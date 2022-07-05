@@ -1,6 +1,6 @@
 import isEmpty from 'lodash/isEmpty';
 
-import { Checkbox, Menu } from '@cognite/cogs.js';
+import { Checkbox, Flex, Icon, Menu, Tooltip } from '@cognite/cogs.js';
 
 import {
   DropdownContent,
@@ -33,7 +33,7 @@ export const DropdownMenuOptions: React.FC<DropdownViewOption> = ({
         content={
           <DropdownContent>
             {(options || []).map((option) => {
-              const { label, checkboxColor } = option;
+              const { label, checkboxColor, helpText } = option;
               const name = `${category}-${label}`;
 
               return (
@@ -47,7 +47,14 @@ export const DropdownMenuOptions: React.FC<DropdownViewOption> = ({
                       onChangeOption(option, isSelected)
                     }
                   >
-                    {label}
+                    <Flex gap={4} alignItems="center">
+                      {label}
+                      {helpText && (
+                        <Tooltip content={helpText}>
+                          <Icon type="Info" />
+                        </Tooltip>
+                      )}
+                    </Flex>
                   </Checkbox>
                 </OptionSubWrapper>
               );

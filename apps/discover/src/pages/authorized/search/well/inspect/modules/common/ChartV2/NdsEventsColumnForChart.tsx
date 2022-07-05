@@ -28,7 +28,8 @@ export type Props = {
   view?: EventTabs;
 };
 
-export const EMPTY_STATE_TEXT = 'This wellbore has no NDS events data';
+export const EMPTY_STATE_TEXT =
+  'This wellbore has no NDS events data on this depth';
 export const LOADING_TEXT = 'Loading';
 
 export const NdsEventsColumnForChart: React.FC<Props> = ({

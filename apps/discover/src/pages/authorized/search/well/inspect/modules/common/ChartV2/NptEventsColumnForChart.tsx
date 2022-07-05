@@ -28,7 +28,8 @@ export type Props = {
   view?: EventTabs;
 };
 
-export const EMPTY_STATE_TEXT = 'This wellbore has no NPT events data';
+export const EMPTY_STATE_TEXT =
+  'This wellbore has no NPT events data on this depth';
 export const LOADING_TEXT = 'Loading';
 
 export const NptEventsColumnForChart: React.FC<Props> = ({

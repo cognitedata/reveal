@@ -50,7 +50,12 @@ export type ChartProps = {
   adaptiveChart?: boolean;
 };
 
-const chartStyles = { display: 'flex !important' };
+const chartStyles = {
+  display: 'flex !important',
+  width: '100%',
+  height: '100%',
+  overflow: 'hidden',
+};
 
 const DEFAULT_GRAPH_Y_VIEWPORT = [100, 0];
 const DEFAULT_GRAPH_X_VIEWPORT = [0, 10];
@@ -85,6 +90,7 @@ const ChartV2 = React.forwardRef(
 
     // Typing this anything besides 'any', causes a mismatch in LegacyRef for Plotly (investigate this the future).
     const chartRef = useRef<any>();
+
     const axisConfigs: AxisConfig = React.useMemo(
       () => ({
         xaxis: {
@@ -110,14 +116,8 @@ const ChartV2 = React.forwardRef(
           tickformat: 'digit',
         },
       }),
-      [
-        axisTicksuffixes,
-        axisAutorange,
-        axisNames,
-        yRange,
-        adaptiveChart,
-        xRange,
-      ]
+      // Do not include the other variable in this fn as deps. It causes plotly onUpdate to be triggered twice
+      [yRange, xRange, adaptiveChart]
     );
 
     if (axisNames?.x2) {
@@ -152,7 +152,7 @@ const ChartV2 = React.forwardRef(
           },
           yaxis: {
             title: axisNames?.y || 'y Axis',
-            // autorange: axisAutorange?.y,
+            autorange: axisAutorange?.y,
           },
           zaxis: {
             title: axisNames?.z || 'z Axis',
@@ -170,59 +170,61 @@ const ChartV2 = React.forwardRef(
         },
         dragmode: 'pan',
       }),
-      [
-        axisConfigs,
-        hovermode,
-        height,
-        axisNames,
-        axisAutorange,
-        autosize,
-        showLegend,
-      ]
+      [axisConfigs]
     );
 
-    const handleRelayoutChange = useDebounce(
-      (event: Plotly.PlotRelayoutEvent) => {
-        const minY = event['yaxis.range[1]'] || 0;
-        const maxY = event['yaxis.range[0]'] || 0;
+    const manageGraphRangeChange = (figure: Figure, graph: HTMLElement) => {
+      if (!adaptiveChart) return;
 
-        onMinMaxChange?.(minY, maxY);
-      },
-      1000
-    );
-
-    const handleUpdate = useDebounce((figure: Figure, graph: HTMLElement) => {
-      const gap = calculateYTicksGap(graph);
       const visibleYValues = findVisibleYTicksValues(graph);
 
       // Change the graph position to match the events by depth column.
-      if (adaptiveChart) {
-        const [max, min] = maxMin(visibleYValues);
+      const [max, min] = maxMin(visibleYValues);
 
-        setYRange((prevState) => {
-          const [prevMax, prevMin] = prevState;
-          if (prevMax !== max && prevMin !== min) {
-            return [max, min];
-          }
-
-          return prevState;
-        });
-
-        if (figure.layout?.xaxis?.range) {
-          setXRange(figure.layout.xaxis.range as [Datum, Datum]);
+      setYRange((prevState) => {
+        const [prevMax, prevMin] = prevState;
+        if (prevMax !== max && prevMin !== min) {
+          return [max, min];
         }
+
+        return prevState;
+      });
+
+      if (figure.layout?.xaxis?.range) {
+        setXRange(figure.layout.xaxis.range as [Datum, Datum]);
       }
+    };
 
-      onLayoutChange?.(gap, visibleYValues);
-    }, 100);
-
-    const handleInitialization = (figure: Figure, graph: HTMLElement) => {
+    const manageMinMaxChange = (figure: Figure) => {
       const [maxY, minY] = (figure.layout.yaxis?.range || [0, 0]) as [
         number,
         number
       ];
+
       onMinMaxChange?.(minY, maxY);
-      handleUpdate(figure, graph);
+    };
+
+    const manageLayoutChange = (graph: HTMLElement) => {
+      const gap = calculateYTicksGap(graph);
+      const visibleYValues = findVisibleYTicksValues(graph);
+
+      onLayoutChange?.(gap, visibleYValues);
+    };
+
+    const handleUpdate = useDebounce((figure: Figure, graph: HTMLElement) => {
+      manageGraphRangeChange(figure, graph);
+
+      manageMinMaxChange(figure);
+
+      manageLayoutChange(graph);
+    }, 500);
+
+    const handleInitialization = (_figure: Figure, graph: HTMLElement) => {
+      // Reset the graph to the show the whole plot on init.
+      const inbuiltButtons = graph.querySelector("[data-val='auto']");
+
+      if (!inbuiltButtons) return;
+      (inbuiltButtons as HTMLAnchorElement).click();
     };
 
     const renderPlot = useMemo(
@@ -234,7 +236,6 @@ const ChartV2 = React.forwardRef(
           layout={layout}
           style={chartStyles}
           onInitialized={handleInitialization}
-          onRelayout={handleRelayoutChange}
           onUpdate={handleUpdate}
           config={{
             responsive: true,
@@ -265,6 +266,10 @@ const ChartV2 = React.forwardRef(
       [data, layout]
     );
 
+    const renderDetailCard = useMemo(() => {
+      return <DetailCard data={detailCardData} />;
+    }, [detailCardData]);
+
     return (
       <React.Suspense fallback={<Loader darkMode={false} />}>
         <Container>
@@ -275,7 +280,7 @@ const ChartV2 = React.forwardRef(
             </BodyColumnHeaderLegend>
           </BodyColumnHeaderWrapper>
           <ChartWrapper ref={ref}>
-            <DetailCard data={detailCardData} />
+            {renderDetailCard}
             {renderPlot}
           </ChartWrapper>
         </Container>

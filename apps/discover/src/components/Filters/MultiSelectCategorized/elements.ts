@@ -36,6 +36,10 @@ export const OptionWrapper = styled(CategoryWrapper)`
 
 export const OptionSubWrapper = styled(CategoryWrapper)`
   width: 100%;
+
+  i {
+    color: rgba(0, 0, 0, 0.55);
+  }
 `;
 
 export const NoOptionsWrapper = styled(Menu.Item)`

@@ -27,6 +27,9 @@ export const DropdownWrapper = styled(Flex)`
     > * .cogs-select__control--menu-is-open {
       border: 2px solid var(--cogs-midblue-4) !important;
     }
+    .cogs-select--title {
+      color: #262626;
+    }
     .cogs-select__clear-indicator {
       display: none;
     }

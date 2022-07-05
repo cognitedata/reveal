@@ -1,3 +1,5 @@
+import React from 'react';
+
 import { SelectProps } from '@cognite/cogs.js';
 
 import { ExtraLabels } from '../interfaces';
@@ -26,7 +28,7 @@ export type MultiSelectOptionValue = string | number;
 export type MultiSelectOptionObject = {
   value: MultiSelectOptionValue;
   count?: number;
-  helpText?: string | JSX.Element;
+  helpText?: string | React.ReactNode;
   checkboxColor?: string;
 };
 

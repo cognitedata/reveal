@@ -9,8 +9,8 @@ import {
 
 export type DetailCardMetadata = {
   color?: string;
-  title: string;
-  content?: string;
+  title: string | React.ReactNode;
+  content?: string | React.ReactNode;
   layout?: {
     extendedWidth?: boolean;
   };

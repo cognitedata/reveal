@@ -48,14 +48,19 @@ export const calculateYTicksGap = (graph: HTMLElement) => {
   const yTickLineElements = Array.from(
     graph.getElementsByClassName('ygrid crisp')
   );
+  const zeroLineElement = Array.from(
+    graph.getElementsByClassName('yzl zl crisp')
+  );
 
-  const lines = yTickLineElements.map((lineElement) => {
-    const { f } = new DOMMatrixReadOnly(
-      window.getComputedStyle(lineElement).getPropertyValue('transform')
-    );
+  const lines = [...yTickLineElements, ...zeroLineElement].map(
+    (lineElement) => {
+      const { f } = new DOMMatrixReadOnly(
+        window.getComputedStyle(lineElement).getPropertyValue('transform')
+      );
 
-    return f;
-  });
+      return f;
+    }
+  );
 
   const sortedLines = sortByNumberAscending(lines);
 

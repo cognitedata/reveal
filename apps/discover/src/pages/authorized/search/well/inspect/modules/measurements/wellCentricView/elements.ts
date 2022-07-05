@@ -49,6 +49,7 @@ export const Footer = styled(FlexColumn)`
   padding-top: 0;
   align-items: center;
   gap: ${sizes.normal};
+  width: 80%;
 `;
 
 export const LegendsHolder = styled(Flex)`
