@@ -121,6 +121,7 @@ export type TimeseriesChartProps = {
   defaultOption?: TIME_OPTION_KEY;
   cacheToDate?: boolean;
   showCustomRangePicker?: boolean;
+  enableTooltipPreview?: boolean;
   disabled?: boolean;
 } & Omit<
   LineChartProps,

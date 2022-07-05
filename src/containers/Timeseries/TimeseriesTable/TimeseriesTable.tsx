@@ -47,6 +47,7 @@ export const TimeseriesTable = ({
           enableTooltip={false}
           showGridLine="none"
           minRowTicks={2}
+          enableTooltipPreview
           dateRange={[new Date(start), new Date(end)]}
           onDateRangeChange={() => {}}
         />

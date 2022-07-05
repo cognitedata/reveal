@@ -2,7 +2,12 @@ import React, { useMemo } from 'react';
 import { AreaClosed, Line, Bar, LinePath } from '@visx/shape';
 import { GridRows, GridColumns } from '@visx/grid';
 import { scaleTime, scaleLinear } from '@visx/scale';
-import { useTooltip, defaultStyles, Tooltip } from '@visx/tooltip';
+import {
+  useTooltip,
+  defaultStyles,
+  Tooltip,
+  TooltipWithBounds,
+} from '@visx/tooltip';
 import { localPoint } from '@visx/event';
 import { LinearGradient } from '@visx/gradient';
 import { max, min, extent, bisector } from 'd3-array';
@@ -14,6 +19,7 @@ import { Threshold } from '@visx/threshold';
 import { Body, Colors, Overline } from '@cognite/cogs.js';
 import { lightGrey } from 'utils/Colors';
 import { formatDate, datetimeMultiFormat } from 'utils/datetimeFormat';
+import styled from 'styled-components';
 
 const pointColor = Colors['midblue-3'].hex();
 const primaryColor = Colors['midblue-4'].hex();
@@ -52,6 +58,7 @@ export type LineChartProps = {
   showPoints?: boolean;
   enableArea?: boolean;
   enableMinMaxArea?: boolean;
+  enableTooltipPreview?: boolean;
   values: DatapointAggregate[];
   margin?: { top: number; right: number; bottom: number; left: number };
 };
@@ -67,6 +74,7 @@ export const LineChart = ({
   enableArea = false,
   enableMinMaxArea = true,
   enableTooltip = true,
+  enableTooltipPreview = false,
   showPoints = true,
   minRowTicks = 5,
   margin = { top: 0, right: 40, bottom: 40, left: 10 },
@@ -301,7 +309,7 @@ export const LineChart = ({
   };
 
   const renderTooltipLine = () => {
-    if (!enableTooltip) {
+    if (!enableTooltip && !enableTooltipPreview) {
       return <></>;
     }
     return (
@@ -353,12 +361,41 @@ export const LineChart = ({
   };
 
   const renderTooltipContent = () => {
-    if (!enableTooltip) {
+    if (enableTooltipPreview) {
+      return (
+        tooltipData && (
+          <RelativeWrapper>
+            <TooltipWithBounds
+              key={Math.random()}
+              top={tooltipTop < innerHeight ? -innerHeight - 10 : -tooltipTop}
+              left={tooltipLeft + 5}
+              style={tooltipStyles}
+            >
+              <>
+                <Overline level={3}>
+                  Average:
+                  <TooltipSpan>
+                    {getDataPointAverage(tooltipData)?.toFixed(3)}
+                  </TooltipSpan>
+                </Overline>
+
+                <Overline level={3}>
+                  Date:
+                  <TooltipSpan>{formatDate(getDate(tooltipData))}</TooltipSpan>
+                </Overline>
+              </>
+            </TooltipWithBounds>
+          </RelativeWrapper>
+        )
+      );
+    }
+    if (!enableTooltip && !enableTooltipPreview) {
       return <></>;
     }
+
     return (
       tooltipData && (
-        <div style={{ position: 'relative' }}>
+        <RelativeWrapper>
           <Tooltip
             key={Math.random()}
             top={tooltipTop < innerHeight ? -innerHeight : -tooltipTop}
@@ -395,7 +432,7 @@ export const LineChart = ({
           >
             {formatDate(getDate(tooltipData))}
           </Tooltip>
-        </div>
+        </RelativeWrapper>
       )
     );
   };
@@ -435,3 +472,13 @@ export const LineChart = ({
     </div>
   );
 };
+
+const RelativeWrapper = styled.div`
+  position: relative;
+`;
+
+const TooltipSpan = styled.span`
+  font-weight: 400;
+  font-size: 14px;
+  text-transform: none;
+`;
