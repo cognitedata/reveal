@@ -51,8 +51,6 @@ export class Measurement {
 
   /**
    * Update the measurement line to end at the provided mouse coordinates
-   * @param mouseEvent.offsetX Mouse coordinates relative to the canvas DOM element.
-   * @param mouseEvent.offsetY Mouse coordinates relative to the canvas DOM element.
    */
   update(mouseEvent: { offsetX: number; offsetY: number }): void {
     if (this._line === null) {
