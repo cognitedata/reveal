@@ -9,7 +9,6 @@ import {
   ChartWorkflowV2,
   SourceCollectionData,
   StorableNode,
-  UserInfo,
 } from 'models/charts/charts/types/types';
 import { getEntryColor } from 'utils/colors';
 import dayjs from 'dayjs';
@@ -32,6 +31,7 @@ import { Operation } from '@cognite/calculation-backend';
 import { initializeParameterValues } from 'components/NodeEditor/V2/utils';
 import compareVersions from 'compare-versions';
 import { AxisUpdate } from 'components/PlotlyChart/utils';
+import { UserInfo } from 'models/charts/login/types/UserInfo';
 
 export function duplicate(chart: Chart, login: UserInfo): Chart {
   const id = uuidv4();

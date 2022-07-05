@@ -1,5 +1,4 @@
 import { Router } from 'react-router-dom';
-import { SDKProvider } from '@cognite/sdk-provider';
 import { QueryClientProvider, QueryClient } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
 import { ToastContainer } from '@cognite/cogs.js';
@@ -8,8 +7,6 @@ import { IntercomProvider } from 'react-use-intercom';
 import Locale from 'models/charts/user-preferences/classes/Locale';
 import I18N from 'models/charts/user-preferences/classes/I18N';
 
-import 'antd/dist/antd.css';
-import '@cognite/cogs.js/dist/cogs.css';
 import 'services/metrics';
 
 // START SENTRY CODE
@@ -18,7 +15,6 @@ import { Integrations } from '@sentry/tracing';
 import SentryRRWeb from '@sentry/rrweb';
 import { isDevelopment } from 'models/charts/config/utils/environment';
 import { createBrowserHistory } from 'history';
-import { getSDK } from 'utils/cdf-sdk';
 import Config from 'models/charts/config/classes/Config';
 import Routes from './pages/Routes';
 
@@ -35,6 +31,7 @@ if (Config.sentryDSN && !isDevelopment) {
     environment: Config.environment,
     integrations: [
       new Integrations.BrowserTracing({
+        tracingOrigins: [/calculation-backend.([A-Za-z0-9-]+\.)?cognite\.ai/],
         routingInstrumentation: Sentry.reactRouterV5Instrumentation(history),
       }),
       new SentryRRWeb(),
@@ -61,8 +58,6 @@ const queryClient = new QueryClient({
   },
 });
 
-const sdkClient = getSDK();
-
 export default function RootApp() {
   return (
     <Sentry.ErrorBoundary fallback={<p>An error has occurred</p>} showDialog>
@@ -79,12 +74,10 @@ export default function RootApp() {
           }}
         >
           <RecoilRoot>
-            <SDKProvider sdk={sdkClient}>
-              <Router history={history}>
-                <ToastContainer />
-                <Routes />
-              </Router>
-            </SDKProvider>
+            <Router history={history}>
+              <ToastContainer />
+              <Routes />
+            </Router>
           </RecoilRoot>
         </IntercomProvider>
         <ReactQueryDevtools />

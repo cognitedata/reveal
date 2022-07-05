@@ -1,5 +1,6 @@
 import { Node, Connection } from '@cognite/connect';
 import { NodeDataDehydratedVariants } from 'components/NodeEditor/V2/types';
+import { UserInfo } from 'models/charts/login/types/UserInfo';
 import { FlowExportObject } from 'react-flow-renderer';
 
 export type Chart = {
@@ -119,12 +120,6 @@ type StatisticsCallRef = {
   callId: string;
   callDate: number;
   hash?: number;
-};
-
-export type UserInfo = {
-  id: string;
-  email?: string;
-  displayName?: string;
 };
 
 type ThresholdCallRef = {

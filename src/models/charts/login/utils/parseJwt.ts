@@ -1,4 +1,4 @@
-export function parseJwt(token: string | null) {
+export function parseJwt(token: string | null | undefined) {
   if (!token) return '';
   const base64Url = token.split('.')[1];
   const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
@@ -10,5 +10,5 @@ export function parseJwt(token: string | null) {
       .join('')
   );
 
-  return JSON.stringify(JSON.parse(jsonPayload), null, 2);
+  return JSON.parse(jsonPayload);
 }

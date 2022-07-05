@@ -13,8 +13,6 @@ import { useUserInfo } from '@cognite/sdk-react-query-hooks';
 import { makeDefaultTranslations, translationKeys } from 'utils/translations';
 import { useTranslations } from 'hooks/translations';
 import { useEffect, useState } from 'react';
-import firebase from 'firebase/app';
-import 'firebase/auth';
 import dayjs from 'dayjs';
 import PageTitle from 'components/PageTitle/PageTitle';
 import Locale from 'models/charts/user-preferences/classes/Locale';
@@ -24,6 +22,7 @@ import UserPreferences from 'models/charts/user-preferences/classes/UserPreferen
 import { pick } from 'lodash';
 import { parseJwt } from 'models/charts/login/utils/parseJwt';
 import Login from 'models/charts/login/classes/Login';
+import Firebase from 'models/firebase/classes/Firebase';
 
 const UserProfileWrap = styled(Flex)`
   width: 100%;
@@ -224,15 +223,19 @@ const UserProfile = () => {
             <Display level={3}>User Information</Display>
             <pre>{JSON.stringify(user, null, 2)}</pre>
             <Display level={3}>Firebase User Information</Display>
-            <pre>
-              {JSON.stringify(firebase.auth()?.currentUser ?? {}, null, 2)}
-            </pre>
+            <pre>{JSON.stringify(Firebase.currentUser, null, 2)}</pre>
             <Display level={3}>Firebase Token Information</Display>
-            <pre>{parseJwt(Login.firebaseToken)}</pre>
+            <pre>{JSON.stringify(parseJwt(Firebase.token), null, 2)}</pre>
             <Display level={3}>CDF Token Information</Display>
-            <pre>{parseJwt(Login.cdfToken)}</pre>
-            <Display level={3}>Azure AD Token Information</Display>
-            <pre>{parseJwt(Login.accessToken)}</pre>
+            <pre>{JSON.stringify(parseJwt(Login.cdfToken), null, 2)}</pre>
+            {Login.accessToken && (
+              <>
+                <Display level={3}>Azure AD Token Information</Display>
+                <pre>
+                  {JSON.stringify(parseJwt(Login.accessToken), null, 2)}
+                </pre>
+              </>
+            )}
           </Collapse.Panel>
         </Collapse>
       </div>
