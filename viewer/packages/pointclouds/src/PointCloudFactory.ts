@@ -7,21 +7,19 @@ import { PointCloudMetadata } from './PointCloudMetadata';
 
 import { ModelIdentifier, CdfModelIdentifier } from '@reveal/modeldata-api';
 
-import {
-  CdfPointCloudObjectAnnotation,
-  CylinderPrimitive,
-  Geometry
-} from './annotationTypes';
-import { PointCloudObjectProvider } from './styling/PointCloudObjectProvider';
+import { CdfPointCloudObjectAnnotation } from './annotationTypes';
 import { annotationsToObjectInfo } from './styling/annotationsToObjects';
-import { BoxPrimitive } from './annotationTypes';
 
 import { Potree } from './potree-three-loader';
 import { DEFAULT_POINT_CLOUD_METADATA_FILE } from './constants';
 
 import { CogniteClient } from '@cognite/sdk';
 
-import * as THREE from 'three';
+import { PointCloudObjectProvider } from './styling/PointCloudObjectProvider';
+import { Box } from './styling/shapes/Box';
+import { createInvertedRevealTransformationFromCdfTransformation } from './styling/shapes/linalg';
+import { Cylinder } from './styling/shapes/Cylinder';
+import { IShape } from './styling/shapes/IShape';
 
 export class PointCloudFactory {
   private readonly _potreeInstance: Potree;
@@ -36,15 +34,13 @@ export class PointCloudFactory {
     return this._potreeInstance;
   }
 
-  private annotationGeometryToLocalGeometry(geometry: any): Geometry {
+  private annotationGeometryToLocalGeometry(geometry: any): IShape {
     if (geometry.box) {
-      return new BoxPrimitive(new THREE.Matrix4().fromArray(geometry.box.matrix));
+      return new Box(createInvertedRevealTransformationFromCdfTransformation({ data: geometry.box.matrix }));
     }
 
     if (geometry.cylinder) {
-      const centerA = new THREE.Vector3().fromArray(geometry.cylinder.centerA);
-      const centerB = new THREE.Vector3().fromArray(geometry.cylinder.centerB);
-      return new CylinderPrimitive(centerA, centerB, geometry.cylinder.radius);
+      return new Cylinder(geometry.cylinder.centerA, geometry.cylinder.centerB, geometry.cylinder.radius);
     }
 
     throw Error('Annotation geometry type not recognized');
@@ -60,7 +56,7 @@ export class PointCloudFactory {
       limit: 1000
     }).autoPagingToArray({ limit: Infinity });
 
-    const bvs = modelAnnotations.map(annotation => {
+    const annotations = modelAnnotations.map(annotation => {
       const region = (annotation.data as any).region.map((geometry: any) => {
         return this.annotationGeometryToLocalGeometry(geometry);
       });
@@ -69,10 +65,10 @@ export class PointCloudFactory {
         annotationId: annotation.id,
         assetId: annotation.annotatedResourceId,
         region
-      } as CdfPointCloudObjectAnnotation;
+      };
     });
 
-    return bvs;
+    return annotations;
   }
 
   async createModel(modelIdentifier: ModelIdentifier, modelMetadata: PointCloudMetadata): Promise<PotreeNodeWrapper> {

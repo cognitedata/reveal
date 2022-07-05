@@ -13,7 +13,7 @@ function cdfAnnotationsToRevealAnnotations(bvs: CdfPointCloudObjectAnnotation[])
   const resultAnnotations = bvs.map(bv => {
     idCounter++;
 
-    const shapes = bv.region.map(primitive => primitive.transformToShape());
+    const shapes = bv.region;
 
     const compShape = new CompositeShape(shapes);
     const stylableObject: StylableObject = {
