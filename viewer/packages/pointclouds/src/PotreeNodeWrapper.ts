@@ -34,13 +34,13 @@ export class PotreeNodeWrapper {
     return this._needsRedraw;
   }
 
-  constructor(octree: PointCloudOctree, annotationsInfo?: PointCloudObjectAnnotationsWithIndexMap | undefined) {
+  constructor(octree: PointCloudOctree, annotations: PointCloudObjectAnnotation[]) {
     this.octree = octree;
     this.pointSize = 2;
     this.pointColorType = PotreePointColorType.Rgb;
     this.pointShape = PotreePointShape.Circle;
     this._classification = octree.material.classification;
-    this._annotations = annotationsInfo?.annotations ?? [];
+    this._annotations = annotations;
   }
 
   get pointSize(): number {

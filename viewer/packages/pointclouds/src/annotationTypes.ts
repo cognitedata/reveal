@@ -49,8 +49,3 @@ export type AnnotationMetadata = {
 export type PointCloudObjectAnnotation = AnnotationMetadata & {
   stylableObject: StylableObject;
 };
-
-export type PointCloudObjectAnnotationsWithIndexMap = {
-  annotations: PointCloudObjectAnnotation[];
-  annotationIdToIndexMap: Map<number, number>;
-};

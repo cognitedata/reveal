@@ -2,23 +2,15 @@
  * Copyright 2022 Cognite AS
  */
 
-import {
-  PointCloudObjectAnnotation,
-  PointCloudObjectAnnotationsWithIndexMap,
-  CdfPointCloudObjectAnnotation
-} from '../annotationTypes';
+import { PointCloudObjectAnnotation, CdfPointCloudObjectAnnotation } from '../annotationTypes';
+import { PointCloudObjectProvider } from './PointCloudObjectProvider';
 import { CompositeShape } from './shapes/CompositeShape';
 import { StylableObject } from './StylableObject';
 
-function cdfAnnotationsToRevealAnnotationsAndIdMap(
-  bvs: CdfPointCloudObjectAnnotation[]
-): [PointCloudObjectAnnotation[], Map<number, number>] {
+function cdfAnnotationsToRevealAnnotations(bvs: CdfPointCloudObjectAnnotation[]): PointCloudObjectAnnotation[] {
   let idCounter = 0;
-  const idMap = new Map<number, number>();
 
-  const resultAnnotations = bvs.map((bv, ind) => {
-    idMap.set(bv.annotationId, ind);
-
+  const resultAnnotations = bvs.map(bv => {
     idCounter++;
 
     const shapes = bv.region.map(primitive => primitive.transformToShape());
@@ -38,13 +30,11 @@ function cdfAnnotationsToRevealAnnotationsAndIdMap(
     return annotation;
   });
 
-  return [resultAnnotations, idMap];
+  return resultAnnotations;
 }
 
-export function annotationsToObjectInfo(
-  annotations: CdfPointCloudObjectAnnotation[]
-): PointCloudObjectAnnotationsWithIndexMap {
-  const [translatedAnnotations, idMap] = cdfAnnotationsToRevealAnnotationsAndIdMap(annotations);
+export function annotationsToObjectInfo(annotations: CdfPointCloudObjectAnnotation[]): PointCloudObjectProvider {
+  const translatedAnnotations = cdfAnnotationsToRevealAnnotations(annotations);
 
-  return { annotations: translatedAnnotations, annotationIdToIndexMap: idMap };
+  return new PointCloudObjectProvider(translatedAnnotations);
 }

@@ -8,11 +8,11 @@ import { PointCloudMetadata } from './PointCloudMetadata';
 import { ModelIdentifier, CdfModelIdentifier } from '@reveal/modeldata-api';
 
 import {
-  PointCloudObjectAnnotation,
   CdfPointCloudObjectAnnotation,
   CylinderPrimitive,
   Geometry
 } from './annotationTypes';
+import { PointCloudObjectProvider } from './styling/PointCloudObjectProvider';
 import { annotationsToObjectInfo } from './styling/annotationsToObjects';
 import { BoxPrimitive } from './annotationTypes';
 
@@ -78,10 +78,7 @@ export class PointCloudFactory {
   async createModel(modelIdentifier: ModelIdentifier, modelMetadata: PointCloudMetadata): Promise<PotreeNodeWrapper> {
     const { modelBaseUrl } = modelMetadata;
 
-    let annotationInfo = {
-      annotations: new Array<PointCloudObjectAnnotation>(),
-      annotationIdToIndexMap: new Map<number, number>()
-    };
+    let annotationInfo = new PointCloudObjectProvider([]);
 
     if (this._sdkClient) {
       const annotations = await this.getAnnotations(modelIdentifier as CdfModelIdentifier);
@@ -95,6 +92,6 @@ export class PointCloudFactory {
     );
 
     pointCloudOctree.name = `PointCloudOctree: ${modelBaseUrl}`;
-    return new PotreeNodeWrapper(pointCloudOctree, annotationInfo);
+    return new PotreeNodeWrapper(pointCloudOctree, annotationInfo.annotations);
   }
 }
