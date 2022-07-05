@@ -16,7 +16,7 @@ import { CogniteClientPlayground } from '@cognite/sdk-playground';
 
 import { Mock } from 'moq.ts';
 
-function ColorStyling() {
+function ColorStylingCognite3DViewerPointCloudTestPage() {
   const modelUrl = 'pointcloud-bunny';
   const sdkPlaygroundMock = new Mock<CogniteClientPlayground>()
     .setup(p => p.annotations)
@@ -51,4 +51,4 @@ function ColorStyling() {
   viewerOptions={viewerOptions} />;
 }
 
-registerVisualTest('pointcloud', 'color-styling', 'Color Styling', <ColorStyling />)
+registerVisualTest('pointcloud', 'color-styling', 'Color Styling', <ColorStylingCognite3DViewerPointCloudTestPage />)
