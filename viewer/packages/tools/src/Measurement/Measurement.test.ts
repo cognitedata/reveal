@@ -2,25 +2,18 @@
  * Copyright 2022 Cognite AS
  */
 
-import { CogniteClient } from '@cognite/sdk';
-import { Cognite3DViewer, Intersection } from '@reveal/api';
-import { MeasurementOptions } from 'dist/tools';
 import * as THREE from 'three';
-import { createGlContext, mockClientAuthentication, createCadModel } from '../../../../test-utilities';
+import { CogniteClient } from '@cognite/sdk';
+import { Cognite3DViewer } from '@reveal/api';
+import { createGlContext, mockClientAuthentication } from '../../../../test-utilities';
 import { HtmlOverlayTool } from '../HtmlOverlay/HtmlOverlayTool';
 import { Measurement } from './Measurement';
+import { MeasurementOptions } from './types';
 
 describe(Measurement.name, () => {
   let measurement: Measurement;
   let overlay: HtmlOverlayTool;
   let meshGroup: THREE.Group;
-  const intersection: Intersection = {
-    type: 'cad',
-    model: createCadModel(1, 2, 3, 3),
-    treeIndex: 0,
-    point: new THREE.Vector3(100, 100, 100),
-    distanceToCamera: 10
-  };
 
   beforeEach(() => {
     const sdk = new CogniteClient({
