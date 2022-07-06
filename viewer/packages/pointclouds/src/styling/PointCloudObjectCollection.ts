@@ -12,8 +12,14 @@ import { EventTrigger } from '@reveal/utilities';
 export abstract class PointCloudObjectCollection {
   private readonly _changedEvent = new EventTrigger<() => void>();
 
+  /**
+   * @returns annotation IDs of the annotations for the objects represented by this PointCloudObjectCollection instance
+   */
   abstract getAnnotationIds(): Iterable<number>;
 
+  /**
+   * @returns whether the collection is still loading data in the background i.e. not yet ready for use
+   */
   abstract get isLoading(): boolean;
 
   on(event: 'changed', listener: () => void): void {

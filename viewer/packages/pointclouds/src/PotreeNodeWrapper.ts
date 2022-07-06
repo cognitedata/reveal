@@ -17,8 +17,8 @@ import { WellKnownAsprsPointClassCodes } from './types';
 
 import { createPointClassKey } from './createPointClassKey';
 import { StyledPointCloudObjectCollection } from './styling/StyledPointCloudObjectCollection';
-import { AnnotationMetadata, PointCloudObjectAnnotation } from './annotationTypes';
-import { CompletePointCloudObjectAppearance } from './styling/PointCloudAppearance';
+import { PointCloudObjectMetadata, PointCloudObjectAnnotation } from './annotationTypes';
+import { CompletePointCloudAppearance } from './styling/PointCloudAppearance';
 
 /**
  * Wrapper around `Potree.PointCloudOctree` with some convenience functions.

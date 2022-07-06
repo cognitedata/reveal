@@ -227,8 +227,8 @@ export class CognitePointCloudModel extends THREE.Object3D implements CogniteMod
   }
 
   /**
-   * Sets default apparance for points that are
-   * not styled otherwise
+   * Sets default apparance for points that are not styled otherwise
+   * @param appearance Appearance to assign as default
    */
   setDefaultPointCloudAppearance(appearance: PointCloudAppearance): void {
     const fullAppearance: CompletePointCloudAppearance = applyDefaultsToPointCloudAppearance(appearance);
@@ -237,13 +237,15 @@ export class CognitePointCloudModel extends THREE.Object3D implements CogniteMod
 
   /**
    * Gets the object collections that have been assigned a style
+   * @returns All object collections and their associated style
    */
   get styledCollections(): StyledPointCloudObjectCollection[] {
     return this._styledObjectCollections;
   }
 
   /**
-   * Assign a style to a collection of objects
+   * Assign a style to a collection of objects. If the object collection has been assigned
+   * a style previously, the previous style will be replaced by the new one.
    * @param objectCollection The object collection to assign a style to
    * @param appearance The style to assign to the object collection
    */
@@ -265,7 +267,8 @@ export class CognitePointCloudModel extends THREE.Object3D implements CogniteMod
   }
 
   /**
-   * Unassign style from an already styled object collection
+   * Unassign style from an already styled object collection.
+   * @param objectCollection The object collection from which to remove the style
    */
   unassignStyledObjectCollection(objectCollection: PointCloudObjectCollection): void {
     const styledCollectionIndex = this._styledObjectCollections.findIndex(x => x.objectCollection === objectCollection);
@@ -282,14 +285,14 @@ export class CognitePointCloudModel extends THREE.Object3D implements CogniteMod
   }
 
   /**
-   * Remove style from all styled object collections
+   * Removes styling on all object collections in this model
    */
   removeAllStyledObjectCollections(): void {
     this.pointCloudNode.removeAllStyledPointCloudOjects();
   }
 
   /**
-   * Returns the number of stylable objects
+   * @returns The number of stylable objects
    */
   get stylableObjectCount(): number {
     return this.pointCloudNode.potreeNode.stylableObjects.length;
