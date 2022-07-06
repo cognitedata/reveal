@@ -39,22 +39,23 @@ export function Cognite3DTestViewer(props: Props) {
       return;
     }
 
+    const cogniteClientMock = new Mock<CogniteClient>()
+      .setup(p => p.annotations)
+      .returns(new Mock<CogniteClient['annotations']>()
+        .setup(p => p.list)
+        .returns(() => {
+          const promise = Promise.resolve({ items: [] });
+          Object.assign(promise, { autoPagingToArray: async (_arg: { limit: number }) => (await promise).items });
+          return promise as any;
+        })
+        .object());
+
     // Prepare viewer
     const options: Cognite3DViewerOptions = {
       domElement: containerRef.current,
       onLoading: (itemsLoaded, itemsRequested, itemsCulled) => setLoadingState({ itemsLoaded, itemsRequested, itemsCulled }),
       // Note! Pure fake - we will not contact CDF during our tests
-      sdk: new Mock<CogniteClient>()
-        .setup(p => p.annotations)
-        .returns(new Mock<CogniteClient['annotations']>()
-          .setup(p => p.list)
-          .returns(() => {
-            const promise = Promise.resolve({ items: [] });
-            Object.assign(promise, { autoPagingToArray: async (_arg: { limit: number }) => (await promise).items });
-            return promise as any;
-          })
-          .object())
-        .object(),
+      sdk: cogniteClientMock.object(),
       // Instruct viewer to load models from local storage
       // @ts-expect-error
       _localModels: true,
