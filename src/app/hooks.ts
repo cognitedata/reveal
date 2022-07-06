@@ -139,7 +139,6 @@ export const useUserInformation = () => {
  * Create the function which helps to persist the search string and create the relative link in the navigation in preview mode
  * @param tabType the type of the tab
  * @param type Resource type of the navigator
- *
  */
 export const useOnPreviewTabChange = (tabType?: string, type?: string) => {
   const location = useLocation();
