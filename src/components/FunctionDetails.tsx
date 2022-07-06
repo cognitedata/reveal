@@ -1,11 +1,11 @@
 import React from 'react';
 import moment from 'moment';
-import { Descriptions, Alert } from 'antd';
+import { Descriptions, Alert, Typography } from 'antd';
 import LoadingIcon from 'components/LoadingIcon';
 import { useFunction } from 'utils/hooks';
-import CopyContentButton from 'components/buttons/CopyContentButton';
 
 const { Item } = Descriptions;
+const { Text } = Typography;
 
 type Props = {
   id: number;
@@ -58,13 +58,7 @@ export default function FunctionDetails({ id, name }: Props) {
         {currentFunction?.apiKey || notSet}
       </Item>
       <Item label="Function Id" span={3}>
-        <div className="group-wrapper">
-          {currentFunction?.id}
-          <CopyContentButton
-            value={currentFunction!.id.toString()}
-            style={{ marginLeft: '4px', marginTop: '-1px' }}
-          />
-        </div>
+        <Text copyable>{currentFunction?.id}</Text>
       </Item>
       <Item label="File Id" span={3}>
         {currentFunction?.fileId}

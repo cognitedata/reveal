@@ -43,8 +43,3 @@ h3 {
   display: flex;
   flex-wrap: flex;
 }
-
-.group-wrapper {
-  display: flex;
-  align-items: start;
-}
