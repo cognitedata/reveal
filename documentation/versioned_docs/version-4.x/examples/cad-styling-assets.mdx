@@ -7,13 +7,13 @@ describe: Applying styles to assets and assosciated asset mappings from Cognite 
 import { DemoWrapper } from '@site/versioned_docs/version-4.x/components/DemoWrapper';
 
 In Cognite Data Fusion, assets and asset hierarchies are digital representations of objects
-or groups of objects from the physical world. Assets can be assosciated with different data
+or groups of objects from the physical world. Assets can be assosciated with different data 
 types, such as documents, time series and events and serves as a "hub" to look up data for
 physical equipment. See [Cognite Data Fusion documentation](https://docs.cognite.com/dev/concepts/resource_types/assets.html)
 for more information about assets.
 
 3D nodes can be ["asset mapped"](https://docs.cognite.com/api/v1/#tag/3D-Asset-Mapping) to
-assets in Cognite Data Fusion. Reveal supports styling nodes mapped to an asset by using
+assets in Cognite Data Fusion. Reveal supports styling nodes mapped to an asset by using 
 `AssetNodeCollection`.
 
 <DemoWrapper name="Cognite3DViewerDemo" />
@@ -33,7 +33,7 @@ model.assignStyledNodeCollection(allAssetMappedNodes, { renderGhosted: false, ou
 
 # Style a given asset
 
-It is also possible to only style nodes mapped to a single asset. Assets are identified by their
+It is also possible to only style nodes mapped to a single asset. Assets are identified by their 
 'ID':
 
 ```js runnable-4x
@@ -52,9 +52,9 @@ To support proximity lookups, Reveal supports styling assets within a certain ar
 sufficient for an asset to intersect the provided bounds, it doesn't need to be fully inside.
 
 :::note
-The bounding box is defined in "Reveal coordinates" -
-[a right handed, Y up coordinate system](https://www.youtube.com/watch?v=TGbMzoJqV7c) - which might differ
-from the "native model coordinates" stored in Cognite Fusion. `AssetNodeCollection` will automatically map from
+The bounding box is defined in "Reveal coordinates" - 
+[a right handed, Y up coordinate system](https://www.youtube.com/watch?v=TGbMzoJqV7c) - which might differ 
+from the "native model coordinates" stored in Cognite Fusion. `AssetNodeCollection` will automatically map from 
 "Reveal coordinates" to "native model coordinates" using `Cognite3DModel.mapBoxFromModelToCdfCoordinates`.
 :::
 

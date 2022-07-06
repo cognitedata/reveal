@@ -12,7 +12,7 @@ to provide details or draw the attention to a given point. This can be done by p
 that follows the object it's attached to. `HtmlOverlayTool` is a convinience tool to manage overlays. The tool
 also supports "clustering", i.e. that overlapping elements are combined into a single element to avoid clustering.
 
-Note that these overlays always will be placed on top of the 3D viewer, they will not be hidden when the object is
+Note that these overlays always will be placed on top of the 3D viewer, they will not be hidden when the object is 
 obscured by other objects. To achieve this it's necessary to use custom 3D objects.
 
 <DemoWrapper name="Cognite3DViewerDemo" />
@@ -135,24 +135,26 @@ As shown above, overlays can be removed using `remove()`. It is also possible to
 overlays by calling `clear()` or by disposing the tool using `dispose()`. The tool cannot
 be used after calling `dispose()`.
 
+Overlays can change visibility of elements with `visible(true/false)`, which will unhide/hide all the elements in the overlay.
+
 ## Clustering overlays
 
 The overlay tool also support clustering of elements. When enabled, the tool will detect
 overlapping HTML elements and combine them into a single element by invoking a callback
-factory for creating a "composite" element. This is useful to avoid cluttering when theres
+factory for creating a "composite" element. This is useful to avoid cluttering when theres 
 a high number of overlays in the view.
 
 Clustering is enabled by providing an options-argument to the constructor or `HtmlOverlayTool`
-and provide a cluster mode and a callback for creating a "composite element" based on
+and provide a cluster mode and a callback for creating a "composite element" based on 
 a set a set of clustered overlay elements. Currently the only mode supported is `overlapByScreenSpace`
-which causes overlay elements that overlap on screen to be replaced with a composite
+which causes overlay elements that overlap on screen to be replaced with a composite 
 element.
 
-Each overlay added to `HtmlOverlayTool` may have assosciated, custom `userData`. This data
+Each overlay added to `HtmlOverlayTool` may have assosciated, custom `userData`. This data 
 can be used to create custom labels for composite elements.
 
 In the following example, overlays are added on click in the model. When overlays overlap
-they are replaced with composite elements. `userData` is used to display a value range
+they are replaced with composite elements. `userData` is used to display a value range 
 of the underlying overlay elements.
 
 ```js runnable-4x
@@ -189,7 +191,7 @@ function createClusterElementCallback(cluster) {
   return compositeElement;
 }
 
-const overlays = new HtmlOverlayTool(viewer, {
+const overlays = new HtmlOverlayTool(viewer, { 
     clusteringOptions: { mode: 'overlapInScreenSpace', createClusterElementCallback }
   });
 viewer.on('click', async event => {

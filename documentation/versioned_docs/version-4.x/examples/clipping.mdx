@@ -115,7 +115,7 @@ controls.addEventListener('drag', () => {
 });
 
 // When we are hovering over a sphere we want to disable viewer controls
-controls.addEventListener('hoveron', () => {
+controls.addEventListener('hoveron', () => { 
   viewer.cameraManager.cameraControlsEnabled = false;
   draggerMaterial.color.set('gray');
   viewer.requestRedraw();

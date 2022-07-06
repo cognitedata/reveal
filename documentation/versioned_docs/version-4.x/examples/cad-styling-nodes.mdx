@@ -18,9 +18,9 @@ Note that if a node is in a `PropertyFilterNodeCollection` all of its children w
 in the set.
 
 :::note
-The test model used in the documentation site is lacking good node properties and the quality of
-the examples shown is therefor restricted as a result of this. To best utilize the filtering APIs
-we recommend providing a rich 3D models with a good set of high-quality attributes associated with
+The test model used in the documentation site is lacking good node properties and the quality of 
+the examples shown is therefor restricted as a result of this. To best utilize the filtering APIs 
+we recommend providing a rich 3D models with a good set of high-quality attributes associated with 
 the nodes.
 :::
 
@@ -139,12 +139,12 @@ const livingQuarters = new PropertyFilterNodeCollection(sdk, model);
 livingQuarters.executeFilter({'Item': {'Name': '/SLP/S/LQ'}});
 const notLivingQuarters = new InvertedNodeCollection(model, livingQuarters);
 
-model.setDefaultNodeAppearance({
-  outlineColor: NodeOutlineColor.Red,
-  color: [120, 50, 0]
+model.setDefaultNodeAppearance({ 
+  outlineColor: NodeOutlineColor.Red, 
+  color: [120, 50, 0] 
 });
-model.assignStyledNodeCollection(notLivingQuarters, {
-  outlineColor: NodeOutlineColor.NoOutline,
-  color: [0,0,0]
+model.assignStyledNodeCollection(notLivingQuarters, { 
+  outlineColor: NodeOutlineColor.NoOutline, 
+  color: [0,0,0] 
 });
 ```

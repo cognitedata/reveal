@@ -42,7 +42,7 @@
     "replace-4.x:update-site-imports": "yarn replace \"'@site/docs/\" \"'@site/versioned_docs/version-4.x/\" versioned_docs/version-4.x/ --include '*.ts*,*.mdx' -r",
     "replace-4.x:update-sdk": "yarn replace \"\\'@cognite/sdk\\'\" \"''@cognite/sdk-4.x''\" versioned_docs/version-4.x/ --include '*.ts*' -r",
     "replace-4.x:update-reveal": "yarn replace \"\\'@cognite/reveal\\'\" \"''@cognite/reveal-4.x''\" versioned_docs/version-4.x/ --include '*.ts*' -r",
-    "replace-4.x:update-runnable": "yarn replace '^```(js[x]?) runnable$' '```$1 runnable-3x' versioned_docs/version-4.x/ --include '*.mdx' -r",
+    "replace-4.x:update-runnable": "yarn replace '^```(js[x]?) runnable$' '```$1 runnable-4x' versioned_docs/version-4.x/ --include '*.mdx' -r",
     "replace-4.x": "yarn replace-4.x:clean-versioned && yarn replace-4.x:copy-docs && yarn replace-4.x:update-sdk && yarn replace-4.x:update-reveal && yarn replace-4.x:update-runnable && yarn replace-4.x:update-site-imports",
     "replace-latest-by-next": "yarn replace-4.x"
   },
@@ -56,7 +56,7 @@
     "@cognite/sdk-1.x": "npm:@cognite/sdk@^3.4.0",
     "@cognite/sdk-2.x": "npm:@cognite/sdk@^5.1.3",
     "@cognite/sdk-3.x": "npm:@cognite/sdk@^7.1.0",
-    "@cognite/sdk-4.x": "npm:@cognite/sdk@7.5.0",
+    "@cognite/sdk-4.x": "npm:@cognite/sdk@7.7.0",
     "@docusaurus/core": "2.0.0-alpha.64",
     "@docusaurus/module-type-aliases": "2.0.0-alpha.64",
     "@docusaurus/preset-classic": "2.0.0-alpha.64",

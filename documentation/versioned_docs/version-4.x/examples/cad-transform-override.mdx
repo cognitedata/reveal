@@ -74,7 +74,7 @@ async function animate() {
     clock.getElapsedTime();
 
     modelToWorld.setPosition(center);
-    worldToModel.getInverse(modelToWorld.clone());
+    worldToModel.copy(modelToWorld.clone().invert());
 
     const newRotation = new THREE.Euler(0, -Math.PI * clock.elapsedTime / 20, 0);
     rotationMatrix.makeRotationFromEuler(newRotation);
