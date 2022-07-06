@@ -1,5 +1,8 @@
 import { Table } from 'components';
 
+const APPLICATION = 'application';
+const TEXT = 'text';
+const IMAGE = 'image';
 export const getIdParam = (id: number | string) => {
   if (typeof id === 'string') {
     return { externalId: id };
@@ -21,3 +24,12 @@ export function getColumnsWithRelationshipLabels(
   ];
   return relationshipLabels ? modifiedColumns : columns;
 }
+
+export const mapFileType = (mimeType: string) => {
+  if (mimeType.startsWith(APPLICATION) || mimeType.startsWith(TEXT)) {
+    const [, ...rest] = mimeType.split('/');
+    return rest.join('');
+  }
+  if (mimeType.startsWith(IMAGE)) return 'Image';
+  return mimeType;
+};

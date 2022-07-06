@@ -1,9 +1,10 @@
 import React from 'react';
 import { FileInfo as File } from '@cognite/sdk';
+
 import { TimeDisplay, TableProps, Table } from 'components';
-import { Body } from '@cognite/cogs.js';
+import { Body, Tooltip } from '@cognite/cogs.js';
 import { RelationshipLabels } from 'types';
-import { getColumnsWithRelationshipLabels } from 'utils';
+import { getColumnsWithRelationshipLabels, mapFileType } from 'utils';
 
 type FileWithRelationshipLabels = RelationshipLabels & File;
 export const FileTable = (props: TableProps<FileWithRelationshipLabels>) => {
@@ -11,7 +12,16 @@ export const FileTable = (props: TableProps<FileWithRelationshipLabels>) => {
 
   const columns = [
     Table.Columns.name,
-    Table.Columns.mimeType,
+    {
+      ...Table.Columns.mimeType,
+      cellRenderer: ({ cellData: mimeValue }: { cellData: string }) => (
+        <Body level={2}>
+          <Tooltip interactive content={mimeValue}>
+            <>{mapFileType(mimeValue || '')}</>
+          </Tooltip>
+        </Body>
+      ),
+    },
     {
       ...Table.Columns.uploadedTime,
       cellRenderer: ({ cellData: file }: { cellData: File }) => (

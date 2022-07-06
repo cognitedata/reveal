@@ -97,7 +97,7 @@ export const ResourceTableColumns = {
   },
   mimeType: {
     key: 'mimeType',
-    title: 'MIME type',
+    title: 'Type',
     dataKey: 'mimeType',
     width: 200,
   },
