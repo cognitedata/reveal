@@ -16,7 +16,7 @@ import {
 import { WellKnownAsprsPointClassCodes } from './types';
 
 import { createPointClassKey } from './createPointClassKey';
-import { StylablePointCloudObjectCollection } from './styling/StyledPointCloudObjectCollection';
+import { StyledPointCloudObjectCollection } from './styling/StyledPointCloudObjectCollection';
 import { AnnotationMetadata, PointCloudObjectAnnotation } from './annotationTypes';
 import { PointCloudAppearance } from './styling/PointCloudAppearance';
 
@@ -102,7 +102,7 @@ export class PotreeNodeWrapper {
     return this.octree.pick(renderer, camera, ray, { pickWindowSize: 20 });
   }
 
-  assignObjectStyle(styledCollection: StylablePointCloudObjectCollection): void {
+  assignObjectStyle(styledCollection: StyledPointCloudObjectCollection): void {
     this.octree.material.objectAppearanceTexture.assignStyledObjectSet(styledCollection);
     this._needsRedraw = true;
   }

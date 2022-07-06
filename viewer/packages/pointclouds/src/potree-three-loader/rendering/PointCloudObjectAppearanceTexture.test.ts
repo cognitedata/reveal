@@ -3,8 +3,8 @@
  */
 
 import { PointCloudObjectAppearanceTexture } from './PointCloudObjectAppearanceTexture';
-import { AnnotationListStylableObjectCollection } from '../../styling/AnnotationListPointCloudObjectCollection';
-import { StylablePointCloudObjectCollection } from '../../styling/StyledPointCloudObjectCollection';
+import { AnnotationIdPointCloudObjectCollection } from '../../styling/AnnotationListPointCloudObjectCollection';
+import { StyledPointCloudObjectCollection } from '../../styling/StyledPointCloudObjectCollection';
 
 const textureWidth = 10;
 const textureHeight = 10;
@@ -22,8 +22,8 @@ describe(PointCloudObjectAppearanceTexture.name, () => {
     const annotationId = 1223423;
     const objectId = 5;
 
-    const objectSet = new AnnotationListStylableObjectCollection([annotationId]);
-    const stylableObjectSet = new StylablePointCloudObjectCollection(objectSet, { color, visible: true });
+    const objectSet = new AnnotationIdPointCloudObjectCollection([annotationId]);
+    const stylableObjectSet = new StyledPointCloudObjectCollection(objectSet, { color, visible: true });
 
     appearanceTexture.setAnnotationIdToObjectIdMap(new Map<number, number>([[annotationId, objectId]]));
 
@@ -51,8 +51,8 @@ describe(PointCloudObjectAppearanceTexture.name, () => {
     const annotationId = 3945873;
     const objectId = 89;
 
-    const objectSet = new AnnotationListStylableObjectCollection([annotationId]);
-    const stylableObjectSet = new StylablePointCloudObjectCollection(objectSet, { color: [0, 0, 0], visible: false });
+    const objectSet = new AnnotationIdPointCloudObjectCollection([annotationId]);
+    const stylableObjectSet = new StyledPointCloudObjectCollection(objectSet, { color: [0, 0, 0], visible: false });
 
     appearanceTexture.setAnnotationIdToObjectIdMap(new Map<number, number>([[annotationId, objectId]]));
 

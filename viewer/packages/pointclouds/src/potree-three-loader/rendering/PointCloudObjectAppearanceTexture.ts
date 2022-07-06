@@ -5,15 +5,15 @@
 import { generateDataTexture } from './texture-generation';
 
 import * as THREE from 'three';
-import { StylablePointCloudObjectCollection } from '../../styling/StyledPointCloudObjectCollection';
-import { StylableObjectCollection } from '../../styling/PointCloudObjectCollection';
+import { StyledPointCloudObjectCollection } from '../../styling/StyledPointCloudObjectCollection';
+import { PointCloudObjectCollection } from '../../styling/PointCloudObjectCollection';
 import { DefaultPointCloudAppearance, PointCloudAppearance } from '../../styling/PointCloudAppearance';
 
 export class PointCloudObjectAppearanceTexture {
   private _objectStyleTexture: THREE.DataTexture;
   private _needsReconstruction: boolean = true;
 
-  private readonly _styledObjectSets: StylablePointCloudObjectCollection[] = [];
+  private readonly _styledObjectSets: StyledPointCloudObjectCollection[] = [];
 
   private _defaultAppearance: PointCloudAppearance = { ...DefaultPointCloudAppearance };
 
@@ -46,7 +46,7 @@ export class PointCloudObjectAppearanceTexture {
     data.set(styleData, 4 * objectId);
   }
 
-  private setObjectCollectionStyle(styledObjectSet: StylablePointCloudObjectCollection): void {
+  private setObjectCollectionStyle(styledObjectSet: StyledPointCloudObjectCollection): void {
     if (!this._annotationIdsToObjectId) {
       throw new Error('Annotation ID to Object ID map not initialized');
     }
@@ -82,7 +82,7 @@ export class PointCloudObjectAppearanceTexture {
     }
   }
 
-  assignStyledObjectSet(styledCollection: StylablePointCloudObjectCollection): void {
+  assignStyledObjectSet(styledCollection: StyledPointCloudObjectCollection): void {
     const ind = this._styledObjectSets.findIndex(s => s.objectCollection === styledCollection.objectCollection);
 
     if (ind !== -1) {
@@ -94,7 +94,7 @@ export class PointCloudObjectAppearanceTexture {
     this._needsReconstruction = true;
   }
 
-  removeStyledObjectSet(collection: StylableObjectCollection): void {
+  removeStyledObjectSet(collection: PointCloudObjectCollection): void {
     const ind = this._styledObjectSets.findIndex(s => s.objectCollection === collection);
     if (ind !== -1) {
       this._styledObjectSets.splice(ind, 1);

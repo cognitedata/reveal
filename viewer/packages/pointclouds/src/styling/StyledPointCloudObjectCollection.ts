@@ -2,9 +2,9 @@
  * Copyright 2022 Cognite AS
  */
 
-import { StylableObjectCollection } from './PointCloudObjectCollection';
+import { PointCloudObjectCollection } from './PointCloudObjectCollection';
 import { PointCloudAppearance } from './PointCloudAppearance';
 
-export class StylablePointCloudObjectCollection {
-  constructor(public objectCollection: StylableObjectCollection, public style: PointCloudAppearance) {}
+export class StyledPointCloudObjectCollection {
+  constructor(public objectCollection: PointCloudObjectCollection, public style: PointCloudAppearance) {}
 }

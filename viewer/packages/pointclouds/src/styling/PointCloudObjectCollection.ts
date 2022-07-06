@@ -9,7 +9,7 @@ import { EventTrigger } from '@reveal/utilities';
 /**
  * Base class for collections of point cloud objects intended for styling operations
  */
-export abstract class StylableObjectCollection {
+export abstract class PointCloudObjectCollection {
   private readonly _changedEvent = new EventTrigger<() => void>();
 
   abstract getAnnotationIds(): Iterable<number>;
