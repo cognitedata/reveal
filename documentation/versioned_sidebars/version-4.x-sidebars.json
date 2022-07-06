@@ -82,6 +82,10 @@
         },
         {
           "type": "doc",
+          "id": "version-4.x/examlpes/pointcloud-styling"
+        },
+        {
+          "type": "doc",
           "id": "version-4.x/examples/click-reactions-cad"
         },
         {
