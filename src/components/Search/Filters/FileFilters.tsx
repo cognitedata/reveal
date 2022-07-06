@@ -1,12 +1,12 @@
 import React from 'react';
 import { useList } from '@cognite/sdk-react-query-hooks';
 import { FileFilterProps, InternalId } from '@cognite/sdk';
+import { ResetFiltersButton } from './ResetFiltersButton';
 import { LabelFilter } from './LabelFilter/LabelFilter';
 import { MetadataFilter } from './MetadataFilter/MetadataFilter';
 import { DataSetFilter } from './DataSetFilter/DataSetFilter';
 import { ByAssetFilter } from './ByAssetFilter/ByAssetFilter';
 import { AggregatedFilter } from './AggregatedFilter/AggregatedFilter';
-import { BooleanFilter } from './BooleanFilter/BooleanFilter';
 import { StringFilter } from './StringFilter/StringFilter';
 import { DateFilter } from './DateFilter/DateFilter';
 
@@ -20,6 +20,7 @@ export const FileFilters = ({
   const { data: items = [] } = useList('files', { filter, limit: 1000 });
   return (
     <div>
+      <ResetFiltersButton setFilter={setFilter} />
       <LabelFilter
         resourceType="file"
         value={((filter as any).labels || { containsAny: [] }).containsAny}

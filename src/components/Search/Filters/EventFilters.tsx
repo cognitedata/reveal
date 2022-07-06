@@ -2,8 +2,8 @@ import React from 'react';
 
 import { EventFilter, InternalId } from '@cognite/sdk';
 import { useList } from '@cognite/sdk-react-query-hooks';
-
 import { useAggregatedEventFilter } from 'hooks/useAggregatedEventFilter';
+import { ResetFiltersButton } from './ResetFiltersButton';
 
 import { AggregatedFilter } from './AggregatedFilter/AggregatedFilter';
 import { ByAssetFilter } from './ByAssetFilter/ByAssetFilter';
@@ -38,6 +38,7 @@ export const EventFilters = ({
 
   return (
     <div>
+      <ResetFiltersButton setFilter={setFilter} />
       <DataSetFilter
         resourceType="event"
         value={filter.dataSetIds}

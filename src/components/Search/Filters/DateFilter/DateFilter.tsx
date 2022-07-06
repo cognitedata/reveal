@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Body } from '@cognite/cogs.js';
 import { DatePicker, Select, RangePicker } from 'components';
 import { TIME_SELECT } from 'containers';
@@ -36,9 +36,20 @@ export const DateFilter = ({
     newValue: { min?: number; max?: number } | undefined | null
   ) => void;
 }) => {
-  const [period, setPeriod] = useState<
-    'none' | 'before' | 'during' | 'after' | 'null'
-  >(determinePeriod(value));
+  type PeriodType = 'none' | 'before' | 'during' | 'after' | 'null';
+  const [period, setPeriod] = useState<PeriodType>(determinePeriod(value));
+
+  const prevValueRef = useRef<PeriodType>();
+  const prevValue = prevValueRef.current;
+  if (
+    determinePeriod(value) !== prevValue &&
+    determinePeriod(value) !== period
+  ) {
+    setPeriod(determinePeriod(value));
+  }
+  useEffect(() => {
+    prevValueRef.current = determinePeriod(value);
+  }, [value]);
 
   const startDate = new Date(
     value?.min || value?.max || TIME_SELECT['1Y'].getTime()[0]

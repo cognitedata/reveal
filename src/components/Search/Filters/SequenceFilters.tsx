@@ -1,6 +1,7 @@
 import React from 'react';
 import { useList } from '@cognite/sdk-react-query-hooks';
 import { SequenceFilter, InternalId } from '@cognite/sdk';
+import { ResetFiltersButton } from './ResetFiltersButton';
 import { MetadataFilter } from './MetadataFilter/MetadataFilter';
 import { DataSetFilter } from './DataSetFilter/DataSetFilter';
 import { ByAssetFilter } from './ByAssetFilter/ByAssetFilter';
@@ -17,6 +18,7 @@ export const SequenceFilters = ({
   const { data: items = [] } = useList('sequences', { filter, limit: 1000 });
   return (
     <div>
+      <ResetFiltersButton setFilter={setFilter} />
       <DataSetFilter
         resourceType="sequence"
         value={filter.dataSetIds}

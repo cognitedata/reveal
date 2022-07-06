@@ -38,10 +38,11 @@ export const AggregatedFilter = <T,>({
       </Body>
       <Select
         creatable
-        value={value ? { value, label: value } : undefined}
+        value={value ? { value, label: value } : null}
         onChange={item => {
           if (item) {
-            setSource((item as { value: string }).value);
+            const tmpValue = (item as { value: string }).value;
+            setSource(tmpValue);
           } else {
             setSource(undefined);
           }

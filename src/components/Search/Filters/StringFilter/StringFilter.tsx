@@ -12,8 +12,8 @@ export const StringFilter = ({
   value: string | undefined;
   setValue: (newValue: string | undefined) => void;
 }) => {
-  const setNewString = (newValue: string) => {
-    setValue(newValue.length > 0 ? newValue : undefined);
+  const setNewString = (newValue: string | undefined) => {
+    setValue(newValue && newValue.length > 0 ? newValue : undefined);
   };
 
   return (
@@ -28,7 +28,7 @@ export const StringFilter = ({
       <Input
         variant="default"
         style={{ width: '100%', borderColor: '#cccccc' }}
-        value={value}
+        value={value || ''}
         placeholder={placeholder}
         onChange={ev => setNewString(ev.target.value)}
       />

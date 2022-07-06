@@ -4,6 +4,7 @@ import {
   InternalId,
   TimeseriesFilter as TimeseriesFilterProps,
 } from '@cognite/sdk';
+import { ResetFiltersButton } from './ResetFiltersButton';
 import { DataSetFilter } from './DataSetFilter/DataSetFilter';
 import { ByAssetFilter } from './ByAssetFilter/ByAssetFilter';
 import { BooleanFilter } from './BooleanFilter/BooleanFilter';
@@ -22,6 +23,7 @@ export const TimeseriesFilters = ({
   const { data: items = [] } = useList('timeseries', { filter, limit: 1000 });
   return (
     <div>
+      <ResetFiltersButton setFilter={setFilter} />
       <DataSetFilter
         resourceType="timeSeries"
         value={filter.dataSetIds}
