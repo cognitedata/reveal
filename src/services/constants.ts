@@ -24,6 +24,7 @@ export const CLASSIFIER_KEYS = {
   all: ['classifiers'],
   classifiers: () => [...CLASSIFIER_KEYS.all, 'classifier'],
   classifier: (id?: number) => [...CLASSIFIER_KEYS.classifiers(), id],
+  activeClassifier: () => [...CLASSIFIER_KEYS.all, 'active'],
   trainingSets: () => [...CLASSIFIER_KEYS.all, 'trainingSet'],
 } as const;
 

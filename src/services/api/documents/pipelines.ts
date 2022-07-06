@@ -33,14 +33,14 @@ export const fetchDocumentPipelines = async (sdk: CogniteClient) => {
     `/api/playground/projects/${sdk.project}/documents/pipelines`
   );
 
-  let classifier = result.data.items?.[0];
+  let pipeline = result.data.items?.[0];
 
   // If a project doesn't have any configured pipeline configurations, create a default one.
-  if (!classifier) {
-    classifier = await createDocumentPipeline(sdk, 'Document Type');
+  if (!pipeline) {
+    pipeline = await createDocumentPipeline(sdk, 'Document Type');
   }
 
-  return classifier;
+  return pipeline;
 };
 
 export const updateDocumentPipelinesActiveClassifier = (

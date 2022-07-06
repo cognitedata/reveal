@@ -1,8 +1,12 @@
 import { DocumentsClassifier } from '@cognite/sdk-playground';
 import { useSDK } from '@cognite/sdk-provider';
 import { useInfiniteQuery, useQuery } from 'react-query';
-import { composeClassifierTrainingSets } from 'src/services/compose';
+import {
+  composeActiveClassifier,
+  composeClassifierTrainingSets,
+} from 'src/services/compose';
 import { CLASSIFIER_KEYS } from 'src/services/constants';
+
 import React from 'react';
 import {
   fetchDocumentClassifierById,
@@ -69,5 +73,13 @@ export const useDocumentsClassifierByIdQuery = (id?: number) => {
       },
       onError: () => disableRefreshInterval(),
     }
+  );
+};
+
+export const useDocumentsActiveClassifierQuery = () => {
+  const sdk = useSDK();
+
+  return useQuery(CLASSIFIER_KEYS.activeClassifier(), () =>
+    composeActiveClassifier(sdk)
   );
 };

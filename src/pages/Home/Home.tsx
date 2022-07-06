@@ -7,7 +7,7 @@ import { useDocumentsPipelinesQuery } from 'src/services/query/pipelines/query';
 import { useNavigation } from 'src/hooks/useNavigation';
 import { DocumentsClassifier as Classifier } from '@cognite/sdk-playground';
 import { useClassifierDeleteMutate } from 'src/services/query/classifier/mutate';
-import { useActiveClassifier } from 'src/hooks/useActiveClassifier';
+import { useDocumentsActiveClassifierQuery } from 'src/services/query/classifier/query';
 import { useDocumentsActiveClassifierPipelineMutate } from 'src/services/query/pipelines/mutate';
 import { TableWrapper } from 'src/components/table/TableWrapper';
 import ClassifierWidget from './components/widgets/ClassifierWidget';
@@ -19,7 +19,8 @@ import { ClassifierActions } from './components/table/curateClassifierColumns';
 const HomePage = () => {
   const { toClassifier } = useNavigation();
 
-  const { data: activeClassifier, isLoading } = useActiveClassifier();
+  const { data: activeClassifier, isLoading } =
+    useDocumentsActiveClassifierQuery();
 
   const [selectedClassifier, setClassifier] = React.useState<
     Classifier | undefined

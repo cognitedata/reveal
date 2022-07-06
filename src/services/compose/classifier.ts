@@ -1,6 +1,11 @@
+import { DocumentsClassifier as Classifier } from '@cognite/sdk-playground';
 import { CogniteClient } from '@cognite/sdk';
 import { ClassifierTrainingSet } from 'src/services/types';
-import { fetchDocumentPipelines, fetchLabels } from '../api';
+import {
+  fetchDocumentClassifierById,
+  fetchDocumentPipelines,
+  fetchLabels,
+} from '../api';
 import { composeLabelsCount, composeLabelsDescription } from './labels';
 
 /**
@@ -37,4 +42,26 @@ export const composeClassifierTrainingSets = async (
     count: labelCount[externalId],
     description: labelDescription[externalId],
   }));
+};
+
+/**
+ * Use for fetching the active classifier model
+ *
+ * API is stitched together with 2 independent calls to CDF:
+ *    A) Pipelines
+ *    B) Document classifier by id (referenced from pipeline)
+ *
+ * @returns {@link DocumentClassifier}
+ */
+export const composeActiveClassifier = async (
+  sdk: CogniteClient
+): Promise<Classifier | undefined> => {
+  const { classifier } = await fetchDocumentPipelines(sdk); // Call "A"
+
+  const activeClassifierId = classifier?.activeClassifierId;
+  if (!activeClassifierId) {
+    return undefined;
+  }
+
+  return await fetchDocumentClassifierById(sdk, activeClassifierId); // Call "B"
 };
