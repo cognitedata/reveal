@@ -1,10 +1,12 @@
 import React from 'react';
 import moment from 'moment';
-import { Descriptions, Alert } from 'antd';
+import { Descriptions, Alert, Typography } from 'antd';
 import LoadingIcon from 'components/LoadingIcon';
 import { useFunction } from 'utils/hooks';
+import styled from 'styled-components';
 
 const { Item } = Descriptions;
+const { Text } = Typography;
 
 type Props = {
   id: number;
@@ -28,8 +30,15 @@ export default function FunctionDetails({ id, name }: Props) {
 
   const notSet = <em>Not Set</em>;
 
+  const StyledDescriptions = styled(Descriptions)`
+    td.ant-descriptions-item {
+      display: flex;
+      flex-wrap: wrap;
+    }
+  `;
+
   return (
-    <Descriptions>
+    <StyledDescriptions>
       <Item label="Description" span={3}>
         {currentFunction?.description || notSet}
       </Item>
@@ -57,13 +66,17 @@ export default function FunctionDetails({ id, name }: Props) {
         {currentFunction?.apiKey || notSet}
       </Item>
       <Item label="Function Id" span={3}>
-        {currentFunction?.id}
+        <Text copyable>{currentFunction?.id}</Text>
       </Item>
       <Item label="File Id" span={3}>
-        {currentFunction?.fileId}
+        <Text copyable>{currentFunction?.fileId}</Text>
       </Item>
       <Item label="External Id" span={3}>
-        {currentFunction?.externalId || notSet}
+        {currentFunction?.externalId ? (
+          <Text copyable>{currentFunction?.externalId}</Text>
+        ) : (
+          notSet
+        )}
       </Item>
       <Item label="Secrets" span={3}>
         <div style={{ display: 'flex' }}>
@@ -75,6 +88,6 @@ export default function FunctionDetails({ id, name }: Props) {
           <pre>{JSON.stringify(currentFunction?.metadata || {}, null, 4)}</pre>
         </div>
       </Item>
-    </Descriptions>
+    </StyledDescriptions>
   );
 }
