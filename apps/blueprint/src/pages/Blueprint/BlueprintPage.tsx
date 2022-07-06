@@ -29,6 +29,7 @@ import {
   OrnateExport,
 } from 'ornate';
 import { NavigationPanel } from 'components/NavigationPanel/NavigationPanel';
+import { Legend } from 'components/Legend';
 
 import useBlueprint from './useBlueprint';
 import { FullScreenOverlay, PageWrapper, TopLeft, TopRight } from './elements';
@@ -43,6 +44,9 @@ const BlueprintPage: React.FC = () => {
   const [isTimeSeriesSidebarOpen, toggleTimseriesSidebar] = useState(false);
   const [selectedTagId, setSelectedTagId] = useState<string>();
   const [shapes, setShapes] = useState<OrnateExport>();
+  const [disabledRuleSets, setDisabledRuleSets] = useState<
+    Record<string, boolean>
+  >({});
   const history = useHistory();
   const { externalId } = useParams<{ externalId: string }>();
   const { addFile } = useBlueprint(ornateViewer);
@@ -289,6 +293,12 @@ const BlueprintPage: React.FC = () => {
         onUpdateTimeSeriesTag={onUpdateTimeSeriesTag}
       />
 
+      <Legend
+        ruleSets={blueprint?.ruleSets || []}
+        disabledRuleSets={disabledRuleSets}
+        onChange={setDisabledRuleSets}
+      />
+
       {/* Interactive blueprint & toolbar */}
       <Blueprint
         client={client}
@@ -306,6 +316,7 @@ const BlueprintPage: React.FC = () => {
         onSelectTag={setSelectedTagId}
         onDeleteTag={onDeleteTag}
         isAllMinimized={isMinimized}
+        disabledRulesets={disabledRuleSets}
       />
     </PageWrapper>
   );

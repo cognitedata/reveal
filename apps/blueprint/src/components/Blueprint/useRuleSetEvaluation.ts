@@ -12,7 +12,7 @@ import { Asset, Datapoints, Timeseries } from '@cognite/sdk';
 
 export const useRuleSetEvaluation = (
   blueprint?: BlueprintDefinition,
-  onSuccess?: (shapeKey: string, output: RuleOutput) => void,
+  onSuccess?: (shapeKey: string, output: RuleOutput[]) => void,
   onError?: (shapeKey: string, error: string) => void
 ) => {
   const { ruleSets = [], shapeRuleSets, shapeAttributes } = blueprint || {};
@@ -147,12 +147,15 @@ export const useRuleSetEvaluation = (
                 return {};
               }
             });
-            return Object.assign({}, ...allRulesOutput) as RuleOutput;
+            return Object.assign(
+              { id: ruleSet.id },
+              ...allRulesOutput
+            ) as RuleOutput;
           });
 
           return {
             shapeKey,
-            output: Object.assign({}, ...ruleSetOutputs) as RuleOutput,
+            output: ruleSetOutputs,
             errors,
           };
         });

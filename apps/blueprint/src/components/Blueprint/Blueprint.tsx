@@ -7,7 +7,7 @@ import {
   useRef,
   useState,
 } from 'react';
-import { BlueprintDefinition, TimeSeriesTag } from 'typings';
+import { BlueprintDefinition, RuleOutput, TimeSeriesTag } from 'typings';
 // import { NodeConfig, Node } from 'konva/lib/Node';
 import { Drawer } from '@cognite/cogs.js';
 import { RuleSetsDrawer } from 'components/RuleSetDrawer/RuleSetsDrawer';
@@ -30,6 +30,7 @@ export type BlueprintProps = {
   // onSelectNodes?: (nodes: Node<NodeConfig>[]) => void;
   onReady?: (viewer: MutableRefObject<CogniteOrnate | undefined>) => void;
   isAllMinimized?: boolean;
+  disabledRulesets?: Record<string, boolean>;
 };
 
 const DEFAULT_STYLE: NodeStyle = {
@@ -47,6 +48,7 @@ const Blueprint = ({
   onDeleteTag,
   onReady,
   isAllMinimized,
+  disabledRulesets,
 }: BlueprintProps) => {
   const ornateViewer = useRef<CogniteOrnate>();
   const [activeStyle, setActiveStyle] = useState(DEFAULT_STYLE);
@@ -55,6 +57,22 @@ const Blueprint = ({
   const [activeTool, setActiveTool] = useState<ToolType>('HAND');
   const [isCreatingNewRuleSet, setIsCreatingNewRuleSet] = useState(false);
   const [errors, setErrors] = useState<Record<string, string | undefined>>({});
+  const [ruleSetResults, setRuleSetResults] = useState<
+    Record<string, RuleOutput[]>
+  >({});
+
+  useEffect(() => {
+    Object.keys(ruleSetResults).forEach((shapeKey) => {
+      if (!ornateViewer.current) return;
+      ornateViewer.current.stage.find(`#${shapeKey}`).forEach((shape) => {
+        const activeRules = ruleSetResults[shapeKey].map(({ id, ...rest }) =>
+          id && disabledRulesets?.[id] ? {} : rest
+        );
+
+        shape.setAttrs(Object.assign({ fill: 'grey' }, ...activeRules));
+      });
+    });
+  }, [ruleSetResults, disabledRulesets]);
 
   const queriesResults = useRuleSetEvaluation(
     blueprint,
@@ -63,11 +81,10 @@ const Blueprint = ({
         ...prev,
         [shapeKey]: undefined,
       }));
-      if (ornateViewer.current) {
-        ornateViewer.current.stage.find(`#${shapeKey}`).forEach((shape) => {
-          shape.setAttrs(result);
-        });
-      }
+      setRuleSetResults((prev) => ({
+        ...prev,
+        [shapeKey]: result,
+      }));
     },
     (shapeKey, error) => {
       console.log('setting errors', shapeKey, error);

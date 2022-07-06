@@ -75,6 +75,7 @@ export type ShapeAttribute = {
 };
 
 export type RuleOutput = {
+  id?: string;
   fill?: string;
   stroke?: string;
 };
