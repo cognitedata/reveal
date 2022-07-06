@@ -7,13 +7,13 @@ import { PointCloudObjectProvider } from './PointCloudObjectProvider';
 import { CompositeShape } from './shapes/CompositeShape';
 import { StylableObject } from './StylableObject';
 
-function cdfAnnotationsToRevealAnnotations(bvs: CdfPointCloudObjectAnnotation[]): PointCloudObjectAnnotation[] {
+function cdfAnnotationsToRevealAnnotations(cdfAnnotations: CdfPointCloudObjectAnnotation[]): PointCloudObjectAnnotation[] {
   let idCounter = 0;
 
-  const resultAnnotations = bvs.map(bv => {
+  const resultAnnotations = cdfAnnotations.map(cdfAnnotation => {
     idCounter++;
 
-    const shapes = bv.region;
+    const shapes = cdfAnnotation.region;
 
     const compShape = new CompositeShape(shapes);
     const stylableObject: StylableObject = {
@@ -22,8 +22,8 @@ function cdfAnnotationsToRevealAnnotations(bvs: CdfPointCloudObjectAnnotation[])
     };
 
     const annotation = {
-      annotationId: bv.annotationId,
-      assetId: bv.assetId,
+      annotationId: cdfAnnotation.annotationId,
+      assetId: cdfAnnotation.assetId,
       stylableObject
     };
 
