@@ -41,5 +41,5 @@ h3 {
 
 .function-details-wrapper td.ant-descriptions-item {
   display: flex;
-  flex-wrap: flex;
+  flex-wrap: wrap;
 }
