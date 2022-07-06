@@ -178,7 +178,7 @@ export class PointCloudNode extends THREE.Group {
   }
 
   set defaultAppearance(appearance: CompletePointCloudAppearance) {
-    this._potreeNode.octree.material.objectAppearanceTexture.defaultAppearance = appearance;
+    this._potreeNode.defaultAppearance = appearance;
   }
 
   assignStyledPointCloudObjectCollection(styledCollection: StyledPointCloudObjectCollection): void {

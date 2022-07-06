@@ -98,6 +98,11 @@ export class PotreeNodeWrapper {
     return this.octree.material.objectAppearanceTexture.defaultAppearance;
   }
 
+  set defaultAppearance(appearance: CompletePointCloudAppearance) {
+    this.octree.material.objectAppearanceTexture.defaultAppearance = appearance;
+    this._needsRedraw = true;
+  }
+
   pick(renderer: THREE.WebGLRenderer, camera: THREE.Camera, ray: THREE.Ray): PickPoint | null {
     return this.octree.pick(renderer, camera, ray, { pickWindowSize: 20 });
   }
