@@ -12,6 +12,6 @@ export const DefaultPointCloudAppearance: PointCloudAppearance = {
   visible: true
 };
 
-export function fillPartialPointCloudAppearance(appearance: Partial<PointCloudAppearance>): PointCloudAppearance {
+export function applyDefaultsToPointCloudAppearance(appearance: Partial<PointCloudAppearance>): PointCloudAppearance {
   return { ...DefaultPointCloudAppearance, ...appearance };
 }
