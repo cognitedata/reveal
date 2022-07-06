@@ -1,4 +1,4 @@
-import { WELL_LOGS_MEASUREMENT_TYPES } from 'domain/wells/measurements0/constants';
+import { WELL_LOGS_MEASUREMENT_TYPES } from 'domain/wells/measurements/internal/constants';
 import { getWellSDKClient } from 'domain/wells/utils/authenticate';
 
 import flatten from 'lodash/flatten';

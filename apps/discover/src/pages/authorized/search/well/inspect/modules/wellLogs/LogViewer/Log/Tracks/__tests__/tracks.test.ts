@@ -1,4 +1,4 @@
-import { GraphTrackEnum } from 'domain/wells/measurements0/constants';
+import { GraphTrackEnum } from 'domain/wells/measurements/internal/constants';
 
 import {
   commonLogDataMock,
@@ -7,7 +7,7 @@ import {
   tvdBasedLogData,
 } from '__test-utils/fixtures/wellLogs';
 
-import { LogData } from '../../interfaces';
+import { WellLogPreviewData } from '../../types';
 import { getLogViewerTracks } from '../tracks';
 
 const MD_SCALE_TRACK = 'MD_SCALE_TRACK';
@@ -21,8 +21,10 @@ jest.mock('../ScaleTracks', () => ({
 }));
 
 jest.mock('../GraphTrack', () => ({
-  getGraphTrack: (_trackLogData: LogData, trackName: GraphTrackEnum) =>
-    trackName,
+  getGraphTrack: (
+    _trackLogData: WellLogPreviewData,
+    trackName: GraphTrackEnum
+  ) => trackName,
 }));
 
 describe('getLogViewerTracks', () => {

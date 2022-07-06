@@ -1,4 +1,3 @@
-import { useWellLogsRowDataKeyBySource } from 'domain/wells/log/internal/transformers/useWellLogsRowDataSelectors';
 import { useNdsEventsQuery } from 'domain/wells/nds/internal/queries/useNdsEventsQuery';
 import { useWellInspectSelectedWellboreIds } from 'domain/wells/well/internal/transformers/useWellInspectSelectedWellboreIds';
 import { groupByWellbore } from 'domain/wells/wellbore/internal/transformers/groupByWellbore';
@@ -25,27 +24,23 @@ import {
 import { LogViewer } from './LogViewer';
 import { DomainFilter } from './LogViewer/DomainFilter';
 import { DomainListItem, DomainMap } from './LogViewer/DomainFilter/types';
-import { WellLog } from './types';
+import { WellLogView } from './types';
 
-export const WellLogsPreview: React.FC<{ wellLogs: WellLog[] }> = ({
+interface WellLogsPreviewProps {
+  wellLogs: WellLogView[];
+}
+
+export const WellLogsPreview: React.FC<WellLogsPreviewProps> = ({
   wellLogs,
 }) => {
-  const [selectedWellLog, setSelectedWellLog] = useState<WellLog>();
+  const [selectedWellLog, setSelectedWellLog] = useState<WellLogView>();
   const [domainList, setDomainList] = useState<DomainListItem[]>([]);
   const { t } = useTranslation();
 
   const wellboreIds = useWellInspectSelectedWellboreIds();
+  const { data: ndsData, isLoading } = useNdsEventsQuery({ wellboreIds });
 
-  const { data: wellLogsRowData, isLoading: isWellLogsRowDataLoading } =
-    useWellLogsRowDataKeyBySource(
-      selectedWellLog ? [selectedWellLog.source.sequenceExternalId] : []
-    );
-
-  const { data: ndsData, isLoading: isNdsEventsDataLoading } =
-    useNdsEventsQuery({ wellboreIds });
-
-  const isNoData = !selectedWellLog || !wellLogsRowData || !ndsData;
-  const isLoading = isWellLogsRowDataLoading || isNdsEventsDataLoading;
+  const isNoData = isEmpty(wellLogs) || !selectedWellLog || !ndsData;
 
   const groupedNdsData = useMemo(
     () => groupByWellbore(ndsData || []),
@@ -78,7 +73,7 @@ export const WellLogsPreview: React.FC<{ wellLogs: WellLog[] }> = ({
     };
   }, {});
 
-  const handleSelectWellLog = (wellLog: WellLog) => {
+  const handleSelectWellLog = (wellLog: WellLogView) => {
     // Reset domains to avoid the current domains config being jammed with the newly selected log.
     setDomainList([]);
     setSelectedWellLog(wellLog);
@@ -93,12 +88,11 @@ export const WellLogsPreview: React.FC<{ wellLogs: WellLog[] }> = ({
       );
     }
 
-    const { wellboreMatchingId, source } = selectedWellLog;
+    const { wellboreMatchingId } = selectedWellLog;
 
     return (
       <LogViewer
         wellLog={selectedWellLog}
-        wellLogRowData={wellLogsRowData[source.sequenceExternalId]}
         events={groupedNdsData[wellboreMatchingId]}
         domainMap={domainMap}
         setDomainList={setDomainList}

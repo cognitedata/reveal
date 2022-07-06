@@ -1,4 +1,4 @@
-import { GraphTrackEnum } from 'domain/wells/measurements0/constants';
+import { GraphTrackEnum } from 'domain/wells/measurements/internal/constants';
 
 import { DENSITY_AND_NEUTRON_PLOTS } from './plotConfig/densityAndNeutron';
 import { GAMMA_RAY_AND_CALIPER_PLOTS } from './plotConfig/gammaRayAndCaliper';

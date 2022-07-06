@@ -4,24 +4,21 @@ import React from 'react';
 
 import isEmpty from 'lodash/isEmpty';
 
-import { DepthMeasurementData } from '@cognite/sdk-wells-v3';
-
 import EmptyState from 'components/EmptyState';
 import { useDeepEffect, useDeepMemo } from 'hooks/useDeep';
 
 import { LogsMessageWrapper } from '../elements';
-import { useEventsData } from '../hooks/useEventsData';
-import { useWellLogsData } from '../hooks/useWellLogsData';
-import { WellLog } from '../types';
+import { WellLogView } from '../types';
+import { adaptToWellLogNdsEventsData } from '../utils/adaptToWellLogNdsEventsData';
+import { adaptToWellLogPreviewData } from '../utils/adaptToWellLogPreviewData';
 
 import { DomainListItem, DomainMap } from './DomainFilter/types';
 import { LogHolder } from './elements';
-import { LogData as LogViewerData } from './Log/interfaces';
 import Log from './Log/Log';
+import { WellLogPreviewData } from './Log/types';
 
 interface LogViewerProps {
-  wellLog: WellLog;
-  wellLogRowData: DepthMeasurementData | undefined;
+  wellLog: WellLogView;
   events?: NdsInternal[];
   domainMap: DomainMap;
   setDomainList: (domainList: DomainListItem[]) => void;
@@ -29,15 +26,21 @@ interface LogViewerProps {
 
 export const LogViewer: React.FC<LogViewerProps> = ({
   wellLog,
-  wellLogRowData,
   events = [],
   domainMap,
   setDomainList,
 }) => {
-  const wellLogsData = useWellLogsData(wellLogRowData);
-  const eventsData = useEventsData(events);
+  const previewData = useDeepMemo(
+    () => adaptToWellLogPreviewData(wellLog),
+    [wellLog]
+  );
 
-  const updateDomainList = (wellLogsData: LogViewerData) => {
+  const eventsData = useDeepMemo(
+    () => adaptToWellLogNdsEventsData(events),
+    [events]
+  );
+
+  const updateDomainList = (wellLogsData: WellLogPreviewData) => {
     const domainData = Object.keys(wellLogsData).map((columnExternalId) => {
       const [min, max] = wellLogsData[columnExternalId].domain;
       return { columnExternalId, min, max };
@@ -45,27 +48,27 @@ export const LogViewer: React.FC<LogViewerProps> = ({
     setDomainList(domainData);
   };
 
-  useDeepEffect(() => updateDomainList(wellLogsData), [wellLogsData]);
+  useDeepEffect(() => updateDomainList(previewData), [previewData]);
 
   const logViewerData = useDeepMemo(() => {
-    return Object.keys(wellLogsData).reduce<LogViewerData>(
+    return Object.keys(previewData).reduce<WellLogPreviewData>(
       (updatedWellLogsData, columnExternalId) => {
-        const currentDomain = wellLogsData[columnExternalId].domain;
+        const currentDomain = previewData[columnExternalId].domain;
         const updatedDomain = domainMap[columnExternalId];
 
         return {
           ...updatedWellLogsData,
           [columnExternalId]: {
-            ...wellLogsData[columnExternalId],
+            ...previewData[columnExternalId],
             domain: updatedDomain || currentDomain,
           },
         };
       },
       {}
     );
-  }, [wellLogsData, domainMap]);
+  }, [previewData, domainMap]);
 
-  if (!wellLogRowData || isEmpty(wellLogRowData?.columns)) {
+  if (isEmpty(previewData)) {
     return (
       <LogsMessageWrapper>
         <EmptyState emptyTitle="Logs Not Found" />
@@ -73,12 +76,14 @@ export const LogViewer: React.FC<LogViewerProps> = ({
     );
   }
 
+  const { externalId, type } = wellLog.depthColumn;
+
   return (
     <LogHolder key={wellLog.id}>
       <Log
         logData={logViewerData}
-        depthIndexColumnExternalId={wellLogRowData.depthColumn.columnExternalId}
-        depthIndexType={wellLogRowData.depthColumn.type}
+        depthIndexColumnExternalId={externalId}
+        depthIndexType={type}
         eventsData={eventsData}
       />
     </LogHolder>

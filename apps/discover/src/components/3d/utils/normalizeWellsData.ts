@@ -21,7 +21,6 @@ export const normalizeWellsData = (wellsData: WellsData): BPDataOptions => {
     ndsEvents = [],
     nptEvents = [],
     wellLogs = {},
-    wellLogsRowData = {},
   } = wellsData;
 
   /**
@@ -39,7 +38,7 @@ export const normalizeWellsData = (wellsData: WellsData): BPDataOptions => {
     casings: mapCasingsTo3D(wellbores, casings),
     ndsEvents: mapNDSTo3D(ndsEvents),
     nptEvents: mapNPTTo3D(nptEvents),
-    logs: mapLogsTo3D(wellLogs, wellLogsRowData),
+    logs: mapLogsTo3D(wellLogs),
   };
 
   // console.log('Normalize 3D result:', result);

@@ -5,7 +5,7 @@ import {
   tvdBasedLogData,
 } from '__test-utils/fixtures/wellLogs';
 
-import { EventData } from '../../interfaces';
+import { WellLogNdsEventsData } from '../../types';
 import {
   convertEventsDataToArray,
   getCategorizedLogData,
@@ -75,7 +75,7 @@ describe('LogViewer -> Log -> utils', () => {
 
   describe('convertEventsDataToArray', () => {
     it('should filter events data and convert to array', () => {
-      const eventsData: EventData[] = [
+      const eventsData: WellLogNdsEventsData[] = [
         { holeStartValue: 0, holeEndValue: 100 },
         { holeStartValue: 10, holeEndValue: 90, riskType: 'riskType' },
       ];

@@ -27,7 +27,6 @@ const ThreeDee: React.FC<ThreeDeeProps> = ({
   nptEvents,
   casings,
   wellLogs,
-  wellLogsRowData,
   fileId,
 }) => {
   const [root, setRoot] = useState<BaseRootNode>();
@@ -52,7 +51,6 @@ const ThreeDee: React.FC<ThreeDeeProps> = ({
           trajectories,
           casings,
           wellLogs,
-          wellLogsRowData,
           ndsEvents,
           nptEvents,
         })

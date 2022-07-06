@@ -1,8 +1,7 @@
-import { DepthMeasurement } from '@cognite/sdk-wells-v3';
+import { DepthMeasurementWithData } from 'domain/wells/measurements/internal/types';
 
-export interface WellLog extends DepthMeasurement {
+export interface WellLogView extends Omit<DepthMeasurementWithData, 'id'> {
   id: string;
-  wellName: string;
+  wellName?: string;
   wellboreName: string;
-  modified: string;
 }

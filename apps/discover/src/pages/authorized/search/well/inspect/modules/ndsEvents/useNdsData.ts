@@ -1,4 +1,3 @@
-import { useDepthMeasurementsWithData } from 'domain/wells/measurements/internal/hooks/useDepthMeasurementsWithData';
 import { useNdsWithTvdData } from 'domain/wells/nds/internal/hooks/useNdsWithTvdData';
 import { useNdsAggregatesSummaryQuery } from 'domain/wells/nds/internal/queries/useNdsAggregatesSummaryQuery';
 import { useWellInspectSelectedWellboreIds } from 'domain/wells/well/internal/transformers/useWellInspectSelectedWellboreIds';
@@ -16,10 +15,6 @@ export const useNdsData = () => {
   const wellboreIds = useWellInspectSelectedWellboreIds();
   const wellboreMatchingIdMap = keyBy(wellbores, 'matchingId');
   const { data: userPreferredUnit } = useUserPreferencesMeasurement();
-
-  const { data } = useDepthMeasurementsWithData({ wellboreIds });
-
-  console.log('data', data);
 
   const { data: ndsData, isLoading } = useNdsWithTvdData({
     wellboreIds,

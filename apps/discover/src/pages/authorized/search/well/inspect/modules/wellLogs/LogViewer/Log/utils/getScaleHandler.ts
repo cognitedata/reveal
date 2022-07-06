@@ -10,14 +10,14 @@ import {
   ScaleInterpolator,
 } from '@cognite/videx-wellog';
 
-import { Domain, LogData, Tuplet } from '../interfaces';
+import { Domain, WellLogPreviewData, Tuplet } from '../types';
 
 export const getScaleHandler = ({
   logData,
   domain,
   depthIndexType,
 }: {
-  logData: LogData;
+  logData: WellLogPreviewData;
   domain: Domain;
   depthIndexType: DepthIndexTypeEnum;
 }) => {

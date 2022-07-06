@@ -1,67 +1,50 @@
-import get from 'lodash/get';
+import {
+  DepthMeasurementDataColumnInternal,
+  DepthMeasurementWithData,
+} from 'domain/wells/measurements/internal/types';
+
 import reduce from 'lodash/reduce';
 
 import { ILog, ILogRow, ILogRowColumn } from '@cognite/node-visualizer';
-import {
-  DepthMeasurement,
-  DepthMeasurementData,
-  DepthMeasurementDataColumn,
-  DepthMeasurementValueTypeEnum,
-} from '@cognite/sdk-wells-v3';
+import { DepthMeasurementValueTypeEnum } from '@cognite/sdk-wells-v3';
 
 import { WellboreId } from 'modules/wellSearch/types';
 
 export const mapLogsTo3D = (
-  wellLogs: Record<string, DepthMeasurement[]>,
-  wellLogsRowData: Record<string, DepthMeasurementData>
+  wellLogs: Record<string, DepthMeasurementWithData[]>
 ): Record<WellboreId, ILog[]> => {
   return reduce(
     wellLogs,
     (wellLogsTo3DMap, wellboreLogs, wellboreId) => ({
       ...wellLogsTo3DMap,
-      [wellboreId]: wellboreLogs.map<ILog>((depthMeasurement) => {
-        const depthMeasurementData = get(
-          wellLogsRowData,
-          depthMeasurement.source.sequenceExternalId
-        );
-
-        return adaptDepthMeasurmentToILog(
-          depthMeasurement,
-          depthMeasurementData
-        );
-      }),
+      [wellboreId]: wellboreLogs.map<ILog>(adaptDepthMeasurmentToILog),
     }),
     {}
   );
 };
 
 export const adaptDepthMeasurmentToILog = (
-  depthMeasurement: DepthMeasurement,
-  depthMeasurementData?: DepthMeasurementData
+  depthMeasurement: DepthMeasurementWithData
 ): ILog => {
   const { wellboreAssetExternalId, wellboreMatchingId, source } =
     depthMeasurement;
-
-  const items = depthMeasurementData
-    ? adaptDepthMeasurementDataToILogRows(depthMeasurementData)
-    : [];
 
   return {
     assetId: wellboreAssetExternalId as unknown as number,
     id: wellboreMatchingId as unknown as number,
     name: source.sourceName,
     state: 'LOADED',
-    items,
+    items: adaptDepthMeasurementDataToILogRows(depthMeasurement),
   };
 };
 
 export const adaptDepthMeasurementDataToILogRows = (
-  depthMeasurementData: DepthMeasurementData
+  depthMeasurementData: DepthMeasurementWithData
 ): ILogRow[] => {
   const { rows, columns, depthColumn } = depthMeasurementData;
 
   const depthColumnAsILogRowColumn: ILogRowColumn = {
-    externalId: depthColumn.columnExternalId,
+    externalId: depthColumn.externalId,
     valueType: DepthMeasurementValueTypeEnum.Double,
     name: depthColumn.type,
   };
@@ -93,7 +76,7 @@ export const adaptDepthMeasurementDataToILogRows = (
 };
 
 export const mapDepthMeasurementDataColumnToILogRowColumn = (
-  depthMeasurementDataColumn: DepthMeasurementDataColumn
+  depthMeasurementDataColumn: DepthMeasurementDataColumnInternal
 ): ILogRowColumn => {
   const { externalId, valueType, name, measurementType } =
     depthMeasurementDataColumn;

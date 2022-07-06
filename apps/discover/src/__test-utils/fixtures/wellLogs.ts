@@ -1,16 +1,16 @@
 import {
-  ColumnLogData,
-  LogData,
-} from 'pages/authorized/search/well/inspect/modules/wellLogs/LogViewer/Log/interfaces';
+  WellLogPreviewDataColumn,
+  WellLogPreviewData,
+} from 'pages/authorized/search/well/inspect/modules/wellLogs/LogViewer/Log/types';
 
-export const commonColumnLogDataMock: ColumnLogData = {
+export const commonColumnLogDataMock: WellLogPreviewDataColumn = {
   measurementType: 'measurementType',
   values: [0, 20, 40, 60, 80, 100],
   domain: [0, 100],
   unit: 'unit',
 };
 
-export const commonLogDataMock: LogData = {
+export const commonLogDataMock: WellLogPreviewData = {
   COMMON_COLUMN_EXTERNAL_ID: commonColumnLogDataMock,
 };
 
@@ -19,8 +19,8 @@ export const commonLogDataMock: LogData = {
  */
 
 export const getMockLogDataForMDColumn = (
-  extras?: Partial<ColumnLogData>
-): LogData => ({
+  extras?: Partial<WellLogPreviewDataColumn>
+): WellLogPreviewData => ({
   MD: {
     measurementType: 'measured depth',
     values: [
@@ -36,8 +36,8 @@ export const getMockLogDataForMDColumn = (
 });
 
 export const getMockLogDataForTVDColumn = (
-  extras?: Partial<ColumnLogData>
-): LogData => ({
+  extras?: Partial<WellLogPreviewDataColumn>
+): WellLogPreviewData => ({
   TVD: {
     measurementType: 'true vertical depth',
     values: [29.52756, 62.33596, 95.14436, 127.95276],
@@ -47,7 +47,9 @@ export const getMockLogDataForTVDColumn = (
   },
 });
 
-export const getMockLogData = (extras?: LogData): LogData => ({
+export const getMockLogData = (
+  extras?: WellLogPreviewData
+): WellLogPreviewData => ({
   ...getMockLogDataForMDColumn(),
   ...getMockLogDataForTVDColumn(),
   TVDSS: {
@@ -77,7 +79,7 @@ export const getMockLogData = (extras?: LogData): LogData => ({
 
 export const getLogDataWithMeasurementType = (
   measurementType: string
-): LogData => {
+): WellLogPreviewData => {
   return {
     [measurementType]: {
       ...commonColumnLogDataMock,
@@ -86,12 +88,12 @@ export const getLogDataWithMeasurementType = (
   };
 };
 
-export const mdBasedLogData: LogData = {
+export const mdBasedLogData: WellLogPreviewData = {
   ...getLogDataWithMeasurementType('gamma ray'),
   ...getLogDataWithMeasurementType('caliper'),
 };
 
-export const tvdBasedLogData: LogData = {
+export const tvdBasedLogData: WellLogPreviewData = {
   ...getLogDataWithMeasurementType('deep resistivity'),
   ...getLogDataWithMeasurementType('medium resistivity'),
   ...getLogDataWithMeasurementType('micro resistivity'),

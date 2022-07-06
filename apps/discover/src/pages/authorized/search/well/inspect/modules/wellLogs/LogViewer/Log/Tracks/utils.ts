@@ -1,4 +1,4 @@
-import { GraphTrackEnum } from 'domain/wells/measurements0/constants';
+import { GraphTrackEnum } from 'domain/wells/measurements/internal/constants';
 
 import isEmpty from 'lodash/isEmpty';
 import keyBy from 'lodash/keyBy';
@@ -8,7 +8,7 @@ import { BlockScaleTrack, GraphTrack } from '@cognite/videx-wellog';
 
 import { MEASUREMENT_TYPE_MAPPING } from '../../../measurementTypeMapping';
 import { TRACK_CONFIG } from '../../../trackConfig';
-import { EventData, LogData } from '../interfaces';
+import { WellLogNdsEventsData, WellLogPreviewData } from '../types';
 
 import {
   DISABLED_OPACITY,
@@ -35,11 +35,11 @@ export const getTrackConfig = (requiredMeasurementType: string) => {
     : undefined;
 };
 
-export const getCategorizedLogData = (logData: LogData) => {
-  const gammaRayAndCaliperData: LogData = {};
-  const resistivityData: LogData = {};
-  const densityAndNeutronData: LogData = {};
-  const geomechanicsAndPPFGData: LogData = {};
+export const getCategorizedLogData = (logData: WellLogPreviewData) => {
+  const gammaRayAndCaliperData: WellLogPreviewData = {};
+  const resistivityData: WellLogPreviewData = {};
+  const densityAndNeutronData: WellLogPreviewData = {};
+  const geomechanicsAndPPFGData: WellLogPreviewData = {};
 
   const gammaRayAndCaliperTypes =
     MEASUREMENT_TYPE_MAPPING[GraphTrackEnum.GAMMA_RAY_AND_CALIPER];
@@ -72,7 +72,7 @@ export const getCategorizedLogData = (logData: LogData) => {
   };
 };
 
-export const convertEventsDataToArray = (data: EventData[]) => {
+export const convertEventsDataToArray = (data: WellLogNdsEventsData[]) => {
   return data
     .filter((eventData) => !isEmpty(eventData.riskType))
     .map(({ holeStartValue, holeEndValue, riskType }) => [

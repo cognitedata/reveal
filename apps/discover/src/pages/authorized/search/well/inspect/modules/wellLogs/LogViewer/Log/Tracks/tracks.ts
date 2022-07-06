@@ -1,11 +1,11 @@
-import { GraphTrackEnum } from 'domain/wells/measurements0/constants';
+import { GraphTrackEnum } from 'domain/wells/measurements/internal/constants';
 
 import compact from 'lodash/compact';
 import isEmpty from 'lodash/isEmpty';
 
 import { Track } from '@cognite/videx-wellog';
 
-import { EventData, LogData } from '../interfaces';
+import { WellLogNdsEventsData, WellLogPreviewData } from '../types';
 
 import { getGraphTrack } from './GraphTrack';
 import {
@@ -20,8 +20,8 @@ export const getLogViewerTracks = ({
   eventsData,
   depthUnit,
 }: {
-  logData: LogData;
-  eventsData: EventData[];
+  logData: WellLogPreviewData;
+  eventsData: WellLogNdsEventsData[];
   depthUnit: string;
 }): Track[] => {
   const {

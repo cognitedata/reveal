@@ -1,4 +1,4 @@
-import { Domain } from '../Log/interfaces';
+import { Domain } from '../Log/types';
 
 export type DomainListItem = {
   columnExternalId: string;

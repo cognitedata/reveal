@@ -6,7 +6,7 @@ import {
   getMockLogDataForTVDColumn,
 } from '__test-utils/fixtures/wellLogs';
 
-import { Tuplet } from '../../interfaces';
+import { Tuplet } from '../../types';
 import {
   getClosestValue,
   getDefaultScaleHandler,

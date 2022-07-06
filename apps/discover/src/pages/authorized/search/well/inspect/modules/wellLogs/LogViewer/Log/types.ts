@@ -1,16 +1,16 @@
 export type Domain = [number, number];
 export type Tuplet = [number, number];
 
-export type ColumnLogData = {
+export type WellLogPreviewDataColumn = {
   measurementType: string;
   values: Tuplet[] | number[];
   unit: string;
   domain: Domain;
 };
 
-export type LogData = Record<string, ColumnLogData>;
+export type WellLogPreviewData = Record<string, WellLogPreviewDataColumn>;
 
-export type EventData = {
+export type WellLogNdsEventsData = {
   holeStartValue: number;
   holeEndValue: number;
   riskType?: string;

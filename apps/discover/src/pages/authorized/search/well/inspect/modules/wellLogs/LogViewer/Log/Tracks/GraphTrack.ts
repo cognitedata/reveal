@@ -1,4 +1,4 @@
-import { GraphTrackEnum } from 'domain/wells/measurements0/constants';
+import { GraphTrackEnum } from 'domain/wells/measurements/internal/constants';
 
 import get from 'lodash/get';
 import isEmpty from 'lodash/isEmpty';
@@ -8,7 +8,7 @@ import { PlotConfig } from '@cognite/videx-wellog/dist/tracks/graph/interfaces';
 
 import { NO_LOGS_LEGEND_MESSAGE } from 'pages/authorized/search/well/inspect/constants';
 
-import { LogData } from '../interfaces';
+import { WellLogPreviewData } from '../types';
 
 import { getRandomTrackColor } from './trackColorizer';
 import {
@@ -18,7 +18,7 @@ import {
 } from './utils';
 
 export const getGraphTrack = (
-  trackLogData: LogData,
+  trackLogData: WellLogPreviewData,
   trackName: GraphTrackEnum
 ) => {
   const plots = Object.keys(trackLogData).map<PlotConfig>(
@@ -36,9 +36,9 @@ export const getGraphTrack = (
           dash: trackConfig?.dash,
           filterToScale: false,
           domain,
-          dataAccessor: (data: LogData) =>
+          dataAccessor: (data: WellLogPreviewData) =>
             get(data, `${columnExternalId}.values`, []),
-          legendInfo: (data: LogData) => ({
+          legendInfo: (data: WellLogPreviewData) => ({
             label: `${columnExternalId} (${get(
               data,
               `${columnExternalId}.unit`,

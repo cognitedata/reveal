@@ -1,4 +1,4 @@
-import { EventData } from '../../interfaces';
+import { WellLogNdsEventsData } from '../../types';
 import {
   getMDScaleTrack,
   getNDSScaleTrack,
@@ -28,7 +28,7 @@ describe('ScaleTracks', () => {
 
   describe('getNDSScaleTrack', () => {
     it('should return NDS scale track and call block title setter', () => {
-      const eventsData: EventData[] = [
+      const eventsData: WellLogNdsEventsData[] = [
         { holeStartValue: 0, holeEndValue: 100 },
       ];
       const ndsScaleTrack = getNDSScaleTrack(eventsData, 'ft');

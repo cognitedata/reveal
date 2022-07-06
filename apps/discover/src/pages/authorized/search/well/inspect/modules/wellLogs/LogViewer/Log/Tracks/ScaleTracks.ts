@@ -4,7 +4,7 @@ import {
   scaleLegendConfig,
 } from '@cognite/videx-wellog';
 
-import { EventData } from '../interfaces';
+import { WellLogNdsEventsData } from '../types';
 
 import {
   convertEventsDataToArray,
@@ -36,7 +36,10 @@ export const getTVDScaleTrack = (unit: string) => {
   });
 };
 
-export const getNDSScaleTrack = (eventsData: EventData[], unit: string) => {
+export const getNDSScaleTrack = (
+  eventsData: WellLogNdsEventsData[],
+  unit: string
+) => {
   const ndsTrack = new BlockScaleTrack('NDS_SCALE_TRACK', {
     maxWidth: 50,
     width: 2,

@@ -14,7 +14,7 @@ export interface GetDepthMeasurementDataProps extends MeasurementTypeFilter {
 }
 
 export interface MeasurementTypeFilter {
-  measurementTypes?: Array<WdlMeasurementType>;
+  measurementTypes?: Array<string>;
 }
 
 export interface SequenceExternalIdFilter {

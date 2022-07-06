@@ -1,12 +1,11 @@
 import { useCasingSchematicsQuery } from 'domain/wells/casings/internal/queries/useCasingSchematicsQuery';
 import { sortCasingAssembliesByMDBase } from 'domain/wells/casings/internal/transformers/sortCasingAssembliesByMDBase';
-import { useWellLogsWithRowData } from 'domain/wells/log/internal/queries/useWellLogsWithRowData';
+import { useDepthMeasurementsForWellLogs } from 'domain/wells/measurements/internal/hooks/useDepthMeasurementsForWellLogs';
 import { useNdsWithTvdData } from 'domain/wells/nds/internal/hooks/useNdsWithTvdData';
 import { useNptEventsQuery } from 'domain/wells/npt/internal/queries/useNptEventsQuery';
 import { useTrajectoriesWithData } from 'domain/wells/trajectory/internal/hooks/useTrajectoriesWithData';
 import { useWellInspectSelectedWells } from 'domain/wells/well/internal/transformers/useWellInspectSelectedWells';
 import { groupByWellbore } from 'domain/wells/wellbore/internal/transformers/groupByWellbore';
-import { keyBySequence } from 'domain/wells/wellbore/internal/transformers/keyBySequence';
 
 import React, { useMemo } from 'react';
 import { connect } from 'react-redux';
@@ -45,11 +44,8 @@ const ThreeDeePreview: React.FC<Props> = ({ wellboreIds }: Props) => {
    * ************PP-2693************
    * DISABLING WELL LOGS IN 3D TEMPORARILY.
    */
-  const {
-    wellLogs,
-    wellLogsRowData,
-    // isLoading: isWellLogsLoading,
-  } = useWellLogsWithRowData();
+
+  const { data: wellLogs } = useDepthMeasurementsForWellLogs({ wellboreIds });
 
   // trigger build
   const isLoading =
@@ -75,8 +71,7 @@ const ThreeDeePreview: React.FC<Props> = ({ wellboreIds }: Props) => {
       casings={casings}
       ndsEvents={ndsEvents}
       nptEvents={nptEvents}
-      wellLogs={wellLogs.length ? groupByWellbore(wellLogs) : undefined}
-      wellLogsRowData={keyBySequence(wellLogsRowData)}
+      wellLogs={groupByWellbore(wellLogs)}
     />
   );
 };

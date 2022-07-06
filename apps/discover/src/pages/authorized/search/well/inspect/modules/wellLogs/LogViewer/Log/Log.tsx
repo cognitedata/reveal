@@ -6,14 +6,14 @@ import { LogViewer, Track } from '@cognite/videx-wellog';
 import { useDeepEffect } from 'hooks/useDeep';
 
 import { LogViewerWrapper } from './elements';
-import { LogData, EventData } from './interfaces';
 import { getLogViewerTracks } from './Tracks';
+import { WellLogPreviewData, WellLogNdsEventsData } from './types';
 import { getScaleHandler } from './utils/getScaleHandler';
 import { updateRanges } from './utils/updateRanges';
 
 export type Props = {
-  logData: LogData;
-  eventsData: EventData[];
+  logData: WellLogPreviewData;
+  eventsData: WellLogNdsEventsData[];
   depthIndexColumnExternalId: string;
   depthIndexType: DepthIndexTypeEnum;
 };

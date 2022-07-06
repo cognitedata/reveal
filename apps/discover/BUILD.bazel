@@ -509,7 +509,7 @@ CYPRESS_EXTERNAL_FILES = [
     "src/utils/isISODateRegex.ts",
     "src/pages/authorized/search/well/content/constants.ts",
     "src/constants/units.ts",
-    "src/domain/wells/measurements0/constants.ts",
+    "src/domain/wells/measurements/internal/constants.ts",
     "src/pages/authorized/favorites/tabs/savedSearches/constants.ts",
     "src/components/SearchUsers/constants.ts",
     "src/components/Charts/common/ResetToDefault/constants.ts",

@@ -6,7 +6,7 @@ import { setupServer } from 'msw/node';
 
 import { testWrapper as wrapper } from '__test-utils/renderer';
 
-import { useWellLogsQuery } from '../useWellLogsQuery';
+import { useDepthMeasurementsQuery } from '../useDepthMeasurementsQuery';
 
 const mockServer = setupServer(getMockDepthMeasurements());
 
@@ -16,7 +16,10 @@ describe('useWellLogsQuery', () => {
 
   test('should be ok', async () => {
     const { result, waitFor } = renderHook(
-      () => useWellLogsQuery(['pequin-wellbore-OMN2000002000']),
+      () =>
+        useDepthMeasurementsQuery({
+          wellboreIds: ['pequin-wellbore-OMN2000002000'],
+        }),
       { wrapper }
     );
     expect(result.current.isLoading).toBe(true);

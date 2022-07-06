@@ -2,9 +2,9 @@ import isEmpty from 'lodash/isEmpty';
 
 import { PlotConfig } from '@cognite/videx-wellog/dist/tracks/graph/interfaces';
 
-import { LogData } from '../interfaces';
+import { WellLogPreviewData } from '../types';
 
-export const updateRanges = (logData: LogData, tracks: any[]) => {
+export const updateRanges = (logData: WellLogPreviewData, tracks: any[]) => {
   if (isEmpty(tracks)) return;
 
   Object.keys(logData).forEach((columnExternalId) => {
