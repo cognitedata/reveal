@@ -3,11 +3,14 @@ import {
   calculateBadgeCountsDifferences,
   getAnnotationCounts,
   getAnnotationsBadgeCounts,
-  AnnotationStatus,
+  VisionAnnotationV1,
 } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 
 import { VisionDetectionModelType } from 'src/api/vision/detectionModels/types';
 import { getDummyAnnotation } from 'src/__test-utils/annotations';
+import { AnnotationStatus } from 'src/api/annotation/types';
+import { AnnotationsBadgeCounts } from 'src/modules/Common/types';
+import { AnnotationFilterType } from 'src/modules/FilterSidePanel/types';
 
 describe('annotationCounts', () => {
   it('should return unique annotation texts and number of occurences', () => {
@@ -23,7 +26,9 @@ describe('annotationCounts', () => {
       },
     ];
 
-    expect(getAnnotationCounts(annotations)).toStrictEqual({
+    expect(
+      getAnnotationCounts(annotations as VisionAnnotationV1[])
+    ).toStrictEqual({
       gauge: 1,
       pump: 2,
     });
@@ -51,7 +56,9 @@ describe('getAnnotationsBadgeCounts', () => {
       },
     ];
 
-    expect(getAnnotationsBadgeCounts(annotations)).toStrictEqual({
+    expect(
+      getAnnotationsBadgeCounts(annotations as VisionAnnotationV1[])
+    ).toStrictEqual({
       objects: 2,
       assets: 1,
       text: 0,
@@ -96,15 +103,18 @@ describe('calculateBadgeCountsDifferences', () => {
       assets: 4,
       objects: 10,
     };
-    expect(calculateBadgeCountsDifferences(badgeCountsA, badgeCountsB)).toEqual(
-      {
-        gdpr: 6,
-        assets: 0,
-        text: 0,
-        objects: 0,
-        mostFrequentObject: undefined,
-      }
-    );
+    expect(
+      calculateBadgeCountsDifferences(
+        badgeCountsA as AnnotationsBadgeCounts,
+        badgeCountsB as AnnotationsBadgeCounts
+      )
+    ).toEqual({
+      gdpr: 6,
+      assets: 0,
+      text: 0,
+      objects: 0,
+      mostFrequentObject: undefined,
+    });
   });
 });
 
@@ -134,7 +144,9 @@ describe('filterAnnotations', () => {
   statuses.forEach((annotationStatus, index) => {
     test(`filter ${annotationStatus}`, () => {
       expect(
-        AnnotationUtilsV1.filterAnnotations(annotations, { annotationStatus })
+        AnnotationUtilsV1.filterAnnotations(annotations, {
+          annotationStatus,
+        } as AnnotationFilterType)
       ).toEqual(expect.arrayContaining([annotations[index]]));
     });
   });
@@ -257,7 +269,7 @@ describe('filterAnnotationsIdsByConfidence', () => {
     AnnotationStatus.Unhandled,
     AnnotationStatus.Rejected
   );
-  confidences.push(undefined, undefined, undefined);
+  confidences.push(NaN, NaN, NaN);
   const annotations2 = statuses.map((annotationStatus, index) =>
     getDummyAnnotation(index + 1, 1, {
       status: annotationStatus,

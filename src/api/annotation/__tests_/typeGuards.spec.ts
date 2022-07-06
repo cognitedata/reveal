@@ -1,6 +1,5 @@
 import { VisionDetectionModelType } from 'src/api/vision/detectionModels/types';
 import { getDummyAnnotation } from 'src/__test-utils/annotations';
-import { AnnotationStatus } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 import {
   isAssetLinkedAnnotation,
   isKeyPointAnnotation,
@@ -9,6 +8,7 @@ import {
   isPolyline,
   isTextAnnotation,
 } from 'src/api/annotation/typeGuards';
+import { AnnotationStatus } from 'src/api/annotation/types';
 
 const textAnnotation = getDummyAnnotation(1, VisionDetectionModelType.OCR, {
   text: 'one',
