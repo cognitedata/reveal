@@ -774,7 +774,7 @@ __metadata:
     whatwg-fetch: 3.6.2
     worker-loader: ^3.0.8
   peerDependencies:
-    "@cognite/sdk": ^5.0.0 || ^6.0.0 || ^7.0.0
+    "@cognite/sdk": ^7.7.0
     "@cognite/sdk-core": ^4.1.0
   languageName: unknown
   linkType: soft
