@@ -14,8 +14,6 @@ export const DefaultPointCloudAppearance: CompletePointCloudAppearance = {
   visible: true
 };
 
-export function applyDefaultsToPointCloudAppearance(
-  appearancPointCloudAppearancence
-): CompletePointCloudAppearance {
+export function applyDefaultsToPointCloudAppearance(appearance: PointCloudAppearance): CompletePointCloudAppearance {
   return { ...DefaultPointCloudAppearance, ...appearance };
 }

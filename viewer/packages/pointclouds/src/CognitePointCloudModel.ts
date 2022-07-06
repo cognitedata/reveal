@@ -249,10 +249,7 @@ export class CognitePointCloudModel extends THREE.Object3D implements CogniteMod
    * @param objectCollection The object collection to assign a style to
    * @param appearance The style to assign to the object collection
    */
-  assignStyledObjectCollection(
-    objectCollection: PointCloudObjectCollection,
-    appearance: PointCloudAppearance
-  ): void {
+  assignStyledObjectCollection(objectCollection: PointCloudObjectCollection, appearance: PointCloudAppearance): void {
     const fullAppearance: CompletePointCloudAppearance = applyDefaultsToPointCloudAppearance(appearance);
     const index = this._styledObjectCollections.findIndex(x => x.objectCollection === objectCollection);
     if (index !== -1) {
