@@ -79,6 +79,16 @@ export const AssetSelect = ({
         },
       ];
 
+  const getSelectedItemValues = () => {
+    const selectedItemArr = selectedItems
+      ? selectedItems.map(el => ({
+          value: el.id,
+          label: el.name,
+        }))
+      : undefined;
+    return selectedItemArr;
+  };
+
   return (
     <Select
       isClearable
@@ -90,14 +100,7 @@ export const AssetSelect = ({
       }}
       {...extraProps}
       isLoading={isLoading || isRootLoading}
-      value={
-        selectedItems
-          ? selectedItems.map(el => ({
-              value: el.id,
-              label: el.name,
-            }))
-          : undefined
-      }
+      value={getSelectedItemValues()}
       onInputChange={input => setQuery(input)}
       options={values}
       onChange={selected => {

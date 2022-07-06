@@ -1,11 +1,12 @@
 import { assets, rootAssets } from 'stubs/assets';
 import { timeseries } from 'stubs/timeseries';
 import { sequences } from 'stubs/sequences';
+import { datasets } from 'stubs/datasets';
 import { events } from 'stubs/events';
 import { files } from 'stubs/files';
 import styled from 'styled-components';
 import { datapoints } from 'stubs/timeseriesData';
-import { AssetListScope } from '@cognite/sdk';
+import { AssetListScope, IdEither } from '@cognite/sdk';
 import {
   ResourcePreviewObserver,
   ResourcePreviewProps,
@@ -38,22 +39,36 @@ export const sdkMock = {
     if (query.includes('aggregate')) {
       return { data: { items: [{ count: 1 }] } };
     }
+
     if (query.includes('datasets')) {
-      return {
-        data: {
-          items: [
-            { name: 'david', id: 123 },
-            { name: 'issaaf', id: 124 },
-            { name: 'milad', id: 125 },
-            { name: 'data set with a really long name', id: 126 },
-          ],
-        },
-      };
+      if (query.includes('byids')) {
+        const idArr = body.data.items.map((el: { id: IdEither }) => el.id);
+        return {
+          data: { items: datasets.filter(el => idArr.includes(el.id)) },
+        };
+      }
+
+      return { data: { items: datasets } };
     }
+
     if (query.includes('assets')) {
       if (body.data && body.data.filter && body.data.filter.dataSetIds) {
         return { data: { items: [assets[2]] } };
       }
+
+      if (body.data && body.data.filter && body.data.filter.root) {
+        return { data: { items: rootAssets } };
+      }
+
+      if (query.includes('byids')) {
+        const allAssets = [...rootAssets, ...assets];
+        const idArr = body.data.items.map((el: { id: IdEither }) => el.id);
+        return {
+          // Filter assets according to the ids.
+          data: { items: allAssets.filter(el => idArr.includes(el.id)) },
+        };
+      }
+
       return { data: { items: assets } };
     }
     if (query.includes('files')) {
