@@ -7,7 +7,9 @@ import { PointCloudObjectProvider } from './PointCloudObjectProvider';
 import { CompositeShape } from './shapes/CompositeShape';
 import { StylableObject } from './StylableObject';
 
-function cdfAnnotationsToRevealAnnotations(cdfAnnotations: CdfPointCloudObjectAnnotation[]): PointCloudObjectAnnotation[] {
+function cdfAnnotationsToRevealAnnotations(
+  cdfAnnotations: CdfPointCloudObjectAnnotation[]
+): PointCloudObjectAnnotation[] {
   let idCounter = 0;
 
   const resultAnnotations = cdfAnnotations.map(cdfAnnotation => {
