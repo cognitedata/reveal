@@ -13,7 +13,7 @@ export const mapTrajectoryDataTo3D = (
       valueType: 'DOUBLE',
     }));
 
-    const rows = rowsOriginal.map((row, index) => ({
+    const rows = (rowsOriginal || []).map((row, index) => ({
       rowNumber: index + 1,
       values: Object.values(row),
     }));
