@@ -4,7 +4,7 @@
 
 import {
   CognitePointCloudModel,
-  AnnotationListStylableObjectCollection,
+  AnnotationIdPointCloudObjectCollection,
   PointCloudAppearance,
   DefaultPointCloudAppearance
 } from '@cognite/reveal';
@@ -73,7 +73,7 @@ export class PointCloudObjectStylingUI {
         this._model.traverseStylableObjects(id => allAnnotationIds.push(id.annotationId));
         const selectedIds = allAnnotationIds.slice(state.from, state.from + numIndices);
 
-        const objects = new AnnotationListStylableObjectCollection(selectedIds);
+        const objects = new AnnotationIdPointCloudObjectCollection(selectedIds);
         const appearance = createAppearanceCb();
         this._model.assignStyledObjectCollection(objects, appearance);
       }

@@ -8,7 +8,7 @@ import { registerVisualTest } from '../../../visual_tests';
 import {
   Cognite3DViewerOptions,
   PotreePointColorType,
-  AnnotationListStylableObjectCollection,
+  AnnotationIdPointCloudObjectCollection,
   CognitePointCloudModel
 } from '@cognite/reveal';
 import { CogniteClient } from '@cognite/sdk';
@@ -42,7 +42,7 @@ function ColorStylingCognite3DViewerPointCloudTestPage() {
     const stylableObjectIds: number[] = [];
     model.traverseStylableObjects(m => stylableObjectIds.push(m.annotationId));
 
-    const objectCollection = new AnnotationListStylableObjectCollection(stylableObjectIds);
+    const objectCollection = new AnnotationIdPointCloudObjectCollection(stylableObjectIds);
     const appearance = { color: [0, 255, 0] as [number, number, number] };
 
     model.assignStyledObjectCollection(objectCollection, appearance);
