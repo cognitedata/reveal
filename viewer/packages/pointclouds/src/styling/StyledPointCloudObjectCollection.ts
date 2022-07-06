@@ -3,8 +3,11 @@
  */
 
 import { PointCloudObjectCollection } from './PointCloudObjectCollection';
-import { PointCloudAppearance } from './PointCloudAppearance';
+import { CompletePointCloudObjectAppearance } from './PointCloudAppearance';
 
+/**
+ * Represents an object collection that is associated with an appearance
+ */
 export class StyledPointCloudObjectCollection {
-  constructor(public objectCollection: PointCloudObjectCollection, public style: PointCloudAppearance) {}
+  constructor(public objectCollection: PointCloudObjectCollection, public style: CompletePointCloudObjectAppearance) {}
 }

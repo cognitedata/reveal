@@ -18,7 +18,7 @@ import { WellKnownAsprsPointClassCodes } from './types';
 import { createPointClassKey } from './createPointClassKey';
 import { StyledPointCloudObjectCollection } from './styling/StyledPointCloudObjectCollection';
 import { AnnotationMetadata, PointCloudObjectAnnotation } from './annotationTypes';
-import { PointCloudAppearance } from './styling/PointCloudAppearance';
+import { CompletePointCloudObjectAppearance } from './styling/PointCloudAppearance';
 
 /**
  * Wrapper around `Potree.PointCloudOctree` with some convenience functions.
@@ -94,7 +94,7 @@ export class PotreeNodeWrapper {
     return this._annotations;
   }
 
-  get defaultAppearance(): PointCloudAppearance {
+  get defaultAppearance(): CompletePointCloudObjectAppearance {
     return this.octree.material.objectAppearanceTexture.defaultAppearance;
   }
 

@@ -7,7 +7,7 @@ import { generateDataTexture } from './texture-generation';
 import * as THREE from 'three';
 import { StyledPointCloudObjectCollection } from '../../styling/StyledPointCloudObjectCollection';
 import { PointCloudObjectCollection } from '../../styling/PointCloudObjectCollection';
-import { DefaultPointCloudAppearance, PointCloudAppearance } from '../../styling/PointCloudAppearance';
+import { DefaultPointCloudAppearance, CompletePointCloudObjectAppearance } from '../../styling/PointCloudAppearance';
 
 export class PointCloudObjectAppearanceTexture {
   private _objectStyleTexture: THREE.DataTexture;
@@ -15,7 +15,7 @@ export class PointCloudObjectAppearanceTexture {
 
   private readonly _styledObjectSets: StyledPointCloudObjectCollection[] = [];
 
-  private _defaultAppearance: PointCloudAppearance = { ...DefaultPointCloudAppearance };
+  private _defaultAppearance: CompletePointCloudObjectAppearance = { ...DefaultPointCloudAppearance };
 
   private readonly _width: number;
   private readonly _height: number;
@@ -33,13 +33,13 @@ export class PointCloudObjectAppearanceTexture {
     this._annotationIdsToObjectId = map;
   }
 
-  private appearanceToRgba(appearance: PointCloudAppearance): [number, number, number, number] {
+  private appearanceToRgba(appearance: CompletePointCloudObjectAppearance): [number, number, number, number] {
     const realAppearance = { ...DefaultPointCloudAppearance, ...appearance };
     const alpha = appearance.visible ? 1 << 0 : 0;
     return [realAppearance.color[0], realAppearance.color[1], realAppearance.color[2], alpha];
   }
 
-  private setObjectStyle(objectId: number, appearance: PointCloudAppearance): void {
+  private setObjectStyle(objectId: number, appearance: CompletePointCloudObjectAppearance): void {
     const data = this._objectStyleTexture.image.data;
 
     const styleData = this.appearanceToRgba(appearance);
@@ -108,12 +108,12 @@ export class PointCloudObjectAppearanceTexture {
     this._needsReconstruction = true;
   }
 
-  set defaultAppearance(appearance: PointCloudAppearance) {
+  set defaultAppearance(appearance: CompletePointCloudObjectAppearance) {
     this._defaultAppearance = { ...appearance };
     this._needsReconstruction = true;
   }
 
-  get defaultAppearance(): PointCloudAppearance {
+  get defaultAppearance(): CompletePointCloudObjectAppearance {
     return this._defaultAppearance;
   }
 

@@ -11,7 +11,11 @@ import { PotreePointColorType, PotreePointShape, PotreePointSizeType } from './p
 
 import { SupportedModelTypes, CogniteModelBase } from '@reveal/model-base';
 
-import { applyDefaultsToPointCloudAppearance, PointCloudAppearance } from './styling/PointCloudAppearance';
+import {
+  applyDefaultsToPointCloudAppearance,
+  PointCloudObjectAppearance,
+  CompletePointCloudObjectAppearance
+} from './styling/PointCloudAppearance';
 import { StyledPointCloudObjectCollection } from './styling/StyledPointCloudObjectCollection';
 import { PointCloudObjectCollection } from './styling/PointCloudObjectCollection';
 import { AnnotationMetadata } from './annotationTypes';
@@ -218,7 +222,7 @@ export class CognitePointCloudModel extends THREE.Object3D implements CogniteMod
   /**
    * Gets default point appearance
    */
-  getDefaultPointCloudAppearance(): PointCloudAppearance {
+  getDefaultPointCloudAppearance(): PointCloudObjectAppearance {
     return this.pointCloudNode.defaultAppearance;
   }
 
@@ -226,8 +230,8 @@ export class CognitePointCloudModel extends THREE.Object3D implements CogniteMod
    * Sets default apparance for points that are
    * not styled otherwise
    */
-  setDefaultPointCloudAppearance(appearance: Partial<PointCloudAppearance>): void {
-    const fullAppearance: PointCloudAppearance = applyDefaultsToPointCloudAppearance(appearance);
+  setDefaultPointCloudAppearance(appearance: PointCloudObjectAppearance): void {
+    const fullAppearance: CompletePointCloudObjectAppearance = applyDefaultsToPointCloudAppearance(appearance);
     this.pointCloudNode.defaultAppearance = fullAppearance;
   }
 
@@ -243,9 +247,9 @@ export class CognitePointCloudModel extends THREE.Object3D implements CogniteMod
    */
   assignStyledObjectCollection(
     objectCollection: PointCloudObjectCollection,
-    appearance: Partial<PointCloudAppearance>
+    appearance: PointCloudObjectAppearance
   ): void {
-    const fullAppearance: PointCloudAppearance = applyDefaultsToPointCloudAppearance(appearance);
+    const fullAppearance: CompletePointCloudObjectAppearance = applyDefaultsToPointCloudAppearance(appearance);
     const index = this._styledObjectCollections.findIndex(x => x.objectCollection === objectCollection);
     if (index !== -1) {
       this._styledObjectCollections[index].style = fullAppearance;

@@ -12,7 +12,7 @@ import { createPointClassKey } from './createPointClassKey';
 
 import { PickPoint, PotreePointColorType, PotreePointShape, PotreePointSizeType } from './potree-three-loader';
 
-import { PointCloudAppearance } from './styling/PointCloudAppearance';
+import { CompletePointCloudObjectAppearance } from './styling/PointCloudAppearance';
 import { StyledPointCloudObjectCollection } from './styling/StyledPointCloudObjectCollection';
 
 const PotreeDefaultPointClass = 'DEFAULT';
@@ -173,11 +173,11 @@ export class PointCloudNode extends THREE.Group {
     return out.copy(this.matrix);
   }
 
-  get defaultAppearance(): PointCloudAppearance {
+  get defaultAppearance(): CompletePointCloudObjectAppearance {
     return this._potreeNode.defaultAppearance;
   }
 
-  set defaultAppearance(appearance: PointCloudAppearance) {
+  set defaultAppearance(appearance: CompletePointCloudObjectAppearance) {
     this._potreeNode.octree.material.objectAppearanceTexture.defaultAppearance = appearance;
   }
 
