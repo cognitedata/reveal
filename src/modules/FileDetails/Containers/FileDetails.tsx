@@ -16,7 +16,6 @@ import {
 } from 'src/modules/FileDetails/selectors';
 import { fileInfoEdit } from 'src/modules/FileDetails/slice';
 import { Tabs } from '@cognite/data-exploration';
-import { DeleteAnnotationsAndHandleLinkedAssetsOfFile } from 'src/store/thunks/Review/DeleteAnnotationsAndHandleLinkedAssetsOfFile';
 import { FileDetailsAnnotationsPreview } from './FileDetailsAnnotationsPreview/FileDetailsAnnotationsPreview';
 
 export const FileDetails = ({
@@ -72,15 +71,6 @@ export const FileDetails = ({
     }
   };
 
-  const onAnnotationDeleteClick = (annotationId: number) => {
-    dispatch(
-      DeleteAnnotationsAndHandleLinkedAssetsOfFile({
-        annotationId: { id: annotationId },
-        showWarnings: true,
-      })
-    );
-  };
-
   return (
     <Container>
       <CloseButtonRow>
@@ -112,13 +102,12 @@ export const FileDetails = ({
             <Tabs.Pane
               title="Annotations"
               key="context"
-              style={{ overflow: 'hidden' }}
+              style={{ overflow: 'hidden', height: `calc(100% - 45px)` }}
             >
-              {fileDetails?.id && (
+              {fileDetails && (
                 <FileDetailsAnnotationsPreview
                   fileInfo={fileDetails}
                   onReviewClick={onReview}
-                  onAnnotationDeleteClick={onAnnotationDeleteClick}
                 />
               )}
             </Tabs.Pane>

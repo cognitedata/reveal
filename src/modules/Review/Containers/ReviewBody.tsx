@@ -155,7 +155,7 @@ const ReviewBody = (props: { file: FileInfo; prev: string | undefined }) => {
                 style={{ overflow: 'hidden', height: `calc(100% - 45px)` }}
                 disabled={isVideo(file)}
               >
-                <AnnotationDetailPanel file={file} />
+                <AnnotationDetailPanel file={file} showEditOptions />
               </Tabs.Pane>
               <Tabs.Pane
                 title="File details"
