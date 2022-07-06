@@ -22,17 +22,20 @@ export type SearchResultLoaderProps = {
   type: ResourceType;
   query?: string;
   filter?: any;
+  hideEmptyData?: boolean;
 };
 
 export const SearchResultLoader = <T extends RealResourceType>({
   type,
   query,
+  hideEmptyData = false,
   filter = {},
   isSelected = () => false,
   children,
   selectionMode = 'none',
   onSelect = () => {},
   excludedIds = [],
+  dateRange,
   ...props
 }: {
   children: (
@@ -51,7 +54,7 @@ export const SearchResultLoader = <T extends RealResourceType>({
     isFetched,
     isFetching,
     items,
-  } = useResourceResults(api, query, filter);
+  } = useResourceResults(api, query, filter, dateRange, hideEmptyData);
 
   const filteredItems = items?.filter(({ id }) => !excludedIds.includes(id));
   const selectedIds = useMemo(

@@ -23,10 +23,12 @@ export const ResultTableLoader = <T extends Resource>({
   excludedIds = [],
   mode = 'search',
   children,
+  dateRange,
   ...props
 }: {
   excludedIds?: number[];
   mode?: 'search' | 'relatedResources';
+  dateRange?: [Date, Date];
   children: (tableProps: TableProps<T>) => React.ReactNode;
 } & Partial<SearchResultLoaderProps> &
   Partial<RelatedResourcesLoaderProps> &
@@ -36,6 +38,7 @@ export const ResultTableLoader = <T extends Resource>({
     return (
       <SearchResultLoader
         excludedIds={excludedIds}
+        dateRange={dateRange}
         {...(props as SearchResultLoaderProps)}
       >
         {children}

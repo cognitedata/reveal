@@ -16,5 +16,5 @@ export const Example: ComponentStory<typeof TimeseriesSearchResults> = args => (
 );
 
 const Container = styled.div`
-  height: 400px;
+  height: 800px;
 `;

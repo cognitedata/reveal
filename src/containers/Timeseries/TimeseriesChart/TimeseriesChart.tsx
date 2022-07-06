@@ -283,7 +283,7 @@ export const TimeseriesChart = ({
  * @param domain Domain [utc int, utc int]
  * @param pps points to show
  */
-const calculateGranularity = (domain: number[], pps: number) => {
+export const calculateGranularity = (domain: number[], pps: number) => {
   const diff = domain[1] - domain[0];
   for (let i = 1; i <= 60; i += 1) {
     const points = diff / (1000 * i);

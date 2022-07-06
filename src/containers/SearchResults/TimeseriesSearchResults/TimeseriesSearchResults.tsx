@@ -19,7 +19,7 @@ import {
 import { ResultTableLoader } from 'containers/ResultTableLoader';
 import { RelatedResourceType } from 'hooks/RelatedResourcesHooks';
 import { TIME_SELECT } from 'containers';
-import { Body } from '@cognite/cogs.js';
+import { Body, Checkbox, Flex } from '@cognite/cogs.js';
 import { TimeseriesToolbar } from './TimeseriesToolbar';
 
 export const TimeseriesSearchResults = ({
@@ -51,7 +51,12 @@ export const TimeseriesSearchResults = ({
   const [stateDateRange, stateSetDateRange] = useState<[Date, Date]>(
     TIME_SELECT['1Y'].getTime()
   );
+  const [hideEmptyData, setHideEmptyData] = useState(false);
   const [currentView, setCurrentView] = useState<string>(initialView);
+  const onClickCheckbox = () => {
+    setHideEmptyData(prev => !prev);
+  };
+
   return (
     <>
       <TimeseriesToolbar
@@ -61,26 +66,38 @@ export const TimeseriesSearchResults = ({
         onViewChange={setCurrentView}
         count={count}
       />
+
       <EnsureNonEmptyResource api="timeSeries">
-        {showDatePicker && (
-          <SpacedRow style={{ marginBottom: 8 }}>
-            <Body level={4} style={{ alignSelf: 'center' }}>
-              Showing graph data from
-            </Body>
-            {onDateRangeChange && (
-              <RangePicker
-                initialRange={dateRange || stateDateRange}
-                onRangeChanged={onDateRangeChange || stateSetDateRange}
-              />
-            )}
-          </SpacedRow>
-        )}
+        <Flex justifyContent="space-between" alignItems="center">
+          {showDatePicker && (
+            <SpacedRow style={{ marginBottom: 8 }}>
+              <Body level={4} style={{ alignSelf: 'center' }}>
+                Showing graph data from
+              </Body>
+              {onDateRangeChange && (
+                <RangePicker
+                  initialRange={dateRange || stateDateRange}
+                  onRangeChanged={onDateRangeChange || stateSetDateRange}
+                />
+              )}
+            </SpacedRow>
+          )}
+          <Checkbox
+            onChange={onClickCheckbox}
+            name="Hidden"
+            checked={hideEmptyData}
+          >
+            Hide empty
+          </Checkbox>
+        </Flex>
 
         <ResultTableLoader<Timeseries>
           mode={showRelatedResources ? 'relatedResources' : 'search'}
+          hideEmptyData={hideEmptyData}
           type="timeSeries"
           filter={filter}
           query={query}
+          dateRange={dateRange || [new Date(), new Date()]}
           parentResource={parentResource}
           relatedResourceType={relatedResourceType}
           {...extraProps}
