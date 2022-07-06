@@ -9,7 +9,7 @@ import { StylablePointCloudObjectCollection } from '../../styling/StyledPointClo
 import { StylableObjectCollection } from '../../styling/PointCloudObjectCollection';
 import { DefaultPointCloudAppearance, PointCloudAppearance } from '../../styling/PointCloudAppearance';
 
-export class ObjectAppearanceTexture {
+export class PointCloudObjectAppearanceTexture {
   private _objectStyleTexture: THREE.DataTexture;
   private _needsReconstruction: boolean = true;
 

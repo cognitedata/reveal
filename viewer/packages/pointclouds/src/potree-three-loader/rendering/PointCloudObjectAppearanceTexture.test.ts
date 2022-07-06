@@ -2,18 +2,18 @@
  * Copyright 2022 Cognite AS
  */
 
-import { ObjectAppearanceTexture } from './ObjectAppearanceTexture';
+import { PointCloudObjectAppearanceTexture } from './PointCloudObjectAppearanceTexture';
 import { AnnotationListStylableObjectCollection } from '../../styling/AnnotationListPointCloudObjectCollection';
 import { StylablePointCloudObjectCollection } from '../../styling/StyledPointCloudObjectCollection';
 
 const textureWidth = 10;
 const textureHeight = 10;
 
-describe(ObjectAppearanceTexture.name, () => {
-  let appearanceTexture: ObjectAppearanceTexture;
+describe(PointCloudObjectAppearanceTexture.name, () => {
+  let appearanceTexture: PointCloudObjectAppearanceTexture;
 
   beforeEach(() => {
-    appearanceTexture = new ObjectAppearanceTexture(textureWidth, textureHeight);
+    appearanceTexture = new PointCloudObjectAppearanceTexture(textureWidth, textureHeight);
   });
 
   test('color is correctly set for one object', () => {

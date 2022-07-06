@@ -47,7 +47,7 @@ import {
 import { generateClassificationTexture, generateDataTexture, generateGradientTexture } from './texture-generation';
 import { IClassification, IUniform } from './types';
 import { SpectralGradient } from './gradients/SpectralGradient';
-import { ObjectAppearanceTexture } from './ObjectAppearanceTexture';
+import { PointCloudObjectAppearanceTexture } from './PointCloudObjectAppearanceTexture';
 
 export interface IPointCloudMaterialParameters {
   size: number;
@@ -182,7 +182,7 @@ export class PointCloudMaterial extends RawShaderMaterial {
   private readonly _gradient = SpectralGradient;
   private gradientTexture: Texture | undefined = generateGradientTexture(this._gradient);
 
-  private readonly _objectAppearanceTexture = new ObjectAppearanceTexture(
+  private readonly _objectAppearanceTexture = new PointCloudObjectAppearanceTexture(
     OBJECT_STYLING_TEXTURE_WIDTH,
     OBJECT_STYLING_TEXTURE_HEIGHT
   );
@@ -520,7 +520,7 @@ export class PointCloudMaterial extends RawShaderMaterial {
     this.setUniform('clipBoxes', clipBoxesArray);
   }
 
-  get objectAppearanceTexture(): ObjectAppearanceTexture {
+  get objectAppearanceTexture(): PointCloudObjectAppearanceTexture {
     return this._objectAppearanceTexture;
   }
 
