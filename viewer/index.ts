@@ -57,8 +57,8 @@ export {
 export { Cognite3DModel, BoundingBoxClipper, GeometryFilter, WellKnownUnit } from './packages/cad-model';
 export {
   CognitePointCloudModel,
-  CompletePointCloudObjectAppearance,
-  PointCloudObjectAppearance,
+  CompletePointCloudAppearance,
+  PointCloudAppearance,
   PointCloudObjectCollection,
   AnnotationIdPointCloudObjectCollection,
   DefaultPointCloudAppearance

@@ -2,20 +2,20 @@
  * Copyright 2022 Cognite AS
  */
 
-export type PointCloudObjectAppearance = {
+export type PointCloudAppearance = {
   color?: [number, number, number];
   visible?: boolean;
 };
 
-export type CompletePointCloudObjectAppearance = Required<PointCloudObjectAppearance>;
+export type CompletePointCloudAppearance = Required<PointCloudAppearance>;
 
-export const DefaultPointCloudAppearance: CompletePointCloudObjectAppearance = {
+export const DefaultPointCloudAppearance: CompletePointCloudAppearance = {
   color: [0, 0, 0],
   visible: true
 };
 
 export function applyDefaultsToPointCloudAppearance(
-  appearance: PointCloudObjectAppearance
-): CompletePointCloudObjectAppearance {
+  appearancPointCloudAppearancence
+): CompletePointCloudAppearance {
   return { ...DefaultPointCloudAppearance, ...appearance };
 }

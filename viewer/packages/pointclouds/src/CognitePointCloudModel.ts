@@ -13,12 +13,12 @@ import { SupportedModelTypes, CogniteModelBase } from '@reveal/model-base';
 
 import {
   applyDefaultsToPointCloudAppearance,
-  PointCloudObjectAppearance,
-  CompletePointCloudObjectAppearance
+  PointCloudAppearance,
+  CompletePointCloudAppearance
 } from './styling/PointCloudAppearance';
 import { StyledPointCloudObjectCollection } from './styling/StyledPointCloudObjectCollection';
 import { PointCloudObjectCollection } from './styling/PointCloudObjectCollection';
-import { AnnotationMetadata } from './annotationTypes';
+import { PointCloudObjectMetadata } from './annotationTypes';
 
 /**
  * Represents a point clouds model loaded from CDF.
@@ -222,7 +222,7 @@ export class CognitePointCloudModel extends THREE.Object3D implements CogniteMod
   /**
    * Gets default point appearance
    */
-  getDefaultPointCloudAppearance(): PointCloudObjectAppearance {
+  getDefaultPointCloudAppearance(): PointCloudAppearance {
     return this.pointCloudNode.defaultAppearance;
   }
 
@@ -230,8 +230,8 @@ export class CognitePointCloudModel extends THREE.Object3D implements CogniteMod
    * Sets default apparance for points that are
    * not styled otherwise
    */
-  setDefaultPointCloudAppearance(appearance: PointCloudObjectAppearance): void {
-    const fullAppearance: CompletePointCloudObjectAppearance = applyDefaultsToPointCloudAppearance(appearance);
+  setDefaultPointCloudAppearance(appearance: PointCloudAppearance): void {
+    const fullAppearance: CompletePointCloudAppearance = applyDefaultsToPointCloudAppearance(appearance);
     this.pointCloudNode.defaultAppearance = fullAppearance;
   }
 
@@ -244,12 +244,14 @@ export class CognitePointCloudModel extends THREE.Object3D implements CogniteMod
 
   /**
    * Assign a style to a collection of objects
+   * @param objectCollection The object collection to assign a style to
+   * @param appearance The style to assign to the object collection
    */
   assignStyledObjectCollection(
     objectCollection: PointCloudObjectCollection,
-    appearance: PointCloudObjectAppearance
+    appearance: PointCloudAppearance
   ): void {
-    const fullAppearance: CompletePointCloudObjectAppearance = applyDefaultsToPointCloudAppearance(appearance);
+    const fullAppearance: CompletePointCloudAppearance = applyDefaultsToPointCloudAppearance(appearance);
     const index = this._styledObjectCollections.findIndex(x => x.objectCollection === objectCollection);
     if (index !== -1) {
       this._styledObjectCollections[index].style = fullAppearance;
@@ -302,7 +304,7 @@ export class CognitePointCloudModel extends THREE.Object3D implements CogniteMod
    * );
    * ```
    */
-  traverseStylableObjects(callback: (annotationMetadata: AnnotationMetadata) => void): void {
+  traverseStylableObjects(callback: (annotationMetadata: PointCloudObjectMetadata) => void): void {
     for (const obj of this.pointCloudNode.potreeNode.stylableObjectAnnotationIds) {
       callback(obj);
     }

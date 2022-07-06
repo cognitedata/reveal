@@ -84,7 +84,7 @@ export class PotreeNodeWrapper {
     return this._classification;
   }
 
-  get stylableObjectAnnotationIds(): Iterable<AnnotationMetadata> {
+  get stylableObjectAnnotationIds(): Iterable<PointCloudObjectMetadata> {
     return this._annotations.map(a => {
       return { annotationId: a.annotationId, assetId: a.assetId };
     });
@@ -94,7 +94,7 @@ export class PotreeNodeWrapper {
     return this._annotations;
   }
 
-  get defaultAppearance(): CompletePointCloudObjectAppearance {
+  get defaultAppearance(): CompletePointCloudAppearance {
     return this.octree.material.objectAppearanceTexture.defaultAppearance;
   }
 
