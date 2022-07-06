@@ -35,7 +35,7 @@ module.exports = {
         'examples/clipping',
         'examples/cad-save-viewerstate',
         'examples/pointcloud',
-        'examlpes/pointcloud-styling',
+        'examples/pointcloud-styling',
         'examples/click-reactions-cad',
         'examples/click-reactions-pointcloud',
         'examples/antialiasing',
