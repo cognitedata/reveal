@@ -3,6 +3,7 @@ import moment from 'moment';
 import { Descriptions, Alert } from 'antd';
 import LoadingIcon from 'components/LoadingIcon';
 import { useFunction } from 'utils/hooks';
+import CopyContentButton from 'components/buttons/CopyContentButton';
 
 const { Item } = Descriptions;
 
@@ -29,7 +30,7 @@ export default function FunctionDetails({ id, name }: Props) {
   const notSet = <em>Not Set</em>;
 
   return (
-    <Descriptions>
+    <Descriptions className="function-details-wrapper">
       <Item label="Description" span={3}>
         {currentFunction?.description || notSet}
       </Item>
@@ -57,7 +58,13 @@ export default function FunctionDetails({ id, name }: Props) {
         {currentFunction?.apiKey || notSet}
       </Item>
       <Item label="Function Id" span={3}>
-        {currentFunction?.id}
+        <div className="group-wrapper">
+          {currentFunction?.id}
+          <CopyContentButton
+            value={currentFunction!.id.toString()}
+            style={{ marginLeft: '4px', marginTop: '-1px' }}
+          />
+        </div>
       </Item>
       <Item label="File Id" span={3}>
         {currentFunction?.fileId}
