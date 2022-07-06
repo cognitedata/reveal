@@ -3,6 +3,7 @@ import { SetStateAction, useEffect, useState } from 'react';
 import { Datapoints, DoubleDatapoint, ExternalId } from '@cognite/sdk';
 import { useAuthContext } from '@cognite/react-container';
 import { pickChartColor } from 'utils/utils';
+import { useMetrics } from '@cognite/metrics';
 import { PriceArea } from '@cognite/power-ops-api-types';
 import { TableData } from 'types';
 import dayjs from 'dayjs';
@@ -38,6 +39,7 @@ export const PriceScenariosChart = ({
   changeTab,
   tableData,
 }: PriceScenariosChartProps) => {
+  const metrics = useMetrics('price-scenarios');
   const { client } = useAuthContext();
   const [chartData, setChartData] = useState<Data[]>([{}]);
   const [hoverClass, setHoverClass] = useState<string>('');
@@ -109,6 +111,13 @@ export const PriceScenariosChart = ({
       : [];
 
     setChartData(plotData);
+  };
+
+  const handleChartClickEvent = (event: PlotMouseEvent) => {
+    changeTab(event.points[0].data.name);
+    metrics.track('click-chart-line', {
+      priceScenarioExternalId: event.points[0].data.name,
+    });
   };
 
   const handleChartHoverEvent = (event: PlotMouseEvent) => {
@@ -184,7 +193,7 @@ export const PriceScenariosChart = ({
             displaylogo: false,
             scrollZoom: true,
           }}
-          onClick={(event) => changeTab(event.points[0].data.name)}
+          onClick={handleChartClickEvent}
           onHover={handleChartHoverEvent}
           onUnhover={() => setHoverClass('')}
         />

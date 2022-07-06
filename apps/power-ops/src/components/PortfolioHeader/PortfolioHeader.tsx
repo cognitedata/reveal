@@ -2,9 +2,10 @@ import { Button, Dropdown, Icon, Label, Menu } from '@cognite/cogs.js';
 import { useAuthContext } from '@cognite/react-container';
 import { downloadBidMatrices, formatDate } from 'utils/utils';
 import { PriceAreaWithData } from 'types';
-import { useContext, useEffect, useState } from 'react';
+import { MouseEvent, useContext, useEffect, useState } from 'react';
 import { CogniteClient } from '@cognite/sdk';
 import { PriceAreasContext } from 'providers/priceAreaProvider';
+import { useMetrics } from '@cognite/metrics';
 
 import {
   Header,
@@ -43,6 +44,8 @@ export const PortfolioHeader = ({
 }: {
   priceArea: PriceAreaWithData;
 }) => {
+  const metrics = useMetrics('portfolio');
+
   const { client } = useAuthContext();
   const { authState } = useAuthContext();
 
@@ -58,6 +61,25 @@ export const PortfolioHeader = ({
     priceArea?.bidProcessExternalId,
     client
   );
+
+  const downloadMatrix = async (_e: MouseEvent) => {
+    setDownloading(true);
+    await downloadBidMatrices(priceArea, client?.project, authState?.token);
+    setDownloading(false);
+    metrics.track(`click-download-matrices-button`, {
+      bidProcessExternalId: priceArea.bidProcessExternalId,
+    });
+  };
+
+  const selectProcessConfiguration = async (
+    _e: MouseEvent,
+    selectedConfigurationExternalId: string
+  ) => {
+    bidProcessConfigurationChanged(selectedConfigurationExternalId);
+    metrics.track(`click-process-configuration-dropdown`, {
+      selectedConfiguration: selectedConfigurationExternalId,
+    });
+  };
 
   useEffect(() => {
     if (priceArea?.bidProcessExternalId) {
@@ -84,8 +106,9 @@ export const PortfolioHeader = ({
                     bidProcessEventExternalId
                   }
                   key={config.bidProcessEventExternalId}
-                  onClick={() =>
-                    bidProcessConfigurationChanged(
+                  onClick={(e) =>
+                    selectProcessConfiguration(
+                      e,
                       config.bidProcessEventExternalId
                     )
                   }
@@ -127,15 +150,7 @@ export const PortfolioHeader = ({
           icon="Download"
           type="primary"
           loading={downloading}
-          onClick={async () => {
-            setDownloading(true);
-            await downloadBidMatrices(
-              priceArea,
-              client?.project,
-              authState?.token
-            );
-            setDownloading(false);
-          }}
+          onClick={downloadMatrix}
         >
           Download
         </Button>

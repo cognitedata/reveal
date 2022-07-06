@@ -1,5 +1,5 @@
 import { CogniteEvent, DoubleDatapoint } from '@cognite/sdk';
-import { useState, useEffect, useContext } from 'react';
+import { useState, useEffect, useContext, MouseEvent } from 'react';
 import { Button, Tooltip, Detail } from '@cognite/cogs.js';
 import { useAuthContext } from '@cognite/react-container';
 import { Column } from 'react-table';
@@ -9,16 +9,10 @@ import { TableData, PriceAreaWithData, MatrixWithData } from 'types';
 import { EVENT_TYPES } from '@cognite/power-ops-api-types';
 import { EventStreamContext } from 'providers/eventStreamProvider';
 import { HeadlessTable } from 'components/HeadlessTable';
-
-import { StyledTitle } from '../elements';
+import { useMetrics } from '@cognite/metrics';
 
 import {
-  getFormattedBidMatrixData,
-  copyMatrixToClipboard,
-  formatScenarioData,
-  isNewBidMatrixAvailable,
-} from './utils';
-import {
+  StyledTitle,
   StyledDiv,
   StyledHeader,
   StyledBidMatrixTable,
@@ -26,6 +20,12 @@ import {
   Main,
   StyledInfobar,
 } from './elements';
+import {
+  getFormattedBidMatrixData,
+  copyMatrixToClipboard,
+  formatScenarioData,
+  isNewBidMatrixAvailable,
+} from './utils';
 
 export const mainScenarioTableHeaderConfig = [
   {
@@ -39,6 +39,7 @@ export const mainScenarioTableHeaderConfig = [
 ];
 
 export const BidMatrix = ({ priceArea }: { priceArea: PriceAreaWithData }) => {
+  const metrics = useMetrics('bid-matrix');
   const { client } = useAuthContext();
   const { eventStore } = useContext(EventStreamContext);
 
@@ -109,6 +110,29 @@ export const BidMatrix = ({ priceArea }: { priceArea: PriceAreaWithData }) => {
     return 'Total';
   };
 
+  const handleCopyBidMatrixClick = async (_e: MouseEvent) => {
+    const isCopied =
+      matrixHeaderConfig && matrixData
+        ? await copyMatrixToClipboard(matrixHeaderConfig, matrixData)
+        : false;
+
+    setCopied(true);
+
+    if (isCopied) setTooltipContent('Copied!');
+    else setTooltipContent('Unable to copy');
+
+    metrics.track('click-copy-bid-matrix-button', {
+      matrixExternalId: currentMatrix?.externalId,
+    });
+  };
+
+  const reloadMatrixData = async (_e: MouseEvent) => {
+    metrics.track('click-reload-bid-matrix-button', {
+      priceAreaExternalId: priceArea.externalId,
+    });
+    window.location.reload();
+  };
+
   useEffect(() => {
     if (plantExternalId && priceArea) {
       setBidDate(dayjs(priceArea.bidDate));
@@ -171,7 +195,7 @@ export const BidMatrix = ({ priceArea }: { priceArea: PriceAreaWithData }) => {
             size="small"
             icon="Refresh"
             iconPlacement="right"
-            onClick={() => window.location.reload()}
+            onClick={reloadMatrixData}
           >
             Update matrix
           </Button>
@@ -194,20 +218,7 @@ export const BidMatrix = ({ priceArea }: { priceArea: PriceAreaWithData }) => {
               <Button
                 aria-label="Copy Bidmatrix"
                 icon="Copy"
-                onClick={async () => {
-                  const isCopied =
-                    matrixHeaderConfig && matrixData
-                      ? await copyMatrixToClipboard(
-                          matrixHeaderConfig,
-                          matrixData
-                        )
-                      : false;
-
-                  setCopied(true);
-
-                  if (isCopied) setTooltipContent('Copied!');
-                  else setTooltipContent('Unable to copy');
-                }}
+                onClick={handleCopyBidMatrixClick}
                 onMouseEnter={() => {
                   setCopied(true);
                   setTooltipContent('Copy to clipboard');

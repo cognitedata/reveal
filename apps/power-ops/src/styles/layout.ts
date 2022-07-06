@@ -1,3 +1,5 @@
+import styled from 'styled-components/macro';
+
 /**
  * MARGINS AND PADDINGS
  */
@@ -25,3 +27,17 @@ export const sizes = {
   /** 80px */
   huge,
 };
+
+export const BaseContainer = styled.div`
+  text-align: center;
+  min-height: calc(100vh - 134px);
+`;
+
+export const MainPanel = styled.div`
+  display: flex;
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 100%;
+  width: inherit;
+`;

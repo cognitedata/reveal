@@ -5,6 +5,7 @@ import { LogoutButton, useAuthContext } from '@cognite/react-container';
 import { PriceArea } from '@cognite/power-ops-api-types';
 import { PriceAreasContext } from 'providers/priceAreaProvider';
 import { handleLogout } from 'utils/utils';
+import { PAGES } from 'App';
 
 import {
   StyledTopBar,
@@ -12,14 +13,6 @@ import {
   LogOutButtonContainer,
   StyledMenu,
 } from './elements';
-
-export enum PAGES {
-  HOME = '/home',
-  PROCESSES = '/processes',
-  MONITORING = '/monitoring',
-  PORTFOLIO = '/portfolio',
-  LOGOUT = '/logout',
-}
 
 export const MenuBar = () => {
   const history = useHistory();
@@ -31,17 +24,17 @@ export const MenuBar = () => {
 
   const { allPriceAreas, priceAreaChanged } = useContext(PriceAreasContext);
 
-  const handleNavigate = (page: PAGES, priceArea?: PriceArea) => {
+  const handleNavigate = (path: PAGES, priceArea?: PriceArea) => {
+    let page: string = path;
     if (priceArea) {
-      setActive(`${page}/${priceArea.externalId}/total`);
-      history.push(`${page}/${priceArea.externalId}/total`);
+      page = `${path}/${priceArea.externalId}/total`;
       priceAreaChanged(priceArea.externalId);
-    } else {
-      setActive(page);
-      history.push(page);
     }
+
     setVisible(false);
     setSelected(priceArea?.externalId || '');
+    setActive(page);
+    history.push(page);
   };
 
   const toggleDropdown = () => {

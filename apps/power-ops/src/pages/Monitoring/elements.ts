@@ -1,4 +1,10 @@
 import styled from 'styled-components/macro';
+import { BaseContainer } from 'styles/layout';
+
+export const Container = styled(BaseContainer)`
+  padding-top: 32px;
+  padding-bottom: 32px;
+`;
 
 export const StyledTable = styled.table`
   text-align: left;

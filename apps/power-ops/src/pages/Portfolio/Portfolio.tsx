@@ -1,6 +1,6 @@
 import { useState, useEffect, memo, useContext } from 'react';
 import { Loader } from '@cognite/cogs.js';
-import { BaseContainer } from 'pages/elements';
+import { useMetrics } from '@cognite/metrics';
 import {
   Route,
   Switch,
@@ -8,13 +8,14 @@ import {
   useParams,
   useRouteMatch,
 } from 'react-router-dom';
-import { PAGES } from 'pages/Menubar';
+import { PAGES } from 'App';
 import { PriceScenarios } from 'pages/PriceScenarios';
-import { BidMatrix } from 'pages/BidMatrix';
+import { BidMatrix } from 'components/BidMatrix';
 import { PriceAreasContext } from 'providers/priceAreaProvider';
-import { NotFoundPage } from 'pages/Error404';
+import { NotFoundPage } from 'pages/NotFound/NotFound';
 import { PortfolioHeader } from 'components/PortfolioHeader/PortfolioHeader';
 import { Sidebar } from 'components/Sidebar/Sidebar';
+import { BaseContainer } from 'styles/layout';
 
 import { Container, MainDiv } from './elements';
 
@@ -28,6 +29,7 @@ const PortfolioPage = () => {
 
   const { priceAreaExternalId } = useParams<{ priceAreaExternalId?: string }>();
 
+  const metrics = useMetrics('portfolio');
   const history = useHistory();
   const match = useRouteMatch();
 
@@ -49,6 +51,12 @@ const PortfolioPage = () => {
       setLoading(true);
     }
   }, [allPriceAreas]);
+
+  useEffect(() => {
+    metrics.track(
+      `click-${openedSidePanel ? 'open' : 'close'}-portfolio-sidebar`
+    );
+  }, [openedSidePanel]);
 
   useEffect(() => {
     setLoading(true);

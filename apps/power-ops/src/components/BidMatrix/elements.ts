@@ -1,6 +1,6 @@
 import styled, { css } from 'styled-components/macro';
 import { Infobar, Title } from '@cognite/cogs.js';
-import { MainPanel } from 'pages/elements';
+import { MainPanel } from 'styles/layout';
 
 const GeneralTableStyles = css`
   overflow: hidden;

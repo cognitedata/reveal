@@ -1,6 +1,6 @@
 import styled from 'styled-components/macro';
-import { BaseContainer } from 'pages/elements';
 import { Title } from '@cognite/cogs.js';
+import { BaseContainer } from 'styles/layout';
 
 const sidePanelOpenedWidth = 280;
 const sidePanelClosedWidth = 68;

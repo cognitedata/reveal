@@ -4,14 +4,13 @@ import {
   useAuthContext,
 } from '@cognite/react-container';
 import { CogniteClient } from '@cognite/sdk';
+import { useMetrics } from '@cognite/metrics';
 import { useFetchSnifferJobs } from 'queries/useFetchSnifferJobs';
 import { Flex, Label, Button } from '@cognite/cogs.js';
 import axios from 'axios';
 import sidecar from 'utils/sidecar';
 
-import { Container } from '../elements';
-
-import { StyledTable } from './elements';
+import { Container, StyledTable } from './elements';
 
 export const Monitoring: React.FC = () => (
   <AuthConsumer>
@@ -22,6 +21,8 @@ export const Monitoring: React.FC = () => (
 );
 
 const MonitoringInner = ({ client }: { client: CogniteClient }) => {
+  const metrics = useMetrics('monitoring');
+
   const { authState } = useAuthContext();
   const { snifferServiceBaseUrl } = sidecar;
 
@@ -31,6 +32,7 @@ const MonitoringInner = ({ client }: { client: CogniteClient }) => {
   });
 
   const startJobs = async () => {
+    metrics.track('click-start-all-jobs-button');
     axios
       .get(`${snifferServiceBaseUrl}/${client.project}/jobs/start-all`, {
         headers: { Authorization: `Bearer ${authState?.token}` },
@@ -43,6 +45,7 @@ const MonitoringInner = ({ client }: { client: CogniteClient }) => {
   };
 
   const stopJobs = async () => {
+    metrics.track('click-stop-all-jobs-button');
     axios
       .get(`${snifferServiceBaseUrl}/${client.project}/jobs/stop-all`, {
         headers: { Authorization: `Bearer ${authState?.token}` },

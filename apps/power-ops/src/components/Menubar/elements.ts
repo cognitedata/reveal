@@ -3,16 +3,6 @@ import { sizes } from 'styles/layout';
 import { Title, Menu, TopBar } from '@cognite/cogs.js';
 import layers from 'utils/zindex';
 
-export const BaseContainer = styled.div`
-  text-align: center;
-  min-height: calc(100vh - 134px);
-`;
-
-export const Container = styled(BaseContainer)`
-  padding-top: 32px;
-  padding-bottom: 32px;
-`;
-
 export const StyledTopBar = styled(TopBar)`
   z-index: ${layers.MAXIMUM};
   position: sticky;
@@ -50,27 +40,6 @@ export const LogoContainer = styled.div`
 export const StyledMenu = styled(Menu)`
   margin-left: 16px;
   min-width: 189px;
-`;
-
-export const MainPanel = styled.div`
-  display: flex;
-  position: absolute;
-  top: 0;
-  right: 0;
-  height: 100%;
-  width: inherit;
-`;
-
-export const NotFound = styled(BaseContainer)`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-
-  h3 {
-    font-weight: 700;
-    font-size: 16px;
-  }
 `;
 
 export const StyledTitle = styled(Title)`

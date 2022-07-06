@@ -1,7 +1,7 @@
 import styled from 'styled-components/macro';
 import { Icon, Tabs } from '@cognite/cogs.js';
-import { MainPanel } from 'pages/elements';
 import layers from 'utils/zindex';
+import { MainPanel } from 'styles/layout';
 
 export const Main = styled(MainPanel)`
   flex-direction: column;

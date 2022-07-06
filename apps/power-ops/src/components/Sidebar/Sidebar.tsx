@@ -1,9 +1,10 @@
 import { Button, Detail } from '@cognite/cogs.js';
-import { SetStateAction, useEffect, useState } from 'react';
+import { SetStateAction, useCallback, useEffect, useState } from 'react';
 import { NavLink, useLocation, useRouteMatch } from 'react-router-dom';
 import debounce from 'lodash/debounce';
 import { PriceAreaWithData } from 'types';
 import { Plant } from '@cognite/power-ops-api-types';
+import { useMetrics } from '@cognite/metrics';
 
 import {
   Header,
@@ -23,6 +24,8 @@ export const Sidebar = ({
   opened: boolean;
   setOpened: (opened: SetStateAction<boolean>) => void;
 }) => {
+  const metrics = useMetrics('portfolio');
+
   const { pathname } = useLocation();
   const currentPath = pathname.endsWith('/') ? pathname.slice(0, -1) : pathname;
   const match = useRouteMatch();
@@ -35,39 +38,39 @@ export const Sidebar = ({
   const [focused, setFocused] = useState<boolean>(false);
   const [resize, setResize] = useState<boolean>(false);
 
-  const search = (query: any, callback: any) => {
-    const searchResults = priceArea.plants?.filter((plant) =>
-      plant.displayName.toLowerCase().includes(query.toLowerCase())
-    );
-    if ('price scenarios'.includes(query.toLowerCase())) {
-      setSearchPrice(true);
+  const trackSidebarNavLinkClick = (selectedSection: string) => {
+    if (selectedSection === 'total') {
+      metrics.track('click-sidebar-total-link');
+    } else if (selectedSection === 'price-scenarios') {
+      metrics.track('click-sidebar-price-scenarios-link');
     } else {
-      setSearchPrice(false);
+      metrics.track('click-sidebar-plant-link', {
+        selectedPlant: selectedSection,
+      });
     }
-    if ('total'.includes(query.toLowerCase())) {
-      setSearchTotal(true);
-    } else {
-      setSearchTotal(false);
-    }
-    callback(searchResults);
   };
 
-  const debouncedSearch = debounce((query, callback) => {
-    search(query, callback);
-  }, 300);
+  const debouncedSearch = useCallback(
+    debounce((query: any, callback: any) => {
+      if (query) {
+        metrics.track('type-search-input', { query });
+      }
+
+      const searchResults = priceArea.plants?.filter((plant) =>
+        plant.displayName.toLowerCase().includes(query.toLowerCase())
+      );
+      callback(searchResults);
+    }, 300),
+    []
+  );
 
   useEffect(() => {
     if (priceArea.plants) {
       debouncedSearch(query, (result: Plant[]) => {
-        if (query.length === 0) {
-          setSearchPrice(true);
-          setSearchTotal(true);
-          setFilteredPlants(priceArea.plants);
-          setIsSearching(false);
-        } else {
-          setFilteredPlants(result);
-          setIsSearching(true);
-        }
+        setSearchPrice('price scenarios'.includes(query.toLowerCase()));
+        setSearchTotal('total'.includes(query.toLowerCase()));
+        setFilteredPlants(query?.length ? result : priceArea.plants);
+        setIsSearching(!!query?.length);
       });
     }
   }, [query]);
@@ -84,6 +87,7 @@ export const Sidebar = ({
             value={query}
             clearable={{
               callback: () => {
+                metrics.track('click-clear-search-button');
                 setQuery('');
               },
             }}
@@ -94,6 +98,7 @@ export const Sidebar = ({
             icon="Search"
             aria-label="Open search field"
             onClick={() => {
+              metrics.track('click-open-search-button');
               setOpened(true);
               setFocused(true);
             }}
@@ -104,7 +109,10 @@ export const Sidebar = ({
         <PanelContent>
           {!isSearching && <Detail>Price area overview</Detail>}
           {searchTotal && (
-            <NavLink to={`${match.url}/total`}>
+            <NavLink
+              to={`${match.url}/total`}
+              onClick={() => trackSidebarNavLinkClick('total')}
+            >
               <StyledButton
                 toggled={currentPath === `${match.url}/total`}
                 key={`${priceArea.externalId}-total`}
@@ -115,7 +123,10 @@ export const Sidebar = ({
             </NavLink>
           )}
           {searchPrice && (
-            <NavLink to={`${match.url}/price-scenarios`}>
+            <NavLink
+              to={`${match.url}/price-scenarios`}
+              onClick={() => trackSidebarNavLinkClick('price-scenarios')}
+            >
               <StyledButton
                 toggled={currentPath === `${match.url}/price-scenarios`}
                 key={`${priceArea.externalId}-price-scenarios-link`}
@@ -132,6 +143,7 @@ export const Sidebar = ({
                 <NavLink
                   to={`${match.url}/${plant.externalId}`}
                   key={`${priceArea.externalId}-${plant.externalId}`}
+                  onClick={() => trackSidebarNavLinkClick(priceArea.externalId)}
                 >
                   <StyledButton
                     toggled={currentPath === `${match.url}/${plant.externalId}`}

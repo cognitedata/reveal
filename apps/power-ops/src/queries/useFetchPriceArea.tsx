@@ -6,7 +6,7 @@ import {
 import { useQuery } from 'react-query';
 import sidecar from 'utils/sidecar';
 import { CogniteClient } from '@cognite/sdk';
-import { getBidMatrixData } from 'pages/BidMatrix/utils';
+import { getBidMatrixData } from 'components/BidMatrix/utils';
 import { PriceAreaWithData } from 'types';
 
 export const fetchProcessConfigurations = async ({

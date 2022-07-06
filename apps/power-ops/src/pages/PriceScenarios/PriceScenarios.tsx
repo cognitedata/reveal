@@ -12,6 +12,7 @@ import { useAuthContext } from '@cognite/react-container';
 import { DoubleDatapoint, ExternalId } from '@cognite/sdk';
 import dayjs from 'dayjs';
 import { CalculatedProduction } from '@cognite/power-ops-api-types';
+import { useMetrics } from '@cognite/metrics';
 
 import { getActiveColumns } from './utils';
 import {
@@ -27,6 +28,7 @@ export const PriceScenarios = ({
 }: {
   priceArea: PriceAreaWithData;
 }) => {
+  const metrics = useMetrics('price-scenarios');
   const { client } = useAuthContext();
 
   const bidDate = dayjs(priceArea.bidDate);
@@ -36,8 +38,16 @@ export const PriceScenarios = ({
   >();
 
   const [activeTab, setActiveTab] = useState<string>('total');
-  const changeTab = (tab: SetStateAction<string>) => {
-    setActiveTab(tab);
+
+  const handleTabClickEvent = (activeKey: string) => {
+    setActiveTab(activeKey);
+    if (activeKey === 'total') {
+      metrics.track('click-total-tab');
+    } else {
+      metrics.track('click-price-scenario-tab', {
+        priceScenarioExternalId: activeKey,
+      });
+    }
   };
 
   const [tableColumns, setTableColumns] = useState<Column<TableData>[]>([]);
@@ -246,13 +256,15 @@ export const PriceScenarios = ({
           priceArea={priceArea}
           externalIds={priceExternalIds}
           activeTab={activeTab}
-          changeTab={changeTab}
+          changeTab={(selectedTab: SetStateAction<string>) =>
+            setActiveTab(selectedTab)
+          }
           tableData={tableData}
         />
         <StyledTabs
           defaultActiveKey="total"
           activeKey={activeTab}
-          onChange={changeTab}
+          onChange={(activeKey: string) => handleTabClickEvent(activeKey)}
         >
           <StyledTabs.TabPane key="total" tab="Total" />
           {priceArea?.priceScenarios.map((scenario, index) => {
