@@ -59,13 +59,4 @@ describe('Platypus Data Preview Page - Preview', () => {
       '.ag-body-viewport .ag-row[row-index="0"] .ag-cell[col-id="user"] .cogs-tag'
     ).should('have.text', '{"externalId":""}');
   });
-
-  it('should display data preview if no data', () => {
-    cy.get('[data-testid="Comment"]').click();
-    cy.getBySel('data-preview-table').should('be.visible');
-    cy.get('.ag-header .ag-header-cell[col-id="body"]').should('be.visible');
-    cy.get('.ag-body-viewport .ag-row .ag-cell[col-id="body"]')
-      .should('exist')
-      .should('have.text', '');
-  });
 });

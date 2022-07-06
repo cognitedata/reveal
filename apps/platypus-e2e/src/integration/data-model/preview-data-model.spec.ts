@@ -80,6 +80,27 @@ describe('Data Model Page - Existing Solution Preview', () => {
       .and('contain', 'String!');
   });
 
+  it('should create type and fields & see changes in visualizer', () => {
+    cy.get('[aria-label="UI editor"]').click();
+    cy.addDataModelType('Person');
+    cy.addDataModelTypeField('firstName');
+    cy.addDataModelTypeField('last_name');
+    cy.addDataModelTypeField('age');
+    cy.editDataModelTypeFieldName('Person', 'last_name', 'lastName', false);
+
+    cy.getBySel('data_model_type_field_age').should('be.visible');
+    cy.getBySel('data_model_type_field_lastName').should('be.visible');
+
+    // checks if visualizer updated with edited value
+    cy.get('div#Person')
+      .should('be.visible')
+      .children()
+      .getBySel('visualizer-type-field')
+      .should('contain', 'lastName')
+      .and('contain', 'String')
+      .and('contain', 'age');
+  });
+
   it('should delete field inside type and see changes in visualizer', () => {
     cy.get('[aria-label="UI editor"]').click();
     cy.contains('Post').click();
@@ -121,6 +142,9 @@ describe('Data Model Page - Existing Solution Preview', () => {
     cy.get('h5').contains('Author').should('be.visible');
     cy.getBySel('schema-type-field').first().type('user');
 
+    // eslint-disable-next-line
+    cy.wait(500);
+
     // by default we set type as String
     cy.getBySel('select-String')
       .children()
@@ -129,6 +153,10 @@ describe('Data Model Page - Existing Solution Preview', () => {
       .type('User{enter}');
     cy.getBySel('select-User').contains('User');
     cy.getBySel('checkbox-field-required').first().click();
+
+    // eslint-disable-next-line
+    cy.wait(500);
+
     // Code Editor check for properly working
     cy.get('[aria-label="Code editor"]').click();
     cy.get('.monaco-editor textarea:first')
@@ -139,6 +167,10 @@ describe('Data Model Page - Existing Solution Preview', () => {
       'not.contain',
       'Unable to visualize schema.'
     );
+
+    // eslint-disable-next-line
+    cy.wait(500);
+
     cy.get('div#Author')
       .should('be.visible')
       .children()

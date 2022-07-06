@@ -27,10 +27,12 @@ declare namespace Cypress {
     assertQueryExplorerResult(expectedResult: any, timeout?: number): void;
     addDataModelType(typeName: string): void;
     deleteDataModelType(typeName: string): void;
+    addDataModelTypeField(fieldName: string, isRequired?: boolean): void;
     editDataModelTypeFieldName(
       typeName: string,
       fieldName: string,
-      value: string
+      value: string,
+      openType?: boolean
     ): void;
     ensureCurrentVersionIsDraft(): void;
     ensureCurrentVersionIsNotDraft(): void;
@@ -83,13 +85,26 @@ Cypress.Commands.add(
 );
 
 Cypress.Commands.add(
+  'addDataModelTypeField',
+  (fieldName: string, isRequired?: boolean) => {
+    // Add new type
+    cy.get('[aria-label="Add field"]').click();
+    cy.getBySel('schema-type-field').last().click().type(fieldName);
+
+    if (isRequired) {
+      cy.getBySel('checkbox-field-required').last().click();
+    }
+  }
+);
+Cypress.Commands.add(
   'editDataModelTypeFieldName',
-  (typeName: string, fieldName: string, value: string) => {
+  (typeName: string, fieldName: string, value: string, openType = true) => {
     // Add new type
     cy.get('[aria-label="UI editor"]').click();
-    cy.getBySel(`type-list-item-${typeName}`).click();
-    cy.getBySel(`data_model_type_field_${fieldName}`)
-      .getBySel('schema-type-field')
+    if (openType) {
+      cy.getBySel(`type-list-item-${typeName}`).click();
+    }
+    cy.get(`[data-cy=data_model_type_field_${fieldName}] > input`)
       .type('{selectAll}')
       .type(value);
 

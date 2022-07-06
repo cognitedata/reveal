@@ -48,6 +48,8 @@ describe('Data Model Page - Publish new schema', () => {
     cy.getBySel('edit-schema-btn').click();
 
     cy.editDataModelTypeFieldName('User', 'name', 'userName');
+    // eslint-disable-next-line
+    cy.wait(500);
 
     cy.getBySel('publish-schema-btn').click();
 

@@ -9,10 +9,11 @@ import styled from 'styled-components';
 import { TypeSelect } from './TypeSelect';
 import { SolutionDataModelFieldNameValidator } from '@platypus/platypus-core';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
-import debounce from 'lodash/debounce';
+
 import { v4 } from 'uuid';
 import useSelector from '@platypus-app/hooks/useSelector';
 import { useSolution } from '@platypus-app/modules/solution/hooks/useSolution';
+import { useDebounce } from '@platypus-app/hooks/useDebounce';
 export interface SchemaTypeFieldProps {
   index: number;
   field: DataModelTypeDefsField;
@@ -36,6 +37,27 @@ export const SchemaTypeField = ({
 }: SchemaTypeFieldProps) => {
   const [fieldName, setFieldname] = useState(field.name);
   const { t } = useTranslation('UiEditorTypeField');
+  const debouncedFieldName = useDebounce(fieldName, 500);
+
+  useEffect(() => {
+    if (!debouncedFieldName) {
+      return;
+    }
+    const validationResult = nameValidator.validate('name', debouncedFieldName);
+    setError(validationResult.valid ? '' : validationResult.errors['name']);
+    const isSameFieldPresent = typeFieldNames.some(
+      (nameField, i) => nameField === debouncedFieldName && index !== i
+    );
+
+    if (!validationResult.valid) {
+      setError(validationResult.valid ? '' : validationResult.errors['name']);
+    } else if (isSameFieldPresent) {
+      setError(t('duplicate_field', 'Duplicate field name'));
+    } else {
+      onFieldUpdated({ name: debouncedFieldName });
+    }
+  }, [debouncedFieldName]);
+
   const nameValidator = new SolutionDataModelFieldNameValidator();
   const error = useSelector(
     (state) => state.dataModel.typeFieldErrors[field.name]
@@ -51,37 +73,17 @@ export const SchemaTypeField = ({
       setError('');
     };
   }, [setError]);
-  const fieldNameDebounced = useCallback(
-    debounce((value: string) => {
-      const isSameFieldPresent = typeFieldNames.some(
-        (nameField, i) => nameField === value && index !== i
-      );
-      if (isSameFieldPresent) {
-        setError(t('duplicate_field', 'Duplicate field name'));
-      } else {
-        onFieldUpdated({ name: value });
-      }
-    }, 500),
-    [field.name]
-  );
-  const onFieldNameChanged = useCallback(
-    (e: React.FormEvent<HTMLInputElement>) => {
-      e.preventDefault();
 
-      let { value } = e.currentTarget;
+  const onFieldNameChanged = (e: React.FormEvent<HTMLInputElement>) => {
+    e.preventDefault();
 
-      setFieldname(value);
-      value = value.trimEnd();
+    let { value } = e.currentTarget;
 
-      const validationResult = nameValidator.validate('name', value);
-      setError(validationResult.valid ? '' : validationResult.errors['name']);
-      if (validationResult.valid) {
-        fieldNameDebounced(value);
-      }
-      e.currentTarget?.focus();
-    },
-    [fieldNameDebounced]
-  );
+    setFieldname(value);
+    value = value.trimEnd();
+
+    e.currentTarget?.focus();
+  };
   const isFirstField = index === 0;
   return (
     <Flex
