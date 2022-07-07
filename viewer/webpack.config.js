@@ -21,7 +21,7 @@ if (parserWorkerVersion.split('.').some(i => isNaN(parseInt(i, 10)))) {
   );
 }
 
-const defaultExportFunction = (env, entries, additionalAllow = undefined) => {
+const defaultExportFunction = (env, entries, additionalAllows = undefined) => {
   const development = getEnvArg(env, 'development', false);
   const publicPathViewer =
     publicPath || getWorkerCdnUrl({ name: workerPackageJSON.name, version: workerPackageJSON.version });
@@ -32,11 +32,11 @@ const defaultExportFunction = (env, entries, additionalAllow = undefined) => {
     entryObject[entries[i]] = entryFileNames[i];
   }
 
-  logger.info('Viewer build config:');
-  logger.info({ development, publicPathViewer });
   const allowlist = [/^@reveal/];
-  if (additionalAllow) {
-    allowlist.push(additionalAllow);
+  if (additionalAllows) {
+    for (const additionalAllow of additionalAllows) {
+      allowlist.push(additionalAllow);
+    }
   }
 
   return {
@@ -150,13 +150,14 @@ const peripheralEntries = ['tools', 'extensions/datasource'];
 
 module.exports = [
   env => {
-    return defaultExportFunction(env, ['index'], 'three');
+    return defaultExportFunction(env, ['index'], ['three', 'lodash/debounce']);
   },
   env => {
     const development = getEnvArg(env, 'development', false);
     if (development) {
       peripheralEntries.push('internals');
     }
+
     return defaultExportFunction(env, peripheralEntries);
   }
 ];

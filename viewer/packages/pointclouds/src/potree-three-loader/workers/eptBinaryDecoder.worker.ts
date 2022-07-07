@@ -6,11 +6,12 @@ import { RawStylableObject, StylableObject, rawToStylableObject } from '../../st
 
 import { parseEpt, EptInputData } from './parseEpt';
 import { Vec3 } from '../../styling/shapes/linalg';
+import * as THREE from 'three';
 
 const ctx: Worker = self as any;
 
 let objectList: StylableObject[] = [];
-let pointOffset: Vec3 = [0, 0, 0];
+let pointOffset = [0, 0, 0];
 
 type CommandType = 'objects' | 'parse';
 
@@ -40,7 +41,8 @@ ctx.onmessage = function (event: MessageEvent<ICommand>) {
       break;
     case 'parse':
       const parseCommand = command as ParseCommand;
-      parseEpt(ctx, parseCommand.data, objectList, pointOffset);
+      const threePointOffset = new THREE.Vector3().fromArray(pointOffset);
+      parseEpt(ctx, parseCommand.data, objectList, threePointOffset);
       break;
     default:
       console.error('Unrecognized eptBinaryDecoder worker command');

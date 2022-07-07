@@ -1,5 +1,4 @@
 import { StylableObject } from '../../styling/StylableObject';
-import { Vec3 } from '../../styling/shapes/linalg';
 import { computeObjectIdBuffer } from './assignObjects';
 
 export type ParsedEptData = {
@@ -37,7 +36,12 @@ export type EptInputData = {
   mins: [number, number, number];
 };
 
-export function parseEpt(worker: Worker, data: EptInputData, objects: StylableObject[], pointOffset: Vec3): void {
+export function parseEpt(
+  worker: Worker,
+  data: EptInputData,
+  objects: StylableObject[],
+  pointOffset: THREE.Vector3
+): void {
   const buffer = data.buffer;
   const view = new DataView(buffer);
   const schema: SchemaEntry[] = data.schema;

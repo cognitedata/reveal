@@ -4,7 +4,9 @@
 
 import { ShapeType } from './IRawShape';
 import { IShape } from './IShape';
-import { m4MultiplyV3WithTranslation, Mat4, Vec3 } from './linalg';
+import { Mat4 } from './linalg';
+
+import * as THREE from 'three';
 
 export type RawBox = {
   type: ShapeType.Box;
@@ -12,17 +14,17 @@ export type RawBox = {
 };
 
 export class Box implements IShape {
-  readonly invMatrix: Mat4;
+  readonly invMatrix: THREE.Matrix4;
 
-  constructor(invertedInstanceMatrix: Mat4) {
-    this.invMatrix = invertedInstanceMatrix;
+  constructor(invertedInstanceMatrix: THREE.Matrix4) {
+    this.invMatrix = invertedInstanceMatrix.clone();
   }
 
-  containsPoint(point: Vec3): boolean {
-    const transformedPoint = m4MultiplyV3WithTranslation(this.invMatrix, point);
+  containsPoint(point: THREE.Vector3): boolean {
+    const transformedPoint = point.clone().applyMatrix4(this.invMatrix);
 
     return (
-      Math.max(Math.abs(transformedPoint[0]), Math.max(Math.abs(transformedPoint[1]), Math.abs(transformedPoint[2]))) <=
+      Math.max(Math.abs(transformedPoint.x), Math.max(Math.abs(transformedPoint.y), Math.abs(transformedPoint.z))) <=
       0.5
     );
   }
@@ -30,7 +32,7 @@ export class Box implements IShape {
   toRawShape(): RawBox {
     return {
       type: ShapeType.Box,
-      invMatrix: this.invMatrix
+      invMatrix: { data: this.invMatrix.clone().transpose().toArray() }
     };
   }
 }
