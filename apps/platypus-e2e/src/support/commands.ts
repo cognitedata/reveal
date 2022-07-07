@@ -125,7 +125,7 @@ Cypress.Commands.add('addDataModelType', (typeName: string) => {
 
   const typeSelector = `div#${typeName}.node`;
   // Wait for visualizer to be updated with new type before reloading page
-  cy.get(typeSelector).should('be.visible');
+  cy.get(typeSelector).should('be.visible').contains('name');
 });
 
 Cypress.Commands.add('deleteDataModelType', (typeName: string) => {

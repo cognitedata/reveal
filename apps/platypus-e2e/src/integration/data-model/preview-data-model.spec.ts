@@ -101,6 +101,18 @@ describe('Data Model Page - Existing Solution Preview', () => {
       .and('contain', 'age');
   });
 
+  it('should add a type in UI editor and not see an error in the visualizer', () => {
+    cy.get('[aria-label="UI editor"]').click();
+    cy.getBySel('edit-schema-btn').click();
+    cy.getBySel('add-type-btn').click();
+    cy.getBySel('type-name-input').type('Dog');
+    cy.getBySel('modal-ok-button').click();
+
+    cy.get('#visualizer-wrapper')
+      .contains('Unable to visualize')
+      .should('not.exist');
+  });
+
   it('should delete field inside type and see changes in visualizer', () => {
     cy.get('[aria-label="UI editor"]').click();
     cy.contains('Post').click();

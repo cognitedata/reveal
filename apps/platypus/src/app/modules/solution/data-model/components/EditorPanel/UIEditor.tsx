@@ -121,7 +121,7 @@ export function UIEditor({
       (type) => type.type === 'DIRECTIVE'
     );
 
-    const newState = defaultDirective
+    const dataModelWithNewType = defaultDirective
       ? dataModelTypeDefsBuilder.addType(
           solutionDataModel,
           capitalizedTypeName,
@@ -132,7 +132,30 @@ export function UIEditor({
           capitalizedTypeName
         );
 
-    updateUiState(newState, capitalizedTypeName);
+    updateUiState(dataModelWithNewType, capitalizedTypeName);
+
+    /*
+    Add a field *after* calling updateUiState because we want the schema string to be
+    updated with the new Type but *not* with the new Field since the field will not
+    have a value until the user types one and we want to avoid having an invalid schema
+    string with '' for the name of the field.
+    */
+    const fieldName = '';
+    const dataModelWithNewField = dataModelTypeDefsBuilder.addField(
+      dataModelWithNewType,
+      typeName,
+      fieldName,
+      {
+        name: fieldName,
+        type: 'String',
+      }
+    );
+
+    const updatedType = dataModelWithNewField.types.find(
+      (type) => type.name === typeName
+    ) as DataModelTypeDefsType;
+    setSolutionDataModel(dataModelWithNewField);
+    setCurrentType(updatedType);
   };
 
   const onFieldCreate = () => {

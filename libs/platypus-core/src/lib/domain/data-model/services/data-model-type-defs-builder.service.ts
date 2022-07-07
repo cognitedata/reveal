@@ -25,14 +25,10 @@ export class DataModelTypeDefsBuilderService {
     directive?: string
   ): DataModelTypeDefs {
     const newType = this.graphqlService.addType(name, directive);
-    let newState = {
+    const newState = {
       ...state,
       types: [...state.types, newType],
     };
-    newState = this.addField(newState, name, '', {
-      name: '',
-      type: 'String',
-    });
     return newState;
   }
 
