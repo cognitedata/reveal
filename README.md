@@ -44,6 +44,13 @@ The Document Search UI can be run locally, using [dev.fusion.cogniteapp.com](htt
 9. Press `Apply override`
 10. Edit the url bar in the browser, and add `/documents` at the end of the path. Example: if you are using the `unstructured-search` tenant, the full url should be: `https://dev.fusion.cogniteapp.com/unstructured-search/documents?env=greenfield`
 
+## Deploying
+
+When you have merged your PR, and the CD jenkins has run successfully, there are a couple more steps that need to be done before your change becomes visible in fusion:
+
+1. Trigger this build: https://cd.jenkins.cognite.ai/job/cognitedata-cd/job/cdf-hub/job/master/ This will make your change visible on https://staging.fusion.cognite.com, but not on https://fusion.cognite.com
+2. To deploy the change to production, approve this pipeline: https://spinnaker.cognite.ai/#/applications/fusion-app/executions
+
 ## Questions?
 
 Head on over to our Slack channel at [#topic-document-search](https://cognitedata.slack.com/archives/CKY04V4CA).
