@@ -3,22 +3,21 @@
  */
 
 import { StylableObject } from '../../styling/StylableObject';
-import { Vec3, v3Add } from '../../styling/shapes/linalg';
+
+import * as THREE from 'three';
 
 export function computeObjectIdBuffer(
   positionBuffer: Float32Array,
   objectList: StylableObject[],
-  pointOffset: Vec3
+  pointOffset: THREE.Vector3
 ): ArrayBuffer {
   const numPoints = positionBuffer.length / 3;
   const rawObjectIdBuffer = new ArrayBuffer(2 * numPoints);
   const objectIdBufferView = new Uint16Array(rawObjectIdBuffer);
 
   for (let i = 0; i < objectIdBufferView.length; i++) {
-    const position: Vec3 = v3Add(
-      [positionBuffer[3 * i + 0], positionBuffer[3 * i + 1], positionBuffer[3 * i + 2]],
-      pointOffset
-    );
+    const position = new THREE.Vector3().fromArray(positionBuffer.slice(3 * i, 3 * (i + 1))).add(pointOffset);
+
 
     for (const obj of objectList) {
       if (obj.shape.containsPoint(position)) {

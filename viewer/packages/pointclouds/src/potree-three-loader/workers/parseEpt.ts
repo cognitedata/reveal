@@ -1,5 +1,4 @@
 import { StylableObject } from '../../styling/StylableObject';
-import { Vec3 } from '../../styling/shapes/linalg';
 import { computeObjectIdBuffer } from './assignObjects';
 
 import { addThree } from '../../../wasm';

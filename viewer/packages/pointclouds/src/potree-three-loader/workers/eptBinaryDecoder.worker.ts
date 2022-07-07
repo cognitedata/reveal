@@ -6,6 +6,7 @@ import { RawStylableObject, StylableObject, rawToStylableObject } from '../../st
 
 import { parseEpt, EptInputData, ParsedEptData } from './parseEpt';
 import { Vec3 } from '../../styling/shapes/linalg';
+import * as THREE from 'three';
 
 import { setupTransferableMethodsOnWorker } from '@reveal/utilities';
 

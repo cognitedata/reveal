@@ -5,7 +5,9 @@
 import { ShapeType } from './IRawShape';
 import { IShape } from './IShape';
 
-import { Vec3, v3Scale, v3Middle, v3Length, v3Sub, v3Normalized, v3Dot } from './linalg';
+import { Vec3 } from './linalg';
+
+import * as THREE from 'three';
 
 export type RawCylinder = {
   type: ShapeType.Cylinder;
@@ -15,21 +17,21 @@ export type RawCylinder = {
 };
 
 export class Cylinder implements IShape {
-  private readonly _centerA: Vec3;
-  private readonly _centerB: Vec3;
+  private readonly _centerA: THREE.Vector3;
+  private readonly _centerB: THREE.Vector3;
   private readonly _radius: number;
 
-  constructor(centerA: Vec3, centerB: Vec3, radius: number) {
+  constructor(centerA: THREE.Vector3, centerB: THREE.Vector3, radius: number) {
     this._centerA = centerA;
     this._centerB = centerB;
     this._radius = radius;
   }
 
-  get centerA(): Vec3 {
+  get centerA(): THREE.Vector3 {
     return this._centerA;
   }
 
-  get centerB(): Vec3 {
+  get centerB(): THREE.Vector3 {
     return this._centerB;
   }
 
@@ -38,25 +40,26 @@ export class Cylinder implements IShape {
   }
 
   private getHalfHeight(): number {
-    return v3Length(v3Sub(this._centerA, this._centerB));
+    return this._centerA.clone().sub(this._centerB).length() * 0.5;
   }
 
-  private getMiddle(): Vec3 {
-    return v3Middle(this._centerA, this._centerB);
+  private getMiddle(): THREE.Vector3 {
+    return this._centerA.clone().add(this._centerB).multiplyScalar(0.5);
   }
 
-  private getAxis(): Vec3 {
-    return v3Normalized(v3Sub(this._centerA, this._centerB));
+  private getAxis(): THREE.Vector3 {
+    return this._centerA.clone().sub(this._centerB).normalize();
   }
 
-  containsPoint(point: Vec3): boolean {
+  containsPoint(point: THREE.Vector3): boolean {
     const halfHeight = this.getHalfHeight();
     const middle = this.getMiddle();
     const dir = this.getAxis();
-    const distAlongAxis = v3Dot(v3Sub(point, middle), dir);
-    const axisRelativeMiddle = v3Sub(point, v3Scale(dir, distAlongAxis));
 
-    const distToAxis = v3Length(v3Sub(axisRelativeMiddle, middle));
+    const distAlongAxis = point.clone().sub(middle).dot(dir);
+    const axisRelativeMiddle = point.clone().sub(dir.clone().multiplyScalar(distAlongAxis));
+
+    const distToAxis = axisRelativeMiddle.clone().sub(middle).length();
 
     return Math.abs(distAlongAxis) < halfHeight && distToAxis < this._radius;
   }
@@ -64,8 +67,8 @@ export class Cylinder implements IShape {
   toRawShape(): RawCylinder {
     return {
       type: ShapeType.Cylinder,
-      centerA: this._centerA,
-      centerB: this._centerB,
+      centerA: this._centerA.toArray(),
+      centerB: this._centerB.toArray(),
       radius: this._radius
     };
   }

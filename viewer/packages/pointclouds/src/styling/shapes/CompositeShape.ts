@@ -5,7 +5,7 @@
 import { IShape } from './IShape';
 import { IRawShape, ShapeType } from './IRawShape';
 
-import { Vec3 } from './linalg';
+import * as THREE from 'three';
 
 export type RawCompositeShape = {
   type: ShapeType.Composite;
@@ -19,7 +19,7 @@ export class CompositeShape implements IShape {
     this._innerShapes = shapes.slice();
   }
 
-  containsPoint(point: Vec3): boolean {
+  containsPoint(point: THREE.Vector3): boolean {
     for (const shape of this._innerShapes) {
       if (shape.containsPoint(point)) {
         return true;
