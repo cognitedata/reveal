@@ -1,6 +1,8 @@
 import { FetchOptions } from 'utils/fetchAllCursors';
 
-import { Wellbore } from '@cognite/sdk-wells-v3';
+import { SequenceSource, Wellbore } from '@cognite/sdk-wells-v3';
+
+import { DataError } from 'modules/inspectTabs/types';
 
 export interface GetAllInspectDataProps {
   wellboreIds: Set<Wellbore['matchingId']>;
@@ -9,4 +11,9 @@ export interface GetAllInspectDataProps {
 
 export interface AllCursorsProps {
   wellboreIds: Array<Wellbore['matchingId']>;
+}
+
+export interface SequenceDataError {
+  source: SequenceSource;
+  errors: DataError[];
 }

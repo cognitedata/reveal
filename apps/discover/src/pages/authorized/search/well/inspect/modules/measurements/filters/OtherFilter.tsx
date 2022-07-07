@@ -1,17 +1,17 @@
-import { useOtherFilterOptions } from 'domain/wells/measurements0/internal/hooks/useOtherFilterOptions';
+import { DepthMeasurementDataColumnInternal } from 'domain/wells/measurements/internal/types';
 
 import React from 'react';
 
-import { DepthMeasurementColumn } from '@cognite/sdk-wells-v3';
-
 import { useDeepEffect } from 'hooks/useDeep';
+
+import { useOtherFilterOptions } from '../hooks/useOtherFilterOptions';
 
 import { CommonCurveFilter } from './CommonCurveFilter';
 import { mapCurvesToOptions } from './utils';
 
 interface Props {
-  selectedCurves: DepthMeasurementColumn[];
-  onChange: (curves: DepthMeasurementColumn[]) => void;
+  selectedCurves: DepthMeasurementDataColumnInternal[];
+  onChange: (curves: DepthMeasurementDataColumnInternal[]) => void;
 }
 
 export const OtherFilter: React.FC<Props> = ({ selectedCurves, onChange }) => {

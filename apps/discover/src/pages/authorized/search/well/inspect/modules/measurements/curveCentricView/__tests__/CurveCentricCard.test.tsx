@@ -1,10 +1,11 @@
 import 'modules/map/__mocks/mockMapbox';
+import { getMockMeasurementChartData } from 'domain/wells/measurements/internal/__fixtures/measurements';
+
 import { screen } from '@testing-library/react';
 
-import { getMockMeasurementChartData } from '__test-utils/fixtures/measurements';
 import { testRenderer } from '__test-utils/renderer';
 import { getMockedStore } from '__test-utils/store.utils';
-import { MeasurementTypeV3 as MeasurementType } from 'modules/wellSearch/types';
+import { MeasurementType } from 'modules/wellSearch/types';
 
 import { GEOMECHANICS_CRUVES_TITLE, PPFG_CURVES_TITLE } from '../constants';
 import { CurveCentricCard, Props } from '../CurveCentricCard';

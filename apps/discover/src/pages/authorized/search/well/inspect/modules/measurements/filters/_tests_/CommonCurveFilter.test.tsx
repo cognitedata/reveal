@@ -1,10 +1,11 @@
+import { getMockPpfgsColumns } from 'domain/wells/measurements/internal/__fixtures/measurements';
+import { DepthMeasurementDataColumnInternal } from 'domain/wells/measurements/internal/types';
+
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import { OptionType } from '@cognite/cogs.js';
-import { DepthMeasurementColumn } from '@cognite/sdk-wells-v3';
 
-import { getMockPpfgsColumns } from '__test-utils/fixtures/measurements';
 import { testRenderer } from '__test-utils/renderer';
 
 import { CommonCurveFilter, Props } from '../CommonCurveFilter';
@@ -17,7 +18,7 @@ describe('CommonCurveFilter tests', () => {
     testRenderer(CommonCurveFilter, undefined, viewProps);
 
   it('Should display title and selected number of curves', async () => {
-    const groupOptions: OptionType<DepthMeasurementColumn>[] = [
+    const groupOptions: OptionType<DepthMeasurementDataColumnInternal>[] = [
       {
         label: 'Curves',
         options: mapCurvesToOptions(getMockPpfgsColumns()),
@@ -38,7 +39,7 @@ describe('CommonCurveFilter tests', () => {
   });
 
   it('Should call the callback with selected curves', async () => {
-    const groupOptions: OptionType<DepthMeasurementColumn>[] = [
+    const groupOptions: OptionType<DepthMeasurementDataColumnInternal>[] = [
       {
         label: 'Curves',
         options: mapCurvesToOptions(getMockPpfgsColumns()),
@@ -55,7 +56,7 @@ describe('CommonCurveFilter tests', () => {
 
     await userEvent.click(screen.getByText(TITLE));
     await userEvent.click(
-      screen.getByText(getMockPpfgsColumns()[1].columnExternalId)
+      screen.getByText(getMockPpfgsColumns()[1].externalId)
     );
     expect(onChange).toBeCalledWith([
       getMockPpfgsColumns()[0],

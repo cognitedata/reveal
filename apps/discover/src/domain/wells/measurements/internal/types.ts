@@ -10,6 +10,8 @@ import {
   DistanceRange,
 } from '@cognite/sdk-wells-v3';
 
+import { DataError } from 'modules/inspectTabs/types';
+
 export interface DepthMeasurementInternal
   extends Omit<DepthMeasurement, 'depthColumn' | 'datum' | 'depthRange'> {
   depthColumn: DepthIndexColumnInternal;
@@ -23,23 +25,24 @@ export interface DepthMeasurementDataInternal
   depthUnit: Distance;
 }
 
-export interface DistanceRangeInternal extends Omit<DistanceRange, 'unit'> {
-  unit: Distance;
-}
-
 export interface DepthMeasurementWithData
   extends Omit<DepthMeasurementInternal, 'columns'>,
     Omit<DepthMeasurementDataInternal, 'columns'> {
   columns: DepthMeasurementDataColumnInternal[];
+  errors?: DataError[];
 }
 
-export interface DepthMeasurementDataColumnInternal
-  extends DepthMeasurementDataColumn {
-  description?: string;
+export interface DistanceRangeInternal extends Omit<DistanceRange, 'unit'> {
+  unit: Distance;
 }
 
 export interface DepthIndexColumnInternal {
   externalId: string;
   unit: Distance;
   type: DepthIndexTypeEnum;
+}
+
+export interface DepthMeasurementDataColumnInternal
+  extends DepthMeasurementDataColumn {
+  description?: string;
 }

@@ -1,5 +1,3 @@
-import { GraphTrackEnum } from 'domain/wells/measurements/internal/constants';
-
 import get from 'lodash/get';
 import isEmpty from 'lodash/isEmpty';
 
@@ -8,6 +6,7 @@ import { PlotConfig } from '@cognite/videx-wellog/dist/tracks/graph/interfaces';
 
 import { NO_LOGS_LEGEND_MESSAGE } from 'pages/authorized/search/well/inspect/constants';
 
+import { GraphTrackEnum } from '../../../constants';
 import { WellLogPreviewData } from '../types';
 
 import { getRandomTrackColor } from './trackColorizer';

@@ -1,6 +1,6 @@
+import { SequenceDataError } from 'domain/wells/types';
 import { groupBySequence } from 'domain/wells/wellbore/internal/transformers/groupBySequence';
 
-import { handleServiceError } from 'utils/errors';
 import { toDistanceUnitEnum } from 'utils/units/toDistanceUnitEnum';
 
 import { WELL_QUERY_KEY } from 'constants/react-query';
@@ -12,42 +12,37 @@ import {
   MeasurementTypeFilter,
   SequenceExternalIdFilter,
 } from '../../service/types';
-import { ERROR_LOADING_DEPTH_MEASUREMENT_DATA_ERROR } from '../constants';
+import { handleDepthMeasurementDataServiceError } from '../../service/utils/handleDepthMeasurementDataServiceError';
 import { normalizeDepthMeasurementData } from '../transformers/normalizeDepthMeasurementData';
 import { DepthMeasurementDataInternal } from '../types';
 
 export const useDepthMeasurementDataQuery = ({
   sequenceExternalIds,
-  measurementTypes,
+  measurementTypes = [],
 }: SequenceExternalIdFilter & MeasurementTypeFilter) => {
   const { data: userPreferredUnit } = useUserPreferencesMeasurement();
 
-  return useArrayCache<DepthMeasurementDataInternal>({
+  return useArrayCache<DepthMeasurementDataInternal | SequenceDataError>({
     key: [
-      ...WELL_QUERY_KEY.DEPTH_MEASUREMENT_DATA,
-      ...(measurementTypes || []),
+      ...WELL_QUERY_KEY.DEPTH_MEASUREMENTS_DATA,
+      ...measurementTypes,
       userPreferredUnit,
     ],
     items: new Set(sequenceExternalIds),
     fetchAction: (sequenceExternalIds, options) =>
-      getDepthMeasurementData({
-        sequenceExternalIds,
-        measurementTypes,
-        unit: toDistanceUnitEnum(userPreferredUnit),
-        options,
-      })
-        .then((depthMeasurementData) =>
-          depthMeasurementData.map((rawDepthMeasurementData) =>
-            normalizeDepthMeasurementData(rawDepthMeasurementData)
-          )
+      Promise.all(
+        Array.from(sequenceExternalIds).map((sequenceExternalId) =>
+          getDepthMeasurementData({
+            sequenceExternalId,
+            measurementTypes,
+            unit: toDistanceUnitEnum(userPreferredUnit),
+            options,
+          })
+            .then(normalizeDepthMeasurementData)
+            .catch((error) =>
+              handleDepthMeasurementDataServiceError(error, sequenceExternalId)
+            )
         )
-        .then(groupBySequence)
-        .catch((error) =>
-          handleServiceError(
-            error,
-            {},
-            ERROR_LOADING_DEPTH_MEASUREMENT_DATA_ERROR
-          )
-        ),
+      ).then(groupBySequence),
   });
 };

@@ -1,7 +1,8 @@
 import 'modules/map/__mocks/mockMapbox';
+import { getMockMeasurementChartData } from 'domain/wells/measurements/internal/__fixtures/measurements';
+
 import { screen } from '@testing-library/react';
 
-import { getMockMeasurementChartData } from '__test-utils/fixtures/measurements';
 import { testRenderer } from '__test-utils/renderer';
 
 import { CompareViewCard, Props } from '../CompareViewCard';

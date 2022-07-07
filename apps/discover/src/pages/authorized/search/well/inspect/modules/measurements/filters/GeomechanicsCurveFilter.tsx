@@ -1,18 +1,18 @@
-import { useGeomechanicsFilterOptions } from 'domain/wells/measurements0/internal/hooks/useGeomechanicsFilterOptions';
+import { DepthMeasurementDataColumnInternal } from 'domain/wells/measurements/internal/types';
 
 import React from 'react';
 
 import { OptionType } from '@cognite/cogs.js';
-import { DepthMeasurementColumn } from '@cognite/sdk-wells-v3';
 
 import { useDeepEffect } from 'hooks/useDeep';
+import { useGeomechanicsFilterOptions } from 'pages/authorized/search/well/inspect/modules/measurements/hooks/useGeomechanicsFilterOptions';
 
 import { CommonCurveFilter } from './CommonCurveFilter';
 import { mapCurvesToOptions } from './utils';
 
 interface Props {
-  selectedCurves: DepthMeasurementColumn[];
-  onChange: (curves: DepthMeasurementColumn[]) => void;
+  selectedCurves: DepthMeasurementDataColumnInternal[];
+  onChange: (curves: DepthMeasurementDataColumnInternal[]) => void;
 }
 
 export const GeomechanicsCurveFilter: React.FC<Props> = ({
@@ -21,7 +21,7 @@ export const GeomechanicsCurveFilter: React.FC<Props> = ({
 }) => {
   const { curves } = useGeomechanicsFilterOptions();
 
-  const groupOptions: OptionType<DepthMeasurementColumn>[] = [
+  const groupOptions: OptionType<DepthMeasurementDataColumnInternal>[] = [
     {
       label: 'Curves',
       options: mapCurvesToOptions(curves),

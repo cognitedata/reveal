@@ -1,4 +1,4 @@
-import { useMeasurementsQuery } from 'domain/wells/measurements0/internal/queries/useMeasurementsQuery';
+import { DepthMeasurementDataColumnInternal } from 'domain/wells/measurements/internal/types';
 import { useWellInspectSelectedWellbores } from 'domain/wells/well/internal/transformers/useWellInspectSelectedWellbores';
 
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
@@ -9,18 +9,17 @@ import groupBy from 'lodash/groupBy';
 import isEmpty from 'lodash/isEmpty';
 import isUndefined from 'lodash/isUndefined';
 
-import { DepthMeasurementColumn } from '@cognite/sdk-wells-v3';
-
 import { NoDataAvailable } from 'components/Charts/common/NoDataAvailable';
 import { Loading } from 'components/Loading';
 import { PressureUnit } from 'constants/units';
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 import { inspectTabsActions } from 'modules/inspectTabs/actions';
 import {
-  MeasurementChartDataV3 as MeasurementChartData,
-  MeasurementTypeV3 as MeasurementType,
+  MeasurementChartData,
+  MeasurementType,
 } from 'modules/wellSearch/types';
 
+import { useMeasurementsData } from '../hooks/useMeasurementsData';
 import {
   filterByChartType,
   filterByMainChartType,
@@ -32,9 +31,9 @@ import CurveCentricCard from './CurveCentricCard';
 import { CurveCentricViewWrapper } from './elements';
 
 export type Props = {
-  geomechanicsCurves: DepthMeasurementColumn[];
-  ppfgCurves: DepthMeasurementColumn[];
-  otherTypes: DepthMeasurementColumn[];
+  geomechanicsCurves: DepthMeasurementDataColumnInternal[];
+  ppfgCurves: DepthMeasurementDataColumnInternal[];
+  otherTypes: DepthMeasurementDataColumnInternal[];
   pressureUnit: PressureUnit;
   measurementReference: string;
 };
@@ -48,7 +47,7 @@ export const CurveCentricView: React.FC<Props> = ({
 }) => {
   const dispatch = useDispatch();
 
-  const { data, isLoading } = useMeasurementsQuery();
+  const { data, groupedData, isLoading } = useMeasurementsData();
 
   const selectedInspectWellbores = useWellInspectSelectedWellbores();
 
@@ -64,7 +63,7 @@ export const CurveCentricView: React.FC<Props> = ({
       .map((wellbore) => ({
         wellbore,
         proccessedData: formatChartData(
-          data[wellbore.id],
+          groupedData[wellbore.id],
           geomechanicsCurves,
           ppfgCurves,
           otherTypes,

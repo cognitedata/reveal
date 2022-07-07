@@ -1,15 +1,16 @@
+import { DepthMeasurementDataColumnInternal } from 'domain/wells/measurements/internal/types';
+
 import isEmpty from 'lodash/isEmpty';
 import { colorize } from 'utils/colorize';
 
 import { OptionType } from '@cognite/cogs.js';
-import { DepthMeasurementColumn } from '@cognite/sdk-wells-v3';
 
 import { PressureUnit, DepthMeasurementUnit } from 'constants/units';
 
 export const mapCurvesToOptions = (
-  curves: DepthMeasurementColumn[]
-): OptionType<DepthMeasurementColumn>[] =>
-  curves.map((column) => ({ value: column, label: column.columnExternalId }));
+  curves: DepthMeasurementDataColumnInternal[]
+): OptionType<DepthMeasurementDataColumnInternal>[] =>
+  curves.map((column) => ({ value: column, label: column.externalId }));
 
 export const mapEventsToOptions = (
   events: Record<string, string[]>

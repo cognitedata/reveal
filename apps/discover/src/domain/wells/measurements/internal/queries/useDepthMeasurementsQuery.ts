@@ -15,14 +15,14 @@ import { DepthMeasurementInternal } from '../types';
 
 export const useDepthMeasurementsQuery = ({
   wellboreIds,
-  measurementTypes,
+  measurementTypes = [],
 }: AllCursorsProps & MeasurementTypeFilter) => {
   const { data: userPreferredUnit } = useUserPreferencesMeasurement();
 
   return useArrayCache<DepthMeasurementInternal>({
     key: [
       ...WELL_QUERY_KEY.DEPTH_MEASUREMENTS,
-      ...(measurementTypes || []),
+      ...measurementTypes,
       userPreferredUnit,
     ],
     items: new Set(wellboreIds),

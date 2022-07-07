@@ -5,8 +5,8 @@ import isUndefined from 'lodash/isUndefined';
 
 import { NoDataAvailable } from 'components/Charts/common/NoDataAvailable';
 import {
-  MeasurementChartDataV3 as MeasurementChartData,
-  MeasurementTypeV3 as MeasurementType,
+  MeasurementChartData,
+  MeasurementType,
 } from 'modules/wellSearch/types';
 import { ChartV2 } from 'pages/authorized/search/well/inspect/modules/common/ChartV2';
 

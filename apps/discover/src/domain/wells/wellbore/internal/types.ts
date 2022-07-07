@@ -22,6 +22,7 @@ export interface Wellbore
   maxMeasuredDepth?: number;
   maxTrueVerticalDepth?: number;
   maxDoglegSeverity?: DoglegSeverityInternal;
+  color?: string;
 }
 
 export interface DatumInternal extends Omit<Datum, 'unit'> {

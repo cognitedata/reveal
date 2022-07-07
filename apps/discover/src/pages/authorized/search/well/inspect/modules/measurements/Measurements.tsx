@@ -1,17 +1,15 @@
-import { useMeasurementsQuery } from 'domain/wells/measurements0/internal/queries/useMeasurementsQuery';
+import { DepthMeasurementDataColumnInternal } from 'domain/wells/measurements/internal/types';
 
 import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
 import isEmpty from 'lodash/isEmpty';
-import { areAllSetValuesEmpty } from 'utils/areAllSetValuesEmpty';
 
 import { PerfMetrics } from '@cognite/metrics';
-import { DepthMeasurementColumn } from '@cognite/sdk-wells-v3';
 
-import { NoDataAvailable } from 'components/Charts/common/NoDataAvailable';
+import EmptyState from 'components/EmptyState';
 import { MultiSelectCategorizedOptionMap } from 'components/Filters/MultiSelectCategorized/types';
-import { Loading } from 'components/Loading';
+import { LOADING_TEXT } from 'components/Loading/constants';
 import {
   PerformanceMetricsObserver,
   PerformanceObserved,
@@ -34,6 +32,7 @@ import { OtherFilter } from './filters/OtherFilter';
 import { PPFGCurveFilter } from './filters/PPFGCurveFilter';
 import { UnitSelector } from './filters/UnitSelector';
 import { ViewModeSelector } from './filters/ViewModeSelector';
+import { useMeasurementsData } from './hooks/useMeasurementsData';
 import { getMeasurementDataFetchErrors } from './utils';
 import WellCentricView from './wellCentricView/WellCentricView';
 
@@ -41,10 +40,14 @@ export const MeasurementsComponent: React.FC = () => {
   const dispatch = useDispatch();
   const [viewMode, setViewMode] = useState<string>('Wells');
   const [geomechanicsCurves, setGeomechanicsCurves] = useState<
-    DepthMeasurementColumn[]
+    DepthMeasurementDataColumnInternal[]
   >([]);
-  const [ppfgCurves, setPPFGCurves] = useState<DepthMeasurementColumn[]>([]);
-  const [otherTypes, setOtherTypes] = useState<DepthMeasurementColumn[]>([]);
+  const [ppfgCurves, setPPFGCurves] = useState<
+    DepthMeasurementDataColumnInternal[]
+  >([]);
+  const [otherTypes, setOtherTypes] = useState<
+    DepthMeasurementDataColumnInternal[]
+  >([]);
   const [nptEvents, setNptEvents] = useState<MultiSelectCategorizedOptionMap>(
     {}
   );
@@ -58,22 +61,18 @@ export const MeasurementsComponent: React.FC = () => {
   const [measurementReference, setMeasurementReference] =
     useState<DepthMeasurementUnit>(DEFAULT_MEASUREMENTS_REFERENCE);
 
-  const { isLoading, data } = useMeasurementsQuery();
+  const { isLoading, data, groupedData } = useMeasurementsData();
 
   useEffect(() => {
-    if (!data) return;
-    const wellboreErrors = getMeasurementDataFetchErrors(data);
+    if (isEmpty(data)) return;
+    const wellboreErrors = getMeasurementDataFetchErrors(groupedData);
     if (!isEmpty(wellboreErrors)) {
       dispatch(inspectTabsActions.setErrors(wellboreErrors));
     }
   }, [JSON.stringify(data)]);
 
-  if (isLoading) {
-    return <Loading />;
-  }
-
-  if (data && areAllSetValuesEmpty(data)) {
-    return <NoDataAvailable />;
+  if (isEmpty(data)) {
+    return <EmptyState isLoading={isLoading} loadingSubtitle={LOADING_TEXT} />;
   }
 
   return (

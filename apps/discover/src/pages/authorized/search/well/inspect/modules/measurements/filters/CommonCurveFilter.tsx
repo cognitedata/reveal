@@ -1,7 +1,8 @@
+import { DepthMeasurementDataColumnInternal } from 'domain/wells/measurements/internal/types';
+
 import React from 'react';
 
 import { OptionType, Select } from '@cognite/cogs.js';
-import { DepthMeasurementColumn } from '@cognite/sdk-wells-v3';
 
 import EmptyState from 'components/EmptyState';
 
@@ -10,9 +11,9 @@ import { mapCurvesToOptions, extractSelectedCurvesFromOptions } from './utils';
 
 export interface Props {
   title: string;
-  selected: DepthMeasurementColumn[];
-  options: OptionType<DepthMeasurementColumn>[];
-  onChange: (curves: DepthMeasurementColumn[]) => void;
+  selected: DepthMeasurementDataColumnInternal[];
+  options: OptionType<DepthMeasurementDataColumnInternal>[];
+  onChange: (curves: DepthMeasurementDataColumnInternal[]) => void;
   grouped?: boolean;
 }
 
@@ -33,17 +34,21 @@ export const CommonCurveFilter: React.FC<Props> = ({
 
   return (
     <DropdownWrapper>
-      <Select<DepthMeasurementColumn>
+      <Select<DepthMeasurementDataColumnInternal>
         isMulti
         title={title}
         selectAllLabel="All"
         placeholder="Search"
         value={selectedOptions}
-        onChange={(options: OptionType<DepthMeasurementColumn>[]) => {
+        onChange={(
+          options: OptionType<DepthMeasurementDataColumnInternal>[]
+        ) => {
           onChange(
             extractSelectedCurvesFromOptions(options, selectedOptions)
               .map((option) => option.value)
-              .filter((value) => !!value) as DepthMeasurementColumn[]
+              .filter(
+                (value) => !!value
+              ) as DepthMeasurementDataColumnInternal[]
           );
         }}
         options={options}

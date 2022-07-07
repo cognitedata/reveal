@@ -3,8 +3,12 @@ import 'domain/wells/__mocks/setupWellsMockSDK';
 import 'modules/map/__mocks/mockMapbox';
 import { getMockConfigGet } from 'domain/projectConfig/service/__mocks/getMockConfigGet';
 import { getMockUserMe } from 'domain/userManagementService/service/__mocks/getMockUserMe';
-import { getMockDepthMeasurementData } from 'domain/wells/measurements0/service/__mocks/getMockDepthMeasurementData';
-import { getMockDepthMeasurements } from 'domain/wells/measurements0/service/__mocks/getMockDepthMeasurements';
+import {
+  getMockDepthMeasurementDataWellboreOne,
+  getMockDepthMeasurementItem,
+} from 'domain/wells/measurements/internal/__fixtures/measurements';
+import { getMockDepthMeasurementData } from 'domain/wells/measurements/service/__mocks/getMockDepthMeasurementData';
+import { getMockDepthMeasurements } from 'domain/wells/measurements/service/__mocks/getMockDepthMeasurements';
 import { getMockWell } from 'domain/wells/well/service/__fixtures/well';
 import { getMockWellsById } from 'domain/wells/well/service/__mocks/getMockWellsById';
 import { getMockWellbore } from 'domain/wells/wellbore/service/__fixtures/wellbore';
@@ -12,10 +16,6 @@ import { getMockWellbore } from 'domain/wells/wellbore/service/__fixtures/wellbo
 import { screen, waitFor } from '@testing-library/react';
 import { setupServer } from 'msw/node';
 
-import {
-  getMockDepthMeasurementDataWellboreOne,
-  getMockDepthMeasurementItem,
-} from '__test-utils/fixtures/measurements';
 import { testRenderer } from '__test-utils/renderer';
 import { getMockedStore } from '__test-utils/store.utils';
 import { LOADING_TEXT, NO_RESULTS_TEXT } from 'components/Loading/constants';
@@ -125,7 +125,7 @@ describe('WellCentricView Tests api return data sequence list', () => {
       ppfgCurves: [
         {
           measurementType: 'fracture pressure pre drill mean',
-          columnExternalId: 'FP_CARBONATE_ML',
+          externalId: 'FP_CARBONATE_ML',
           unit: 'psi',
         },
       ],
@@ -190,7 +190,7 @@ describe('Measuremnts with loading errors ( unit )', () => {
       ppfgCurves: [
         {
           measurementType: 'fracture pressure pre drill mean',
-          columnExternalId: 'FP_CARBONATE_ML',
+          externalId: 'FP_CARBONATE_ML',
           unit: 'psi',
         },
       ],
@@ -256,7 +256,7 @@ describe('Measuremnts with loading errors ( measurement type )', () => {
       ppfgCurves: [
         {
           measurementType: 'fracture pressure pre drill mean',
-          columnExternalId: 'FP_CARBONATE_ML',
+          externalId: 'FP_CARBONATE_ML',
           unit: 'psi',
         },
       ],

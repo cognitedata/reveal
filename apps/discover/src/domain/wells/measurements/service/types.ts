@@ -8,13 +8,13 @@ export type GetDepthMeasurementsProps = GetAllInspectDataProps &
   MeasurementTypeFilter;
 
 export interface GetDepthMeasurementDataProps extends MeasurementTypeFilter {
-  sequenceExternalIds: Set<string>;
+  sequenceExternalId: string;
   unit?: DistanceUnitEnum;
   options?: FetchOptions;
 }
 
 export interface MeasurementTypeFilter {
-  measurementTypes?: Array<string>;
+  measurementTypes?: Array<WdlMeasurementType>;
 }
 
 export interface SequenceExternalIdFilter {
@@ -42,4 +42,12 @@ export enum WdlMeasurementType {
   FRACTURE_PRESSURE_POST_DRILL_MEAN = 'fracture pressure post drill mean',
   LOT = 'fit equivalent mud weight',
   FIT = 'lot equivalent mud weight',
+  GAMMA_RAY = 'gamma ray',
+  CALIPER = 'caliper',
+  DEEP_RESISTIVITY = 'deep resistivity',
+  MEDIUM_RESISTIVITY = 'medium resistivity',
+  MICRO_RESISTIVITY = 'micro resistivity',
+  SHALLOW_RESISTIVITY = 'shallow resistivity',
+  DENSITY = 'density',
+  NEUTRON_POROSITY = 'neutron porosity',
 }

@@ -1,11 +1,10 @@
-import { GraphTrackEnum } from 'domain/wells/measurements/internal/constants';
-
 import isEmpty from 'lodash/isEmpty';
 import keyBy from 'lodash/keyBy';
 import set from 'lodash/set';
 
 import { BlockScaleTrack, GraphTrack } from '@cognite/videx-wellog';
 
+import { GraphTrackEnum } from '../../../constants';
 import { MEASUREMENT_TYPE_MAPPING } from '../../../measurementTypeMapping';
 import { TRACK_CONFIG } from '../../../trackConfig';
 import { WellLogNdsEventsData, WellLogPreviewData } from '../types';

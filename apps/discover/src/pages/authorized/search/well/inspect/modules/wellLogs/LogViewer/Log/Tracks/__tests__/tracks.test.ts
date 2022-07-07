@@ -1,5 +1,3 @@
-import { GraphTrackEnum } from 'domain/wells/measurements/internal/constants';
-
 import {
   commonLogDataMock,
   getLogDataWithMeasurementType,
@@ -7,6 +5,7 @@ import {
   tvdBasedLogData,
 } from '__test-utils/fixtures/wellLogs';
 
+import { GraphTrackEnum } from '../../../../constants';
 import { WellLogPreviewData } from '../../types';
 import { getLogViewerTracks } from '../tracks';
 

@@ -4,8 +4,8 @@ import head from 'lodash/head';
 
 import { BaseButton } from 'components/Buttons';
 import {
-  MeasurementChartDataV3 as MeasurementChartData,
-  MeasurementTypeV3 as MeasurementType,
+  MeasurementChartData,
+  MeasurementType,
 } from 'modules/wellSearch/types';
 import { ChartV2 } from 'pages/authorized/search/well/inspect/modules/common/ChartV2';
 import CurveColorCode from 'pages/authorized/search/well/inspect/modules/common/ChartV2/CurveColorCode';

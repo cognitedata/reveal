@@ -20,8 +20,8 @@ import { Checkbox, SegmentedControl } from '@cognite/cogs.js';
 import { BaseButton } from 'components/Buttons';
 import { MultiSelectCategorizedOptionMap } from 'components/Filters/MultiSelectCategorized/types';
 import {
-  MeasurementChartDataV3 as MeasurementChartData,
-  MeasurementTypeV3,
+  MeasurementChartData,
+  MeasurementType,
   WellboreId,
 } from 'modules/wellSearch/types';
 import { ChartV2 } from 'pages/authorized/search/well/inspect/modules/common/ChartV2';
@@ -95,8 +95,8 @@ export const WellCentricCard: React.FC<Props> = ({
     0, 10,
   ]);
 
-  const fitChart = head(filterByChartType(chartData, [MeasurementTypeV3.FIT]));
-  const lotChart = head(filterByChartType(chartData, [MeasurementTypeV3.LOT]));
+  const fitChart = head(filterByChartType(chartData, [MeasurementType.FIT]));
+  const lotChart = head(filterByChartType(chartData, [MeasurementType.LOT]));
 
   const { isLoading: isNptLoading, data: nptEvents } = useNptEventsForCasings({
     wellboreIds,

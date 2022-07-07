@@ -1,20 +1,18 @@
-import { DistanceUnitEnum } from '@cognite/sdk-wells-v3';
-
 import {
   getMockDepthMeasurementColumn,
-  getMockDepthMeasurementData,
   getDepthMeasurementRowsWithBreakingValues,
   getMockDepthMeasurementDataColumns,
   getMockPpfgsColumns,
   getMockGeomechanicsColumns,
   getMockMeasurement,
-} from '__test-utils/fixtures/measurements';
+} from 'domain/wells/measurements/internal/__fixtures/measurements';
+
 import { mockedWellboreResultFixture } from '__test-utils/fixtures/well';
-import { UserPreferredUnit, PressureUnit } from 'constants/units';
+import { UserPreferredUnit, PressureUnit, FEET } from 'constants/units';
 import {
-  MeasurementTypeV3 as MeasurementType,
+  MeasurementType,
   GeoPpfgFilterTypes,
-  MeasurementChartDataV3 as MeasurementChartData,
+  MeasurementChartData,
 } from 'modules/wellSearch/types';
 
 import {
@@ -34,10 +32,8 @@ describe('Measurement filter utils', () => {
   test('Should map chart data to curve centric data', () => {
     const wellbore = {
       ...mockedWellboreResultFixture[0],
-      metadata: {
-        wellName: 'Test Well Name',
-        color: '#FFFFFF',
-      },
+      wellName: 'Test Well Name',
+      color: '#FFFFFF',
     };
     const chart = {
       measurementType: MeasurementType.PPFG,
@@ -154,8 +150,8 @@ describe('mapDepthMeasurementColumnToPlotly test', () => {
       getMockDepthMeasurementColumn(),
       [],
       'GEOMECHANICS',
-      getMockDepthMeasurementData(),
-      DistanceUnitEnum.Foot,
+      getMockMeasurement(),
+      FEET,
       UserPreferredUnit.FEET,
       PressureUnit.PPG,
       MeasurementType.GEOMECHANNICS
@@ -165,12 +161,12 @@ describe('mapDepthMeasurementColumnToPlotly test', () => {
   test('Should not create graph if column is missing', () => {
     const result = mapCurveToPlotly(
       getMockDepthMeasurementColumn({
-        columnExternalId: 'TEST_ID',
+        externalId: 'TEST_ID',
       }),
       [],
       'GEOMECHANICS',
-      getMockDepthMeasurementData(),
-      DistanceUnitEnum.Foot,
+      getMockMeasurement(),
+      FEET,
       UserPreferredUnit.FEET,
       PressureUnit.PPG,
       MeasurementType.GEOMECHANNICS
@@ -181,12 +177,12 @@ describe('mapDepthMeasurementColumnToPlotly test', () => {
   test('Should not create graph if wrong measurement type passed', () => {
     const result = mapCurveToPlotly(
       getMockDepthMeasurementColumn({
-        columnExternalId: 'TEST_ID',
+        externalId: 'TEST_ID',
       }),
       [],
       'GEOMECHANICS',
-      getMockDepthMeasurementData(),
-      DistanceUnitEnum.Foot,
+      getMockMeasurement(),
+      FEET,
       UserPreferredUnit.FEET,
       PressureUnit.PPG,
       'wrong measurement type' as MeasurementType
@@ -199,10 +195,10 @@ describe('mapDepthMeasurementColumnToPlotly test', () => {
       getMockDepthMeasurementColumn(),
       [],
       'GEOMECHANICS',
-      getMockDepthMeasurementData({
+      getMockMeasurement({
         rows: getDepthMeasurementRowsWithBreakingValues(),
       }),
-      DistanceUnitEnum.Foot,
+      FEET,
       UserPreferredUnit.FEET,
       PressureUnit.PSI,
       MeasurementType.GEOMECHANNICS
@@ -219,10 +215,10 @@ describe('mapDepthMeasurementColumnToPlotly test', () => {
       getMockDepthMeasurementColumn(),
       [],
       'GEOMECHANICS',
-      getMockDepthMeasurementData({
+      getMockMeasurement({
         rows: getDepthMeasurementRowsWithBreakingValues(),
       }),
-      DistanceUnitEnum.Foot,
+      FEET,
       UserPreferredUnit.FEET,
       PressureUnit.PSI,
       MeasurementType.PPFG
@@ -239,11 +235,11 @@ describe('mapMeasurementToPlotly test', () => {
   test('Should return a chart (  ppfg )', () => {
     const result = mapMeasurementToPlotly(
       getMockDepthMeasurementDataColumns()[2],
-      getMockDepthMeasurementData(),
+      getMockMeasurement(),
       getMockGeomechanicsColumns(),
       getMockPpfgsColumns(),
       [],
-      DistanceUnitEnum.Foot,
+      FEET,
       PressureUnit.PPG,
       UserPreferredUnit.FEET,
       []
@@ -254,11 +250,11 @@ describe('mapMeasurementToPlotly test', () => {
   test('Should return a chart ( geomechanics )', () => {
     const result = mapMeasurementToPlotly(
       getMockDepthMeasurementDataColumns()[3],
-      getMockDepthMeasurementData(),
+      getMockMeasurement(),
       getMockGeomechanicsColumns(),
       getMockPpfgsColumns(),
       [],
-      DistanceUnitEnum.Foot,
+      FEET,
       PressureUnit.PPG,
       UserPreferredUnit.FEET,
       []

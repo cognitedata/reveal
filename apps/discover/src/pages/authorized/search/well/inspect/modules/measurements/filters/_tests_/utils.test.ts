@@ -1,6 +1,5 @@
-import { DepthMeasurementColumn } from '@cognite/sdk-wells-v3';
-
-import { getMockCurveOptions } from '__test-utils/fixtures/measurements';
+import { getMockCurveOptions } from 'domain/wells/measurements/internal/__fixtures/measurements';
+import { DepthMeasurementDataColumnInternal } from 'domain/wells/measurements/internal/types';
 
 import {
   mapStringCurvesToOptions,
@@ -24,7 +23,7 @@ const changeSomeOptions = [
   {
     value: {
       measurementType: 'geomechanics',
-      columnExternalId: 'GEO',
+      externalId: 'GEO',
       unit: 'psi',
       description: 'geomechanics',
     },
@@ -33,7 +32,7 @@ const changeSomeOptions = [
   {
     value: {
       measurementType: 'geomechanics post drill',
-      columnExternalId: 'GEO_POST_DRILL',
+      externalId: 'GEO_POST_DRILL',
       unit: 'psi',
       description: 'geomechanics post drill',
     },
@@ -48,7 +47,7 @@ const changeAllOptions = [
       {
         value: {
           measurementType: 'geomechanics',
-          columnExternalId: 'GEO',
+          externalId: 'GEO',
           unit: 'psi',
           description: 'geomechanics',
         },
@@ -57,7 +56,7 @@ const changeAllOptions = [
       {
         value: {
           measurementType: 'geomechanics pre drill',
-          columnExternalId: 'GEO_PRE_DRILL',
+          externalId: 'GEO_PRE_DRILL',
           unit: 'psi',
           description: 'geomechanics pre drill',
         },
@@ -66,7 +65,7 @@ const changeAllOptions = [
       {
         value: {
           measurementType: 'geomechanics post drill',
-          columnExternalId: 'GEO_POST_DRILL',
+          externalId: 'GEO_POST_DRILL',
           unit: 'psi',
           description: 'geomechanics post drill',
         },
@@ -89,7 +88,7 @@ describe('Measurement filter utils', () => {
 describe('extractSelectedCurvesFromOptions tests', () => {
   test('Should return same options since not a select all', () => {
     expect(
-      extractSelectedCurvesFromOptions<DepthMeasurementColumn>(
+      extractSelectedCurvesFromOptions<DepthMeasurementDataColumnInternal>(
         changeSomeOptions,
         getMockCurveOptions()
       )

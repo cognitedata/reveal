@@ -1,3 +1,4 @@
+import isEmpty from 'lodash/isEmpty';
 import keyBy from 'lodash/keyBy';
 
 import {
@@ -11,6 +12,10 @@ export const mergeDepthColumns = (
   depthMeasurementColumns: DepthMeasurementColumn[],
   depthMeasurementDataColumns: DepthMeasurementDataColumn[]
 ): DepthMeasurementDataColumnInternal[] => {
+  if (isEmpty(depthMeasurementDataColumns)) {
+    return [];
+  }
+
   const keyedDepthMeasurementColumns = keyBy(
     depthMeasurementColumns,
     'columnExternalId'

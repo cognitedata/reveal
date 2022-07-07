@@ -1,18 +1,19 @@
-import { usePPFGFilterOptions } from 'domain/wells/measurements0/internal/hooks/usePPFGFilterOptions';
+import { DepthMeasurementDataColumnInternal } from 'domain/wells/measurements/internal/types';
 
 import React from 'react';
 
 import { OptionType } from '@cognite/cogs.js';
-import { DepthMeasurementColumn } from '@cognite/sdk-wells-v3';
 
 import { useDeepEffect } from 'hooks/useDeep';
+
+import { usePPFGFilterOptions } from '../hooks/usePPFGFilterOptions';
 
 import { CommonCurveFilter } from './CommonCurveFilter';
 import { mapCurvesToOptions } from './utils';
 
 interface Props {
-  selectedCurves: DepthMeasurementColumn[];
-  onChange: (curves: DepthMeasurementColumn[]) => void;
+  selectedCurves: DepthMeasurementDataColumnInternal[];
+  onChange: (curves: DepthMeasurementDataColumnInternal[]) => void;
 }
 
 export const PPFGCurveFilter: React.FC<Props> = ({
@@ -21,7 +22,7 @@ export const PPFGCurveFilter: React.FC<Props> = ({
 }) => {
   const { curves } = usePPFGFilterOptions();
 
-  const groupOptions: OptionType<DepthMeasurementColumn>[] = [
+  const groupOptions: OptionType<DepthMeasurementDataColumnInternal>[] = [
     {
       label: 'Curves',
       options: mapCurvesToOptions(curves),

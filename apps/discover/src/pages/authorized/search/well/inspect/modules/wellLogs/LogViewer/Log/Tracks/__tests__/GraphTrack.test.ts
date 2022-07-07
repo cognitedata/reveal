@@ -1,7 +1,6 @@
-import { GraphTrackEnum } from 'domain/wells/measurements/internal/constants';
-
 import { getMockLogData } from '__test-utils/fixtures/wellLogs';
 
+import { GraphTrackEnum } from '../../../../constants';
 import { getGraphTrack } from '../GraphTrack';
 import * as utils from '../utils';
 

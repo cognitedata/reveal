@@ -1,6 +1,9 @@
+import { DepthMeasurementDataColumnInternal } from 'domain/wells/measurements/internal/types';
+import { WdlMeasurementType } from 'domain/wells/measurements/service/types';
 import { getWellboreTitle } from 'domain/wells/wellbore/internal/selectors/getWellboreTitle';
 import { Wellbore } from 'domain/wells/wellbore/internal/types';
 
+import { Distance } from 'convert-units';
 import flatten from 'lodash/flatten';
 import groupBy from 'lodash/groupBy';
 import isEmpty from 'lodash/isEmpty';
@@ -10,13 +13,6 @@ import { PlotData } from 'plotly.js';
 import { pluralize } from 'utils/pluralize';
 import { convertPressure, changeUnitTo } from 'utils/units';
 
-import {
-  DepthMeasurementColumn,
-  DepthMeasurementData,
-  DepthMeasurementDataColumn,
-  DistanceUnitEnum,
-} from '@cognite/sdk-wells-v3';
-
 import { PressureUnit, UserPreferredUnit } from 'constants/units';
 import { DataError, Errors } from 'modules/inspectTabs/types';
 import {
@@ -24,15 +20,14 @@ import {
   MEASUREMENT_EXTERNAL_ID_CONFIG,
 } from 'modules/wellSearch/constants';
 import {
-  MeasurementV3 as Measurement,
-  MeasurementChartDataV3 as MeasurementChartData,
-  MeasurementTypeV3 as MeasurementType,
-  WdlMeasurementType,
+  MeasurementChartData,
+  MeasurementType,
   GeoPpfgFilterTypes,
-  WellboreMeasurementsMapV3 as WellboreMeasurementsMap,
   ProcessedData,
   WellboreProcessedData,
 } from 'modules/wellSearch/types';
+
+import { MeasurementView, MeasurementViewMap } from './types';
 
 const ANGLE_CURVES_UNIT = 'deg';
 const CHART_BREAK_POINTS = [0, -9999, null];
@@ -43,20 +38,18 @@ const EMPTY_DATA = Object.freeze({
 });
 
 export const formatChartData = (
-  measurements: Measurement[],
-  geomechanicsCurves: DepthMeasurementColumn[], // currently enabled geomechanics curves from filters
-  ppfgCurves: DepthMeasurementColumn[], // currently enabled ppfg curves from filters
-  otherTypes: DepthMeasurementColumn[], // currently enabled other curves from filters
+  measurements: MeasurementView[],
+  geomechanicsCurves: DepthMeasurementDataColumnInternal[], // currently enabled geomechanics curves from filters
+  ppfgCurves: DepthMeasurementDataColumnInternal[], // currently enabled ppfg curves from filters
+  otherTypes: DepthMeasurementDataColumnInternal[], // currently enabled other curves from filters
   userPreferedPressureUnit: PressureUnit,
   userPreferedDepthMeasurementUnit: UserPreferredUnit
 ) => {
   const processedCurves: string[] = [];
 
-  return measurements.reduce((processedData, measurement) => {
-    const { data: depthMeasurementData } = measurement;
-
+  return (measurements || []).reduce((processedData, measurement) => {
     // No rows
-    if (isUndefined(depthMeasurementData)) {
+    if (isEmpty(measurement.rows)) {
       return EMPTY_DATA;
     }
 
@@ -64,13 +57,13 @@ export const formatChartData = (
       return EMPTY_DATA;
     }
 
-    const tvdUnit = measurement.depthColumn.unit.unit;
+    const tvdUnit = measurement.depthColumn.unit;
 
-    const currentMeasurementProcessedData = depthMeasurementData.columns.reduce(
+    const currentMeasurementProcessedData = measurement.columns.reduce(
       (processedData, column) => {
         const processedDataOfCurrentColumn = mapMeasurementToPlotly(
           column,
-          depthMeasurementData,
+          measurement,
           geomechanicsCurves,
           ppfgCurves,
           otherTypes,
@@ -106,12 +99,12 @@ export const formatChartData = (
 };
 
 export const mapMeasurementToPlotly = (
-  column: DepthMeasurementDataColumn,
-  depthMeasurementData: DepthMeasurementData,
-  geomechanicsCurves: DepthMeasurementColumn[], // currently enabled geomechanics curves from filters
-  ppfgCurves: DepthMeasurementColumn[], // currently enabled ppfg curves from filters
-  otherTypes: DepthMeasurementColumn[], // currently enabled other curves from filters
-  tvdUnit: DistanceUnitEnum,
+  column: DepthMeasurementDataColumnInternal,
+  depthMeasurementData: MeasurementView,
+  geomechanicsCurves: DepthMeasurementDataColumnInternal[], // currently enabled geomechanics curves from filters
+  ppfgCurves: DepthMeasurementDataColumnInternal[], // currently enabled ppfg curves from filters
+  otherTypes: DepthMeasurementDataColumnInternal[], // currently enabled other curves from filters
+  tvdUnit: Distance,
   userPreferedPressureUnit: PressureUnit,
   userPreferedDepthMeasurementUnit: UserPreferredUnit,
   processedCurves: string[] = []
@@ -175,12 +168,12 @@ export const mapMeasurementToPlotly = (
 
 const getEnabledCurvesAndCardTitleForFilterType = (
   filterType: GeoPpfgFilterTypes,
-  geomechanicsCurves: DepthMeasurementColumn[],
-  ppfgCurves: DepthMeasurementColumn[],
-  otherTypes: DepthMeasurementColumn[]
+  geomechanicsCurves: DepthMeasurementDataColumnInternal[],
+  ppfgCurves: DepthMeasurementDataColumnInternal[],
+  otherTypes: DepthMeasurementDataColumnInternal[]
 ) => {
   let detailCardTitle = '';
-  let enabledCurves: DepthMeasurementColumn[] = [];
+  let enabledCurves: DepthMeasurementDataColumnInternal[] = [];
 
   if (filterType === GeoPpfgFilterTypes.GEOMECHANNICS) {
     enabledCurves = geomechanicsCurves;
@@ -215,18 +208,18 @@ const getEnabledCurvesAndCardTitleForFilterType = (
  * @returns
  */
 export const mapCurveToPlotly = (
-  depthMeasurementColumn: DepthMeasurementColumn,
+  DepthMeasurementDataColumnInternal: DepthMeasurementDataColumnInternal,
   processedCurves: string[],
   detailCardTitle: string,
-  depthMeasurementData: DepthMeasurementData,
-  tvdUnit: DistanceUnitEnum,
+  depthMeasurementData: MeasurementView,
+  tvdUnit: Distance,
   userPreferedDepthMeasurementUnit: UserPreferredUnit,
   userPreferedPressureUnit: PressureUnit,
   measurementType: MeasurementType
 ): ProcessedData => {
   const chartData: MeasurementChartData[] = [];
   const errors: DataError[] = [];
-  const curveDescription = `${depthMeasurementColumn.columnExternalId} (${detailCardTitle})`;
+  const curveDescription = `${DepthMeasurementDataColumnInternal.externalId} (${detailCardTitle})`;
 
   /**
    * I'm not sure why we have this. Can there be duplicate curves in row data. It is the only scenario
@@ -249,14 +242,15 @@ export const mapCurveToPlotly = (
    */
   const lineConfig =
     (MEASUREMENT_CURVE_CONFIG[measurementType] || {})[
-      depthMeasurementColumn.columnExternalId
+      DepthMeasurementDataColumnInternal.externalId
     ] || MEASUREMENT_CURVE_CONFIG[measurementType]?.default;
 
   /**
    * This is used to pluck respective value from row data.
    */
   const columnIndex = depthMeasurementData.columns.findIndex(
-    (column) => column.externalId === depthMeasurementColumn.columnExternalId
+    (column) =>
+      column.externalId === DepthMeasurementDataColumnInternal.externalId
   );
 
   if (isUndefined(lineConfig) || columnIndex < 0) {
@@ -264,7 +258,7 @@ export const mapCurveToPlotly = (
       chartData: [],
       errors: [
         {
-          message: `Line config for ${depthMeasurementColumn.columnExternalId} does not exist or data not found for curve`,
+          message: `Line config for ${DepthMeasurementDataColumnInternal.externalId} does not exist or data not found for curve`,
         },
       ],
     };
@@ -314,7 +308,7 @@ export const mapCurveToPlotly = (
         measurementType,
         lineConfig,
         isAngleCurve,
-        depthMeasurementColumn.columnExternalId,
+        DepthMeasurementDataColumnInternal.externalId,
         curveDescription,
         x,
         y
@@ -350,7 +344,7 @@ export const mapCurveToPlotly = (
     measurementType,
     lineConfig,
     isAngleCurve,
-    depthMeasurementColumn.columnExternalId,
+    DepthMeasurementDataColumnInternal.externalId,
     curveDescription,
     x,
     y
@@ -394,21 +388,21 @@ export const mapToCurveCentric = (
 ) =>
   data.map((row) => ({
     ...row,
-    customdata: [wellbore.metadata?.wellName || '', getWellboreTitle(wellbore)],
+    customdata: [wellbore.wellName || '', getWellboreTitle(wellbore)],
     ...(row.marker
       ? {
           marker: {
             ...row.marker,
-            color: wellbore.metadata?.color,
+            color: wellbore?.color,
             line: {
-              color: wellbore.metadata?.color,
+              color: wellbore?.color,
             },
           },
         }
       : {
           line: {
             ...row.line,
-            color: wellbore.metadata?.color,
+            color: wellbore?.color,
           },
         }),
   }));
@@ -477,15 +471,13 @@ export const getSelectedWellboresTitle = (count: number) =>
 export const getSelectedWellsTitle = (count: number) =>
   `From ${count} ${pluralize('well', count)}`;
 
-export const getMeasurementDataFetchErrors = (
-  data: WellboreMeasurementsMap
-) => {
+export const getMeasurementDataFetchErrors = (data: MeasurementViewMap) => {
   return Object.keys(data).reduce((results, wellboreId) => {
     const measurements = data[wellboreId];
     const errors = flatten(
       measurements
-        .filter((measurement) => measurement.errors)
-        .map((measurement) => measurement.errors)
+        .filter(({ errors }) => !isEmpty(errors))
+        .map(({ errors }) => errors)
         .filter((error): error is DataError[] => !!error)
     );
     return {

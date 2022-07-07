@@ -1,13 +1,11 @@
+import { DepthMeasurementDataColumnInternal } from 'domain/wells/measurements/internal/types';
 import { useWellInspectSelectedWellbores } from 'domain/wells/well/internal/transformers/useWellInspectSelectedWellbores';
-import { useWellInspectSelectedWellboresChartData } from 'domain/wells/well/internal/transformers/useWellInspectSelectedWellboresChartData';
 
 import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
 import isEmpty from 'lodash/isEmpty';
 import uniqBy from 'lodash/uniqBy';
-
-import { DepthMeasurementColumn } from '@cognite/sdk-wells-v3';
 
 import { NoDataAvailable } from 'components/Charts/common/NoDataAvailable';
 import { MultiSelectCategorizedOptionMap } from 'components/Filters/MultiSelectCategorized/types';
@@ -18,6 +16,7 @@ import { inspectTabsActions } from 'modules/inspectTabs/actions';
 import { BooleanSelection } from 'modules/wellInspect/types';
 import { WellboreId } from 'modules/wellSearch/types';
 
+import { useWellInspectSelectedWellboresChartData } from '../hooks/useWellInspectSelectedWellboresChartData';
 import {
   extractChartDataFromProcessedData,
   extractWellboreErrorsFromProcessedData,
@@ -29,9 +28,9 @@ import { WellCentricBulkActions } from './WellCentricBulkActions';
 import WellCentricCard from './WellCentricCard';
 
 export type Props = {
-  geomechanicsCurves: DepthMeasurementColumn[];
-  ppfgCurves: DepthMeasurementColumn[];
-  otherTypes: DepthMeasurementColumn[];
+  geomechanicsCurves: DepthMeasurementDataColumnInternal[];
+  ppfgCurves: DepthMeasurementDataColumnInternal[];
+  otherTypes: DepthMeasurementDataColumnInternal[];
   pressureUnit: PressureUnit;
   measurementReference: DepthMeasurementUnit;
   nptEvents: MultiSelectCategorizedOptionMap;

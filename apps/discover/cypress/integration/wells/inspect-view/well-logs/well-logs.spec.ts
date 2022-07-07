@@ -1,6 +1,6 @@
-import { GraphTrackEnum } from '../../../../../src/domain/wells/measurements/internal/constants';
 import { DATA_SOURCE } from '../../../../../src/modules/wellSearch/constantsSidebarFilters';
 import { TAB_NAMES } from '../../../../../src/pages/authorized/search/well/inspect/constants';
+import { GraphTrackEnum } from '../../../../../src/pages/authorized/search/well/inspect/modules/wellLogs/constants';
 import { interceptCoreNetworkRequests } from '../../../../support/commands/helpers';
 import { WELL_SOURCE_WITH_ALL } from '../../../../support/constants';
 import {
