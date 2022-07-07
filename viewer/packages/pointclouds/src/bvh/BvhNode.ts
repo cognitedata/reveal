@@ -9,7 +9,6 @@ import { BvhElement } from './BvhElement';
 
 import { findBestSplit } from './bvhUtils';
 
-
 export class BvhNode<T extends BvhElement> {
   // Either _children or _elements is defined. Not both, not none.
   private readonly _children: [BvhNode<T>, BvhNode<T>] | undefined;
@@ -46,7 +45,6 @@ export class BvhNode<T extends BvhElement> {
 
       return;
     }
-
 
     if (this._children![0].boundingBox.containsPoint(point)) {
       this._children![0].findContainingElements(point, resultList);
