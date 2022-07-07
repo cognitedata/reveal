@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 
 import head from 'lodash/head';
 import isEmpty from 'lodash/isEmpty';
+import isUndefined from 'lodash/isUndefined';
 
 import { Modal } from 'components/Modal';
 import { NavigationPanel } from 'components/NavigationPanel';
@@ -91,6 +92,7 @@ export const DetailedView: React.FC<DetailedViewProps> = ({
   }, [appliedFilters, data]);
 
   useEffect(() => {
+    if (isUndefined(ndsAggregate)) return;
     const { riskTypesAndSubtypes, severities, probabilities } = ndsAggregate;
     setAppliedFilters({
       riskType: riskTypesAndSubtypes,

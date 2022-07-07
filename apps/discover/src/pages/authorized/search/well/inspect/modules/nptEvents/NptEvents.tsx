@@ -11,7 +11,6 @@ import { DEFAULT_ACTIVE_VIEW_MODE } from './constants';
 import { NptEventsDataControlArea } from './elements';
 import { FilterContainer } from './filters';
 import { NptGraph, SelectedWellboreNptView } from './Graph';
-import { SelectedWellbore } from './Graph/types';
 import { useNptData } from './hooks/useNptData';
 import { NptTable } from './Table';
 
@@ -23,24 +22,26 @@ export const NPTEvents: React.FC = () => {
     DEFAULT_ACTIVE_VIEW_MODE
   );
 
-  const [nptGraphSelectedWellbore, setNptGraphSelectedWellbore] =
-    useState<SelectedWellbore>();
+  const [nptGraphSelectedWellbore, setNptGraphSelectedWellbore] = useState<
+    string | undefined
+  >();
   const [selectedWellboreViewLoading, setSelectedWellboreViewLoading] =
     useState<boolean>(false);
 
   const isGraphViewModeActive = activeViewMode === ViewModes.Graph;
   const isTableViewModeActive = activeViewMode === ViewModes.Table;
 
-  const handleSelectNptGraphBar = useCallback(
-    (selectedWellbore: SelectedWellbore) => {
-      setSelectedWellboreViewLoading(true);
-      setTimeout(() => {
-        setNptGraphSelectedWellbore(selectedWellbore);
-        setTimeout(() => setSelectedWellboreViewLoading(false));
-      });
-    },
-    []
-  );
+  const handleSelectNptGraphBar = useCallback((selectedWellbore?: string) => {
+    setSelectedWellboreViewLoading(true);
+    setTimeout(() => {
+      setNptGraphSelectedWellbore(selectedWellbore);
+      setTimeout(() => setSelectedWellboreViewLoading(false));
+    });
+  }, []);
+
+  const handleCloseWellboreDetailView = () => {
+    setNptGraphSelectedWellbore(undefined);
+  };
 
   if (isLoading) {
     return <Loading />;
@@ -76,7 +77,8 @@ export const NPTEvents: React.FC = () => {
       <SelectedWellboreNptView
         data={data}
         selectedWellbore={nptGraphSelectedWellbore}
-        setSelectedWellbore={setNptGraphSelectedWellbore}
+        selectedWellboreId={nptGraphSelectedWellbore}
+        onCloseSelectedWellboreNptViewClick={handleCloseWellboreDetailView}
       />
 
       {selectedWellboreViewLoading && <WhiteLoaderOverlay />}

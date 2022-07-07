@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
+import head from 'lodash/head';
 import isEmpty from 'lodash/isEmpty';
 import { now, fromNow } from 'utils/date';
 
@@ -31,12 +32,11 @@ import {
 } from './constants';
 import { IconStyle } from './SelectedWellboreNptView/elements';
 import { NptTooltip } from './SelectedWellboreNptView/NptTooltip';
-import { SelectedWellbore } from './types';
 import { adaptEventsToDaysDuration, getNptCodesColorMap } from './utils';
 
 interface Props {
   data: NptView[];
-  onSelectBar: (selectedWellbore: SelectedWellbore) => void;
+  onSelectBar: (selectedWellbore?: string) => void;
 }
 
 export const NptGraph: React.FC<Props> = React.memo(({ data, onSelectBar }) => {
@@ -88,10 +88,7 @@ export const NptGraph: React.FC<Props> = React.memo(({ data, onSelectBar }) => {
 
   const handleOnSelectBar = useCallback(
     (selectedBarData: SelectedBarData<NptView>) => {
-      onSelectBar({
-        wellboreName: selectedBarData.key,
-        index: selectedBarData.index,
-      });
+      onSelectBar(head(selectedBarData.data)?.wellboreMatchingId);
     },
     []
   );

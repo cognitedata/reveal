@@ -1,7 +1,5 @@
 import React from 'react';
 
-import noop from 'lodash/noop';
-
 import { Button } from '@cognite/cogs.js';
 
 import { Dropdown } from 'components/Dropdown';
@@ -17,22 +15,40 @@ import { HeaderWrapper, Subtitle, Title } from './elements';
 interface HeaderProps {
   wellName: string;
   wellboreName: string;
+  wellboreMatchingId: string;
   onChangeDropdown: ({
     wellName,
     wellboreName,
   }: {
+    eventType: 'npt' | 'nds';
     wellName: string;
     wellboreName: string;
+    wellboreMatchingId: string;
   }) => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
   wellName,
   wellboreName,
+  wellboreMatchingId,
   onChangeDropdown,
 }) => {
-  const handleChangeDropdown = () => {
-    onChangeDropdown({ wellName, wellboreName });
+  const handleChangeNptDropdown = () => {
+    onChangeDropdown({
+      eventType: 'npt',
+      wellName,
+      wellboreName,
+      wellboreMatchingId,
+    });
+  };
+
+  const handleChangeNdsDropdown = () => {
+    onChangeDropdown({
+      eventType: 'nds',
+      wellName,
+      wellboreName,
+      wellboreMatchingId,
+    });
   };
 
   return (
@@ -45,10 +61,10 @@ export const Header: React.FC<HeaderProps> = ({
       <Dropdown
         content={
           <Dropdown.Menu>
-            <Dropdown.Item onClick={noop} disabled>
+            <Dropdown.Item onClick={handleChangeNdsDropdown}>
               {NDS_EVENT_DETAILS_LABEL}
             </Dropdown.Item>
-            <Dropdown.Item onClick={handleChangeDropdown}>
+            <Dropdown.Item onClick={handleChangeNptDropdown}>
               {NPT_EVENT_DETAILS_LABEL}
             </Dropdown.Item>
           </Dropdown.Menu>

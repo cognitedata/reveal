@@ -13,7 +13,6 @@ import { DepthMeasurementUnit } from 'constants/units';
 import DepthColumn from '../../../common/Events/DepthColumn';
 import EventsByDepth from '../../../common/Events/EventsByDepth';
 import { SelectedWellboreNptView } from '../../../nptEvents/Graph';
-import { SelectedWellbore } from '../../../nptEvents/Graph/types';
 import { adaptNptDataToView } from '../../../nptEvents/utils/adaptNptDataToView';
 import { CasingSchematicView } from '../../types';
 import { getScaleBlocks } from '../../utils/scale';
@@ -22,6 +21,7 @@ import { DEPTH_SCALE_MIN_HEIGHT } from '../constants';
 import { ContentWrapper, WellboreCasingsViewWrapper } from './elements';
 import { Header } from './Header';
 import { SchemaColumn } from './SchemaColumn';
+import { WellboreNdsDetailedView } from './WellboreNdsDetailedView';
 
 interface WellboreCasingsViewProps {
   data: CasingSchematicView;
@@ -39,7 +39,8 @@ export const WellboreCasingView: React.FC<WellboreCasingsViewProps> = ({
   const depthScaleRef = useRef<HTMLElement>(null);
 
   const [scaleBlocks, setScaleBlocks] = useState<number[]>([]);
-  const [selectedWellbore, setSelectedWellbore] = useState<SelectedWellbore>();
+  const [showNptDetailView, setShowNptDetailView] = useState<boolean>(false);
+  const [showNdsDetailView, setShowNdsDetailView] = useState<boolean>(false);
 
   const {
     wellboreMatchingId,
@@ -75,15 +76,26 @@ export const WellboreCasingView: React.FC<WellboreCasingsViewProps> = ({
 
   useEffect(() => setDepthScaleBlocks(), [setDepthScaleBlocks]);
 
+  const handleBackFromDetailViewClick = () => {
+    setShowNdsDetailView(false);
+    setShowNptDetailView(false);
+  };
+
   return (
     <>
       <WellboreCasingsViewWrapper>
         <Header
           wellName={wellName}
           wellboreName={wellboreName}
-          onChangeDropdown={({ wellboreName }) =>
-            setSelectedWellbore(wellboreName)
-          }
+          wellboreMatchingId={wellboreMatchingId}
+          onChangeDropdown={({ eventType }) => {
+            if (eventType === 'nds') {
+              setShowNdsDetailView(true);
+            }
+            if (eventType === 'npt') {
+              setShowNptDetailView(true);
+            }
+          }}
         />
 
         <ContentWrapper>
@@ -112,12 +124,22 @@ export const WellboreCasingView: React.FC<WellboreCasingsViewProps> = ({
         </ContentWrapper>
       </WellboreCasingsViewWrapper>
 
-      <SelectedWellboreNptView
-        data={selectedWellboreNptViewData}
-        selectedWellbore={selectedWellbore}
-        setSelectedWellbore={setSelectedWellbore}
-        disableWellboreNavigation
-      />
+      {showNptDetailView && (
+        <SelectedWellboreNptView
+          data={selectedWellboreNptViewData}
+          selectedWellbore={wellboreName}
+          selectedWellboreId={wellboreMatchingId}
+          disableWellboreNavigation
+          onCloseSelectedWellboreNptViewClick={handleBackFromDetailViewClick}
+        />
+      )}
+
+      {showNdsDetailView && (
+        <WellboreNdsDetailedView
+          selectedWellboreId={wellboreMatchingId}
+          onBackClick={handleBackFromDetailViewClick}
+        />
+      )}
     </>
   );
 };

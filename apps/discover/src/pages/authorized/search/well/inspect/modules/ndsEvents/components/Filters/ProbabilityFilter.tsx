@@ -13,8 +13,8 @@ import { ProbabilityFilterProps } from './types';
 import { getMultiSelectDisplayValue } from './utils';
 
 export const ProbabilityFilter: React.FC<ProbabilityFilterProps> = ({
-  probabilities,
-  appliedProbabilities,
+  probabilities = [],
+  appliedProbabilities = [],
   onChangeProbability,
 }) => {
   return (

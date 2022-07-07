@@ -13,8 +13,8 @@ import { SeverityFilterProps } from './types';
 import { getMultiSelectDisplayValue } from './utils';
 
 export const SeverityFilter: React.FC<SeverityFilterProps> = ({
-  severities,
-  appliedSeverities,
+  severities = [],
+  appliedSeverities = [],
   onChangeSeverity,
 }) => {
   return (

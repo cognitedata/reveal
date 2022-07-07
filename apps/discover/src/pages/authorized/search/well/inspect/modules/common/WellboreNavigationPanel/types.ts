@@ -3,12 +3,13 @@ export interface WellboreNavigationPanelProps<
 > {
   data: T[];
   currentWellboreName?: string;
+  currentWellboreMatchingId?: string;
   onNavigate?: ({
     data,
-    wellboreName,
+    wellboreMatchingId,
   }: {
     data: T[];
-    wellboreName: string;
+    wellboreMatchingId: string;
   }) => void;
   onBackClick: () => void;
   disableNavigation?: boolean;

@@ -1,6 +1,6 @@
 import { useNptDefinitions } from 'domain/wells/npt/internal/hooks/useNptDefinitions';
 
-import React, { useCallback, useState, useRef } from 'react';
+import React, { useCallback, useState, useRef, useEffect } from 'react';
 
 import isString from 'lodash/isString';
 import isUndefined from 'lodash/isUndefined';
@@ -21,8 +21,9 @@ import { NPTEventsTable } from './NPTEventsTable';
 interface Props {
   data: NptView[];
   selectedWellbore?: SelectedWellbore;
-  setSelectedWellbore?: (selectedWellbore?: SelectedWellbore) => void;
+  selectedWellboreId?: string;
   disableWellboreNavigation?: boolean;
+  onCloseSelectedWellboreNptViewClick: () => void;
 }
 
 const getWellboreName = (selectedWellbore?: SelectedWellbore) => {
@@ -35,39 +36,59 @@ export const SelectedWellboreNptView: React.FC<Props> = React.memo(
   ({
     data,
     selectedWellbore,
-    setSelectedWellbore,
+    selectedWellboreId,
     disableWellboreNavigation,
+    onCloseSelectedWellboreNptViewClick,
   }) => {
     const [chartRendering, setChartRendering] = useState<boolean>(false);
+    const [currentWellboreId, setCurrentWellboreId] = useState<
+      string | undefined
+    >(undefined);
     const chartData = useRef<NptView[]>(EMPTY_ARRAY);
     const { nptCodeDefinitions } = useNptDefinitions();
 
     const currentWellboreName = getWellboreName(selectedWellbore);
 
+    const setWellboreAndChartDate = (data: NptView[], wellboreId?: string) => {
+      setChartRendering(true);
+      setCurrentWellboreId(wellboreId);
+      chartData.current = data;
+      setTimeout(() => setChartRendering(false));
+    };
+
+    useEffect(() => {
+      setWellboreAndChartDate(data, selectedWellboreId);
+    }, [selectedWellboreId]);
+
     const handleChangeSelectedWellbore = useCallback(
-      ({ data, wellboreName }: { data: NptView[]; wellboreName: string }) => {
-        setChartRendering(true);
-        setSelectedWellbore?.(wellboreName);
-        chartData.current = data;
-        setTimeout(() => setChartRendering(false));
+      ({
+        data,
+        wellboreMatchingId,
+      }: {
+        data: NptView[];
+        wellboreMatchingId: string;
+      }) => {
+        setWellboreAndChartDate(data, wellboreMatchingId);
       },
-      [setSelectedWellbore]
+      [selectedWellboreId]
     );
 
     const handleCloseSelectedWellboreView = useCallback(() => {
       chartData.current = EMPTY_ARRAY;
-      setSelectedWellbore?.(undefined);
-    }, [setSelectedWellbore]);
+      setCurrentWellboreId(undefined);
+      onCloseSelectedWellboreNptViewClick();
+    }, [selectedWellboreId]);
 
     return (
       <>
         <OverlayNavigation
           backgroundInvisibleMount
-          mount={Boolean(selectedWellbore)}
+          mount={Boolean(currentWellboreId)}
         >
           <WellboreNavigationPanel
             data={data}
             currentWellboreName={currentWellboreName}
+            currentWellboreMatchingId={selectedWellboreId}
             onNavigate={handleChangeSelectedWellbore}
             onBackClick={handleCloseSelectedWellboreView}
             disableNavigation={disableWellboreNavigation}

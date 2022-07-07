@@ -1,4 +1,4 @@
-import { groupByWellboreName } from 'domain/wells/well/internal/transformers/groupByWellboreName';
+import { groupByWellboreMatchingId } from 'domain/wells/well/internal/transformers/groupByWellboreName';
 
 import { useEffect, useMemo } from 'react';
 
@@ -10,43 +10,46 @@ import { NavigationPanelDataType, WellboreNavigationPanelProps } from './types';
 
 export const WellboreNavigationPanel = <T extends NavigationPanelDataType>({
   data,
-  currentWellboreName,
+  currentWellboreMatchingId,
   onNavigate,
   onBackClick,
   disableNavigation,
 }: WellboreNavigationPanelProps<T>) => {
-  const groupedData = useMemo(() => groupByWellboreName(data), [data]);
+  const groupedData = useMemo(() => groupByWellboreMatchingId(data), [data]);
 
-  const wellboreNames = useMemo(() => Object.keys(groupedData), [groupedData]);
+  const wellboreIds = useMemo(() => Object.keys(groupedData), [groupedData]);
 
   useEffect(() => {
-    if (!currentWellboreName) return;
+    if (!currentWellboreMatchingId) return;
 
-    const currentData = groupedData[currentWellboreName];
-    onNavigate?.({ data: currentData, wellboreName: currentWellboreName });
+    const currentData = groupedData[currentWellboreMatchingId];
+    onNavigate?.({
+      data: currentData,
+      wellboreMatchingId: currentWellboreMatchingId,
+    });
   }, [data]);
 
-  if (!currentWellboreName) {
+  if (!currentWellboreMatchingId) {
     return null;
   }
 
-  const currentData = groupedData[currentWellboreName];
+  const currentData = groupedData[currentWellboreMatchingId];
   const navigationPanelData = head(currentData);
 
   if (!navigationPanelData) {
     return null;
   }
 
-  const { wellName, wellboreName } = navigationPanelData;
-  const currentWellboreIndex = wellboreNames.indexOf(wellboreName);
+  const { wellName, wellboreName, wellboreMatchingId } = navigationPanelData;
+  const currentWellboreIndex = wellboreIds.indexOf(wellboreMatchingId);
 
   const isFirstWellbore = currentWellboreIndex === 0;
-  const isLastWellbore = currentWellboreIndex === wellboreNames.length - 1;
+  const isLastWellbore = currentWellboreIndex === wellboreIds.length - 1;
 
   const handleNavigation = (index: number) => {
-    const wellboreName = wellboreNames[index];
-    const data = groupedData[wellboreName];
-    onNavigate?.({ data, wellboreName });
+    const wellboreMatchingId = wellboreIds[index];
+    const data = groupedData[wellboreMatchingId];
+    onNavigate?.({ data, wellboreMatchingId });
   };
 
   const onPreviousClick = () => handleNavigation(currentWellboreIndex - 1);
