@@ -10,7 +10,6 @@ import { AutoTerminatingWorker, WorkerPool } from '../utils/WorkerPool';
 import { ILoader } from './ILoader';
 import { ModelDataProvider } from '@reveal/modeldata-api';
 import { PointCloudEptGeometryNode } from '../geometry/PointCloudEptGeometryNode';
-
 import EptDecoderWorker from '../workers/eptBinaryDecoder.worker';
 import { ParseCommand, ObjectsCommand } from '../workers/eptBinaryDecoder.worker';
 
