@@ -150,6 +150,8 @@ const peripheralEntries = ['tools', 'extensions/datasource'];
 
 module.exports = [
   env => {
+    // The additional libraries specified here are bundled with Reveal.
+    // This is needed for libraries used in workers
     return defaultExportFunction(env, ['index'], ['three', 'lodash/debounce']);
   },
   env => {
