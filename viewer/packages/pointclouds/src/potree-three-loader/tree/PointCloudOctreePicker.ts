@@ -1,4 +1,4 @@
-import { Camera, Ray, Vector3, WebGLRenderer } from 'three';
+import { Camera, Ray, Vector2, Vector3, WebGLRenderer } from 'three';
 import { DEFAULT_PICK_WINDOW_SIZE } from '../rendering/constants';
 import { PointCloudOctree } from './PointCloudOctree';
 import { PickPoint } from '../types/types';
@@ -33,10 +33,8 @@ export class PointCloudOctreePicker {
     const helper = new PointCloudOctreePickerHelper(renderer);
 
     try {
-      const pixelRatio = renderer.getPixelRatio();
-      const width = Math.ceil(renderer.domElement.clientWidth * pixelRatio);
-      const height = Math.ceil(renderer.domElement.clientHeight * pixelRatio);
-      PointCloudOctreePickerHelper.updatePickRenderTarget(this.pickState, width, height);
+      const renderSize = renderer.getDrawingBufferSize(new Vector2());
+      PointCloudOctreePickerHelper.updatePickRenderTarget(this.pickState, renderSize.x, renderSize.y);
 
       const pixelPosition = PointCloudOctreePicker.helperVec3; // Use helper vector to prevent extra allocations.
 
@@ -44,14 +42,14 @@ export class PointCloudOctreePicker {
         pixelPosition.copy(params.pixelPosition);
       } else {
         pixelPosition.addVectors(camera.position, ray.direction).project(camera);
-        pixelPosition.x = (pixelPosition.x + 1) * width * 0.5;
-        pixelPosition.y = (pixelPosition.y + 1) * height * 0.5;
+        pixelPosition.x = (pixelPosition.x + 1) * renderSize.x * 0.5;
+        pixelPosition.y = (pixelPosition.y + 1) * renderSize.y * 0.5;
       }
 
-      const pickWndSize = Math.floor((params.pickWindowSize || DEFAULT_PICK_WINDOW_SIZE) * pixelRatio);
+      const pickWndSize = params.pickWindowSize ?? DEFAULT_PICK_WINDOW_SIZE;
       const halfPickWndSize = (pickWndSize - 1) / 2;
-      const x = Math.floor(clamp(pixelPosition.x - halfPickWndSize, 0, width));
-      const y = Math.floor(clamp(pixelPosition.y - halfPickWndSize, 0, height));
+      const x = Math.floor(clamp(pixelPosition.x - halfPickWndSize, 0, renderSize.x));
+      const y = Math.floor(clamp(pixelPosition.y - halfPickWndSize, 0, renderSize.y));
 
       helper.prepareRender(x, y, pickWndSize, pickMaterial, pickState);
       const renderedNodes = helper.render(camera, pickMaterial, octrees, ray, pickState, params);

@@ -29,6 +29,15 @@ export class WebGLRendererStateHelper {
   private _originalState: WebGLRendererState = {};
   private readonly _renderer: THREE.WebGLRenderer;
 
+  private static DefaultWebGLState: WebGLState = {
+    buffers: {
+      depth: {
+        mask: true,
+        test: true
+      }
+    }
+  };
+
   constructor(renderer: THREE.WebGLRenderer) {
     this._renderer = renderer;
     this._originalState = {};
@@ -54,9 +63,7 @@ export class WebGLRendererStateHelper {
     this._renderer.setClearColor(color, alpha);
   }
 
-  setWebGLState(state: WebGLState): void {
-    const gl = this._renderer.getContext();
-
+  setWebGLState(state: WebGLState, resetState: WebGLState = WebGLRendererStateHelper.DefaultWebGLState): void {
     this._originalState = {
       webGLState: {
         buffers: state?.buffers ? {} : undefined
@@ -69,8 +76,8 @@ export class WebGLRendererStateHelper {
       const newMask = state.buffers.depth?.mask;
 
       this._originalState.webGLState!.buffers!.depth = {
-        test: newTest ? gl.getParameter(gl.DEPTH_TEST) : undefined,
-        mask: newMask ? gl.getParameter(gl.DEPTH_WRITEMASK) : undefined
+        test: newTest ? resetState.buffers?.depth?.test : undefined,
+        mask: newMask ? resetState.buffers?.depth?.mask : undefined
       };
 
       if (newMask) this._renderer.state.buffers.depth.setMask(newMask);

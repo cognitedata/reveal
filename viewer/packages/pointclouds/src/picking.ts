@@ -60,7 +60,7 @@ export function intersectPointClouds(
     .map(x => {
       const pointCloudNode = determinePointCloudNode(x.object, nodes);
       if (pointCloudNode === null) {
-        throw new Error(`Could not find PointCloudNode for intersected point`);
+        throw new Error(`Coulds not find PointCloudNode for intersected point`);
       }
 
       const result: IntersectPointCloudNodeResult = {
