@@ -43,7 +43,7 @@ export interface Props {
   isIncorrectDocType: boolean;
   isOther: boolean;
   freeText: string;
-  currentDocumentType: string;
+  currentDocumentType: string[];
   documentTypes: DocumentPayload[];
   handleSetCorrectDocumentType: (event: {
     label: string;
@@ -65,7 +65,6 @@ export const EntityFeedbackContent: React.FC<Props> = (props) => {
     handleSetCorrectDocumentType,
     handleTextChanged,
   } = props;
-
   const { t } = useTranslation('feedback');
   const [documentTypeDropdownValue, setDocumentTypeDropdownValue] = useState<
     string | undefined
@@ -78,7 +77,7 @@ export const EntityFeedbackContent: React.FC<Props> = (props) => {
   const documentTypesOptions: OptionType<string>[] = useMemo(
     () =>
       documentTypes
-        .filter((docType) => docType.name !== currentDocumentType)
+        .filter((docType) => !currentDocumentType?.includes(docType.name))
         .map((docType) => ({ label: docType.name, value: docType.id })),
     [documentTypes, currentDocumentType]
   );
@@ -144,14 +143,13 @@ export const EntityFeedbackContent: React.FC<Props> = (props) => {
         >
           {t(INCORRECT_DOCUMENT_TYPE_CHECKBOX_LABEL)}{' '}
         </Checkbox>
-
         {isIncorrectDocType && (
           <>
             <TinyText variant="tinytext">
               {t(CURRENT_DOCUMENT_TYPE)}:{' '}
               <CurrentDocumentTypeText stale={documentTypeDropdownValue}>
-                {currentDocumentType
-                  ? `"${currentDocumentType}"`
+                {currentDocumentType?.length > 0
+                  ? `"${currentDocumentType.join(', ')}"`
                   : UNCLASSIFIED_DOCUMENT_TYPE}
               </CurrentDocumentTypeText>
             </TinyText>

@@ -197,3 +197,17 @@ export const adaptLocalDateToISOString = (date: Date) => {
     .toDate()
     .toISOString();
 };
+
+export const toISOStringDate = (input: string | Date): string => {
+  let date;
+
+  if (isString(input)) {
+    date = new Date(input);
+  } else if (input instanceof Date) {
+    date = input;
+  } else {
+    throw new Error('Input is not convertable to Date');
+  }
+
+  return date.toISOString().split('T')[0];
+};

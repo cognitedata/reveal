@@ -101,8 +101,6 @@ export const EntityFeedbackModal: React.FC<Props> = ({ documentId }) => {
 
   const filteredLabels = useDocumentLabelsByExternalIds(doc?.doc.labels || []);
 
-  const currentDocumentType = filteredLabels[0];
-
   const sendFeedback = () => {
     const isDocumentTypeFeedback = isIncorrectDocType;
     const isDocumentFeedback =
@@ -172,7 +170,7 @@ export const EntityFeedbackModal: React.FC<Props> = ({ documentId }) => {
           handleSetCorrectDocumentType={handleSetCorrectDocumentType}
           handleTextChanged={handleTextChanged}
           documentTypes={categories}
-          currentDocumentType={currentDocumentType}
+          currentDocumentType={filteredLabels}
           freeText={freeText}
         />
       </Modal>

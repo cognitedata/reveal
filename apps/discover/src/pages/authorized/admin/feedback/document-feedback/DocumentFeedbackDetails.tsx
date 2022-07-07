@@ -39,10 +39,13 @@ interface DeletedProps {
   feedback: ObjectFeedbackResponse;
 }
 
-const BaseDocumentFeedbackDetails: React.FC<BaseProps> = (props) => {
+const BaseDocumentFeedbackDetails: React.FC<BaseProps> = ({
+  feedback,
+  action,
+}) => {
   const { mutateAsync: updateObjectFeedbackSensitive } =
     useFeedbackUpdateMutate('sensitive');
-  const { feedback, action } = props;
+
   const { data: doc } = useDocumentSearchOneQuery(Number(feedback.documentId));
   const initialAssessment = feedback?.isSensitiveByAdmin
     ? ASSESS.Approve
@@ -149,6 +152,7 @@ const BaseDocumentFeedbackDetails: React.FC<BaseProps> = (props) => {
                     value: feedback.suggestedTypeLabelId,
                   }}
                   userId={feedback?.user?.id || 'unknown'}
+                  feedbackCreatedTime={feedback.createdTime}
                 />
               }
             />

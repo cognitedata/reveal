@@ -43,10 +43,11 @@ describe('Document Feedback Mutate', () => {
     await act(() =>
       mutateAsync({
         type: 'accept',
-        documentId: Number(123),
-        label: { externalId: '123' },
-        action: 'ATTACH',
-        reporterInfo: 'test',
+        payload: {
+          documentId: Number(123),
+          labelExternalId: '123',
+          reporterInfo: 'test',
+        },
       }).then((result) => {
         expect(result).toMatchObject(getAcceptMockFeedback());
       })
@@ -59,10 +60,11 @@ describe('Document Feedback Mutate', () => {
     await act(() =>
       mutateAsync({
         type: 'reject',
-        documentId: Number(123),
-        label: { externalId: '123' },
-        action: 'ATTACH',
-        reporterInfo: 'test',
+        payload: {
+          documentId: Number(123),
+          labelExternalId: '123',
+          reporterInfo: 'test',
+        },
       }).then((result) => {
         expect(result).toMatchObject(getRejectMockFeedback());
       })

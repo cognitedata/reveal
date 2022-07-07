@@ -17,8 +17,11 @@ describe('EntityFeedbackContent Tests', () => {
       isIncorrectDocType: true,
       isOther: true,
       freeText: 'TEST_TEXT',
-      currentDocumentType: 'test1',
-      documentTypes: ['test1', 'test2'],
+      currentDocumentType: ['test1'],
+      documentTypes: [
+        { name: 'test1', count: 0 },
+        { name: 'test2', count: 0 },
+      ],
       handleCheckChanged,
       handleSetCorrectDocumentType,
       handleTextChanged,

@@ -25,34 +25,64 @@ describe('Document feedback hooks', () => {
     jest.clearAllMocks();
   });
 
-  const initiateTest = (documentId: number, label: string) => {
-    return renderHook(() => useFeedbackDocumentStatus(documentId, label), {
-      wrapper: testWrapper,
-    });
+  const initiateTest = (
+    documentId: number,
+    label: string,
+    feedbackCreatedDate: string
+  ) => {
+    return renderHook(
+      () => useFeedbackDocumentStatus(documentId, label, feedbackCreatedDate),
+      {
+        wrapper: testWrapper,
+      }
+    );
   };
 
-  it('should return expected result with input', async () => {
-    const { result } = initiateTest(2, 'falseLabel');
-
-    const content = await result.current;
-    expect(content).toMatchObject({
-      assessed: false,
-      loading: true,
-      status: undefined,
-    });
-  });
-
-  it('should return expected result with inputs', async () => {
-    const { result, waitForNextUpdate } = initiateTest(100, 'testId1');
+  it('Should get the assessment of document with multiple assessments with "earliest" match to feedback creation', async () => {
+    const { result, waitForNextUpdate } = initiateTest(
+      100,
+      'testId1',
+      '2021-02-03T16:24:23.284407'
+    );
 
     await waitForNextUpdate();
 
-    const content = await result.current;
+    const content = result.current;
 
     expect(content).toMatchObject({
       assessed: true,
       loading: false,
       status: 'ACCEPTED',
     });
+  });
+
+  it('Should get the assessment of document with multiple assessments with "latest" match to feedback creation', async () => {
+    const { result, waitForNextUpdate } = initiateTest(
+      100,
+      'testId1',
+      '2021-02-06T16:24:23.284407'
+    );
+
+    await waitForNextUpdate();
+
+    const content = result.current;
+
+    expect(content).toMatchObject({
+      assessed: true,
+      loading: false,
+      status: 'REJECTED',
+    });
+  });
+
+  it('Should be returning default values when document id is not found in document feedback', async () => {
+    const { waitForNextUpdate } = initiateTest(981, 'testId1', '2021-02-07');
+
+    await waitForNextUpdate();
+
+    return {
+      loading: false,
+      assessed: false,
+      status: undefined,
+    };
   });
 });

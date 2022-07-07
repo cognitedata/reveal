@@ -16,11 +16,11 @@ export type DocumentFeedbackCreateBody = {
     externalId: string;
   };
   action: 'ATTACH' | 'DETACH';
-  reporterInfo: string;
+  reporterInfo?: string;
 };
 
 export type DocumentFeedbackCreateResponse = DocumentFeedbackCreateBody & {
-  status: string;
+  status: 'CREATED' | 'ACCEPTED' | 'REJECTED' | 'STALE';
   feedbackId: number;
   createdAt: string;
 };

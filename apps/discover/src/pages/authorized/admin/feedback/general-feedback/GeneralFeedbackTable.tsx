@@ -268,7 +268,11 @@ export const GeneralFeedbackTable: React.FC<Props> = ({
     if (!data || isString(data)) {
       return [];
     }
-    return data.filter((item) => item.deleted === generalFeedbackShowDeleted);
+    return data
+      .filter((item) => item.deleted === generalFeedbackShowDeleted)
+      .sort((a, b) => {
+        return sortByDate(new Date(b.createdTime), new Date(a.createdTime));
+      });
   }, [data, generalFeedbackShowDeleted]);
 
   if (isLoading || isAdminUserLoading) {

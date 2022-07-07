@@ -122,6 +122,7 @@ export const DOCUMENTS_QUERY_KEY = {
   SEARCH: [DOCUMENTS, 'search'],
   SEARCH_ONE: [DOCUMENTS, 'one'],
   LABELS: [DOCUMENTS, 'labels'],
+  LABELS_QUERY: (query: unknown) => [DOCUMENTS, 'labels', query],
 };
 
 export const DOCUMENTS_AGGREGATES = {

@@ -2,7 +2,7 @@ import { useFeedbackDocumentStatus } from 'domain/documents/internal/hooks/useFe
 import { useDocumentFeedbackMutate } from 'domain/documents/service/queries/useDocumentFeedbackMutate';
 import { DocumentFeedbackType } from 'domain/documents/service/types';
 
-import React, { useEffect } from 'react';
+import React from 'react';
 
 import styled from 'styled-components/macro';
 
@@ -23,12 +23,14 @@ interface Props {
   originalDocumentType?: string;
   suggestedDocumentType: { label: string; value: string };
   userId: string;
+  feedbackCreatedTime: string;
 }
 export const DocumentFeedbackDocumentTypeActions: React.FC<Props> = ({
   documentId,
   originalDocumentType,
   suggestedDocumentType,
   userId,
+  feedbackCreatedTime,
 }) => {
   const approvalRights = usePermissions({
     documentFeedbackAcl: ['READ', 'DELETE', 'CREATE'],
@@ -42,23 +44,27 @@ export const DocumentFeedbackDocumentTypeActions: React.FC<Props> = ({
 
   const { assessed, status, loading } = useFeedbackDocumentStatus(
     Number(documentId),
-    suggestedDocumentType.value
+    suggestedDocumentType.value,
+    feedbackCreatedTime
   );
 
-  const [beenAssessed, setBeenAssessed] = React.useState(assessed);
-  useEffect(() => {
-    setBeenAssessed(assessed);
-  }, [assessed]);
+  // Re-enable this in the future when undo is required.
+  // const [beenAssessed, setBeenAssessed] = React.useState(assessed);
+  // useEffect(() => {
+  //   setBeenAssessed(assessed);
+  // }, [assessed]);
 
   const assessment = useDocumentFeedbackMutate();
 
   const performAssessment = (type: DocumentFeedbackType) => {
     assessment.mutate({
       type,
-      documentId: Number(documentId),
-      label: { externalId: suggestedDocumentType.value },
-      action: 'ATTACH',
-      reporterInfo: userId,
+      originalDocumentType,
+      payload: {
+        documentId: Number(documentId),
+        labelExternalId: suggestedDocumentType.value,
+        reporterInfo: userId,
+      },
     });
   };
 
@@ -74,7 +80,7 @@ export const DocumentFeedbackDocumentTypeActions: React.FC<Props> = ({
     return null;
   }
 
-  if (beenAssessed) {
+  if (assessed) {
     return (
       <Container>
         <Button disabled size="small">

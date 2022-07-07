@@ -1,4 +1,5 @@
-import head from 'lodash/head';
+import { toISOStringDate } from 'utils/date';
+import { sortByDate } from 'utils/sort';
 
 import { useDocumentFeedbackListQuery } from '../../service/queries/userDocumentFeedbackListQuery';
 
@@ -7,23 +8,45 @@ import { useDocumentFeedbackListQuery } from '../../service/queries/userDocument
  */
 export const useFeedbackDocumentStatus = (
   documentId: number,
-  label: string
+  label: string,
+  feedbackCreatedTime: string
 ) => {
   const { data, isLoading } = useDocumentFeedbackListQuery();
 
-  const documentAssessments = (data?.items || []).filter((item) => {
-    return item.documentId === documentId && item.label.externalId === label;
-  });
+  /**
+   * Check if there are any feedback that is submitted with
+   * specific document id and label, and that its feedback submission
+   * date comes after the list of registered document feedbacks.
+   *
+   * (NB: latter is done because it might be cases where same document
+   * and same label has been assessed before, and thus, we need to
+   * validate whether the feedback creation time comes after the new
+   * submission or not)
+   *
+   * FYI: That NB could have been avoided if we proceeded to create the
+   * document feedback upon feedback creation and then stored the generated
+   * feedback id in the database...
+   */
+  const documentAssessments = (data?.items || [])
+    .sort((a, b) => {
+      return sortByDate(new Date(a.createdAt), new Date(b.createdAt));
+    })
+    .find((item) => {
+      const feedbackCreatedTimeDate = toISOStringDate(item.createdAt);
+      const documentFeedbackAssessedTimeDate =
+        toISOStringDate(feedbackCreatedTime);
 
-  const hasDocumentBeenAssessed =
-    documentAssessments.length > 0 &&
-    documentAssessments?.every((item) => {
-      return ['ACCEPTED', 'REJECTED', 'STALE'].includes(item.status);
+      return (
+        item.documentId === documentId &&
+        item.label.externalId === label &&
+        item.action === 'ATTACH' &&
+        feedbackCreatedTimeDate >= documentFeedbackAssessedTimeDate
+      );
     });
 
   return {
     loading: isLoading,
-    status: head(documentAssessments)?.status,
-    assessed: hasDocumentBeenAssessed,
+    status: documentAssessments?.status,
+    assessed: !!documentAssessments,
   };
 };
