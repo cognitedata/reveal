@@ -5,7 +5,7 @@
 import * as THREE from 'three';
 import { BvhElement } from './BvhElement';
 
-import { unionBoxes } from '@reveal/utilities';
+import { unionBoxes } from './unionBoxes';
 
 const computeVectorSeparatismVars = { vec: new THREE.Vector3() };
 
@@ -15,7 +15,6 @@ function computeVectorSeparatism(min: THREE.Vector3, max: THREE.Vector3): number
   diff.copy(min).sub(max);
 
   return Math.max(diff.x, Math.max(diff.y, diff.z));
-
 }
 
 /**
@@ -41,7 +40,7 @@ function copySortedByAxis<T extends BvhElement>(elements: T[], axisIndex: number
 
 function splitByMiddle<T>(elements: T[]): [T[], T[]] {
   const midIndex = Math.floor(elements.length / 2);
-  return [ elements.slice(0, midIndex), elements.slice(midIndex, elements.length) ];
+  return [elements.slice(0, midIndex), elements.slice(midIndex, elements.length)];
 }
 
 /**
@@ -51,7 +50,7 @@ function splitByMiddle<T>(elements: T[]): [T[], T[]] {
  */
 function evaluateSeparatingAxis(elements: BvhElement[], axisIndex: number): number {
   if (elements.length < 2) {
-    throw Error("Too few elements provided to separation evaluation function, need at least two");
+    throw Error('Too few elements provided to separation evaluation function, need at least two');
   }
 
   const sortedElements = copySortedByAxis(elements, axisIndex);
@@ -70,17 +69,18 @@ function evaluateSeparatingAxis(elements: BvhElement[], axisIndex: number): numb
  * separates the boxes associated with the elements
  */
 export function findBestSplit<T extends BvhElement>(elements: T[]): [T[], T[]] {
-    let bestSeparatism = -Infinity, bestAxisIndex = 0;
+  let bestSeparatism = -Infinity,
+    bestAxisIndex = 0;
 
-    for (let i = 0; i < 3; i++) {
-      const separatismValue = evaluateSeparatingAxis(elements, i);
+  for (let i = 0; i < 3; i++) {
+    const separatismValue = evaluateSeparatingAxis(elements, i);
 
-      if (separatismValue > bestSeparatism) {
-        bestAxisIndex = i;
-        bestSeparatism = separatismValue;
-      }
+    if (separatismValue > bestSeparatism) {
+      bestAxisIndex = i;
+      bestSeparatism = separatismValue;
     }
+  }
 
-    const sortedElements = copySortedByAxis(elements, bestAxisIndex);
-    return splitByMiddle(sortedElements);
+  const sortedElements = copySortedByAxis(elements, bestAxisIndex);
+  return splitByMiddle(sortedElements);
 }

@@ -17,4 +17,4 @@ export class BoundingVolumeHierarchy<T extends BvhElement> {
     this._root.findContainingElements(point, resultList);
     return resultList;
   }
-};
+}
