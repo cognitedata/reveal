@@ -72,4 +72,23 @@ export class Cylinder implements IShape {
       radius: this._radius
     };
   }
+
+  createBoundingBox(): THREE.Box3 {
+    const axisVec = this.getMiddle().sub(this._centerB);
+
+    const axisOption0 = new THREE.Vector3(1, 0, 0);
+    const axisOption1 = new THREE.Vector3(0, 1, 0);
+
+    const chosenAxis =
+      Math.abs(axisOption0.dot(axisVec)) < Math.abs(axisOption1.dot(axisVec)) ? axisOption0 : axisOption1;
+
+    const perpVector0 = chosenAxis.clone().cross(axisVec).multiplyScalar(this.radius);
+    const perpVector1 = perpVector0.clone().cross(axisVec).multiplyScalar(this.radius);
+
+    const matrix = new THREE.Matrix4().makeBasis(axisVec, perpVector0, perpVector1);
+    matrix.setPosition(this.getMiddle());
+
+    const baseBox = new THREE.Box3(new THREE.Vector3(-1, -1, -1), new THREE.Vector3(1, 1, 1));
+    return baseBox.applyMatrix4(matrix);
+  }
 }
