@@ -29,7 +29,7 @@ export class WebGLRendererStateHelper {
   private _originalState: WebGLRendererState = {};
   private readonly _renderer: THREE.WebGLRenderer;
 
-  private static DefaultWebGLState: WebGLState = {
+  private static readonly DefaultWebGLState: WebGLState = {
     buffers: {
       depth: {
         mask: true,
