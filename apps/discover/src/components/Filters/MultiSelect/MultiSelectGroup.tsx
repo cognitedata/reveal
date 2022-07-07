@@ -60,7 +60,8 @@ export const MultiSelectGroup: React.FC<MultiSelectGroupProps> = ({
 
     const value = groupedOptions
       .flatMap((item) => [...item.options])
-      .filter((option) => selectedOptions.includes(option.label));
+      .filter((option) => selectedOptions.includes(option.label))
+      .sort((a, b) => sortByCaseInsensitive(a.label, b.label));
 
     setValue(value);
   }, [groupedOptions, selectedOptions]);

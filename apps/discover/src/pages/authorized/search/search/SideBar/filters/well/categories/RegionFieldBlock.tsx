@@ -3,6 +3,7 @@ import { useWellGroupsQuery } from 'domain/wells/well/internal/queries/useWellGr
 import React from 'react';
 
 import isEmpty from 'lodash/isEmpty';
+import isUndefined from 'lodash/isUndefined';
 
 import { MULTISELECT_NO_RESULTS } from 'components/Filters/MultiSelect/constants';
 import { FilterIDs } from 'modules/wellSearch/constants';
@@ -18,6 +19,8 @@ import {
   WellFilterMapValue,
   WellFilterOptionValue,
 } from 'modules/wellSearch/types';
+import { isChildShouldUpdateWith } from 'modules/wellSearch/utils/isChildShouldUpdateWith';
+import { isParentShouldUpdate } from 'modules/wellSearch/utils/isParentShouldUpdate';
 
 import { CommonFilter } from '../CommonFilter';
 
@@ -34,7 +37,6 @@ export const RegionFieldBlock: React.FC<RegionFieldBlockProps> = ({
   regionFieldBlockConfig,
 }) => {
   const { data: wellGroups } = useWellGroupsQuery();
-
   const getRelationship = useRegionsFieldsBlocksRelationship(
     wellGroups,
     selectedOptions
@@ -43,6 +45,8 @@ export const RegionFieldBlock: React.FC<RegionFieldBlockProps> = ({
   const selectedRegions: WellFilterMapValue = selectedOptions[FilterIDs.REGION];
   const selectedFields: WellFilterMapValue = selectedOptions[FilterIDs.FIELD];
   const selectedBlocks: WellFilterMapValue = selectedOptions[FilterIDs.BLOCK];
+
+  let parentToChild = false;
 
   const allRegions = Object.keys(wellGroups?.regions || []);
   const allFields = Object.keys(wellGroups?.fields || []);
@@ -78,9 +82,20 @@ export const RegionFieldBlock: React.FC<RegionFieldBlockProps> = ({
     } = getRelationship(FilterIDs.REGION);
 
     setField(updatingField);
-    setBlock(updatingBlock);
+    setBlock((previousValue) => previousValue || updatingBlock);
 
-    // Triggered on 'regions'-field updates
+    const { isUpdate, value } = isChildShouldUpdateWith(
+      selectedFields,
+      selectedRegions,
+      'region',
+      'fields',
+      wellGroups
+    );
+
+    if (!isUpdate || isUndefined(value)) return;
+
+    // Triggered on 'Field'-field updates
+    updateFieldSelection(value);
   }, [selectedRegions, regionConfig]);
 
   React.useEffect(() => {
@@ -94,9 +109,24 @@ export const RegionFieldBlock: React.FC<RegionFieldBlockProps> = ({
     setRegion(updatingRegion);
     setBlock(updatingBlock);
 
-    updateRegionSelection(updatingRegion);
+    if (isParentShouldUpdate(selectedRegions, updatingRegion)) {
+      updateRegionSelection(updatingRegion);
+    }
 
-    // Triggered on 'fields'-field updates
+    const { isUpdate, value } = isChildShouldUpdateWith(
+      selectedBlocks,
+      selectedFields,
+      'field',
+      'blocks',
+      wellGroups
+    );
+
+    if (!isUpdate || isUndefined(value)) return;
+
+    parentToChild = true;
+
+    // Triggered on 'block'-field updates
+    updateBlockSelection(value);
   }, [selectedFields, fieldConfig]);
 
   React.useEffect(() => {
@@ -110,10 +140,16 @@ export const RegionFieldBlock: React.FC<RegionFieldBlockProps> = ({
     setRegion(updatingRegion);
     setField(updatingField);
 
-    updateRegionSelection(updatingRegion);
-    updateFieldSelection(updatingField);
-
-    // Triggered on 'blocks'-field updates
+    if (
+      isParentShouldUpdate(selectedFields, updatingField) &&
+      !parentToChild &&
+      selectedBlocks
+    ) {
+      // Triggered on 'blocks'-field updates
+      updateFieldSelection(updatingField);
+    } else if (parentToChild) {
+      parentToChild = false;
+    }
   }, [selectedBlocks, blockConfig]);
 
   const updateRegionSelection = (selectedVals: WellFilterOptionValue[]) => {
@@ -126,9 +162,9 @@ export const RegionFieldBlock: React.FC<RegionFieldBlockProps> = ({
 
   const updateBlockSelection = (
     selectedVals: WellFilterOptionValue[],
-    id: number
+    id?: number
   ) => {
-    onValueChange(FilterIDs.BLOCK, id, selectedVals, BLOCK);
+    onValueChange(FilterIDs.BLOCK, id || FilterIDs.BLOCK, selectedVals, BLOCK);
   };
 
   if (!wellGroups) {

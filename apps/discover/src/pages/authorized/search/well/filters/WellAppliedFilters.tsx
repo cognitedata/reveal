@@ -5,7 +5,7 @@ import { useSetWellsFilters } from 'domain/savedSearches/internal/hooks/useSetWe
 
 import React from 'react';
 
-import isEmpty from 'lodash/isEmpty';
+import isUndefined from 'lodash/isUndefined';
 import styled from 'styled-components/macro';
 
 import { FilterClearAllButton } from 'components/Buttons/FilterClearAllButton';
@@ -54,7 +54,9 @@ export const WellAppliedFilters: React.FC<Props> = React.memo(
     const filterValues = useGetAppliedFilterEntries();
 
     const hasFiltersApplied =
-      !isEmpty(appliedFilters) ||
+      !isUndefined(
+        Object.values(appliedFilters).find((values) => values.length)
+      ) ||
       (showGeoFilters && geoFiltersApplied) ||
       (showSearchPhraseTag && searchPhrase);
 

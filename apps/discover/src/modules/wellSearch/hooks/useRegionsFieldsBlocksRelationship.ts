@@ -57,16 +57,25 @@ export const useRegionsFieldsBlocksRelationship = (
 
       const { parents, children } = hierarchy[filterId];
 
+      const selectedParents = Object.keys(selectedOptions).filter(
+        (key: string) => !isEmpty(selectedOptions[Number(key)])
+      );
+
       parents.forEach((parent) => {
         const parentFilters = ((selectedValues as string[]) || []).map(
           (filter) => wellGroups[parentAccessor(filterId)][filter]
         ) as WellGroupsResponse[keyof WellGroupsResponse][];
 
-        const mapFilterKeys = parentFilters
-          .filter(Boolean)
-          .map((filter) => filter[childAccessor(parent)]);
-
-        const result = [...new Set(mapFilterKeys)];
+        const result =
+          isEmpty(parentFilters) && selectedParents.includes(String(parent))
+            ? selectedOptions[parent]
+            : [
+                ...new Set(
+                  parentFilters
+                    .filter(Boolean)
+                    .map((filter) => filter[childAccessor(parent)])
+                ),
+              ];
 
         results = { ...results, [parent]: result };
       });
