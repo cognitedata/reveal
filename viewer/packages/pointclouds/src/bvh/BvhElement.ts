@@ -4,4 +4,4 @@
 
 export interface BvhElement {
   getBox(): THREE.Box3;
-};
+}
