@@ -10,4 +10,6 @@ export interface IShape {
   containsPoint(point: THREE.Vector3): boolean;
 
   toRawShape(): IRawShape;
+
+  createBoundingBox(): THREE.Box3;
 }

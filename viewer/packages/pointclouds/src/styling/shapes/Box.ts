@@ -35,4 +35,11 @@ export class Box implements IShape {
       invMatrix: { data: this.invMatrix.clone().transpose().toArray() }
     };
   }
+
+  createBoundingBox(): THREE.Box3 {
+    const baseBox = new THREE.Box3(new THREE.Vector3(-0.5, -0.5, -0.5), new THREE.Vector3(0.5, 0.5, 0.5));
+    const instanceMatrix = this.invMatrix.clone().invert();
+
+    return baseBox.applyMatrix4(instanceMatrix);
+  }
 }

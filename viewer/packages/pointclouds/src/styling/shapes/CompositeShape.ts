@@ -35,4 +35,13 @@ export class CompositeShape implements IShape {
       shapes: this._innerShapes.map(shape => shape.toRawShape())
     };
   }
+
+  createBoundingBox(): THREE.Box3 {
+    const box = new THREE.Box3();
+    for (const shape of this._innerShapes) {
+      box.union(shape.createBoundingBox());
+    }
+
+    return box;
+  }
 }
