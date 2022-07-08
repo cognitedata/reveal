@@ -1,6 +1,6 @@
 import keyBy from 'lodash/keyBy';
 
-import { SequenceSource, Wellbore } from '@cognite/sdk-wells-v3';
+import { SequenceSource, Wellbore } from '@cognite/sdk-wells';
 
 export const keyBySequence = <T extends { source: SequenceSource }>(
   items: T[]

@@ -1,7 +1,7 @@
 import { rest } from 'msw';
 import { TEST_PROJECT } from 'setupTests';
 
-import { WellItems } from '@cognite/sdk-wells-v3';
+import { WellItems } from '@cognite/sdk-wells';
 
 import { MSWRequest } from '__test-utils/types';
 import { SIDECAR } from 'constants/app';

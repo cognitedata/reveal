@@ -1,4 +1,4 @@
-import { NdsAggregate } from '@cognite/sdk-wells-v3/dist/src';
+import { NdsAggregate } from '@cognite/sdk-wells/dist/src';
 
 import { generateNdsFilterDataFromAggregate } from '../generateNdsFilterDataFromAggregate';
 

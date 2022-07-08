@@ -3,7 +3,7 @@ import { filters } from 'domain/wells/well/internal/filters';
 import isEmpty from 'lodash/isEmpty';
 import isObject from 'lodash/isObject';
 
-import { WellFilter } from '@cognite/sdk-wells-v3';
+import { WellFilter } from '@cognite/sdk-wells';
 
 export const getNPTDurationFilter = (
   value: unknown

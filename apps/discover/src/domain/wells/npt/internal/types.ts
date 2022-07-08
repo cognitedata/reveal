@@ -1,6 +1,6 @@
 import { ConvertedDistance } from 'utils/units/constants';
 
-import { Npt, NptAggregate } from '@cognite/sdk-wells-v3';
+import { Npt, NptAggregate } from '@cognite/sdk-wells';
 
 export interface NptInternal extends Omit<Npt, 'measuredDepth'> {
   nptCode: string;

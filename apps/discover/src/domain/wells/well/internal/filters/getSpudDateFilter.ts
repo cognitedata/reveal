@@ -3,7 +3,7 @@ import { filters } from 'domain/wells/well/internal/filters';
 import { adaptLocalDateToISOString } from 'utils/date';
 import { isStringsArray } from 'utils/types/isStringsArray';
 
-import { WellFilter } from '@cognite/sdk-wells-v3';
+import { WellFilter } from '@cognite/sdk-wells';
 
 export const getSpudDateFilter = (
   value?: unknown

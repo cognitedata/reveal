@@ -3,7 +3,7 @@ import { convertToIdentifiers } from 'domain/wells/utils/convertToIdentifiers';
 
 import { fetchAllCursors } from 'utils/fetchAllCursors';
 
-import { Well } from '@cognite/sdk-wells-v3';
+import { Well } from '@cognite/sdk-wells';
 
 export const getWellsByIds = async (
   wellMatchingIds: Array<Well['matchingId']>

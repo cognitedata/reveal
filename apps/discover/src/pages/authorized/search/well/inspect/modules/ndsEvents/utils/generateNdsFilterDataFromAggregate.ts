@@ -1,4 +1,4 @@
-import { NdsAggregate } from '@cognite/sdk-wells-v3';
+import { NdsAggregate } from '@cognite/sdk-wells';
 
 import { MultiSelectCategorizedOption } from 'components/Filters/MultiSelectCategorized/types';
 

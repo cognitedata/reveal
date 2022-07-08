@@ -2,7 +2,7 @@ import { getWellSDKClient } from 'domain/wells/utils/authenticate';
 
 import { fetchAllCursors, FetchOptions } from 'utils/fetchAllCursors';
 
-import { Well, WellFilterRequest } from '@cognite/sdk-wells-v3';
+import { Well, WellFilterRequest } from '@cognite/sdk-wells';
 
 export const getWellsByFilter = ({
   wellFilterRequest,

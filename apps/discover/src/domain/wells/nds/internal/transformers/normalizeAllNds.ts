@@ -2,7 +2,7 @@ import compact from 'lodash/compact';
 import map from 'lodash/map';
 import { colorize } from 'utils/colorize';
 
-import { Nds } from '@cognite/sdk-wells-v3';
+import { Nds } from '@cognite/sdk-wells';
 
 import { UserPreferredUnit } from 'constants/units';
 

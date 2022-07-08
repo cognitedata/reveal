@@ -1,8 +1,4 @@
-import {
-  DistanceUnitEnum,
-  Nds,
-  TrueVerticalDepths,
-} from '@cognite/sdk-wells-v3';
+import { DistanceUnitEnum, Nds, TrueVerticalDepths } from '@cognite/sdk-wells';
 
 export const getMockNdsEvent = (extras?: Partial<Nds>): Nds => ({
   wellboreAssetExternalId: 'events/nds/test/wellboreAssetExternalId',

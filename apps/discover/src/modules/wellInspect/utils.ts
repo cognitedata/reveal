@@ -38,7 +38,7 @@ export const selectObjectsByKey = <T extends Record<string | number, unknown>>(
     return data;
   }
   return pickBy(data, (_, key) =>
-    // @sdk-wells-v3
+    // @sdk-wells
     filterKeys.map(String).includes(String(key))
   ) as T;
 };

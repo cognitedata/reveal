@@ -1,6 +1,6 @@
 import { convertDistance } from 'utils/units/convertDistance';
 
-import { Datum } from '@cognite/sdk-wells-v3';
+import { Datum } from '@cognite/sdk-wells';
 
 import { UserPreferredUnit } from 'constants/units';
 

@@ -1,4 +1,4 @@
-import { CogniteWellsClient, createWellsClient } from '@cognite/sdk-wells-v3';
+import { CogniteWellsClient, createWellsClient } from '@cognite/sdk-wells';
 
 let client: CogniteWellsClient;
 

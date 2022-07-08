@@ -1,6 +1,6 @@
 import { endOf, isValidDate, startOf } from 'utils/date';
 
-import { SpudDateLimits } from '@cognite/sdk-wells-v3';
+import { SpudDateLimits } from '@cognite/sdk-wells';
 
 export const processSpudDateLimits = (spudDateLimits: SpudDateLimits) => {
   const minDate = new Date(String(spudDateLimits.min));

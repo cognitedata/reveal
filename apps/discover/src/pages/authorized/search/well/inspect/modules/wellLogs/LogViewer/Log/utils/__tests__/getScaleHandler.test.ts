@@ -1,4 +1,4 @@
-import { DepthIndexTypeEnum } from '@cognite/sdk-wells-v3';
+import { DepthIndexTypeEnum } from '@cognite/sdk-wells';
 
 import {
   getMockLogData,

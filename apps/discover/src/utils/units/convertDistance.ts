@@ -2,7 +2,7 @@ import { Distance } from 'convert-units';
 import isUndefined from 'lodash/isUndefined';
 import { Fixed, toFixedNumberFromNumber } from 'utils/number';
 
-import { DistanceUnitEnum } from '@cognite/sdk-wells-v3';
+import { DistanceUnitEnum } from '@cognite/sdk-wells';
 
 import { changeUnitTo } from '.';
 import { ConvertedDistance } from './constants';

@@ -1,4 +1,4 @@
-import { DistanceUnitEnum } from '@cognite/sdk-wells-v3';
+import { DistanceUnitEnum } from '@cognite/sdk-wells';
 
 import { UserPreferredUnit } from 'constants/units';
 

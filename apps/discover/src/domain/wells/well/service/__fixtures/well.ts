@@ -1,6 +1,6 @@
 import { getMockWellbore } from 'domain/wells/wellbore/service/__fixtures/wellbore';
 
-import { Well } from '@cognite/sdk-wells-v3';
+import { Well } from '@cognite/sdk-wells';
 
 export const getMockWell = (extras?: Partial<Well>): Well => {
   return {

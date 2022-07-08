@@ -1,6 +1,6 @@
 import { getWellSDKClient } from 'domain/wells/utils/authenticate';
 
-import { TrajectoryData } from '@cognite/sdk-wells-v3';
+import { TrajectoryData } from '@cognite/sdk-wells';
 
 import { TrajectoriesDataRequest } from '../types';
 import { getTrajectoryDataRequestDepthUnitBody } from '../utils/getTrajectoryDataRequestDepthUnitBody';

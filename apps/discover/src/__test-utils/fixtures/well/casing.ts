@@ -1,4 +1,4 @@
-import { CasingSchematic } from '@cognite/sdk-wells-v3';
+import { CasingSchematic } from '@cognite/sdk-wells';
 
 export const getMockCasings = (): CasingSchematic[] => [
   {

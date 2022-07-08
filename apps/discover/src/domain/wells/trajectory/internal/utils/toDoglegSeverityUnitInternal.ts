@@ -1,7 +1,7 @@
 import { toAngel } from 'utils/units/toAngel';
 import { toDistance } from 'utils/units/toDistance';
 
-import { DoglegSeverityUnit } from '@cognite/sdk-wells-v3';
+import { DoglegSeverityUnit } from '@cognite/sdk-wells';
 
 import { DoglegSeverityUnitInternal } from '../types';
 

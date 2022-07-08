@@ -4,7 +4,7 @@ import { convertToIdentifiers } from 'domain/wells/utils/convertToIdentifiers';
 
 import { fetchAllCursors } from 'utils/fetchAllCursors';
 
-import { Nds } from '@cognite/sdk-wells-v3';
+import { Nds } from '@cognite/sdk-wells';
 
 import { EVENT_PER_PAGE } from '../constants';
 

@@ -1,6 +1,6 @@
 import { toDistance } from 'utils/units/toDistance';
 
-import { DepthMeasurementData } from '@cognite/sdk-wells-v3';
+import { DepthMeasurementData } from '@cognite/sdk-wells';
 
 import { DepthMeasurementDataInternal } from '../types';
 

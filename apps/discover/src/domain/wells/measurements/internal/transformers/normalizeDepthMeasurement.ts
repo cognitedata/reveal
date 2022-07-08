@@ -1,6 +1,6 @@
 import { normalizeDatum } from 'domain/wells/wellbore/internal/transformers/normalizeDatum';
 
-import { DepthMeasurement } from '@cognite/sdk-wells-v3';
+import { DepthMeasurement } from '@cognite/sdk-wells';
 
 import { UserPreferredUnit } from 'constants/units';
 

@@ -2,7 +2,7 @@ import { normalizeWellbore } from 'domain/wells/wellbore/internal/transformers/n
 
 import { convertDistance } from 'utils/units/convertDistance';
 
-import { Well } from '@cognite/sdk-wells-v3';
+import { Well } from '@cognite/sdk-wells';
 
 import { UserPreferredUnit } from 'constants/units';
 

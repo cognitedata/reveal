@@ -1,4 +1,4 @@
-import { Trajectory } from '@cognite/sdk-wells-v3';
+import { Trajectory } from '@cognite/sdk-wells';
 
 export const getMockTrajectory = (
   id: string,

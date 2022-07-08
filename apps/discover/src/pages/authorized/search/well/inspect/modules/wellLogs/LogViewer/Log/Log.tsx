@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
 
-import { DepthIndexTypeEnum } from '@cognite/sdk-wells-v3';
+import { DepthIndexTypeEnum } from '@cognite/sdk-wells';
 import { LogViewer, Track } from '@cognite/videx-wellog';
 
 import { useDeepEffect } from 'hooks/useDeep';

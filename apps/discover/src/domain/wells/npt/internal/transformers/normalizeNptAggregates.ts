@@ -1,4 +1,4 @@
-import { NptAggregate, NptAggregateRow, Wellbore } from '@cognite/sdk-wells-v3';
+import { NptAggregate, NptAggregateRow, Wellbore } from '@cognite/sdk-wells';
 
 import { NptAggregatesInternal } from '../types';
 

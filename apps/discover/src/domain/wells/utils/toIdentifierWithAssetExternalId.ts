@@ -1,4 +1,4 @@
-import { Identifier, AssetSource } from '@cognite/sdk-wells-v3';
+import { Identifier, AssetSource } from '@cognite/sdk-wells';
 
 export const toIdentifierWithAssetExternalId = (
   assetExternalId: AssetSource['assetExternalId']

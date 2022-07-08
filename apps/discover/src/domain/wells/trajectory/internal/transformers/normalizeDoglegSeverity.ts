@@ -1,4 +1,4 @@
-import { DoglegSeverity } from '@cognite/sdk-wells-v3';
+import { DoglegSeverity } from '@cognite/sdk-wells';
 
 import { DoglegSeverityInternal } from '../types';
 import { toDoglegSeverityUnitInternal } from '../utils/toDoglegSeverityUnitInternal';

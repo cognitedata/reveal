@@ -1,4 +1,4 @@
-import { NdsAggregate, NdsAggregateRow, Wellbore } from '@cognite/sdk-wells-v3';
+import { NdsAggregate, NdsAggregateRow, Wellbore } from '@cognite/sdk-wells';
 
 import { NdsAggregatesInternal } from '../types';
 

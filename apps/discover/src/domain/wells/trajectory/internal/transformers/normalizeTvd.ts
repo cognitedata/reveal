@@ -1,6 +1,6 @@
 import times from 'lodash/times';
 
-import { TrueVerticalDepths } from '@cognite/sdk-wells-v3';
+import { TrueVerticalDepths } from '@cognite/sdk-wells';
 
 import { TrueVerticalDepthsDataLayer } from '../types';
 

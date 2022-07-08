@@ -3,7 +3,7 @@ import { getMockWell } from 'domain/wells/well/service/__fixtures/well';
 import { rest } from 'msw';
 import { TEST_PROJECT } from 'setupTests';
 
-import { Well, WellItems } from '@cognite/sdk-wells-v3';
+import { Well, WellItems } from '@cognite/sdk-wells';
 
 import { MSWRequest } from '__test-utils/types';
 import { SIDECAR } from 'constants/app';

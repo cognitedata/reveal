@@ -8,7 +8,7 @@ import {
   DepthMeasurementData,
   DepthMeasurementDataColumn,
   DistanceRange,
-} from '@cognite/sdk-wells-v3';
+} from '@cognite/sdk-wells';
 
 import { DataError } from 'modules/inspectTabs/types';
 

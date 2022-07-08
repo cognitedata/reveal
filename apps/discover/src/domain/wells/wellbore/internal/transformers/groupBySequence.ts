@@ -1,6 +1,6 @@
 import groupBy from 'lodash/groupBy';
 
-import { SequenceSource, Wellbore } from '@cognite/sdk-wells-v3';
+import { SequenceSource, Wellbore } from '@cognite/sdk-wells';
 
 export const groupBySequence = <T extends { source: SequenceSource }>(
   items: T[]

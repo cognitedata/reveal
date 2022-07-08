@@ -4,7 +4,7 @@ import { convertToIdentifiers } from 'domain/wells/utils/convertToIdentifiers';
 
 import { fetchAllCursors } from 'utils/fetchAllCursors';
 
-import { CasingSchematic } from '@cognite/sdk-wells-v3';
+import { CasingSchematic } from '@cognite/sdk-wells';
 
 export const getCasingSchematics = async ({
   wellboreIds,

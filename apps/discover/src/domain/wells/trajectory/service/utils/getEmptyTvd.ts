@@ -1,4 +1,4 @@
-import { DistanceUnitEnum, TrueVerticalDepths } from '@cognite/sdk-wells-v3';
+import { DistanceUnitEnum, TrueVerticalDepths } from '@cognite/sdk-wells';
 
 import { ResponseItemType } from '../types';
 

@@ -4,7 +4,7 @@ import { Fixed, toFixedNumberFromNumber } from 'utils/number';
 import { changeUnitTo } from 'utils/units';
 import { ConvertedDistance } from 'utils/units/constants';
 
-import { Distance } from '@cognite/sdk-wells-v3';
+import { Distance } from '@cognite/sdk-wells';
 
 import { UserPreferredUnit } from 'constants/units';
 

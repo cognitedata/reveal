@@ -1,6 +1,6 @@
 import compact from 'lodash/compact';
 
-import { MeasurementType } from '@cognite/sdk-wells-v3';
+import { MeasurementType } from '@cognite/sdk-wells';
 
 export const getTypesFromMeasurementTypes = (
   measurementTypes: MeasurementType[]

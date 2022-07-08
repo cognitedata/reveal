@@ -1,4 +1,4 @@
-import { Identifier, Wellbore } from '@cognite/sdk-wells-v3';
+import { Identifier, Wellbore } from '@cognite/sdk-wells';
 
 export const toIdentifierWithMatchingId = (
   matchingId: Wellbore['matchingId']

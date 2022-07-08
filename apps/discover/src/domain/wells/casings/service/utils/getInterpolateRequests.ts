@@ -8,7 +8,7 @@ import { toDistanceUnit } from 'utils/units/toDistanceUnit';
 import {
   DistanceUnitEnum,
   TrajectoryInterpolationRequest,
-} from '@cognite/sdk-wells-v3';
+} from '@cognite/sdk-wells';
 
 import { UserPreferredUnit } from 'constants/units';
 

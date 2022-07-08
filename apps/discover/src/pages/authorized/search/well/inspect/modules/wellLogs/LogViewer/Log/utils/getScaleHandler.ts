@@ -3,7 +3,7 @@ import head from 'lodash/head';
 import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
-import { DepthIndexTypeEnum } from '@cognite/sdk-wells-v3';
+import { DepthIndexTypeEnum } from '@cognite/sdk-wells';
 import {
   InterpolatedScaleHandler,
   ScaleHandler,

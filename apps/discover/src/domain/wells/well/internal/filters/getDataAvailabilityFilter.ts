@@ -1,7 +1,7 @@
 import isArray from 'lodash/isArray';
 import isEmpty from 'lodash/isEmpty';
 
-import { WellFilter } from '@cognite/sdk-wells-v3';
+import { WellFilter } from '@cognite/sdk-wells';
 
 export enum DataAvailabilityOptions {
   'Trajectories' = 'Trajectories',

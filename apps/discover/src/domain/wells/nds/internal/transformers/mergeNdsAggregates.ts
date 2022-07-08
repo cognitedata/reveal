@@ -1,7 +1,7 @@
 import isNil from 'lodash/isNil';
 import { mergeUniqueArray } from 'utils/merge';
 
-import { NdsAggregateRow } from '@cognite/sdk-wells-v3';
+import { NdsAggregateRow } from '@cognite/sdk-wells';
 
 import { WellboreNdsAggregatesSummary } from '../types';
 

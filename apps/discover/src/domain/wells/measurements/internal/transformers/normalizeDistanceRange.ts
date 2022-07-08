@@ -1,6 +1,6 @@
 import { changeUnitTo } from 'utils/units';
 
-import { DistanceRange } from '@cognite/sdk-wells-v3';
+import { DistanceRange } from '@cognite/sdk-wells';
 
 import { UserPreferredUnit } from 'constants/units';
 

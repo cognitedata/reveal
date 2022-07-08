@@ -1,7 +1,7 @@
 import { rest } from 'msw';
 import { TEST_PROJECT } from 'setupTests';
 
-import { CasingItems } from '@cognite/sdk-wells-v3';
+import { CasingItems } from '@cognite/sdk-wells';
 
 import { getMockCasings } from '__test-utils/fixtures/well/casing';
 import { MSWRequest } from '__test-utils/types';

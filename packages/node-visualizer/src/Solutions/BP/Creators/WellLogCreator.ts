@@ -1,4 +1,4 @@
-import { DepthIndexTypeEnum } from '@cognite/sdk-wells-v3';
+import { DepthIndexTypeEnum } from '@cognite/sdk-wells';
 
 import { BaseNode } from '../../../Core/Nodes/BaseNode';
 import { Util } from '../../../Core/Primitives/Util';

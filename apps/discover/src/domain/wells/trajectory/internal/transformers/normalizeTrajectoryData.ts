@@ -1,7 +1,7 @@
 import { toAngel } from 'utils/units/toAngel';
 import { toDistance } from 'utils/units/toDistance';
 
-import { TrajectoryData } from '@cognite/sdk-wells-v3';
+import { TrajectoryData } from '@cognite/sdk-wells';
 
 import { TrajectoryDataInternal } from '../types';
 import { toDoglegSeverityUnitInternal } from '../utils/toDoglegSeverityUnitInternal';

@@ -1,4 +1,4 @@
-import { GeometryTypeEnum, PolygonFilter } from '@cognite/sdk-wells-v3';
+import { GeometryTypeEnum, PolygonFilter } from '@cognite/sdk-wells';
 import { GeoJson } from '@cognite/seismic-sdk-js';
 
 export const getPolygonFilter = (

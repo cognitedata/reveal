@@ -1,7 +1,7 @@
 import { ColorMap } from 'utils/colorize';
 import { convertDistance } from 'utils/units/convertDistance';
 
-import { Nds } from '@cognite/sdk-wells-v3';
+import { Nds } from '@cognite/sdk-wells';
 
 import { UserPreferredUnit } from 'constants/units';
 

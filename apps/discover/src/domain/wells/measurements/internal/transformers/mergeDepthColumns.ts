@@ -4,7 +4,7 @@ import keyBy from 'lodash/keyBy';
 import {
   DepthMeasurementColumn,
   DepthMeasurementDataColumn,
-} from '@cognite/sdk-wells-v3';
+} from '@cognite/sdk-wells';
 
 import { DepthMeasurementDataColumnInternal } from '../types';
 

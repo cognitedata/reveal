@@ -1,6 +1,6 @@
 import { screen } from '@testing-library/react';
 
-import { DepthIndexTypeEnum } from '@cognite/sdk-wells-v3';
+import { DepthIndexTypeEnum } from '@cognite/sdk-wells';
 
 import { getMockLogData } from '__test-utils/fixtures/wellLogs';
 import { testRenderer } from '__test-utils/renderer';

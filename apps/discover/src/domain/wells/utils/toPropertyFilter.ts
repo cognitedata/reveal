@@ -1,6 +1,6 @@
 import isUndefined from 'lodash/isUndefined';
 
-import { PropertyFilter } from '@cognite/sdk-wells-v3';
+import { PropertyFilter } from '@cognite/sdk-wells';
 
 export const toPropertyFilter = (values?: string[]): PropertyFilter => {
   if (isUndefined(values)) {

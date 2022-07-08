@@ -1,4 +1,4 @@
-import { Wellbore } from '@cognite/sdk-wells-v3';
+import { Wellbore } from '@cognite/sdk-wells';
 
 export const mockWellboreOptions = {
   trajectory: jest.fn(),

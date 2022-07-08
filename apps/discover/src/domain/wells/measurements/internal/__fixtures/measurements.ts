@@ -14,7 +14,7 @@ import {
   DepthIndexColumn,
   DepthIndexTypeEnum,
   DistanceUnitEnum,
-} from '@cognite/sdk-wells-v3';
+} from '@cognite/sdk-wells';
 
 import {
   MeasurementChartData,

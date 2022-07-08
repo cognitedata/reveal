@@ -1,4 +1,4 @@
-import { Well } from '@cognite/sdk-wells-v3';
+import { Well } from '@cognite/sdk-wells';
 
 import { getWellboresIdsFromWellsList } from 'modules/wellSearch/utils/getWellboresIdsFromWellsList';
 

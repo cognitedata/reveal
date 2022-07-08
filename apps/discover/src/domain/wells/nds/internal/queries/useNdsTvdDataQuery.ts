@@ -1,7 +1,7 @@
 import { useInterpolateTvdQuery } from 'domain/wells/trajectory/internal/queries/useInterpolateTvdQuery';
 import { getKeyedTvdData } from 'domain/wells/trajectory/internal/transformers/getKeyedTvdData';
 
-import { Nds } from '@cognite/sdk-wells-v3';
+import { Nds } from '@cognite/sdk-wells';
 
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 

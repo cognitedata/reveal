@@ -1,6 +1,6 @@
 import { Distance } from 'convert-units';
 
-import { DistanceUnitEnum } from '@cognite/sdk-wells-v3';
+import { DistanceUnitEnum } from '@cognite/sdk-wells';
 
 const DISTANCE_UNIT_MAP: Record<DistanceUnitEnum, Distance> = {
   meter: 'm',

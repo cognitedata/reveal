@@ -8,7 +8,7 @@ import {
   Trajectory,
   TrajectoryData,
   TrueVerticalDepths,
-} from '@cognite/sdk-wells-v3';
+} from '@cognite/sdk-wells';
 
 export interface TrajectoryInternal
   extends Omit<Trajectory, 'maxDoglegSeverity'> {

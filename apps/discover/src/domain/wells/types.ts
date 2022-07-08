@@ -1,6 +1,6 @@
 import { FetchOptions } from 'utils/fetchAllCursors';
 
-import { SequenceSource, Wellbore } from '@cognite/sdk-wells-v3';
+import { SequenceSource, Wellbore } from '@cognite/sdk-wells';
 
 import { DataError } from 'modules/inspectTabs/types';
 

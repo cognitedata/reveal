@@ -1,6 +1,6 @@
 import { groupBySequence } from 'domain/wells/wellbore/internal/transformers/groupBySequence';
 
-import { TrajectoryDataRequest } from '@cognite/sdk-wells-v3';
+import { TrajectoryDataRequest } from '@cognite/sdk-wells';
 
 import { WELL_QUERY_KEY } from 'constants/react-query';
 import { useArrayCache } from 'hooks/useArrayCache';

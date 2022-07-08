@@ -1,6 +1,6 @@
 import { ConvertedDistance } from 'utils/units/constants';
 
-import { CasingSchematic, CasingAssembly } from '@cognite/sdk-wells-v3';
+import { CasingSchematic, CasingAssembly } from '@cognite/sdk-wells';
 
 export interface CasingSchematicInternal
   extends Omit<CasingSchematic, 'casingAssemblies'> {

@@ -1,4 +1,4 @@
-import { SummaryCount } from '@cognite/sdk-wells-v3';
+import { SummaryCount } from '@cognite/sdk-wells';
 
 export const getPropertiesFromSummaryCounts = (
   summaryCounts: SummaryCount[]

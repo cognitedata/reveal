@@ -3,7 +3,7 @@ import { getPolygonFilter } from 'domain/wells/well/internal/filters/getPolygonF
 
 import merge from 'lodash/merge';
 
-import { WellFilter } from '@cognite/sdk-wells-v3';
+import { WellFilter } from '@cognite/sdk-wells';
 
 import { UserPreferredUnit } from 'constants/units';
 import { useDeepMemo } from 'hooks/useDeep';

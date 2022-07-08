@@ -1,6 +1,6 @@
 import { getWellSDKClient } from 'domain/wells/utils/authenticate';
 
-import { Well, WellFilter } from '@cognite/sdk-wells-v3';
+import { Well, WellFilter } from '@cognite/sdk-wells';
 
 export const searchWells = async (filter: WellFilter, query: string) => {
   const results = await getWellSDKClient().wells.search({

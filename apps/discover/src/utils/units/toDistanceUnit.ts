@@ -1,6 +1,6 @@
 import convert from 'convert-units';
 
-import { DistanceUnit, DistanceUnitEnum } from '@cognite/sdk-wells-v3';
+import { DistanceUnit, DistanceUnitEnum } from '@cognite/sdk-wells';
 
 import { UserPreferredUnit } from 'constants/units';
 

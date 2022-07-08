@@ -1,4 +1,4 @@
-import { Well, Wellbore } from '@cognite/sdk-wells-v3';
+import { Well, Wellbore } from '@cognite/sdk-wells';
 
 export const getWellboresIdsFromWellsList = (
   wells: Well[]

@@ -5,7 +5,7 @@ import {
   OTHER_CONVERSION_UNITS,
 } from 'utils/units/constants';
 
-import { DistanceUnitEnum } from '@cognite/sdk-wells-v3';
+import { DistanceUnitEnum } from '@cognite/sdk-wells';
 
 import { UserPreferredUnit } from 'constants/units';
 

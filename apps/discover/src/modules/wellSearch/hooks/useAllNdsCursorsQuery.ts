@@ -1,7 +1,7 @@
 import { getNdsEvents } from 'domain/wells/nds/service/network/getNdsEvents';
 import { groupByWellbore } from 'domain/wells/wellbore/internal/transformers/groupByWellbore';
 
-import { Nds } from '@cognite/sdk-wells-v3';
+import { Nds } from '@cognite/sdk-wells';
 
 import { WELL_QUERY_KEY } from 'constants/react-query';
 import { useArrayCache } from 'hooks/useArrayCache';

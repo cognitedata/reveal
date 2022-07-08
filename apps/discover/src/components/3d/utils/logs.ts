@@ -6,7 +6,7 @@ import {
 import reduce from 'lodash/reduce';
 
 import { ILog, ILogRow, ILogRowColumn } from '@cognite/node-visualizer';
-import { DepthMeasurementValueTypeEnum } from '@cognite/sdk-wells-v3';
+import { DepthMeasurementValueTypeEnum } from '@cognite/sdk-wells';
 
 import { WellboreId } from 'modules/wellSearch/types';
 

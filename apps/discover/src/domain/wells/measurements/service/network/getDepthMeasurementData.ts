@@ -2,7 +2,7 @@ import { getWellSDKClient } from 'domain/wells/utils/authenticate';
 
 import { fetchAllCursorsItem } from 'utils/fetchAllCursors';
 
-import { DepthMeasurementData } from '@cognite/sdk-wells-v3';
+import { DepthMeasurementData } from '@cognite/sdk-wells';
 
 import { GetDepthMeasurementDataProps } from '../types';
 

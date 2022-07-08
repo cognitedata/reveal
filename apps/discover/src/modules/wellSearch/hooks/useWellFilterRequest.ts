@@ -5,7 +5,7 @@ import {
   GeometryTypeEnum,
   WellFilter,
   WellFilterRequest,
-} from '@cognite/sdk-wells-v3';
+} from '@cognite/sdk-wells';
 
 import { useDeepMemo } from 'hooks/useDeep';
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';

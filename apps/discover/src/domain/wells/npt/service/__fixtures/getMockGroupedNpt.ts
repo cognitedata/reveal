@@ -1,4 +1,4 @@
-import { Npt } from '@cognite/sdk-wells-v3';
+import { Npt } from '@cognite/sdk-wells';
 
 export const getMockGroupedNpt = (extras?: Partial<Npt[]>) => ({
   CEMT: [

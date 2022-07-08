@@ -2,7 +2,7 @@ import { GetAllInspectDataProps } from 'domain/wells/types';
 
 import { FetchOptions } from 'utils/fetchAllCursors';
 
-import { DistanceUnitEnum } from '@cognite/sdk-wells-v3';
+import { DistanceUnitEnum } from '@cognite/sdk-wells';
 
 export type GetDepthMeasurementsProps = GetAllInspectDataProps &
   MeasurementTypeFilter;

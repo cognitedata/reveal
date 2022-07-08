@@ -2,7 +2,7 @@ import { filters } from 'domain/wells/well/internal/filters';
 
 import { isNumberTuple } from 'utils/types/isNumberTuple';
 
-import { WellFilter } from '@cognite/sdk-wells-v3';
+import { WellFilter } from '@cognite/sdk-wells';
 
 export const getMaxInclinationAngleFilter = (
   value?: unknown

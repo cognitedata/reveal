@@ -9,7 +9,7 @@ import {
   AngleUnitEnum,
   DurationUnitEnum,
   WellFilter,
-} from '@cognite/sdk-wells-v3';
+} from '@cognite/sdk-wells';
 
 import { FEET, UserPreferredUnit } from 'constants/units';
 import { FilterIDs } from 'modules/wellSearch/constants';

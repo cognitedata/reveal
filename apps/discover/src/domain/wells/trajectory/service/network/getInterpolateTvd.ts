@@ -6,7 +6,7 @@ import {
   TrajectoryInterpolationItems,
   TrajectoryInterpolationRequest,
   TrueVerticalDepths,
-} from '@cognite/sdk-wells-v3';
+} from '@cognite/sdk-wells';
 
 import { ResponseItemType } from '../types';
 import { getEmptyTvd } from '../utils/getEmptyTvd';

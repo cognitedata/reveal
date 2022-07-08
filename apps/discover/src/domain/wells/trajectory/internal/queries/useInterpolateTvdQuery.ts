@@ -4,7 +4,7 @@ import { useQuery } from 'react-query';
 
 import { handleServiceError } from 'utils/errors';
 
-import { TrajectoryInterpolationRequest } from '@cognite/sdk-wells-v3';
+import { TrajectoryInterpolationRequest } from '@cognite/sdk-wells';
 
 import { WELL_QUERY_KEY } from 'constants/react-query';
 

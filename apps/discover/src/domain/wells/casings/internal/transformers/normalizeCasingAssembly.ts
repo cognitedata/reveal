@@ -1,7 +1,7 @@
 import { Fixed } from 'utils/number';
 import { convertDistance } from 'utils/units/convertDistance';
 
-import { CasingAssembly } from '@cognite/sdk-wells-v3';
+import { CasingAssembly } from '@cognite/sdk-wells';
 
 import { UserPreferredUnit } from 'constants/units';
 

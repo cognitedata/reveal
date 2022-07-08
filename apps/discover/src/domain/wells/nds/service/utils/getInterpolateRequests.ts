@@ -8,7 +8,7 @@ import {
   DistanceUnitEnum,
   Nds,
   TrajectoryInterpolationRequest,
-} from '@cognite/sdk-wells-v3';
+} from '@cognite/sdk-wells';
 
 import { UserPreferredUnit } from 'constants/units';
 

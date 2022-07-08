@@ -11,7 +11,7 @@ import {
   DateRange,
   AngleUnitEnum,
   AngleRange,
-} from '@cognite/sdk-wells-v3';
+} from '@cognite/sdk-wells';
 
 // helpers for using the SDK
 export const filters = {

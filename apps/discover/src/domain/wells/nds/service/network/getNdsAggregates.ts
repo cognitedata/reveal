@@ -2,11 +2,7 @@ import { normalizeNdsAggregates } from 'domain/wells/nds/internal/transformers/n
 import { getWellSDKClient } from 'domain/wells/utils/authenticate';
 import { convertToIdentifiers } from 'domain/wells/utils/convertToIdentifiers';
 
-import {
-  NdsAggregate,
-  NdsAggregateEnum,
-  Wellbore,
-} from '@cognite/sdk-wells-v3';
+import { NdsAggregate, NdsAggregateEnum, Wellbore } from '@cognite/sdk-wells';
 
 export const getNdsAggregates = (
   wellboreIds: Set<Wellbore['matchingId']>,

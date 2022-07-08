@@ -1,6 +1,6 @@
 import { ConvertedDistance } from 'utils/units/constants';
 
-import { Well } from '@cognite/sdk-wells-v3';
+import { Well } from '@cognite/sdk-wells';
 import { Point } from '@cognite/seismic-sdk-js';
 
 import { WellboreInternal } from '../../wellbore/internal/types';

@@ -1,4 +1,4 @@
-import { SummaryCount } from '@cognite/sdk-wells-v3';
+import { SummaryCount } from '@cognite/sdk-wells';
 
 export const getNptCodeSummaries = (): SummaryCount[] => {
   return [

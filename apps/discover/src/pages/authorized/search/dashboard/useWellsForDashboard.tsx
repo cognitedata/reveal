@@ -1,6 +1,6 @@
 import { useAllWellSearchResultQuery } from 'domain/wells/well/internal/queries/useAllWellSearchResultQuery';
 
-import { Well } from '@cognite/sdk-wells-v3';
+import { Well } from '@cognite/sdk-wells';
 
 export const useWellsForDashboard = () => {
   const { data: wells, isLoading: isLoadingWells } =

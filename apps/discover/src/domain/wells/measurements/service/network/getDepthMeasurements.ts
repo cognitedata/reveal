@@ -3,7 +3,7 @@ import { convertToIdentifiers } from 'domain/wells/utils/convertToIdentifiers';
 
 import { fetchAllCursors } from 'utils/fetchAllCursors';
 
-import { DepthMeasurement } from '@cognite/sdk-wells-v3';
+import { DepthMeasurement } from '@cognite/sdk-wells';
 
 import { GetDepthMeasurementsProps } from '../types';
 

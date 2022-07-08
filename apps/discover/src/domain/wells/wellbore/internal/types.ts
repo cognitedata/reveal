@@ -2,7 +2,7 @@ import { DoglegSeverityInternal } from 'domain/wells/trajectory/internal/types';
 
 import { Distance } from 'convert-units';
 
-import { Datum, Wellbore } from '@cognite/sdk-wells-v3';
+import { Datum, Wellbore } from '@cognite/sdk-wells';
 
 export interface WellboreInternal extends Omit<Wellbore, 'datum'> {
   id: string;

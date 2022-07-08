@@ -3099,20 +3099,10 @@
     "@cognite/sdk-core" "^3.4.1"
     lodash "^4.17.11"
 
-"@cognite/sdk-wells-v2@npm:@cognite/sdk-wells@2.0.14":
-  version "2.0.14"
-  resolved "https://registry.yarnpkg.com/@cognite/sdk-wells/-/sdk-wells-2.0.14.tgz#dd13735a2811d0dfac1d8244265a499dcb660ad3"
-  integrity sha512-9Csh4RQUVa3MYbBdFM23SwIGnTUd6jINnJ8KyE+Hwq8CqWPIUV9WqOE4EHfKLmzJX/6RD9V49cGUOid0epSQpg==
-  dependencies:
-    "@cognite/sdk" "^5.1.3"
-    "@cognite/sdk-core" "^3.2.0"
-    lodash "^4.17.11"
-    wkt "^0.1.1"
-
-"@cognite/sdk-wells-v3@npm:@cognite/sdk-wells@3.11.1":
-  version "3.11.1"
-  resolved "https://registry.yarnpkg.com/@cognite/sdk-wells/-/sdk-wells-3.11.1.tgz#9f706f929de491aafd609f1d2d9799a36e8e9e3b"
-  integrity sha512-iMqkjwsCi//5QF/D8zY4xxEvQGOPgOR0NW3OaRx6Y22fXQDaxvsXTB1l6zH7camCCOwGtVfLpK/1an2ZobxAZg==
+"@cognite/sdk-wells@3.13.0":
+  version "3.13.0"
+  resolved "https://registry.yarnpkg.com/@cognite/sdk-wells/-/sdk-wells-3.13.0.tgz#c7a86dbcd47e19140b52e2cb748e3365dec28966"
+  integrity sha512-cgywMebMvetlni55ZVBTIvAbndsZHj6K4SQfh80XDgxFqkNsZJwswYB1gyVIkQ35TF2RxPCI5h+1rFqoat1+4w==
   dependencies:
     "@cognite/sdk" "^5.1.3"
     "@cognite/sdk-core" "^3.2.0"
@@ -3181,6 +3171,13 @@
   integrity sha512-X4xqRHqN8ACt2aHVe51OxeA2HjbcL4MqFqXkrmQszJ1NOUuUu5u6Vqx/0lZSVNku7velL5FC/s5uEAj1lsBMhA==
   dependencies:
     "@cspotcode/source-map-consumer" "0.8.0"
+
+"@cspotcode/source-map-support@^0.8.0":
+  version "0.8.1"
+  resolved "https://registry.yarnpkg.com/@cspotcode/source-map-support/-/source-map-support-0.8.1.tgz#00629c35a688e05a88b1cda684fb9d5e73f000a1"
+  integrity sha512-IchNf6dN4tHoMFIn/7OE8LWZ19Y6q/67Bmf6vnGREv8RSbBVb9LPJxEcnwrcwX6ixSvaiGoomAUvu4YSxXrVgw==
+  dependencies:
+    "@jridgewell/trace-mapping" "0.3.9"
 
 "@ctrl/tinycolor@^3.4.0":
   version "3.4.0"
@@ -4404,6 +4401,14 @@
   version "1.4.11"
   resolved "https://registry.yarnpkg.com/@jridgewell/sourcemap-codec/-/sourcemap-codec-1.4.11.tgz#771a1d8d744eeb71b6adb35808e1a6c7b9b8c8ec"
   integrity sha512-Fg32GrJo61m+VqYSdRSjRXMjQ06j8YIYfcTqndLYVAaHmroZHLJZCydsWBOTDqXS2v+mjxohBWEMfg97GXmYQg==
+
+"@jridgewell/trace-mapping@0.3.9":
+  version "0.3.9"
+  resolved "https://registry.yarnpkg.com/@jridgewell/trace-mapping/-/trace-mapping-0.3.9.tgz#6534fd5933a53ba7cbf3a17615e273a0d1273ff9"
+  integrity sha512-3Belt6tdc8bPgAtbcmdtNJlirVoTmEb5e2gC94PnkwEW9jI6CAHUeoG85tjWP5WquqfavoMtMwiG4P926ZKKuQ==
+  dependencies:
+    "@jridgewell/resolve-uri" "^3.0.3"
+    "@jridgewell/sourcemap-codec" "^1.4.10"
 
 "@jridgewell/trace-mapping@^0.3.0":
   version "0.3.4"
@@ -28498,11 +28503,11 @@ ts-node@10.4.0:
     yn "3.1.1"
 
 ts-node@^10.7.0:
-  version "10.7.0"
-  resolved "https://registry.yarnpkg.com/ts-node/-/ts-node-10.7.0.tgz#35d503d0fab3e2baa672a0e94f4b40653c2463f5"
-  integrity sha512-TbIGS4xgJoX2i3do417KSaep1uRAW/Lu+WAL2doDHC0D6ummjirVOXU5/7aiZotbQ5p1Zp9tP7U6cYhA0O7M8A==
+  version "10.8.2"
+  resolved "https://registry.yarnpkg.com/ts-node/-/ts-node-10.8.2.tgz#3185b75228cef116bf82ffe8762594f54b2a23f2"
+  integrity sha512-LYdGnoGddf1D6v8REPtIH+5iq/gTDuZqv2/UJUU7tKjuEU8xVZorBM+buCGNjj+pGEud+sOoM4CX3/YzINpENA==
   dependencies:
-    "@cspotcode/source-map-support" "0.7.0"
+    "@cspotcode/source-map-support" "^0.8.0"
     "@tsconfig/node10" "^1.0.7"
     "@tsconfig/node12" "^1.0.7"
     "@tsconfig/node14" "^1.0.0"
@@ -28513,7 +28518,7 @@ ts-node@^10.7.0:
     create-require "^1.1.0"
     diff "^4.0.1"
     make-error "^1.1.1"
-    v8-compile-cache-lib "^3.0.0"
+    v8-compile-cache-lib "^3.0.1"
     yn "3.1.1"
 
 ts-node@^9:
@@ -29349,7 +29354,7 @@ uuid@^8.0.0, uuid@^8.3.2:
   resolved "https://registry.yarnpkg.com/uuid/-/uuid-8.3.2.tgz#80d5b5ced271bb9af6c445f21a1a04c606cefbe2"
   integrity sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==
 
-v8-compile-cache-lib@^3.0.0:
+v8-compile-cache-lib@^3.0.1:
   version "3.0.1"
   resolved "https://registry.yarnpkg.com/v8-compile-cache-lib/-/v8-compile-cache-lib-3.0.1.tgz#6336e8d71965cb3d35a1bbb7868445a7c05264bf"
   integrity sha512-wa7YjyUGfNZngI/vtK0UHAN+lgDCxBPCylVXGp0zu59Fz5aiGtNXaq3DhIov063MorB+VfufLh3JlF2KdTK3xg==
@@ -30423,11 +30428,6 @@ wkt-parser@^1.3.1:
   version "1.3.1"
   resolved "https://registry.yarnpkg.com/wkt-parser/-/wkt-parser-1.3.1.tgz#a569678eb28f82f6739f736319be073e32bf8191"
   integrity sha512-XK5qV+Y5gsygQfHx2/cS5a7Zxsgleaw8iX5UPC5eOXPc0TgJAu1JB9lr0iYYX3zAnN3p0aNiaN5c+1Bdblxwrg==
-
-wkt@^0.1.1:
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/wkt/-/wkt-0.1.1.tgz#8d3280cb0d7664343d8987a30c85806554618bf8"
-  integrity sha512-2vtzYZOqN0VZdtDTMDUgbpXpE+MXRdsFTiCpS08FZ4yktT9pPylVMZaLxcIqT9pRkBp5FIAGVQyJ/kJa9b8uGg==
 
 word-wrap@^1.2.3, word-wrap@~1.2.3:
   version "1.2.3"

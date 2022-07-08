@@ -1,6 +1,6 @@
 import { Row } from 'react-table';
 
-import { Npt } from '@cognite/sdk-wells-v3';
+import { Npt } from '@cognite/sdk-wells';
 
 type NptCode = Pick<Npt, 'nptCode'>;
 

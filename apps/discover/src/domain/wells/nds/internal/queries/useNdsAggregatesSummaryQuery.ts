@@ -3,7 +3,7 @@ import { NdsAggregatesSummary } from 'domain/wells/nds/internal/types';
 
 import { useQuery } from 'react-query';
 
-import { NdsAggregateEnum } from '@cognite/sdk-wells-v3';
+import { NdsAggregateEnum } from '@cognite/sdk-wells';
 
 import { WELL_QUERY_KEY } from 'constants/react-query';
 

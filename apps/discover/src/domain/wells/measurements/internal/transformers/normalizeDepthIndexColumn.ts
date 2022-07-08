@@ -1,6 +1,6 @@
 import { toDistance } from 'utils/units/toDistance';
 
-import { DepthIndexColumn } from '@cognite/sdk-wells-v3';
+import { DepthIndexColumn } from '@cognite/sdk-wells';
 
 import { DepthIndexColumnInternal } from '../types';
 

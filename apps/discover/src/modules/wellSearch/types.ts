@@ -4,7 +4,7 @@ import { WellboreInternal } from 'domain/wells/wellbore/internal/types';
 import { PlotData } from 'plotly.js';
 
 import { Sequence as DefaultSequence, Asset } from '@cognite/sdk';
-import { AssetSource, WellFilter } from '@cognite/sdk-wells-v3';
+import { AssetSource, WellFilter } from '@cognite/sdk-wells';
 
 import { DataError } from 'modules/inspectTabs/types';
 

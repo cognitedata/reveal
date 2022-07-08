@@ -1,4 +1,4 @@
-import { Identifier, Wellbore, AssetSource } from '@cognite/sdk-wells-v3';
+import { Identifier, Wellbore, AssetSource } from '@cognite/sdk-wells';
 
 import { toIdentifierWithAssetExternalId } from './toIdentifierWithAssetExternalId';
 import { toIdentifierWithMatchingId } from './toIdentifierWithMatchingId';

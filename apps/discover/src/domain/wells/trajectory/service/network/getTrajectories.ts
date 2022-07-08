@@ -4,7 +4,7 @@ import { convertToIdentifiers } from 'domain/wells/utils/convertToIdentifiers';
 
 import { fetchAllCursors } from 'utils/fetchAllCursors';
 
-import { Trajectory } from '@cognite/sdk-wells-v3';
+import { Trajectory } from '@cognite/sdk-wells';
 
 export const getTrajectories = async ({
   wellboreIds,

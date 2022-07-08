@@ -3,7 +3,7 @@ import { getMockDepthMeasurementDataWellboreOne } from 'domain/wells/measurement
 import { rest } from 'msw';
 import { TEST_PROJECT } from 'setupTests';
 
-import { DepthMeasurementData } from '@cognite/sdk-wells-v3/dist/src';
+import { DepthMeasurementData } from '@cognite/sdk-wells/dist/src';
 
 import { MSWRequest } from '__test-utils/types';
 import { SIDECAR } from 'constants/app';
