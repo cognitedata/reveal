@@ -58,12 +58,10 @@ export const getDummyAnnotation = (
 };
 
 export const getDummyKeypointState = (
-  label: string,
   confidence?: number,
   point?: Point
 ): Keypoint => {
   return {
-    label,
     confidence: confidence || 1,
     point: point || { x: 0.5, y: 0.5 },
   };
@@ -111,7 +109,8 @@ export const getDummyReviewImageKeypointObject = (
   return {
     id: id.toString(),
     selected,
-    keypoint: getDummyImageKeypointCollectionAnnotation({ id }).keypoints[0],
+    keypoint: getDummyImageKeypointCollectionAnnotation({ id }).keypoints.start,
+    label: 'start',
   };
 };
 
@@ -123,12 +122,14 @@ export const getDummyTempKeypointCollection = ({
     {
       id: 'pump-one',
       selected: false,
-      keypoint: { label: 'one', confidence: 0.5, point: { x: 0, y: 0 } },
+      keypoint: { confidence: 0.5, point: { x: 0, y: 0 } },
+      label: 'one',
     },
     {
       id: 'pump-two',
       selected: false,
-      keypoint: { label: 'two', confidence: 0.5, point: { x: 1, y: 1 } },
+      keypoint: { confidence: 0.5, point: { x: 1, y: 1 } },
+      label: 'two',
     },
   ],
   remainingKeypoints = [
@@ -151,7 +152,9 @@ export const getDummyTempKeypointCollection = ({
     annotatedResourceId,
     data: {
       label,
-      keypoints: reviewKeypoints,
+      keypoints: Object.fromEntries(
+        reviewKeypoints.map((kp) => [kp.label, kp])
+      ),
     },
     remainingKeypoints,
     color: 'red',

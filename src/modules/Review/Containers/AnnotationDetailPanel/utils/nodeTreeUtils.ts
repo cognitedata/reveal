@@ -53,7 +53,7 @@ export const isVisionReviewImageKeypointRowData = (
 
   return (
     'keypoint' in castedType &&
-    'label' in castedType.keypoint &&
+    'label' in castedType &&
     'point' in castedType.keypoint
   );
 };
