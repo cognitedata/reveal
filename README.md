@@ -100,7 +100,7 @@ Your bundle should now be hosted at https://localhost:3000/index.js. You can go 
 
 Then show it in unified CDF UI by following these steps:
 
-Go to [https://cog-appdev.next-release.fusion.cognite.com/](https://cog-appdev.next-release.fusion.cognite.com/)
+Go to [https://cog-appdev.dev.fusion.cogniteapp.com/](https://cog-appdev.dev.fusion.cogniteapp.com/)
 Open devtools
 In the console type: `importMapOverrides.enableUI()` (This sets some variables in localstorage)
 On the bottom right click the "{...}"-button

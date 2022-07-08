@@ -1,8 +1,27 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { Icon, Tabs } from '@cognite/cogs.js';
 import config from '@platypus-app/config/config';
+import { getCogniteSDKClient } from '../../../environments/cogniteSdk';
+import { getProject } from '@cognite/cdf-utilities';
+
+const DEFAULT_TOKEN_STR = 'Bearer <xxx>';
 const NoAccessPage = (): JSX.Element => {
+  const [token, setToken] = useState(DEFAULT_TOKEN_STR);
+
+
+  useEffect(() => {
+    (async () => {
+      try {
+        setToken(
+          (await getCogniteSDKClient().getDefaultRequestHeaders()
+            .Authorization) || DEFAULT_TOKEN_STR
+        );
+      } catch (e) {
+        // noop
+      }
+    })();
+  }, []);
   return (
     <NoAccessContent>
       <Warning>
@@ -35,8 +54,9 @@ const NoAccessPage = (): JSX.Element => {
       </p>
       <Tabs defaultActiveKey="Postman">
         <Tabs.TabPane key="Postman" tab="Postman (CURL)">
-          <pre>{`curl --location --request POST 'https://greenfield.cognitedata.com/api/v1/projects/<cdf project>/groups' 
---header 'Authorization: Bearer <XXX>' 
+          <pre>{`curl --location --request POST '${getCogniteSDKClient().getBaseUrl()}/api/v1/projects/${getProject()}/groups' \\
+--header 'Authorization: ${token}' \\
+--header 'Content-Type: application/json' \\
 --data-raw '{
     "items": [
         {
