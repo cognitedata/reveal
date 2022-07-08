@@ -19,8 +19,10 @@ export const AnnotationTableRow = ({
   onVisibilityChange,
   onApprove,
   showColorCircle,
+  showEditOptions,
 }: AnnotationTableRowProps) => {
   const annotationColor = useAnnotationColor(reviewAnnotation.annotation);
+
   return (
     <StyledRow
       key={reviewAnnotation.annotation.id}
@@ -86,66 +88,70 @@ export const AnnotationTableRow = ({
           </Detail>
         </AttributesIconContainer>
       )}
-      <ApproveBtnContainer onClick={(evt) => evt.stopPropagation()}>
-        <StyledSegmentedControl
-          status={reviewAnnotation.annotation.status}
-          className="approvalButton"
-          currentKey={
-            // eslint-disable-next-line no-nested-ternary
-            reviewAnnotation.annotation.status === Status.Approved
-              ? 'verified'
-              : reviewAnnotation.annotation.status === Status.Rejected
-              ? 'rejected'
-              : undefined
-          }
-          onButtonClicked={(key) => {
-            if (key === 'verified') {
-              pushMetric('Vision.Review.Annotation.Verified');
-              onApprove(reviewAnnotation.annotation.id, Status.Approved);
-            }
-            if (key === 'rejected') {
-              pushMetric('Vision.Review.Annotation.Rejected');
-              onApprove(reviewAnnotation.annotation.id, Status.Rejected);
-            }
-          }}
-        >
-          <SegmentedControl.Button
-            type="primary"
-            size="small"
-            key="verified"
-            aria-label="verify annotation"
-            className="approveButton"
+      {showEditOptions && (
+        <>
+          <ApproveBtnContainer onClick={(evt) => evt.stopPropagation()}>
+            <StyledSegmentedControl
+              status={reviewAnnotation.annotation.status}
+              className="approvalButton"
+              currentKey={
+                // eslint-disable-next-line no-nested-ternary
+                reviewAnnotation.annotation.status === Status.Approved
+                  ? 'verified'
+                  : reviewAnnotation.annotation.status === Status.Rejected
+                  ? 'rejected'
+                  : undefined
+              }
+              onButtonClicked={(key) => {
+                if (key === 'verified') {
+                  pushMetric('Vision.Review.Annotation.Verified');
+                  onApprove(reviewAnnotation.annotation.id, Status.Approved);
+                }
+                if (key === 'rejected') {
+                  pushMetric('Vision.Review.Annotation.Rejected');
+                  onApprove(reviewAnnotation.annotation.id, Status.Rejected);
+                }
+              }}
+            >
+              <SegmentedControl.Button
+                type="primary"
+                size="small"
+                key="verified"
+                aria-label="verify annotation"
+                className="approveButton"
+              >
+                TRUE
+              </SegmentedControl.Button>
+              <SegmentedControl.Button
+                type="primary"
+                size="small"
+                key="rejected"
+                aria-label="reject annotation"
+                className="rejectButton"
+              >
+                FALSE
+              </SegmentedControl.Button>
+            </StyledSegmentedControl>
+          </ApproveBtnContainer>
+          <ActionMenuContainer
+            onClick={(evt) => evt.stopPropagation()}
+            aria-hidden="true"
           >
-            TRUE
-          </SegmentedControl.Button>
-          <SegmentedControl.Button
-            type="primary"
-            size="small"
-            key="rejected"
-            aria-label="reject annotation"
-            className="rejectButton"
-          >
-            FALSE
-          </SegmentedControl.Button>
-        </StyledSegmentedControl>
-      </ApproveBtnContainer>
-      <ActionMenuContainer
-        onClick={(evt) => evt.stopPropagation()}
-        aria-hidden="true"
-      >
-        <AnnotationActionMenuExtended
-          showPolygon={reviewAnnotation.show}
-          disableShowPolygon={
-            reviewAnnotation.annotation.status === Status.Rejected
-          }
-          handleVisibility={() => {
-            onVisibilityChange(reviewAnnotation.annotation.id);
-          }}
-          handleAnnotationDelete={() => {
-            onDelete(reviewAnnotation.annotation.id);
-          }}
-        />
-      </ActionMenuContainer>
+            <AnnotationActionMenuExtended
+              showPolygon={reviewAnnotation.show}
+              disableShowPolygon={
+                reviewAnnotation.annotation.status === Status.Rejected
+              }
+              handleVisibility={() => {
+                onVisibilityChange(reviewAnnotation.annotation.id);
+              }}
+              handleAnnotationDelete={() => {
+                onDelete(reviewAnnotation.annotation.id);
+              }}
+            />
+          </ActionMenuContainer>
+        </>
+      )}
     </StyledRow>
   );
 };

@@ -88,7 +88,8 @@ const annotatorWrapperSlice = createSlice({
       }
     },
     keypointSelectStatusChange(state, action: PayloadAction<string>) {
-      const keypoint = state.keypointMap.byId[action.payload];
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const [label, keypoint] = state.keypointMap.byId[action.payload] || [];
       const status = state.keypointMap.selectedIds.includes(action.payload);
       if (status) {
         state.keypointMap.selectedIds = state.keypointMap.selectedIds.filter(
@@ -128,11 +129,7 @@ const annotatorWrapperSlice = createSlice({
             keypoints[0];
 
           const imageKeypointToAdd: Keypoint = {
-            label: predefinedKeypoint.caption,
-            point: {
-              x,
-              y,
-            },
+            point: { x, y },
             confidence: 1, // 100% confident about manually created keypoints
           };
 
@@ -160,7 +157,7 @@ const annotatorWrapperSlice = createSlice({
           state.collections.byId[state.lastCollectionId].keypointIds.push(
             String(id)
           );
-          state.keypointMap.byId[id] = imageKeypointToAdd;
+          state.keypointMap.byId[id] = [keypointLabel, imageKeypointToAdd];
           state.keypointMap.allIds = Object.keys(state.keypointMap.byId);
         }
       }
@@ -174,11 +171,13 @@ const annotatorWrapperSlice = createSlice({
           keypointLabel
         );
         if (state.keypointMap.allIds.includes(keypointId)) {
-          state.keypointMap.byId[keypointId] = {
-            label: keypointLabel,
-            confidence: keypointConfidence,
-            point: { x, y },
-          };
+          state.keypointMap.byId[keypointId] = [
+            keypointLabel,
+            {
+              confidence: keypointConfidence,
+              point: { x, y },
+            },
+          ];
         }
       }
     },
@@ -222,11 +221,7 @@ const annotatorWrapperSlice = createSlice({
                 (keypoint) => keypoint.caption === keypointLabel
               ) || keypoints[0];
             const imageKeypointToAdd: Keypoint = {
-              label: predefinedKeypoint.caption,
-              point: {
-                x,
-                y,
-              },
+              point: { x, y },
               confidence: 1, // 100% confident about manually created keypoints
             };
 
@@ -248,7 +243,7 @@ const annotatorWrapperSlice = createSlice({
 
             // update keypoints
             state.lastKeyPoint = predefinedKeypoint.caption;
-            state.keypointMap.byId[id] = imageKeypointToAdd;
+            state.keypointMap.byId[id] = [keypointLabel, imageKeypointToAdd];
             state.keypointMap.allIds = Object.keys(state.keypointMap.byId);
           } else {
             console.warn('predefined collection has no keypoints!');
@@ -275,11 +270,7 @@ const annotatorWrapperSlice = createSlice({
         const { id, annotationLabelOrText, keypointLabel, x, y } = tempRegion;
         if (annotationLabelOrText && keypointLabel) {
           const imageKeypointToAdd: Keypoint = {
-            label: keypointLabel,
-            point: {
-              x,
-              y,
-            },
+            point: { x, y },
             confidence: 1, // 100% confident about manually created keypoints
           };
 
@@ -290,7 +281,8 @@ const annotatorWrapperSlice = createSlice({
             state.collections.byId[state.lastCollectionId].keypointIds;
           const duplicateKeypointIdIndex = tempCollectionKeypointIds
             .map((keypointId) => state.keypointMap.byId[keypointId])
-            .findIndex((keypoint) =>
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            .findIndex(([label, keypoint]) =>
               isEqual(keypoint.point, imageKeypointToAdd.point)
             );
           /* duplicate keypoint detection end */
@@ -303,7 +295,10 @@ const annotatorWrapperSlice = createSlice({
 
             // update keypoints
             state.lastKeyPoint = keypointLabel;
-            state.keypointMap.byId[String(id)] = imageKeypointToAdd;
+            state.keypointMap.byId[String(id)] = [
+              keypointLabel,
+              imageKeypointToAdd,
+            ];
             state.keypointMap.allIds = Object.keys(state.keypointMap.byId);
           }
         } else {
@@ -377,15 +372,13 @@ const annotatorWrapperSlice = createSlice({
             const collectionId = keypointAnnotationCollection.id;
             const keypointIds: string[] = [];
 
-            keypointAnnotationCollection.keypoints.forEach((keypoint) => {
-              const keypointId = generateKeypointId(
-                collectionId,
-                keypoint.label
-              );
-              keypointIds.push(keypointId);
-
-              state.keypointMap.byId[keypointId] = keypoint;
-            });
+            Object.entries(keypointAnnotationCollection.keypoints).forEach(
+              ([label, keypoint]) => {
+                const keypointId = generateKeypointId(collectionId, label);
+                keypointIds.push(keypointId);
+                state.keypointMap.byId[keypointId] = [label, keypoint];
+              }
+            );
 
             state.keypointMap.allIds = Object.keys(state.keypointMap.byId);
 

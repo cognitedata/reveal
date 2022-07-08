@@ -1,50 +1,21 @@
 import React, { useMemo } from 'react';
-import { Button, Title } from '@cognite/cogs.js';
-import { makeSelectFileAnnotationsByType } from 'src/modules/Common/store/annotation/selectors';
+import { Button } from '@cognite/cogs.js';
 import { VisionFileDetails } from 'src/modules/FileDetails/Components/FileMetadata/Types';
-import { AnnotationsListPreview } from 'src/modules/FileDetails/Containers/FileDetailsAnnotationsPreview/AnnotationsListPreview';
 import styled from 'styled-components';
 import { useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
 import { isProcessingFile } from 'src/modules/Process/store/utils';
 import { makeSelectJobStatusForFile } from 'src/modules/Process/store/selectors';
 import { Thumbnail } from 'src/modules/Common/Components/Thumbnail/Thumbnail';
-import { CDFAnnotationTypeEnum } from 'src/api/annotation/types';
+import { AnnotationDetailPanel } from 'src/modules/Review/Containers/AnnotationDetailPanel/AnnotationDetailPanel';
 
 export const FileDetailsAnnotationsPreview = ({
   fileInfo,
   onReviewClick,
-  onAnnotationDeleteClick,
 }: {
   fileInfo: VisionFileDetails;
   onReviewClick: (id: number) => void;
-  onAnnotationDeleteClick: (annotationId: number) => void;
 }) => {
-  // need to create two instances of selector from selector factory since we are using them with different parameters
-  const selectFileAnnotationsByOcrObjectTypes = useMemo(
-    makeSelectFileAnnotationsByType,
-    []
-  );
-  const selectFileAnnotationsByTagDetectionType = useMemo(
-    makeSelectFileAnnotationsByType,
-    []
-  );
-
-  const textAndObjectAnnotations = useSelector(
-    ({ annotationReducer }: RootState) =>
-      selectFileAnnotationsByOcrObjectTypes(annotationReducer, fileInfo.id, [
-        CDFAnnotationTypeEnum.ImagesTextRegion,
-        CDFAnnotationTypeEnum.ImagesObjectDetection,
-        CDFAnnotationTypeEnum.ImagesKeypointCollection,
-      ])
-  );
-
-  const tagAnnotations = useSelector(({ annotationReducer }: RootState) =>
-    selectFileAnnotationsByTagDetectionType(annotationReducer, fileInfo.id, [
-      CDFAnnotationTypeEnum.ImagesAssetLink,
-    ])
-  );
-
   const getAnnotationStatuses = useMemo(makeSelectJobStatusForFile, []);
   const annotationStatuses = useSelector(({ processSlice }: RootState) =>
     getAnnotationStatuses(processSlice, fileInfo.id)
@@ -58,11 +29,11 @@ export const FileDetailsAnnotationsPreview = ({
 
   return (
     <Container>
-      <div className="image">
+      <ThumbnailContainer className="image">
         <Thumbnail
           fileInfo={fileInfo} // TODO: only show in table view
         />
-      </div>
+      </ThumbnailContainer>
       <Button
         type="tertiary"
         icon="Edit"
@@ -73,33 +44,15 @@ export const FileDetailsAnnotationsPreview = ({
       >
         Review annotations
       </Button>
-      <TitleRow>
-        <Title level={5}>Linked assets</Title>
-      </TitleRow>
-      <AnnotationsListPreview
-        annotations={tagAnnotations}
-        reviewDisabled={reviewDisabled}
-        handleReview={handleOnReviewClick}
-        onAnnotationDeleteClick={onAnnotationDeleteClick}
-      />
-      <TitleRow>
-        <Title level={5}>Text and objects in image</Title>
-      </TitleRow>
-      <AnnotationsListPreview
-        annotations={textAndObjectAnnotations}
-        reviewDisabled={reviewDisabled}
-        handleReview={handleOnReviewClick}
-        onAnnotationDeleteClick={onAnnotationDeleteClick}
-      />
+      <AnnotationDetailPanel file={fileInfo} showEditOptions={false} />
     </Container>
   );
 };
 
 const Container = styled.div`
-  height: 100%;
-  width: 100%;
+  height: inherit;
   display: grid;
-
+  grid-template-rows: 200px 50px auto;
   .image {
     height: 191px;
     padding-top: 11px;
@@ -114,7 +67,8 @@ const Container = styled.div`
   }
 `;
 
-const TitleRow = styled.div`
+const ThumbnailContainer = styled.div`
   padding-top: 18px;
   padding-bottom: 5px;
+  height: 200px;
 `;

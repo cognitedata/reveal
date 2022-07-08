@@ -26,7 +26,7 @@ export const convertTempKeypointCollectionToUnsavedVisionImageKeypointCollection
       !collection.data ||
       !collection.data.label ||
       !collection.data.keypoints ||
-      !collection.data.keypoints.length
+      !Object.keys(collection.data.keypoints).length
     ) {
       return null;
     }
@@ -37,11 +37,17 @@ export const convertTempKeypointCollectionToUnsavedVisionImageKeypointCollection
       data: {
         ...collection.data,
         confidence: 1, // since it is manually created
-        keypoints: collection.data.keypoints.map((reviewKeypoint) => ({
-          label: reviewKeypoint.keypoint.label,
-          point: reviewKeypoint.keypoint.point,
-          confidence: 1, // since it is manually created
-        })),
+        keypoints: Object.fromEntries(
+          Object.entries(collection.data.keypoints).map(
+            ([label, reviewKeypoint]) => [
+              label,
+              {
+                point: reviewKeypoint.keypoint.point,
+                confidence: 1, // since it is manually created
+              },
+            ]
+          )
+        ),
       },
     };
   };

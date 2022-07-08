@@ -51,9 +51,13 @@ import {
   annotationTypeFromCategoryTitle,
 } from 'src/modules/Review/Containers/AnnotationDetailPanel/utils';
 
-export const AnnotationDetailPanel = (props: { file: FileInfo }) => {
-  const { file } = props;
-
+export const AnnotationDetailPanel = ({
+  file,
+  showEditOptions,
+}: {
+  file: FileInfo;
+  showEditOptions: boolean;
+}) => {
   const dispatch = useDispatch();
   const annotationCategoryState = useSelector(
     (state: RootState) =>
@@ -314,6 +318,7 @@ export const AnnotationDetailPanel = (props: { file: FileInfo }) => {
           <VirtualizedReviewAnnotations
             rootNodeArr={rootNodeArr}
             scrollId={scrollId}
+            showEditOptions={showEditOptions}
           />
         </TableContainer>
       </Container>

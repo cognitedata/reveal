@@ -169,18 +169,18 @@ export const getDummyImageKeypointCollectionAnnotation = ({
   annotatedResourceId = 10,
   label = 'gauge',
   confidence = 0.5,
-  keypoints = [
-    { label: 'start', point: { x: 0.1, y: 0.1 }, confidence: 0.2 },
-    { label: 'center', point: { x: 0.2, y: 0.2 }, confidence: 0.2 },
-    { label: 'end', point: { x: 0.3, y: 0.3 }, confidence: 0.2 },
-  ],
+  keypoints = {
+    start: { point: { x: 0.1, y: 0.1 }, confidence: 0.2 },
+    center: { point: { x: 0.2, y: 0.2 }, confidence: 0.2 },
+    end: { point: { x: 0.3, y: 0.3 }, confidence: 0.2 },
+  },
 }: {
   id?: number;
   status?: Status;
   annotatedResourceId?: CogniteInternalId;
   label?: string;
   confidence?: number;
-  keypoints?: Keypoint[];
+  keypoints?: Record<string, Keypoint>;
 }): VisionAnnotation<ImageKeypointCollection> => {
   const data: ImageKeypointCollection = {
     label,
@@ -283,13 +283,15 @@ export const getDummyVisionReviewAnnotation = (
     annotation: (isImageKeypointCollectionData(annotation)
       ? {
           ...annotation,
-          keypoints: annotation.keypoints.map((keypoint, index) => ({
-            id: generateKeypointId(annotation.id, keypoint.label),
-            keypoint,
-            selected: selectedKeypointIndices?.length
-              ? selectedKeypointIndices.includes(index)
-              : false,
-          })),
+          keypoints: Object.entries(annotation.keypoints).map(
+            ([label, keypoint], index) => ({
+              id: generateKeypointId(annotation.id, label),
+              keypoint,
+              selected: selectedKeypointIndices?.length
+                ? selectedKeypointIndices.includes(index)
+                : false,
+            })
+          ),
         }
       : annotation) as TurnKeypointType<
       VisionAnnotation<VisionAnnotationDataType>

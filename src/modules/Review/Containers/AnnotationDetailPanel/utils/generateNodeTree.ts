@@ -100,7 +100,7 @@ export const generateNodeTree = (
     if (isVisionReviewImageKeypointCollection(reviewAnnotation)) {
       return {
         ...data,
-        children: reviewAnnotation.annotation.keypoints
+        children: Object.values(reviewAnnotation.annotation.keypoints)
           .map((reviewImageKeypoint, index) =>
             generateNodeTree({
               ...reviewImageKeypoint,
@@ -117,7 +117,9 @@ export const generateNodeTree = (
                       common: {
                         ...common,
                         index:
-                          index + reviewAnnotation.annotation.keypoints.length,
+                          index +
+                          Object.keys(reviewAnnotation.annotation.keypoints)
+                            .length,
                         color: reviewAnnotation.color,
                       }, // keypoint index and color is passed as common attributes
                       callbacks,
@@ -141,7 +143,7 @@ export const generateNodeTree = (
       rowData as AnnotationDetailPanelRowDataBase<ReviewKeypoint>;
     return {
       id: reviewImageKeypoint.id.toString(),
-      name: reviewImageKeypoint.keypoint.label,
+      name: reviewImageKeypoint.label,
       component: ReviewKeypointRow as FC<
         VirtualizedTreeRowProps<AnnotationDetailPanelRowData>
       >,
@@ -184,7 +186,7 @@ const isAnyKeypointChildSelected = (
 ) => {
   return (
     isVisionReviewImageKeypointCollection(reviewAnnotation) &&
-    reviewAnnotation.annotation.keypoints.some(
+    Object.values(reviewAnnotation.annotation.keypoints).some(
       (reviewImageKeypoint) => reviewImageKeypoint.selected
     )
   );
