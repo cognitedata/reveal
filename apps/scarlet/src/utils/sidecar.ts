@@ -20,7 +20,7 @@ const CLUSTER: CDFCluster = 'az-eastus-1';
 
 const getAadApplicationId = (cluster: string) => {
   const ids: Record<string, string> = {
-    'az-eastus-1': '9bbfff3a-1863-4e21-854d-1aba009804b5',
+    'az-eastus-1': '7a12c4e5-1266-4a18-969a-15d86e7a702b',
   };
 
   const aadApplicationId = ids[cluster] || '';
