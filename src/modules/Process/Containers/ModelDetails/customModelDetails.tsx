@@ -122,6 +122,7 @@ export const content = (
       const newParams = {
         modelIndex,
         params: {
+          ...params,
           modelJobId: params.modelJobId,
           threshold: value,
         },
