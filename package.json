@@ -139,6 +139,10 @@
       "pre-commit": "pretty-quick --staged"
     }
   },
+  "resolutions": {
+    "@types/react": "^16.14.3",
+    "@types/react-dom": "^16.9.8"
+  },
   "jest": {
     "transformIgnorePatterns": [
       "/!node_modules\\/lodash-es/"
