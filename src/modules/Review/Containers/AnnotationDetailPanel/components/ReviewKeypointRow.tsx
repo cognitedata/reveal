@@ -48,7 +48,7 @@ export const ReviewKeypointRow = ({
             }}
           >
             <KeypointRowContent
-              label={reviewKeypoint.keypoint.label}
+              label={reviewKeypoint.label}
               // given that a keypoint is set, the corresponding color (which
               // belongs to its keypoint collection) must also exist
               keypointColor={color!}

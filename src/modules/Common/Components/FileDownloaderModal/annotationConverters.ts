@@ -99,7 +99,7 @@ export const convertAnnotationsToCOCO = async (
   const categories = uniqueAnnotations.map((item, index) => {
     const text = getAnnotationLabelOrText(item);
     const keypointLabels = isImageKeypointCollectionData(item)
-      ? item.keypoints.map((keypoint) => keypoint.label)
+      ? Object.keys(item.keypoints)
       : [];
     const colors: never[] = [];
 
@@ -142,7 +142,7 @@ export const convertAnnotationsToCOCO = async (
         }
         if (isImageKeypointCollectionData(annotation)) {
           vertices = ([] as number[]).concat(
-            ...annotation.keypoints.map((keypoint) => [
+            ...Object.values(annotation.keypoints).map((keypoint) => [
               keypoint.point.x,
               keypoint.point.y,
             ])

@@ -256,14 +256,17 @@ describe('convertVisionJobAnnotationToImageKeypointCollection', () => {
             .gauge_value,
         },
       },
-      keypoints: visionJobAnnotation.region?.vertices.map((vertex, index) => {
-        return {
-          label: (visionJobAnnotation as GaugeReaderJobAnnotation).data
-            .keypointNames[index],
-          confidence: visionJobAnnotation.confidence,
-          point: vertex,
-        };
-      }),
+      keypoints: Object.fromEntries(
+        visionJobAnnotation.region?.vertices.map((vertex, index) => [
+          (visionJobAnnotation as GaugeReaderJobAnnotation).data.keypointNames[
+            index
+          ],
+          {
+            confidence: visionJobAnnotation.confidence,
+            point: vertex,
+          },
+        ]) || []
+      ),
     });
   });
 });
@@ -375,10 +378,10 @@ describe('Test converts for internal types -> Annotation V1 types', () => {
     const visionJobAnnotation = {
       confidence: 0.5,
       label: 'gauge',
-      keypoints: [
-        { label: 'left', point: { x: boundingBox.xMin, y: boundingBox.yMin } },
-        { label: 'right', point: { x: boundingBox.xMax, y: boundingBox.yMax } },
-      ],
+      keypoints: {
+        left: { point: { x: boundingBox.xMin, y: boundingBox.yMin } },
+        right: { point: { x: boundingBox.xMax, y: boundingBox.yMax } },
+      },
     } as ImageKeypointCollection;
     expect(
       convertImageKeypointCollectionToAnnotationTypeV1(visionJobAnnotation)
