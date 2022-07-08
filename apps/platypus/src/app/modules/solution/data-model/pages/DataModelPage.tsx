@@ -239,7 +239,6 @@ export const DataModelPage = () => {
         setMode(SchemaEditorMode.View);
       }
       setIsDirty(false);
-      setCurrentType(null);
       removeLocalDraft(draft);
       dataModelTypeDefsBuilder.clear();
       setSelectedSchema(selectedReduxSchema);

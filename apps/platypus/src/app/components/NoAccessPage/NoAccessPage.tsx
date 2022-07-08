@@ -9,7 +9,6 @@ const DEFAULT_TOKEN_STR = 'Bearer <xxx>';
 const NoAccessPage = (): JSX.Element => {
   const [token, setToken] = useState(DEFAULT_TOKEN_STR);
 
-
   useEffect(() => {
     (async () => {
       try {
