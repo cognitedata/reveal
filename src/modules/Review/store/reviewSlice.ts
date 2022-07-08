@@ -231,15 +231,23 @@ export const selectVisionReviewAnnotationsForFile = createSelector(
       }))
       .map((reviewAnn) => {
         if (isImageKeypointCollectionData(reviewAnn.annotation)) {
-          const keypoints = reviewAnn.annotation.keypoints.map((keypoint) => {
-            const id = `${reviewAnn.annotation.id}-${keypoint.label}`;
-            return {
-              keypoint,
-              id,
-              color: reviewAnn.color, // NOTE: it is possible to have colors per keypoint
-              selected: selectedKeypointIds.includes(id),
-            };
-          });
+          const keypoints = Object.fromEntries(
+            Object.entries(reviewAnn.annotation.keypoints).map(
+              ([label, keypoint]) => {
+                const id = `${reviewAnn.annotation.id}-${label}`;
+                return [
+                  label,
+                  {
+                    keypoint,
+                    id,
+                    label,
+                    color: reviewAnn.color, // NOTE: it is possible to have colors per keypoint
+                    selected: selectedKeypointIds.includes(id),
+                  },
+                ];
+              }
+            )
+          );
           return {
             ...reviewAnn,
             annotation: {

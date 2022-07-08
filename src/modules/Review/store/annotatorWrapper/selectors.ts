@@ -115,13 +115,22 @@ export const selectTempKeypointCollection = createSelector(
         annotationColorMap,
         lastKeypointCollection.label
       );
-      const reviewImageKeypoints: ReviewKeypoint[] =
-        lastKeypointCollection.keypointIds.map((keypointId: string) => ({
-          id: keypointId,
-          selected: selectedKeypointIds.includes(keypointId),
-          keypoint: allKeypoints[keypointId],
-          color: keypointColor, // same keypoint color for whole collection
-        }));
+      const reviewImageKeypoints: Record<string, ReviewKeypoint> =
+        Object.fromEntries(
+          lastKeypointCollection.keypointIds.map((keypointId: string) => {
+            const [label, keypoint] = allKeypoints[keypointId];
+            return [
+              label,
+              {
+                id: keypointId,
+                selected: selectedKeypointIds.includes(keypointId),
+                keypoint,
+                label,
+                color: keypointColor, // same keypoint color for whole collection
+              },
+            ];
+          })
+        );
 
       const predefinedCollection: PredefinedKeypointCollection | undefined =
         predefinedKeypointCollections.find(
@@ -130,9 +139,7 @@ export const selectTempKeypointCollection = createSelector(
       const remainingKeypoints =
         predefinedCollection?.keypoints?.filter(
           (keypoint) =>
-            !reviewImageKeypoints
-              .map((reviewImageKeypoint) => reviewImageKeypoint.keypoint.label)
-              .includes(keypoint.caption)
+            !Object.keys(reviewImageKeypoints).includes(keypoint.caption)
         ) || [];
 
       return {

@@ -183,13 +183,12 @@ export function convertVisionJobAnnotationToImageKeypointCollection(
     ...convertGaugeReaderJobAnnotationAttributesToAnnotationAttributes(
       annotation
     ),
-    keypoints: annotation.region.vertices.map((item, index) => {
-      return {
-        point: item,
-        label: annotation.data.keypointNames[index],
-        confidence: annotation.confidence,
-      };
-    }),
+    keypoints: Object.fromEntries(
+      annotation.region.vertices.map((item, index) => [
+        annotation.data.keypointNames[index],
+        { point: item, confidence: annotation.confidence },
+      ])
+    ),
   };
 
   return imageKeypointCollection;
@@ -303,16 +302,20 @@ export function convertImageKeypointCollectionToAnnotationTypeV1(
       ...(imageKeypointCollection.attributes && {
         attributes: imageKeypointCollection.attributes,
       }),
-      keypoints: imageKeypointCollection.keypoints.map((item, index) => {
-        return {
-          caption: item.label,
-          order: (index + 1).toString(), // annotation library (react-image-annotate) has 1-based indexing
-        };
-      }),
+      keypoints: Object.keys(imageKeypointCollection.keypoints).map(
+        (label, index) => {
+          return {
+            caption: label,
+            order: (index + 1).toString(), // annotation library (react-image-annotate) has 1-based indexing
+          };
+        }
+      ),
     },
     region: {
       shape: 'points',
-      vertices: imageKeypointCollection.keypoints.map((item) => item.point),
+      vertices: Object.values(imageKeypointCollection.keypoints).map(
+        (kp) => kp.point
+      ),
     },
   };
 

@@ -87,12 +87,16 @@ describe('test convertTempKeypointCollectionToUnsavedVisionImageKeypointCollecti
       status: Status.Approved,
       data: {
         label: dummyTempKeypointCollection.data.label,
-        keypoints: dummyTempKeypointCollection.data.keypoints.map(
-          ({ keypoint }) => ({
-            label: keypoint.label,
-            confidence: 1,
-            point: keypoint.point,
-          })
+        keypoints: Object.fromEntries(
+          Object.entries(dummyTempKeypointCollection.data.keypoints).map(
+            ([label, { keypoint }]) => [
+              label,
+              {
+                confidence: 1,
+                point: keypoint.point,
+              },
+            ]
+          )
         ),
         confidence: 1,
       },
