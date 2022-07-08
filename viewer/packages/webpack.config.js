@@ -6,14 +6,14 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const webpack = require('webpack');
 
 module.exports = env => {
-  const entryFile = env.example ?? './app/index.ts';
+  const entryFile = '../visual-tests/VisualTests.ts';
   return {
     mode: 'development',
 
-    entry: path.resolve(env.dir, entryFile),
+    entry: path.resolve(__dirname, entryFile),
 
     output: {
-      path: path.resolve(env.dir, 'dist'),
+      path: path.resolve(__dirname, 'dist'),
       filename: 'index.js'
     },
 
@@ -33,7 +33,7 @@ module.exports = env => {
     devServer: {
       static: [
         {
-          directory: path.resolve(__dirname, env.dir + '/app')
+          directory: path.resolve(__dirname, 'sector-parser/app')
         },
         {
           directory: path.resolve(__dirname, '../../examples/public'),
@@ -41,7 +41,8 @@ module.exports = env => {
         }
       ],
       allowedHosts: 'all',
-      server: 'https'
+      server: 'https',
+      port: 12345
     },
 
     module: {
@@ -65,8 +66,7 @@ module.exports = env => {
                 noUnusedParameters: false
               }
             }
-          },
-          exclude: [/.*\.test\.tsx?/g, /.*\/stubs\//]
+          }
         },
         {
           test: /\.(glsl|vert|frag)$/,
@@ -79,7 +79,7 @@ module.exports = env => {
     devtool: 'inline-source-map',
 
     plugins: [
-      new HtmlWebpackPlugin({ title: require(path.resolve(env.dir, './package.json')).name }),
+      new HtmlWebpackPlugin({ title: require(path.resolve('./packages/sector-parser', './package.json')).name }),
       new webpack.ProvidePlugin({
         process: 'process/browser'
       })

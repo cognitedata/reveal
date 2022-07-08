@@ -4,39 +4,27 @@
 
 import * as THREE from 'three';
 
-import { SimpleVisualTestFixture } from '../../../test-utilities/src/visual-tests/test-fixtures/SimpleVisualTestFixture';
+import { SimpleTestFixtureComponents, SimpleVisualTestFixture } from '../../../visual-tests';
 import { GltfSectorParser } from '../src/GltfSectorParser';
 import { RevealGeometryCollectionType } from '../src/types';
 import * as TestMaterials from './testMaterials';
 
-class SectorParserTestApp extends SimpleVisualTestFixture {
-  public async setup(_: THREE.WebGLRenderer, scene: THREE.Scene, camera: THREE.PerspectiveCamera): Promise<void> {
-    const cadFromCdfToThreeMatrix = new THREE.Matrix4().set(1, 0, 0, 0, 0, 0, 1, 0, 0, -1, 0, 0, 0, 0, 0, 1);
-    const group = new THREE.Group();
-    group.frustumCulled = false;
-    group.applyMatrix4(cadFromCdfToThreeMatrix);
-    scene.add(group);
+export class SectorParserTestApp extends SimpleVisualTestFixture {
+  public async setup(simpleTestFixtureComponents: SimpleTestFixtureComponents): Promise<void> {
+    const { scene, camera, dataProviders } = simpleTestFixtureComponents;
+    const { modelDataProvider, modelIdentifier, modelMetadataProvider } = dataProviders;
 
-    const materialMap: Map<RevealGeometryCollectionType, THREE.RawShaderMaterial> = new Map([
-      [RevealGeometryCollectionType.BoxCollection, TestMaterials.createBoxMaterial()],
-      [RevealGeometryCollectionType.CircleCollection, TestMaterials.createCircleMaterial()],
-      [RevealGeometryCollectionType.ConeCollection, TestMaterials.createConeMaterial()],
-      [RevealGeometryCollectionType.EccentricConeCollection, TestMaterials.createEccentricConeMaterial()],
-      [RevealGeometryCollectionType.EllipsoidSegmentCollection, TestMaterials.createEllipsoidSegmentMaterial()],
-      [RevealGeometryCollectionType.GeneralCylinderCollection, TestMaterials.createGeneralCylinderMaterial()],
-      [RevealGeometryCollectionType.GeneralRingCollection, TestMaterials.createGeneralRingMaterial()],
-      [RevealGeometryCollectionType.QuadCollection, TestMaterials.createQuadMaterial()],
-      [RevealGeometryCollectionType.TorusSegmentCollection, TestMaterials.createTorusSegmentMaterial()],
-      [RevealGeometryCollectionType.TrapeziumCollection, TestMaterials.createTrapeziumMaterial()],
-      [RevealGeometryCollectionType.NutCollection, TestMaterials.createNutMaterial()],
-      [RevealGeometryCollectionType.TriangleMesh, TestMaterials.createTriangleMeshMaterial()],
-      [RevealGeometryCollectionType.InstanceMesh, TestMaterials.createInstancedMeshMaterial()]
-    ]);
+    const group = this.initializeGroup(scene);
+
+    const materialMap = this.setMaterialMap();
 
     const loader = new GltfSectorParser();
-    const sceneJsonUrl = 'primitives/';
 
-    const sceneJson = await (await fetch(sceneJsonUrl + 'scene.json')).json();
+    const gltfOutput = (await modelMetadataProvider.getModelOutputs(modelIdentifier)).find(
+      output => output.format === 'gltf-directory'
+    )!;
+    const modelUri = await modelMetadataProvider.getModelUri(modelIdentifier, gltfOutput);
+    const sceneJson = await modelDataProvider.getJsonFile(modelUri, 'scene.json');
 
     const sectors = sceneJson.sectors as [
       {
@@ -49,19 +37,27 @@ class SectorParserTestApp extends SimpleVisualTestFixture {
     const max = sectors[0].boundingBox.max;
 
     const boundingBox = new THREE.Box3(new THREE.Vector3(min.x, min.y, min.z), new THREE.Vector3(max.x, max.y, max.z));
-    boundingBox.applyMatrix4(cadFromCdfToThreeMatrix);
+    boundingBox.applyMatrix4(this.cadFromCdfToThreeMatrix);
 
-    const fileNames = sectors.map(p => p.sectorFileName);
+    const fileNames = sectors.map(sector => sector.sectorFileName);
 
-    const blobs = await Promise.all(
-      fileNames.map(fileName =>
-        fetch(sceneJsonUrl + fileName)
-          .then(file => file.blob())
-          .then(blob => blob.arrayBuffer())
-      )
-    );
+    const blobs = await Promise.all(fileNames.map(fileName => modelDataProvider.getBinaryFile(modelUri, fileName)));
 
-    await Promise.all(
+    await this.loadSectors(blobs, loader, materialMap, camera, group);
+
+    this.fitCameraToBoundingBox(boundingBox, 1.3);
+
+    return Promise.resolve();
+  }
+
+  private async loadSectors(
+    blobs: ArrayBuffer[],
+    loader: GltfSectorParser,
+    materialMap: Map<RevealGeometryCollectionType, THREE.RawShaderMaterial>,
+    camera: THREE.PerspectiveCamera,
+    group: THREE.Group
+  ) {
+    return Promise.all(
       blobs.map(async element => {
         const geometries = await loader.parseSector(element);
         geometries.forEach(result => {
@@ -77,36 +73,31 @@ class SectorParserTestApp extends SimpleVisualTestFixture {
         });
       })
     );
-    this.fitCameraToBoundingBox(boundingBox, camera, 1.3);
-    camera.position.setY(15);
-    camera.lookAt(13.5, 0, -13.5);
-
-    return Promise.resolve();
   }
 
-  private fitCameraToBoundingBox(box: THREE.Box3, camera: THREE.PerspectiveCamera, radiusFactor: number = 2): void {
-    const center = new THREE.Vector3().lerpVectors(box.min, box.max, 0.5);
-    const radius = 0.5 * new THREE.Vector3().subVectors(box.max, box.min).length();
-    const boundingSphere = new THREE.Sphere(center, radius);
+  private setMaterialMap(): Map<RevealGeometryCollectionType, THREE.RawShaderMaterial> {
+    return new Map([
+      [RevealGeometryCollectionType.BoxCollection, TestMaterials.createBoxMaterial()],
+      [RevealGeometryCollectionType.CircleCollection, TestMaterials.createCircleMaterial()],
+      [RevealGeometryCollectionType.ConeCollection, TestMaterials.createConeMaterial()],
+      [RevealGeometryCollectionType.EccentricConeCollection, TestMaterials.createEccentricConeMaterial()],
+      [RevealGeometryCollectionType.EllipsoidSegmentCollection, TestMaterials.createEllipsoidSegmentMaterial()],
+      [RevealGeometryCollectionType.GeneralCylinderCollection, TestMaterials.createGeneralCylinderMaterial()],
+      [RevealGeometryCollectionType.GeneralRingCollection, TestMaterials.createGeneralRingMaterial()],
+      [RevealGeometryCollectionType.QuadCollection, TestMaterials.createQuadMaterial()],
+      [RevealGeometryCollectionType.TorusSegmentCollection, TestMaterials.createTorusSegmentMaterial()],
+      [RevealGeometryCollectionType.TrapeziumCollection, TestMaterials.createTrapeziumMaterial()],
+      [RevealGeometryCollectionType.NutCollection, TestMaterials.createNutMaterial()],
+      [RevealGeometryCollectionType.TriangleMesh, TestMaterials.createTriangleMeshMaterial()],
+      [RevealGeometryCollectionType.InstanceMesh, TestMaterials.createInstancedMeshMaterial()]
+    ]);
+  }
 
-    const target = boundingSphere.center;
-    const distance = boundingSphere.radius * radiusFactor;
-    const direction = new THREE.Vector3(0, 0, -1);
-    direction.applyQuaternion(camera.quaternion);
-
-    const position = new THREE.Vector3();
-    position.copy(direction).multiplyScalar(-distance).add(target);
-
-    camera.position.copy(position);
+  private initializeGroup(scene: THREE.Scene) {
+    const group = new THREE.Group();
+    group.frustumCulled = false;
+    group.applyMatrix4(this.cadFromCdfToThreeMatrix);
+    scene.add(group);
+    return group;
   }
 }
-
-const test = new SectorParserTestApp();
-await test.run();
-
-const render = () => {
-  test.render();
-  requestAnimationFrame(render);
-};
-
-render();

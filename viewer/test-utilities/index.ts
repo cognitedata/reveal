@@ -27,5 +27,3 @@ export { yieldProcessing } from './src/wait';
 export { createRandomBox } from './src/createBoxes';
 
 export { Mutable } from './src/reflection';
-
-export { SimpleVisualTestFixture } from './src/visual-tests/SimpleVisualTestFixture';
