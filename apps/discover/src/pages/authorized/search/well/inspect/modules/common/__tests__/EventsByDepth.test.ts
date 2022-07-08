@@ -1,7 +1,8 @@
+import { mockNptEvents } from 'domain/wells/npt/internal/__fixtures/npt';
+
 import { screen } from '@testing-library/react';
 
 import { mockNdsEvents } from '__test-utils/fixtures/nds';
-import { mockNptEvents } from '__test-utils/fixtures/npt';
 import { testRenderer } from '__test-utils/renderer';
 
 import EventsByDepth, { Props } from '../Events/EventsByDepth';

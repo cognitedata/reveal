@@ -1,4 +1,4 @@
-import { getMockNPTEvent } from '__test-utils/fixtures/npt';
+import { getMockNPTEvent } from 'domain/wells/npt/internal/__fixtures/npt';
 
 import { getNptCodeSort } from '../getNptCodeSort';
 

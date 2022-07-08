@@ -4,8 +4,6 @@ import { WellboreInternal } from 'domain/wells/wellbore/internal/types';
 import { PlotData } from 'plotly.js';
 
 import { Sequence as DefaultSequence, Asset } from '@cognite/sdk';
-// TODO(PP-2998): Remove well sdk v2 usage in NPT
-import { NPT } from '@cognite/sdk-wells-v2';
 import { AssetSource, WellFilter } from '@cognite/sdk-wells-v3';
 
 import { DataError } from 'modules/inspectTabs/types';
@@ -235,13 +233,6 @@ export type WellboreIdMap = {
 export type WellboreExternalAssetIdMap = {
   [key: string]: string;
 };
-
-export interface NPTEvent extends NPT {
-  wellboreId: string;
-  wellName?: string;
-  wellboreName?: string;
-  nptCodeColor: string;
-}
 
 export interface FilterValues {
   id: number;

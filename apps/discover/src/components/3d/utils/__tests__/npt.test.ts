@@ -1,19 +1,19 @@
-import { mockNpt } from '__test-utils/fixtures/npt';
+import { getMockNPTEvent } from 'domain/wells/npt/internal/__fixtures/npt';
+import { NptInternal } from 'domain/wells/npt/internal/types';
 
 import { mapNPTTo3D } from '../npt';
 
 describe('mapNPTTo3D', () => {
   it(`should convert npt events to 3d events format`, () => {
-    const events = [
-      {
-        ...mockNpt,
+    const events: NptInternal[] = [
+      getMockNPTEvent({
         wellboreMatchingId: '759155409324993',
         wellboreAssetExternalId: '759155409324993',
         measuredDepth: {
-          unit: 'meter',
+          unit: 'm',
           value: 100,
         },
-      },
+      }),
     ];
 
     const results = mapNPTTo3D(events);

@@ -1,6 +1,7 @@
+import { mockNptEvents } from 'domain/wells/npt/internal/__fixtures/npt';
+
 import { screen } from '@testing-library/react';
 
-import { mockNptEvents } from '__test-utils/fixtures/npt';
 import { testRenderer } from '__test-utils/renderer';
 
 import NptEventsColumn, {

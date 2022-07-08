@@ -1,4 +1,4 @@
-import { getMockNPTEvent } from '__test-utils/fixtures/npt';
+import { getMockNPTEvent } from 'domain/wells/npt/internal/__fixtures/npt';
 
 import { processAccessor } from '../processAccessor';
 
@@ -11,7 +11,7 @@ describe('processAccessor', () => {
   });
 
   it('should return `null` when it does not exist in the npt event', () => {
-    const accessor = 'wellName';
+    const accessor = 'subtype';
     expect(processAccessor(nptEvent, accessor)).toEqual(null);
   });
 
@@ -23,7 +23,7 @@ describe('processAccessor', () => {
   });
 
   it('should return `number` values when it exists in the npt event', () => {
-    const accessor = 'wellboreId';
+    const accessor = 'wellboreMatchingId';
     expect(processAccessor(nptEvent, accessor)).toEqual(nptEvent[accessor]);
   });
 });
