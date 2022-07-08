@@ -15,6 +15,10 @@ export const authenticateWellSDK = (
   });
 };
 
+export const isWellSDKAuthenticated = () => {
+  return Boolean(client?.isLoggedIn);
+};
+
 export const getWellSDKClient = () => {
   return client;
 };

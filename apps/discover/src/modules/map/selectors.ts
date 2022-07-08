@@ -1,4 +1,4 @@
-import { Geometry } from '@cognite/seismic-sdk-js';
+import { GeoJson, Geometry } from '@cognite/seismic-sdk-js';
 
 import useSelector from 'hooks/useSelector';
 
@@ -12,7 +12,7 @@ export const useMapDrawMode = () => {
 
 export const useGeoFilter = () => {
   const { geoFilter } = useMap();
-  return geoFilter;
+  return geoFilter as GeoJson[];
 };
 
 export const useCurrentPolygon = () => {

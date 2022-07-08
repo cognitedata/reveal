@@ -1,6 +1,11 @@
+import isEmpty from 'lodash/isEmpty';
 import merge from 'lodash/merge';
 
-import { Polygon } from '@cognite/sdk-wells-v2';
+import {
+  GeometryTypeEnum,
+  WellFilter,
+  WellFilterRequest,
+} from '@cognite/sdk-wells-v3';
 
 import { useDeepMemo } from 'hooks/useDeep';
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
@@ -11,16 +16,15 @@ import {
 } from 'modules/sidebar/selectors';
 
 import { filterConfigsById } from '../../../pages/authorized/search/search/SideBar/filters/well/filters';
-import { CommonWellFilter } from '../types';
 
-export const useCommonWellFilter = () => {
+export const useWellFilterRequest = (): WellFilterRequest => {
   const wellFilters = useAppliedWellFilters();
   const geoFilter = useGeoFilter();
   const searchPhrase = useSearchPhrase();
   const { data: userPreferredUnit } = useUserPreferencesMeasurement();
 
   return useDeepMemo(() => {
-    const commonWellFilter: CommonWellFilter = Object.keys(wellFilters).reduce(
+    const wellFilter: WellFilter = Object.keys(wellFilters).reduce(
       (prev, current) => {
         const id = Number(current);
         const { filterParameters } = filterConfigsById[id];
@@ -48,22 +52,24 @@ export const useCommonWellFilter = () => {
             })
           : prev;
       },
-      {} as CommonWellFilter
+      {} as WellFilter
     );
 
     // Apply Geo Filter
-    if (geoFilter && geoFilter.length) {
-      commonWellFilter.polygon = {
-        geoJsonGeometry: geoFilter[0].geometry as unknown as Polygon,
+    if (!isEmpty(geoFilter)) {
+      wellFilter.polygon = {
+        geometry: JSON.stringify(geoFilter),
         crs: 'EPSG:4326',
+        geometryType: GeometryTypeEnum.GeoJson,
       };
     }
 
     // Apply Query Filter
-    if (searchPhrase) {
-      commonWellFilter.stringMatching = searchPhrase;
-    }
+    const searchFilter = searchPhrase ? { query: searchPhrase } : {};
 
-    return commonWellFilter;
+    return {
+      filter: wellFilter,
+      ...searchFilter,
+    };
   }, [wellFilters, geoFilter, searchPhrase, userPreferredUnit]);
 };

@@ -4,6 +4,7 @@ import { useDispatch } from 'react-redux';
 import isEmpty from 'lodash/isEmpty';
 import map from 'lodash/map';
 import pickBy from 'lodash/pickBy';
+import { toBooleanMap } from 'utils/booleanMap';
 
 import { PreviewButton } from 'components/Buttons';
 import EmptyState from 'components/EmptyState';
@@ -12,7 +13,6 @@ import { RowProps, Table } from 'components/Tablev3';
 import { useDeepEffect, useDeepMemo } from 'hooks/useDeep';
 import { inspectTabsActions } from 'modules/inspectTabs/actions';
 import { useFilterDataLog } from 'modules/inspectTabs/selectors';
-import { toBooleanMap } from 'modules/wellSearch/utils';
 
 import { columns } from './columns';
 import { PreviewButtonWrapper } from './elements';

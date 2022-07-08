@@ -10,10 +10,9 @@ import {
   PPG,
   PSI,
   SG,
-  UserPreferredUnit,
 } from 'constants/units';
 
-import { convertObject, toBooleanMap, getRangeLimitInUnit } from '../utils';
+import { convertObject } from '../utils';
 
 const cmToftFactor = 30.48;
 const mmtoCmFactor = 10;
@@ -141,29 +140,5 @@ describe('Pressure Converter', () => {
   it('should convert sg to ppg', () => {
     const value = convertPressure(sgValue, SG, undefined, undefined, PPG);
     expect(round(value)).toEqual(ppgValue);
-  });
-});
-
-describe('Common Utils', () => {
-  it('should return boolean map from id list', () => {
-    const results = toBooleanMap([1, 2], true);
-    expect(results).toEqual({
-      1: true,
-      2: true,
-    });
-  });
-});
-
-describe('getRangeLimitInUnit', () => {
-  it('should convert ft ranges into m', () => {
-    expect(getRangeLimitInUnit(100, 1000, UserPreferredUnit.METER)).toEqual([
-      30, 305,
-    ]);
-  });
-
-  it('should return same range back since no chagne of unit', () => {
-    expect(getRangeLimitInUnit(100, 1000, UserPreferredUnit.FEET)).toEqual([
-      100, 1000,
-    ]);
   });
 });

@@ -1,5 +1,15 @@
+import { normalizeRange } from 'domain/wells/summaries/internal/transformers/normalizeRange';
+import { getWellFilterFetchers } from 'domain/wells/summaries/service/network/getWellFilterFetchers';
+import { toPropertyFilter } from 'domain/wells/utils/toPropertyFilter';
+
+import { toDistanceUnitEnum } from 'utils/units/toDistanceUnitEnum';
+
 import { ProjectConfigWellsWellCharacteristicsFilterDls } from '@cognite/discover-api-types';
-import { MeasurementType, WellFilter } from '@cognite/sdk-wells-v2';
+import {
+  AngleUnitEnum,
+  DurationUnitEnum,
+  WellFilter,
+} from '@cognite/sdk-wells-v3';
 
 import { FEET, UserPreferredUnit } from 'constants/units';
 import { FilterIDs } from 'modules/wellSearch/constants';
@@ -29,27 +39,10 @@ import {
   OPERATOR,
 } from 'modules/wellSearch/constantsSidebarFilters';
 import {
-  getNDSRiskTypes,
-  getNPTCodes,
-  getNPTDetailCodes,
-  getNPTDurationLimits,
-  getSources,
-  getWellFilterFetchers,
-  getWellsSpudDateLimits,
-  getWellsWaterDepthLimits,
-} from 'modules/wellSearch/sdk';
-import { unitToLengthUnitEnum } from 'modules/wellSearch/sdk/utils';
-import {
-  FiltersOnlySupportSdkV3,
   FilterConfig,
   FilterConfigMap,
   FilterTypes,
 } from 'modules/wellSearch/types';
-import {
-  getFilterRangeInUserPreferredUnit,
-  getWaterDepthLimitsInUnit,
-  processSpudDateLimits,
-} from 'modules/wellSearch/utils';
 
 const wellFilterFetchers = getWellFilterFetchers();
 
@@ -63,7 +56,7 @@ export const filterConfigs = (
     key: 'data_source_filter',
     category: DATA_SOURCE,
     type: FilterTypes.CHECKBOXES,
-    fetcher: getSources,
+    fetcher: wellFilterFetchers?.sources,
     filterParameters: (values): WellFilter => ({
       sources: values as string[],
     }),
@@ -76,7 +69,7 @@ export const filterConfigs = (
     type: FilterTypes.MULTISELECT,
     fetcher: wellFilterFetchers?.regions,
     filterParameters: (values): WellFilter => ({
-      regions: values as string[],
+      region: toPropertyFilter(values as string[]),
     }),
   },
   {
@@ -87,7 +80,7 @@ export const filterConfigs = (
     type: FilterTypes.CHECKBOXES,
     fetcher: wellFilterFetchers?.fields,
     filterParameters: (values): WellFilter => ({
-      fields: values as string[],
+      field: toPropertyFilter(values as string[]),
     }),
   },
   {
@@ -98,7 +91,7 @@ export const filterConfigs = (
     type: FilterTypes.CHECKBOXES,
     fetcher: wellFilterFetchers?.blocks,
     filterParameters: (values): WellFilter => ({
-      blocks: values as string[],
+      block: toPropertyFilter(values as string[]),
     }),
   },
   {
@@ -109,7 +102,7 @@ export const filterConfigs = (
     type: FilterTypes.MULTISELECT,
     fetcher: wellFilterFetchers?.operators,
     filterParameters: (values): WellFilter => ({
-      operators: values as string[],
+      operator: toPropertyFilter(values as string[]),
     }),
     isTextCapitalized: false,
   },
@@ -128,12 +121,11 @@ export const filterConfigs = (
     type: FilterTypes.MULTISELECT,
     isTextCapitalized: false,
     fetcher: wellFilterFetchers?.measurements,
-    // this is just v2 now
     filterParameters: (values): WellFilter => ({
-      hasMeasurements: {
-        containsAny: (values as MeasurementType[]).map((measurementType) => ({
-          measurementType,
-        })),
+      depthMeasurements: {
+        measurementTypes: {
+          containsAny: values as string[],
+        },
       },
     }),
   },
@@ -145,7 +137,7 @@ export const filterConfigs = (
     type: FilterTypes.MULTISELECT,
     fetcher: () => wellFilterFetchers?.welltypes(),
     filterParameters: (values): WellFilter => ({
-      wellTypes: values as string[],
+      wellType: toPropertyFilter(values as string[]),
     }),
   },
   {
@@ -158,18 +150,14 @@ export const filterConfigs = (
       return wellFilterFetchers
         ?.kbLimits()
         .then((response) =>
-          getFilterRangeInUserPreferredUnit(
-            [response.min, response.max],
-            response.unit,
-            unit
-          )
+          normalizeRange([response.min, response.max], response.unit, unit)
         );
     },
-    filterParameters: (values, userPreferredUnit): FiltersOnlySupportSdkV3 => ({
+    filterParameters: (values, userPreferredUnit): WellFilter => ({
       datum: {
-        min: values[0] as number,
-        max: values[1] as number,
-        unit: unitToLengthUnitEnum(userPreferredUnit),
+        min: Number(values[0]),
+        max: Number(values[1]),
+        unit: toDistanceUnitEnum(userPreferredUnit),
       },
     }),
   },
@@ -183,19 +171,15 @@ export const filterConfigs = (
       return wellFilterFetchers
         ?.mdLimits()
         .then((response) =>
-          getFilterRangeInUserPreferredUnit(
-            [response.min, response.max],
-            response.unit,
-            unit
-          )
+          normalizeRange([response.min, response.max], response.unit, unit)
         );
     },
     filterParameters: (values, userPreferredUnit): WellFilter => ({
-      hasTrajectory: {
+      trajectories: {
         maxMeasuredDepth: {
-          min: values[0] as number,
-          max: values[1] as number,
-          unit: unitToLengthUnitEnum(userPreferredUnit),
+          min: Number(values[0]),
+          max: Number(values[1]),
+          unit: toDistanceUnitEnum(userPreferredUnit),
         },
       },
     }),
@@ -210,19 +194,15 @@ export const filterConfigs = (
       return wellFilterFetchers
         ?.tvdLimits()
         .then((response) =>
-          getFilterRangeInUserPreferredUnit(
-            [response.min, response.max],
-            response.unit,
-            unit
-          )
+          normalizeRange([response.min, response.max], response.unit, unit)
         );
     },
-    filterParameters: (values, userPreferredUnit): FiltersOnlySupportSdkV3 => ({
+    filterParameters: (values, userPreferredUnit): WellFilter => ({
       trajectories: {
         maxTrueVerticalDepth: {
-          min: values[0] as number,
-          max: values[1] as number,
-          unit: unitToLengthUnitEnum(userPreferredUnit),
+          min: Number(values[0]),
+          max: Number(values[1]),
+          unit: toDistanceUnitEnum(userPreferredUnit),
         },
       },
     }),
@@ -241,21 +221,21 @@ export const filterConfigs = (
       return wellFilterFetchers
         ?.dogLegSeverityLimits()
         .then((response) =>
-          getFilterRangeInUserPreferredUnit(
+          normalizeRange(
             [response.min, response.max],
             response.unit.distanceUnit,
             unit
           )
         );
     },
-    filterParameters: (values, userPreferredUnit): FiltersOnlySupportSdkV3 => ({
+    filterParameters: (values, userPreferredUnit): WellFilter => ({
       trajectories: {
         maxDoglegSeverity: {
-          min: values[0] as number,
-          max: values[1] as number,
+          min: Number(values[0]),
+          max: Number(values[1]),
           unit: {
             angleUnit: 'degree',
-            distanceUnit: unitToLengthUnitEnum(userPreferredUnit),
+            distanceUnit: toDistanceUnitEnum(userPreferredUnit),
             distanceInterval:
               userPreferredUnit === FEET
                 ? wellCharacteristicsDls?.feetDistanceInterval
@@ -272,14 +252,20 @@ export const filterConfigs = (
     category: WELL_CHARACTERISTICS,
     type: FilterTypes.NUMERIC_RANGE,
     fetcher: () =>
-      getWellsWaterDepthLimits()?.then((response) =>
-        getWaterDepthLimitsInUnit(response, unit)
-      ),
+      wellFilterFetchers
+        ?.waterDepthLimits()
+        .then((waterDepthLimits) =>
+          normalizeRange(
+            [waterDepthLimits.min?.value, waterDepthLimits.max?.value],
+            waterDepthLimits.min?.unit || waterDepthLimits.max?.unit,
+            unit
+          )
+        ),
     filterParameters: (values, userPreferredUnit): WellFilter => ({
       waterDepth: {
-        min: values[0] as number,
-        max: values[1] as number,
-        unit: unitToLengthUnitEnum(userPreferredUnit),
+        min: Number(values[0]),
+        max: Number(values[1]),
+        unit: toDistanceUnitEnum(userPreferredUnit),
       },
     }),
   },
@@ -289,11 +275,11 @@ export const filterConfigs = (
     key: 'well_characteristics_filter.spud_date',
     category: WELL_CHARACTERISTICS,
     type: FilterTypes.DATE_RANGE,
-    fetcher: () => getWellsSpudDateLimits()?.then(processSpudDateLimits),
+    fetcher: wellFilterFetchers?.spudDateLimits,
     filterParameters: (values): WellFilter => ({
       spudDate: {
-        min: values[0] as Date,
-        max: values[1] as Date,
+        min: String(values[0]),
+        max: String(values[1]),
       },
     }),
   },
@@ -307,10 +293,11 @@ export const filterConfigs = (
       // Later these will be taken from the sdk
       Promise.resolve([0, 180]),
     filterParameters: (values): WellFilter => ({
-      hasTrajectory: {
+      trajectories: {
         maxInclination: {
-          min: values[0] as number,
-          max: values[1] as number,
+          unit: AngleUnitEnum.Degree,
+          min: Number(values[0]),
+          max: Number(values[1]),
         },
       },
     }),
@@ -321,11 +308,10 @@ export const filterConfigs = (
     name: NDS_RISKS_TYPE,
     category: NDS_RISKS,
     type: FilterTypes.CHECKBOXES,
-    fetcher: getNDSRiskTypes,
-    // this is just v2 now
+    fetcher: wellFilterFetchers?.ndsRiskTypes,
     filterParameters: (values): WellFilter => ({
       nds: {
-        riskTypes: values as string[],
+        riskTypes: { containsAny: values as string[] },
       },
     }),
   },
@@ -336,10 +322,9 @@ export const filterConfigs = (
     category: NDS_RISKS,
     type: FilterTypes.CHECKBOXES,
     fetcher: () => Promise.resolve([0, 1, 2, 3, 4]),
-    // this is just v2 now
     filterParameters: (values): WellFilter => ({
       nds: {
-        severities: values as number[],
+        severities: { containsAny: values as number[] },
       },
     }),
   },
@@ -350,10 +335,9 @@ export const filterConfigs = (
     category: NDS_RISKS,
     type: FilterTypes.CHECKBOXES,
     fetcher: () => Promise.resolve([0, 1, 2, 3, 4, 5]),
-    // this is just v2 now
     filterParameters: (values): WellFilter => ({
       nds: {
-        probabilities: values as number[],
+        probabilities: { containsAny: values as number[] },
       },
     }),
   },
@@ -363,13 +347,13 @@ export const filterConfigs = (
     key: 'npt_filter',
     category: NPT_EVENTS,
     type: FilterTypes.NUMERIC_RANGE,
-    fetcher: getNPTDurationLimits,
-    // this is just v2 now
+    fetcher: wellFilterFetchers?.nptDurations,
     filterParameters: (values): WellFilter => ({
       npt: {
         duration: {
-          min: values[0] as number,
-          max: values[1] as number,
+          unit: DurationUnitEnum.Hour,
+          min: Number(values[0]),
+          max: Number(values[1]),
         },
       },
     }),
@@ -380,8 +364,7 @@ export const filterConfigs = (
     key: 'npt_filter',
     category: NPT_EVENTS,
     type: FilterTypes.CHECKBOXES,
-    fetcher: getNPTCodes,
-    // this is just v2 now
+    fetcher: wellFilterFetchers?.nptCodes,
     filterParameters: (values): WellFilter => ({
       npt: {
         nptCodes: {
@@ -396,8 +379,7 @@ export const filterConfigs = (
     key: 'npt_filter',
     category: NPT_EVENTS,
     type: FilterTypes.CHECKBOXES,
-    fetcher: getNPTDetailCodes,
-    // this is just v2 now
+    fetcher: wellFilterFetchers?.nptCodeDetails,
     filterParameters: (values): WellFilter => ({
       npt: {
         nptCodeDetails: {

@@ -1,11 +1,11 @@
 import { filters } from 'domain/wells/well/internal/filters';
 
 import { isNumberTuple } from 'utils/types/isNumberTuple';
+import { toDistanceUnitEnum } from 'utils/units/toDistanceUnitEnum';
 
 import { WellFilter } from '@cognite/sdk-wells-v3';
 
 import { UserPreferredUnit } from 'constants/units';
-import { unitToLengthUnitEnum } from 'modules/wellSearch/sdk/utils';
 
 export const getTVDFilter = (
   value?: unknown,
@@ -14,10 +14,7 @@ export const getTVDFilter = (
   if (isNumberTuple(value) && unit) {
     return {
       trajectories: {
-        maxTrueVerticalDepth: filters.toRange(
-          value,
-          unitToLengthUnitEnum(unit)
-        ),
+        maxTrueVerticalDepth: filters.toRange(value, toDistanceUnitEnum(unit)),
       },
     };
   }

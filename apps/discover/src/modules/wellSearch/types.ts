@@ -5,8 +5,8 @@ import { PlotData } from 'plotly.js';
 
 import { Sequence as DefaultSequence, Asset } from '@cognite/sdk';
 // TODO(PP-2998): Remove well sdk v2 usage in NPT
-import { NPT, WellFilter } from '@cognite/sdk-wells-v2';
-import { AssetSource, WellFilter as WellFilterV3 } from '@cognite/sdk-wells-v3';
+import { NPT } from '@cognite/sdk-wells-v2';
+import { AssetSource, WellFilter } from '@cognite/sdk-wells-v3';
 
 import { DataError } from 'modules/inspectTabs/types';
 
@@ -192,21 +192,6 @@ export enum FilterTypes {
   DATE_RANGE,
 }
 
-/**
- * @deprecated
- * Certain filters are only available in Sdk v3, picking thoese filters to use with app well filter
- */
-export type FiltersOnlySupportSdkV3 = Pick<
-  WellFilterV3,
-  'trajectories' | 'datum'
->;
-
-/**
- * @deprecated
- * Type compiled sdk v2 and picked fitlers from sdk v3
- */
-export type CommonWellFilter = WellFilter & FiltersOnlySupportSdkV3;
-
 export type FilterConfig = {
   id: number;
   name: string;
@@ -219,7 +204,7 @@ export type FilterConfig = {
   filterParameters?: (
     filters: string[] | Date[] | number[],
     userPreferredUnit: UserPreferredUnit
-  ) => CommonWellFilter;
+  ) => WellFilter;
   isTextCapitalized?: boolean;
 };
 

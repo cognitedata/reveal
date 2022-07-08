@@ -5,8 +5,8 @@ import { useQuery, useQueryClient, UseQueryResult } from 'react-query';
 import { WELL_QUERY_KEY } from 'constants/react-query';
 import { useDeepEffect } from 'hooks/useDeep';
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
-import { useCommonWellFilter } from 'modules/wellSearch/hooks/useCommonWellFilter';
 import { useWellConfig } from 'modules/wellSearch/hooks/useWellConfig';
+import { useWellFilterRequest } from 'modules/wellSearch/hooks/useWellFilterRequest';
 
 import { getWells } from '../../service/network/getWells';
 import { normalizeWell } from '../transformers/normalizeWell';
@@ -16,7 +16,7 @@ export const useAllWellSearchResultQuery = (): UseQueryResult<
 > => {
   const { data: wellConfig } = useWellConfig();
   const { data: userPreferredUnit } = useUserPreferencesMeasurement();
-  const wellFilter = useCommonWellFilter();
+  const wellFilter = useWellFilterRequest();
   const queryClient = useQueryClient();
 
   const key = [WELL_QUERY_KEY.ALL, userPreferredUnit];

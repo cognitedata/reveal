@@ -7,8 +7,8 @@ import {
   useNptLegendDetailCodeQuery,
 } from 'domain/wells/legend/internal/queries/useNptLegendQuery';
 import { WellLegendNptType } from 'domain/wells/legend/internal/types';
-import { useNptCodesQuery } from 'domain/wells/summaries/service/network/useNptCodesQuery';
-import { useNptDetailCodesQuery } from 'domain/wells/summaries/service/network/useNptDetailCodesQuery';
+import { useNptCodeDetailsQuery } from 'domain/wells/summaries/internal/queries/useNptCodeDetailsQuery';
+import { useNptCodesQuery } from 'domain/wells/summaries/internal/queries/useNptCodesQuery';
 
 import { useEffect, useState } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
@@ -35,7 +35,7 @@ export const CodeDefinitions = () => {
   // NPT codes from WDL
   const { data: nptCodes, isLoading: isNptCodesLoading } = useNptCodesQuery();
   const { data: nptDetailCodes, isLoading: isNptDetailCodesLoading } =
-    useNptDetailCodesQuery();
+    useNptCodeDetailsQuery();
 
   // NPT legend from discover-api
   const { data: nptCodesLegend, isLoading: isNptCodeLegendLoading } =

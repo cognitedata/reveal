@@ -1,9 +1,9 @@
 import isEmpty from 'lodash/isEmpty';
 import pickBy from 'lodash/pickBy';
+import { toBooleanMap } from 'utils/booleanMap';
 
 import { storage } from '@cognite/react-container';
 
-import { toBooleanMap } from 'modules/wellSearch/utils';
 import { columns } from 'pages/authorized/search/well/inspect/modules/relatedDocument/constant';
 
 import { WELL_SELECTED_RELATED_DOCUMENTS_COLUMNS } from './actions';
