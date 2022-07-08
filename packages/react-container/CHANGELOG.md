@@ -1,3 +1,7 @@
+## 6.0.3 July 8 2022
+
+- Bump cognite SDK to 7.1.1 to fix bug with react-container calling services with "Bearer Bearer X" access token
+
 ## 6.0.2 June 24 2022
 
 - react-project-selector version bump

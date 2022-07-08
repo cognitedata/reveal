@@ -3072,10 +3072,10 @@
     query-string "^5.1.1"
     url "^0.11.0"
 
-"@cognite/sdk-core@^4.2.0":
-  version "4.2.0"
-  resolved "https://registry.yarnpkg.com/@cognite/sdk-core/-/sdk-core-4.2.0.tgz#4988ebd9a3df83d21d86662862a7f27964caad3b"
-  integrity sha512-DJKThOLktoL9f3rE/td3ZiUIXIU2ztigZn+Z69fhzuF084Wsoksz2MnPRCG3dUaOA61LDdXoKPxUL9tdjumdMA==
+"@cognite/sdk-core@^4.5.1":
+  version "4.5.1"
+  resolved "https://registry.yarnpkg.com/@cognite/sdk-core/-/sdk-core-4.5.1.tgz#c27a0cb28c04253f5fd45eb6deee06bc69a277f3"
+  integrity sha512-1ugoguRpokJHsm9wC6lsNXWsiAPnC5ArqhZVfBR7Bs1yigUlSlmkOpJf19D9xkiBzHHM3KfUrL2hcKQG7Bmpjw==
   dependencies:
     cross-fetch "^3.0.4"
     is-buffer "^2.0.5"
@@ -3117,12 +3117,12 @@
     geojson "^0.5.0"
     lodash "^4.17.11"
 
-"@cognite/sdk@^7.5.1":
-  version "7.5.1"
-  resolved "https://registry.yarnpkg.com/@cognite/sdk/-/sdk-7.5.1.tgz#16e2ade08779c18afdadbb3032382bce34416af2"
-  integrity sha512-H/7mwy42/GyO1kBDue/Lyts+ppI3/VW2ZqHhEzwrTgi6AfzybkVpc5J73J3R8SlkRw8NqncpVn/p4vGycMBeow==
+"@cognite/sdk@^7.7.1":
+  version "7.7.1"
+  resolved "https://registry.yarnpkg.com/@cognite/sdk/-/sdk-7.7.1.tgz#a6fa64414127b32a55d36869f329507d86f4b049"
+  integrity sha512-RoG4KBB3niTv2TlfcC7g9cvPfpKWSfHmg6WvFlt1NlkOrfsMyKFZVmScZV8eAuqipUXJbhRgBPAUYVvSup9X1Q==
   dependencies:
-    "@cognite/sdk-core" "^4.2.0"
+    "@cognite/sdk-core" "^4.5.1"
     geojson "^0.5.0"
     lodash "^4.17.11"
 
