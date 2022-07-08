@@ -1,7 +1,7 @@
 import { DepthMeasurementDataColumnInternal } from 'domain/wells/measurements/internal/types';
 import { WdlMeasurementType } from 'domain/wells/measurements/service/types';
 import { getWellboreTitle } from 'domain/wells/wellbore/internal/selectors/getWellboreTitle';
-import { Wellbore } from 'domain/wells/wellbore/internal/types';
+import { WellboreInternal } from 'domain/wells/wellbore/internal/types';
 
 import { Distance } from 'convert-units';
 import flatten from 'lodash/flatten';
@@ -384,7 +384,7 @@ export const pushCurveToChart = (
 
 export const mapToCurveCentric = (
   data: MeasurementChartData[],
-  wellbore: Wellbore
+  wellbore: WellboreInternal
 ) =>
   data.map((row) => ({
     ...row,
@@ -409,7 +409,7 @@ export const mapToCurveCentric = (
 
 export const mapToCompareView = (
   data: {
-    wellbore: Wellbore;
+    wellbore: WellboreInternal;
     chartData: MeasurementChartData[];
   }[]
 ) =>

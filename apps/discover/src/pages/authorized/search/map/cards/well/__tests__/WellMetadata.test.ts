@@ -17,7 +17,7 @@ describe('Well metadata', () => {
   it('should render metadata with details of well', async () => {
     await getWellMetadata({
       well: getMockWell({
-        sources: ['test-sources'],
+        sourceList: 'test-sources',
         operator: 'test-operator',
         spudDate: new Date(163321123233),
       }),

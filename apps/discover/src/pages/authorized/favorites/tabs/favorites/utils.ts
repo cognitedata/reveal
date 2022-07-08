@@ -1,11 +1,11 @@
-import { Well } from 'domain/wells/well/internal/types';
+import { WellInternal } from 'domain/wells/well/internal/types';
 
 import isEmpty from 'lodash/isEmpty';
 
 import { FavoriteContentWells } from 'modules/favorite/types';
 
 export const filterWellboresFromWellsData = (
-  wells: Well[],
+  wells: WellInternal[],
   favoriteWellsWithWellboreIds: FavoriteContentWells
 ) => {
   return wells.map((well) => ({
@@ -35,7 +35,7 @@ export const setSelectedWellboreIdsToWell = (
 };
 
 export const getSelectedWellIds = (
-  wells: Well[],
+  wells: WellInternal[],
   currentSelection: FavoriteContentWells
 ) => {
   const wellIds = Object.keys(currentSelection);
@@ -56,7 +56,7 @@ export const getSelectedWellIds = (
 };
 
 export const getIndeterminateWellIds = (
-  wells: Well[],
+  wells: WellInternal[],
   currentSelection: FavoriteContentWells
 ) => {
   const wellIds = Object.keys(currentSelection);
@@ -81,7 +81,7 @@ export const getIndeterminateWellIds = (
 };
 
 export const getUpdatedWellsAndWellboresAfterRemove = (
-  wells: Well[],
+  wells: WellInternal[],
   favoriteWells: FavoriteContentWells,
   selectedWellsAndWellboreIds: FavoriteContentWells
 ) => {

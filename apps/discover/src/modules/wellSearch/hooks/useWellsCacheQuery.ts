@@ -1,4 +1,5 @@
-import { Well } from 'domain/wells/well/internal/types';
+import { normalizeWell } from 'domain/wells/well/internal/transformers/normalizeWell';
+import { WellInternal } from 'domain/wells/well/internal/types';
 import { getWellsByIds } from 'domain/wells/well/service/network/getWellsById';
 
 import React from 'react';
@@ -11,6 +12,7 @@ import { handleServiceError, PossibleError } from 'utils/errors';
 
 import { WELL_QUERY_KEY } from 'constants/react-query';
 import { useDeepMemo } from 'hooks/useDeep';
+import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 
 import { ERROR_LOADING_WELLS_ERROR } from '../constants';
 import { WellId, WellResult } from '../types';
@@ -31,9 +33,10 @@ export const useWellsCacheQuery = (
 ): UseQueryResult<WellResult> => {
   const queryClient = useQueryClient();
   const { data: wellConfig } = useWellConfig();
+  const { data: userPreferredUnit } = useUserPreferencesMeasurement();
 
   const cachedWells =
-    queryClient.getQueryData<Well[]>(WELL_QUERY_KEY.WELLS_CACHE) || [];
+    queryClient.getQueryData<WellInternal[]>(WELL_QUERY_KEY.WELLS_CACHE) || [];
 
   const cachedWellIds = useDeepMemo(
     () => cachedWells.map((well) => String(well.id)),
@@ -41,7 +44,7 @@ export const useWellsCacheQuery = (
   );
 
   return useQuery<WellResult>(
-    [WELL_QUERY_KEY.WELLS_ONE, requiredWellIds],
+    [WELL_QUERY_KEY.WELLS_ONE, requiredWellIds, userPreferredUnit],
     async () => {
       const uncachedWellIds = difference(requiredWellIds, cachedWellIds);
       // console.log('uncachedWellIds', uncachedWellIds);
@@ -52,10 +55,12 @@ export const useWellsCacheQuery = (
         };
 
       // console.log('Fetching wells:', uncachedWellIds);
-      let uncachedWells: Well[];
+      let uncachedWells: WellInternal[];
 
       try {
-        uncachedWells = await getWellsByIds(uncachedWellIds);
+        uncachedWells = await getWellsByIds(uncachedWellIds).then((wells) =>
+          wells.map((rawWell) => normalizeWell(rawWell, userPreferredUnit))
+        );
       } catch (error) {
         // console.log('Error loading wells:', error);
         return handleServiceError<WellResult>(
@@ -84,7 +89,7 @@ export const useWellsCacheQuery = (
       select: React.useCallback(
         (result: WellResult) => {
           return {
-            wells: result.wells.filter((well: Well) =>
+            wells: result.wells.filter((well: WellInternal) =>
               requiredWellIds.map(String).includes(String(well.id))
             ),
             error: result.error,

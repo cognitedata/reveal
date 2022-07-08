@@ -1,4 +1,4 @@
-import { Well } from 'domain/wells/well/internal/types';
+import { WellInternal } from 'domain/wells/well/internal/types';
 
 import head from 'lodash/head';
 import isEmpty from 'lodash/isEmpty';
@@ -11,10 +11,10 @@ import { getWellsOfWellIds } from '../utils/wells';
 import { useWellsCacheQuery } from './useWellsCacheQuery';
 
 type Result = {
-  wells: Well[];
+  wells: WellInternal[];
   error?: Error | undefined;
 };
-export const useWellsByIds = (wellIds?: Well['id'][]) => {
+export const useWellsByIds = (wellIds?: WellInternal['id'][]) => {
   const { data: fetchedWells } = useWellsCacheQuery(wellIds);
 
   return useDeepMemo(() => {
@@ -38,13 +38,13 @@ export const useWellsByIds = (wellIds?: Well['id'][]) => {
   }, [wellIds, fetchedWells]);
 };
 
-export const useWellById = (wellId?: Well['id']) => {
+export const useWellById = (wellId?: WellInternal['id']) => {
   const { wells } = useWellsByIds(wellId ? [wellId] : []);
   return !wellId ? null : head(wells) || null;
 };
 
 export const useWellboresOfWellById = (
-  wellId?: Well['id'],
+  wellId?: WellInternal['id'],
   filterWellboresByIds?: WellboreId[]
 ) => {
   const well = useWellById(wellId);

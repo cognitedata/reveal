@@ -1,4 +1,4 @@
-import { Well } from 'domain/wells/well/internal/types';
+import { WellInternal } from 'domain/wells/well/internal/types';
 import { getMockWellbore } from 'domain/wells/wellbore/internal/__fixtures/getMockWellbore';
 
 import { getMockWell } from '__test-utils/fixtures/well';
@@ -14,7 +14,7 @@ import {
 
 describe('Favorite utils', () => {
   it('filterWellboresFromWellsData', () => {
-    const wells: Well[] = [
+    const wells: WellInternal[] = [
       getMockWell({
         id: '1',
         wellbores: [

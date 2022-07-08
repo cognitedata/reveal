@@ -1,10 +1,10 @@
-import { Well } from 'domain/wells/well/internal/types';
+import { WellInternal } from 'domain/wells/well/internal/types';
 
 import { ColumnMap } from 'modules/documentSearch/utils/getAvailableColumns';
 import { useWells } from 'modules/wellSearch/selectors';
 
 export const useWellColumnsWithSelectionStatus = (
-  wellColumns: ColumnMap<Well>
+  wellColumns: ColumnMap<WellInternal>
 ) => {
   const { selectedColumns } = useWells();
 

@@ -1,6 +1,6 @@
 import { useFavoriteUpdateContent } from 'domain/favorites/internal/actions/useFavoritesMutate';
-import { Well } from 'domain/wells/well/internal/types';
-import { Wellbore } from 'domain/wells/wellbore/internal/types';
+import { WellInternal } from 'domain/wells/well/internal/types';
+import { WellboreInternal } from 'domain/wells/wellbore/internal/types';
 
 import React, { useState, useCallback } from 'react';
 
@@ -53,7 +53,7 @@ export const FavoriteWellsTable: React.FC<Props> = ({ wells, favoriteId }) => {
 
   const [wellIds, setWellIds] = useState<WellId[]>([]);
   const { data, isLoading } = useWellsCacheQuery(wellIds); // when we fetch the wells we also get the wellbores, no need to fetch for them again
-  const [wellsData, setWellsData] = useState<Well[]>([]); // wells data with filtered wellbores
+  const [wellsData, setWellsData] = useState<WellInternal[]>([]); // wells data with filtered wellbores
   const [tableOptions] = useState<Options>(WellResultTableOptions);
   const [expandedIds, setExpandedIds] = useState<SelectedMap>({});
   const [selectedWellIds, setSelectedWellIds] = useState<SelectedMap>({});
@@ -61,7 +61,7 @@ export const FavoriteWellsTable: React.FC<Props> = ({ wells, favoriteId }) => {
     {}
   );
   const [isDeleteWellModalOpen, setIsDeleteWellModalOpen] = useState(false);
-  const [hoveredWell, setHoveredWell] = useState<Well>();
+  const [hoveredWell, setHoveredWell] = useState<WellInternal>();
 
   const [selectedWellsAndWellboreIds, setSelectedWellsAndWellboreIds] =
     useState<FavoriteContentWells>({});
@@ -88,8 +88,8 @@ export const FavoriteWellsTable: React.FC<Props> = ({ wells, favoriteId }) => {
   }, [wellsData, selectedWellsAndWellboreIds]);
 
   const handleRowClick = useCallback(
-    (row: RowProps<Well> & { isSelected: boolean }) => {
-      const wellRow: Well = row.original;
+    (row: RowProps<WellInternal> & { isSelected: boolean }) => {
+      const wellRow: WellInternal = row.original;
       setExpandedIds((state) => ({
         ...state,
         [wellRow.id]: !state[wellRow.id],
@@ -99,7 +99,7 @@ export const FavoriteWellsTable: React.FC<Props> = ({ wells, favoriteId }) => {
   );
 
   const handleRowSelect = useCallback(
-    (row: RowProps<Well>, nextState: boolean) => {
+    (row: RowProps<WellInternal>, nextState: boolean) => {
       setExpandedIds((state) => ({
         ...state,
         [row.original.id]: true,
@@ -127,7 +127,7 @@ export const FavoriteWellsTable: React.FC<Props> = ({ wells, favoriteId }) => {
     );
   };
 
-  const handleRemoveWellbores = (well: Well, wellboreIds: string[]) => {
+  const handleRemoveWellbores = (well: WellInternal, wellboreIds: string[]) => {
     const wellboreIdsForUpdate = (
       well.wellbores?.flatMap((wellbore) => wellbore.id) || []
     ).filter((wellboreId) => !wellboreIds.includes(wellboreId));
@@ -205,7 +205,7 @@ export const FavoriteWellsTable: React.FC<Props> = ({ wells, favoriteId }) => {
 
   const renderRowSubComponent = useDeepCallback(
     ({ row }) => {
-      const wellbores: Wellbore[] =
+      const wellbores: WellboreInternal[] =
         wellsData?.find((well) => well.id === row.original.id)?.wellbores || [];
 
       return (
@@ -239,7 +239,7 @@ export const FavoriteWellsTable: React.FC<Props> = ({ wells, favoriteId }) => {
     }
   };
 
-  const handleHoverViewBtnClick = async (row: RowProps<Well>) => {
+  const handleHoverViewBtnClick = async (row: RowProps<WellInternal>) => {
     const well = row.original;
     navigateToWellInspect({
       wellIds: [well.id],
@@ -248,7 +248,7 @@ export const FavoriteWellsTable: React.FC<Props> = ({ wells, favoriteId }) => {
   };
 
   const renderRowHoverComponent: React.FC<{
-    row: RowProps<Well>;
+    row: RowProps<WellInternal>;
   }> = ({ row }) => {
     const wellRow = row.original;
     return (
@@ -291,7 +291,7 @@ export const FavoriteWellsTable: React.FC<Props> = ({ wells, favoriteId }) => {
 
   return (
     <FavoriteWellWrapper>
-      <Table<Well>
+      <Table<WellInternal>
         id="favorite-wells-table"
         data={wellsData}
         columns={columns}

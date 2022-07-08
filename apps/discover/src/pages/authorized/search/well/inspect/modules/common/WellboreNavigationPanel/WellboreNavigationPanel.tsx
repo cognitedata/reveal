@@ -1,4 +1,4 @@
-import { groupByWellboreMatchingId } from 'domain/wells/well/internal/transformers/groupByWellboreName';
+import { groupByWellbore } from 'domain/wells/wellbore/internal/transformers/groupByWellbore';
 
 import { useEffect, useMemo } from 'react';
 
@@ -15,7 +15,7 @@ export const WellboreNavigationPanel = <T extends NavigationPanelDataType>({
   onBackClick,
   disableNavigation,
 }: WellboreNavigationPanelProps<T>) => {
-  const groupedData = useMemo(() => groupByWellboreMatchingId(data), [data]);
+  const groupedData = useMemo(() => groupByWellbore(data), [data]);
 
   const wellboreIds = useMemo(() => Object.keys(groupedData), [groupedData]);
 

@@ -8,10 +8,10 @@ import { DatumInternal } from '../types';
 
 export const normalizeDatum = (
   rawDatum: Datum,
-  unit: UserPreferredUnit
+  userPreferredUnit: UserPreferredUnit
 ): DatumInternal => {
   return {
     ...rawDatum,
-    ...convertDistance(rawDatum, unit),
+    ...convertDistance(rawDatum, userPreferredUnit),
   };
 };

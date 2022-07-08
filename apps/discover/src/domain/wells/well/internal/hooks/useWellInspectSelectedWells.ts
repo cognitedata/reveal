@@ -1,7 +1,7 @@
 import { useDeepMemo } from 'hooks/useDeep';
 import { useWellInspectSelection } from 'modules/wellInspect/selectors';
 
-import { useWellInspectWells } from './useWellInspect';
+import { useWellInspectWells } from './useWellInspectWells';
 
 export const useWellInspectSelectedWells = () => {
   const { wells } = useWellInspectWells();

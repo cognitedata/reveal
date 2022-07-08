@@ -1,5 +1,5 @@
-import { Well } from 'domain/wells/well/internal/types';
-import { Wellbore } from 'domain/wells/wellbore/internal/types';
+import { WellInternal } from 'domain/wells/well/internal/types';
+import { WellboreInternal } from 'domain/wells/wellbore/internal/types';
 
 import intersection from 'lodash/intersection';
 
@@ -8,8 +8,8 @@ import { ColumnMap } from 'modules/documentSearch/utils/getAvailableColumns';
 
 export const getVisibleWellboreColumns = (
   selectedColumns: string[],
-  wellColumns: ColumnMap<Well>,
-  wellboreColumns: ColumnMap<Wellbore>
+  wellColumns: ColumnMap<WellInternal>,
+  wellboreColumns: ColumnMap<WellboreInternal>
 ) => {
   const wellColumnNames = Object.keys(wellColumns);
   const wellboreColumnsNames = Object.keys(wellboreColumns);
@@ -21,7 +21,7 @@ export const getVisibleWellboreColumns = (
   );
 
   return Object.keys(wellboreColumns).reduce(
-    (resultColumns: ColumnType<Wellbore>[], currentColumnName) => {
+    (resultColumns: ColumnType<WellboreInternal>[], currentColumnName) => {
       // if a key includes in intersection array and not include in selected columns.
       if (
         commonColumnsNames.includes(currentColumnName) &&

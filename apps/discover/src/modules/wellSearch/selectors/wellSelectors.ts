@@ -1,4 +1,4 @@
-import { Well } from 'domain/wells/well/internal/types';
+import { WellInternal } from 'domain/wells/well/internal/types';
 
 import pickBy from 'lodash/pickBy';
 import { createSelector } from 'reselect';
@@ -17,7 +17,7 @@ export const selectedWellIdsSelector = createSelector(
 // This returns indeterminate wells (Wells that some wellbores are selected but not all)
 export const intermediateWellsSelector = createSelector(
   (state: StoreState) => state.wellSearch.selectedWellboreIds,
-  (_state: StoreState, wells: Well[]) => ({ wells }),
+  (_state: StoreState, wells: WellInternal[]) => ({ wells }),
   (selectedWellboreIds, { wells }) =>
     getIndeterminateWells(wells, selectedWellboreIds)
 );

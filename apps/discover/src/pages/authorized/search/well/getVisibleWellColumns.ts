@@ -1,5 +1,5 @@
 import { DoglegSeverityUnitInternal } from 'domain/wells/trajectory/internal/types';
-import { Well } from 'domain/wells/well/internal/types';
+import { WellInternal } from 'domain/wells/well/internal/types';
 
 import pickBy from 'lodash/pickBy';
 
@@ -20,7 +20,7 @@ export const getVisibleWellColumns = ({
   unit: string;
   enabled: string[];
   doglegUnit?: DoglegSeverityUnitInternal;
-}): ColumnMap<Well> => {
+}): ColumnMap<WellInternal> => {
   const columns = getWellColumns(unit, doglegUnit);
 
   const visibleColumns = pickBy(columns, (_column, key) =>

@@ -1,4 +1,4 @@
-import { Wellbore } from 'domain/wells/wellbore/internal/types';
+import { WellboreInternal } from 'domain/wells/wellbore/internal/types';
 
 import { WELLBORE_COLORS } from '../../constants';
 
@@ -9,15 +9,12 @@ export const addColorToWellbore = () => {
     ...WELLBORE_COLORS.map((color) => `${color}_`),
   ];
 
-  return (wellbore: Wellbore): Wellbore => {
+  return (wellbore: WellboreInternal): WellboreInternal => {
     wellboreIndex += 1;
     const colorIndex = wellboreIndex % colors.length;
     return {
       ...wellbore,
-      metadata: {
-        ...wellbore.metadata,
-        color: colors[colorIndex],
-      },
+      color: colors[colorIndex],
     };
   };
 };

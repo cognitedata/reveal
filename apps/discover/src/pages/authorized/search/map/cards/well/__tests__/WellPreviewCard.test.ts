@@ -3,14 +3,12 @@ import '__mocks/setupMockCogniteSDK';
 import 'domain/wells/__mocks/setupWellsMockSDK';
 import { getMockFavoritesListGet } from 'domain/favorites/service/__mocks/getMockFavoritesListGet';
 import { getMockConfigGet } from 'domain/projectConfig/service/__mocks/getMockConfigGet';
+import { getMockWell } from 'domain/wells/well/service/__fixtures/well';
 
 import { screen, cleanup, fireEvent } from '@testing-library/react';
 import { setupServer } from 'msw/node';
 
-import {
-  getMockWell,
-  mockedWellStateWithSelectedWells,
-} from '__test-utils/fixtures/well';
+import { mockedWellStateWithSelectedWells } from '__test-utils/fixtures/well';
 import { testRenderer } from '__test-utils/renderer';
 import { getMockedStore } from '__test-utils/store.utils';
 import { clearSelectedWell } from 'modules/map/actions';
@@ -43,13 +41,15 @@ describe('Well Preview Card', () => {
     (useWellById as jest.Mock).mockImplementation(() => selectedWell);
 
     getWellPreviewCard({
-      wellId: selectedWell.id,
+      wellId: selectedWell.matchingId,
     });
 
     await Promise.resolve();
 
     expect(screen.getByTestId('title').innerHTML).toBe(selectedWell.name);
-    expect(screen.getByText('23.52')).toBeInTheDocument();
+    expect(
+      screen.getByText(String(selectedWell.waterDepth?.value))
+    ).toBeInTheDocument();
   });
 
   it('should close preview on clicking close icon', async () => {

@@ -1,5 +1,5 @@
-import { useWellInspectSelectedWellbores } from 'domain/wells/well/internal/transformers/useWellInspectSelectedWellbores';
-import { useWellInspectSelectedWells } from 'domain/wells/well/internal/transformers/useWellInspectSelectedWells';
+import { useWellInspectSelectedWellbores } from 'domain/wells/well/internal/hooks/useWellInspectSelectedWellbores';
+import { useWellInspectSelectedWells } from 'domain/wells/well/internal/hooks/useWellInspectSelectedWells';
 
 import { act } from '@testing-library/react';
 
@@ -14,13 +14,13 @@ import { getMockedStore } from '__test-utils/store.utils';
 import { useWellboreData } from '../wellbore';
 
 jest.mock(
-  'domain/wells/well/internal/transformers/useWellInspectSelectedWells',
+  'domain/wells/well/internal/hooks/useWellInspectSelectedWells',
   () => ({
     useWellInspectSelectedWells: jest.fn(),
   })
 );
 jest.mock(
-  'domain/wells/well/internal/transformers/useWellInspectSelectedWellbores',
+  'domain/wells/well/internal/hooks/useWellInspectSelectedWellbores',
   () => ({
     useWellInspectSelectedWellbores: jest.fn(),
   })

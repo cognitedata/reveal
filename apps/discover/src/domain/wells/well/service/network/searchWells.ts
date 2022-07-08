@@ -1,6 +1,6 @@
 import { getWellSDKClient } from 'domain/wells/utils/authenticate';
 
-import { WellFilter } from '@cognite/sdk-wells-v3';
+import { Well, WellFilter } from '@cognite/sdk-wells-v3';
 
 export const searchWells = async (filter: WellFilter, query: string) => {
   const results = await getWellSDKClient().wells.search({
@@ -19,7 +19,7 @@ export const searchWells = async (filter: WellFilter, query: string) => {
   // const normalizedResponse = mapV3ToV2WellItems(results);
 
   return {
-    wells: results.items || [],
+    wells: (results.items || []) as Array<Well>,
     ...totals,
   };
 };

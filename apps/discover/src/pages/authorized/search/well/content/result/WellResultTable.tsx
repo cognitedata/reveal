@@ -1,8 +1,8 @@
 import { useFavoriteWellIds } from 'domain/favorites/internal/hooks/useFavoriteWellIds';
 import { useTrajectoriesQuery } from 'domain/wells/trajectory/internal/queries/useTrajectoriesQuery';
-import { processedWellsAdapter } from 'domain/wells/well/internal/adapters';
 import { useWellSearchResultQuery } from 'domain/wells/well/internal/queries/useWellSearchResultQuery';
-import { Well } from 'domain/wells/well/internal/types';
+import { processWellsData } from 'domain/wells/well/internal/transformers/processWellsData';
+import { WellInternal } from 'domain/wells/well/internal/types';
 import { getWellboreIdsList } from 'domain/wells/wellbore/internal/transformers/getWellboreIdsList';
 
 import React, { useCallback, useEffect, useRef } from 'react';
@@ -20,7 +20,6 @@ import { Table, RowProps } from 'components/Tablev3';
 import { EMPTY_ARRAY } from 'constants/empty';
 import { useDeepCallback, useDeepEffect, useDeepMemo } from 'hooks/useDeep';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
-import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 import { moveToCoords, zoomToCoords } from 'modules/map/actions';
 import { useNavigateToWellInspect } from 'modules/wellInspect/hooks/useNavigateToWellInspect';
 import { wellSearchActions } from 'modules/wellSearch/actions';
@@ -39,7 +38,11 @@ import { useDataForTable } from './useDataForTable';
 import { WellboreResultTable } from './WellBoreResultTable';
 import { WellsBulkActions } from './WellsBulkActions';
 
-const renderRowSubComponent = ({ row }: { row: { original: Well } }) => {
+const renderRowSubComponent = ({
+  row,
+}: {
+  row: { original: WellInternal };
+}) => {
   return <WellboreResultTable well={row.original} />;
 };
 
@@ -49,7 +52,6 @@ export const WellResultTable: React.FC = () => {
   const indeterminateWellIds = useIndeterminateWells();
   const favoriteWellIds = useFavoriteWellIds();
   const metrics = useGlobalMetrics('wells');
-  const { data: userPreferredUnit } = useUserPreferencesMeasurement();
   const dispatch = useDispatch();
   const navigateToWellInspect = useNavigateToWellInspect();
   const { wells } = data || {};
@@ -68,13 +70,8 @@ export const WellResultTable: React.FC = () => {
   }, [wells]);
 
   const wellsData = useDeepMemo(
-    () =>
-      processedWellsAdapter(
-        wells || EMPTY_ARRAY,
-        userPreferredUnit,
-        trajectories
-      ),
-    [wells, userPreferredUnit, isLoading]
+    () => processWellsData(wells || EMPTY_ARRAY, trajectories),
+    [wells, isLoading]
   );
 
   useDeepEffect(() => {
@@ -85,7 +82,7 @@ export const WellResultTable: React.FC = () => {
   }, [wells]);
 
   const handleDoubleClick = useCallback(
-    (row: RowProps<Well> & { isSelected: boolean }) => {
+    (row: RowProps<WellInternal> & { isSelected: boolean }) => {
       const well = row.original;
       if (well.geometry) {
         dispatch(zoomToCoords(well.geometry));
@@ -95,7 +92,7 @@ export const WellResultTable: React.FC = () => {
   );
 
   const handleRowClick = useCallback(
-    (row: RowProps<Well> & { isSelected: boolean }) => {
+    (row: RowProps<WellInternal> & { isSelected: boolean }) => {
       const well = row.original;
       const point = well.geometry;
       batch(() => {
@@ -107,7 +104,7 @@ export const WellResultTable: React.FC = () => {
   );
 
   const handleRowSelect = useCallback(
-    (row: RowProps<Well>, isSelected: boolean) => {
+    (row: RowProps<WellInternal>, isSelected: boolean) => {
       const well = row.original;
       dispatch(wellSearchActions.toggleSelectedWells([well], { isSelected }));
     },
@@ -156,7 +153,7 @@ export const WellResultTable: React.FC = () => {
   /**
    * When 'View' button on well head row is clicked
    */
-  const handleViewClick = (well: Well) => {
+  const handleViewClick = (well: WellInternal) => {
     metrics.track('click-inspect-wellhead');
     navigateToWellInspect({
       wellIds: [well.id],
@@ -165,7 +162,7 @@ export const WellResultTable: React.FC = () => {
   };
 
   const renderRowHoverComponent: React.FC<{
-    row: RowProps<Well>;
+    row: RowProps<WellInternal>;
   }> = ({ row }) => {
     return (
       <FlexRow>
@@ -207,7 +204,7 @@ export const WellResultTable: React.FC = () => {
         </SearchResultsContainer>
         <WellOptionPanel />
       </SearchTableResultActionContainer>
-      <Table<Well>
+      <Table<WellInternal>
         scrollTable
         id="well-result-table"
         data={wellsData.processedWells}

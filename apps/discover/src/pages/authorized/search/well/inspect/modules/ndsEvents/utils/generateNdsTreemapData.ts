@@ -1,6 +1,6 @@
 import { NdsInternal } from 'domain/wells/nds/internal/types';
 import { groupByWellbore } from 'domain/wells/wellbore/internal/transformers/groupByWellbore';
-import { Wellbore } from 'domain/wells/wellbore/internal/types';
+import { WellboreInternal } from 'domain/wells/wellbore/internal/types';
 
 import isEmpty from 'lodash/isEmpty';
 import minBy from 'lodash/minBy';
@@ -10,7 +10,7 @@ import { getFixedPercent } from 'utils/number';
 import { TreeMapData } from 'components/Treemap';
 
 export const generateNdsTreemapData = (
-  wellbores: Wellbore[],
+  wellbores: WellboreInternal[],
   ndsEvents: NdsInternal[],
   maxNodes = 15
 ): TreeMapData => {

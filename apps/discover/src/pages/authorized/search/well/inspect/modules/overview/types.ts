@@ -1,12 +1,13 @@
-import { Wellbore } from 'domain/wells/wellbore/internal/types';
+import { WellboreInternal } from 'domain/wells/wellbore/internal/types';
 
-import { DoubleWithUnit } from '@cognite/sdk-wells-v2/dist/src/client/model/DoubleWithUnit';
+import { ConvertedDistance } from 'utils/units/constants';
 
-export interface OverviewModel extends Omit<Wellbore, 'wellbores' | 'sources'> {
+export interface OverviewModel
+  extends Omit<WellboreInternal, 'wellbores' | 'sources'> {
   source?: string;
   operator?: string;
-  spudDate?: string;
-  waterDepth?: DoubleWithUnit;
+  spudDate?: string | Date;
+  waterDepth?: ConvertedDistance;
   md?: string;
   mdUnit?: string;
   tvd?: string;

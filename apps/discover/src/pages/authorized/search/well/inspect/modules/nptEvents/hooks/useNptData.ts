@@ -1,8 +1,8 @@
 import { useNptDefinitions } from 'domain/wells/npt/internal/hooks/useNptDefinitions';
 import { useNptEventsQuery } from 'domain/wells/npt/internal/queries/useNptEventsQuery';
-import { useWellInspectSelectedWellboreIds } from 'domain/wells/well/internal/transformers/useWellInspectSelectedWellboreIds';
-import { useWellInspectSelectedWellboreNames } from 'domain/wells/well/internal/transformers/useWellInspectSelectedWellboreNames';
-import { useWellInspectSelectedWellbores } from 'domain/wells/well/internal/transformers/useWellInspectSelectedWellbores';
+import { useWellInspectSelectedWellboreIds } from 'domain/wells/well/internal/hooks/useWellInspectSelectedWellboreIds';
+import { useWellInspectSelectedWellboreNames } from 'domain/wells/well/internal/hooks/useWellInspectSelectedWellboreNames';
+import { useWellInspectSelectedWellbores } from 'domain/wells/well/internal/hooks/useWellInspectSelectedWellbores';
 
 import { useMemo } from 'react';
 

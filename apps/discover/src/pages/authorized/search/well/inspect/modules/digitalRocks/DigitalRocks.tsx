@@ -1,6 +1,6 @@
-import { useWellInspectWellboreExternalAssetIdMap } from 'domain/wells/well/internal/transformers/useWellInspectIdMap';
-import { useWellInspectSelectedWellbores } from 'domain/wells/well/internal/transformers/useWellInspectSelectedWellbores';
-import { Wellbore } from 'domain/wells/wellbore/internal/types';
+import { useWellInspectSelectedWellbores } from 'domain/wells/well/internal/hooks/useWellInspectSelectedWellbores';
+import { useWellInspectWellboreExternalAssetIdMap } from 'domain/wells/well/internal/hooks/useWellInspectWellboreExternalAssetIdMap';
+import { WellboreInternal } from 'domain/wells/wellbore/internal/types';
 
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Row } from 'react-table';
@@ -86,7 +86,9 @@ export const DigitalRocks: React.FC = () => {
   const wellboreAssetIdReverseMap =
     getWellboreExternalAssetIdReverseMap(wellboreAssetIdMap);
 
-  const [selectedWellbores, setSelectedWellbores] = useState<Wellbore[]>([]);
+  const [selectedWellbores, setSelectedWellbores] = useState<
+    WellboreInternal[]
+  >([]);
   const [wellboreIdsWithDigitalRocks, setWellboreIdsWithDigitalRocks] =
     useState<string[]>([]);
 

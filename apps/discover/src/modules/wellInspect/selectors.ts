@@ -1,4 +1,4 @@
-import { useWellInspectWells } from 'domain/wells/well/internal/transformers/useWellInspect';
+import { useWellInspectWells } from 'domain/wells/well/internal/hooks/useWellInspectWells';
 
 import { useMemo } from 'react';
 

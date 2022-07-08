@@ -1,4 +1,4 @@
-import { Well } from 'domain/wells/well/internal/types';
+import { WellInternal } from 'domain/wells/well/internal/types';
 
 import proj4 from 'proj4';
 import { log } from 'utils/log';
@@ -7,13 +7,19 @@ import { proj4Defs } from 'modules/map/proj4Defs';
 
 proj4.defs(Object.keys(proj4Defs).map((key) => [key, proj4Defs[key]]));
 
-export const normalizeCoords = (
-  x: string | number = 0,
-  y: string | number = 0,
-  crs = ''
-): Partial<Well> => {
+export const normalizeCoords = ({
+  x = 0,
+  y = 0,
+  crs = '',
+}: {
+  x?: string | number;
+  y?: string | number;
+  crs?: string;
+}): Partial<WellInternal> => {
   if (!crs) return {};
+
   const CRS = crs.toUpperCase();
+
   if (CRS === 'WGS84') {
     return {
       geometry: {
@@ -22,6 +28,7 @@ export const normalizeCoords = (
       },
     };
   }
+
   if (proj4Defs[CRS]) {
     try {
       const [normalizedX, normalizedY] = proj4(crs.toUpperCase()).inverse([
@@ -42,5 +49,6 @@ export const normalizeCoords = (
   } else {
     log('proj4 Defs Not found :', crs);
   }
+
   return {};
 };

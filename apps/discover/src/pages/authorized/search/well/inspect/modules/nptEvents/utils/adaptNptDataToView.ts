@@ -1,11 +1,11 @@
 import { NptInternal } from 'domain/wells/npt/internal/types';
-import { Wellbore } from 'domain/wells/wellbore/internal/types';
+import { WellboreInternal } from 'domain/wells/wellbore/internal/types';
 
 import keyBy from 'lodash/keyBy';
 
 import { NptView } from '../types';
 
-type WellboreType = Pick<Wellbore, 'matchingId' | 'name' | 'wellName'>;
+type WellboreType = Pick<WellboreInternal, 'matchingId' | 'name' | 'wellName'>;
 
 export const adaptNptDataToView = <T extends WellboreType>(
   wellbores: T[],

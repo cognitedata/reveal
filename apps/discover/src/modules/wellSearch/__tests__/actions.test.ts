@@ -1,4 +1,4 @@
-import { Well } from 'domain/wells/well/internal/types';
+import { WellInternal } from 'domain/wells/well/internal/types';
 
 import { PartialStoreState } from 'core';
 import fetchMock from 'fetch-mock';
@@ -72,7 +72,7 @@ describe('Well search Actions', () => {
   describe('toggleSelectedWells', () => {
     it(`should toggle selected wells status`, async () => {
       const { store } = getDefaultTestValues();
-      const well = getMockWell() as unknown as Well;
+      const well = getMockWell() as unknown as WellInternal;
       const isSelected = true;
       store.dispatch(
         wellSearchActions.toggleSelectedWells([well], { isSelected })
@@ -90,7 +90,7 @@ describe('Well search Actions', () => {
   describe('toggleSelectedWellboreOfWell', () => {
     it(`should toggle selected wellbore of well status`, async () => {
       const { store } = getDefaultTestValues();
-      const well = getMockWell() as unknown as Well;
+      const well = getMockWell() as unknown as WellInternal;
       const wellboreId = 'well/test_wellbore_id';
       const isSelected = true;
       store.dispatch(

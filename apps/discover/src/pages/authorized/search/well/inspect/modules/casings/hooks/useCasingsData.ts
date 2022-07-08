@@ -2,20 +2,16 @@ import { useCasingSchematicsQuery } from 'domain/wells/casings/internal/queries/
 import { useCasingsTvdDataQuery } from 'domain/wells/casings/internal/queries/useCasingsTvdDataQuery';
 import { useNdsEventsForCasings } from 'domain/wells/nds/internal/hooks/useNdsEventsForCasings';
 import { useNptEventsForCasings } from 'domain/wells/npt/internal/hooks/useNptEventsForCasings';
-import { useWellInspectSelectedWellboreIds } from 'domain/wells/well/internal/transformers/useWellInspectSelectedWellboreIds';
-import { useWellInspectSelectedWells } from 'domain/wells/well/internal/transformers/useWellInspectSelectedWells';
+import { useWellInspectSelectedWellboreIds } from 'domain/wells/well/internal/hooks/useWellInspectSelectedWellboreIds';
+import { useWellInspectSelectedWells } from 'domain/wells/well/internal/hooks/useWellInspectSelectedWells';
 
 import { useMemo } from 'react';
-
-import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 
 import { adaptCasingsDataToView } from '../utils/adaptCasingsDataToView';
 
 export const useCasingsData = () => {
   const wells = useWellInspectSelectedWells();
   const wellboreIds = useWellInspectSelectedWellboreIds();
-
-  const { data: userPreferredUnit } = useUserPreferencesMeasurement();
 
   const { data: casingsData, isLoading } = useCasingSchematicsQuery({
     wellboreIds,
@@ -35,10 +31,9 @@ export const useCasingsData = () => {
       casingsData || [],
       tvdData,
       nptData,
-      ndsData,
-      userPreferredUnit
+      ndsData
     );
-  }, [wells, casingsData, tvdData, nptData, ndsData, userPreferredUnit]);
+  }, [wells, casingsData, tvdData, nptData, ndsData]);
 
   return {
     data: adaptedCasingsData,

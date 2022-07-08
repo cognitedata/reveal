@@ -1,8 +1,8 @@
 import { Row } from 'react-table';
 
-import { Well } from '../types';
+import { WellInternal } from '../types';
 
-type WellWaterDepth = Pick<Well, 'waterDepth'>;
+type WellWaterDepth = Pick<WellInternal, 'waterDepth'>;
 
 export const getWaterDepthSort = <T extends WellWaterDepth>(
   wellA: Row<T>,

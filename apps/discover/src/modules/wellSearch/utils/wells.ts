@@ -1,4 +1,4 @@
-import { Well } from 'domain/wells/well/internal/types';
+import { WellInternal } from 'domain/wells/well/internal/types';
 
 import isUndefined from 'lodash/isUndefined';
 import keyBy from 'lodash/keyBy';
@@ -8,7 +8,7 @@ import { TableResults } from 'components/Tablev3';
 import { WellId, WellMap } from '../types';
 
 export const getIndeterminateWells = (
-  wells: Well[],
+  wells: WellInternal[],
   selectedWellboreIds: TableResults
 ) => {
   return wells.reduce<TableResults>((intermediateWells, well) => {
@@ -28,10 +28,13 @@ export const getIndeterminateWells = (
   }, {});
 };
 
-export const getWellsOfWellIds = (wells: Well[], wellIds: WellId[]): Well[] => {
+export const getWellsOfWellIds = (
+  wells: WellInternal[],
+  wellIds: WellId[]
+): WellInternal[] => {
   const wellsById = keyBy<WellMap>(wells, 'id');
 
-  return wellIds.reduce<Well[]>((wells, wellId) => {
+  return wellIds.reduce<WellInternal[]>((wells, wellId) => {
     const well = wellsById[wellId];
     if (isUndefined(well)) return wells;
     return [...wells, well];

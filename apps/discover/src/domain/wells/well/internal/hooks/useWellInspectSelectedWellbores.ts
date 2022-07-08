@@ -1,4 +1,4 @@
-import { Wellbore } from 'domain/wells/wellbore/internal/types';
+import { WellboreInternal } from 'domain/wells/wellbore/internal/types';
 
 import flatMap from 'lodash/flatMap';
 
@@ -11,7 +11,7 @@ export const useWellInspectSelectedWellbores = (filterByIds?: WellboreId[]) => {
   const wells = useWellInspectSelectedWells();
 
   return useDeepMemo(() => {
-    const wellbores: Wellbore[] = flatMap(wells, 'wellbores');
+    const wellbores: WellboreInternal[] = flatMap(wells, 'wellbores');
 
     if (filterByIds) {
       return wellbores.filter((wellbore) =>

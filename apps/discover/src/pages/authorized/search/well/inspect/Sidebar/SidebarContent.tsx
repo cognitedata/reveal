@@ -1,5 +1,5 @@
-import { useWellInspectWells } from 'domain/wells/well/internal/transformers/useWellInspect';
-import { Well } from 'domain/wells/well/internal/types';
+import { useWellInspectWells } from 'domain/wells/well/internal/hooks/useWellInspectWells';
+import { WellInternal } from 'domain/wells/well/internal/types';
 
 import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
@@ -41,12 +41,15 @@ export const SidebarContent: React.FC = () => {
 
   const dispatch = useDispatch();
 
-  const handleClickWell = useCallback((well: Well, isSelected: boolean) => {
-    dispatch(wellInspectActions.toggleSelectedWell({ well, isSelected }));
-  }, []);
+  const handleClickWell = useCallback(
+    (well: WellInternal, isSelected: boolean) => {
+      dispatch(wellInspectActions.toggleSelectedWell({ well, isSelected }));
+    },
+    []
+  );
 
   const handleClickWellbore = useCallback(
-    (well: Well, wellboreId: WellboreId, isSelected: boolean) => {
+    (well: WellInternal, wellboreId: WellboreId, isSelected: boolean) => {
       dispatch(
         wellInspectActions.toggleSelectedWellboreOfWell({
           well,

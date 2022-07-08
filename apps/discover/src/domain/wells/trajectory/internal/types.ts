@@ -1,4 +1,4 @@
-import { Wellbore } from 'domain/wells/wellbore/internal/types';
+import { WellboreInternal } from 'domain/wells/wellbore/internal/types';
 
 import { Angle, Distance } from 'convert-units';
 
@@ -51,11 +51,11 @@ export interface TrueVerticalDepthsDataLayer extends TrueVerticalDepths {
 }
 
 export type KeyedTvdData = Record<
-  Wellbore['matchingId'],
+  WellboreInternal['matchingId'],
   TrueVerticalDepthsDataLayer
 >;
 
 export type GroupedTvdData = Record<
-  Wellbore['matchingId'],
+  WellboreInternal['matchingId'],
   TrueVerticalDepthsDataLayer[]
 >;

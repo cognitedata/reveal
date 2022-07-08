@@ -1,4 +1,4 @@
-import { Wellbore } from 'domain/wells/wellbore/internal/types';
+import { WellboreInternal } from 'domain/wells/wellbore/internal/types';
 
 import find from 'lodash/find';
 import get from 'lodash/get';
@@ -11,10 +11,10 @@ import { OptionType } from '@cognite/cogs.js';
 import { GroupedColumn } from 'components/ManageColumnsPanel/ManageColumnsPanel';
 
 export const getFilteredOptionTypeValues = (
-  options: OptionType<Wellbore>[]
-): Wellbore[] => {
+  options: OptionType<WellboreInternal>[]
+): WellboreInternal[] => {
   return options.reduce(
-    (filtered: Wellbore[], option: OptionType<Wellbore>) => {
+    (filtered: WellboreInternal[], option: OptionType<WellboreInternal>) => {
       const { value } = option;
       if (value) {
         return [...filtered, value];
@@ -26,40 +26,46 @@ export const getFilteredOptionTypeValues = (
 };
 
 export const getSelectedWellboresFromOptionType = (
-  optionItems: OptionType<Wellbore>[]
-): Wellbore[] => {
-  return optionItems.reduce((acc: Wellbore[], item: OptionType<Wellbore>) => {
-    const { options, value } = item;
+  optionItems: OptionType<WellboreInternal>[]
+): WellboreInternal[] => {
+  return optionItems.reduce(
+    (acc: WellboreInternal[], item: OptionType<WellboreInternal>) => {
+      const { options, value } = item;
 
-    if (options && options.length) {
-      const filterItems: Wellbore[] = getFilteredOptionTypeValues(options);
-      return [...acc, ...filterItems];
-    }
+      if (options && options.length) {
+        const filterItems: WellboreInternal[] =
+          getFilteredOptionTypeValues(options);
+        return [...acc, ...filterItems];
+      }
 
-    if (value) return [...acc, value];
+      if (value) return [...acc, value];
 
-    return acc;
-  }, []);
+      return acc;
+    },
+    []
+  );
 };
 
 export const groupOptionTypes = (
-  wellbores: Wellbore[]
-): OptionType<Wellbore>[] =>
+  wellbores: WellboreInternal[]
+): OptionType<WellboreInternal>[] =>
   map(
     groupBy(wellbores, 'wellId'),
-    (groupedWellbores: Wellbore[], key: string) => ({
+    (groupedWellbores: WellboreInternal[], key: string) => ({
       label: get(find(wellbores, { wellId: key }), 'metadata.wellDescription'),
 
-      options: groupedWellbores.map((wellbore: Wellbore, index: number) => ({
-        label: wellbore.description || '',
-        value: wellbore,
-        divider: groupedWellbores.length === index + 1, // divider to last item
-      })),
+      options: groupedWellbores.map(
+        (wellbore: WellboreInternal, index: number) => ({
+          label: wellbore.description || '',
+          value: wellbore,
+          divider: groupedWellbores.length === index + 1, // divider to last item
+        })
+      ),
     })
   );
 
 export const searchByDescription = (
-  allWellbores: Wellbore[],
+  allWellbores: WellboreInternal[],
   searchValue: string
 ) => {
   return allWellbores.filter(
@@ -72,9 +78,9 @@ export const searchByDescription = (
 };
 
 export const checkIndeterminateState = (
-  allWellbores: Wellbore[],
-  selectedWellbores: Wellbore[],
-  searchWellbores: Wellbore[],
+  allWellbores: WellboreInternal[],
+  selectedWellbores: WellboreInternal[],
+  searchWellbores: WellboreInternal[],
   searchValue?: string
 ) => {
   if (searchValue) {
@@ -99,8 +105,8 @@ export const checkIndeterminateState = (
 };
 
 export const checkSelectAllState = (
-  selectedWellbores: Wellbore[],
-  searchWellbores: Wellbore[],
+  selectedWellbores: WellboreInternal[],
+  searchWellbores: WellboreInternal[],
   searchValue?: string
 ) => {
   if (searchValue) {
@@ -117,15 +123,15 @@ export const checkSelectAllState = (
 };
 
 export const mapToGroupColumns = (
-  selectedWellbores: Wellbore[],
-  searchWellbores: Wellbore[]
+  selectedWellbores: WellboreInternal[],
+  searchWellbores: WellboreInternal[]
 ): GroupedColumn[] => {
   return map(
     groupBy(searchWellbores, 'wellId'),
-    (val: Wellbore[], key: string) => ({
+    (val: WellboreInternal[], key: string) => ({
       label:
         get(find(searchWellbores, { wellId: +key }), 'metadata.wellName') || '',
-      columns: val.map((wellbore: Wellbore) => ({
+      columns: val.map((wellbore: WellboreInternal) => ({
         field: wellbore.id,
         selected: includes(selectedWellbores, wellbore),
         name: `${get(wellbore, 'description', '')} ${get(

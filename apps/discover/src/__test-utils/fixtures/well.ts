@@ -1,5 +1,8 @@
-import { Well as OldWellType, Well } from 'domain/wells/well/internal/types';
-import { Wellbore } from 'domain/wells/wellbore/internal/types';
+import {
+  WellInternal as OldWellType,
+  WellInternal,
+} from 'domain/wells/well/internal/types';
+import { WellboreInternal } from 'domain/wells/wellbore/internal/types';
 
 import map from 'lodash/map';
 
@@ -21,7 +24,7 @@ export const WELL_TRAJ_COLUMNS = [
 /**
  * @deprecated - use domain/wells/well/service/__fixtures/well OR domain/wells/well/internal/__fixtures/well
  */
-export const getMockWell = (extras?: Partial<Well>): Well => {
+export const getMockWell = (extras?: Partial<WellInternal>): WellInternal => {
   return {
     name: 'test-well',
     description: 'test-well-desc',
@@ -58,7 +61,7 @@ export const mockWellboreOptions = {
   sourceAssets: jest.fn(),
 };
 
-export const mockedWellboreResultFixture: Wellbore[] = [
+export const mockedWellboreResultFixture: WellboreInternal[] = [
   {
     name: 'wellbore B',
     id: '759155409324883',
@@ -66,7 +69,7 @@ export const mockedWellboreResultFixture: Wellbore[] = [
     wellId: '1234',
     wellMatchingId: '1234',
     description: 'wellbore B desc',
-    sourceWellbores: [],
+    sources: [],
     ...mockWellboreOptions,
   },
   {
@@ -77,11 +80,10 @@ export const mockedWellboreResultFixture: Wellbore[] = [
     wellId: '1234',
     wellMatchingId: '1234',
     description: 'wellbore A desc',
-    sourceWellbores: [
+    sources: [
       {
-        id: '759155409324993',
-        externalId: 'Wellbore A:759155409324993',
-        source: 'Source A',
+        assetExternalId: 'Wellbore A:759155409324993',
+        sourceName: 'Source A',
       },
     ],
     ...mockWellboreOptions,

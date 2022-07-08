@@ -1,10 +1,12 @@
-import { Well } from 'domain/wells/well/internal/types';
-import { Wellbore } from 'domain/wells/wellbore/internal/types';
+import { WellInternal } from 'domain/wells/well/internal/types';
+import { WellboreInternal } from 'domain/wells/wellbore/internal/types';
 
 import { IWellBore } from '@cognite/node-visualizer';
 
-export const mapWellboresTo3D = (wells: Well[]): Partial<IWellBore>[] => {
-  return ([] as Wellbore[]).concat(
+export const mapWellboresTo3D = (
+  wells: WellInternal[]
+): Partial<IWellBore>[] => {
+  return ([] as WellboreInternal[]).concat(
     ...wells
       .filter((row) => row.wellbores)
       .map((row) =>

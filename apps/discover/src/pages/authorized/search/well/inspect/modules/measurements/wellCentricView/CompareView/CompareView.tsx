@@ -1,5 +1,5 @@
 import { DepthMeasurementDataColumnInternal } from 'domain/wells/measurements/internal/types';
-import { Wellbore } from 'domain/wells/wellbore/internal/types';
+import { WellboreInternal } from 'domain/wells/wellbore/internal/types';
 
 import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
@@ -45,7 +45,7 @@ import {
 } from './elements';
 
 export type Props = {
-  wellbores: Wellbore[];
+  wellbores: WellboreInternal[];
   onBack: () => void;
 };
 

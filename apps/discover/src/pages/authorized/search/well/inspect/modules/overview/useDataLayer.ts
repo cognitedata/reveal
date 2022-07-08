@@ -1,7 +1,6 @@
 import { useTrajectoriesQuery } from 'domain/wells/trajectory/internal/queries/useTrajectoriesQuery';
-import { getWaterDepth } from 'domain/wells/well/internal/selectors/getWaterDepth';
-import { useWellInspectSelectedWellboreIds } from 'domain/wells/well/internal/transformers/useWellInspectSelectedWellboreIds';
-import { useWellInspectSelectedWells } from 'domain/wells/well/internal/transformers/useWellInspectSelectedWells';
+import { useWellInspectSelectedWellboreIds } from 'domain/wells/well/internal/hooks/useWellInspectSelectedWellboreIds';
+import { useWellInspectSelectedWells } from 'domain/wells/well/internal/hooks/useWellInspectSelectedWells';
 import { keyByWellbore } from 'domain/wells/wellbore/internal/transformers/keyByWellbore';
 
 import { useMemo } from 'react';
@@ -39,12 +38,11 @@ export const useDataLayer = () => {
             operator: well.operator,
             spudDate: well.spudDate,
             sources: well.sourceList,
-            // this is a special case just for the overview
-            field: well.field || wellbore.metadata?.field_name,
+            field: well.field,
             md: '',
             tvd: '',
 
-            waterDepth: getWaterDepth(well, userPreferredUnit),
+            waterDepth: well.waterDepth,
           };
 
           const trajectory = keyedTrajectories[wellbore.matchingId];

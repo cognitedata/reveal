@@ -1,4 +1,4 @@
-import { Wellbore } from '../types';
+import { WellboreInternal } from '../types';
 
 export const mockWellboreOptions = {
   trajectory: jest.fn(),
@@ -8,12 +8,14 @@ export const mockWellboreOptions = {
   sourceAssets: jest.fn(),
 };
 
-export const getMockWellbore = (extras?: Partial<Wellbore>): Wellbore => {
+export const getMockWellbore = (
+  extras?: Partial<WellboreInternal>
+): WellboreInternal => {
   return {
     id: '1234',
     name: 'test-wellbore',
     description: 'test-wellbore-description',
-    sourceWellbores: [],
+    sources: [],
     ...mockWellboreOptions,
     ...extras,
   };

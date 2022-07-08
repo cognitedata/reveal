@@ -1,5 +1,5 @@
 import { useNdsEventsQuery } from 'domain/wells/nds/internal/queries/useNdsEventsQuery';
-import { useWellInspectSelectedWellboreIds } from 'domain/wells/well/internal/transformers/useWellInspectSelectedWellboreIds';
+import { useWellInspectSelectedWellboreIds } from 'domain/wells/well/internal/hooks/useWellInspectSelectedWellboreIds';
 import { groupByWellbore } from 'domain/wells/wellbore/internal/transformers/groupByWellbore';
 
 import React, { useMemo, useState } from 'react';

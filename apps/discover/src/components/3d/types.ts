@@ -3,14 +3,14 @@ import { DepthMeasurementWithData } from 'domain/wells/measurements/internal/typ
 import { NdsInternalWithTvd } from 'domain/wells/nds/internal/types';
 import { NptInternal } from 'domain/wells/npt/internal/types';
 import { TrajectoryWithData } from 'domain/wells/trajectory/internal/types';
-import { Well } from 'domain/wells/well/internal/types';
+import { WellInternal } from 'domain/wells/well/internal/types';
 
 export interface ThreeDeeProps extends WellsData {
   fileId?: string;
 }
 
 export interface WellsData {
-  wells?: Well[];
+  wells?: WellInternal[];
   trajectories?: TrajectoryWithData[];
   casings?: CasingSchematicInternal[];
   ndsEvents?: NdsInternalWithTvd[];

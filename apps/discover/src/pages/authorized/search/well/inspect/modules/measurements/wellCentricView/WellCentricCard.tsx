@@ -4,10 +4,9 @@ import { filterNdsBySelectedEvents } from 'domain/wells/nds/internal/selectors/f
 import { useNptEventsForCasings } from 'domain/wells/npt/internal/hooks/useNptEventsForCasings';
 import { filterNptByMeasuredDepth } from 'domain/wells/npt/internal/selectors/filterNptByMeasuredDepth';
 import { filterNptBySelectedEvents } from 'domain/wells/npt/internal/selectors/filterNptBySelectedEvents';
-import { useWellInspectSelectedWellboreIds } from 'domain/wells/well/internal/transformers/useWellInspectSelectedWellboreIds';
-import { getWellboreName } from 'domain/wells/wellbore/internal/selectors/getWellboreName';
+import { useWellInspectSelectedWellboreIds } from 'domain/wells/well/internal/hooks/useWellInspectSelectedWellboreIds';
 import { getWellboreTitle } from 'domain/wells/wellbore/internal/selectors/getWellboreTitle';
-import { Wellbore } from 'domain/wells/wellbore/internal/types';
+import { WellboreInternal } from 'domain/wells/wellbore/internal/types';
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 
@@ -52,7 +51,7 @@ type AxisNames = {
 };
 
 export type Props = {
-  wellbore: Wellbore;
+  wellbore: WellboreInternal;
   chartData: MeasurementChartData[];
   axisNames: AxisNames;
   selected: boolean;
@@ -141,6 +140,8 @@ export const WellCentricCard: React.FC<Props> = ({
     );
   }, [legendsHolderRef]);
 
+  const wellboreName = wellbore.name;
+
   return (
     <Wrapper>
       <Header>
@@ -210,9 +211,7 @@ export const WellCentricCard: React.FC<Props> = ({
             const [curveDisplayName] = row.customdata as string[];
             return (
               <CurveIndicator
-                key={`${getWellboreName(
-                  wellbore
-                )}-${curveDisplayName}-${uuid()}`}
+                key={`${wellboreName}-${curveDisplayName}-${uuid()}`}
               >
                 <CurveColorCode line={row.line} marker={row.marker} />
                 <span>{curveDisplayName}</span>
@@ -221,14 +220,14 @@ export const WellCentricCard: React.FC<Props> = ({
           })}
 
           {fitChart && (
-            <CurveIndicator key={`${getWellboreName(wellbore)}-FIT`}>
+            <CurveIndicator key={`${wellboreName}-FIT`}>
               <CurveColorCode line={fitChart.line} marker={fitChart.marker} />
               <span>FIT</span>
             </CurveIndicator>
           )}
 
           {lotChart && (
-            <CurveIndicator key={`${getWellboreName(wellbore)}-LOT`}>
+            <CurveIndicator key={`${wellboreName}-LOT`}>
               <CurveColorCode line={lotChart.line} marker={lotChart.marker} />
               <span>LOT</span>
             </CurveIndicator>

@@ -9,6 +9,7 @@ import React, {
 } from 'react';
 
 import { DepthMeasurementUnit } from 'constants/units';
+import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 
 import DepthColumn from '../../../common/Events/DepthColumn';
 import EventsByDepth from '../../../common/Events/EventsByDepth';
@@ -36,6 +37,8 @@ export const WellboreCasingView: React.FC<WellboreCasingsViewProps> = ({
   isNdsEventsLoading,
   showBothSides = false,
 }) => {
+  const { data: userPreferredUnit } = useUserPreferencesMeasurement();
+
   const depthScaleRef = useRef<HTMLElement>(null);
 
   const [scaleBlocks, setScaleBlocks] = useState<number[]>([]);
@@ -102,7 +105,7 @@ export const WellboreCasingView: React.FC<WellboreCasingsViewProps> = ({
           <DepthColumn
             ref={depthScaleRef}
             scaleBlocks={scaleBlocks}
-            unit={waterDepth.unit}
+            unit={userPreferredUnit}
             measurementUnit={DepthMeasurementUnit.MD}
           />
 

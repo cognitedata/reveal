@@ -1,31 +1,25 @@
 import { TrajectoryInternal } from 'domain/wells/trajectory/internal/types';
-import { Well } from 'domain/wells/well/internal/types';
+import { WellInternal } from 'domain/wells/well/internal/types';
 import { keyByWellbore } from 'domain/wells/wellbore/internal/transformers/keyByWellbore';
 
-import { UserPreferredUnit } from 'constants/units';
-
-import { waterDepthAdapter } from './waterDepthAdapter';
-
-type ProcessedWells = {
-  processedWells: Well[];
+type ProcessedWellsData = {
+  processedWells: WellInternal[];
   wellboresCount: number;
   wellsCount: number;
 };
 
-export const processedWellsAdapter = (
-  wells: Well[],
-  userPreferredUnit?: UserPreferredUnit,
+export const processWellsData = (
+  wells: WellInternal[],
   trajectories: TrajectoryInternal[] = []
-): ProcessedWells => {
+): ProcessedWellsData => {
   const keyedTrajectories = keyByWellbore(trajectories);
 
   if (!wells) {
     return { processedWells: [], wellboresCount: 0, wellsCount: 0 };
   }
-  return wells.reduce<ProcessedWells>(
+  return wells.reduce<ProcessedWellsData>(
     (acc, well) => {
-      const item = waterDepthAdapter(well, userPreferredUnit);
-      const wellboresCount: number = well?.wellbores?.length || 0;
+      const wellboresCount: number = well.wellbores.length;
 
       const wellbores = well.wellbores?.map((wellbore) => {
         const trajectoryData = keyedTrajectories[wellbore.matchingId];
@@ -47,7 +41,7 @@ export const processedWellsAdapter = (
 
       return {
         ...acc,
-        processedWells: [...acc.processedWells, { ...item, wellbores }],
+        processedWells: [...acc.processedWells, { ...well, wellbores }],
         wellboresCount: acc.wellboresCount + wellboresCount,
       };
     },

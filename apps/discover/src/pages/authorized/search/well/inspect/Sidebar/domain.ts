@@ -1,9 +1,9 @@
 import { addColor } from 'domain/wells/wellbore/internal/selectors/addColor';
 import { addTitle } from 'domain/wells/wellbore/internal/selectors/addTitle';
-import { Wellbore } from 'domain/wells/wellbore/internal/types';
+import { WellboreInternal } from 'domain/wells/wellbore/internal/types';
 
 export const wellboreAdapter = (
-  wellbore: Wellbore,
+  wellbore: WellboreInternal,
   isColoredWellbores: boolean
 ) => {
   // const datalayers = [addTitle, addColor(is)];

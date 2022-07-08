@@ -1,5 +1,5 @@
-import { useWellInspectWells } from 'domain/wells/well/internal/transformers/useWellInspect';
-import { useWellInspectSelectedWellboreIds } from 'domain/wells/well/internal/transformers/useWellInspectSelectedWellboreIds';
+import { useWellInspectSelectedWellboreIds } from 'domain/wells/well/internal/hooks/useWellInspectSelectedWellboreIds';
+import { useWellInspectWells } from 'domain/wells/well/internal/hooks/useWellInspectWells';
 
 import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';

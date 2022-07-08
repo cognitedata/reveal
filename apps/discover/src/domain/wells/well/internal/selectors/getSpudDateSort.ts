@@ -1,10 +1,10 @@
-import { Well } from 'domain/wells/well/internal/types';
+import { WellInternal } from 'domain/wells/well/internal/types';
 
 import { Row } from 'react-table';
 
 import { sortByDate } from 'utils/sort/sortByDate';
 
-type WellSpudDate = Pick<Well, 'spudDate'>;
+type WellSpudDate = Pick<WellInternal, 'spudDate'>;
 
 export const getSpudDateTableSort = <T extends WellSpudDate>(
   wellA: Row<T>,

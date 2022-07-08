@@ -1,4 +1,4 @@
-import { Wellbore } from 'domain/wells/wellbore/internal/types';
+import { WellboreInternal } from 'domain/wells/wellbore/internal/types';
 
 import { OptionType } from '@cognite/cogs.js';
 
@@ -15,7 +15,7 @@ import {
 } from '../utils';
 
 describe('common utils', () => {
-  const options: OptionType<Wellbore>[] = [
+  const options: OptionType<WellboreInternal>[] = [
     {
       label: 'Wellbore B',
       value: mockedWellboreResultFixture[0],
@@ -56,7 +56,7 @@ describe('common utils', () => {
   });
 
   it(`should group wellbores based on well id`, async () => {
-    const data: Wellbore[] = mockedWellboreResultFixture.map((item) => {
+    const data: WellboreInternal[] = mockedWellboreResultFixture.map((item) => {
       return {
         ...item,
         metadata: { wellDescription: item?.wellId || '' },

@@ -10,9 +10,9 @@ import { WellInspectState } from 'modules/wellInspect/types';
 import { useWellsByIds } from 'modules/wellSearch/hooks/useWellsCacheQuerySelectors';
 import { WellboreId } from 'modules/wellSearch/types';
 
-import { useWellInspectWells } from '../useWellInspect';
 import { useWellInspectSelectedWellbores } from '../useWellInspectSelectedWellbores';
 import { useWellInspectSelectedWells } from '../useWellInspectSelectedWells';
+import { useWellInspectWells } from '../useWellInspectWells';
 
 jest.mock('modules/wellSearch/hooks/useWellsCacheQuerySelectors', () => ({
   useWellsByIds: jest.fn(),
@@ -20,7 +20,7 @@ jest.mock('modules/wellSearch/hooks/useWellsCacheQuerySelectors', () => ({
 
 const inspectWellId = '759155409324883';
 const inspectWellboreId = '12345';
-const inspectWellboreMetadata = { metadata: { color: WELLBORE_COLORS[0] } };
+const inspectWellboreMetadata = { color: WELLBORE_COLORS[0] };
 
 const getMockedStoreWithWellInspect = (extras?: Partial<WellInspectState>) => {
   return {
@@ -172,7 +172,7 @@ describe('useWellInspect', () => {
 
       const selectedWells = getHookResult(mockStore, [filterWellboreId]);
       expect(selectedWells).toEqual([
-        { ...filterWellbore, metadata: { color: WELLBORE_COLORS[1] } },
+        { ...filterWellbore, color: WELLBORE_COLORS[1] },
       ]);
     });
   });

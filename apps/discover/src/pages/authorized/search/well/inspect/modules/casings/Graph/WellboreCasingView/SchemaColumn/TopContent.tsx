@@ -70,20 +70,25 @@ export const TopContent: React.FC<TopContentProps> = ({
 
   return (
     <TopContentWrapper>
-      <TopContentArea
-        label={RKB_LEVEL_LABEL}
-        value={rkbLevel.value}
-        unit={rkbLevel.unit}
-        Wrapper={RkbLevel}
-        height={getScaledDepth(rkbLevel.value)}
-      />
-      <TopContentArea
-        label={WATER_DEPTH_LABEL}
-        value={waterDepth.value}
-        unit={waterDepth.unit}
-        Wrapper={WaterDepth}
-        height={getScaledDepth(waterDepth.value)}
-      />
+      {rkbLevel && (
+        <TopContentArea
+          label={RKB_LEVEL_LABEL}
+          value={rkbLevel.value}
+          unit={rkbLevel.unit}
+          Wrapper={RkbLevel}
+          height={getScaledDepth(rkbLevel.value)}
+        />
+      )}
+
+      {waterDepth && (
+        <TopContentArea
+          label={WATER_DEPTH_LABEL}
+          value={waterDepth.value}
+          unit={waterDepth.unit}
+          Wrapper={WaterDepth}
+          height={getScaledDepth(waterDepth.value)}
+        />
+      )}
     </TopContentWrapper>
   );
 };

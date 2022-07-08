@@ -1,4 +1,4 @@
-import { Well } from 'domain/wells/well/internal/types';
+import { WellInternal } from 'domain/wells/well/internal/types';
 
 import React from 'react';
 
@@ -21,7 +21,7 @@ import { FlexAlignItems, FlexGrow } from 'styles/layout';
 import { ActionContainer } from '../document/components/elements';
 
 interface Props {
-  well: Well | null;
+  well: WellInternal | null;
   favoriteWellIds: FavoriteContentWells;
 }
 

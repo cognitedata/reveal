@@ -3,7 +3,7 @@ import { getSpudDateDisplay } from 'domain/wells/well/internal/selectors/getSpud
 import { getSpudDateTableSort } from 'domain/wells/well/internal/selectors/getSpudDateSort';
 import { getWaterDepthSort } from 'domain/wells/well/internal/selectors/getWaterDepthSort';
 import { wellFieldTitles } from 'domain/wells/well/internal/titles';
-import { Well } from 'domain/wells/well/internal/types';
+import { WellInternal } from 'domain/wells/well/internal/types';
 
 import { MiddleEllipsis } from 'components/MiddleEllipsis/MiddleEllipsis';
 import { ColumnMap } from 'modules/documentSearch/utils/getAvailableColumns';
@@ -30,7 +30,7 @@ export type Field = {
 export const getWellColumns = (
   userPreferredUnit = '',
   doglegUnit?: DoglegSeverityUnitInternal
-): ColumnMap<Well> => {
+): ColumnMap<WellInternal> => {
   return {
     wellname: {
       Header: WELL,

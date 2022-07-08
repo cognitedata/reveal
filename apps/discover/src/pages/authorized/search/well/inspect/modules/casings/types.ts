@@ -11,8 +11,8 @@ export interface CasingSchematicView extends CasingSchematicInternal {
   wellName: string;
   wellboreName: string;
   casingAssemblies: Array<CasingAssemblyView>;
-  rkbLevel: ConvertedDistance;
-  waterDepth: ConvertedDistance;
+  rkbLevel?: ConvertedDistance;
+  waterDepth?: ConvertedDistance;
   nptEvents: NptInternal[];
   ndsEvents: NdsInternal[];
 }

@@ -1,4 +1,4 @@
-import { Well } from 'domain/wells/well/internal/types';
+import { WellInternal } from 'domain/wells/well/internal/types';
 
 import { TableResults } from 'components/Tablev3';
 import { SequenceData, WellboreId, WellId } from 'modules/wellSearch/types';
@@ -38,7 +38,7 @@ export interface SetPrerequisiteData {
 export interface ToggleSelectedWell {
   type: typeof TOGGLE_SELECTED_WELL;
   payload: {
-    well: Well;
+    well: WellInternal;
     isSelected: boolean;
   };
 }
@@ -46,7 +46,7 @@ export interface ToggleSelectedWell {
 export interface ToggleSelectedWellboreOfWell {
   type: typeof TOGGLE_SELECTED_WELLBORE_OF_WELL;
   payload: {
-    well: Well;
+    well: WellInternal;
     wellboreId: WellboreId;
     isSelected: boolean;
   };

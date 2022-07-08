@@ -1,4 +1,4 @@
-import { Wellbore } from 'domain/wells/wellbore/internal/types';
+import { WellboreInternal } from 'domain/wells/wellbore/internal/types';
 
 import React, { useState } from 'react';
 
@@ -28,7 +28,7 @@ import {
 } from './elements';
 
 export interface Props {
-  wellbores: Wellbore[];
+  wellbores: WellboreInternal[];
   selectedWellboreIds: WellboreId[];
   onRemoveWellbores: (wellboreIds: string[]) => void;
   onViewWellbores: (wellboreIds: string[]) => void;
@@ -48,7 +48,7 @@ const WellboreResult: React.FC<Props> = ({
   const columns = useVisibleWellboreColumns();
   const handleOpenDeleteModal = () => setIsDeleteWellModalOpen(true);
   const handleCloseDeleteModal = () => setIsDeleteWellModalOpen(false);
-  const [hoveredWellbore, setHoveredWellbore] = useState<Wellbore>();
+  const [hoveredWellbore, setHoveredWellbore] = useState<WellboreInternal>();
 
   const [selectedWellbores, setSelectedWellbores] = useState<SelectedMap>({});
 
@@ -60,7 +60,7 @@ const WellboreResult: React.FC<Props> = ({
     );
   }, [selectedWellboreIds]);
 
-  const getSortedWellbores = (wellboreList: Wellbore[] | undefined) =>
+  const getSortedWellbores = (wellboreList: WellboreInternal[] | undefined) =>
     wellboreList ? sortBy(wellboreList, 'name') : [];
 
   const sortedWellbores = useDeepMemo(
@@ -78,12 +78,12 @@ const WellboreResult: React.FC<Props> = ({
     handleCloseDeleteModal();
   };
 
-  const handleViewClick = (row: RowProps<Wellbore>): void => {
+  const handleViewClick = (row: RowProps<WellboreInternal>): void => {
     onViewWellbores([row.original.id]);
   };
 
   const renderRowHoverComponent: React.FC<{
-    row: RowProps<Wellbore>;
+    row: RowProps<WellboreInternal>;
   }> = ({ row }) => {
     const wellbore = row.original;
     return (
@@ -116,13 +116,13 @@ const WellboreResult: React.FC<Props> = ({
     );
   };
 
-  const handleRowSelect = (row: RowProps<Wellbore>) => {
+  const handleRowSelect = (row: RowProps<WellboreInternal>) => {
     onSelectedWellbore(row.original.id);
   };
 
   return (
     <FavoriteWelboreResultsTableWrapper>
-      <Table<Wellbore>
+      <Table<WellboreInternal>
         id="wellbore-result-table"
         data={sortedWellbores}
         columns={columns}

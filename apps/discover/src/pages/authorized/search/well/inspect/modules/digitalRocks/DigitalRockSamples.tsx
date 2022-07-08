@@ -1,4 +1,4 @@
-import { useWellInspectWellboreExternalAssetIdMap } from 'domain/wells/well/internal/transformers/useWellInspectIdMap';
+import { useWellInspectWellboreExternalAssetIdMap } from 'domain/wells/well/internal/hooks/useWellInspectWellboreExternalAssetIdMap';
 
 import React, { useState } from 'react';
 

@@ -1,6 +1,6 @@
-import { useWellInspectSelectedWellboreIds } from 'domain/wells/well/internal/transformers/useWellInspectSelectedWellboreIds';
-import { useWellInspectSelectedWellbores } from 'domain/wells/well/internal/transformers/useWellInspectSelectedWellbores';
-import { useWellInspectSelectedWells } from 'domain/wells/well/internal/transformers/useWellInspectSelectedWells';
+import { useWellInspectSelectedWellboreIds } from 'domain/wells/well/internal/hooks/useWellInspectSelectedWellboreIds';
+import { useWellInspectSelectedWellbores } from 'domain/wells/well/internal/hooks/useWellInspectSelectedWellbores';
+import { useWellInspectSelectedWells } from 'domain/wells/well/internal/hooks/useWellInspectSelectedWells';
 
 import { renderHook } from '@testing-library/react-hooks';
 import { AppStore } from 'core';
@@ -21,28 +21,31 @@ import {
 } from '../digitalRocks';
 
 jest.mock(
-  'domain/wells/well/internal/transformers/useWellInspectSelectedWellboreIds',
+  'domain/wells/well/internal/hooks/useWellInspectSelectedWellboreIds',
   () => ({
     useWellInspectSelectedWellboreIds: jest.fn(),
   })
 );
 jest.mock(
-  'domain/wells/well/internal/transformers/useWellInspectSelectedWells',
+  'domain/wells/well/internal/hooks/useWellInspectSelectedWells',
   () => ({
     useWellInspectSelectedWells: jest.fn(),
   })
 );
 jest.mock(
-  'domain/wells/well/internal/transformers/useWellInspectSelectedWellbores',
+  'domain/wells/well/internal/hooks/useWellInspectSelectedWellbores',
   () => ({
     useWellInspectSelectedWellbores: jest.fn(),
   })
 );
-jest.mock('domain/wells/well/internal/transformers/useWellInspect', () => ({
-  useWellInspectWellboreExternalAssetIdMap: () => ({
-    parentExternalId: 7591554,
-  }),
-}));
+jest.mock(
+  'domain/wells/well/internal/hooks/useWellInspectWellboreExternalAssetIdMap',
+  () => ({
+    useWellInspectWellboreExternalAssetIdMap: () => ({
+      parentExternalId: 7591554,
+    }),
+  })
+);
 
 describe('useSelectedWellBoresDigitalRocks', () => {
   beforeEach(() => {

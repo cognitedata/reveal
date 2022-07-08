@@ -1,18 +1,18 @@
 import { getWellSDKClient } from 'domain/wells/utils/authenticate';
-import { normalize } from 'domain/wells/well/internal/transformers/normalize';
+import { convertToIdentifiers } from 'domain/wells/utils/convertToIdentifiers';
 
-import { WellItems, Well } from '@cognite/sdk-wells-v3';
+import { fetchAllCursors } from 'utils/fetchAllCursors';
 
-import { toIdentifier, toIdentifierItems } from 'modules/wellSearch/sdk/utils';
+import { Well } from '@cognite/sdk-wells-v3';
 
-export function getWellsByIds(ids: Well['matchingId'][]) {
-  const client = getWellSDKClient();
-
-  return (
-    client.wells.retrieveMultiple(
-      toIdentifierItems(ids.map((id) => toIdentifier(id)))
-    ) as Promise<WellItems>
-  ).then((response) => {
-    return response.items.map(normalize);
+export const getWellsByIds = async (
+  wellMatchingIds: Array<Well['matchingId']>
+) => {
+  return fetchAllCursors<Well>({
+    action: getWellSDKClient().wells.retrieveMultiple,
+    actionProps: {
+      items: convertToIdentifiers(wellMatchingIds),
+      ignoreUnknownIds: true,
+    },
   });
-}
+};

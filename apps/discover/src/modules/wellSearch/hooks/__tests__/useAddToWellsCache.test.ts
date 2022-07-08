@@ -1,4 +1,4 @@
-import { Well } from 'domain/wells/well/internal/types';
+import { WellInternal } from 'domain/wells/well/internal/types';
 
 import { useQueryClient } from 'react-query';
 
@@ -17,7 +17,7 @@ jest.mock('react-query', () => ({
 describe('useAddToWellsCache', () => {
   const setQueryData = jest.fn();
 
-  const mockQueryClientWithData = (wells: Well[]) => {
+  const mockQueryClientWithData = (wells: WellInternal[]) => {
     (useQueryClient as jest.Mock).mockImplementation(() => ({
       setQueryData,
       getQueryData: () => wells,

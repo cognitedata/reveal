@@ -1,11 +1,11 @@
 import { DepthMeasurementWithData } from 'domain/wells/measurements/internal/types';
-import { Wellbore } from 'domain/wells/wellbore/internal/types';
+import { WellboreInternal } from 'domain/wells/wellbore/internal/types';
 
 import { WellLogView } from '../types';
 
 export const adaptToWellLogView = (
   depthMeasurement: DepthMeasurementWithData,
-  wellbore: Wellbore
+  wellbore: WellboreInternal
 ): WellLogView => {
   const { source } = depthMeasurement;
 

@@ -1,6 +1,6 @@
 import { useFavoriteWellIds } from 'domain/favorites/internal/hooks/useFavoriteWellIds';
-import { Well } from 'domain/wells/well/internal/types';
-import { Wellbore } from 'domain/wells/wellbore/internal/types';
+import { WellInternal } from 'domain/wells/well/internal/types';
+import { WellboreInternal } from 'domain/wells/wellbore/internal/types';
 
 import React, { useCallback, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
@@ -31,7 +31,7 @@ import { NO_WELLBORES_FOUND } from '../constants';
 import { OverlayCellPadding } from './elements';
 
 interface Props {
-  well: Well;
+  well: WellInternal;
 }
 
 const TABLE_ROW_HEIGHT = 50;
@@ -57,7 +57,7 @@ export const WellboreResultTable: React.FC<Props> = React.memo(({ well }) => {
   );
 
   const handleRowSelect = useCallback(
-    (row: RowProps<Wellbore>, isSelected: boolean) => {
+    (row: RowProps<WellboreInternal>, isSelected: boolean) => {
       dispatch(
         wellSearchActions.toggleSelectedWellboreOfWell({
           well,
@@ -72,12 +72,16 @@ export const WellboreResultTable: React.FC<Props> = React.memo(({ well }) => {
   /**
    * When 'View' button on well bore row is clicked
    */
-  const handleViewClick = (wellbore: Wellbore) => {
+  const handleViewClick = (wellbore: WellboreInternal) => {
     metrics.track('click-inspect-wellbore');
     navigateToWellInspect({ wellIds: [well.id], wellboreIds: [wellbore.id] });
   };
 
-  const renderHoverRowSubComponent = ({ row }: { row: Row<Wellbore> }) => {
+  const renderHoverRowSubComponent = ({
+    row,
+  }: {
+    row: Row<WellboreInternal>;
+  }) => {
     return (
       <FlexRow>
         <OverlayCellPadding>
@@ -111,7 +115,11 @@ export const WellboreResultTable: React.FC<Props> = React.memo(({ well }) => {
     );
   };
 
-  const renderRowOverlayComponent = ({ row }: { row: Row<Wellbore> }) => {
+  const renderRowOverlayComponent = ({
+    row,
+  }: {
+    row: Row<WellboreInternal>;
+  }) => {
     if (
       !isWellboreFavored(
         favoriteWellIds,
@@ -129,7 +137,7 @@ export const WellboreResultTable: React.FC<Props> = React.memo(({ well }) => {
   }
 
   return (
-    <Table<Wellbore>
+    <Table<WellboreInternal>
       id="wellbore-result-table"
       indent
       data={sortedWellbores}

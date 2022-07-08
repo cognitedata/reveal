@@ -1,4 +1,4 @@
-import { Well } from 'domain/wells/well/internal/types';
+import { WellInternal } from 'domain/wells/well/internal/types';
 
 import chunk from 'lodash/chunk';
 import groupBy from 'lodash/groupBy';
@@ -72,7 +72,10 @@ function getGrainAnalysisData(
   };
 }
 
-function toggleExpandedWell(well: Well, reset = false): ThunkResult<void> {
+function toggleExpandedWell(
+  well: WellInternal,
+  reset = false
+): ThunkResult<void> {
   return (dispatch) => {
     dispatch({
       type: TOGGLE_EXPANDED_WELL_ID,
@@ -83,7 +86,7 @@ function toggleExpandedWell(well: Well, reset = false): ThunkResult<void> {
 }
 
 function toggleSelectedWells(
-  wells: Well[],
+  wells: WellInternal[],
   options: {
     isSelected: boolean;
     clear?: boolean;
@@ -104,7 +107,7 @@ function toggleSelectedWellboreOfWell({
   wellboreId,
   isSelected,
 }: {
-  well: Well;
+  well: WellInternal;
   wellboreId: WellboreId;
   isSelected: boolean;
 }): ThunkResult<void> {

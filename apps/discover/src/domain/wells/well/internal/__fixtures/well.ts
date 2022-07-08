@@ -1,9 +1,9 @@
-import { Well } from 'domain/wells/well/internal/types';
+import { WellInternal } from 'domain/wells/well/internal/types';
 import { getMockWellbore } from 'domain/wells/wellbore/internal/__fixtures/getMockWellbore';
 
 import { Asset } from '@cognite/sdk';
 
-export const getMockWell = (extras?: Partial<Well>): Well => {
+export const getMockWell = (extras?: Partial<WellInternal>): WellInternal => {
   return {
     id: 'test-well-1',
     name: 'test-well',

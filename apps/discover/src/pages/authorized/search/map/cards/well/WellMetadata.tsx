@@ -1,5 +1,4 @@
-import { waterDepthAdapter } from 'domain/wells/well/internal/adapters/waterDepthAdapter';
-import { Well } from 'domain/wells/well/internal/types';
+import { WellInternal } from 'domain/wells/well/internal/types';
 
 import React, { useMemo } from 'react';
 
@@ -7,30 +6,25 @@ import MetadataTable from 'components/MetadataTable';
 import { FEET } from 'constants/units';
 
 interface Props {
-  well: Well | null;
+  well: WellInternal | null;
 }
 
 export const WellMetadata: React.FC<Props> = ({ well }) => {
-  const adaptedWell = useMemo(
-    () => (well ? waterDepthAdapter(well) : well),
-    [well]
-  );
-
   const metadata = useMemo(
     () => [
       {
         label: `Water Depth (${FEET})`,
-        value: adaptedWell?.waterDepth?.value,
+        value: well?.waterDepth?.value,
       },
-      { label: 'Source', value: adaptedWell?.sources },
-      { label: 'Operator', value: adaptedWell?.operator },
+      { label: 'Source', value: well?.sourceList },
+      { label: 'Operator', value: well?.operator },
       {
         label: 'Spud Date',
-        value: adaptedWell?.spudDate,
+        value: well?.spudDate,
         type: 'date' as const,
       },
     ],
-    [adaptedWell]
+    [well]
   );
 
   return <MetadataTable columns={2} metadata={metadata} />;

@@ -17,7 +17,7 @@ import { Text } from './formats/Text';
 import { UrlPath } from './formats/UrlPath';
 
 export interface FormatItemProps {
-  value?: string | string[] | number | React.ReactNode[] | false | null;
+  value?: string | string[] | number | Date | React.ReactNode[] | false | null;
   type?:
     | 'text'
     | 'path'

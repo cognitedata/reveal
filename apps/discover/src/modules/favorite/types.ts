@@ -1,4 +1,4 @@
-import { Well } from 'domain/wells/well/internal/types';
+import { WellInternal } from 'domain/wells/well/internal/types';
 
 import {
   FavoriteLastUpdatedBy,
@@ -78,7 +78,9 @@ export interface FavoriteWellData {
   name: string;
 }
 
-export const mapWellToFavoriteWellData = (well: Well): FavoriteWellData => ({
+export const mapWellToFavoriteWellData = (
+  well: WellInternal
+): FavoriteWellData => ({
   id: well.id,
   name: well.name,
 });

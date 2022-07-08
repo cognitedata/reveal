@@ -1,4 +1,4 @@
-import { Well } from 'domain/wells/well/internal/types';
+import { WellInternal } from 'domain/wells/well/internal/types';
 
 import { useQueryClient } from 'react-query';
 
@@ -11,9 +11,9 @@ export const useAddToWellsCache = () => {
   const queryClient = useQueryClient();
 
   const cachedWells =
-    queryClient.getQueryData<Well[]>(WELL_QUERY_KEY.WELLS_CACHE) || [];
+    queryClient.getQueryData<WellInternal[]>(WELL_QUERY_KEY.WELLS_CACHE) || [];
 
-  return (wells: Well[]) => {
+  return (wells: WellInternal[]) => {
     const newWellsToCache = differenceBy(wells, cachedWells, 'id');
 
     queryClient.setQueryData(

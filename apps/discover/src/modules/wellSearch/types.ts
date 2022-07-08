@@ -1,5 +1,5 @@
-import { Well } from 'domain/wells/well/internal/types';
-import { Wellbore } from 'domain/wells/wellbore/internal/types';
+import { WellInternal } from 'domain/wells/well/internal/types';
+import { WellboreInternal } from 'domain/wells/wellbore/internal/types';
 
 import { PlotData } from 'plotly.js';
 
@@ -66,13 +66,13 @@ interface ToggleExpandedWellId {
 interface ToggleSelectedWells {
   clear?: boolean;
   type: typeof TOGGLE_SELECTED_WELLS;
-  wells: Well[];
+  wells: WellInternal[];
   isSelected: boolean;
 }
 
 interface ToggleSelectedWellboreOfWell {
   type: typeof TOGGLE_SELECTED_WELLBORE_OF_WELL;
-  well: Well;
+  well: WellInternal;
   wellboreId: WellboreId;
   isSelected: boolean;
 }
@@ -122,7 +122,7 @@ export type WellSearchAction =
   | SetSelectedColumn;
 
 export interface WellResult {
-  wells: Well[];
+  wells: WellInternal[];
   error?: Error;
 }
 
@@ -143,7 +143,7 @@ export interface WellFilterMap {
 }
 
 export interface WellMap {
-  [key: number]: Well;
+  [key: number]: WellInternal;
 }
 
 export type WellFormatFilter = { [key: string]: WellFilterOptionValue[] };
@@ -296,7 +296,7 @@ export type MeasurementChartData = Partial<PlotData> & {
 };
 
 export type WellboreProcessedData = {
-  wellbore: Wellbore;
+  wellbore: WellboreInternal;
   proccessedData: ProcessedData;
 };
 

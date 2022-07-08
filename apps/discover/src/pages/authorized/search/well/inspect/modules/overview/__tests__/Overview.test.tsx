@@ -10,16 +10,18 @@ const getMockOverviewModel = (
   extras: Partial<OverviewModel> = {}
 ): OverviewModel => {
   const model: OverviewModel = {
-    id: 1,
+    id: '1',
+    matchingId: '1',
+    wellId: '1',
+    wellMatchingId: '1',
     name: 'test',
     wellName: 'test-well',
     sources: 'test-source',
     operator: 'test-operator',
     spudDate: '2021-04-15T13:31:27.767Z',
-    waterDepth: { value: 1, unit: 'feet' },
+    waterDepth: { value: 1, unit: 'ft' },
     md: '1',
     tvd: '2',
-    sourceWellbores: [],
 
     ...mockWellboreOptions,
     ...extras,

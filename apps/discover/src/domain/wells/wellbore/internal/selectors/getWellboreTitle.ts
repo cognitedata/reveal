@@ -1,13 +1,9 @@
-import { Wellbore } from 'domain/wells/wellbore/internal/types';
+import { WellboreInternal } from 'domain/wells/wellbore/internal/types';
 
-import { getWellboreName } from './getWellboreName';
-
-export const getWellboreTitle = (wellbore: Wellbore) => {
-  const name = getWellboreName(wellbore);
-
-  if (name === wellbore.description) {
+export const getWellboreTitle = ({ name, description }: WellboreInternal) => {
+  if (!description || name === description) {
     return name;
   }
 
-  return `${wellbore.description} ${name}`.trim();
+  return `${description} ${name}`.trim();
 };

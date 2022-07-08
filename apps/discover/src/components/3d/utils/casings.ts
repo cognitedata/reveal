@@ -2,14 +2,14 @@ import {
   CasingAssemblyInternal,
   CasingSchematicInternal,
 } from 'domain/wells/casings/internal/types';
-import { Wellbore } from 'domain/wells/wellbore/internal/types';
+import { WellboreInternal } from 'domain/wells/wellbore/internal/types';
 
 import keyBy from 'lodash/keyBy';
 
 import { ICasing } from '@cognite/node-visualizer';
 
 export const mapCasingsTo3D = (
-  wellbores: Wellbore[],
+  wellbores: WellboreInternal[],
   casingSchematics: CasingSchematicInternal[]
 ) => {
   const keyedWellbores = keyBy(wellbores, 'matchingId');
@@ -34,7 +34,7 @@ export const mapCasingsTo3D = (
 export const mapCasingTo3D = (
   casingSchematic: CasingSchematicInternal,
   casingAssembly: CasingAssemblyInternal,
-  wellbore?: Wellbore
+  wellbore?: WellboreInternal
 ): Partial<ICasing> => {
   return {
     // ...casing,

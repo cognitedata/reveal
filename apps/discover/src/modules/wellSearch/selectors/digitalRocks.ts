@@ -1,5 +1,5 @@
-import { useWellInspectWellboreExternalAssetIdMap } from 'domain/wells/well/internal/transformers/useWellInspectIdMap';
-import { useWellInspectSelectedWells } from 'domain/wells/well/internal/transformers/useWellInspectSelectedWells';
+import { useWellInspectSelectedWells } from 'domain/wells/well/internal/hooks/useWellInspectSelectedWells';
+import { useWellInspectWellboreExternalAssetIdMap } from 'domain/wells/well/internal/hooks/useWellInspectWellboreExternalAssetIdMap';
 
 import { useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';

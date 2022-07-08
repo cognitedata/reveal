@@ -1,5 +1,4 @@
-import { getKbElevation } from 'domain/wells/wellbore/internal/selectors/getKbElevation';
-import { Wellbore } from 'domain/wells/wellbore/internal/types';
+import { WellboreInternal } from 'domain/wells/wellbore/internal/types';
 
 import { DEFAULT_PAGE_SIZE } from 'constants/app';
 import { NOT_AVAILABLE } from 'constants/empty';
@@ -41,7 +40,7 @@ export const WellboreSubtableOptions = {
 
 export const getWellboreColumns = (
   userPreferredUnit?: string
-): ColumnMap<Wellbore> => {
+): ColumnMap<WellboreInternal> => {
   return {
     wellbore: {
       Header: WELLBORE,
@@ -85,7 +84,7 @@ export const getWellboreColumns = (
     },
     kbElevation: {
       Header: KB_ELEVATION_TEXT,
-      accessor: (wellbore) => getKbElevation(wellbore, userPreferredUnit),
+      accessor: (wellbore) => String(wellbore.datum?.value || NOT_AVAILABLE),
       width: '130px',
     },
     trueVerticalDepth: {

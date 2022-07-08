@@ -1,4 +1,4 @@
-import { Well } from 'domain/wells/well/internal/types';
+import { WellInternal } from 'domain/wells/well/internal/types';
 
 import {
   getMockWell,
@@ -10,7 +10,7 @@ import { mapWellboresTo3D } from '../wellbores';
 
 describe('mapWellboresTo3D', () => {
   it('should return wells in 3d format', () => {
-    const wells: Well[] = [
+    const wells: WellInternal[] = [
       { ...getMockWell(), wellbores: mockedWellboreResultFixture },
     ];
     const results = mapWellboresTo3D(wells);
@@ -28,7 +28,7 @@ describe('mapWellboresTo3D', () => {
         },
         name: 'wellbore B',
         parentId: '1234',
-        sourceWellbores: [],
+        sources: [],
         wellId: '1234',
         wellMatchingId: '1234',
         ...mockWellboreOptions,
@@ -48,11 +48,10 @@ describe('mapWellboresTo3D', () => {
         wellId: '1234',
         wellMatchingId: '1234',
         description: 'wellbore A desc',
-        sourceWellbores: [
+        sources: [
           {
-            externalId: 'Wellbore A:759155409324993',
-            id: '759155409324993',
-            source: 'Source A',
+            assetExternalId: 'Wellbore A:759155409324993',
+            sourceName: 'Source A',
           },
         ],
         parentId: '1234',
