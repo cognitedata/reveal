@@ -132,7 +132,7 @@ describe('Test annotator slice', () => {
     });
 
     describe('Test keypointSelectStatusChange reducer', () => {
-      const previousState = {
+      const previousState: AnnotatorWrapperState = {
         ...initialState,
         collections: {
           byId: {
@@ -144,8 +144,8 @@ describe('Test annotator slice', () => {
         },
         keypointMap: {
           byId: {
-            k1: getDummyKeypointState('k1'),
-            k2: getDummyKeypointState('k2'),
+            k1: ['k2', getDummyKeypointState()],
+            k2: ['k2', getDummyKeypointState()],
           },
           allIds: ['k1', 'k2'],
           selectedIds: ['k1'],
@@ -193,7 +193,7 @@ describe('Test annotator slice', () => {
       const k1Id = generateKeypointId(1, 'left');
       const k2Id = generateKeypointId(1, 'center');
 
-      const previousState = {
+      const previousState: AnnotatorWrapperState = {
         ...initialState,
         collections: {
           byId: {
@@ -205,8 +205,8 @@ describe('Test annotator slice', () => {
         },
         keypointMap: {
           byId: {
-            k1Id: getDummyKeypointState('left'),
-            k2Id: getDummyKeypointState('center'),
+            [k1Id]: ['left', getDummyKeypointState()],
+            [k2Id]: ['center', getDummyKeypointState()],
           },
           allIds: [k1Id, k2Id],
           selectedIds: [k1Id],
@@ -215,7 +215,6 @@ describe('Test annotator slice', () => {
 
       test('should update confidence and point', () => {
         const pointToUpdate: Keypoint = {
-          label: 'left',
           confidence: 0.5,
           point: { x: 0.25, y: 0.75 },
         };
@@ -226,7 +225,7 @@ describe('Test annotator slice', () => {
             previousState,
             onUpdateKeyPoint({
               keypointAnnotationCollectionId: collectionId,
-              label: pointToUpdate.label,
+              label: 'left',
               newConfidence: pointToUpdate.confidence,
               newPoint: pointToUpdate.point,
             })
@@ -242,7 +241,6 @@ describe('Test annotator slice', () => {
 
       test('should not effect others when non existing label used', () => {
         const pointToUpdate: Keypoint = {
-          label: 'non-existing-label',
           confidence: 0.5,
           point: { x: 0.25, y: 0.75 },
         };
@@ -251,7 +249,7 @@ describe('Test annotator slice', () => {
             previousState,
             onUpdateKeyPoint({
               keypointAnnotationCollectionId: 1,
-              label: pointToUpdate.label,
+              label: 'non-existing-label',
               newConfidence: pointToUpdate.confidence,
               newPoint: pointToUpdate.point,
             })

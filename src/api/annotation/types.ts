@@ -56,10 +56,9 @@ export type TextRegion = {
   textRegion: BoundingBox;
 };
 
-export type Keypoint = Label &
-  Partial<Confidence> & {
-    point: Point;
-  };
+export type Keypoint = Partial<Confidence> & {
+  point: Point;
+};
 
 export type Timestamp = number;
 
@@ -126,7 +125,7 @@ export type ImageAssetLink = TextRegion &
   };
 
 export type ImageKeypointCollection = ImageClassification & {
-  keypoints: Keypoint[];
+  keypoints: Record<string, Keypoint>;
 };
 
 export enum CDFAnnotationTypeEnum {

@@ -33,8 +33,8 @@ export const useIsCurrentKeypointCollectionComplete = (fileId: number) => {
           keypointCollectionTemplate.keypoints!.map(
             (keypoint) => keypoint.caption
           );
-        const createdKeypointLabels = tempKeypointCollection.data.keypoints.map(
-          (keypoint) => keypoint.keypoint.label
+        const createdKeypointLabels = Object.keys(
+          tempKeypointCollection.data.keypoints
         );
         const notCompletedKeypoints = templateKeypointLabels.filter(
           (keypointLabel) => !createdKeypointLabels.includes(keypointLabel)

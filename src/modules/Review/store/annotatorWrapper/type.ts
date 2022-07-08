@@ -14,7 +14,7 @@ export type KeypointCollectionState = {
 export type AnnotatorWrapperState = {
   predefinedAnnotations: PredefinedVisionAnnotations;
   keypointMap: {
-    byId: Record<string, Keypoint>;
+    byId: Record<string, [string, Keypoint]>; // id => (label, keypoint)
     allIds: string[];
     selectedIds: string[];
   };

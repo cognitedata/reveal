@@ -174,20 +174,26 @@ export const convertVisionReviewAnnotationToRegions = (
           VisionAnnotation<ImageKeypointCollection>
         >
       ).keypoints ||
-      !(
-        annotation as TurnKeypointType<
-          VisionAnnotation<ImageKeypointCollection>
-        >
-      ).keypoints.length
+      !Object.keys(
+        (
+          annotation as TurnKeypointType<
+            VisionAnnotation<ImageKeypointCollection>
+          >
+        ).keypoints
+      ).length
     ) {
       console.error(
         'ReactImageAnnotateWrapper: keypoints not found in annotation'
       );
       return regions;
     }
-    (
-      annotation as TurnKeypointType<VisionAnnotation<ImageKeypointCollection>>
-    ).keypoints.forEach((keypoint) => {
+    Object.entries(
+      (
+        annotation as TurnKeypointType<
+          VisionAnnotation<ImageKeypointCollection>
+        >
+      ).keypoints
+    ).forEach(([label, keypoint]) => {
       regions.push({
         ...{
           type: AnnotatorRegionType.PointRegion,
@@ -197,12 +203,12 @@ export const convertVisionReviewAnnotationToRegions = (
         ...baseRegionData,
         id: keypoint.id,
         editingLabels: keypoint.selected,
-        highlighted: !!reviewAnnotation.selected || keypoint.selected,
+        highlighted: reviewAnnotation.selected || keypoint.selected,
         tags: [],
         parentAnnotationId: (
           annotation as VisionAnnotation<ImageKeypointCollection>
         ).id,
-        keypointLabel: keypoint.keypoint.label,
+        keypointLabel: label,
         keypointConfidence: keypoint.keypoint.confidence,
       } as AnnotatorPointRegion);
     });
@@ -284,8 +290,8 @@ export const getVisionAnnotationDataFromRegion = (
     const { keypointLabel } = region;
     data = {
       id: String(region.id),
+      label: keypointLabel,
       keypoint: {
-        label: keypointLabel,
         point: { x: region.x, y: region.y },
         confidence: region.keypointConfidence,
       },
@@ -409,10 +415,11 @@ export const convertAnnotatorPointRegionToAnnotationChangeProperties = (
       point: { x: number; y: number };
     }
   > = {};
-  (
-    region.annotationMeta as VisionReviewAnnotation<ImageKeypointCollection>
-  ).annotation.keypoints.forEach(({ keypoint }) => {
-    annotationKeypoints[keypoint.label] = {
+  Object.entries(
+    (region.annotationMeta as VisionReviewAnnotation<ImageKeypointCollection>)
+      .annotation.keypoints
+  ).forEach(([label, { keypoint }]) => {
+    annotationKeypoints[label] = {
       confidence: keypoint.confidence,
       point: keypoint.point,
     };

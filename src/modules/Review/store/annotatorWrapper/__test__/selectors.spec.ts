@@ -238,11 +238,11 @@ describe('Test annotationLabel selectors', () => {
       20: unfinishedCollection,
     };
 
-    const imageKeypoints: Record<string, Keypoint> = {
-      [k1Id]: getDummyKeypointState('left'),
-      [k2Id]: getDummyKeypointState('center'),
-      [k3Id]: getDummyKeypointState('right'),
-      [k4Id]: getDummyKeypointState('left'),
+    const imageKeypoints: Record<string, [string, Keypoint]> = {
+      [k1Id]: ['left', getDummyKeypointState()],
+      [k2Id]: ['center', getDummyKeypointState()],
+      [k3Id]: ['right', getDummyKeypointState()],
+      [k4Id]: ['left', getDummyKeypointState()],
     };
 
     test('Should return null since lastCollectionId is not set', () => {
@@ -279,7 +279,8 @@ describe('Test annotationLabel selectors', () => {
         {
           id: '20-left',
           selected: false,
-          keypoint: getDummyKeypointState('left'),
+          keypoint: getDummyKeypointState(),
+          label: 'left',
           color: 'red',
         },
       ];
