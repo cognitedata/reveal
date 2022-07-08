@@ -68,11 +68,11 @@ export const content = (modelIndex: number) => {
   };
 
   const selectOptions = ['analog', 'level', 'digital'].map((item) => {
-    return { label: item, text: item };
+    return { label: item, value: item };
   });
 
   const getOption = (value: string) => {
-    return { label: value, text: value };
+    return { label: value, value };
   };
 
   return (
