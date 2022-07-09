@@ -8,7 +8,6 @@ import {
   useState,
 } from 'react';
 import { BlueprintDefinition, RuleOutput, TimeSeriesTag } from 'typings';
-// import { NodeConfig, Node } from 'konva/lib/Node';
 import { Drawer } from '@cognite/cogs.js';
 import { RuleSetsDrawer } from 'components/RuleSetDrawer/RuleSetsDrawer';
 import { CogniteOrnate, defaultColor, ToolNodeStyle, ToolType } from 'ornate';
@@ -16,10 +15,14 @@ import { Ornate } from 'ornate/react';
 import { NodeStyle, StyleSelector, Toolbar } from 'ornate/react/components';
 import BaseAttributesControl from 'components/ContextMenu/ContextMenuItems/AttributesControl';
 import { ControlProps } from 'ornate/react/components/context-menu/controls';
+import Konva from 'konva';
 
+import { ToggleButton } from './CanvasLayerMenu';
 import { useRuleSetEvaluation } from './useRuleSetEvaluation';
 import { BlueprintWrapper } from './elements';
 import { BaseRuleControl } from './RuleControl/RuleControl';
+import { BaseLinkControl } from './LinkControl/LinkControl';
+import { Link } from './LinkControl/types';
 
 export type BlueprintProps = {
   client: CogniteClient;
@@ -31,6 +34,8 @@ export type BlueprintProps = {
   onReady?: (viewer: MutableRefObject<CogniteOrnate | undefined>) => void;
   isAllMinimized?: boolean;
   disabledRulesets?: Record<string, boolean>;
+  isRuleSetDrawerOpen: boolean;
+  setIsRuleSetDrawerOpen: (nextState: boolean) => void;
 };
 
 const DEFAULT_STYLE: NodeStyle = {
@@ -49,13 +54,14 @@ const Blueprint = ({
   onReady,
   isAllMinimized,
   disabledRulesets,
+  isRuleSetDrawerOpen,
+  setIsRuleSetDrawerOpen,
 }: BlueprintProps) => {
   const ornateViewer = useRef<CogniteOrnate>();
   const [activeStyle, setActiveStyle] = useState(DEFAULT_STYLE);
   const [isReady, setIsReady] = useState(false);
   const [loadedBlueprint, setLoadedBlueprint] = useState<BlueprintDefinition>();
   const [activeTool, setActiveTool] = useState<ToolType>('HAND');
-  const [isCreatingNewRuleSet, setIsCreatingNewRuleSet] = useState(false);
   const [errors, setErrors] = useState<Record<string, string | undefined>>({});
   const [ruleSetResults, setRuleSetResults] = useState<
     Record<string, RuleOutput[]>
@@ -133,7 +139,7 @@ const Blueprint = ({
           ruleSets={blueprint?.ruleSets}
           shapeRuleSetsIds={blueprint?.shapeRuleSets?.[nodes[0].id()] || []}
           onNewRuleSet={() => {
-            setIsCreatingNewRuleSet(true);
+            setIsRuleSetDrawerOpen(true);
           }}
           onClickRuleSet={(nextRuleSetId: string) => {
             if (onUpdate && blueprint) {
@@ -194,6 +200,53 @@ const Blueprint = ({
     [blueprint]
   );
 
+  const LinkControl: React.FC<ControlProps> = useCallback(
+    ({ nodes, instance }) => {
+      const [links, setLinks] = useState<Link[]>(nodes[0]?.attrs?.links || []);
+      return (
+        <BaseLinkControl
+          onAddLink={(nextLink) => {
+            nodes.forEach((node) => {
+              node.setAttr('links', [...(node.attrs?.links || []), nextLink]);
+            });
+            setLinks((prevLinks) => [...prevLinks, nextLink]);
+            instance.emitSaveEvent();
+          }}
+          onDeleteLinks={() => {
+            nodes.forEach((node) => {
+              node.setAttr('links', undefined);
+            });
+            setLinks([]);
+          }}
+          links={links}
+        />
+      );
+    },
+    [blueprint]
+  );
+
+  const handleToggleLayers = useCallback(
+    (layer: string, isVisible: boolean) => {
+      const shapes: Konva.Node[] = [];
+
+      shapes.push(...(ornateViewer.current?.stage.find(`.${layer}`) || []));
+      // legacy data
+      if (layer === 'drawing') {
+        shapes.push(
+          ...(ornateViewer.current?.stage.find(`.user-drawing`) || [])
+        );
+      }
+      shapes.forEach((shape) => {
+        if (isVisible) {
+          shape.show();
+        } else {
+          shape.hide();
+        }
+      });
+    },
+    [ornateViewer]
+  );
+
   return (
     <BlueprintWrapper>
       <Ornate
@@ -209,10 +262,11 @@ const Blueprint = ({
         contextMenuProps={{
           additionalControls: (shapeTypes) =>
             shapeTypes.some((type) => ['CIRCLE', 'RECT', 'LINE'].includes(type))
-              ? [RuleControl, AttributeControl]
+              ? [LinkControl, RuleControl, AttributeControl]
               : [],
         }}
       />
+      <ToggleButton handleToggleLayers={handleToggleLayers} />
       <Toolbar
         activeTool={activeTool}
         setActiveTool={setActiveTool}
@@ -256,10 +310,10 @@ const Blueprint = ({
           />
         ))}
       <Drawer
-        visible={isCreatingNewRuleSet}
+        visible={isRuleSetDrawerOpen}
         width={360}
         onClose={() => {
-          setIsCreatingNewRuleSet(false);
+          setIsRuleSetDrawerOpen(false);
         }}
       >
         <RuleSetsDrawer

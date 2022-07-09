@@ -47,6 +47,7 @@ const BlueprintPage: React.FC = () => {
   const [disabledRuleSets, setDisabledRuleSets] = useState<
     Record<string, boolean>
   >({});
+  const [isCreatingNewRuleSet, setIsCreatingNewRuleSet] = useState(false);
   const history = useHistory();
   const { externalId } = useParams<{ externalId: string }>();
   const { addFile } = useBlueprint(ornateViewer);
@@ -297,6 +298,9 @@ const BlueprintPage: React.FC = () => {
         ruleSets={blueprint?.ruleSets || []}
         disabledRuleSets={disabledRuleSets}
         onChange={setDisabledRuleSets}
+        onEdit={() => {
+          setIsCreatingNewRuleSet(true);
+        }}
       />
 
       {/* Interactive blueprint & toolbar */}
@@ -317,6 +321,8 @@ const BlueprintPage: React.FC = () => {
         onDeleteTag={onDeleteTag}
         isAllMinimized={isMinimized}
         disabledRulesets={disabledRuleSets}
+        isRuleSetDrawerOpen={isCreatingNewRuleSet}
+        setIsRuleSetDrawerOpen={setIsCreatingNewRuleSet}
       />
     </PageWrapper>
   );

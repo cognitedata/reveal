@@ -11,13 +11,23 @@ export const LegendWrapper = styled.div`
   padding: 16px;
   box-shadow: var(--cogs-z-8);
   min-width: 160px;
+  max-width: 320px;
   display: flex;
   flex-direction: column;
   gap: 16px;
 
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    h3 {
+      margin: 0;
+    }
+  }
+
   .rule-set--details {
     display: flex;
     align-items: center;
-    margin: 4px;
+    margin: 8px 4px;
   }
 `;

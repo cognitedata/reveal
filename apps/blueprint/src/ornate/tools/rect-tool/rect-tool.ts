@@ -38,7 +38,7 @@ export class RectTool implements Tool {
       width: 1,
       height: 1,
       userGenerated: true,
-      name: 'user-drawing',
+      name: 'drawing',
       fill: this.ornate.style?.fill || defaultColor.hex(),
       stroke: this.ornate.style?.stroke || 'rgba(0, 0, 0, 1)',
       strokeWidth: this.style?.strokeWidth || 8,

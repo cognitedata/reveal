@@ -1,4 +1,4 @@
-import { Checkbox } from '@cognite/cogs.js';
+import { Button, Checkbox } from '@cognite/cogs.js';
 import { RuleStylePreview } from 'components/RuleSetDrawer/RuleStylePreview';
 import { RuleSet } from 'typings';
 
@@ -8,12 +8,14 @@ export type LegendProps = {
   ruleSets: RuleSet[];
   disabledRuleSets?: Record<string, boolean>;
   onChange: (next: Record<string, boolean>) => void;
+  onEdit: () => void;
 };
 
 export const Legend = ({
   ruleSets,
   disabledRuleSets = {},
   onChange,
+  onEdit,
 }: LegendProps) => {
   const renderRules = () =>
     ruleSets.map((r) => (
@@ -46,7 +48,21 @@ export const Legend = ({
     return null;
   }
 
-  return <LegendWrapper>{renderRules()}</LegendWrapper>;
+  return (
+    <LegendWrapper>
+      <header>
+        <h3>Legend</h3>
+        <Button
+          icon="Edit"
+          type="ghost"
+          onClick={() => {
+            onEdit();
+          }}
+        />
+      </header>
+      {renderRules()}
+    </LegendWrapper>
+  );
 };
 
 export default Legend;
