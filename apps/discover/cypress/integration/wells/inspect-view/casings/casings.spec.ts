@@ -188,6 +188,8 @@ describe('Casings: Table view', () => {
   it('Measurement unit changes should apply to "Top MD" & "Bottom MD" column', () => {
     cy.changeMeasurementUnit('Meter');
 
+    cy.contains('Table').click({ force: true });
+
     cy.log(`verify Top MD column header`);
     cy.findByTestId('table-header-row')
       .findByText(`Top MD (${UserPreferredUnit.METER})`)
@@ -198,10 +200,12 @@ describe('Casings: Table view', () => {
       .findByText(`Bottom MD (${UserPreferredUnit.METER})`)
       .should('be.visible');
 
+    cy.contains('Table').click({ force: true });
     cy.log(
       'Top MD values should change according to selected measurement unit'
     );
-    cy.findAllByTestId('wellbore-casings-table')
+
+    cy.findByTestId('wellbore-casings-table')
       .findAllByTestId('table-cell')
       .eq(3)
       .invoke('text')

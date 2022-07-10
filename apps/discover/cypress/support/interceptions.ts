@@ -18,6 +18,9 @@ export const REMOVE_SHARE_SAVED_SEARCHES_ALIAS = 'removeShareSavedSearches';
 export const MAPBOX_REQUESTS_ALIAS = 'mapboxRequests';
 export const USERS_SEARCH_ALIAS = 'usersSearch';
 
+export const UMS_ME_GET = 'getUMS';
+export const UMS_ME_UPDATE = 'updateUMS';
+
 /**
  * INTERCEPTIONS
  * */
@@ -129,4 +132,16 @@ export const interceptMapboxRequests = () => {
     url: 'https://events.mapbox.com/**',
     method: 'POST',
   }).as(MAPBOX_REQUESTS_ALIAS);
+};
+
+export const interceptUMS = () => {
+  cy.intercept({
+    url: '**/user/me',
+    method: 'GET',
+  }).as(UMS_ME_GET);
+
+  cy.intercept({
+    url: '**/user/me',
+    method: 'PATCH',
+  }).as(UMS_ME_UPDATE);
 };
