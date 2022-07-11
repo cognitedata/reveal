@@ -2,10 +2,10 @@ import { changeUnitTo } from '../changeUnitTo';
 
 describe('changeUnitTo', () => {
   it('should be ok', () => {
-    expect(changeUnitTo(1, 'm', 'ft')).toEqual(3.28084);
+    expect(changeUnitTo(1, 'm', 'ft')).toEqual(3.281);
   });
   it('should handle custom conversion', () => {
-    expect(changeUnitTo(1, 'meter', 'ft')).toEqual(3.28084);
+    expect(changeUnitTo(1, 'meter', 'ft')).toEqual(3.281);
   });
 
   describe('bad tests', () => {

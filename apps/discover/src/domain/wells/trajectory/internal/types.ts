@@ -11,8 +11,13 @@ import {
 } from '@cognite/sdk-wells';
 
 export interface TrajectoryInternal
-  extends Omit<Trajectory, 'maxDoglegSeverity'> {
+  extends Omit<
+    Trajectory,
+    'maxMeasuredDepth' | 'maxTrueVerticalDepth' | 'maxDoglegSeverity'
+  > {
   maxDoglegSeverity: DoglegSeverityInternal;
+  maxMeasuredDepth?: number;
+  maxTrueVerticalDepth?: number;
 }
 
 export interface TrajectoryDataInternal

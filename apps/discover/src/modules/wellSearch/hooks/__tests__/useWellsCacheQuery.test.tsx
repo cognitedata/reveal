@@ -9,6 +9,7 @@ import { setupServer } from 'msw/node';
 
 import { testRendererForHooks } from '__test-utils/renderer';
 import { WELL_QUERY_KEY } from 'constants/react-query';
+import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 
 import { useWellsCacheQuery } from '../useWellsCacheQuery';
 
@@ -46,9 +47,12 @@ describe('useWellsCacheQuery', () => {
 
     const ComponentTwo = () => {
       const { data, isLoading } = useWellsCacheQuery(['test-well-2']);
+      const { data: userPreferredUnit } = useUserPreferencesMeasurement();
       const cachedWells =
-        useQueryClient().getQueryData<unknown[]>(WELL_QUERY_KEY.WELLS_CACHE) ||
-        [];
+        useQueryClient().getQueryData<unknown[]>([
+          ...WELL_QUERY_KEY.WELLS_CACHE,
+          userPreferredUnit,
+        ]) || [];
 
       return (
         <>

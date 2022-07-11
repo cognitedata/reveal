@@ -35,8 +35,8 @@ export const useWellsCacheQuery = (
   const { data: wellConfig } = useWellConfig();
   const { data: userPreferredUnit } = useUserPreferencesMeasurement();
 
-  const cachedWells =
-    queryClient.getQueryData<WellInternal[]>(WELL_QUERY_KEY.WELLS_CACHE) || [];
+  const key = [...WELL_QUERY_KEY.WELLS_CACHE, userPreferredUnit];
+  const cachedWells = queryClient.getQueryData<WellInternal[]>(key) || [];
 
   const cachedWellIds = useDeepMemo(
     () => cachedWells.map((well) => String(well.id)),
@@ -79,7 +79,7 @@ export const useWellsCacheQuery = (
       const updatedCache = concat(cachedWells, uncachedWells);
       // console.log('Updated cache:', updatedCache);
 
-      queryClient.setQueryData(WELL_QUERY_KEY.WELLS_CACHE, updatedCache);
+      queryClient.setQueryData(key, updatedCache);
       return {
         wells: updatedCache,
       };
