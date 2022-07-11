@@ -11,7 +11,7 @@ import { NdsInternal } from '../types';
 export const normalizeNds = (
   rawNds: Nds,
   userPreferredUnit: UserPreferredUnit,
-  ndsCodeColorMap: ColorMap
+  ndsCodeColorMap: ColorMap = {}
 ): NdsInternal => {
   const { holeDiameter, holeStart, holeEnd, riskType } = rawNds;
 

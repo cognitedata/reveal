@@ -13,7 +13,7 @@ export const useWellInspectSelectedWells = () => {
         .filter((well) => selectedWellIds[well.id])
         .map((well) => ({
           ...well,
-          wellbores: (well.wellbores || []).filter(
+          wellbores: well.wellbores.filter(
             (wellbore) => selectedWellboreIds[wellbore.id]
           ),
         })),

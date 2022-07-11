@@ -9,5 +9,3 @@ export const SIDEBAR_SIZE = {
 export const HIDE_TEXT = 'Hide';
 export const EXPAND_TEXT = 'Click to expand the area';
 export const COLLAPSE_TEXT = 'Collapse the filter bar';
-
-export const DEFAULT_WELLBORE_COLOR = '#595959';

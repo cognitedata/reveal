@@ -1,6 +1,5 @@
-import { addColorToWellbore } from 'domain/wells/wellbore/internal/transformers/addColorToWellbore';
-
-import { sortObjectsAscending } from 'utils/sort';
+import { sortWellsByName } from 'domain/wells/well/internal/transformers/sortWellsByName';
+import { sortWellboresByName } from 'domain/wells/wellbore/internal/transformers/sortWellboresByName';
 
 import { useDeepMemo } from 'hooks/useDeep';
 import {
@@ -13,7 +12,6 @@ export const useWellInspectWells = () => {
   const inspectWellboreIds = useWellInspectWellboreIds();
   const inspectWellIds = useWellInspectWellIds();
   const { wells, error } = useWellsByIds(inspectWellIds);
-  const toColoredWellbore = addColorToWellbore();
 
   return useDeepMemo(() => {
     if (!wells)
@@ -23,22 +21,19 @@ export const useWellInspectWells = () => {
       };
 
     const unsortedWells = wells.map((well) => {
-      const unsortedWellbores =
-        well.wellbores
-          ?.filter((wellbore) =>
-            inspectWellboreIds.includes(String(wellbore.id))
-          )
-          .map(toColoredWellbore) || [];
+      const unsortedWellbores = well.wellbores?.filter((wellbore) =>
+        inspectWellboreIds.includes(String(wellbore.id))
+      );
 
       return {
         ...well,
-        wellbores: sortObjectsAscending(unsortedWellbores, 'name'), // Move to data layer when refactoring.
+        wellbores: sortWellboresByName(unsortedWellbores),
       };
     });
 
     return {
-      wells: sortObjectsAscending(unsortedWells, 'name'),
+      wells: sortWellsByName(unsortedWells),
       error,
-    }; // Move to data layer when refactoring.
+    };
   }, [wells, inspectWellIds, inspectWellboreIds, error]);
 };

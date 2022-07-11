@@ -36,6 +36,7 @@ export const getMockWell = (extras?: Partial<WellInternal>): WellInternal => {
     spudDate: new Date(1622190752316),
     sourceAssets: () => Promise.resolve([]),
     sourceList: 'source1',
+    wellbores: [],
     ...extras,
   };
 };

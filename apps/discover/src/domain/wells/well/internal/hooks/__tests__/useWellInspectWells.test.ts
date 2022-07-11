@@ -1,4 +1,3 @@
-import { WELLBORE_COLORS } from 'domain/wells/wellbore/constants';
 import { getMockWellbore } from 'domain/wells/wellbore/internal/__fixtures/getMockWellbore';
 
 import { Store } from 'redux';
@@ -20,7 +19,6 @@ jest.mock('modules/wellSearch/hooks/useWellsCacheQuerySelectors', () => ({
 
 const inspectWellId = '759155409324883';
 const inspectWellboreId = '12345';
-const inspectWellboreMetadata = { color: WELLBORE_COLORS[0] };
 
 const getMockedStoreWithWellInspect = (extras?: Partial<WellInspectState>) => {
   return {
@@ -55,19 +53,6 @@ describe('useWellInspect', () => {
       expect(inspectWells).toEqual([]);
     });
 
-    it('should return an empty array for wellbores when they are undefined', () => {
-      const wells = [getMockWell({ wellbores: undefined })];
-      const mockStore = getMockedStoreWithWellInspect();
-      (useWellsByIds as jest.Mock).mockImplementation(() => ({ wells }));
-
-      const { wells: inspectWells } = getHookResult(mockStore);
-      const expectedResult = wells.map((well) => ({
-        ...well,
-        wellbores: [],
-      }));
-      expect(inspectWells).toEqual(expectedResult);
-    });
-
     it('should return wells and wellbores to inspect', () => {
       const inspectWellbore = getMockWellbore({ id: inspectWellboreId });
       const inspectWell = getMockWell({
@@ -85,7 +70,7 @@ describe('useWellInspect', () => {
           wells: [
             {
               ...inspectWell,
-              wellbores: [{ ...inspectWellbore, ...inspectWellboreMetadata }],
+              wellbores: [{ ...inspectWellbore }],
             },
           ],
         })
@@ -117,7 +102,7 @@ describe('useWellInspect', () => {
       expect(selectedWells).toEqual([
         {
           ...inspectWell,
-          wellbores: [{ ...inspectWellbore, ...inspectWellboreMetadata }],
+          wellbores: [{ ...inspectWellbore }],
         },
       ]);
     });
@@ -146,9 +131,7 @@ describe('useWellInspect', () => {
       (useWellsByIds as jest.Mock).mockImplementation(() => ({ wells }));
 
       const selectedWells = getHookResult(mockStore);
-      expect(selectedWells).toEqual([
-        { ...inspectWellbore, ...inspectWellboreMetadata },
-      ]);
+      expect(selectedWells).toEqual([{ ...inspectWellbore }]);
     });
 
     it('should return only selected wellbores filtered by id', () => {
@@ -171,9 +154,7 @@ describe('useWellInspect', () => {
       (useWellsByIds as jest.Mock).mockImplementation(() => ({ wells }));
 
       const selectedWells = getHookResult(mockStore, [filterWellboreId]);
-      expect(selectedWells).toEqual([
-        { ...filterWellbore, color: WELLBORE_COLORS[1] },
-      ]);
+      expect(selectedWells).toEqual([{ ...filterWellbore }]);
     });
   });
 });

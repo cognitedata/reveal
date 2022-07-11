@@ -1,4 +1,4 @@
-import { normalizeWellbore } from 'domain/wells/wellbore/internal/transformers/normalizeWellbore';
+import { normalizeWellbores } from 'domain/wells/wellbore/internal/transformers/normalizeWellbores';
 
 import { convertDistance } from 'utils/units/convertDistance';
 
@@ -14,22 +14,13 @@ export const normalizeWell = (
   rawWell: Well,
   userPreferredUnit: UserPreferredUnit
 ): WellInternal => {
-  const {
-    matchingId,
-    wellhead,
-    wellbores = [],
-    spudDate,
-    waterDepth,
-    sources,
-  } = rawWell;
+  const { matchingId, wellhead, spudDate, waterDepth, sources } = rawWell;
 
   return {
     ...rawWell,
     ...normalizeCoords(wellhead),
     id: matchingId,
-    wellbores: wellbores.map((rawWellbore) =>
-      normalizeWellbore(rawWell, rawWellbore, userPreferredUnit)
-    ),
+    wellbores: normalizeWellbores(rawWell, userPreferredUnit),
     spudDate: spudDate ? new Date(spudDate) : undefined,
     waterDepth: waterDepth && convertDistance(waterDepth, userPreferredUnit),
     sourceList: sources.map(({ sourceName }) => sourceName).join(', '),

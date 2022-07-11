@@ -1,5 +1,6 @@
 import { useWellInspectWells } from 'domain/wells/well/internal/hooks/useWellInspectWells';
 import { WellInternal } from 'domain/wells/well/internal/types';
+import { DEFAULT_WELLBORE_COLOR } from 'domain/wells/wellbore/constants';
 
 import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
@@ -18,8 +19,6 @@ import {
 } from 'modules/wellInspect/selectors';
 import { WellboreId } from 'modules/wellSearch/types';
 
-import { DEFAULT_WELLBORE_COLOR } from './constants';
-import { wellboreAdapter } from './domain';
 import {
   BlockContent,
   BlockContentItem,
@@ -82,10 +81,7 @@ export const SidebarContent: React.FC = () => {
 
           <BlockContent>
             {well.wellbores.map((wellbore) => {
-              const { title, color, id } = wellboreAdapter(
-                wellbore,
-                isColoredWellbores
-              );
+              const { title, color, id } = wellbore;
               const wellboreHasErrors = !isEmpty(errors[id]);
 
               return (
@@ -94,7 +90,7 @@ export const SidebarContent: React.FC = () => {
                   key={id}
                 >
                   <Checkbox
-                    color={color}
+                    color={isColoredWellbores ? color : DEFAULT_WELLBORE_COLOR}
                     checked={selectedWellboreIds[id]}
                     onChange={(isSelected) =>
                       handleClickWellbore(well, id, isSelected)

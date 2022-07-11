@@ -8,6 +8,7 @@ import { CHART_PLANES } from './constants';
 
 export interface TrajectoryView extends TrajectoryWithData {
   wellboreName: string;
+  wellboreColor: string;
 }
 
 export interface ChartDataList {

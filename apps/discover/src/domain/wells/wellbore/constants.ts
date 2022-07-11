@@ -26,3 +26,5 @@ export const WELLBORE_COLORS = [
   '#F4718B',
   '#91ebf5',
 ];
+
+export const DEFAULT_WELLBORE_COLOR = '#595959';

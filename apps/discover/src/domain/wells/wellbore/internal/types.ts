@@ -9,11 +9,12 @@ export interface WellboreInternal extends Omit<Wellbore, 'datum'> {
   wellMatchingId: string;
   wellId: string;
   wellName: string;
+  title: string;
   datum?: DatumInternal;
   maxMeasuredDepth?: number;
   maxTrueVerticalDepth?: number;
   maxDoglegSeverity?: DoglegSeverityInternal;
-  color?: string;
+  color: string;
 }
 
 export interface DatumInternal extends Omit<Datum, 'unit'> {

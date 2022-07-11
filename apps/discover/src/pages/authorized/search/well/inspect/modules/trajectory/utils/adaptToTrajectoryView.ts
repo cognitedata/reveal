@@ -10,5 +10,6 @@ export const adaptToTrajectoryView = (
   return {
     ...trajectory,
     wellboreName: wellbore.name,
+    wellboreColor: wellbore.color,
   };
 };

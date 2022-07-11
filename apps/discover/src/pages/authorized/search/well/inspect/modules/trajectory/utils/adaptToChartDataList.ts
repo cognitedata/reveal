@@ -14,21 +14,26 @@ export const adaptToChartDataList = (
   const errorsMap = new Map<string, DataError[]>();
 
   const data = trajectoryCharts.map(({ type, chartData, chartExtraData }) => {
-    return trajectories.map(({ wellboreMatchingId, wellboreName, rows }) => {
-      const { coordinates, errors } = getChartCoordinates(rows, chartData);
+    return trajectories.map(
+      ({ wellboreMatchingId, wellboreName, wellboreColor, rows }) => {
+        const { coordinates, errors } = getChartCoordinates(rows, chartData);
 
-      const currentErrors = errorsMap.get(wellboreMatchingId) || [];
-      const updatedErrors = [...currentErrors, ...errors];
-      errorsMap.set(wellboreMatchingId, updatedErrors);
+        const currentErrors = errorsMap.get(wellboreMatchingId) || [];
+        const updatedErrors = [...currentErrors, ...errors];
+        errorsMap.set(wellboreMatchingId, updatedErrors);
 
-      return {
-        name: wellboreName,
-        mode: 'lines',
-        type: getChartType(type),
-        ...coordinates,
-        ...chartExtraData,
-      };
-    });
+        return {
+          name: wellboreName,
+          mode: 'lines',
+          type: getChartType(type),
+          line: {
+            color: wellboreColor,
+          },
+          ...coordinates,
+          ...chartExtraData,
+        };
+      }
+    );
   });
 
   return {

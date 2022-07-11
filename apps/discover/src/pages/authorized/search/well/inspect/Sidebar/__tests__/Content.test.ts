@@ -17,6 +17,7 @@ jest.mock('domain/wells/well/internal/hooks/useWellInspectWells', () => ({
             id: '1',
             name: 'WellboreA',
             description: 'WellboreDescription',
+            title: 'WellboreDescription WellboreA',
           },
         ],
       },
