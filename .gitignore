@@ -24,10 +24,7 @@ yarn-error.log*
 
 storybook-static/
 
-.eslintcache
+.yalc
+yalc.lock
 
 .idea
-
-.husky/*
-
-**/fake*.json

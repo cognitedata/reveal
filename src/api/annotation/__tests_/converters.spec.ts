@@ -265,14 +265,14 @@ describe('Test convertCDFAnnotationV1ToImageKeypointCollection', () => {
     ).toStrictEqual({
       confidence: cdfKeypointAnnotationV1.data?.confidence,
       label: cdfKeypointAnnotationV1.text,
-      keypoints: cdfKeypointAnnotationV1.region?.vertices.map(
-        (vertex, index) => {
-          return {
-            label: cdfKeypointAnnotationV1.data?.keypoints![index].caption,
+      keypoints: Object.fromEntries(
+        cdfKeypointAnnotationV1.region?.vertices.map((vertex, index) => [
+          cdfKeypointAnnotationV1.data?.keypoints![index].caption,
+          {
             confidence: cdfKeypointAnnotationV1.data?.confidence,
             point: vertex,
-          };
-        }
+          },
+        ]) || []
       ),
     } as ImageKeypointCollection);
   });
@@ -452,12 +452,14 @@ describe('Test convertCDFAnnotationV1ToVisionAnnotation', () => {
       confidence: cdfAnnotationWithKeypoint.data?.confidence,
       label: cdfAnnotationWithKeypoint.text,
       annotationType: CDFAnnotationTypeEnum.ImagesKeypointCollection,
-      keypoints: cdfAnnotationWithKeypoint.region!.vertices.map(
-        (item, index) => ({
-          point: item,
-          label: cdfAnnotationWithKeypoint.data!.keypoints![index].caption,
-          confidence: cdfAnnotationWithKeypoint.data?.confidence,
-        })
+      keypoints: Object.fromEntries(
+        cdfAnnotationWithKeypoint.region!.vertices.map((item, index) => [
+          cdfAnnotationWithKeypoint.data!.keypoints![index].caption,
+          {
+            point: item,
+            confidence: cdfAnnotationWithKeypoint.data?.confidence,
+          },
+        ])
       ),
     } as VisionImageKeypointCollectionAnnotation);
 

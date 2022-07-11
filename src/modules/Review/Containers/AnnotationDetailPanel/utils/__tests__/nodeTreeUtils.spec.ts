@@ -52,6 +52,7 @@ const getDummyVisionReviewAnnotationRowDataObject = (
     show: true,
     selected,
     annotation: getDummyImageObjectDetectionBoundingBoxAnnotation({ id }),
+    color: 'red',
   };
 };
 

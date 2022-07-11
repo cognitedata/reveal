@@ -20,8 +20,6 @@ import {
 import { Status } from 'src/api/annotation/types';
 import { VisionAnnotationDataType } from 'src/modules/Common/types';
 import { VisionReviewAnnotation } from 'src/modules/Review/types';
-import { SaveAnnotations } from 'src/store/thunks/Annotation/SaveAnnotations';
-import { UpdateAnnotations } from 'src/store/thunks/Annotation/UpdateAnnotations';
 import { DeleteAnnotations } from 'src/store/thunks/Annotation/DeleteAnnotations';
 import { getAnnotationColor } from 'src/modules/Common/store/annotation/hooks';
 
@@ -150,18 +148,6 @@ const reviewSlice = createSlice({
         state.fileIds = state.fileIds.filter((id) => !payload.includes(id));
       }
     );
-
-    // select created or updated annotations if no other annotation is already selected
-    builder.addMatcher(
-      isAnyOf(SaveAnnotations.fulfilled, UpdateAnnotations.fulfilled),
-      (state, { payload }) => {
-        payload.forEach((annotation) => {
-          if (!state.selectedAnnotationIds.length) {
-            state.selectedAnnotationIds = [annotation.id];
-          }
-        });
-      }
-    );
   },
 });
 
@@ -231,15 +217,23 @@ export const selectVisionReviewAnnotationsForFile = createSelector(
       }))
       .map((reviewAnn) => {
         if (isImageKeypointCollectionData(reviewAnn.annotation)) {
-          const keypoints = reviewAnn.annotation.keypoints.map((keypoint) => {
-            const id = `${reviewAnn.annotation.id}-${keypoint.label}`;
-            return {
-              keypoint,
-              id,
-              color: reviewAnn.color, // NOTE: it is possible to have colors per keypoint
-              selected: selectedKeypointIds.includes(id),
-            };
-          });
+          const keypoints = Object.fromEntries(
+            Object.entries(reviewAnn.annotation.keypoints).map(
+              ([label, keypoint]) => {
+                const id = `${reviewAnn.annotation.id}-${label}`;
+                return [
+                  label,
+                  {
+                    keypoint,
+                    id,
+                    label,
+                    color: reviewAnn.color, // NOTE: it is possible to have colors per keypoint
+                    selected: selectedKeypointIds.includes(id),
+                  },
+                ];
+              }
+            )
+          );
           return {
             ...reviewAnn,
             annotation: {

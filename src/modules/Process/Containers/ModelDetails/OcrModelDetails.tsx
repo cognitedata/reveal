@@ -2,7 +2,7 @@ import {
   Button,
   Detail,
   Icon,
-  PrimaryTooltip,
+  Tooltip,
   Row,
   SegmentedControl,
   Title,
@@ -84,12 +84,12 @@ export const content = (modelIndex: number) => {
                 <tr>
                   <td>
                     <Detail>Use cached results</Detail>
-                    <PrimaryTooltip
-                      tooltipTitle=""
-                      tooltipText="If True, uses cached result if the file has previously been analyzed."
+                    <Tooltip
+                      wrapped
+                      content="If True, uses cached result if the file has previously been analyzed."
                     >
                       <Icon type="HelpFilled" style={{ marginLeft: '11px' }} />
-                    </PrimaryTooltip>
+                    </Tooltip>
                   </td>
                   <th>
                     <SegmentedControl

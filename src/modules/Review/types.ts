@@ -9,6 +9,7 @@ import {
 import {
   ImageKeypointCollection,
   Keypoint,
+  Label,
   Status,
 } from 'src/api/annotation/types';
 
@@ -75,10 +76,10 @@ export type KeypointId = { id: string };
 
 // derivations
 
-// Casts Keypoint to ReviewKeypoint[] if Type is Keypoint[]
+// Casts Keypoint to Record<string, ReviewKeypoint> if Type is Record<string, Keypoint>
 export type TurnKeypointType<Type> = {
-  [Property in keyof Type]: Type[Property] extends Keypoint[]
-    ? ReviewKeypoint[]
+  [Property in keyof Type]: Type[Property] extends Record<string, Keypoint>
+    ? Record<string, ReviewKeypoint>
     : Type[Property];
 };
 export type VisionReviewAnnotation<Type> = Visible &
@@ -88,6 +89,7 @@ export type VisionReviewAnnotation<Type> = Visible &
   };
 
 export type ReviewKeypoint = KeypointId &
+  Label &
   Selectable & {
     keypoint: Keypoint;
   };

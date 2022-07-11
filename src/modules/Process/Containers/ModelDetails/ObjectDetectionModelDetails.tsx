@@ -1,11 +1,4 @@
-import {
-  Button,
-  Detail,
-  Icon,
-  PrimaryTooltip,
-  Row,
-  Title,
-} from '@cognite/cogs.js';
+import { Button, Detail, Icon, Tooltip, Row, Title } from '@cognite/cogs.js';
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { ParamsObjectDetection } from 'src/api/vision/detectionModels/types';
@@ -90,12 +83,12 @@ export const content = (modelIndex: number) => {
                 <tr>
                   <td>
                     <Detail>Confidence threshold</Detail>
-                    <PrimaryTooltip
-                      tooltipTitle=""
-                      tooltipText="Threshold for minimum confidence the model has on a detected object"
+                    <Tooltip
+                      wrapped
+                      content="Threshold for minimum confidence the model has on a detected object"
                     >
                       <Icon type="HelpFilled" style={{ marginLeft: '11px' }} />
-                    </PrimaryTooltip>
+                    </Tooltip>
                   </td>
                   <th>
                     <Row>
