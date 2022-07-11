@@ -1,5 +1,5 @@
 import React, { ReactText, useCallback, useMemo } from 'react';
-import { Detail, Icon, PrimaryTooltip } from '@cognite/cogs.js';
+import { Detail, Icon, Tooltip } from '@cognite/cogs.js';
 import {
   selectAnnotation,
   toggleAnnotationVisibility,
@@ -303,15 +303,15 @@ export const AnnotationDetailPanel = ({
       <Container>
         <Detail style={{ color: '#595959' }}>
           {'Approve and reject detected annotations '}
-          <PrimaryTooltip
-            tooltipTitle="Labeling annotations"
-            tooltipText={`
-              Pressing True or False will label the predictions in order to improve the 
-              future quality of the annotation detection. Pressing False will not delete the annotation.
-              `}
+          <Tooltip
+            wrapped
+            content={`
+                Pressing True or False will label the predictions in order to
+                improve the future quality of the annotation detection. Pressing
+                False will not delete the annotation.`}
           >
             <Icon style={{ color: '#BFBFBF' }} type="HelpFilled" />
-          </PrimaryTooltip>
+          </Tooltip>
         </Detail>
 
         <TableContainer>

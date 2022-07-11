@@ -1,5 +1,5 @@
 /* eslint-disable no-nested-ternary */
-import { Body, Icon, PrimaryTooltip, Slider, Title } from '@cognite/cogs.js';
+import { Body, Icon, Tooltip, Slider, Title } from '@cognite/cogs.js';
 import React, { useState } from 'react';
 import {
   AutoMLMetrics,
@@ -68,12 +68,12 @@ export const AutoMLMetricsOverview = (props: { model?: AutoMLTrainingJob }) => {
             <Title level={6}>Performance</Title>
             <Body strong level={2}>
               Score threshold
-              <PrimaryTooltip
-                tooltipTitle=""
-                tooltipText="The confidence threshold returns predictions as positive if their confidence score is the selected value or higher. A higher confidence threshold increases precision but lowers recall, and vice versa."
+              <Tooltip
+                wrapped
+                content="The confidence threshold returns predictions as positive if their confidence score is the selected value or higher. A higher confidence threshold increases precision but lowers recall, and vice versa."
               >
                 <Icon type="HelpFilled" style={{ marginLeft: '11px' }} />
-              </PrimaryTooltip>
+              </Tooltip>
             </Body>
             <ModelDataContainer
               style={{ paddingBottom: '10px', alignItems: 'center' }}
@@ -108,12 +108,12 @@ export const AutoMLMetricsOverview = (props: { model?: AutoMLTrainingJob }) => {
             <ModelDataContainer>
               <Body strong level={2}>
                 Precision
-                <PrimaryTooltip
-                  tooltipTitle=""
-                  tooltipText="The percentage of predictions that were correct (positive)."
+                <Tooltip
+                  wrapped
+                  content="The percentage of predictions that were correct (positive)."
                 >
                   <Icon type="HelpFilled" style={{ marginLeft: '11px' }} />
-                </PrimaryTooltip>
+                </Tooltip>
               </Body>
               <Body strong level={2}>
                 {convertToPercent(precision)}
@@ -122,12 +122,12 @@ export const AutoMLMetricsOverview = (props: { model?: AutoMLTrainingJob }) => {
             <ModelDataContainer>
               <Body strong level={2}>
                 Recall
-                <PrimaryTooltip
-                  tooltipTitle=""
-                  tooltipText="The percentage of all ground truth items that were successfully predicted by the model."
+                <Tooltip
+                  wrapped
+                  content="The percentage of all ground truth items that were successfully predicted by the model."
                 >
                   <Icon type="HelpFilled" style={{ marginLeft: '11px' }} />
-                </PrimaryTooltip>
+                </Tooltip>
               </Body>
 
               <Body strong level={2}>
