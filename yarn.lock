@@ -13750,10 +13750,10 @@ locate-path@^6.0.0:
   dependencies:
     p-locate "^5.0.0"
 
-locize-lastused@3.0.13:
-  version "3.0.13"
-  resolved "https://registry.yarnpkg.com/locize-lastused/-/locize-lastused-3.0.13.tgz#3d87840abc406bcbc433a39653c80891cd5cbc28"
-  integrity sha512-379gfVJ16b3/Jmo/64AzKlHl0xC88/CT91/0qrKbZpKzBDjaC2FKP7ukEr0FFig7I+NTynEDpffDR5zz5dZXdA==
+locize-lastused@3.1.0:
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/locize-lastused/-/locize-lastused-3.1.0.tgz#5bbc682bd0f16209caab283b1c1d7f6d715639a4"
+  integrity sha512-LSX7vCa0VdEv3eAW9xmUHbsRgbEm33SIVDNU4MrM9w8HkdKwm/lfToOVhUjygAramT39JBqbmXKYYsdoweSyKw==
   dependencies:
     cross-fetch "3.1.5"
 
