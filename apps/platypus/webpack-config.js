@@ -46,7 +46,7 @@ const replaceStyleLoaders = (config) => {
         postcssOptions: {
           plugins: [
             PrefixWrap(`.${styleScope}`, {
-              ignoredSelectors: [':root'],
+              ignoredSelectors: [':root', '.monaco-aria-container'],
             }),
           ],
         },
