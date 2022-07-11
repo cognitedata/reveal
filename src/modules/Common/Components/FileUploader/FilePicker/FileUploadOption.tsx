@@ -4,7 +4,7 @@ import {
   setExtractExif,
 } from 'src/modules/Common/store/files/slice';
 import styled from 'styled-components';
-import { Checkbox, Detail, Icon, PrimaryTooltip } from '@cognite/cogs.js';
+import { Checkbox, Detail, Icon, Tooltip } from '@cognite/cogs.js';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
@@ -50,12 +50,12 @@ export function FileUploadOption({ isDisabled }: FileUploadOptionProps) {
         }}
       >
         Extract Exif-data from files
-        <PrimaryTooltip
-          tooltipTitle="Exif"
-          tooltipText="Exif is a standard that defines specific information related to imagery data (e.g. camera exposure and GPS location). By selecting this option, Exif-data will be extracted from the files (if available) and stored as metadata on the files."
+        <Tooltip
+          wrapped
+          content="Exif is a standard that defines specific information related to imagery data (e.g. camera exposure and GPS location). By selecting this option, Exif-data will be extracted from the files (if available) and stored as metadata on the files."
         >
           <Icon type="HelpFilled" style={{ marginLeft: '11px' }} />
-        </PrimaryTooltip>
+        </Tooltip>
       </Checkbox>
     </OptionContainer>
   );

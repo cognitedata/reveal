@@ -3,7 +3,7 @@ import {
   Button,
   Detail,
   Icon,
-  PrimaryTooltip,
+  Tooltip,
   Row,
   Select,
   Title,
@@ -93,12 +93,9 @@ export const content = (modelIndex: number) => {
                 <tr>
                   <td>
                     <Detail>Gauge type</Detail>
-                    <PrimaryTooltip
-                      tooltipTitle=""
-                      tooltipText="The gauge type to detect"
-                    >
+                    <Tooltip wrapped content="The gauge type to detect">
                       <Icon type="HelpFilled" style={{ marginLeft: '11px' }} />
-                    </PrimaryTooltip>
+                    </Tooltip>
                   </td>
                   <th>
                     <Select
