@@ -1,4 +1,4 @@
-import { Body, Button, Checkbox, Flex, Input } from '@cognite/cogs.js';
+import { Body, Button, Checkbox, Flex, Input, Tooltip } from '@cognite/cogs.js';
 import {
   BuiltInType,
   DataModelTypeDefsField,
@@ -67,6 +67,8 @@ export const SchemaTypeField = ({
     (message: string) => setDataModelFieldErrors(field.name, message),
     [field.name, setDataModelFieldErrors]
   );
+  const isCustomType =
+    customTypesNames.filter((name) => name === field.type.name).length > 0;
 
   useEffect(() => {
     return () => {
@@ -119,38 +121,56 @@ export const SchemaTypeField = ({
           customTypesNames={customTypesNames}
           disabled={disabled}
           onValueChanged={({ value, isList }) => {
+            const isCustomTypeSelected =
+              customTypesNames.filter((name) => name === value).length > 0;
             onFieldUpdated({
               directives: [],
               type: {
                 ...field.type,
                 name: value,
                 list: isList,
+                ...(isCustomTypeSelected
+                  ? {
+                      nonNull: false,
+                    }
+                  : {}),
               },
             });
           }}
         />
       </InputWrapper>
       <Flex style={{ width: 110 }}>
-        <div style={{ width: 70 }}>
+        <div style={{ width: 70, textAlign: 'center' }}>
           {isFirstField && (
             <Label level="2">{t('field_label_req', 'Required')}</Label>
           )}
-          <Checkbox
-            name={`required_${v4()}`}
-            data-cy="checkbox-field-required"
-            style={{ height: 36, marginLeft: 20 }}
-            disabled={disabled}
-            onChange={(isChecked) => {
-              onFieldUpdated({
-                type: {
-                  ...field.type,
-                  nonNull: isChecked,
-                },
-                nonNull: isChecked,
-              });
-            }}
-            checked={field.nonNull === true}
-          />
+          <Tooltip
+            content={
+              isCustomType &&
+              t(
+                'direct_relations_nullable_only_text',
+                'Custom type fields can not have `required` attribute'
+              )
+            }
+            disabled={!isCustomType || disabled}
+          >
+            <Checkbox
+              name={`required_${v4()}`}
+              data-cy="checkbox-field-required"
+              style={{ height: 36, marginLeft: '8px' }}
+              disabled={isCustomType || disabled}
+              onChange={(isChecked) => {
+                onFieldUpdated({
+                  type: {
+                    ...field.type,
+                    nonNull: !isCustomType ? isChecked : false,
+                  },
+                  nonNull: !isCustomType ? isChecked : false,
+                });
+              }}
+              checked={field.nonNull === true}
+            />
+          </Tooltip>
         </div>
         <div>
           {isFirstField && <EmptyLabel />}

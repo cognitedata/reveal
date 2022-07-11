@@ -28,6 +28,7 @@ describe('Platypus Data Models Page - Delete Data Model', () => {
 
     cy.getBySel('publish-schema-btn').click();
     cy.getBySel('toast-title').should('have.text', 'Data model published');
+    cy.getBySel('type-view-back-button').click();
 
     cy.getBySel('back-to-all-models-btn').click();
     cy.url().should('not.include', `${modelName}/latest`);

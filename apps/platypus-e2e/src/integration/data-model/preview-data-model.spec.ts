@@ -188,6 +188,6 @@ describe('Data Model Page - Existing Solution Preview', () => {
       .children()
       .last()
       .should('contain', 'user')
-      .and('contain', 'User!');
+      .and('contain', 'User');
   });
 });
