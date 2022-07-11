@@ -84,12 +84,17 @@ export const DataPreviewTable = ({
               const fetchedData = result.getValue();
               cursor = fetchedData.pageInfo.cursor;
               nextPage = fetchedData.pageInfo.hasNextPage;
-              const rowCount = !fetchedData.pageInfo.hasNextPage
-                ? Math.max(
-                    gridReadyEvent.api.getDisplayedRowCount() + 1,
-                    fetchedData.items.length
-                  )
-                : undefined;
+              let rowCount;
+
+              if (fetchedData.items.length === 0) {
+                rowCount = 1;
+              } else if (!fetchedData.pageInfo.hasNextPage) {
+                rowCount = Math.max(
+                  gridReadyEvent.api.getDisplayedRowCount() + 1,
+                  fetchedData.items.length
+                );
+              }
+
               params.successCallback(fetchedData.items, rowCount);
             })
             .catch((errResponse) => {
