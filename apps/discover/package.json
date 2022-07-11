@@ -8,6 +8,7 @@
     "analyze": "yarn analyse",
     "build": "bazel build :build_sed",
     "clean": "rm -Rf build",
+    "clean:vite": "rm -Rf node_modules/.vite",
     "eslint": "bazel test :eslint_test",
     "eslint:fix": "bazel run :eslint_test -- --fix",
     "lint": "bazel test :eslint_test :prettier_test",
