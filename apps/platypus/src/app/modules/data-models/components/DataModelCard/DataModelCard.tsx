@@ -58,7 +58,7 @@ export const DataModelCard = ({
                 e.stopPropagation();
               }}
               className="delete"
-              data-cy="delete-data-model-menu-item"
+              data-cy={`delete-data-model-menu-item-${dataModel.name}`}
             >
               <StyledDeleteMenuItem>
                 {t('delete_data_model', 'Delete data model')}
@@ -126,7 +126,7 @@ export const DataModelCard = ({
             e.stopPropagation();
           }}
           role="menu"
-          data-cy="data-model-card-menu"
+          data-cy={`data-model-card-menu-${dataModel.name}`}
         >
           {renderMenu()}
         </div>

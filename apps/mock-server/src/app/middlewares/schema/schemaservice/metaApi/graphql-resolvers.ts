@@ -68,6 +68,25 @@ export const graphQlMetaApiResolvers = (
 
         const solution = store.find({ externalId: solutionExternalId });
         store.deleteByKey({ externalId: solutionExternalId });
+
+        // temp hack for mock server not deleting models (removeById seems not to be working)
+        const doesSolutionStillExist = store.find({
+          externalId: solutionExternalId,
+        })
+          ? true
+          : false;
+        if (doesSolutionStillExist) {
+          const state = db.getState();
+          state.schema = state.schema.filter(
+            (schemaObj) => schemaObj.externalId !== solutionExternalId
+          );
+          state.spaces = state.spaces.filter(
+            (spaceObj) => spaceObj.externalId !== solutionExternalId
+          );
+          db.setState(state);
+          db.write();
+        }
+
         return [solution];
       },
       upsertApiVersionFromGraphQl: async (_, req) => {

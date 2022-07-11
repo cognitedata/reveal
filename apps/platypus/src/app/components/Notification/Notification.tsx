@@ -26,7 +26,11 @@ export const Notification = ({
     );
   }
 
-  toastBody.push(<p key="message">{message}</p>);
+  toastBody.push(
+    <p key="message" data-cy="toast-body">
+      {message}
+    </p>
+  );
 
   if (validationErrors && validationErrors.length) {
     toastBody.push(

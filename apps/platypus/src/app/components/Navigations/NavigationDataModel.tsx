@@ -36,6 +36,7 @@ export const NavigationDataModel = () => {
               iconPlacement="left"
               aria-label="Go Back to data model list page"
               onClick={() => history.push('/data-models')}
+              data-cy="back-to-all-models-btn"
             />
           </Tooltip>
           <StyledTitle level="2">{dataModelName}</StyledTitle>

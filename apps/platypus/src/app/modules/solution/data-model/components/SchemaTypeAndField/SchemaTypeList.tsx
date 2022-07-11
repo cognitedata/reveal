@@ -150,6 +150,7 @@ export const SchemaTypeList = ({
               aria-label="Add type"
               disabled={disabled}
               onClick={openCreateModal}
+              data-cy="no-types-add-type-btn"
             >
               {t('add_type', 'Add Type')}
             </Button>

@@ -10,6 +10,7 @@ import { TOKENS } from '@platypus-app/di';
 import { StyledModalDialog } from './elements';
 import { getLocalDraftKey } from '@platypus-app/utils/local-storage-utils';
 import { useInjection } from '@platypus-app/hooks/useInjection';
+import { useQueryClient } from 'react-query';
 
 export const DeleteDataModel = ({
   dataModel,
@@ -27,6 +28,7 @@ export const DeleteDataModel = ({
   const localStorageProvider = useInjection(
     TOKENS.storageProviderFactory
   ).getProvider(StorageProviderType.localStorage);
+  const queryClient = useQueryClient();
 
   const onDeleteDataModel = (dataModelExternalId: string) => {
     dataModelsHandler.delete({ id: dataModelExternalId }).then((result) => {
@@ -46,6 +48,8 @@ export const DeleteDataModel = ({
         });
 
         localStorageProvider.removeItem(getLocalDraftKey(dataModel.id));
+        queryClient.removeQueries(['dataModel', dataModel.id]);
+        queryClient.removeQueries(['dataModelVersions', dataModel.id]);
         onCancel();
         onAfterDeleting();
       }
@@ -81,6 +85,7 @@ export const DeleteDataModel = ({
             name="ConfirmDelete"
             checked={confirmDelete}
             onChange={() => setConfirmDelete(!confirmDelete)}
+            data-cy="data-model-confirm-deletion-checkbox"
           />{' '}
           <span
             onClick={() => setConfirmDelete(!confirmDelete)}
