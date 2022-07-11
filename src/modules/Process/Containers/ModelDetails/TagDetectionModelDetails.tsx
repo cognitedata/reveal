@@ -2,7 +2,7 @@ import {
   Button,
   Detail,
   Icon,
-  PrimaryTooltip,
+  Tooltip,
   Row,
   SegmentedControl,
   Title,
@@ -114,12 +114,12 @@ export const content = (modelIndex: number) => {
                 <tr>
                   <td>
                     <Detail>Use cached results</Detail>
-                    <PrimaryTooltip
-                      tooltipTitle=""
-                      tooltipText="If True, uses cached result if the file has previously been analyzed."
+                    <Tooltip
+                      wrapped
+                      content="If True, uses cached result if the file has previously been analyzed."
                     >
                       <Icon type="HelpFilled" style={{ marginLeft: '11px' }} />
-                    </PrimaryTooltip>
+                    </Tooltip>
                   </td>
                   <th>
                     <SegmentedControl
@@ -139,12 +139,12 @@ export const content = (modelIndex: number) => {
                 <tr>
                   <td>
                     <Detail>Allow partial match </Detail>
-                    <PrimaryTooltip
-                      tooltipTitle=""
-                      tooltipText="Allow partial (fuzzy) matching of detected external IDs in the file. Will only match when it is possible to do so unambiguously."
+                    <Tooltip
+                      wrapped
+                      content="Allow partial (fuzzy) matching of detected external IDs in the file. Will only match when it is possible to do so unambiguously."
                     >
                       <Icon type="HelpFilled" style={{ marginLeft: '11px' }} />
-                    </PrimaryTooltip>
+                    </Tooltip>
                   </td>
                   <th>
                     <SegmentedControl
@@ -164,13 +164,13 @@ export const content = (modelIndex: number) => {
                 <tr>
                   <td>
                     <Detail>Search within asset subtree</Detail>
-                    <PrimaryTooltip
-                      tooltipTitle=""
-                      tooltipText="Search for external ID of assets that are in a subtree rooted at one of the assetSubtreeIds (including the roots given).
+                    <Tooltip
+                      wrapped
+                      content="Search for external ID of assets that are in a subtree rooted at one of the assetSubtreeIds (including the roots given).
                     "
                     >
                       <Icon type="HelpFilled" style={{ marginLeft: '11px' }} />
-                    </PrimaryTooltip>
+                    </Tooltip>
                   </td>
                   <th style={{ maxWidth: '200px' }}>
                     <AssetSelector

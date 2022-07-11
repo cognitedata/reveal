@@ -1,12 +1,4 @@
-import {
-  Button,
-  Detail,
-  Icon,
-  PrimaryTooltip,
-  Row,
-  Title,
-  Tooltip,
-} from '@cognite/cogs.js';
+import { Button, Detail, Icon, Tooltip, Row, Title } from '@cognite/cogs.js';
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { ParamsCustomModel } from 'src/api/vision/detectionModels/types';
@@ -162,12 +154,12 @@ export const content = (
                 <tr>
                   <td>
                     <Detail>Model</Detail>
-                    <PrimaryTooltip
-                      tooltipTitle=""
-                      tooltipText="Select which model to perform prediction with"
+                    <Tooltip
+                      wrapped
+                      content="Select which model to perform prediction with"
                     >
                       <Icon type="HelpFilled" style={{ marginLeft: '11px' }} />
-                    </PrimaryTooltip>
+                    </Tooltip>
                   </td>
                   <th>
                     <>
@@ -194,12 +186,12 @@ export const content = (
                 <tr>
                   <td>
                     <Detail>Confidence threshold</Detail>
-                    <PrimaryTooltip
-                      tooltipTitle=""
-                      tooltipText="Threshold for minimum confidence the model has on a detected object"
+                    <Tooltip
+                      wrapped
+                      content="Threshold for minimum confidence the model has on a detected object"
                     >
                       <Icon type="HelpFilled" style={{ marginLeft: '11px' }} />
-                    </PrimaryTooltip>
+                    </Tooltip>
                   </td>
                   <th>
                     <Row>
