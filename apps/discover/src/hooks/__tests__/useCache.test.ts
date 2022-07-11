@@ -15,7 +15,7 @@ const queryClient = new QueryClient({
 });
 
 describe('useCache', () => {
-  const dynamicFetchAction = (items: Set<string>) => {
+  const dynamicFetchAction = jest.fn((items: Set<string>) => {
     return Promise.resolve(
       Array.from(items.keys()).reduce((result, item) => {
         return {
@@ -24,7 +24,7 @@ describe('useCache', () => {
         };
       }, {})
     );
-  };
+  });
 
   it('should be ok in good case', async () => {
     const { result, waitForNextUpdate } = renderHook(
@@ -58,23 +58,34 @@ describe('useCache', () => {
 
     await waitForNextUpdate();
 
+    expect(dynamicFetchAction).toHaveBeenCalledWith(
+      new Set(['1', '2', '3']),
+      expect.anything()
+    );
+
     const { result, waitForNextUpdate: waitAgain } = renderHook(
       () =>
         useCache({
           key: 'c',
           items: new Set(['1', '2', '3', '4', '5']),
-          fetchAction: async () => ({ '4': ['sub-4-a'], '5': ['sub-5-a'] }),
+          fetchAction: dynamicFetchAction,
         }),
       { wrapper: QueryClientWrapper, initialProps: { queryClient } }
     );
 
     await waitAgain();
+
+    expect(dynamicFetchAction).toHaveBeenCalledWith(
+      new Set(['4', '5']),
+      expect.anything()
+    );
+
     expect(result.current.data).toEqual({
       '1': ['sub-1-a', 'sub-1-b'],
       '2': ['sub-2-a', 'sub-2-b'],
       '3': ['sub-3-a', 'sub-3-b'],
-      '4': ['sub-4-a'],
-      '5': ['sub-5-a'],
+      '4': ['sub-4-a', 'sub-4-b'],
+      '5': ['sub-5-a', 'sub-5-b'],
     });
   });
 });

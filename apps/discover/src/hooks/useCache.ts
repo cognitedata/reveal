@@ -44,7 +44,7 @@ export const useCache = <T>({ key, items, fetchAction }: CacheProps<T>) => {
   // console.log('newItemsToFetch', newItemsToFetch.size);
 
   return useQuery(
-    key,
+    [key, ...Array.from(items)],
     ({ signal }) => {
       if (newItemsToFetch.size === 0) {
         return previousCache;
@@ -62,10 +62,13 @@ export const useCache = <T>({ key, items, fetchAction }: CacheProps<T>) => {
           }
         });
 
+        queryClient.setQueryData<Record<string, T[]>>(key, updatedCache);
+
         return updatedCache;
       });
     },
     {
+      cacheTime: 1,
       enabled: items.size > 0,
       // ✅ memoizes with useCallback
       // https://tkdodo.eu/blog/react-query-data-transformations#3-using-the-select-option
