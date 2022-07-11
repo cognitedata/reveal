@@ -1,3 +1,4 @@
+import { NptView } from 'domain/wells/npt/internal/types';
 import { groupByWellbore } from 'domain/wells/wellbore/internal/transformers/groupByWellbore';
 
 import React, { useEffect, useCallback, useState } from 'react';
@@ -6,8 +7,6 @@ import { Row } from 'react-table';
 import isEmpty from 'lodash/isEmpty';
 
 import { Options, Table, TableResults } from 'components/Tablev3';
-
-import { NptView } from '../types';
 
 import { PAGE_SIZE } from './constants';
 import { useNptWellboresTableColumns } from './hooks/useHelpers';

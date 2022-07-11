@@ -1,4 +1,5 @@
-import { Metadata } from 'pages/authorized/admin/projectConfig/types';
+import { Metadata } from 'domain/projectConfig/types';
+
 import { Layer } from 'tenants/types';
 
 export const mockProjectConfigMetadata: Metadata = {

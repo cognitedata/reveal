@@ -1,5 +1,9 @@
+import {
+  NptCodeDefinitionType,
+  NptView,
+} from 'domain/wells/npt/internal/types';
+
 import { NO_DEFINITION } from '../../components/constants';
-import { NptCodeDefinitionType, NptView } from '../../types';
 import { formatTooltip } from '../utils';
 
 export const NptTooltip: React.FC<{

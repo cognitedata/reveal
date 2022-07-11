@@ -5,13 +5,14 @@ import get from 'lodash/get';
 
 import { ProjectConfig } from '@cognite/discover-api-types';
 
+import { Metadata } from '../../../../domain/projectConfig/types';
+
 import { FullContainer } from './elements';
 import { useSelectedPath } from './hooks/useSelectedPath';
 import { RightPanel, LeftPanel } from './layout';
 import {
   HandleConfigChange,
   HandleConfigUpdate,
-  Metadata,
   CustomComponentProps,
   CustomDeleteProps,
 } from './types';

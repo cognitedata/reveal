@@ -1,4 +1,5 @@
 import { useNptDefinitions } from 'domain/wells/npt/internal/hooks/useNptDefinitions';
+import { NptView } from 'domain/wells/npt/internal/types';
 
 import React, { useCallback, useState, useRef, useEffect } from 'react';
 
@@ -10,7 +11,6 @@ import { OverlayNavigation } from 'components/OverlayNavigation';
 import { EMPTY_ARRAY } from 'constants/empty';
 
 import { WellboreNavigationPanel } from '../../../common/WellboreNavigationPanel';
-import { NptView } from '../../types';
 import { SelectedWellbore } from '../types';
 
 import { SelectedWellboreDataContainer, Separator } from './elements';

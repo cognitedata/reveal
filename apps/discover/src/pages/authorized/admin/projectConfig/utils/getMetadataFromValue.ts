@@ -1,6 +1,7 @@
 import reduce from 'lodash/reduce';
 
-import { Metadata, MetadataValue } from '../types';
+import { Metadata } from '../../../../../domain/projectConfig/types';
+import { MetadataValue } from '../types';
 
 import { getLabelFromIdentifier } from './getLabelFromIdentifier';
 

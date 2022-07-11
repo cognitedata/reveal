@@ -13,3 +13,16 @@ export type NptAggregatesInternal = Record<
   NptAggregate['wellboreMatchingId'],
   NptAggregate['items']
 >;
+
+export interface NptCodeDefinitionType {
+  [key: string]: string;
+}
+
+export interface NptCodeDetailsDefinitionType {
+  [key: string]: string;
+}
+
+export interface NptView extends NptInternal {
+  wellName: string;
+  wellboreName: string;
+}

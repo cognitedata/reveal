@@ -1,12 +1,12 @@
 import { getCodeDefinition } from 'domain/wells/npt/internal/selectors/getCodeDefinition';
+import {
+  NptCodeDefinitionType,
+  NptCodeDetailsDefinitionType,
+} from 'domain/wells/npt/NptCodeDefinitionType';
 
 import { MultiSelectOptionObject } from 'components/Filters/types';
 import { Definition } from 'pages/authorized/search/well/inspect/modules/nptEvents/components/Definition';
 import { NoCodeDefinition } from 'pages/authorized/search/well/inspect/modules/nptEvents/components/NoCodeDefinition';
-import {
-  NptCodeDefinitionType,
-  NptCodeDetailsDefinitionType,
-} from 'pages/authorized/search/well/inspect/modules/nptEvents/types';
 
 export const nptDataMapToMultiSelect = (
   codeList: string[],

@@ -1,4 +1,4 @@
-import { NptView } from '../types';
+import { NptView } from 'domain/wells/npt/internal/types';
 
 export type NptWell = {
   id: string;

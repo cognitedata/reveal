@@ -1,10 +1,11 @@
+import { NptView } from 'domain/wells/npt/internal/types';
+
 import React from 'react';
 
 import { Table } from 'components/Tablev3';
 
 import { PAGE_SIZE } from '../../Table/constants';
 import { useSelectedWellboreNptEventsTableColumns } from '../../Table/hooks/useHelpers';
-import { NptView } from '../../types';
 
 import { NPTEventsTableWrapper } from './elements';
 

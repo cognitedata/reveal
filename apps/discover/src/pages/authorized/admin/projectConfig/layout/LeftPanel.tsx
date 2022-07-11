@@ -5,8 +5,8 @@ import { ProjectConfig } from '@cognite/discover-api-types';
 import { SearchBox } from 'components/Filters';
 import { useTranslation } from 'hooks/useTranslation';
 
+import { Metadata } from '../../../../../domain/projectConfig/types';
 import { ConfigFields } from '../fields/ConfigFields';
-import { Metadata } from '../types';
 
 import {
   ProjectConfigSidebar,

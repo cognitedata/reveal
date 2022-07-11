@@ -1,6 +1,10 @@
 import { getCodeDefinition } from 'domain/wells/npt/internal/selectors/getCodeDefinition';
 import { getEndTimeDisplay } from 'domain/wells/npt/internal/selectors/getEndTimeDisplay';
 import { getStartTimeDisplay } from 'domain/wells/npt/internal/selectors/getStartTimeDisplay';
+import {
+  NptCodeDefinitionType,
+  NptView,
+} from 'domain/wells/npt/internal/types';
 
 import React, { useCallback, useMemo } from 'react';
 
@@ -17,7 +21,6 @@ import { FlexColumn, FlexRow } from 'styles/layout';
 
 import { NptCodeDefinition } from '../../components/NptCodeDefinition';
 import { accessors } from '../../constants';
-import { NptCodeDefinitionType, NptView } from '../../types';
 import { NPT_GRAPH_COMMON_COLOR_CONFIG } from '../constants';
 import { getNptCodesColorMap } from '../utils';
 

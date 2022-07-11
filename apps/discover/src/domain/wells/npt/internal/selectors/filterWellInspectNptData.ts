@@ -2,9 +2,8 @@ import includes from 'lodash/includes';
 import isEmpty from 'lodash/isEmpty';
 
 import { InspectTabsState } from 'modules/inspectTabs/types';
-import { NptView } from 'pages/authorized/search/well/inspect/modules/nptEvents/types';
 
-import { NptInternal } from '../types';
+import { NptInternal, NptView } from '../types';
 
 const filterByName = (npt: NptView, searchPhrase: string) =>
   isEmpty(searchPhrase) ||

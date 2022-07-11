@@ -1,10 +1,9 @@
 import { filterWellInspectNptData } from 'domain/wells/npt/internal/selectors/filterWellInspectNptData';
+import { NptView } from 'domain/wells/npt/internal/types';
 
 import React, { useMemo } from 'react';
 
 import { useFilterDataNpt } from 'modules/inspectTabs/selectors';
-
-import { NptView } from '../types';
 
 import { NptWellsTable } from './NptWellsTable';
 

@@ -1,7 +1,5 @@
 import { UMSUser } from '@cognite/user-management-service-types';
 
-import { UNASSIGNED } from 'pages/authorized/admin/feedback/constants';
-
 import { getAssigneeName } from '../getAssigneeName';
 
 describe('getAssigneeName', () => {
@@ -13,7 +11,7 @@ describe('getAssigneeName', () => {
     lastUpdatedTime: '',
   };
   it('should return unassigned', () => {
-    expect(getAssigneeName()).toEqual(UNASSIGNED);
+    expect(getAssigneeName()).toEqual(undefined);
   });
 
   it('should return user name', () => {

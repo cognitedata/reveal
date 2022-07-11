@@ -1,4 +1,5 @@
 import { getNptCodeTableSort } from 'domain/wells/npt/internal/selectors/getNptCodeSort';
+import { NptView } from 'domain/wells/npt/internal/types';
 
 import get from 'lodash/get';
 import { getTimeDuration } from 'utils/date';
@@ -9,7 +10,6 @@ import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 import { COMMON_COLUMN_WIDTHS } from '../../../../constants';
 import { accessors } from '../../constants';
 import { useNptData } from '../../hooks/useNptData';
-import { NptView } from '../../types';
 import { getCommonColumns, getExtendedColumns } from '../columns';
 import {
   renderAsBody2DefaultStrongText,

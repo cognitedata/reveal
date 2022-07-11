@@ -1,9 +1,12 @@
 import head from 'lodash/head';
 import { sortObjectsAscending, sortObjectsDecending } from 'utils/sort';
 
-import { SortBy } from 'pages/types';
-
 import { NptInternal } from '../types';
+
+export type SortBy = {
+  id: string;
+  desc: boolean;
+};
 
 export const sortNptEvents = <T extends NptInternal>(
   events: T[],

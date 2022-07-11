@@ -1,4 +1,8 @@
 import { getCodeDefinition } from 'domain/wells/npt/internal/selectors/getCodeDefinition';
+import {
+  NptCodeDefinitionType,
+  NptView,
+} from 'domain/wells/npt/internal/types';
 
 import styled from 'styled-components/macro';
 
@@ -6,7 +10,6 @@ import { MiddleEllipsis } from 'components/MiddleEllipsis/MiddleEllipsis';
 
 import { NptCodeDefinition } from '../components/NptCodeDefinition';
 import { NptCodeAvatar } from '../elements';
-import { NptCodeDefinitionType, NptView } from '../types';
 
 import { Body, IconStyles, NptCodeContainer } from './elements';
 

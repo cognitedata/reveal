@@ -1,9 +1,10 @@
+import { NptView } from 'domain/wells/npt/internal/types';
+
 import { StackedBarChartOptions } from 'components/Charts/modules/StackedBarChart';
 import { ColorConfig } from 'components/Charts/types';
 import { DEFAULT_NPT_COLOR } from 'modules/wellSearch/constants';
 
 import { accessors } from '../constants';
-import { NptView } from '../types';
 
 export const NO_NPT_DATA_COLOR = '#00000010';
 

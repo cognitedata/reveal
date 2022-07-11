@@ -1,4 +1,4 @@
-import { Metadata } from './types';
+import { Metadata } from '../../../../domain/projectConfig/types';
 
 export const projectConfigMetadata: Metadata = {
   general: {

@@ -46,7 +46,7 @@ export const AssigneeColumn: React.FC<Props> = (props) => {
   };
 
   const assigneeName = useMemo(() => {
-    return getAssigneeName(visibleAssignee, user?.id);
+    return getAssigneeName(visibleAssignee, user?.id) || UNASSIGNED;
   }, [visibleAssignee?.displayName, user?.id]);
 
   const MenuContent = (

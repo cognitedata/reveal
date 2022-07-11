@@ -1,7 +1,7 @@
 import forEach from 'lodash/forEach';
 import get from 'lodash/get';
 
-import { Metadata } from '../types';
+import { Metadata } from '../../../../../domain/projectConfig/types';
 
 import { adaptSelectedPathToMetadataPath } from './adaptSelectedPathToMetadataPath';
 

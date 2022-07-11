@@ -3,7 +3,7 @@ import { useHistory, useLocation } from 'react-router-dom';
 
 import head from 'lodash/head';
 
-import { Metadata } from '../types';
+import { Metadata } from '../../../../../domain/projectConfig/types';
 
 export const useSelectedPath = (metadata: Metadata) => {
   const history = useHistory();

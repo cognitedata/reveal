@@ -1,7 +1,4 @@
-import {
-  NptCodeDefinitionType,
-  NptCodeDetailsDefinitionType,
-} from 'pages/authorized/search/well/inspect/modules/nptEvents/types';
+import { NptCodeDefinitionType, NptCodeDetailsDefinitionType } from '../types';
 
 export const getCodeDefinition = (
   code?: string,

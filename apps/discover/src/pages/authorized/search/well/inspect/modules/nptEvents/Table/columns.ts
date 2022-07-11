@@ -1,5 +1,6 @@
 import { getEndTimeDisplay } from 'domain/wells/npt/internal/selectors/getEndTimeDisplay';
 import { getStartTimeDisplay } from 'domain/wells/npt/internal/selectors/getStartTimeDisplay';
+import { NptView } from 'domain/wells/npt/internal/types';
 
 import keyBy from 'lodash/keyBy';
 import set from 'lodash/set';
@@ -9,7 +10,6 @@ import { processAccessor } from 'utils/table/processAccessor';
 import { ColumnType } from 'components/Tablev3';
 
 import { accessors } from '../constants';
-import { NptView } from '../types';
 
 export const getCommonColumns = (unit?: string): ColumnType<NptView>[] => {
   return [

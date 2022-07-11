@@ -1,8 +1,8 @@
+import { NptView } from 'domain/wells/npt/internal/types';
+
 import React from 'react';
 
 import { Options, Table } from 'components/Tablev3';
-
-import { NptView } from '../types';
 
 import { PAGE_SIZE } from './constants';
 import { useNptEventsTableColumns } from './hooks/useHelpers';

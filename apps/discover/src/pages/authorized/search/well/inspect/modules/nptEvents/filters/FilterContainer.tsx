@@ -9,7 +9,10 @@ import { useDeepMemo } from 'hooks/useDeep';
 import { inspectTabsActions } from 'modules/inspectTabs/actions';
 import { nptDataMapToMultiSelect } from 'modules/wellSearch/utils/npt';
 
-import { NptCodeDefinitionType, NptCodeDetailsDefinitionType } from '../types';
+import {
+  NptCodeDefinitionType,
+  NptCodeDetailsDefinitionType,
+} from '../../../../../../../../domain/wells/npt/NptCodeDefinitionType';
 import { getNptFilterOptions } from '../utils/getNptFilterOptions';
 
 import { NPTCodeFilter } from './NPTCodeFilter';

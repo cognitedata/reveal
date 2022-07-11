@@ -1,3 +1,5 @@
+import { NptView } from 'domain/wells/npt/internal/types';
+
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import head from 'lodash/head';
@@ -20,7 +22,6 @@ import {
 import { NptCodeDefinition } from '../components/NptCodeDefinition';
 import { accessors } from '../constants';
 import { useNptData } from '../hooks/useNptData';
-import { NptView } from '../types';
 
 import {
   GRAPH_LEGEND_TITLE,

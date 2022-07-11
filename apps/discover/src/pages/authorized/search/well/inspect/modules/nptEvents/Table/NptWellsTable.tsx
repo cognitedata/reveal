@@ -1,4 +1,5 @@
 import { sortNptEvents } from 'domain/wells/npt/internal/transformers/sortNptEvents';
+import { NptView } from 'domain/wells/npt/internal/types';
 import { groupByWellName } from 'domain/wells/well/internal/transformers/groupByWellName';
 
 import React, { useCallback, useEffect, useState } from 'react';
@@ -9,8 +10,6 @@ import isEmpty from 'lodash/isEmpty';
 import EmptyState from 'components/EmptyState';
 import { Table, TableResults } from 'components/Tablev3';
 import { SortBy } from 'pages/types';
-
-import { NptView } from '../types';
 
 import { PAGE_SIZE } from './constants';
 import { WellNptEventsTableWrapper } from './elements';

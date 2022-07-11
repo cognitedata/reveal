@@ -7,9 +7,10 @@ import map from 'lodash/map';
 import { Flex, Collapse, Body } from '@cognite/cogs.js';
 import { ProjectConfig } from '@cognite/discover-api-types';
 
+import { Metadata } from '../../../../../domain/projectConfig/types';
 import { ExpandIcon } from '../common/ExpandIcon';
 import { ConfigIcon, CollapseWrapper, LeafField } from '../elements';
-import { Metadata, MetadataValue } from '../types';
+import { MetadataValue } from '../types';
 import { getMetadataFromValue } from '../utils/getMetadataFromValue';
 import { isLeaf } from '../utils/isLeaf';
 

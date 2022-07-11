@@ -1,3 +1,5 @@
+import { NptView } from 'domain/wells/npt/internal/types';
+
 import get from 'lodash/get';
 import { ColorMap } from 'utils/colorize';
 import { getTimeDuration } from 'utils/date';
@@ -8,7 +10,6 @@ import { LegendCheckboxState } from 'components/Charts/common/Legend';
 import { DataObject } from 'components/Charts/types';
 
 import { accessors } from '../constants';
-import { NptView } from '../types';
 
 export const formatTooltip = (event: NptView) =>
   `${get(event, accessors.NPT_CODE)} - ${getTimeDuration(

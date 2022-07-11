@@ -1,5 +1,7 @@
 import { FC, PropsWithChildren } from 'react';
 
+import { Metadata } from '../../../../domain/projectConfig/types';
+
 export type PrimitiveValue = string | number | boolean;
 
 export type Config = {
@@ -13,23 +15,6 @@ export type Config = {
 
 // todo(PP-2934): remove this and use Config
 type ConfigValues = { [index: string | number]: unknown } | [];
-
-export type Metadata = {
-  [key: string]: {
-    children?: Metadata;
-    dataAsChildren?: boolean;
-    enums?: string[];
-    helpText?: string;
-    label: string;
-    placeholder?: string;
-    type?: 'boolean' | 'string' | 'number' | 'object' | 'array';
-    renderAsJSON?: boolean;
-    dataLabelIdentifier?: string;
-    hidden?: boolean;
-    editInline?: boolean;
-    disabled?: boolean;
-  };
-};
 
 export type MetadataKey = keyof Metadata;
 
