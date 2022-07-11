@@ -13,6 +13,8 @@ type ModalDialogProps = {
   okDisabled?: boolean;
   okProgress?: boolean;
   okType?: ButtonType;
+  width?: string;
+  height?: string;
 };
 
 export const ModalDialog = ({
@@ -26,13 +28,17 @@ export const ModalDialog = ({
   okDisabled,
   okProgress,
   okType,
+  width,
+  height,
   ...rest
 }: ModalDialogProps) => {
   const { t } = useTranslation('data-models');
 
   return (
     <StyledModal
+      modalWidth={width}
       visible={visible}
+      style={{ height }}
       title={null}
       footer={null}
       onCancel={() => onCancel()}

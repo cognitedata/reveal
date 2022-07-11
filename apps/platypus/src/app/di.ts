@@ -9,8 +9,9 @@ import {
   DateUtils,
   TimeUtils,
   StorageProviderFactory,
-  DataManagmentHandler,
+  DataManagementHandler,
   MixerApiQueryBuilderService,
+  TransformationApiService,
 } from '@platypus/platypus-core';
 
 import { DateUtilsImpl, TimeUtilsImpl } from '@platypus-app/utils/data';
@@ -39,7 +40,10 @@ export const TOKENS = {
   dataModelTypeDefsBuilderService: token<DataModelTypeDefsBuilderService>(
     'dataModelTypeDefsBuilderService'
   ),
-  dataManagmentHandler: token<DataManagmentHandler>('dataManagmentHandler'),
+  DataManagementHandler: token<DataManagementHandler>('DataManagementHandler'),
+  transformationsApiService: token<TransformationApiService>(
+    'transformationsApiService'
+  ),
 };
 
 export const rootInjector = new Container();
@@ -107,12 +111,18 @@ rootInjector
   .inSingletonScope();
 
 rootInjector
-  .bind(TOKENS.dataManagmentHandler)
+  .bind(TOKENS.DataManagementHandler)
   .toInstance(
     () =>
-      new DataManagmentHandler(
+      new DataManagementHandler(
         new MixerApiQueryBuilderService(),
-        rootInjector.get(TOKENS.mixerApiService)
+        rootInjector.get(TOKENS.mixerApiService),
+        new TransformationApiService(getCogniteSDKClient())
       )
   )
+  .inSingletonScope();
+
+rootInjector
+  .bind(TOKENS.transformationsApiService)
+  .toInstance(() => new TransformationApiService(getCogniteSDKClient()))
   .inSingletonScope();

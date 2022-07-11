@@ -1,12 +1,17 @@
 import { Result } from '../../boundaries/types';
 import { FetchDataDTO } from './dto';
-import { MixerApiQueryBuilderService, MixerApiService } from './services';
-import { PaginatedResponse } from './types';
+import {
+  MixerApiQueryBuilderService,
+  MixerApiService,
+  TransformationApiService,
+} from './services';
+import { DataModelTransformation, PaginatedResponse } from './types';
 
-export class DataManagmentHandler {
+export class DataManagementHandler {
   constructor(
     private queryBuilder: MixerApiQueryBuilderService,
-    private mixerApiService: MixerApiService
+    private mixerApiService: MixerApiService,
+    private transformationApiService: TransformationApiService
   ) {}
 
   fetchData(dto: FetchDataDTO): Promise<Result<PaginatedResponse>> {
@@ -48,5 +53,14 @@ export class DataManagmentHandler {
         })
         .catch((error) => reject(Result.fail(error)));
     });
+  }
+  getTransformations(type: string, externalId: string) {
+    return this.transformationApiService.getTransformationsForType(
+      type,
+      externalId
+    );
+  }
+  createTransformation(transformation: Omit<DataModelTransformation, 'id'>) {
+    return this.transformationApiService.createTransformation(transformation);
   }
 }

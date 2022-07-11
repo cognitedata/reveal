@@ -1,8 +1,8 @@
 import { Modal } from '@cognite/cogs.js';
 import styled from 'styled-components/macro';
 
-export const StyledModal = styled(Modal)`
-  width: 500px !important;
+export const StyledModal = styled(Modal)<{ modalWidth?: string }>`
+  width: ${(props) => props.modalWidth || '500px'} !important;
   padding: 10px;
   border-radius: 12px;
 
@@ -43,5 +43,10 @@ export const StyledModal = styled(Modal)`
         transform: scale(1.25);
       }
     }
+  }
+  .cogs-modal-content {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
   }
 `;

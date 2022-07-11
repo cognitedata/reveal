@@ -31,7 +31,7 @@ export const DataPreviewTable = ({
 }: DataPreviewTableProps) => {
   const instanceIdCol = 'externalId';
 
-  const dataManagmentHandler = useInjection(TOKENS.dataManagmentHandler);
+  const dataManagementHandler = useInjection(TOKENS.DataManagementHandler);
 
   const { t } = useTranslation('DataPreviewTable');
   const [isGridInit, setIsGridInit] = useState(false);
@@ -71,7 +71,7 @@ export const DataPreviewTable = ({
       const dataSource = {
         rowCount: undefined,
         getRows: (params: IGetRowsParams) => {
-          dataManagmentHandler
+          dataManagementHandler
             .fetchData({
               cursor,
               dataModelType,
