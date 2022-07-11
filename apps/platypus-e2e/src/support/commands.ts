@@ -27,7 +27,11 @@ declare namespace Cypress {
     assertQueryExplorerResult(expectedResult: any, timeout?: number): void;
     addDataModelType(typeName: string): void;
     deleteDataModelType(typeName: string): void;
-    addDataModelTypeField(fieldName: string, isRequired?: boolean): void;
+    addDataModelTypeField(
+      typeName: string,
+      fieldName: string,
+      isRequired?: boolean
+    ): void;
     editDataModelTypeFieldName(
       typeName: string,
       fieldName: string,
@@ -86,7 +90,7 @@ Cypress.Commands.add(
 
 Cypress.Commands.add(
   'addDataModelTypeField',
-  (fieldName: string, isRequired?: boolean) => {
+  (typeName: string, fieldName: string, isRequired?: boolean) => {
     // Add new type
     cy.get('[aria-label="Add field"]').click();
     cy.getBySel('schema-type-field').last().click().type(fieldName);
@@ -94,6 +98,9 @@ Cypress.Commands.add(
     if (isRequired) {
       cy.getBySel('checkbox-field-required').last().click();
     }
+
+    // Wait for visualizer to be updated with new type
+    cy.get(`div#${typeName}.node`).should('be.visible').contains(fieldName);
   }
 );
 Cypress.Commands.add(
@@ -110,7 +117,7 @@ Cypress.Commands.add(
 
     const typeSelector = `div#${typeName}.node`;
     // Wait for visualizer to be updated with new type before reloading page
-    cy.get(typeSelector).should('be.visible');
+    cy.get(typeSelector).should('be.visible').contains(value);
   }
 );
 

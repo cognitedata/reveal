@@ -83,9 +83,9 @@ describe('Data Model Page - Existing Solution Preview', () => {
   it('should create type and fields & see changes in visualizer', () => {
     cy.get('[aria-label="UI editor"]').click();
     cy.addDataModelType('Person');
-    cy.addDataModelTypeField('firstName');
-    cy.addDataModelTypeField('last_name');
-    cy.addDataModelTypeField('age');
+    cy.addDataModelTypeField('Person', 'firstName');
+    cy.addDataModelTypeField('Person', 'last_name');
+    cy.addDataModelTypeField('Person', 'age');
     cy.editDataModelTypeFieldName('Person', 'last_name', 'lastName', false);
 
     cy.getBySel('data_model_type_field_age').should('be.visible');
