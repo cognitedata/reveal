@@ -20,8 +20,6 @@ import {
 import { Status } from 'src/api/annotation/types';
 import { VisionAnnotationDataType } from 'src/modules/Common/types';
 import { VisionReviewAnnotation } from 'src/modules/Review/types';
-import { SaveAnnotations } from 'src/store/thunks/Annotation/SaveAnnotations';
-import { UpdateAnnotations } from 'src/store/thunks/Annotation/UpdateAnnotations';
 import { DeleteAnnotations } from 'src/store/thunks/Annotation/DeleteAnnotations';
 import { getAnnotationColor } from 'src/modules/Common/store/annotation/hooks';
 
@@ -148,18 +146,6 @@ const reviewSlice = createSlice({
       (state, { payload }) => {
         // clear loaded Ids
         state.fileIds = state.fileIds.filter((id) => !payload.includes(id));
-      }
-    );
-
-    // select created or updated annotations if no other annotation is already selected
-    builder.addMatcher(
-      isAnyOf(SaveAnnotations.fulfilled, UpdateAnnotations.fulfilled),
-      (state, { payload }) => {
-        payload.forEach((annotation) => {
-          if (!state.selectedAnnotationIds.length) {
-            state.selectedAnnotationIds = [annotation.id];
-          }
-        });
       }
     );
   },
