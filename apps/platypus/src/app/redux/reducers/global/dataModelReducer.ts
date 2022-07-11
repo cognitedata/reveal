@@ -4,7 +4,11 @@ import { DataModel, DataModelVersion } from '@platypus/platypus-core';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 const initialState = {
+  currentTypeName: null as null | string,
   dataModel: undefined as DataModel | undefined,
+  dataModelVersions: [] as DataModelVersion[],
+  graphQlSchema: '',
+  isDirty: false,
   selectedVersion: {
     schema: '',
     externalId: '',
@@ -14,13 +18,15 @@ const initialState = {
     lastUpdatedTime: Date.now(),
   } as DataModelVersion,
   typeFieldErrors: {} as { [key: string]: string },
-  versions: [] as DataModelVersion[],
 };
 
 const dataModelSlice = createSlice({
   name: 'data-model',
   initialState: initialState,
   reducers: {
+    setCurrentTypeName: (state, action: PayloadAction<string | null>) => {
+      state.currentTypeName = action.payload;
+    },
     setDataModel: (state, action: PayloadAction<{ dataModel: DataModel }>) => {
       state.dataModel = action.payload.dataModel;
     },
@@ -28,16 +34,22 @@ const dataModelSlice = createSlice({
       state,
       action: PayloadAction<{ dataModelVersions: DataModelVersion[] }>
     ) => {
-      state.versions = action.payload.dataModelVersions;
+      state.dataModelVersions = action.payload.dataModelVersions;
+    },
+    setGraphQlSchema: (state, action: PayloadAction<string>) => {
+      state.graphQlSchema = action.payload;
+    },
+    setIsDirty: (state, action: PayloadAction<boolean>) => {
+      state.isDirty = action.payload;
     },
     selectVersion: (state, action: PayloadAction<{ version: string }>) => {
-      if (state.versions.length) {
+      if (state.dataModelVersions.length) {
         if (action.payload.version === DEFAULT_VERSION_PATH) {
-          state.selectedVersion = state.versions.sort((a, b) =>
+          state.selectedVersion = state.dataModelVersions.sort((a, b) =>
             +a.version < +b.version ? 1 : -1
           )[0];
         } else {
-          state.selectedVersion = state.versions.find(
+          state.selectedVersion = state.dataModelVersions.find(
             (schema) => schema.version === action.payload.version
           ) as DataModelVersion;
         }
@@ -52,7 +64,7 @@ const dataModelSlice = createSlice({
       state.selectedVersion = action.payload;
     },
     insertVersion: (state, action: PayloadAction<DataModelVersion>) => {
-      state.versions = [action.payload, ...state.versions];
+      state.dataModelVersions = [action.payload, ...state.dataModelVersions];
     },
     setTypeFieldErrors: (
       state,

@@ -1,5 +1,6 @@
 import { Body, Button, Title, Flex } from '@cognite/cogs.js';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
+import { useSolution } from '@platypus-app/modules/solution/hooks/useSolution';
 import { DataModelTypeDefsType } from '@platypus/platypus-core';
 import { useState } from 'react';
 import styled from 'styled-components';
@@ -11,7 +12,6 @@ import { TypeFormModal } from './TypeFormModal';
 type Props = {
   disabled?: boolean;
   objectTypes: DataModelTypeDefsType[];
-  setCurrentType: (type: DataModelTypeDefsType) => void;
   createSchemaType: (schema: string) => void;
   renameSchemaType: (oldTypeName: string, newTypeName: string) => void;
   deleteSchemaType: (typeName: string) => void;
@@ -22,12 +22,12 @@ type ModalType = 'create' | 'rename' | 'delete' | '';
 export const SchemaTypeList = ({
   disabled,
   objectTypes,
-  setCurrentType,
   createSchemaType,
   renameSchemaType,
   deleteSchemaType,
 }: Props) => {
   const [currentModal, setModal] = useState<ModalType>('');
+  const { setCurrentTypeName } = useSolution();
   const [typeValue, setValue] = useState('');
   const { t } = useTranslation('schema_type_list');
 
@@ -86,7 +86,7 @@ export const SchemaTypeList = ({
             <ListItem
               data-cy={`type-list-item-${el.name}`}
               key={el.name}
-              onClick={() => setCurrentType(el)}
+              onClick={() => setCurrentTypeName(el.name)}
             >
               <Flex direction="column">
                 <Body level={2} strong>

@@ -11,7 +11,6 @@ import { SchemaEditorMode } from '../../types';
 import { UIEditor } from './UIEditor';
 import { ErrorBoundary } from '@platypus-app/components/ErrorBoundary/ErrorBoundary';
 import { BuiltInType } from '@platypus/platypus-core';
-import { DataModelTypeDefsType } from '@platypus/platypus-core';
 import { ErrorPlaceholder } from '../ErrorBoundary/ErrorPlaceholder';
 import { useInjection } from '@platypus-app/hooks/useInjection';
 import { TOKENS } from '@platypus-app/di';
@@ -27,8 +26,6 @@ export interface EditorPanelProps {
   editorMode: SchemaEditorMode;
   builtInTypes: BuiltInType[];
   onSchemaChanged: (schemaString: string) => void;
-  currentType: null | DataModelTypeDefsType;
-  setCurrentType: (type: null | DataModelTypeDefsType) => void;
 }
 
 export const EditorPanel = (props: EditorPanelProps) => {
@@ -92,8 +89,6 @@ export const EditorPanel = (props: EditorPanelProps) => {
           <div style={{ flexGrow: 1, overflow: 'auto' }}>
             <UIEditor
               builtInTypes={builtInTypes}
-              currentType={props.currentType}
-              setCurrentType={props.setCurrentType}
               disabled={props.editorMode === SchemaEditorMode.View}
               graphQLSchemaString={props.graphQlSchema}
               onSchemaChange={(schemaString) =>

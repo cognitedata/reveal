@@ -1,14 +1,13 @@
 import { Button, Flex, Title } from '@cognite/cogs.js';
-import { DataModelTypeDefsType } from '@platypus/platypus-core';
 
 type SchemaTypeViewProps = {
-  currentType: DataModelTypeDefsType;
+  currentTypeName: string;
   onNavigateBack: () => void;
   children?: React.ReactNode;
 };
 
 export const SchemaTypeView = ({
-  currentType,
+  currentTypeName,
   onNavigateBack,
   children,
 }: SchemaTypeViewProps) => {
@@ -23,7 +22,7 @@ export const SchemaTypeView = ({
           style={{ marginLeft: 6 }}
           onClick={() => onNavigateBack()}
         />
-        <Title level="5">{currentType.name}</Title>
+        <Title level="5">{currentTypeName}</Title>
       </Flex>
       <div style={{ marginTop: '10px' }}>{children}</div>
     </div>

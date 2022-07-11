@@ -27,6 +27,13 @@ export const useSolution = () => {
     [dispatch]
   );
 
+  const setCurrentTypeName = useCallback(
+    (name: string | null) => {
+      dispatch(solutionActions.setCurrentTypeName(name));
+    },
+    [dispatch]
+  );
+
   const setDataModelFieldErrors = useCallback(
     (fieldName: string, message: string) => {
       dispatch(
@@ -35,10 +42,28 @@ export const useSolution = () => {
     },
     [dispatch]
   );
+
+  const setGraphQlSchema = useCallback(
+    (graphQlSchema) => {
+      dispatch(solutionActions.setGraphQlSchema(graphQlSchema));
+    },
+    [dispatch]
+  );
+
+  const setIsDirty = useCallback(
+    (isDirty) => {
+      dispatch(solutionActions.setIsDirty(isDirty));
+    },
+    [dispatch]
+  );
+
   return {
     updateSchema,
     insertSchema,
     selectVersion,
+    setCurrentTypeName,
     setDataModelFieldErrors,
+    setGraphQlSchema,
+    setIsDirty,
   };
 };

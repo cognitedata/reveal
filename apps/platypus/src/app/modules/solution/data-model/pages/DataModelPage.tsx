@@ -10,7 +10,6 @@ import { SplitPanelLayout } from '@platypus-app/components/Layouts/SplitPanelLay
 import { Notification } from '@platypus-app/components/Notification/Notification';
 import { TOKENS } from '@platypus-app/di';
 import {
-  DataModelTypeDefsType,
   ErrorType,
   BuiltInType,
   DataModelVersionStatus,
@@ -41,30 +40,35 @@ export const DataModelPage = () => {
 
   const { t } = useTranslation('SolutionDataModel');
   const {
+    currentTypeName,
     dataModel,
-    versions: schemas,
+    dataModelVersions,
+    graphQlSchema,
+    isDirty,
     selectedVersion: selectedReduxSchema,
     typeFieldErrors,
   } = useSelector<DataModelState>((state) => state.dataModel);
   const [mode, setMode] = useState<SchemaEditorMode>(
-    schemas.length ? SchemaEditorMode.View : SchemaEditorMode.Edit
+    dataModelVersions.length ? SchemaEditorMode.View : SchemaEditorMode.Edit
   );
-  const [projectSchema, setProjectSchema] = useState('');
   const [saving, setSaving] = useState(false);
   const [updating, setUpdating] = useState(false);
-  const [isDirty, setIsDirty] = useState(false);
   const [isInit, setInit] = useState(false);
   const [breakingChanges, setBreakingChanges] = useState('');
   const [builtInTypes, setBuiltInTypes] = useState<BuiltInType[]>([]);
-  const [currentType, setCurrentType] = useState<null | DataModelTypeDefsType>(
-    null
-  );
   const [selectedSchema, setSelectedSchema] = useState(selectedReduxSchema);
   const dataModelTypeDefsBuilder = useInjection(
     TOKENS.dataModelTypeDefsBuilderService
   );
   const dataModelVersionHandler = useInjection(TOKENS.dataModelVersionHandler);
-  const { insertSchema, updateSchema, selectVersion } = useSolution();
+  const {
+    insertSchema,
+    updateSchema,
+    selectVersion,
+    setCurrentTypeName,
+    setGraphQlSchema,
+    setIsDirty,
+  } = useSolution();
   const {
     setLocalDraft,
     removeLocalDraft,
@@ -74,9 +78,9 @@ export const DataModelPage = () => {
 
   const onSelectedSchemaChanged = (changedSchema: DataModelVersion) => {
     dataModelTypeDefsBuilder.clear();
-    setProjectSchema(changedSchema.schema);
+    setGraphQlSchema(changedSchema.schema);
     setIsDirty(false);
-    setCurrentType(null);
+    setCurrentTypeName(null);
     selectVersion(changedSchema.version);
     setSelectedSchema(changedSchema);
     setMode(
@@ -90,7 +94,7 @@ export const DataModelPage = () => {
       const builtInTypesResponse = dataModelTypeDefsBuilder.getBuiltinTypes();
       setBuiltInTypes(builtInTypesResponse);
       dataModelTypeDefsBuilder.clear();
-      setProjectSchema(selectedSchema.schema);
+      setGraphQlSchema(selectedSchema.schema);
       setInit(true);
     }
 
@@ -105,26 +109,26 @@ export const DataModelPage = () => {
     if (draft) {
       dataModelTypeDefsBuilder.clear();
       setSelectedSchema(draft);
-      setProjectSchema(draft.schema);
+      setGraphQlSchema(draft.schema);
       setMode(SchemaEditorMode.Edit);
     }
   }, []);
   const onSaveOrPublish = async () => {
     try {
-      const publishNewVersion = breakingChanges || !schemas.length;
+      const publishNewVersion = breakingChanges || !dataModelVersions.length;
       let version = selectedSchema?.version;
       let result;
 
       if (publishNewVersion) {
         setUpdating(true);
-        version = schemas.length
+        version = dataModelVersions.length
           ? (parseInt(selectedSchema?.version) + 1).toString()
           : '1';
         result = await dataModelVersionHandler.publish(
           {
             ...selectedSchema,
             externalId: dataModel!.id,
-            schema: projectSchema,
+            schema: graphQlSchema,
             version: version,
           },
           'NEW_VERSION'
@@ -136,7 +140,7 @@ export const DataModelPage = () => {
           {
             ...selectedSchema,
             externalId: dataModel!.id,
-            schema: projectSchema,
+            schema: graphQlSchema,
             version: version,
           },
           'PATCH'
@@ -210,7 +214,7 @@ export const DataModelPage = () => {
 
   const onSchemaChanged = useCallback(
     (schemaString) => {
-      setProjectSchema(schemaString);
+      setGraphQlSchema(schemaString);
       setIsDirty(selectedSchema.schema !== schemaString);
 
       setLocalDraft({
@@ -235,7 +239,7 @@ export const DataModelPage = () => {
     };
     const onDiscardClick = () => {
       // if there is no published version yet, stay in edit mode
-      if (schemas.length > 0) {
+      if (dataModelVersions.length > 0) {
         setMode(SchemaEditorMode.View);
       }
       setIsDirty(false);
@@ -267,8 +271,8 @@ export const DataModelPage = () => {
             disabled={
               (!isDirty &&
                 selectedSchema.status !== DataModelVersionStatus.DRAFT) ||
-              !projectSchema ||
-              selectedReduxSchema.schema === projectSchema ||
+              !graphQlSchema ||
+              selectedReduxSchema.schema === graphQlSchema ||
               Object.keys(typeFieldErrors).length !== 0
             }
           >
@@ -298,7 +302,7 @@ export const DataModelPage = () => {
           <DataModelHeader
             solutionId={dataModel!.id}
             editorMode={mode}
-            schemas={getRemoteAndLocalSchemas(schemas)}
+            schemas={getRemoteAndLocalSchemas(dataModelVersions)}
             draftSaved={isDirty && Object.keys(typeFieldErrors).length === 0}
             selectSchema={onSelectedSchemaChanged}
             selectedSchema={selectedSchema!}
@@ -314,11 +318,9 @@ export const DataModelPage = () => {
               sidebar={
                 <ErrorBoundary errorComponent={<ErrorPlaceholder />}>
                   <EditorPanel
-                    currentType={currentType}
-                    setCurrentType={setCurrentType}
                     editorMode={mode}
-                    graphQlSchema={projectSchema}
                     builtInTypes={builtInTypes}
+                    graphQlSchema={graphQlSchema}
                     onSchemaChanged={onSchemaChanged}
                   />
                 </ErrorBoundary>
@@ -337,8 +339,8 @@ export const DataModelPage = () => {
                   />
                   <ErrorBoundary errorComponent={<ErrorPlaceholder />}>
                     <SchemaVisualizer
-                      graphQLSchemaString={projectSchema}
-                      active={currentType?.name}
+                      active={currentTypeName || undefined}
+                      graphQLSchemaString={graphQlSchema}
                     />
                   </ErrorBoundary>
                 </Flex>

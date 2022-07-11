@@ -15,14 +15,14 @@ import { useErrorLogger } from '@platypus-app/hooks/useErrorLogger';
 import { ErrorPlaceholder } from '../ErrorBoundary/ErrorPlaceholder';
 import { useInjection } from '@platypus-app/hooks/useInjection';
 import { TOKENS } from '@platypus-app/di';
+import useSelector from '@platypus-app/hooks/useSelector';
+import { useSolution } from '@platypus-app/modules/solution/hooks/useSolution';
 
 interface UIEditorProps {
   builtInTypes: BuiltInType[];
   graphQLSchemaString: string;
   disabled?: boolean;
   onSchemaChange: (typeName: string) => void;
-  currentType: null | DataModelTypeDefsType;
-  setCurrentType: (type: null | DataModelTypeDefsType) => void;
 }
 
 export function UIEditor({
@@ -30,8 +30,6 @@ export function UIEditor({
   graphQLSchemaString,
   disabled,
   onSchemaChange,
-  currentType,
-  setCurrentType,
 }: UIEditorProps) {
   const { t } = useTranslation('UIEditor');
   const [isInit, setIsInit] = useState(false);
@@ -44,9 +42,16 @@ export function UIEditor({
       types: [],
     }
   );
+  const { setCurrentTypeName } = useSolution();
+  const currentTypeName = useSelector(
+    (state) => state.dataModel.currentTypeName
+  );
   const errorLogger = useErrorLogger();
   const dataModelTypeDefsBuilder = useInjection(
     TOKENS.dataModelTypeDefsBuilderService
+  );
+  const currentType = solutionDataModel.types.find(
+    (type) => type.name === currentTypeName
   );
 
   useEffect(() => {
@@ -65,9 +70,6 @@ export function UIEditor({
           dataModelTypeDefsBuilder.getCustomTypesNames(newState)
         );
         setCurrentGraphqlSchema(graphQLSchemaString);
-        setCurrentType(
-          newState.types.find((type) => type.name === currentType?.name) || null
-        );
       } catch (err) {
         errorLogger.log(err as any);
         setHasError(true);
@@ -77,15 +79,8 @@ export function UIEditor({
     // eslint-disable-next-line
   }, [graphQLSchemaString]);
 
-  const updateUiState = (
-    newState: DataModelTypeDefs,
-    updatedTypeName: string
-  ) => {
-    const updatedType = newState.types.find(
-      (type) => type.name === updatedTypeName
-    ) as DataModelTypeDefsType;
+  const updateUiState = (newState: DataModelTypeDefs) => {
     setSolutionDataModel(newState);
-    setCurrentType(updatedType);
     const updatedGqlSchema = dataModelTypeDefsBuilder.buildSchemaString();
     setCurrentGraphqlSchema(updatedGqlSchema);
     onSchemaChange(updatedGqlSchema);
@@ -103,7 +98,7 @@ export function UIEditor({
       fieldName,
       updates
     );
-    updateUiState(newState, currentType!.name);
+    updateUiState(newState);
   };
   const onFieldRemoved = (typeName: string, fieldName: string) => {
     const newState = dataModelTypeDefsBuilder.removeField(
@@ -111,7 +106,7 @@ export function UIEditor({
       typeName,
       fieldName
     );
-    updateUiState(newState, currentType!.name);
+    updateUiState(newState);
   };
   const createSchemaType = (typeName: string) => {
     const capitalizedTypeName =
@@ -132,7 +127,7 @@ export function UIEditor({
           capitalizedTypeName
         );
 
-    updateUiState(dataModelWithNewType, capitalizedTypeName);
+    updateUiState(dataModelWithNewType);
 
     /*
     Add a field *after* calling updateUiState because we want the schema string to be
@@ -155,42 +150,32 @@ export function UIEditor({
       (type) => type.name === typeName
     ) as DataModelTypeDefsType;
     setSolutionDataModel(dataModelWithNewField);
-    setCurrentType(updatedType);
+    setCurrentTypeName(updatedType.name);
   };
 
   const onFieldCreate = () => {
     const fieldName = '';
     const newState = dataModelTypeDefsBuilder.addField(
       solutionDataModel,
-      currentType!.name,
+      currentTypeName!,
       fieldName,
       {
         name: fieldName,
         type: 'String',
       }
     );
-    const updatedType = newState.types.find(
-      (type) => type.name === currentType!.name
-    ) as DataModelTypeDefsType;
     setSolutionDataModel(newState);
-    setCurrentType(updatedType);
   };
 
   const renameSchemaType = (oldValue: string, newValue: string) => {
     updateUiState(
-      dataModelTypeDefsBuilder.renameType(
-        solutionDataModel,
-        oldValue,
-        newValue
-      ),
-      newValue
+      dataModelTypeDefsBuilder.renameType(solutionDataModel, oldValue, newValue)
     );
   };
 
   const deleteSchemaType = (typeName: string) => {
     updateUiState(
-      dataModelTypeDefsBuilder.removeType(solutionDataModel, typeName),
-      typeName
+      dataModelTypeDefsBuilder.removeType(solutionDataModel, typeName)
     );
   };
 
@@ -204,31 +189,32 @@ export function UIEditor({
 
   return (
     <>
-      {currentType ? (
+      {currentTypeName ? (
         <SchemaTypeView
-          currentType={currentType}
-          onNavigateBack={() => setCurrentType(null)}
+          currentTypeName={currentTypeName}
+          onNavigateBack={() => setCurrentTypeName(null)}
         >
           <Flex direction="column" gap={16}>
-            {currentType.fields.map((field, index) => (
-              <SchemaTypeField
-                index={index}
-                field={field}
-                key={field.name}
-                disabled={disabled}
-                builtInTypes={builtInTypes}
-                customTypesNames={customTypesNames.filter(
-                  (name) => name !== currentType.name
-                )}
-                typeFieldNames={currentType.fields.map((f) => f.name)}
-                onFieldUpdated={(updates) =>
-                  onFieldUpdated(currentType.name, field.name, updates)
-                }
-                onFieldRemoved={(removedField) =>
-                  onFieldRemoved(currentType.name, removedField.name)
-                }
-              />
-            ))}
+            {currentType &&
+              currentType.fields.map((field, index) => (
+                <SchemaTypeField
+                  index={index}
+                  field={field}
+                  key={field.name}
+                  disabled={disabled}
+                  builtInTypes={builtInTypes}
+                  customTypesNames={customTypesNames.filter(
+                    (name) => name !== currentType.name
+                  )}
+                  typeFieldNames={currentType.fields.map((f) => f.name)}
+                  onFieldUpdated={(updates) =>
+                    onFieldUpdated(currentType.name, field.name, updates)
+                  }
+                  onFieldRemoved={(removedField) =>
+                    onFieldRemoved(currentType.name, removedField.name)
+                  }
+                />
+              ))}
             {!disabled && (
               <Button
                 icon="Add"
@@ -236,7 +222,7 @@ export function UIEditor({
                 aria-label={t('add_field', 'Add field')}
                 type="ghost"
                 disabled={
-                  disabled || currentType.fields.some((field) => !field.name)
+                  disabled || currentType?.fields.some((field) => !field.name)
                 }
                 style={{
                   alignSelf: 'flex-start',
@@ -257,7 +243,6 @@ export function UIEditor({
           createSchemaType={createSchemaType}
           renameSchemaType={renameSchemaType}
           deleteSchemaType={deleteSchemaType}
-          setCurrentType={setCurrentType}
           objectTypes={solutionDataModel.types}
         />
       )}
