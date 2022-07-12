@@ -208,19 +208,18 @@ export class WellLogCreator {
         md_hole_start: mdHoleStart,
         md_hole_start_unit: mdHoleStartUnit,
         md_hole_end: mdHoleEnd,
-        md_hole_end_unit: mdHoleEndUnit,
         risk_sub_category: riskSubCategory,
         details,
       } = metadata;
 
       let topMd = Number.NaN;
-      if (mdHoleStart !== undefined && mdHoleStartUnit) {
-        topMd = Util.getNumberWithUnit(mdHoleStart, mdHoleStartUnit);
+      if (mdHoleStart) {
+        topMd = Util.getNumber(mdHoleStart);
       }
 
       let baseMd = Number.NaN;
-      if (mdHoleEnd && mdHoleEndUnit) {
-        baseMd = Util.getNumberWithUnit(mdHoleEnd, mdHoleEndUnit);
+      if (mdHoleEnd) {
+        baseMd = Util.getNumber(mdHoleEnd);
       }
 
       const { subtype, description } = event;
