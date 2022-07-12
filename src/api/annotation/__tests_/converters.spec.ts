@@ -633,28 +633,20 @@ describe('Test convertCDFAnnotationToVisionAnnotations fn', () => {
           expect(convertedAnnotation.label).toStrictEqual(
             sampleCDFAnnotation5.data.label
           );
-          expect(convertedAnnotation.keypoints).toStrictEqual([
-            {
-              label: 'center',
+          expect(convertedAnnotation.keypoints).toStrictEqual({
+            center: {
               point: sampleCDFAnnotation5.data.keypoints.center.point,
-              confidence: undefined,
             },
-            {
-              label: 'start',
+            start: {
               point: sampleCDFAnnotation5.data.keypoints.start.point,
-              confidence: undefined,
             },
-            {
-              label: 'stop',
+            stop: {
               point: sampleCDFAnnotation5.data.keypoints.stop.point,
-              confidence: undefined,
             },
-            {
-              label: 'tip',
+            tip: {
               point: sampleCDFAnnotation5.data.keypoints.tip.point,
-              confidence: undefined,
             },
-          ]);
+          });
         });
 
         test('KeypointCollection annotation - sample-6', () => {
@@ -663,26 +655,23 @@ describe('Test convertCDFAnnotationToVisionAnnotations fn', () => {
           expect(convertedAnnotation.label).toStrictEqual(
             sampleCDFAnnotation6.data.label
           );
-          expect(convertedAnnotation.keypoints).toStrictEqual([
-            {
-              label: 'point 1',
+          expect(convertedAnnotation.keypoints).toStrictEqual({
+            'point 1': {
               point: sampleCDFAnnotation6.data.keypoints['point 1'].point,
               confidence:
                 sampleCDFAnnotation6.data.keypoints['point 1'].confidence,
             },
-            {
-              label: 'point 2',
+            'point 2': {
               point: sampleCDFAnnotation6.data.keypoints['point 2'].point,
               confidence:
                 sampleCDFAnnotation6.data.keypoints['point 2'].confidence,
             },
-            {
-              label: 'point 3',
+            'point 3': {
               point: sampleCDFAnnotation6.data.keypoints['point 3'].point,
               confidence:
                 sampleCDFAnnotation6.data.keypoints['point 3'].confidence,
             },
-          ]);
+          });
         });
 
         test('KeypointCollection annotation - sample-7', () => {
@@ -691,13 +680,12 @@ describe('Test convertCDFAnnotationToVisionAnnotations fn', () => {
           expect(convertedAnnotation.label).toStrictEqual(
             sampleCDFAnnotation7.data.label
           );
-          expect(convertedAnnotation.keypoints).toStrictEqual([
-            {
-              label: '1',
+          expect(convertedAnnotation.keypoints).toStrictEqual({
+            '1': {
               point: sampleCDFAnnotation7.data.keypoints['1'].point,
               confidence: sampleCDFAnnotation7.data.keypoints['1'].confidence,
             },
-          ]);
+          });
         });
       });
 
