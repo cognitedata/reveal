@@ -1,10 +1,10 @@
 import React from 'react';
+import { screen } from '@testing-library/react';
 
 import { testRenderer } from 'src/__test-utils/renderer';
 import { useIsCurrentKeypointCollectionComplete } from 'src/modules/Review/store/annotatorWrapper/hooks';
 import { PredefinedKeypoint } from 'src/modules/Review/types';
 import { getMockedStore } from 'src/__test-utils/store.utils';
-import { screen } from '@testing-library/react';
 import { initialState as annotatorWrapperInitialState } from 'src/modules/Review/store/annotatorWrapper/slice';
 import { initialState as annotatorAnnotationInitialState } from 'src/modules/Common/store/annotation/slice';
 import { Status } from 'src/api/annotation/types';
@@ -131,8 +131,15 @@ const baseAnnotatorWrapperReducer: AnnotatorWrapperState = {
         show: true,
         status: Status.Suggested,
       },
+      400: {
+        id: 1,
+        keypointIds: [],
+        label: 'invalid-label', // do not exist in the predefinedKeypointCollectionList
+        show: true,
+        status: Status.Suggested,
+      },
     },
-    allIds: [100, 200, 300],
+    allIds: [100, 200, 300, 400],
     selectedIds: [],
   },
   lastCollectionId: 100,
@@ -140,36 +147,68 @@ const baseAnnotatorWrapperReducer: AnnotatorWrapperState = {
 };
 
 describe('Test useIsCurrentKeypointCollectionComplete hook', () => {
-  test('When all the keypoints in current collection were added', () => {
-    const storeWithCompletedCollection = getMockedStore({
-      annotationReducer: baseAnnotationReducer,
-      annotatorWrapperReducer: baseAnnotatorWrapperReducer,
-    });
-    testRenderer(TestComponent, storeWithCompletedCollection, { fileId: 1 });
-    expect(screen.queryByTestId(COMPLETED_ID)).toBeInTheDocument();
-  });
-
-  test('When some of the keypoints in current collection were added', () => {
-    const storeWithSomeKeypointsAdded = getMockedStore({
-      annotationReducer: baseAnnotationReducer,
-      annotatorWrapperReducer: {
-        ...baseAnnotatorWrapperReducer,
-        lastCollectionId: 200,
-      },
-    });
-    testRenderer(TestComponent, storeWithSomeKeypointsAdded, { fileId: 1 });
-    expect(screen.queryByTestId(NOT_COMPLETED_ID)).toBeInTheDocument();
-  });
-
-  test('When no keypoints in current collection were added', () => {
+  test('When not tempKeypointCollection selected', () => {
     const storeWithNoKeypointsAdded = getMockedStore({
       annotationReducer: baseAnnotationReducer,
       annotatorWrapperReducer: {
         ...baseAnnotatorWrapperReducer,
-        lastCollectionId: 300,
+        lastCollectionId: undefined,
       },
     });
     testRenderer(TestComponent, storeWithNoKeypointsAdded, { fileId: 1 });
     expect(screen.queryByTestId(NOT_COMPLETED_ID)).toBeInTheDocument();
+  });
+
+  describe('When a tempKeypointCollection is selected', () => {
+    test('when keypointCollectionTemplate not found', () => {
+      const storeWithCompletedCollection = getMockedStore({
+        annotationReducer: baseAnnotationReducer,
+        annotatorWrapperReducer: {
+          ...baseAnnotatorWrapperReducer,
+          lastCollectionId: 400,
+        },
+      });
+      testRenderer(TestComponent, storeWithCompletedCollection, {
+        fileId: 1,
+      });
+      expect(screen.queryByTestId(NOT_COMPLETED_ID)).toBeInTheDocument();
+    });
+
+    describe('when keypointCollectionTemplate is found', () => {
+      test('When all the keypoints in current collection were added', () => {
+        const storeWithCompletedCollection = getMockedStore({
+          annotationReducer: baseAnnotationReducer,
+          annotatorWrapperReducer: baseAnnotatorWrapperReducer,
+        });
+        testRenderer(TestComponent, storeWithCompletedCollection, {
+          fileId: 1,
+        });
+        expect(screen.queryByTestId(COMPLETED_ID)).toBeInTheDocument();
+      });
+
+      test('When some of the keypoints in current collection were added', () => {
+        const storeWithSomeKeypointsAdded = getMockedStore({
+          annotationReducer: baseAnnotationReducer,
+          annotatorWrapperReducer: {
+            ...baseAnnotatorWrapperReducer,
+            lastCollectionId: 200,
+          },
+        });
+        testRenderer(TestComponent, storeWithSomeKeypointsAdded, { fileId: 1 });
+        expect(screen.queryByTestId(NOT_COMPLETED_ID)).toBeInTheDocument();
+      });
+
+      test('When no keypoints in current collection were added', () => {
+        const storeWithNoKeypointsAdded = getMockedStore({
+          annotationReducer: baseAnnotationReducer,
+          annotatorWrapperReducer: {
+            ...baseAnnotatorWrapperReducer,
+            lastCollectionId: 300,
+          },
+        });
+        testRenderer(TestComponent, storeWithNoKeypointsAdded, { fileId: 1 });
+        expect(screen.queryByTestId(NOT_COMPLETED_ID)).toBeInTheDocument();
+      });
+    });
   });
 });
