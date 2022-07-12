@@ -25,8 +25,6 @@ export class MeasurementLine {
       linewidth: lineWidth,
       worldUnits: true,
       depthTest: false,
-      transparent: true,
-      opacity: 1
     });
 
     //Fixed line Width.
@@ -35,8 +33,6 @@ export class MeasurementLine {
       linewidth: 2, // TODO 2022-07-05 larsmoa: Should this be variable?
       worldUnits: false,
       depthTest: false,
-      transparent: true,
-      opacity: 1
     });
 
     this._meshes = new THREE.Group();

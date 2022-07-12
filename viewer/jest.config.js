@@ -14,9 +14,6 @@ module.exports = () => {
     transform: {
       '^.+\\.tsx?$': 'ts-jest'
     },
-    //Need 'preset' and 'transformIgnorePatterns' to ignore the three/examples/jsm files been used
-    preset: 'ts-jest/presets/js-with-ts',
-    transformIgnorePatterns: ['./node_modules/*types/three/examples'],
     testRegex: '(.*\\.test\\..*|\\.(test|spec|Test))\\.tsx?$',
     moduleFileExtensions: ['ts', 'js', 'json', 'node'],
     moduleNameMapper: {
