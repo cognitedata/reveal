@@ -17,7 +17,7 @@ import {
 } from '@cognite/sdk-react-query-hooks';
 import { useQueries } from 'react-query';
 import { useSDK } from '@cognite/sdk-provider';
-import { calculateGranularity } from 'containers';
+import { calculateGranularity, TIME_SELECT } from 'containers';
 
 type ResourceType = FileInfo | Asset | CogniteEvent | Sequence | Timeseries;
 
@@ -100,7 +100,7 @@ export const useResourceResults = <T extends ResourceType>(
   api: SdkResourceType,
   query?: string,
   filter?: any,
-  dateRange: [Date, Date] | undefined = [new Date(), new Date()],
+  dateRange: [Date, Date] | undefined = TIME_SELECT['2Y'].getTime(),
   hideEmptyData?: boolean
 ) => {
   const searchEnabled = !!query && query.length > 0;

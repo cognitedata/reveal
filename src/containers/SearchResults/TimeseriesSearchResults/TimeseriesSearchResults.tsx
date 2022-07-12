@@ -28,7 +28,7 @@ export const TimeseriesSearchResults = ({
   onClick,
   initialView = 'list',
   showRelatedResources = false,
-  showDatePicker = true,
+  showDatePicker = false,
   relatedResourceType,
   parentResource,
   count,
@@ -82,13 +82,15 @@ export const TimeseriesSearchResults = ({
               )}
             </SpacedRow>
           )}
-          <Checkbox
-            onChange={onClickCheckbox}
-            name="Hidden"
-            checked={hideEmptyData}
-          >
-            Hide empty
-          </Checkbox>
+          {showDatePicker && (
+            <Checkbox
+              onChange={onClickCheckbox}
+              name="Hidden"
+              checked={hideEmptyData}
+            >
+              Hide empty
+            </Checkbox>
+          )}
         </Flex>
 
         <ResultTableLoader<Timeseries>

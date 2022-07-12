@@ -6,7 +6,10 @@ import { TimeseriesSearchResults } from './TimeseriesSearchResults';
 export default {
   title: 'Search Results/TimeseriesSearchResults',
   component: TimeseriesSearchResults,
-  argTypes: { query: { control: 'text' } },
+  argTypes: {
+    query: { control: 'text' },
+    showDatePicker: { control: 'boolean' },
+  },
 };
 
 export const Example: ComponentStory<typeof TimeseriesSearchResults> = args => (
@@ -14,6 +17,10 @@ export const Example: ComponentStory<typeof TimeseriesSearchResults> = args => (
     <TimeseriesSearchResults {...args} />
   </Container>
 );
+
+Example.args = {
+  showDatePicker: true,
+};
 
 const Container = styled.div`
   height: 800px;
