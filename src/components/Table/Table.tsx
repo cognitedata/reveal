@@ -1,14 +1,13 @@
 import React, { useCallback, useEffect, useRef } from 'react';
 import AutoSizer from 'react-virtualized-auto-sizer';
 import ReactBaseTable, { BaseTableProps, ColumnShape } from 'react-base-table';
-import { Body, Tooltip } from '@cognite/cogs.js';
-import Highlighter from 'react-highlight-words';
+import { Body } from '@cognite/cogs.js';
 import {
   ResourceSelectionMode,
   useSelectionCheckbox,
 } from 'hooks/useSelection';
 import { TableStateProps, AllowedTableStateId } from 'CommonProps';
-import styled, { css } from 'styled-components';
+import { HighlightCell } from './HighlightCell';
 import { TableWrapper } from './TableWrapper';
 import { ResourceTableColumns } from './Columns';
 
@@ -42,26 +41,6 @@ const headerRenderer = ({
   <Body level={3} strong>
     {title}
   </Body>
-);
-
-const HighlightCell = ({
-  text,
-  query,
-  lines = 2,
-}: {
-  text?: string;
-  query?: string;
-  lines?: number;
-}) => (
-  <EllipsisText level={2} strong lines={lines}>
-    <Tooltip content={text} placement="top-start" arrow={false} interactive>
-      <Highlighter
-        searchWords={(query || '').split(' ')}
-        textToHighlight={text || ''}
-        autoEscape
-      />
-    </Tooltip>
-  </EllipsisText>
 );
 
 export type TableProps<T> = Partial<BaseTableProps<T>> & {
@@ -181,15 +160,3 @@ export const Table = <T extends { id: AllowedTableStateId }>({
 
 Table.HighlightCell = HighlightCell;
 Table.Columns = ResourceTableColumns;
-
-export const EllipsisText = styled(Body)(
-  ({ lines = 1 }: { lines?: number }) => css`
-    display: block; /* Fallback for non-webkit */
-    display: -webkit-box;
-    -webkit-line-clamp: ${lines};
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    word-break: break-all;
-    text-overflow: ellipsis;
-  `
-);

@@ -1,12 +1,10 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 import { FileInfo as File } from '@cognite/sdk';
 import { useSelectionCheckbox } from 'hooks/useSelection';
 import styled, { css } from 'styled-components';
-import { Loader, TimeDisplay } from 'components';
-import { Body, Colors, DocumentIcon } from '@cognite/cogs.js';
+import { TimeDisplay, FileThumbnail } from 'components';
+import { Body, Colors } from '@cognite/cogs.js';
 import Highlighter from 'react-highlight-words';
-import { useFileIcon } from 'hooks/sdk';
-import { isFileOfType } from 'utils/FileUtils';
 import { SelectableItemsProps } from 'CommonProps';
 
 export const FileGridPreview = ({
@@ -27,52 +25,11 @@ export const FileGridPreview = ({
   style?: React.CSSProperties;
   onClick?: () => void;
 } & SelectableItemsProps) => {
-  const [imageUrl, setImage] = useState<string | undefined>(undefined);
-  const { data, isError } = useFileIcon(item);
-  const isPreviewable = isFileOfType(item, [
-    'png',
-    'jpg',
-    'jpeg',
-    'tiff',
-    'gif',
-  ]);
-  useEffect(() => {
-    if (data) {
-      const arrayBufferView = new Uint8Array(data);
-      const blob = new Blob([arrayBufferView]);
-      setImage(URL.createObjectURL(blob));
-    }
-    return () => {
-      setImage(url => {
-        if (url) {
-          URL.revokeObjectURL(url);
-        }
-        return undefined;
-      });
-    };
-  }, [data]);
-
-  const image = useMemo(() => {
-    if (isPreviewable) {
-      if (imageUrl) {
-        return <img src={imageUrl} alt="" />;
-      }
-      if (!isError) {
-        return <Loader />;
-      }
-    }
-    return (
-      <>
-        <DocumentIcon file={item.name} style={{ height: 36, width: 36 }} />
-        {isError && <Body level={3}>Unable to preview file.</Body>}
-      </>
-    );
-  }, [imageUrl, isPreviewable, item, isError]);
-
   const isCellSelected = useMemo(
     () => isSelected({ type: 'file', id: item.id }),
     [isSelected, item.id]
   );
+
   return (
     <PreviewCell
       onClick={onClick}
@@ -80,7 +37,9 @@ export const FileGridPreview = ({
       isActive={isActive}
       isPreviewing={isPreviewing}
     >
-      <div className="preview">{image}</div>
+      <div className="preview">
+        <FileThumbnail file={item} />
+      </div>
       <Body>
         <Highlighter
           searchWords={query.split(' ')}

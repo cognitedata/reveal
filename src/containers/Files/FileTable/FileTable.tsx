@@ -1,17 +1,30 @@
 import React from 'react';
-import { FileInfo as File } from '@cognite/sdk';
 
+import { FileInfo } from '@cognite/sdk';
 import { TimeDisplay, TableProps, Table } from 'components';
 import { Body, Tooltip } from '@cognite/cogs.js';
 import { RelationshipLabels } from 'types';
 import { getColumnsWithRelationshipLabels, mapFileType } from 'utils';
+import { FileNamePreview } from './FileNamePreview';
 
-type FileWithRelationshipLabels = RelationshipLabels & File;
+type FileWithRelationshipLabels = RelationshipLabels & FileInfo;
 export const FileTable = (props: TableProps<FileWithRelationshipLabels>) => {
-  const { relatedResourceType } = props;
+  const { relatedResourceType, query } = props;
 
   const columns = [
-    Table.Columns.name,
+    {
+      ...Table.Columns.name,
+      cellRenderer: ({
+        cellData: fileName,
+        rowData: file,
+      }: {
+        cellData: string;
+        rowData: FileInfo;
+      }) => {
+        const fileNamePreviewProps = { fileName, file, query };
+        return <FileNamePreview {...fileNamePreviewProps} />;
+      },
+    },
     {
       ...Table.Columns.mimeType,
       cellRenderer: ({ cellData: mimeValue }: { cellData: string }) => (
@@ -24,7 +37,7 @@ export const FileTable = (props: TableProps<FileWithRelationshipLabels>) => {
     },
     {
       ...Table.Columns.uploadedTime,
-      cellRenderer: ({ cellData: file }: { cellData: File }) => (
+      cellRenderer: ({ cellData: file }: { cellData: FileInfo }) => (
         <Body level={2}>
           {file && file.uploaded && (
             <TimeDisplay value={file.uploadedTime} relative withTooltip />

@@ -12,7 +12,7 @@ import {
   aggregateKey,
   aggregate,
 } from '@cognite/sdk-react-query-hooks';
-import { isFileOfType } from 'utils/FileUtils';
+import { isFileOfType, fetchFilePreviewURL } from 'utils/FileUtils';
 
 const post = (sdk: CogniteClient, path: string, data: any) =>
   sdk
@@ -86,6 +86,20 @@ export const useFileIcon = (file: FileInfo) => {
     {
       retry: false,
       staleTime: Infinity,
+    }
+  );
+};
+
+export const useFilePreviewURL = (file: FileInfo) => {
+  const sdk = useSDK();
+
+  return useQuery(
+    ['cdf', 'files', file.id, 'previewURL'],
+    () => fetchFilePreviewURL(sdk, file),
+    {
+      retry: false,
+      cacheTime: 1000,
+      refetchOnWindowFocus: false,
     }
   );
 };
