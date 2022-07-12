@@ -1,5 +1,3 @@
-import { NptInternal } from 'domain/wells/npt/internal/types';
-
 import React, { useEffect } from 'react';
 import { batch, useDispatch } from 'react-redux';
 
@@ -9,10 +7,7 @@ import { useDeepMemo } from 'hooks/useDeep';
 import { inspectTabsActions } from 'modules/inspectTabs/actions';
 import { nptDataMapToMultiSelect } from 'modules/wellSearch/utils/npt';
 
-import {
-  NptCodeDefinitionType,
-  NptCodeDetailsDefinitionType,
-} from '../../../../../../../../domain/wells/npt/NptCodeDefinitionType';
+import { useNptDataForTable } from '../hooks/useNptDataForTable';
 import { getNptFilterOptions } from '../utils/getNptFilterOptions';
 
 import { NPTCodeFilter } from './NPTCodeFilter';
@@ -21,56 +16,54 @@ import { NPTDurationFilter } from './NPTDurationFilter';
 import { NPTFilterByName } from './NPTFilterByName';
 
 export const FilterContainer: React.FC<{
-  data: NptInternal[];
   isVisible: boolean;
-  nptCodeDefinitions?: NptCodeDefinitionType;
-  nptDetailCodeDefinitions?: NptCodeDetailsDefinitionType;
-}> = React.memo(
-  ({ data, isVisible, nptCodeDefinitions, nptDetailCodeDefinitions }) => {
-    const dispatch = useDispatch();
+}> = React.memo(({ isVisible }) => {
+  const { data, nptCodeDefinitions, nptDetailCodeDefinitions } =
+    useNptDataForTable();
 
-    const { minMaxDuration, nptCodes, nptDetailCodes } = useDeepMemo(
-      () => getNptFilterOptions(data),
-      [data]
-    );
+  const dispatch = useDispatch();
 
-    const processedNptCodes = nptDataMapToMultiSelect(
-      nptCodes,
-      nptCodeDefinitions
-    );
-    const processedNptDetailCodes = nptDataMapToMultiSelect(
-      nptDetailCodes,
-      nptDetailCodeDefinitions
-    );
+  const { minMaxDuration, nptCodes, nptDetailCodes } = useDeepMemo(
+    () => getNptFilterOptions(data),
+    [data]
+  );
 
-    useEffect(() => {
-      batch(() => {
-        dispatch(inspectTabsActions.setNptDuration(minMaxDuration));
-        dispatch(inspectTabsActions.setNptCode(nptCodes));
-        dispatch(inspectTabsActions.setNptDetailCode(nptDetailCodes));
-      });
-    }, []);
+  const processedNptCodes = nptDataMapToMultiSelect(
+    nptCodes,
+    nptCodeDefinitions
+  );
+  const processedNptDetailCodes = nptDataMapToMultiSelect(
+    nptDetailCodes,
+    nptDetailCodeDefinitions
+  );
 
-    if (!isVisible) return null;
+  useEffect(() => {
+    batch(() => {
+      dispatch(inspectTabsActions.setNptDuration(minMaxDuration));
+      dispatch(inspectTabsActions.setNptCode(nptCodes));
+      dispatch(inspectTabsActions.setNptDetailCode(nptDetailCodes));
+    });
+  }, []);
 
-    return (
-      <Row>
-        <Col span={5}>
-          <NPTFilterByName />
-        </Col>
+  if (!isVisible) return null;
 
-        <Col span={7}>
-          <NPTDurationFilter minMaxDuration={minMaxDuration} />
-        </Col>
+  return (
+    <Row>
+      <Col span={5}>
+        <NPTFilterByName />
+      </Col>
 
-        <Col span={6}>
-          <NPTCodeFilter nptCodes={processedNptCodes} />
-        </Col>
+      <Col span={7}>
+        <NPTDurationFilter minMaxDuration={minMaxDuration} />
+      </Col>
 
-        <Col span={6}>
-          <NPTDetailCodeFilter nptDetailCodes={processedNptDetailCodes} />
-        </Col>
-      </Row>
-    );
-  }
-);
+      <Col span={6}>
+        <NPTCodeFilter nptCodes={processedNptCodes} />
+      </Col>
+
+      <Col span={6}>
+        <NPTDetailCodeFilter nptDetailCodes={processedNptDetailCodes} />
+      </Col>
+    </Row>
+  );
+});

@@ -1,4 +1,4 @@
-import { NptView } from 'domain/wells/npt/internal/types';
+import { NptAggregateView } from 'domain/wells/npt/internal/types';
 
 import get from 'lodash/get';
 import { ColorMap } from 'utils/colorize';
@@ -11,7 +11,7 @@ import { DataObject } from 'components/Charts/types';
 
 import { accessors } from '../constants';
 
-export const formatTooltip = (event: NptView) =>
+export const formatTooltip = (event: NptAggregateView) =>
   `${get(event, accessors.NPT_CODE)} - ${getTimeDuration(
     get(event, accessors.DURATION),
     'days'
@@ -33,13 +33,13 @@ export const getNptCodeCheckboxOptions = <T extends DataObject<T>>(
   return { dataOption, checkboxState };
 };
 
-export const adaptEventsToDaysDuration = (events: NptView[]) =>
+export const adaptEventsToDaysDuration = (events: NptAggregateView[]) =>
   events.map((event) => ({
     ...event,
     [accessors.DURATION]: get(event, accessors.DURATION, 0) / HOURS_IN_A_DAY,
   }));
 
-export const getNptCodesColorMap = (events: NptView[]): ColorMap =>
+export const getNptCodesColorMap = (events: NptAggregateView[]): ColorMap =>
   events.reduce((colorMap, event) => {
     const { nptCode, nptCodeColor } = event;
     if (!nptCode) {

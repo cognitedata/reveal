@@ -1,6 +1,6 @@
 import { ConvertedDistance } from 'utils/units/constants';
 
-import { Npt, NptAggregate } from '@cognite/sdk-wells';
+import { Npt, NptAggregate, NptAggregateRow } from '@cognite/sdk-wells';
 
 export interface NptInternal extends Omit<Npt, 'measuredDepth'> {
   nptCode: string;
@@ -14,6 +14,18 @@ export type NptAggregatesInternal = Record<
   NptAggregate['items']
 >;
 
+export interface NptAggregateRowInternal
+  extends Omit<NptAggregateRow, 'duration'> {
+  wellboreMatchingId: string;
+  nptCode: string;
+  nptCodeDetail: string;
+  nptCodeColor: string;
+  /**
+   * Duration (hours) of the NPT event..
+   */
+  duration?: number;
+}
+
 export interface NptCodeDefinitionType {
   [key: string]: string;
 }
@@ -23,6 +35,12 @@ export interface NptCodeDetailsDefinitionType {
 }
 
 export interface NptView extends NptInternal {
+  wellName: string;
+  wellboreName: string;
+}
+
+export interface NptAggregateView
+  extends Omit<NptAggregateRowInternal, 'count'> {
   wellName: string;
   wellboreName: string;
 }

@@ -1,3 +1,4 @@
+import { useNptDefinitions } from 'domain/wells/npt/internal/hooks/useNptDefinitions';
 import { getNptCodeTableSort } from 'domain/wells/npt/internal/selectors/getNptCodeSort';
 import { NptView } from 'domain/wells/npt/internal/types';
 
@@ -9,7 +10,6 @@ import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 
 import { COMMON_COLUMN_WIDTHS } from '../../../../constants';
 import { accessors } from '../../constants';
-import { useNptData } from '../../hooks/useNptData';
 import { getCommonColumns, getExtendedColumns } from '../columns';
 import {
   renderAsBody2DefaultStrongText,
@@ -49,7 +49,7 @@ export const useNptWellboresTableColumns = () => {
 };
 
 export const useNptEventsTableColumns = () => {
-  const { nptCodeDefinitions } = useNptData();
+  const { nptCodeDefinitions } = useNptDefinitions();
 
   return [
     {
@@ -66,7 +66,7 @@ export const useNptEventsTableColumns = () => {
 
 export const useSelectedWellboreNptEventsTableColumns = () => {
   const commonHeaders = useNptTableCommonHeaders();
-  const { nptCodeDefinitions } = useNptData();
+  const { nptCodeDefinitions } = useNptDefinitions();
 
   return [
     {

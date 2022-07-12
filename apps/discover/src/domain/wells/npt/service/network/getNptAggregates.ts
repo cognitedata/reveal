@@ -1,13 +1,15 @@
-import { normalizeNptAggregates } from 'domain/wells/npt/internal/transformers/normalizeNptAggregates';
 import { getWellSDKClient } from 'domain/wells/utils/authenticate';
 import { convertToIdentifiers } from 'domain/wells/utils/convertToIdentifiers';
 
 import { NptAggregate, NptAggregateEnum, Wellbore } from '@cognite/sdk-wells';
 
-export const getNptAggregates = (
-  wellboreIds: Set<Wellbore['matchingId']>,
-  groupBy: NptAggregateEnum[]
-) => {
+export const getNptAggregates = ({
+  wellboreIds,
+  groupBy,
+}: {
+  wellboreIds: Set<Wellbore['matchingId']>;
+  groupBy: NptAggregateEnum[];
+}) => {
   return getWellSDKClient()
     .npt.aggregate({
       filter: {
@@ -15,6 +17,5 @@ export const getNptAggregates = (
       },
       groupBy,
     })
-    .then((response) => response.items as NptAggregate[])
-    .then(normalizeNptAggregates);
+    .then((response) => response.items as Array<NptAggregate>);
 };

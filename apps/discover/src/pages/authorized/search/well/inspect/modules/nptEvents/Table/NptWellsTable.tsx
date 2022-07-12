@@ -2,13 +2,14 @@ import { sortNptEvents } from 'domain/wells/npt/internal/transformers/sortNptEve
 import { NptView } from 'domain/wells/npt/internal/types';
 import { groupByWellName } from 'domain/wells/well/internal/transformers/groupByWellName';
 
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Row } from 'react-table';
 
 import isEmpty from 'lodash/isEmpty';
 
 import EmptyState from 'components/EmptyState';
 import { Table, TableResults } from 'components/Tablev3';
+import { useDeepCallback, useDeepEffect } from 'hooks/useDeep';
 import { SortBy } from 'pages/types';
 
 import { PAGE_SIZE } from './constants';
@@ -39,7 +40,7 @@ export const NptWellsTable: React.FC<NptWellsTableProps> = ({ data }) => {
     },
   };
 
-  useEffect(() => {
+  useDeepEffect(() => {
     const groupedData = groupByWellName(data);
     const wells = Object.keys(groupedData).map((wellName) => ({
       id: wellName,
@@ -51,7 +52,7 @@ export const NptWellsTable: React.FC<NptWellsTableProps> = ({ data }) => {
     setSortBy([]);
   }, [data]);
 
-  useEffect(() => {
+  useDeepEffect(() => {
     if (isEmpty(wells)) return;
 
     setExpandedWells({
@@ -60,7 +61,7 @@ export const NptWellsTable: React.FC<NptWellsTableProps> = ({ data }) => {
     });
   }, [wells]);
 
-  const handleRowClick = useCallback(
+  const handleRowClick = useDeepCallback(
     (row: Row) => {
       const { id } = row.original as NptWell;
 
@@ -72,7 +73,7 @@ export const NptWellsTable: React.FC<NptWellsTableProps> = ({ data }) => {
     [expandedWells]
   );
 
-  const renderRowSubComponent = useCallback(
+  const renderRowSubComponent = useDeepCallback(
     ({ row, sortBy }) => {
       const { data } = row.original as NptWell;
       const sortedData = sortNptEvents(data, sortBy);

@@ -1,21 +1,12 @@
-export interface WellboreNavigationPanelProps<
-  T extends NavigationPanelDataType
-> {
-  data: T[];
-  currentWellboreName?: string;
-  currentWellboreMatchingId?: string;
-  onNavigate?: ({
-    data,
-    wellboreMatchingId,
-  }: {
-    data: T[];
-    wellboreMatchingId: string;
-  }) => void;
+export interface WellboreNavigationPanelProps {
+  data?: NavigationPanelData;
+  wellboreIds?: string[];
+  onNavigate?: (wellboreId: string) => void;
   onBackClick: () => void;
   disableNavigation?: boolean;
 }
 
-export interface NavigationPanelDataType {
+export interface NavigationPanelData {
   wellboreMatchingId: string;
   wellName: string;
   wellboreName: string;

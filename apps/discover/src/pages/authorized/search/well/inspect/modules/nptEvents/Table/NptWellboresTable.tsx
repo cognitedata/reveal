@@ -1,12 +1,13 @@
 import { NptView } from 'domain/wells/npt/internal/types';
 import { groupByWellbore } from 'domain/wells/wellbore/internal/transformers/groupByWellbore';
 
-import React, { useEffect, useCallback, useState } from 'react';
+import React, { useState } from 'react';
 import { Row } from 'react-table';
 
 import isEmpty from 'lodash/isEmpty';
 
 import { Options, Table, TableResults } from 'components/Tablev3';
+import { useDeepCallback, useDeepEffect } from 'hooks/useDeep';
 
 import { PAGE_SIZE } from './constants';
 import { useNptWellboresTableColumns } from './hooks/useHelpers';
@@ -35,7 +36,7 @@ export const NptWellboresTable: React.FC<NptWellboresTableProps> = ({
 
   const nptWellboresTableColumns = useNptWellboresTableColumns();
 
-  useEffect(() => {
+  useDeepEffect(() => {
     const groupedData = groupByWellbore(data);
     const wellbores = Object.keys(groupedData).map((wellboreName) => ({
       id: wellboreName,
@@ -46,7 +47,7 @@ export const NptWellboresTable: React.FC<NptWellboresTableProps> = ({
     setWellbores(wellbores);
   }, [data]);
 
-  useEffect(() => {
+  useDeepEffect(() => {
     if (isEmpty(wellbores)) return;
 
     setExpandedWellbores({
@@ -55,7 +56,7 @@ export const NptWellboresTable: React.FC<NptWellboresTableProps> = ({
     });
   }, [wellbores]);
 
-  const handleRowClick = useCallback(
+  const handleRowClick = useDeepCallback(
     (row: Row) => {
       const { id } = row.original as NptWellbore;
 
@@ -67,7 +68,7 @@ export const NptWellboresTable: React.FC<NptWellboresTableProps> = ({
     [expandedWellbores]
   );
 
-  const renderRowSubComponent = useCallback(
+  const renderRowSubComponent = useDeepCallback(
     ({ row }) => {
       const { data } = row.original as NptWellbore;
       return <NptEventsTable data={data} />;

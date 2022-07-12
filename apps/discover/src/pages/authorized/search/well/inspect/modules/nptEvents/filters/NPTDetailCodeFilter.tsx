@@ -1,8 +1,9 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { MultiSelect } from 'components/Filters';
 import { MultiSelectOptionObject } from 'components/Filters/types';
+import { useDeepMemo } from 'hooks/useDeep';
 import { inspectTabsActions } from 'modules/inspectTabs/actions';
 import { useFilterDataNpt } from 'modules/inspectTabs/selectors';
 import { NPT_DETAIL_CODE } from 'modules/wellSearch/constantsSidebarFilters';
@@ -18,7 +19,7 @@ export const NPTDetailCodeFilter = React.memo(
     const { nptDetailCode } = useFilterDataNpt();
     const dispatch = useDispatch();
 
-    const displayValue = useMemo(() => {
+    const displayValue = useDeepMemo(() => {
       if (nptDetailCode.length === 1) return nptDetailCode[0];
       if (nptDetailCode.length === nptDetailCodes.length)
         return SELECTED_ALL_DISPLAY_VALUE;

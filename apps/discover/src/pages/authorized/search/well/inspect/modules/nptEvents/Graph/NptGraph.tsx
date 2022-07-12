@@ -1,6 +1,6 @@
-import { NptView } from 'domain/wells/npt/internal/types';
+import { NptAggregateView } from 'domain/wells/npt/internal/types';
 
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import head from 'lodash/head';
 import isEmpty from 'lodash/isEmpty';
@@ -13,15 +13,17 @@ import {
   StackedBarChart,
   StackedBarChartOptions,
 } from 'components/Charts/modules/StackedBarChart';
+import { Loading } from 'components/Loading';
 import {
   PerformanceMetricsObserver,
   PerformanceObserved,
   nptGraphPageLoadQuery,
 } from 'components/Performance';
+import { useDeepMemo } from 'hooks/useDeep';
 
 import { NptCodeDefinition } from '../components/NptCodeDefinition';
 import { accessors } from '../constants';
-import { useNptData } from '../hooks/useNptData';
+import { useNptDataForGraph } from '../hooks/useNptDataForGraph';
 
 import {
   GRAPH_LEGEND_TITLE,
@@ -36,12 +38,12 @@ import { NptTooltip } from './SelectedWellboreNptView/NptTooltip';
 import { adaptEventsToDaysDuration, getNptCodesColorMap } from './utils';
 
 interface Props {
-  data: NptView[];
   onSelectBar: (selectedWellbore?: string) => void;
 }
 
-export const NptGraph: React.FC<Props> = React.memo(({ data, onSelectBar }) => {
-  const { nptCodeDefinitions, wellboreNames } = useNptData();
+export const NptGraph: React.FC<Props> = React.memo(({ onSelectBar }) => {
+  const { isLoading, data, wellboreNames, nptCodeDefinitions } =
+    useNptDataForGraph();
 
   const [lastUpdatedTime, setLastUpdatedTime] = useState<number>();
   const [chartSubtitle, setChartSubtitle] = useState<string>(
@@ -61,7 +63,7 @@ export const NptGraph: React.FC<Props> = React.memo(({ data, onSelectBar }) => {
     return () => clearInterval(updateChartSubtitle);
   }, [lastUpdatedTime]);
 
-  const adaptedData: NptView[] = useMemo(() => {
+  const adaptedData: NptAggregateView[] = useDeepMemo(() => {
     setLastUpdatedTime(now());
     if (isEmpty(data)) {
       PerfMetrics.trackPerfEnd('NPT_PAGE_LOAD');
@@ -88,14 +90,14 @@ export const NptGraph: React.FC<Props> = React.memo(({ data, onSelectBar }) => {
   const handleOnUpdateGraph = useCallback(() => setLastUpdatedTime(now()), []);
 
   const handleOnSelectBar = useCallback(
-    (selectedBarData: SelectedBarData<NptView>) => {
+    (selectedBarData: SelectedBarData<NptAggregateView>) => {
       onSelectBar(head(selectedBarData.data)?.wellboreMatchingId);
     },
     []
   );
 
   const getFormatTooltip = useCallback(
-    (event: NptView) => (
+    (event: NptAggregateView) => (
       <NptTooltip event={event} definitions={nptCodeDefinitions} />
     ),
     []
@@ -111,7 +113,7 @@ export const NptGraph: React.FC<Props> = React.memo(({ data, onSelectBar }) => {
     []
   );
 
-  const options: StackedBarChartOptions<NptView> = useMemo(
+  const options: StackedBarChartOptions<NptAggregateView> = useDeepMemo(
     () => ({
       ...NPT_GRAPH_COMMON_OPTIONS,
       colorConfig: {
@@ -129,27 +131,28 @@ export const NptGraph: React.FC<Props> = React.memo(({ data, onSelectBar }) => {
     [data]
   );
 
-  return useMemo(
-    () => (
-      <PerformanceMetricsObserver onChange={handlePerformanceObserved}>
-        <StackedBarChart<NptView>
-          id="npt-events-graph"
-          data={adaptedData}
-          xAxis={{ accessor: accessors.DURATION, title: GRAPH_X_AXIS_TITLE }}
-          yAxis={{
-            accessor: accessors.WELLBORE_NAME,
-            reverseScaleDomain: true,
-          }}
-          yScaleDomain={wellboreNames}
-          groupDataInsideBarsBy={accessors.NPT_CODE}
-          title={GRAPH_TITLE}
-          subtitle={chartSubtitle}
-          options={options}
-          onUpdate={handleOnUpdateGraph}
-          onSelectBar={handleOnSelectBar}
-        />
-      </PerformanceMetricsObserver>
-    ),
-    [wellboreNames, chartSubtitle]
+  if (isLoading) {
+    return <Loading />;
+  }
+
+  return (
+    <PerformanceMetricsObserver onChange={handlePerformanceObserved}>
+      <StackedBarChart<NptAggregateView>
+        id="npt-events-graph"
+        data={adaptedData}
+        xAxis={{ accessor: accessors.DURATION, title: GRAPH_X_AXIS_TITLE }}
+        yAxis={{
+          accessor: accessors.WELLBORE_NAME,
+          reverseScaleDomain: true,
+        }}
+        yScaleDomain={wellboreNames}
+        groupDataInsideBarsBy={accessors.NPT_CODE}
+        title={GRAPH_TITLE}
+        subtitle={chartSubtitle}
+        options={options}
+        onUpdate={handleOnUpdateGraph}
+        onSelectBar={handleOnSelectBar}
+      />
+    </PerformanceMetricsObserver>
   );
 });

@@ -1,6 +1,8 @@
+import { useWellInspectSelectedWellboreIds } from 'domain/wells/well/internal/hooks/useWellInspectSelectedWellboreIds';
+
 import React, { useCallback, useState } from 'react';
 
-import { Loading, WhiteLoaderOverlay } from 'components/Loading';
+import { WhiteLoaderOverlay } from 'components/Loading';
 import { MultiStateToggle } from 'components/MultiStateToggle';
 import { NoUnmountShowHide } from 'components/NoUnmountShowHide';
 import { ViewModes } from 'pages/authorized/search/common/types';
@@ -11,41 +13,34 @@ import { DEFAULT_ACTIVE_VIEW_MODE } from './constants';
 import { NptEventsDataControlArea } from './elements';
 import { FilterContainer } from './filters';
 import { NptGraph, SelectedWellboreNptView } from './Graph';
-import { useNptData } from './hooks/useNptData';
 import { NptTable } from './Table';
 
-export const NPTEvents: React.FC = () => {
-  const { isLoading, data, nptCodeDefinitions, nptDetailCodeDefinitions } =
-    useNptData();
+export const NptEvents: React.FC = () => {
+  const wellboreIds = useWellInspectSelectedWellboreIds();
 
   const [activeViewMode, setActiveViewMode] = useState<ViewModes>(
     DEFAULT_ACTIVE_VIEW_MODE
   );
 
-  const [nptGraphSelectedWellbore, setNptGraphSelectedWellbore] = useState<
-    string | undefined
-  >();
+  const [nptGraphSelectedWellboreId, setNptGraphSelectedWellboreId] =
+    useState<string>();
   const [selectedWellboreViewLoading, setSelectedWellboreViewLoading] =
     useState<boolean>(false);
 
-  const isGraphViewModeActive = activeViewMode === ViewModes.Graph;
-  const isTableViewModeActive = activeViewMode === ViewModes.Table;
-
-  const handleSelectNptGraphBar = useCallback((selectedWellbore?: string) => {
+  const handleSelectNptGraphBar = useCallback((selectedWellboreId?: string) => {
     setSelectedWellboreViewLoading(true);
     setTimeout(() => {
-      setNptGraphSelectedWellbore(selectedWellbore);
+      setNptGraphSelectedWellboreId(selectedWellboreId);
       setTimeout(() => setSelectedWellboreViewLoading(false));
     });
   }, []);
 
   const handleCloseWellboreDetailView = () => {
-    setNptGraphSelectedWellbore(undefined);
+    setNptGraphSelectedWellboreId(undefined);
   };
 
-  if (isLoading) {
-    return <Loading />;
-  }
+  const isGraphViewModeActive = activeViewMode === ViewModes.Graph;
+  const isTableViewModeActive = activeViewMode === ViewModes.Table;
 
   return (
     <>
@@ -58,26 +53,20 @@ export const NPTEvents: React.FC = () => {
 
         {isTableViewModeActive && <Separator />}
 
-        <FilterContainer
-          data={data}
-          isVisible={isTableViewModeActive}
-          nptCodeDefinitions={nptCodeDefinitions}
-          nptDetailCodeDefinitions={nptDetailCodeDefinitions}
-        />
+        <FilterContainer isVisible={isTableViewModeActive} />
       </NptEventsDataControlArea>
 
       <NoUnmountShowHide show={isGraphViewModeActive} fullHeight>
-        <NptGraph data={data} onSelectBar={handleSelectNptGraphBar} />
+        <NptGraph onSelectBar={handleSelectNptGraphBar} />
       </NoUnmountShowHide>
 
       <NoUnmountShowHide show={isTableViewModeActive} fullHeight>
-        <NptTable data={data} />
+        <NptTable />
       </NoUnmountShowHide>
 
       <SelectedWellboreNptView
-        data={data}
-        selectedWellbore={nptGraphSelectedWellbore}
-        selectedWellboreId={nptGraphSelectedWellbore}
+        selectedWellboreId={nptGraphSelectedWellboreId}
+        wellboreIdsToNavigate={wellboreIds}
         onCloseSelectedWellboreNptViewClick={handleCloseWellboreDetailView}
       />
 
@@ -86,4 +75,4 @@ export const NPTEvents: React.FC = () => {
   );
 };
 
-export default NPTEvents;
+export default NptEvents;

@@ -6,7 +6,7 @@ import {
   NptView,
 } from 'domain/wells/npt/internal/types';
 
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback } from 'react';
 
 import get from 'lodash/get';
 import uniqueId from 'lodash/uniqueId';
@@ -16,6 +16,7 @@ import { CHART_AXIS_LABEL_DATE_FORMAT } from 'utils/date/constants';
 import { ScatterPlot } from 'components/Charts';
 import { AxisPlacement } from 'components/Charts/common/Axis';
 import { ScatterPlotOptions } from 'components/Charts/modules/ScatterPlot/types';
+import { useDeepMemo } from 'hooks/useDeep';
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 import { FlexColumn, FlexRow } from 'styles/layout';
 
@@ -77,7 +78,7 @@ export const NPTEventsGraph: React.FC<{
     []
   );
 
-  const options: ScatterPlotOptions<NptView> = useMemo(
+  const options: ScatterPlotOptions<NptView> = useDeepMemo(
     () => ({
       maxHeight: GRAPH_MAX_HEIGHT,
       colorConfig: {

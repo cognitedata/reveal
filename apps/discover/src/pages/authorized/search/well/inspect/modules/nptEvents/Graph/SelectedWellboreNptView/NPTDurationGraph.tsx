@@ -3,13 +3,14 @@ import {
   NptView,
 } from 'domain/wells/npt/internal/types';
 
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback } from 'react';
 
 import { AxisPlacement } from 'components/Charts/common/Axis';
 import {
   StackedBarChart,
   StackedBarChartOptions,
 } from 'components/Charts/modules/StackedBarChart';
+import { useDeepMemo } from 'hooks/useDeep';
 
 import { NptCodeDefinition } from '../../components/NptCodeDefinition';
 import { accessors } from '../../constants';
@@ -48,7 +49,7 @@ export const NPTDurationGraph: React.FC<{
     []
   );
 
-  const options: StackedBarChartOptions<NptView> = useMemo(
+  const options: StackedBarChartOptions<NptView> = useDeepMemo(
     () => ({
       ...NPT_GRAPH_COMMON_OPTIONS,
       colorConfig: {
@@ -69,7 +70,10 @@ export const NPTDurationGraph: React.FC<{
     [data]
   );
 
-  const adaptedEvents = useMemo(() => adaptEventsToDaysDuration(data), [data]);
+  const adaptedEvents = useDeepMemo(
+    () => adaptEventsToDaysDuration(data),
+    [data]
+  );
 
   return (
     <ChartWrapper>

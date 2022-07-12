@@ -1,13 +1,13 @@
 import {
+  NptAggregateView,
   NptCodeDefinitionType,
-  NptView,
 } from 'domain/wells/npt/internal/types';
 
 import { NO_DEFINITION } from '../../components/constants';
 import { formatTooltip } from '../utils';
 
 export const NptTooltip: React.FC<{
-  event: NptView;
+  event: NptAggregateView;
   definitions?: NptCodeDefinitionType;
 }> = ({ event, definitions }) => {
   return (

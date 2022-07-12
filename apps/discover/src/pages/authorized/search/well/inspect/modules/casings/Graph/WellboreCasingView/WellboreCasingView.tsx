@@ -14,7 +14,6 @@ import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 import DepthColumn from '../../../common/Events/DepthColumn';
 import EventsByDepth from '../../../common/Events/EventsByDepth';
 import { SelectedWellboreNptView } from '../../../nptEvents/Graph';
-import { adaptNptDataToView } from '../../../nptEvents/utils/adaptNptDataToView';
 import { CasingSchematicView } from '../../types';
 import { getScaleBlocks } from '../../utils/scale';
 import { DEPTH_SCALE_MIN_HEIGHT } from '../constants';
@@ -60,15 +59,6 @@ export const WellboreCasingView: React.FC<WellboreCasingsViewProps> = ({
     () => getDepthRange(casingAssemblies, nptEvents, ndsEvents),
     [data]
   );
-
-  const selectedWellboreNptViewData = useMemo(() => {
-    const wellbore = {
-      matchingId: wellboreMatchingId,
-      name: wellboreName,
-      wellName,
-    };
-    return adaptNptDataToView([wellbore], nptEvents);
-  }, [wellboreMatchingId, nptEvents]);
 
   const setDepthScaleBlocks = useCallback(() => {
     const depthColumnHeight = depthScaleRef.current?.offsetHeight;
@@ -129,10 +119,7 @@ export const WellboreCasingView: React.FC<WellboreCasingsViewProps> = ({
 
       {showNptDetailView && (
         <SelectedWellboreNptView
-          data={selectedWellboreNptViewData}
-          selectedWellbore={wellboreName}
           selectedWellboreId={wellboreMatchingId}
-          disableWellboreNavigation
           onCloseSelectedWellboreNptViewClick={handleBackFromDetailViewClick}
         />
       )}

@@ -6,10 +6,11 @@ import { MultiSelectOptionObject } from 'components/Filters/types';
 import { useDeepMemo } from 'hooks/useDeep';
 import { Definition } from 'pages/authorized/search/well/inspect/modules/nptEvents/components/Definition';
 import { NoCodeDefinition } from 'pages/authorized/search/well/inspect/modules/nptEvents/components/NoCodeDefinition';
-import { useNptData } from 'pages/authorized/search/well/inspect/modules/nptEvents/hooks/useNptData';
 
 import { useNptEventsQuery } from '../queries/useNptEventsQuery';
 import { getCodeDefinition } from '../selectors/getCodeDefinition';
+
+import { useNptDefinitions } from './useNptDefinitions';
 
 /**
  * Used together with @see MultiSelectCategorized
@@ -18,7 +19,7 @@ import { getCodeDefinition } from '../selectors/getCodeDefinition';
  */
 export const useNptEventsForMultiSelect = () => {
   const wellboreIds = useWellInspectSelectedWellboreIds();
-  const { nptCodeDefinitions } = useNptData();
+  const { nptCodeDefinitions } = useNptDefinitions();
 
   const { data } = useNptEventsQuery({ wellboreIds });
 

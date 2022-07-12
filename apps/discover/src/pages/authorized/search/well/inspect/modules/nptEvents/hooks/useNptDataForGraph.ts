@@ -1,31 +1,29 @@
 import { useNptDefinitions } from 'domain/wells/npt/internal/hooks/useNptDefinitions';
-import { useNptEventsQuery } from 'domain/wells/npt/internal/queries/useNptEventsQuery';
+import { useNptAggregatesByCodeQuery } from 'domain/wells/npt/internal/queries/useNptAggregatesByCodeQuery';
 import { useWellInspectSelectedWellboreIds } from 'domain/wells/well/internal/hooks/useWellInspectSelectedWellboreIds';
 import { useWellInspectSelectedWellboreNames } from 'domain/wells/well/internal/hooks/useWellInspectSelectedWellboreNames';
 import { useWellInspectSelectedWellbores } from 'domain/wells/well/internal/hooks/useWellInspectSelectedWellbores';
 
-import { useMemo } from 'react';
+import { useDeepMemo } from 'hooks/useDeep';
 
-import { adaptNptDataToView } from '../utils/adaptNptDataToView';
+import { adaptNptAggregatesDataToView } from '../utils/adaptNptAggregatesDataToView';
 
-export const useNptData = () => {
+export const useNptDataForGraph = () => {
   const wellbores = useWellInspectSelectedWellbores();
   const wellboreIds = useWellInspectSelectedWellboreIds();
   const wellboreNames = useWellInspectSelectedWellboreNames();
 
-  const { nptCodeDefinitions, nptDetailCodeDefinitions } = useNptDefinitions();
+  const { data = [], isLoading } = useNptAggregatesByCodeQuery({ wellboreIds });
+  const { nptCodeDefinitions } = useNptDefinitions();
 
-  const { data: nptData = [], isLoading } = useNptEventsQuery({ wellboreIds });
-
-  const adaptedNptData = useMemo(() => {
-    return adaptNptDataToView(wellbores, nptData);
-  }, [wellbores, nptData]);
+  const adaptedNptData = useDeepMemo(() => {
+    return adaptNptAggregatesDataToView(wellbores, data);
+  }, [wellbores, data]);
 
   return {
     isLoading,
     data: adaptedNptData,
     wellboreNames,
     nptCodeDefinitions,
-    nptDetailCodeDefinitions,
   };
 };

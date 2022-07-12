@@ -1,23 +1,27 @@
 import { filterWellInspectNptData } from 'domain/wells/npt/internal/selectors/filterWellInspectNptData';
-import { NptView } from 'domain/wells/npt/internal/types';
 
-import React, { useMemo } from 'react';
+import React from 'react';
 
+import { Loading } from 'components/Loading';
+import { useDeepMemo } from 'hooks/useDeep';
 import { useFilterDataNpt } from 'modules/inspectTabs/selectors';
+
+import { useNptDataForTable } from '../hooks/useNptDataForTable';
 
 import { NptWellsTable } from './NptWellsTable';
 
-interface NptTableProps {
-  data: NptView[];
-}
-
-export const NptTable: React.FC<NptTableProps> = React.memo(({ data }) => {
+export const NptTable: React.FC = React.memo(() => {
+  const { isLoading, data } = useNptDataForTable();
   const filterDataNpt = useFilterDataNpt();
 
-  const filteredData = useMemo(
+  const filteredData = useDeepMemo(
     () => filterWellInspectNptData(data, filterDataNpt),
     [data, filterDataNpt]
   );
+
+  if (isLoading) {
+    return <Loading />;
+  }
 
   return <NptWellsTable data={filteredData} />;
 });

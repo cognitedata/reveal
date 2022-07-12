@@ -92,6 +92,7 @@ export const WELL_QUERY_KEY = {
   NDS_EVENTS_AGGREGATE: [WELLS, 'nds', 'aggregate'],
   NPT_EVENTS: [WELLS, 'npt', 'old'],
   NPT_EVENTS_CACHE: [WELLS, 'npt', 'cache'],
+  NPT_AGGREGATES_BY_CODE: [WELLS, 'npt', 'aggregates', 'nptCode'],
   MEASUREMENTS: [WELLS, 'measurements'],
   DEPTH_MEASUREMENTS: [WELLS, 'measurements', 'list'],
   DEPTH_MEASUREMENTS_DATA: [WELLS, 'measurements', 'listData'],
