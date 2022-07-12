@@ -4,8 +4,6 @@ import { useUpdateEquipment } from 'domain/node/internal/actions/equipment/useUp
 import { Equipment } from 'graphql/generated';
 import { useState } from 'react';
 
-import { Container, Content } from '../Popup/elements';
-
 import { EquipmentPopupContent } from './EquipmentPopupContent';
 import { EquipmentEditPopupContent } from './EquipmentEditPopupContent';
 import { EquipmentPopupProvider } from './EquipmentPopupProvider';
@@ -34,15 +32,11 @@ export const EquipmentPopup: React.FC<Props> = ({ data }) => {
 
   return (
     <EquipmentPopupProvider data={data}>
-      <Container>
-        <Content className="z-2">
-          {isEditMode ? (
-            <EquipmentEditPopupContent onSubmit={onSubmit} />
-          ) : (
-            <EquipmentPopupContent handleEdit={() => setIsEditMode(true)} />
-          )}
-        </Content>
-      </Container>
+      {isEditMode ? (
+        <EquipmentEditPopupContent onSubmit={onSubmit} />
+      ) : (
+        <EquipmentPopupContent handleEdit={() => setIsEditMode(true)} />
+      )}
     </EquipmentPopupProvider>
   );
 };

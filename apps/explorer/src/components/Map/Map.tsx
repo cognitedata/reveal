@@ -4,6 +4,7 @@ import {
   Cognite3DViewer,
 } from '@cognite/reveal';
 import { CogniteClient } from '@cognite/sdk';
+import { MapOverlayRouter } from 'pages/MapOverlay/MapOverlayRouter';
 import React from 'react';
 import { updateStyledNodes } from 'utils/map/updateStyledNodes';
 
@@ -55,6 +56,7 @@ const Map: React.FC<Props> = ({ client, model, setNodeIdInUrl }) => {
 
   return (
     <div style={fullStyle}>
+      <MapOverlayRouter />
       <div id="reveal-map" style={fullStyle} />
     </div>
   );

@@ -1,38 +1,24 @@
-import { useRoomMutate } from 'domain/node/internal/actions/room/useRoomMutate';
-
 import { Room } from 'graphql/generated';
-import { useState } from 'react';
-
-import { Container, Content } from '../Popup/elements';
+import { useRecoilState } from 'recoil';
+import { roomFormState } from 'recoil/roomPopup/roomFormState';
+import { isEditModeAtom } from 'recoil/popupShared/isEditModeAtom';
+import { useSetupPopup } from 'hooks/useSetupPopup';
 
 import { RoomPopupContent } from './RoomPopupContent';
-import { RoomEditPopupContent } from './RoomEditPopupContent/RoomEditPopupContent';
-import { RoomPopupProvider } from './RoomPopupProvider';
+import { RoomEditPopupContent } from './RoomEditPopupContent';
 
 export interface Props {
   data: Room;
 }
 
 export const RoomPopup: React.FC<Props> = ({ data }) => {
-  const [isEditMode, setIsEditMode] = useState<boolean>(false);
-  const updateRoom = useRoomMutate();
+  const [isEditMode, setIsEditMode] = useRecoilState(isEditModeAtom);
+  useSetupPopup(data, roomFormState);
   const handleEdit = () => setIsEditMode(true);
-  const onSubmit = async (newFields: Partial<Room>) => {
-    await updateRoom({ ...data, ...newFields });
-    setIsEditMode(false);
-  };
 
-  return (
-    <RoomPopupProvider data={data}>
-      <Container>
-        <Content className="z-2">
-          {isEditMode ? (
-            <RoomEditPopupContent onSubmit={onSubmit} />
-          ) : (
-            <RoomPopupContent handleEdit={handleEdit} />
-          )}
-        </Content>
-      </Container>
-    </RoomPopupProvider>
+  return isEditMode ? (
+    <RoomEditPopupContent />
+  ) : (
+    <RoomPopupContent handleEdit={handleEdit} />
   );
 };

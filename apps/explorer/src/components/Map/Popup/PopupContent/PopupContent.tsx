@@ -10,19 +10,21 @@ import {
   FlexSpaceBetween,
 } from '../elements';
 
+import { NavigationButton } from './NavigationButton';
+
 interface Props {
   labels: string[];
-  disableRoute?: boolean;
   handleEdit?: () => void;
+  nodeId?: any;
   Icon: ReactNode;
 }
 
 export const PopupContent: React.FC<Props> = ({
+  Icon,
   labels,
-  disableRoute = false,
+  nodeId,
   handleEdit,
   children,
-  Icon,
 }) => {
   return (
     <FlexColumnSpaceAround>
@@ -56,9 +58,7 @@ export const PopupContent: React.FC<Props> = ({
         ))}
       </Flex>
       <Flex justifyContent="flex-end">
-        <Button type="primary" disabled={disableRoute}>
-          Directions
-        </Button>
+        <NavigationButton nodeId={nodeId} />
       </Flex>
     </FlexColumnSpaceAround>
   );

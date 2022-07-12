@@ -1,4 +1,5 @@
-import { Button, Flex, Label } from '@cognite/cogs.js';
+import { Flex, Label } from '@cognite/cogs.js';
+import { ReactElement } from 'react';
 import { Link } from 'react-router-dom';
 
 import {
@@ -10,13 +11,13 @@ import {
 
 interface Props {
   labels: string[];
-  handleSubmit: () => void;
+  SubmitButton: ReactElement;
 }
 
 // Note: Add ability to modify labels
 export const EditPopupContent: React.FC<Props> = ({
   labels,
-  handleSubmit,
+  SubmitButton,
   children,
 }) => {
   return (
@@ -36,9 +37,7 @@ export const EditPopupContent: React.FC<Props> = ({
         <Label variant="unknown" icon="Add" />
       </Flex>
       <FlexEnd>
-        <Button onClick={handleSubmit} type="primary">
-          Done
-        </Button>
+        {SubmitButton}
         <Link to="/home">
           <ButtonWithMargin>Close</ButtonWithMargin>
         </Link>

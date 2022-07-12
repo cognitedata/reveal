@@ -1,6 +1,6 @@
 import { Button } from '@cognite/cogs.js';
 
-import { Container, Content } from './elements';
+import { Container, Content } from '../Popup/elements';
 
 export const BlankPopup: React.FC = () => {
   return (

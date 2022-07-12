@@ -1,26 +1,17 @@
 import { Icon } from '@cognite/cogs.js';
-import React, { useContext } from 'react';
-import { Room } from 'graphql/generated';
+import React from 'react';
+import { EditPopupContentFieldsWrapper } from 'components/Map/Popup/elements';
 
 import { EditPopupContent } from '../../Popup/EditPopupContent';
-import { EditPopupContentFieldsWrapper } from '../../Popup/elements';
-import { RoomContext } from '../RoomPopupProvider';
+import { NameInput } from '../../Popup/NameInput';
 
-import { NameInput } from './NameInput';
-import { DescriptionInput } from './DescriptionInput';
-import { IsBookableCheckbox } from './IsBookableCheckbox';
+import { RoomPopupSubmitButton } from './RoomPopupSubmitButton';
+import { DescriptionInput } from './Fields/DescriptionInput';
+import { IsBookableCheckbox } from './Fields/IsBookableCheckbox';
 
-interface Props {
-  onSubmit: (newFields: Partial<Room>) => void;
-}
-
-export const RoomEditPopupContent: React.FC<Props> = ({ onSubmit }) => {
-  const { formState } = useContext(RoomContext);
-  const { name, description, isBookable } = formState;
-  const handleSubmit = () => onSubmit({ name, description, isBookable });
-
+export const RoomEditPopupContent: React.FC = () => {
   return (
-    <EditPopupContent handleSubmit={handleSubmit} labels={[]}>
+    <EditPopupContent SubmitButton={<RoomPopupSubmitButton />} labels={[]}>
       <Icon size={54} type="Cube" />
       <EditPopupContentFieldsWrapper>
         <NameInput />
