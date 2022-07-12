@@ -23,10 +23,27 @@ export class PointCloudObjectStylingUI {
     const actions = {
       reset: () => {
         this._model.removeAllStyledObjectCollections();
+      },
+      randomColors: () => {
+        model.traverseStylableObjects((object) => {
+          const objectStyle: [number, number, number] = [
+            Math.floor(Math.random() * 255),
+            Math.floor(Math.random() * 255),
+            Math.floor(Math.random() * 255),
+          ];
+
+          const stylableObject = new AnnotationIdPointCloudObjectCollection([
+            object.annotationId,
+          ]);
+          model.assignStyledObjectCollection(stylableObject, {
+            color: objectStyle,
+          });
+        });
       }
     };
 
     uiFolder.add(actions, 'reset').name('Reset all styled objects');
+    uiFolder.add(actions, 'randomColors').name('Set random for objects');
   }
 
   private createObjectAppearanceUi(uiFolder: dat.GUI): () => PointCloudAppearance {
