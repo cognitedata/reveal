@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
 import { makeSelectJobStatusForFile } from 'src/modules/Process/store/selectors';
 import { AnnotationsBadgePopover } from 'src/modules/Common/Components/AnnotationsBadge/AnnotationBadgePopover';
-import { calculateBadgeCountsDifferences } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
+import { calculateBadgeCountsDifferences } from 'src/modules/Common/Utils/AnnotationUtils/AnnotationUtils';
 
 export function FilteredAnnotationsRenderer({
   rowData: { id, annotationFilter },

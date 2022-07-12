@@ -40,7 +40,6 @@ import {
   AnnotatorRegionLabelProps,
   isAnnotatorPointRegion,
 } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/types';
-import { AnnotationUtilsV1 } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 import { AnnotationChangeById } from '@cognite/sdk-playground';
 import {
   createTempKeypointCollection,
@@ -54,6 +53,7 @@ import {
 } from 'src/modules/Review/store/annotatorWrapper/slice';
 import { useIsCurrentKeypointCollectionComplete } from 'src/modules/Review/store/annotatorWrapper/hooks';
 import { convertTempKeypointCollectionToUnsavedVisionImageKeypointCollection } from 'src/modules/Review/store/review/utils';
+import { LegacyAnnotationUtils } from 'src/api/annotation/legacy/legacyAnnotationUtils';
 import { tools } from './Tools';
 
 type ReactImageAnnotateWrapperProps = {
@@ -136,7 +136,7 @@ export const ReactImageAnnotateWrapper = ({
       (keypoint) => ({
         value: keypoint.collectionName,
         label: keypoint.collectionName,
-        icon: AnnotationUtilsV1.getIconType({
+        icon: LegacyAnnotationUtils.getIconType({
           text: keypoint.collectionName,
           modelType: VisionDetectionModelType.ObjectDetection,
         }),
@@ -149,7 +149,7 @@ export const ReactImageAnnotateWrapper = ({
     return predefinedAnnotations?.predefinedShapes.map((shape) => ({
       value: shape.shapeName,
       label: shape.shapeName,
-      icon: AnnotationUtilsV1.getIconType({
+      icon: LegacyAnnotationUtils.getIconType({
         text: shape.shapeName,
         modelType: VisionDetectionModelType.ObjectDetection,
       }),

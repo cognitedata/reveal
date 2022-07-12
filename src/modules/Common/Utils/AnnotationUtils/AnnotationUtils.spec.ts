@@ -13,6 +13,7 @@ import {
   getAnnotationLabelOrText,
   getAnnotationsBadgeCounts,
   generateKeypointId,
+  calculateBadgeCountsDifferences,
 } from 'src/modules/Common/Utils/AnnotationUtils/AnnotationUtils';
 import {
   AnnotationsBadgeCounts,
@@ -349,13 +350,62 @@ describe('Test AnnotationUtils', () => {
       }
       expect(testGetKeypointId).toThrowError(exception);
     });
-    test('should return id when parent anntoation id and keypoint label is provided', () => {
+    test('should return id when parent annotation id and keypoint label is provided', () => {
       expect(
         generateKeypointId('test string annotation id', 'test keypoint')
       ).toEqual('test string annotation id-test keypoint');
       expect(generateKeypointId(12, 'test keypoint')).toEqual(
         '12-test keypoint'
       );
+    });
+  });
+  describe('calculateBadgeCountsDifferences', () => {
+    it('should return difference between A and B', () => {
+      const badgeCountsA = {
+        gdpr: 10,
+        assets: 10,
+        text: 10,
+        objects: 10,
+      };
+      const badgeCountsB = {
+        gdpr: 4,
+        assets: 4,
+        text: 4,
+        objects: 4,
+      };
+      expect(
+        calculateBadgeCountsDifferences(badgeCountsA, badgeCountsB)
+      ).toEqual({
+        objects: 6,
+        assets: 6,
+        text: 6,
+        gdpr: 6,
+        mostFrequentObject: undefined,
+      });
+    });
+    it('should return difference of non-null values between A and B', () => {
+      const badgeCountsA = {
+        gdpr: 10,
+        text: 10,
+        objects: 1,
+      };
+      const badgeCountsB = {
+        gdpr: 4,
+        assets: 4,
+        objects: 10,
+      };
+      expect(
+        calculateBadgeCountsDifferences(
+          badgeCountsA as AnnotationsBadgeCounts,
+          badgeCountsB as AnnotationsBadgeCounts
+        )
+      ).toEqual({
+        gdpr: 6,
+        assets: 0,
+        text: 0,
+        objects: 0,
+        mostFrequentObject: undefined,
+      });
     });
   });
 });
