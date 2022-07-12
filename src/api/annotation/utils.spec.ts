@@ -1,6 +1,6 @@
 import { AnnotationRegion } from 'src/api/vision/detectionModels/types';
-import { UnsavedAnnotation } from 'src/api/annotation/types';
 import { enforceRegionValidity, validateAnnotationV1 } from './utils';
+import { LegacyUnsavedAnnotation } from './legacyTypes';
 
 describe('enforce valid regions', () => {
   it('should cap vertex coordinates within 0 and 1', () => {
@@ -176,7 +176,7 @@ describe('should check validity of annotations', () => {
 
   it('should not accept annotations without region', () => {
     expect(
-      validateAnnotationV1(requiredAnnotationFields as UnsavedAnnotation)
+      validateAnnotationV1(requiredAnnotationFields as LegacyUnsavedAnnotation)
     ).toBeFalsy();
   });
 
@@ -188,37 +188,37 @@ describe('should check validity of annotations', () => {
       validateAnnotationV1({
         ...requiredAnnotationFields,
         region: invalidPoint1,
-      } as UnsavedAnnotation)
+      } as LegacyUnsavedAnnotation)
     ).toThrow(coordinatesOutOfBounds);
     await expect(() =>
       validateAnnotationV1({
         ...requiredAnnotationFields,
         region: invalidPoint2,
-      } as UnsavedAnnotation)
+      } as LegacyUnsavedAnnotation)
     ).toThrow(coordinatesOutOfBounds);
     await expect(() =>
       validateAnnotationV1({
         ...requiredAnnotationFields,
         region: invalidPoint3,
-      } as UnsavedAnnotation)
+      } as LegacyUnsavedAnnotation)
     ).toThrow(coordinatesOutOfBounds);
     await expect(() =>
       validateAnnotationV1({
         ...requiredAnnotationFields,
         region: invalidPoint4,
-      } as UnsavedAnnotation)
+      } as LegacyUnsavedAnnotation)
     ).toThrow(coordinatesOutOfBounds);
     await expect(() =>
       validateAnnotationV1({
         ...requiredAnnotationFields,
         region: invalidPoint5,
-      } as UnsavedAnnotation)
+      } as LegacyUnsavedAnnotation)
     ).toThrow(coordinatesOutOfBounds);
     await expect(() =>
       validateAnnotationV1({
         ...requiredAnnotationFields,
         region: invalidPoint6,
-      } as UnsavedAnnotation)
+      } as LegacyUnsavedAnnotation)
     ).toThrow(coordinatesOutOfBounds);
   });
   it('should not accept annotations if vertex coordinates are duplicated', async () => {
@@ -226,7 +226,7 @@ describe('should check validity of annotations', () => {
       validateAnnotationV1({
         ...requiredAnnotationFields,
         region: duplicatedVerticesPoint,
-      } as UnsavedAnnotation)
+      } as LegacyUnsavedAnnotation)
     ).toThrow(coordinatesOutOfBounds);
   });
   it('should accept annotations if vertex coordinates are valid', () => {
@@ -234,7 +234,7 @@ describe('should check validity of annotations', () => {
       validateAnnotationV1({
         ...requiredAnnotationFields,
         region: desiredRectangle1,
-      } as UnsavedAnnotation)
+      } as LegacyUnsavedAnnotation)
     ).toBeTruthy();
   });
 });

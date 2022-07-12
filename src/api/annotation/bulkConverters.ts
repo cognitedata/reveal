@@ -3,11 +3,11 @@ import {
   VisionAnnotationDataType,
 } from 'src/modules/Common/types';
 import { convertCDFAnnotationV1ToVisionAnnotation } from './converters';
-import { CDFAnnotationV1 } from './types';
+import { LegacyAnnotation } from './legacyTypes';
 
 /** @deprecated */
 export const convertCDFAnnotationV1ToVisionAnnotations = (
-  annotations: CDFAnnotationV1[]
+  annotations: LegacyAnnotation[]
 ): VisionAnnotation<VisionAnnotationDataType>[] =>
   annotations.reduce(
     (acc: VisionAnnotation<VisionAnnotationDataType>[], item) => {

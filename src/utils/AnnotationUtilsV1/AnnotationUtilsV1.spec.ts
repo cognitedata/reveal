@@ -3,14 +3,16 @@ import {
   calculateBadgeCountsDifferences,
   getAnnotationCounts,
   getAnnotationsBadgeCounts,
-  VisionAnnotationV1,
 } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 
 import { VisionDetectionModelType } from 'src/api/vision/detectionModels/types';
 import { getDummyAnnotation } from 'src/__test-utils/annotations';
-import { AnnotationStatus } from 'src/api/annotation/types';
 import { AnnotationsBadgeCounts } from 'src/modules/Common/types';
 import { AnnotationFilterType } from 'src/modules/FilterSidePanel/types';
+import {
+  LegacyAnnotationStatus,
+  LegacyVisionAnnotation,
+} from 'src/api/annotation/legacyTypes';
 
 describe('annotationCounts', () => {
   it('should return unique annotation texts and number of occurences', () => {
@@ -27,7 +29,7 @@ describe('annotationCounts', () => {
     ];
 
     expect(
-      getAnnotationCounts(annotations as VisionAnnotationV1[])
+      getAnnotationCounts(annotations as LegacyVisionAnnotation[])
     ).toStrictEqual({
       gauge: 1,
       pump: 2,
@@ -57,7 +59,7 @@ describe('getAnnotationsBadgeCounts', () => {
     ];
 
     expect(
-      getAnnotationsBadgeCounts(annotations as VisionAnnotationV1[])
+      getAnnotationsBadgeCounts(annotations as LegacyVisionAnnotation[])
     ).toStrictEqual({
       objects: 2,
       assets: 1,
@@ -120,9 +122,9 @@ describe('calculateBadgeCountsDifferences', () => {
 
 describe('filterAnnotations', () => {
   const statuses = [
-    AnnotationStatus.Verified,
-    AnnotationStatus.Rejected,
-    AnnotationStatus.Unhandled,
+    LegacyAnnotationStatus.Verified,
+    LegacyAnnotationStatus.Rejected,
+    LegacyAnnotationStatus.Unhandled,
   ];
   const names = ['a', 'a', 'b'];
   const annotations = statuses.map((annotationStatus, index) =>
@@ -161,9 +163,9 @@ describe('filterAnnotations', () => {
 
 describe('filterAnnotationIdsByAnnotationStatus', () => {
   const statuses = [
-    AnnotationStatus.Verified,
-    AnnotationStatus.Rejected,
-    AnnotationStatus.Unhandled,
+    LegacyAnnotationStatus.Verified,
+    LegacyAnnotationStatus.Rejected,
+    LegacyAnnotationStatus.Unhandled,
   ];
   const annotations = statuses.map((annotationStatus, index) =>
     getDummyAnnotation(index + 1, 1, {
@@ -184,9 +186,9 @@ describe('filterAnnotationIdsByAnnotationStatus', () => {
 
 describe('filterAnnotationsIdsByConfidence', () => {
   const statuses = [
-    AnnotationStatus.Unhandled,
-    AnnotationStatus.Unhandled,
-    AnnotationStatus.Unhandled,
+    LegacyAnnotationStatus.Unhandled,
+    LegacyAnnotationStatus.Unhandled,
+    LegacyAnnotationStatus.Unhandled,
   ];
   const confidences = [0.9, 0.4, 0.1];
   const annotations = statuses.map((annotationStatus, index) =>
@@ -265,9 +267,9 @@ describe('filterAnnotationsIdsByConfidence', () => {
   });
   statuses.push(
     // Fallback options when confidences are undefined
-    AnnotationStatus.Verified,
-    AnnotationStatus.Unhandled,
-    AnnotationStatus.Rejected
+    LegacyAnnotationStatus.Verified,
+    LegacyAnnotationStatus.Unhandled,
+    LegacyAnnotationStatus.Rejected
   );
   confidences.push(NaN, NaN, NaN);
   const annotations2 = statuses.map((annotationStatus, index) =>

@@ -8,7 +8,7 @@ import {
   isPolyline,
   isTextAnnotation,
 } from 'src/api/annotation/typeGuards';
-import { AnnotationStatus } from 'src/api/annotation/types';
+import { LegacyAnnotationStatus } from 'src/api/annotation/legacyTypes';
 
 const textAnnotation = getDummyAnnotation(1, VisionDetectionModelType.OCR, {
   text: 'one',
@@ -16,7 +16,7 @@ const textAnnotation = getDummyAnnotation(1, VisionDetectionModelType.OCR, {
 const tagAnnotation = getDummyAnnotation(
   1,
   VisionDetectionModelType.TagDetection,
-  { status: AnnotationStatus.Verified, assetId: 1 }
+  { status: LegacyAnnotationStatus.Verified, assetId: 1 }
 );
 const keypointsAnnotation = getDummyAnnotation(
   1,
@@ -44,7 +44,7 @@ describe('Test isAssetLinkedAnnotation', () => {
     const invalidTagAnnotation = getDummyAnnotation(
       1,
       VisionDetectionModelType.TagDetection,
-      { status: AnnotationStatus.Verified }
+      { status: LegacyAnnotationStatus.Verified }
     );
     expect(isAssetLinkedAnnotation(textAnnotation)).toBe(false);
     expect(isAssetLinkedAnnotation(keypointsAnnotation)).toBe(false);
@@ -97,7 +97,7 @@ describe('Test isObjectAnnotation', () => {
     const userDefinedAnnotation = getDummyAnnotation(
       1,
       VisionDetectionModelType.ObjectDetection,
-      { status: AnnotationStatus.Verified, type: 'user_defined' }
+      { status: LegacyAnnotationStatus.Verified, type: 'user_defined' }
     );
     expect(isObjectAnnotation(objectAnnotation)).toBe(true);
     expect(isObjectAnnotation(polygonAnnotation)).toBe(true);

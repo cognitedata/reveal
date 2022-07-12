@@ -1,4 +1,4 @@
-import { CDFAnnotationV1, RegionShape } from 'src/api/annotation/types';
+import { RegionShape } from 'src/api/annotation/types';
 import {
   validBoundingBox,
   validImageAssetLink,
@@ -6,17 +6,18 @@ import {
   validPolygon,
   validPolyline,
 } from 'src/api/annotation/typeValidators';
+import { LegacyAnnotation } from 'src/api/annotation/legacyTypes';
 
 describe('validBoundingBox, validPolygon and validPolyline', () => {
   test('Missing region', () => {
-    const cdfAnnotationV1 = {} as CDFAnnotationV1;
+    const cdfAnnotationV1 = {} as LegacyAnnotation;
     expect(validBoundingBox(cdfAnnotationV1)).toBe(false);
     expect(validPolygon(cdfAnnotationV1)).toBe(false);
     expect(validPolyline(cdfAnnotationV1)).toBe(false);
   });
 
   test('Missing shape', () => {
-    const cdfAnnotationV1 = { region: {} } as CDFAnnotationV1;
+    const cdfAnnotationV1 = { region: {} } as LegacyAnnotation;
     expect(validBoundingBox(cdfAnnotationV1)).toBe(false);
     expect(validPolygon(cdfAnnotationV1)).toBe(false);
     expect(validPolyline(cdfAnnotationV1)).toBe(false);
@@ -25,13 +26,13 @@ describe('validBoundingBox, validPolygon and validPolyline', () => {
   test('Invalid shape', () => {
     const cdfBoundingBoxAnnotationV1 = {
       region: { shape: RegionShape.Rectangle },
-    } as CDFAnnotationV1;
+    } as LegacyAnnotation;
     const cdfPolygonAnnotationV1 = {
       region: { shape: RegionShape.Polygon },
-    } as CDFAnnotationV1;
+    } as LegacyAnnotation;
     const cdfPolylineAnnotationV1 = {
       region: { shape: RegionShape.Polyline },
-    } as CDFAnnotationV1;
+    } as LegacyAnnotation;
 
     expect(validBoundingBox(cdfPolygonAnnotationV1)).toBe(false);
     expect(validBoundingBox(cdfPolylineAnnotationV1)).toBe(false);
@@ -46,13 +47,13 @@ describe('validBoundingBox, validPolygon and validPolyline', () => {
   test('Missing vertices', () => {
     const cdfBoundingBoxAnnotationV1 = {
       region: { shape: RegionShape.Rectangle },
-    } as CDFAnnotationV1;
+    } as LegacyAnnotation;
     const cdfPolygonAnnotationV1 = {
       region: { shape: RegionShape.Polygon },
-    } as CDFAnnotationV1;
+    } as LegacyAnnotation;
     const cdfPolylineAnnotationV1 = {
       region: { shape: RegionShape.Polyline },
-    } as CDFAnnotationV1;
+    } as LegacyAnnotation;
 
     expect(validBoundingBox(cdfBoundingBoxAnnotationV1)).toBe(false);
     expect(validPolygon(cdfPolygonAnnotationV1)).toBe(false);
@@ -62,13 +63,13 @@ describe('validBoundingBox, validPolygon and validPolyline', () => {
   test('Too few items in vertices', () => {
     const cdfBoundingBoxAnnotationV1 = {
       region: { shape: RegionShape.Rectangle, vertices: [{}] },
-    } as CDFAnnotationV1;
+    } as LegacyAnnotation;
     const cdfPolygonAnnotationV1 = {
       region: { shape: RegionShape.Polygon, vertices: [{}] },
-    } as CDFAnnotationV1;
+    } as LegacyAnnotation;
     const cdfPolylineAnnotationV1 = {
       region: { shape: RegionShape.Polyline, vertices: [{}] },
-    } as CDFAnnotationV1;
+    } as LegacyAnnotation;
 
     expect(validBoundingBox(cdfBoundingBoxAnnotationV1)).toBe(false);
     expect(validPolygon(cdfPolygonAnnotationV1)).toBe(false);
@@ -78,7 +79,7 @@ describe('validBoundingBox, validPolygon and validPolyline', () => {
   test('Too many items in vertices - Bounding Box only', () => {
     const cdfAnnotationV1 = {
       region: { shape: RegionShape.Rectangle, vertices: [{}, {}, {}] },
-    } as CDFAnnotationV1;
+    } as LegacyAnnotation;
 
     expect(validBoundingBox(cdfAnnotationV1)).toBe(false);
   });
@@ -89,19 +90,19 @@ describe('validBoundingBox, validPolygon and validPolyline', () => {
         shape: RegionShape.Rectangle,
         vertices: [{ x: 1 }, { x: 0.1, y: 0.3 }],
       },
-    } as CDFAnnotationV1;
+    } as LegacyAnnotation;
     const cdfPolygonAnnotationV1 = {
       region: {
         shape: RegionShape.Polygon,
         vertices: [{ x: 1 }, { x: 0.1, y: 0.3 }, { x: 0.5, y: 0.8 }],
       },
-    } as CDFAnnotationV1;
+    } as LegacyAnnotation;
     const cdfPolylineAnnotationV1 = {
       region: {
         shape: RegionShape.Polyline,
         vertices: [{ x: 1 }, { x: 0.1, y: 0.3 }],
       },
-    } as CDFAnnotationV1;
+    } as LegacyAnnotation;
 
     expect(validBoundingBox(cdfBoundingBoxAnnotationV1)).toBe(false);
     expect(validPolygon(cdfPolygonAnnotationV1)).toBe(false);
@@ -117,7 +118,7 @@ describe('validBoundingBox, validPolygon and validPolyline', () => {
           { x: 1, y: 2 },
         ],
       },
-    } as CDFAnnotationV1;
+    } as LegacyAnnotation;
     const cdfPolygonAnnotationV1 = {
       region: {
         shape: RegionShape.Polygon,
@@ -127,7 +128,7 @@ describe('validBoundingBox, validPolygon and validPolyline', () => {
           { x: 1, y: 2 },
         ],
       },
-    } as CDFAnnotationV1;
+    } as LegacyAnnotation;
     const cdfPolylineAnnotationV1 = {
       region: {
         shape: RegionShape.Polyline,
@@ -136,7 +137,7 @@ describe('validBoundingBox, validPolygon and validPolyline', () => {
           { x: 1, y: 2 },
         ],
       },
-    } as CDFAnnotationV1;
+    } as LegacyAnnotation;
 
     expect(validBoundingBox(cdfBoundingBoxAnnotationV1)).toBe(false);
     expect(validPolygon(cdfPolygonAnnotationV1)).toBe(false);
@@ -152,7 +153,7 @@ describe('validBoundingBox, validPolygon and validPolyline', () => {
           { x: 0, y: 0.1 },
         ],
       },
-    } as CDFAnnotationV1;
+    } as LegacyAnnotation;
     const cdfPolygonAnnotationV1 = {
       region: {
         shape: RegionShape.Polygon,
@@ -162,7 +163,7 @@ describe('validBoundingBox, validPolygon and validPolyline', () => {
           { x: 0.1, y: 0.3 },
         ],
       },
-    } as CDFAnnotationV1;
+    } as LegacyAnnotation;
     const cdfPolylineAnnotationV1 = {
       region: {
         shape: RegionShape.Polyline,
@@ -171,7 +172,7 @@ describe('validBoundingBox, validPolygon and validPolyline', () => {
           { x: 0, y: 0.1 },
         ],
       },
-    } as CDFAnnotationV1;
+    } as LegacyAnnotation;
 
     expect(validBoundingBox(cdfBoundingBoxAnnotationV1)).toBe(false);
     expect(validPolygon(cdfPolygonAnnotationV1)).toBe(false);
@@ -187,7 +188,7 @@ describe('validBoundingBox, validPolygon and validPolyline', () => {
           { x: 1, y: 0.3 },
         ],
       },
-    } as CDFAnnotationV1;
+    } as LegacyAnnotation;
     const cdfAnnotationBoundingBox2 = {
       region: {
         shape: RegionShape.Rectangle,
@@ -196,7 +197,7 @@ describe('validBoundingBox, validPolygon and validPolyline', () => {
           { x: 0.3, y: 1 },
         ],
       },
-    } as CDFAnnotationV1;
+    } as LegacyAnnotation;
     expect(validBoundingBox(cdfAnnotationBoundingBox1)).toBe(true);
     expect(validBoundingBox(cdfAnnotationBoundingBox2)).toBe(true);
   });
@@ -212,7 +213,7 @@ describe('validBoundingBox, validPolygon and validPolyline', () => {
           { x: 1, y: 1 },
         ],
       },
-    } as CDFAnnotationV1;
+    } as LegacyAnnotation;
     expect(validPolygon(cdfAnnotationPolygon)).toBe(true);
   });
   test('Valid polyline', () => {
@@ -227,7 +228,7 @@ describe('validBoundingBox, validPolygon and validPolyline', () => {
           { x: 1, y: 1 },
         ],
       },
-    } as CDFAnnotationV1;
+    } as LegacyAnnotation;
     expect(validPolyline(cdfAnnotationPolyline)).toBe(true);
   });
 });
@@ -246,12 +247,12 @@ describe('validImageAssetLink', () => {
     const cdfAnnotationV1 = {
       linkedResourceId: 1,
       linkedResourceType: 'asset',
-    } as CDFAnnotationV1;
+    } as LegacyAnnotation;
     expect(validImageAssetLink(cdfAnnotationV1)).toBe(false);
   });
 
   test('Missing assetId or external id', () => {
-    const cdfAnnotationV1 = { ...boundingBox } as CDFAnnotationV1;
+    const cdfAnnotationV1 = { ...boundingBox } as LegacyAnnotation;
     expect(validImageAssetLink(cdfAnnotationV1)).toBe(false);
   });
 
@@ -259,7 +260,7 @@ describe('validImageAssetLink', () => {
     const cdfAnnotationV1 = {
       ...boundingBox,
       linkedResourceId: 1,
-    } as CDFAnnotationV1;
+    } as LegacyAnnotation;
     expect(validImageAssetLink(cdfAnnotationV1)).toBe(false);
   });
 
@@ -268,12 +269,12 @@ describe('validImageAssetLink', () => {
       ...boundingBox,
       linkedResourceId: 1,
       linkedResourceType: 'asset',
-    } as CDFAnnotationV1;
+    } as LegacyAnnotation;
     const cdfAnnotationV1WithExternalId = {
       ...boundingBox,
       linkedResourceId: 1,
       linkedResourceType: 'asset',
-    } as CDFAnnotationV1;
+    } as LegacyAnnotation;
     expect(validImageAssetLink(cdfAnnotationV1WithId)).toBe(true);
     expect(validImageAssetLink(cdfAnnotationV1WithExternalId)).toBe(true);
   });
@@ -281,7 +282,7 @@ describe('validImageAssetLink', () => {
 
 describe('validKeypointCollection', () => {
   test('Missing data', () => {
-    const cdfAnnotationV1 = {} as CDFAnnotationV1;
+    const cdfAnnotationV1 = {} as LegacyAnnotation;
     expect(validKeypointCollection(cdfAnnotationV1)).toBe(false);
   });
 
@@ -291,7 +292,7 @@ describe('validKeypointCollection', () => {
         keypoint: true,
         keypoints: [{}, {}, {}],
       },
-    } as CDFAnnotationV1;
+    } as LegacyAnnotation;
     expect(validKeypointCollection(cdfAnnotationV1)).toBe(false);
   });
 
@@ -302,7 +303,7 @@ describe('validKeypointCollection', () => {
         keypoints: [{}, {}, {}],
       },
       region: {},
-    } as CDFAnnotationV1;
+    } as LegacyAnnotation;
     expect(validKeypointCollection(cdfAnnotationV1)).toBe(false);
   });
 
@@ -313,7 +314,7 @@ describe('validKeypointCollection', () => {
         keypoints: [{}, {}, {}],
       },
       region: { shape: RegionShape.Rectangle },
-    } as CDFAnnotationV1;
+    } as LegacyAnnotation;
     expect(validKeypointCollection(cdfAnnotationV1)).toBe(false);
   });
 
@@ -324,7 +325,7 @@ describe('validKeypointCollection', () => {
         keypoints: [{}, {}, {}],
       },
       region: { shape: RegionShape.Points },
-    } as CDFAnnotationV1;
+    } as LegacyAnnotation;
     expect(validKeypointCollection(cdfAnnotationV1)).toBe(false);
   });
 
@@ -340,7 +341,7 @@ describe('validKeypointCollection', () => {
           { x: 1, y: 0.2 },
         ],
       },
-    } as CDFAnnotationV1;
+    } as LegacyAnnotation;
     expect(validKeypointCollection(cdfAnnotationV1)).toBe(false);
   });
 
@@ -357,7 +358,7 @@ describe('validKeypointCollection', () => {
           { x: 1, y: 0.2 },
         ],
       },
-    } as CDFAnnotationV1;
+    } as LegacyAnnotation;
     expect(validKeypointCollection(cdfAnnotationV1)).toBe(false);
   });
 
@@ -371,7 +372,7 @@ describe('validKeypointCollection', () => {
         shape: RegionShape.Points,
         vertices: [{ x: 1 }, { x: 1, y: 0.2 }],
       },
-    } as CDFAnnotationV1;
+    } as LegacyAnnotation;
     expect(validKeypointCollection(cdfAnnotationV1)).toBe(false);
   });
 
@@ -388,7 +389,7 @@ describe('validKeypointCollection', () => {
           { x: 1, y: 2 },
         ],
       },
-    } as CDFAnnotationV1;
+    } as LegacyAnnotation;
     expect(validKeypointCollection(cdfAnnotationV1)).toBe(false);
   });
 
@@ -405,7 +406,7 @@ describe('validKeypointCollection', () => {
           { x: 0, y: 0.1 },
         ],
       },
-    } as CDFAnnotationV1;
+    } as LegacyAnnotation;
     expect(validKeypointCollection(cdfAnnotationV1)).toBe(false);
   });
 
@@ -422,7 +423,7 @@ describe('validKeypointCollection', () => {
           { x: 1, y: 0.3 },
         ],
       },
-    } as CDFAnnotationV1;
+    } as LegacyAnnotation;
     expect(validKeypointCollection(cdfAnnotationV1)).toBe(true);
   });
 });

@@ -2,19 +2,19 @@ import {
   VisionAnnotation,
   VisionAnnotationDataType,
 } from 'src/modules/Common/types';
-import { VisionAnnotationV1 } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
+import { LegacyVisionAnnotation } from 'src/api/annotation/legacyTypes';
 
 export const groupAnnotationsByFile = (
   annotations:
-    | VisionAnnotationV1[]
+    | LegacyVisionAnnotation[]
     | VisionAnnotation<VisionAnnotationDataType>[]
 ): Map<
   number,
-  (VisionAnnotationV1 | VisionAnnotation<VisionAnnotationDataType>)[]
+  (LegacyVisionAnnotation | VisionAnnotation<VisionAnnotationDataType>)[]
 > => {
   const fileAnnotationMap = new Map<
     number,
-    (VisionAnnotationV1 | VisionAnnotation<VisionAnnotationDataType>)[]
+    (LegacyVisionAnnotation | VisionAnnotation<VisionAnnotationDataType>)[]
   >();
 
   // eslint-disable-next-line no-restricted-syntax

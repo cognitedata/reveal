@@ -1,6 +1,6 @@
 import { groupAnnotationsByFile } from 'src/api/utils/groupAnnotationsByFile';
 import { mockAnnotationList } from 'src/__test-utils/fixtures/annotationsV1';
-import { VisionAnnotationV1 } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
+import { LegacyVisionAnnotation } from 'src/api/annotation/legacyTypes';
 
 describe('test groupAnnotationsByFile', () => {
   test('should handle empty array', () => {
@@ -10,7 +10,7 @@ describe('test groupAnnotationsByFile', () => {
   });
 
   test('should group single annotation', () => {
-    const mockAnnotation = mockAnnotationList[0] as VisionAnnotationV1;
+    const mockAnnotation = mockAnnotationList[0] as LegacyVisionAnnotation;
     const fileAnnotationMap = groupAnnotationsByFile([mockAnnotation]);
     expect(fileAnnotationMap).toBeInstanceOf(Map);
     expect(fileAnnotationMap.size).toEqual(1);
@@ -20,8 +20,10 @@ describe('test groupAnnotationsByFile', () => {
   });
 
   test('should group annotations for different files', () => {
-    const mockAnnotationFileOne = mockAnnotationList[0] as VisionAnnotationV1;
-    const mockAnnotationFileTwo = mockAnnotationList[1] as VisionAnnotationV1;
+    const mockAnnotationFileOne =
+      mockAnnotationList[0] as LegacyVisionAnnotation;
+    const mockAnnotationFileTwo =
+      mockAnnotationList[1] as LegacyVisionAnnotation;
     const fileAnnotationMap = groupAnnotationsByFile([
       mockAnnotationFileOne,
       mockAnnotationFileTwo,

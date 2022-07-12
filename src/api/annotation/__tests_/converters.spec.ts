@@ -1,7 +1,5 @@
 import {
-  AnnotationStatus,
   CDFAnnotationTypeEnum,
-  CDFAnnotationV1,
   ImageAssetLink,
   ImageClassification,
   ImageKeypointCollection,
@@ -31,11 +29,15 @@ import {
 } from 'src/modules/Common/types';
 import { getDummyAnnotation } from 'src/__test-utils/annotations';
 import { VisionDetectionModelType } from 'src/api/vision/detectionModels/types';
-import { KeypointItem } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
+import {
+  LegacyKeypointData,
+  LegacyAnnotation,
+  LegacyAnnotationStatus,
+} from 'src/api/annotation/legacyTypes';
 
 describe('Test convertCDFAnnotationV1ToImageClassification', () => {
   test('Missing text', () => {
-    const cdfAnnotationV1 = {} as CDFAnnotationV1;
+    const cdfAnnotationV1 = {} as LegacyAnnotation;
     const consoleSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
 
     expect(
@@ -55,7 +57,7 @@ describe('Test convertCDFAnnotationV1ToImageClassification', () => {
         ],
       },
       data: { confidence: 0.1 },
-    } as CDFAnnotationV1;
+    } as LegacyAnnotation;
 
     expect(
       convertCDFAnnotationV1ToImageClassification(cdfAnnotationV1)
@@ -65,7 +67,7 @@ describe('Test convertCDFAnnotationV1ToImageClassification', () => {
 
 describe('Test convertCDFAnnotationV1ToImageObjectDetectionBoundingBox', () => {
   test('Invalid BoundingBox', () => {
-    const cdfAnnotationV1 = {} as CDFAnnotationV1;
+    const cdfAnnotationV1 = {} as LegacyAnnotation;
     const consoleSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
 
     expect(
@@ -79,7 +81,7 @@ describe('Test convertCDFAnnotationV1ToImageObjectDetectionBoundingBox', () => {
       (annotation) =>
         annotation.annotationType === 'vision/objectdetection' &&
         annotation.region.shape === 'rectangle'
-    ) as CDFAnnotationV1;
+    ) as LegacyAnnotation;
     expect(
       convertCDFAnnotationV1ToImageObjectDetectionBoundingBox(
         cdfObjectAnnotationV1
@@ -99,7 +101,7 @@ describe('Test convertCDFAnnotationV1ToImageObjectDetectionBoundingBox', () => {
 
 describe('Test convertCDFAnnotationV1ToImageObjectDetectionPolygon', () => {
   test('Missing vertices', () => {
-    const cdfAnnotationV1 = {} as CDFAnnotationV1;
+    const cdfAnnotationV1 = {} as LegacyAnnotation;
     const consoleSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
 
     expect(
@@ -113,7 +115,7 @@ describe('Test convertCDFAnnotationV1ToImageObjectDetectionPolygon', () => {
       (annotation) =>
         annotation.annotationType === 'vision/objectdetection' &&
         annotation.region.shape === 'polygon'
-    ) as CDFAnnotationV1;
+    ) as LegacyAnnotation;
     expect(
       convertCDFAnnotationV1ToImageObjectDetectionPolygon(cdfObjectAnnotationV1)
     ).toStrictEqual({
@@ -128,7 +130,7 @@ describe('Test convertCDFAnnotationV1ToImageObjectDetectionPolygon', () => {
 
 describe('Test convertCDFAnnotationV1ToImageObjectDetectionPolyline', () => {
   test('Missing vertices', () => {
-    const cdfAnnotationV1 = {} as CDFAnnotationV1;
+    const cdfAnnotationV1 = {} as LegacyAnnotation;
     const consoleSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
 
     expect(
@@ -142,7 +144,7 @@ describe('Test convertCDFAnnotationV1ToImageObjectDetectionPolyline', () => {
       (annotation) =>
         annotation.annotationType === 'vision/objectdetection' &&
         annotation.region.shape === 'polyline'
-    ) as CDFAnnotationV1;
+    ) as LegacyAnnotation;
     expect(
       convertCDFAnnotationV1ToImageObjectDetectionPolyline(
         cdfObjectAnnotationV1
@@ -159,7 +161,7 @@ describe('Test convertCDFAnnotationV1ToImageObjectDetectionPolyline', () => {
 
 describe('Test convertCDFAnnotationV1ToImageExtractedText', () => {
   test('Missing bounding box', () => {
-    const cdfAnnotationV1 = {} as CDFAnnotationV1;
+    const cdfAnnotationV1 = {} as LegacyAnnotation;
     const consoleSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
 
     expect(
@@ -171,7 +173,7 @@ describe('Test convertCDFAnnotationV1ToImageExtractedText', () => {
   test('Should return converted type', () => {
     const cdfTextAnnotationV1 = mockAnnotationList.find(
       (annotation) => annotation.annotationType === 'vision/ocr'
-    ) as CDFAnnotationV1;
+    ) as LegacyAnnotation;
     expect(
       convertCDFAnnotationV1ToImageExtractedText(cdfTextAnnotationV1)
     ).toStrictEqual({
@@ -198,7 +200,7 @@ describe('test convertCDFAnnotationV1ToImageAssetLink', () => {
     },
   };
   test('Invalid BoundingBox', () => {
-    const cdfAnnotationV1 = {} as CDFAnnotationV1;
+    const cdfAnnotationV1 = {} as LegacyAnnotation;
     const consoleSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
 
     expect(
@@ -210,7 +212,7 @@ describe('test convertCDFAnnotationV1ToImageAssetLink', () => {
   test('Invalid asset link', () => {
     const cdfAnnotationV1 = {
       ...boundingBox,
-    } as CDFAnnotationV1;
+    } as LegacyAnnotation;
     const consoleSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
 
     expect(
@@ -222,7 +224,7 @@ describe('test convertCDFAnnotationV1ToImageAssetLink', () => {
   test('Should return converted type', () => {
     const cdfTagAnnotationV1 = mockAnnotationList.find(
       (annotation) => annotation.annotationType === 'vision/tagdetection'
-    ) as CDFAnnotationV1;
+    ) as LegacyAnnotation;
 
     expect(
       convertCDFAnnotationV1ToImageAssetLink(cdfTagAnnotationV1)
@@ -245,7 +247,7 @@ describe('test convertCDFAnnotationV1ToImageAssetLink', () => {
 
 describe('Test convertCDFAnnotationV1ToImageKeypointCollection', () => {
   test('Invalid keypoint collection', () => {
-    const cdfKeypointAnnotationV1 = {} as CDFAnnotationV1;
+    const cdfKeypointAnnotationV1 = {} as LegacyAnnotation;
     const consoleSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
 
     expect(
@@ -259,7 +261,7 @@ describe('Test convertCDFAnnotationV1ToImageKeypointCollection', () => {
       (annotation) =>
         annotation.annotationType === 'vision/objectdetection' &&
         annotation.region.shape === 'points'
-    ) as CDFAnnotationV1;
+    ) as LegacyAnnotation;
     expect(
       convertCDFAnnotationV1ToImageKeypointCollection(cdfKeypointAnnotationV1)
     ).toStrictEqual({
@@ -281,22 +283,22 @@ describe('Test convertCDFAnnotationV1ToImageKeypointCollection', () => {
 describe('Test convertAnnotationStatusToStatus', () => {
   test('Invalid Status', () => {
     expect(
-      convertCDFAnnotationV1StatusToStatus('' as AnnotationStatus)
+      convertCDFAnnotationV1StatusToStatus('' as LegacyAnnotationStatus)
     ).toEqual(Status.Suggested);
   });
 
   test('Valid Status', () => {
     expect(
-      convertCDFAnnotationV1StatusToStatus(AnnotationStatus.Verified)
+      convertCDFAnnotationV1StatusToStatus(LegacyAnnotationStatus.Verified)
     ).toEqual(Status.Approved);
     expect(
-      convertCDFAnnotationV1StatusToStatus(AnnotationStatus.Deleted)
+      convertCDFAnnotationV1StatusToStatus(LegacyAnnotationStatus.Deleted)
     ).toEqual(Status.Rejected);
     expect(
-      convertCDFAnnotationV1StatusToStatus(AnnotationStatus.Rejected)
+      convertCDFAnnotationV1StatusToStatus(LegacyAnnotationStatus.Rejected)
     ).toEqual(Status.Rejected);
     expect(
-      convertCDFAnnotationV1StatusToStatus(AnnotationStatus.Unhandled)
+      convertCDFAnnotationV1StatusToStatus(LegacyAnnotationStatus.Unhandled)
     ).toEqual(Status.Suggested);
   });
 });
@@ -304,7 +306,7 @@ describe('Test convertAnnotationStatusToStatus', () => {
 // todo: Better if these tests could be run after mocking validator functions and typeguard functions used within the main converter function
 describe('Test convertCDFAnnotationV1ToVisionAnnotation', () => {
   test('annotationId, annotationExternalId and annotationStatus', () => {
-    const cdfAnnotation = {} as CDFAnnotationV1;
+    const cdfAnnotation = {} as LegacyAnnotation;
     const consoleSpy = jest
       .spyOn(console, 'error')
       .mockImplementation(() => {});
@@ -351,7 +353,7 @@ describe('Test convertCDFAnnotationV1ToVisionAnnotation', () => {
     } as VisionImageExtractedTextAnnotation);
     expect(
       convertCDFAnnotationV1ToVisionAnnotation(
-        cdfAnnotationWithExternalIdV1 as unknown as CDFAnnotationV1
+        cdfAnnotationWithExternalIdV1 as unknown as LegacyAnnotation
       )
     ).toEqual(null);
     expect(consoleSpy).toHaveBeenCalled();
@@ -436,7 +438,10 @@ describe('Test convertCDFAnnotationV1ToVisionAnnotation', () => {
         ],
         data: {
           keypoint: true,
-          keypoints: [{ caption: 'one' }, { caption: 'two' }] as KeypointItem[],
+          keypoints: [
+            { caption: 'one' },
+            { caption: 'two' },
+          ] as LegacyKeypointData[],
         },
       }
     );

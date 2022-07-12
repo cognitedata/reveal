@@ -1,8 +1,9 @@
 import isFinite from 'lodash-es/isFinite';
-import { CDFAnnotationV1, RegionShape } from 'src/api/annotation/types';
+import { RegionShape } from 'src/api/annotation/types';
 import { uniqueVertices, vertexIsNormalized } from 'src/api/utils/regionUtils';
+import { LegacyAnnotation } from './legacyTypes';
 
-export function validBoundingBox(annotationV1: CDFAnnotationV1) {
+export function validBoundingBox(annotationV1: LegacyAnnotation) {
   return (
     !!annotationV1.region &&
     annotationV1.region.shape === RegionShape.Rectangle &&
@@ -14,7 +15,7 @@ export function validBoundingBox(annotationV1: CDFAnnotationV1) {
   );
 }
 
-export function validPolygon(annotationV1: CDFAnnotationV1) {
+export function validPolygon(annotationV1: LegacyAnnotation) {
   return (
     !!annotationV1.region &&
     annotationV1.region.shape === RegionShape.Polygon &&
@@ -26,7 +27,7 @@ export function validPolygon(annotationV1: CDFAnnotationV1) {
   );
 }
 
-export function validPolyline(annotationV1: CDFAnnotationV1) {
+export function validPolyline(annotationV1: LegacyAnnotation) {
   return (
     !!annotationV1.region &&
     annotationV1.region.shape === RegionShape.Polyline &&
@@ -38,7 +39,7 @@ export function validPolyline(annotationV1: CDFAnnotationV1) {
   );
 }
 
-export function validImageAssetLink(annotationV1: CDFAnnotationV1) {
+export function validImageAssetLink(annotationV1: LegacyAnnotation) {
   if (
     !(
       annotationV1.linkedResourceId && isFinite(annotationV1.linkedResourceId)
@@ -53,7 +54,7 @@ export function validImageAssetLink(annotationV1: CDFAnnotationV1) {
   );
 }
 
-export function validKeypointCollection(annotationV1: CDFAnnotationV1) {
+export function validKeypointCollection(annotationV1: LegacyAnnotation) {
   if (
     !annotationV1.data ||
     !annotationV1.data.keypoint ||

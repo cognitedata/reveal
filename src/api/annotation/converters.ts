@@ -1,9 +1,7 @@
 import {
   AnnotatedResourceId,
-  AnnotationStatus,
   CDFAnnotationType,
   CDFAnnotationTypeEnum,
-  CDFAnnotationV1,
   ImageAssetLink,
   ImageClassification,
   ImageExtractedText,
@@ -28,6 +26,10 @@ import {
 } from 'src/api/annotation/typeGuards';
 import { AnnotationModel } from '@cognite/sdk-playground';
 import {
+  LegacyAnnotation,
+  LegacyAnnotationStatus,
+} from 'src/api/annotation/legacyTypes';
+import {
   validBoundingBox,
   validImageAssetLink,
   validKeypointCollection,
@@ -40,7 +42,7 @@ function conversionWarningMessage(type: string) {
 }
 
 export function convertCDFAnnotationV1ToImageClassification(
-  annotation: CDFAnnotationV1
+  annotation: LegacyAnnotation
 ): ImageClassification | null {
   if (annotation.region) {
     console.warn(
@@ -60,7 +62,7 @@ export function convertCDFAnnotationV1ToImageClassification(
 }
 
 export function convertCDFAnnotationV1ToImageObjectDetectionBoundingBox(
-  annotation: CDFAnnotationV1
+  annotation: LegacyAnnotation
 ): ImageObjectDetectionBoundingBox | null {
   if (!validBoundingBox(annotation)) {
     console.warn(conversionWarningMessage('ImageObjectDetectionBoundingBox'));
@@ -81,7 +83,7 @@ export function convertCDFAnnotationV1ToImageObjectDetectionBoundingBox(
 }
 
 export function convertCDFAnnotationV1ToImageObjectDetectionPolygon(
-  annotation: CDFAnnotationV1
+  annotation: LegacyAnnotation
 ): ImageObjectDetectionPolygon | null {
   if (!validPolygon(annotation)) {
     console.warn(conversionWarningMessage('ImageObjectDetectionPolygon'));
@@ -99,7 +101,7 @@ export function convertCDFAnnotationV1ToImageObjectDetectionPolygon(
 }
 
 export function convertCDFAnnotationV1ToImageObjectDetectionPolyline(
-  annotation: CDFAnnotationV1
+  annotation: LegacyAnnotation
 ): ImageObjectDetectionPolyline | null {
   if (!validPolyline(annotation)) {
     console.warn(conversionWarningMessage('ImageObjectDetectionPolyline'));
@@ -117,7 +119,7 @@ export function convertCDFAnnotationV1ToImageObjectDetectionPolyline(
 }
 
 export function convertCDFAnnotationV1ToImageExtractedText(
-  annotation: CDFAnnotationV1
+  annotation: LegacyAnnotation
 ): ImageExtractedText | null {
   if (!validBoundingBox(annotation)) {
     console.warn(conversionWarningMessage('ImageExtractedText'));
@@ -138,7 +140,7 @@ export function convertCDFAnnotationV1ToImageExtractedText(
 }
 
 export function convertCDFAnnotationV1ToImageAssetLink(
-  annotation: CDFAnnotationV1
+  annotation: LegacyAnnotation
 ): ImageAssetLink | null {
   if (!validImageAssetLink(annotation)) {
     console.warn(conversionWarningMessage('ImageAssetLink'));
@@ -165,7 +167,7 @@ export function convertCDFAnnotationV1ToImageAssetLink(
 }
 
 export function convertCDFAnnotationV1ToImageKeypointCollection(
-  annotation: CDFAnnotationV1
+  annotation: LegacyAnnotation
 ): ImageKeypointCollection | null {
   if (!validKeypointCollection(annotation)) {
     console.warn(conversionWarningMessage('ImageKeypointCollection'));
@@ -186,14 +188,14 @@ export function convertCDFAnnotationV1ToImageKeypointCollection(
 }
 
 export function convertCDFAnnotationV1StatusToStatus(
-  annotationStatusV1: AnnotationStatus
+  annotationStatusV1: LegacyAnnotationStatus
 ): Status {
-  if (annotationStatusV1 === AnnotationStatus.Verified) {
+  if (annotationStatusV1 === LegacyAnnotationStatus.Verified) {
     return Status.Approved;
   }
   if (
-    annotationStatusV1 === AnnotationStatus.Rejected ||
-    annotationStatusV1 === AnnotationStatus.Deleted
+    annotationStatusV1 === LegacyAnnotationStatus.Rejected ||
+    annotationStatusV1 === LegacyAnnotationStatus.Deleted
   ) {
     return Status.Rejected;
   }
@@ -201,7 +203,7 @@ export function convertCDFAnnotationV1StatusToStatus(
 }
 
 export function convertCDFAnnotationV1ToVisionAnnotation(
-  annotation: CDFAnnotationV1
+  annotation: LegacyAnnotation
 ): VisionAnnotation<VisionAnnotationDataType> | null {
   let data: VisionAnnotationDataType | null = null;
   let annotatedResourceId: AnnotatedResourceId | null = null;

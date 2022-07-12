@@ -7,14 +7,7 @@ import {
   Vertex,
   VisionDetectionModelType,
 } from 'src/api/vision/detectionModels/types';
-import {
-  AnnotationMetadataV1,
-  AnnotationStatus,
-  AnnotationTypeV1,
-  Keypoint,
-  Point,
-  Status,
-} from 'src/api/annotation/types';
+import { Keypoint, Point, Status } from 'src/api/annotation/types';
 import { KeypointCollectionState } from 'src/modules/Review/store/annotatorWrapper/type';
 import {
   PredefinedKeypoint,
@@ -22,6 +15,11 @@ import {
   ReviewKeypoint,
   TempKeypointCollection,
 } from 'src/modules/Review/types';
+import {
+  LegacyAnnotationMetadata,
+  LegacyAnnotationStatus,
+  LegacyAnnotationType,
+} from 'src/api/annotation/legacyTypes';
 import { getDummyImageKeypointCollectionAnnotation } from './getDummyAnnotations';
 
 /**
@@ -31,14 +29,14 @@ export const getDummyAnnotation = (
   id?: number,
   modelType?: number,
   other?: {
-    status?: AnnotationStatus;
+    status?: LegacyAnnotationStatus;
     confidence?: number;
     text?: string;
     assetId?: number;
     shape?: RegionType;
     vertices?: Vertex[];
-    data?: AnnotationMetadataV1;
-    type?: AnnotationTypeV1;
+    data?: LegacyAnnotationMetadata;
+    type?: LegacyAnnotationType;
   }
 ) => {
   return AnnotationUtilsV1.createVisionAnnotationStubV1(
@@ -51,7 +49,7 @@ export const getDummyAnnotation = (
     { shape: other?.shape || 'rectangle', vertices: other?.vertices! },
     undefined,
     undefined,
-    other?.status || AnnotationStatus.Unhandled,
+    other?.status || LegacyAnnotationStatus.Unhandled,
     { ...other?.data, confidence: other?.confidence },
     other?.type ||
       ModelTypeAnnotationTypeMap[modelType || VisionDetectionModelType.OCR],

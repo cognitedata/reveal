@@ -1,5 +1,5 @@
 import { AnnotationRegion } from 'src/api/vision/detectionModels/types';
-import { CDFAnnotationV1, UnsavedAnnotation } from 'src/api/annotation/types';
+import { LegacyAnnotation, LegacyUnsavedAnnotation } from './legacyTypes';
 
 /**
  * @deprecated method of Annotation V1 api
@@ -48,7 +48,7 @@ export function enforceRegionValidity(region: AnnotationRegion) {
  * @deprecated method of Annotation V1 api
  */
 export function validateAnnotationV1(
-  annotation: CDFAnnotationV1 | UnsavedAnnotation
+  annotation: LegacyAnnotation | LegacyUnsavedAnnotation
 ): boolean {
   if (annotation.region) {
     const vertexSignatures = annotation.region.vertices.map(

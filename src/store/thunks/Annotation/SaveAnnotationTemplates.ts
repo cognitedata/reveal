@@ -5,11 +5,11 @@ import {
   PredefinedShape,
 } from 'src/modules/Review/types';
 import { ThunkConfig } from 'src/store/rootReducer';
-import { UnsavedAnnotation } from 'src/api/annotation/types';
 import { AnnotationApiV1 } from 'src/api/annotation/AnnotationApiV1';
 import { PopulateAnnotationTemplates } from 'src/store/thunks/Annotation/PopulateAnnotationTemplates';
 import { AnnotationUtilsV1 } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 import { VisionDetectionModelType } from 'src/api/vision/detectionModels/types';
+import { LegacyUnsavedAnnotation } from 'src/api/annotation/legacyTypes';
 
 export const SaveAnnotationTemplates = createAsyncThunk<
   PredefinedVisionAnnotations,
@@ -24,7 +24,7 @@ export const SaveAnnotationTemplates = createAsyncThunk<
   const savedConfiguration = unwrapResult(savedConfigurationsResponse);
   const unsavedShapes: PredefinedShape[] = [];
   const unsavedKeypointCollections: PredefinedKeypointCollection[] = [];
-  const unsavedAnnotations: UnsavedAnnotation[] = [];
+  const unsavedAnnotations: LegacyUnsavedAnnotation[] = [];
 
   templateData.predefinedShapes.forEach((shape, index) => {
     if (!shape.id) {

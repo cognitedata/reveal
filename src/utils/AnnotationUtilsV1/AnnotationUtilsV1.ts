@@ -2,24 +2,14 @@ import {
   AnnotationRegion,
   DetectedAnnotation,
   RegionType,
-  Vertex,
   VisionDetectionModelType,
 } from 'src/api/vision/detectionModels/types';
-import {
-  CDFAnnotationV1,
-  AnnotationMetadataV1,
-  AnnotationSourceV1,
-  AnnotationTypeV1,
-  UnsavedAnnotation,
-  AnnotationStatus,
-} from 'src/api/annotation/types';
 import {
   ColorsObjectDetection,
   ColorsOCR,
   ColorsPersonDetection,
   ColorsTagDetection,
 } from 'src/constants/Colors';
-import { PredefinedKeypoint } from 'src/modules/Review/types';
 import {
   AnnotationIdsByStatus,
   AnnotationsBadgeCounts,
@@ -32,34 +22,16 @@ import {
   isAssetLinkedAnnotation,
   isKeyPointAnnotation,
 } from 'src/api/annotation/typeGuards';
-
-export type KeypointItem = Required<PredefinedKeypoint> & {
-  id: string;
-  selected: boolean;
-};
-
-export type KeypointVertex = Vertex & KeypointItem;
-
-export type VisionAnnotationRegion = Pick<AnnotationRegion, 'shape'> & {
-  vertices: Array<Vertex | KeypointVertex>;
-};
-
-export type VisionAnnotationV1 = Omit<
-  CDFAnnotationV1,
-  | 'linkedResourceId'
-  | 'linkedResourceExternalId'
-  | 'linkedResourceType'
-  | 'region'
-> & {
-  region?: VisionAnnotationRegion;
-  label: string;
-  type: RegionType;
-  color: string;
-  modelType: VisionDetectionModelType;
-  linkedResourceId?: number;
-  linkedResourceExternalId?: string;
-  linkedResourceType?: 'asset';
-};
+import {
+  LegacyKeypointData,
+  LegacyAnnotation,
+  LegacyAnnotationMetadata,
+  LegacyAnnotationSource,
+  LegacyAnnotationStatus,
+  LegacyAnnotationType,
+  LegacyUnsavedAnnotation,
+  LegacyVisionAnnotation,
+} from 'src/api/annotation/legacyTypes';
 
 export const ModelTypeStyleMap = {
   [VisionDetectionModelType.OCR]: ColorsOCR,
@@ -76,7 +48,9 @@ export const ModelTypeIconMap: { [key: number]: string } = {
   [VisionDetectionModelType.CustomModel]: 'Scan',
 };
 
-export const ModelTypeAnnotationTypeMap: { [key: number]: AnnotationTypeV1 } = {
+export const ModelTypeAnnotationTypeMap: {
+  [key: number]: LegacyAnnotationType;
+} = {
   [VisionDetectionModelType.OCR]: 'vision/ocr',
   [VisionDetectionModelType.TagDetection]: 'vision/tagdetection',
   [VisionDetectionModelType.ObjectDetection]: 'vision/objectdetection',
@@ -102,7 +76,7 @@ export class AnnotationUtilsV1 {
   public static getAnnotationColor(
     text: string,
     modelType: VisionDetectionModelType,
-    data?: AnnotationMetadataV1
+    data?: LegacyAnnotationMetadata
   ): string {
     if (data) {
       if (data.color) {
@@ -128,8 +102,8 @@ export class AnnotationUtilsV1 {
   };
 
   public static convertToVisionAnnotationsV1(
-    annotations: CDFAnnotationV1[]
-  ): VisionAnnotationV1[] {
+    annotations: LegacyAnnotation[]
+  ): LegacyVisionAnnotation[] {
     return annotations.map((value) => {
       let ann = AnnotationUtilsV1.createVisionAnnotationStubV1(
         value.id,
@@ -171,14 +145,14 @@ export class AnnotationUtilsV1 {
     lastUpdatedTime: number,
     region?: AnnotationRegion,
     type: RegionType = 'rectangle', // TODO: get this from region.shape?
-    source: AnnotationSourceV1 = 'user',
-    status = AnnotationStatus.Unhandled,
-    data?: AnnotationMetadataV1,
-    annotationType: AnnotationTypeV1 = 'vision/ocr',
+    source: LegacyAnnotationSource = 'user',
+    status = LegacyAnnotationStatus.Unhandled,
+    data?: LegacyAnnotationMetadata,
+    annotationType: LegacyAnnotationType = 'vision/ocr',
     fileExternalId?: string,
     assetId?: number,
     assetExternalId?: string
-  ): VisionAnnotationV1 {
+  ): LegacyVisionAnnotation {
     const modifiedData = // use random color for keypoints if no color information exist
       !data || !data.keypoint || !data.keypoints?.length
         ? data
@@ -218,9 +192,9 @@ export class AnnotationUtilsV1 {
   }
 
   public static convertToAnnotation(
-    value: VisionAnnotationV1
-  ): CDFAnnotationV1 {
-    const ann: CDFAnnotationV1 = {
+    value: LegacyVisionAnnotation
+  ): LegacyAnnotation {
+    const ann: LegacyAnnotation = {
       id: value.id,
       createdTime: value.createdTime,
       lastUpdatedTime: value.lastUpdatedTime,
@@ -241,9 +215,9 @@ export class AnnotationUtilsV1 {
   }
 
   public static filterAnnotations(
-    annotations: VisionAnnotationV1[],
+    annotations: LegacyVisionAnnotation[],
     filter?: AnnotationFilterType
-  ): VisionAnnotationV1[] {
+  ): LegacyVisionAnnotation[] {
     let filteredAnnotations = annotations;
     if (filter) {
       if (filter.annotationState) {
@@ -261,7 +235,7 @@ export class AnnotationUtilsV1 {
   }
 
   public static getAnnotationsDetectionModelType = (
-    ann: CDFAnnotationV1
+    ann: LegacyAnnotation
   ): VisionDetectionModelType => {
     if (isAssetLinkedAnnotation(ann)) {
       return VisionDetectionModelType.TagDetection;
@@ -274,16 +248,16 @@ export class AnnotationUtilsV1 {
   };
 
   public static filterAnnotationsIdsByAnnotationStatus(
-    annotations: VisionAnnotationV1[]
+    annotations: LegacyVisionAnnotation[]
   ): AnnotationIdsByStatus {
     const rejectedAnnotationIds: number[] = [];
     const acceptedAnnotationIds: number[] = [];
     const unhandledAnnotationIds: number[] = [];
     annotations.forEach((annotation) => {
       const annotationId = annotation.id;
-      if (annotation.status === AnnotationStatus.Verified)
+      if (annotation.status === LegacyAnnotationStatus.Verified)
         acceptedAnnotationIds.push(annotationId);
-      else if (annotation.status === AnnotationStatus.Rejected)
+      else if (annotation.status === LegacyAnnotationStatus.Rejected)
         rejectedAnnotationIds.push(annotationId);
       else unhandledAnnotationIds.push(annotationId);
     });
@@ -295,7 +269,7 @@ export class AnnotationUtilsV1 {
   }
 
   public static filterAnnotationsIdsByConfidence(
-    annotations: VisionAnnotationV1[],
+    annotations: LegacyVisionAnnotation[],
     rejectedThreshold: number,
     acceptedThreshold: number
   ): AnnotationIdsByStatus {
@@ -330,9 +304,9 @@ export class AnnotationUtilsV1 {
   }
 }
 
-const populateKeyPoints = (annotation: VisionAnnotationV1) => {
-  const keypointAnnotation: VisionAnnotationV1 = { ...annotation };
-  const keypointMeta = (annotation.data as AnnotationMetadataV1).keypoints;
+const populateKeyPoints = (annotation: LegacyVisionAnnotation) => {
+  const keypointAnnotation: LegacyVisionAnnotation = { ...annotation };
+  const keypointMeta = (annotation.data as LegacyAnnotationMetadata).keypoints;
 
   if (keypointAnnotation.region) {
     if (keypointMeta) {
@@ -341,7 +315,7 @@ const populateKeyPoints = (annotation: VisionAnnotationV1) => {
           const keyPointData =
             (keypointMeta.find(
               (keyPointMetaItem) => keyPointMetaItem.order === String(index + 1)
-            ) as KeypointItem) || {};
+            ) as LegacyKeypointData) || {};
 
           return {
             ...vertex,
@@ -418,7 +392,7 @@ const populateKeyPoints = (annotation: VisionAnnotationV1) => {
   return keypointAnnotation;
 };
 
-export const getAnnotationCounts = (annotations: VisionAnnotationV1[]) => {
+export const getAnnotationCounts = (annotations: LegacyVisionAnnotation[]) => {
   const counts: { [text: string]: number } = {};
 
   annotations.forEach((item) => {
@@ -429,7 +403,7 @@ export const getAnnotationCounts = (annotations: VisionAnnotationV1[]) => {
 };
 
 export const getAnnotationsBadgeCounts = (
-  annotations: VisionAnnotationV1[]
+  annotations: LegacyVisionAnnotation[]
 ) => {
   const annotationsBadgeProps: AnnotationsBadgeCounts = {
     objects: 0,
@@ -493,17 +467,18 @@ export const calculateBadgeCountsDifferences = (
 };
 
 export const isAnnotation = (
-  ann: DetectedAnnotation | CDFAnnotationV1 | UnsavedAnnotation
-): ann is CDFAnnotationV1 => {
+  ann: DetectedAnnotation | LegacyAnnotation | LegacyUnsavedAnnotation
+): ann is LegacyAnnotation => {
   return (
-    !!(ann as CDFAnnotationV1).id && !!(ann as CDFAnnotationV1).lastUpdatedTime
+    !!(ann as LegacyAnnotation).id &&
+    !!(ann as LegacyAnnotation).lastUpdatedTime
   );
 };
 
 export const isUnSavedAnnotation = (
-  ann: DetectedAnnotation | CDFAnnotationV1 | UnsavedAnnotation
-): ann is UnsavedAnnotation => {
-  return !(ann as CDFAnnotationV1).lastUpdatedTime;
+  ann: DetectedAnnotation | LegacyAnnotation | LegacyUnsavedAnnotation
+): ann is LegacyUnsavedAnnotation => {
+  return !(ann as LegacyAnnotation).lastUpdatedTime;
 };
 
 /**
@@ -516,10 +491,10 @@ export const createUniqueId = (text: string): string => {
 // todo: remove this function once they are not needed - start
 
 export const tempConvertAnnotationStatus = (
-  status: AnnotationStatus
-): AnnotationStatus => {
-  if (status === AnnotationStatus.Deleted) {
-    return AnnotationStatus.Rejected;
+  status: LegacyAnnotationStatus
+): LegacyAnnotationStatus => {
+  if (status === LegacyAnnotationStatus.Deleted) {
+    return LegacyAnnotationStatus.Rejected;
   }
   return status;
 };
