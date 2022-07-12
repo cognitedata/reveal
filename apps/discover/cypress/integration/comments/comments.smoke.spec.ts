@@ -1,10 +1,14 @@
+import {
+  interceptGetSavedSearches,
+  GET_SAVED_SEARCHES_ALIAS,
+} from '../../support/interceptions';
+
 const favoriteToComments = `favorite to show comments, ${Date.now()}`;
 const savedSearch = `saved ${Date.now()}`;
 const commentText = `comment text, ${Date.now()}`;
-const feedbackText = `feedback text, ${Date.now()}`;
+// const feedbackText = `feedback text, ${Date.now()}`;
 
-// eslint-disable-next-line jest/no-disabled-tests
-describe.skip('Comments', () => {
+describe('Comments', () => {
   const checkIfCommentsBarIsShowing = () => {
     cy.findByTestId('comments-root').then(($subject) => {
       cy.wrap($subject).findByTestId('editable-area').should('be.visible');
@@ -16,13 +20,6 @@ describe.skip('Comments', () => {
     cy.findByTestId('top-bar').findByRole('tab', { name: 'Favorites' }).click();
     cy.url().should('include', '/favorites');
   };
-
-  const goToSavedSearches = () => {
-    cy.log('Go to Saved Searches tab');
-    cy.findByRole('tab', { name: 'Saved Searches' }).click();
-    cy.url().should('include', '/saved-searches');
-  };
-
   const openCommentBar = () => {
     cy.log('Open the comment bar');
     cy.findByTestId(`favorite-card-${favoriteToComments}`)
@@ -52,14 +49,21 @@ describe.skip('Comments', () => {
         status: 1,
       },
     }, true); */
-    cy.log('Create a savedsearch');
-    cy.createSavedSearch(savedSearch, true);
+    // cy.log('Create a savedsearch');
+    // cy.createSavedSearch(savedSearch, true);
   });
 
   it('Should show comments on the SavedSearch page', () => {
-    goToFavoritesPage();
-    goToSavedSearches();
+    interceptGetSavedSearches();
+
+    cy.log('Create a savedsearch');
+    cy.clickSavedSearchButton();
+    cy.createNewSavedSearch(savedSearch);
+
+    cy.goToSavedSearches();
+    cy.wait(`@${GET_SAVED_SEARCHES_ALIAS}`);
     cy.log('Find the search on the saved searches page');
+    cy.findAllByTitle(savedSearch).should('be.visible');
     cy.findByTitle(savedSearch)
       .parents("[role='row']")
       .then(($row) => {
@@ -83,7 +87,6 @@ describe.skip('Comments', () => {
   });
 
   it('Should be able to post comments', () => {
-    openCommentBar();
     cy.log('Post a comment');
     cy.findByTestId('comments-root').then(($subject) => {
       cy.wrap($subject).findByTestId('editable-area').type(commentText);
@@ -94,7 +97,6 @@ describe.skip('Comments', () => {
   });
 
   it('Should be able to edit comments', () => {
-    openCommentBar();
     cy.findByTestId('comments-root').then(($subject) => {
       cy.wrap($subject).findByText(commentText);
       cy.log('Click the edit comment button');
@@ -105,7 +107,7 @@ describe.skip('Comments', () => {
         .closest("[data-testid='editable-area']")
         .type('modified');
       cy.log('Save the modified comment');
-      cy.findByText('Edit').click({ force: true });
+      cy.findByText('Save').click({ force: true });
       cy.wrap($subject)
         .findByText(`${commentText}modified`)
         .should('be.visible');
