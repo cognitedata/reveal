@@ -10,6 +10,13 @@ export { PickParams };
 export class PointCloudOctreePicker {
   private static readonly helperVec3 = new Vector3();
   private pickState: IPickState | undefined;
+  private readonly _renderer: WebGLRenderer;
+  private readonly _pickerHelper: PointCloudOctreePickerHelper;
+
+  constructor(renderer: WebGLRenderer) {
+    this._renderer = renderer;
+    this._pickerHelper = new PointCloudOctreePickerHelper(renderer);
+  }
 
   dispose(): void {
     if (this.pickState) {
@@ -18,22 +25,15 @@ export class PointCloudOctreePicker {
     }
   }
 
-  pick(
-    renderer: WebGLRenderer,
-    camera: Camera,
-    ray: Ray,
-    octrees: PointCloudOctree[],
-    params: Partial<PickParams> = {}
-  ): PickPoint | null {
+  pick(camera: Camera, ray: Ray, octrees: PointCloudOctree[], params: Partial<PickParams> = {}): PickPoint | null {
     if (octrees.length === 0) {
       return null;
     }
     const pickState = this.pickState ? this.pickState : (this.pickState = PointCloudOctreePickerHelper.getPickState());
     const pickMaterial = pickState.material;
-    const helper = new PointCloudOctreePickerHelper(renderer);
 
     try {
-      const renderSize = renderer.getDrawingBufferSize(new Vector2());
+      const renderSize = this._renderer.getDrawingBufferSize(new Vector2());
       PointCloudOctreePickerHelper.updatePickRenderTarget(this.pickState, renderSize.x, renderSize.y);
 
       const pixelPosition = PointCloudOctreePicker.helperVec3; // Use helper vector to prevent extra allocations.
@@ -51,18 +51,18 @@ export class PointCloudOctreePicker {
       const x = Math.floor(clamp(pixelPosition.x - halfPickWndSize, 0, renderSize.x));
       const y = Math.floor(clamp(pixelPosition.y - halfPickWndSize, 0, renderSize.y));
 
-      helper.prepareRender(x, y, pickWndSize, pickMaterial, pickState);
-      const renderedNodes = helper.render(camera, pickMaterial, octrees, ray, pickState, params);
+      this._pickerHelper.prepareRender(x, y, pickWndSize, pickMaterial, pickState);
+      const renderedNodes = this._pickerHelper.render(camera, pickMaterial, octrees, ray, pickState, params);
 
       // Read back image and decode hit point
-      const pixels = helper.readPixels(x, y, pickWndSize);
+      const pixels = this._pickerHelper.readPixels(x, y, pickWndSize);
       const hit = PointCloudOctreePickerHelper.findHit(pixels, pickWndSize, renderedNodes, camera);
 
       return PointCloudOctreePickerHelper.getPickPoint(hit, renderedNodes);
     } finally {
       // Cleanup
       pickMaterial.clearVisibleNodeTextureOffsets();
-      helper.resetState();
+      this._pickerHelper.resetState();
     }
   }
 }

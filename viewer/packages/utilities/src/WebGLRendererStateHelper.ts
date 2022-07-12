@@ -128,6 +128,8 @@ export class WebGLRendererStateHelper {
       this._renderer.setScissorTest(this._originalState.scissorTest);
     }
     if (this._originalState.webGLState !== undefined) {
+      this._renderer.state.reset();
+
       if (this._originalState.webGLState?.buffers?.depth) {
         const lastTest = this._originalState.webGLState.buffers.depth?.test;
         const lastMask = this._originalState.webGLState.buffers.depth?.mask;

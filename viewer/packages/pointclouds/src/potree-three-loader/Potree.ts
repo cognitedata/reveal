@@ -111,8 +111,8 @@ export class Potree implements IPotree {
     ray: Ray,
     params: Partial<PickParams> = {}
   ): PickPoint | null {
-    Potree.picker = Potree.picker || new PointCloudOctreePicker();
-    return Potree.picker.pick(renderer, camera, ray, pointClouds, params);
+    Potree.picker = Potree.picker || new PointCloudOctreePicker(renderer);
+    return Potree.picker.pick(camera, ray, pointClouds, params);
   }
 
   get pointBudget(): number {
