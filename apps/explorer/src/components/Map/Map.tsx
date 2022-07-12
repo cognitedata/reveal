@@ -12,10 +12,10 @@ const fullStyle = { width: '100%', height: '100%' };
 interface Props {
   client: CogniteClient;
   model: AddModelOptions;
-  setDestination: (treeNodeId: number | undefined) => void;
+  setNodeIdInUrl: (treeNodeId: number | undefined) => void;
 }
 
-const Map: React.FC<Props> = ({ client, model, setDestination }) => {
+const Map: React.FC<Props> = ({ client, model, setNodeIdInUrl }) => {
   const viewer = React.useRef<Cognite3DViewer>();
   // Need to work on connecting this with nodeId
   const [_treeIndex, setTreeIndex] = React.useState<number>();
@@ -30,7 +30,7 @@ const Map: React.FC<Props> = ({ client, model, setDestination }) => {
       model
     );
 
-    setDestination(newTreeNodeId);
+    setNodeIdInUrl(newTreeNodeId);
     setTreeIndex(newTreeIndex);
   };
 

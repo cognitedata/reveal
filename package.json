@@ -178,6 +178,7 @@
     "react-use": "^17.3.2",
     "react-virtualized": "^9.21.2",
     "react-virtualized-tree": "^3.4.1",
+    "recoil": "^0.7.4",
     "redux": "^4.1.1",
     "redux-actions": "^2.6.5",
     "redux-devtools-extension": "^2.13.9",

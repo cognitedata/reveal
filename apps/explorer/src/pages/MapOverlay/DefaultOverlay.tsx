@@ -1,10 +1,10 @@
 import { AvatarButton } from 'components/AvatarButton';
 import { AbsoluteHeader } from 'components/Header';
 import { NavigateToSearchButton } from 'components/SearchBar';
-import { PAGES } from 'pages/routers/constants';
+import { PAGES } from 'pages/constants';
 import { Link } from 'react-router-dom';
 
-export const DefaultView = () => (
+export const DefaultOverlay = () => (
   <AbsoluteHeader>
     <AbsoluteHeader.Left>
       <NavigateToSearchButton />

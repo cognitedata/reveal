@@ -1,9 +1,11 @@
 import { useRouteMatch } from 'react-router-dom';
-import { PAGES } from 'pages/routers/constants';
+import { PAGES } from 'pages/constants';
 
 export const usePageSettings = () => {
-  const match = useRouteMatch(PAGES.HOME)?.isExact || false;
+  const matchHomePath = useRouteMatch(PAGES.HOME)?.path;
+  const isFullScreen = matchHomePath === PAGES.HOME || false;
+
   return {
-    isFullScreen: match,
+    isFullScreen,
   };
 };

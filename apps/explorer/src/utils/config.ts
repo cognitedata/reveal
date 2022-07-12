@@ -16,7 +16,7 @@ const env = {
     },
     'discover-test-bluefield': {
       modelId: 2917764993669823,
-      revisionId: 4809067008094381,
+      revisionId: 3478149284839956,
     },
   } as Record<string, AddModelOptions>,
 };

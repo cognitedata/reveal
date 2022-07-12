@@ -1,7 +1,7 @@
 import { AvatarButton } from 'components/AvatarButton';
 import { RegularHeader } from 'components/Header';
 import { NavigateToSearchButton } from 'components/SearchBar';
-import { PAGES } from 'pages/routers/constants';
+import { PAGES } from 'pages/constants';
 import React from 'react';
 import { Link } from 'react-router-dom';
 

@@ -2,7 +2,7 @@ import GlobalStyles from 'global-styles';
 import sidecar from 'utils/sidecar';
 import { Loader } from '@cognite/cogs.js';
 import { ContainerWithoutI18N, AuthConsumer } from '@cognite/react-container';
-import { AppRouter } from 'pages/routers/AppRouter';
+import { AppRouter } from 'pages/App/AppRouter';
 import { ProvideAuthSetup } from 'components/ProvideAuthSetup';
 
 const App = () => (

@@ -7,7 +7,8 @@ export const getObjectsFromItems = (items: SearchDataFormat[]) => {
 
   items.forEach((item) => {
     const filteredItem = {
-      id: item.id,
+      ...item,
+      externalId: item.externalId,
       name: item.name,
       iconSrc: item.iconSrc ? item.iconSrc : 'Cube',
       description: item.description,

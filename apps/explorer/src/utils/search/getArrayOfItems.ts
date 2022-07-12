@@ -17,11 +17,9 @@ export const getArrayOfItems = (
     const sectionItems = searchResults[section]?.items || [];
     sectionItems.forEach((item: any) => {
       const filteredItem = {
-        id: item.externalId,
-        name: item.name,
+        ...item,
         iconSrc: item.icon ? item.icon : 'Cube',
         section,
-        description: item.description,
       };
       items.push(filteredItem);
     });

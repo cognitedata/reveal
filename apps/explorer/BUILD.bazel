@@ -86,6 +86,7 @@ DEPENDENCIES = [
     "@npm//react-i18next",
     "@npm//react-query",
     "@npm//react-router-dom",
+    "@npm//recoil",
     "@npm//styled-components",
     "//packages/react-container",
     "//packages/metrics",

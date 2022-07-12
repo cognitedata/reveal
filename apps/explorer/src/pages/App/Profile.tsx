@@ -7,7 +7,7 @@ import { Button, Input, Title } from '@cognite/cogs.js';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
-import { PAGES } from './routers/constants';
+import { PAGES } from '../constants';
 
 export const PageWrapper = styled.div``;
 export const PageHeader = styled.div``;
