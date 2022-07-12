@@ -4,6 +4,8 @@ title: Pointcloud styling
 description: Usage of the styling API for pointcloud models
 ---
 
+Cognite Data Fusion has a concept of "objects" in point clouds, represented by one or more bounding volumes for 
+each object. The objects are backed by the [CDF Annotations API](https://docs.cognite.com/api/v1/#tag/Annotations). 
 `@cognite/reveal` supports styling individual objects within a point cloud.
 
 import { DemoWrapper } from '@site/versioned_docs/version-4.x/components/DemoWrapper';
@@ -12,7 +14,7 @@ import { DemoWrapper } from '@site/versioned_docs/version-4.x/components/DemoWra
 
 In this context, a _stylable object_ represents some volume in space. Styling an object results in all points that lie within the corresponding volume to attain the assigned style.
 
-Stylable objects must be supplied separately from the model itself. Upon adding a new point cloud model to the viewer, Reveal will automatically fetch data describing the point cloud objects from CDFs annotations API, if any are available. To get the number of fetched stylable objects, use the property `model.stylableObjectCount`, where `model` is a `CognitePointCloudModel`.
+Stylable objects must be supplied separately from the model itself. Upon adding a new point cloud model to the viewer, Reveal will automatically fetch data describing the point cloud objects from CDFs Annotations API, if any are available. To get the number of fetched stylable objects, use the property `model.stylableObjectCount`, where `model` is a `CognitePointCloudModel`.
 
 Point cloud objects can be styled with a `PointCloudAppearance` object, containing the following attributes:
 
@@ -25,7 +27,7 @@ To assign a style to one or more stylable objects, you must first create an inst
 
 To color all objects red:
 
-```js runnable-4x
+```js runnable
 const annotationIds = [];
 
 model.traverseStylableObjects(annotationMetadata => annotationIds.push(annotationMetadata.annotationId));
@@ -38,11 +40,11 @@ model.assignStyledObjectCollection(objectCollection, appearance);
 
 Use the property `model.styledCollections` to get a list of all object collections and their assigned style registered on the model.
 
-## Default Appearance
+## Default appearance
 
 It is also possible to set a default appearance for the point cloud using the `model.setDefaultPointCloudAppearance`. The following example makes all annotated objects visible, while hiding everything else:
 
-```js runnable-4x
+```js runnable
 const annotationIds = [];
 
 model.traverseStylableObjects(annotationMetadata => annotationIds.push(annotationMetadata.annotationId));
@@ -56,6 +58,6 @@ model.setDefaultPointCloudAppearance({ visible: false });
 
 Like in CAD styling, stylable objects that are part of multiple styled object collections will attain the appearance of the object set whose first style assignment was last.
 
-## Unassigning Styled Object Collections
+## Unassigning styled object collections
 
-To revert an assignment of a style to an object collection, you may use `model.unassignStyledObjectCollection`, using the `PointCloudObjectCollection` as argument. To reset all styled objects use `model.removeAllStyledCollections`
+To reset style of an object collection, use `model.unassignStyledObjectCollection` with the previously styled `PointCloudObjectCollection` as argument. To reset all styled objects use `model.removeAllStyledCollections`
