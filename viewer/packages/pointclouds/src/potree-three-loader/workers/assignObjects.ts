@@ -35,8 +35,13 @@ export function computeObjectIdBuffer(
   const rawObjectIdBuffer = new ArrayBuffer(2 * numPoints);
   const objectIdBufferView = new Uint16Array(rawObjectIdBuffer);
 
+  const helpVec = new THREE.Vector3();
+
   for (let i = 0; i < objectIdBufferView.length; i++) {
-    const position = new THREE.Vector3().fromArray(positionBuffer.slice(3 * i, 3 * (i + 1))).add(pointOffset);
+    const position = helpVec.set(
+      positionBuffer[3 * i],
+      positionBuffer[3 * i + 1],
+      positionBuffer[3 * i + 2]).add(pointOffset);
 
     const elements = bvh.findContainingElements(position);
 
