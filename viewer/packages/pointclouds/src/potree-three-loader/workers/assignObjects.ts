@@ -38,10 +38,9 @@ export function computeObjectIdBuffer(
   const helpVec = new THREE.Vector3();
 
   for (let i = 0; i < objectIdBufferView.length; i++) {
-    const position = helpVec.set(
-      positionBuffer[3 * i],
-      positionBuffer[3 * i + 1],
-      positionBuffer[3 * i + 2]).add(pointOffset);
+    const position = helpVec
+      .set(positionBuffer[3 * i], positionBuffer[3 * i + 1], positionBuffer[3 * i + 2])
+      .add(pointOffset);
 
     const elements = bvh.findContainingElements(position);
 
