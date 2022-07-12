@@ -43,7 +43,7 @@ import {
   sampleCDFAnnotation6,
   sampleCDFAnnotation7,
   sampleCDFAnnotations,
-} from 'src/__test-utils/annotationsCDF';
+} from 'src/__test-utils/fixtures/annotationsCDF';
 
 describe('Test convertCDFAnnotationV1ToImageClassification', () => {
   test('Missing text', () => {
