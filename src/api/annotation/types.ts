@@ -140,7 +140,7 @@ export type CDFAnnotationType<Type> = Type extends ImageObjectDetection
   ? CDFAnnotationTypeEnum.ImagesClassification
   : never;
 
-export type CDFAnnotationV2<Type> = AnnotatedResourceId & {
+export type CDFAnnotation<Type> = AnnotatedResourceId & {
   id: number;
   createdTime: Timestamp;
   lastUpdatedTime: Timestamp;

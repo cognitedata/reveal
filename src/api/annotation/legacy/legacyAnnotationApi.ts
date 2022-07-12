@@ -7,7 +7,7 @@ import {
   LegacyAnnotationUpdateRequest,
 } from './legacyTypes';
 
-export class AnnotationApiV1 {
+export class LegacyAnnotationApi {
   public static listCursor = async (
     request: LegacyAnnotationListRequest
   ): Promise<{
@@ -50,7 +50,7 @@ export class AnnotationApiV1 {
       }
 
       // eslint-disable-next-line no-await-in-loop
-      const response = await AnnotationApiV1.listCursor({
+      const response = await LegacyAnnotationApi.listCursor({
         limit: currentLimit,
         cursor,
         filter: request.filter,

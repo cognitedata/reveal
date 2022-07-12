@@ -1,19 +1,7 @@
 import { FileInfo } from '@cognite/sdk';
 import { ColumnShape } from 'react-base-table';
-import {
-  JobStatus,
-  VisionDetectionModelType,
-} from 'src/api/vision/detectionModels/types';
+import { JobStatus } from 'src/api/vision/detectionModels/types';
 import { AnnotationFilterType } from 'src/modules/FilterSidePanel/types';
-import { LegacyAnnotation } from 'src/api/annotation/legacyTypes';
-
-export interface AnnotationPreview
-  extends Pick<
-    LegacyAnnotation,
-    'id' | 'annotatedResourceId' | 'status' | 'source' | 'text' | 'region'
-  > {
-  modelType: VisionDetectionModelType;
-}
 
 export type AnnotationStatuses = {
   status: JobStatus;

@@ -5,11 +5,11 @@ import {
   PredefinedShape,
 } from 'src/modules/Review/types';
 import { ThunkConfig } from 'src/store/rootReducer';
-import { AnnotationApiV1 } from 'src/api/annotation/AnnotationApiV1';
+import { LegacyAnnotationApi } from 'src/api/annotation/legacy/legacyAnnotationApi';
+import { LegacyUnsavedAnnotation } from 'src/api/annotation/legacy/legacyTypes';
 import { PopulateAnnotationTemplates } from 'src/store/thunks/Annotation/PopulateAnnotationTemplates';
-import { AnnotationUtilsV1 } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 import { VisionDetectionModelType } from 'src/api/vision/detectionModels/types';
-import { LegacyUnsavedAnnotation } from 'src/api/annotation/legacyTypes';
+import { LegacyAnnotationUtils } from 'src/api/annotation/legacy/legacyAnnotationUtils';
 
 export const SaveAnnotationTemplates = createAsyncThunk<
   PredefinedVisionAnnotations,
@@ -111,7 +111,7 @@ export const SaveAnnotationTemplates = createAsyncThunk<
 
   if (unsavedAnnotations.length) {
     const data = { items: unsavedAnnotations };
-    const response = await AnnotationApiV1.create(data);
+    const response = await LegacyAnnotationApi.create(data);
     const templateAnnotations = response.data.items;
     templateAnnotations.forEach((templateAnnotation) => {
       if (templateAnnotation.data?.keypoint && templateAnnotation.data.color) {
@@ -126,7 +126,7 @@ export const SaveAnnotationTemplates = createAsyncThunk<
         shapes.push({
           id: templateAnnotation.id,
           lastUpdated: templateAnnotation.lastUpdatedTime,
-          color: AnnotationUtilsV1.getAnnotationColor(
+          color: LegacyAnnotationUtils.getAnnotationColor(
             templateAnnotation.text,
             VisionDetectionModelType.ObjectDetection,
             templateAnnotation.data

@@ -13,6 +13,7 @@ import {
   getAnnotationLabelOrText,
   getAnnotationsBadgeCounts,
   generateKeypointId,
+  calculateBadgeCountsDifferences,
 } from 'src/modules/Common/Utils/AnnotationUtils/AnnotationUtils';
 import {
   AnnotationsBadgeCounts,
@@ -20,7 +21,6 @@ import {
   VisionAnnotationDataType,
 } from 'src/modules/Common/types';
 import { Status } from 'src/api/annotation/types';
-import { calculateBadgeCountsDifferences } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
 
 const ANN_WITH_PUMP_LABEL_OR_TEXT_COUNT = 6;
 const ANN_WITH_SUGGESTED_PUMP_COUNT = 5;
