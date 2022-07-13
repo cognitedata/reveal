@@ -18,7 +18,7 @@ import { NPTFilterByName } from './NPTFilterByName';
 export const FilterContainer: React.FC<{
   isVisible: boolean;
 }> = React.memo(({ isVisible }) => {
-  const { data, nptCodeDefinitions, nptDetailCodeDefinitions } =
+  const { isLoading, data, nptCodeDefinitions, nptDetailCodeDefinitions } =
     useNptDataForTable();
 
   const dispatch = useDispatch();
@@ -38,12 +38,15 @@ export const FilterContainer: React.FC<{
   );
 
   useEffect(() => {
-    batch(() => {
-      dispatch(inspectTabsActions.setNptDuration(minMaxDuration));
-      dispatch(inspectTabsActions.setNptCode(nptCodes));
-      dispatch(inspectTabsActions.setNptDetailCode(nptDetailCodes));
-    });
-  }, []);
+    // the state was set to early, this way we wait for the initial data fetch
+    if (!isLoading) {
+      batch(() => {
+        dispatch(inspectTabsActions.setNptDuration(minMaxDuration));
+        dispatch(inspectTabsActions.setNptCode(nptCodes));
+        dispatch(inspectTabsActions.setNptDetailCode(nptDetailCodes));
+      });
+    }
+  }, [isLoading]);
 
   if (!isVisible) return null;
 
