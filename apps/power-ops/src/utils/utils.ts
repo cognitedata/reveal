@@ -1,6 +1,6 @@
 import { CalculatedProduction } from '@cognite/power-ops-api-types';
 import { DoubleDatapoint } from '@cognite/sdk';
-import { PriceAreaWithData, SequenceRow } from 'types';
+import { MatrixWithData, PriceAreaWithData } from 'types';
 import sidecar from 'utils/sidecar';
 import axios from 'axios';
 import dayjs from 'dayjs';
@@ -43,15 +43,21 @@ export const pickChartColor = (index: number) => {
 };
 
 export const interpolateProduction = (
-  lowerBoundColumn: SequenceRow,
-  upperBoundColumn: SequenceRow,
+  matrix: MatrixWithData,
+  lowerBoundIndex: number,
+  upperBoundIndex: number,
   hour: number,
   shopPrice: number
 ) => {
-  const lowerBoundValue = (lowerBoundColumn[hour + 1] as number) || 0;
-  const upperBoundValue = (upperBoundColumn?.[hour + 1] as number) || 0;
-  const lowerBoundPrice = (lowerBoundColumn[0] as number) || 0;
-  const upperBoundPrice = (upperBoundColumn?.[0] as number) || 0;
+  const lowerBoundValue =
+    (matrix.dataRows[hour][lowerBoundIndex] as number) || 0;
+  const upperBoundValue =
+    (matrix.dataRows[hour][upperBoundIndex] as number) || 0;
+  const lowerBoundPrice =
+    (matrix.columnHeaders[lowerBoundIndex] as number) || 0;
+  const upperBoundPrice =
+    (matrix.columnHeaders[upperBoundIndex] as number) || 0;
+
   return linearInterpolation(
     lowerBoundValue,
     upperBoundValue,
@@ -71,11 +77,12 @@ export const linearInterpolation = (
   if (scenarioPrice === lowerBoundPrice) {
     return lowerBoundProd;
   }
-  return (
-    lowerBoundProd +
-    ((upperBoundProd - lowerBoundProd) * (scenarioPrice - lowerBoundPrice)) /
-      (upperBoundPrice - lowerBoundPrice)
-  );
+  return upperBoundPrice - lowerBoundPrice !== 0
+    ? lowerBoundProd +
+        ((upperBoundProd - lowerBoundProd) *
+          (scenarioPrice - lowerBoundPrice)) /
+          (upperBoundPrice - lowerBoundPrice)
+    : 0;
 };
 
 export const roundWithDec = (number: number, decimals: number) => {
@@ -84,29 +91,33 @@ export const roundWithDec = (number: number, decimals: number) => {
 
 export const calculateScenarioProduction = (
   scenarioPricePerHour: DoubleDatapoint[],
-  sequenceRows: SequenceRow[]
+  matrix: MatrixWithData
 ): CalculatedProduction[] => {
   const production: CalculatedProduction[] = [];
   scenarioPricePerHour.forEach((scenarioPrice, hour) => {
-    let lowerBoundColumn: SequenceRow = sequenceRows[0];
-    let upperBoundColumn: SequenceRow = sequenceRows[0];
-    sequenceRows.every((row) => {
-      // Price is always column 0 in a matrix sequence
-      const price = row[0] as number;
+    let lowerBoundIndex = 1;
+    let upperBoundIndex = 1;
+
+    matrix.columnHeaders.every((price, priceIndex) => {
+      // First column header is "Hour" so we start from index 1
+      if (typeof price === 'string') return true;
+
       if (price < scenarioPrice.value) {
-        lowerBoundColumn = row;
+        lowerBoundIndex = priceIndex;
         return true;
       }
-      upperBoundColumn = row;
+      upperBoundIndex = priceIndex;
       return false;
     });
 
     const calculatedProduction = interpolateProduction(
-      lowerBoundColumn,
-      upperBoundColumn,
+      matrix,
+      lowerBoundIndex,
+      upperBoundIndex,
       hour,
       scenarioPrice.value
     );
+
     production.push({
       timestamp: scenarioPrice.timestamp,
       price: scenarioPrice.value,
@@ -117,30 +128,48 @@ export const calculateScenarioProduction = (
   return production;
 };
 
+export const fetchBidMatricesData = async (
+  externalIds: string[],
+  project: string | undefined,
+  token: string | undefined,
+  format: 'zip' | 'json' | 'csv'
+) => {
+  const { powerOpsApiBaseUrl } = sidecar;
+
+  const matrixExternalIds = externalIds
+    .map((id) => `externalId=${id}`)
+    .join('&');
+
+  const url = `${powerOpsApiBaseUrl}/${project}/sequence/bid-matrix?${matrixExternalIds}`;
+  return axios.get(url, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      Accept: `application/${format}`,
+    },
+    responseType: format === 'json' ? 'json' : 'blob',
+  });
+};
+
 export const downloadBidMatrices = async (
   priceArea: PriceAreaWithData,
   project: string | undefined,
   token: string | undefined
 ) => {
-  const { powerOpsApiBaseUrl } = sidecar;
-
-  const totalMatrixExternalId = priceArea.totalMatrix?.externalId;
-  const plantMatrixExternalIds = priceArea.plantMatrixes
-    ?.map((plant) => `&externalId=${plant.matrix?.externalId}`)
-    .join('');
-  const url = `${powerOpsApiBaseUrl}/${project}/sequence/bid-matrix?externalId=${totalMatrixExternalId}${plantMatrixExternalIds}`;
-  await axios
-    .get(url, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        Accept: 'application/zip',
-      },
-      responseType: 'blob',
-    })
-    .then((response) => {
+  if (priceArea.totalMatrix?.externalId && priceArea.plantMatrixes) {
+    const totalMatrixExternalId = priceArea.totalMatrix.externalId;
+    const plantMatrixExternalIds = priceArea.plantMatrixes.map(
+      (plant) => plant.matrix!.externalId
+    );
+    await fetchBidMatricesData(
+      [totalMatrixExternalId, ...plantMatrixExternalIds],
+      project,
+      token,
+      'zip'
+    ).then((response) => {
       const blob: Blob = new Blob([response.data]);
       triggerDownloadFromBlob('bid-matrices.zip', blob);
     });
+  }
 };
 
 export const triggerDownloadFromBlob = (fileName: string, blob: Blob) => {

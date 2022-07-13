@@ -3,11 +3,11 @@ import {
   PriceArea,
   BidProcessConfiguration,
 } from '@cognite/power-ops-api-types';
-import { useQuery } from 'react-query';
+import { QueryClient, useQuery } from 'react-query';
 import sidecar from 'utils/sidecar';
 import { CogniteClient } from '@cognite/sdk';
-import { getBidMatrixData } from 'components/BidMatrix/utils';
 import { PriceAreaWithData } from 'types';
+import { fetchBidMatricesData } from 'utils/utils';
 
 export const fetchProcessConfigurations = async ({
   client,
@@ -34,13 +34,48 @@ export const fetchProcessConfigurations = async ({
   return processConfigurations;
 };
 
+const getMatrixDataFromCache = async (
+  matrixExternalId: string,
+  queryClient: QueryClient,
+  project: string,
+  token: string
+) => {
+  const queryData:
+    | { dataRows: Array<number[]>; columnHeaders: Array<number | string> }
+    | undefined = queryClient.getQueryData(matrixExternalId);
+
+  if (!queryData) {
+    const { data: serverData } = await fetchBidMatricesData(
+      [matrixExternalId],
+      project,
+      token,
+      'json'
+    );
+    const formattedData = {
+      dataRows: serverData.dataRows,
+      columnHeaders: serverData.headerRow,
+    };
+
+    queryClient.setQueryData<{
+      dataRows: Array<number[]>;
+      columnHeaders: Array<number | string>;
+    }>(matrixExternalId, formattedData);
+
+    return formattedData;
+  }
+
+  return queryData;
+};
+
 export const fetchPriceArea = async ({
   client,
+  queryClient,
   token,
   priceAreaExternalId,
   bidProcessEventExternalId,
 }: {
   client: CogniteClient;
+  queryClient: QueryClient;
   token: string;
   priceAreaExternalId: string;
   bidProcessEventExternalId?: string;
@@ -61,26 +96,32 @@ export const fetchPriceArea = async ({
   );
   if (!priceArea) return undefined;
 
+  const totalMatrixData = await getMatrixDataFromCache(
+    priceArea.totalMatrix!.externalId,
+    queryClient,
+    client.project,
+    token
+  );
   const priceAreaWithData: PriceAreaWithData = {
     ...priceArea,
     totalMatrixWithData: {
       ...priceArea.totalMatrix!,
-      sequenceRows:
-        (await getBidMatrixData(client, priceArea.totalMatrix?.externalId)) ||
-        [],
+      ...totalMatrixData,
     },
     plantMatrixesWithData: priceArea.plantMatrixes
       ? await Promise.all(
           priceArea.plantMatrixes.map(async (plant) => {
-            const matrixData = await getBidMatrixData(
-              client,
-              plant.matrix?.externalId
+            const plantMatrixData = await getMatrixDataFromCache(
+              plant.matrix!.externalId,
+              queryClient,
+              client.project,
+              token
             );
             return {
               ...plant,
               matrixWithData: {
                 ...plant.matrix!,
-                sequenceRows: matrixData || [],
+                ...plantMatrixData,
               },
             };
           })

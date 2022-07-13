@@ -100,7 +100,7 @@ export const PriceScenariosChart = ({
                 type: 'scatter',
                 mode: 'lines+markers',
                 name: ts.externalId,
-                text: priceArea?.priceScenarios[index].name,
+                text: priceArea?.priceScenarios[index]?.name,
                 hoverinfo: 'none',
                 line: { color: pickChartColor(index) },
                 opacity,
@@ -139,7 +139,7 @@ export const PriceScenariosChart = ({
       color: event.points[0].data.line.color?.toString(),
       scenario: event.points[0].data.text.toString(),
       hour: `${hour + 1}`,
-      price: Math.round(Number(event.points[0].y)),
+      price: Math.round(Number(event.points[0].y) * 100) / 100,
       auctionMatrix: tableData[hour][`calc-${index}`]
         ? tableData[hour][`calc-${index}`].toString()
         : 'No data',

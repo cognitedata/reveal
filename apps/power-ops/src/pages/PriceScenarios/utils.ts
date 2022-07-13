@@ -1,17 +1,18 @@
-import { PriceArea } from '@cognite/power-ops-api-types';
-
-import { Cols } from '../../types';
+import { PriceAreaWithData, TableColumn } from 'types';
+import { calculateScenarioProduction, roundWithDec } from 'utils/utils';
+import { DatapointAggregates, Datapoints, DoubleDatapoint } from '@cognite/sdk';
+import { PriceArea, CalculatedProduction } from '@cognite/power-ops-api-types';
 
 export function getActiveColumns(
   activeTab: string,
   priceArea: PriceArea
-): Cols[] {
-  let columns: Cols[] = [];
+): TableColumn[] {
+  let columns: TableColumn[] = [];
 
   // If on total tab, one column for each Scenario
   if (activeTab === 'total') {
     columns = priceArea?.priceScenarios.map((scenario, index) => {
-      const header: Cols = {
+      const header: TableColumn = {
         Header: scenario.name,
         id: scenario.externalId,
         accessor: `scenario-${index}`,
@@ -38,7 +39,7 @@ export function getActiveColumns(
       .filter((scenario) => scenario.externalId === activeTab)
       .flatMap((scenario) => {
         // First column is Total Volume
-        const totalColumn: Cols = {
+        const totalColumn: TableColumn = {
           Header: 'Total Volume',
           id: scenario.externalId,
           accessor: `scenario-${index}`,
@@ -55,7 +56,7 @@ export function getActiveColumns(
           disableSortBy: true,
         };
         // The following columns are for each plant
-        const plantColumns: Cols[] = scenario.plantProduction
+        const plantColumns: TableColumn[] = scenario.plantProduction
           .sort((plantA, plantB) =>
             plantA.plantName.localeCompare(plantB.plantName)
           )
@@ -101,3 +102,71 @@ export function getActiveColumns(
   ];
   return totalColumns;
 }
+
+export const getFormattedProductionColumn = (
+  datapoints: DoubleDatapoint[] | CalculatedProduction[],
+  accessor: string
+): { [accesor: string]: string }[] => {
+  const formatedData: { [accesor: string]: string }[] = Array(24).fill({
+    [accessor]: undefined,
+  });
+  datapoints.forEach((point) => {
+    const hour = point.timestamp.getHours();
+    formatedData[hour] = {
+      [accessor]: roundWithDec(point.value, 1),
+    };
+  });
+  return formatedData || [];
+};
+
+export const calculateProduction = async (
+  activeTab: string,
+  activeScenarioIndex: number,
+  priceTimeseries: DatapointAggregates[] | Datapoints[],
+  priceArea: PriceAreaWithData
+): Promise<{ [accessor: string]: string }[][]> => {
+  let calcProductionData: { [accessor: string]: string }[][];
+  if (activeTab === 'total') {
+    calcProductionData = priceTimeseries.map((scenarioPricePerHour, index) => {
+      const accessor = `calc-${index}`;
+      const calulatedProduction = calculateScenarioProduction(
+        scenarioPricePerHour.datapoints as DoubleDatapoint[],
+        priceArea.totalMatrixWithData
+      );
+      return getFormattedProductionColumn(calulatedProduction, accessor);
+    });
+  } else {
+    // Calculate Plant Columns
+    calcProductionData = priceArea.plantMatrixesWithData
+      ? priceArea.plantMatrixesWithData
+          .sort((plantA, plantB) =>
+            plantA.plantName.localeCompare(plantB.plantName)
+          )
+          .map((plantMatrix, index) => {
+            const accessor = `calc-plant-${index}`;
+
+            const calulatedProduction = calculateScenarioProduction(
+              priceTimeseries[0].datapoints as DoubleDatapoint[],
+              plantMatrix.matrixWithData
+            );
+            return getFormattedProductionColumn(calulatedProduction, accessor);
+          })
+      : [];
+
+    // Calculate Total Column
+    const [calcTotalProductionData] = priceTimeseries
+      ? priceTimeseries.map((scenarioPricePerHour) => {
+          const accessor = `calc-${activeScenarioIndex}`;
+          const calulatedProduction = calculateScenarioProduction(
+            scenarioPricePerHour.datapoints as DoubleDatapoint[],
+            priceArea.totalMatrixWithData
+          );
+          return getFormattedProductionColumn(calulatedProduction, accessor);
+        })
+      : [];
+
+    // Append total prod uction column first
+    calcProductionData = [calcTotalProductionData, ...calcProductionData];
+  }
+  return calcProductionData;
+};

@@ -1,15 +1,4 @@
 import { Matrix, PriceArea } from '@cognite/power-ops-api-types';
-import { SequenceItem, SequenceColumnBasicInfo } from '@cognite/sdk';
-
-export class SequenceRow extends Array<SequenceItem> {
-  constructor(
-    public rowNumber: number,
-    values: SequenceItem[],
-    public columns: SequenceColumnBasicInfo[]
-  ) {
-    super(...values);
-  }
-}
 
 export interface TableData {
   id: number | undefined;
@@ -20,7 +9,7 @@ export interface TableRow {
   [key: string]: string;
 }
 
-export interface Cols {
+export interface TableColumn {
   Header: string | undefined;
   accessor?: string | undefined;
   disableSortBy: boolean;
@@ -36,7 +25,8 @@ export interface SubColumn {
 }
 
 export interface MatrixWithData extends Matrix {
-  sequenceRows: SequenceRow[];
+  columnHeaders: Array<string | number>;
+  dataRows: Array<string | number>[];
 }
 
 export interface PriceAreaWithData extends PriceArea {

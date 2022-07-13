@@ -21,7 +21,7 @@ import {
   StyledInfobar,
 } from './elements';
 import {
-  getFormattedBidMatrixData,
+  formatBidMatrixData,
   copyMatrixToClipboard,
   formatScenarioData,
   isNewBidMatrixAvailable,
@@ -59,35 +59,36 @@ export const BidMatrix = ({ priceArea }: { priceArea: PriceAreaWithData }) => {
 
   const updateMatrixData = async (
     matrix: MatrixWithData,
-    scenariopPriceTsExternalId: string
+    scenarioPriceTsExternalId: string
   ) => {
-    if (!matrix.sequenceRows?.length) return;
+    if (!matrix.columnHeaders?.length && matrix.dataRows?.length) return;
     setCurrentMatrix(matrix);
 
-    const { columns, data } = await getFormattedBidMatrixData(
-      matrix.sequenceRows
-    );
-    setMatrixHeaderConfig(columns);
-    setMatrixData(data);
+    if (matrix?.columnHeaders && matrix?.dataRows) {
+      const { columns, data } = await formatBidMatrixData(matrix);
 
-    if (!priceArea.bidDate) return;
+      setMatrixHeaderConfig(columns);
+      setMatrixData(data);
 
-    const priceTs = await client?.datapoints.retrieve({
-      items: [{ externalId: scenariopPriceTsExternalId }],
-      start: bidDate.startOf('day').valueOf(),
-      end: bidDate.endOf('day').valueOf(),
-    });
+      if (!priceArea.bidDate) return;
 
-    if (!priceTs?.length) return;
+      const priceTs = await client?.datapoints.retrieve({
+        items: [{ externalId: scenarioPriceTsExternalId }],
+        start: bidDate.startOf('day').valueOf(),
+        end: bidDate.endOf('day').valueOf(),
+      });
 
-    const [{ datapoints: scenarioPricePerHour }] = priceTs;
+      if (!priceTs?.length) return;
 
-    const scenarioData = await formatScenarioData(
-      scenarioPricePerHour as DoubleDatapoint[],
-      matrix.sequenceRows
-    );
+      const [{ datapoints: scenarioPricePerHour }] = priceTs;
 
-    setMainScenarioData(scenarioData);
+      const scenarioData = await formatScenarioData(
+        scenarioPricePerHour as DoubleDatapoint[],
+        matrix
+      );
+
+      setMainScenarioData(scenarioData);
+    }
   };
 
   const processEvent = async (event: CogniteEvent): Promise<void> => {

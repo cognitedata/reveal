@@ -1,135 +1,35 @@
-import { PriceAreaWithData, SequenceRow } from 'types';
+import { PriceAreaWithData } from 'types';
 import { rest } from 'msw';
 import sidecar from 'utils/sidecar';
 import { MSWRequest } from 'utils/test';
-import { SequenceColumnBasicInfo } from '@cognite/sdk';
 
-export const columns: SequenceColumnBasicInfo[] = [
-  {
-    externalId: 'price',
-    valueType: 'DOUBLE',
-    name: 'Price',
-  },
-  {
-    externalId: '1h.1',
-    valueType: 'DOUBLE',
-    name: '1h.1',
-  },
-  {
-    externalId: '1h.2',
-    valueType: 'DOUBLE',
-    name: '1h.2',
-  },
-  {
-    externalId: '1h.3',
-    valueType: 'DOUBLE',
-    name: '1h.3',
-  },
-  {
-    externalId: '1h.4',
-    valueType: 'DOUBLE',
-    name: '1h.4',
-  },
-  {
-    externalId: '1h.5',
-    valueType: 'DOUBLE',
-    name: '1h.5',
-  },
-  {
-    externalId: '1h.6',
-    valueType: 'DOUBLE',
-    name: '1h.6',
-  },
-  {
-    externalId: '1h.7',
-    valueType: 'DOUBLE',
-    name: '1h.7',
-  },
-  {
-    externalId: '1h.8',
-    valueType: 'DOUBLE',
-    name: '1h.8',
-  },
-  {
-    externalId: '1h.9',
-    valueType: 'DOUBLE',
-    name: '1h.9',
-  },
-  {
-    externalId: '1h.10',
-    valueType: 'DOUBLE',
-    name: '1h.10',
-  },
-  {
-    externalId: '1h.11',
-    valueType: 'DOUBLE',
-    name: '1h.11',
-  },
-  {
-    externalId: '1h.12',
-    valueType: 'DOUBLE',
-    name: '1h.12',
-  },
-  {
-    externalId: '1h.13',
-    valueType: 'DOUBLE',
-    name: '1h.13',
-  },
-  {
-    externalId: '1h.14',
-    valueType: 'DOUBLE',
-    name: '1h.14',
-  },
-  {
-    externalId: '1h.15',
-    valueType: 'DOUBLE',
-    name: '1h.15',
-  },
-  {
-    externalId: '1h.16',
-    valueType: 'DOUBLE',
-    name: '1h.16',
-  },
-  {
-    externalId: '1h.17',
-    valueType: 'DOUBLE',
-    name: '1h.17',
-  },
-  {
-    externalId: '1h.18',
-    valueType: 'DOUBLE',
-    name: '1h.18',
-  },
-  {
-    externalId: '1h.19',
-    valueType: 'DOUBLE',
-    name: '1h.19',
-  },
-  {
-    externalId: '1h.20',
-    valueType: 'DOUBLE',
-    name: '1h.20',
-  },
-  {
-    externalId: '1h.21',
-    valueType: 'DOUBLE',
-    name: '1h.21',
-  },
-  {
-    externalId: '1h.22',
-    valueType: 'DOUBLE',
-    name: '1h.22',
-  },
-  {
-    externalId: '1h.23',
-    valueType: 'DOUBLE',
-    name: '1h.23',
-  },
-  {
-    externalId: '1h.24',
-    valueType: 'DOUBLE',
-    name: '1h.24',
-  },
+const mockColumnHeaders = ['hour', 1, 2, 3];
+
+const mockDataRows = [
+  ['0', -500.05, -0.87, -0.32],
+  ['1', 103.21, -0.87, -0.32],
+  ['2', 103.21, -0.87, -0.32],
+  ['3', 103.21, -0.87, -0.32],
+  ['4', 103.21, -0.87, -0.32],
+  ['5', 103.21, -0.87, -0.32],
+  ['6', 103.21, -0.87, -0.32],
+  ['7', 103.21, -0.87, -0.32],
+  ['8', 103.21, -0.87, -0.32],
+  ['9', 103.21, -0.87, -0.32],
+  ['10', 103.21, -0.87, -0.32],
+  ['11', 103.21, -0.87, -0.32],
+  ['12', 103.21, -0.87, -0.32],
+  ['13', 103.21, -0.87, -0.32],
+  ['14', 103.21, -0.87, -0.32],
+  ['15', 103.21, -0.87, -0.32],
+  ['16', 103.21, -0.87, -0.32],
+  ['17', 103.21, -0.87, -0.32],
+  ['18', 103.21, -0.87, -0.32],
+  ['19', 103.21, -0.87, -0.32],
+  ['20', 103.21, -0.87, -0.32],
+  ['21', 103.21, -0.87, -0.32],
+  ['22', 103.21, -0.87, -0.32],
+  ['23', 103.21, -0.87, -0.32],
 ];
 
 export const mockPriceArea: PriceAreaWithData = {
@@ -217,26 +117,8 @@ export const mockPriceArea: PriceAreaWithData = {
   totalMatrixWithData: {
     externalId: 'total_matrixes_with_data_externalId',
     startTime: 1651830168688,
-    sequenceRows: [
-      new SequenceRow(
-        0,
-        [
-          -500, -0.87, -0.32, -0.32, -0.32, -0.32, -0.32, -24.32, -25.14,
-          -24.87, -24.32, -24.32, -0.32, -0.32, -0.32, -0.32, -0.32, -0.32,
-          -0.32, -22.39, -22.37, -22.35, -24.87, -24.87, -24.18,
-        ],
-        columns
-      ),
-      new SequenceRow(
-        1,
-        [
-          103.21, -0.87, -0.32, -0.32, -0.32, -0.32, -0.32, -24.32, -25.14,
-          -24.87, -24.32, -24.32, -0.32, -0.32, -0.32, -0.32, -0.32, -0.32,
-          -0.32, -22.39, -22.37, -22.81, -24.87, -24.87, -24.18,
-        ],
-        columns
-      ),
-    ],
+    columnHeaders: mockColumnHeaders,
+    dataRows: mockDataRows,
   },
   plantMatrixesWithData: [
     {
@@ -244,26 +126,8 @@ export const mockPriceArea: PriceAreaWithData = {
       matrixWithData: {
         externalId: 'plant1_with_data_externalId',
         startTime: 1651830150988,
-        sequenceRows: [
-          new SequenceRow(
-            0,
-            [
-              -500, -0.87, -0.32, -0.32, -0.32, -0.32, -0.32, -24.32, -25.14,
-              -24.87, -24.32, -24.32, -0.32, -0.32, -0.32, -0.32, -0.32, -0.32,
-              -0.32, -22.39, -22.37, -22.35, -24.87, -24.87, -24.18,
-            ],
-            columns
-          ),
-          new SequenceRow(
-            1,
-            [
-              103.21, -0.87, -0.32, -0.32, -0.32, -0.32, -0.32, -24.32, -25.14,
-              -24.87, -24.32, -24.32, -0.32, -0.32, -0.32, -0.32, -0.32, -0.32,
-              -0.32, -22.39, -22.37, -22.81, -24.87, -24.87, -24.18,
-            ],
-            columns
-          ),
-        ],
+        columnHeaders: mockColumnHeaders,
+        dataRows: mockDataRows,
       },
     },
     {
@@ -271,26 +135,8 @@ export const mockPriceArea: PriceAreaWithData = {
       matrixWithData: {
         externalId: 'plant2_with_data_externalId',
         startTime: 1651830151224,
-        sequenceRows: [
-          new SequenceRow(
-            0,
-            [
-              -500, -0.87, -0.32, -0.32, -0.32, -0.32, -0.32, -24.32, -25.14,
-              -24.87, -24.32, -24.32, -0.32, -0.32, -0.32, -0.32, -0.32, -0.32,
-              -0.32, -22.39, -22.37, -22.35, -24.87, -24.87, -24.18,
-            ],
-            columns
-          ),
-          new SequenceRow(
-            1,
-            [
-              103.21, -0.87, -0.32, -0.32, -0.32, -0.32, -0.32, -24.32, -25.14,
-              -24.87, -24.32, -24.32, -0.32, -0.32, -0.32, -0.32, -0.32, -0.32,
-              -0.32, -22.39, -22.37, -22.81, -24.87, -24.87, -24.18,
-            ],
-            columns
-          ),
-        ],
+        columnHeaders: mockColumnHeaders,
+        dataRows: mockDataRows,
       },
     },
   ],

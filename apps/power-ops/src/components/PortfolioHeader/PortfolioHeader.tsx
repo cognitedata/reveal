@@ -46,8 +46,7 @@ export const PortfolioHeader = ({
 }) => {
   const metrics = useMetrics('portfolio');
 
-  const { client } = useAuthContext();
-  const { authState } = useAuthContext();
+  const { client, authState } = useAuthContext();
 
   const {
     allProcessConfigurations,

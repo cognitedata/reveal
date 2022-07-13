@@ -1,8 +1,9 @@
 import { fireEvent, screen, waitFor } from '@testing-library/react';
 import dayjs from 'dayjs';
 import { useParams } from 'react-router-dom';
-import { mockPriceArea, testRenderer } from 'utils/test';
 import { SequenceItem } from '@cognite/sdk';
+
+import { mockPriceArea, testRenderer } from '../../utils/test';
 
 import * as utils from './utils';
 import { BidMatrix } from './BidMatrix';
@@ -109,7 +110,7 @@ describe('Bid matrix tests', () => {
       testRenderer(<BidMatrix priceArea={mockPriceArea} />);
 
       const expectedColumnLength =
-        mockPriceArea.totalMatrixWithData.sequenceRows.length + 1; // +1 for hour column
+        mockPriceArea.totalMatrixWithData.dataRows[0].length;
       const columns = await screen.findAllByRole('columnheader');
 
       expect(columns).toHaveLength(expectedColumnLength);
@@ -126,13 +127,12 @@ describe('Bid matrix tests', () => {
         return (index - 1) % numColumns === 0 && value !== '';
       });
 
-      const expectedFirstColumn: SequenceItem[] = Array.from(
-        mockPriceArea.totalMatrixWithData.sequenceRows[0].values()
-      )
-        .slice(1)
-        .map((data) => {
-          return Number(data).toFixed(1);
-        });
+      const expectedFirstColumn: SequenceItem[] =
+        mockPriceArea.totalMatrixWithData.dataRows.map(
+          (row: Array<string | number>) => {
+            return Number(row.splice(1, 1)).toFixed(2);
+          }
+        );
 
       expect(firstColumn).toEqual(expectedFirstColumn);
     });
