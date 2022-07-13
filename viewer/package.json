@@ -67,7 +67,7 @@
     "@cognite/sdk": "7.7.0",
     "@cognite/sdk-core": "4.4.0",
     "@types/dat.gui": "0.7.7",
-    "@types/jest": "27.5.2",
+    "@types/jest": "28.1.5",
     "@types/jsdom": "16.2.14",
     "@types/lodash": "4.14.182",
     "@types/mixpanel-browser": "2.38.0",
