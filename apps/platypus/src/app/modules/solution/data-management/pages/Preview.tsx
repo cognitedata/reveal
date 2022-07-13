@@ -124,6 +124,7 @@ export const Preview = () => {
                 <Title level={5}>{selectedType.name}</Title>
                 {transformation.data?.id && (
                   <Button
+                    data-cy="edit-transformation"
                     type="primary"
                     icon="ExternalLink"
                     iconPlacement="right"

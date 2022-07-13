@@ -59,4 +59,14 @@ describe('Platypus Data Preview Page - Preview', () => {
       '.ag-body-viewport .ag-row[row-index="0"] .ag-cell[col-id="user"] .cogs-tag'
     ).should('have.text', '{"externalId":""}');
   });
+  it('should show edit transformation button when its already created', () => {
+    cy.get('[data-testid="Post"]').click();
+    cy.getBySel('edit-transformation').should('be.visible').click();
+    cy.getBySel('modal-title').should('be.visible').contains('Transformations');
+  });
+  it('should show placeholder when no data is available', () => {
+    cy.get('[data-testid="User"]').click();
+    cy.getBySel('transformation-placeholder').should('be.visible');
+    cy.getBySel('load-transformation').click();
+  });
 });

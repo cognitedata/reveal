@@ -11,7 +11,7 @@ export function TransformationPlaceholder({ onLoadClick }: Props) {
   const { t } = useTranslation('Transformation');
 
   return (
-    <Wrapper>
+    <Wrapper data-cy="transformation-placeholder">
       <BasicPlaceholder type="Search">
         <Flex direction="column" justifyContent="center" alignItems="center">
           <Body level="1" strong style={{ fontSize: 18, marginBottom: 8 }}>
@@ -32,6 +32,8 @@ export function TransformationPlaceholder({ onLoadClick }: Props) {
             icon="ExternalLink"
             iconPlacement="right"
             onClick={onLoadClick}
+            aria-label="Load transformation"
+            data-cy="load-transformation"
           >
             {t('transformation_plachoder_button', 'Load data')}
           </StyledButton>

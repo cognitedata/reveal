@@ -9,6 +9,7 @@ import {
   templatesMockData,
   filesMockData,
   groupsMockData,
+  transformationsMockData,
 } from '@platypus/mock-data';
 
 export const mockDataSample = {
@@ -21,6 +22,7 @@ export const mockDataSample = {
   templates: templatesMockData,
   files: filesMockData,
   groups: groupsMockData,
+  transformations: transformationsMockData,
   posts: [{ id: 1, title: 'json-server', author: 'typicode' }],
   spaces: [{ externalId: 'blog' }],
   models: [

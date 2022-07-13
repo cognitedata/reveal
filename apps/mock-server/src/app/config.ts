@@ -8,13 +8,14 @@ export const config = {
     'templategroups',
     'templates',
     'groups',
+    'transformations',
   ],
   builtInTypes: {
     Asset: 'assets',
     TimeSeries: 'timeseries',
     SyntheticTimeSeries: 'timeseries',
   },
-  whitelistedEndpointEndings: ['/list', '/search', '/byids'],
+  whitelistedEndpointEndings: ['/list', '/search', '/byids', '/filter'],
   ignoreUrlPatterns: [
     '/templategroups/upsert',
     '/templategroups/.*/versions/upsert',
@@ -38,6 +39,7 @@ export const config = {
     '/:resource/list': '/:resource',
     '/:resource/search': '/:resource',
     '/:resource/byids': '/:resource',
+    '/transformations/filter': '/transformations',
     '/templategroups/:templategroups_id/versions/list':
       '/templates?templategroups_id=:templategroups_id&_sort=version&_order=desc',
   },
