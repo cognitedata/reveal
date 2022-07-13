@@ -1,0 +1,39 @@
+import { Meta, Story, Canvas } from '@storybook/addon-docs';
+
+<Meta title="Plots / Introduction" />
+
+## Plots
+
+- Calculation Result
+- Choke Curve
+- Logical Check
+- Steady State Detection
+- Time series
+
+## Libraries
+
+- Visx
+- D3
+
+## Common
+
+- `useBaseChart`
+- `useMultiSeriesTooltip` Generates multiple tooltips on a plot.
+- `usePortalTooltip` Generates a single tooltip on a plot.
+
+  ##### Parameters for `useMultiSeriesTooltip` and `usePortalTooltip`
+
+  - `geometry` Specifies the width, height and margin of a plot.
+  - `scale` Expects an object containing a scaling function for the X and Y axis, this scales are used to map your datapoints to the actual pixels on where the plot will be rendered, this relies on `linearScale` function from the `visx` library.
+  - `data`: Expects to receive the same datapoints that you're passing to render the actual plot, this prop is being used to calculate where in the axis the tooltip should be shown when the user interacts with it, this logic is achieved using the d3 [bisect](https://observablehq.com/@d3/d3-bisect) function which calculates where the index is being positioned based on the X, Y coordinates.
+
+- `useAreaPlot` Used to provide the base canva properties where the plot will be shown, the props for this are provided by `useBaseChart`.
+
+  ##### Parameters
+
+  - `geometry` Specifies the width, height and margin of a plot.
+  - `scale` Expects an object containing a scaling function for the X and Y axis, this scales are used to map your datapoints to the actual pixels on where the plot will be rendered, this relies on `linearScale` function from the `visx` library.
+  - `defaultCurve` Specifies the d3 cuve that will be used for displaying the datapoints, by default we're using [curveMonotoneX](https://github.com/d3/d3-shape#curveMonotoneX) here, in this [list](https://github.com/d3/d3-shape) you can see all the d3 available curves.
+
+- `useChangePointPlot`
+- `useLinePlot` Specifies the properties of the line that will be used for representing the datapoints in the plot.

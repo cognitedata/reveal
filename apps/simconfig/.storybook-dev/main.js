@@ -6,7 +6,7 @@ const { loadEnv } = require('vite');
 module.exports = {
   framework: '@storybook/react',
   core: { builder: '@storybook/builder-vite' },
-  stories: ['../src/**/*.stories.tsx'],
+  stories: ['../src/stories/*.stories.@(tsx|mdx)'],
   addons: ['@storybook/addon-links', '@storybook/addon-essentials'],
   // https://storybook.js.org/docs/react/configure/typescript#mainjs-configuration
   typescript: {
