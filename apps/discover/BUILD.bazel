@@ -586,7 +586,7 @@ cypress_web_test(
     templated_args = [
         "--record",
         "--key 57e436d7-0dbb-401d-ac07-7a1ec69e7a90",
-        "--tag \"staging,nightly\"",
+        "--tag \"discover,staging,nightly\"",
         "--config " +
         "supportFile=./apps/discover/cypress/support," +
         "integrationFolder=./apps/discover/cypress/integration," +

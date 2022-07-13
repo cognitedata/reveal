@@ -196,7 +196,9 @@ pods {
     if (env.BRANCH_NAME == 'master' && params.NIGHTLY) {
       stageWithNotify('Nightly tests', CONTEXTS.bazelTests) {
         container('bazel') {
-          sh(label: 'bazel test discover', script: 'bazel test //apps/discover/... --test_tag_filters=nightly')
+          def commitMessage = sh(script:"git show --pretty=format:%s -s origin/master", returnStdout:true).trim()
+          def commitSha = sh(script: "git rev-parse origin/master", returnStdout:true).trim()
+          sh(label: 'bazel test discover', script: 'COMMIT_INFO_REMOTE=\"https://github.com/cognitedata/applications/commit/${commitSha}\" COMMIT_INFO_BRANCH=master COMMIT_INFO_SHA=${commitSha} COMMIT_INFO_MESSAGE=\"${commitMessage}\" bazel test //apps/discover/... --test_tag_filters=nightly')
         }
       }
       return
