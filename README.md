@@ -122,7 +122,8 @@ The data stored in Charts is currently on Firebase and can be accessed for admin
 | -------------------- | ------------------------- | --------- | -------- | --------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
 | Europe 1 (Google)    | `europe-west1-1`          | GCP       | Prod     | [Console](https://console.firebase.google.com/project/cognitedata-production-charts/overview) | [Console](https://console.firebase.google.com/project/cognitedata-development-charts/overview) |
 | Europe 2 (Microsoft) | `westeurope-1`            | Azure     | Prod     | [Console](https://console.firebase.google.com/project/westeurope-1-charts-prod/overview)      |                                                                                                |
-| Asia 1               | `asia-northeast1-1`       | GCP       | Prod     | [Console](https://console.firebase.google.com/project/charts-983055760582/overview)           | [Console](https://console.firebase.google.com/project/charts-983055760582-staging/overview)    |
+| Asia 1 (Google)      | `asia-northeast1-1`       | GCP       | Prod     | [Console](https://console.firebase.google.com/project/charts-983055760582/overview)           | [Console](https://console.firebase.google.com/project/charts-983055760582-staging/overview)    |
+| Asia 2 (Microsoft)   | `az-tyo-gp-001`           | Azure     | Prod     | [Console](https://console.firebase.google.com/project/charts-158632786139/overview)           | [Console](https://console.firebase.google.com/project/charts-158632786139-staging/overview)    |
 | US East 1            | `az-eastus-1`             | Azure     | Prod     | [Console](https://console.firebase.google.com/project/az-eastus-1-charts-prod/overview)       | [Console](https://console.firebase.google.com/project/az-eastus-1-charts-stg/overview)         |
 | BP North Europe      | `bp-northeurope`          | Azure     | Prod     | [Console](https://console.firebase.google.com/project/bp-northeurope-charts-prod/overview)    | [Console](https://console.firebase.google.com/project/bp-northeurope-charts-stg/overview)      |
 | OMV                  | `omv`                     | GCP       | Prod     | [Console](https://console.firebase.google.com/project/charts-637116228329/overview)           | [Console](https://console.firebase.google.com/project/charts-637116228329-staging/overview)    |
@@ -136,22 +137,22 @@ The data stored in Charts is currently on Firebase and can be accessed for admin
 
 ## Login
 
-| Name                 | Cluster                   | Project | Azure AD Tenant |
-| -------------------- | ------------------------- | ------- | --------------- | 
-| Europe 1 (Google)    | `europe-west1-1`          |         | cognitecharts.onmicrosoft.com |
-| Europe 2 (Microsoft) | `westeurope-1`            | charts-westeurope-1 | cognitecharts.onmicrosoft.com | 
-| Asia 1               | `asia-northeast1-1`       |        | cognitecharts.onmicrosoft.com | 
-| US East 1            | `az-eastus-1`             |      | cognitecharts.onmicrosoft.com | 
-| BP North Europe      | `bp-northeurope`          |      | cognitecharts.onmicrosoft.com | 
-| OMV                  | `omv`                     |        | cognitecharts.onmicrosoft.com |
-| PGS                  | `pgs`                     |        | cognitecharts.onmicrosoft.com |
-| Power NO (Google)    | `power-no`                |       | cognitecharts.onmicrosoft.com | 
-| Power NO (Microsoft) | `az-power-no-northeurope` |      | cognitecharts.onmicrosoft.com | 
-| Statnett             | `statnett`                |        | cognitecharts.onmicrosoft.com | 
-| Greenfield           | `greenfield`              | charts-greenfield | cognitecharts.onmicrosoft.com | 
-| Bluefield            | `bluefield`               | charts-demo     | cognitecharts.onmicrosoft.com | 
-| Azure Dev            | `azure-dev`               | charts-azuredev | cognitecharts.onmicrosoft.com |
-
+| Name                 | Cluster                   | Project             | Azure AD Tenant               |
+| -------------------- | ------------------------- | ------------------- | ----------------------------- |
+| Europe 1 (Google)    | `europe-west1-1`          |                     | cognitecharts.onmicrosoft.com |
+| Europe 2 (Microsoft) | `westeurope-1`            | charts-westeurope-1 | cognitecharts.onmicrosoft.com |
+| Asia 1 (Google)      | `asia-northeast1-1`       |                     | cognitecharts.onmicrosoft.com |
+| Asia 2 (Microsoft)   | `az-tyo-gp-001`           | charts-tokyo-az     | cognitecharts.onmicrosoft.com |
+| US East 1            | `az-eastus-1`             |                     | cognitecharts.onmicrosoft.com |
+| BP North Europe      | `bp-northeurope`          |                     | cognitecharts.onmicrosoft.com |
+| OMV                  | `omv`                     |                     | cognitecharts.onmicrosoft.com |
+| PGS                  | `pgs`                     |                     | cognitecharts.onmicrosoft.com |
+| Power NO (Google)    | `power-no`                |                     | cognitecharts.onmicrosoft.com |
+| Power NO (Microsoft) | `az-power-no-northeurope` |                     | cognitecharts.onmicrosoft.com |
+| Statnett             | `statnett`                |                     | cognitecharts.onmicrosoft.com |
+| Greenfield           | `greenfield`              | charts-greenfield   | cognitecharts.onmicrosoft.com |
+| Bluefield            | `bluefield`               | charts-demo         | cognitecharts.onmicrosoft.com |
+| Azure Dev            | `azure-dev`               | charts-azuredev     | cognitecharts.onmicrosoft.com |
 
 ## Important Links
 
