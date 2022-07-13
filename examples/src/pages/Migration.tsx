@@ -368,7 +368,6 @@ export function Migration() {
         const start = performance.now();
         const intersection = await viewer.getIntersectionFromPixel(offsetX, offsetY);
         if (intersection !== null) {
-          console.log('intersection', intersection);
           switch (intersection.type) {
             case 'cad':
               {
