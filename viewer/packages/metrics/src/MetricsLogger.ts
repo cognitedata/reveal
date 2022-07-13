@@ -4,7 +4,7 @@
 
 import * as THREE from 'three';
 import mixpanel from 'mixpanel-browser';
-
+import throttle from 'lodash/throttle';
 import log from '@reveal/logger';
 
 import { TrackedEvents, EventProps } from './types';
@@ -125,7 +125,18 @@ export class MetricsLogger {
     rotation: new THREE.Quaternion()
   };
 
-  static trackCadNodeTransformOverridden(nodeCount: number, matrix: THREE.Matrix4): void {
+  /**
+   * Track use of CAD node transform overrides. Note that the metric is throttled and will only trigger
+   * once per second.
+   * @param nodeCount Number of nodes affected by the transform override
+   * @param matrix  Matrix used to override the node transform
+   */
+  static readonly trackCadNodeTransformOverridden = throttle(
+    (nodeCount, matrix) => MetricsLogger.trackCadNodeTransformOverriddenImpl(nodeCount, matrix),
+    1000
+  );
+
+  private static trackCadNodeTransformOverriddenImpl(nodeCount: number, matrix: THREE.Matrix4): void {
     const { zeroVector, identityRotation, translation, scale, rotation } =
       MetricsLogger.trackCadNodeTransformOverriddenVars;
     matrix.decompose(translation, rotation, scale);
