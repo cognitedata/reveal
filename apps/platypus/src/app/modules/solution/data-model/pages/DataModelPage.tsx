@@ -256,6 +256,7 @@ export const DataModelPage = () => {
             <DiscardButton
               type="secondary"
               data-cy="discard-btn"
+              disabled={saving || updating}
               onClick={onDiscardClick}
               style={{ marginRight: '10px' }}
             >
@@ -266,8 +267,10 @@ export const DataModelPage = () => {
           <Button
             type="primary"
             data-cy="publish-schema-btn"
-            onClick={() => onSaveOrPublish()}
-            loading={saving}
+            onClick={() => {
+              onSaveOrPublish();
+            }}
+            loading={saving || updating}
             disabled={
               (!isDirty &&
                 selectedSchema.status !== DataModelVersionStatus.DRAFT) ||
@@ -322,6 +325,7 @@ export const DataModelPage = () => {
                     builtInTypes={builtInTypes}
                     graphQlSchema={graphQlSchema}
                     onSchemaChanged={onSchemaChanged}
+                    isPublishing={saving || updating}
                   />
                 </ErrorBoundary>
               }

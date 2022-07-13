@@ -26,6 +26,7 @@ export interface EditorPanelProps {
   editorMode: SchemaEditorMode;
   builtInTypes: BuiltInType[];
   onSchemaChanged: (schemaString: string) => void;
+  isPublishing: boolean;
 }
 
 export const EditorPanel = (props: EditorPanelProps) => {
@@ -89,7 +90,9 @@ export const EditorPanel = (props: EditorPanelProps) => {
           <div style={{ flexGrow: 1, overflow: 'auto' }}>
             <UIEditor
               builtInTypes={builtInTypes}
-              disabled={props.editorMode === SchemaEditorMode.View}
+              disabled={
+                props.editorMode === SchemaEditorMode.View || props.isPublishing
+              }
               graphQLSchemaString={props.graphQlSchema}
               onSchemaChange={(schemaString) =>
                 props.onSchemaChanged(schemaString)
