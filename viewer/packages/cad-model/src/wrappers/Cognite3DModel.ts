@@ -198,6 +198,7 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase, 
    * @param transformMatrix   Transformation to apply.
    */
   setNodeTransform(treeIndices: NumericRange, transformMatrix: THREE.Matrix4): void {
+    MetricsLogger.trackCadNodeTransformOverridden(treeIndices.count, transformMatrix);
     this.nodeTransformProvider.setNodeTransform(treeIndices, transformMatrix);
   }
 

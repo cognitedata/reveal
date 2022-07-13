@@ -2,6 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
+import * as THREE from 'three';
 import mixpanel from 'mixpanel-browser';
 
 import log from '@reveal/logger';
@@ -113,6 +114,26 @@ export class MetricsLogger {
 
   static trackCadModelStyled(nodeCollectionClassToken: string, appearance: any): void {
     MetricsLogger.trackEvent('cadModelStyleAssigned', { nodeCollectionClassToken, style: appearance });
+  }
+
+  private static readonly trackCadNodeTransformOverriddenVars = {
+    zeroVector: new THREE.Vector3(),
+    identityRotation: new THREE.Quaternion().identity(),
+
+    translation: new THREE.Vector3(),
+    scale: new THREE.Vector3(),
+    rotation: new THREE.Quaternion()
+  };
+
+  static trackCadNodeTransformOverridden(nodeCount: number, matrix: THREE.Matrix4): void {
+    const { zeroVector, identityRotation, translation, scale, rotation } =
+      MetricsLogger.trackCadNodeTransformOverriddenVars;
+    matrix.decompose(translation, rotation, scale);
+
+    const hasTranslation = translation.distanceToSquared(zeroVector) < 1e-8;
+    const hasRotation = Math.abs(rotation.dot(identityRotation)) < 1e-5;
+    const hasScale = scale.distanceToSquared(zeroVector) < 1e-8;
+    MetricsLogger.trackEvent('cadNodeTransformOverridden', { nodeCount, hasTranslation, hasRotation, hasScale });
   }
 
   static trackError(error: Error, eventProps: EventProps): void {
