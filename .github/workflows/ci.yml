@@ -335,6 +335,16 @@ jobs:
             https://cognitedata.github.io/reveal-docs-preview/${{ env.PR_NUMBER }}/docs/next/.
           check_for_duplicate_msg: true
 
+      - name: Add comment about preview URL
+        run: |
+            cat << EOF | gh pr comment ${{ github.event.pull_request.number }} --body-file -
+             :orange_book: Documentation preview is available from
+            https://cognitedata.github.io/reveal-docs-preview/${{ env.PR_NUMBER }}/docs/next/.
+            EOF
+        env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+
 
   cleanup:
     name: Cleanup
