@@ -8,7 +8,6 @@ import SiteContext from '../components/SiteContext/SiteContext';
 export const PagePath = {
   LINE_REVIEWS: '/lineReviews',
   LINE_REVIEW: '/lineReview/:id',
-  SCARLET: '/scarlet',
   DIAGRAM_PARSER: '/diagramParser',
 };
 
@@ -79,11 +78,6 @@ export const MenuBar = () => {
             name: 'Line reviews',
             isActive: activePathName === PagePath.LINE_REVIEWS,
             onClick: handleNavigate(PagePath.LINE_REVIEWS),
-          },
-          {
-            name: 'Document Schema Scanner',
-            isActive: activePathName === PagePath.SCARLET,
-            onClick: handleNavigate(PagePath.SCARLET),
           },
           {
             name: 'Diagram Parser',

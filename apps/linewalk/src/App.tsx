@@ -7,7 +7,6 @@ import NotFoundPage from 'pages/Error404';
 import { ProvideMixpanel } from 'components/ProvideMixpanel';
 import LineReviews from 'pages/LineReviews';
 import LineReview from 'pages/LineReview';
-import { ScarletApp } from 'scarlet/ScarletApp';
 import DiagramParserPage from 'pages/DiagramParser';
 import SiteContextProvider from 'components/SiteContext/SiteContextProvider';
 
@@ -26,7 +25,6 @@ const App = () => (
               render={() => <LineReviews />}
             />
             <Route path={PagePath.LINE_REVIEW} render={() => <LineReview />} />
-            <Route path={PagePath.SCARLET} render={() => <ScarletApp />} />
             <Route
               path={PagePath.DIAGRAM_PARSER}
               render={() => <DiagramParserPage />}

@@ -131,7 +131,6 @@ mappings_dict = {
     "modules": "build/modules",
     "pages": "build/pages",
     "react-app-env.d": "build/react-app-env.d",
-    "scarlet": "build/scarlet",
     "serviceWorker": "build/serviceWorker",
     "setupTests": "build/setupTests",
     "styles": "build/styles",
