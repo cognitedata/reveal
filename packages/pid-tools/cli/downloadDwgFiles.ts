@@ -3,8 +3,8 @@ import * as https from 'https';
 
 import chunk from 'lodash/chunk';
 
+import getMsalClient, { MsalClientOptions } from '../src/utils/msalClient';
 import { DIAGRAM_PARSER_SITE_KEY, DIAGRAM_PARSER_UNIT_KEY } from '../src';
-import getClient from '../src/utils/getClient';
 
 import createdirIfNotExists from './utils/createDirIfNotExists';
 import getDataDirPath from './utils/getDataDirPath';
@@ -52,13 +52,12 @@ const downloadFileByUrl = (url: string, filePath: string, attempt = 0) => {
 };
 
 const downloadDwgFiles = async (argv: any) => {
-  const { unit, site } = argv as unknown as {
+  const { site, unit } = argv as {
     site: string;
     unit: string;
   };
   const dir = getDataDirPath(site, unit);
-
-  const client = await getClient();
+  const client = await getMsalClient(argv as MsalClientOptions);
   const allFiles = await client.files
     .list({
       filter: {

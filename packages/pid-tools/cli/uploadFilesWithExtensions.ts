@@ -6,7 +6,7 @@ import {
   DIAGRAM_PARSER_SOURCE,
   DIAGRAM_PARSER_UNIT_KEY,
 } from '../src';
-import getClient from '../src/utils/getClient';
+import getMsalClient, { MsalClientOptions } from '../src/utils/msalClient';
 
 import getDataDirPath from './utils/getDataDirPath';
 
@@ -26,14 +26,15 @@ const getFileExtensionByFileName = (fileName: string): string => {
 };
 
 const uploadFilesWithExtensions = async (
-  argv,
+  argv: any,
   fileExtensionsToUpload: string[]
 ) => {
-  const { unit, site } = argv as unknown as {
+  const { site, unit } = argv as {
     site: string;
     unit: string;
   };
   const dir = getDataDirPath(site, unit);
+  const client = await getMsalClient(argv as MsalClientOptions);
 
   const fileNames = await fsPromises.readdir(dir);
   const supportedFileNames = fileNames.filter((fileName) => {
@@ -44,8 +45,6 @@ const uploadFilesWithExtensions = async (
 
     return fileExtensionsToUpload.includes(fileExtension);
   });
-
-  const client = await getClient();
 
   // eslint-disable-next-line no-restricted-syntax
   for (const [i, fileName] of supportedFileNames.entries()) {

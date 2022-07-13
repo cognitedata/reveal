@@ -4,7 +4,7 @@ import chunk from 'lodash/chunk';
 import { CogniteClient, FileInfo } from '@cognite/sdk';
 
 import { DIAGRAM_PARSER_SITE_KEY, DIAGRAM_PARSER_UNIT_KEY } from '../src';
-import getClient from '../src/utils/getClient';
+import getMsalClient, { MsalClientOptions } from '../src/utils/msalClient';
 
 import createdirIfNotExists from './utils/createDirIfNotExists';
 import getDataDirPath from './utils/getDataDirPath';
@@ -82,14 +82,14 @@ const convertChunk = async (
   });
 };
 
-export const convertDwgToPdf = async (argv) => {
-  const { site, unit } = argv as unknown as {
+export const convertDwgToPdf = async (argv: any) => {
+  const { site, unit } = argv as {
     site: string;
     unit: string;
   };
   const dir = getDataDirPath(site, unit);
+  const client = await getMsalClient(argv as MsalClientOptions);
 
-  const client = await getClient();
   const allFiles = await client.files
     .list({
       filter: {

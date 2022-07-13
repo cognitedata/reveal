@@ -3,8 +3,8 @@ import fsPromises from 'fs/promises';
 
 import getDataDirPath from './utils/getDataDirPath';
 
-export const convertPdfToSvg = async (argv) => {
-  const { site, unit } = argv as unknown as {
+export const convertPdfToSvg = async (argv: any) => {
+  const { site, unit } = argv as {
     site: string;
     unit: string;
   };

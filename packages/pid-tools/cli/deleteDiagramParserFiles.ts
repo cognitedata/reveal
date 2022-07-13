@@ -5,15 +5,15 @@ import {
   DIAGRAM_PARSER_SOURCE,
   DIAGRAM_PARSER_UNIT_KEY,
 } from '../src';
-import getClient from '../src/utils/getClient';
+import getMsalClient, { MsalClientOptions } from '../src/utils/msalClient';
 
 const deleteDiagramParserFiles = async (argv: any) => {
-  const { site, unit } = argv as unknown as {
+  const { site, unit } = argv as {
     site: string;
     unit: string;
   };
+  const client = await getMsalClient(argv as MsalClientOptions);
 
-  const client = await getClient();
   const allFiles1 = await client.files
     .list({
       filter: {

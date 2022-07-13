@@ -1,16 +1,15 @@
 import { LINEWALK_DATA_VERSION } from '../src';
-import getClient from '../src/utils/getClient';
+import getMsalClient, { MsalClientOptions } from '../src/utils/msalClient';
 
 import createEventForSiteIfDoesntExist from './utils/createEventForSiteIfDoesntExist';
 import createEventForUnitIfDoesntExist from './utils/createEventForUnitIfDoesntExist';
 
-const createSiteUnitEvents = async (argv) => {
-  const { unit, site } = argv as unknown as {
+const createSiteUnitEvents = async (argv: any) => {
+  const { site, unit } = argv as {
     site: string;
     unit: string;
   };
-
-  const client = await getClient();
+  const client = await getMsalClient(argv as MsalClientOptions);
 
   console.log(`Ensuring that events for site ${site} and unit ${unit} exist`);
   await createEventForSiteIfDoesntExist(client, {
