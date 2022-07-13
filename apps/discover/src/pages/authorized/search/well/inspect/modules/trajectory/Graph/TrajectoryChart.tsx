@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import { useDeepCallback, useDeepMemo } from 'hooks/useDeep';
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
@@ -26,6 +26,8 @@ export const TrajectoryChart: React.FC<
     [config?.trajectory?.charts]
   );
 
+  const chartConfig = useMemo(() => chartConfigs[index], [chartConfigs, index]);
+
   const isLegend = useDeepCallback(
     (index: number) => chartConfigs[index].type === 'legend',
     [chartConfigs]
@@ -43,8 +45,9 @@ export const TrajectoryChart: React.FC<
           userPreferredUnit
         )}
         axisAutorange={{
-          y: 'reversed',
-          z: chartConfigs[index].type === '3d' ? 'reversed' : undefined,
+          x: chartConfig.reverseXAxis ? 'reversed' : undefined,
+          y: chartConfig.reverseYAxis ? 'reversed' : undefined,
+          z: chartConfig.reverseZAxis ? 'reversed' : undefined,
         }}
         margin={isLegend(index) ? { r: 250 } : undefined}
         {...chartProps}
