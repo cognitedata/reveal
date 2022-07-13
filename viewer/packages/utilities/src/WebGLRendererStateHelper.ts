@@ -45,7 +45,7 @@ export class WebGLRendererStateHelper {
 
   setScissor(x: number, y: number, width: number, height: number): void {
     const scissorData = this._renderer.getScissor(new Vector4());
-    this._originalState = { scissorData: scissorData ? scissorData : undefined, ...this._originalState };
+    this._originalState = { scissorData, ...this._originalState };
     this._renderer.setScissor(x, y, width, height);
   }
 
@@ -76,12 +76,12 @@ export class WebGLRendererStateHelper {
       const newMask = state.buffers.depth?.mask;
 
       this._originalState.webGLState!.buffers!.depth = {
-        test: newTest ? resetState.buffers?.depth?.test : undefined,
-        mask: newMask ? resetState.buffers?.depth?.mask : undefined
+        test: newTest !== undefined ? resetState.buffers?.depth?.test : undefined,
+        mask: newMask !== undefined ? resetState.buffers?.depth?.mask : undefined
       };
 
-      if (newMask) this._renderer.state.buffers.depth.setMask(newMask);
-      if (newTest) this._renderer.state.buffers.depth.setTest(newTest);
+      if (newMask !== undefined) this._renderer.state.buffers.depth.setMask(newMask);
+      if (newTest !== undefined) this._renderer.state.buffers.depth.setTest(newTest);
     }
   }
 
@@ -134,8 +134,8 @@ export class WebGLRendererStateHelper {
         const lastTest = this._originalState.webGLState.buffers.depth?.test;
         const lastMask = this._originalState.webGLState.buffers.depth?.mask;
 
-        if (lastMask) this._renderer.state.buffers.depth.setMask(lastMask);
-        if (lastTest) this._renderer.state.buffers.depth.setTest(lastTest);
+        if (lastMask !== undefined) this._renderer.state.buffers.depth.setMask(lastMask);
+        if (lastTest !== undefined) this._renderer.state.buffers.depth.setTest(lastTest);
       }
     }
 
