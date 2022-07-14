@@ -627,7 +627,7 @@ describe('Test convertCDFAnnotationToVisionAnnotations fn', () => {
       });
 
       describe('images.KeypointCollection annotation', () => {
-        test('KeypointCollection annotation - sample-5', () => {
+        test('KeypointCollection annotation without confidence - sample-5', () => {
           const convertedAnnotation =
             visionAnnotations[4] as VisionAnnotation<ImageKeypointCollection>;
           expect(convertedAnnotation.label).toStrictEqual(
@@ -649,7 +649,7 @@ describe('Test convertCDFAnnotationToVisionAnnotations fn', () => {
           });
         });
 
-        test('KeypointCollection annotation - sample-6', () => {
+        test('KeypointCollection annotation with confidence - sample-6', () => {
           const convertedAnnotation =
             visionAnnotations[5] as VisionAnnotation<ImageKeypointCollection>;
           expect(convertedAnnotation.label).toStrictEqual(
@@ -674,7 +674,7 @@ describe('Test convertCDFAnnotationToVisionAnnotations fn', () => {
           });
         });
 
-        test('KeypointCollection annotation - sample-7', () => {
+        test('KeypointCollection annotation with numbers as keys - sample-7', () => {
           const convertedAnnotation =
             visionAnnotations[6] as VisionAnnotation<ImageKeypointCollection>;
           expect(convertedAnnotation.label).toStrictEqual(
@@ -690,7 +690,7 @@ describe('Test convertCDFAnnotationToVisionAnnotations fn', () => {
       });
 
       describe('images.ObjectDetection annotation', () => {
-        test('ObjectDetection annotation - sample-8', () => {
+        test('ObjectDetection boundingBox annotation - sample-8', () => {
           const convertedAnnotation =
             visionAnnotations[7] as VisionAnnotation<ImageObjectDetectionBoundingBox>;
 
@@ -700,7 +700,7 @@ describe('Test convertCDFAnnotationToVisionAnnotations fn', () => {
           }).toStrictEqual(sampleCDFAnnotations[7].data);
         });
 
-        test('ObjectDetection annotation - sample-9', () => {
+        test('ObjectDetection polygon annotation - sample-9', () => {
           const convertedAnnotation =
             visionAnnotations[8] as VisionAnnotation<ImageObjectDetectionPolygon>;
 
