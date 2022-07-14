@@ -335,6 +335,10 @@ jobs:
       #       https://cognitedata.github.io/reveal-docs-preview/${{ env.PR_NUMBER }}/docs/next/.
       #     check_for_duplicate_msg: true
 
+      
+      # Checkout to provide context for Github CLI below
+      - name: Checkout 🛎️ 
+        uses: actions/checkout@v2 # If you're using actions/checkout@v2 you must set persist-credentials to false in most cases for the deployment to work correctly.
       - name: Add comment about preview URL
         run: |
             cat << EOF | gh pr comment ${{ github.event.pull_request.number }} --body-file -
