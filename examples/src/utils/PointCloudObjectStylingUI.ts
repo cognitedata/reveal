@@ -26,7 +26,7 @@ export class PointCloudObjectStylingUI {
       }
     };
 
-    uiFolder.add(actions, 'reset').name('Remove all styles');
+    uiFolder.add(actions, 'reset').name('Reset all styled objects');
   }
 
   private createObjectAppearanceUi(uiFolder: dat.GUI): () => PointCloudAppearance {
