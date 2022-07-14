@@ -81,10 +81,7 @@ describe(CdfPointCloudFactory.name, () => {
       new THREE.Vector3(-0.03, 0.1, -500),
       new THREE.Vector3(0.4, -0.4, 0)
     ];
-    const expectedUncontainedPoints: THREE.Vector3[] = [
-      new THREE.Vector3(1, 1, 1),
-      new THREE.Vector3(300, 300, 300)
-    ];
+    const expectedUncontainedPoints: THREE.Vector3[] = [new THREE.Vector3(1, 1, 1), new THREE.Vector3(300, 300, 300)];
 
     const shapes = model.stylableObjects.map(obj => obj.stylableObject.shape);
 
