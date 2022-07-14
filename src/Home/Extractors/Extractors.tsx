@@ -76,7 +76,7 @@ const VersionTable = ({ releases }: { releases: Release[] }) => {
       artifacts: release.artifacts,
       downloads: release.artifacts.map((artifact) => (
         <LinkStyled onClick={() => Download(artifact)} key={artifact.name}>
-          {getArtifactName(t, artifact)}
+          {getArtifactName(artifact)}
         </LinkStyled>
       )),
     });

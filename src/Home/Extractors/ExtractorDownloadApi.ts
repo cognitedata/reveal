@@ -5,6 +5,7 @@ export type Artifact = {
   name: string;
   link: string;
   platform: string;
+  displayName: string | undefined;
 };
 
 export type Release = {
