@@ -5,10 +5,10 @@ import {
   PredefinedShape,
 } from 'src/modules/Review/types';
 import { ThunkConfig } from 'src/store/rootReducer';
-import { AnnotationApiV1 } from 'src/api/annotation/AnnotationApiV1';
-import { AnnotationUtilsV1 } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
+import { LegacyAnnotationApi } from 'src/api/annotation/legacy/legacyAnnotationApi';
 import { VisionDetectionModelType } from 'src/api/vision/detectionModels/types';
 import { getPredefinedKeypointsWithColor } from 'src/store/util/getPredefinedKeypointsWithCorrectColors';
+import { LegacyAnnotationUtils } from 'src/api/annotation/legacy/legacyAnnotationUtils';
 
 export const PopulateAnnotationTemplates = createAsyncThunk<
   PredefinedVisionAnnotations,
@@ -24,7 +24,9 @@ export const PopulateAnnotationTemplates = createAsyncThunk<
     filter: filterPayload,
     limit: -1,
   };
-  const templateAnnotations = await AnnotationApiV1.list(annotationListRequest);
+  const templateAnnotations = await LegacyAnnotationApi.list(
+    annotationListRequest
+  );
   const keypointCollections: PredefinedKeypointCollection[] = [];
   const shapes: PredefinedShape[] = [];
 
@@ -54,7 +56,7 @@ export const PopulateAnnotationTemplates = createAsyncThunk<
         shapes.push({
           id: templateAnnotation.id,
           lastUpdated: templateAnnotation.lastUpdatedTime,
-          color: AnnotationUtilsV1.getAnnotationColor(
+          color: LegacyAnnotationUtils.getAnnotationColor(
             templateAnnotation.text,
             VisionDetectionModelType.ObjectDetection,
             templateAnnotation.data

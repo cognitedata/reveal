@@ -1,5 +1,5 @@
 import {
-  CDFAnnotationV2,
+  CDFAnnotation,
   ImageAssetLink,
   ImageClassification,
   ImageExtractedText,
@@ -23,7 +23,7 @@ export type VisionAnnotationDataType =
 export type CDFInheritedFields<Type> = {
   status: Status;
 } & Pick<
-  CDFAnnotationV2<Type>,
+  CDFAnnotation<Type>,
   | 'id'
   | 'annotatedResourceId'
   | 'createdTime'

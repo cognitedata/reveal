@@ -1,13 +1,5 @@
-import {
-  CogniteInternalId,
-  ExternalId,
-  IdEither,
-  InternalId,
-} from '@cognite/sdk';
-import { AnnotationRegion } from 'src/api/vision/detectionModels/types';
-import { PredefinedKeypoint } from 'src/modules/Review/types';
-import { AnnotationStatus } from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
-import { AnnotationStatus as CDFAnnotationStatus } from '@cognite/sdk-playground';
+import { CogniteInternalId, ExternalId, InternalId } from '@cognite/sdk';
+import { AnnotationStatus } from '@cognite/sdk-playground';
 
 // Constants
 export enum RegionShape {
@@ -148,94 +140,13 @@ export type CDFAnnotationType<Type> = Type extends ImageObjectDetection
   ? CDFAnnotationTypeEnum.ImagesClassification
   : never;
 
-export type CDFAnnotationV2<Type> = AnnotatedResourceId & {
+export type CDFAnnotation<Type> = AnnotatedResourceId & {
   id: number;
   createdTime: Timestamp;
   lastUpdatedTime: Timestamp;
   annotatedResourceType: 'file';
-  status: CDFAnnotationStatus;
+  status: AnnotationStatus;
   annotationType: CDFAnnotationType<Type>;
   data: Type;
   linkedResourceType: 'file' | 'asset';
 };
-// Annotation API types
-export type AnnotationTypeV1 =
-  | 'vision/ocr'
-  | 'vision/tagdetection'
-  | 'vision/objectdetection'
-  | 'vision/gaugereader'
-  | 'vision/custommodel'
-  | 'user_defined'
-  | 'CDF_ANNOTATION_TEMPLATE';
-
-export type AnnotationSourceV1 = 'context_api' | 'user';
-
-export type AnnotationMetadataV1 = Partial<AnnotationAttributes> & {
-  keypoint?: boolean;
-  keypoints?: PredefinedKeypoint[];
-  color?: string;
-  confidence?: number;
-};
-
-interface CDFBaseAnnotationV1 {
-  text: string;
-  data?: AnnotationMetadataV1;
-  region?: AnnotationRegion;
-  annotatedResourceId: number;
-  annotatedResourceExternalId?: string;
-  annotatedResourceType: 'file';
-  annotationType: AnnotationTypeV1;
-  source: AnnotationSourceV1;
-  status: AnnotationStatus;
-  id: number;
-  createdTime: number;
-  lastUpdatedTime: number;
-}
-
-export interface CDFLinkedAnnotationV1 extends CDFBaseAnnotationV1 {
-  linkedResourceId?: number;
-  linkedResourceExternalId?: string;
-  linkedResourceType?: 'asset' | 'file';
-}
-
-export type CDFAnnotationV1 = CDFLinkedAnnotationV1;
-
-export interface AnnotationListRequest {
-  limit?: number;
-  cursor?: string;
-  filter?: Partial<
-    Pick<
-      CDFLinkedAnnotationV1,
-      | 'linkedResourceType'
-      | 'annotatedResourceType'
-      | 'annotationType'
-      | 'source'
-      | 'text'
-    >
-  > & { annotatedResourceIds?: IdEither[]; linkedResourceIds: IdEither[] };
-}
-
-export type UnsavedAnnotation = Omit<
-  CDFAnnotationV1,
-  'id' | 'createdTime' | 'lastUpdatedTime' | 'status'
-> & {
-  data?: { useCache?: boolean; threshold?: number };
-  status?: AnnotationStatus;
-};
-
-export interface AnnotationCreateRequest {
-  items: UnsavedAnnotation[];
-}
-
-type annotationUpdateField<T> = { set: any } | { setNull: true } | T;
-export interface AnnotationUpdateRequest {
-  items: {
-    id: number;
-    update: {
-      text?: annotationUpdateField<string>;
-      status?: annotationUpdateField<AnnotationStatus>;
-      region?: annotationUpdateField<AnnotationRegion>;
-      data?: annotationUpdateField<AnnotationMetadataV1>;
-    };
-  }[];
-}

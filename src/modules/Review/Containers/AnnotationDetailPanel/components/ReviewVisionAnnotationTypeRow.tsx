@@ -2,10 +2,6 @@ import React from 'react';
 import styled from 'styled-components';
 import { AllIconTypes, Icon } from '@cognite/cogs.js';
 import {
-  ModelTypeIconMap,
-  ModelTypeStyleMap,
-} from 'src/utils/AnnotationUtilsV1/AnnotationUtilsV1';
-import {
   AnnotationDetailPanelAnnotationType,
   AnnotationDetailPanelRowDataBase,
   VirtualizedTreeRowProps,
@@ -14,6 +10,10 @@ import {
   ExpandIconComponent,
   KeyboardShortCutSelectable,
 } from 'src/modules/Review/Containers/AnnotationDetailPanel/components/common';
+import {
+  ModelTypeIconMap,
+  ModelTypeStyleMap,
+} from 'src/api/annotation/legacy/legacyAnnotationUtils';
 
 /**
  * Annotation detail row component for main annotation category group headers

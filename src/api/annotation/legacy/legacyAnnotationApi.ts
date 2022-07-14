@@ -1,17 +1,17 @@
 import sdk from '@cognite/cdf-sdk-singleton';
 import { HttpResponse, ItemsResponse } from '@cognite/sdk';
 import {
-  CDFAnnotationV1,
-  AnnotationCreateRequest,
-  AnnotationListRequest,
-  AnnotationUpdateRequest,
-} from 'src/api/annotation/types';
+  LegacyAnnotation,
+  LegacyAnnotationCreateRequest,
+  LegacyAnnotationListRequest,
+  LegacyAnnotationUpdateRequest,
+} from './legacyTypes';
 
-export class AnnotationApiV1 {
+export class LegacyAnnotationApi {
   public static listCursor = async (
-    request: AnnotationListRequest
+    request: LegacyAnnotationListRequest
   ): Promise<{
-    items: CDFAnnotationV1[];
+    items: LegacyAnnotation[];
     nextCursor?: string;
   }> => {
     const { limit } = request;
@@ -35,11 +35,11 @@ export class AnnotationApiV1 {
   };
 
   public static list = async (
-    request: AnnotationListRequest
-  ): Promise<CDFAnnotationV1[]> => {
+    request: LegacyAnnotationListRequest
+  ): Promise<LegacyAnnotation[]> => {
     const { limit } = request;
     const limitVar = limit === -1 ? undefined : limit;
-    const result: CDFAnnotationV1[] = [];
+    const result: LegacyAnnotation[] = [];
     let remaining: number | undefined = limitVar;
     let cursor: string | undefined;
     let currentLimit: number = 1000;
@@ -50,7 +50,7 @@ export class AnnotationApiV1 {
       }
 
       // eslint-disable-next-line no-await-in-loop
-      const response = await AnnotationApiV1.listCursor({
+      const response = await LegacyAnnotationApi.listCursor({
         limit: currentLimit,
         cursor,
         filter: request.filter,
@@ -68,8 +68,8 @@ export class AnnotationApiV1 {
   };
 
   public static create(
-    request: AnnotationCreateRequest
-  ): Promise<HttpResponse<ItemsResponse<CDFAnnotationV1>>> {
+    request: LegacyAnnotationCreateRequest
+  ): Promise<HttpResponse<ItemsResponse<LegacyAnnotation>>> {
     const data = { data: request };
     return sdk.post(
       `${sdk.getBaseUrl()}/api/playground/projects/${
@@ -80,8 +80,8 @@ export class AnnotationApiV1 {
   }
 
   public static update(
-    request: AnnotationUpdateRequest
-  ): Promise<HttpResponse<ItemsResponse<CDFAnnotationV1>>> {
+    request: LegacyAnnotationUpdateRequest
+  ): Promise<HttpResponse<ItemsResponse<LegacyAnnotation>>> {
     const data = { data: request };
     return sdk.post(
       `${sdk.getBaseUrl()}/api/playground/projects/${
