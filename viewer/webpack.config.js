@@ -4,7 +4,6 @@
 const path = require('path');
 const nodeExternals = require('webpack-node-externals');
 const copyPkgJsonPlugin = require('copy-pkg-json-webpack-plugin');
-const logger = require('webpack-log')('reveal');
 const packageJSON = require('./package.json');
 const workerPackageJSON = require('./node_modules/@cognite/reveal-parser-worker/package.json');
 const webpack = require('webpack');
