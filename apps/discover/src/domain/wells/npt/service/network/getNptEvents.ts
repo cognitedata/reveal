@@ -1,3 +1,4 @@
+import { WDL_PAGINATION_LIMITS } from 'domain/wells/constants';
 import { GetAllInspectDataProps } from 'domain/wells/types';
 import { getWellSDKClient } from 'domain/wells/utils/authenticate';
 import { convertToIdentifiers } from 'domain/wells/utils/convertToIdentifiers';
@@ -5,8 +6,6 @@ import { convertToIdentifiers } from 'domain/wells/utils/convertToIdentifiers';
 import { fetchAllCursors } from 'utils/fetchAllCursors';
 
 import { Npt } from '@cognite/sdk-wells';
-
-import { EVENT_PER_PAGE } from '../constants';
 
 export const getNptEvents = async ({
   wellboreIds,
@@ -19,7 +18,7 @@ export const getNptEvents = async ({
       filter: {
         wellboreIds: convertToIdentifiers(wellboreIds),
       },
-      limit: EVENT_PER_PAGE,
+      limit: WDL_PAGINATION_LIMITS.LIST,
     },
   });
 };

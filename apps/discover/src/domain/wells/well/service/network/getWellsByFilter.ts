@@ -1,3 +1,4 @@
+import { WDL_PAGINATION_LIMITS } from 'domain/wells/constants';
 import { getWellSDKClient } from 'domain/wells/utils/authenticate';
 
 import { fetchAllCursors, FetchOptions } from 'utils/fetchAllCursors';
@@ -14,6 +15,9 @@ export const getWellsByFilter = ({
   return fetchAllCursors<Well>({
     signal: options?.signal,
     action: getWellSDKClient().wells.list,
-    actionProps: { ...wellFilterRequest },
+    actionProps: {
+      ...wellFilterRequest,
+      limit: WDL_PAGINATION_LIMITS.LIST,
+    },
   });
 };

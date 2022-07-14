@@ -39,9 +39,9 @@ export const adaptDepthMeasurmentToILog = (
 };
 
 export const adaptDepthMeasurementDataToILogRows = (
-  depthMeasurementData: DepthMeasurementWithData
+  depthMeasurement: DepthMeasurementWithData
 ): ILogRow[] => {
-  const { rows, columns, depthColumn } = depthMeasurementData;
+  const { rows, columns, depthColumn } = depthMeasurement;
 
   const depthColumnAsILogRowColumn: ILogRowColumn = {
     externalId: depthColumn.externalId,

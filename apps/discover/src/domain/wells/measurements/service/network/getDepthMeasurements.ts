@@ -1,3 +1,4 @@
+import { WDL_PAGINATION_LIMITS } from 'domain/wells/constants';
 import { getWellSDKClient } from 'domain/wells/utils/authenticate';
 import { convertToIdentifiers } from 'domain/wells/utils/convertToIdentifiers';
 
@@ -20,6 +21,7 @@ export const getDepthMeasurements = async ({
         wellboreIds: convertToIdentifiers(wellboreIds),
         measurementTypes,
       },
+      limit: WDL_PAGINATION_LIMITS.LIST,
     },
   });
 };

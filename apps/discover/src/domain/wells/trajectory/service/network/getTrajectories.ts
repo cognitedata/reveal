@@ -1,3 +1,4 @@
+import { WDL_PAGINATION_LIMITS } from 'domain/wells/constants';
 import { GetAllInspectDataProps } from 'domain/wells/types';
 import { getWellSDKClient } from 'domain/wells/utils/authenticate';
 import { convertToIdentifiers } from 'domain/wells/utils/convertToIdentifiers';
@@ -17,6 +18,7 @@ export const getTrajectories = async ({
       filter: {
         wellboreIds: convertToIdentifiers(wellboreIds),
       },
+      limit: WDL_PAGINATION_LIMITS.LIST,
     },
   });
 };

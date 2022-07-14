@@ -8,6 +8,7 @@ import {
 } from '../types';
 
 import { mergeDepthColumns } from './mergeDepthColumns';
+import { normalizeDepthMeasurementDataWithErrors } from './normalizeDepthMeasurementDataWithErrors';
 
 export const mergeDepthMeasurementsAndData = (
   depthMeasurements: DepthMeasurementInternal[],
@@ -17,16 +18,17 @@ export const mergeDepthMeasurementsAndData = (
 
   return depthMeasurements.reduce((mergedData, depthMeasurement) => {
     const { sequenceExternalId } = depthMeasurement.source;
-    const depthMeasurementData = keyedDepthMeasurementsData[sequenceExternalId];
-    const depthMeasurementDataColumns =
-      'columns' in depthMeasurementData ? depthMeasurementData.columns : [];
+    const depthMeasurementData = normalizeDepthMeasurementDataWithErrors(
+      depthMeasurement,
+      keyedDepthMeasurementsData[sequenceExternalId]
+    );
 
     const depthMeasurementWithData = {
-      ...(depthMeasurementData as DepthMeasurementDataInternal),
+      ...depthMeasurementData,
       ...depthMeasurement,
       columns: mergeDepthColumns(
         depthMeasurement.columns,
-        depthMeasurementDataColumns
+        depthMeasurementData.columns
       ),
     };
 

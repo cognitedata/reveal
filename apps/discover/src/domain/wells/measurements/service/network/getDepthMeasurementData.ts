@@ -1,3 +1,4 @@
+import { WDL_PAGINATION_LIMITS } from 'domain/wells/constants';
 import { getWellSDKClient } from 'domain/wells/utils/authenticate';
 
 import { fetchAllCursorsItem } from 'utils/fetchAllCursors';
@@ -19,6 +20,7 @@ export const getDepthMeasurementData = async ({
       sequenceExternalId,
       measurementTypes,
       depthUnit: unit && { unit },
+      limit: WDL_PAGINATION_LIMITS.LIST_DATA,
     },
     concatAccessor: 'rows',
   });
