@@ -25,7 +25,7 @@ interface Sidecar extends SidecarConfig {
 const PROD = false;
 // examples: bluefield, greenfield, ew1, bp-northeurope, azure-dev, bp
 // NOTE: leave on 'azure-dev' for testing in the PR's since that is the only place we have the FAKEIdp currently for this project:
-const CLUSTER = 'az-eastus-1';
+const CLUSTER = 'greenfield';
 // #
 // #
 // #
@@ -34,6 +34,7 @@ const CLUSTER = 'az-eastus-1';
 const getAadApplicationId = (cluster: string) => {
   const ids: Record<string, string> = {
     'az-eastus-1': '9bbfff3a-1863-4e21-854d-1aba009804b5',
+    greenfield: 'b8318db7-18d1-419d-a90a-40087c76b1cd',
   };
 
   const aadApplicationId = ids[cluster] || '';
