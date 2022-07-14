@@ -322,6 +322,7 @@ export const DataModelPage = () => {
                 <ErrorBoundary errorComponent={<ErrorPlaceholder />}>
                   <EditorPanel
                     editorMode={mode}
+                    externalId={dataModel!.id}
                     builtInTypes={builtInTypes}
                     graphQlSchema={graphQlSchema}
                     onSchemaChanged={onSchemaChanged}

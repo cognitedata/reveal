@@ -51,6 +51,37 @@ export const graphQlMetaApiResolvers = (
         });
         return items;
       },
+      validateApiVersionFromGraphQl: async (prm, req) => {
+        const { apiExternalId, graphQl } = req.apiVersion;
+        const version = req.apiVersion.version || 1;
+
+        const solution = store.find({ externalId: apiExternalId });
+        const versions = (solution.versions || []) as CdfResourceObject[];
+
+        const currentSchemaVersion = versions.find(
+          (schemaVersion: any) => schemaVersion.version === version
+        ) as any;
+
+        const breakingChanges = await validateBreakingChanges(
+          graphQl,
+          currentSchemaVersion.dataModel.graphqlRepresentation,
+          'upsertApiVersionFromGraphQl'
+        );
+
+        if (breakingChanges.length) {
+          throw new GraphQLError(
+            breakingChanges[0].message,
+            null,
+            null,
+            null,
+            null,
+            null,
+            breakingChanges[0].extensions
+          );
+        }
+
+        return [];
+      },
     },
     Mutation: {
       upsertApis: (_, req) => {

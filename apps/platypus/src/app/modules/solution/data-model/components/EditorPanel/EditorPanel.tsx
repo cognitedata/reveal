@@ -23,6 +23,7 @@ const GraphqlCodeEditor = React.lazy(() =>
 
 export interface EditorPanelProps {
   graphQlSchema: string;
+  externalId: string;
   editorMode: SchemaEditorMode;
   builtInTypes: BuiltInType[];
   onSchemaChanged: (schemaString: string) => void;
@@ -35,6 +36,8 @@ export const EditorPanel = (props: EditorPanelProps) => {
   const dataModelTypeDefsBuilder = useInjection(
     TOKENS.dataModelTypeDefsBuilderService
   );
+  const dataModelVersionHandler = useInjection(TOKENS.dataModelVersionHandler);
+
   useEffect(() => {
     async function getOptions() {
       const builtInTypesResponse =
@@ -80,6 +83,8 @@ export const EditorPanel = (props: EditorPanelProps) => {
         <Suspense fallback={<Spinner />}>
           <GraphqlCodeEditor
             builtInTypes={props.builtInTypes}
+            dataModelVersionHandler={dataModelVersionHandler}
+            externalId={props.externalId}
             code={props.graphQlSchema}
             onChange={props.onSchemaChanged}
             disabled={props.editorMode === SchemaEditorMode.View}

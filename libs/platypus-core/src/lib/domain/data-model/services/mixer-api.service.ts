@@ -11,6 +11,7 @@ import {
   ApiVersionFromGraphQl,
   ConflictMode,
   DataModelStorageBindingsDTO,
+  ValidateDataModelDTO,
 } from '../dto';
 
 export class MixerApiService {
@@ -165,6 +166,40 @@ export class MixerApiService {
       .then((response) => {
         return response.data.data.validateBindings[0] as { message: string }[];
       })
+      .catch((err) => Promise.reject(PlatypusError.fromSdkError(err)));
+  }
+
+  validateDataModel(
+    dto: ApiVersionFromGraphQl,
+    conflictMode: ConflictMode
+  ): Promise<ValidateDataModelDTO[]> {
+    const validateDTO = {
+      query: `query ($apiVersion: ApiVersionFromGraphQl, $conflictMode: ConflictMode) {
+        validateApiVersionFromGraphQl(apiVersion: $apiVersion, conflictMode: $conflictMode) {
+          message
+          breakingChangeInfo {
+            typeOfChange
+            typeName
+            fieldName
+            previousValue
+            currentValue
+          }
+        }
+      }`,
+      variables: {
+        apiVersion: dto,
+        conflictMode,
+      },
+    } as GraphQlQueryParams;
+
+    // Mixer API retrurns different response DTO depending on their validation
+    // sometimes the error is in data and sometimes in errors
+    // Also the structure of the actual errors is different as well
+    return this.runGraphQlQuery(this.schemaServiceBaseUrl, validateDTO)
+      .then(
+        (response) => response.data.data.validateApiVersionFromGraphQl,
+        (errResponse) => errResponse.errors
+      )
       .catch((err) => Promise.reject(PlatypusError.fromSdkError(err)));
   }
 

@@ -53,3 +53,22 @@ export interface ApiSpecDTO {
     [key: string]: unknown;
   };
 }
+
+export interface ValidateDataModelBreakingChangeInfoDTO {
+  currentValue: string;
+  fieldName: string;
+  previousValue: string;
+  typeName: string;
+  typeOfChange: string;
+}
+
+export interface ValidateDataModelDTO {
+  message: string;
+  locations?: { line: number; column: number }[];
+  path?: string[];
+  extensions?: {
+    classification?: string;
+    breakingChangeInfo?: ValidateDataModelBreakingChangeInfoDTO;
+  };
+  breakingChangeInfo?: ValidateDataModelBreakingChangeInfoDTO;
+}

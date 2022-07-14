@@ -200,4 +200,319 @@ describe('GraphQlUtilsServiceTest', () => {
     service.removeType('Person');
     expect(service.generateSdl()).toBe('');
   });
+
+  describe('GraphQlUtilsService GraphQl schema validation test', () => {
+    it('should validate valid schema', () => {
+      const service = createInstance();
+
+      const validSchema = `type Post @view {
+        name: String
+        author: Author
+      }
+
+      type Author @view {
+        name: String
+      }`;
+      const result = service.validate(validSchema);
+      expect(result).toEqual([]);
+    });
+
+    it('should validate syntax errors', () => {
+      const service = createInstance();
+      const schemaWithSyntaxError = `type Post @view
+      name: String
+      author: Author
+    }
+
+    type Author @view {
+      name: String
+    }`;
+      const result = service.validate(schemaWithSyntaxError);
+      expect(result).toEqual([
+        {
+          message: 'Syntax Error: Unexpected Name "name".',
+          status: 400,
+          errorMessage: 'Syntax Error: Unexpected Name "name".',
+          locations: [
+            {
+              column: 7,
+              line: 2,
+            },
+          ],
+        },
+      ]);
+    });
+
+    it('should validate invalid fields', () => {
+      const service = createInstance();
+      const schemaWithInvalidField = `type Post @view {
+        name String
+        author: Author
+      }
+
+      type Author @view {
+        name: String
+      }`;
+      const result = service.validate(schemaWithInvalidField);
+
+      expect(result).toEqual([
+        {
+          message: 'Syntax Error: Expected ":", found Name "String".',
+          status: 400,
+          errorMessage: 'Syntax Error: Expected ":", found Name "String".',
+          locations: [
+            {
+              line: 2,
+              column: 14,
+            },
+          ],
+        },
+      ]);
+    });
+
+    it('should validate invalid scalars', () => {
+      const service = createInstance();
+
+      const schemaWithInvalidScalar = `type Post @view {
+        name: Strings
+        author: Author
+      }
+
+      type Author @view {
+        name: String
+      }`;
+      const result = service.validate(schemaWithInvalidScalar);
+      expect(result).toEqual([
+        {
+          message: 'Unknown type "Strings". Did you mean "String"?',
+          status: 400,
+          errorMessage: 'Unknown type "Strings". Did you mean "String"?',
+          locations: [
+            {
+              column: 15,
+              line: 2,
+            },
+          ],
+        },
+      ]);
+    });
+
+    it('should validate undefined types', () => {
+      const service = createInstance();
+
+      const schemaWithUndefinedType = `type Post @view {
+        name: String
+        author: User
+      }
+
+      type Author @view {
+        name: String
+      }`;
+      const result = service.validate(schemaWithUndefinedType);
+      expect(result).toEqual([
+        {
+          message: 'Unknown type "User".',
+          status: 400,
+          errorMessage: 'Unknown type "User".',
+          locations: [
+            {
+              column: 17,
+              line: 3,
+            },
+          ],
+        },
+      ]);
+    });
+
+    it('should validate duplicate fields', () => {
+      const service = createInstance();
+
+      const schemaWithDuplicateField = `type Post @view {
+        name: String
+        author: Author
+        author: Author
+      }
+
+      type Author @view {
+        name: String
+      }`;
+      const result = service.validate(schemaWithDuplicateField);
+
+      expect(result).toEqual([
+        {
+          message: 'Field "Post.author" can only be defined once.',
+          status: 400,
+          errorMessage: 'Field "Post.author" can only be defined once.',
+          locations: [
+            {
+              column: 9,
+              line: 3,
+            },
+            {
+              column: 9,
+              line: 4,
+            },
+          ],
+        },
+      ]);
+    });
+
+    it('should validate duplicate types', () => {
+      const service = createInstance();
+      const schemaWithDuplicateType = `type Post {
+        name: String
+      }
+
+      type Post @view {
+        title: String
+      }`;
+      const result = service.validate(schemaWithDuplicateType);
+
+      expect(result).toEqual([
+        {
+          message: 'There can be only one type named "Post".',
+          status: 400,
+          errorMessage: 'There can be only one type named "Post".',
+          locations: [
+            {
+              column: 6,
+              line: 1,
+            },
+            {
+              column: 12,
+              line: 5,
+            },
+          ],
+        },
+      ]);
+    });
+
+    it('should validate types with missing view directive', () => {
+      const service = createInstance();
+      const schemaWithMissingViewDirective = `type Post {
+        name: String
+      }
+
+      type Author @view {
+        title: String
+      }`;
+      const result = service.validate(schemaWithMissingViewDirective);
+      expect(result).toEqual([
+        {
+          message: 'Type "Post" must have @view directive',
+          status: 400,
+          typeName: 'Post',
+          fieldName: 'name',
+          errorMessage: 'Type "Post" must have @view directive',
+          locations: [
+            {
+              column: 1,
+              line: 1,
+            },
+          ],
+        },
+      ]);
+    });
+
+    it('should validate unsupported features', () => {
+      const service = createInstance();
+
+      const schemaWithUnsupportedFeatures = `input ReviewInput {
+        stars: Int!
+        commentary: String
+      }
+
+      enum Episode {
+        NEWHOPE
+        EMPIRE
+        JEDI
+      }
+
+      interface Character {
+        id: ID!
+        name: String!
+        friends: [Character]
+        appearsIn: [Episode]!
+      }
+
+      type Human  @view {
+        name: String!
+      }
+
+      extend type Human {
+        gender: String
+      }
+
+      type User @view {
+        name: String
+        jobs: [Job]
+      }
+
+      type Job @view {
+        name: String
+      }
+
+      union Superman = Human | User
+      `;
+      const result = service.validate(schemaWithUnsupportedFeatures);
+
+      expect(result).toEqual([
+        {
+          message: 'Input type defenitions are not supported.',
+          status: 400,
+          errorMessage: 'Input type defenitions are not supported.',
+          locations: [
+            {
+              line: 1,
+              column: 1,
+            },
+          ],
+        },
+        {
+          message: 'Enums are not supported.',
+          status: 400,
+          errorMessage: 'Enums are not supported.',
+          locations: [
+            {
+              line: 6,
+              column: 7,
+            },
+          ],
+        },
+        {
+          message: 'Interfaces are not supported.',
+          status: 400,
+          errorMessage: 'Interfaces are not supported.',
+          locations: [
+            {
+              line: 12,
+              column: 7,
+            },
+          ],
+        },
+        {
+          message: 'Type extensions are not supported.',
+          status: 400,
+          errorMessage: 'Type extensions are not supported.',
+          locations: [
+            {
+              line: 23,
+              column: 7,
+            },
+          ],
+        },
+        {
+          message: 'Unions are not supported.',
+          status: 400,
+          errorMessage: 'Unions are not supported.',
+          locations: [
+            {
+              line: 36,
+              column: 7,
+            },
+          ],
+        },
+      ]);
+    });
+  });
 });

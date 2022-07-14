@@ -15,7 +15,7 @@ export class DiagnosticsAdapter {
   constructor(
     private readonly _languageId: string,
     protected readonly editorInstance: EditorInstance,
-    private doValidation: ValidateFunction
+    private validateFn: ValidateFunction
   ) {
     const onModelAdd = (model: editor.IModel): void => {
       let handle: number;
@@ -74,12 +74,12 @@ export class DiagnosticsAdapter {
   }
 
   // wrapper that do the validation and set errors in monaco editor
-  private _doValidate(
+  private async _doValidate(
     editorInstance: EditorInstance,
     model: editor.IModel,
     editorContent: string
-  ): void {
-    const markers = this.doValidation(editorContent);
+  ): Promise<void> {
+    const markers = await this.validateFn(editorContent);
     editorInstance.setModelMarkers(model, config.languageId, markers);
   }
 }

@@ -4,10 +4,13 @@ import { IDisposable } from 'monaco-editor';
 import { config } from './config';
 import { DiagnosticsAdapter } from './languageServiceFeatures';
 import { autoCompleteProvider } from './codeCompletitionProvider';
-import { EditorInstance } from './types';
-import { validateGraphQlSchemaString } from './validation';
+import { EditorInstance, ValidateFunction } from './types';
 
-export const setupGraphql = (monaco: Monaco, builtInTypes: BuiltInType[]) => {
+export const setupGraphql = (
+  monaco: Monaco,
+  builtInTypes: BuiltInType[],
+  validator: ValidateFunction
+) => {
   const editorInstance: EditorInstance = monaco.editor;
   const disposables: IDisposable[] = [];
   const providers: IDisposable[] = [];
@@ -16,11 +19,7 @@ export const setupGraphql = (monaco: Monaco, builtInTypes: BuiltInType[]) => {
     disposeAll(providers);
 
     providers.push(
-      new DiagnosticsAdapter(
-        config.languageId,
-        editorInstance,
-        validateGraphQlSchemaString
-      )
+      new DiagnosticsAdapter(config.languageId, editorInstance, validator)
     );
 
     providers.push(

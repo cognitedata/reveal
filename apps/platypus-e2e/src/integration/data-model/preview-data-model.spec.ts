@@ -190,4 +190,43 @@ describe('Data Model Page - Existing Solution Preview', () => {
       .should('contain', 'user')
       .and('contain', 'User');
   });
+
+  it('should validate unsuported features when publishing', () => {
+    cy.get('[aria-label="Code editor"]').click();
+    cy.get('.monaco-editor textarea:first').should('be.visible');
+    cy.getBySel('edit-schema-btn').should('be.visible').click();
+    cy.get('.monaco-editor textarea:first').type(`
+      type Test {
+        user: User!
+      }
+      `);
+
+    cy.getBySel('publish-schema-btn').click();
+
+    // breaking changes dialog should be displayed even before publishing
+    cy.getBySelLike('toast-title').contains(
+      'Error: could not update data model'
+    );
+    cy.getBySelLike('toast-body').contains(
+      'Your Data Model GraphQL schema contains errors.'
+    );
+  });
+
+  it('should validate GraphQl schema with breaking changes when publishing', () => {
+    cy.get('[aria-label="UI editor"]').click();
+    cy.contains('Post').click();
+    cy.get('h5').contains('Post').should('be.visible');
+    // should delete field "title"
+    cy.getBySel('edit-schema-btn').should('be.visible').click();
+    cy.get('button[aria-label="Delete field"').first().click();
+    cy.get('div#Post')
+      .find('[data-cy="visualizer-type-field"]')
+      .first()
+      .should('not.contain', 'title');
+
+    cy.getBySel('publish-schema-btn').click();
+
+    // breaking changes dialog should be displayed even before publishing
+    cy.getBySelLike('modal-title').contains('Breaking changes in data model');
+  });
 });

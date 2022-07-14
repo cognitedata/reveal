@@ -11,15 +11,32 @@ const toCompletitionItem = (
   type: BuiltInType,
   iconKind: languages.CompletionItemKind,
   prefix = ''
-) =>
-  ({
+) => {
+  // check the current line that the user is editing
+  // if matches on of this formats, just add the type, otherwise add space
+  /**
+   * Formats:
+   * 1. field:{space}
+   * 2. {space}
+   * 2. @
+   */
+  let insertText = textUntilPosition.match(/(:[\s]{1,}|[\s]{1,}|[@])/)
+    ? type.name
+    : ' ' + type.name;
+
+  // if current line does not include prefix and insert text does not includes also
+  // just append in the line. Prefix could be something like "@"
+  if (!insertText.includes(prefix) && !textUntilPosition.includes(prefix)) {
+    insertText = prefix + insertText;
+  }
+
+  return {
     label: type.name,
     kind: iconKind,
-    insertText: textUntilPosition.match(/(:\s|\[\s])/)
-      ? prefix + type.name
-      : ' ' + prefix + type.name,
+    insertText,
     insertTextRules: languages.CompletionItemInsertTextRule.InsertAsSnippet,
-  } as CompletionItem);
+  } as CompletionItem;
+};
 
 const getCodeCompletitionItems = (
   textUntilPosition: string,
@@ -58,7 +75,7 @@ const getCodeCompletitionItems = (
 export const autoCompleteProvider = (builtInTypes: BuiltInType[]) => {
   const completionItemProvider: CompletionItemProvider = {
     // Run this function when the period or open parenthesis is typed
-    triggerCharacters: [':', '[', ']'],
+    triggerCharacters: [':', '[', ']', '@'],
     provideCompletionItems: (model: editor.ITextModel, position: Position) => {
       // get the text from current line
       const textUntilPosition = model.getValueInRange({

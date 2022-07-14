@@ -16,12 +16,18 @@ import {
 } from './dto';
 import { DataModelStorageApiService, MixerApiService } from './services';
 import { DataModelVersionDataMapper } from './services/data-mappers/data-model-version-data-mapper';
+import { DataModelValidationErrorDataMapper } from './services/data-mappers/data-model-validation-error-data-mapper';
 import { DataModelStorageBuilderService } from './services/data-model-storage-builder.service';
-import { DataModelVersion, DataModelVersionStatus } from './types';
+import {
+  DataModelValidationError,
+  DataModelVersion,
+  DataModelVersionStatus,
+} from './types';
 
 export class DataModelVersionHandler {
   private dataModelVersionDataMapper: DataModelVersionDataMapper;
   private dmsServiceBuilder: DataModelStorageBuilderService;
+  private validationErrorDataMapper: DataModelValidationErrorDataMapper;
 
   constructor(
     private mixerApiService: MixerApiService,
@@ -31,6 +37,7 @@ export class DataModelVersionHandler {
     // Internal services, no need to export to the outside world
     this.dataModelVersionDataMapper = new DataModelVersionDataMapper();
     this.dmsServiceBuilder = new DataModelStorageBuilderService();
+    this.validationErrorDataMapper = new DataModelValidationErrorDataMapper();
   }
 
   /**
@@ -38,7 +45,7 @@ export class DataModelVersionHandler {
    * @param dto
    */
   version(dto: FetchDataModelVersionDTO): Promise<Result<DataModelVersion>> {
-    const validationResult = this.validate(dto, ['dataModelId']);
+    const validationResult = this.validateField(dto, ['dataModelId']);
 
     if (!validationResult.valid) {
       return Promise.reject(Result.fail(validationResult.errors));
@@ -64,7 +71,7 @@ export class DataModelVersionHandler {
    * @param dto
    */
   versions(dto: ListDataModelVersionsDTO): Promise<Result<DataModelVersion[]>> {
-    const validationResult = this.validate(dto, ['dataModelId']);
+    const validationResult = this.validateField(dto, ['dataModelId']);
     if (!validationResult.valid) {
       return Promise.reject(Result.fail(validationResult.errors));
     }
@@ -94,6 +101,45 @@ export class DataModelVersionHandler {
       .catch((err: PlatypusError) => Result.fail(err));
   }
 
+  async validate(
+    dto: CreateDataModelVersionDTO,
+    validateBreakingChanges = true
+  ): Promise<Result<DataModelValidationError[]>> {
+    const errors = this.graphqlService.validate(dto.schema);
+
+    if (errors.length) {
+      return Promise.resolve(Result.fail(errors));
+    }
+
+    if (!validateBreakingChanges) {
+      return Promise.resolve(Result.ok(errors));
+    }
+
+    // if all ok til this point, the schema should be valid
+    // we can check for breaking changes
+    const typeDefs = this.graphqlService.parseSchema(dto.schema);
+
+    try {
+      const validationErrors = await this.mixerApiService.validateDataModel(
+        {
+          apiExternalId: dto.externalId,
+          graphQl: dto.schema,
+        },
+        'PATCH'
+      );
+
+      const dataModelErrors = validationErrors!.map((err: any) =>
+        this.validationErrorDataMapper.deserialize(err as any, typeDefs)
+      );
+
+      return dataModelErrors.length
+        ? Result.fail(dataModelErrors)
+        : Result.ok([]);
+    } catch (err) {
+      return Result.fail(err);
+    }
+  }
+
   /**
    * Publish new schema by bumping the version.
    * @param dataModelVersion - DataModelVersion
@@ -103,7 +149,7 @@ export class DataModelVersionHandler {
     dto: CreateDataModelVersionDTO,
     conflictMode: ConflictMode
   ): Promise<Result<DataModelVersion>> {
-    const validationResult = this.validate(dto, ['externalId']);
+    const validationResult = this.validateField(dto, ['externalId']);
     if (!validationResult.valid) {
       return Promise.reject(Result.fail(validationResult.errors));
     }
@@ -117,6 +163,18 @@ export class DataModelVersionHandler {
       status: dto.status || DataModelVersionStatus.PUBLISHED,
       version: dto.version,
     } as DataModelVersion;
+
+    // Validate Data Model
+    const dataModelValidation = await this.validate(
+      dataModelVersionDto,
+      conflictMode === 'PATCH'
+    );
+    if (!dataModelValidation.isSuccess) {
+      const errors = dataModelValidation.errorValue();
+      const errorResponse = PlatypusError.fromDataModelValidationError(errors);
+
+      return Result.fail(errorResponse);
+    }
 
     let version;
 
@@ -199,7 +257,7 @@ export class DataModelVersionHandler {
    * @param dto
    */
   runQuery(dto: RunQueryDTO): Promise<Result<GraphQLQueryResponse>> {
-    const validationResult = this.validate(dto, ['dataModelId']);
+    const validationResult = this.validateField(dto, ['dataModelId']);
 
     if (!validationResult.valid) {
       return Promise.reject(Result.fail(validationResult.errors));
@@ -215,7 +273,7 @@ export class DataModelVersionHandler {
       .catch((err) => Promise.reject(PlatypusError.fromSdkError(err)));
   }
 
-  private validate(dto: DTO, fields: string[]): ValidatorResult {
+  private validateField(dto: DTO, fields: string[]): ValidatorResult {
     const validator = new Validator(dto);
     fields.forEach((field) =>
       validator.addRule(field, new RequiredFieldValidator())

@@ -6,6 +6,17 @@ type Query {
   getApisByIds(externalIds: [ID!]!): [Api]!
 
   validateBindings(apiExternalId: ID, version: Int!, bindings: [ViewBindingCreate!]!): [ValidationError!]!
+
+  validateApiVersionFromGraphQl(
+      apiVersion: ApiVersionFromGraphQl,
+      conflictMode: ConflictMode = PATCH
+  ): [ValidationError!]!
+
+  queryStatistics(
+    queries: [QueryStatistic!]!
+    since: Timestamp
+    until: Timestamp
+  ): [Statistic]
 }
 type Mutation {
   upsertApis(apis: [ApiCreate!]!): [Api!]!
@@ -52,6 +63,15 @@ enum ConflictMode {
   PATCH
   "This mode creates a new version"
   NEW_VERSION
+}
+
+input QueryStatistic {
+  query: String!
+}
+
+type Statistic {
+  query: String!
+  count: Int
 }
 
 type DataModel {
@@ -128,7 +148,24 @@ type MappingReverseRelation {
 
 type ValidationError {
   message: String!
+  breakingChangeInfo: BreakingChangeInfo
 }
+
+enum TypeOfChange {
+  TYPE_REMOVED
+  FIELD_REMOVED
+  FIELD_TYPE_CHANGED
+  CONSTRAINT_CHANGED
+}
+
+type BreakingChangeInfo {
+  typeOfChange: TypeOfChange!
+  typeName: String
+  fieldName: String
+  previousValue: String
+  currentValue: String
+}
+
 type PageInfo {
   hasNextPage: Boolean!
   hasPreviousPage: Boolean!

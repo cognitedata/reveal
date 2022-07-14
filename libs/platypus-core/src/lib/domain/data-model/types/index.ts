@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { KeyValueMap } from '@platypus-core/boundaries/types';
+import { KeyValueMap, ValidationError } from '../../../boundaries/types';
 export * from './data-model-storage-types';
 export * from './data-model-type-defs-types';
 export interface DataModel {
@@ -43,6 +43,10 @@ export type PaginatedResponse = {
   pageInfo: { cursor: string; hasNextPage: boolean };
   items: KeyValueMap[];
 };
+export interface DataModelValidationError extends ValidationError {
+  typeName?: string;
+  fieldName?: string;
+}
 
 export type DataModelTransformation = {
   id: number;

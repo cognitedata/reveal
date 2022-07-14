@@ -1,18 +1,20 @@
+import { DataModelValidationError } from '@platypus-core/domain/data-model';
+
 export interface ValidationError {
   status: number;
   message: string;
   errorMessage?: string;
-  missing: Record<string, string>[];
+  missing?: Record<string, string>[];
   locations?: { line: number; column: number }[];
   extensions?: {
     breakingChangeInfo?: {
       typeOfChange:
-        | 'constraintChanged'
-        | 'fieldTypeChanged'
-        | 'typeRemoved'
-        | 'fieldRemoved';
-      typeName?: string;
-      fieldName?: string;
+        | 'TYPE_REMOVED'
+        | 'FIELD_REMOVED'
+        | 'FIELD_TYPE_CHANGED'
+        | 'CONSTRAINT_CHANGED';
+      typeName: string;
+      fieldName: string;
       previousValue: string;
       currentValue: string;
     };
@@ -98,6 +100,25 @@ export class PlatypusError {
           platypusErrorMsg.type = 'BREAKING_CHANGE';
           break;
         }
+
+        // Handle breaking changes for mixer API
+        if (err.errors?.some((error: any) => error?.breakingChangeInfo)) {
+          platypusErrorMsg.errors = err.errors.map((err) => {
+            return {
+              ...err,
+              extensions: {
+                breakingChangeInfo: (err as any).breakingChangeInfo,
+              },
+            };
+          });
+          const breakingChangeList = err.errors
+            .map((error) => `* ${error.message}`)
+            .join('\n');
+          platypusErrorMsg.message = `Breaking change(s): \n\n${breakingChangeList}`;
+          platypusErrorMsg.type = 'BREAKING_CHANGE';
+          break;
+        }
+
         if (err.missing) {
           platypusErrorMsg.message = scopedMsg;
           platypusErrorMsg.type = 'NOT_FOUND';
@@ -142,6 +163,27 @@ export class PlatypusError {
     }
 
     return platypusErrorMsg;
+  }
+
+  static fromDataModelValidationError(
+    errors: DataModelValidationError[]
+  ): PlatypusError {
+    const errorResponse = new PlatypusError(
+      'Your Data Model GraphQL schema contains errors.',
+      'VALIDATION',
+      400,
+      null,
+      errors
+    );
+    if (errors?.some((error) => error.extensions?.breakingChangeInfo)) {
+      errorResponse.type = 'BREAKING_CHANGE';
+      const breakingChangeList = errorResponse
+        .errors!.map((error) => `* ${error.message}`)
+        .join('\n');
+      errorResponse.message = `Breaking change(s): \n\n${breakingChangeList}`;
+    }
+
+    return errorResponse;
   }
 
   toString(): string {

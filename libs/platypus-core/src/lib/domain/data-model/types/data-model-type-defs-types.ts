@@ -31,6 +31,7 @@ export type DataModelTypeDefsField = {
   directives?: DirectiveProps[];
   nonNull?: boolean;
   list?: string;
+  location?: { line: number; column: number };
 };
 
 export type DataModelTypeDefsType = {
@@ -39,6 +40,7 @@ export type DataModelTypeDefsType = {
   interfaces?: string[];
   directives?: DirectiveProps[];
   fields: DataModelTypeDefsField[];
+  location?: { line: number; column: number };
 };
 export type DataModelTypeDefs = {
   types: DataModelTypeDefsType[];

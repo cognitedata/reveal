@@ -7,8 +7,16 @@ import {
   DataModelTypeDefsFieldArgument,
   DataModelTypeDefsType,
   UpdateDataModelFieldDTO,
+  DataModelValidationError,
 } from '@platypus/platypus-core';
-import { ObjectTypeDefinitionNode } from 'graphql';
+import {
+  ObjectTypeDefinitionNode,
+  parse,
+  buildSchema,
+  GraphQLError,
+  DocumentNode,
+} from 'graphql';
+
 import {
   documentApi,
   DocumentApi,
@@ -20,7 +28,13 @@ import {
   DirectiveApi,
   InputValueApi,
 } from 'graphql-extra';
-// import { DomainModelSchemaDataMapper } from './solution-data-model-mapper';
+import {
+  validate as validateFromGql,
+  ValidationRule,
+} from 'graphql/validation';
+import { validateSDL } from 'graphql/validation/validate';
+import { NotSupportedFeaturesRule } from './validation/NotSupportedFeaturesRule';
+import { TypeHasViewDirectiveRule } from './validation/TypeHasViewDirectiveRule';
 
 export class GraphQlUtilsService implements IGraphQlUtilsService {
   private schemaAst: DocumentApi | null = null;
@@ -124,8 +138,8 @@ export class GraphQlUtilsService implements IGraphQlUtilsService {
   }
 
   parseSchema(graphQlSchema: string): DataModelTypeDefs {
-    this.schemaAst = documentApi().addSDL(graphQlSchema);
-
+    const schemaAst = parse(graphQlSchema);
+    this.schemaAst = documentApi().addSDL(schemaAst);
     const types = [...this.schemaAst.typeMap.keys()].map((type) =>
       this.schemaAst!.typeMap.get(type)
     );
@@ -175,6 +189,12 @@ export class GraphQlUtilsService implements IGraphQlUtilsService {
         (typeInterface) => typeInterface.name.value
       ),
       directives: this.mapDirectives(type.getDirectives()),
+      location: type.node.loc
+        ? {
+            line: type.node.loc.startToken.line,
+            column: type.node.loc.endToken.column,
+          }
+        : undefined,
     } as DataModelTypeDefsType;
   }
 
@@ -192,6 +212,12 @@ export class GraphQlUtilsService implements IGraphQlUtilsService {
       nonNull: field.isNonNullType(),
       directives: this.mapDirectives(field.getDirectives()),
       arguments: this.mapArguments(field.getArguments()),
+      location: field.node.loc
+        ? {
+            line: field.node.loc.startToken.line,
+            column: field.node.loc.endToken.column,
+          }
+        : undefined,
     } as DataModelTypeDefsField;
   }
 
@@ -231,5 +257,76 @@ export class GraphQlUtilsService implements IGraphQlUtilsService {
 
   clear() {
     this.schemaAst = documentApi();
+  }
+
+  validate(graphQlString: string): DataModelValidationError[] {
+    // we need this to be able to parse and validate the schema properly
+    const schemaToValidate = `${graphQlString}
+scalar Timestamp
+directive @view on OBJECT
+type Query {
+  test: String
+}
+    `;
+
+    const customValidationRules = [
+      TypeHasViewDirectiveRule,
+      // NoRequiredCustomTypesRule,
+      NotSupportedFeaturesRule,
+    ] as ValidationRule[];
+
+    let errors = [];
+    let doc: DocumentNode;
+
+    try {
+      doc = parse(schemaToValidate);
+      errors = validateSDL(doc);
+
+      if (errors.length) {
+        return errors.map((err) => this.graphQlToValidationError(err));
+      }
+
+      errors = validateFromGql(
+        buildSchema(schemaToValidate),
+        doc,
+        Object.freeze(customValidationRules)
+      ).map((err) => err);
+    } catch (err) {
+      errors = [err];
+    }
+
+    return errors.map((err) => this.graphQlToValidationError(err));
+  }
+
+  private graphQlToValidationError(
+    error: GraphQLError
+  ): DataModelValidationError {
+    let typeName = undefined;
+    let fieldName = undefined;
+
+    if (error.nodes?.length) {
+      const node = error.nodes[0];
+
+      if (node.kind === 'ObjectTypeDefinition') {
+        const typeDef = objectTypeApi(node);
+        typeName = typeDef.getName();
+
+        if (node.fields?.length) {
+          const fieldDef = fieldDefinitionApi(node.fields[0]);
+          fieldName = fieldDef.getName();
+        }
+      }
+    }
+    return {
+      message: error.message,
+      status: 400,
+      errorMessage: error.message,
+      typeName,
+      fieldName,
+      locations: error.locations?.map((loc) => ({
+        line: loc.line,
+        column: loc.column,
+      })),
+    };
   }
 }
