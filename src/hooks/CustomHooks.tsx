@@ -101,3 +101,37 @@ export function useUniqueCdfItems<T>(
     isLoading: isItemWithExternalIdLoading || isItemLoading,
   };
 }
+
+/**
+ * This hook gets an HTMLElement as ref and computes if it is overflowing
+ * @param ref ref object to an HTMLElement
+ * @returns boolean flag whether the HTMLElement is overflowing
+ */
+export const useIsOverflow = (ref: React.RefObject<HTMLElement>) => {
+  const [isOverflow, setIsOverflow] = useState(false);
+  const { current } = ref;
+  useEffect(() => {
+    if (
+      current?.clientWidth &&
+      current?.scrollWidth &&
+      current?.clientHeight &&
+      current?.scrollHeight
+    ) {
+      if (
+        current?.clientWidth < current?.scrollWidth ||
+        current?.clientHeight < current?.scrollHeight
+      ) {
+        setIsOverflow(true);
+      } else {
+        setIsOverflow(false);
+      }
+    }
+  }, [
+    current?.clientWidth,
+    current?.clientHeight,
+    current?.scrollWidth,
+    current?.scrollHeight,
+  ]);
+
+  return isOverflow;
+};

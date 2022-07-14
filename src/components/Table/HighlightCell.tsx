@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { Body, Tooltip } from '@cognite/cogs.js';
 import styled, { css } from 'styled-components';
 import Highlighter from 'react-highlight-words';
+import { useIsOverflow } from 'hooks';
 
 export const HighlightCell = ({
   text,
@@ -12,15 +13,33 @@ export const HighlightCell = ({
   query?: string;
   lines?: number;
 }) => {
+  const textWrapperRef = useRef<HTMLDivElement>(null);
+  const isEllipsisActive = useIsOverflow(textWrapperRef);
+
   return (
     <EllipsisText level={2} strong lines={lines}>
-      <Tooltip content={text} placement="top-start" arrow={false} interactive>
-        <Highlighter
-          searchWords={(query || '').split(' ')}
-          textToHighlight={text || ''}
-          autoEscape
-        />
-      </Tooltip>
+      <div ref={textWrapperRef}>
+        {isEllipsisActive ? (
+          <Tooltip
+            content={text}
+            placement="top-start"
+            arrow={false}
+            interactive
+          >
+            <Highlighter
+              searchWords={(query || '').split(' ')}
+              textToHighlight={text || ''}
+              autoEscape
+            />
+          </Tooltip>
+        ) : (
+          <Highlighter
+            searchWords={(query || '').split(' ')}
+            textToHighlight={text || ''}
+            autoEscape
+          />
+        )}
+      </div>
     </EllipsisText>
   );
 };
