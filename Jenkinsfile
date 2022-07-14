@@ -198,7 +198,7 @@ pods {
         container('bazel') {
           def commitMessage = sh(script:"git show --pretty=format:%s -s origin/master", returnStdout:true).trim()
           def commitSha = sh(script: "git rev-parse origin/master", returnStdout:true).trim()
-          sh(label: 'bazel test discover', script: 'COMMIT_INFO_REMOTE=\"https://github.com/cognitedata/applications/commit/${commitSha}\" COMMIT_INFO_BRANCH=master COMMIT_INFO_SHA=${commitSha} COMMIT_INFO_MESSAGE=\"${commitMessage}\" bazel test --test_env=COMMIT_INFO_BRANCH --test_env=COMMIT_INFO_SHA --test_env=COMMIT_INFO_MESSAGE --test_env=COMMIT_INFO_REMOTE //apps/discover/... --test_tag_filters=nightly')
+          sh(label: 'bazel test discover', script: "bazel test --test_env=COMMIT_INFO_BRANCH=master --test_env=COMMIT_INFO_SHA=${commitSha} --test_env=COMMIT_INFO_MESSAGE=\"${commitMessage}\" --test_env=COMMIT_INFO_REMOTE=\"https://github.com/cognitedata/applications/commit/${commitSha}\" //apps/discover/... --test_tag_filters=nightly")
         }
       }
       return
