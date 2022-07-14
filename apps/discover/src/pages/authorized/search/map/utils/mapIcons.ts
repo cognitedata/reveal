@@ -1,3 +1,5 @@
+import { MapIcon } from '@cognite/react-map';
+
 import {
   DOCUMENT_MARKER,
   DOCUMENTS_CLUSTER_MARKER,
@@ -10,7 +12,18 @@ import { documentsCluster } from 'pages/authorized/search/map/icons/documentsClu
 import { mixedCluster } from 'pages/authorized/search/map/icons/mixedCluster';
 import { wellImage } from 'pages/authorized/search/map/icons/well';
 import { wellsCluster } from 'pages/authorized/search/map/icons/wellsCluster';
-import { MapIcon } from 'pages/authorized/search/map/MapboxMap';
+
+import {
+  OIL_GAS_PATTERN,
+  GAS_CONDENSATE_PATTERN,
+  SURFACE_FACILITY_ICON,
+  SUBSURFACE_FACILITY_ICON,
+} from '../constants';
+import {
+  surfacefacilityImage,
+  subsurfacefacilityImage,
+} from '../icons/facility';
+import { oilgasImage, gascondensateImage } from '../icons/fields';
 
 export function getMapIcons(): MapIcon[] {
   const wellIcon = new Image();
@@ -27,6 +40,18 @@ export function getMapIcons(): MapIcon[] {
 
   const wellsClusterIcon = new Image();
   wellsClusterIcon.src = wellsCluster;
+
+  const oilgasPattern = new Image();
+  oilgasPattern.src = oilgasImage;
+
+  const gascondensatePattern = new Image();
+  gascondensatePattern.src = gascondensateImage;
+
+  const surfacefacilityIcon = new Image();
+  surfacefacilityIcon.src = surfacefacilityImage;
+
+  const subsurfacefacilityIcon = new Image();
+  subsurfacefacilityIcon.src = subsurfacefacilityImage;
 
   return [
     {
@@ -48,6 +73,22 @@ export function getMapIcons(): MapIcon[] {
     {
       name: WELLS_CLUSTER_MARKER,
       icon: wellsClusterIcon,
+    },
+    {
+      name: OIL_GAS_PATTERN,
+      icon: oilgasPattern,
+    },
+    {
+      name: GAS_CONDENSATE_PATTERN,
+      icon: gascondensatePattern,
+    },
+    {
+      name: SURFACE_FACILITY_ICON,
+      icon: surfacefacilityIcon,
+    },
+    {
+      name: SUBSURFACE_FACILITY_ICON,
+      icon: subsurfacefacilityIcon,
     },
   ];
 }

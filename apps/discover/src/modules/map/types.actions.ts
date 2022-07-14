@@ -1,9 +1,10 @@
 import { Feature } from '@turf/helpers';
 import { TS_FIX_ME } from 'core';
 
+import { DrawMode } from '@cognite/react-map';
 import { Geometry } from '@cognite/seismic-sdk-js';
 
-import { DrawMode, MapDataSource, MapState } from './types';
+import { MapDataSource, MapState } from './types';
 
 export const SET_GEO_FILTERS = 'MAP_SET_GEO_FILTERS';
 export const SET_OTHER_SHOWING_GEO = 'MAP_SET_OTHER_SHOWING_GEO';

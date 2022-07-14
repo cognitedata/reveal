@@ -1,4 +1,5 @@
-import { SelectableLayer } from 'modules/map/types';
+import { SelectableLayer } from '@cognite/react-map';
+
 import { MapLayer } from 'tenants/types';
 
 import {

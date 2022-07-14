@@ -29,8 +29,8 @@ export const MapExample: React.FC = () => {
       maxBounds={undefined}
       center={[12, 60]}
       zoom={4}
-      sources={[]}
-      layers={[]}
+      layerData={[]}
+      layerConfigs={[]}
       events={[]}
       features={features}
       focusedFeature={focusedFeature}

@@ -4,7 +4,7 @@ import { testWrapper } from '__test-utils/renderer';
 import { useMap } from 'modules/map/selectors';
 import allLayers from 'tenants/test/layers';
 
-import { useSearchableLayers } from '../useLayers';
+import { useSearchableLayers } from '../useSearchableLayers';
 
 describe('useLayers', () => {
   // actually to test this we need the map sources in the store

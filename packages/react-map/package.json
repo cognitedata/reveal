@@ -18,15 +18,17 @@
   ],
   "scripts": {
     "build": "bazel build :react-map",
-    "test": "../../node_modules/.bin/jest",
+    "test": "bazel test :jest_test",
+    "test:jest": "../../node_modules/.bin/jest",
     "test:watch": "yarn test --watchAll",
-    "test:bazel": "bazel test :jest_test",
     "test:bazel-run": "ibazel run :jest --",
     "lint": "bazel test :eslint_test :prettier_test",
     "eslint": "bazel test :eslint_test",
     "eslint:fix": "bazel run :eslint_test -- --fix",
     "prettier": "bazel test :prettier_test",
     "prettier:fix": "bazel run :prettier_test -- --write",
-    "update-helpers": "bazel run :generate_package_json_helpers"
+    "update-helpers": "bazel run :generate_package_json_helpers",
+    "storybook": "bazel run :start-storybook",
+    "build-storybook": "bazel build :storybook-static"
   }
 }

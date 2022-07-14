@@ -200,57 +200,6 @@ export const GlobalStyles = createGlobalStyle`
     display: none;
   }
 
-  .mapboxgl-ctrl-bottom-left {
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-end;
-    align-items: flex-end;
-
-    .mapboxgl-ctrl .mapboxgl-ctrl-logo {
-      display: none;
-    }
-
-    .mapboxgl-ctrl-minimap {
-      border-radius: 8px;
-      position: relative;
-
-      .mapboxgl-ctrl-bottom-left .mapboxgl-ctrl-logo {
-        width: 90px;
-        display: block;
-        transform: scale(0.9);
-        transform-origin: bottom left;
-      }
-
-      &::after {
-        content: '';
-        position: absolute;
-        height: 100%;
-        width: 100%;
-        top: 0;
-        left: 0;
-        border-radius: 8px;
-        box-shadow: 0 0 1px 1px black inset;
-        opacity: 0.15;
-        pointer-events: none;
-      }
-    }
-  }
-
-  .mapboxgl-ctrl-bottom-right .mapboxgl-ctrl-scale {
-    background-color: transparent;
-    font-size: 12px;
-    height: 20px;
-    border: 2px solid var(--cogs-text-color-secondary);
-    color: var(--cogs-text-color-secondary);
-    border-top: none;
-    padding: 0 6px;
-    border-radius: 0 0 4px 4px;
-  }
-
-  .mapboxgl-ctrl-attrib.mapboxgl-compact {
-    display: none;
-  }
-
   .mapbox-popup {
     z-index: ${layers.MAP_TOP_BUTTONS};
 

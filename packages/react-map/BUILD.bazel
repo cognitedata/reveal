@@ -1,6 +1,7 @@
 load("@npm//rollup:index.bzl", "rollup")
 load("@npm//jest:index.bzl", "jest")
 load("@bazel_skylib//rules:write_file.bzl", "write_file")
+load("@npm//@storybook/react:index.bzl", "start_storybook")
 load("@build_bazel_rules_nodejs//:index.bzl", "copy_to_bin", "js_library", "pkg_npm")
 load("//rules/test:jest.bzl", "jest_test")
 load("//rules/lint:index.bzl", "eslint_config", "eslint_test", "prettier_test")
@@ -10,16 +11,27 @@ load("//rules/npm:is_published.bzl", "is_published")
 load("//rules/npm:package_info.bzl", "package_info")
 load("//rules/npm:append_deps.bzl", "append_deps")
 
+_STORYBOOK = [
+    ".storybook/*",
+    "src/**/*.stories.ts*",
+]
+
+_TESTS = [
+    "src/**/*.spec.ts",
+]
+
 SOURCES = glob(
     [
         "src/*.tsx",
         "src/*.ts",
         "src/**/*.ts*",
     ],
-    exclude = ["src/**/*.spec.ts"],
+    exclude = _TESTS + _STORYBOOK,
 )
 
-TESTS = glob(["src/**/*.spec.ts"])
+TESTS = glob(_TESTS)
+
+STORYBOOK = glob(_STORYBOOK)
 
 # Generates the below helpers.
 #
@@ -60,6 +72,7 @@ TYPE_DEPENDENCIES = [
 
 # Dev dependencies from package.json
 DEV_DEPENDENCIES = [
+    "@npm//@testing-library/react-hooks",
     "@npm//rollup-plugin-json",
     "@npm//rollup-plugin-typescript2",
     "@npm//typescript",
@@ -231,4 +244,31 @@ package_info(
     name = "package_info",
     display_name = "react-map",
     package = ":npm-package",
+)
+
+### Storybook ###
+
+copy_to_bin(
+    name = "copy_storybook_files",
+    srcs = STORYBOOK,
+)
+
+start_storybook(
+    name = "start-storybook",
+    args = [
+        "--node_options=--require=./$(rootpath chdir-workspace.js)",
+        "-p",
+        "6006",
+    ],
+    data = [
+        "chdir-workspace.js",
+        # Bazel needs to give access @tippyjs in cogs.js
+        "@npm//@cognite/cogs.js",
+    ],
+    tags = [
+        # This tag instructs ibazel to pipe into stdin a event describing actions.
+        # ibazel send EOF to stdin by default and target will stop when getting EOF in stdin.
+        # So use this to prevent EOF.
+        "ibazel_notify_changes",
+    ],
 )

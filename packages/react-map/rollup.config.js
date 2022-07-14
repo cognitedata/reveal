@@ -24,6 +24,30 @@ export default [
       'lodash/isObject',
       'lodash/findLast',
       'lodash/isEqual',
+      'maplibre-gl/dist/maplibre-gl.css',
+      '@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css',
+    ],
+    plugins: [
+      typescript({
+        typescript: require('typescript'),
+      }),
+      json(),
+    ],
+  },
+  {
+    input: 'src/mocks.ts',
+    output: [
+      {
+        file: 'dist/mocks.js',
+        format: 'cjs',
+      },
+    ],
+    external: [
+      ...Object.keys(pkg.dependencies || {}),
+      ...Object.keys(pkg.peerDependencies || {}),
+      // https://github.com/facebook/react/issues/20235
+      // with react 17 we are getting Unresolved dependencies for react/jsx-runtime
+      'react/jsx-runtime',
     ],
     plugins: [
       typescript({

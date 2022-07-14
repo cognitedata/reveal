@@ -2,30 +2,21 @@ import React from 'react';
 import { useDispatch } from 'react-redux';
 
 import { Body, Checkbox, Menu } from '@cognite/cogs.js';
+import { SelectableLayer } from '@cognite/react-map';
 
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
 import { toggleLayer } from 'modules/map/actions';
 import { useCategoryLayers } from 'modules/map/hooks/useCategoryLayers';
-import { SelectableLayer } from 'modules/map/types';
-import { Layer } from 'tenants/types';
 
 import { LayerItem, LayerWrapper } from './elements';
 
-const Item = ({
-  item,
-  allLayers,
-}: {
-  item: SelectableLayer;
-  allLayers: Record<string, Layer>;
-}) => {
+const Item = ({ item }: { item: SelectableLayer }) => {
   const dispatch = useDispatch();
   const metrics = useGlobalMetrics('map');
   const handleOnChange = () => {
     dispatch(toggleLayer(item));
     metrics.track(`click-${item.selected ? 'enable' : 'disable'}-layer-toggle`);
   };
-
-  const color = allLayers[item.id]?.color;
 
   return (
     <LayerItem>
@@ -35,7 +26,7 @@ const Item = ({
         checked={item.selected}
         disabled={item.disabled || false}
         onChange={handleOnChange}
-        color={color === 'transparent' ? 'black' : color}
+        color={item.color === 'transparent' ? 'black' : item.color}
       >
         <Body level={2} as="span">
           {item.name}
@@ -47,58 +38,52 @@ const Item = ({
 
 export interface Props {
   layers: SelectableLayer[];
-  allLayers: Record<string, Layer>;
 }
-export const LayerSelector: React.FC<Props> = React.memo(
-  ({ layers = [], allLayers }) => {
-    const categoryLayers = useCategoryLayers();
+export const LayerSelector: React.FC<Props> = React.memo(({ layers = [] }) => {
+  const categoryLayers = useCategoryLayers();
 
-    const dynamicLayers = layers.filter(
-      (layer) =>
-        !categoryLayers.map((staticLayer) => staticLayer.id).includes(layer.id)
-    );
+  const topLayers: SelectableLayer[] = [];
+  const bottomLayers: SelectableLayer[] = [];
 
-    return (
-      <LayerWrapper>
-        {layers
-          .filter((layer) =>
-            categoryLayers
-              .map((staticLayer) => staticLayer.id)
-              .includes(layer.id)
-          )
-          .map((item) => {
-            return (
-              <Menu.Item
-                key={`mapLayerselector-${item.id}`}
-                style={{ textAlign: 'left' }}
-              >
-                <Item
-                  key={`mapLayerselector-${item.id}`}
-                  item={item}
-                  allLayers={allLayers}
-                />
-              </Menu.Item>
-            );
-          })}
+  layers.forEach((layer) => {
+    const isStatic = categoryLayers
+      .map((staticLayer) => staticLayer.id)
+      .includes(layer.id);
 
-        {dynamicLayers.length > 0 && <Menu.Divider />}
-        {dynamicLayers.map((item) => {
-          return (
-            <Menu.Item
-              key={`mapLayerselector-${item.id}`}
-              style={{ textAlign: 'left' }}
-            >
-              <Item
-                key={`mapLayerselector-${item.id}`}
-                item={item}
-                allLayers={allLayers}
-              />
-            </Menu.Item>
-          );
-        })}
-      </LayerWrapper>
-    );
-  }
-);
+    if (isStatic) {
+      topLayers.push(layer);
+    } else {
+      bottomLayers.push(layer);
+    }
+  });
+
+  return (
+    <LayerWrapper>
+      {topLayers.map((item) => {
+        return (
+          <Menu.Item
+            key={`mapLayerselector-menu-${item.id}`}
+            style={{ textAlign: 'left' }}
+          >
+            <Item key={`mapLayerselector-${item.id}`} item={item} />
+          </Menu.Item>
+        );
+      })}
+
+      {bottomLayers.length > 0 && <Menu.Divider />}
+
+      {bottomLayers.map((item) => {
+        return (
+          <Menu.Item
+            key={`mapLayerselector-menu-${item.id}`}
+            style={{ textAlign: 'left' }}
+          >
+            <Item key={`mapLayerselector-${item.id}`} item={item} />
+          </Menu.Item>
+        );
+      })}
+    </LayerWrapper>
+  );
+});
 
 export default LayerSelector;

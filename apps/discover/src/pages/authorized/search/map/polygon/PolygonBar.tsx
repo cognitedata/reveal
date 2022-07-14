@@ -9,7 +9,8 @@ import { MapDataSource, MapState } from 'modules/map/types';
 import { FlexGrow } from 'styles/layout';
 
 import { useSelectedLayers } from '../hooks';
-import { useLayers, useSearchableConfig } from '../hooks/useLayers';
+import { useLayers } from '../hooks/useLayers';
+import { useSearchableConfig } from '../hooks/useSearchableConfig';
 import {
   ContentSelector,
   InfoButton,
@@ -42,8 +43,12 @@ export const PolygonBar: React.FC<Props> = ({
     selectedFeature,
   } = useMap();
 
-  const { layers: allLayers, selectableLayers } = useLayers();
-  const selectedLayers = useSelectedLayers(selectableLayers, selected);
+  const { allLayers, selectableLayers } = useLayers();
+  // add selected status to layers from redux
+  const layersWithUpdatedSelectedStatus = useSelectedLayers(
+    selectableLayers,
+    selected
+  );
 
   const { layers: searchableAssets, title: searchableTitle } =
     useSearchableConfig(allLayers, sources);
@@ -85,7 +90,7 @@ export const PolygonBar: React.FC<Props> = ({
       </>
 
       <ContentSelector
-        selectedLayers={selectedLayers}
+        layers={layersWithUpdatedSelectedStatus}
         zoomToAsset={zoomToAsset}
         assets={assets}
       />

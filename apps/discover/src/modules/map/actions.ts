@@ -1,14 +1,10 @@
 import { Feature } from '@turf/helpers';
 
+import { DrawMode, SelectableLayer } from '@cognite/react-map';
 import { Geometry } from '@cognite/seismic-sdk-js';
 
 import { translateGeoType } from 'modules/map/helper';
-import {
-  DrawMode,
-  MapDataSource,
-  MapState,
-  SelectableLayer,
-} from 'modules/map/types';
+import { MapDataSource, MapState } from 'modules/map/types';
 import {
   AddArbitraryline,
   RemoveArbitraryline,

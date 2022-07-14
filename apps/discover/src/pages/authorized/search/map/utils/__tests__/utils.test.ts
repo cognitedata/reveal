@@ -1,6 +1,7 @@
 import { MapDataSource } from 'modules/map/types';
 
-import { getAbsoluteCoordinates, setSourceProperties } from '../utils';
+import { getAbsoluteCoordinates } from '../getAbsoluteCoordinates';
+import { setSourceProperties } from '../setSourceProperties';
 
 describe('Map utils', () => {
   it('should set source properties', () => {

@@ -7,27 +7,21 @@ import mapboxgl from 'maplibre-gl';
 import { GeoJson } from '@cognite/seismic-sdk-js';
 import type { MapboxOptions } from 'maplibre-gl';
 
-import { MapLayer, SelectableLayer, MapDataSource, DrawMode } from './types';
+import { addLayer, removeLayer } from './layers/addRemoveVisibleLayer';
+import { MapDataSource, DrawMode, MapEvent, MapIcon } from './types';
+import { SelectableLayer } from './layers/types';
 import { useDeepEffect } from './hooks/useDeep';
 import { MapContainer } from './elements';
 import { FreeDraw } from './FreeDraw';
 import { useZoomToFeature } from './hooks/useZoomToFeature';
 import { Minimap } from './Minimap/Minimap';
 import { getMapStyles } from './style';
-import { choosePreviousSelectedLayer } from './layers';
+import { choosePreviousSelectedLayer } from './layers/choosePreviousSelectedLayer';
 
-export interface MapEvent {
-  type: string;
-  layers?: string[];
-  callback: any;
-}
+import 'maplibre-gl/dist/maplibre-gl.css';
+import '@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css';
 
-export interface MapIcon {
-  name: string;
-  icon: HTMLImageElement;
-}
-
-interface Props {
+export interface Props {
   center?: MapboxOptions['center'];
   disableMinimap?: boolean;
   drawMode: DrawMode;
@@ -38,13 +32,13 @@ interface Props {
     zoom?: number;
   } | null;
   focusedFeature: Feature | null;
-  layers: SelectableLayer[];
+  layerConfigs: SelectableLayer[];
+  layerData: MapDataSource[];
   mapIcons?: MapIcon[];
   maxBounds?: MapboxOptions['maxBounds'];
   renderNavigationControls?: (mapWidth: number) => React.ReactElement;
   selectedFeature: GeoJson | null;
   setMapReference?: (map: mapboxgl.Map) => void;
-  sources: MapDataSource[];
   zoom?: MapboxOptions['zoom'];
 
   MAPBOX_TOKEN: string;
@@ -68,13 +62,13 @@ export const Map: React.FC<Props> = ({
   features,
   flyTo,
   focusedFeature,
-  layers,
+  layerConfigs,
   mapIcons,
   maxBounds,
   renderNavigationControls,
   selectedFeature,
   setMapReference,
-  sources,
+  layerData,
   zoom,
   MAPBOX_TOKEN,
   MAPBOX_MAP_ID,
@@ -97,9 +91,9 @@ export const Map: React.FC<Props> = ({
     if (map && focusedFeature) {
       zoomToFeature(focusedFeature);
     }
-  }, [focusedFeature, zoomToFeature, map]);
+  }, [focusedFeature, zoomToFeature, !!map]);
 
-  useDeepEffect(() => {
+  React.useEffect(() => {
     if (!mapRef.current) return noop;
 
     const initializeMap = async (initProps: any) => {
@@ -222,7 +216,7 @@ export const Map: React.FC<Props> = ({
         });
       }
     }
-  }, [map, flyTo]);
+  }, [!!map, flyTo]);
 
   useDeepEffect(() => {
     if (map === null || draw === null) return noop;
@@ -267,75 +261,21 @@ export const Map: React.FC<Props> = ({
 
   useDeepEffect(() => {
     if (map) {
-      sources.forEach((source) => {
+      layerData.forEach((source) => {
         addSource(map, source.id, source.data, source.clusterProps);
       });
     }
-  }, [map, sources]);
-
-  const getLayer = (innerMap: mapboxgl.Map, layerId: string) => {
-    return innerMap.getLayer(layerId);
-  };
-
-  const addLayer = (
-    innerMap: mapboxgl.Map,
-    innerLayer: MapLayer,
-    beforeLayer?: string
-  ) => {
-    // console.log('Adding before:', beforeLayer);
-    let beforeLayerToUse;
-
-    // Check if the layer is already added to map
-    const innerLayerExist = getLayer(innerMap, innerLayer.id);
-    // Check if the layer's source is already added to map
-    const sourceExist = innerMap.getSource(innerLayer.source);
-    // console.log('beforeLayerExist', beforeLayerExist);
-
-    if (beforeLayer === undefined) {
-      // this default will cause the first layer to be drawn before
-      // the gl-draw ones, eg: the layers where we draw the user polygon
-      const fallbackBeforeLayerName = 'gl-draw-polygon-fill-inactive.cold';
-      const fallbackBeforeLayer = getLayer(innerMap, fallbackBeforeLayerName);
-      if (fallbackBeforeLayer) {
-        beforeLayerToUse = fallbackBeforeLayerName;
-      }
-    } else {
-      // Check if the layer has a before layer and already added to the map
-      const beforeLayerExist = getLayer(innerMap, beforeLayer);
-      if (beforeLayerExist) {
-        beforeLayerToUse = beforeLayer;
-      }
-    }
-
-    if (!innerLayerExist && sourceExist) {
-      try {
-        innerMap.addLayer(innerLayer, beforeLayerToUse);
-      } catch (error) {
-        // eslint-disable-next-line no-console
-        console.error('Layer not ready:', error);
-      }
-    }
-  };
-
-  const removeLayer = (innerMap: mapboxgl.Map, layerId: string) => {
-    if (getLayer(map, layerId)) {
-      innerMap.removeLayer(layerId);
-    }
-  };
+  }, [!!map, layerData]);
 
   useDeepEffect(() => {
-    if (map && sources.length > 0) {
-      layers.forEach((layer, index) => {
+    if (map && layerData.length > 0) {
+      layerConfigs.forEach((layer, index) => {
         const addLayerBeforeThisLayer = choosePreviousSelectedLayer(
-          layers,
+          layerConfigs,
           index
         );
 
         layer.layers.forEach((innerLayer) => {
-          // console.log('Processing inner layer:', {
-          //   id: innerLayer.id,
-          //   selected: layer.selected,
-          // });
           if (layer.selected) {
             addLayer(map, innerLayer, addLayerBeforeThisLayer);
           } else {
@@ -344,7 +284,7 @@ export const Map: React.FC<Props> = ({
         });
       });
     }
-  }, [map, layers, sources]);
+  }, [!!map, layerConfigs, layerData]);
 
   useDeepEffect(() => {
     if (!map) return noop;
@@ -369,7 +309,7 @@ export const Map: React.FC<Props> = ({
         }
       });
     };
-  }, [map, events]);
+  }, [!!map, events]);
 
   useDeepEffect(() => {
     // This is needed to resize the map when the parent container changes size (e.g expanded mode)

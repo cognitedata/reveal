@@ -1,7 +1,8 @@
 import { renderHook } from '@testing-library/react-hooks';
 
+import { SelectableLayer } from '@cognite/react-map';
+
 import { testWrapper } from '__test-utils/renderer';
-import { SelectableLayer } from 'modules/map/types';
 
 import { useVisibleLayers } from '../useVisibleLayers';
 
@@ -25,20 +26,29 @@ const extraLayers: SelectableLayer[] = [
         source: 'test',
         type: 'symbol',
       },
+      {
+        id: 'second_sub_layer',
+        weight: 1000,
+        source: 'test',
+        type: 'symbol',
+      },
     ],
   },
 ];
 
+jest.mock('../useLayers', () => ({
+  useLayers: () => ({
+    selectableLayers: extraLayers,
+    alwaysVisible: [],
+  }),
+}));
+
 describe('useVisibleLayers', () => {
   it('should sort ok', async () => {
-    const { result, waitForNextUpdate } = renderHook(
-      () => useVisibleLayers([]),
-      {
-        wrapper: testWrapper,
-      }
-    );
+    const { result } = renderHook(() => useVisibleLayers([]), {
+      wrapper: testWrapper,
+    });
 
-    await waitForNextUpdate();
     // console.log('result', result.current);
 
     const first = result.current[0];
@@ -47,14 +57,13 @@ describe('useVisibleLayers', () => {
   });
 
   it('should have the extra layers', async () => {
-    const { result, waitForNextUpdate } = renderHook(
-      () => useVisibleLayers(extraLayers),
+    const { result } = renderHook(
+      () => useVisibleLayers(extraLayers.map((layer) => layer.id)),
       {
         wrapper: testWrapper,
       }
     );
 
-    await waitForNextUpdate();
     // console.log('result', result.current);
 
     expect(result.current[0].id).toEqual('first_sub_layer');

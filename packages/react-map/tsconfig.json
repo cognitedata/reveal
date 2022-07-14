@@ -1,6 +1,6 @@
 {
   "extends": "../tsconfig.json",
-  "include": ["src/*.ts", "src/*.tsx"],
+  "include": ["src/*.ts", "src/*.tsx", "src/**/*.ts", "src/**/*.tsx"],
   "compilerOptions": {
     "rootDirs": ["src"],
     "baseUrl": "src"

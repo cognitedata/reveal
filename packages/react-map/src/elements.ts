@@ -27,6 +27,11 @@ export const MapContainer = styled.div`
       justify-content: flex-start;
       align-items: flex-start;
 
+      // the main logo
+      .mapboxgl-ctrl .mapboxgl-ctrl-logo {
+        display: none;
+      }
+
       .mapboxgl-ctrl-minimap {
         border-radius: 8px;
         position: relative;
@@ -42,6 +47,7 @@ export const MapContainer = styled.div`
           opacity: 0.15;
           pointer-events: none;
         }
+        // the minimap logo
         .mapboxgl-ctrl-logo {
           width: 90px;
           display: block;
@@ -52,6 +58,10 @@ export const MapContainer = styled.div`
     }
   }
 `;
+// .mapboxgl-canvas-container canvas.mapboxgl-canvas {
+//   position: relative !important;
+// }
+
 //   .map-hover-popup .mapboxgl-popup-content {
 //     font-size: 12px;
 //     line-height: 16px;
@@ -86,9 +96,6 @@ export const MapContainer = styled.div`
 //     justify-content: flex-end;
 //     align-items: flex-end;
 
-//     .mapboxgl-ctrl .mapboxgl-ctrl-logo {
-//       display: none;
-//     }
 //     .mapboxgl-ctrl-attrib-button {
 //       display: none;
 //     }

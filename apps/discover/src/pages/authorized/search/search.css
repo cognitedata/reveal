@@ -9,11 +9,3 @@
     transform: translateX(-10px);
   }
 }
-
-.mapboxgl-control-container {
-  user-select: none;
-}
-
-.mapboxgl-canvas-container canvas.mapboxgl-canvas {
-  position: relative !important;
-}

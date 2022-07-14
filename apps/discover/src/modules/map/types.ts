@@ -1,10 +1,9 @@
 import { Feature, FeatureCollection } from '@turf/helpers';
 
+import { DrawMode } from '@cognite/react-map';
 import { Geometry, Point, Polygon, GeoJson } from '@cognite/seismic-sdk-js';
 
 import { WellId } from 'modules/wellSearch/types';
-
-import { MapLayer } from '../../tenants/types';
 
 export interface NPDLayerItemResponse {
   assetIds: string[];
@@ -39,22 +38,6 @@ export interface MapDataSource {
     clusterRadius: number;
   };
 }
-
-export interface SelectableLayer {
-  id: string;
-  name: string;
-  selected: boolean;
-  layers: MapLayer[];
-
-  disabled?: boolean;
-  weight?: number; // for ordering
-}
-
-// type Marker = {
-//   id: string;
-//   title: string;
-//   coordinates: Position[];
-// };
 export interface MapState {
   // polygon(s) drawn on the map
   geoFilter: GeoJson[] | never[];
@@ -98,14 +81,5 @@ export interface APIGeo {
   shape: Geometry;
   relation: string;
 }
-
-export type DrawMode =
-  | 'simple_select'
-  | 'draw_line_string'
-  // we need to move to using this inbuilt one
-  | 'draw_polygon'
-  // and remove this custom one:
-  | 'draw_free_polygon'
-  | 'direct_select';
 
 export type MapFeatureCollection = FeatureCollection;

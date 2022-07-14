@@ -10,8 +10,8 @@ export const convertToCancellablePromise = (
 
   const wrappedPromise = new Promise((resolve, reject) => {
     promise.then(
-      (val) => (hasCanceled ? reject(new Error('cancelled')) : resolve(val)),
-      (error) => (hasCanceled ? reject(new Error('cancelled')) : reject(error))
+      (val) => (hasCanceled ? reject(new Error('Cancelled')) : resolve(val)),
+      (error) => (hasCanceled ? reject(new Error('Cancelled')) : reject(error))
     );
   });
 

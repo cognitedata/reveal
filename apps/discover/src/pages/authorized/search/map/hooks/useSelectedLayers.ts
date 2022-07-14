@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 
 // import { useMap } from 'modules/map/selectors';
-import { SelectableLayer } from 'modules/map/types';
+import { SelectableLayer } from '@cognite/react-map';
 
 export const useSelectedLayers = (
   selectableLayers: SelectableLayer[],

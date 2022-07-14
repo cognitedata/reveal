@@ -13,6 +13,7 @@ jest.mock('modules/map/selectors', () => ({
 jest.mock('../useLayers', () => ({
   useLayers: () => ({
     layersReady: true,
+    allLayers: [],
   }),
 }));
 

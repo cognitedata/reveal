@@ -1,14 +1,13 @@
-// @ts-expect-error this is not exposed
 import * as Constants from '@mapbox/mapbox-gl-draw/src/constants';
-// @ts-expect-error this is not exposed
 import doubleClickZoom from '@mapbox/mapbox-gl-draw/src/lib/double_click_zoom';
-// @ts-expect-error this is not exposed
 import DrawPolygon from '@mapbox/mapbox-gl-draw/src/modes/draw_polygon';
 
 import { mouseUp } from './mouseUp';
 import { dragPan } from './dragPan';
 
 export const FreeDraw = DrawPolygon;
+
+// should change to this: https://github.com/bemky/mapbox-gl-draw-freehand-mode
 
 FreeDraw.onSetup = function OnSetup() {
   const polygon = this.newFeature({

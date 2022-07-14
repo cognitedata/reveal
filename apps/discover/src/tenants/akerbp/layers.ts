@@ -7,6 +7,7 @@ export const AKER_BP_DATA_URL = `${MAP_DATA_URL}akerbp/`;
 const layers: Layers = {
   akerBPLicense: {
     remote: `${AKER_BP_DATA_URL}Licenses_AkerBP.json`,
+    id: 'akerBPLicense',
     name: 'Licenses Aker BP',
     color: 'rgba(251, 59, 134, 0.8)',
     weight: 30,
@@ -49,6 +50,7 @@ const layers: Layers = {
     name: 'Licences AkerBP Partners',
     color: 'rgba(0, 0, 0, 0.6)',
     defaultOn: false,
+    id: 'AkerBPPartner',
     mapLayers: [
       {
         id: 'AkerBPPartner',
@@ -91,6 +93,7 @@ const layers: Layers = {
       filter: ['Operator', 'Aker BP ASA'],
       displayField: 'Field',
     },
+    id: 'akerBpFields',
     mapLayers: [
       {
         id: 'akerBpFields',
@@ -130,6 +133,7 @@ const layers: Layers = {
     color: 'rgba(0, 0, 0, 1)',
     defaultOn: false,
     weight: 10,
+    id: 'wells',
     mapLayers: [
       {
         id: 'wells',
@@ -163,6 +167,7 @@ const layers: Layers = {
     color: 'rgba(0, 0, 0, 1)',
     defaultOn: false,
     weight: 10,
+    id: 'Development_Wells',
     mapLayers: [
       {
         id: 'Development_Wells',
@@ -197,6 +202,7 @@ const layers: Layers = {
     defaultOn: true,
     alwaysOn: true,
     weight: 100,
+    id: 'blocks',
     mapLayers: [
       {
         id: 'blocks',
@@ -226,6 +232,7 @@ const layers: Layers = {
     name: 'Other licenses',
     color: 'rgba(0, 0, 0, 0.6)',
     defaultOn: false,
+    id: 'otherLicenses',
     mapLayers: [
       {
         id: 'otherLicenses',
@@ -253,6 +260,7 @@ const layers: Layers = {
     color: 'rgba(180, 183, 121, 0.8)',
     defaultOn: false,
     weight: 50,
+    id: 'otherFields',
     mapLayers: [
       {
         id: 'otherFields',
@@ -293,6 +301,7 @@ const layers: Layers = {
     defaultOn: true,
     weight: 90,
     alwaysOn: true,
+    id: 'quadrants',
     mapLayers: [
       {
         id: 'quadrants',
@@ -309,6 +318,7 @@ const layers: Layers = {
     name: 'Structural elements',
     color: 'transparent',
     defaultOn: false,
+    id: 'structuralElements',
     mapLayers: [
       {
         id: 'structuralElements',
@@ -354,6 +364,7 @@ const layers: Layers = {
     color: 'rgba(183, 102, 25, 0.8)',
     weight: 2,
     defaultOn: false,
+    id: 'discoveries',
     mapLayers: [
       {
         id: 'discoveries',

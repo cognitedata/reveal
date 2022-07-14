@@ -1,4 +1,3 @@
-// @ts-expect-error this is not exposed
 import * as Constants from '@mapbox/mapbox-gl-draw/src/constants';
 import simplify from '@turf/simplify';
 

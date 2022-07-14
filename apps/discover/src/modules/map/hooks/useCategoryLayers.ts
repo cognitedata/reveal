@@ -1,7 +1,8 @@
 import { useMemo } from 'react';
 
+import { SelectableLayer } from '@cognite/react-map';
+
 import { useProjectConfig } from 'hooks/useProjectConfig';
-import { SelectableLayer } from 'modules/map/types';
 import {
   DOCUMENT_LAYER_ID,
   WELL_HEADS_LAYER_ID,

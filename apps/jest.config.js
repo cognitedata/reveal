@@ -1,16 +1,17 @@
 module.exports = {
-  roots: ['<rootDir>/src'],
-  transform: {
-    '.ts': 'ts-jest',
-    '.tsx': 'ts-jest',
-  },
-  modulePaths: ['src'],
-  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node', 'd.ts'],
-  testEnvironment: 'node',
   coveragePathIgnorePatterns: ['/node_modules/', '/test/'],
   haste: {
     enableSymlinks: false,
   },
+  roots: ['<rootDir>/src'],
+  modulePaths: ['src'],
+  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node', 'd.ts'],
+  testEnvironment: 'node',
+  transform: {
+    '.ts': 'ts-jest',
+    '.tsx': 'ts-jest',
+  },
+  transformIgnorePatterns: ['/node_modules/(?!@mapbox)'],
   moduleNameMapper: {
     // resolve @cognite/<package>/dist/mocks to
     // 1. @cognite/<package>/src/mocks when running plain jest

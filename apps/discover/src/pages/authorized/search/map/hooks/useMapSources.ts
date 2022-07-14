@@ -23,10 +23,15 @@ export const useMapSources = () => {
     externalWells?.data.features || []
   );
 
-  const resultSources = useDeepMemo(
+  const searchResultSources = useDeepMemo(
     // this creates the sources and set's up the clustering layer
     () => createSources(seismicCollection, features, mapConfig?.cluster),
-    [features, seismicCollection, mapConfig?.cluster, mapConfig?.zoom]
+    [
+      features.features.length,
+      seismicCollection,
+      mapConfig?.cluster,
+      mapConfig?.zoom,
+    ]
   );
 
   const combinedSources = useDeepMemo(
@@ -34,10 +39,10 @@ export const useMapSources = () => {
       sources
         ? [
             ...sources.filter((source) => source.id !== WELL_HEADS_LAYER_ID),
-            ...resultSources,
+            ...searchResultSources,
           ]
         : [],
-    [resultSources, sources]
+    [searchResultSources, sources]
   );
 
   return [combinedSources];

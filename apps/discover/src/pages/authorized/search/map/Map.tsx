@@ -3,7 +3,7 @@ import {
   useSetPolygon,
 } from 'domain/savedSearches/internal/hooks/useClearPolygon';
 
-import React, { useState, useMemo, useEffect, useRef } from 'react';
+import * as React from 'react';
 import { batch, useDispatch } from 'react-redux';
 
 import cleanCoords from '@turf/clean-coords';
@@ -17,14 +17,12 @@ import { TS_FIX_ME } from 'core';
 import get from 'lodash/get';
 import isEmpty from 'lodash/isEmpty';
 import isUndefined from 'lodash/isUndefined';
-import mapboxgl from 'maplibre-gl';
+import mapboxgl, { LngLatBoundsLike, LngLatLike } from 'maplibre-gl';
 import { v1 } from 'uuid';
 
 import { PerfMetrics } from '@cognite/metrics';
+import { Map as MapboxMap } from '@cognite/react-map';
 import { Point } from '@cognite/seismic-sdk-js';
-
-import 'maplibre-gl/dist/maplibre-gl.css';
-import '@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css';
 
 import { BlockExpander } from 'components/BlockExpander/BlockExpander';
 import { showErrorMessage } from 'components/Toast';
@@ -38,7 +36,9 @@ import {
   setSelectedFeature,
   setSelectedLayers,
 } from 'modules/map/actions';
+import { MAPBOX_TOKEN, MAPBOX_MAP_ID } from 'modules/map/constants';
 import { getRightMostPoint, getFeature } from 'modules/map/helper';
+import { useMapConfig } from 'modules/map/hooks/useMapConfig';
 import { useMap } from 'modules/map/selectors';
 import { MapState } from 'modules/map/types';
 import { useActivePanel } from 'modules/resultPanel/selectors';
@@ -74,7 +74,6 @@ import { useMapSources } from './hooks/useMapSources';
 import { useTouchedEvent } from './hooks/useTouchedEvent';
 import { useVisibleLayers } from './hooks/useVisibleLayers';
 import LeaveConfirmModal from './LeaveConfirmModal';
-import { Map as MapboxMap } from './MapboxMap';
 import MapPopup from './MapPopup';
 import { PolygonBar } from './polygon/PolygonBar';
 import { getMapIcons } from './utils/mapIcons';
@@ -96,64 +95,63 @@ export const Map: React.FC = () => {
     moveToCoords,
     drawMode,
     selectedFeature,
+    selectedLayers,
     cancelPolygonSearch,
   } = useMap();
   const { selectableLayers } = useLayers();
   const { data: selectedSurveyData } = useSelectedSurvey();
   const metrics = useGlobalMetrics('map');
-  const [flyTo, setFlyTo] = useState<{
+  const [flyTo, setFlyTo] = React.useState<{
     center: number[];
     zoom?: number;
   } | null>(null);
-  const [mapReference, setMapReference] = useState<mapboxgl.Map>();
-  const [focusedFeature, setFocusedFeature] = useState<Feature | null>(null);
+  const [mapReference, setMapReference] = React.useState<mapboxgl.Map>();
+  const [focusedFeature, setFocusedFeature] = React.useState<Feature | null>(
+    null
+  );
   const { showSearchResults } = useSearchState();
-  const [polygon, setPolygon] = useState<MapState['geoFilter']>(() => []);
-  const [showModal, setShowModal] = useState(false);
-  const searchPendingRef = useRef<boolean>(false);
+  const [polygon, setPolygon] = React.useState<MapState['geoFilter']>(() => []);
+  const [showModal, setShowModal] = React.useState(false);
+  const searchPendingRef = React.useRef<boolean>(false);
   const { touched, touchedEvent } = useTouchedEvent();
   const activePanel = useActivePanel();
   const sidebarCategory = useFilterCategory();
-  const sidebarCategoryUnsetRef = useRef<boolean>(false);
-
+  const sidebarCategoryUnsetRef = React.useRef<boolean>(false);
+  const { data: mapConfig } = useMapConfig();
   const [combinedSources] = useMapSources();
-
+  const layers = useVisibleLayers(selectedLayers);
+  const { t } = useTranslation();
+  const setSavedPolygon = useSetPolygon();
+  const clearPolygon = useClearPolygon();
   const isPolygonButtonActive =
     drawMode === 'draw_polygon' || !isEmpty(polygon);
 
-  const { t } = useTranslation();
-
-  const layers = useVisibleLayers(selectableLayers);
-
-  const setSavedPolygon = useSetPolygon();
-  const clearPolygon = useClearPolygon();
-
-  useEffect(() => {
+  React.useEffect(() => {
     if (cancelPolygonSearch) {
       deletePolygon();
       dispatch(setClearPolygon(false));
     }
   }, [cancelPolygonSearch]);
 
-  useEffect(() => {
+  useDeepEffect(() => {
     if (zoomToFeature) {
       setFocusedFeature(turfFeature(zoomToFeature as TurfGeometry));
     }
   }, [zoomToFeature]);
 
-  useEffect(() => {
+  useDeepEffect(() => {
     if (zoomToCoords) {
       zoomToAsset(zoomToCoords);
     }
   }, [zoomToCoords]);
 
-  useEffect(() => {
+  useDeepEffect(() => {
     if (moveToCoords) {
       zoomToAsset(moveToCoords, false);
     }
   }, [moveToCoords]);
 
-  useEffect(() => {
+  useDeepEffect(() => {
     // Draw polygon when loads a saved search
     if (!isEmpty(geoFilter)) {
       const firstGeo = geoFilter[0];
@@ -169,7 +167,7 @@ export const Map: React.FC = () => {
   }, [geoFilter]);
 
   // Handle clicking outside while on drawing mode
-  useEffect(() => {
+  React.useEffect(() => {
     const outsideListener = (event: MouseEvent) => {
       if (
         mapReference &&
@@ -251,14 +249,14 @@ export const Map: React.FC = () => {
     }
   }, [mapReference]);
 
-  React.useEffect(() => {
+  useDeepEffect(() => {
     PerfMetrics.trackPerfStart('MAP_RENDER');
   }, []);
 
   const mapEvents = useMapEvents();
 
   // Try to get these into the useMapEvents hooks, as of now they require some work if we're to avoid passing
-  // tons of props, perhaps go with a context instead of all the useStates.
+  // tons of props, perhaps go with a context instead of all the React.useStates.
   const events = useDeepMemo(
     () => [
       {
@@ -391,14 +389,14 @@ export const Map: React.FC = () => {
     }
   };
 
-  useEffect(() => {
+  useDeepEffect(() => {
     if (!isUndefined(activePanel) && sidebarCategoryUnsetRef.current) {
       sidebarCategoryUnsetRef.current = false;
       dispatch(setCategoryPage(activePanel as CategoryTypes));
     }
   }, [activePanel]);
 
-  useEffect(() => {
+  useDeepEffect(() => {
     const timeout = setTimeout(() => {
       // Trigger a resize for the map to change width after transition has finished
       mapReference?.resize();
@@ -411,14 +409,17 @@ export const Map: React.FC = () => {
   // note: this might be better done when initially loading the layers
   // so we can skip this step entirly.
   useDeepEffect(() => {
-    const initialSelectedLayers = selectableLayers
-      .filter((layer) => layer.selected)
-      .map((layer) => layer.id);
+    const initialSelectedLayers = selectableLayers.reduce((result, layer) => {
+      if (!layer.id || !layer.selected) {
+        return result;
+      }
+      return [...result, layer.id];
+    }, [] as string[]);
 
     dispatch(setSelectedLayers(initialSelectedLayers));
   }, [selectableLayers]);
 
-  const features = useMemo(() => {
+  const features = React.useMemo(() => {
     const collection = [
       // any other geometrys we want to show
       ...Object.keys(otherGeo).map((key) =>
@@ -451,7 +452,7 @@ export const Map: React.FC = () => {
     return null;
   };
 
-  const renderBlockExpander = useMemo(() => {
+  const renderBlockExpander = React.useMemo(() => {
     if (showSearchResults) return null;
 
     return (
@@ -485,16 +486,26 @@ export const Map: React.FC = () => {
         {renderBlockExpander}
 
         <MapboxMap
-          setMapReference={setMapReference}
-          sources={combinedSources}
+          MAPBOX_TOKEN={MAPBOX_TOKEN}
+          MAPBOX_MAP_ID={MAPBOX_MAP_ID}
+          // project config stuff:
+          // -todo: should we fix project config types?
+          maxBounds={mapConfig?.maxBounds as LngLatBoundsLike}
+          center={mapConfig?.center as LngLatLike}
+          zoom={mapConfig?.zoom}
           drawMode={drawMode}
+          // things to overlay:
+          layerData={combinedSources}
+          layerConfigs={layers}
           events={events}
           features={features}
+          mapIcons={mapIcons}
+          // others:
           flyTo={flyTo}
           focusedFeature={focusedFeature}
-          layers={layers}
-          mapIcons={mapIcons}
           selectedFeature={selectedFeature}
+          // callbacks
+          setMapReference={setMapReference}
           renderNavigationControls={(mapWidth) => {
             return (
               <>

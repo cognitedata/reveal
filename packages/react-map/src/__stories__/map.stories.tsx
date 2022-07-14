@@ -1,22 +1,17 @@
 import { useState } from 'react';
-
 import { featureCollection, feature } from '@turf/helpers';
-
 import { Button } from '@cognite/cogs.js';
 
-import { DrawMode } from 'modules/map/types';
-import { Flex } from 'styles/layout';
+import { DrawMode } from '../types';
+import { Map } from '../Map';
 
-import Map from './MapboxMap';
-
-// eslint-disable-next-line import/no-anonymous-default-export
 export default {
   title: 'Components / Map',
   component: Map,
 };
 
 const props = {
-  drawMode: 'draw_line_string' as DrawMode,
+  drawMode: 'direct_select' as DrawMode,
   events: [],
   features: featureCollection([], {}),
   flyTo: null,
@@ -31,21 +26,28 @@ const props = {
   //   coordinates: [110, 50],
   // }),
   sources: [],
+
+  MAPBOX_TOKEN: '',
+  MAPBOX_MAP_ID: '',
+  // maxBounds:{undefined},
+  center: [12, 60] as [number, number],
+  zoom: 4,
+  // renderNavigationControls:{renderNavigationControls}  ,
 };
 
 export const basic = () => {
   return (
-    <Flex>
+    <div style={{ display: 'flex' }}>
       <Map {...props} />
-    </Flex>
+    </div>
   );
 };
 
 export const verticalDocked = () => {
   return (
-    <Flex>
+    <div style={{ display: 'flex' }}>
       <Map {...props} />
-    </Flex>
+    </div>
   );
 };
 

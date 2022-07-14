@@ -15,7 +15,7 @@ describe('Cancellable Promise', () => {
     );
     cancellablePromise.cancel();
     await expect(cancellablePromise.promise).rejects.toMatchObject({
-      message: 'cancelled',
+      message: 'Cancelled',
     });
   });
 
@@ -33,7 +33,7 @@ describe('Cancellable Promise', () => {
     );
     cancellablePromise.cancel();
     await expect(cancellablePromise.promise).rejects.toMatchObject({
-      message: 'cancelled',
+      message: 'Cancelled',
     });
   });
 });

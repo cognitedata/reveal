@@ -8,7 +8,7 @@ import { ToastContainer } from '@cognite/cogs.js';
 import {
   isTest,
   Container,
-  getTenantInfo,
+  getProjectInfo,
   storage,
 } from '@cognite/react-container';
 
@@ -26,7 +26,7 @@ if (isTest) {
 const APP_STATE_KEY = 'APP_STATE';
 
 export const AppRoot: React.FC = () => {
-  const [possibleTenant] = getTenantInfo();
+  const [possibleTenant] = getProjectInfo();
   const [store] = useState(() =>
     configureStore({
       ...(storage.getItem(APP_STATE_KEY) || {}),

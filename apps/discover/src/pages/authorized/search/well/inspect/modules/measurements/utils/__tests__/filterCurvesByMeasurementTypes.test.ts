@@ -8,10 +8,6 @@ import { MeasurementType } from 'modules/wellSearch/types';
 import { filterCurvesByMeasurementTypes } from '../filterCurvesByMeasurementTypes';
 
 describe('filterCurvesByMeasurementTypes', () => {
-  /**
-   * filterCurvesByMeasurementTypes
-   */
-
   test('Should contain geomechanics columns only', () => {
     const depthMeasurementColumns = [
       ...getMockDepthMeasurementDataColumnsCurves(),

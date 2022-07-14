@@ -1,13 +1,20 @@
 import { renderHook } from '@testing-library/react-hooks';
 import mapboxgl from 'maplibre-gl';
 
-import { getMockGeometry } from '__test-utils/fixtures/geometry';
-
 import { useZoomToFeature } from '../useZoomToFeature';
 
 const getMockFeature = () => {
   return {
-    geometry: getMockGeometry(),
+    geometry: {
+      type: 'Polygon',
+      coordinates: [
+        [
+          [1, 1],
+          [2, 2],
+          [3, 3],
+        ],
+      ],
+    },
   };
 };
 

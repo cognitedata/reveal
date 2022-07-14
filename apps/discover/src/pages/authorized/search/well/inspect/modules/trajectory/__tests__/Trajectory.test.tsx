@@ -1,4 +1,3 @@
-import 'modules/map/__mocks/mockMapbox';
 import { screen } from '@testing-library/react';
 import { Store } from 'redux';
 

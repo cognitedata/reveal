@@ -37,17 +37,6 @@ export const MapWrapper = styled.div`
   width: 100%;
 `;
 
-export const MapContainer = styled.div`
-  z-index: ${layers.MAP};
-  height: 100%;
-  width: 100%;
-  padding: 0;
-  border: none;
-  position: relative;
-  border-left: 1px solid var(--cogs-color-strokes-default);
-  margin-bottom: -30px; // <-- quick fix: Couldn't get the map to behave properly in its container.
-`;
-
 export const MapDocumentPreviewContainer = styled.div`
   position: absolute;
   z-index: ${layers.MAP_DOCUMENT_PREVIEW};

@@ -12,6 +12,8 @@ import {
 } from 'maplibre-gl';
 import { log } from 'utils/log';
 
+import { MapEvent, DrawMode } from '@cognite/react-map';
+
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
 import {
   clearSelectedDocument,
@@ -22,7 +24,6 @@ import {
   setSelectedFeature,
   setSelectedWell,
 } from 'modules/map/actions';
-import { DrawMode } from 'modules/map/types';
 import { Modules } from 'modules/sidebar/types';
 import { wellSearchActions } from 'modules/wellSearch/actions';
 import {
@@ -40,8 +41,8 @@ import {
   WELL_MARKER,
 } from '../constants';
 import { MapLayerSearchModal } from '../map-overlay-actions/MapLayerSearchModal';
-import { MapEvent } from '../MapboxMap';
-import { extractDocumentMapLayers, getAbsoluteCoordinates } from '../utils';
+import { extractDocumentMapLayers } from '../utils';
+import { getAbsoluteCoordinates } from '../utils/getAbsoluteCoordinates';
 
 const hoverPopup = new Popup({
   closeButton: false,

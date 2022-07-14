@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 
 import { Button, Dropdown, Tooltip } from '@cognite/cogs.js';
+import { SelectableLayer } from '@cognite/react-map';
 import { Point } from '@cognite/seismic-sdk-js';
 
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
 import { useTranslation } from 'hooks/useTranslation';
-import { Asset, SelectableLayer } from 'modules/map/types';
+import { Asset } from 'modules/map/types';
 
 import { useLayers } from '../hooks/useLayers';
 
@@ -16,13 +17,13 @@ import Layers from './Layers';
 export interface Props {
   assets: Asset[];
   zoomToAsset: (center: Point) => void;
-  selectedLayers: SelectableLayer[];
+  layers: SelectableLayer[];
 }
 
 type Options = 'Assets' | 'Layers' | null;
 
 export const ContentSelector: React.FC<Props> = React.memo(
-  ({ assets, zoomToAsset, selectedLayers }) => {
+  ({ assets, zoomToAsset, layers }) => {
     const [selected, setSelected] = useState<Options>(null);
 
     const metrics = useGlobalMetrics('map');
@@ -55,7 +56,7 @@ export const ContentSelector: React.FC<Props> = React.memo(
       handleClose();
       zoomToAsset(item.geometry);
     };
-    const { layers: allLayers } = useLayers();
+    const { allLayers } = useLayers();
 
     const assetsIcon = selected === 'Assets' ? 'ChevronUp' : 'ChevronDown';
     const layersIcon = selected === 'Layers' ? 'ChevronUp' : 'ChevronDown';
@@ -92,7 +93,7 @@ export const ContentSelector: React.FC<Props> = React.memo(
     const renderLayersButton = React.useMemo(
       () => (
         <Dropdown
-          content={<Layers allLayers={allLayers} layers={selectedLayers} />}
+          content={<Layers layers={layers} />}
           visible={selected === 'Layers'}
           onClickOutside={handleClose}
         >
@@ -111,7 +112,7 @@ export const ContentSelector: React.FC<Props> = React.memo(
           </Tooltip>
         </Dropdown>
       ),
-      [layersIcon, allLayers, selectedLayers]
+      [layersIcon, allLayers, layers]
     );
 
     return (

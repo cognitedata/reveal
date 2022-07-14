@@ -1,10 +1,17 @@
 import { Geometry, Point } from '@cognite/seismic-sdk-js';
 import { Feature, FeatureCollection } from '@turf/helpers';
-import type {
-  AnyLayer,
-  CustomLayerInterface,
-  MapboxOptions,
-} from 'maplibre-gl';
+import type { MapboxOptions } from 'maplibre-gl';
+
+export interface MapEvent {
+  type: string;
+  layers?: string[];
+  callback: any;
+}
+
+export interface MapIcon {
+  name: string;
+  icon: HTMLImageElement;
+}
 
 export interface Asset {
   name: string;
@@ -20,45 +27,6 @@ export interface MapDataSource {
     clusterRadius: number;
   };
 }
-
-export interface SelectableLayer {
-  id: string;
-  name: string;
-  selected: boolean;
-  layers: MapLayer[];
-
-  disabled?: boolean;
-  weight?: number; // for ordering
-}
-
-export type RemoteServiceResponse = FeatureCollection & { nextCursor?: string };
-
-export interface Layer {
-  name: string;
-  remote?: string;
-  remoteService?: (
-    tenant: string,
-    cursor?: string
-  ) => Promise<RemoteServiceResponse>;
-  local?: string;
-  color: string;
-  defaultOn: boolean;
-
-  // which layer to show this before
-  // used for layer display ordering
-  weight?: number;
-
-  alwaysOn?: boolean;
-  searchable?: string;
-  searchInputText?: string;
-  mapLayers?: MapLayer[];
-  asset?: {
-    filter?: [string, string | string[]];
-    displayField: string;
-  };
-}
-
-export type Layers = Record<string, Layer>;
 
 // type Marker = {
 //   id: string;
@@ -124,8 +92,3 @@ export interface MapConfig {
     maxBounds?: MapboxOptions['maxBounds']; // deprecated
   };
 }
-
-export type MapLayer = (AnyLayer | CustomLayerInterface) & {
-  weight?: number;
-  source: string;
-};

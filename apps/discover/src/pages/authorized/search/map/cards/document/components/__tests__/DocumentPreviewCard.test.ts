@@ -1,8 +1,14 @@
+import '__mocks/mockContainerAuth'; // should be first
 import '__mocks/mockCogniteSDK';
+import { getMockAssetsByIds } from 'domain/assets/__mocks/getMockAssets';
 import { useDocumentHighlightedContent } from 'domain/documents/internal/hooks/useDocumentHighlightedContent';
+import { getMockDocumentCategoriesGet } from 'domain/documents/service/__mocks/getMockDocumentCategoriesGet';
+import { getMockFavoritesListGet } from 'domain/favorites/service/__mocks/getMockFavoritesListGet';
+import { getMockConfigGet } from 'domain/projectConfig/service/__mocks/getMockConfigGet';
 
 import { screen, fireEvent } from '@testing-library/react';
 import noop from 'lodash/noop';
+import { setupServer } from 'msw/node';
 import { Store } from 'redux';
 
 import { getMockDocument } from '__test-utils/fixtures/document';
@@ -39,7 +45,17 @@ jest.mock(
   })
 );
 
+const mockServer = setupServer(
+  getMockConfigGet(),
+  getMockFavoritesListGet(),
+  getMockAssetsByIds(),
+  getMockDocumentCategoriesGet()
+);
+
 describe('Favourite Content', () => {
+  beforeAll(() => mockServer.listen());
+  afterAll(() => mockServer.close());
+
   let doSearchSpy: any;
   let mockedDocument: any;
 

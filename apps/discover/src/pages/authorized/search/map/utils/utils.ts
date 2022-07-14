@@ -1,10 +1,10 @@
-import { Feature, FeatureCollection, Position } from '@turf/helpers';
+import { Feature, FeatureCollection } from '@turf/helpers';
 import isArray from 'lodash/isArray';
 import pick from 'lodash/pick';
 import { MapboxGeoJSONFeature } from 'maplibre-gl';
 
 import { DocumentFilter } from '@cognite/sdk';
-import { GeoJson, Geometry } from '@cognite/seismic-sdk-js';
+import { Geometry } from '@cognite/seismic-sdk-js';
 
 import { convertPolygonToPoint } from 'modules/map/helper';
 import { Asset, GEOJSONPoint, MapDataSource } from 'modules/map/types';
@@ -40,13 +40,13 @@ export const clusterConfig = {
 };
 
 const createSources = (
-  seismicImages: FeatureCollection,
+  data: FeatureCollection,
   features: FeatureCollection,
   cluster = true,
   zoom: number = DEFAULT_CLUSTER_ZOOM_LEVEL
 ): MapDataSource[] => {
   const sources = [
-    { id: SEISMIC_LAYER_ID, data: seismicImages },
+    { id: SEISMIC_LAYER_ID, data },
     {
       id: GROUPED_CLUSTER_LAYER_ID,
       data: {
@@ -104,43 +104,6 @@ const getAssetFilter = (assetFilter?: [string, string | string[]]) => {
   return undefined;
 };
 
-const setSourceProperties = (
-  sources: MapDataSource[],
-  sourceId: string,
-  key: string,
-  value: string
-) => {
-  return sources.map((row) => {
-    if (row.id === sourceId) {
-      return {
-        ...row,
-        data: {
-          ...row.data,
-          features: row.data.features.map((feature: GeoJson) => ({
-            ...feature,
-            properties: {
-              ...feature.properties,
-              [key]: value,
-            },
-          })),
-        },
-      };
-    }
-    return row;
-  });
-};
-
-const getAbsoluteCoordinates = (
-  lng: number,
-  coordinates: Position
-): Position => {
-  const position = coordinates;
-  while (Math.abs(lng - coordinates[0]) > 180) {
-    position[0] += lng > coordinates[0] ? 360 : -360;
-  }
-  return position;
-};
-
 const extractDocumentMapLayers = (
   features: MapboxGeoJSONFeature[],
   tenantConfigMapLayerFilters?: MapLayerFilters
@@ -191,7 +154,5 @@ export {
   getAssetFilter,
   getAssetData,
   createSources,
-  setSourceProperties,
-  getAbsoluteCoordinates,
   extractDocumentMapLayers,
 };
