@@ -16,15 +16,28 @@ export type RawCylinder = {
   radius: number;
 };
 
+const cylinderContainsPointVars = {
+  tempPoint0: new THREE.Vector3(),
+  tempPoint1: new THREE.Vector3(),
+  tempAxis: new THREE.Vector3() };
+
 export class Cylinder implements IShape {
   private readonly _centerA: THREE.Vector3;
   private readonly _centerB: THREE.Vector3;
   private readonly _radius: number;
 
+  private readonly _halfHeight: number;
+  private readonly _middle: THREE.Vector3;
+  private readonly _axis: THREE.Vector3;
+
   constructor(centerA: THREE.Vector3, centerB: THREE.Vector3, radius: number) {
     this._centerA = centerA;
     this._centerB = centerB;
     this._radius = radius;
+
+    this._halfHeight = this._centerA.clone().sub(this._centerB).length() * 0.5;
+    this._middle = this._centerA.clone().add(this._centerB).multiplyScalar(0.5);
+    this._axis = this._centerA.clone().sub(this._centerB).normalize();
   }
 
   get centerA(): THREE.Vector3 {
@@ -39,29 +52,20 @@ export class Cylinder implements IShape {
     return this._radius;
   }
 
-  private getHalfHeight(): number {
-    return this._centerA.clone().sub(this._centerB).length() * 0.5;
-  }
-
-  private getMiddle(): THREE.Vector3 {
-    return this._centerA.clone().add(this._centerB).multiplyScalar(0.5);
-  }
-
-  private getAxis(): THREE.Vector3 {
-    return this._centerA.clone().sub(this._centerB).normalize();
-  }
-
   containsPoint(point: THREE.Vector3): boolean {
-    const halfHeight = this.getHalfHeight();
-    const middle = this.getMiddle();
-    const dir = this.getAxis();
+    const { tempPoint0, tempPoint1, tempAxis } = cylinderContainsPointVars;
 
-    const distAlongAxis = point.clone().sub(middle).dot(dir);
-    const axisRelativeMiddle = point.clone().sub(dir.clone().multiplyScalar(distAlongAxis));
+    tempPoint0.copy(point);
+    tempPoint1.copy(point);
+    tempAxis.copy(this._axis);
 
-    const distToAxis = axisRelativeMiddle.clone().sub(middle).length();
+    const distAlongAxis = tempPoint0.sub(this._middle).dot(this._axis);
+    const distVectorAlongAxis = tempAxis.multiplyScalar(distAlongAxis);
+    const axisRelativeMiddle = tempPoint1.sub(distVectorAlongAxis);
 
-    return Math.abs(distAlongAxis) < halfHeight && distToAxis < this._radius;
+    const distToAxis = axisRelativeMiddle.sub(this._middle).length();
+
+    return Math.abs(distAlongAxis) < this._halfHeight && distToAxis < this._radius;
   }
 
   toRawShape(): RawCylinder {
@@ -74,7 +78,7 @@ export class Cylinder implements IShape {
   }
 
   createBoundingBox(): THREE.Box3 {
-    const axisVec = this.getMiddle().sub(this._centerB);
+    const axisVec = this._middle.clone().sub(this._centerB);
 
     const axisOption0 = new THREE.Vector3(1, 0, 0);
     const axisOption1 = new THREE.Vector3(0, 1, 0);
@@ -86,7 +90,7 @@ export class Cylinder implements IShape {
     const perpVector1 = perpVector0.clone().cross(axisVec).multiplyScalar(this.radius);
 
     const matrix = new THREE.Matrix4().makeBasis(axisVec, perpVector0, perpVector1);
-    matrix.setPosition(this.getMiddle());
+    matrix.setPosition(this._middle);
 
     const baseBox = new THREE.Box3(new THREE.Vector3(-1, -1, -1), new THREE.Vector3(1, 1, 1));
     return baseBox.applyMatrix4(matrix);
