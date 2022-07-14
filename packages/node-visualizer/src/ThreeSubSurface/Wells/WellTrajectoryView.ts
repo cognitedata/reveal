@@ -42,6 +42,8 @@ import { ColorMaps } from '../../Core/Primitives/ColorMaps';
 import { Colors } from '../../Core/Primitives/Colors';
 import { Changes } from '../../Core/Views/Changes';
 import { NodeEventArgs } from '../../Core/Views/NodeEventArgs';
+import groupBy from 'lodash/groupBy';
+import { specialCharacter } from '../../Three/Utilities/constants';
 
 const trajectoryName = 'trajectory';
 const trajectoryLabelName = 'trajectoryLabel';
@@ -59,6 +61,10 @@ export class WellTrajectoryView extends BaseGroupThreeView {
   private fgColor: Color = Colors.white;
 
   private bandTextures: (THREE.CanvasTexture | null)[] = [null, null];
+
+  private maxCoordinate = new Vector3(0, 0, 0);
+
+  private commonName: string = '';
 
   private getBandName(bandPosition: BandPosition): string {
     return bandPosition === BandPosition.Right ? 'RightBand' : 'LeftBand';
@@ -133,6 +139,12 @@ export class WellTrajectoryView extends BaseGroupThreeView {
     super.beforeRender();
     const parent = this.object3D;
     if (!parent) return;
+
+    const allViewTrajectories = this.getAllViewShowTrajectoryList();
+    if (allViewTrajectories) {
+      this.setCommonName(allViewTrajectories);
+      this.setMaxCoordinate(allViewTrajectories);
+    }
 
     // Check if we need to create the bands
     let hasBands = false;
@@ -391,8 +403,8 @@ export class WellTrajectoryView extends BaseGroupThreeView {
       const position = trajectory.getTopPosition().clone();
       this.transformer.transformRelativeTo3D(position);
       const label = SpriteCreator.createByPositionAndAlignment(
-        wellNode.name,
-        position,
+        this.commonName,
+        this.maxCoordinate,
         1,
         style.nameFontSize.value,
         color
@@ -487,6 +499,43 @@ export class WellTrajectoryView extends BaseGroupThreeView {
       parent.add(band);
     }
   }
+
+  private getAllViewShowTrajectoryList = () => {
+    const viewShowList = this.renderTarget.viewsShownHere.list;
+    return viewShowList.filter(
+      (view) => view.constructor.name === this.constructor.name
+    ) as WellTrajectoryView[];
+  };
+
+  private setCommonName = (wellTrajectoryViews: WellTrajectoryView[]) => {
+    const groupedWellTrajectories = groupBy(
+      wellTrajectoryViews,
+      'node.parent.name'
+    );
+    let name = '';
+    Object.keys(groupedWellTrajectories).forEach((trajectory) => {
+      if (trajectory) {
+        name += `${trajectory}${specialCharacter}`;
+      }
+    });
+    this.commonName = name;
+  };
+
+  private setMaxCoordinate = (wellTrajectoryViews: WellTrajectoryView[]) => {
+    let maxCoordinate = new Vector3(0, 0, 0);
+
+    wellTrajectoryViews.forEach((wellTrajectory) => {
+      const trajectoryTop =
+        wellTrajectory.node.trajectory?.getTopPosition() ||
+        new Vector3(0, 0, 0);
+      maxCoordinate = new Vector3(
+        Math.max(maxCoordinate.x, trajectoryTop.x),
+        Math.max(maxCoordinate.y, trajectoryTop.y),
+        Math.max(maxCoordinate.z, trajectoryTop.z)
+      );
+    });
+    this.maxCoordinate = maxCoordinate;
+  };
 
   //= =================================================
   // INSTANCE METHODS: Add 3D objects

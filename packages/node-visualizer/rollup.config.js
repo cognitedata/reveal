@@ -33,6 +33,7 @@ export default {
     'lodash/isNil',
     'lodash/startCase',
     'lodash/isNumber',
+    'lodash/groupBy',
     'prop-types',
   ],
   plugins: [

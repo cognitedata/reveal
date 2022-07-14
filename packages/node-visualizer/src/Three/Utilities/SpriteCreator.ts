@@ -17,6 +17,7 @@ import * as THREE from 'three';
 import { Vector3 } from '../../Core/Geometry/Vector3';
 import { Canvas } from '../Utilities/Canvas';
 import { ThreeConverter } from '../Utilities/ThreeConverter';
+import { specialCharacter } from './constants';
 
 export class SpriteCreator {
   //= =================================================
@@ -113,6 +114,43 @@ export class SpriteCreator {
     const width = textWidth + 2 * doubleBorderSize;
     const height = fontSize + doubleBorderSize;
 
+    const splitText = text.split(specialCharacter);
+
+    // removing empty string at the end of the array
+    splitText.pop();
+    const splitTextLength = splitText.length;
+
+    /*
+     * if we find the special split character, this means we need to show the text on multiple lines
+     * so we will break up: 1/n/2/n/3/n/
+     * into:
+     *  1
+     *  2
+     *  3
+     */
+
+    if (splitTextLength >= 1) {
+      canvas.width = width * splitTextLength;
+      canvas.height = height * splitTextLength;
+
+      // need to set font again after resizing canvas
+      context.font = font;
+      context.textBaseline = 'middle';
+      context.textAlign = 'center';
+
+      // scale to fit but don't stretch
+      context.translate((width * splitTextLength) / 2, height / 2);
+
+      context.fillStyle = color.string();
+      let x = 0;
+      splitText.forEach((i) => {
+        context.fillText(i, 0, x);
+        x += fontSize;
+      });
+
+      return canvas;
+    }
+
     canvas.width = width;
     canvas.height = height;
 
@@ -128,6 +166,8 @@ export class SpriteCreator {
     context.translate(width / 2, height / 2);
     context.fillStyle = color.string();
     context.fillText(text, 0, 0);
+    //
+
     return canvas;
   }
 
