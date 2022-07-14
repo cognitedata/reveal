@@ -1,14 +1,12 @@
 import { Checkbox } from '@cognite/cogs.js';
-import { useContext } from 'react';
+import { useRecoilState } from 'recoil';
+import { equipmentIsBrokenAtom } from 'recoil/equipmentPopup/equipmentPopupAtoms';
 
 import { EditOptionItem } from '../../Popup/elements';
-import { EquipmentContext } from '../EquipmentPopupProvider';
 
 export const IsBrokenCheckbox: React.FC = () => {
-  const { formState, updateFields } = useContext(EquipmentContext);
-  const { isBroken } = formState;
-  const handleChange = (nextState: boolean) =>
-    updateFields({ isBroken: nextState });
+  const [isBroken, setIsBroken] = useRecoilState(equipmentIsBrokenAtom);
+  const handleChange = (nextState: boolean) => setIsBroken(nextState);
 
   return (
     <EditOptionItem>

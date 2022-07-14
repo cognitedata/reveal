@@ -8,21 +8,19 @@ export interface Props {
   data: Person;
 }
 
+const renderIcon = () => <Icon size={54} type="Grid" />;
+
 export const PersonPopup: React.FC<Props> = ({ data }) => {
   const desk = data.desk || { name: '' };
 
   return (
-    <PopupContent
-      Icon={<Icon size={54} type="Grid" />}
-      nodeId={data.desk?.nodeId}
-      labels={[]}
-    >
+    <PopupContent Icon={renderIcon} nodeId={data.desk?.nodeId} labels={[]}>
       <TextWrapper>
         <Title level={3}>{data.name}</Title>
         <Body>Slack: {data.slackId || 'N/A'}</Body>
         <Body>
           {desk.name
-            ? `This person sits at  ${desk.name}`
+            ? `This person sits at ${desk.name}`
             : 'This person does not have a desk'}
         </Body>
       </TextWrapper>

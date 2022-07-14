@@ -1,5 +1,4 @@
 import { Button, Flex, Label } from '@cognite/cogs.js';
-import { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 
 import {
@@ -16,21 +15,21 @@ interface Props {
   labels: string[];
   handleEdit?: () => void;
   nodeId?: any;
-  Icon: ReactNode;
+  Icon: () => JSX.Element | null;
 }
 
 export const PopupContent: React.FC<Props> = ({
-  Icon,
   labels,
   nodeId,
   handleEdit,
+  Icon,
   children,
 }) => {
   return (
     <FlexColumnSpaceAround>
       <DivWithMarginBottom>
         <FlexSpaceBetween>
-          {Icon}
+          <Icon />
           <div>
             {handleEdit && (
               <Button

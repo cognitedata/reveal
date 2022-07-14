@@ -1,50 +1,64 @@
 import {
   Equipment,
   useGetMapDataQuery,
+  useGetSearchDataQuery,
   useListPeopleWithNoEquipmentQuery,
 } from 'graphql/generated';
 import { useQueryClient } from 'react-query';
 
-import { EquipmentMutate, PersonMutate } from '../../types';
 import { usePersonMutate } from '../person/usePersonMutate';
 
 import { useEquipmentMutate } from './useEquipmentMutate';
 
 export const useUpdateEquipment = () => {
-  const updateEquipment = useEquipmentMutate();
   const updatePerson = usePersonMutate();
   const queryClient = useQueryClient();
+
+  const onEquipmentMutateSuccess = () => {
+    queryClient.invalidateQueries(useGetMapDataQuery.getKey());
+    queryClient.invalidateQueries(useListPeopleWithNoEquipmentQuery.getKey());
+    queryClient.invalidateQueries(useGetSearchDataQuery.getKey());
+  };
+  const updateEquipment = useEquipmentMutate(onEquipmentMutateSuccess);
+
   return async (
-    data: Equipment,
-    newEquipmentFields: Partial<EquipmentMutate>,
-    oldPersonFields: Pick<PersonMutate, 'name' | 'externalId'>,
-    newPersonFields: Pick<PersonMutate, 'name' | 'externalId' | 'desk'>
+    oldEquipmentFields: Equipment,
+    newEquipmentFields: Partial<Equipment>
   ) => {
+    const newPersonExternalId = newEquipmentFields.person?.externalId;
+    const oldPersonExternalId = oldEquipmentFields.person?.externalId;
     const promiseArray = [
       updateEquipment({
-        ...data,
+        ...oldEquipmentFields,
         ...newEquipmentFields,
-        person: newPersonFields.externalId,
+        person: newPersonExternalId,
       }),
     ];
 
-    if (oldPersonFields.externalId !== newPersonFields.externalId) {
+    if (oldPersonExternalId !== newPersonExternalId) {
       // set old person's desk to null and update new person with desk
-      promiseArray.push(
-        updatePerson({
-          ...oldPersonFields,
-          desk: null,
-        }),
-        updatePerson({
-          ...newPersonFields,
-        })
-      );
+      const oldPerson = {
+        ...oldEquipmentFields.person,
+        team: oldEquipmentFields.person?.team?.externalId,
+      };
+      const newPerson = {
+        ...newEquipmentFields.person,
+        team: newEquipmentFields.person?.team?.externalId,
+        desk: oldEquipmentFields.externalId,
+      };
+
+      if (oldPersonExternalId) {
+        promiseArray.push(
+          updatePerson({
+            ...oldPerson,
+            desk: null,
+          })
+        );
+      }
+      promiseArray.push(updatePerson(newPerson));
     }
 
-    Promise.all(promiseArray).then(() => {
-      queryClient.invalidateQueries(useGetMapDataQuery.getKey());
-      queryClient.invalidateQueries(useListPeopleWithNoEquipmentQuery.getKey());
-    });
+    Promise.all(promiseArray);
 
     return { isloading: false };
   };

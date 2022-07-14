@@ -9,15 +9,16 @@ interface Props {
   handleEdit: () => void;
 }
 
+const renderIcon = () => <Icon size={54} type="Cube" />;
+
 export const RoomPopupContent: React.FC<Props> = ({ handleEdit }) => {
   const { name, description, isBookable, nodeId } =
     useRecoilValue(roomFormState);
-  const PopupIcon = <Icon size={54} type="Cube" />;
 
   return (
     <PopupContent
       nodeId={nodeId}
-      Icon={PopupIcon}
+      Icon={renderIcon}
       handleEdit={handleEdit}
       labels={[]}
     >

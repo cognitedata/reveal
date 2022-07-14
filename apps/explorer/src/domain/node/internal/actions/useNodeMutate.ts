@@ -8,7 +8,7 @@ import { EquipmentMutate, PersonMutate, RoomMutate } from '../types';
 
 type Updateable = Building | EquipmentMutate | RoomMutate | PersonMutate;
 
-export const useNodeMutate = () => {
+export const useNodeMutate = (onSuccess?: () => void) => {
   const client = getCogniteSDKClient();
 
   return useMutation(
@@ -24,9 +24,7 @@ export const useNodeMutate = () => {
       return updateNode({ client, modelName, spaceName, items: [nodeContent] });
     },
     {
-      // onSuccess: (data) => {
-      //   console.log('data', data);
-      // },
+      onSuccess,
     }
   );
 };

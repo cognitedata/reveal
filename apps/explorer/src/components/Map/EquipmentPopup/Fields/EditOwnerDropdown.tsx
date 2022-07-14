@@ -1,15 +1,14 @@
 import { Dropdown, Menu, Button } from '@cognite/cogs.js';
 import { useListPeopleWithNoEquipmentQuery } from 'graphql/generated';
-import { useContext } from 'react';
+import { useRecoilState } from 'recoil';
+import { equipmentPersonAtom } from 'recoil/equipmentPopup/equipmentPopupAtoms';
 
 import { EditOptionItem } from '../../Popup/elements';
-import { EquipmentContext } from '../EquipmentPopupProvider';
 
 export const EditOwnerDropdown: React.FC = () => {
   const { data, isLoading } = useListPeopleWithNoEquipmentQuery();
   const people = data?.people?.items || [];
-  const { formState, updateFields } = useContext(EquipmentContext);
-  const { selected } = formState;
+  const [person, setPerson] = useRecoilState(equipmentPersonAtom);
 
   return (
     <EditOptionItem>
@@ -21,7 +20,11 @@ export const EditOwnerDropdown: React.FC = () => {
               ? 'Loading'
               : people.map((p) => {
                   const handleClick = () =>
-                    updateFields({ selected: { ...p } });
+                    setPerson({
+                      ...p,
+                      name: p?.name || '',
+                      externalId: p?.externalId || '',
+                    });
                   return (
                     <Menu.Item key={p?.externalId} onClick={handleClick}>
                       {p?.name}
@@ -32,7 +35,7 @@ export const EditOwnerDropdown: React.FC = () => {
         }
       >
         <Button icon="ChevronDown" iconPlacement="right">
-          <div>{selected.name}</div>
+          <div>{person.name ? person.name : 'Select...'}</div>
         </Button>
       </Dropdown>
     </EditOptionItem>
