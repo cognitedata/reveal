@@ -10,11 +10,9 @@ import { PointCloudObjectCollection } from './PointCloudObjectCollection';
 export class AnnotationIdPointCloudObjectCollection extends PointCloudObjectCollection {
   private readonly _annotationIds = new Set<number>();
 
-  constructor(ids: number[]) {
+  constructor(ids: Iterable<number>) {
     super();
-    for (const id of ids) {
-      this._annotationIds.add(id);
-    }
+    this._annotationIds = new Set<number>(ids);
   }
 
   getAnnotationIds(): Iterable<number> {
