@@ -251,9 +251,32 @@ export const sampleCDFAnnotation9: AnnotationModel = {
   },
 };
 
+export const sampleCDFAnnotation10: AnnotationModel = {
+  id: 111918284059050,
+  createdTime: new Date(2022, 1, 24),
+  lastUpdatedTime: new Date(2022, 1, 24),
+  status: 'approved',
+  annotatedResourceType: 'file',
+  annotatedResourceId: 711494377822800,
+  annotationType: 'images.ObjectDetection',
+  creatingApp: 'annotation-migration-migrate-legacy-annotations',
+  creatingAppVersion: '0.4.8',
+  creatingUser: null,
+  data: {
+    label: 'wind-turbine',
+    polyline: {
+      vertices: [
+        { x: 0.3812919463087248, y: 0.11577181208053691 },
+        { x: 0.5939597315436241, y: 0.1040268456375839 },
+        { x: 0.636744966442953, y: 0.3053691275167785 },
+      ],
+    },
+  },
+};
+
 // images.AssetLink annotation type
 
-export const sampleCDFAnnotation10: AnnotationModel = {
+export const sampleCDFAnnotation11: AnnotationModel = {
   id: 111918284059050,
   createdTime: new Date(2022, 1, 24),
   lastUpdatedTime: new Date(2022, 1, 24),
@@ -288,4 +311,5 @@ export const sampleCDFAnnotations: AnnotationModel[] = [
   sampleCDFAnnotation8,
   sampleCDFAnnotation9,
   sampleCDFAnnotation10,
+  sampleCDFAnnotation11,
 ];

@@ -709,19 +709,29 @@ describe('Test convertCDFAnnotationToVisionAnnotations fn', () => {
             polygon: convertedAnnotation.polygon,
           }).toStrictEqual(sampleCDFAnnotations[8].data);
         });
+
+        test('ObjectDetection polyline annotation - sample-10', () => {
+          const convertedAnnotation =
+            visionAnnotations[9] as VisionAnnotation<ImageObjectDetectionPolyline>;
+
+          expect({
+            label: convertedAnnotation.label,
+            polyline: convertedAnnotation.polyline,
+          }).toStrictEqual(sampleCDFAnnotations[9].data);
+        });
       });
 
       describe('images.AssetLink annotation', () => {
-        test('AssetLink annotation - sample-10', () => {
+        test('AssetLink annotation - sample-11', () => {
           const convertedAnnotation =
-            visionAnnotations[9] as VisionAnnotation<ImageAssetLink>;
+            visionAnnotations[10] as VisionAnnotation<ImageAssetLink>;
 
           expect({
             text: convertedAnnotation.text,
             confidence: convertedAnnotation.confidence,
             assetRef: convertedAnnotation.assetRef,
             textRegion: convertedAnnotation.textRegion,
-          }).toStrictEqual(sampleCDFAnnotations[9].data);
+          }).toStrictEqual(sampleCDFAnnotations[10].data);
         });
       });
     });
