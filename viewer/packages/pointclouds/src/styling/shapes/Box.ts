@@ -13,6 +13,8 @@ export type RawBox = {
   invMatrix: Mat4;
 };
 
+const boxContainsPointVars = { tempPoint: new THREE.Vector3() };
+
 export class Box implements IShape {
   readonly invMatrix: THREE.Matrix4;
 
@@ -21,7 +23,9 @@ export class Box implements IShape {
   }
 
   containsPoint(point: THREE.Vector3): boolean {
-    const transformedPoint = point.clone().applyMatrix4(this.invMatrix);
+    const { tempPoint } = boxContainsPointVars;
+    tempPoint.copy(point);
+    const transformedPoint = tempPoint.applyMatrix4(this.invMatrix);
 
     return (
       Math.max(Math.abs(transformedPoint.x), Math.max(Math.abs(transformedPoint.y), Math.abs(transformedPoint.z))) <=
