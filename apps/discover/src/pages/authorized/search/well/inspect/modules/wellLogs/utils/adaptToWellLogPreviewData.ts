@@ -1,3 +1,4 @@
+import { colorize } from 'utils/colorize';
 import { minMax } from 'utils/number/minMax';
 
 import { WellLogPreviewData, Tuplet } from '../LogViewer/Log/types';
@@ -16,6 +17,12 @@ export const adaptToWellLogPreviewData = (
   wellLog: WellLogView
 ): WellLogPreviewData => {
   const { depthColumn, columns, rows } = wellLog;
+
+  const columnExternalIds = [
+    depthColumn.externalId,
+    ...columns.map(({ externalId }) => externalId),
+  ];
+  const columnColorMap = colorize(columnExternalIds);
 
   const columnsData = columns.reduce<WellLogPreviewData>(
     (logViewerData, column, columnIndex) => {
@@ -49,6 +56,7 @@ export const adaptToWellLogPreviewData = (
           values,
           unit: column.unit,
           domain: [Math.floor(columnsMinValue), Math.ceil(columnsMaxValue)],
+          color: columnColorMap[column.externalId],
         },
       };
     },
@@ -64,6 +72,7 @@ export const adaptToWellLogPreviewData = (
       values: depthValues,
       unit: depthColumn.unit,
       domain: [Math.floor(minDepthValue), Math.ceil(maxDepthValue)],
+      color: columnColorMap[depthColumn.externalId],
     },
   };
 

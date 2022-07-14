@@ -9,7 +9,6 @@ import { NO_LOGS_LEGEND_MESSAGE } from 'pages/authorized/search/well/inspect/con
 import { GraphTrackEnum } from '../../../constants';
 import { WellLogPreviewData } from '../types';
 
-import { getRandomTrackColor } from './trackColorizer';
 import {
   disableGraphTrack,
   getTrackConfig,
@@ -22,7 +21,7 @@ export const getGraphTrack = (
 ) => {
   const plots = Object.keys(trackLogData).map<PlotConfig>(
     (columnExternalId) => {
-      const { measurementType, domain } = trackLogData[columnExternalId];
+      const { measurementType, domain, color } = trackLogData[columnExternalId];
       const trackConfig = getTrackConfig(measurementType);
 
       return {
@@ -31,7 +30,7 @@ export const getGraphTrack = (
         options: {
           scale: trackConfig?.scale || 'linear',
           width: trackConfig?.width,
-          color: trackConfig?.color || getRandomTrackColor(),
+          color,
           dash: trackConfig?.dash,
           filterToScale: false,
           domain,

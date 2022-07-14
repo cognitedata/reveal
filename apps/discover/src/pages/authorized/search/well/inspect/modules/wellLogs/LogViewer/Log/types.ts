@@ -6,6 +6,7 @@ export type WellLogPreviewDataColumn = {
   values: Tuplet[] | number[];
   unit: string;
   domain: Domain;
+  color: string;
 };
 
 export type WellLogPreviewData = Record<string, WellLogPreviewDataColumn>;

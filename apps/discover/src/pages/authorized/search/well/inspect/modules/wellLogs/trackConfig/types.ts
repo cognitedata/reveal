@@ -2,7 +2,6 @@ import { GraphTrackEnum } from '../constants';
 
 export interface PlotConfig {
   measurementType: string;
-  color: string;
   scale?: 'linear' | 'log'; // Default: 'linear'
   name?: string;
   dash?: [number, number];
