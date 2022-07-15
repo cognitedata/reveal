@@ -23,6 +23,13 @@ export const isSelectable = (value: unknown) => isString(value);
 const convertToLayerConfig = (
   projectConfigLayer: ProjectConfigMapLayers
 ): SelectableLayer | undefined => {
+  // fix up any old layers that have mising info
+  // eg: from files
+  if (projectConfigLayer.name && !projectConfigLayer.id) {
+    // eslint-disable-next-line no-param-reassign
+    projectConfigLayer.id = projectConfigLayer.name;
+  }
+
   if (
     !projectConfigLayer.id ||
     !projectConfigLayer.name ||
