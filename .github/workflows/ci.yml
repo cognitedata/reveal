@@ -327,7 +327,7 @@ jobs:
 
 
       - name: Add comment about preview URL
-        uses: unsplash/comment-on-pr@v1.2.0
+        uses: jsavikko/comment-on-pr@master
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -335,20 +335,6 @@ jobs:
             :orange_book: Documentation preview is available from
             https://cognitedata.github.io/reveal-docs-preview/${{ env.PR_NUMBER }}/docs/next/.
           check_for_duplicate_msg: true
-
-      # Publish comment on PR. Note that we used unsplash/comment-on-pr@v1.2.0 previously, but
-      # due to incompatibilities with Ruby version in Github Docker image, we had to go old-school
-      # Checkout to provide context for Github CLI below
-      - name: Checkout 🛎️ 
-        uses: actions/checkout@v2 # If you're using actions/checkout@v2 you must set persist-credentials to false in most cases for the deployment to work correctly.
-      - name: Add comment about preview URL
-        run: |
-            cat << EOF | gh pr comment ${{ github.event.pull_request.number }} --body-file -
-             :orange_book: Documentation preview is available from
-            https://cognitedata.github.io/reveal-docs-preview/${{ env.PR_NUMBER }}/docs/next/.
-            EOF
-        env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   cleanup:
     name: Cleanup
