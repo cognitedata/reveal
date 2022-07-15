@@ -325,7 +325,6 @@ jobs:
           destination_dir: ${{ env.PR_NUMBER }}
           keep_files: false
 
-
       - name: Add comment about preview URL
         uses: savokr/comment-on-pr@v1.3.2
         env:
@@ -335,6 +334,8 @@ jobs:
             :orange_book: Documentation preview is available from
             https://cognitedata.github.io/reveal-docs-preview/${{ env.PR_NUMBER }}/docs/next/.
           check_for_duplicate_msg: true
+
+
   cleanup:
     name: Cleanup
     runs-on: ubuntu-latest
