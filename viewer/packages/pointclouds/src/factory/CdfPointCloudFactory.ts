@@ -77,10 +77,8 @@ export class CdfPointCloudFactory implements PointCloudFactory {
   async createModel(modelMetadata: PointCloudMetadata): Promise<PotreeNodeWrapper> {
     const { modelBaseUrl, modelIdentifier } = modelMetadata;
 
-    let annotationInfo = new PointCloudObjectProvider([]);
-
     const annotations = await this.getAnnotations(modelIdentifier as CdfModelIdentifier);
-    annotationInfo = annotationsToObjectInfo(annotations);
+    const annotationInfo = annotationsToObjectInfo(annotations);
 
     const pointCloudOctree = await this._potreeInstance.loadPointCloud(
       modelBaseUrl,
