@@ -174,9 +174,9 @@ export const PriceScenariosChart = ({
               <Card title="Hour" value={tooltipData.hour} />
             </FlexRow>
             <FlexRow>
+              <Card title="Auction Matrix" value={tooltipData.auctionMatrix} />
               <Card title="Shop" value={tooltipData.shop} />
               <Card title="Price" value={`${tooltipData.price} NOK`} />
-              <Card title="Auction Matrix" value={tooltipData.auctionMatrix} />
             </FlexRow>
           </TooltipCard>
         )}
