@@ -67,7 +67,12 @@ export const AssigneeColumn: React.FC<Props> = (props) => {
         {assignee && (
           <>
             <Menu.Divider />
-            <DangerButton onClick={unassignModal}>{UNASSIGN}</DangerButton>
+            <DangerButton
+              data-testid="unassign-feedback"
+              onClick={unassignModal}
+            >
+              {UNASSIGN}
+            </DangerButton>
           </>
         )}
       </>

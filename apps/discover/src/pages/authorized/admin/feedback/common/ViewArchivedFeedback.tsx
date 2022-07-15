@@ -18,7 +18,11 @@ export const ViewArchivedFeedback: React.FC = () => {
   };
 
   return (
-    <Button toggled={generalFeedbackShowDeleted} onClick={toggleShowDeleted}>
+    <Button
+      data-testid="view-archived"
+      toggled={generalFeedbackShowDeleted}
+      onClick={toggleShowDeleted}
+    >
       {t('View archived')}
     </Button>
   );

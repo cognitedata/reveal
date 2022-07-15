@@ -8,6 +8,8 @@ import { NoPropagationWrapper } from 'components/Buttons/NoPropagationWrapper';
 import { useTranslation } from 'hooks/useTranslation';
 import { STATUS } from 'modules/feedback/constants';
 
+import { DISMISSED, IN_PROGRESS, NEW, RESOLVED } from '../../constants';
+
 interface DropdownButtonProps {
   status: number;
   options: { value: number; display: string }[];
@@ -54,10 +56,10 @@ export const StatusColumn: React.FC<Props> = (props) => {
   const { t } = useTranslation('Admin');
 
   const options = [
-    { value: STATUS.New, display: t('New') },
-    { value: STATUS.Progress, display: t('In Progress') },
-    { value: STATUS.Resolved, display: t('Resolved') },
-    { value: STATUS.Dismissed, display: t('Dismissed') },
+    { value: STATUS.New, display: t(NEW) },
+    { value: STATUS.Progress, display: t(IN_PROGRESS) },
+    { value: STATUS.Resolved, display: t(RESOLVED) },
+    { value: STATUS.Dismissed, display: t(DISMISSED) },
   ];
 
   const handleStatusChange = (value: number) => {

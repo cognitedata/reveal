@@ -5,6 +5,13 @@ import { ObjectFeedbackResponse } from '@cognite/discover-api-types';
 
 import { useTranslation } from 'hooks/useTranslation';
 
+import {
+  INCORRECT_DOCUMENT_TYPE,
+  INCORRECT_GEO_LABEL,
+  OTHER,
+  SENSITIVE,
+} from '../constants';
+
 interface Props {
   feedback: ObjectFeedbackResponse;
 }
@@ -24,22 +31,22 @@ export const DocumentFeedbackLabels: React.FC<Props> = ({ feedback }) => {
     <Flex gap={8} wrap="wrap">
       {feedback.isSensitiveData && (
         <Label variant="danger" size="medium">
-          {t('Sensitive')}
+          {t(SENSITIVE)}
         </Label>
       )}
       {feedback.suggestedType && (
         <Label variant="unknown" size="medium">
-          {t('Incorrect document type')}
+          {t(INCORRECT_DOCUMENT_TYPE)}
         </Label>
       )}
       {feedback.isIncorrectGeo && (
         <Label variant="unknown" size="medium">
-          {t('Incorrect geo-Label')}
+          {t(INCORRECT_GEO_LABEL)}
         </Label>
       )}
       {isOther && (
         <Label variant="unknown" size="medium">
-          {t('Other')}
+          {t(OTHER)}
         </Label>
       )}
     </Flex>

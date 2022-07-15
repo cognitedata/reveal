@@ -24,13 +24,19 @@ function checkAdminSettingsIsNotVisible(): void {
   cy.findByTestId('top-bar').contains('Admin Settings').should('not.exist');
 }
 
+function clickAdminSettings(): void {
+  cy.findByTestId('top-bar').contains('Admin Settings').should('exist').click();
+}
+
 Cypress.Commands.add('checkUserCannotAccessPage', checkUserCannotAccessPage);
 Cypress.Commands.add(
   'checkAdminSettingsIsNotVisible',
   checkAdminSettingsIsNotVisible
 );
+Cypress.Commands.add('clickAdminSettings', clickAdminSettings);
 
 export interface AdminCommands {
   checkUserCannotAccessPage(path: string): void;
   checkAdminSettingsIsNotVisible(): void;
+  clickAdminSettings(): void;
 }

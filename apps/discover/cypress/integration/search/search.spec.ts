@@ -1,4 +1,5 @@
 import { STATIC_WELL_1 } from '../../support/constants';
+
 const FILENAME = '15_9_19_A_1980_01_01';
 
 describe('search history', () => {
@@ -35,7 +36,7 @@ describe('search history', () => {
       });
   });
 
-  it('Should be able to search documents from search history ', () => {
+  it('Should be able to search documents from search history', () => {
     cy.performSearch(FILENAME);
     cy.goToTab('Documents');
 

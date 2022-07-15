@@ -16,7 +16,11 @@ import { getEmptyDocumentResult } from 'modules/documentSearch/utils';
 export const mergeSearchResponsePages = (
   queryResults: UseInfiniteQueryResult<DocumentResult>
 ): InifniteQueryResponse => {
-  if (!queryResults.data || queryResults.isLoading) {
+  if (
+    !queryResults.data ||
+    queryResults.isLoading ||
+    !queryResults.data?.pages
+  ) {
     return {
       ...queryResults,
       results: getEmptyDocumentResult(),

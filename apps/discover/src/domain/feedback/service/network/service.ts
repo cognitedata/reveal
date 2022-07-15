@@ -41,6 +41,7 @@ export const feedback = {
     headers: FetchHeaders
   ) => {
     const [tenant] = getTenantInfo();
+    console.log('feedbackType', feedbackType);
 
     return fetchPost<FeedbackPostResponse>(
       `${SIDECAR.discoverApiBaseUrl}/${tenant}/feedback/${feedbackType}`,

@@ -16,10 +16,14 @@ export const WarningModal: React.FC<Props> = ({
 }) => {
   const footer = (
     <div className="cogs-modal-footer-buttons">
-      <Button type="secondary" onClick={onCancel}>
+      <Button
+        data-testid="warning-modal-cancel"
+        type="secondary"
+        onClick={onCancel}
+      >
         {cancelText || 'Cancel'}
       </Button>
-      <Button type="danger" onClick={onOk}>
+      <Button data-testid="warning-modal-unassign" type="danger" onClick={onOk}>
         {okText || 'Proceed'}
       </Button>
     </div>
