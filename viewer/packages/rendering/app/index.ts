@@ -43,6 +43,7 @@ async function init() {
   const guiData = {
     drawCalls: 0,
     gpuFrameTime: 1.1,
+    triangleCount: 0,
     steps: 6,
     canvasColor: '#50728c',
     clearColor: '#444',
@@ -137,6 +138,7 @@ async function init() {
   const stats = gui.addFolder('frame stats');
   const drawCallController = stats.add(guiData, 'drawCalls');
   const gpuFrameTimeController = stats.add(guiData, 'gpuFrameTime');
+  const triangleCountController = stats.add(guiData, 'triangleCount');
   stats.open();
 
   const grid = new THREE.GridHelper(30, 40);
@@ -244,6 +246,8 @@ async function init() {
     stepController.max(numberOfSteps);
     guiData.steps = Math.min(numberOfSteps, guiData.steps);
     stepController.updateDisplay();
+    guiData.triangleCount = renderer.info.render.triangles;
+    triangleCountController.updateDisplay();
   };
 
   const animate = () => {
