@@ -1,9 +1,10 @@
 import http from 'http';
 
+import open from 'open';
 import isString from 'lodash/isString';
 
-const processSingleIncomingRequest = (): Promise<{ code: string }> =>
-  new Promise((resolve) => {
+export async function processRedirect(authCodeUrl: string): Promise<string> {
+  return new Promise((resolve) => {
     const server = http.createServer((req, res) => {
       const fullUrl = `${req.headers.host}${req.url}`;
 
@@ -27,12 +28,14 @@ const processSingleIncomingRequest = (): Promise<{ code: string }> =>
       console.log('Received redirect, shutting down server.');
       res.end('OK!');
       server.close();
-      resolve({ code });
+      resolve(code);
     });
 
     // eslint-disable-next-line no-console
     console.log('Listening for redirect on localhost:53000');
     server.listen(53000);
+    open(authCodeUrl);
   });
+}
 
-export default processSingleIncomingRequest;
+export default processRedirect;

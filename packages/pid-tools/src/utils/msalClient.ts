@@ -1,18 +1,17 @@
 import * as msal from '@azure/msal-node';
 import { CogniteClient } from '@cognite/sdk';
-import open from 'open';
 
-import processSingleIncomingRequest from './processSingleIncomingRequest';
+import processRedirect from './processRedirect';
 
 const REDIRECT_URL = 'http://localhost:53000/';
 
 type tokenFn = () => Promise<string>;
 
-const getTokenImplicitFlow = (
+async function getTokenImplicitFlow(
   tenantId: string,
   clientId: string,
   baseUrl: string
-): tokenFn => {
+): Promise<tokenFn> {
   const scopes = [`${baseUrl}/.default`];
   const pca = new msal.PublicClientApplication({
     auth: {
@@ -22,37 +21,34 @@ const getTokenImplicitFlow = (
   });
 
   const cryptoProvider = new msal.CryptoProvider();
-  const getToken: tokenFn = async () => {
-    const { verifier, challenge } = await cryptoProvider.generatePkceCodes();
+  const { verifier, challenge } = await cryptoProvider.generatePkceCodes();
 
-    const authCodeUrl = await pca.getAuthCodeUrl({
-      scopes,
-      redirectUri: REDIRECT_URL,
-      codeChallenge: challenge,
-      codeChallengeMethod: 'S256',
-    });
-    await open(authCodeUrl); // NOTE: Probably not an issue but could be a source of a race condition :)
-    const query = await processSingleIncomingRequest();
+  const authCodeUrl = await pca.getAuthCodeUrl({
+    scopes,
+    redirectUri: REDIRECT_URL,
+    codeChallenge: challenge,
+    codeChallengeMethod: 'S256',
+  });
 
-    const response = await pca.acquireTokenByCode({
-      code: query.code,
-      codeVerifier: verifier, // PKCE Code Verifier
-      redirectUri: REDIRECT_URL,
-      scopes,
-    });
+  const code = await processRedirect(authCodeUrl);
 
-    return response.accessToken as string;
-  };
+  const res = await pca.acquireTokenByCode({
+    code,
+    codeVerifier: verifier, // PKCE Code Verifier
+    redirectUri: REDIRECT_URL,
+    scopes,
+  });
 
+  const getToken: tokenFn = async () => res.accessToken;
   return getToken;
-};
+}
 
-const getTokenClientCredentialsFlow = (
+function getTokenClientCredentialsFlow(
   tenantId: string,
   clientId: string,
   baseUrl: string,
   clientSecret: string
-): tokenFn => {
+): tokenFn {
   const scopes = [`${baseUrl}/.default`];
   const pca = new msal.ConfidentialClientApplication({
     auth: {
@@ -69,8 +65,9 @@ const getTokenClientCredentialsFlow = (
     });
     return response?.accessToken as string;
   };
+
   return getToken;
-};
+}
 
 export interface MsalClientOptions {
   /** App identifier (ex: 'FileExtractor') */
@@ -92,7 +89,7 @@ export async function getMsalClient(
   const appId = options.appId === undefined ? 'pid-tools' : options.appId;
   let getToken: tokenFn;
   if (options.clientSecret === undefined) {
-    getToken = getTokenImplicitFlow(
+    getToken = await getTokenImplicitFlow(
       options.tenantId,
       options.clientId,
       options.baseUrl
