@@ -163,4 +163,20 @@ export class MeasurementLine {
 
     return startPoint.clone().add(direction);
   }
+
+  /**
+   * Update current line width.
+   * @param lineWidth Width of the measuring line mesh.
+   */
+  updateLineWidth(lineWidth: number): void {
+    this._adaptiveWidthLineMaterial.linewidth = lineWidth;
+  }
+
+  /**
+   * Update current line color.
+   * @param color Color of the measuring line mesh.
+   */
+  updateLineColor(color: number): void {
+    this._fixedWidthLineMaterial.color = this._adaptiveWidthLineMaterial.color = new THREE.Color(color);
+  }
 }

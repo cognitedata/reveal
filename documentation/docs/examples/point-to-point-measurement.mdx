@@ -30,7 +30,12 @@ To exit from measurement mode, use `MeasurementTool.exitMeasurementMode()`.
 
 const measurementTool = new MeasurementTool(viewer);
 measurementTool.enterMeasurementMode();
-measurementTool.exitMeasurementMode();
+document.onkeydown = function(event) {
+  event = event || window.event;
+  if (event.keyCode == 27) {
+    measurementTool.exitMeasurementMode();
+  }
+}
 ```
 
 ## Set width and color of the measuring line

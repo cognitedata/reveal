@@ -9,6 +9,13 @@ import { MeasurementLabels } from './MeasurementLabels';
 import { MeasurementLine } from './MeasurementLine';
 import { MeasurementOptions } from './types';
 
+export type MeasurementRef = {
+  readonly measurementId: number;
+  readonly startPoint: THREE.Vector3;
+  readonly endPoint: THREE.Vector3;
+  readonly distanceInMeters: number;
+};
+
 export class Measurement {
   private readonly _measurementLabel: MeasurementLabels;
   private _line: MeasurementLine | null = null;
@@ -18,6 +25,12 @@ export class Measurement {
   private readonly _meshGroup: THREE.Group;
   private readonly _htmlOverlay: HtmlOverlayTool;
   private _labelElement: HTMLDivElement | null = null;
+  private _measurementRef: MeasurementRef = {
+    measurementId: 0,
+    startPoint: new THREE.Vector3(),
+    endPoint: new THREE.Vector3(),
+    distanceInMeters: 0
+  };
 
   constructor(
     viewerDomElement: HTMLElement,
@@ -47,6 +60,7 @@ export class Measurement {
     this._line = new MeasurementLine(lineWidth, lineColor);
     this._line.startLine(point, distanceToCamera);
     this._meshGroup.add(this._line.meshes);
+    this._measurementRef.startPoint.copy(point);
   }
 
   /**
@@ -75,6 +89,12 @@ export class Measurement {
     const label = distanceToLabelCallback(this._line.getMeasuredDistance());
     //Add the measurement label.
     this._labelElement = this.addLabel(this._line.getMidPointOnLine(), label);
+    this._measurementRef = {
+      measurementId: Date.now(),
+      startPoint: this._measurementRef.startPoint,
+      endPoint: point,
+      distanceInMeters: this._line.getMeasuredDistance()
+    };
   }
 
   /**
@@ -103,11 +123,31 @@ export class Measurement {
     }
   }
 
+  getMeasurementReference(): MeasurementRef {
+    return this._measurementRef!;
+  }
+
+  /**
+   * Update current line width.
+   * @param lineWidth Width of the measuring line mesh.
+   */
+  updateLineWidth(lineWidth: number): void {
+    this._line?.updateLineWidth(lineWidth);
+  }
+
+  /**
+   * Update current line color.
+   * @param color Color of the measuring line mesh.
+   */
+  updateLineColor(color: number): void {
+    this._line?.updateLineColor(color);
+  }
+
   /**
    * Creates a measurement label, add it to HTMLOverlay and return the created label element.
    * @param position Label position.
    * @param label Label text.
-   * @returns Label HTML element.
+   * @returns HTML element.
    */
   private addLabel(position: THREE.Vector3, label: string): HTMLDivElement {
     const labelElement = this._measurementLabel.createLabel(label);

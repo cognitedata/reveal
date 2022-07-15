@@ -6,7 +6,7 @@ import { Cognite3DViewer } from '@reveal/api';
 import { Cognite3DViewerToolBase } from '../Cognite3DViewerToolBase';
 import * as THREE from 'three';
 import { MeasurementOptions } from './types';
-import { Measurement } from './Measurement';
+import { Measurement, MeasurementRef } from './Measurement';
 import { HtmlOverlayTool, HtmlOverlayToolOptions } from '../HtmlOverlay/HtmlOverlayTool';
 import rulerSvg from './styles/ruler.svg';
 import { MeasurementLabels } from './MeasurementLabels';
@@ -97,17 +97,22 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
 
   /**
    * Removes a measurement from the Cognite3DViewer.
-   * @param _measurement Measurement mesh to be removed from @Cognite3DViewer.
+   * @param measurementId Measurement Id of a measurement to be removed from @Cognite3DViewer.
    */
-  removeMeasurement(_measurement: THREE.Group): void {
-    // TODO 2022-07-05 larsmoa: Implement
-    throw new Error('Not implemented');
+  removeMeasurement(measurementId: number): void {
+    const index = this._measurements.findIndex(
+      measurement => measurement.getMeasurementReference().measurementId === measurementId
+    );
+    if (index > -1) {
+      this._measurements[index].removeMeasurement();
+      this._measurements.splice(index, 1);
+    }
   }
 
   /**
    * Removes all measurements from the Cognite3DViewer.
    */
-  removeAllMeasurement(): void {
+  removeAllMeasurements(): void {
     this._measurements.forEach(measurement => {
       measurement.removeMeasurement();
     });
@@ -139,10 +144,36 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
   }
 
   /**
+   * Update current line width.
+   * @param lineWidth Width of the measuring line mesh.
+   */
+  updateLineWidth(lineWidth: number): void {
+    assert(this._currentMeasurementIndex !== -1);
+    this._measurements[this._currentMeasurementIndex].updateLineWidth(lineWidth);
+  }
+
+  /**
+   * Update current line color.
+   * @param color Color of the measuring line mesh.
+   */
+  updateLineColor(color: number): void {
+    assert(this._currentMeasurementIndex !== -1);
+    this._measurements[this._currentMeasurementIndex].updateLineColor(color);
+  }
+
+  getAllMeasurements(): MeasurementRef[] {
+    const measurementRef: MeasurementRef[] = [];
+    this._measurements.forEach(measurement => {
+      measurementRef.push(measurement.getMeasurementReference());
+    });
+    return measurementRef;
+  }
+
+  /**
    * Dispose Measurement Tool.
    */
   dispose(): void {
-    this.removeAllMeasurement();
+    this.removeAllMeasurements();
     this._htmlOverlay.clear();
     super.dispose();
   }
