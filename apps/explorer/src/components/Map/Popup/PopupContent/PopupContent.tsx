@@ -1,5 +1,7 @@
 import { Button, Flex, Label } from '@cognite/cogs.js';
 import { Link } from 'react-router-dom';
+import { useSetRecoilState } from 'recoil';
+import { isEditModeAtom } from 'recoil/popupShared/isEditModeAtom';
 
 import {
   FullWidthContainer,
@@ -13,7 +15,7 @@ import { NavigationButton } from './NavigationButton';
 
 interface Props {
   labels: string[];
-  handleEdit?: () => void;
+  isEditable?: boolean;
   nodeId?: any;
   Icon: () => JSX.Element | null;
 }
@@ -21,21 +23,24 @@ interface Props {
 export const PopupContent: React.FC<Props> = ({
   labels,
   nodeId,
-  handleEdit,
+  isEditable = true,
   Icon,
   children,
 }) => {
+  const setIsEditMode = useSetRecoilState(isEditModeAtom);
+  const handleEditButtonClick = () => setIsEditMode(true);
+
   return (
     <FlexColumnSpaceAround>
       <DivWithMarginBottom>
         <FlexSpaceBetween>
           <Icon />
           <div>
-            {handleEdit && (
+            {isEditable && (
               <Button
                 aria-label="Edit information"
                 icon="Edit"
-                onClick={handleEdit}
+                onClick={handleEditButtonClick}
               />
             )}
             <Link to="/home">

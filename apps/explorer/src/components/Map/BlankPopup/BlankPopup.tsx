@@ -1,20 +1,20 @@
-import { Button } from '@cognite/cogs.js';
+import { useEffect } from 'react';
+import { useRecoilValue, useResetRecoilState } from 'recoil';
+import { isEditModeAtom } from 'recoil/popupShared/isEditModeAtom';
+import { nameAtom } from 'recoil/popupShared/nameAtom';
 
-import { Container, Content } from '../Popup/elements';
+import { BlankEditPopup } from './BlankEditPopup';
+import { BlankPopupContent } from './BlankPopupContent';
 
 export const BlankPopup: React.FC = () => {
-  return (
-    <Container>
-      <Content
-        style={{
-          justifyContent: 'center',
-          alignItems: 'center',
-          display: 'flex',
-        }}
-        className="z-2"
-      >
-        <Button icon="Plus"> Add Information </Button>
-      </Content>
-    </Container>
-  );
+  const isEditMode = useRecoilValue(isEditModeAtom);
+  const resetIsEditMode = useResetRecoilState(isEditModeAtom);
+  const resetNameInput = useResetRecoilState(nameAtom);
+
+  useEffect(() => {
+    resetIsEditMode();
+    resetNameInput();
+  }, []);
+
+  return isEditMode ? <BlankEditPopup /> : <BlankPopupContent />;
 };

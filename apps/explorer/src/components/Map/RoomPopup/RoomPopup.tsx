@@ -1,5 +1,5 @@
 import { Room } from 'graphql/generated';
-import { useRecoilState } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import { roomFormState } from 'recoil/roomPopup/roomFormState';
 import { isEditModeAtom } from 'recoil/popupShared/isEditModeAtom';
 import { useSetupPopup } from 'hooks/useSetupPopup';
@@ -12,13 +12,8 @@ export interface Props {
 }
 
 export const RoomPopup: React.FC<Props> = ({ data }) => {
-  const [isEditMode, setIsEditMode] = useRecoilState(isEditModeAtom);
+  const isEditMode = useRecoilValue(isEditModeAtom);
   useSetupPopup(data, roomFormState);
-  const handleEdit = () => setIsEditMode(true);
 
-  return isEditMode ? (
-    <RoomEditPopupContent />
-  ) : (
-    <RoomPopupContent handleEdit={handleEdit} />
-  );
+  return isEditMode ? <RoomEditPopupContent /> : <RoomPopupContent />;
 };

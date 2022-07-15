@@ -5,23 +5,14 @@ import { roomFormState } from 'recoil/roomPopup/roomFormState';
 import { TextWrapper } from '../Popup/elements';
 import { PopupContent } from '../Popup/PopupContent';
 
-interface Props {
-  handleEdit: () => void;
-}
-
 const renderIcon = () => <Icon size={54} type="Cube" />;
 
-export const RoomPopupContent: React.FC<Props> = ({ handleEdit }) => {
+export const RoomPopupContent: React.FC = () => {
   const { name, description, isBookable, nodeId } =
     useRecoilValue(roomFormState);
 
   return (
-    <PopupContent
-      nodeId={nodeId}
-      Icon={renderIcon}
-      handleEdit={handleEdit}
-      labels={[]}
-    >
+    <PopupContent nodeId={nodeId} Icon={renderIcon} labels={[]}>
       <TextWrapper>
         <Title level={3}>{name}</Title>
         <Detail>{description}</Detail>

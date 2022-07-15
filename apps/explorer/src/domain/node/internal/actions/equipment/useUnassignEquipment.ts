@@ -21,21 +21,16 @@ export const useUnassignEquipment = () => {
   };
   const updateEquipment = useEquipmentMutate(onEquipmentMutateSuccess);
 
-  return async (oldEquipmentFields: Equipment) => {
-    const promiseArray = [
-      updateEquipment({
-        ...oldEquipmentFields,
-        person: null,
-      }),
-      updatePerson({
-        externalId: oldEquipmentFields.person?.externalId,
-        name: oldEquipmentFields.person?.name,
-        desk: null,
-      }),
-    ];
+  return (oldEquipmentFields: Equipment) => {
+    updateEquipment({
+      ...oldEquipmentFields,
+      person: null,
+    });
 
-    Promise.all(promiseArray);
-
-    return { isloading: false };
+    updatePerson({
+      externalId: oldEquipmentFields.person?.externalId,
+      name: oldEquipmentFields.person?.name,
+      desk: null,
+    });
   };
 };

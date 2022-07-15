@@ -14,7 +14,12 @@ export const PersonPopup: React.FC<Props> = ({ data }) => {
   const desk = data.desk || { name: '' };
 
   return (
-    <PopupContent Icon={renderIcon} nodeId={data.desk?.nodeId} labels={[]}>
+    <PopupContent
+      Icon={renderIcon}
+      isEditable={false}
+      nodeId={data.desk?.nodeId}
+      labels={[]}
+    >
       <TextWrapper>
         <Title level={3}>{data.name}</Title>
         <Body>Slack: {data.slackId || 'N/A'}</Body>

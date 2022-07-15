@@ -1,5 +1,5 @@
 import { Equipment } from 'graphql/generated';
-import { useRecoilState } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import { isEditModeAtom } from 'recoil/popupShared/isEditModeAtom';
 import { equipmentFormState } from 'recoil/equipmentPopup/equipmentFormState';
 import { useSetupPopup } from 'hooks/useSetupPopup';
@@ -12,12 +12,8 @@ export interface Props {
 }
 
 export const EquipmentPopup: React.FC<Props> = ({ data }) => {
-  const [isEditMode, setIsEditMode] = useRecoilState(isEditModeAtom);
+  const isEditMode = useRecoilValue(isEditModeAtom);
   useSetupPopup(data, equipmentFormState);
 
-  return isEditMode ? (
-    <EquipmentEditPopupContent />
-  ) : (
-    <EquipmentPopupContent handleEdit={() => setIsEditMode(true)} />
-  );
+  return isEditMode ? <EquipmentEditPopupContent /> : <EquipmentPopupContent />;
 };

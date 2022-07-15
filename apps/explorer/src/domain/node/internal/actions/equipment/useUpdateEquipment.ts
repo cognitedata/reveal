@@ -27,13 +27,13 @@ export const useUpdateEquipment = () => {
   ) => {
     const newPersonExternalId = newEquipmentFields.person?.externalId;
     const oldPersonExternalId = oldEquipmentFields.person?.externalId;
-    const promiseArray = [
-      updateEquipment({
-        ...oldEquipmentFields,
-        ...newEquipmentFields,
-        person: newPersonExternalId,
-      }),
-    ];
+
+    // use null option for person to align with schema definition
+    updateEquipment({
+      ...oldEquipmentFields,
+      ...newEquipmentFields,
+      person: newPersonExternalId || null,
+    });
 
     if (oldPersonExternalId !== newPersonExternalId) {
       // set old person's desk to null and update new person with desk
@@ -47,19 +47,17 @@ export const useUpdateEquipment = () => {
         desk: oldEquipmentFields.externalId,
       };
 
+      // prevent making empty people
       if (oldPersonExternalId) {
-        promiseArray.push(
-          updatePerson({
-            ...oldPerson,
-            desk: null,
-          })
-        );
+        updatePerson({
+          ...oldPerson,
+          desk: null,
+        });
       }
-      promiseArray.push(updatePerson(newPerson));
+
+      if (newPersonExternalId) {
+        updatePerson(newPerson);
+      }
     }
-
-    Promise.all(promiseArray);
-
-    return { isloading: false };
   };
 };

@@ -11,7 +11,7 @@ import { IsBookableCheckbox } from './Fields/IsBookableCheckbox';
 
 export const RoomEditPopupContent: React.FC = () => {
   return (
-    <EditPopupContent SubmitButton={<RoomPopupSubmitButton />} labels={[]}>
+    <EditPopupContent SubmitButton={RoomPopupSubmitButton} labels={[]}>
       <Icon size={54} type="Cube" />
       <EditPopupContentFieldsWrapper>
         <NameInput />
