@@ -32,7 +32,16 @@ export const useMapContent = () => {
     const tempSources: MapDataSource[] = [];
     const promises: Promise<void>[] = [];
 
-    if (layersReady && !sources) {
+    // if we want the BP layers back, we can enable this:
+    // const notAllSourcesLoaded = (sources?.length || 0) <= allLayers.length;
+    // this is the old check, but it has some edge cases
+    // eg: if some sources load, but some do not (eg: remove)
+    // then this will pass and ignore the pending remote
+    // this is ok for now as i want to test removing the current (july 15 2022)
+    // BP remote layers
+    const notAllSourcesLoaded = !sources;
+
+    if (layersReady && notAllSourcesLoaded) {
       allLayers.forEach((layer) => {
         // console.log('Trying to add layer:', layer);
         const { remote, local, asset } = layer;

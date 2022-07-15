@@ -1,6 +1,8 @@
 import { Geometry, Point } from '@cognite/seismic-sdk-js';
 import { Feature, FeatureCollection } from '@turf/helpers';
-import type { MapboxOptions } from 'maplibre-gl';
+import type { MapboxOptions, Map } from 'maplibre-gl';
+
+export type MapType = Map;
 
 export interface MapEvent {
   type: string;

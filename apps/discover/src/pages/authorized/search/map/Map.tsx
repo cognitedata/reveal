@@ -17,17 +17,18 @@ import { TS_FIX_ME } from 'core';
 import get from 'lodash/get';
 import isEmpty from 'lodash/isEmpty';
 import isUndefined from 'lodash/isUndefined';
-import mapboxgl, { LngLatBoundsLike, LngLatLike } from 'maplibre-gl';
 import { v1 } from 'uuid';
 
 import { PerfMetrics } from '@cognite/metrics';
-import { Map as MapboxMap } from '@cognite/react-map';
+import { Map as MapboxMap, Props, MapType } from '@cognite/react-map';
 import { Point } from '@cognite/seismic-sdk-js';
 
 import { BlockExpander } from 'components/BlockExpander/BlockExpander';
 import { showErrorMessage } from 'components/Toast';
+import { useDeepEffect, useDeepMemo } from 'hooks/useDeep';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
 import { useKeyPressListener } from 'hooks/useKeyPressListener';
+import { useTranslation } from 'hooks/useTranslation';
 import {
   addArbitraryLine,
   clearSelectedFeature,
@@ -35,6 +36,7 @@ import {
   setDrawMode,
   setSelectedFeature,
   setSelectedLayers,
+  setClearPolygon,
 } from 'modules/map/actions';
 import { MAPBOX_TOKEN, MAPBOX_MAP_ID } from 'modules/map/constants';
 import { getRightMostPoint, getFeature } from 'modules/map/helper';
@@ -55,9 +57,6 @@ import { setCategoryPage } from 'modules/sidebar/actions';
 import { useFilterCategory } from 'modules/sidebar/selectors';
 import { CategoryTypes } from 'modules/sidebar/types';
 
-import { useDeepEffect, useDeepMemo } from '../../../../hooks/useDeep';
-import { useTranslation } from '../../../../hooks/useTranslation';
-import { setClearPolygon } from '../../../../modules/map/actions';
 import { MS_TRANSITION_TIME } from '../search/SideBar/constants';
 
 import { SeismicCard, WellCard, DocumentCard } from './cards';
@@ -105,7 +104,7 @@ export const Map: React.FC = () => {
     center: number[];
     zoom?: number;
   } | null>(null);
-  const [mapReference, setMapReference] = React.useState<mapboxgl.Map>();
+  const [mapReference, setMapReference] = React.useState<MapType>();
   const [focusedFeature, setFocusedFeature] = React.useState<Feature | null>(
     null
   );
@@ -119,6 +118,7 @@ export const Map: React.FC = () => {
   const sidebarCategoryUnsetRef = React.useRef<boolean>(false);
   const { data: mapConfig } = useMapConfig();
   const [combinedSources] = useMapSources();
+  // console.log('Final map sources:', combinedSources);
   const layers = useVisibleLayers(selectedLayers);
   const { t } = useTranslation();
   const setSavedPolygon = useSetPolygon();
@@ -490,8 +490,8 @@ export const Map: React.FC = () => {
           MAPBOX_MAP_ID={MAPBOX_MAP_ID}
           // project config stuff:
           // -todo: should we fix project config types?
-          maxBounds={mapConfig?.maxBounds as LngLatBoundsLike}
-          center={mapConfig?.center as LngLatLike}
+          maxBounds={mapConfig?.maxBounds as Props['maxBounds']}
+          center={mapConfig?.center as Props['center']}
           zoom={mapConfig?.zoom}
           drawMode={drawMode}
           // things to overlay:

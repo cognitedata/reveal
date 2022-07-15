@@ -23,13 +23,6 @@ export const isSelectable = (value: unknown) => isString(value);
 const convertToLayerConfig = (
   projectConfigLayer: ProjectConfigMapLayers
 ): SelectableLayer | undefined => {
-  // fix up any old layers that have mising info
-  // eg: from files
-  if (projectConfigLayer.name && !projectConfigLayer.id) {
-    // eslint-disable-next-line no-param-reassign
-    projectConfigLayer.id = projectConfigLayer.name;
-  }
-
   if (
     !projectConfigLayer.id ||
     !projectConfigLayer.name ||
@@ -87,9 +80,20 @@ export const useLayers = (): {
     () =>
       fetchTenantFile(project, 'layers')
         .then((fetchedLayers) => {
-          return (Object.values(fetchedLayers) as ProjectConfigMapLayers[]).map(
-            convertToLayerConfig
-          );
+          return Object.values(fetchedLayers).map((remoteLayer) => {
+            let safeLayer = remoteLayer as ProjectConfigMapLayers;
+
+            // fix up any old layers that have mising info
+            // eg: from files
+            if (safeLayer.name && !safeLayer.id) {
+              safeLayer = {
+                ...safeLayer,
+                id: safeLayer.name,
+              };
+            }
+
+            return convertToLayerConfig(safeLayer);
+          });
         })
         .catch((error) => {
           console.error('Error fetching layer file:', error);
@@ -122,5 +126,6 @@ export const useLayers = (): {
     layersReady,
   };
 
+  // console.log('Final layerResponse:', layerResponse);
   return layerResponse;
 };
