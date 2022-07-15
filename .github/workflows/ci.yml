@@ -327,7 +327,7 @@ jobs:
 
 
       - name: Add comment about preview URL
-        uses: jsavikko/comment-on-pr@master
+        uses: savokr/comment-on-pr@v1.3.2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -335,7 +335,6 @@ jobs:
             :orange_book: Documentation preview is available from
             https://cognitedata.github.io/reveal-docs-preview/${{ env.PR_NUMBER }}/docs/next/.
           check_for_duplicate_msg: true
-
   cleanup:
     name: Cleanup
     runs-on: ubuntu-latest
