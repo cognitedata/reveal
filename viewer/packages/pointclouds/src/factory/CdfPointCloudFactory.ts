@@ -15,7 +15,6 @@ import { DEFAULT_POINT_CLOUD_METADATA_FILE } from '../constants';
 
 import { CogniteClient } from '@cognite/sdk';
 
-import { PointCloudObjectProvider } from '../styling/PointCloudObjectProvider';
 import { Box } from '../styling/shapes/Box';
 import { createInvertedRevealTransformationFromCdfTransformation } from '../styling/shapes/linalg';
 import { Cylinder } from '../styling/shapes/Cylinder';
