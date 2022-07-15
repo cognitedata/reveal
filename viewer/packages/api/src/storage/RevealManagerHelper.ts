@@ -80,7 +80,7 @@ export class RevealManagerHelper {
     revealOptions: RevealOptions,
     sdkClient: CogniteClient
   ): RevealManagerHelper {
-    const revealManager = createCdfRevealManager(sdkClient, renderer, sceneHandler, revealOptions, sdkClient);
+    const revealManager = createCdfRevealManager(sdkClient, renderer, sceneHandler, revealOptions);
     return new RevealManagerHelper('cdf', revealManager);
   }
 

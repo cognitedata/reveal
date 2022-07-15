@@ -63,14 +63,12 @@ export function createLocalRevealManager(
  * @param renderer
  * @param sceneHandler
  * @param revealOptions
- * @param sdkClient
  */
 export function createCdfRevealManager(
   client: CogniteClient,
   renderer: THREE.WebGLRenderer,
   sceneHandler: SceneHandler,
-  revealOptions: RevealOptions = {},
-  sdkClient?: CogniteClient | undefined
+  revealOptions: RevealOptions = {}
 ): RevealManager {
   const applicationId = getSdkApplicationId(client);
   const modelMetadataProvider = new CdfModelMetadataProvider(client);
@@ -83,7 +81,7 @@ export function createCdfRevealManager(
     renderer,
     sceneHandler,
     revealOptions,
-    sdkClient
+    client
   );
 }
 
