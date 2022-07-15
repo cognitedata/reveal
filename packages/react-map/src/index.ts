@@ -1,4 +1,5 @@
+export * from './layers';
 export * from './Map';
 export * from './MapExample';
-export * from './layers';
 export * from './types';
+export * from './UnmountConfirmation';

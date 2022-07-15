@@ -18,8 +18,8 @@
   ],
   "scripts": {
     "build": "bazel build :react-map",
-    "test": "bazel test :jest_test",
-    "test:jest": "../../node_modules/.bin/jest",
+    "test:preview": "../../node_modules/.bin/jest-preview",
+    "test": "../../node_modules/.bin/jest --no-watchman",
     "test:watch": "yarn test --watchAll",
     "test:bazel-run": "ibazel run :jest --",
     "lint": "bazel test :eslint_test :prettier_test",

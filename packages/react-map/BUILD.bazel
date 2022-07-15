@@ -1,5 +1,4 @@
 load("@npm//rollup:index.bzl", "rollup")
-load("@npm//jest:index.bzl", "jest")
 load("@bazel_skylib//rules:write_file.bzl", "write_file")
 load("@npm//@storybook/react:index.bzl", "start_storybook")
 load("@build_bazel_rules_nodejs//:index.bzl", "copy_to_bin", "js_library", "pkg_npm")
@@ -17,7 +16,8 @@ _STORYBOOK = [
 ]
 
 _TESTS = [
-    "src/**/*.spec.ts",
+    "src/**/__tests__/**/*.js*",
+    "src/**/__tests__/**/*.ts*",
 ]
 
 SOURCES = glob(
@@ -67,12 +67,17 @@ TYPE_DEPENDENCIES = [
     "@npm//@types/maplibre-gl",
     "@npm//@types/mapbox__mapbox-gl-draw",
     "@npm//@types/react",
+    "@npm//@types/react-modal",
     "@npm//@types/styled-components",
 ]
 
 # Dev dependencies from package.json
 DEV_DEPENDENCIES = [
+    "@npm//@testing-library/jest-dom",
+    "@npm//@testing-library/react",
     "@npm//@testing-library/react-hooks",
+    "@npm//react-modal",
+    "@npm//jest-preview",
     "@npm//rollup-plugin-json",
     "@npm//rollup-plugin-typescript2",
     "@npm//typescript",
@@ -124,6 +129,7 @@ jest_test(
     name = "jest_test",
     srcs = SOURCES + TESTS + [
         "//packages:jest.config.js",
+        "//packages:jest.react.config.js",
         ":tsconfig.json",
         "//:tsconfig.json",
         "//packages:tsconfig.json",
@@ -139,31 +145,6 @@ write_file(
     name = "write_chdir_worspace_script",
     out = "chdir-workspace.js",
     content = ["process.chdir(require('path').join(process.env.BUILD_WORKSPACE_DIRECTORY, '" + package_name() + "'));"],
-)
-
-jest(
-    name = "jest",
-    args = [
-        "--node_options=--require=./$(rootpath chdir-workspace.js)",
-        "--config",
-        "jest.config.js",
-        "--runInBand",
-        "--watchAll",
-    ],
-    data = [
-        "chdir-workspace.js",
-        "jest.config.js",
-        "tsconfig.json",
-        "//:tsconfig.json",
-        "//packages:jest.config.js",
-        "//packages:tsconfig.json",
-    ],
-    tags = [
-        # This tag instructs ibazel to pipe into stdin a event describing actions.
-        # ibazel send EOF to stdin by default and `react-scripts start` will stop when getting EOF in stdin.
-        # So use this to prevent EOF.
-        "ibazel_notify_changes",
-    ],
 )
 
 write_file(
