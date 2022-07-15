@@ -19,7 +19,8 @@ export type RawCylinder = {
 const cylinderContainsPointVars = {
   tempPoint0: new THREE.Vector3(),
   tempPoint1: new THREE.Vector3(),
-  tempAxis: new THREE.Vector3() };
+  tempAxis: new THREE.Vector3()
+};
 
 export class Cylinder implements IShape {
   private readonly _centerA: THREE.Vector3;

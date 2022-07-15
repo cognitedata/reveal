@@ -17,10 +17,15 @@ import { ParsedEptData, EptInputData } from '../workers/parseEpt';
 
 import { fromThreeVector3, setupTransferableMethodsOnMain } from '@reveal/utilities';
 import { RawStylableObject } from '../../styling/StylableObject';
+import { PointCloudObjectProvider } from '../../styling/PointCloudObjectProvider';
+import { stylableObjectToRaw } from '../../styling/StylableObject';
 
 export class EptBinaryLoader implements ILoader {
   private readonly _dataLoader: ModelDataProvider;
-  private readonly _stylableObjects: RawStylableObject[];
+  private readonly _stylableObjectsWithBoundingBox: {
+    object: RawStylableObject;
+    box: THREE.Box3;
+  }[];
 
   static readonly WORKER_POOL = new WorkerPool(32, EptDecoderWorker as unknown as new () => Worker);
 
@@ -28,9 +33,14 @@ export class EptBinaryLoader implements ILoader {
     return '.bin';
   }
 
-  constructor(dataLoader: ModelDataProvider, stylableObjects: RawStylableObject[]) {
+  constructor(dataLoader: ModelDataProvider, stylableObjects: PointCloudObjectProvider) {
     this._dataLoader = dataLoader;
-    this._stylableObjects = stylableObjects;
+    this._stylableObjectsWithBoundingBox = stylableObjects.annotations.map(a => {
+      return {
+        object: stylableObjectToRaw(a.stylableObject),
+        box: a.stylableObject.shape.createBoundingBox()
+      };
+    });
   }
 
   async load(node: PointCloudEptGeometryNode): Promise<void> {
@@ -71,7 +81,11 @@ export class EptBinaryLoader implements ILoader {
       }
     });
 
-    const result = await eptDecoderWorker.parse(eptData, this._stylableObjects, node.boundingBox.min.toArray());
+      const relevantStylableObjects = this._stylableObjectsWithBoundingBox
+        .filter(p => p.box.intersectsBox(node.getBoundingBox()))
+        .map(p => p.object);
+
+    const result = await eptDecoderWorker.parse(eptData, relevantStylableObjects, node.boundingBox.min.toArray());
     EptBinaryLoader.WORKER_POOL.releaseWorker(autoTerminatingWorker);
     return result;
   }
