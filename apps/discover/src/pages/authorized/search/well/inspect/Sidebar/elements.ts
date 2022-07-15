@@ -112,6 +112,7 @@ export const BlockContent = styled(FlexColumn)`
   width: 100%;
   border-top: 1px solid var(--cogs-greyscale-grey3);
   padding: ${sizes.normal} 12px;
+  gap: 5px;
 `;
 
 export const BlockContentItem = styled(FlexRow)`
@@ -130,7 +131,7 @@ export const BlockContentItem = styled(FlexRow)`
 `;
 
 export const CheckboxContent = styled(Flex)`
-  width: calc(100% - 24px);
+  width: 220px;
 `;
 
 export const WellboreErrorWarningButton = styled(WarningButton)`

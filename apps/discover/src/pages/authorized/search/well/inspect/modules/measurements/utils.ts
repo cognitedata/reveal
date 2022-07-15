@@ -371,13 +371,17 @@ export const pushCurveToChart = (
     x,
     y,
     type: 'scatter',
-    mode: 'lines',
+    mode: isMeasurementTypeFitOrLot(measurementType) ? 'markers' : 'lines',
     name: curveName,
     customdata: [curveDescription],
     xaxis: isAngleCurve ? 'x2' : undefined,
     measurementType,
   };
-  if (x.length > 2) {
+  /**
+   * For FIT and LOT we don't mind even one or two data points for others we expect more than two to draw a plot
+   * https://cognitedata.atlassian.net/browse/PP-2220
+   */
+  if (isMeasurementTypeFitOrLot(measurementType) || x.length > 2) {
     chartData.push(curveData);
   }
 };
@@ -512,3 +516,6 @@ export const extractWellboreErrorsFromProcessedData = (
     {} as Errors
   );
 };
+
+export const isMeasurementTypeFitOrLot = (measurementType: MeasurementType) =>
+  [MeasurementType.FIT, MeasurementType.LOT].includes(measurementType);
