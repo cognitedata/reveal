@@ -2,7 +2,7 @@ import styled from 'styled-components/macro';
 import layers from 'utils/zindex';
 
 import { MapOverlayPadding } from 'pages/authorized/search/elements';
-import { Flex, FlexRow, sizes } from 'styles/layout';
+import { sizes } from 'styles/layout';
 
 export const Spacer = styled.div`
   flex-grow: 1;
@@ -60,33 +60,5 @@ export const FloatingActionsWrapper = styled.div`
 
   .cogs-btn-primary {
     margin-right: ${sizes.extraSmall};
-  }
-`;
-
-export const DialogHeader = styled(FlexRow)`
-  height: 44px;
-  display: flex;
-  align-items: center;
-  padding: 0 ${sizes.extraSmall};
-`;
-
-export const DialogHeaderLabel = styled(Flex)`
-  display: flex;
-  align-items: center;
-  font-weight: 600;
-  color: var(--cogs-greyscale-grey9);
-  font-size: var(--cogs-t5-font-size);
-  line-height: var(--cogs-t5-line-height);
-  letter-spacing: var(--cogs-t5-letter-spacing);
-`;
-
-export const DialogFooter = styled(FlexRow)`
-  justify-content: flex-end;
-  .cogs-btn {
-    margin-left: 10px;
-    border-radius: 6px;
-  }
-  .cogs-btn-ghost {
-    color: var(--cogs-red-2);
   }
 `;

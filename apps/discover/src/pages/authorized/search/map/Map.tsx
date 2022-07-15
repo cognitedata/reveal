@@ -20,7 +20,12 @@ import isUndefined from 'lodash/isUndefined';
 import { v1 } from 'uuid';
 
 import { PerfMetrics } from '@cognite/metrics';
-import { Map as MapboxMap, Props, MapType } from '@cognite/react-map';
+import {
+  Map as MapboxMap,
+  Props,
+  MapType,
+  UnmountConfirmation,
+} from '@cognite/react-map';
 import { Point } from '@cognite/seismic-sdk-js';
 
 import { BlockExpander } from 'components/BlockExpander/BlockExpander';
@@ -72,7 +77,6 @@ import { useMapEvents } from './hooks/useMapEvents';
 import { useMapSources } from './hooks/useMapSources';
 import { useTouchedEvent } from './hooks/useTouchedEvent';
 import { useVisibleLayers } from './hooks/useVisibleLayers';
-import LeaveConfirmModal from './LeaveConfirmModal';
 import MapPopup from './MapPopup';
 import { PolygonBar } from './polygon/PolygonBar';
 import { getMapIcons } from './utils/mapIcons';
@@ -110,7 +114,6 @@ export const Map: React.FC = () => {
   );
   const { showSearchResults } = useSearchState();
   const [polygon, setPolygon] = React.useState<MapState['geoFilter']>(() => []);
-  const [showModal, setShowModal] = React.useState(false);
   const searchPendingRef = React.useRef<boolean>(false);
   const { touched, touchedEvent } = useTouchedEvent();
   const activePanel = useActivePanel();
@@ -165,31 +168,6 @@ export const Map: React.FC = () => {
       setPolygon([]);
     }
   }, [geoFilter]);
-
-  // Handle clicking outside while on drawing mode
-  React.useEffect(() => {
-    const outsideListener = (event: MouseEvent) => {
-      if (
-        mapReference &&
-        !mapReference.getContainer().contains(event.target as Node)
-      ) {
-        if (searchPendingRef.current || drawMode === 'draw_polygon') {
-          event.preventDefault();
-          event.stopPropagation();
-          setShowModal(true);
-        }
-
-        //   else {
-        //     dispatch(clearSelectedFeature());
-        //   }
-      }
-    };
-
-    document.addEventListener('mousedown', outsideListener);
-    return () => {
-      document.removeEventListener('mousedown', outsideListener);
-    };
-  }, [mapReference, drawMode]);
 
   // Handle keyboard listeners
   useKeyPressListener({
@@ -464,20 +442,19 @@ export const Map: React.FC = () => {
     );
   }, [showSearchResults]);
 
+  const enableUnmountWarning =
+    searchPendingRef.current || drawMode === 'draw_polygon';
+  const handleCancelUnmountWarning = () => {
+    handlePolygonButtonToggle();
+  };
+
   return (
     <>
-      {showModal && (
-        <LeaveConfirmModal
-          open={showModal}
-          onCancel={() => {
-            handlePolygonButtonToggle();
-            setShowModal(false);
-          }}
-          onOk={() => {
-            setShowModal(false);
-          }}
-        />
-      )}
+      <UnmountConfirmation
+        map={mapReference}
+        enabled={enableUnmountWarning}
+        onCancel={handleCancelUnmountWarning}
+      />
       <DocumentCard map={mapReference} />
       <SeismicCard map={mapReference} />
       <WellCard map={mapReference} />
