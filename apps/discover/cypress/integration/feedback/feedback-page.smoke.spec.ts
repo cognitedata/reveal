@@ -23,7 +23,7 @@ import {
   interceptGetUserRoles,
 } from '../../support/interceptions/user';
 
-describe('Feedback', () => {
+describe.skip('Feedback', () => {
   describe('Normal User', () => {
     before(() => {
       cy.visit(Cypress.env('BASE_URL'));
@@ -196,7 +196,7 @@ describe('Feedback', () => {
     });
   });
 
-  describe('Admin User Feedback', () => {
+  describe.skip('Admin User Feedback', () => {
     beforeEach(() => {
       interceptGetUserRoles();
       interceptGetGeneralFeedback();
