@@ -7,17 +7,17 @@ import * as THREE from 'three';
 import { assertNever } from '@reveal/utilities';
 import { LoadingState } from '@reveal/model-base';
 
-import { PointCloudFactory } from './PointCloudFactory';
 import { PointCloudNode } from './PointCloudNode';
 import { PointCloudMetadataRepository } from './PointCloudMetadataRepository';
 import { PotreeGroupWrapper } from './PotreeGroupWrapper';
-import { PointCloudOctree } from './potree-three-loader';
+import { PointCloudOctree, Potree } from './potree-three-loader';
 
 import { asyncScheduler, combineLatest, Observable, scan, Subject, throttleTime } from 'rxjs';
 
 import { ModelIdentifier } from '@reveal/modeldata-api';
 import { MetricsLogger } from '@reveal/metrics';
 import { SupportedModelTypes } from '@reveal/model-base';
+import { PointCloudFactory } from './IPointCloudFactory';
 
 export class PointCloudManager {
   private readonly _pointCloudMetadataRepository: PointCloudMetadataRepository;
@@ -36,12 +36,13 @@ export class PointCloudManager {
   constructor(
     metadataRepository: PointCloudMetadataRepository,
     modelFactory: PointCloudFactory,
+    potreeInstance: Potree,
     scene: THREE.Scene,
     renderer: THREE.WebGLRenderer
   ) {
     this._pointCloudMetadataRepository = metadataRepository;
     this._pointCloudFactory = modelFactory;
-    this._pointCloudGroupWrapper = new PotreeGroupWrapper(modelFactory.potreeInstance);
+    this._pointCloudGroupWrapper = new PotreeGroupWrapper(potreeInstance);
 
     scene.add(this._pointCloudGroupWrapper);
 
@@ -129,7 +130,7 @@ export class PointCloudManager {
       metadata.formatVersion
     );
 
-    const nodeWrapper = await this._pointCloudFactory.createModel(modelIdentifier, metadata);
+    const nodeWrapper = await this._pointCloudFactory.createModel(metadata);
     this._pointCloudGroupWrapper.addPointCloud(nodeWrapper);
     const node = new PointCloudNode(this._pointCloudGroupWrapper, nodeWrapper, metadata.cameraConfiguration);
     node.setModelTransformation(metadata.modelMatrix);

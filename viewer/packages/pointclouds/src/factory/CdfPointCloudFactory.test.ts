@@ -2,14 +2,14 @@
  * Copyright 2022 Cognite AS
  */
 
-import { PointCloudFactory } from './PointCloudFactory';
+import { CdfPointCloudFactory } from './CdfPointCloudFactory';
 
 import { CogniteClient } from '@cognite/sdk';
 
 import { Mock } from 'moq.ts';
-import { PointCloudMetadata } from './PointCloudMetadata';
-import { Potree, PointCloudOctree, PointCloudMaterial } from './potree-three-loader';
-import { PotreeNodeWrapper } from './PotreeNodeWrapper';
+import { PointCloudMetadata } from '../PointCloudMetadata';
+import { Potree, PointCloudOctree, PointCloudMaterial } from '../potree-three-loader';
+import { PotreeNodeWrapper } from '../PotreeNodeWrapper';
 
 const dummyAnnotationsResponse = {
   items: [
@@ -53,14 +53,15 @@ const potreeMock = new Mock<Potree>()
     )
   );
 
-describe(PointCloudFactory.name, () => {
-  let factory: PointCloudFactory;
+describe(CdfPointCloudFactory.name, () => {
+  let factory: CdfPointCloudFactory;
   let model: PotreeNodeWrapper;
 
   beforeEach(async () => {
-    factory = new PointCloudFactory(potreeMock.object(), sdkMock.object());
-    model = await factory.createModel({ revealInternalId: Symbol() }, {
-      modelBaseUrl: 'dummy-url'
+    factory = new CdfPointCloudFactory(potreeMock.object(), sdkMock.object());
+    model = await factory.createModel({
+      modelBaseUrl: 'dummy-url',
+      modelIdentifier: { revealInternalId: Symbol() }
     } as PointCloudMetadata);
   });
 
