@@ -18,14 +18,14 @@ import { DepthMeasurementDataInternal } from '../types';
 
 export const useDepthMeasurementDataQuery = ({
   sequenceExternalIds,
-  measurementTypes = [],
+  measurementTypes,
 }: SequenceExternalIdFilter & MeasurementTypeFilter) => {
   const { data: userPreferredUnit } = useUserPreferencesMeasurement();
 
   return useArrayCache<DepthMeasurementDataInternal | SequenceDataError>({
     key: [
       ...WELL_QUERY_KEY.DEPTH_MEASUREMENTS_DATA,
-      ...measurementTypes,
+      ...(measurementTypes || []),
       userPreferredUnit,
     ],
     items: new Set(sequenceExternalIds),

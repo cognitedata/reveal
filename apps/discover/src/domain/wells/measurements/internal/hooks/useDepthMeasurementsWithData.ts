@@ -26,7 +26,13 @@ export const useDepthMeasurementsWithData = ({
     isLoading: isDepthMeasurementDataLoading,
   } = useDepthMeasurementDataQuery({
     sequenceExternalIds,
-    measurementTypes,
+    /**
+     * There is a doubt if we should or shouldn't send the measurementTypes for this request body.
+     * Commenting this out as a quick fix.
+     * This should be confirmed and fixed as soon as possible.
+     * TODO(PP-3071)
+     */
+    // measurementTypes,
   });
 
   const isLoading = isDepthMeasurementsLoading || isDepthMeasurementDataLoading;
