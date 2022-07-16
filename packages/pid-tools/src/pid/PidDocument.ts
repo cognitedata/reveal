@@ -16,7 +16,10 @@ import {
   DiagramInstanceWithPaths,
 } from '../types';
 import { findLinesAndConnections } from '../findLinesAndConnections';
-import { svgCommandsToSegments } from '../matcher/svgPathParser';
+import {
+  getSceenCTMToSvgMatrix,
+  svgCommandsToPathSegments,
+} from '../geometry/svgPathParser';
 import { findAllInstancesOfSymbol } from '../matcher';
 import { BoundingBox, PathSegment, Point } from '../geometry';
 import {
@@ -129,7 +132,9 @@ export class PidDocument {
 
       const newPidPaths = pathReplacement.replacementPaths.map(
         (svgPathWithId) => {
-          const pathSegments = svgCommandsToSegments(svgPathWithId.svgCommands);
+          const pathSegments = svgCommandsToPathSegments(
+            svgPathWithId.svgCommands
+          );
           return new PidPath(pathSegments, svgPathWithId.id, oldPidPath?.style);
         }
       );
@@ -248,14 +253,14 @@ export class PidDocument {
         const { style } = properties;
         if (style === undefined) {
           pidPaths.push(
-            new PidPath(svgCommandsToSegments(segmentList), id, undefined)
+            new PidPath(svgCommandsToPathSegments(segmentList), id, undefined)
           );
         } else {
           if (typeof style === 'number') return;
 
           const styleRecord = parseStyleString(style);
           pidPaths.push(
-            new PidPath(svgCommandsToSegments(segmentList), id, styleRecord)
+            new PidPath(svgCommandsToPathSegments(segmentList), id, styleRecord)
           );
         }
       }
@@ -531,15 +536,24 @@ export class PidDocumentWithDom extends PidDocument {
   }
 
   static fromSVG(svg: SVGSVGElement, svgElements: SVGElement[]) {
+    const sceenCTMToSVGMatrix = getSceenCTMToSvgMatrix(svg);
+
     const paths = svgElements
       .filter((svgElement) => svgElement instanceof SVGPathElement)
       .map((svgElement) => {
-        return PidPath.fromSVGElement(svgElement as SVGPathElement, svg);
+        return PidPath.fromSVGElement(
+          svgElement as SVGPathElement,
+          sceenCTMToSVGMatrix
+        );
       });
+
     const labels = svgElements
       .filter((svgElement) => svgElement instanceof SVGTSpanElement)
       .map((svgElement) => {
-        return PidTspan.fromSVGTSpan(svgElement as SVGTSpanElement, svg);
+        return PidTspan.fromSVGTSpan(
+          svgElement as SVGTSpanElement,
+          sceenCTMToSVGMatrix
+        );
       });
 
     const viewBox = {

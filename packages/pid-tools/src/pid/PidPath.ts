@@ -1,9 +1,9 @@
 /* eslint-disable no-continue */
 import {
-  segmentsToSvgCommands,
-  svgCommandsToSegments,
-  svgCommandsToSegmentsWithDom,
-} from '../matcher/svgPathParser';
+  getSvgElementToSvgMatrix,
+  pathSegmentsToSvgCommands,
+  svgCommandsToPathSegments,
+} from '../geometry/svgPathParser';
 import {
   PathSegment,
   Point,
@@ -50,7 +50,7 @@ export class PidPath {
   }
 
   serializeToPathCommands(toFixed: null | number = null): string {
-    return segmentsToSvgCommands(this.segmentList, toFixed);
+    return pathSegmentsToSvgCommands(this.segmentList, toFixed);
   }
 
   translateAndScale(
@@ -77,13 +77,20 @@ export class PidPath {
     );
   }
 
-  static fromSVGElement(svgElement: SVGPathElement, mainSVG: SVGSVGElement) {
+  static fromSVGElement(
+    svgElement: SVGPathElement,
+    sceenCTMToSVGMatrix: DOMMatrix
+  ) {
     const { strokeLinejoin, stroke, fill } = svgElement.style;
+
+    const svgElementToSvgMatrix = getSvgElementToSvgMatrix(
+      svgElement,
+      sceenCTMToSVGMatrix
+    );
     return new PidPath(
-      svgCommandsToSegmentsWithDom(
+      svgCommandsToPathSegments(
         svgElement.getAttribute('d') as string,
-        mainSVG,
-        svgElement.id
+        svgElementToSvgMatrix
       ),
       svgElement.id,
       { strokeLinejoin, stroke, fill }
@@ -102,13 +109,21 @@ export class PidPath {
   }
 
   static fromPathCommand(pathCommand: string, pathId = '') {
-    return new PidPath(svgCommandsToSegments(pathCommand), pathId, undefined);
+    return new PidPath(
+      svgCommandsToPathSegments(pathCommand),
+      pathId,
+      undefined
+    );
   }
 
   static fromSvgPath(svgPath: SvgPath) {
     const style =
       svgPath.style === undefined ? undefined : parseStyleString(svgPath.style);
-    return new PidPath(svgCommandsToSegments(svgPath.svgCommands), '', style);
+    return new PidPath(
+      svgCommandsToPathSegments(svgPath.svgCommands),
+      '',
+      style
+    );
   }
 
   getTJunctionByIntersectionWith(
@@ -180,7 +195,7 @@ export class PidPath {
       pathId: splitGuide.pathId,
       replacementPaths: [
         {
-          svgCommands: segmentsToSvgCommands(newSplitGuideSegments),
+          svgCommands: pathSegmentsToSvgCommands(newSplitGuideSegments),
           id: `${splitGuide.pathId}_1`,
         },
       ],
@@ -200,21 +215,21 @@ export class PidPath {
     );
     const lineSegmentReplacementCommands: SvgPathWithId[] = [
       {
-        svgCommands: segmentsToSvgCommands([
+        svgCommands: pathSegmentsToSvgCommands([
           ...this.segmentList.slice(0, thisIndex),
           new LineSegment(start, line1StopPoint),
         ]),
         id: `${this.pathId}_1`,
       },
       {
-        svgCommands: segmentsToSvgCommands([
+        svgCommands: pathSegmentsToSvgCommands([
           new LineSegment(line2StartPoint, stop),
           ...this.segmentList.slice(thisIndex + 1),
         ]),
         id: `${this.pathId}_2`,
       },
       {
-        svgCommands: segmentsToSvgCommands([
+        svgCommands: pathSegmentsToSvgCommands([
           new LineSegment(line1StopPoint, line2StartPoint),
           new LineSegment(intersection, bottomOfTPoint),
         ]),
@@ -289,7 +304,7 @@ export class PidPath {
         (pathSegments, index) => {
           return {
             id: `${this.pathId}_${index}`,
-            svgCommands: segmentsToSvgCommands(pathSegments),
+            svgCommands: pathSegmentsToSvgCommands(pathSegments),
           };
         }
       ),

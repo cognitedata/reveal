@@ -1,9 +1,9 @@
+import { getSvgElementToSvgMatrix } from '../geometry/svgPathParser';
 import { Rect, DiagramLabelOutputFormat } from '../types';
-import { translatePointWithDom } from '../matcher/svgPathParser';
 import { Point } from '../geometry';
 
-// The text exported to PDF can vary slightly then the one in SVG.
-// This scaling should make sure that the bounding box never will be too short.
+// The rendered text in the PDF and SVG can vary slightly.
+// This purpose of this scaling is to make sure that the text is not too small.
 const textWidthScale = 1.2;
 
 export class PidTspan {
@@ -17,42 +17,33 @@ export class PidTspan {
     this.text = text;
   }
 
-  static fromSVGTSpan(tSpan: SVGTSpanElement, svg: SVGSVGElement) {
+  static fromSVGTSpan(tSpan: SVGTSpanElement, sceenCTMToSVGMatrix: DOMMatrix) {
     const bBox = (tSpan.parentElement as unknown as SVGTextElement).getBBox();
-
     const textWidth = textWidthScale * bBox.width;
 
-    const topLeftUnrotated = translatePointWithDom(bBox.x, bBox.y, {
-      svg,
-      currentElem: tSpan,
-    });
-
-    const topRightUnrotated = translatePointWithDom(
-      bBox.x + textWidth,
-      bBox.y,
-      {
-        svg,
-        currentElem: tSpan,
-      }
+    const svgElemeentToSvgMatrix = getSvgElementToSvgMatrix(
+      tSpan,
+      sceenCTMToSVGMatrix
     );
 
-    const bottomLeftUnrotated = translatePointWithDom(
+    const topLeftUnrotated = new DOMPoint(bBox.x, bBox.y).matrixTransform(
+      svgElemeentToSvgMatrix
+    );
+
+    const topRightUnrotated = new DOMPoint(
+      bBox.x + textWidth,
+      bBox.y
+    ).matrixTransform(svgElemeentToSvgMatrix);
+
+    const bottomLeftUnrotated = new DOMPoint(
       bBox.x,
-      bBox.y + bBox.height,
-      {
-        svg,
-        currentElem: tSpan,
-      }
-    );
+      bBox.y + bBox.height
+    ).matrixTransform(svgElemeentToSvgMatrix);
 
-    const bottomRightUnrotated = translatePointWithDom(
+    const bottomRightUnrotated = new DOMPoint(
       bBox.x + textWidth,
-      bBox.y + bBox.height,
-      {
-        svg,
-        currentElem: tSpan,
-      }
-    );
+      bBox.y + bBox.height
+    ).matrixTransform(svgElemeentToSvgMatrix);
 
     const xMin = Math.min(
       topLeftUnrotated.x,
