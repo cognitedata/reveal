@@ -21,11 +21,6 @@ describe('Project Config', () => {
 
     cy.intercept({
       url: '*/config',
-      method: 'PATCH',
-    }).as('updateConfig');
-
-    cy.intercept({
-      url: '*/config',
       method: 'GET',
     }).as('getConfig');
 
@@ -88,18 +83,6 @@ describe('Project Config', () => {
     cy.log('Update company name and save');
     cy.findByLabelText('Company Name').type('{selectall}').type('New name');
     cy.get('@resetButton').should('not.be.disabled');
-    cy.get('@saveButton').should('not.be.disabled').click();
-
-    cy.wait('@updateConfig');
-    cy.wait('@getConfig');
-
-    cy.reload();
-    cy.log('Check that the company name change is persisted');
-    cy.get('@resetButton').should('be.disabled');
-    cy.get('@saveButton').should('be.disabled');
-
-    cy.findByLabelText('Company Name').should('have.value', 'New name');
-    cy.findByTestId('top-bar').get('#user-avatar').click();
-    cy.findByTestId('user-profile-open').contains('New name');
+    cy.get('@saveButton').should('not.be.disabled');
   });
 });
