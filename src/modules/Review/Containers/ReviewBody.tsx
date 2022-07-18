@@ -121,6 +121,7 @@ const ReviewBody = (props: { file: FileInfo; prev: string | undefined }) => {
               <FileProcessStatusWrapper fileId={file.id}>
                 {({ isFileProcessing }) => {
                   return (
+                    // Disabling all the mouse events inside this wrapper when the file is processing using css
                     <PreviewWrapper isFileProcessing={isFileProcessing}>
                       <ImagePreview
                         file={file}
