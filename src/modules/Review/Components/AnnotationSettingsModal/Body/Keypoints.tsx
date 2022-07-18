@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Collapse, Input } from 'antd';
+import { ColorsPersonDetection } from 'src/constants/Colors';
 import { ColorPicker } from 'src/modules/Common/Components/ColorPicker/ColorPicker';
 import {
   getRandomColor,
@@ -9,10 +10,11 @@ import {
   PredefinedKeypoint,
   PredefinedKeypointCollection,
 } from 'src/modules/Review/types';
+import { isSensitiveAnnotationLabel } from 'src/utils/textUtils';
 import styled from 'styled-components';
 import { CaretRightOutlined } from '@ant-design/icons';
 import { Body, Button, Detail, Tooltip } from '@cognite/cogs.js';
-import { NO_EMPTY_LABELS_MESSAGE } from 'src/constants/AnnotationSettings';
+import { NO_EMPTY_LABELS_MESSAGE } from 'src/constants/annotationSettingsConstants';
 import isEmpty from 'lodash-es/isEmpty';
 import { NewKeypoints } from 'src/modules/Review/Components/AnnotationSettingsModal/types';
 import { ToastUtils } from 'src/utils/ToastUtils';
@@ -84,6 +86,7 @@ export const Keypoints = ({
       const { keypoints } = newKeypoints;
       setNewKeypoints({
         ...newKeypoints,
+        color: value,
         keypoints: [...keypoints.map((item) => ({ ...item, color: value }))],
       });
     }
@@ -111,7 +114,10 @@ export const Keypoints = ({
   };
   const onFinish = () => {
     if (newKeypoints) {
-      const { collectionName, keypoints, color } = newKeypoints;
+      const { collectionName, keypoints } = newKeypoints;
+      const color = isSensitiveAnnotationLabel(collectionName)
+        ? ColorsPersonDetection.color
+        : newKeypoints.color;
       const structuredNewKeypoints: PredefinedKeypoint[] = keypoints.map(
         (keypoint, index) => ({
           ...keypoint,
@@ -247,6 +253,7 @@ export const Keypoints = ({
           {/* New Keypoint Collection */}
           {newKeypoints && (
             <Panel
+              collapsible="disabled"
               style={{ background: '#4a67fb14' }}
               header={
                 <PanelHeader>
@@ -263,13 +270,19 @@ export const Keypoints = ({
                     }}
                   />
                   <PanelHeaderActionContainer>
-                    <ColorPicker
-                      size="16px"
-                      color={newKeypoints.color}
-                      onChange={(newColor: string) => {
-                        updateColor(newColor);
-                      }}
-                    />
+                    {isSensitiveAnnotationLabel(newKeypoints.collectionName) ? (
+                      <Tooltip content="color picker is disabled for sensitive labels">
+                        <ColorBox color={ColorsPersonDetection.color} />
+                      </Tooltip>
+                    ) : (
+                      <ColorPicker
+                        size="16px"
+                        color={newKeypoints.color}
+                        onChange={(newColor: string) => {
+                          updateColor(newColor);
+                        }}
+                      />
+                    )}
                     <Button
                       icon="Delete"
                       onClick={() => setNewKeypoints(undefined)}
@@ -291,7 +304,13 @@ export const Keypoints = ({
                 </Row>
                 {newKeypoints.keypoints.map((keypoint, index) => (
                   <Row key={index.toString()}>
-                    <ColorBox color={newKeypoints.color} />
+                    <ColorBox
+                      color={
+                        isSensitiveAnnotationLabel(newKeypoints?.collectionName)
+                          ? ColorsPersonDetection.color
+                          : newKeypoints.color
+                      }
+                    />
                     <OrderDetail>{index + 1}</OrderDetail>
                     <KeypointInput
                       size="small"

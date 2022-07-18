@@ -18,11 +18,11 @@ import {
 import { Annotator, AnnotatorTool } from '@cognite/react-image-annotate';
 import { retrieveDownloadUrl } from 'src/api/file/fileDownloadUrl';
 import { deselectAllSelectionsReviewPage } from 'src/store/commonActions';
+import { getIcon } from 'src/utils/iconUtils';
 import styled from 'styled-components';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from 'src/store';
 import { AnnotationEditPopup } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/AnnotationEditPopup/AnnotationEditPopup';
-import { VisionDetectionModelType } from 'src/api/vision/detectionModels/types';
 import {
   convertAnnotatorPointRegionToAnnotationChangeProperties,
   convertAnnotatorRegionToAnnotationChangeProperties,
@@ -53,7 +53,6 @@ import {
 } from 'src/modules/Review/store/annotatorWrapper/slice';
 import { useIsCurrentKeypointCollectionComplete } from 'src/modules/Review/store/annotatorWrapper/hooks';
 import { convertTempKeypointCollectionToUnsavedVisionImageKeypointCollection } from 'src/modules/Review/store/review/utils';
-import { LegacyAnnotationUtils } from 'src/api/annotation/legacy/legacyAnnotationUtils';
 import { tools } from './Tools';
 
 type ReactImageAnnotateWrapperProps = {
@@ -136,10 +135,7 @@ export const ReactImageAnnotateWrapper = ({
       (keypoint) => ({
         value: keypoint.collectionName,
         label: keypoint.collectionName,
-        icon: LegacyAnnotationUtils.getIconType({
-          text: keypoint.collectionName,
-          modelType: VisionDetectionModelType.ObjectDetection,
-        }),
+        icon: getIcon(keypoint.collectionName),
         color: keypoint.color,
       })
     );
@@ -149,10 +145,7 @@ export const ReactImageAnnotateWrapper = ({
     return predefinedAnnotations?.predefinedShapes.map((shape) => ({
       value: shape.shapeName,
       label: shape.shapeName,
-      icon: LegacyAnnotationUtils.getIconType({
-        text: shape.shapeName,
-        modelType: VisionDetectionModelType.ObjectDetection,
-      }),
+      icon: getIcon(shape.shapeName),
       color: shape.color,
     }));
   }, [predefinedAnnotations]);

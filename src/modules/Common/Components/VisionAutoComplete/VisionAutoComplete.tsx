@@ -1,11 +1,11 @@
 import { AutoComplete, Button, OptionType } from '@cognite/cogs.js';
-import { VisionDetectionModelType } from 'src/api/vision/detectionModels/types';
-import { OptionProps } from 'react-select';
-import { VisionOptionType } from 'src/modules/Review/types';
 import React from 'react';
-import styled from 'styled-components';
+import { OptionProps } from 'react-select';
 import { VisionSelectOption } from 'src/modules/Common/Components/SelectOption/VisionSelectOption';
-import { LegacyAnnotationUtils } from 'src/api/annotation/legacy/legacyAnnotationUtils';
+import { VisionOptionType } from 'src/modules/Review/types';
+import useColorForLabel from 'src/store/hooks/useColorForLabel';
+import { getIcon } from 'src/utils/iconUtils';
+import styled from 'styled-components';
 
 export const VisionAutoComplete = ({
   value,
@@ -32,6 +32,7 @@ export const VisionAutoComplete = ({
       maxMenuHeight={maxHeight}
       components={{
         MenuList: (props: any) => {
+          const color = useColorForLabel(props.selectProps.inputValue || '');
           return (
             <>
               <CustomMenuList>{props.children}</CustomMenuList>
@@ -39,18 +40,8 @@ export const VisionAutoComplete = ({
                 <VisionSelectOption
                   {...props}
                   data={{
-                    icon:
-                      props.selectProps.inputValue !== ''
-                        ? LegacyAnnotationUtils.getIconType({
-                            text: props.selectProps.inputValue,
-                            modelType: VisionDetectionModelType.ObjectDetection,
-                          })
-                        : null,
-                    color: LegacyAnnotationUtils.getAnnotationColor(
-                      props.selectProps.inputValue || '',
-                      VisionDetectionModelType.ObjectDetection,
-                      { keypoint: true }
-                    ),
+                    icon: getIcon(props.selectProps.inputValue),
+                    color,
                   }}
                 >
                   <OptionContainer>

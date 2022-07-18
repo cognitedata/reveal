@@ -1,6 +1,12 @@
 import React, { ReactText, useCallback, useMemo } from 'react';
 import { Detail, Icon, Tooltip } from '@cognite/cogs.js';
 import {
+  annotationCategoryTitle,
+  annotationObjectsName,
+  annotationRowComponent,
+  annotationTypeFromCategoryTitle,
+} from 'src/constants/annotationDetailPanel';
+import {
   selectAnnotation,
   toggleAnnotationVisibility,
   selectVisionReviewAnnotationsForFile,
@@ -43,13 +49,6 @@ import {
   AnnotationDetailPanelRowDataBase,
 } from 'src/modules/Review/Containers/AnnotationDetailPanel/types';
 import { selectTempKeypointCollection } from 'src/modules/Review/store/annotatorWrapper/selectors';
-import {
-  annotationCategoryTitle,
-  annotationDetectionModelType,
-  annotationObjectsName,
-  annotationRowComponent,
-  annotationTypeFromCategoryTitle,
-} from 'src/modules/Review/Containers/AnnotationDetailPanel/utils';
 
 export const AnnotationDetailPanel = ({
   file,
@@ -264,7 +263,7 @@ export const AnnotationDetailPanel = ({
             callbacks: ReviewCallbacks,
             common: {
               reviewAnnotations: getReviewAnnotations(annotationType),
-              mode: annotationDetectionModelType[annotationType],
+              annotationType,
               component: annotationRowComponent[annotationType] as React.FC,
               tempKeypointCollection,
             },
