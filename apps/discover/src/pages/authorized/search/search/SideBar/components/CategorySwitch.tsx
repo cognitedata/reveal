@@ -4,7 +4,7 @@ import { useHistory } from 'react-router-dom';
 
 import get from 'lodash/get';
 
-import { Button, Dropdown, Icons, Menu } from '@cognite/cogs.js';
+import { Button, Dropdown, Icon, Menu } from '@cognite/cogs.js';
 
 import { Tooltip } from 'components/Tooltip';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
@@ -53,7 +53,7 @@ export const CategorySwitch: React.FC = React.memo(() => {
             <FlexGrow />
             {row.name === category && (
               <div data-testid="svg-wrapper">
-                <Icons.Checkmark />
+                <Icon type="Checkmark" />
               </div>
             )}
           </CategoryItem>

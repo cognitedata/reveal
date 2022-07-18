@@ -1,7 +1,7 @@
 import React from 'react';
 import { CellProps, Hooks, Row } from 'react-table';
 
-import { Icons } from '@cognite/cogs.js';
+import { Icon } from '@cognite/cogs.js';
 
 import { ExpandIconWrapper } from '../elements';
 
@@ -14,7 +14,7 @@ export const EXPANSION_COLUMN_ID = 'expansion';
 export const Expand: React.FC<Props> = ({ expanded }) => {
   return (
     <ExpandIconWrapper expanded={expanded}>
-      <Icons.ChevronDown />
+      <Icon type="ChevronDown" />
     </ExpandIconWrapper>
   );
 };

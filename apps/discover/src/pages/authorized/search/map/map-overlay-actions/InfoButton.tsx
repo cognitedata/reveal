@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react';
 
-import { Icons } from '@cognite/cogs.js';
+import { Icon } from '@cognite/cogs.js';
 
 import { POLYGON_EDIT_MESSAGE } from '../constants';
 
@@ -47,7 +47,7 @@ export const InfoButton: React.FC<Props> = React.memo(({ infoCodes }) => {
 
   return (
     <InfoContainer data-testid="shortcut-helper">
-      <Icons.Info />
+      <Icon type="Info" />
       {messages.map((message, index) => (
         <Fragment key={`${message.code}InfoMessage`}>
           {!!index && <InfoSeparator data-testid="info-message-separator" />}
