@@ -19,7 +19,7 @@ export const useSidebar = () => {
  */
 export const useFilterBarIsOpen = () => {
   const state = useSidebar();
-  return state.isOpen;
+  return useMemo(() => state.isOpen, [state.isOpen]);
 };
 
 export const useFilterCategory = () => {

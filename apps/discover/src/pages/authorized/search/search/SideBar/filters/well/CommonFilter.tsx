@@ -1,12 +1,8 @@
-import isArray from 'lodash/isArray';
+import { useMemo } from 'react';
+
 import isEmpty from 'lodash/isEmpty';
 import isUndefined from 'lodash/isUndefined';
-import map from 'lodash/map';
-import sortBy from 'lodash/sortBy';
-import layers from 'utils/zindex';
 
-import { NumericRangeFilter, MultiSelect } from 'components/Filters';
-import { MultiSelectGroup } from 'components/Filters/MultiSelect/MultiSelectGroup';
 import {
   FilterConfig,
   FilterTypes,
@@ -14,10 +10,11 @@ import {
   WellFilterOptionValue,
 } from 'modules/wellSearch/types';
 
-import { Checkboxes } from '../../components/Checkboxes';
-
-import { DateRangeFilter } from './DateRangeFilter';
-import { MultiSelectWrapper } from './elements';
+import { CheckboxElement } from './CheckboxElement';
+import { DateRangeElement } from './DateRangeElement';
+import { MultiSelectElement } from './MultiSelectElement';
+import { MultiSelectGroupElement } from './MultiSelectGroupElement';
+import { NumericRangeFilterElement } from './NumericRangeFilterElement';
 
 export type Props = {
   filterConfig: Pick<
@@ -57,102 +54,17 @@ export const CommonFilter = ({
    * This issue was introduced when integrating the new wells SDK.
    * @TODO: Filter types should be typed properly and casting to `any` should be removed.
    */
-  const options = originalOptions.map((option: any) =>
-    isUndefined(option.value?.value)
-      ? option || { value: 0 }
-      : option.value || { value: 0 }
-  );
-
-  const createDateRangeElement = () => (
-    <DateRangeFilter
-      title={filterName}
-      minMaxRange={map(options, 'value')}
-      range={
-        isArray(selectedOptions)
-          ? selectedOptions.map((option) => new Date(option))
-          : [new Date(selectedOptions)]
-      }
-      onChange={(range) => {
-        onValueChange(filterId, range);
-      }}
-    />
+  const options = useMemo(
+    () =>
+      originalOptions.map((option: any) =>
+        isUndefined(option.value?.value)
+          ? option || { value: 0 }
+          : option.value || { value: 0 }
+      ),
+    [originalOptions]
   );
 
   const title = displayFilterTitle ? filterName : '';
-
-  const createMultiSelectElement = () => (
-    <MultiSelectWrapper>
-      <MultiSelect
-        options={options}
-        groupedOptions={groupedOptions}
-        selectedOptions={
-          isArray(selectedOptions) ? selectedOptions : [selectedOptions]
-        }
-        title={title}
-        titlePlacement="top"
-        onValueChange={(values: string[]) => onValueChange(filterId, values)}
-        isTextCapitalized={isTextCapitalized}
-        footer={footer}
-      />
-    </MultiSelectWrapper>
-  );
-
-  const createMultiSelectGroupElement = () => (
-    <MultiSelectWrapper>
-      <MultiSelectGroup
-        groupedOptions={groupedOptions}
-        selectedOptions={
-          isArray(selectedOptions) ? selectedOptions : [selectedOptions]
-        }
-        title={title}
-        titlePlacement="top"
-        onValueChange={(values: string[]) => onValueChange(filterId, values)}
-        isTextCapitalized={isTextCapitalized}
-        footer={footer}
-        styles={{
-          groupHeading: (base: any) => ({
-            ...base,
-            textTransform: 'inherit',
-            position: 'sticky',
-            top: 0,
-            background: 'white',
-            zIndex: layers.FILTER_HEADER,
-          }),
-        }}
-      />
-    </MultiSelectWrapper>
-  );
-
-  const createCheckboxElement = () => {
-    const data = sortBy(options, 'value').map((option) => ({
-      name: option.value,
-      count: option.count,
-      selected:
-        isArray(selectedOptions) && selectedOptions.includes(option.value),
-    }));
-    return (
-      <Checkboxes
-        data={data}
-        title={title}
-        onValueChange={(values: string[]) => onValueChange(filterId, values)}
-      />
-    );
-  };
-
-  const createNumericRangeFilter = () => {
-    return (
-      <NumericRangeFilter
-        min={map(options, 'value')[0]}
-        max={map(options, 'value')[1]}
-        selectedValues={selectedOptions as number[]}
-        onValueChange={(vals: any) => onValueChange(filterId, vals)}
-        config={{
-          title: (displayFilterTitle && filterName) || '',
-          editableTextFields: true,
-        }}
-      />
-    );
-  };
 
   if (
     filterType === FilterTypes.MULTISELECT ||
@@ -160,18 +72,64 @@ export const CommonFilter = ({
       (options.length >= 10 || isEmpty(options)))
   ) {
     // console.log('Multiselect:', title || 'unknown');
-    returnElement = createMultiSelectElement();
+    returnElement = (
+      <MultiSelectElement
+        onValueChange={onValueChange}
+        groupedOptions={groupedOptions}
+        options={options}
+        selectedOptions={selectedOptions}
+        title={title}
+        isTextCapitalized={isTextCapitalized}
+        filterId={filterId}
+        footer={footer}
+      />
+    );
   } else if (filterType === FilterTypes.MULTISELECT_GROUP) {
-    returnElement = createMultiSelectGroupElement();
+    returnElement = (
+      <MultiSelectGroupElement
+        onValueChange={onValueChange}
+        groupedOptions={groupedOptions}
+        selectedOptions={selectedOptions}
+        title={title}
+        isTextCapitalized={isTextCapitalized}
+        filterId={filterId}
+        footer={footer}
+      />
+    );
   } else if (filterType === FilterTypes.CHECKBOXES) {
     // console.log('Checkbox:', title || 'unknown');
-    returnElement = createCheckboxElement();
+    returnElement = (
+      <CheckboxElement
+        onValueChange={onValueChange}
+        options={options}
+        selectedOptions={selectedOptions}
+        title={title}
+        filterId={filterId}
+      />
+    );
   } else if (filterType === FilterTypes.DATE_RANGE) {
     // console.log('Date:', title || 'unknown');
-    returnElement = createDateRangeElement();
+    returnElement = (
+      <DateRangeElement
+        onValueChange={onValueChange}
+        options={options}
+        selectedOptions={selectedOptions}
+        filterName={filterName}
+        filterId={filterId}
+      />
+    );
   } else {
     // console.log('Numeric:', title || 'unknown');
-    returnElement = createNumericRangeFilter();
+    returnElement = (
+      <NumericRangeFilterElement
+        onValueChange={onValueChange}
+        selectedOptions={selectedOptions}
+        options={options}
+        filterName={filterName}
+        filterId={filterId}
+        displayFilterTitle={displayFilterTitle}
+      />
+    );
   }
 
   return <div data-testid="filter-item-wrapper">{returnElement}</div>;
