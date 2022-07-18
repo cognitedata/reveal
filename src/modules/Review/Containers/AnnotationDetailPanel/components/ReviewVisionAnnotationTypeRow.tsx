@@ -1,6 +1,10 @@
 import React from 'react';
+import {
+  annotationTypeIconMap,
+  annotationTypeStyleMap,
+} from 'src/constants/annotationDetailPanel';
 import styled from 'styled-components';
-import { AllIconTypes, Icon } from '@cognite/cogs.js';
+import { Icon, IconType } from '@cognite/cogs.js';
 import {
   AnnotationDetailPanelAnnotationType,
   AnnotationDetailPanelRowDataBase,
@@ -10,10 +14,6 @@ import {
   ExpandIconComponent,
   KeyboardShortCutSelectable,
 } from 'src/modules/Review/Containers/AnnotationDetailPanel/components/common';
-import {
-  ModelTypeIconMap,
-  ModelTypeStyleMap,
-} from 'src/api/annotation/legacy/legacyAnnotationUtils';
 
 /**
  * Annotation detail row component for main annotation category group headers
@@ -32,7 +32,7 @@ export const ReviewVisionAnnotationTypeRow = ({
   AnnotationDetailPanelRowDataBase<AnnotationDetailPanelAnnotationType>
 >) => {
   const {
-    common: { mode },
+    common: { annotationType },
     callbacks: { onSelect },
     title,
     selected,
@@ -41,13 +41,15 @@ export const ReviewVisionAnnotationTypeRow = ({
     <KeyboardShortCutSelectable id={title} selected={selected}>
       <PanelHeader onClick={() => onSelect(title, !selected)}>
         <ExpandIconComponent isActive={isOpen} />
-        <IconContainer background={ModelTypeStyleMap[mode].backgroundColor}>
+        <IconContainer
+          background={annotationTypeStyleMap[annotationType].backgroundColor}
+        >
           <Icon
             style={{
-              color: ModelTypeStyleMap[mode].color,
+              color: annotationTypeStyleMap[annotationType].color,
               flex: '0 0 16px',
             }}
-            type={ModelTypeIconMap[mode] as AllIconTypes}
+            type={annotationTypeIconMap[annotationType] as IconType}
           />
         </IconContainer>
         <span>

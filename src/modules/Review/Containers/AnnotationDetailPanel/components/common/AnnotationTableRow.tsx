@@ -1,6 +1,7 @@
 import { Detail, Icon, SegmentedControl, Tooltip } from '@cognite/cogs.js';
 import { AnnotationActionMenuExtended } from 'src/modules/Common/Components/AnnotationActionMenu/AnnotationActionMenuExtended';
 import React from 'react';
+import useColorForLabel from 'src/store/hooks/useColorForLabel';
 import styled from 'styled-components';
 import { AnnotationTableRowProps } from 'src/modules/Review/types';
 import { pushMetric } from 'src/utils/pushMetric';
@@ -9,7 +10,6 @@ import { Link } from 'react-router-dom';
 import { getAnnotationLabelOrText } from 'src/modules/Common/Utils/AnnotationUtils/AnnotationUtils';
 import { Status } from 'src/api/annotation/types';
 import { isImageAssetLinkData } from 'src/modules/Common/types/typeGuards';
-import useAnnotationColor from 'src/modules/Common/store/annotation/hooks';
 import { AnnotationTableRowAttribute } from './AnnotationTableRowAttribute';
 
 export const AnnotationTableRow = ({
@@ -21,7 +21,10 @@ export const AnnotationTableRow = ({
   showColorCircle,
   showEditOptions,
 }: AnnotationTableRowProps) => {
-  const annotationColor = useAnnotationColor(reviewAnnotation.annotation);
+  const annotationColor = useColorForLabel(
+    getAnnotationLabelOrText(reviewAnnotation.annotation),
+    reviewAnnotation.annotation.annotationType
+  );
 
   return (
     <StyledRow

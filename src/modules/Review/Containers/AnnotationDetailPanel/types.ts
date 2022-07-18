@@ -1,6 +1,5 @@
 import React, { ReactText } from 'react';
 import { FixedSizeNodeData } from 'react-vtree';
-import { VisionDetectionModelType } from 'src/api/vision/detectionModels/types';
 import { FileInfo } from '@cognite/sdk';
 import {
   PredefinedKeypoint,
@@ -10,7 +9,7 @@ import {
   VisionReviewAnnotation,
 } from 'src/modules/Review/types';
 import { VisionAnnotationDataType } from 'src/modules/Common/types';
-import { Status } from 'src/api/annotation/types';
+import { CDFAnnotationTypeEnum, Status } from 'src/api/annotation/types';
 
 export type AnnotationDetailPanelAnnotationType = Selectable & {
   title: string;
@@ -20,10 +19,7 @@ export type AnnotationDetailPanelAnnotationType = Selectable & {
 export type AnnotationDetailPanelCommonProps = {
   file: FileInfo;
   reviewAnnotations: VisionReviewAnnotation<VisionAnnotationDataType>[];
-  /**
-   * @deprecated Its usage can likely be replaced by checking the type of `VisionAnnotationDataType`
-   */
-  mode: VisionDetectionModelType;
+  annotationType: CDFAnnotationTypeEnum;
   component: React.FunctionComponent<
     VirtualizedTreeRowProps<
       AnnotationDetailPanelRowDataBase<AnnotationDetailPanelRowData>
