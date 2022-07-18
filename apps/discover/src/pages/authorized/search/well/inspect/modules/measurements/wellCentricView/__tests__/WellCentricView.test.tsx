@@ -58,6 +58,8 @@ describe('WellCentricView Tests api return empty sequence list', () => {
       otherTypes: [],
       measurementReference: DepthMeasurementUnit.TVD,
       pressureUnit: PressureUnit.PPG,
+      nptEvents: {},
+      ndsEvents: {},
     });
     await waitFor(() => {
       expect(screen.getByText(LOADING_TEXT)).toBeInTheDocument();
@@ -71,6 +73,8 @@ describe('WellCentricView Tests api return empty sequence list', () => {
       otherTypes: [],
       measurementReference: DepthMeasurementUnit.TVD,
       pressureUnit: PressureUnit.PPG,
+      nptEvents: {},
+      ndsEvents: {},
     });
     await waitFor(
       () => {
@@ -113,6 +117,8 @@ describe('WellCentricView Tests api return data sequence list', () => {
       otherTypes: [],
       measurementReference: DepthMeasurementUnit.TVD,
       pressureUnit: PressureUnit.PPG,
+      nptEvents: {},
+      ndsEvents: {},
     });
     await waitFor(() => {
       expect(screen.getByText(LOADING_TEXT)).toBeInTheDocument();
@@ -127,16 +133,19 @@ describe('WellCentricView Tests api return data sequence list', () => {
           measurementType: 'fracture pressure pre drill mean',
           externalId: 'FP_CARBONATE_ML',
           unit: 'psi',
+          valueType: 'string',
         },
       ],
       otherTypes: [],
       measurementReference: DepthMeasurementUnit.TVD,
       pressureUnit: PressureUnit.PPG,
+      nptEvents: {},
+      ndsEvents: {},
     });
     await waitFor(
       () => {
         expect(
-          screen.getByText(new RegExp(wellbore.name, 'g'))
+          screen.getByText(wellbore.name, { exact: true })
         ).toBeInTheDocument();
       },
       { timeout: 5000 }
@@ -192,11 +201,14 @@ describe('Measuremnts with loading errors ( unit )', () => {
           measurementType: 'fracture pressure pre drill mean',
           externalId: 'FP_CARBONATE_ML',
           unit: 'psi',
+          valueType: 'string',
         },
       ],
       otherTypes: [],
       measurementReference: DepthMeasurementUnit.TVD,
       pressureUnit: PressureUnit.PPG,
+      ndsEvents: {},
+      nptEvents: {},
     });
 
     await waitFor(
@@ -258,11 +270,14 @@ describe('Measuremnts with loading errors ( measurement type )', () => {
           measurementType: 'fracture pressure pre drill mean',
           externalId: 'FP_CARBONATE_ML',
           unit: 'psi',
+          valueType: 'string',
         },
       ],
       otherTypes: [],
       measurementReference: DepthMeasurementUnit.TVD,
       pressureUnit: PressureUnit.PPG,
+      ndsEvents: {},
+      nptEvents: {},
     });
 
     await waitFor(

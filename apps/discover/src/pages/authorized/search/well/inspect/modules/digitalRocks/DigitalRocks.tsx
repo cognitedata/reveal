@@ -165,7 +165,7 @@ export const DigitalRocks: React.FC = () => {
   }, []);
 
   const renderRowSubComponent = useCallback(
-    ({ row }) => (
+    ({ row }: any) => (
       <DigitalRockSamplesTable digitalRock={row.original as Asset} />
     ),
     []

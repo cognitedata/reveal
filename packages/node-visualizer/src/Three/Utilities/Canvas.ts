@@ -223,7 +223,7 @@ export class Canvas {
     reverse: boolean
   ) {
     const operation = this.context.globalCompositeOperation;
-    this.context.globalCompositeOperation = 'darker';
+    this.context.globalCompositeOperation = 'darken';
     const colorWithAlpha =
       alphaFraction !== 1 ? color.alpha(alphaFraction) : color;
 

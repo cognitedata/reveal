@@ -1,19 +1,8 @@
 import update from './update';
 
-interface CustomGlobal extends NodeJS.Global {
-  window: {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    Intercom: any;
-  };
-}
-
-declare let global: CustomGlobal;
-
 describe('Update Method', () => {
   beforeEach(() => {
-    global.window = {
-      Intercom: jest.fn(),
-    };
+    window.Intercom = jest.fn();
   });
 
   it('Matching object', () => {
@@ -24,7 +13,7 @@ describe('Update Method', () => {
       horizontal_padding: 15,
     };
     update(object);
-    expect(global.window.Intercom).toHaveBeenCalledWith('update', {
+    expect(window.Intercom).toHaveBeenCalledWith('update', {
       name: 'name',
       email: 'email',
       hide_default_launcher: true,
@@ -35,7 +24,7 @@ describe('Update Method', () => {
   it('Empty object', () => {
     const object = {};
     update(object);
-    expect(global.window.Intercom).not.toHaveBeenCalled();
+    expect(window.Intercom).not.toHaveBeenCalled();
   });
 
   it('Object with blacklisted key', () => {
@@ -47,7 +36,7 @@ describe('Update Method', () => {
       user_id: 'my ID',
     };
     update(object);
-    expect(global.window.Intercom).toHaveBeenCalledWith('update', {
+    expect(window.Intercom).toHaveBeenCalledWith('update', {
       name: 'name2',
       email: 'email',
       hide_default_launcher: true,
@@ -56,6 +45,6 @@ describe('Update Method', () => {
   });
 
   afterEach(() => {
-    delete global.window.Intercom;
+    delete window.Intercom;
   });
 });

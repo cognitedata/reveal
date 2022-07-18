@@ -31,6 +31,10 @@ export const FavoriteDetails: React.FC<{
     favoriteId: string;
   }>();
 
+  if (!favoriteId) {
+    throw new Error('Missing favorite id');
+  }
+
   const { data: favorite, isFetching } = useFavoriteQuery(favoriteId);
 
   const handleComment = () =>

@@ -16,6 +16,7 @@ import {
 
 export const MenuBar = () => {
   const history = useHistory();
+
   const { authState } = useAuthContext();
   const [active, setActive] = useState<string>(PAGES.PORTFOLIO);
 

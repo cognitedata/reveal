@@ -12,7 +12,7 @@ This should happen as early as possible in the app's setup routine.
 A common place for this to happen is in `src/index.tsx`.
 
 ```jsx
-import React from 'react';
+import ReactDOM from 'react-dom/client';
 import App from 'app';
 import { configureI18n } from '@cognite/react-i18n';
 
@@ -20,7 +20,8 @@ configureI18n({
   // Insert options here.
 });
 
-ReactDOM.render(<App />, document.getElementById('root'));
+const root = ReactDOM.createRoot(document.getElementById('root')!);
+root.render(<App />);
 ```
 
 ## Usage

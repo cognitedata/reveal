@@ -3,7 +3,9 @@ import { getTenantInfo, useAuthContext } from '@cognite/react-container';
 import sidecar from 'utils/sidecar';
 import reportWebVitals from 'utils/reportWebVitals';
 
-export const ProvideMixpanel: React.FC = ({ children }) => {
+export const ProvideMixpanel: React.FC<
+  React.PropsWithChildren<Record<string, unknown>>
+> = ({ children }) => {
   const { authState } = useAuthContext();
 
   const email = authState?.email;

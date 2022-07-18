@@ -7,11 +7,9 @@ import { DomainFilterRow } from './DomainFilterRow';
 import { Panel } from './elements';
 import { DomainFilterProps } from './types';
 
-export const DomainFilter: React.FC<DomainFilterProps> = ({
-  domainList = [],
-  onChangeDomain,
-  children,
-}) => {
+export const DomainFilter: React.FC<
+  React.PropsWithChildren<DomainFilterProps>
+> = ({ domainList = [], onChangeDomain, children }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const handleDisplayToggle = () => {

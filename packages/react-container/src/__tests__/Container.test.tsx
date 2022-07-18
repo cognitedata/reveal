@@ -9,6 +9,8 @@ import { FAKE_IDP_USER_LS_KEY } from '../components/LoginWithFakeIDP';
 import { ContainerWithoutI18N } from '../Container';
 import { fakeIdpLoginPost } from '../__test-utils__/fakeIdpPostMock';
 
+const perfHookPerformanceObserver = require('perf_hooks').PerformanceObserver;
+
 // mock fake idp login response
 const networkMocks = setupServer(fakeIdpLoginPost());
 
@@ -18,6 +20,7 @@ describe('ContainerWithoutI18N', () => {
     // @ts-expect-error - missing other keys
     global.console = { warn: jest.fn(), log: console.log, error: jest.fn() };
     networkMocks.listen();
+    global.PerformanceObserver = perfHookPerformanceObserver;
   });
 
   afterAll(() => {

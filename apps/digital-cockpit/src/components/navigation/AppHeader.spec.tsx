@@ -1,3 +1,4 @@
+import userEvent from '@testing-library/user-event';
 import { sandbox, render } from 'utils/test';
 import { screen, waitFor } from '@testing-library/react';
 import { GroupsState } from 'store/groups/types';
@@ -23,7 +24,7 @@ describe('AppHeader', () => {
   });
 
   it('should render', async () => {
-    const view = render(<AppHeader />);
+    const view = await render(<AppHeader />);
     await waitFor(() => {
       expect(view).toBeTruthy();
     });
@@ -35,7 +36,7 @@ describe('AppHeader', () => {
         isAdmin: true,
         filter: ['dc-team-developers'],
       });
-      render(<AppHeader />, {
+      await render(<AppHeader />, {
         state: { groups: groupsState },
         cdfClient: mockClient,
       });
@@ -67,7 +68,7 @@ describe('AppHeader', () => {
         groups: allUserGroups,
         isAdmin: true,
       });
-      render(<AppHeader />, {
+      await render(<AppHeader />, {
         state: { groups: groupsState },
         cdfClient: mockClient,
       });
@@ -93,13 +94,13 @@ describe('AppHeader', () => {
         isAdmin: true,
         filter: [selectedGroupName],
       });
-      render(<AppHeader />, {
+      await render(<AppHeader />, {
         state: { groups: groupsState },
         cdfClient: mockClient,
       });
 
       const clearViewBtn = await screen.findByText('Clear view');
-      clearViewBtn.click();
+      await userEvent.click(clearViewBtn);
 
       const groupPreviewBar = screen.queryByTestId('user-group-preview-bar');
       expect(groupPreviewBar).not.toBeInTheDocument();

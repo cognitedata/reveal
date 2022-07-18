@@ -222,6 +222,7 @@ describe('Documents', () => {
       .children()
       .first()
       .invoke('attr', 'style', 'opacity: 1')
+      .wait(1000)
       .findByTestId('menu-button')
       .trigger('mouseenter', { force: true });
 

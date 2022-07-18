@@ -38,6 +38,9 @@ export default defineConfig(({ command }) => {
       splitVendorChunkPlugin(),
     ],
     resolve: {
+      alias: {
+        crypto: require.resolve('rollup-plugin-node-builtins'),
+      },
       dedupe: ['react', 'react-dom'],
       preserveSymlinks: true,
     },

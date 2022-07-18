@@ -1,9 +1,11 @@
+/* eslint-disable @typescript-eslint/no-misused-promises */
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
 
 import styled from 'styled-components/macro';
 
 import { Button, Input, Modal } from '@cognite/cogs.js';
+import type { LabelDetails } from '@cognite/simconfig-api-sdk/rtk';
 import {
   useCreateLabelMutation,
   useDeleteLabelMutation,
@@ -33,6 +35,10 @@ export function LabelsModal({ isOpen, setOpen }: LabelsModalProps) {
       createLabelModel: { labels: [{ name: searchTerm.trim() }] },
     });
     setSearchTerm('');
+  };
+
+  const handleLabelDeletion = async (label: LabelDetails) => {
+    await deleteLabel({ project, name: label.name ?? '' });
   };
 
   return (
@@ -79,9 +85,7 @@ export function LabelsModal({ isOpen, setOpen }: LabelsModalProps) {
                     aria-label="remove-label-from-model"
                     icon="Delete"
                     type="ghost"
-                    onClick={async () => {
-                      await deleteLabel({ project, name: label.name ?? '' });
-                    }}
+                    onClick={async () => handleLabelDeletion(label)}
                   />
                 </div>
               </div>

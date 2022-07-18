@@ -1,14 +1,14 @@
 import { Feature, FeatureCollection } from '@turf/helpers';
 import isArray from 'lodash/isArray';
 import pick from 'lodash/pick';
-import { MapboxGeoJSONFeature } from 'maplibre-gl';
+// import { MapboxGeoJSONFeature } from 'maplibre-gl';
 
 import { DocumentFilter } from '@cognite/sdk';
 import { Geometry } from '@cognite/seismic-sdk-js';
 
 import { convertPolygonToPoint } from 'modules/map/helper';
 import { Asset, GEOJSONPoint, MapDataSource } from 'modules/map/types';
-import { MapLayerGeoJsonFilter } from 'modules/sidebar/types';
+// import { MapLayerGeoJsonFilter } from 'modules/sidebar/types';
 import {
   DEFAULT_CLUSTER_RADIUS,
   DEFAULT_CLUSTER_ZOOM_LEVEL,
@@ -105,16 +105,16 @@ const getAssetFilter = (assetFilter?: [string, string | string[]]) => {
 };
 
 const extractDocumentMapLayers = (
-  features: MapboxGeoJSONFeature[],
+  features: any[],
   tenantConfigMapLayerFilters?: MapLayerFilters
 ): {
-  geoFilter: MapLayerGeoJsonFilter;
+  geoFilter: any;
   extraDocumentsFilter?: DocumentFilter;
 }[] => {
   return features.reduce(
     (
       previousValue: {
-        geoFilter: MapLayerGeoJsonFilter;
+        geoFilter: any;
         extraDocumentsFilter?: DocumentFilter;
       }[],
       currentValue

@@ -35,7 +35,7 @@ export type ReactOrnateProps = {
     pdf: PDFDocumentProxy;
   }[];
   nodes?: (Group | Drawing)[];
-  onAnnotationClick?: (nodes: any) => void;
+  // onAnnotationClick?: (nodes: any) => void;
   onOrnateRef?: (ref: CogniteOrnate | undefined) => void;
   renderWorkspaceTools?: (
     ornateRef: CogniteOrnate | undefined,

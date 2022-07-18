@@ -10,8 +10,10 @@ import { RecentAssets } from './RecentAssets';
 
 const Explorer = () => {
   const history = useHistory();
-  const { assetId, tab: activeTab } =
-    useParams<{ assetId: string; tab: string }>();
+  const { assetId, tab: activeTab } = useParams<{
+    assetId: string;
+    tab: string;
+  }>();
   const [_, addToRecentAssets] = useRecentAssets();
 
   const onAssetSelect = (asset: Asset) => {

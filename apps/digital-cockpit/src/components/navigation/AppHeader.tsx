@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useMemo, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
   Avatar,
   Icon,
@@ -90,7 +90,7 @@ const AppHeader: React.FC = () => {
 
   useEffect(() => {
     if (!customerLogoFetched) {
-      dispatch(fetchCustomerLogoUrl(client, setCustomerLogoUrl));
+      dispatch<any>(fetchCustomerLogoUrl(client, setCustomerLogoUrl));
       dispatch(addConfigItems({ customerLogoFetched: true }));
     }
   }, [customerLogoFetched, dispatch, client]);

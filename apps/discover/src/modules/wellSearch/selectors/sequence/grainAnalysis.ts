@@ -63,7 +63,7 @@ export const useGrainPartionings = (digitalRockSample: Asset) => {
     if (!grainPartionings) {
       if (!isLoading) {
         setIsLoading(true);
-        dispatch(
+        dispatch<any>(
           wellSearchActions.getGrainAnalysisData(
             digitalRockSample,
             'gpart',

@@ -22,16 +22,17 @@ export const getWrapper =
   ({ children }: { children: React.ReactNode }) =>
     testWrapper({ store, children });
 
-export const testWrapper: React.FC<React.PropsWithChildren<{ store?: Store }>> =
-  ({ store, children }) => {
-    return (
-      <BrowserRouter>
-        <QueryClientWrapper>
-          <Provider store={store || getMockedStore()}>{children}</Provider>
-        </QueryClientWrapper>
-      </BrowserRouter>
-    );
-  };
+export const testWrapper: React.FC<
+  React.PropsWithChildren<{ store?: Store }>
+> = ({ store, children }) => {
+  return (
+    <BrowserRouter>
+      <QueryClientWrapper>
+        <Provider store={store || getMockedStore()}>{children}</Provider>
+      </QueryClientWrapper>
+    </BrowserRouter>
+  );
+};
 
 interface Props {
   component: React.FC<any>;

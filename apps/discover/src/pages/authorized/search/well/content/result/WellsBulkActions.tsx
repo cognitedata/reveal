@@ -52,7 +52,7 @@ export const WellsBulkActions: React.FC = () => {
   };
 
   const handleDeselectAll = () => {
-    dispatch(
+    dispatch<any>(
       wellSearchActions.toggleSelectedWells(wells, {
         isSelected: false,
         clear: true,

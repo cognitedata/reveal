@@ -4,10 +4,9 @@ import { reportException } from '@cognite/react-errors';
 
 import { ConditionalWrapperWithProps } from './ConditionalWrapper';
 
-export const LoopDetector: React.FC<{ fallbackUrl?: string }> = ({
-  children,
-  fallbackUrl,
-}) => (
+export const LoopDetector: React.FC<
+  React.PropsWithChildren<{ fallbackUrl?: string }>
+> = ({ children, fallbackUrl }) => (
   <CogniteLoopDetector
     onLoopDetected={(records) => {
       reportException(new Error('Login loop detected'), { records }).finally(

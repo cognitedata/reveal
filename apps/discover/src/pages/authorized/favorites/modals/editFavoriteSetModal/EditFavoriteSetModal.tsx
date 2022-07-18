@@ -82,7 +82,7 @@ const EditFavoriteSetModal: React.FC<Props> = (props) => {
       handleOnConfirm={updateSet}
       handleTextChanged={handleTextChanged}
       handleOnClose={handleCancel}
-      showShareOptions={false}
+      // showShareOptions={false}
     />
   );
 };

@@ -3,8 +3,6 @@ import React, { useEffect, useState, useMemo } from 'react';
 import { Checkbox, OptionType } from '@cognite/cogs.js';
 import { DocumentPayload } from '@cognite/discover-api-types';
 
-import { useTranslation } from 'hooks/useTranslation';
-
 import {
   FEEDBACK_ACTION_TITLE,
   FEEDBACK_AGREEMENT,
@@ -37,7 +35,7 @@ import {
 import { Field } from './types';
 
 export interface Props {
-  handleCheckChanged: (field: Field, isSelected: boolean) => void;
+  handleCheckChanged?: (field: Field, isSelected: boolean) => void;
   isSensitiveData: boolean;
   isIncorrectGeo: boolean;
   isIncorrectDocType: boolean;
@@ -45,14 +43,14 @@ export interface Props {
   freeText: string;
   currentDocumentType: string[];
   documentTypes: DocumentPayload[];
-  handleSetCorrectDocumentType: (event: {
+  handleSetCorrectDocumentType?: (event: {
     label: string;
     value?: string;
   }) => void;
-  handleTextChanged: (event: React.ChangeEvent<HTMLTextAreaElement>) => void;
+  handleTextChanged?: (event: React.ChangeEvent<HTMLTextAreaElement>) => void;
 }
 
-export const EntityFeedbackContent: React.FC<Props> = (props) => {
+export const EntityFeedbackContent: React.FC<Props> = React.memo((props) => {
   const {
     handleCheckChanged,
     isSensitiveData,
@@ -65,7 +63,9 @@ export const EntityFeedbackContent: React.FC<Props> = (props) => {
     handleSetCorrectDocumentType,
     handleTextChanged,
   } = props;
-  const { t } = useTranslation('feedback');
+
+  // causing issues with react modal and react 18, so disabled.
+  // const { t } = useTranslation('feedback');
   const [documentTypeDropdownValue, setDocumentTypeDropdownValue] = useState<
     string | undefined
   >();
@@ -87,7 +87,7 @@ export const EntityFeedbackContent: React.FC<Props> = (props) => {
   ) => {
     const { label, value } = selected;
     setDocumentTypeDropdownValue(value);
-    handleSetCorrectDocumentType({ value, label });
+    handleSetCorrectDocumentType?.({ value, label });
   };
 
   return (
@@ -96,13 +96,13 @@ export const EntityFeedbackContent: React.FC<Props> = (props) => {
         data-testid="imminent-remove-note"
         visible={isSensitiveData}
       >
-        {t(IMMINENT_REMOVE_NOTE)}
+        {IMMINENT_REMOVE_NOTE}
       </ImminentRemoveNote>
 
-      <FeedbackIntroTitle>{t(FEEDBACK_INTRO_TEXT)}</FeedbackIntroTitle>
+      <FeedbackIntroTitle>{FEEDBACK_INTRO_TEXT}</FeedbackIntroTitle>
 
       <FeedbackActionTitle variant="body2">
-        {t(FEEDBACK_ACTION_TITLE)}
+        {FEEDBACK_ACTION_TITLE}
       </FeedbackActionTitle>
 
       <ItemRow>
@@ -111,11 +111,11 @@ export const EntityFeedbackContent: React.FC<Props> = (props) => {
           data-testid="sensitive-data-checkbox"
           checked={isSensitiveData}
           onChange={() =>
-            handleCheckChanged('isSensitiveData', !isSensitiveData)
+            handleCheckChanged?.('isSensitiveData', !isSensitiveData)
           }
-          name={t(SENSITIVE_DATA_CHECKBOX_LABEL)}
+          name={SENSITIVE_DATA_CHECKBOX_LABEL}
         >
-          {t(SENSITIVE_DATA_CHECKBOX_LABEL)}
+          {SENSITIVE_DATA_CHECKBOX_LABEL}
         </Checkbox>
       </ItemRow>
 
@@ -124,10 +124,12 @@ export const EntityFeedbackContent: React.FC<Props> = (props) => {
           id="feedback-incorrectGeo"
           data-testid="incorrect-geo-checkbox"
           checked={isIncorrectGeo}
-          onChange={() => handleCheckChanged('isIncorrectGeo', !isIncorrectGeo)}
-          name={t(INCORRECT_GEO_CHECKBOX_LABEL)}
+          onChange={() =>
+            handleCheckChanged?.('isIncorrectGeo', !isIncorrectGeo)
+          }
+          name={INCORRECT_GEO_CHECKBOX_LABEL}
         >
-          {t(INCORRECT_GEO_CHECKBOX_LABEL)}
+          {INCORRECT_GEO_CHECKBOX_LABEL}
         </Checkbox>
       </ItemRow>
 
@@ -137,16 +139,16 @@ export const EntityFeedbackContent: React.FC<Props> = (props) => {
           data-testid="feedback-incorrectdoctype-checkbox"
           checked={isIncorrectDocType}
           onChange={() =>
-            handleCheckChanged('isIncorrectDocType', !isIncorrectDocType)
+            handleCheckChanged?.('isIncorrectDocType', !isIncorrectDocType)
           }
-          name={t(INCORRECT_DOCUMENT_TYPE_CHECKBOX_LABEL)}
+          name={INCORRECT_DOCUMENT_TYPE_CHECKBOX_LABEL}
         >
-          {t(INCORRECT_DOCUMENT_TYPE_CHECKBOX_LABEL)}{' '}
+          {INCORRECT_DOCUMENT_TYPE_CHECKBOX_LABEL}{' '}
         </Checkbox>
         {isIncorrectDocType && (
           <>
             <TinyText variant="tinytext">
-              {t(CURRENT_DOCUMENT_TYPE)}:{' '}
+              {CURRENT_DOCUMENT_TYPE}:{' '}
               <CurrentDocumentTypeText stale={documentTypeDropdownValue}>
                 {currentDocumentType?.length > 0
                   ? `"${currentDocumentType.join(', ')}"`
@@ -168,10 +170,10 @@ export const EntityFeedbackContent: React.FC<Props> = (props) => {
           id="feedback-other"
           data-testid="feedback-other-checkbox"
           checked={isOther}
-          onChange={() => handleCheckChanged('isOther', !isOther)}
-          name={t(OTHER_CHECKBOX_LABEL)}
+          onChange={() => handleCheckChanged?.('isOther', !isOther)}
+          name={OTHER_CHECKBOX_LABEL}
         >
-          {t(OTHER_CHECKBOX_LABEL)}
+          {OTHER_CHECKBOX_LABEL}
         </Checkbox>
       </ItemRow>
 
@@ -180,13 +182,13 @@ export const EntityFeedbackContent: React.FC<Props> = (props) => {
         data-testid="feedback-text"
         title={ADDITIONAL_FEEDBACK_TITLE}
         value={freeText}
-        placeholder={t(FEEDBACK_INPUT_PLACEHOLDER)}
+        placeholder={FEEDBACK_INPUT_PLACEHOLDER}
         onChange={handleTextChanged}
       />
 
-      <FeedbackAgreement>{t(FEEDBACK_AGREEMENT)}</FeedbackAgreement>
+      <FeedbackAgreement>{FEEDBACK_AGREEMENT}</FeedbackAgreement>
 
-      <OnlyByAdminText>{t(ONLY_BY_ADMIN)}</OnlyByAdminText>
+      <OnlyByAdminText>{ONLY_BY_ADMIN}</OnlyByAdminText>
     </>
   );
-};
+});

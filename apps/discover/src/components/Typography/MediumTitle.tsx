@@ -17,7 +17,10 @@ const Text = styled.span`
 interface Props {
   text?: string;
 }
-export const MediumTitle: React.FC<Props> = ({ text, children }) => {
+export const MediumTitle: React.FC<React.PropsWithChildren<Props>> = ({
+  text,
+  children,
+}) => {
   return (
     <StyledTypography variant="h6" weight="semibold">
       <Text>{text || children}</Text>

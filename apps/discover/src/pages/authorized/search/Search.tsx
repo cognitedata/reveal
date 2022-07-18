@@ -181,8 +181,8 @@ export const Search: React.FC = () => {
 
   useEffect(() => {
     batch(() => {
-      dispatch(documentSearchActions.initialize());
-      dispatch(wellSearchActions.initialize());
+      dispatch<any>(documentSearchActions.initialize());
+      dispatch<any>(wellSearchActions.initialize());
     });
   }, []);
 

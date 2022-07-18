@@ -64,7 +64,8 @@ describe('useSelectedWellBoresDigitalRocks', () => {
     const { result, waitForNextUpdate } = renderHook(
       () => useSelectedWellBoresDigitalRocks(),
       {
-        wrapper: ({ children }) => testWrapper({ store, children }),
+        wrapper: ({ children }: { children: React.ReactNode }) =>
+          testWrapper({ store, children }),
       }
     );
     waitForNextUpdate();
@@ -91,7 +92,8 @@ describe('useDigitalRocksSamples', () => {
           }),
         ]),
       {
-        wrapper: ({ children }) => testWrapper({ store, children }),
+        wrapper: ({ children }: { children: React.ReactNode }) =>
+          testWrapper({ store, children }),
       }
     );
     waitForNextUpdate();

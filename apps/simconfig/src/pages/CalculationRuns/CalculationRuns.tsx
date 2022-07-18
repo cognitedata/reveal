@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import type { Range } from 'react-date-range';
 import { useMatch, useNavigate, useSearch } from 'react-location';
 import { useSelector } from 'react-redux';
+// import { useHistory } from 'react-router-dom';
 
 import { formatISO, parseISO, sub } from 'date-fns';
 import styled from 'styled-components/macro';
@@ -40,6 +41,7 @@ export function CalculationRuns() {
   const nextCursor = cursors[cursors.length - 1];
   const searchFilters: Partial<GetCalculationRunListApiArg> =
     useSearch<AppLocationGenerics>();
+  // const history = useHistory();
   const navigate = useNavigate();
 
   const {

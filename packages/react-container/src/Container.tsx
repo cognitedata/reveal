@@ -157,7 +157,8 @@ const RawContainer: React.FC<Props> = ({
               <>
                 <ProvideMetrics sidecar={sidecar} />
                 <ConditionalReduxProvider store={store}>
-                  <ErrorBoundary instanceId="container-root">
+                  {/* <ErrorBoundary instanceId="container-root"> */}
+                  <ErrorBoundary>
                     <Router history={history}>{children}</Router>
                   </ErrorBoundary>
                 </ConditionalReduxProvider>

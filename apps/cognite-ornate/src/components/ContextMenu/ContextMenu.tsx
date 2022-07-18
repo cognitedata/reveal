@@ -221,8 +221,10 @@ const ContextMenu = ({
       )}
       {(commonMenuItems || menuItems) && (
         <Menu className="ornate-context-menu">
-          {commonMenuItems}
-          {menuItems}
+          <>
+            {commonMenuItems}
+            {menuItems}
+          </>
         </Menu>
       )}
     </ContextMenuWrapper>

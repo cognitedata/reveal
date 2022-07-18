@@ -200,6 +200,7 @@ vite_build(
         "@npm//vite-tsconfig-paths",
         "@npm//vite-plugin-svgr",
         "@npm//vite-plugin-babel-macros",
+        "@npm//rollup-plugin-node-builtins",
     ],
     env = {
         "INLINE_RUNTIME_CHUNK": "false",

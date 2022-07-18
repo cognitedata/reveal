@@ -57,42 +57,48 @@ export const EntityFeedbackModal: React.FC<Props> = ({ documentId }) => {
   const { mutateAsync: addObjectFeedback } = useFeedbackCreateMutate('object');
   const removeSensitiveDocument = useRemoveSensitiveDocument();
 
-  const { data: categories } = useQueryDocumentLabels();
-
   const [doc] = useDocument(documentId);
+
+  const { data: categories } = useQueryDocumentLabels();
 
   const handleClose = () => {
     dispatch(clearObjectFeedbackModalDocumentId());
   };
 
-  const handleCheckChanged = (field: Field, value: boolean) => {
-    switch (field) {
-      case 'isSensitiveData':
-        setSensitiveData(value);
-        break;
-      case 'isIncorrectGeo':
-        setIncorrectGeo(value);
-        break;
-      case 'isIncorrectDocType':
-        setIncorrectDocType(value);
-        setCorrectDocType({ label: '', value: '' });
-        break;
-      case 'isOther':
-        setOther(value);
-        break;
-    }
-  };
+  const handleCheckChanged = React.useCallback(
+    (field: Field, value: boolean) => {
+      switch (field) {
+        case 'isSensitiveData':
+          setSensitiveData(value);
+          break;
+        case 'isIncorrectGeo':
+          setIncorrectGeo(value);
+          break;
+        case 'isIncorrectDocType':
+          setIncorrectDocType(value);
+          setCorrectDocType({ label: '', value: '' });
+          break;
+        case 'isOther':
+          setOther(value);
+          break;
+      }
+    },
+    []
+  );
 
-  const handleTextChanged = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setFreeText(event.target.value);
-  };
+  const handleTextChanged = React.useCallback(
+    (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+      setFreeText(event.target.value);
+    },
+    []
+  );
 
-  const handleSetCorrectDocumentType = (event: {
-    label: string;
-    value?: string;
-  }) => {
-    setCorrectDocType({ ...event, value: event.value || '' });
-  };
+  const handleSetCorrectDocumentType = React.useCallback(
+    (event: { label: string; value?: string }) => {
+      setCorrectDocType({ ...event, value: event.value || '' });
+    },
+    []
+  );
 
   const handleSendClick = () => {
     setShowModal(false);

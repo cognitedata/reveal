@@ -1,6 +1,6 @@
 import React from 'react';
 
-import mapboxgl from 'maplibre-gl';
+import { Map } from 'maplibre-gl';
 
 import { useMap } from 'modules/map/selectors';
 import { useSelectedSurvey } from 'modules/seismicSearch/hooks/useSelectedSurvey';
@@ -11,7 +11,7 @@ import { MapPreviewContainer } from '../CardContainer';
 import SeismicPreviewCard from './components/SeismicPreviewCard';
 
 interface Props {
-  map?: mapboxgl.Map;
+  map?: Map;
 }
 export const SeismicCard: React.FC<Props> = ({ map }) => {
   const { data: selectedSurveyData } = useSelectedSurvey();

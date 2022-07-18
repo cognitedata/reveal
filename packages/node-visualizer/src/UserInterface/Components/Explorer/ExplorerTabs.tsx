@@ -15,8 +15,8 @@ export const ExplorerTabs = (props: ExplorerTabsPropType) => {
 
   return (
     <StyledTabs activeKey={selectedTabIndex.toString()} onChange={handleChange}>
-      {tabs.map((tab, index) => (
-        <Tabs.TabPane key={index.toString()} tab={<span>{tab.name}</span>} />
+      {tabs.map((tab) => (
+        <Tabs.TabPane key={tab.name} tab={<span>{tab.name}</span>} />
       ))}
     </StyledTabs>
   );

@@ -105,7 +105,7 @@ export const useSelectedWellBoresDigitalRocks = () => {
       setIsLoading(true);
       startNetworkTimer();
 
-      dispatch(
+      dispatch<any>(
         wellSearchActions.getWellboreAssetsByExternalParentIds(
           digitalRocksPristineIds,
           wellboreAssetIdMap,
@@ -195,7 +195,7 @@ export const useDigitalRocksSamples = (digitalRocks: Asset[]) => {
     if (digitalRocksToFetch.length && !isLoading) {
       setIsLoading(constant(true));
       startNetworkTimer();
-      dispatch(
+      dispatch<any>(
         wellSearchActions.getDigitalRockSamples(
           digitalRocksToFetch,
           wellboreAssetIdReverseMap,

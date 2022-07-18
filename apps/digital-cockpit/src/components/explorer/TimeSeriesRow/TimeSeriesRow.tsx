@@ -1,6 +1,6 @@
 import { Icon, Tooltip } from '@cognite/cogs.js';
 import { DoubleDatapoint, Timeseries } from '@cognite/sdk';
-import Loading from 'components/utils/Loading';
+// import Loading from 'components/utils/Loading';
 import useDatapointsQuery from 'hooks/useQuery/useDatapointsQuery';
 
 import TimeSeriesPreview from '../TimeSeriesPreview';
@@ -9,7 +9,7 @@ import { RowWrapper } from './elements';
 
 export type TimeSeriesRowProps = {
   timeSeries: Timeseries;
-  descriptionField?: string;
+  // descriptionField?: string;
   onClick?: () => void;
 };
 

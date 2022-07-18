@@ -295,7 +295,7 @@ export const DocumentResultTable: React.FC<Props> = ({ onHandleRowClick }) => {
   };
 
   const renderRowHoverComponent = useCallback(
-    ({ row }) => (
+    ({ row }: any) => (
       <DocumentResultTableHoverComponent
         doc={row.original}
         onPreviewHandle={handlePreviewClick}
@@ -307,7 +307,7 @@ export const DocumentResultTable: React.FC<Props> = ({ onHandleRowClick }) => {
   );
 
   const renderRowOverlayComponent = useCallback(
-    ({ row }) => {
+    ({ row }: any) => {
       const isAlreadyInFavorite = favoriteDocumentIds.includes(
         Number(row.original.id)
       );
@@ -323,7 +323,7 @@ export const DocumentResultTable: React.FC<Props> = ({ onHandleRowClick }) => {
     expandedDocumentIds,
   ]);
 
-  const Footer: React.FC = React.memo(() => {
+  const renderFooter = () => {
     return (
       <FooterPaginationServer
         handleLoadMore={hasNextPage ? fetchNextPage : undefined}
@@ -333,7 +333,7 @@ export const DocumentResultTable: React.FC<Props> = ({ onHandleRowClick }) => {
         pageSize={DOCUMENT_SEARCH_PAGE_LIMIT}
       />
     );
-  });
+  };
 
   return (
     <>
@@ -342,7 +342,7 @@ export const DocumentResultTable: React.FC<Props> = ({ onHandleRowClick }) => {
         id="doc-result-table"
         data={results}
         columns={columns}
-        Footer={Footer}
+        Footer={renderFooter}
         handleRowClick={handleRowClick}
         handleDoubleClick={handleDoubleClick}
         handleRowSelect={handleRowSelect}

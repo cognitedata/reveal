@@ -1,4 +1,4 @@
-import { useState, createContext, useEffect } from 'react';
+import { PropsWithChildren, useState, createContext, useEffect } from 'react';
 import {
   useFetchAllPriceAreas,
   fetchPriceArea,
@@ -31,11 +31,9 @@ export const PriceAreasContext = createContext<PriceAreasContextType>({
   bidProcessConfigurationChanged: () => false,
 });
 
-export const PriceAreaProvider: React.FC<PriceAreaProviderProps> = ({
-  children,
-  client,
-  authState,
-}) => {
+export const PriceAreaProvider: React.FC<
+  PropsWithChildren<PriceAreaProviderProps>
+> = ({ children, client, authState }) => {
   const queryClient = useQueryClient();
 
   const [priceAreaExternalId, setPriceAreaExternalId] = useState<string>('');

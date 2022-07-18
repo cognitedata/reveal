@@ -16,26 +16,27 @@ export const Metadata = ({
   const { t } = useTranslation('SeismicData');
 
   const metadata = mapMetadata(item.metadata);
-  const MetaData = Object.keys(config.metadata || {}).map((key) => {
-    if (config?.metadata && config.metadata[key].display) {
-      const data =
-        config.metadata[key].source !== undefined
-          ? get(item, `${config.metadata[key].source}${key}`)
-          : get(metadata, getSafeMetadataName(key));
+  const renderMetaData = () =>
+    Object.keys(config.metadata || {}).map((key) => {
+      if (config?.metadata && config.metadata[key].display) {
+        const data =
+          config.metadata[key].source !== undefined
+            ? get(item, `${config.metadata[key].source}${key}`)
+            : get(metadata, getSafeMetadataName(key));
 
-      return (
-        <div key={key}>
-          <strong>{config.metadata[key].displayName}</strong>: {data}
-        </div>
-      );
-    }
-    return {};
-  });
+        return (
+          <div key={key}>
+            <strong>{config.metadata[key].displayName}</strong>: {data}
+          </div>
+        );
+      }
+      return <></>;
+    });
 
   return (
     <Typography variant="tinytext">
       <strong>{t('Dataset')}:</strong> {item.name} <br />
-      {MetaData}
+      {renderMetaData()}
       <strong>Id:</strong> {item.id} <br />
     </Typography>
   );

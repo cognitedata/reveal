@@ -5,9 +5,11 @@ import { SidecarConfig } from '@cognite/sidecar';
 
 import { ConditionalWrapperWithProps } from './ConditionalWrapper';
 
-export const CogniteQueryClientProvider: React.FC<{
-  reactQueryDevtools?: SidecarConfig['reactQueryDevtools'];
-}> = ({ reactQueryDevtools, children }) => {
+export const CogniteQueryClientProvider: React.FC<
+  React.PropsWithChildren<{
+    reactQueryDevtools?: SidecarConfig['reactQueryDevtools'];
+  }>
+> = ({ reactQueryDevtools, children }) => {
   const queryClient = new QueryClient({
     defaultOptions: {
       queries: {

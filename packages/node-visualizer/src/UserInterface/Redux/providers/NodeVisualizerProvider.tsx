@@ -9,7 +9,9 @@ import {
 import { getStore } from '../State/store';
 
 export const NodeVisualizerProvider: React.FC<
-  { root: BaseRootNode } & Exclude<NodeVisualizerProps, 'root'>
+  React.PropsWithChildren<
+    { root: BaseRootNode } & Exclude<NodeVisualizerProps, 'root'>
+  >
 > = ({ root, toolbar, explorer, unit, children }) => {
   return (
     <Provider store={getStore()}>

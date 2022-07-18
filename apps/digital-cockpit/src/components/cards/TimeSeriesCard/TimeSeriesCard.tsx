@@ -15,8 +15,8 @@ import { TimeSeriesSelector } from './elements';
 export type TimeSeriesCardProps = {
   assetId: number;
   onHeaderClick?: () => void;
-  descriptionField?: string;
-  onFileClick?: (file: FileInfo) => void;
+  // descriptionField?: string;
+  // onFileClick?: (file: FileInfo) => void;
 };
 
 const TimeSeriesCard = ({ assetId, onHeaderClick }: TimeSeriesCardProps) => {

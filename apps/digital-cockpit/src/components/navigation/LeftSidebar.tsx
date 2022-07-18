@@ -100,7 +100,9 @@ const LeftSidebar: React.FC = () => {
         const newIndex = suitesOrder.indexOf(over.id);
         const newSuitesOrder = arrayMove(suitesOrder, oldIndex, newIndex);
         suites &&
-          dispatch(changeAndSaveSuitesOrder(apiClient, suites, newSuitesOrder));
+          dispatch<any>(
+            changeAndSaveSuitesOrder(apiClient, suites, newSuitesOrder)
+          );
       }
     },
     [suites, suitesOrder]

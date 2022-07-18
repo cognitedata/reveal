@@ -95,12 +95,12 @@ describe('Measurement with delayed loading and data available', () => {
     });
   });
 
-  it('Should show well bore curve', async () => {
+  it('Should show wellbore curve', async () => {
     page();
     await waitFor(
       () => {
         expect(
-          screen.getByText(new RegExp(wellbore.name, 'g'))
+          screen.getByText(wellbore.name, { exact: true })
         ).toBeInTheDocument();
       },
       { timeout: 5000 }

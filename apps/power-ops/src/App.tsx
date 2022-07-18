@@ -1,5 +1,5 @@
 import GlobalStyles from 'global-styles';
-import { Switch, Redirect, Route } from 'react-router-dom';
+import { Route, Switch, Redirect } from 'react-router-dom';
 import {
   AuthConsumer,
   AuthContext,

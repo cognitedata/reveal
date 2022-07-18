@@ -1,4 +1,5 @@
 import { screen, fireEvent } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 
 import { testRenderer } from '__test-utils/renderer';
 
@@ -12,14 +13,13 @@ describe('MultiSelect', () => {
   const onValueChange = jest.fn();
 
   const testInit = async (extraProps?: Partial<MultiSelectProps>) => {
-    page({
+    return page({
       options: [],
       title: 'test-title',
       onValueChange,
       isOptionsSorted: true,
       ...extraProps,
     });
-    fireEvent.keyDown(screen.getByRole('textbox'), { key: 'ArrowDown' });
   };
 
   it('should render title as expected', async () => {
@@ -30,6 +30,7 @@ describe('MultiSelect', () => {
 
   it('should render options when passed as a `string[]`', async () => {
     await testInit({ options: ['Option 1', 'Option 2', 'Option 3'] });
+    fireEvent.keyDown(screen.getByRole('textbox'), { key: 'ArrowDown' });
 
     expect(screen.getByText('Option 1')).toBeInTheDocument();
     expect(screen.getByText('Option 2')).toBeInTheDocument();
@@ -44,6 +45,7 @@ describe('MultiSelect', () => {
         { value: 'Option 3', count: 100 },
       ],
     });
+    fireEvent.keyDown(screen.getByRole('textbox'), { key: 'ArrowDown' });
 
     expect(screen.getByText('Option 1')).toBeInTheDocument();
     expect(screen.getByText('Option 2')).toBeInTheDocument();
@@ -59,21 +61,28 @@ describe('MultiSelect', () => {
       ],
       enableSelectAll: true,
       showCustomCheckbox: true,
+      SelectAllLabel: 'Select all',
     });
+    fireEvent.keyDown(screen.getByRole('textbox'), { key: 'ArrowDown' });
 
-    const [selectAllCheckbox, ...optionCheckboxes] = screen.getAllByRole(
+    await userEvent.click(screen.getByText('Select all'));
+    fireEvent.keyDown(screen.getByRole('textbox'), { key: 'ArrowDown' });
+
+    let [selectAllCheckbox, ...optionCheckboxes] = screen.getAllByRole(
       'checkbox'
     ) as HTMLInputElement[];
-
-    // Select all
-    fireEvent.click(selectAllCheckbox);
     expect(selectAllCheckbox.checked).toEqual(true);
     optionCheckboxes.forEach((checkbox) =>
       expect(checkbox.checked).toEqual(true)
     );
 
-    // De-select all
-    fireEvent.click(selectAllCheckbox);
+    // // De-select all
+    await userEvent.click(screen.getByText('Select all'));
+    fireEvent.keyDown(screen.getByRole('textbox'), { key: 'ArrowDown' });
+
+    [selectAllCheckbox, ...optionCheckboxes] = screen.getAllByRole(
+      'checkbox'
+    ) as HTMLInputElement[];
     expect(selectAllCheckbox.checked).toEqual(false);
     optionCheckboxes.forEach((checkbox) =>
       expect(checkbox.checked).toEqual(false)

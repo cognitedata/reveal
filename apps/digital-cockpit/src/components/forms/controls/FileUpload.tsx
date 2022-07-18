@@ -134,7 +134,7 @@ export const FileUpload: React.FC<Props & FieldProps<string | undefined>> = ({
             !inDeleteQueue &&
             renderFileName(currentFileInfo.name, deleteCurrentFile)}
           <span className="break" />
-          <span className="error-space">{error}</span>
+          <span className="error-space">{error as any}</span>
         </>
       );
     }

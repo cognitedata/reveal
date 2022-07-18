@@ -178,11 +178,11 @@ const HeadTitle: React.FC<HeadTitleProps> = React.memo(
   }
 );
 
-interface IBaseFilter {
-  FilterTitle: React.FC<TitleProps>;
-  HeaderTitle: React.FC<HeadTitleProps>;
-}
-export const BaseFilter: React.FC & IBaseFilter = ({ children }) => {
+// interface IBaseFilter {
+//   FilterTitle: React.FC<TitleProps>;
+//   HeaderTitle: React.FC<HeadTitleProps>;
+// }
+export const BaseFilter = ({ children }: { children?: React.ReactNode }) => {
   const { t } = useTranslation();
 
   const isOpen = useFilterBarIsOpen();

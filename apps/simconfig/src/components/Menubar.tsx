@@ -50,6 +50,7 @@ export function MenuBar() {
               isActive: !!matchRoute({ to: '/model-library/*' }),
               onClick: () => {
                 navigate({ to: '/model-library' });
+                // history.push('/model-library');
               },
             },
             {
@@ -58,6 +59,7 @@ export function MenuBar() {
               onClick: () => {
                 trackUsage(TRACKING_EVENTS.RUN_BROWSER_VIEW, {});
                 navigate({ to: '/calculations/runs' });
+                // history.push('/calculations/runs');
               },
             },
           ]}

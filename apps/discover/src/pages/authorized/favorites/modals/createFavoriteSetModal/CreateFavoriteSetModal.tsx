@@ -96,7 +96,7 @@ const CreateFavoriteSetModal: React.FC = () => {
       handleOnConfirm={handleOnConfirm}
       handleTextChanged={handleTextChanged}
       handleOnClose={handleOnClose}
-      showShareOptions={false}
+      // showShareOptions={false}
     />
   );
 };

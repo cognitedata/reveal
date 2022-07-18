@@ -42,6 +42,7 @@ const Actions: React.FC<ActionProps> = ({
 
   const { isOwner } = useIsOwner();
   const checkIfIsOwner = isOwner(favorite.owner.id);
+  console.log('isOwner', checkIfIsOwner);
 
   const handleDownloadAll = () => {
     metrics.track('click-download-all-documents-button');

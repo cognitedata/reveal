@@ -25,20 +25,21 @@ const AuthenticatedUserContext: React.FC<React.PropsWithChildren<unknown>> = ({
   return <>{children}</>;
 };
 
-export const ProvideAzureTelemetry: React.FC<React.PropsWithChildren<unknown>> =
-  ({ children }) => {
-    const { data: azureConfig } = useProjectConfigByKey('azureConfig');
+export const ProvideAzureTelemetry: React.FC<
+  React.PropsWithChildren<unknown>
+> = ({ children }) => {
+  const { data: azureConfig } = useProjectConfigByKey('azureConfig');
 
-    if (!azureConfig) {
-      return <>{children}</>;
-    }
+  if (!azureConfig) {
+    return <>{children}</>;
+  }
 
-    return (
-      <AzureTelemetryProvider
-        instrumentationKey={azureConfig?.instrumentationKey}
-        options={azureConfig.options}
-      >
-        <AuthenticatedUserContext>{children}</AuthenticatedUserContext>
-      </AzureTelemetryProvider>
-    );
-  };
+  return (
+    <AzureTelemetryProvider
+      instrumentationKey={azureConfig?.instrumentationKey}
+      options={azureConfig.options}
+    >
+      <AuthenticatedUserContext>{children}</AuthenticatedUserContext>
+    </AzureTelemetryProvider>
+  );
+};

@@ -16,7 +16,9 @@ const StartPage: React.FC = () => {
       <Box m={32}>
         <Box mb={10}>
           <div
-            onClick={navigateTo('signInWithMicrosoft')}
+            onClick={() => {
+              history.push('signInWithMicrosoft');
+            }}
             onKeyPress={navigateTo('signInWithMicrosoft')}
             role="button"
             tabIndex={0}

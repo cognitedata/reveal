@@ -91,7 +91,7 @@ const NestedField: React.FC<{
   isCurrentPathActive,
 }) => {
   const handleCollapseChange = React.useCallback(
-    (newPath) => {
+    (newPath: string) => {
       if (!newPath) {
         setSelected(currentPath);
       } else {

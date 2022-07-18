@@ -30,7 +30,7 @@ interface Props {
  *  <Button onClick={() => performAction()} />
  * </ModalConfirm>
  */
-export const ModalConfirm: React.FC<Props> = ({
+export const ModalConfirm: React.FC<React.PropsWithChildren<Props>> = ({
   children,
   title,
   content,

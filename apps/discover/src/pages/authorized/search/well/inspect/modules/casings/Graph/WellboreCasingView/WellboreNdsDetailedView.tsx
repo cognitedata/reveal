@@ -15,43 +15,41 @@ interface WellboreNdsDetailedViewProps {
   onBackClick: () => void;
 }
 
-export const WellboreNdsDetailedView: React.FC<WellboreNdsDetailedViewProps> =
-  ({ selectedWellboreId, onBackClick }) => {
-    // data
-    const { isLoading, data: ndsEvents, ndsAggregates } = useNdsData();
-    const [detailedViewNdsData, setDetailedViewNdsData] = useState<NdsView[]>(
-      []
+export const WellboreNdsDetailedView: React.FC<
+  WellboreNdsDetailedViewProps
+> = ({ selectedWellboreId, onBackClick }) => {
+  // data
+  const { isLoading, data: ndsEvents, ndsAggregates } = useNdsData();
+  const [detailedViewNdsData, setDetailedViewNdsData] = useState<NdsView[]>([]);
+
+  const detailedViewNdsAggregate = useMemo(
+    () => getNdsAggregateForWellbore(detailedViewNdsData || [], ndsAggregates),
+    [detailedViewNdsData, ndsAggregates]
+  );
+
+  useEffect(() => {
+    setDetailedViewNdsData(
+      selectedWellboreId
+        ? ndsEvents.filter(
+            (ndsEvent) => ndsEvent.wellboreMatchingId === selectedWellboreId
+          )
+        : []
     );
+  }, [selectedWellboreId, ndsEvents]);
 
-    const detailedViewNdsAggregate = useMemo(
-      () =>
-        getNdsAggregateForWellbore(detailedViewNdsData || [], ndsAggregates),
-      [detailedViewNdsData, ndsAggregates]
-    );
+  if (isLoading || isEmpty(ndsAggregates)) {
+    return <Loading />;
+  }
 
-    useEffect(() => {
-      setDetailedViewNdsData(
-        selectedWellboreId
-          ? ndsEvents.filter(
-              (ndsEvent) => ndsEvent.wellboreMatchingId === selectedWellboreId
-            )
-          : []
-      );
-    }, [selectedWellboreId, ndsEvents]);
-
-    if (isLoading || isEmpty(ndsAggregates)) {
-      return <Loading />;
-    }
-
-    return (
-      <DetailedView
-        data={ndsEvents}
-        ndsAggregate={detailedViewNdsAggregate}
-        isPreviousButtonDisabled={false}
-        isNextButtonDisabled={false}
-        onBackClick={onBackClick}
-        onPreviousClick={noop}
-        onNextClick={noop}
-      />
-    );
-  };
+  return (
+    <DetailedView
+      data={ndsEvents}
+      ndsAggregate={detailedViewNdsAggregate}
+      isPreviousButtonDisabled={false}
+      isNextButtonDisabled={false}
+      onBackClick={onBackClick}
+      onPreviousClick={noop}
+      onNextClick={noop}
+    />
+  );
+};

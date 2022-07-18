@@ -4,8 +4,8 @@
 
 import { FeatureCollection } from 'geojson';
 import type {
-  MapboxOptions,
-  AnyLayer,
+  // MapboxOptions,
+  // AnyLayer,
   CustomLayerInterface,
 } from 'maplibre-gl';
 
@@ -26,7 +26,7 @@ import { LogTypes, TrackType } from 'modules/wellSearch/types';
 
 import { FetchHeaders } from '../utils/fetch';
 
-export type MapLayer = (AnyLayer | CustomLayerInterface) & {
+export type MapLayer = (any | CustomLayerInterface) & {
   weight?: number;
   source: string;
 };
@@ -274,14 +274,14 @@ export interface SeismicConfig {
 }
 
 export interface MapConfig {
-  zoom?: MapboxOptions['zoom'];
-  center: MapboxOptions['center'];
-  maxBounds?: MapboxOptions['maxBounds'];
+  zoom?: any;
+  center: any;
+  maxBounds?: any;
   cluster?: boolean;
   seismic?: {
-    zoom: MapboxOptions['zoom']; // deprecated
-    center: MapboxOptions['center']; // deprecated
-    maxBounds?: MapboxOptions['maxBounds']; // deprecated
+    zoom: any; // deprecated
+    center: any; // deprecated
+    maxBounds?: any; // deprecated
   };
 }
 

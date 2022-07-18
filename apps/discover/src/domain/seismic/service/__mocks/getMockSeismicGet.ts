@@ -13,6 +13,6 @@ export const getMockSeismicGet = (fail = false): MSWRequest => {
   //   console.log('STARTING MOCK', url);
 
   return rest.get<Request>(url, (_req, res, ctx) => {
-    return res(ctx.json(fail ? badResponseData : goodResponseData));
+    return res(ctx.json<any>(fail ? badResponseData : goodResponseData));
   });
 };

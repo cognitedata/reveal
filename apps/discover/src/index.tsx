@@ -1,9 +1,10 @@
 import 'resize-observer-polyfill';
 
-import { render } from 'react-dom';
+import ReactDOM from 'react-dom/client';
 
 import AppRoot from 'pages/App';
 
 import './index.css';
 
-render(<AppRoot />, document.getElementById('root'));
+const root = ReactDOM.createRoot(document.getElementById('root')!);
+root.render(<AppRoot />);

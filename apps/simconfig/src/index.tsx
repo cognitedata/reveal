@@ -1,6 +1,6 @@
-import ReactDOM from 'react-dom';
-
 import * as Sentry from '@sentry/browser';
+
+import ReactDOM from 'react-dom/client';
 
 import { Metrics } from '@cognite/metrics';
 
@@ -36,7 +36,8 @@ if (process.env.REACT_APP_MIXPANEL_TOKEN) {
   });
 }
 
-ReactDOM.render(<AppRoot />, document.getElementById('root'));
+const root = ReactDOM.createRoot(document.getElementById('root')!);
+root.render(<AppRoot />);
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.

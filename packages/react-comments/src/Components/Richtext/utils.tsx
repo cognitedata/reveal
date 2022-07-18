@@ -47,10 +47,9 @@ export const Element: React.FC<any> = (props) => {
   }
 };
 
-export const Portal: React.FC<{ targetId?: string }> = ({
-  children,
-  targetId,
-}) => {
+export const Portal: React.FC<
+  React.PropsWithChildren<{ targetId?: string }>
+> = ({ children, targetId }) => {
   return typeof document === 'object'
     ? ReactDOM.createPortal(
         children,

@@ -65,6 +65,7 @@ describe.skip('Feedback', () => {
         .children()
         .first()
         .invoke('attr', 'style', 'opacity: 1')
+        .wait(1000)
         .findByTestId('menu-button')
         .click({ force: true });
 
@@ -127,6 +128,7 @@ describe.skip('Feedback', () => {
         .children()
         .first()
         .invoke('attr', 'style', 'opacity: 1')
+        .wait(1000)
         .findByTestId('menu-button')
         .click({ force: true });
 

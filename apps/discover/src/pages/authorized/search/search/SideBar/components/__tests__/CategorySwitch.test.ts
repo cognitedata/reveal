@@ -1,4 +1,5 @@
 import { screen, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { Store } from 'redux';
 
 import { testRenderer } from '__test-utils/renderer';
@@ -52,7 +53,7 @@ describe('CategorySwitch', () => {
     await defaultTestInit();
 
     const menuButton = screen.getByLabelText('Filter Categories');
-    menuButton.click();
+    await userEvent.click(menuButton);
 
     const menu = screen.getByRole('tooltip');
     const documentItem = within(menu).getByText('Documents');
@@ -76,7 +77,7 @@ describe('CategorySwitch', () => {
     await defaultTestInit();
 
     const menuButton = screen.getByLabelText('Filter Categories');
-    menuButton.click();
+    await userEvent.click(menuButton);
 
     const menu = screen.getByRole('tooltip');
     expect(within(menu).getAllByRole('button').length).toEqual(2);

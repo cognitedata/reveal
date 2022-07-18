@@ -59,7 +59,7 @@ export const Richtext: React.FC<RichtextProps> = ({
   const [index, setIndex] = React.useState(0);
   const [search, setSearch] = React.useState('');
   const renderElement = React.useCallback(
-    (props) => <Element {...props} />,
+    (props: any) => <Element {...props} />,
     []
   );
   const editor = React.useMemo(
@@ -78,7 +78,7 @@ export const Richtext: React.FC<RichtextProps> = ({
   };
 
   const onKeyDown = React.useCallback(
-    (event) => {
+    (event: any) => {
       if (target) {
         switch (event.key) {
           case 'Escape':

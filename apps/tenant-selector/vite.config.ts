@@ -46,6 +46,11 @@ export default defineConfig(({ command }) => {
     define: {
       'process.env': env,
     },
+    resolve: {
+      alias: {
+        crypto: require.resolve('rollup-plugin-node-builtins'),
+      },
+    },
     build: {
       sourcemap: command === 'build',
       commonjsOptions: {

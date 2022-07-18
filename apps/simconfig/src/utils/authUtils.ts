@@ -41,8 +41,12 @@ export function getAuthenticatedUser({
   authState,
 }: {
   project?: string;
-  authState: AuthenticatedUser;
+  authState?: AuthenticatedUser;
 }): AccountInfo | null {
+  if (!authState) {
+    return null;
+  }
+
   try {
     const { flow, options } = getFlow(project);
 

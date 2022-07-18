@@ -53,6 +53,8 @@ interface LeftPanelProps {
   custom?: boolean;
 }
 
+const CustomSplitPane: any = SplitPane;
+
 // Renders Explorer
 export const LeftPanel = ({ explorer, custom }: LeftPanelProps) => {
   const Explorer = useMemo(
@@ -66,10 +68,10 @@ export const LeftPanel = ({ explorer, custom }: LeftPanelProps) => {
       {custom ? (
         <Explorer />
       ) : (
-        <SplitPane split="horizontal" defaultSize="50%" primary="second">
+        <CustomSplitPane split="horizontal" defaultSize="50%" primary="second">
           <Explorer />
           <ConnectedSettingsPanel />
-        </SplitPane>
+        </CustomSplitPane>
       )}
     </LeftPanelContainer>
   );

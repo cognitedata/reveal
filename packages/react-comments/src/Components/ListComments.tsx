@@ -140,7 +140,8 @@ export const ListComments: React.FC<ListCommentsProps> = ({
 
   return (
     <ConversationContainer data-testid="comments-root">
-      <ErrorBoundary instanceId="comment-root">
+      {/* <ErrorBoundary instanceId="comment-root"> */}
+      <ErrorBoundary>
         <Conversation
           key={`${target.id}+${target.targetType}`}
           reverseOrder

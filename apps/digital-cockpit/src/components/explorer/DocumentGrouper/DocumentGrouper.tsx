@@ -9,7 +9,7 @@ export type DocumentGrouperProps = {
   groupByField: string;
   nameMappings?: Record<string, string>;
   children: (files: FileInfo[], type: string) => React.ReactNode;
-  odd?: boolean;
+  // odd?: boolean;
 };
 
 type Group = {

@@ -18,7 +18,7 @@ export const useSeismicSearch = () => {
     headers: FetchHeaders
   ) => {
     if (!isUndefined(searchQuery.phrase) && searchQuery.phrase === '') {
-      dispatch(seismicSearchActions.resetDataSearch());
+      dispatch<any>(seismicSearchActions.resetDataSearch());
     }
     prefetchSurveys(headers, queryClient);
   };

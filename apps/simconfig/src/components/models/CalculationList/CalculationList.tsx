@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link, useMatch, useNavigate } from 'react-location';
 import { useSelector } from 'react-redux';
+// import { useHistory } from 'react-router-dom';
 
 import { parseISO } from 'date-fns';
 import styled from 'styled-components/macro';
@@ -66,8 +67,10 @@ export function CalculationList({
   modelName,
   showConfigured = true,
 }: CalculationListProps) {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
   const project = useSelector(selectProject);
   const navigate = useNavigate();
+  // const history = useHistory();
   const [runModelCalculations] = useRunModelCalculationMutation();
   const [deleteModelCalculation, { isSuccess: isDeleteSuccess }] =
     useDeleteModelCalculationMutation();

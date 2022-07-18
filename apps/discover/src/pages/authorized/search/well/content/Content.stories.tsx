@@ -1,20 +1,22 @@
-import { Provider } from 'react-redux';
+export {};
 
-import { store } from 'utils/store';
+// import { Provider } from 'react-redux';
 
-import Content from './Content';
+// import { store } from 'utils/store';
 
-const withProvider = (story: any) => (
-  <Provider store={store}>{story()}</Provider>
-);
+// import Content from './Content';
 
-// eslint-disable-next-line import/no-anonymous-default-export
-export default {
-  title: 'Pages / Well search',
-  component: Content,
-  decorators: [withProvider],
-};
+// const withProvider = (story: any) => (
+//   <Provider store={store}>{story()}</Provider>
+// );
 
-export const Result = () => <Content />;
+// // eslint-disable-next-line import/no-anonymous-default-export
+// export default {
+//   title: 'Pages / Well search',
+//   component: Content,
+//   decorators: [withProvider],
+// };
 
-export const frontPage = () => <Content />;
+// export const Result = () => <Content />;
+
+// export const frontPage = () => <Content />;

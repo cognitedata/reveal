@@ -8,7 +8,8 @@ export default {
 };
 
 export const WithChildren = () => (
-  <ErrorBoundary instanceId="storybook">
+  // <ErrorBoundary instanceId="storybook">
+  <ErrorBoundary>
     <h1>Must have children</h1>
   </ErrorBoundary>
 );
@@ -26,13 +27,15 @@ const Crasher = () => {
 };
 
 export const WithErrorCaught = () => (
-  <ErrorBoundary instanceId="storybook">
+  // <ErrorBoundary instanceId="storybook">
+  <ErrorBoundary>
     <Crasher />
   </ErrorBoundary>
 );
 
 export const DifferentLevels = () => (
-  <ErrorBoundary instanceId="storybook">
+  // <ErrorBoundary instanceId="storybook">
+  <ErrorBoundary>
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <div>
         <Crasher />
@@ -45,7 +48,8 @@ export const DifferentLevels = () => (
           outline: '2px solid #cdcdcd',
         }}
       >
-        <ErrorBoundary instanceId="nested">
+        {/* <ErrorBoundary instanceId="nested"> */}
+        <ErrorBoundary>
           <Crasher />
         </ErrorBoundary>
       </div>

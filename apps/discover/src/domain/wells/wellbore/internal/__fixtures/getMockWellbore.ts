@@ -13,7 +13,13 @@ export const getMockWellbore = (
 ): WellboreInternal => {
   return {
     id: '1234',
+    wellMatchingId: '123',
+    matchingId: '123',
+    wellId: '1234',
+    wellName: 'test-wellbore',
+    title: 'test-wellbore',
     name: 'test-wellbore',
+    color: '#fefefe',
     description: 'test-wellbore-description',
     sources: [],
     ...mockWellboreOptions,

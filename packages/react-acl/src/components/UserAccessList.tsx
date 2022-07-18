@@ -57,29 +57,30 @@ export const UserAccessList: FCWithChildren<{
   return <UserAccessListView access={data}>{children}</UserAccessListView>;
 };
 
-export const UserAccessListView: FCWithChildren<{ access: AccessCheckResult }> =
-  ({ access, children }) => {
-    const handleChange = () => {
-      log('Processed access:', [access], 1);
-    };
-
-    return (
-      <UserAccessContainer>
-        <Collapse ghost onChange={handleChange}>
-          <Collapse.Panel header="Show my access" key="user-access-list">
-            <>
-              {access.length === 0 && 'Loading...'}
-              {access.map((value) => {
-                return value.missing.length > 0 ? (
-                  <AccessError key={value.name} item={value} />
-                ) : (
-                  <AccessGood key={value.name} item={value} />
-                );
-              })}
-              {children}
-            </>
-          </Collapse.Panel>
-        </Collapse>
-      </UserAccessContainer>
-    );
+export const UserAccessListView: FCWithChildren<{
+  access: AccessCheckResult;
+}> = ({ access, children }) => {
+  const handleChange = () => {
+    log('Processed access:', [access], 1);
   };
+
+  return (
+    <UserAccessContainer>
+      <Collapse ghost onChange={handleChange}>
+        <Collapse.Panel header="Show my access" key="user-access-list">
+          <>
+            {access.length === 0 && 'Loading...'}
+            {access.map((value) => {
+              return value.missing.length > 0 ? (
+                <AccessError key={value.name} item={value} />
+              ) : (
+                <AccessGood key={value.name} item={value} />
+              );
+            })}
+            {children}
+          </>
+        </Collapse.Panel>
+      </Collapse>
+    </UserAccessContainer>
+  );
+};

@@ -224,6 +224,7 @@ interface Props {
   weight?: 'regular' | 'light' | 'medium' | 'semibold';
   color?: 'primary' | 'secondary' | 'default';
   onClick?: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
+  children?: React.ReactNode | React.ReactNode[];
 }
 
 export const Typography: React.FC<Props> = React.forwardRef((props, ref) => {

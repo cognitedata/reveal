@@ -21,7 +21,7 @@ export const SeismicImage: React.FC<Props> = ({
   const [hasZoomed, setHasZoomed] = useState(false);
 
   const drawImage = useCallback(
-    (ctx) => {
+    (ctx: any) => {
       const idata = ctx.createImageData(width, height);
       idata.data.set(data);
       ctx.putImageData(idata, 0, 0);

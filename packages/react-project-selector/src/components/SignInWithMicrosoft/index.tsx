@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import { useContext } from 'react';
 import { saveFlow } from '@cognite/auth-utils';
 import { Button } from '@cognite/cogs.js';
 import { useHistory } from 'react-router-dom';

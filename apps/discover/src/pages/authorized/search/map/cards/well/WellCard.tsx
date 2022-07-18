@@ -1,4 +1,4 @@
-import mapboxgl from 'maplibre-gl';
+import { Map } from 'maplibre-gl';
 
 import { useMap } from 'modules/map/selectors';
 
@@ -7,7 +7,7 @@ import MapPopup from '../../MapPopup';
 import { WellPreviewCard } from './WellPreviewCard';
 
 interface Props {
-  map?: mapboxgl.Map;
+  map?: Map;
 }
 
 export const WellCard: React.FC<Props> = ({ map }) => {

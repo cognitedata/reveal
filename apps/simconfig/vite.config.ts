@@ -41,6 +41,9 @@ export default defineConfig(({ command }) => {
     resolve: {
       dedupe: ['react', 'react-dom'],
       preserveSymlinks: true,
+      alias: {
+        crypto: require.resolve('rollup-plugin-node-builtins'),
+      },
     },
     base: command === 'build' ? '/PUBLIC_URL_VALUE/' : '/',
     define: {

@@ -13,7 +13,7 @@ type State = {
 
 type Props = WithTranslation & {
   children: React.ReactNode;
-  instanceId: string;
+  // instanceId: string;
 };
 
 class ErrorBoundary extends React.Component<Props, State> {

@@ -5,7 +5,7 @@ import {
   ConditionalWrapperWithProps,
 } from '../ConditionalWrapper';
 
-const Wrapper: React.FC = (children) => (
+const Wrapper: React.FC = (children: any) => (
   <div>
     WRAPPER_ADDED
     {children}
@@ -24,10 +24,9 @@ export const BaseWithWrapper = () => (
   </ConditionalWrapper>
 );
 
-const TestWrapper: React.FC<{ otherProps: string }> = ({
-  children,
-  otherProps,
-}) => (
+const TestWrapper: React.FC<
+  React.PropsWithChildren<{ otherProps: string }>
+> = ({ children, otherProps }) => (
   <>
     <div>This is the test wrapper</div>
     <div>{otherProps}</div>

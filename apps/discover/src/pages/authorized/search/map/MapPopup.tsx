@@ -1,12 +1,12 @@
 import { cloneElement, useCallback, useEffect, useRef } from 'react';
 
-import mapboxgl from 'maplibre-gl';
+import { Map, Popup } from 'maplibre-gl';
 
 import { Point } from '@cognite/seismic-sdk-js';
 
 interface Props {
   point: Point;
-  map?: mapboxgl.Map;
+  map?: Map;
   children: JSX.Element;
   // Add custom styles in 'globalStyles.ts' with prefix of 'mapbox-popup-X'
   className?: 'mapbox-popup-previewcard';
@@ -22,7 +22,7 @@ export const MapPopup = ({ children, map, point, className }: Props) => {
   useEffect(() => {
     if (!map || !popupRef.current) return undefined;
 
-    currentPopup.current = new mapboxgl.Popup({
+    currentPopup.current = new Popup({
       className: extendedClassnames,
       offset: 16,
       closeButton: false,

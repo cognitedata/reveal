@@ -1,3 +1,5 @@
+/* eslint-disable react/default-props-match-prop-types */
+/* eslint-disable react/no-unused-prop-types */
 import React from 'react';
 import BluebirdPromise from 'bluebird';
 import * as d3 from 'd3';

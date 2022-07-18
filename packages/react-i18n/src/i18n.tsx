@@ -1,3 +1,6 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck
+// FIX ME: Line 50, causing "error: Type instantiation is excessively deep and possibly infinite." errors
 import React from 'react';
 import i18next, { InitOptions } from 'i18next';
 import ChainedBackend from 'i18next-chained-backend';
@@ -36,6 +39,7 @@ export const useTranslation = (
     ready: true,
   } as unknown as UseTranslationResponse<string>;
 };
+
 export const Trans = <
   K extends TFuncKey<N, Resources> extends infer A ? A : never,
   N extends Namespace<string> = string,

@@ -22,7 +22,9 @@ describe('useSavedSearchNavigation hook', () => {
   const historyPush = jest.fn();
 
   beforeEach(() => {
-    (useHistory as jest.Mock).mockImplementation(() => ({ push: historyPush }));
+    (useHistory as jest.Mock).mockImplementation(() => ({
+      push: historyPush,
+    }));
   });
 
   const getSavedSearchNavigationHandler = async () => {

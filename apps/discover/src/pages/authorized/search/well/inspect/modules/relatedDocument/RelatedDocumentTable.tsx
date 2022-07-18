@@ -131,7 +131,7 @@ export const RelatedDocumentTableComponent: React.FC<Props> = () => {
   );
 
   const renderRowHoverComponent = useCallback(
-    ({ row }) => (
+    ({ row }: any) => (
       <DocumentResultTableHoverComponent
         doc={row.original}
         onPreviewHandle={handlePreviewDocument}
@@ -160,7 +160,7 @@ export const RelatedDocumentTableComponent: React.FC<Props> = () => {
 
   useStopTimeLogger(renderTimer);
 
-  const Footer: React.FC = React.memo(() => {
+  const renderFooter = () => {
     return (
       <FooterPaginationServer
         handleLoadMore={hasNextPage ? fetchNextPage : undefined}
@@ -170,7 +170,7 @@ export const RelatedDocumentTableComponent: React.FC<Props> = () => {
         pageSize={DOCUMENT_SEARCH_PAGE_LIMIT}
       />
     );
-  });
+  };
 
   return (
     <>
@@ -180,7 +180,7 @@ export const RelatedDocumentTableComponent: React.FC<Props> = () => {
         data={data.hits}
         columns={selectedColumns}
         options={options}
-        Footer={Footer}
+        Footer={renderFooter}
         expandedIds={expandedIds}
         selectedIds={selectedIds}
         handleRowClick={handleRowClick}

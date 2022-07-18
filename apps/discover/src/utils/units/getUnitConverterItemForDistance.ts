@@ -5,7 +5,7 @@ export const getUnitConverterItemForDistance = <T>(
   toUnit: UserPreferredUnit
 ) => ({
   id: accessor,
-  accessor: `${accessor}.value`,
-  fromAccessor: `${accessor}.unit`,
+  accessor: `${String(accessor)}.value`,
+  fromAccessor: `${String(accessor)}.unit`,
   to: toUnit,
 });

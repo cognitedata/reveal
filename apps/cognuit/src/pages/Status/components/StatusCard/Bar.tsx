@@ -29,40 +29,41 @@ const Description = styled(Detail)`
   color: rgba(0, 0, 0, 0.45);
 `;
 
-export const StatusBar: React.FC<Pick<HeartbeatsReportResponse, 'aggregates'>> =
-  ({ aggregates }) => {
-    const sortedAggregates = React.useMemo(() => {
-      const sorted = Object.keys(aggregates)
-        .map(Number)
-        .sort((a, b) => a - b);
+export const StatusBar: React.FC<
+  Pick<HeartbeatsReportResponse, 'aggregates'>
+> = ({ aggregates }) => {
+  const sortedAggregates = React.useMemo(() => {
+    const sorted = Object.keys(aggregates)
+      .map(Number)
+      .sort((a, b) => a - b);
 
-      return takeRight(sorted, statusConfig.beatsInADay);
-    }, [aggregates]);
+    return takeRight(sorted, statusConfig.beatsInADay);
+  }, [aggregates]);
 
-    const average = React.useMemo(() => {
-      const activeBeats = sortedAggregates.reduce((acc, item) => {
-        const onlineBeat = aggregates[item];
+  const average = React.useMemo(() => {
+    const activeBeats = sortedAggregates.reduce((acc, item) => {
+      const onlineBeat = aggregates[item];
 
-        return acc + (onlineBeat ? 1 : 0);
-      }, 0);
+      return acc + (onlineBeat ? 1 : 0);
+    }, 0);
 
-      const calculateAverage = (activeBeats / statusConfig.beatsInADay) * 100;
+    const calculateAverage = (activeBeats / statusConfig.beatsInADay) * 100;
 
-      return calculateAverage.toFixed(2);
-    }, [sortedAggregates]);
+    return calculateAverage.toFixed(2);
+  }, [sortedAggregates]);
 
-    return (
-      <BarContent>
-        <BarContainer>
-          {sortedAggregates.map((item) => (
-            <Bar key={item} online={aggregates[item]} />
-          ))}
-        </BarContainer>
-        <BarContainer>
-          <Description>24 hours ago</Description>
-          <Detail>{average}% uptime</Detail>
-          <Description>now</Description>
-        </BarContainer>
-      </BarContent>
-    );
-  };
+  return (
+    <BarContent>
+      <BarContainer>
+        {sortedAggregates.map((item) => (
+          <Bar key={item} online={aggregates[item]} />
+        ))}
+      </BarContainer>
+      <BarContainer>
+        <Description>24 hours ago</Description>
+        <Detail>{average}% uptime</Detail>
+        <Description>now</Description>
+      </BarContainer>
+    </BarContent>
+  );
+};

@@ -57,9 +57,9 @@ export const MeasurementsComponent: React.FC = () => {
   const [pressureUnit, setPressureUnit] = useState<PressureUnit>(
     DEFAULT_PRESSURE_UNIT
   );
-
-  const [measurementReference, setMeasurementReference] =
-    useState<DepthMeasurementUnit>(DEFAULT_MEASUREMENTS_REFERENCE);
+  const [measurementReference] = useState<DepthMeasurementUnit>(
+    DEFAULT_MEASUREMENTS_REFERENCE
+  );
 
   const { isLoading, data, groupedData } = useMeasurementsData();
 
@@ -90,9 +90,9 @@ export const MeasurementsComponent: React.FC = () => {
         <OtherFilter selectedCurves={otherTypes} onChange={setOtherTypes} />
         <UnitSelector
           unit={pressureUnit}
-          reference={measurementReference}
+          // reference={measurementReference}
           onUnitChange={setPressureUnit}
-          onReferenceChange={setMeasurementReference}
+          // onReferenceChange={setMeasurementReference}
         />
       </MeasurementsTopBar>
 

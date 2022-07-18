@@ -62,7 +62,7 @@ export const selectionHook =
         },
         // The cell can use the individual row's getToggleRowSelectedProps method
         // to the render a checkbox
-        Cell: ({ row }: Hooks<T>) => {
+        Cell: ({ row }: any) => {
           const { checked, onChange, ...rest } =
             row.getToggleRowSelectedProps();
 
@@ -79,13 +79,15 @@ export const selectionHook =
             : true;
 
           return (
-            <Checkbox
-              {...rest}
-              checked={isSelected}
-              indeterminate={get(row, 'isIndeterminate', false)}
-              onChange={onCheckboxChanged}
-              disabled={!isCheckboxEnabled}
-            />
+            <>
+              <Checkbox
+                {...rest}
+                checked={isSelected}
+                indeterminate={get(row, 'isIndeterminate', false)}
+                onChange={onCheckboxChanged}
+                disabled={!isCheckboxEnabled}
+              />
+            </>
           );
         },
       },

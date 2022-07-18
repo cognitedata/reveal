@@ -33,6 +33,7 @@ const enterPolygonEditMode = () => {
 const checkPolygonIsClosed = () => {
   cy.log('Check that helper buttons are not visible');
   cy.findByTestId('shortcut-helper').should('not.exist');
+  cy.findByRole('button', { name: /freedraw button/i });
 };
 
 const closePolygonESC = () => {
@@ -54,7 +55,7 @@ const drawPolygon = (
   points: Coordinate[],
   acceptMode?: 'doubleClick' | 'enter' | 'esc'
 ) => {
-  cy.log('Draw the polygon');
+  cy.log(`Draw the polygon (${points.length} points)`);
   cy.findAllByRole('region').first().as('map').should('be.visible');
 
   points.forEach((point, index) => {
@@ -64,12 +65,14 @@ const drawPolygon = (
       cy.get('@map').click(point.x, point.y, { force: true });
     }
 
+    cy.wait(500); // map is slow sometimes
+
     if (index + 1 === points.length && acceptMode === 'doubleClick') {
       if (typeof point === 'string') {
         cy.get('@map').dblclick(point);
-        return;
+      } else {
+        cy.get('@map').dblclick(point.x, point.y);
       }
-      cy.get('@map').dblclick(point.x, point.y);
     }
   });
 
@@ -78,7 +81,7 @@ const drawPolygon = (
   }
 };
 
-const checkPolygonFloatingActionsAreVisible = (assertion?: boolean) => {
+const checkPolygonFloatingActionVisibility = (assertion?: boolean) => {
   cy.log(`Check polygon action buttons are ${assertion ? '' : 'not'} visible`);
   cy.findByTestId('map-container')
     .findByRole('button', {
@@ -202,8 +205,8 @@ Cypress.Commands.add(
 Cypress.Commands.add('closePolygonENTER', closePolygonENTER);
 Cypress.Commands.add('drawPolygon', drawPolygon);
 Cypress.Commands.add(
-  'checkPolygonFloatingActionsAreVisible',
-  checkPolygonFloatingActionsAreVisible
+  'checkPolygonFloatingActionVisibility',
+  checkPolygonFloatingActionVisibility
 );
 Cypress.Commands.add('deletePolygon', deletePolygon);
 Cypress.Commands.add('triggerPolygonSearch', triggerPolygonSearch);
@@ -264,7 +267,7 @@ export interface MapCommands {
     points: Coordinate[],
     acceptMode?: 'doubleClick' | 'enter' | 'esc'
   ): void;
-  checkPolygonFloatingActionsAreVisible(assertion?: boolean): void;
+  checkPolygonFloatingActionVisibility(assertion?: boolean): void;
   deletePolygon(): void;
   triggerPolygonSearch(): void;
   closeByClickOutside(): void;

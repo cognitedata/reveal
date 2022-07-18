@@ -86,6 +86,7 @@ DEPENDENCIES = [
     "@npm//react-table",
     "@npm//react-table-sticky",
     "@npm//react-router-dom",
+    "@npm//rxjs",
     "@npm//styled-components",
     "@npm//web-vitals",
     "//packages/react-container",
@@ -221,6 +222,7 @@ vite_build(
         "@npm//vite-tsconfig-paths",
         "@npm//vite-plugin-svgr",
         "@npm//vite-plugin-babel-macros",
+        "@npm//rollup-plugin-node-builtins",
     ],
     env = {
         "INLINE_RUNTIME_CHUNK": "false",

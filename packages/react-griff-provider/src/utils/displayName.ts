@@ -1,4 +1,4 @@
-export function withDisplayName<T extends React.ReactNode>(
+export function withDisplayName<T extends (props: any) => JSX.Element>(
   displayName: string,
   Component: T
 ): T {

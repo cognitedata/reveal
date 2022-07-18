@@ -335,7 +335,7 @@ export const Map: React.FC = () => {
 
         const id = v1();
 
-        dispatch(
+        dispatch<any>(
           searchForSlicesByLine(id, selectedSurveyData.files, selectedFeature)
         );
 

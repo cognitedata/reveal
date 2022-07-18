@@ -79,7 +79,7 @@ interface Category {
 interface DocumentTableProps {
   className?: string;
   docs: Document[];
-  handleDocumentClick: (
+  handleDocumentClick?: (
     document: Document,
     category: string,
     description: string
@@ -110,7 +110,7 @@ export class DocumentTable extends React.PureComponent<
   DocumentTableState
 > {
   public static defaultProps = {
-    handleDocumentClick: () => null,
+    // handleDocumentClick: () => null,
     scrollX: false,
   };
 
@@ -130,7 +130,9 @@ export class DocumentTable extends React.PureComponent<
           <LinkStyle
             key={document.id}
             data-test-id="file-name"
-            onClick={() => handleDocumentClick(document, category, description)}
+            onClick={() =>
+              handleDocumentClick?.(document, category, description)
+            }
             tabIndex={-1}
           >
             {document.fileName}

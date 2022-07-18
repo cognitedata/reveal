@@ -1,5 +1,6 @@
 import { Link, useMatch, useNavigate } from 'react-location';
 import { useSelector } from 'react-redux';
+// import { useHistory } from 'react-router-dom';
 
 import { formatISO } from 'date-fns';
 import { Form, Formik, useFormikContext } from 'formik';
@@ -55,6 +56,7 @@ export function CalculationConfiguration() {
     data: { definitions },
   } = useMatch<AppLocationGenerics>();
   const navigate = useNavigate();
+  // const history = useHistory();
 
   const { data: simulatorsList } = useGetSimulatorsListQuery(
     { project },

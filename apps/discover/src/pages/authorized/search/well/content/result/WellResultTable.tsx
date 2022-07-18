@@ -77,7 +77,7 @@ export const WellResultTable: React.FC = () => {
   useDeepEffect(() => {
     const firstWell = head(wells);
     if (firstWell) {
-      dispatch(wellSearchActions.toggleExpandedWell(firstWell, true));
+      dispatch<any>(wellSearchActions.toggleExpandedWell(firstWell, true));
     }
   }, [wells]);
 
@@ -96,7 +96,7 @@ export const WellResultTable: React.FC = () => {
       const well = row.original;
       const point = well.geometry;
       batch(() => {
-        dispatch(wellSearchActions.toggleExpandedWell(well));
+        dispatch<any>(wellSearchActions.toggleExpandedWell(well));
         dispatch(moveToCoords(point));
       });
     },
@@ -106,7 +106,9 @@ export const WellResultTable: React.FC = () => {
   const handleRowSelect = useCallback(
     (row: RowProps<WellInternal>, isSelected: boolean) => {
       const well = row.original;
-      dispatch(wellSearchActions.toggleSelectedWells([well], { isSelected }));
+      dispatch<any>(
+        wellSearchActions.toggleSelectedWells([well], { isSelected })
+      );
     },
     []
   );
@@ -114,7 +116,7 @@ export const WellResultTable: React.FC = () => {
   const handleRowsSelect = useDeepCallback(
     (isSelected: boolean) => {
       if (wellsRef.current) {
-        dispatch(
+        dispatch<any>(
           wellSearchActions.toggleSelectedWells(wellsRef.current, {
             isSelected,
           })
@@ -138,7 +140,7 @@ export const WellResultTable: React.FC = () => {
   ];
 
   const renderRowOverlayComponent = useCallback(
-    ({ row }) => {
+    ({ row }: any) => {
       const isAlreadyInFavorite = favoriteWellIds
         ? Object.keys(favoriteWellIds).includes(String(row.original.id))
         : false;

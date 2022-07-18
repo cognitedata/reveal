@@ -251,7 +251,6 @@ export class SeismicCube extends RegularGrid3 {
       client.volume.getTrace({ id: fileId }, inlineMinValue, xlineMaxValue),
     ];
 
-    // @ts-expect-error potential real error
     const resultList = await Promise.allSettled(promises);
     for (const result of resultList) {
       if (result.status !== 'fulfilled') continue;

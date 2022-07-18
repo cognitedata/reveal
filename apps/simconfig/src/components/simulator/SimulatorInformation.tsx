@@ -40,7 +40,7 @@ export function SimulatorInformation({
 
   return (
     <SimulatorInformationContainer>
-      <SimulatorInformationList>
+      <SimulatorInformationList id="simulator-info-details">
         <dt>Last seen</dt>
         <dd>{formatDistanceToNow(new Date(heartbeat), { addSuffix: true })}</dd>
         <dt>Data set</dt>

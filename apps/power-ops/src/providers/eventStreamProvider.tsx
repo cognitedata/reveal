@@ -1,4 +1,10 @@
-import { useState, createContext, useEffect } from 'react';
+import {
+  useState,
+  createContext,
+  useEffect,
+  PropsWithChildren,
+  ReactNode,
+} from 'react';
 import sidecar from 'utils/sidecar';
 import { Observable, fromEvent, from } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
@@ -12,7 +18,9 @@ export interface EventStreamContextType {
 
 export const EventStreamContext = createContext<EventStreamContextType>({});
 
-export const EventStreamProvider: React.FC = ({ children }) => {
+export const EventStreamProvider: React.FC<
+  PropsWithChildren<{ children: ReactNode }>
+> = ({ children }) => {
   const { client } = useAuthContext();
   const { powerOpsApiBaseUrl } = sidecar;
   const eventsSourceURL = `${powerOpsApiBaseUrl}/sse`;

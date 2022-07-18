@@ -76,7 +76,8 @@ describe('Comments', () => {
       });
   });
 
-  it('Should show comments on the favorite page', () => {
+  // eslint-disable-next-line jest/no-disabled-tests
+  it.skip('Should show comments on the favorite page', () => {
     goToFavoritesPage();
     openCommentBar();
     cy.wait(1000);

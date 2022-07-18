@@ -30,7 +30,9 @@ describe('withI18nSuspense', () => {
         const { t } = this.props;
 
         return (
-          <div>TRANS: {t('test_string', { defaultValue: 'COMPLETE' })}</div>
+          <div>
+            TRANS: {t('test_string', { defaultValue: 'COMPLETE' }) as string}
+          </div>
         );
       }
     }

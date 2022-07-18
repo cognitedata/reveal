@@ -23,30 +23,30 @@ describe('App tests', () => {
 
   it('Check for at least one connector status', () => {
     cy.get('#simulator-status-0').click();
+    // Click of first accordion to open up the details
     cy.get('#simulator-header-0').click();
 
-    cy.get(
-      '.cogs-collapse--ghost > .rc-collapse-item-active > .rc-collapse-content'
-    )
+    // Assert simulator info details
+    cy.get('#simulator-info-details')
       .invoke('text')
       .should('contain', 'Last seen')
       .and('contain', 'Data set')
       .and('contain', 'Connector version');
 
-    cy.get(
-      '.SimulatorInformation__SimulatorInformationContainer-sskn1g-0 > .rc-collapse > .rc-collapse-item > .rc-collapse-header'
-    ).click();
+    // Click on Data set details accordion
+    cy.get('.simulator-collapse').click();
 
+    // Validate the details
     cy.get('.simulator-collapse')
       .invoke('text')
       .should('contain', 'Model files')
       .and('contain', 'Calculation files')
       .and('contain', 'Calculation run events');
 
-    cy.get(
-      '.SimulatorInformation__SimulatorInformationContainer-sskn1g-0 > .rc-collapse > .rc-collapse-item > .rc-collapse-header'
-    ).click();
+    // Close  Data set details accordion
+    cy.get('.simulator-collapse').click();
 
+    // Close other accordions
     cy.get('#simulator-header-0').click();
     cy.get('#simulator-status-0').click();
   });

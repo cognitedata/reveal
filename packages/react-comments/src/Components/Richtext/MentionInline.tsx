@@ -6,10 +6,12 @@ import {
 
 import { MentionElement } from './types';
 
-export const MentionInline: React.FC<{
-  attributes?: any;
-  element: MentionElement;
-}> = ({ attributes, children, element }) => {
+export const MentionInline: React.FC<
+  React.PropsWithChildren<{
+    attributes?: any;
+    element: MentionElement;
+  }>
+> = ({ attributes, children, element }) => {
   const selected = useSelected();
   // const focused = useFocused();
   return (

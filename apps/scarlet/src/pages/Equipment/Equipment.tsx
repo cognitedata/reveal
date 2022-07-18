@@ -21,8 +21,10 @@ import * as Styled from './style';
 
 export const Equipment = () => {
   const facility = useFacility();
-  const { unitId, equipmentId } =
-    useParams<{ unitId: string; equipmentId: string }>();
+  const { unitId, equipmentId } = useParams<{
+    unitId: string;
+    equipmentId: string;
+  }>();
 
   const { appState, appDispatch } = useAppContext();
 

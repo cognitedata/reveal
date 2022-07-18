@@ -10,6 +10,7 @@ interface Props {
   onMouseLeave?: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
   onFocus?: (event: React.FocusEvent<HTMLDivElement>) => void;
   className?: string;
+  children?: React.ReactNode;
 }
 
 export const ButtonNoPropagation: React.FC<Props> = React.forwardRef<

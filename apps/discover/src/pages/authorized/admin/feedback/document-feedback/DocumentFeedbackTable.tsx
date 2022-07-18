@@ -317,7 +317,7 @@ export const DocumentFeedbackTable: React.FC<Props> = ({
   );
 
   const renderRowSubComponent = useCallback(
-    ({ row }) => {
+    ({ row }: any) => {
       if (!objectFeedbackShowDeleted) {
         return (
           <DocumentFeedbackDetails

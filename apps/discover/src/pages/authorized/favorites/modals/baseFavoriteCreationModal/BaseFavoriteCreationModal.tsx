@@ -46,7 +46,7 @@ export interface Props {
   ) => void;
   handleOnConfirm?: () => void;
   handleOnClose?: () => void;
-  showShareOptions?: boolean;
+  // showShareOptions?: boolean;
 }
 
 /**

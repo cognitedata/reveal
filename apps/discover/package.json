@@ -8,7 +8,10 @@
     "analyze": "yarn analyse",
     "build": "bazel build :build_sed",
     "clean": "rm -Rf build",
+    "clean:bazel": "bazel clean --expunge",
     "clean:vite": "rm -Rf node_modules/.vite",
+    "clean:node": "rm -Rf node_modules",
+    "clean:all": "yarn clean:bazel && yarn clean:vite && yarn clean",
     "eslint": "bazel test :eslint_test",
     "eslint:fix": "bazel run :eslint_test -- --fix",
     "lint": "bazel test :eslint_test :prettier_test",
@@ -48,5 +51,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@types/rollup-plugin-node-builtins": "^2.1.2"
   }
 }

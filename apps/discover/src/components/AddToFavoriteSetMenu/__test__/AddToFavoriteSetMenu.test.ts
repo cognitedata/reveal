@@ -2,6 +2,7 @@ import { useFavoritesSortedByName } from 'domain/favorites/internal/hooks/useFav
 import { getMockFavoritesList } from 'domain/favorites/service/__fixtures/favorite';
 
 import { screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 
 import { testRenderer } from '__test-utils/renderer';
 import { getMockedStore } from '__test-utils/store.utils';
@@ -95,7 +96,7 @@ describe('Add to favorite set', () => {
       name: 'Mock favorite',
     });
 
-    favorites[1].click();
+    await userEvent.click(favorites[1]);
     expect(favorites[1]).toBeDisabled();
     expect(handleFavoriteUpdate).toHaveBeenCalledTimes(1);
 

@@ -127,6 +127,7 @@ DEV_DEPENDENCIES = [
     "@npm//@storybook/addons",
     "@npm//@testing-library/jest-dom",
     "@npm//@testing-library/react",
+    "@npm//@testing-library/user-event",
     "@npm//eslint-config-react-app",
     "@npm//redux-mock-store",
     "@npm//sinon",
@@ -242,6 +243,7 @@ vite_build(
         "@npm//vite-tsconfig-paths",
         "@npm//vite-plugin-svgr",
         "@npm//vite-plugin-babel-macros",
+        "@npm//rollup-plugin-node-builtins",
     ],
     env = {
         "INLINE_RUNTIME_CHUNK": "false",

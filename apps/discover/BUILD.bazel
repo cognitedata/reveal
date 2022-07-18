@@ -304,6 +304,7 @@ vite_build(
         "@npm//vite-tsconfig-paths",
         "@npm//vite-plugin-svgr",
         "@npm//vite-plugin-babel-macros",
+        "@npm//rollup-plugin-node-builtins",
         # "@npm//typeface-inter:typeface-inter__all_files",
         # "@npm//@types/webpack-env",
         # ":random-id",

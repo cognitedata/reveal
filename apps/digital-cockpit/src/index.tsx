@@ -1,4 +1,4 @@
-import ReactDOM from 'react-dom';
+import ReactDOM from 'react-dom/client';
 import * as Sentry from '@sentry/browser';
 import config from 'utils/config';
 import { Metrics } from '@cognite/metrics';
@@ -39,8 +39,8 @@ if (mixpanel) {
   });
 }
 
-// eslint-disable-next-line
-ReactDOM.render(<AppRoot />, document.getElementById('root'));
+const root = ReactDOM.createRoot(document.getElementById('root')!);
+root.render(<AppRoot />);
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.

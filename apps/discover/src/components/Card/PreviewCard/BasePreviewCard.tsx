@@ -26,7 +26,7 @@ interface Props {
   collapsible?: boolean;
   icon?: IconType;
 }
-export const BasePreviewCard: React.FC<Props> = ({
+export const BasePreviewCard: React.FC<React.PropsWithChildren<Props>> = ({
   title,
   handleCloseClick,
   children,

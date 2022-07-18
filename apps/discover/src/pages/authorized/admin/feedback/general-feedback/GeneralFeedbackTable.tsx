@@ -231,7 +231,7 @@ export const GeneralFeedbackTable: React.FC<Props> = ({
     deleteGeneralFeedback(feedback.id, updateGeneralFeedback);
 
   const renderRowSubComponent = useCallback(
-    ({ row }) => {
+    ({ row }: any) => {
       return (
         <GeneralFeedbackDetails
           deleted={generalFeedbackShowDeleted}

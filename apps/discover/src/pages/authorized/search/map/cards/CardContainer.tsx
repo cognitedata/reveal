@@ -1,6 +1,6 @@
 import React from 'react';
 
-import mapboxgl, { LngLatLike } from 'maplibre-gl';
+import { LngLatLike, Map } from 'maplibre-gl';
 
 import { Point } from '@cognite/seismic-sdk-js';
 
@@ -11,7 +11,7 @@ import { MapDocumentPreviewContainer } from '../elements';
 export const MapPreviewContainer: React.FC<
   React.PropsWithChildren<{
     point?: Point;
-    map: mapboxgl.Map;
+    map: Map;
   }>
 > = ({ point, map, children }) => {
   const getRightByGeo = ({

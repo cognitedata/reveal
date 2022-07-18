@@ -95,7 +95,9 @@ describe('Favorite Details Header', () => {
     );
     mockServer.listen();
 
-    page({ favorite: { ...mockFavorite, owner: { id: '1' } } });
+    await page({
+      favorite: { ...mockFavorite, owner: { id: '2' } },
+    });
 
     await waitFor(() =>
       expect(

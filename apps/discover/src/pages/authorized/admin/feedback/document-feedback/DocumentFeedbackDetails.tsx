@@ -176,13 +176,12 @@ export const DeletedDocumentFeedbackDetails: React.FC<DeletedProps> = (
   props
 ) => {
   const { feedback } = props;
-  return (
-    <BaseDocumentFeedbackDetails feedback={feedback}>
-      {/* {feedback.isSensitiveData && (
-        <Assessment feedback={feedback} data-testid="dropdown-assessment" />
-      )} */}
-    </BaseDocumentFeedbackDetails>
-  );
+  return <BaseDocumentFeedbackDetails feedback={feedback} />;
+
+  //     {feedback.isSensitiveData && (
+  //     <Assessment feedback={feedback} data-testid="dropdown-assessment" />
+  //   )}
+  // </BaseDocumentFeedbackDetails>
 };
 
 export const DocumentFeedbackDetails: React.FC<Props> = (props) => {

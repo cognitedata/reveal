@@ -68,7 +68,7 @@ describe('useSelectedPath', () => {
           },
         }),
       {
-        wrapper: ({ children }) => {
+        wrapper: ({ children }: any) => {
           const history = createBrowserHistory();
           history.location = createLocation(
             '/projectConfig?selectedPath=favorites.showDocumentButton'

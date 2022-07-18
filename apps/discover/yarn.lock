@@ -2,3 +2,28 @@
 # yarn lockfile v1
 
 
+"@types/estree@0.0.39":
+  version "0.0.39"
+  resolved "https://registry.yarnpkg.com/@types/estree/-/estree-0.0.39.tgz#e177e699ee1b8c22d23174caaa7422644389509f"
+  integrity sha512-EYNwp3bU+98cpU4lAWYYL7Zz+2gryWH1qbdDTidVd6hkiR6weksdbMadyXKXNPEkQFhXM+hVO9ZygomHXp+AIw==
+
+"@types/node@*":
+  version "17.0.41"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-17.0.41.tgz#1607b2fd3da014ae5d4d1b31bc792a39348dfb9b"
+  integrity sha512-xA6drNNeqb5YyV5fO3OAEsnXLfO7uF0whiOfPTz5AeDo8KeZFmODKnvwPymMNO8qE/an8pVY/O50tig2SQCrGw==
+
+"@types/rollup-plugin-node-builtins@^2.1.2":
+  version "2.1.2"
+  resolved "https://registry.yarnpkg.com/@types/rollup-plugin-node-builtins/-/rollup-plugin-node-builtins-2.1.2.tgz#d702de68f4aa7ab072845ab65e51fd7f1c0b4786"
+  integrity sha512-R6dkiJk0JaRavDddmE4zddXOkFjCmSXv8RwqIgkX/1MvQ0SjDfo326+yAHy8HL++JWVNa48yB4EjPYyZeISzGQ==
+  dependencies:
+    "@types/node" "*"
+    rollup "^0.63.4"
+
+rollup@^0.63.4:
+  version "0.63.5"
+  resolved "https://registry.yarnpkg.com/rollup/-/rollup-0.63.5.tgz#5543eecac9a1b83b7e1be598b5be84c9c0a089db"
+  integrity sha512-dFf8LpUNzIj3oE0vCvobX6rqOzHzLBoblyFp+3znPbjiSmSvOoK2kMKx+Fv9jYduG1rvcCfCveSgEaQHjWRF6g==
+  dependencies:
+    "@types/estree" "0.0.39"
+    "@types/node" "*"

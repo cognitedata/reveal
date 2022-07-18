@@ -5,7 +5,7 @@ import { batch, useDispatch } from 'react-redux';
 import simplify from '@turf/simplify';
 import { TS_FIX_ME } from 'core';
 import {
-  MapboxGeoJSONFeature,
+  // MapboxGeoJSONFeature,
   MapLayerMouseEvent,
   MapMouseEvent,
   Popup,
@@ -225,7 +225,7 @@ export const useMapEvents = () => {
         const wellId = view[0]?.properties?.id;
 
         if (wellId && wellIds.includes(wellId)) {
-          dispatch(
+          dispatch<any>(
             wellSearchActions.toggleSelectedWells([wellsById[wellId]], {
               isSelected: true,
             })
@@ -266,9 +266,7 @@ export const useMapEvents = () => {
   // };
 
   const onClickFilterableMapLayer = (event: MapMouseEvent) => {
-    const view: MapboxGeoJSONFeature[] = event.target.queryRenderedFeatures(
-      event.point
-    );
+    const view: any[] = event.target.queryRenderedFeatures(event.point);
 
     /**
      * Don't show the filter popup if we click on one of our custom layers

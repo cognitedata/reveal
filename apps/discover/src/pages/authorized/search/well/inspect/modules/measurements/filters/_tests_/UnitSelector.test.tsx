@@ -2,7 +2,7 @@ import { fireEvent, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import { testRenderer } from '__test-utils/renderer';
-import { PressureUnit, DepthMeasurementUnit } from 'constants/units';
+import { PressureUnit } from 'constants/units';
 
 import { UnitSelector, Props } from '../UnitSelector';
 
@@ -13,9 +13,9 @@ describe('View Mode Selector', () => {
   it('Should display default selections', async () => {
     await testInit({
       unit: PressureUnit.PPG,
-      reference: DepthMeasurementUnit.MD,
+      // reference: DepthMeasurementUnit.MD,
       onUnitChange: jest.fn(),
-      onReferenceChange: jest.fn(),
+      // onReferenceChange: jest.fn(),
     });
 
     fireEvent.mouseEnter(screen.getByTestId('menu-button'), { bubbles: true });
@@ -25,9 +25,9 @@ describe('View Mode Selector', () => {
   it('Click on drop down and all items are visible', async () => {
     await testInit({
       unit: PressureUnit.PPG,
-      reference: DepthMeasurementUnit.MD,
+      // reference: DepthMeasurementUnit.MD,
       onUnitChange: jest.fn(),
-      onReferenceChange: jest.fn(),
+      // onReferenceChange: jest.fn(),
     });
 
     fireEvent.mouseEnter(screen.getByTestId('menu-button'), { bubbles: true });
@@ -40,9 +40,9 @@ describe('View Mode Selector', () => {
     const onUnitChange = jest.fn();
     await testInit({
       unit: PressureUnit.PPG,
-      reference: DepthMeasurementUnit.MD,
+      // reference: DepthMeasurementUnit.MD,
       onUnitChange,
-      onReferenceChange: jest.fn(),
+      // onReferenceChange: jest.fn(),
     });
 
     fireEvent.mouseEnter(screen.getByTestId('menu-button'), { bubbles: true });

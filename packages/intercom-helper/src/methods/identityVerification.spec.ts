@@ -6,18 +6,9 @@ import identityVerification from './identityVerification';
 
 jest.mock('../utils/getHmac');
 
-interface CustomGlobal extends NodeJS.Global {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  window: any;
-}
-
-declare let global: CustomGlobal;
-
 describe('get Hmac key from server', () => {
   beforeEach(() => {
-    global.window = {
-      Intercom: jest.fn(),
-    };
+    window.Intercom = jest.fn();
   });
 
   it('identityVerification resolves with no project', () => {
@@ -42,7 +33,7 @@ describe('get Hmac key from server', () => {
         undefined
       );
       expect(response).toEqual({ success: true });
-      expect(global.window.Intercom).toHaveBeenCalledWith('update', {
+      expect(window.Intercom).toHaveBeenCalledWith('update', {
         name: 'user name',
         user_id: 'Unique ID',
         user_hash: 'hmacHash1234',
@@ -66,7 +57,7 @@ describe('get Hmac key from server', () => {
         undefined
       );
       expect(response).toEqual({ success: false, error });
-      expect(global.window.Intercom).not.toHaveBeenCalled();
+      expect(window.Intercom).not.toHaveBeenCalled();
     });
   });
 
@@ -93,7 +84,7 @@ describe('get Hmac key from server', () => {
         'myFakeProject'
       );
       expect(response).toEqual({ success: true });
-      expect(global.window.Intercom).toHaveBeenCalledWith('update', {
+      expect(window.Intercom).toHaveBeenCalledWith('update', {
         name: 'user name',
         user_id: 'Unique ID',
         user_hash: 'hmacHash1234',
@@ -118,7 +109,7 @@ describe('get Hmac key from server', () => {
         'myFakeProject'
       );
       expect(response).toEqual({ success: false, error });
-      expect(global.window.Intercom).not.toHaveBeenCalled();
+      expect(window.Intercom).not.toHaveBeenCalled();
     });
   });
 });

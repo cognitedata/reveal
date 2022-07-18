@@ -52,7 +52,7 @@ export const WorkspaceHeader = ({
   };
 
   const showTitleInput = useCallback(
-    (e) => {
+    (e: any) => {
       e.preventDefault();
       e.stopPropagation();
       setIsInputVisible(!isInputVisible);

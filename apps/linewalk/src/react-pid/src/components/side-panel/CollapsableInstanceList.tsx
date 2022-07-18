@@ -53,153 +53,149 @@ interface CollapsableInstanceListProps {
   ) => void;
 }
 
-export const CollapsableInstanceList: React.FC<CollapsableInstanceListProps> =
-  ({
-    symbols,
-    symbolInstances,
-    lineInstances,
-    connections,
-    deleteSymbol,
-    deleteConnection,
-    tags: equipmentTags,
-    setTags: setEquipmentTags,
-    activeTagId,
-    setActiveTagId,
-    pathReplacementGroups,
-    deletePathReplacementGroups,
-  }) => {
-    const renderSymbolInstances = (
-      symbolInstances: DiagramSymbolInstance[],
-      symbol: DiagramSymbol
-    ) => {
-      return (
-        <div>
-          {getInstancesBySymbolId(symbolInstances, symbol.id).map(
-            (instance) => (
-              <Pre key={instance.id}>
-                {JSON.stringify(instance, undefined, 2)}
-              </Pre>
-            )
-          )}
-        </div>
-      );
-    };
-
-    const renderSymbolPanels = (
-      symbols: DiagramSymbol[],
-      symbolInstances: DiagramSymbolInstance[]
-    ) => {
-      return symbols.map((symbol) => {
-        const symInstances = getInstancesBySymbolId(symbolInstances, symbol.id);
-        return (
-          <Collapse.Panel
-            header={CollapsableSymbolHeader({
-              symbol,
-              symbolInstanceCount: symInstances.length,
-              foundRotations: uniqBy(symInstances, (si) => si.rotation).length,
-              deleteSymbol,
-            })}
-            key={symbol.id}
-          >
-            {renderSymbolInstances(symbolInstances, symbol)}
-          </Collapse.Panel>
-        );
-      });
-    };
-
-    const { pathReplacementGroupMap, deletePathReplacementByType } =
-      usePathReplacementGroupsByType(
-        pathReplacementGroups,
-        deletePathReplacementGroups
-      );
-
+export const CollapsableInstanceList: React.FC<
+  CollapsableInstanceListProps
+> = ({
+  symbols,
+  symbolInstances,
+  lineInstances,
+  connections,
+  deleteSymbol,
+  deleteConnection,
+  tags: equipmentTags,
+  setTags: setEquipmentTags,
+  activeTagId,
+  setActiveTagId,
+  pathReplacementGroups,
+  deletePathReplacementGroups,
+}) => {
+  const renderSymbolInstances = (
+    symbolInstances: DiagramSymbolInstance[],
+    symbol: DiagramSymbol
+  ) => {
     return (
-      <ScrollWrapper>
-        <CollapseSeperator>Lines</CollapseSeperator>
-        <Collapse accordion ghost>
-          <Collapse.Panel header={`Flowlines (${lineInstances?.length || 0})`}>
-            {lineInstances?.map((line) => (
-              <Pre key={line.id}>{JSON.stringify(line, null, 2)}</Pre>
-            ))}
-          </Collapse.Panel>
-        </Collapse>
+      <div>
+        {getInstancesBySymbolId(symbolInstances, symbol.id).map((instance) => (
+          <Pre key={instance.id}>{JSON.stringify(instance, undefined, 2)}</Pre>
+        ))}
+      </div>
+    );
+  };
 
-        <CollapseSeperator>Symbols</CollapseSeperator>
-        <Collapse accordion ghost>
-          {renderSymbolPanels(symbols, symbolInstances)}
-        </Collapse>
+  const renderSymbolPanels = (
+    symbols: DiagramSymbol[],
+    symbolInstances: DiagramSymbolInstance[]
+  ) => {
+    return symbols.map((symbol) => {
+      const symInstances = getInstancesBySymbolId(symbolInstances, symbol.id);
+      return (
+        <Collapse.Panel
+          header={CollapsableSymbolHeader({
+            symbol,
+            symbolInstanceCount: symInstances.length,
+            foundRotations: uniqBy(symInstances, (si) => si.rotation).length,
+            deleteSymbol,
+          })}
+          key={symbol.id}
+        >
+          {renderSymbolInstances(symbolInstances, symbol)}
+        </Collapse.Panel>
+      );
+    });
+  };
 
-        <CollapseSeperator>Connections</CollapseSeperator>
-        <Collapse accordion ghost>
-          <Collapse.Panel header={`Connections (${connections.length})`}>
-            {connections?.map((connection) => (
-              <ConnectionItem key={`${connection.start}.${connection.end}`}>
-                <p>
-                  {`${connection.start} ${
-                    connection.direction === 'unknown' ? '--' : '->'
-                  } ${connection.end}`}
-                </p>
+  const { pathReplacementGroupMap, deletePathReplacementByType } =
+    usePathReplacementGroupsByType(
+      pathReplacementGroups,
+      deletePathReplacementGroups
+    );
+
+  return (
+    <ScrollWrapper>
+      <CollapseSeperator>Lines</CollapseSeperator>
+      <Collapse accordion ghost>
+        <Collapse.Panel header={`Flowlines (${lineInstances?.length || 0})`}>
+          {lineInstances?.map((line) => (
+            <Pre key={line.id}>{JSON.stringify(line, null, 2)}</Pre>
+          ))}
+        </Collapse.Panel>
+      </Collapse>
+
+      <CollapseSeperator>Symbols</CollapseSeperator>
+      <Collapse accordion ghost>
+        {renderSymbolPanels(symbols, symbolInstances)}
+      </Collapse>
+
+      <CollapseSeperator>Connections</CollapseSeperator>
+      <Collapse accordion ghost>
+        <Collapse.Panel header={`Connections (${connections.length})`}>
+          {connections?.map((connection) => (
+            <ConnectionItem key={`${connection.start}.${connection.end}`}>
+              <p>
+                {`${connection.start} ${
+                  connection.direction === 'unknown' ? '--' : '->'
+                } ${connection.end}`}
+              </p>
+              <Icon
+                onClick={() => deleteConnection(connection)}
+                type="Close"
+                size={12}
+              />
+            </ConnectionItem>
+          ))}
+        </Collapse.Panel>
+      </Collapse>
+
+      <CollapseSeperator>Path Replacements</CollapseSeperator>
+      <Collapse accordion ghost>
+        {Object.keys(pathReplacementGroupMap).map((key) => (
+          <Collapse.Panel
+            key={key}
+            header={
+              <>
+                <div>
+                  {key} (
+                  {pathReplacementGroupMap[key as PathReplacementType].length})
+                </div>
                 <Icon
-                  onClick={() => deleteConnection(connection)}
+                  onClick={() => {
+                    deletePathReplacementByType(key as PathReplacementType);
+                  }}
                   type="Close"
                   size={12}
+                  style={{ marginLeft: 'auto' }}
                 />
-              </ConnectionItem>
-            ))}
-          </Collapse.Panel>
-        </Collapse>
-
-        <CollapseSeperator>Path Replacements</CollapseSeperator>
-        <Collapse accordion ghost>
-          {Object.keys(pathReplacementGroupMap).map((key) => (
-            <Collapse.Panel
-              key={key}
-              header={
-                <>
-                  <div>
-                    {key} (
-                    {pathReplacementGroupMap[key as PathReplacementType].length}
-                    )
-                  </div>
+              </>
+            }
+          >
+            {pathReplacementGroupMap[key as PathReplacementType].map(
+              (group) => (
+                <ConnectionItem key={group.id}>
+                  <Pre key={group.id}>
+                    {JSON.stringify(group.replacements, null, 2)}
+                  </Pre>
                   <Icon
                     onClick={() => {
-                      deletePathReplacementByType(key as PathReplacementType);
+                      deletePathReplacementGroups(group.id);
                     }}
                     type="Close"
                     size={12}
-                    style={{ marginLeft: 'auto' }}
                   />
-                </>
-              }
-            >
-              {pathReplacementGroupMap[key as PathReplacementType].map(
-                (group) => (
-                  <ConnectionItem key={group.id}>
-                    <Pre key={group.id}>
-                      {JSON.stringify(group.replacements, null, 2)}
-                    </Pre>
-                    <Icon
-                      onClick={() => {
-                        deletePathReplacementGroups(group.id);
-                      }}
-                      type="Close"
-                      size={12}
-                    />
-                  </ConnectionItem>
-                )
-              )}
-            </Collapse.Panel>
-          ))}
-        </Collapse>
-        <div>
-          <CollapseSeperator>Tags</CollapseSeperator>
-          <TagPanel
-            tags={equipmentTags}
-            setTags={setEquipmentTags}
-            activeTagId={activeTagId}
-            setActiveTagId={setActiveTagId}
-          />
-        </div>
-      </ScrollWrapper>
-    );
-  };
+                </ConnectionItem>
+              )
+            )}
+          </Collapse.Panel>
+        ))}
+      </Collapse>
+      <div>
+        <CollapseSeperator>Tags</CollapseSeperator>
+        <TagPanel
+          tags={equipmentTags}
+          setTags={setEquipmentTags}
+          activeTagId={activeTagId}
+          setActiveTagId={setActiveTagId}
+        />
+      </div>
+    </ScrollWrapper>
+  );
+};

@@ -16,6 +16,6 @@ export const authenticateCogniteClient = (project = TEST_PROJECT) => {
     appId: sidecar.applicationId,
     baseUrl: sidecar.cdfApiBaseUrl,
     project,
-    getToken: async () => '',
+    getToken: async () => Promise.resolve('mock token'),
   });
 };

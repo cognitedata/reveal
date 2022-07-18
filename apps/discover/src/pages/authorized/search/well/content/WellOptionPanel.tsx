@@ -19,9 +19,9 @@ export const WellOptionPanel: React.FC = () => {
     };
 
     if (toggledColumn.selected) {
-      dispatch(wellSearchActions.addSelectedColumn(column));
+      dispatch<any>(wellSearchActions.addSelectedColumn(column));
     } else {
-      dispatch(wellSearchActions.removeSelectedColumn(column));
+      dispatch<any>(wellSearchActions.removeSelectedColumn(column));
     }
   };
 

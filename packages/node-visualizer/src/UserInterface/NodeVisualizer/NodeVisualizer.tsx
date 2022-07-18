@@ -49,6 +49,9 @@ export interface NodeVisualizerProps {
  * Node Visualizer Component of the application
  * This will render all the Components (Settings/Explorer/3D viewers etc.)
  */
+
+const CustomSplitPane: any = SplitPane;
+
 export const NodeVisualizer: React.FC<NodeVisualizerProps> = (props) => {
   const dispatch = useDispatch();
   const common = useSelector((state: State) => state.common); // -TODO: Remove state reference
@@ -122,7 +125,7 @@ export const NodeVisualizer: React.FC<NodeVisualizerProps> = (props) => {
 
   return (
     <NodeVisualizerContainer>
-      <SplitPane
+      <CustomSplitPane
         split="vertical"
         minSize={common.isFullscreen ? 0 : Appearance.leftPanelDefaultSize}
         maxSize={common.isFullscreen ? 0 : Appearance.leftPanelMaxSize}
@@ -138,7 +141,7 @@ export const NodeVisualizer: React.FC<NodeVisualizerProps> = (props) => {
       >
         <LeftPanel explorer={renderExplorer} custom={!!explorer} />
         <RightPanel viewer3D={viewerElementCallback} toolbar={renderToolbar} />
-      </SplitPane>
+      </CustomSplitPane>
     </NodeVisualizerContainer>
   );
 };

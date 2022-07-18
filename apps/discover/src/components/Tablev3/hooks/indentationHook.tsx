@@ -11,8 +11,8 @@ export const indentationHook =
         disableResizing: true,
         width: indent === true ? '30px' : indent,
         // Return a space to prevent the empty state from showing
-        Header: () => ' ',
-        Cell: () => ' ',
+        Header: ' ',
+        Cell: ' ',
       },
       ...restOfColumns,
     ]);
