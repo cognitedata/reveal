@@ -19,24 +19,16 @@ export const FileDetails = ({ file }: { file: FileInfo }) => (
     <DataSetItem id={file.id} type="file" />
     <AssetsItem assetIds={file.assetIds} linkId={file.id} type="file" />
     <DetailsTabItem
-      name="Uploaded at"
-      value={file ? <TimeDisplay value={file.uploadedTime} /> : 'Loading...'}
-    />
-    <DetailsTabItem
-      name="Created at"
-      value={file ? <TimeDisplay value={file.createdTime} /> : 'Loading...'}
-    />
-    <DetailsTabItem
-      name="Updated at"
-      value={file ? <TimeDisplay value={file.lastUpdatedTime} /> : 'Loading...'}
-    />
-    <DetailsTabItem
       name="Labels"
       value={
         file.labels
           ? file.labels.map(label => <Label>{label.externalId}</Label>)
           : undefined
       }
+    />
+    <DetailsTabItem
+      name="Uploaded at"
+      value={file ? <TimeDisplay value={file.uploadedTime} /> : 'Loading...'}
     />
   </DetailsTabGrid>
 );
