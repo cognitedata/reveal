@@ -514,7 +514,7 @@ export const visualizeConnections = (
 
 export interface VisualizeBoundingBoxPros {
   svg: SVGSVGElement;
-  boundignBox: Rect;
+  boundingBox: Rect;
   id: string;
   color: string;
   opacity: number;
@@ -525,7 +525,7 @@ export interface VisualizeBoundingBoxPros {
 
 export const visualizeBoundingBoxBehind = ({
   svg,
-  boundignBox,
+  boundingBox,
   id,
   color,
   opacity,
@@ -544,7 +544,7 @@ export const visualizeBoundingBoxBehind = ({
     `stroke:${usedStrokeColor};stroke-width:${usedStrokeWidth};fill:${color};stroke-opacity:${usedStrokeOpacity};fill-opacity:${opacity}`
   );
 
-  const { x, y, width, height } = boundignBox;
+  const { x, y, width, height } = boundingBox;
 
   rect.setAttribute('x', `${x}`);
   rect.setAttribute('y', `${y}`);
@@ -588,7 +588,7 @@ export const visualizeLabelsToInstances = (
 
           const rect = visualizeBoundingBoxBehind({
             svg,
-            boundignBox: pidTspan.boundingBox,
+            boundingBox: pidTspan.boundingBox,
             id: `tspanrect_${pidTspan.id}`,
             color: COLORS.connection.color,
             opacity: 0.1,
@@ -643,7 +643,7 @@ export const visualizeSymbolInstanceBoundingBoxes = (
     };
     const rect = visualizeBoundingBoxBehind({
       svg,
-      boundignBox: paddedBoundingBox,
+      boundingBox: paddedBoundingBox,
       id: `symbolinstancerect_${symbolInstance.id}`,
       color: COLORS.symbolBoundingBox.color,
       opacity: COLORS.symbolBoundingBox.opacity,
@@ -675,7 +675,7 @@ export const visualizeTagBoundingBoxes = (
     };
     const rect = visualizeBoundingBoxBehind({
       svg,
-      boundignBox: paddedBoundingBox,
+      boundingBox: paddedBoundingBox,
       id: `tag_${tag.id}`,
       color: COLORS.symbolBoundingBox.color,
       opacity: COLORS.symbolBoundingBox.opacity,

@@ -520,6 +520,12 @@ export class PidDocument {
       }
     });
   }
+
+  getPathsEnclosedByBoundingBox(boundingBox: BoundingBox): PidPath[] {
+    return this.pidPaths.filter((path) =>
+      boundingBox.enclosesBoundingBox(path.getBoundingBox(), false)
+    );
+  }
 }
 
 export class PidDocumentWithDom extends PidDocument {

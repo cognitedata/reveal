@@ -3,6 +3,7 @@
 import { v4 as uuid } from 'uuid';
 import uniqBy from 'lodash/uniqBy';
 import uniq from 'lodash/uniq';
+import xor from 'lodash/xor';
 
 import {
   getPathReplacementDescendants,
@@ -14,6 +15,7 @@ import {
   computeSymbolInstances,
   getGraphFormat,
   getLineNumberAndUnitFromText,
+  setSelectablilityOfAllText,
 } from './utils';
 import {
   applyPathReplacementInSvg,
@@ -74,6 +76,7 @@ import {
 import { isLine } from './utils/type';
 import { EQUIPMENT_TAG_REGEX } from './constants';
 import { getMetadataFromFileName } from './utils/fileNameUtils';
+import { BoundingBox, Point } from './geometry';
 
 const hoverBoldStrokeScale = 1.5;
 
@@ -109,6 +112,14 @@ export interface AddSymbolData {
 
 export enum EventType {
   LOAD = 'onLoad',
+}
+
+export enum MouseButton {
+  LEFT_CLICK = 0,
+  WHEEL_CLICK = 1,
+  RIGHT_CLICK = 2,
+  BROWSER_BACK_CLICK = 3,
+  BROWSER_FORWARD_CLICK = 4,
 }
 
 type EventListener = (ref: CognitePid) => void;
@@ -188,6 +199,10 @@ export class CognitePid {
   private labelVisualizations: LabelVisualization[] = [];
   private lineNumberVisualizationIds: string[] = [];
   private symbolInstanceAndTagBoundingBoxesIds: string[] = [];
+
+  private selectionRectStart: Point | null = null;
+  private selectionRect: Node | null = null;
+  private backgroundRect: SVGRectElement | null = null;
 
   constructor(options: CognitePidOptions) {
     const host = document.querySelector(options.container) as SVGElement;
@@ -390,7 +405,7 @@ export class CognitePid {
   }
 
   private setSymbolSelection(pathIds: string[], applyStyles = true) {
-    const possiblyChangedPathIds = [...this.symbolSelection, ...pathIds]; // FIX: Find elements that's only is in one of the two lists
+    const possiblyChangedPathIds = xor(pathIds, this.symbolSelection);
     this.symbolSelection = pathIds;
     if (this.symbolSelectionSubscriber) {
       this.symbolSelectionSubscriber(pathIds);
@@ -671,6 +686,8 @@ export class CognitePid {
     this.host.appendChild(this.svg);
 
     this.pidDocument = PidDocumentWithDom.fromSVG(this.svg, allSvgElements);
+
+    this.initializeRectangularSelection();
   }
 
   load() {
@@ -1572,7 +1589,7 @@ export class CognitePid {
         (pidTspan) =>
           visualizeBoundingBoxBehind({
             svg: this.svg!,
-            boundignBox: pidTspan.boundingBox,
+            boundingBox: pidTspan.boundingBox,
             id: `linenumberrect_${pidTspan.id}`,
             color: 'black',
             opacity:
@@ -1637,5 +1654,107 @@ export class CognitePid {
       }
     }
     this.symbolInstanceAndTagBoundingBoxesIds = [];
+  }
+
+  private mouseEventToPidPoint(mouseEvent: MouseEvent): Point {
+    const {
+      width: clientRectWidth,
+      height: clientRectHeight,
+      x: documentClientRectX,
+      y: documentClientRectY,
+    } = this.backgroundRect!.getClientRects()[0];
+
+    const viewportClientRect = (
+      this.host.parentNode as SVGElement
+    ).getClientRects()[0];
+    const documentOffsetX = documentClientRectX - viewportClientRect.x;
+    const documentOffsetY = documentClientRectY - viewportClientRect.y;
+
+    const zoomCorrectedX =
+      ((mouseEvent.offsetX - documentOffsetX) *
+        this.pidDocument!.viewBox.width) /
+      clientRectWidth;
+    const zoomCorrectedY =
+      ((mouseEvent.offsetY - documentOffsetY) *
+        this.pidDocument!.viewBox.height) /
+      clientRectHeight;
+
+    return new Point(zoomCorrectedX, zoomCorrectedY);
+  }
+
+  private initializeRectangularSelection() {
+    this.backgroundRect = visualizeBoundingBoxBehind({
+      svg: this.svg!,
+      boundingBox: this.pidDocument!.viewBox,
+      id: 'background_rect',
+      color: 'white',
+      opacity: 0,
+      strokeColor: 'white',
+      strokeOpacity: 1,
+      strokeWidth: 0,
+    });
+    this.backgroundRect.addEventListener('mousedown', (e) => {
+      if (e.button !== MouseButton.LEFT_CLICK) return;
+
+      this.selectionRectStart = this.mouseEventToPidPoint(e);
+
+      setSelectablilityOfAllText({ document, selectable: false });
+    });
+
+    this.backgroundRect.addEventListener('mousemove', (e) => {
+      if (!this.selectionRectStart) return;
+
+      const selectionRectStop = this.mouseEventToPidPoint(e);
+
+      const selectionBoundingBox = BoundingBox.fromPoints(
+        this.selectionRectStart,
+        selectionRectStop
+      );
+
+      if (this.selectionRect) {
+        (this.svg!.parentNode as SVGSVGElement).removeChild(this.selectionRect);
+      }
+
+      this.selectionRect = visualizeBoundingBoxBehind({
+        svg: this.svg!.parentNode as SVGSVGElement,
+        boundingBox: selectionBoundingBox,
+        id: 'selection',
+        color: 'white',
+        opacity: 0,
+        strokeColor: 'red',
+        strokeOpacity: 1,
+        strokeWidth: 0.5,
+      });
+    });
+
+    this.backgroundRect.addEventListener('mouseup', (e) => {
+      if (!this.selectionRectStart) return;
+
+      const selectionRectStop = this.mouseEventToPidPoint(e);
+
+      const selectionBoundingBox = BoundingBox.fromPoints(
+        this.selectionRectStart,
+        selectionRectStop
+      );
+
+      const pathsToSelect =
+        this.pidDocument!.getPathsEnclosedByBoundingBox(selectionBoundingBox);
+
+      this.setSymbolSelection(
+        uniq([
+          ...this.symbolSelection,
+          ...pathsToSelect.map((path) => path.pathId),
+        ])
+      );
+
+      if (this.selectionRect) {
+        (this.svg!.parentNode as SVGSVGElement).removeChild(this.selectionRect);
+      }
+
+      setSelectablilityOfAllText({ document, selectable: true });
+
+      this.selectionRect = null;
+      this.selectionRectStart = null;
+    });
   }
 }

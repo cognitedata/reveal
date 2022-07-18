@@ -33,6 +33,18 @@ export class BoundingBox {
     );
   }
 
+  enclosesBoundingBox(rect: Rect, includeBorder = true): boolean {
+    return (
+      this.encloses(new Point(rect.x, rect.y), includeBorder) &&
+      this.encloses(new Point(rect.x + rect.width, rect.y), includeBorder) &&
+      this.encloses(new Point(rect.x, rect.y + rect.height), includeBorder) &&
+      this.encloses(
+        new Point(rect.x + rect.width, rect.y + rect.height),
+        includeBorder
+      )
+    );
+  }
+
   normalize(viewBox: Rect) {
     const newX = (this.x - viewBox.x) / viewBox.width;
     const newY = (this.y - viewBox.y) / viewBox.height;
@@ -55,5 +67,14 @@ export class BoundingBox {
 
   static fromPidPaths(pidPaths: PidPath[]): BoundingBox {
     return BoundingBox.fromRect(calculatePidPathsBoundingBox(pidPaths));
+  }
+
+  static fromPoints(startPoint: Point, endPoint: Point): BoundingBox {
+    return new BoundingBox(
+      Math.min(endPoint.x, startPoint.x),
+      Math.min(endPoint.y, startPoint.y),
+      Math.abs(endPoint.x - startPoint.x),
+      Math.abs(endPoint.y - startPoint.y)
+    );
   }
 }
