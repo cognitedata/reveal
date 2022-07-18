@@ -18,7 +18,7 @@ import { RootState } from 'src/store/rootReducer';
 import { pushMetric } from 'src/utils/pushMetric';
 import styled from 'styled-components';
 import { SaveAnnotationTemplates } from 'src/store/thunks/Annotation/SaveAnnotationTemplates';
-import isEmpty from 'lodash/isEmpty';
+import isEmpty from 'lodash-es/isEmpty';
 import {
   UnsavedVisionAnnotation,
   VisionAnnotationDataType,
