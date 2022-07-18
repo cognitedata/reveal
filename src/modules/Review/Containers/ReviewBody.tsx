@@ -121,7 +121,8 @@ const ReviewBody = (props: { file: FileInfo; prev: string | undefined }) => {
               <FileProcessStatusWrapper fileId={file.id}>
                 {({ isFileProcessing }) => {
                   return (
-                    <>
+                    // Disabling all the mouse events inside this wrapper when the file is processing using css
+                    <PreviewWrapper isFileProcessing={isFileProcessing}>
                       <ImagePreview
                         file={file}
                         onEditMode={onEditMode}
@@ -129,7 +130,7 @@ const ReviewBody = (props: { file: FileInfo; prev: string | undefined }) => {
                         scrollIntoView={scrollToItem}
                       />
                       {isFileProcessing && <PreviewProcessingOverlay />}
-                    </>
+                    </PreviewWrapper>
                   );
                 }}
               </FileProcessStatusWrapper>
@@ -253,4 +254,8 @@ const TabsContainer = styled.div`
   border-radius: 8px;
   overflow: hidden;
   box-sizing: content-box;
+`;
+
+const PreviewWrapper = styled.div<{ isFileProcessing: boolean }>`
+  pointer-events: ${(props) => (props.isFileProcessing ? 'none' : 'all')};
 `;
