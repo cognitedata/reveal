@@ -69,6 +69,7 @@ const ColorBox = styled.div<{ size: string; color: string }>`
 const Popover = styled.div`
   position: fixed;
   z-index: 2;
+  cursor: pointer;
 `;
 
 const ColorPickerCover = styled.div`

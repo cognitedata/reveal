@@ -6,9 +6,8 @@ import {
 } from 'src/modules/Review/types';
 import { ThunkConfig } from 'src/store/rootReducer';
 import { LegacyAnnotationApi } from 'src/api/annotation/legacy/legacyAnnotationApi';
-import { VisionDetectionModelType } from 'src/api/vision/detectionModels/types';
 import { getPredefinedKeypointsWithColor } from 'src/store/util/getPredefinedKeypointsWithCorrectColors';
-import { LegacyAnnotationUtils } from 'src/api/annotation/legacy/legacyAnnotationUtils';
+import { getPredefinedAnnotationColor } from 'src/utils/colorUtils';
 
 export const PopulateAnnotationTemplates = createAsyncThunk<
   PredefinedVisionAnnotations,
@@ -42,25 +41,13 @@ export const PopulateAnnotationTemplates = createAsyncThunk<
             templateAnnotation.data.color
           ),
           collectionName: templateAnnotation.text,
-          // Predefined collections created after june 2022 have color
-          // property, but old collections have color on individual keypoints
-          // This ensures backward comparability by using color from the first keypoint
-          // if collection does not have a color field.
-          color:
-            templateAnnotation.data.color ||
-            (templateAnnotation.data.keypoints?.length
-              ? templateAnnotation.data.keypoints[0].color
-              : ''),
+          color: getPredefinedAnnotationColor(templateAnnotation),
         });
       } else {
         shapes.push({
           id: templateAnnotation.id,
           lastUpdated: templateAnnotation.lastUpdatedTime,
-          color: LegacyAnnotationUtils.getAnnotationColor(
-            templateAnnotation.text,
-            VisionDetectionModelType.ObjectDetection,
-            templateAnnotation.data
-          ),
+          color: getPredefinedAnnotationColor(templateAnnotation),
           shapeName: templateAnnotation.text,
         });
       }

@@ -5,6 +5,7 @@ import {
   isAnyOf,
   PayloadAction,
 } from '@reduxjs/toolkit';
+import { getAnnotationLabelOrText } from 'src/modules/Common/Utils/AnnotationUtils/AnnotationUtils';
 import {
   clearFileState,
   deselectAllSelectionsReviewPage,
@@ -21,7 +22,7 @@ import { Status } from 'src/api/annotation/types';
 import { VisionAnnotationDataType } from 'src/modules/Common/types';
 import { VisionReviewAnnotation } from 'src/modules/Review/types';
 import { DeleteAnnotations } from 'src/store/thunks/Annotation/DeleteAnnotations';
-import { getAnnotationColor } from 'src/modules/Common/store/annotation/hooks';
+import { getAnnotationColor } from 'src/utils/colorUtils';
 
 type State = {
   fileIds: number[];
@@ -213,7 +214,11 @@ export const selectVisionReviewAnnotationsForFile = createSelector(
         annotation: ann,
         show: !hiddenAnnotationIds.includes(ann.id),
         selected: selectedAnnotationIds.includes(ann.id),
-        color: getAnnotationColor(annotationColorMap, ann),
+        color: getAnnotationColor(
+          annotationColorMap,
+          getAnnotationLabelOrText(ann),
+          ann.annotationType
+        ),
       }))
       .map((reviewAnn) => {
         if (isImageKeypointCollectionData(reviewAnn.annotation)) {

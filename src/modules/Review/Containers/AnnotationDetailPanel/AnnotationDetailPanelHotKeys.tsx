@@ -6,6 +6,7 @@ import React, {
   useRef,
 } from 'react';
 import { batch, useDispatch } from 'react-redux';
+import { annotationTypeFromCategoryTitle } from 'src/constants/annotationDetailPanel';
 import { deselectAllSelectionsReviewPage } from 'src/store/commonActions';
 import {
   selectAnnotation,
@@ -38,7 +39,6 @@ import {
   keypointSelectStatusChange,
   selectCollection,
 } from 'src/modules/Review/store/annotatorWrapper/slice';
-import { annotationTypeFromCategoryTitle } from 'src/modules/Review/Containers/AnnotationDetailPanel/utils';
 
 export const AnnotationDetailPanelHotKeys = ({
   scrollId,
