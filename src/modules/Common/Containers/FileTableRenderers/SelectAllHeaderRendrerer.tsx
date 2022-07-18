@@ -1,7 +1,7 @@
 import { SelectableTableCellRenderer } from 'src/modules/Common/types';
 import React from 'react';
 import { Button, Checkbox, Dropdown, Menu } from '@cognite/cogs.js';
-import { v4 as uuidv4 } from 'uuid';
+import { keyGenerator } from 'src/utils/keyGenerator/keyGenerator';
 
 export function SelectAllHeaderRenderer({
   column,
@@ -19,6 +19,10 @@ export function SelectAllHeaderRenderer({
       onSelectAll(!allSelected);
     }
   };
+  const columnHeaderUniqueKeyGenerator = keyGenerator({
+    prefix: 'column-header-key',
+  });
+  const columnHeaderKey = columnHeaderUniqueKeyGenerator.next().value as string;
   const pageSelected: boolean = fileIdsInCurrentPage.every((val: any) =>
     selectedIds?.includes(val)
   );
@@ -52,7 +56,7 @@ export function SelectAllHeaderRenderer({
   return (
     <Checkbox
       className="cogs-body-2"
-      name={uuidv4()}
+      name={columnHeaderKey}
       checked={column.allSelected}
       onChange={handleSelectAllFiles}
       style={{ margin: 0 }}
