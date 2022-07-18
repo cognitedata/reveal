@@ -33,7 +33,7 @@ import { BinaryHeap } from './utils/BinaryHeap';
 import { Box3Helper } from './utils/box3-helper';
 import { LRU } from './utils/lru';
 import { ModelDataProvider } from '@reveal/modeldata-api';
-import { RawStylableObject } from '../styling/StylableObject';
+import { PointCloudObjectProvider } from '../styling/PointCloudObjectProvider';
 
 export class QueueItem {
   constructor(
@@ -79,10 +79,12 @@ export class Potree implements IPotree {
   async loadPointCloud(
     baseUrl: string,
     fileName: string,
-    stylableObjects: RawStylableObject[]
+    annotationObjectInfo: PointCloudObjectProvider
   ): Promise<PointCloudOctree> {
-    const geometry = await EptLoader.load(baseUrl, fileName, this._modelDataProvider, stylableObjects);
-    return new PointCloudOctree(this, geometry);
+    const rawObjects = annotationObjectInfo.createRawObjectArray();
+
+    const geometry = await EptLoader.load(baseUrl, fileName, this._modelDataProvider, rawObjects);
+    return new PointCloudOctree(this, geometry, annotationObjectInfo);
   }
 
   updatePointClouds(pointClouds: PointCloudOctree[], camera: Camera, renderer: WebGLRenderer): IVisibilityUpdateResult {

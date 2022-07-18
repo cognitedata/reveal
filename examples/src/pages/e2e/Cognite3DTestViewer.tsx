@@ -4,8 +4,10 @@ import { AddModelOptions, Cognite3DModel, Cognite3DViewer, Cognite3DViewerOption
 import { CogniteClient } from '@cognite/sdk';
 import { isLocalUrlPointCloudModel } from '../../utils/isLocalUrlPointCloudModel';
 
+import { Mock } from 'moq.ts';
+
 type Props = {
-  viewerOptions?: Cognite3DViewerOptions;
+  viewerOptions?: Partial<Cognite3DViewerOptions>;
 
   modelUrls: string[];
   fitCameraToModel?: boolean;
@@ -37,16 +39,23 @@ export function Cognite3DTestViewer(props: Props) {
       return;
     }
 
+    const cogniteClientMock = new Mock<CogniteClient>()
+      .setup(p => p.annotations)
+      .returns(new Mock<CogniteClient['annotations']>()
+        .setup(p => p.list)
+        .returns(() => {
+          const promise = Promise.resolve({ items: [] });
+          Object.assign(promise, { autoPagingToArray: async (_arg: { limit: number }) => (await promise).items });
+          return promise as any;
+        })
+        .object());
+
     // Prepare viewer
     const options: Cognite3DViewerOptions = {
       domElement: containerRef.current,
       onLoading: (itemsLoaded, itemsRequested, itemsCulled) => setLoadingState({ itemsLoaded, itemsRequested, itemsCulled }),
       // Note! Pure fake - we will not contact CDF during our tests
-      sdk: new CogniteClient({
-        appId: 'reveal-visual-tests',
-        project: 'dummy',
-        getToken: async () => 'dummy'
-      }),
+      sdk: cogniteClientMock.object(),
       // Instruct viewer to load models from local storage
       // @ts-expect-error
       _localModels: true,

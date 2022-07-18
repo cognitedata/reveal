@@ -464,7 +464,7 @@
   version "0.0.0"
   uid ""
 
-"@cognite/sdk-core@^4.4.0", "@cognite/sdk-core@^4.5.0":
+"@cognite/sdk-core@^4.5.0":
   version "4.5.0"
   resolved "https://registry.yarnpkg.com/@cognite/sdk-core/-/sdk-core-4.5.0.tgz#d93c128f552aed124128345adc8f35ce1cbba3a5"
   integrity sha512-HwurP2XfkTQcPgKI5R+90i5vpRNI2EyZf7Qvvauw5VCXmn7iOgOgEJD1BaXCmP/Oz280VySPBwhSLih/6Ffbvg==
@@ -474,30 +474,6 @@
     lodash "^4.17.11"
     query-string "^5.1.1"
     url "^0.11.0"
-
-"@cognite/sdk-core@^4.5.1":
-  version "4.5.1"
-  resolved "https://registry.yarnpkg.com/@cognite/sdk-core/-/sdk-core-4.5.1.tgz#c27a0cb28c04253f5fd45eb6deee06bc69a277f3"
-  integrity sha512-1ugoguRpokJHsm9wC6lsNXWsiAPnC5ArqhZVfBR7Bs1yigUlSlmkOpJf19D9xkiBzHHM3KfUrL2hcKQG7Bmpjw==
-  dependencies:
-    cross-fetch "^3.0.4"
-    is-buffer "^2.0.5"
-    lodash "^4.17.11"
-    query-string "^5.1.1"
-    url "^0.11.0"
-
-"@cognite/sdk-playground@link:../viewer/node_modules/@cognite/sdk-playground":
-  version "0.0.0"
-  uid ""
-
-"@cognite/sdk@^7.6.1":
-  version "7.7.1"
-  resolved "https://registry.yarnpkg.com/@cognite/sdk/-/sdk-7.7.1.tgz#a6fa64414127b32a55d36869f329507d86f4b049"
-  integrity sha512-RoG4KBB3niTv2TlfcC7g9cvPfpKWSfHmg6WvFlt1NlkOrfsMyKFZVmScZV8eAuqipUXJbhRgBPAUYVvSup9X1Q==
-  dependencies:
-    "@cognite/sdk-core" "^4.5.1"
-    geojson "^0.5.0"
-    lodash "^4.17.11"
 
 "@cognite/sdk@link:../viewer/node_modules/@cognite/sdk":
   version "0.0.0"
@@ -5263,6 +5239,13 @@ mkdirp@^1.0.3, mkdirp@^1.0.4:
   resolved "https://registry.yarnpkg.com/mkdirp/-/mkdirp-1.0.4.tgz#3eb5ed62622756d79a5f0e2a221dfebad75c2f7e"
   integrity sha512-vVqVZQyf3WLx2Shd0qJ9xuvqgAyKPLAiqITEtqW0oIUjzo3PePDd6fW9iFz30ef7Ysp/oiWqbhszeGWW2T6Gzw==
 
+moq.ts@^9.0.2:
+  version "9.0.2"
+  resolved "https://registry.yarnpkg.com/moq.ts/-/moq.ts-9.0.2.tgz#bd792fe4267bb0a6836ae3b635f5bd4aaf3f23ff"
+  integrity sha512-Xd8SURuhG0V2uPtNelc5L6Zt6zHrAgOKd9RmDOOO7iRvNYcYAD9Ph69vNMdMjyH5dTBtzjGG3lHzsbg0u4YO9A==
+  dependencies:
+    tslib "2.3.1"
+
 ms@2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/ms/-/ms-2.0.0.tgz#5608aeadfc00be6c2901df5f9861788de0d597c8"
@@ -6920,6 +6903,11 @@ ts-loader@^9.3.1:
     enhanced-resolve "^5.0.0"
     micromatch "^4.0.0"
     semver "^7.3.4"
+
+tslib@2.3.1:
+  version "2.3.1"
+  resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.3.1.tgz#e8a335add5ceae51aa261d32a490158ef042ef01"
+  integrity sha512-77EbyPPpMz+FRFRuAFlWMtmgUWGe9UOG2Z25NqCwiIjRhOf5iKGuzSe5P2w1laq+FkRy4p+PCuVkJSGkzTEKVw==
 
 tslib@^2.0.3, tslib@^2.1.0:
   version "2.4.0"

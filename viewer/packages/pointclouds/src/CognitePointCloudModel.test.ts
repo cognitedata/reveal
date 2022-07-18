@@ -12,7 +12,7 @@ describe(CognitePointCloudModel.name, () => {
     model = createPointCloudModel(1, 2);
   });
 
-  test('Default CognitePointCloudModel does not contain annotations', () => {
-    expect(model.stylableObjects).toHaveLength(0);
+  test('default CognitePointCloudModel does not contain annotations', () => {
+    expect(model.stylableObjectCount).toEqual(0);
   });
 });

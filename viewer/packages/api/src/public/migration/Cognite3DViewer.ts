@@ -235,7 +235,8 @@ export class Cognite3DViewer {
       this._revealManagerHelper = RevealManagerHelper.createLocalHelper(
         this._renderer,
         this._sceneHandler,
-        revealOptions
+        revealOptions,
+        options.sdk
       );
     } else if (options.customDataSource !== undefined) {
       this._dataSource = options.customDataSource;
@@ -243,7 +244,8 @@ export class Cognite3DViewer {
         this._renderer,
         this._sceneHandler,
         revealOptions,
-        options.customDataSource
+        options.customDataSource,
+        options.sdk
       );
     } else {
       // CDF - default mode
@@ -253,8 +255,7 @@ export class Cognite3DViewer {
         this._renderer,
         this._sceneHandler,
         revealOptions,
-        options.sdk,
-        options.sdkPlayground
+        options.sdk
       );
     }
 

@@ -51,6 +51,10 @@ export const visualTests: VisualTest[] = [
     category: 'pointcloud'
   },
   {
+    testKey: 'color-styling',
+    category: 'pointcloud'
+  },
+  {
     testKey: 'default-cognite3dviewer-v8',
     category: 'cad'
   },

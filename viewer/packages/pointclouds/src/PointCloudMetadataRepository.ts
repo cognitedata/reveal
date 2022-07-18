@@ -44,6 +44,7 @@ export class PointCloudMetadataRepository implements MetadataRepository<Promise<
       formatVersion: output.version,
       modelBaseUrl,
       modelMatrix,
+      modelIdentifier,
       cameraConfiguration: transformCameraConfiguration(cameraConfiguration, modelMatrix),
       scene
     };

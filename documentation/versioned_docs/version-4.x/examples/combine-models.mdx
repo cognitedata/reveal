@@ -1,0 +1,91 @@
+---
+id: combine-models
+title: Combining multiple models
+description: Load multiple models in the same viewer and apply transformation to correctly place the models
+---
+
+`Cognite3DViewer` supports combining multiple CAD- and point cloud-models into one view and lets
+users interact with them as if they were one model. This is done by simply adding multiple models
+using `Cognite3DViewer.addModel`, `Cognite3DViewer.addCadModel` or `Cognite3DViewer.addPointCloudModel`.
+
+import { DemoWrapper } from '@site/versioned_docs/version-4.x/components/DemoWrapper';
+
+<DemoWrapper name="Cognite3DViewerDemo" />
+
+## Modify coordinate systems
+
+In many cases, it will be necessary to apply some transformation to the models to make them be in the same
+coordinate system. This can be done using `setModelTransformation` with a [`THREE.Matrix4`](https://threejs.org/docs/#api/en/math/Matrix4)
+representing the transformation. Note that each 3D model stored in Cognite Data Fusion will have an associated
+model transformation that is loaded when the model is added. When updating `setModelTransformation` this model transformation
+should also be applied to ensure that the axis system is correct.
+
+The following example shows how to modify the coordinate system of a point cloud model to make it fit with a CAD model.
+
+```js runnable-4x
+async function updateModelTransformation() {
+  const pointCloudModel = await viewer.addModel({
+    modelId: 5564365369975452 ,
+    revisionId: 2817572261344477,
+  })
+
+  // Retrieve default transformation
+  const modelTransformation = pointCloudModel.getModelTransformation();
+  // Apply translation
+  const translation = new THREE.Matrix4().makeTranslation(140, 75, -110);
+  modelTransformation.multiply(translation);
+  // Update model transformation
+  pointCloudModel.setModelTransformation(modelTransformation);
+
+  viewer.fitCameraToModel(pointCloudModel);
+}
+
+updateModelTransformation();
+```
+
+## Use geometry filters to extract parts of a model
+
+Geometry filters allows only loading geometry within a specified box. By loading the same model with different geometry
+filters, several subsections of the same model can be loaded in the same viewer.
+
+```js runnable-4x
+viewer.models.forEach(x => viewer.removeModel(x));
+
+async function addFilteredModel(box) {
+  const model = await viewer.addModel({
+    modelId: 3356984403684032,
+    revisionId: 6664823881595566,
+    geometryFilter: {
+      boundingBox: box,
+      isBoundingBoxInModelCoordinates: true
+    }
+  });
+  return model;
+}
+
+const center = new THREE.Vector3(100, 25, -75);
+const sliceOffset = new THREE.Vector3(0, 20, 0);
+const sliceSize = new THREE.Vector3(100, 10, 100);
+
+const sliceColors = [
+  [200, 0, 0],
+  [0, 200, 0],
+  [0, 0, 200],
+  [200, 200, 0],
+  [200, 0, 200]
+]
+for (let i = 0; i < 5; i++) {
+  const sliceCenter = sliceOffset.clone().multiplyScalar(i).add(center);
+  const sliceBounds = new THREE.Box3().setFromCenterAndSize(sliceCenter, sliceSize);
+  const sliceColor = [...sliceColors[i]];
+
+  addFilteredModel(sliceBounds).then(model => {
+    model.setDefaultNodeAppearance({ color: sliceColor });
+  });
+}
+```
+
+:::note 
+Geometry filters should not overlap as this will cause the same geometry to be loaded and 
+visualized more than once.
+:::

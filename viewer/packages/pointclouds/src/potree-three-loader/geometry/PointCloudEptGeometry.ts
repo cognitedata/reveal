@@ -7,6 +7,7 @@
 import * as THREE from 'three';
 
 import { EptBinaryLoader } from '../loading/EptBinaryLoader';
+import { EptJson, EptSchemaEntry } from '../loading/EptJson';
 
 import { PointCloudEptGeometryNode } from './PointCloudEptGeometryNode';
 import { IPointCloudTreeGeometry } from './IPointCloudTreeGeometry';
@@ -15,14 +16,6 @@ import proj4 from 'proj4';
 import { ModelDataProvider } from '@reveal/modeldata-api';
 import { toVector3, toBox3 } from './translationUtils';
 import { RawStylableObject } from '../../styling/StylableObject';
-
-type EptSchemaEntry = {
-  name: string;
-  type: 'signed' | 'unsigned' | 'float';
-  size: number;
-  scale: number;
-  offset: number;
-};
 
 function findDim(schema: EptSchemaEntry[], name: string): EptSchemaEntry {
   const dim = schema.find(dim => dim.name == name);
@@ -96,7 +89,11 @@ export class PointCloudEptGeometry implements IPointCloudTreeGeometry {
     return this._eptOffset;
   }
 
-  constructor(url: string, info: any, dataLoader: ModelDataProvider, stylableObjects: RawStylableObject[]) {
+  constructor(url: string, info: EptJson, dataLoader: ModelDataProvider, stylableObjects: RawStylableObject[]) {
+    if (info.dataType !== 'binary') {
+      throw new Error('Could not read data type: ' + info.dataType);
+    }
+
     const schema = info.schema;
     const bounds = info.bounds;
     const boundsConforming = info.boundsConforming;
@@ -121,7 +118,7 @@ export class PointCloudEptGeometry implements IPointCloudTreeGeometry {
       this._projection = info.srs.authority + ':' + info.srs.horizontal;
     }
 
-    if (info.srs.wkt) {
+    if (info.srs?.wkt) {
       if (!this._projection) this._projection = info.srs.wkt;
     }
 
@@ -137,10 +134,6 @@ export class PointCloudEptGeometry implements IPointCloudTreeGeometry {
     }
 
     this._spacing = (this._boundingBox.max.x - this._boundingBox.min.x) / this._span;
-
-    if (info.dataType !== 'binary') {
-      throw new Error('Could not read data type: ' + info.dataType);
-    }
 
     this._loader = new EptBinaryLoader(dataLoader, stylableObjects);
   }
