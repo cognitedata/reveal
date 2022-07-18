@@ -37,4 +37,13 @@ describe('BoundingBox', () => {
     expect(midPoint.x).toBeCloseTo(5);
     expect(midPoint.y).toBeCloseTo(15);
   });
+
+  test('pad', async () => {
+    const paddedBoundingBox = new BoundingBox(0, 10, 10, 20).pad(2);
+
+    expect(paddedBoundingBox.x).toBeCloseTo(-2);
+    expect(paddedBoundingBox.y).toBeCloseTo(8);
+    expect(paddedBoundingBox.width).toBeCloseTo(14);
+    expect(paddedBoundingBox.height).toBeCloseTo(24);
+  });
 });

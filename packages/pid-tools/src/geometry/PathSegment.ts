@@ -1,3 +1,5 @@
+import clamp from 'lodash/clamp';
+
 import { Rect } from '../types';
 
 import { Point } from './Point';
@@ -108,7 +110,10 @@ export abstract class PathSegment {
     };
   };
 
-  getClosestPointOnSegment(point: Point): ClosestPointOnSegment {
+  getClosestPointOnSegment(
+    point: Point,
+    clampOnSegment = true
+  ): ClosestPointOnSegment {
     // Note: This does not work properly on Curve segments curently
     // Based on: https://stackoverflow.com/a/6853926
     const A = point.x - this.start.x;
@@ -123,7 +128,9 @@ export abstract class PathSegment {
       percentAlongPath = dot / lenSq;
     }
 
-    percentAlongPath = Math.min(1, Math.max(percentAlongPath, 0));
+    if (clampOnSegment) {
+      percentAlongPath = clamp(percentAlongPath, 0, 1);
+    }
     const pointOnSegment = this.getPointOnSegment(percentAlongPath);
     const distance = pointOnSegment.distance(point);
     return { pointOnSegment, percentAlongPath, distance };

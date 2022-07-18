@@ -194,12 +194,11 @@ export class PidDocument {
     const svgString: string[] = [];
     svgString.push(`<?xml version="1.0" encoding="UTF-8" standalone="no"?>\n`);
 
-    const bBox = calculatePidPathsBoundingBox(this.pidPaths);
     svgString.push(`<svg
   xmlns="http://www.w3.org/2000/svg"
-  viewBox="${bBox.x.toFixed(2)} ${bBox.y.toFixed(2)} ${bBox.height.toFixed(
+  viewBox="${this.viewBox.x.toFixed(2)} ${this.viewBox.y.toFixed(
       2
-    )} ${bBox.width.toFixed(2)}">
+    )} ${this.viewBox.height.toFixed(2)} ${this.viewBox.width.toFixed(2)}">
 `);
 
     this.pidPaths.forEach((pidPath) => {

@@ -1,4 +1,6 @@
 /* eslint-disable no-continue */
+import min from 'lodash/min';
+
 import { isLineSegment } from '../utils';
 import {
   AUTO_ANALYSIS_DISTANCE_THRESHOLD_ISO,
@@ -12,7 +14,11 @@ import {
   DiagramSymbolInstance,
   DiagramType,
 } from '../types';
-import { EdgePoint, getClosestPointsOnSegments } from '../geometry';
+import {
+  BoundingBox,
+  EdgePoint,
+  getClosestPointsOnSegments,
+} from '../geometry';
 
 export const findConnectionsByTraversal = (
   symbolInstances: DiagramSymbolInstance[],
@@ -45,24 +51,11 @@ export const findConnectionsByTraversal = (
     }
     hasVisited.push(potentialInstance);
 
-    let closePidGroups: PidInstance[];
-    if (potentialInstance.isLine) {
-      closePidGroups = getClosePidInstances(
-        allInstances,
-        potentialInstance,
-        diagramType
-      );
-    } else {
-      // FIX: We don't try to find connections from symbol instances to symbol instances since this may
-      //      introduce false positives (for instance when two caps connect to the same point on a line).
-      //      A more sophisticated logic that makes sure a symbol instnace only has one connection in
-      //      a given direction is left as an exercise to the reader.
-      closePidGroups = getClosePidInstances(
-        linesToVisit,
-        potentialInstance,
-        diagramType
-      );
-    }
+    const closePidGroups = getClosePidInstances(
+      potentialInstance,
+      allInstances,
+      diagramType
+    );
 
     closePidGroups.forEach((closePidGroup) => {
       if (potentialInstance.id !== closePidGroup.id) {
@@ -196,9 +189,38 @@ const getCloseWithLineJumps = (
   return closeInstances;
 };
 
-export const getClosePidInstances = (
+const getCloseForSymbols = (
+  symbol: PidInstance,
   pidInstances: PidInstance[],
+  threshold: number
+) => {
+  const smallSymbolBoundingBox = BoundingBox.fromRect(symbol.boundingBox).pad(
+    -(1 / 5) * min([symbol.boundingBox.width, symbol.boundingBox.height])!
+  );
+
+  return pidInstances.filter((pidInstance) => {
+    if (pidInstance.isLine) {
+      if (!symbol.isClose(pidInstance, 2 * threshold)) return false;
+
+      const pointsTowardSymbol = pidInstance
+        .getPathSegments()
+        .some((pathSegment) =>
+          smallSymbolBoundingBox.encloses(
+            pathSegment.getClosestPointOnSegment(symbol.midPoint, false)
+              .pointOnSegment
+          )
+        );
+
+      return pointsTowardSymbol;
+    }
+
+    return symbol.isClose(pidInstance, threshold);
+  });
+};
+
+export const getClosePidInstances = (
   instance: PidInstance,
+  pidInstances: PidInstance[],
   diagramType: DiagramType
 ) => {
   const threshold =
@@ -206,9 +228,12 @@ export const getClosePidInstances = (
       ? AUTO_ANALYSIS_DISTANCE_THRESHOLD_PID
       : AUTO_ANALYSIS_DISTANCE_THRESHOLD_ISO;
 
-  if (instance.isLine && instance.getPathSegments().length === 1) {
+  if (instance.isLine && instance.getPathSegments().length === 1)
     return getCloseWithLineJumps(instance, pidInstances, threshold);
-  }
+
+  if (!instance.isLine)
+    return getCloseForSymbols(instance, pidInstances, threshold);
+
   return pidInstances.filter((pidGroup) =>
     instance.isClose(pidGroup, threshold)
   );

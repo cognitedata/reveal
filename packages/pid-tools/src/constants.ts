@@ -6,9 +6,9 @@ export const T_JUNCTION = 'tjunction';
 
 const TYPICAL_DOCUMENT_WIDTH = 1632;
 export const T_JUNCTION_SIZE = 2; // fix: Normalize
-export const AUTO_ANALYSIS_DISTANCE_THRESHOLD_PID = 1; // fix: Normalize
-export const AUTO_ANALYSIS_LINE_JUMP_THRESHOLD = 30; // fix: Normalize
+export const AUTO_ANALYSIS_DISTANCE_THRESHOLD_PID = 2; // fix: Normalize
 export const AUTO_ANALYSIS_DISTANCE_THRESHOLD_ISO = 2; // fix: Normalize
+export const AUTO_ANALYSIS_LINE_JUMP_THRESHOLD = 30; // fix: Normalize
 export const AUTO_ANALYSIS_LABEL_THRESHOLD_PID = 10 / TYPICAL_DOCUMENT_WIDTH;
 export const AUTO_ANALYSIS_LABEL_THRESHOLD_ISO = 40 / TYPICAL_DOCUMENT_WIDTH;
 export const AUTO_ANALYSIS_LINE_CONNECTION_TAG_THRESHOLD =

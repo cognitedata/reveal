@@ -61,6 +61,15 @@ export class BoundingBox {
     return this.midPoint().distance(other.midPoint());
   }
 
+  pad(padding: number): BoundingBox {
+    return new BoundingBox(
+      this.x - padding,
+      this.y - padding,
+      this.width + 2 * padding,
+      this.height + 2 * padding
+    );
+  }
+
   static fromRect(rect: Rect): BoundingBox {
     return new BoundingBox(rect.x, rect.y, rect.width, rect.height);
   }

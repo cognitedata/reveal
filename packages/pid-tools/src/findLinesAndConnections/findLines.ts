@@ -29,7 +29,10 @@ export const detectLines = (
 
   const potLineSegmentsWithConnections = potentialLineInstanceList.filter(
     (line) =>
-      connections.some((con) => line.id === con.end || line.id === con.start)
+      connections.some(
+        (connection) =>
+          line.id === connection.end || line.id === connection.start
+      )
   );
 
   potLineSegmentsWithConnections.forEach((newPotLine) => {

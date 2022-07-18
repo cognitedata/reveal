@@ -21,7 +21,7 @@ import {
   applyPathReplacementInSvg,
   removePathReplacementFromSvg,
 } from './utils/pathReplacementUtils';
-import { PidDocumentWithDom } from './pid';
+import { PidDocument, PidDocumentWithDom } from './pid';
 import {
   applyStyleToNode,
   isSymbolInstance,
@@ -404,6 +404,16 @@ export class CognitePid {
     );
   }
 
+  private logPathIdsAsSvgString(pathIds: string[]) {
+    console.log(
+      new PidDocument(
+        pathIds.map((pathId) => this.pidDocument!.getPidPathById(pathId)!),
+        [],
+        this.pidDocument!.viewBox
+      ).toSvgString()
+    );
+  }
+
   private setSymbolSelection(pathIds: string[], applyStyles = true) {
     const possiblyChangedPathIds = xor(pathIds, this.symbolSelection);
     this.symbolSelection = pathIds;
@@ -417,6 +427,8 @@ export class CognitePid {
     if (applyStyles) {
       possiblyChangedPathIds.forEach((id) => this.applyStyleToNodeId(id));
     }
+
+    // logSelectedSymbols(pathIds);
   }
 
   onChangeSymbolSelection(callback: PathIdsCallback) {
