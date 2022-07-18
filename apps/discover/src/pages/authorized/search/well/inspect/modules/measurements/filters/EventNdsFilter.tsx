@@ -29,7 +29,7 @@ export const EventNdsFilter: React.FC<Props> = ({
       onValueChange={(values) => onChange(values as any)}
       selectedOptions={selectedEvents}
       options={events}
-      width={150}
+      width={190}
       viewMode="submenu"
     />
   );

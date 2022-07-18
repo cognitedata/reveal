@@ -77,6 +77,7 @@ export const WellCentricCard: React.FC<Props> = ({
   onToggle,
 }) => {
   const scaleRef = useRef<HTMLElement | null>(null);
+
   const legendsHolderRef = React.useRef<HTMLDivElement>(null);
 
   const wellboreIds = useWellInspectSelectedWellboreIds();
@@ -202,7 +203,7 @@ export const WellCentricCard: React.FC<Props> = ({
         />
       </Content>
 
-      <Footer>
+      <Footer width={scaleRef.current?.clientWidth}>
         <LegendsHolder expanded={showAll} ref={legendsHolderRef}>
           {uniqueBy(filterByMainChartType(chartData), (row) => {
             const [curveDisplayName] = row.customdata as string[];

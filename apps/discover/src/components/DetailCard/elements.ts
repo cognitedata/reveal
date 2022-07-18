@@ -1,4 +1,4 @@
-import styled from 'styled-components/macro';
+import styled, { css } from 'styled-components/macro';
 import layers from 'utils/zindex';
 
 import { Flex, FlexColumn, FlexRow, sizes } from 'styles/layout';
@@ -26,9 +26,21 @@ export const DetailCardBlock = styled(FlexColumn)`
   background: var(--cogs-greyscale-grey1);
   border-radius: 8px;
   min-width: 130px;
-  width: 80px;
+  width: 165px;
   height: fit-content;
-  ${(props: any) => props.flex && `flex: 1;`}
+  flex: 1;
+  ${(props: any) =>
+    props.flex &&
+    css`
+      flex: 2;
+      width: 100%;
+    `}
+`;
+
+export const DetailCardMain = styled(FlexRow)`
+  gap: 12px;
+  align-items: center;
+  flex: 50%;
 `;
 
 export const DetailCardBlockHeader = styled(Flex)`
@@ -54,10 +66,4 @@ export const DetailCardColor = styled.div`
   max-height: 12px;
   border: 2px solid rgba(64, 64, 64, 0.04);
   border-radius: 4px;
-`;
-
-export const DetailCardMain = styled(FlexRow)`
-  gap: 12px;
-  align-items: center;
-  flex: 1;
 `;

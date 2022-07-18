@@ -17,6 +17,7 @@ export const RiskTypeFilter: React.FC<RiskTypeFilterProps> = ({
       options={riskTypesAndSubtypes}
       selectedOptions={appliedRiskTypesAndSubtypes}
       onValueChange={onChangeRiskType}
+      boldTitle
     />
   );
 };

@@ -42,12 +42,14 @@ export const MultiSelectCategorized: React.FC<MultiSelectCategorizedProps> = ({
   selectedOptions: selectedOptionsProp,
   title,
   placeholder,
+  renderCategoryHelpText,
   onValueChange,
   enableSelectAll = true,
   selectAllLabel = DEFAULT_SELECT_ALL_LABEL,
   extraLabels = {},
   width,
   viewMode,
+  boldTitle,
 }) => {
   const multiSelectCategorizedRef = useRef<HTMLElement>(null);
 
@@ -180,6 +182,7 @@ export const MultiSelectCategorized: React.FC<MultiSelectCategorizedProps> = ({
               viewMode={viewMode}
               selectedOptions={selectedOptions[category]}
               onValueChange={handleValueChange}
+              renderCategoryHelpText={renderCategoryHelpText}
             />
           );
         })}
@@ -231,10 +234,9 @@ export const MultiSelectCategorized: React.FC<MultiSelectCategorizedProps> = ({
           iconPlacement="right"
           $focused={dropdownVisible}
           onClick={() => setDropdownVisible((prevState) => !prevState)}
+          boldTitle={boldTitle}
         >
-          <Body level={2} strong>
-            {title}:
-          </Body>
+          <Body level={2}>{title}:</Body>
           <DropdownValue $placeholder={!isAnySelected}>
             {dropdownValue}
           </DropdownValue>

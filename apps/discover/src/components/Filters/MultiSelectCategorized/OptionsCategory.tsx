@@ -11,7 +11,14 @@ import { DropdownMenuOptions } from './views/DropdownMenuOptions';
 export const OptionsCategory: React.FC<
   OptionsCategoryProps<MultiSelectOptionType>
 > = React.memo(
-  ({ category, options, selectedOptions, onValueChange, viewMode }) => {
+  ({
+    category,
+    options,
+    selectedOptions,
+    renderCategoryHelpText,
+    onValueChange,
+    viewMode,
+  }) => {
     const handleChangeCategory = (isSelected: boolean) => {
       onValueChange({
         category,
@@ -51,6 +58,7 @@ export const OptionsCategory: React.FC<
           selectedOptions={selectedOptions}
           onChangeOption={handleChangeOption}
           onChangeCategory={handleChangeCategory}
+          renderCategoryHelpText={renderCategoryHelpText}
         />
       );
     }

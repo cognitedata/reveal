@@ -1,3 +1,5 @@
+import React from 'react';
+
 import { OptionType } from '@cognite/cogs.js';
 
 import { ExtraLabels } from '../interfaces';
@@ -29,11 +31,14 @@ export interface MultiSelectCategorizedProps {
   extraLabels?: ExtraLabels;
   width?: number;
   viewMode?: MultiSelectCategorizedViewMode;
+  renderCategoryHelpText?: (nptCode: string) => React.ReactNode;
+  boldTitle?: boolean;
 }
 
 export interface OptionsCategoryProps<ValueType>
   extends CategorizedOptionType<ValueType> {
   selectedOptions?: OptionType<MultiSelectOptionType>[];
+  renderCategoryHelpText?: (nptCode: string) => React.ReactNode;
   onValueChange: ({
     category,
     options,
@@ -60,4 +65,5 @@ export type DropdownViewOption = Omit<
     isSelected: boolean
   ) => void;
   onChangeCategory: (isSelected: boolean) => void;
+  renderCategoryHelpText?: (nptCode: string) => React.ReactNode;
 };
