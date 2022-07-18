@@ -41,7 +41,9 @@ export class CdfPointCloudFactory implements PointCloudFactory {
     }
 
     if (geometry.cylinder) {
-      return new Cylinder(geometry.cylinder.centerA, geometry.cylinder.centerB, geometry.cylinder.radius);
+      return new Cylinder(new THREE.Vector3().fromArray(geometry.cylinder.centerA),
+                          new THREE.Vector3().fromArray(geometry.cylinder.centerB),
+                          geometry.cylinder.radius);
     }
 
     throw Error('Annotation geometry type not recognized');
