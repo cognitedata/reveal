@@ -122,7 +122,8 @@ export class MetricsLogger {
   }
 
   private static readonly trackCadNodeTransformOverriddenVars = {
-    zeroVector: new THREE.Vector3(),
+    zeroVector: new THREE.Vector3(1, 1, 1),
+    oneVector: new THREE.Vector3(0, 0, 0),
     identityRotation: new THREE.Quaternion().identity(),
 
     translation: new THREE.Vector3(),
@@ -142,13 +143,13 @@ export class MetricsLogger {
   );
 
   private static trackCadNodeTransformOverriddenImpl(nodeCount: number, matrix: THREE.Matrix4): void {
-    const { zeroVector, identityRotation, translation, scale, rotation } =
+    const { zeroVector, oneVector, identityRotation, translation, scale, rotation } =
       MetricsLogger.trackCadNodeTransformOverriddenVars;
     matrix.decompose(translation, rotation, scale);
 
     const hasTranslation = translation.distanceToSquared(zeroVector) > 1e-8;
     const hasRotation = Math.abs(rotation.dot(identityRotation)) > 1e-5;
-    const hasScale = scale.distanceToSquared(zeroVector) > 1e-8;
+    const hasScale = scale.distanceToSquared(oneVector) > 1e-8;
     MetricsLogger.trackEvent('cadNodeTransformOverridden', {
       nodeCount,
       hasTranslation,
