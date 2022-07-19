@@ -224,8 +224,9 @@ describe('Wells: NPT Events Table view', () => {
       .invoke('text')
       .then((selectedCode) => {
         cy.findAllByTestId('table-cell-expanded')
+          .findAllByTestId('npt-events-table')
           .findAllByTestId('table-cell')
-          .eq(14)
+          .eq(1)
           .invoke('text')
           .then((valInCell) => {
             expect(valInCell).eql(selectedCode);
@@ -260,8 +261,9 @@ describe('Wells: NPT Events Table view', () => {
       .invoke('text')
       .then((selectedCode) => {
         cy.findAllByTestId('table-cell-expanded')
+          .findAllByTestId('npt-events-table')
           .findAllByTestId('table-cell')
-          .eq(15)
+          .eq(2)
           .invoke('text')
           .then((valInCell) => {
             expect(valInCell).eql(selectedCode);
