@@ -146,10 +146,18 @@ export class MetricsLogger {
       MetricsLogger.trackCadNodeTransformOverriddenVars;
     matrix.decompose(translation, rotation, scale);
 
-    const hasTranslation = translation.distanceToSquared(zeroVector) < 1e-8;
-    const hasRotation = Math.abs(rotation.dot(identityRotation)) < 1e-5;
-    const hasScale = scale.distanceToSquared(zeroVector) < 1e-8;
-    MetricsLogger.trackEvent('cadNodeTransformOverridden', { nodeCount, hasTranslation, hasRotation, hasScale });
+    const hasTranslation = translation.distanceToSquared(zeroVector) > 1e-8;
+    const hasRotation = Math.abs(rotation.dot(identityRotation)) > 1e-5;
+    const hasScale = scale.distanceToSquared(zeroVector) > 1e-8;
+    MetricsLogger.trackEvent('cadNodeTransformOverridden', {
+      nodeCount,
+      hasTranslation,
+      hasRotation,
+      hasScale,
+      tx: translation.x,
+      ty: translation.y,
+      tz: translation.z
+    });
   }
 
   /**
