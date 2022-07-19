@@ -7,7 +7,7 @@ import {
   ReviewKeypoint,
   TempKeypointCollection,
 } from 'src/modules/Review/types';
-import { getAnnotationColorFromColorKey } from 'src/modules/Common/store/annotation/hooks';
+import { getAnnotationColorFromColorKey } from 'src/utils/colorUtils';
 
 /**
  * Selects next predefined shape based on last shape annotation created

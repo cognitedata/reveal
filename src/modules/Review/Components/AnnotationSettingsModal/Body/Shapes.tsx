@@ -1,13 +1,15 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Input } from 'antd';
+import { ColorsPersonDetection } from 'src/constants/Colors';
 import { ColorPicker } from 'src/modules/Common/Components/ColorPicker/ColorPicker';
 import {
   getRandomColor,
   validNewShapes,
 } from 'src/modules/Review/Components/AnnotationSettingsModal/AnnotationSettingsUtils';
+import { isSensitiveAnnotationLabel } from 'src/utils/textUtils';
 import styled from 'styled-components';
 import { Body, Button, Tooltip } from '@cognite/cogs.js';
-import { NO_EMPTY_LABELS_MESSAGE } from 'src/constants/AnnotationSettings';
+import { NO_EMPTY_LABELS_MESSAGE } from 'src/constants/annotationSettingsConstants';
 import { renderEmptyAnnotationMessage } from 'src/modules/Review/Components/AnnotationSettingsModal/Body/EmptyAnnotationInfo';
 import isEmpty from 'lodash-es/isEmpty';
 import { PredefinedShape } from 'src/modules/Review/types';
@@ -76,7 +78,11 @@ export const Shapes = ({
     setNewShapes({ ...newShapesTemp });
   };
   const onFinish = () => {
-    const newShapesTemp = Object.keys(newShapes).map((key) => newShapes[key]);
+    const newShapesTemp = Object.keys(newShapes).map((key) =>
+      isSensitiveAnnotationLabel(newShapes[key].shapeName)
+        ? { ...newShapes[key], color: ColorsPersonDetection.color }
+        : newShapes[key]
+    );
     if (newShapesTemp.length > 0) {
       const newShape = newShapesTemp[0];
       const duplicates = allShapes.find(
@@ -175,13 +181,19 @@ export const Shapes = ({
                   updateCaption(key, value);
                 }}
               />
-              <ColorPicker
-                size="28px"
-                color={newShapes[key].color}
-                onChange={(newColor: string) => {
-                  updateColor(key, newColor);
-                }}
-              />
+              {isSensitiveAnnotationLabel(newShapes[key].shapeName) ? (
+                <Tooltip content="color picker is disabled for sensitive labels">
+                  <ColorBox color={ColorsPersonDetection.color} />
+                </Tooltip>
+              ) : (
+                <ColorPicker
+                  size="28px"
+                  color={newShapes[key].color}
+                  onChange={(newColor: string) => {
+                    updateColor(key, newColor);
+                  }}
+                />
+              )}
             </>
             <Button
               icon="Delete"

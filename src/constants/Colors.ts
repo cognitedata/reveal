@@ -27,3 +27,6 @@ export const StatusColors = {
   running: 'rgb(235, 155, 0)',
   failed: 'rgb(229, 59, 56)',
 };
+
+export const HEX_COLOR_CODE_REGEX =
+  /^((0x){0,1}|#{0,1})([0-9a-f]{8}|[0-9a-f]{6})$/g;

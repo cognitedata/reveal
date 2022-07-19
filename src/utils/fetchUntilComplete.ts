@@ -1,4 +1,4 @@
-import noop from 'lodash/noop';
+import noop from 'lodash-es/noop';
 
 type Options<T> = {
   /* check data to see if there is no calls needed */

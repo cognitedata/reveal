@@ -1,6 +1,6 @@
 import { NewKeypoints } from 'src/modules/Review/Components/AnnotationSettingsModal/types';
 import { PredefinedShape } from 'src/modules/Review/types';
-import isEmpty from 'lodash/isEmpty';
+import isEmpty from 'lodash-es/isEmpty';
 
 const hsvToRgb = (h: number, s: number, v: number) => {
   let r = 0;
