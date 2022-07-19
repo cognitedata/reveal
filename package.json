@@ -15,7 +15,7 @@
     "deploy": "./scripts/deploy.sh"
   },
   "dependencies": {
-    "@azure/msal-browser": "^2.22.0",
+    "@azure/msal-browser": "2.11.0",
     "@babel/runtime": "^7.16.7",
     "@cognite/cogs.js": "7.5.0",
     "@cognite/comment-service-types": "^0.0.7",
@@ -399,6 +399,7 @@
     "@types/react-custom-scrollbars/@types/react": "18.0.9",
     "@types/react-virtualized/@types/react": "18.0.9",
     "@types/react-table/@types/react": "18.0.9",
-    "@cognite/cogs.js/@types/react": "18.0.9"
+    "@cognite/cogs.js/@types/react": "18.0.9",
+    "@cognite/sdk-core/@azure/msal-browser": "2.11.0"
   }
 }
