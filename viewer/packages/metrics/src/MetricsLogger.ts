@@ -8,6 +8,7 @@ import log from '@reveal/logger';
 
 import { TrackedEvents, EventProps } from './types';
 import throttle from 'lodash/throttle';
+import { setMaxListeners } from 'events';
 
 /**
  * Source: https://stackoverflow.com/a/2117523/167251
@@ -156,7 +157,13 @@ export class MetricsLogger {
       hasScale,
       tx: translation.x,
       ty: translation.y,
-      tz: translation.z
+      tz: translation.z,
+      rx: rotation.x,
+      ry: rotation.y,
+      rz: rotation.z,
+      rw: rotation.w,
+      sx: scale.x,
+      sy: setMaxListeners.y
     });
   }
 
