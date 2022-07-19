@@ -67,7 +67,7 @@ export class TokenFactory {
         if (this.aadApplicationId) {
           return this.getAzureToken;
         }
-        throw new Error('Missing aadApplicationId');
+        throw new Error('Missing aadApplicationId for Azure AD');
       }
       case 'COGNITE_AUTH':
         return this.getLegacyToken;

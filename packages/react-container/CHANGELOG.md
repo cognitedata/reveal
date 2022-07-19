@@ -1,3 +1,7 @@
+## 6.0.4 July 19 2022
+
+- Fix the error message in token factory.
+
 ## 6.0.3 July 8 2022
 
 - Bump cognite SDK to 7.1.1 to fix bug with react-container calling services with "Bearer Bearer X" access token

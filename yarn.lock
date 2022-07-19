@@ -22504,9 +22504,9 @@ rc-menu@~9.6.0:
     shallowequal "^1.1.0"
 
 rc-motion@^2.0.0, rc-motion@^2.0.1, rc-motion@^2.2.0, rc-motion@^2.3.0, rc-motion@^2.3.4, rc-motion@^2.4.3, rc-motion@^2.4.4, rc-motion@^2.5.1:
-  version "2.6.1"
-  resolved "https://registry.yarnpkg.com/rc-motion/-/rc-motion-2.6.1.tgz#cd9cf5aff5deb9f1edf5a6614a11caabac908923"
-  integrity sha512-ZwctBWvvaKN7n7RQHu3ZH35IG7/a7A3Pwxy17kg5TlBv5zfrusD2oS1yDDK9Eh/BwViASLvjHSA3PkyIltzUaQ==
+  version "2.6.2"
+  resolved "https://registry.yarnpkg.com/rc-motion/-/rc-motion-2.6.2.tgz#3d31f97e41fb8e4f91a4a4189b6a98ac63342869"
+  integrity sha512-4w1FaX3dtV749P8GwfS4fYnFG4Rb9pxvCYPc/b2fw1cmlHJWNNgOFIz7ysiD+eOrzJSvnLJWlNQQncpNMXwwpg==
   dependencies:
     "@babel/runtime" "^7.11.1"
     classnames "^2.2.1"
