@@ -69,18 +69,6 @@ export const FileToolbar = ({
           onButtonClicked={onViewChange}
           currentKey={currentView}
         >
-          <SegmentedControl.Button
-            key="list"
-            icon="List"
-            title="List"
-            aria-label="List"
-          />
-          <SegmentedControl.Button
-            key="grid"
-            icon="Grid"
-            title="Grid"
-            aria-label="Grid"
-          />
           {isHaveParent &&
           relatedResourceType === 'linkedResource' &&
           isGroupingFilesEnabled ? (
@@ -93,6 +81,18 @@ export const FileToolbar = ({
           ) : (
             <div />
           )}
+          <SegmentedControl.Button
+            key="list"
+            icon="List"
+            title="List"
+            aria-label="List"
+          />
+          <SegmentedControl.Button
+            key="grid"
+            icon="Grid"
+            title="Grid"
+            aria-label="Grid"
+          />
         </SegmentedControl>
       </SearchResultToolbar>
       <FileUploaderModal

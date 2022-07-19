@@ -38,7 +38,16 @@ export const FileSearchResults = ({
 } & SelectableItemsProps &
   TableStateProps &
   DateRangeProps) => {
-  const [currentView, setCurrentView] = useState<string>('list');
+  const [currentView, setCurrentView] = useState<string>(() => {
+    if (
+      Boolean(parentResource) &&
+      relatedResourceType === 'linkedResource' &&
+      isGroupingFilesEnabled
+    ) {
+      return 'tree';
+    }
+    return 'list';
+  });
 
   return (
     <>
