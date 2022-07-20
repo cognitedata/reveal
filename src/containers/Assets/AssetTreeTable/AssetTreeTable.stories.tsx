@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import { assets } from 'stubs/assets';
 import { action } from '@storybook/addon-actions';
 import { ComponentStory } from '@storybook/react';
 import { AssetTreeTable } from './AssetTreeTable';
@@ -24,6 +25,20 @@ export const ExampleSingleSelect: ComponentStory<
 > = args => <AssetTreeTable {...args} />;
 ExampleSingleSelect.args = {
   selectionMode: 'single',
+  onAssetClicked: action('onAssetClicked'),
+  isSelected: () => false,
+};
+
+const asset = assets[assets.length - 1];
+export const ExampleFocusAsset: ComponentStory<
+  typeof AssetTreeTable
+> = args => <AssetTreeTable {...args} />;
+ExampleFocusAsset.args = {
+  selectionMode: 'single',
+  activeIds: [asset.id],
+  hierachyRootId: asset.rootId,
+  filter: asset.id === asset.rootId ? { parentIds: [asset.id] } : {},
+
   onAssetClicked: action('onAssetClicked'),
   isSelected: () => false,
 };

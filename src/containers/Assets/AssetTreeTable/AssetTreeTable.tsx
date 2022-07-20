@@ -19,11 +19,13 @@ export const AssetTreeTable = ({
   activeIds = [],
   isSelected,
   disableScroll,
+  hierachyRootId,
   ...selectionProps
 }: {
   filter: AssetFilterProps;
   query?: string;
   onAssetClicked: (item: Asset) => void;
+  hierachyRootId?: number;
   disableScroll?: boolean;
 } & SelectableItemsProps &
   TableStateProps) => {
@@ -129,6 +131,9 @@ export const AssetTreeTable = ({
   const assets = useMemo(() => {
     if (startFromRoot) {
       if (rootFetched) {
+        if (hierachyRootId) {
+          return rootItems?.filter(item => item.id === hierachyRootId);
+        }
         return rootItems;
       }
       return oldRootItems;
@@ -154,7 +159,14 @@ export const AssetTreeTable = ({
       ...el,
       aggregates: { childCount: count(el) },
     }));
-  }, [startFromRoot, searchItems, rootFetched, rootItems, oldRootItems]);
+  }, [
+    startFromRoot,
+    searchItems,
+    rootFetched,
+    oldRootItems,
+    hierachyRootId,
+    rootItems,
+  ]);
 
   const selectedIds = useMemo(() => {
     const mergeChildren = (

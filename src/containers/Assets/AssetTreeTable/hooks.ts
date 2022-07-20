@@ -7,6 +7,7 @@ import {
   byIdKey,
   listKey,
   listApi,
+  useCdfItem,
 } from '@cognite/sdk-react-query-hooks';
 import { useQueryClient, useQuery, UseQueryOptions } from 'react-query';
 
@@ -25,8 +26,6 @@ export const useSearchTree = (
   query?: string,
   config?: UseQueryOptions<ConstructedTreeAsset[]>
 ) => {
-  const sdk = useSDK();
-  const client = useQueryClient();
   const enableSearch = !!query;
 
   const {
@@ -68,53 +67,10 @@ export const useSearchTree = (
 
   const enabled = isFetched;
 
-  const fetchAndBuildTree = async () => {
-    const rootAssets: number[] = [];
-    const assetsMap: ConstructedTreeAssetMap = {};
-    const assetsChildrenMap: {
-      [key in number]: number[];
-    } = {};
-
-    const parentIds = new Set<number>();
-
-    const processItems = (el: Asset) => {
-      assetsMap[el.id] = el;
-      if (el.parentId) {
-        if (!assetsChildrenMap[el.parentId]) {
-          assetsChildrenMap[el.parentId] = [];
-        }
-        if (!assetsChildrenMap[el.parentId].includes(el.id)) {
-          assetsChildrenMap[el.parentId].push(el.id);
-        }
-        if (!assetsMap[el.parentId]) {
-          parentIds.add(el.parentId);
-        }
-      } else if (!rootAssets.some(id => id === el.id)) {
-        rootAssets.push(el.id);
-      }
-    };
-    data.forEach(processItems);
-
-    while (parentIds.size !== 0) {
-      const parentIdsList = [...parentIds].map(id => ({ id }));
-      // eslint-disable-next-line no-await-in-loop
-      const items = await client.fetchQuery(
-        retrieveItemsKey('assets', parentIdsList),
-        () => sdk.assets.retrieve(parentIdsList),
-        {
-          staleTime: 60 * 1000,
-        }
-      );
-
-      parentIds.clear();
-
-      items.forEach(processItems);
-    }
-    return constructTree(rootAssets, assetsChildrenMap, assetsMap);
-  };
+  const fetchAndBuildTree = useFetchAndBuildTree(data);
   const treeResult = useQuery<ConstructedTreeAsset[]>(
     ['asset-search-tree', query, filter],
-    fetchAndBuildTree,
+    () => fetchAndBuildTree,
     { enabled }
   );
 
@@ -248,6 +204,7 @@ export const useRootPath = (
     async () => {
       const pathToRoot: number[] = [];
       let curAssetId = assetId;
+
       try {
         while (curAssetId) {
           // eslint-disable-next-line no-await-in-loop
@@ -271,4 +228,52 @@ export const useRootPath = (
     },
     { ...config }
   );
+};
+
+const useFetchAndBuildTree = async (data: Asset[]) => {
+  const rootAssets: number[] = [];
+  const assetsMap: ConstructedTreeAssetMap = {};
+  const assetsChildrenMap: {
+    [key in number]: number[];
+  } = {};
+
+  const sdk = useSDK();
+  const client = useQueryClient();
+
+  const parentIds = new Set<number>();
+
+  const processItems = (el: Asset) => {
+    assetsMap[el.id] = el;
+    if (el.parentId) {
+      if (!assetsChildrenMap[el.parentId]) {
+        assetsChildrenMap[el.parentId] = [];
+      }
+      if (!assetsChildrenMap[el.parentId].includes(el.id)) {
+        assetsChildrenMap[el.parentId].push(el.id);
+      }
+      if (!assetsMap[el.parentId]) {
+        parentIds.add(el.parentId);
+      }
+    } else if (!rootAssets.some(id => id === el.id)) {
+      rootAssets.push(el.id);
+    }
+  };
+  data.forEach(processItems);
+
+  while (parentIds.size !== 0) {
+    const parentIdsList = [...parentIds].map(id => ({ id }));
+    // eslint-disable-next-line no-await-in-loop
+    const items = await client.fetchQuery(
+      retrieveItemsKey('assets', parentIdsList),
+      () => sdk.assets.retrieve(parentIdsList),
+      {
+        staleTime: 60 * 1000,
+      }
+    );
+
+    parentIds.clear();
+
+    items.forEach(processItems);
+  }
+  return constructTree(rootAssets, assetsChildrenMap, assetsMap);
 };
