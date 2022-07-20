@@ -146,7 +146,7 @@ export class MetricsLogger {
       MetricsLogger.trackCadNodeTransformOverriddenVars;
     matrix.decompose(translation, rotation, scale);
 
-    const hasRotation = Math.abs(rotation.dot(identityRotation) - 1.0) > 1e-5; // Angle between two quaternions is arccos(q1.dot(q2))
+    const hasRotation = Math.abs(rotation.angleTo(identityRotation)) > 1e-5;
     const hasTranslation = translation.distanceToSquared(zeroVector) > 1e-5;
     const hasScale = scale.distanceToSquared(oneVector) > 1e-5;
     MetricsLogger.trackEvent('cadNodeTransformOverridden', {
