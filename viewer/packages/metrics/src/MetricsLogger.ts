@@ -122,8 +122,8 @@ export class MetricsLogger {
   }
 
   private static readonly trackCadNodeTransformOverriddenVars = {
-    zeroVector: new THREE.Vector3(1, 1, 1),
-    oneVector: new THREE.Vector3(0, 0, 0),
+    zeroVector: new THREE.Vector3(0, 0, 0),
+    oneVector: new THREE.Vector3(1, 1, 1),
     identityRotation: new THREE.Quaternion().identity(),
 
     translation: new THREE.Vector3(),
