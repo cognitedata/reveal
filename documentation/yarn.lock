@@ -1621,7 +1621,7 @@
     query-string "^5.1.1"
     url "^0.11.0"
 
-"@cognite/sdk-core@^4.5.0":
+"@cognite/sdk-core@^4.5.1":
   version "4.5.1"
   resolved "https://registry.yarnpkg.com/@cognite/sdk-core/-/sdk-core-4.5.1.tgz#c27a0cb28c04253f5fd45eb6deee06bc69a277f3"
   integrity sha512-1ugoguRpokJHsm9wC6lsNXWsiAPnC5ArqhZVfBR7Bs1yigUlSlmkOpJf19D9xkiBzHHM3KfUrL2hcKQG7Bmpjw==
