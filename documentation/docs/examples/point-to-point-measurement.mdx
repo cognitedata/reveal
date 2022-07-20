@@ -34,10 +34,15 @@ To exit from measurement mode, use `MeasurementTool.exitMeasurementMode()`.
 
 const measurementTool = new MeasurementTool(viewer);
 measurementTool.enterMeasurementMode();
+
+//Add point to point distance measurement before existing from measurement tool.
+
 document.onkeydown = function(event) {
   event = event || window.event;
+  //On "Esc" key, removes all measured distance before exiting from measurement tool.
   if (event.keyCode == 27) {
     measurementTool.exitMeasurementMode();
+    viewer.requestRedraw();
   }
 }
 ```
@@ -69,7 +74,7 @@ measurementTool.enterMeasurementMode();
 
 // Add few measurements
 
-//Change measurement line color & width to random values on spacebar key press.
+//Change measurement line color & width to random values on "spacebar" key.
 document.onkeydown = function(event) {
   event = event || window.event;
   if (event.keyCode == 32) {
@@ -131,7 +136,7 @@ To remove a measurement from the viewer, we have `MeasurementTool.removeMeasurem
 const measurementTool = new MeasurementTool(viewer);
 measurementTool.enterMeasurementMode();
 
-//On key press of 'r' remove the first measurement added
+//On key 'r', remove the first measurement added
 document.onkeydown = function(event) {
   event = event || window.event;
   if (event.keyCode == 82) {
