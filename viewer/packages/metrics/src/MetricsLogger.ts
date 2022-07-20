@@ -147,9 +147,9 @@ export class MetricsLogger {
       MetricsLogger.trackCadNodeTransformOverriddenVars;
     matrix.decompose(translation, rotation, scale);
 
-    const hasTranslation = translation.distanceToSquared(zeroVector) > 1;
-    const hasRotation = Math.abs(rotation.dot(identityRotation)) > 1;
-    const hasScale = scale.distanceToSquared(oneVector) > 1;
+    const hasTranslation = translation.distanceToSquared(zeroVector);
+    const hasRotation = Math.abs(rotation.dot(identityRotation));
+    const hasScale = scale.distanceToSquared(oneVector);
     MetricsLogger.trackEvent('cadNodeTransformOverridden', {
       nodeCount,
       hasTranslation,
