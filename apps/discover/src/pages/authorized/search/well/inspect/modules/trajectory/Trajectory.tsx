@@ -1,8 +1,10 @@
 import React from 'react';
 
+import isEmpty from 'lodash/isEmpty';
+
 import { PerfMetrics } from '@cognite/metrics';
 
-import { Loading } from 'components/Loading/Loading';
+import EmptyState from 'components/EmptyState';
 import {
   PerformanceMetricsObserver,
   PerformanceObserved,
@@ -27,8 +29,8 @@ export const Trajectory: React.FC = () => {
     }
   };
 
-  if (isLoading) {
-    return <Loading />;
+  if (isEmpty(data)) {
+    return <EmptyState isLoading={isLoading} />;
   }
 
   return (

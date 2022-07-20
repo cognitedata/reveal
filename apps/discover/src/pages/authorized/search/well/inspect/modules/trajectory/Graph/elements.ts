@@ -20,24 +20,22 @@ export const TrajectoryGrid = styled.div`
   // access first child of the first row
   .chart2d :first-child {
     border-top-left-radius: ${sizes.small};
-    overflow: hidden;
   }
 
   // access last child of the first row
   .chart2d :nth-child(3n) {
     border-top-right-radius: ${sizes.small};
-    overflow: hidden;
   }
 
   // access first child of last row
   .chart2d :nth-child(3n + 1):nth-last-child(-n + 3) {
     border-bottom-left-radius: ${sizes.small};
-    overflow: hidden;
   }
 
   & .legend {
     border-bottom: 1px solid var(--cogs-black);
     border-right: 1px solid var(--cogs-black);
+    border-bottom-right-radius: ${sizes.small};
 
     & .cartesianlayer,
     .legendtoggle,
@@ -62,7 +60,6 @@ export const TrajectoryGrid = styled.div`
 
   // access last child of last row
   .legend :last-child {
-    overflow: hidden;
     border-bottom-right-radius: ${sizes.small};
   }
 `;
