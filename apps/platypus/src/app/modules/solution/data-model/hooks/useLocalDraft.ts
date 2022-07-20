@@ -39,13 +39,11 @@ export const useLocalDraft = (dataModelId: string) => {
     localStorageProvider.setItem(DRAFT_KEY, appendedOrReplaced);
   };
 
-  const removeLocalDraft = (solutionSchema: DataModelVersion) => {
-    const schemas = getLocalDrafts().filter(
-      (schema) =>
-        schema.version !== solutionSchema.version ||
-        schema.status !== solutionSchema.status
+  const removeLocalDraft = (version: string) => {
+    const localDrafts = getLocalDrafts().filter(
+      (localDraft) => localDraft.version !== version
     );
-    localStorageProvider.setItem(DRAFT_KEY, schemas);
+    localStorageProvider.setItem(DRAFT_KEY, localDrafts);
   };
 
   const getRemoteAndLocalSchemas = (remoteSchemas: DataModelVersion[]) => {

@@ -1,6 +1,6 @@
 import { lazy, Suspense } from 'react';
 
-import { Route, Switch } from 'react-router-dom';
+import { Route, Switch, useParams } from 'react-router-dom';
 import { Icon } from '@cognite/cogs.js';
 
 import { PageLayout } from '@platypus-app/components/Layouts/PageLayout';
@@ -28,23 +28,26 @@ const QueryExplorerPage = lazy<any>(() =>
 
 export const DataLayout = () => {
   const { t } = useTranslation('SolutionDataModel');
+  const { dataModelExternalId } = useParams<{
+    dataModelExternalId: string;
+  }>();
 
   const renderPageContent = () => {
     return (
       <Switch>
         <Route exact path="*/data-management/:subSolutionPage?">
           <Suspense fallback={<Spinner />}>
-            <DataManagementPage />
+            <DataManagementPage dataModelExternalId={dataModelExternalId} />
           </Suspense>
         </Route>
         <Route exact path="*/query-explorer">
           <Suspense fallback={<Spinner />}>
-            <QueryExplorerPage />
+            <QueryExplorerPage dataModelExternalId={dataModelExternalId} />
           </Suspense>
         </Route>
         <Route exact path="*">
           <Suspense fallback={<Spinner />}>
-            <DataModelPage />
+            <DataModelPage dataModelExternalId={dataModelExternalId} />
           </Suspense>
         </Route>
       </Switch>

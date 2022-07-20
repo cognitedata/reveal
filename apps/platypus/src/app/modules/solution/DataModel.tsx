@@ -6,12 +6,9 @@ import {
   useDataModelVersions,
 } from '@platypus-app/hooks/useDataModelActions';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
-import solutionStateSlice, {
-  actions,
-} from '@platypus-app/redux/reducers/global/dataModelReducer';
 import { lazy, Suspense, useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
 import { Route, Switch, useParams } from 'react-router-dom';
+import { useSolution } from './hooks/useSolution';
 
 const OverviewPage = lazy<any>(() =>
   import('./OverviewLayout').then((module) => ({
@@ -45,24 +42,22 @@ const SettingsPage = lazy(() =>
 
 export const DataModel = () => {
   const { t } = useTranslation('DataModel');
-  const dispatch = useDispatch();
 
   const { dataModelExternalId, version } = useParams<{
     dataModelExternalId: string;
     version: string;
   }>();
+  const { setCurrentTypeName, setSelectedVersionNumber } = useSolution();
 
   const [isReady, setIsReady] = useState(false);
 
   const {
-    data: dataModel,
     isLoading: isDataModelLoading,
     isError: hasDataModelError,
     isSuccess: isDataModelLoaded,
   } = useDataModel(dataModelExternalId);
 
   const {
-    data: dataModelVersions,
     isLoading: areDataModelVersionsLoading,
     isError: hasDataModelVersionError,
     isSuccess: areDataModelVersionsLoaded,
@@ -72,18 +67,9 @@ export const DataModel = () => {
     () => {
       // wait for both requests to finish and update redux store
       if (isDataModelLoaded && areDataModelVersionsLoaded) {
-        dispatch(actions.setDataModel({ dataModel: dataModel! }));
-        dispatch(
-          actions.setDataModelVersions({
-            dataModelVersions: dataModelVersions!,
-          })
-        );
-        dispatch(
-          solutionStateSlice.actions.selectVersion({
-            version,
-          })
-        );
-
+        // set selected version based on the param in the route we landed on
+        setSelectedVersionNumber(version);
+        setCurrentTypeName(null);
         setIsReady(true);
       }
     },

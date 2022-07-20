@@ -1,18 +1,34 @@
 import 'graphiql/graphiql.min.css';
 
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
-import useSelector from '@platypus-app/hooks/useSelector';
-import { DataModelState } from '@platypus-app/redux/reducers/global/dataModelReducer';
 
 import { PageToolbar } from '@platypus-app/components/PageToolbar/PageToolbar';
 import { PageContentLayout } from '@platypus-app/components/Layouts/PageContentLayout';
 import { QueryExplorer } from '../components/QueryExplorer';
 import { BasicPlaceholder } from '@platypus-app/components/BasicPlaceholder/BasicPlaceholder';
+import {
+  useDataModelVersions,
+  useSelectedDataModelVersion,
+} from '@platypus-app/hooks/useDataModelActions';
+import useSelector from '@platypus-app/hooks/useSelector';
+import { DataModelState } from '@platypus-app/redux/reducers/global/dataModelReducer';
 
-export const QueryExplorerPage = () => {
+export interface QueryExplorerPageProps {
+  dataModelExternalId: string;
+}
+
+export const QueryExplorerPage = ({
+  dataModelExternalId,
+}: QueryExplorerPageProps) => {
   const { t } = useTranslation('SolutionMonitoring');
-  const { dataModel, selectedVersion } = useSelector<DataModelState>(
+  const { data: dataModelVersions } = useDataModelVersions(dataModelExternalId);
+  const { selectedVersionNumber } = useSelector<DataModelState>(
     (state) => state.dataModel
+  );
+  const selectedDataModelVersion = useSelectedDataModelVersion(
+    selectedVersionNumber,
+    dataModelVersions || [],
+    dataModelExternalId
   );
 
   const renderHeader = () => {
@@ -23,10 +39,10 @@ export const QueryExplorerPage = () => {
     <PageContentLayout>
       <PageContentLayout.Header>{renderHeader()}</PageContentLayout.Header>
       <PageContentLayout.Body>
-        {selectedVersion?.version ? (
+        {selectedDataModelVersion.version ? (
           <QueryExplorer
-            solutionId={dataModel?.id || ''}
-            schemaVersion={selectedVersion.version}
+            solutionId={dataModelExternalId}
+            schemaVersion={selectedDataModelVersion.version}
           />
         ) : (
           <BasicPlaceholder

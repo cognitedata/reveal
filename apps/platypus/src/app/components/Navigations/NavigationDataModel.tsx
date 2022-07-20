@@ -1,4 +1,4 @@
-import { useHistory } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 import { Tooltip } from '@cognite/cogs.js';
 import {
   StyledButton,
@@ -9,10 +9,14 @@ import {
   StyledTitle,
   StyledFlex,
 } from './elements';
-import useSelector from '@platypus-app/hooks/useSelector';
+import { useDataModel } from '@platypus-app/hooks/useDataModelActions';
 
 export const NavigationDataModel = () => {
-  const dataModelName = useSelector((state) => state.dataModel.dataModel?.name);
+  const { dataModelExternalId } = useParams<{
+    dataModelExternalId: string;
+  }>();
+  const { data: dataModel } = useDataModel(dataModelExternalId);
+
   const history = useHistory();
 
   const renderTopBarRight = () => {
@@ -39,7 +43,7 @@ export const NavigationDataModel = () => {
               data-cy="back-to-all-models-btn"
             />
           </Tooltip>
-          <StyledTitle level="2">{dataModelName}</StyledTitle>
+          <StyledTitle level="2">{dataModel?.name}</StyledTitle>
         </StyledFlex>
       </StyledTopBarLeft>
     );

@@ -1,19 +1,10 @@
 import { Flex, Title, Button } from '@cognite/cogs.js';
 import { SplitPanelLayout } from '@platypus-app/components/Layouts/SplitPanelLayout';
-import { Notification } from '@platypus-app/components/Notification/Notification';
 import { FlexPlaceholder } from '@platypus-app/components/Placeholder/FlexPlaceholder';
 import { ModalDialog } from '@platypus-app/components/ModalDialog/ModalDialog';
-import { TOKENS } from '@platypus-app/di';
-import { useErrorLogger } from '@platypus-app/hooks/useErrorLogger';
-import { useInjection } from '@platypus-app/hooks/useInjection';
-import useSelector from '@platypus-app/hooks/useSelector';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
-import { DataModelState } from '@platypus-app/redux/reducers/global/dataModelReducer';
-import {
-  DataModelTypeDefs,
-  DataModelTypeDefsType,
-} from '@platypus/platypus-core';
-import { useEffect, useState } from 'react';
+import { DataModelTypeDefsType } from '@platypus/platypus-core';
+import { useState } from 'react';
 import { DataPreviewTable } from '../components/DataPreviewTable/DataPreviewTable';
 import { TypeList } from '../components/TypeList/TypeList';
 import { TransformationPlaceholder } from '../components/TransformationPlaceholder/TransformationPlaceholder';
@@ -22,48 +13,47 @@ import {
   useTransformationMutate,
 } from '@platypus-app/hooks/useTransformationAPI';
 import { TransformationIframe } from '../components/TransformationPlaceholder/TransformationIframe';
+import useSelector from '@platypus-app/hooks/useSelector';
+import { DataModelState } from '@platypus-app/redux/reducers/global/dataModelReducer';
+import {
+  useDataModelTypeDefs,
+  useDataModelVersions,
+  useSelectedDataModelVersion,
+} from '@platypus-app/hooks/useDataModelActions';
 
-export const Preview = () => {
+export interface PreviewProps {
+  dataModelExternalId: string;
+}
+
+export const Preview = ({ dataModelExternalId }: PreviewProps) => {
+  const { selectedVersionNumber } = useSelector<DataModelState>(
+    (state) => state.dataModel
+  );
+  const { data: dataModelVersions } = useDataModelVersions(dataModelExternalId);
+  const selectedDataModelVersion = useSelectedDataModelVersion(
+    selectedVersionNumber,
+    dataModelVersions || [],
+    dataModelExternalId
+  );
   const [selectedType, setSelected] = useState<DataModelTypeDefsType | null>(
     null
   );
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const errorLogger = useErrorLogger();
   const { t } = useTranslation('DataPreview');
-  const { selectedVersion } = useSelector<DataModelState>(
-    (state) => state.dataModel
-  );
-  const dataModelTypeDefsBuilder = useInjection(
-    TOKENS.dataModelTypeDefsBuilderService
-  );
-  const [solutionDataModel, setSolutionDataModel] = useState<DataModelTypeDefs>(
-    {
-      types: [],
-    }
-  );
-  const typeKey = `${selectedType?.name}_${selectedVersion.version}`;
+  const typeKey = `${selectedType?.name}_${selectedDataModelVersion.version}`;
 
-  const transformation = useTransformation(typeKey, selectedVersion.externalId);
+  const transformation = useTransformation(typeKey, dataModelExternalId);
   const transformationMutate = useTransformationMutate();
-  useEffect(() => {
-    if (selectedVersion.schema) {
-      try {
-        const newState = dataModelTypeDefsBuilder.parseSchema(
-          selectedVersion.schema
-        );
-        setSolutionDataModel(newState);
-      } catch (err: any) {
-        errorLogger.log(err);
-        Notification({ type: 'error', message: err.message });
-      }
-    }
 
-    // eslint-disable-next-line
-  }, []);
+  const dataModelTypeDefs = useDataModelTypeDefs(
+    dataModelExternalId,
+    selectedVersionNumber
+  );
+
   const onLoadDataFromTransformation = async () => {
     transformationMutate.mutate(
       {
-        externalId: selectedVersion.externalId,
+        externalId: dataModelExternalId,
         typeKey,
       },
       {
@@ -73,6 +63,7 @@ export const Preview = () => {
       }
     );
   };
+
   return (
     <div>
       {selectedType && (
@@ -100,7 +91,7 @@ export const Preview = () => {
         sidebar={
           <TypeList
             placeholder="Filter"
-            items={solutionDataModel.types.filter(
+            items={dataModelTypeDefs.types.filter(
               (type) => type.directives?.length
             )}
             onClick={(item: any) => setSelected(item)}
@@ -137,8 +128,8 @@ export const Preview = () => {
               <DataPreviewTable
                 key={`${isModalOpen}_key`}
                 dataModelType={selectedType}
-                solutionId={selectedVersion.externalId}
-                version={selectedVersion.version}
+                solutionId={dataModelExternalId}
+                version={selectedDataModelVersion.version}
               />
             </div>
           ) : (

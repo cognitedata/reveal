@@ -14,6 +14,7 @@ import {
   BuiltInType,
   DataModelVersionStatus,
   DataModelVersion,
+  Result,
 } from '@platypus/platypus-core';
 
 import { DEFAULT_VERSION_PATH } from '@platypus-app/utils/config';
@@ -33,58 +34,74 @@ import { ErrorPlaceholder } from '../components/ErrorBoundary/ErrorPlaceholder';
 import { useLocalDraft } from '@platypus-app/modules/solution/data-model/hooks/useLocalDraft';
 import { DiscardButton } from './elements';
 import { useInjection } from '@platypus-app/hooks/useInjection';
-import { queryClient } from '@platypus-app/queryClient';
+import {
+  useDataModelVersions,
+  useSelectedDataModelVersion,
+} from '@platypus-app/hooks/useDataModelActions';
+import { useQueryClient } from 'react-query';
 
-export const DataModelPage = () => {
+export interface DataModelPageProps {
+  dataModelExternalId: string;
+}
+
+export const DataModelPage = ({ dataModelExternalId }: DataModelPageProps) => {
   const history = useHistory();
 
   const { t } = useTranslation('SolutionDataModel');
+
+  const { data: dataModelVersions, refetch: refetchDataModelVersions } =
+    useDataModelVersions(dataModelExternalId);
+  const queryClient = useQueryClient();
   const {
     currentTypeName,
-    dataModel,
-    dataModelVersions,
     graphQlSchema,
     isDirty,
-    selectedVersion: selectedReduxSchema,
+    selectedVersionNumber,
     typeFieldErrors,
   } = useSelector<DataModelState>((state) => state.dataModel);
-  const [mode, setMode] = useState<SchemaEditorMode>(
-    dataModelVersions.length ? SchemaEditorMode.View : SchemaEditorMode.Edit
-  );
-  const [saving, setSaving] = useState(false);
-  const [updating, setUpdating] = useState(false);
-  const [isInit, setInit] = useState(false);
-  const [breakingChanges, setBreakingChanges] = useState('');
-  const [builtInTypes, setBuiltInTypes] = useState<BuiltInType[]>([]);
-  const [selectedSchema, setSelectedSchema] = useState(selectedReduxSchema);
-  const dataModelTypeDefsBuilder = useInjection(
-    TOKENS.dataModelTypeDefsBuilderService
-  );
-  const dataModelVersionHandler = useInjection(TOKENS.dataModelVersionHandler);
   const {
-    insertSchema,
-    updateSchema,
-    selectVersion,
     setCurrentTypeName,
     setGraphQlSchema,
     setIsDirty,
+    setSelectedVersionNumber,
   } = useSolution();
   const {
     setLocalDraft,
     removeLocalDraft,
     getRemoteAndLocalSchemas,
     getLocalDraft,
-  } = useLocalDraft(dataModel!.id);
+  } = useLocalDraft(dataModelExternalId);
 
-  const onSelectedSchemaChanged = (changedSchema: DataModelVersion) => {
+  const selectedDataModelVersion = useSelectedDataModelVersion(
+    selectedVersionNumber,
+    dataModelVersions || [],
+    dataModelExternalId
+  );
+  const localDraft = getLocalDraft(selectedDataModelVersion.version);
+
+  const [mode, setMode] = useState<SchemaEditorMode>(
+    localDraft || dataModelVersions?.length === 0
+      ? SchemaEditorMode.Edit
+      : SchemaEditorMode.View
+  );
+  const [saving, setSaving] = useState(false);
+  const [updating, setUpdating] = useState(false);
+  const [isInit, setInit] = useState(false);
+  const [breakingChanges, setBreakingChanges] = useState('');
+  const [builtInTypes, setBuiltInTypes] = useState<BuiltInType[]>([]);
+  const dataModelTypeDefsBuilder = useInjection(
+    TOKENS.dataModelTypeDefsBuilderService
+  );
+  const dataModelVersionHandler = useInjection(TOKENS.dataModelVersionHandler);
+
+  const onSelectDataModelVersion = (dataModelVersion: DataModelVersion) => {
     dataModelTypeDefsBuilder.clear();
-    setGraphQlSchema(changedSchema.schema);
+    setGraphQlSchema(dataModelVersion.schema);
     setIsDirty(false);
     setCurrentTypeName(null);
-    selectVersion(changedSchema.version);
-    setSelectedSchema(changedSchema);
+    setSelectedVersionNumber(dataModelVersion.version);
     setMode(
-      changedSchema.status === DataModelVersionStatus.DRAFT
+      dataModelVersion.status === DataModelVersionStatus.DRAFT
         ? SchemaEditorMode.Edit
         : SchemaEditorMode.View
     );
@@ -94,7 +111,7 @@ export const DataModelPage = () => {
       const builtInTypesResponse = dataModelTypeDefsBuilder.getBuiltinTypes();
       setBuiltInTypes(builtInTypesResponse);
       dataModelTypeDefsBuilder.clear();
-      setGraphQlSchema(selectedSchema.schema);
+      setGraphQlSchema(selectedDataModelVersion.schema);
       setInit(true);
     }
 
@@ -102,32 +119,33 @@ export const DataModelPage = () => {
       fetchSchemaAndTypes();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedSchema, isInit]);
+  }, [selectedDataModelVersion, isInit]);
 
   useEffect(() => {
-    const draft = getLocalDraft(selectedReduxSchema.version);
-    if (draft) {
+    if (localDraft) {
       dataModelTypeDefsBuilder.clear();
-      setSelectedSchema(draft);
-      setGraphQlSchema(draft.schema);
+      setGraphQlSchema(localDraft.schema);
       setMode(SchemaEditorMode.Edit);
     }
   }, []);
+
   const onSaveOrPublish = async () => {
     try {
-      const publishNewVersion = breakingChanges || !dataModelVersions.length;
-      let version = selectedSchema?.version;
-      let result;
+      const publishNewVersion =
+        breakingChanges || !dataModelVersions || dataModelVersions.length === 0;
+      let version = selectedDataModelVersion?.version;
+      const draftVersion = version;
+      let result: Result<DataModelVersion>;
 
       if (publishNewVersion) {
         setUpdating(true);
-        version = dataModelVersions.length
-          ? (parseInt(selectedSchema?.version) + 1).toString()
+        version = dataModelVersions?.length
+          ? (parseInt(selectedDataModelVersion?.version) + 1).toString()
           : '1';
         result = await dataModelVersionHandler.publish(
           {
-            ...selectedSchema,
-            externalId: dataModel!.id,
+            ...selectedDataModelVersion,
+            externalId: dataModelExternalId,
             schema: graphQlSchema,
             version: version,
           },
@@ -138,8 +156,8 @@ export const DataModelPage = () => {
         setSaving(true);
         result = await dataModelVersionHandler.publish(
           {
-            ...selectedSchema,
-            externalId: dataModel!.id,
+            ...selectedDataModelVersion,
+            externalId: dataModelExternalId,
             schema: graphQlSchema,
             version: version,
           },
@@ -159,21 +177,35 @@ export const DataModelPage = () => {
       }
 
       if (result.isSuccess) {
-        removeLocalDraft(selectedSchema);
+        removeLocalDraft(draftVersion);
         setIsDirty(false);
 
-        updateSchema(result.getValue());
-        setSelectedSchema(result.getValue());
-
-        // react-query cache the requests and if we have to clear the cache when we are making changes
-        // otherwise we will end with invalid state
-        queryClient.clear();
-
         if (publishNewVersion) {
-          insertSchema(result.getValue());
-          history.replace(
-            `/data-models/${dataModel?.id}/${DEFAULT_VERSION_PATH}/data`
+          // add new version to react-query cache and then refetch
+          queryClient.setQueryData<DataModelVersion[]>(
+            ['dataModelVersions', dataModelExternalId],
+            (oldDataModelVersions = []) => {
+              return [...oldDataModelVersions, result.getValue()];
+            }
           );
+          refetchDataModelVersions();
+
+          history.replace(
+            `/data-models/${dataModelExternalId}/${DEFAULT_VERSION_PATH}/data`
+          );
+        } else {
+          // update version in react-query cache and then refetch
+          queryClient.setQueryData<DataModelVersion[]>(
+            ['dataModelVersions', dataModelExternalId],
+            (oldDataModelVersions = []) => {
+              return oldDataModelVersions.map((dataModelVersion) => {
+                return dataModelVersion.version === version
+                  ? result.getValue()
+                  : dataModelVersion;
+              });
+            }
+          );
+          refetchDataModelVersions();
         }
 
         Notification({
@@ -215,54 +247,56 @@ export const DataModelPage = () => {
   const onSchemaChanged = useCallback(
     (schemaString) => {
       setGraphQlSchema(schemaString);
-      setIsDirty(selectedSchema.schema !== schemaString);
+      setIsDirty(selectedDataModelVersion.schema !== schemaString);
 
       setLocalDraft({
-        ...selectedSchema,
+        ...selectedDataModelVersion,
         schema: schemaString,
         status: DataModelVersionStatus.DRAFT,
       });
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [selectedSchema]
+    [selectedDataModelVersion]
   );
 
   const renderTools = () => {
-    const draft = getLocalDraft(selectedSchema.version) || {
-      ...selectedSchema,
-      status: DataModelVersionStatus.DRAFT,
-    };
     const onEditClick = () => {
-      setLocalDraft(draft);
-      setSelectedSchema(draft);
+      if (!localDraft) {
+        setLocalDraft({
+          ...selectedDataModelVersion,
+          status: DataModelVersionStatus.DRAFT,
+        });
+      }
+
       setMode(SchemaEditorMode.Edit);
     };
+
     const onDiscardClick = () => {
       // if there is no published version yet, stay in edit mode
-      if (dataModelVersions.length > 0) {
+      if (dataModelVersions && dataModelVersions.length > 0) {
         setMode(SchemaEditorMode.View);
       }
+      if (localDraft) {
+        removeLocalDraft(localDraft.version);
+      }
       setIsDirty(false);
-      removeLocalDraft(draft);
       dataModelTypeDefsBuilder.clear();
-      setSelectedSchema(selectedReduxSchema);
-      selectVersion('latest');
+      setCurrentTypeName(null);
+      setSelectedVersionNumber(DEFAULT_VERSION_PATH);
       setInit(false);
     };
     if (mode === SchemaEditorMode.Edit) {
       return (
         <div data-cy="data-model-toolbar-actions" style={{ display: 'flex' }}>
-          {selectedSchema.status === DataModelVersionStatus.DRAFT && (
-            <DiscardButton
-              type="secondary"
-              data-cy="discard-btn"
-              disabled={saving || updating}
-              onClick={onDiscardClick}
-              style={{ marginRight: '10px' }}
-            >
-              {t('discard_changes', 'Discard changes')}
-            </DiscardButton>
-          )}
+          <DiscardButton
+            type="secondary"
+            data-cy="discard-btn"
+            disabled={saving || updating}
+            onClick={onDiscardClick}
+            style={{ marginRight: '10px' }}
+          >
+            {t('discard_changes', 'Discard changes')}
+          </DiscardButton>
 
           <Button
             type="primary"
@@ -272,10 +306,9 @@ export const DataModelPage = () => {
             }}
             loading={saving || updating}
             disabled={
-              (!isDirty &&
-                selectedSchema.status !== DataModelVersionStatus.DRAFT) ||
+              !isDirty ||
               !graphQlSchema ||
-              selectedReduxSchema.schema === graphQlSchema ||
+              selectedDataModelVersion.schema === graphQlSchema ||
               Object.keys(typeFieldErrors).length !== 0
             }
           >
@@ -303,12 +336,16 @@ export const DataModelPage = () => {
       <PageContentLayout>
         <PageContentLayout.Header>
           <DataModelHeader
-            solutionId={dataModel!.id}
+            solutionId={dataModelExternalId}
             editorMode={mode}
-            schemas={getRemoteAndLocalSchemas(dataModelVersions)}
+            schemas={getRemoteAndLocalSchemas(dataModelVersions || [])}
             draftSaved={isDirty && Object.keys(typeFieldErrors).length === 0}
-            selectSchema={onSelectedSchemaChanged}
-            selectedSchema={selectedSchema!}
+            onSelectDataModelVersion={onSelectDataModelVersion}
+            selectedDataModelVersion={
+              mode === SchemaEditorMode.Edit
+                ? localDraft!
+                : selectedDataModelVersion
+            }
           >
             {renderTools()}
           </DataModelHeader>
@@ -322,7 +359,7 @@ export const DataModelPage = () => {
                 <ErrorBoundary errorComponent={<ErrorPlaceholder />}>
                   <EditorPanel
                     editorMode={mode}
-                    externalId={dataModel!.id}
+                    externalId={dataModelExternalId}
                     builtInTypes={builtInTypes}
                     graphQlSchema={graphQlSchema}
                     onSchemaChanged={onSchemaChanged}

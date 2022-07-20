@@ -40,7 +40,7 @@ export const SchemaTypeField = ({
   const debouncedFieldName = useDebounce(fieldName, 500);
 
   useEffect(() => {
-    if (!debouncedFieldName) {
+    if (!debouncedFieldName || disabled) {
       return;
     }
     const validationResult = nameValidator.validate('name', debouncedFieldName);

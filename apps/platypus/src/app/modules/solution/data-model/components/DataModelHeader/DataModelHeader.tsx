@@ -9,8 +9,8 @@ import { SelectorWrapper } from './elements';
 export interface DataModelHeaderProps {
   editorMode: SchemaEditorMode;
   solutionId: string;
-  selectedSchema: DataModelVersion;
-  selectSchema: (schema: DataModelVersion) => void;
+  selectedDataModelVersion: DataModelVersion;
+  onSelectDataModelVersion: (schema: DataModelVersion) => void;
   schemas: DataModelVersion[];
   children?: React.ReactNode;
   draftSaved: boolean;
@@ -26,15 +26,15 @@ export const DataModelHeader = (props: DataModelHeaderProps) => {
         title={t('data_model_title', 'Data model')}
         behindTitle={
           <SelectorWrapper>
-            {props.schemas.length && props.selectedSchema ? (
+            {props.schemas.length && props.selectedDataModelVersion ? (
               <SchemaVersionDropdown
                 onVersionSelect={(solutionSchema) => {
                   history.replace(
                     `/data-models/${props.solutionId}/${solutionSchema.version}/data`
                   );
-                  props.selectSchema(solutionSchema);
+                  props.onSelectDataModelVersion(solutionSchema);
                 }}
-                selectedVersion={props.selectedSchema}
+                selectedVersion={props.selectedDataModelVersion}
                 versions={props.schemas}
               />
             ) : null}
