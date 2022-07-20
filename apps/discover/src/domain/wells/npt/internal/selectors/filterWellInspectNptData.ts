@@ -20,10 +20,10 @@ const filterByDuration = (npt: NptInternal, duration: number[]) => {
 };
 
 const filterByNptCode = (npt: NptInternal, nptCodes: string[]) =>
-  isEmpty(nptCodes) || includes(nptCodes, npt.nptCode);
+  includes(nptCodes, npt.nptCode);
 
 const filterByNptDetailCode = (npt: NptInternal, nptDetailCodes: string[]) =>
-  isEmpty(nptDetailCodes) || includes(nptDetailCodes, npt.nptCodeDetail);
+  includes(nptDetailCodes, npt.nptCodeDetail);
 
 export const filterWellInspectNptData = (
   nptData: NptView[],
