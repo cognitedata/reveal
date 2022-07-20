@@ -29,7 +29,7 @@ export const buildMockServer = (params: BuildMockServerParams) => {
 
   const store = CdfDatabaseService.from(db, 'schema');
 
-  const templateTables = parser.getTableNames(schema, 'view');
+  const templateTables = parser.getTableNames(schema, '');
   const modifiedSchema = schemaBuilder.sanitizeSchema(schema);
 
   const parsedSchema = parser.buildGraphQlSchema(

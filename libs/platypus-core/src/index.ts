@@ -8,3 +8,4 @@ export * from './lib/boundaries/utils';
 export * from './lib/domain/data-model';
 export * from './lib/domain/common/validators';
 export * from './lib/domain/data-model/services';
+export * from './lib/domain/data-model/constants';

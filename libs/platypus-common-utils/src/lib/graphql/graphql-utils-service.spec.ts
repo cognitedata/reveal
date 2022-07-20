@@ -1,6 +1,9 @@
 import { GraphQlUtilsService } from './graphql-utils-service';
 import { postsGraphQlSchema } from '@platypus/mock-data';
-import { DataModelTypeDefsField } from '@platypus/platypus-core';
+import {
+  DataModelTypeDefsField,
+  mixerApiBuiltInTypes,
+} from '@platypus/platypus-core';
 
 const schemaMock = postsGraphQlSchema;
 
@@ -205,29 +208,32 @@ describe('GraphQlUtilsServiceTest', () => {
     it('should validate valid schema', () => {
       const service = createInstance();
 
-      const validSchema = `type Post @view {
+      const validSchema = `type Post {
         name: String
         author: Author
       }
 
-      type Author @view {
+      type Author {
         name: String
       }`;
-      const result = service.validate(validSchema);
+      const result = service.validate(validSchema, mixerApiBuiltInTypes);
       expect(result).toEqual([]);
     });
 
     it('should validate syntax errors', () => {
       const service = createInstance();
-      const schemaWithSyntaxError = `type Post @view
+      const schemaWithSyntaxError = `type Post
       name: String
       author: Author
     }
 
-    type Author @view {
+    type Author {
       name: String
     }`;
-      const result = service.validate(schemaWithSyntaxError);
+      const result = service.validate(
+        schemaWithSyntaxError,
+        mixerApiBuiltInTypes
+      );
       expect(result).toEqual([
         {
           message: 'Syntax Error: Unexpected Name "name".',
@@ -245,15 +251,18 @@ describe('GraphQlUtilsServiceTest', () => {
 
     it('should validate invalid fields', () => {
       const service = createInstance();
-      const schemaWithInvalidField = `type Post @view {
+      const schemaWithInvalidField = `type Post {
         name String
         author: Author
       }
 
-      type Author @view {
+      type Author {
         name: String
       }`;
-      const result = service.validate(schemaWithInvalidField);
+      const result = service.validate(
+        schemaWithInvalidField,
+        mixerApiBuiltInTypes
+      );
 
       expect(result).toEqual([
         {
@@ -273,15 +282,18 @@ describe('GraphQlUtilsServiceTest', () => {
     it('should validate invalid scalars', () => {
       const service = createInstance();
 
-      const schemaWithInvalidScalar = `type Post @view {
+      const schemaWithInvalidScalar = `type Post {
         name: Strings
         author: Author
       }
 
-      type Author @view {
+      type Author {
         name: String
       }`;
-      const result = service.validate(schemaWithInvalidScalar);
+      const result = service.validate(
+        schemaWithInvalidScalar,
+        mixerApiBuiltInTypes
+      );
       expect(result).toEqual([
         {
           message: 'Unknown type "Strings". Did you mean "String"?',
@@ -300,15 +312,18 @@ describe('GraphQlUtilsServiceTest', () => {
     it('should validate undefined types', () => {
       const service = createInstance();
 
-      const schemaWithUndefinedType = `type Post @view {
+      const schemaWithUndefinedType = `type Post {
         name: String
         author: User
       }
 
-      type Author @view {
+      type Author {
         name: String
       }`;
-      const result = service.validate(schemaWithUndefinedType);
+      const result = service.validate(
+        schemaWithUndefinedType,
+        mixerApiBuiltInTypes
+      );
       expect(result).toEqual([
         {
           message: 'Unknown type "User".',
@@ -327,16 +342,19 @@ describe('GraphQlUtilsServiceTest', () => {
     it('should validate duplicate fields', () => {
       const service = createInstance();
 
-      const schemaWithDuplicateField = `type Post @view {
+      const schemaWithDuplicateField = `type Post {
         name: String
         author: Author
         author: Author
       }
 
-      type Author @view {
+      type Author {
         name: String
       }`;
-      const result = service.validate(schemaWithDuplicateField);
+      const result = service.validate(
+        schemaWithDuplicateField,
+        mixerApiBuiltInTypes
+      );
 
       expect(result).toEqual([
         {
@@ -363,10 +381,13 @@ describe('GraphQlUtilsServiceTest', () => {
         name: String
       }
 
-      type Post @view {
+      type Post {
         title: String
       }`;
-      const result = service.validate(schemaWithDuplicateType);
+      const result = service.validate(
+        schemaWithDuplicateType,
+        mixerApiBuiltInTypes
+      );
 
       expect(result).toEqual([
         {
@@ -381,33 +402,6 @@ describe('GraphQlUtilsServiceTest', () => {
             {
               column: 12,
               line: 5,
-            },
-          ],
-        },
-      ]);
-    });
-
-    it('should validate types with missing view directive', () => {
-      const service = createInstance();
-      const schemaWithMissingViewDirective = `type Post {
-        name: String
-      }
-
-      type Author @view {
-        title: String
-      }`;
-      const result = service.validate(schemaWithMissingViewDirective);
-      expect(result).toEqual([
-        {
-          message: 'Type "Post" must have @view directive',
-          status: 400,
-          typeName: 'Post',
-          fieldName: 'name',
-          errorMessage: 'Type "Post" must have @view directive',
-          locations: [
-            {
-              column: 1,
-              line: 1,
             },
           ],
         },
@@ -435,7 +429,7 @@ describe('GraphQlUtilsServiceTest', () => {
         appearsIn: [Episode]!
       }
 
-      type Human  @view {
+      type Human {
         name: String!
       }
 
@@ -443,18 +437,21 @@ describe('GraphQlUtilsServiceTest', () => {
         gender: String
       }
 
-      type User @view {
+      type User {
         name: String
         jobs: [Job]
       }
 
-      type Job @view {
+      type Job {
         name: String
       }
 
       union Superman = Human | User
       `;
-      const result = service.validate(schemaWithUnsupportedFeatures);
+      const result = service.validate(
+        schemaWithUnsupportedFeatures,
+        mixerApiBuiltInTypes
+      );
 
       expect(result).toEqual([
         {

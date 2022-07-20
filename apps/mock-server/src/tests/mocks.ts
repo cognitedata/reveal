@@ -2,6 +2,9 @@ export const execSchemaMock = `
 scalar JSONObject
 
 scalar Timestamp
+scalar TimeSeries
+scalar DataPoint
+scalar DataPointValue
 
 scalar Int64
 

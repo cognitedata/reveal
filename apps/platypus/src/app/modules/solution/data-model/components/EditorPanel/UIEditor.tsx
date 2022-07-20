@@ -112,20 +112,10 @@ export function UIEditor({
     const capitalizedTypeName =
       typeName.charAt(0).toUpperCase() + typeName.slice(1);
 
-    const defaultDirective = builtInTypes.find(
-      (type) => type.type === 'DIRECTIVE'
+    const dataModelWithNewType = dataModelTypeDefsBuilder.addType(
+      solutionDataModel,
+      capitalizedTypeName
     );
-
-    const dataModelWithNewType = defaultDirective
-      ? dataModelTypeDefsBuilder.addType(
-          solutionDataModel,
-          capitalizedTypeName,
-          defaultDirective.name
-        )
-      : dataModelTypeDefsBuilder.addType(
-          solutionDataModel,
-          capitalizedTypeName
-        );
 
     updateUiState(dataModelWithNewType);
 

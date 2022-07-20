@@ -1,3 +1,4 @@
+import { mixerApiInlineTypeDirectiveName } from '../constants';
 import {
   DataModel,
   DataModelVersion,
@@ -64,6 +65,25 @@ const dataModelMock: DataModelTypeDefs = {
           name: 'post',
           type: {
             name: 'Post',
+            list: false,
+            nonNull: true,
+          },
+          nonNull: true,
+        },
+      ],
+    },
+    {
+      name: 'User',
+      directives: [
+        {
+          name: mixerApiInlineTypeDirectiveName,
+        },
+      ],
+      fields: [
+        {
+          name: 'name',
+          type: {
+            name: 'String',
             list: false,
             nonNull: true,
           },

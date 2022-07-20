@@ -36,6 +36,7 @@ export interface DataModelVersion {
 export type BuiltInType = {
   name: string;
   dmsType?: string;
+  fieldDirective?: boolean;
   type: 'SCALAR' | 'DIRECTIVE' | 'OBJECT' | 'ENUM';
 };
 

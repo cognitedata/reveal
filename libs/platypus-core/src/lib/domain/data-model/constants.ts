@@ -1,5 +1,7 @@
 import { BuiltInType } from './types';
 
+export const mixerApiInlineTypeDirectiveName = 'nested';
+
 export const mixerApiBuiltInTypes = [
   { name: 'String', type: 'SCALAR', dmsType: 'text' },
   { name: 'Int', type: 'SCALAR', dmsType: 'int32' },
@@ -9,5 +11,6 @@ export const mixerApiBuiltInTypes = [
   { name: 'Timestamp', type: 'SCALAR', dmsType: 'timestamp' },
   { name: 'JSONObject', type: 'SCALAR', dmsType: 'json' },
   { name: 'TimeSeries', type: 'SCALAR', dmsType: 'text' },
-  { name: 'view', type: 'DIRECTIVE', fieldDirective: false },
+  { name: 'DataPoint', type: 'SCALAR', dmsType: 'text' },
+  { name: 'DataPointValue', type: 'SCALAR', dmsType: 'text' },
 ] as BuiltInType[];

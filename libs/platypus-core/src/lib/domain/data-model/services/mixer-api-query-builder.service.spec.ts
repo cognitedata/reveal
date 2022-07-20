@@ -1,3 +1,4 @@
+import { mixerApiInlineTypeDirectiveName } from '../constants';
 import { MixerApiQueryBuilderService } from './mixer-api-query-builder.service';
 
 describe('MixerApiQueryBuilderServiceTest', () => {
@@ -20,6 +21,76 @@ describe('MixerApiQueryBuilderServiceTest', () => {
 
   it('should build query', () => {
     const service = createInstance();
+
+    const mockTypeDefs = {
+      types: [
+        {
+          name: 'Person',
+          fields: [
+            {
+              name: 'name',
+              type: {
+                name: 'String',
+                list: false,
+                nonNull: true,
+              },
+              nonNull: true,
+            },
+            {
+              name: 'posts',
+              type: {
+                name: 'Post',
+                list: true,
+                nonNull: true,
+              },
+              nonNull: true,
+            },
+            {
+              name: 'user',
+              type: {
+                name: 'User',
+                list: false,
+                nonNull: false,
+              },
+              nonNull: false,
+            },
+          ],
+        },
+        {
+          name: 'Post',
+          fields: [
+            {
+              name: 'name',
+              type: {
+                name: 'String',
+                list: false,
+                nonNull: true,
+              },
+              nonNull: true,
+            },
+          ],
+        },
+        {
+          name: 'User',
+          directives: [
+            {
+              name: mixerApiInlineTypeDirectiveName,
+            },
+          ],
+          fields: [
+            {
+              name: 'name',
+              type: {
+                name: 'String',
+                list: false,
+                nonNull: true,
+              },
+              nonNull: true,
+            },
+          ],
+        },
+      ],
+    };
 
     const limit = 100;
     const cursor = 'abcd=';
@@ -53,6 +124,7 @@ describe('MixerApiQueryBuilderServiceTest', () => {
           externalId
           name
 posts { externalId }
+user { name }
         }
         pageInfo {
           startCursor
@@ -67,7 +139,8 @@ posts { externalId }
       cursor,
       hasNextPage: true,
       limit,
-      dataModelType: mockType,
+      dataModelType: mockTypeDefs.types[0],
+      dataModelTypeDefs: mockTypeDefs,
     });
 
     expect(normalizeString(query)).toEqual(normalizeString(expected));

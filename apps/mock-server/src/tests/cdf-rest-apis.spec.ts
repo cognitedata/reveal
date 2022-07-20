@@ -144,6 +144,7 @@ describe('CdfRestApis Test', () => {
         },
       });
     let qryResult = response.body;
+
     expect(response.statusCode).toEqual(200);
     expect(qryResult.items.length).toBeGreaterThanOrEqual(2);
     expect(qryResult.items[0].externalId).toEqual(
@@ -166,8 +167,8 @@ describe('CdfRestApis Test', () => {
       });
     qryResult = response.body;
     expect(response.statusCode).toEqual(200);
-    expect(qryResult.length).toBeGreaterThanOrEqual(1);
-    expect(qryResult[0].downloadUrl).toMatch(
+    expect(qryResult.items.length).toBeGreaterThanOrEqual(1);
+    expect(qryResult.items[0].downloadUrl).toMatch(
       '/files/gcs_proxy/cognitedata-file-storage/5111311590959999'
     );
   });

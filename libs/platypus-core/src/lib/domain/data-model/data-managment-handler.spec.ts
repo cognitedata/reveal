@@ -73,6 +73,7 @@ describe('DataManagementHandlerTest', () => {
     const response = await service.fetchData({
       cursor: 'abcd',
       dataModelType: mockType,
+      dataModelTypeDefs: { types: [mockType] },
       hasNextPage: true,
       limit: 100,
       dataModelId: 'testExternalId',

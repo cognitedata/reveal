@@ -46,7 +46,7 @@ export class GraphQlSchemaParser {
     let m;
     const regexTemplates =
       /type[\s]{1,}[a-zA-Z]{1,20}[\s]{1,}@template[\s]{1,}\{/gm;
-    const regexSchema = /type[\s]{1,}[a-zA-Z]{1,20}[\s]{1,}@view[\s]{1,}\{/gm;
+    const regexSchema = /type[\s]{1,}[a-zA-Z]{1,20}[\s]{1,}\{/gm;
     const regex =
       tableDirectiveName === 'template' ? regexTemplates : regexSchema;
 

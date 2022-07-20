@@ -23,6 +23,7 @@ import {
   DataModelVersion,
   DataModelVersionStatus,
 } from './types';
+import { mixerApiBuiltInTypes } from './constants';
 
 export class DataModelVersionHandler {
   private dataModelVersionDataMapper: DataModelVersionDataMapper;
@@ -105,7 +106,10 @@ export class DataModelVersionHandler {
     dto: CreateDataModelVersionDTO,
     validateBreakingChanges = true
   ): Promise<Result<DataModelValidationError[]>> {
-    const errors = this.graphqlService.validate(dto.schema);
+    const errors = this.graphqlService.validate(
+      dto.schema,
+      mixerApiBuiltInTypes
+    );
 
     if (errors.length) {
       return Promise.resolve(Result.fail(errors));

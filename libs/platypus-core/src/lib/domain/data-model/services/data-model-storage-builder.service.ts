@@ -5,9 +5,13 @@ import {
   DataModelTypeDefs,
   DataModelStorageModel,
   DmsModelProperty,
+  DataModelTypeDefsType,
 } from '../types';
 import { KeyValueMap } from '../../../boundaries/types';
-import { mixerApiBuiltInTypes } from '../constants';
+import {
+  mixerApiBuiltInTypes,
+  mixerApiInlineTypeDirectiveName,
+} from '../constants';
 
 export class DataModelStorageBuilderService {
   /**
@@ -26,20 +30,23 @@ export class DataModelStorageBuilderService {
     // code for building bindings
     const bindings: DataModelStorageBindingsDTO[] = [];
 
-    dataModelTypeDefs.types.forEach((def) => {
-      const typeName = def.name; // DataModelType name
+    dataModelTypeDefs.types
+      // don't generate DMS storage for inline types
+      .filter((def) => !this.isInlineType(def))
+      .forEach((def) => {
+        const typeName = def.name; // DataModelType name
 
-      bindings.push({
-        targetName: typeName,
-        dataModelStorageSource: {
-          externalId: this.getVersionedExternalId(
-            typeName,
-            dataModelVersion.version
-          ),
-          space: externalId,
-        },
+        bindings.push({
+          targetName: typeName,
+          dataModelStorageSource: {
+            externalId: this.getVersionedExternalId(
+              typeName,
+              dataModelVersion.version
+            ),
+            space: externalId,
+          },
+        });
       });
-    });
 
     return bindings;
   }
@@ -62,52 +69,65 @@ export class DataModelStorageBuilderService {
       items: [],
     } as DataModelStorageModelsDTO;
 
-    dataModelTypeDefs.types.forEach((def) => {
-      const typeName = def.name; // DataModelType name
-      const table = {
-        externalId: this.getVersionedExternalId(
-          typeName,
-          dataModelVersion.version
-        ),
-        properties: {},
-      } as DataModelStorageModel;
+    dataModelTypeDefs.types
+      // don't generate DMS storage for inline types
+      .filter((def) => !this.isInlineType(def))
+      .forEach((def) => {
+        const typeName = def.name; // DataModelType name
+        const table = {
+          externalId: this.getVersionedExternalId(
+            typeName,
+            dataModelVersion.version
+          ),
+          properties: {},
+        } as DataModelStorageModel;
 
-      def.fields.forEach((field) => {
-        const fieldName = field.name;
-        const propType = field.type.name as string;
-        const isNullable = !field.type.nonNull;
-        const isList = field.type.list;
+        def.fields.forEach((field) => {
+          const fieldName = field.name;
+          const propType = field.type.name as string;
+          const isNullable = !field.type.nonNull;
+          const isList = field.type.list;
 
-        // IN case if the type is complex type (custom type, not a primitive) ex: Person
-        // eslint-disable-next-line no-prototype-builtins
-        const isCustomType = !typesMap.hasOwnProperty(propType);
+          // IN case if the type is complex type (custom type, not a primitive) ex: Person
+          // eslint-disable-next-line no-prototype-builtins
+          const isCustomType = !typesMap.hasOwnProperty(propType);
 
-        const property = {
-          type: isCustomType
-            ? 'direct_relation'
-            : isList
-            ? typesMap[propType] + '[]'
-            : typesMap[propType],
-          nullable: isNullable,
-        } as DmsModelProperty;
+          const property = {
+            type: isCustomType
+              ? 'direct_relation'
+              : isList
+              ? typesMap[propType] + '[]'
+              : typesMap[propType],
+            nullable: isNullable,
+          } as DmsModelProperty;
 
-        if (isCustomType) {
-          property.targetModel = [
-            externalId,
-            `${this.getVersionedExternalId(
-              propType,
-              dataModelVersion.version
-            )}`,
-          ];
-        }
+          if (isCustomType) {
+            property.targetModel = [
+              externalId,
+              `${this.getVersionedExternalId(
+                propType,
+                dataModelVersion.version
+              )}`,
+            ];
+          }
 
-        table.properties[fieldName] = property;
+          table.properties[fieldName] = property;
+        });
+
+        generatedStorageTypes.items.push(table);
       });
 
-      generatedStorageTypes.items.push(table);
-    });
-
     return generatedStorageTypes;
+  }
+
+  private isInlineType(typeDef: DataModelTypeDefsType): boolean {
+    return (
+      typeDef.directives !== undefined &&
+      typeDef.directives.length > 0 &&
+      typeDef.directives.some(
+        (directive) => directive.name === mixerApiInlineTypeDirectiveName
+      )
+    );
   }
 
   private getVersionedExternalId(name: string, version: string): string {

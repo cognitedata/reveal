@@ -6,7 +6,11 @@ import { Spinner } from '@platypus-app/components/Spinner/Spinner';
 import { TOKENS } from '@platypus-app/di';
 import { useInjection } from '@platypus-app/hooks/useInjection';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
-import { KeyValueMap, DataModelTypeDefsType } from '@platypus/platypus-core';
+import {
+  KeyValueMap,
+  DataModelTypeDefsType,
+  DataModelTypeDefs,
+} from '@platypus/platypus-core';
 import { GridReadyEvent, IDatasource, IGetRowsParams } from 'ag-grid-community';
 import { useCallback, useEffect, useState } from 'react';
 
@@ -21,11 +25,13 @@ const pageSizeLimit = 100;
 
 export interface DataPreviewTableProps {
   dataModelType: DataModelTypeDefsType;
+  dataModelTypeDefs: DataModelTypeDefs;
   solutionId: string;
   version: string;
 }
 export const DataPreviewTable = ({
   dataModelType,
+  dataModelTypeDefs,
   solutionId,
   version,
 }: DataPreviewTableProps) => {
@@ -75,6 +81,7 @@ export const DataPreviewTable = ({
             .fetchData({
               cursor,
               dataModelType,
+              dataModelTypeDefs,
               hasNextPage: nextPage,
               limit: pageSizeLimit,
               dataModelId: solutionId,

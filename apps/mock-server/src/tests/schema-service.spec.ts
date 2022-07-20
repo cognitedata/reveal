@@ -184,7 +184,7 @@ describe('SchemaService Solutions Test', () => {
 
   it('Should create new solution data model version', async () => {
     const gqlSchema =
-      'type Post @view {\n  title: String!\n  views: Int!\n  user: User\n}\n\ntype User @view {\n  name: String!\n}\n\ntype Comment @view {\n  body: String!\n  date: Int!\n  post: Post\n}\n';
+      'type Post {\n  title: String!\n  views: Int!\n  user: User\n}\n\ntype User {\n  name: String!\n}\n\ntype Comment {\n  body: String!\n  date: Int!\n  post: Post\n}\n';
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const createSolutionResponse = await createSolutionReq();
     const response = await request(server)
@@ -242,7 +242,7 @@ describe('SchemaService Solutions Test', () => {
 
   it('Should handle breaking changes', async () => {
     const gqlSchema =
-      'type Post @view {\n  title: Int!\n  views: Int!\n  user: User\n}\n\ntype User @view {\n  name: String!\n}';
+      'type Post {\n  title: Int!\n  views: Int!\n  user: User\n}\n\ntype User {\n  name: String!\n}';
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const createSolutionResponse = await createSolutionReq();
     const response = await request(server)

@@ -15,14 +15,22 @@ export class DataManagementHandler {
   ) {}
 
   fetchData(dto: FetchDataDTO): Promise<Result<PaginatedResponse>> {
-    const { cursor, hasNextPage, limit, dataModelType, dataModelId, version } =
-      dto;
+    const {
+      cursor,
+      hasNextPage,
+      limit,
+      dataModelType,
+      dataModelTypeDefs,
+      dataModelId,
+      version,
+    } = dto;
     const operationName = this.queryBuilder.getOperationName(
       dataModelType.name
     );
     const query = this.queryBuilder.buildQuery({
       cursor,
       dataModelType,
+      dataModelTypeDefs,
       hasNextPage,
       limit,
     });

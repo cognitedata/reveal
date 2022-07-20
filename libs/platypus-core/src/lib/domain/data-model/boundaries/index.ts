@@ -1,5 +1,6 @@
 import { UpdateDataModelFieldDTO } from '../dto';
 import {
+  BuiltInType,
   DataModelTypeDefs,
   DataModelTypeDefsField,
   DataModelTypeDefsType,
@@ -79,5 +80,8 @@ export interface IGraphQlUtilsService {
    *
    * Validation runs synchronously, returning an array of encountered errors, or
    * an empty array if no errors were encountered and the document is valid. */
-  validate(graphQlString: string): DataModelValidationError[];
+  validate(
+    graphQlString: string,
+    builtInTypes: BuiltInType[]
+  ): DataModelValidationError[];
 }

@@ -92,7 +92,7 @@ export const Preview = ({ dataModelExternalId }: PreviewProps) => {
           <TypeList
             placeholder="Filter"
             items={dataModelTypeDefs.types.filter(
-              (type) => type.directives?.length
+              (type) => !type.directives?.length // if it has directive, that means that it is inline types
             )}
             onClick={(item: any) => setSelected(item)}
           />
@@ -128,6 +128,7 @@ export const Preview = ({ dataModelExternalId }: PreviewProps) => {
               <DataPreviewTable
                 key={`${isModalOpen}_key`}
                 dataModelType={selectedType}
+                dataModelTypeDefs={dataModelTypeDefs}
                 solutionId={dataModelExternalId}
                 version={selectedDataModelVersion.version}
               />

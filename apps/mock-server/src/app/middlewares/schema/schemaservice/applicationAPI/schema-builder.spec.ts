@@ -15,7 +15,7 @@ describe('SchemaServiceGraphqlApiBuilder Test', () => {
     const schemaBuilder = new SchemaServiceGraphqlApiBuilder();
     const parser = new GraphQlSchemaParser();
     const schema =
-      'type Post @view {\n  title: String!\n  views: Int!\n  user: User\n comments: [Comment]}\n\ntype User @view {\n  name: String!\n}\n\ntype Comment @view {\n  body: String!\n  date: Timestamp!\n  post: Post\n}\n';
+      'type Post {\n  title: String!\n  views: Int!\n  user: User\n comments: [Comment]}\n\ntype User {\n  name: String!\n}\n\ntype Comment {\n  body: String!\n  date: Timestamp!\n  post: Post\n}\n';
     const templateTables = parser.getTableNames(schema, 'view');
     const modifiedSchema = schemaBuilder.sanitizeSchema(schema);
 

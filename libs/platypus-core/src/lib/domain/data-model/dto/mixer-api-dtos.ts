@@ -1,4 +1,4 @@
-import { DataModelTypeDefsType } from '../types';
+import { DataModelTypeDefs, DataModelTypeDefsType } from '../types';
 
 export interface ApiVersionDataModel {
   types: any[];
@@ -40,6 +40,7 @@ export interface ApiVersionFromGraphQl {
 
 export interface BuildQueryDTO {
   dataModelType: DataModelTypeDefsType;
+  dataModelTypeDefs: DataModelTypeDefs;
   limit: number;
   cursor: string;
   hasNextPage: boolean;

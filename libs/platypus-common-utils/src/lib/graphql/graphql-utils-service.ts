@@ -8,6 +8,7 @@ import {
   DataModelTypeDefsType,
   UpdateDataModelFieldDTO,
   DataModelValidationError,
+  BuiltInType,
 } from '@platypus/platypus-core';
 import {
   ObjectTypeDefinitionNode,
@@ -34,7 +35,6 @@ import {
 } from 'graphql/validation';
 import { validateSDL } from 'graphql/validation/validate';
 import { NotSupportedFeaturesRule } from './validation/NotSupportedFeaturesRule';
-import { TypeHasViewDirectiveRule } from './validation/TypeHasViewDirectiveRule';
 
 export class GraphQlUtilsService implements IGraphQlUtilsService {
   private schemaAst: DocumentApi | null = null;
@@ -259,19 +259,35 @@ export class GraphQlUtilsService implements IGraphQlUtilsService {
     this.schemaAst = documentApi();
   }
 
-  validate(graphQlString: string): DataModelValidationError[] {
+  validate(
+    graphQlString: string,
+    builtInTypes: BuiltInType[]
+  ): DataModelValidationError[] {
+    const generateBuiltIntTypes = () => {
+      return builtInTypes.map((builtInType) => {
+        if (builtInType.type === 'DIRECTIVE' && !builtInType.fieldDirective) {
+          return `directive @${builtInType.name} on OBJECT`;
+        } else if (
+          builtInType.type === 'DIRECTIVE' &&
+          builtInType.fieldDirective
+        ) {
+          return `directive @${builtInType.name} on FIELD_DEFINITION`;
+        } else if (builtInType.type === 'OBJECT') {
+          return `type ${builtInType.name} {}`;
+        } else {
+          return `scalar ${builtInType.name}`;
+        }
+      });
+    };
     // we need this to be able to parse and validate the schema properly
     const schemaToValidate = `${graphQlString}
-scalar Timestamp
-directive @view on OBJECT
+${generateBuiltIntTypes().join('\n')}
 type Query {
   test: String
 }
     `;
 
     const customValidationRules = [
-      TypeHasViewDirectiveRule,
-      // NoRequiredCustomTypesRule,
       NotSupportedFeaturesRule,
     ] as ValidationRule[];
 

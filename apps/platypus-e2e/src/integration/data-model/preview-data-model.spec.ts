@@ -24,7 +24,7 @@ describe('Data Model Page - Existing Solution Preview', () => {
   it('should fill the code editor with text', () => {
     // This should come imported from the mock package
     const expectedSchema =
-      'type Post @view {\n  title: String!\n  views: Int!\n  user: User\n tags: [String]\n comments: [Comment]\n}\n\ntype User @view {\n  name: String!\n}\n\ntype Comment @view {\n  body: String!\n  date: Timestamp!\n  post: Post\n}';
+      'type Post {\n  title: String!\n  views: Int!\n  user: User\n tags: [String]\n comments: [Comment]\n}\n\ntype User {\n  name: String!\n}\n\ntype Comment {\n  body: String!\n  date: Timestamp!\n  post: Post\n}';
 
     cy.get('[aria-label="Code editor"]').click();
     cy.get('.monaco-editor textarea:first').should('be.visible');
@@ -167,7 +167,7 @@ describe('Data Model Page - Existing Solution Preview', () => {
     cy.getBySel('checkbox-field-required').first().click();
 
     // eslint-disable-next-line
-    cy.wait(500);
+    cy.wait(1000);
 
     // Code Editor check for properly working
     cy.get('[aria-label="Code editor"]').click();
