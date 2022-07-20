@@ -48,9 +48,10 @@ document.onkeydown = function(event) {
 ```
 
 ## Set width and color of the measuring line
-To change width and color of the line, use `MeasurementTool.setLineOptions(options: MeasurementOptions, meshObject?: THREE.Mesh)`. MeasurementOptions expects
+To change width and color of the line, use `MeasurementTool.setLineOptions(options: MeasurementOptions)`. MeasurementOptions expects
   - `lineWidth` : number
   - `color` : number
+The updated line width and color will be applied for the next measuring distance.
 
 ```jsx runnable
 // import { MeasurementTool } from '@cognite/reveal/tools';
@@ -61,10 +62,14 @@ const lineOptions = {
 };
 const measurementTool = new MeasurementTool(viewer);
 measurementTool.enterMeasurementMode();
+
+//Update line width & color for the next measuring line.
 measurementTool.setLineOptions(lineOptions);
+
+//If measurement is added, it would have updated line width & color.
 ```
 
-To change recent measurement line width or color, use `MeasurementTool.updateLineWidth(lineWidth: number)` or `MeasurementTool.updateLineColor(color: number)`
+To change existing measurement line width or color, use `MeasurementTool.updateLineWidth(lineWidth: number)` or `MeasurementTool.updateLineColor(color: number)`
 
 ```jsx runnable
 // import { MeasurementTool } from '@cognite/reveal/tools';
