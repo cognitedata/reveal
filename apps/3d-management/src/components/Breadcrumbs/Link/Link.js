@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Link as RouterLink } from 'react-router-dom';
-import { createLink } from '@cognite/cdf-utilities';
+import { createLink } from 'utils/cdf-utilities';
 
 const propTypes = {
   to: PropTypes.oneOfType([
@@ -23,7 +23,7 @@ const defaultProps = {
 
 // Link replaces the default Link component from react-router-dom
 //   by prefixing all links with /tenant/ and suffixing them with
-//   ?env=environment when necessary, so subapps don't have to add that
+//   ?cluster=apiPath when necessary, so subapps don't have to add that
 //   to all links
 // Everything else behaves like the react-router-dom Link component
 const Link = ({ to, ...props }) => {

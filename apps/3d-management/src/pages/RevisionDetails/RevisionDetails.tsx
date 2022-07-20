@@ -12,7 +12,7 @@ import {
 import { useMetrics } from 'hooks/useMetrics';
 import React, { useEffect, useState } from 'react';
 
-import { createLink } from '@cognite/cdf-utilities';
+import { createLink } from 'utils/cdf-utilities';
 import dayjs from 'dayjs';
 import Status from 'components/Status';
 import NotFound from 'pages/NotFound';

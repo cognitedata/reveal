@@ -9,6 +9,7 @@ import sdk from '@cognite/cdf-sdk-singleton';
 import { HttpError, CogniteMultiError, Revision3D } from '@cognite/sdk';
 import { useHistory } from 'react-router-dom';
 import { useFlag } from '@cognite/react-feature-flags';
+import { createLink } from 'utils/cdf-utilities';
 
 type Props = Omit<ModalProps, 'onOk' | 'onCancel'> & {
   modelId: number;
@@ -56,7 +57,7 @@ export const ReprocessingModal = ({
         progressMessage.then(() => {
           message.success('New revision is created!');
           history.push(
-            `/${projectName}/3d-models/${modelId}/revisions/${createdRevision.id}`
+            createLink(`/3d-models/${modelId}/revisions/${createdRevision.id}`)
           );
         });
 
