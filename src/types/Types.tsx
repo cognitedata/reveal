@@ -35,6 +35,15 @@ export function convertResourceType(t?: ResourceType): SdkResourceType {
   }
 }
 
+/**
+ * Temporary fix
+ * A wrapper that handle the case of resource type which is threeD in general the normal function will return the error
+ */
+export const convertResourceThreeDWrapper = (type?: ResourceType) => {
+  if (type === 'threeD') return type as SdkResourceType;
+  return convertResourceType(type);
+};
+
 export function getTitle(t: ResourceType, plural: boolean = true): string {
   switch (t) {
     case 'asset': {

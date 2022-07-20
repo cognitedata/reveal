@@ -80,12 +80,12 @@ const FilterIconWithCount = ({ filter }: IFilterIcon) => {
   if (filterCount !== 0) {
     return (
       <Badge count={filterCount}>
-        <Icon type="Filter" />
+        <Icon type="Configure" />
       </Badge>
     );
   }
 
-  return <Icon type="Filter" />;
+  return <Icon type="Configure" />;
 };
 
 export const SearchFilters = ({
@@ -123,7 +123,7 @@ export const SearchFilters = ({
     <div
       style={{
         display: 'flex',
-        flex: '0 1 auto',
+
         flexDirection: 'column',
         width: visible ? 260 : 0,
         marginLeft: 1,
@@ -194,6 +194,6 @@ const StyledFilters = styled.div`
   padding-left: 1px;
   padding-right: 16px;
   padding-bottom: 16px;
-  overflow: auto;
   height: 100%;
+  overflow: auto;
 `;

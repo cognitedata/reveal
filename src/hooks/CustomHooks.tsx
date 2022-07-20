@@ -1,12 +1,21 @@
 import { useEffect, useRef, useState } from 'react';
 import { useSDK } from '@cognite/sdk-provider';
-import { useQuery } from 'react-query';
+import {
+  useInfiniteQuery,
+  UseInfiniteQueryOptions,
+  useQuery,
+} from 'react-query';
 import { useParams } from 'react-router-dom';
 import queryString from 'query-string';
-import { IdEither } from '@cognite/sdk';
+import { IdEither, Model3D } from '@cognite/sdk';
 import { extractUniqueIds } from 'utils/idUtils';
 import { SdkResourceType, useCdfItems } from '@cognite/sdk-react-query-hooks';
 import unionBy from 'lodash/unionBy';
+
+export type ThreeDModelsResponse = {
+  items: Model3D[];
+  nextCursor?: string;
+};
 
 export function usePrevious<T>(value: T) {
   const ref = useRef<T>();
@@ -101,6 +110,34 @@ export function useUniqueCdfItems<T>(
     isLoading: isItemWithExternalIdLoading || isItemLoading,
   };
 }
+
+export const useInfinite3DModels = (
+  limit?: number,
+  config?: UseInfiniteQueryOptions<
+    ThreeDModelsResponse,
+    unknown,
+    ThreeDModelsResponse,
+    ThreeDModelsResponse,
+    string[]
+  >
+) => {
+  const sdk = useSDK();
+
+  return useInfiniteQuery(
+    ['cdf', 'infinite', '3d', 'models', 'list'],
+    async ({ pageParam }) => {
+      const models = await sdk.get<ThreeDModelsResponse>(
+        `/api/v1/projects/${sdk.project}/3d/models`,
+        { params: { limit: limit || 1000, cursor: pageParam } }
+      );
+      return models.data;
+    },
+    {
+      getNextPageParam: r => r.nextCursor,
+      ...config,
+    }
+  );
+};
 
 /**
  * This hook gets an HTMLElement as ref and computes if it is overflowing

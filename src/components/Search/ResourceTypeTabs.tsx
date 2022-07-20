@@ -1,8 +1,9 @@
 import React from 'react';
 import { ResourceType } from 'types';
-import { Colors, Tabs } from '@cognite/cogs.js';
+import { Badge, Colors, Tabs } from '@cognite/cogs.js';
 import { ResourceIcons } from 'components/ResourceIcons/ResourceIcons';
-import styled from 'styled-components';
+import styled from 'styled-components/macro';
+import { useResultCount } from 'components/ResultCount/ResultCount';
 
 const resourceTypeMap: Record<ResourceType, string> = {
   asset: 'Assets',
@@ -24,34 +25,57 @@ const defaultResourceTypes: ResourceType[] = [
 type Props = {
   resourceTypes?: ResourceType[];
   currentResourceType: ResourceType;
+  query?: string;
+  filter?: any;
+  showCount?: boolean;
   setCurrentResourceType: (newResourceType: ResourceType) => void;
 };
 
+const ResourceTypeTab = ({
+  currentResourceType,
+  query,
+  showCount = false,
+}: Omit<Props, 'setCurrentResourceType'>) => {
+  const result = useResultCount({
+    filter: {},
+    query,
+    api: query && query.length > 0 ? 'search' : 'list',
+    type: currentResourceType,
+  });
+
+  return (
+    <TabContainer>
+      <ResourceIcons style={{ marginRight: 12 }} type={currentResourceType} />
+      <div>{resourceTypeMap[currentResourceType]}</div>
+      {showCount && (
+        <Badge
+          text={`${result.count}`}
+          background={Colors['greyscale-grey3'].hex()}
+        />
+      )}
+    </TabContainer>
+  );
+};
 export const ResourceTypeTabs = ({
   currentResourceType,
   setCurrentResourceType,
   resourceTypes = defaultResourceTypes,
-}: Props) => (
-  <StyledTabs
-    activeKey={currentResourceType}
-    onChange={tab => setCurrentResourceType(tab as ResourceType)}
-  >
-    {resourceTypes.map(key => {
-      const type = key as ResourceType;
-      return (
+  ...rest
+}: Props) => {
+  return (
+    <StyledTabs
+      activeKey={currentResourceType}
+      onChange={tab => setCurrentResourceType(tab as ResourceType)}
+    >
+      {resourceTypes.map(resourceType => (
         <Tabs.TabPane
-          key={type}
-          tab={
-            <TabContainer>
-              <ResourceIcons style={{ marginRight: 12 }} type={type} />
-              {resourceTypeMap[type]}
-            </TabContainer>
-          }
+          key={resourceType}
+          tab={<ResourceTypeTab currentResourceType={resourceType} {...rest} />}
         />
-      );
-    })}
-  </StyledTabs>
-);
+      ))}
+    </StyledTabs>
+  );
+};
 
 const StyledTabs = styled(Tabs)`
   .rc-tabs-nav-wrap {
