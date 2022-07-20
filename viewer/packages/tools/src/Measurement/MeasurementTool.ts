@@ -247,6 +247,7 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
   private createCombineClusterElement() {
     // TODO 2022-07-05 larsmoa: Move all ownership of labels here - currently responsibility is split
     // between several classes which is *bad*
+    // pramodcog: as clustering is related to tool, it would be ideal to have it here.
     const combineElement = document.createElement('div');
     combineElement.className = MeasurementLabels.stylesId;
     combineElement.innerHTML = rulerSvg;
