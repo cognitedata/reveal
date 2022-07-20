@@ -11927,10 +11927,10 @@ typedarray@^0.0.6:
   resolved "https://registry.yarnpkg.com/typedarray/-/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
   integrity sha512-/aCDEGatGvZ2BIk+HmLf4ifCJFwvKFNb9/JeZPMulfgFracn9QFcAf5GO8B/mweUjSoblS5In0cWhqpfs/5PQA==
 
-typedoc-plugin-markdown@3.13.2:
-  version "3.13.2"
-  resolved "https://registry.yarnpkg.com/typedoc-plugin-markdown/-/typedoc-plugin-markdown-3.13.2.tgz#988846ab68365ef215fbae35a75745fa7641a8af"
-  integrity sha512-WpP+XW4TZ7yVIM9jSjTWUznZitXWY8OwSVRZAu65+lOI6tiIeUYEsgiFzIdGjNcWbwD6THNcJqATDoMVIp9RKw==
+typedoc-plugin-markdown@3.13.3:
+  version "3.13.3"
+  resolved "https://registry.yarnpkg.com/typedoc-plugin-markdown/-/typedoc-plugin-markdown-3.13.3.tgz#4a242b1927e5f06f3bacfd7d6e38204b1d2a13ac"
+  integrity sha512-KKvFkQphRcH26NoBCKjjZ7a3rkPBQAOuWg1F4s+snDSWXfTyGWO5isgoe19VUbG87W8X/0x3uc/O0Nj7Qle3TQ==
   dependencies:
     handlebars "^4.7.7"
 
