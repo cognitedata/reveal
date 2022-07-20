@@ -144,23 +144,37 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
   }
 
   /**
-   * Update current line width.
+   * Update selected line width.
+   * @param measurementId Measurement Id of a measurement.
    * @param lineWidth Width of the measuring line mesh.
    */
-  updateLineWidth(lineWidth: number): void {
-    assert(this._currentMeasurementIndex !== -1);
-    this._measurements[this._currentMeasurementIndex].updateLineWidth(lineWidth);
+  updateLineWidth(measurementId: number, lineWidth: number): void {
+    const index = this._measurements.findIndex(
+      measurement => measurement.getMeasurementReference().measurementId === measurementId
+    );
+    if (index > -1) {
+      this._measurements[index].updateLineWidth(lineWidth);
+    }
   }
 
   /**
-   * Update current line color.
+   * Update selected line color.
+   * @param measurementId Measurement Id of a measurement.
    * @param color Color of the measuring line mesh.
    */
-  updateLineColor(color: number): void {
-    assert(this._currentMeasurementIndex !== -1);
-    this._measurements[this._currentMeasurementIndex].updateLineColor(color);
+  updateLineColor(measurementId: number, color: number): void {
+    const index = this._measurements.findIndex(
+      measurement => measurement.getMeasurementReference().measurementId === measurementId
+    );
+    if (index > -1) {
+      this._measurements[index].updateLineColor(color);
+    }
   }
 
+  /**
+   * Get all measurements from @Cognite3DViewer.
+   * @returns Array of Measurement reference consisting Id, start point, end point & measured distance.
+   */
   getAllMeasurements(): MeasurementRef[] {
     const measurementRef: MeasurementRef[] = [];
     this._measurements.forEach(measurement => {

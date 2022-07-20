@@ -55,6 +55,34 @@ measurementTool.enterMeasurementMode();
 measurementTool.setLineOptions(lineOptions);
 ```
 
+To change recent measurement line width or color, use `MeasurementTool.updateLineWidth(lineWidth: number)` or `MeasurementTool.updateLineColor(color: number)`
+
+```jsx runnable
+// import { MeasurementTool } from '@cognite/reveal/tools';
+
+const measurementTool = new MeasurementTool(viewer);
+measurementTool.enterMeasurementMode();
+
+// Add few measurements
+
+//Change measurement line color & width to random values on spacebar key press.
+document.onkeydown = function(event) {
+  event = event || window.event;
+  if (event.keyCode == 32) {
+    const measurementRefArray = measurementTool.getAllMeasurements();
+
+    measurementRefArray.forEach(measurementRef => {
+        const color = Math.floor(Math.random() * 16777215);
+        measurementTool.updateLineColor(measurementRef.measurementId, color);
+
+        //Update line width
+        const lineWidth = (Math.random() * 1.0) + 0.2;
+        measurementTool.updateLineWidth(measurementRef.measurementId, lineWidth);
+        viewer.requestRedraw();
+      });
+    }
+}
+```
 ## Change unit
 
 It's also possible to apply custom label content for the measurement.
@@ -72,8 +100,12 @@ measurementTool.enterMeasurementMode();
 ```
 
 ### Get all measurement
-To retrive all measurements added in the viewer, we can provide `MeasurementTool.getAllMeasurement()` which will
-returns array of meshes `THREE.Mesh[]`.
+To get all measurements added in the viewer, we can provide `MeasurementTool.getAllMeasurements()` which will
+returns array of measurement reference `MeasurementRef` having
+  - `measurementId` : unique id of measurement.
+  - `startPoint` : start point of the measurement.
+  - `endPoint` : end point of the measurement.
+  - `distanceInMeters` : measured distance in meters.
 
 ```jsx
 // import { MeasurementTool } from '@cognite/reveal/tools';
@@ -82,24 +114,30 @@ const measurementTool = new MeasurementTool(viewer);
 measurementTool.enterMeasurementMode();
 
 //get all measurements
-const measurements = measurementTool.getAllMeasurement();
+const measurements = measurementTool.getAllMeasurements();
 ```
 
 ### Remove measurement
-To remove a measurement from the viewer, we have `MeasurementTool.removeMeasurement(measurement: THREE.Mesh)`
-  - 'measurement` : Measurement mesh to be removed.
+To remove a measurement from the viewer, we have `MeasurementTool.removeMeasurement(measurementId: number)`
+  - 'measurementId` : Measurement Id of a measurement to be removed.
 
-```jsx
+```jsx runnable
 // import { MeasurementTool } from '@cognite/reveal/tools';
 
 const measurementTool = new MeasurementTool(viewer);
 measurementTool.enterMeasurementMode();
 
-// Before retrival of measurements, add some measurement
-const measurements = measurementTool.getAllMeasurement();
+//On key press of 'r' remove the first measurement added
+document.onkeydown = function(event) {
+  event = event || window.event;
+  if (event.keyCode == 82) {
+    // Before retrival of measurements, add some measurement
+    const measurements = measurementTool.getAllMeasurements();
 
-// Remove the first measurement added
-measurementTool.removeMeasurement(measurements[0]);
+    measurementTool.removeMeasurement(measurements[0].measurementId);
+    viewer.requestRedraw();
+    }
+}
 ```
 
 To remove all measurement from the viewer, use `MeasurementTool.removeAllMeasurement()`
