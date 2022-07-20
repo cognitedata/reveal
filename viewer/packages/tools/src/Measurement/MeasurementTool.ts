@@ -172,7 +172,7 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
   }
 
   /**
-   * Get all measurements from @Cognite3DViewer.
+   * Get all measurements from {@link Cognite3DViewer}.
    * @returns Array of Measurement reference consisting Id, start point, end point & measured distance.
    */
   getAllMeasurements(): MeasurementRef[] {
