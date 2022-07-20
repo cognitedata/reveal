@@ -44,6 +44,7 @@ import {
   selectTempKeypointCollection,
 } from 'src/modules/Review/store/annotatorWrapper/selectors';
 import { ImageKeyboardShortKeys } from 'src/modules/Review/Containers/KeyboardShortKeys/ImageKeyboardShortKeys';
+import { annotationSnapToEdge } from 'src/modules/Review/utils/annotationSnapToEdge';
 
 export const ImagePreview = ({
   file,
@@ -130,7 +131,9 @@ export const ImagePreview = ({
         pushMetric('Vision.Review.CreateAnnotation.Line');
       }
       const res = await dispatch(
-        SaveAnnotations([{ ...annotation, annotatedResourceId: file.id }])
+        SaveAnnotations([
+          { ...annotationSnapToEdge(annotation), annotatedResourceId: file.id },
+        ])
       );
       const createdAnnotations = unwrapResult(res);
 
