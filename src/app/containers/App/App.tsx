@@ -30,7 +30,7 @@ export default function App() {
   return (
     <Suspense fallback={<Spinner />}>
       <FileContextualizationContextProvider>
-        <ResourceSelectionProvider allowEdit mode="multiple">
+        <ResourceSelectionProvider allowEdit mode="none">
           <ResourceActionsProvider>
             <DateRangeProvider>
               <DataExplorationProvider
