@@ -131,11 +131,11 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
   }
 
   /**
-   * Sets Measurement line width and color with @options value.
-   * @param options MeasurementOptions to set line width and color.
+   * Sets Measurement line width and color with @options value for the next measurment.
+   * @param options MeasurementOptions to set line width and/or color.
    */
   setLineOptions(options: MeasurementOptions): void {
-    // TODO 2022-07-05 larsmoa: WTF - clean up. Allowing setting options and then ignoring one of the options
+    //Line width & color value will be used for the next measuring line
     this._options = {
       ...MeasurementTool.defaultLineOptions,
       distanceToLabelCallback: this._options.distanceToLabelCallback,
