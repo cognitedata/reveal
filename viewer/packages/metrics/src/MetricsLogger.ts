@@ -42,7 +42,6 @@ export class MetricsLogger {
 
     mixpanel.init(MIXPANEL_TOKEN!, {
       batch_requests: true,
-      debug: true,
       disable_cookie: true,
       disable_persistence: true,
       // Don't send IP which disables geolocation
@@ -147,24 +146,14 @@ export class MetricsLogger {
       MetricsLogger.trackCadNodeTransformOverriddenVars;
     matrix.decompose(translation, rotation, scale);
 
-    const hasTranslation = translation.distanceToSquared(zeroVector);
-    const hasRotation = Math.abs(rotation.dot(identityRotation));
-    const hasScale = scale.distanceToSquared(oneVector);
+    const hasRotation = Math.abs(rotation.dot(identityRotation) - 1.0) > 1e-5; // Angle between two quaternions is arccos(q1.dot(q2))
+    const hasTranslation = translation.distanceToSquared(zeroVector) > 1e-5;
+    const hasScale = scale.distanceToSquared(oneVector) > 1e-5;
     MetricsLogger.trackEvent('cadNodeTransformOverridden', {
       nodeCount,
       hasTranslation,
       hasRotation,
-      hasScale,
-      tx: translation.x,
-      ty: translation.y,
-      tz: translation.z,
-      rx: rotation.x,
-      ry: rotation.y,
-      rz: rotation.z,
-      rw: rotation.w,
-      sx: scale.x,
-      sy: scale.y,
-      sz: scale.z
+      hasScale
     });
   }
 
