@@ -1,10 +1,15 @@
 import { useEffect, useState } from 'react';
-import type { ActionMeta, InputActionMeta } from 'react-select';
+import type {
+  ActionMeta,
+  InputActionMeta,
+  MenuListComponentProps,
+} from 'react-select';
+import { components } from 'react-select';
 import { useDebounce } from 'react-use';
 
 import styled from 'styled-components/macro';
 
-import { AutoComplete } from '@cognite/cogs.js';
+import { AutoComplete, Button } from '@cognite/cogs.js';
 import type { AutoCompleteProps } from '@cognite/cogs.js';
 import { useAuthContext } from '@cognite/react-container';
 
@@ -24,6 +29,44 @@ interface TimeSeriesSelectorProps extends AutoCompleteProps {
   endOffset?: number;
 }
 
+function MenuList(props: MenuListComponentProps<TimeseriesOption, false>) {
+  const { children, selectProps } = props;
+  const { MenuListFooter = null } = selectProps.components;
+  return (
+    <components.MenuList {...props}>
+      {children}
+      {Array.isArray(children) && MenuListFooter}
+    </components.MenuList>
+  );
+}
+
+function MenuListFooter({
+  total,
+  setPagination,
+  currentPage,
+}: {
+  total: number;
+  currentPage: number;
+  setPagination: (page: number) => void;
+}) {
+  return (
+    <>
+      {currentPage < total && (
+        <Button
+          icon="Add"
+          style={{ width: '100%' }}
+          type="primary"
+          onClick={() => {
+            setPagination(currentPage + 10);
+          }}
+        >
+          Load more
+        </Button>
+      )}
+    </>
+  );
+}
+
 function TimeseriesSelector({
   disabled,
   name,
@@ -35,6 +78,7 @@ function TimeseriesSelector({
   endOffset = 0,
 }: TimeSeriesSelectorProps) {
   const [selectedValue, setSelectedValue] = useState<TimeseriesOption>();
+  const [pagination, setPagination] = useState<number>(10);
   const [queryString, setQueryString] = useState('');
   const [queryResult, setQueryResult] = useState<TimeseriesOption[]>();
   const { client } = useAuthContext();
@@ -59,6 +103,7 @@ function TimeseriesSelector({
 
   const [isReady] = useDebounce(
     async () => {
+      setPagination(10);
       if (queryString.length < 2) {
         setQueryResult([]);
         return;
@@ -111,13 +156,21 @@ function TimeseriesSelector({
       <AutoComplete
         components={{
           Option: TimeseriesSelectorOptionContainer,
+          MenuList,
+          MenuListFooter: (
+            <MenuListFooter
+              currentPage={pagination}
+              setPagination={setPagination}
+              total={queryResult ? queryResult.length : 0}
+            />
+          ),
         }}
         disabled={disabled}
         inputValue={queryString}
         isDisabled={disabled}
         isLoading={!isReady()}
         name={name}
-        options={queryResult}
+        options={queryResult?.slice(0, pagination)}
         placeholder="Type to search..."
         renderOption={renderOption}
         title={title}
