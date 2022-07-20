@@ -1,11 +1,15 @@
 import React from 'react';
 
+import isEmpty from 'lodash/isEmpty';
+
 import { ViewButton } from 'components/Buttons';
 import { RowProps, Table } from 'components/Tablev3';
+import { Center, FullWidth } from 'styles/layout';
 
 import { CasingAssemblyTableView } from '../Table/types';
 
 import { useCasingsWellboresTableColumns } from './columns/useCasingsTableColumns';
+import { NO_CASINGS_DATA_TEXT } from './constants';
 import { CasingViewButtonWrapper } from './elements';
 
 interface CasingsWellboresTableProps {
@@ -40,6 +44,14 @@ export const CasingsWellboresTable: React.FC<CasingsWellboresTableProps> = ({
       />
     </CasingViewButtonWrapper>
   );
+
+  if (isEmpty(data)) {
+    return (
+      <FullWidth>
+        <Center>{NO_CASINGS_DATA_TEXT}</Center>
+      </FullWidth>
+    );
+  }
 
   return (
     <Table<Partial<CasingAssemblyTableView>>

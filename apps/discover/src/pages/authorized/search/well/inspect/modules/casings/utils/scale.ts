@@ -8,6 +8,10 @@ import {
 } from '../../common/Events/constants';
 
 export const getScaleBlocks = (scaleHeight: number, maxDepth: number) => {
+  if (!maxDepth) {
+    return [0];
+  }
+
   const blocksCountWithoutZero = Math.floor(
     (scaleHeight - SCALE_PADDING) / SCALE_BLOCK_HEIGHT
   );
@@ -19,6 +23,7 @@ export const getScaleBlocks = (scaleHeight: number, maxDepth: number) => {
       blocksCountWithoutZero - 1 - 1
     : blocksCountWithoutZero;
   const interval = Math.round(maxDepth / blocksCount);
+
   return [
     0,
     ...[...Array(blocksCount).keys()]

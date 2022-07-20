@@ -32,6 +32,8 @@ export const SchemaColumn: React.FC<SchemaColumnProps> = ({
   scaleBlocks,
   showBothSides = false,
 }) => {
+  const hasCasingAssembliesData = !isEmpty(casingAssemblies);
+
   /**
    * It takes a little time to calculate the depth scale.
    * The initial value of scaleBlocks is [0].
@@ -39,12 +41,12 @@ export const SchemaColumn: React.FC<SchemaColumnProps> = ({
    * Hence, `scaleBlocks.length === 1` condition represents that the scale is being calculated.
    */
   const isScaleCalculating = useMemo(
-    () => scaleBlocks.length === 1,
+    () => hasCasingAssembliesData && scaleBlocks.length === 1,
     [scaleBlocks]
   );
 
   const renderSchemaColumnContent = () => {
-    if (isEmpty(casingAssemblies) || isScaleCalculating) {
+    if (!hasCasingAssembliesData || isScaleCalculating) {
       return (
         <EmptyState
           isLoading={isScaleCalculating}

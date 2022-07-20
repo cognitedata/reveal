@@ -7,13 +7,12 @@ import { WellInternal } from 'domain/wells/well/internal/types';
 import { getRkbLevel } from 'domain/wells/wellbore/internal/selectors/getRkbLevel';
 import { keyByWellbore } from 'domain/wells/wellbore/internal/transformers/keyByWellbore';
 
-import compact from 'lodash/compact';
-import isEmpty from 'lodash/isEmpty';
 import isUndefined from 'lodash/isUndefined';
 
 import { CasingSchematicView } from '../types';
 
 import { adaptCasingAssembliesDataToView } from './adaptCasingAssembliesDataToView';
+import { getEmptyCasingSchematicView } from './getEmptyCasingSchematicView';
 
 export const adaptCasingsDataToView = (
   wells: WellInternal[],
@@ -22,13 +21,9 @@ export const adaptCasingsDataToView = (
   nptData: Record<string, NptInternal[]>,
   ndsData: Record<string, NdsInternal[]>
 ): CasingSchematicView[] => {
-  if (isEmpty(casingsData)) {
-    return [];
-  }
-
   const keyedCasingsData = keyByWellbore(casingsData);
 
-  const casingViews = wells.flatMap((well) =>
+  return wells.flatMap((well) =>
     (well.wellbores || []).map((wellbore) => {
       const { matchingId: wellboreMatchingId, name: wellboreName } = wellbore;
 
@@ -37,7 +32,7 @@ export const adaptCasingsDataToView = (
 
       // If no casings for the current wellbore.
       if (isUndefined(casingSchematic)) {
-        return null;
+        return getEmptyCasingSchematicView(wellbore);
       }
 
       const casingAssemblies = adaptCasingAssembliesDataToView(
@@ -57,6 +52,4 @@ export const adaptCasingsDataToView = (
       };
     })
   );
-
-  return compact(casingViews);
 };
