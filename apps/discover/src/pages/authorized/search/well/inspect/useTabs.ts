@@ -10,6 +10,7 @@ import NdsEvents from './modules/ndsEvents';
 import NptEvents from './modules/nptEvents';
 import Overview from './modules/overview';
 import RelatedDocument from './modules/relatedDocument';
+import StickChart from './modules/stickChart';
 import Trajectory from './modules/trajectory';
 import WellLogs from './modules/wellLogs';
 import { Tab } from './types';
@@ -24,6 +25,13 @@ export const useTabs = () => {
       path: navigation.SEARCH_WELLS_INSPECT_OVERVIEW,
       componentToRender: Overview,
       enabled: !!wellsConfig?.overview?.enabled,
+    },
+    {
+      key: 'stickChart',
+      name: TAB_NAMES.STICK_CHART,
+      path: navigation.SEARCH_WELLS_INSPECT_STICK_CHART,
+      componentToRender: StickChart,
+      enabled: true,
     },
     {
       key: 'trajectory',

@@ -6,10 +6,9 @@ type KeyOfType<T, U> = {
   [P in keyof T]-?: T[P] extends U ? P : never;
 }[keyof T];
 
-// ndsV2 needs to be removed after everything is done
 export type Tab = {
   key: KeyOfType<
-    Required<ProjectConfigWells & { ndsV2: { enabled: boolean } }>,
+    Required<ProjectConfigWells & { stickChart: { enabled: boolean } }>,
     { enabled?: boolean }
   >;
   name: WellInspectTabs;

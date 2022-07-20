@@ -1,5 +1,6 @@
 export enum TAB_NAMES {
   OVERVIEW = 'Overview',
+  STICK_CHART = 'Stick Chart',
   TRAJECTORIES = 'Trajectories',
   NDS_EVENTS = 'NDS Events',
   NPT_EVENTS = 'NPT Events',

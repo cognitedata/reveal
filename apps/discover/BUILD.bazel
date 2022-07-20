@@ -106,6 +106,7 @@ DEPENDENCIES = [
     "@npm//plotly.js",
     "@npm//proj4",
     "@npm//react-autosuggest",
+    "@npm//react-beautiful-dnd",
     "@npm//react-copy-to-clipboard",
     "@npm//react-custom-scrollbars",
     "@npm//react-dom",
