@@ -17,14 +17,14 @@ export const BoolCellRenderer = React.memo((props: ICellRendererParams) => {
     <div
       style={{
         display: 'inline-block',
-        paddingTop: '5px',
-        verticalAlign: 'text-bottom',
+        paddingTop: '4px',
       }}
     >
       <Switch
         name={`${colId}_${rowIdx}`}
         checked={props.value}
         onChange={checkedHandler}
+        size="small"
       ></Switch>
     </div>
   );

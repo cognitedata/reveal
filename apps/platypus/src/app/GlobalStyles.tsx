@@ -15,7 +15,6 @@ import graphiqlStyles from 'graphiql/graphiql.min.css';
 import styleScope from '../styleScope';
 
 import agGridStyles from 'ag-grid-community/dist/styles/ag-grid.css';
-import agThemeStyles from 'ag-grid-community/dist/styles/ag-theme-alpine.css';
 import cogDataGridStyles from '@cognite/cog-data-grid-root/lib/cog-data-grid-styles.css';
 
 export const getContainer = () => {
@@ -47,7 +46,6 @@ export default function GlobalStyles(props: { children: React.ReactNode }) {
     graphiqlStyles,
     monacoStyles,
     agGridStyles,
-    agThemeStyles,
     cogDataGridStyles,
   ]);
 

@@ -5,13 +5,18 @@ import styled from 'styled-components/macro';
 
 export type TypeListProps = {
   items?: DataModelTypeDefsType[];
+  selectedTypeName?: string;
   placeholder?: string;
   onClick: (item: DataModelTypeDefsType) => void;
 };
 
-export const TypeList = ({ items, placeholder, onClick }: TypeListProps) => {
+export const TypeList = ({
+  items,
+  placeholder,
+  onClick,
+  selectedTypeName,
+}: TypeListProps) => {
   const [filter, setFilter] = useState('');
-  const [selectedTypeName, setSelected] = useState('');
 
   return (
     <StyledTypeList data-cy="types-list-panel">
@@ -37,7 +42,6 @@ export const TypeList = ({ items, placeholder, onClick }: TypeListProps) => {
                 selectedTypeName === dataModelType.name ? 'active' : ''
               }
               onClick={() => {
-                setSelected(dataModelType.name);
                 onClick(dataModelType);
               }}
             >
@@ -77,13 +81,19 @@ const StyledItem = styled.div`
   min-height: 54px;
   width: 100%;
   padding: 8px 12px;
+  margin-bottom: 8px;
   transition: background-color 0.2s ease-in-out;
+  border-radius: 6px;
+  cursor: pointer;
 
-  &.active,
   &:hover {
-    background: rgba(74, 103, 251, 0.08);
-    border-radius: 6px;
-    cursor: pointer;
+    background: var(--cogs-surface--interactive--toggled-hover);
+  }
+  &:active {
+    background: var(--cogs-surface--interactive--toggled-pressed);
+  }
+  &.active {
+    background: var(--cogs-surface--interactive--toggled-default);
   }
 
   .type-name {

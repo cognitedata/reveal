@@ -27,6 +27,16 @@ export class TextCellEditor
   }
 
   componentDidMount() {
+    if (this.props.cellStartedEdit) this.focusIn();
+  }
+
+  componentDidUpdate() {
+    this.props.eGridCell.classList.remove('ag-cell-has-error');
+    if (this.state.hasError)
+      this.props.eGridCell.classList.add('ag-cell-has-error');
+  }
+
+  focusIn() {
     this.inputRef.current.focus();
     setTimeout(() => this.inputRef.current.select());
   }
@@ -69,23 +79,9 @@ export class TextCellEditor
         ref={this.inputRef}
         value={this.state.value}
         onChange={this.onValueChanged}
-        style={{
-          width: '100%',
-          border: this.state.hasError
-            ? '1px solid red'
-            : '1px solid transparent',
-          outline: 0,
-          textAlign: 'left',
-          paddingRight: '15px',
-          boxSizing: 'border-box',
-          position: 'absolute',
-          padding: '0 15px',
-          top: '0',
-          left: '0',
-          right: '0',
-          bottom: '0',
-          resize: 'none',
-        }}
+        className={`ag-cell-editor ${
+          this.state.hasError ? 'ag-has-error' : ''
+        }`}
       ></textarea>
     );
   }

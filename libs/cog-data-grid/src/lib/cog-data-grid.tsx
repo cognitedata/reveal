@@ -1,5 +1,5 @@
 import './cog-data-grid.module.css';
-import { ColumnTypes, GridConfig, KeyValueMap, TableType } from './core/types';
+import { ColumnTypes, GridConfig, KeyValueMap } from './core/types';
 import { AgGridReact } from 'ag-grid-react';
 import { useEffect, useState, forwardRef, ForwardedRef } from 'react';
 import {
@@ -18,7 +18,6 @@ import ReactDOM from 'react-dom';
 export interface CogDataGridProps {
   data?: KeyValueMap[];
   config: GridConfig;
-  tableType?: TableType;
   /** An object map of custom column types which contain groups of properties that column definitions can inherit by referencing in their `type` property. */
   columnTypes?: ColumnTypes;
   gridOptions?: GridOptions;
@@ -33,16 +32,11 @@ export const CogDataGrid = forwardRef<AgGridReact, CogDataGridProps>(
     const [isGridInit, setIsGridInit] = useState(false);
     const [colDefs, setColDefs] = useState<(ColDef | ColGroupDef)[]>([]);
     const [gridOptions, setGridOptions] = useState<GridOptions>({});
-    const tableType = props.tableType || 'default';
 
     useEffect(() => {
       if (!isGridInit) {
         const agGridOptions = Object.assign(
-          gridConfigService.getGridConfig(
-            tableType,
-            props.columnTypes,
-            props.rowNodeId
-          ),
+          gridConfigService.getGridConfig(props.columnTypes, props.rowNodeId),
           props.gridOptions || {}
         );
 
@@ -67,7 +61,7 @@ export const CogDataGrid = forwardRef<AgGridReact, CogDataGridProps>(
     const gridProps = props.data ? { rowData: props.data } : {};
 
     return (
-      <CogDataGridStyled tableType={tableType}>
+      <CogDataGridStyled>
         <AgGridReact
           // components={components}
           ref={ref}
@@ -87,7 +81,6 @@ export const CogDataGrid = forwardRef<AgGridReact, CogDataGridProps>(
           }}
           {...gridProps}
           // rowData={props.data}
-          className="ag-theme-alpine"
         >
           {props.children}
         </AgGridReact>

@@ -54,11 +54,7 @@ export class CustomHeader extends PureComponent<
             onClick={this.onMenuClicked}
             className="ag-header-icon ag-header-cell-menu-button ag-header-menu-always-show"
           >
-            <span
-              className="ag-icon ag-icon-menu"
-              unselectable="on"
-              role="presentation"
-            ></span>
+            <Icon type="HamburgerMenu" />
           </span>
         )}
 

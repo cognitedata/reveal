@@ -5,12 +5,27 @@ import {
   GroupTitle,
   Group,
 } from '@platypus-app/components/Styles/storybook';
-import { CogDataGrid, TableType } from '@cognite/cog-data-grid';
+import { CogDataGrid } from '@cognite/cog-data-grid';
 import { useState } from 'react';
 import { TypeList } from '../components/TypeList/TypeList';
 
 const configMock = {
   columns: [
+    {
+      property: 'manufacturer',
+      label: 'Manufacturer',
+      optional: false,
+      dataType: 'TEXT',
+      defaultValue: '',
+      execOrder: 1,
+      metadata: {},
+      rules: [],
+      displayOrder: 1,
+      colDef: {
+        pinned: 'left',
+        width: 240,
+      },
+    },
     {
       property: 'models',
       label: 'Models',
@@ -48,21 +63,6 @@ const configMock = {
       displayOrder: 1,
     },
     {
-      property: 'manufacturer',
-      label: 'Manufacturer',
-      optional: false,
-      dataType: 'TEXT',
-      defaultValue: '',
-      execOrder: 1,
-      metadata: {},
-      rules: [],
-      displayOrder: 1,
-      colDef: {
-        pinned: 'left',
-        width: 250,
-      },
-    },
-    {
       property: 'model',
       label: 'Model',
       optional: false,
@@ -84,7 +84,6 @@ const configMock = {
       rules: [],
       displayOrder: 1,
       colDef: {
-        width: 150,
         editable: true,
       },
     },
@@ -178,7 +177,7 @@ const responseMock = [
   },
 ];
 
-const DataGridComponent = ({ type }: { type: TableType }) => {
+const DataGridComponent = () => {
   const [data, setData] = useState(responseMock);
 
   const onCellValueChanged = (e: any) => {
@@ -197,7 +196,6 @@ const DataGridComponent = ({ type }: { type: TableType }) => {
     <div style={{ height: '100%' }}>
       <CogDataGrid
         data={responseMock}
-        tableType={type}
         config={configMock}
         onCellValueChanged={onCellValueChanged}
       />
@@ -220,7 +218,7 @@ export const Default = () => (
     <Group>
       <GroupTitle>Default</GroupTitle>
       <div style={{ height: '600px' }}>
-        <DataGridComponent type={'default'} />
+        <DataGridComponent />
       </div>
     </Group>
   </Wrapper>
@@ -235,32 +233,39 @@ export const DataPreview = () => (
     <Group>
       <GroupTitle>Default</GroupTitle>
       <div style={{ height: '600px' }}>
-        <DataGridComponent type={'large'} />
+        <DataGridComponent />
       </div>
     </Group>
   </Wrapper>
 );
 
-export const TypeListPreview = () => (
-  <Wrapper>
-    <MainTitle>Type List Preview Component</MainTitle>
-    <MainDescription title="Where is it used?">
-      This component is used on Solution/Data Model/DataPreview page.
-    </MainDescription>
-    <Group>
-      <GroupTitle>Default</GroupTitle>
-      <div style={{ height: '600px' }}>
-        <TypeList
-          placeholder="Filter"
-          items={[
-            { name: 'System', description: '7 properties', fields: [] },
-            { name: 'Well', description: '5 properties', fields: [] },
-            { name: 'Pump', fields: [] },
-            { name: 'Person', description: '0 properties', fields: [] },
-          ]}
-          onClick={(item: any) => alert(item.title)}
-        />
-      </div>
-    </Group>
-  </Wrapper>
-);
+export const TypeListPreview = () => {
+  const [selected, setSelected] = useState<string | undefined>(undefined);
+  return (
+    <Wrapper>
+      <MainTitle>Type List Preview Component</MainTitle>
+      <MainDescription title="Where is it used?">
+        This component is used on Solution/Data Model/DataPreview page.
+      </MainDescription>
+      <Group>
+        <GroupTitle>Default</GroupTitle>
+        <div style={{ height: '600px' }}>
+          <TypeList
+            placeholder="Filter"
+            items={[
+              { name: 'System', description: '7 properties', fields: [] },
+              { name: 'Well', description: '5 properties', fields: [] },
+              { name: 'Pump', fields: [] },
+              { name: 'Person', description: '0 properties', fields: [] },
+            ]}
+            selectedTypeName={selected}
+            onClick={(item) => {
+              alert(item.name);
+              setSelected(item.name);
+            }}
+          />
+        </div>
+      </Group>
+    </Wrapper>
+  );
+};

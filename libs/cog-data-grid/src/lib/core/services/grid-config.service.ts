@@ -12,7 +12,6 @@ import {
   ColumnDataType,
   ColumnConfig,
   ColumnTypes,
-  TableType,
 } from '../types';
 
 const cellClassRules = {
@@ -25,11 +24,7 @@ export class GridConfigService {
   /**
    * Loads default ag-grid gridOptions needed for grid to work
    */
-  getGridConfig(
-    tableType: TableType,
-    columnTypes?: ColumnTypes,
-    rowNodeId?: string
-  ): GridOptions {
+  getGridConfig(columnTypes?: ColumnTypes, rowNodeId?: string): GridOptions {
     const virtualizationDisabled = this.isVirtualizationModeDisabled();
 
     if (columnTypes) {
@@ -43,7 +38,8 @@ export class GridConfigService {
       floatingFilter: false,
       stopEditingWhenCellsLoseFocus: false,
       autoSizePadding: 0,
-      singleClickEdit: true,
+      singleClickEdit: false,
+      editType: 'fullRow',
       multiSortKey: 'ctrl',
       domLayout: virtualizationDisabled ? 'autoHeight' : 'normal',
       suppressColumnVirtualisation: virtualizationDisabled ? true : false,
@@ -54,11 +50,11 @@ export class GridConfigService {
       enableCellExpressions: true,
       suppressAggFuncInHeader: true,
       getRowNodeId: (data) => (rowNodeId ? data[rowNodeId] : data.id),
-      rowHeight: tableType === 'large' ? 96 : 44,
-      headerHeight: tableType === 'large' ? 56 : 48,
+      rowHeight: 48,
+      headerHeight: 44,
       // a default column definition with properties that get applied to every column
       defaultColDef: {
-        ...this.getColTypeProps(tableType, 'String'),
+        ...this.getColTypeProps('String'),
         // make every column editable
         editable: false,
 
@@ -90,29 +86,27 @@ export class GridConfigService {
         {
           booleanColType: {
             cellRenderer: 'checkboxRendererComponent',
-            ...this.getColTypeProps(tableType, 'Boolean'),
+            ...this.getColTypeProps('Boolean'),
           },
           customColTypes: {
             cellRenderer: 'customRendererComponent',
-            ...this.getColTypeProps(tableType, 'Link'),
+            ...this.getColTypeProps('Link'),
           },
           largeTextColType: {
             cellEditor: 'textCellEditor',
-            ...this.getColTypeProps(tableType, 'String'),
+            ...this.getColTypeProps('String'),
           },
           listColType: {
             cellRenderer: 'listCellRendererComponent',
-            ...this.getColTypeProps(tableType, 'List'),
+            ...this.getColTypeProps('List'),
           },
           numberColType: {
             cellEditor: 'numberCellEditor',
-            ...this.getColTypeProps(tableType, 'Number'),
-            cellClass: 'ag-right-aligned-cell',
+            ...this.getColTypeProps('Number'),
           },
           decimalColType: {
             cellEditor: 'decimalColType',
-            ...this.getColTypeProps(tableType, 'Number'),
-            cellClass: 'ag-right-aligned-cell',
+            ...this.getColTypeProps('Number'),
             cellEditorParams: {
               allowDecimals: true,
             },
@@ -145,7 +139,7 @@ export class GridConfigService {
   buildColDefs(tableConfig: GridConfig) {
     const columns = tableConfig.columns;
     return columns
-      .map((columnConfig) => {
+      .map((columnConfig, index) => {
         if (columnConfig.dataType === ColumnDataType.Dynamic) {
           return null;
         }
@@ -172,6 +166,7 @@ export class GridConfigService {
             editable: isEditable,
             resizable: true,
             cellClassRules: cellClassRules,
+            width: userProvidedColDef.width || (index === 0 ? 240 : 200),
           },
           userProvidedColDef
         ) as ColDef;
@@ -277,15 +272,12 @@ export class GridConfigService {
     });
   }
 
-  private getColTypeProps(tableType: TableType, iconName: string): ColDef {
-    if (tableType === 'default') {
-      return {} as ColDef;
-    }
-
+  private getColTypeProps(iconName: string): ColDef {
     return {
       headerComponent: 'cogCustomHeader',
       headerComponentParams: {
         headerIcon: iconName,
+        enableMenu: false,
       },
     } as ColDef;
   }

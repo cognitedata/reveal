@@ -1,4 +1,4 @@
-import { Tag } from '@cognite/cogs.js';
+import { Flex, Label } from '@cognite/cogs.js';
 import { ICellRendererParams } from 'ag-grid-community';
 import React from 'react';
 import styled from 'styled-components';
@@ -8,17 +8,23 @@ const LIMIT = 4;
 
 export const ListCellRenderer = React.memo(
   ({ value, colDef }: ICellRendererParams) => {
-    const diff = value.length - LIMIT;
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     const [_, realType] = colDef?.type;
     return value
       .splice(0, LIMIT)
       .map((item: any, index: number, items: any) => {
-        if (items.length === index + 1 && diff > 0) {
-          return <StyledTag>+{diff}</StyledTag>;
-        }
-        return <StyledTag key={index}>{printType(item, realType)}</StyledTag>;
+        if (index !== 0) return null;
+        return (
+          <Flex justifyContent={'space-between'} key={index}>
+            <ListCellValueText>
+              {printType(item, realType)};...
+            </ListCellValueText>
+            <Label size="small" variant="normal">
+              {items.length}
+            </Label>
+          </Flex>
+        );
       });
   }
 );
@@ -35,7 +41,8 @@ const printType = (value: any, type: ColumnDataType) => {
   }
 };
 
-const StyledTag = styled(Tag)`
-  margin-right: 4px;
-  border-radius: 4px;
+const ListCellValueText = styled.span`
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding-right: 8px;
 `;

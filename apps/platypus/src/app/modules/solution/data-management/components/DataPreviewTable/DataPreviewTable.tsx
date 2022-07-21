@@ -151,7 +151,6 @@ export const DataPreviewTable = ({
             maxConcurrentDatasourceRequests: 2,
             noRowsOverlayComponentFramework: noRowsOverlay,
           }}
-          tableType={'large'}
           rowNodeId={instanceIdCol}
           config={gridConfig}
           onCellValueChanged={onCellValueChanged}

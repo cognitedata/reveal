@@ -8,13 +8,7 @@ export const CustomCellRenderer = React.memo((props: ICellRendererParams) => {
   }
 
   return (
-    <div
-      style={{
-        display: 'inline-block',
-        paddingTop: '5px',
-        verticalAlign: 'text-bottom',
-      }}
-    >
+    <div>
       <Tag>
         {props.value.externalId ||
           props.value._externalId ||

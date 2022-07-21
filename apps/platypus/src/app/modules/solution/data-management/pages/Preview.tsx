@@ -13,6 +13,9 @@ import {
   useTransformationMutate,
 } from '@platypus-app/hooks/useTransformationAPI';
 import { TransformationIframe } from '../components/TransformationPlaceholder/TransformationIframe';
+import { useHistory } from 'react-router-dom';
+import { getQueryParameter } from '@cognite/cdf-utilities';
+
 import useSelector from '@platypus-app/hooks/useSelector';
 import { DataModelState } from '@platypus-app/redux/reducers/global/dataModelReducer';
 import {
@@ -26,6 +29,7 @@ export interface PreviewProps {
 }
 
 export const Preview = ({ dataModelExternalId }: PreviewProps) => {
+  const history = useHistory();
   const { selectedVersionNumber } = useSelector<DataModelState>(
     (state) => state.dataModel
   );
@@ -35,20 +39,23 @@ export const Preview = ({ dataModelExternalId }: PreviewProps) => {
     dataModelVersions || [],
     dataModelExternalId
   );
-  const [selectedType, setSelected] = useState<DataModelTypeDefsType | null>(
-    null
-  );
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const { t } = useTranslation('DataPreview');
-  const typeKey = `${selectedType?.name}_${selectedDataModelVersion.version}`;
-
-  const transformation = useTransformation(typeKey, dataModelExternalId);
-  const transformationMutate = useTransformationMutate();
-
   const dataModelTypeDefs = useDataModelTypeDefs(
     dataModelExternalId,
     selectedVersionNumber
   );
+  const selectedTypeNameFromQuery = getQueryParameter('type');
+  const [selectedType, setSelected] = useState<DataModelTypeDefsType | null>(
+    dataModelTypeDefs.types.find(
+      (el) => el.name === selectedTypeNameFromQuery
+    ) || null
+  );
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const { t } = useTranslation('DataPreview');
+
+  const typeKey = `${selectedType?.name}_${selectedDataModelVersion.version}`;
+
+  const transformation = useTransformation(typeKey, dataModelExternalId);
+  const transformationMutate = useTransformationMutate();
 
   const onLoadDataFromTransformation = async () => {
     transformationMutate.mutate(
@@ -94,12 +101,18 @@ export const Preview = ({ dataModelExternalId }: PreviewProps) => {
             items={dataModelTypeDefs.types.filter(
               (type) => !type.directives?.length // if it has directive, that means that it is inline types
             )}
-            onClick={(item: any) => setSelected(item)}
+            selectedTypeName={selectedType?.name}
+            onClick={(item) => {
+              history.push({
+                search: `type=${item.name}`,
+              });
+              setSelected(item);
+            }}
           />
         }
         content={
           selectedType ? (
-            <div style={{ flex: 1 }}>
+            <Flex direction="column" style={{ flex: 1 }}>
               {transformation.data?.id == null &&
                 transformation.status === 'success' &&
                 !transformationMutate.isError && (
@@ -108,7 +121,7 @@ export const Preview = ({ dataModelExternalId }: PreviewProps) => {
                   />
                 )}
               <Flex
-                style={{ height: 56, paddingLeft: 16, paddingRight: 16 }}
+                style={{ height: 56, padding: '10px 16px' }}
                 alignItems="center"
                 justifyContent="space-between"
               >
@@ -132,7 +145,7 @@ export const Preview = ({ dataModelExternalId }: PreviewProps) => {
                 solutionId={dataModelExternalId}
                 version={selectedDataModelVersion.version}
               />
-            </div>
+            </Flex>
           ) : (
             <FlexPlaceholder
               data-cy="data-preview-no-types-selected"

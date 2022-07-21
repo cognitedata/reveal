@@ -50,9 +50,9 @@ describe('Platypus Data Preview Page - Preview', () => {
     ).should('have.text', 'Lorem Ipsum');
 
     // check numbers
-    cy.get('.ag-body-viewport .ag-row[row-index="0"] .ag-cell[col-id="views"]')
-      .should('have.text', '254')
-      .should('have.class', 'ag-right-aligned-cell');
+    cy.get(
+      '.ag-body-viewport .ag-row[row-index="0"] .ag-cell[col-id="views"]'
+    ).should('have.text', '254');
 
     // check custom col types
     cy.get(
