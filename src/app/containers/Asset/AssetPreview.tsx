@@ -101,12 +101,16 @@ export const AssetPreview = ({
             <Metadata metadata={asset.metadata} />
           </Tabs.TabPane>,
           <Tabs.TabPane
-            tab={<TabTitle>Children</TabTitle>}
+            tab={<TabTitle>Hierarchy</TabTitle>}
             style={{ padding: '20px 16px' }}
             key="children"
           >
             <AssetTreeTable
-              filter={{ parentIds: [asset.id] }}
+              activeIds={[asset.id]}
+              filter={
+                asset.id === asset.rootId ? { parentIds: [asset.id] } : {}
+              }
+              hierachyRootId={asset.rootId}
               onAssetClicked={(newAsset: Asset) => openAsset(newAsset.id)}
               selectionMode={mode}
               onSelect={onSelect}
