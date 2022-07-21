@@ -15,5 +15,5 @@ export interface IPotree {
     stylableObjectInfo: PointCloudObjectProvider
   ): Promise<PointCloudOctree>;
 
-  updatePointClouds(pointClouds: PointCloudOctree[], camera: Camera, renderer: WebGLRenderer): IVisibilityUpdateResult;
+  updatePointClouds(pointClouds: PointCloudOctree[], camera: Camera, renderer: WebGLRenderer): void;
 }

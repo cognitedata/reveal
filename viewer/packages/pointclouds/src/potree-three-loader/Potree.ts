@@ -34,6 +34,7 @@ import { Box3Helper } from './utils/box3-helper';
 import { LRU } from './utils/lru';
 import { ModelDataProvider } from '@reveal/modeldata-api';
 import { PointCloudObjectProvider } from '../styling/PointCloudObjectProvider';
+import throttle from 'lodash/throttle';
 
 export class QueueItem {
   constructor(
@@ -68,6 +69,11 @@ export class Potree implements IPotree {
   private readonly _rendererSize: Vector2 = new Vector2();
   private readonly _modelDataProvider: ModelDataProvider;
 
+  private readonly _throttledUpdateFunc = throttle((pointClouds: PointCloudOctree[],
+                                                    camera: THREE.Camera,
+                                                    renderer: WebGLRenderer) =>
+    this.innerUpdatePointClouds(pointClouds, camera, renderer), 300);
+
   maxNumNodesLoading: number = MAX_NUM_NODES_LOADING;
   features = FEATURES;
   lru = new LRU(this._pointBudget);
@@ -85,7 +91,11 @@ export class Potree implements IPotree {
     return new PointCloudOctree(this, geometry, annotationObjectInfo);
   }
 
-  updatePointClouds(pointClouds: PointCloudOctree[], camera: Camera, renderer: WebGLRenderer): IVisibilityUpdateResult {
+  updatePointClouds(pointClouds: PointCloudOctree[], camera: Camera, renderer: WebGLRenderer): void {
+    this._throttledUpdateFunc(pointClouds, camera, renderer);
+  }
+
+  private innerUpdatePointClouds(pointClouds: PointCloudOctree[], camera: Camera, renderer: WebGLRenderer): IVisibilityUpdateResult {
     const result = this.updateVisibility(pointClouds, camera, renderer);
 
     for (let i = 0; i < pointClouds.length; i++) {
@@ -255,7 +265,10 @@ export class Potree implements IPotree {
     const numNodesToLoad = Math.min(this.maxNumNodesLoading, updateInfo.unloadedGeometry.length);
     const nodeLoadPromises: Promise<void>[] = [];
     for (let i = 0; i < numNodesToLoad; i++) {
-      nodeLoadPromises.push(updateInfo.unloadedGeometry[i].load());
+      nodeLoadPromises.push(updateInfo.unloadedGeometry[i].load()
+        .then(() => {
+          this._throttledUpdateFunc(pointClouds, camera, renderer);
+        }));
     }
 
     return this.createVisibilityUpdateResult(updateInfo, nodeLoadPromises);
