@@ -1,25 +1,57 @@
-import React from 'react';
+import React, { useRef } from 'react';
 
-import times from 'lodash/times';
-import styled from 'styled-components/macro';
+import isEmpty from 'lodash/isEmpty';
 
-import { DragDropContainer } from 'components/DragDropContainer';
+import { PerfMetrics } from '@cognite/metrics';
 
-const Item = styled.div`
-  width: 200px;
-  border: 1px solid grey;
-  margin-bottom: 10px;
-  background-color: lightblue;
-  padding: 10px;
-`;
+import EmptyState from 'components/EmptyState';
+import {
+  PerformanceMetricsObserver,
+  PerformanceObserved,
+} from 'components/Performance';
+
+import { WellboreCasingsViewsWrapper } from './elements';
+import { useCasingsData } from './hooks/useCasingsData';
+import { WellboreCasingView } from './WellboreCasingView';
 
 const StickChart: React.FC = () => {
+  const { data, isLoading, isNptEventsLoading, isNdsEventsLoading } =
+    useCasingsData();
+
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  const handlePerformanceObserved = ({
+    mutations,
+    data,
+  }: PerformanceObserved) => {
+    if (mutations) {
+      PerfMetrics.trackPerfEnd('CASING_PAGE_LOAD');
+    }
+    if (isEmpty(data)) {
+      PerfMetrics.trackPerfEnd('CASING_PAGE_LOAD');
+    }
+  };
+
+  if (isLoading) {
+    return <EmptyState isLoading={isLoading} />;
+  }
+
   return (
-    <DragDropContainer id="list">
-      {times(5).map((index) => (
-        <Item key={index}>Item {index}</Item>
-      ))}
-    </DragDropContainer>
+    <PerformanceMetricsObserver
+      onChange={handlePerformanceObserved}
+      data={data}
+    >
+      <WellboreCasingsViewsWrapper ref={scrollRef}>
+        {data.map((casingsView) => (
+          <WellboreCasingView
+            key={`casings-view-${casingsView.wellboreName}`}
+            data={casingsView}
+            isNptEventsLoading={isNptEventsLoading}
+            isNdsEventsLoading={isNdsEventsLoading}
+          />
+        ))}
+      </WellboreCasingsViewsWrapper>
+    </PerformanceMetricsObserver>
   );
 };
 

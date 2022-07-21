@@ -1,23 +1,31 @@
 import React, { useState } from 'react';
 import { DragDropContext, Droppable, DropResult } from 'react-beautiful-dnd';
 
-import { useDeepMemo } from 'hooks/useDeep';
+import isEmpty from 'lodash/isEmpty';
+
+import { useDeepEffect, useDeepMemo } from 'hooks/useDeep';
 
 import { DraggableElements } from './components/DraggableElements';
 import { DragDropContainerProps } from './types';
 import { getDraggableElementsWrapper } from './utils/getDraggableElementsWrapper';
 import { getElementsFromChildren } from './utils/getElementsFromChildren';
 import { getReorderedElements } from './utils/getReorderedElements';
+import { orderElementsByKey } from './utils/orderElementsByKey';
 
 export const DragDropContainer: React.FC<
   React.PropsWithChildren<DragDropContainerProps>
-> = React.memo(({ id, children, direction }) => {
+> = React.memo(({ id, children, direction, elementsOrder }) => {
   const elements = useDeepMemo(
     () => getElementsFromChildren(children),
     [children]
   );
 
   const [orderedElements, setOrderedElements] = useState(elements);
+
+  useDeepEffect(() => {
+    if (!elementsOrder || isEmpty(elementsOrder)) return;
+    setOrderedElements([...orderElementsByKey(elements, elementsOrder)]);
+  }, [elements, elementsOrder]);
 
   const handleDragEnd = (result: DropResult) => {
     if (
