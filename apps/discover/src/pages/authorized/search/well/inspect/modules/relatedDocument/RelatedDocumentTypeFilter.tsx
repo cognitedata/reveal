@@ -57,7 +57,7 @@ export const RelatedDocumentTypeFilter = () => {
             <DocTypeHeader>
               <DocTypeHeaderLabel>Document type</DocTypeHeaderLabel>
               <FlexGrow />
-              <DocTypeCount>
+              <DocTypeCount data-testid="document-type-count">
                 {withThousandSeparator(totalResults)} files
               </DocTypeCount>
             </DocTypeHeader>
