@@ -8,8 +8,13 @@ import {
 } from '../../common/Events/constants';
 
 export const getScaleBlocks = (scaleHeight: number, maxDepth: number) => {
-  if (!maxDepth) {
-    return [0];
+  /**
+   * If scaleHeight or maxDepth value is 0,
+   * no point of calculating scale blocks.
+   * Hence, return an empty array.
+   */
+  if (!scaleHeight || !maxDepth) {
+    return [];
   }
 
   const blocksCountWithoutZero = Math.floor(

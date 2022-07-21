@@ -4,10 +4,12 @@ import React, { useMemo } from 'react';
 
 import isEmpty from 'lodash/isEmpty';
 
+import { WithDragHandleProps } from 'components/DragDropContainer';
 import EmptyState from 'components/EmptyState';
 
 import { EventTabs } from '../../measurements/wellCentricView/constants';
 
+import { ColumnDragger } from './ColumnDragger';
 import { NDS_COLUMN_TITLE } from './constants';
 import {
   BodyColumn,
@@ -32,11 +34,12 @@ export type Props = {
 export const EMPTY_STATE_TEXT = 'This wellbore has no NDS events data';
 export const LOADING_TEXT = 'Loading';
 
-const NdsEventsColumn: React.FC<Props> = ({
+const NdsEventsColumn: React.FC<WithDragHandleProps<Props>> = ({
   scaleBlocks,
   events,
   isEventsLoading,
   view,
+  ...dragHandleProps
 }: Props) => {
   const blockElements = useMemo(() => {
     const lastEvents = events.filter(
@@ -80,9 +83,12 @@ const NdsEventsColumn: React.FC<Props> = ({
 
   return (
     <BodyColumn width={150}>
+      <ColumnDragger {...dragHandleProps} />
+
       <BodyColumnHeaderWrapper>
         <BodyColumnMainHeader>{NDS_COLUMN_TITLE}</BodyColumnMainHeader>
       </BodyColumnHeaderWrapper>
+
       <BodyColumnBody>
         {(isEventsLoading || isEmpty(events)) && (
           <EmptyStateWrapper>

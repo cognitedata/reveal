@@ -8,11 +8,10 @@ import React, {
   useState,
 } from 'react';
 
-import { DepthMeasurementUnit } from 'constants/units';
-import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
+import { DragDropContainer } from 'components/DragDropContainer';
 
-import DepthColumn from '../../common/Events/DepthColumn';
-import EventsByDepth from '../../common/Events/EventsByDepth';
+import NdsEventsColumn from '../../common/Events/NdsEventsColumn';
+import NptEventsColumn from '../../common/Events/NptEventsColumn';
 import { SelectedWellboreNptView } from '../../nptEvents/Graph';
 import { CasingSchematicView } from '../types';
 import { getScaleBlocks } from '../utils/scale';
@@ -36,11 +35,10 @@ export const WellboreCasingView: React.FC<WellboreCasingsViewProps> = ({
   isNdsEventsLoading,
   showBothSides = false,
 }) => {
-  const { data: userPreferredUnit } = useUserPreferencesMeasurement();
-
   const depthScaleRef = useRef<HTMLElement>(null);
 
   const [scaleBlocks, setScaleBlocks] = useState<number[]>([]);
+  const [isSchemaLoading, setSchamaLoading] = useState<boolean>(true);
   const [showNptDetailView, setShowNptDetailView] = useState<boolean>(false);
   const [showNdsDetailView, setShowNdsDetailView] = useState<boolean>(false);
 
@@ -61,10 +59,12 @@ export const WellboreCasingView: React.FC<WellboreCasingsViewProps> = ({
   );
 
   const setDepthScaleBlocks = useCallback(() => {
+    setSchamaLoading(true);
     const depthColumnHeight = depthScaleRef.current?.offsetHeight;
     const height = depthColumnHeight || DEPTH_SCALE_MIN_HEIGHT;
     const depthScaleBlocks = getScaleBlocks(height, maxDepth);
     setScaleBlocks(depthScaleBlocks);
+    setSchamaLoading(false);
   }, [depthScaleRef.current?.offsetHeight, maxDepth]);
 
   useEffect(() => setDepthScaleBlocks(), [setDepthScaleBlocks]);
@@ -92,28 +92,29 @@ export const WellboreCasingView: React.FC<WellboreCasingsViewProps> = ({
         />
 
         <ContentWrapper>
-          <DepthColumn
-            ref={depthScaleRef}
-            scaleBlocks={scaleBlocks}
-            unit={userPreferredUnit}
-            measurementUnit={DepthMeasurementUnit.MD}
-          />
+          <DragDropContainer id="welbore-casing-view-content">
+            <SchemaColumn
+              ref={depthScaleRef}
+              isLoading={isSchemaLoading}
+              rkbLevel={rkbLevel}
+              waterDepth={waterDepth}
+              casingAssemblies={casingAssemblies}
+              scaleBlocks={scaleBlocks}
+              showBothSides={showBothSides}
+            />
 
-          <SchemaColumn
-            rkbLevel={rkbLevel}
-            waterDepth={waterDepth}
-            casingAssemblies={casingAssemblies}
-            scaleBlocks={scaleBlocks}
-            showBothSides={showBothSides}
-          />
+            <NptEventsColumn
+              scaleBlocks={scaleBlocks}
+              events={nptEvents}
+              isEventsLoading={isNptEventsLoading}
+            />
 
-          <EventsByDepth
-            nptEvents={nptEvents}
-            ndsEvents={ndsEvents}
-            isNptEventsLoading={isNptEventsLoading}
-            isNdsEventsLoading={isNdsEventsLoading}
-            scaleBlocks={scaleBlocks}
-          />
+            <NdsEventsColumn
+              scaleBlocks={scaleBlocks}
+              events={ndsEvents}
+              isEventsLoading={isNdsEventsLoading}
+            />
+          </DragDropContainer>
         </ContentWrapper>
       </WellboreCasingsViewWrapper>
 

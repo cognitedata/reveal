@@ -3,6 +3,8 @@ import { NptInternal } from 'domain/wells/npt/internal/types';
 
 import React from 'react';
 
+import { FlexRow } from 'styles/layout';
+
 import { EventTabs } from '../../measurements/wellCentricView/constants';
 
 import NdsEventsColumn from './NdsEventsColumn';
@@ -26,7 +28,7 @@ const EventsByDepth: React.FC<Props> = ({
   view,
 }: Props) => {
   return (
-    <>
+    <FlexRow>
       <NptEventsColumn
         scaleBlocks={scaleBlocks}
         events={nptEvents}
@@ -39,7 +41,7 @@ const EventsByDepth: React.FC<Props> = ({
         isEventsLoading={isNdsEventsLoading}
         view={view}
       />
-    </>
+    </FlexRow>
   );
 };
 

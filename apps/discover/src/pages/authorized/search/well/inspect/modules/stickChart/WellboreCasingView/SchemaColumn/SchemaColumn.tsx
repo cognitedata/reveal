@@ -1,9 +1,12 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 
 import isEmpty from 'lodash/isEmpty';
 
+import { WithDragHandleProps } from 'components/DragDropContainer';
 import EmptyState from 'components/EmptyState';
 
+import { ColumnDragger } from '../../../common/Events/ColumnDragger';
+import { BodyColumn } from '../../../common/Events/elements';
 import { CasingAssemblyView, CasingSchematicView } from '../../types';
 import { EMPTY_SCHEMA_TEXT, LOADING_TEXT } from '../constants';
 
@@ -13,78 +16,79 @@ import {
   HeaderText,
   SchemaColumnContentWrapper,
   SchemaColumnHeaderWrapper,
-  SchemaColumnWrapper,
 } from './elements';
 import { Legend } from './Legend';
 import { TopContent } from './TopContent';
 
 interface SchemaColumnProps
   extends Pick<CasingSchematicView, 'rkbLevel' | 'waterDepth'> {
+  isLoading: boolean;
   casingAssemblies: CasingAssemblyView[];
   scaleBlocks: number[];
   showBothSides?: boolean;
 }
 
-export const SchemaColumn: React.FC<SchemaColumnProps> = ({
-  rkbLevel,
-  waterDepth,
-  casingAssemblies,
-  scaleBlocks,
-  showBothSides = false,
-}) => {
-  const hasCasingAssembliesData = !isEmpty(casingAssemblies);
+export const SchemaColumn = React.forwardRef<
+  HTMLElement,
+  WithDragHandleProps<SchemaColumnProps>
+>(
+  (
+    {
+      isLoading,
+      rkbLevel,
+      waterDepth,
+      casingAssemblies,
+      scaleBlocks,
+      showBothSides = false,
+      ...dragHandleProps
+    },
+    ref
+  ) => {
+    const hasCasingAssembliesData = !isEmpty(casingAssemblies);
 
-  /**
-   * It takes a little time to calculate the depth scale.
-   * The initial value of scaleBlocks is [0].
-   * Once calculated, scaleBlocks should have at least two elements [0, maxDepth].
-   * Hence, `scaleBlocks.length === 1` condition represents that the scale is being calculated.
-   */
-  const isScaleCalculating = useMemo(
-    () => hasCasingAssembliesData && scaleBlocks.length === 1,
-    [scaleBlocks]
-  );
+    const renderSchemaColumnContent = () => {
+      if (!hasCasingAssembliesData || isLoading) {
+        return (
+          <EmptyState
+            isLoading={isLoading}
+            loadingSubtitle={LOADING_TEXT}
+            emptySubtitle={EMPTY_SCHEMA_TEXT}
+          />
+        );
+      }
 
-  const renderSchemaColumnContent = () => {
-    if (!hasCasingAssembliesData || isScaleCalculating) {
       return (
-        <EmptyState
-          isLoading={isScaleCalculating}
-          loadingSubtitle={LOADING_TEXT}
-          emptySubtitle={EMPTY_SCHEMA_TEXT}
-        />
+        <>
+          <DepthScaleLines scaleBlocks={scaleBlocks} />
+
+          <TopContent
+            rkbLevel={rkbLevel}
+            waterDepth={waterDepth}
+            scaleBlocks={scaleBlocks}
+          />
+
+          <DepthIndicators
+            casingAssemblies={casingAssemblies}
+            scaleBlocks={scaleBlocks}
+            showBothSides={showBothSides}
+          />
+        </>
       );
-    }
+    };
 
     return (
-      <>
-        <DepthScaleLines scaleBlocks={scaleBlocks} />
+      <BodyColumn data-testid="schema-column" ref={ref}>
+        <ColumnDragger {...dragHandleProps} />
 
-        <TopContent
-          rkbLevel={rkbLevel}
-          waterDepth={waterDepth}
-          scaleBlocks={scaleBlocks}
-        />
+        <SchemaColumnHeaderWrapper>
+          <HeaderText>Schema</HeaderText>
+          <Legend />
+        </SchemaColumnHeaderWrapper>
 
-        <DepthIndicators
-          casingAssemblies={casingAssemblies}
-          scaleBlocks={scaleBlocks}
-          showBothSides={showBothSides}
-        />
-      </>
+        <SchemaColumnContentWrapper>
+          {renderSchemaColumnContent()}
+        </SchemaColumnContentWrapper>
+      </BodyColumn>
     );
-  };
-
-  return (
-    <SchemaColumnWrapper data-testid="schema-column">
-      <SchemaColumnHeaderWrapper>
-        <HeaderText>Schema</HeaderText>
-        <Legend />
-      </SchemaColumnHeaderWrapper>
-
-      <SchemaColumnContentWrapper>
-        {renderSchemaColumnContent()}
-      </SchemaColumnContentWrapper>
-    </SchemaColumnWrapper>
-  );
-};
+  }
+);

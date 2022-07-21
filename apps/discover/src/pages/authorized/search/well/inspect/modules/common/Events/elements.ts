@@ -18,6 +18,7 @@ export const BodyColumn = styled(FlexColumn)`
   min-width: ${(props: { width: number }) => props.width}px;
   width: auto;
   background: var(--cogs-bg-accent);
+  margin: ${sizes.small};
 `;
 
 export const BodyColumnHeaderWrapper = styled(FlexRow)`
@@ -25,8 +26,6 @@ export const BodyColumnHeaderWrapper = styled(FlexRow)`
   padding: ${sizes.small};
   background: var(--cogs-greyscale-grey2);
   border-bottom: 1px solid var(--cogs-greyscale-grey3);
-  border-top-left-radius: 12px;
-  border-top-right-radius: 12px;
 `;
 
 export const BodyColumnHeaderLegend = styled(FlexRow)`
@@ -199,4 +198,14 @@ export const EmptyStateWrapper = styled(Flex)`
     padding-top: 0;
     justify-content: center;
   }
+`;
+
+export const ColumnDraggerWrapper = styled(FlexRow)`
+  height: 21px;
+  padding: ${sizes.small};
+  align-items: center;
+  justify-content: center;
+  background: var(--cogs-greyscale-grey3);
+  border-top-left-radius: inherit;
+  border-top-right-radius: inherit;
 `;

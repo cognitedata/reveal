@@ -1,4 +1,9 @@
-import { Direction, DraggableProvided } from 'react-beautiful-dnd';
+import {
+  ContextId,
+  Direction,
+  DraggableId,
+  ElementId,
+} from 'react-beautiful-dnd';
 
 export interface DragDropContainerProps {
   id: string;
@@ -11,5 +16,14 @@ export interface DragDropContainerProps {
   elementsOrder?: string[];
 }
 
-export type WithDragHandleProps<T> = T &
-  Pick<DraggableProvided, 'dragHandleProps'>;
+export type WithDragHandleProps<T> = T & DragHandleProps;
+
+export interface DragHandleProps {
+  'data-rbd-drag-handle-draggable-id'?: DraggableId;
+  'data-rbd-drag-handle-context-id'?: ContextId;
+  'aria-describedby'?: ElementId;
+  role?: string;
+  tabIndex?: number;
+  draggable?: boolean;
+  onDragStart?: React.DragEventHandler<any>;
+}

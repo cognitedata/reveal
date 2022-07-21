@@ -4,10 +4,12 @@ import React, { useMemo } from 'react';
 
 import isEmpty from 'lodash/isEmpty';
 
+import { WithDragHandleProps } from 'components/DragDropContainer';
 import EmptyState from 'components/EmptyState';
 
 import { EventTabs } from '../../measurements/wellCentricView/constants';
 
+import { ColumnDragger } from './ColumnDragger';
 import { NPT_COLUMN_TITLE } from './constants';
 import {
   BodyColumn,
@@ -32,11 +34,12 @@ export type Props = {
 export const EMPTY_STATE_TEXT = 'This wellbore has no NPT events data';
 export const LOADING_TEXT = 'Loading';
 
-const NptEventsColumn: React.FC<Props> = ({
+const NptEventsColumn: React.FC<WithDragHandleProps<Props>> = ({
   scaleBlocks,
   events,
   isEventsLoading,
   view,
+  ...dragHandleProps
 }: Props) => {
   const blockElements = useMemo(() => {
     const lastEvents = events.filter(
@@ -81,9 +84,12 @@ const NptEventsColumn: React.FC<Props> = ({
 
   return (
     <BodyColumn width={150}>
+      <ColumnDragger {...dragHandleProps} />
+
       <BodyColumnHeaderWrapper>
         <BodyColumnMainHeader>{NPT_COLUMN_TITLE}</BodyColumnMainHeader>
       </BodyColumnHeaderWrapper>
+
       <BodyColumnBody>
         {(isEventsLoading || isEmpty(events)) && (
           <EmptyStateWrapper>

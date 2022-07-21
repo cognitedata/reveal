@@ -14,7 +14,7 @@ import { orderElementsByKey } from './utils/orderElementsByKey';
 
 export const DragDropContainer: React.FC<
   React.PropsWithChildren<DragDropContainerProps>
-> = React.memo(({ id, children, direction, elementsOrder }) => {
+> = React.memo(({ id, children, direction = 'horizontal', elementsOrder }) => {
   const elements = useDeepMemo(
     () => getElementsFromChildren(children),
     [children]
@@ -22,9 +22,17 @@ export const DragDropContainer: React.FC<
 
   const [orderedElements, setOrderedElements] = useState(elements);
 
+  const updatedOrderedElements = (elements: JSX.Element[]) => {
+    setOrderedElements([...elements]);
+  };
+
+  useDeepEffect(() => updatedOrderedElements(elements), [elements]);
+
   useDeepEffect(() => {
     if (!elementsOrder || isEmpty(elementsOrder)) return;
-    setOrderedElements([...orderElementsByKey(elements, elementsOrder)]);
+
+    const orderedElementsByKey = orderElementsByKey(elements, elementsOrder);
+    updatedOrderedElements(orderedElementsByKey);
   }, [elements, elementsOrder]);
 
   const handleDragEnd = (result: DropResult) => {
@@ -49,12 +57,10 @@ export const DragDropContainer: React.FC<
     <DragDropContext onDragEnd={handleDragEnd}>
       <Droppable droppableId={id} direction={direction}>
         {(provided) => (
-          <div ref={provided.innerRef} {...provided.droppableProps}>
-            <Wrapper>
-              <DraggableElements>{orderedElements}</DraggableElements>
-            </Wrapper>
+          <Wrapper ref={provided.innerRef} {...provided.droppableProps}>
+            <DraggableElements>{orderedElements}</DraggableElements>
             {provided.placeholder}
-          </div>
+          </Wrapper>
         )}
       </Droppable>
     </DragDropContext>

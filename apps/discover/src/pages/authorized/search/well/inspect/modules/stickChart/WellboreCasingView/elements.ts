@@ -10,8 +10,8 @@ export const WellboreCasingsViewWrapper = styled(FlexColumn)`
 `;
 
 export const ContentWrapper = styled(Flex)`
-  height: calc(100% - 72px);
-  padding: ${sizes.normal};
+  height: calc(100% - 93px);
+  padding: ${sizes.small};
   gap: ${sizes.small};
   justify-content: center;
   > * h6 {
