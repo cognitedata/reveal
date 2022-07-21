@@ -123,23 +123,65 @@ export const mockDataSample = {
           bindings: [
             {
               targetName: 'Post',
-              dataModelStorageSource: {
-                externalId: 'Post_1',
-                space: 'blog',
+              dataModelStorageMappingSource: {
+                filter: {
+                  and: [
+                    {
+                      hasData: {
+                        models: [['blog', 'Post_1']],
+                      },
+                    },
+                  ],
+                },
+                properties: [
+                  {
+                    from: {
+                      property: ['blog', 'Post_1', '.*'],
+                    },
+                  },
+                ],
               },
             },
             {
               targetName: 'User',
-              dataModelStorageSource: {
-                externalId: 'User_1',
-                space: 'blog',
+              dataModelStorageMappingSource: {
+                filter: {
+                  and: [
+                    {
+                      hasData: {
+                        models: [['blog', 'User_1']],
+                      },
+                    },
+                  ],
+                },
+                properties: [
+                  {
+                    from: {
+                      property: ['blog', 'User_1', '.*'],
+                    },
+                  },
+                ],
               },
             },
             {
               targetName: 'Comment',
-              dataModelStorageSource: {
-                externalId: 'Comment_1',
-                space: 'blog',
+              dataModelStorageMappingSource: {
+                filter: {
+                  and: [
+                    {
+                      hasData: {
+                        models: [['blog', 'Comment_1']],
+                      },
+                    },
+                  ],
+                },
+                properties: [
+                  {
+                    from: {
+                      property: ['blog', 'Comment_1', '.*'],
+                    },
+                  },
+                ],
               },
             },
           ],

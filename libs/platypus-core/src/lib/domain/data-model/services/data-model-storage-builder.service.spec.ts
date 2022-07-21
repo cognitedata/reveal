@@ -14,7 +14,7 @@ const solutionMock: DataModel = {
   createdTime: 0,
   updatedTime: 0,
   owners: [''],
-  version: 'v1',
+  version: '1',
 };
 const solutionSchemaMock: DataModelVersion = {
   externalId: 'app-dev-test-1-schema-1',
@@ -22,7 +22,7 @@ const solutionSchemaMock: DataModelVersion = {
   createdTime: 0,
   lastUpdatedTime: 0,
   schema: '',
-  version: 'v1',
+  version: '1',
 };
 const dataModelMock: DataModelTypeDefs = {
   types: [
@@ -117,7 +117,7 @@ describe('DataModelStorageBuilderServiceTest', () => {
       spaceExternalId: 'app-dev-test-1',
       items: [
         {
-          externalId: 'Post_v1',
+          externalId: 'Post_1',
           properties: {
             body: {
               type: 'text',
@@ -126,7 +126,7 @@ describe('DataModelStorageBuilderServiceTest', () => {
           },
         },
         {
-          externalId: 'Comment_v1',
+          externalId: 'Comment_1',
           properties: {
             body: {
               type: 'text',
@@ -139,7 +139,7 @@ describe('DataModelStorageBuilderServiceTest', () => {
             post: {
               type: 'direct_relation',
               nullable: false,
-              targetModel: ['app-dev-test-1', 'Post_v1'],
+              targetModel: ['app-dev-test-1', 'Post_1'],
             },
           },
         },
@@ -161,16 +161,44 @@ describe('DataModelStorageBuilderServiceTest', () => {
     const expected = [
       {
         targetName: 'Post',
-        dataModelStorageSource: {
-          externalId: 'Post_v1',
-          space: 'app-dev-test-1',
+        dataModelStorageMappingSource: {
+          filter: {
+            and: [
+              {
+                hasData: {
+                  models: [['app-dev-test-1', 'Post_1']],
+                },
+              },
+            ],
+          },
+          properties: [
+            {
+              from: {
+                property: ['app-dev-test-1', 'Post_1', '.*'],
+              },
+            },
+          ],
         },
       },
       {
         targetName: 'Comment',
-        dataModelStorageSource: {
-          externalId: 'Comment_v1',
-          space: 'app-dev-test-1',
+        dataModelStorageMappingSource: {
+          filter: {
+            and: [
+              {
+                hasData: {
+                  models: [['app-dev-test-1', 'Comment_1']],
+                },
+              },
+            ],
+          },
+          properties: [
+            {
+              from: {
+                property: ['app-dev-test-1', 'Comment_1', '.*'],
+              },
+            },
+          ],
         },
       },
     ];

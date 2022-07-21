@@ -7,9 +7,33 @@ export interface ApiVersionDataModel {
 
 export interface DataModelStorageBindingsDTO {
   targetName: string;
-  dataModelStorageSource: {
-    externalId: string;
-    space: string;
+  dataModelStorageMappingSource: {
+    filter: {
+      and: [
+        {
+          hasData: {
+            models: [[string, string]];
+          };
+        }
+      ];
+    };
+    properties: {
+      from:
+        | {
+            property: [string, string, string];
+          }
+        | {
+            connection: {
+              edgeFilter: {
+                hasData: {
+                  dataContainer: [string, string];
+                };
+              };
+            };
+            outwards: boolean;
+          };
+      as?: string;
+    }[];
   };
 }
 

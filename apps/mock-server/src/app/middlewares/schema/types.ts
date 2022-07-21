@@ -19,7 +19,32 @@ export interface Api {
 
 export interface DmsBinding {
   targetName: string;
-  dataModelStorageSource?: {
-    externalId: string;
+  dataModelStorageMappingSource: {
+    filter: {
+      and: [
+        {
+          hasData: {
+            models: [[string, string]];
+          };
+        }
+      ];
+    };
+    properties: {
+      from:
+        | {
+            property: [string, string, string];
+          }
+        | {
+            connection: {
+              edgeFilter: {
+                hasData: {
+                  dataContainer: [string, string];
+                };
+              };
+            };
+            outwards: boolean;
+          };
+      as?: string;
+    }[];
   };
 }

@@ -1,15 +1,12 @@
 import { makeExecutableSchema } from '@graphql-tools/schema';
-import {
-  KeyValuePair,
-  CdfMockDatabase,
-  TemplateGroupTemplate,
-} from '../../../../types';
+import { KeyValuePair, CdfMockDatabase } from '../../../../types';
 import { CdfDatabaseService } from '../../../../common/cdf-database.service';
 import { GraphQlSchemaParser } from '../../../../common/graphql-schema-parser';
-import uuid from '../../../../utils/uuid';
-import { schemaServiceGraphqlApi } from '../../config/schema-service-api';
 import { Api, DmsBinding } from '../../types';
-import { buildQueryResolvers } from './query-resolvers-builder';
+import {
+  buildQueryResolvers,
+  getDataModelStorageExternalId,
+} from './query-resolvers-builder';
 import { SchemaServiceGraphqlApiBuilder } from './schema-builder';
 import { createMockServerKey } from '../../utils/graphql-server-utils';
 
@@ -72,9 +69,9 @@ export const buildMockServer = (params: BuildMockServerParams) => {
         bindings &&
         bindings.find((bindingsItem) => bindingsItem.targetName === table)
       ) {
-        storageTableName = bindings.find(
-          (bindingsItem) => bindingsItem.targetName === table
-        )!.dataModelStorageSource.externalId;
+        storageTableName = getDataModelStorageExternalId(
+          bindings.find((bindingsItem) => bindingsItem.targetName === table)
+        );
       }
 
       if (!templateDb[storageTableName]) {

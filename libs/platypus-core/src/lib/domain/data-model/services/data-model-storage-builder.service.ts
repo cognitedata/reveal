@@ -35,15 +35,30 @@ export class DataModelStorageBuilderService {
       .filter((def) => !this.isInlineType(def))
       .forEach((def) => {
         const typeName = def.name; // DataModelType name
+        const versionedExternalId = this.getVersionedExternalId(
+          typeName,
+          dataModelVersion.version
+        );
 
         bindings.push({
           targetName: typeName,
-          dataModelStorageSource: {
-            externalId: this.getVersionedExternalId(
-              typeName,
-              dataModelVersion.version
-            ),
-            space: externalId,
+          dataModelStorageMappingSource: {
+            filter: {
+              and: [
+                {
+                  hasData: {
+                    models: [[externalId, versionedExternalId]],
+                  },
+                },
+              ],
+            },
+            properties: [
+              {
+                from: {
+                  property: [externalId, versionedExternalId, '.*'],
+                },
+              },
+            ],
           },
         });
       });
