@@ -1,5 +1,4 @@
 import React from 'react';
-import styled from 'styled-components';
 import { Tag } from 'antd';
 import { BulkEditTableDataType } from 'src/modules/Common/Components/BulkEdit/BulkEditTable/BulkEditTable';
 import {
@@ -7,6 +6,7 @@ import {
   BulkEditUnsavedState,
 } from 'src/modules/Common/store/common/types';
 import { VisionFile } from 'src/modules/Common/store/files/types';
+import { CellContainer } from 'src/modules/Common/Components/BulkEdit/utils/CellContainer';
 
 export const getTagForOriginal = ({
   assetId,
@@ -177,9 +177,3 @@ export const getDataForAssets = ({
     };
   });
 };
-
-const CellContainer = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  row-gap: 2px;
-`;
