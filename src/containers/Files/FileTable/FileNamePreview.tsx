@@ -1,10 +1,17 @@
 import React from 'react';
 import { FileInfo } from '@cognite/sdk';
+import styled from 'styled-components';
 import Highlighter from 'react-highlight-words';
 import { HighlightCell, EllipsisText, FileThumbnail } from 'components';
 import { Popover } from 'antd';
 import { isFilePreviewable } from 'utils/FileUtils';
+import { fileIconMapper } from 'utils';
+import { DocumentIcon, Flex } from '@cognite/cogs.js';
 
+const DocumentIconWrapper = styled.div`
+  height: 32px;
+  width: 32px;
+`;
 export const FileNamePreview = ({
   fileName,
   file,
@@ -24,16 +31,33 @@ export const FileNamePreview = ({
         trigger="hover"
         placement="topLeft"
       >
-        <EllipsisText level={2} strong lines={2}>
-          <Highlighter
-            searchWords={(query || '').split(' ')}
-            textToHighlight={fileName || ''}
-            autoEscape
-          />
-        </EllipsisText>
+        <Flex gap={4} alignItems="center">
+          <DocumentIconWrapper>
+            {file?.mimeType && (
+              <DocumentIcon file={fileIconMapper[file.mimeType]} />
+            )}
+          </DocumentIconWrapper>
+
+          <EllipsisText level={2} strong lines={2}>
+            <Highlighter
+              searchWords={(query || '').split(' ')}
+              textToHighlight={fileName || ''}
+              autoEscape
+            />
+          </EllipsisText>
+        </Flex>
       </Popover>
     );
   }
 
-  return <HighlightCell text={fileName} query={query} />;
+  return (
+    <Flex gap={4} alignItems="center">
+      <DocumentIconWrapper>
+        {file?.mimeType && (
+          <DocumentIcon file={fileIconMapper[file.mimeType]} />
+        )}
+      </DocumentIconWrapper>
+      <HighlightCell text={fileName} query={query} />
+    </Flex>
+  );
 };
