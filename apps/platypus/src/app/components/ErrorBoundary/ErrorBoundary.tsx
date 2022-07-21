@@ -22,6 +22,7 @@ export class ErrorBoundary extends React.Component<IProps, ErrorBoundaryState> {
 
   componentDidCatch(error: any, errorInfo: any) {
     // Errors are logged in with sentry
+    // eslint-disable-next-line no-console
     console.error(error, errorInfo);
   }
 

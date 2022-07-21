@@ -18,4 +18,4 @@ cogniteClient.setBaseUrl(window.location.origin);
 // @ts-ignore
 cogniteClient.initAPIs();
 
-setCogniteSDKClient(cogniteClient!);
+setCogniteSDKClient(cogniteClient);

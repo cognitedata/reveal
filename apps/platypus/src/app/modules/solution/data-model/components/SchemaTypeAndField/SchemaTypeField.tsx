@@ -56,6 +56,7 @@ export const SchemaTypeField = ({
     } else {
       onFieldUpdated({ name: debouncedFieldName });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debouncedFieldName]);
 
   const nameValidator = new SolutionDataModelFieldNameValidator();

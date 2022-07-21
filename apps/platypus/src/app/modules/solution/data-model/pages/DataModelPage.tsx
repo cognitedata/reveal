@@ -127,6 +127,7 @@ export const DataModelPage = ({ dataModelExternalId }: DataModelPageProps) => {
       setGraphQlSchema(localDraft.schema);
       setMode(SchemaEditorMode.Edit);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const onSaveOrPublish = async () => {

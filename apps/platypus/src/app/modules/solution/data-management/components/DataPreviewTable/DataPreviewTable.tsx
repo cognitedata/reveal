@@ -51,7 +51,7 @@ export const DataPreviewTable = ({
     setGridConfig(buildGridConfig(instanceIdCol, dataModelType));
     setIsGridInit(false);
     setHasError(false);
-  }, [dataModelType.name]);
+  }, [dataModelType]);
 
   useEffect(() => {
     if (!isGridInit) {

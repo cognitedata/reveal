@@ -47,6 +47,7 @@ export const EditorPanel = (props: EditorPanelProps) => {
 
     // Load built in types only once, since they are not going to change
     getOptions();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   const [currentView, setCurrentView] = useState('ui');
 

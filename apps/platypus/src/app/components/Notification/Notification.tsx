@@ -61,6 +61,7 @@ export const Notification = ({
   }
 
   if (type === 'error') {
+    // eslint-disable-next-line no-console
     console.error(toastBody, validationErrors);
     toast.error(<div>{toastBody}</div>, options);
   }

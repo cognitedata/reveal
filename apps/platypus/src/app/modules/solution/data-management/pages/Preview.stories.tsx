@@ -192,9 +192,6 @@ const DataGridComponent = ({ type }: { type: TableType }) => {
 
     setData(newData);
   };
-  const onGridReady = (e: any) => {
-    console.log('grid ready', e);
-  };
 
   return (
     <div style={{ height: '100%' }}>
@@ -203,7 +200,6 @@ const DataGridComponent = ({ type }: { type: TableType }) => {
         tableType={type}
         config={configMock}
         onCellValueChanged={onCellValueChanged}
-        onGridReady={onGridReady}
       />
     </div>
   );

@@ -77,7 +77,7 @@ export const GraphqlCodeEditor = React.memo(
     }
     const debouncedOnChange = useMemo(
       () => debounce((value: string) => onChange(value), 500),
-      []
+      [onChange]
     );
     useEffect(() => {
       return () => {

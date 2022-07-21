@@ -34,6 +34,7 @@ export class DateUtilsImpl implements DateUtils {
     try {
       parsedDate = format(inputDate, this.normalizeDateFormat(dateFormat));
     } catch (err) {
+      // eslint-disable-next-line no-console
       console.error(err, inputDate);
     }
     return parsedDate;

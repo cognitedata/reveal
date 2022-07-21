@@ -7,6 +7,7 @@ import {
 import { DataModelTypeDefsField } from '@platypus/platypus-core';
 import { useState } from 'react';
 import { SchemaTypeField } from './SchemaTypeField';
+import _noop from 'lodash/noop';
 
 export default {
   title: 'Schema/UIEditor/SchemaTypeField',
@@ -38,9 +39,7 @@ export const Default = () => {
             builtInTypes={[{ name: 'Post', type: 'OBJECT' }]}
             customTypesNames={['Person']}
             typeFieldNames={['Post']}
-            onFieldRemoved={(updatedField) =>
-              console.log('removed', updatedField)
-            }
+            onFieldRemoved={_noop}
             onFieldUpdated={(updatedField) => {
               setField({
                 ...field,

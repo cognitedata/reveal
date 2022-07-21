@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { LogEntry, LogPublisher } from '@platypus/platypus-core';
 
 export class LogConsole extends LogPublisher {
