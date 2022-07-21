@@ -32,6 +32,7 @@ export const assets: Asset[] = [
     metadata: {
       'Network Level': '["Facility - Sub-Level - PSH"]',
     },
+    source: 'some source',
     id: 354247832298988,
   },
   {
@@ -48,6 +49,7 @@ export const assets: Asset[] = [
     metadata: {
       'Network Level': '["Facility - Sub-Level - PSH"]',
     },
+    source: 'some source',
     id: 8026188205449529,
   },
   {
@@ -64,6 +66,7 @@ export const assets: Asset[] = [
     metadata: {
       'Network Level': '["Facility - Sub-Level - PSH"]',
     },
+    source: 'some source',
     id: 4731838049650567,
   },
   {
@@ -80,6 +83,7 @@ export const assets: Asset[] = [
     metadata: {
       'Network Level': 'well',
     },
+    source: 'some other source',
     labels: [
       {
         externalId: 'BEST_DAY_WELL_FLAG_GAS',
@@ -105,6 +109,7 @@ export const assets: Asset[] = [
     externalId: 'LOR_UMEA',
     name: 'Umea',
     metadata: {},
+    source: 'some other source',
     id: 4068389871948573,
   },
   {
@@ -119,6 +124,7 @@ export const assets: Asset[] = [
     externalId: 'LOR_GOTHENBURG',
     name: 'Gothenburg',
     metadata: {},
+    source: 'some other source',
     id: 8493722957009725,
   },
 ];

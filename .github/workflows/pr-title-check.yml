@@ -12,4 +12,4 @@ jobs:
     steps:
       - uses: naveenk1223/action-pr-title@master
         with:
-          regex: '^(fix|feat|chore|refactor|style|docs)(\([\w.-]+\))?(!)?: .+$'
+          regex: '^(fix|feat|chore|refactor|style|docs|test)(\([\w.-]+\))?(!)?: .+$'

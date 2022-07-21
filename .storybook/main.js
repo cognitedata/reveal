@@ -44,5 +44,9 @@ module.exports = {
         },
       },
     },
+    '@storybook/addon-interactions',
   ],
+  features: {
+    interactionsDebugger: true,
+  },
 };

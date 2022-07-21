@@ -73,9 +73,9 @@ We use [semantic-release](https://github.com/semantic-release/semantic-release) 
 
 | Type | PR title | Release type | Version |
 |------|----------|--------------|---------|
-| `fix`, `docs`, `chore`, `refactor` | `fix(AssetPreview): make assetId selectable` | [Patch] Fix Release | x.x.1 |
+| `fix`, `docs`, `test`, `chore`, `refactor` | `fix(AssetPreview): make assetId selectable` | [Patch] Fix Release | x.x.1 |
 | `feat`, `style` | `feat(MetadataTable): enable sorting` | [Minor] Feature Release | x.1.x |
-| `feat`, `fix`, `style`, `chore`, `refactor` | `feat(Table)!: implement new interface` | [Major] Breaking Release | 1.x.x |
+| `feat`, `fix`, `style`, `test`, `chore`, `refactor` | `feat(Table)!: implement new interface` | [Major] Breaking Release | 1.x.x |
 
 ### Releasing a test version
 

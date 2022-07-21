@@ -38,6 +38,7 @@ export const AggregatedFilter = <T,>({
       </Body>
       <Select
         creatable
+        className="aggregated-filter-select"
         value={value ? { value, label: value } : null}
         onChange={item => {
           if (item) {

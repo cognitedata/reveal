@@ -214,6 +214,7 @@ const FilterItem = ({
               setSelectedValue(null);
             }}
             options={options}
+            className="key-select"
           />
         </div>
         <div className="value">
@@ -246,6 +247,7 @@ const FilterItem = ({
             }}
             options={selectedKey ? getMetadataValues(selectedKey) : []}
             isLoading={isFetching}
+            className="value-select"
           />
         </div>
       </FilterItemWrapper>
