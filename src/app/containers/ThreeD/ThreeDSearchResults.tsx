@@ -1,8 +1,5 @@
 import React from 'react';
-import {
-  useInfinite3DModels,
-  ThreeDModelsResponse,
-} from 'app/containers/ThreeD/hooks';
+import { ThreeDModelsResponse } from 'app/containers/ThreeD/hooks';
 import { Loader } from '@cognite/cogs.js';
 import { ThreeDGridPreview } from 'app/containers/ThreeD/ThreeDGridPreview';
 import { Model3D } from '@cognite/sdk';
@@ -10,6 +7,7 @@ import AutoSizer from 'react-virtualized-auto-sizer';
 import { FixedSizeGrid as Grid } from 'react-window';
 import InfiniteLoader from 'react-window-infinite-loader';
 import { Alert } from 'antd';
+import { useInfinite3DModels } from '@cognite/data-exploration';
 
 export const ThreeDSearchResults = ({
   query = '',

@@ -1,6 +1,6 @@
 import React from 'react';
-import { Badge, Button } from 'antd';
-import { Icon } from '@cognite/cogs.js';
+import { Badge } from 'antd';
+import { Button, Tooltip } from '@cognite/cogs.js';
 import { useResourceFilter } from 'app/context/ResourceSelectionContext';
 import { useCurrentResourceType } from 'app/hooks';
 import { countByFilter } from '@cognite/data-exploration';
@@ -15,13 +15,14 @@ export default function FilterToggleButton({
   const filterCount = countByFilter(filter);
 
   return (
-    <Badge count={filterCount} style={{ zIndex: 2 }}>
-      <Button
-        onClick={toggleOpen}
-        type="ghost"
-        size="large"
-        icon={<Icon type="Filter" />}
-      />
-    </Badge>
+    <Tooltip content="Filters">
+      <Badge count={filterCount} style={{ zIndex: 2 }}>
+        <Button
+          icon="Configure"
+          aria-label="Select Filters"
+          onClick={toggleOpen}
+        />
+      </Badge>
+    </Tooltip>
   );
 }

@@ -93,7 +93,6 @@ export const ResourceDetailsTabs = ({
 
   const relationshipTabs = filteredTabs.map(key => (
     <Tabs.TabPane
-      style={{ flex: 1, overflow: 'auto' }}
       key={key}
       tab={
         <TabWrapper>

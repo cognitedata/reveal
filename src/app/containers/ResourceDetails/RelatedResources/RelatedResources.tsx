@@ -172,6 +172,7 @@ export const RelatedResources = ({
 
 const TableOffsetHeightWrapper = styled.div`
   height: calc(100% - 170px);
+  min-height: 200px;
 `;
 const selectStyles = {
   option: (styles: any) => ({

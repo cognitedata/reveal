@@ -12,15 +12,15 @@ import {
   ResourceType,
   Splitter,
 } from '@cognite/data-exploration';
-import { Colors } from '@cognite/cogs.js';
-import { Row, Col } from 'antd';
+import { Colors, Flex } from '@cognite/cogs.js';
+
 import { trackUsage } from 'app/utils/Metrics';
 import ResourceSelectionContext, {
   useResourceFilter,
   useResourceEditable,
 } from 'app/context/ResourceSelectionContext';
 import { useDebounce } from 'use-debounce/lib';
-import styled from 'styled-components';
+import styled from 'styled-components/macro';
 import ResourcePreview from 'app/containers/Exploration/ResourcePreview';
 import {
   useQueryString,
@@ -37,12 +37,9 @@ import { ThreeDSearchResults } from 'app/containers/ThreeD/ThreeDSearchResults';
 import FilterToggleButton from './FilterToggleButton';
 
 const Wrapper = styled.div`
-  display: flex;
-  flex-direction: row;
   width: 100%;
-  height: calc(100% - 56px);
+  display: flex;
   background: #fff;
-  overflow: hidden;
 `;
 
 const getPageTitle = (query: string, resourceType: ResourceType): string => {
@@ -189,6 +186,7 @@ function SearchPage() {
       dateRange,
       onDateRangeChange: setDateRange,
     };
+
     switch (currentResourceType) {
       case 'asset':
         return (
@@ -250,13 +248,25 @@ function SearchPage() {
   };
 
   return (
-    <>
-      <ResourceTypeTabs
-        currentResourceType={currentResourceType}
-        setCurrentResourceType={setCurrentResourceType}
-      />
+    <RootHeightWrapper>
+      <SearchInputContainer alignItems="center">
+        <ExplorationSearchBar />
+      </SearchInputContainer>
+      <TabsContainer>
+        <ResourceTypeTabs
+          showCount
+          query={query}
+          currentResourceType={currentResourceType}
+          setCurrentResourceType={setCurrentResourceType}
+        />
+      </TabsContainer>
+      <MainContainer>
+        {currentResourceType !== 'threeD' && !showFilter && (
+          <FilterWrapper>
+            <FilterToggleButton toggleOpen={() => setShowFilter(!showFilter)} />
+          </FilterWrapper>
+        )}
 
-      <Wrapper>
         <SearchFilters
           assetFilter={assetFilter}
           setAssetFilter={setAssetFilter}
@@ -272,59 +282,42 @@ function SearchPage() {
           closeFilters={() => setShowFilter(false)}
           visible={currentResourceType !== 'threeD' && showFilter}
         />
-        <StyledSplitter secondaryMinSize={440} primaryIndex={1}>
-          <div
-            style={{
-              borderRight: active
-                ? `1px solid ${Colors['greyscale-grey3'].hex()}`
-                : 'unset',
-              display: 'flex',
-              flexDirection: 'column',
-            }}
-          >
-            <SearchInputContainer align="middle">
-              {currentResourceType !== 'threeD' && !showFilter ? (
-                <Col flex="none">
-                  <FilterToggleButton
-                    toggleOpen={() => setShowFilter(!showFilter)}
-                  />
-                </Col>
-              ) : undefined}
-              <Col flex="auto">
-                <ExplorationSearchBar />
-              </Col>
-            </SearchInputContainer>
-            <SearchResultWrapper
+
+        <Wrapper>
+          <StyledSplitter secondaryMinSize={440} primaryIndex={1}>
+            <Flex
+              direction="column"
               style={{
-                paddingRight: active ? 8 : 0,
-                paddingLeft: showFilter ? 8 : 0,
+                borderRight: active
+                  ? `1px solid ${Colors['greyscale-grey3'].hex()}`
+                  : 'unset',
               }}
             >
-              {SearchResults()}
-            </SearchResultWrapper>
-          </div>
+              <SearchResultWrapper>
+                <SearchResults />
+              </SearchResultWrapper>
+            </Flex>
 
-          {active && (
-            <div>
-              {activeId && (
+            {active && activeId && (
+              <div>
                 <SearchResultWrapper>
                   <ResourcePreview
                     item={{ id: activeId, type: currentResourceType }}
                     onCloseClicked={() => openPreview(undefined)}
                   />
                 </SearchResultWrapper>
-              )}
-              {!activeId && cart.length > 0 && (
-                <SelectedResults
-                  ids={cart.map(id => ({ id }))}
-                  resourceType={currentResourceType}
-                />
-              )}
-            </div>
-          )}
-        </StyledSplitter>
-      </Wrapper>
-    </>
+              </div>
+            )}
+            {!activeId && cart.length > 0 && (
+              <SelectedResults
+                ids={cart.map(id => ({ id }))}
+                resourceType={currentResourceType}
+              />
+            )}
+          </StyledSplitter>
+        </Wrapper>
+      </MainContainer>
+    </RootHeightWrapper>
   );
 }
 const StyledSplitter = styled(Splitter)`
@@ -365,12 +358,32 @@ const SearchResultWrapper = styled.div`
   flex: 1 1 auto;
   display: flex;
   flex-direction: column;
-
+  padding-inline: 8px;
   height: 100%;
 `;
 
-const SearchInputContainer = styled(Row)`
+const SearchInputContainer = styled(Flex)`
   border-bottom: 1px solid ${Colors['greyscale-grey3'].hex()};
   padding-top: 20px;
   padding-bottom: 16px;
+`;
+
+const TabsContainer = styled.div`
+  flex: 0 0 auto;
+`;
+
+const MainContainer = styled(Flex)`
+  height: calc(100% - 140px);
+`;
+
+const FilterWrapper = styled.div`
+  padding-top: 1rem;
+  border-right: 1px solid ${Colors['greyscale-grey3'].hex()};
+  padding-right: 10px;
+`;
+
+const RootHeightWrapper = styled.div`
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 `;

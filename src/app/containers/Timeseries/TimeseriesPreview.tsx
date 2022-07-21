@@ -16,6 +16,7 @@ import { ResourceDetailsTabs, TabTitle } from 'app/containers/ResourceDetails';
 
 import { useDateRange } from 'app/context/DateRangeContext';
 import { useOnPreviewTabChange } from 'app/hooks';
+import styled from 'styled-components';
 
 export type TimeseriesPreviewTabType =
   | 'details'
@@ -71,24 +72,17 @@ export const TimeseriesPreview = ({
         item={{ id: timeseriesId, type: 'timeSeries' }}
         afterDefaultActions={actions}
       />
+
       {timeseries && (
-        <>
-          <div
-            style={{
-              height: '40%',
-              width: 'calc(100% - 16px)',
-              maxHeight: 400,
-              display: 'flex',
-              flexDirection: 'column',
-            }}
-          >
+        <TimeseriesWrapper>
+          <TimeseriesChartWrapper>
             <TimeseriesChart
               timeseriesId={timeseries.id}
               showCustomRangePicker
               dateRange={dateRange}
               onDateRangeChange={setDateRange}
             />
-          </div>
+          </TimeseriesChartWrapper>
           <ResourceDetailsTabs
             parentResource={{
               type: 'timeSeries',
@@ -104,8 +98,23 @@ export const TimeseriesPreview = ({
               </Tabs.TabPane>,
             ]}
           />
-        </>
+        </TimeseriesWrapper>
       )}
     </>
   );
 };
+
+const TimeseriesChartWrapper = styled.div`
+  height: 300px;
+  width: calc(100% - 16px);
+  display: flex;
+  flex-direction: column;
+`;
+
+const TimeseriesWrapper = styled.div`
+  overflow: auto;
+
+  .rc-tabs {
+    overflow: unset;
+  }
+`;
