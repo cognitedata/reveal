@@ -46,7 +46,7 @@
     "@cognite/reveal-parser-worker": "1.3.0",
     "@tweenjs/tween.js": "18.6.4",
     "@types/draco3dgltf": "1.4.0",
-    "@types/geojson": "7946.0.8",
+    "@types/geojson": "7946.0.10",
     "@types/three": "0.141.0",
     "assert": "2.0.0",
     "comlink": "4.3.1",
