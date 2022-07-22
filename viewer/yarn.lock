@@ -730,7 +730,7 @@ __metadata:
     "@types/draco3dgltf": 1.4.0
     "@types/geojson": 7946.0.8
     "@types/jest": 28.1.5
-    "@types/jsdom": 16.2.14
+    "@types/jsdom": 16.2.15
     "@types/lodash": 4.14.182
     "@types/mixpanel-browser": 2.38.0
     "@types/node": 16.11.45
@@ -1800,7 +1800,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/jsdom@npm:16.2.14, @types/jsdom@npm:^16.2.4":
+"@types/jsdom@npm:16.2.15":
+  version: 16.2.15
+  resolution: "@types/jsdom@npm:16.2.15"
+  dependencies:
+    "@types/node": "*"
+    "@types/parse5": ^6.0.3
+    "@types/tough-cookie": "*"
+  checksum: e038335321bef42ebf220aaf597e186e2eec8de6107ce7a70de1c046a84c1fbb42d454e195a20383a6870b18c7ef6fa6b73812a626f88a4a2ef1f711d2e2e13c
+  languageName: node
+  linkType: hard
+
+"@types/jsdom@npm:^16.2.4":
   version: 16.2.14
   resolution: "@types/jsdom@npm:16.2.14"
   dependencies:
@@ -1871,6 +1882,13 @@ __metadata:
   version: 6.0.1
   resolution: "@types/parse5@npm:6.0.1"
   checksum: 752d4968b03084b783995c50280707f64c149b7e3d59e9fcdaa82c8c54b37dc56023a8b11c7d60dbb359f2277ef165970bfc7d79231863456bf25d102c09b33f
+  languageName: node
+  linkType: hard
+
+"@types/parse5@npm:^6.0.3":
+  version: 6.0.3
+  resolution: "@types/parse5@npm:6.0.3"
+  checksum: ddb59ee4144af5dfcc508a8dcf32f37879d11e12559561e65788756b95b33e6f03ea027d88e1f5408f9b7bfb656bf630ace31a2169edf44151daaf8dd58df1b7
   languageName: node
   linkType: hard
 
