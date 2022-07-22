@@ -71,7 +71,7 @@
   },
   "scripts": {
     "build": "yarn clean ; NODE_ENV=production rollup -c",
-    "watch": "nodemon -e ts,tsx --ignore dist/ --exec \"NODE_ENV=development rollup -c && yalc push\"",
+    "watch": "nodemon -e ts,tsx --ignore dist/ --exec \"NODE_ENV=development rollup -c && yalc push --sig\"",
     "build:storybook": "build-storybook -s public",
     "clean": "rm -rf dist/",
     "lint": "eslint src --ext .js,.jsx,.ts,.tsx",
