@@ -1,6 +1,7 @@
 /* eslint-disable @cognite/no-number-z-index */
 import React, { useCallback, useEffect, useState } from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
+import { VerticalContainer } from 'src/modules/Common/Components/VerticalContainer';
 import {
   hideFileMetadata,
   setExplorerFileSelectState,
@@ -95,11 +96,11 @@ const Explorer = () => {
     [dispatch]
   );
 
-  const handleMetadataClose = () => {
+  const handleMetadataClose = useCallback(() => {
     dispatch(hideFileMetadata());
-  };
+  }, []);
 
-  const onFileDetailReview = () => {
+  const onFileDetailReview = useCallback(() => {
     if (focusedFileId) {
       dispatch(PopulateReviewFiles([focusedFileId]));
       history.push(
@@ -107,10 +108,10 @@ const Explorer = () => {
         { from: 'explorer' }
       );
     }
-  };
+  }, [focusedFileId]);
 
   return (
-    <>
+    <VerticalContainer>
       <StatusToolBar current="Vision Explore" />
       <Deselect />
       <ExplorerFileUploadModalContainer />
@@ -175,7 +176,7 @@ const Explorer = () => {
           <ExplorerModelTrainingModalContainer />
         </QueryClientProvider>
       </Wrapper>
-    </>
+    </VerticalContainer>
   );
 };
 
@@ -225,12 +226,11 @@ const ViewContainer = styled.div`
 `;
 
 const DrawerContainer = styled.div`
-  width: 400px;
+  width: 420px;
   border-left: 1px solid #d9d9d9;
   box-sizing: content-box;
   height: 100%;
   flex-shrink: 0;
-  overflow: auto;
   background: white;
 `;
 
