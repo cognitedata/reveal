@@ -1,5 +1,6 @@
-import React from 'react';
-import { Button, Title } from '@cognite/cogs.js';
+import React, { useState } from 'react';
+import { Button, Icon, Tabs, Title } from '@cognite/cogs.js';
+import { StyledTabs } from 'src/modules/Common/Components/StyledTabs/StyledTabs';
 import { FileDetailsContainer } from 'src/modules/FileDetails/Components/FileMetadata/FileDetailsContainer';
 import { MetadataTableToolBar } from 'src/modules/FileDetails/Components/FileMetadata/MetadataTableToolBar';
 import { MetaDataTable } from 'src/modules/FileDetails/Components/FileMetadata/MetadataTable';
@@ -15,7 +16,6 @@ import {
   selectUpdatedFileMeta,
 } from 'src/modules/FileDetails/selectors';
 import { fileInfoEdit } from 'src/modules/FileDetails/slice';
-import { Tabs } from '@cognite/data-exploration';
 import { FileDetailsAnnotationsPreview } from './FileDetailsAnnotationsPreview/FileDetailsAnnotationsPreview';
 
 export const FileDetails = ({
@@ -28,6 +28,7 @@ export const FileDetails = ({
   onReview: () => void;
 }) => {
   const dispatch = useDispatch();
+  const [activeTab, setActiveTab] = useState('1');
 
   const fileDetails = useSelector((state: RootState) =>
     selectUpdatedFileDetails(state, fileId)
@@ -71,6 +72,14 @@ export const FileDetails = ({
     }
   };
 
+  if (!fileDetails) {
+    return (
+      <IconContainer>
+        <Icon type="Loader" />
+      </IconContainer>
+    );
+  }
+
   return (
     <Container>
       <CloseButtonRow>
@@ -88,58 +97,47 @@ export const FileDetails = ({
           </Title>
         </TitleRow>
         <DetailsContainer>
-          <Tabs
-            tab="context"
-            onTabChange={() => {}}
+          <StyledTabs
+            activeKey={activeTab}
+            onChange={setActiveTab}
             style={{
               fontSize: 14,
               fontWeight: 600,
               lineHeight: '20px',
               paddingBottom: '13px',
-              border: 0,
             }}
           >
-            <Tabs.Pane
-              title="Annotations"
-              key="context"
-              style={{ overflow: 'hidden', height: `calc(100% - 45px)` }}
-            >
-              {fileDetails && (
-                <FileDetailsAnnotationsPreview
-                  fileInfo={fileDetails}
-                  onReviewClick={onReview}
-                />
-              )}
-            </Tabs.Pane>
-            <Tabs.Pane
-              title="File Details"
-              key="file-details"
-              style={{ overflow: 'hidden', height: `calc(100% - 45px)` }}
-            >
-              {fileDetails && (
+            <Tabs.TabPane tab="Annotations" key="1">
+              <FileDetailsAnnotationsPreview
+                fileInfo={fileDetails}
+                onReviewClick={onReview}
+              />
+            </Tabs.TabPane>
+            <Tabs.TabPane tab="File Details" key="2">
+              <FileDetailsContent>
                 <FileDetailsContainer
                   info={fileDetails}
                   onFieldChange={onFieldChange}
                   updateInfo={updateFileInfo}
                 />
-              )}
-              <MetaDataTable
-                title="Metadata"
-                rowHeight={35}
-                columnWidth={180}
-                editMode={tableEditMode}
-                data={fileMetadata}
-                details={fileDetails}
-                toolBar={
-                  <MetadataTableToolBar
-                    editMode={tableEditMode}
-                    metadata={fileMetadata}
-                    onEditModeChange={onEditModeChange}
-                  />
-                }
-              />
-            </Tabs.Pane>
-          </Tabs>
+                <MetaDataTable
+                  title="Metadata"
+                  rowHeight={35}
+                  columnWidth={180}
+                  editMode={tableEditMode}
+                  data={fileMetadata}
+                  details={fileDetails}
+                  toolBar={
+                    <MetadataTableToolBar
+                      editMode={tableEditMode}
+                      metadata={fileMetadata}
+                      onEditModeChange={onEditModeChange}
+                    />
+                  }
+                />
+              </FileDetailsContent>
+            </Tabs.TabPane>
+          </StyledTabs>
         </DetailsContainer>
       </Content>
     </Container>
@@ -156,10 +154,22 @@ const Container = styled.div`
 `;
 
 const Content = styled.div`
-  padding: 10px 20px;
+  padding-left: 20px;
+  padding-right: 10px;
   display: grid;
   grid-template-columns: 100%;
   grid-template-rows: 32px auto;
+  grid-row-gap: 15px;
+  overflow: hidden;
+`;
+
+const FileDetailsContent = styled.div`
+  height: 100%;
+  width: 100%;
+  padding-right: 10px;
+  padding-left: 2px;
+  padding-bottom: 10px;
+  overflow-y: auto;
 `;
 
 const TitleRow = styled.div`
@@ -167,11 +177,12 @@ const TitleRow = styled.div`
   text-overflow: ellipsis !important;
   white-space: nowrap;
   overflow: hidden;
+  align-items: center;
 `;
 
 const DetailsContainer = styled.div`
   width: 100%;
-  padding: 15px 0;
+  overflow: hidden;
 `;
 
 const CloseButtonRow = styled.div`
@@ -181,4 +192,12 @@ const CloseButtonRow = styled.div`
 
 const CloseButton = styled(Button)`
   color: black;
+`;
+
+const IconContainer = styled.div`
+  height: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;

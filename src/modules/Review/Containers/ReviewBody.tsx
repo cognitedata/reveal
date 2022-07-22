@@ -1,12 +1,13 @@
 import { FileInfo } from '@cognite/sdk';
 import sdk, { getFlow } from '@cognite/cdf-sdk-singleton';
-import { Title } from '@cognite/cogs.js';
-import { DataExplorationProvider, Tabs } from '@cognite/data-exploration';
+import { Tabs, Title } from '@cognite/cogs.js';
+import { DataExplorationProvider } from '@cognite/data-exploration';
 import { Spin, notification } from 'antd';
 import React, { ReactText, useCallback, useRef, useState } from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
+import { StyledTabs } from 'src/modules/Common/Components/StyledTabs/StyledTabs';
 import { FileDetailsReview } from 'src/modules/FileDetails/Containers/FileDetailsReview/FileDetailsReview';
 import { ThumbnailCarousel } from 'src/modules/Review/Components/ThumbnailCarousel/ThumbnailCarousel';
 import { ImagePreview } from 'src/modules/Review/Containers/ImagePreview';
@@ -33,7 +34,7 @@ const ReviewBody = (props: { file: FileInfo; prev: string | undefined }) => {
   const [inFocus, setInFocus] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
   const loadingState = useRef<boolean>(false);
-  const [currentTab, tabChange] = useState('context');
+  const [currentTab, tabChange] = useState('1');
 
   const { flow } = getFlow();
   const { data: userInfo } = useUserInformation();
@@ -91,7 +92,7 @@ const ReviewBody = (props: { file: FileInfo; prev: string | undefined }) => {
 
   const scrollToItem = useCallback(
     (id: ReactText) => {
-      tabChange('context');
+      tabChange('1');
       dispatch(setScrollToId(id.toString()));
     },
     [tabChange, dispatch, setScrollToId]
@@ -143,26 +144,14 @@ const ReviewBody = (props: { file: FileInfo; prev: string | undefined }) => {
         <RightPanelContainer>
           <StyledTitle level={4}>{file?.name}</StyledTitle>
           <TabsContainer>
-            <Tabs
-              tab={isVideo(file) ? 'file-detail' : currentTab}
-              onTabChange={tabChange}
-              style={{
-                border: 0,
-              }}
+            <StyledTabs
+              activeKey={isVideo(file) ? '2' : currentTab}
+              onChange={tabChange}
             >
-              <Tabs.Pane
-                title="Annotations"
-                key="context"
-                style={{ overflow: 'hidden', height: `calc(100% - 45px)` }}
-                disabled={isVideo(file)}
-              >
+              <Tabs.TabPane tab="Annotations" key="1" disabled={isVideo(file)}>
                 <AnnotationDetailPanel file={file} showEditOptions />
-              </Tabs.Pane>
-              <Tabs.Pane
-                title="File details"
-                key="file-detail"
-                style={{ overflow: 'hidden', height: `calc(100% - 45px)` }}
-              >
+              </Tabs.TabPane>
+              <Tabs.TabPane tab="File details" key="2">
                 {file && (
                   <DataExplorationProvider
                     flow={flow}
@@ -178,8 +167,8 @@ const ReviewBody = (props: { file: FileInfo; prev: string | undefined }) => {
                     </QueryClientProvider>
                   </DataExplorationProvider>
                 )}
-              </Tabs.Pane>
-            </Tabs>
+              </Tabs.TabPane>
+            </StyledTabs>
           </TabsContainer>
         </RightPanelContainer>
         <div aria-hidden="true" className="confirm-delete-modal-anchor" />
@@ -234,7 +223,7 @@ const PreviewContainer = styled.div<PreviewProps>`
 const RightPanelContainer = styled.div`
   width: 100%;
   height: 100%;
-  padding: 17px;
+  padding: 15px;
   display: grid;
   grid-template-rows: 36px 1fr;
   grid-template-columns: 100%;
