@@ -16,6 +16,7 @@ export const Example: ComponentStory<typeof AssetSearchResults> = args => (
 );
 Example.args = {
   isSelected: () => false,
+  showCount: true,
 };
 
 const Container = styled.div`

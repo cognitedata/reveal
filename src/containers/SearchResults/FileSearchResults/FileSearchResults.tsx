@@ -21,12 +21,14 @@ export const FileSearchResults = ({
   parentResource,
   count,
   isGroupingFilesEnabled,
+  showCount = false,
   allowEdit = false,
   onClick,
   ...extraProps
 }: {
   query?: string;
   items?: FileInfo[];
+  showCount?: boolean;
   filter?: FileFilterProps;
   showRelatedResources?: boolean;
   relatedResourceType?: RelatedResourceType;
@@ -52,6 +54,7 @@ export const FileSearchResults = ({
   return (
     <>
       <FileToolbar
+        showCount={showCount}
         isHaveParent={Boolean(parentResource)}
         relatedResourceType={relatedResourceType}
         query={query}

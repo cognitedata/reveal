@@ -15,6 +15,10 @@ export const Example: ComponentStory<typeof SequenceSearchResults> = args => (
   </Container>
 );
 
+Example.args = {
+  showCount: true,
+};
+
 const Container = styled.div`
   height: 400px;
 `;

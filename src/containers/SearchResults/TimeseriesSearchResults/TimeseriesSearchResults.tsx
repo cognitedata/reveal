@@ -31,12 +31,14 @@ export const TimeseriesSearchResults = ({
   showDatePicker = false,
   relatedResourceType,
   parentResource,
+  showCount = false,
   count,
   dateRange,
   onDateRangeChange,
   ...extraProps
 }: {
   query?: string;
+  showCount?: boolean;
   initialView?: string;
   filter?: TimeseriesFilter;
   showRelatedResources?: boolean;
@@ -60,6 +62,7 @@ export const TimeseriesSearchResults = ({
   return (
     <>
       <TimeseriesToolbar
+        showCount={showCount}
         query={query}
         filter={filter}
         currentView={currentView}

@@ -17,10 +17,12 @@ import {
 export const AssetSearchResults = ({
   query = '',
   filter,
+  showCount = false,
   onClick,
   ...extraProps
 }: {
   query?: string;
+  showCount?: boolean;
   filter: AssetFilterProps;
   onClick: (item: Asset) => void;
 } & SelectableItemsProps &
@@ -62,6 +64,7 @@ export const AssetSearchResults = ({
   return (
     <>
       <SearchResultToolbar
+        showCount={showCount}
         api={query.length > 0 ? 'search' : 'list'}
         type="asset"
         filter={filter}

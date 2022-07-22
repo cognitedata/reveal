@@ -23,6 +23,7 @@ export const FileToolbar = ({
   relatedResourceType,
   filter,
   count,
+  showCount = false,
   allowEdit = false,
 }: {
   onFileClicked?: (file: FileInfo) => boolean;
@@ -35,6 +36,7 @@ export const FileToolbar = ({
   isGroupingFilesEnabled?: boolean;
   relatedResourceType?: RelatedResourceType;
   allowEdit?: boolean;
+  showCount?: boolean;
 }) => {
   const context = useContext(AppContext);
   const { data: hasEditPermissions } = usePermissions(
@@ -52,6 +54,7 @@ export const FileToolbar = ({
       <SearchResultToolbar
         api={query?.length > 0 ? 'search' : 'list'}
         type="file"
+        showCount={showCount}
         filter={filter}
         query={query}
         count={count}

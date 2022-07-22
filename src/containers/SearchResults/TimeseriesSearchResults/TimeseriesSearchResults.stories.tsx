@@ -20,6 +20,7 @@ export const Example: ComponentStory<typeof TimeseriesSearchResults> = args => (
 
 Example.args = {
   showDatePicker: true,
+  showCount: true,
 };
 
 const Container = styled.div`

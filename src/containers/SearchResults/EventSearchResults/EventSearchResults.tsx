@@ -20,10 +20,12 @@ export const EventSearchResults = ({
   relatedResourceType,
   parentResource,
   count,
+  showCount = false,
   ...extraProps
 }: {
   query?: string;
   filter?: EventFilter;
+  showCount?: boolean;
   showRelatedResources?: boolean;
   relatedResourceType?: RelatedResourceType;
   parentResource?: ResourceItem;
@@ -33,13 +35,16 @@ export const EventSearchResults = ({
   TableStateProps &
   DateRangeProps) => (
   <>
-    <SearchResultToolbar
-      api={query.length > 0 ? 'search' : 'list'}
-      type="event"
-      filter={filter}
-      query={query}
-      count={count}
-    />
+    {showCount && (
+      <SearchResultToolbar
+        showCount={showCount}
+        api={query.length > 0 ? 'search' : 'list'}
+        type="event"
+        filter={filter}
+        query={query}
+        count={count}
+      />
+    )}
     <EnsureNonEmptyResource api="event">
       <ResultTableLoader<CogniteEvent>
         mode={showRelatedResources ? 'relatedResources' : 'search'}

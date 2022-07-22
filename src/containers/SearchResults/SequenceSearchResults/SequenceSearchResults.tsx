@@ -20,6 +20,7 @@ export const SequenceSearchResults = ({
   parentResource,
   count,
   onClick,
+  showCount = false,
   ...extraProps
 }: {
   query?: string;
@@ -28,6 +29,7 @@ export const SequenceSearchResults = ({
   relatedResourceType?: RelatedResourceType;
   parentResource?: ResourceItem;
   count?: number;
+  showCount?: boolean;
   onClick: (item: Sequence) => void;
 } & SelectableItemsProps &
   TableStateProps &
@@ -37,6 +39,7 @@ export const SequenceSearchResults = ({
       api={query.length > 0 ? 'search' : 'list'}
       type="sequence"
       filter={filter}
+      showCount={showCount}
       query={query}
       count={count}
     />
