@@ -1,4 +1,30 @@
 import { AnnotatorRegion } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/types';
+
+export const cropEdge = (
+  start: number,
+  length: number
+): { start: number; length: number } => {
+  if (start > 1) {
+    return { start, length };
+  }
+
+  if (start > 0) {
+    if (start + length > 1) {
+      return { start, length: 1 - start };
+    }
+    return { start, length };
+  }
+
+  // if (start < 0)
+  if (start + length < 0) {
+    return { start, length };
+  }
+  if (start + length < 1) {
+    return { start: 0, length: start + length };
+  }
+  return { start: 0, length: 1 };
+};
+
 /**
  * @param region AnnotatorRegion
  * @returns AnnotatorRegion
@@ -9,27 +35,12 @@ export const cropBoxRegionAtEdges = (
   region: AnnotatorRegion
 ): AnnotatorRegion => {
   if (region.type === 'box') {
-    let { x, y, w, h } = region;
+    const { x, y, w, h } = region;
 
-    if (x >= 1 || y >= 1) {
-      // error state but not handling here
-      return region;
-    }
+    const { start: startX, length: lengthW } = cropEdge(x, w);
+    const { start: startY, length: lengthH } = cropEdge(y, h);
 
-    if (x < 0) {
-      x = 0;
-    }
-    if (y < 0) {
-      y = 0;
-    }
-
-    if (x + w > 1) {
-      w = 1 - x;
-    }
-    if (y + h > 1) {
-      h = 1 - y;
-    }
-    return { ...region, x, y, w, h };
+    return { ...region, x: startX, y: startY, w: lengthW, h: lengthH };
   }
   return region;
 };

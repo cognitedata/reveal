@@ -1,189 +1,68 @@
-/* eslint-disable jest/no-disabled-tests */
-import {
-  AnnotationMeta,
-  AnnotatorRegion,
-  AnnotatorRegionType,
-} from 'src/modules/Review/Components/ReactImageAnnotateWrapper/types';
-import { CDFAnnotationTypeEnum, Status } from 'src/api/annotation/types';
-import { cropBoxRegionAtEdges } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/utils/cropBoxRegionAtEdges';
+import { cropEdge } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/utils/cropBoxRegionAtEdges';
 
-const baseRegion: AnnotatorRegion = {
-  id: 1,
-  color: 'red',
-  annotationMeta: {} as AnnotationMeta,
-  status: Status.Approved,
-  annotationType: CDFAnnotationTypeEnum.ImagesObjectDetection,
-  annotationLabelOrText: 'dummy-label',
-  type: AnnotatorRegionType.BoxRegion,
+describe('test cropEdge fn', () => {
+  describe('if started right side or below the image', () => {
+    /**
+     * if start is grater than 1
+     * user has internationally create the annotation outside the image
+     * annotation will not created with api error
+     */
+    const start = 1.5;
+    test('for any length', () => {
+      const length = 0.5;
+      expect(cropEdge(start, length)).toEqual({ start, length });
+    });
+  });
 
-  x: 0.25,
-  y: 0.25,
-  w: 0.5,
-  h: 0.5,
-};
+  describe('if started inside the image', () => {
+    // if start is between 0 and 1
+    const start = 0.25;
 
-describe('if region is a box', () => {
-  describe('test cropBoxRegionAtEdges fn', () => {
-    describe('for invalid x or y values', () => {
-      const dummyRegion = baseRegion;
-      test('with x value of grater than 1', () => {
-        const region = { ...dummyRegion, x: 1.5 };
-        expect(cropBoxRegionAtEdges(region)).toEqual(region);
-      });
-
-      test('with y value of grater than 1', () => {
-        const region = { ...dummyRegion, y: 1.5 };
-        expect(cropBoxRegionAtEdges(region)).toEqual(region);
-      });
-
-      test('with both x and y values are grater than 1', () => {
-        const region = { ...dummyRegion, x: 1.5, y: 1.5 };
-        expect(cropBoxRegionAtEdges(region)).toEqual(region);
-      });
+    test('if ends outside the image', () => {
+      // need to crop
+      const length = 1;
+      expect(cropEdge(start, length)).toEqual({ start, length: 0.75 });
     });
 
-    describe('for valid x or y values', () => {
-      describe('positive x or y values', () => {
-        const dummyRegion = baseRegion;
-        test('valid w and h', () => {
-          const region = { ...dummyRegion };
-          expect(cropBoxRegionAtEdges(region)).toEqual(region);
-        });
+    test('if ends inside the image the image', () => {
+      // no need for a crop
+      const length = 0.5;
+      expect(cropEdge(start, length)).toEqual({ start, length });
+    });
+  });
 
-        test('invalid w', () => {
-          const region = { ...dummyRegion, w: 0.8 };
-          expect(cropBoxRegionAtEdges(region)).toEqual({ ...region, w: 0.75 });
-        });
+  describe('if started left side or above the image', () => {
+    // if start is negative
+    const start = -0.3;
 
-        test('invalid h', () => {
-          const region = { ...dummyRegion, h: 0.8 };
-          expect(cropBoxRegionAtEdges(region)).toEqual({ ...region, h: 0.75 });
-        });
+    test('if end before the image', () => {
+      const length = 0.1;
+      /**
+       * user has internationally create the annotation outside the image
+       * annotation will not created with api error
+       */
+      expect(cropEdge(start, length)).toEqual({ start, length });
+    });
 
-        test('invalid w and h', () => {
-          const region = { ...dummyRegion, w: 0.8, h: 0.8 };
-          expect(cropBoxRegionAtEdges(region)).toEqual({
-            ...region,
-            w: 0.75,
-            h: 0.75,
-          });
-        });
-      });
+    test('if ends inside the image', () => {
+      const length = 0.5;
+      // need to crop
 
-      describe('negative x value', () => {
-        const dummyRegion = { ...baseRegion, x: -0.25 };
-        test('valid w and h', () => {
-          const region = { ...dummyRegion };
-          expect(cropBoxRegionAtEdges(region)).toEqual({ ...region, x: 0 });
-        });
+      expect(cropEdge(start, length)).toEqual({ start: 0, length: 0.2 });
+    });
 
-        test('invalid w', () => {
-          const region = { ...dummyRegion, w: 1.5 };
-          expect(cropBoxRegionAtEdges(region)).toEqual({
-            ...region,
-            x: 0,
-            w: 1,
-          });
-        });
+    test('if ends inside the image while length grater than 1', () => {
+      const length = 1.1;
+      // need to crop
 
-        test('invalid h', () => {
-          const region = { ...dummyRegion, h: 0.8 };
-          expect(cropBoxRegionAtEdges(region)).toEqual({
-            ...region,
-            x: 0,
-            h: 0.75,
-          });
-        });
+      expect(cropEdge(start, length)).toEqual({ start: 0, length: 0.8 });
+    });
 
-        test('invalid w and h', () => {
-          const region = { ...dummyRegion, w: 1.25, h: 0.8 };
-          expect(cropBoxRegionAtEdges(region)).toEqual({
-            ...region,
-            x: 0,
-            w: 1,
-            h: 0.75,
-          });
-        });
-      });
+    test('if end after the image', () => {
+      const length = 1.5;
+      // need to crop
 
-      describe('negative y value', () => {
-        const dummyRegion = { ...baseRegion, y: -0.3 };
-        test('valid w and h', () => {
-          const region = { ...dummyRegion };
-          expect(cropBoxRegionAtEdges(region)).toEqual({ ...region, y: 0 });
-        });
-
-        test('invalid w', () => {
-          const region = { ...dummyRegion, w: 0.9 };
-          expect(cropBoxRegionAtEdges(region)).toEqual({
-            ...region,
-            y: 0,
-            w: 0.75,
-          });
-        });
-
-        test('invalid h', () => {
-          const region = { ...dummyRegion, h: 1.5 };
-          expect(cropBoxRegionAtEdges(region)).toEqual({
-            ...region,
-            y: 0,
-            h: 1,
-          });
-        });
-
-        test('invalid w and h', () => {
-          const region = { ...dummyRegion, w: 0.9, h: 1.3 };
-          expect(cropBoxRegionAtEdges(region)).toEqual({
-            ...region,
-            y: 0,
-            w: 0.75,
-            h: 1,
-          });
-        });
-      });
-
-      describe('negative x and y values', () => {
-        const dummyRegion = { ...baseRegion, x: -0.4, y: -0.5 };
-        test('valid w and h', () => {
-          const region = { ...dummyRegion };
-          expect(cropBoxRegionAtEdges(region)).toEqual({
-            ...region,
-            x: 0,
-            y: 0,
-          });
-        });
-
-        test('invalid w', () => {
-          const region = { ...dummyRegion, w: 1.8 };
-          expect(cropBoxRegionAtEdges(region)).toEqual({
-            ...region,
-            x: 0,
-            y: 0,
-            w: 1,
-          });
-        });
-
-        test('invalid h', () => {
-          const region = { ...dummyRegion, h: 1.8 };
-          expect(cropBoxRegionAtEdges(region)).toEqual({
-            ...region,
-            x: 0,
-            y: 0,
-            h: 1,
-          });
-        });
-
-        test('invalid w and h', () => {
-          const region = { ...dummyRegion, w: 1.8, h: 1.8 };
-          expect(cropBoxRegionAtEdges(region)).toEqual({
-            ...region,
-            x: 0,
-            y: 0,
-            w: 1,
-            h: 1,
-          });
-        });
-      });
+      expect(cropEdge(start, length)).toEqual({ start: 0, length: 1 });
     });
   });
 });
