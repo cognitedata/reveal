@@ -4,7 +4,11 @@ export const cropEdge = (
   start: number,
   length: number
 ): { start: number; length: number } => {
-  if (start > 1) {
+  if (start > 1 || start + length < 0) {
+    /**
+     * user has intentionally created the annotation outside the image
+     * nothing will change but will rejected by the api
+     */
     return { start, length };
   }
 
@@ -16,9 +20,6 @@ export const cropEdge = (
   }
 
   // if (start < 0)
-  if (start + length < 0) {
-    return { start, length };
-  }
   if (start + length < 1) {
     return { start: 0, length: start + length };
   }
