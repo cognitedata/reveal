@@ -8,6 +8,10 @@ import {
 } from '../../support/interceptions';
 
 describe('Creating Favorites', () => {
+  before(() => {
+    cy.deleteAllFavorites();
+  });
+
   beforeEach(() => {
     const coreRequests = interceptCoreNetworkRequests();
     cy.visit(Cypress.env('BASE_URL'));
@@ -61,7 +65,7 @@ describe('Creating Favorites', () => {
   };
 
   describe('Favorites Page', () => {
-    it('has the option to create favorites from  here', () => {
+    it('Create empty favorite set and test comments', () => {
       cy.goToFavoritesPage();
       cy.log('Create a new Favorite Set by pressing the "Create set" button');
       cy.findByLabelText('Plus').should('be.visible').click();
@@ -71,6 +75,11 @@ describe('Creating Favorites', () => {
       createFavorite(favoriteName);
 
       checkFavoriteIsCreated(favoriteName);
+
+      cy.openCommentBar();
+      cy.postComment();
+      cy.editComment();
+      cy.deleteComment();
     });
   });
 

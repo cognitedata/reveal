@@ -1,21 +1,23 @@
 import '@testing-library/cypress/add-commands';
 import { AdminCommands } from './admin.commands';
 import { ButtonCommands } from './button.commands';
+import { CommentCommands } from './comments.commands';
 import { FavoriteCommands } from './favorite.commands';
 import { FeedbackCommands } from './feedback.commands';
 import { LoginCommand } from './login.command';
+import { MapCommands } from './map.commands';
 import { SavedSearchCommands } from './savedSearches.commands';
 import { SearchCommands } from './search.commands';
+import { SettingsCommands } from './settings.commands';
 import { SidebarCommands } from './sidebar.commands';
 import { TableCommands } from './table.commands';
 import { WellsCommands } from './wells.commands';
-import { MapCommands } from './map.commands';
-import { SettingsCommands } from './settings.commands';
 
 declare global {
   namespace Cypress {
     interface Chainable
       extends LoginCommand,
+        CommentCommands,
         SearchCommands,
         SidebarCommands,
         WellsCommands,
@@ -31,6 +33,7 @@ declare global {
 }
 
 export * from './login.command';
+export * from './comments.commands';
 export * from './search.commands';
 export * from './favorite.commands';
 export * from './admin.commands';
