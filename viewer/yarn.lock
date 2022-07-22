@@ -14,19 +14,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@azure/msal-browser@npm:2.26.0":
-  version: 2.26.0
-  resolution: "@azure/msal-browser@npm:2.26.0"
+"@azure/msal-browser@npm:2.28.0":
+  version: 2.28.0
+  resolution: "@azure/msal-browser@npm:2.28.0"
   dependencies:
-    "@azure/msal-common": ^7.0.0
-  checksum: 098809dc7cfd9eebcbaf8b5835a7ca4fbda32b9fcd319a3414d96a12171f5c7c9cd94b332fab7b98bbaf1142d85a93a0fc8ffa6464ce911510cc14c7900ba76e
+    "@azure/msal-common": ^7.2.0
+  checksum: bd92bd1084b75e6eed2dbec64deb8f610490cd9e809d8b289e8deb16aead97f886c46c64f9e6051205375bff6eba46995fd019c63185af5281d561d7a62998b1
   languageName: node
   linkType: hard
 
-"@azure/msal-common@npm:^7.0.0":
-  version: 7.0.0
-  resolution: "@azure/msal-common@npm:7.0.0"
-  checksum: e3ccfba3af6488ca86a72f7ca32b88049f2c94f6c44180ffa7f703baf30b13cb10ab820b9ce8092c2a7b22ad198d323dd8eb5798d66a746df424a2d12b46cb89
+"@azure/msal-common@npm:^7.2.0":
+  version: 7.2.0
+  resolution: "@azure/msal-common@npm:7.2.0"
+  checksum: 25add344a6a1964270a00db60fed95da9d029ce3143ab3cd9e3828ab69be2ebbded3089c8de70f4e1d05a4213caf6e49cf820afdebe6b8c00e060e3aefb92f06
   languageName: node
   linkType: hard
 
@@ -721,14 +721,14 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@cognite/reveal@workspace:."
   dependencies:
-    "@azure/msal-browser": 2.26.0
+    "@azure/msal-browser": 2.28.0
     "@cognite/reveal-parser-worker": 1.3.0
     "@cognite/sdk": 7.7.1
     "@cognite/sdk-core": 4.4.0
     "@tweenjs/tween.js": 18.6.4
     "@types/dat.gui": 0.7.7
     "@types/draco3dgltf": 1.4.0
-    "@types/geojson": 7946.0.8
+    "@types/geojson": 7946.0.10
     "@types/jest": 28.1.6
     "@types/jsdom": 16.2.14
     "@types/lodash": 4.14.182
@@ -749,7 +749,7 @@ __metadata:
     core-js: 3.23.5
     cross-var: 1.1.0
     dat.gui: 0.7.9
-    eslint: 8.19.0
+    eslint: 8.20.0
     eslint-config-prettier: 8.5.0
     eslint-plugin-header: 3.1.1
     eslint-plugin-jsdoc: 39.3.3
@@ -1733,10 +1733,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/geojson@npm:7946.0.8":
-  version: 7946.0.8
-  resolution: "@types/geojson@npm:7946.0.8"
-  checksum: 6049a39b025cfe323d5cf87333d87c133ec963cdbd349c49295bee779827ee4b46a3041fd8bd2e7a4b02d6d1e26f3002968875928941bbed08477bfd5f6f9284
+"@types/geojson@npm:7946.0.10":
+  version: 7946.0.10
+  resolution: "@types/geojson@npm:7946.0.10"
+  checksum: 12c407c2dc93ecb26c08af533ee732f1506a9b29456616ba7ba1d525df96206c28ddf44a528f6a5415d7d22893e9d967420940a9c095ee5e539c1eba5fefc1f4
   languageName: node
   linkType: hard
 
@@ -5260,9 +5260,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint@npm:8.19.0":
-  version: 8.19.0
-  resolution: "eslint@npm:8.19.0"
+"eslint@npm:8.20.0":
+  version: 8.20.0
+  resolution: "eslint@npm:8.20.0"
   dependencies:
     "@eslint/eslintrc": ^1.3.0
     "@humanwhocodes/config-array": ^0.9.2
@@ -5301,7 +5301,7 @@ __metadata:
     v8-compile-cache: ^2.0.3
   bin:
     eslint: bin/eslint.js
-  checksum: 0bc9df1a3a09dcd5a781ec728f280aa8af3ab19c2d1f14e2668b5ee5b8b1fb0e72dde5c3acf738e7f4281685fb24ec149b6154255470b06cf41de76350bca7a4
+  checksum: a31adf390d71d916925586bc8467b48f620e93dd0416bc1e897d99265af88b48d4eba3985b5ff4653ae5cc46311a360d373574002277e159bb38a4363abf9228
   languageName: node
   linkType: hard
 
