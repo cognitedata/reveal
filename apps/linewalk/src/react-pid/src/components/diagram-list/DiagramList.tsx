@@ -1,6 +1,14 @@
-import { Table, TableData, Title, Button, Select } from '@cognite/cogs.js';
+import {
+  Table,
+  TableData,
+  Title,
+  Button,
+  Select,
+  TextInput,
+} from '@cognite/cogs.js';
 import { FileInfo } from '@cognite/sdk';
-import React, { Dispatch, useContext, useRef } from 'react';
+import { Dispatch, useContext, useRef, useState } from 'react';
+import styled from 'styled-components';
 
 import SiteContext from '../../../../components/SiteContext/SiteContext';
 import mapValueToOption from '../../../../utils/mapValueToOption';
@@ -11,6 +19,20 @@ import {
 } from '../../utils/diagramsReducer';
 
 import { Overlay, ListContainer, ListHeader, ListFooter } from './elements';
+
+const FiltersContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  > * {
+    margin-right: 8px;
+  }
+  padding-bottom: 16px;
+`;
+
+const FilterContainer = styled.div`
+  width: 500px;
+`;
 
 interface DiagramListProps {
   diagrams: FileInfo[];
@@ -46,11 +68,15 @@ const DiagramList = ({
   selectedUnparsedDiagrams,
   dispatch,
 }: DiagramListProps) => {
-  const tableData: DiagramTableData[] = diagrams.map((file) => ({
-    id: file.id,
-    externalId: file.externalId!,
-    uploadedDate: file.lastUpdatedTime.toLocaleDateString(),
-  }));
+  const [search, setSearch] = useState('');
+
+  const tableData: DiagramTableData[] = diagrams
+    .filter((file) => file.name.toLowerCase().includes(search.toLowerCase()))
+    .map((file) => ({
+      id: file.id,
+      externalId: file.externalId!,
+      uploadedDate: file.lastUpdatedTime.toLocaleDateString(),
+    }));
 
   const preSelected = selectedUnparsedDiagrams.reduce((record, externalId) => {
     // eslint-disable-next-line no-param-reassign
@@ -86,14 +112,27 @@ const DiagramList = ({
           <Title level={4}>Select diagrams</Title>
           <Button type="ghost" icon="CloseLarge" onClick={close} />
         </ListHeader>
-        <div style={{ marginBottom: 16 }}>
-          <Select
-            title="Unit"
-            value={mapValueToOption(unit)}
-            onChange={pickOnChangeOptionValue(setUnit)}
-            options={availableUnits.map(mapValueToOption)}
-          />
-        </div>{' '}
+        <FiltersContainer>
+          <FilterContainer>
+            <Select
+              title="Unit"
+              value={mapValueToOption(unit)}
+              onChange={pickOnChangeOptionValue(setUnit)}
+              options={availableUnits.map(mapValueToOption)}
+            />
+          </FilterContainer>
+          <FilterContainer>
+            <TextInput
+              placeholder="Search"
+              icon="Search"
+              value={search}
+              onChange={(e) => {
+                setSearch(e.target.value);
+              }}
+              fullWidth
+            />
+          </FilterContainer>
+        </FiltersContainer>
         <Table<DiagramTableData>
           columns={[
             { Header: 'Document name', accessor: 'externalId' },
