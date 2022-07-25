@@ -226,7 +226,7 @@ const ViewContainer = styled.div`
 `;
 
 const DrawerContainer = styled.div`
-  width: 420px;
+  width: 400px;
   border-left: 1px solid #d9d9d9;
   box-sizing: content-box;
   height: 100%;

@@ -314,7 +314,7 @@ export const AnnotationDetailPanel = ({
 const Container = styled.div`
   height: 100%;
   width: 100%;
-  padding-top: 15px;
+  padding: 15px 0;
   box-sizing: border-box;
 `;
 

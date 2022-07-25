@@ -123,7 +123,7 @@ export const FileDetails = ({
                 <MetaDataTable
                   title="Metadata"
                   rowHeight={35}
-                  columnWidth={180}
+                  columnWidth={170}
                   editMode={tableEditMode}
                   data={fileMetadata}
                   details={fileDetails}

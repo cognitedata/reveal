@@ -25,7 +25,7 @@ import { PopulateProcessFiles } from 'src/store/thunks/Process/PopulateProcessFi
 
 const ResultsContainer = styled.div`
   flex: 1;
-  height: calc(100% - 50px);
+  overflow: hidden;
 `;
 
 const TitleContainer = styled.div`
