@@ -257,5 +257,7 @@ const TabsContainer = styled.div`
 `;
 
 const PreviewWrapper = styled.div<{ isFileProcessing: boolean }>`
+  height: 100%;
+  width: 100%;
   pointer-events: ${(props) => (props.isFileProcessing ? 'none' : 'all')};
 `;
