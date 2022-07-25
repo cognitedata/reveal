@@ -10,6 +10,7 @@ import React, {
 
 import { DragDropContainer } from 'components/DragDropContainer';
 
+import { SCALE_BOTTOM_PADDING } from '../../common/Events/constants';
 import NdsEventsColumn from '../../common/Events/NdsEventsColumn';
 import NptEventsColumn from '../../common/Events/NptEventsColumn';
 import { SelectedWellboreNptView } from '../../nptEvents/Graph';
@@ -62,7 +63,8 @@ export const WellboreCasingView: React.FC<WellboreCasingsViewProps> = ({
     setSchamaLoading(true);
     const depthColumnHeight = depthScaleRef.current?.offsetHeight;
     const height = depthColumnHeight || DEPTH_SCALE_MIN_HEIGHT;
-    const depthScaleBlocks = getScaleBlocks(height, maxDepth);
+    const usableHeight = height - SCALE_BOTTOM_PADDING;
+    const depthScaleBlocks = getScaleBlocks(usableHeight, maxDepth);
     setScaleBlocks(depthScaleBlocks);
     setSchamaLoading(false);
   }, [depthScaleRef.current?.offsetHeight, maxDepth]);

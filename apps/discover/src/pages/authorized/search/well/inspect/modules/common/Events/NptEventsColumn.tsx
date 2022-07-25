@@ -13,13 +13,13 @@ import { ColumnDragger } from './ColumnDragger';
 import { NPT_COLUMN_TITLE } from './constants';
 import {
   BodyColumn,
-  BodyColumnHeaderWrapper,
   BodyColumnMainHeader,
   BodyColumnBody,
   ScaleLine,
   DepthMeasurementScale,
   EmptyStateWrapper,
   LastScaleBlock,
+  ColumnHeaderWrapper,
 } from './elements';
 import NptEventsBadge from './NptEventsBadge';
 import { NptEventsScatterView } from './NptEventsScatterView';
@@ -86,9 +86,9 @@ const NptEventsColumn: React.FC<WithDragHandleProps<Props>> = ({
     <BodyColumn width={150}>
       <ColumnDragger {...dragHandleProps} />
 
-      <BodyColumnHeaderWrapper>
+      <ColumnHeaderWrapper>
         <BodyColumnMainHeader>{NPT_COLUMN_TITLE}</BodyColumnMainHeader>
-      </BodyColumnHeaderWrapper>
+      </ColumnHeaderWrapper>
 
       <BodyColumnBody>
         {(isEventsLoading || isEmpty(events)) && (

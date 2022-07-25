@@ -13,13 +13,13 @@ import { ColumnDragger } from './ColumnDragger';
 import { NDS_COLUMN_TITLE } from './constants';
 import {
   BodyColumn,
-  BodyColumnHeaderWrapper,
   BodyColumnMainHeader,
   BodyColumnBody,
   ScaleLine,
   DepthMeasurementScale,
   LastScaleBlock,
   EmptyStateWrapper,
+  ColumnHeaderWrapper,
 } from './elements';
 import NdsEventsBadge from './NdsEventsBadge';
 import { NdsEventsScatterView } from './NdsEventsScatterView';
@@ -85,9 +85,9 @@ const NdsEventsColumn: React.FC<WithDragHandleProps<Props>> = ({
     <BodyColumn width={150}>
       <ColumnDragger {...dragHandleProps} />
 
-      <BodyColumnHeaderWrapper>
+      <ColumnHeaderWrapper>
         <BodyColumnMainHeader>{NDS_COLUMN_TITLE}</BodyColumnMainHeader>
-      </BodyColumnHeaderWrapper>
+      </ColumnHeaderWrapper>
 
       <BodyColumnBody>
         {(isEventsLoading || isEmpty(events)) && (

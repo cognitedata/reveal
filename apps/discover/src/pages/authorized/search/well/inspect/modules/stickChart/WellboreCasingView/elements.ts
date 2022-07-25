@@ -1,6 +1,6 @@
 import styled from 'styled-components/macro';
 
-import { Flex, FlexColumn, sizes } from 'styles/layout';
+import { Flex, FlexColumn, FlexRow, sizes } from 'styles/layout';
 
 export const WellboreCasingsViewWrapper = styled(FlexColumn)`
   height: 100%;
@@ -10,11 +10,18 @@ export const WellboreCasingsViewWrapper = styled(FlexColumn)`
 `;
 
 export const ContentWrapper = styled(Flex)`
-  height: calc(100% - 93px);
+  height: 100%;
   padding: ${sizes.small};
   gap: ${sizes.small};
   justify-content: center;
   > * h6 {
     display: none;
   }
+`;
+
+export const ColumnHeaderWrapper = styled(FlexRow)`
+  height: 32px;
+  padding: ${sizes.small};
+  background: var(--cogs-greyscale-grey2);
+  border-bottom: 1px solid var(--cogs-greyscale-grey3);
 `;

@@ -16,6 +16,7 @@ export const Container = styled.div`
   padding-bottom: 8px;
   border: 1px solid var(--cogs-greyscale-grey3);
   border-radius: 12px;
+  margin: ${sizes.small};
 `;
 
 export const ChartWrapper = styled.div`

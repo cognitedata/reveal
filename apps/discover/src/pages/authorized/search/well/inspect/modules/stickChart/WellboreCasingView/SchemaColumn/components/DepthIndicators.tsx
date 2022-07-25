@@ -5,11 +5,11 @@ import React, { useCallback, useMemo } from 'react';
 import reduce from 'lodash/reduce';
 import reduceRight from 'lodash/reduceRight';
 
-import { useScaledDepth } from '../../hooks/useScaledDepth';
-import { CasingAssemblyView } from '../../types';
+import { useScaledDepth } from '../../../hooks/useScaledDepth';
+import { CasingAssemblyView } from '../../../types';
+import { DepthIndicatorsContainer } from '../elements';
 
 import { DepthIndicator } from './DepthIndicator';
-import { DepthIndicatorsContainer } from './elements';
 
 interface DepthIndicatorsProps {
   casingAssemblies: CasingAssemblyView[];
@@ -17,11 +17,10 @@ interface DepthIndicatorsProps {
   showBothSides?: boolean;
 }
 
-export const DepthIndicators: React.FC<DepthIndicatorsProps> = ({
-  casingAssemblies,
-  scaleBlocks,
-  showBothSides = false,
-}) => {
+export const DepthIndicators = React.forwardRef<
+  HTMLElement,
+  DepthIndicatorsProps
+>(({ casingAssemblies, scaleBlocks, showBothSides = false }, ref) => {
   const getScaledDepth = useScaledDepth(scaleBlocks);
 
   const depthIndicatorsReducer = useCallback(
@@ -71,9 +70,9 @@ export const DepthIndicators: React.FC<DepthIndicatorsProps> = ({
   );
 
   return (
-    <DepthIndicatorsContainer>
+    <DepthIndicatorsContainer ref={ref}>
       {showBothSides && DepthIndicatorsLeftHalf}
       {DepthIndicatorsRightHalf}
     </DepthIndicatorsContainer>
   );
-};
+});

@@ -5,8 +5,10 @@ import { Menu } from '@cognite/cogs.js';
 import { Center } from 'styles/layout';
 
 import {
+  DEPTH_END_MARKER_COLOR,
   DEPTH_INDICATOR_END_HEIGHT,
   DEPTH_INDICATOR_LINE_WIDTH,
+  DEPTH_INDICATOR_MARKER_SHIFT,
   DEPTH_INDICATOR_SPACING,
   DEPTH_SEGMENT_COLOR,
   TOOLTIP_HOVER_AREA,
@@ -97,4 +99,28 @@ export const TooptipSection = styled(Menu.Item)`
 
 export const FlipHorizontal = styled.div`
   ${(props: { flip: boolean }) => props.flip && `transform: scaleX(-1)`};
+`;
+
+export const DepthEndMarker = styled.div`
+  height: 1px;
+  border-bottom: 1px dashed ${DEPTH_END_MARKER_COLOR};
+  float: right;
+`;
+
+export const DepthEndMarkerForLine = styled(DepthEndMarker)`
+  ${(props: { width: number }) => `
+    width: calc(${
+      props.width ? `${props.width}px` : '100vw'
+    } + ${DEPTH_INDICATOR_LINE_WIDTH} + ${DEPTH_INDICATOR_MARKER_SHIFT});
+    margin-right: -${DEPTH_INDICATOR_MARKER_SHIFT};
+  `}
+`;
+
+export const DepthEndMarkerForTriangle = styled(DepthEndMarker)`
+  ${(props: { width: number }) => `
+    width: calc(${
+      props.width ? `${props.width}px` : '100vw'
+    } + ${DEPTH_INDICATOR_LINE_WIDTH} + ${DEPTH_INDICATOR_END_HEIGHT} + ${DEPTH_INDICATOR_MARKER_SHIFT});
+    margin-right: calc(-${DEPTH_INDICATOR_MARKER_SHIFT} - ${DEPTH_INDICATOR_END_HEIGHT});
+  `}
 `;

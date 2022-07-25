@@ -3,16 +3,10 @@ import styled from 'styled-components/macro';
 import { SubTitleText } from 'components/EmptyState/elements';
 import { Flex, FlexColumn, FlexRow, sizes } from 'styles/layout';
 
-import {
-  SCALE_BLOCK_HEIGHT,
-  SCALE_BOTTOM_PADDING,
-  SCALE_PADDING,
-} from './constants';
+import { SCALE_BLOCK_HEIGHT, SCALE_PADDING } from './constants';
 
 export const BodyColumn = styled(FlexColumn)`
-  /* margin-top: 30px; */
-  /* height: 500px; */
-  height: 100%;
+  height: calc(100% - 12px); // reduced the bottom gap here.
   border: 1px solid var(--cogs-greyscale-grey3);
   border-radius: 12px;
   min-width: ${(props: { width: number }) => props.width}px;
@@ -22,6 +16,15 @@ export const BodyColumn = styled(FlexColumn)`
 `;
 
 export const BodyColumnHeaderWrapper = styled(FlexRow)`
+  height: 32px;
+  padding: ${sizes.small};
+  background: var(--cogs-greyscale-grey2);
+  border-bottom: 1px solid var(--cogs-greyscale-grey3);
+  border-top-left-radius: inherit;
+  border-top-right-radius: inherit;
+`;
+
+export const ColumnHeaderWrapper = styled(FlexRow)`
   height: 32px;
   padding: ${sizes.small};
   background: var(--cogs-greyscale-grey2);
@@ -51,8 +54,7 @@ export const BodyColumnSubHeader = styled(Flex)`
 `;
 
 export const BodyColumnBody = styled(Flex)`
-  height: calc(100% - 32px);
-  padding-bottom: ${SCALE_BOTTOM_PADDING}px;
+  height: 100%;
   position: relative;
   > * h6 {
     display: none;
@@ -95,7 +97,7 @@ export const ScaleLineDepth = styled.div`
   color: var(--cogs-greyscale-grey7);
   height: ${SCALE_PADDING}px;
   padding: 0 ${sizes.small};
-  top: 32px;
+  top: ${SCALE_BLOCK_HEIGHT / 2 + 1}px;
   position: relative;
   background: var(--cogs-greyscale-grey1);
 `;

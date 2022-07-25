@@ -1,8 +1,7 @@
 import React from 'react';
 
-import { ScaleLine } from '../../../common/Events/elements';
-
-import { DepthMeasurementScaleWrapper } from './elements';
+import { ScaleLine } from '../../../../common/Events/elements';
+import { DepthMeasurementScaleWrapper } from '../elements';
 
 interface DepthScaleLinesProps {
   scaleBlocks: number[];

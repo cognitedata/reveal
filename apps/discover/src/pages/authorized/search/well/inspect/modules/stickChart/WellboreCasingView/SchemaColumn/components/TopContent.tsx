@@ -2,20 +2,19 @@ import React from 'react';
 
 import { Tooltip } from 'components/PopperTooltip';
 
-import { useScaledDepth } from '../../hooks/useScaledDepth';
-import { CasingSchematicView } from '../../types';
+import { useScaledDepth } from '../../../hooks/useScaledDepth';
+import { CasingSchematicView } from '../../../types';
 import {
   DEPTH_BLOCK_LABEL_MINIMUM_HEIGHT,
   RKB_LEVEL_LABEL,
   WATER_DEPTH_LABEL,
-} from '../constants';
-
+} from '../../constants';
 import {
   DepthLabel,
   RkbLevel,
   TopContentWrapper,
   WaterDepth,
-} from './elements';
+} from '../elements';
 
 interface TopContentAreaProps {
   label: string;

@@ -1,8 +1,7 @@
 import React from 'react';
 
-import { MUD_LINE_COLOR, RKB_COLOR, SEA_LEVEL_COLOR } from '../constants';
-
-import { HeaderText, LegendIndicator, LegendWrapper } from './elements';
+import { MUD_LINE_COLOR, RKB_COLOR, SEA_LEVEL_COLOR } from '../../constants';
+import { HeaderText, LegendIndicator, LegendWrapper } from '../elements';
 
 const LEGEND_CONFIG: LegendItemProps[] = [
   {

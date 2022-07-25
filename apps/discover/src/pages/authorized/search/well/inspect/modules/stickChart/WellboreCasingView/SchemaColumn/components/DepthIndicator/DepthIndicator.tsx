@@ -1,14 +1,16 @@
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import layers from 'utils/zindex';
 
 import { Tooltip } from 'components/PopperTooltip';
 
-import { CasingAssemblyView } from '../../../types';
+import { CasingAssemblyView } from '../../../../types';
 
 import { DEPTH_INDICATOR_END_HEIGHT, TOOLTIP_PLACEMENT } from './constants';
 import { DepthSegment } from './DepthSegment';
 import {
+  DepthEndMarkerForLine,
+  DepthEndMarkerForTriangle,
   DepthIndicatorWrapper,
   DescriptionFlipped,
   DescriptionUnflipped,
@@ -35,7 +37,10 @@ export const DepthIndicator: React.FC<DepthIndicatorProps> = ({
   isTied,
   flip = false,
 }) => {
+  const depthIndicatorRef = useRef<HTMLElement>(null);
+
   const [zIndex, setZIndex] = useState<number>(layers.MAIN_LAYER);
+  const [depthMarkerWidth, setDepthMarkerWidth] = useState<number>();
 
   const depthSegmentStartHeight = `${casingStartDepthScaled}px`;
   const depthSegmentMiddleHeight = `calc(${casingDepthScaled}px - ${DEPTH_INDICATOR_END_HEIGHT})`;
@@ -46,8 +51,16 @@ export const DepthIndicator: React.FC<DepthIndicatorProps> = ({
 
   const DescriptionWrapper = flip ? DescriptionFlipped : DescriptionUnflipped;
 
+  const updateDepthMarkerWidth = useCallback(
+    () => setDepthMarkerWidth(depthIndicatorRef.current?.offsetLeft),
+    [depthIndicatorRef.current?.offsetLeft]
+  );
+
+  useEffect(() => updateDepthMarkerWidth(), [updateDepthMarkerWidth]);
+
   return (
     <DepthIndicatorWrapper
+      ref={depthIndicatorRef}
       data-testid="depth-indicator"
       style={{ zIndex }}
       /**
@@ -72,6 +85,12 @@ export const DepthIndicator: React.FC<DepthIndicatorProps> = ({
           <DepthSegment.End isLiner={isLiner} />
         </FlipHorizontal>
       </Tooltip>
+
+      {isLiner ? (
+        <DepthEndMarkerForLine width={depthMarkerWidth} />
+      ) : (
+        <DepthEndMarkerForTriangle width={depthMarkerWidth} />
+      )}
 
       <DescriptionWrapper>{outsideDiameterFormatted}</DescriptionWrapper>
     </DepthIndicatorWrapper>
