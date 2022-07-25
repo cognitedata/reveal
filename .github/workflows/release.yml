@@ -5,7 +5,7 @@ on:
     branches: ['main']
 
 jobs:
-  deploy-storybook:
+  publish-package:
     runs-on: ubuntu-latest
 
     steps:
