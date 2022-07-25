@@ -10,6 +10,7 @@ const useDiagramFile = (
   diagramExternalId?: string
 ) => {
   const [file, setFile] = useState<File | null>(null);
+  const [unit, setUnit] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [documentMetadata, setDocumentMetadata] = useState<DocumentMetadata>({
     type: DiagramType.UNKNOWN,
@@ -18,11 +19,6 @@ const useDiagramFile = (
   });
 
   const { client } = useAuthContext();
-
-  const setDiagramType = (diagramType: DiagramType) => {
-    if (pidViewer.current === undefined) return;
-    pidViewer.current.setDocumentMetadata(diagramType);
-  };
 
   const handleFileUpload = ({
     target,
@@ -38,9 +34,13 @@ const useDiagramFile = (
   const loadFileIfProvided = async () => {
     if (diagramExternalId && client) {
       setIsLoading(true);
-      fetchFileByExternalId(client, diagramExternalId).then((file) => {
-        setFile(file);
-      });
+      const [fileInfo, file] = await fetchFileByExternalId(
+        client,
+        diagramExternalId
+      );
+
+      setUnit(fileInfo.metadata?.unit ?? null);
+      setFile(file);
     }
   };
 
@@ -56,11 +56,11 @@ const useDiagramFile = (
 
   return {
     file,
+    unit,
     handleFileUpload,
     loadFileIfProvided,
     isLoading,
     documentMetadata,
-    setDiagramType,
   };
 };
 

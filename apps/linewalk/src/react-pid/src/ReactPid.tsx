@@ -5,7 +5,6 @@ import {
   DiagramConnection,
   DiagramLineInstance,
   DiagramSymbol,
-  DiagramType,
   EventType,
   AddSymbolData,
   ToolType,
@@ -43,7 +42,7 @@ export const ReactPid = ({
 }: ReactPidProps) => {
   const [hasDocumentLoaded, setHasDocumentLoaded] = useState(false);
 
-  const [activeTool, setActiveTool] = useState<ToolType>('selectDiagramType');
+  const [activeTool, setActiveTool] = useState<ToolType>('addSymbol');
 
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [showLoader, setShowLoader] = useState(false);
@@ -54,11 +53,11 @@ export const ReactPid = ({
 
   const {
     file,
+    unit,
     handleFileUpload,
     loadFileIfProvided,
     isLoading,
     documentMetadata,
-    setDiagramType,
   } = useDiagramFile(pidViewer, hasDocumentLoaded, diagramExternalId);
 
   const { symbols, setSymbols, symbolInstances, setSymbolInstances } =
@@ -215,15 +214,6 @@ export const ReactPid = ({
   });
 
   useEffect(() => {
-    if (
-      documentMetadata.type !== DiagramType.UNKNOWN &&
-      activeTool === 'selectDiagramType'
-    ) {
-      setActiveToolWrapper('addSymbol');
-    }
-  }, [documentMetadata]);
-
-  useEffect(() => {
     if (activeTool !== 'addEquipmentTag' && activeTagId !== null) {
       pidViewer.current?.setActiveTagId(null);
     }
@@ -333,6 +323,7 @@ export const ReactPid = ({
     if (file) {
       if (pidViewer.current && pidViewer.current.document === undefined) {
         pidViewer.current.addSvgDocument(file);
+        pidViewer.current.setDocumentMetadata(unit ?? undefined);
       } else {
         throw new Error('Failed to add SVG document to pidViewer');
       }
@@ -364,7 +355,6 @@ export const ReactPid = ({
           autoAnalysis={autoAnalysis}
           saveGraphAsJson={saveGraphAsJsonWrapper}
           documentMetadata={documentMetadata}
-          setDiagramType={setDiagramType}
           lineNumbers={lineNumbers}
           setLineNumbers={setLineNumbersWrapper}
           activeLineNumber={activeLineNumber}

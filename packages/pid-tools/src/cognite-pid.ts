@@ -248,7 +248,6 @@ export class CognitePid {
       this.reset();
     }
     this.fileName = svgDocument.name;
-    this.setDocumentMetadata();
     svgDocument
       .text()
       .then((text) => {
@@ -575,10 +574,10 @@ export class CognitePid {
     this.documentMetadataSubscriber = callback;
   }
 
-  setDocumentMetadata(selectedType?: DiagramType) {
+  setDocumentMetadata(unit?: string) {
     this.documentMetadata = getMetadataFromFileName(
       this.fileName ?? '',
-      selectedType
+      unit ?? ''
     );
 
     if (this.documentMetadata && this.documentMetadataSubscriber) {

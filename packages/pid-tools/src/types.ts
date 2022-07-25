@@ -214,6 +214,5 @@ export type ToolType =
   | 'splitLine'
   | 'connectInstances'
   | 'connectLabels'
-  | 'selectDiagramType'
   | 'setLineNumber'
   | 'addEquipmentTag';

@@ -6,7 +6,6 @@ import {
   DiagramSymbol,
   DiagramSymbolInstance,
   DocumentMetadata,
-  DiagramType,
   ToolType,
   PathReplacementGroup,
   AddSymbolData,
@@ -16,7 +15,6 @@ import {
 import { CollapsableInstanceList } from './CollapsableInstanceList';
 import { FileController } from './FileController';
 import { AddSymbolController } from './AddSymbolController';
-import { DiagramTypeSelector } from './DiagramTypeSelector';
 import { AddLineNumberController } from './AddLineNumberController';
 import { DocumentInfo } from './DocumentInfo';
 
@@ -52,7 +50,6 @@ interface SidePanelProps {
   autoAnalysis: () => void;
   saveGraphAsJson: () => void;
   documentMetadata: DocumentMetadata;
-  setDiagramType: (type: DiagramType) => void;
   lineNumbers: string[];
   setLineNumbers: (arg: string[]) => void;
   activeLineNumber: string | null;
@@ -88,7 +85,6 @@ export const SidePanel = ({
   autoAnalysis,
   saveGraphAsJson,
   documentMetadata,
-  setDiagramType,
   lineNumbers,
   setLineNumbers,
   activeLineNumber,
@@ -160,9 +156,6 @@ export const SidePanel = ({
           />
         )}
       </div>
-      {activeTool === 'selectDiagramType' && file !== null && (
-        <DiagramTypeSelector setDiagramType={setDiagramType} />
-      )}
     </SidePanelWrapper>
   );
 };
