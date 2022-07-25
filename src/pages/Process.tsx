@@ -2,23 +2,22 @@ import { VerticalContainer } from 'src/modules/Common/Components/VerticalContain
 import { LazyWrapper } from 'src/modules/Common/Components/LazyWrapper';
 import { ProcessFileDetailsContainer } from 'src/modules/Process/Containers/ProcesseFileDetailsContainer/ProcesseFileDetailsContainer';
 import React, { useMemo } from 'react';
-import { Redirect, Route, RouteComponentProps, Switch } from 'react-router-dom';
-import { workflowRoutes, WorkflowStepKey } from 'src/utils/workflowRoutes';
+import { Redirect, Route, Switch, useLocation } from 'react-router-dom';
+import { workflowRoutes } from 'src/utils/workflowRoutes';
 import styled from 'styled-components';
 import { StatusToolBar } from 'src/modules/Process/Containers/StatusToolBar';
 
-type ProcessPageProps = RouteComponentProps<{ step: WorkflowStepKey }>;
-
-const ProcessStep = (props: ProcessPageProps) => {
+const ProcessStep = () => {
   const compRoute = useMemo(
     () => () => import('src/modules/Process/Containers/ProcessStep'),
     []
   );
 
-  return <LazyWrapper routeProps={props} importFn={compRoute} />;
+  return <LazyWrapper importFn={compRoute} />;
 };
 
-export default function Process({ location }: ProcessPageProps) {
+export default function Process() {
+  const { search } = useLocation();
   return (
     <VerticalContainer>
       <StatusToolBar current="Contextualize Imagery Data" previous="explorer" />
@@ -30,7 +29,7 @@ export default function Process({ location }: ProcessPageProps) {
               to={{
                 key: workflowRoutes.process,
                 pathname: workflowRoutes.process,
-                search: location.search,
+                search,
               }}
             />
             <Route
