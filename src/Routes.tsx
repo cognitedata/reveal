@@ -1,21 +1,17 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import { Loader } from '@cognite/cogs.js';
-import { Route, RouteComponentProps, Switch } from 'react-router-dom';
+import { Route, Switch, useLocation } from 'react-router-dom';
 import NotFound from 'src/pages/NotFound';
 import { LazyWrapper } from 'src/modules/Common/Components/LazyWrapper';
 import NoAccessPage from 'src/pages/NoAccessPage';
 import { useUserCapabilities } from './hooks/useUserCapabilities';
 
-const RouteWrapper = ({
-  Component,
-  capabilities,
-  ...routeProps
-}: {
-  Component: any;
+const RouteWrapper: React.FC<{
   capabilities: { acl: string; actions: string[] }[];
-} & RouteComponentProps): JSX.Element => {
+}> = ({ capabilities, children }): JSX.Element => {
   const { data: hasCapabilities, isFetched } =
     useUserCapabilities(capabilities);
+  const { pathname } = useLocation();
 
   if (!isFetched) {
     return <Loader />;
@@ -23,25 +19,18 @@ const RouteWrapper = ({
 
   if (!hasCapabilities) {
     return (
-      <NoAccessPage
-        capabilities={capabilities}
-        requestedPathName={routeProps.location.pathname}
-      />
+      <NoAccessPage capabilities={capabilities} requestedPathName={pathname} />
     );
   }
 
-  return <Component {...routeProps} />;
+  return <>{children}</>;
 };
 
 const routes = [
   {
     exact: true,
     path: '/:tenant/vision',
-    component: (props: RouteComponentProps) => {
-      const compRoute = useMemo(() => () => import('src/pages/Home'), []);
-
-      return <LazyWrapper routeProps={props} importFn={compRoute} />;
-    },
+    importFn: () => import('src/pages/Home'),
     capabilities: [
       {
         acl: 'filesAcl',
@@ -56,14 +45,7 @@ const routes = [
   {
     exact: true,
     path: '/:tenant/vision/workflow/review/:fileId',
-    component: (props: RouteComponentProps) => {
-      const compRoute = useMemo(
-        () => () => import('src/modules/Review/Containers/Review'),
-        []
-      );
-
-      return <LazyWrapper routeProps={props} importFn={compRoute} />;
-    },
+    importFn: () => import('src/modules/Review/Containers/Review'),
     capabilities: [
       {
         acl: 'filesAcl',
@@ -78,11 +60,7 @@ const routes = [
   {
     exact: false,
     path: '/:tenant/vision/workflow/:step',
-    component: (props: RouteComponentProps) => {
-      const compRoute = useMemo(() => () => import('src/pages/Process'), []);
-
-      return <LazyWrapper routeProps={props} importFn={compRoute} />;
-    },
+    importFn: () => import('src/pages/Process'),
     capabilities: [
       {
         acl: 'filesAcl',
@@ -97,14 +75,7 @@ const routes = [
   {
     exact: true,
     path: '/:tenant/vision/explore',
-    component: (props: RouteComponentProps) => {
-      const compRoute = useMemo(
-        () => () => import('src/modules/Explorer/Containers/Explorer'),
-        []
-      );
-
-      return <LazyWrapper routeProps={props} importFn={compRoute} />;
-    },
+    importFn: () => import('src/modules/Explorer/Containers/Explorer'),
     capabilities: [
       {
         acl: 'filesAcl',
@@ -119,14 +90,7 @@ const routes = [
   {
     exact: true,
     path: '/:tenant/vision/models',
-    component: (props: RouteComponentProps) => {
-      const compRoute = useMemo(
-        () => () => import('src/modules/AutoML/Components/AutoML'),
-        []
-      );
-
-      return <LazyWrapper routeProps={props} importFn={compRoute} />;
-    },
+    importFn: () => import('src/modules/AutoML/Components/AutoML'),
     capabilities: [
       {
         acl: 'groupsAcl',
@@ -144,18 +108,11 @@ export function Routes() {
   return (
     <Switch>
       {routes.map((r) => (
-        <Route
-          key={r.path}
-          exact={r.exact}
-          path={r.path}
-          render={(routeProps) => (
-            <RouteWrapper
-              Component={r.component}
-              capabilities={r.capabilities}
-              {...routeProps}
-            />
-          )}
-        />
+        <Route key={r.path} exact={r.exact} path={r.path}>
+          <RouteWrapper capabilities={r.capabilities}>
+            <LazyWrapper importFn={r.importFn} />
+          </RouteWrapper>
+        </Route>
       ))}
 
       <Route component={NotFound} />

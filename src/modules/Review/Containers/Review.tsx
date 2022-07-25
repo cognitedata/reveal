@@ -8,7 +8,7 @@ import { FetchFilesById } from 'src/store/thunks/Files/FetchFilesById';
 import { PopulateReviewFiles } from 'src/store/thunks/Review/PopulateReviewFiles';
 import styled from 'styled-components';
 import { Button, Icon, Popconfirm, ToastContainer } from '@cognite/cogs.js';
-import { RouteComponentProps, useHistory } from 'react-router-dom';
+import { useHistory, useLocation, useParams } from 'react-router-dom';
 import { batch, useDispatch, useSelector } from 'react-redux';
 import { resetPreview } from 'src/modules/Review/store/reviewSlice';
 import ReviewBody from 'src/modules/Review/Containers/ReviewBody';
@@ -42,12 +42,13 @@ const DeleteButton = (props: {
   </div>
 );
 
-const Review = (props: RouteComponentProps<{ fileId: string }>) => {
+const Review = () => {
   const [isDeleteInProgress, setIsDeleteInProgress] = useState<boolean>(false);
 
   const history = useHistory();
   const dispatch = useDispatch();
-  const { fileId } = props.match.params;
+  const { fileId } = useParams<{ fileId: string }>();
+  const { state } = useLocation();
 
   const file = useSelector(({ fileReducer }: RootState) =>
     selectFileById(fileReducer, +fileId)
@@ -57,7 +58,7 @@ const Review = (props: RouteComponentProps<{ fileId: string }>) => {
     ({ reviewSlice }: RootState) => reviewSlice.fileIds
   );
 
-  const previousPage = (props.location.state as { from?: string })?.from;
+  const previousPage = (state as { from?: string })?.from;
   const showBackButton = !!previousPage || false;
 
   const onBackButtonClick = useCallback(() => {
