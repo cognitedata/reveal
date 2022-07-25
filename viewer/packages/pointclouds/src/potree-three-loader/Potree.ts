@@ -14,7 +14,8 @@ import {
   DEFAULT_POINT_BUDGET,
   MAX_LOADS_TO_GPU,
   MAX_NUM_NODES_LOADING,
-  PERSPECTIVE_CAMERA
+  PERSPECTIVE_CAMERA,
+  UPDATE_THROTTLE_TIME_MS
 } from './rendering/constants';
 import { FEATURES } from './rendering/features';
 import { EptLoader } from './loading/EptLoader';
@@ -71,7 +72,7 @@ export class Potree implements IPotree {
   private readonly _throttledUpdateFunc = throttle(
     (pointClouds: PointCloudOctree[], camera: THREE.Camera, renderer: WebGLRenderer) =>
       this.innerUpdatePointClouds(pointClouds, camera, renderer),
-    1000
+    UPDATE_THROTTLE_TIME_MS
   );
 
   maxNumNodesLoading: number = MAX_NUM_NODES_LOADING;
