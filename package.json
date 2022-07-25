@@ -1,7 +1,7 @@
 {
   "name": "@cognite/cdf-extractor-downloads",
   "description": "Extractor downloads subapp of fusion.cognite.com",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "start": "env GENERATE_SOURCEMAP=false BROWSER=none WDS_SOCKET_PORT=8000 WDS_SOCKET_HOST=localhost PORT=8000 react-app-rewired --max_old_space_size=2000 start",
