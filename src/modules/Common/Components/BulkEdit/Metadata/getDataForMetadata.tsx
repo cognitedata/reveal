@@ -3,7 +3,7 @@ import { EditPanelState } from 'src/modules/Common/Components/BulkEdit/bulkEditO
 import { BulkEditTableDataType } from 'src/modules/Common/Components/BulkEdit/BulkEditTable/BulkEditTable';
 import { BulkEditUnsavedState } from 'src/modules/Common/store/common/types';
 import { VisionFile } from 'src/modules/Common/store/files/types';
-import styled from 'styled-components';
+import { CellContainer } from 'src/modules/Common/Components/BulkEdit/utils/CellContainer';
 
 export const getDataForMetadata = ({
   selectedFiles,
@@ -40,9 +40,3 @@ export const getDataForMetadata = ({
     };
   });
 };
-
-const CellContainer = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  row-gap: 2px;
-`;

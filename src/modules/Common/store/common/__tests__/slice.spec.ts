@@ -5,6 +5,11 @@ import { SaveAnnotations } from 'src/store/thunks/Annotation/SaveAnnotations';
 import { DeleteAnnotations } from 'src/store/thunks/Annotation/DeleteAnnotations';
 import { UpdateAnnotations } from 'src/store/thunks/Annotation/UpdateAnnotations';
 import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotations';
+import { SerializedError } from '@reduxjs/toolkit/dist/createAsyncThunk';
+
+jest.mock('src/utils/extractErrorMessage.ts', () => ({
+  extractErrorMessage: (rawMessage: SerializedError) => rawMessage,
+}));
 
 describe('Test common reducer', () => {
   const fulfilledActionTypes = [

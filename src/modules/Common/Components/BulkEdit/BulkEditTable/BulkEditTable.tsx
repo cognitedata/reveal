@@ -52,6 +52,12 @@ export const BulkEditTable = ({
           data={data}
           width={720}
           maxHeight={Infinity}
+          /**
+           * The minimum height for a row will be 33px when it only has the file name and image.
+           * This estimated value will use to calculate the total height for the initial render.
+           * Row height will dynamically change with the row content.
+           */
+          estimatedRowHeight={33}
           columns={columns}
           components={components}
           disabled={disabled}

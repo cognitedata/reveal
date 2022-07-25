@@ -53,6 +53,7 @@ import {
 } from 'src/modules/Review/store/annotatorWrapper/slice';
 import { useIsCurrentKeypointCollectionComplete } from 'src/modules/Review/store/annotatorWrapper/hooks';
 import { convertTempKeypointCollectionToUnsavedVisionImageKeypointCollection } from 'src/modules/Review/store/review/utils';
+import { cropBoxRegionAtEdges } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/utils/cropBoxRegionAtEdges';
 import { tools } from './Tools';
 
 type ReactImageAnnotateWrapperProps = {
@@ -213,7 +214,8 @@ export const ReactImageAnnotateWrapper = ({
   }, [fileInfo, selectedTool]);
 
   const handleCreateRegion = useCallback(
-    async (region: AnnotatorRegion) => {
+    async (newRegion: AnnotatorRegion) => {
+      const region = cropBoxRegionAtEdges(newRegion);
       const { annotationLabelOrText } = region;
 
       if (annotationLabelOrText) {
@@ -233,7 +235,8 @@ export const ReactImageAnnotateWrapper = ({
   );
 
   const handleUpdateRegion = useCallback(
-    async (region: AnnotatorRegion) => {
+    async (updatedRegion: AnnotatorRegion) => {
+      const region = cropBoxRegionAtEdges(updatedRegion);
       const { annotationLabelOrText } = region;
 
       if (annotationLabelOrText) {

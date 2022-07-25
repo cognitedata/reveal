@@ -14,6 +14,7 @@ import { SaveAnnotations } from 'src/store/thunks/Annotation/SaveAnnotations';
 import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotations';
 import { DeleteAnnotations } from 'src/store/thunks/Annotation/DeleteAnnotations';
 import { UpdateAnnotations } from 'src/store/thunks/Annotation/UpdateAnnotations';
+import { extractErrorMessage } from 'src/utils/extractErrorMessage';
 import { BulkEditUnsavedState, CommonState } from './types';
 
 export const initialState: CommonState = {
@@ -71,9 +72,9 @@ const commonSlice = createSlice({
         if (error && error.message) {
           state.saveState.mode = 'error';
           state.saveState.time = new Date().getTime();
-          ToastUtils.onFailure(
-            `Failed to update Annotations, ${error?.message}`
-          );
+          const errorMessage = extractErrorMessage(error);
+
+          ToastUtils.onFailure(`Failed to update Annotations, ${errorMessage}`);
         }
       }
     );
