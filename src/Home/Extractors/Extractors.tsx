@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { Table } from 'antd';
-import NewHeader from 'components/NewHeader';
 import styled from 'styled-components';
 import { getContainer } from 'utils/utils';
 import {
@@ -10,10 +9,11 @@ import {
   Release,
   getDownloadUrl,
 } from './ExtractorDownloadApi';
-import { Colors } from '@cognite/cogs.js';
 import { ExpandableConfig } from 'antd/lib/table/interface';
 import { useTranslation } from 'common/i18n';
 import { getColumns, getArtifactName } from './common';
+import { Header } from 'components/Header';
+import { Layout } from 'components/Layout';
 
 const GetExtractors = () => {
   const [extractors, setExtractors] = useState<ExtractorWithRelease[]>();
@@ -101,20 +101,19 @@ const Extractors = () => {
   const { t } = useTranslation();
   const { extractorColumns } = getColumns(t);
   return (
-    <StyledExtractorsContainer>
-      <NewHeader
-        title={t('extractor-downloads')}
-        ornamentColor={Colors['lightblue']}
-      />
-      <Table
-        dataSource={GetExtractors()}
-        columns={extractorColumns}
-        pagination={false}
-        rowKey={(record) => record.externalId}
-        expandable={expandableConfig}
-        getPopupContainer={getContainer}
-      />
-    </StyledExtractorsContainer>
+    <Layout>
+      <Header />
+      <Layout.Container>
+        <Table
+          dataSource={GetExtractors()}
+          columns={extractorColumns}
+          pagination={false}
+          rowKey={(record) => record.externalId}
+          expandable={expandableConfig}
+          getPopupContainer={getContainer}
+        />
+      </Layout.Container>
+    </Layout>
   );
 };
 
@@ -124,10 +123,6 @@ const LinkStyled = styled.a`
   display: flex;
   justify-content: left;
   align-items: left;
-`;
-
-const StyledExtractorsContainer = styled.div`
-  padding: 18px 44px;
 `;
 
 export default Extractors;

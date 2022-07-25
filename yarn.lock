@@ -1169,17 +1169,18 @@
     query-string "^7.0.1"
     styled-components "^5.3.3"
 
-"@cognite/cogs.js@^5.17.0":
-  version "5.19.5"
-  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-5.19.5.tgz#5fa025481b8711b90fea1b9b29bf38ebef773f29"
-  integrity sha512-8Fi+0J2j4qNOAENoIV2L10WXZGmhGXnxeEJDfZFZyPDWHKcilADD7mojmdg9lKGk1rgHkp4cYhxDm0xdRCwHwA==
+"@cognite/cogs.js@^6.9.1":
+  version "6.19.0"
+  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-6.19.0.tgz#3531513aa352991efd9988844e800c75ae0833b1"
+  integrity sha512-nOAjK9jOGkGA7UtrJ5ywsCqHEz+MiVYcfJv0DWxL1GDZkjautJET99bculhI6+xqB+PAhRSHTkp6viJ9NwHE7Q==
   dependencies:
     "@tippyjs/react" "4.2.3"
-    "@types/react-date-range" "^1.1.2"
+    "@types/react-date-range" "^1.4.3"
     axios "^0.21.2"
     classnames "^2.3.1"
     color "^3.1.2"
     dayjs "^1.9.7"
+    deepdash "^5.3.9"
     eslint-config-stylelint "^13.1.1"
     focus-visible "^5.1.0"
     match-sorter "^6.3.0"
@@ -1197,10 +1198,10 @@
     tippy.js "6.2.0"
     ts-dedent "^2.2.0"
 
-"@cognite/cogs.js@^6.9.1":
-  version "6.19.0"
-  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-6.19.0.tgz#3531513aa352991efd9988844e800c75ae0833b1"
-  integrity sha512-nOAjK9jOGkGA7UtrJ5ywsCqHEz+MiVYcfJv0DWxL1GDZkjautJET99bculhI6+xqB+PAhRSHTkp6viJ9NwHE7Q==
+"@cognite/cogs.js@^7.5.0":
+  version "7.5.0"
+  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-7.5.0.tgz#c0ac04138832ea96fe317a90eca9e7f6aba49c20"
+  integrity sha512-LQQyzS+TsIZL3lQmtH0qfos/FcaWJfyRaqs1DlK3BKfcQ3y1inOs2jIQj8nMlNGsINcgn5sKOKhPntu/4OYigA==
   dependencies:
     "@tippyjs/react" "4.2.3"
     "@types/react-date-range" "^1.4.3"
@@ -2340,7 +2341,7 @@
   resolved "https://registry.yarnpkg.com/@types/range-parser/-/range-parser-1.2.4.tgz#cd667bcfdd025213aafb7ca5915a932590acdcdc"
   integrity sha512-EEhsLsD6UsDM1yFhAvy0Cjr6VwmpMWqFBCb9w07wVugF7w9nfajxLuVmngTIpgS6svCnm6Vaw+MZhoDCKnOfsw==
 
-"@types/react-date-range@^1.1.2", "@types/react-date-range@^1.4.3":
+"@types/react-date-range@^1.4.3":
   version "1.4.3"
   resolved "https://registry.yarnpkg.com/@types/react-date-range/-/react-date-range-1.4.3.tgz#3578c28858fe5198c1fa021ca21dc50dfb0ad774"
   integrity sha512-hCZOoRPcyb+st3mZhcyPYnBQ83h0eNcTfCjPTj5EgqrPKnMGCy58TiEJXHV0ozCMOtLqH7Y80ldc19SKfKbuXA==

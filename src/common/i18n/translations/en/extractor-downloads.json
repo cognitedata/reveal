@@ -1,13 +1,15 @@
 {
-    "extractor-downloads": "Extractor downloads",
-    "description": "Description",
-    "documentation": "Documentation",
-    "download-links": "Download links",
-    "help": "Help",
-    "linux": "Linux",
-    "macos": "MacOS",
-    "name": "Name",
-    "release-date": "Release date",
-    "version": "Version",
-    "windows": "Windows"
+  "extractor-downloads": "Extractor downloads",
+  "description": "Description",
+  "documentation": "Documentation",
+  "download-links": "Download links",
+  "help": "Help",
+  "linux": "Linux",
+  "macos": "MacOS",
+  "name": "Name",
+  "release-date": "Release date",
+  "version": "Version",
+  "windows": "Windows",
+  "extract-data": "Extract data",
+  "search-for-source-systems": "Search for source systems, databases, protocols, resource types"
 }
