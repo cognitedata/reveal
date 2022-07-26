@@ -8,7 +8,7 @@ import {
   // getDownloadUrl,
 } from './ExtractorDownloadApi';
 // import { useTranslation } from 'common/i18n';
-// import { getColumns, getArtifactName } from './common';
+// import { getArtifactName } from './common';
 import { Header } from 'components/Header';
 import { Layout } from 'components/Layout';
 import { CreateExtractor } from 'components/CreateExtractor';
@@ -29,8 +29,6 @@ const _useGetExtractors = () => {
 };
 
 const Extractors = () => {
-  // const { t } = useTranslation();
-  // const { extractorColumns } = getColumns(t);
   return (
     <Layout>
       <Header />
