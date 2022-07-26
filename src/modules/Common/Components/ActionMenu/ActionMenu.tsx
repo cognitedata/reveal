@@ -60,7 +60,7 @@ export const ActionMenu = ({
       )}
       <Popconfirm
         icon="WarningFilled"
-        placement="bottom-end"
+        placement="left"
         onConfirm={handleFileDelete}
         content="Are you sure you want to permanently delete this file?"
       >
