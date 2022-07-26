@@ -14,10 +14,12 @@ import {
 } from 'utils/constants';
 import ColumnIcon from 'components/ColumnIcon';
 import Tooltip from 'components/Tooltip/Tooltip';
+import { useTranslation } from 'common/i18n';
 
 type Props = { selectedColumn: ColumnType | undefined };
 
 export const Header = ({ selectedColumn }: Props) => {
+  const { t } = useTranslation();
   const { database, table } = useActiveTableContext();
   const { getColumnType, isFetched } = useColumnType(database, table);
 
@@ -81,7 +83,7 @@ export const Header = ({ selectedColumn }: Props) => {
       </StyledDrawerHeader>
       <StyledDrawerSectionColumnType>
         <Body level={2} strong>
-          Type
+          {t('type_capitalized')}
         </Body>
         <ColumnIcon dataKey={selectedColumn?.dataKey} />
         <Body level={2} style={{ fontWeight: 400, marginLeft: '4px' }}>

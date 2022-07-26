@@ -18,12 +18,7 @@ import { RawExplorerContext } from 'contexts';
 import { stringCompare } from 'utils/utils';
 
 import SidePanelTableListItem from './SidePanelTableListItem';
-
-const accessWarningContent = (
-  <>
-    To create tables, you need to have the <strong>raw:write</strong> capability
-  </>
-);
+import { Trans, useTranslation } from 'common/i18n';
 
 type SidePanelTableListContentProps = {
   openCreateModal: () => void;
@@ -36,6 +31,7 @@ const SidePanelTableListContent = ({
   searchQuery,
   tables,
 }: SidePanelTableListContentProps): JSX.Element => {
+  const { t } = useTranslation();
   const { flow } = getFlow();
   const { selectedSidePanelDatabase = '' } = useContext(RawExplorerContext);
 
@@ -56,20 +52,26 @@ const SidePanelTableListContent = ({
   if (!tables.length) {
     return (
       <StyledEmptyListWrapper>
-        <StyledEmptyListTitle level={6}>Create a table</StyledEmptyListTitle>
+        <StyledEmptyListTitle level={6}>
+          {t('explorer-side-panel-tables-create-title')}
+        </StyledEmptyListTitle>
         <StyledEmptyListDetail strong>
-          All raw data is stored in tables. Create a table to upload a file or
-          write data directly using the API.
+          {t('explorer-side-panel-tables-create-detail')}
         </StyledEmptyListDetail>
 
-        <Tooltip content={accessWarningContent} disabled={hasWriteAccess}>
+        <Tooltip
+          content={
+            <Trans i18nKey="explorer-side-panel-tables-access-warning" />
+          }
+          disabled={hasWriteAccess}
+        >
           <Button
             disabled={!hasWriteAccess}
             icon="Add"
             onClick={openCreateModal}
             type="primary"
           >
-            Create table
+            {t('explorer-side-panel-tables-create-button')}
           </Button>
         </Tooltip>
       </StyledEmptyListWrapper>
@@ -88,10 +90,11 @@ const SidePanelTableListContent = ({
         ))
       ) : (
         <StyledNoItemsWrapper>
-          <Title level={6}>No results found.</Title>
+          <Title level={6}>
+            {t('explorer-side-panel-tables-no-results-title')}
+          </Title>
           <StyledNoItemsDetail strong>
-            The search “{searchQuery}” did not match any tables. Please try
-            another search.
+            {t('explorer-side-panel-tables-no-results-detail')}
           </StyledNoItemsDetail>
         </StyledNoItemsWrapper>
       )}

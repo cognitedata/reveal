@@ -2,29 +2,25 @@ import React from 'react';
 
 import { Icons } from '@cognite/cogs.js';
 import styled from 'styled-components';
+import { Trans, useTranslation } from 'common/i18n';
 
 const NoAccessPage = (): JSX.Element => {
+  const { t } = useTranslation();
+
   return (
     <NoAccessContent>
       <Warning>
         <Icons.WarningFilled />
-        <div>You have insufficient access rights to access this feature</div>
+        <div>{t('error-page-no-access-title')}</div>
       </Warning>
-      <Instructions>
-        Check the access rights needed below and ask the person responsible for
-        access management in your organization to grant them to you.
-      </Instructions>
+      <Instructions>{t('error-page-no-access-instructions')}</Instructions>
       <AccessInfoWrapper className="z-4">
         <AccessInfo>
           <p>
-            It is a prerequisite to have <strong>groups:list</strong> scoped at
-            least for the current user to access any feature.
+            <Trans i18nKey="error-page-no-access-required-for-any-feature" />
           </p>
           <p>
-            To view tables and databases in RAW, you need the capabilities{' '}
-            <strong>raw:read</strong> and <strong>raw:list</strong>. To create,
-            update, or delete tables and databases in RAW, you additionally need
-            the capability <strong>raw:write</strong>.
+            <Trans i18nKey="error-page-no-access-required-for-this-feature" />
           </p>
         </AccessInfo>
       </AccessInfoWrapper>

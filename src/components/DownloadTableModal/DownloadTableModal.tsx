@@ -9,6 +9,7 @@ import Modal, { ModalProps } from 'components/Modal/Modal';
 import Message from 'components/Message/Message';
 import { useDownloadData } from 'hooks/table-data';
 import { RAW_PAGE_SIZE_LIMIT } from 'utils/constants';
+import { useTranslation } from 'common/i18n';
 
 const COLUMNS_IGNORED = ['column-index', 'lastUpdatedTime'];
 
@@ -24,6 +25,7 @@ const DownloadTableModal = ({
   visible,
   ...modalProps
 }: DownloadTableModalProps): JSX.Element => {
+  const { t } = useTranslation();
   const [rowCount, setRowCount] = useState<string>('100');
   const [fetchRowCount, setFetchRowCount] = useState<string>(rowCount);
   const { currentRows, fetchedRows, isDownloading, isError } = useDownloadData(
@@ -63,7 +65,7 @@ const DownloadTableModal = ({
     <Modal
       footer={[
         <StyledCancelButton onClick={handleClose} type="ghost">
-          Cancel
+          {t('cancel')}
         </StyledCancelButton>,
         rowCount !== fetchRowCount ? (
           <Button
@@ -71,7 +73,7 @@ const DownloadTableModal = ({
             onClick={() => setFetchRowCount(rowCount)}
             type="primary"
           >
-            Create File
+            {t('download-table-modal-button-create-file')}
           </Button>
         ) : (
           <CSVLink
@@ -84,22 +86,24 @@ const DownloadTableModal = ({
               onClick={handleClose}
               type="primary"
             >
-              Download
+              {t('download-table-modal-button-download')}
             </Button>
           </CSVLink>
         ),
       ]}
       onCancel={handleClose}
-      title={`Download as csv ${tableName}`}
+      title={t('download-table-modal-title', { name: tableName })}
       visible={visible}
       {...modalProps}
     >
       <Message
-        message={`The download option is limited to ${RAW_PAGE_SIZE_LIMIT} rows.`}
+        message={t('download-table-modal-rows-limit-message', {
+          count: RAW_PAGE_SIZE_LIMIT,
+        })}
         type="info"
       />
       <StyledRowsInputWrapper>
-        Rows to download
+        {t('download-table-modal-rows-limit-label')}
         <Input
           disabled={isDownloading}
           onChange={(event) => setRowCount(event.target.value)}

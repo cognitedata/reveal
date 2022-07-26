@@ -2,6 +2,7 @@ import React from 'react';
 
 import FrequencyStats, { Count } from 'containers/Profiling/FrequencyStats';
 import { Section } from 'components/ProfilingSection';
+import { useTranslation } from 'common/i18n';
 
 type Props = {
   allCount: number;
@@ -17,16 +18,17 @@ export const SectionFrequency = ({
   isHalf,
   isCompact,
 }: Props): JSX.Element => {
+  const { t } = useTranslation();
   return (
     <Section
-      title={title ?? 'Frequency analysis'}
+      title={title ?? t('profiling-sidebar-frequency-title')}
       isCompact={isCompact}
       isHalf={isHalf}
     >
       {counts ? (
         <FrequencyStats allCount={allCount} counts={counts} />
       ) : (
-        'MISSING'
+        t('profiling-sidebar-value-missing')
       )}
     </Section>
   );

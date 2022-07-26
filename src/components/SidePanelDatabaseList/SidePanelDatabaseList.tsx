@@ -14,15 +14,10 @@ import { useDatabases } from 'hooks/sdk-queries';
 import { useActiveTable } from 'hooks/table-tabs';
 
 import SidePanelDatabaseListContent from './SidePanelDatabaseListContent';
-
-const accessWarningContent = (
-  <>
-    To create databases, you need to have the <strong>raw:write</strong>{' '}
-    capability
-  </>
-);
+import { Trans, useTranslation } from 'common/i18n';
 
 const SidePanelDatabaseList = (): JSX.Element => {
+  const { t } = useTranslation();
   const { flow } = getFlow();
   const [query, setQuery] = useState('');
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -59,7 +54,12 @@ const SidePanelDatabaseList = (): JSX.Element => {
           <StyledSidePanelDatabaseListHeaderTitle strong>
             RAW Explorer
           </StyledSidePanelDatabaseListHeaderTitle>
-          <Tooltip content={accessWarningContent} disabled={hasWriteAccess}>
+          <Tooltip
+            content={
+              <Trans i18nKey="explorer-side-panel-databases-access-warning" />
+            }
+            disabled={hasWriteAccess}
+          >
             <Button
               aria-label="Create database"
               disabled={!hasWriteAccess}
@@ -80,7 +80,9 @@ const SidePanelDatabaseList = (): JSX.Element => {
           />
         </StyledSidePanelDatabaseListHeaderWrapper>
       }
-      searchInputPlaceholder="Filter databases"
+      searchInputPlaceholder={t(
+        'explorer-side-panel-databases-filter-placeholder'
+      )}
       onQueryChange={setQuery}
       query={query}
     >
@@ -90,14 +92,19 @@ const SidePanelDatabaseList = (): JSX.Element => {
         searchQuery={query}
       />
       {!!databases.length && (
-        <Tooltip content={accessWarningContent} disabled={hasWriteAccess}>
+        <Tooltip
+          content={
+            <Trans i18nKey="explorer-side-panel-databases-access-warning" />
+          }
+          disabled={hasWriteAccess}
+        >
           <Button
             block
             disabled={!hasWriteAccess}
             icon="Add"
             onClick={() => setIsCreateModalOpen(true)}
           >
-            Create database
+            {t('explorer-side-panel-databases-button-create-database')}
           </Button>
         </Tooltip>
       )}

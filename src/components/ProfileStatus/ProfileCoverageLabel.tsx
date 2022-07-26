@@ -9,6 +9,7 @@ import {
   ProfileResultType,
 } from 'hooks/profiling-service';
 import Tooltip from 'components/Tooltip/Tooltip';
+import { useTranslation } from 'common/i18n';
 
 type ProfileCoverageLabelProps = {
   coverageType: ProfileCoverageType;
@@ -20,27 +21,41 @@ export const ProfileCoverageLabel = ({
   resultType,
   nrOfProfiledRows,
 }: ProfileCoverageLabelProps): JSX.Element => {
+  const { t } = useTranslation();
+
   switch (resultType) {
     case 'complete':
-      return <StyledLabelComplete>Complete</StyledLabelComplete>;
+      return (
+        <StyledLabelComplete>
+          {t('profile-coverage-label-complete')}
+        </StyledLabelComplete>
+      );
     case 'running':
-      return <StyledLabelRunning>Running</StyledLabelRunning>;
+      return (
+        <StyledLabelRunning>
+          {t('profile-coverage-label-running')}
+        </StyledLabelRunning>
+      );
     case 'partial':
       const nrOfRows =
         nrOfProfiledRows && nrOfProfiledRows < FULL_PROFILE_LIMIT
           ? nrOfProfiledRows
-          : 'million';
+          : t('million');
       return (
         <Tooltip
-          content={`Only the first ${nrOfRows} rows of data were profiled`}
+          content={t('profile-coverage-label-partial-tooltip', {
+            amount: nrOfRows,
+          })}
         >
           {coverageType === 'rows' ? (
             <StyledLabelPartial>
               <StyledPartialIcon size={14} type="WarningTriangleFilled" />
-              Partial
+              {t('profile-coverage-label-partial-text')}
             </StyledLabelPartial>
           ) : (
-            <StyledLabelComplete>Complete</StyledLabelComplete>
+            <StyledLabelComplete>
+              {t('profile-coverage-label-complete')}
+            </StyledLabelComplete>
           )}
         </Tooltip>
       );

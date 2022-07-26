@@ -3,6 +3,7 @@ import styled from 'styled-components';
 
 import { ProfileResultType } from 'hooks/profiling-service';
 import Message from 'components/Message/Message';
+import { useTranslation } from 'common/i18n';
 
 type ProfileStatusMessageProps = {
   resultType: ProfileResultType;
@@ -13,13 +14,14 @@ export const ProfileStatusMessage = ({
   resultType,
   isCompact,
 }: ProfileStatusMessageProps): JSX.Element => {
+  const { t } = useTranslation();
   switch (resultType) {
     case 'complete':
       return (
         <StyledMessage
           isClosable
           isCompact={isCompact}
-          message="Data profiling completed for all rows and columns."
+          message={t('profile-status-message_complete')}
           type="success"
         />
       );
@@ -27,7 +29,7 @@ export const ProfileStatusMessage = ({
       return (
         <StyledMessage
           isCompact={isCompact}
-          message="Running data profiling for the first million rows. Profile is currently being populated."
+          message={t('profile-status-message_running')}
           type="loading"
         />
       );
@@ -36,7 +38,7 @@ export const ProfileStatusMessage = ({
         <StyledMessage
           isClosable
           isCompact={isCompact}
-          message="Data profiling partially completed. Only up to one million rows of data are used for profiling."
+          message={t('profile-status-message_partial')}
           type="warning"
         />
       );

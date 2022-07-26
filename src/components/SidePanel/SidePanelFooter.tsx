@@ -6,6 +6,7 @@ import styled from 'styled-components';
 import { RawExplorerContext } from 'contexts';
 import { useActiveTable } from 'hooks/table-tabs';
 import { SIDE_PANEL_FOOTER_HEIGHT } from 'utils/constants';
+import { useTranslation } from 'common/i18n';
 
 const StyledSidePanelFooterWrapper = styled.div`
   border-top: 1px solid ${Colors['border-default']};
@@ -14,6 +15,7 @@ const StyledSidePanelFooterWrapper = styled.div`
 `;
 
 const SidePanelFooter = (): JSX.Element => {
+  const { t } = useTranslation();
   const { setIsSidePanelOpen } = useContext(RawExplorerContext);
 
   const [[activeDatabase, activeTable] = []] = useActiveTable();
@@ -27,7 +29,7 @@ const SidePanelFooter = (): JSX.Element => {
         onClick={() => setIsSidePanelOpen(false)}
         type="secondary"
       >
-        Hide
+        {t('explorer-side-panel-databases-button-hide')}
       </Button>
     </StyledSidePanelFooterWrapper>
   );

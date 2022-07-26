@@ -11,8 +11,10 @@ import { SIDEBAR_PROFILING_DRAWER_WIDTH } from 'utils/constants';
 import { ProfileStatusMessage } from 'components/ProfileStatus';
 import { Header } from './Header';
 import { ProfilingData } from './ProfilingData';
+import { useTranslation } from 'common/i18n';
 
 export const ProfilingSidebar = (): JSX.Element => {
+  const { t } = useTranslation();
   const { database, table } = useActiveTableContext();
   const { isProfilingSidebarOpen, setIsProfilingSidebarOpen } =
     useProfilingSidebar();
@@ -23,7 +25,7 @@ export const ProfilingSidebar = (): JSX.Element => {
 
   const footer = (
     <Button block icon="PanelRight" type="secondary" onClick={onClickHide}>
-      Hide
+      {t('profiling-sidebar-button-hide')}
     </Button>
   );
 

@@ -9,6 +9,7 @@ import DeleteTableModal from 'components/DeleteTableModal/DeleteTableModal';
 import Dropdown from 'components/Dropdown/Dropdown';
 import Tooltip from 'components/Tooltip/Tooltip';
 import { useActiveTable } from 'hooks/table-tabs';
+import { Trans, useTranslation } from 'common/i18n';
 
 type SidePanelTableListItemProps = {
   databaseName: string;
@@ -67,6 +68,7 @@ const SidePanelTableListItem = ({
   databaseName,
   tableName,
 }: SidePanelTableListItemProps): JSX.Element => {
+  const { t } = useTranslation();
   const { flow } = getFlow();
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
@@ -99,10 +101,7 @@ const SidePanelTableListItem = ({
           <Menu>
             <Tooltip
               content={
-                <>
-                  To delete tables, you need to have the{' '}
-                  <strong>raw:write</strong> capability
-                </>
+                <Trans i18nKey="explorer-side-panel-tables-delete-warning-no-access" />
               }
               disabled={hasWriteAccess}
             >
@@ -115,7 +114,7 @@ const SidePanelTableListItem = ({
                 }}
                 type="ghost-danger"
               >
-                Delete table
+                {t('explorer-side-panel-tables-delete-button')}
               </Button>
             </Tooltip>
           </Menu>
