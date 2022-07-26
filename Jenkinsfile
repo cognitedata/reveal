@@ -2,7 +2,7 @@
 
 static final String PR_COMMENT_MARKER = "🚀[pr-server]\n"
 static final String SLACK_ALERTS_CHANNEL = "#cdf-ui-devs-alerts"
-static final String APP_ID = 'cdf-extractor-downloads'
+static final String APP_ID = 'cdf-extractor-downloads-2'
 static final String APPLICATION_REPO_ID = 'cdf-hub-extractor-downloads'
 static final String NODE_VERSION = 'node:14'
 static final String VERSIONING_STRATEGY = "single-branch"
@@ -133,7 +133,7 @@ pods {
         }
         container('fas') {
           stageWithNotify('Build and deploy PR') {
-            def package_name = "@cognite/cdf-extractor-downloads";
+            def package_name = "@cognite/cdf-extractor-downloads-2";
             def prefix = jenkinsHelpersUtil.determineRepoName();
             def domain = "fusion-preview";
             previewServer(
