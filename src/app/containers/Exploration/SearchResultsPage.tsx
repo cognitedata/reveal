@@ -191,6 +191,7 @@ function SearchPage() {
       case 'asset':
         return (
           <AssetSearchResults
+            showCount
             onClick={(item: ResourceItem) =>
               openPreview(item.id !== activeId ? item.id : undefined)
             }
@@ -201,6 +202,7 @@ function SearchPage() {
       case 'file':
         return (
           <FileSearchResults
+            showCount
             filter={fileFilter}
             allowEdit={editable}
             onClick={(item: ResourceItem) =>
@@ -212,6 +214,7 @@ function SearchPage() {
       case 'sequence':
         return (
           <SequenceSearchResults
+            showCount
             onClick={(item: ResourceItem) =>
               openPreview(item.id !== activeId ? item.id : undefined)
             }
@@ -222,6 +225,7 @@ function SearchPage() {
       case 'timeSeries':
         return (
           <TimeseriesSearchResults
+            showCount
             onClick={(item: ResourceItem) =>
               openPreview(item.id !== activeId ? item.id : undefined)
             }
@@ -233,6 +237,7 @@ function SearchPage() {
       case 'event':
         return (
           <EventSearchResults
+            showCount
             onClick={(item: ResourceItem) =>
               openPreview(item.id !== activeId ? item.id : undefined)
             }
