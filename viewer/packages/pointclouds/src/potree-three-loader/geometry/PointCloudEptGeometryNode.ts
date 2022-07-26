@@ -224,6 +224,12 @@ export class PointCloudEptGeometryNode implements IPointCloudTreeGeometryNode {
     child.parent = this;
   }
 
+  async assignPointsToObjects(): Promise<void> {
+    if (this._geometry !== undefined) {
+      await this._ept.loader.assignPointsToObjects(this, this._geometry);
+    }
+  }
+
   async load(): Promise<void> {
     if (this._loaded || this._loading) return;
     if (globalNumNodesLoading >= globalMaxNumNodesLoading) return;

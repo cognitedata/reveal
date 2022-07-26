@@ -141,11 +141,11 @@ export class Potree implements IPotree {
   }
 
   static set maxLoaderWorkers(value: number) {
-    EptBinaryLoader.WORKER_POOL.maxWorkers = value;
+    EptBinaryLoader.EPT_DECODER_WORKER_POOL.maxWorkers = value;
   }
 
   static get maxLoaderWorkers(): number {
-    return EptBinaryLoader.WORKER_POOL.maxWorkers;
+    return EptBinaryLoader.EPT_DECODER_WORKER_POOL.maxWorkers;
   }
 
   private updateVisibilityForNode(
@@ -268,9 +268,13 @@ export class Potree implements IPotree {
     const numNodesToLoad = Math.min(this.maxNumNodesLoading, updateInfo.unloadedGeometry.length);
     const nodeLoadPromises: Promise<void>[] = [];
     for (let i = 0; i < numNodesToLoad; i++) {
-      nodeLoadPromises.push(updateInfo.unloadedGeometry[i].load()
+      nodeLoadPromises.push(updateInfo.unloadedGeometry[i].node.load()
         .then(() => {
           this._throttledUpdateFunc(pointClouds, camera, renderer);
+          updateInfo.unloadedGeometry[i].node.assignPointsToObjects().then(() => {
+            // Force re-render
+            updateInfo.unloadedGeometry[i].tree.requestRedraw();
+          });
         }));
     }
 

@@ -5,6 +5,7 @@ export interface IPointCloudTreeGeometryNode extends IPointCloudTreeNodeBase {
   geometry: THREE.BufferGeometry | undefined;
   failed: boolean;
   load: () => Promise<void>;
+  assignPointsToObjects: () => Promise<void>;
   baseUrl: () => string;
   fileName: () => string;
   oneTimeDisposeHandlers: (() => void)[];

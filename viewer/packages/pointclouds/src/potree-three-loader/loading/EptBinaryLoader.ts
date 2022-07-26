@@ -11,7 +11,8 @@ import { ILoader } from './ILoader';
 import { ModelDataProvider } from '@reveal/modeldata-api';
 import { PointCloudEptGeometryNode } from '../geometry/PointCloudEptGeometryNode';
 import EptDecoderWorker from '../workers/eptBinaryDecoder.worker';
-import { ParseCommand, ObjectsCommand } from '../workers/eptBinaryDecoder.worker';
+import PointObjectAssignmentWorker, { PointToObjectAssignmentCommand, PointToObjectAssignmentResult } from '../workers/pointToObjectAssigner.worker';
+import { ParseCommand } from '../workers/eptBinaryDecoder.worker';
 
 import { ParsedEptData, EptInputData } from '../workers/parseEpt';
 
@@ -27,7 +28,8 @@ export class EptBinaryLoader implements ILoader {
     box: THREE.Box3;
   }[];
 
-  static readonly WORKER_POOL = new WorkerPool(32, EptDecoderWorker);
+  static readonly EPT_DECODER_WORKER_POOL = new WorkerPool(32, EptDecoderWorker);
+  static readonly POINT_OBJECT_ASSIGNMENT_WORKER_POOL = new WorkerPool(32, PointObjectAssignmentWorker);
 
   extension(): string {
     return '.bin';
@@ -50,32 +52,61 @@ export class EptBinaryLoader implements ILoader {
     const data = await this._dataLoader.getBinaryFile(node.baseUrl(), fullFileName);
 
     const parsedData = await this.parse(node, data);
+
     this.finalizeLoading(parsedData, node);
   }
 
-  private finalizeLoading(parsedData: ParsedEptData, node: PointCloudEptGeometryNode) {
+  async assignPointsToObjects(node: PointCloudEptGeometryNode, geometry: THREE.BufferGeometry): Promise<void> {
+    const positionBuffer = new Float32Array(geometry.getAttribute('position').array);
+    const autoTerminatingWorker = await EptBinaryLoader.POINT_OBJECT_ASSIGNMENT_WORKER_POOL.getWorker();
+
+    const relevantStylableObjects = this._stylableObjectsWithBoundingBox
+      .filter(p => p.box.intersectsBox(node.boundingBox))
+      .map(p => p.object);
+
+    const positionBufferCopy = positionBuffer.slice();
+
+    return new Promise<void>(res => {
+      console.time('Running point assignment worker for ' + node.name);
+      autoTerminatingWorker.worker.onmessage = (e: { data: PointToObjectAssignmentResult }) => {
+        EptBinaryLoader.POINT_OBJECT_ASSIGNMENT_WORKER_POOL.releaseWorker(autoTerminatingWorker);
+
+        const objectId = new Uint16Array(e.data.objectIdBuffer);
+        geometry.setAttribute('objectId', new THREE.BufferAttribute(objectId, 1));
+
+        console.timeEnd('Running point assignment worker for ' + node.name);
+        console.log(`Assigned ${positionBuffer.length / 3} points to ${relevantStylableObjects.length} objects`);
+        res();
+      };
+
+      const assignmentCommand: PointToObjectAssignmentCommand = {
+        positionBuffer: positionBufferCopy,
+        objectList: relevantStylableObjects,
+        pointOffset: node.boundingBox.min.toArray()
+      };
+
+      autoTerminatingWorker.worker.postMessage(assignmentCommand, [positionBufferCopy.buffer]);
+    });
+  }
+
+  private finalizeLoading(parsedData: ParsedEptData, node: PointCloudEptGeometryNode): THREE.BufferGeometry {
     const geometry = createGeometryFromEptData(parsedData);
 
     const tightBoundingBox = createTightBoundingBox(parsedData);
 
     const numPoints = parsedData.numPoints;
     node.doneLoading(geometry, tightBoundingBox, numPoints, new THREE.Vector3(...parsedData.mean));
+    return geometry;
   }
 
   async parse(node: PointCloudEptGeometryNode, data: ArrayBuffer): Promise<ParsedEptData> {
-    const autoTerminatingWorker = await EptBinaryLoader.WORKER_POOL.getWorker();
+    const autoTerminatingWorker = await EptBinaryLoader.EPT_DECODER_WORKER_POOL.getWorker();
 
     return new Promise<ParsedEptData>(res => {
       autoTerminatingWorker.worker.onmessage = (e: { data: ParsedEptData }) => {
-        EptBinaryLoader.WORKER_POOL.releaseWorker(autoTerminatingWorker);
+        EptBinaryLoader.EPT_DECODER_WORKER_POOL.releaseWorker(autoTerminatingWorker);
         res(e.data);
       };
-
-      const relevantStylableObjects = this._stylableObjectsWithBoundingBox
-        .filter(p => p.box.intersectsBox(node.getBoundingBox()))
-        .map(p => p.object);
-
-      postStylableObjectInfo(autoTerminatingWorker, node, relevantStylableObjects);
 
       const eptData: EptInputData = {
         buffer: data,
@@ -106,22 +137,6 @@ function postParseCommand(autoTerminatingWorker: AutoTerminatingWorker, data: Ep
   autoTerminatingWorker.worker.postMessage(parseMessage, [parseMessage.data.buffer]);
 }
 
-function postStylableObjectInfo(
-  autoTerminatingWorker: AutoTerminatingWorker,
-  node: PointCloudEptGeometryNode,
-  stylableObjects: RawStylableObject[]
-): void {
-  const offsetVec = node.boundingBox.min;
-
-  const objectMessage: ObjectsCommand = {
-    type: 'objects',
-    objects: stylableObjects,
-    pointOffset: [offsetVec.x, offsetVec.y, offsetVec.z] as [number, number, number]
-  };
-
-  autoTerminatingWorker.worker.postMessage(objectMessage);
-}
-
 function createGeometryFromEptData(data: ParsedEptData): THREE.BufferGeometry {
   const geometry = new THREE.BufferGeometry();
 
@@ -146,7 +161,8 @@ function createGeometryFromEptData(data: ParsedEptData): THREE.BufferGeometry {
   addAttributeIfPresent<Uint8Array>(Uint8Array, 'return number', 1, data.returnNumber);
   addAttributeIfPresent<Uint8Array>(Uint8Array, 'number of returns', 1, data.numberOfReturns);
   addAttributeIfPresent<Uint16Array>(Uint16Array, 'source id', 1, data.pointSourceId);
-  addAttributeIfPresent<Uint16Array>(Uint16Array, 'objectId', 1, data.objectId);
+
+  geometry.setAttribute('objectId', new THREE.BufferAttribute(new Uint16Array(new ArrayBuffer(data.position.byteLength)), 1));
 
   geometry.attributes.indices.normalized = true;
 

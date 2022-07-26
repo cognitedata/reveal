@@ -1,5 +1,4 @@
-import { StylableObject } from '../../styling/StylableObject';
-import { computeObjectIdBuffer } from './assignObjects';
+import { EptSchemaEntry } from '../loading/EptJson';
 
 export type ParsedEptData = {
   numPoints: number;
@@ -13,13 +12,6 @@ export type ParsedEptData = {
   numberOfReturns: ArrayBuffer | undefined;
   pointSourceId: ArrayBuffer | undefined;
   indices: ArrayBuffer;
-  objectId: ArrayBuffer;
-};
-
-export type SchemaEntry = {
-  name: string;
-  size: number;
-  type: 'signed' | 'unsigned' | 'float';
 };
 
 type RawVector3 = {
@@ -30,7 +22,7 @@ type RawVector3 = {
 
 export type EptInputData = {
   buffer: ArrayBuffer;
-  schema: SchemaEntry[];
+  schema: EptSchemaEntry[];
   scale: RawVector3;
   offset: RawVector3;
   mins: [number, number, number];
@@ -38,21 +30,19 @@ export type EptInputData = {
 
 export function parseEpt(
   worker: Worker,
-  data: EptInputData,
-  objects: StylableObject[],
-  pointOffset: THREE.Vector3
+  data: EptInputData
 ): void {
   const buffer = data.buffer;
   const view = new DataView(buffer);
-  const schema: SchemaEntry[] = data.schema;
+  const schema: EptSchemaEntry[] = data.schema;
   const scale = data.scale;
   const offset = data.offset;
   const mins = data.mins;
 
-  const dimensions: Record<string, SchemaEntry> = schema.reduce((p, c) => {
+  const dimensions: Record<string, EptSchemaEntry> = schema.reduce((p, c) => {
     p[c.name] = c;
     return p;
-  }, {} as Record<string, SchemaEntry>);
+  }, {} as Record<string, EptSchemaEntry>);
 
   const dimOffset = (name: string) => {
     let offset = 0;
@@ -245,13 +235,10 @@ export function parseEpt(
     indices[i] = i;
   }
 
-  const objectIdBuffer = computeObjectIdBuffer(xyz, objects, pointOffset);
-
   const message: ParsedEptData = {
     numPoints: numPoints,
     tightBoundingBox: bounds,
     mean: mean,
-
     position: xyzBuffer,
     color: rgbBuffer,
     intensity: intensityBuffer,
@@ -260,7 +247,6 @@ export function parseEpt(
     numberOfReturns: numberOfReturnsBuffer,
     pointSourceId: pointSourceIdBuffer,
     indices: indicesBuffer,
-    objectId: objectIdBuffer
   };
 
   function assertDefined(buffer: ArrayBuffer | undefined): buffer is ArrayBuffer {
@@ -275,8 +261,7 @@ export function parseEpt(
     message.returnNumber,
     message.numberOfReturns,
     message.pointSourceId,
-    message.indices,
-    message.objectId
+    message.indices
   ].filter(assertDefined);
 
   worker.postMessage(message, transferables);

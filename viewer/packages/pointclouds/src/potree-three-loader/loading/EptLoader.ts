@@ -18,6 +18,7 @@ export class EptLoader {
 
       geometry.root = root;
       await geometry.root.load();
+      await geometry.root.assignPointsToObjects();
       return geometry;
     });
   }
