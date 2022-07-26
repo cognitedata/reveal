@@ -1,32 +1,10 @@
-import { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import {
-  getExtractorsWithReleases,
-  ExtractorWithRelease,
-  // Artifact,
-  // Release,
-  // getDownloadUrl,
-} from './ExtractorDownloadApi';
-// import { useTranslation } from 'common/i18n';
-// import { getArtifactName } from './common';
+import { Flex } from '@cognite/cogs.js';
+
 import { Header } from 'components/Header';
 import { Layout } from 'components/Layout';
+import { ExtractorsList } from 'components/ExtractorsList';
 import { CreateExtractor } from 'components/CreateExtractor';
-
-// TODO: move this to react-query
-const _useGetExtractors = () => {
-  const [extractors, setExtractors] = useState<ExtractorWithRelease[]>();
-  useEffect(() => {
-    getExtractorsWithReleases()
-      .then((res) => {
-        setExtractors(res);
-      })
-      // eslint-disable-next-line no-console
-      .catch((e) => console.error(e));
-  }, []);
-
-  return extractors;
-};
 
 const Extractors = () => {
   return (
@@ -34,7 +12,10 @@ const Extractors = () => {
       <Header />
       <Layout.Container>
         <StyledContentContainer>
-          <CreateExtractor />
+          <Flex gap={48} direction="column">
+            <CreateExtractor />
+            <ExtractorsList />
+          </Flex>
         </StyledContentContainer>
       </Layout.Container>
     </Layout>

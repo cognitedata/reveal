@@ -13,5 +13,7 @@
   "extract-data": "Extract data",
   "search-for-source-systems": "Search for source systems, databases, protocols, resource types",
   "create-your-own-extractor": "Create your own extractor",
-  "use-our-tools-and-libraries": "Use our tools and libraries to easily create custom extractors"
+  "use-our-tools-and-libraries": "Use our tools and libraries to easily create custom extractors",
+  "cognite-extractors": "Cognite Extractors",
+  "install-prebuilt-cognite-extractors": "Install prebuilt Cognite extractors to push data from your source system to Cognite Data Fusion:"
 }
