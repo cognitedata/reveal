@@ -117,7 +117,7 @@ const baseAnnotatorWrapperReducer: AnnotatorWrapperState = {
         show: true,
         status: Status.Suggested,
       },
-      200: {
+      200: { // collection with incomplete keypoints
         id: 1,
         keypointIds: ['k4', 'k5'],
         label: 'gauge',
