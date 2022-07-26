@@ -8,12 +8,14 @@ import { trackEvent } from '@cognite/cdf-route-tracker';
 
 import { PrimaryKeyMethod } from 'components/CreateTableModal/CreateTableModal';
 import { sleep } from 'utils/utils';
+import { useTranslation } from 'common/i18n';
 
 export const useCSVUpload = (
   file: File | undefined,
   selectedPrimaryKeyMethod: PrimaryKeyMethod | undefined,
   selectedKeyIndex: number
 ) => {
+  const { t } = useTranslation();
   const sdk = useSDK();
 
   const [[database, table], setTableToUpload] = useState<
@@ -73,7 +75,7 @@ export const useCSVUpload = (
       header: true,
       error: () => {
         notification.error({
-          message: `${file.name} could not be parsed!`,
+          message: t('file-upload-error', { name: file.name }),
           key: 'file-upload',
         });
         setIsUpload(false);
@@ -111,7 +113,7 @@ export const useCSVUpload = (
           });
       },
     });
-  }, [file, isUpload, columns, selectedColumn, database, table, sdk.raw]);
+  }, [file, isUpload, columns, selectedColumn, database, table, sdk.raw, t]);
 
   useEffect(() => {
     if (!file || !isUploadCompleted) return;

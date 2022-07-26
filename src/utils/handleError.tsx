@@ -4,6 +4,7 @@ import notification from 'antd/lib/notification';
 import { Typography } from 'antd';
 
 import { getContainer } from './utils';
+import { Trans, TranslationKeys } from 'common/i18n';
 
 interface ApiError {
   duplicated: any[];
@@ -25,28 +26,35 @@ interface ErrorNotificationProps extends ApiError {
   error?: any;
 }
 
-const generateStatusMessage = (errorCode: number): string => {
+const generateStatusMessage = (errorCode: number): TranslationKeys => {
   switch (errorCode) {
     case 401:
-      return 'Your account has insufficient access rights. Contact your project administrator.';
+      return 'error-insufficient-access';
     case 404:
     case 403:
-      return 'We could not find what you were looking for. Keep in mind that this may be due to insufficient access rights.';
+      return 'error-not-found';
     case 500:
     case 503:
-      return 'Something went terribly wrong. You can try again in a bit.';
+      return 'error-server-error';
     case undefined:
-      return 'We experienced a network issue while handling your request. Please make sure you are connected to the internet and try again.';
+      return 'error-network-issue';
     default:
-      return `Something went wrong. Please contact Cognite support if the error persists. Error code: ${errorCode}`;
+      return 'error-default';
   }
 };
 
-const generateErrorTitle = (error: ApiError, extraMessage?: string) => (
-  <Typography.Paragraph ellipsis={{ rows: 1, expandable: true }}>
-    {extraMessage || generateStatusMessage(error.status)}
-  </Typography.Paragraph>
-);
+const generateErrorTitle = (error: ApiError, extraMessage?: string) => {
+  return (
+    <Typography.Paragraph ellipsis={{ rows: 1, expandable: true }}>
+      {extraMessage || (
+        <Trans
+          i18nKey={generateStatusMessage(error.status)}
+          values={{ errorCode: error.status }}
+        />
+      )}
+    </Typography.Paragraph>
+  );
+};
 
 const generateErrorDescription = (
   error: ApiError,

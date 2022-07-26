@@ -1,7 +1,7 @@
 {
-  "select_a_table_to_view": "Select a table to view raw data",
-  "table_not_found": "The specified table was not found!",
-  "use_the_side_menu": "Use the side menu to navigate between databases and open raw tables.",
+  "spreadsheet-select-table": "Select a table to view raw data",
+  "spreadsheet-table-not-found": "The specified table was not found!",
+  "spreadsheet-use-side-menu": "Use the side menu to navigate between databases and open raw tables.",
   "profiling-row-distribution-graph-tooltip-range": "From {{start}} to {{end}}",
   "profiling-row-distribution-graph-tooltip-total": "Total: {{total}}",
   "profiling-row-frequency-stats-header-value": "Value",
@@ -54,5 +54,11 @@
   "spreadsheet-table-empty-button-write-data": "Write data using API",
   "spreadsheet-table-empty-button-write-data-learn": "Learn how to write data to a RAW table here",
   "tab-table": "Table",
-  "tab-profile": "Profile"
+  "tab-profile": "Profile",
+  "file-upload-error": "{{name}} could not be parsed",
+  "error-insufficient-access": "Your account has insufficient access rights. Contact your project administrator.",
+  "error-not-found": "We could not find what you were looking for. Keep in mind that this may be due to insufficient access rights.",
+  "error-server-error": "Something went terribly wrong. You can try again in a bit.",
+  "error-network-issue": "We experienced a network issue while handling your request. Please make sure you are connected to the internet and try again.",
+  "error-default": "Something went wrong. Please contact Cognite support if the error persists. Error code: {{errorCode}}"
 }

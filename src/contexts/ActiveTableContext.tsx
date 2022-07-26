@@ -58,15 +58,15 @@ export const ActiveTableProvider = ({ children }: ActiveTableProviderProps) => {
             src={graphics.EmptyStateArrowGraphic}
           />
           <StyledRawExplorerNotSelectedTitle level={3}>
-            {t('select_a_table_to_view')}
+            {t('spreadsheet-select-table')}
           </StyledRawExplorerNotSelectedTitle>
           {isError && (
             <StyledRawExplorerNotSelectedBody>
-              {t('table_not_found')}
+              {t('spreadsheet-table-not-found')}
             </StyledRawExplorerNotSelectedBody>
           )}
           <StyledRawExplorerNotSelectedBody>
-            {t('use_the_side_menu')}
+            {t('spreadsheet-use-side-menu')}
           </StyledRawExplorerNotSelectedBody>
         </StyledRawExplorerNotSelectedContent>
       </StyledRawExplorerNotSelectedWrapper>
