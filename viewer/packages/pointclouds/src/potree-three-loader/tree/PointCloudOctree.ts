@@ -35,6 +35,8 @@ export class PointCloudOctree extends PointCloudTree {
   private readonly visibleBounds: Box3 = new Box3();
   private picker: PointCloudOctreePicker | undefined;
 
+  private _needsRedraw: boolean = false;
+
   constructor(potree: IPotree, pcoGeometry: IPointCloudTreeGeometry, annotationInfo: PointCloudObjectProvider) {
     super();
 
@@ -209,5 +211,15 @@ export class PointCloudOctree extends PointCloudTree {
 
   get progress(): number {
     return this.visibleGeometry.length === 0 ? 0 : this.visibleNodes.length / this.visibleGeometry.length;
+  }
+
+  requestRedraw(): void {
+    this._needsRedraw = true;
+  }
+
+  getAndResetNeedsRedraw(): boolean {
+    const originalValue = this._needsRedraw;
+    this._needsRedraw = false;
+    return originalValue;
   }
 }

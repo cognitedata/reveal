@@ -31,6 +31,7 @@ export class PotreeNodeWrapper {
   private readonly _annotations: PointCloudObjectAnnotation[];
 
   get needsRedraw(): boolean {
+    this._needsRedraw ||= this.octree.getAndResetNeedsRedraw();
     return this._needsRedraw;
   }
 
