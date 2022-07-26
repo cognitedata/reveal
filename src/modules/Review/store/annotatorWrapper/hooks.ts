@@ -3,7 +3,6 @@ import { RootState } from 'src/store/rootReducer';
 import { useEffect, useState } from 'react';
 import { selectTempKeypointCollection } from 'src/modules/Review/store/annotatorWrapper/selectors';
 
-// todo: add test cases VIS-892
 export const useIsCurrentKeypointCollectionComplete = (fileId: number) => {
   const [isComplete, setIsComplete] = useState(false);
   const tempKeypointCollection = useSelector(
@@ -20,7 +19,6 @@ export const useIsCurrentKeypointCollectionComplete = (fileId: number) => {
   );
 
   useEffect(() => {
-    // todo: extract this logic and add test cases
     if (tempKeypointCollection) {
       // check for completeness
       const keypointCollectionTemplate = predefinedKeypointCollections.find(
