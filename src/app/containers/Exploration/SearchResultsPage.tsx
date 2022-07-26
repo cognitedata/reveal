@@ -19,7 +19,7 @@ import ResourceSelectionContext, {
   useResourceFilter,
   useResourceEditable,
 } from 'app/context/ResourceSelectionContext';
-import { useDebounce } from 'use-debounce/lib';
+import { useDebounce } from 'use-debounce';
 import styled from 'styled-components/macro';
 import ResourcePreview from 'app/containers/Exploration/ResourcePreview';
 import {

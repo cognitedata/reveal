@@ -1,14 +1,14 @@
 const { override, useBabelRc } = require('customize-cra');
 const PrefixWrap = require('postcss-prefixwrap');
-const { colors, ids} = require('./src/cogs-variables.js');
+const { colors, ids } = require('./src/cogs-variables.js');
 
 const CSS_REGEX = /\.css$/;
 const LESS_REGEX = /\.less$/;
 
-const cssRegexMatcher = (rule) =>
+const cssRegexMatcher = rule =>
   rule.test && rule.test.toString() === CSS_REGEX.toString();
 
-const replaceStyleLoaders = (config) => {
+const replaceStyleLoaders = config => {
   const styleLoaders = [
     {
       loader: 'style-loader',
@@ -30,17 +30,21 @@ const replaceStyleLoaders = (config) => {
       },
     },
     {
-      loader: "postcss-loader",
+      loader: 'postcss-loader',
       options: {
-        plugins: [PrefixWrap(`.${ids.styleScope}`, {
-          ignoredSelectors: [":root"],
-        })],
+        postcssOptions: {
+          plugins: [
+            PrefixWrap(`.${ids.styleScope}`, {
+              ignoredSelectors: [':root'],
+            }),
+          ],
+        },
       },
     },
   ];
 
   config.module.rules = [
-    ...config.module.rules.filter((rule) => !Array.isArray(rule.oneOf)),
+    ...config.module.rules.filter(rule => !Array.isArray(rule.oneOf)),
     {
       oneOf: [
         {
@@ -66,8 +70,8 @@ const replaceStyleLoaders = (config) => {
           ],
         },
         ...config.module.rules
-          .find((rule) => Array.isArray(rule.oneOf))
-          .oneOf.filter((rule) => {
+          .find(rule => Array.isArray(rule.oneOf))
+          .oneOf.filter(rule => {
             return !cssRegexMatcher(rule);
           }),
       ],
@@ -78,7 +82,8 @@ const replaceStyleLoaders = (config) => {
 };
 
 module.exports = {
-  webpack: override(useBabelRc(), (config) => {
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  webpack: override(useBabelRc(), config => {
     // Compiling our code to System.register format to use polyfill-like
     // behavior of SystemJS for import maps and in-browser modules.
     // https://single-spa.js.org/docs/recommended-setup/#systemjs
@@ -101,12 +106,14 @@ module.exports = {
     // Removing html-webpack-plugin.
     // https://single-spa.js.org/docs/faq/#create-react-app
     config.plugins = config.plugins.filter(
-      (plugin) => plugin.constructor.name !== 'HtmlWebpackPlugin'
+      plugin => plugin.constructor.name !== 'HtmlWebpackPlugin'
     );
 
     config.plugins = config.plugins.filter(
-      (plugin) => plugin.constructor.name !== 'MiniCssExtractPlugin'
+      plugin => plugin.constructor.name !== 'MiniCssExtractPlugin'
     );
+
+    config.resolve.fallback = { path: require.resolve('path-browserify') };
 
     // Setting shared in-browser modules as webpack externals. This will
     // exclude these dependencies from the output bundle.
@@ -134,7 +141,8 @@ module.exports = {
       // https://single-spa.js.org/docs/recommended-setup/#build-tools-webpack--rollup
       config.https = true;
       config.port = 3003;
-      config.watchOptions = {
+
+      config.static.watch = {
         followSymlinks: true,
       };
 

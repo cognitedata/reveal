@@ -1,4 +1,3 @@
-/* eslint-disable jest/require-top-level-describe */
 import * as sinon from 'sinon';
 
 /**

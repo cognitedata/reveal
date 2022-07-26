@@ -56,7 +56,7 @@ export default () => {
     <SDKProvider sdk={sdk}>
       <QueryClientProvider client={queryClient}>
         <AntStyles>
-          <SubAppWrapper padding={false}>
+          <SubAppWrapper title="Data Exploration">
             <AuthWrapper
               loadingScreen={<Loader darkMode={false} />}
               login={() => loginAndAuthIfNeeded(project, env)}

@@ -1,5 +1,4 @@
 /* eslint no-console: 0 */
-/* eslint jest/require-top-level-describe: 0 */
 import { configure } from 'enzyme';
 import Adapter from '@wojtekmaj/enzyme-adapter-react-17';
 import 'regenerator-runtime/runtime';

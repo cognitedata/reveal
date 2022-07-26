@@ -6,7 +6,7 @@ static final String SLACK_ALERTS_CHANNEL = "#cdf-ui-devs-alerts"
 // deploySpinnakerPipelineConfigs {}
 static final String APP_ID = 'cdf-data-exploration'
 static final String APPLICATION_REPO_ID = 'data-exploration'
-static final String NODE_VERSION = 'node:12'
+static final String NODE_VERSION = 'node:14'
 static final String VERSIONING_STRATEGY = "single-branch"
 static final String SENTRY_PROJECT_NAME = "watchtower"
 static final String SENTRY_DSN = "https://d09f6d3557114e6cbaa63b56d7ef86cc@o124058.ingest.sentry.io/1288725"

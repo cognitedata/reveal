@@ -33,7 +33,7 @@ export const RelatedResources = ({
   const [selectedType, setSelectedType] = useState<TypeOption>();
 
   // Adding the flag to manually enable this feature to categorize the documents
-  const isGroupingFilesEnabled = useFlag(
+  const { isEnabled: isGroupingFilesEnabled } = useFlag(
     DATA_EXPLORATION_DOCUMENT_CATEGORISATION,
     {
       forceRerender: true,
