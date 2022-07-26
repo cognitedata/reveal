@@ -6,7 +6,6 @@ import { Flex, FlexColumn, FlexRow, sizes } from 'styles/layout';
 import { SCALE_BLOCK_HEIGHT, SCALE_PADDING } from './constants';
 
 export const BodyColumn = styled(FlexColumn)`
-  height: calc(100% - 12px); // reduced the bottom gap here.
   border: 1px solid var(--cogs-greyscale-grey3);
   border-radius: 12px;
   min-width: ${(props: { width: number }) => props.width}px;

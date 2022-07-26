@@ -21,6 +21,7 @@ import { DEPTH_SCALE_MIN_HEIGHT } from './constants';
 import { ContentWrapper, WellboreCasingsViewWrapper } from './elements';
 import { Header } from './Header';
 import { SchemaColumn } from './SchemaColumn';
+import { SummaryColumn } from './SummaryColumn';
 import { WellboreNdsDetailedView } from './WellboreNdsDetailedView';
 
 interface WellboreCasingsViewProps {
@@ -116,6 +117,8 @@ export const WellboreCasingView: React.FC<WellboreCasingsViewProps> = ({
               events={ndsEvents}
               isEventsLoading={isNdsEventsLoading}
             />
+
+            <SummaryColumn casingAssemblies={casingAssemblies} />
           </DragDropContainer>
         </ContentWrapper>
       </WellboreCasingsViewWrapper>

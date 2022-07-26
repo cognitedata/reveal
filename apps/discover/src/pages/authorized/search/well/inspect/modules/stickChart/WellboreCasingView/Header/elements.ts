@@ -3,7 +3,6 @@ import styled from 'styled-components/macro';
 import { Flex, FlexRow, sizes } from 'styles/layout';
 
 export const HeaderWrapper = styled(FlexRow)`
-  gap: 32px;
   padding: ${sizes.normal};
   box-shadow: inset 0px -1px 0px var(--cogs-greyscale-grey3);
 `;
