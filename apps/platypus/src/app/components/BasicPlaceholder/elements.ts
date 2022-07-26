@@ -1,5 +1,5 @@
 import styled from 'styled-components/macro';
-import { Title } from '@cognite/cogs.js';
+import { Title, Button } from '@cognite/cogs.js';
 
 export const StyledContainer = styled.div`
   display: flex;
@@ -21,4 +21,10 @@ export const StyledTitle = styled(Title)`
 
 export const StyledContent = styled.div`
   text-align: center;
+`;
+
+export const CloseButton = styled(Button)`
+  position: absolute;
+  top: 16px;
+  right: 16px;
 `;

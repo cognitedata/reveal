@@ -9,7 +9,11 @@ const GET_KEY = (type: string, externalId: string) => [
   `${type}_${externalId}`,
 ];
 
-export function useTransformation(type: string, externalId: string) {
+export function useTransformation(
+  type: string,
+  externalId: string,
+  isEnabled: boolean
+) {
   const dataManagementHandler = useInjection(TOKENS.DataManagementHandler);
   const query = useQuery(
     GET_KEY(type, externalId),
@@ -17,7 +21,7 @@ export function useTransformation(type: string, externalId: string) {
       return dataManagementHandler.getTransformations(type, externalId);
     },
     {
-      enabled: !type.includes('undefined'),
+      enabled: !type.includes('undefined') && isEnabled,
     }
   );
 

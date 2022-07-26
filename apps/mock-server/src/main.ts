@@ -10,6 +10,7 @@ import cdfMiddleware from './app/middlewares/cdf-middleware';
 // hardcoded for now, should be loaded from file
 import { loadConfig, loadMockData } from './cli/loader';
 import * as path from 'path';
+import { userTokenData } from './user-token-data';
 const TENANT = process.env.NODE_ENV || 'mock';
 const server = createMockServer();
 
@@ -45,8 +46,6 @@ server.get('/reset', (req, res) => {
   res.jsonp({ items: [] });
 });
 
-server.use(cdfMiddlewares);
-
 server.get('/login/status', (req, res) => {
   res.set({
     'content-type': 'application/json',
@@ -62,6 +61,16 @@ server.get('/login/status', (req, res) => {
     },
   });
 });
+server.get('/api/v1/token/inspect', (req, res) => {
+  res.set({
+    'content-type': 'application/json',
+    'access-control-allow-credentials': true,
+    'access-control-allow-origin': baseUrl,
+  });
+  res.jsonp(userTokenData);
+});
+
+server.use(cdfMiddlewares);
 
 const spdyServer = spdy.createServer(
   {

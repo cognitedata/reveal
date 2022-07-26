@@ -2,30 +2,40 @@ import { Button, Body, Flex } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { BasicPlaceholder } from '@platypus-app/components/BasicPlaceholder/BasicPlaceholder';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
+import { useState } from 'react';
 
 type Props = {
   onLoadClick: () => void;
+  doesSupportAcl: boolean;
 };
 
-export function TransformationPlaceholder({ onLoadClick }: Props) {
+export function TransformationPlaceholder({
+  onLoadClick,
+  doesSupportAcl,
+}: Props) {
   const { t } = useTranslation('Transformation');
-
-  return (
+  const [isShown, toggleShown] = useState(true);
+  return isShown ? (
     <Wrapper data-cy="transformation-placeholder">
-      <BasicPlaceholder type="Search">
+      <BasicPlaceholder type="Search" onClose={() => toggleShown(false)}>
         <Flex direction="column" justifyContent="center" alignItems="center">
           <Body level="1" strong style={{ fontSize: 18, marginBottom: 8 }}>
             {t(
-              'transformation_plachoder_title',
+              'transformation-placeholder-title',
               'Your data model has currently no data'
             )}
           </Body>
 
           <Body level="2">
-            {t(
-              'transformation_plachoder_body',
-              'You have to load data through transformations.'
-            )}
+            {doesSupportAcl
+              ? t(
+                  'transformation-placeholder-body',
+                  'You have to load data through transformations.'
+                )
+              : t(
+                  'transformation-acl-message',
+                  'You do not have enough permissions to load data.'
+                )}
           </Body>
           <StyledButton
             type="primary"
@@ -34,13 +44,14 @@ export function TransformationPlaceholder({ onLoadClick }: Props) {
             onClick={onLoadClick}
             aria-label="Load transformation"
             data-cy="load-transformation"
+            disabled={!doesSupportAcl}
           >
-            {t('transformation_plachoder_button', 'Load data')}
+            {t('transformation-placeholder-button', 'Load data')}
           </StyledButton>
         </Flex>
       </BasicPlaceholder>
     </Wrapper>
-  );
+  ) : null;
 }
 
 const StyledButton = styled(Button)`

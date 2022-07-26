@@ -1,4 +1,4 @@
-import { Flex, Title, Button } from '@cognite/cogs.js';
+import { Flex, Title, Button, Tooltip } from '@cognite/cogs.js';
 import { SplitPanelLayout } from '@platypus-app/components/Layouts/SplitPanelLayout';
 import { FlexPlaceholder } from '@platypus-app/components/Placeholder/FlexPlaceholder';
 import { ModalDialog } from '@platypus-app/components/ModalDialog/ModalDialog';
@@ -11,11 +11,11 @@ import { TransformationPlaceholder } from '../components/TransformationPlacehold
 import {
   useTransformation,
   useTransformationMutate,
-} from '@platypus-app/hooks/useTransformationAPI';
+} from '../hooks/useTransformationAPI';
 import { TransformationIframe } from '../components/TransformationPlaceholder/TransformationIframe';
 import { useHistory } from 'react-router-dom';
 import { getQueryParameter } from '@cognite/cdf-utilities';
-
+import { useCapabilities } from '@platypus-app/hooks/useCapabilities';
 import useSelector from '@platypus-app/hooks/useSelector';
 import { DataModelState } from '@platypus-app/redux/reducers/global/dataModelReducer';
 import {
@@ -23,7 +23,7 @@ import {
   useDataModelVersions,
   useSelectedDataModelVersion,
 } from '@platypus-app/hooks/useDataModelActions';
-
+import { usePreviewPageData } from '../hooks/usePreviewPageData';
 export interface PreviewProps {
   dataModelExternalId: string;
 }
@@ -49,12 +49,23 @@ export const Preview = ({ dataModelExternalId }: PreviewProps) => {
       (el) => el.name === selectedTypeNameFromQuery
     ) || null
   );
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { t } = useTranslation('DataPreview');
+  const doesSupportRead = useCapabilities('transformationsAcl', [
+    'READ',
+  ]).isAclSupported;
+  const doesSupportWrite = useCapabilities('transformationsAcl', [
+    'WRITE',
+  ]).isAclSupported;
 
   const typeKey = `${selectedType?.name}_${selectedDataModelVersion.version}`;
+  const transformation = useTransformation(
+    typeKey,
+    selectedDataModelVersion.externalId,
+    !!doesSupportRead
+  );
 
-  const transformation = useTransformation(typeKey, dataModelExternalId);
   const transformationMutate = useTransformationMutate();
 
   const onLoadDataFromTransformation = async () => {
@@ -70,6 +81,30 @@ export const Preview = ({ dataModelExternalId }: PreviewProps) => {
       }
     );
   };
+  const {
+    isError: previewDataError,
+    isFetched: isPreviewFetched,
+    data: previewData,
+  } = usePreviewPageData(
+    {
+      dataModelId: selectedDataModelVersion.externalId,
+      dataModelType: selectedType!,
+      dataModelTypeDefs,
+      version: selectedDataModelVersion.version,
+      limit: 100,
+    },
+    false
+  );
+  const mergedPreviewData =
+    previewData?.pages.flatMap((page) => page.items) ?? [];
+  const shouldShowTransformation =
+    transformation.data?.id == null &&
+    transformation.status === 'success' &&
+    !transformationMutate.isError &&
+    !previewDataError &&
+    isPreviewFetched &&
+    previewData &&
+    mergedPreviewData.length === 0;
 
   return (
     <div>
@@ -113,19 +148,37 @@ export const Preview = ({ dataModelExternalId }: PreviewProps) => {
         content={
           selectedType ? (
             <Flex direction="column" style={{ flex: 1 }}>
-              {transformation.data?.id == null &&
-                transformation.status === 'success' &&
-                !transformationMutate.isError && (
-                  <TransformationPlaceholder
-                    onLoadClick={onLoadDataFromTransformation}
-                  />
-                )}
+              {shouldShowTransformation && (
+                <TransformationPlaceholder
+                  doesSupportAcl={!!doesSupportWrite}
+                  onLoadClick={onLoadDataFromTransformation}
+                />
+              )}
               <Flex
                 style={{ height: 56, padding: '10px 16px' }}
                 alignItems="center"
                 justifyContent="space-between"
               >
                 <Title level={5}>{selectedType.name}</Title>
+                {!transformation.data?.id && mergedPreviewData.length !== 0 && (
+                  <Tooltip
+                    content={t(
+                      'transformation_tooltip',
+                      'No transformation defined for data in this table'
+                    )}
+                  >
+                    <Button
+                      data-cy="edit-transformation"
+                      type="primary"
+                      icon="ExternalLink"
+                      iconPlacement="right"
+                      disabled={true}
+                      onClick={() => setIsModalOpen(true)}
+                    >
+                      {t('transformation-edit', 'Edit transformations')}
+                    </Button>
+                  </Tooltip>
+                )}
                 {transformation.data?.id && (
                   <Button
                     data-cy="edit-transformation"

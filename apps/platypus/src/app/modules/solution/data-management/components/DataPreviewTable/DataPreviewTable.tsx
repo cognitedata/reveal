@@ -1,17 +1,19 @@
 import { CogDataGrid, GridConfig } from '@cognite/cog-data-grid';
 import { ErrorBoundary } from '@platypus-app/components/ErrorBoundary/ErrorBoundary';
-import { Notification } from '@platypus-app/components/Notification/Notification';
 import { FlexPlaceholder } from '@platypus-app/components/Placeholder/FlexPlaceholder';
 import { Spinner } from '@platypus-app/components/Spinner/Spinner';
-import { TOKENS } from '@platypus-app/di';
-import { useInjection } from '@platypus-app/hooks/useInjection';
+import { usePreviewPageData } from '@platypus-app/modules/solution/data-management/hooks/usePreviewPageData';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import {
-  KeyValueMap,
   DataModelTypeDefsType,
   DataModelTypeDefs,
 } from '@platypus/platypus-core';
-import { GridReadyEvent, IDatasource, IGetRowsParams } from 'ag-grid-community';
+import {
+  CellValueChangedEvent,
+  GridReadyEvent,
+  IDatasource,
+  IGetRowsParams,
+} from 'ag-grid-community';
 import { useCallback, useEffect, useState } from 'react';
 
 import {
@@ -37,96 +39,84 @@ export const DataPreviewTable = ({
 }: DataPreviewTableProps) => {
   const instanceIdCol = 'externalId';
 
-  const dataManagementHandler = useInjection(TOKENS.DataManagementHandler);
-
   const { t } = useTranslation('DataPreviewTable');
   const [isGridInit, setIsGridInit] = useState(false);
-  const [hasError, setHasError] = useState(false);
-  const [data, setData] = useState<KeyValueMap[]>([]);
   const [gridConfig, setGridConfig] = useState<GridConfig>(
     getInitialGridConfig()
   );
-
+  const {
+    fetchNextPage,
+    data: previewData,
+    isError,
+    updatePreviewData,
+  } = usePreviewPageData(
+    {
+      dataModelId: solutionId,
+      dataModelType,
+      limit: pageSizeLimit,
+      dataModelTypeDefs,
+      version,
+    },
+    true
+  );
   useEffect(() => {
     setGridConfig(buildGridConfig(instanceIdCol, dataModelType));
     setIsGridInit(false);
-    setHasError(false);
-  }, [dataModelType]);
-
+  }, [dataModelType.name]);
   useEffect(() => {
     if (!isGridInit) {
       setIsGridInit(true);
     }
   }, [isGridInit]);
-
-  const onCellValueChanged = (e: any) => {
-    const { rowIndex, value, colDef } = e;
-    const field = colDef.field;
-
-    const newData = data.map((el, idx) => {
-      if (idx === rowIndex) return { ...el, [field]: value };
-      return el;
-    });
-
-    setData(newData);
-  };
   const onGridReady = useCallback(
-    (gridReadyEvent: GridReadyEvent) => {
-      let cursor = '';
-      let nextPage = false;
+    (grid: GridReadyEvent) => {
       const dataSource = {
-        rowCount: undefined,
         getRows: (params: IGetRowsParams) => {
-          dataManagementHandler
-            .fetchData({
-              cursor,
-              dataModelType,
-              dataModelTypeDefs,
-              hasNextPage: nextPage,
-              limit: pageSizeLimit,
-              dataModelId: solutionId,
-              version,
-            })
-            .then((result) => {
-              const fetchedData = result.getValue();
-              cursor = fetchedData.pageInfo.cursor;
-              nextPage = fetchedData.pageInfo.hasNextPage;
-              let rowCount;
-
-              if (fetchedData.items.length === 0) {
-                rowCount = 1;
-              } else if (!fetchedData.pageInfo.hasNextPage) {
-                rowCount = Math.max(
-                  gridReadyEvent.api.getDisplayedRowCount() + 1,
-                  fetchedData.items.length
-                );
+          return fetchNextPage()
+            .then((response) => {
+              if (response.data?.pages.length && grid.api) {
+                const lastPage =
+                  response.data.pages[response.data.pages.length - 1];
+                if (!response.hasNextPage) {
+                  params.successCallback(
+                    lastPage.items,
+                    response.data.pages.flatMap((page) => page.items).length
+                  );
+                } else {
+                  params.successCallback(
+                    response.data.pages.flatMap((page) => page.items),
+                    -1
+                  );
+                }
               }
-
-              params.successCallback(fetchedData.items, rowCount);
             })
-            .catch((errResponse) => {
-              const error = errResponse.error;
-              Notification({
-                type: 'error',
-                message: error.message,
-                validationErrors: error.errors,
-              });
-              setHasError(true);
+            .catch(() => {
               params.failCallback();
             });
         },
       } as IDatasource;
-      gridReadyEvent.api.setDatasource(dataSource);
+      grid.api.setDatasource(dataSource);
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [dataModelType]
+    [fetchNextPage]
   );
+  const onCellValueChanged = (e: CellValueChangedEvent) => {
+    const { rowIndex, value, colDef } = e;
+    const field = colDef.field;
+    const flattedData = previewData?.pages.flatMap((page) => page.items);
+    const newData = flattedData?.map((el, idx) => {
+      if (idx === rowIndex) return { ...el, [field!]: value };
+      return el;
+    });
+    if (newData) {
+      updatePreviewData(newData, pageSizeLimit);
+    }
+  };
 
   if (!isGridInit) {
     return <Spinner />;
   }
 
-  if (hasError) {
+  if (isError) {
     return (
       <FlexPlaceholder
         data-cy="data-preview-error"

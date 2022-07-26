@@ -1,5 +1,10 @@
 declare module '@cognite/cdf-sdk-singleton' {
-  import { CogniteClient } from '@cognite/sdk';
+  import {
+    CogniteClient,
+    Acl,
+    SingleCogniteCapability,
+    AclScopeAll,
+  } from '@cognite/sdk';
 
   export declare type Flow =
     | 'COGNITE_AUTH'

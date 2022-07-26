@@ -65,6 +65,19 @@ describe('Platypus Data Preview Page - Preview', () => {
     cy.getBySel('modal-title').should('be.visible').contains('Transformations');
   });
   it('should show placeholder when no data is available', () => {
+    const response = {
+      data: {
+        listUser: {
+          items: [],
+        },
+      },
+    };
+
+    cy.intercept(
+      'POST',
+      '/api/v1/projects/mock/schema/api/blog/1/graphql',
+      response
+    );
     cy.get('[data-testid="User"]').click();
     cy.getBySel('transformation-placeholder').should('be.visible');
     cy.getBySel('load-transformation').click();

@@ -23,7 +23,7 @@ export class CustomHeader extends PureComponent<
 
     this.state = {
       sortDirection: '',
-      sortable: props.enableSorting,
+      sortable: props.enableSorting!,
     };
 
     this.onSortRequested = this.onSortRequested.bind(this);
@@ -122,7 +122,7 @@ export class CustomHeader extends PureComponent<
       return;
     }
     this.props.setSort(
-      this.getSortDirection(),
+      this.getSortDirection() as any,
       event.shiftKey || event.ctrlKey || event.metaKey
     );
   }

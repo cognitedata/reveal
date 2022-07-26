@@ -1,10 +1,10 @@
 export const groupsMockData = [
   {
-    id: 1182524592259134,
+    id: 1658310948207,
     isDeleted: false,
     deletedTime: -1,
     name: 'templates-preview',
-    sourceId: 'c456ffca-e0ba-41ff-ae8f-e754b86c7cd3',
+    sourceId: '1c0a7f13-ac64-46d3-a94e-0bed87688bd4',
     capabilities: [
       {
         templateGroupsAcl: {
@@ -33,11 +33,11 @@ export const groupsMockData = [
     ],
   },
   {
-    id: 1920640158166538,
+    id: 1658310948208,
     isDeleted: false,
     deletedTime: -1,
     name: 'all-resources',
-    sourceId: 'c456ffca-e0ba-41ff-ae8f-e754b86c7cd3',
+    sourceId: '1c0a7f13-ac64-46d3-a94e-0bed87688bd4',
     capabilities: [
       {
         threedAcl: {
@@ -122,11 +122,11 @@ export const groupsMockData = [
     ],
   },
   {
-    id: 3428354942225754,
+    id: 1658310948209,
     isDeleted: false,
     deletedTime: -1,
     name: 'schema',
-    sourceId: 'c456ffca-e0ba-41ff-ae8f-e754b86c7cd3',
+    sourceId: '1c0a7f13-ac64-46d3-a94e-0bed87688bd4',
     capabilities: [
       {
         experimentAcl: {
@@ -141,11 +141,11 @@ export const groupsMockData = [
     ],
   },
   {
-    id: 6551888225678493,
+    id: 1658310948210,
     isDeleted: false,
     deletedTime: -1,
     name: 'datamodelstorage',
-    sourceId: 'c456ffca-e0ba-41ff-ae8f-e754b86c7cd3',
+    sourceId: '1c0a7f13-ac64-46d3-a94e-0bed87688bd4',
     capabilities: [
       {
         experimentAcl: {
