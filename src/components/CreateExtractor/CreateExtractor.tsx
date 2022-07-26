@@ -8,16 +8,19 @@ import {
   Elevations,
 } from '@cognite/cogs.js';
 import styled from 'styled-components';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 import { createLink } from '@cognite/cdf-utilities';
 import { useTranslation } from 'common';
 
 const CreateExtractor = () => {
   const { t } = useTranslation();
   const history = useHistory();
+  const { subAppPath } = useParams<{ subAppPath?: string }>();
   return (
     <StyledContainer
-      onClick={() => history.push(createLink('/extractors/new'))}
+      onClick={() => {
+        history.push(createLink(`/${subAppPath}/new`));
+      }}
     >
       <StyledIconContainer>
         <Icon size={24} type="Plus" />

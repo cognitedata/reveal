@@ -7,7 +7,7 @@ import {
   Title,
 } from '@cognite/cogs.js';
 import styled from 'styled-components';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 import { createLink } from '@cognite/cdf-utilities';
 
 import { useTranslation } from 'common';
@@ -35,6 +35,7 @@ const ExtractorsList = () => {
   const { t } = useTranslation();
   const { data: extractors } = useExtractorsList();
   const history = useHistory();
+  const { subAppPath } = useParams<{ subAppPath?: string }>();
   return (
     <Flex gap={24} direction="column">
       <Flex gap={4} direction="column">
@@ -44,8 +45,11 @@ const ExtractorsList = () => {
       <StyledGrid>
         {extractors?.map((extractor) => (
           <StyledExtractorContainer
+            key={extractor.externalId}
             onClick={() => {
-              history.push(createLink(`/extractors/${extractor.externalId}`));
+              history.push(
+                createLink(`/${subAppPath}/${extractor.externalId}`)
+              );
             }}
           >
             <Flex gap={24} direction="column">
