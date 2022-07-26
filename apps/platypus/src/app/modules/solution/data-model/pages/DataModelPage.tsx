@@ -18,7 +18,7 @@ import {
 } from '@platypus/platypus-core';
 
 import { DEFAULT_VERSION_PATH } from '@platypus-app/utils/config';
-import { useSolution } from '../../hooks/useSolution';
+import { useDataModelState } from '../../hooks/useDataModelState';
 import { SchemaEditorMode } from '../types';
 import { BreakingChangesModal } from '../components/BreakingChangesModal';
 import { EditorPanel } from '../components/EditorPanel';
@@ -64,7 +64,7 @@ export const DataModelPage = ({ dataModelExternalId }: DataModelPageProps) => {
     setGraphQlSchema,
     setIsDirty,
     setSelectedVersionNumber,
-  } = useSolution();
+  } = useDataModelState();
   const {
     setLocalDraft,
     removeLocalDraft,

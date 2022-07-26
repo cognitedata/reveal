@@ -2,7 +2,7 @@ import { actions as solutionActions } from '@platypus-app/redux/reducers/global/
 import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 
-export const useSolution = () => {
+export const useDataModelState = () => {
   const dispatch = useDispatch();
 
   const setCurrentTypeName = useCallback(

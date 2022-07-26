@@ -12,7 +12,7 @@ import { useTranslation } from '@platypus-app/hooks/useTranslation';
 
 import { v4 } from 'uuid';
 import useSelector from '@platypus-app/hooks/useSelector';
-import { useSolution } from '@platypus-app/modules/solution/hooks/useSolution';
+import { useDataModelState } from '@platypus-app/modules/solution/hooks/useDataModelState';
 import { useDebounce } from '@platypus-app/hooks/useDebounce';
 export interface SchemaTypeFieldProps {
   index: number;
@@ -63,7 +63,7 @@ export const SchemaTypeField = ({
   const error = useSelector(
     (state) => state.dataModel.typeFieldErrors[field.name]
   );
-  const { setDataModelFieldErrors } = useSolution();
+  const { setDataModelFieldErrors } = useDataModelState();
   const setError = useCallback(
     (message: string) => setDataModelFieldErrors(field.name, message),
     [field.name, setDataModelFieldErrors]

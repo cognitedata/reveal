@@ -16,7 +16,7 @@ import { ErrorPlaceholder } from '../ErrorBoundary/ErrorPlaceholder';
 import { useInjection } from '@platypus-app/hooks/useInjection';
 import { TOKENS } from '@platypus-app/di';
 import useSelector from '@platypus-app/hooks/useSelector';
-import { useSolution } from '@platypus-app/modules/solution/hooks/useSolution';
+import { useDataModelState } from '@platypus-app/modules/solution/hooks/useDataModelState';
 
 interface UIEditorProps {
   builtInTypes: BuiltInType[];
@@ -42,7 +42,7 @@ export function UIEditor({
       types: [],
     }
   );
-  const { setCurrentTypeName } = useSolution();
+  const { setCurrentTypeName } = useDataModelState();
   const currentTypeName = useSelector(
     (state) => state.dataModel.currentTypeName
   );

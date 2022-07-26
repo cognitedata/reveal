@@ -1,6 +1,6 @@
 import { Body, Button, Title, Flex } from '@cognite/cogs.js';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
-import { useSolution } from '@platypus-app/modules/solution/hooks/useSolution';
+import { useDataModelState } from '@platypus-app/modules/solution/hooks/useDataModelState';
 import { DataModelTypeDefsType } from '@platypus/platypus-core';
 import { useState } from 'react';
 import styled from 'styled-components';
@@ -27,7 +27,7 @@ export const SchemaTypeList = ({
   deleteSchemaType,
 }: Props) => {
   const [currentModal, setModal] = useState<ModalType>('');
-  const { setCurrentTypeName } = useSolution();
+  const { setCurrentTypeName } = useDataModelState();
   const [typeValue, setValue] = useState('');
   const { t } = useTranslation('schema_type_list');
 

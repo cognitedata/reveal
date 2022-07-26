@@ -8,7 +8,7 @@ import {
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import { lazy, Suspense, useEffect, useState } from 'react';
 import { Route, Switch, useParams } from 'react-router-dom';
-import { useSolution } from './hooks/useSolution';
+import { useDataModelState } from './hooks/useDataModelState';
 
 const OverviewPage = lazy<any>(() =>
   import('./OverviewLayout').then((module) => ({
@@ -47,7 +47,7 @@ export const DataModel = () => {
     dataModelExternalId: string;
     version: string;
   }>();
-  const { setCurrentTypeName, setSelectedVersionNumber } = useSolution();
+  const { setCurrentTypeName, setSelectedVersionNumber } = useDataModelState();
 
   const [isReady, setIsReady] = useState(false);
 
