@@ -1,5 +1,5 @@
 {
-  "name": "@cognite/cdf-extractor-downloads",
+  "name": "@cognite/cdf-extractor-downloads-2",
   "description": "Extractor downloads subapp of fusion.cognite.com",
   "version": "1.0.0",
   "private": true,
