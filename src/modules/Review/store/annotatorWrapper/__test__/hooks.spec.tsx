@@ -34,19 +34,16 @@ const gaugeKeypoints: PredefinedKeypoint[] = [
     caption: 'left',
     order: '1',
     color: 'red',
-    defaultPosition: [0.25, 0.25],
   },
   {
     caption: 'center',
     order: '2',
     color: 'red',
-    defaultPosition: [0.5, 0.5],
   },
   {
     caption: 'right',
     order: '3',
     color: 'red',
-    defaultPosition: [0.75, 0.25],
   },
 ];
 const valveKeypoints: PredefinedKeypoint[] = [
@@ -54,19 +51,16 @@ const valveKeypoints: PredefinedKeypoint[] = [
     caption: 'close',
     order: '1',
     color: 'red',
-    defaultPosition: [0.25, 0.25],
   },
   {
     caption: 'center',
     order: '2',
     color: 'red',
-    defaultPosition: [0.5, 0.5],
   },
   {
     caption: 'open',
     order: '3',
     color: 'red',
-    defaultPosition: [0.75, 0.25],
   },
 ];
 const predefinedKeypointCollectionList = [
@@ -117,14 +111,16 @@ const baseAnnotatorWrapperReducer: AnnotatorWrapperState = {
         show: true,
         status: Status.Suggested,
       },
-      200: { // collection with incomplete keypoints
+      200: {
+        // collection with incomplete keypoints
         id: 1,
         keypointIds: ['k4', 'k5'],
         label: 'gauge',
         show: true,
         status: Status.Suggested,
       },
-      300: {  // collection with no keypoints
+      300: {
+        // collection with no keypoints
         id: 1,
         keypointIds: [],
         label: 'gauge',
