@@ -70,6 +70,10 @@ export class BoundingBox {
     );
   }
 
+  toRect(): Rect {
+    return { x: this.x, y: this.y, width: this.width, height: this.height };
+  }
+
   static fromRect(rect: Rect): BoundingBox {
     return new BoundingBox(rect.x, rect.y, rect.width, rect.height);
   }

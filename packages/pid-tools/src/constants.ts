@@ -1,8 +1,9 @@
 import { FileInfo } from '@cognite/sdk';
 
 export const SVG_ID = 'svg-id';
-export const PATH_REPLACEMENT_GROUP = 'path_replacement_group';
+export const PATH_REPLACEMENT_GROUP = 'path-replacement-group';
 export const T_JUNCTION = 'tjunction';
+export const BACKGROUND_OVERLAY_GROUP = 'background-overlay-group';
 
 const TYPICAL_DOCUMENT_WIDTH = 1632;
 export const T_JUNCTION_SIZE = 2; // fix: Normalize

@@ -29,14 +29,10 @@ export const getDiagramInstanceIdFromPathIds = (
 export function getDiagramInstanceByPathId<T extends DiagramInstanceWithPaths>(
   diagramInstances: T[],
   pathId: string
-): T | null {
-  const diagramInstance = diagramInstances.filter((diagramInstance) =>
+): T | undefined {
+  return diagramInstances.find((diagramInstance) =>
     diagramInstance.pathIds.includes(pathId)
   );
-  if (diagramInstance.length > 0) {
-    return diagramInstance[0];
-  }
-  return null;
 }
 
 export function getDiagramInstancesByPathIds<

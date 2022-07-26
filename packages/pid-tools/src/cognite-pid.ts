@@ -15,6 +15,7 @@ import {
   computeSymbolInstances,
   getGraphFormat,
   getLineNumberAndUnitFromText,
+  assertNever,
   setSelectablilityOfAllText,
 } from './utils';
 import {
@@ -24,13 +25,12 @@ import {
 import { PidDocument, PidDocumentWithDom } from './pid';
 import {
   applyStyleToNode,
-  isSymbolInstance,
   scaleStrokeWidthInstance,
   applyToLeafSVGElements,
   visualizeConnections,
   visualizeLabelsToInstances,
   scaleStrokeWidthPath,
-  visualizeBoundingBoxBehind,
+  getSvgRect,
   visualizeSymbolInstanceBoundingBoxes,
   scaleStrokeWidth,
   visualizeTagBoundingBoxes,
@@ -58,7 +58,6 @@ import {
 } from './types';
 import {
   addOrRemoveLabelToInstance,
-  addOrRemoveLineNumberToInstance,
   connectionExists,
   createEquipmentTagInstance,
   createEquipmentTagInstanceFromSVGTSpanElement,
@@ -68,13 +67,17 @@ import {
   getDiagramInstanceId,
   getDiagramInstanceIdFromPathIds,
   getDiagramInstancesByPathIds,
-  getInstanceByDiagramInstanceId,
   getPathReplacementId,
   isConnectionUnidirectionalMatch,
   pruneSymbolOverlappingPathsFromLines,
+  addOrRemoveLineNumberToInstance,
 } from './utils/diagramInstanceUtils';
 import { isLine } from './utils/type';
-import { EQUIPMENT_TAG_REGEX } from './constants';
+import {
+  BACKGROUND_OVERLAY_GROUP,
+  COLORS,
+  EQUIPMENT_TAG_REGEX,
+} from './constants';
 import { getMetadataFromFileName } from './utils/fileNameUtils';
 import { BoundingBox, Point } from './geometry';
 
@@ -189,6 +192,11 @@ export class CognitePid {
       parentElement: HTMLElement | null;
     }
   >();
+  private pathIdToDiagramInstanceWithPathsMap = new Map<
+    string,
+    DiagramInstanceWithPaths
+  >();
+  private diagramInstancesWithPaths: DiagramInstanceWithPaths[] = [];
   private connectionVisualizations: ConnectionVisualization[] = [];
   private manuallyRemovedConnections: DiagramConnection[] = [];
   private manuallyRemovedLabelConnections: [
@@ -200,6 +208,7 @@ export class CognitePid {
   private lineNumberVisualizationIds: string[] = [];
   private symbolInstanceAndTagBoundingBoxesIds: string[] = [];
 
+  private backgroundOverlayGroup: SVGElement | null = null;
   private selectionRectStart: Point | null = null;
   private selectionRect: Node | null = null;
   private backgroundRect: SVGRectElement | null = null;
@@ -326,6 +335,27 @@ export class CognitePid {
     this.setSymbols(symbolsToKeep);
   }
 
+  updatePathIdToDiagramInstanceWithPathsMap() {
+    this.diagramInstancesWithPaths = [...this.symbolInstances, ...this.lines];
+
+    this.pathIdToDiagramInstanceWithPathsMap = new Map();
+    this.diagramInstancesWithPaths.forEach((diagramInstanceWithPaths) => {
+      diagramInstanceWithPaths.pathIds.forEach((pathId) => {
+        this.pathIdToDiagramInstanceWithPathsMap.set(
+          pathId,
+          diagramInstanceWithPaths
+        );
+      });
+
+      diagramInstanceWithPaths.labelIds.forEach((pathId) => {
+        this.pathIdToDiagramInstanceWithPathsMap.set(
+          pathId,
+          diagramInstanceWithPaths
+        );
+      });
+    });
+  }
+
   setSymbolInstances(symbolInstances: DiagramSymbolInstance[], refresh = true) {
     this.symbolInstances = symbolInstances;
     if (this.symbolInstancesSubscriber) {
@@ -335,6 +365,8 @@ export class CognitePid {
         'PID: Called this.setSymbolInstances() without this.symbolInstancesSubscriber'
       );
     }
+
+    this.updatePathIdToDiagramInstanceWithPathsMap();
 
     if (refresh) {
       this.refresh();
@@ -352,6 +384,8 @@ export class CognitePid {
     } else {
       console.warn('PID: Called this.setLines() without this.linesSubscriber');
     }
+
+    this.updatePathIdToDiagramInstanceWithPathsMap();
 
     if (refresh) {
       this.refresh();
@@ -677,7 +711,7 @@ export class CognitePid {
     this.addSymbolsAndFindInstances(legend.symbols);
   }
 
-  render() {
+  private render() {
     if (!this.document) return;
 
     const parser = new DOMParser();
@@ -697,6 +731,17 @@ export class CognitePid {
     this.host.appendChild(this.svg);
 
     this.pidDocument = PidDocumentWithDom.fromSVG(this.svg, allSvgElements);
+
+    // Initialize background overlay group
+    // This group will be the parent of all the overlays such as bounding boxes and connection lines.
+    // One performance advantage of having this group element first in the SVG,
+    // is that the overlays can be added with an `appendChild` call to this group instead of `insertBefore` on the SVG.
+    this.backgroundOverlayGroup = document.createElementNS(
+      'http://www.w3.org/2000/svg',
+      'g'
+    );
+    this.backgroundOverlayGroup.setAttribute('id', BACKGROUND_OVERLAY_GROUP);
+    this.svg.insertBefore(this.backgroundOverlayGroup, this.svg.children[0]);
 
     this.initializeRectangularSelection();
   }
@@ -748,15 +793,17 @@ export class CognitePid {
     }
     const { node, originalStyle } = nodeData;
     node.setAttribute('style', originalStyle);
+    const diagramInstance =
+      this.pathIdToDiagramInstanceWithPathsMap.get(nodeId);
     applyStyleToNode({
       node,
+      diagramInstance,
+      instances: this.diagramInstancesWithPaths,
       symbolSelection: this.symbolSelection,
       connectionSelection: this.connectionSelection,
       labelSelection: this.labelSelection,
-      symbolInstances: this.symbolInstances,
-      lines: this.lines,
       connections: this.connections,
-      active: this.activeTool,
+      activeTool: this.activeTool,
       activeLineNumber: this.activeLineNumber,
       tags: this.tags,
       activeTagId: this.activeTagId,
@@ -929,7 +976,7 @@ export class CognitePid {
         node.id
       );
 
-      if (symbolInstance === null) return;
+      if (symbolInstance === undefined) return;
       scaleStrokeWidthInstance(
         hoverBoldStrokeScale,
         symbolInstance,
@@ -955,7 +1002,7 @@ export class CognitePid {
         node.id
       );
 
-      if (symbolInstance === null) return;
+      if (symbolInstance === undefined) return;
       symbolInstance.pathIds.forEach((pathId) => {
         this.applyStyleToNodeId(pathId);
       });
@@ -969,8 +1016,10 @@ export class CognitePid {
       return;
     }
 
-    if (this.activeTool === 'addSymbol') {
-      if (!(node instanceof SVGTSpanElement)) {
+    switch (this.activeTool) {
+      case 'addSymbol': {
+        if (node instanceof SVGTSpanElement) return;
+
         if (!this.symbolSelection.includes(node.id)) {
           this.setSymbolSelection([...this.symbolSelection, node.id]);
         } else {
@@ -978,12 +1027,16 @@ export class CognitePid {
             this.symbolSelection.filter((id) => id !== node.id)
           );
         }
+        break;
       }
-    } else if (this.activeTool === 'addLine') {
-      if (!(node instanceof SVGTSpanElement)) {
-        const line = getDiagramInstanceByPathId(this.lines, node.id);
-        if (line) {
-          this.deleteLine(line);
+      case 'addLine': {
+        if (node instanceof SVGTSpanElement) return;
+
+        const diagramInstance = this.pathIdToDiagramInstanceWithPathsMap.get(
+          node.id
+        );
+        if (isLine(diagramInstance)) {
+          this.deleteLine(diagramInstance);
         } else {
           this.setLines([
             ...this.lines,
@@ -994,149 +1047,177 @@ export class CognitePid {
               labelIds: [],
               lineNumbers: [],
               inferedLineNumbers: [],
-            } as DiagramLineInstance,
+            },
           ]);
         }
+        break;
       }
-    } else if (this.activeTool === 'splitLine') {
-      if (node instanceof SVGTSpanElement) return;
-      if (isSymbolInstance(node, this.symbolInstances)) return;
-      if (this.pidDocument === undefined) return;
-      if (event.altKey) {
-        this.deleteTJunction(node.id);
-        return;
-      }
-      // Remove line if it was already selected
-      if (this.splitSelection === node.id) {
-        this.setSplitSelection(null);
-        return;
-      }
-      if (this.splitSelection !== null) {
-        const tJunctionPathReplacements = this.pidDocument
-          .getPidPathById(this.splitSelection)
-          ?.getTJunctionByIntersectionWith(
-            this.pidDocument.getPidPathById(node.id)!
-          );
+      case 'splitLine': {
+        if (node instanceof SVGTSpanElement || this.pidDocument === undefined)
+          return;
 
-        if (!tJunctionPathReplacements) {
+        const diagramInstnace = this.pathIdToDiagramInstanceWithPathsMap.get(
+          node.id
+        );
+        const isSymbolInstance =
+          diagramInstnace !== undefined && !isLine(diagramInstnace);
+        if (isSymbolInstance) return;
+
+        if (event.altKey) {
+          this.deleteTJunction(node.id);
           return;
         }
+        // Remove line if it was already selected
+        if (this.splitSelection === node.id) {
+          this.setSplitSelection(null);
+          return;
+        }
+        if (this.splitSelection !== null) {
+          const tJunctionPathReplacements = this.pidDocument
+            .getPidPathById(this.splitSelection)
+            ?.getTJunctionByIntersectionWith(
+              this.pidDocument.getPidPathById(node.id)!
+            );
 
-        const pathReplacementGroup: PathReplacementGroup = {
-          id: getPathReplacementId(tJunctionPathReplacements),
-          type: 'T-junction',
-          replacements: tJunctionPathReplacements,
-        };
-
-        this.addPathReplacementGroups(pathReplacementGroup);
-        this.setSplitSelection(null);
-        return;
-      }
-      this.setSplitSelection(node.id);
-    } else if (this.activeTool === 'connectInstances') {
-      const symbolInstance = getDiagramInstanceByPathId(
-        [...this.symbolInstances, ...this.lines],
-        node.id
-      );
-      if (symbolInstance) {
-        const instanceId = getDiagramInstanceId(symbolInstance);
-
-        if (this.connectionSelection === null) {
-          this.setConnectionSelection(instanceId);
-        } else if (instanceId === this.connectionSelection) {
-          this.setConnectionSelection(null);
-        } else {
-          const newConnection = {
-            start: this.connectionSelection,
-            end: instanceId,
-            direction: 'unknown',
-          } as DiagramConnection;
-          if (connectionExists(this.connections, newConnection)) {
+          if (!tJunctionPathReplacements) {
             return;
           }
-          this.setConnections([...this.connections, newConnection]);
-          this.setConnectionSelection(instanceId);
+
+          const pathReplacementGroup: PathReplacementGroup = {
+            id: getPathReplacementId(tJunctionPathReplacements),
+            type: 'T-junction',
+            replacements: tJunctionPathReplacements,
+          };
+
+          this.addPathReplacementGroups(pathReplacementGroup);
+          this.setSplitSelection(null);
+          return;
         }
+        this.setSplitSelection(node.id);
+        break;
       }
-    } else if (this.activeTool === 'connectLabels') {
-      // selection or deselect symbol/line instance that will be used for adding labels
-      if (!(node instanceof SVGTSpanElement)) {
+      case 'connectInstances': {
+        const diagramInstance = this.pathIdToDiagramInstanceWithPathsMap.get(
+          node.id
+        );
+        if (diagramInstance === undefined) return;
+
+        if (this.connectionSelection === null) {
+          this.setConnectionSelection(diagramInstance.id);
+        } else if (diagramInstance.id === this.connectionSelection) {
+          this.setConnectionSelection(null);
+        } else {
+          const newConnection: DiagramConnection = {
+            start: this.connectionSelection,
+            end: diagramInstance.id,
+            direction: 'unknown',
+          };
+          if (connectionExists(this.connections, newConnection)) return;
+
+          this.setConnections([...this.connections, newConnection], false);
+          this.setConnectionSelection(diagramInstance.id);
+        }
+        break;
+      }
+      case 'connectLabels': {
+        // selection or deselect symbol/line instance that will be used for adding labels
+        if (!(node instanceof SVGTSpanElement)) {
+          const diagramInstance = getDiagramInstanceByPathId(
+            [...this.symbolInstances, ...this.lines],
+            node.id
+          );
+          const diagramInstanceId = diagramInstance
+            ? getDiagramInstanceId(diagramInstance)
+            : node.id;
+
+          if (diagramInstanceId === this.labelSelection) {
+            this.setLabelSelection(null);
+            return;
+          }
+          if (diagramInstance) {
+            this.setLabelSelection(diagramInstanceId);
+          }
+        } else {
+          // add or remove labels to symbol/line instance given `labelSelection`
+          if (!this.labelSelection) {
+            return;
+          }
+          const diagramInstance = this.pathIdToDiagramInstanceWithPathsMap.get(
+            this.labelSelection
+          );
+          if (diagramInstance === undefined) return;
+
+          if (isLine(diagramInstance)) {
+            addOrRemoveLabelToInstance(
+              node.id,
+              node.innerHTML,
+              diagramInstance
+            );
+            this.setLines([...this.lines]);
+          } else {
+            addOrRemoveLabelToInstance(
+              node.id,
+              node.innerHTML,
+              diagramInstance
+            );
+            this.setSymbolInstances([...this.symbolInstances]);
+          }
+        }
+        break;
+      }
+      case 'addEquipmentTag': {
+        if (!(node instanceof SVGTSpanElement)) return;
+
+        if (this.activeTagId) {
+          const tag = getDiagramTagInstanceByTagId(this.activeTagId, this.tags);
+          if (tag === undefined) return;
+          if (tag.labelIds.length < 1) {
+            this.setActiveTagId(tag.id);
+            this.setTags(this.tags.filter((tag) => tag.labelIds.length > 0));
+          } else {
+            this.setActiveTagId(tag.id);
+            this.setTags([...this.tags]);
+          }
+        } else {
+          const tag = getDiagramTagInstanceByLabelId(node.id, this.tags);
+          if (tag === undefined) {
+            const newTag = createEquipmentTagInstanceFromSVGTSpanElement(node);
+            this.setTags([...this.tags, newTag]);
+            this.setActiveTagId(newTag.id);
+          } else {
+            this.setActiveTagId(tag.id);
+          }
+        }
+        break;
+      }
+      case 'setLineNumber': {
+        if (this.activeLineNumber === null) return;
+
         const diagramInstance = getDiagramInstanceByPathId(
           [...this.symbolInstances, ...this.lines],
           node.id
         );
-        const diagramInstanceId = diagramInstance
-          ? getDiagramInstanceId(diagramInstance)
-          : node.id;
+        if (diagramInstance === undefined) return;
 
-        if (diagramInstanceId === this.labelSelection) {
-          this.setLabelSelection(null);
-          return;
-        }
-        if (diagramInstance) {
-          this.setLabelSelection(diagramInstanceId);
-        }
-      } else {
-        // add or remove labels to symbol/line instance given `labelSelection`
-        if (!this.labelSelection) {
-          return;
-        }
-        const diagramInstance = getInstanceByDiagramInstanceId(
-          [...this.symbolInstances, ...this.lines],
-          this.labelSelection
-        );
-        if (!diagramInstance) {
-          return;
-        }
         if (isLine(diagramInstance)) {
-          addOrRemoveLabelToInstance(node.id, node.innerHTML, diagramInstance);
-          this.setLines([...this.lines]);
+          addOrRemoveLineNumberToInstance(
+            this.activeLineNumber,
+            diagramInstance
+          );
+          this.setLines([...this.lines], false);
         } else {
-          addOrRemoveLabelToInstance(node.id, node.innerHTML, diagramInstance);
-          this.setSymbolInstances([...this.symbolInstances]);
+          addOrRemoveLineNumberToInstance(
+            this.activeLineNumber,
+            diagramInstance
+          );
+          this.setSymbolInstances([...this.symbolInstances], false);
         }
+
+        this.inferLineNumbers();
+        break;
       }
-    } else if (this.activeTool === 'setLineNumber') {
-      if (this.activeLineNumber === null) return;
-
-      const diagramInstance = getDiagramInstanceByPathId(
-        [...this.symbolInstances, ...this.lines],
-        node.id
-      );
-      if (diagramInstance === null) return;
-
-      if (isLine(diagramInstance)) {
-        addOrRemoveLineNumberToInstance(this.activeLineNumber, diagramInstance);
-        this.setLines([...this.lines], false);
-      } else {
-        addOrRemoveLineNumberToInstance(this.activeLineNumber, diagramInstance);
-        this.setSymbolInstances([...this.symbolInstances], false);
-      }
-
-      this.inferLineNumbers();
-    } else if (this.activeTool === 'addEquipmentTag') {
-      if (!(node instanceof SVGTSpanElement)) return;
-
-      if (this.activeTagId) {
-        const tag = getDiagramTagInstanceByTagId(this.activeTagId, this.tags);
-        if (tag === undefined) return;
-        if (tag.labelIds.length < 1) {
-          this.setActiveTagId(tag.id);
-          this.setTags(this.tags.filter((tag) => tag.labelIds.length > 0));
-        } else {
-          this.setActiveTagId(tag.id);
-          this.setTags([...this.tags]);
-        }
-      } else {
-        const tag = getDiagramTagInstanceByLabelId(node.id, this.tags);
-        if (tag === undefined) {
-          const newTag = createEquipmentTagInstanceFromSVGTSpanElement(node);
-          this.setTags([...this.tags, newTag]);
-          this.setActiveTagId(newTag.id);
-        } else {
-          this.setActiveTagId(tag.id);
-        }
-      }
+      default:
+        assertNever(this.activeTool);
     }
   };
 
@@ -1146,13 +1227,13 @@ export class CognitePid {
     // Create new diagram symbol
     const pidGroup = this.pidDocument.getPidGroup(this.symbolSelection);
     const { symbolType, description, direction } = symbolData;
-    const newSymbol = {
+    const newSymbol: DiagramSymbol = {
       id: uuid(),
       symbolType,
       description,
       svgRepresentation: pidGroup.createSvgRepresentation(false, 3),
       direction,
-    } as DiagramSymbol;
+    };
 
     this.addSymbolsAndFindInstances([newSymbol]);
   }
@@ -1368,7 +1449,10 @@ export class CognitePid {
 
     const newGroups = this.pidDocument.pidPaths.reduce((groups, pidPath) => {
       // Paths in existing instances of line or symbol should not be split
-      if (getDiagramInstanceByPathId(diagramInstances, pidPath.pathId) !== null)
+      if (
+        getDiagramInstanceByPathId(diagramInstances, pidPath.pathId) !==
+        undefined
+      )
         return groups;
 
       const pathReplacement = pidPath?.getPathReplacementByAngles([90]);
@@ -1457,23 +1541,22 @@ export class CognitePid {
   }
 
   private drawConnectionVisualizations() {
-    if (!this.svg) {
-      throw Error('Calling drawConnectionVisualizations without SVG');
-    }
-    if (!this.pidDocument) {
-      throw Error('Calling drawConnectionVisualizations without pidDocument');
+    if (!this.pidDocument || !this.backgroundOverlayGroup) {
+      throw Error(
+        'Calling drawConnectionVisualizations without proper initialization'
+      );
     }
 
     this.connectionVisualizations = visualizeConnections(
-      this.svg,
+      this.backgroundOverlayGroup,
       this.pidDocument,
       this.connections,
       this.symbolInstances,
       this.lines
     );
 
+    const originalStrokeWidth = COLORS.connection.strokeWidth.toString();
     this.connectionVisualizations.forEach(({ diagramConnection, node }) => {
-      const originalStrokeWidth = node.style.strokeWidth;
       node.addEventListener('mouseenter', () => {
         node.style.strokeWidth = scaleStrokeWidth(
           hoverBoldStrokeScale,
@@ -1509,15 +1592,14 @@ export class CognitePid {
   }
 
   private drawLabelVisualizations() {
-    if (!this.svg) {
-      throw Error('Calling drawLabelVisualizations without SVG');
-    }
-    if (!this.pidDocument) {
-      throw Error('Calling drawLabelVisualizations without pidDocument');
+    if (!this.pidDocument || !this.backgroundOverlayGroup) {
+      throw Error(
+        'Calling drawLabelVisualizations without proper initialization'
+      );
     }
 
     this.labelVisualizations = visualizeLabelsToInstances(
-      this.svg,
+      this.backgroundOverlayGroup,
       this.pidDocument,
       [...this.symbolInstances, ...this.lines]
     );
@@ -1585,32 +1667,32 @@ export class CognitePid {
   }
 
   private drawLineVisualizations() {
-    if (!this.svg) {
-      throw Error('Calling drawLineVisualizations without SVG');
-    }
-    if (!this.pidDocument) {
-      throw Error('Calling drawLineVisualizations without pidDocument');
+    if (!this.pidDocument || !this.backgroundOverlayGroup) {
+      throw Error(
+        'Calling drawLineVisualizations without proper initialization'
+      );
     }
 
     this.lineNumberVisualizationIds = this.pidDocument.pidLabels
       .filter(
         (pidLabel) => getLineNumberAndUnitFromText(pidLabel.text).lineNumber
       )
-      .map(
-        (pidTspan) =>
-          visualizeBoundingBoxBehind({
-            svg: this.svg!,
-            boundingBox: pidTspan.boundingBox,
-            id: `linenumberrect_${pidTspan.id}`,
-            color: 'black',
-            opacity:
-              this.activeLineNumber &&
-              pidTspan.text.includes(this.activeLineNumber.toString())
-                ? 0.3
-                : 0.2,
-            strokeColor: 'blue',
-          }).id
-      );
+      .map((pidTspan) => {
+        const svgRect = getSvgRect({
+          rect: pidTspan.boundingBox,
+          id: `linenumberrect_${pidTspan.id}`,
+          color: 'black',
+          opacity:
+            this.activeLineNumber &&
+            pidTspan.text.includes(this.activeLineNumber.toString())
+              ? 0.3
+              : 0.2,
+          strokeColor: 'blue',
+        });
+
+        this.backgroundOverlayGroup!.appendChild(svgRect);
+        return svgRect.id;
+      });
   }
 
   private removeLineVisualizations() {
@@ -1630,24 +1712,25 @@ export class CognitePid {
   }
 
   private drawSymbolInstanceAndTagBoundingBoxes() {
-    if (!this.svg) {
-      throw Error('Calling drawSymbolInstanceAndTagBoundingBoxes without SVG');
-    }
-    if (!this.pidDocument) {
+    if (!this.pidDocument || !this.backgroundOverlayGroup) {
       throw Error(
-        'Calling drawSymbolInstanceAndTagBoundingBoxes without pidDocument'
+        'Calling drawSymbolInstanceAndTagBoundingBoxes without propper initialization'
       );
     }
 
     this.symbolInstanceAndTagBoundingBoxesIds =
       visualizeSymbolInstanceBoundingBoxes(
-        this.svg,
+        this.backgroundOverlayGroup,
         this.pidDocument,
         this.symbolInstances
       );
 
     this.symbolInstanceAndTagBoundingBoxesIds.push(
-      ...visualizeTagBoundingBoxes(this.svg, this.pidDocument, this.tags)
+      ...visualizeTagBoundingBoxes(
+        this.backgroundOverlayGroup,
+        this.pidDocument,
+        this.tags
+      )
     );
   }
 
@@ -1694,9 +1777,11 @@ export class CognitePid {
   }
 
   private initializeRectangularSelection() {
-    this.backgroundRect = visualizeBoundingBoxBehind({
-      svg: this.svg!,
-      boundingBox: this.pidDocument!.viewBox,
+    if (this.backgroundOverlayGroup === null || this.pidDocument === undefined)
+      return;
+
+    this.backgroundRect = getSvgRect({
+      rect: this.pidDocument.viewBox,
       id: 'background_rect',
       color: 'white',
       opacity: 0,
@@ -1704,6 +1789,8 @@ export class CognitePid {
       strokeOpacity: 1,
       strokeWidth: 0,
     });
+    this.svg?.insertBefore(this.backgroundRect, this.svg.children[0]);
+
     this.backgroundRect.addEventListener('mousedown', (e) => {
       if (e.button !== MouseButton.LEFT_CLICK) return;
 
@@ -1722,13 +1809,13 @@ export class CognitePid {
         selectionRectStop
       );
 
+      const svgParent = this.svg!.parentNode as SVGSVGElement;
       if (this.selectionRect) {
-        (this.svg!.parentNode as SVGSVGElement).removeChild(this.selectionRect);
+        svgParent.removeChild(this.selectionRect);
       }
 
-      this.selectionRect = visualizeBoundingBoxBehind({
-        svg: this.svg!.parentNode as SVGSVGElement,
-        boundingBox: selectionBoundingBox,
+      this.selectionRect = getSvgRect({
+        rect: selectionBoundingBox,
         id: 'selection',
         color: 'white',
         opacity: 0,
@@ -1736,6 +1823,8 @@ export class CognitePid {
         strokeOpacity: 1,
         strokeWidth: 0.5,
       });
+
+      svgParent.insertBefore(this.selectionRect, svgParent.children[0]);
     });
 
     this.backgroundRect.addEventListener('mouseup', (e) => {

@@ -13,3 +13,4 @@ export { default as parseStyleString } from './parseStyleString';
 export { default as areSetsEqual } from './areSetsEqual';
 export { default as getUnitAndLineNumberString } from './getUnitAndLineNumberString';
 export { default as setSelectablilityOfAllText } from './setSelectablilityOfAllText';
+export { default as assertNever } from './assertNever';

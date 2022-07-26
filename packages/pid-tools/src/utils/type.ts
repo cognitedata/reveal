@@ -54,7 +54,7 @@ export const isLine = (
   diagramInstance: any
 ): diagramInstance is DiagramLineInstance => {
   const line: DiagramAnnotationType = 'Line';
-  return diagramInstance.type === line;
+  return diagramInstance && diagramInstance.type === line;
 };
 
 export const isPid = (
