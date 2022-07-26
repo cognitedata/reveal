@@ -50,7 +50,10 @@ type VisibilityUpdateInfo = {
   exceededMaxLoadsToGPU: boolean;
   nodeLoadFailed: boolean;
   numVisiblePoints: number;
-  unloadedGeometry: IPointCloudTreeGeometryNode[];
+  unloadedGeometry: {
+    node: IPointCloudTreeGeometryNode,
+    tree: PointCloudOctree
+  }[];
   visibleNodes: IPointCloudTreeNodeBase[];
   priorityQueue: BinaryHeap<QueueItem>;
 };
@@ -176,7 +179,7 @@ export class Potree implements IPotree {
         if (node.loaded && updateInfo.loadedToGPUThisFrame >= MAX_LOADS_TO_GPU) {
           updateInfo.exceededMaxLoadsToGPU = true;
         }
-        updateInfo.unloadedGeometry.push(node);
+        updateInfo.unloadedGeometry.push({ node, tree: pointCloud });
         pointCloud.visibleGeometry.push(node);
       } else {
         updateInfo.nodeLoadFailed = true;
