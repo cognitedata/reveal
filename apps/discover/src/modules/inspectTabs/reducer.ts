@@ -1,7 +1,7 @@
 import { createReducer } from '@reduxjs/toolkit';
 import cloneDeep from 'lodash/cloneDeep';
 import isEmpty from 'lodash/isEmpty';
-import uniq from 'lodash/uniq';
+import uniqBy from 'lodash/uniqBy';
 
 import {
   resetErrors,
@@ -107,17 +107,20 @@ const inspectReducerCreator = createReducer(initialState, (builder) => {
 
       wellboreIdsToUpdate.forEach((wellboreId) => {
         if (existingWellboreIds.includes(wellboreId)) {
-          updatedWellboreErrors[wellboreId] = uniq([
-            ...updatedWellboreErrors[wellboreId],
-            ...errorsToUpdate[wellboreId],
-          ]);
+          updatedWellboreErrors[wellboreId] = uniqBy(
+            [
+              ...updatedWellboreErrors[wellboreId],
+              ...errorsToUpdate[wellboreId],
+            ],
+            'message'
+          );
         } else {
-          updatedWellboreErrors[wellboreId] = uniq([
-            ...errorsToUpdate[wellboreId],
-          ]);
+          updatedWellboreErrors[wellboreId] = uniqBy(
+            [...errorsToUpdate[wellboreId]],
+            'message'
+          );
         }
       });
-
       state.errors = updatedWellboreErrors;
     })
     .addCase(resetErrors, (state) => {

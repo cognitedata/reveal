@@ -9,6 +9,7 @@ import groupBy from 'lodash/groupBy';
 import isEmpty from 'lodash/isEmpty';
 import isNull from 'lodash/isNull';
 import isUndefined from 'lodash/isUndefined';
+import uniqBy from 'lodash/uniqBy';
 import { PlotData } from 'plotly.js';
 import { pluralize } from 'utils/pluralize';
 import { convertPressure, changeUnitTo } from 'utils/units';
@@ -77,10 +78,10 @@ export const formatChartData = (
             ...processedData.chartData,
             ...processedDataOfCurrentColumn.chartData,
           ],
-          errors: [
-            ...processedData.errors,
-            ...processedDataOfCurrentColumn.errors,
-          ],
+          errors: uniqBy(
+            [...processedData.errors, ...processedDataOfCurrentColumn.errors],
+            'message'
+          ),
         };
       },
       EMPTY_DATA as ProcessedData
@@ -90,10 +91,10 @@ export const formatChartData = (
         ...processedData.chartData,
         ...currentMeasurementProcessedData.chartData,
       ],
-      errors: [
-        ...processedData.errors,
-        ...currentMeasurementProcessedData.errors,
-      ],
+      errors: uniqBy(
+        [...processedData.errors, ...currentMeasurementProcessedData.errors],
+        'message'
+      ),
     };
   }, EMPTY_DATA as ProcessedData);
 };

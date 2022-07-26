@@ -55,7 +55,7 @@ describe('inspectTabs.reducer', () => {
 
   it('Should set errors into the state with no other errors', () => {
     const payload: Errors = {
-      wellbore1: [{ value: 'Error 1' }, { value: 'Error 2' }],
+      wellbore1: [{ message: 'Error 1' }, { message: 'Error 2' }],
     };
     const state = inspectTabs(
       { ...initialState },
@@ -70,15 +70,15 @@ describe('inspectTabs.reducer', () => {
   it('Should set errors into the state with other wellbore errors', () => {
     const payload: Errors = {
       wellbore1: [
-        { value: 'Wellbore 1 Error 1' },
-        { value: 'Wellbore 1 Error 2' },
+        { message: 'Wellbore 1 Error 1' },
+        { message: 'Wellbore 1 Error 2' },
       ],
     };
     const state = inspectTabs(
       {
         ...initialState,
         errors: {
-          wellbore2: [{ value: 'Wellbore 2 Error 2' }],
+          wellbore2: [{ message: 'Wellbore 2 Error 2' }],
         },
       },
       {
@@ -91,13 +91,13 @@ describe('inspectTabs.reducer', () => {
 
   it('Should update same wellbore errors', () => {
     const payload: Errors = {
-      wellbore1: [{ value: 'Wellbore 1 Error 2' }],
+      wellbore1: [{ message: 'Wellbore 1 Error 2' }],
     };
     const state = inspectTabs(
       {
         ...initialState,
         errors: {
-          wellbore1: [{ value: 'Wellbore 1 Error 1' }],
+          wellbore1: [{ message: 'Wellbore 1 Error 1' }],
         },
       },
       {
@@ -107,15 +107,15 @@ describe('inspectTabs.reducer', () => {
     );
     expect(state.errors.wellbore1).toEqual(
       expect.arrayContaining([
-        expect.objectContaining({ value: 'Wellbore 1 Error 1' }),
-        expect.objectContaining({ value: 'Wellbore 1 Error 2' }),
+        expect.objectContaining({ message: 'Wellbore 1 Error 1' }),
+        expect.objectContaining({ message: 'Wellbore 1 Error 2' }),
       ])
     );
   });
 
   it('Should reset errors from state', () => {
     const errors: Errors = {
-      wellbore1: [{ value: 'Wellbore 1 Error 2' }],
+      wellbore1: [{ message: 'Wellbore 1 Error 2' }],
     };
     const state = inspectTabs(
       { ...initialState, errors },
@@ -124,5 +124,28 @@ describe('inspectTabs.reducer', () => {
       }
     );
     expect(state.errors).toEqual({});
+  });
+
+  it('Should not have duplicate errors', () => {
+    const payload: Errors = {
+      wellbore1: [
+        { message: 'Wellbore 1 Error 1' },
+        { message: 'Wellbore 1 Error 2' },
+      ],
+    };
+    const state = inspectTabs(
+      {
+        ...initialState,
+        errors: {
+          wellbore1: [{ message: 'Wellbore 1 Error 1' }],
+          wellbore2: [{ message: 'Wellbore 2 Error 2' }],
+        },
+      },
+      {
+        type: SET_ERRORS,
+        payload,
+      }
+    );
+    expect(state.errors.wellbore1.length).toEqual(2);
   });
 });
