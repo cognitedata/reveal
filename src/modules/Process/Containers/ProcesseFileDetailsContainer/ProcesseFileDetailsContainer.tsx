@@ -54,6 +54,5 @@ const Container = styled.div`
   box-sizing: content-box;
   flex-shrink: 0;
   height: 100%;
-  overflow: auto;
   z-index: 1;
 `;

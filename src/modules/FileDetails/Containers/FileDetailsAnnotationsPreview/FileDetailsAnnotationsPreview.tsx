@@ -50,7 +50,7 @@ export const FileDetailsAnnotationsPreview = ({
 };
 
 const Container = styled.div`
-  height: inherit;
+  height: 100%;
   display: grid;
   grid-template-rows: 200px 50px auto;
   .image {
