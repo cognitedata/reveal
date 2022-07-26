@@ -60,14 +60,10 @@ describe('Wells: Casings', () => {
 
     // inspect good casings
     cy.validateSelect(DATA_SOURCE, [GOOD_CASINGS], GOOD_CASINGS);
-    cy.goToTab('Wells');
+    // TODO(PP-3087): Temporally disabling this line for fix well/document tabs hidden issue
+    // cy.goToTab('Wells');
 
-    cy.findByTestId('well-result-table')
-      .findAllByTestId('table-row')
-      .first()
-      .children()
-      .first()
-      .click();
+    cy.selectFirstWellInResults();
 
     cy.openInspectView();
     cy.goToWellsInspectTab(TAB_NAMES.CASINGS);

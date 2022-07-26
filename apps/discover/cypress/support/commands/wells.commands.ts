@@ -37,7 +37,7 @@ Cypress.Commands.add('openInspectView', (selectedWells?: number) => {
   cy.findByTestId('table-bulk-actions')
     .findByRole('button', { name: 'View' })
     .should('exist')
-    .click();
+    .click({ force: true });
 });
 
 Cypress.Commands.add('clearWellsSelection', () => {
