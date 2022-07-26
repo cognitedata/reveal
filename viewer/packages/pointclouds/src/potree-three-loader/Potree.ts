@@ -96,7 +96,7 @@ export class Potree implements IPotree {
   }
 
   private innerUpdatePointClouds(pointClouds: PointCloudOctree[], camera: Camera, renderer: WebGLRenderer): IVisibilityUpdateResult {
-    const result = this.updateAndLoadNodes(pointClouds, camera, renderer);
+    const result = this.updateVisibility(pointClouds, camera, renderer);
 
     for (let i = 0; i < pointClouds.length; i++) {
       const pointCloud = pointClouds[i];
