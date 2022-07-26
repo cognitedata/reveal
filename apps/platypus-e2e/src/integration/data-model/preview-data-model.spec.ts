@@ -40,29 +40,6 @@ describe('Data Model Page - Existing Solution Preview', () => {
     cy.get('div#Comment.node').should('be.visible');
   });
 
-  // it('Adds type with template directive using ui editor', () => {
-  //   cy.get('[aria-label="UI editor"]').click();
-  //   cy.getBySel('edit-schema-btn').should('be.visible').click();
-  //   cy.getBySel('add-type-btn').should('be.visible').click();
-  //   cy.getBySel('type-name-input').should('be.visible').type('CypressTestType');
-  //   cy.getBySel('modal-ok-button').should('be.visible').click();
-
-  //   cy.getBySel('schema-type-field').type('name');
-  //   cy.getBySel('checkbox-field-required').click();
-  //   cy.getBySel('type-view-back-button').should('be.visible').click();
-  //   cy.getBySel('type-list-item-CypressTestType').should('be.visible');
-  //   //Test UI Editor type list
-  //   cy.getBySel('type-list-item-CypressTestType')
-  //     .contains('span', 'template')
-  //     .should('be.visible');
-
-  //   //Test visualizer
-  //   cy.get('div.node#CypressTestType').should('be.visible');
-  //   cy.get('div.node#CypressTestType')
-  //     .contains('span', 'Template')
-  //     .should('be.visible');
-  // });
-
   it('should enter the type in UI editor and add new field & see changes in visualizer', () => {
     cy.get('[aria-label="UI editor"]').click();
     cy.contains('Post').click();
@@ -144,30 +121,24 @@ describe('Data Model Page - Existing Solution Preview', () => {
       .find('[data-cy="visualizer-type-field"]')
       .should('not.contain', 'Post');
   });
+
   it('schema generation should properly work between UI & Code & Visualizer', () => {
     // UI editor workflow
-    cy.get('[aria-label="UI editor"]').click();
-    cy.getBySel('edit-schema-btn').click();
-    cy.get('button[aria-label="Add type"]').click();
-    cy.get('input[name="typeName"]').should('be.visible').type('Author');
-    cy.get('button[data-cy="modal-ok-button"]').click();
+    cy.addDataModelType('Author');
     cy.get('h5').contains('Author').should('be.visible');
-    cy.getBySel('schema-type-field').first().type('user');
 
-    // eslint-disable-next-line
-    cy.wait(500);
-
-    // by default we set type as String
-    cy.getBySel('select-String')
-      .children()
-      .get('input[aria-autocomplete="list"]')
+    cy.addDataModelTypeField('Author', 'user', true);
+    cy.get('input[aria-autocomplete="list"]')
+      .last()
       .focus()
       .type('User{enter}');
     cy.getBySel('select-User').contains('User');
-    cy.getBySel('checkbox-field-required').first().click();
-
-    // eslint-disable-next-line
-    cy.wait(1000);
+    cy.get('div#Author.node')
+      .should('be.visible')
+      .children()
+      .last()
+      .should('contain', 'user')
+      .and('contain', 'User');
 
     // Code Editor check for properly working
     cy.get('[aria-label="Code editor"]').click();
@@ -179,16 +150,6 @@ describe('Data Model Page - Existing Solution Preview', () => {
       'not.contain',
       'Unable to visualize schema.'
     );
-
-    // eslint-disable-next-line
-    cy.wait(500);
-
-    cy.get('div#Author')
-      .should('be.visible')
-      .children()
-      .last()
-      .should('contain', 'user')
-      .and('contain', 'User');
   });
 
   it('should validate unsuported features when publishing', () => {

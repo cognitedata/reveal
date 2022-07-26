@@ -60,8 +60,6 @@ Cypress.Commands.add('getCogsToast', (type, ...args) => {
 });
 
 Cypress.Commands.add('clickQueryExplorerExecuteQuery', () => {
-  // eslint-disable-next-line
-  cy.wait(300);
   return cy.get('.execute-button').click();
 });
 
@@ -74,19 +72,13 @@ Cypress.Commands.add('setQueryExplorerQuery', (query: string) => {
     .type(query, { parseSpecialCharSequences: false });
 });
 
-Cypress.Commands.add(
-  'assertQueryExplorerResult',
-  (mockSuccess, timeout = 400) => {
-    // eslint-disable-next-line
-    cy.wait(timeout);
-    return cy.window().then((w) => {
-      // eslint-disable-next-line
-      // @ts-ignore
-      const value = w.g.resultComponent.viewer.getValue();
-      expect(value).to.deep.equal(JSON.stringify(mockSuccess, null, 2));
-    });
-  }
-);
+Cypress.Commands.add('assertQueryExplorerResult', (mockSuccess) => {
+  return cy
+    .window()
+    .its('g.resultComponent.viewer')
+    .invoke('getValue')
+    .should('deep.equal', JSON.stringify(mockSuccess, null, 2));
+});
 
 Cypress.Commands.add(
   'addDataModelTypeField',

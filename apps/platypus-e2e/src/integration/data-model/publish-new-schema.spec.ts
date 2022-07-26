@@ -1,7 +1,4 @@
 const checkQueryExplorer = (query: string, expectedResult: any) => {
-  // eslint-disable-next-line
-  cy.wait(300);
-
   cy.setQueryExplorerQuery(query);
   cy.clickQueryExplorerExecuteQuery();
   cy.assertQueryExplorerResult(expectedResult);
