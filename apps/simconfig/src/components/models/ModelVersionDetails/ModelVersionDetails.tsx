@@ -164,20 +164,23 @@ export function ModelVersionDetails({ modelFile }: ModelVersionDetailsProps) {
             </div>
             {Object.keys(additionalMetadata).length ? (
               <div className="more-info">
-                <Tooltip
+                <ModelMetaTooltip
                   content={Object.keys(additionalMetadata).map((key) => (
                     <AdditionalMetadataContainer key={key}>
                       <dl>
-                        <dt>{key}</dt>
-                        <dd>{additionalMetadata[key]}</dd>
+                        <dt className="dont-break-out">{key}</dt>
+                        <dd className="dont-break-out">
+                          {additionalMetadata[key]}
+                        </dd>
                       </dl>
                     </AdditionalMetadataContainer>
                   ))}
-                  position="right-top"
+                  position="right"
                   visible={isAdditionMetaInfoTooltipEnabled}
                   elevated
                   interactive
                   inverted
+                  wrapped
                   onClickOutside={() => {
                     setIsAdditionMetaInfoTooltipEnabled(false);
                   }}
@@ -191,7 +194,7 @@ export function ModelVersionDetails({ modelFile }: ModelVersionDetailsProps) {
                   >
                     More Info{' '}
                   </Button>
-                </Tooltip>
+                </ModelMetaTooltip>
               </div>
             ) : undefined}
           </div>
@@ -280,14 +283,30 @@ const BoundaryConditionsContainer = styled.aside`
   overflow: hidden;
 `;
 
+const ModelMetaTooltip = styled(Tooltip)`
+  &.cogs-tooltip-wrapped {
+    .tippy-content {
+      max-width: 300px;
+      width: 300px;
+      max-height: 400px;
+      overflow: auto;
+    }
+  }
+`;
 const AdditionalMetadataContainer = styled.div`
   padding: 5px;
+
   > dl {
     padding: 2px;
     display: grid;
     grid-template-columns: 1.5fr 1fr;
     margin: 0;
-    align-items: center;
+    align-items: start;
+
+    > dt {
+      margin-right: 1rem;
+    }
+
     > dd {
       margin: 0;
     }
