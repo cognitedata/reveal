@@ -49,19 +49,34 @@ export type RelationshipTypeLabels = { externalId: string }[];
 type RelationshipLabelsOutput = {
   [key: string]: string[];
 };
+
 const extractRelationshipLabels = (
   pages: { items: Relationship[] }[] = []
 ): RelationshipLabelsOutput => {
   const labels = pages.reduce((accl, page) => {
     page.items.forEach(
       ({ labels: rlabels, sourceExternalId, targetExternalId }) => {
-        accl[sourceExternalId] = rlabels.map(label => label.externalId);
-        accl[targetExternalId] = rlabels.map(label => label.externalId);
+        const labelsExtracted = rlabels.map(label => label.externalId);
+        if (!accl[sourceExternalId]) {
+          accl[sourceExternalId] = labelsExtracted;
+        } else {
+          accl[sourceExternalId].push(...labelsExtracted);
+        }
+        if (!accl[targetExternalId]) {
+          accl[targetExternalId] = labelsExtracted;
+        } else {
+          accl[targetExternalId].push(...labelsExtracted);
+        }
       }
     );
     return accl;
   }, {} as RelationshipLabelsOutput);
-  return labels;
+
+  return Object.keys(labels).reduce((acc, item) => {
+    const value = Array.from(new Set(labels[item]));
+
+    return { ...acc, [item]: value };
+  }, {} as RelationshipLabelsOutput);
 };
 
 export const useRelationships = (externalId?: string, type?: ResourceType) => {
