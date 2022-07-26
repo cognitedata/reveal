@@ -1,5 +1,4 @@
 import React, { ReactText, useCallback, useMemo } from 'react';
-import { Detail, Icon, Tooltip } from '@cognite/cogs.js';
 import {
   annotationCategoryTitle,
   annotationObjectsName,
@@ -294,25 +293,12 @@ export const AnnotationDetailPanel = ({
   );
 
   return (
-    <AnnotationDetailPanelHotKeys
-      nodeTree={rootNodeArr}
-      scrollId={scrollId}
-      file={file}
-    >
-      <Container>
-        <Detail style={{ color: '#595959' }}>
-          {'Approve and reject detected annotations '}
-          <Tooltip
-            wrapped
-            content={`
-                Pressing True or False will label the predictions in order to
-                improve the future quality of the annotation detection. Pressing
-                False will not delete the annotation.`}
-          >
-            <Icon style={{ color: '#BFBFBF' }} type="HelpFilled" />
-          </Tooltip>
-        </Detail>
-
+    <Container>
+      <AnnotationDetailPanelHotKeys
+        nodeTree={rootNodeArr}
+        scrollId={scrollId}
+        file={file}
+      >
         <TableContainer>
           <VirtualizedReviewAnnotations
             rootNodeArr={rootNodeArr}
@@ -320,21 +306,18 @@ export const AnnotationDetailPanel = ({
             showEditOptions={showEditOptions}
           />
         </TableContainer>
-      </Container>
-    </AnnotationDetailPanelHotKeys>
+      </AnnotationDetailPanelHotKeys>
+    </Container>
   );
 };
 
 const Container = styled.div`
   height: 100%;
   width: 100%;
-  display: grid;
-  grid-template-rows: auto calc(100% - 50px);
-  padding-top: 15px;
+  padding: 15px 0;
   box-sizing: border-box;
 `;
 
 const TableContainer = styled.div`
-  border: 1px solid #d9d9d9;
-  border-radius: 4px;
+  height: 100%;
 `;

@@ -1,7 +1,6 @@
 import { Button, Icon, toast } from '@cognite/cogs.js';
 import { notification } from 'antd';
 import React from 'react';
-import { ToastContentProps } from 'react-toastify/dist/types';
 import styled from 'styled-components';
 
 const WarnIconContainer = styled.div`
@@ -41,7 +40,7 @@ export class ToastUtils {
   ) {
     const key = `open${Date.now()}`;
 
-    const toastContent = (props: ToastContentProps) => {
+    const toastContent = (props: { closeToast: () => void }) => {
       const btn = (
         <Button
           type="danger"
