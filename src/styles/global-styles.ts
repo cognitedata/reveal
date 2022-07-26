@@ -47,7 +47,7 @@ const GlobalStyle = createGlobalStyle<{ theme: typeof theme }>`
     text-shadow: 0 0 0.25px currentColor;
   }
 
-  // TODO: This can be removed when Cogs fix styles of Dropdown
+  // TODO: This can be removed when Cogs fix styles of Dropdown [CDS-1111](https://cognitedata.atlassian.net/browse/CDS-1111?atlOrigin=eyJpIjoiOTkyMDc2ZTIwMTlmNDJjY2E5MTlhYmYyODdjYzUzMmEiLCJwIjoiamlyYS1zbGFjay1pbnQifQ)
   .cogs-tooltip {
     padding: 8px 8px;
   }
