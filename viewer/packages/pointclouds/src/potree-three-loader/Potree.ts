@@ -75,7 +75,7 @@ export class Potree implements IPotree {
   private readonly _throttledUpdateFunc = throttle((pointClouds: PointCloudOctree[],
                                                     camera: THREE.Camera,
                                                     renderer: WebGLRenderer) =>
-    this.innerUpdatePointClouds(pointClouds, camera, renderer), 1000);
+    this.innerUpdatePointClouds(pointClouds, camera, renderer), 300);
 
   maxNumNodesLoading: number = MAX_NUM_NODES_LOADING;
   features = FEATURES;
