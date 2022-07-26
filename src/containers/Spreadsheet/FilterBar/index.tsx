@@ -11,6 +11,7 @@ import { FilterItem, FilterType } from 'components/FilterItem';
 import { Actions } from './Actions';
 import RowCount from './RowCount';
 import TableLastUpdatedTime from './TableLastUpdatedTime';
+import { useTranslation } from 'common/i18n';
 
 type Props = {
   className?: string;
@@ -29,6 +30,7 @@ export const FilterBar = ({
   isTableLastUpdatedTimeFetched,
   tableLastUpdatedTime,
 }: Props): JSX.Element => {
+  const { t } = useTranslation();
   const {
     filters,
     columnTypeFilters,
@@ -49,7 +51,7 @@ export const FilterBar = ({
     >
       <FilterBar.List justifyContent="center" alignItems="center">
         <Input
-          placeholder="Search column name"
+          placeholder={t('spreadsheet-filter-search-placeholder')}
           value={columnNameFilter}
           onChange={onColumnFilterChange}
           disabled={isEmpty}
@@ -58,7 +60,9 @@ export const FilterBar = ({
         <FilterBar.Buttons justifyContent="center" alignItems="center">
           {!areTypesFetched ? (
             <>
-              <Body level={2}> Running data profiling...</Body>
+              <Body level={2}>
+                {t('spreadsheet-filter-buttons-running-profiling')}
+              </Body>
               <Icon type="Loader" className="load-icon" />
             </>
           ) : (

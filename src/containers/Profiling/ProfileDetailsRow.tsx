@@ -4,6 +4,7 @@ import { Flex, Colors } from '@cognite/cogs.js';
 
 import { Section, DATA_MISSING } from 'components/ProfilingSection';
 import { BooleanProfile, ColumnProfile } from 'hooks/profiling-service';
+import { useTranslation } from 'common/i18n';
 
 type Props = {
   allCount: number;
@@ -33,21 +34,34 @@ export default function ProfileDetailsRow({ allCount, profile }: Props) {
 }
 
 const ProfilingDataString = ({ allCount, profile }: Props) => {
+  const { t } = useTranslation();
   const { distinctCount, counts, count, nullCount, min, max, histogram } =
     profile;
   return (
     <>
-      <Section title="Numerical statistics">
+      <Section title={t('profiling-row-numbers-title')}>
         <StyledStatisticsRow direction="row" wrap="wrap">
           <NumberOrMissingSummary
-            label="Distinct values"
+            label={t('profiling-row-numbers-distinct-values')}
             value={distinctCount}
             isHalf={false}
           />
-          <NumberOrMissingSummary label="Non-empty" value={count} />
-          <NumberOrMissingSummary label="Empty" value={nullCount} />
-          <NumberOrMissingSummary label="Minimum length" value={min} />
-          <NumberOrMissingSummary label="Maximum length" value={max} />
+          <NumberOrMissingSummary
+            label={t('profiling-row-numbers-non-empty')}
+            value={count}
+          />
+          <NumberOrMissingSummary
+            label={t('profiling-row-numbers-empty')}
+            value={nullCount}
+          />
+          <NumberOrMissingSummary
+            label={t('profiling-row-numbers-minimum-length')}
+            value={min}
+          />
+          <NumberOrMissingSummary
+            label={t('profiling-row-numbers-maximum-length')}
+            value={max}
+          />
         </StyledStatisticsRow>
       </Section>
       <Section.Frequency counts={counts} allCount={allCount} />
@@ -57,6 +71,7 @@ const ProfilingDataString = ({ allCount, profile }: Props) => {
 };
 
 const ProfilingDataNumber = ({ allCount, profile }: Props) => {
+  const { t } = useTranslation();
   const {
     distinctCount,
     counts,
@@ -71,20 +86,41 @@ const ProfilingDataNumber = ({ allCount, profile }: Props) => {
   } = profile;
   return (
     <>
-      <Section title="Numerical statistics">
+      <Section title={t('profiling-row-numbers-title')}>
         <StyledStatisticsRow direction="row" wrap="wrap">
           <NumberOrMissingSummary
-            label="Distinct values"
+            label={t('profiling-row-numbers-distinct-values')}
             value={distinctCount}
             isHalf={false}
           />
-          <NumberOrMissingSummary label="Non-empty" value={count} />
-          <NumberOrMissingSummary label="Empty" value={nullCount} />
-          <NumberOrMissingSummary label="Min" value={min} />
-          <NumberOrMissingSummary label="Max" value={max} />
-          <NumberOrMissingSummary label="Mean" value={mean} />
-          <NumberOrMissingSummary label="Median" value={median} />
-          <NumberOrMissingSummary label="Standard deviation" value={std} />
+          <NumberOrMissingSummary
+            label={t('profiling-row-numbers-non-empty')}
+            value={count}
+          />
+          <NumberOrMissingSummary
+            label={t('profiling-row-numbers-empty')}
+            value={nullCount}
+          />
+          <NumberOrMissingSummary
+            label={t('profiling-row-numbers-minimum-length')}
+            value={min}
+          />
+          <NumberOrMissingSummary
+            label={t('profiling-row-numbers-maximum-length')}
+            value={max}
+          />
+          <NumberOrMissingSummary
+            label={t('profiling-row-numbers-mean')}
+            value={mean}
+          />
+          <NumberOrMissingSummary
+            label={t('profiling-row-numbers-medium')}
+            value={median}
+          />
+          <NumberOrMissingSummary
+            label={t('profiling-row-numbers-standard-deviation')}
+            value={std}
+          />
         </StyledStatisticsRow>
       </Section>
       <Section.Frequency counts={counts} allCount={allCount} />
@@ -94,17 +130,30 @@ const ProfilingDataNumber = ({ allCount, profile }: Props) => {
 };
 
 const ProfilingDataBoolean = ({ allCount, profile }: Props) => {
+  const { t } = useTranslation();
   const { counts, count, nullCount, profile: boolProfile } = profile;
   const { trueCount } = boolProfile as BooleanProfile;
   const falseCount = count - trueCount - nullCount;
   return (
     <>
-      <Section title="Numerical statistics">
+      <Section title={t('profiling-row-numbers-title')}>
         <StyledStatisticsRow direction="row" wrap="wrap">
-          <NumberOrMissingSummary label="True" value={trueCount} />
-          <NumberOrMissingSummary label="False" value={falseCount} />
-          <NumberOrMissingSummary label="Non-empty" value={count} />
-          <NumberOrMissingSummary label="Empty" value={nullCount} />
+          <NumberOrMissingSummary
+            label={t('profiling-row-numbers-true')}
+            value={trueCount}
+          />
+          <NumberOrMissingSummary
+            label={t('profiling-row-numbers-false')}
+            value={falseCount}
+          />
+          <NumberOrMissingSummary
+            label={t('profiling-row-numbers-non-empty')}
+            value={count}
+          />
+          <NumberOrMissingSummary
+            label={t('profiling-row-numbers-empty')}
+            value={nullCount}
+          />
         </StyledStatisticsRow>
       </Section>
       <Section.Frequency counts={counts} allCount={allCount} />

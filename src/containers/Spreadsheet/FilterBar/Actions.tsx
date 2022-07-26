@@ -13,8 +13,10 @@ import { useActiveTableContext } from 'contexts';
 import { rowKey } from 'hooks/sdk-queries';
 
 import { Menu } from './Menu';
+import { useTranslation } from 'common/i18n';
 
 export const Actions = (): JSX.Element => {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
   const { flow } = getFlow();
   const { data: hasWriteAccess } = usePermissions(flow, 'rawAcl', 'WRITE');
@@ -28,7 +30,7 @@ export const Actions = (): JSX.Element => {
         hasWriteAccess={hasWriteAccess}
         onClick={() => setCSVModalVisible(true)}
       >
-        Add new data
+        {t('spreadsheet-filter-add-new-data')}
       </AccessButton>
       <Dropdown content={<Menu />}>
         <Button

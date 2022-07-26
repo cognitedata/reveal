@@ -8,6 +8,7 @@ import { useColumnType } from 'hooks/profiling-service';
 
 import { FilterBar } from './FilterBar';
 import { Table } from './Table';
+import { useTranslation } from 'common/i18n';
 
 const Loading = styled.p<{ $visible: boolean }>`
   position: absolute;
@@ -24,6 +25,7 @@ const Loading = styled.p<{ $visible: boolean }>`
 `;
 
 export const Spreadsheet = (): JSX.Element => {
+  const { t } = useTranslation();
   const { database, table } = useActiveTableContext();
   const {
     rows,
@@ -65,7 +67,7 @@ export const Spreadsheet = (): JSX.Element => {
           />
           <Loading $visible={isFetched && isFetching}>
             <Icon type="Loader" size={12} style={{ marginRight: 8 }} />
-            Loading more data
+            {t('spreadsheet-loading-more-data')}
           </Loading>
         </>
       )}

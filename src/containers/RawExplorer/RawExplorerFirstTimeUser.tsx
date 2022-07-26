@@ -5,28 +5,31 @@ import { Carousel } from 'antd';
 import styled from 'styled-components';
 
 import graphics from 'assets/graphics';
+import { useTranslation } from 'common/i18n';
 
 const FIRST_TIME_CAROUSEL_HEIGHT = 330;
 
-const carouselSlides = [
-  {
-    title: 'Get started with RAW Explorer.',
-    detail: 'Create databases to store and organize raw data in tables.',
-    imageSrc: graphics.SidePanelGraphic,
-  },
-  {
-    title: 'View and compare tables as tabs.',
-    detail: 'Open raw data in table format to compare and analyze the content.',
-    imageSrc: graphics.TabsGraphic,
-  },
-  {
-    title: 'Analyze and inspect your data.',
-    detail: 'Discover, analyze, and understand critical patterns in your data.',
-    imageSrc: graphics.ProfilingGraphic,
-  },
-];
-
 const RawExplorerFirstTimeUser = (): JSX.Element => {
+  const { t } = useTranslation();
+
+  const carouselSlides = [
+    {
+      title: t('first-time-user-title-get-started'),
+      detail: t('first-time-user-detail-get-started'),
+      imageSrc: graphics.SidePanelGraphic,
+    },
+    {
+      title: t('first-time-user-title-view-compare'),
+      detail: t('first-time-user-detail-view-compare'),
+      imageSrc: graphics.TabsGraphic,
+    },
+    {
+      title: t('first-time-user-title-analyze-inspect'),
+      detail: t('first-time-user-detail-analyze-inspect'),
+      imageSrc: graphics.ProfilingGraphic,
+    },
+  ];
+
   return (
     <StyledRawExplorerFirstTimeWrapper>
       <StyledRawExplorerFirstTimeContent>

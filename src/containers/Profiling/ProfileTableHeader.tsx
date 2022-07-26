@@ -5,6 +5,7 @@ import { Colors, Icon } from '@cognite/cogs.js';
 import { ZIndexLayer } from 'utils/zIndex';
 import { TableCell } from './ProfileRow';
 import { SortableColumn } from '.';
+import { useTranslation } from 'common/i18n';
 
 type Props = {
   sortKey: SortableColumn;
@@ -14,6 +15,7 @@ type Props = {
 };
 
 export default function ProfileTableHeader(props: Props): JSX.Element {
+  const { t } = useTranslation();
   const { sortKey, setSortKey, sortReversed, setSortReversed } = props;
   const onSortClick = (key: SortableColumn) => {
     const reverse = sortKey === key;
@@ -27,33 +29,35 @@ export default function ProfileTableHeader(props: Props): JSX.Element {
           <Icon type="ReorderDefault" onClick={() => onSortClick('type')} />
         </TableCell>
         <TableCell>
-          Column
+          {t('profiling-table-header-column')}
           <Icon type="ReorderDefault" onClick={() => onSortClick('label')} />
         </TableCell>
         <TableCell>
-          Empty
+          {t('profiling-table-header-empty')}
           <Icon
             type="ReorderDefault"
             onClick={() => onSortClick('nullCount')}
           />
         </TableCell>
         <TableCell>
-          Distinct
+          {t('profiling-table-header-distinct')}
           <Icon
             type="ReorderDefault"
             onClick={() => onSortClick('distinctCount')}
           />
         </TableCell>
-        <TableCell $width={150}>Frequency</TableCell>
+        <TableCell $width={150}>
+          {t('profiling-table-header-frequency')}
+        </TableCell>
         <TableCell>
-          Min
+          {t('profiling-table-header-min')}
           <Icon type="ReorderDefault" onClick={() => onSortClick('min')} />
         </TableCell>
         <TableCell>
-          Max
+          {t('profiling-table-header-max')}
           <Icon type="ReorderDefault" onClick={() => onSortClick('max')} />
         </TableCell>
-        <TableCell>Mean</TableCell>
+        <TableCell>{t('profiling-table-header-mean')}</TableCell>
         <TableCell $width={68}>
           <StyledExpandTableHeaderIcon type="ChevronDown" />
         </TableCell>

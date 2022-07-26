@@ -12,6 +12,7 @@ import { ColumnProfile, useColumnType } from 'hooks/profiling-service';
 import { Graph } from './Distribution';
 import ProfileDetailsRow from './ProfileDetailsRow';
 import { reduceHistogramBins } from 'utils/utils';
+import { useTranslation } from 'common/i18n';
 
 type ProfileRowDataType = 'Empty' | 'Distinct' | 'Min' | 'Max' | 'Mean';
 
@@ -176,6 +177,7 @@ const NumberOrMissingTd = ({
   value?: number;
   children?: React.ReactNode;
 }) => {
+  const { t } = useTranslation();
   const getIsDataAvailable = (): boolean => {
     if (!columnType) return false;
     if (columnType === 'Key') return true;
@@ -186,7 +188,7 @@ const NumberOrMissingTd = ({
   if (!isDataAvailable) {
     return (
       <StyledJustifyCenter>
-        <Tooltip content="This information is not available for this data type">
+        <Tooltip content={t('profiling-row-tooltip-information-not-available')}>
           <CustomIcon icon="NotAvailable" style={{ width: 16 }} />
         </Tooltip>
       </StyledJustifyCenter>
@@ -200,7 +202,7 @@ const NumberOrMissingTd = ({
     </>
   ) : (
     <StyledJustifyCenter>
-      <Tooltip content="Unavailable due to error">
+      <Tooltip content={t('profiling-row-tooltip-error-not-available')}>
         <StyledInfoFilledIcon />
       </Tooltip>
     </StyledJustifyCenter>

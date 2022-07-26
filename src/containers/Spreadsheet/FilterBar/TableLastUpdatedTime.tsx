@@ -5,6 +5,7 @@ import moment from 'moment';
 import styled from 'styled-components';
 
 import Tooltip from 'components/Tooltip/Tooltip';
+import { useTranslation } from 'common/i18n';
 
 type TableLastUpdatedTimeProps = {
   isTableLastUpdatedTimeFetched?: boolean;
@@ -15,6 +16,8 @@ const TableLastUpdatedTime = ({
   isTableLastUpdatedTimeFetched,
   tableLastUpdatedTime,
 }: TableLastUpdatedTimeProps): JSX.Element => {
+  const { t } = useTranslation();
+
   if (!isTableLastUpdatedTimeFetched) {
     <StyledLastUpdatedTimeLoaderIcon type="Loader" />;
   }
@@ -33,7 +36,9 @@ const TableLastUpdatedTime = ({
         strong
         style={{ display: 'flex', alignItems: 'center' }}
       >
-        Last updated time: {moment(tableLastUpdatedTime).format('DD/MM/YYYY')}
+        {t('last-updated-time', {
+          time: moment(tableLastUpdatedTime).format('DD/MM/YYYY'),
+        })}
       </StyledLastUpdatedTimeBody>
     </Tooltip>
   );
