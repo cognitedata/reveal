@@ -36,10 +36,18 @@ generate_package_json_helpers(
 ### start of auto-generated helpers ###
 
 # Dependencies from package.json
-DEPENDENCIES = []
+DEPENDENCIES = [
+    "@npm//@cognite/sdk",
+    "@npm//@cognite/seismic-sdk-js",
+    "@npm//lodash",
+    "@npm//react-query",
+    "@npm//moment",
+]
 
 # Type dependencies from package.json
-TYPE_DEPENDENCIES = []
+TYPE_DEPENDENCIES = [
+    "@npm//@types/lodash",
+]
 
 # Dev dependencies from package.json
 DEV_DEPENDENCIES = []
