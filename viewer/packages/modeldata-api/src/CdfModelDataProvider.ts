@@ -18,6 +18,7 @@ export class CdfModelDataProvider implements ModelDataProvider {
   }
 
   public async getBinaryFile(baseUrl: string, fileName: string): Promise<ArrayBuffer> {
+    console.time(`getting binary file ${fileName}`);
     const url = `${baseUrl}/${fileName}`;
     const headers = {
       ...this.client.getDefaultRequestHeaders(),
@@ -27,7 +28,10 @@ export class CdfModelDataProvider implements ModelDataProvider {
     const response = await this.fetchWithRetry(url, { headers, method: 'GET' }).catch(_err => {
       throw Error('Could not download binary file');
     });
-    return response.arrayBuffer();
+    const array = await response.arrayBuffer();
+
+    console.timeEnd(`getting binary file ${fileName}`);
+    return array;
   }
 
   async getJsonFile(baseUrl: string, fileName: string): Promise<any> {
