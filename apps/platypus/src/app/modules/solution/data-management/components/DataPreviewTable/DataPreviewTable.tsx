@@ -83,10 +83,7 @@ export const DataPreviewTable = ({
                     response.data.pages.flatMap((page) => page.items).length
                   );
                 } else {
-                  params.successCallback(
-                    response.data.pages.flatMap((page) => page.items),
-                    -1
-                  );
+                  params.successCallback(lastPage.items, -1);
                 }
               }
             })
