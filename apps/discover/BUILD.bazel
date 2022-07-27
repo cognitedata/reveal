@@ -517,6 +517,7 @@ CYPRESS_EXTERNAL_FILES = [
     "src/pages/authorized/admin/feedback/constants.ts",
     "src/domain/feedback/service/__fixtures/getDocumentFeedback.ts",
     "src/domain/feedback/service/__fixtures/getGeneralFeedback.ts",
+    "src/pages/authorized/search/well/inspect/modules/ndsEvents/components/Filters/constants.ts",
 ]
 
 CYPRESS_FILES = _CYPRESS_FILES + CYPRESS_EXTERNAL_FILES

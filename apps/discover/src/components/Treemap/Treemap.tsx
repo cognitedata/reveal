@@ -58,6 +58,7 @@ export const Treemap: React.FC<Props> = ({
         }
       })
       .attr('class', 'node rect')
+      .attr('data-testid', 'treemap-tile')
       .style('left', (node) => `${node.x0}px`)
       .style('top', (node) => `${node.y0}px`)
       .style('width', (node) => `${node.x1 - node.x0}px`)
@@ -69,7 +70,8 @@ export const Treemap: React.FC<Props> = ({
     nodes
       .append('p')
       .text((node) => `${node.data?.title || ''}`)
-      .attr('class', 'title-text');
+      .attr('class', 'title-text')
+      .attr('data-testid', 'treemap-tile-title');
 
     // description
     nodes
