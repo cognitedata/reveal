@@ -16,6 +16,7 @@ export const StyledTable = styled.table`
   border-radius: 8px;
   font-family: 'Inter';
   overflow: hidden;
+  margin-bottom: 12px;
 
   thead {
     tr {

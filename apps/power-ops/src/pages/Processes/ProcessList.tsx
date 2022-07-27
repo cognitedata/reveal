@@ -1,4 +1,5 @@
 import { Flex, Label, Pagination } from '@cognite/cogs.js';
+import { RANGE_OPTIONS } from '@cognite/cogs.js/dist/esm/Components/Pagination/types';
 import dayjs from 'dayjs';
 import { useEffect, useMemo, useRef } from 'react';
 import {
@@ -177,13 +178,12 @@ const ProcessTable = ({
       </StyledTable>
       <Flex style={{ justifyContent: 'center', alignItems: 'center' }}>
         <Pagination
-          current={pageIndex + 1}
-          defaultCurrent={pageIndex + 1}
-          total={pageOptions.length * pageSize}
-          pageSize={pageSize}
-          onChange={(x) => gotoPage(() => x - 1)}
+          initialCurrentPage={pageIndex + 1}
+          totalPages={pageOptions.length}
+          itemsPerPage={pageSize as typeof RANGE_OPTIONS[number]}
+          onPageChange={(x) => gotoPage(() => x - 1)}
+          hideItemsPerPage
         />
-        <div>of {pageOptions.length}</div>
       </Flex>
     </div>
   );
