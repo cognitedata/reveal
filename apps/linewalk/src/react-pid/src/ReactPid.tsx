@@ -11,6 +11,7 @@ import {
   saveGraphAsJson,
   PathReplacementGroup,
   DiagramTag,
+  DiagramInstanceId,
 } from '@cognite/pid-tools';
 import React, { useCallback, useEffect, useState } from 'react';
 import { Loader } from '@cognite/cogs.js';
@@ -70,6 +71,8 @@ export const ReactPid = ({
   const [lineNumbers, setLineNumbers] = useState<string[]>([]);
   const [activeLineNumber, setActiveLineNumber] = useState<string | null>(null);
   const [activeTagId, setActiveTagId] = useState<string | null>(null);
+  const [labelSelection, setLabelSelection] =
+    useState<DiagramInstanceId | null>(null);
 
   useEffect(() => {
     setShowLoader(isAnalyzing || isLoading);
@@ -136,6 +139,12 @@ export const ReactPid = ({
       pidViewer.current.onChangeSymbolInstances(setSymbolInstances);
     }
   }, [setSymbolInstances]);
+
+  useEffect(() => {
+    if (pidViewer.current) {
+      pidViewer.current.onChangeLabelSelection(setLabelSelection);
+    }
+  }, [setLabelSelection]);
 
   useEffect(() => {
     if (pidViewer.current) {
@@ -345,7 +354,9 @@ export const ReactPid = ({
           symbols={symbols}
           lines={lines}
           symbolInstances={symbolInstances}
+          setSymbolInstances={setSymbolInstances}
           symbolSelection={symbolSelection}
+          labelSelection={labelSelection}
           loadJson={loadJson}
           addSymbolFromSymbolSelection={addSymbolFromSymbolSelection}
           connections={connections}

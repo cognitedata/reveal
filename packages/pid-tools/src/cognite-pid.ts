@@ -106,6 +106,9 @@ type PathReplacmentCallback = (
 ) => void;
 type LineNumbersCallback = (lineNumbers: string[]) => void;
 type DocumentMetadataCallback = (documentMetadata: DocumentMetadata) => void;
+type DiagramInstanceIdCallback = (
+  diagramInstanceId: DiagramInstanceId | null
+) => void;
 
 export interface AddSymbolData {
   symbolType: SymbolType;
@@ -173,8 +176,10 @@ export class CognitePid {
   private documentMetadata: DocumentMetadata | undefined = undefined;
   private documentMetadataSubscriber: DocumentMetadataCallback | undefined;
 
-  private connectionSelection: DiagramInstanceId | null = null;
   private labelSelection: DiagramInstanceId | null = null;
+  private labelSelectionSubscriber: DiagramInstanceIdCallback | undefined;
+
+  private connectionSelection: DiagramInstanceId | null = null;
   private splitSelection: string | null = null;
 
   private pathReplacementGroups: PathReplacementGroup[] = [];
@@ -574,21 +579,31 @@ export class CognitePid {
     this.pathReplacementsSubscriber = callback;
   }
 
-  private setConnectionSelection(
-    connectionSelection: DiagramInstanceId | null,
-    refresh = true
-  ) {
-    this.connectionSelection = connectionSelection;
+  setLabelSelection(labelSelection: DiagramInstanceId | null, refresh = true) {
+    this.labelSelection = labelSelection;
+    if (this.labelSelectionSubscriber) {
+      this.labelSelectionSubscriber(labelSelection);
+    } else {
+      console.warn(
+        'PID: Called this.setLabelSelection without this.labelSelectionSubscriber'
+      );
+    }
     if (refresh) {
       this.refresh();
     }
   }
 
-  private setLabelSelection(
-    labelSelection: DiagramInstanceId | null,
+  onChangeLabelSelection(
+    callback: (labelSelection: DiagramInstanceId | null) => void
+  ) {
+    this.labelSelectionSubscriber = callback;
+  }
+
+  private setConnectionSelection(
+    connectionSelection: DiagramInstanceId | null,
     refresh = true
   ) {
-    this.labelSelection = labelSelection;
+    this.connectionSelection = connectionSelection;
     if (refresh) {
       this.refresh();
     }

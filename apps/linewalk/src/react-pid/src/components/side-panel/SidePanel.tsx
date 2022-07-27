@@ -10,6 +10,7 @@ import {
   PathReplacementGroup,
   AddSymbolData,
   DiagramTag,
+  DiagramInstanceId,
 } from '@cognite/pid-tools';
 
 import { CollapsableInstanceList } from './CollapsableInstanceList';
@@ -17,6 +18,7 @@ import { FileController } from './FileController';
 import { AddSymbolController } from './AddSymbolController';
 import { AddLineNumberController } from './AddLineNumberController';
 import { DocumentInfo } from './DocumentInfo';
+import { AddAssetController } from './AddAssetController';
 
 const SidePanelWrapper = styled.div`
   display: grid;
@@ -40,7 +42,9 @@ interface SidePanelProps {
   symbols: DiagramSymbol[];
   lines: DiagramLineInstance[];
   symbolInstances: DiagramSymbolInstance[];
+  setSymbolInstances: (arg: DiagramSymbolInstance[]) => void;
   symbolSelection: string[];
+  labelSelection: DiagramInstanceId | null;
   loadJson: (json: Record<string, unknown>) => void;
   addSymbolFromSymbolSelection: (options: AddSymbolData) => void;
   deleteSymbol: (symbol: DiagramSymbol) => void;
@@ -75,7 +79,9 @@ export const SidePanel = ({
   symbols,
   lines,
   symbolInstances,
+  setSymbolInstances,
   symbolSelection,
+  labelSelection,
   loadJson,
   addSymbolFromSymbolSelection,
   deleteSymbol,
@@ -153,6 +159,14 @@ export const SidePanel = ({
             setLineNumbers={setLineNumbers}
             activeLineNumber={activeLineNumber}
             setActiveLineNumber={setActiveLineNumber}
+          />
+        )}
+        {activeTool === 'connectLabels' && (
+          <AddAssetController
+            documentMetadata={documentMetadata}
+            symbolInstances={symbolInstances}
+            setSymbolInstances={setSymbolInstances}
+            labelSelection={labelSelection}
           />
         )}
       </div>

@@ -39,6 +39,8 @@ export interface DiagramInstance {
   type: DiagramAnnotationType;
   labelIds: string[];
   assetExternalId?: string;
+  assetId?: number;
+  assetName?: string;
   lineNumbers: string[];
   inferedLineNumbers: string[];
 }
