@@ -87,6 +87,9 @@ describe('Data Model Page - Local Drafts', () => {
     cy.get('.monaco-editor textarea:first')
       .type('{selectAll}')
       .should('not.have.text', 'type Currency');
+
+    // Edit button is visible again
+    cy.getBySel('edit-schema-btn').should('be.visible');
   });
 
   it('publishes draft', () => {
@@ -97,5 +100,8 @@ describe('Data Model Page - Local Drafts', () => {
     cy.getBySel('toast-title').should('have.text', 'Data model updated');
 
     cy.ensureCurrentVersionIsNotDraft();
+
+    // Edit button is visible again
+    cy.getBySel('edit-schema-btn').should('be.visible');
   });
 });

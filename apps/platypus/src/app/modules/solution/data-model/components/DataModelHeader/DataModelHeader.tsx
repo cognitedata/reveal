@@ -2,7 +2,6 @@ import { PageToolbar } from '@platypus-app/components/PageToolbar/PageToolbar';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import { SchemaVersionDropdown } from '@platypus-app/modules/solution/components/SchemaVersionDropdown/SchemaVersionDropdown';
 import { DataModelVersion } from '@platypus/platypus-core';
-import { useHistory } from 'react-router-dom';
 import { SchemaEditorMode } from '../../types';
 import { SelectorWrapper } from './elements';
 
@@ -18,7 +17,6 @@ export interface DataModelHeaderProps {
 
 export const DataModelHeader = (props: DataModelHeaderProps) => {
   const { t } = useTranslation('DataModelHeader');
-  const history = useHistory();
 
   return (
     <div>
@@ -29,9 +27,6 @@ export const DataModelHeader = (props: DataModelHeaderProps) => {
             {props.schemas.length && props.selectedDataModelVersion ? (
               <SchemaVersionDropdown
                 onVersionSelect={(solutionSchema) => {
-                  history.replace(
-                    `/data-models/${props.solutionId}/${solutionSchema.version}/data`
-                  );
                   props.onSelectDataModelVersion(solutionSchema);
                 }}
                 selectedVersion={props.selectedDataModelVersion}

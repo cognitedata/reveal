@@ -32,7 +32,7 @@ import { Spinner } from '@platypus-app/components/Spinner/Spinner';
 import { ErrorBoundary } from '@platypus-app/components/ErrorBoundary/ErrorBoundary';
 import { ErrorPlaceholder } from '../components/ErrorBoundary/ErrorPlaceholder';
 import { useLocalDraft } from '@platypus-app/modules/solution/data-model/hooks/useLocalDraft';
-import { DiscardButton } from './elements';
+import { DiscardButton, ReturnButton } from './elements';
 import { useInjection } from '@platypus-app/hooks/useInjection';
 import {
   useDataModelVersions,
@@ -77,6 +77,11 @@ export const DataModelPage = ({ dataModelExternalId }: DataModelPageProps) => {
     dataModelVersions || [],
     dataModelExternalId
   );
+  const latestDataModelVersion = useSelectedDataModelVersion(
+    DEFAULT_VERSION_PATH,
+    dataModelVersions || [],
+    dataModelExternalId
+  );
   const localDraft = getLocalDraft(selectedDataModelVersion.version);
 
   const [mode, setMode] = useState<SchemaEditorMode>(
@@ -105,7 +110,11 @@ export const DataModelPage = ({ dataModelExternalId }: DataModelPageProps) => {
         ? SchemaEditorMode.Edit
         : SchemaEditorMode.View
     );
+    history.replace(
+      `/data-models/${dataModelExternalId}/${dataModelVersion.version}/data`
+    );
   };
+
   useEffect(() => {
     function fetchSchemaAndTypes() {
       const builtInTypesResponse = dataModelTypeDefsBuilder.getBuiltinTypes();
@@ -262,7 +271,9 @@ export const DataModelPage = ({ dataModelExternalId }: DataModelPageProps) => {
 
   const renderTools = () => {
     const onEditClick = () => {
-      if (!localDraft) {
+      if (localDraft) {
+        setGraphQlSchema(localDraft.schema);
+      } else {
         setLocalDraft({
           ...selectedDataModelVersion,
           status: DataModelVersionStatus.DRAFT,
@@ -286,6 +297,11 @@ export const DataModelPage = ({ dataModelExternalId }: DataModelPageProps) => {
       setSelectedVersionNumber(DEFAULT_VERSION_PATH);
       setInit(false);
     };
+
+    const onReturnToLatestClick = () => {
+      onSelectDataModelVersion(latestDataModelVersion);
+    };
+
     if (mode === SchemaEditorMode.Edit) {
       return (
         <div data-cy="data-model-toolbar-actions" style={{ display: 'flex' }}>
@@ -316,6 +332,38 @@ export const DataModelPage = ({ dataModelExternalId }: DataModelPageProps) => {
             {t('publish', 'Publish')}
           </Button>
         </div>
+      );
+    }
+
+    if (selectedDataModelVersion.version !== latestDataModelVersion.version) {
+      return (
+        <Flex
+          className="cogs-body-2 strong"
+          style={{
+            backgroundColor: 'var(--cogs-border--status-warning--muted)',
+            borderRadius: '6px',
+            flexGrow: 1,
+            height: '36px',
+            marginLeft: '8px',
+            padding: '0 12px',
+          }}
+        >
+          <Flex
+            alignItems="center"
+            justifyContent="space-between"
+            style={{ flexGrow: 1 }}
+          >
+            {t('viewing_older_version', 'You are viewing an older version')}
+            <ReturnButton
+              data-cy="return-to-latest-btn"
+              iconPlacement="left"
+              icon="Reply"
+              onClick={onReturnToLatestClick}
+            >
+              {t('return_to_latest', 'Return to latest')}
+            </ReturnButton>
+          </Flex>
+        </Flex>
       );
     }
 

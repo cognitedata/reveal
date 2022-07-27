@@ -45,8 +45,22 @@ describe('Data Model Page - Publish new schema', () => {
     cy.getBySel('edit-schema-btn').click();
 
     cy.editDataModelTypeFieldName('User', 'name', 'userName');
-    // eslint-disable-next-line
-    cy.wait(500);
+
+    // click to select published v1, new field is not there
+    cy.getBySel('schema-version-select').click().contains('Latest').click();
+    cy.getBySel('type-list-item-User').click();
+    cy.getBySel('schema-type-field').should('have.value', 'name');
+
+    // click to select local draft again, new field is there
+    cy.getBySel('schema-version-select').click().contains('draft').click();
+    cy.getBySel('type-list-item-User').click();
+    cy.getBySel('schema-type-field').should('have.value', 'userName');
+
+    // click to select published v1, then click edit, new field is there
+    cy.getBySel('schema-version-select').click().contains('Latest').click();
+    cy.getBySel('edit-schema-btn').click();
+    cy.getBySel('type-list-item-User').click();
+    cy.getBySel('schema-type-field').should('have.value', 'userName');
 
     cy.getBySel('publish-schema-btn').click();
 
@@ -61,6 +75,14 @@ describe('Data Model Page - Publish new schema', () => {
     cy.ensureCurrentVersionIsNotDraft();
 
     cy.getBySel('schema-version-select').contains('v. 2');
+
+    // go to v1 and check that the edit button is not visible
+    cy.getBySel('schema-version-select').click().contains('v. 1').click();
+    cy.getBySel('edit-schema-btn').should('not.exist');
+
+    // click to return to latest and check we're on latest version again
+    cy.getBySel('return-to-latest-btn').click();
+    cy.getBySel('schema-version-select').contains('Latest');
 
     // Navigate to Query explorer page and make sure that we can run queries against updated schema
     cy.visit('/platypus/data-models/blog/latest/data/query-explorer');

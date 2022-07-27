@@ -59,7 +59,7 @@ export const PageToolbar = ({
 
         {behindTitle && <div>{behindTitle}</div>}
       </Flex>
-      {children && <Flex alignItems="center">{children}</Flex>}
+      {children}
     </Flex>
   );
 };
