@@ -181,20 +181,29 @@ const WizardContainer = styled.div`
   margin: 12px 0;
   display: flex;
   flex-flow: column nowrap;
-  gap: 24px;
+
   .rc-tabs {
     overflow: visible;
     flex: 1 1 auto;
     display: flex;
     flex-flow: column nowrap;
-    gap: 24px;
+    padding: 9.5rem 0 1.5rem;
   }
   .rt-tabs-tabpane {
     flex: 1 1 auto;
   }
 `;
 
-const WizardProgressContainer = styled.div``;
+const WizardProgressContainer = styled.div`
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(5px);
+  transform: translate(0, 0); // resets position:fixed (x,y) origin
+  width: calc(100% - 3rem);
+  position: fixed;
+  z-index: 4;
+  top: 8.75rem;
+  padding-bottom: 1rem;
+`;
 
 const WizardStepIcons = styled.div<{ steps: number; iconSize: number }>`
   display: flex;

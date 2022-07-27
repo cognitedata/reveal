@@ -202,9 +202,11 @@ export function CalculationConfiguration() {
 
   return (
     <CalculationConfigurationContainer>
-      <h2>
-        <strong>{nameFromConfiguration ?? calculationName}</strong>
-        <span>Configuration for {modelFile.metadata.modelName}</span>
+      <header>
+        <h2>
+          <strong>{nameFromConfiguration ?? calculationName}</strong>{' '}
+          Configuration for {modelFile.metadata.modelName}
+        </h2>
         {isEditing ? (
           <Link to="..">
             <Button icon="Info">Calculation details</Button>
@@ -213,7 +215,7 @@ export function CalculationConfiguration() {
         <Link to={modelLibraryPath}>
           <Button icon="ArrowLeft">Return to model library</Button>
         </Link>
-      </h2>
+      </header>
       {modelFile.metadata.modelType ? (
         <Formik
           initialValues={initialValues}
@@ -392,14 +394,28 @@ const ValidationErrorContainer = styled.section`
 
 const CalculationConfigurationContainer = styled.main`
   padding: 24px;
-  h2 {
+
+  header {
     display: flex;
     align-items: center;
     column-gap: 12px;
-    margin-bottom: 24px;
-    span:last-of-type {
+    padding: 1.5rem 0;
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(5px);
+
+    transform: translate(0, 0); // resets position:fixed (x,y) origin
+    width: calc(100% - 3rem);
+    position: fixed;
+    top: 3.5rem;
+    z-index: 3;
+
+    > h2 {
       flex: 1 1 auto;
     }
+  }
+
+  .cogs-infobox {
+    margin-top: 4.5rem;
   }
 `;
 
