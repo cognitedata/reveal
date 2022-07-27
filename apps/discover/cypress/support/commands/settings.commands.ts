@@ -7,6 +7,8 @@ const changeMeasurementUnit = (unit: string) => {
   cy.get('[aria-label="Settings"]').as('settingsBtn');
   cy.get('@settingsBtn').click();
 
+  cy.log(`changing the measurement unit: ${unit}`);
+  
   if (unit === 'Meter') {
     cy.getButton('Meter').click({ force: true }).should('be.focused');
   }
