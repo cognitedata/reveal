@@ -87,44 +87,47 @@ export const useRelationships = (externalId?: string, type?: ResourceType) => {
     });
   const enabled = !!(permissionFetched && hasRelationshipRead && !!externalId);
 
-  const sourceRelationships = useList<Relationship>(
+  const sourceRelationships = useInfiniteList<Relationship>(
     // @ts-ignore
     'relationships',
+    100,
     {
-      filter: {
-        sourceExternalIds: [externalId],
-        targetTypes: type ? [type] : undefined,
-      },
+      sourceExternalIds: [externalId],
+      targetTypes: type ? [type] : undefined,
     },
+
     { enabled, staleTime: 60 * 1000 }
   );
 
-  const targetRelationships = useList<Relationship>(
+  const targetRelationships = useInfiniteList<Relationship>(
     // @ts-ignore
     'relationships',
+    100,
     {
-      filter: {
-        targetExternalIds: [externalId],
-        sourceTypes: type ? [type] : undefined,
-      },
+      targetExternalIds: [externalId],
+      sourceTypes: type ? [type] : undefined,
     },
+
     { enabled, staleTime: 60 * 1000 }
   );
 
-  const data = (sourceRelationships.data || [])
+  const data = (sourceRelationships.data?.pages[0].items || [])
     .map(item => ({
       externalId: item.targetExternalId,
       type: item.targetType,
     }))
     .concat(
-      (targetRelationships.data || []).map(item => ({
+      (targetRelationships.data?.pages[0].items || []).map(item => ({
         externalId: item.sourceExternalId,
         type: item.sourceType,
       }))
     );
-
+  const hasNextPage =
+    sourceRelationships?.data?.pages[0].nextCursor ||
+    targetRelationships?.data?.pages[0].nextCursor;
   return {
     data,
+    hasMore: Boolean(hasNextPage),
     isFetching:
       sourceRelationships.isFetching || targetRelationships.isFetching,
     isFetched: sourceRelationships.isFetched && targetRelationships.isFetched,
@@ -401,6 +404,7 @@ export const useRelationshipCount = (
 ) => {
   const {
     data: relationships,
+    hasMore,
     isFetched,
     ...rest
   } = useRelationships(resource.externalId, type);
@@ -410,7 +414,7 @@ export const useRelationshipCount = (
     count = relationships.length;
   }
 
-  return { data: count, isFetched, ...rest };
+  return { data: count, hasMore, isFetched, ...rest };
 };
 
 export const useAnnotationCount = (
@@ -491,8 +495,11 @@ export const useRelatedResourceCount = (
       { enabled: isAsset && !!resource.id, staleTime: 60 * 1000 }
     );
 
-  const { data: relationships = [], isFetched: isRelationshipFetched } =
-    useRelationships(resource.externalId, tabType);
+  const {
+    data: relationships = [],
+    hasMore,
+    isFetched: isRelationshipFetched,
+  } = useRelationships(resource.externalId, tabType);
 
   type Item = {
     assetId?: string;
@@ -545,6 +552,7 @@ export const useRelatedResourceCount = (
   return {
     count: formatNumber(count),
     relationshipCount: relationships.length,
+    hasMoreRelationships: hasMore,
     assetIdCount,
     linkedResourceCount: isAssetTab
       ? Math.max((linkedResourceCount?.count ?? 1) - 1, 0)
@@ -557,12 +565,20 @@ export const useRelatedResourceCount = (
 
 export const useRelatedResourceCounts = (
   resource: ResourceItem
-): { counts: { [key in ResourceType]?: string } } => {
-  const { count: asset } = useRelatedResourceCount(resource, 'asset');
-  const { count: event } = useRelatedResourceCount(resource, 'event');
-  const { count: file } = useRelatedResourceCount(resource, 'file');
-  const { count: sequence } = useRelatedResourceCount(resource, 'sequence');
-  const { count: timeSeries } = useRelatedResourceCount(resource, 'timeSeries');
+): {
+  counts: { [key in ResourceType]?: string };
+  hasMoreRelationships: { [key in ResourceType]?: boolean };
+} => {
+  const { count: asset, hasMoreRelationships: assetRelation } =
+    useRelatedResourceCount(resource, 'asset');
+  const { count: event, hasMoreRelationships: eventRelation } =
+    useRelatedResourceCount(resource, 'event');
+  const { count: file, hasMoreRelationships: fileRelation } =
+    useRelatedResourceCount(resource, 'file');
+  const { count: sequence, hasMoreRelationships: sequenceRelation } =
+    useRelatedResourceCount(resource, 'sequence');
+  const { count: timeSeries, hasMoreRelationships: timeSeriesRelation } =
+    useRelatedResourceCount(resource, 'timeSeries');
 
   return {
     counts: {
@@ -571,6 +587,13 @@ export const useRelatedResourceCounts = (
       file,
       sequence,
       timeSeries,
+    },
+    hasMoreRelationships: {
+      asset: assetRelation,
+      event: eventRelation,
+      file: fileRelation,
+      sequence: sequenceRelation,
+      timeSeries: timeSeriesRelation,
     },
   };
 };
