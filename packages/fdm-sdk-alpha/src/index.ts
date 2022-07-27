@@ -9,6 +9,7 @@ import { createSchema } from './schema/createSchema';
 import { createSchemaVersion } from './schema/createSchemaVersion';
 import { listSchemas } from './schema/listSchemas';
 import { listSchemaVersions } from './schema/listSchemaVersions';
+import { getQueryCreator } from './schema/utils/getQueryCreator';
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 export const getCogniteClientFDM = () => {
@@ -30,6 +31,6 @@ export const getCogniteClientFDM = () => {
       models: byidsModels,
       spaces: byidsSpaces,
     },
-    update: {},
+    getQueryCreator,
   };
 };

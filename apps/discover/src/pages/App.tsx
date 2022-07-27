@@ -7,7 +7,7 @@ import { Providers as DiscoverProviders } from 'providers';
 import { ToastContainer } from '@cognite/cogs.js';
 import {
   isTest,
-  Container,
+  ContainerWithoutI18N,
   getProjectInfo,
   storage,
 } from '@cognite/react-container';
@@ -53,7 +53,7 @@ export const AppRoot: React.FC = () => {
   // ReduxProvider should be moved to the react-container
   return (
     <ReduxProvider store={store}>
-      <Container sidecar={SIDECAR}>
+      <ContainerWithoutI18N sidecar={SIDECAR}>
         <>
           <DevelopmentHelpers />
           <GlobalStyles />
@@ -64,7 +64,7 @@ export const AppRoot: React.FC = () => {
             <ApplicationRoutes project={possibleTenant} />
           </DiscoverProviders>
         </>
-      </Container>
+      </ContainerWithoutI18N>
     </ReduxProvider>
   );
 };

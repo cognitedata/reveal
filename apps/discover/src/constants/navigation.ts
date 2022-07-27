@@ -28,6 +28,8 @@ const ADMIN_FEEDBACK = `${ADMIN}/feedback`;
 const ADMIN_FEEDBACK_GENERAL = `${ADMIN_FEEDBACK}/general`;
 const ADMIN_FEEDBACK_DOCUMENT = `${ADMIN_FEEDBACK}/document`;
 
+const ADMIN_MAP_CONFIG = `${ADMIN}/mapConfig`;
+
 const ADMIN_PROJECT_CONFIG = `${ADMIN}/projectConfig`;
 const INTERNAL_PROJECT_CONFIG = '/__internal__/projectConfig';
 
@@ -71,6 +73,8 @@ const navigationConfig = {
   ADMIN_FEEDBACK,
   ADMIN_FEEDBACK_GENERAL,
   ADMIN_FEEDBACK_DOCUMENT,
+
+  ADMIN_MAP_CONFIG,
 
   ADMIN_PROJECT_CONFIG,
   INTERNAL_PROJECT_CONFIG,

@@ -1,22 +1,23 @@
 import { CogniteClient } from '@cognite/sdk';
 
+import { ExternalId } from '../types';
+
 import { DMSError, Response } from './types';
 
-type ExternalId = { externalId: string };
 type Node = {
-  [field: string]: Record<string, boolean | string | number>;
+  [field: string]: boolean | string | number;
 } & ExternalId;
 
 export const createNodes = async ({
   client,
-  modelName,
   items,
+  modelName,
   spaceName,
 }: {
   client: CogniteClient;
+  items: Node[];
   spaceName: string;
   modelName: string;
-  items: Node[];
 }): Promise<Response<unknown> | DMSError> => {
   try {
     const createNodesResponse = await client.post(
@@ -36,6 +37,13 @@ export const createNodes = async ({
 
     return createNodesResponse;
   } catch (error) {
-    return error as DMSError;
+    // cdf client is breaking our errors
+    // convert it back
+    return {
+      error: {
+        code: 500,
+        message: (error as Error).message,
+      },
+    } as DMSError;
   }
 };

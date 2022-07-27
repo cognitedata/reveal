@@ -133,6 +133,7 @@ DEPENDENCIES = [
     "@npm//typeface-inter",
     "@npm//uuid",
     "@npm//web-vitals",
+    "//packages/fdm-sdk-alpha",
     "//packages/metrics",
     "//packages/node-visualizer",
     "//packages/react-acl",

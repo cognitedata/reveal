@@ -79,6 +79,7 @@ const sidecarOverridesWithCustomFakeIdpUser: Partial<SidecarConfig> = {
 export type DiscoverSidecarConfig = SidecarConfig & {
   mixpanel: string;
   unleash: string;
+  useFDMConfig: boolean;
 };
 
 export const SIDECAR = {
@@ -90,6 +91,8 @@ export const SIDECAR = {
   }),
   // disableLegacyLogin: true, // for testing
   // disableAzureLogin: true, // for testing
+
+  useFDMConfig: false,
 
   enableUserManagement: true,
 

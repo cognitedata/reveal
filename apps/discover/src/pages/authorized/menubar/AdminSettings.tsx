@@ -7,6 +7,7 @@ import { Dropdown, Menu, TopBar } from '@cognite/cogs.js';
 import { useFlag } from '@cognite/react-feature-flags';
 
 import { Admin } from 'components/Admin';
+import { SIDECAR } from 'constants/app';
 import navigation from 'constants/navigation';
 import { useProjectConfigByKey } from 'hooks/useProjectConfig';
 import { useTranslation } from 'hooks/useTranslation';
@@ -16,6 +17,7 @@ import {
   ADMIN_CODE_DEFINITIONS_LINK_TEXT_KEY,
   ADMIN_FEEDBACK_LINK_TEXT_KEY,
   ADMIN_PROJECT_CONFIG_LINK_TEXT_KEY,
+  ADMIN_MAP_CONFIG,
   PATHNAMES,
 } from './constants';
 
@@ -29,6 +31,7 @@ interface Props {
 interface AdminMenuItems {
   key: string;
   name: string;
+  disabled?: boolean;
   configKey: string;
   onClick: () => void;
 }
@@ -78,7 +81,19 @@ export const AdminSettings: React.FC<Props> = ({
         handleNavigation(navigation.ADMIN_LEGEND, PATHNAMES.ADMIN);
       },
     },
+    {
+      key: 'ADMIN/MAP_CONFIG',
+      configKey: 'projectConfig',
+      disabled: !SIDECAR.useFDMConfig,
+      name: t(ADMIN_MAP_CONFIG) as string,
+      onClick: () => {
+        handleNavigation(navigation.ADMIN_MAP_CONFIG, PATHNAMES.ADMIN);
+      },
+    },
   ].filter((item) => {
+    if (item.disabled) {
+      return false;
+    }
     if (item.configKey === 'layers') {
       return layersEnabled;
     }

@@ -38,6 +38,8 @@ generate_package_json_helpers(
 # Dependencies from package.json
 DEPENDENCIES = [
     "@npm//@cognite/sdk",
+    "@npm//graphql",
+    "@npm//graphql-request",
 ]
 
 # Type dependencies from package.json
