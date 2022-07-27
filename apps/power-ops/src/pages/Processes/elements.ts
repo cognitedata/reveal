@@ -1,3 +1,4 @@
+import { Icon } from '@cognite/cogs.js';
 import styled from 'styled-components/macro';
 
 export const Header = styled.header`
@@ -39,6 +40,10 @@ export const StyledTable = styled.table`
 
       td {
         padding: 8px 16px 8px 16px;
+      }
+
+      &.all-processes:hover {
+        cursor: pointer;
       }
     }
   }
@@ -131,5 +136,42 @@ export const TableContainer = styled.div`
 
   .tableContainer {
     height: 100%;
+  }
+`;
+
+export const SubProcess = styled.div`
+  display: flex;
+  justify-content: space-between;
+
+  .cogs-tooltip__content {
+    display: flex;
+    align-items: center;
+    margin-right: 4px;
+
+    :not(:first-child) {
+      margin-left: 8px;
+    }
+  }
+`;
+
+export const StatusIcon = styled(Icon)`
+  border-radius: 5px;
+
+  &.triggered {
+    color: var(--cogs-border--status-undefined--muted);
+    box-shadow: 0px 0px 0px 2px var(--cogs-border--status-undefined--strong)
+      inset;
+  }
+  &.running {
+    color: var(--cogs-bg-status-small--accent);
+    box-shadow: 0px 0px 0px 2px var(--cogs-bg-status-small--accent) inset;
+  }
+  &.finished {
+    color: var(--cogs-border--status-success--muted);
+    box-shadow: 0px 0px 0px 2px var(--cogs-text-status-small--success) inset;
+  }
+  &.failed {
+    color: var(--cogs-border--status-critical--muted);
+    box-shadow: 0px 0px 0px 2px var(--cogs-text-status-small--danger) inset;
   }
 `;

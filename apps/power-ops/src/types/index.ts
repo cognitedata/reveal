@@ -36,3 +36,22 @@ export interface PriceAreaWithData extends PriceArea {
     matrixWithData: MatrixWithData;
   }[];
 }
+
+export type Statuses = {
+  failed: number;
+  finished: number;
+  triggered: number;
+  running: number;
+};
+
+export type Process = {
+  id: number;
+  cdfProject: string;
+  collectionId: number;
+  eventCreationTime: string;
+  eventStartTime: string;
+  eventEndTime: string;
+  eventExternalId: string;
+  eventType: string;
+  status: string;
+};

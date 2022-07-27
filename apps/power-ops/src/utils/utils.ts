@@ -6,6 +6,8 @@ import axios from 'axios';
 import dayjs from 'dayjs';
 import isToday from 'dayjs/plugin/isToday';
 import isYesterday from 'dayjs/plugin/isYesterday';
+import duration from 'dayjs/plugin/duration';
+import { History } from 'history';
 
 export const CHART_COLORS: string[] = [
   '#008b8b',
@@ -196,6 +198,21 @@ export const formatDate = (date: Date | string) => {
   return formatDate.format('MMM DD, YYYY HH:mm');
 };
 
-export const handleLogout = (history: any) => {
+export const handleLogout = (history: History) => {
   history.push('/logout');
+};
+
+export const calculateDuration = (
+  startTime: Date | string,
+  endTime: Date | string
+) => {
+  dayjs.extend(duration);
+
+  const eventStartTime = dayjs(startTime);
+  const eventEndTime = dayjs(endTime);
+
+  if (eventStartTime && eventEndTime) {
+    return dayjs.duration(eventEndTime.diff(eventStartTime)).format('H:mm:ss');
+  }
+  return '';
 };

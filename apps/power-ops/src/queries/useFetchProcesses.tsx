@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { Process } from 'pages/Processes';
+import { Process } from 'types';
 import { useQuery } from 'react-query';
 import sidecar from 'utils/sidecar';
 
@@ -36,7 +36,7 @@ export const useFetchProcesses = ({
   token: string | undefined;
 }) => {
   return useQuery({
-    queryKey: [processTypes].flat().join('-'),
+    queryKey: [processTypes],
     queryFn: () => fetchProcesses({ project, processTypes, token }),
   });
 };

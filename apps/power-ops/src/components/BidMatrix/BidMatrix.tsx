@@ -177,7 +177,7 @@ export const BidMatrix = ({ priceArea }: { priceArea: PriceAreaWithData }) => {
   }, [priceArea, plantExternalId]);
 
   useEffect(() => {
-    const subscription = eventStore?.subscribe((event) => {
+    const subscription = eventStore?.subscribe(({ event }) => {
       processEvent(event);
     });
 
