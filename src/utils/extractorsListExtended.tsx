@@ -1,16 +1,13 @@
-import { ReactNode } from 'react';
-
 import osiImgUrl from 'assets/osi-soft.png';
 import odbcImgUrl from 'assets/odbc.png';
 import opcuaImgUrl from 'assets/opc-ua.png';
 import documentumImgUrl from 'assets/documentum.png';
 import piafImgUrl from 'assets/piaf.png';
 import prosperImgUrl from 'assets/prosper.png';
-import { Body, Flex } from '@cognite/cogs.js';
 
 type ExtractorExtended = {
   imagePath: string | any;
-  body: ReactNode;
+  body: string;
   tags: string[];
   links: Array<{
     title: string;
@@ -25,31 +22,24 @@ export const extractorsListExtended: {
 } = {
   'cognite-db': {
     imagePath: odbcImgUrl,
-    body: (
-      <Flex gap={20} direction="column">
-        <Body level="1">
-          The Cognite DB Extractor is a general database extractor that connects
-          to one or more databases, executes queries, and sends the results to
-          the staging area in Cognite Data Fusion (CDF).
-        </Body>
-        <Body level="1">
-          The extractor connects to databases using ODBC, and you need ODBC
-          drivers for the databases you're connecting to. Typically, the
-          database vendors provide the necessary ODBC drivers for their
-          databases.
-        </Body>
-        <Body level="1">
-          The extractor is available as:
-          <ul>
-            <li>A native Windows application.</li>
-            <li>
-              A Docker image for Unix-based systems (for example, Mac OS and
-              Linux).
-            </li>
-          </ul>
-        </Body>
-      </Flex>
-    ),
+    body: `
+      <p>
+        The Cognite DB Extractor is a general database extractor that connects to one or more databases, executes queries, and sends the results to the staging area in Cognite Data Fusion (CDF).
+      </p>
+      <p>
+        The extractor connects to databases using ODBC, and you need ODBC drivers for the databases you're connecting to. Typically, the database vendors provide the necessary ODBC drivers for their databases.
+      </p>
+      <p>
+        The extractor is available as:
+        <ul>
+          <li>A native Windows application.</li>
+          <li>
+            A Docker image for Unix-based systems (for example, Mac OS and
+            Linux).
+          </li>
+        </ul>
+      </p>
+    `,
     tags: ['DB', 'Database', 'Cognite Extractor', 'ODBC'],
     links: [
       {
@@ -72,12 +62,7 @@ export const extractorsListExtended: {
   },
   'cognite-doc': {
     imagePath: documentumImgUrl,
-    body: (
-      <Body level="1">
-        A file extractor gathering documents from the OpenText Documentum or
-        OpenText D2 systems.
-      </Body>
-    ),
+    body: `<p>A file extractor gathering documents from the OpenText Documentum or OpenText D2 systems.</p>`,
     tags: ['Documentum', 'D2', 'Cognite Extractor', 'OpenText'],
     links: [],
   },
@@ -85,14 +70,12 @@ export const extractorsListExtended: {
     imagePath: opcuaImgUrl,
     source: 'https://github.com/cognitedata/opcua-extractor-net',
     docs: 'https://docs.cognite.com/cdf/integration/guides/extraction/opc_ua',
-    body: (
-      <Body level="1">
-        The Cognite OPC UA extractor reads time series, events, and asset
-        information via the open OPC UA protocol. The extractor copies the OPC
-        UA node hierarchy to Cognite Data Fusion (CDF), then streams data and
-        events to time series in CDF.
-      </Body>
-    ),
+    body: `
+      <p>
+        The Cognite OPC UA extractor reads time series, events, and asset information via the open OPC UA protocol.
+        The extractor copies the OPC UA node hierarchy to Cognite Data Fusion (CDF), then streams data and events to time series in CDF.
+      </p>
+    `,
     tags: [
       'OPC UA',
       'Cognite Extractor',
@@ -144,24 +127,16 @@ export const extractorsListExtended: {
     imagePath: osiImgUrl,
     source: 'https://github.com/cognitedata/extractor-pi-net',
     docs: 'https://docs.cognite.com/cdf/integration/guides/extraction/pi',
-    body: (
-      <Flex gap={20} direction="column">
-        <Body level="1">
-          The OSISoft PI Server collects, stores, and organizes data from
-          sensors and control systems and is widely used across many industries.
-          The OSISoft PI Server stores information as PI Points in a PI Data
-          Archive. PI Points correspond to time series in Cognite Data Fusion
-          (CDF).
-        </Body>
-        <Body level="1">
-          The Cognite PI Extractor connects to the PI Data Archive, detects and
-          extracts time series data, and transfers the data to your CDF project
-          to make time series available in near real-time. The extractor streams
-          data continuously, and in parallel, ingests historical data
-          (backfilling) to make all time series data available in CDF.
-        </Body>
-      </Flex>
-    ),
+    body: `
+      <p>
+        The OSISoft PI Server collects, stores, and organizes data from sensors and control systems and is widely used across many industries.
+        The OSISoft PI Server stores information as PI Points in a PI Data Archive. PI Points correspond to time series in Cognite Data Fusion (CDF).
+      </p>
+      <p>
+        The Cognite PI Extractor connects to the PI Data Archive, detects and extracts time series data, and transfers the data to your CDF project
+        to make time series available in near real-time. The extractor streams data continuously, and in parallel, ingests historical data (backfilling) to make all time series data available in CDF.
+      </p>
+    `,
     tags: [
       'PI',
       'Cognite Extractor',
@@ -188,12 +163,7 @@ export const extractorsListExtended: {
   'cognite-piaf': {
     imagePath: piafImgUrl,
     source: 'https://github.com/cognitedata/extractor-pi-af-net',
-    body: (
-      <Body level="1">
-        An extractor for writing data from the Osisoft PI Asset Framework to
-        Raw.
-      </Body>
-    ),
+    body: `<p>An extractor for writing data from the Osisoft PI Asset Framework to Raw.</p>`,
     tags: [
       'PI',
       'Cognite Extractor',
@@ -206,11 +176,7 @@ export const extractorsListExtended: {
   },
   'cognite-simconnect': {
     imagePath: prosperImgUrl,
-    body: (
-      <Body level="1">
-        A Connector that integrates the PROSPER simulator with CDF.
-      </Body>
-    ),
+    body: `<p>A Connector that integrates the PROSPER simulator with CDF.</p>`,
     tags: ['Simulator', 'Connector', 'Cognite Extractor', 'Prosper'],
     links: [],
   },
