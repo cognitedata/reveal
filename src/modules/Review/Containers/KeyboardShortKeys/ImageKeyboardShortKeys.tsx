@@ -43,7 +43,7 @@ export const ImageKeyboardShortKeys = ({ children }: { children: any }) => {
     },
     []
   );
-  // todo: line tool temporarily disabled from task [VIS-985] uncomment when it's added back again
+  // todo: line tool temporarily disabled from task [VIS-985] uncomment when it's needed again
   // useHotkeys(
   //   HotKeys.create_line,
   //   () => {
