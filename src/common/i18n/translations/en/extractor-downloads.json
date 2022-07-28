@@ -26,5 +26,8 @@
   "tags": "Tags",
   "cognite-docs": "Cognite Docs",
   "github": "GitHub",
-  "version-semver": "Version {{semver}}"
+  "version-semver": "Version {{semver}}",
+  "download-colon": "Download:",
+  "close": "Close",
+  "all-versions-of-extractor": "All versions of {{extractor}}"
 }
