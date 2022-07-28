@@ -222,6 +222,8 @@ const StyledButtonLink = styled(Button).attrs({
   type: 'link',
   icon: 'ExternalLink',
   iconPlacement: 'right',
+  target: '_blank',
+  rel: 'noopener noreferrer',
 })`
   && {
     display: inline-flex;
