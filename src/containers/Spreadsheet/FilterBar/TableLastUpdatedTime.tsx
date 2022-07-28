@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Body, Colors, Icon } from '@cognite/cogs.js';
+import { Body, Colors, Detail, Flex, Icon } from '@cognite/cogs.js';
 import moment from 'moment';
 import styled from 'styled-components';
 
@@ -27,22 +27,37 @@ const TableLastUpdatedTime = ({
   }
 
   return (
-    <Tooltip
-      content={moment(tableLastUpdatedTime).format('DD/MM/YYYY hh:mm:ss A (Z)')}
-      delay={[300, 0]}
-    >
-      <StyledLastUpdatedTimeBody
-        level={2}
-        strong
-        style={{ display: 'flex', alignItems: 'center' }}
+    <Wrapper alignItems="center" direction="column">
+      <Tooltip
+        content={moment(tableLastUpdatedTime).format(
+          'DD/MM/YYYY hh:mm:ss A (Z)'
+        )}
+        delay={[300, 0]}
       >
-        {t('last-updated-time', {
-          time: moment(tableLastUpdatedTime).format('DD/MM/YYYY'),
-        })}
-      </StyledLastUpdatedTimeBody>
-    </Tooltip>
+        <StyledLastUpdatedTimeBody
+          level={2}
+          strong
+          style={{ display: 'flex', alignItems: 'center' }}
+        >
+          {t('spreadsheet-table-last-updated-time', {
+            time: moment(tableLastUpdatedTime).format('DD/MM/YYYY'),
+          })}
+        </StyledLastUpdatedTimeBody>
+      </Tooltip>
+      <Detail className="detail--last-update-info" strong>
+        {t('spreadsheet-table-last-updated-time-note')}
+      </Detail>
+    </Wrapper>
   );
 };
+
+const Wrapper = styled(Flex)`
+  white-space: nowrap;
+  margin-top: 18px;
+  .detail--last-update-info {
+    color: ${Colors['greyscale-grey6'].hex()};
+  }
+`;
 
 const StyledLastUpdatedTimeBody = styled(Body)`
   white-space: nowrap;
