@@ -377,10 +377,14 @@ export const ReactImageAnnotateWrapper = ({
     return Object.values(tools);
   }, [tools]);
 
+  const onExit = useMemo(() => {
+    return () => {};
+  }, []);
+
   return (
     <Container>
-      <MemoizedAnnotator
-        onExit={() => {}}
+      <Annotator
+        onExit={onExit}
         hideHeader
         images={images}
         enabledTools={enabledTools}
@@ -401,8 +405,6 @@ export const ReactImageAnnotateWrapper = ({
     </Container>
   );
 };
-
-export const MemoizedAnnotator = React.memo(Annotator);
 
 const Container = styled.div`
   width: 100%;
