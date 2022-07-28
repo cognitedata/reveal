@@ -49,6 +49,10 @@ export const getUpdatedValue = ({
  * ```
  */
 
+/**
+ * Either update files or updateStatus/delete annotation will be called depending on the bulkEditUnsaved.
+ * All the unsaved states for other bulk edits will be cleared by the bulk edit switching logic
+ */
 export const updateBulk = createAsyncThunk<
   void,
   { selectedFiles: VisionFile[]; bulkEditUnsaved: BulkEditUnsavedState },
