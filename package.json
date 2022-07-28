@@ -29,6 +29,7 @@
     "antd": "^4.15.2",
     "babel-polyfill": "^6.26.0",
     "i18next": "^21.6.12",
+    "js-file-download": "^0.4.12",
     "less": "^4.1.2",
     "less-loader": "^10.2.0",
     "query-string": "^6.13.6",
