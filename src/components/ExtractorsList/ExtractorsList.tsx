@@ -12,28 +12,12 @@ import { createLink } from '@cognite/cdf-utilities';
 
 import { useTranslation } from 'common';
 import { useExtractorsList } from 'hooks/useExtractorsList';
-
-// TODO: remove this if the backend returns the images
-import osiImgUrl from 'assets/osi-soft.png';
-import odbcImgUrl from 'assets/odbc.png';
-import opcuaImgUrl from 'assets/opc-ua.png';
-import documentumImgUrl from 'assets/documentum.png';
-import piafImgUrl from 'assets/piaf.png';
-import prosperImgUrl from 'assets/prosper.png';
-
-// TODO: remove this if the backend returns the images
-const images = {
-  'cognite-db': odbcImgUrl,
-  'cognite-doc': documentumImgUrl,
-  'cognite-opcua': opcuaImgUrl,
-  'cognite-pi': osiImgUrl,
-  'cognite-piaf': piafImgUrl,
-  'cognite-simconnect': prosperImgUrl,
-};
+import { extractorsListExtended } from 'utils/extractorsListExtended';
+import { Skeleton } from 'antd';
 
 const ExtractorsList = () => {
   const { t } = useTranslation();
-  const { data: extractors } = useExtractorsList();
+  const { data: extractors, isFetched } = useExtractorsList();
   const history = useHistory();
   const { subAppPath } = useParams<{ subAppPath?: string }>();
   return (
@@ -43,28 +27,46 @@ const ExtractorsList = () => {
         <Body level="1">{t('install-prebuilt-cognite-extractors')}</Body>
       </Flex>
       <StyledGrid>
-        {extractors?.map((extractor) => (
-          <StyledExtractorContainer
-            key={extractor.externalId}
-            onClick={() => {
-              history.push(
-                createLink(`/${subAppPath}/${extractor.externalId}`)
-              );
-            }}
-          >
-            <Flex gap={24} direction="column">
-              <div>
-                <img src={images[extractor.externalId]} />
-              </div>
-              <Flex gap={8} direction="column">
-                <Title level="5">{extractor.name}</Title>
-                <StyledMutedDescription>
-                  {extractor.description}
-                </StyledMutedDescription>
-              </Flex>
-            </Flex>
-          </StyledExtractorContainer>
-        ))}
+        {isFetched ? (
+          <>
+            {extractors?.map((extractor) => (
+              <StyledExtractorContainer
+                key={extractor.externalId}
+                onClick={() => {
+                  history.push(
+                    createLink(`/${subAppPath}/${extractor.externalId}`)
+                  );
+                }}
+              >
+                <Flex gap={24} direction="column">
+                  <div>
+                    <img
+                      src={
+                        extractorsListExtended?.[extractor.externalId]
+                          ?.imagePath
+                      }
+                    />
+                  </div>
+                  <Flex gap={8} direction="column">
+                    <Title level="5">{extractor.name}</Title>
+                    <StyledMutedDescription>
+                      {extractor.description}
+                    </StyledMutedDescription>
+                  </Flex>
+                </Flex>
+              </StyledExtractorContainer>
+            ))}
+          </>
+        ) : (
+          <>
+            <StyledSkeletonAvatar />
+            <StyledSkeletonAvatar />
+            <StyledSkeletonAvatar />
+            <StyledSkeletonAvatar />
+            <StyledSkeletonAvatar />
+            <StyledSkeletonAvatar />
+          </>
+        )}
       </StyledGrid>
     </Flex>
   );
@@ -105,4 +107,15 @@ const StyledExtractorContainer = styled(Button).attrs({ type: 'ghost' })`
 
 const StyledMutedDescription = styled(Body).attrs({ level: 3 })`
   color: ${Colors['text-icon--muted']};
+`;
+
+const StyledSkeletonAvatar = styled((props) => (
+  <Skeleton.Avatar shape="square" {...props} />
+))`
+  .ant-skeleton-avatar {
+    border-radius: 6px;
+    width: 100%;
+    height: 100%;
+    min-height: 212px;
+  }
 `;
