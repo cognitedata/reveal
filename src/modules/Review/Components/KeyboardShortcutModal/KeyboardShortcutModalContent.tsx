@@ -83,12 +83,12 @@ export const KeyboardShortcutModalContent = () => {
                 <CommandText>R</CommandText>
               </CommandAndIcon>
             </Shortcut>
-            <Shortcut>
-              <Body level={3}>Line</Body>
-              <CommandAndIcon>
-                <CommandText>L</CommandText>
-              </CommandAndIcon>
-            </Shortcut>
+            {/* <Shortcut> todo: line tool temporarily disabled from task [VIS-985] uncomment when it's added back again */}
+            {/*  <Body level={3}>Line</Body> */}
+            {/*  <CommandAndIcon> */}
+            {/*    <CommandText>L</CommandText> */}
+            {/*  </CommandAndIcon> */}
+            {/* </Shortcut> */}
           </SectionBody>
         </Section>
         <Section>
