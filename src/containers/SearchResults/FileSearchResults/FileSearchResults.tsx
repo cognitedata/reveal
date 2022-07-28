@@ -90,6 +90,7 @@ export const FileSearchResults = ({
                   onItemClicked={file => onClick(file)}
                   {...extraProps}
                   renderCell={cellProps => <FileGridPreview {...cellProps} />}
+                  canFetchMore
                 />
               );
 

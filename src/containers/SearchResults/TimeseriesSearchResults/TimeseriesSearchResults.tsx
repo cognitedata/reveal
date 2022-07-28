@@ -123,6 +123,7 @@ export const TimeseriesSearchResults = ({
                     onDateRangeChange={onDateRangeChange || stateSetDateRange}
                   />
                 )}
+                canFetchMore
               />
             ) : (
               <TimeseriesTable
