@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import Table from 'antd/lib/table';
 import Timeline from 'antd/lib/timeline';
 import { Button, Colors, Icon } from '@cognite/cogs.js';
-import { createLink, getEnv } from '@cognite/cdf-utilities';
+import { createLink } from '@cognite/cdf-utilities';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import { getFlow } from '@cognite/cdf-sdk-singleton';
 import { getContainer } from 'utils/shared';
@@ -52,9 +52,9 @@ const ExtpipeTable: FunctionComponent<ExtpipeTableProps> = ({
   const canEditExtractionPipelines = permissionsExtractionPipelines.data;
 
   const addExtpipeLink = () => {
-    return `${createLink(`${getExtractionPipelineUIUrl('/create')}`)}${
-      getEnv() ? '&' : '?'
-    }dataSetId=${dataSet.id}`;
+    return `${createLink(
+      `${getExtractionPipelineUIUrl('/create')}`
+    )}&dataSetId=${dataSet.id}`;
   };
 
   const createExtpipeButton = canEditExtractionPipelines ? (
