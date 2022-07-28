@@ -1,3 +1,6 @@
+import { Annotator, AnnotatorTool } from '@cognite/react-image-annotate';
+import { FileInfo, InternalId } from '@cognite/sdk';
+import { AnnotationChangeById } from '@cognite/sdk-playground';
 import React, {
   Dispatch,
   ReactText,
@@ -7,21 +10,12 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { selectAnnotation } from 'src/modules/Review/store/reviewSlice';
-import {
-  PredefinedKeypointCollection,
-  PredefinedShape,
-  PredefinedVisionAnnotations,
-  TempKeypointCollection,
-  VisionReviewAnnotation,
-} from 'src/modules/Review/types';
-import { Annotator, AnnotatorTool } from '@cognite/react-image-annotate';
-import { retrieveDownloadUrl } from 'src/api/file/fileDownloadUrl';
-import { deselectAllSelectionsReviewPage } from 'src/store/commonActions';
-import { getIcon } from 'src/utils/iconUtils';
-import styled from 'styled-components';
 import { useDispatch } from 'react-redux';
-import { AppDispatch } from 'src/store';
+import { retrieveDownloadUrl } from 'src/api/file/fileDownloadUrl';
+import {
+  UnsavedVisionAnnotation,
+  VisionAnnotationDataType,
+} from 'src/modules/Common/types';
 import { AnnotationEditPopup } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/AnnotationEditPopup/AnnotationEditPopup';
 import {
   convertAnnotatorPointRegionToAnnotationChangeProperties,
@@ -30,30 +24,36 @@ import {
   convertTempKeypointCollectionToRegions,
   convertVisionReviewAnnotationsToRegions,
 } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/converters';
-import { FileInfo, InternalId } from '@cognite/sdk';
-import {
-  UnsavedVisionAnnotation,
-  VisionAnnotationDataType,
-} from 'src/modules/Common/types';
 import {
   AnnotatorRegion,
   AnnotatorRegionLabelProps,
   isAnnotatorPointRegion,
 } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/types';
-import { AnnotationChangeById } from '@cognite/sdk-playground';
+import { cropBoxRegionAtEdges } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/utils/cropBoxRegionAtEdges';
+import { useIsCurrentKeypointCollectionComplete } from 'src/modules/Review/store/annotatorWrapper/hooks';
 import {
   createTempKeypointCollection,
   deleteTempKeypointCollection,
   keypointSelectStatusChange,
-  onCreateRegion,
+  onCreateKeypointRegion,
   onUpdateKeyPoint,
-  onUpdateRegion,
+  onUpdateKeypointRegion,
   setLastShape,
   setSelectedTool,
 } from 'src/modules/Review/store/annotatorWrapper/slice';
-import { useIsCurrentKeypointCollectionComplete } from 'src/modules/Review/store/annotatorWrapper/hooks';
 import { convertTempKeypointCollectionToUnsavedVisionImageKeypointCollection } from 'src/modules/Review/store/review/utils';
-import { cropBoxRegionAtEdges } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/utils/cropBoxRegionAtEdges';
+import { selectAnnotation } from 'src/modules/Review/store/reviewSlice';
+import {
+  PredefinedKeypointCollection,
+  PredefinedShape,
+  PredefinedVisionAnnotations,
+  TempKeypointCollection,
+  VisionReviewAnnotation,
+} from 'src/modules/Review/types';
+import { AppDispatch } from 'src/store';
+import { deselectAllSelectionsReviewPage } from 'src/store/commonActions';
+import { getIcon } from 'src/utils/iconUtils';
+import styled from 'styled-components';
 import { tools } from './Tools';
 
 type ReactImageAnnotateWrapperProps = {
@@ -286,7 +286,6 @@ export const ReactImageAnnotateWrapper = ({
           onClose={onClose}
           onChange={onChange}
           onCreateRegion={handleCreateRegion}
-          onUpdateRegion={handleUpdateRegion}
           onDeleteRegion={handleDeleteRegion}
           collectionOptions={collectionOptions}
           shapeOptions={shapeOptions}
@@ -359,12 +358,23 @@ export const ReactImageAnnotateWrapper = ({
   }, [isLoading]);
 
   const regionCreateHandler = useCallback((region: AnnotatorRegion) => {
-    dispatch(onCreateRegion(region));
+    if (isAnnotatorPointRegion(region)) {
+      dispatch(onCreateKeypointRegion(region));
+    }
   }, []);
 
   const regionUpdateHandler = useCallback((region: AnnotatorRegion) => {
-    dispatch(onUpdateRegion(region));
+    if (
+      // todo: remove this once typescript and lint packages are updated to react -18
+      // eslint-disable-next-line react/prop-types
+      region?.annotationMeta?.annotation?.lastUpdatedTime
+    ) {
+      handleUpdateRegion(region);
+    } else if (isAnnotatorPointRegion(region)) {
+      dispatch(onUpdateKeypointRegion(region));
+    }
   }, []);
+  /* eslint-enable react/prop-types */
 
   const dispatchObjectReceiveHandler = useCallback(
     (dispatchObj: Dispatch<any>) => {

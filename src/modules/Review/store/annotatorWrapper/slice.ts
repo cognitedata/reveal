@@ -4,7 +4,11 @@ import { PredefinedKeypoint, Tool } from 'src/modules/Review/types';
 import { deselectAllSelectionsReviewPage } from 'src/store/commonActions';
 import { PopulateAnnotationTemplates } from 'src/store/thunks/Annotation/PopulateAnnotationTemplates';
 import { SaveAnnotationTemplates } from 'src/store/thunks/Annotation/SaveAnnotationTemplates';
-import { deleteCollection } from 'src/modules/Review/store/annotatorWrapper/utils';
+import {
+  deleteCollection,
+  getKeypointForAnnotatorPointRegion,
+  populateTempKeypointCollection,
+} from 'src/modules/Review/store/annotatorWrapper/utils';
 import {
   VisionAnnotation,
   VisionAnnotationDataType,
@@ -18,7 +22,6 @@ import { isImageKeypointCollectionData } from 'src/modules/Common/types/typeGuar
 import { AnnotatorWrapperState } from 'src/modules/Review/store/annotatorWrapper/type';
 import {
   AnnotatorPointRegion,
-  AnnotatorRegion,
   isAnnotatorPointRegion,
 } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/types';
 import {
@@ -29,7 +32,6 @@ import { VisionJobUpdate } from 'src/store/thunks/Process/VisionJobUpdate';
 import { UpdateAnnotations } from 'src/store/thunks/Annotation/UpdateAnnotations';
 import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotations';
 import { SaveAnnotations } from 'src/store/thunks/Annotation/SaveAnnotations';
-import isEqual from 'lodash-es/isEqual';
 
 export const initialState: AnnotatorWrapperState = {
   predefinedAnnotations: {
@@ -255,63 +257,52 @@ const annotatorWrapperSlice = createSlice({
         console.warn('annotation label or keypoint label not found!');
       }
     },
-    onCreateRegion(state, action: PayloadAction<AnnotatorRegion>) {
+    onCreateKeypointRegion(state, action: PayloadAction<AnnotatorPointRegion>) {
       state.temporaryRegion = action.payload;
-
-      const tempRegion = action.payload;
       if (
         state.isCreatingKeypointCollection &&
         state.lastCollectionId &&
-        state.lastCollectionName &&
-        isAnnotatorPointRegion(tempRegion) // temp keypoint collection is available and temp region is available
+        isAnnotatorPointRegion(action.payload) // temp keypoint collection is available and temp region is available
       ) {
         // populate temp keypoint collection
 
-        const { id, annotationLabelOrText, keypointLabel, x, y } = tempRegion;
-        if (annotationLabelOrText && keypointLabel) {
-          const imageKeypointToAdd: Keypoint = {
-            point: { x, y },
-            confidence: 1, // 100% confident about manually created keypoints
-          };
-
-          /* duplicate keypoint detection start
-          this is due to bug in Annotator where onRegionCreated is called twice
-           */
-          const tempCollectionKeypointIds =
-            state.collections.byId[state.lastCollectionId].keypointIds;
-          const duplicateKeypointIdIndex = tempCollectionKeypointIds
-            .map((keypointId) => state.keypointMap.byId[keypointId])
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            .findIndex(([label, keypoint]) =>
-              isEqual(keypoint.point, imageKeypointToAdd.point)
-            );
-          /* duplicate keypoint detection end */
-
-          // todo: remove this check once duplicate region create callback is fixed
-          if (duplicateKeypointIdIndex === -1) {
-            const tempCollection =
-              state.collections.byId[state.lastCollectionId];
-            tempCollection.keypointIds.push(String(id));
-
-            // update keypoints
-            state.lastKeyPoint = keypointLabel;
-            state.keypointMap.byId[String(id)] = [
-              keypointLabel,
-              imageKeypointToAdd,
-            ];
-            state.keypointMap.allIds = Object.keys(state.keypointMap.byId);
-          }
-        } else {
-          console.warn('annotation label or keypoint label not found!');
-        }
+        populateTempKeypointCollection(state, action.payload);
+      } else {
+        console.warn('annotation label or keypoint label not found!');
       }
     },
-    onUpdateRegion(state, action: PayloadAction<AnnotatorRegion>) {
-      if (
-        state.temporaryRegion &&
-        action.payload.id === state.temporaryRegion.id
-      ) {
+    onUpdateKeypointRegion(state, action: PayloadAction<AnnotatorPointRegion>) {
+      const regionId = String(action.payload.id);
+      if (state.temporaryRegion && regionId === state.temporaryRegion.id) {
         state.temporaryRegion = { ...state.temporaryRegion, ...action.payload };
+
+        if (
+          state.isCreatingKeypointCollection &&
+          state.lastCollectionId &&
+          isAnnotatorPointRegion(action.payload) // temp keypoint collection is available and temp region is available
+        ) {
+          const tempCollectionKeypointIds =
+            state.collections.byId[state.lastCollectionId].keypointIds;
+          if (tempCollectionKeypointIds.includes(String(action.payload.id))) {
+            const keypointObj = getKeypointForAnnotatorPointRegion(
+              action.payload
+            );
+            if (keypointObj) {
+              state.keypointMap.byId[regionId] = keypointObj;
+            }
+          } else {
+            // add temp region for temp keypoint collection if it's not already included
+            populateTempKeypointCollection(state, action.payload);
+          }
+        }
+        // update existing keypoints of temp keypoint collection
+      } else if (state.keypointMap.allIds.includes(regionId)) {
+        const keypointObj = getKeypointForAnnotatorPointRegion(action.payload);
+        if (keypointObj) {
+          state.keypointMap.byId[regionId] = keypointObj;
+        }
+      } else {
+        console.warn('unknown region');
       }
     },
   },
@@ -425,8 +416,8 @@ export const {
   deleteTempKeypointCollection,
   removeLabels,
   setKeepUnsavedRegion,
-  onCreateRegion,
-  onUpdateRegion,
+  onCreateKeypointRegion,
+  onUpdateKeypointRegion,
   createTempKeypointCollection,
 } = annotatorWrapperSlice.actions;
 

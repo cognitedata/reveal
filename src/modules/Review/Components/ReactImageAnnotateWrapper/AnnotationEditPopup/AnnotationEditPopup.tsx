@@ -33,7 +33,6 @@ export const AnnotationEditPopup = ({
   onClose,
   onChange,
   onCreateRegion,
-  onUpdateRegion,
   onDeleteRegion,
   collectionOptions,
   shapeOptions,
@@ -45,7 +44,6 @@ export const AnnotationEditPopup = ({
   predefinedAnnotations,
 }: AnnotatorRegionLabelProps & {
   onCreateRegion: (region: AnnotatorRegion) => void;
-  onUpdateRegion: (region: AnnotatorRegion) => void;
   onDeleteRegion: (region: AnnotatorRegion) => void;
   collectionOptions?: VisionOptionType<string>[];
   shapeOptions?: VisionOptionType<string>[];
@@ -144,13 +142,6 @@ export const AnnotationEditPopup = ({
     onDelete(region);
   };
 
-  const handleOnUpdate = () => {
-    // calls update callback and deletes region in annotation lib memory
-    onClose(region);
-    onDelete(region);
-    onUpdateRegion(region); // todo: move this to top of function once annotations are immutable
-  };
-
   const handleSelect = (value: Required<OptionType<string>>) => {
     setLabelValue(value);
   };
@@ -201,13 +192,16 @@ export const AnnotationEditPopup = ({
     ) {
       if (nextKeypoint) {
         // for intermediate keypoints of a collection keypoint metadata are accessed from nextKeypoint
-        const updatedRegion = {
-          ...region,
-          color: nextKeypoint.color,
-          annotationLabelOrText: labelValue.value,
-          keypointLabel: nextKeypoint.caption,
-        };
-        onChange(updatedRegion);
+
+        if (!region.annotationLabelOrText || !region.keypointLabel) {
+          const updatedRegion = {
+            ...region,
+            color: nextKeypoint.color,
+            annotationLabelOrText: labelValue.value,
+            keypointLabel: nextKeypoint.caption,
+          };
+          onChange(updatedRegion);
+        }
       } else {
         // for first keypoint of a collection keypoint metadata needs to be taken from the correct predefinedKeypointCollection
         const predefinedCollection =
@@ -246,9 +240,9 @@ export const AnnotationEditPopup = ({
     }
   }, [editing]);
 
-  const showFooter = (isShape: boolean) => {
-    return isShape ? !!shapeOptions?.length : !!collectionOptions?.length;
-  };
+  const showFooter = useMemo(() => {
+    return !isKeypoint ? !!shapeOptions?.length : !!collectionOptions?.length;
+  }, [isKeypoint]);
 
   if (editing && (!isKeypoint || (isKeypoint && !nextKeypoint))) {
     // don't show popup for intermediate keypoints
@@ -291,33 +285,26 @@ export const AnnotationEditPopup = ({
               onOpenAnnotationSettings={handleAnnotationSettingsOpen}
             />
           </Row>
-          {showFooter(!isKeypoint) && (
-            <Row style={{ paddingTop: '30px' }} cols={12} gutter={0}>
-              <Col span={3}>
-                <Popconfirm
-                  icon="WarningFilled"
-                  placement="bottom-end"
-                  onConfirm={handleOnDelete}
-                  content="Are you sure you want to permanently delete this annotation?"
+          {showFooter && (
+            <FooterContainer>
+              <Popconfirm
+                icon="WarningFilled"
+                placement="bottom-end"
+                onConfirm={handleOnDelete}
+                content="Are you sure you want to permanently delete this annotation?"
+              >
+                <Button
+                  size="small"
+                  icon="Delete"
+                  disabled={!alreadyCreated || isKeypoint}
                 >
-                  <Button
-                    size="small"
-                    icon="Delete"
-                    disabled={!alreadyCreated || isKeypoint}
-                  >
-                    Delete
-                  </Button>
-                </Popconfirm>
-              </Col>
-              <Col span={3}>
-                <div />
-              </Col>
-              <Col span={3}>
+                  Delete
+                </Button>
+              </Popconfirm>
+              <FooterRightButtonContainer>
                 <Button size="small" onClick={handleOnCancel}>
                   Cancel
                 </Button>
-              </Col>
-              <Col span={3}>
                 {!alreadyCreated && (
                   <Button
                     className="annotation-submit-btn"
@@ -331,21 +318,8 @@ export const AnnotationEditPopup = ({
                     Create
                   </Button>
                 )}
-                {alreadyCreated && (
-                  <Button
-                    className="annotation-submit-btn"
-                    type="primary"
-                    icon="Upload"
-                    size="small"
-                    disabled={disabledCreationOrUpdate}
-                    onClick={handleOnUpdate}
-                    tabIndex={0}
-                  >
-                    Update
-                  </Button>
-                )}
-              </Col>
-            </Row>
+              </FooterRightButtonContainer>
+            </FooterContainer>
           )}
         </OptionContainer>
       </Container>
@@ -368,4 +342,18 @@ const OptionContainer = styled.div`
 
 const Container = styled.div`
   cursor: default;
+`;
+
+const FooterContainer = styled.div`
+  display: grid;
+  grid-template-columns: auto auto;
+  grid-template-rows: 100%;
+  padding-top: 30px;
+`;
+
+const FooterRightButtonContainer = styled.div`
+  display: flex;
+  justify-content: end;
+  align-items: center;
+  gap: 20px;
 `;
