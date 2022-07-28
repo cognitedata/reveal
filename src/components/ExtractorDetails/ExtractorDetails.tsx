@@ -17,11 +17,6 @@ import { useExtractorsList } from 'hooks/useExtractorsList';
 import { ContentContainer } from 'components/ContentContainer';
 import { extractorsListExtended } from 'utils/extractorsListExtended';
 import { useTranslation } from 'common';
-import { Artifact, Release } from 'service/extractors';
-
-const hasDocs = (artifact: Artifact) => artifact.platform === 'docs';
-const createdTimeSorter = (releaseA: Release, releaseB: Release) =>
-  (releaseA?.createdTime ?? 0) - (releaseB?.createdTime ?? 0) || -1;
 
 const ExtractorDetails = () => {
   const { t } = useTranslation();
@@ -40,21 +35,7 @@ const ExtractorDetails = () => {
   const extractorExtended = extractorsListExtended?.[extractorExternalId!];
   const { body, links, tags, source, docs } = extractorExtended;
 
-  // Attempt to find the docs artifact in the latest release, but there might not be one.
-  const latestReleaseDocs = latestRelease?.artifacts?.find(hasDocs);
-
-  // If we don't have the docs in the latest release we'll try to find it among all
-  // the releases based on the list being sorted by `createdTime` property.
-  const latestReleaseWithDocs = extractor?.releases
-    ?.slice(0)
-    ?.sort(createdTimeSorter)
-    ?.find((release) => release?.artifacts?.find(hasDocs));
-  const latestDocs = latestReleaseWithDocs?.artifacts.find(hasDocs);
-
   const artifacts = latestRelease?.artifacts ?? [];
-
-  const noDocsInLatestRelease = !latestReleaseDocs;
-  const latestDocsReady = !!latestDocs;
 
   return (
     <Layout>
@@ -112,22 +93,6 @@ const ExtractorDetails = () => {
                           {artifact.displayName}
                         </Button>
                       ))}
-                      {noDocsInLatestRelease && latestDocsReady && (
-                        <Button
-                          type="secondary"
-                          icon="Download"
-                          iconPlacement="right"
-                          size="large"
-                          onClick={() => {
-                            fileDownload(
-                              latestDocs?.link ?? '',
-                              latestDocs?.name
-                            );
-                          }}
-                        >
-                          {latestDocs?.displayName}
-                        </Button>
-                      )}
                     </Flex>
                   )}
                   <StyledDivider />
