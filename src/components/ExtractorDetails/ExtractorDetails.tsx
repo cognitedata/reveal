@@ -10,6 +10,7 @@ import {
   Label,
   Title,
 } from '@cognite/cogs.js';
+import { Skeleton } from 'antd';
 import { DetailsHeader } from 'components/DetailsHeader';
 import { Layout } from 'components/Layout';
 import { useExtractorsList } from 'hooks/useExtractorsList';
@@ -17,7 +18,6 @@ import { ContentContainer } from 'components/ContentContainer';
 import { extractorsListExtended } from 'utils/extractorsListExtended';
 import { useTranslation } from 'common';
 import { Artifact, Release } from 'service/extractors';
-import { Skeleton } from 'antd';
 
 const hasDocs = (artifact: Artifact) => artifact.platform === 'docs';
 const createdTimeSorter = (releaseA: Release, releaseB: Release) =>
@@ -40,18 +40,21 @@ const ExtractorDetails = () => {
   const extractorExtended = extractorsListExtended?.[extractorExternalId!];
   const { body, links, tags, source, docs } = extractorExtended;
 
+  // Attempt to find the docs artifact in the latest release, but there might not be one.
+  const latestReleaseDocs = latestRelease?.artifacts?.find(hasDocs);
+
+  // If we don't have the docs in the latest release we'll try to find it among all
+  // the releases based on the list being sorted by `createdTime` property.
   const latestReleaseWithDocs = extractor?.releases
     ?.slice(0)
     ?.sort(createdTimeSorter)
     ?.find((release) => release?.artifacts?.find(hasDocs));
   const latestDocs = latestReleaseWithDocs?.artifacts.find(hasDocs);
 
-  const latestReleaseDocs = latestRelease?.artifacts?.find(hasDocs);
-
   const artifacts = latestRelease?.artifacts ?? [];
 
   const noDocsInLatestRelease = !latestReleaseDocs;
-  const hasLatestDocs = !!latestDocs;
+  const latestDocsReady = !!latestDocs;
 
   return (
     <Layout>
@@ -66,7 +69,9 @@ const ExtractorDetails = () => {
           <StyledLayoutGrid>
             {isFetched ? (
               <Flex direction="column" gap={56}>
-                <StyledBody>{body}</StyledBody>
+                <StyledBody>
+                  <div dangerouslySetInnerHTML={{ __html: body as string }} />
+                </StyledBody>
                 {links.length > 0 && (
                   <Flex direction="column" gap={16}>
                     <Title level="4">{t('user-guide-from-cognite-docs')}</Title>
@@ -107,7 +112,7 @@ const ExtractorDetails = () => {
                           {artifact.displayName}
                         </Button>
                       ))}
-                      {noDocsInLatestRelease && hasLatestDocs && (
+                      {noDocsInLatestRelease && latestDocsReady && (
                         <Button
                           type="secondary"
                           icon="Download"
@@ -128,14 +133,20 @@ const ExtractorDetails = () => {
                   <StyledDivider />
                   <Flex justifyContent="space-between" alignItems="center">
                     <Title level="5">{t('versions')}</Title>
-                    <Button href="#" type="link" size="small">
+                    <Button
+                      type="link"
+                      size="small"
+                      onClick={() => {
+                        // TODO: open all versions modal
+                      }}
+                    >
                       {t('view-all')}
                     </Button>
                   </Flex>
                   <Flex gap={8} direction="column">
                     <Flex gap={8}>
                       <Label size="small">
-                        {t('v-version-number', {
+                        {t('v-semver', {
                           version: latestRelease?.version,
                         })}
                       </Label>
@@ -147,25 +158,27 @@ const ExtractorDetails = () => {
                     </Flex>
                     <Body level="2">{latestRelease?.description}</Body>
                   </Flex>
-                  {source ||
-                    (docs && (
-                      <>
-                        <StyledDivider />
-                        <Title level="5">{t('links')}</Title>
-                        <Flex direction="column" gap={12}>
-                          {docs && (
-                            <StyledButtonLink href={docs}>
-                              {t('cognite-docs')}
-                            </StyledButtonLink>
-                          )}
-                          {source && (
-                            <StyledButtonLink href={source}>
-                              {t('github')}
-                            </StyledButtonLink>
-                          )}
-                        </Flex>
-                      </>
-                    ))}
+                  {/* Only display the "Links" section if we have either the source code or docs. */}
+                  {(source || docs) && (
+                    <>
+                      <StyledDivider />
+                      <Title level="5">{t('links')}</Title>
+                      <Flex direction="column" gap={12}>
+                        {/* The extractor might not have an entry in the Cognite Docs. */}
+                        {docs && (
+                          <StyledButtonLink href={docs}>
+                            {t('cognite-docs')}
+                          </StyledButtonLink>
+                        )}
+                        {/* Some repositories have their source code private, thus we can't share it for people without access. */}
+                        {source && (
+                          <StyledButtonLink href={source}>
+                            {t('github')}
+                          </StyledButtonLink>
+                        )}
+                      </Flex>
+                    </>
+                  )}
                   {tags.length > 0 && (
                     <>
                       <StyledDivider />
@@ -199,7 +212,7 @@ const StyledLayoutGrid = styled.div`
   gap: 56px;
 `;
 
-const StyledBody = styled.div``;
+const StyledBody = styled(Body).attrs({ level: 1 })``;
 
 const StyledItemsGrid = styled.div`
   display: grid;

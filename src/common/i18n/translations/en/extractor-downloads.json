@@ -20,7 +20,7 @@
   "download-extractor": "Download extractor",
   "versions": "Versions",
   "view-all": "View all",
-  "v-version-number": "V{{version}}",
+  "v-semver": "V{{version}}",
   "released-date": "Released {{createdAt}}",
   "links": "Links",
   "tags": "Tags",
