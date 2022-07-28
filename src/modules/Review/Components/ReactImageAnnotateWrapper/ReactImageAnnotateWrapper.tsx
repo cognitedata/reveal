@@ -385,6 +385,8 @@ export const ReactImageAnnotateWrapper = ({
         images={images}
         enabledTools={enabledTools}
         RegionEditLabel={NewRegionEditLabel}
+        RegionEditLabelHeight={195}
+        zoomSensitivity={0.05}
         showTags
         selectedTool={selectedTool}
         keepUnsavedRegions={keepUnsavedRegion}
