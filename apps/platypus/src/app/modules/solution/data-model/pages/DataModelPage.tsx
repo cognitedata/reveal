@@ -22,7 +22,7 @@ import { useDataModelState } from '../../hooks/useDataModelState';
 import { SchemaEditorMode } from '../types';
 import { BreakingChangesModal } from '../components/BreakingChangesModal';
 import { EditorPanel } from '../components/EditorPanel';
-import { DataModelHeader } from '../components/DataModelHeader';
+import { DataModelHeader } from '../../../../components/DataModelHeader';
 import {
   PageToolbar,
   Size,
@@ -385,8 +385,7 @@ export const DataModelPage = ({ dataModelExternalId }: DataModelPageProps) => {
       <PageContentLayout>
         <PageContentLayout.Header>
           <DataModelHeader
-            solutionId={dataModelExternalId}
-            editorMode={mode}
+            title={t('data_model_title', 'Data model')}
             schemas={getRemoteAndLocalSchemas(dataModelVersions || [])}
             draftSaved={isDirty && Object.keys(typeFieldErrors).length === 0}
             onSelectDataModelVersion={onSelectDataModelVersion}

@@ -2,7 +2,6 @@ import 'graphiql/graphiql.min.css';
 
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 
-import { PageToolbar } from '@platypus-app/components/PageToolbar/PageToolbar';
 import { PageContentLayout } from '@platypus-app/components/Layouts/PageContentLayout';
 import { QueryExplorer } from '../components/QueryExplorer';
 import { BasicPlaceholder } from '@platypus-app/components/BasicPlaceholder/BasicPlaceholder';
@@ -12,6 +11,9 @@ import {
 } from '@platypus-app/hooks/useDataModelActions';
 import useSelector from '@platypus-app/hooks/useSelector';
 import { DataModelState } from '@platypus-app/redux/reducers/global/dataModelReducer';
+import { DataModelHeader } from '../../../../components/DataModelHeader';
+import { DataModelVersion } from '@platypus/platypus-core';
+import { useHistory } from 'react-router-dom';
 
 export interface QueryExplorerPageProps {
   dataModelExternalId: string;
@@ -21,6 +23,7 @@ export const QueryExplorerPage = ({
   dataModelExternalId,
 }: QueryExplorerPageProps) => {
   const { t } = useTranslation('SolutionMonitoring');
+  const history = useHistory();
   const { data: dataModelVersions } = useDataModelVersions(dataModelExternalId);
   const { selectedVersionNumber } = useSelector<DataModelState>(
     (state) => state.dataModel
@@ -31,13 +34,23 @@ export const QueryExplorerPage = ({
     dataModelExternalId
   );
 
-  const renderHeader = () => {
-    return <PageToolbar title={t('query_explorer_title', 'Query explorer')} />;
+  const onSelectDataModelVersion = (dataModelVersion: DataModelVersion) => {
+    history.replace(
+      `/data-models/${dataModelExternalId}/${dataModelVersion.version}/data/query-explorer`
+    );
   };
 
   return (
     <PageContentLayout>
-      <PageContentLayout.Header>{renderHeader()}</PageContentLayout.Header>
+      <PageContentLayout.Header>
+        <DataModelHeader
+          title={t('query_explorer_title', 'Query explorer')}
+          schemas={dataModelVersions || []}
+          draftSaved={false}
+          onSelectDataModelVersion={onSelectDataModelVersion}
+          selectedDataModelVersion={selectedDataModelVersion}
+        />
+      </PageContentLayout.Header>
       <PageContentLayout.Body>
         {selectedDataModelVersion.version ? (
           <QueryExplorer

@@ -1,10 +1,17 @@
 import React, { lazy, Suspense, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 import { PageContentLayout } from '@platypus-app/components/Layouts/PageContentLayout';
-import { PageToolbar } from '@platypus-app/components/PageToolbar/PageToolbar';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import { Spinner } from '@platypus-app/components/Spinner/Spinner';
 import { StyledPage } from '../data-model/pages/elements';
+import {
+  useDataModelVersions,
+  useSelectedDataModelVersion,
+} from '@platypus-app/hooks/useDataModelActions';
+import useSelector from '@platypus-app/hooks/useSelector';
+import { DataModelState } from '@platypus-app/redux/reducers/global/dataModelReducer';
+import { DataModelVersion } from '@platypus/platypus-core';
+import { DataModelHeader } from '../../../components/DataModelHeader';
 
 type TabType = 'preview' | 'pipelines' | 'data-quality';
 
@@ -33,7 +40,6 @@ export interface DataManagementPageProps {
 export const DataManagementPage = ({
   dataModelExternalId,
 }: DataManagementPageProps) => {
-  // const history = useHistory();
   const { t } = useTranslation('SolutionDataPreview');
 
   const { subSolutionPage } = useParams<{
@@ -42,6 +48,26 @@ export const DataManagementPage = ({
 
   const initialPage: TabType = (subSolutionPage as TabType) || 'preview';
   const [tab] = useState<TabType>(initialPage);
+
+  const { data: dataModelVersions } = useDataModelVersions(dataModelExternalId);
+
+  const history = useHistory();
+
+  const { selectedVersionNumber } = useSelector<DataModelState>(
+    (state) => state.dataModel
+  );
+
+  const selectedDataModelVersion = useSelectedDataModelVersion(
+    selectedVersionNumber,
+    dataModelVersions || [],
+    dataModelExternalId
+  );
+
+  const onSelectDataModelVersion = (dataModelVersion: DataModelVersion) => {
+    history.replace(
+      `/data-models/${dataModelExternalId}/${dataModelVersion.version}/data/data-management/preview`
+    );
+  };
 
   const Preview = (
     <StyledPage style={tab !== 'preview' ? { display: 'none' } : {}}>
@@ -70,8 +96,15 @@ export const DataManagementPage = ({
   return (
     <PageContentLayout>
       <PageContentLayout.Header>
-        <PageToolbar title={t('data_management_title', 'Data management')} />
+        <DataModelHeader
+          title={t('data_management_title', 'Data management')}
+          schemas={dataModelVersions || []}
+          draftSaved={false}
+          onSelectDataModelVersion={onSelectDataModelVersion}
+          selectedDataModelVersion={selectedDataModelVersion}
+        />
       </PageContentLayout.Header>
+
       <PageContentLayout.Body>
         {Preview}
         {Pipelines}

@@ -1,13 +1,11 @@
 import { PageToolbar } from '@platypus-app/components/PageToolbar/PageToolbar';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
-import { SchemaVersionDropdown } from '@platypus-app/modules/solution/components/SchemaVersionDropdown/SchemaVersionDropdown';
+import { SchemaVersionDropdown } from '@platypus-app/components/SchemaVersionDropdown/SchemaVersionDropdown';
 import { DataModelVersion } from '@platypus/platypus-core';
-import { SchemaEditorMode } from '../../types';
 import { SelectorWrapper } from './elements';
 
 export interface DataModelHeaderProps {
-  editorMode: SchemaEditorMode;
-  solutionId: string;
+  title: string;
   selectedDataModelVersion: DataModelVersion;
   onSelectDataModelVersion: (schema: DataModelVersion) => void;
   schemas: DataModelVersion[];
@@ -21,7 +19,7 @@ export const DataModelHeader = (props: DataModelHeaderProps) => {
   return (
     <div>
       <PageToolbar
-        title={t('data_model_title', 'Data model')}
+        title={props.title || ''}
         behindTitle={
           <SelectorWrapper>
             {props.schemas.length && props.selectedDataModelVersion ? (
