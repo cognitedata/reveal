@@ -1,5 +1,7 @@
 /* eslint-disable no-param-reassign */
 
+import { Keypoint } from 'src/api/annotation/types';
+import { AnnotatorPointRegion } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/types';
 import { AnnotatorWrapperState } from 'src/modules/Review/store/annotatorWrapper/type';
 
 export const deleteCollection = (
@@ -44,5 +46,47 @@ export const deleteCollection = (
   }
   if (state.lastCollectionId === collectionId) {
     state.lastCollectionId = undefined;
+  }
+};
+
+export const getKeypointForAnnotatorPointRegion = (
+  region: AnnotatorPointRegion
+): [string, Keypoint] | null => {
+  const { keypointLabel, x, y } = region;
+
+  if (keypointLabel) {
+    const keypointData: Keypoint = {
+      point: { x, y },
+      confidence: 1, // 100% confident about manually created keypoints
+    };
+
+    return [keypointLabel, keypointData];
+  }
+  return null;
+};
+
+export const populateTempKeypointCollection = (
+  state: AnnotatorWrapperState,
+  region: AnnotatorPointRegion
+) => {
+  const { id, annotationLabelOrText, keypointLabel } = region;
+
+  const keypointObj = getKeypointForAnnotatorPointRegion(region);
+
+  if (state.lastCollectionId && annotationLabelOrText && keypointObj) {
+    const tempCollection = state.collections.byId[state.lastCollectionId];
+    tempCollection.keypointIds.push(String(id));
+
+    // update keypoints
+    state.lastKeyPoint = keypointLabel;
+    state.keypointMap.byId[String(id)] = keypointObj;
+    state.keypointMap.allIds = Object.keys(state.keypointMap.byId);
+  } else {
+    if (!state.lastCollectionId) {
+      console.warn('temp keypoint collection is not available');
+    }
+    if (annotationLabelOrText && keypointLabel) {
+      console.warn('annotation label or keypoint label not found');
+    }
   }
 };
