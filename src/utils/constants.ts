@@ -11,7 +11,7 @@ export const CREATE_TABLE_MODAL_WIDTH = 600;
 
 export const TOPBAR_NAVIGATION_HEIGHT = 56;
 export const TAB_HEIGHT = 49;
-export const FILTER_BAR_HEIGHT = 68;
+export const FILTER_BAR_HEIGHT = 72;
 
 export const TABLE_ROW_HEIGHT = 36;
 export const TABLE_CELL_EXPANDED_WIDTH = 465;
