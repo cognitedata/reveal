@@ -268,7 +268,7 @@ const annotatorWrapperSlice = createSlice({
 
         populateTempKeypointCollection(state, action.payload);
       } else {
-        console.warn('annotation label or keypoint label not found!');
+        console.warn('annotation label or keypoint label not found');
       }
     },
     onUpdateKeypointRegion(state, action: PayloadAction<AnnotatorPointRegion>) {

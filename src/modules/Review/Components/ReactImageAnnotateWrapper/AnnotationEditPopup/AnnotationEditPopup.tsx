@@ -240,7 +240,7 @@ export const AnnotationEditPopup = ({
     }
   }, [editing]);
 
-  const showFooter = useMemo(() => {
+  const showFooter = useMemo(() => { // show footer when shape options or collection options are available
     return !isKeypoint ? !!shapeOptions?.length : !!collectionOptions?.length;
   }, [isKeypoint]);
 

@@ -83,10 +83,10 @@ export const populateTempKeypointCollection = (
     state.keypointMap.allIds = Object.keys(state.keypointMap.byId);
   } else {
     if (!state.lastCollectionId) {
-      console.warn('temp keypoint collection is not available!');
+      console.warn('temp keypoint collection is not available');
     }
     if (annotationLabelOrText && keypointLabel) {
-      console.warn('annotation label or keypoint label not found!');
+      console.warn('annotation label or keypoint label not found');
     }
   }
 };
