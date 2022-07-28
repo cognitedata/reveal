@@ -21,8 +21,6 @@ export const ProfileCoverageLabel = ({
   nrOfProfiledRows,
 }: ProfileCoverageLabelProps): JSX.Element => {
   switch (resultType) {
-    case 'complete':
-      return <StyledLabelComplete>Complete</StyledLabelComplete>;
     case 'running':
       return <StyledLabelRunning>Running</StyledLabelRunning>;
     case 'partial':
@@ -40,7 +38,7 @@ export const ProfileCoverageLabel = ({
               Partial
             </StyledLabelPartial>
           ) : (
-            <StyledLabelComplete>Complete</StyledLabelComplete>
+            <></>
           )}
         </Tooltip>
       );
@@ -57,11 +55,6 @@ const StyledLabelBaseWrapper = styled.div`
   font-size: 14px;
   font-weight: 500;
   padding: 0 12px;
-`;
-
-const StyledLabelComplete = styled(StyledLabelBaseWrapper)`
-  background-color: #39a2631f;
-  color: #22633c;
 `;
 
 const StyledEllipsisAnimation = keyframes`
