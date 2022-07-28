@@ -18,7 +18,7 @@ export type PivotRange = {
   type: 'Pivot';
   date: Date;
   direction: 'before' | 'after' | 'both';
-  amount: number;
+  amount: number | string;
   unit: 'minute' | 'hour' | 'day' | 'week' | 'month' | 'year';
 };
 
@@ -65,17 +65,18 @@ export const getPivotRangeAsDates = ({
   amount,
   unit,
 }: PivotRange): [Date, Date] => {
+  const amountInNumber = Number(amount);
   switch (direction) {
     case 'before': {
-      return [dayjs(date).subtract(amount, unit).toDate(), date];
+      return [dayjs(date).subtract(amountInNumber, unit).toDate(), date];
     }
     case 'after': {
-      return [date, dayjs(date).add(amount, unit).toDate()];
+      return [date, dayjs(date).add(amountInNumber, unit).toDate()];
     }
   }
   return [
-    dayjs(date).subtract(amount, unit).toDate(),
-    dayjs(date).add(amount, unit).toDate(),
+    dayjs(date).subtract(amountInNumber, unit).toDate(),
+    dayjs(date).add(amountInNumber, unit).toDate(),
   ];
 };
 

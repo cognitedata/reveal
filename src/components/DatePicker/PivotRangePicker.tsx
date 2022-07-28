@@ -57,15 +57,21 @@ export const PivotRangePicker = ({
       <SpacedRow style={{ marginBottom: 8, marginTop: 8 }}>
         <div style={{ flex: 1 }}>
           <Input
-            type="number"
+            type="tel"
             variant="noBorder"
             value={amount}
             style={{ width: '100%' }}
             onChange={ev => {
-              const number = Number(ev.target.value);
+              const { value } = ev.target;
+              const number = +value;
+
               if (!Number.isNaN(number)) {
-                onChange({ amount: number });
+                onChange({ amount: value });
               }
+            }}
+            onBlur={() => {
+              if (amount === '') onChange({ amount: 0 });
+              else onChange({ amount: Number(amount) });
             }}
           />
         </div>
