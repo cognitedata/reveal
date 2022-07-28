@@ -26,15 +26,21 @@ export function transformGetRequest(req, res) {
 }
 
 /**
- * Transforms the response that is comming from JSON Server
- * It wraps the reponse into items
+ * Transforms the response that is coming from JSON Server
+ * It wraps the response into items
  */
 export function transformPostPutRequest(req, res) {
   const originalSend = res.jsonp;
   res.jsonp = (...args) => {
-    const response = {
+    let response = {
       items: args[0],
     };
+    if (req.url.includes('/transformations')) {
+      response = {
+        items: [args[0]],
+      };
+    }
+
     return originalSend.call(res, response);
   };
 }
