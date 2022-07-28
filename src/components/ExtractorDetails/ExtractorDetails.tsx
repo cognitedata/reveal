@@ -51,7 +51,7 @@ const ExtractorDetails = () => {
             {isFetched ? (
               <Flex direction="column" gap={56}>
                 <StyledBody>
-                  <div dangerouslySetInnerHTML={{ __html: body as string }} />
+                  <div dangerouslySetInnerHTML={{ __html: body }} />
                 </StyledBody>
                 {links.length > 0 && (
                   <Flex direction="column" gap={16}>
