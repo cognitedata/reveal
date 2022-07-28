@@ -1,22 +1,68 @@
 import { CombinedSCC, checkAuthorized, checkPermissions } from './capabilities';
 
-const successMock = [
+const groupsMock = [
   {
-    experimentAcl: {
-      actions: ['USE'],
-      scope: { experimentscope: { experiments: ['schema'] } },
+    threedAcl: {
+      actions: ['READ', 'CREATE', 'UPDATE', 'DELETE'],
+      scope: {
+        all: {},
+      },
     },
   },
   {
-    experimentAcl: {
-      actions: ['USE'],
-      scope: { experimentscope: { experiments: ['datamodelstorage'] } },
+    assetsAcl: {
+      actions: ['READ', 'WRITE'],
+      scope: {
+        all: {},
+      },
     },
   },
   {
-    experimentAcl: {
-      actions: ['USE'],
-      scope: { experimentscope: { experiments: ['identity'] } },
+    eventsAcl: {
+      actions: ['READ', 'WRITE'],
+      scope: {
+        all: {},
+      },
+    },
+  },
+  {
+    filesAcl: {
+      actions: ['READ', 'WRITE'],
+      scope: {
+        all: {},
+      },
+    },
+  },
+  {
+    rawAcl: {
+      actions: ['READ', 'WRITE', 'LIST'],
+      scope: {
+        all: {},
+      },
+    },
+  },
+  {
+    relationshipsAcl: {
+      actions: ['READ', 'WRITE'],
+      scope: {
+        all: {},
+      },
+    },
+  },
+  {
+    sequencesAcl: {
+      actions: ['READ', 'WRITE'],
+      scope: {
+        all: {},
+      },
+    },
+  },
+  {
+    labelsAcl: {
+      actions: ['READ', 'WRITE'],
+      scope: {
+        all: {},
+      },
     },
   },
   {
@@ -28,7 +74,7 @@ const successMock = [
     },
   },
 ] as unknown as CombinedSCC[];
-const failedMock = [
+const tokenMock = [
   {
     experimentAcl: {
       actions: ['USE'],
@@ -41,35 +87,27 @@ const failedMock = [
       scope: { experimentscope: { experiments: ['datamodelstorage'] } },
     },
   },
-  {
-    transformationsAcl: {
-      actions: ['READ'],
-      scope: {
-        all: {},
-      },
-    },
-  },
 ] as unknown as CombinedSCC[];
 
 describe('check capabilities core functions', () => {
   it('should perform permissions check for user', () => {
-    expect(checkPermissions('transformationsAcl', successMock, ['READ'])).toBe(
-      true
-    );
-    expect(checkPermissions('transformationsAcl', failedMock, ['WRITE'])).toBe(
-      false
-    );
+    expect(
+      checkPermissions('transformationsAcl', tokenMock, groupsMock, ['READ'])
+    ).toBe(true);
+    expect(
+      checkPermissions('timeSeriesAcl', tokenMock, groupsMock, ['READ'])
+    ).toBe(false);
   });
   it('should perform authorization check for user', () => {
     expect(
       checkAuthorized(
-        successMock,
+        tokenMock,
         ['identity', 'datamodelstorage', 'schema'],
         ['identity', 'datamodelstorage', 'schema']
       )
     ).toBe(true);
     expect(
-      checkAuthorized(failedMock, ['identity'], ['datamodelstorage', 'schema'])
+      checkAuthorized(tokenMock, ['identity'], ['datamodelstorage', 'schema'])
     ).toBe(false);
   });
 });

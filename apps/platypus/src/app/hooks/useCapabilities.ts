@@ -42,6 +42,9 @@ export function useCapabilities<T extends KeysOfSCC>(
   }
 
   const userGroupNames = groups?.map((group) => group.name) ?? [];
+  const userGroupCapabilities = (groups?.flatMap((gr) => gr.capabilities) ??
+    []) as Combine<Capability>[];
+
   const platypusUserCapabilities = (token?.data.capabilities.filter(
     (cap: { projectScope: { projects: string | string[] } }) =>
       cap.projectScope.projects.includes(tenant)
@@ -50,6 +53,7 @@ export function useCapabilities<T extends KeysOfSCC>(
   const hasPermissions = checkPermissions(
     aclName,
     platypusUserCapabilities,
+    userGroupCapabilities,
     permissions
   );
 

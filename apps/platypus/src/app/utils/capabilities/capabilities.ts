@@ -35,16 +35,22 @@ export type Combine<U> = UnionToIntersection<U> extends infer O
 export type CombinedSCC = Combine<Capability>;
 
 export const checkPermissions = <T extends KeysOfSCC>(
-  name?: T,
-  capability?: CombinedSCC[],
+  name: T | undefined,
+  capability: CombinedSCC[], // User token's capabilities
+  userGroups: CombinedSCC[], // Groups' capabilities
   permissions?: CombinedSCC[T]['actions']
 ) => {
   // check wether user has the required capabilities in his current groups of his token
   // as this func consumes array of permissions, we need to check if the user has all of them
-  if (capability && name && permissions) {
-    const foundCapability = capability.find((cap) => cap[name]);
-    if (foundCapability) {
-      return diff(permissions, foundCapability[name].actions).length === 0;
+  if (name) {
+    //check first for user's token capabilities if not found then check group capabilities
+    const tokenCapability = capability.find((cap) => cap[name]);
+    if (tokenCapability) {
+      return diff(permissions, tokenCapability[name].actions).length === 0;
+    }
+    const groupCapability = userGroups.find((cap) => cap[name]);
+    if (groupCapability) {
+      return diff(permissions, groupCapability[name].actions).length === 0;
     }
   }
   return false;
