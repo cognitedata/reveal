@@ -10,6 +10,7 @@ import uploadPdfAndSvgFiles from './uploadPdfAndSvgFiles';
 import convertDwgToPdf from './convertDwgToPdf';
 import convertPdfToSvg from './convertPdfToSvg';
 import deleteDiagramParserFiles from './deleteDiagramParserFiles';
+import upsertDms from './upsertDms';
 
 const shamefulKeepProcessAlive = () => {
   // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -107,6 +108,36 @@ const run = async () => {
       describe: 'Upload all PDFs and SVGs from `dir` to CDF',
       handler: (argv) => deleteDiagramParserFiles(argv),
       builder: addAllOptions,
+    })
+    .command({
+      command: 'upsert-dms',
+      describe: 'Upsert data from a GraphDocument JSON to DMS',
+      handler: (argv) => upsertDms(argv),
+      builder: (yargs) =>
+        addClientOptions(
+          yargs
+            .option('path', {
+              type: 'string',
+              describe: 'path to the JSON file containing the GraphDocument',
+              demandOption: true,
+            })
+            .option('file-id', {
+              type: 'number',
+              describe:
+                'CDF file id corresponding to the SVG file the GraphDocument belongs to',
+              demandOption: true,
+            })
+            .option('file-page', {
+              type: 'number',
+              describe: 'page number in the file',
+              default: 1,
+            })
+            .option('space-external-id', {
+              type: 'string',
+              describe: 'external id of the DMS space you want to upsert to',
+              demandOption: true,
+            })
+        ),
     })
     .command({
       command: 'all',
