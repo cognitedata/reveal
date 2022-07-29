@@ -53,7 +53,7 @@ const DetailsHeader = ({
                   />
                 </div>
                 <Title level="3">{title}</Title>
-                <Flex gap={24}>
+                <Flex gap={16}>
                   <Flex gap={6} alignItems="center">
                     <StyledIconMuted type="Layers" />
                     <StyledBodyMuted>
