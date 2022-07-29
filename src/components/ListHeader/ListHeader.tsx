@@ -1,19 +1,23 @@
 import styled from 'styled-components';
 import { Colors, Flex, Icon, Input, Title } from '@cognite/cogs.js';
+import { useParams } from 'react-router-dom';
+
 import { useTranslation } from 'common';
 import { Layout } from 'components/Layout';
 import { Breadcrumb } from '@cognite/cdf-utilities';
+import { HeaderContainer } from 'components/HeaderContainer';
 
-const Header = () => {
+const ListHeader = () => {
   const { t } = useTranslation();
+  const { subAppPath } = useParams<{ subAppPath?: string }>();
   return (
-    <StyledContainer>
+    <HeaderContainer>
       <Layout.Container>
         <Flex direction="column" gap={32}>
           <Breadcrumb
             items={[
               {
-                path: '/extractors',
+                path: `/${subAppPath}`,
                 title: t('extract-data'),
               },
             ]}
@@ -31,14 +35,9 @@ const Header = () => {
           </Flex>
         </Flex>
       </Layout.Container>
-    </StyledContainer>
+    </HeaderContainer>
   );
 };
-
-const StyledContainer = styled.div`
-  padding: 24px 0;
-  background-color: ${Colors['greyscale-grey1']};
-`;
 
 const StyledSearchInput = styled(Input).attrs({
   type: 'search',
@@ -53,4 +52,4 @@ const StyledSearchInput = styled(Input).attrs({
   }
 `;
 
-export default Header;
+export default ListHeader;

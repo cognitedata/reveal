@@ -12,6 +12,7 @@ import {
   Dropdown,
   Spin,
 } from 'antd';
+// TODO: remove those we don't need anymore
 import affixStyle from 'antd/es/affix/style/index.less';
 import alertStyle from 'antd/es/alert/style/index.less';
 import breadcrumbStyle from 'antd/es/breadcrumb/style/index.less';
@@ -38,6 +39,7 @@ import tableStyle from 'antd/es/table/style/index.less';
 import tagStyle from 'antd/es/tag/style/index.less';
 import tooltipStyle from 'antd/es/tooltip/style/index.less';
 import uploadStyle from 'antd/es/upload/style/index.less';
+import skeletonStyle from 'antd/es/skeleton/style/index.less';
 
 const antdStyles = [
   affixStyle,
@@ -66,6 +68,7 @@ const antdStyles = [
   tagStyle,
   tooltipStyle,
   uploadStyle,
+  skeletonStyle,
 ];
 
 Modal.defaultProps = {

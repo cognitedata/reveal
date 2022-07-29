@@ -1,29 +1,25 @@
-import styled from 'styled-components';
 import { Flex } from '@cognite/cogs.js';
 
-import { Header } from 'components/Header';
+import { ListHeader } from 'components/ListHeader';
 import { Layout } from 'components/Layout';
 import { ExtractorsList } from 'components/ExtractorsList';
 import { CreateExtractor } from 'components/CreateExtractor';
+import { ContentContainer } from 'components/ContentContainer';
 
 const Extractors = () => {
   return (
     <Layout>
-      <Header />
+      <ListHeader />
       <Layout.Container>
-        <StyledContentContainer>
+        <ContentContainer>
           <Flex gap={48} direction="column">
             <CreateExtractor />
             <ExtractorsList />
           </Flex>
-        </StyledContentContainer>
+        </ContentContainer>
       </Layout.Container>
     </Layout>
   );
 };
 
 export default Extractors;
-
-const StyledContentContainer = styled.div`
-  padding: 48px 0 52px 0;
-`;

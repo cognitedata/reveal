@@ -15,5 +15,16 @@
   "create-your-own-extractor": "Create your own extractor",
   "use-our-tools-and-libraries": "Use our tools and libraries to easily create custom extractors",
   "cognite-extractors": "Cognite Extractors",
-  "install-prebuilt-cognite-extractors": "Install prebuilt Cognite extractors to push data from your source system to Cognite Data Fusion:"
+  "install-prebuilt-cognite-extractors": "Install prebuilt Cognite extractors to push data from your source system to Cognite Data Fusion:",
+  "user-guide-from-cognite-docs": "User guide from Cognite Docs",
+  "download-extractor": "Download extractor",
+  "versions": "Versions",
+  "view-all": "View all",
+  "v-semver": "V{{version}}",
+  "released-date": "Released {{createdAt}}",
+  "links": "Links",
+  "tags": "Tags",
+  "cognite-docs": "Cognite Docs",
+  "github": "GitHub",
+  "version-semver": "Version {{semver}}"
 }
