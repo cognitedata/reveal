@@ -73,7 +73,9 @@ export class DataModelsHandler {
       return Promise.resolve(Result.fail(validationResult.errors));
     }
 
-    const externalId = DataUtils.convertToCamelCase(dto.name);
+    const externalId = dto.externalId
+      ? DataUtils.convertToCamelCase(dto.externalId)
+      : DataUtils.convertToCamelCase(dto.name);
 
     try {
       const createApiResponse = await this.mixerApiService.upsertApi({

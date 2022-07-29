@@ -25,12 +25,8 @@ export class CommandBuilderService {
     this.enquirerBuilder = new EnquirerCommandBuilder();
   }
 
-  buildYargsOptions(
-    yargs: Argv,
-    commandName: string,
-    commandArguments: CommandArgument[]
-  ): Argv {
-    return this.yargsBuilder.buildOptions(yargs, commandName, commandArguments);
+  buildYargsArguments(yargs: Argv, commandArguments: CommandArgument[]): Argv {
+    return this.yargsBuilder.buildArguments(yargs, commandArguments);
   }
 
   validateArgs(
@@ -63,6 +59,15 @@ export class CommandBuilderService {
               new NumericFieldValidator({
                 validationMessage: arg.prompt,
                 options: numberRangeOptions,
+              })
+            );
+            break;
+          }
+          case CommandArgumentType.MULTI_SELECT: {
+            validator.addRule(
+              arg.name,
+              new RequiredFieldValidator({
+                validationMessage: arg.prompt,
               })
             );
             break;

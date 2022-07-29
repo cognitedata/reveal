@@ -2,7 +2,7 @@
 import yargs, { scriptName } from 'yargs';
 import chalk from 'chalk';
 import { authenticate } from './app/middlewares/auth';
-import * as login from './app/cmds/login';
+import * as signin from './app/cmds/sign-in';
 import * as dataModelsCmds from './app/cmds/data-models';
 import { init } from './app/middlewares/init';
 import status from './app/cmds/status';
@@ -11,15 +11,31 @@ import { DEBUG as _DEBUG } from './app/utils/logger';
 import { CONSTANTS } from './app/constants';
 import { getMixpanel } from '@cognite/platypus-cdf-cli/app/utils/mixpanel';
 import { PlatypusError } from '@platypus/platypus-core';
+import * as Sentry from '@sentry/node';
+import CONFIG from './app/config/config';
 
 const DEBUG = _DEBUG.extend('main');
+
+Sentry.init({
+  dsn: CONFIG.SENTRY_DSN,
+  tracesSampleRate: 1.0,
+});
 
 // commands
 scriptName(CONSTANTS.APP_ID)
   .strict()
+  .usage(
+    `$0 <command>
+
+    The Cognite Data Fusion CLI (CDF CLI) currently supports managing data models. For feature requests, navigate to [Cognite Hub](https://hub.cognite.com/).
+  
+    Check out the full documentation here: https://docs.cognite.com/cli
+  `
+  )
   .middleware([init, authenticate])
+  .version(true)
   .demandCommand(1)
-  .command(login)
+  .command(signin)
   .command(dataModelsCmds)
   .command(logout)
   .command(status)
@@ -32,9 +48,10 @@ scriptName(CONSTANTS.APP_ID)
   .option('interactive', {
     type: 'boolean',
     default: true,
-    describe: 'Show prompts and ask for user inputs',
+    describe:
+      'Request for inputs interactively if any required field is missing from options',
   })
-  .version()
+  .wrap(Math.min(120, yargs.terminalWidth()))
   .help(true)
   .fail((msg, err, { argv, help }) => {
     DEBUG(`Error occurred and caught by main handler: ${msg}, ${err}`);
@@ -51,6 +68,8 @@ scriptName(CONSTANTS.APP_ID)
     }
 
     console.error(chalk.red(errorMessage));
+
+    Sentry.captureException(err);
 
     getMixpanel()?.track('failed command', {
       message: msg || err.message,

@@ -528,7 +528,7 @@
           "executor": "@nrwl/node:execute",
           "options": {
             "buildTarget": "platypus-cdf-cli:build",
-            "watch": false
+            "watch": true
           }
         },
         "lint": {

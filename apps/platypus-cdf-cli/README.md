@@ -1,7 +1,5 @@
 # [CDF CLI](https://www.npmjs.com/package/@cognite/cdf-cli)
 
-# [Confluence](https://cognitedata.atlassian.net/wiki/spaces/APPJOURNEY/pages/3383361624/Schema+Service+CLI+Commands+-+temporary)
-
 The CDF CLI's aim is to make it easier for developers to develop an app or solution on top of CDF. The CLI's current focus is on enabling key data modeling functionality, and we will expand towards other features in the future.
 
 **NOTE: This package is still in early alpha and under active development. We will document and test actively, but please file bug report via the [Cognite Hub group](https://hub.cognite.com/groups/flexible-data-modeling-early-adopter-208)**
@@ -16,62 +14,52 @@ yarn global add @cognite/cdf-cli
 
 We currently support these top level commands
 
-| Top Level Command       | Description                                                |
-| ----------------------- | ---------------------------------------------------------- |
-| [`cdf login`](#login)   | Login with the CLI                                         |
-| [`cdf logout`](#logout) | Logout the currently logged-in user                        |
-| [`cdf status`](#status) | Show user's logged-in status (fails is user not logged in) |
+| Top Level Command         | Description                                                |
+| ------------------------- | ---------------------------------------------------------- |
+| [`cdf signin`](#signin)   | Login with the CLI (alias: login)                          |
+| [`cdf signout`](#signout) | Logout the currently logged-in user (alias: logout)        |
+| [`cdf status`](#status)   | Show user's logged-in status (fails is user not logged in) |
 
-## Templates (alias: `t`)
+## Data-models (alias: `dm`)
 
-Use templates backend to perform the action there (`cdfrc.json` file is the config file that helps execute the commands)
-
-| Templates Command                       | Description                                                                                                    |
-| --------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
-| `cdf t init`                            | Init a templates project locally by creating a `cdfrc.json`                                                    |
-| `cdf t list`                            | Show list of the templates group's external ids                                                                |
-| `cdf t create`                          | create a new template group                                                                                    |
-| `cdf t delete`                          | delete some existing templates group                                                                           |
-| [`cdf t generate`](#templates-generate) | Generate client side code for the specified templates group and generate typings based on the selected plugins |
-
-### Templates Schema
-
-Operate with `schema` inside templates instance
-
-| Templates Command           | Description                                                                                      |
-| --------------------------- | ------------------------------------------------------------------------------------------------ |
-| `cdf t schema pull`         | Pull and override the graphql schema locally based on the version specified in `cdfrc.json` file |
-| `cdf t schema publish`      | Publish the local graphql schema file to the backend                                             |
-| `cdf t schema version list` |                                                                                                  |
-
-## Solutions (alias: `s`) ![experimental](https://img.shields.io/badge/experimental-red)
-
-Use new schema service backend to perform the action there (`cdfrc.json` file is the config file that helps execute the commands)
-
-| Templates Command                       | Description                                                                                            |
-| --------------------------------------- | ------------------------------------------------------------------------------------------------------ |
-| [`cdf s generate`](#templates-generate) | Generate client side code for the specified APISpec and generate typings based on the selected plugins |
+| Data model Commands                                 | Description                                                                                                                                                                                                              |
+| --------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `cdf data-models create`                            | Creates a new data model in CDF that allows you to store and retrieve data to your needs.                                                                                                                                |
+| `cdf data-models delete`                            | Deletes a data model stored in CDF (including all its data and versions). This is an irreversible action!                                                                                                                |
+| `cdf data-models publish`                           | Updates a data model with a new GraphQL definition. In case of any breaking changes, a new version of the data model will be published. For non-breaking changes, the existing version of the data model will be updated |
+| [`cdf data-models generate`](#Data-models-generate) | Generate a GraphQL client code for the schema you provide by fetching the introspection query from the server                                                                                                            |
 
 # Options (Global)
 
 These global `--options` are supported for helping with the executions
 
-| Templates Command  | Description                                                              |
-| ------------------ | ------------------------------------------------------------------------ |
-| `--help`           | Show help message and command description                                |
-| `--verbose`        | Show debug logs and detailed message to the users helping with debugging |
-| `--no-interactive` | Not show prompts rather fails if required args are missing               |
-| `--versions`       | Show the CLI Version                                                     |
+| Templates Command | Description                                                                        |
+| ----------------- | ---------------------------------------------------------------------------------- |
+| `--help`          | Show help message and command description                                          |
+| `--verbose`       | Show debug logs and detailed message to the users helping with debugging           |
+| `--interactive`   | (Default: true) Show prompts rather than failing if required arguments are missing |
 
 # Command Description
 
-## Login
+## Signin
 
 See the login section for [more details](./LOGIN.md)
 
-## Logout
+```bash
+cdf signin
+```
 
-This will logout and clear the global config files for the CLI (not project config use [templates delete](#templates-delete) for that)
+```bash
+cdf login
+```
+
+## Signout
+
+This will logout and clear the global config files for the CLI.
+
+```bash
+cdf signout
+```
 
 ```bash
 cdf logout
@@ -85,9 +73,9 @@ This command will tell about the login status and later on status of the backend
 cdf status
 ```
 
-## Templates Generate
+## Data models generate
 
-This command generates the client side code for the specified project in `cdfrc.json`.
+This command generates the client side code for the specified project.
 
 Currently following plugins are supported only:
 
@@ -102,7 +90,7 @@ Currently following plugins are supported only:
 Example:
 
 ```bash
-cdf templates generate --operations-file operations.graphql --plugins typescript typescript-operations
+cdf data-models generate --operations-file operations.graphql --plugins typescript typescript-operations
 ```
 
 # Metrics, Logs and Telemetry

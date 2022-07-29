@@ -71,7 +71,7 @@ export const showMultiSelect = (commandArg: CommandArgument) => {
 
   return Object.assign(buildBasePrompt(commandArg), {
     type: 'multiselect',
-    choices: cmdOptions.choices,
+    choices: cmdOptions.choices.filter((option) => option !== null),
     muliple: true,
     sort: cmdOptions.sort || true,
   } as ArrayPromptOptions);

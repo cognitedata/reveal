@@ -4,12 +4,14 @@ import { AUTH_TYPE, SETTINGS } from '../../constants';
 import { promiseWithTimeout } from '../../utils/general';
 import { getCogniteSDKClient } from '../../utils/cogniteSdk';
 
-export const command = 'login <project>';
-export const desc = 'Login to Cognite Data Fusion';
+export const command = 'signin <project>';
+export const aliases = ['login'];
+export const desc = 'Sign in to Cognite Data Fusion';
 export const builder = (yargs: Argv<LoginArgs>) =>
   yargs
-    .usage('$0 login <project>')
-    .example('$0 login platypus', 'Login to platypus project')
+    .usage('$0 signin <project>')
+    .example('$0 signin platypus', 'Sign in to platypus project')
+    .version(false)
     .positional('project', {
       alias: 'p',
       type: 'string',
@@ -43,17 +45,12 @@ export const builder = (yargs: Argv<LoginArgs>) =>
       description: 'Cluster Name',
     })
     .check(validateClusterName)
-    .option('auth-type', {
-      type: 'string',
-      default: AUTH_TYPE.PKCE,
-      description: 'Auth type',
-    })
-    .choices('auth-type', [
-      AUTH_TYPE.PKCE,
-      AUTH_TYPE.CLIENT_SECRET,
-      AUTH_TYPE.APIKEY,
-      AUTH_TYPE.DEVICE_CODE,
-    ]);
+    .option('device-code', {
+      type: 'boolean',
+      default: false,
+      description:
+        'In case of interactive login, show a QR code for sign in (Recommended method for machines without a web browser)',
+    });
 
 export const handler = async (arg: Arguments<LoginArgs>) => {
   const client = getCogniteSDKClient();
@@ -80,7 +77,7 @@ export const handler = async (arg: Arguments<LoginArgs>) => {
     },
     'Timeout while authenticating user, please make sure you have entered valid parameters like cluster, project etc.'
   );
-  arg.logger.success('Login Success');
+  arg.logger.success('Sign in was successful!');
 };
 
 export const validateClusterName = ({

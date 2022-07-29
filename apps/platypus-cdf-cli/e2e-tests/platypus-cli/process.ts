@@ -1,5 +1,4 @@
 import { spawn } from 'child_process';
-
 /**
  *
  * @param arg string[] - arguments to pass to the command e.g. ['cdf', 'templates', 'generate', '--plugins', 'typescript'], dont specify (yarn/npm)

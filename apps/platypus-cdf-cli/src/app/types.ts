@@ -95,7 +95,9 @@ export interface CommandArgument {
   initial?: string | boolean | number;
   /** Is required */
   required?: boolean;
-  /** Argument type.
+  /** Is argument positional */
+  isPositional?: boolean;
+  /** Option type.
    * This will be used to convert the value to expected format,
    * validate the value and show the appropriate prompt message */
   type: CommandArgumentType;

@@ -1,8 +1,6 @@
 name: CLI Testing
 on:
   pull_request:
-    branches:
-      - master
     paths:
       - 'apps/platypus-cdf-cli/**'
 jobs:
@@ -34,6 +32,7 @@ jobs:
         run: |
           yarn nx run platypus-cdf-cli:e2e
         env:
+          PROJECT: ${{ secrets.CLI_E2E_PROJECT }}
           TENANT: ${{ secrets.CLI_E2E_TENANT }}
           CLUSTER: ${{ secrets.CLI_E2E_CLUSTER }}
           CLIENT_ID: ${{ secrets.CLI_E2E_CLIENT_ID }}

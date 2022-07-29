@@ -23,47 +23,31 @@ const { readFile, stat, writeFile } = promises;
 import { join, resolve } from 'path';
 import { DEBUG as _DEBUG } from '../../utils/logger';
 
-const DEBUG = _DEBUG.extend('solutions:generate');
-
-export type SolutionsGenerateCommandArgs = BaseArgs & {
-  ['project-name']: string;
-  ['api-name']: string;
-  ['plugins']?: string[];
-  ['output-file']?: string;
-  ['operations-file']?: string;
-};
+const DEBUG = _DEBUG.extend('data-models:generate');
 
 const commandArgs = [
   {
-    name: 'project-name',
-    description: 'The name of the project',
-    required: true,
+    name: 'external-id',
+    description: 'The external id of the data model',
+    prompt: 'Enter the data model external id',
     type: CommandArgumentType.STRING,
-    prompt: 'What is the name of the project?',
-    help: 'The name of the project',
-    example: '--project-name=schema-test',
-  },
-  {
-    name: 'api-name',
-    description: 'The name of the API',
     required: true,
-    type: CommandArgumentType.STRING,
-    prompt: 'What is the name of the API?',
-    help: 'The name of the API',
-    example: '--api-name=movieApi',
   },
   {
     name: 'plugins',
     description:
-      'Plugin which will be use for code generation (each plugin-name separated by space)',
-    required: true,
+      'Plugin which will be use for code generation (each plugin-name separated by ",")',
+    prompt: `Select the plugin to generate the types, we currently support ${SupportedGraphQLGeneratorPlugins.join(
+      ','
+    )}`,
     type: CommandArgumentType.MULTI_SELECT,
-    prompt:
-      'Select the plugin to generate the types, we currently support few of the @graphql-codegen plugins only',
     options: {
       choices: SupportedGraphQLGeneratorPlugins,
     },
-    example: `--plugins=${SupportedGraphQLGeneratorPlugins.join(' ')}`,
+    required: true,
+    example: `cdf data-models generate
+      --external-id=schema-test
+      --plugins=${SupportedGraphQLGeneratorPlugins.join(',')}`,
   },
   {
     name: 'operations-file',
@@ -82,22 +66,23 @@ const commandArgs = [
   },
 ] as CommandArgument[];
 
-const command = 'generate';
-const describe =
-  'Generate will help to generate a graphql client code for the schema you provide by fetching the introspection query from the server';
-class SolutionGenerateCommand extends CLICommand {
-  async execute(args: Arguments<SolutionsGenerateCommandArgs>) {
+type DataModelGenerateCommandArgs = BaseArgs & {
+  'external-id': string;
+  plugins?: string[];
+  'output-file'?: string;
+  'operations-file'?: string;
+};
+
+class GenerateCmd extends CLICommand {
+  async execute(args: Arguments<DataModelGenerateCommandArgs>) {
     try {
       const client = getCogniteSDKClient();
       DEBUG('Initialize the Cognite SDK client');
-      const solutions = new MixerApiService(client);
+      const mixerApi = new MixerApiService(client);
       DEBUG('Fetching the introspection query from the server');
-      const response = await solutions.runQuery({
-        dataModelId: args['project-name'],
+      const response = await mixerApi.runQuery({
+        dataModelId: args['external-id'],
         schemaVersion: '1',
-        extras: {
-          apiName: args['api-name'],
-        },
         graphQlParams: {
           query: getIntrospectionQuery(),
           operationName: 'IntrospectionQuery',
@@ -161,4 +146,8 @@ class SolutionGenerateCommand extends CLICommand {
   }
 }
 
-export default new SolutionGenerateCommand(command, describe, commandArgs);
+export default new GenerateCmd(
+  'generate',
+  'Generate a GraphQL client code for the schema you provide by fetching the introspection query from the server',
+  commandArgs
+);

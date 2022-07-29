@@ -47,14 +47,4 @@ export async function init(args: Arguments<BaseArgs>) {
       cluster: authConfig?.cluster,
     });
   }
-
-  // set auth type based on api_key
-  if (args.apiKey) {
-    args.authType = AUTH_TYPE.APIKEY;
-    args['auth-type'] = AUTH_TYPE.APIKEY;
-  }
-  if (args.clientSecret) {
-    args.authType = AUTH_TYPE.CLIENT_SECRET;
-    args['auth-type'] = AUTH_TYPE.CLIENT_SECRET;
-  }
 }

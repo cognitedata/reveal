@@ -32,11 +32,27 @@ export async function authenticate(arg: Arguments<BaseArgs>) {
     }
     // for `login` command, rerunning should retrigger signin, hence we should clear cached tokens and config
     // as well, inject a default clientId
-    if (getCommandName(arg) === 'login') {
+    if (getCommandName(arg) === 'login' || getCommandName(arg) === 'signin') {
       logger.info(
         'Logging out the current user and clearing the config (if exists)'
       );
       logout();
+
+      arg.authType = AUTH_TYPE.PKCE;
+      arg['auth-type'] = AUTH_TYPE.PKCE;
+
+      if (arg.apiKey) {
+        arg.authType = AUTH_TYPE.APIKEY;
+        arg['auth-type'] = AUTH_TYPE.APIKEY;
+      }
+      if (arg.clientSecret) {
+        arg.authType = AUTH_TYPE.CLIENT_SECRET;
+        arg['auth-type'] = AUTH_TYPE.CLIENT_SECRET;
+      }
+      if (arg.deviceCode) {
+        arg.authType = AUTH_TYPE.DEVICE_CODE;
+        arg['auth-type'] = AUTH_TYPE.DEVICE_CODE;
+      }
 
       if (
         (arg.authType === AUTH_TYPE.PKCE ||

@@ -33,11 +33,7 @@ export abstract class CLICommand implements CommandModule {
   }
 
   builder<T>(yargs: Argv<T>): Argv {
-    return this.commandBuilder.buildYargsOptions(
-      yargs,
-      this.command,
-      this._args
-    );
+    return this.commandBuilder.buildYargsArguments(yargs, this._args);
   }
 
   async handler<T>(args: Arguments<BaseArgs & T>) {

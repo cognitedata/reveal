@@ -1,4 +1,4 @@
-import { Argv, Options } from 'yargs';
+import { Argv, Options, PositionalOptions } from 'yargs';
 import {
   ArrayPromptOptions,
   CommandArgument,
@@ -6,33 +6,34 @@ import {
 } from '@cognite/platypus-cdf-cli/app/types';
 
 export class YargsCommandBuilder {
-  buildOptions(
-    yargs: Argv,
-    commandName: string,
-    args: CommandArgument[]
-  ): Argv {
-    const yargsInstance = yargs;
-
-    args.forEach((arg) => this.buildYargOption(yargsInstance, arg));
-    return yargsInstance;
+  buildArguments(yargs: Argv, args: CommandArgument[]): Argv {
+    args.forEach((args) => this.buildYargArgument(yargs, args));
+    return yargs;
   }
 
-  private buildYargOption(yargsInstance: Argv, arg: CommandArgument): Argv {
-    yargsInstance = yargsInstance.option(
-      arg.name,
-      this.buildYargsArgumentOptions(arg)
-    );
+  private buildYargArgument(yargsInstance: Argv, arg: CommandArgument): Argv {
+    if (arg.isPositional) {
+      yargsInstance = yargsInstance.positional(
+        arg.name,
+        this.buildYargsArgumentOptions(arg)
+      );
+    } else {
+      yargsInstance = yargsInstance.option(
+        arg.name,
+        this.buildYargsArgumentOptions(arg)
+      );
+    }
 
     if (arg.example) {
-      yargsInstance = yargsInstance.example(arg.example, '');
+      yargsInstance = yargsInstance.example('\n' + arg.example, '');
     }
 
     switch (arg.type) {
-      case CommandArgumentType.MULTI_SELECT:
-        yargsInstance
-          .array(arg.name)
-          .choices(arg.name, (arg.options as ArrayPromptOptions).choices);
+      case CommandArgumentType.MULTI_SELECT: {
+        const choices = (arg.options as ArrayPromptOptions).choices;
+        yargsInstance.array(arg.name).choices(arg.name, [...choices, null]);
         break;
+      }
       case CommandArgumentType.SELECT:
         yargsInstance
           .string(arg.name)
@@ -58,10 +59,10 @@ export class YargsCommandBuilder {
    * @param arg
    * @returns
    */
-  private buildYargsArgumentOptions(arg: CommandArgument) {
+  private buildYargsArgumentOptions(arg: CommandArgument): PositionalOptions {
     const options = {
       description: arg.description,
-    } as Options;
+    } as PositionalOptions;
     if (arg.initial) {
       options.default = arg.initial;
     }

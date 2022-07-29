@@ -21,6 +21,15 @@ export class RequiredFieldValidator extends ValidationRule {
       } as ValidatorResult;
     }
 
+    if (Array.isArray(value) && !value.filter((option) => option).length) {
+      return {
+        valid: false,
+        errors: {
+          [field]: this.validationMessage || field + ' is required field',
+        },
+      } as ValidatorResult;
+    }
+
     return { valid: true, errors: {} };
   }
 }
