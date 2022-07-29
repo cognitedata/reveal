@@ -22,8 +22,8 @@ describe('Wells: casings buttons', () => {
 
     cy.log('select `casings` from side bar filters');
     cy.findAllByTestId('filter-item-wrapper').as('filter-items').eq(0).click();
-    cy.findAllByText(DATA_AVAILABILITY_CASINGS).click();
-    cy.findAllByText(DATA_AVAILABILITY_NPT).click();
+    cy.findAllByText(DATA_AVAILABILITY_CASINGS).should('be.visible').click();
+    cy.findAllByText(DATA_AVAILABILITY_NPT).should('be.visible').click();
 
     cy.log('select one row');
     cy.hoverOnNthWellbore(0, 'result');
