@@ -41,7 +41,6 @@ general
   map
      |- zoom
      |- center
-     |- maxBounds
      |- cluster
   azureConfig
      |- enabled

@@ -276,7 +276,6 @@ export interface SeismicConfig {
 export interface MapConfig {
   zoom?: any;
   center: any;
-  maxBounds?: any;
   cluster?: boolean;
   seismic?: {
     zoom: any; // deprecated

@@ -9,10 +9,6 @@ const defaultConfig: TenantConfig = {
   map: {
     zoom: 4,
     center: [0, 68],
-    maxBounds: [
-      [-55, 27],
-      [84, 80],
-    ],
   },
   documents: {
     extractByFilepath: true,

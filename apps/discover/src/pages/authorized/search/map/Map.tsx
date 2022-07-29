@@ -467,7 +467,6 @@ export const Map: React.FC = () => {
           MAPBOX_MAP_ID={MAPBOX_MAP_ID}
           // project config stuff:
           // -todo: should we fix project config types?
-          maxBounds={mapConfig?.maxBounds as Props['maxBounds']}
           center={mapConfig?.center as Props['center']}
           zoom={mapConfig?.zoom}
           drawMode={drawMode}
