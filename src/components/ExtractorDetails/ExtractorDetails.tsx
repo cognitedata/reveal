@@ -48,137 +48,133 @@ const ExtractorDetails = () => {
   };
 
   return (
-    <>
-      <Layout>
-        <DetailsHeader
-          isFetched={isFetched}
-          title={String(extractor?.name)}
-          version={String(latestRelease?.version)}
-          createdAt={String(createdAt)}
-        />
-        <ContentContainer>
-          <Layout.Container>
-            <StyledLayoutGrid>
-              {isFetched ? (
-                <Flex direction="column" gap={56}>
-                  <StyledBody>
-                    <div dangerouslySetInnerHTML={{ __html: body }} />
-                  </StyledBody>
-                  {links.length > 0 && (
+    <Layout>
+      <DetailsHeader
+        isFetched={isFetched}
+        title={String(extractor?.name)}
+        version={String(latestRelease?.version)}
+        createdAt={String(createdAt)}
+      />
+      <ContentContainer>
+        <Layout.Container>
+          <StyledLayoutGrid>
+            {isFetched ? (
+              <Flex direction="column" gap={56}>
+                <StyledBody>
+                  <div dangerouslySetInnerHTML={{ __html: body }} />
+                </StyledBody>
+                {links.length > 0 && (
+                  <Flex direction="column" gap={16}>
+                    <Title level="4">{t('user-guide-from-cognite-docs')}</Title>
+                    <StyledItemsGrid>
+                      {links.map((link) => (
+                        <GridItemLink key={link.url} href={link.url}>
+                          {link.title}
+                        </GridItemLink>
+                      ))}
+                    </StyledItemsGrid>
+                  </Flex>
+                )}
+              </Flex>
+            ) : (
+              <Skeleton />
+            )}
+            {isFetched ? (
+              <aside>
+                <Flex direction="column" gap={24}>
+                  {artifacts?.length > 0 && (
                     <Flex direction="column" gap={16}>
-                      <Title level="4">
-                        {t('user-guide-from-cognite-docs')}
-                      </Title>
-                      <StyledItemsGrid>
-                        {links.map((link) => (
-                          <GridItemLink key={link.url} href={link.url}>
-                            {link.title}
-                          </GridItemLink>
-                        ))}
-                      </StyledItemsGrid>
+                      <Title level="5">{t('download-extractor')}</Title>
+                      {artifacts.map((artifact) => (
+                        <Button
+                          key={artifact.link}
+                          type={
+                            artifact.platform === 'docs'
+                              ? 'secondary'
+                              : 'primary'
+                          }
+                          icon="Download"
+                          iconPlacement="right"
+                          size="large"
+                          onClick={() => {
+                            handleDownload(artifact);
+                          }}
+                        >
+                          {artifact.displayName}
+                        </Button>
+                      ))}
                     </Flex>
                   )}
-                </Flex>
-              ) : (
-                <Skeleton />
-              )}
-              {isFetched ? (
-                <aside>
-                  <Flex direction="column" gap={24}>
-                    {artifacts?.length > 0 && (
-                      <Flex direction="column" gap={16}>
-                        <Title level="5">{t('download-extractor')}</Title>
-                        {artifacts.map((artifact) => (
-                          <Button
-                            key={artifact.link}
-                            type={
-                              artifact.platform === 'docs'
-                                ? 'secondary'
-                                : 'primary'
-                            }
-                            icon="Download"
-                            iconPlacement="right"
-                            size="large"
-                            onClick={() => {
-                              handleDownload(artifact);
-                            }}
-                          >
-                            {artifact.displayName}
-                          </Button>
-                        ))}
-                      </Flex>
-                    )}
-                    <StyledDivider />
-                    <Flex justifyContent="space-between" alignItems="center">
-                      <Title level="5">{t('versions')}</Title>
-                      <Button
-                        type="link"
-                        size="small"
-                        onClick={() => {
-                          setIsModalOpen(true);
-                        }}
-                      >
-                        {t('view-all')}
-                      </Button>
-                    </Flex>
-                    <Flex gap={8} direction="column">
-                      <Flex gap={8}>
-                        <Label size="small">
-                          {t('v-semver', {
-                            version: latestRelease?.version,
-                          })}
-                        </Label>
-                        <StyledBodyMuted>
-                          {t('released-date', {
-                            createdAt,
-                          })}
-                        </StyledBodyMuted>
-                      </Flex>
-                      <Body level="2">{latestRelease?.description}</Body>
-                    </Flex>
-                    {/* Only display the "Links" section if we have either the source code or docs. */}
-                    {(source || docs) && (
-                      <>
-                        <StyledDivider />
-                        <Title level="5">{t('links')}</Title>
-                        <Flex direction="column" gap={12}>
-                          {/* The extractor might not have an entry in the Cognite Docs. */}
-                          {docs && (
-                            <StyledButtonLink href={docs}>
-                              {t('cognite-docs')}
-                            </StyledButtonLink>
-                          )}
-                          {/* Some repositories have their source code private, thus we can't share it for people without access. */}
-                          {source && (
-                            <StyledButtonLink href={source}>
-                              {t('github')}
-                            </StyledButtonLink>
-                          )}
-                        </Flex>
-                      </>
-                    )}
-                    {tags.length > 0 && (
-                      <>
-                        <StyledDivider />
-                        <Title level="5">{t('tags')}</Title>
-                        <StyledTagsContainer>
-                          {tags.map((tag) => (
-                            <Label size="small" key={tag}>
-                              {tag}
-                            </Label>
-                          ))}
-                        </StyledTagsContainer>
-                      </>
-                    )}
+                  <StyledDivider />
+                  <Flex justifyContent="space-between" alignItems="center">
+                    <Title level="5">{t('versions')}</Title>
+                    <Button
+                      type="link"
+                      size="small"
+                      onClick={() => {
+                        setIsModalOpen(true);
+                      }}
+                    >
+                      {t('view-all')}
+                    </Button>
                   </Flex>
-                </aside>
-              ) : (
-                <Skeleton />
-              )}
-            </StyledLayoutGrid>
-          </Layout.Container>
-        </ContentContainer>
-      </Layout>
+                  <Flex gap={8} direction="column">
+                    <Flex gap={8}>
+                      <Label size="small">
+                        {t('v-version', {
+                          version: latestRelease?.version,
+                        })}
+                      </Label>
+                      <StyledBodyMuted>
+                        {t('released-date', {
+                          createdAt,
+                        })}
+                      </StyledBodyMuted>
+                    </Flex>
+                    <Body level="2">{latestRelease?.description}</Body>
+                  </Flex>
+                  {/* Only display the "Links" section if we have either the source code or docs. */}
+                  {(source || docs) && (
+                    <>
+                      <StyledDivider />
+                      <Title level="5">{t('links')}</Title>
+                      <Flex direction="column" gap={12}>
+                        {/* The extractor might not have an entry in the Cognite Docs. */}
+                        {docs && (
+                          <StyledButtonLink href={docs}>
+                            {t('cognite-docs')}
+                          </StyledButtonLink>
+                        )}
+                        {/* Some repositories have their source code private, thus we can't share it for people without access. */}
+                        {source && (
+                          <StyledButtonLink href={source}>
+                            {t('github')}
+                          </StyledButtonLink>
+                        )}
+                      </Flex>
+                    </>
+                  )}
+                  {tags.length > 0 && (
+                    <>
+                      <StyledDivider />
+                      <Title level="5">{t('tags')}</Title>
+                      <StyledTagsContainer>
+                        {tags.map((tag) => (
+                          <Label size="small" key={tag}>
+                            {tag}
+                          </Label>
+                        ))}
+                      </StyledTagsContainer>
+                    </>
+                  )}
+                </Flex>
+              </aside>
+            ) : (
+              <Skeleton />
+            )}
+          </StyledLayoutGrid>
+        </Layout.Container>
+      </ContentContainer>
       <StyledModal
         visible={isModalOpen}
         title={t('all-versions-of-extractor', { extractor: extractor?.name })}
@@ -205,8 +201,8 @@ const ExtractorDetails = () => {
                 <Flex direction="column" gap={8}>
                   <Flex justifyContent="space-between" gap={8}>
                     <Title level="5">
-                      {t('version-semver', {
-                        semver: release.version,
+                      {t('version-n', {
+                        version: release.version,
                       })}
                     </Title>
                     <StyledBodyMuted>
@@ -236,7 +232,7 @@ const ExtractorDetails = () => {
           ))}
         </StyledModalListContainer>
       </StyledModal>
-    </>
+    </Layout>
   );
 };
 

@@ -57,8 +57,8 @@ const DetailsHeader = ({
                   <Flex gap={6} alignItems="center">
                     <StyledIconMuted type="Layers" />
                     <StyledBodyMuted>
-                      {t('version-semver', {
-                        semver: version,
+                      {t('version-n', {
+                        version,
                       })}
                     </StyledBodyMuted>
                   </Flex>
