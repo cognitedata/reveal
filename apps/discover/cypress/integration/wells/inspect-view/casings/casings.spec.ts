@@ -3,18 +3,24 @@ import { UserPreferredUnit } from '../../../../../src/constants/units';
 import { DATA_AVAILABILITY } from '../../../../../src/modules/wellSearch/constantsSidebarFilters';
 import { TAB_NAMES } from '../../../../../src/pages/authorized/search/well/inspect/constants';
 import { interceptCoreNetworkRequests } from '../../../../support/commands/helpers';
-import { WELLS_SEARCH_ALIAS } from '../../../../support/interceptions';
+import {
+  interceptWellsSearch,
+  WELLS_SEARCH_ALIAS,
+} from '../../../../support/interceptions';
 
 const DATA_AVAILABILITY_CASINGS = 'Casings';
 const DATA_AVAILABILITY_NPT = 'NPT events';
 
 describe('Wells: casings buttons', () => {
   before(() => {
+    const coreRequests = interceptCoreNetworkRequests();
     cy.addWaitForWdlResources('casings/list', 'POST', 'casingsList');
+    interceptWellsSearch();
 
     cy.visit(Cypress.env('BASE_URL'));
     cy.login();
     cy.acceptCookies();
+    cy.wait(coreRequests);
     cy.selectCategory('Wells');
 
     cy.log('click on source filter section');
@@ -23,7 +29,13 @@ describe('Wells: casings buttons', () => {
     cy.log('select `casings` from side bar filters');
     cy.findAllByTestId('filter-item-wrapper').as('filter-items').eq(0).click();
     cy.findAllByText(DATA_AVAILABILITY_CASINGS).should('be.visible').click();
+    cy.findAllByTestId('filter-option-label')
+      .first()
+      .should('be.visible')
+      .should('have.text', 'Casings'); // check if first option got selected
+    cy.wait(`@${WELLS_SEARCH_ALIAS}`);
     cy.findAllByText(DATA_AVAILABILITY_NPT).should('be.visible').click();
+    cy.wait(`@${WELLS_SEARCH_ALIAS}`);
 
     cy.log('select one row');
     cy.hoverOnNthWellbore(0, 'result');
