@@ -19,6 +19,7 @@ import { ContentContainer } from 'components/ContentContainer';
 import { extractorsListExtended } from 'utils/extractorsListExtended';
 import { useTranslation } from 'common';
 import { Artifact, getDownloadUrl } from 'service/extractors';
+import { DocsLinkGrid, DocsLinkGridItem } from 'components/DocsLinkGrid';
 
 const formatDate = (timestamp?: number) => {
   return timestamp && new Date(timestamp).toLocaleDateString();
@@ -66,13 +67,13 @@ const ExtractorDetails = () => {
                 {links.length > 0 && (
                   <Flex direction="column" gap={16}>
                     <Title level="4">{t('user-guide-from-cognite-docs')}</Title>
-                    <StyledItemsGrid>
+                    <DocsLinkGrid>
                       {links.map((link) => (
-                        <GridItemLink key={link.url} href={link.url}>
+                        <DocsLinkGridItem key={link.url} href={link.url}>
                           {link.title}
-                        </GridItemLink>
+                        </DocsLinkGridItem>
                       ))}
-                    </StyledItemsGrid>
+                    </DocsLinkGrid>
                   </Flex>
                 )}
               </Flex>
@@ -246,35 +247,6 @@ const StyledLayoutGrid = styled.div`
 `;
 
 const StyledBody = styled(Body).attrs({ level: 1 })``;
-
-const StyledItemsGrid = styled.div`
-  display: grid;
-  justify-content: space-between;
-  gap: 24px;
-  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
-`;
-
-const GridItemLink = styled((props) => (
-  <Button type="link" target="_blank" rel="noopener noreferrer" {...props}>
-    <Title level="5">{props.children}</Title>
-    <Icon type="ExternalLink" />
-  </Button>
-))`
-  display: inline-flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: ${Colors['decorative--grayscale--200']};
-  border-radius: 6px;
-
-  && {
-    height: auto;
-    padding: 24px;
-  }
-
-  > * {
-    color: ${Colors['text-icon--medium']};
-  }
-`;
 
 const StyledDivider = styled.div`
   width: 100%;
