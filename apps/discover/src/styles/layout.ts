@@ -61,6 +61,10 @@ export const FullWidth = styled.div`
   width: 100%;
 `;
 
+export const FlexRowFullWidth = styled(FlexRow)`
+  width: 100%;
+`;
+
 /**
  * MARGINS AND PADDINGS
  */

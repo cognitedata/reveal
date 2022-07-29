@@ -78,16 +78,6 @@ export const Depth = styled(SecondaryText)`
   }
 `;
 
-export const EventAvatar = styled.div`
-  height: 12px;
-  width: 12px;
-  border-radius: ${sizes.extraSmall};
-  border: 2px var(--cogs-greyscale-grey2) solid;
-  background-color: ${(props: { color: string }) => props.color};
-  margin-top: -9px;
-  margin-right: ${sizes.extraSmall};
-`;
-
 export const EventText = styled(SecondaryText)`
   color: #000000;
   opacity: 90%;

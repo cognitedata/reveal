@@ -3,8 +3,8 @@ import React from 'react';
 import { FlexRow } from 'styles/layout';
 
 import { BodyColumnMainHeader } from '../../../../common/Events/elements';
+import { NptEventAvatar } from '../../elements';
 import {
-  EventAvatar,
   EventText,
   SecondaryText,
   SummarySection,
@@ -20,7 +20,7 @@ export const HighlightEvent: React.FC = () => {
       <SecondaryText>9/1/2021</SecondaryText>
 
       <FlexRow>
-        <EventAvatar color="#87E79C" />
+        <NptEventAvatar color="#87E79C" />
         <EventText>DFAL MOTR 2036 (ft)</EventText>
       </FlexRow>
     </SummarySection>

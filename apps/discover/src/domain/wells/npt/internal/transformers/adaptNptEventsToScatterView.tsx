@@ -6,7 +6,7 @@ import { NptInternal } from '../types';
 
 export const adaptNptEventsToScatterView = (
   nptEvents: NptInternal[]
-): ScatterViewEvent[] => {
+): ScatterViewEvent<NptInternal>[] => {
   // create a bucket of npt codes with corresponding events.
   const nptCodeBucket = nptEvents.reduce((bucket, item) => {
     const stack = bucket[item.nptCode] || [];
@@ -36,6 +36,7 @@ export const adaptNptEventsToScatterView = (
     return {
       id: `${nptCode}-${nptCodeDetail}-${measuredDepth?.value}-${startTime}-${endTime}`,
       dotColor: nptCodeColor,
+      original: event,
       metadata: [
         {
           title: nptCode,
@@ -64,7 +65,7 @@ export const adaptNptEventsToScatterView = (
           content: duration,
         },
       ],
-    } as ScatterViewEvent;
+    };
   });
 
   return transformedData;

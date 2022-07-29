@@ -11,8 +11,6 @@ import React, {
 import { DragDropContainer } from 'components/DragDropContainer';
 
 import { SCALE_BOTTOM_PADDING } from '../../common/Events/constants';
-import NdsEventsColumn from '../../common/Events/NdsEventsColumn';
-import NptEventsColumn from '../../common/Events/NptEventsColumn';
 import { SelectedWellboreNptView } from '../../nptEvents/Graph';
 import { CasingSchematicView } from '../types';
 import { getScaleBlocks } from '../utils/scale';
@@ -20,6 +18,8 @@ import { getScaleBlocks } from '../utils/scale';
 import { DEPTH_SCALE_MIN_HEIGHT } from './constants';
 import { ContentWrapper, WellboreCasingsViewWrapper } from './elements';
 import { Header } from './Header';
+import { NdsEventsColumn } from './NdsEventsColumn';
+import { NptEventsColumn } from './NptEventsColumn';
 import { SchemaColumn } from './SchemaColumn';
 import { SummaryColumn } from './SummaryColumn';
 import { WellboreNdsDetailedView } from './WellboreNdsDetailedView';
@@ -109,13 +109,13 @@ export const WellboreCasingView: React.FC<WellboreCasingsViewProps> = ({
             <NptEventsColumn
               scaleBlocks={scaleBlocks}
               events={nptEvents}
-              isEventsLoading={isNptEventsLoading}
+              isLoading={isNptEventsLoading}
             />
 
             <NdsEventsColumn
               scaleBlocks={scaleBlocks}
               events={ndsEvents}
-              isEventsLoading={isNdsEventsLoading}
+              isLoading={isNdsEventsLoading}
             />
 
             <SummaryColumn casingAssemblies={casingAssemblies} />

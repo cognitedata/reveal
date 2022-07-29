@@ -5,23 +5,33 @@ import { Tooltip } from 'components/PopperTooltip';
 
 import { DetailCard, DetailCardMetadata } from '../DetailCard';
 
-export type ScatterViewEvent = {
+export type ScatterViewEvent<T> = {
   id: string;
   dotColor?: string;
+  original: T;
   metadata: DetailCardMetadata[];
 };
 
-interface Props {
-  events: ScatterViewEvent[];
+interface Props<T> {
+  events: ScatterViewEvent<T>[];
+  renderTooltipContent?: (event: ScatterViewEvent<T>) => JSX.Element;
 }
 
-export const ScatterView: React.FC<Props> = ({ events }) => {
+export const ScatterView = <T extends object>({
+  events,
+  renderTooltipContent,
+}: Props<T>) => {
   return (
     <Content>
       {events.map((event) => (
         <Tooltip
           key={event.id}
-          content={<DetailCard data={event.metadata} />}
+          interactive
+          content={
+            renderTooltipContent?.(event) || (
+              <DetailCard data={event.metadata} />
+            )
+          }
           hideArrow
           followCursor
         >

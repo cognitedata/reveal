@@ -6,7 +6,7 @@ import { NdsInternal } from '../types';
 
 export const adaptNdsEventsToScatterView = (
   nptEvents: NdsInternal[]
-): ScatterViewEvent[] => {
+): ScatterViewEvent<NdsInternal>[] => {
   // create a bucket of npt codes with corresponding events.
   const ndsCodeBucket = nptEvents.reduce((buckets, item) => {
     if (!item.riskType) {
@@ -41,6 +41,7 @@ export const adaptNdsEventsToScatterView = (
     return {
       id: `${riskType}-${subtype}-${holeStart?.value}-${holeEnd?.value}-${severity}-${probability}`,
       dotColor: ndsCodeColor,
+      original: event,
       metadata: [
         {
           title: riskType,
@@ -77,7 +78,7 @@ export const adaptNdsEventsToScatterView = (
           content: holeEnd?.value,
         },
       ],
-    } as ScatterViewEvent;
+    };
   });
 
   return transformedData;
