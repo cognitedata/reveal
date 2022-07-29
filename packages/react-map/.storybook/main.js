@@ -28,6 +28,8 @@ module.exports = {
       NODE_ENV: NODE_ENV,
       ...loadEnv(NODE_ENV, process.cwd(), 'REACT_APP_'),
       ...loadEnv(NODE_ENV, process.cwd(), 'PUBLIC_URL'),
+      ...loadEnv(NODE_ENV, process.cwd(), 'STORYBOOK_MAPBOX_TOKEN'),
+      ...loadEnv(NODE_ENV, process.cwd(), 'STORYBOOK_MAPBOX_MAP_ID'),
     };
 
     config.define = {
@@ -55,6 +57,12 @@ module.exports = {
             buffer: true,
           }),
         ],
+      },
+    };
+    config.server = {
+      ...config.server,
+      fs: {
+        allow: ['../..'],
       },
     };
     return config;

@@ -20,6 +20,7 @@ import { choosePreviousSelectedLayer } from './layers/choosePreviousSelectedLaye
 
 import 'maplibre-gl/dist/maplibre-gl.css';
 import '@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css';
+import '@cognite/cogs.js/dist/cogs.css';
 
 export interface Props {
   center?: MapboxOptions['center'];
@@ -54,8 +55,9 @@ export interface Props {
  * features: polygons/lines drawn by user to display on the map
  *
  */
-export const Map: React.FC<Props> = ({
+export const Map: React.FC<React.PropsWithChildren<Props>> = ({
   center,
+  children,
   disableMinimap,
   drawMode,
   events,
@@ -322,6 +324,7 @@ export const Map: React.FC<Props> = ({
     <MapContainer ref={mapRef} data-testid="map-container">
       {renderNavigationControls &&
         renderNavigationControls(mapRef?.current?.offsetWidth)}
+      {children}
     </MapContainer>
   );
 };

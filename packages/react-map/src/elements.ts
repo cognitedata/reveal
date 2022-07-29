@@ -1,5 +1,15 @@
 import styled from 'styled-components';
 
+export const sizes = {
+  extraSmall: '4px',
+  small: '8px',
+  normal: '16px',
+  medium: '24px',
+  large: '40px',
+  extraLarge: '48px',
+  huge: '80px',
+};
+
 //   z-index: ${layers.MAP};
 export const MapContainer = styled.div`
   height: 100%;
