@@ -5,7 +5,7 @@ import documentumImgUrl from 'assets/documentum.png';
 import piafImgUrl from 'assets/piaf.png';
 import prosperImgUrl from 'assets/prosper.png';
 
-type ExtractorExtended = {
+export type ExtractorExtended = {
   imagePath: string | any;
   body: string;
   tags: string[];

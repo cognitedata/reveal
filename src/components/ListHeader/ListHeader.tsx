@@ -6,8 +6,14 @@ import { useTranslation } from 'common';
 import { Layout } from 'components/Layout';
 import { Breadcrumb } from '@cognite/cdf-utilities';
 import { HeaderContainer } from 'components/HeaderContainer';
+import { Dispatch } from 'react';
 
-const ListHeader = () => {
+type ListHeaderProps = {
+  search: string;
+  setSearch: Dispatch<string>;
+};
+
+const ListHeader = ({ search, setSearch }: ListHeaderProps) => {
   const { t } = useTranslation();
   const { subAppPath } = useParams<{ subAppPath?: string }>();
   return (
@@ -31,6 +37,10 @@ const ListHeader = () => {
               size="large"
               fullWidth
               placeholder={t('search-for-source-systems')}
+              value={search}
+              onChange={(evt) => {
+                setSearch(evt.currentTarget.value);
+              }}
             />
           </Flex>
         </Flex>

@@ -12,14 +12,50 @@ import { createLink } from '@cognite/cdf-utilities';
 
 import { useTranslation } from 'common';
 import { useExtractorsList } from 'hooks/useExtractorsList';
-import { extractorsListExtended } from 'utils/extractorsListExtended';
+import {
+  ExtractorExtended,
+  extractorsListExtended,
+} from 'utils/extractorsListExtended';
 import { Skeleton } from 'antd';
+import { ExtractorWithRelease } from 'service/extractors';
 
-const ExtractorsList = () => {
+type ExtractorsListProps = {
+  search: string;
+};
+
+type TExtractorsListExtended = typeof extractorsListExtended;
+type ExtractorWithReleaseExtended = ExtractorWithRelease & ExtractorExtended;
+
+const mergeExtractorsExtended = (
+  extractors: ExtractorWithRelease[],
+  extractorsListExtended: TExtractorsListExtended
+): ExtractorWithReleaseExtended[] => {
+  return extractors.map((extractor) => {
+    return { ...extractorsListExtended[extractor.externalId], ...extractor };
+  });
+};
+
+const ExtractorsList = ({ search = '' }: ExtractorsListProps) => {
   const { t } = useTranslation();
   const { data: extractors, isFetched } = useExtractorsList();
   const history = useHistory();
   const { subAppPath } = useParams<{ subAppPath?: string }>();
+  const extractorsList = mergeExtractorsExtended(
+    extractors ?? [],
+    extractorsListExtended
+  ).filter((extractor) => {
+    const searchLowercase = search.toLowerCase();
+    if (extractor.description?.toLowerCase()?.includes(searchLowercase)) {
+      return true;
+    }
+    if (extractor.name.toLowerCase().includes(searchLowercase)) {
+      return true;
+    }
+    if (extractor.tags.map((t) => t.toLowerCase()).includes(searchLowercase)) {
+      return true;
+    }
+    return false;
+  }, []);
   return (
     <Flex gap={24} direction="column">
       <Flex gap={4} direction="column">
@@ -29,7 +65,7 @@ const ExtractorsList = () => {
       <StyledGrid>
         {isFetched ? (
           <>
-            {extractors?.map((extractor) => (
+            {extractorsList?.map((extractor) => (
               <StyledExtractorContainer
                 key={extractor.externalId}
                 onClick={() => {

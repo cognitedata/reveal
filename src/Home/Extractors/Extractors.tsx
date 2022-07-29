@@ -5,16 +5,18 @@ import { Layout } from 'components/Layout';
 import { ExtractorsList } from 'components/ExtractorsList';
 import { CreateExtractor } from 'components/CreateExtractor';
 import { ContentContainer } from 'components/ContentContainer';
+import { useState } from 'react';
 
 const Extractors = () => {
+  const [search, setSearch] = useState('');
   return (
     <Layout>
-      <ListHeader />
+      <ListHeader search={search} setSearch={setSearch} />
       <Layout.Container>
         <ContentContainer>
           <Flex gap={48} direction="column">
             <CreateExtractor />
-            <ExtractorsList />
+            <ExtractorsList search={search} />
           </Flex>
         </ContentContainer>
       </Layout.Container>
