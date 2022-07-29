@@ -222,6 +222,7 @@ const ExtractorDetails = () => {
                       icon="Download"
                       iconPlacement="right"
                       onClick={() => handleDownload(artifact)}
+                      size="small"
                     >
                       {artifact.displayName}
                     </Button>
