@@ -1,8 +1,21 @@
-import { Geometry, Point } from '@cognite/seismic-sdk-js';
-import { Feature, FeatureCollection } from '@turf/helpers';
+import type {
+  Feature,
+  FeatureCollection,
+  Geometries,
+  Point,
+} from '@turf/helpers';
 import type { MapboxOptions, Map } from 'maplibre-gl';
+import type { Geometry } from 'geojson';
+
+import type { DrawMode } from './FreeDraw';
 
 export type MapType = Map;
+
+// proxy these so we don't expose turf as the geo type source
+export type MapPoint = Point;
+export type MapFeature = Feature;
+export type MapGeometries = Geometries;
+export type MapFeatureCollection = FeatureCollection;
 
 export interface MapEvent {
   type: string;
@@ -15,10 +28,10 @@ export interface MapIcon {
   icon: HTMLImageElement;
 }
 
-export interface Asset {
-  name: string;
-  geometry: Point;
-}
+// export interface Asset {
+//   name: string;
+//   geometry: Point;
+// }
 
 export interface MapDataSource {
   id: string;
@@ -30,6 +43,14 @@ export interface MapDataSource {
   };
 }
 
+export interface MapAddedProps {
+  draw: DrawMode;
+  setDraw: (mode: DrawMode) => void;
+
+  selectedFeatures?: any[];
+  polygon?: MapGeometries;
+}
+
 // type Marker = {
 //   id: string;
 //   title: string;
@@ -37,52 +58,41 @@ export interface MapDataSource {
 // };
 export interface MapState {
   // polygon(s) drawn on the map
-  geoFilter: GeoJson[] | never[];
+  polygons: Geometry[] | never[];
   // other objects drawn on the map
   otherGeo: Record<string, Geometry>;
   // selectedDataFeature: Feature | null;
-  selectedFeature: Feature | null; // Feature === Geometry | GeometryCollection
+  selectedFeature: MapFeature; // Feature === Geometry | GeometryCollection
 
-  arbitraryLine: Feature | null;
+  arbitraryLine: MapFeature;
   selectedLayers: string[];
   // sources: MapDataSource[];
-  assets: Asset[];
-  focusedAsset?: Asset;
+  // assets: Asset[];
+  // focusedAsset?: Asset;
   filterApplied: boolean;
 }
 
 // other types
 
 // DEPRECATED use from mapbox
-export interface MapFeature {
-  type?: string;
-  features: GeoJson[];
-}
+// export interface MapFeature {
+//   type?: string;
+//   features: GeoJson[];
+// }
 
 // DEPRECATED use from sdk
-export interface APIGeo {
-  shape: Geometry;
-  relation: string;
-}
+// export interface APIGeo {
+//   shape: Geometry;
+//   relation: string;
+// }
 
 // DEPRECATED use from sdk
-export interface GeoJson {
-  id?: string;
-  type?: string;
-  properties?: any;
-  geometry: Geometry;
-}
-
-export type DrawMode =
-  | 'simple_select'
-  | 'draw_line_string'
-  // we need to move to using this inbuilt one
-  | 'draw_polygon'
-  // and remove this custom one:
-  | 'draw_free_polygon'
-  | 'direct_select';
-
-export type MapFeatureCollection = FeatureCollection;
+// export interface GeoJson {
+//   id?: string;
+//   type?: string;
+//   properties?: any;
+//   geometry: Geometry;
+// }
 
 export interface MapConfig {
   zoom?: MapboxOptions['zoom'];

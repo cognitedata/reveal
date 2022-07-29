@@ -26,6 +26,7 @@ export default [
       'lodash/isEqual',
       'maplibre-gl/dist/maplibre-gl.css',
       '@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css',
+      '@cognite/cogs.js/dist/cogs.css',
     ],
     plugins: [
       typescript({

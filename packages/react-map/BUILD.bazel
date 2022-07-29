@@ -51,7 +51,6 @@ generate_package_json_helpers(
 # Dependencies from package.json
 DEPENDENCIES = [
     "@npm//@cognite/cogs.js",
-    "@npm//@cognite/seismic-sdk-js",
     "@npm//@mapbox/mapbox-gl-draw",
     "@npm//@turf/helpers",
     "@npm//@turf/simplify",

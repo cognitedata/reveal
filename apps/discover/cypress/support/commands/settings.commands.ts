@@ -8,7 +8,7 @@ const changeMeasurementUnit = (unit: string) => {
   cy.get('@settingsBtn').click();
 
   cy.log(`changing the measurement unit: ${unit}`);
-  
+
   if (unit === 'Meter') {
     cy.getButton('Meter').click({ force: true }).should('be.focused');
   }

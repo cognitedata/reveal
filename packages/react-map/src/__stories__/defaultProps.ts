@@ -1,9 +1,9 @@
 import { featureCollection, feature } from '@turf/helpers';
 
-import { DrawMode } from '../types';
+import { drawModes } from '../FreeDraw';
 
 export const props = {
-  drawMode: 'direct_select' as DrawMode,
+  drawMode: drawModes.DIRECT_SELECT,
   events: [],
   features: featureCollection([], {}),
   flyTo: null,

@@ -3,10 +3,11 @@ import { Button } from '@cognite/cogs.js';
 
 import { Map } from '../Map';
 
+import { MapWrapper } from './elements';
 import { props } from './defaultProps';
 
 export default {
-  title: 'Map / Default',
+  title: 'Map / Map',
   component: Map,
 };
 
@@ -18,12 +19,11 @@ export const WithFlyTo = () => {
   };
 
   return (
-    <div style={{ display: 'flex' }}>
-      <Map {...props} flyTo={position} />
-
+    <MapWrapper>
       <Button onClick={handleFlyTo} aria-label="Fly to NY">
         Fly to NY
       </Button>
-    </div>
+      <Map {...props} flyTo={position} />
+    </MapWrapper>
   );
 };

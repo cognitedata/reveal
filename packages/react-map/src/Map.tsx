@@ -1,18 +1,24 @@
 import React, { useState, useRef } from 'react';
 import MapboxDraw from '@mapbox/mapbox-gl-draw';
-import { FeatureCollection, Feature } from '@turf/helpers';
 import isUndefined from 'lodash/isUndefined';
 import noop from 'lodash/noop';
 import mapboxgl from 'maplibre-gl';
-import { GeoJson } from '@cognite/seismic-sdk-js';
 import type { MapboxOptions } from 'maplibre-gl';
 
 import { addLayer, removeLayer } from './layers/addRemoveVisibleLayer';
-import { MapDataSource, DrawMode, MapEvent, MapIcon } from './types';
+import {
+  MapDataSource,
+  MapEvent,
+  MapIcon,
+  MapAddedProps,
+  MapGeometries,
+  MapFeature,
+  MapFeatureCollection,
+} from './types';
 import { SelectableLayer } from './layers/types';
 import { useDeepEffect } from './hooks/useDeep';
 import { MapContainer } from './elements';
-import { FreeDraw } from './FreeDraw';
+import { DrawMode, drawModes, FreeDraw } from './FreeDraw';
 import { useZoomToFeature } from './hooks/useZoomToFeature';
 import { Minimap } from './Minimap/Minimap';
 import { getMapStyles } from './style';
@@ -27,18 +33,19 @@ export interface Props {
   disableMinimap?: boolean;
   drawMode: DrawMode;
   events: MapEvent[];
-  features: FeatureCollection;
+  features: MapFeatureCollection;
   flyTo: {
     center: number[];
     zoom?: number;
   } | null;
-  focusedFeature: Feature | null;
+  focusedFeature?: MapFeature;
   layerConfigs: SelectableLayer[];
   layerData: MapDataSource[];
   mapIcons?: MapIcon[];
   maxBounds?: MapboxOptions['maxBounds'];
   renderNavigationControls?: (mapWidth: number) => React.ReactElement;
-  selectedFeature: GeoJson | null;
+  selectedFeature?: MapFeature;
+  initialPolygon?: MapGeometries;
   setMapReference?: (map: mapboxgl.Map) => void;
   zoom?: MapboxOptions['zoom'];
 
@@ -72,6 +79,7 @@ export const Map: React.FC<React.PropsWithChildren<Props>> = ({
   setMapReference,
   layerData,
   zoom,
+  initialPolygon,
   MAPBOX_TOKEN,
   MAPBOX_MAP_ID,
 }) => {
@@ -79,6 +87,7 @@ export const Map: React.FC<React.PropsWithChildren<Props>> = ({
 
   const [draw, setDraw] = useState<any>(null);
   const [map, setMap] = useState<any>(null);
+  const [selectedFeatures, _setSelectedFeatures] = useState<any[]>([]);
   const [, setNavigation] = useState<boolean | undefined>(false);
 
   const zoomToFeature = useZoomToFeature(map);
@@ -222,21 +231,23 @@ export const Map: React.FC<React.PropsWithChildren<Props>> = ({
 
   useDeepEffect(() => {
     if (map === null || draw === null) return noop;
-    if (selectedFeature && drawMode === 'simple_select') return noop;
-    if (drawMode === 'direct_select') {
+    if (selectedFeature && drawMode === drawModes.SIMPLE_SELECT) return noop;
+    if (drawMode === drawModes.DIRECT_SELECT) {
       if (selectedFeature) {
-        draw.changeMode('direct_select', { featureId: selectedFeature.id });
+        draw.changeMode(drawModes.DIRECT_SELECT, {
+          featureId: selectedFeature.id,
+        });
       } else {
-        draw.changeMode('simple_select');
+        draw.changeMode(drawModes.SIMPLE_SELECT);
       }
       return noop;
     }
     const currentDrawmode = draw.getMode();
-    if (currentDrawmode !== drawMode || drawMode !== 'simple_select')
+    if (currentDrawmode !== drawMode || drawMode !== drawModes.SIMPLE_SELECT)
       draw.changeMode(drawMode);
 
     return noop;
-  }, [drawMode, draw, selectedFeature]);
+  }, [drawMode, !!draw, selectedFeature]);
 
   const addSource = (
     mapInstance: mapboxgl.Map,
@@ -320,11 +331,27 @@ export const Map: React.FC<React.PropsWithChildren<Props>> = ({
     }
   }, [mapRef?.current?.offsetWidth]);
 
+  const propsToGiveToChildren: MapAddedProps = {
+    draw,
+    polygon: initialPolygon,
+    setDraw,
+    selectedFeatures,
+  };
+
+  const childrenWithProps = React.Children.map(children, (child) => {
+    // Checking isValidElement is the safe way
+    // and avoids a typescript error too.
+    if (React.isValidElement(child)) {
+      return React.cloneElement(child, propsToGiveToChildren);
+    }
+    return child;
+  });
+
   return (
     <MapContainer ref={mapRef} data-testid="map-container">
       {renderNavigationControls &&
         renderNavigationControls(mapRef?.current?.offsetWidth)}
-      {children}
+      {childrenWithProps}
     </MapContainer>
   );
 };
