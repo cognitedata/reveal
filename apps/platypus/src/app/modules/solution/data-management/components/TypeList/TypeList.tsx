@@ -65,8 +65,7 @@ const StyledTypeList = styled.div`
 
 const StyledFilterContainer = styled.div`
   height: 56px;
-  padding: 10px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+  padding: 16px;
 `;
 
 const StyledItemContainer = styled.div`

@@ -1,4 +1,4 @@
-import { Flex, Title, Button, Tooltip } from '@cognite/cogs.js';
+import { Flex } from '@cognite/cogs.js';
 import { SplitPanelLayout } from '@platypus-app/components/Layouts/SplitPanelLayout';
 import { FlexPlaceholder } from '@platypus-app/components/Placeholder/FlexPlaceholder';
 import { ModalDialog } from '@platypus-app/components/ModalDialog/ModalDialog';
@@ -24,6 +24,7 @@ import {
   useSelectedDataModelVersion,
 } from '@platypus-app/hooks/useDataModelActions';
 import { usePreviewPageData } from '../hooks/usePreviewPageData';
+import { PreviewPageHeader } from '../components/PreviewPageHeader/PreviewPageHeader';
 export interface PreviewProps {
   dataModelExternalId: string;
 }
@@ -154,43 +155,12 @@ export const Preview = ({ dataModelExternalId }: PreviewProps) => {
                   onLoadClick={onLoadDataFromTransformation}
                 />
               )}
-              <Flex
-                style={{ height: 56, padding: '10px 16px' }}
-                alignItems="center"
-                justifyContent="space-between"
-              >
-                <Title level={5}>{selectedType.name}</Title>
-                {!transformation.data?.id && mergedPreviewData.length !== 0 && (
-                  <Tooltip
-                    content={t(
-                      'transformation_tooltip',
-                      'No transformation defined for data in this table'
-                    )}
-                  >
-                    <Button
-                      data-cy="edit-transformation"
-                      type="primary"
-                      icon="ExternalLink"
-                      iconPlacement="right"
-                      disabled={true}
-                      onClick={() => setIsModalOpen(true)}
-                    >
-                      {t('transformation-edit', 'Edit transformations')}
-                    </Button>
-                  </Tooltip>
-                )}
-                {transformation.data?.id && (
-                  <Button
-                    data-cy="edit-transformation"
-                    type="primary"
-                    icon="ExternalLink"
-                    iconPlacement="right"
-                    onClick={() => setIsModalOpen(true)}
-                  >
-                    {t('transformation-edit', 'Edit transformations')}
-                  </Button>
-                )}
-              </Flex>
+              <PreviewPageHeader
+                transformationId={transformation.data?.id}
+                previewDataLength={mergedPreviewData.length}
+                title={selectedType.name}
+                onTransformationClick={setIsModalOpen}
+              />
               <DataPreviewTable
                 key={`${isModalOpen}_key`}
                 dataModelType={selectedType}
