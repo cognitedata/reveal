@@ -269,10 +269,19 @@ const GridItemLink = styled((props) => (
   && {
     height: auto;
     padding: 24px;
+    color: ${Colors['text-icon--medium']};
+
+    &:hover {
+      background-color: ${Colors['surface--strong']};
+
+      > * {
+        color: ${Colors['surface--action--strong--default']};
+      }
+    }
   }
 
-  > * {
-    color: ${Colors['text-icon--medium']};
+  svg {
+    color: inherit;
   }
 `;
 
