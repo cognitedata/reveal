@@ -26,7 +26,7 @@ import { Container } from '@cognite/react-container';
 </Container>;
 ```
 
-The prime example can be found in the demo app [here](https://github.com/cognitedata/react-demo-app/blob/master/src/App.tsx#L18)
+The prime example can be found in the demo app [here](https://github.com/cognitedata/applications/blob/master/apps/react-demo-app/src/App.tsx#L16)
 
 ## Overview
 
