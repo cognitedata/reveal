@@ -15,7 +15,9 @@ export const ViewModeControl = <T extends string>({
       onButtonClicked={(view) => onChangeView(view as T)}
     >
       {views.map((view) => (
-        <SegmentedControl.Button key={view}>{view}</SegmentedControl.Button>
+        <SegmentedControl.Button key={view} data-testid={`view-mode-${view}`}>
+          {view}
+        </SegmentedControl.Button>
       ))}
     </SegmentedControl>
   );

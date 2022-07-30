@@ -43,7 +43,7 @@ export const NdsTreemap: React.FC<NdsTreemapProps> = ({
         onCancel={() => setOtherWellbores([])}
         footer={null}
       >
-        <WellboreTableWrapper>
+        <WellboreTableWrapper data-testid="nds-wellbore-table">
           <Table<NdsTreemapWellboreData>
             id="nds-modal-wellbores"
             data={otherWellbores}
