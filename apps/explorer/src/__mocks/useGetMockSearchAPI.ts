@@ -1,9 +1,8 @@
+import { GetSearchDataQueryTypeGenerated } from 'graphql/generated';
 import { useEffect, useState } from 'react';
-import { getArrayOfItems } from 'utils/search';
-import { SearchDataFormat } from 'utils/search/types';
 import { getMockSearchAPI } from '__mocks/mockSearchAPIData';
 
-export const useGetMockSearchAPI = (): SearchDataFormat[] => {
+export const useGetMockSearchAPI = (): GetSearchDataQueryTypeGenerated => {
   const [searchResults, setSearchResults] = useState<Record<string, any>>({});
   useEffect(() => {
     const fetchData = async () => {
@@ -13,5 +12,5 @@ export const useGetMockSearchAPI = (): SearchDataFormat[] => {
     fetchData();
   }, []);
 
-  return getArrayOfItems(searchResults);
+  return searchResults;
 };

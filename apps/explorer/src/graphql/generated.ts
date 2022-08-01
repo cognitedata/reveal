@@ -18,13 +18,9 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
-  /** Represents the value of a data point. Can be either a String (<= 255 characters) or a number in the range [-1e100, 1e100].  */
   DataPointValue: any;
-  /** Represents a 64-bit integer value. Note that some consumers as JavaScript only supports [-(2^53)+1, (2^53)-1]. */
   Int64: any;
-  /** Represents a plain JSON object. */
   JSONObject: any;
-  /** A timestamp with UTC-offset, formatted as a ISO-8601 date time string, with potentially microsecond resolution.Note as input the timestamp can be formatted as a number, which is assumed to represent milliseconds since Unix epoch. */
   Timestamp: any;
 };
 
@@ -780,7 +776,11 @@ export type GetSearchDataQueryTypeGenerated = {
       externalId: string;
       name?: string | null;
       slackId?: string | null;
-      desk?: { name?: string | null; externalId: string } | null;
+      desk?: {
+        name?: string | null;
+        externalId: string;
+        nodeId?: any | null;
+      } | null;
     } | null>;
   } | null;
   rooms?: {
@@ -790,6 +790,7 @@ export type GetSearchDataQueryTypeGenerated = {
       nodeId?: any | null;
       description?: string | null;
       isBookable?: boolean | null;
+      type?: string | null;
     } | null>;
   } | null;
 };
@@ -858,6 +859,7 @@ export const GetSearchDataDocument = `
       desk {
         name
         externalId
+        nodeId
       }
     }
   }
@@ -868,6 +870,7 @@ export const GetSearchDataDocument = `
       nodeId
       description
       isBookable
+      type
     }
   }
 }

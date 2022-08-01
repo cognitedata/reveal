@@ -13,6 +13,7 @@ export const GetSearchDataQuery = gql`
         desk {
           name
           externalId
+          nodeId
         }
       }
     }
@@ -23,6 +24,7 @@ export const GetSearchDataQuery = gql`
         nodeId
         description
         isBookable
+        type
       }
     }
   }

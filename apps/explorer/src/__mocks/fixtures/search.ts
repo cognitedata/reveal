@@ -3,21 +3,22 @@ export const data = {
     rooms: {
       items: [
         {
-          id: 'room-1',
+          externalId: 'room-1',
           name: 'Mario',
           nodeId: 3245,
           description: "It's a me, Mario",
           isBookable: true,
           type: 'meeting-room',
           equipment: [
+            // This should be a property in the actual API but arrays of direct relations are not supported yet (Aug. 1st 2022)
             {
-              id: 'equip-4',
+              externalId: 'equip-4',
               nodeId: 1444,
               type: 'TV',
               isBroken: true,
             },
             {
-              id: 'equip-5',
+              externalId: 'equip-5',
               nodeId: 1654,
               type: 'Whiteboard',
               isBroken: false,
@@ -25,16 +26,15 @@ export const data = {
           ],
         },
         {
-          id: 'room-2',
+          externalId: 'room-2',
           name: '5th Floor Restroom',
           nodeId: 3345,
           description: 'The Restroom. What more shall I say?',
           isBookable: false,
           type: 'rest-room',
-
           equipment: [
             {
-              id: 'equip-6',
+              externalId: 'equip-6',
               nodeId: 1354,
               type: 'TV',
               isBroken: false,
@@ -46,35 +46,32 @@ export const data = {
     people: {
       items: [
         {
-          id: 'id1',
+          externalId: 'id1',
           name: 'Potato',
           slackId: 'potato.slack',
           desk: {
-            id: 'equip-1',
+            externalId: 'equip-1',
             nodeId: 2345,
-            type: 'Desk',
             isBroken: false,
           },
         },
         {
-          id: 'id2',
+          externalId: 'id2',
           name: 'Cake',
           slackId: 'cake.slack',
           desk: {
-            id: 'equip-2',
+            externalId: 'equip-2',
             nodeId: 2334,
-            type: 'Desk',
             isBroken: false,
           },
         },
         {
-          id: 'id3',
+          externalId: 'id3',
           name: 'Sweet Potato',
           slackId: 'spotato.slack',
           desk: {
-            id: 'equip-3',
+            externalId: 'equip-3',
             nodeId: 2324,
-            type: 'Desk',
             isBroken: false,
           },
         },
