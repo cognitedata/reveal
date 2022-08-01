@@ -14,6 +14,13 @@ export const ResourceTableColumns = {
     dataKey: 'name',
     width: 200,
   },
+  relation: {
+    key: 'relation',
+    title: 'Relationship Description(Source/Target)',
+    dataKey: 'relation',
+    width: 200,
+  },
+
   relationshipLabels: {
     key: 'relationshipLabels',
     title: 'Relationship Labels',
@@ -28,6 +35,12 @@ export const ResourceTableColumns = {
         ))}
       </Flex>
     ),
+  },
+  externalId: {
+    key: 'externalId',
+    title: 'External ID',
+    dataKey: 'externalId',
+    width: 200,
   },
   root: {
     key: 'root',
@@ -50,12 +63,6 @@ export const ResourceTableColumns = {
     key: 'description',
     title: 'Description',
     dataKey: 'description',
-    width: 200,
-  },
-  externalId: {
-    key: 'externalId',
-    title: 'External ID',
-    dataKey: 'externalId',
     width: 200,
   },
   lastUpdatedTime: {

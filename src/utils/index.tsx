@@ -19,7 +19,10 @@ export function getColumnsWithRelationshipLabels(
 ) {
   const modifiedColumns = [
     ...columns.slice(0, 1),
+
     Table.Columns.relationshipLabels,
+    Table.Columns.relation,
+
     ...columns.slice(1),
   ];
   return relationshipLabels ? modifiedColumns : columns;

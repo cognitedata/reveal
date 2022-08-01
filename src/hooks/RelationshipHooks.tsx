@@ -50,6 +50,42 @@ type RelationshipLabelsOutput = {
   [key: string]: string[];
 };
 
+type RelationshipWithTarget = {
+  [key: string]: {
+    sourceExternalId?: string;
+    targetExternalId?: string;
+  };
+};
+
+function getRelation<T extends Resource>(
+  relationship: RelationshipWithTarget,
+  item: T
+) {
+  return item.externalId &&
+    relationship[item.externalId] &&
+    relationship[item.externalId].sourceExternalId === item.externalId
+    ? 'Source'
+    : 'Target';
+}
+
+const extractRelationships = (
+  pages: { items: Relationship[] }[] = [],
+  type: 'source' | 'target'
+) => {
+  const relationships = pages.reduce((accl, t) => {
+    t.items.forEach(rel => {
+      const { sourceExternalId, targetExternalId } = rel;
+
+      accl[type === 'source' ? targetExternalId : sourceExternalId] = {
+        sourceExternalId,
+        targetExternalId,
+      };
+    });
+    return accl;
+  }, {} as RelationshipWithTarget);
+  return relationships;
+};
+
 const extractRelationshipLabels = (
   pages: { items: Relationship[] }[] = []
 ): RelationshipLabelsOutput => {
@@ -242,6 +278,9 @@ export const useInfiniteRelationshipsList = <T extends Resource>(
     () => extractExternalIds(targetData?.pages, 'target'),
     [targetData]
   );
+  const targetRelationships = extractRelationships(targetData?.pages, 'target');
+
+  const sourceRelationships = extractRelationships(sourceData?.pages, 'source');
 
   const { data: targetResources = [] } = useCdfItems<T>(
     convertResourceType(type!),
@@ -253,19 +292,29 @@ export const useInfiniteRelationshipsList = <T extends Resource>(
   );
 
   const rest = sourceParams.hasNextPage ? sourceParams : targetParams;
-  const sourceResourcesWithRelationshipLabels = sourceResources.map(item => ({
-    ...item,
-    relationshipLabels: item?.externalId
-      ? sourceRelationshipLabels[item.externalId]
-      : [],
-  }));
 
-  const targetResourcesWithRelationshipLabels = targetResources.map(item => ({
-    ...item,
-    relationshipLabels: item?.externalId
-      ? targetRelationshipLabels[item.externalId]
-      : [],
-  }));
+  const sourceResourcesWithRelationshipLabels = sourceResources.map(item => {
+    const relation = getRelation(sourceRelationships, item);
+
+    return {
+      ...item,
+      relation,
+      relationshipLabels: item?.externalId
+        ? sourceRelationshipLabels[item.externalId]
+        : [],
+    };
+  });
+
+  const targetResourcesWithRelationshipLabels = targetResources.map(item => {
+    const relation = getRelation(targetRelationships, item);
+    return {
+      ...item,
+      relation,
+      relationshipLabels: item?.externalId
+        ? targetRelationshipLabels[item.externalId]
+        : [],
+    };
+  });
 
   const relationshipLabelsLength = Object.keys({
     ...targetRelationshipLabels,
