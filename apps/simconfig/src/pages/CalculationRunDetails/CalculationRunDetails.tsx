@@ -1,5 +1,5 @@
 import type { Reducer } from 'react';
-import { useEffect, useMemo, useReducer, useState } from 'react';
+import { useEffect, useMemo, useReducer } from 'react';
 import { Link, useMatch } from 'react-location';
 
 import { ParentSizeModern } from '@visx/responsive';
@@ -46,14 +46,15 @@ export function CalculationRunDetails() {
         externalId?: string,
         start?: number | string,
         end?: number | string
-      ) =>
-        (
-          await client.sequences.retrieveRows({
-            externalId: externalId ?? '',
-            start: +(start ?? ''),
-            end: +(end ?? ''),
-          })
-        ).items;
+      ) => {
+        const rows = await client.sequences.retrieveRows({
+          externalId: externalId ?? '',
+          start: +(start ?? ''),
+          end: +(end ?? ''),
+        });
+
+        return rows.items;
+      };
 
       const [run] = await client.events.retrieve([
         {
@@ -75,17 +76,20 @@ export function CalculationRunDetails() {
       if (
         run.metadata.outputResultsRowStart !== run.metadata.outputResultsRowEnd
       ) {
-        const outputResults = (
-          await getSequenceRows(
-            run.metadata.outputResultsSequence,
-            run.metadata.outputResultsRowStart,
-            +run.metadata.outputResultsRowEnd + 1
-          )
-        ).reduce<ValueUnitType>(
-          (acc, [label, value, unit]) =>
-            label && value && unit
+        const outputSequence = await getSequenceRows(
+          run.metadata.outputResultsSequence,
+          run.metadata.outputResultsRowStart,
+          +run.metadata.outputResultsRowEnd + 1
+        );
+
+        const outputResults = outputSequence.reduce<ValueUnitType>(
+          (acc: ValueUnitType, { values }) => {
+            const [label, value, unit] = values;
+
+            return label && value && unit
               ? { ...acc, [label]: { value: +value, unit: unit.toString() } }
-              : acc,
+              : acc;
+          },
           {}
         );
 
@@ -123,15 +127,17 @@ export function CalculationRunDetails() {
         );
       const dataColumns = [xAxisColumn, ...yAxisColumns];
 
-      const curveTable = outputCurves.map((row) =>
-        row.reduce<Record<string, number>>(
-          (acc, cur, i) => ({
-            ...acc,
-            [columns[i].name ?? 'n/a']: +(cur ?? 0),
-          }),
-          {}
-        )
-      );
+      const curveTable = outputCurves
+        .map(({ values }) => values)
+        .map((row) =>
+          row.reduce<Record<string, number>>(
+            (acc, cur, i) => ({
+              ...acc,
+              [columns[i].name ?? 'n/a']: +(cur ?? 0),
+            }),
+            {}
+          )
+        );
 
       dispatch({
         curveTable,
@@ -185,6 +191,7 @@ export function CalculationRunDetails() {
     if (!state.isChartEnabled) {
       return <Skeleton.Rectangle height="300px" />;
     }
+
     return (
       <NoResultContainer>
         <Graphic type="Search" />
