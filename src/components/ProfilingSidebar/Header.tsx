@@ -6,7 +6,7 @@ import { Body, Button, Colors, Title } from '@cognite/cogs.js';
 import { useActiveTableContext, useProfilingSidebar } from 'contexts';
 import { ColumnType } from 'hooks/table-data';
 import { useColumnNavigation } from 'hooks/table-navigation';
-import { useColumnType } from 'hooks/profiling-service';
+import { FULL_PROFILE_LIMIT, useColumnType } from 'hooks/profiling-service';
 
 import {
   SIDEBAR_PROFILING_DRAWER_WIDTH,
@@ -21,7 +21,11 @@ type Props = { selectedColumn: ColumnType | undefined };
 export const Header = ({ selectedColumn }: Props) => {
   const { t } = useTranslation();
   const { database, table } = useActiveTableContext();
-  const { getColumnType, isFetched } = useColumnType(database, table);
+  const quickColumnTypes = useColumnType(database, table);
+  const fullColumnTypes = useColumnType(database, table, FULL_PROFILE_LIMIT);
+  const { getColumnType, isFetched } = fullColumnTypes.isFetched
+    ? fullColumnTypes
+    : quickColumnTypes;
 
   const { setIsProfilingSidebarOpen } = useProfilingSidebar();
 

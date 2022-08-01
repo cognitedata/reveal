@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 
 import { Icon } from '@cognite/cogs.js';
 import { useActiveTableContext } from 'contexts';
-import { useColumnType } from 'hooks/profiling-service';
+import { FULL_PROFILE_LIMIT, useColumnType } from 'hooks/profiling-service';
 
 import { CustomIcon } from 'components/CustomIcon';
 
@@ -12,7 +12,11 @@ type Props = { dataKey: string | undefined };
 
 export default function ColumnIcon({ dataKey }: Props) {
   const { database, table } = useActiveTableContext();
-  const { getColumnType, isFetched } = useColumnType(database, table);
+  const quickColumnTypes = useColumnType(database, table);
+  const fullColumnTypes = useColumnType(database, table, FULL_PROFILE_LIMIT);
+  const { getColumnType, isFetched } = fullColumnTypes.isFetched
+    ? fullColumnTypes
+    : quickColumnTypes;
 
   const columnType = useMemo(
     () => (isFetched ? getColumnType(dataKey) : 'Loading'),
