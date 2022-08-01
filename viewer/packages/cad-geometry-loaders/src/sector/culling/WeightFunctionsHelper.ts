@@ -83,7 +83,9 @@ export class WeightFunctionsHelper {
 
     // Weight sectors that are close to the camera higher
     const distanceToCamera = transformedSectorBounds.distanceToPoint(this._camera.position);
-    const normalizedDistanceToCamera = (distanceToCamera - minSectorDistance) / (maxSectorDistance - minSectorDistance);
+
+    // We add an epsilon to the denominator to make it non-zero in the case we have only one sector in the scene
+    const normalizedDistanceToCamera = (distanceToCamera - minSectorDistance) / (maxSectorDistance - minSectorDistance + 1e-3);
     return 1.0 - normalizedDistanceToCamera;
   }
 
