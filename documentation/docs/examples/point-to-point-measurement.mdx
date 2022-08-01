@@ -125,8 +125,13 @@ returns array of measurement reference `MeasurementRef` having
 const measurementTool = new MeasurementTool(viewer);
 measurementTool.enterMeasurementMode();
 
+//add measurements
+
 //get all measurements
 const measurements = measurementTool.getAllMeasurements();
+meausrements.forEach(measurement => {
+  alert(measurement.distanceInMeters);
+});
 ```
 
 ### Remove measurement

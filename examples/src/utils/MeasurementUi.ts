@@ -7,7 +7,6 @@ export class MeasurementUi {
   private readonly _measurementTool: MeasurementTool;
   private _gui: dat.GUI;
   private _guiController: dat.GUIController[];
-  private _measurementObjectControllerUi: dat.GUIController[];
 
   private state = {
     lineWidth: 2.0,
@@ -28,7 +27,6 @@ export class MeasurementUi {
      }});
     this._gui = ui.addFolder('Types');
     this._guiController = [];
-    this._measurementObjectControllerUi = [];
     const addDistanceOptions = this.addDistanceOptions.bind(this);
 
     this._gui.add(this.measurement, 'enable').name('Point To Point Distance').onChange(addDistanceOptions);
@@ -54,10 +52,6 @@ export class MeasurementUi {
       this.state.color = color;
       this.setMeasurementLineOptions();
     }));
-    this._guiController.push(this._gui.add(this.state, 'allMeasurement').name('Show all Measurement').onChange(allMeasurement => {
-      this.state.allMeasurement = allMeasurement;
-      this.measurementObjectsUI(allMeasurement);
-    }));
     this._guiController.push(this._gui.add(this.state, 'showAllMeasurementLabels').name('Show Measurement Labels').onChange(showAllMeasurementLabels => {
       this.state.showAllMeasurementLabels = showAllMeasurementLabels;
       this._measurementTool.showMeasurementLabels(showAllMeasurementLabels);
@@ -70,32 +64,10 @@ export class MeasurementUi {
     });
     this._guiController.splice(0, this._guiController.length);
     this.state.allMeasurement = false;
-    this.removeMeasurementObjectUI();
     this._measurementTool.exitMeasurementMode();
   }
 
   private setMeasurementLineOptions() {
     this._measurementTool.setLineOptions(this.state, );
-  }
-
-  private measurementObjectsUI(enable: boolean) {
-    if (enable && this._measurementObjectControllerUi.length === 0) {
-      this.populateMeasurementObjectUI();
-    } else {
-      this.removeMeasurementObjectUI();
-    }
-  }
-
-  private populateMeasurementObjectUI() {
-    if (this._measurementObjectControllerUi.length > 0) {
-      this.removeMeasurementObjectUI();
-    }
-  }
-
-  private removeMeasurementObjectUI() {
-    this._measurementObjectControllerUi.forEach(controller => {
-      controller.remove();
-    });
-    this._measurementObjectControllerUi.splice(0, this._measurementObjectControllerUi.length);
   }
 }
