@@ -1,6 +1,7 @@
 import { Group, ServiceAccount, GroupSpec } from '@cognite/sdk';
 import omit from 'lodash/omit';
 import sdk from '@cognite/cdf-sdk-singleton';
+import { TranslationKeys } from 'common/i18n';
 import { isOidcEnv } from 'utils/shared';
 import { UpdateGroupData } from './types';
 import { retry } from './retry';
@@ -45,14 +46,14 @@ const updateGroupData = (
 
 export const updateGroup = async (
   id: UpdateGroupData['id'],
-  update: UpdateGroupData['update']
+  update: UpdateGroupData['update'],
+  _t: (key: TranslationKeys) => string
 ): Promise<Group> => {
   const allGroups: Group[] = await sdk.groups.list({ all: true });
   const originalGroup: Group | undefined = allGroups.find((g) => g.id === id);
 
   if (!originalGroup) {
-    // TODO CDFUX-1573 - figure out translation
-    throw new Error('Group does not exist');
+    throw new Error(_t('error-group-does-not-exist'));
   }
 
   const tempGroup = updateGroupData(originalGroup, update) as GroupSpec;
@@ -79,8 +80,7 @@ export const updateGroup = async (
   } catch (error) {
     const deleteNewGroup = async () => sdk.groups.delete([newGroup.id]);
     await retry(deleteNewGroup, null, NUMBER_OF_RETRIES);
-    // TODO CDFUX-1573 - figure out translation
-    throw new Error('Cannot edit the default group');
+    throw new Error(_t('error-cannot-edit-the-default-group'));
   }
 
   return newGroup;

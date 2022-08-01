@@ -65,18 +65,15 @@ const ResourceCountBox = ({
           <EmptyValueTag>{count}</EmptyValueTag>
         </EmptyBorderedBox>
       )}
-      {/* TODO CDFUX-1573 - figure out translation */}
       {count === -1 && (
         <Tooltip
           title={
             <p>
-              Count is not available. This may be due to insufficient acces
-              rights, to view the counts for {resourceName} you need{' '}
-              <b>{resourceName.toLocaleLowerCase()}:read</b> capability.
+              {t('resource-count-p1-1', { resourceName })}
+              <b>{resourceName.toLocaleLowerCase()}:read</b>{' '}
+              {t('resource-count-p1-2')}
               <br />
-              <b style={{ fontStyle: 'italic' }}>
-                If your dataset is new, it may also be empty
-              </b>
+              <b style={{ fontStyle: 'italic' }}>{t('resource-count-p2')}</b>
             </p>
           }
           getPopupContainer={getContainer}

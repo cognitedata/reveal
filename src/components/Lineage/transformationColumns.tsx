@@ -6,92 +6,100 @@ import moment from 'moment';
 import { Button, Icon, Popconfirm } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import HiddenTransformation from './HiddenTranformation';
+import { useTranslation } from 'common/i18n';
 
-// TODO CDFUX-1573 - figure out translation
-const transformationsColumns = (
-  onDeleteTransformationClick: (transformation: any) => void
-) => [
-  {
-    key: 'name',
-    title: 'Transform',
-    sorter: (a: any, b: any) => stringCompare(a?.name, b?.name),
-    render: (_text: string, transform: any) => {
-      const onTransformationClick = () =>
-        trackEvent(
-          'DataSets.LineageFlow.Clicked on an external transformation'
+export const useTransformationsColumns = () => {
+  const { t } = useTranslation();
+
+  const transformationsColumns = (
+    onDeleteTransformationClick: (transformation: any) => void
+  ) => [
+    {
+      title: t('transform'),
+      key: 'name',
+      sorter: (a: any, b: any) => stringCompare(a?.name, b?.name),
+      render: (_text: string, transform: any) => {
+        const onTransformationClick = () =>
+          trackEvent(
+            'DataSets.LineageFlow.Clicked on an external transformation'
+          );
+        if (transform.hidden)
+          return <HiddenTransformation transformation={transform.storedData} />;
+        const env = getStringCdfEnv() ? `?env=${getStringCdfEnv()}` : '';
+        const href = `/${sdk.project}/transformations/${transform.id}${env}`;
+        return (
+          <a
+            onClick={onTransformationClick}
+            href={href}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {transform.name}
+          </a>
         );
-      if (transform.hidden)
-        return <HiddenTransformation transformation={transform.storedData} />;
-      const env = getStringCdfEnv() ? `?env=${getStringCdfEnv()}` : '';
-      const href = `/${sdk.project}/transformations/${transform.id}${env}`;
-      return (
-        <a
-          onClick={onTransformationClick}
-          href={href}
-          target="_blank"
-          rel="noopener noreferrer"
+      },
+    },
+    {
+      title: t('created'),
+      key: 'created',
+      render: (_text: string, transform: any) => {
+        const { hidden, created } = transform;
+        const cellText = hidden
+          ? t('not-available')
+          : moment(created).toString();
+        return (
+          <CellTransformation $hidden={hidden}>{cellText}</CellTransformation>
+        );
+      },
+    },
+    {
+      title: t('updated'),
+      key: 'updated',
+      render: (_text: string, transform: any) => {
+        const { hidden, updated } = transform;
+        const cellText = hidden
+          ? t('not-available')
+          : moment(updated).toString();
+        return (
+          <CellTransformation $hidden={hidden}>{cellText}</CellTransformation>
+        );
+      },
+    },
+    {
+      title: t('owner'),
+      key: 'owner',
+      render: (_text: string, transform: any) => {
+        const { hidden, owner: _owner, ownerIsCurrentUser } = transform;
+        const owner = ownerIsCurrentUser ? (
+          <CellTransformation>
+            <Icon type="User" /> {t('me')}
+          </CellTransformation>
+        ) : (
+          _owner?.user ?? ''
+        );
+        const cellText = hidden ? t('not-available') : owner;
+        return (
+          <CellTransformation $hidden={transform.hidden}>
+            {cellText}
+          </CellTransformation>
+        );
+      },
+    },
+    {
+      key: 'actions',
+      render: (_: string, transform: any) => (
+        <Popconfirm
+          content={t('lineage-transformation-remove-confirmation')}
+          onConfirm={() => onDeleteTransformationClick(transform)}
         >
-          {transform.name}
-        </a>
-      );
+          <Button icon="Delete" size="small" type="ghost-danger" />
+        </Popconfirm>
+      ),
     },
-  },
-  {
-    key: 'created',
-    title: 'Created',
-    render: (_text: string, transform: any) => {
-      const { hidden, created } = transform;
-      const cellText = hidden ? 'Not available' : moment(created).toString();
-      return (
-        <CellTransformation $hidden={hidden}>{cellText}</CellTransformation>
-      );
-    },
-  },
-  {
-    key: 'updated',
-    title: 'Updated',
-    render: (_text: string, transform: any) => {
-      const { hidden, updated } = transform;
-      const cellText = hidden ? 'Not available' : moment(updated).toString();
-      return (
-        <CellTransformation $hidden={hidden}>{cellText}</CellTransformation>
-      );
-    },
-  },
-  {
-    key: 'owner',
-    title: 'Owner',
-    render: (_text: string, transform: any) => {
-      const { hidden, owner: _owner, ownerIsCurrentUser } = transform;
-      const owner = ownerIsCurrentUser ? (
-        <CellTransformation>
-          <Icon type="User" /> me
-        </CellTransformation>
-      ) : (
-        _owner?.user ?? ''
-      );
-      const cellText = hidden ? 'Not available' : owner;
-      return (
-        <CellTransformation $hidden={transform.hidden}>
-          {cellText}
-        </CellTransformation>
-      );
-    },
-  },
-  {
-    key: 'actions',
-    render: (_: string, transform: any) => (
-      <Popconfirm
-        content="Are you sure you want to remove this transformation from this data set?"
-        onConfirm={() => onDeleteTransformationClick(transform)}
-      >
-        <Button icon="Delete" size="small" type="ghost-danger" />
-      </Popconfirm>
-    ),
-  },
-];
+  ];
 
-export default transformationsColumns;
+  return { transformationsColumns };
+};
 
 const CellTransformation = styled.div.attrs(
   ({ $hidden }: { $hidden?: boolean }) => {

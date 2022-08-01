@@ -13,7 +13,7 @@ import {
   LineageSubTitle,
   LineageTitle,
 } from '../../utils/styledComponents';
-import { ConsumerTableColumns } from './ConsumerTableColumns';
+import { useConsumerTableColumns } from './ConsumerTableColumns';
 import { Consumer, DataSet } from '../../utils/types';
 import { useTranslation } from 'common/i18n';
 
@@ -25,6 +25,7 @@ const ConsumerTable: FunctionComponent<ConsumerTableProps> = ({
   dataSet,
 }: PropsWithChildren<ConsumerTableProps>) => {
   const { t } = useTranslation();
+  const { ConsumerTableColumns } = useConsumerTableColumns();
   const [consumerList, setConsumerList] = useState<Consumer[]>([]);
   const setConsumers = (consumers: Consumer[] = []) => {
     setConsumerList(consumers);

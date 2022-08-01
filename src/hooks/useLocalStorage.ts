@@ -1,6 +1,6 @@
 import isFunction from 'lodash/isFunction';
 import { useState } from 'react';
-import { handleError } from '../utils/errorUtils';
+import { handleError } from 'utils/handleError';
 
 const useLocalStorage = <T>(key: string, defaultValue: T) => {
   const [storedValue, setStoredValue] = useState(() => {

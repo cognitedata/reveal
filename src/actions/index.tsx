@@ -82,11 +82,12 @@ export const useCreateDataSetMutation = () => {
 };
 
 export const useUpdateDataSetOwners = () => {
+  const { t } = useTranslation();
   const client = useQueryClient();
   const { mutate: updateOwners, ...rest } = useMutation(
     'update-owners',
     async (options: { owners: Group[]; dataSetId: number }) => {
-      await updateDataSetOwners(options.dataSetId, options.owners);
+      await updateDataSetOwners(options.dataSetId, options.owners, t);
       invalidateDataSetQueries(client, options.dataSetId, true);
     },
     {

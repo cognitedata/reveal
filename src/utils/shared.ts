@@ -1,5 +1,6 @@
 import sdk, { getFlow } from '@cognite/cdf-sdk-singleton';
 import moment from 'moment';
+import { TranslationKeys } from 'common/i18n';
 import { updateGroup } from 'utils/updateGroup';
 import queryString from 'query-string';
 import handleError from 'utils/handleError';
@@ -127,17 +128,25 @@ export const removeDataSetIdFromIDsScope = (
   return cleanCapabilities;
 };
 
-export const revokeOwnerAccess = (groups: any[], dataSetId: number) => {
+export const revokeOwnerAccess = (
+  groups: any[],
+  dataSetId: number,
+  _t: (key: TranslationKeys) => string
+) => {
   try {
     return Promise.all(
       groups.map(async (group) => {
         if (!isOwnerOfAllDataSets(group)) {
-          await updateGroup(group.id, {
-            capabilities: removeDataSetIdFromIDsScope(
-              group?.capabilities,
-              dataSetId
-            ),
-          });
+          await updateGroup(
+            group.id,
+            {
+              capabilities: removeDataSetIdFromIDsScope(
+                group?.capabilities,
+                dataSetId
+              ),
+            },
+            _t
+          );
         }
       })
     );
@@ -146,7 +155,11 @@ export const revokeOwnerAccess = (groups: any[], dataSetId: number) => {
   }
 };
 
-export const makeGroupsOwnerOfSet = (groups: any[], dataSetId: any) => {
+export const makeGroupsOwnerOfSet = (
+  groups: any[],
+  dataSetId: any,
+  _t: (key: TranslationKeys) => string
+) => {
   const dataSetsOwnerAcl = {
     datasetsAcl: {
       actions: ['OWNER'],
@@ -160,9 +173,13 @@ export const makeGroupsOwnerOfSet = (groups: any[], dataSetId: any) => {
   try {
     return Promise.all(
       groups.map(async (group: { id: any; capabilities: any }) => {
-        await updateGroup(group.id, {
-          capabilities: [...group.capabilities, dataSetsOwnerAcl],
-        });
+        await updateGroup(
+          group.id,
+          {
+            capabilities: [...group.capabilities, dataSetsOwnerAcl],
+          },
+          _t
+        );
       })
     );
   } catch (e) {
@@ -184,7 +201,11 @@ export const getAllSetOwners = async (dataSetId: any) => {
   }
 };
 
-export const updateDataSetOwners = async (dataSetId: any, newOwners: any[]) => {
+export const updateDataSetOwners = async (
+  dataSetId: any,
+  newOwners: any[],
+  _t: (key: TranslationKeys) => string
+) => {
   try {
     const oldOwners = await getAllSetOwners(dataSetId);
 
@@ -196,8 +217,8 @@ export const updateDataSetOwners = async (dataSetId: any, newOwners: any[]) => {
       (group: { id: any }) =>
         !oldOwners.map((g: { id: any }) => g.id).includes(group.id)
     );
-    revokeOwnerAccess(groupsToRevokeAccess, dataSetId);
-    makeGroupsOwnerOfSet(groupsToGiveAccess, dataSetId);
+    revokeOwnerAccess(groupsToRevokeAccess, dataSetId, _t);
+    makeGroupsOwnerOfSet(groupsToGiveAccess, dataSetId, _t);
   } catch (e) {
     handleError({ ...(e as any) });
   }

@@ -12,10 +12,13 @@
     "eslint": "yarn eslint:changed 'src/**/*.{ts,tsx}'",
     "eslint:changed": "eslint --config .eslintrc.production.js",
     "prettier": "prettier --config .prettierrc -l 'src/**/*.{js,ts,tsx}' || (echo \nThese files are not formatted correctly && false)",
-    "prettier:fix": "prettier --write .prettierrc -l \"src/**/*.{js,ts,tsx}\""
+    "prettier:fix": "prettier --write .prettierrc -l \"src/**/*.{js,ts,tsx}\"",
+    "pull-keys": "cdf-i18n-utils-cli pull-keys-from-remote --namespace data-sets",
+    "remove-deleted": "cdf-i18n-utils-cli remove-deleted-keys-from-remote --namespace data-sets",
+    "save-missing": "cdf-i18n-utils-cli save-missing-keys-to-remote --namespace data-sets"
   },
   "dependencies": {
-    "@cognite/cdf-i18n-utils": "^0.0.5",
+    "@cognite/cdf-i18n-utils": "^0.1.1",
     "@cognite/cdf-utilities": "^1.4.6",
     "@cognite/cogs.js": "^5.17.0",
     "@cognite/metrics": "^1.2.1",
@@ -28,11 +31,9 @@
     "antd": "^4.16.13",
     "cronstrue": "^1.119.0",
     "eslint-plugin-promise": "^5.1.1",
-    "i18next": "^21.6.12",
     "query-string": "^7.1.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
-    "react-i18next": "^11.15.5",
     "react-iframe": "^1.8.0",
     "react-query": "^3.34.16",
     "react-router-dom": "^6.2.2",
@@ -48,6 +49,7 @@
     "@quickbaseoss/babel-plugin-styled-components-css-namespace": "^1.0.1",
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^12.1.2",
+    "@testing-library/react-hooks": "^8.0.0",
     "@types/jest": "^27.0.2",
     "@types/node": "^16.11.1",
     "@types/react": "^17.0.30",
@@ -63,6 +65,7 @@
     "postcss-prefixwrap": "^1.29.0",
     "prettier": "^2.4.1",
     "react-app-rewired": "^2.2.1",
+    "react-test-renderer": "^17.0.2",
     "style-loader": "^1.3.0",
     "typescript": "4.5.5"
   },

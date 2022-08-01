@@ -19,7 +19,7 @@ import { useFlag } from '@cognite/react-feature-flags';
 import { ExtpipeRawTables } from 'components/Lineage/Extpipe/ExtpipeRawTables';
 
 import handleError from 'utils/handleError';
-import transformationsColumns from 'components/Lineage/transformationColumns';
+import { useTransformationsColumns } from 'components/Lineage/transformationColumns';
 import ConsumerTable from 'components/Lineage/ConsumerTable';
 import ExtpipeTable from 'components/Lineage/Extpipe/ExtpipeTable';
 import { Source } from 'components/Lineage/Source/Source';
@@ -40,6 +40,7 @@ export interface RawWithUpdateTime extends RawTable {
 
 const Lineage = ({ dataSetWithExtpipes, isExtpipesFetched }: LineageProps) => {
   const { t } = useTranslation();
+  const { transformationsColumns } = useTransformationsColumns();
   const { updateDataSetTransformations } = useUpdateDataSetTransformations();
   const [transformationsData, setTransformationsData] = useState<any[]>([]);
   const [disableTransformations, setDisableTransformations] =
