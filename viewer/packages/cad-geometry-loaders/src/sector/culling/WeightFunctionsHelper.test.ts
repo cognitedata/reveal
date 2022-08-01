@@ -76,8 +76,8 @@ describe('WeightFunctionsHelper', () => {
     const weights = sectors.map(x => helper.computeDistanceToCameraWeight(x.subtreeBoundingBox));
     weights.sort();
 
-    expect(weights[0]).toBe(0.0);
-    expect(weights[weights.length - 1]).toBe(1.0);
+    expect(weights[0]).toBeCloseTo(0.0, 2);
+    expect(weights[weights.length - 1]).toBeCloseTo(1.0, 2);
   });
 
   test('computeScreenAreaWeight returns 0 for sector outside frustum', () => {
@@ -173,6 +173,16 @@ describe('WeightFunctionsHelper', () => {
 
     expect(newDistance).toBeLessThanOrEqual(1);
     expect(newDistance).toBeGreaterThanOrEqual(0);
+  });
+
+  test('distance weight is reasonable when only one sector is present', () => {
+    const bounds = new THREE.Box3().setFromArray([0, 0, 1, 1, 1, 2]);
+
+    helper.addCandidateSectors([mockSectorMetadataFromBounds(bounds)], new THREE.Matrix4().identity());
+    const distance = helper.computeDistanceToCameraWeight(bounds);
+
+    expect(distance).toBeLessThanOrEqual(1);
+    expect(distance).toBeGreaterThanOrEqual(0);
   });
 
   test('reset() resets min/max distances', () => {
