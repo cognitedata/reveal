@@ -7,7 +7,7 @@ import {
   Title,
 } from '@cognite/cogs.js';
 import styled from 'styled-components';
-import { useHistory, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { createLink } from '@cognite/cdf-utilities';
 
 import { useTranslation } from 'common';
@@ -20,7 +20,6 @@ type ExtractorsListProps = {
 const ExtractorsList = ({ extractorsList }: ExtractorsListProps) => {
   const { t } = useTranslation();
   const { subAppPath } = useParams<{ subAppPath?: string }>();
-  const history = useHistory();
 
   return (
     <Flex gap={24} direction="column">
@@ -32,11 +31,7 @@ const ExtractorsList = ({ extractorsList }: ExtractorsListProps) => {
         {extractorsList?.map((extractor) => (
           <StyledExtractorContainer
             key={extractor.externalId}
-            onClick={() => {
-              history.push(
-                createLink(`/${subAppPath}/${extractor.externalId}`)
-              );
-            }}
+            href={createLink(`/${subAppPath}/${extractor.externalId}`)}
           >
             <Flex gap={24} direction="column">
               <div>
@@ -69,7 +64,7 @@ const StyledGrid = styled.div`
   grid-template-columns: repeat(auto-fit, minmax(256px, 1fr));
 `;
 
-const StyledExtractorContainer = styled(Button).attrs({ type: 'ghost' })`
+const StyledExtractorContainer = styled(Button).attrs({ type: 'link' })`
   display: inline-flex;
   flex-direction: column;
   justify-content: flex-start;
