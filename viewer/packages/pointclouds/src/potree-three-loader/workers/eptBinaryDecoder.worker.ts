@@ -43,7 +43,7 @@ ctx.onmessage = function (event: MessageEvent<ICommand>) {
       parseEpt(ctx, parseCommand.data, objectList, pointOffset);
       break;
     default:
-      console.error('Out of switch cases');
+      console.error('Unrecognized eptBinaryDecoder worker command');
   }
 };
 

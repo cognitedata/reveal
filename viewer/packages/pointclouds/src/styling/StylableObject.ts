@@ -23,3 +23,10 @@ export function rawToStylableObject(obj: RawStylableObject): StylableObject {
     shape: fromRawShape(obj.shape)
   };
 }
+
+export function stylableObjectToRaw(obj: StylableObject): RawStylableObject {
+  return {
+    objectId: obj.objectId,
+    shape: obj.shape.toRawShape()
+  };
+}

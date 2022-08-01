@@ -12,8 +12,8 @@ import { createPointClassKey } from './createPointClassKey';
 
 import { PickPoint, PotreePointColorType, PotreePointShape, PotreePointSizeType } from './potree-three-loader';
 
-import { PointCloudAppearance } from './styling/PointCloudAppearance';
-import { RawStylableObject } from './styling/StylableObject';
+import { CompletePointCloudAppearance } from './styling/PointCloudAppearance';
+import { StyledPointCloudObjectCollection } from './styling/StyledPointCloudObjectCollection';
 
 const PotreeDefaultPointClass = 'DEFAULT';
 
@@ -97,15 +97,6 @@ export class PointCloudNode extends THREE.Group {
     this._potreeNode.pointShape = value;
   }
 
-  get stylableObjects(): RawStylableObject[] {
-    return this._potreeNode.stylableObjects;
-  }
-
-  setObjectStyle(objectId: number, appearance: PointCloudAppearance): void {
-    this.potreeNode.setObjectStyle(objectId, appearance);
-    this.requestRedraw();
-  }
-
   /**
    * GPU-based picking allowing to get point data based on ray directing from the camera.
    * @param renderer Renderer object used for Reveal rendereing.
@@ -180,5 +171,21 @@ export class PointCloudNode extends THREE.Group {
 
   getModelTransformation(out = new THREE.Matrix4()): THREE.Matrix4 {
     return out.copy(this.matrix);
+  }
+
+  get defaultAppearance(): CompletePointCloudAppearance {
+    return this._potreeNode.defaultAppearance;
+  }
+
+  set defaultAppearance(appearance: CompletePointCloudAppearance) {
+    this._potreeNode.defaultAppearance = appearance;
+  }
+
+  assignStyledPointCloudObjectCollection(styledCollection: StyledPointCloudObjectCollection): void {
+    this._potreeNode.assignObjectStyle(styledCollection);
+  }
+
+  removeAllStyledPointCloudOjects(): void {
+    this._potreeNode.octree.material.objectAppearanceTexture.removeAllStyledObjectSets();
   }
 }

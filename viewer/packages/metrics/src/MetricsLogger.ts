@@ -36,7 +36,7 @@ export class MetricsLogger {
     // Even though mixpanel has an opt out property, the mixpanel object
     // used by Metrics is not available here, so we have our own way of opting out.
 
-    mixpanel.init(MIXPANEL_TOKEN, {
+    mixpanel.init(MIXPANEL_TOKEN!, {
       disable_cookie: true,
       disable_persistence: true,
       // Don't send IP which disables geolocation
@@ -68,7 +68,7 @@ export class MetricsLogger {
     mixpanel.identify(mixpanelDistinctId);
 
     this._sessionProps = {
-      VERSION,
+      VERSION: VERSION!,
       project: 'unknown',
       application: 'unknown',
       // Use a random identifier because we want to don't track users over multiple sessions to not

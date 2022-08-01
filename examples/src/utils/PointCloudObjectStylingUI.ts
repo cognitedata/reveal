@@ -2,30 +2,85 @@
  * Copyright 2022 Cognite AS
  */
 
-import { CognitePointCloudModel, THREE } from '@cognite/reveal';
+import {
+  CognitePointCloudModel,
+  AnnotationIdPointCloudObjectCollection,
+  PointCloudAppearance,
+  DefaultPointCloudAppearance
+} from '@cognite/reveal';
+import * as THREE from 'three';
 
 export class PointCloudObjectStylingUI {
-
-  static readonly MAX_OBJECTS = 10;
 
   private readonly _model: CognitePointCloudModel;
 
   constructor(uiFolder: dat.GUI, model: CognitePointCloudModel) {
     this._model = model;
 
-    const objects = model.stylableObjects;
+    this.createDefaultStyleUi(uiFolder.addFolder('Default styling'));
+    this.createByObjectIndexUi(uiFolder.addFolder('By object index styling'));
 
-    objects.slice(0, PointCloudObjectStylingUI.MAX_OBJECTS).map(obj => this.createObjectUi(uiFolder.addFolder('Object #' + obj.objectId), obj.objectId));
-  }
-
-  createObjectUi(uiFolder: dat.GUI, objectId: number): void {
-    const state = {
-      color: '#ffffff',
+    const actions = {
+      reset: () => {
+        this._model.removeAllStyledObjectCollections();
+      }
     };
 
-    uiFolder.addColor(state, 'color').name('Color').onFinishChange(color => {
-      this._model.setObjectStyle(objectId, { color: hexStringToColor(color) });
+    uiFolder.add(actions, 'reset').name('Reset all styled objects');
+  }
+
+  private createObjectAppearanceUi(uiFolder: dat.GUI): () => PointCloudAppearance {
+    const appearance: PointCloudAppearance = { ...DefaultPointCloudAppearance };
+
+    const state = {
+      color: '#ffffff',
+      visible: true
+    };
+
+    uiFolder.add(state, 'visible').name('Visible').onFinishChange(visibility => {
+      appearance.visible = visibility;
     });
+    uiFolder.addColor(state, 'color').name('Color').onFinishChange(color => {
+      appearance.color = hexStringToColor(color);
+    });
+
+    return () => {
+      const clone: PointCloudAppearance = { ...appearance };
+      return clone;
+    };
+  }
+
+  private createDefaultStyleUi(ui: dat.GUI) {
+
+    const createAppearanceCb = this.createObjectAppearanceUi(ui);
+    const actions = {
+      apply: () => {
+        const appearance = createAppearanceCb();
+        this._model.setDefaultPointCloudAppearance(appearance);
+      }
+    };
+    ui.add(actions, 'apply').name('Apply');
+  }
+
+  private createByObjectIndexUi(ui: dat.GUI) {
+    const state = { from: 1, count: 1 };
+    const createAppearanceCb = this.createObjectAppearanceUi(ui);
+    const actions = {
+      apply: () => {
+        const numIndices = Math.min(state.count, this._model.stylableObjectCount - state.from + 1);
+
+        const allAnnotationIds: number[] = [];
+        this._model.traverseStylableObjects(id => allAnnotationIds.push(id.annotationId));
+        const selectedIds = allAnnotationIds.slice(state.from, state.from + numIndices);
+
+        const objects = new AnnotationIdPointCloudObjectCollection(selectedIds);
+        const appearance = createAppearanceCb();
+        this._model.assignStyledObjectCollection(objects, appearance);
+      }
+    };
+    ui.add(state, 'from', 1, this._model.stylableObjectCount, 1).name('First object ID');
+    ui.add(state, 'count', 1, this._model.stylableObjectCount, 1).name('Object ID count');
+    ui.add(actions, 'apply').name('Apply');
   }
 };
 

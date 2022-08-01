@@ -11,9 +11,9 @@ import {
   HtmlOverlayCreateClusterDelegate
 } from './HtmlOverlayTool';
 
-import { Cognite3DViewer } from '@reveal/core';
 import { CogniteClient } from '@cognite/sdk';
 import { createGlContext, mockClientAuthentication } from '../../../../test-utilities';
+import { Cognite3DViewer } from '@reveal/api';
 
 describe(HtmlOverlayTool.name, () => {
   let canvasContainer: HTMLElement;
@@ -111,6 +111,26 @@ describe(HtmlOverlayTool.name, () => {
     // Assert
     expect(behindCameraElement.style.visibility).toBe('hidden');
     expect(behindFarPlaneElement.style.visibility).toBe('hidden');
+  });
+
+  test('visible() hides or unhides elements in the overlay', () => {
+    const helper = new HtmlOverlayTool(viewer);
+    const htmlElement = document.createElement('div');
+    htmlElement.style.position = 'absolute';
+    const position = new THREE.Vector3(0, 0, 0.5);
+
+    helper.add(htmlElement, position);
+    helper.forceUpdate();
+
+    expect(htmlElement.style.visibility).toBe('visible');
+
+    helper.visible(false);
+    helper.forceUpdate();
+    expect(htmlElement.style.visibility).toBe('hidden');
+
+    helper.visible(true);
+    helper.forceUpdate();
+    expect(htmlElement.style.visibility).toBe('visible');
   });
 
   test('Triggers position update callback', () => {

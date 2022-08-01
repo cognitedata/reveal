@@ -1,0 +1,154 @@
+{
+  "version-4.x/docs": [
+    {
+      "type": "doc",
+      "id": "version-4.x/overview"
+    },
+    {
+      "type": "doc",
+      "id": "version-4.x/installation"
+    },
+    {
+      "type": "doc",
+      "id": "version-4.x/migration-guide"
+    },
+    {
+      "collapsed": false,
+      "type": "category",
+      "label": "Examples",
+      "items": [
+        {
+          "type": "doc",
+          "id": "version-4.x/examples/cad-basic"
+        },
+        {
+          "collapsed": true,
+          "type": "category",
+          "label": "Styling CAD models",
+          "items": [
+            {
+              "type": "doc",
+              "id": "version-4.x/examples/cad-styling"
+            },
+            {
+              "type": "doc",
+              "id": "version-4.x/examples/cad-styling-assets"
+            },
+            {
+              "type": "doc",
+              "id": "version-4.x/examples/cad-styling-nodes"
+            },
+            {
+              "type": "doc",
+              "id": "version-4.x/examples/cad-styling-custom"
+            }
+          ]
+        },
+        {
+          "type": "doc",
+          "id": "version-4.x/examples/cad-prioritized-nodes"
+        },
+        {
+          "type": "doc",
+          "id": "version-4.x/examples/cad-transform-override"
+        },
+        {
+          "type": "doc",
+          "id": "version-4.x/examples/cad-2doverlay"
+        },
+        {
+          "type": "doc",
+          "id": "version-4.x/examples/cad-3dobjects"
+        },
+        {
+          "type": "doc",
+          "id": "version-4.x/examples/node-visiting"
+        },
+        {
+          "type": "doc",
+          "id": "version-4.x/examples/cad-preview"
+        },
+        {
+          "type": "doc",
+          "id": "version-4.x/examples/clipping"
+        },
+        {
+          "type": "doc",
+          "id": "version-4.x/examples/cad-save-viewerstate"
+        },
+        {
+          "type": "doc",
+          "id": "version-4.x/examples/pointcloud"
+        },
+        {
+          "type": "doc",
+          "id": "version-4.x/examples/pointcloud-styling"
+        },
+        {
+          "type": "doc",
+          "id": "version-4.x/examples/click-reactions-cad"
+        },
+        {
+          "type": "doc",
+          "id": "version-4.x/examples/click-reactions-pointcloud"
+        },
+        {
+          "type": "doc",
+          "id": "version-4.x/examples/antialiasing"
+        },
+        {
+          "type": "doc",
+          "id": "version-4.x/examples/cad-explode"
+        },
+        {
+          "type": "doc",
+          "id": "version-4.x/examples/axisviewtool"
+        },
+        {
+          "type": "doc",
+          "id": "version-4.x/examples/geomaptool"
+        },
+        {
+          "type": "doc",
+          "id": "version-4.x/examples/timelinetool"
+        },
+        {
+          "type": "doc",
+          "id": "version-4.x/examples/combine-models"
+        },
+        {
+          "type": "doc",
+          "id": "version-4.x/examples/controlsmodes"
+        }
+      ]
+    },
+    {
+      "type": "doc",
+      "id": "version-4.x/concepts"
+    },
+    {
+      "collapsed": false,
+      "type": "category",
+      "label": "Extending Reveal",
+      "items": [
+        {
+          "type": "doc",
+          "id": "version-4.x/extending/datasource"
+        },
+        {
+          "type": "doc",
+          "id": "version-4.x/extending/camera-manager"
+        }
+      ]
+    },
+    {
+      "type": "doc",
+      "id": "version-4.x/API Reference"
+    },
+    {
+      "type": "link",
+      "href": "https://github.com/cognitedata/reveal/releases",
+      "label": "Release notes"
+    }
+  ]
+}

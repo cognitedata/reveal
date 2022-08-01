@@ -8,7 +8,7 @@
  * @module @cognite/reveal
  */
 
-export * from './core/src/index';
+export * from './packages/api/';
 
 export {
   CameraControlsOptions,
@@ -55,4 +55,11 @@ export {
 } from './packages/utilities';
 
 export { Cognite3DModel, BoundingBoxClipper, GeometryFilter, WellKnownUnit } from './packages/cad-model';
-export { CognitePointCloudModel, PointCloudAppearance } from './packages/pointclouds';
+export {
+  CognitePointCloudModel,
+  CompletePointCloudAppearance,
+  PointCloudAppearance,
+  PointCloudObjectCollection,
+  AnnotationIdPointCloudObjectCollection,
+  DefaultPointCloudAppearance
+} from './packages/pointclouds';

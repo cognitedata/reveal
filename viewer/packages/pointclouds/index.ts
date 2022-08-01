@@ -21,4 +21,7 @@ export { PotreeGroupWrapper } from './src/PotreeGroupWrapper';
 
 export { Potree, PointCloudOctree } from './src/PotreePnextLoader';
 
-export { PointCloudAppearance } from './src/styling/PointCloudAppearance';
+export { CompletePointCloudAppearance, PointCloudAppearance } from './src/styling/PointCloudAppearance';
+export { PointCloudObjectCollection } from './src/styling/PointCloudObjectCollection';
+export { AnnotationIdPointCloudObjectCollection } from './src/styling/AnnotationListPointCloudObjectCollection';
+export { DefaultPointCloudAppearance } from './src/styling/PointCloudAppearance';

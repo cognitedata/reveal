@@ -1,0 +1,206 @@
+---
+id: cad-2doverlay
+title: HTML overlays
+description: Demo shows how to add an HTML overlay over 3D objects.
+---
+
+import { DemoWrapper } from '@site/versioned_docs/version-4.x/components/DemoWrapper';
+import useBaseUrl from '@docusaurus/useBaseUrl';
+
+A common requirement for a 3D application is to add information overlays hovering over 3D objects
+to provide details or draw the attention to a given point. This can be done by placing HTML elements over the 3D canvas
+that follows the object it's attached to. `HtmlOverlayTool` is a convinience tool to manage overlays. The tool
+also supports "clustering", i.e. that overlapping elements are combined into a single element to avoid clustering.
+
+Note that these overlays always will be placed on top of the 3D viewer, they will not be hidden when the object is 
+obscured by other objects. To achieve this it's necessary to use custom 3D objects.
+
+<DemoWrapper name="Cognite3DViewerDemo" />
+
+Attaching HTML elements to 3D objects/positions requires the following operations:
+
+1. Create an HTML element and apply style `position: absolute` to the element. There also some other recommended
+   styles that should be applied (see below).
+2. Determine 3D world coordinate of the pivot point (e.g. using intersection when user clicks an object)
+3. Attach overlay using `HtmlOverlayTool.add`.
+
+This will attach the overlay to the 2D position corresponding to the 3D coordinate, then it will provide the updated
+coordinate whenever navigating the viewer.
+
+:::note
+The following CSS style is recommended for overlays:
+```css
+position: absolute; /* Required */
+
+/* Anchor to the center of the element and ignore events */
+transform: translate(-50%, -50%);
+pointer-events: none;
+touch-action: none;
+user-select: none;
+```
+:::
+
+```jsx runnable-4x
+// import { HtmlOverlayTool } from '@cognite/reveal/tools';
+
+function createOverlay() {
+  const element = document.createElement('div');
+  element.innerText = `Overlay!`;
+  element.style.cssText = `
+    position: absolute;
+
+    /* Anchor to the center of the element and ignore events */
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    touch-action: none;
+    user-select: none;
+
+    /* Make it look nice */
+    padding: 10px;
+    minHeight: 50px;
+    color: #fff;
+    background: #232323da;
+    borderRadius: 0.25em;
+    border: '#ffffff22 solid 2px;
+  `;
+  return element;
+}
+
+// Attach overlay on click
+const overlays = new HtmlOverlayTool(viewer);
+viewer.on('click', async event => {
+  // Find 3D coordinate of what the user clicks
+  const intersection = await viewer.getIntersectionFromPixel(event.offsetX, event.offsetY);
+  if (intersection) {
+    const el = createOverlay();
+    overlays.add(el, intersection.point);
+    // Remove overlay after 5 seconds
+    setTimeout(() => overlays.remove(el), 5000);
+  }
+});
+```
+
+It's also possible to apply styling based on the position of the
+overlay, e.g. to vary the opacity of the overlay based on distance
+from the camera. To do this, provide an `options`-argument with a
+`positionUpdatedCallback` to `HtmlOverlayTool.add`. This
+callback is triggered every time the HTML overlay is updated.
+
+```js runnable-4x
+// import { HtmlOverlayTool } from '@cognite/reveal/tools';
+
+function createOverlay(pressure) {
+  const color = pressure < 30 ? '#fff' : (pressure > 80 ? '#aa1100' : '#aaaa00');
+  const element = document.createElement('div');
+  element.innerText = `${pressure} PSI`;
+  element.style.cssText = `
+    position: absolute;
+
+    /* Anchor to the center of the element and ignore events */
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    touch-action: none;
+    user-select: none;
+
+    /* Make it look nice */
+    padding: 10px;
+    color: ${color};
+    background: #232323da;
+    borderRadius: 0.25em;
+    border: '#ffffff22 solid 2px;
+  `;
+  return element;
+}
+
+const overlays = new HtmlOverlayTool(viewer);
+viewer.on('click', async event => {
+  // Find 3D coordinate of what the user clicks
+  const intersection = await viewer.getIntersectionFromPixel(event.offsetX, event.offsetY);
+  if (intersection) {
+    const pressure = Math.floor(Math.random() * 110);
+    const el = createOverlay(pressure);
+    const options = {
+      positionUpdatedCallback: (element, position2D, position3D, distanceToCamera, userData) => {
+        // Compute opacity based on distance to camera
+        const opacity = 0.3 + 0.7 * (1.0 - (Math.min(Math.max(distanceToCamera, 10), 110) - 10) / 100.0);
+        element.style.opacity = opacity;
+      }
+    };
+    overlays.add(el, intersection.point, options);
+  }
+});
+```
+
+As shown above, overlays can be removed using `remove()`. It is also possible to remove all
+overlays by calling `clear()` or by disposing the tool using `dispose()`. The tool cannot
+be used after calling `dispose()`.
+
+Overlays can change visibility of elements with `visible(true/false)`, which will unhide/hide all the elements in the overlay.
+
+## Clustering overlays
+
+The overlay tool also support clustering of elements. When enabled, the tool will detect
+overlapping HTML elements and combine them into a single element by invoking a callback
+factory for creating a "composite" element. This is useful to avoid cluttering when theres 
+a high number of overlays in the view.
+
+Clustering is enabled by providing an options-argument to the constructor or `HtmlOverlayTool`
+and provide a cluster mode and a callback for creating a "composite element" based on 
+a set a set of clustered overlay elements. Currently the only mode supported is `overlapByScreenSpace`
+which causes overlay elements that overlap on screen to be replaced with a composite 
+element.
+
+Each overlay added to `HtmlOverlayTool` may have assosciated, custom `userData`. This data 
+can be used to create custom labels for composite elements.
+
+In the following example, overlays are added on click in the model. When overlays overlap
+they are replaced with composite elements. `userData` is used to display a value range 
+of the underlying overlay elements.
+
+```js runnable-4x
+// import { HtmlOverlayTool } from '@cognite/reveal/tools';
+
+function createOverlay(text) {
+  const element = document.createElement('div');
+  element.innerText = text;
+  element.style.cssText = `
+    position: absolute;
+
+    /* Anchor to the center of the element and ignore events */
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    touch-action: none;
+    user-select: none;
+
+    /* Make it look nice */
+    padding: 10px;
+    minHeight: 50px;
+    color: #fff;
+    background: #232323da;
+    borderRadius: 0.25em;
+    border: '#ffffff22 solid 2px;
+  `;
+  return element;
+}
+
+function createClusterElementCallback(cluster) {
+  const minPressure = cluster.reduce((min, x) => Math.min(x.userData.pressure, min), Infinity);
+  const maxPressure = cluster.reduce((max, x) => Math.max(x.userData.pressure, max), -Infinity);
+  const compositeElement = createOverlay(`${minPressure}-${maxPressure} PSI`);
+  compositeElement.style.color = '#999';
+  return compositeElement;
+}
+
+const overlays = new HtmlOverlayTool(viewer, { 
+    clusteringOptions: { mode: 'overlapInScreenSpace', createClusterElementCallback }
+  });
+viewer.on('click', async event => {
+  // Find 3D coordinate of what the user clicks
+  const intersection = await viewer.getIntersectionFromPixel(event.offsetX, event.offsetY);
+  if (intersection) {
+    const pressure = Math.floor(Math.random() * 110);
+    const el = createOverlay(`${pressure} PSI`);
+    overlays.add(el, intersection.point, { userData: { pressure } });
+  }
+});
+```

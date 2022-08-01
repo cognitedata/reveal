@@ -6,7 +6,6 @@ import { useEffect, useRef } from 'react';
 import { CanvasWrapper } from '../components/styled';
 import { THREE } from '@cognite/reveal';
 import { CogniteClient } from '@cognite/sdk';
-import { CogniteClientPlayground } from '@cognite/sdk-playground';
 import dat from 'dat.gui';
 import {
   Cognite3DViewer,
@@ -28,7 +27,7 @@ import { InspectNodeUI } from '../utils/InspectNodeUi';
 import { CameraUI } from '../utils/CameraUI';
 import { PointCloudUi } from '../utils/PointCloudUi';
 import { ModelUi } from '../utils/ModelUi';
-import { createPlaygroundSDKFromEnvironment, createSDKFromEnvironment } from '../utils/example-helpers';
+import { createSDKFromEnvironment } from '../utils/example-helpers';
 import { PointCloudClassificationFilterUI } from '../utils/PointCloudClassificationFilterUI';
 import { PointCloudObjectStylingUI } from '../utils/PointCloudObjectStylingUI';
 
@@ -65,22 +64,16 @@ export function Migration() {
       };
 
       let client: CogniteClient;
-      let clientPlayground: CogniteClientPlayground;
       if (project && environmentParam) {
         client = await createSDKFromEnvironment('reveal.example.example', project, environmentParam);
-        clientPlayground = await createPlaygroundSDKFromEnvironment('reveal.example.example', project, environmentParam);
       } else {
         client = new CogniteClient({ appId: 'reveal.example.example',
                                      project: 'dummy',
                                      getToken: async () => 'dummy' });
-        clientPlayground = new CogniteClientPlayground({ appId: 'reveal.example.example',
-                                                         project: 'dummy',
-                                                         getToken: async () => 'dummy' });
       }
 
       let viewerOptions: Cognite3DViewerOptions = {
         sdk: client,
-        sdkPlayground: clientPlayground,
         domElement: canvasWrapperRef.current!,
         onLoading: progress,
         logMetrics: false,
@@ -190,7 +183,7 @@ export function Migration() {
         } else if (model instanceof CognitePointCloudModel) {
           new PointCloudClassificationFilterUI(gui.addFolder(`Class filter #${modelUi.pointCloudModels.length}`), model);
           pointCloudUi.applyToAllModels();
-          new PointCloudObjectStylingUI(gui.addFolder(`Object styling (${PointCloudObjectStylingUI.MAX_OBJECTS} first objects) #${modelUi.pointCloudModels.length}`), model);
+          new PointCloudObjectStylingUI(gui.addFolder('Point cloud object styling'), model);
         }
       }
       const modelUi = new ModelUi(gui.addFolder('Models'), viewer, handleModelAdded);
@@ -374,14 +367,14 @@ export function Migration() {
       viewer.on('click', async (event) => {
         const { offsetX, offsetY } = event;
         console.log('2D coordinates', event);
+        const start = performance.now();
         const intersection = await viewer.getIntersectionFromPixel(offsetX, offsetY);
         if (intersection !== null) {
-          console.log(intersection);
           switch (intersection.type) {
             case 'cad':
               {
                 const { treeIndex, point } = intersection;
-                console.log(`Clicked node with treeIndex ${treeIndex} at`, point);
+                console.log(`Clicked node with treeIndex ${treeIndex} at`, point, `took ${(performance.now() - start).toFixed(1)} ms`);
 
                 inspectNodeUi.inspectNode(intersection.model, treeIndex);
               }

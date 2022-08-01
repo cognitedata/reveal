@@ -16,8 +16,9 @@ import {
 import { WellKnownAsprsPointClassCodes } from './types';
 
 import { createPointClassKey } from './createPointClassKey';
-import { PointCloudAppearance } from './styling/PointCloudAppearance';
-import { RawStylableObject } from './styling/StylableObject';
+import { StyledPointCloudObjectCollection } from './styling/StyledPointCloudObjectCollection';
+import { PointCloudObjectMetadata, PointCloudObjectAnnotation } from './annotationTypes';
+import { CompletePointCloudAppearance } from './styling/PointCloudAppearance';
 
 /**
  * Wrapper around `Potree.PointCloudOctree` with some convenience functions.
@@ -26,19 +27,20 @@ export class PotreeNodeWrapper {
   readonly octree: PointCloudOctree;
   private _needsRedraw = false;
   private readonly _classification: IClassification = {} as IClassification;
-  private readonly _stylableObjects: RawStylableObject[];
+
+  private readonly _annotations: PointCloudObjectAnnotation[];
 
   get needsRedraw(): boolean {
     return this._needsRedraw;
   }
 
-  constructor(octree: PointCloudOctree, stylableObjects: RawStylableObject[]) {
+  constructor(octree: PointCloudOctree, annotations: PointCloudObjectAnnotation[]) {
     this.octree = octree;
     this.pointSize = 2;
     this.pointColorType = PotreePointColorType.Rgb;
     this.pointShape = PotreePointShape.Circle;
     this._classification = octree.material.classification;
-    this._stylableObjects = stylableObjects;
+    this._annotations = annotations;
   }
 
   get pointSize(): number {
@@ -82,16 +84,31 @@ export class PotreeNodeWrapper {
     return this._classification;
   }
 
+  get stylableObjectAnnotationIds(): Iterable<PointCloudObjectMetadata> {
+    return this._annotations.map(a => {
+      return { annotationId: a.annotationId, assetId: a.assetId };
+    });
+  }
+
+  get stylableObjects(): PointCloudObjectAnnotation[] {
+    return this._annotations;
+  }
+
+  get defaultAppearance(): CompletePointCloudAppearance {
+    return this.octree.material.objectAppearanceTexture.defaultAppearance;
+  }
+
+  set defaultAppearance(appearance: CompletePointCloudAppearance) {
+    this.octree.material.objectAppearanceTexture.defaultAppearance = appearance;
+    this._needsRedraw = true;
+  }
+
   pick(renderer: THREE.WebGLRenderer, camera: THREE.Camera, ray: THREE.Ray): PickPoint | null {
     return this.octree.pick(renderer, camera, ray, { pickWindowSize: 20 });
   }
 
-  get stylableObjects(): RawStylableObject[] {
-    return this._stylableObjects;
-  }
-
-  setObjectStyle(objectId: number, appearance: PointCloudAppearance): void {
-    this.octree.material.setObjectAppearance(objectId, appearance);
+  assignObjectStyle(styledCollection: StyledPointCloudObjectCollection): void {
+    this.octree.material.objectAppearanceTexture.assignStyledObjectSet(styledCollection);
     this._needsRedraw = true;
   }
 
