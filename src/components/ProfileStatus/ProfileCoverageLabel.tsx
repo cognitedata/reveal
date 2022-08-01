@@ -24,12 +24,6 @@ export const ProfileCoverageLabel = ({
   const { t } = useTranslation();
 
   switch (resultType) {
-    case 'complete':
-      return (
-        <StyledLabelComplete>
-          {t('profile-coverage-label-complete')}
-        </StyledLabelComplete>
-      );
     case 'running':
       return (
         <StyledLabelRunning>
@@ -53,9 +47,7 @@ export const ProfileCoverageLabel = ({
               {t('profile-coverage-label-partial-text')}
             </StyledLabelPartial>
           ) : (
-            <StyledLabelComplete>
-              {t('profile-coverage-label-complete')}
-            </StyledLabelComplete>
+            <></>
           )}
         </Tooltip>
       );
@@ -72,11 +64,6 @@ const StyledLabelBaseWrapper = styled.div`
   font-size: 14px;
   font-weight: 500;
   padding: 0 12px;
-`;
-
-const StyledLabelComplete = styled(StyledLabelBaseWrapper)`
-  background-color: #39a2631f;
-  color: #22633c;
 `;
 
 const StyledEllipsisAnimation = keyframes`

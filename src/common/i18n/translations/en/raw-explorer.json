@@ -100,7 +100,6 @@
   "million": "million",
   "n-rows_one": "{{count}} row",
   "n-rows_other": "{{count}} rows",
-  "profile-coverage-label-complete": "Complete",
   "profile-coverage-label-partial-text": "Partial",
   "profile-coverage-label-partial-tooltip": "Only the first {{amount}} rows of data were profiled",
   "profile-coverage-label-running": "Running",

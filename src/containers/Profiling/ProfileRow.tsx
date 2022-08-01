@@ -236,6 +236,7 @@ const StyledTD = styled.td<{
 
 const StyledExpandButton = styled(Button)`
   display: none;
+  padding: 8px 10px !important; /* override cogs style */
 `;
 
 const StyledTableRow = styled.tr`
