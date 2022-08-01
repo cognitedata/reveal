@@ -2,11 +2,13 @@ import { Data, PlotMouseEvent } from 'plotly.js';
 import { SetStateAction, useEffect, useState } from 'react';
 import { Datapoints, DoubleDatapoint, ExternalId } from '@cognite/sdk';
 import { useAuthContext } from '@cognite/react-container';
-import { pickChartColor } from 'utils/utils';
+import { pickChartColor, TIME_ZONE } from 'utils/utils';
 import { useMetrics } from '@cognite/metrics';
 import { PriceArea } from '@cognite/power-ops-api-types';
 import { TableData } from 'types';
 import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+import timezone from 'dayjs/plugin/timezone';
 
 import { TooltipCard, FlexRow, StyledPlot, StyledTitle } from './elements';
 import { chartStyles, layout, Card } from './chartConfig';
@@ -31,6 +33,9 @@ interface PriceScenariosChartProps {
   changeTab: (tab: SetStateAction<string>) => void;
   tableData: TableData[];
 }
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 export const PriceScenariosChart = ({
   externalIds,
@@ -70,7 +75,7 @@ export const PriceScenariosChart = ({
   };
 
   const getChartData = async () => {
-    const bidDate = dayjs(priceArea.bidDate);
+    const bidDate = dayjs(priceArea.bidDate).tz(TIME_ZONE);
 
     const timeseries =
       externalIds &&
@@ -82,7 +87,13 @@ export const PriceScenariosChart = ({
 
     const plotData = timeseries
       ? timeseries.map((ts, index) => {
-          const xvals = ts.datapoints.map((dataPoint) => dataPoint.timestamp);
+          const xvals = ts.datapoints.map((dataPoint) => {
+            // Convert date timezone for plotly chart
+            const convertedDate = dayjs(dataPoint.timestamp)
+              .tz(TIME_ZONE)
+              .format('MMM D, YYYY HH:mm');
+            return new Date(convertedDate);
+          });
           const yvals = ts.datapoints.map((dataPoint) => {
             const newPoint = dataPoint as DoubleDatapoint;
             return newPoint.value;

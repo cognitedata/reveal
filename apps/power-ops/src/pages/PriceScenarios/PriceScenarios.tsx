@@ -1,12 +1,14 @@
 import { PriceScenariosChart } from 'components/PriceScenariosChart';
 import { SetStateAction, useEffect, useState } from 'react';
-import { pickChartColor } from 'utils/utils';
+import { pickChartColor, TIME_ZONE } from 'utils/utils';
 import { PriceAreaWithData, TableData, TableColumn } from 'types';
 import { Column } from 'react-table';
 import { HeadlessTable } from 'components/HeadlessTable';
 import { useAuthContext } from '@cognite/react-container';
 import { DoubleDatapoint, ExternalId } from '@cognite/sdk';
 import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+import timezone from 'dayjs/plugin/timezone';
 import { useMetrics } from '@cognite/metrics';
 
 import {
@@ -22,6 +24,9 @@ import {
   StyledTable,
 } from './elements';
 
+dayjs.extend(utc);
+dayjs.extend(timezone);
+
 export const PriceScenarios = ({
   priceArea,
 }: {
@@ -30,7 +35,7 @@ export const PriceScenarios = ({
   const metrics = useMetrics('price-scenarios');
   const { client } = useAuthContext();
 
-  const bidDate = dayjs(priceArea.bidDate);
+  const bidDate = dayjs(priceArea.bidDate).tz(TIME_ZONE);
 
   const [priceExternalIds, setPriceExternalIds] = useState<
     { externalId: string }[] | undefined

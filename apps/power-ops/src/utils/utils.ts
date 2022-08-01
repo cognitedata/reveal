@@ -8,6 +8,15 @@ import isToday from 'dayjs/plugin/isToday';
 import isYesterday from 'dayjs/plugin/isYesterday';
 import duration from 'dayjs/plugin/duration';
 import { History } from 'history';
+import utc from 'dayjs/plugin/utc';
+import timezone from 'dayjs/plugin/timezone';
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
+dayjs.extend(isToday);
+dayjs.extend(isYesterday);
+
+export const TIME_ZONE = 'Europe/Oslo';
 
 export const CHART_COLORS: string[] = [
   '#008b8b',
@@ -185,17 +194,15 @@ export const triggerDownloadFromBlob = (fileName: string, blob: Blob) => {
 };
 
 export const formatDate = (date: Date | string) => {
-  const formatDate = dayjs(date);
-  dayjs.extend(isToday);
-  dayjs.extend(isYesterday);
+  const formatDate = dayjs(date).tz(TIME_ZONE);
 
   if (formatDate.isToday()) {
-    return `Today ${formatDate.format('HH:mm')}`;
+    return `Today ${formatDate.format('HH:mm Z')}`;
   }
   if (formatDate.isYesterday()) {
-    return `Yesterday ${formatDate.format('HH:mm')}`;
+    return `Yesterday ${formatDate.format('HH:mm Z')}`;
   }
-  return formatDate.format('MMM DD, YYYY HH:mm');
+  return formatDate.format('MMM DD, YYYY HH:mm Z');
 };
 
 export const handleLogout = (history: History) => {

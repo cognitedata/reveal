@@ -5,11 +5,14 @@ import { useAuthContext } from '@cognite/react-container';
 import { Column } from 'react-table';
 import { useParams } from 'react-router-dom';
 import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+import timezone from 'dayjs/plugin/timezone';
 import { TableData, PriceAreaWithData, MatrixWithData } from 'types';
 import { EVENT_TYPES } from '@cognite/power-ops-api-types';
 import { EventStreamContext } from 'providers/eventStreamProvider';
 import { HeadlessTable } from 'components/HeadlessTable';
 import { useMetrics } from '@cognite/metrics';
+import { TIME_ZONE } from 'utils/utils';
 
 import {
   StyledTitle,
@@ -26,6 +29,9 @@ import {
   formatScenarioData,
   isNewBidMatrixAvailable,
 } from './utils';
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 export const mainScenarioTableHeaderConfig = [
   {
@@ -50,7 +56,9 @@ export const BidMatrix = ({ priceArea }: { priceArea: PriceAreaWithData }) => {
     useState<Column<TableData>[]>();
   const [matrixData, setMatrixData] = useState<TableData[]>();
   const [mainScenarioData, setMainScenarioData] = useState<TableData[]>();
-  const [bidDate, setBidDate] = useState<dayjs.Dayjs>(dayjs(priceArea.bidDate));
+  const [bidDate, setBidDate] = useState<dayjs.Dayjs>(
+    dayjs(priceArea.bidDate).tz(TIME_ZONE)
+  );
   const [newMatrixAvailable, setNewMatrixAvailable] = useState<boolean>(false);
 
   const [copied, setCopied] = useState<boolean>(false);
@@ -136,7 +144,7 @@ export const BidMatrix = ({ priceArea }: { priceArea: PriceAreaWithData }) => {
 
   useEffect(() => {
     if (plantExternalId && priceArea) {
-      setBidDate(dayjs(priceArea.bidDate));
+      setBidDate(dayjs(priceArea.bidDate).tz(TIME_ZONE));
       const priceExternalId = priceArea.priceScenarios.find(
         (scenario) => scenario.externalId === priceArea.mainScenarioExternalId
       )?.externalId;
