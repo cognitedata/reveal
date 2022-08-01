@@ -15,6 +15,7 @@ import { Select } from '@cognite/cogs.js';
 
 import styled from 'styled-components';
 import { useFlag } from '@cognite/react-feature-flags';
+import { addPlusSignToCount } from 'app/utils/stringUtils';
 
 type TypeOption = {
   label: string;
@@ -45,6 +46,7 @@ export const RelatedResources = ({
     linkedResourceCount = 0,
     assetIdCount,
     annotationCount,
+    hasMoreRelationships,
     annotatedWithCount,
     isFetched,
   } = useRelatedResourceCount(parentResource, type);
@@ -52,7 +54,10 @@ export const RelatedResources = ({
   const getRelatedResourceType = () => {
     let types: TypeOption[] = [
       {
-        label: `Relationships (${relationshipCount})`,
+        label: `Relationships (${addPlusSignToCount(
+          relationshipCount,
+          hasMoreRelationships
+        )})`,
         value: 'relationship',
         count: relationshipCount,
       },

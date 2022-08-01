@@ -11,6 +11,7 @@ import { useNavigate } from 'react-router-dom';
 import { createLink } from '@cognite/cdf-utilities';
 import ResourceSelectionContext from 'app/context/ResourceSelectionContext';
 import { RelatedResources } from 'app/containers/ResourceDetails/RelatedResources/RelatedResources';
+import { addPlusSignToCount } from 'app/utils/stringUtils';
 
 type ResouceDetailsTabsProps = {
   parentResource: ResourceItem;
@@ -71,7 +72,8 @@ export const ResourceDetailsTabs = ({
   onTabChange,
   style = {},
 }: ResouceDetailsTabsProps) => {
-  const { counts } = useRelatedResourceCounts(parentResource);
+  const { counts, hasMoreRelationships } =
+    useRelatedResourceCounts(parentResource);
 
   const filteredTabs = defaultRelationshipTabs.filter(
     type => !excludedTypes.includes(type)
@@ -99,7 +101,10 @@ export const ResourceDetailsTabs = ({
           <div>{getTitle(key)}</div>
           <Badge
             style={{ alignSelf: 'flex-end' }}
-            text={key === 'asset' ? assetCount : counts[key]!}
+            text={addPlusSignToCount(
+              key === 'asset' ? assetCount : counts[key]!,
+              hasMoreRelationships[key]!
+            )}
             background={Colors['greyscale-grey3'].hex()}
           />
         </TabWrapper>
