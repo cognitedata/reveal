@@ -1,21 +1,21 @@
-import React from 'react';
+import React, { useContext, useEffect } from 'react';
 
-// import { MapContext } from '../MapProvider';
+import { MapContext } from '../MapProvider';
 
 import { Content, Container } from './elements';
 
 export const PopupWrapper: React.FC<React.PropsWithChildren<unknown>> = ({
   children,
 }) => {
-  // uncomment when we migrate context
-  // const { model } = useContext(MapContext);
-  // const cleanupFunction = () => {
-  //   if (model) {
-  //     model.current.removeAllStyledNodeCollections();
-  //   }
-  // };
+  const { modelRef } = useContext(MapContext);
+  const cleanupFunction = () => {
+    if (modelRef) {
+      modelRef.current.removeAllStyledNodeCollections();
+    }
+  };
 
-  // useEffect(() => cleanupFunction, []);
+  useEffect(() => cleanupFunction, []);
+
   return (
     <Container>
       <Content className="z-2">{children} </Content>

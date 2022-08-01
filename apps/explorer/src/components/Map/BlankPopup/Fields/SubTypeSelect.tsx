@@ -5,8 +5,7 @@ import {
   selectedTypeAtom,
 } from 'recoil/blankPopup/blankPopupAtoms';
 import { EditOptionItem } from 'components/Map/Popup/elements';
-
-import { subTypeOptions } from '../constants';
+import { subTypeOptions } from 'recoil/blankPopup/constants';
 
 export const SubTypeSelect: React.FC = () => {
   const [selectedSubType, setSelectedSubType] =

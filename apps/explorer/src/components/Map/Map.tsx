@@ -5,52 +5,64 @@ import {
 } from '@cognite/reveal';
 import { CogniteClient } from '@cognite/sdk';
 import { MapOverlayRouter } from 'pages/MapOverlay/MapOverlayRouter';
-import React from 'react';
+import React, { useContext } from 'react';
 import { updateStyledNodes } from 'utils/map/updateStyledNodes';
+
+import { MapContext } from './MapProvider';
 
 const fullStyle = { width: '100%', height: '100%' };
 
 interface Props {
   client: CogniteClient;
-  model: AddModelOptions;
+  modelOptions: AddModelOptions;
   setNodeIdInUrl: (treeNodeId: number | undefined) => void;
 }
 
-const Map: React.FC<Props> = ({ client, model, setNodeIdInUrl }) => {
-  const viewer = React.useRef<Cognite3DViewer>();
-  // Need to work on connecting this with nodeId
-  const [_treeIndex, setTreeIndex] = React.useState<number>();
-
+const Map: React.FC<Props> = ({ client, modelOptions, setNodeIdInUrl }) => {
+  const { viewerRef, modelRef } = useContext(MapContext);
   const handleClick = async (
     event: { offsetX: any; offsetY: any },
     model: Cognite3DModel
   ) => {
-    const { newTreeIndex, newTreeNodeId } = await updateStyledNodes(
-      viewer.current,
+    const { newTreeNodeId } = await updateStyledNodes(
+      viewerRef.current,
       event,
       model
     );
 
     setNodeIdInUrl(newTreeNodeId);
-    setTreeIndex(newTreeIndex);
   };
 
   React.useEffect(() => {
     const main = async () => {
-      viewer.current = new Cognite3DViewer({
+      viewerRef.current = new Cognite3DViewer({
         // @ts-expect-error client needs updates
         sdk: client,
         domElement: document.getElementById('reveal-map')!,
       });
 
       // load a model and add it on 3d scene
-      const loadedModel = await viewer.current.addModel(model).then((model) => {
-        viewer.current?.fitCameraToModel(model);
-        return model as Cognite3DModel;
-      });
-      viewer.current.on('click', (event) => handleClick(event, loadedModel));
-    };
+      modelRef.current = await viewerRef.current
+        .addModel(modelOptions)
+        .then((fetchedModel) => {
+          viewerRef.current?.fitCameraToModel(fetchedModel);
+          return fetchedModel as Cognite3DModel;
+        });
 
+      const newControlsOptions = {
+        mouseWheelAction: 'zoomToCursor',
+        changeCameraTargetOnClick: false,
+      };
+
+      // @ts-expect-error property does not exist due to out of date client
+      viewerRef.current.cameraManager.setCameraControlsOptions(
+        newControlsOptions
+      );
+
+      viewerRef.current.on('click', (event) =>
+        handleClick(event, modelRef.current as Cognite3DModel)
+      );
+    };
     main();
   }, []);
 

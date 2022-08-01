@@ -9,10 +9,10 @@ export const Home = () => {
   const [project] = getProjectInfo();
   const setNodeIdInUrl = useSetNodeIdInURL();
 
-  const model = env.projectModels[project];
+  const modelOptions = env.projectModels[project];
 
   // fix later for displaying clearer error message
-  if (!model || !client)
+  if (!modelOptions || !client)
     return (
       <ErrorDisplay>
         Error loading the 3D model. Perhaps this project is not configured or
@@ -20,5 +20,11 @@ export const Home = () => {
       </ErrorDisplay>
     );
 
-  return <Map client={client} model={model} setNodeIdInUrl={setNodeIdInUrl} />;
+  return (
+    <Map
+      client={client}
+      modelOptions={modelOptions}
+      setNodeIdInUrl={setNodeIdInUrl}
+    />
+  );
 };

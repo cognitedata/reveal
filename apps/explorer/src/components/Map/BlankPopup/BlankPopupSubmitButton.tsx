@@ -8,8 +8,7 @@ import { blankFormState } from 'recoil/blankPopup/blankFormState';
 import { selectedTypeAtom } from 'recoil/blankPopup/blankPopupAtoms';
 import { useHistory } from 'react-router-dom';
 import { PAGES } from 'pages/constants';
-
-import { MAP_OBJECTS } from './constants';
+import { MAP_OBJECTS } from 'recoil/blankPopup/constants';
 
 export const BlankPopupSubmitButton = () => {
   const history = useHistory();

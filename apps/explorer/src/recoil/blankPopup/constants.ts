@@ -1,9 +1,7 @@
-export type MAP_OBJECTS_TYPE = 'equipment' | 'room';
-
-export const MAP_OBJECTS: { [key: string]: MAP_OBJECTS_TYPE } = {
-  EQUIPMENT: 'equipment',
-  ROOM: 'room',
-};
+export enum MAP_OBJECTS {
+  EQUIPMENT = 'equipment',
+  ROOM = 'room',
+}
 
 export const mainTypeSelectOptions = [
   { value: MAP_OBJECTS.EQUIPMENT, label: 'Equipment' },
@@ -11,7 +9,7 @@ export const mainTypeSelectOptions = [
 ];
 
 type SubTypeOptions = {
-  [key in MAP_OBJECTS_TYPE]: { label: string; value: string }[];
+  [key in MAP_OBJECTS]: { label: string; value: string }[];
 };
 
 export const subTypeOptions: SubTypeOptions = {

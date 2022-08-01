@@ -1,4 +1,4 @@
-import { MAP_OBJECTS } from 'components/Map/BlankPopup/constants';
+import { MAP_OBJECTS } from 'recoil/blankPopup/constants';
 import { atom } from 'recoil';
 
 export const selectedTypeAtom = atom({

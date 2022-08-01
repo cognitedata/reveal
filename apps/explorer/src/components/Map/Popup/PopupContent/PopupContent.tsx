@@ -1,4 +1,7 @@
 import { Button, Flex, Label } from '@cognite/cogs.js';
+import { MapContext } from 'components/Map/MapProvider';
+import { Scalars } from 'graphql/generated';
+import { useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
 import { isEditModeAtom } from 'recoil/popupShared/isEditModeAtom';
@@ -27,8 +30,26 @@ export const PopupContent: React.FC<Props> = ({
   Icon,
   children,
 }) => {
+  const { modelRef, viewerRef } = useContext(MapContext);
   const setIsEditMode = useSetRecoilState(isEditModeAtom);
+
+  const zoomToNodeId = async (nodeId: Scalars['Int64']) => {
+    if (nodeId) {
+      try {
+        const boundingBox = await modelRef.current.getBoundingBoxByNodeId(
+          nodeId
+        );
+        if (boundingBox) {
+          viewerRef.current.cameraManager.fitCameraToBoundingBox(boundingBox);
+        }
+      } catch (e) {
+        // console.log(e);
+      }
+    }
+  };
+
   const handleEditButtonClick = () => setIsEditMode(true);
+  const handleLocationButtonClick = () => zoomToNodeId(nodeId);
 
   return (
     <FlexColumnSpaceAround>
@@ -62,6 +83,7 @@ export const PopupContent: React.FC<Props> = ({
         ))}
       </Flex>
       <Flex justifyContent="flex-end">
+        <Button onClick={handleLocationButtonClick}>Show Location </Button>
         <NavigationButton nodeId={nodeId} />
       </Flex>
     </FlexColumnSpaceAround>
