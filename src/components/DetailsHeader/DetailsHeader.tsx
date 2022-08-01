@@ -6,21 +6,14 @@ import { Breadcrumb } from '@cognite/cdf-utilities';
 import { useParams } from 'react-router-dom';
 import { Body, Colors, Flex, Icon, Title } from '@cognite/cogs.js';
 import { extractorsListExtended } from 'utils/extractorsListExtended';
-import { Skeleton } from 'antd';
 
 type DetailsHeaderProps = {
-  isFetched: boolean;
   title: string;
   version: string;
   createdAt: string;
 };
 
-const DetailsHeader = ({
-  isFetched,
-  title,
-  version,
-  createdAt,
-}: DetailsHeaderProps) => {
+const DetailsHeader = ({ title, version, createdAt }: DetailsHeaderProps) => {
   const { t } = useTranslation();
   const { subAppPath, extractorExternalId } = useParams<{
     subAppPath?: string;
@@ -30,52 +23,44 @@ const DetailsHeader = ({
     <HeaderContainer>
       <Layout.Container>
         <Flex gap={36} direction="column">
-          {isFetched ? (
-            <>
-              <Breadcrumb
-                items={[
-                  {
-                    path: `/${subAppPath}`,
-                    title: t('extract-data'),
-                  },
-                  {
-                    path: `/${subAppPath}/${extractorExternalId}`,
-                    title: title,
-                  },
-                ]}
+          <Breadcrumb
+            items={[
+              {
+                path: `/${subAppPath}`,
+                title: t('extract-data'),
+              },
+              {
+                path: `/${subAppPath}/${extractorExternalId}`,
+                title: title,
+              },
+            ]}
+          />
+          <Flex direction="column" gap={16}>
+            <div>
+              <img
+                src={extractorsListExtended?.[extractorExternalId!]?.imagePath}
               />
-              <Flex direction="column" gap={16}>
-                <div>
-                  <img
-                    src={
-                      extractorsListExtended?.[extractorExternalId!]?.imagePath
-                    }
-                  />
-                </div>
-                <Title level="3">{title}</Title>
-                <Flex gap={16}>
-                  <Flex gap={6} alignItems="center">
-                    <StyledIconMuted type="Layers" />
-                    <StyledBodyMuted>
-                      {t('version-n', {
-                        version,
-                      })}
-                    </StyledBodyMuted>
-                  </Flex>
-                  <Flex gap={6} alignItems="center">
-                    <StyledIconMuted type="Events" />
-                    <StyledBodyMuted>
-                      {t('released-date', {
-                        createdAt,
-                      })}
-                    </StyledBodyMuted>
-                  </Flex>
-                </Flex>
+            </div>
+            <Title level="3">{title}</Title>
+            <Flex gap={16}>
+              <Flex gap={6} alignItems="center">
+                <StyledIconMuted type="Layers" />
+                <StyledBodyMuted>
+                  {t('version-n', {
+                    version,
+                  })}
+                </StyledBodyMuted>
               </Flex>
-            </>
-          ) : (
-            <Skeleton />
-          )}
+              <Flex gap={6} alignItems="center">
+                <StyledIconMuted type="Events" />
+                <StyledBodyMuted>
+                  {t('released-date', {
+                    createdAt,
+                  })}
+                </StyledBodyMuted>
+              </Flex>
+            </Flex>
+          </Flex>
         </Flex>
       </Layout.Container>
     </HeaderContainer>
