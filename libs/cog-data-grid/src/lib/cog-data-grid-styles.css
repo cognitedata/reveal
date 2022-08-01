@@ -27,7 +27,7 @@
   --ag-range-selection-background-color: var(--cogs-surface--medium);
   --ag-cell-horizontal-padding: 8px;
   --ag-cell-vertical-padding: 12px;
-  --ag-cell-line-height: 20px;
+  --ag-cell-line-height: 22px;
   --ag-cell-double-focus-background-color: var(--cogs-surface--medium);
   --ag-border-color: var(--cogs-greyscale-grey4, #d9d9d9);
 }
@@ -73,6 +73,10 @@
   border-left: 1px solid var(--ag-border-color);
 }
 
+.cog-data-grid .ag-row.ag-row-focus {
+  z-index: 5;
+}
+
 .cog-data-grid .ag-header-row-column {
   border-top: 1px solid var(--ag-border-color);
 }
@@ -97,8 +101,6 @@
 .cog-data-grid .ag-cell {
   padding: var(--ag-cell-vertical-padding) var(--ag-cell-horizontal-padding);
   line-height: var(--ag-cell-line-height);
-  display: flex;
-  align-items: center;
 }
 
 .cog-data-grid .ag-header-cell {
@@ -219,13 +221,13 @@
   right: 0;
   bottom: 0;
   resize: none;
-  line-height: calc(var(--ag-cell-line-height) + 3px);
+  line-height: var(--ag-cell-line-height);
 }
 .cog-data-grid .ag-cell-inline-editing .ag-cell-editor:focus {
   box-shadow: 0 0 0 2px var(--ag-range-selection-border-color);
 }
-.cog-data-grid .ag-row-first .ag-cell-inline-editing .ag-cell-editor {
-  line-height: calc(var(--ag-cell-line-height) + 2px);
+.cog-data-grid .ag-cell-inline-editing[aria-colindex='1'] .ag-cell-editor {
+  font-weight: 600;
 }
 .cog-data-grid .ag-row-first .ag-cell-inline-editing .ag-cell-editor:focus {
   box-shadow: 0 0 0 2px var(--ag-range-selection-border-color),
