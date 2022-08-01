@@ -15,14 +15,10 @@ import SidePanelTableListHomeItem from './SidePanelTableListHomeItem';
 import CreateTableModal from 'components/CreateTableModal/CreateTableModal';
 import { useTables } from 'hooks/sdk-queries';
 import { useActiveTable } from 'hooks/table-tabs';
-
-const accessWarningContent = (
-  <>
-    To create tables, you need to have the <strong>raw:write</strong> capability
-  </>
-);
+import { Trans, useTranslation } from 'common/i18n';
 
 const SidePanelTableList = (): JSX.Element => {
+  const { t } = useTranslation();
   const {
     selectedSidePanelDatabase = '',
     setSelectedSidePanelDatabase,
@@ -87,7 +83,12 @@ const SidePanelTableList = (): JSX.Element => {
           <StyledSidePanelTableListHeaderTitle strong>
             {selectedSidePanelDatabase}
           </StyledSidePanelTableListHeaderTitle>
-          <Tooltip content={accessWarningContent} disabled={hasWriteAccess}>
+          <Tooltip
+            content={
+              <Trans i18nKey="explorer-side-panel-tables-access-warning" />
+            }
+            disabled={hasWriteAccess}
+          >
             <Button
               aria-label="Create table"
               disabled={!hasWriteAccess}
@@ -119,14 +120,19 @@ const SidePanelTableList = (): JSX.Element => {
         tables={tables}
       />
       {!!tables.length && (
-        <Tooltip content={accessWarningContent} disabled={hasWriteAccess}>
+        <Tooltip
+          content={
+            <Trans i18nKey="explorer-side-panel-tables-access-warning" />
+          }
+          disabled={hasWriteAccess}
+        >
           <Button
             block
             disabled={!hasWriteAccess}
             icon="Add"
             onClick={() => setIsCreateModalOpen(true)}
           >
-            Create table
+            {t('explorer-side-panel-tables-button-create-table')}
           </Button>
         </Tooltip>
       )}

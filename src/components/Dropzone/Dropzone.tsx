@@ -6,6 +6,7 @@ import { DraggerProps } from 'antd/lib/upload';
 import styled from 'styled-components';
 
 import { CustomIcon } from 'components/CustomIcon';
+import { useTranslation } from 'common/i18n';
 
 type DropzoneProps = {
   description?: string;
@@ -17,22 +18,24 @@ const Dropzone = ({
   title,
   ...draggerProps
 }: DropzoneProps & DraggerProps): JSX.Element => {
+  const { t } = useTranslation();
+
   return (
     <StyledDropzone {...draggerProps}>
       <StyledDropzoneContent>
         <StyledDropzoneOnDrop>
           <Icon type="Upload" />
           <StyledDropzoneOnDropText level={6}>
-            Drop to upload CSV
+            {t('csv-file-drop-area-drop-text')}
           </StyledDropzoneOnDropText>
         </StyledDropzoneOnDrop>
         <StyledDocumentIcon />
         <StyledDocumentIconHover />
         <StyledDropzoneTitle level={6} strong>
-          {title ?? 'Upload CSV file'}
+          {title ?? t('csv-file-drop-area-title')}
         </StyledDropzoneTitle>
         <StyledDropzoneDetail strong>
-          {description ?? 'Drag and drop, or click to select'}
+          {description ?? t('csv-file-drop-area-detail')}
         </StyledDropzoneDetail>
       </StyledDropzoneContent>
     </StyledDropzone>

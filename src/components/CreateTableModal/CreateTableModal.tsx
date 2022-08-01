@@ -17,6 +17,7 @@ import Modal, { ModalProps } from 'components/Modal/Modal';
 import CreateTableModalCreationModeStep from './CreateTableModalCreationModeStep';
 import CreateTableModalPrimaryKeyStep from './CreateTableModalPrimaryKeyStep';
 import CreateTableModalUploadStep from './CreateTableModalUploadStep';
+import { useTranslation } from 'common/i18n';
 
 export enum CreateTableModalStep {
   CreationMode = 'creationMode',
@@ -52,6 +53,7 @@ const CreateTableModal = ({
   onReset,
   ...modalProps
 }: CreateTableModalProps): JSX.Element => {
+  const { t } = useTranslation();
   const [createTableModalStep, setCreateTableModalStep] = useState(
     CreateTableModalStep.CreationMode
   );
@@ -103,7 +105,7 @@ const CreateTableModal = ({
   function handleCancel(): void {
     if (file && isParsing && !isUploadCompleted) {
       notification.info({
-        message: `File upload was canceled.`,
+        message: t('create-table-modal-file-upload-notification_cancel'),
         key: 'file-upload',
       });
     }
@@ -125,7 +127,9 @@ const CreateTableModal = ({
             onConfirmUpload(databaseName, values.tableName);
           } else {
             notification.success({
-              message: `Table ${values.tableName} created!`,
+              message: t('table-created-notification_success', {
+                name: values.tableName,
+              }),
               key: 'create-table',
             });
             handleCancel();
@@ -137,7 +141,11 @@ const CreateTableModal = ({
           notification.error({
             message: (
               <p>
-                <p>Table {values.tableName} was not created!</p>
+                <p>
+                  {t('table-created-notification_error', {
+                    name: values.tableName,
+                  })}
+                </p>
                 <pre>{JSON.stringify(e?.errors, null, 2)}</pre>
               </p>
             ),
@@ -151,11 +159,11 @@ const CreateTableModal = ({
   function handleValidation(values: CreateTableFormValues) {
     const errors: Partial<Record<keyof CreateTableFormValues, string>> = {};
     if (!values.tableName) {
-      errors.tableName = 'A required field is missing.';
+      errors.tableName = t('table-name-validation-error-required');
     } else if (values.tableName.length > 64) {
-      errors.tableName = 'This name exceeds the character limit (64).';
+      errors.tableName = t('table-name-validation-error-long');
     } else if (tables.some(({ name }) => name === values.tableName)) {
-      errors.tableName = 'This name already exist. Try a different name.';
+      errors.tableName = t('table-name-validation-error-duplicate');
     }
     return errors;
   }
@@ -227,12 +235,12 @@ const CreateTableModal = ({
           <>
             {createTableModalStep !== CreateTableModalStep.Upload ? (
               <StyledCancelButton onClick={handleCancel} type="ghost">
-                Cancel
+                {t('cancel')}
               </StyledCancelButton>
             ) : (
               (isUploadCompleted || isUploadFailed) && (
                 <Button onClick={handleCancel} type="primary">
-                  OK
+                  {t('create-table-modal-button-ok')}
                 </Button>
               )
             )}
@@ -243,7 +251,7 @@ const CreateTableModal = ({
                 onClick={() => handleSubmit()}
                 type="primary"
               >
-                Create
+                {t('create-table-modal-button-create')}
               </Button>
             )}
             {createTableModalStep === CreateTableModalStep.PrimaryKey && (
@@ -253,14 +261,14 @@ const CreateTableModal = ({
                 onClick={() => handleSubmit()}
                 type="primary"
               >
-                Create
+                {t('create-database-modal-button-create')}
               </Button>
             )}
           </>
         }
         maskClosable={createTableModalStep !== CreateTableModalStep.Upload}
         onCancel={handleCancel}
-        title={<Title level={5}>Create table</Title>}
+        title={<Title level={5}>{t('create-table-modal-title')}</Title>}
         visible={visible}
         {...modalProps}
         afterClose={() => {
@@ -270,7 +278,10 @@ const CreateTableModal = ({
         width={CREATE_TABLE_MODAL_WIDTH}
       >
         {createTableModalStep !== CreateTableModalStep.Upload && (
-          <FormFieldWrapper isRequired title="Name">
+          <FormFieldWrapper
+            isRequired
+            title={t('create-table-modal-name-field-title')}
+          >
             <Input
               autoFocus
               disabled={isCreatingTable}
@@ -283,12 +294,12 @@ const CreateTableModal = ({
                   handleSubmit();
                 }
               }}
-              placeholder="Enter name"
+              placeholder={t('create-table-modal-name-field-placeholder')}
               value={values.tableName}
             />
             {!errors.tableName && (
               <StyledNameInputDetail>
-                The name should be unique. You can not change this name later.
+                {t('create-table-modal-name-field-note')}
               </StyledNameInputDetail>
             )}
           </FormFieldWrapper>

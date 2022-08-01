@@ -15,12 +15,14 @@ import CreateTableModalUploadStep from 'components/CreateTableModal/CreateTableM
 import CreateTableModalPrimaryKeyStep from 'components/CreateTableModal/CreateTableModalPrimaryKeyStep';
 import { PrimaryKeyMethod } from 'components/CreateTableModal/CreateTableModal';
 import Dropzone from 'components/Dropzone/Dropzone';
+import { useTranslation } from 'common/i18n';
 
 interface UploadCsvProps {
   setCSVModalVisible(value: boolean, tableChanged?: boolean): void;
 }
 
 const UploadCSV = ({ setCSVModalVisible }: UploadCsvProps) => {
+  const { t } = useTranslation();
   const [file, setFile] = useState<File | undefined>();
   const [selectedColumnIndex, setSelectedColumnIndex] = useState<number>(-1);
   const [selectedPrimaryKeyMethod, setSelectedPrimaryKeyMethod] =
@@ -40,7 +42,7 @@ const UploadCSV = ({ setCSVModalVisible }: UploadCsvProps) => {
   const onCancelUpload = () => {
     if (file && isParsing && !isUploadCompleted) {
       notification.info({
-        message: `File upload was canceled.`,
+        message: t('file-upload-notification_cancel'),
         key: 'file-upload',
       });
     }
@@ -76,7 +78,9 @@ const UploadCSV = ({ setCSVModalVisible }: UploadCsvProps) => {
     disabled: !file || isUpload,
   };
 
-  const okText = isUploadCompleted ? 'OK' : 'Add';
+  const okText = isUploadCompleted
+    ? t('file-upload-modal-button-ok')
+    : t('file-upload-modal-button-add');
   const isStepAddFile = !file;
   const isStepChooseColumn = file && !(isUpload || isUploadCompleted);
   const isStepUpload = file && (isUpload || isUploadCompleted);
@@ -110,7 +114,7 @@ const UploadCSV = ({ setCSVModalVisible }: UploadCsvProps) => {
   const footer = (
     <StyledModalFooter>
       <Button type="ghost" onClick={onCancelUpload}>
-        Cancel
+        {t('cancel')}
       </Button>
       <Button type="primary" onClick={onOk} {...okButtonProps}>
         {okText}
@@ -121,7 +125,7 @@ const UploadCSV = ({ setCSVModalVisible }: UploadCsvProps) => {
   return (
     <Modal
       visible
-      title={<Title level={5}>Add new data</Title>}
+      title={<Title level={5}>{t('file-upload-modal-title')}</Title>}
       onOk={onOk}
       onCancel={onCancelUpload}
       getContainer={getContainer}

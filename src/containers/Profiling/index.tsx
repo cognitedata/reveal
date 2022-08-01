@@ -6,6 +6,7 @@ import { sortBy } from 'lodash';
 import { AutoResizer } from 'react-base-table';
 import styled from 'styled-components';
 
+import { useTranslation } from 'common/i18n';
 import { useActiveTableContext } from 'contexts';
 import { useFilteredColumns } from 'hooks/table-filters';
 import {
@@ -28,6 +29,7 @@ import ProfileRow from './ProfileRow';
 export type SortableColumn = keyof ColumnProfile;
 
 export const Profiling = (): JSX.Element => {
+  const { t } = useTranslation();
   const { database, table } = useActiveTableContext();
   const { isFetched: areTypesFetched } = useColumnType(database, table);
 
@@ -93,10 +95,10 @@ export const Profiling = (): JSX.Element => {
   return (
     <RootFlex direction="column">
       <ProfileStatusMessage resultType={profileResultType} />
-      <Title level={4}>Table summary</Title>
+      <Title level={4}>{t('profiling-title')}</Title>
       <CardsFlex direction="row">
         <Card className="z-2">
-          <header>Rows profiled</header>
+          <header>{t('profiling-cards-row-title')}</header>
           <Flex direction="row" justifyContent="space-between">
             <StyledCount $isRunning={!fullProfile.isFetched}>
               {data.rowCount}
@@ -109,7 +111,7 @@ export const Profiling = (): JSX.Element => {
           </Flex>
         </Card>
         <Card className="z-2">
-          <header>Columns profiled</header>
+          <header>{t('profiling-cards-column-title')}</header>
           <Flex direction="row" justifyContent="space-between">
             <StyledCount $isRunning={!fullProfile.isFetched}>
               {Object.values(data.columns).length}

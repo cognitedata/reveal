@@ -1,4 +1,4 @@
-import { useSDK } from '@cognite/sdk-provider'; // eslint-disable-line
+import { useSDK } from '@cognite/sdk-provider';
 import { RawDB, RawDBRow, RawDBRowInsert, RawDBTable } from '@cognite/sdk';
 import { useInfiniteQuery, useMutation, useQueryClient } from 'react-query';
 import { RAW_PAGE_SIZE_LIMIT } from 'utils/constants';

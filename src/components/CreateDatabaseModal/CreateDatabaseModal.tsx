@@ -10,6 +10,7 @@ import Modal, { ModalProps } from 'components/Modal/Modal';
 import { RawExplorerContext } from 'contexts';
 import { useCreateDatabase } from 'hooks/sdk-queries';
 import FormFieldWrapper from 'components/FormFieldWrapper/FormFieldWrapper';
+import { useTranslation } from 'common/i18n';
 
 type CreateDatabaseFormValues = {
   databaseName: string;
@@ -25,6 +26,7 @@ const CreateDatabaseModal = ({
   visible,
   ...modalProps
 }: CreateDatabaseModalProps): JSX.Element => {
+  const { t } = useTranslation();
   const { setSelectedSidePanelDatabase } = useContext(RawExplorerContext);
 
   const {
@@ -60,7 +62,9 @@ const CreateDatabaseModal = ({
       {
         onSuccess: () => {
           notification.success({
-            message: `Database ${databaseName} created!`,
+            message: t('database-created-notification_success', {
+              name: databaseName,
+            }),
             key: 'create-database',
           });
           onCancel();
@@ -70,7 +74,11 @@ const CreateDatabaseModal = ({
           notification.error({
             message: (
               <p>
-                <p>Database {databaseName} was not created!</p>
+                <p>
+                  {t('database-created-notification_error', {
+                    name: databaseName,
+                  })}
+                </p>
                 <pre>{JSON.stringify(e?.errors, null, 2)}</pre>
               </p>
             ),
@@ -84,11 +92,11 @@ const CreateDatabaseModal = ({
   function handleValidation(values: CreateDatabaseFormValues) {
     const errors: Partial<Record<keyof CreateDatabaseFormValues, string>> = {};
     if (!values.databaseName) {
-      errors.databaseName = 'A required field is missing.';
+      errors.databaseName = t('database-name-validation-error-required');
     } else if (values.databaseName.length > 32) {
-      errors.databaseName = 'This name exceeds the character limit (32).';
+      errors.databaseName = t('database-name-validation-error-long');
     } else if (databases.some(({ name }) => name === values.databaseName)) {
-      errors.databaseName = 'This name already exist. Try a different name.';
+      errors.databaseName = t('database-name-validation-error-duplicate');
     }
     return errors;
   }
@@ -98,7 +106,7 @@ const CreateDatabaseModal = ({
       <Modal
         footer={[
           <StyledCancelButton onClick={onCancel} type="ghost">
-            Cancel
+            {t('cancel')}
           </StyledCancelButton>,
           <Button
             disabled={isDisabled}
@@ -107,15 +115,18 @@ const CreateDatabaseModal = ({
             onClick={() => handleSubmit()}
             type="primary"
           >
-            Create
+            {t('create-database-modal-button-create')}
           </Button>,
         ]}
         onCancel={onCancel}
-        title={<Title level={5}>Create database</Title>}
+        title={<Title level={5}>{t('create-database-modal-title')}</Title>}
         visible={visible}
         {...modalProps}
       >
-        <FormFieldWrapper isRequired title="Name">
+        <FormFieldWrapper
+          isRequired
+          title={t('create-database-modal-name-field-title')}
+        >
           <Input
             autoFocus
             disabled={isLoading}
@@ -128,12 +139,12 @@ const CreateDatabaseModal = ({
                 handleSubmit();
               }
             }}
-            placeholder="Enter name"
+            placeholder={t('create-database-modal-name-field-placeholder')}
             value={values.databaseName}
           />
           {!errors.databaseName && (
             <StyledNameInputDetail>
-              Enter a unique name. You cannot change this later.
+              {t('create-database-modal-name-field-note')}
             </StyledNameInputDetail>
           )}
         </FormFieldWrapper>

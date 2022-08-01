@@ -8,6 +8,7 @@ import Modal, { ModalProps } from 'components/Modal/Modal';
 import { RawExplorerContext } from 'contexts';
 import { useDeleteDatabase } from 'hooks/sdk-queries';
 import { useCloseDatabase } from 'hooks/table-tabs';
+import { Trans, useTranslation } from 'common/i18n';
 
 type DeleteDatabaseModalProps = {
   databaseName: string;
@@ -33,6 +34,7 @@ const DeleteDatabaseModal = ({
   onCancel,
   ...modalProps
 }: DeleteDatabaseModalProps): JSX.Element => {
+  const { t } = useTranslation();
   const { setSelectedSidePanelDatabase } = useContext(RawExplorerContext);
 
   const { mutate: deleteDatabase, isLoading } = useDeleteDatabase();
@@ -44,7 +46,9 @@ const DeleteDatabaseModal = ({
       {
         onSuccess: () => {
           notification.success({
-            message: `Database ${databaseName} deleted!`,
+            message: t('delete-database-notification_success', {
+              name: databaseName,
+            }),
             key: 'database-delete',
           });
           onCancel();
@@ -55,7 +59,11 @@ const DeleteDatabaseModal = ({
           notification.error({
             message: (
               <p>
-                <p>Database {databaseName} was not deleted!</p>
+                <p>
+                  {t('delete-database-notification_error', {
+                    name: databaseName,
+                  })}
+                </p>
                 <pre>{JSON.stringify(e?.errors, null, 2)}</pre>
               </p>
             ),
@@ -70,7 +78,7 @@ const DeleteDatabaseModal = ({
     <Modal
       footer={[
         <StyledCancelButton onClick={onCancel} type="ghost">
-          Cancel
+          {t('cancel')}
         </StyledCancelButton>,
         <Button
           disabled={isLoading}
@@ -78,20 +86,22 @@ const DeleteDatabaseModal = ({
           onClick={handleDelete}
           type="danger"
         >
-          Delete
+          {t('delete-database-modal-button-delete')}
         </Button>,
       ]}
       onCancel={onCancel}
       title={
         <StyledDeleteDatabaseModalTitle level={5}>
-          Delete {databaseName}
+          {t('delete-database-modal-title', { name: databaseName })}
         </StyledDeleteDatabaseModalTitle>
       }
       {...modalProps}
     >
       <StyledDeleteDatabaseModalBody level={2}>
-        Are you sure you want to delete <b>{databaseName}</b>? You{' '}
-        <b>will not</b> be able to restore it later.
+        <Trans
+          i18nKey="delete-database-modal-body"
+          values={{ name: databaseName }}
+        />
       </StyledDeleteDatabaseModalBody>
     </Modal>
   );

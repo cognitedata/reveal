@@ -2,6 +2,7 @@ import React from 'react';
 import { Body, Flex, Label } from '@cognite/cogs.js';
 
 import { Section } from 'components/ProfilingSection';
+import { useTranslation } from 'common/i18n';
 
 type Props = {
   allCount: number;
@@ -18,12 +19,13 @@ export const SectionDistinctValues = ({
   isHalf,
   isCompact,
 }: Props): JSX.Element => {
+  const { t } = useTranslation();
   const percentage =
     allCount !== 0 ? Math.ceil((distinctCount / allCount) * 100) : 0;
   const variant = percentage === 100 ? 'success' : 'default';
   return (
     <Section
-      title={title ?? 'Distinct values'}
+      title={title ?? t('profiling-sidebar-distinct-values-title')}
       isHalf={isHalf}
       isCompact={isCompact}
     >
@@ -34,7 +36,7 @@ export const SectionDistinctValues = ({
       >
         <Body level={2}>{distinctCount}</Body>
         <Label size="small" variant={variant}>
-          {percentage}% unique values
+          {t('profiling-sidebar-distinct-values-value', { percentage })}
         </Label>
       </Flex>
     </Section>

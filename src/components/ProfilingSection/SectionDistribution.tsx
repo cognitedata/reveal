@@ -5,6 +5,7 @@ import { Count } from 'hooks/profiling-service';
 
 import Distribution from 'containers/Profiling/Distribution';
 import { Section } from 'components/ProfilingSection';
+import { useTranslation } from 'common/i18n';
 
 type Props = {
   histogram?: Count[];
@@ -20,10 +21,11 @@ export const SectionDistribution = ({
   isHalf,
   isCompact,
 }: Props): JSX.Element => {
+  const { t } = useTranslation();
   const height = isCompact ? 200 : 330;
   return (
     <Section
-      title={title ?? 'Distribution'}
+      title={title ?? t('profiling-sidebar-distribution-title')}
       isCompact={isCompact}
       isHalf={isHalf}
     >
@@ -47,7 +49,7 @@ export const SectionDistribution = ({
           </div>
         </Flex>
       ) : (
-        'MISSING'
+        t('profiling-sidebar-value-missing')
       )}
     </Section>
   );

@@ -8,6 +8,7 @@ import Dropzone from 'components/Dropzone/Dropzone';
 
 import CreateTableModalOption from './CreateTableModalOption';
 import { CreationMode } from './CreateTableModal';
+import { useTranslation } from 'common/i18n';
 
 type CreateTableModalCreationModeStepProps = {
   isCreatingTable: boolean;
@@ -22,6 +23,7 @@ const CreateTableModalCreationModeStep = ({
   selectedCreationMode,
   setFile,
 }: CreateTableModalCreationModeStepProps): JSX.Element => {
+  const { t } = useTranslation();
   const fileProps = {
     accept: '.csv',
     beforeUpload: () => false,
@@ -40,19 +42,19 @@ const CreateTableModalCreationModeStep = ({
   };
 
   return (
-    <FormFieldWrapper isRequired title="Select one">
+    <FormFieldWrapper isRequired title={t('create-table-modal-select-one')}>
       <StyledCreateOptions>
         <StyledCreateOption>
           <Dropzone {...fileProps} />
         </StyledCreateOption>
         <StyledCreateOption>
           <CreateTableModalOption
-            description="Upload files later or write data directly using the API"
+            description={t('create-table-modal-empty-table-option-description')}
             icon="DataTable"
             isDisabled={isCreatingTable}
             isSelected={selectedCreationMode === CreationMode.Empty}
             onClick={selectCreationMode(CreationMode.Empty)}
-            title="Create empty table"
+            title={t('create-table-modal-empty-table-option-title')}
           />
         </StyledCreateOption>
       </StyledCreateOptions>

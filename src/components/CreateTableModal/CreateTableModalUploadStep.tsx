@@ -9,6 +9,7 @@ import {
   SIDE_PANEL_TRANSITION_DURATION,
   SIDE_PANEL_TRANSITION_FUNCTION,
 } from 'utils/constants';
+import { useTranslation } from 'common/i18n';
 
 type CreateTableModalUploadStepProps = {
   fileName?: string;
@@ -25,15 +26,16 @@ const CreateTableModalUploadStep = ({
   onCancel,
   progression = 0,
 }: CreateTableModalUploadStepProps): JSX.Element => {
+  const { t } = useTranslation();
   const percentage = isUploadCompleted ? 100 : progression;
 
-  let messageContent = 'Please keep this window open to complete the upload.';
+  let messageContent = t('create-table-modal-file-upload-message_ongoing');
   let messageType: MessageType = 'info';
   if (isUploadFailed) {
-    messageContent = 'An error has occurred while uploading your CSV.';
+    messageContent = t('create-table-modal-file-upload-message_error');
     messageType = 'error';
   } else if (isUploadCompleted) {
-    messageContent = 'The file was successfully uploaded.';
+    messageContent = t('create-table-modal-file-upload-message_success');
     messageType = 'success';
   }
 
@@ -51,7 +53,7 @@ const CreateTableModalUploadStep = ({
               {fileName}
             </StyledFileName>
             <StyledUploadPercentage level={3}>
-              {percentage}%
+              {t('create-table-modal-file-upload-percentage', { percentage })}
             </StyledUploadPercentage>
           </StyledProgressionInfo>
           <StyledProgressionBarWrapper>

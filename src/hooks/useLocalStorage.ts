@@ -16,7 +16,6 @@ const useLocalStorage = <T>(
   const setValue = (value: any) => {
     try {
       const valueToStore =
-        // eslint-disable-next-line
         value instanceof Function ? value(storedValue) : value;
       setStoredValue(valueToStore);
       window.localStorage.setItem(key, JSON.stringify(valueToStore));

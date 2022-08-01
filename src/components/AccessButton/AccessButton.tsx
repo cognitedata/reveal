@@ -3,6 +3,7 @@ import { Button, ButtonProps } from '@cognite/cogs.js';
 import { Popconfirm, Tooltip } from 'antd';
 import { getActionLabel, getContainer } from 'utils/utils';
 import { AccessPermission } from 'utils/types';
+import { useTranslation } from 'common/i18n';
 
 interface AccessButtonProps extends ButtonProps {
   permissions?: AccessPermission[];
@@ -22,10 +23,10 @@ const AccessButton = ({
   onClick,
   hasWriteAccess,
 }: AccessButtonProps) => {
+  const { t } = useTranslation();
   const accessRequired = (
     <p>
-      To gain access, please request permission from your administrator for the
-      following:
+      {t('to-gain-access-please-request-permission')}
       {permissions?.map((permission) => (
         <span style={{ fontWeight: 'bold' }} key={permission.acl}>
           <br />
@@ -33,7 +34,7 @@ const AccessButton = ({
             (action) => `${getActionLabel(permission.acl, action)} `
           )}
           <br />
-          {permission.scope && 'scoped to the specific id or scope all'}
+          {permission.scope && t('scoped-to-the-specific-id-or-scope-all')}
         </span>
       ))}
     </p>
@@ -50,7 +51,7 @@ const AccessButton = ({
       }
       disabled={!showConfirm}
       style={{
-        zIndex: 999, // eslint-disable-line
+        zIndex: 999,
         width: '100%',
       }}
       okText="Yes"

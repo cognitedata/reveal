@@ -3,6 +3,7 @@ import React from 'react';
 import { Body, Colors, Detail, Icon, Title, Tooltip } from '@cognite/cogs.js';
 import { RawDB } from '@cognite/sdk';
 import styled from 'styled-components';
+import { useTranslation } from 'common/i18n';
 
 type SidePanelDatabaseListItemTooltipProps = {
   children: React.ReactElement<any>;
@@ -71,15 +72,18 @@ const SidePanelDatabaseListItemTooltip = ({
   name,
   tables,
 }: SidePanelDatabaseListItemTooltipProps): JSX.Element => {
+  const { t } = useTranslation();
   const renderTables = (): JSX.Element => {
     if (tables.length === 0) {
-      return <Detail>This database has no tables</Detail>;
+      return (
+        <Detail>{t('explorer-side-panel-databases-tooltip-no-tables')}</Detail>
+      );
     }
 
     return (
       <>
         <Body level={2} strong>
-          Tables
+          {t('explorer-side-panel-databases-tooltip-tables')}
         </Body>
         {tables.slice(0, 5).map(({ name: tableName }) => (
           <StyledTooltipTableListItemWrapper key={tableName}>

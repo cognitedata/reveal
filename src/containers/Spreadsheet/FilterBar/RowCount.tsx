@@ -9,8 +9,10 @@ import {
   useFullProfile,
   Profile,
 } from 'hooks/profiling-service';
+import { useTranslation } from 'common/i18n';
 
 export default function RowCount() {
+  const { t } = useTranslation();
   const { database, table } = useActiveTableContext();
   const { data = {}, isFetched } = useFullProfile({
     database,
@@ -39,21 +41,17 @@ export default function RowCount() {
   }
   if (isPartialProfiling) {
     const fixedRowCount =
-      rowCount && rowCount < FULL_PROFILE_LIMIT ? rowCount : '1 million';
+      rowCount && rowCount < FULL_PROFILE_LIMIT ? rowCount : t('1-million');
     const fixedRowCountAbbreviated = `>
-      ${rowCount && rowCount < FULL_PROFILE_LIMIT ? rowCount : '1M'}`;
+      ${rowCount && rowCount < FULL_PROFILE_LIMIT ? rowCount : t('1M')}`;
     return (
       <Tooltip
         placement="bottom"
-        content={`This table contains more than ${fixedRowCount} rows.`}
+        content={t('profiling-row-count-tooltip', { number: fixedRowCount })}
       >
         <>{fixedRowCountAbbreviated}</>
       </Tooltip>
     );
   }
-  return (
-    <>
-      {rowCount} row{rowCount! === 1 ? '' : 's'}
-    </>
-  );
+  return <>{t('n-rows', { count: rowCount })}</>;
 }

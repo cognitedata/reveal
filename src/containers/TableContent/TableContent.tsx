@@ -11,6 +11,7 @@ import { TAB_HEIGHT } from 'utils/constants';
 import { useFullProfile } from 'hooks/profiling-service';
 import { useIsTableEmpty } from 'hooks/table-data';
 import { useActiveTableContext } from 'contexts';
+import { useTranslation } from 'common/i18n';
 
 const TableContent = () => {
   const { database, table, view, update } = useActiveTableContext();
@@ -51,24 +52,31 @@ const TableContent = () => {
   );
 };
 
-const TabSpreadsheet = (): JSX.Element => (
-  <Tab>
-    <Icon type="DataTable" />
-    Table
-  </Tab>
-);
+const TabSpreadsheet = (): JSX.Element => {
+  const { t } = useTranslation();
+  return (
+    <Tab>
+      <Icon type="DataTable" />
+      {t('tab-table')}
+    </Tab>
+  );
+};
+
 const TabProfiling = ({
   isFetching,
   isEmpty,
 }: {
   isFetching: boolean;
   isEmpty: boolean;
-}): JSX.Element => (
-  <Tab $isEmpty={isEmpty}>
-    <Icon type={isFetching ? 'Loader' : 'Profiling'} />
-    Profile
-  </Tab>
-);
+}): JSX.Element => {
+  const { t } = useTranslation();
+  return (
+    <Tab $isEmpty={isEmpty}>
+      <Icon type={isFetching ? 'Loader' : 'Profiling'} />
+      {t('tab-profile')}
+    </Tab>
+  );
+};
 
 const Wrapper = styled(Flex)`
   height: calc(100% - ${TAB_HEIGHT}px);

@@ -9,6 +9,7 @@ import Select from 'components/Select/Select';
 import { PrimaryKeyMethod } from './CreateTableModal';
 import CreateTableModalOption from './CreateTableModalOption';
 import Message from 'components/Message/Message';
+import { useTranslation } from 'common/i18n';
 
 type CreateTableModalPrimaryKeyStepProps = {
   columns?: string[];
@@ -24,6 +25,7 @@ const CreateTableModalPrimaryKeyStep = ({
   selectedPrimaryKeyMethod,
   selectPrimaryKeyMethod,
 }: CreateTableModalPrimaryKeyStepProps): JSX.Element => {
+  const { t } = useTranslation();
   const handleSelectedColumnChange = (value: string): void => {
     const selectedColumnIndex =
       columns?.findIndex((columnName) => columnName === value) ?? -1;
@@ -38,25 +40,29 @@ const CreateTableModalPrimaryKeyStep = ({
         <StyledCreateOptions>
           <StyledCreateOption>
             <CreateTableModalOption
-              description="This is the column that identifies each table record. Data is overwritten if the entries in the column are not unique."
+              description={t(
+                'create-table-modal-primary-key-option-description'
+              )}
               icon="KeyIcon"
               isDisabled={!columns}
               isSelected={
                 selectedPrimaryKeyMethod === PrimaryKeyMethod.ChooseColumn
               }
               onClick={selectPrimaryKeyMethod(PrimaryKeyMethod.ChooseColumn)}
-              title="I know the primary key"
+              title={t('create-table-modal-primary-key-option-title')}
             />
           </StyledCreateOption>
           <StyledCreateOption>
             <CreateTableModalOption
-              description="An auto-generated key is added as a new column. Updating data creates a new entry and can result in duplicated entries."
+              description={t(
+                'create-table-modal-no-primary-key-option-description'
+              )}
               icon="UnknownPrimaryKeyIcon"
               isSelected={
                 selectedPrimaryKeyMethod === PrimaryKeyMethod.AutoGenerate
               }
               onClick={selectPrimaryKeyMethod(PrimaryKeyMethod.AutoGenerate)}
-              title="I don’t know the primary key"
+              title={t('create-table-modal-no-primary-key-option-title')}
             />
           </StyledCreateOption>
         </StyledCreateOptions>
@@ -64,17 +70,25 @@ const CreateTableModalPrimaryKeyStep = ({
       {selectedPrimaryKeyMethod === PrimaryKeyMethod.ChooseColumn && (
         <>
           <StyledMessage
-            message={`File parsed. ${columns?.length ?? 0} column${
-              !!columns?.length ? 's' : ''
-            } detected.`}
+            message={t(
+              'create-table-modal-select-primary-key-file-parsed-message_success',
+              {
+                count: columns?.length,
+              }
+            )}
             type="success"
           />
-          <FormFieldWrapper isRequired title="Select primary key">
+          <FormFieldWrapper
+            isRequired
+            title={t('create-table-modal-select-primary-key-title')}
+          >
             {columns?.length ? (
               <Select
                 defaultOpen
                 onChange={handleSelectedColumnChange}
-                placeholder="Enter column name"
+                placeholder={t(
+                  'create-table-modal-select-primary-key-placeholder'
+                )}
                 showSearch
               >
                 {columns?.map((columnName) => (
@@ -85,7 +99,7 @@ const CreateTableModalPrimaryKeyStep = ({
               </Select>
             ) : (
               <StyledColumnsEmptyText level={2}>
-                No column found
+                {t('create-table-modal-select-primary-key-not-found')}
               </StyledColumnsEmptyText>
             )}
           </FormFieldWrapper>

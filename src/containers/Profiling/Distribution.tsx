@@ -12,6 +12,7 @@ import { useTooltip, useTooltipInPortal } from '@visx/tooltip';
 import styled from 'styled-components';
 
 import { Count } from 'hooks/profiling-service';
+import { useTranslation } from 'common/i18n';
 
 const BOTTOM_AXIS_HEIGHT = 24;
 const MAXIMUM_BAR_WIDTH = 16;
@@ -105,6 +106,7 @@ export function Graph({
   maximumBarWidth = MAXIMUM_BAR_WIDTH,
   rangeEnd,
 }: GraphProps) {
+  const { t } = useTranslation();
   const horizontalMargin = 0;
   const verticalMargin = 0;
   const xMax = width - horizontalMargin;
@@ -226,10 +228,15 @@ export function Graph({
       content={
         <StyledTooltipContent>
           <StyledTooltipBody level={3}>
-            From {tooltipData?.data?.value} to {tooltipIntervalEndValue}
+            {t('profiling-row-distribution-graph-tooltip-range', {
+              start: tooltipData?.data?.value,
+              end: tooltipIntervalEndValue,
+            })}
           </StyledTooltipBody>
           <StyledTooltipBody level={3}>
-            Total: {distribution[tooltipData?.index ?? 0]?.count}
+            {t('profiling-row-distribution-graph-tooltip-total', {
+              total: distribution[tooltipData?.index ?? 0]?.count,
+            })}
           </StyledTooltipBody>
         </StyledTooltipContent>
       }

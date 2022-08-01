@@ -16,6 +16,7 @@ import { CustomIcon } from 'components/CustomIcon';
 import UploadCSV from 'components/UploadCSV';
 import { useQueryClient } from 'react-query';
 import { rowKey } from 'hooks/sdk-queries';
+import { useTranslation } from 'common/i18n';
 
 const Comp = ({ item }: any) => item;
 
@@ -107,7 +108,7 @@ const Box = styled.div`
     min-height: 50px;
   }
   .icon {
-    display: inital;
+    display: initial;
   }
   &:hover {
     background-color: ${Colors['midblue-7'].hex()};
@@ -125,6 +126,7 @@ const Box = styled.div`
 `;
 
 export const EmptyRender = (): JSX.Element => {
+  const { t } = useTranslation();
   const [csvModalVisible, setCSVModalVisible] = useState(false);
   const { database, table } = useActiveTableContext();
   const queryClient = useQueryClient();
@@ -143,8 +145,7 @@ export const EmptyRender = (): JSX.Element => {
         />
       )}
       <EmptyTableText level={2} strong>
-        This table is empty. Upload a CSV file or write data directly using the
-        API.
+        {t('spreadsheet-table-empty-text')}
       </EmptyTableText>
       <Flex wrap="wrap" justifyContent="center">
         <Box onClick={() => setCSVModalVisible(true)}>
@@ -152,9 +153,11 @@ export const EmptyRender = (): JSX.Element => {
             <CustomIcon className="icon" icon="DocumentIconDisabled" />
             <CustomIcon className="icon-hover" icon="DocumentIconHover" />
           </p>
-          <Title level={5}>Upload CSV file</Title>
+          <Title level={5}>
+            {t('spreadsheet-table-empty-button-upload-csv')}
+          </Title>
           <Button icon="Upload" iconPlacement="right" type="primary">
-            Add data
+            {t('spreadsheet-table-empty-button-add-data')}
           </Button>
         </Box>
         <a
@@ -168,12 +171,14 @@ export const EmptyRender = (): JSX.Element => {
             </p>
             <Title level={5}>
               <Flex alignItems="center" justifyContent="center">
-                <span style={{ marginRight: '8px' }}>Write data using API</span>
+                <span style={{ marginRight: '8px' }}>
+                  {t('spreadsheet-table-empty-button-write-data')}
+                </span>
                 <Icon type="ExternalLink" />
               </Flex>
             </Title>
             <p style={{ color: Colors['text-secondary'].hex(), margin: 0 }}>
-              Learn how to write data to a RAW table here
+              {t('spreadsheet-table-empty-button-write-data-learn')}
             </p>
           </Box>
         </a>

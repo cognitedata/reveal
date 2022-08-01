@@ -7,6 +7,7 @@ import styled from 'styled-components';
 import Modal, { ModalProps } from 'components/Modal/Modal';
 import { useDeleteTable } from 'hooks/sdk-queries';
 import { useCloseTable } from 'hooks/table-tabs';
+import { Trans, useTranslation } from 'common/i18n';
 
 type DeleteTableModalProps = {
   databaseName: string;
@@ -19,6 +20,7 @@ const DeleteTableModal = ({
   onCancel,
   ...modalProps
 }: DeleteTableModalProps): JSX.Element => {
+  const { t } = useTranslation();
   const [isConfirmed, setIsConfirmed] = useState(false);
 
   const { mutate: deleteTable, isLoading } = useDeleteTable();
@@ -30,7 +32,9 @@ const DeleteTableModal = ({
       {
         onSuccess: () => {
           notification.success({
-            message: `Table ${tableName} deleted!`,
+            message: t('delete-table-notification_success', {
+              name: tableName,
+            }),
             key: 'table-delete',
           });
           onCancel();
@@ -40,7 +44,9 @@ const DeleteTableModal = ({
           notification.error({
             message: (
               <p>
-                <p>Table {tableName} was not deleted!</p>
+                <p>
+                  {t('delete-table-notification_error', { name: tableName })}
+                </p>
                 <pre>{JSON.stringify(e?.errors, null, 2)}</pre>
               </p>
             ),
@@ -65,7 +71,7 @@ const DeleteTableModal = ({
       <Modal
         footer={[
           <StyledCancelButton onClick={handleClose} type="ghost">
-            Cancel
+            {t('cancel')}
           </StyledCancelButton>,
           <Button
             disabled={isLoading || !isConfirmed}
@@ -73,20 +79,22 @@ const DeleteTableModal = ({
             onClick={handleDelete}
             type="danger"
           >
-            Delete
+            {t('delete-table-modal-button-delete')}
           </Button>,
         ]}
         onCancel={handleClose}
         title={
           <StyledDeleteTableModalTitle level={5}>
-            Delete {tableName}
+            {t('delete-table-modal-title', { name: tableName })}
           </StyledDeleteTableModalTitle>
         }
         {...modalProps}
       >
         <StyledDeleteTableModalBody level={2}>
-          Are you sure you want to delete <b>{tableName}</b>? You will lose all
-          of the data, and <b>will not</b> be able to restore it later.
+          <Trans
+            i18nKey="delete-table-modal-body"
+            values={{ name: tableName }}
+          />
         </StyledDeleteTableModalBody>
         <StyledConfirmCheckboxWrapper>
           <StyledConfirmCheckbox
@@ -94,7 +102,7 @@ const DeleteTableModal = ({
             name="confirm-delete-table"
             onChange={handleConfirmCheckboxChange}
           >
-            Yes, I'm sure I want to delete this table
+            {t('delete-table-modal-confirm')}
           </StyledConfirmCheckbox>
         </StyledConfirmCheckboxWrapper>
       </Modal>

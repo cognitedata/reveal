@@ -9,6 +9,7 @@ import { RawExplorerContext } from 'contexts';
 import DeleteDatabaseModal from 'components/DeleteDatabaseModal/DeleteDatabaseModal';
 import Dropdown from 'components/Dropdown/Dropdown';
 import Tooltip from 'components/Tooltip/Tooltip';
+import { Trans, useTranslation } from 'common/i18n';
 
 type SidePanelTableListHomeItemProps = {
   isEmpty?: boolean;
@@ -47,6 +48,7 @@ const StyledHomeItemName = styled(Body)`
 const SidePanelTableListHomeItem = ({
   isEmpty,
 }: SidePanelTableListHomeItemProps): JSX.Element => {
+  const { t } = useTranslation();
   const { flow } = getFlow();
   const { selectedSidePanelDatabase = '' } = useContext(RawExplorerContext);
 
@@ -67,12 +69,9 @@ const SidePanelTableListHomeItem = ({
               <Tooltip
                 content={
                   hasWriteAccess ? (
-                    'You cannot delete non-empty databases'
+                    t('explorer-side-panel-databases-delete-warning-non-empty')
                   ) : (
-                    <>
-                      To delete databases, you need to have the{' '}
-                      <strong>raw:write</strong> capability
-                    </>
+                    <Trans i18nKey="explorer-side-panel-databases-delete-warning-no-access" />
                   )
                 }
                 disabled={hasWriteAccess && isEmpty}
@@ -83,7 +82,7 @@ const SidePanelTableListHomeItem = ({
                   onClick={() => setIsDeleteModalOpen(true)}
                   type="ghost-danger"
                 >
-                  Delete database
+                  {t('explorer-side-panel-databases-delete-button')}
                 </Button>
               </Tooltip>
             </Menu>

@@ -5,6 +5,7 @@ import styled from 'styled-components';
 
 import { TOOLTIP_DELAY_IN_MS } from 'utils/constants';
 import Tooltip from 'components/Tooltip/Tooltip';
+import { useTranslation } from 'common/i18n';
 
 export type Count = {
   value: string;
@@ -16,14 +17,18 @@ type Props = {
 };
 
 export default function FrequencyStats({ allCount, counts }: Props) {
+  const { t } = useTranslation();
+
   if (!counts) return <span />;
   return (
-    <FrequenceTable style={{ width: '100%' }}>
+    <FrequencyTable style={{ width: '100%' }}>
       <TableHeader>
         <tr>
-          <td style={{ width: 'calc(70% - 90px)' }}>Value</td>
+          <td style={{ width: 'calc(70% - 90px)' }}>
+            {t('profiling-row-frequency-stats-header-value')}
+          </td>
           <td className="numeric" style={{ width: 90 }}>
-            Count
+            {t('profiling-row-frequency-stats-header-count')}
           </td>
           <td style={{ width: '30%' }} />
         </tr>
@@ -31,7 +36,7 @@ export default function FrequencyStats({ allCount, counts }: Props) {
       <tbody>
         {counts.map(({ value, count }) => (
           <tr key={value} className={value === '<other>' ? 'other' : undefined}>
-            <StyledFrequenceTableValue>
+            <StyledFrequencyTableValue>
               <Tooltip
                 content={value}
                 delay={TOOLTIP_DELAY_IN_MS}
@@ -39,7 +44,7 @@ export default function FrequencyStats({ allCount, counts }: Props) {
               >
                 <>{value}</>
               </Tooltip>
-            </StyledFrequenceTableValue>
+            </StyledFrequencyTableValue>
             <TableData>{count}</TableData>
             <TableData style={{ padding: '0 10px' }}>
               <Percent p={Math.round((count / allCount) * 100)} />
@@ -47,7 +52,7 @@ export default function FrequencyStats({ allCount, counts }: Props) {
           </tr>
         ))}
       </tbody>
-    </FrequenceTable>
+    </FrequencyTable>
   );
 }
 
@@ -75,7 +80,7 @@ function Percent({ p }: { p: number }) {
   );
 }
 
-const FrequenceTable = styled.table`
+const FrequencyTable = styled.table`
   tr.other {
     border-top: 1px dashed ${Colors['greyscale-grey4'].hex()};
   }
@@ -91,7 +96,7 @@ const TableData = styled.td`
   padding: 4px 0;
 `;
 
-const StyledFrequenceTableValue = styled(TableData)`
+const StyledFrequencyTableValue = styled(TableData)`
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;

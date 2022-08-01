@@ -9,8 +9,10 @@ import { useTableData } from 'hooks/table-data';
 import DeleteTableModal from 'components/DeleteTableModal/DeleteTableModal';
 import DownloadTableModal from 'components/DownloadTableModal/DownloadTableModal';
 import { useActiveTableContext } from 'contexts';
+import { useTranslation } from 'common/i18n';
 
 export const Menu = (): JSX.Element => {
+  const { t } = useTranslation();
   const { flow } = getFlow();
   const { data: hasWriteAccess } = usePermissions(flow, 'rawAcl', 'WRITE');
   const { rows, isFetched } = useTableData();
@@ -27,13 +29,15 @@ export const Menu = (): JSX.Element => {
   return (
     <StyledMenu>
       <CogsMenu.Item
-        aria-label="Button download table"
+        aria-label={`Button ${t(
+          'spreadsheet-menu-download-table'
+        ).toLowerCase()}`}
         disabled={!canBeDownloaded}
         onClick={() => setIsDownloadModalOpen(true)}
       >
         <Item>
           <Icon type="Download" />
-          Download table
+          {t('spreadsheet-menu-download-table')}
         </Item>
       </CogsMenu.Item>
       <DownloadTableModal
@@ -43,9 +47,9 @@ export const Menu = (): JSX.Element => {
         onCancel={() => setIsDownloadModalOpen(false)}
       />
       <CogsMenu.Divider />
-      <CogsMenu.Header>Danger zone</CogsMenu.Header>
+      <CogsMenu.Header>{t('spreadsheet-menu-danger-zone')}</CogsMenu.Header>
       <CogsMenu.Item
-        aria-label="Button delete table"
+        aria-label={`Button ${t('spreadsheet-menu-delete-table')}`}
         disabled={!hasWriteAccess}
         onClick={(e: React.MouseEvent<HTMLElement, MouseEvent>) => {
           stopPropagation(e);
@@ -54,7 +58,7 @@ export const Menu = (): JSX.Element => {
       >
         <DeleteButton type="ghost-danger" tabIndex={-1}>
           <Icon type="Delete" />
-          <span>Delete table</span>
+          <span>{t('spreadsheet-menu-delete-table')}</span>
         </DeleteButton>
       </CogsMenu.Item>
       <DeleteTableModal

@@ -16,12 +16,7 @@ import Tooltip from 'components/Tooltip/Tooltip';
 import { stringCompare } from 'utils/utils';
 
 import SidePanelDatabaseListItem from './SidePanelDatabaseListItem';
-
-const accessWarningContent = (
-  <>
-    To create tables, you need to have the <strong>raw:write</strong> capability
-  </>
-);
+import { Trans, useTranslation } from 'common/i18n';
 
 type SidePanelDatabaseListContentProps = {
   databases: RawDB[];
@@ -34,6 +29,7 @@ const SidePanelDatabaseListContent = ({
   openCreateModal,
   searchQuery,
 }: SidePanelDatabaseListContentProps): JSX.Element => {
+  const { t } = useTranslation();
   const { flow } = getFlow();
   const { data: hasWriteAccess } = usePermissions(flow, 'rawAcl', 'WRITE');
 
@@ -50,19 +46,25 @@ const SidePanelDatabaseListContent = ({
   if (!databases.length) {
     return (
       <StyledEmptyListWrapper>
-        <StyledEmptyListTitle level={6}>Create a database</StyledEmptyListTitle>
+        <StyledEmptyListTitle level={6}>
+          {t('explorer-side-panel-databases-create-title')}
+        </StyledEmptyListTitle>
         <StyledEmptyListDetail strong>
-          Databases are used for separating different source systems and contain
-          tables with your data.
+          {t('explorer-side-panel-databases-create-detail')}
         </StyledEmptyListDetail>
-        <Tooltip content={accessWarningContent} disabled={hasWriteAccess}>
+        <Tooltip
+          content={
+            <Trans i18nKey="explorer-side-panel-tables-access-warning" />
+          }
+          disabled={hasWriteAccess}
+        >
           <Button
             disabled={!hasWriteAccess}
             icon="Add"
             onClick={openCreateModal}
             type="primary"
           >
-            Create database
+            {t('explorer-side-panel-databases-button-create-database')}
           </Button>
         </Tooltip>
       </StyledEmptyListWrapper>
@@ -77,10 +79,11 @@ const SidePanelDatabaseListContent = ({
         ))
       ) : (
         <StyledNoItemsWrapper>
-          <Title level={6}>No results found.</Title>
+          <Title level={6}>
+            {t('explorer-side-panel-databases-no-results-title')}
+          </Title>
           <StyledNoItemsDetail strong>
-            The search “{searchQuery}” did not match any databases. Please try
-            another search.
+            {t('explorer-side-panel-databases-no-results-detail')}
           </StyledNoItemsDetail>
         </StyledNoItemsWrapper>
       )}
