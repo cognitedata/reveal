@@ -52,9 +52,10 @@ const ExtpipeTable: FunctionComponent<ExtpipeTableProps> = ({
   const canEditExtractionPipelines = permissionsExtractionPipelines.data;
 
   const addExtpipeLink = () => {
-    return `${createLink(
-      `${getExtractionPipelineUIUrl('/create')}`
-    )}&dataSetId=${dataSet.id}`;
+    const dataSetId = dataSet.id;
+    return `${createLink(`${getExtractionPipelineUIUrl('/create')}`, {
+      dataSetId,
+    })}`;
   };
 
   const createExtpipeButton = canEditExtractionPipelines ? (
