@@ -207,13 +207,13 @@ const DataSetDetails = (): JSX.Element => {
             <Col md={17} xs={24}>
               <DetailsPane>
                 <Tabs animated={false} defaultActiveKey="1" size="large">
-                  <TabPane tab="EXPLORE DATA" key="1">
+                  <TabPane tab={t('tab-explore-data-uppercase')} key="1">
                     <ExploreData
                       loading={loading}
                       dataSetId={Number(dataSetId)}
                     />
                   </TabPane>
-                  <TabPane tab="LINEAGE" key="2">
+                  <TabPane tab={t('tab-lineage-uppercase')} key="2">
                     <Lineage
                       dataSetWithExtpipes={
                         dataSetWithExtpipes as DataSetWithExtpipes
@@ -221,10 +221,10 @@ const DataSetDetails = (): JSX.Element => {
                       isExtpipesFetched={isExtpipesFetched}
                     />
                   </TabPane>
-                  <TabPane tab="DOCUMENTATION" key="3">
+                  <TabPane tab={t('tab-documentation-uppercase')} key="3">
                     <DocumentationsTab dataSet={dataSet} />
                   </TabPane>
-                  <TabPane tab="ACCESS CONTROL" key="4">
+                  <TabPane tab={t('tab-access-control-uppercase')} key="4">
                     <AccessControl
                       dataSetId={dataSet.id}
                       writeProtected={dataSet.writeProtected}
