@@ -237,8 +237,7 @@ function transformProfile(p: RawProfile): Profile {
           return {
             type,
             count: !!column[type]
-              ? // TODO: change to column count, distincCount is not present in all
-                ((column[type] || {}) as any).distinctCount || 0
+              ? ((column[type] || {}) as any).count || 0
               : -1,
           };
         })

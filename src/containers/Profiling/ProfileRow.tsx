@@ -7,7 +7,11 @@ import ColumnIcon from 'components/ColumnIcon';
 import { CustomIcon } from 'components/CustomIcon';
 import Tooltip from 'components/Tooltip/Tooltip';
 import { useActiveTableContext } from 'contexts';
-import { ColumnProfile, useColumnType } from 'hooks/profiling-service';
+import {
+  ColumnProfile,
+  FULL_PROFILE_LIMIT,
+  useColumnType,
+} from 'hooks/profiling-service';
 
 import { Graph } from './Distribution';
 import ProfileDetailsRow from './ProfileDetailsRow';
@@ -49,7 +53,11 @@ export default function ProfileRow({ allCount, profile }: Props) {
   const histogram = reduceHistogramBins(rawHistogram || [], 16);
 
   const { database, table } = useActiveTableContext();
-  const { getColumnType, isFetched } = useColumnType(database, table);
+  const quickColumnTypes = useColumnType(database, table);
+  const fullColumnTypes = useColumnType(database, table, FULL_PROFILE_LIMIT);
+  const { getColumnType, isFetched } = fullColumnTypes.isFetched
+    ? fullColumnTypes
+    : quickColumnTypes;
 
   const getPercentage = (portion: number, total: number) => {
     const percentage = total === 0 ? 0 : (100 * portion) / total;

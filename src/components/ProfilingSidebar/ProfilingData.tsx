@@ -12,6 +12,7 @@ import {
   NumberProfile,
   BooleanProfile,
   ColumnProfile,
+  FULL_PROFILE_LIMIT,
 } from 'hooks/profiling-service';
 
 import Message from 'components/Message/Message';
@@ -38,7 +39,11 @@ export const ProfilingData = ({ selectedColumn }: Props): JSX.Element => {
     isError,
   } = fullProfile.isFetched ? fullProfile : limitProfile;
 
-  const { getColumnType, isFetched } = useColumnType(database, table);
+  const quickColumnTypes = useColumnType(database, table);
+  const fullColumnTypes = useColumnType(database, table, FULL_PROFILE_LIMIT);
+  const { getColumnType, isFetched } = fullColumnTypes.isFetched
+    ? fullColumnTypes
+    : quickColumnTypes;
 
   const columnType = useMemo(
     () => (isFetched ? getColumnType(selectedColumn?.dataKey) : null),
