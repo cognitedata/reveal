@@ -9,40 +9,50 @@ const environment = process?.env?.NODE_ENV ?? 'browser';
 if (environment === 'browser') {
   const tests = testGenerator();
 
-  (window as any).render = async () => {
-    return tests.next();
+  (window as any).render = async (testName: string) => {
+    document.body.innerHTML = '';
+    return (await tests).get(testName)!();
   };
 
-  async function* testGenerator(): AsyncGenerator<void> {
+  (window as any).getAllTestFixtures = async () => {
+    document.body.innerHTML = '';
+    return Array.from((await tests).keys());
+  };
+
+  async function testGenerator(): Promise<Map<string, () => Promise<void>>> {
+    const testMap = new Map<string, () => Promise<void>>();
+
     const { SectorParserTestApp } = await import('../packages/sector-parser/app/index');
     const sectorParserTestApp = new SectorParserTestApp();
-    yield sectorParserTestApp.run();
-
-    document.body.innerHTML = '';
+    testMap.set(SectorParserTestApp.name, () => sectorParserTestApp.run());
 
     const { SectorLoaderVisualTestFixture } = await import('../packages/sector-loader/app/index');
     const sectorLoaderVisualTestFixture = new SectorLoaderVisualTestFixture();
-    yield sectorLoaderVisualTestFixture.run();
+    testMap.set(SectorLoaderVisualTestFixture.name, () => sectorLoaderVisualTestFixture.run());
 
-    document.body.innerHTML = '';
+    return testMap;
   }
 } else if (environment === 'test') {
-  describe('Parser worker visual tests', () => {
+  describe('Visual tests', () => {
     let testPage: Page;
+    let testFixtures: string[];
 
-    beforeAll(done => {
-      browser
-        .newPage()
-        .then(page => {
-          testPage = page;
-          return testPage.goto('https://localhost:12345/', {
-            waitUntil: ['domcontentloaded']
-          });
-        })
-        .then(() => done());
+    beforeAll(async () => {
+      testPage = await browser.newPage();
+      await testPage.goto('https://localhost:12345/', {
+        waitUntil: ['domcontentloaded']
+      });
+
+      testFixtures = await testPage.evaluate(async () => {
+        return (window as any).getAllTestFixtures();
+      });
+
+      console.log(testFixtures);
     });
 
-    test.each(['SectorParser', 'SectorLoader'])('%p', async testName => {
+    console.log('asd');
+
+    test.each(testFixtures!)('%p', async testName => {
       await runTest(testName);
     });
 
@@ -51,10 +61,9 @@ if (environment === 'browser') {
     });
 
     async function runTest(name: string) {
-      await testPage.evaluate(async () => {
-        const app = (window as any).render() as Promise<void>;
-        await app;
-      });
+      await testPage.evaluate(async (testName: string) => {
+        return (window as any).render(testName) as Promise<void>;
+      }, name);
 
       const canvas = await testPage.$('canvas');
 
