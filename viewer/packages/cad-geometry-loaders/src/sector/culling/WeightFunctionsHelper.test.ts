@@ -16,7 +16,8 @@ import { Mock } from 'moq.ts';
 function mockSectorMetadataFromBounds(box: THREE.Box3): SectorMetadata {
   return new Mock<SectorMetadata>()
     .setup(p => p.subtreeBoundingBox)
-    .returns(box).object();
+    .returns(box)
+    .object();
 }
 
 describe('WeightFunctionsHelper', () => {
@@ -167,7 +168,10 @@ describe('WeightFunctionsHelper', () => {
     const bounds2 = new THREE.Box3().setFromArray([0, 0, 5, 0, 0, 6]);
 
     helper.addCandidateSectors([mockSectorMetadataFromBounds(bounds0)], new THREE.Matrix4().identity());
-    helper.addCandidateSectors([mockSectorMetadataFromBounds(bounds1), mockSectorMetadataFromBounds(bounds2)], new THREE.Matrix4().identity());
+    helper.addCandidateSectors(
+      [mockSectorMetadataFromBounds(bounds1), mockSectorMetadataFromBounds(bounds2)],
+      new THREE.Matrix4().identity()
+    );
 
     const newDistance = helper.computeDistanceToCameraWeight(bounds0);
 
@@ -190,15 +194,20 @@ describe('WeightFunctionsHelper', () => {
     const bounds1 = new THREE.Box3().setFromArray([0, 0, 3, 0, 0, 4]);
     const bounds2 = new THREE.Box3().setFromArray([0, 0, 5, 0, 0, 6]);
 
-    helper.addCandidateSectors([mockSectorMetadataFromBounds(bounds0), mockSectorMetadataFromBounds(bounds1)], new THREE.Matrix4().identity());
+    helper.addCandidateSectors(
+      [mockSectorMetadataFromBounds(bounds0), mockSectorMetadataFromBounds(bounds1)],
+      new THREE.Matrix4().identity()
+    );
     const distance = helper.computeDistanceToCameraWeight(bounds0);
 
     expect(distance).toBeGreaterThanOrEqual(0);
     expect(distance).toBeLessThanOrEqual(1);
 
     helper.reset();
-    helper.addCandidateSectors([mockSectorMetadataFromBounds(bounds1), mockSectorMetadataFromBounds(bounds2)],
-                               new THREE.Matrix4().identity());
+    helper.addCandidateSectors(
+      [mockSectorMetadataFromBounds(bounds1), mockSectorMetadataFromBounds(bounds2)],
+      new THREE.Matrix4().identity()
+    );
 
     const newDistance = helper.computeDistanceToCameraWeight(bounds0);
 

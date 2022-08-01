@@ -85,7 +85,8 @@ export class WeightFunctionsHelper {
     const distanceToCamera = transformedSectorBounds.distanceToPoint(this._camera.position);
 
     // We add an epsilon to the denominator to make it non-zero in the case we have only one sector in the scene
-    const normalizedDistanceToCamera = (distanceToCamera - minSectorDistance) / (maxSectorDistance - minSectorDistance + 1e-3);
+    const normalizedDistanceToCamera =
+      (distanceToCamera - minSectorDistance) / (maxSectorDistance - minSectorDistance + 1e-3);
     return 1.0 - normalizedDistanceToCamera;
   }
 
