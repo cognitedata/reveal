@@ -155,6 +155,8 @@ function initializeTakenSectorsAndWeightFunctions(
   takenSectors: TakenV9SectorMap,
   weightFunctions: WeightFunctionsHelper
 ) {
+  weightFunctions.reset();
+
   for (const [model, sectors] of modelsAndCandidateSectors) {
     takenSectors.initializeScene(model);
     weightFunctions.addCandidateSectors(sectors, model.modelMatrix);
