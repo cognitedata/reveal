@@ -13,6 +13,12 @@ import { createV8SectorMetadata } from '../../../../../test-utilities';
 
 import { Mock } from 'moq.ts';
 
+function mockSectorMetadataFromBounds(box: THREE.Box3): SectorMetadata {
+  return new Mock<SectorMetadata>()
+    .setup(p => p.subtreeBoundingBox)
+    .returns(box).object();
+}
+
 describe('WeightFunctionsHelper', () => {
   let camera: THREE.PerspectiveCamera;
   let sectors: SectorMetadata[];
@@ -155,25 +161,33 @@ describe('WeightFunctionsHelper', () => {
     expect(helper.computePrioritizedAreaWeight(bounds, areas)).toBe(4.0);
   });
 
+  test('addCandidateSectors keeps previously added sectors', () => {
+    const bounds0 = new THREE.Box3().setFromArray([0, 0, 1, 0, 0, 2]);
+    const bounds1 = new THREE.Box3().setFromArray([0, 0, 3, 0, 0, 4]);
+    const bounds2 = new THREE.Box3().setFromArray([0, 0, 5, 0, 0, 6]);
+
+    helper.addCandidateSectors([mockSectorMetadataFromBounds(bounds0)], new THREE.Matrix4().identity());
+    helper.addCandidateSectors([mockSectorMetadataFromBounds(bounds1), mockSectorMetadataFromBounds(bounds2)], new THREE.Matrix4().identity());
+
+    const newDistance = helper.computeDistanceToCameraWeight(bounds0);
+
+    expect(newDistance).toBeLessThanOrEqual(1);
+    expect(newDistance).toBeGreaterThanOrEqual(0);
+  });
+
   test('reset() resets min/max distances', () => {
     const bounds0 = new THREE.Box3().setFromArray([0, 0, 1, 0, 0, 2]);
     const bounds1 = new THREE.Box3().setFromArray([0, 0, 3, 0, 0, 4]);
     const bounds2 = new THREE.Box3().setFromArray([0, 0, 5, 0, 0, 6]);
 
-    function mockSectorMetadata(box: THREE.Box3): SectorMetadata {
-      return new Mock<SectorMetadata>()
-        .setup(p => p.subtreeBoundingBox)
-        .returns(box).object();
-    }
-
-    helper.addCandidateSectors([mockSectorMetadata(bounds0), mockSectorMetadata(bounds1)], new THREE.Matrix4().identity());
+    helper.addCandidateSectors([mockSectorMetadataFromBounds(bounds0), mockSectorMetadataFromBounds(bounds1)], new THREE.Matrix4().identity());
     const distance = helper.computeDistanceToCameraWeight(bounds0);
 
     expect(distance).toBeGreaterThanOrEqual(0);
     expect(distance).toBeLessThanOrEqual(1);
 
     helper.reset();
-    helper.addCandidateSectors([mockSectorMetadata(bounds1), mockSectorMetadata(bounds2)],
+    helper.addCandidateSectors([mockSectorMetadataFromBounds(bounds1), mockSectorMetadataFromBounds(bounds2)],
                                new THREE.Matrix4().identity());
 
     const newDistance = helper.computeDistanceToCameraWeight(bounds0);
@@ -181,25 +195,5 @@ describe('WeightFunctionsHelper', () => {
     // bounds0 is closer to the camera than the minimum distance (which is distance to bounds1),
     // so it will receive a weight above 1
     expect(newDistance).toBeGreaterThan(1);
-  });
-
-  test('addCandidateSectors keeps previously added sectors', () => {
-    const bounds0 = new THREE.Box3().setFromArray([0, 0, 1, 0, 0, 2]);
-    const bounds1 = new THREE.Box3().setFromArray([0, 0, 3, 0, 0, 4]);
-    const bounds2 = new THREE.Box3().setFromArray([0, 0, 5, 0, 0, 6]);
-
-    function mockSectorMetadata(box: THREE.Box3): SectorMetadata {
-      return new Mock<SectorMetadata>()
-        .setup(p => p.subtreeBoundingBox)
-        .returns(box).object();
-    }
-
-    helper.addCandidateSectors([mockSectorMetadata(bounds0)], new THREE.Matrix4().identity());
-    helper.addCandidateSectors([mockSectorMetadata(bounds1), mockSectorMetadata(bounds2)], new THREE.Matrix4().identity());
-
-    const newDistance = helper.computeDistanceToCameraWeight(bounds0);
-
-    expect(newDistance).toBeLessThanOrEqual(1);
-    expect(newDistance).toBeGreaterThanOrEqual(0);
   });
 });
