@@ -53,7 +53,7 @@ const ExtpipeTable: FunctionComponent<ExtpipeTableProps> = ({
 
   const addExtpipeLink = () => {
     const dataSetId = dataSet.id;
-    return `${createLink(`${getExtractionPipelineUIUrl('/create')}`, {
+    return `${createLink(getExtractionPipelineUIUrl('/create'), {
       dataSetId,
     })}`;
   };
