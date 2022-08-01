@@ -21,8 +21,7 @@ export const Simple = BaseComponent.bind({});
 
 export const WithMap = () => {
   const [isActive, setIsActive] = React.useState(false);
-  const handleToggle = (args: unknown) => {
-    console.log('args', args);
+  const handleToggle = () => {
     setIsActive(!isActive);
   };
 

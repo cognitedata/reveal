@@ -48,7 +48,7 @@ export interface MapAddedProps {
   setDraw: (mode: DrawMode) => void;
 
   selectedFeatures?: any[];
-  polygon?: MapGeometries;
+  polygon?: MapFeature;
 }
 
 // type Marker = {

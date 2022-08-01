@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { getFeature } from '__fixtures/getFeature';
 
 import { Actions } from '../Actions';
 import { Map } from '../Map';
@@ -44,7 +45,7 @@ export const WithMap = () => {
   const mapProps = {
     ...props,
     draw: drawModes.DRAW_POLYGON,
-    initialPolygon: [[1, 1]],
+    initialPolygon: getFeature(),
   };
 
   return (

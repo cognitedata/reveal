@@ -6,14 +6,13 @@ export const props = {
   drawMode: drawModes.DIRECT_SELECT,
   events: [],
   features: featureCollection([], {}),
-  flyTo: null,
   focusedFeature: feature({
     type: 'Point',
     coordinates: [110, 50],
   }),
   layerConfigs: [],
   layerData: [],
-  selectedFeature: null,
+  // selectedFeature: null,
   // selectedFeature: feature({
   //   type: 'Point',
   //   coordinates: [110, 50],

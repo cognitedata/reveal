@@ -31,7 +31,6 @@ export const MapExample: React.FC = () => {
       features={features}
       focusedFeature={focusedFeature}
       selectedFeature={selectedFeature}
-      flyTo={null}
       drawMode={drawMode}
       renderNavigationControls={renderNavigationControls}
     />

@@ -11,12 +11,12 @@ import {
   MapEvent,
   MapIcon,
   MapAddedProps,
-  MapGeometries,
   MapFeature,
   MapFeatureCollection,
 } from './types';
 import { SelectableLayer } from './layers/types';
 import { useDeepEffect } from './hooks/useDeep';
+import { useFlyTo, FlyToProps } from './hooks/useFlyTo';
 import { MapContainer } from './elements';
 import { DrawMode, drawModes, FreeDraw } from './FreeDraw';
 import { useZoomToFeature } from './hooks/useZoomToFeature';
@@ -34,10 +34,7 @@ export interface Props {
   drawMode: DrawMode;
   events: MapEvent[];
   features: MapFeatureCollection;
-  flyTo: {
-    center: number[];
-    zoom?: number;
-  } | null;
+  flyTo?: FlyToProps['flyTo'];
   focusedFeature?: MapFeature;
   layerConfigs: SelectableLayer[];
   layerData: MapDataSource[];
@@ -45,7 +42,7 @@ export interface Props {
   maxBounds?: MapboxOptions['maxBounds'];
   renderNavigationControls?: (mapWidth: number) => React.ReactElement;
   selectedFeature?: MapFeature;
-  initialPolygon?: MapGeometries;
+  initialPolygon?: MapFeature;
   setMapReference?: (map: mapboxgl.Map) => void;
   zoom?: MapboxOptions['zoom'];
 
@@ -91,6 +88,7 @@ export const Map: React.FC<React.PropsWithChildren<Props>> = ({
   const [, setNavigation] = useState<boolean | undefined>(false);
 
   const zoomToFeature = useZoomToFeature(map);
+  useFlyTo({ map, flyTo });
 
   useDeepEffect(() => {
     if (features && features.type && draw) {
@@ -203,31 +201,6 @@ export const Map: React.FC<React.PropsWithChildren<Props>> = ({
 
     return noop;
   }, [map, mapRef]);
-
-  // Add zoom if it exists. (note: cannot do zoom:0 with this)
-  useDeepEffect(() => {
-    if (map && flyTo) {
-      let safe = true;
-
-      if (flyTo.center[1] < -90 || flyTo.center[1] > 90) {
-        // eslint-disable-next-line no-console
-        console.log('Error in y when changing map to:', flyTo);
-        safe = false;
-      }
-      if (flyTo.center[0] < -180 || flyTo.center[0] > 180) {
-        // eslint-disable-next-line no-console
-        console.log('Error in x when changing map to:', flyTo);
-        safe = false;
-      }
-
-      if (safe) {
-        map.flyTo({
-          ...(flyTo.zoom && { zoom: flyTo.zoom }),
-          center: [flyTo.center[0], flyTo.center[1]],
-        });
-      }
-    }
-  }, [!!map, flyTo]);
 
   useDeepEffect(() => {
     if (map === null || draw === null) return noop;
