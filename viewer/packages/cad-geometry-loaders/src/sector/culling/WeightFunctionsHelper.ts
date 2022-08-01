@@ -49,6 +49,11 @@ export class WeightFunctionsHelper {
     });
   }
 
+  reset(): void {
+    this._minSectorDistance = Infinity;
+    this._maxSectorDistance = -Infinity;
+  }
+
   addCandidateSectors(sectors: SectorMetadata[], modelMatrix: THREE.Matrix4): void {
     // Note! We compute distance to camera, not screen (which would probably be better)
     const { minDistance, maxDistance } = sectors.reduce(
@@ -58,7 +63,7 @@ export class WeightFunctionsHelper {
         minMax.minDistance = Math.min(minMax.minDistance, distanceToCamera);
         return minMax;
       },
-      { minDistance: Infinity, maxDistance: -Infinity }
+      { minDistance: this._minSectorDistance, maxDistance: this._maxSectorDistance }
     );
     this._minSectorDistance = minDistance;
     this._maxSectorDistance = maxDistance;
