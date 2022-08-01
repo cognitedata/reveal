@@ -90,7 +90,7 @@ export function Migration() {
       } else if (!(project && environmentParam)) {
         throw new Error('Must either provide URL parameters "env", "project", ' +
                         '"modelId" and "revisionId" to load model from CDF ' +
-                        '"or "modelUrl" to load model from URL.s');
+                        '"or "modelUrl" to load model from URL.');
       }
 
       // Prepare viewer
