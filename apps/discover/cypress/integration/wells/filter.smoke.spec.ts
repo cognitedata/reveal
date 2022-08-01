@@ -154,7 +154,7 @@ describe('Wells sidebar filters', () => {
       DATA_AVAILABILITY_SELECT
     );
     checkRequestContainsFilter({
-      trajectories: {},
+      dataAvailability: ['trajectories'],
     });
     cy.validateSelect(MEASUREMENTS, [MEASUREMENT_SELECT], MEASUREMENT_SELECT);
     checkRequestContainsFilter({

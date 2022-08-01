@@ -11,7 +11,7 @@ import { getWrapper, testWrapper } from '__test-utils/renderer';
 import { getMockedStore } from '__test-utils/store.utils';
 import { FilterIDs } from 'modules/wellSearch/constants';
 
-import { DataAvailabilityOptions } from '../getDataAvailabilityFilter';
+import { DATA_AVAILABILITY_OPTIONS_LABELS } from '../getDataAvailabilityFilter';
 import { useWellFilters } from '../useWellFilters';
 
 // mocking this because when rendering the hook useWellFilters (this test file)
@@ -65,7 +65,9 @@ describe('useWellFilters', () => {
           {},
           {
             [FilterIDs.NDS_RISKS_TYPE]: ['Casing'],
-            [FilterIDs.DATA_AVAILABILITY]: [DataAvailabilityOptions.NDS],
+            [FilterIDs.DATA_AVAILABILITY]: [
+              DATA_AVAILABILITY_OPTIONS_LABELS.NDS,
+            ],
           }
         ),
       }),
@@ -79,6 +81,7 @@ describe('useWellFilters', () => {
       nds: { riskTypes: { containsAny: ['Casing'] }, exists: true },
       operator: { isSet: true, oneOf: ['Atlantis', 'Mad Dog'] },
       field: { isSet: true, oneOf: ['BOEM', 'BP-Penquin'] },
+      dataAvailability: ['nds'],
     });
   });
 });

@@ -9,10 +9,12 @@ export const authenticateWellSDK = (
   accessToken?: string
 ) => {
   client = createWellsClient(appId, baseUrl);
-  return client.loginWithToken({
-    project,
-    accessToken,
-  });
+  return client
+    .loginWithToken({
+      project,
+      accessToken,
+    })
+    .then(() => client.experimental.enable());
 };
 
 export const isWellSDKAuthenticated = () => {

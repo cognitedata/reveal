@@ -20,3 +20,13 @@ export interface WellInternal
    */
   sourceList: string;
 }
+
+export type DataAvailabilityOptions =
+  | 'NPT'
+  | 'NDS'
+  | 'Trajectories'
+  | 'DepthMeasurements'
+  | 'Casings'
+  | 'HoleSections'
+  | 'TimeMeasurements'
+  | 'WellTops';

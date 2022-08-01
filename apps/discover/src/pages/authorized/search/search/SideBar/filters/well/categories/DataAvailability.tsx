@@ -1,4 +1,4 @@
-import { DataAvailabilityOptions } from 'domain/wells/well/internal/filters/getDataAvailabilityFilter';
+import { DATA_AVAILABILITY_OPTIONS_LABELS } from 'domain/wells/well/internal/filters/getDataAvailabilityFilter';
 
 import React from 'react';
 
@@ -10,18 +10,15 @@ import { CommonFilter } from '../CommonFilter';
 
 import { CustomFilterBaseProps } from './types';
 
+const options: WellFilterOptionValue[] = Object.values(
+  DATA_AVAILABILITY_OPTIONS_LABELS
+);
+
 type Props = CustomFilterBaseProps;
 export const DataAvailability: React.FC<Props> = ({
   onValueChange,
   selectedOptions,
 }) => {
-  const options: WellFilterOptionValue[] = [
-    DataAvailabilityOptions.Trajectories,
-    DataAvailabilityOptions.NDS,
-    DataAvailabilityOptions.NPT,
-    DataAvailabilityOptions.Casings,
-  ];
-
   return (
     <CommonFilter
       key={`filter-${FilterIDs.DATA_AVAILABILITY}`}
