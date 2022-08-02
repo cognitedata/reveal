@@ -1,25 +1,17 @@
 import React, { useEffect, useState } from 'react';
 
 import { checkUrl } from '@cognite/cdf-utilities';
-import { FlagProvider } from '@cognite/react-feature-flags';
 import i18next, { InitOptions, Resource } from 'i18next';
 import I18NextLocizeBackend from 'i18next-locize-backend';
-import { initReactI18next, useTranslation } from 'react-i18next';
 import { locizePlugin } from 'locize';
+import { initReactI18next, useTranslation } from 'react-i18next';
 
-import { LOCIZE_PROJECT_ID, useLanguage } from '../..';
-
-type FlagProviderProps = {
-  apiToken: string;
-  appName: string;
-  projectName: string;
-};
+import { LOCIZE_PROJECT_ID, getLanguage } from '../..';
 
 type I18nWrapperProps = {
   children: React.ReactNode;
   errorScreen?: (e: Error) => React.ReactElement | null;
   loadingScreen?: React.ReactElement | null;
-  flagProviderProps: FlagProviderProps;
   translations: Resource;
   defaultNamespace: string;
   /**
@@ -86,17 +78,6 @@ const initializeTranslations = (
 };
 
 const I18nWrapper = ({
-  flagProviderProps,
-  ...otherProps
-}: I18nWrapperProps) => {
-  return (
-    <FlagProvider {...flagProviderProps}>
-      <I18nInitWrapper {...otherProps} />
-    </FlagProvider>
-  );
-};
-
-const I18nInitWrapper = ({
   children,
   defaultNamespace,
   useLocizeBackend = ['next-release'],
@@ -104,15 +85,15 @@ const I18nInitWrapper = ({
   loadingScreen,
   translations,
   locizeProjectId,
-}: Omit<I18nWrapperProps, 'flagProviderProps'>): JSX.Element => {
+}: I18nWrapperProps): JSX.Element => {
+  const language = getLanguage();
+
   const [didInitializedTranslations, setDidInitializedTranslations] =
     useState(false);
   const [error, setError] = useState<Error | undefined>();
 
-  const { data: language, isClientReady } = useLanguage();
-
   useEffect(() => {
-    if (isClientReady && !didInitializedTranslations) {
+    if (!didInitializedTranslations) {
       initializeTranslations(
         language,
         translations,
@@ -131,7 +112,6 @@ const I18nInitWrapper = ({
     defaultNamespace,
     didInitializedTranslations,
     useLocizeBackend,
-    isClientReady,
     language,
     translations,
     locizeProjectId,
