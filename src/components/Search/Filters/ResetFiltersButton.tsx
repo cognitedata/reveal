@@ -1,22 +1,9 @@
 import React from 'react';
 import { Button } from '@cognite/cogs.js';
 import styled from 'styled-components';
-import {
-  AssetFilterProps,
-  TimeseriesFilter,
-  FileFilterProps,
-  EventFilter,
-  SequenceFilter,
-} from '@cognite/sdk';
+import { FiltersType } from 'CommonProps';
 
-type ResourceFiltersType =
-  | FileFilterProps
-  | AssetFilterProps
-  | EventFilter
-  | TimeseriesFilter
-  | Required<SequenceFilter>['filter'];
-
-export const ResetFiltersButton = <T extends ResourceFiltersType>({
+export const ResetFiltersButton = <T extends FiltersType>({
   setFilter,
 }: {
   setFilter: (filter: T) => void;

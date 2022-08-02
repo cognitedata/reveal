@@ -37,7 +37,7 @@ export type FilterType =
  * @param filter the type of the filter based on selected resource.
  * @returns Number of filters applied to that resource type.
  */
-export const countByFilter = (filter: FilterType) => {
+export const countByFilter = (filter: Partial<FilterType>) => {
   const count = filter
     ? Object.values(filter).filter(f => isBoolean(f) || (!!f && !isEmpty(f)))
         .length

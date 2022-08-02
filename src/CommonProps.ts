@@ -36,6 +36,13 @@ export type InitialResourceFilterProps = {
   initialSequenceFilter?: Required<SequenceFilter>['filter'];
 };
 
+export type FiltersType =
+  | AssetFilterProps
+  | TimeseriesFilter
+  | FileFilterProps
+  | EventFilter
+  | Required<SequenceFilter>['filter'];
+
 export type ResourceFilterProps = {
   assetFilter?: AssetFilterProps;
   timeseriesFilter?: TimeseriesFilter;

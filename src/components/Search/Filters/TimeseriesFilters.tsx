@@ -12,6 +12,7 @@ import { AggregatedFilter } from './AggregatedFilter/AggregatedFilter';
 import { MetadataFilter } from './MetadataFilter/MetadataFilter';
 import { StringFilter } from './StringFilter/StringFilter';
 import { DateFilter } from './DateFilter/DateFilter';
+import { AdvancedFiltersCollapse } from './AdvancedFiltersCollapse';
 
 export const TimeseriesFilters = ({
   filter,
@@ -21,6 +22,7 @@ export const TimeseriesFilters = ({
   setFilter: (newFilter: TimeseriesFilterProps) => void;
 }) => {
   const { data: items = [] } = useList('timeseries', { filter, limit: 1000 });
+
   return (
     <div>
       <ResetFiltersButton setFilter={setFilter} />
@@ -34,22 +36,7 @@ export const TimeseriesFilters = ({
           })
         }
       />
-      <ByAssetFilter
-        value={filter.assetSubtreeIds?.map(el => (el as InternalId).id)}
-        setValue={newValue =>
-          setFilter({
-            ...filter,
-            assetSubtreeIds: newValue?.map(id => ({ id })),
-          })
-        }
-      />
-      <AggregatedFilter
-        items={items}
-        aggregator="unit"
-        title="Unit"
-        value={filter.unit}
-        setValue={newValue => setFilter({ ...filter, unit: newValue })}
-      />
+
       <BooleanFilter
         title="Is step"
         value={filter.isStep}
@@ -80,36 +67,55 @@ export const TimeseriesFilters = ({
           })
         }
       />
-      <MetadataFilter
-        items={items}
-        value={filter.metadata}
-        setValue={newMetadata =>
-          setFilter({
-            ...filter,
-            metadata: newMetadata,
-          })
-        }
-      />
-      <DateFilter
-        title="Created Time"
-        value={filter.createdTime}
-        setValue={newDate =>
-          setFilter({
-            ...filter,
-            createdTime: newDate || undefined,
-          })
-        }
-      />
-      <DateFilter
-        title="Updated Time"
-        value={filter.lastUpdatedTime}
-        setValue={newDate =>
-          setFilter({
-            ...filter,
-            lastUpdatedTime: newDate || undefined,
-          })
-        }
-      />
+
+      <AdvancedFiltersCollapse resourceType="timeSeries" filter={filter}>
+        <ByAssetFilter
+          value={filter.assetSubtreeIds?.map(el => (el as InternalId).id)}
+          setValue={newValue =>
+            setFilter({
+              ...filter,
+              assetSubtreeIds: newValue?.map(id => ({ id })),
+            })
+          }
+        />
+        <AggregatedFilter
+          items={items}
+          aggregator="unit"
+          title="Unit"
+          value={filter.unit}
+          setValue={newValue => setFilter({ ...filter, unit: newValue })}
+        />
+        <MetadataFilter
+          items={items}
+          value={filter.metadata}
+          setValue={newMetadata =>
+            setFilter({
+              ...filter,
+              metadata: newMetadata,
+            })
+          }
+        />
+        <DateFilter
+          title="Created Time"
+          value={filter.createdTime}
+          setValue={newDate =>
+            setFilter({
+              ...filter,
+              createdTime: newDate || undefined,
+            })
+          }
+        />
+        <DateFilter
+          title="Updated Time"
+          value={filter.lastUpdatedTime}
+          setValue={newDate =>
+            setFilter({
+              ...filter,
+              lastUpdatedTime: newDate || undefined,
+            })
+          }
+        />
+      </AdvancedFiltersCollapse>
     </div>
   );
 };

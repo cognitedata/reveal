@@ -25,7 +25,7 @@
     "@visx/shape": "^2.1.0",
     "@visx/threshold": "^2.1.0",
     "@visx/tooltip": "^2.1.0",
-    "antd": "^4.15.2",
+    "antd": "^4.21.0",
     "d3-array": "^2.12.1",
     "d3-scale": "^4.0.2",
     "d3-time": "^3.0.0",

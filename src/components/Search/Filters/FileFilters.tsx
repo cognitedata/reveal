@@ -9,6 +9,7 @@ import { ByAssetFilter } from './ByAssetFilter/ByAssetFilter';
 import { AggregatedFilter } from './AggregatedFilter/AggregatedFilter';
 import { StringFilter } from './StringFilter/StringFilter';
 import { DateFilter } from './DateFilter/DateFilter';
+import { AdvancedFiltersCollapse } from './AdvancedFiltersCollapse';
 
 export const FileFilters = ({
   filter,
@@ -18,19 +19,10 @@ export const FileFilters = ({
   setFilter: (newFilter: FileFilterProps) => void;
 }) => {
   const { data: items = [] } = useList('files', { filter, limit: 1000 });
+
   return (
     <div>
       <ResetFiltersButton setFilter={setFilter} />
-      <LabelFilter
-        resourceType="file"
-        value={((filter as any).labels || { containsAny: [] }).containsAny}
-        setValue={newFilters =>
-          setFilter({
-            ...filter,
-            labels: newFilters ? { containsAny: newFilters } : undefined,
-          })
-        }
-      />
       <DataSetFilter
         resourceType="file"
         value={filter.dataSetIds}
@@ -48,26 +40,6 @@ export const FileFilters = ({
         value={filter.mimeType}
         setValue={newValue => setFilter({ ...filter, mimeType: newValue })}
       />
-      <ByAssetFilter
-        value={filter.assetSubtreeIds?.map(el => (el as InternalId).id)}
-        setValue={newValue =>
-          setFilter({
-            ...filter,
-            assetSubtreeIds: newValue?.map(id => ({ id })),
-          })
-        }
-      />
-
-      <DateFilter
-        title="Uploaded Time"
-        value={filter.uploadedTime}
-        setValue={newDate =>
-          setFilter({
-            ...filter,
-            uploadedTime: newDate || undefined,
-          })
-        }
-      />
       <StringFilter
         title="External ID"
         value={filter.externalIdPrefix}
@@ -75,69 +47,6 @@ export const FileFilters = ({
           setFilter({
             ...filter,
             externalIdPrefix: newExternalId,
-          })
-        }
-      />
-      <StringFilter
-        title="Directory prefix"
-        value={(filter as any).directoryPrefix}
-        setValue={newPrefix =>
-          setFilter({
-            ...filter,
-            // @ts-ignore
-            directoryPrefix: newPrefix,
-          })
-        }
-      />
-      <AggregatedFilter
-        title="Source"
-        items={items}
-        aggregator="source"
-        value={filter.source}
-        setValue={newSource =>
-          setFilter({
-            ...filter,
-            source: newSource,
-          })
-        }
-      />
-      <MetadataFilter
-        items={items}
-        value={filter.metadata}
-        setValue={newMetadata =>
-          setFilter({
-            ...filter,
-            metadata: newMetadata,
-          })
-        }
-      />
-      <DateFilter
-        title="Created Time"
-        value={filter.createdTime}
-        setValue={newDate =>
-          setFilter({
-            ...filter,
-            createdTime: newDate || undefined,
-          })
-        }
-      />
-      <DateFilter
-        title="Updated Time"
-        value={filter.lastUpdatedTime}
-        setValue={newDate =>
-          setFilter({
-            ...filter,
-            lastUpdatedTime: newDate || undefined,
-          })
-        }
-      />
-      <DateFilter
-        title="Source Created Time"
-        value={filter.sourceCreatedTime}
-        setValue={newDate =>
-          setFilter({
-            ...filter,
-            sourceCreatedTime: newDate || undefined,
           })
         }
       />
@@ -151,6 +60,100 @@ export const FileFilters = ({
           })
         }
       />
+      <AdvancedFiltersCollapse resourceType="file" filter={filter}>
+        <LabelFilter
+          resourceType="file"
+          value={((filter as any).labels || { containsAny: [] }).containsAny}
+          setValue={newFilters =>
+            setFilter({
+              ...filter,
+              labels: newFilters ? { containsAny: newFilters } : undefined,
+            })
+          }
+        />
+        <ByAssetFilter
+          value={filter.assetSubtreeIds?.map(el => (el as InternalId).id)}
+          setValue={newValue =>
+            setFilter({
+              ...filter,
+              assetSubtreeIds: newValue?.map(id => ({ id })),
+            })
+          }
+        />
+        <DateFilter
+          title="Uploaded Time"
+          value={filter.uploadedTime}
+          setValue={newDate =>
+            setFilter({
+              ...filter,
+              uploadedTime: newDate || undefined,
+            })
+          }
+        />
+        <StringFilter
+          title="Directory prefix"
+          value={(filter as any).directoryPrefix}
+          setValue={newPrefix =>
+            setFilter({
+              ...filter,
+              // @ts-ignore
+              directoryPrefix: newPrefix,
+            })
+          }
+        />
+        <AggregatedFilter
+          title="Source"
+          items={items}
+          aggregator="source"
+          value={filter.source}
+          setValue={newSource =>
+            setFilter({
+              ...filter,
+              source: newSource,
+            })
+          }
+        />
+        <MetadataFilter
+          items={items}
+          value={filter.metadata}
+          setValue={newMetadata =>
+            setFilter({
+              ...filter,
+              metadata: newMetadata,
+            })
+          }
+        />
+        <DateFilter
+          title="Created Time"
+          value={filter.createdTime}
+          setValue={newDate =>
+            setFilter({
+              ...filter,
+              createdTime: newDate || undefined,
+            })
+          }
+        />
+        <DateFilter
+          title="Updated Time"
+          value={filter.lastUpdatedTime}
+          setValue={newDate =>
+            setFilter({
+              ...filter,
+              lastUpdatedTime: newDate || undefined,
+            })
+          }
+        />
+        <DateFilter
+          title="Source Created Time"
+          value={filter.sourceCreatedTime}
+          setValue={newDate =>
+            setFilter({
+              ...filter,
+              sourceCreatedTime: newDate || undefined,
+            })
+          }
+        />
+      </AdvancedFiltersCollapse>
     </div>
   );
 };

@@ -7,6 +7,7 @@ import { DataSetFilter } from './DataSetFilter/DataSetFilter';
 import { ByAssetFilter } from './ByAssetFilter/ByAssetFilter';
 import { StringFilter } from './StringFilter/StringFilter';
 import { DateFilter } from './DateFilter/DateFilter';
+import { AdvancedFiltersCollapse } from './AdvancedFiltersCollapse';
 
 export const SequenceFilters = ({
   filter,
@@ -16,6 +17,7 @@ export const SequenceFilters = ({
   setFilter: (newFilter: Required<SequenceFilter>['filter']) => void;
 }) => {
   const { data: items = [] } = useList('sequences', { filter, limit: 1000 });
+
   return (
     <div>
       <ResetFiltersButton setFilter={setFilter} />
@@ -48,16 +50,6 @@ export const SequenceFilters = ({
           })
         }
       />
-      <MetadataFilter
-        items={items}
-        value={filter.metadata}
-        setValue={newMetadata =>
-          setFilter({
-            ...filter,
-            metadata: newMetadata,
-          })
-        }
-      />
       <DateFilter
         title="Created Time"
         value={filter.createdTime}
@@ -78,6 +70,18 @@ export const SequenceFilters = ({
           })
         }
       />
+      <AdvancedFiltersCollapse resourceType="sequence" filter={filter}>
+        <MetadataFilter
+          items={items}
+          value={filter.metadata}
+          setValue={newMetadata =>
+            setFilter({
+              ...filter,
+              metadata: newMetadata,
+            })
+          }
+        />
+      </AdvancedFiltersCollapse>
     </div>
   );
 };
