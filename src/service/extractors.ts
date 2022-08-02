@@ -19,9 +19,10 @@ export type Release = {
 type Extractor = {
   externalId: string;
   name: string;
-  description: string | undefined;
+  description?: string;
   type: string;
   latestVersion: string | undefined;
+  documentation?: string;
 };
 
 type Items<T> = {
@@ -31,9 +32,10 @@ type Items<T> = {
 export type ExtractorWithRelease = {
   externalId: string;
   name: string;
-  description: string | undefined;
+  description?: string;
   type: string;
   releases: Release[];
+  documentation?: string;
 };
 
 type ExtractorDownload = {
@@ -77,6 +79,7 @@ export const getExtractorsWithReleases = async () => {
 
   extractors.forEach((extractor) => {
     extractorMap[extractor.externalId] = {
+      ...extractor,
       externalId: extractor.externalId,
       name: extractor.name,
       description: extractor.description,
