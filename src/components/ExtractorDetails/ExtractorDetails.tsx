@@ -319,8 +319,9 @@ const StyledBody = styled.div`
     ${bodySpacing};
   }
 
-  *:last-child {
+  > *:last-child {
     margin-bottom: 0;
+    padding-bottom: 0;
   }
 `;
 
