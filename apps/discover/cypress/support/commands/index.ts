@@ -47,3 +47,4 @@ export * from './map.commands';
 export * from './feedback.commands';
 export * from './savedSearches.commands';
 export * from './settings.commands';
+export * from './document.commands';
