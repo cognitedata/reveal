@@ -54,10 +54,27 @@ describe('Wells: nds-events', () => {
     cy.wait('@trajectoriesInterpolate');
 
     cy.log('click on risk type filter');
-    cy.contains(RISK_TYPE_FILTER_TITLE).click();
+    cy.contains(RISK_TYPE_FILTER_TITLE)
+      .should('be.visible')
+      .click({ force: true });
+
+    cy.log('scroll risk type dropdown');
+    cy.findAllByRole('tooltip')
+      .children()
+      .children()
+      .children()
+      .scrollTo('bottom');
+
+    cy.findAllByRole('tooltip')
+      .children()
+      .children()
+      .children()
+      .scrollTo('top');
 
     cy.log('click on `All` option from the dropdown menu');
-    cy.get(`input[id=${SELECTED_ALL_DISPLAY_VALUE}]`).click({ force: true });
+    cy.get(`input[id=${SELECTED_ALL_DISPLAY_VALUE}]`)
+      .should('be.checked')
+      .click({ force: true });
 
     cy.log('no result text should display');
     cy.findAllByText(NO_RESULTS_TEXT).should('be.visible');
