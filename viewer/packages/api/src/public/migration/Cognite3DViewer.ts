@@ -57,6 +57,7 @@ import { IntersectInput, SupportedModelTypes, CogniteModelBase, LoadingState } f
 import { CogniteClient } from '@cognite/sdk';
 import log from '@reveal/logger';
 import { determineAntiAliasingMode, determineSsaoRenderParameters } from './renderOptionsHelpers';
+import { Result, ok, err } from 'neverthrow';
 
 type Cognite3DViewerEvents = 'click' | 'hover' | 'cameraChange' | 'sceneRendered' | 'disposed';
 
@@ -963,7 +964,7 @@ export class Cognite3DViewer {
    * document.body.appendChild(url);
    * ```
    */
-  async getScreenshot(width = this.canvas.width, height = this.canvas.height): Promise<string> {
+  async getScreenshot(width = this.canvas.width, height = this.canvas.height): Promise<Result<string, Error>> {
     if (this.isDisposed) {
       throw new Error('Viewer is disposed');
     }
@@ -983,7 +984,11 @@ export class Cognite3DViewer {
 
     this.requestRedraw();
 
-    return url;
+    if (url) {
+      return ok(url);
+    } else {
+      return err(new Error("Cannot generate Scrrenshot"));
+    }
   }
 
   /**
@@ -1021,7 +1026,7 @@ export class Cognite3DViewer {
    *   );
    * ```
    */
-  async getIntersectionFromPixel(offsetX: number, offsetY: number): Promise<null | Intersection>;
+  async getIntersectionFromPixel(offsetX: number, offsetY: number): Promise<Result<Intersection, null>>;
   /**
    * @deprecated Since 3.1 options argument have no effect.
    * */
@@ -1029,7 +1034,7 @@ export class Cognite3DViewer {
     offsetX: number,
     offsetY: number,
     options: IntersectionFromPixelOptions
-  ): Promise<null | Intersection>;
+  ): Promise<Result<Intersection, null>>;
   /**
    * @obvious
    * @param offsetX
@@ -1040,7 +1045,7 @@ export class Cognite3DViewer {
     offsetX: number,
     offsetY: number,
     options?: IntersectionFromPixelOptions
-  ): Promise<null | Intersection> {
+  ): Promise<Result<Intersection, null>> {
     const cadModels = this.getModels('cad');
     const pointCloudModels = this.getModels('pointcloud');
     const cadNodes = cadModels.map(x => x.cadNode);

@@ -774,6 +774,7 @@ __metadata:
     loglevel: 1.8.0
     mixpanel-browser: 2.45.0
     moq.ts: 9.0.2
+    neverthrow: ^5.0.0
     nock: 13.2.9
     path-browserify: ^1.0.1
     prettier: 2.7.1
@@ -8543,6 +8544,13 @@ __metadata:
   version: 2.6.2
   resolution: "neo-async@npm:2.6.2"
   checksum: deac9f8d00eda7b2e5cd1b2549e26e10a0faa70adaa6fdadca701cc55f49ee9018e427f424bac0c790b7c7e2d3068db97f3093f1093975f2acb8f8818b936ed9
+  languageName: node
+  linkType: hard
+
+"neverthrow@npm:^5.0.0":
+  version: 5.0.0
+  resolution: "neverthrow@npm:5.0.0"
+  checksum: 4a75793a01a13c0f4589156da073700fa5534ce5a797ab32fa7f6b445946bfade7c181003aa58918e7f1ed6532c21dd9b2726da42bf982b98096a319db4f8f61
   languageName: node
   linkType: hard
 
