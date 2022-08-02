@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import fileDownload from 'js-file-download';
+import ReactMarkdown from 'react-markdown';
 import {
   Body,
   Button,
@@ -38,7 +39,7 @@ const ExtractorDetails = () => {
     latestRelease?.createdTime && formatDate(latestRelease?.createdTime);
 
   const extractorExtended = extractorsListExtended?.[extractorExternalId!];
-  const { body, links, tags, source, docs } = extractorExtended;
+  const { links, tags, source, docs } = extractorExtended;
 
   const artifacts = latestRelease?.artifacts ?? [];
 
@@ -63,7 +64,9 @@ const ExtractorDetails = () => {
           <StyledLayoutGrid>
             <Flex direction="column" gap={56}>
               <StyledBody>
-                <div dangerouslySetInnerHTML={{ __html: body }} />
+                <ReactMarkdown>
+                  {(extractor?.documentation || extractor?.description) ?? ''}
+                </ReactMarkdown>
               </StyledBody>
               {links.length > 0 && (
                 <Flex direction="column" gap={16}>
