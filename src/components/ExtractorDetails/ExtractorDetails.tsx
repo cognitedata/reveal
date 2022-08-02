@@ -7,6 +7,7 @@ import {
   Button,
   Colors,
   Flex,
+  formatDate,
   Icon,
   Label,
   Loader,
@@ -22,10 +23,6 @@ import { useTranslation } from 'common';
 import { Artifact, getDownloadUrl } from 'service/extractors';
 import { DocsLinkGrid, DocsLinkGridItem } from 'components/DocsLinkGrid';
 
-const formatDate = (timestamp?: number) => {
-  return timestamp && new Date(timestamp).toLocaleDateString();
-};
-
 const ExtractorDetails = () => {
   const { t } = useTranslation();
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -37,7 +34,8 @@ const ExtractorDetails = () => {
   );
 
   const latestRelease = extractor?.releases?.at(0);
-  const createdAt = formatDate(latestRelease?.createdTime);
+  const createdAt =
+    latestRelease?.createdTime && formatDate(latestRelease?.createdTime);
 
   const extractorExtended = extractorsListExtended?.[extractorExternalId!];
   const { body, links, tags, source, docs } = extractorExtended;
@@ -201,7 +199,7 @@ const ExtractorDetails = () => {
                       })}
                     </Title>
                     <StyledBodyMuted>
-                      {formatDate(release?.createdTime)}
+                      {release?.createdTime && formatDate(release?.createdTime)}
                     </StyledBodyMuted>
                   </Flex>
                   <Body level="2">{release.description}</Body>
