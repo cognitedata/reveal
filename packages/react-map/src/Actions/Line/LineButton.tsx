@@ -5,39 +5,42 @@ import { drawModes, DrawMode } from '../../FreeDraw';
 import { TOOLTIP_TEXT } from '../../constants';
 import { ButtonContainer } from '../elements';
 
-export const LineButton: React.FC<{
+export interface LineProps {
   disabled?: boolean;
   drawMode: DrawMode;
   setDrawMode: (mode: string) => void;
-}> = React.memo(({ setDrawMode, drawMode, disabled }) => {
-  const selected = drawMode === drawModes.DRAW_LINE_STRING;
+}
+export const LineButton: React.FC<LineProps> = React.memo(
+  ({ setDrawMode, drawMode, disabled }) => {
+    const selected = drawMode === drawModes.DRAW_LINE_STRING;
 
-  const handleLineTool = (
-    event: React.MouseEvent<HTMLButtonElement, MouseEvent>
-  ) => {
-    event.preventDefault();
-    event.stopPropagation();
-    setDrawMode(
-      selected
-        ? // this is the polygon mode from mapbox
-          drawModes.SIMPLE_SELECT
-        : // line mode
-          drawModes.DRAW_LINE_STRING
+    const handleLineTool = (
+      event: React.MouseEvent<HTMLButtonElement, MouseEvent>
+    ) => {
+      event.preventDefault();
+      event.stopPropagation();
+      setDrawMode(
+        selected
+          ? // this is the polygon mode from mapbox
+            drawModes.SIMPLE_SELECT
+          : // line mode
+            drawModes.DRAW_LINE_STRING
+      );
+    };
+
+    return (
+      <ButtonContainer>
+        <Tooltip content={TOOLTIP_TEXT}>
+          <Button
+            type={selected ? 'ghost-danger' : 'ghost'}
+            icon="VectorLine"
+            disabled={disabled}
+            onClick={handleLineTool}
+            aria-label={TOOLTIP_TEXT}
+            data-testid="line-button"
+          />
+        </Tooltip>
+      </ButtonContainer>
     );
-  };
-
-  return (
-    <ButtonContainer selected={selected}>
-      <Tooltip content={TOOLTIP_TEXT}>
-        <Button
-          type="ghost"
-          icon="VectorLine"
-          disabled={disabled}
-          onClick={handleLineTool}
-          aria-label={TOOLTIP_TEXT}
-          data-testid="line-button"
-        />
-      </Tooltip>
-    </ButtonContainer>
-  );
-});
+  }
+);

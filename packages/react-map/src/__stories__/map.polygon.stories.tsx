@@ -1,3 +1,5 @@
+import { Story, Meta } from '@storybook/react';
+
 import { Map } from '../Map';
 import { drawModes } from '../FreeDraw';
 
@@ -9,6 +11,7 @@ export default {
   component: Map,
   argTypes: {
     drawMode: {
+      name: 'Draw mode',
       options: ['Normal', 'Polygon'],
       mapping: {
         Polygon: drawModes.DRAW_POLYGON,
@@ -17,9 +20,9 @@ export default {
       control: { type: 'radio' },
     },
   },
-};
+} as Meta;
 
-const BaseComponent = (props: React.ComponentProps<typeof Map>) => (
+const BaseComponent: Story<React.ComponentProps<typeof Map>> = (props) => (
   <MapWrapper>
     <Map {...defaultProps} {...props} />
   </MapWrapper>

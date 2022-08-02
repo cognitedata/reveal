@@ -1,22 +1,8 @@
 import { renderHook } from '@testing-library/react-hooks';
 import mapboxgl from 'maplibre-gl';
+import { getFeature } from '__fixtures/getFeature';
 
 import { useZoomToFeature } from '../useZoomToFeature';
-
-const getMockFeature = () => {
-  return {
-    geometry: {
-      type: 'Polygon',
-      coordinates: [
-        [
-          [1, 1],
-          [2, 2],
-          [3, 3],
-        ],
-      ],
-    },
-  };
-};
 
 describe('useZoomToFeature', () => {
   it('should be ok', () => {
@@ -28,10 +14,10 @@ describe('useZoomToFeature', () => {
 
     const zoomer = result.current;
 
-    zoomer(getMockFeature());
+    zoomer(getFeature());
 
     expect(map.fitBounds).toBeCalledWith(
-      { _ne: { lat: 3, lng: 3 }, _sw: { lat: 1, lng: 1 } },
+      { _ne: { lat: 80, lng: 59 }, _sw: { lat: 50, lng: 55 } },
       { maxZoom: 8, padding: 20 }
     );
   });

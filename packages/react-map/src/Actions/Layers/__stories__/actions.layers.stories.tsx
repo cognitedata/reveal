@@ -1,18 +1,19 @@
 import * as React from 'react';
 import { getSelectableLayer } from '__fixtures/getSelectableLayer';
+import { Story, Meta } from '@storybook/react';
 
-import { SelectableLayer } from '../layers/types';
-import { Actions } from '../Actions';
-import { Map } from '../Map';
-
-import { props } from './defaultProps';
-import { MapWrapper } from './elements';
+import { SelectableLayer } from '../../../layers/types';
+import { Actions } from '../..';
+import { Map } from '../../../Map';
+import { props } from '../../../__stories__/defaultProps';
+import { MapWrapper } from '../../../__stories__/elements';
 
 export default {
   title: 'Map / Buttons / Layers',
   component: Actions.LayersButton,
   argTypes: {
     layers: {
+      name: 'Layers',
       options: ['Simple', 'Grouped'],
       mapping: {
         Simple: [
@@ -32,7 +33,7 @@ export default {
       control: { type: 'radio' },
     },
   },
-};
+} as Meta;
 
 const useHandleToggle = () => {
   const [on, setOn] = React.useState<Record<string, boolean>>({});
@@ -47,7 +48,9 @@ const getLayers = (on: Record<string, boolean>) => [
   getSelectableLayer({ id: '2', name: 'Test Layer Two', selected: on['2'] }),
 ];
 
-const LayersButton = (props: React.ComponentProps<typeof Actions.Status>) => {
+const BaseComponent: Story<
+  React.ComponentProps<typeof Actions.LayersButton>
+> = (props) => {
   const { handleToggle, on } = useHandleToggle();
   return (
     <Actions.Wrapper>
@@ -60,7 +63,7 @@ const LayersButton = (props: React.ComponentProps<typeof Actions.Status>) => {
   );
 };
 
-export const Simple = LayersButton.bind({});
+export const Simple = BaseComponent.bind({});
 
 export const WithMap = () => {
   const { handleToggle, on } = useHandleToggle();

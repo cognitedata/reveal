@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Button } from '@cognite/cogs.js';
+import { Meta } from '@storybook/react';
 
 import { Map, Props } from '../Map';
 
@@ -9,7 +10,7 @@ import { props } from './defaultProps';
 export default {
   title: 'Map / Map',
   component: Map,
-};
+} as Meta;
 
 export const WithFlyTo = () => {
   const [position, setPosition] = useState<Props['flyTo']>({

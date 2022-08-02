@@ -5,7 +5,7 @@ import noop from 'lodash/noop';
 import mapboxgl from 'maplibre-gl';
 import type { MapboxOptions } from 'maplibre-gl';
 
-import { addLayer, removeLayer } from './layers/addRemoveVisibleLayer';
+import { useAddSources } from './layers/useAddSources';
 import {
   MapDataSource,
   MapEvent,
@@ -22,7 +22,7 @@ import { DrawMode, drawModes, FreeDraw } from './FreeDraw';
 import { useZoomToFeature } from './hooks/useZoomToFeature';
 import { Minimap } from './Minimap/Minimap';
 import { getMapStyles } from './style';
-import { choosePreviousSelectedLayer } from './layers/choosePreviousSelectedLayer';
+import { useAddLayers } from './layers/useAddLayers';
 
 import 'maplibre-gl/dist/maplibre-gl.css';
 import '@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css';
@@ -89,6 +89,8 @@ export const Map: React.FC<React.PropsWithChildren<Props>> = ({
 
   const zoomToFeature = useZoomToFeature(map);
   useFlyTo({ map, flyTo });
+  useAddSources({ map, layerData });
+  useAddLayers({ map, layerConfigs, layerData });
 
   useDeepEffect(() => {
     if (features && features.type && draw) {
@@ -109,86 +111,92 @@ export const Map: React.FC<React.PropsWithChildren<Props>> = ({
       const { innerSetMap, innerSetDraw, mapContainer } = initProps;
       mapboxgl.accessToken = MAPBOX_TOKEN;
 
-      const mapInstance = new mapboxgl.Map({
-        preserveDrawingBuffer: true,
-        container: mapContainer.current,
-        style: MAPBOX_MAP_ID,
-        center,
-        zoom,
-        maxBounds,
-      });
-
-      const miniMap = disableMinimap
-        ? undefined
-        : new Minimap({ style: MAPBOX_MAP_ID });
-
-      const drawMap = new MapboxDraw({
-        userProperties: true,
-        displayControlsDefault: false,
-        styles: [...getMapStyles()],
-        modes: {
-          draw_free_polygon: FreeDraw,
-          ...MapboxDraw.modes,
-        },
-        controls: {},
-      });
-
-      const scaleControl = new mapboxgl.ScaleControl({ maxWidth: 200 });
-      const navigationButtons = new mapboxgl.NavigationControl();
-
-      mapInstance.on('load', () => {
-        innerSetMap(mapInstance);
-        if (setMapReference) {
-          setMapReference(mapInstance);
-        }
-
-        if (mapIcons && mapIcons.length) {
-          mapIcons.forEach((mapIcon) => {
-            mapInstance.addImage(mapIcon.name, mapIcon.icon);
-          });
-        }
-
-        // @ts-expect-error mapbox vs maplibre
-        mapInstance.addControl(drawMap, 'top-right');
-        innerSetDraw(drawMap);
-
-        mapInstance.resize();
-      });
-
-      mapInstance.on('resize', () => {
-        const mapWidth = mapInstance.getCanvasContainer().offsetWidth;
-
-        if (!isUndefined(miniMap)) {
-          const miniMapExists = !!miniMap._parentMap; // eslint-disable-line no-underscore-dangle
-
-          if (!miniMapExists && mapWidth > 400) {
-            mapInstance.addControl(scaleControl, 'bottom-right');
-            mapInstance.addControl(miniMap, 'bottom-left');
-          } else if (miniMapExists && mapWidth < 400) {
-            mapInstance.removeControl(scaleControl);
-            mapInstance.removeControl(miniMap);
-          }
-        }
-
-        /*
-         *
-         * This used for memorize and track the updated previousState.
-         * since the state is being changing very fast with the resize event and the useState also asynchronous,
-         * unable to pick the the updated state. so that's why useState has been used in a little bit different way here.
-         *
-         */
-        setNavigation((previousState) => {
-          if (mapWidth > 80) {
-            mapInstance.addControl(navigationButtons, 'bottom-right');
-            return true;
-          }
-          if (previousState && mapWidth < 80) {
-            mapInstance.removeControl(navigationButtons);
-            return !previousState;
-          }
-          return undefined;
+      try {
+        const mapInstance = new mapboxgl.Map({
+          preserveDrawingBuffer: true,
+          container: mapContainer.current,
+          style: MAPBOX_MAP_ID,
+          center,
+          zoom,
+          maxBounds,
         });
-      });
+
+        const miniMap = disableMinimap
+          ? undefined
+          : new Minimap({ style: MAPBOX_MAP_ID });
+
+        const drawMap = new MapboxDraw({
+          userProperties: true,
+          displayControlsDefault: false,
+          styles: [...getMapStyles()],
+          modes: {
+            draw_free_polygon: FreeDraw,
+            ...MapboxDraw.modes,
+          },
+          controls: {},
+        });
+
+        const scaleControl = new mapboxgl.ScaleControl({ maxWidth: 200 });
+        const navigationButtons = new mapboxgl.NavigationControl();
+
+        mapInstance.on('load', () => {
+          innerSetMap(mapInstance);
+          if (setMapReference) {
+            setMapReference(mapInstance);
+          }
+
+          if (mapIcons && mapIcons.length) {
+            mapIcons.forEach((mapIcon) => {
+              mapInstance.addImage(mapIcon.name, mapIcon.icon);
+            });
+          }
+
+          // @ts-expect-error mapbox vs maplibre
+          mapInstance.addControl(drawMap, 'top-right');
+          innerSetDraw(drawMap);
+
+          mapInstance.resize();
+        });
+
+        mapInstance.on('resize', () => {
+          const mapWidth = mapInstance.getCanvasContainer().offsetWidth;
+
+          if (!isUndefined(miniMap)) {
+            const miniMapExists = !!miniMap._parentMap; // eslint-disable-line no-underscore-dangle
+
+            if (!miniMapExists && mapWidth > 400) {
+              mapInstance.addControl(scaleControl, 'bottom-right');
+              mapInstance.addControl(miniMap, 'bottom-left');
+            } else if (miniMapExists && mapWidth < 400) {
+              mapInstance.removeControl(scaleControl);
+              mapInstance.removeControl(miniMap);
+            }
+          }
+
+          /*
+           *
+           * This used for memorize and track the updated previousState.
+           * since the state is being changing very fast with the resize event and the useState also asynchronous,
+           * unable to pick the the updated state. so that's why useState has been used in a little bit different way here.
+           *
+           */
+          setNavigation((previousState) => {
+            if (mapWidth > 80) {
+              mapInstance.addControl(navigationButtons, 'bottom-right');
+              return true;
+            }
+            if (previousState && mapWidth < 80) {
+              mapInstance.removeControl(navigationButtons);
+              return !previousState;
+            }
+            return undefined;
+          });
+        });
+      } catch (error) {
+        // commonly in jest -> "Error: Failed to initialize WebGL."
+        // eslint-disable-next-line no-console
+        console.error(error);
+      }
     };
 
     if (!map) {
@@ -221,56 +229,6 @@ export const Map: React.FC<React.PropsWithChildren<Props>> = ({
 
     return noop;
   }, [drawMode, !!draw, selectedFeature]);
-
-  const addSource = (
-    mapInstance: mapboxgl.Map,
-    id: string,
-    data: any,
-    clusterProps?: {
-      cluster: boolean;
-      clusterMaxZoom: number;
-      clusterRadius: number;
-    }
-  ) => {
-    if (mapInstance === null) return;
-    if (mapInstance.getSource(id) === undefined) {
-      mapInstance.addSource(id, {
-        type: 'geojson',
-        data,
-        ...clusterProps,
-      });
-    } else {
-      const source = mapInstance.getSource(id) as mapboxgl.GeoJSONSource;
-      source.setData(data);
-    }
-  };
-
-  useDeepEffect(() => {
-    if (map) {
-      layerData.forEach((source) => {
-        addSource(map, source.id, source.data, source.clusterProps);
-      });
-    }
-  }, [!!map, layerData]);
-
-  useDeepEffect(() => {
-    if (map && layerData.length > 0) {
-      layerConfigs.forEach((layer, index) => {
-        const addLayerBeforeThisLayer = choosePreviousSelectedLayer(
-          layerConfigs,
-          index
-        );
-
-        layer.layers.forEach((innerLayer) => {
-          if (layer.selected) {
-            addLayer(map, innerLayer, addLayerBeforeThisLayer);
-          } else {
-            removeLayer(map, innerLayer.id);
-          }
-        });
-      });
-    }
-  }, [!!map, layerConfigs, layerData]);
 
   useDeepEffect(() => {
     if (!map) return noop;

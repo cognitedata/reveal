@@ -6,6 +6,7 @@ exports_files(
         "tsconfig.json",
         "jest.config.js",
         "jest.react.config.js",
+        "babelTransform.js",
     ],
     visibility = ["//visibility:public"],
 )

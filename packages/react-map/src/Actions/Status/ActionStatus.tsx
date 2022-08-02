@@ -1,6 +1,7 @@
 import React, { Fragment } from 'react';
 import { Icon } from '@cognite/cogs.js';
 import { MapAddedProps } from 'types';
+import isEmpty from 'lodash/isEmpty';
 import MapboxGLDraw from '@mapbox/mapbox-gl-draw';
 
 import { POLYGON_EDIT_MESSAGE } from '../../constants';
@@ -32,18 +33,13 @@ const getMessageCodes = ({
   selectedFeatures,
 }: MapAddedProps): (keyof typeof allMessages)[] => {
   const isPolygonButtonActive =
-    draw === MapboxGLDraw.modes.DRAW_POLYGON || polygon?.length > 0;
+    draw === MapboxGLDraw.modes.DRAW_POLYGON || !isEmpty(polygon);
 
   if (!isPolygonButtonActive) {
     return [];
   }
 
-  if (
-    selectedFeatures &&
-    selectedFeatures.length === 0 &&
-    polygon &&
-    polygon.length > 0
-  ) {
+  if (isEmpty(selectedFeatures) && !isEmpty(polygon)) {
     return ['edit'];
   }
 

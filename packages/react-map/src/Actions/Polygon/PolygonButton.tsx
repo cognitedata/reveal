@@ -12,7 +12,7 @@ interface Props {
 export const PolygonButton: React.FC<Props> = React.memo(
   ({ onToggle, isActive }) => {
     return (
-      <ButtonContainer selected={isActive}>
+      <ButtonContainer>
         <Tooltip content="Free draw">
           <Button
             data-testid="freedraw-button"

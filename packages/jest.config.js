@@ -10,6 +10,7 @@ module.exports = {
   haste: {
     enableSymlinks: true,
   },
+  transformIgnorePatterns: ['/node_modules/(?!@mapbox)'],
   moduleNameMapper: {
     // resolve @cognite/<package>/dist/mocks to
     // 1. @cognite/<package>/src/mocks when running plain jest

@@ -29,7 +29,7 @@ SOURCES = glob(
     exclude = _TESTS + _STORYBOOK,
 )
 
-TESTS = glob(_TESTS)
+TESTS = glob(_TESTS + _STORYBOOK)
 
 STORYBOOK = glob(_STORYBOOK)
 
@@ -75,6 +75,7 @@ DEV_DEPENDENCIES = [
     "@npm//@testing-library/jest-dom",
     "@npm//@testing-library/react",
     "@npm//@testing-library/react-hooks",
+    "@npm//@storybook/testing-react",
     "@npm//react-modal",
     "@npm//jest-preview",
     "@npm//rollup-plugin-json",
@@ -129,6 +130,7 @@ jest_test(
     srcs = SOURCES + TESTS + [
         "//packages:jest.config.js",
         "//packages:jest.react.config.js",
+        "//packages:babelTransform.js",
         ":tsconfig.json",
         "//:tsconfig.json",
         "//packages:tsconfig.json",
@@ -136,7 +138,7 @@ jest_test(
     jest_args = [],
     jest_config = "jest.config.js",
     service_name = "react-map",
-    deps = DEPENDENCIES + DEV_DEPENDENCIES + TYPE_DEPENDENCIES,
+    deps = DEPENDENCIES + DEV_DEPENDENCIES + TYPE_DEPENDENCIES + ["@npm//babel-preset-react-app"],
 )
 
 # For ibazel run to properly pick the changes we need to run from the Workspace directory

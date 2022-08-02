@@ -18,6 +18,10 @@ module.exports = {
       '<rootDir>/../../../npm/node_modules/jest-css-modules-transform',
     ],
   },
+  transform: {
+    '.ts': 'ts-jest',
+    '.tsx': 'ts-jest',
+  },
   setupFilesAfterEnv: ['<rootDir>/src/setupTests.ts'],
   testEnvironment: 'jest-environment-jsdom',
 };

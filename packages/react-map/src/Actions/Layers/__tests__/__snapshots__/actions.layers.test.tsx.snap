@@ -1,0 +1,233 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Renders Simple story 1`] = `
+<body>
+  <div>
+    <div
+      class="sc-llJcti byfDnd"
+    >
+      <div
+        class="sc-gsnTZi sc-dkzDqf dKRiIy fNTABv"
+      >
+        <span
+          aria-expanded="false"
+        >
+          <span
+            class="cogs-tooltip__content"
+          >
+            <button
+              aria-label="Layers"
+              class="cogs-btn cogs-btn-ghost cogs-btn-right--padding"
+              data-testid="map-button-layers"
+              type="button"
+            >
+              Layers
+              <i
+                class="cogs-icon cogs-icon-ChevronDown icon-margin-left"
+                style="width: 16px;"
+              >
+                <svg
+                  fill="none"
+                  height="16"
+                  role="img"
+                  viewBox="0 0 16 16"
+                  width="16"
+                  xmlns="http://www.w3.org/2000/svg"
+                  xmlns:xlink="http://www.w3.org/1999/xlink"
+                >
+                  <path
+                    clip-rule="evenodd"
+                    d="M3.293 6.293a1 1 0 0 1 1.414 0L8 9.586l3.293-3.293a1 1 0 1 1 1.414 1.414l-4 4a1 1 0 0 1-1.414 0l-4-4a1 1 0 0 1 0-1.414Z"
+                    fill="currentColor"
+                    fill-rule="evenodd"
+                  />
+                </svg>
+              </i>
+            </button>
+          </span>
+        </span>
+      </div>
+    </div>
+  </div>
+</body>
+`;
+
+exports[`Renders WithMap story 1`] = `
+<body>
+  <div>
+    <div
+      class="sc-ezWOiH iltyNU"
+    >
+      <div
+        class="sc-bczRLJ glDwtp maplibregl-map mapboxgl-map"
+        data-testid="map-container"
+      >
+        <div
+          class="sc-llJcti byfDnd"
+        >
+          <div
+            class="sc-gsnTZi sc-dkzDqf dKRiIy fNTABv"
+          >
+            <span
+              aria-expanded="false"
+            >
+              <span
+                class="cogs-tooltip__content"
+              >
+                <button
+                  aria-label="Layers"
+                  class="cogs-btn cogs-btn-ghost cogs-btn-right--padding"
+                  data-testid="map-button-layers"
+                  type="button"
+                >
+                  Layers
+                  <i
+                    class="cogs-icon cogs-icon-ChevronDown icon-margin-left"
+                    style="width: 16px;"
+                  >
+                    <svg
+                      fill="none"
+                      height="16"
+                      role="img"
+                      viewBox="0 0 16 16"
+                      width="16"
+                      xmlns="http://www.w3.org/2000/svg"
+                      xmlns:xlink="http://www.w3.org/1999/xlink"
+                    >
+                      <path
+                        clip-rule="evenodd"
+                        d="M3.293 6.293a1 1 0 0 1 1.414 0L8 9.586l3.293-3.293a1 1 0 1 1 1.414 1.414l-4 4a1 1 0 0 1-1.414 0l-4-4a1 1 0 0 1 0-1.414Z"
+                        fill="currentColor"
+                        fill-rule="evenodd"
+                      />
+                    </svg>
+                  </i>
+                </button>
+              </span>
+            </span>
+          </div>
+        </div>
+        <div
+          class="maplibregl-canvas-container mapboxgl-canvas-container maplibregl-interactive mapboxgl-interactive"
+        >
+          <canvas
+            aria-label="Map"
+            class="maplibregl-canvas mapboxgl-canvas"
+            height="300"
+            role="region"
+            style="width: 400px; height: 300px;"
+            tabindex="0"
+            width="400"
+          />
+        </div>
+        <div
+          class="maplibregl-control-container mapboxgl-control-container"
+        >
+          <div
+            class="maplibregl-ctrl-top-left mapboxgl-ctrl-top-left"
+          />
+          <div
+            class="maplibregl-ctrl-top-right mapboxgl-ctrl-top-right"
+          />
+          <div
+            class="maplibregl-ctrl-bottom-left mapboxgl-ctrl-bottom-left"
+          />
+          <div
+            class="maplibregl-ctrl-bottom-right mapboxgl-ctrl-bottom-right"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+`;
+
+exports[`Renders WithMapGrouped story 1`] = `
+<body>
+  <div>
+    <div
+      class="sc-ezWOiH iltyNU"
+    >
+      <div
+        class="sc-bczRLJ glDwtp maplibregl-map mapboxgl-map"
+        data-testid="map-container"
+      >
+        <div
+          class="sc-llJcti byfDnd"
+        >
+          <div
+            class="sc-gsnTZi sc-dkzDqf dKRiIy fNTABv"
+          >
+            <span
+              aria-expanded="false"
+            >
+              <span
+                class="cogs-tooltip__content"
+              >
+                <button
+                  aria-label="Layers"
+                  class="cogs-btn cogs-btn-ghost cogs-btn-right--padding"
+                  data-testid="map-button-layers"
+                  type="button"
+                >
+                  Layers
+                  <i
+                    class="cogs-icon cogs-icon-ChevronDown icon-margin-left"
+                    style="width: 16px;"
+                  >
+                    <svg
+                      fill="none"
+                      height="16"
+                      role="img"
+                      viewBox="0 0 16 16"
+                      width="16"
+                      xmlns="http://www.w3.org/2000/svg"
+                      xmlns:xlink="http://www.w3.org/1999/xlink"
+                    >
+                      <path
+                        clip-rule="evenodd"
+                        d="M3.293 6.293a1 1 0 0 1 1.414 0L8 9.586l3.293-3.293a1 1 0 1 1 1.414 1.414l-4 4a1 1 0 0 1-1.414 0l-4-4a1 1 0 0 1 0-1.414Z"
+                        fill="currentColor"
+                        fill-rule="evenodd"
+                      />
+                    </svg>
+                  </i>
+                </button>
+              </span>
+            </span>
+          </div>
+        </div>
+        <div
+          class="maplibregl-canvas-container mapboxgl-canvas-container maplibregl-interactive mapboxgl-interactive"
+        >
+          <canvas
+            aria-label="Map"
+            class="maplibregl-canvas mapboxgl-canvas"
+            height="300"
+            role="region"
+            style="width: 400px; height: 300px;"
+            tabindex="0"
+            width="400"
+          />
+        </div>
+        <div
+          class="maplibregl-control-container mapboxgl-control-container"
+        >
+          <div
+            class="maplibregl-ctrl-top-left mapboxgl-ctrl-top-left"
+          />
+          <div
+            class="maplibregl-ctrl-top-right mapboxgl-ctrl-top-right"
+          />
+          <div
+            class="maplibregl-ctrl-bottom-left mapboxgl-ctrl-bottom-left"
+          />
+          <div
+            class="maplibregl-ctrl-bottom-right mapboxgl-ctrl-bottom-right"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+`;

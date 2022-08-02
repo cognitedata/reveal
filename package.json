@@ -55,6 +55,7 @@
     "@sentry/react": "^6.13.3",
     "@sentry/rrweb": "^0.3.1",
     "@sentry/tracing": "^6.13.3",
+    "@storybook/testing-react": "^1.3.0",
     "@tanem/svg-injector": "^10.1.7",
     "@turf/centroid": "6.0.2",
     "@turf/clean-coords": "^6.0.1",

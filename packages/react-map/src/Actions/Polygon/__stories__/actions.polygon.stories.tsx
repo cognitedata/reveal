@@ -1,17 +1,19 @@
 import * as React from 'react';
+import { Story, Meta } from '@storybook/react';
 
-import { Actions } from '../Actions';
-import { Map } from '../Map';
-
-import { props } from './defaultProps';
-import { MapWrapper } from './elements';
+import { Actions } from '../../Actions';
+import { Map } from '../../../Map';
+import { props } from '../../../__stories__/defaultProps';
+import { MapWrapper } from '../../../__stories__/elements';
 
 export default {
   title: 'Map / Buttons / Polygon',
   component: Actions.Polygon,
-};
+} as Meta;
 
-const BaseComponent = (props: React.ComponentProps<typeof Actions.Status>) => (
+const BaseComponent: Story<React.ComponentProps<typeof Actions.Polygon>> = (
+  props
+) => (
   <Actions.Wrapper>
     <Actions.Polygon {...props} />
   </Actions.Wrapper>
