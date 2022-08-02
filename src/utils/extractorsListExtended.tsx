@@ -50,7 +50,6 @@ export const extractorsListExtended: {
     imagePath: opcuaImgUrl,
     source: 'https://github.com/cognitedata/opcua-extractor-net',
     docs: 'https://docs.cognite.com/cdf/integration/guides/extraction/opc_ua',
-
     tags: [
       'OPC UA',
       'Cognite Extractor',
