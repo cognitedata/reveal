@@ -15,5 +15,14 @@ export const Base = () => {
     baseUrl: SIDECAR.cdfApiBaseUrl,
     getToken: () => Promise.resolve('123'),
   });
-  return <Map client={client!} project="atlas-greenfield" />;
+  return (
+    <Map
+      client={client!}
+      modelOptions={{
+        modelId: 3838447502587280,
+        revisionId: 8081245322726425,
+      }}
+      setNodeIdInUrl={() => null}
+    />
+  );
 };

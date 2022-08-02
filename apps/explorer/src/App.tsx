@@ -5,6 +5,7 @@ import { ContainerWithoutI18N, AuthConsumer } from '@cognite/react-container';
 import { AppRouter } from 'pages/App/AppRouter';
 import { ProvideAuthSetup } from 'components/ProvideAuthSetup';
 import { RecoilRoot } from 'recoil';
+import { MapProvider } from 'components/Map/MapProvider';
 
 const App = () => (
   <ContainerWithoutI18N sidecar={sidecar}>
@@ -18,9 +19,11 @@ const App = () => (
 
           return (
             <ProvideAuthSetup authState={authState}>
-              <RecoilRoot>
-                <AppRouter />
-              </RecoilRoot>
+              <MapProvider>
+                <RecoilRoot>
+                  <AppRouter />
+                </RecoilRoot>
+              </MapProvider>
             </ProvideAuthSetup>
           );
         }}

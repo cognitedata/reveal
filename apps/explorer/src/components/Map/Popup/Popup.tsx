@@ -8,7 +8,7 @@ import {
 } from 'graphql/generated';
 import { useGetURLSearchParams } from 'hooks/useGetURLSearchParams';
 import { DATA_TYPES } from 'pages/MapOverlay/MapOverlayRouter';
-import { getData } from 'utils/map/getData';
+import { getDataFromMapAndSearch } from 'utils/map/getDataFromMapAndSearch';
 
 import { PopupWrapper } from './PopupWrapper';
 
@@ -25,7 +25,7 @@ export const Popup: React.FC<Props> = ({ mapData, searchData }) => {
 
   if (to) {
     const type = urlSearchParams.get('toType') || '';
-    const { data: destData, type: dataType } = getData(
+    const { data: destData, type: dataType } = getDataFromMapAndSearch(
       type,
       to,
       mapData,
@@ -43,7 +43,7 @@ export const Popup: React.FC<Props> = ({ mapData, searchData }) => {
         PopupComponent = <EquipmentPopup data={destData} />;
         break;
       default:
-        PopupComponent = <BlankPopup />;
+        PopupComponent = <BlankPopup nodeId={to} />;
     }
   }
 

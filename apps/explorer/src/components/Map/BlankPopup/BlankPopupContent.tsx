@@ -1,6 +1,5 @@
-import { Button } from '@cognite/cogs.js';
+import { LinkButton } from 'components/LinkButton/LinkButton';
 import { PAGES } from 'pages/constants';
-import { Link } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
 import { isEditModeAtom } from 'recoil/popupShared/isEditModeAtom';
 
@@ -12,9 +11,12 @@ export const BlankPopupContent = () => {
   return (
     <BlankPopupContentWrapper>
       <div>
-        <Link to={PAGES.HOME}>
-          <Button type="ghost" icon="Close" aria-label="close-popup" />
-        </Link>
+        <LinkButton
+          to={PAGES.HOME}
+          type="ghost"
+          icon="Close"
+          aria-label="close-popup"
+        />
       </div>
       <FullWidthButton icon="Plus" onClick={handleClick}>
         Add Information

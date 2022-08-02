@@ -2,10 +2,15 @@ import {
   AddModelOptions,
   Cognite3DModel,
   Cognite3DViewer,
+  DefaultNodeAppearance,
+  InvertedNodeCollection,
+  PropertyFilterNodeCollection,
 } from '@cognite/reveal';
 import { CogniteClient } from '@cognite/sdk';
-import { MapOverlayRouter } from 'pages/MapOverlay/MapOverlayRouter';
+// import { MapOverlayRouter } from 'pages/MapOverlay/MapOverlayRouter';
 import React, { useContext } from 'react';
+import { useRecoilValue } from 'recoil';
+import { getFloorLayer } from 'recoil/map/getFloorLayer';
 import { updateStyledNodes } from 'utils/map/updateStyledNodes';
 
 import { MapContext } from './MapProvider';
@@ -20,6 +25,10 @@ interface Props {
 
 const Map: React.FC<Props> = ({ client, modelOptions, setNodeIdInUrl }) => {
   const { viewerRef, modelRef } = useContext(MapContext);
+  const floorLayer = useRecoilValue(getFloorLayer);
+  // Need to work on connecting this with nodeId
+  // const [_treeIndex, setTreeIndex] = React.useState<number>();
+
   const handleClick = async (
     event: { offsetX: any; offsetY: any },
     model: Cognite3DModel
@@ -49,6 +58,24 @@ const Map: React.FC<Props> = ({ client, modelOptions, setNodeIdInUrl }) => {
           return fetchedModel as Cognite3DModel;
         });
 
+      // Filter for the current selected floor
+      const currFloor = new PropertyFilterNodeCollection(
+        // @ts-expect-error client needs updates
+        client,
+        modelRef.current
+      );
+      currFloor.executeFilter({ Item: { Name: floorLayer } });
+      const notCurrFloor = new InvertedNodeCollection(
+        modelRef.current,
+        currFloor
+      );
+
+      modelRef.current.assignStyledNodeCollection(
+        notCurrFloor,
+        DefaultNodeAppearance.Hidden
+      );
+
+      // Set camera controls
       const newControlsOptions = {
         mouseWheelAction: 'zoomToCursor',
         changeCameraTargetOnClick: false,
@@ -68,7 +95,6 @@ const Map: React.FC<Props> = ({ client, modelOptions, setNodeIdInUrl }) => {
 
   return (
     <div style={fullStyle}>
-      <MapOverlayRouter />
       <div id="reveal-map" style={fullStyle} />
     </div>
   );

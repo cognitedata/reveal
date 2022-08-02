@@ -35,23 +35,29 @@ ListItem.args = {
   },
 };
 
-const ListStory = ({ items }: ListProps) => <ListComponent items={items} />;
+const ListStory = ({ items }: ListProps) => (
+  <ListComponent items={items} onClick={() => null} />
+);
 
 export const List = ListStory.bind({});
 List.args = {
   items: {
     section: [
       {
+        externalId: 'id-1',
         name: 'Very cool item',
         description: 'Not a hot item',
         iconSrc: '',
+        nodeId: 123,
       },
     ],
     food: [
       {
+        externalId: 'id-2',
         name: 'Ramen',
         description: 'A type of noodle',
         iconSrc: 'CubeBottom',
+        nodeId: 125,
       },
     ],
   },

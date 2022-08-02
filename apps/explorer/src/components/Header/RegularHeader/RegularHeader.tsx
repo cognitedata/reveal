@@ -1,7 +1,7 @@
 import { HeaderLeft, StyledRegularHeader } from '../elements';
 
 export interface CompoundComponent {
-  Left: React.FC;
+  Left: React.FC<React.PropsWithChildren<unknown>>;
 }
 
 export const RegularHeader: React.FC<React.PropsWithChildren<unknown>> &

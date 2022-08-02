@@ -1,7 +1,7 @@
 import { HeaderLeft, StyledAbsoluteHeader } from '../elements';
 
 export interface CompoundComponent {
-  Left: React.FC;
+  Left: React.FC<React.PropsWithChildren<unknown>>;
 }
 
 export const AbsoluteHeader: React.FC<React.PropsWithChildren<unknown>> &

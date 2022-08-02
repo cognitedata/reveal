@@ -3,6 +3,7 @@ import Map from 'components/Map';
 import env from 'utils/config';
 import { ErrorDisplay } from 'components/ErrorDisplay';
 import { useSetNodeIdInURL } from 'hooks/useSetNodeIdInURL';
+import { MapOverlayRouter } from 'pages/MapOverlay/MapOverlayRouter';
 
 export const Home = () => {
   const { client } = useAuthContext();
@@ -21,10 +22,13 @@ export const Home = () => {
     );
 
   return (
-    <Map
-      client={client}
-      modelOptions={modelOptions}
-      setNodeIdInUrl={setNodeIdInUrl}
-    />
+    <>
+      <MapOverlayRouter />
+      <Map
+        client={client}
+        modelOptions={modelOptions}
+        setNodeIdInUrl={setNodeIdInUrl}
+      />
+    </>
   );
 };

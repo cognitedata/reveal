@@ -50,7 +50,11 @@ export const SearchModal: React.FC<React.PropsWithChildren<Props>> = ({
             />
           </RegularHeader.Left>
         </RegularHeader>
-        {isEmpty(itemsObj) ? <NoResults /> : <List items={itemsObj} />}
+        {isEmpty(itemsObj) ? (
+          <NoResults />
+        ) : (
+          <List items={itemsObj} onClick={handleClose} />
+        )}
       </SearchModalWrapper>
     </ReactPortal>
   );

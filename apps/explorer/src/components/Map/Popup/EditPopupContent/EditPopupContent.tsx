@@ -1,4 +1,5 @@
 import { Flex, Label } from '@cognite/cogs.js';
+import { PAGES } from 'pages/constants';
 import { Link } from 'react-router-dom';
 
 import {
@@ -14,7 +15,7 @@ interface Props {
 }
 
 // Note: Add ability to modify labels
-export const EditPopupContent: React.FC<Props> = ({
+export const EditPopupContent: React.FC<React.PropsWithChildren<Props>> = ({
   labels,
   SubmitButton,
   children,
@@ -37,7 +38,7 @@ export const EditPopupContent: React.FC<Props> = ({
       </Flex>
       <FlexEnd>
         <SubmitButton />
-        <Link to="/home">
+        <Link to={PAGES.HOME}>
           <ButtonWithMargin>Close</ButtonWithMargin>
         </Link>
       </FlexEnd>

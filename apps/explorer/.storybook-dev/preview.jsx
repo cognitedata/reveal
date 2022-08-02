@@ -4,16 +4,19 @@ import { configureI18n, I18nContainer } from '@cognite/react-i18n';
 import GlobalStyles from 'global-styles';
 
 import '@cognite/cogs.js/dist/cogs.css';
+import { RecoilRoot } from 'recoil';
 
 configureI18n();
 
 export const decorators = [
   (Story) => (
     <I18nContainer>
-      <BrowserRouter>
-        <GlobalStyles />
-        <Story />
-      </BrowserRouter>
+      <RecoilRoot>
+        <BrowserRouter>
+          <GlobalStyles />
+          <Story />
+        </BrowserRouter>
+      </RecoilRoot>
     </I18nContainer>
   ),
 ];

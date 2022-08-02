@@ -1,6 +1,7 @@
 import { Button, Flex, Label } from '@cognite/cogs.js';
 import { MapContext } from 'components/Map/MapProvider';
 import { Scalars } from 'graphql/generated';
+import { PAGES } from 'pages/constants';
 import { useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
@@ -23,11 +24,11 @@ interface Props {
   Icon: () => JSX.Element | null;
 }
 
-export const PopupContent: React.FC<Props> = ({
+export const PopupContent: React.FC<React.PropsWithChildren<Props>> = ({
+  Icon,
   labels,
   nodeId,
   isEditable = true,
-  Icon,
   children,
 }) => {
   const { modelRef, viewerRef } = useContext(MapContext);
@@ -64,7 +65,7 @@ export const PopupContent: React.FC<Props> = ({
                 onClick={handleEditButtonClick}
               />
             )}
-            <Link to="/home">
+            <Link to={PAGES.HOME}>
               <ButtonWithMargin
                 type="ghost"
                 icon="Close"

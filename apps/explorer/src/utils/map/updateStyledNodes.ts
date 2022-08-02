@@ -13,6 +13,15 @@ interface ObjectDetails {
   newTreeNodeId: number | undefined;
 }
 
+const removeAllVisibleStyledNodes = (model: Cognite3DModel) => {
+  const styledNodeCollection = model.styledNodeCollections;
+  styledNodeCollection.forEach((styledNode) => {
+    if (styledNode.appearance.visible) {
+      model.unassignStyledNodeCollection(styledNode.nodeCollection);
+    }
+  });
+};
+
 export const updateStyledNodes = async (
   viewer: Cognite3DViewer | undefined,
   event: { offsetX: any; offsetY: any },
@@ -40,8 +49,8 @@ export const updateStyledNodes = async (
         ? styledIndexSet.rootNode.range.from
         : undefined;
 
-      // reset
-      model.removeAllStyledNodeCollections();
+      // reset;
+      removeAllVisibleStyledNodes(model);
       if (styledNodeTreeIndex === intersection.treeIndex) {
         updateStyles = false;
       }
