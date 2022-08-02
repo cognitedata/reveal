@@ -1,22 +1,9 @@
-import { useFlag } from '@cognite/react-feature-flags';
-import { TOptions, StringMap } from 'i18next';
 import { useCallback } from 'react';
+
+import { TOptions, StringMap } from 'i18next';
 import { useTranslation } from 'react-i18next';
 
-import { ExtendedTranslationKeys, getLanguage } from '..';
-
-export const useLanguage = () => {
-  const { isClientReady, isEnabled } = useFlag('FUSION_TRANSLATIONS', {
-    forceRerender: true,
-  });
-
-  let data: string;
-  if (isClientReady) {
-    data = isEnabled ? getLanguage() : 'en';
-  }
-
-  return { isClientReady, data };
-};
+import { ExtendedTranslationKeys } from '..';
 
 export const useTypedTranslation = <K extends string>() => {
   const { t: oldT, ...rest } = useTranslation();

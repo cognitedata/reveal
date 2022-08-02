@@ -22,7 +22,6 @@
   },
   "dependencies": {
     "@cognite/cdf-utilities": "^1.4.6",
-    "@cognite/react-feature-flags": "^1.0.0",
     "cross-spawn": "^7.0.3",
     "dotenv": "^16.0.0",
     "i18next": "^21.6.13",
