@@ -1,0 +1,353 @@
+load("@bazel_skylib//rules:write_file.bzl", "write_file")
+load("@build_bazel_rules_nodejs//:index.bzl", "copy_to_bin")
+load("@npm//@storybook/react:index.bzl", "build_storybook", "start_storybook")
+load("@npm//vite:index.bzl", "vite")
+load("//rules/vite:vite_build.bzl", "vite_build")
+load("//rules/test:jest.bzl", "jest_test")
+load("@npm//jest:index.bzl", "jest")
+load("//rules/lint:index.bzl", "eslint_config", "eslint_test", "prettier_test")
+load("//rules/package_json_helpers:generate.bzl", "generate_package_json_helpers")
+load("//rules/publish:publish_fas.bzl", "publish_fas")
+load("//rules/publish:publish_storybook.bzl", "publish_storybook")
+load("//rules/storybook:move_assets.bzl", "move_assets")
+
+# Filename conventions described at
+# https://create-react-app.dev/docs/running-tests#filename-conventions
+_TESTS = [
+    "src/**/*.test.js*",
+    "src/**/*.test.ts*",
+    "src/**/*.spec.js*",
+    "src/**/*.spec.ts*",
+    "src/**/__tests__/**/*.js*",
+    "src/**/__tests__/**/*.ts*",
+    "src/__mocks__/*",
+    "src/**/__mocks__/*",
+    "src/utils/test/*",
+]
+
+_STORYBOOK = [
+    ".storybook/*",
+    "src/**/*.stories.ts*",
+]
+
+_SOURCES = [
+    "src/**/*.ts*",
+]
+
+TESTS = glob(_TESTS + _STORYBOOK)
+
+STORYBOOK = glob(_STORYBOOK)
+
+SOURCES = glob(
+    _SOURCES,
+    exclude = _TESTS + _STORYBOOK,
+)
+
+PUBLIC = glob([
+    "public/*",
+])
+
+# Generates the below helpers.
+#
+# Usage:
+#   bazel run :generate_package_json_helpers
+generate_package_json_helpers(
+    name = "generate_package_json_helpers",
+    out_dir = "build",
+    package_json = "//:package.json",
+    src_dir = "src",
+    workspace = "@npm",
+)
+
+### start of auto-generated helpers ###
+
+# Dependencies from package.json
+DEPENDENCIES = [
+    "@npm//@cognite/cogs.js",
+    "@npm//@cognite/comment-service-types",
+    "@npm//@cognite/sdk",
+    "@npm//@sentry/browser",
+    "@npm//react",
+    "@npm//react-dom",
+    "@npm//react-i18next",
+    "@npm//react-query",
+    "@npm//react-router-dom",
+    "@npm//styled-components",
+    "//packages/react-container",
+    "//packages/metrics",
+    "//packages/sidecar",
+    "//packages/z-index",
+    "//packages/react-i18n",
+    "//packages/react-version",
+    "//packages/intercom-helper",
+    "//packages/react-comments",
+]
+
+# Type dependencies from package.json
+TYPE_DEPENDENCIES = [
+    "@npm//@types/react",
+    "@npm//@types/react-dom",
+    "@npm//@types/react-i18next",
+    "@npm//@types/react-router-dom",
+    "@npm//@types/sinon",
+    "@npm//@types/styled-components",
+]
+
+# Dev dependencies from package.json
+DEV_DEPENDENCIES = [
+    "@npm//@storybook/addons",
+    "@npm//@testing-library/jest-dom",
+    "@npm//@testing-library/react",
+    "@npm//eslint-config-react-app",
+    "@npm//express",
+    "@npm//sinon",
+    "@npm//jest-preview",
+]
+
+# Mappings for absolute imports from baseUrl @unused
+mappings_dict = {
+    "App": "build/App",
+    "global-styles": "build/global-styles",
+    "index": "build/index",
+    "pages": "build/pages",
+    "queries": "build/queries",
+    "react-app-env.d": "build/react-app-env.d",
+    "serviceWorker": "build/serviceWorker",
+    "setupTests": "build/setupTests",
+    "styles": "build/styles",
+    "typings": "build/typings",
+    "utils": "build/utils",
+}
+
+### end of auto-generated helpers ###
+
+eslint_config(
+    name = "eslint_config",
+    src = ":.eslintrc.js",
+    deps = [
+        ".eslintrc.production.js",
+        "//:eslint_config",
+    ],
+)
+
+eslint_test(
+    name = "eslint_test",
+    data = SOURCES + TESTS + [
+        ":tsconfig.json",
+        "//:tsconfig.json",
+    ],
+    eslint_config = ":eslint_config",
+)
+
+prettier_test(
+    name = "prettier_test",
+    data = SOURCES + TESTS,
+    prettier_config = "//:prettier_config",
+)
+
+# We don't want to teach react-scripts to include from multiple directories
+# So we copy everything it wants to read to the output "bin" directory
+copy_to_bin(
+    name = "copy_static_files",
+    srcs = SOURCES + PUBLIC + [
+        ":package.json",
+        ":tsconfig.json",
+        ":index.html",
+        ":.env.production",
+        ":.env.development",
+    ],
+)
+
+copy_to_bin(
+    name = "vite_config",
+    srcs = [":vite.config.ts"],
+)
+
+# react-scripts can only work if the working directory is the root of the application.
+# So we'll need to chdir before it runs.
+write_file(
+    name = "write_chdir_script",
+    out = "chdir.js",
+    content = ["process.chdir(__dirname)"],
+)
+
+# For ibazel run to properly pick the changes we need to run from the Workspace directory
+write_file(
+    name = "write_chdir_worspace_script",
+    out = "chdir-workspace.js",
+    content = ["process.chdir(require('path').join(process.env.BUILD_WORKSPACE_DIRECTORY, '" + package_name() + "'));"],
+)
+
+_RUNTIME_DEPS = [
+    "chdir.js",
+    "copy_static_files",
+    "//:tsconfig",
+]
+
+### vite build ###
+
+vite_build(
+    name = "build",
+    args = [
+        "--node_options=--require=./$(execpath chdir.js)",
+        "build",
+    ],
+    data = _RUNTIME_DEPS + DEPENDENCIES + TYPE_DEPENDENCIES + [
+        ":vite_config",
+        "@npm//@vitejs/plugin-react",
+        "@npm//vite-tsconfig-paths",
+        "@npm//vite-plugin-svgr",
+        "@npm//vite-plugin-babel-macros",
+        "@npm//rollup-plugin-node-builtins",
+    ],
+    env = {
+        "INLINE_RUNTIME_CHUNK": "false",
+    },
+    output_dir = True,
+)
+
+### vite start ###
+
+vite(
+    name = "start",
+    args = [
+        "--node_options=--require=./$(rootpath chdir-workspace.js)",
+        "--https",
+    ],
+    data = _RUNTIME_DEPS + [
+        "chdir-workspace.js",
+    ],
+    env = {
+        "NODE_OPTIONS": "--max_old_space_size=4096",
+    },
+)
+
+### vite test CI ###
+
+copy_to_bin(
+    name = "copy_test_files",
+    srcs = TESTS,
+)
+
+jest_test(
+    name = "jest_test",
+    srcs = SOURCES + TESTS + [
+        "//apps:jest.config.js",
+        "//apps:jest.react.config.js",
+        "//apps:babelTransform.js",
+        ":tsconfig.json",
+        "//:tsconfig.json",
+    ],
+    jest_args = [],
+    jest_config = "jest.config.js",
+    service_name = "infield2",
+    deps = DEPENDENCIES + DEV_DEPENDENCIES + TYPE_DEPENDENCIES + ["@npm//babel-preset-react-app"],
+)
+
+### vite test Dev ###
+jest(
+    name = "jest",
+    args = [
+        "--node_options=--require=./$(rootpath chdir-workspace.js)",
+        "--config",
+        "jest.config.js",
+        "--runInBand",
+    ],
+    data = _RUNTIME_DEPS + [
+        "chdir-workspace.js",
+    ],
+    env = {
+        "DISABLE_ESLINT_PLUGIN": "true",
+    },
+    tags = [
+        # This tag instructs ibazel to pipe into stdin a event describing actions.
+        # ibazel send EOF to stdin by default and `react-scripts start` will stop when getting EOF in stdin.
+        # So use this to prevent EOF.
+        "ibazel_notify_changes",
+    ],
+)
+
+### Storybook ###
+
+copy_to_bin(
+    name = "copy_storybook_files",
+    srcs = STORYBOOK,
+)
+
+build_storybook(
+    # Note: If you want to change the name make sure you pass that value with -o into args
+    # https://storybook.js.org/docs/react/api/cli-options
+    name = "storybook-static-tmp",
+    args = [
+        # Suppress verbose build output
+        "--quiet",
+        "-o",
+        "storybook-static-tmp",
+    ],
+    chdir = "$(RULEDIR)",
+    data = _RUNTIME_DEPS + DEPENDENCIES + DEV_DEPENDENCIES + TYPE_DEPENDENCIES + [
+        "copy_storybook_files",
+        "@npm//@storybook/addon-essentials",
+        "@npm//@storybook/addon-links",
+        "@npm//@storybook/react",
+        "@npm//@storybook/builder-vite",
+        "@npm//vite-plugin-babel-macros",
+        "@npm//vite-tsconfig-paths",
+    ],
+    output_dir = True,
+)
+
+move_assets(
+    name = "storybook-static",
+    out_dir = "storybook-static",
+    src_dir = ":storybook-static-tmp",
+    tmp_dir = "tmp",
+)
+
+start_storybook(
+    name = "start-storybook",
+    args = [
+        "--node_options=--require=./$(rootpath chdir-workspace.js)",
+        "-c",
+        ".storybook-dev",
+        "-p",
+        "6006",
+    ],
+    data = [
+        "chdir-workspace.js",
+        # Bazel needs to give access @tippyjs in cogs.js
+        "@npm//@cognite/cogs.js",
+    ],
+    tags = [
+        # This tag instructs ibazel to pipe into stdin a event describing actions.
+        # ibazel send EOF to stdin by default and target will stop when getting EOF in stdin.
+        # So use this to prevent EOF.
+        "ibazel_notify_changes",
+    ],
+)
+
+publish_storybook(
+    name = "publish_storybook",
+    build = ":storybook-static-final",
+    # Storybook sub domain to be used
+    sub_domain = "infield2",
+)
+
+### FAS ###
+
+publish_fas(
+    name = "publish_fas",
+    build = ":build",
+    package_json = ":package.json",
+    # Subdomain name used for the pull requests preview.
+    preview_subdomain = "infield2",
+    # FAS production app id
+    production_app_id = "infield2",
+    # FAS app identifier (repo) shared across both production and staging apps
+    repo_id = "infield2",
+    # Sentry project name
+    sentry_project_name = "infield2",
+    # FAS staging app id
+    staging_app_id = "infield2-staging",
+    versioning_strategy = "single-branch",
+)

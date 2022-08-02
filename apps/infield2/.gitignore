@@ -1,0 +1,28 @@
+# dependencies
+node_modules
+yarn-error.log
+package-lock.json
+
+# build
+build
+
+# testing
+coverage
+
+#misc
+.npmrc
+.idea
+.env
+.DS_Store
+
+# NPM
+npm-public-credentials.txt
+
+# cypress
+cypress/screenshots
+cypress/videos
+*.jwk-key.json
+res.xml
+
+#storybook
+storybook-static/
