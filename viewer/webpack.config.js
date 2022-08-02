@@ -21,29 +21,28 @@ if (parserWorkerVersion.split('.').some(i => isNaN(parseInt(i, 10)))) {
   );
 }
 
-module.exports = env => {
+const defaultExportFunction = (env, entries, additionalAllow = undefined) => {
   const development = getEnvArg(env, 'development', false);
   const publicPathViewer =
     publicPath || getWorkerCdnUrl({ name: workerPackageJSON.name, version: workerPackageJSON.version });
 
+  const entryFileNames = entries.map(name => './' + name + '.ts');
+  const entryObject = {};
+  for (let i = 0; i < entryFileNames.length; i++) {
+    entryObject[entries[i]] = entryFileNames[i];
+  }
+
   logger.info('Viewer build config:');
   logger.info({ development, publicPathViewer });
+  const allowlist = [/^@reveal/];
+  if (additionalAllow) {
+    allowlist.push(additionalAllow);
+  }
 
   return {
     mode: development ? 'development' : 'production',
     // Internals is not part of prod builds
-    entry: development
-      ? {
-          index: './index.ts',
-          tools: './tools.ts',
-          'extensions/datasource': './extensions/datasource.ts',
-          internals: './internals.ts'
-        }
-      : {
-          index: './index.ts',
-          tools: './tools.ts',
-          'extensions/datasource': './extensions/datasource.ts'
-        },
+    entry: entryObject,
     target: 'web',
     resolve: {
       fallback: {
@@ -99,7 +98,8 @@ module.exports = env => {
     },
     externals: [
       nodeExternals({
-        allowlist: [/^@reveal/]
+        allowlist: allowlist,
+        importType: 'umd'
       })
     ],
     output: {
@@ -145,3 +145,18 @@ module.exports = env => {
     ]
   };
 };
+
+const peripheralEntries = ['tools', 'extensions/datasource'];
+
+module.exports = [
+  env => {
+    return defaultExportFunction(env, ['index'], 'three');
+  },
+  env => {
+    const development = getEnvArg(env, 'development', false);
+    if (development) {
+      peripheralEntries.push('internals');
+    }
+    return defaultExportFunction(env, peripheralEntries);
+  }
+];
