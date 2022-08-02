@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import fileDownload from 'js-file-download';
 import ReactMarkdown from 'react-markdown';
 import {
@@ -241,7 +241,88 @@ const StyledLayoutGrid = styled.div`
   gap: 56px;
 `;
 
-const StyledBody = styled(Body).attrs({ level: 1 })``;
+const titleSpacing = css`
+  margin-bottom: 2rem;
+`;
+
+const bodySpacing = css`
+  margin-bottom: 1rem;
+`;
+
+const StyledBody = styled.div`
+  color: var(--cogs-text-color);
+
+  h1 {
+    color: var(--cogs-t1-color);
+    font-size: var(--cogs-t1-font-size);
+    letter-spacing: var(--cogs-t1-letter-spacing);
+    line-height: var(--cogs-t1-line-height);
+    ${titleSpacing};
+  }
+
+  h2 {
+    color: var(--cogs-t2-color);
+    font-size: var(--cogs-t2-font-size);
+    letter-spacing: var(--cogs-t2-letter-spacing);
+    line-height: var(--cogs-t2-line-height);
+    ${titleSpacing};
+  }
+
+  h3 {
+    color: var(--cogs-t3-color);
+    font-size: var(--cogs-t3-font-size);
+    letter-spacing: var(--cogs-t3-letter-spacing);
+    line-height: var(--cogs-t3-line-height);
+    ${titleSpacing};
+  }
+
+  h4 {
+    color: var(--cogs-t4-color);
+    font-size: var(--cogs-t4-font-size);
+    letter-spacing: var(--cogs-t4-letter-spacing);
+    line-height: var(--cogs-t4-line-height);
+    ${titleSpacing};
+  }
+
+  h5 {
+    color: var(--cogs-t5-color);
+    font-size: var(--cogs-t5-font-size);
+    font-weight: 600;
+    letter-spacing: var(--cogs-t5-letter-spacing);
+    line-height: var(--cogs-t5-line-height);
+    ${titleSpacing};
+  }
+
+  h6 {
+    color: var(--cogs-t6-color);
+    font-size: var(--cogs-t6-font-size);
+    font-weight: 600;
+    letter-spacing: var(--cogs-t6-letter-spacing);
+    line-height: var(--cogs-t6-line-height);
+    ${titleSpacing};
+  }
+
+  ul,
+  ol,
+  li {
+    font-size: var(--cogs-b1-font-size);
+    line-height: var(--cogs-b1-line-height);
+    letter-spacing: var(--cogs-b1-letter-spacing);
+    padding-left: 1.25rem;
+    padding-bottom: 0.75rem;
+  }
+
+  p {
+    font-size: var(--cogs-b1-font-size);
+    line-height: var(--cogs-b1-line-height);
+    letter-spacing: var(--cogs-b1-letter-spacing);
+    ${bodySpacing};
+  }
+
+  *:last-child {
+    margin-bottom: 0;
+  }
+`;
 
 const StyledDivider = styled.div`
   width: 100%;
