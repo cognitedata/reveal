@@ -309,7 +309,7 @@ const StyledBody = styled.div`
     line-height: var(--cogs-b1-line-height);
     letter-spacing: var(--cogs-b1-letter-spacing);
     padding-left: 1.25rem;
-    padding-bottom: 0.75rem;
+    margin-bottom: 0.75rem;
   }
 
   p {
