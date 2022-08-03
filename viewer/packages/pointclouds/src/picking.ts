@@ -31,9 +31,9 @@ export interface IntersectPointCloudNodeResult {
    */
   object: THREE.Object3D;
   /**
-   * Id of the clicked object within a pointcloud.
+   * annotationId of the clicked object within a pointcloud.
    */
-  objectId: number;
+  annotationId: number;
 }
 
 const normalized = new THREE.Vector2();
@@ -67,13 +67,15 @@ export function intersectPointClouds(
         throw new Error(`Could not find PointCloudNode for intersected point`);
       }
 
+      const annotationId = pointCloudNode.potreeNode.octree.material.objectAppearanceTexture.convertObjectIdToAnnotationId(x.objectId);
+
       const result: IntersectPointCloudNodeResult = {
         distance: x.position.distanceTo(camera.position),
         point: x.position,
         pointIndex: x.pointIndex,
         pointCloudNode,
         object: x.object,
-        objectId: x.objectId as number
+        annotationId: annotationId
       };
       return result;
     });

@@ -47,9 +47,9 @@ export class PointCloudOctree extends PointCloudTree {
 
     this.position.copy(pcoGeometry.offset);
 
-    const annotationIdToObjectIdMap = annotationInfo.createAnnotationIdToObjectIdMap();
+    const objectsMaps = annotationInfo.createObjectsMaps();
 
-    this.material = new PointCloudMaterial({ annotationIdToObjectIdMap });
+    this.material = new PointCloudMaterial({ objectsMaps });
     this.updateMaterial();
   }
 

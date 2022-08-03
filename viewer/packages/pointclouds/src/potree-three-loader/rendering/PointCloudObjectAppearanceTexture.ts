@@ -8,6 +8,7 @@ import * as THREE from 'three';
 import { StyledPointCloudObjectCollection } from '../../styling/StyledPointCloudObjectCollection';
 import { PointCloudObjectCollection } from '../../styling/PointCloudObjectCollection';
 import { DefaultPointCloudAppearance, CompletePointCloudAppearance } from '../../styling/PointCloudAppearance';
+import { ObjectsMaps } from '../../styling/PointCloudObjectProvider';
 
 export class PointCloudObjectAppearanceTexture {
   private _objectStyleTexture: THREE.DataTexture;
@@ -21,6 +22,7 @@ export class PointCloudObjectAppearanceTexture {
   private readonly _height: number;
 
   private _annotationIdsToObjectId: Map<number, number> | undefined;
+  private _objectIdsToAnnotationId: Map<number, number> | undefined;
 
   constructor(width: number, height: number) {
     this._objectStyleTexture = generateDataTexture(width, height, new THREE.Color(0x01000000)); // Initialize with visibility bit set
@@ -29,8 +31,19 @@ export class PointCloudObjectAppearanceTexture {
     this._height = height;
   }
 
-  setAnnotationIdToObjectIdMap(map: Map<number, number>): void {
-    this._annotationIdsToObjectId = map;
+  setObjectsMaps(objectsMaps: ObjectsMaps): void {
+    this._annotationIdsToObjectId = objectsMaps.annotationToObjectIds;
+    this._objectIdsToAnnotationId = objectsMaps.objectToAnnotationIds;
+  }
+
+  convertObjectIdToAnnotationId(objectId: number): number {
+    if (!this._objectIdsToAnnotationId) {
+      throw new Error('Object ID to annotation ID map not initialized');
+    }
+
+    const annotationId = this._objectIdsToAnnotationId.get(objectId) ?? 0;
+
+    return annotationId;
   }
 
   private appearanceToRgba(appearance: CompletePointCloudAppearance): [number, number, number, number] {

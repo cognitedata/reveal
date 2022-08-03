@@ -48,13 +48,14 @@ import { generateClassificationTexture, generateDataTexture, generateGradientTex
 import { IClassification, IUniform } from './types';
 import { SpectralGradient } from './gradients/SpectralGradient';
 import { PointCloudObjectAppearanceTexture } from './PointCloudObjectAppearanceTexture';
+import { ObjectsMaps } from '../../styling/PointCloudObjectProvider';
 
 export interface IPointCloudMaterialParameters {
   size: number;
   minSize: number;
   maxSize: number;
   treeType: TreeType;
-  annotationIdToObjectIdMap: Map<number, number>;
+  objectsMaps: ObjectsMaps;
 }
 
 export interface IPointCloudMaterialUniforms {
@@ -345,8 +346,8 @@ export class PointCloudMaterial extends RawShaderMaterial {
 
     this.vertexColors = true;
 
-    if (parameters.annotationIdToObjectIdMap) {
-      this._objectAppearanceTexture.setAnnotationIdToObjectIdMap(parameters.annotationIdToObjectIdMap);
+    if (parameters.objectsMaps) {
+      this._objectAppearanceTexture.setObjectsMaps(parameters.objectsMaps);
     }
 
     this.updateShaderSource();
