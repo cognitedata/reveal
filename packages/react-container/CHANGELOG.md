@@ -1,3 +1,7 @@
+## 6.0.5 July 28 2022
+
+- always use sidecar.cdfCluster as the initial one
+
 ## 6.0.4 July 19 2022
 
 - Fix the error message in token factory.

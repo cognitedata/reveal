@@ -1,3 +1,7 @@
+## 2.1.2 July 28 2022
+
+- always use sidecar.cdfCluster as the initial one
+
 ## 2.1.0 Jan 24 2022
 
 - Only show projects the user has groups for in project selector list
