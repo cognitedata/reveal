@@ -49,6 +49,7 @@ export const DataPreviewTable = ({
     data: previewData,
     isError,
     updatePreviewData,
+    remove: removeQueryFromCache,
   } = usePreviewPageData(
     {
       dataModelId: solutionId,
@@ -66,8 +67,10 @@ export const DataPreviewTable = ({
   useEffect(() => {
     if (!isGridInit) {
       setIsGridInit(true);
+      // Removing queryFromCache is necessary to avoid stale data from previous query on a new page
+      removeQueryFromCache();
     }
-  }, [isGridInit]);
+  }, [isGridInit, removeQueryFromCache]);
   const onGridReady = useCallback(
     (grid: GridReadyEvent) => {
       const dataSource = {
