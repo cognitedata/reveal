@@ -8,7 +8,7 @@ export default {
   decorators: [(storyFn: any) => <Container>{storyFn()}</Container>],
 };
 
-export const Example = () => <TimeseriesChart timeseriesId={123} />;
+export const Example = () => <TimeseriesChart timeseriesId={18846745253145} />;
 
 const Container = styled.div`
   padding: 20px;

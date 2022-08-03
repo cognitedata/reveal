@@ -1,5 +1,6 @@
 import { ComponentStory } from '@storybook/react';
-import React from 'react';
+import { TIME_SELECT } from 'containers';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { TimeseriesSearchResults } from './TimeseriesSearchResults';
 
@@ -12,11 +13,23 @@ export default {
   },
 };
 
-export const Example: ComponentStory<typeof TimeseriesSearchResults> = args => (
-  <Container>
-    <TimeseriesSearchResults {...args} />
-  </Container>
-);
+export const Example: ComponentStory<typeof TimeseriesSearchResults> = args => {
+  const [dateRange, setDateRange] = useState<[Date, Date]>(
+    TIME_SELECT['2Y'].getTime()
+  );
+  const onDateRange = (newDate: [Date, Date]) => {
+    setDateRange(newDate);
+  };
+  return (
+    <Container>
+      <TimeseriesSearchResults
+        {...args}
+        dateRange={dateRange}
+        onDateRangeChange={onDateRange}
+      />
+    </Container>
+  );
+};
 
 Example.args = {
   showDatePicker: true,

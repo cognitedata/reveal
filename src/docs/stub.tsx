@@ -5,7 +5,7 @@ import { datasets } from 'stubs/datasets';
 import { events } from 'stubs/events';
 import { files } from 'stubs/files';
 import styled from 'styled-components';
-import { datapoints } from 'stubs/timeseriesData';
+import { datapoints } from 'stubs/timeseriesDatapoints';
 import { AssetListScope, IdEither } from '@cognite/sdk';
 import {
   ResourcePreviewObserver,
@@ -116,7 +116,13 @@ export const sdkMock = {
     getDownloadUrls: async () => [{ downloadUrl: UNSPLASH_URL }],
   },
   datapoints: {
-    retrieve: async () => datapoints.items,
+    retrieve: async (asc: any) => {
+      const result = timeseries.find(asset => asset.id === asc.items[0].id);
+
+      return datapoints.filter(
+        datapoint => datapoint.externalId === result?.externalId
+      );
+    },
   },
 };
 
