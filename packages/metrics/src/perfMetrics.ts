@@ -101,6 +101,33 @@ const perfMetricsInstance = (() => {
     enabled = false;
   }
 
+  function log(arg: any): void {
+    // eslint-disable-next-line
+    console && console.log(arg);
+  }
+
+  function logAndReturnPromise(
+    buildPromise: () => Promise<Response>
+  ): Promise<Response> {
+    return new Promise((resolve, reject) => {
+      buildPromise()
+        .catch((exception: any) => {
+          log(exception);
+        })
+        .then(
+          (response: void | Response) => {
+            if (typeof response !== 'undefined') {
+              resolve(response);
+            } else {
+              /** simply return an empty response, we have logged the exception */
+              resolve(new Response());
+            }
+          },
+          (rejectionReason: any) => reject(rejectionReason)
+        );
+    });
+  }
+
   function pushMetricIncrementToServer(
     body: MetricIncrementBody
   ): Promise<Response> {
@@ -109,8 +136,9 @@ const perfMetricsInstance = (() => {
       headers,
       body: JSON.stringify(body),
     };
-
-    return fetch(`${frontendMetricsBaseUrl}/metrics`, requestOptions);
+    return logAndReturnPromise(() =>
+      fetch(`${frontendMetricsBaseUrl}/metrics`, requestOptions)
+    );
   }
 
   function pushSuccessOrFailureToServer(
@@ -121,8 +149,9 @@ const perfMetricsInstance = (() => {
       headers,
       body: JSON.stringify(body),
     };
-
-    return fetch(`${frontendMetricsBaseUrl}/metrics/counter`, requestOptions);
+    return logAndReturnPromise(() =>
+      fetch(`${frontendMetricsBaseUrl}/metrics/counter`, requestOptions)
+    );
   }
 
   function updateRegisteredMonitors(data: PerfMonitor): void {

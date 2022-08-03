@@ -1,7 +1,10 @@
+## 1.3.1 Aug 2 2022
+
+- Added exception logging to network requests made by metrics
+
 ## 1.3.0 May 9 2022
 
 - Add functions for logging success/failure metrics in Prometheus
--
 
 ## 1.2.4 May 4 2022
 
