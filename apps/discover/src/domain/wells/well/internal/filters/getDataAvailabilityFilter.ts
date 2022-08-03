@@ -48,7 +48,24 @@ export const getDataAvailabilityFilter = (values: unknown): WellFilter => {
     return DATA_AVAILABILITY_OPTIONS[option];
   });
 
-  return {
-    dataAvailability: verifiedData,
-  };
+  /**
+   * Since we need the logic of `containsAll`.
+   */
+  const dataAvailabilityFilter = verifiedData.reduce(
+    (filter, key) => ({
+      ...filter,
+      [key]: {
+        exists: true,
+      },
+    }),
+    {} as WellFilter
+  );
+
+  return dataAvailabilityFilter;
+
+  // return {
+  //   dataAvailability: {
+  //     containsAny: verifiedData,
+  //   },
+  // };
 };

@@ -81,7 +81,6 @@ describe('useWellFilters', () => {
       nds: { riskTypes: { containsAny: ['Casing'] }, exists: true },
       operator: { isSet: true, oneOf: ['Atlantis', 'Mad Dog'] },
       field: { isSet: true, oneOf: ['BOEM', 'BP-Penquin'] },
-      dataAvailability: ['nds'],
     });
   });
 });
