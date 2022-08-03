@@ -9,6 +9,7 @@ import { MapWrapper } from '../../../__stories__/elements';
 export default {
   title: 'Map / Buttons / Polygon',
   component: Actions.Polygon,
+  argTypes: { onToggle: { action: 'clicked' } },
 } as Meta;
 
 const BaseComponent: Story<React.ComponentProps<typeof Actions.Polygon>> = (
@@ -20,6 +21,10 @@ const BaseComponent: Story<React.ComponentProps<typeof Actions.Polygon>> = (
 );
 
 export const Simple = BaseComponent.bind({});
+export const InitiallyActive = BaseComponent.bind({});
+InitiallyActive.args = {
+  isActive: true,
+};
 
 export const WithMap = () => {
   const [isActive, setIsActive] = React.useState(false);

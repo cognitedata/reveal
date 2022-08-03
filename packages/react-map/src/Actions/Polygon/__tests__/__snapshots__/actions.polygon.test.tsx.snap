@@ -1,0 +1,174 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Action Polygon Stories Renders InitiallyActive story 1`] = `
+<body>
+  <div>
+    <div
+      class="sc-llJcti byfDnd"
+    >
+      <div
+        class="sc-gsnTZi sc-dkzDqf dKRiIy fNTABv"
+      >
+        <div
+          class="sc-gsnTZi sc-hKMtZM dKRiIy"
+        >
+          <span
+            class="cogs-tooltip__content"
+          >
+            <button
+              aria-label="Freedraw button"
+              class="cogs-btn cogs-btn-ghost-danger cogs-btn--padding"
+              data-testid="freedraw-button"
+              type="button"
+            >
+              Cancel polygon search
+            </button>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+`;
+
+exports[`Action Polygon Stories Renders Simple story 1`] = `
+<body>
+  <div>
+    <div
+      class="sc-llJcti byfDnd"
+    >
+      <div
+        class="sc-gsnTZi sc-dkzDqf dKRiIy fNTABv"
+      >
+        <div
+          class="sc-gsnTZi sc-hKMtZM dKRiIy"
+        >
+          <span
+            class="cogs-tooltip__content"
+          >
+            <button
+              aria-label="Freedraw button"
+              class="cogs-btn cogs-btn-ghost cogs-btn-left--padding"
+              data-testid="freedraw-button"
+              type="button"
+            >
+              <i
+                class="cogs-icon cogs-icon-Polygon icon-margin-right"
+                style="width: 16px;"
+              >
+                <svg
+                  fill="none"
+                  height="16"
+                  role="img"
+                  viewBox="0 0 16 16"
+                  width="16"
+                  xmlns="http://www.w3.org/2000/svg"
+                  xmlns:xlink="http://www.w3.org/1999/xlink"
+                >
+                  <path
+                    clip-rule="evenodd"
+                    d="M3.391 2.556a.835.835 0 1 0 0 1.67.835.835 0 0 0 0-1.67ZM1 3.39a2.39 2.39 0 0 1 4.653-.778h4.695a2.392 2.392 0 1 1 2.594 3.146L11.662 8l1.28 2.241a2.391 2.391 0 1 1-2.595 3.146H5.654a2.392 2.392 0 1 1-3.04-3.04V5.654A2.392 2.392 0 0 1 1 3.39Zm3.169 2.262v4.695a2.397 2.397 0 0 1 1.484 1.483h4.695c.18-.522.535-.963.996-1.251L10.22 8.615a1.239 1.239 0 0 1 0-1.23l1.123-1.965a2.398 2.398 0 0 1-.996-1.251H5.652a2.397 2.397 0 0 1-1.484 1.484Zm8.44-3.097a.835.835 0 1 0 0 1.67.835.835 0 0 0 0-1.67Zm-9.218 9.218a.835.835 0 1 0 0 1.67.835.835 0 0 0 0-1.67Zm9.218 0a.835.835 0 1 0 0 1.67.835.835 0 0 0 0-1.67Z"
+                    fill="currentColor"
+                    fill-rule="evenodd"
+                  />
+                </svg>
+              </i>
+              Polygon tool
+            </button>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+`;
+
+exports[`Action Polygon Stories Renders WithMap story 1`] = `
+<body>
+  <div>
+    <div
+      class="sc-ezWOiH iltyNU"
+    >
+      <div
+        class="sc-bczRLJ glDwtp maplibregl-map mapboxgl-map"
+        data-testid="map-container"
+      >
+        <div
+          class="sc-llJcti byfDnd"
+        >
+          <div
+            class="sc-gsnTZi sc-dkzDqf dKRiIy fNTABv"
+          >
+            <div
+              class="sc-gsnTZi sc-hKMtZM dKRiIy"
+            >
+              <span
+                class="cogs-tooltip__content"
+              >
+                <button
+                  aria-label="Freedraw button"
+                  class="cogs-btn cogs-btn-ghost cogs-btn-left--padding"
+                  data-testid="freedraw-button"
+                  type="button"
+                >
+                  <i
+                    class="cogs-icon cogs-icon-Polygon icon-margin-right"
+                    style="width: 16px;"
+                  >
+                    <svg
+                      fill="none"
+                      height="16"
+                      role="img"
+                      viewBox="0 0 16 16"
+                      width="16"
+                      xmlns="http://www.w3.org/2000/svg"
+                      xmlns:xlink="http://www.w3.org/1999/xlink"
+                    >
+                      <path
+                        clip-rule="evenodd"
+                        d="M3.391 2.556a.835.835 0 1 0 0 1.67.835.835 0 0 0 0-1.67ZM1 3.39a2.39 2.39 0 0 1 4.653-.778h4.695a2.392 2.392 0 1 1 2.594 3.146L11.662 8l1.28 2.241a2.391 2.391 0 1 1-2.595 3.146H5.654a2.392 2.392 0 1 1-3.04-3.04V5.654A2.392 2.392 0 0 1 1 3.39Zm3.169 2.262v4.695a2.397 2.397 0 0 1 1.484 1.483h4.695c.18-.522.535-.963.996-1.251L10.22 8.615a1.239 1.239 0 0 1 0-1.23l1.123-1.965a2.398 2.398 0 0 1-.996-1.251H5.652a2.397 2.397 0 0 1-1.484 1.484Zm8.44-3.097a.835.835 0 1 0 0 1.67.835.835 0 0 0 0-1.67Zm-9.218 9.218a.835.835 0 1 0 0 1.67.835.835 0 0 0 0-1.67Zm9.218 0a.835.835 0 1 0 0 1.67.835.835 0 0 0 0-1.67Z"
+                        fill="currentColor"
+                        fill-rule="evenodd"
+                      />
+                    </svg>
+                  </i>
+                  Polygon tool
+                </button>
+              </span>
+            </div>
+          </div>
+        </div>
+        <div
+          class="maplibregl-canvas-container mapboxgl-canvas-container maplibregl-interactive mapboxgl-interactive"
+        >
+          <canvas
+            aria-label="Map"
+            class="maplibregl-canvas mapboxgl-canvas"
+            height="300"
+            role="region"
+            style="width: 400px; height: 300px;"
+            tabindex="0"
+            width="400"
+          />
+        </div>
+        <div
+          class="maplibregl-control-container mapboxgl-control-container"
+        >
+          <div
+            class="maplibregl-ctrl-top-left mapboxgl-ctrl-top-left"
+          />
+          <div
+            class="maplibregl-ctrl-top-right mapboxgl-ctrl-top-right"
+          />
+          <div
+            class="maplibregl-ctrl-bottom-left mapboxgl-ctrl-bottom-left"
+          />
+          <div
+            class="maplibregl-ctrl-bottom-right mapboxgl-ctrl-bottom-right"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+`;

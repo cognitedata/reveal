@@ -11,22 +11,6 @@ export const getMapLayerData = () => {
             type: 'Polygon',
             coordinates: [
               [
-                [0.9982, 62.50417],
-                [0.99817, 62.99958],
-                [0.52763, 62.99957],
-                [0.7892, 62.73743],
-                [0.9982, 62.50417],
-              ],
-            ],
-          },
-          properties: { Quadrant: '6200' },
-        },
-        {
-          type: 'Feature',
-          geometry: {
-            type: 'Polygon',
-            coordinates: [
-              [
                 [-1.0017, 58.99938],
                 [-1.00175, 59.99942],
                 [-2.00178, 59.99941],

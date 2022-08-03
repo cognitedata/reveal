@@ -58,21 +58,26 @@ const drawPolygon = (
   cy.log(`Draw the polygon (${points.length} points)`);
   cy.findAllByRole('region').first().as('map').should('be.visible');
 
-  points.forEach((point, index) => {
+  const clickOnPoint = (point: Coordinate) => {
     if (typeof point === 'string') {
       cy.get('@map').click(point, { force: true });
     } else {
       cy.get('@map').click(point.x, point.y, { force: true });
     }
+  };
+
+  points.forEach((point, index) => {
+    clickOnPoint(point);
 
     cy.wait(500); // map is slow sometimes
 
+    /**
+     * If the current point is the last point,
+     * and accept mode is double click,
+     * click once again on the last point to simulate a double click.
+     */
     if (index + 1 === points.length && acceptMode === 'doubleClick') {
-      if (typeof point === 'string') {
-        cy.get('@map').dblclick(point);
-      } else {
-        cy.get('@map').dblclick(point.x, point.y);
-      }
+      clickOnPoint(point);
     }
   });
 

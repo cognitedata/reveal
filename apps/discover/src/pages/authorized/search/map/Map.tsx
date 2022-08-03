@@ -11,6 +11,7 @@ import {
   Feature,
   feature as turfFeature,
   featureCollection,
+  Geometry,
   Geometry as TurfGeometry,
 } from '@turf/helpers';
 import { TS_FIX_ME } from 'core';
@@ -22,9 +23,10 @@ import { v1 } from 'uuid';
 import { PerfMetrics } from '@cognite/metrics';
 import {
   Map as MapboxMap,
-  Props,
   MapType,
+  useTouchedEvent,
   UnmountConfirmation,
+  MapEvent,
 } from '@cognite/react-map';
 import { Point } from '@cognite/seismic-sdk-js';
 
@@ -75,7 +77,6 @@ import FloatingActions from './FloatingActions';
 import { useLayers } from './hooks/useLayers';
 import { useMapEvents } from './hooks/useMapEvents';
 import { useMapSources } from './hooks/useMapSources';
-import { useTouchedEvent } from './hooks/useTouchedEvent';
 import { useVisibleLayers } from './hooks/useVisibleLayers';
 import MapPopup from './MapPopup';
 import { PolygonBar } from './polygon/PolygonBar';
@@ -86,6 +87,8 @@ function getGeometryType<T>(item: T) {
 }
 
 const mapIcons = getMapIcons();
+
+type ReactMapProps = React.ComponentProps<typeof MapboxMap>;
 
 export const Map: React.FC = () => {
   const dispatch = useDispatch();
@@ -104,14 +107,9 @@ export const Map: React.FC = () => {
   const { selectableLayers } = useLayers();
   const { data: selectedSurveyData } = useSelectedSurvey();
   const metrics = useGlobalMetrics('map');
-  const [flyTo, setFlyTo] = React.useState<{
-    center: number[];
-    zoom?: number;
-  } | null>(null);
+  const [flyTo, setFlyTo] = React.useState<ReactMapProps['flyTo']>();
   const [mapReference, setMapReference] = React.useState<MapType>();
-  const [focusedFeature, setFocusedFeature] = React.useState<Feature | null>(
-    null
-  );
+  const [focusedFeature, setFocusedFeature] = React.useState<Feature>();
   const { showSearchResults } = useSearchState();
   const [polygon, setPolygon] = React.useState<MapState['geoFilter']>(() => []);
   const searchPendingRef = React.useRef<boolean>(false);
@@ -236,20 +234,26 @@ export const Map: React.FC = () => {
   // Try to get these into the useMapEvents hooks, as of now they require some work if we're to avoid passing
   // tons of props, perhaps go with a context instead of all the React.useStates.
   const events = useDeepMemo(
-    () => [
-      {
-        type: 'draw.create',
-        callback: updateArea,
-      },
-      {
-        type: 'draw.update',
-        callback: updateArea,
-      },
-      ...touchedEvent,
-      ...mapEvents,
-    ],
+    () =>
+      [
+        {
+          type: 'draw.create',
+          callback: updateArea,
+        },
+        {
+          type: 'draw.update',
+          callback: updateArea,
+        },
+        ...touchedEvent,
+        ...mapEvents,
+      ] as MapEvent[],
     [mapEvents]
   );
+
+  const setupEvents: ReactMapProps['setupEvents'] = ({ defaultEvents }) => [
+    ...defaultEvents,
+    ...events,
+  ];
 
   const zoomToAsset = (point: Point, changeZoom?: number | false) => {
     let zoom: number | undefined;
@@ -266,7 +270,7 @@ export const Map: React.FC = () => {
     }
 
     setFlyTo({
-      center: point.coordinates,
+      center: point.coordinates as [number, number],
       zoom,
     });
   };
@@ -397,7 +401,8 @@ export const Map: React.FC = () => {
     dispatch(setSelectedLayers(initialSelectedLayers));
   }, [selectableLayers]);
 
-  const features = React.useMemo(() => {
+  // @ts-expect-error types off?
+  const features: ReactMapProps['features'] = React.useMemo(() => {
     const collection = [
       // any other geometrys we want to show
       ...Object.keys(otherGeo).map((key) =>
@@ -408,7 +413,8 @@ export const Map: React.FC = () => {
     ];
     const safeFeatures = collection.filter((item) =>
       getGeometryType(item)
-    ) as Feature[];
+    ) as Feature<Geometry, any>[];
+
     // remove any null or empty points and convert to an official 'featureCollection'
     return featureCollection(safeFeatures);
   }, [polygon, otherGeo, arbitraryLine]);
@@ -467,19 +473,19 @@ export const Map: React.FC = () => {
           MAPBOX_MAP_ID={MAPBOX_MAP_ID}
           // project config stuff:
           // -todo: should we fix project config types?
-          center={mapConfig?.center as Props['center']}
+          center={mapConfig?.center as ReactMapProps['center']}
           zoom={mapConfig?.zoom}
           drawMode={drawMode}
           // things to overlay:
           layerData={combinedSources}
           layerConfigs={layers}
-          events={events}
+          setupEvents={setupEvents}
           features={features}
           mapIcons={mapIcons}
           // others:
           flyTo={flyTo}
           focusedFeature={focusedFeature}
-          selectedFeature={selectedFeature}
+          // selectedFeature={selectedFeature}
           // callbacks
           setMapReference={setMapReference}
           renderNavigationControls={(mapWidth) => {

@@ -5,7 +5,7 @@ import isArray from 'lodash/isArray';
 import { useDeepEffect } from './useDeep';
 
 export interface FlyToProps {
-  map: mapboxgl.Map;
+  map?: mapboxgl.Map;
   flyTo?: {
     center: MapboxOptions['center'];
     zoom?: MapboxOptions['zoom'];

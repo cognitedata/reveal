@@ -1,4 +1,4 @@
-import { featureCollection, feature } from '@turf/helpers';
+import { featureCollection } from '@turf/helpers';
 
 import { drawModes } from '../FreeDraw';
 
@@ -6,10 +6,7 @@ export const props = {
   drawMode: drawModes.DIRECT_SELECT,
   events: [],
   features: featureCollection([], {}),
-  focusedFeature: feature({
-    type: 'Point',
-    coordinates: [110, 50],
-  }),
+
   layerConfigs: [],
   layerData: [],
   // selectedFeature: null,

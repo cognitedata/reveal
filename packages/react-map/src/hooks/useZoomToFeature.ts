@@ -1,4 +1,3 @@
-import * as React from 'react';
 import mapboxgl from 'maplibre-gl';
 import {
   Feature,
@@ -8,6 +7,10 @@ import {
   Polygon,
   Position,
 } from '@turf/helpers';
+
+import { MapProps } from '../types';
+
+import { useDeepEffect } from './useDeep';
 
 const isSafe = (possibleGoodCoords: number[]) => {
   const safeCoords = possibleGoodCoords;
@@ -35,44 +38,58 @@ const fitToBounds = (map: mapboxgl.Map, coordinates: Position[]) => {
         maxZoom: 8,
       });
     } catch (error) {
-      // eslint-disable-next-line no-console
-      console.log('error', error);
-      // if (typeof error.message === 'string') {
-      //   throw new Error(error.message);
-      // }
+      if (error && 'message' in (error as { message: string })) {
+        throw new Error((error as { message: string }).message);
+      }
     }
   }
 };
 
-export const useZoomToFeature = (map: mapboxgl.Map) => {
-  const zoomToFeature = React.useCallback(
-    (feature: Feature) => {
-      if (!map) return;
-      if (!feature) return;
-      if (!feature.geometry) return;
+const zoomToFeature = ({
+  feature,
+  map,
+}: {
+  map: mapboxgl.Map;
+  feature: Feature;
+}) => {
+  if (!map) return;
+  if (!feature) return;
+  if (!feature.geometry) return;
 
-      if (feature.geometry.type === 'Polygon') {
-        fitToBounds(map, (feature.geometry as Polygon).coordinates[0]);
-      } else if (feature.geometry.type === 'Point') {
-        fitToBounds(map, [
-          (feature.geometry as Point).coordinates,
-          (feature.geometry as Point).coordinates,
-        ]);
-      } else if (feature.geometry.type === 'MultiPolygon') {
-        fitToBounds(map, (feature.geometry as MultiPolygon).coordinates[0][0]);
-      } else if (feature.geometry.type === 'MultiLineString') {
-        fitToBounds(map, (feature.geometry as MultiLineString).coordinates[0]);
-      } else if (
-        feature.geometry.type === 'GeometryCollection' &&
-        'geometries' in feature.geometry
-      ) {
-        zoomToFeature({ ...feature, geometry: feature.geometry.geometries[0] });
-      } else {
-        throw new Error(`Unknown feature type, ${feature.geometry.type}`);
-      }
-    },
-    [!!map]
-  );
+  if (feature.geometry.type === 'Polygon') {
+    fitToBounds(map, (feature.geometry as Polygon).coordinates[0]);
+  } else if (feature.geometry.type === 'Point') {
+    fitToBounds(map, [
+      (feature.geometry as Point).coordinates,
+      (feature.geometry as Point).coordinates,
+    ]);
+  } else if (feature.geometry.type === 'MultiPolygon') {
+    fitToBounds(map, (feature.geometry as MultiPolygon).coordinates[0][0]);
+  } else if (feature.geometry.type === 'MultiLineString') {
+    fitToBounds(map, (feature.geometry as MultiLineString).coordinates[0]);
+  } else if (
+    feature.geometry.type === 'GeometryCollection' &&
+    'geometries' in feature.geometry
+  ) {
+    zoomToFeature({
+      map,
+      feature: { ...feature, geometry: feature.geometry.geometries[0] },
+    });
+  } else {
+    throw new Error(`Unknown feature type, ${feature.geometry.type}`);
+  }
+};
 
-  return zoomToFeature;
+export const useZoomToFeature = ({
+  map,
+  zoomTo,
+}: {
+  map?: mapboxgl.Map;
+  zoomTo: MapProps['focusedFeature'];
+}) => {
+  useDeepEffect(() => {
+    if (map && zoomTo) {
+      zoomToFeature({ map, feature: zoomTo });
+    }
+  }, [zoomTo, !!map]);
 };

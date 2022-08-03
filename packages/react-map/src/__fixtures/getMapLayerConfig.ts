@@ -35,11 +35,11 @@ export const getMapLayerConfigBlocks = (
     layers: [
       {
         id: 'blocksOutline',
-        minzoom: 6,
+        maxzoom: 6,
         source: 'BlocksSource',
         type: 'line',
         layout: {},
-        paint: { 'line-color': '#1f1', 'line-opacity': 0.8 },
+        paint: { 'line-color': '#f55', 'line-opacity': 0.8 },
       },
       {
         id: 'blocksLabel',

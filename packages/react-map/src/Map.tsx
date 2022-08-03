@@ -3,72 +3,36 @@ import MapboxDraw from '@mapbox/mapbox-gl-draw';
 import isUndefined from 'lodash/isUndefined';
 import noop from 'lodash/noop';
 import mapboxgl from 'maplibre-gl';
-import type { MapboxOptions } from 'maplibre-gl';
 
+import { useDrawMode } from './hooks/useDrawMode';
 import { useAddSources } from './layers/useAddSources';
-import {
-  MapDataSource,
-  MapEvent,
-  MapIcon,
-  MapAddedProps,
-  MapFeature,
-  MapFeatureCollection,
-} from './types';
-import { SelectableLayer } from './layers/types';
+import { MapAddedProps, MapProps } from './types';
 import { useDeepEffect } from './hooks/useDeep';
-import { useFlyTo, FlyToProps } from './hooks/useFlyTo';
+import { useFlyTo } from './hooks/useFlyTo';
 import { MapContainer } from './elements';
-import { DrawMode, drawModes, FreeDraw } from './FreeDraw';
+import { FreeDraw } from './FreeDraw';
+import { useResizeAware } from './hooks/useResizeAware';
 import { useZoomToFeature } from './hooks/useZoomToFeature';
 import { Minimap } from './Minimap/Minimap';
 import { getMapStyles } from './style';
 import { useAddLayers } from './layers/useAddLayers';
+import { useLayerEvents } from './events/useLayerEvents';
 
 import 'maplibre-gl/dist/maplibre-gl.css';
 import '@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css';
 import '@cognite/cogs.js/dist/cogs.css';
 
-export interface Props {
-  center?: MapboxOptions['center'];
-  disableMinimap?: boolean;
-  drawMode: DrawMode;
-  events: MapEvent[];
-  features: MapFeatureCollection;
-  flyTo?: FlyToProps['flyTo'];
-  focusedFeature?: MapFeature;
-  layerConfigs: SelectableLayer[];
-  layerData: MapDataSource[];
-  mapIcons?: MapIcon[];
-  maxBounds?: MapboxOptions['maxBounds'];
-  renderNavigationControls?: (mapWidth: number) => React.ReactElement;
-  selectedFeature?: MapFeature;
-  initialPolygon?: MapFeature;
-  setMapReference?: (map: mapboxgl.Map) => void;
-  zoom?: MapboxOptions['zoom'];
-
-  MAPBOX_TOKEN: string;
-  MAPBOX_MAP_ID: string;
-}
-
-/**
- *
- * What is what?
- *
- * sources: the actual from files or geospatial endpoint
- * layers: selections/filters of stuff from the sources to display on the map
- * features: polygons/lines drawn by user to display on the map
- *
- */
-export const Map: React.FC<React.PropsWithChildren<Props>> = ({
+export const Map: React.FC<React.PropsWithChildren<MapProps>> = ({
   center,
   children,
   disableMinimap,
   drawMode,
-  events,
+  setupEvents,
   features,
   flyTo,
   focusedFeature,
   layerConfigs,
+  hideShowNagivationWidth = 80,
   mapIcons,
   maxBounds,
   renderNavigationControls,
@@ -82,27 +46,31 @@ export const Map: React.FC<React.PropsWithChildren<Props>> = ({
 }) => {
   const mapRef = useRef<any>();
 
-  const [draw, setDraw] = useState<any>(null);
-  const [map, setMap] = useState<any>(null);
-  const [selectedFeatures, _setSelectedFeatures] = useState<any[]>([]);
+  const [draw, setDraw] = useState<MapboxDraw>();
+  const [map, setMap] = useState<maplibregl.Map>();
+  const [selectedFeatures, _setSelectedFeatures] = useState<any[]>([
+    selectedFeature,
+  ]);
   const [, setNavigation] = useState<boolean | undefined>(false);
 
-  const zoomToFeature = useZoomToFeature(map);
+  useZoomToFeature({ map, zoomTo: focusedFeature });
   useFlyTo({ map, flyTo });
   useAddSources({ map, layerData });
   useAddLayers({ map, layerConfigs, layerData });
+  useLayerEvents({ map, setupEvents });
+  useResizeAware({ map, mapRef });
+  useDrawMode({
+    map,
+    draw,
+    drawMode,
+    selectedFeatures,
+  });
 
   useDeepEffect(() => {
     if (features && features.type && draw) {
       draw.set(features);
     }
   }, [features, draw]);
-
-  useDeepEffect(() => {
-    if (map && focusedFeature) {
-      zoomToFeature(focusedFeature);
-    }
-  }, [focusedFeature, zoomToFeature, !!map]);
 
   React.useEffect(() => {
     if (!mapRef.current) return noop;
@@ -176,16 +144,18 @@ export const Map: React.FC<React.PropsWithChildren<Props>> = ({
           /*
            *
            * This used for memorize and track the updated previousState.
-           * since the state is being changing very fast with the resize event and the useState also asynchronous,
-           * unable to pick the the updated state. so that's why useState has been used in a little bit different way here.
+           * since the state is being changing very fast with the resize event
+           * and the normal useState is also asynchronous,
+           * thus unable to pick the the updated state.
+           * so that's why useState has been used in the callback mode
            *
            */
           setNavigation((previousState) => {
-            if (mapWidth > 80) {
+            if (mapWidth > hideShowNagivationWidth) {
               mapInstance.addControl(navigationButtons, 'bottom-right');
               return true;
             }
-            if (previousState && mapWidth < 80) {
+            if (previousState && mapWidth < hideShowNagivationWidth) {
               mapInstance.removeControl(navigationButtons);
               return !previousState;
             }
@@ -209,58 +179,6 @@ export const Map: React.FC<React.PropsWithChildren<Props>> = ({
 
     return noop;
   }, [map, mapRef]);
-
-  useDeepEffect(() => {
-    if (map === null || draw === null) return noop;
-    if (selectedFeature && drawMode === drawModes.SIMPLE_SELECT) return noop;
-    if (drawMode === drawModes.DIRECT_SELECT) {
-      if (selectedFeature) {
-        draw.changeMode(drawModes.DIRECT_SELECT, {
-          featureId: selectedFeature.id,
-        });
-      } else {
-        draw.changeMode(drawModes.SIMPLE_SELECT);
-      }
-      return noop;
-    }
-    const currentDrawmode = draw.getMode();
-    if (currentDrawmode !== drawMode || drawMode !== drawModes.SIMPLE_SELECT)
-      draw.changeMode(drawMode);
-
-    return noop;
-  }, [drawMode, !!draw, selectedFeature]);
-
-  useDeepEffect(() => {
-    if (!map) return noop;
-    events.forEach((event: MapEvent) => {
-      if (event.layers) {
-        event.layers.forEach((layer) => {
-          map.on(event.type, layer, event.callback);
-        });
-      } else {
-        map.on(event.type, event.callback);
-      }
-    });
-
-    return () => {
-      events.forEach((event: MapEvent) => {
-        if (event.layers) {
-          event.layers.forEach((layer) => {
-            map.off(event.type, layer, event.callback);
-          });
-        } else {
-          map.off(event.type, event.callback);
-        }
-      });
-    };
-  }, [!!map, events]);
-
-  useDeepEffect(() => {
-    // This is needed to resize the map when the parent container changes size (e.g expanded mode)
-    if (map) {
-      map.resize();
-    }
-  }, [mapRef?.current?.offsetWidth]);
 
   const propsToGiveToChildren: MapAddedProps = {
     draw,

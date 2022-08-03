@@ -1,20 +1,22 @@
 import mapboxgl from 'maplibre-gl';
 
 import { useDeepEffect } from '../hooks/useDeep';
-import { Props as MapProps } from '../Map';
+import { MapProps } from '../types';
 
 interface Props {
-  map: mapboxgl.Map;
+  map?: mapboxgl.Map;
   layerData: MapProps['layerData'];
 }
 export const useAddSources = ({ map, layerData }: Props) => {
   useDeepEffect(() => {
-    if (map) {
-      layerData.forEach((source) => {
-        // console.log('Adding source:', source);
-        addSource(map, source.id, source.data, source.clusterProps);
-      });
+    if (!map) {
+      return;
     }
+
+    layerData.forEach((source) => {
+      // console.log('Adding source:', source);
+      addSource(map, source.id, source.data, source.clusterProps);
+    });
   }, [!!map, layerData]);
 };
 

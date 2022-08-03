@@ -4,9 +4,11 @@ import type {
   Geometries,
   Point,
 } from '@turf/helpers';
-import type { MapboxOptions, Map } from 'maplibre-gl';
+import type { MapboxOptions, Map, MapLayerEventType } from 'maplibre-gl';
 import type { Geometry } from 'geojson';
 
+import type { FlyToProps } from './hooks/useFlyTo';
+import type { SelectableLayer } from './layers';
 import type { DrawMode } from './FreeDraw';
 
 export type MapType = Map;
@@ -15,10 +17,9 @@ export type MapType = Map;
 export type MapPoint = Point;
 export type MapFeature = Feature;
 export type MapGeometries = Geometries;
-export type MapFeatureCollection = FeatureCollection;
-
+export type MapFeatureCollection = FeatureCollection<Geometry, any>;
 export interface MapEvent {
-  type: string;
+  type: keyof MapLayerEventType;
   layers?: string[];
   callback: any;
 }
@@ -27,11 +28,6 @@ export interface MapIcon {
   name: string;
   icon: HTMLImageElement;
 }
-
-// export interface Asset {
-//   name: string;
-//   geometry: Point;
-// }
 
 export interface MapDataSource {
   id: string;
@@ -44,8 +40,8 @@ export interface MapDataSource {
 }
 
 export interface MapAddedProps {
-  draw: DrawMode;
-  setDraw: (mode: DrawMode) => void;
+  draw?: MapboxDraw;
+  setDraw: (mode: MapboxDraw) => void;
 
   selectedFeatures?: any[];
   polygon?: MapFeature;
@@ -72,28 +68,6 @@ export interface MapState {
   filterApplied: boolean;
 }
 
-// other types
-
-// DEPRECATED use from mapbox
-// export interface MapFeature {
-//   type?: string;
-//   features: GeoJson[];
-// }
-
-// DEPRECATED use from sdk
-// export interface APIGeo {
-//   shape: Geometry;
-//   relation: string;
-// }
-
-// DEPRECATED use from sdk
-// export interface GeoJson {
-//   id?: string;
-//   type?: string;
-//   properties?: any;
-//   geometry: Geometry;
-// }
-
 export interface MapConfig {
   zoom?: MapboxOptions['zoom'];
   center: MapboxOptions['center'];
@@ -103,4 +77,35 @@ export interface MapConfig {
     center: MapboxOptions['center']; // deprecated
     maxBounds?: MapboxOptions['maxBounds']; // deprecated
   };
+}
+
+// Map Component props
+export interface MapProps {
+  center?: MapboxOptions['center'];
+  disableMinimap?: boolean;
+  // the nagivation buttons that control zoom/rotation of the map
+  // value is in PX
+  hideShowNagivationWidth?: number;
+  drawMode: DrawMode;
+  setupEvents?: (props: { defaultEvents: MapEvent[] }) => MapEvent[];
+  // polygons/lines drawn by user to display on the map
+  features: MapFeatureCollection;
+  // fly to x/y coords
+  flyTo?: FlyToProps['flyTo'];
+  // move the map to a feature
+  focusedFeature?: MapFeature;
+  // selections/filters of stuff from the sources to display on the map (aka: layers)
+  selectedFeature?: MapFeature;
+  layerConfigs: SelectableLayer[];
+  // the actual from files or geospatial endpoint (aka: sources)
+  layerData: MapDataSource[];
+  mapIcons?: MapIcon[];
+  maxBounds?: MapboxOptions['maxBounds'];
+  renderNavigationControls?: (mapWidth: number) => React.ReactElement;
+  initialPolygon?: MapFeature;
+  setMapReference?: (map: maplibregl.Map) => void;
+  zoom?: MapboxOptions['zoom'];
+
+  MAPBOX_TOKEN: string;
+  MAPBOX_MAP_ID: string;
 }

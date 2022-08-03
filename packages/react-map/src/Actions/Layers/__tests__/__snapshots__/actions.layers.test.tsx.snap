@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Renders Simple story 1`] = `
+exports[`Action Layout Stories Renders Simple story 1`] = `
 <body>
   <div>
     <div
@@ -52,7 +52,7 @@ exports[`Renders Simple story 1`] = `
 </body>
 `;
 
-exports[`Renders WithMap story 1`] = `
+exports[`Action Layout Stories Renders WithMap story 1`] = `
 <body>
   <div>
     <div
@@ -142,7 +142,7 @@ exports[`Renders WithMap story 1`] = `
 </body>
 `;
 
-exports[`Renders WithMapGrouped story 1`] = `
+exports[`Action Layout Stories Renders WithMapGrouped story 1`] = `
 <body>
   <div>
     <div

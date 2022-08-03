@@ -10,7 +10,7 @@ export default {
   component: Map,
 } as Meta;
 
-export const basic: Story = () => {
+export const Simple: Story = () => {
   return (
     <MapWrapper>
       <Map {...props} />

@@ -2,20 +2,20 @@ import { useState } from 'react';
 import { Button } from '@cognite/cogs.js';
 import { Meta } from '@storybook/react';
 
-import { Map, Props } from '../Map';
-
-import { MapWrapper } from './elements';
-import { props } from './defaultProps';
+import { Map } from '../../Map';
+import { MapProps } from '../../types';
+import { MapWrapper } from '../../__stories__/elements';
+import { props } from '../../__stories__/defaultProps';
 
 export default {
-  title: 'Map / Map',
+  title: 'Map / Focus',
   component: Map,
 } as Meta;
 
 export const WithFlyTo = () => {
-  const [position, setPosition] = useState<Props['flyTo']>({
+  const [position, setPosition] = useState<MapProps['flyTo']>({
     zoom: 1,
-    center: [0, 0],
+    center: [12, 58],
   });
 
   const handleFlyTo = () => {
@@ -28,11 +28,10 @@ export const WithFlyTo = () => {
 
   return (
     <>
-      <Button onClick={handleFlyTo} aria-label="Fly to NY">
+      <Button type="ghost" onClick={handleFlyTo} aria-label="Fly to NY">
         Fly to NY
       </Button>
-      -
-      <Button onClick={handleFlyToKtm} aria-label="Fly to KTM">
+      <Button type="ghost" onClick={handleFlyToKtm} aria-label="Fly to KTM">
         Fly to KTM
       </Button>
       <MapWrapper>

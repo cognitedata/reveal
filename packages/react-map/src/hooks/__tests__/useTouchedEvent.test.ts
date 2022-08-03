@@ -1,6 +1,6 @@
 import { act, renderHook } from '@testing-library/react-hooks';
 
-import { useTouchedEvent } from '../useTouchedEvent';
+import { useTouchedEvent } from '../../events/useTouchedEvent';
 
 describe('useTouchedEvent', () => {
   it('should return touched status after the default debounce time', async () => {

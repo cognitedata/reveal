@@ -72,8 +72,8 @@ const getHoverPopupCoords = (e: MapLayerMouseEvent): [number, number] => {
   return [coordinates[0], coordinates[1]];
 };
 
-const getHoverPopupOffset = (e: MapLayerMouseEvent): [number, number] => {
-  const properties = e.features && e.features[0].properties;
+const getHoverPopupOffset = (event: MapLayerMouseEvent): [number, number] => {
+  const properties = event.features && event.features[0].properties;
   if (properties) {
     if (!properties.point_count) {
       return [0, 32];
@@ -92,8 +92,8 @@ const getHoverPopupOffset = (e: MapLayerMouseEvent): [number, number] => {
   return [0, 0];
 };
 
-const getHoverPopupContent = (e: MapLayerMouseEvent) => {
-  const properties = e.features && e.features[0].properties;
+const getHoverPopupContent = (event: MapLayerMouseEvent) => {
+  const properties = event.features && event.features[0].properties;
 
   if (properties) {
     if (properties.point_count && properties.point_count > 0) {
@@ -140,8 +140,8 @@ const onMouseMove = (e: MapLayerMouseEvent) => {
     .addTo(e.target);
 };
 
-const onMouseLeave = (e: MapMouseEvent) => {
-  const canvas = e.target.getCanvas();
+const onMouseLeave = (event: MapMouseEvent) => {
+  const canvas = event.target.getCanvas();
   canvas.style.cursor = '';
 
   // hide 'tooltip'

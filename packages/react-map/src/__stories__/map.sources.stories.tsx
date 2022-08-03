@@ -12,12 +12,12 @@ import { getMapLayerDataBlocks } from '../__fixtures/getMapLayerDataBlocks';
 import { props as defaultProps } from './defaultProps';
 import { MapWrapper } from './elements';
 
-const getConfigs = (selected = true) => getMapLayerConfig({ selected });
+const getConfigsOne = (selected = true) => getMapLayerConfig({ selected });
 const getConfigsTwo = (selected = true) =>
   getMapLayerConfigBlocks({ selected });
 
 const getConfigsOff = () => {
-  return getSortedFlatLayers([getConfigs(false), getConfigsTwo(false)]);
+  return getSortedFlatLayers([getConfigsOne(false), getConfigsTwo(false)]);
 };
 
 export default {
@@ -28,15 +28,15 @@ export default {
       name: 'Layer Configs',
       options: ['None', 'SetOne', 'SetTwo'],
       mapping: {
-        SetOne: getConfigs(),
-        SetTwo: getConfigsTwo(),
+        SetOne: getSortedFlatLayers([getConfigsOne()]),
+        SetTwo: getSortedFlatLayers([getConfigsTwo()]),
         None: getConfigsOff(),
       },
       control: { type: 'radio' },
     },
     layerData: {
       name: 'Layer Data',
-      options: ['None', 'One', 'SetTwo'],
+      options: ['None', 'SetOne', 'SetTwo'],
       mapping: {
         SetOne: [getMapLayerData()],
         SetTwo: [getMapLayerDataBlocks()],
