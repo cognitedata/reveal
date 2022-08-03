@@ -36,7 +36,6 @@ import {
   deleteTempKeypointCollection,
   keypointSelectStatusChange,
   onCreateKeypointRegion,
-  onUpdateKeyPoint,
   onUpdateKeypointRegion,
   setLastShape,
   setSelectedTool,
@@ -211,7 +210,7 @@ export const ReactImageAnnotateWrapper = ({
   useEffect(() => {
     dispatch(deleteTempKeypointCollection());
     dispatch(deselectAllSelectionsReviewPage());
-  }, [fileInfo, selectedTool]);
+  }, [fileInfo.id, selectedTool]);
 
   const handleCreateRegion = useCallback(
     async (newRegion: AnnotatorRegion) => {
@@ -242,7 +241,6 @@ export const ReactImageAnnotateWrapper = ({
       if (annotationLabelOrText) {
         let annotationChangeProps;
         if (isAnnotatorPointRegion(region)) {
-          await dispatch(onUpdateKeyPoint(region));
           annotationChangeProps =
             convertAnnotatorPointRegionToAnnotationChangeProperties(region);
         } else {
