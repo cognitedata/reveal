@@ -13,7 +13,6 @@ import {
 } from 'src/modules/Review/store/reviewSlice';
 import { PredefinedVisionAnnotations } from 'src/modules/Review/types';
 import { AppDispatch } from 'src/store';
-import { deselectAllSelectionsReviewPage } from 'src/store/commonActions';
 import { RootState } from 'src/store/rootReducer';
 import { pushMetric } from 'src/utils/pushMetric';
 import styled from 'styled-components';
@@ -143,7 +142,6 @@ export const ImagePreview = ({
 
   const handleModifyAnnotation = useCallback(
     async (annotationChanges: AnnotationChangeById) => {
-      dispatch(deselectAllSelectionsReviewPage());
       await dispatch(UpdateAnnotations([annotationChanges]));
     },
     [dispatch]
