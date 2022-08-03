@@ -6,9 +6,9 @@ import { RawStylableObject, stylableObjectToRaw } from './StylableObject';
 import { PointCloudObjectAnnotation } from '../annotationTypes';
 
 export type ObjectsMaps = {
-  annotationToObjectIds: Map<number, number>,
-  objectToAnnotationIds: Map<number, number>
-}
+  annotationToObjectIds: Map<number, number>;
+  objectToAnnotationIds: Map<number, number>;
+};
 
 export class PointCloudObjectProvider {
   private readonly _annotations: PointCloudObjectAnnotation[];
@@ -22,12 +22,14 @@ export class PointCloudObjectProvider {
   }
 
   createObjectsMaps(): ObjectsMaps {
-    const objectsMaps = { 
+    const objectsMaps = {
       annotationToObjectIds: new Map<number, number>(
-        this._annotations.map(annotation => [annotation.annotationId, annotation.stylableObject.objectId])),
+        this._annotations.map(annotation => [annotation.annotationId, annotation.stylableObject.objectId])
+      ),
       objectToAnnotationIds: new Map<number, number>(
-        this._annotations.map(annotation => [annotation.stylableObject.objectId, annotation.annotationId]))
-      }
+        this._annotations.map(annotation => [annotation.stylableObject.objectId, annotation.annotationId])
+      )
+    };
 
     return objectsMaps;
   }

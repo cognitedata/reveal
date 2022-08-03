@@ -67,7 +67,8 @@ export function intersectPointClouds(
         throw new Error(`Could not find PointCloudNode for intersected point`);
       }
 
-      const annotationId = pointCloudNode.potreeNode.octree.material.objectAppearanceTexture.convertObjectIdToAnnotationId(x.objectId);
+      const annotationId =
+        pointCloudNode.potreeNode.octree.material.objectAppearanceTexture.convertObjectIdToAnnotationId(x.objectId);
 
       const result: IntersectPointCloudNodeResult = {
         distance: x.position.distanceTo(camera.position),
