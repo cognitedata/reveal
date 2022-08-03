@@ -233,7 +233,7 @@ export const Shapes = ({
 
 const ShapePanel = styled.div`
   overflow: auto;
-  height: 500px;
+  height: 350px;
 `;
 
 const ShapeWrapper = styled.div`

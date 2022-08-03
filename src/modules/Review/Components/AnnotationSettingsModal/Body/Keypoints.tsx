@@ -369,7 +369,7 @@ export const Keypoints = ({
 
 const CollapsePanel = styled.div`
   overflow: auto;
-  height: 500px;
+  height: 350px;
   .ant-collapse-header {
     padding: 12px 12px 12px 33px;
   }
