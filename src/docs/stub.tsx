@@ -7,6 +7,7 @@ import { files } from 'stubs/files';
 import styled from 'styled-components';
 import { datapoints } from 'stubs/timeseriesDatapoints';
 import { AssetListScope, IdEither } from '@cognite/sdk';
+import { relationships } from 'stubs/relationships';
 import {
   ResourcePreviewObserver,
   ResourcePreviewProps,
@@ -33,6 +34,7 @@ export const sdkMock = {
       const arrayBuffer = await reponse.arrayBuffer();
       return arrayBuffer;
     }
+
     return { data: { items: [] } };
   },
   post: async (query: string, body: any) => {
@@ -63,9 +65,18 @@ export const sdkMock = {
       if (query.includes('byids')) {
         const allAssets = [...rootAssets, ...assets];
         const idArr = body.data.items.map((el: { id: IdEither }) => el.id);
+        const externalIdArr = body.data.items.map(
+          (el: { externalId: IdEither }) => el.externalId
+        );
+
         return {
           // Filter assets according to the ids.
-          data: { items: allAssets.filter(el => idArr.includes(el.id)) },
+          data: {
+            items: allAssets.filter(
+              el =>
+                idArr.includes(el.id) || externalIdArr.includes(el.externalId)
+            ),
+          },
         };
       }
 
@@ -73,6 +84,30 @@ export const sdkMock = {
     }
     if (query.includes('files')) {
       return { data: { items: files } };
+    }
+    if (query.includes('relationships')) {
+      const { filter } = body.data;
+      const filteredRelationship = relationships.filter(relationship =>
+        filter.sourceExternalIds
+          ? relationship.sourceExternalId === filter.sourceExternalIds[0]
+          : relationship.targetExternalId === filter.targetExternalIds[0]
+      );
+      const labelsWithExternalId = filter?.labels?.containsAny;
+      if (labelsWithExternalId) {
+        const labels = new Set<string>(
+          labelsWithExternalId.map((label: any) => label.externalId)
+        );
+
+        return {
+          data: {
+            items: filteredRelationship.filter(relationship =>
+              relationship.labels?.some(label => labels.has(label.externalId))
+            ),
+          },
+        };
+      }
+
+      return { data: { items: filteredRelationship } };
     }
     if (query.includes('timeseries')) {
       return { data: { items: timeseries } };
@@ -106,11 +141,26 @@ export const sdkMock = {
     list: async () => ({ data: { items: [] } }),
   },
   groups: {
-    list: async () => [
-      {
-        capabilities: [{ datasetsAcl: { actions: ['READ', 'WRITE'] } }],
-      },
-    ],
+    list: async () => {
+      return [
+        {
+          capabilities: [
+            {
+              datasetsAcl: {
+                actions: ['READ', 'WRITE'],
+              },
+            },
+          ],
+        },
+        {
+          capabilities: [
+            {
+              relationshipsAcl: { actions: ['READ', 'WRITE'] },
+            },
+          ],
+        },
+      ];
+    },
   },
   files: {
     getDownloadUrls: async () => [{ downloadUrl: UNSPLASH_URL }],
