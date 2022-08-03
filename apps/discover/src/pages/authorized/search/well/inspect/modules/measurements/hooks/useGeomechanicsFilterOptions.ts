@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useDeepMemo } from 'hooks/useDeep';
 
 import { getUniqGeomechanicsCurves } from '../utils/getUniqGeomechanicsCurves';
 
@@ -9,7 +9,7 @@ import { useMeasurementsData } from './useMeasurementsData';
  */
 export const useGeomechanicsFilterOptions = () => {
   const { data } = useMeasurementsData();
-  return useMemo(() => {
+  return useDeepMemo(() => {
     return { curves: getUniqGeomechanicsCurves(data) };
   }, [data]);
 };

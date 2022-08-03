@@ -1,8 +1,8 @@
 import { DepthMeasurementDataColumnInternal } from 'domain/wells/measurements/internal/types';
 
-import { useMemo } from 'react';
-
 import isEmpty from 'lodash/isEmpty';
+
+import { useDeepMemo } from 'hooks/useDeep';
 
 import { getUniqOtherCurves } from '../utils/getUniqOtherCurves';
 
@@ -14,7 +14,7 @@ import { useMeasurementsData } from './useMeasurementsData';
 export const useOtherFilterOptions = () => {
   const { data } = useMeasurementsData();
 
-  return useMemo(() => {
+  return useDeepMemo(() => {
     if (isEmpty(data)) {
       return {
         types: [] as DepthMeasurementDataColumnInternal[],

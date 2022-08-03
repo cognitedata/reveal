@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useDeepMemo } from 'hooks/useDeep';
 
 import { getUniqPpfgCurves } from '../utils/getUniqPpfgCurves';
 
@@ -9,7 +9,7 @@ import { useMeasurementsData } from './useMeasurementsData';
  */
 export const usePPFGFilterOptions = () => {
   const { data } = useMeasurementsData();
-  return useMemo(() => {
+  return useDeepMemo(() => {
     return { curves: getUniqPpfgCurves(data) };
   }, [data]);
 };
