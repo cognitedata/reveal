@@ -1,3 +1,4 @@
+import { INVALID_POLYGON_SEARCH_MESSAGE } from '../../../src/domain/documents/constants';
 import { EXPAND_MAP_TEXT } from '../../../src/pages/authorized/search/map/constants';
 
 const CANCEL_POLYGON_BUTTON = 'Cancel polygon search';
@@ -34,6 +35,10 @@ const checkPolygonIsClosed = () => {
   cy.log('Check that helper buttons are not visible');
   cy.findByTestId('shortcut-helper').should('not.exist');
   cy.findByRole('button', { name: /freedraw button/i });
+};
+
+const checkPolygonIsInvalid = () => {
+  cy.contains(INVALID_POLYGON_SEARCH_MESSAGE).should('be.visible');
 };
 
 const closePolygonESC = () => {
@@ -202,6 +207,7 @@ const checkClickOnPolygonToEditIsVisible = () => {
 
 Cypress.Commands.add('enterPolygonEditMode', enterPolygonEditMode);
 Cypress.Commands.add('checkPolygonIsClosed', checkPolygonIsClosed);
+Cypress.Commands.add('checkPolygonIsInvalid', checkPolygonIsInvalid);
 Cypress.Commands.add('closePolygonESC', closePolygonESC);
 Cypress.Commands.add(
   'closePolygonWithCancelButton',
@@ -265,6 +271,7 @@ export interface MapCommands {
   expandMap(): void;
   enterPolygonEditMode(): void;
   checkPolygonIsClosed(): void;
+  checkPolygonIsInvalid(): void;
   closePolygonESC(): void;
   closePolygonWithCancelButton(): void;
   closePolygonENTER(): void;

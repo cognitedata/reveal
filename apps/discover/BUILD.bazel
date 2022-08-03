@@ -501,24 +501,25 @@ _CYPRESS_FILES = glob([
 ])
 
 CYPRESS_EXTERNAL_FILES = [
-    "src/constants/app.ts",
-    "src/modules/wellSearch/constantsSidebarFilters.ts",
     "src/components/AddToFavoriteSetMenu/constants.ts",
     "src/components/EmptyState/constants.ts",
-    "src/pages/authorized/search/map/constants.ts",
-    "src/pages/authorized/search/well/inspect/constants.ts",
-    "src/core/constants.ts",
-    "src/utils/isISODateRegex.ts",
-    "src/pages/authorized/search/well/content/constants.ts",
-    "src/constants/units.ts",
-    "src/pages/authorized/search/well/inspect/modules/wellLogs/constants.ts",
-    "src/pages/authorized/favorites/tabs/savedSearches/constants.ts",
     "src/components/SearchUsers/constants.ts",
     "src/components/Charts/common/ResetToDefault/constants.ts",
-    "src/pages/authorized/admin/feedback/constants.ts",
+    "src/constants/app.ts",
+    "src/constants/units.ts",
+    "src/core/constants.ts",
+    "src/domain/documents/constants.ts",
     "src/domain/feedback/service/__fixtures/getDocumentFeedback.ts",
     "src/domain/feedback/service/__fixtures/getGeneralFeedback.ts",
+    "src/modules/wellSearch/constantsSidebarFilters.ts",
+    "src/pages/authorized/admin/feedback/constants.ts",
+    "src/pages/authorized/favorites/tabs/savedSearches/constants.ts",
+    "src/pages/authorized/search/map/constants.ts",
+    "src/pages/authorized/search/well/content/constants.ts",
+    "src/pages/authorized/search/well/inspect/constants.ts",
     "src/pages/authorized/search/well/inspect/modules/ndsEvents/components/Filters/constants.ts",
+    "src/pages/authorized/search/well/inspect/modules/wellLogs/constants.ts",
+    "src/utils/isISODateRegex.ts",
 ]
 
 CYPRESS_FILES = _CYPRESS_FILES + CYPRESS_EXTERNAL_FILES

@@ -17,7 +17,6 @@ import { TimeLogStages } from 'hooks/useTimeLog';
 import { DOCUMENT_SEARCH_PAGE_LIMIT } from 'modules/documentSearch/constants';
 import { useDocumentSearchQueryFull } from 'modules/documentSearch/hooks/useDocumentSearchQueryFull';
 import { SearchQueryFull } from 'modules/documentSearch/types';
-import { handleDocumentSearchError } from 'modules/documentSearch/utils/documentSearch';
 
 import { InifniteQueryResponse } from './types';
 
@@ -43,9 +42,7 @@ export const useDocumentSearchQuery = (
         searchQuery,
         { ...options, cursor: pageParam },
         DOCUMENT_SEARCH_PAGE_LIMIT
-      )
-        .catch(handleDocumentSearchError)
-        .finally(() => timer.stop());
+      ).finally(() => timer.stop());
     },
     {
       getNextPageParam: (lastPage) => {

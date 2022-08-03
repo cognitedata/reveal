@@ -20,6 +20,12 @@ const testPoints = [
   { x: 700, y: 700 },
   { x: 650, y: 300 },
 ];
+const invalidPolygon = [
+  { x: 500, y: 500 },
+  { x: 1000, y: 500 },
+  { x: 1000, y: 750 },
+  { x: 750, y: 300 },
+];
 
 describe('Map', () => {
   before(() => {
@@ -67,8 +73,21 @@ describe('Map', () => {
       cy.checkPolygonFloatingActionVisibility(true);
       cy.deletePolygon();
       cy.checkPolygonFloatingActionVisibility();
-
       cy.closePolygonESC();
+      cy.checkPolygonIsClosed();
+
+      // draw invalid polygon search
+      cy.enterPolygonEditMode();
+      cy.drawPolygon(invalidPolygon, 'enter');
+      cy.checkPolygonFloatingActionVisibility(true);
+      cy.triggerPolygonSearch();
+      cy.checkPolygonIsInvalid();
+      cy.clickClearAllFilterButtonInNoResultDocumentsTable();
+      cy.expandMap();
+      cy.checkPolygonButtonIsVisible();
+      cy.closePolygonESC();
+      cy.checkPolygonIsClosed();
+
       cy.enterPolygonEditMode();
       cy.drawPolygon(polygonWithResults, 'enter');
       cy.checkPolygonFloatingActionVisibility(true);

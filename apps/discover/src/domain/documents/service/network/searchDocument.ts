@@ -2,6 +2,7 @@ import { getSearchQuery } from 'domain/documents/internal/transformers/getSearch
 import { getDocumentSDKClient } from 'domain/documents/service/utils/getDocumentSDKClient';
 
 import isEmpty from 'lodash/isEmpty';
+import isString from 'lodash/isString';
 import { handleServiceError } from 'utils/errors';
 import { mergeUniqueArray } from 'utils/merge';
 
@@ -12,6 +13,11 @@ import { aggregates } from 'modules/documentSearch/aggregates';
 import { SearchQueryFull, DocumentResult } from 'modules/documentSearch/types';
 import { processFacets } from 'modules/documentSearch/utils/processFacets';
 import { toDocuments } from 'modules/documentSearch/utils/toDocuments';
+
+import {
+  INVALID_POLYGON_SEARCH_MESSAGE,
+  SMALLER_POLYGON_SEARCH_MESSAGE,
+} from '../../constants';
 
 export type SearchRequestOptions = Omit<
   DocumentSearchRequest,
@@ -51,6 +57,8 @@ export const searchDocument = (
       };
     })
     .catch((error) => {
+      let possibleKnownError;
+
       const safeErrorResponse = {
         count: 0,
         hits: EMPTY_ARRAY,
@@ -60,6 +68,19 @@ export const searchDocument = (
         }),
       };
 
-      return handleServiceError<DocumentResult>(error, safeErrorResponse);
+      if (isString(error?.errorMessage)) {
+        if (error?.errorMessage?.includes('Invalid coordinates for Polygon')) {
+          possibleKnownError = INVALID_POLYGON_SEARCH_MESSAGE;
+        }
+        if (error?.errorMessage?.includes('exceeds coordinates size limit')) {
+          possibleKnownError = SMALLER_POLYGON_SEARCH_MESSAGE;
+        }
+      }
+
+      return handleServiceError<DocumentResult>(
+        error,
+        safeErrorResponse,
+        possibleKnownError
+      );
     });
 };
