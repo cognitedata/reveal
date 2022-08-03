@@ -17,6 +17,18 @@ function main() {
       'downloads translations from remote (overrides local files)',
       (yargs) => {
         return yargs
+          .option('projectId', {
+            alias: 'i',
+            describe: 'The project id to use for operations',
+            default: '0f0363e6-4ef6-49cf-8f1b-e0d993b4b828',
+            type: 'string',
+          })
+          .option('namespace', {
+            alias: 'n',
+            describe: 'The namespace to target for translations',
+            type: 'string',
+            demandOption: true,
+          })
           .option('productionVersion', {
             describe: 'The production version to pull translations',
             default: 'production',
@@ -43,6 +55,18 @@ function main() {
       'saves missing keys to remote staging version (does not update the existing values in locize)',
       (yargs) => {
         return yargs
+          .option('projectId', {
+            alias: 'i',
+            describe: 'The project id to use for operations',
+            default: '0f0363e6-4ef6-49cf-8f1b-e0d993b4b828',
+            type: 'string',
+          })
+          .option('namespace', {
+            alias: 'n',
+            describe: 'The namespace to target for translations',
+            type: 'string',
+            demandOption: true,
+          })
           .option('stagingVersion', {
             describe: 'The staging version to use for operations',
             default: 'latest',
@@ -70,6 +94,18 @@ function main() {
       'removes deleted keys from remote staging version',
       (yargs) => {
         return yargs
+          .option('projectId', {
+            alias: 'i',
+            describe: 'The project id to use for operations',
+            default: '0f0363e6-4ef6-49cf-8f1b-e0d993b4b828',
+            type: 'string',
+          })
+          .option('namespace', {
+            alias: 'n',
+            describe: 'The namespace to target for translations',
+            type: 'string',
+            demandOption: true,
+          })
           .option('stagingVersion', {
             describe: 'The staging version to use for operations',
             default: 'latest',
@@ -92,18 +128,6 @@ function main() {
         });
       }
     )
-    .option('projectId', {
-      alias: 'i',
-      describe: 'The project id to use for operations',
-      default: '0f0363e6-4ef6-49cf-8f1b-e0d993b4b828',
-      type: 'string',
-    })
-    .option('namespace', {
-      alias: 'n',
-      describe: 'The namespace to target for translations',
-      type: 'string',
-      demandOption: true,
-    })
     .option('verbose', {
       type: 'boolean',
       description: 'Run with verbose logging',
