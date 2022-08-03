@@ -3,7 +3,7 @@
  */
 
 import { THREE } from '@cognite/reveal';
-import * as reveal from '@cognite/reveal/internals';
+import * as reveal from '@cognite/reveal';
 import dat from 'dat.gui';
 
 export type RenderFilter = {

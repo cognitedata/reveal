@@ -46,6 +46,8 @@ import { RevealOptions } from '../types';
 
 import { Spinner } from '../../utilities/Spinner';
 
+import * as myWorker from '../../asd.workerhello';
+
 import { ViewerState, ViewStateHelper } from '../../utilities/ViewStateHelper';
 import { RevealManagerHelper } from '../../storage/RevealManagerHelper';
 
@@ -568,6 +570,11 @@ export class Cognite3DViewer {
    * ```
    */
   async addCadModel(options: AddModelOptions): Promise<Cognite3DModel> {
+    const { thisIsAWorkerTest } = (myWorker as any)() as typeof myWorker;
+    const result = await thisIsAWorkerTest();
+
+    console.log(result);
+
     const nodesApiClient = this._dataSource.getNodesApiClient();
 
     const { modelId, revisionId } = options;

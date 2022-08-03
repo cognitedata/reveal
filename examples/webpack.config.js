@@ -5,6 +5,8 @@ const logger = require('webpack-log')('example');
 require('dotenv').config({ path: './.env' });
 
 logger.info(process.env.REACT_APP_CREDENTIAL_ENVIRONMENTS);
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+
 
 module.exports = {
   entry: './src/index.tsx',
@@ -45,10 +47,12 @@ module.exports = {
     }),
     new webpack.DefinePlugin({
       process: { env: { REACT_APP_CREDENTIAL_ENVIRONMENTS: JSON.stringify(process.env.REACT_APP_CREDENTIAL_ENVIRONMENTS) } }
-    })
+    }),
+    new BundleAnalyzerPlugin()
   ],
   resolve: {
     extensions: ['.tsx', '.ts', '.js', '.css'],
+    symlinks: false
   },
   devtool: 'inline-source-map',
   output: {

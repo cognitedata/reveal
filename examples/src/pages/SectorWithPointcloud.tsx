@@ -20,7 +20,7 @@ import { getParamsFromURL, createSDKFromEnvironment } from '../utils/example-hel
 import { AnimationLoopHandler } from '../utils/AnimationLoopHandler';
 import { createManagerAndLoadModel } from '../utils/createManagerAndLoadModel';
 import { suggestCameraConfig } from '../utils/cameraConfig';
-import { CadNode, CdfModelIdentifier, LocalModelIdentifier, PotreeGroupWrapper, PotreeNodeWrapper, SceneHandler } from '@cognite/reveal/internals';
+import { CadNode, CdfModelIdentifier, LocalModelIdentifier, PotreeGroupWrapper, PotreeNodeWrapper, SceneHandler } from '@cognite/reveal';
 
 CameraControls.install({ THREE });
 
@@ -133,9 +133,11 @@ export function SectorWithPointcloud() {
       if (project && environmentParam) {
         client = await createSDKFromEnvironment('reveal.example.hybrid-cad-pointcloud', project, environmentParam);
       } else {
-        client = new CogniteClient({ appId: 'reveal.example.hybrid-cad-pointcloud',
-                                     project: 'dummy',
-                                     getToken: async () => 'dummy' });
+        client = new CogniteClient({
+          appId: 'reveal.example.hybrid-cad-pointcloud',
+          project: 'dummy',
+          getToken: async () => 'dummy'
+        });
       }
 
       const sceneHandler = new SceneHandler();
@@ -180,7 +182,7 @@ export function SectorWithPointcloud() {
 
       const { position, target, near, far } =
         suggestCameraConfig(model.cadModelMetadata.scene.root,
-                            model.getModelTransformation());
+          model.getModelTransformation());
       const camera = new THREE.PerspectiveCamera(
         75,
         window.innerWidth / window.innerHeight,

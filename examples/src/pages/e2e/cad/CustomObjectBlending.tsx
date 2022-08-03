@@ -14,11 +14,11 @@ import { TransformControls } from 'three/examples/jsm/controls/TransformControls
  */
 function CustomObjectBlending() {
   const modelUrl = 'primitives';
-  
-  return <Cognite3DTestViewer modelUrls={[modelUrl]} initializeCallback={(viewer:Cognite3DViewer) => {
+
+  return <Cognite3DTestViewer modelUrls={[modelUrl]} initializeCallback={(viewer: Cognite3DViewer) => {
     viewer.renderer.setClearColor(new THREE.Color(0.1, 0.2, 0.3), 0.5);
     viewer.domElement.style.backgroundColor = "#777777";
-    viewer.cameraManager.setCameraState({position: new THREE.Vector3(30,10,50), target: new THREE.Vector3()});
+    viewer.cameraManager.setCameraState({ position: new THREE.Vector3(30, 10, 50), target: new THREE.Vector3() });
 
     const customBox = new THREE.Mesh(
       new THREE.BoxGeometry(5, 10, 20),
@@ -29,14 +29,14 @@ function CustomObjectBlending() {
         depthTest: true
       })
     );
-  
+
     customBox.position.set(0, 0, -15);
     viewer.addObject3D(customBox);
 
     const customBox2 = new THREE.Mesh(
       new THREE.BoxGeometry(5, 10, 20),
       new THREE.MeshBasicMaterial({ color: new THREE.Color(1, 0, 0) }));
-  
+
     customBox2.position.set(10, 0, -15);
     viewer.addObject3D(customBox2);
 
@@ -48,7 +48,7 @@ function CustomObjectBlending() {
         opacity: 0.4
       })
     );
-  
+
     customBox3.position.set(20, 0, -15);
     viewer.addObject3D(customBox3);
 
@@ -75,6 +75,6 @@ function CustomObjectBlending() {
       ...DefaultNodeAppearance.Default,
       outlineColor: 6
     });
-  }}/>;
+  }} />;
 }
 registerVisualTest('cad', 'customObjectBlending', 'Custom objects with different blending', <CustomObjectBlending />)

@@ -5,13 +5,13 @@
 import { THREE } from '@cognite/reveal';
 import React from 'react';
 import { TestEnvCad, TestViewer } from '../TestViewer';
-import { defaultRenderOptions } from '@cognite/reveal/internals';
+import { defaultRenderOptions } from '@cognite/reveal';
 import { registerVisualTest } from '../../../visual_tests';
 
 function SsaoTestPage() {
   return (
     <TestViewer
-      modifyTestEnv={({revealManager }: TestEnvCad) => {
+      modifyTestEnv={({ revealManager }: TestEnvCad) => {
 
         (revealManager as any)._renderPipeline.renderOptions = defaultRenderOptions;
 

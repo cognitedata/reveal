@@ -3,7 +3,7 @@
  */
 import React, { useEffect, useRef } from 'react';
 import { THREE } from '@cognite/reveal';
-import * as reveal from '@cognite/reveal/internals';
+import * as reveal from '@cognite/reveal';
 import CameraControls from 'camera-controls';
 import dat from 'dat.gui';
 import { getParamsFromURL, createSDKFromEnvironment } from '../utils/example-helpers';
@@ -34,9 +34,11 @@ export function Clipping() {
       if (project && environmentParam) {
         client = await createSDKFromEnvironment('reveal.example.clipping', project, environmentParam);
       } else {
-        client = new CogniteClient({ appId: 'reveal.example.clipping',
-                                     project: 'dummy',
-                                     getToken: async () => 'dummy' });
+        client = new CogniteClient({
+          appId: 'reveal.example.clipping',
+          project: 'dummy',
+          getToken: async () => 'dummy'
+        });
       }
 
       const sceneHandler = new reveal.SceneHandler();
@@ -51,7 +53,7 @@ export function Clipping() {
       sceneHandler.addCadModel(model, model.cadModelIdentifier);
 
       const { position, target, near, far } = suggestCameraConfig(model.cadModelMetadata.scene.root,
-                                                                  model.getModelTransformation());
+        model.getModelTransformation());
       const camera = new THREE.PerspectiveCamera(
         75,
         window.innerWidth / window.innerHeight,

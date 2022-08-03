@@ -1,6 +1,6 @@
 import { THREE } from '@cognite/reveal';
 import { Cognite3DModel, Cognite3DViewer, DefaultNodeAppearance, IndexSet, NodeAppearance, NumericRange, TreeIndexNodeCollection } from '@cognite/reveal';
-import { HtmlOverlayTool } from '@cognite/reveal/tools';
+import { HtmlOverlayTool } from '@cognite/reveal';
 import { CogniteClient } from '@cognite/sdk/dist/src';
 import * as dat from 'dat.gui';
 

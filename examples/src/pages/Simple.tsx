@@ -13,7 +13,7 @@ import { AnimationLoopHandler } from '../utils/AnimationLoopHandler';
 
 import { createManagerAndLoadModel } from '../utils/createManagerAndLoadModel';
 import { suggestCameraConfig } from '../utils/cameraConfig';
-import { LoadingState, RevealManager, SceneHandler } from '@cognite/reveal/internals';
+import { LoadingState, RevealManager, SceneHandler } from '@cognite/reveal';
 
 CameraControls.install({ THREE });
 
@@ -37,9 +37,11 @@ export function Simple() {
       if (project && environmentParam) {
         client = await createSDKFromEnvironment('reveal.example.simple', project, environmentParam);
       } else {
-        client = new CogniteClient({ appId: 'reveal.example.simple',
-                                     project: 'dummy',
-                                     getToken: async () => 'dummy' });
+        client = new CogniteClient({
+          appId: 'reveal.example.simple',
+          project: 'dummy',
+          getToken: async () => 'dummy'
+        });
       }
 
       const renderer = new THREE.WebGLRenderer({
@@ -56,7 +58,7 @@ export function Simple() {
       revealManager.on('loadingStateChanged', setLoadingState);
 
       const { position, target, near, far } = suggestCameraConfig(model.cadModelMetadata.scene.root,
-                                                                  model.getModelTransformation());
+        model.getModelTransformation());
       const camera = new THREE.PerspectiveCamera(75, 2, near, far);
       const controls = new CameraControls(camera, renderer.domElement);
       controls.setLookAt(

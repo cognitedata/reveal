@@ -9,7 +9,7 @@ import { THREE } from '@cognite/reveal';
 import CameraControls from 'camera-controls';
 import { createSDKFromEnvironment, getParamsFromURL } from '../utils/example-helpers';
 import { CogniteClient } from '@cognite/sdk';
-import * as reveal from '@cognite/reveal/internals';
+import * as reveal from '@cognite/reveal';
 import { AnimationLoopHandler } from '../utils/AnimationLoopHandler';
 import { createManagerAndLoadModel } from '../utils/createManagerAndLoadModel';
 import { suggestCameraConfig } from '../utils/cameraConfig';
@@ -43,9 +43,11 @@ export function TwoModels() {
       if (project && environmentParam) {
         client = await createSDKFromEnvironment('reveal.example.twomodels', project, environmentParam);
       } else {
-        client = new CogniteClient({ appId: 'reveal.example.twomodels',
-                                     project: 'dummy',
-                                     getToken: async () => 'dummy' });
+        client = new CogniteClient({
+          appId: 'reveal.example.twomodels',
+          project: 'dummy',
+          getToken: async () => 'dummy'
+        });
       }
 
       const renderer = new THREE.WebGLRenderer({
@@ -70,11 +72,11 @@ export function TwoModels() {
         throw new Error(
           'Need to provide either project & modelId2/revisionId2 OR modelUrl2 as query parameters'
         );
-      }      
+      }
       sceneHandler.addCadModel(model2, model2.cadModelIdentifier);
 
       const { position, target, near, far } = suggestCameraConfig(model.cadModelMetadata.scene.root,
-                                                                  model.getModelTransformation());
+        model.getModelTransformation());
       const camera = new THREE.PerspectiveCamera(
         75,
         window.innerWidth / window.innerHeight,

@@ -8,7 +8,7 @@ import {
   createCdfRevealManager,
   createLocalRevealManager,
   SceneHandler
-} from "@cognite/reveal/internals";
+} from "@cognite/reveal";
 
 import { CogniteClient } from "@cognite/sdk";
 

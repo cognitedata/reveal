@@ -7,7 +7,7 @@ import { resizeRendererToDisplaySize } from '../../utils/sceneHelpers';
 import { CanvasWrapper } from '../../components/styled';
 import { SuggestedCameraConfig, suggestCameraConfig } from '../../utils/cameraConfig';
 
-import { CadNode, createLocalRevealManager, defaultRenderOptions, LoadingState, LocalModelIdentifier, PointCloudNode, RenderOptions, RevealManager, SceneHandler } from '@cognite/reveal/internals';
+import { CadNode, createLocalRevealManager, defaultRenderOptions, LoadingState, LocalModelIdentifier, PointCloudNode, RenderOptions, RevealManager, SceneHandler } from '@cognite/reveal';
 
 type CadModelEnv = {
   modelType: 'cad';
@@ -87,9 +87,9 @@ export function TestViewer(props: Props) {
     model: CadNode | PointCloudNode
   ): SuggestedCameraConfig => {
 
-    if ( model instanceof CadNode) {
+    if (model instanceof CadNode) {
       return suggestCameraConfig(model.cadModelMetadata.scene.root,
-                                 model.getModelTransformation());
+        model.getModelTransformation());
     }
 
     const near = 0.1;
@@ -154,10 +154,10 @@ export function TestViewer(props: Props) {
           'cad',
           modelIdentifier
         );
-        
+
         sceneHandler.addCadModel(model, (model as CadNode).cadModelIdentifier);
       }
-      
+
       let cameraConfig = getCameraConfig(model);
 
       let camera: THREE.PerspectiveCamera = new THREE.PerspectiveCamera(

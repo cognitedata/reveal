@@ -34,15 +34,10 @@ module.exports = env => {
     // Internals is not part of prod builds
     entry: development
       ? {
-          index: './index.ts',
-          tools: './tools.ts',
-          'extensions/datasource': './extensions/datasource.ts',
-          internals: './internals.ts'
+          index: './index.ts'
         }
       : {
-          index: './index.ts',
-          tools: './tools.ts',
-          'extensions/datasource': './extensions/datasource.ts'
+          index: './index.ts'
         },
     target: 'web',
     resolve: {
@@ -56,10 +51,12 @@ module.exports = env => {
     module: {
       rules: [
         {
-          test: /\.worker\.ts$/,
-          loader: 'worker-loader',
-          options: {
-            inline: 'no-fallback'
+          test: /\.workerhello\.ts$/,
+          use: {
+            loader: 'workerize-loader',
+            options: {
+              inline: true
+            }
           }
         },
         {
@@ -103,7 +100,7 @@ module.exports = env => {
       })
     ],
     output: {
-      filename: '[name].js',
+      filename: 'index.js',
       publicPath: publicPathViewer,
       path: path.resolve(__dirname, 'dist'),
       sourceMapFilename: '[name].map',

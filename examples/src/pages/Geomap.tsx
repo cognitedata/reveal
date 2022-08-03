@@ -13,13 +13,15 @@ import {
   Cognite3DViewer,
   Cognite3DModel,
   CognitePointCloudModel,
-  PotreePointColorType, 
+  PotreePointColorType,
   PotreePointShape,
   TreeIndexNodeCollection,
   IndexSet
 } from '@cognite/reveal';
-import { DebugCameraTool, DebugLoadedSectorsTool, DebugLoadedSectorsToolOptions, AxisViewTool, GeomapTool, MapConfig,
-  MapboxMode, MapboxStyle, MapProviders, MapboxImageFormat, BingMapType, HereMapType, HereMapScheme, HereMapImageFormat } from '@cognite/reveal/tools';
+import {
+  DebugCameraTool, DebugLoadedSectorsTool, DebugLoadedSectorsToolOptions, AxisViewTool, GeomapTool, MapConfig,
+  MapboxMode, MapboxStyle, MapProviders, MapboxImageFormat, BingMapType, HereMapType, HereMapScheme, HereMapImageFormat
+} from '@cognite/reveal';
 import * as reveal from '@cognite/reveal';
 
 window.THREE = THREE;
@@ -28,10 +30,10 @@ window.THREE = THREE;
 export function Geomap() {
   const canvasWrapperRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    const gui = new dat.GUI({ width: Math.min(500, 0.8*window.innerWidth) });
+    const gui = new dat.GUI({ width: Math.min(500, 0.8 * window.innerWidth) });
     let viewer: Cognite3DViewer;
 
-    function createGeometryFilter(input: string | null): { center: THREE.Vector3, size: THREE.Vector3 } | undefined  {
+    function createGeometryFilter(input: string | null): { center: THREE.Vector3, size: THREE.Vector3 } | undefined {
       if (input === null) return undefined;
       const parsed = JSON.parse(input) as { center: THREE.Vector3, size: THREE.Vector3 };
       return { center: new THREE.Vector3().copy(parsed.center), size: new THREE.Vector3().copy(parsed.size) };
@@ -69,9 +71,11 @@ export function Geomap() {
       if (project && environmentParam) {
         client = await createSDKFromEnvironment('reveal.example.geomap', project, environmentParam);
       } else {
-        client = new CogniteClient({ appId: 'reveal.example.geomap',
-                                     project: 'dummy',
-                                     getToken: async () => 'dummy' });
+        client = new CogniteClient({
+          appId: 'reveal.example.geomap',
+          project: 'dummy',
+          getToken: async () => 'dummy'
+        });
       }
 
       const progress = (itemsLoaded: number, itemsRequested: number, itemsCulled: number) => {
@@ -122,8 +126,8 @@ export function Geomap() {
         revisionId: 0,
         geometryFilter:
           geometryFilter !== undefined
-          ? { ...geometryFilter, enabled: true }
-          : { center: new THREE.Vector3(), size: new THREE.Vector3(), enabled: false },
+            ? { ...geometryFilter, enabled: true }
+            : { center: new THREE.Vector3(), size: new THREE.Vector3(), enabled: false },
         antiAliasing: urlParams.get('antialias'),
         ssaoQuality: urlParams.get('ssao'),
         debug: {
@@ -185,15 +189,15 @@ export function Geomap() {
           console.log(intersection);
           switch (intersection.type) {
             case 'cad':
-            {
-              const { treeIndex, point, model } = intersection;
-              console.log(`Clicked node with treeIndex ${treeIndex} at`, point);
-              // highlight the object
-              selectedSet.updateSet(new IndexSet([treeIndex]));
-              const boundingBox = await model.getBoundingBoxByTreeIndex(treeIndex);
-              viewer.fitCameraToBoundingBox(boundingBox, 1000);
-            }
-            break;
+              {
+                const { treeIndex, point, model } = intersection;
+                console.log(`Clicked node with treeIndex ${treeIndex} at`, point);
+                // highlight the object
+                selectedSet.updateSet(new IndexSet([treeIndex]));
+                const boundingBox = await model.getBoundingBoxByTreeIndex(treeIndex);
+                viewer.fitCameraToBoundingBox(boundingBox, 1000);
+              }
+              break;
 
             case 'pointcloud':
               {
@@ -224,7 +228,7 @@ export function Geomap() {
       const renderGui = gui.addFolder('Options');
       const mapProviders = ['MapboxMap', 'HereMap', 'BingMap', 'OpenStreetMap'];
       renderGui.add(guiState, 'providers', mapProviders).name('MapProviders').onFinishChange(value => {
-        switch(value) {
+        switch (value) {
           case 'HereMap':
             mapConfig = {
               provider: MapProviders.HereMap,
@@ -234,8 +238,8 @@ export function Geomap() {
               scheme: HereMapScheme.Terrain,
               imageFormat: HereMapImageFormat.PNG,
               latlong: {
-                  latitude: 59.9016426931744,
-                  longitude: 10.607235872426175
+                latitude: 59.9016426931744,
+                longitude: 10.607235872426175
               }
             };
             break;
@@ -258,8 +262,8 @@ export function Geomap() {
               APIKey: "AuViYD_FXGfc3dxc0pNa8ZEJxyZyPq1lwOLPCOydV3f0tlEVH-HKMgxZ9ilcRj-T",
               type: BingMapType.Aerial,
               latlong: {
-                  latitude: 59.9016426931744,
-                  longitude: 10.607235872426175
+                latitude: 59.9016426931744,
+                longitude: 10.607235872426175
               }
             };
             break;
@@ -267,8 +271,8 @@ export function Geomap() {
             mapConfig = {
               provider: MapProviders.OpenStreetMap,
               latlong: {
-                  latitude: 59.9016426931744,
-                  longitude: 10.607235872426175
+                latitude: 59.9016426931744,
+                longitude: 10.607235872426175
               }
             };
             break;
@@ -294,9 +298,8 @@ function createGeometryFilterStateFromBounds(bounds: THREE.Box3, out: { center: 
   return out;
 }
 
-function createGeometryFilterFromState(state: { center: THREE.Vector3, size: THREE.Vector3 }):
- { boundingBox: THREE.Box3, isBoundingBoxInModelCoordinates: true } | undefined {
-  state.size.clamp(new THREE.Vector3(0,0,0), new THREE.Vector3(Infinity, Infinity, Infinity));
+function createGeometryFilterFromState(state: { center: THREE.Vector3, size: THREE.Vector3 }): { boundingBox: THREE.Box3, isBoundingBoxInModelCoordinates: true } | undefined {
+  state.size.clamp(new THREE.Vector3(0, 0, 0), new THREE.Vector3(Infinity, Infinity, Infinity));
   if (state.size.equals(new THREE.Vector3())) {
     return undefined;
   }

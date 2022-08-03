@@ -12,15 +12,15 @@ import {
 } from '@cognite/reveal';
 import * as reveal from '@cognite/reveal';
 
-import { 
-  DataSource, 
-  ModelDataProvider, 
-  ModelIdentifier, 
-  ModelMetadataProvider, 
+import {
+  DataSource,
+  ModelDataProvider,
+  ModelIdentifier,
+  ModelMetadataProvider,
   NodesApiClient,
   File3dFormat,
   BlobOutputMetadata
-} from '@cognite/reveal/extensions/datasource';
+} from '@cognite/reveal/';
 
 class MyDataSource implements DataSource {
   getNodesApiClient(): NodesApiClient {
@@ -48,7 +48,7 @@ class MyModelMetadataProvider implements ModelMetadataProvider {
     // Note! identifier will always be a CdfModelIdentifier
     return Promise.resolve('/primitives');
   }
-  getModelCamera(identifier: ModelIdentifier): Promise< { position: THREE.Vector3; target: THREE.Vector3 } | undefined> {
+  getModelCamera(identifier: ModelIdentifier): Promise<{ position: THREE.Vector3; target: THREE.Vector3 } | undefined> {
     // Note! identifier will always be a CdfModelIdentifier
 
     // Use default camera
@@ -60,7 +60,7 @@ class MyModelMetadataProvider implements ModelMetadataProvider {
     // CAD models are usually stored in Z-up, while Reveal uses Y-up, so
     // we need to account for this
     const cadModelToReveal = new THREE.Matrix4().makeRotationFromEuler(new THREE.Euler(-Math.PI / 2, 0, 0));
-    
+
     return Promise.resolve(cadModelToReveal);
   }
 
@@ -95,10 +95,10 @@ class MyNodesApiClient implements NodesApiClient {
     // Map 1:1 - pretend treeIndices == nodeIds
     return Promise.resolve(nodeIds);
   }
-  determineTreeIndexAndSubtreeSizesByNodeIds(modelId: number, revisionId: number, nodeIds: number[]): Promise<{treeIndex: number; subtreeSize: number }[]> {
+  determineTreeIndexAndSubtreeSizesByNodeIds(modelId: number, revisionId: number, nodeIds: number[]): Promise<{ treeIndex: number; subtreeSize: number }[]> {
     throw new Error('Not supported.');
   }
-  determineNodeAncestorsByNodeId(modelId: number, revisionId: number, nodeId: number, generation: number): Promise<{treeIndex: number; subtreeSize: number }> {
+  determineNodeAncestorsByNodeId(modelId: number, revisionId: number, nodeId: number, generation: number): Promise<{ treeIndex: number; subtreeSize: number }> {
     throw new Error('Not supported.');
   }
   getBoundingBoxesByNodeIds(modelId: number, revisionId: number, nodeIds: number[]): Promise<THREE.Box3[]> {
@@ -121,12 +121,12 @@ export function CustomDataSource() {
         domElement: canvasWrapperRef.current!,
         logMetrics: false
       };
-      
+
       // Prepare viewer
       viewer = new Cognite3DViewer(viewerOptions);
       // ModelID + revisionID doesn't really matter here as we've
       // hardcoded the behavior in MyDataSource
-      const model = await viewer.addCadModel({modelId: 42, revisionId: 78});
+      const model = await viewer.addCadModel({ modelId: 42, revisionId: 78 });
       viewer.fitCameraToModel(model);
 
       (window as any).viewer = viewer;

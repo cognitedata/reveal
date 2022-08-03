@@ -7,7 +7,7 @@ import { CanvasWrapper } from '../components/styled';
 import { THREE } from '@cognite/reveal';
 import CameraControls from 'camera-controls';
 import { CogniteClient, HttpError } from '@cognite/sdk';
-import * as reveal from '@cognite/reveal/internals';
+import * as reveal from '@cognite/reveal';
 import { GUI, GUIController } from 'dat.gui';
 import { createSDKFromEnvironment, getParamsFromURL } from '../utils/example-helpers';
 import { AnimationLoopHandler } from '../utils/AnimationLoopHandler';
@@ -72,9 +72,11 @@ export function WalkablePath() {
       if (project && environmentParam) {
         client = await createSDKFromEnvironment('reveal.example.walkable-path', project, environmentParam);
       } else {
-        client = new CogniteClient({ appId: 'reveal.example.walkable-path',
-                                     project: 'dummy',
-                                     getToken: async () => 'dummy' });
+        client = new CogniteClient({
+          appId: 'reveal.example.walkable-path',
+          project: 'dummy',
+          getToken: async () => 'dummy'
+        });
       }
 
       const sceneHandler = new reveal.SceneHandler();
@@ -88,7 +90,7 @@ export function WalkablePath() {
       sceneHandler.addCadModel(model, model.cadModelIdentifier);
 
       const { position, target, near, far } = suggestCameraConfig(model.cadModelMetadata.scene.root,
-                                                                  model.getModelTransformation());
+        model.getModelTransformation());
       const camera = new THREE.PerspectiveCamera(
         75,
         window.innerWidth / window.innerHeight,
@@ -204,7 +206,7 @@ function createWalkablePathMeshes(
       mesh.position.y += heightOffset;
       meshes.push(mesh);
     }
-  } catch (error) {}
+  } catch (error) { }
   return meshes;
 }
 

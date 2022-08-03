@@ -14,7 +14,7 @@ import { createSDKFromEnvironment, getParamsFromURL } from '../utils/example-hel
 import { AnimationLoopHandler } from '../utils/AnimationLoopHandler';
 import { ClippingUI } from '../utils/ClippingUI';
 import { createManagerAndLoadModel } from '../utils/createManagerAndLoadModel';
-import { LoadingState, PointCloudNode, RevealManager, SceneHandler } from '@cognite/reveal/internals';
+import { LoadingState, PointCloudNode, RevealManager, SceneHandler } from '@cognite/reveal';
 
 CameraControls.install({ THREE });
 
@@ -101,9 +101,11 @@ export function SimplePointcloud() {
       if (project && environmentParam) {
         client = await createSDKFromEnvironment('reveal.example.simplepointcloud', project, environmentParam);
       } else {
-        client = new CogniteClient({ appId: 'reveal.example.simplepointcloud',
-                                     project: 'dummy',
-                                     getToken: async () => 'dummy' });
+        client = new CogniteClient({
+          appId: 'reveal.example.simplepointcloud',
+          project: 'dummy',
+          getToken: async () => 'dummy'
+        });
       }
 
       const sceneHandler = new SceneHandler();

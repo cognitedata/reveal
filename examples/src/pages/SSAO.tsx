@@ -5,7 +5,7 @@
 import React, { useEffect, useRef } from 'react';
 import { CanvasWrapper } from '../components/styled';
 import CameraControls from 'camera-controls';
-import * as reveal from '@cognite/reveal/internals';
+import * as reveal from '@cognite/reveal';
 import { THREE } from '@cognite/reveal';
 import dat from 'dat.gui';
 import { createSDKFromEnvironment, getParamsFromURL } from '../utils/example-helpers';
@@ -34,9 +34,11 @@ export function SSAO() {
       if (project && environmentParam) {
         client = await createSDKFromEnvironment('reveal.example.ssao', project, environmentParam);
       } else {
-        client = new CogniteClient({ appId: 'reveal.example.ssao',
-                                     project: 'dummy',
-                                     getToken: async () => 'dummy' });
+        client = new CogniteClient({
+          appId: 'reveal.example.ssao',
+          project: 'dummy',
+          getToken: async () => 'dummy'
+        });
       }
 
       const sceneHandler = new reveal.SceneHandler();
@@ -51,7 +53,7 @@ export function SSAO() {
       sceneHandler.addCadModel(model, model.cadModelIdentifier);
 
       const { position, target, near, far } = suggestCameraConfig(model.cadModelMetadata.scene.root,
-                                                                  model.getModelTransformation());
+        model.getModelTransformation());
       const camera = new THREE.PerspectiveCamera(
         75,
         window.innerWidth / window.innerHeight,
