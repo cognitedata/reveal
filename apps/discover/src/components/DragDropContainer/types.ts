@@ -14,6 +14,7 @@ export interface DragDropContainerProps {
    * Then, pass the array of those keys with the required order.
    */
   elementsOrder?: string[];
+  onRearranged?: (elementOrder: string[]) => void;
 }
 
 export type WithDragHandleProps<T> = T & DragHandleProps;

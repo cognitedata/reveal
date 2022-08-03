@@ -18,3 +18,12 @@ export const DEPTH_SCALE_LABEL_HEIGHT = 16;
 export const DEPTH_SCALE_LABEL_COLOR = 'var(--cogs-midblue-7)';
 
 export const DEFAULT_DEPTH_MEASUREMENT_TYPE = DepthMeasurementUnit.MD;
+export const COLUMNS = {
+  FORMATIONS: 'formations',
+  CASINGS: 'casings',
+  NDS: 'nds',
+  NPT: 'npt',
+  SUMMARY: 'summary',
+};
+
+export const DEFAULT_COLUMN_ORDER = [COLUMNS.CASINGS, COLUMNS.NDS, COLUMNS.NPT];

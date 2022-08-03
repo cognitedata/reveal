@@ -1,4 +1,6 @@
 import { getDepthRange } from 'domain/wells/casings/internal/selectors/getDepthRange';
+import { filterNdsBySelectedEvents } from 'domain/wells/nds/internal/selectors/filterNdsBySelectedEvents';
+import { filterNptBySelectedEvents } from 'domain/wells/npt/internal/selectors/filterNptBySelectedEvents';
 
 import React, {
   useCallback,
@@ -9,13 +11,15 @@ import React, {
 } from 'react';
 
 import { DragDropContainer } from 'components/DragDropContainer';
+import { MultiSelectCategorizedOptionMap } from 'components/Filters/MultiSelectCategorized/types';
+import { useDeepMemo } from 'hooks/useDeep';
 
 import { SCALE_BOTTOM_PADDING } from '../../common/Events/constants';
 import { SelectedWellboreNptView } from '../../nptEvents/Graph';
 import { CasingSchematicView } from '../types';
 import { getScaleBlocks } from '../utils/scale';
 
-import { DEPTH_SCALE_MIN_HEIGHT } from './constants';
+import { COLUMNS, DEPTH_SCALE_MIN_HEIGHT } from './constants';
 import { ContentWrapper, WellboreCasingsViewWrapper } from './elements';
 import { Header } from './Header';
 import { NdsEventsColumn } from './NdsEventsColumn';
@@ -26,6 +30,10 @@ import { WellboreNdsDetailedView } from './WellboreNdsDetailedView';
 
 interface WellboreCasingsViewProps {
   data: CasingSchematicView;
+  columnOrder: string[];
+  visibleColumns: string[];
+  selectedNptCodes: MultiSelectCategorizedOptionMap;
+  selectedNdsCodes: MultiSelectCategorizedOptionMap;
   isNptEventsLoading?: boolean;
   isNdsEventsLoading?: boolean;
   showBothSides?: boolean;
@@ -33,6 +41,10 @@ interface WellboreCasingsViewProps {
 
 export const WellboreCasingView: React.FC<WellboreCasingsViewProps> = ({
   data,
+  columnOrder,
+  visibleColumns,
+  selectedNptCodes = {},
+  selectedNdsCodes = {},
   isNptEventsLoading,
   isNdsEventsLoading,
   showBothSides = false,
@@ -54,6 +66,16 @@ export const WellboreCasingView: React.FC<WellboreCasingsViewProps> = ({
     rkbLevel,
     waterDepth,
   } = data;
+
+  const filteredNptEvents = useDeepMemo(
+    () => filterNptBySelectedEvents(nptEvents, selectedNptCodes),
+    [nptEvents, selectedNptCodes]
+  );
+
+  const filteredNdsEvents = useDeepMemo(
+    () => filterNdsBySelectedEvents(ndsEvents, selectedNdsCodes),
+    [ndsEvents, selectedNdsCodes]
+  );
 
   const [_, maxDepth] = useMemo(
     () => getDepthRange(casingAssemblies, nptEvents, ndsEvents),
@@ -77,6 +99,13 @@ export const WellboreCasingView: React.FC<WellboreCasingsViewProps> = ({
     setShowNptDetailView(false);
   };
 
+  const shouldShowColumn = useCallback(
+    (columnIdentifier: string) => {
+      return visibleColumns.includes(columnIdentifier);
+    },
+    [visibleColumns]
+  );
+
   return (
     <>
       <WellboreCasingsViewWrapper>
@@ -85,40 +114,52 @@ export const WellboreCasingView: React.FC<WellboreCasingsViewProps> = ({
           wellboreName={wellboreName}
           wellboreMatchingId={wellboreMatchingId}
           onChangeDropdown={({ eventType }) => {
-            if (eventType === 'nds') {
+            if (eventType === COLUMNS.NDS) {
               setShowNdsDetailView(true);
             }
-            if (eventType === 'npt') {
+            if (eventType === COLUMNS.NPT) {
               setShowNptDetailView(true);
             }
           }}
         />
 
-        <ContentWrapper>
-          <DragDropContainer id="welbore-casing-view-content">
-            <SchemaColumn
-              ref={depthScaleRef}
-              isLoading={isSchemaLoading}
-              rkbLevel={rkbLevel}
-              waterDepth={waterDepth}
-              casingAssemblies={casingAssemblies}
-              scaleBlocks={scaleBlocks}
-              showBothSides={showBothSides}
-            />
+        <ContentWrapper ref={depthScaleRef}>
+          <DragDropContainer
+            id="welbore-casing-view-content"
+            elementsOrder={columnOrder}
+          >
+            {shouldShowColumn(COLUMNS.CASINGS) && (
+              <SchemaColumn
+                key="casings"
+                isLoading={isSchemaLoading}
+                rkbLevel={rkbLevel}
+                waterDepth={waterDepth}
+                casingAssemblies={casingAssemblies}
+                scaleBlocks={scaleBlocks}
+                showBothSides={showBothSides}
+              />
+            )}
 
-            <NptEventsColumn
-              scaleBlocks={scaleBlocks}
-              events={nptEvents}
-              isLoading={isNptEventsLoading}
-            />
+            {shouldShowColumn(COLUMNS.NPT) && (
+              <NptEventsColumn
+                key="npt"
+                scaleBlocks={scaleBlocks}
+                events={filteredNptEvents}
+                isLoading={isNptEventsLoading}
+              />
+            )}
 
-            <NdsEventsColumn
-              scaleBlocks={scaleBlocks}
-              events={ndsEvents}
-              isLoading={isNdsEventsLoading}
-            />
-
-            <SummaryColumn casingAssemblies={casingAssemblies} />
+            {shouldShowColumn(COLUMNS.NDS) && (
+              <NdsEventsColumn
+                key="nds"
+                scaleBlocks={scaleBlocks}
+                events={filteredNdsEvents}
+                isLoading={isNdsEventsLoading}
+              />
+            )}
+            {shouldShowColumn(COLUMNS.SUMMARY) && (
+              <SummaryColumn casingAssemblies={casingAssemblies} />
+            )}
           </DragDropContainer>
         </ContentWrapper>
       </WellboreCasingsViewWrapper>

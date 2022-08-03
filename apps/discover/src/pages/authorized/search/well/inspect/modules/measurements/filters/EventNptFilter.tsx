@@ -3,6 +3,8 @@ import { useNptEventsForMultiSelect } from 'domain/wells/npt/internal/hooks/useN
 
 import React, { useEffect } from 'react';
 
+import { IconType } from '@cognite/cogs.js';
+
 import { MultiSelectCategorized } from 'components/Filters/MultiSelectCategorized/MultiSelectCategorized';
 import { MultiSelectCategorizedOptionMap } from 'components/Filters/MultiSelectCategorized/types';
 
@@ -12,9 +14,11 @@ import { NoCodeDefinition } from '../../nptEvents/components/NoCodeDefinition';
 interface Props {
   selectedEvents: MultiSelectCategorizedOptionMap;
   onChange: (events: MultiSelectCategorizedOptionMap) => void;
+  iconInsteadText?: IconType;
 }
 
 export const EventNptFilter: React.FC<Props> = ({
+  iconInsteadText,
   selectedEvents,
   onChange,
 }) => {
@@ -35,7 +39,6 @@ export const EventNptFilter: React.FC<Props> = ({
   // Automatically select all the events when the component is mounted
   useEffect(() => {
     if (!events) return;
-
     onChange(events);
   }, [events]);
 
@@ -46,8 +49,9 @@ export const EventNptFilter: React.FC<Props> = ({
       selectedOptions={selectedEvents}
       renderCategoryHelpText={renderNptHelpText}
       options={events}
-      width={175}
+      width={iconInsteadText ? undefined : 175}
       viewMode="submenu"
+      iconInsteadText={iconInsteadText}
     />
   );
 };

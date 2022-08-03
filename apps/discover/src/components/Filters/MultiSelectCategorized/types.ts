@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { OptionType } from '@cognite/cogs.js';
+import { IconType, OptionType } from '@cognite/cogs.js';
 
 import { ExtraLabels } from '../interfaces';
 import { MultiSelectOptionType } from '../MultiSelect/types';
@@ -11,6 +11,11 @@ export type MultiSelectCategorizedOptionMap = Record<
   Category,
   MultiSelectOptionType[] | undefined
 >;
+
+export type OtherOption = {
+  label: string;
+  value: string;
+};
 
 export type PossibleOptionsType =
   | MultiSelectCategorizedOption[]
@@ -23,6 +28,7 @@ export interface MultiSelectCategorizedProps {
   onValueChange: (
     values: Record<Category, OptionType<MultiSelectOptionType>[] | undefined>
   ) => void;
+  iconInsteadText?: IconType;
   options?: PossibleOptionsType;
   selectedOptions?: PossibleOptionsType;
   placeholder?: string;

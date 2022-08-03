@@ -1,8 +1,9 @@
+import isUndefined from 'lodash/isUndefined';
 import styled from 'styled-components/macro';
 
 import { Label, Menu } from '@cognite/cogs.js';
 
-import { Flex, FlexColumn, sizes } from 'styles/layout';
+import { Flex, FlexColumn, FlexRow, sizes } from 'styles/layout';
 
 import { OPTION_INDENTATION } from './constants';
 
@@ -13,7 +14,8 @@ export const MultiSelectCategorizedWrapper = styled.span`
 
 export const DropdownContent = styled(Menu)`
   margin-top: 2px;
-  width: ${(props: { width?: number }) => props.width}px;
+  width: ${(props: { width?: number }) =>
+    isUndefined(props.width) ? 'fit-content' : props.width}px;
   max-height: 65vh;
   overflow: auto;
 `;
@@ -80,4 +82,24 @@ export const DropdownValue = styled(Flex)`
     `
     color: var(--cogs-text-icon--muted);
   `}
+`;
+
+export const SingleValueOption = styled(FlexRow)`
+  width: 100%;
+`;
+
+export const SingleValueText = styled.div`
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 20px;
+  color: #595959;
+  :hover {
+    color: #4a67fb;
+  }
+`;
+
+export const CheckMark = styled.div`
+  margin-left: auto;
 `;

@@ -10,7 +10,7 @@ import isEmpty from 'lodash/isEmpty';
 import isUndefined from 'lodash/isUndefined';
 import unset from 'lodash/unset';
 
-import { Body, Checkbox, Dropdown, OptionType } from '@cognite/cogs.js';
+import { Body, Checkbox, Dropdown, Icon, OptionType } from '@cognite/cogs.js';
 
 import { useDeepMemo } from 'hooks/useDeep';
 
@@ -38,6 +38,7 @@ import {
 import { getMultiSelectCategorizedOptions, getProcessedOptions } from './utils';
 
 export const MultiSelectCategorized: React.FC<MultiSelectCategorizedProps> = ({
+  iconInsteadText,
   options: data,
   selectedOptions: selectedOptionsProp,
   title,
@@ -62,15 +63,18 @@ export const MultiSelectCategorized: React.FC<MultiSelectCategorizedProps> = ({
   useEffect(() => {
     if (!selectedOptionsProp) return;
 
-    setSelectedOptions(
-      getMultiSelectCategorizedOptions(selectedOptionsProp).reduce(
-        (selectedOptions, { category, options }) => ({
-          ...selectedOptions,
-          [category]: options,
-        }),
-        {}
-      )
+    const multiSelectCategorizedOptions =
+      getMultiSelectCategorizedOptions(selectedOptionsProp);
+
+    const selectedOptions = multiSelectCategorizedOptions.reduce(
+      (selectedOptions, { category, options }) => ({
+        ...selectedOptions,
+        [category]: options,
+      }),
+      {}
     );
+
+    setSelectedOptions(selectedOptions);
   }, [selectedOptionsProp]);
 
   const options = useDeepMemo(() => {
@@ -141,12 +145,6 @@ export const MultiSelectCategorized: React.FC<MultiSelectCategorizedProps> = ({
     }
   };
 
-  /**
-   * Takes the width passed in props or,
-   * takes the full width available.
-   */
-  const dropdownWidth = width || multiSelectCategorizedRef.current?.clientWidth;
-
   const isAnySelected = !isEmpty(selectedOptions);
   const isAllSelected = selectedOptionsCount === optionsCount;
 
@@ -154,7 +152,6 @@ export const MultiSelectCategorized: React.FC<MultiSelectCategorizedProps> = ({
     if (!enableSelectAll || isEmpty(options)) {
       return null;
     }
-
     return (
       <CategoryWrapper>
         <Checkbox
@@ -198,11 +195,11 @@ export const MultiSelectCategorized: React.FC<MultiSelectCategorizedProps> = ({
 
   const dropdownContent = useMemo(
     () => (
-      <DropdownContent width={dropdownWidth}>
+      <DropdownContent width={width}>
         {optionsCount ? OptionsContent : NoOptionsContent}
       </DropdownContent>
     ),
-    [optionsCount, dropdownWidth, NoOptionsContent, OptionsContent]
+    [optionsCount, NoOptionsContent, OptionsContent]
   );
 
   const dropdownIcon = useMemo(
@@ -220,7 +217,7 @@ export const MultiSelectCategorized: React.FC<MultiSelectCategorizedProps> = ({
   return (
     <MultiSelectCategorizedWrapper
       ref={multiSelectCategorizedRef}
-      width={dropdownWidth}
+      width={width}
     >
       <Dropdown
         appendTo={document.body}
@@ -230,16 +227,22 @@ export const MultiSelectCategorized: React.FC<MultiSelectCategorizedProps> = ({
       >
         <DropdownLabel
           variant="unknown"
-          icon={dropdownIcon}
+          icon={!iconInsteadText && dropdownIcon} // Use provided icon if passed
           iconPlacement="right"
           $focused={dropdownVisible}
           onClick={() => setDropdownVisible((prevState) => !prevState)}
           boldTitle={boldTitle}
         >
-          <Body level={2}>{title}:</Body>
-          <DropdownValue $placeholder={!isAnySelected}>
-            {dropdownValue}
-          </DropdownValue>
+          {iconInsteadText ? (
+            <Icon type={iconInsteadText} />
+          ) : (
+            <>
+              <Body level={2}>{title}:</Body>
+              <DropdownValue $placeholder={!isAnySelected}>
+                {dropdownValue}
+              </DropdownValue>
+            </>
+          )}
         </DropdownLabel>
       </Dropdown>
     </MultiSelectCategorizedWrapper>

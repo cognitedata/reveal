@@ -2,17 +2,21 @@ import { useNdsEventsForMultiSelect } from 'domain/wells/nds/internal/hooks/useN
 
 import React, { useEffect } from 'react';
 
+import { IconType } from '@cognite/cogs.js';
+
 import { MultiSelectCategorized } from 'components/Filters/MultiSelectCategorized/MultiSelectCategorized';
 import { MultiSelectCategorizedOptionMap } from 'components/Filters/MultiSelectCategorized/types';
 
 interface Props {
   selectedEvents: MultiSelectCategorizedOptionMap;
   onChange: (events: MultiSelectCategorizedOptionMap) => void;
+  iconInsteadText?: IconType;
 }
 
 export const EventNdsFilter: React.FC<Props> = ({
   selectedEvents,
   onChange,
+  iconInsteadText,
 }) => {
   const events = useNdsEventsForMultiSelect();
 
@@ -29,8 +33,9 @@ export const EventNdsFilter: React.FC<Props> = ({
       onValueChange={(values) => onChange(values as any)}
       selectedOptions={selectedEvents}
       options={events}
-      width={190}
+      width={iconInsteadText ? undefined : 200}
       viewMode="submenu"
+      iconInsteadText={iconInsteadText}
     />
   );
 };
