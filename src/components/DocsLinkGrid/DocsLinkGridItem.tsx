@@ -23,10 +23,23 @@ const DocsLinkGridItem = styled(
   && {
     height: auto;
     padding: 26px 24px;
+    color: ${Colors['text-icon--medium']};
+
+    &:hover {
+      background-color: ${Colors['surface--strong']};
+
+      > * {
+        color: ${Colors['surface--action--strong--default']};
+      }
+    }
   }
 
   > * {
     color: ${Colors['text-icon--medium']};
+  }
+
+  svg {
+    color: inherit;
   }
 `;
 

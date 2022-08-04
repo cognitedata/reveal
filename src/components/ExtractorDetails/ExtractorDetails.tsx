@@ -39,7 +39,6 @@ const ExtractorDetails = () => {
     latestRelease?.createdTime && formatDate(latestRelease?.createdTime);
 
   const extractorExtended = extractorsListExtended?.[extractorExternalId!];
-  const { links, tags, source, docs } = extractorExtended;
 
   const artifacts = latestRelease?.artifacts ?? [];
 
@@ -49,6 +48,18 @@ const ExtractorDetails = () => {
     const data = await response.blob();
     fileDownload(data, artifact.name);
   };
+
+  const tags = extractor?.tags || extractorExtended?.tags;
+
+  const externalLinks =
+    (extractor?.links || extractorExtended?.links)?.filter(
+      (link) => link?.type === 'externalDocumentation'
+    ) ?? [];
+
+  const genericLinks =
+    (extractor?.links || extractorExtended?.links)?.filter(
+      (link) => link?.type === 'generic'
+    ) ?? [];
 
   if (status === 'loading') {
     return <Loader />;
@@ -70,13 +81,13 @@ const ExtractorDetails = () => {
                   {(extractor?.documentation || extractor?.description) ?? ''}
                 </ReactMarkdown>
               </StyledBody>
-              {links.length > 0 && (
+              {externalLinks?.length > 0 && (
                 <Flex direction="column" gap={16}>
                   <Title level="4">{t('user-guide-from-cognite-docs')}</Title>
                   <DocsLinkGrid>
-                    {links.map((link) => (
-                      <DocsLinkGridItem key={link.url} href={link.url}>
-                        {link.title}
+                    {externalLinks?.map((link) => (
+                      <DocsLinkGridItem key={link?.name} href={link?.url}>
+                        {link?.name}
                       </DocsLinkGridItem>
                     ))}
                   </DocsLinkGrid>
@@ -90,9 +101,11 @@ const ExtractorDetails = () => {
                     <Title level="5">{t('download-extractor')}</Title>
                     {artifacts.map((artifact) => (
                       <Button
-                        key={artifact.link}
+                        key={artifact?.link}
                         type={
-                          artifact.platform === 'docs' ? 'secondary' : 'primary'
+                          artifact?.platform === 'docs'
+                            ? 'secondary'
+                            : 'primary'
                         }
                         icon="Download"
                         iconPlacement="right"
@@ -134,33 +147,33 @@ const ExtractorDetails = () => {
                   </Flex>
                   <Body level="2">{latestRelease?.description}</Body>
                 </Flex>
-                {/* Only display the "Links" section if we have either the source code or docs. */}
-                {(source || docs) && (
+                {genericLinks?.length > 0 && (
                   <>
                     <StyledDivider />
                     <Title level="5">{t('links')}</Title>
                     <Flex direction="column" gap={12}>
-                      {/* The extractor might not have an entry in the Cognite Docs. */}
-                      {docs && (
-                        <StyledButtonLink href={docs}>
-                          {t('cognite-docs')}
-                        </StyledButtonLink>
-                      )}
-                      {/* Some repositories have their source code private, thus we can't share it for people without access. */}
-                      {source && (
-                        <StyledButtonLink href={source}>
-                          {t('github')}
-                        </StyledButtonLink>
-                      )}
+                      {genericLinks?.map((link) => (
+                        <StyledLink
+                          className="cogs-anchor"
+                          href={link?.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          <Flex gap={9} alignItems="center">
+                            <span>{link?.name}</span>
+                            <Icon type="ExternalLink" />
+                          </Flex>
+                        </StyledLink>
+                      ))}
                     </Flex>
                   </>
                 )}
-                {tags.length > 0 && (
+                {tags?.length > 0 && (
                   <>
                     <StyledDivider />
                     <Title level="5">{t('tags')}</Title>
                     <StyledTagsContainer>
-                      {tags.map((tag) => (
+                      {tags?.map((tag) => (
                         <Label size="small" key={tag}>
                           {tag}
                         </Label>
@@ -209,7 +222,7 @@ const ExtractorDetails = () => {
                   </Flex>
                   <Body level="2">{release.description}</Body>
                 </Flex>
-                {release?.changelog && (
+                {Object.values(release?.changelog).length > 0 && (
                   <StyledCollapse
                     defaultActiveKey={[]}
                     expandIcon={({ isActive }) => {
@@ -373,24 +386,8 @@ const StyledBodyMuted = styled(Body).attrs({ level: 2 })`
   color: ${Colors['text-icon--muted']};
 `;
 
-const StyledButtonLink = styled(Button).attrs({
-  type: 'link',
-  icon: 'ExternalLink',
-  iconPlacement: 'right',
-  target: '_blank',
-  rel: 'noopener noreferrer',
-})`
-  && {
-    display: inline-flex;
-    justify-content: flex-start;
-    flex-grow: 0;
-    align-self: flex-start;
-    width: auto;
-    color: ${Colors['text-icon--strong']};
-    svg {
-      color: inherit;
-    }
-  }
+const StyledLink = styled.a`
+  color: ${Colors['text-icon--strong']};
 `;
 
 const StyledTagsContainer = styled.div`

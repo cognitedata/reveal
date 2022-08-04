@@ -17,6 +17,12 @@ export type Release = {
   changelog: { [key: string]: string[] };
 };
 
+export type ExtractorLink = {
+  type: 'generic' | 'externalDocumentation';
+  url: string;
+  name: string;
+};
+
 type Extractor = {
   externalId: string;
   name: string;
@@ -24,6 +30,8 @@ type Extractor = {
   type: string;
   latestVersion: string | undefined;
   documentation?: string;
+  tags?: string[];
+  links?: ExtractorLink[];
 };
 
 type Items<T> = {
@@ -37,6 +45,8 @@ export type ExtractorWithRelease = {
   type: string;
   releases: Release[];
   documentation?: string;
+  tags?: string[];
+  links?: ExtractorLink[];
 };
 
 type ExtractorDownload = {
