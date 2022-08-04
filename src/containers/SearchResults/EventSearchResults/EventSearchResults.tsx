@@ -58,6 +58,9 @@ export const EventSearchResults = ({
         {props => (
           <EventTable
             {...props}
+            {...(relatedResourceType === 'relationship'
+              ? { estimatedRowHeight: 100 }
+              : {})}
             onRowClick={event => onClick(event)}
             relatedResourceType={relatedResourceType}
           />

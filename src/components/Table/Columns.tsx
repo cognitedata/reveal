@@ -26,6 +26,7 @@ export const ResourceTableColumns = {
     title: 'Relationship Labels',
     dataKey: 'relationshipLabels',
     width: 250,
+    resizable: true,
     cellRenderer: ({ rowData }: { rowData: any }) => (
       <Flex gap={2} wrap="wrap">
         {rowData.relationshipLabels?.map((label: string) => (

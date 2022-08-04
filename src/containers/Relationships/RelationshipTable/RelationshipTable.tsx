@@ -69,6 +69,7 @@ export const RelationshipTable = ({
               onRowClick={el => onItemClicked(el.id)}
               {...props}
               relatedResourceType="relationship"
+              estimatedRowHeight={100}
             />
           )}
         </ResultTableLoader>

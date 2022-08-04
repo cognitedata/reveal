@@ -51,6 +51,9 @@ export const SequenceSearchResults = ({
         query={query}
         parentResource={parentResource}
         relatedResourceType={relatedResourceType}
+        {...(relatedResourceType === 'relationship'
+          ? { estimatedRowHeight: 100 }
+          : {})}
         {...extraProps}
       >
         {props => (

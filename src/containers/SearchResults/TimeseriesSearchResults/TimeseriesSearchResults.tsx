@@ -105,6 +105,9 @@ export const TimeseriesSearchResults = ({
           dateRange={dateRange || [new Date(), new Date()]}
           parentResource={parentResource}
           relatedResourceType={relatedResourceType}
+          {...(relatedResourceType === 'relationship'
+            ? { estimatedRowHeight: 100 }
+            : {})}
           {...extraProps}
         >
           {props =>

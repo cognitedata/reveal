@@ -76,6 +76,9 @@ export const FileSearchResults = ({
           filter={filter}
           query={query}
           parentResource={parentResource}
+          {...(relatedResourceType === 'relationship'
+            ? { estimatedRowHeight: 100 }
+            : {})}
           relatedResourceType={relatedResourceType}
           {...extraProps}
         >
