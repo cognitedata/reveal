@@ -4,12 +4,13 @@ import opcuaImgUrl from 'assets/opc-ua.png';
 import documentumImgUrl from 'assets/documentum.png';
 import piafImgUrl from 'assets/piaf.png';
 import prosperImgUrl from 'assets/prosper.png';
-import { ExtractorLinks } from 'service/extractors';
+import { ExtractorLink } from 'service/extractors';
 
-export interface ExtractorExtended extends ExtractorLinks {
+export type ExtractorExtended = {
   imagePath: string | any;
   tags: string[];
-}
+  links?: ExtractorLink[];
+};
 
 export const extractorsListExtended: {
   [key: string]: ExtractorExtended;

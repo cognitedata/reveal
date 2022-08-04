@@ -17,15 +17,13 @@ export type Release = {
   changelog: { [key: string]: string[] };
 };
 
-export interface ExtractorLinks {
-  links?: Array<{
-    type: 'generic' | 'externalDocumentation';
-    url: string;
-    name: string;
-  }>;
-}
+export type ExtractorLink = {
+  type: 'generic' | 'externalDocumentation';
+  url: string;
+  name: string;
+};
 
-interface Extractor extends ExtractorLinks {
+type Extractor = {
   externalId: string;
   name: string;
   description?: string;
@@ -33,13 +31,14 @@ interface Extractor extends ExtractorLinks {
   latestVersion: string | undefined;
   documentation?: string;
   tags?: string[];
-}
+  links?: ExtractorLink[];
+};
 
 type Items<T> = {
   items: T[];
 };
 
-export interface ExtractorWithRelease extends ExtractorLinks {
+export type ExtractorWithRelease = {
   externalId: string;
   name: string;
   description?: string;
@@ -47,7 +46,8 @@ export interface ExtractorWithRelease extends ExtractorLinks {
   releases: Release[];
   documentation?: string;
   tags?: string[];
-}
+  links?: ExtractorLink[];
+};
 
 type ExtractorDownload = {
   downloadUrl: string;
