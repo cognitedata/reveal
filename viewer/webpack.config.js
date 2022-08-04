@@ -21,28 +21,29 @@ if (parserWorkerVersion.split('.').some(i => isNaN(parseInt(i, 10)))) {
   );
 }
 
-const defaultExportFunction = (env, entries, additionalAllow = undefined) => {
+module.exports = env => {
   const development = getEnvArg(env, 'development', false);
   const publicPathViewer =
     publicPath || getWorkerCdnUrl({ name: workerPackageJSON.name, version: workerPackageJSON.version });
 
-  const entryFileNames = entries.map(name => './' + name + '.ts');
-  const entryObject = {};
-  for (let i = 0; i < entryFileNames.length; i++) {
-    entryObject[entries[i]] = entryFileNames[i];
-  }
-
   logger.info('Viewer build config:');
   logger.info({ development, publicPathViewer });
-  const allowlist = [/^@reveal/];
-  if (additionalAllow) {
-    allowlist.push(additionalAllow);
-  }
 
   return {
     mode: development ? 'development' : 'production',
     // Internals is not part of prod builds
-    entry: entryObject,
+    entry: development
+      ? {
+          index: './index.ts',
+          tools: './tools.ts',
+          'extensions/datasource': './extensions/datasource.ts',
+          internals: './internals.ts'
+        }
+      : {
+          index: './index.ts',
+          tools: './tools.ts',
+          'extensions/datasource': './extensions/datasource.ts'
+        },
     target: 'web',
     resolve: {
       fallback: {
@@ -56,9 +57,9 @@ const defaultExportFunction = (env, entries, additionalAllow = undefined) => {
       rules: [
         {
           test: /\.worker\.ts$/,
-          loader: 'worker-loader',
+          loader: 'workerize-loader',
           options: {
-            inline: 'no-fallback'
+            inline: true
           }
         },
         {
@@ -98,8 +99,7 @@ const defaultExportFunction = (env, entries, additionalAllow = undefined) => {
     },
     externals: [
       nodeExternals({
-        allowlist: allowlist,
-        importType: 'umd'
+        allowlist: [/^@reveal/]
       })
     ],
     output: {
@@ -145,18 +145,3 @@ const defaultExportFunction = (env, entries, additionalAllow = undefined) => {
     ]
   };
 };
-
-const peripheralEntries = ['tools', 'extensions/datasource'];
-
-module.exports = [
-  env => {
-    return defaultExportFunction(env, ['index'], 'three');
-  },
-  env => {
-    const development = getEnvArg(env, 'development', false);
-    if (development) {
-      peripheralEntries.push('internals');
-    }
-    return defaultExportFunction(env, peripheralEntries);
-  }
-];

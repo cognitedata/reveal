@@ -37,7 +37,12 @@ export type EptInputData = {
   mins: [number, number, number];
 };
 
-export function parseEpt(worker: Worker, data: EptInputData, objects: StylableObject[], pointOffset: Vec3): void {
+export function parseEpt(
+  worker: Worker,
+  data: EptInputData,
+  objects: StylableObject[],
+  pointOffset: Vec3
+): ParsedEptData {
   const buffer = data.buffer;
   const view = new DataView(buffer);
   const schema: SchemaEntry[] = data.schema;
@@ -262,6 +267,8 @@ export function parseEpt(worker: Worker, data: EptInputData, objects: StylableOb
   function assertDefined(buffer: ArrayBuffer | undefined): buffer is ArrayBuffer {
     return buffer !== undefined;
   }
+
+  return message;
 
   const transferables = [
     message.position,

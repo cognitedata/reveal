@@ -122,7 +122,7 @@
     "webpack-log": "^3.0.2",
     "webpack-node-externals": "^3.0.0",
     "whatwg-fetch": "3.6.2",
-    "worker-loader": "^3.0.8"
+    "workerize-loader": "2.0.2"
   },
   "peerDependencies": {
     "@cognite/sdk": "^7.7.0",
