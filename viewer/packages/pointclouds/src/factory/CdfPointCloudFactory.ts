@@ -20,6 +20,7 @@ import { createInvertedRevealTransformationFromCdfTransformation } from '../styl
 import { Cylinder } from '../styling/shapes/Cylinder';
 import { IShape } from '../styling/shapes/IShape';
 import { PointCloudFactory } from '../IPointCloudFactory';
+import { ClassDefinition } from '../potree-three-loader/loading/ClassDefinition';
 
 export class CdfPointCloudFactory implements PointCloudFactory {
   private readonly _potreeInstance: Potree;
@@ -73,13 +74,34 @@ export class CdfPointCloudFactory implements PointCloudFactory {
     return annotations;
   }
 
+  async fetchClassMap(modelIdentifier: CdfModelIdentifier): Promise<ClassDefinition | undefined> {
+    const revision = await this._sdkClient.revisions3D.retrieve(modelIdentifier.modelId, modelIdentifier.revisionId);
+    if (!revision.metadata) {
+      return undefined;
+    }
+
+    const classNames = Object.keys(revision.metadata).filter(k => !isNaN(parseInt(revision.metadata![k])));
+
+    if (classNames.length === 0) {
+      return undefined;
+    }
+
+    const classes: ClassDefinition = {};
+    for (const className of classNames) {
+      classes[className] = parseInt(revision.metadata[className]);
+    }
+  }
+
   async createModel(modelMetadata: PointCloudMetadata): Promise<PotreeNodeWrapper> {
     const { modelBaseUrl, modelIdentifier } = modelMetadata;
 
-    const annotations = await this.getAnnotations(modelIdentifier as CdfModelIdentifier);
+    const cdfModelIdentifier = modelIdentifier as CdfModelIdentifier;
+    const classMap = await this.fetchClassMap(cdfModelIdentifier);
+
+    const annotations = await this.getAnnotations(cdfModelIdentifier);
     const annotationInfo = annotationsToObjectInfo(annotations);
 
-    const [pointCloudOctree, classMap] = await this._potreeInstance.loadPointCloud(
+    const [pointCloudOctree, classMap0] = await this._potreeInstance.loadPointCloud(
       modelBaseUrl,
       DEFAULT_POINT_CLOUD_METADATA_FILE,
       annotationInfo
