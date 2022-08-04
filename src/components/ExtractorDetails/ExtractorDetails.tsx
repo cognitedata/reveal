@@ -61,8 +61,6 @@ const ExtractorDetails = () => {
       (link) => link?.type === 'generic'
     ) ?? [];
 
-  console.log(extractor);
-
   if (status === 'loading') {
     return <Loader />;
   }
