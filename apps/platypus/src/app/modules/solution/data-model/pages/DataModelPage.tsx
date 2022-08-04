@@ -3,7 +3,7 @@ import { useHistory } from 'react-router-dom';
 
 import { PageContentLayout } from '@platypus-app/components/Layouts/PageContentLayout';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
-import { Button, Flex } from '@cognite/cogs.js';
+import { Button, Flex, Label, Tooltip } from '@cognite/cogs.js';
 import useSelector from '@platypus-app/hooks/useSelector';
 import { DataModelState } from '@platypus-app/redux/reducers/global/dataModelReducer';
 import { SplitPanelLayout } from '@platypus-app/components/Layouts/SplitPanelLayout';
@@ -302,9 +302,27 @@ export const DataModelPage = ({ dataModelExternalId }: DataModelPageProps) => {
       onSelectDataModelVersion(latestDataModelVersion);
     };
 
+    const isDraftOld =
+      !!localDraft &&
+      parseInt(latestDataModelVersion.version, 10) >
+        parseInt(localDraft.version, 10);
+
     if (mode === SchemaEditorMode.Edit) {
       return (
         <div data-cy="data-model-toolbar-actions" style={{ display: 'flex' }}>
+          {isDraftOld && (
+            <Flex alignItems={'center'} style={{ marginRight: '8px' }}>
+              <Tooltip
+                position="bottom"
+                content={`Version v. ${latestDataModelVersion.version} has been published by another user, and this draft is currently based on an outdated version.`}
+              >
+                <Label size="medium" variant="warning">
+                  Your draft is based on an outdated version
+                </Label>
+              </Tooltip>
+            </Flex>
+          )}
+
           <DiscardButton
             type="secondary"
             data-cy="discard-btn"
