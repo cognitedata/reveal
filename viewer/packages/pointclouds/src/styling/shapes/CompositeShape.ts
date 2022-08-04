@@ -44,4 +44,8 @@ export class CompositeShape implements IShape {
 
     return box;
   }
+
+  getInnerShapes(): IShape[] {
+    return this._innerShapes;
+  }
 }
