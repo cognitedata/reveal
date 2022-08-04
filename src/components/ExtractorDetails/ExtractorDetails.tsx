@@ -49,7 +49,7 @@ const ExtractorDetails = () => {
     fileDownload(data, artifact.name);
   };
 
-  const _tags = extractor?.tags || extractorExtended?.tags;
+  const tags = extractor?.tags || extractorExtended?.tags;
 
   const externalLinks =
     (extractor?.links || extractorExtended?.links)?.filter(
@@ -170,12 +170,12 @@ const ExtractorDetails = () => {
                     </Flex>
                   </>
                 )}
-                {_tags?.length > 0 && (
+                {tags?.length > 0 && (
                   <>
                     <StyledDivider />
                     <Title level="5">{t('tags')}</Title>
                     <StyledTagsContainer>
-                      {_tags?.map((tag) => (
+                      {tags?.map((tag) => (
                         <Label size="small" key={tag}>
                           {tag}
                         </Label>
