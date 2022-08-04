@@ -1,9 +1,12 @@
 import { STATIC_WELL_1 } from '../../support/constants';
+import { cancelFrontendMetricsRequest } from '../../support/interceptions';
 
 const FILENAME = '15_9_19_A_1980_01_01';
 
 describe('search history', () => {
   beforeEach(() => {
+    cancelFrontendMetricsRequest();
+
     cy.visit(Cypress.env('BASE_URL'));
     cy.login();
     cy.acceptCookies();

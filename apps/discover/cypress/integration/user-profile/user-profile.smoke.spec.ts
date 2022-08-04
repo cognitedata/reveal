@@ -1,5 +1,9 @@
+import { cancelFrontendMetricsRequest } from '../../support/interceptions';
+
 describe('User Profile', () => {
   before(() => {
+    cancelFrontendMetricsRequest();
+
     cy.visit(Cypress.env('BASE_URL'));
     cy.login();
     cy.acceptCookies();

@@ -1,3 +1,5 @@
+import { cancelFrontendMetricsRequest } from '../../support/interceptions';
+
 describe('Delete Favorites', () => {
   const favoriteToDelete = `favorite to delete, ${Date.now()}`;
 
@@ -8,6 +10,8 @@ describe('Delete Favorites', () => {
   };
 
   before(() => {
+    cancelFrontendMetricsRequest();
+
     cy.deleteAllFavorites();
     cy.createFavorite({
       name: favoriteToDelete,

@@ -1,8 +1,11 @@
 import { TAB_NAMES } from '../../../../src/pages/authorized/search/well/inspect/constants';
 import { STATIC_WELL_1 } from '../../../support/constants';
+import { cancelFrontendMetricsRequest } from '../../../support/interceptions';
 
 describe('Wells: Related documents', () => {
   beforeEach(() => {
+    cancelFrontendMetricsRequest();
+
     cy.visit(Cypress.env('BASE_URL'));
     cy.login();
     cy.acceptCookies();

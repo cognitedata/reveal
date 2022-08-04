@@ -1,9 +1,12 @@
 import { CLUSTER, USER_PREFIX } from '../../app.constants';
+import { cancelFrontendMetricsRequest } from '../../support/interceptions';
 
 describe('Share Favorites', () => {
   const favoriteName = `shared favorite, ${Date.now()}`;
 
   before(() => {
+    cancelFrontendMetricsRequest();
+
     cy.createFavorite({
       name: favoriteName,
     });

@@ -2,9 +2,12 @@ import {
   DATA_AVAILABILITY,
   MEASUREMENTS,
 } from '../../../../src/modules/wellSearch/constantsSidebarFilters';
+import { cancelFrontendMetricsRequest } from '../../../support/interceptions';
 
 describe('Wells: Geomechanics & Ppfg', () => {
   before(() => {
+    cancelFrontendMetricsRequest();
+
     cy.visit(Cypress.env('BASE_URL'));
     cy.login();
     cy.acceptCookies();

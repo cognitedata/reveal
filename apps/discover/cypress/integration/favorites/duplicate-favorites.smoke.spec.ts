@@ -1,4 +1,5 @@
 import {
+  cancelFrontendMetricsRequest,
   DOCUMENTS_SEARCH_ALIAS,
   DUPLICATE_FAVORITE_ALIAS,
   GET_FAVORITES_ALIAS,
@@ -19,6 +20,8 @@ describe('Duplicate Favorites', () => {
   };
 
   before(() => {
+    cancelFrontendMetricsRequest();
+
     cy.deleteAllFavorites();
     cy.createFavorite({
       name: favoriteToDuplicate,

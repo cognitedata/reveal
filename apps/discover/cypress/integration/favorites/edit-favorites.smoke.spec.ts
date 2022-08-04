@@ -1,8 +1,11 @@
 import { CLUSTER, PROJECT } from '../../app.constants';
+import { cancelFrontendMetricsRequest } from '../../support/interceptions';
 
 const filename = '15_9_19_A_1997_07_25';
 describe.skip('Edit Favorites', () => {
   before(() => {
+    cancelFrontendMetricsRequest();
+
     cy.deleteAllFavorites();
 
     cy.visit(Cypress.env('BASE_URL'));

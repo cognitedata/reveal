@@ -1,3 +1,5 @@
+//import { SIDECAR } from '../../src/constants/app';
+
 /**
  * ALIASES
  * */
@@ -14,6 +16,7 @@ export const PUT_SAVED_SEARCHES_ALIAS = 'putSavedSearches';
 export const GET_SAVED_SEARCHES_ALIAS = 'getSavedSearches';
 export const SHARE_SAVED_SEARCHES_ALIAS = 'shareSavedSearches';
 export const REMOVE_SHARE_SAVED_SEARCHES_ALIAS = 'removeShareSavedSearches';
+export const FRONTEND_METRICS_ALIAS = 'postMetrics';
 
 export const MAPBOX_REQUESTS_ALIAS = 'mapboxRequests';
 export const USERS_SEARCH_ALIAS = 'usersSearch';
@@ -144,4 +147,10 @@ export const interceptUMS = () => {
     url: '**/user/me',
     method: 'PATCH',
   }).as(UMS_ME_UPDATE);
+};
+
+export const cancelFrontendMetricsRequest = () => {
+  cy.intercept('POST', `**/metrics`, (req) => {
+    req.destroy();
+  }).as(FRONTEND_METRICS_ALIAS);
 };

@@ -3,6 +3,7 @@ import {
   DOCUMENTS_SEARCH_ALIAS,
   GET_SAVED_SEARCHES_ALIAS,
   interceptDocumentsSearch,
+  cancelFrontendMetricsRequest,
   interceptGetFavorites,
   interceptGetSavedSearches,
   interceptRemoveShareSavedSearches,
@@ -20,6 +21,9 @@ describe('saved search', () => {
 
   beforeEach(() => {
     cy.deleteAllSavedSearches();
+
+    cancelFrontendMetricsRequest();
+
     cy.visit(Cypress.env('BASE_URL'));
     cy.login();
     cy.acceptCookies();

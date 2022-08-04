@@ -11,6 +11,7 @@ import {
   MAPBOX_REQUESTS_ALIAS,
   WELL_GEOMETRIES_ALIAS,
   WELLS_SEARCH_ALIAS,
+  cancelFrontendMetricsRequest,
 } from '../interceptions';
 
 const rawHeaders = {
@@ -137,6 +138,7 @@ export const interceptCoreNetworkRequests = (): string[] => {
   interceptGeoStreaming();
   interceptWellGeometries();
   interceptMapboxRequests();
+  cancelFrontendMetricsRequest(); // we dont need to return it since we dont want to wait for it
 
   return [
     `@${DOCUMENTS_SEARCH_ALIAS}`,

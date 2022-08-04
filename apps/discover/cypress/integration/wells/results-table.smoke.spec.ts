@@ -1,7 +1,10 @@
 import { STATIC_LOCATION_WELL } from '../../support/constants';
+import { cancelFrontendMetricsRequest } from '../../support/interceptions';
 
 describe('Wells: Search table', () => {
   before(() => {
+    cancelFrontendMetricsRequest();
+
     cy.visit(Cypress.env('BASE_URL'));
     cy.login();
     cy.acceptCookies();

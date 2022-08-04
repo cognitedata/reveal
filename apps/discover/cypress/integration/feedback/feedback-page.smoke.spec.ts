@@ -12,6 +12,7 @@ import {
   RESOLVED,
   UNASSIGN_WARNING,
 } from '../../../src/pages/authorized/admin/feedback/constants';
+import { cancelFrontendMetricsRequest } from '../../support/interceptions';
 import {
   GET_DOCUMENT_FEEDBACK_ALIAS,
   GET_GENERAL_FEEDBACK_ALIAS,
@@ -26,6 +27,8 @@ import {
 describe.skip('Feedback', () => {
   describe('Normal User', () => {
     before(() => {
+      cancelFrontendMetricsRequest();
+
       cy.visit(Cypress.env('BASE_URL'));
       cy.login();
       cy.acceptCookies();

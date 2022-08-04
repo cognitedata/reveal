@@ -1,7 +1,9 @@
 import { PROJECT } from '../../app.constants';
+import { cancelFrontendMetricsRequest } from '../../support/interceptions';
 
 describe('Project Config', () => {
   beforeEach(() => {
+    cancelFrontendMetricsRequest();
     cy.visit(Cypress.env('BASE_URL'));
   });
 

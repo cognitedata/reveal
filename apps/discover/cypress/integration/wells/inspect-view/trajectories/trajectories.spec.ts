@@ -1,10 +1,13 @@
 import { DATA_AVAILABILITY } from '../../../../../src/modules/wellSearch/constantsSidebarFilters';
 import { TAB_NAMES } from '../../../../../src/pages/authorized/search/well/inspect/constants';
+import { cancelFrontendMetricsRequest } from '../../../../support/interceptions';
 
 const DATA_AVAILABILITY_TRAJECTORIES = 'Trajectories';
 
 describe('Wells: Trajectories', () => {
   before(() => {
+    cancelFrontendMetricsRequest();
+
     cy.visit(Cypress.env('BASE_URL'));
     cy.login();
     cy.acceptCookies();
