@@ -17,27 +17,37 @@ export type Release = {
   changelog: { [key: string]: string[] };
 };
 
-type Extractor = {
+export interface ExtractorLinks {
+  links?: Array<{
+    type: 'generic' | 'externalDocumentation';
+    url: string;
+    name: string;
+  }>;
+}
+
+interface Extractor extends ExtractorLinks {
   externalId: string;
   name: string;
   description?: string;
   type: string;
   latestVersion: string | undefined;
   documentation?: string;
-};
+  tags?: string[];
+}
 
 type Items<T> = {
   items: T[];
 };
 
-export type ExtractorWithRelease = {
+export interface ExtractorWithRelease extends ExtractorLinks {
   externalId: string;
   name: string;
   description?: string;
   type: string;
   releases: Release[];
   documentation?: string;
-};
+  tags?: string[];
+}
 
 type ExtractorDownload = {
   downloadUrl: string;

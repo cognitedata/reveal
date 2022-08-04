@@ -4,17 +4,12 @@ import opcuaImgUrl from 'assets/opc-ua.png';
 import documentumImgUrl from 'assets/documentum.png';
 import piafImgUrl from 'assets/piaf.png';
 import prosperImgUrl from 'assets/prosper.png';
+import { ExtractorLinks } from 'service/extractors';
 
-export type ExtractorExtended = {
+export interface ExtractorExtended extends ExtractorLinks {
   imagePath: string | any;
   tags: string[];
-  links: Array<{
-    title: string;
-    url: string;
-  }>;
-  source?: string;
-  docs?: string;
-};
+}
 
 export const extractorsListExtended: {
   [key: string]: ExtractorExtended;
@@ -24,20 +19,24 @@ export const extractorsListExtended: {
     tags: ['DB', 'Database', 'Cognite Extractor', 'ODBC'],
     links: [
       {
-        title: 'Server requirements',
+        name: 'Server requirements',
         url: 'https://docs.cognite.com/cdf/integration/guides/extraction/db#tag/Schema/operation/getTransformationSchema',
+        type: 'externalDocumentation',
       },
       {
-        title: 'Running as a Docker container',
+        name: 'Running as a Docker container',
         url: 'https://docs.cognite.com/cdf/integration/guides/extraction/db#running-as-a-docker-container',
+        type: 'externalDocumentation',
       },
       {
-        title: 'Prerequisites',
+        name: 'Prerequisites',
         url: 'https://docs.cognite.com/cdf/integration/guides/extraction/db#prerequisites',
+        type: 'externalDocumentation',
       },
       {
-        title: 'Incremental load',
+        name: 'Incremental load',
         url: 'https://docs.cognite.com/cdf/integration/guides/extraction/db#incremental-load',
+        type: 'externalDocumentation',
       },
     ],
   },
@@ -48,8 +47,6 @@ export const extractorsListExtended: {
   },
   'cognite-opcua': {
     imagePath: opcuaImgUrl,
-    source: 'https://github.com/cognitedata/opcua-extractor-net',
-    docs: 'https://docs.cognite.com/cdf/integration/guides/extraction/opc_ua',
     tags: [
       'OPC UA',
       'Cognite Extractor',
@@ -60,47 +57,64 @@ export const extractorsListExtended: {
     ],
     links: [
       {
-        title: 'Extractor features',
+        name: 'GitHub',
+        url: 'https://github.com/cognitedata/opcua-extractor-net',
+        type: 'generic',
+      },
+      {
+        name: 'Documenation',
+        url: 'https://docs.cognite.com/cdf/integration/guides/extraction/opc_ua',
+        type: 'generic',
+      },
+      {
+        name: 'Extractor features',
         url: 'https://docs.cognite.com/cdf/integration/guides/extraction/opc_ua/',
+        type: 'externalDocumentation',
       },
       {
-        title: 'Hardware requirements',
+        name: 'Hardware requirements',
         url: 'https://docs.cognite.com/cdf/integration/guides/extraction/opc_ua/opc_ua_hw_requirements',
+        type: 'externalDocumentation',
       },
       {
-        title: 'Server requirements',
+        name: 'Server requirements',
         url: 'https://docs.cognite.com/cdf/integration/guides/extraction/opc_ua/opc_ua_server_requirements',
+        type: 'externalDocumentation',
       },
       {
-        title: 'Setting up the OPC UA',
+        name: 'Setting up the OPC UA',
         url: 'https://docs.cognite.com/cdf/integration/guides/extraction/opc_ua/opc_ua_setup',
+        type: 'externalDocumentation',
       },
       {
-        title: 'Command-line arguments',
+        name: 'Command-line arguments',
         url: 'https://docs.cognite.com/cdf/integration/guides/extraction/opc_ua/opc_ua_cli',
+        type: 'externalDocumentation',
       },
       {
-        title: 'Configuration settings',
+        name: 'Configuration settings',
         url: 'https://docs.cognite.com/cdf/integration/guides/extraction/opc_ua/opc_ua_configuration',
+        type: 'externalDocumentation',
       },
       {
-        title: 'Extractor metrics',
+        name: 'Extractor metrics',
         url: 'https://docs.cognite.com/cdf/integration/guides/extraction/opc_ua/opc_ua_metrics#',
+        type: 'externalDocumentation',
       },
       {
-        title: 'Troubleshooting',
+        name: 'Troubleshooting',
         url: 'https://docs.cognite.com/cdf/integration/guides/extraction/opc_ua/opc_ua_troubleshooting',
+        type: 'externalDocumentation',
       },
       {
-        title: "What's new?",
+        name: "What's new?",
         url: 'https://docs.cognite.com/cdf/integration/guides/extraction/opc_ua/changelog',
+        type: 'externalDocumentation',
       },
     ],
   },
   'cognite-pi': {
     imagePath: osiImgUrl,
-    source: 'https://github.com/cognitedata/extractor-pi-net',
-    docs: 'https://docs.cognite.com/cdf/integration/guides/extraction/pi',
     tags: [
       'PI',
       'Cognite Extractor',
@@ -111,22 +125,34 @@ export const extractorsListExtended: {
     ],
     links: [
       {
-        title: 'Server requirements',
+        name: 'GitHub',
+        url: 'https://github.com/cognitedata/extractor-pi-net',
+        type: 'generic',
+      },
+      {
+        name: 'Documentation',
+        url: 'https://docs.cognite.com/cdf/integration/guides/extraction/pi',
+        type: 'generic',
+      },
+      {
+        name: 'Server requirements',
         url: 'https://docs.cognite.com/cdf/integration/guides/extraction/pi#server-requirements',
+        type: 'externalDocumentation',
       },
       {
-        title: 'Before you start',
+        name: 'Before you start',
         url: 'https://docs.cognite.com/cdf/integration/guides/extraction/pi#before-you-start',
+        type: 'externalDocumentation',
       },
       {
-        title: 'How the extractor processes data',
+        name: 'How the extractor processes data',
         url: 'https://docs.cognite.com/cdf/integration/guides/extraction/pi#how-the-extractor-processes-data',
+        type: 'externalDocumentation',
       },
     ],
   },
   'cognite-piaf': {
     imagePath: piafImgUrl,
-    source: 'https://github.com/cognitedata/extractor-pi-af-net',
     tags: [
       'PI',
       'Cognite Extractor',
@@ -135,7 +161,13 @@ export const extractorsListExtended: {
       'OSISoft PI Server',
       'PI Points',
     ],
-    links: [],
+    links: [
+      {
+        name: 'GitHub',
+        url: 'https://github.com/cognitedata/extractor-pi-af-net',
+        type: 'generic',
+      },
+    ],
   },
   'cognite-simconnect': {
     imagePath: prosperImgUrl,

@@ -34,6 +34,10 @@ const DocsLinkGridItem = styled(
     }
   }
 
+  > * {
+    color: ${Colors['text-icon--medium']};
+  }
+
   svg {
     color: inherit;
   }
