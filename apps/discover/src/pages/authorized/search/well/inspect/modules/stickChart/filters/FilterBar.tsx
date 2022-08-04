@@ -1,9 +1,9 @@
-import { useState } from 'react';
+import { useCallback } from 'react';
 
 import { DragDropContainer } from 'components/DragDropContainer';
 import { MultiSelectCategorizedOptionMap } from 'components/Filters/MultiSelectCategorized/types';
 
-import { COLUMNS } from '../WellboreCasingView/constants';
+import { ChartColumn } from '../types';
 
 import { FilterBarWrapper } from './elements';
 import { FilterItem } from './FilterItem';
@@ -11,58 +11,63 @@ import { NdsFilterItem } from './NdsFilterItem';
 import { NptFilterItem } from './NptFilterItem';
 
 interface FilterBarProps {
+  visibleColumns: ChartColumn[];
   onNptCodesChange: (events: MultiSelectCategorizedOptionMap) => void;
   onNdsCodesChange: (eventCodes: MultiSelectCategorizedOptionMap) => void;
-  onRearrange: (order: string[]) => void;
-  onVisibleColumnChange: (visibleColumns: string[]) => void;
+  onRearrange: (order: ChartColumn[]) => void;
+  onVisibleColumnChange: (visibleColumns: ChartColumn[]) => void;
 }
 
 export const FilterBar: React.FC<FilterBarProps> = ({
+  visibleColumns,
   onNptCodesChange,
   onNdsCodesChange,
   onRearrange,
   onVisibleColumnChange,
 }) => {
-  const [visibleColumns, setVisibleColumns] = useState<Array<string>>([
-    COLUMNS.CASINGS,
-    COLUMNS.NDS,
-    COLUMNS.NPT,
-  ]);
+  const handleColumnVisibilityChange = useCallback(
+    (columnIdentifier: ChartColumn, isVisible: boolean) => {
+      const columns = isVisible
+        ? [...visibleColumns, columnIdentifier]
+        : visibleColumns.filter((column) => column !== columnIdentifier);
 
-  const handleColumnVisibilityChange = (
-    columnIdentifier: string,
-    isVisible: boolean
-  ) => {
-    const columns = isVisible
-      ? [...visibleColumns, columnIdentifier]
-      : visibleColumns.filter((column) => column !== columnIdentifier);
+      onVisibleColumnChange(columns);
+    },
+    [onVisibleColumnChange]
+  );
 
-    setVisibleColumns(columns);
-    onVisibleColumnChange(columns);
-  };
+  const handleRearrange = useCallback(
+    (columnKeysOrder: string[]) => {
+      onRearrange(columnKeysOrder as ChartColumn[]);
+    },
+    [onRearrange]
+  );
 
   return (
     <FilterBarWrapper>
-      <DragDropContainer id="casing-filter-content" onRearranged={onRearrange}>
+      <DragDropContainer
+        id="casing-filter-content"
+        onRearranged={handleRearrange}
+      >
         {/* <FilterItem text="Formations" key="formations" /> */}
         <FilterItem
-          text="Casings"
-          column={COLUMNS.CASINGS}
-          key={COLUMNS.CASINGS}
+          key={ChartColumn.CASINGS}
+          column={ChartColumn.CASINGS}
           onFiterVisiblityChange={handleColumnVisibilityChange}
         />
         <NptFilterItem
+          key={ChartColumn.NPT}
           onFiterVisiblityChange={handleColumnVisibilityChange}
           onNptCodesChange={onNptCodesChange}
         />
         <NdsFilterItem
+          key={ChartColumn.NDS}
           onFiterVisiblityChange={handleColumnVisibilityChange}
           onNdsCodesChange={onNdsCodesChange}
         />
         <FilterItem
-          text="Section Summary"
-          column={COLUMNS.SUMMARY}
-          key={COLUMNS.SUMMARY}
+          key={ChartColumn.SUMMARY}
+          column={ChartColumn.SUMMARY}
           onFiterVisiblityChange={handleColumnVisibilityChange}
         />
       </DragDropContainer>

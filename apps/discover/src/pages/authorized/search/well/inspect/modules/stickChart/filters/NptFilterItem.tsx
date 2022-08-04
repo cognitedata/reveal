@@ -1,17 +1,17 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import { WithDragHandleProps } from 'components/DragDropContainer';
 import { MultiSelectCategorizedOptionMap } from 'components/Filters/MultiSelectCategorized/types';
 
 import { EventNptFilter } from '../../measurements/filters/EventNptFilter';
-import { COLUMNS } from '../WellboreCasingView/constants';
+import { ChartColumn } from '../types';
 
 import { FilterItem } from './FilterItem';
 
 export interface NptFilterProps {
   onNptCodesChange: (events: MultiSelectCategorizedOptionMap) => void;
   onFiterVisiblityChange: (
-    columnIdentifier: string,
+    columnIdentifier: ChartColumn,
     visibility: boolean
   ) => void;
 }
@@ -25,21 +25,20 @@ export const NptFilterItem: React.FC<WithDragHandleProps<NptFilterProps>> = ({
     {}
   );
 
-  useEffect(() => {
+  const handleChangeNptFilter = (nptCodes: MultiSelectCategorizedOptionMap) => {
+    setNptEvents(nptCodes);
     onNptCodesChange(nptCodes);
-  }, [nptCodes]);
+  };
 
   return (
     <FilterItem
-      text="NPT"
-      column={COLUMNS.NPT}
-      key={COLUMNS.NPT}
+      column={ChartColumn.NPT}
       onFiterVisiblityChange={onFiterVisiblityChange}
       {...dragHandleProps}
     >
       <EventNptFilter
         selectedEvents={nptCodes}
-        onChange={setNptEvents}
+        onChange={handleChangeNptFilter}
         iconInsteadText="Configure"
       />
     </FilterItem>

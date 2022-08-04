@@ -3,12 +3,14 @@ import { DragDropContext, Droppable, DropResult } from 'react-beautiful-dnd';
 
 import isEmpty from 'lodash/isEmpty';
 
-import { useDeepEffect } from 'hooks/useDeep';
+import { useDeepEffect, useDeepMemo } from 'hooks/useDeep';
 
 import { DraggableElements } from './components/DraggableElements';
 import { DragDropContainerProps } from './types';
+import { getChildrenProps } from './utils/getChildrenProps';
 import { getDraggableElementsWrapper } from './utils/getDraggableElementsWrapper';
 import { getElementsFromChildren } from './utils/getElementsFromChildren';
+import { getElementsKeys } from './utils/getElementsKeys';
 import { getReorderedElements } from './utils/getReorderedElements';
 import { orderElementsByKey } from './utils/orderElementsByKey';
 
@@ -18,23 +20,25 @@ export const DragDropContainer: React.FC<
   ({ id, children, direction = 'horizontal', elementsOrder, onRearranged }) => {
     const [orderedElements, setOrderedElements] = useState<JSX.Element[]>([]);
 
-    const updatedOrderedElements = (elements: JSX.Element[]) => {
-      setOrderedElements([...elements]);
-    };
+    const childrenProps = useDeepMemo(
+      () => getChildrenProps(children),
+      [children]
+    );
+
+    const elements = useDeepMemo(
+      () => getElementsFromChildren(children),
+      [childrenProps]
+    );
 
     useDeepEffect(() => {
-      const elements = getElementsFromChildren(children);
-      updatedOrderedElements(elements);
-    }, [children]);
+      setOrderedElements(elements);
+    }, [elements]);
 
     useDeepEffect(() => {
       if (!elementsOrder || isEmpty(elementsOrder)) return;
 
-      const orderedElementsByKey = orderElementsByKey(
-        orderedElements,
-        elementsOrder
-      );
-      updatedOrderedElements(orderedElementsByKey);
+      const orderedElementsByKey = orderElementsByKey(elements, elementsOrder);
+      setOrderedElements([...orderedElementsByKey]);
     }, [elementsOrder]);
 
     const handleDragEnd = (result: DropResult) => {
@@ -53,9 +57,7 @@ export const DragDropContainer: React.FC<
       setOrderedElements(reorderedElements);
 
       if (onRearranged) {
-        const reorderedElementsKeys = reorderedElements.map(({ key }) =>
-          String(key).slice(2)
-        );
+        const reorderedElementsKeys = getElementsKeys(reorderedElements);
         onRearranged(reorderedElementsKeys);
       }
     };

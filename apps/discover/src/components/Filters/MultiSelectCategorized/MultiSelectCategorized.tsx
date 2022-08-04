@@ -231,7 +231,7 @@ export const MultiSelectCategorized: React.FC<MultiSelectCategorizedProps> = ({
           iconPlacement="right"
           $focused={dropdownVisible}
           onClick={() => setDropdownVisible((prevState) => !prevState)}
-          boldTitle={boldTitle}
+          bold={boldTitle}
         >
           {iconInsteadText ? (
             <Icon type={iconInsteadText} />

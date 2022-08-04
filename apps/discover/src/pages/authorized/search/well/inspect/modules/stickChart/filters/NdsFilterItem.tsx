@@ -1,17 +1,17 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import { WithDragHandleProps } from 'components/DragDropContainer';
 import { MultiSelectCategorizedOptionMap } from 'components/Filters/MultiSelectCategorized/types';
 
 import { EventNdsFilter } from '../../measurements/filters/EventNdsFilter';
-import { COLUMNS } from '../WellboreCasingView/constants';
+import { ChartColumn } from '../types';
 
 import { FilterItem } from './FilterItem';
 
 export interface NdsFilterProps {
   onNdsCodesChange: (events: MultiSelectCategorizedOptionMap) => void;
   onFiterVisiblityChange: (
-    columnIdentifier: string,
+    columnIdentifier: ChartColumn,
     visibility: boolean
   ) => void;
 }
@@ -25,21 +25,20 @@ export const NdsFilterItem: React.FC<WithDragHandleProps<NdsFilterProps>> = ({
     {}
   );
 
-  useEffect(() => {
+  const handleChangeNptFilter = (ndsCodes: MultiSelectCategorizedOptionMap) => {
+    setNdsEvents(ndsCodes);
     onNdsCodesChange(ndsCodes);
-  }, [ndsCodes]);
+  };
 
   return (
     <FilterItem
-      text="NDS"
-      column={COLUMNS.NDS}
-      key={COLUMNS.NDS}
+      column={ChartColumn.NDS}
       onFiterVisiblityChange={onFiterVisiblityChange}
       {...dragHandleProps}
     >
       <EventNdsFilter
         selectedEvents={ndsCodes}
-        onChange={setNdsEvents}
+        onChange={handleChangeNptFilter}
         iconInsteadText="Configure"
       />
     </FilterItem>

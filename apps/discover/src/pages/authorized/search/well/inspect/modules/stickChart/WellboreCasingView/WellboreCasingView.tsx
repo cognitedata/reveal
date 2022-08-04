@@ -2,13 +2,7 @@ import { getDepthRange } from 'domain/wells/casings/internal/selectors/getDepthR
 import { filterNdsBySelectedEvents } from 'domain/wells/nds/internal/selectors/filterNdsBySelectedEvents';
 import { filterNptBySelectedEvents } from 'domain/wells/npt/internal/selectors/filterNptBySelectedEvents';
 
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import { DragDropContainer } from 'components/DragDropContainer';
 import { MultiSelectCategorizedOptionMap } from 'components/Filters/MultiSelectCategorized/types';
@@ -16,10 +10,10 @@ import { useDeepMemo } from 'hooks/useDeep';
 
 import { SCALE_BOTTOM_PADDING } from '../../common/Events/constants';
 import { SelectedWellboreNptView } from '../../nptEvents/Graph';
-import { CasingSchematicView } from '../types';
+import { CasingSchematicView, ChartColumn } from '../types';
 import { getScaleBlocks } from '../utils/scale';
 
-import { COLUMNS, DEPTH_SCALE_MIN_HEIGHT } from './constants';
+import { DEPTH_SCALE_MIN_HEIGHT } from './constants';
 import { ContentWrapper, WellboreCasingsViewWrapper } from './elements';
 import { Header } from './Header';
 import { NdsEventsColumn } from './NdsEventsColumn';
@@ -30,8 +24,8 @@ import { WellboreNdsDetailedView } from './WellboreNdsDetailedView';
 
 interface WellboreCasingsViewProps {
   data: CasingSchematicView;
-  columnOrder: string[];
-  visibleColumns: string[];
+  columnOrder: ChartColumn[];
+  visibleColumns: ChartColumn[];
   selectedNptCodes: MultiSelectCategorizedOptionMap;
   selectedNdsCodes: MultiSelectCategorizedOptionMap;
   isNptEventsLoading?: boolean;
@@ -77,7 +71,7 @@ export const WellboreCasingView: React.FC<WellboreCasingsViewProps> = ({
     [ndsEvents, selectedNdsCodes]
   );
 
-  const [_, maxDepth] = useMemo(
+  const [_, maxDepth] = useDeepMemo(
     () => getDepthRange(casingAssemblies, nptEvents, ndsEvents),
     [data]
   );
@@ -99,12 +93,9 @@ export const WellboreCasingView: React.FC<WellboreCasingsViewProps> = ({
     setShowNptDetailView(false);
   };
 
-  const shouldShowColumn = useCallback(
-    (columnIdentifier: string) => {
-      return visibleColumns.includes(columnIdentifier);
-    },
-    [visibleColumns]
-  );
+  const isColumnVisible = (column: ChartColumn) => {
+    return visibleColumns.includes(column);
+  };
 
   return (
     <>
@@ -114,10 +105,10 @@ export const WellboreCasingView: React.FC<WellboreCasingsViewProps> = ({
           wellboreName={wellboreName}
           wellboreMatchingId={wellboreMatchingId}
           onChangeDropdown={({ eventType }) => {
-            if (eventType === COLUMNS.NDS) {
+            if (eventType === 'nds') {
               setShowNdsDetailView(true);
             }
-            if (eventType === COLUMNS.NPT) {
+            if (eventType === 'npt') {
               setShowNptDetailView(true);
             }
           }}
@@ -128,9 +119,9 @@ export const WellboreCasingView: React.FC<WellboreCasingsViewProps> = ({
             id="welbore-casing-view-content"
             elementsOrder={columnOrder}
           >
-            {shouldShowColumn(COLUMNS.CASINGS) && (
+            {isColumnVisible(ChartColumn.CASINGS) && (
               <SchemaColumn
-                key="casings"
+                key={ChartColumn.CASINGS}
                 isLoading={isSchemaLoading}
                 rkbLevel={rkbLevel}
                 waterDepth={waterDepth}
@@ -140,25 +131,29 @@ export const WellboreCasingView: React.FC<WellboreCasingsViewProps> = ({
               />
             )}
 
-            {shouldShowColumn(COLUMNS.NPT) && (
+            {isColumnVisible(ChartColumn.CASINGS) && (
               <NptEventsColumn
-                key="npt"
+                key={ChartColumn.NPT}
                 scaleBlocks={scaleBlocks}
                 events={filteredNptEvents}
                 isLoading={isNptEventsLoading}
               />
             )}
 
-            {shouldShowColumn(COLUMNS.NDS) && (
+            {isColumnVisible(ChartColumn.CASINGS) && (
               <NdsEventsColumn
-                key="nds"
+                key={ChartColumn.NDS}
                 scaleBlocks={scaleBlocks}
                 events={filteredNdsEvents}
                 isLoading={isNdsEventsLoading}
               />
             )}
-            {shouldShowColumn(COLUMNS.SUMMARY) && (
-              <SummaryColumn casingAssemblies={casingAssemblies} />
+
+            {isColumnVisible(ChartColumn.CASINGS) && (
+              <SummaryColumn
+                key={ChartColumn.SUMMARY}
+                casingAssemblies={casingAssemblies}
+              />
             )}
           </DragDropContainer>
         </ContentWrapper>

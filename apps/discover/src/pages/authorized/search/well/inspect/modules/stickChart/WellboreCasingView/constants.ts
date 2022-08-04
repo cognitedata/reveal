@@ -1,5 +1,7 @@
 import { DepthMeasurementUnit } from 'constants/units';
 
+import { ChartColumn } from '../types';
+
 export const RKB_LEVEL_LABEL = 'RKB level';
 export const WATER_DEPTH_LABEL = 'Water depth';
 
@@ -18,12 +20,10 @@ export const DEPTH_SCALE_LABEL_HEIGHT = 16;
 export const DEPTH_SCALE_LABEL_COLOR = 'var(--cogs-midblue-7)';
 
 export const DEFAULT_DEPTH_MEASUREMENT_TYPE = DepthMeasurementUnit.MD;
-export const COLUMNS = {
-  FORMATIONS: 'formations',
-  CASINGS: 'casings',
-  NDS: 'nds',
-  NPT: 'npt',
-  SUMMARY: 'summary',
-};
 
-export const DEFAULT_COLUMN_ORDER = [COLUMNS.CASINGS, COLUMNS.NDS, COLUMNS.NPT];
+export const DEFAULT_COLUMN_ORDER = [
+  ChartColumn.CASINGS,
+  ChartColumn.NPT,
+  ChartColumn.NDS,
+  ChartColumn.SUMMARY,
+];

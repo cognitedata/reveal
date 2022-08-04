@@ -4,6 +4,8 @@ import { Checkbox, Icon } from '@cognite/cogs.js';
 
 import { WithDragHandleProps } from 'components/DragDropContainer';
 
+import { ChartColumn } from '../types';
+
 import {
   FilterItemWrapper,
   FilterItemElement,
@@ -12,11 +14,9 @@ import {
 } from './elements';
 
 export interface FilterItemProps {
-  text: string;
-  column: string;
-  key: React.Key;
+  column: ChartColumn;
   onFiterVisiblityChange: (
-    columnIdentifier: string,
+    columnIdentifier: ChartColumn,
     visibility: boolean
   ) => void;
   children?: React.ReactNode;
@@ -24,13 +24,7 @@ export interface FilterItemProps {
 
 export const FilterItem: React.FC<WithDragHandleProps<FilterItemProps>> =
   React.memo(
-    ({
-      text,
-      column,
-      onFiterVisiblityChange,
-      children,
-      ...dragHandleProps
-    }) => {
+    ({ column, onFiterVisiblityChange, children, ...dragHandleProps }) => {
       const [checked, setChecked] = useState<boolean>(true);
       const handleChange = (selected: boolean) => {
         setChecked(selected);
@@ -50,7 +44,7 @@ export const FilterItem: React.FC<WithDragHandleProps<FilterItemProps>> =
             />
           </FilterItemElement>
           <FilterItemElement>
-            <FilterText>{text}</FilterText>
+            <FilterText>{column}</FilterText>
           </FilterItemElement>
           {children && <VertSeperator />}
           {children}
