@@ -27,8 +27,8 @@ describe(PointCloudObjectAppearanceTexture.name, () => {
 
     const objectsMaps = {
       annotationToObjectIds: new Map<number, number>([[annotationId, objectId]]),
-      objectToAnnotationIds: new Map<number, number>([[objectId, annotationId]]),
-    }
+      objectToAnnotationIds: new Map<number, number>([[objectId, annotationId]])
+    };
 
     appearanceTexture.setObjectsMaps(objectsMaps);
 
@@ -61,8 +61,8 @@ describe(PointCloudObjectAppearanceTexture.name, () => {
 
     const objectsMaps = {
       annotationToObjectIds: new Map<number, number>([[annotationId, objectId]]),
-      objectToAnnotationIds: new Map<number, number>([[objectId, annotationId]]),
-    }
+      objectToAnnotationIds: new Map<number, number>([[objectId, annotationId]])
+    };
 
     appearanceTexture.setObjectsMaps(objectsMaps);
 
