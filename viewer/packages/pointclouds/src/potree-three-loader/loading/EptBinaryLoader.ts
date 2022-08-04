@@ -19,6 +19,7 @@ import { fromThreeVector3, setupTransferableMethodsOnMain } from '@reveal/utilit
 import { RawStylableObject } from '../../styling/StylableObject';
 import { PointCloudObjectProvider } from '../../styling/PointCloudObjectProvider';
 import { stylableObjectToRaw } from '../../styling/StylableObject';
+import { Vec3 } from '../../styling/shapes/linalg';
 
 export class EptBinaryLoader implements ILoader {
   private readonly _dataLoader: ModelDataProvider;
@@ -81,11 +82,16 @@ export class EptBinaryLoader implements ILoader {
       }
     });
 
-      const relevantStylableObjects = this._stylableObjectsWithBoundingBox
-        .filter(p => p.box.intersectsBox(node.getBoundingBox()))
-        .map(p => p.object);
+    const relevantStylableObjects = this._stylableObjectsWithBoundingBox
+      .filter(p => p.box.intersectsBox(node.getBoundingBox()))
+      .map(p => p.object);
 
-    const result = await eptDecoderWorker.parse(eptData, relevantStylableObjects, node.boundingBox.min.toArray());
+    const sectorBoundingBox: [Vec3, Vec3] = [node.boundingBox.min.toArray(), node.boundingBox.max.toArray()]
+
+    const result = await eptDecoderWorker.parse(eptData,
+                                                relevantStylableObjects,
+                                                node.boundingBox.min.toArray(),
+                                                sectorBoundingBox);
     EptBinaryLoader.WORKER_POOL.releaseWorker(autoTerminatingWorker);
     return result;
   }

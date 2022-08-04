@@ -36,7 +36,12 @@ export type EptInputData = {
   mins: [number, number, number];
 };
 
-export function parseEpt(data: EptInputData, objects: StylableObject[], pointOffset: Vec3): ParsedEptData {
+export function parseEpt(
+  data: EptInputData,
+  objects: StylableObject[],
+  pointOffset: THREE.Vector3,
+  sectorBoundingBox: THREE.Box3
+): ParsedEptData {
   const buffer = data.buffer;
   const view = new DataView(buffer);
   const schema: SchemaEntry[] = data.schema;
@@ -240,7 +245,7 @@ export function parseEpt(data: EptInputData, objects: StylableObject[], pointOff
     indices[i] = i;
   }
 
-  const objectIdBuffer = computeObjectIdBuffer(xyz, objects, pointOffset);
+  const objectIdBuffer = computeObjectIdBuffer(xyz, objects, pointOffset, sectorBoundingBox);
 
   const message: ParsedEptData = {
     numPoints: numPoints,
