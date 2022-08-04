@@ -79,6 +79,11 @@ export const ScaleLine = styled(Flex)`
   align-items: center;
 `;
 
+export const ScaleLineAbsolute = styled(ScaleLine)`
+  position: absolute;
+  top: ${(props: { top: number }) => props.top}px;
+`;
+
 export const LastScaleBlock = styled(Flex)`
   height: ${SCALE_BLOCK_HEIGHT}px;
   min-height: ${SCALE_BLOCK_HEIGHT}px;

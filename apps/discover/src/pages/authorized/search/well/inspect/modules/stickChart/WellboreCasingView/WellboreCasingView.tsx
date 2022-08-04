@@ -8,7 +8,10 @@ import { DragDropContainer } from 'components/DragDropContainer';
 import { MultiSelectCategorizedOptionMap } from 'components/Filters/MultiSelectCategorized/types';
 import { useDeepMemo } from 'hooks/useDeep';
 
-import { SCALE_BOTTOM_PADDING } from '../../common/Events/constants';
+import {
+  SCALE_BLOCK_HEIGHT,
+  SCALE_BOTTOM_PADDING,
+} from '../../common/Events/constants';
 import { SelectedWellboreNptView } from '../../nptEvents/Graph';
 import { CasingSchematicView, ChartColumn } from '../types';
 import { getScaleBlocks } from '../utils/scale';
@@ -80,7 +83,7 @@ export const WellboreCasingView: React.FC<WellboreCasingsViewProps> = ({
     setSchamaLoading(true);
     const depthColumnHeight = depthScaleRef.current?.offsetHeight;
     const height = depthColumnHeight || DEPTH_SCALE_MIN_HEIGHT;
-    const usableHeight = height - SCALE_BOTTOM_PADDING;
+    const usableHeight = height - SCALE_BLOCK_HEIGHT - SCALE_BOTTOM_PADDING;
     const depthScaleBlocks = getScaleBlocks(usableHeight, maxDepth);
     setScaleBlocks(depthScaleBlocks);
     setSchamaLoading(false);

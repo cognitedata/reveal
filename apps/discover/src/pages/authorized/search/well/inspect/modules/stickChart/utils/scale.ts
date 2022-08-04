@@ -1,6 +1,7 @@
 import { ScaleLinear, scaleLinear } from 'd3-scale';
 import head from 'lodash/head';
 import last from 'lodash/last';
+import times from 'lodash/times';
 
 import {
   SCALE_BLOCK_HEIGHT,
@@ -30,10 +31,11 @@ export const getScaleBlocks = (scaleHeight: number, maxDepth: number) => {
   const interval = Math.round(maxDepth / blocksCount);
 
   return [
-    0,
-    ...[...Array(blocksCount).keys()]
+    0, // Scale min depth
+    ...times(blocksCount)
       .map((blockIndex) => Number(((blockIndex + 1) * interval).toFixed(2)))
       .filter((row) => !Number.isNaN(row)),
+    interval * (blocksCount + 1), // Scale max depth
   ];
 };
 

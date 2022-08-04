@@ -1,6 +1,7 @@
 import React from 'react';
 
 import isUndefined from 'lodash/isUndefined';
+import last from 'lodash/last';
 import { Fixed, toFixedNumberFromNumber } from 'utils/number';
 
 import { DepthMeasurementUnit } from 'constants/units';
@@ -9,6 +10,7 @@ import {
   BodyColumnBody,
   DepthMeasurementScale,
   ScaleLine,
+  ScaleLineAbsolute,
   ScaleLineDepth,
 } from '../../../../common/Events/elements';
 import { useScaledDepth } from '../../../hooks/useScaledDepth';
@@ -33,6 +35,7 @@ const DepthColumn: React.FC<Props> = ({
   const getScaledDepth = useScaledDepth(scaleBlocks);
 
   const isTvdBased = depthMeasurementType === DepthMeasurementUnit.TVD;
+  const scaleMaxDepth = last(scaleBlocks);
 
   return (
     <DepthColumnContainer>
@@ -65,6 +68,12 @@ const DepthColumn: React.FC<Props> = ({
               </DepthScaleLabel>
             );
           })}
+
+          {!isUndefined(scaleMaxDepth) && (
+            <ScaleLineAbsolute top={getScaledDepth(scaleMaxDepth)}>
+              <ScaleLineDepth>{scaleMaxDepth}</ScaleLineDepth>
+            </ScaleLineAbsolute>
+          )}
         </DepthMeasurementScale>
       </BodyColumnBody>
     </DepthColumnContainer>
