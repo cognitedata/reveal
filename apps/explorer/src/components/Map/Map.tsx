@@ -7,7 +7,6 @@ import {
   PropertyFilterNodeCollection,
 } from '@cognite/reveal';
 import { CogniteClient } from '@cognite/sdk';
-// import { MapOverlayRouter } from 'pages/MapOverlay/MapOverlayRouter';
 import React, { useContext } from 'react';
 import { useRecoilValue } from 'recoil';
 import { getFloorLayer } from 'recoil/map/getFloorLayer';

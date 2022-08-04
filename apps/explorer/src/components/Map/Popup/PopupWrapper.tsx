@@ -10,7 +10,13 @@ export const PopupWrapper: React.FC<React.PropsWithChildren<unknown>> = ({
   const { modelRef } = useContext(MapContext);
   const cleanupFunction = () => {
     if (modelRef) {
-      modelRef.current.removeAllStyledNodeCollections();
+      modelRef.current.styledNodeCollections.forEach((styledNodeCollection) => {
+        if (styledNodeCollection.appearance.visible) {
+          modelRef.current.unassignStyledNodeCollection(
+            styledNodeCollection.nodeCollection
+          );
+        }
+      });
     }
   };
 

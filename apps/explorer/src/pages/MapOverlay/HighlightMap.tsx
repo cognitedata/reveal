@@ -20,25 +20,41 @@ export const HighlightMap: React.FC = () => {
   useEffect(() => {
     // this is assuming we are navingating by nodeIds. Need to refactor to pass objects in
     const model = modelRef.current;
+    const oldNodeCollection = modelRef.current.styledNodeCollections;
     if (srcName && destName && model) {
-      const myNodes = new TreeIndexNodeCollection();
+      const srcNode = new TreeIndexNodeCollection();
+      const destNode = new TreeIndexNodeCollection();
       Promise.all([
         model?.mapNodeIdToTreeIndex(Number(srcName)),
         model?.mapNodeIdToTreeIndex(Number(destName)),
-      ]).then((values) => {
+      ]).then(([src, dest]) => {
         model.removeAllStyledNodeCollections();
         model.setDefaultNodeAppearance(DefaultNodeAppearance.Ghosted);
 
-        myNodes.updateSet(new IndexSet(values));
-        model.assignStyledNodeCollection(
-          myNodes,
-          DefaultNodeAppearance.Highlighted
-        );
+        srcNode.updateSet(new IndexSet([src]));
+        model.assignStyledNodeCollection(srcNode, {
+          renderGhosted: false,
+          color: [65, 123, 219],
+        });
+
+        destNode.updateSet(new IndexSet([dest]));
+        model.assignStyledNodeCollection(destNode, {
+          renderGhosted: false,
+          color: [115, 200, 146],
+        });
       });
     }
     return () => {
       model.removeAllStyledNodeCollections();
       model.setDefaultNodeAppearance(DefaultNodeAppearance.Default);
+      oldNodeCollection.forEach((nodeCollection) => {
+        if (!nodeCollection.appearance.visible) {
+          model.assignStyledNodeCollection(
+            nodeCollection.nodeCollection,
+            nodeCollection.appearance
+          );
+        }
+      });
     };
   }, [destName, srcName, modelRef]);
 

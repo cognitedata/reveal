@@ -1,4 +1,5 @@
 import { GetSearchDataQueryTypeGenerated } from 'graphql/generated';
+import { DATA_TYPES } from 'pages/MapOverlay/MapOverlayRouter';
 
 import { getDataFromMap, getDataFromSearch } from '.';
 
@@ -10,7 +11,7 @@ export const getDataFromMapAndSearch = (
 ) => {
   let dataType = type;
   let destData;
-  if (!type) {
+  if (!type || type === DATA_TYPES.EQUIPMENT) {
     const { key, item } = getDataFromMap(mapData, to);
     // if the item cannot be found, return nodeId to enable zoom
     destData = item || { nodeId: to };
