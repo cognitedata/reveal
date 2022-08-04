@@ -32,10 +32,14 @@ setupTransferableMethodsOnWorker({
 export async function parse(
   data: EptInputData,
   objects: RawStylableObject[],
-  pointOffset: Vec3
+  pointOffset: Vec3,
+  sectorBoundingBox: [Vec3, Vec3]
 ): Promise<ParsedEptData> {
   const objectList = objects.map(rawToStylableObject);
-  return parseEpt(data, objectList, pointOffset);
+  const point = new THREE.Vector3().fromArray(pointOffset);
+  const boundingBox = new THREE.Box3(new THREE.Vector3().fromArray(sectorBoundingBox[0]),
+                                     new THREE.Vector3().fromArray(sectorBoundingBox[1]));
+  return parseEpt(data, objectList, point, boundingBox);
 }
 
 function assertDefined(buffer: ArrayBuffer | undefined): buffer is ArrayBuffer {

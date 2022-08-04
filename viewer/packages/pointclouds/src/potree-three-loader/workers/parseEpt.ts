@@ -37,12 +37,12 @@ export type EptInputData = {
   offset: RawVector3;
   mins: [number, number, number];
 };
-
-export async function parseEpt(
+export function parseEpt(
   data: EptInputData,
   objects: StylableObject[],
-  pointOffset: Vec3
-): Promise<ParsedEptData> {
+  pointOffset: THREE.Vector3,
+  sectorBoundingBox: THREE.Box3
+): ParsedEptData {
   const buffer = data.buffer;
   const view = new DataView(buffer);
   const schema: SchemaEntry[] = data.schema;
@@ -246,9 +246,7 @@ export async function parseEpt(
     indices[i] = i;
   }
 
-  // eslint-disable-next-line
-  console.log('The WASM answer is ', await addThree(39));
-  const objectIdBuffer = computeObjectIdBuffer(xyz, objects, pointOffset);
+  const objectIdBuffer = computeObjectIdBuffer(xyz, objects, pointOffset, sectorBoundingBox);
 
   const message: ParsedEptData = {
     numPoints: numPoints,
