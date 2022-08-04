@@ -21,7 +21,7 @@
     "@types/react-window": "^1.8.5",
     "@types/react-window-infinite-loader": "^1.0.5",
     "@wojtekmaj/enzyme-adapter-react-17": "^0.6.7",
-    "antd": "^4.20.1",
+    "antd": "^4.21.0",
     "i18next": "^21.8.14",
     "lodash": "^4.17.21",
     "mixpanel-browser": "^2.41.0",

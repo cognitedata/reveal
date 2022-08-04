@@ -1280,7 +1280,6 @@
 
 "@cognite/gcs-browser-upload@cognitedata/gcs-browser-upload#mn/temporary-azure-fix":
   version "1.1.1"
-  uid e180a039d56e9572efbfe123bd607e7ce1e6f06e
   resolved "https://codeload.github.com/cognitedata/gcs-browser-upload/tar.gz/e180a039d56e9572efbfe123bd607e7ce1e6f06e"
   dependencies:
     axios "^0.21.1"
@@ -3736,7 +3735,7 @@ ansi-styles@^5.0.0:
   resolved "https://registry.yarnpkg.com/ansi-styles/-/ansi-styles-5.2.0.tgz#07449690ad45777d1924ac2abb2fc8895dba836b"
   integrity sha512-Cxwpt2SfTzTtXcfOlzGEee8O+c+MmUgGrNiBcXnuWxuFJHe6a5Hz7qwhwe5OgaSYI0IJvkLqWX1ASG+cJOkEiA==
 
-antd@^4.15.2, antd@^4.20.1:
+antd@^4.15.2:
   version "4.21.7"
   resolved "https://registry.yarnpkg.com/antd/-/antd-4.21.7.tgz#a542cbd46539c4de426245efa7bb459ae25cbcf5"
   integrity sha512-rwPtY2tcMpckAbkQjI7EFtJoa13wog29vKcCJEcWUp8ePhszJI2JUVB67IJxs8ZdvwFmKijl0OSwOKnSkDOgJw==
@@ -3776,6 +3775,56 @@ antd@^4.15.2, antd@^4.20.1:
     rc-steps "~4.1.0"
     rc-switch "~3.2.0"
     rc-table "~7.25.0"
+    rc-tabs "~11.16.0"
+    rc-textarea "~0.3.0"
+    rc-tooltip "~5.2.0"
+    rc-tree "~5.6.5"
+    rc-tree-select "~5.4.0"
+    rc-trigger "^5.2.10"
+    rc-upload "~4.3.0"
+    rc-util "^5.22.5"
+    scroll-into-view-if-needed "^2.2.25"
+
+antd@^4.21.0:
+  version "4.22.2"
+  resolved "https://registry.yarnpkg.com/antd/-/antd-4.22.2.tgz#8b022c7d234f9038f9aa018e837544bc1caace8c"
+  integrity sha512-3zyJ0Z9LaloCII0OLv7GUjKvigrmj44whPrNqrbLhcdc2O2oJNGtlPUf5bkrn98RIZSQ+EjXOuTlUSRbDjvLJA==
+  dependencies:
+    "@ant-design/colors" "^6.0.0"
+    "@ant-design/icons" "^4.7.0"
+    "@ant-design/react-slick" "~0.29.1"
+    "@babel/runtime" "^7.18.3"
+    "@ctrl/tinycolor" "^3.4.0"
+    classnames "^2.2.6"
+    copy-to-clipboard "^3.2.0"
+    lodash "^4.17.21"
+    memoize-one "^6.0.0"
+    moment "^2.29.2"
+    rc-cascader "~3.6.0"
+    rc-checkbox "~2.3.0"
+    rc-collapse "~3.3.0"
+    rc-dialog "~8.9.0"
+    rc-drawer "~5.1.0-alpha.1"
+    rc-dropdown "~4.0.0"
+    rc-field-form "~1.27.0"
+    rc-image "~5.7.0"
+    rc-input "~0.0.1-alpha.5"
+    rc-input-number "~7.3.5"
+    rc-mentions "~1.9.0"
+    rc-menu "~9.6.0"
+    rc-motion "^2.6.1"
+    rc-notification "~4.6.0"
+    rc-pagination "~3.1.17"
+    rc-picker "~2.6.10"
+    rc-progress "~3.3.2"
+    rc-rate "~2.9.0"
+    rc-resize-observer "^1.2.0"
+    rc-segmented "~2.1.0"
+    rc-select "~14.1.1"
+    rc-slider "~10.0.0"
+    rc-steps "~4.1.0"
+    rc-switch "~3.2.0"
+    rc-table "~7.25.3"
     rc-tabs "~11.16.0"
     rc-textarea "~0.3.0"
     rc-tooltip "~5.2.0"
@@ -11302,6 +11351,16 @@ rc-drawer@^4.1.0, rc-drawer@~4.4.2:
     classnames "^2.2.6"
     rc-util "^5.7.0"
 
+rc-drawer@~5.1.0-alpha.1:
+  version "5.1.0-alpha.2"
+  resolved "https://registry.yarnpkg.com/rc-drawer/-/rc-drawer-5.1.0-alpha.2.tgz#402b37d65f43dd9e3dd2fba3ace2c88aba979fd3"
+  integrity sha512-tDT2WG9j4zLUL1kw7BJ1u+cCDypqgonwVO3OwIzksyqeqeLKWRJCwRSxwLYDsuVeCoXFndCGZ7qmRUG83z6mOQ==
+  dependencies:
+    "@babel/runtime" "^7.10.1"
+    classnames "^2.2.6"
+    rc-motion "^2.6.1"
+    rc-util "^5.21.2"
+
 rc-dropdown@~4.0.0:
   version "4.0.1"
   resolved "https://registry.yarnpkg.com/rc-dropdown/-/rc-dropdown-4.0.1.tgz#f65d9d3d89750241057db59d5a75e43cd4576b68"
@@ -11316,6 +11375,15 @@ rc-field-form@~1.26.1:
   version "1.26.7"
   resolved "https://registry.yarnpkg.com/rc-field-form/-/rc-field-form-1.26.7.tgz#1794afa50f844170d8907cc575ab482d65db9926"
   integrity sha512-CIb7Gw+DG9R+g4HxaDGYHhOjhjQoU2mGU4y+UM2+KQ3uRz9HrrNgTspGvNynn3UamsYcYcaPWZJmiJ6VklkT/w==
+  dependencies:
+    "@babel/runtime" "^7.18.0"
+    async-validator "^4.1.0"
+    rc-util "^5.8.0"
+
+rc-field-form@~1.27.0:
+  version "1.27.1"
+  resolved "https://registry.yarnpkg.com/rc-field-form/-/rc-field-form-1.27.1.tgz#11d61ccb43679e71fdbbff0d821326202554df84"
+  integrity sha512-RShegnwFu6TH8tl2olCxn+B4Wyh5EiQH8c/7wucbkLNyue05YiH5gomUAg1vbZjp71yFKwegClctsEG5CNBWAA==
   dependencies:
     "@babel/runtime" "^7.18.0"
     async-validator "^4.1.0"
@@ -11339,6 +11407,15 @@ rc-input-number@~7.3.0:
     "@babel/runtime" "^7.10.1"
     classnames "^2.2.5"
     rc-util "^5.9.8"
+
+rc-input-number@~7.3.5:
+  version "7.3.6"
+  resolved "https://registry.yarnpkg.com/rc-input-number/-/rc-input-number-7.3.6.tgz#54d66bd3fdaef0abfded4c734a12ac6d9461ebab"
+  integrity sha512-Se62oMOBn9HwF/gSag+YtAYyKZsjJzEsqmyAJHAnAvPfjZJOu7dLMlQRwBbTtELbKXM/Y5Fztcq8CW2Y9f49qA==
+  dependencies:
+    "@babel/runtime" "^7.10.1"
+    classnames "^2.2.5"
+    rc-util "^5.23.0"
 
 rc-input@~0.0.1-alpha.5:
   version "0.0.1-alpha.7"
@@ -11374,7 +11451,7 @@ rc-menu@~9.6.0:
     rc-util "^5.12.0"
     shallowequal "^1.1.0"
 
-rc-motion@^2.0.0, rc-motion@^2.0.1, rc-motion@^2.2.0, rc-motion@^2.3.0, rc-motion@^2.3.4, rc-motion@^2.4.3, rc-motion@^2.4.4, rc-motion@^2.5.1:
+rc-motion@^2.0.0, rc-motion@^2.0.1, rc-motion@^2.2.0, rc-motion@^2.3.0, rc-motion@^2.3.4, rc-motion@^2.4.3, rc-motion@^2.4.4, rc-motion@^2.5.1, rc-motion@^2.6.1:
   version "2.6.2"
   resolved "https://registry.yarnpkg.com/rc-motion/-/rc-motion-2.6.2.tgz#3d31f97e41fb8e4f91a4a4189b6a98ac63342869"
   integrity sha512-4w1FaX3dtV749P8GwfS4fYnFG4Rb9pxvCYPc/b2fw1cmlHJWNNgOFIz7ysiD+eOrzJSvnLJWlNQQncpNMXwwpg==
@@ -11403,7 +11480,7 @@ rc-overflow@^1.0.0, rc-overflow@^1.2.0:
     rc-resize-observer "^1.0.0"
     rc-util "^5.19.2"
 
-rc-pagination@~3.1.16:
+rc-pagination@~3.1.16, rc-pagination@~3.1.17:
   version "3.1.17"
   resolved "https://registry.yarnpkg.com/rc-pagination/-/rc-pagination-3.1.17.tgz#91e690aa894806e344cea88ea4a16d244194a1bd"
   integrity sha512-/BQ5UxcBnW28vFAcP2hfh+Xg15W0QZn8TWYwdCApchMH1H0CxiaUUcULP8uXcFM1TygcdKWdt3JqsL9cTAfdkQ==
@@ -11411,7 +11488,7 @@ rc-pagination@~3.1.16:
     "@babel/runtime" "^7.10.1"
     classnames "^2.2.1"
 
-rc-picker@~2.6.8:
+rc-picker@~2.6.10, rc-picker@~2.6.8:
   version "2.6.10"
   resolved "https://registry.yarnpkg.com/rc-picker/-/rc-picker-2.6.10.tgz#8d0a473c079388bdb2d7358a2a54c7d5095893b4"
   integrity sha512-9wYtw0DFWs9FO92Qh2D76P0iojUr8ZhLOtScUeOit6ks/F+TBLrOC1uze3IOu+u9gbDAjmosNWLKbBzx/Yuv2w==
@@ -11526,6 +11603,17 @@ rc-table@~7.25.0:
     rc-util "^5.14.0"
     shallowequal "^1.1.0"
 
+rc-table@~7.25.3:
+  version "7.25.3"
+  resolved "https://registry.yarnpkg.com/rc-table/-/rc-table-7.25.3.tgz#a2941d4fde4c181e687e97a294faca8e4122e26d"
+  integrity sha512-McsLJ2rg8EEpRBRYN4Pf9gT7ZNYnjvF9zrBpUBBbUX/fxk+eGi5ff1iPIhMyiHsH71/BmTUzX9nc9XqupD0nMg==
+  dependencies:
+    "@babel/runtime" "^7.10.1"
+    classnames "^2.2.5"
+    rc-resize-observer "^1.1.0"
+    rc-util "^5.22.5"
+    shallowequal "^1.1.0"
+
 rc-tabs@^11.6.2, rc-tabs@~11.16.0:
   version "11.16.1"
   resolved "https://registry.yarnpkg.com/rc-tabs/-/rc-tabs-11.16.1.tgz#7c57b6a092d9d0e2df54413b0319f195c27214a9"
@@ -11614,6 +11702,15 @@ rc-util@^5.0.1, rc-util@^5.0.6, rc-util@^5.12.0, rc-util@^5.14.0, rc-util@^5.15.
   version "5.22.5"
   resolved "https://registry.yarnpkg.com/rc-util/-/rc-util-5.22.5.tgz#d4d6d886c5ecb6a2a51dde1840d780a2b70f5179"
   integrity sha512-awD2TGMGU97OZftT2R3JwrHWjR8k/xIwqjwcivPskciweUdgXE7QsyXkBKVSBHXS+c17AWWMDWuKWsJSheQy8g==
+  dependencies:
+    "@babel/runtime" "^7.18.3"
+    react-is "^16.12.0"
+    shallowequal "^1.1.0"
+
+rc-util@^5.21.2, rc-util@^5.23.0:
+  version "5.23.0"
+  resolved "https://registry.yarnpkg.com/rc-util/-/rc-util-5.23.0.tgz#a583b1ec3e1832a80eced7a700a494af0b590743"
+  integrity sha512-lgm6diJ/pLgyfoZY59Vz7sW4mSoQCgozqbBye9IJ7/mb5w5h4T7h+i2JpXAx/UBQxscBZe68q0sP7EW+qfkKUg==
   dependencies:
     "@babel/runtime" "^7.18.3"
     react-is "^16.12.0"
