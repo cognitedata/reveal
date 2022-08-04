@@ -87,8 +87,8 @@ export class Cylinder implements IShape {
     const chosenAxis =
       Math.abs(axisOption0.dot(axisVec)) < Math.abs(axisOption1.dot(axisVec)) ? axisOption0 : axisOption1;
 
-    const perpVector0 = chosenAxis.clone().cross(axisVec).multiplyScalar(this.radius);
-    const perpVector1 = perpVector0.clone().cross(axisVec).multiplyScalar(this.radius);
+    const perpVector0 = chosenAxis.clone().cross(axisVec).normalize().multiplyScalar(this.radius);
+    const perpVector1 = perpVector0.clone().cross(axisVec).normalize().multiplyScalar(this.radius);
 
     const matrix = new THREE.Matrix4().makeBasis(axisVec, perpVector0, perpVector1);
     matrix.setPosition(this._middle);
