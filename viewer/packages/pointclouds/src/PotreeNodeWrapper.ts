@@ -27,6 +27,7 @@ export class PotreeNodeWrapper {
   readonly octree: PointCloudOctree;
   private _needsRedraw = false;
   private readonly _classification: IClassification = {} as IClassification;
+  private readonly _classToNumberMap: { [key: string]: number } | undefined;
 
   private readonly _annotations: PointCloudObjectAnnotation[];
 
@@ -34,13 +35,16 @@ export class PotreeNodeWrapper {
     return this._needsRedraw;
   }
 
-  constructor(octree: PointCloudOctree, annotations: PointCloudObjectAnnotation[]) {
+  constructor(octree: PointCloudOctree,
+              annotations: PointCloudObjectAnnotation[],
+              classToNumberMap: { [key: string]: number } | undefined) {
     this.octree = octree;
     this.pointSize = 2;
     this.pointColorType = PotreePointColorType.Rgb;
     this.pointShape = PotreePointShape.Circle;
     this._classification = octree.material.classification;
     this._annotations = annotations;
+    this._classToNumberMap = classToNumberMap;
   }
 
   get pointSize(): number {
@@ -112,8 +116,16 @@ export class PotreeNodeWrapper {
     this._needsRedraw = true;
   }
 
-  setClassificationAndRecompute(pointClass: number | WellKnownAsprsPointClassCodes, visible: boolean): void {
-    const key = createPointClassKey(pointClass);
+  private createPointClassKey(pointClass: number | WellKnownAsprsPointClassCodes | string): number | 'DEFAULT' {
+    if (this._classToNumberMap && this._classToNumberMap[pointClass] !== undefined) {
+      return this._classToNumberMap[pointClass];
+    }
+
+    return createPointClassKey(pointClass);
+  }
+
+  setClassificationAndRecompute(pointClass: number | WellKnownAsprsPointClassCodes | string, visible: boolean): void {
+    const key = this.createPointClassKey(pointClass);
 
     this._classification[key].w = visible ? 1.0 : 0.0;
     this.octree.material.classification = this._classification;

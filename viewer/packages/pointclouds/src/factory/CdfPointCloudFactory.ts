@@ -79,13 +79,13 @@ export class CdfPointCloudFactory implements PointCloudFactory {
     const annotations = await this.getAnnotations(modelIdentifier as CdfModelIdentifier);
     const annotationInfo = annotationsToObjectInfo(annotations);
 
-    const pointCloudOctree = await this._potreeInstance.loadPointCloud(
+    const [pointCloudOctree, classMap] = await this._potreeInstance.loadPointCloud(
       modelBaseUrl,
       DEFAULT_POINT_CLOUD_METADATA_FILE,
       annotationInfo
     );
 
     pointCloudOctree.name = `PointCloudOctree: ${modelBaseUrl}`;
-    return new PotreeNodeWrapper(pointCloudOctree, annotationInfo.annotations);
+    return new PotreeNodeWrapper(pointCloudOctree, annotationInfo.annotations, classMap);
   }
 }

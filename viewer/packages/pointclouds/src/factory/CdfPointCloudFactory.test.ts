@@ -46,10 +46,10 @@ const potreeMock = new Mock<Potree>()
   .setup(p => p.loadPointCloud)
   .returns(() =>
     Promise.resolve(
-      new Mock<PointCloudOctree>()
+      [new Mock<PointCloudOctree>()
         .setup(p => p.material)
         .returns(new Mock<PointCloudMaterial>().object())
-        .object()
+        .object(), undefined]
     )
   );
 
