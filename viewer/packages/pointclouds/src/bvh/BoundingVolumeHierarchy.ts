@@ -12,9 +12,18 @@ export class BoundingVolumeHierarchy<T extends BvhElement> {
     this._root = new BvhNode(elements);
   }
 
+  get root(): BvhNode<T> {
+    return this._root;
+  }
+
   findContainingElements(point: THREE.Vector3): T[] {
     const resultList = new Array<T>();
     this._root.findContainingElements(point, resultList);
     return resultList;
+  }
+
+  traverseContainingElements(point: THREE.Vector3,
+                             callback: (element: T) => void): void {
+    return this._root.traverseContainingElements(point, callback);
   }
 }
