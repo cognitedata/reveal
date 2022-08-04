@@ -381,7 +381,7 @@ export function Migration() {
               break;
             case 'pointcloud':
               {
-                const { pointIndex, point } = intersection;
+                const { point } = intersection;
                 console.log(`Clicked point assigned to the object with annotationId:`, intersection.annotationId, `at`, point);
                 const sphere = new THREE.Mesh(new THREE.SphereBufferGeometry(0.1), new THREE.MeshBasicMaterial({ color: 'red' }));
                 sphere.position.copy(point);
