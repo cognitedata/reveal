@@ -112,7 +112,7 @@ export class CognitePointCloudModel extends THREE.Object3D implements CogniteMod
    * @param visible Boolean flag that determines if the point class type should be visible or not.
    * @throws Error if the model doesn't have the class given.
    */
-  setClassVisible(pointClass: number | WellKnownAsprsPointClassCodes, visible: boolean): void {
+  setClassVisible(pointClass: number | WellKnownAsprsPointClassCodes | string, visible: boolean): void {
     this.pointCloudNode.setClassVisible(pointClass, visible);
   }
 
@@ -123,7 +123,7 @@ export class CognitePointCloudModel extends THREE.Object3D implements CogniteMod
    * @returns True if points from the given class will be visible.
    * @throws Error if the model doesn't have the class given.
    */
-  isClassVisible(pointClass: number | WellKnownAsprsPointClassCodes): boolean {
+  isClassVisible(pointClass: number | WellKnownAsprsPointClassCodes | string): boolean {
     return this.pointCloudNode.isClassVisible(pointClass);
   }
 
@@ -133,7 +133,7 @@ export class CognitePointCloudModel extends THREE.Object3D implements CogniteMod
    * classes from {@link WellKnownAsprsPointClassCodes} or a number for user defined classes.
    * @returns True if model has values in the class given.
    */
-  hasClass(pointClass: number | WellKnownAsprsPointClassCodes): boolean {
+  hasClass(pointClass: number | WellKnownAsprsPointClassCodes | string): boolean {
     return this.pointCloudNode.hasClass(pointClass);
   }
 
@@ -141,7 +141,7 @@ export class CognitePointCloudModel extends THREE.Object3D implements CogniteMod
    * Returns a list of sorted classification codes present in the model.
    * @returns A sorted list of classification codes from the model.
    */
-  getClasses(): Array<number | WellKnownAsprsPointClassCodes> {
+  getClasses(): Array<number | WellKnownAsprsPointClassCodes | string> {
     return this.pointCloudNode.getClasses();
   }
 
