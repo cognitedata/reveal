@@ -108,7 +108,9 @@ export const AssetPreview = ({
             <AssetTreeTable
               activeIds={[asset.id]}
               filter={
-                asset.id === asset.rootId ? { parentIds: [asset.id] } : {}
+                asset.id === asset.rootId
+                  ? { assetSubtreeIds: [{ id: asset.rootId }] }
+                  : {}
               }
               hierachyRootId={asset.rootId}
               onAssetClicked={(newAsset: Asset) => openAsset(newAsset.id)}
