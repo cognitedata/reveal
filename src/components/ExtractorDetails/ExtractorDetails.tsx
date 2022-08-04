@@ -49,11 +49,6 @@ const ExtractorDetails = () => {
     fileDownload(data, artifact.name);
   };
 
-  const getFavicon = (url: string) => {
-    const { origin } = new URL(url);
-    return `${origin}/favicon.ico`;
-  };
-
   const _tags = extractor?.tags || extractorExtended?.tags;
 
   const externalLinks =
