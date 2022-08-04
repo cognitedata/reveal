@@ -16,17 +16,13 @@ import * as EptDecoderWorker from '../workers/eptBinaryDecoder.worker';
 import { ParsedEptData, EptInputData } from '../workers/parseEpt';
 
 import { fromThreeVector3, setupTransferableMethodsOnMain } from '@reveal/utilities';
-import { RawStylableObject } from '../../styling/StylableObject';
-import { PointCloudObjectProvider } from '../../styling/PointCloudObjectProvider';
-import { stylableObjectToRaw } from '../../styling/StylableObject';
 import { Vec3 } from '../../styling/shapes/linalg';
+import { RawStylableObjectWithBox, stylableObjectsToRawDecomposedWithBoxes } from '../../styling/StylableObject';
+import { PointCloudObjectProvider } from '../../styling/PointCloudObjectProvider';
 
 export class EptBinaryLoader implements ILoader {
   private readonly _dataLoader: ModelDataProvider;
-  private readonly _stylableObjectsWithBoundingBox: {
-    object: RawStylableObject;
-    box: THREE.Box3;
-  }[];
+  private readonly _stylableObjectsWithBoundingBox: RawStylableObjectWithBox[];
 
   static readonly WORKER_POOL = new WorkerPool(32, EptDecoderWorker as unknown as new () => Worker);
 
@@ -36,12 +32,8 @@ export class EptBinaryLoader implements ILoader {
 
   constructor(dataLoader: ModelDataProvider, stylableObjects: PointCloudObjectProvider) {
     this._dataLoader = dataLoader;
-    this._stylableObjectsWithBoundingBox = stylableObjects.annotations.map(a => {
-      return {
-        object: stylableObjectToRaw(a.stylableObject),
-        box: a.stylableObject.shape.createBoundingBox()
-      };
-    });
+    this._stylableObjectsWithBoundingBox =
+      stylableObjectsToRawDecomposedWithBoxes(stylableObjects.annotations.map(a => a.stylableObject));
   }
 
   async load(node: PointCloudEptGeometryNode): Promise<void> {
