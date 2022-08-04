@@ -16,6 +16,7 @@ import { ParsedEptData, EptInputData } from '../workers/parseEpt';
 
 import { fromThreeVector3 } from '@reveal/utilities';
 import { RawStylableObject } from '../../styling/StylableObject';
+import { setupTransferableMethodsOnMain } from '@naoak/workerize-transferable';
 
 export class EptBinaryLoader implements ILoader {
   private readonly _dataLoader: ModelDataProvider;
@@ -62,7 +63,15 @@ export class EptBinaryLoader implements ILoader {
       mins: fromThreeVector3(node.key.b.min)
     };
 
-    const result = await eptDecoderWorker.Parse(eptData, this._stylableObjects, node.boundingBox.min.toArray());
+    setupTransferableMethodsOnMain(autoTerminatingWorker.worker, {
+      parse: {
+        pickTransferablesFromParams: (params: any) => {
+          return params.buffer;
+        }
+      }
+    });
+
+    const result = await eptDecoderWorker.parse(eptData, this._stylableObjects, node.boundingBox.min.toArray());
     EptBinaryLoader.WORKER_POOL.releaseWorker(autoTerminatingWorker);
     return result;
   }
