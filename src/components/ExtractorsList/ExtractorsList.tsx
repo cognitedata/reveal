@@ -58,10 +58,24 @@ const ExtractorsList = ({ extractorsList }: ExtractorsListProps) => {
 export default ExtractorsList;
 
 const StyledGrid = styled.div`
+  --cell: minmax(256px, 1fr);
+
   display: grid;
   justify-content: space-between;
   gap: 24px;
-  grid-template-columns: repeat(auto-fit, minmax(256px, 1fr));
+  grid-template-columns: repeat(auto-fit, var(--cell));
+
+  @media (min-width: 768px) {
+    grid-template-columns: repeat(2, var(--cell));
+  }
+
+  @media (min-width: 1024px) {
+    grid-template-columns: repeat(3, var(--cell));
+  }
+
+  @media (min-width: 1440px) {
+    grid-template-columns: repeat(4, var(--cell));
+  }
 `;
 
 const StyledExtractorContainer = styled(Button).attrs({ type: 'link' })`

@@ -14,7 +14,7 @@ import {
   Loader,
   Title,
 } from '@cognite/cogs.js';
-import { Modal } from 'antd';
+import { Collapse, Modal } from 'antd';
 import { DetailsHeader } from 'components/DetailsHeader';
 import { Layout } from 'components/Layout';
 import { useExtractorsList } from 'hooks/useExtractorsList';
@@ -45,7 +45,9 @@ const ExtractorDetails = () => {
 
   const handleDownload = async (artifact: Artifact) => {
     const url = await getDownloadUrl(artifact);
-    fileDownload(url, artifact.name);
+    const response = await fetch(url);
+    const data = await response.blob();
+    fileDownload(data, artifact.name);
   };
 
   if (status === 'loading') {
@@ -193,7 +195,7 @@ const ExtractorDetails = () => {
         <StyledModalListContainer>
           {extractor?.releases?.map((release) => (
             <StyledModalListItem key={release.version}>
-              <Flex direction="column" gap={16}>
+              <Flex direction="column" gap={12}>
                 <Flex direction="column" gap={8}>
                   <Flex justifyContent="space-between" gap={8}>
                     <Title level="5">
@@ -207,6 +209,42 @@ const ExtractorDetails = () => {
                   </Flex>
                   <Body level="2">{release.description}</Body>
                 </Flex>
+                {release?.changelog && (
+                  <StyledCollapse
+                    defaultActiveKey={[]}
+                    expandIcon={({ isActive }) => {
+                      return <StyledExpandIcon $isActive={isActive} />;
+                    }}
+                  >
+                    <StyledCollapsePanel
+                      header={
+                        <Body level="3" strong>
+                          {t('changelog')}
+                        </Body>
+                      }
+                      key="1"
+                    >
+                      <Flex gap={12} direction="column">
+                        {Object.entries(release?.changelog)?.map(
+                          ([key, values]) => (
+                            <Flex direction="column" gap={2} key={key}>
+                              <StyledChangelogListHeader>
+                                {key}
+                              </StyledChangelogListHeader>
+                              <StyledChangelogList>
+                                {values.map((value) => (
+                                  <li key={value}>
+                                    <Body level="3">{value}</Body>
+                                  </li>
+                                ))}
+                              </StyledChangelogList>
+                            </Flex>
+                          )
+                        )}
+                      </Flex>
+                    </StyledCollapsePanel>
+                  </StyledCollapse>
+                )}
                 <Flex gap={8} alignItems="center">
                   <Body level="2" strong>
                     {t('download-colon')}
@@ -378,4 +416,51 @@ const StyledModalListItem = styled.div`
   padding: 16px 24px;
   border: 1px solid ${Colors['border--muted']};
   border-radius: 4px;
+`;
+
+const StyledCollapse = styled(Collapse)`
+  background-color: white;
+  border: none;
+
+  .ant-collapse-header {
+    padding: 8px !important;
+  }
+
+  .ant-collapse-content {
+    background-color: white;
+    border: none;
+  }
+
+  .ant-collapse-item {
+    border: none;
+  }
+`;
+
+const StyledCollapsePanel = styled(Collapse.Panel)`
+  padding: 0;
+
+  .ant-collapse-content-box {
+    padding: 0 16px;
+  }
+`;
+
+const StyledChangelogList = styled.ul`
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 0;
+`;
+
+const StyledChangelogListHeader = styled(Body).attrs({
+  level: 3,
+  strong: true,
+})`
+  text-transform: capitalize;
+`;
+
+const StyledExpandIcon = styled((props: any) => {
+  return <Icon type="ChevronRight" {...props} />;
+})`
+  transition: transform 100ms ease;
+  transform: ${({ $isActive }) =>
+    $isActive ? 'rotate(90deg)' : 'rotate(0deg)'};
 `;

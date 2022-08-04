@@ -38,5 +38,6 @@
   "version-n": "Version {{version}}",
   "download-colon": "Download:",
   "close": "Close",
-  "all-versions-of-extractor": "All versions of {{extractor}}"
+  "all-versions-of-extractor": "All versions of {{extractor}}",
+  "changelog": "Changelog"
 }

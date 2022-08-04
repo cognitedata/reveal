@@ -14,6 +14,7 @@ export type Release = {
   artifacts: Artifact[];
   externalId: string;
   description: string;
+  changelog: { [key: string]: string[] };
 };
 
 type Extractor = {
