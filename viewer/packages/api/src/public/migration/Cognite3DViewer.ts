@@ -1062,11 +1062,7 @@ export class Cognite3DViewer {
       domElement: this.renderer.domElement
     };
     const cadResults = await this._pickingHandler.intersectCadNodes(cadNodes, input);
-    const pointCloudResults = this._pointCloudPickingHandler.intersectPointClouds(
-      pointCloudNodes,
-      input,
-      options?.pointIntersectionThreshold
-    );
+    const pointCloudResults = this._pointCloudPickingHandler.intersectPointClouds(pointCloudNodes, input);
 
     const intersections: Intersection[] = [];
     if (pointCloudResults.length > 0) {

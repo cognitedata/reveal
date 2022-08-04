@@ -37,25 +37,22 @@ export class PointCloudPickingHandler {
   private readonly _raycaster = new THREE.Raycaster();
   private readonly _picker: PointCloudOctreePicker;
 
+  private static readonly PickingWindowSize = 20;
+
   constructor(renderer: THREE.WebGLRenderer) {
     this._picker = new PointCloudOctreePicker(renderer);
   }
 
-  intersectPointClouds(
-    nodes: PointCloudNode[],
-    input: IntersectInput,
-    threshold: number = 0.05 // 5 cm
-  ): IntersectPointCloudNodeResult[] {
+  intersectPointClouds(nodes: PointCloudNode[], input: IntersectInput): IntersectPointCloudNodeResult[] {
     const { normalizedCoords, camera } = input;
     this._normalized.set(normalizedCoords.x, normalizedCoords.y);
     this._raycaster.setFromCamera(normalizedCoords, camera);
-    this._raycaster.params.Points = { threshold };
 
     const intersections: PickPoint[] = [];
 
     nodes.forEach(node => {
       const intersection = this._picker.pick(camera, this._raycaster.ray, [node.potreeNode.octree], {
-        pickWindowSize: 20
+        pickWindowSize: PointCloudPickingHandler.PickingWindowSize
       });
       if (intersection !== null) {
         intersections.push(intersection);
