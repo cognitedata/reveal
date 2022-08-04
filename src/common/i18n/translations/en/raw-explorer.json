@@ -104,7 +104,7 @@
   "profile-coverage-label-partial-tooltip": "Only the first {{amount}} rows of data were profiled",
   "profile-coverage-label-running": "Running",
   "profile-status-message_complete": "Data profiling completed for all rows and columns.",
-  "profile-status-message_partial": "ata profiling partially completed. Only up to one million rows of data are used for profiling.",
+  "profile-status-message_partial": "Data profiling partially completed. Only up to one million rows of data are used for profiling.",
   "profile-status-message_running": "Running data profiling for the first million rows. Profile is currently being populated.",
   "profiling-cards-column-title": "Columns profiled",
   "profiling-cards-row-title": "Rows profiled",
