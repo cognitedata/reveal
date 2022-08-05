@@ -1,13 +1,6 @@
-import {
-  Body,
-  Button,
-  Colors,
-  Elevations,
-  Flex,
-  Title,
-} from '@cognite/cogs.js';
+import { Body, Colors, Elevations, Flex, Title } from '@cognite/cogs.js';
 import styled from 'styled-components';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { createLink } from '@cognite/cdf-utilities';
 
 import { useTranslation } from 'common';
@@ -31,7 +24,7 @@ const ExtractorsList = ({ extractorsList }: ExtractorsListProps) => {
         {extractorsList?.map((extractor) => (
           <StyledExtractorContainer
             key={extractor.externalId}
-            href={createLink(`/${subAppPath}/${extractor.externalId}`)}
+            to={createLink(`/${subAppPath}/${extractor.externalId}`)}
           >
             <Flex gap={24} direction="column">
               <div>
@@ -78,7 +71,7 @@ const StyledGrid = styled.div`
   }
 `;
 
-const StyledExtractorContainer = styled(Button).attrs({ type: 'link' })`
+const StyledExtractorContainer = styled(Link)`
   display: inline-flex;
   flex-direction: column;
   justify-content: flex-start;
