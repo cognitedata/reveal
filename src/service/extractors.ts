@@ -30,6 +30,7 @@ type Extractor = {
   type: string;
   latestVersion: string | undefined;
   documentation?: string;
+  imageUrl: string;
   tags?: string[];
   links?: ExtractorLink[];
 };
@@ -45,6 +46,7 @@ export type ExtractorWithRelease = {
   type: string;
   releases: Release[];
   documentation?: string;
+  imageUrl: string;
   tags?: string[];
   links?: ExtractorLink[];
 };

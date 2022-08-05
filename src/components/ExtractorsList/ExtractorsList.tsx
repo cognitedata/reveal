@@ -4,7 +4,6 @@ import { Link, useParams } from 'react-router-dom';
 import { createLink } from '@cognite/cdf-utilities';
 
 import { useTranslation } from 'common';
-import { extractorsListExtended } from 'utils/extractorsListExtended';
 
 type ExtractorsListProps = {
   extractorsList: any[];
@@ -27,13 +26,11 @@ const ExtractorsList = ({ extractorsList }: ExtractorsListProps) => {
             to={createLink(`/${subAppPath}/${extractor.externalId}`)}
           >
             <Flex gap={24} direction="column">
-              <div>
-                <img
-                  src={
-                    extractorsListExtended?.[extractor.externalId]?.imagePath
-                  }
-                />
-              </div>
+              {extractor?.imageUrl && (
+                <div>
+                  <img src={extractor?.imageUrl} />
+                </div>
+              )}
               <Flex gap={8} direction="column">
                 <Title level="5">{extractor.name}</Title>
                 <StyledMutedDescription>

@@ -19,7 +19,6 @@ import { DetailsHeader } from 'components/DetailsHeader';
 import { Layout } from 'components/Layout';
 import { useExtractorsList } from 'hooks/useExtractorsList';
 import { ContentContainer } from 'components/ContentContainer';
-import { extractorsListExtended } from 'utils/extractorsListExtended';
 import { useTranslation } from 'common';
 import { Artifact, getDownloadUrl } from 'service/extractors';
 import { DocsLinkGrid, DocsLinkGridItem } from 'components/DocsLinkGrid';
@@ -38,8 +37,6 @@ const ExtractorDetails = () => {
   const createdAt =
     latestRelease?.createdTime && formatDate(latestRelease?.createdTime);
 
-  const extractorExtended = extractorsListExtended?.[extractorExternalId!];
-
   const artifacts = latestRelease?.artifacts ?? [];
 
   const handleDownload = async (artifact: Artifact) => {
@@ -49,17 +46,15 @@ const ExtractorDetails = () => {
     fileDownload(data, artifact.name);
   };
 
-  const tags = extractor?.tags || extractorExtended?.tags;
+  const tags = extractor?.tags ?? [];
 
   const externalLinks =
-    (extractor?.links || extractorExtended?.links)?.filter(
+    extractor?.links?.filter(
       (link) => link?.type === 'externalDocumentation'
     ) ?? [];
 
   const genericLinks =
-    (extractor?.links || extractorExtended?.links)?.filter(
-      (link) => link?.type === 'generic'
-    ) ?? [];
+    extractor?.links?.filter((link) => link?.type === 'generic') ?? [];
 
   if (status === 'loading') {
     return <Loader />;
@@ -68,6 +63,7 @@ const ExtractorDetails = () => {
   return (
     <Layout>
       <DetailsHeader
+        imageUrl={extractor?.imageUrl}
         title={String(extractor?.name)}
         version={String(latestRelease?.version)}
         createdAt={String(createdAt)}
