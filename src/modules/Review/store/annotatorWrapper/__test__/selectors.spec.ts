@@ -7,19 +7,20 @@ import { ReviewReducerState } from 'src/modules/Review/store/reviewSlice';
 import {
   AnnotatorWrapperState,
   KeypointCollectionState,
+  KeypointState,
 } from 'src/modules/Review/store/annotatorWrapper/type';
 import {
   PredefinedKeypointCollection,
   ReviewKeypoint,
 } from 'src/modules/Review/types';
-import { Keypoint } from 'src/api/annotation/types';
 import { generateKeypointId } from 'src/modules/Common/Utils/AnnotationUtils/AnnotationUtils';
 import {
-  dummyKeypoint,
+  getDummyPredefinedKeypoint,
   getDummyKeypointCollectionState,
   getDummyKeypointState,
   getDummyPredefinedKeypointCollection,
   getDummyTempKeypointCollection,
+  getDummyKeypoint,
 } from 'src/__test-utils/annotations';
 import {
   selectNextPredefinedKeypointCollection,
@@ -132,16 +133,18 @@ describe('Test annotationLabel selectors', () => {
   });
 
   describe('Test selectNextPredefinedKeypointCollection selector', () => {
-    const predefinedKeypointCollectionList = [
+    const predefinedKeypointCollectionList: PredefinedKeypointCollection[] = [
       {
         id: '1',
         collectionName: 'gauge',
         keypoints: [],
+        color: 'red',
       },
       {
         id: '2',
         collectionName: 'valve',
         keypoints: [],
+        color: 'yellow',
       },
     ];
 
@@ -231,25 +234,36 @@ describe('Test annotationLabel selectors', () => {
     const k3Id = generateKeypointId(20, 'right');
     const k4Id = generateKeypointId(20, 'left');
 
-    const unfinishedCollection = getDummyKeypointCollectionState(20, [k4Id]);
+    const unfinishedCollection = getDummyKeypointCollectionState({
+      id: 20,
+      keypointIds: [k4Id],
+    });
 
     const keypointCollectionState: Record<string, KeypointCollectionState> = {
-      10: getDummyKeypointCollectionState(10, [k1Id, k2Id, k3Id]),
+      10: getDummyKeypointCollectionState({
+        id: 10,
+        keypointIds: [k1Id, k2Id, k3Id],
+      }),
       20: unfinishedCollection,
     };
 
-    const imageKeypoints: Record<string, [string, Keypoint]> = {
-      [k1Id]: ['left', getDummyKeypointState()],
-      [k2Id]: ['center', getDummyKeypointState()],
-      [k3Id]: ['right', getDummyKeypointState()],
-      [k4Id]: ['left', getDummyKeypointState()],
+    const imageKeypoints: Record<string, KeypointState> = {
+      [k1Id]: getDummyKeypointState('left'),
+      [k2Id]: getDummyKeypointState('center'),
+      [k3Id]: getDummyKeypointState('right'),
+      [k4Id]: getDummyKeypointState('left'),
     };
 
     test('Should return null since lastCollectionId is not set', () => {
       const previousState = {
         ...initialState,
       };
-      expect(selectTempKeypointCollection(previousState, 1)).toEqual(null);
+      expect(
+        selectTempKeypointCollection(previousState, {
+          currentFileId: 1,
+          annotationColorMap: { gauge: 'red' },
+        })
+      ).toEqual(null);
     });
 
     test('Should return last collection++', () => {
@@ -279,9 +293,8 @@ describe('Test annotationLabel selectors', () => {
         {
           id: '20-left',
           selected: false,
-          keypoint: getDummyKeypointState(),
+          keypoint: getDummyKeypoint(),
           label: 'left',
-          color: 'red',
         },
       ];
 
@@ -289,7 +302,10 @@ describe('Test annotationLabel selectors', () => {
         id: 20,
         label: 'gauge',
         reviewKeypoints: keypoints,
-        remainingKeypoints: [dummyKeypoint('center'), dummyKeypoint('right')],
+        remainingKeypoints: [
+          getDummyPredefinedKeypoint('center'),
+          getDummyPredefinedKeypoint('right'),
+        ],
       });
 
       expect(
