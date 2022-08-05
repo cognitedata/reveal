@@ -33,7 +33,6 @@ export async function parse(
   pointOffset: Vec3
 ): Promise<ParsedEptData> {
   const objectList = objects.map(rawToStylableObject);
-  pointOffset = pointOffset;
   return parseEpt(data, objectList, pointOffset);
 }
 
