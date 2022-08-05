@@ -148,11 +148,7 @@ export class PointCloudNode extends THREE.Group {
    * @returns A sorted list of classification codes from the model.
    */
   getClasses(): Array<number | WellKnownAsprsPointClassCodes | string> {
-    return Object.keys(this._potreeNode.classification)
-      .map(x => {
-        return x === PotreeDefaultPointClass ? -1 : parseInt(x, 10);
-      })
-      .sort((a, b) => a - b);
+    return this._potreeNode.classNames;
   }
 
   getBoundingBox(outBbox?: THREE.Box3): THREE.Box3 {
