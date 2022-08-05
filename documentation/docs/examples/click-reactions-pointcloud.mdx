@@ -31,6 +31,23 @@ viewer.on('click', async event => {
 });
 ```
 
+## Getting information about object assigned to a clicked point
+Using Cognite's Annotations API, a user can define objects within a point cloud model. In order to retrieve information
+about a clicked object, users may get the `annotationId` that is assigned to each point.
+The `annotationId` is available in the `intersection` object returned from `viewer.getIntersectionFromPixel`. An annotation id of 0 means that the clicked point 
+is not assigned to any object.
+
+```js runnable
+viewer.on('click', async event => {
+  const intersection = await viewer.getIntersectionFromPixel(
+    event.offsetX, event.offsetY
+  );
+  if (intersection) {
+     alert(`Clicked object: ${intersection.annotationId}`);
+  };
+});
+```
+
 ## Controlling the intersection threshold
 
 By default, points within 5 cm of an intersection ray is considered to be intersecting. For point clouds of large
