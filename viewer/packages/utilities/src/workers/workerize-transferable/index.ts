@@ -1,5 +1,5 @@
 /*!
- * Copyright 2022 Cognite AS
+ * Adopted from https://github.com/naoak/workerize-transferable
  */
 export * from './message-types';
 export * from './on-main';

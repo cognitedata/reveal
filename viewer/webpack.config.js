@@ -143,7 +143,6 @@ module.exports = env => {
               }
             }
           ]
-          // parameters for "after normal and watch compilation" stage.
         }
       }),
       {

@@ -1,5 +1,5 @@
 /*!
- * Copyright 2022 Cognite AS
+ * Adopted from https://github.com/naoak/workerize-transferable
  */
 import { MESSAGE_TYPE_RPC_TRANSFERABLE } from './message-types';
 import { getGlobalThis } from './util';

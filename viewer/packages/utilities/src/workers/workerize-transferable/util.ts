@@ -1,5 +1,5 @@
 /*!
- * Copyright 2022 Cognite AS
+ * Adopted from https://github.com/naoak/workerize-transferable
  */
 const globals = getGlobalThis();
 

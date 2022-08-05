@@ -34,7 +34,7 @@ export async function parse(
 ): Promise<ParsedEptData> {
   const objectList = objects.map(rawToStylableObject);
   pointOffset = pointOffset;
-  return parseEpt(self as any, data, objectList, pointOffset);
+  return parseEpt(data, objectList, pointOffset);
 }
 
 function assertDefined(buffer: ArrayBuffer | undefined): buffer is ArrayBuffer {
