@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 import fileDownload from 'js-file-download';
 import ReactMarkdown from 'react-markdown';
 import {
