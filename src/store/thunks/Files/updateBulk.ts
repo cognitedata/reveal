@@ -49,59 +49,15 @@ export const getUpdatedValue = ({
  * ```
  */
 
+/**
+ * Either update files or updateStatus/delete annotation will be called depending on the bulkEditUnsaved.
+ * All the unsaved states for other bulk edits will be cleared by the bulk edit switching logic
+ */
 export const updateBulk = createAsyncThunk<
   void,
   { selectedFiles: VisionFile[]; bulkEditUnsaved: BulkEditUnsavedState },
   ThunkConfig
 >('updateBulk', async ({ selectedFiles, bulkEditUnsaved }, { dispatch }) => {
-  const payload: {
-    id: number;
-    update: {};
-  }[] = selectedFiles.map((file) => {
-    /**
-     * API limitations:
-     * - All set/add/remove should be populated, no null allowed
-     * - No overlap elements in add and remove operations allowed
-     * - set and setNull are mutually exclusive
-     */
-
-    const { id } = file;
-    const addedLabels: Label[] = bulkEditUnsaved.labels || [];
-
-    const updatedMetadata = bulkEditUnsaved.metadata;
-    const newMetadata = updatedMetadata
-      ? Object.keys(updatedMetadata)
-          .filter((key) => !!updatedMetadata[key])
-          .reduce(
-            (res, key) => Object.assign(res, { [key]: updatedMetadata[key] }),
-            {}
-          )
-      : {};
-
-    // No overlap elements in add and remove operations allowed
-    // So remove will priorities
-    const updatedAssets = bulkEditUnsaved.assetIds;
-    const assetsToRemove = updatedAssets?.removedAssetIds || [];
-    const assetsToAdd =
-      updatedAssets?.addedAssetIds?.filter(
-        (addedAssetIds) => !assetsToRemove?.includes(addedAssetIds)
-      ) || [];
-
-    return {
-      id,
-      update: {
-        labels: { add: addedLabels },
-        metadata: { add: newMetadata },
-        assetIds: {
-          add: assetsToAdd,
-          remove: assetsToRemove,
-        },
-        source: getUpdatedValue({ unsavedValue: bulkEditUnsaved.source }),
-        directory: getUpdatedValue({ unsavedValue: bulkEditUnsaved.directory }),
-      },
-    };
-  });
-
   if (bulkEditUnsaved.annotationIds) {
     const updateAnnotationStatuses = async (
       status: Status,
@@ -137,6 +93,57 @@ export const updateBulk = createAsyncThunk<
         annotationIds.annotationIdsToDelete?.map((id) => ({ id })) || []
       )
     );
+  } else {
+    const payload: {
+      id: number;
+      update: {};
+    }[] = selectedFiles.map((file) => {
+      /**
+       * API limitations:
+       * - All set/add/remove should be populated, no null allowed
+       * - No overlap elements in add and remove operations allowed
+       * - set and setNull are mutually exclusive
+       */
+
+      const { id } = file;
+      const addedLabels: Label[] = bulkEditUnsaved.labels || [];
+
+      const updatedMetadata = bulkEditUnsaved.metadata;
+      const newMetadata = updatedMetadata
+        ? Object.keys(updatedMetadata)
+            .filter((key) => !!updatedMetadata[key])
+            .reduce(
+              (res, key) => Object.assign(res, { [key]: updatedMetadata[key] }),
+              {}
+            )
+        : {};
+
+      // No overlap elements in add and remove operations allowed
+      // So remove will priorities
+      const updatedAssets = bulkEditUnsaved.assetIds;
+      const assetsToRemove = updatedAssets?.removedAssetIds || [];
+      const assetsToAdd =
+        updatedAssets?.addedAssetIds?.filter(
+          (addedAssetIds) => !assetsToRemove?.includes(addedAssetIds)
+        ) || [];
+
+      return {
+        id,
+        update: {
+          labels: { add: addedLabels },
+          metadata: { add: newMetadata },
+          assetIds: {
+            add: assetsToAdd,
+            remove: assetsToRemove,
+          },
+          source: getUpdatedValue({ unsavedValue: bulkEditUnsaved.source }),
+          directory: getUpdatedValue({
+            unsavedValue: bulkEditUnsaved.directory,
+          }),
+        },
+      };
+    });
+
+    await dispatch(UpdateFiles(payload));
   }
-  await dispatch(UpdateFiles(payload));
 });
