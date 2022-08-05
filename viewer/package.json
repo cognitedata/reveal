@@ -108,6 +108,7 @@
     "process": "^0.11.10",
     "random-seed": "0.3.0",
     "raw-loader": "^4.0.2",
+    "remove-files-webpack-plugin": "^1.5.0",
     "rimraf": "3.0.2",
     "run-script-os": "1.1.6",
     "shx": "0.3.4",
@@ -122,7 +123,7 @@
     "webpack-log": "^3.0.2",
     "webpack-node-externals": "^3.0.0",
     "whatwg-fetch": "3.6.2",
-    "worker-loader": "^3.0.8"
+    "workerize-loader": "2.0.2"
   },
   "peerDependencies": {
     "@cognite/sdk": "^7.7.0",
