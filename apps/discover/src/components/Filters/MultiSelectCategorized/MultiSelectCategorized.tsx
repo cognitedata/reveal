@@ -216,6 +216,7 @@ export const MultiSelectCategorized: React.FC<MultiSelectCategorizedProps> = ({
 
   return (
     <MultiSelectCategorizedWrapper
+      data-testid="multi-select-categorized-wrapper"
       ref={multiSelectCategorizedRef}
       width={width}
     >

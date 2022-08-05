@@ -6,6 +6,7 @@ import { MultiSelectCategorizedOptionMap } from 'components/Filters/MultiSelectC
 import { EventNptFilter } from '../../measurements/filters/EventNptFilter';
 import { ChartColumn } from '../types';
 
+import { DropDownIconStyler } from './elements';
 import { FilterItem } from './FilterItem';
 
 export interface NptFilterProps {
@@ -36,11 +37,13 @@ export const NptFilterItem: React.FC<WithDragHandleProps<NptFilterProps>> = ({
       onFiterVisiblityChange={onFiterVisiblityChange}
       {...dragHandleProps}
     >
-      <EventNptFilter
-        selectedEvents={nptCodes}
-        onChange={handleChangeNptFilter}
-        iconInsteadText="Configure"
-      />
+      <DropDownIconStyler>
+        <EventNptFilter
+          selectedEvents={nptCodes}
+          onChange={handleChangeNptFilter}
+          iconInsteadText="Configure"
+        />
+      </DropDownIconStyler>
     </FilterItem>
   );
 };

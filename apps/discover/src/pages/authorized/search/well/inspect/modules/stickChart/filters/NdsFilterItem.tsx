@@ -6,6 +6,7 @@ import { MultiSelectCategorizedOptionMap } from 'components/Filters/MultiSelectC
 import { EventNdsFilter } from '../../measurements/filters/EventNdsFilter';
 import { ChartColumn } from '../types';
 
+import { DropDownIconStyler } from './elements';
 import { FilterItem } from './FilterItem';
 
 export interface NdsFilterProps {
@@ -36,11 +37,13 @@ export const NdsFilterItem: React.FC<WithDragHandleProps<NdsFilterProps>> = ({
       onFiterVisiblityChange={onFiterVisiblityChange}
       {...dragHandleProps}
     >
-      <EventNdsFilter
-        selectedEvents={ndsCodes}
-        onChange={handleChangeNptFilter}
-        iconInsteadText="Configure"
-      />
+      <DropDownIconStyler>
+        <EventNdsFilter
+          selectedEvents={ndsCodes}
+          onChange={handleChangeNptFilter}
+          iconInsteadText="Configure"
+        />
+      </DropDownIconStyler>
     </FilterItem>
   );
 };

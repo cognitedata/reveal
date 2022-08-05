@@ -1,5 +1,7 @@
 import styled from 'styled-components/macro';
 
+import { Icon } from '@cognite/cogs.js';
+
 import { FlexRow, sizes } from 'styles/layout';
 
 import { FilterItem } from './FilterItem';
@@ -7,12 +9,12 @@ import { FilterItem } from './FilterItem';
 export const FilterItemWrapper = styled(FlexRow)`
   padding: ${sizes.small};
   align-items: center;
-  padding: 8px 8px 8px 12px;
-  gap: 8px;
+  padding: ${sizes.small};
+  gap: ${sizes.small};
 
   background: rgba(102, 102, 102, 0.06);
   border-radius: 6px;
-  margin-right: 8px;
+  margin-right: ${sizes.small};
 `;
 
 export const FilterItemElement = styled.div`
@@ -31,13 +33,26 @@ export const FilterText = styled.div`
 
 export const VertSeperator = styled.div`
   display: flex;
-  border-right: 1px solid var(--cogs-color-strokes-default);
+  border-right: 1px solid var(--cogs-border--muted);
   height: 100%;
-  margin: 0 14px;
 `;
 
 export const NptFilterItemContainer = styled(FilterItem)`
   & > * .cogs-menu {
     width: 175px;
+  }
+`;
+
+export const DragHandler = styled(Icon)`
+  margin-top: 5px;
+`;
+
+export const DropDownIconStyler = styled.div`
+  & > * span.cogs-label {
+    border: none !important;
+    background: rgba(102, 102, 102, 0) !important;
+  }
+  & > * i.cogs-icon {
+    color: rgba(0, 0, 0, 0.7) !important;
   }
 `;

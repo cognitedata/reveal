@@ -14,10 +14,11 @@ import head from 'lodash/head';
 import uniqueBy from 'lodash/uniqBy';
 import { v4 as uuid } from 'uuid';
 
-import { Checkbox, SegmentedControl } from '@cognite/cogs.js';
+import { Checkbox } from '@cognite/cogs.js';
 
 import { BaseButton } from 'components/Buttons';
 import { MultiSelectCategorizedOptionMap } from 'components/Filters/MultiSelectCategorized/types';
+import { SegmentedControl } from 'components/SegmentedControl/SegmentedControl';
 import {
   MeasurementChartData,
   MeasurementType,
@@ -161,16 +162,13 @@ export const WellCentricCard: React.FC<Props> = ({
           </Checkbox>
           <HeaderActions>
             <SegmentedControl
-              currentKey={currentTab}
-              onButtonClicked={(tabKey: string) => setCurrentTab(tabKey as any)}
-            >
-              <SegmentedControl.Button key={EventTabs.cluster}>
-                Cluster view
-              </SegmentedControl.Button>
-              <SegmentedControl.Button key={EventTabs.scatter}>
-                Scatter view
-              </SegmentedControl.Button>
-            </SegmentedControl>
+              onTabChange={(tabKey) => setCurrentTab(tabKey as any)}
+              currentTab={currentTab}
+              tabs={{
+                [EventTabs.cluster]: 'Cluster view',
+                [EventTabs.scatter]: 'Scatter view',
+              }}
+            />
           </HeaderActions>
         </HeaderTitleContainer>
       </Header>

@@ -74,7 +74,7 @@ export const NdsEventsColumnForChart: React.FC<Props> = ({
         })}
       </>
     );
-  }, [scaleBlocks, events]);
+  }, [scaleBlocks, events, view]);
 
   return (
     <BodyColumn width={150}>

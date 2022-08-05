@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import { Checkbox, Icon } from '@cognite/cogs.js';
+import { Checkbox } from '@cognite/cogs.js';
 
 import { WithDragHandleProps } from 'components/DragDropContainer';
 
@@ -11,6 +11,7 @@ import {
   FilterItemElement,
   FilterText,
   VertSeperator,
+  DragHandler,
 } from './elements';
 
 export interface FilterItemProps {
@@ -34,7 +35,11 @@ export const FilterItem: React.FC<WithDragHandleProps<FilterItemProps>> =
       return (
         <FilterItemWrapper>
           <FilterItemElement>
-            <Icon type="DragHandleHorizontal" {...dragHandleProps} />
+            <DragHandler
+              type="DragHandleHorizontal"
+              size={25}
+              {...dragHandleProps}
+            />
           </FilterItemElement>
           <FilterItemElement>
             <Checkbox
