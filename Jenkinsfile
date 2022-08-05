@@ -143,8 +143,8 @@ void registerNightly() {
   def triggers = []
   // add nightly run cron on master only
   if (env.BRANCH_NAME == 'master') {
-    // run at minute 0 past every 5rd hour from 4 through 19.
-    triggers += [parameterizedCron('0 4-19/5 * * * %NIGHTLY=true')]
+    // “At minute 0 past every 5th hour from 4 through 19 on every day-of-week from Monday through Friday.”
+    triggers += [parameterizedCron('0 4-19/5 * * 1-5 %NIGHTLY=true')]
     properties([
         disableConcurrentBuilds(),
         parameters([
