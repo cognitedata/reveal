@@ -31,13 +31,13 @@ export class LocalPointCloudFactory implements PointCloudFactory {
 
     const annotationInfo = new PointCloudObjectProvider([]);
 
-    const pointCloudOctree = await this._potreeInstance.loadPointCloud(
+    const [pointCloudOctree, classSchema] = await this._potreeInstance.loadPointCloud(
       modelBaseUrl,
       DEFAULT_POINT_CLOUD_METADATA_FILE,
       annotationInfo
     );
 
     pointCloudOctree.name = `PointCloudOctree: ${modelBaseUrl}`;
-    return new PotreeNodeWrapper(pointCloudOctree, annotationInfo.annotations);
+    return new PotreeNodeWrapper(pointCloudOctree, annotationInfo.annotations, undefined);
   }
 }
