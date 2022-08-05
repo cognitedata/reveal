@@ -8,8 +8,8 @@ import {
   PROBABILITY_FILTER_TITLE,
 } from '../../../../../src/pages/authorized/search/well/inspect/modules/ndsEvents/components/Filters/constants';
 import { interceptCoreNetworkRequests } from '../../../../support/commands/helpers';
-import { WELLS_SEARCH_ALIAS } from '../../../../support/interceptions';
 import { STATIC_WELLBORE_1 } from '../../../../support/constants';
+import { WELLS_SEARCH_ALIAS } from '../../../../support/interceptions';
 
 const DATA_AVAILABILITY_NDS = 'NDS events';
 const SUB_TYPE_OPTION = 'Bit-Bit balling';
@@ -53,23 +53,17 @@ describe('Wells: nds-events', () => {
     cy.wait('@listNds');
     cy.wait('@trajectoriesInterpolate');
 
+    cy.log('navigate to table view');
+    cy.contains('Table').click();
+    cy.findByTestId('nds-wells-table').should('be.visible');
+
+    cy.log('navigate to treemap view');
+    cy.contains('Treemap').click();
+
     cy.log('click on risk type filter');
     cy.contains(RISK_TYPE_FILTER_TITLE)
       .should('be.visible')
       .click({ force: true });
-
-    cy.log('scroll risk type dropdown');
-    cy.findAllByRole('tooltip')
-      .children()
-      .children()
-      .children()
-      .scrollTo('bottom');
-
-    cy.findAllByRole('tooltip')
-      .children()
-      .children()
-      .children()
-      .scrollTo('top');
 
     cy.log('click on `All` option from the dropdown menu');
     cy.get(`input[id=${SELECTED_ALL_DISPLAY_VALUE}]`)
