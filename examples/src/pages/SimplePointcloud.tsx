@@ -118,7 +118,7 @@ export function SimplePointcloud() {
       revealManager.on('loadingStateChanged', setLoadingState);
 
       const classesGui = gui.addFolder('Class filters');
-      const enabledClasses: { [clazz: number]: boolean } = {};
+      const enabledClasses: Record<number | string, boolean> = {};
       console.log(pointCloudNode.getClasses());
       for (const clazz of pointCloudNode.getClasses()) {
         enabledClasses[clazz] = true;

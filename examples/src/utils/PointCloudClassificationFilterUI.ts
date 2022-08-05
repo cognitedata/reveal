@@ -16,12 +16,12 @@ export class PointCloudClassificationFilterUI {
   }
 }
 
-function getClassName(clazz: number): string {
-  const entry = Object.entries(WellKnownAsprsPointClassCodes).find(entry => {
-    if (entry[1] === clazz) {
-      return true;
-    }
-    return false;
-  })
+function getClassName(clazz: number | string): string {
+  if (typeof(clazz) === 'string') {
+    return clazz;
+  }
+
+  const entry = Object.entries(WellKnownAsprsPointClassCodes)
+    .find(entry => entry[1] == clazz);
   return (entry !== undefined) ? entry[0] : `Class ${clazz}`;
 }
