@@ -63,7 +63,7 @@ export class PointCloudObjectStylingUI {
   }
 
   private createByObjectIndexUi(ui: dat.GUI) {
-    const state = { from: 1, count: 1 };
+    const state = { from: 1, count: 1, annotationId: 0 };
     const createAppearanceCb = this.createObjectAppearanceUi(ui);
     const actions = {
       apply: () => {
@@ -73,13 +73,16 @@ export class PointCloudObjectStylingUI {
         this._model.traverseStylableObjects(id => allAnnotationIds.push(id.annotationId));
         const selectedIds = allAnnotationIds.slice(state.from, state.from + numIndices);
 
-        const objects = new AnnotationIdPointCloudObjectCollection(selectedIds);
+        const ids = state.annotationId !== 0 ? [state.annotationId]: selectedIds;
+
+        const objects = new AnnotationIdPointCloudObjectCollection(ids);
         const appearance = createAppearanceCb();
         this._model.assignStyledObjectCollection(objects, appearance);
       }
     };
     ui.add(state, 'from', 1, this._model.stylableObjectCount, 1).name('First object ID');
     ui.add(state, 'count', 1, this._model.stylableObjectCount, 1).name('Object ID count');
+    ui.add(state, 'annotationId', 0).name(`Object's annotationId`);
     ui.add(actions, 'apply').name('Apply');
   }
 };

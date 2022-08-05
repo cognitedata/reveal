@@ -25,7 +25,12 @@ describe(PointCloudObjectAppearanceTexture.name, () => {
     const objectSet = new AnnotationIdPointCloudObjectCollection([annotationId]);
     const stylableObjectSet = new StyledPointCloudObjectCollection(objectSet, { color, visible: true });
 
-    appearanceTexture.setAnnotationIdToObjectIdMap(new Map<number, number>([[annotationId, objectId]]));
+    const objectsMaps = {
+      annotationToObjectIds: new Map<number, number>([[annotationId, objectId]]),
+      objectToAnnotationIds: new Map<number, number>([[objectId, annotationId]])
+    };
+
+    appearanceTexture.setObjectsMaps(objectsMaps);
 
     appearanceTexture.assignStyledObjectSet(stylableObjectSet);
     appearanceTexture.onBeforeRender();
@@ -54,7 +59,12 @@ describe(PointCloudObjectAppearanceTexture.name, () => {
     const objectSet = new AnnotationIdPointCloudObjectCollection([annotationId]);
     const stylableObjectSet = new StyledPointCloudObjectCollection(objectSet, { color: [0, 0, 0], visible: false });
 
-    appearanceTexture.setAnnotationIdToObjectIdMap(new Map<number, number>([[annotationId, objectId]]));
+    const objectsMaps = {
+      annotationToObjectIds: new Map<number, number>([[annotationId, objectId]]),
+      objectToAnnotationIds: new Map<number, number>([[objectId, annotationId]])
+    };
+
+    appearanceTexture.setObjectsMaps(objectsMaps);
 
     appearanceTexture.assignStyledObjectSet(stylableObjectSet);
     appearanceTexture.onBeforeRender();
