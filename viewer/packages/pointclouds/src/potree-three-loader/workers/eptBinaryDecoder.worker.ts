@@ -6,7 +6,7 @@ import { RawStylableObject, rawToStylableObject } from '../../styling/StylableOb
 
 import { parseEpt, EptInputData, ParsedEptData } from './parseEpt';
 import { Vec3 } from '../../styling/shapes/linalg';
-import { setupTransferableMethodsOnWorker } from '@naoak/workerize-transferable';
+import { setupTransferableMethodsOnWorker } from '@reveal/utilities';
 
 setupTransferableMethodsOnWorker({
   parse: {

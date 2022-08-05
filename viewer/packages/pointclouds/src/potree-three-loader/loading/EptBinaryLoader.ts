@@ -14,9 +14,8 @@ import * as EptDecoderWorker from '../workers/eptBinaryDecoder.worker';
 
 import { ParsedEptData, EptInputData } from '../workers/parseEpt';
 
-import { fromThreeVector3 } from '@reveal/utilities';
+import { fromThreeVector3, setupTransferableMethodsOnMain } from '@reveal/utilities';
 import { RawStylableObject } from '../../styling/StylableObject';
-import { setupTransferableMethodsOnMain } from '@naoak/workerize-transferable';
 
 export class EptBinaryLoader implements ILoader {
   private readonly _dataLoader: ModelDataProvider;

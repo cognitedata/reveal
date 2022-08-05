@@ -45,3 +45,5 @@ export { worldToNormalizedViewportCoordinates, worldToViewportCoordinates } from
 export { DeferredPromise } from './src/DeferredPromise';
 
 export { SceneHandler } from './src/SceneHandler';
+
+export * from './src/workers/workerize-transferable';

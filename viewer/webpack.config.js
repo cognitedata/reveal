@@ -2,6 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 const path = require('path');
+const RemovePlugin = require('remove-files-webpack-plugin');
 const nodeExternals = require('webpack-node-externals');
 const copyPkgJsonPlugin = require('copy-pkg-json-webpack-plugin');
 const logger = require('webpack-log')('reveal');
@@ -131,6 +132,19 @@ module.exports = env => {
           MIXPANEL_TOKEN: development ? MIXPANEL_TOKEN_DEV : MIXPANEL_TOKEN_PROD,
           IS_DEVELOPMENT_MODE: development
         })
+      }),
+      new RemovePlugin({
+        after: {
+          test: [
+            {
+              folder: 'dist',
+              method: absoluteItemPath => {
+                return new RegExp(/\.worker.js$/, 'm').test(absoluteItemPath);
+              }
+            }
+          ]
+          // parameters for "after normal and watch compilation" stage.
+        }
       }),
       {
         apply: compiler => {
