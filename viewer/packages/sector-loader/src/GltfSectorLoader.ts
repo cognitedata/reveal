@@ -11,6 +11,7 @@ import { MetricsLogger } from '@reveal/metrics';
 import { AutoDisposeGroup, assertNever, incrementOrInsertIndex } from '@reveal/utilities';
 
 import assert from 'assert';
+import { ResultAsync } from 'neverthrow';
 
 export class GltfSectorLoader {
   private readonly _gltfSectorParser: GltfSectorParser;
@@ -26,20 +27,32 @@ export class GltfSectorLoader {
   async loadSector(sector: WantedSector): Promise<ConsumedSector> {
     const metadata = sector.metadata as V9SectorMetadata;
     try {
-      const sectorByteBuffer = await this._sectorFileProvider.getBinaryFile(
-        sector.modelBaseUrl,
-        metadata.sectorFileName!
+      const sectorByteBufferResult = ResultAsync.fromPromise(
+        this._sectorFileProvider.getBinaryFile(sector.modelBaseUrl, metadata.sectorFileName!),
+        () => {}
       );
+      const sectorByteBuffer = await sectorByteBufferResult;
+      if (sectorByteBuffer.isErr()) {
+        throw new Error('Binary file not loaded');
+      }
 
       const group = new AutoDisposeGroup();
 
-      const parsedSectorGeometry = await this._gltfSectorParser.parseSector(sectorByteBuffer);
+      const parsedSectorGeometryResult = ResultAsync.fromPromise(
+        this._gltfSectorParser.parseSector(sectorByteBuffer.value),
+        () => {}
+      );
+
+      const parsedSectorGeometry = await parsedSectorGeometryResult;
+      if (parsedSectorGeometry.isErr()) {
+        throw new Error('Sector geometry not found');
+      }
 
       const materials = this._materialManager.getModelMaterials(sector.modelIdentifier);
 
       const geometryBatchingQueue: ParsedGeometry[] = [];
 
-      parsedSectorGeometry.forEach(parsedGeometry => {
+      parsedSectorGeometry.value.forEach(parsedGeometry => {
         const type = parsedGeometry.type as RevealGeometryCollectionType;
 
         const filteredGeometryBuffer = filterGeometryOutsideClipBox(
