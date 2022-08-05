@@ -14,6 +14,7 @@ import { ByScreenSizeSectorCuller } from './culling/ByScreenSizeSectorCuller';
 import { File3dFormat } from '@reveal/modeldata-api';
 import { SectorDownloadScheduler } from './SectorDownloadScheduler';
 import { CadNode } from '@reveal/cad-model';
+import { Result, ok, err } from 'neverthrow';
 
 /**
  * How many sectors to load per batch before doing another filtering pass, i.e. perform culling to determine
@@ -96,8 +97,16 @@ export class SectorLoader {
     const currentBatchId = this._batchId;
 
     for (const batch of chunk(changedSectors, SectorLoadingBatchSize)) {
-      const filteredSectors = await this.filterSectors(sectorCullerInput, batch, sectorCuller, progressHelper);
-      const consumedPromises = this.startLoadingBatch(filteredSectors, cadModels);
+      const filteredSectors: Result<WantedSector[], Error> = await this.filterSectors(
+        sectorCullerInput,
+        batch,
+        sectorCuller,
+        progressHelper
+      );
+      if (filteredSectors.isErr()) {
+        throw new Error('No filtered sectors');
+      }
+      const consumedPromises = this.startLoadingBatch(filteredSectors.value, cadModels);
       for await (const consumed of PromiseUtils.raceUntilAllCompleted(consumedPromises)) {
         const resolvedSector = consumed.result;
         if (currentBatchId === this._batchId && resolvedSector !== undefined) {
@@ -137,11 +146,15 @@ export class SectorLoader {
     batch: WantedSector[],
     sectorCuller: SectorCuller,
     progressHelper: ProgressReportHelper
-  ): Promise<WantedSector[]> {
+  ): Promise<Result<WantedSector[], Error>> {
     // Determine if some of the sectors in the batch is culled by already loaded geometry
     const filteredSectors = await sectorCuller.filterSectorsToLoad(input, batch);
     progressHelper.reportNewSectorsCulled(batch.length - filteredSectors.length);
-    return filteredSectors;
+    if (filteredSectors) {
+      return ok(filteredSectors);
+    } else {
+      return err(new Error('No filtered sectores'));
+    }
   }
 
   private startLoadingBatch(batch: WantedSector[], models: CadNode[]): Promise<ConsumedSector>[] {

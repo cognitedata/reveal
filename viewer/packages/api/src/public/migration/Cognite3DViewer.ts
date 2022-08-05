@@ -987,7 +987,7 @@ export class Cognite3DViewer {
     if (url) {
       return ok(url);
     } else {
-      return err(new Error("Cannot generate Scrrenshot"));
+      return err(new Error('Cannot generate Scrrenshot'));
     }
   }
 
@@ -1026,7 +1026,7 @@ export class Cognite3DViewer {
    *   );
    * ```
    */
-  async getIntersectionFromPixel(offsetX: number, offsetY: number): Promise<Result<Intersection, null>>;
+  async getIntersectionFromPixel(offsetX: number, offsetY: number): Promise<null | Intersection>;
   /**
    * @deprecated Since 3.1 options argument have no effect.
    * */
@@ -1034,7 +1034,7 @@ export class Cognite3DViewer {
     offsetX: number,
     offsetY: number,
     options: IntersectionFromPixelOptions
-  ): Promise<Result<Intersection, null>>;
+  ): Promise<null | Intersection>;
   /**
    * @obvious
    * @param offsetX
@@ -1045,7 +1045,7 @@ export class Cognite3DViewer {
     offsetX: number,
     offsetY: number,
     options?: IntersectionFromPixelOptions
-  ): Promise<Result<Intersection, null>> {
+  ): Promise<null | Intersection> {
     const cadModels = this.getModels('cad');
     const pointCloudModels = this.getModels('pointcloud');
     const cadNodes = cadModels.map(x => x.cadNode);
