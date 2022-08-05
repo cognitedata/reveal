@@ -8,7 +8,6 @@ import { CameraConfiguration } from '@reveal/utilities';
 import { PotreeGroupWrapper } from './PotreeGroupWrapper';
 import { PotreeNodeWrapper } from './PotreeNodeWrapper';
 import { WellKnownAsprsPointClassCodes } from './types';
-import { createPointClassKey } from './createPointClassKey';
 
 import { PickPoint, PotreePointColorType, PotreePointShape, PotreePointSizeType } from './potree-three-loader';
 
@@ -129,7 +128,7 @@ export class PointCloudNode extends THREE.Group {
     if (!this.hasClass(pointClass)) {
       throw new Error(`Point cloud model doesn't have class ${pointClass}`);
     }
-    const key = createPointClassKey(pointClass);
+    const key = this._potreeNode.createPointClassKey(pointClass);
     return this._potreeNode.classification[key].w !== 0.0;
   }
 
@@ -140,7 +139,7 @@ export class PointCloudNode extends THREE.Group {
    * @returns true if model has values in the class given.
    */
   hasClass(pointClass: number | WellKnownAsprsPointClassCodes | string): boolean {
-    const key = createPointClassKey(pointClass);
+    const key = this._potreeNode.createPointClassKey(pointClass);
     return this._potreeNode.classification[key] !== undefined;
   }
 

@@ -15,7 +15,6 @@ import {
 } from './potree-three-loader';
 import { WellKnownAsprsPointClassCodes } from './types';
 
-import { createPointClassKey } from './createPointClassKey';
 import { StyledPointCloudObjectCollection } from './styling/StyledPointCloudObjectCollection';
 import { PointCloudObjectMetadata, PointCloudObjectAnnotation } from './annotationTypes';
 import { CompletePointCloudAppearance } from './styling/PointCloudAppearance';
@@ -116,12 +115,22 @@ export class PotreeNodeWrapper {
     this._needsRedraw = true;
   }
 
-  private createPointClassKey(pointClass: number | WellKnownAsprsPointClassCodes | string): number | 'DEFAULT' {
+  createPointClassKey(pointClass: number | WellKnownAsprsPointClassCodes | string): number {
     if (this._classToNumberMap && this._classToNumberMap[pointClass] !== undefined) {
       return this._classToNumberMap[pointClass];
     }
 
-    return createPointClassKey(pointClass);
+    if (typeof(pointClass) === 'string') {
+      throw Error(`Unrecognized string ${pointClass} used as class name`);
+    }
+
+    if (pointClass === WellKnownAsprsPointClassCodes.Default) {
+      // Potree has a special class 'DEFAULT'. Our map has number keys, but this one is specially
+      // handled in Potree so we ignore type.
+      return PotreeDefaultPointClass as any;
+    }
+
+    return pointClass;
   }
 
   setClassificationAndRecompute(pointClass: number | WellKnownAsprsPointClassCodes | string, visible: boolean): void {
