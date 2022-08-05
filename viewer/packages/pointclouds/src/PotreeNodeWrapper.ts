@@ -5,6 +5,7 @@
 import * as THREE from 'three';
 
 export type PotreeClassification = { [pointClass: number]: { x: number; y: number; z: number; w: number } };
+const PotreeDefaultPointClass = 'DEFAULT';
 
 import {
   PointCloudOctree,
@@ -85,6 +86,18 @@ export class PotreeNodeWrapper {
 
   get classification(): PotreeClassification {
     return this._classification;
+  }
+
+  get classNames(): Array<string> | Array<number> {
+    if (this._classToNumberMap) {
+      return Object.keys(this._classToNumberMap);
+    }
+
+    return Object.keys(this.classification)
+      .map(x => {
+        return x === PotreeDefaultPointClass ? -1 : parseInt(x, 10);
+      })
+      .sort((a, b) => a - b);
   }
 
   get stylableObjectAnnotationIds(): Iterable<PointCloudObjectMetadata> {
