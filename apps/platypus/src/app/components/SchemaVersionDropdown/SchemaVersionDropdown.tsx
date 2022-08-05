@@ -52,7 +52,14 @@ export function SchemaVersionDropdown({
         onClickOutside={() => setOpen(false)}
         visible={isOpen}
         content={
-          <Menu style={{ maxHeight: 192, width: 300, overflow: 'auto' }}>
+          <Menu
+            style={{
+              maxHeight: 192,
+              width: 300,
+              overflow: 'auto',
+              display: 'block',
+            }}
+          >
             {versions.map((schemaObj) => (
               <MenuItem
                 key={`${schemaObj.version}-${schemaObj.status}`}
@@ -81,14 +88,14 @@ export function SchemaVersionDropdown({
                     status={schemaObj.status}
                     isLatest={schemaObj.version === latestVersion}
                   />
-                  <div
-                    role="button"
-                    aria-label="Version select actions"
-                    onClick={(e) => e.stopPropagation()}
-                    style={{ padding: 0, width: 28, height: 28, marginLeft: 4 }}
-                  >
-                    <Icon type="EllipsisVertical" style={{ margin: 0 }} />
-                  </div>
+                  <Icon
+                    type="EllipsisVertical"
+                    style={{
+                      margin: 0,
+                      marginLeft: 12,
+                      marginRight: 12,
+                    }}
+                  />
                 </Flex>
               </MenuItem>
             ))}

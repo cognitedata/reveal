@@ -416,9 +416,7 @@ export const DataModelPage = ({ dataModelExternalId }: DataModelPageProps) => {
             {renderTools()}
           </DataModelHeader>
         </PageContentLayout.Header>
-        <PageContentLayout.Body
-          style={{ flexDirection: 'row', overflow: 'hidden' }}
-        >
+        <PageContentLayout.Body style={{ flexDirection: 'row' }}>
           {isInit ? (
             <SplitPanelLayout
               sidebar={

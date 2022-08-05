@@ -58,7 +58,6 @@ export const EditorPanel = (props: EditorPanelProps) => {
         display: 'flex',
         flexDirection: 'column',
         height: '100%',
-        overflow: 'hidden',
       }}
     >
       <PageToolbar title={t('editor_title', 'Editor')} size={Size.SMALL}>

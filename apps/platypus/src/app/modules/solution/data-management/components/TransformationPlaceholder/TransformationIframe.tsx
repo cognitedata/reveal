@@ -13,7 +13,7 @@ export function TransformationIframe({
       width="100%"
       height="100%"
       style={{ border: 'none' }}
-      src={createLink(`/transformations/${transformationId}`)}
+      src={createLink(`/transformations-previous/${transformationId}`)}
       onLoad={() => {
         const new_style_element = document.createElement('style');
         new_style_element.textContent = css`

@@ -9,7 +9,6 @@ export const StyledPageContentLayout = styled.div`
   .body {
     display: flex;
     flex: 1;
-    overflow: auto;
     flex-direction: column;
     font-size: inherit;
     position: relative;
@@ -49,7 +48,6 @@ export const SplitPanel = styled.div`
   left: 0;
   right: 0;
   bottom: 0;
-  overflow: hidden;
   background: white;
   display: flex;
 
@@ -57,8 +55,6 @@ export const SplitPanel = styled.div`
     width: 25%;
     background: var(--split-panel-sidebar-background, transparent);
     top: 0;
-    overflow-x: hidden;
-    overflow-y: auto;
     bottom: 0;
     display: flex;
     box-sizing: border-box;
