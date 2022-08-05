@@ -80,7 +80,8 @@ export class CdfPointCloudFactory implements PointCloudFactory {
       return undefined;
     }
 
-    const classNames = Object.keys(revision.metadata).filter(k => !isNaN(parseInt(revision.metadata![k])));
+    const classKeys = Object.keys(revision.metadata);
+    const classNames = classKeys.filter(k => !isNaN(parseInt(revision.metadata![k])));
 
     if (classNames.length === 0) {
       return undefined;
@@ -90,6 +91,8 @@ export class CdfPointCloudFactory implements PointCloudFactory {
     for (const className of classNames) {
       classes[className] = parseInt(revision.metadata[className]);
     }
+
+    return classes;
   }
 
   async createModel(modelMetadata: PointCloudMetadata): Promise<PotreeNodeWrapper> {
