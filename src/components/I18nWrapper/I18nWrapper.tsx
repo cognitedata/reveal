@@ -6,7 +6,12 @@ import I18NextLocizeBackend from 'i18next-locize-backend';
 import { locizePlugin } from 'locize';
 import { initReactI18next, useTranslation } from 'react-i18next';
 
-import { LOCIZE_PROJECT_ID, getLanguage } from '../..';
+import {
+  LOCIZE_PROJECT_ID,
+  getLanguage,
+  lowercasePostProcessor,
+  uppercasePostProcessor,
+} from '../..';
 
 type I18nWrapperProps = {
   children: React.ReactNode;
@@ -57,6 +62,8 @@ const initializeTranslations = (
       .use(locizePlugin)
       .use(I18NextLocizeBackend)
       .use(initReactI18next)
+      .use(lowercasePostProcessor)
+      .use(uppercasePostProcessor)
       .init({
         ...commonI18nOptions,
         react: {
@@ -71,10 +78,14 @@ const initializeTranslations = (
       });
   }
 
-  return i18next.use(initReactI18next).init({
-    ...commonI18nOptions,
-    resources: translations,
-  });
+  return i18next
+    .use(initReactI18next)
+    .use(lowercasePostProcessor)
+    .use(uppercasePostProcessor)
+    .init({
+      ...commonI18nOptions,
+      resources: translations,
+    });
 };
 
 const I18nWrapper = ({
