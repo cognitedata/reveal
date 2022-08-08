@@ -7,7 +7,7 @@ export interface DetailedViewProps {
   ndsAggregate: WellboreNdsAggregatesSummary;
   isPreviousButtonDisabled?: boolean;
   isNextButtonDisabled?: boolean;
-  onPreviousClick: () => void;
-  onNextClick: () => void;
+  onPreviousClick?: () => void;
+  onNextClick?: () => void;
   onBackClick: () => void;
 }

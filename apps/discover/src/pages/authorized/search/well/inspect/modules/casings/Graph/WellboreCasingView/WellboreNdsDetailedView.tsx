@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 
 import isEmpty from 'lodash/isEmpty';
-import noop from 'lodash/noop';
 
 import { Loading } from 'components/Loading';
 
@@ -45,11 +44,7 @@ export const WellboreNdsDetailedView: React.FC<
     <DetailedView
       data={ndsEvents}
       ndsAggregate={detailedViewNdsAggregate}
-      isPreviousButtonDisabled={false}
-      isNextButtonDisabled={false}
       onBackClick={onBackClick}
-      onPreviousClick={noop}
-      onNextClick={noop}
     />
   );
 };
