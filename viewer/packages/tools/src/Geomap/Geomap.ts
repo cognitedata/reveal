@@ -6,6 +6,7 @@
 import { GEOTHREE } from 'geo-three';
 import { Cognite3DViewer } from '@reveal/api';
 import { LatLongPosition, MapConfig, MapProviders } from './MapConfig';
+import { err, ok, Result } from 'neverthrow';
 
 export class Geomap {
   private readonly _viewer: Cognite3DViewer;
@@ -16,7 +17,10 @@ export class Geomap {
   constructor(viewer: Cognite3DViewer, mapConfig: MapConfig) {
     this._viewer = viewer;
     const mapProvider = this.getMapProvider(mapConfig);
-    this._map = new GEOTHREE.MapView(GEOTHREE.MapView.PLANAR, mapProvider, mapProvider);
+    if (mapProvider.isErr()) {
+      throw new Error('Map provider key or related keys is missing/wrong');
+    }
+    this._map = new GEOTHREE.MapView(GEOTHREE.MapView.PLANAR, mapProvider.value, mapProvider.value);
     this._viewer.addObject3D(this._map);
 
     const coords = GEOTHREE.UnitsUtils.datumsToSpherical(mapConfig.latlong.latitude, mapConfig.latlong.longitude);
@@ -41,33 +45,42 @@ export class Geomap {
   }
 
   private getMapProvider(mapConfig: MapConfig) {
-    let mapProvider: GEOTHREE.MapProvider;
-    switch (mapConfig.provider) {
-      case MapProviders.BingMap:
-        mapProvider = new GEOTHREE.BingMapsProvider(mapConfig.APIKey, mapConfig.type);
-        break;
-      case MapProviders.HereMap:
-        mapProvider = new GEOTHREE.HereMapsProvider(
-          mapConfig.APIKey,
-          mapConfig.appCode!,
-          mapConfig.style!,
-          mapConfig.scheme!,
-          mapConfig.imageFormat!,
-          mapConfig.size!
-        );
-        break;
-      case MapProviders.MapboxMap:
-        mapProvider = new GEOTHREE.MapBoxProvider(mapConfig.APIKey, mapConfig.id, mapConfig.mode, mapConfig.tileFormat);
-        break;
-      case MapProviders.OpenStreetMap:
-        mapProvider = new GEOTHREE.OpenStreetMapsProvider();
-        break;
+    let mapProvider: Result<GEOTHREE.MapProvider, Error>;
+    try {
+      switch (mapConfig.provider) {
+        case MapProviders.BingMap:
+          mapProvider = new GEOTHREE.BingMapsProvider(mapConfig.APIKey, mapConfig.type);
+          break;
+        case MapProviders.HereMap:
+          mapProvider = new GEOTHREE.HereMapsProvider(
+            mapConfig.APIKey,
+            mapConfig.appCode!,
+            mapConfig.style!,
+            mapConfig.scheme!,
+            mapConfig.imageFormat!,
+            mapConfig.size!
+          );
+          break;
+        case MapProviders.MapboxMap:
+          mapProvider = new GEOTHREE.MapBoxProvider(
+            mapConfig.APIKey,
+            mapConfig.id,
+            mapConfig.mode,
+            mapConfig.tileFormat
+          );
+          break;
+        case MapProviders.OpenStreetMap:
+          mapProvider = new GEOTHREE.OpenStreetMapsProvider();
+          break;
 
-      default:
-        throw new Error('Unsupported map provider');
+        default:
+          throw new Error('Unsupported map provider');
+      }
+
+      return ok(mapProvider);
+    } catch (error: unknown) {
+      return err(error);
     }
-
-    return mapProvider;
   }
 
   public latLongToWorldCoordinates(latLong: LatLongPosition): { x: number; y: number } {

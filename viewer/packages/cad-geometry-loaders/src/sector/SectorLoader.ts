@@ -153,7 +153,7 @@ export class SectorLoader {
     if (filteredSectors) {
       return ok(filteredSectors);
     } else {
-      return err(new Error('No filtered sectores'));
+      return err(new Error('No filtered sectors'));
     }
   }
 
