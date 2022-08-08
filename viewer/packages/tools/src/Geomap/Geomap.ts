@@ -17,18 +17,19 @@ export class Geomap {
   constructor(viewer: Cognite3DViewer, mapConfig: MapConfig) {
     this._viewer = viewer;
     const mapProvider = this.getMapProvider(mapConfig);
-    if (mapProvider.isErr()) {
-      throw new Error('Map provider key or related keys is missing/wrong');
-    }
-    this._map = new GEOTHREE.MapView(GEOTHREE.MapView.PLANAR, mapProvider.value, mapProvider.value);
-    this._viewer.addObject3D(this._map);
+    if (mapProvider.isOk()) {
+      this._map = new GEOTHREE.MapView(GEOTHREE.MapView.PLANAR, mapProvider.value, mapProvider.value);
+      this._viewer.addObject3D(this._map);
 
-    const coords = GEOTHREE.UnitsUtils.datumsToSpherical(mapConfig.latlong.latitude, mapConfig.latlong.longitude);
-    const bound = this._viewer.models[0].getModelBoundingBox();
-    this._map.position.set(-coords.x, bound.min.y, coords.y);
-    this._map.updateMatrixWorld(true);
-    this.requestRedraw(10000);
-    this._viewer.on('cameraChange', this._onCameraChange);
+      const coords = GEOTHREE.UnitsUtils.datumsToSpherical(mapConfig.latlong.latitude, mapConfig.latlong.longitude);
+      const bound = this._viewer.models[0].getModelBoundingBox();
+      this._map.position.set(-coords.x, bound.min.y, coords.y);
+      this._map.updateMatrixWorld(true);
+      this.requestRedraw(10000);
+      this._viewer.on('cameraChange', this._onCameraChange);
+    } else {
+      console.log('Error: Mapprovider key or configuration is misssing/incorrect');
+    }
   }
 
   private requestRedraw(timeOut: number) {
@@ -74,7 +75,8 @@ export class Geomap {
           break;
 
         default:
-          throw new Error('Unsupported map provider');
+          mapProvider = new GEOTHREE.OpenStreetMapsProvider();
+          break;
       }
 
       return ok(mapProvider);

@@ -56,9 +56,11 @@ export class GltfSectorRepository implements SectorRepository {
       return this._gltfCache.get(cacheKey);
     }
 
-    const consumedSector = await this._gltfSectorLoader.loadSector(sector).catch(() => {
-      return undefined;
-    });
+    const consumedSectorResult = await this._gltfSectorLoader.loadSector(sector);
+    if (consumedSectorResult.isErr()) {
+      return this.getEmptyDiscardedSector(sector.modelIdentifier, metadata);
+    }
+    const consumedSector = consumedSectorResult.value;
 
     if (!consumedSector) {
       return this.getEmptyDiscardedSector(sector.modelIdentifier, metadata);

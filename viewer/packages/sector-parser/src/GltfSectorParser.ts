@@ -17,6 +17,7 @@ import {
 import { GlbMetadataParser } from './reveal-glb-parser/GlbMetadataParser';
 import { COLLECTION_TYPE_SIZES, DATA_TYPE_BYTE_SIZES } from './constants';
 import { DracoDecoderHelper } from './DracoDecoderHelper';
+import { Result, ok, err } from 'neverthrow';
 
 export class GltfSectorParser {
   private readonly _glbMetadataParser: GlbMetadataParser;
@@ -27,14 +28,17 @@ export class GltfSectorParser {
     this._dracoDecoderHelper = new DracoDecoderHelper();
   }
 
-  public async parseSector(data: ArrayBuffer): Promise<ParsedGeometry[]> {
+  public async parseSector(data: ArrayBuffer): Promise<Result<ParsedGeometry[], Error>> {
     const headers = this._glbMetadataParser.parseGlbMetadata(data);
     const json = headers.json;
-
     return this.traverseDefaultSceneNodes(json, headers, data);
   }
 
-  private async traverseDefaultSceneNodes(json: GltfJson, headers: GlbHeaderData, data: ArrayBuffer) {
+  private async traverseDefaultSceneNodes(
+    json: GltfJson,
+    headers: GlbHeaderData,
+    data: ArrayBuffer
+  ): Promise<Result<ParsedGeometry[], Error>> {
     const typedGeometryBuffers: ParsedGeometry[] = [];
 
     const defaultSceneNodeIds = json.scenes[json.scene].nodes;
@@ -45,14 +49,14 @@ export class GltfSectorParser {
         .map(async node => {
           const processedNode = await this.processNode(node, headers, data)!;
           if (processedNode === undefined) {
-            return;
+            return err;
           }
 
           typedGeometryBuffers.push(processedNode);
         })
     );
 
-    return typedGeometryBuffers;
+    return ok(typedGeometryBuffers);
   }
 
   private async processNode(

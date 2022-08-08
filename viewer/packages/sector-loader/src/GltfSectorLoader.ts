@@ -11,7 +11,7 @@ import { MetricsLogger } from '@reveal/metrics';
 import { AutoDisposeGroup, assertNever, incrementOrInsertIndex } from '@reveal/utilities';
 
 import assert from 'assert';
-import { ResultAsync } from 'neverthrow';
+import { ok, err, Result, ResultAsync } from 'neverthrow';
 
 export class GltfSectorLoader {
   private readonly _gltfSectorParser: GltfSectorParser;
@@ -24,28 +24,27 @@ export class GltfSectorLoader {
     this._materialManager = materialManager;
   }
 
-  async loadSector(sector: WantedSector): Promise<ConsumedSector> {
+  async loadSector(sector: WantedSector): Promise<Result<ConsumedSector, Error>> {
     const metadata = sector.metadata as V9SectorMetadata;
-    try {
-      const sectorByteBufferResult = ResultAsync.fromPromise(
-        this._sectorFileProvider.getBinaryFile(sector.modelBaseUrl, metadata.sectorFileName!),
-        () => {}
-      );
-      const sectorByteBuffer = await sectorByteBufferResult;
-      if (sectorByteBuffer.isErr()) {
-        throw new Error('Binary file not loaded');
-      }
-
+    const sectorByteBufferResult = ResultAsync.fromPromise(
+      this._sectorFileProvider.getBinaryFile(sector.modelBaseUrl, metadata.sectorFileName!),
+      () => {}
+    );
+    const sectorByteBuffer = await sectorByteBufferResult;
+    if (sectorByteBuffer.isErr()) {
+      MetricsLogger.trackError(new Error('Reading sector byte buffer from binary file resulted in error'), {
+        moduleName: 'GltfSectorLoader',
+        methodName: 'loadSector'
+      });
+      return err(new Error('Reading sector byte buffer from binary file resulted in error'));
+    } else {
       const group = new AutoDisposeGroup();
 
-      const parsedSectorGeometryResult = ResultAsync.fromPromise(
-        this._gltfSectorParser.parseSector(sectorByteBuffer.value),
-        () => {}
-      );
+      const parsedSectorGeometryResult = this._gltfSectorParser.parseSector(sectorByteBuffer.value);
 
       const parsedSectorGeometry = await parsedSectorGeometryResult;
       if (parsedSectorGeometry.isErr()) {
-        throw new Error('Sector geometry not found');
+        return err(parsedSectorGeometry.error);
       }
 
       const materials = this._materialManager.getModelMaterials(sector.modelIdentifier);
@@ -61,7 +60,7 @@ export class GltfSectorLoader {
           sector.geometryClipBox ?? undefined
         );
 
-        if (!filteredGeometryBuffer) return;
+        if (!filteredGeometryBuffer) return new Error('No Filtered Geometry Buffer');
 
         switch (type) {
           case RevealGeometryCollectionType.BoxCollection:
@@ -96,17 +95,14 @@ export class GltfSectorLoader {
         }
       });
 
-      return {
+      return ok({
         levelOfDetail: sector.levelOfDetail,
         group: group,
         instancedMeshes: [],
         metadata: metadata,
         modelIdentifier: sector.modelIdentifier,
         geometryBatchingQueue: geometryBatchingQueue
-      };
-    } catch (error) {
-      MetricsLogger.trackError(error as Error, { moduleName: 'GltfSectorLoader', methodName: 'loadSector' });
-      throw error;
+      });
     }
   }
 
