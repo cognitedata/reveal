@@ -16,7 +16,7 @@ module.exports = {
     }
   },
   rootDir: '.',
-  globalSetup: 'jest-environment-puppeteer/setup',
+  globalSetup: path.resolve(__dirname, './globalTestSetup.ts'),
   globalTeardown: 'jest-environment-puppeteer/teardown',
   testEnvironment: 'jest-environment-puppeteer',
   setupFilesAfterEnv: [path.resolve(__dirname, './setupTests.ts')],

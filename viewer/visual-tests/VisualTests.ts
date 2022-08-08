@@ -5,9 +5,7 @@
 // import assert from 'assert';
 import { Page } from 'puppeteer';
 
-// const environment = process?.env?.NODE_ENV ?? 'browser';
-
-// assert(environment === 'test');
+const testFixtures = ((process.env as any).TEST_FIXTURES as string).split(',');
 
 describe('Visual tests', () => {
   let testPage: Page;
@@ -19,12 +17,8 @@ describe('Visual tests', () => {
     });
   });
 
-  // test.each(testFixtures!)('%p', async testName => {
-  //   await runTest(testName);
-  // });
-
-  test('myTest', async () => {
-    await runTest('SectorLoaderVisualTestFixture');
+  test.each(testFixtures)('%p', async testName => {
+    return runTest(testName);
   });
 
   afterAll(() => {

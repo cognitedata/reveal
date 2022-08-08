@@ -14,10 +14,5 @@ module.exports = {
       isMobile: false
     },
     dumpio: false // get console output
-  },
-  server: {
-    command: 'yarn run ws:start',
-    port: 12345,
-    launchTimeout: 80000
   }
 };
