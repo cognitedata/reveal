@@ -55,7 +55,7 @@ describe(GltfSectorRepository.name, () => {
     const sectorRepository = new GltfSectorRepository(binaryFileProvider.object(), materialManager.object());
 
     //Sector loader will throw since there is no valid materials for given object
-    await expect(sectorRepository.loadSector(wantedSectorMock.object())).resolves.not.toThrow();
+    expect(sectorRepository.loadSector(wantedSectorMock.object())).resolves.not.toThrow();
 
     Log.setLevel(currentLogLevel);
   });

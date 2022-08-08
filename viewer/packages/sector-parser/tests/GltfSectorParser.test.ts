@@ -19,8 +19,14 @@ describe(GltfSectorParser.name, () => {
     const primitivesByteBuffer = fs.readFileSync(__dirname + '/test-all-primitives.glb');
     const dracoTestByteBuffer = fs.readFileSync(__dirname + '/anders-test-scene-draco.glb');
 
-    parsedPrimitivesResult = await parser.parseSector(primitivesByteBuffer.buffer);
-    parsedDracoResult = await parser.parseSector(dracoTestByteBuffer.buffer);
+    const primitiveResult = await parser.parseSector(primitivesByteBuffer.buffer);
+    if (primitiveResult.isOk()) {
+      parsedPrimitivesResult = primitiveResult.value;
+    }
+    const dracoResult = await parser.parseSector(dracoTestByteBuffer.buffer);
+    if (dracoResult.isOk()) {
+      parsedDracoResult = dracoResult.value;
+    }
   });
 
   test('Parsing test.glb should have 11 output primitive types', () => {
@@ -251,8 +257,11 @@ describe(GltfSectorParser.name, () => {
 
     const testFileByteBuffer = fs.readFileSync(__dirname + '/anders-test-scene.glb');
     const parsedResult = await parser.parseSector(testFileByteBuffer.buffer);
+    if (parsedResult.isErr()) {
+      return;
+    }
 
-    const triangleMeshes = parsedResult.filter(x => x.type === RevealGeometryCollectionType.TriangleMesh);
+    const triangleMeshes = parsedResult.value.filter(x => x.type === RevealGeometryCollectionType.TriangleMesh);
     expect(triangleMeshes.length).toBe(1);
 
     const { geometryBuffer } = triangleMeshes[0];
