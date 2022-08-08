@@ -1,11 +1,17 @@
 // TODO(CDFUX-0): copies from @cognite/cdf-utilities!
 import queryString from 'query-string';
 
+enum PARAMS {
+  ENV = 'env',
+  CLUSTER = 'cluster',
+}
+
 export const getProject = () =>
   new URL(window.location.href).pathname.split('/')[1];
 
-export const getEnv = () => {
-  const param = queryString.parse(window.location.search).env;
+export const getEnv = (key: PARAMS) => {
+  const param = queryString.parse(window.location.search)[key];
+
   if (param instanceof Array) {
     return param[0];
   }
@@ -36,8 +42,10 @@ export const createLink = (
   opts?: queryString.StringifyOptions
 ): string => {
   const project = getProject() || '';
-  const env = getEnv();
-  const query = queryString.stringify({ ...queries, env }, opts);
+  const env = getEnv(PARAMS.ENV);
+  const cluster = getEnv(PARAMS.CLUSTER);
+  const query = queryString.stringify({ ...queries, env, cluster }, opts);
+
   if (query.length > 0) {
     return `/${project}${path}?${query}`;
   }
