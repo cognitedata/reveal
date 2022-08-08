@@ -5,15 +5,20 @@ import { useTranslation } from 'common';
 import { Breadcrumb } from '@cognite/cdf-utilities';
 import { useParams } from 'react-router-dom';
 import { Body, Colors, Flex, Icon, Title } from '@cognite/cogs.js';
-import { extractorsListExtended } from 'utils/extractorsListExtended';
 
 type DetailsHeaderProps = {
+  imageUrl?: string;
   title: string;
   version: string;
   createdAt: string;
 };
 
-const DetailsHeader = ({ title, version, createdAt }: DetailsHeaderProps) => {
+const DetailsHeader = ({
+  imageUrl,
+  title,
+  version,
+  createdAt,
+}: DetailsHeaderProps) => {
   const { t } = useTranslation();
   const { subAppPath, extractorExternalId } = useParams<{
     subAppPath?: string;
@@ -36,11 +41,11 @@ const DetailsHeader = ({ title, version, createdAt }: DetailsHeaderProps) => {
             ]}
           />
           <Flex direction="column" gap={16}>
-            <div>
-              <img
-                src={extractorsListExtended?.[extractorExternalId!]?.imagePath}
-              />
-            </div>
+            {imageUrl && (
+              <div>
+                <img src={imageUrl} />
+              </div>
+            )}
             <Title level="3">{title}</Title>
             <Flex gap={16}>
               <Flex gap={6} alignItems="center">
