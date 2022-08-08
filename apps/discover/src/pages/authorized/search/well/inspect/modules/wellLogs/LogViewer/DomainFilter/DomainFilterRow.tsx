@@ -10,6 +10,22 @@ export const DomainFilterRow: React.FC<DomainFilterRowProps> = ({
   onChangeDomain,
 }) => {
   const { columnExternalId, min, max } = domainListItem;
+  const [tempValMin, setTempValMin] = React.useState(`${min}`);
+  const [tempValMax, setTempValMax] = React.useState(`${max}`);
+
+  const handleDomainChange = (value: string, updateType: 'min' | 'max') => {
+    switch (updateType) {
+      case 'min':
+        setTempValMin(value);
+        break;
+      case 'max':
+        setTempValMax(value);
+        break;
+    }
+    if (!Number.isNaN(Number(value))) {
+      onChangeDomain(columnExternalId, updateType, Number(value));
+    }
+  };
 
   return (
     <Row key={columnExternalId} data-testid="domain-filter-row">
@@ -17,10 +33,10 @@ export const DomainFilterRow: React.FC<DomainFilterRowProps> = ({
         <Input
           title={columnExternalId}
           type="number"
-          value={min}
-          onChange={(event) =>
-            onChangeDomain(columnExternalId, 'min', Number(event.target.value))
-          }
+          value={tempValMin}
+          onChange={(event) => {
+            handleDomainChange(event.target.value, 'min');
+          }}
           data-testid="domain-min-value"
         />
       </NumberInputWrapper>
@@ -31,10 +47,10 @@ export const DomainFilterRow: React.FC<DomainFilterRowProps> = ({
         <Input
           title="&nbsp;"
           type="number"
-          value={max}
-          onChange={(event) =>
-            onChangeDomain(columnExternalId, 'max', Number(event.target.value))
-          }
+          value={tempValMax}
+          onChange={(event) => {
+            handleDomainChange(event.target.value, 'max');
+          }}
           data-testid="domain-max-value"
         />
       </NumberInputWrapper>
