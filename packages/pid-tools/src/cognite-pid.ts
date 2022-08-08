@@ -1,9 +1,12 @@
 /* eslint-disable no-console */
 /* eslint-disable no-param-reassign */
+/* eslint-disable no-continue */
+
 import { v4 as uuid } from 'uuid';
 import uniqBy from 'lodash/uniqBy';
 import uniq from 'lodash/uniq';
 import xor from 'lodash/xor';
+import type { CogniteClient } from '@cognite/sdk';
 
 import {
   getPathReplacementDescendants,
@@ -465,8 +468,6 @@ export class CognitePid {
     if (applyStyles) {
       possiblyChangedPathIds.forEach((id) => this.applyStyleToNodeId(id));
     }
-
-    // logSelectedSymbols(pathIds);
   }
 
   onChangeSymbolSelection(callback: PathIdsCallback) {
@@ -1335,7 +1336,10 @@ export class CognitePid {
     this.setTags([...this.tags, ...lineConnectionTags], false);
   }
 
-  autoAnalysis(documentMetadata: DocumentMetadata) {
+  async autoAnalysis(
+    documentMetadata: DocumentMetadata,
+    client: CogniteClient | undefined
+  ) {
     if (this.pidDocument === undefined) return;
 
     // find lines and connections
@@ -1396,6 +1400,53 @@ export class CognitePid {
     }
 
     this.inferLineNumbers();
+
+    // Assign assets to symbol instances
+    const toUpdateInstances = this.symbolInstances.filter(
+      (symbolInstance) =>
+        !symbolInstance.assetId && symbolInstance.type === 'Instrument'
+    );
+
+    // eslint-disable-next-line no-restricted-syntax
+    for (const symbolInstance of toUpdateInstances) {
+      const labelNames = symbolInstance.labelIds.map(
+        (labelId) => this.pidDocument!.getPidTspanById(labelId)!
+      );
+
+      if (labelNames.length < 2) continue;
+
+      const querySubstrings = [
+        documentMetadata.unit,
+        ...labelNames.map((label) => label?.text),
+      ];
+      const query = querySubstrings.join('-');
+
+      // eslint-disable-next-line no-await-in-loop
+      const assets = await client?.assets.search({
+        search: {
+          query,
+        },
+        limit: 1,
+      });
+
+      if (!assets || assets.length < 1) continue;
+
+      if (
+        querySubstrings.every((querySubstring) =>
+          assets[0].name
+            .split(/[-.]+/)
+            .slice(-querySubstrings.length)
+            .includes(querySubstring)
+        )
+      ) {
+        symbolInstance.assetId = assets[0].id;
+        symbolInstance.assetName = assets[0].name;
+      } else {
+        console.log(`"${query}" not found for instrument`, symbolInstance);
+      }
+    }
+
+    this.setSymbolInstances([...this.symbolInstances]);
   }
 
   inferLineNumbers() {

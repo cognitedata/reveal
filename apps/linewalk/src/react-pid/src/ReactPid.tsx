@@ -14,6 +14,7 @@ import {
   DiagramInstanceId,
 } from '@cognite/pid-tools';
 import React, { useCallback, useEffect, useState } from 'react';
+import { useAuthContext } from '@cognite/react-container';
 import { Loader } from '@cognite/cogs.js';
 
 import { SaveState } from './utils/useCdfDiagrams';
@@ -73,6 +74,7 @@ export const ReactPid = ({
   const [activeTagId, setActiveTagId] = useState<string | null>(null);
   const [labelSelection, setLabelSelection] =
     useState<DiagramInstanceId | null>(null);
+  const { client } = useAuthContext();
 
   useEffect(() => {
     setShowLoader(isAnalyzing || isLoading);
@@ -297,8 +299,8 @@ export const ReactPid = ({
   const autoAnalysis = () => {
     if (!pidViewer.current) return;
     setIsAnalyzing(true);
-    setTimeout(() => {
-      pidViewer.current!.autoAnalysis(documentMetadata);
+    setTimeout(async () => {
+      await pidViewer.current!.autoAnalysis(documentMetadata, client);
       setIsAnalyzing(false);
       if (isAutoMode && onAutoAnalysisCompleted) {
         onAutoAnalysisCompleted();

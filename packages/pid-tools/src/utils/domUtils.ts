@@ -152,11 +152,6 @@ export const applyStyleToNode = ({
       colorNode(node, COLORS.connectionSelection);
       color = COLORS.connectionSelection;
     }
-
-    // isInLabelSelection
-    if (diagramInstance.id === labelSelection) {
-      color = COLORS.labelSelection;
-    }
   }
 
   if (node.id === splitSelection) {
@@ -172,39 +167,49 @@ export const applyStyleToNode = ({
     color = COLORS.labelSelection;
   }
 
-  if (activeTool === 'setLineNumber') {
-    if (node instanceof SVGTSpanElement) {
-      if (activeLineNumber && node.innerHTML.includes(activeLineNumber)) {
-        node.style.fontWeight = '600';
-        return;
+  switch (activeTool) {
+    case 'setLineNumber':
+      if (node instanceof SVGTSpanElement) {
+        if (activeLineNumber && node.innerHTML.includes(activeLineNumber)) {
+          node.style.fontWeight = '600';
+          return;
+        }
       }
-    }
 
-    if (isNodeInLineNumber(node, activeLineNumber, instances)) {
-      node.style.strokeWidth = `${2.5 * parseFloat(node.style.strokeWidth)}`;
-      color = 'green';
-    } else if (isNodeInInferedLineNumber(node, activeLineNumber, instances)) {
-      node.style.strokeWidth = `${2 * parseFloat(node.style.strokeWidth)}`;
-    } else if (diagramInstance && diagramInstance.lineNumbers.length > 0) {
-      node.style.strokeWidth = `${2 * parseFloat(node.style.strokeWidth)}`;
-      opacity = 0.3;
-      color = 'green';
-    } else if (
-      diagramInstance &&
-      diagramInstance.type !== 'Equipment' &&
-      diagramInstance.inferedLineNumbers.length > 1
-    ) {
-      node.style.strokeWidth = `${2 * parseFloat(node.style.strokeWidth)}`;
-      color = 'darkOrange';
-    } else if (
-      diagramInstance &&
-      diagramInstance.inferedLineNumbers.length === 1
-    ) {
-      node.style.strokeWidth = `${2 * parseFloat(node.style.strokeWidth)}`;
-      opacity = 0.1;
-    } else {
-      opacity = 0.45;
-    }
+      if (isNodeInLineNumber(node, activeLineNumber, instances)) {
+        node.style.strokeWidth = `${2.5 * parseFloat(node.style.strokeWidth)}`;
+        color = 'green';
+      } else if (isNodeInInferedLineNumber(node, activeLineNumber, instances)) {
+        node.style.strokeWidth = `${2 * parseFloat(node.style.strokeWidth)}`;
+      } else if (diagramInstance && diagramInstance.lineNumbers.length > 0) {
+        node.style.strokeWidth = `${2 * parseFloat(node.style.strokeWidth)}`;
+        opacity = 0.3;
+        color = 'green';
+      } else if (
+        diagramInstance &&
+        diagramInstance.type !== 'Equipment' &&
+        diagramInstance.inferedLineNumbers.length > 1
+      ) {
+        node.style.strokeWidth = `${2 * parseFloat(node.style.strokeWidth)}`;
+        color = 'darkOrange';
+      } else if (
+        diagramInstance &&
+        diagramInstance.inferedLineNumbers.length === 1
+      ) {
+        node.style.strokeWidth = `${2 * parseFloat(node.style.strokeWidth)}`;
+        opacity = 0.1;
+      } else {
+        opacity = 0.45;
+      }
+      break;
+    case 'connectLabels':
+      if (diagramInstance) {
+        if (diagramInstance.id === labelSelection) {
+          color = COLORS.labelSelection;
+        } else if (diagramInstance.assetId) {
+          ({ color, opacity } = COLORS.symbolWithAsset);
+        }
+      }
   }
 
   colorNode(node, color, opacity);

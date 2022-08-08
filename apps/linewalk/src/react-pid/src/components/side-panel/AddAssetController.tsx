@@ -8,7 +8,7 @@ import {
 } from '@cognite/pid-tools';
 import {
   AutoComplete as CogsAutoComplete,
-  Button,
+  Button as CogsButton,
   Row,
   Title,
 } from '@cognite/cogs.js';
@@ -50,7 +50,7 @@ const AutoComplete = styled(CogsAutoComplete)`
   }
 `;
 
-const AutoCompleteButton = styled(Button)`
+const AutoCompleteButton = styled(CogsButton)`
   border-radius: 0px 6px 6px 0px;
 `;
 
@@ -146,7 +146,7 @@ export const AddAssetController: React.FC<AddAssetControllerProps> = ({
     return (
       labelSelection === null ||
       !assets.some((asset) => asset.name === search) ||
-      clickedAssetOption?.id === selectedSymbolInstance!.assetId
+      clickedAssetOption?.id === selectedSymbolInstance?.assetId
     );
   };
 

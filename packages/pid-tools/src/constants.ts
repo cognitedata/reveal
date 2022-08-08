@@ -59,6 +59,10 @@ export const COLORS = {
     color: 'Crimson',
     opacity: 0.9,
   },
+  symbolWithAsset: {
+    color: 'green',
+    opacity: 0.9,
+  },
   symbolBoundingBox: {
     color: 'DarkRed',
     opacity: 0.05,
