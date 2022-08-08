@@ -1,7 +1,7 @@
 import env from 'utils/config';
 import {
   useGetMapDataQuery,
-  useListPeopleWithNoEquipmentQuery,
+  useListPeopleWithNoDeskQuery,
 } from 'graphql/generated';
 import { useQueryClient } from 'react-query';
 
@@ -12,7 +12,7 @@ export const useCreateEquipment = () => {
   const queryClient = useQueryClient();
   const onEquipmentMutateSuccess = () => {
     queryClient.invalidateQueries(useGetMapDataQuery.getKey());
-    queryClient.invalidateQueries(useListPeopleWithNoEquipmentQuery.getKey());
+    queryClient.invalidateQueries(useListPeopleWithNoDeskQuery.getKey());
   };
 
   const { mutate } = useNodeMutate(onEquipmentMutateSuccess);

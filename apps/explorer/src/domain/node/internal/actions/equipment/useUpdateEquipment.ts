@@ -1,63 +1,34 @@
-import {
-  Equipment,
-  useGetMapDataQuery,
-  useGetSearchDataQuery,
-  useListPeopleWithNoEquipmentQuery,
-} from 'graphql/generated';
+import { Equipment, useListFilteredEquipmentQuery } from 'graphql/generated';
 import { useQueryClient } from 'react-query';
+import { EQUIPMENT_TYPES } from 'recoil/equipmentPopup/constants';
 
-import { usePersonMutate } from '../person/usePersonMutate';
+import { EquipmentMutate } from '../../types';
 
 import { useEquipmentMutate } from './useEquipmentMutate';
+import { useUpdateDesk } from './useUpdateDesk';
 
-export const useUpdateEquipment = () => {
-  const updatePerson = usePersonMutate();
+export const useUpdateEquipment = (type: string) => {
   const queryClient = useQueryClient();
+  const updateDesk = useUpdateDesk();
+  if (type === EQUIPMENT_TYPES.DESK) {
+    return updateDesk;
+  }
 
   const onEquipmentMutateSuccess = () => {
-    queryClient.invalidateQueries(useGetMapDataQuery.getKey());
-    queryClient.invalidateQueries(useListPeopleWithNoEquipmentQuery.getKey());
-    queryClient.invalidateQueries(useGetSearchDataQuery.getKey());
+    queryClient.invalidateQueries(useListFilteredEquipmentQuery.getKey());
   };
   const updateEquipment = useEquipmentMutate(onEquipmentMutateSuccess);
 
-  return async (
-    oldEquipmentFields: Equipment,
-    newEquipmentFields: Partial<Equipment>
-  ) => {
-    const newPersonExternalId = newEquipmentFields.person?.externalId;
-    const oldPersonExternalId = oldEquipmentFields.person?.externalId;
-
+  return async (newEquipmentFields: Partial<Equipment>) => {
     // use null option for person to align with schema definition
-    updateEquipment({
-      ...oldEquipmentFields,
+    const newEquipment = {
       ...newEquipmentFields,
-      person: newPersonExternalId || null,
-    });
+      person: null,
+    } as EquipmentMutate;
 
-    if (oldPersonExternalId !== newPersonExternalId) {
-      // set old person's desk to null and update new person with desk
-      const oldPerson = {
-        ...oldEquipmentFields.person,
-        team: oldEquipmentFields.person?.team?.externalId,
-      };
-      const newPerson = {
-        ...newEquipmentFields.person,
-        team: newEquipmentFields.person?.team?.externalId,
-        desk: oldEquipmentFields.externalId,
-      };
-
-      // prevent making empty people
-      if (oldPersonExternalId) {
-        updatePerson({
-          ...oldPerson,
-          desk: null,
-        });
-      }
-
-      if (newPersonExternalId) {
-        updatePerson(newPerson);
-      }
+    if (newEquipmentFields.room?.externalId) {
+      newEquipment.room = newEquipmentFields.room?.externalId;
     }
+    updateEquipment(newEquipment);
   };
 };

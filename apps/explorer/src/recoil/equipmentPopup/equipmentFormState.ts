@@ -10,6 +10,7 @@ import {
   equipmentPersonAtom,
 } from './equipmentPopupAtoms';
 
+// Note: Don't add fields here that are not part of the Equipment GraphQL definition
 export const equipmentFormState = selector({
   key: 'EquipmentFormState',
   get: ({ get }) => {

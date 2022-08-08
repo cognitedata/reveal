@@ -2,7 +2,7 @@ import {
   Equipment,
   useGetMapDataQuery,
   useGetSearchDataQuery,
-  useListPeopleWithNoEquipmentQuery,
+  useListPeopleWithNoDeskQuery,
 } from 'graphql/generated';
 import { useQueryClient } from 'react-query';
 
@@ -10,13 +10,13 @@ import { usePersonMutate } from '../person/usePersonMutate';
 
 import { useEquipmentMutate } from './useEquipmentMutate';
 
-export const useUnassignEquipment = () => {
+export const useUnassignDesk = () => {
   const updatePerson = usePersonMutate();
 
   const queryClient = useQueryClient();
   const onEquipmentMutateSuccess = () => {
     queryClient.invalidateQueries(useGetMapDataQuery.getKey());
-    queryClient.invalidateQueries(useListPeopleWithNoEquipmentQuery.getKey());
+    queryClient.invalidateQueries(useListPeopleWithNoDeskQuery.getKey());
     queryClient.invalidateQueries(useGetSearchDataQuery.getKey());
   };
   const updateEquipment = useEquipmentMutate(onEquipmentMutateSuccess);
@@ -25,6 +25,7 @@ export const useUnassignEquipment = () => {
     updateEquipment({
       ...oldEquipmentFields,
       person: null,
+      room: oldEquipmentFields.room?.externalId,
     });
 
     updatePerson({

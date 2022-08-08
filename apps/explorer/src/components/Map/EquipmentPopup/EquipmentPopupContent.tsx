@@ -1,4 +1,4 @@
-import { useUnassignEquipment } from 'domain/node/internal/actions/equipment/useUnassignEquipment';
+import { useUnassignDesk } from 'domain/node/internal/actions/equipment/useUnassignDesk';
 
 import { Body, Button, Icon, Title } from '@cognite/cogs.js';
 import { useRecoilState, useRecoilValue } from 'recoil';
@@ -14,7 +14,7 @@ export const EquipmentPopupContent: React.FC = () => {
   const [{ name, isBroken, person, nodeId }, setEquipmentForm] =
     useRecoilState(equipmentFormState);
   const prevState = useRecoilValue(prevEquipmentAtom);
-  const unassignEquipment = useUnassignEquipment();
+  const unassignEquipment = useUnassignDesk();
 
   const subtitle = person?.name
     ? `This is currently owned by ${person.name}`
@@ -28,16 +28,18 @@ export const EquipmentPopupContent: React.FC = () => {
   };
 
   return (
-    <PopupContent Icon={renderIcon} nodeId={nodeId} labels={[]}>
+    <PopupContent Icon={renderIcon} nodeId={nodeId}>
       <TextWrapper>
         <Title level={3}>{name}</Title>
         <Body>{subtitle}</Body>
         <Body>
           {isBroken ? '❌ Sorry! Currently broken' : '✅  Functional'}
         </Body>
-        <Button type="primary" onClick={handleClick}>
-          Unassign
-        </Button>
+        {person?.externalId && (
+          <Button type="primary" onClick={handleClick}>
+            Unassign
+          </Button>
+        )}
       </TextWrapper>
     </PopupContent>
   );

@@ -1,12 +1,12 @@
 import { Dropdown, Menu, Button } from '@cognite/cogs.js';
-import { useListPeopleWithNoEquipmentQuery } from 'graphql/generated';
+import { useListPeopleWithNoDeskQuery } from 'graphql/generated';
 import { useRecoilState } from 'recoil';
 import { equipmentPersonAtom } from 'recoil/equipmentPopup/equipmentPopupAtoms';
 
 import { EditOptionItem } from '../../Popup/elements';
 
 export const EditOwnerDropdown: React.FC = () => {
-  const { data, isLoading } = useListPeopleWithNoEquipmentQuery();
+  const { data, isLoading } = useListPeopleWithNoDeskQuery();
   const people = data?.people?.items || [];
   const [person, setPerson] = useRecoilState(equipmentPersonAtom);
 

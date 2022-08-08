@@ -3,7 +3,7 @@ import env from 'utils/config';
 import { EquipmentMutate } from '../../types';
 import { useNodeMutate } from '../useNodeMutate';
 
-export const useEquipmentMutate = (onSuccess: () => void) => {
+export const useEquipmentMutate = (onSuccess?: () => void) => {
   const { mutate } = useNodeMutate(onSuccess);
 
   return ({
@@ -13,6 +13,7 @@ export const useEquipmentMutate = (onSuccess: () => void) => {
     type,
     isBroken,
     person,
+    room,
   }: Partial<EquipmentMutate>) =>
     mutate({
       modelName: env.dataModelStorage.modelNameEquipment,
@@ -24,6 +25,7 @@ export const useEquipmentMutate = (onSuccess: () => void) => {
         type,
         isBroken,
         person,
+        room,
       },
     });
 };

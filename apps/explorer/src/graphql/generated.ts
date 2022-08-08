@@ -795,6 +795,23 @@ export type GetSearchDataQueryTypeGenerated = {
   } | null;
 };
 
+export type ListFilteredEquipmentQueryVariables = Exact<{
+  equipmentFilter?: InputMaybe<_ListEquipmentFilter>;
+}>;
+
+export type ListFilteredEquipmentQueryTypeGenerated = {
+  equipment?: {
+    items: Array<{
+      externalId: string;
+      name?: string | null;
+      type?: string | null;
+      nodeId?: any | null;
+      isBroken?: boolean | null;
+      person?: { externalId: string; name?: string | null } | null;
+    } | null>;
+  } | null;
+};
+
 export type ListPeopleWithNoEquipmentQueryVariables = Exact<{
   [key: string]: never;
 }>;
@@ -813,6 +830,7 @@ export const GetMapDataDocument = `
       name
       type
       nodeId
+      isBroken
       person {
         externalId
         name
@@ -893,6 +911,51 @@ export const useGetSearchDataQuery = <
 
 useGetSearchDataQuery.getKey = (variables?: GetSearchDataQueryVariables) =>
   variables === undefined ? ['getSearchData'] : ['getSearchData', variables];
+export const ListFilteredEquipmentDocument = `
+    query ListFilteredEquipment($equipmentFilter: _ListEquipmentFilter) {
+  equipment: listEquipment(filter: $equipmentFilter) {
+    items {
+      externalId
+      name
+      type
+      nodeId
+      isBroken
+      person {
+        externalId
+        name
+      }
+    }
+  }
+}
+    `;
+export const useListFilteredEquipmentQuery = <
+  TData = ListFilteredEquipmentQueryTypeGenerated,
+  TError = unknown
+>(
+  variables?: ListFilteredEquipmentQueryVariables,
+  options?: UseQueryOptions<
+    ListFilteredEquipmentQueryTypeGenerated,
+    TError,
+    TData
+  >
+) =>
+  useQuery<ListFilteredEquipmentQueryTypeGenerated, TError, TData>(
+    variables === undefined
+      ? ['ListFilteredEquipment']
+      : ['ListFilteredEquipment', variables],
+    graphqlFetcher<
+      ListFilteredEquipmentQueryTypeGenerated,
+      ListFilteredEquipmentQueryVariables
+    >(ListFilteredEquipmentDocument, variables),
+    options
+  );
+
+useListFilteredEquipmentQuery.getKey = (
+  variables?: ListFilteredEquipmentQueryVariables
+) =>
+  variables === undefined
+    ? ['ListFilteredEquipment']
+    : ['ListFilteredEquipment', variables];
 export const ListPeopleWithNoEquipmentDocument = `
     query listPeopleWithNoEquipment {
   people: listPerson(filter: {desk: {externalId: {isNull: true}}}) {
@@ -903,7 +966,7 @@ export const ListPeopleWithNoEquipmentDocument = `
   }
 }
     `;
-export const useListPeopleWithNoEquipmentQuery = <
+export const useListPeopleWithNoDeskQuery = <
   TData = ListPeopleWithNoEquipmentQueryTypeGenerated,
   TError = unknown
 >(
@@ -925,7 +988,7 @@ export const useListPeopleWithNoEquipmentQuery = <
     options
   );
 
-useListPeopleWithNoEquipmentQuery.getKey = (
+useListPeopleWithNoDeskQuery.getKey = (
   variables?: ListPeopleWithNoEquipmentQueryVariables
 ) =>
   variables === undefined

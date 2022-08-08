@@ -8,6 +8,7 @@ import {
   roomNodeIdAtom,
 } from 'recoil/roomPopup/roomPopupAtoms';
 
+// Note: Don't add fields here that are not part of the Room GraphQL definition
 export const roomFormState = selector({
   key: 'RoomFormState',
   get: ({ get }) => {
@@ -24,7 +25,10 @@ export const roomFormState = selector({
       set(roomDescriptionAtom, newValues.description || '');
       set(roomIsBookableAtom, !!newValues.isBookable);
       set(roomNodeIdAtom, newValues.nodeId);
-      set(prevRoomAtom, newValues);
+      set(prevRoomAtom, {
+        ...newValues,
+        externalId: newValues.externalId || '',
+      });
     }
   },
 });

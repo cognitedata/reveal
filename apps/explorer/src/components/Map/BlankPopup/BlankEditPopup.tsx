@@ -8,7 +8,7 @@ import { SubTypeSelect } from './Fields/SubTypeSelect';
 
 export const BlankEditPopup: React.FC = () => {
   return (
-    <EditPopupContent SubmitButton={BlankPopupSubmitButton} labels={[]}>
+    <EditPopupContent SubmitButton={BlankPopupSubmitButton}>
       <EditPopupContentFieldsWrapper>
         <MainTypeSelect />
         <NameInput />

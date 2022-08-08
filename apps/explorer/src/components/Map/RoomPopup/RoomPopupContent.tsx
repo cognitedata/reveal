@@ -5,6 +5,8 @@ import { roomFormState } from 'recoil/roomPopup/roomFormState';
 import { TextWrapper } from '../Popup/elements';
 import { PopupContent } from '../Popup/PopupContent';
 
+import { EquipmentList } from './RoomEditPopupContent/EquipmentList';
+
 const renderIcon = () => <Icon size={54} type="Cube" />;
 
 export const RoomPopupContent: React.FC = () => {
@@ -12,7 +14,7 @@ export const RoomPopupContent: React.FC = () => {
     useRecoilValue(roomFormState);
 
   return (
-    <PopupContent nodeId={nodeId} Icon={renderIcon} labels={[]}>
+    <PopupContent nodeId={nodeId} Icon={renderIcon}>
       <TextWrapper>
         <Title level={3}>{name}</Title>
         <Detail>{description}</Detail>
@@ -20,6 +22,7 @@ export const RoomPopupContent: React.FC = () => {
       <Body>
         {isBookable ? 'This room is bookable' : 'This room is not bookable'}
       </Body>
+      <EquipmentList />
     </PopupContent>
   );
 };

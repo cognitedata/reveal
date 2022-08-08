@@ -43,7 +43,7 @@ export const Popup: React.FC<Props> = ({ mapData, searchData }) => {
         PopupComponent = <EquipmentPopup data={destData} />;
         break;
       default:
-        PopupComponent = <BlankPopup nodeId={to} />;
+        PopupComponent = <BlankPopup />;
     }
   }
 

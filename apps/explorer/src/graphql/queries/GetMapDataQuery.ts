@@ -11,6 +11,7 @@ export const GetMapDataQuery = gql`
         name
         type
         nodeId
+        isBroken
         person {
           externalId
           name

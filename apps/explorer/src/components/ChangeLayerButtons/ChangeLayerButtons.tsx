@@ -42,6 +42,7 @@ export const ChangeLayerButtons = () => {
         icon="ChevronUp"
         onClick={handlePlusClick}
         type="ghost"
+        aria-label="Switch to floor above"
       />
       <Divider />
       <LayerText>{floorLayerIndex + FLOOR_OFFSET}</LayerText>
@@ -51,6 +52,7 @@ export const ChangeLayerButtons = () => {
         icon="ChevronDown"
         onClick={handleMinusClick}
         type="ghost"
+        aria-label="Switch to floor below"
       />
     </LayerButtonWrapper>
   );

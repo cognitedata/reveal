@@ -1,4 +1,4 @@
-import { Button, Flex, Label } from '@cognite/cogs.js';
+import { Button, Flex } from '@cognite/cogs.js';
 import { MapContext } from 'components/Map/MapProvider';
 import { Scalars } from 'graphql/generated';
 import { PAGES } from 'pages/constants';
@@ -18,7 +18,6 @@ import {
 import { NavigationButton } from './NavigationButton';
 
 interface Props {
-  labels: string[];
   isEditable?: boolean;
   nodeId?: any;
   Icon: () => JSX.Element | null;
@@ -26,7 +25,6 @@ interface Props {
 
 export const PopupContent: React.FC<React.PropsWithChildren<Props>> = ({
   Icon,
-  labels,
   nodeId,
   isEditable = true,
   children,
@@ -60,31 +58,26 @@ export const PopupContent: React.FC<React.PropsWithChildren<Props>> = ({
           <div>
             {isEditable && (
               <Button
-                aria-label="Edit information"
                 icon="Edit"
                 onClick={handleEditButtonClick}
+                aria-label="Edit information"
               />
             )}
             <Link to={PAGES.HOME}>
               <ButtonWithMargin
                 type="ghost"
                 icon="Close"
-                aria-label="close-popup"
+                aria-label="Close popup"
               />
             </Link>
           </div>
         </FlexSpaceBetween>
         <FullWidthContainer>{children}</FullWidthContainer>
       </DivWithMarginBottom>
-      <Flex gap={6}>
-        {labels.map((label) => (
-          <Label variant="unknown" key={label}>
-            {label}
-          </Label>
-        ))}
-      </Flex>
       <Flex justifyContent="flex-end">
-        <Button onClick={handleLocationButtonClick}>Show Location </Button>
+        <Button disabled={!nodeId} onClick={handleLocationButtonClick}>
+          Show Location
+        </Button>
         <NavigationButton nodeId={nodeId} />
       </Flex>
     </FlexColumnSpaceAround>

@@ -16,4 +16,4 @@ echo "Starting fake IDP ..."
 
 # Run the final command
 docker pull eu.gcr.io/cognitedata/fake-idp:latest
-docker run -v $(pwd)/private-keys:/private-keys --name fakeIdp -p 8200:8200 -e PORT=8200 eu.gcr.io/cognitedata/fake-idp:latest
+docker run -v $(pwd)/private-keys:/private-keys --platform linux/amd64 --name fakeIdp -p 8200:8200 -e PORT=8200 eu.gcr.io/cognitedata/fake-idp:latest 

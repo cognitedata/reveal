@@ -1,4 +1,4 @@
-import { Room, Equipment } from 'graphql/generated';
+import { Equipment, Room } from 'graphql/generated';
 import { useEffect } from 'react';
 import { RecoilState, useResetRecoilState, useSetRecoilState } from 'recoil';
 import { isEditModeAtom } from 'recoil/popupShared/isEditModeAtom';
