@@ -97,17 +97,19 @@ async function init() {
   ).then(buffers => {
     buffers.forEach(async element => {
       const geometries = await loader.parseSector(element);
-      geometries.forEach(result => {
-        const material = materialMap.get(result.type)!;
+      if (geometries.isOk()) {
+        geometries.value.forEach(result => {
+          const material = materialMap.get(result.type)!;
 
-        const mesh = new THREE.Mesh(result.geometryBuffer, material);
-        mesh.frustumCulled = false;
-        mesh.onBeforeRender = () => {
-          (material.uniforms.inverseModelMatrix?.value as THREE.Matrix4)?.copy(mesh.matrixWorld).invert();
-          (material.uniforms.cameraPosition?.value as THREE.Vector3)?.copy(camera.position);
-        };
-        group.add(mesh);
-      });
+          const mesh = new THREE.Mesh(result.geometryBuffer, material);
+          mesh.frustumCulled = false;
+          mesh.onBeforeRender = () => {
+            (material.uniforms.inverseModelMatrix?.value as THREE.Matrix4)?.copy(mesh.matrixWorld).invert();
+            (material.uniforms.cameraPosition?.value as THREE.Vector3)?.copy(camera.position);
+          };
+          group.add(mesh);
+        });
+      }
     });
   });
 
