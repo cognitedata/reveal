@@ -79,9 +79,12 @@ export class SectorLoader {
     }
 
     const sectorCuller = this.getSectorCuller(sectorCullerInput);
+    if (sectorCuller.isErr()) {
+      return [];
+    }
 
     // Initial prioritization
-    const prioritizedResult = sectorCuller.determineSectors(sectorCullerInput);
+    const prioritizedResult = sectorCuller.value.determineSectors(sectorCullerInput);
     this._collectStatisticsCallback(prioritizedResult.spentBudget);
 
     const hasSectorChanged = this._modelStateHandler.hasStateChanged.bind(this._modelStateHandler);
@@ -100,11 +103,11 @@ export class SectorLoader {
       const filteredSectors: Result<WantedSector[], Error> = await this.filterSectors(
         sectorCullerInput,
         batch,
-        sectorCuller,
+        sectorCuller.value,
         progressHelper
       );
       if (filteredSectors.isErr()) {
-        throw new Error('No filtered sectors');
+        return err(Error('No filtered sectors'));
       }
       const consumedPromises = this.startLoadingBatch(filteredSectors.value, cadModels);
       for await (const consumed of PromiseUtils.raceUntilAllCompleted(consumedPromises)) {
@@ -132,13 +135,13 @@ export class SectorLoader {
     return this._continuousModelStreaming || !input.cameraInMotion;
   }
 
-  private getSectorCuller(sectorCullerInput: DetermineSectorsInput): SectorCuller {
+  private getSectorCuller(sectorCullerInput: DetermineSectorsInput): Result<SectorCuller, Error> {
     if (isLegacyModelFormat(sectorCullerInput.cadModelsMetadata[0])) {
-      return this._v8SectorCuller;
+      return ok(this._v8SectorCuller);
     } else if (isGltfModelFormat(sectorCullerInput.cadModelsMetadata[0])) {
-      return this._gltfSectorCuller;
+      return ok(this._gltfSectorCuller);
     }
-    throw new Error(`No supported sector culler for format ${sectorCullerInput.cadModelsMetadata[0].format}`);
+    return err(Error(`No supported sector culler for format ${sectorCullerInput.cadModelsMetadata[0].format}`));
   }
 
   private async filterSectors(

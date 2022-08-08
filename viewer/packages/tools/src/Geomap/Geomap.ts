@@ -27,8 +27,6 @@ export class Geomap {
       this._map.updateMatrixWorld(true);
       this.requestRedraw(10000);
       this._viewer.on('cameraChange', this._onCameraChange);
-    } else {
-      console.log('Error: Mapprovider key or configuration is misssing/incorrect');
     }
   }
 
