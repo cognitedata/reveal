@@ -5,6 +5,9 @@ import { DocsLinkGrid, DocsLinkGridItem } from 'components/DocsLinkGrid';
 import { Layout } from 'components/Layout';
 import { NewExtractorHeader } from 'components/NewExtractorHeader';
 
+import pythonImgPath from 'assets/python.png';
+import dotnetImgPath from 'assets/dotnet.png';
+
 const NewExtractor = () => {
   const { t } = useTranslation();
   return (
@@ -16,6 +19,9 @@ const NewExtractor = () => {
             <Flex gap={16} direction="column">
               <Flex gap={8}>
                 {/* <Icon type="Python" /> */}
+                <div>
+                  <img src={pythonImgPath} alt="Python" />
+                </div>
                 <Title level="4">
                   {t('resources-for-custom-python-extractor')}
                 </Title>
@@ -38,6 +44,9 @@ const NewExtractor = () => {
             <Flex gap={16} direction="column">
               <Flex gap={8}>
                 {/* <Icon type=".NET" /> */}
+                <div>
+                  <img src={dotnetImgPath} alt=".NET" />
+                </div>
                 <Title level="4">
                   {t('resources-for-custom-net-extractor')}
                 </Title>
