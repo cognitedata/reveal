@@ -9,7 +9,9 @@ import {
 } from '../../../common/Events/constants';
 import { DepthMeasurementScale } from '../../../common/Events/elements';
 import {
+  DEPTH_SCALE_BORDER_LABEL_COLOR,
   DEPTH_SCALE_LABEL_COLOR,
+  DEPTH_SCALE_OVERLAP_LABEL_COLOR,
   DEPTH_SCALE_LABEL_HEIGHT,
   DEPTH_SCALE_LABEL_WIDTH,
   MUD_LINE_COLOR,
@@ -127,19 +129,44 @@ export const DepthScaleLabel = styled(FlexRow)`
 `;
 
 export const DepthScaleLabelTag = styled(Flex)`
-  background: ${DEPTH_SCALE_LABEL_COLOR};
+  background: ${(props: { overlapping: boolean }) =>
+    props.overlapping
+      ? DEPTH_SCALE_OVERLAP_LABEL_COLOR
+      : DEPTH_SCALE_LABEL_COLOR};
   font-size: 12px;
   line-height: ${sizes.normal};
   text-align: center;
   letter-spacing: -0.008em;
-  color: var(--cogs-greyscale-grey7);
+  color: var(--cogs-text-icon--strong);
   height: ${DEPTH_SCALE_LABEL_HEIGHT + 1}px; // +1 for the middle point pixel
   width: ${DEPTH_SCALE_LABEL_WIDTH}px;
   padding-left: ${sizes.extraSmall};
   align-items: center;
+  border: 1px solid
+    ${(props: { overlapping: boolean }) =>
+      props.overlapping
+        ? DEPTH_SCALE_LABEL_COLOR
+        : DEPTH_SCALE_BORDER_LABEL_COLOR};
+  border-right: none;
   border-radius: ${sizes.extraSmall} 0 0 ${sizes.extraSmall};
 
   &:after {
+    content: '';
+    position: absolute;
+    left: ${DEPTH_SCALE_LABEL_WIDTH -
+    1}px; // need for border to show arrow right side
+    width: 0;
+    height: 0;
+    border-top: ${DEPTH_SCALE_LABEL_HEIGHT / 2}px solid transparent;
+    border-bottom: ${DEPTH_SCALE_LABEL_HEIGHT / 2}px solid transparent;
+    border-left: ${sizes.extraSmall} solid
+      ${(props: { overlapping: boolean }) =>
+        props.overlapping
+          ? DEPTH_SCALE_OVERLAP_LABEL_COLOR
+          : DEPTH_SCALE_LABEL_COLOR};
+  }
+
+  &:before {
     content: '';
     position: absolute;
     left: ${DEPTH_SCALE_LABEL_WIDTH}px;
@@ -147,7 +174,11 @@ export const DepthScaleLabelTag = styled(Flex)`
     height: 0;
     border-top: ${DEPTH_SCALE_LABEL_HEIGHT / 2}px solid transparent;
     border-bottom: ${DEPTH_SCALE_LABEL_HEIGHT / 2}px solid transparent;
-    border-left: ${sizes.extraSmall} solid ${DEPTH_SCALE_LABEL_COLOR};
+    border-left: ${sizes.extraSmall} solid
+      ${(props: { overlapping: boolean }) =>
+        props.overlapping
+          ? DEPTH_SCALE_LABEL_COLOR
+          : DEPTH_SCALE_BORDER_LABEL_COLOR};
   }
 `;
 

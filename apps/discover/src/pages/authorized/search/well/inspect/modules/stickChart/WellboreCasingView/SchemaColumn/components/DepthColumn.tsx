@@ -14,6 +14,7 @@ import {
   ScaleLineDepth,
 } from '../../../../common/Events/elements';
 import { useScaledDepth } from '../../../hooks/useScaledDepth';
+import { DEPTH_SCALE_LABEL_HEIGHT } from '../../constants';
 import {
   DepthColumnContainer,
   DepthScaleLabel,
@@ -33,6 +34,7 @@ const DepthColumn: React.FC<Props> = ({
   depthMeasurementType,
 }) => {
   const getScaledDepth = useScaledDepth(scaleBlocks);
+  const depthValues = Object.keys(depthValuesMap);
 
   const isTvdBased = depthMeasurementType === DepthMeasurementUnit.TVD;
   const scaleMaxDepth = last(scaleBlocks);
@@ -45,9 +47,17 @@ const DepthColumn: React.FC<Props> = ({
             <ScaleLineDepth>0</ScaleLineDepth>
           </ScaleLine>
 
-          {Object.keys(depthValuesMap).map((depth, index) => {
+          {depthValues.map((depth, index) => {
             const md = Number(depth);
             const tvd = depthValuesMap[md];
+            const precedingMdDepth =
+              depthValues.length === index + 1
+                ? 0
+                : Number(depthValues[index + 1]);
+            const depthOffset = getScaledDepth(md);
+            const precedingDepthOffset = getScaledDepth(precedingMdDepth);
+            const areDepthsOverlapping =
+              depthOffset - precedingDepthOffset < DEPTH_SCALE_LABEL_HEIGHT;
 
             if (isTvdBased && isUndefined(tvd)) {
               return null;
@@ -59,9 +69,9 @@ const DepthColumn: React.FC<Props> = ({
               <DepthScaleLabel
                 // eslint-disable-next-line react/no-array-index-key
                 key={`${index}-${depth}`}
-                top={getScaledDepth(md)}
+                top={depthOffset}
               >
-                <DepthScaleLabelTag>
+                <DepthScaleLabelTag overlapping={areDepthsOverlapping}>
                   {toFixedNumberFromNumber(Number(label), Fixed.NoDecimals)}
                 </DepthScaleLabelTag>
                 <DepthScaleLabelMarker />
