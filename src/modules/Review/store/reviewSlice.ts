@@ -23,23 +23,9 @@ import { VisionAnnotationDataType } from 'src/modules/Common/types';
 import { VisionReviewAnnotation } from 'src/modules/Review/types';
 import { DeleteAnnotations } from 'src/store/thunks/Annotation/DeleteAnnotations';
 import { getAnnotationColor } from 'src/utils/colorUtils';
+import { ReviewState } from 'src/modules/Review/store/review/types';
 
-type State = {
-  fileIds: number[];
-  selectedAnnotationIds: number[];
-  hiddenAnnotationIds: number[];
-  annotationSettings: {
-    show: boolean;
-    activeView: 'keypoint' | 'shape';
-    createNew: {
-      text?: string;
-      color?: string;
-    };
-  };
-  scrollToId: string;
-};
-
-const initialState: State = {
+const initialState: ReviewState = {
   fileIds: [],
   selectedAnnotationIds: [],
   hiddenAnnotationIds: [],
@@ -152,7 +138,6 @@ const reviewSlice = createSlice({
   },
 });
 
-export type { State as ReviewReducerState };
 export { initialState as reviewReducerInitialState };
 
 export const {
@@ -181,7 +166,7 @@ export const selectAllReviewFiles = createSelector(
 );
 
 export const selectAnnotationSettingsState = createSelector(
-  (state: State) => state.annotationSettings,
+  (state: ReviewState) => state.annotationSettings,
   (annotationSettingsState) => {
     const settingsState = {
       ...annotationSettingsState,
