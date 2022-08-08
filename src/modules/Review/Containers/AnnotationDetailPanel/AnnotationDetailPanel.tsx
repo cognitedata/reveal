@@ -9,7 +9,7 @@ import {
   selectAnnotation,
   toggleAnnotationVisibility,
 } from 'src/modules/Review/store/review/slice';
-import { selectVisionReviewAnnotationsForFile } from 'src/modules/Review/store/reviewSlice';
+import { selectVisionReviewAnnotationsForFile } from 'src/modules/Review/store/review/selectors';
 import { deselectAllSelectionsReviewPage } from 'src/store/commonActions';
 import styled from 'styled-components';
 import { RootState } from 'src/store/rootReducer';

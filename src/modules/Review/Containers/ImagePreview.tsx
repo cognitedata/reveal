@@ -10,7 +10,7 @@ import { showAnnotationSettingsModel } from 'src/modules/Review/store/review/sli
 import {
   selectAnnotationSettingsState,
   selectNonRejectedVisionReviewAnnotationsForFile,
-} from 'src/modules/Review/store/reviewSlice';
+} from 'src/modules/Review/store/review/selectors';
 import { PredefinedVisionAnnotations } from 'src/modules/Review/types';
 import { AppDispatch } from 'src/store';
 import { RootState } from 'src/store/rootReducer';
