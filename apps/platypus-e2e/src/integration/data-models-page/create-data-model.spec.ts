@@ -21,5 +21,8 @@ describe('Platypus Data Models Page - Create Data Model', () => {
     // we should be redirected to /dashboard
     cy.url().should('include', '/data-models/cypress-test/latest');
     cy.getCogsToast('success').contains('Data Model successfully created');
+
+    // we should see version select dropdown with draft
+    cy.getBySel('schema-version-select').contains('Local draft');
   });
 });

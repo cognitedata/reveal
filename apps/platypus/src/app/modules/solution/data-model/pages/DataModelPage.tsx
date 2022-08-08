@@ -398,18 +398,30 @@ export const DataModelPage = ({ dataModelExternalId }: DataModelPageProps) => {
     );
   };
 
+  const getDataModelHeaderSchemas = () => {
+    /*
+    if there's neither a draft nor any published data model versions, for example when
+    we're in a newly created data model, return an array with a default data model version
+    */
+    if (!localDraft && dataModelVersions?.length === 0) {
+      return [selectedDataModelVersion];
+    } else {
+      return getRemoteAndLocalSchemas(dataModelVersions || []);
+    }
+  };
+
   return (
     <>
       <PageContentLayout>
         <PageContentLayout.Header>
           <DataModelHeader
             title={t('data_model_title', 'Data model')}
-            schemas={getRemoteAndLocalSchemas(dataModelVersions || [])}
+            schemas={getDataModelHeaderSchemas()}
             draftSaved={isDirty && Object.keys(typeFieldErrors).length === 0}
             onSelectDataModelVersion={onSelectDataModelVersion}
             selectedDataModelVersion={
-              mode === SchemaEditorMode.Edit
-                ? localDraft!
+              mode === SchemaEditorMode.Edit && localDraft
+                ? localDraft
                 : selectedDataModelVersion
             }
           >

@@ -22,7 +22,7 @@ export const DataModelHeader = (props: DataModelHeaderProps) => {
         title={props.title || ''}
         behindTitle={
           <SelectorWrapper>
-            {props.schemas.length && props.selectedDataModelVersion ? (
+            {props.selectedDataModelVersion ? (
               <SchemaVersionDropdown
                 onVersionSelect={(solutionSchema) => {
                   props.onSelectDataModelVersion(solutionSchema);
