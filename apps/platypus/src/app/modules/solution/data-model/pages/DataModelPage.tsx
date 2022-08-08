@@ -135,6 +135,10 @@ export const DataModelPage = ({ dataModelExternalId }: DataModelPageProps) => {
       dataModelTypeDefsBuilder.clear();
       setGraphQlSchema(localDraft.schema);
       setMode(SchemaEditorMode.Edit);
+
+      if (latestDataModelVersion.schema !== localDraft.schema) {
+        setIsDirty(true);
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

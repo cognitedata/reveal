@@ -16,6 +16,9 @@ describe('Data Model Page - Local Drafts', () => {
       .contains('Local draft')
       .click();
     cy.getBySel('type-list-item-Currency').should('be.visible');
+
+    // Publish button is clickable
+    cy.getBySel('publish-schema-btn').should('not.have.attr', 'disabled');
   });
 
   it('clears the draft when user removes all types from a published data model', () => {
@@ -102,6 +105,11 @@ describe('Data Model Page - Local Drafts', () => {
     cy.ensureCurrentVersionIsNotDraft();
 
     // Edit button is visible again
-    cy.getBySel('edit-schema-btn').should('be.visible');
+    cy.getBySel('edit-schema-btn').click();
+
+    // Publish button should be disabled until we make a change
+    cy.getBySel('publish-schema-btn').should('have.attr', 'disabled');
+    cy.addDataModelTypeField('Currency', 'foo');
+    cy.getBySel('publish-schema-btn').should('not.have.attr', 'disabled');
   });
 });
