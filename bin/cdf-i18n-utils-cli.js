@@ -8,6 +8,7 @@ const { hideBin } = require('yargs/helpers');
 const pull = require('./pull');
 const saveMissing = require('./save-missing');
 const removeDeleted = require('./remove-deleted');
+const sortLocalKeys = require('./sort-local-keys');
 
 function main() {
   yargs(hideBin(process.argv))
@@ -125,6 +126,30 @@ function main() {
           namespace: argv.namespace,
           version: argv.stagingVersion,
           path: argv.path,
+        });
+      }
+    )
+    .command(
+      'sort-local-keys [path] [sourceLanguage]',
+      'sorts local files',
+      (yargs) => {
+        return yargs
+          .option('path', {
+            alias: 'p',
+            describe: 'The path to read local translations',
+            default: './src/common/i18n/translations',
+            type: 'string',
+          })
+          .option('sourceLanguage', {
+            describe: 'The source language to sort files',
+            default: 'en',
+            type: 'string',
+          });
+      },
+      (argv) => {
+        sortLocalKeys({
+          path: argv.path,
+          sourceLanguage: argv.sourceLanguage,
         });
       }
     )
