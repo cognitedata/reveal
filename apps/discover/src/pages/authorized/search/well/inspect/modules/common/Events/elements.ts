@@ -30,6 +30,11 @@ export const ColumnHeaderWrapper = styled(FlexRow)`
   border-bottom: 1px solid var(--cogs-greyscale-grey3);
 `;
 
+export const ColumnHeaderWrapperWithRadius = styled(ColumnHeaderWrapper)`
+  border-top-left-radius: inherit;
+  border-top-right-radius: inherit;
+`;
+
 export const BodyColumnHeaderLegend = styled(FlexRow)`
   margin-left: auto;
 `;

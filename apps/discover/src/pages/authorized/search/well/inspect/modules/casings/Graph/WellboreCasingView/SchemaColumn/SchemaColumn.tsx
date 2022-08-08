@@ -4,6 +4,7 @@ import isEmpty from 'lodash/isEmpty';
 
 import EmptyState from 'components/EmptyState';
 
+import { BodyColumn } from '../../../../common/Events/elements';
 import { CasingAssemblyView, CasingSchematicView } from '../../../types';
 import { EMPTY_SCHEMA_TEXT, LOADING_TEXT } from '../../constants';
 
@@ -13,7 +14,6 @@ import {
   HeaderText,
   SchemaColumnContentWrapper,
   SchemaColumnHeaderWrapper,
-  SchemaColumnWrapper,
 } from './elements';
 import { Legend } from './Legend';
 import { TopContent } from './TopContent';
@@ -76,7 +76,7 @@ export const SchemaColumn: React.FC<SchemaColumnProps> = ({
   };
 
   return (
-    <SchemaColumnWrapper data-testid="schema-column">
+    <BodyColumn data-testid="schema-column">
       <SchemaColumnHeaderWrapper>
         <HeaderText>Schema</HeaderText>
         <Legend />
@@ -85,6 +85,6 @@ export const SchemaColumn: React.FC<SchemaColumnProps> = ({
       <SchemaColumnContentWrapper>
         {renderSchemaColumnContent()}
       </SchemaColumnContentWrapper>
-    </SchemaColumnWrapper>
+    </BodyColumn>
   );
 };

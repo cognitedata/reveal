@@ -20,6 +20,7 @@ import {
   EmptyStateWrapper,
   LastScaleBlock,
   ColumnHeaderWrapper,
+  ColumnHeaderWrapperWithRadius,
 } from './elements';
 import NptEventsBadge from './NptEventsBadge';
 import { NptEventsScatterView } from './NptEventsScatterView';
@@ -82,13 +83,19 @@ const NptEventsColumn: React.FC<WithDragHandleProps<Props>> = ({
     );
   }, [scaleBlocks, events, view]);
 
+  const isDraggable = !isEmpty(dragHandleProps);
+
+  const HeaderWrapper = isDraggable
+    ? ColumnHeaderWrapper
+    : ColumnHeaderWrapperWithRadius;
+
   return (
     <BodyColumn width={150}>
-      <ColumnDragger {...dragHandleProps} />
+      {isDraggable && <ColumnDragger {...dragHandleProps} />}
 
-      <ColumnHeaderWrapper>
+      <HeaderWrapper>
         <BodyColumnMainHeader>{NPT_COLUMN_TITLE}</BodyColumnMainHeader>
-      </ColumnHeaderWrapper>
+      </HeaderWrapper>
 
       <BodyColumnBody>
         {(isEventsLoading || isEmpty(events)) && (

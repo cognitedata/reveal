@@ -20,6 +20,7 @@ import {
   LastScaleBlock,
   EmptyStateWrapper,
   ColumnHeaderWrapper,
+  ColumnHeaderWrapperWithRadius,
 } from './elements';
 import NdsEventsBadge from './NdsEventsBadge';
 import { NdsEventsScatterView } from './NdsEventsScatterView';
@@ -81,13 +82,19 @@ const NdsEventsColumn: React.FC<WithDragHandleProps<Props>> = ({
     );
   }, [scaleBlocks, events]);
 
+  const isDraggable = !isEmpty(dragHandleProps);
+
+  const HeaderWrapper = isDraggable
+    ? ColumnHeaderWrapper
+    : ColumnHeaderWrapperWithRadius;
+
   return (
     <BodyColumn width={150}>
-      <ColumnDragger {...dragHandleProps} />
+      {isDraggable && <ColumnDragger {...dragHandleProps} />}
 
-      <ColumnHeaderWrapper>
+      <HeaderWrapper>
         <BodyColumnMainHeader>{NDS_COLUMN_TITLE}</BodyColumnMainHeader>
-      </ColumnHeaderWrapper>
+      </HeaderWrapper>
 
       <BodyColumnBody>
         {(isEventsLoading || isEmpty(events)) && (

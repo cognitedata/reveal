@@ -1,7 +1,7 @@
 import styled from 'styled-components/macro';
 import layers from 'utils/zindex';
 
-import { Center, Flex, FlexColumn, FlexRow, sizes } from 'styles/layout';
+import { Center, Flex, FlexRow, sizes } from 'styles/layout';
 
 import {
   SCALE_BLOCK_HEIGHT,
@@ -9,15 +9,6 @@ import {
 } from '../../../../common/Events/constants';
 import { DepthMeasurementScale } from '../../../../common/Events/elements';
 import { MUD_LINE_COLOR, RKB_COLOR, SEA_LEVEL_COLOR } from '../../constants';
-
-export const SchemaColumnWrapper = styled(FlexColumn)`
-  position: relative;
-  height: 100%;
-  border: 1px solid var(--cogs-greyscale-grey3);
-  border-radius: 12px;
-  width: auto;
-  background: var(--cogs-bg-accent);
-`;
 
 export const SchemaColumnHeaderWrapper = styled(FlexRow)`
   height: 32px;
