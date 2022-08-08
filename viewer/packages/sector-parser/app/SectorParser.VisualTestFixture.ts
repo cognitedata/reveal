@@ -9,7 +9,7 @@ import { GltfSectorParser } from '../src/GltfSectorParser';
 import { RevealGeometryCollectionType } from '../src/types';
 import * as TestMaterials from './testMaterials';
 
-export class SectorParserTestApp extends SimpleVisualTestFixture {
+export default class SectorParserVisualTestFixture extends SimpleVisualTestFixture {
   public async setup(simpleTestFixtureComponents: SimpleTestFixtureComponents): Promise<void> {
     const { scene, camera, dataProviders } = simpleTestFixtureComponents;
     const { modelDataProvider, modelIdentifier, modelMetadataProvider } = dataProviders;

@@ -13,7 +13,7 @@ import { RevealGeometryCollectionType } from '@reveal/sector-parser';
 import { CadSceneRootMetadata, BoundingBox } from '@reveal/cad-parsers/src/metadata/parsers/types';
 import { SimpleTestFixtureComponents, SimpleVisualTestFixture } from '../../../visual-tests';
 
-export class SectorLoaderVisualTestFixture extends SimpleVisualTestFixture {
+export default class SectorLoaderVisualTestFixture extends SimpleVisualTestFixture {
   async setup(simpleTestFixtureComponents: SimpleTestFixtureComponents): Promise<void> {
     const { scene, cameraControls, dataProviders } = simpleTestFixtureComponents;
     const { modelDataProvider, modelIdentifier, modelMetadataProvider } = dataProviders;

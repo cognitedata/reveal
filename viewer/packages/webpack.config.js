@@ -6,7 +6,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const webpack = require('webpack');
 
 module.exports = env => {
-  const entryFile = '../visual-tests/VisualTests.ts';
+  const entryFile = '../visual-tests/VisualTest.browser.ts';
   return {
     mode: 'development',
 
