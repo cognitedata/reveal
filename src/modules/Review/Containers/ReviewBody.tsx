@@ -11,10 +11,8 @@ import { StyledTabs } from 'src/modules/Common/Components/StyledTabs/StyledTabs'
 import { FileDetailsReview } from 'src/modules/FileDetails/Containers/FileDetailsReview/FileDetailsReview';
 import { ThumbnailCarousel } from 'src/modules/Review/Components/ThumbnailCarousel/ThumbnailCarousel';
 import { ImagePreview } from 'src/modules/Review/Containers/ImagePreview';
-import {
-  selectAllReviewFiles,
-  setScrollToId,
-} from 'src/modules/Review/store/reviewSlice';
+import { setScrollToId } from 'src/modules/Review/store/review/slice';
+import { selectAllReviewFiles } from 'src/modules/Review/store/reviewSlice';
 import { RootState } from 'src/store/rootReducer';
 import { getParamLink, workflowRoutes } from 'src/utils/workflowRoutes';
 import styled from 'styled-components';

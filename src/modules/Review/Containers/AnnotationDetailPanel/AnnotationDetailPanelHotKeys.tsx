@@ -11,7 +11,7 @@ import { deselectAllSelectionsReviewPage } from 'src/store/commonActions';
 import {
   selectAnnotation,
   setScrollToId,
-} from 'src/modules/Review/store/reviewSlice';
+} from 'src/modules/Review/store/review/slice';
 import {
   getActiveNode,
   getActiveNodeIndexFromArray,
