@@ -5,8 +5,8 @@ import {
   SelectableItemsProps,
   TableStateProps,
   DateRangeProps,
-} from 'CommonProps';
-import { ResourceItem } from 'types';
+  ResourceItem,
+} from 'types';
 import { SequenceTable } from 'containers/Sequences';
 import { ResultTableLoader } from 'containers/ResultTableLoader';
 import { RelatedResourceType } from 'hooks/RelatedResourcesHooks';

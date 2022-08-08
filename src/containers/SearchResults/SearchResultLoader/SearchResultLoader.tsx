@@ -12,8 +12,9 @@ import {
   SelectableItemsProps,
   TableStateProps,
   DateRangeProps,
-} from 'CommonProps';
-import { convertResourceType, ResourceType } from 'types';
+  convertResourceType,
+  ResourceType,
+} from 'types';
 import { useResourceResults } from './hooks';
 
 type RealResourceType = FileInfo | Asset | CogniteEvent | Sequence | Timeseries;

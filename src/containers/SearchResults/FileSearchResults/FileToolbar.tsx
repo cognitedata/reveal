@@ -7,7 +7,7 @@ import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import styled from 'styled-components';
 
 import { SearchResultToolbar, FileUploaderModal } from 'containers';
-import { CLOSE_DROPDOWN_EVENT } from 'utils/WindowEvents';
+import { CLOSE_DROPDOWN_EVENT } from 'utils';
 import { AppContext } from 'context/AppContext';
 import { RelatedResourceType } from 'hooks';
 

@@ -7,8 +7,7 @@ import { SequenceSmallPreview } from 'containers/Sequences';
 import { TimeseriesSmallPreview } from 'containers/Timeseries';
 import { EventSmallPreview } from 'containers/Events';
 import { Loader } from 'components';
-import { ResourceItem } from 'types';
-import { SelectableItemProps } from 'CommonProps';
+import { ResourceItem, SelectableItemProps } from 'types';
 
 type Props = {
   item?: ResourceItem;

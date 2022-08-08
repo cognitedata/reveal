@@ -1,6 +1,6 @@
 import React from 'react';
 import { Asset } from '@cognite/sdk';
-import { ResourceType, ResourceItem } from 'types';
+import { ResourceType, ResourceItem, SelectableItemsProps } from 'types';
 import { AssetTable } from 'containers';
 import {
   FileSearchResults,
@@ -8,7 +8,6 @@ import {
   EventSearchResults,
   SequenceSearchResults,
 } from 'containers/SearchResults';
-import { SelectableItemsProps } from 'CommonProps';
 import { ResultTableLoader } from 'containers/ResultTableLoader';
 
 export const LinkedResourceTable = ({

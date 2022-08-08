@@ -11,14 +11,14 @@ import styled, { css } from 'styled-components';
 import {
   isFilePreviewable,
   readablePreviewableFileTypes,
-} from 'utils/FileUtils';
+  removeSimilarAnnotations,
+} from 'utils';
 import {
   PendingCogniteAnnotation,
   CogniteAnnotation,
 } from '@cognite/annotations';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
-import { removeSimilarAnnotations } from 'utils/AnnotationUtils';
-import { ResourceItem } from 'types/Types';
+import { ResourceItem } from 'types';
 import { AnnotationPreviewSidebar } from './AnnotationPreviewSidebar';
 import { useAnnotations } from '../hooks';
 import { AnnotationHoverPreview } from './AnnotationHoverPreview';

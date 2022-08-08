@@ -5,7 +5,7 @@ import styled, { css } from 'styled-components';
 import { TimeDisplay, FileThumbnail } from 'components';
 import { Body, Colors } from '@cognite/cogs.js';
 import Highlighter from 'react-highlight-words';
-import { SelectableItemsProps } from 'CommonProps';
+import { SelectableItemsProps } from 'types';
 
 export const FileGridPreview = ({
   item,

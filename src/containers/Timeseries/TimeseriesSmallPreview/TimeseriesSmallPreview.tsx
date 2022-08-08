@@ -13,7 +13,7 @@ import {
 } from 'components';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 import { TimeseriesChart } from 'containers/Timeseries';
-import { SmallPreviewProps, SelectableItemProps } from 'CommonProps';
+import { SmallPreviewProps, SelectableItemProps } from 'types';
 import { useSelectionButton } from 'hooks/useSelection';
 
 export const TimeseriesSmallPreview = ({

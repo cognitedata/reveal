@@ -1,6 +1,6 @@
 import styled, { css } from 'styled-components';
 import { Colors } from '@cognite/cogs.js';
-import { lightGrey } from 'utils/Colors';
+import { lightGrey } from 'utils';
 
 export const TableWrapperInner = styled.div`
   .BaseTable {

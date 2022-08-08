@@ -1,4 +1,4 @@
-import { isSimilarBoundingBox } from '../AnnotationUtils';
+import { isSimilarBoundingBox } from '../annotations';
 
 describe('AnnotationUtils', () => {
   describe('isSimilarBoundingBox', () => {

@@ -1,10 +1,11 @@
 import React from 'react';
-import { ResourceType, ResourceItem } from 'types';
 import {
+  ResourceType,
+  ResourceItem,
   ResourceFilterProps,
   SelectableItemsProps,
   DateRangeProps,
-} from 'CommonProps';
+} from 'types';
 import { FileSearchResults } from './FileSearchResults/FileSearchResults';
 import { EventSearchResults } from './EventSearchResults/EventSearchResults';
 import { AssetSearchResults } from './AssetSearchResults/AssetSearchResults';

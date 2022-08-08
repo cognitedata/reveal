@@ -10,7 +10,7 @@ import {
   SegmentedControl,
 } from '@cognite/cogs.js';
 import BreadcrumbItem from 'antd/lib/breadcrumb/BreadcrumbItem';
-import { lightGrey } from 'utils/Colors';
+import { lightGrey } from 'utils';
 import { ResourceIcons } from 'components';
 import {
   ProposedCogniteAnnotation,

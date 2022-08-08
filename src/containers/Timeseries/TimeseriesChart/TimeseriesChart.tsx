@@ -10,7 +10,7 @@ import { useQuery } from 'react-query';
 import { useSDK } from '@cognite/sdk-provider';
 import { baseCacheKey } from '@cognite/sdk-react-query-hooks';
 import dayjs from 'dayjs';
-import { DateRangeProps } from 'CommonProps';
+import { DateRangeProps } from 'types';
 import { SegmentedControl } from '@cognite/cogs.js';
 import { ParentSize } from '@visx/responsive';
 

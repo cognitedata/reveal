@@ -2,7 +2,7 @@ import React from 'react';
 import SplitterLayout from 'react-splitter-layout';
 import styled, { css } from 'styled-components';
 import { Colors } from '@cognite/cogs.js';
-import { SIDEBAR_RESIZE_EVENT } from 'utils/WindowEvents';
+import { SIDEBAR_RESIZE_EVENT } from 'utils';
 
 export type SplitterProps = {
   secondaryMinSize?: number;

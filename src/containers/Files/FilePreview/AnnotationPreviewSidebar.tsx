@@ -37,14 +37,12 @@ import {
 } from 'types';
 import { useCreate } from 'hooks/sdk';
 import { useQueryClient, useMutation } from 'react-query';
-import { sleep } from 'utils';
+import { sleep, lightGrey, SIDEBAR_RESIZE_EVENT } from 'utils';
 import { useSDK } from '@cognite/sdk-provider';
 import { CogniteEvent, EventChange, FileInfo } from '@cognite/sdk';
-import { lightGrey } from 'utils/Colors';
 import { ResourcePreviewSidebar } from 'containers';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 import { AppContext } from 'context/AppContext';
-import { SIDEBAR_RESIZE_EVENT } from 'utils/WindowEvents';
 import BreadcrumbItem from 'antd/lib/breadcrumb/BreadcrumbItem';
 import capitalize from 'lodash/capitalize';
 import { useDisclosure } from 'hooks';

@@ -1,6 +1,5 @@
 import React, { useMemo } from 'react';
-import { SelectableItemsProps } from 'CommonProps';
-import { ResourceItem } from 'types';
+import { SelectableItemsProps, ResourceItem } from 'types';
 import { FileInfo, IdEither } from '@cognite/sdk';
 import { useFilesAnnotatedWithResource } from 'hooks/RelationshipHooks';
 import { uniqBy } from 'lodash';

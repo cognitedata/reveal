@@ -4,7 +4,7 @@ import {
   useAggregate,
   SdkResourceType,
 } from '@cognite/sdk-react-query-hooks';
-import { formatNumber } from 'utils/numbers';
+import { formatNumber } from 'utils';
 import { Body } from '@cognite/cogs.js';
 import { getTitle, ResourceType, convertResourceThreeDWrapper } from 'types';
 import { ThreeDModelsResponse, useInfinite3DModels } from 'hooks';

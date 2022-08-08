@@ -1,8 +1,7 @@
 import React, { useMemo } from 'react';
 import uniqBy from 'lodash/uniqBy';
 import { Loader } from 'components';
-import { SelectableItemsProps } from 'CommonProps';
-import { ResourceType, convertResourceType } from 'types';
+import { SelectableItemsProps, ResourceType, convertResourceType } from 'types';
 import { Alert } from 'antd';
 import {
   AssetTable,

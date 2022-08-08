@@ -2,10 +2,9 @@ import React from 'react';
 import { CogniteEvent } from '@cognite/sdk';
 import { Table, TableProps } from 'components';
 import { getColumnsWithRelationshipLabels } from 'utils';
+import { RelationshipLabels } from 'types';
 
-interface EventWithRelationshipLabels extends CogniteEvent {
-  relationshipLabels?: string[];
-}
+type EventWithRelationshipLabels = RelationshipLabels & CogniteEvent;
 export const EventTable = (props: TableProps<EventWithRelationshipLabels>) => {
   const { relatedResourceType } = props;
 

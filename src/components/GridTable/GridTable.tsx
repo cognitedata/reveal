@@ -6,7 +6,7 @@ import { FixedSizeGrid as Grid, GridChildComponentProps } from 'react-window';
 import InfiniteLoader from 'react-window-infinite-loader';
 import styled from 'styled-components';
 
-import { SelectableItemsProps, AllowedTableStateId } from 'CommonProps';
+import { SelectableItemsProps, AllowedTableStateId } from 'types';
 import { Loader } from 'components';
 
 export type GridCellProps<T> = {

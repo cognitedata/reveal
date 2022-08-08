@@ -4,8 +4,8 @@ import {
   SelectableItemsProps,
   DateRangeProps,
   TableStateProps,
-} from 'CommonProps';
-import { ResourceItem } from 'types';
+  ResourceItem,
+} from 'types';
 import {
   TimeseriesTable,
   TimeseriesSparklineCard,

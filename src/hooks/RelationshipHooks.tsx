@@ -7,7 +7,11 @@ import {
   usePermissions,
 } from '@cognite/sdk-react-query-hooks';
 import { ResourceType, ResourceItem, convertResourceType } from 'types';
-import { formatNumber } from 'utils/numbers';
+import {
+  formatNumber,
+  annotationInteralIdFilter,
+  annotationExternalIdFilter,
+} from 'utils';
 import { useEffect, useContext, useMemo, useState } from 'react';
 import {
   ExternalId,
@@ -18,10 +22,6 @@ import {
   FileInfo,
 } from '@cognite/sdk';
 import flatten from 'lodash/flatten';
-import {
-  annotationInteralIdFilter,
-  annotationExternalIdFilter,
-} from 'utils/filters';
 import {
   ANNOTATION_METADATA_PREFIX as PREFIX,
   ANNOTATION_EVENT_TYPE,

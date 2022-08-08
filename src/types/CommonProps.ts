@@ -6,7 +6,7 @@ import {
   EventFilter,
   SequenceFilter,
 } from '@cognite/sdk';
-import { ResourceItem } from './types/Types';
+import { ResourceItem } from './Types';
 
 export type SmallPreviewProps = {
   actions?: React.ReactNode[];

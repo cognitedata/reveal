@@ -3,9 +3,8 @@ import { Timeseries } from '@cognite/sdk';
 import { Table, TableProps } from 'components';
 import { TimeseriesChart } from 'containers/Timeseries';
 import { Body } from '@cognite/cogs.js';
-import { DateRangeProps } from 'CommonProps';
+import { DateRangeProps, RelationshipLabels } from 'types';
 import { TIME_SELECT } from 'containers';
-import { RelationshipLabels } from 'types';
 import { getColumnsWithRelationshipLabels } from 'utils';
 
 export type TimeseriesWithRelationshipLabels = Timeseries & RelationshipLabels;

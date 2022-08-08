@@ -8,7 +8,7 @@ import {
 } from '@cognite/sdk';
 // eslint-disable-next-line
 import { SequenceRow } from '@cognite/sdk/dist/src/api/sequences/sequenceRow'; //
-import { pickOptionalId } from 'utils/idUtils';
+import { pickOptionalId } from 'utils';
 
 import { UseInfiniteQueryOptions, useInfiniteQuery } from 'react-query';
 

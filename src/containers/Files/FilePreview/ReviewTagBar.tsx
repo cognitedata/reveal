@@ -5,8 +5,7 @@ import { ResourceIcons } from 'components';
 import { ResourceType } from 'index';
 import React from 'react';
 import styled from 'styled-components';
-import { capitalizeFirstLetter } from 'utils/stringUtils';
-import { createLink } from 'utils/URLUtils';
+import { capitalizeFirstLetter, createLink } from 'utils';
 
 const ReviewTagBar = ({
   annotation,

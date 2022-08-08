@@ -27,11 +27,10 @@ import {
 } from 'components';
 import { TimeseriesSmallPreview } from 'containers/Timeseries';
 import { FileSmallPreview } from 'containers/Files';
-import { SelectableItemProps, SmallPreviewProps } from 'CommonProps';
+import { SelectableItemProps, SmallPreviewProps } from 'types';
 import { useSelectionButton } from 'hooks/useSelection';
 
-import { lightGrey } from 'utils/Colors';
-import { createLink } from 'utils/URLUtils';
+import { lightGrey, createLink } from 'utils';
 
 const RowItem = ({
   style,

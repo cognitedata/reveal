@@ -6,7 +6,7 @@ import {
   ResourceSelectionMode,
   useSelectionCheckbox,
 } from 'hooks/useSelection';
-import { TableStateProps, AllowedTableStateId } from 'CommonProps';
+import { TableStateProps, AllowedTableStateId } from 'types';
 import { HighlightCell } from './HighlightCell';
 import { TableWrapper } from './TableWrapper';
 import { ResourceTableColumns } from './Columns';

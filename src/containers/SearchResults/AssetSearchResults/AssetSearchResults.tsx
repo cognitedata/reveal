@@ -8,11 +8,7 @@ import {
   SearchResultToolbar,
   SearchResultLoader,
 } from 'containers';
-import {
-  SelectableItemsProps,
-  DateRangeProps,
-  TableStateProps,
-} from 'CommonProps';
+import { SelectableItemsProps, DateRangeProps, TableStateProps } from 'types';
 
 export const AssetSearchResults = ({
   query = '',

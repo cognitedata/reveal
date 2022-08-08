@@ -7,8 +7,7 @@ import {
 } from '@cognite/sdk-react-query-hooks';
 import styled from 'styled-components';
 import { A, Body, Colors } from '@cognite/cogs.js';
-import { createLink } from 'utils/URLUtils';
-import { stringContains } from 'utils/stringUtils';
+import { createLink, stringContains } from 'utils';
 import { AppContext } from 'context/AppContext';
 
 export type DataSetSelectProps = {

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button } from '@cognite/cogs.js';
 import styled from 'styled-components';
-import { FiltersType } from 'CommonProps';
+import { FiltersType } from 'types';
 
 export const ResetFiltersButton = <T extends FiltersType>({
   setFilter,

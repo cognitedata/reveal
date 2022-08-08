@@ -1,8 +1,11 @@
 import React from 'react';
 import { Icon, Button, Tooltip } from '@cognite/cogs.js';
 import { Row, Col, Badge } from 'antd';
-import { ResourceType } from 'types';
-import { ResourceFilterProps, SetResourceFilterProps } from 'CommonProps';
+import {
+  ResourceType,
+  ResourceFilterProps,
+  SetResourceFilterProps,
+} from 'types';
 import {
   AssetFilters,
   EventFilters,
@@ -10,14 +13,14 @@ import {
   SequenceFilters,
   TimeseriesFilters,
 } from 'components';
-import { lightGrey } from 'utils/Colors';
-import styled from 'styled-components';
 import {
+  lightGrey,
   getSelectedFilter,
   countByFilter,
   FiltersWithResourceType,
   FilterType,
-} from 'utils/FilterCountUtils';
+} from 'utils';
+import styled from 'styled-components';
 
 const TRANSITION_TIME = 200;
 interface IFilterIcon {

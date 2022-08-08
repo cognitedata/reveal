@@ -5,8 +5,8 @@ import {
   SelectableItemsProps,
   TableStateProps,
   DateRangeProps,
-} from 'CommonProps';
-import { ResourceItem } from 'types';
+  ResourceItem,
+} from 'types';
 import { EventTable } from 'containers/Events';
 import { ResultTableLoader } from 'containers/ResultTableLoader';
 import { RelatedResourceType } from 'hooks/RelatedResourcesHooks';

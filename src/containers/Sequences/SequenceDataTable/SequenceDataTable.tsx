@@ -1,7 +1,7 @@
 import React from 'react';
 import { Sequence } from '@cognite/sdk';
 import { Table } from 'components';
-import { AllowedTableStateId } from 'CommonProps';
+import { AllowedTableStateId } from 'types';
 
 export type SequenceDataTableProps = {
   sequence: Sequence;

@@ -1,5 +1,5 @@
 import React from 'react';
-import { SelectableItemsProps, TableStateProps } from 'CommonProps';
+import { SelectableItemsProps, TableStateProps } from 'types';
 import { TableProps } from 'components';
 import {
   FileInfo,

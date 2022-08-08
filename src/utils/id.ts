@@ -23,3 +23,10 @@ export const extractUniqueIds = (ids: IdEither[]) => {
   };
   return updatedIds;
 };
+
+export const getIdParam = (id: number | string) => {
+  if (typeof id === 'string') {
+    return { externalId: id };
+  }
+  return { id };
+};

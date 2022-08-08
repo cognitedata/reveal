@@ -1,14 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { Button, Input } from '@cognite/cogs.js';
-import { ResourceType, ResourceItem } from 'types';
+import {
+  ResourceType,
+  ResourceItem,
+  InitialResourceFilterProps,
+  SelectableItemsProps,
+} from 'types';
 import { Divider, SpacedRow, ResourceTypeTabs } from 'components';
 import {
   SearchFilters,
   SearchResults,
   ResourcePreviewSidebar,
 } from 'containers';
-import { InitialResourceFilterProps, SelectableItemsProps } from 'CommonProps';
 import {
   AssetFilterProps,
   TimeseriesFilter,

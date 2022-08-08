@@ -15,9 +15,8 @@ import {
   SpacedRow,
   ResourceIcons,
 } from 'components';
-import { isFilePreviewable } from 'utils/FileUtils';
-import { getIdParam } from 'utils';
-import { SmallPreviewProps, SelectableItemProps } from 'CommonProps';
+import { isFilePreviewable, getIdParam } from 'utils';
+import { SmallPreviewProps, SelectableItemProps } from 'types';
 import { FileDetails } from 'containers/Files';
 import { AppContext } from 'context/AppContext';
 import { useSelectionButton } from 'hooks/useSelection';

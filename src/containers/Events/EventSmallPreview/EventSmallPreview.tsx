@@ -9,10 +9,10 @@ import {
   SpacedRow,
 } from 'components';
 import { Title, Body, Colors } from '@cognite/cogs.js';
-import { renderTitle } from 'utils/EventsUtils';
+import { renderTitle } from 'utils';
 import { ResourceIcons } from 'components/ResourceIcons/ResourceIcons';
 import { EventDetails } from 'containers/Events';
-import { SmallPreviewProps, SelectableItemProps } from 'CommonProps';
+import { SmallPreviewProps, SelectableItemProps } from 'types';
 import { useSelectionButton } from 'hooks/useSelection';
 
 export const EventSmallPreview = ({

@@ -5,7 +5,7 @@ import { TimeseriesChart } from 'containers/Timeseries';
 import styled from 'styled-components';
 import { Body, Tooltip, Icon, Colors } from '@cognite/cogs.js';
 import { GridCellProps, LatestDatapoint } from 'components';
-import { DateRangeProps } from 'CommonProps';
+import { DateRangeProps } from 'types';
 
 export const TimeseriesSparklineCard = ({
   item,

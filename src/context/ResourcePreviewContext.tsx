@@ -3,7 +3,7 @@ import { ResourceItem } from 'types';
 import { Splitter } from 'components';
 import { ResourcePreviewSidebar } from 'containers/ResourceSidebar';
 import styled from 'styled-components';
-import { SIDEBAR_RESIZE_EVENT } from 'utils/WindowEvents';
+import { SIDEBAR_RESIZE_EVENT } from 'utils';
 
 export type ResourcePreviewProps = {
   /**

@@ -7,7 +7,7 @@ import { AnnotationBoundingBox, CogniteAnnotation } from '@cognite/annotations';
 import { InfoGrid, InfoCell, Divider } from 'components';
 import { Title, Body } from '@cognite/cogs.js';
 import styled from 'styled-components';
-import { lightGrey } from 'utils/Colors';
+import { lightGrey } from 'utils';
 
 export const ContextualizationData = ({
   selectedAnnotation,

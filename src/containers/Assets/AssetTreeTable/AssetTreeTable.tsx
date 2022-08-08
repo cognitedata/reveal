@@ -4,7 +4,7 @@ import { Asset, AssetFilterProps } from '@cognite/sdk';
 import styled from 'styled-components';
 import { usePrevious } from 'hooks/CustomHooks';
 import { Loader, Table } from 'components';
-import { SelectableItemsProps, TableStateProps } from 'CommonProps';
+import { SelectableItemsProps, TableStateProps } from 'types';
 import {
   useRootTree,
   useSearchTree,

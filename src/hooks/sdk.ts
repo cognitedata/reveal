@@ -12,7 +12,7 @@ import {
   aggregateKey,
   aggregate,
 } from '@cognite/sdk-react-query-hooks';
-import { isFileOfType, fetchFilePreviewURL } from 'utils/FileUtils';
+import { isFileOfType, fetchFilePreviewURL } from 'utils';
 
 const post = (sdk: CogniteClient, path: string, data: any) =>
   sdk

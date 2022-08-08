@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import { Alert } from 'antd';
 import { Asset } from '@cognite/sdk';
-import { ResourceType, ResourceItem } from 'types';
+import { ResourceType, ResourceItem, SelectableItemsProps } from 'types';
 import { AssetTable } from 'containers';
 import {
   FileSearchResults,
@@ -9,11 +9,10 @@ import {
   EventSearchResults,
   SequenceSearchResults,
 } from 'containers/SearchResults';
-import { SelectableItemsProps } from 'CommonProps';
 import { ResultTableLoader } from 'containers/ResultTableLoader';
 import { useRelationshipCount } from 'hooks/RelationshipHooks';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
-import { createLink } from 'utils/URLUtils';
+import { createLink } from 'utils';
 import { A } from '@cognite/cogs.js';
 import { AppContext } from 'context/AppContext';
 

@@ -5,11 +5,11 @@ import {
   SelectableItemsProps,
   TableStateProps,
   DateRangeProps,
-} from 'CommonProps';
+  ResourceItem,
+} from 'types';
 import { GridTable, EnsureNonEmptyResource } from 'components';
 import { ResultTableLoader } from 'containers/ResultTableLoader';
 import { RelatedResourceType } from 'hooks/RelatedResourcesHooks';
-import { ResourceItem } from 'types';
 import FileGroupingTable from 'containers/Files/FileGroupingTable/FileGroupingTable';
 import { FileToolbar } from './FileToolbar';
 

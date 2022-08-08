@@ -4,10 +4,9 @@ import UploadGCS from '@cognite/gcs-browser-upload';
 import { FileUploadResponse } from '@cognite/sdk';
 import { UploadFile } from 'antd/lib/upload/interface';
 import { Body, Icon, Button } from '@cognite/cogs.js';
-import { getMIMEType } from 'utils/FileUtils';
+import { getMIMEType, sleep } from 'utils';
 import { SpacedRow } from 'components';
 import { useSDK } from '@cognite/sdk-provider';
-import { sleep } from 'utils';
 
 export const GCSUploader = (
   file: Blob | UploadFile,

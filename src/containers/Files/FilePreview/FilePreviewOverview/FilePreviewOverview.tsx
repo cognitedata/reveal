@@ -22,11 +22,10 @@ import {
 } from '@cognite/sdk';
 import { useViewerQuery } from '@cognite/react-picture-annotation';
 import { useCdfItems } from '@cognite/sdk-react-query-hooks';
-import { getIdParam } from 'utils';
 import { DetailsItem, InfoGrid } from 'components';
 import { useResourcePreview } from 'context';
 import { FileDetails } from 'containers/Files';
-import { extractUniqueIds } from 'utils/idUtils';
+import { getIdParam, extractUniqueIds } from 'utils';
 import {
   AssetItem,
   EventItem,

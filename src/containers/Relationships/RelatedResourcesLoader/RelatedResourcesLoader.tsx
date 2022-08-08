@@ -1,8 +1,7 @@
 import React, { useMemo } from 'react';
 import { Flex, Icon } from '@cognite/cogs.js';
 import { Loader, Select, SpacedRow, TableProps } from 'components';
-import { SelectableItemsProps } from 'CommonProps';
-import { ResourceType, ResourceItem } from 'types';
+import { SelectableItemsProps, ResourceType, ResourceItem } from 'types';
 import {
   FileInfo,
   Asset,

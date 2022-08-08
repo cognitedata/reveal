@@ -4,8 +4,7 @@ import styled from 'styled-components';
 import Highlighter from 'react-highlight-words';
 import { HighlightCell, EllipsisText, FileThumbnail } from 'components';
 import { Popover } from 'antd';
-import { isFilePreviewable } from 'utils/FileUtils';
-import { fileIconMapper } from 'utils';
+import { isFilePreviewable, fileIconMapper } from 'utils';
 import { DocumentIcon, Flex } from '@cognite/cogs.js';
 
 const DocumentIconWrapper = styled.div`

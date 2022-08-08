@@ -1,7 +1,7 @@
 import { ResourcePreviewSidebar } from 'containers';
 import React, { useContext } from 'react';
 import styled from 'styled-components';
-import { lightGrey } from 'utils/Colors';
+import { lightGrey } from 'utils';
 import { Detail, Icon, Title, Modal } from '@cognite/cogs.js';
 
 import { FileInfo } from '@cognite/sdk';
