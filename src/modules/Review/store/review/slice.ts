@@ -7,7 +7,7 @@ import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
 import { DeleteAnnotations } from 'src/store/thunks/Annotation/DeleteAnnotations';
 import { ReviewState } from 'src/modules/Review/store/review/types';
 
-const initialState: ReviewState = {
+export const initialState: ReviewState = {
   fileIds: [],
   selectedAnnotationIds: [],
   hiddenAnnotationIds: [],
@@ -119,8 +119,6 @@ const reviewSlice = createSlice({
     );
   },
 });
-
-export { initialState as reviewReducerInitialState };
 
 export const {
   setReviewFileIds,
