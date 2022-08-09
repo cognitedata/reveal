@@ -3,9 +3,45 @@
  */
 
 use wasm_bindgen::prelude::*;
+use web_sys::console;
 extern crate console_error_panic_hook;
 
-mod add_three;
+use std::vec::Vec;
+use serde::Deserialize;
+use std::fmt::Display;
+
+mod point_octree;
+mod shapes;
+mod linalg;
+mod parse_inputs;
+
+use linalg::{Vec3WithIndex,BoundingBox,Vec3,to_bounding_box};
+
+#[derive(Deserialize)]
+pub struct InputBoundingBox {
+    min: [f64; 3],
+    max: [f64; 3]
+}
+
+#[derive(Debug,Deserialize)]
+struct InputCylinder {
+    center_a: [f64; 3],
+    center_b: [f64; 3],
+    radius: f64
+}
+
+#[derive(Debug,Deserialize)]
+struct InputOrientedBox {
+    inv_instance_matrix: [f64; 16]
+}
+
+#[wasm_bindgen]
+#[derive(Debug,Deserialize)]
+pub struct InputShape {
+    object_id: u32,
+    cylinder: Option<Box<InputCylinder>>,
+    oriented_box: Option<Box<InputOrientedBox>>
+}
 
 fn init() -> () {
     // This provides better error messages in debug mode.
@@ -15,14 +51,47 @@ fn init() -> () {
 }
 
 #[wasm_bindgen]
-pub fn add_three(input: u32) -> u32 {
+pub fn assign_points(input_shapes: js_sys::Array,
+                     points: js_sys::Float32Array,
+                     input_bounding_box: js_sys::Object,
+                     input_point_offset: js_sys::Array) -> js_sys::Uint16Array {
     init();
 
-    use web_sys::console;
-    console::log_1(&JsValue::from_str(&format!(
-        "[add_three.rs] Retrieved the input number {}",
-        input
-    )));
+    let point_offset = Vec3::new(input_point_offset.get(0).as_f64().unwrap(),
+                                 input_point_offset.get(1).as_f64().unwrap(),
+                                 input_point_offset.get(2).as_f64().unwrap());
+    let point_vec = parse_inputs::parse_points(&points, point_offset);
 
-    add_three::add_three(input)
+    let bounding_box = to_bounding_box(&input_bounding_box.into_serde::<InputBoundingBox>().unwrap());
+
+
+    console::time();
+    let octree = point_octree::PointOctree::new(point_vec, bounding_box);
+    console::time_end();
+
+    let mut input_shape_vec: Vec<InputShape> =
+        Vec::<InputShape>::with_capacity(input_shapes.length() as usize);
+
+    for value in input_shapes.iter() {
+        assert!(value.is_object());
+
+        let input_shape = value.into_serde::<InputShape>().unwrap();
+        input_shape_vec.push(input_shape);
+    }
+
+    let shape_vec = parse_inputs::parse_objects(input_shape_vec);
+
+
+    let object_ids = js_sys::Uint16Array::new_with_length(points.length() / 3).fill(0, 0, points.length() / 3);
+
+    for shape in shape_vec.iter() {
+        let points_in_box = octree.get_points_in_box(&shape.create_bounding_box());
+        for point in points_in_box {
+            if shape.contains_point(&point.vec) {
+                object_ids.set_index(point.index, shape.get_object_id() as u16);
+            }
+        }
+    }
+
+    object_ids
 }

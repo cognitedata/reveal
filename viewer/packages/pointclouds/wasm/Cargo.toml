@@ -16,6 +16,13 @@ crate-type = ["cdylib"]
 wasm-bindgen = { version = "0.2.45", features = ["serde-serialize"] }
 web-sys = { version = "0.3.22", features = ["console"] }
 
+serde = { version = "1.0.143", features = ["derive"] }
+
+js-sys = "0.3.59"
+
+nalgebra = "0.31.1"
+nalgebra-glm = "0.17.0"
+
 console_error_panic_hook = "0.1.7"
 
 # These crates are used for running unit tests.
