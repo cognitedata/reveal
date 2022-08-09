@@ -1,4 +1,3 @@
-import { timeFormat } from 'd3-time-format';
 import {
   timeSecond,
   timeMinute,
@@ -8,18 +7,20 @@ import {
   timeWeek,
   timeYear,
 } from 'd3-time';
+import dayjs from 'dayjs';
 
-export const formatDate = timeFormat('%b %d %Y, %H:%M');
+export const formatDate = (date: Date) =>
+  dayjs(date).format('MMMM DD YYYY HH:mm G[M]T(Z)');
 
 export const datetimeMultiFormat = (date: Date) => {
-  const formatMillisecond = timeFormat('.%L');
-  const formatSecond = timeFormat(':%S');
-  const formatMinute = timeFormat('%H:%M');
-  const formatHour = timeFormat('%H:%M');
-  const formatDay = timeFormat('%a %d');
-  const formatWeek = timeFormat('%b %d');
-  const formatMonth = timeFormat('%B');
-  const formatYear = timeFormat('%Y');
+  const formatMillisecond = (newDate: Date) => dayjs(newDate).format('.SSS');
+  const formatSecond = (newDate: Date) => dayjs(newDate).format(':ss');
+  const formatMinute = (newDate: Date) => dayjs(newDate).format('HH:mm');
+  const formatHour = (newDate: Date) => dayjs(newDate).format('HH:mm');
+  const formatDay = (newDate: Date) => dayjs(newDate).format('ddd DD');
+  const formatWeek = (newDate: Date) => dayjs(newDate).format('MMM DD');
+  const formatMonth = (newDate: Date) => dayjs(newDate).format('MMMM');
+  const formatYear = (newDate: Date) => dayjs(newDate).format('YYYY');
 
   if (timeSecond(date) < date) {
     return formatMillisecond(date);
