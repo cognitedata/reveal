@@ -25,6 +25,7 @@ import {
   AnnotatorRegionType,
   isAnnotatorPointRegion,
 } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/types';
+import { AnnotationSettingsOption } from 'src/modules/Review/store/review/enums';
 
 export const AnnotationEditPopup = ({
   region,
@@ -148,9 +149,9 @@ export const AnnotationEditPopup = ({
 
   const handleAnnotationSettingsOpen = (text?: string, color?: string) => {
     if (isKeypoint) {
-      onOpenAnnotationSettings('keypoint', text, color);
+      onOpenAnnotationSettings(AnnotationSettingsOption.KEYPOINT, text, color);
     } else {
-      onOpenAnnotationSettings('shape', text, color);
+      onOpenAnnotationSettings(AnnotationSettingsOption.SHAPE, text, color);
     }
   };
 
