@@ -305,7 +305,7 @@ export const AnnotationDetailPanel = ({
                 improve the future quality of the annotation detection. Pressing
                 False will not delete the annotation.`}
           >
-            <Icon style={{ color: '#BFBFBF' }} type="HelpFilled" />
+            <ToolTipIcon type="HelpFilled" />
           </Tooltip>
         </StyledDetail>
       )}
@@ -344,4 +344,13 @@ const TableContainer = styled.div``;
 
 const StyledDetail = styled(Detail)`
   color: #595959;
+  display: flex;
+  align-items: center;
+  justify-content: start;
+  gap: 10px;
+`;
+const ToolTipIcon = styled(Icon)`
+  color: #bfbfbf;
+  align-self: center;
+  display: flex;
 `;
