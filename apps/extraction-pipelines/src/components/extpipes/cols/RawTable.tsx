@@ -53,17 +53,13 @@ const RawTable: FunctionComponent<Props> = ({ rawTables }: OwnProps) => {
           const key = `${dbName}-${tableName}-${index}`;
           return (
             <tr className="grid-row" key={key}>
-              <td className="grid-cell cell-0">
-                <LinkWithCopy
-                  href={createRedirectLink(`/raw/${dbName}/`)}
-                  linkText={dbName}
-                  copyText={dbName}
-                  copyType="dbName"
-                />
-              </td>
+              <td className="grid-cell cell-0">{dbName}</td>
               <td className="grid-cell cell-1">
                 <LinkWithCopy
-                  href={createRedirectLink(`/raw/${dbName}/${tableName}`)}
+                  href={createRedirectLink(`/raw`, {
+                    activeTable: `["${dbName}","${tableName}",null]`,
+                    tabs: `[["${dbName}","${tableName}",null]]`,
+                  })}
                   copyText={tableName}
                   linkText={tableName}
                   copyType="tableName"

@@ -4,7 +4,6 @@ import { RawEditModal } from 'components/modals/RawEditModal';
 import { TEST_ID_BTN_SAVE } from 'components/extpipe/DocumentationSection';
 import { useSelectedExtpipe } from 'hooks/useSelectedExtpipe';
 import { useExtpipeById } from 'hooks/useExtpipe';
-import { DivFlex } from 'components/styled';
 import { Icon } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { AddFieldValueBtn } from 'components/buttons/AddFieldValueBtn';
@@ -37,26 +36,19 @@ const EditRawTable: FunctionComponent<{ canEdit: boolean }> = ({ canEdit }) => {
       <RawTableWrapper>
         {extpipe.rawTables.map(({ dbName, tableName }) => {
           return (
-            <DivFlex role="row" key={`${dbName}-${tableName}`}>
-              <a
-                role="gridcell"
-                href={createRedirectLink(`/raw/${dbName}`)}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                {dbName}
-              </a>
+            <StyledLink
+              role="gridcell"
+              href={createRedirectLink(`/raw`, {
+                activeTable: `["${dbName}","${tableName}",null]`,
+                tabs: `[["${dbName}","${tableName}",null]]`,
+              })}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <span>{dbName}</span>
               <Icon type="Dot" aria-hidden />
-              <a
-                role="gridcell"
-                data-testid="selected-table"
-                href={createRedirectLink(`/raw/${dbName}/${tableName}`)}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                {tableName}
-              </a>
-            </DivFlex>
+              <span>{tableName}</span>
+            </StyledLink>
           );
         })}
       </RawTableWrapper>
@@ -75,4 +67,10 @@ const EditRawTable: FunctionComponent<{ canEdit: boolean }> = ({ canEdit }) => {
     </Section>
   );
 };
+
+const StyledLink = styled.a`
+  display: inline-flex;
+  align-items: center;
+`;
+
 export default EditRawTable;
