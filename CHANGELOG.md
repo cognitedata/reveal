@@ -1,3 +1,7 @@
+## [0.6.0] - 9 Aug, 2022
+### Added
+- `lowercase` and `uppercase` post processors
+
 ## [0.5.0] - 9 Aug, 2022
 ### Added
 - `sort-local-keys` command
