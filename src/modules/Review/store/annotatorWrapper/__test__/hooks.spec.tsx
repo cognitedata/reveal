@@ -1,5 +1,6 @@
 import React from 'react';
 import { screen } from '@testing-library/react';
+import { getDummyKeypointState } from 'src/__test-utils/annotations';
 
 import { testRenderer } from 'src/__test-utils/renderer';
 import { useIsCurrentKeypointCollectionComplete } from 'src/modules/Review/store/annotatorWrapper/hooks';
@@ -93,11 +94,11 @@ const baseAnnotatorWrapperReducer: AnnotatorWrapperState = {
   },
   keypointMap: {
     byId: {
-      k1: ['left', { confidence: 1, point: { x: 0.25, y: 0.25 } }],
-      k2: ['center', { confidence: 1, point: { x: 0.5, y: 0.5 } }],
-      k3: ['right', { confidence: 1, point: { x: 0.75, y: 0.75 } }],
-      k4: ['left', { confidence: 1, point: { x: 0.25, y: 0.25 } }],
-      k5: ['center', { confidence: 1, point: { x: 0.5, y: 0.5 } }],
+      k1: getDummyKeypointState('left', 1, { x: 0.25, y: 0.25 }),
+      k2: getDummyKeypointState('center', 1, { x: 0.5, y: 0.5 }),
+      k3: getDummyKeypointState('right', 1, { x: 0.75, y: 0.75 }),
+      k4: getDummyKeypointState('left', 1, { x: 0.25, y: 0.25 }),
+      k5: getDummyKeypointState('center', 1, { x: 0.5, y: 0.5 }),
     },
     allIds: ['k1', 'k2', 'k3', 'k4', 'k5'],
     selectedIds: [],
