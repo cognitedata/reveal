@@ -4,7 +4,7 @@ import { Colors } from '@cognite/cogs.js';
 import LinkWithCopy from 'components/links/LinkWithCopy';
 import { NO_RAW_TABLES_MESSAGE } from 'utils/constants';
 import { ExtpipeRawTable } from 'model/Extpipe';
-import { createRedirectLink } from 'utils/utils';
+import { createLink } from '@cognite/cdf-utilities';
 
 const RawTableWrapper = styled.table`
   width: 50%;
@@ -56,7 +56,7 @@ const RawTable: FunctionComponent<Props> = ({ rawTables }: OwnProps) => {
               <td className="grid-cell cell-0">{dbName}</td>
               <td className="grid-cell cell-1">
                 <LinkWithCopy
-                  href={createRedirectLink(`/raw`, {
+                  href={createLink(`/raw`, {
                     activeTable: `["${dbName}","${tableName}",null]`,
                     tabs: `[["${dbName}","${tableName}",null]]`,
                   })}

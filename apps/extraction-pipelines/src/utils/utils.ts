@@ -1,5 +1,5 @@
-import queryString from 'query-string';
-import { getEnv, getProject } from '@cognite/cdf-utilities';
+// import queryString from 'query-string';
+// import { getEnv, getProject } from '@cognite/cdf-utilities';
 import { styleScope } from 'styles/styleScope';
 
 export { styleScope } from 'styles/styleScope';
@@ -12,33 +12,33 @@ export const getContainer = () => {
 };
 
 // TODO(CDFUX-1655) : Refractor & use createRedirectLink i.e. createLink from @cognite/cdf-utilities
-export const getQueryParameter = (parameterKey: any) => {
-  const parameters = queryString.parse(window.location.search) ?? {};
-  return parameters[parameterKey] ?? '';
-};
+// export const getQueryParameter = (parameterKey: any) => {
+//   const parameters = queryString.parse(window.location.search) ?? {};
+//   return parameters[parameterKey] ?? '';
+// };
 
-export const getCluster = () => {
-  const cluster = getQueryParameter('cluster');
-  return Array.isArray(cluster) ? cluster[0] : cluster;
-};
+// export const getCluster = () => {
+//   const cluster = getQueryParameter('cluster');
+//   return Array.isArray(cluster) ? cluster[0] : cluster;
+// };
 
-export const createRedirectLink = (
-  path: string,
-  queries: any = {},
-  opts?: queryString.StringifyOptions
-): string => {
-  const project = getProject() || '';
-  const env = getEnv();
-  const cluster = getCluster();
-  const query = queryString.stringify(
-    { ...queries, ...(env ? { env } : {}), ...(cluster ? { cluster } : {}) },
-    opts
-  );
-  if (query.length > 0) {
-    return `/${project}${path}?${query}`;
-  }
-  if (path.length > 0 && path !== '/') {
-    return `/${project}${path}`;
-  }
-  return `/${project}`;
-};
+// export const createRedirectLink = (
+//   path: string,
+//   queries: any = {},
+//   opts?: queryString.StringifyOptions
+// ): string => {
+//   const project = getProject() || '';
+//   const env = getEnv();
+//   const cluster = getCluster();
+//   const query = queryString.stringify(
+//     { ...queries, ...(env ? { env } : {}), ...(cluster ? { cluster } : {}) },
+//     opts
+//   );
+//   if (query.length > 0) {
+//     return `/${project}${path}?${query}`;
+//   }
+//   if (path.length > 0 && path !== '/') {
+//     return `/${project}${path}`;
+//   }
+//   return `/${project}`;
+// };

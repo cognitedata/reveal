@@ -6,13 +6,13 @@ import {
 } from 'utils/constants';
 import { Breadcrumbs } from 'components/navigation/breadcrumbs/Breadcrumbs';
 import { createExtPipePath } from 'utils/baseURL';
-import { createRedirectLink } from 'utils/utils';
+import { createLink } from '@cognite/cdf-utilities';
 
 export const ExtPipesBreadcrumbs = () => {
   const currentPageBreadCrumbs = [
-    { href: createRedirectLink(''), label: CDF_LABEL },
+    { href: createLink(''), label: CDF_LABEL },
     {
-      href: createRedirectLink('/data-sets'),
+      href: createLink('/data-sets'),
       label: DATA_SETS_LABEL,
     },
     {

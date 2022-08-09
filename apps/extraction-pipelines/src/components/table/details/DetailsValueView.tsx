@@ -5,7 +5,7 @@ import React from 'react';
 import { DataSet } from '@cognite/sdk';
 import StatusMarker from 'components/extpipes/cols/StatusMarker';
 import { RunStatusUI } from 'model/Status';
-import InteractiveCopy from 'components/InteractiveCopy';
+import InteractiveCopy from 'components/InteractiveCopy/InteractiveCopy';
 import { DataSet as DataSetDisplay } from 'components/extpipes/cols/DataSet';
 import RelativeTimeWithTooltip from 'components/extpipes/cols/RelativeTimeWithTooltip';
 import {

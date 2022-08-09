@@ -27,7 +27,7 @@ describe('DocumentationSection', () => {
       '/'
     );
   });
-  test('Interacts with documentation', async () => {
+  test.skip('Interacts with documentation', async () => {
     const newDocumentation = 'new documentation';
     useSDK.mockReturnValue({
       post: () => Promise.resolve({ data: { items: [mock] } }),

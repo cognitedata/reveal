@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { I18nWrapper } from '@cognite/cdf-i18n-utils';
 import {
   AuthWrapper,
@@ -26,7 +26,6 @@ import rootStyles from 'styles/index.css';
 
 import Home from 'pages/Home';
 import { EXTRACTION_PIPELINES } from 'utils/constants';
-import React from 'react';
 import { AppEnvProvider } from 'hooks/useAppEnv';
 
 const queryClient = new QueryClient({

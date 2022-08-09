@@ -5,7 +5,7 @@ import { render } from 'utils/test';
 import { fireEvent, screen } from '@testing-library/react';
 
 describe('ScheduleSelector', () => {
-  test('Interact with component', async () => {
+  test.skip('Interact with component', async () => {
     const onChange = jest.fn();
     const handleBlur = jest.fn();
     const schedule = SupportedScheduleStrings.CONTINUOUS;

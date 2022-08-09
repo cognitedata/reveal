@@ -45,8 +45,9 @@ import { createAddExtpipeInfo } from 'utils/extpipeUtils';
 import { EXTPIPES_WRITES } from 'model/AclAction';
 import { CapabilityCheck } from 'components/accessCheck/CapabilityCheck';
 import { trackUsage } from 'utils/Metrics';
-import { createRedirectLink, getContainer } from 'utils/utils';
+import { getContainer } from 'utils/utils';
 import { styleScope } from 'styles/styleScope';
+import { createLink } from '@cognite/cdf-utilities';
 
 const InfoMessage = styled.span`
   display: flex;
@@ -252,7 +253,7 @@ export const CreateExtpipe = (props: { customCancelCallback?: () => void }) => {
           <PriSecBtnWrapper>
             {props.customCancelCallback == null ? (
               <a
-                href={createRedirectLink(
+                href={createLink(
                   `/data-sets${
                     dataSetIdFromLocation &&
                     `/data-set/${dataSetIdFromLocation}`

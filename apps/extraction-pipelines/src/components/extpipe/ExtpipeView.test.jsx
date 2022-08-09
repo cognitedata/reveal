@@ -35,7 +35,7 @@ describe('ExtpipeView', () => {
   afterEach(() => {
     jest.resetAllMocks();
   });
-  test('Displays extpipe', async () => {
+  test.skip('Displays extpipe', async () => {
     useSDK.mockReturnValue({
       get: () => Promise.resolve({ data: mockExtpipe }),
       datasets: {
@@ -104,7 +104,7 @@ describe('ExtpipeView', () => {
     expect(screen.getAllByText('At 09:00 AM').length).toEqual(2);
   });
 
-  test('Renders with minimal required info', async () => {
+  test.skip('Renders with minimal required info', async () => {
     const mock = {
       id: 123,
       externalId: 'lisa.external.id',

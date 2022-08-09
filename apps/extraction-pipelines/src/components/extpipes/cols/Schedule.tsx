@@ -1,7 +1,7 @@
 import React, { FunctionComponent, PropsWithoutRef } from 'react';
 import styled from 'styled-components';
 import { parseCron } from 'utils/cronUtils';
-import InteractiveCopy from 'components/InteractiveCopy';
+import InteractiveCopy from 'components/InteractiveCopy/InteractiveCopy';
 import { StyledTooltip } from 'components/styled';
 
 export const InteractiveCopyWrapper = styled.span`

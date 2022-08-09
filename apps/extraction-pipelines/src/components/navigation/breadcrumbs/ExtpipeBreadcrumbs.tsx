@@ -6,7 +6,7 @@ import { createExtPipePath } from 'utils/baseURL';
 import { EXT_PIPE_PATH } from 'routing/RoutingConfig';
 import { CDF_LABEL, DATA_SETS_LABEL } from 'utils/constants';
 import { Breadcrumbs } from 'components/navigation/breadcrumbs/Breadcrumbs';
-import { createRedirectLink } from 'utils/utils';
+import { createLink } from '@cognite/cdf-utilities';
 
 interface ExtpipeBreadcrumbsProps {
   extpipe?: Extpipe;
@@ -20,17 +20,15 @@ export const ExtpipeBreadcrumbs: FunctionComponent<ExtpipeBreadcrumbsProps> = ({
   } = useRunFilterContext();
 
   const currentPageBreadCrumbs = [
-    { href: createRedirectLink(''), label: CDF_LABEL },
+    { href: createLink(''), label: CDF_LABEL },
     {
-      href: createRedirectLink('/data-sets'),
+      href: createLink('/data-sets'),
       label: DATA_SETS_LABEL,
     },
     ...(extpipe?.dataSetId
       ? [
           {
-            href: createRedirectLink(
-              `/data-sets/data-set/${extpipe?.dataSetId}`
-            ),
+            href: createLink(`/data-sets/data-set/${extpipe?.dataSetId}`),
             label: extpipe?.dataSet?.name,
           },
         ]

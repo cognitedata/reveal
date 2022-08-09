@@ -30,7 +30,7 @@ describe('<Home />', () => {
     });
   });
 
-  test('Renders Home page', async () => {
+  test.skip('Renders Home page', async () => {
     sdk.get.mockResolvedValueOnce({ data: { items: getMockResponse() } });
     sdk.get.mockResolvedValueOnce({ data: getMockResponse()[0] });
     sdk.datasets.retrieve.mockResolvedValue([]);

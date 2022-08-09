@@ -72,9 +72,9 @@ export const renderWithReactQueryCacheProvider = (
   const wrapper = ({ children }: { children: React.ReactNode }) => {
     return (
       <QueryClientProvider client={client}>
-        {/* <AppEnvProvider cdfEnv={cdfEnv} project={project} origin={origin}> */}
-        {children}
-        {/* </AppEnvProvider> */}
+        <AppEnvProvider cdfEnv={cdfEnv} project={project} origin={origin}>
+          {children}
+        </AppEnvProvider>
       </QueryClientProvider>
     );
   };

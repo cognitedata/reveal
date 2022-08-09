@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { Colors } from '@cognite/cogs.js';
 import { EXT_PIPE_PATH } from 'routing/RoutingConfig';
 import { EXTRACTION_PIPELINES_PATH } from 'utils/baseURL';
-import { createRedirectLink } from 'utils/utils';
+import { createLink } from '@cognite/cdf-utilities';
 
 export const StyledRouterLink = styled((props) => (
   <Link {...props}>{props.children}</Link>
@@ -33,7 +33,7 @@ const Name: FunctionComponent<Props> = ({
     <StyledRouterLink
       id={`extpipe-${name}`}
       to={{
-        pathname: createRedirectLink(
+        pathname: createLink(
           `/${EXTRACTION_PIPELINES_PATH}/${EXT_PIPE_PATH}/${extpipeId}`
         ),
       }}
