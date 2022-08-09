@@ -24,7 +24,11 @@ export class GridConfigService {
   /**
    * Loads default ag-grid gridOptions needed for grid to work
    */
-  getGridConfig(columnTypes?: ColumnTypes, rowNodeId?: string): GridOptions {
+  getGridConfig(
+    theme: string,
+    columnTypes?: ColumnTypes,
+    rowNodeId?: string
+  ): GridOptions {
     const virtualizationDisabled = this.isVirtualizationModeDisabled();
 
     if (columnTypes) {
@@ -34,7 +38,6 @@ export class GridConfigService {
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     return <GridOptions>{
       enableRangeSelection: false,
-      immutableData: true,
       floatingFilter: false,
       stopEditingWhenCellsLoseFocus: false,
       autoSizePadding: 0,
@@ -49,12 +52,11 @@ export class GridConfigService {
       suppressMenuHide: false,
       enableCellExpressions: true,
       suppressAggFuncInHeader: true,
-      getRowNodeId: (data) => (rowNodeId ? data[rowNodeId] : data.id),
       rowHeight: 48,
       headerHeight: 44,
       // a default column definition with properties that get applied to every column
       defaultColDef: {
-        ...this.getColTypeProps('String'),
+        ...this.getColTypeProps('String', theme),
         // make every column editable
         editable: false,
 
@@ -73,7 +75,7 @@ export class GridConfigService {
           }
         },
       },
-      frameworkComponents: {
+      components: {
         checkboxRendererComponent: BoolCellRenderer,
         numberCellEditor: NumberCellEditor,
         listCellRendererComponent: ListCellRenderer,
@@ -86,27 +88,27 @@ export class GridConfigService {
         {
           booleanColType: {
             cellRenderer: 'checkboxRendererComponent',
-            ...this.getColTypeProps('Boolean'),
+            ...this.getColTypeProps('Boolean', theme),
           },
           customColTypes: {
             cellRenderer: 'customRendererComponent',
-            ...this.getColTypeProps('Link'),
+            ...this.getColTypeProps('Link', theme),
           },
           largeTextColType: {
             cellEditor: 'textCellEditor',
-            ...this.getColTypeProps('String'),
+            ...this.getColTypeProps('String', theme),
           },
           listColType: {
             cellRenderer: 'listCellRendererComponent',
-            ...this.getColTypeProps('List'),
+            ...this.getColTypeProps('List', theme),
           },
           numberColType: {
             cellEditor: 'numberCellEditor',
-            ...this.getColTypeProps('Number'),
+            ...this.getColTypeProps('Number', theme),
           },
           decimalColType: {
             cellEditor: 'decimalColType',
-            ...this.getColTypeProps('Number'),
+            ...this.getColTypeProps('Number', theme),
             cellEditorParams: {
               allowDecimals: true,
             },
@@ -143,15 +145,7 @@ export class GridConfigService {
         if (columnConfig.dataType === ColumnDataType.Dynamic) {
           return null;
         }
-        // hide: this.isNotVisibleIfVisibilityRule(attr, context),
-        //   cellEditor: 'inputCellEditorComponent',
-        //   cellClassRules: {
-        //     'cell-editable': `return ${isEditable === true}`,
-        //   },
-        //   cellEditorParams: {
-        //     config: cellEditorParams,
-        //   },
-        //   optional: attr.optional || true,
+
         const isEditable =
           this.isNotEditableIfExpressionOrEditRule(columnConfig);
 
@@ -236,15 +230,6 @@ export class GridConfigService {
       isEditable = false;
     }
 
-    // if (
-    //   this.utils.hasAttributeRuleFromType(
-    //     attr.attributeRules,
-    //     AttributeRuleType.EDIT_RULE,
-    //     context
-    //   )
-    // ) {
-    //   isEditable = false;
-    // }
     return isEditable;
   }
 
@@ -272,7 +257,11 @@ export class GridConfigService {
     });
   }
 
-  private getColTypeProps(iconName: string): ColDef {
+  private getColTypeProps(iconName: string, theme: string): ColDef {
+    if (theme === 'compact') {
+      return {} as ColDef;
+    }
+
     return {
       headerComponent: 'cogCustomHeader',
       headerComponentParams: {

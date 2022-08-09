@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { KeyValueMap } from '@platypus/platypus-core';
 
 export class MemoryStorageService {

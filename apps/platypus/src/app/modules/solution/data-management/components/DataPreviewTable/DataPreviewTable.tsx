@@ -2,11 +2,11 @@ import { CogDataGrid, GridConfig } from '@cognite/cog-data-grid';
 import { ErrorBoundary } from '@platypus-app/components/ErrorBoundary/ErrorBoundary';
 import { FlexPlaceholder } from '@platypus-app/components/Placeholder/FlexPlaceholder';
 import { Spinner } from '@platypus-app/components/Spinner/Spinner';
-import { usePreviewPageData } from '@platypus-app/modules/solution/data-management/hooks/usePreviewPageData';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
+import { usePreviewPageData } from '@platypus-app/modules/solution/data-management/hooks/usePreviewPageData';
 import {
-  DataModelTypeDefsType,
   DataModelTypeDefs,
+  DataModelTypeDefsType,
 } from '@platypus/platypus-core';
 import {
   CellValueChangedEvent,
@@ -15,7 +15,6 @@ import {
   IGetRowsParams,
 } from 'ag-grid-community';
 import { useCallback, useEffect, useState } from 'react';
-
 import {
   buildGridConfig,
   getInitialGridConfig,
@@ -63,7 +62,11 @@ export const DataPreviewTable = ({
   useEffect(() => {
     setGridConfig(buildGridConfig(instanceIdCol, dataModelType));
     setIsGridInit(false);
+
+    // re-init grid config only and only when another type is clicked
+    // eslint-disable-next-line
   }, [dataModelType.name]);
+
   useEffect(() => {
     if (!isGridInit) {
       setIsGridInit(true);

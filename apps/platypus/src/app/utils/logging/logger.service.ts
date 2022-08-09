@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { LogEntry, LogLevel, LogPublisher } from '@platypus/platypus-core';
 
 import { LogPublishersService } from './log-publishers.service';

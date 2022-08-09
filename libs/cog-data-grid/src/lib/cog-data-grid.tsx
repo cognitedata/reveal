@@ -1,21 +1,15 @@
-import './cog-data-grid.module.css';
-import { ColumnTypes, GridConfig, KeyValueMap } from './core/types';
-import { AgGridReact } from 'ag-grid-react';
-import { useEffect, useState, forwardRef, ForwardedRef } from 'react';
-import {
-  CellValueChangedEvent,
-  ColDef,
-  ColGroupDef,
-  GridOptions,
-  GridReadyEvent,
-} from 'ag-grid-community';
-import { gridConfigService } from './core/services/grid-config.service';
 import { Icon } from '@cognite/cogs.js';
-
-import { CogDataGridStyled } from './cog-data-grid-styled';
+import { ColDef, ColGroupDef, GridOptions } from 'ag-grid-community';
+import { AgGridReact, AgGridReactProps } from 'ag-grid-react';
+import { ForwardedRef, forwardRef, useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
+import { CogDataGridStyled } from './cog-data-grid-styled';
+import './cog-data-grid.module.css';
+import { gridConfigService } from './core/services/grid-config.service';
+import { ColumnTypes, GridConfig, KeyValueMap } from './core/types';
 
-export interface CogDataGridProps {
+export interface CogDataGridProps extends AgGridReactProps {
+  theme?: 'default' | 'compact';
   data?: KeyValueMap[];
   config: GridConfig;
   /** An object map of custom column types which contain groups of properties that column definitions can inherit by referencing in their `type` property. */
@@ -23,8 +17,6 @@ export interface CogDataGridProps {
   gridOptions?: GridOptions;
   rowNodeId?: string;
   children?: any;
-  onCellValueChanged?: (e: CellValueChangedEvent) => void;
-  onGridReady?: (e: GridReadyEvent) => void;
 }
 
 export const CogDataGrid = forwardRef<AgGridReact, CogDataGridProps>(
@@ -33,35 +25,46 @@ export const CogDataGrid = forwardRef<AgGridReact, CogDataGridProps>(
     const [colDefs, setColDefs] = useState<(ColDef | ColGroupDef)[]>([]);
     const [gridOptions, setGridOptions] = useState<GridOptions>({});
 
+    const theme = props.theme || 'default';
+
     useEffect(() => {
-      if (!isGridInit) {
-        const agGridOptions = Object.assign(
-          gridConfigService.getGridConfig(props.columnTypes, props.rowNodeId),
-          props.gridOptions || {}
-        );
+      const agGridOptions = Object.assign(
+        gridConfigService.getGridConfig(
+          theme,
+          props.columnTypes,
+          props.rowNodeId
+        ),
+        props.gridOptions || {}
+      ) as GridOptions;
 
-        if (props.onCellValueChanged) {
-          agGridOptions.onCellValueChanged = props.onCellValueChanged;
-        }
-        if (props.onGridReady) {
-          agGridOptions.onGridReady = props.onGridReady;
-        }
-
-        const generatedColDefs = gridConfigService.buildColDefs(props.config);
-        setGridOptions(agGridOptions);
-        setColDefs(generatedColDefs as any);
-        setIsGridInit(true);
+      if (props.rowNodeId && !props.getRowId) {
+        agGridOptions.getRowNodeId = (data) =>
+          props.rowNodeId ? data[props.rowNodeId] : data.id;
       }
-    }, [isGridInit, props.config]);
+
+      Object.keys(props).forEach((key: string) => {
+        if (!['config', 'data', 'columnTypes', 'theme'].includes(key)) {
+          (agGridOptions as any)[key] = (props as any)[key];
+        }
+      });
+
+      const generatedColDefs = gridConfigService.buildColDefs(props.config);
+      setGridOptions(agGridOptions);
+      setColDefs(generatedColDefs as any);
+      setIsGridInit(true);
+
+      // re-generate colDefs every time config is changed
+      // eslint-disable-next-line
+    }, [props.config]);
 
     if (!isGridInit) {
       return <div>Loading...</div>;
     }
 
-    const gridProps = props.data ? { rowData: props.data } : {};
+    const gridProps = props.rowData || { rowData: props.data || [] };
 
     return (
-      <CogDataGridStyled>
+      <CogDataGridStyled theme={theme}>
         <AgGridReact
           // components={components}
           ref={ref}
@@ -79,6 +82,7 @@ export const CogDataGrid = forwardRef<AgGridReact, CogDataGridProps>(
               return domNode;
             },
           }}
+          {...gridOptions}
           {...gridProps}
           // rowData={props.data}
         >

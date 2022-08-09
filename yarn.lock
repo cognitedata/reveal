@@ -7583,17 +7583,17 @@ adjust-sourcemap-loader@3.0.0:
     loader-utils "^2.0.0"
     regex-parser "^2.2.11"
 
-ag-grid-community@^26.1.0:
-  version "26.1.0"
-  resolved "https://registry.npmjs.org/ag-grid-community/-/ag-grid-community-26.1.0.tgz"
-  integrity sha512-vGnbiaxN6TxsDGcC2uIOrgjx+zwXlBK99aYiWcuiyzSPvNpz1fG29nSNx/fMeVRzc3FOru8h8vvk41vszh5AMg==
+ag-grid-community@^28.1.0:
+  version "28.1.0"
+  resolved "https://registry.yarnpkg.com/ag-grid-community/-/ag-grid-community-28.1.0.tgz#a7b6f1c219d6fb7f777aaf39dd04639eb94f4bea"
+  integrity sha512-iCrdRWImvj6pOKaRQXdaPfZ0EI4fCQgTVv5PiCP9otbDPQBxyxjFVn+jEoV0umOqpqPAMoDIbG9poKyWuHl/EA==
 
-ag-grid-react@^26.1.0:
-  version "26.1.0"
-  resolved "https://registry.npmjs.org/ag-grid-react/-/ag-grid-react-26.1.0.tgz"
-  integrity sha512-W+NTwpbCbMUCYadqn7GFPi+zWzU5UBklVPoKxjx3BkFIa/63Mb0dLm/ynr/hLIRVQCZriUBlHPFU7QrZJXptLg==
+ag-grid-react@^28.1.0:
+  version "28.1.0"
+  resolved "https://registry.yarnpkg.com/ag-grid-react/-/ag-grid-react-28.1.0.tgz#4119e236af63a0ded5f87714cfec1b6635c7d2e9"
+  integrity sha512-4Z/7T5kYKWqUhDrSY6bgseiKLiuMwjG4zHYIVtZwGwma7hb5e2CYwDdnfoWKArR6a7TzF86JiRpzd2WlLaARdQ==
   dependencies:
-    prop-types "^15.6.2"
+    prop-types "^15.8.1"
 
 agent-base@6:
   version "6.0.2"
@@ -20771,6 +20771,15 @@ prop-types@15, prop-types@15.x, prop-types@^15.0.0, prop-types@^15.5.10, prop-ty
     object-assign "^4.1.1"
     react-is "^16.8.1"
 
+prop-types@^15.8.1:
+  version "15.8.1"
+  resolved "https://registry.yarnpkg.com/prop-types/-/prop-types-15.8.1.tgz#67d87bf1a694f48435cf332c24af10214a3140b5"
+  integrity sha512-oj87CgZICdulUohogVAR7AjlC0327U4el4L6eAvOqCeudMDVU0NThNaV+b9Df4dXgSP1gXMTnPdhfe/2qDH5cg==
+  dependencies:
+    loose-envify "^1.4.0"
+    object-assign "^4.1.1"
+    react-is "^16.13.1"
+
 property-information@^5.0.0, property-information@^5.3.0:
   version "5.6.0"
   resolved "https://registry.npmjs.org/property-information/-/property-information-5.6.0.tgz"
@@ -21765,7 +21774,7 @@ react-is@17.0.2, react-is@^17.0.1, react-is@^17.0.2:
   resolved "https://registry.npmjs.org/react-is/-/react-is-17.0.2.tgz"
   integrity sha512-w2GsyukL62IJnlaff/nRegPQR94C/XXamvMWmSHRJ4y7Ts/4ocGRmTHvOs8PSE6pB3dWOrD/nueuU5sduBsQ4w==
 
-react-is@^16.12.0, react-is@^16.6.0, react-is@^16.7.0, react-is@^16.8.1:
+react-is@^16.12.0, react-is@^16.13.1, react-is@^16.6.0, react-is@^16.7.0, react-is@^16.8.1:
   version "16.13.1"
   resolved "https://registry.npmjs.org/react-is/-/react-is-16.13.1.tgz"
   integrity sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==

@@ -43,6 +43,7 @@ function asDisposable(disposables: IDisposable[]): IDisposable {
 
 function disposeAll(disposables: IDisposable[]) {
   while (disposables.length) {
+    // eslint-disable-next-line
     disposables.pop()!.dispose();
   }
 }

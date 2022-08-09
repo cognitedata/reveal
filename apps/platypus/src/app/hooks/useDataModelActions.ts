@@ -118,6 +118,7 @@ export const useDataModelTypeDefs = (
       );
 
       return dataModelTypeDefs;
+      // eslint-disable-next-line
     } catch (err: any) {
       errorLogger.log(err);
       Notification({ type: 'error', message: err.message });

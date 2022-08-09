@@ -5,7 +5,7 @@ import {
   GroupTitle,
   Group,
 } from '@platypus-app/components/Styles/storybook';
-import { CogDataGrid } from '@cognite/cog-data-grid';
+import { CogDataGrid, GridConfig } from '@cognite/cog-data-grid';
 import { useState } from 'react';
 import { TypeList } from '../components/TypeList/TypeList';
 
@@ -124,7 +124,7 @@ const configMock = {
   ],
   customFunctions: [],
   dataSources: [],
-};
+} as GridConfig;
 
 const responseMock = [
   {
