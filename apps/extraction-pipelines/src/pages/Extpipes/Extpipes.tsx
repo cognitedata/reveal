@@ -6,9 +6,11 @@ import NoExtpipes from 'components/error/NoExtpipes';
 import { Button, Loader, Modal } from '@cognite/cogs.js';
 import { ErrorFeedback } from 'components/error/ErrorFeedback';
 import ExtractorDownloadsLink from 'components/links/ExtractorDownloadsLink';
-import { MainFullWidthGrid } from 'styles/grid/StyledGrid';
-import { useAppEnv } from 'hooks/useAppEnv';
-import { LinkWrapper } from 'styles/StyledLinks';
+import {
+  MainFullWidthGrid,
+  LinkWrapper,
+  StyledTooltip,
+} from 'components/styled';
 import { ExtPipesBreadcrumbs } from 'components/navigation/breadcrumbs/ExtPipesBreadcrumbs';
 import { CapabilityCheck } from 'components/accessCheck/CapabilityCheck';
 import { EXTPIPES_READS, EXTPIPES_WRITES } from 'model/AclAction';
@@ -16,11 +18,12 @@ import ExtpipesTable from 'components/table/ExtpipesTable';
 import { extpipeTableColumns } from 'components/table/ExtpipeTableCol';
 import { useOneOfPermissions } from 'hooks/useOneOfPermissions';
 import styled from 'styled-components';
-import { ids } from 'cogs-variables';
+import { getContainer } from 'utils/utils';
+import { styleScope } from 'styles/styleScope';
 import { CreateExtpipe } from 'pages/create/CreateExtpipe';
-import { StyledTooltip } from 'styles/StyledToolTip';
 
 import { trackUsage } from 'utils/Metrics';
+import { getProject } from '@cognite/cdf-utilities';
 
 export const LEARNING_AND_RESOURCES_URL: Readonly<string> =
   'https://docs.cognite.com/cdf/integration/guides/interfaces/about_integrations.html';
@@ -29,16 +32,16 @@ const VerticalSpace = styled.div`
   height: 16px;
 `;
 const CreateExtpipeModal = (props: { visible: boolean; close: () => void }) => {
+  debugger;
+
   return (
     <Modal
       visible={props.visible}
       width={600}
       closable
       onCancel={props.close}
-      appElement={document.getElementsByClassName(ids.styleScope).item(0)!}
-      getContainer={() =>
-        document.getElementsByClassName(ids.styleScope).item(0) as any
-      }
+      appElement={document.getElementsByClassName(styleScope).item(0)!}
+      getContainer={getContainer}
       footer={null}
       title="Create extraction pipeline"
     >
@@ -53,7 +56,7 @@ interface OwnProps {}
 type Props = OwnProps;
 
 const Extpipes: FunctionComponent<Props> = () => {
-  const { project } = useAppEnv();
+  const project = getProject();
   useEffect(() => {
     trackUsage({ t: 'Overview', tenant: project! });
   }, [project]);

@@ -1,7 +1,7 @@
 import React, { FunctionComponent, PropsWithChildren } from 'react';
 import { Colors, Icon } from '@cognite/cogs.js';
 import styled from 'styled-components';
-import { StyledTitle2 } from 'styles/StyledHeadings';
+import { StyledTitle2 } from 'components/styled';
 
 const Wrapper = styled.div`
   padding: 2rem;

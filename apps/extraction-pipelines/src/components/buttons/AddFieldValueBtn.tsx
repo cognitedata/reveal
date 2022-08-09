@@ -1,5 +1,5 @@
 import React, { PropsWithChildren } from 'react';
-import { EditButton } from 'styles/StyledButton';
+import { EditButton } from 'components/styled';
 import { AddFieldInfoText } from 'components/message/AddFieldInfoText';
 import { greyscaleGrey } from 'components/navigation/breadcrumbs/Breadcrumbs';
 import styled from 'styled-components';

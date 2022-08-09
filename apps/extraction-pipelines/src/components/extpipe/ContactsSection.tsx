@@ -1,6 +1,5 @@
 import React, { FunctionComponent, useState } from 'react';
 import { TableHeadings } from 'components/table/ExtpipeTableCol';
-import { useAppEnv } from 'hooks/useAppEnv';
 import { useSelectedExtpipe } from 'hooks/useSelectedExtpipe';
 import { useExtpipeById } from 'hooks/useExtpipe';
 import { User } from 'model/User';
@@ -10,6 +9,7 @@ import { ContactsDialog, isOwnerRole } from 'components/extpipe/ContactsDialog';
 import styled from 'styled-components';
 import { Section } from 'components/extpipe/Section';
 import { Icon } from '@cognite/cogs.js';
+import { getProject } from '@cognite/cdf-utilities';
 
 const Wrapper = styled.div``;
 
@@ -26,7 +26,7 @@ interface ContactsViewProps {
 export const ContactsSection: FunctionComponent<ContactsViewProps> = ({
   canEdit,
 }) => {
-  const { project } = useAppEnv();
+  const project = getProject();
   const { extpipe: selected } = useSelectedExtpipe();
   const { data: extpipe } = useExtpipeById(selected?.id);
   const [showModal, setShowModal] = useState(false);

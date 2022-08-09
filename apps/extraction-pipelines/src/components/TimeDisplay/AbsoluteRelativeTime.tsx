@@ -6,7 +6,9 @@ interface AbsoluteRelativeTimeProps
     Pick<TimeDisplayProps, 'value'> {
   noValueMessage?: string;
 }
-export const AbsoluteRelativeTime: FunctionComponent<AbsoluteRelativeTimeProps> = ({
+export const AbsoluteRelativeTime: FunctionComponent<
+  AbsoluteRelativeTimeProps
+> = ({
   value,
   noValueMessage = '',
   ...rest

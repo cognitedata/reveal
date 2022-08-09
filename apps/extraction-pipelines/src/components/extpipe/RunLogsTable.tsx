@@ -13,7 +13,7 @@ import {
 import styled from 'styled-components';
 import { Graphic, OptionType, Pagination, Select } from '@cognite/cogs.js';
 import { RunUI } from 'model/Runs';
-import { DivFlex } from 'styles/flex/StyledFlex';
+import { DivFlex } from 'components/styled';
 import { Extpipe } from 'model/Extpipe';
 import { calculateStatus } from 'utils/extpipeUtils';
 import { RunStatusUI } from 'model/Status';
@@ -190,7 +190,6 @@ export const RunLogsTable: FunctionComponent<LogsTableProps> = ({
       <DivFlex align="center" justify="space-between">
         <Pagination
           current={pageIndex + 1}
-          defaultCurrent={pageIndex + 1}
           total={rows.length}
           pageSize={pageSize}
           onChange={paginationChanged}

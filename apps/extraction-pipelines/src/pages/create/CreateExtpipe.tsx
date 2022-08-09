@@ -11,8 +11,12 @@ import {
   NAME_HINT,
 } from 'utils/constants';
 import { RegisterExtpipeLayout } from 'components/layout/RegisterExtpipeLayout';
-import { CreateFormWrapper } from 'styles/StyledForm';
-import { ButtonPlaced } from 'styles/StyledButton';
+import {
+  ButtonPlaced,
+  CreateFormWrapper,
+  InfoIcon,
+  PriSecBtnWrapper,
+} from 'components/styled';
 import * as yup from 'yup';
 import { FieldValues, FormProvider, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -20,7 +24,6 @@ import { FullInput } from 'components/inputs/FullInput';
 import { usePostExtpipe } from 'hooks/usePostExtpipe';
 import styled from 'styled-components';
 import { Button, Colors, Modal } from '@cognite/cogs.js';
-import { PriSecBtnWrapper } from 'styles/StyledWrapper';
 import {
   dataSetIdRule,
   descriptionRule,
@@ -38,13 +41,12 @@ import { EXT_PIPE_PATH } from 'routing/RoutingConfig';
 import { translateServerErrorMessage } from 'utils/error/TranslateErrorMessages';
 import { ExtpipeRawTable } from 'model/Extpipe';
 import { User } from 'model/User';
-import { InfoIcon } from 'styles/StyledIcon';
 import { createAddExtpipeInfo } from 'utils/extpipeUtils';
 import { EXTPIPES_WRITES } from 'model/AclAction';
 import { CapabilityCheck } from 'components/accessCheck/CapabilityCheck';
-import { ids } from 'cogs-variables';
 import { trackUsage } from 'utils/Metrics';
-import { createRedirectLink } from 'utils/utils';
+import { createRedirectLink, getContainer } from 'utils/utils';
+import { styleScope } from 'styles/styleScope';
 
 const InfoMessage = styled.span`
   display: flex;
@@ -105,9 +107,8 @@ export const CreateExtpipe = (props: { customCancelCallback?: () => void }) => {
   const location = useLocation();
   const dataSetIdFromLocation = findDataSetId(location.search);
   const { data: userInfo } = useUserInformation();
-  const { data: dataSets, status: dataSetsStatus } = useDataSetsList(
-    DATASET_LIST_LIMIT
-  );
+  const { data: dataSets, status: dataSetsStatus } =
+    useDataSetsList(DATASET_LIST_LIMIT);
   const { mutate } = usePostExtpipe();
   const methods = useForm<AddExtpipeFormInput>({
     resolver: yupResolver(pageSchema),
@@ -148,10 +149,11 @@ export const CreateExtpipe = (props: { customCancelCallback?: () => void }) => {
           history.push(createExtPipePath(`/${EXT_PIPE_PATH}/${newExtpipeId}`));
         },
         onError: (errorRes, variables) => {
-          const serverErrorMessage = translateServerErrorMessage<AddExtpipeFormInput>(
-            errorRes?.data,
-            variables.extpipeInfo
-          );
+          const serverErrorMessage =
+            translateServerErrorMessage<AddExtpipeFormInput>(
+              errorRes?.data,
+              variables.extpipeInfo
+            );
           trackUsage({
             t: 'Create.Rejected',
             error: serverErrorMessage.message,
@@ -171,7 +173,6 @@ export const CreateExtpipe = (props: { customCancelCallback?: () => void }) => {
             setError('server', {
               type: 'server',
               message: serverErrorMessage.message,
-              shouldFocus: true,
             });
           }
         },
@@ -280,6 +281,8 @@ export default function CreateExtpipePage() {
   useEffect(() => {
     trackUsage({ t: 'Create.CreatePageLoaded' });
   }, []);
+
+  debugger;
   return (
     <RegisterExtpipeLayout>
       <CapabilityCheck requiredPermissions={EXTPIPES_WRITES}>
@@ -288,10 +291,8 @@ export default function CreateExtpipePage() {
           width={600}
           closable={false}
           closeIcon={false}
-          appElement={document.getElementsByClassName(ids.styleScope).item(0)!}
-          getContainer={() =>
-            document.getElementsByClassName(ids.styleScope).item(0) as any
-          }
+          appElement={document.getElementsByClassName(styleScope).item(0)!}
+          getContainer={getContainer}
           footer={null}
           title="Create extraction pipeline"
         >
@@ -301,3 +302,5 @@ export default function CreateExtpipePage() {
     </RegisterExtpipeLayout>
   );
 }
+
+debugger;

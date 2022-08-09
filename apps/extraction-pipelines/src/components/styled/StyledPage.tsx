@@ -1,10 +1,11 @@
 import styled from 'styled-components';
 import { Colors } from '@cognite/cogs.js';
 import {
-  mainContentSpaceAround,
-  mainContentSpaceSides,
-} from 'styles/StyledVariables';
-import { MainFullWidthGrid, Span3 } from 'styles/grid/StyledGrid';
+  // mainContentSpaceAround,
+  // mainContentSpaceSides,
+  MainFullWidthGrid,
+  Span3,
+} from 'components/styled';
 
 export const PageWrapper = styled.div`
   flex: 1;
@@ -28,7 +29,7 @@ export const PageWrapper = styled.div`
 
 export const MainWithAsidesWrapper = styled(MainFullWidthGrid)`
   grid-area: main;
-  padding: ${mainContentSpaceAround};
+  padding: 1rem 2rem;
   display: grid;
   grid-template-columns: 1fr 3fr 1fr;
   grid-template-rows: min-content min-content min-content auto;
@@ -55,7 +56,7 @@ export const PageWrapperColumn = styled.div`
   display: flex;
   gap: 1rem;
   flex-direction: column;
-  padding: 0 ${mainContentSpaceSides};
+  padding: 0 2rem;
   scroll-behavior: smooth;
   background-color: ${Colors['greyscale-grey1'].hex()};
 `;

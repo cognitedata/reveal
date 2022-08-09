@@ -1,13 +1,13 @@
 import { useQuery } from 'react-query';
-import { useAppEnv } from 'hooks/useAppEnv';
+import { useSDK } from '@cognite/sdk-provider';
+import { getProject } from '@cognite/cdf-utilities';
 import { getExtpipeById } from 'utils/ExtpipesAPI';
 import { Extpipe } from 'model/Extpipe';
 import { SDKError } from 'model/SDKErrors';
-import { useSDK } from '@cognite/sdk-provider';
 
 export const useExtpipeById = (extpipeId?: number) => {
   const sdk = useSDK();
-  const { project } = useAppEnv();
+  const project = getProject();
   return useQuery<Extpipe, SDKError>(
     ['extpipe', extpipeId, project],
     () => {

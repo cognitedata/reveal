@@ -11,7 +11,7 @@ import { Extpipe } from 'model/Extpipe';
 import { RunLogsTable } from 'components/extpipe/RunLogsTable';
 import { getRunLogTableCol } from 'components/extpipe/RunLogsCols';
 import { ErrorFeedback } from 'components/error/ErrorFeedback';
-import { PageWrapperColumn } from 'styles/StyledPage';
+import { PageWrapperColumn, Span3 } from 'components/styled';
 import { DebouncedSearch } from 'components/inputs/DebouncedSearch';
 import { DateRangeFilter } from 'components/inputs/dateTime/DateRangeFilter';
 import { Colors, Loader } from '@cognite/cogs.js';
@@ -32,7 +32,6 @@ import {
   DateFormatsRecord,
   mapRangeToGraphTimeFormat,
 } from 'components/chart/runChartUtils';
-import { Span3 } from 'styles/grid/StyledGrid';
 import { useFlag } from '@cognite/react-feature-flags';
 import { ErrorBox } from 'components/error/ErrorBox';
 import { SectionWithoutHeader } from 'components/extpipe/Section';

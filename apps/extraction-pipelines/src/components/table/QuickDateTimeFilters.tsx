@@ -1,7 +1,7 @@
 import React, { FunctionComponent, useEffect, useState } from 'react';
 import { Colors, Range } from '@cognite/cogs.js';
 import moment from 'moment';
-import { DivFlex } from 'styles/flex/StyledFlex';
+import { DivFlex } from 'components/styled';
 import styled from 'styled-components';
 import {
   updateDateRangeAction,
@@ -68,7 +68,9 @@ interface QuickDateTimeFiltersProps {}
 export interface QuickFilterType extends Range {
   label: string;
 }
-export const QuickDateTimeFilters: FunctionComponent<QuickDateTimeFiltersProps> = () => {
+export const QuickDateTimeFilters: FunctionComponent<
+  QuickDateTimeFiltersProps
+> = () => {
   const {
     state: { dateRange },
     dispatch,

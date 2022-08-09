@@ -43,9 +43,9 @@ interface GroupByParams {
   by: AllDateFormats;
 }
 
-export const creatTimeFormatterBy = (format: AllDateFormats) => (
-  milliseconds: number
-) => moment(milliseconds).format(format);
+export const creatTimeFormatterBy =
+  (format: AllDateFormats) => (milliseconds: number) =>
+    moment(milliseconds).format(format);
 
 type RunGroupedByDate = { [key in string]: RunUI[] };
 export const groupRunsByDate = ({ data, by }: GroupByParams) => {

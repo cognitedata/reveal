@@ -1,4 +1,4 @@
-import { StyledDropdown } from 'styles/StyledDropdown';
+import { StyledDropdown } from 'components/styled';
 import { Badge, Button, Colors, Menu } from '@cognite/cogs.js';
 import { TableHeadings } from 'components/table/ExtpipeTableCol';
 import React, { PropsWithoutRef } from 'react';

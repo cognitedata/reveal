@@ -1,6 +1,6 @@
 import React from 'react';
-import { StyledLabel } from 'styles/StyledForm';
-import { DivFlex } from 'styles/flex/StyledFlex';
+import { StyledLabel } from 'components/styled';
+import { DivFlex } from 'components/styled';
 import { isUrl, uppercaseFirstWord } from 'utils/primitivesUtils';
 
 interface MetaFieldProps {

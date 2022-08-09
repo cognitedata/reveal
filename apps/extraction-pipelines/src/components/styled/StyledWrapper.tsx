@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import React from 'react';
-import { DivFlex } from 'styles/flex/StyledFlex';
+import { DivFlex } from 'components/styled';
 
 export const WrapperMargin = styled.div`
   margin: 1rem;

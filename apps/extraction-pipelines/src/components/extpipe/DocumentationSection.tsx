@@ -1,38 +1,41 @@
 import React, { FunctionComponent, useState } from 'react';
-import { Hint, StyledTextArea } from 'styles/StyledForm';
 import styled from 'styled-components';
-import { bottomSpacing } from 'styles/StyledVariables';
 import {
   ContactBtnTestIds,
   DOCUMENTATION_HINT,
   SERVER_ERROR_CONTENT,
   SERVER_ERROR_TITLE,
 } from 'utils/constants';
-import { useForm } from 'react-hook-form';
+import { FieldErrors, useForm } from 'react-hook-form';
 import ValidationError from 'components/form/ValidationError';
 import { useSelectedExtpipe } from 'hooks/useSelectedExtpipe';
 import {
   createUpdateSpec,
   useDetailsUpdate,
 } from 'hooks/details/useDetailsUpdate';
-import { useAppEnv } from 'hooks/useAppEnv';
 import { useExtpipeById } from 'hooks/useExtpipe';
 import {
   documentationSchema,
   MAX_DOCUMENTATION_LENGTH,
 } from 'utils/validation/extpipeSchemas';
-import { CountSpan } from 'styles/StyledWrapper';
 import MessageDialog from 'components/buttons/MessageDialog';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { EditButton } from 'styles/StyledButton';
+import {
+  bottomSpacing,
+  CountSpan,
+  DivFlex,
+  EditButton,
+  Hint,
+  StyledTextArea,
+} from 'components/styled';
 import { DetailFieldNames } from 'model/Extpipe';
 import { MarkdownView } from 'components/markDown/MarkdownView';
 import { AddFieldInfoText } from 'components/message/AddFieldInfoText';
 import { Button, Graphic } from '@cognite/cogs.js';
 import { Section } from 'components/extpipe/Section';
-import { DivFlex } from 'styles/flex/StyledFlex';
 import { trackUsage } from 'utils/Metrics';
 import { ExternalLink } from 'components/links/ExternalLink';
+import { getProject } from '@cognite/cdf-utilities';
 
 const DocumentationForm = styled.form`
   padding: 0 1rem;
@@ -69,10 +72,10 @@ interface DocumentationSectionProps {
 
 type Fields = { documentation: string; server: string };
 
-export const DocumentationSection: FunctionComponent<DocumentationSectionProps> = ({
-  canEdit,
-}) => {
-  const { project } = useAppEnv();
+export const DocumentationSection: FunctionComponent<
+  DocumentationSectionProps
+> = ({ canEdit }) => {
+  const project = getProject();
   const [isEdit, setEdit] = useState(false);
   const { extpipe } = useSelectedExtpipe();
   const { data: currentExtpipe } = useExtpipeById(extpipe?.id);
@@ -110,6 +113,7 @@ export const DocumentationSection: FunctionComponent<DocumentationSectionProps> 
           setError('server', {
             type: 'server',
             message: error.data?.message,
+            // @ts-ignore
             shouldFocus: true,
           });
         },
@@ -179,7 +183,7 @@ export const DocumentationSection: FunctionComponent<DocumentationSectionProps> 
   const whenEditing = (
     <>
       <Hint className="hint">{DOCUMENTATION_HINT}</Hint>
-      <ValidationError errors={errors} name="documentation" />
+      <ValidationError errors={errors as FieldErrors} name="documentation" />
       <StyledTextArea
         id="documentation-textarea"
         data-testid="documentation-textarea"

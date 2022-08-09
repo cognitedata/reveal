@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { Colors, Icons } from '@cognite/cogs.js';
-import { StyledTooltip } from 'styles/StyledToolTip';
+import { Colors, Icon } from '@cognite/cogs.js';
+import { StyledTooltip } from 'components/styled';
 
 import { trackUsage } from 'utils/Metrics';
 
@@ -19,7 +19,7 @@ interface InteractiveCopyProps {
   text: string;
   copyType: CopyType;
   showTextInTooltip: boolean;
-  // eslint-disable-next-line react/require-default-props
+  // eslint-disable-next-line
   onCopy?: () => void;
 }
 
@@ -68,7 +68,7 @@ const InteractiveCopy = ({
         }}
         data-testid="interactive-copy"
       >
-        {hasCopied ? <Icons.Checkmark /> : <Icons.Copy />}
+        {hasCopied ? <Icon type="Checkmark" /> : <Icon type="Copy" />}
       </IconWrapper>
     </StyledTooltip>
   );

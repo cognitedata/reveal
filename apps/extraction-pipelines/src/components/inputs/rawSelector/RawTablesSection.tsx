@@ -4,7 +4,7 @@ import { RawEditModal } from 'components/modals/RawEditModal';
 import { TEST_ID_BTN_SAVE } from 'components/extpipe/DocumentationSection';
 import { useSelectedExtpipe } from 'hooks/useSelectedExtpipe';
 import { useExtpipeById } from 'hooks/useExtpipe';
-import { DivFlex } from 'styles/flex/StyledFlex';
+import { DivFlex } from 'components/styled';
 import { Icon } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { AddFieldValueBtn } from 'components/buttons/AddFieldValueBtn';

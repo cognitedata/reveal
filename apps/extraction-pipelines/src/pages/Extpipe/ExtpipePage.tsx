@@ -27,7 +27,6 @@ import styled from 'styled-components';
 import { FullPageLayout } from 'components/layout/FullPageLayout';
 import { useExtpipeById } from 'hooks/useExtpipe';
 import { useSelectedExtpipe } from 'hooks/useSelectedExtpipe';
-import { useAppEnv } from 'hooks/useAppEnv';
 import { ExtpipeDetails } from 'components/extpipe/ExtpipeDetails';
 import { HEALTH_PATH, RouterParams } from 'routing/RoutingConfig';
 import {
@@ -36,10 +35,9 @@ import {
 } from 'utils/constants';
 import { ExtpipeRunHistory } from 'components/extpipe/ExtpipeRunHistory';
 import { ExtpipeHeading } from 'components/extpipe/ExtpipeHeading';
-import { LinkWrapper } from 'styles/StyledLinks';
+import { DivFlex, LinkWrapper, Span3 } from 'components/styled';
 import { RunFilterProvider } from 'hooks/runs/RunsFilterContext';
 import { ExtpipeBreadcrumbs } from 'components/navigation/breadcrumbs/ExtpipeBreadcrumbs';
-import { Span3 } from 'styles/grid/StyledGrid';
 import { CapabilityCheck } from 'components/accessCheck/CapabilityCheck';
 import { EXTPIPES_READS } from 'model/AclAction';
 import { createExtPipePath } from 'utils/baseURL';
@@ -47,7 +45,7 @@ import { useQueryClient } from 'react-query';
 import { deleteExtractionPipeline } from 'utils/ExtpipesAPI';
 import { ErrorBox } from 'components/error/ErrorBox';
 import { EditModal } from 'components/modals/EditModal';
-import { DivFlex } from 'styles/flex/StyledFlex';
+import { getProject } from '@cognite/cdf-utilities';
 
 const PageNav = styled.ul`
   ${Span3};
@@ -144,12 +142,12 @@ const DeleteDialog: FunctionComponent<DeleteDialogProps> = ({
   );
 };
 
-const ExtpipePage: FunctionComponent<ExtpipePageProps> = () => {
+const ExtpipePageComponent: FunctionComponent<ExtpipePageProps> = () => {
   const { search } = useLocation();
   const { path, url } = useRouteMatch();
   const { id } = useParams<RouterParams>();
   const history = useHistory();
-  const { project } = useAppEnv();
+  const project = getProject();
   const queryClient = useQueryClient();
   const { setExtpipe } = useSelectedExtpipe();
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
@@ -302,11 +300,13 @@ const ExtpipePage: FunctionComponent<ExtpipePageProps> = () => {
   );
 };
 
-export default () => (
+const ExtpipePage = () => (
   <CapabilityCheck
     requiredPermissions={EXTPIPES_READS}
     topLevelHeading="Extraction pipeline"
   >
-    <ExtpipePage />
+    <ExtpipePageComponent />
   </CapabilityCheck>
 );
+
+export default ExtpipePage;

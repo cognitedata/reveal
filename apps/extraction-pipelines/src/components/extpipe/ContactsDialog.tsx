@@ -1,4 +1,5 @@
 import React, { FunctionComponent, useState } from 'react';
+import { getProject } from '@cognite/cdf-utilities';
 import { useSelectedExtpipe } from 'hooks/useSelectedExtpipe';
 import { useExtpipeById } from 'hooks/useExtpipe';
 import styled from 'styled-components';
@@ -9,16 +10,13 @@ import {
   NOTIFICATION_LABEL,
   ROLE_LABEL,
 } from 'utils/constants';
-import { Hint } from 'styles/StyledForm';
+import { StyledTableNoRowColor2, Grid, Hint } from 'components/styled';
 import { User } from 'model/User';
-import { Grid } from 'styles/grid/StyledGrid';
-import { StyledTableNoRowColor2 } from 'styles/StyledTable';
 import { Button, Input, Switch } from '@cognite/cogs.js';
 import {
   createUpdateSpec,
   useDetailsUpdate,
 } from 'hooks/details/useDetailsUpdate';
-import { useAppEnv } from 'hooks/useAppEnv';
 import { ErrorMessage } from 'components/error/ErrorMessage';
 import { InfoBox } from 'components/message/InfoBox';
 
@@ -49,7 +47,7 @@ export const ContactsDialog: FunctionComponent<ContactsSectionProps> = ({
 }) => {
   const { extpipe } = useSelectedExtpipe();
   const { data: current } = useExtpipeById(extpipe?.id);
-  const { project } = useAppEnv();
+  const project = getProject();
   const { mutate } = useDetailsUpdate();
   const [showErrors, setShowErrors] = useState(false);
   const onConfirm = async (updatedContacts: User[]) => {
@@ -164,14 +162,16 @@ export const ContactsDialogView = ({
           <tbody>
             {contacts.map((contact, index) => {
               return (
-                <tr className="row-style-even row-height-4">
+                <tr className="row-style-even row-height-4" key={index}>
                   <td>
                     <Input
                       fullWidth
                       placeholder="E.g. Data engineer"
                       disabled={index === 0 && contact.role === 'Owner'}
                       value={contact.role}
-                      onChange={(ev) => onEdit(index, 'role', ev.target.value)}
+                      onChange={(ev: any) =>
+                        onEdit(index, 'role', ev.target.value)
+                      }
                     />
                   </td>
                   <td>

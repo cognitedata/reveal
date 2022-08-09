@@ -1,6 +1,6 @@
 import React, { FunctionComponent, PropsWithChildren, useState } from 'react';
 import { FieldWrapper } from 'components/extpipe/fields/FieldVerticalDisplay';
-import { StyledLabel } from 'styles/StyledForm';
+import { StyledLabel } from 'components/styled';
 import { AddFieldValueBtn } from 'components/buttons/AddFieldValueBtn';
 import {
   minutesToUnit,
@@ -24,10 +24,9 @@ function renderTime(minutes: number) {
   );
 }
 
-export const NotificationSection: FunctionComponent<NotificationSectionProps> = ({
-  canEdit,
-  extpipe,
-}: PropsWithChildren<NotificationSectionProps>) => {
+export const NotificationSection: FunctionComponent<
+  NotificationSectionProps
+> = ({ canEdit, extpipe }: PropsWithChildren<NotificationSectionProps>) => {
   const [open, setOpen] = useState(false);
   const openDialog = () => setOpen(true);
   return (

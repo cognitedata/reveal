@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { CenterFullVH } from 'styles/StyledWrapper';
+import { CenterFullVH } from 'components/styled';
 import { Button, Icon, Title } from '@cognite/cogs.js';
 import { ErrorObj, ErrorVariations } from 'model/SDKErrors';
 

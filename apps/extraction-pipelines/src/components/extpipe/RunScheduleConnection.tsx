@@ -8,7 +8,7 @@ import {
   CardValue,
   CardWrapper,
   StyledTitleCard,
-} from 'styles/StyledCard';
+} from 'components/styled';
 import { TableHeadings } from 'components/table/ExtpipeTableCol';
 import {
   addIfExist,

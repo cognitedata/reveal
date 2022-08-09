@@ -4,7 +4,7 @@ import { useParams } from 'react-router';
 import { useSelectedExtpipe } from 'hooks/useSelectedExtpipe';
 import { RouterParams } from 'routing/RoutingConfig';
 import { EXTRACTION_PIPELINE_LOWER } from 'utils/constants';
-import { PageWrapperColumn } from 'styles/StyledPage';
+import { PageWrapperColumn } from 'components/styled';
 import { DocumentationSection } from 'components/extpipe/DocumentationSection';
 import { RunScheduleConnection } from 'components/extpipe/RunScheduleConnection';
 import { ExtpipeInformation } from 'components/extpipe/ExtpipeInformation';

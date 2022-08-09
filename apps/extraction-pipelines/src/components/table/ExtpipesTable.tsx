@@ -17,16 +17,14 @@ import { useHistory } from 'react-router-dom';
 import { createExtPipePath } from 'utils/baseURL';
 import { EXT_PIPE_PATH } from 'routing/RoutingConfig';
 import { useSelectedExtpipe } from 'hooks/useSelectedExtpipe';
-import { useAppEnv } from 'hooks/useAppEnv';
 import ExtpipeTableSearch from 'components/table/ExtpipeTableSearch';
 import { EXTRACTION_PIPELINE_LOWER } from 'utils/constants';
 import { Colors } from '@cognite/cogs.js';
 import styled from 'styled-components';
-import { Span3 } from 'styles/grid/StyledGrid';
-import { mainContentSpaceAround } from 'styles/StyledVariables';
+import { Span3, StyledTable } from 'components/styled'; // mainContentSpaceAround,
 import Layers from 'utils/zindex';
-import { StyledTable } from 'styles/StyledTable';
 import { Extpipe } from 'model/Extpipe';
+import { getProject } from '@cognite/cdf-utilities';
 
 const selectReducer = (
   newState: TableState,
@@ -63,7 +61,7 @@ const TableTop = styled.div`
 
 const StyledExtpipesTable = styled(StyledTable)`
   ${Span3};
-  margin: ${mainContentSpaceAround};
+  margin: 1rem 2rem;
 
   table {
     border-collapse: collapse;
@@ -98,7 +96,7 @@ const ExtpipesTable = <T extends { id: ReactText }>({
   tableActionButtons,
 }: Props) => {
   const { setExtpipe } = useSelectedExtpipe();
-  const { project } = useAppEnv();
+  const project = getProject();
   const history = useHistory();
 
   const filterTypes = React.useMemo(
@@ -143,6 +141,7 @@ const ExtpipesTable = <T extends { id: ReactText }>({
       autoResetSortBy: false,
       autoResetSelectedRows: false,
       stateReducer: selectReducer as any,
+      //@ts-ignore
       filterTypes,
       initialState: {
         hiddenColumns: ['externalId'],
@@ -218,7 +217,7 @@ const ExtpipesTable = <T extends { id: ReactText }>({
                   };
                   return (
                     // Name column has focusable link for accessibility. Cell click handler is for easy access for mouse users
-                    // eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-noninteractive-element-interactions
+                    // eslint-disable-next-line
                     <td
                       {...cell.getCellProps()}
                       className={`${cell.column.id}-cell`}

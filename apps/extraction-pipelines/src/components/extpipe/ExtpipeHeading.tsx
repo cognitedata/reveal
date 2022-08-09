@@ -5,16 +5,15 @@ import { nameSchema } from 'utils/validation/extpipeSchemas';
 import InlineEdit from 'components/extpipe/InlineEdit';
 import { Icon, Title } from '@cognite/cogs.js';
 import styled from 'styled-components';
-import { useAppEnv } from 'hooks/useAppEnv';
 import { rootUpdate } from 'hooks/details/useDetailsUpdate';
-import { DivFlex } from 'styles/flex/StyledFlex';
+import { DivFlex, StyledNavLink } from 'components/styled';
 import { EXT_PIPE_NAME_HEADING } from 'utils/constants';
 import { useOneOfPermissions } from 'hooks/useOneOfPermissions';
 import { EXTPIPES_WRITES } from 'model/AclAction';
 import StatusMarker from 'components/extpipes/cols/StatusMarker';
 import { calculateStatus } from 'utils/extpipeUtils';
-import { StyledNavLink } from 'styles/StyledLinks';
 import { createExtPipePath } from 'utils/baseURL';
+import { getProject } from '@cognite/cdf-utilities';
 
 const Wrapper = styled.div`
   #description,
@@ -34,7 +33,7 @@ const StyledTitle = styled(Title)`
 `;
 
 export const ExtpipeHeading: FunctionComponent = () => {
-  const { project } = useAppEnv();
+  const project = getProject();
   const { extpipe: selected } = useSelectedExtpipe();
   const { data: extpipe } = useExtpipeById(selected?.id);
   const perm = useOneOfPermissions(EXTPIPES_WRITES);

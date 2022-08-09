@@ -20,40 +20,6 @@ interface ChartProps {
   timeFormat: DateFormatRecordType;
 }
 
-const layout = (text: string): Partial<Plotly.Layout> => {
-  return {
-    height: 400,
-    title: 'Runs',
-    xaxis: {
-      title: `Grouped by date: ${text}`,
-      tickfont: {
-        size: 14,
-        color: 'rgb(107, 107, 107)',
-      },
-    },
-    yaxis: {
-      title: 'Count',
-      tickformat: ',d',
-      tickfont: {
-        size: 14,
-        color: 'rgb(107, 107, 107)',
-      },
-    },
-    hoverlabel: {
-      bgcolor: 'white',
-    },
-    legend: {
-      x: 0,
-      y: 1,
-      bgcolor: 'rgba(255, 255, 255, 0)',
-      bordercolor: 'rgba(255, 255, 255, 0)',
-    },
-    barmode: 'stack',
-    showlegend: false,
-    hovermode: 'x',
-  };
-};
-
 export const RunChart: FunctionComponent<ChartProps> = ({
   allRuns,
   timeFormat,
@@ -79,7 +45,41 @@ export const RunChart: FunctionComponent<ChartProps> = ({
     setDates(allDates);
   }, [allRuns, timeFormat.format]);
 
-  const chartData: Partial<Plotly.PlotData>[] = [
+  const layout = (text: string): Partial<Plotly.Layout> => {
+    return {
+      height: 400,
+      title: 'Runs',
+      xaxis: {
+        title: `Grouped by date: ${text}`,
+        tickfont: {
+          size: 14,
+          color: 'rgb(107, 107, 107)',
+        },
+      },
+      yaxis: {
+        title: 'Count',
+        tickformat: ',d',
+        tickfont: {
+          size: 14,
+          color: 'rgb(107, 107, 107)',
+        },
+      },
+      hoverlabel: {
+        bgcolor: 'white',
+      },
+      legend: {
+        x: 0,
+        y: 1,
+        bgcolor: 'rgba(255, 255, 255, 0)',
+        bordercolor: 'rgba(255, 255, 255, 0)',
+      },
+      barmode: 'stack',
+      showlegend: false,
+      hovermode: 'x',
+    };
+  };
+
+  const chartData: Plotly.Data[] = [
     {
       x: dates, // dates
       y: success, // number of occuences per date
@@ -116,7 +116,9 @@ export const RunChart: FunctionComponent<ChartProps> = ({
       },
     },
   ];
+
   return (
+    //@ts-ignore
     <Plot
       data={chartData}
       layout={layout(timeFormat.label)}

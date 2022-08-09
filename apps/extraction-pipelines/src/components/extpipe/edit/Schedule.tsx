@@ -10,7 +10,7 @@ import DisplaySchedule, {
 } from 'components/extpipes/cols/Schedule';
 import CronInput from 'components/inputs/cron/CronInput';
 import styled from 'styled-components';
-import { DivFlex } from 'styles/flex/StyledFlex';
+import { DivFlex } from 'components/styled';
 import { FormProvider, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import {
@@ -25,20 +25,20 @@ import {
   SERVER_ERROR_TITLE,
 } from 'utils/constants';
 import { Extpipe, ExtpipeFieldName } from 'model/Extpipe';
-import { useAppEnv } from 'hooks/useAppEnv';
 import {
   createUpdateSpec,
   useDetailsUpdate,
 } from 'hooks/details/useDetailsUpdate';
-import { ColumnForm, Hint, StyledLabel } from 'styles/StyledForm';
+import { ColumnForm, Hint, StyledLabel } from 'components/styled';
 import { scheduleSchema } from 'utils/validation/extpipeSchemas';
 import { ScheduleSelector } from 'components/inputs/ScheduleSelector';
 import { OptionTypeBase } from 'react-select';
-import { CloseButton, EditButton, SaveButton } from 'styles/StyledButton';
+import { CloseButton, EditButton, SaveButton } from 'components/styled';
 import { TableHeadings } from 'components/table/ExtpipeTableCol';
 import { AddFieldInfoText } from 'components/message/AddFieldInfoText';
 import { NoDataAdded } from 'components/buttons/AddFieldValueBtn';
 import { trackUsage } from 'utils/Metrics';
+import { getProject } from '@cognite/cdf-utilities';
 
 export const CronWrapper = styled(DivFlex)`
   margin: 1rem 0 1rem 2rem;
@@ -94,7 +94,7 @@ export const Schedule: FunctionComponent<ScheduleProps> = ({
   const [showCron, setShowCron] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
   const [errorVisible, setErrorVisible] = useState(false);
-  const { project } = useAppEnv();
+  const project = getProject();
   const { mutate } = useDetailsUpdate();
   const { schedule } = extpipe;
   const methods = useForm<ScheduleFormInput>({

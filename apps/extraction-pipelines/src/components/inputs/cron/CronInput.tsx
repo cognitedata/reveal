@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { parseCron } from 'utils/cronUtils';
 import { Link } from 'components/buttons/Link';
 import { InputController } from 'components/inputs/InputController';
-import { Hint, StyledLabel } from 'styles/StyledForm';
+import { Hint, StyledLabel } from 'components/styled';
 import ValidationError from 'components/form/ValidationError';
 import { EXTRACTION_PIPELINE_LOWER } from 'utils/constants';
 

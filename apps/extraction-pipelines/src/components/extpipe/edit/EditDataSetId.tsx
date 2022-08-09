@@ -1,5 +1,4 @@
 import React, { FunctionComponent, useEffect, useState } from 'react';
-import { useAppEnv } from 'hooks/useAppEnv';
 import {
   createUpdateSpec,
   useDetailsUpdate,
@@ -19,14 +18,15 @@ import {
   SERVER_ERROR_CONTENT,
   SERVER_ERROR_TITLE,
 } from 'utils/constants';
-import { CloseButton, EditButton, SaveButton } from 'styles/StyledButton';
+import { CloseButton, EditButton, SaveButton } from 'components/styled';
 import { AddInfo } from 'components/extpipe/AddInfo';
-import { ColumnForm, StyledLabel } from 'styles/StyledForm';
+import { ColumnForm, StyledLabel } from 'components/styled';
 import styled from 'styled-components';
-import { DivFlex } from 'styles/flex/StyledFlex';
+import { DivFlex } from 'components/styled';
 import { TableHeadings } from 'components/table/ExtpipeTableCol';
 import DetailsValueView from 'components/table/details/DetailsValueView';
 import { trackUsage } from 'utils/Metrics';
+import { getProject } from '@cognite/cdf-utilities';
 
 const Wrapper = styled.div`
   display: grid;
@@ -60,7 +60,7 @@ interface FormInput {
 export const EditDataSetId: FunctionComponent<{ canEdit: boolean }> = ({
   canEdit,
 }) => {
-  const { project } = useAppEnv();
+  const project = getProject();
   const [isEdit, setIsEdit] = useState(false);
   const [errorVisible, setErrorVisible] = useState(false);
   const { extpipe: selected } = useSelectedExtpipe();

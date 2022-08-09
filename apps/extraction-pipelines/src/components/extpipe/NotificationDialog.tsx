@@ -2,10 +2,10 @@ import React, { FunctionComponent, useState } from 'react';
 import { EditModal } from 'components/modals/EditModal';
 import { Button, Input, Select } from '@cognite/cogs.js';
 
-import { DivFlex } from 'styles/flex/StyledFlex';
-import { IconHeading } from 'styles/StyledHeadings';
+import { DivFlex } from 'components/styled';
+import { IconHeading } from 'components/styled';
 import styled from 'styled-components';
-import { StyledLabel } from 'styles/StyledForm';
+import { StyledLabel } from 'components/styled';
 import { OptionTypeBase } from 'react-select';
 import { Extpipe } from 'model/Extpipe';
 import { InfoBox } from 'components/message/InfoBox';
@@ -13,8 +13,8 @@ import {
   createUpdateSpec,
   useDetailsUpdate,
 } from 'hooks/details/useDetailsUpdate';
-import { useAppEnv } from 'hooks/useAppEnv';
 import { ErrorMessage } from 'components/error/ErrorMessage';
+import { getProject } from '@cognite/cdf-utilities';
 
 const Hr = styled.hr`
   border: 0;
@@ -50,7 +50,7 @@ export const NotificationDialog: FunctionComponent<NotificationDialogProps> = ({
   extpipe,
   close,
 }) => {
-  const { project } = useAppEnv();
+  const project = getProject();
   const { mutate } = useDetailsUpdate();
   const oldValue = minutesToUnit(
     extpipe.notificationConfig?.allowedNotSeenRangeInMinutes ?? 0

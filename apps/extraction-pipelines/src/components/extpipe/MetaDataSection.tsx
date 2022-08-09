@@ -8,8 +8,8 @@ import { MetaData as MetaDataModel } from 'model/MetaData';
 import { MetaField } from 'components/extpipe/MetaDataField';
 import { EditModal } from 'components/modals/EditModal';
 import { EditMetaData } from 'components/inputs/metadata/EditMetaData';
-import { Hint } from 'styles/StyledForm';
-import { StyledTitle3 } from 'styles/StyledHeadings';
+import { Hint } from 'components/styled';
+import { StyledTitle3 } from 'components/styled';
 import { Section } from 'components/extpipe/Section';
 import { Column } from 'components/extpipe/ContactsSection';
 

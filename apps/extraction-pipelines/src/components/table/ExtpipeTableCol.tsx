@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React from 'react';
 import { Cell, CellProps, Column, HeaderProps } from 'react-table';
 import {

@@ -7,7 +7,6 @@ import { useExtpipeById } from 'hooks/useExtpipe';
 import { TableHeadings } from 'components/table/ExtpipeTableCol';
 import { Schedule } from 'components/extpipe/edit/Schedule';
 import { rootUpdate } from 'hooks/details/useDetailsUpdate';
-import { useAppEnv } from 'hooks/useAppEnv';
 import { FieldVerticalDisplay } from 'components/extpipe/fields/FieldVerticalDisplay';
 import RawTablesSection from 'components/inputs/rawSelector/RawTablesSection';
 import { Column, ContactsSection } from 'components/extpipe/ContactsSection';
@@ -20,6 +19,7 @@ import {
   metaDescriptionSchema,
   sourceSchema,
 } from 'utils/validation/extpipeSchemas';
+import { getProject } from '@cognite/cdf-utilities';
 
 interface ExtpipeInformationProps {
   canEdit: boolean;
@@ -28,7 +28,7 @@ interface ExtpipeInformationProps {
 export const ExtpipeInformation: FunctionComponent<ExtpipeInformationProps> = ({
   canEdit,
 }) => {
-  const { project } = useAppEnv();
+  const project = getProject();
   const { extpipe: selected } = useSelectedExtpipe();
   const { data: extpipe } = useExtpipeById(selected?.id);
   if (!extpipe || !project) {

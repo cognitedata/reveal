@@ -1,6 +1,6 @@
 import React, { FunctionComponent, useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { DivFlex } from 'styles/flex/StyledFlex';
+import { DivFlex } from 'components/styled';
 import { OptionTypeBase } from 'react-select';
 import { Button, Colors, Icon, Input, Range, Select } from '@cognite/cogs.js';
 import {

@@ -6,7 +6,7 @@ import {
   NO_DATA_SET_ID_SET,
   NO_DATA_SET_ID_SET_TOOLTIP,
 } from 'utils/constants';
-import { StyledTooltip } from 'styles/StyledToolTip';
+import { StyledTooltip } from 'components/styled';
 
 const DatasetTooltip = styled.div`
   display: flex;

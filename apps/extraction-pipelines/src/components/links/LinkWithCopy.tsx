@@ -1,5 +1,5 @@
 import React, { FunctionComponent } from 'react';
-import { StyledLink } from 'styles/StyledLinks';
+import { StyledLink } from 'components/styled';
 import InteractiveCopy, { CopyType } from 'components/InteractiveCopy';
 
 interface OwnProps {

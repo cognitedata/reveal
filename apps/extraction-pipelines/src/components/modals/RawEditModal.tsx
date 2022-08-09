@@ -8,7 +8,7 @@ import { ModalContent } from 'components/modals/ModalContent';
 import { useSelectedExtpipe } from 'hooks/useSelectedExtpipe';
 import { useExtpipeById } from 'hooks/useExtpipe';
 import * as yup from 'yup';
-import { StyledTitle3 } from 'styles/StyledHeadings';
+import { StyledTitle3 } from 'components/styled';
 import { DetailFieldNames, ExtpipeRawTable } from 'model/Extpipe';
 import { selectedRawTablesRule } from 'utils/validation/extpipeSchemas';
 import { useForm } from 'react-hook-form';
@@ -17,7 +17,6 @@ import {
   createUpdateSpec,
   useDetailsUpdate,
 } from 'hooks/details/useDetailsUpdate';
-import { useAppEnv } from 'hooks/useAppEnv';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { EditModal } from 'components/modals/EditModal';
 import { Button, Select } from '@cognite/cogs.js';
@@ -27,6 +26,7 @@ import {
 } from 'hooks/useRawDBAndTables';
 import styled from 'styled-components';
 import { MissingCapabilityBox } from 'components/accessCheck/CapabilityCheck';
+import { getProject } from '@cognite/cdf-utilities';
 
 interface RawEditModalProps {
   visible: boolean;
@@ -42,7 +42,7 @@ export const RawEditModal: FunctionComponent<RawEditModalProps> = ({
   visible,
   close,
 }: PropsWithChildren<RawEditModalProps>) => {
-  const { project } = useAppEnv();
+  const project = getProject();
   const { data: databases, isError } = useRawDBAndTables();
   const { extpipe: selected } = useSelectedExtpipe();
   const { data: storedExtpipe } = useExtpipeById(selected?.id);
@@ -111,8 +111,7 @@ export const RawEditModal: FunctionComponent<RawEditModalProps> = ({
         <div css="height: 1rem" />
         {isError &&
           MissingCapabilityBox({
-            text:
-              'Cannot load list of tables. Make sure you have permission to read raw tables. Ask administrator for access.',
+            text: 'Cannot load list of tables. Make sure you have permission to read raw tables. Ask administrator for access.',
             requiredPermissions: [
               { acl: 'raw', action: 'READ' },
               { acl: 'raw', action: 'LIST' },

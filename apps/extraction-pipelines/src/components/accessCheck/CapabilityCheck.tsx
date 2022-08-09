@@ -2,8 +2,7 @@ import React, { FunctionComponent, PropsWithChildren } from 'react';
 import { AclAction } from 'model/AclAction';
 import styled from 'styled-components';
 import { Loader } from '@cognite/cogs.js';
-import { Code } from 'styles/StyledText';
-import { PageTitle } from 'styles/StyledHeadings';
+import { PageTitle, Code } from 'components/styled';
 import { useOneOfPermissions } from 'hooks/useOneOfPermissions';
 import { ErrorBox } from 'components/error/ErrorBox';
 

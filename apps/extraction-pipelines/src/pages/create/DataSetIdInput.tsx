@@ -6,7 +6,7 @@ import { MutationStatus } from 'react-query';
 import { DataSet } from '@cognite/sdk';
 import { DataSetSelectOption } from 'components/inputs/dataset/DataSetSelectOption';
 import { InputController } from 'components/inputs/InputController';
-import { Hint } from 'styles/StyledForm';
+import { Hint } from 'components/styled';
 import ValidationError from 'components/form/ValidationError';
 import { TableHeadings } from 'components/table/ExtpipeTableCol';
 import { DATA_SET_ID_HINT } from 'utils/constants';

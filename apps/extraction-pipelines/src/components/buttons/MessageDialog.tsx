@@ -8,7 +8,7 @@ import { Button, Icon, Title } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { CANCEL, OK } from 'utils/constants';
 import { ErrorIcon } from 'components/icons/ErrorIcon';
-import { StyledTooltip } from 'styles/StyledToolTip';
+import { StyledTooltip } from 'components/styled';
 
 export const DialogStyle = styled.div`
   display: grid;

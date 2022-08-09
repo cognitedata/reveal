@@ -35,7 +35,7 @@ const ButtonWithNoPadding = styled(Button)`
     padding: 0;
   }
 
-  display: block;
+  display: flex;
   color: inherit;
 `;
 const SorterIndicator = <T extends object>({

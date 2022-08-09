@@ -1,5 +1,5 @@
-import { Button } from '@cognite/cogs.js';
 import React from 'react';
+import { Button } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
 export const StyledButtonGroup = styled.div`
@@ -13,9 +13,9 @@ export const StyledButtonGroup = styled.div`
 interface CancelSaveBtnsProps {
   onCancel: () => void;
   onSave: () => void;
-  // eslint-disable-next-line react/require-default-props
+  // eslint-disable-next-line
   dateTestIdCancelBtn?: string;
-  // eslint-disable-next-line react/require-default-props
+  // eslint-disable-next-line
   dateTestIdSaveBtn?: string;
 }
 

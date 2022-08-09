@@ -1,35 +1,49 @@
-import React, { useEffect } from 'react';
-import Home from 'pages/Home';
+import { useEffect } from 'react';
+import { I18nWrapper } from '@cognite/cdf-i18n-utils';
 import {
   AuthWrapper,
   getEnv,
   getProject,
   SubAppWrapper,
 } from '@cognite/cdf-utilities';
-import GlobalStyles from 'styles/GlobalStyles';
 import { Loader } from '@cognite/cogs.js';
-import { ThemeProvider } from 'styled-components';
-import cogsStyles from '@cognite/cogs.js/dist/cogs.css';
-import collapseStyle from 'rc-collapse/assets/index.css';
-import { QueryClient, QueryClientProvider } from 'react-query';
-import { EXTRACTION_PIPELINES } from 'utils/constants';
-import { AppEnvProvider } from 'hooks/useAppEnv';
-import { Route, Router, Switch } from 'react-router-dom';
-import { createBrowserHistory } from 'history';
-import { FlagProvider } from '@cognite/react-feature-flags';
-// eslint-disable-next-line
 import { SDKProvider } from '@cognite/sdk-provider';
 import sdk, { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';
-import isObject from 'lodash/isObject';
-import theme from './styles/theme';
-import AppScopeStyles from './styles/AppScopeStyles';
-import rootStyles from './styles/index.css';
+import { QueryClient, QueryClientProvider } from 'react-query';
+
+import { Route, Router, Switch } from 'react-router-dom';
+import { createBrowserHistory } from 'history';
+
+import { translations } from 'common/i18n';
+
+import { ThemeProvider } from 'styled-components';
+import AppScopeStyles from './styles';
+import GlobalStyles from 'styles/GlobalStyles';
+import theme from 'styles/theme';
+import cogsStyles from '@cognite/cogs.js/dist/cogs.css';
+import collapseStyle from 'rc-collapse/assets/index.css';
+import rootStyles from 'styles/index.css';
+
+import Home from 'pages/Home';
+import { EXTRACTION_PIPELINES } from 'utils/constants';
+import React from 'react';
+import { AppEnvProvider } from 'hooks/useAppEnv';
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: false,
+      staleTime: 10 * 60 * 1000,
+    },
+  },
+});
 
 const App = () => {
-  const project = getProject();
+  const appName = 'cdf-integrations-ui';
+  const projectName = getProject();
   const env = getEnv();
-  const { origin } = window.location;
   const history = createBrowserHistory();
+  const { origin } = window.location;
 
   useEffect(() => {
     cogsStyles.use();
@@ -42,45 +56,29 @@ const App = () => {
     };
   }, []);
 
-  const queryClient = new QueryClient({
-    defaultOptions: {
-      queries: {
-        retry: (failureCount, error) => {
-          if (isObject(error) && 'status' in error) {
-            switch ((error as any).status) {
-              case 400:
-              case 401:
-              case 403:
-              case 404:
-              case 409:
-                return false;
-            }
-          }
-          return failureCount < 3;
-        },
-        refetchOnWindowFocus: false,
-      },
-    },
-  });
-
   return (
-    <QueryClientProvider client={queryClient}>
-      <SDKProvider sdk={sdk}>
+    <I18nWrapper
+      flagProviderProps={{
+        apiToken: 'v2Qyg7YqvhyAMCRMbDmy1qA6SuG8YCBE',
+        appName,
+        projectName,
+      }}
+      translations={translations}
+      defaultNamespace="cdf-integrations-ui"
+    >
+      <QueryClientProvider client={queryClient}>
         <AppScopeStyles>
           <SubAppWrapper title={EXTRACTION_PIPELINES}>
             <AuthWrapper
               loadingScreen={<Loader />}
-              login={() => loginAndAuthIfNeeded(project, env)}
+              login={() => loginAndAuthIfNeeded(projectName, env)}
             >
-              <FlagProvider
-                apiToken="v2Qyg7YqvhyAMCRMbDmy1qA6SuG8YCBE"
-                appName="cdf-console"
-                projectName={project}
-              >
+              <SDKProvider sdk={sdk}>
                 <ThemeProvider theme={theme}>
+                  {/* remove this  */}
                   <AppEnvProvider
                     cdfEnv={env}
-                    project={project}
+                    project={projectName}
                     origin={origin}
                   >
                     <Router history={history}>
@@ -90,13 +88,13 @@ const App = () => {
                     </Router>
                   </AppEnvProvider>
                 </ThemeProvider>
-                <GlobalStyles theme={theme} />
-              </FlagProvider>
+                <GlobalStyles />
+              </SDKProvider>
             </AuthWrapper>
           </SubAppWrapper>
         </AppScopeStyles>
-      </SDKProvider>
-    </QueryClientProvider>
+      </QueryClientProvider>
+    </I18nWrapper>
   );
 };
 

@@ -13,11 +13,11 @@ import {
   DetailsUpdateContext,
   useDetailsUpdate,
 } from 'hooks/details/useDetailsUpdate';
-import { DivFlex } from 'styles/flex/StyledFlex';
+import { DivFlex } from 'components/styled';
 import ValidationError from 'components/form/ValidationError';
 import { AnyObjectSchema } from 'yup';
-import { ColumnForm, Hint, StyledInput, StyledLabel } from 'styles/StyledForm';
-import { CloseButton, EditButton, SaveButton } from 'styles/StyledButton';
+import { ColumnForm, Hint, StyledInput, StyledLabel } from 'components/styled';
+import { CloseButton, EditButton, SaveButton } from 'components/styled';
 import { Colors } from '@cognite/cogs.js';
 import { trackUsage } from 'utils/Metrics';
 import { ErrorVariations } from 'model/SDKErrors';

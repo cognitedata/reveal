@@ -1,5 +1,5 @@
 import React from 'react';
-import { Cell, Column } from 'react-table';
+import { Column } from 'react-table';
 import StatusMarker from 'components/extpipes/cols/StatusMarker';
 import { TimeDisplay } from 'components/TimeDisplay/TimeDisplay';
 import { RunUI } from 'model/Runs';
@@ -15,7 +15,7 @@ export const getRunLogTableCol = (): Column<RunUI>[] => {
       Header: RunTableHeading.TIMESTAMP,
       accessor: 'createdTime',
       sortType: 'basic',
-      Cell: ({ row }: Cell<RunUI>) => {
+      Cell: ({ row }) => {
         return <TimeDisplay value={row.original.createdTime} withTooltip />;
       },
       disableFilters: true,
@@ -23,7 +23,7 @@ export const getRunLogTableCol = (): Column<RunUI>[] => {
     {
       Header: TableHeadings.LAST_RUN_STATUS,
       accessor: 'status',
-      Cell: ({ row }: Cell<RunUI>) => {
+      Cell: ({ row }) => {
         return <StatusMarker status={row.original.status} />;
       },
       disableFilters: true,
@@ -31,7 +31,7 @@ export const getRunLogTableCol = (): Column<RunUI>[] => {
     {
       Header: RunTableHeading.MESSAGE,
       accessor: 'message',
-      Cell: ({ row }: Cell<RunUI>) => {
+      Cell: ({ row }) => {
         return <p>{row.original.message}</p>;
       },
       disableFilters: true,

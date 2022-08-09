@@ -1,4 +1,5 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
 # dependencies
 /node_modules
 /.pnp
@@ -22,6 +23,7 @@ yarn-debug.log*
 yarn-error.log*
 
 storybook-static/
+.log
 
 .idea
 .vscode

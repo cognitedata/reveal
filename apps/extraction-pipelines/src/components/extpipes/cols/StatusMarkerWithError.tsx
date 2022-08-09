@@ -1,6 +1,6 @@
 import React, { FunctionComponent, PropsWithoutRef } from 'react';
 import { Badge } from '@cognite/cogs.js';
-import { StyledTooltip } from 'styles/StyledToolTip';
+import { StyledTooltip } from 'components/styled';
 import { RunStatusUI } from 'model/Status';
 
 interface OwnProps {
