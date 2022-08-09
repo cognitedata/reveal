@@ -4,6 +4,7 @@ module.exports = {
   rules: {
     'react/prop-types': 'off',
     'no-console': ['warn'],
+    "react/jsx-uses-react": 1,
     '@typescript-eslint/no-unused-vars': [
       'warn',
       { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },

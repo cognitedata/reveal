@@ -1,13 +1,20 @@
 module.exports = {
   parser: '@typescript-eslint/parser',
-  plugins: ['@typescript-eslint', 'react-hooks', 'react', 'testing-library', 'lodash', 'testcafe'],
+  plugins: [
+    '@typescript-eslint',
+    'lodash',
+    'react-hooks',
+    'react',
+    'testcafe',
+    'testing-library',
+  ],
   extends: [
+    'plugin:prettier/recommended',
+    'plugin:react/recommended',
+    'plugin:react/jsx-runtime',
     'plugin:testing-library/react',
     'plugin:lodash/recommended',
     'plugin:testcafe/recommended',
-    'plugin:prettier/recommended',
-    'plugin:react/recommended',
-    'plugin:react/jsx-runtime'
   ],
   rules: {
     'no-console': ['error'],
@@ -36,6 +43,7 @@ module.exports = {
     "jsx-a11y/label-has-associated-control": "off",
     "jsx-a11y/label-has-for": "off",
     "react/jsx-key": "off",
+    "react/jsx-uses-react": 1,
 
     '@typescript-eslint/no-unused-vars': [
       'error',
