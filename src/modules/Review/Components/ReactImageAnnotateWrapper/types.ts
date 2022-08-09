@@ -77,8 +77,9 @@ export type AnnotatorRegionLabelProps = {
   onChange: (region: AnnotatorRegion) => void;
 };
 
+// todo: rework the type to make id of type number
 export type AnnotatorNewRegion = Pick<
-  AnnotatorBaseRegion,
+  AnnotatorRegion,
   'id' | 'annotationLabelOrText' | 'highlighted' | 'editingLabels' | 'color'
 > &
   (
@@ -101,7 +102,7 @@ export function isAnnotatorPolygonRegion(
 }
 
 export function isAnnotatorPointRegion(
-  region: AnnotatorRegion
+  region: AnnotatorRegion | AnnotatorNewRegion
 ): region is AnnotatorPointRegion {
   return region.type === AnnotatorRegionType.PointRegion;
 }

@@ -118,7 +118,7 @@ export const selectTempKeypointCollection = createSelector(
       const reviewImageKeypoints: Record<string, ReviewKeypoint> =
         Object.fromEntries(
           lastKeypointCollection.keypointIds.map((keypointId: string) => {
-            const [label, keypoint] = allKeypoints[keypointId];
+            const { label, ...keypoint } = allKeypoints[keypointId];
             return [
               label,
               {
@@ -126,7 +126,6 @@ export const selectTempKeypointCollection = createSelector(
                 selected: selectedKeypointIds.includes(keypointId),
                 keypoint,
                 label,
-                color: keypointColor, // same keypoint color for whole collection
               },
             ];
           })

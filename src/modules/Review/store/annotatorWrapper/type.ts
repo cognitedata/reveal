@@ -1,6 +1,6 @@
 import { PredefinedVisionAnnotations, Tool } from 'src/modules/Review/types';
 import { Keypoint, Status } from 'src/api/annotation/types';
-import { AnnotatorRegion } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/types';
+import { AnnotatorNewRegion } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/types';
 
 export type KeypointCollectionState = {
   id: number;
@@ -11,10 +11,14 @@ export type KeypointCollectionState = {
   // do we have to have selected state here?
 };
 
+export type KeypointState = Keypoint & {
+  label: string;
+};
+
 export type AnnotatorWrapperState = {
   predefinedAnnotations: PredefinedVisionAnnotations;
   keypointMap: {
-    byId: Record<string, [string, Keypoint]>; // id => (label, keypoint)
+    byId: Record<string, KeypointState>;
     allIds: string[];
     selectedIds: string[];
   };
@@ -30,5 +34,5 @@ export type AnnotatorWrapperState = {
   currentTool: Tool;
   keepUnsavedRegion: boolean;
   isCreatingKeypointCollection: boolean;
-  temporaryRegion: AnnotatorRegion | undefined;
+  temporaryRegion: AnnotatorNewRegion | undefined;
 };

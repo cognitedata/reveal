@@ -1,5 +1,8 @@
-import { Keypoint, Point, Status } from 'src/api/annotation/types';
-import { KeypointCollectionState } from 'src/modules/Review/store/annotatorWrapper/type';
+import { Point, Status } from 'src/api/annotation/types';
+import {
+  KeypointCollectionState,
+  KeypointState,
+} from 'src/modules/Review/store/annotatorWrapper/type';
 import {
   PredefinedKeypoint,
   PredefinedKeypointCollection,
@@ -8,30 +11,49 @@ import {
 } from 'src/modules/Review/types';
 import { getDummyImageKeypointCollectionAnnotation } from './getDummyAnnotations';
 
-export const getDummyKeypointState = (
-  confidence?: number,
-  point?: Point
-): Keypoint => {
+export const getDummyKeypoint = (confidence?: number, point?: Point) => {
   return {
     confidence: confidence || 1,
     point: point || { x: 0.5, y: 0.5 },
   };
 };
 
-export const getDummyKeypointCollectionState = (
-  id: number,
-  keypointIds: string[]
-): KeypointCollectionState => {
+export const getDummyKeypointState = (
+  label: string,
+  confidence?: number,
+  point?: Point
+): KeypointState => {
   return {
-    id,
-    keypointIds,
-    label: getDummyPredefinedKeypointCollection(id).collectionName,
-    show: true,
-    status: Status.Approved,
+    label,
+    ...getDummyKeypoint(confidence, point),
   };
 };
 
-export const dummyKeypoint = (caption?: string): PredefinedKeypoint => {
+export const getDummyKeypointCollectionState = ({
+  id,
+  keypointIds,
+  show = true,
+  status = Status.Approved,
+  label = getDummyPredefinedKeypointCollection(id).collectionName,
+}: {
+  id: number;
+  keypointIds: string[];
+  show?: boolean;
+  status?: Status;
+  label?: string;
+}): KeypointCollectionState => {
+  return {
+    id,
+    keypointIds,
+    label,
+    show,
+    status,
+  };
+};
+
+export const getDummyPredefinedKeypoint = (
+  caption?: string
+): PredefinedKeypoint => {
   return {
     caption: caption || 'center',
     order: '1',
@@ -46,9 +68,9 @@ export const getDummyPredefinedKeypointCollection = (
     collectionName: 'gauge',
     color: 'red',
     keypoints: [
-      dummyKeypoint('left'),
-      dummyKeypoint('center'),
-      dummyKeypoint('right'),
+      getDummyPredefinedKeypoint('left'),
+      getDummyPredefinedKeypoint('center'),
+      getDummyPredefinedKeypoint('right'),
     ],
   };
 };
