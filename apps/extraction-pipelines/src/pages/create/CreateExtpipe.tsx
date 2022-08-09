@@ -283,7 +283,6 @@ export default function CreateExtpipePage() {
     trackUsage({ t: 'Create.CreatePageLoaded' });
   }, []);
 
-  debugger;
   return (
     <RegisterExtpipeLayout>
       <CapabilityCheck requiredPermissions={EXTPIPES_WRITES}>
@@ -303,5 +302,3 @@ export default function CreateExtpipePage() {
     </RegisterExtpipeLayout>
   );
 }
-
-debugger;

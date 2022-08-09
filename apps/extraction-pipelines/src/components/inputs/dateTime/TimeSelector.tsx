@@ -2,7 +2,7 @@ import React, { FunctionComponent, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { DivFlex } from 'components/styled';
 import { OptionTypeBase } from 'react-select';
-import { Button, Colors, Icon, Input, Range, Select } from '@cognite/cogs.js';
+import { Button, Colors, Input, Range, Select } from '@cognite/cogs.js';
 import {
   createDateFromTimeChange,
   createHalfHourOptions,
@@ -24,7 +24,7 @@ const TimeWrapper = styled(DivFlex)`
         background-color: transparent;
       }
     }
-    .input-postfix-node {
+    .input__postfix--node {
       .cogs-btn {
         padding: 0.5rem;
         height: 100%;
@@ -42,6 +42,7 @@ const TimeWrapper = styled(DivFlex)`
     width: 100%;
     height: 0;
     .cogs-select__control {
+      display: none;
       clip: rect(0 0 0 0);
       clip-path: inset(50%);
       height: 1px;
@@ -147,10 +148,12 @@ export const TimeSelector: FunctionComponent<TimeSelectorProps> = () => {
   };
 
   const toggleStartDropDown = () => {
+    setShowEndDropDown(false);
     setShowStartDropDown((prev) => !prev);
   };
 
   const toggleEndDropDown = () => {
+    setShowStartDropDown(false);
     setShowEndDropDown((prev) => !prev);
   };
 
@@ -163,9 +166,11 @@ export const TimeSelector: FunctionComponent<TimeSelectorProps> = () => {
           onChange={startInputChanged}
           onClick={toggleStartDropDown}
           postfix={
-            <Button type="ghost" onClick={toggleStartDropDown}>
-              <Icon type="ChevronDownSmall" />
-            </Button>
+            <Button
+              type="ghost"
+              icon="ChevronDownSmall"
+              onClick={toggleStartDropDown}
+            />
           }
           aria-label={RANGE_START_LABEL}
         />
@@ -185,10 +190,13 @@ export const TimeSelector: FunctionComponent<TimeSelectorProps> = () => {
           onChange={endInputChanged}
           onClick={toggleEndDropDown}
           aria-label={RANGE_END_LABEL}
+          size="large"
           postfix={
-            <Button type="ghost" onClick={toggleEndDropDown}>
-              <Icon type="ChevronDownSmall" />
-            </Button>
+            <Button
+              type="ghost"
+              icon="ChevronDownSmall"
+              onClick={toggleEndDropDown}
+            />
           }
         />
         <Select

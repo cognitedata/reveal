@@ -11,6 +11,7 @@ import {
   useTable,
 } from 'react-table';
 import styled from 'styled-components';
+// import { Graphic, OptionType, Pagination, Select } from '@cognite/cogs.js';
 import { Graphic, OptionType, Pagination, Select } from '@cognite/cogs.js';
 import { RunUI } from 'model/Runs';
 import { DivFlex } from 'components/styled';
@@ -89,7 +90,7 @@ export const RunLogsTable: FunctionComponent<LogsTableProps> = ({
     prepareRow,
     gotoPage,
     setPageSize,
-    state: { pageIndex, pageSize },
+    state: { pageSize }, // pageIndex
   } = useTable(
     {
       columns,
@@ -189,11 +190,15 @@ export const RunLogsTable: FunctionComponent<LogsTableProps> = ({
       </StyledTable>
       <DivFlex align="center" justify="space-between">
         <Pagination
-          current={pageIndex + 1}
-          total={rows.length}
-          pageSize={pageSize}
-          onChange={paginationChanged}
-          locale={{ goTo: 'Go to' }}
+          totalPages={rows.length}
+          itemsPerPage={10}
+          onPageChange={paginationChanged}
+          // keeping for reference, can be deleted after testing the component on UI
+          // current={pageIndex + 1}
+          // total={rows.length}
+          // pageSize={pageSize}
+          // onChange={paginationChanged}
+          // locale={{ goTo: 'Go to' }}
         />
         <div>
           <InlineBlockDiv>

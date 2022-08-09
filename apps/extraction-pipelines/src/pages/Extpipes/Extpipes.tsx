@@ -32,8 +32,6 @@ const VerticalSpace = styled.div`
   height: 16px;
 `;
 const CreateExtpipeModal = (props: { visible: boolean; close: () => void }) => {
-  debugger;
-
   return (
     <Modal
       visible={props.visible}

@@ -87,7 +87,7 @@ const App = () => {
                     </Router>
                   </AppEnvProvider>
                 </ThemeProvider>
-                <GlobalStyles />
+                <GlobalStyles theme={theme} />
               </SDKProvider>
             </AuthWrapper>
           </SubAppWrapper>

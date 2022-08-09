@@ -1,7 +1,8 @@
 import { createGlobalStyle } from 'styled-components';
 import { Colors } from '@cognite/cogs.js';
+import theme from './theme';
 
-const GlobalStyle = createGlobalStyle`
+const GlobalStyle = createGlobalStyle<{ theme: typeof theme }>`
   body {
     overflow-y: hidden;
   }
@@ -20,9 +21,9 @@ const GlobalStyle = createGlobalStyle`
   }
 
   a {
-    color: ${Colors['midblue']};
+    color: ${(props) => props.theme.actionText};
     :hover {
-      color: ${Colors['midblue']};
+      color: ${(props) => props.theme.actionText};
     }
   }
   .ant-table {
@@ -43,12 +44,12 @@ const GlobalStyle = createGlobalStyle`
 
   .cogs-badge {
     &.badge-success {
-      border: 0.125rem solid ${Colors['text-icon--status-success']} !important;
-      color: ${Colors['greyscale-grey9']} !important;
+      border: 0.125rem solid ${Colors.success.hex()} !important;
+      color: ${Colors['greyscale-grey9'].hex()} !important;
       font-weight: bold;
     }
     &.badge-fail {
-      border: 0.125rem solid ${Colors['text-icon--status-critical']} !important;
+      border: 0.125rem solid ${Colors.danger.hex()} !important;
     }
     span {
       text-transform: lowercase !important;
@@ -65,6 +66,7 @@ const GlobalStyle = createGlobalStyle`
       }
     }
   }
+
 `;
 
 export default GlobalStyle;
