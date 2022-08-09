@@ -1,5 +1,6 @@
 import reducer, {
   initialState,
+  resetPreview,
   selectAnnotation,
   setReviewFileIds,
   setScrollToId,
@@ -11,7 +12,9 @@ import { AnnotationSettingsOption } from 'src/modules/Review/store/review/enums'
 
 const mockReviewState: ReviewState = {
   ...initialState,
+  fileIds: [100, 200, 300],
   hiddenAnnotationIds: [1, 2, 3],
+  selectedAnnotationIds: [4, 5, 6],
 };
 
 describe('Test review slice', () => {
@@ -148,12 +151,7 @@ describe('Test review slice', () => {
 
     describe('action setScrollToId', () => {
       test('set scroll To Id', () => {
-        const newState = reducer(
-          {
-            ...mockReviewState,
-          },
-          setScrollToId('3')
-        );
+        const newState = reducer(mockReviewState, setScrollToId('3'));
         expect(newState.scrollToId).toStrictEqual('3');
       });
 
@@ -169,13 +167,19 @@ describe('Test review slice', () => {
       });
 
       test('remove scroll To Id', () => {
-        const newState = reducer(
-          {
-            ...mockReviewState,
-          },
-          setScrollToId('')
-        );
+        const newState = reducer(mockReviewState, setScrollToId(''));
         expect(newState.scrollToId).toStrictEqual('');
+      });
+    });
+
+    describe('action resetPreview', () => {
+      test('reset selected annotation ids and hidden annotation ids', () => {
+        const newState = reducer(mockReviewState, resetPreview());
+        expect(newState).toStrictEqual({
+          ...mockReviewState,
+          selectedAnnotationIds: [],
+          hiddenAnnotationIds: [],
+        });
       });
     });
   });
