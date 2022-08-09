@@ -1,5 +1,6 @@
 import reducer, {
   initialState,
+  selectAnnotation,
   setReviewFileIds,
   toggleAnnotationVisibility,
 } from 'src/modules/Review/store/review/slice';
@@ -39,6 +40,21 @@ describe('Test review slice', () => {
           toggleAnnotationVisibility({ annotationId: 4 })
         );
         expect(newState.hiddenAnnotationIds).toEqual([1, 2, 3, 4]);
+      });
+    });
+
+    describe('action selectAnnotation', () => {
+      test('set selected annotation id', () => {
+        const newState = reducer(mockReviewState, selectAnnotation(4));
+        expect(newState.selectedAnnotationIds).toEqual([4]);
+      });
+
+      test('change selected annotation id', () => {
+        const newState = reducer(
+          { ...mockReviewState, selectedAnnotationIds: [3] },
+          selectAnnotation(4)
+        );
+        expect(newState.selectedAnnotationIds).toEqual([4]);
       });
     });
   });
