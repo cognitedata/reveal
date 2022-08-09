@@ -5,7 +5,7 @@ const path = require('path');
 
 module.exports = {
   preset: 'jest-puppeteer',
-  testRegex: 'VisualTests.ts',
+  testRegex: 'VisualTest.jest.ts',
   transform: {
     '^.+\\.(ts|tsx)$': 'ts-jest'
   },

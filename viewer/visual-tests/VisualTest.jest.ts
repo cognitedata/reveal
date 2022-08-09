@@ -12,7 +12,7 @@ describe('Visual tests', () => {
 
   beforeAll(async () => {
     testPage = await browser.newPage();
-    await testPage.goto('https://localhost:12345/', {
+    await testPage.goto('https://localhost:8080/', {
       waitUntil: ['domcontentloaded', 'load']
     });
   });

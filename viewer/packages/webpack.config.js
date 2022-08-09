@@ -5,8 +5,23 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const webpack = require('webpack');
 
+function setTestFixture(testFixture) {
+  if (testFixture === undefined) {
+    return false;
+  }
+
+  const parsedTestFixturePath = path.parse(testFixture);
+
+  if (parsedTestFixturePath === undefined) {
+    throw new Error('Unkown test fixture arugment');
+  }
+
+  return '?testfixture=' + parsedTestFixturePath.name.replace('.', '');
+}
+
 module.exports = env => {
   const entryFile = '../visual-tests/VisualTest.browser.ts';
+  const open = setTestFixture(env.testFixture);
   return {
     mode: 'development',
 
@@ -42,7 +57,8 @@ module.exports = env => {
       ],
       allowedHosts: 'all',
       server: 'https',
-      port: 12345
+      port: 8080,
+      open
     },
 
     module: {
