@@ -10,8 +10,8 @@ export const sortByDate = (
   val2?: Date | string | number,
   format = SHORT_DATE_FORMAT
 ): number => {
-  if (val1 === undefined) return 0;
-  if (val2 === undefined) return 0;
+  if (val1 === undefined) return -1;
+  if (val2 === undefined) return 1;
   if (!isValidDate(val1, format) && !isValidDate(val2, format)) return 0;
   if (!isValidDate(val1, format)) return -1;
   if (!isValidDate(val2, format)) return 1;

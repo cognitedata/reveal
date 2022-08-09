@@ -68,4 +68,12 @@ describe('sort dates', () => {
     valid.sort(sortByDate);
     expect(valid).toMatchObject(expectedValid);
   });
+
+  it('sort with undefined dates', () => {
+    const dates = ['2015.03', undefined, '2020.07', '2017.05'];
+    const sorted = ['2015.03', '2017.05', '2020.07', undefined];
+
+    dates.sort(sortByDate);
+    expect(dates).toMatchObject(sorted);
+  });
 });

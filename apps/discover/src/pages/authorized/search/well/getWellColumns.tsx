@@ -1,7 +1,7 @@
 import { DoglegSeverityUnitInternal } from 'domain/wells/trajectory/internal/types';
 import { getSpudDateDisplay } from 'domain/wells/well/internal/selectors/getSpudDateDisplay';
 import { getSpudDateTableSort } from 'domain/wells/well/internal/selectors/getSpudDateSort';
-import { getWaterDepthSort } from 'domain/wells/well/internal/selectors/getWaterDepthSort';
+import { getWaterDepthTableSort } from 'domain/wells/well/internal/selectors/getWaterDepthSort';
 import { wellFieldTitles } from 'domain/wells/well/internal/titles';
 import { WellInternal } from 'domain/wells/well/internal/types';
 
@@ -66,7 +66,7 @@ export const getWellColumns = (
       accessor: 'waterDepth.value',
       width: '170px',
       order: 4,
-      sortType: getWaterDepthSort,
+      sortType: getWaterDepthTableSort,
     },
     blockname: {
       Header: BLOCK_NAME,
