@@ -4,15 +4,25 @@ import React, { useState } from 'react';
 
 import groupBy from 'lodash/groupBy';
 import head from 'lodash/head';
+import { sortTableData } from 'utils/sort/sortTableData';
 
 import { Table, TableResults } from 'components/Tablev3';
 import { useDeepCallback, useDeepEffect, useDeepMemo } from 'hooks/useDeep';
-import { SortBy } from 'pages/types';
+
+import { NdsView } from '../../types';
 
 import { useNdsWellsTableColumns } from './columns/useNdsTableColumns';
 import { NdsWellboresTable } from './NdsWellboresTable';
 import { NdsWellsTableData, NdsTableProps } from './types';
-import { sortNdsEvents } from './utils';
+
+const tableOptions = {
+  expandable: true,
+  flex: false,
+  pagination: {
+    enabled: true,
+    pageSize: 50,
+  },
+};
 
 export const NdsWellsTable: React.FC<NdsTableProps> = ({
   data,
@@ -22,18 +32,6 @@ export const NdsWellsTable: React.FC<NdsTableProps> = ({
 
   const [tableData, setTableData] = useState<NdsWellsTableData[]>([]);
   const [expandedWells, setExpandedWells] = useState<TableResults>({});
-  const [sortBy, setSortBy] = useState<SortBy[]>([]);
-
-  const tableOptions = {
-    expandable: true,
-    flex: false,
-    manualSortBy: true,
-    sortBy,
-    pagination: {
-      enabled: true,
-      pageSize: 50,
-    },
-  };
 
   const groupedData = useDeepMemo(
     () => groupBy(data, NDS_ACCESSORS.WELL_NAME),
@@ -50,7 +48,6 @@ export const NdsWellsTable: React.FC<NdsTableProps> = ({
 
     setTableData(tableData);
     setExpandedWells(firstRow ? { [firstRow.id]: true } : {});
-    setSortBy([]);
   }, [groupedData]);
 
   const handleRowClick = useDeepCallback(
@@ -64,23 +61,11 @@ export const NdsWellsTable: React.FC<NdsTableProps> = ({
     [expandedWells]
   );
 
-  const handleSort = useDeepCallback(
-    (sortBy: SortBy[]) => {
-      const sortedTableData = tableData.map((row) => ({
-        ...row,
-        data: sortNdsEvents(row.data, sortBy),
-      }));
-
-      setSortBy(sortBy);
-      setTableData(sortedTableData);
-    },
-    [tableData]
-  );
-
   const renderRowSubComponent = useDeepCallback(
-    ({ row }) => {
+    ({ row, sortBy }) => {
       const { data } = row.original;
-      return <NdsWellboresTable data={data} onClickView={onClickView} />;
+      const tableData = sortTableData<NdsView>(data, sortBy);
+      return <NdsWellboresTable data={tableData} onClickView={onClickView} />;
     },
     [tableData]
   );
@@ -94,7 +79,6 @@ export const NdsWellsTable: React.FC<NdsTableProps> = ({
       options={tableOptions}
       expandedIds={expandedWells}
       handleRowClick={handleRowClick}
-      handleSort={handleSort}
       renderRowSubComponent={renderRowSubComponent}
     />
   );

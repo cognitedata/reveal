@@ -8,19 +8,19 @@ import { NdsView } from '../../types';
 import { useNdsWellboresTableColumns } from './columns/useNdsTableColumns';
 import { NdsTableProps } from './types';
 
+const tableOptions = {
+  flex: false,
+  pagination: {
+    enabled: true,
+    pageSize: 50,
+  },
+};
+
 export const NdsWellboresTable: React.FC<NdsTableProps> = ({
   data,
   onClickView,
 }) => {
   const columns = useNdsWellboresTableColumns();
-
-  const tableOptions = {
-    flex: false,
-    pagination: {
-      enabled: true,
-      pageSize: 50,
-    },
-  };
 
   const renderRowHoverComponent = useCallback(
     ({ row }) => (

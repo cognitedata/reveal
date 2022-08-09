@@ -1,4 +1,5 @@
 import { NDS_ACCESSORS } from 'domain/wells/nds/internal/selectors/accessors';
+import { getWellNameTableSort } from 'domain/wells/well/internal/selectors/getWellNameSort';
 
 import { useMemo } from 'react';
 
@@ -26,6 +27,7 @@ export const useNdsWellsTableColumns = (): ColumnType<NdsView>[] => {
       width: '300px',
       maxWidth: 'auto',
       Cell: ({ row }) => Body2DefaultStrong(row.original.wellName),
+      sortType: getWellNameTableSort,
       stickyColumn: true,
     },
     ...useNdsTableCommonColumns(),

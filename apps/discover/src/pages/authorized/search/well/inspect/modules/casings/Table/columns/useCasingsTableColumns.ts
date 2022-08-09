@@ -1,3 +1,5 @@
+import { getWellNameTableSort } from 'domain/wells/well/internal/selectors/getWellNameSort';
+
 import { useMemo } from 'react';
 
 import { ColumnType } from 'components/Tablev3';
@@ -26,6 +28,7 @@ export const useCasingsWellsTableColumns =
         width: '300px',
         maxWidth: 'auto',
         Cell: ({ row }) => Body2DefaultStrong(row.original.wellName),
+        sortType: getWellNameTableSort,
         stickyColumn: true,
       },
       ...useCasingsTableCommonColumns(),
