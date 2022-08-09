@@ -19,6 +19,7 @@ import { ParsedGeometry } from '@reveal/sector-parser';
 import { CadMaterialManager, NodeTransformProvider, RenderMode, SectorQuads } from '@reveal/rendering';
 import { InstancedMeshManager } from '../batching/InstancedMeshManager';
 import { GeometryBatchingManager } from '../batching/GeometryBatchingManager';
+import { Result } from 'neverthrow';
 
 export type ParseCallbackDelegate = (parsed: { lod: string; data: SectorGeometry | SectorQuads }) => void;
 
@@ -123,7 +124,7 @@ export class CadNode extends THREE.Object3D {
     return this._materialManager.getRenderMode();
   }
 
-  public loadSector(sector: WantedSector): Promise<ConsumedSector> {
+  public loadSector(sector: WantedSector): Promise<Result<ConsumedSector, Error>> {
     return this._sectorRepository.loadSector(sector);
   }
 

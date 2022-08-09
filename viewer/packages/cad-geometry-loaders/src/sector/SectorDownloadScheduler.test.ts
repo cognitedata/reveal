@@ -8,6 +8,7 @@ import { IMock, Mock } from 'moq.ts';
 import { SectorDownloadData, SectorDownloadScheduler } from './SectorDownloadScheduler';
 import Log from '@reveal/logger';
 import { LogLevelNumbers } from 'loglevel';
+import { ok, Result } from 'neverthrow';
 
 describe(SectorDownloadScheduler.name, () => {
   let sectorDownloadScheduler: SectorDownloadScheduler;
@@ -42,8 +43,8 @@ describe(SectorDownloadScheduler.name, () => {
     const downloadedSector = await Promise.any(sectorDownloadScheduler.queueSectorBatchForDownload(sectorDownloadData));
 
     // Assert
-    expect(wantedSectors[0].modelIdentifier).toBe(downloadedSector.modelIdentifier);
-    expect(wantedSectors[0].metadata.id).toBe(downloadedSector.metadata.id);
+    expect(wantedSectors[0].modelIdentifier).toBe(downloadedSector._unsafeUnwrap().modelIdentifier);
+    expect(wantedSectors[0].metadata.id).toBe(downloadedSector._unsafeUnwrap().metadata.id);
   });
 
   test('Adding the same sector twice should not increment queue and resolve to same instance', async () => {
@@ -72,8 +73,10 @@ describe(SectorDownloadScheduler.name, () => {
     const resolvedFirstSector = await firstBatch[0];
     const resolvedSecondSector = await secondBatch[0];
 
-    expect(resolvedFirstSector.metadata.id).toBe(resolvedSecondSector.metadata.id);
-    expect(resolvedFirstSector.modelIdentifier).toBe(resolvedSecondSector.modelIdentifier);
+    expect(resolvedFirstSector._unsafeUnwrap().metadata.id).toBe(resolvedSecondSector._unsafeUnwrap().metadata.id);
+    expect(resolvedFirstSector._unsafeUnwrap().modelIdentifier).toBe(
+      resolvedSecondSector._unsafeUnwrap().modelIdentifier
+    );
   });
 
   test('When a pending sector is finished, a new sector should be downloaded from the queue', async () => {
@@ -186,10 +189,10 @@ describe(SectorDownloadScheduler.name, () => {
     expect(sectorDownloadScheduler.numberOfQueuedDownloads).toBe(0);
 
     resolvedSectors.forEach(sector => {
-      if (sector.metadata.id === 11) {
-        expect(sector.levelOfDetail).toBe(LevelOfDetail.Discarded);
+      if (sector._unsafeUnwrap().metadata.id === 11) {
+        expect(sector._unsafeUnwrap().levelOfDetail).toBe(LevelOfDetail.Discarded);
       } else {
-        expect(sector.levelOfDetail).toBe(LevelOfDetail.Detailed);
+        expect(sector._unsafeUnwrap().levelOfDetail).toBe(LevelOfDetail.Detailed);
       }
     });
   });

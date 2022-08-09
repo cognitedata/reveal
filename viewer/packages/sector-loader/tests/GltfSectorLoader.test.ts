@@ -15,7 +15,7 @@ describe(GltfSectorLoader.name, () => {
   let loader: GltfSectorLoader;
   let wantedSectorMock: IMock<WantedSector>;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     const binMock = createBinaryFileProviderMock();
     wantedSectorMock = createWantedSectorMock();
 
@@ -27,25 +27,18 @@ describe(GltfSectorLoader.name, () => {
 
   test('loadSector returns consumed sector with right id and modelIdentifier', async () => {
     const consumedSector = await loader.loadSector(wantedSectorMock.object());
-    if (consumedSector.isErr()) {
-      return;
-    }
-
-    expect(consumedSector.value.modelIdentifier).toBe(modelIdentifier);
-    expect(consumedSector.value.metadata.id).toBe(wantedSectorMock.object().metadata.id);
+    expect(consumedSector._unsafeUnwrap().modelIdentifier).toBe(modelIdentifier);
+    expect(consumedSector._unsafeUnwrap().metadata.id).toBe(wantedSectorMock.object().metadata.id);
   });
 
   test('loadSector returns sector with geometryBatchingQueue that contains all geometry types', async () => {
     const consumedSector = await loader.loadSector(wantedSectorMock.object());
-    if (consumedSector.isErr()) {
-      return;
-    }
 
-    expect(consumedSector.value.geometryBatchingQueue).toBeTruthy();
+    expect(consumedSector._unsafeUnwrap().geometryBatchingQueue).toBeTruthy();
 
     const typeSet = new Set<RevealGeometryCollectionType>();
 
-    for (const geometry of consumedSector.value.geometryBatchingQueue!) {
+    for (const geometry of consumedSector._unsafeUnwrap().geometryBatchingQueue!) {
       typeSet.add(geometry.type);
     }
 

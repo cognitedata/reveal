@@ -32,11 +32,11 @@ export class GltfSectorLoader {
     );
     const sectorByteBuffer = await sectorByteBufferResult;
     if (sectorByteBuffer.isErr()) {
-      MetricsLogger.trackError(new Error('Reading sector byte buffer from binary file resulted in error'), {
+      MetricsLogger.trackError(new Error('Reading sector buffer from binary file resulted in error'), {
         moduleName: 'GltfSectorLoader',
         methodName: 'loadSector'
       });
-      return err(new Error('Reading sector byte buffer from binary file resulted in error'));
+      return err(new Error('Reading sector buffer from binary file resulted in error'));
     } else {
       const group = new AutoDisposeGroup();
 

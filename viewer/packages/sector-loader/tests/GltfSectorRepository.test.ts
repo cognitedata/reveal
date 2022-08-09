@@ -32,8 +32,8 @@ describe(GltfSectorRepository.name, () => {
   test('loadSector returns sector metadata with right id and modelidentifier', async () => {
     const consumedSector = await sectorRepository.loadSector(wantedSectorMock.object());
 
-    expect(consumedSector.metadata.id).toEqual(wantedSectorMock.object().metadata.id);
-    expect(consumedSector.modelIdentifier).toEqual(wantedSectorMock.object().modelIdentifier);
+    expect(consumedSector._unsafeUnwrap().metadata.id).toEqual(wantedSectorMock.object().metadata.id);
+    expect(consumedSector._unsafeUnwrap().modelIdentifier).toEqual(wantedSectorMock.object().modelIdentifier);
   });
 
   test('previously fetched sector is cached by GltfSectorRepository', async () => {
@@ -55,7 +55,7 @@ describe(GltfSectorRepository.name, () => {
     const sectorRepository = new GltfSectorRepository(binaryFileProvider.object(), materialManager.object());
 
     //Sector loader will throw since there is no valid materials for given object
-    expect(sectorRepository.loadSector(wantedSectorMock.object())).resolves.not.toBeEmptyObject();
+    expect(sectorRepository.loadSector(wantedSectorMock.object())).resolves.not.toThrow();
 
     Log.setLevel(currentLogLevel);
   });

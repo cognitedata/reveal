@@ -2,26 +2,26 @@
  * Copyright 2022 Cognite AS
  */
 
-import { ConsumedSector, LevelOfDetail, WantedSector } from '@reveal/cad-parsers';
-import log from '@reveal/logger';
+import { ConsumedSector, WantedSector } from '@reveal/cad-parsers';
 import { DeferredPromise } from '@reveal/utilities';
 import assert from 'assert';
+import { Result } from 'neverthrow';
 
 export type SectorDownloadData = {
   sector: WantedSector;
-  downloadSector: (sector: WantedSector) => Promise<ConsumedSector>;
+  downloadSector: (sector: WantedSector) => Promise<Result<ConsumedSector, Error>>;
 };
 
 type QueuedSectorData = {
   sector: WantedSector;
-  downloadSector: (sector: WantedSector) => Promise<ConsumedSector>;
-  queuedDeferredPromise: DeferredPromise<ConsumedSector>;
+  downloadSector: (sector: WantedSector) => Promise<Result<ConsumedSector, Error>>;
+  queuedDeferredPromise: DeferredPromise<Result<ConsumedSector, Error>>;
 };
 
 export class SectorDownloadScheduler {
   private readonly _maxConcurrentSectorDownloads: number;
 
-  private readonly _pendingSectorDownloads: Map<string, Promise<ConsumedSector>>;
+  private readonly _pendingSectorDownloads: Map<string, Promise<Result<ConsumedSector, Error>>>;
   private readonly _queuedSectorDownloads: Map<string, QueuedSectorData>;
   private readonly _sectorDownloadQueue: string[];
 
@@ -40,7 +40,7 @@ export class SectorDownloadScheduler {
     this._sectorDownloadQueue = [];
   }
 
-  public queueSectorBatchForDownload(downloadData: SectorDownloadData[]): Promise<ConsumedSector>[] {
+  public queueSectorBatchForDownload(downloadData: SectorDownloadData[]): Promise<Result<ConsumedSector, Error>>[] {
     return downloadData.map(sectorDownloadData => {
       const { sector, downloadSector } = sectorDownloadData;
       const sectorIdentifier = this.getSectorIdentifier(sector.modelIdentifier, sector.metadata.id);
@@ -61,8 +61,8 @@ export class SectorDownloadScheduler {
   private getOrAddToQueuedDownloads(
     sector: WantedSector,
     sectorIdentifier: string,
-    downloadSector: (sector: WantedSector) => Promise<ConsumedSector>
-  ): Promise<ConsumedSector> {
+    downloadSector: (sector: WantedSector) => Promise<Result<ConsumedSector, Error>>
+  ): Promise<Result<ConsumedSector, Error>> {
     const queuedSector = this._queuedSectorDownloads.get(sectorIdentifier);
 
     if (queuedSector !== undefined) {
@@ -70,7 +70,7 @@ export class SectorDownloadScheduler {
       return queuedDeferredPromise;
     }
 
-    const queuedDeferredPromise = new DeferredPromise<ConsumedSector>();
+    const queuedDeferredPromise = new DeferredPromise<Result<ConsumedSector, Error>>();
     this._sectorDownloadQueue.push(sectorIdentifier);
     this._queuedSectorDownloads.set(sectorIdentifier, {
       sector,
@@ -82,26 +82,20 @@ export class SectorDownloadScheduler {
   }
 
   private addSectorToPendingDownloads(
-    downloadSector: (sector: WantedSector) => Promise<ConsumedSector>,
+    downloadSector: (sector: WantedSector) => Promise<Result<ConsumedSector, Error>>,
     sector: WantedSector,
     sectorIdentifier: string
   ) {
-    const sectorDownload = downloadSector(sector).catch(error => {
-      log.error('Failed to load sector', sector, 'error:', error);
-      return {
-        modelIdentifier: sector.modelIdentifier,
-        metadata: sector.metadata,
-        levelOfDetail: LevelOfDetail.Discarded,
-        group: undefined,
-        instancedMeshes: undefined
-      } as ConsumedSector;
-    });
+    const sectorDownload = downloadSector(sector);
     this._pendingSectorDownloads.set(sectorIdentifier, sectorDownload);
     this.processNextQueuedSectorDownload(sectorDownload, sectorIdentifier);
     return sectorDownload;
   }
 
-  private processNextQueuedSectorDownload(sectorDownload: Promise<ConsumedSector>, sectorIdentifier: string) {
+  private processNextQueuedSectorDownload(
+    sectorDownload: Promise<Result<ConsumedSector, Error>>,
+    sectorIdentifier: string
+  ) {
     sectorDownload.then(_ => {
       this._pendingSectorDownloads.delete(sectorIdentifier);
       const nextSectorIdentifier = this._sectorDownloadQueue.shift();

@@ -18,6 +18,7 @@ import { IMock, Mock } from 'moq.ts';
 import Log from '@reveal/logger';
 import { LogLevelNumbers } from 'loglevel';
 import { CadNode } from '@reveal/cad-model';
+import { ok, Result } from 'neverthrow';
 
 describe('SectorLoader', () => {
   let culler: SectorCuller;
@@ -158,8 +159,8 @@ class StubRepository implements SectorRepository {
     this.loadSectorCallback = createConsumedSector;
   }
 
-  loadSector(sector: WantedSector): Promise<ConsumedSector> {
-    return Promise.resolve(this.loadSectorCallback(sector));
+  loadSector(sector: WantedSector): Promise<Result<ConsumedSector, Error>> {
+    return ok(Promise.resolve(this.loadSectorCallback(sector)));
   }
   clearCache(): void {}
   setCacheSize(_sectorCount: number): void {}

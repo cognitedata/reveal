@@ -25,6 +25,7 @@ import { createOffsetsArray } from './v8/arrays';
 import { BinaryFileProvider } from '@reveal/modeldata-api';
 import { ParseCtmResult, ParseSectorResult } from '@cognite/reveal-parser-worker';
 import { CadMaterialManager } from '@reveal/rendering';
+import { err, ok, Result } from 'neverthrow';
 
 export class V8SectorRepository implements SectorRepository {
   private readonly _consumedSectorCache: MemoryRequestCache<string, ConsumedSector>;
@@ -60,38 +61,44 @@ export class V8SectorRepository implements SectorRepository {
   // TODO j-bjorne 16-04-2020: Should look into ways of not sending in discarded sectors,
   // unless we want them to eventually set their priority to lower in the cache.
 
-  async loadSector(sector: WantedSector): Promise<ConsumedSector> {
+  async loadSector(sector: WantedSector): Promise<Result<ConsumedSector, Error>> {
     const cacheKey = this.wantedSectorCacheKey(sector);
     try {
       if (this._consumedSectorCache.has(cacheKey)) {
-        return this._consumedSectorCache.get(cacheKey);
+        return ok(this._consumedSectorCache.get(cacheKey));
       }
 
       switch (sector.levelOfDetail) {
         case LevelOfDetail.Detailed: {
           const consumed = await this.loadDetailedSectorFromNetwork(sector);
-          this._consumedSectorCache.forceInsert(cacheKey, consumed);
+          if (consumed.isErr()) {
+            return err(new Error('LOD sector is not loaded'));
+          }
+          this._consumedSectorCache.forceInsert(cacheKey, consumed.value);
           // Increase reference count to avoid geometry from being disposed
-          consumed?.group?.reference();
+          consumed?.value.group?.reference();
           return consumed;
         }
 
         case LevelOfDetail.Simple: {
           const consumed = await this.loadSimpleSectorFromNetwork(sector);
-          this._consumedSectorCache.forceInsert(cacheKey, consumed);
+          if (consumed.isErr()) {
+            return err(new Error('LOD simple sector is not loaded'));
+          }
+          this._consumedSectorCache.forceInsert(cacheKey, consumed.value);
           // Increase reference count to avoid geometry from being disposed
-          consumed?.group?.reference();
+          consumed?.value.group?.reference();
           return consumed;
         }
 
         case LevelOfDetail.Discarded:
-          return {
+          return ok({
             modelIdentifier: sector.modelIdentifier,
             metadata: sector.metadata,
             levelOfDetail: sector.levelOfDetail,
             instancedMeshes: [],
             group: undefined
-          };
+          });
 
         default:
           assertNever(sector.levelOfDetail);
@@ -103,7 +110,7 @@ export class V8SectorRepository implements SectorRepository {
     }
   }
 
-  private async loadSimpleSectorFromNetwork(wantedSector: WantedSector): Promise<ConsumedSector> {
+  private async loadSimpleSectorFromNetwork(wantedSector: WantedSector): Promise<Result<ConsumedSector, Error>> {
     const metadata = wantedSector.metadata as V8SectorMetadata;
 
     // TODO 2021-05-05 larsmoa: Retry
@@ -123,7 +130,7 @@ export class V8SectorRepository implements SectorRepository {
       group: transformed.sectorMeshes,
       instancedMeshes: transformed.instancedMeshes
     };
-    return consumedSector;
+    return ok(consumedSector);
   }
 
   private async loadI3DFromNetwork(modelBaseUrl: string, filename: string): Promise<ParseSectorResult> {
@@ -142,7 +149,7 @@ export class V8SectorRepository implements SectorRepository {
     );
   }
 
-  private async loadDetailedSectorFromNetwork(wantedSector: WantedSector): Promise<ConsumedSector> {
+  private async loadDetailedSectorFromNetwork(wantedSector: WantedSector): Promise<Result<ConsumedSector, Error>> {
     const metadata = wantedSector.metadata as V8SectorMetadata;
     const indexFile = metadata.indexFile;
 
@@ -165,7 +172,7 @@ export class V8SectorRepository implements SectorRepository {
       group: transformed.sectorMeshes,
       instancedMeshes: transformed.instancedMeshes
     };
-    return consumedSector;
+    return ok(consumedSector);
   }
 
   private async loadCtmFileFromNetwork(modelBaseUrl: string, filename: string): Promise<ParseCtmResult> {

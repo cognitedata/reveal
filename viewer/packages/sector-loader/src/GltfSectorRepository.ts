@@ -8,6 +8,7 @@ import { BinaryFileProvider } from '@reveal/modeldata-api';
 import { CadMaterialManager } from '@reveal/rendering';
 import { SectorRepository } from './SectorRepository';
 import { GltfSectorLoader } from './GltfSectorLoader';
+import { ok, Result } from 'neverthrow';
 
 export class GltfSectorRepository implements SectorRepository {
   private readonly _gltfSectorLoader: GltfSectorLoader;
@@ -22,8 +23,8 @@ export class GltfSectorRepository implements SectorRepository {
     lod: LevelOfDetail,
     modelIdentifier: string,
     metadata: V9SectorMetadata
-  ): Promise<ConsumedSector> {
-    return Promise.resolve({
+  ): Promise<Result<ConsumedSector, Error>> {
+    return ok({
       modelIdentifier,
       metadata,
       levelOfDetail: lod,
@@ -32,15 +33,21 @@ export class GltfSectorRepository implements SectorRepository {
     });
   }
 
-  private async getEmptyDetailedSector(modelIdentifier: string, metadata: V9SectorMetadata) {
+  private async getEmptyDetailedSector(
+    modelIdentifier: string,
+    metadata: V9SectorMetadata
+  ): Promise<Result<ConsumedSector, Error>> {
     return this.getEmptySectorWithLod(LevelOfDetail.Detailed, modelIdentifier, metadata);
   }
 
-  private async getEmptyDiscardedSector(modelIdentifier: string, metadata: V9SectorMetadata) {
+  private async getEmptyDiscardedSector(
+    modelIdentifier: string,
+    metadata: V9SectorMetadata
+  ): Promise<Result<ConsumedSector, Error>> {
     return this.getEmptySectorWithLod(LevelOfDetail.Discarded, modelIdentifier, metadata);
   }
 
-  async loadSector(sector: WantedSector): Promise<ConsumedSector> {
+  async loadSector(sector: WantedSector): Promise<Result<ConsumedSector, Error>> {
     const metadata = sector.metadata as V9SectorMetadata;
 
     if (metadata.sectorFileName === undefined || metadata.downloadSize === 0) {
@@ -53,7 +60,7 @@ export class GltfSectorRepository implements SectorRepository {
 
     const cacheKey = this.wantedSectorCacheKey(sector);
     if (this._gltfCache.has(cacheKey)) {
-      return this._gltfCache.get(cacheKey);
+      return ok(this._gltfCache.get(cacheKey));
     }
 
     const consumedSectorResult = await this._gltfSectorLoader.loadSector(sector);
@@ -69,7 +76,7 @@ export class GltfSectorRepository implements SectorRepository {
     consumedSector.group?.reference();
     this._gltfCache.forceInsert(cacheKey, consumedSector);
 
-    return consumedSector;
+    return ok(consumedSector);
   }
 
   setCacheSize(sectorCount: number): void {

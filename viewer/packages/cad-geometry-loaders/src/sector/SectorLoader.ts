@@ -113,12 +113,14 @@ export class SectorLoader {
       for await (const consumed of PromiseUtils.raceUntilAllCompleted(consumedPromises)) {
         const resolvedSector = consumed.result;
         if (currentBatchId === this._batchId && resolvedSector !== undefined) {
-          this._modelStateHandler.updateState(
-            resolvedSector.modelIdentifier,
-            resolvedSector.metadata.id,
-            resolvedSector.levelOfDetail
-          );
-          yield resolvedSector;
+          if (resolvedSector.isOk()) {
+            this._modelStateHandler.updateState(
+              resolvedSector.value.modelIdentifier,
+              resolvedSector.value.metadata.id,
+              resolvedSector.value.levelOfDetail
+            );
+            yield resolvedSector.value;
+          }
         }
         progressHelper.reportNewSectorsLoaded(1);
       }
@@ -160,7 +162,7 @@ export class SectorLoader {
     }
   }
 
-  private startLoadingBatch(batch: WantedSector[], models: CadNode[]): Promise<ConsumedSector>[] {
+  private startLoadingBatch(batch: WantedSector[], models: CadNode[]): Promise<Result<ConsumedSector, Error>>[] {
     const consumedPromises = batch.map(wantedSector => {
       const model = models.filter(model => model.cadModelMetadata.modelIdentifier === wantedSector.modelIdentifier)[0];
       return { sector: wantedSector, downloadSector: model.loadSector.bind(model) };
