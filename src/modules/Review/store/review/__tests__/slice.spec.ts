@@ -2,6 +2,7 @@ import reducer, {
   initialState,
   selectAnnotation,
   setReviewFileIds,
+  setScrollToId,
   showAnnotationSettingsModel,
   toggleAnnotationVisibility,
 } from 'src/modules/Review/store/review/slice';
@@ -142,6 +143,39 @@ describe('Test review slice', () => {
             createNew: { text: undefined, color: undefined },
           });
         });
+      });
+    });
+
+    describe('action setScrollToId', () => {
+      test('set scroll To Id', () => {
+        const newState = reducer(
+          {
+            ...mockReviewState,
+          },
+          setScrollToId('3')
+        );
+        expect(newState.scrollToId).toStrictEqual('3');
+      });
+
+      test('change scroll To Id', () => {
+        const newState = reducer(
+          {
+            ...mockReviewState,
+            scrollToId: '2',
+          },
+          setScrollToId('3')
+        );
+        expect(newState.scrollToId).toStrictEqual('3');
+      });
+
+      test('remove scroll To Id', () => {
+        const newState = reducer(
+          {
+            ...mockReviewState,
+          },
+          setScrollToId('')
+        );
+        expect(newState.scrollToId).toStrictEqual('');
       });
     });
   });
