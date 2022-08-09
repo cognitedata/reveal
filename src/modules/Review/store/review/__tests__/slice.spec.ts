@@ -18,8 +18,8 @@ const mockReviewState: ReviewState = {
 };
 
 describe('Test review slice', () => {
-  describe('Test actions', () => {
-    describe('action setReviewFileIds', () => {
+  describe('Test reducers', () => {
+    describe('setReviewFileIds reducer', () => {
       test('Should set new input file ids as state file ids', () => {
         const newState = reducer(mockReviewState, setReviewFileIds([1, 2, 3]));
         expect(newState.fileIds).toEqual([1, 2, 3]);
@@ -31,7 +31,7 @@ describe('Test review slice', () => {
       });
     });
 
-    describe('action toggleAnnotationVisibility', () => {
+    describe('toggleAnnotationVisibility reducer', () => {
       test("remove id from hidden id if it's already exist", () => {
         const newState = reducer(
           mockReviewState,
@@ -49,7 +49,7 @@ describe('Test review slice', () => {
       });
     });
 
-    describe('action selectAnnotation', () => {
+    describe('selectAnnotation reducer', () => {
       test('set selected annotation id', () => {
         const newState = reducer(mockReviewState, selectAnnotation(4));
         expect(newState.selectedAnnotationIds).toEqual([4]);
@@ -64,7 +64,7 @@ describe('Test review slice', () => {
       });
     });
 
-    describe('action showAnnotationSettingsModel', () => {
+    describe('showAnnotationSettingsModel reducer', () => {
       describe('open annotation settings without create new', () => {
         test('open shape annotation settings', () => {
           const newState = reducer(
@@ -149,7 +149,7 @@ describe('Test review slice', () => {
       });
     });
 
-    describe('action setScrollToId', () => {
+    describe('setScrollToId reducer', () => {
       test('set scroll To Id', () => {
         const newState = reducer(mockReviewState, setScrollToId('3'));
         expect(newState.scrollToId).toStrictEqual('3');
@@ -172,7 +172,7 @@ describe('Test review slice', () => {
       });
     });
 
-    describe('action resetPreview', () => {
+    describe('resetPreview reducer', () => {
       test('reset selected annotation ids and hidden annotation ids', () => {
         const newState = reducer(mockReviewState, resetPreview());
         expect(newState).toStrictEqual({
