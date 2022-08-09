@@ -1,3 +1,7 @@
+## [0.5.0] - 9 Aug, 2022
+### Added
+- `sort-local-keys` command
+
 ## [0.4.0] - 2 Aug, 2022
 ### Removed
 - `@cognite/react-feature-flags` from dependency list
