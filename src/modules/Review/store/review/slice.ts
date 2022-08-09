@@ -89,9 +89,6 @@ const reviewSlice = createSlice({
       state.selectedAnnotationIds = [];
       state.hiddenAnnotationIds = [];
     },
-    resetReviewPage(state) {
-      Object.assign(state, initialState);
-    },
   },
   extraReducers: (builder) => {
     builder.addCase(deselectAllSelectionsReviewPage, (state) => {
