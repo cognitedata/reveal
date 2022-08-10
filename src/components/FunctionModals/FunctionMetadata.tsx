@@ -13,7 +13,7 @@ import {
  * Function Metadata
  * =============================================================================
  *
- * [Open docs »](https://docs.cognite.com/api/playground/#operation/post-api-playground-projects-project-functions)
+ * [Open docs »](https://docs.cognite.com/api/v1/#operation/post-api-playground-projects-project-functions)
  */
 
 type MetadataId = string;

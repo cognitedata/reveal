@@ -274,7 +274,7 @@ export default function UploadFunctionModal({ onCancel }: Props) {
               with a function named <b>handle</b> with any of following
               arguments: <b>data</b>, <b>client</b> <b>secrets</b> and{' '}
               <b>metadata</b>. More information can be found{' '}
-              <Link href="https://docs.cognite.com/api/playground/#tag/Functions">
+              <Link href="https://docs.cognite.com/api/v1/#tag/Functions">
                 here.
               </Link>
             </p>

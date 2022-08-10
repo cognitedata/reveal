@@ -70,12 +70,12 @@ describe('FunctionLogsModal', () => {
     await sleep(100);
     expect(sdk.get).toHaveBeenNthCalledWith(
       1,
-      '/api/playground/projects/mockProject/functions/1/calls/2/logs'
+      '/api/v1/projects/mockProject/functions/1/calls/2/logs'
     );
 
     expect(sdk.get).toHaveBeenNthCalledWith(
       2,
-      '/api/playground/projects/mockProject/functions/1/calls/2'
+      '/api/v1/projects/mockProject/functions/1/calls/2'
     );
 
     const result = wrapper.find('.ant-modal-content');
