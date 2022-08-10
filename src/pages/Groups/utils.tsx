@@ -47,7 +47,7 @@ const nameToAclTypeMap = {
   analytics: 'analyticsAcl',
   functions: 'functionsAcl',
   geospatial: 'geospatialAcl',
-  geospatialCrs: 'geospatialCrsAcl',
+  geospatialcrs: 'geospatialCrsAcl',
   robotics: 'roboticsAcl',
   sessions: 'sessionsAcl',
   templategroups: 'templateGroupsAcl',
@@ -77,7 +77,7 @@ const getCapabilityNameTranslationKey = {
   templategroups: 'template-groups',
   templateinstances: 'template-instances',
   visionmodel: 'vision-model',
-  geospatialCrs: 'geospatial-crs',
+  geospatialcrs: 'geospatial-crs',
 };
 
 const prepareCapabilityTypeGroups = (_t: (key: TranslationKeys) => string) => {
@@ -117,7 +117,7 @@ const prepareCapabilityTypeGroups = (_t: (key: TranslationKeys) => string) => {
         'transformations',
         'labels',
         'geospatial',
-        'geospatialCrs',
+        'geospatialcrs',
         'entitymatching',
         'documentpipelines',
         'filepipelines',
