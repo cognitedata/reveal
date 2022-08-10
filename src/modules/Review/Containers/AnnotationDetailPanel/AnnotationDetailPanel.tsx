@@ -301,8 +301,7 @@ export const AnnotationDetailPanel = ({
           <Tooltip
             wrapped
             content={`
-                Pressing True or False will label the predictions in order to
-                improve the future quality of the annotation detection. Pressing
+                Pressing True or False will set the status of the suggested annotation. Pressing
                 False will not delete the annotation.`}
           >
             <ToolTipIcon type="HelpFilled" />
