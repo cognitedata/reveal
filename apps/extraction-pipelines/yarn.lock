@@ -1283,9 +1283,9 @@
     mixpanel "^0.13.0"
 
 "@cognite/cdf-utilities@^1.4.6", "@cognite/cdf-utilities@^1.5.0":
-  version "1.5.0"
-  resolved "https://registry.yarnpkg.com/@cognite/cdf-utilities/-/cdf-utilities-1.5.0.tgz#cff2ee213d7c5f9db4a1a013264cb727b20a09b0"
-  integrity sha512-PW4FRYxida5PAbCLnP5DTcUF6ORiNOG8OQ6tZ1ZDIXabTok7ESFSfHhqzGHNMsmqJLYWJLyNTsRBz24t9qkj/g==
+  version "1.6.0"
+  resolved "https://registry.yarnpkg.com/@cognite/cdf-utilities/-/cdf-utilities-1.6.0.tgz#d782cd03872085bffef2de67ce5d670c6e85e1a8"
+  integrity sha512-+rj0KuYBINSovt1m4Hm+tgyqGfRsm2e7Yn1frhyyz2R/uf7xffQxcw5cpgr+L9A/ajV2LcbnvPn4tn/A5Ng4+w==
   dependencies:
     "@cognite/cogs.js" "^7.6.4"
     antd "^4.19.5"
@@ -1293,9 +1293,9 @@
     styled-components "^5.3.3"
 
 "@cognite/cogs.js@^7.5.0", "@cognite/cogs.js@^7.6.4":
-  version "7.10.0"
-  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-7.10.0.tgz#fc3465413b20516af5ae92099f40af09371443d1"
-  integrity sha512-Mo4895Samtwqc2B4gkGQFbB3PxnCex299OWiunjpKHh3v6OkzvUSALQJEQfED45dA0SxWvAkubvwIqDDronmtA==
+  version "7.10.1"
+  resolved "https://registry.yarnpkg.com/@cognite/cogs.js/-/cogs.js-7.10.1.tgz#1a0e44aa286fc6c0ed4197d7dffcb0fa52b07d47"
+  integrity sha512-vR9ywIH5itDnk3y+gWfabfX2HLmlcqNHblayT+EmwKTNw9KU/flZwZkepCiR/V5cNVjt29KNde3psQXDDs2sqg==
   dependencies:
     "@emotion/react" "^11.9.3"
     "@emotion/styled" "^11.9.3"
@@ -1313,7 +1313,7 @@
     rc-collapse "^1.11.8"
     rc-drawer "^4.1.0"
     rc-slider "^9.5.4"
-    rc-tabs "^11.6.2"
+    rc-tabs "^11.16.1"
     react-date-range "^1.1.3"
     react-modal "^3.11.2"
     react-select "^3.1.0"
@@ -5886,9 +5886,9 @@ caniuse-api@^3.0.0:
     lodash.uniq "^4.5.0"
 
 caniuse-lite@^1.0.0, caniuse-lite@^1.0.30001109, caniuse-lite@^1.0.30001370, caniuse-lite@^1.0.30001373:
-  version "1.0.30001374"
-  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001374.tgz#3dab138e3f5485ba2e74bd13eca7fe1037ce6f57"
-  integrity sha512-mWvzatRx3w+j5wx/mpFN5v5twlPrabG8NqX2c6e45LCpymdoGqNvRkRutFUqpRTXKFQFNQJasvK0YT7suW6/Hw==
+  version "1.0.30001375"
+  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001375.tgz#8e73bc3d1a4c800beb39f3163bf0190d7e5d7672"
+  integrity sha512-kWIMkNzLYxSvnjy0hL8w1NOaWNr2rn39RTAVyIwcw8juu60bZDWiF1/loOYANzjtJmy6qPgNmn38ro5Pygagdw==
 
 canvas-fit@^1.5.0:
   version "1.5.0"
@@ -7725,9 +7725,9 @@ ejs@^3.1.6:
     jake "^10.8.5"
 
 electron-to-chromium@^1.4.202:
-  version "1.4.212"
-  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.212.tgz#20cd48e88288fd2428138c108804edb1961bf559"
-  integrity sha512-LjQUg1SpLj2GfyaPDVBUHdhmlDU1vDB4f0mJWSGkISoXQrn5/lH3ECPCuo2Bkvf6Y30wO+b69te+rZK/llZmjg==
+  version "1.4.213"
+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.213.tgz#a0d0f535e4fbddc25196c91ff2964b5660932297"
+  integrity sha512-+3DbGHGOCHTVB/Ms63bGqbyC1b8y7Fk86+7ltssB8NQrZtSCvZG6eooSl9U2Q0yw++fL2DpHKOdTU0NVEkFObg==
 
 element-size@^1.1.1:
   version "1.1.1"
@@ -14928,9 +14928,9 @@ rc-field-form@~1.27.0:
     rc-util "^5.8.0"
 
 rc-image@~5.7.0:
-  version "5.7.0"
-  resolved "https://registry.yarnpkg.com/rc-image/-/rc-image-5.7.0.tgz#e1a3b21099feb3fb9bf8ef3ce12c3fc11a8c1148"
-  integrity sha512-v6dzSgYfYrH4liKmOZKZZO+x21sJ9KPXNinBfkAoQg2Ihcd5QZ+P/JjB7v60X981XTPGjegy8U17Z8VUX4V36g==
+  version "5.7.1"
+  resolved "https://registry.yarnpkg.com/rc-image/-/rc-image-5.7.1.tgz#678dc014845954c30237808c00c7b12e5f2a0b07"
+  integrity sha512-QyMfdhoUfb5W14plqXSisaYwpdstcLYnB0MjX5ccIK2rydQM9sDPuekQWu500DDGR2dBaIF5vx9XbWkNFK17Fg==
   dependencies:
     "@babel/runtime" "^7.11.2"
     classnames "^2.2.6"
@@ -15132,7 +15132,7 @@ rc-table@~7.25.3:
     rc-util "^5.22.5"
     shallowequal "^1.1.0"
 
-rc-tabs@^11.6.2, rc-tabs@~11.16.0:
+rc-tabs@^11.16.1, rc-tabs@~11.16.0:
   version "11.16.1"
   resolved "https://registry.yarnpkg.com/rc-tabs/-/rc-tabs-11.16.1.tgz#7c57b6a092d9d0e2df54413b0319f195c27214a9"
   integrity sha512-bR7Dap23YyfzZQwtKomhiFEFzZuE7WaKWo+ypNRSGB9PDKSc6tM12VP8LWYkvmmQHthgwP0WRN8nFbSJWuqLYw==
@@ -18100,14 +18100,6 @@ url-loader@^4.1.1:
     loader-utils "^2.0.0"
     mime-types "^2.1.27"
     schema-utils "^3.0.0"
-
-url-parse@^1.4.3:
-  version "1.5.10"
-  resolved "https://registry.yarnpkg.com/url-parse/-/url-parse-1.5.10.tgz#9d3c2f736c1d75dd3bd2be507dcc111f1e2ea9c1"
-  integrity sha512-WypcfiRhfeUP9vvF0j6rw0J3hrWrw6iZv3+22h6iRMJ/8z1Tj6XfLP4DsUix5MhMPnXpiHDoKyoZ/bdCkwBCiQ==
-  dependencies:
-    querystringify "^2.1.1"
-    requires-port "^1.0.0"
 
 url@^0.11.0:
   version "0.11.0"
