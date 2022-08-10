@@ -112,6 +112,7 @@
   "file-pipelines": "File pipelines",
   "filter-by-service-account-or-id": "Filter by service account or ID",
   "generate-api-key": "Generate new key",
+  "geospatial-crs": "Geospatial CRS",
   "google": "Google",
   "group-callback-enabled": "Group callback is enabled",
   "group-callback-enabled-info": "A group callback occurs when a user has too many groups attached. This property indicates whether the group callback functionality should be supported for this project. This is only supported for AAD hosted IdPs.",

@@ -77,6 +77,7 @@ const getCapabilityNameTranslationKey = {
   templategroups: 'template-groups',
   templateinstances: 'template-instances',
   visionmodel: 'vision-model',
+  geospatialCrs: 'geospatial-crs',
 };
 
 const prepareCapabilityTypeGroups = (_t: (key: TranslationKeys) => string) => {
