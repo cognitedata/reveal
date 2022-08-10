@@ -78,7 +78,7 @@ export const AnnotationTableRow = ({
       {(reviewAnnotation.annotation.attributes !== undefined ||
         reviewAnnotation.annotation?.confidence !== undefined) && (
         <AttributesIconContainer>
-          <Detail style={{ color: '#595959' }}>
+          <StyledDetail>
             <Tooltip
               content={
                 <AnnotationTableRowAttribute
@@ -86,9 +86,9 @@ export const AnnotationTableRow = ({
                 />
               }
             >
-              <Icon type="Info" />
+              <ToolTipIcon type="Info" />
             </Tooltip>
-          </Detail>
+          </StyledDetail>
         </AttributesIconContainer>
       )}
       {showEditOptions && (
@@ -224,6 +224,17 @@ const AttributesIconContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: start;
+`;
+
+const StyledDetail = styled(Detail)`
+  color: #595959;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+const ToolTipIcon = styled(Icon)`
+  align-self: center;
+  display: flex;
 `;
 
 const ActionMenuContainer = styled.div`
