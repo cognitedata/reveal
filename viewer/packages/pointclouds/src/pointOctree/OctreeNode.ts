@@ -2,8 +2,6 @@
  * Copyright 2022 Cognite AS
  */
 
-
-
 import { Vec3WithIndex } from '../styling/shapes/linalg';
 import { MAX_POINTS_PER_NODE, MIN_POINT_OCTREE_NODE_SIZE } from './constants';
 import * as THREE from 'three';
@@ -31,19 +29,15 @@ function createChildBoxes(box: THREE.Box3) {
 }
 
 function getChildIndex(point: Vec3WithIndex, middle: THREE.Vector3) {
-  return (point[0] < middle.x ? 0 : 1) +
-    (point[1] < middle.y ? 0 : 2) +
-    (point[2] < middle.z ? 0 : 4);
+  return (point[0] < middle.x ? 0 : 1) + (point[1] < middle.y ? 0 : 2) + (point[2] < middle.z ? 0 : 4);
 }
 
-
 export class OctreeNode {
-
   // Either _children is undefined, or _points is
   private _children: Array<OctreeNode> | undefined;
-  private _points: Array<Vec3WithIndex> | undefined;
+  private readonly _points: Array<Vec3WithIndex> | undefined;
 
-  private _boundingBox: THREE.Box3;
+  private readonly _boundingBox: THREE.Box3;
 
   constructor(points: Vec3WithIndex[], box: THREE.Box3) {
     this._boundingBox = box;

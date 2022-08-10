@@ -22,8 +22,7 @@ export class BoundingVolumeHierarchy<T extends BvhElement> {
     return resultList;
   }
 
-  traverseContainingElements(point: THREE.Vector3,
-                             callback: (element: T) => void): void {
+  traverseContainingElements(point: THREE.Vector3, callback: (element: T) => void): void {
     return this._root.traverseContainingElements(point, callback);
   }
 }

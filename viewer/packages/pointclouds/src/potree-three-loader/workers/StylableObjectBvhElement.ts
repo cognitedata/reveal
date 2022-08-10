@@ -8,9 +8,8 @@ import { StylableObject } from '../../styling/StylableObject';
 import * as THREE from 'three';
 
 export class StylableObjectBvhElement implements BvhElement {
-
-  private _box: THREE.Box3;
-  private _stylableObject: StylableObject;
+  private readonly _box: THREE.Box3;
+  private readonly _stylableObject: StylableObject;
 
   constructor(stylableObject: StylableObject) {
     this._stylableObject = stylableObject;

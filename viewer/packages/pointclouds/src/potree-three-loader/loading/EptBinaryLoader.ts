@@ -32,8 +32,9 @@ export class EptBinaryLoader implements ILoader {
 
   constructor(dataLoader: ModelDataProvider, stylableObjects: PointCloudObjectProvider) {
     this._dataLoader = dataLoader;
-    this._stylableObjectsWithBoundingBox =
-      stylableObjectsToRawDecomposedWithBoxes(stylableObjects.annotations.map(a => a.stylableObject));
+    this._stylableObjectsWithBoundingBox = stylableObjectsToRawDecomposedWithBoxes(
+      stylableObjects.annotations.map(a => a.stylableObject)
+    );
   }
 
   async load(node: PointCloudEptGeometryNode): Promise<void> {
@@ -78,12 +79,14 @@ export class EptBinaryLoader implements ILoader {
       .filter(p => p.box.intersectsBox(node.getBoundingBox()))
       .map(p => p.object);
 
-    const sectorBoundingBox: [Vec3, Vec3] = [node.boundingBox.min.toArray(), node.boundingBox.max.toArray()]
+    const sectorBoundingBox: [Vec3, Vec3] = [node.boundingBox.min.toArray(), node.boundingBox.max.toArray()];
 
-    const result = await eptDecoderWorker.parse(eptData,
-                                                relevantStylableObjects,
-                                                node.boundingBox.min.toArray(),
-                                                sectorBoundingBox);
+    const result = await eptDecoderWorker.parse(
+      eptData,
+      relevantStylableObjects,
+      node.boundingBox.min.toArray(),
+      sectorBoundingBox
+    );
     EptBinaryLoader.WORKER_POOL.releaseWorker(autoTerminatingWorker);
     return result;
   }
