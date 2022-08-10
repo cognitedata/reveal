@@ -290,6 +290,8 @@ export function ModelDetails({
                 },
                 boundaryConditions: [],
                 labels: [],
+                availableBoundaryConditions:
+                  modelFile.availableBoundaryConditions ?? [],
               }}
               onUpload={() => {
                 navigate({ to: '../model-versions' });

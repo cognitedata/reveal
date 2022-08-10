@@ -1,5 +1,5 @@
 import type { ChangeEvent } from 'react';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useMatch } from 'react-location';
 import { useSelector } from 'react-redux';
 
@@ -13,12 +13,14 @@ import type {
   CreateMetadata,
   DefinitionMap,
   FileInfo,
+  Simulator,
   SimulatorInstance,
   UpdateMetadata,
 } from '@cognite/simconfig-api-sdk/rtk';
 import {
   getTypedFormData,
   useCreateModelFileMutation,
+  useGetMetadataResourceQuery,
   useGetSimulatorsListQuery,
   useUpdateModelFileVersionMutation,
 } from '@cognite/simconfig-api-sdk/rtk';
@@ -45,7 +47,7 @@ import {
   UnitSystem,
 } from './constants';
 import { InputRow } from './elements';
-import type { ModelFormState } from './types';
+import type { BoundaryConditionResponse, ModelFormState } from './types';
 
 import type { AppLocationGenerics } from 'routes';
 
@@ -67,6 +69,7 @@ const getInitialModelFormState = (
     name: '',
     source: DEFAULT_MODEL_SOURCE,
   },
+  availableBoundaryConditions: [],
 });
 
 const getSimulatorFromFileName = (fileName: string) => {
@@ -113,7 +116,10 @@ export function ModelForm({
   const [datasets, setDatasets] = useState<DataSet[]>();
   const { authState, client } = useAuthContext();
 
-  const labelsFeature = capabilities.capabilities.find(
+  // state to find which simulator was selected after uploading the model file
+  const [selectedSimulator, setSelectedSimulator] = useState<Simulator>();
+
+  const labelsFeature = capabilities.capabilities?.find(
     (feature) => feature.name === 'Labels'
   );
   const isLabelsEnabled = labelsFeature?.capabilities?.every(
@@ -129,6 +135,42 @@ export function ModelForm({
     { pollingInterval: HEARTBEAT_POLL_INTERVAL }
   );
 
+  const {
+    data: simulatorBoundaryConditions,
+    isSuccess: isBoundaryConditionsSuccess,
+    isError: isBoundaryConditionsError,
+  } = useGetMetadataResourceQuery(
+    {
+      metadataResourceType: 'boundary_conditions',
+      simulator: selectedSimulator ?? 'PROSPER',
+      project,
+    },
+    { skip: !selectedSimulator }
+  );
+
+  const boundaryConditionsData = useMemo(() => {
+    if (isBoundaryConditionsError) {
+      return definitions?.type.boundaryCondition;
+    }
+    if (!isBoundaryConditionsSuccess) {
+      return undefined;
+    }
+    return (
+      simulatorBoundaryConditions as BoundaryConditionResponse
+    ).items.reduce<Record<string, string>>(
+      (result, { key, name }) => ({
+        ...result,
+        [key]: name,
+      }),
+      {}
+    ) as DefinitionMap['type']['boundaryCondition'];
+  }, [
+    definitions?.type.boundaryCondition,
+    isBoundaryConditionsError,
+    isBoundaryConditionsSuccess,
+    simulatorBoundaryConditions,
+  ]);
+
   useEffect(() => {
     const getDatasets = async () => {
       if (client) {
@@ -140,8 +182,9 @@ export function ModelForm({
   }, [client]);
 
   const isNewModel = !initialModelFormState;
+
   const modelFormState = !initialModelFormState
-    ? getInitialModelFormState(definitions?.type.boundaryCondition)
+    ? getInitialModelFormState(boundaryConditionsData)
     : initialModelFormState;
 
   const onButtonClick = () => {
@@ -230,6 +273,7 @@ export function ModelForm({
             fileName,
             userEmail,
           },
+          boundaryConditions,
         }),
       });
       if (isSuccessResponse(response)) {
@@ -264,6 +308,9 @@ export function ModelForm({
       FileExtensionToSimulator[
         fileName ? getFileExtensionFromFileName(fileName) : 'UNKNOWN'
       ];
+
+    setSelectedSimulator(extensionToSimulator);
+
     return simulatorsList?.simulators?.find(
       (connectorSimulator) =>
         connectorSimulator.simulator === extensionToSimulator
@@ -368,14 +415,31 @@ export function ModelForm({
           </InputRow>
 
           {!isNewModel ? (
-            <InputRow>
-              <Input
-                title="Unit system"
-                value={UnitSystem[metadata.unitSystem]}
-                disabled
-                fullWidth
-              />
-            </InputRow>
+            <>
+              <InputRow>
+                <Input
+                  title="Unit system"
+                  value={UnitSystem[metadata.unitSystem]}
+                  disabled
+                  fullWidth
+                />
+              </InputRow>
+              <InputRow>
+                <Field
+                  as={Select}
+                  name="boundaryConditions"
+                  options={modelFormState.availableBoundaryConditions.map(
+                    ({ key, name }) => ({ label: name, value: key })
+                  )}
+                  title="Additional boundary conditions"
+                  isMulti
+                  required
+                  onChange={(values: { label: string; value: string }[]) => {
+                    setFieldValue('boundaryConditions', values);
+                  }}
+                />
+              </InputRow>
+            </>
           ) : (
             <>
               {isLabelsEnabled && <LabelsInput setFieldValue={setFieldValue} />}
@@ -430,21 +494,22 @@ export function ModelForm({
                   }}
                 />
               </InputRow>
-              <InputRow>
-                <Field
-                  as={Select}
-                  name="boundaryConditions"
-                  options={getSelectEntriesFromMap(
-                    definitions?.type.boundaryCondition
-                  )}
-                  title="Boundary conditions"
-                  isMulti
-                  required
-                  onChange={(values: { label: string; value: string }[]) => {
-                    setFieldValue('boundaryConditions', values);
-                  }}
-                />
-              </InputRow>
+              {selectedSimulator && boundaryConditionsData ? (
+                <InputRow>
+                  <Field
+                    as={Select}
+                    name="boundaryConditions"
+                    options={getSelectEntriesFromMap(boundaryConditionsData)}
+                    title="Boundary conditions"
+                    isMulti
+                    required
+                    onChange={(values: { label: string; value: string }[]) => {
+                      setFieldValue('boundaryConditions', values);
+                    }}
+                  />
+                </InputRow>
+              ) : undefined}
+
               <InputRow>
                 <Field
                   as={Select}
