@@ -1,15 +1,28 @@
 /* eslint-disable jest/no-disabled-tests */
 import { ReviewState } from 'src/modules/Review/store/review/types';
-import { initialState } from 'src/modules/Review/store/review/slice';
+
+import { initialState as filesInitialState } from 'src/modules/Common/store/files/slice';
+import { initialState as reviewInitialState } from 'src/modules/Review/store/review/slice';
+import { initialState as annotationInitialState } from 'src/modules/Common/store/annotation/slice';
+import { initialState as annotatorWrapperInitialState } from 'src/modules/Review/store/annotatorWrapper/slice';
+
 import { AnnotationSettingsOption } from 'src/modules/Review/store/review/enums';
 import {
   selectAllReviewFiles,
   selectAnnotationSettingsState,
+  selectVisionReviewAnnotationsForFile,
 } from 'src/modules/Review/store/review/selectors';
 import { FileState } from 'src/modules/Common/store/files/types';
 import { createFileState } from 'src/store/util/StateUtils';
 import { mockFileList } from 'src/__test-utils/fixtures/files';
 import { RootState } from 'src/store/rootReducer';
+import { AnnotationState } from 'src/modules/Common/store/annotation/types';
+import { AnnotatorWrapperState } from 'src/modules/Review/store/annotatorWrapper/type';
+import {
+  getDummyImageObjectDetectionBoundingBoxAnnotation,
+  getDummyImageKeypointCollectionAnnotation,
+} from 'src/__test-utils/getDummyAnnotations';
+import { CDFAnnotationTypeEnum } from 'src/api/annotation/types';
 
 const mockFilesState: FileState = {
   files: {
@@ -24,10 +37,10 @@ const mockFilesState: FileState = {
 };
 
 const mockReviewState: ReviewState = {
-  ...initialState,
+  ...reviewInitialState,
   fileIds: [1, 2],
-  hiddenAnnotationIds: [100, 200, 300],
-  selectedAnnotationIds: [400, 500, 600],
+  hiddenAnnotationIds: [100],
+  selectedAnnotationIds: [200, 400, 500, 600],
   annotationSettings: {
     show: true,
     activeView: AnnotationSettingsOption.KEYPOINT,
@@ -39,9 +52,44 @@ const mockReviewState: ReviewState = {
   scrollToId: 'scroll_id',
 };
 
+const dummyAnnotation100 = getDummyImageObjectDetectionBoundingBoxAnnotation({
+  id: 100,
+});
+const dummyAnnotation200 = getDummyImageObjectDetectionBoundingBoxAnnotation({
+  id: 200,
+});
+const dummyAnnotation300 = getDummyImageKeypointCollectionAnnotation({
+  id: 300,
+});
+
+const mockAnnotationState: AnnotationState = {
+  files: {
+    byId: {
+      '1': [100, 200, 300],
+    },
+  },
+  annotations: {
+    byId: {
+      '100': dummyAnnotation100,
+      '200': dummyAnnotation200,
+      '300': dummyAnnotation300,
+    },
+  },
+  // both keypoints have same label
+  annotationColorMap: {
+    [dummyAnnotation100.label]: '#f00',
+  },
+};
+
+const mockAnnotatorWrapperState: AnnotatorWrapperState = {
+  ...annotatorWrapperInitialState,
+};
+
 const rootState: RootState = {
   fileReducer: mockFilesState,
   reviewSlice: mockReviewState,
+  annotationReducer: mockAnnotationState,
+  annotatorWrapperReducer: mockAnnotatorWrapperState,
 } as RootState;
 
 describe('Test Review selectors', () => {
@@ -77,7 +125,8 @@ describe('Test Review selectors', () => {
 
   describe('selectAnnotationSettingsState selector', () => {
     test('get initial annotation settings', () => {
-      const annotationSettings = selectAnnotationSettingsState(initialState);
+      const annotationSettings =
+        selectAnnotationSettingsState(reviewInitialState);
       expect(annotationSettings.show).toEqual(false);
       expect(annotationSettings.createNew.text).toEqual(undefined);
       expect(annotationSettings.createNew.color).toEqual(undefined);
@@ -112,6 +161,97 @@ describe('Test Review selectors', () => {
       expect(annotationSettings.activeView).toEqual(
         AnnotationSettingsOption.KEYPOINT
       );
+    });
+  });
+
+  describe('selectVisionReviewAnnotationsForFile selector', () => {
+    test('return empty to initial state', () => {
+      const selectedAnnotations = selectVisionReviewAnnotationsForFile(
+        {
+          fileReducer: filesInitialState,
+          reviewSlice: reviewInitialState,
+          annotationReducer: annotationInitialState,
+          annotatorWrapperReducer: annotatorWrapperInitialState,
+        } as RootState,
+        1
+      );
+      expect(selectedAnnotations).toStrictEqual([]);
+    });
+
+    test("return empty to selected file don't have annotations", () => {
+      const selectedAnnotations = selectVisionReviewAnnotationsForFile(
+        rootState,
+        2
+      );
+      expect(selectedAnnotations).toStrictEqual([]);
+    });
+
+    describe('file with annotations', () => {
+      const fileId = 1;
+
+      const selectedAnnotations = selectVisionReviewAnnotationsForFile(
+        rootState,
+        fileId
+      );
+      console.log(selectedAnnotations);
+
+      test('has correct show status', () => {
+        expect(
+          selectedAnnotations.map((annotation) => annotation.annotation.id)
+        ).toContain(100);
+
+        expect(
+          selectedAnnotations.find(
+            (annotation) => annotation.annotation.id === 100
+          )?.show
+        ).toBe(false);
+
+        expect(
+          selectedAnnotations.find(
+            (annotation) => annotation.annotation.id === 200
+          )?.show
+        ).toBe(true);
+      });
+
+      test('has correct select status', () => {
+        expect(
+          selectedAnnotations.map((annotation) => annotation.annotation.id)
+        ).toContain(100);
+
+        expect(
+          selectedAnnotations.find(
+            (annotation) => annotation.annotation.id === 100
+          )?.selected
+        ).toBe(false);
+
+        expect(
+          selectedAnnotations.find(
+            (annotation) => annotation.annotation.id === 200
+          )?.selected
+        ).toBe(true);
+      });
+
+      test('has correct color', () => {
+        expect(
+          selectedAnnotations.map((annotation) => annotation.annotation.id)
+        ).toContain(100);
+
+        expect(
+          selectedAnnotations.find(
+            (annotation) => annotation.annotation.id === 100
+          )?.color
+        ).toBe('#f00');
+      });
+
+      test('keypoint collection', () => {
+        const keypointCollection = selectedAnnotations.find(
+          (annotation) => annotation.annotation.id === 300
+        )?.annotation;
+
+        expect(keypointCollection?.annotationType).toBe(
+          CDFAnnotationTypeEnum.ImagesKeypointCollection
+        );
+      });
     });
   });
 });
