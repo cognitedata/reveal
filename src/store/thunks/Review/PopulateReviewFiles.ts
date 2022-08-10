@@ -1,5 +1,5 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { setReviewFileIds } from 'src/modules/Review/store/reviewSlice';
+import { setReviewFileIds } from 'src/modules/Review/store/review/slice';
 import { ThunkConfig } from 'src/store/rootReducer';
 import { clearAnnotationState, clearFileState } from 'src/store/commonActions';
 
