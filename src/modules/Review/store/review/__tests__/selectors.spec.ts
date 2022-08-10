@@ -11,6 +11,7 @@ import {
   selectAllReviewFiles,
   selectAnnotationSettingsState,
   selectVisionReviewAnnotationsForFile,
+  selectNonRejectedVisionReviewAnnotationsForFile,
 } from 'src/modules/Review/store/review/selectors';
 import { FileState } from 'src/modules/Common/store/files/types';
 import { createFileState } from 'src/store/util/StateUtils';
@@ -22,7 +23,7 @@ import {
   getDummyImageObjectDetectionBoundingBoxAnnotation,
   getDummyImageKeypointCollectionAnnotation,
 } from 'src/__test-utils/getDummyAnnotations';
-import { CDFAnnotationTypeEnum } from 'src/api/annotation/types';
+import { CDFAnnotationTypeEnum, Status } from 'src/api/annotation/types';
 
 const mockFilesState: FileState = {
   files: {
@@ -61,11 +62,15 @@ const dummyAnnotation200 = getDummyImageObjectDetectionBoundingBoxAnnotation({
 const dummyAnnotation300 = getDummyImageKeypointCollectionAnnotation({
   id: 300,
 });
+const dummyAnnotation400 = getDummyImageObjectDetectionBoundingBoxAnnotation({
+  id: 400,
+  status: Status.Rejected,
+});
 
 const mockAnnotationState: AnnotationState = {
   files: {
     byId: {
-      '1': [100, 200, 300],
+      '1': [100, 200, 300, 400],
     },
   },
   annotations: {
@@ -73,6 +78,7 @@ const mockAnnotationState: AnnotationState = {
       '100': dummyAnnotation100,
       '200': dummyAnnotation200,
       '300': dummyAnnotation300,
+      '400': dummyAnnotation400,
     },
   },
   // both keypoints have same label
@@ -193,7 +199,6 @@ describe('Test Review selectors', () => {
         rootState,
         fileId
       );
-      console.log(selectedAnnotations);
 
       test('has correct show status', () => {
         expect(
@@ -252,6 +257,33 @@ describe('Test Review selectors', () => {
           CDFAnnotationTypeEnum.ImagesKeypointCollection
         );
       });
+    });
+  });
+
+  describe('selectNonRejectedVisionReviewAnnotationsForFile selector', () => {
+    const selectedAnnotations = selectNonRejectedVisionReviewAnnotationsForFile(
+      rootState,
+      1
+    );
+
+    test('should not contain rejected annotations', () => {
+      expect(
+        selectedAnnotations.find(
+          (annotation) => annotation.annotation.id === 400
+        )
+      ).toBe(undefined);
+    });
+
+    test('should not contain hidden', () => {
+      expect(
+        selectedAnnotations.find(
+          (annotation) => annotation.annotation.id === 100
+        )
+      ).toBe(undefined);
+    });
+
+    test('should contain all non rejected annotations', () => {
+      expect(selectedAnnotations.length).toBe(2);
     });
   });
 });
