@@ -8,8 +8,8 @@ import {
   setDataSetIds,
   setExtractExif,
 } from 'src/modules/Common/store/files/slice';
-import { DataSetSelect } from '@cognite/data-exploration';
 import 'antd/dist/antd.css';
+import { DataSetSelect } from 'src/modules/Common/Components/DataSetSelect/DataSetSelect';
 
 export interface ModalFileUploadOptionProps {
   isDisabled?: boolean;
