@@ -13,12 +13,7 @@ export class PointOctree {
   constructor(points: Float64Array, boundingBox: THREE.Box3) {
     const pointArray = new Array<Vec3WithIndex>(points.length / 3);
     for (let i = 0; i < points.length / 3; i++) {
-      pointArray[i] = [
-        points[3 * i + 0],
-        points[3 * i + 1],
-        points[3 * i + 2],
-        i
-      ];
+      pointArray[i] = [points[3 * i + 0], points[3 * i + 1], points[3 * i + 2], i];
     }
 
     this._root = new OctreeNode(pointArray, boundingBox);
