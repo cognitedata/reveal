@@ -8,7 +8,7 @@ import { IMock, Mock } from 'moq.ts';
 import { SectorDownloadData, SectorDownloadScheduler } from './SectorDownloadScheduler';
 import Log from '@reveal/logger';
 import { LogLevelNumbers } from 'loglevel';
-import { ok, Result } from 'neverthrow';
+import { err, Result } from 'neverthrow';
 
 describe(SectorDownloadScheduler.name, () => {
   let sectorDownloadScheduler: SectorDownloadScheduler;
@@ -166,7 +166,7 @@ describe(SectorDownloadScheduler.name, () => {
     const downloadSectorMock = async (sector: WantedSector) => {
       await stalledDownload;
       if (sector.metadata.id === 11) {
-        throw new Error('Sector with ID 11 failed');
+        return err(new Error('Sector with ID 11 failed'));
       }
       return createConsumedSectorMock(sector).object();
     };
@@ -189,8 +189,8 @@ describe(SectorDownloadScheduler.name, () => {
     expect(sectorDownloadScheduler.numberOfQueuedDownloads).toBe(0);
 
     resolvedSectors.forEach(sector => {
-      if (sector._unsafeUnwrap().metadata.id === 11) {
-        expect(sector._unsafeUnwrap().levelOfDetail).toBe(LevelOfDetail.Discarded);
+      if (sector.isErr()) {
+        expect(sector._unsafeUnwrapErr().message).toBe('Sector with ID 11 failed');
       } else {
         expect(sector._unsafeUnwrap().levelOfDetail).toBe(LevelOfDetail.Detailed);
       }
@@ -214,18 +214,18 @@ function createMockWantedSectors(numberOfSectors: number, modelIdentifier: strin
   });
 }
 
-function createConsumedSectorMock(wantedSector: WantedSector): IMock<ConsumedSector> {
-  const consumedSector = new Mock<ConsumedSector>()
-    .setup(p => p.modelIdentifier)
+function createConsumedSectorMock(wantedSector: WantedSector): IMock<Result<ConsumedSector, Error>> {
+  const consumedSector = new Mock<Result<ConsumedSector, Error>>()
+    .setup(p => p._unsafeUnwrap().modelIdentifier)
     .returns(wantedSector.modelIdentifier)
-    .setup(p => p.metadata)
+    .setup(p => p._unsafeUnwrap().metadata)
     .returns(
       new Mock<SectorMetadata>()
         .setup(p => p.id)
         .returns(wantedSector.metadata.id)
         .object()
     )
-    .setup(p => p.levelOfDetail)
+    .setup(p => p._unsafeUnwrap().levelOfDetail)
     .returns(LevelOfDetail.Detailed);
   return consumedSector;
 }

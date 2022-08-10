@@ -110,9 +110,9 @@ describe('SectorLoader', () => {
     // Arrange
     const alreadyLoadedSector = createConsumedSector(createWantedSector(model, model.scene.root));
     stateHandler.updateState(
-      alreadyLoadedSector.modelIdentifier,
-      alreadyLoadedSector.metadata.id,
-      alreadyLoadedSector.levelOfDetail
+      alreadyLoadedSector._unsafeUnwrap().modelIdentifier,
+      alreadyLoadedSector._unsafeUnwrap().metadata.id,
+      alreadyLoadedSector._unsafeUnwrap().levelOfDetail
     );
     const updateStateFn = jest.spyOn(stateHandler, 'updateState');
 
@@ -153,14 +153,14 @@ describe('SectorLoader', () => {
 });
 
 class StubRepository implements SectorRepository {
-  loadSectorCallback: (sector: WantedSector) => ConsumedSector;
+  loadSectorCallback: (sector: WantedSector) => Result<ConsumedSector, Error>;
 
   constructor() {
     this.loadSectorCallback = createConsumedSector;
   }
 
   loadSector(sector: WantedSector): Promise<Result<ConsumedSector, Error>> {
-    return ok(Promise.resolve(this.loadSectorCallback(sector)));
+    return Promise.resolve(this.loadSectorCallback(sector));
   }
   clearCache(): void {}
   setCacheSize(_sectorCount: number): void {}
@@ -194,7 +194,7 @@ function createWantedSector(model: CadModelMetadata, sector: SectorMetadata): Wa
   return wanted;
 }
 
-function createConsumedSector(sector: WantedSector): ConsumedSector {
+function createConsumedSector(sector: WantedSector): Result<ConsumedSector, Error> {
   const consumed: ConsumedSector = {
     group: new AutoDisposeGroup(),
     instancedMeshes: [],
@@ -202,7 +202,7 @@ function createConsumedSector(sector: WantedSector): ConsumedSector {
     metadata: sector.metadata,
     modelIdentifier: sector.modelIdentifier
   };
-  return consumed;
+  return ok(consumed);
 }
 
 const noBudget: SectorLoadingSpent = {
