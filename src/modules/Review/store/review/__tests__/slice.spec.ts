@@ -10,6 +10,7 @@ import reducer, {
 import { ReviewState } from 'src/modules/Review/store/review/types';
 import { AnnotationSettingsOption } from 'src/modules/Review/store/review/enums';
 import { deselectAllSelectionsReviewPage } from 'src/store/commonActions';
+import { DeleteAnnotations } from 'src/store/thunks/Annotation/DeleteAnnotations';
 
 const mockReviewState: ReviewState = {
   ...initialState,
@@ -201,6 +202,36 @@ describe('Test review slice', () => {
         );
         expect(newState.selectedAnnotationIds).toStrictEqual([]);
         expect(newState.scrollToId).toStrictEqual('');
+      });
+    });
+
+    describe('DeleteAnnotations fulfilled action', () => {
+      test('Delete fullfil remove ids from selected ids', () => {
+        const action = {
+          type: DeleteAnnotations.fulfilled,
+          meta: { arg: [{ id: 4 }] },
+        };
+        const newState = reducer(mockReviewState, action);
+        expect(newState.selectedAnnotationIds).not.toContain(4);
+      });
+
+      test('Delete fullfil remove ids from hidden ids', () => {
+        const action = {
+          type: DeleteAnnotations.fulfilled,
+          meta: { arg: [{ id: 1 }] },
+        };
+        const newState = reducer(mockReviewState, action);
+        expect(newState.hiddenAnnotationIds).not.toContain(1);
+      });
+
+      test('Delete fullfil remove ids from selected and hidden ids', () => {
+        const action = {
+          type: DeleteAnnotations.fulfilled,
+          meta: { arg: [{ id: 2 }, { id: 5 }] },
+        };
+        const newState = reducer(mockReviewState, action);
+        expect(newState.selectedAnnotationIds).not.toContain(2);
+        expect(newState.hiddenAnnotationIds).not.toContain(5);
       });
     });
   });
