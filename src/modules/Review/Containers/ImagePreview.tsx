@@ -6,11 +6,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import { AnnotationSettingsModal } from 'src/modules/Review/Components/AnnotationSettingsModal/AnnotationSettingsModal';
 import { KeyboardShortcutModal } from 'src/modules/Review/Components/KeyboardShortcutModal/KeyboardShortcutModal';
 import { ReactImageAnnotateWrapper } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/ReactImageAnnotateWrapper';
+import { showAnnotationSettingsModel } from 'src/modules/Review/store/review/slice';
 import {
   selectAnnotationSettingsState,
   selectNonRejectedVisionReviewAnnotationsForFile,
-  showAnnotationSettingsModel,
-} from 'src/modules/Review/store/reviewSlice';
+} from 'src/modules/Review/store/review/selectors';
 import { PredefinedVisionAnnotations } from 'src/modules/Review/types';
 import { AppDispatch } from 'src/store';
 import { RootState } from 'src/store/rootReducer';

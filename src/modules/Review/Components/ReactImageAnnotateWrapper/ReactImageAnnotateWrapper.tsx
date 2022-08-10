@@ -41,7 +41,7 @@ import {
   setSelectedTool,
 } from 'src/modules/Review/store/annotatorWrapper/slice';
 import { convertTempKeypointCollectionToUnsavedVisionImageKeypointCollection } from 'src/modules/Review/store/review/utils';
-import { selectAnnotation } from 'src/modules/Review/store/reviewSlice';
+import { selectAnnotation } from 'src/modules/Review/store/review/slice';
 import {
   PredefinedKeypointCollection,
   PredefinedShape,
