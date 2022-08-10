@@ -152,12 +152,17 @@ async function loadSectors(
         geometryClipBox: null
       });
 
-      if (consumedSector.group) {
-        model.add(consumedSector.group);
+      if (consumedSector.isOk()) {
+        if (consumedSector.value.group) {
+          model.add(consumedSector.value.group);
+        }
       }
 
-      if (formatVersion === 9) {
-        const group = createGltfSectorGroup(consumedSector, cadMaterialManager.getModelMaterials(modelIdentifier));
+      if (formatVersion === 9 && consumedSector.isOk()) {
+        const group = createGltfSectorGroup(
+          consumedSector.value,
+          cadMaterialManager.getModelMaterials(modelIdentifier)
+        );
         model.add(group);
       }
     })
