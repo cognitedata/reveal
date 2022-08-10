@@ -69,6 +69,10 @@ export const TimeseriesPreview = ({
   return (
     <>
       <ResourceTitleRow
+        datefilter={{
+          start: dateRange[0],
+          end: dateRange[1],
+        }}
         item={{ id: timeseriesId, type: 'timeSeries' }}
         afterDefaultActions={actions}
       />

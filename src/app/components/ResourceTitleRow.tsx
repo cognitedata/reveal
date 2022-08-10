@@ -3,6 +3,7 @@ import React from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { createLink } from '@cognite/cdf-utilities';
 import { Icon, Button, Colors } from '@cognite/cogs.js';
+
 import {
   convertResourceType,
   ResourceItem,
@@ -15,9 +16,12 @@ import { useQueryString } from 'app/hooks';
 import { SEARCH_KEY } from 'app/utils/constants';
 import { Divider, Space } from 'antd';
 import { TitleRowActions } from './TitleRowActions';
+import { DatapointsMultiQuery } from '@cognite/sdk';
 
+export type DateFilter = Pick<DatapointsMultiQuery, 'start' | 'end'>;
 type Props = {
   item: ResourceItem;
+  datefilter?: DateFilter;
   getTitle?: (_: any) => string | undefined;
   beforeDefaultActions?: React.ReactNode;
   afterDefaultActions?: React.ReactNode;
@@ -25,6 +29,7 @@ type Props = {
 
 export default function ResourceTitleRow({
   item: { type, id },
+  datefilter,
   getTitle = (i: any) => i?.name,
   beforeDefaultActions,
   afterDefaultActions,
@@ -102,6 +107,7 @@ export default function ResourceTitleRow({
         }}
       >
         <TitleRowActions
+          dateFilter={datefilter}
           item={{ type, id }}
           beforeDefaultActions={beforeDefaultActions}
           afterDefaultActions={afterDefaultActions}
