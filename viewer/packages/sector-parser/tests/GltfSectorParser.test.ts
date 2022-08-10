@@ -257,11 +257,10 @@ describe(GltfSectorParser.name, () => {
 
     const testFileByteBuffer = fs.readFileSync(__dirname + '/anders-test-scene.glb');
     const parsedResult = await parser.parseSector(testFileByteBuffer.buffer);
-    if (parsedResult.isErr()) {
-      return;
-    }
 
-    const triangleMeshes = parsedResult.value.filter(x => x.type === RevealGeometryCollectionType.TriangleMesh);
+    const triangleMeshes = parsedResult
+      ._unsafeUnwrap()
+      .filter(x => x.type === RevealGeometryCollectionType.TriangleMesh);
     expect(triangleMeshes.length).toBe(1);
 
     const { geometryBuffer } = triangleMeshes[0];
