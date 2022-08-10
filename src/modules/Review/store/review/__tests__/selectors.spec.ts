@@ -2,7 +2,10 @@
 import { ReviewState } from 'src/modules/Review/store/review/types';
 import { initialState } from 'src/modules/Review/store/review/slice';
 import { AnnotationSettingsOption } from 'src/modules/Review/store/review/enums';
-import { selectAllReviewFiles } from 'src/modules/Review/store/review/selectors';
+import {
+  selectAllReviewFiles,
+  selectAnnotationSettingsState,
+} from 'src/modules/Review/store/review/selectors';
 import { FileState } from 'src/modules/Common/store/files/types';
 import { createFileState } from 'src/store/util/StateUtils';
 import { mockFileList } from 'src/__test-utils/fixtures/files';
@@ -26,7 +29,7 @@ const mockReviewState: ReviewState = {
   hiddenAnnotationIds: [100, 200, 300],
   selectedAnnotationIds: [400, 500, 600],
   annotationSettings: {
-    show: false,
+    show: true,
     activeView: AnnotationSettingsOption.KEYPOINT,
     createNew: {
       text: 'new annotation',
@@ -69,6 +72,46 @@ describe('Test Review selectors', () => {
         } as ReviewState,
       } as RootState);
       expect(selectedFiles.map((file) => file.id)).toEqual([1, 2]);
+    });
+  });
+
+  describe('selectAnnotationSettingsState selector', () => {
+    test('get initial annotation settings', () => {
+      const annotationSettings = selectAnnotationSettingsState(initialState);
+      expect(annotationSettings.show).toEqual(false);
+      expect(annotationSettings.createNew.text).toEqual(undefined);
+      expect(annotationSettings.createNew.color).toEqual(undefined);
+      expect(annotationSettings.activeView).toEqual(
+        AnnotationSettingsOption.SHAPE
+      );
+    });
+
+    test('open annotation settings without a create new', () => {
+      const annotationSettings = selectAnnotationSettingsState({
+        ...mockReviewState,
+        annotationSettings: {
+          ...mockReviewState.annotationSettings,
+          createNew: {},
+        },
+      });
+      expect(annotationSettings.show).toEqual(true);
+      expect(annotationSettings.createNew).toEqual({});
+      expect(annotationSettings.createNew.text).toEqual(undefined);
+      expect(annotationSettings.createNew.color).toEqual(undefined);
+      expect(annotationSettings.activeView).toEqual(
+        AnnotationSettingsOption.KEYPOINT
+      );
+    });
+
+    test('open annotation settings with a create new', () => {
+      const annotationSettings = selectAnnotationSettingsState(mockReviewState);
+      expect(annotationSettings.show).toEqual(true);
+      expect(annotationSettings.createNew).not.toEqual({});
+      expect(annotationSettings.createNew.text).toEqual('new annotation');
+      expect(annotationSettings.createNew.color).toEqual('red');
+      expect(annotationSettings.activeView).toEqual(
+        AnnotationSettingsOption.KEYPOINT
+      );
     });
   });
 });
