@@ -9,6 +9,7 @@ import reducer, {
 } from 'src/modules/Review/store/review/slice';
 import { ReviewState } from 'src/modules/Review/store/review/types';
 import { AnnotationSettingsOption } from 'src/modules/Review/store/review/enums';
+import { deselectAllSelectionsReviewPage } from 'src/store/commonActions';
 
 const mockReviewState: ReviewState = {
   ...initialState,
@@ -180,6 +181,26 @@ describe('Test review slice', () => {
           selectedAnnotationIds: [],
           hiddenAnnotationIds: [],
         });
+      });
+    });
+  });
+
+  describe('Test extra reducers', () => {
+    describe('deselectAllSelectionsReviewPage reducer', () => {
+      test('deselectAllSelectionsReviewPage resets the select and scroll ids', () => {
+        const action = {
+          type: deselectAllSelectionsReviewPage,
+        };
+        const newState = reducer(
+          {
+            ...mockReviewState,
+            selectedAnnotationIds: [1],
+            scrollToId: 'element_id',
+          },
+          action
+        );
+        expect(newState.selectedAnnotationIds).toStrictEqual([]);
+        expect(newState.scrollToId).toStrictEqual('');
       });
     });
   });
