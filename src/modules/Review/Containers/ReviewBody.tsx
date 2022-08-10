@@ -3,7 +3,7 @@ import sdk, { getFlow } from '@cognite/cdf-sdk-singleton';
 import { Tabs, Title } from '@cognite/cogs.js';
 import { DataExplorationProvider } from '@cognite/data-exploration';
 import { Spin, notification } from 'antd';
-import React, { ReactText, useCallback, useRef, useState } from 'react';
+import React, { ReactText, useCallback, useEffect, useState } from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
@@ -31,7 +31,6 @@ const ReviewBody = (props: { file: FileInfo; prev: string | undefined }) => {
   const dispatch = useDispatch();
   const [inFocus, setInFocus] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
-  const loadingState = useRef<boolean>(false);
   const [currentTab, tabChange] = useState('1');
 
   const { flow } = getFlow();
@@ -50,7 +49,6 @@ const ReviewBody = (props: { file: FileInfo; prev: string | undefined }) => {
 
   const handleLoad = useCallback((status: boolean) => {
     setLoading(status);
-    loadingState.current = status;
   }, []);
 
   const handleError = ({
@@ -66,7 +64,6 @@ const ReviewBody = (props: { file: FileInfo; prev: string | undefined }) => {
   const onItemClick = (fileId: number) => {
     if (fileId !== file.id) {
       setLoading(true);
-      loadingState.current = true;
 
       // Go to this file
       history.replace(
@@ -76,17 +73,15 @@ const ReviewBody = (props: { file: FileInfo; prev: string | undefined }) => {
     }
   };
 
-  // todo: re- add this if red flash becomes visible in review page before image is loaded
-  // useEffect(() => {
-  //   if (loading && loadingState.current) {
-  //     // timeout loading spinner
-  //     setTimeout(() => {
-  //       if (loadingState.current) {
-  //         setLoading(false);
-  //       }
-  //     }, 10000);
-  //   }
-  // }, [loading]);
+  // remove loading icon if handle load was not called due to error
+  useEffect(() => {
+    if (loading) {
+      // timeout loading spinner
+      setTimeout(() => {
+        setLoading(false);
+      }, 3000);
+    }
+  }, [loading]);
 
   const scrollToItem = useCallback(
     (id: ReactText) => {
