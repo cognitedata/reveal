@@ -65,9 +65,7 @@ export class BvhNode<T extends BvhElement> {
     }
   }
 
-
-  traverseContainingElements(point: THREE.Vector3,
-                             callback: (element: T) => void): void {
+  traverseContainingElements(point: THREE.Vector3, callback: (element: T) => void): void {
     if (this._elements) {
       for (const element of this._elements) {
         if (element.getBox().containsPoint(point)) {

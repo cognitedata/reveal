@@ -2,7 +2,7 @@
  * Copyright 2022 Cognite AS
  */
 
-import { RawStylableObject, StylableObject, rawToStylableObject } from '../../styling/StylableObject';
+import { RawStylableObject, rawToStylableObject } from '../../styling/StylableObject';
 
 import { parseEpt, EptInputData, ParsedEptData } from './parseEpt';
 import { Vec3 } from '../../styling/shapes/linalg';
@@ -37,8 +37,10 @@ export async function parse(
 ): Promise<ParsedEptData> {
   const objectList = objects.map(rawToStylableObject);
   const point = new THREE.Vector3().fromArray(pointOffset);
-  const boundingBox = new THREE.Box3(new THREE.Vector3().fromArray(sectorBoundingBox[0]),
-                                     new THREE.Vector3().fromArray(sectorBoundingBox[1]));
+  const boundingBox = new THREE.Box3(
+    new THREE.Vector3().fromArray(sectorBoundingBox[0]),
+    new THREE.Vector3().fromArray(sectorBoundingBox[1])
+  );
   return parseEpt(data, objectList, point, boundingBox);
 }
 

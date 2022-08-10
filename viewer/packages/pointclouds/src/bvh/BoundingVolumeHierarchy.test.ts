@@ -12,8 +12,7 @@ import * as THREE from 'three';
 const random = SeededRandom.create('someseed');
 
 class BasicBvhElement implements BvhElement {
-  constructor(private _box: THREE.Box3,
-              private _id: number) { }
+  constructor(private readonly _box: THREE.Box3, private readonly _id: number) {}
 
   getBox(): THREE.Box3 {
     return this._box;
@@ -22,7 +21,7 @@ class BasicBvhElement implements BvhElement {
   getId() {
     return this._id;
   }
-};
+}
 
 function createId() {
   return Math.floor(random.random() * 100000);
@@ -53,7 +52,7 @@ describe(BoundingVolumeHierarchy.name, () => {
     let numBoxesFound = 0;
 
     for (const point of points) {
-      const expectedBoxIds: number[] = []
+      const expectedBoxIds: number[] = [];
 
       for (const box of boxes) {
         if (box.getBox().containsPoint(point)) {
@@ -70,7 +69,6 @@ describe(BoundingVolumeHierarchy.name, () => {
       numBoxesFound += newBoxIds.length;
     }
 
-    console.log('num boxes = ', numBoxesFound);
     expect(numBoxesFound).toBePositive();
   });
 });

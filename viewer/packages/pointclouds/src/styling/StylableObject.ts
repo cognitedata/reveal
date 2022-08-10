@@ -40,7 +40,6 @@ export type RawStylableObjectWithBox = {
 };
 
 export function stylableObjectsToRawDecomposedWithBoxes(objects: StylableObject[]): RawStylableObjectWithBox[] {
-
   const res = new Array<RawStylableObjectWithBox>();
 
   for (const obj of objects) {
@@ -49,8 +48,7 @@ export function stylableObjectsToRawDecomposedWithBoxes(objects: StylableObject[
       const innerStylableObjects = shape.getInnerShapes().map(shape => ({ objectId: obj.objectId, shape }));
       res.push(...stylableObjectsToRawDecomposedWithBoxes(innerStylableObjects));
     } else {
-      res.push({ object: { objectId: obj.objectId, shape: shape.toRawShape() },
-                 box: shape.createBoundingBox() });
+      res.push({ object: { objectId: obj.objectId, shape: shape.toRawShape() }, box: shape.createBoundingBox() });
     }
   }
 

@@ -1,7 +1,6 @@
 import { Camera, WebGLRenderer } from 'three';
 import { LRU } from '../utils/lru';
 import { PointCloudOctree } from '../tree/PointCloudOctree';
-import { IVisibilityUpdateResult } from './IVisibilityUpdateResult';
 import { PointCloudObjectProvider } from '../../styling/PointCloudObjectProvider';
 
 export interface IPotree {

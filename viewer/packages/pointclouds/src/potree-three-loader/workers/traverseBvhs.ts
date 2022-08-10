@@ -12,9 +12,7 @@ import * as THREE from 'three';
 
 const helpVec = new THREE.Vector3();
 
-function traverseBvhNodes(octreeNode: OctreeNode,
-                          bvhNode: BvhNode<StylableObjectBvhElement>,
-                          objectIds: Uint16Array) {
+function traverseBvhNodes(octreeNode: OctreeNode, bvhNode: BvhNode<StylableObjectBvhElement>, objectIds: Uint16Array) {
   if (octreeNode.children && bvhNode.children) {
     for (const octreeChild of octreeNode.children) {
       for (const bvhChild of bvhNode.children) {
@@ -58,8 +56,10 @@ function traverseBvhNodes(octreeNode: OctreeNode,
   }
 }
 
-export function traverseBvhs(octree: PointOctree,
-                             bvh: BoundingVolumeHierarchy<StylableObjectBvhElement>,
-                             objectIds: Uint16Array): void {
+export function traverseBvhs(
+  octree: PointOctree,
+  bvh: BoundingVolumeHierarchy<StylableObjectBvhElement>,
+  objectIds: Uint16Array
+): void {
   traverseBvhNodes(octree.root, bvh.root, objectIds);
 }
