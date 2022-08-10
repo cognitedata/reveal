@@ -25,12 +25,9 @@ const getCallsSdk = ({ id, scheduleId }: GetCallsArgs): Promise<Call[]> => {
   }
   const filter = scheduleId ? { scheduleId } : {};
   return sdk
-    .post(
-      `/api/v1/projects/${getProject()}/functions/${id}/calls/list`,
-      {
-        data: { filter },
-      }
-    )
+    .post(`/api/v1/projects/${getProject()}/functions/${id}/calls/list`, {
+      data: { filter },
+    })
     .then(response => response.data?.items);
 };
 
@@ -58,9 +55,7 @@ export const getCall = (_: QueryKey, { id, callId }: GetCallArgs) => {
     throw new Error('callId missing');
   }
   return sdk
-    .get(
-      `/api/v1/projects/${getProject()}/functions/${id}/calls/${callId}`
-    )
+    .get(`/api/v1/projects/${getProject()}/functions/${id}/calls/${callId}`)
     .then(response => response.data);
 };
 
@@ -132,12 +127,9 @@ export const createSchedule = async ({
 
 export const deleteSchedule = (id: number) =>
   sdk
-    .post(
-      `/api/v1/projects/${getProject()}/functions/schedules/delete`,
-      {
-        data: { items: [{ id }] },
-      }
-    )
+    .post(`/api/v1/projects/${getProject()}/functions/schedules/delete`, {
+      data: { items: [{ id }] },
+    })
     .then(response => response?.data);
 
 const createFunction = (
