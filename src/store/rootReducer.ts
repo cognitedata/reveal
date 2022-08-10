@@ -7,7 +7,7 @@ import annotatorWrapperReducer from 'src/modules/Review/store/annotatorWrapper/s
 import fileDetailsSlice from 'src/modules/FileDetails/slice';
 import explorerReducer from 'src/modules/Explorer/store/slice';
 import processSlice from 'src/modules/Process/store/slice';
-import reviewSlice from 'src/modules/Review/store/reviewSlice';
+import reviewSlice from 'src/modules/Review/store/review/slice';
 import annotationDetailPanelReducer from 'src/modules/Review/Containers/AnnotationDetailPanel/store/slice';
 
 const rootReducer = combineReducers({

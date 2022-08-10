@@ -3,7 +3,7 @@ import { initialState } from 'src/modules/Review/store/annotatorWrapper/slice';
 import { getInitialState } from 'src/__test-utils/store.utils';
 import { CombinedState } from '@reduxjs/toolkit';
 import { RootState } from 'src/store/rootReducer';
-import { ReviewReducerState } from 'src/modules/Review/store/reviewSlice';
+import { ReviewState } from 'src/modules/Review/store/review/types';
 import {
   AnnotatorWrapperState,
   KeypointCollectionState,
@@ -39,7 +39,7 @@ describe('Test annotationLabel selectors', () => {
           annotationSettings: {
             createNew: {},
           },
-        } as Partial<ReviewReducerState>,
+        } as Partial<ReviewState>,
         annotatorWrapperReducer: {
           ...initialState,
           lastShape,
@@ -58,7 +58,7 @@ describe('Test annotationLabel selectors', () => {
               text: annotationSettingsNewLabel,
             },
           },
-        } as Partial<ReviewReducerState>,
+        } as Partial<ReviewState>,
         annotatorWrapperReducer: {
           ...initialState,
         },
@@ -76,7 +76,7 @@ describe('Test annotationLabel selectors', () => {
           annotationSettings: {
             createNew: {},
           },
-        } as Partial<ReviewReducerState>,
+        } as Partial<ReviewState>,
         annotatorWrapperReducer: {
           ...initialState,
           predefinedAnnotations: {
@@ -101,7 +101,7 @@ describe('Test annotationLabel selectors', () => {
           annotationSettings: {
             createNew: {},
           },
-        } as Partial<ReviewReducerState>,
+        } as Partial<ReviewState>,
         annotatorWrapperReducer: {
           ...initialState,
         },
@@ -120,7 +120,7 @@ describe('Test annotationLabel selectors', () => {
               text: annotationSettingsNewLabel,
             },
           },
-        } as Partial<ReviewReducerState>,
+        } as Partial<ReviewState>,
         annotatorWrapperReducer: {
           ...initialState,
           lastShape,
@@ -155,7 +155,7 @@ describe('Test annotationLabel selectors', () => {
           annotationSettings: {
             createNew: {},
           },
-        } as Partial<ReviewReducerState>,
+        } as Partial<ReviewState>,
         annotatorWrapperReducer: {
           ...initialState,
           predefinedAnnotations: {
@@ -180,7 +180,7 @@ describe('Test annotationLabel selectors', () => {
               text: annotationSettingsNewLabel,
             },
           },
-        } as Partial<ReviewReducerState>,
+        } as Partial<ReviewState>,
         annotatorWrapperReducer: {
           ...initialState,
           predefinedAnnotations: {
@@ -206,7 +206,7 @@ describe('Test annotationLabel selectors', () => {
           annotationSettings: {
             createNew: {},
           },
-        } as Partial<ReviewReducerState>,
+        } as Partial<ReviewState>,
         annotatorWrapperReducer: {
           ...initialState,
           lastCollectionName,
