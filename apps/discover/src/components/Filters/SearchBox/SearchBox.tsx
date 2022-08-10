@@ -27,7 +27,7 @@ export const SearchBox: React.FC<SearchBoxProps> = ({
         onSearch(searchPhrase);
       }
     },
-    [searchPhrase]
+    [searchPhrase, onSearch]
   );
 
   const handleOnBlur = useCallback(() => setSearchPhrase(value), [value]);

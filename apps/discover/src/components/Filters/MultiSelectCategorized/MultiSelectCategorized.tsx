@@ -185,7 +185,14 @@ export const MultiSelectCategorized: React.FC<MultiSelectCategorizedProps> = ({
         })}
       </>
     ),
-    [SelectAllOption, handleValueChange, options, selectedOptions, viewMode]
+    [
+      SelectAllOption,
+      handleValueChange,
+      options,
+      selectedOptions,
+      viewMode,
+      renderCategoryHelpText,
+    ]
   );
 
   const NoOptionsContent = useMemo(

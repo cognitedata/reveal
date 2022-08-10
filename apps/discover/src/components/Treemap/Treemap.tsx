@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 
 import { select, hierarchy, treemap } from 'd3';
 
@@ -27,7 +27,7 @@ export const Treemap: React.FC<Props> = ({
 }) => {
   const divRef = useRef<HTMLDivElement>(null);
 
-  const renderTreemap = () => {
+  const renderTreemap = useCallback(() => {
     const rootDiv = select(divRef.current);
 
     const root = hierarchy(data)
@@ -78,11 +78,11 @@ export const Treemap: React.FC<Props> = ({
       .append('p')
       .text((node) => `${node.data?.description || ''}`)
       .attr('class', 'description-text');
-  };
+  }, [data, onTileClicked, tileCursor]);
 
   useEffect(() => {
     renderTreemap();
-  }, [data]);
+  }, [renderTreemap]);
 
   const debouncedHandleResize = useDebounce(() => {
     renderTreemap();
@@ -94,7 +94,7 @@ export const Treemap: React.FC<Props> = ({
     return () => {
       window.removeEventListener('resize', debouncedHandleResize);
     };
-  }, []);
+  }, [debouncedHandleResize]);
 
   return <TreemapWrapper ref={divRef} />;
 };

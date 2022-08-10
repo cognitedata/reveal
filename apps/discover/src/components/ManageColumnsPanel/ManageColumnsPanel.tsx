@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useCallback } from 'react';
 
 import * as Popper from '@popperjs/core';
 import { TS_FIX_ME } from 'core';
@@ -70,41 +70,50 @@ const ManageColumnsPanel: React.FC<Props> = ({
         if (searchInputChange) searchInputChange('');
       },
     };
-  }, [searchValue]);
+  }, [searchInputChange]);
 
-  const handleOnChanged = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchValue(e.target.value);
-    if (searchInputChange) searchInputChange(e.target.value);
-  };
+  const handleOnChanged = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setSearchValue(e.target.value);
+      if (searchInputChange) searchInputChange(e.target.value);
+    },
+    [searchInputChange]
+  );
 
-  const renderCheckboxes = (simpleColumns: SimpleColumn[]) => {
-    return simpleColumns.map((item) => {
-      return (
-        <Menu.Item key={item.field}>
-          <Checkbox
-            checked={item.selected}
-            disabled={item.disabled || false}
-            onChange={() => handleColumnSelection(item)}
-            name={item.name}
-            indeterminate={item.indeterminate}
-          >
-            <MiddleEllipsis value={item.name} />
-          </Checkbox>
-        </Menu.Item>
-      );
-    });
-  };
+  const renderCheckboxes = useCallback(
+    (simpleColumns: SimpleColumn[]) => {
+      return simpleColumns.map((item) => {
+        return (
+          <Menu.Item key={item.field}>
+            <Checkbox
+              checked={item.selected}
+              disabled={item.disabled || false}
+              onChange={() => handleColumnSelection(item)}
+              name={item.name}
+              indeterminate={item.indeterminate}
+            >
+              <MiddleEllipsis value={item.name} />
+            </Checkbox>
+          </Menu.Item>
+        );
+      });
+    },
+    [handleColumnSelection]
+  );
 
   const getKey = (label: string, index: number) => `checkbox_${label}_${index}`;
-  const renderGroupedCheckboxes = (complexColumns: GroupedColumn[]) => {
-    return complexColumns.map((item: GroupedColumn, index: number) => (
-      <FlexColumn title="flex-menu-container" key={getKey(item.label, index)}>
-        {index !== 0 && <Menu.Divider />}
-        {item.label && <Menu.Header>{item.label}</Menu.Header>}
-        {renderCheckboxes(item.columns)}
-      </FlexColumn>
-    ));
-  };
+  const renderGroupedCheckboxes = useCallback(
+    (complexColumns: GroupedColumn[]) => {
+      return complexColumns.map((item: GroupedColumn, index: number) => (
+        <FlexColumn title="flex-menu-container" key={getKey(item.label, index)}>
+          {index !== 0 && <Menu.Divider />}
+          {item.label && <Menu.Header>{item.label}</Menu.Header>}
+          {renderCheckboxes(item.columns)}
+        </FlexColumn>
+      ));
+    },
+    [renderCheckboxes]
+  );
 
   const MenuContent = React.useMemo(
     () => (
@@ -128,7 +137,16 @@ const ManageColumnsPanel: React.FC<Props> = ({
           : renderCheckboxes(columns as SimpleColumn[])}
       </CustomMenu>
     ),
-    [groupedColumns, columns]
+    [
+      groupedColumns,
+      columns,
+      clearable,
+      searchValue,
+      handleOnChanged,
+      includeSearchInput,
+      renderCheckboxes,
+      renderGroupedCheckboxes,
+    ]
   );
 
   const renderDropDown = React.useMemo(
@@ -145,7 +163,7 @@ const ManageColumnsPanel: React.FC<Props> = ({
         />
       </Tooltip>
     ),
-    []
+    [onVisibilityToggle, t, visible]
   );
 
   return (

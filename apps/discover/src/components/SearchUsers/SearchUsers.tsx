@@ -1,6 +1,6 @@
 import { getUmsUsers } from 'domain/userManagementService/service/network/getUmsUsers';
 
-import React, { useCallback } from 'react';
+import React, { useMemo } from 'react';
 
 import debounce from 'lodash/debounce';
 
@@ -29,22 +29,23 @@ export const SearchUsers: React.FC<Props> = (props) => {
   const headers = useJsonHeaders({}, true);
   const search = getUmsUsers(headers);
 
-  const debouncedSearch = useCallback(
-    debounce((value, updateAutocompleteResults) => {
-      search(value)
-        .then((results) => {
-          updateAutocompleteResults(
-            results.map((user) => ({
-              value: user.id,
-              label: user.displayName || user.email || 'Unknown',
-            }))
-          );
-        })
-        .catch(() => {
-          showErrorMessage(SOMETHING_WENT_WRONG_PLEASE_TRY_AGAIN);
-        });
-    }, 300),
-    []
+  const debouncedSearch = useMemo(
+    () =>
+      debounce((value, updateAutocompleteResults) => {
+        search(value)
+          .then((results) => {
+            updateAutocompleteResults(
+              results.map((user) => ({
+                value: user.id,
+                label: user.displayName || user.email || 'Unknown',
+              }))
+            );
+          })
+          .catch(() => {
+            showErrorMessage(SOMETHING_WENT_WRONG_PLEASE_TRY_AGAIN);
+          });
+      }, 300),
+    [search]
   );
 
   const loadOptions = (

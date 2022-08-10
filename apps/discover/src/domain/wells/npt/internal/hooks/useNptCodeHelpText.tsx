@@ -28,5 +28,5 @@ export const useNptCodeHelpText = () => {
 
       return { ...accumulator, [nptCode]: codeDefinition };
     }, {} as NptCodeHelpText);
-  }, [data]);
+  }, [data, nptCodeDefinitions]);
 };

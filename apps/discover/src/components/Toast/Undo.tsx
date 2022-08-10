@@ -1,4 +1,12 @@
-import React, { Dispatch, ReactNode, SetStateAction, useEffect } from 'react';
+import React, {
+  Dispatch,
+  ReactNode,
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 import { ToastOptions } from 'react-toastify';
 
 import styled from 'styled-components/macro';
@@ -25,18 +33,21 @@ const StyledToast = styled(FlexRow)`
 export const UndoToast: React.FC<Props> = (props) => {
   const { t } = useTranslation();
 
-  let runCallback = true;
+  // let runCallback = true;
 
-  const handleUndoClick = () => {
-    runCallback = false; // Don't run the callback
+  const [runCallback, setRunCallback] = useState<boolean>(true);
+
+  const handleUndoClick = useCallback(() => {
+    // runCallback = false; // Don't run the callback
+    setRunCallback(false);
     cogniteToast.dismiss(); // Close the toast
 
     if (props.onUndo) {
       props.onUndo();
     }
-  };
+  }, [props]);
 
-  const onClose = () => {
+  const onClose = useCallback(() => {
     if (runCallback && props.callback) {
       // The user did not click 'undo'
       props.callback();
@@ -45,28 +56,32 @@ export const UndoToast: React.FC<Props> = (props) => {
     if (props.setVisible) {
       props.setVisible(false);
     }
-  };
+  }, [props, runCallback]);
 
-  const style = {
-    width: '600px!important',
-  };
+  const option: ToastOptions = useMemo(
+    () => ({
+      style: {
+        width: '600px!important',
+      },
+      autoClose: props.duration || 5000,
+      pauseOnHover: true,
+      draggable: true,
+      closeOnClick: false,
+      onClose,
+    }),
+    [onClose, props.duration]
+  );
 
-  const option: ToastOptions = {
-    style,
-    autoClose: props.duration || 5000,
-    pauseOnHover: true,
-    draggable: true,
-    closeOnClick: false,
-    onClose,
-  };
-
-  const renderToastContent = () => (
-    <StyledToast>
-      {props.children}
-      <Button onClick={handleUndoClick} aria-label="Undo">
-        {t('Undo')}
-      </Button>
-    </StyledToast>
+  const renderToastContent = useCallback(
+    () => (
+      <StyledToast>
+        {props.children}
+        <Button onClick={handleUndoClick} aria-label="Undo">
+          {t('Undo')}
+        </Button>
+      </StyledToast>
+    ),
+    [handleUndoClick, props.children, t]
   );
 
   useEffect(() => {
@@ -75,7 +90,7 @@ export const UndoToast: React.FC<Props> = (props) => {
     } else {
       cogniteToast.dismiss();
     }
-  }, [props.visible]);
+  }, [props.visible, option, renderToastContent]);
 
   return null;
 };

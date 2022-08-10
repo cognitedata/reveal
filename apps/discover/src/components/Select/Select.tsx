@@ -61,7 +61,7 @@ export const Select = <T,>({
   };
   const selectedDisplayValue = useMemo(() => {
     return selectedItem ? renderDisplay(selectedItem) : '';
-  }, [selectedItem]);
+  }, [selectedItem, renderDisplay]);
 
   return (
     <div style={style}>
