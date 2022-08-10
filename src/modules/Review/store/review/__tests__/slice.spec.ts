@@ -9,8 +9,12 @@ import reducer, {
 } from 'src/modules/Review/store/review/slice';
 import { ReviewState } from 'src/modules/Review/store/review/types';
 import { AnnotationSettingsOption } from 'src/modules/Review/store/review/enums';
-import { deselectAllSelectionsReviewPage } from 'src/store/commonActions';
+import {
+  deselectAllSelectionsReviewPage,
+  clearFileState,
+} from 'src/store/commonActions';
 import { DeleteAnnotations } from 'src/store/thunks/Annotation/DeleteAnnotations';
+import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
 
 const mockReviewState: ReviewState = {
   ...initialState,
@@ -232,6 +236,23 @@ describe('Test review slice', () => {
         const newState = reducer(mockReviewState, action);
         expect(newState.selectedAnnotationIds).not.toContain(2);
         expect(newState.hiddenAnnotationIds).not.toContain(5);
+      });
+    });
+
+    describe('DeleteFilesById fulfilled matcher', () => {
+      const actionTypes = [DeleteFilesById.fulfilled.type, clearFileState.type];
+      test('Delete fullfil removes file ids', () => {
+        actionTypes.forEach((actionType) => {
+          const action = {
+            type: actionType,
+            payload: [100, 200],
+          };
+          const newState = reducer(mockReviewState, action);
+
+          expect(newState.fileIds).not.toContain(100);
+          expect(newState.fileIds).not.toContain(200);
+          expect(newState.fileIds).toContain(300);
+        });
       });
     });
   });
