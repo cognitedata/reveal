@@ -229,6 +229,9 @@ const getCapabilityKey = (
   if (capabilityName === 'visionmodel') {
     capabilityName = 'vision_model';
   }
+  if (capabilityName === 'geospatialcrs') {
+    capabilityName = 'geospatial_crs';
+  }
   if (capabilityName) {
     capabilityKey = `${capabilityName}_acl`;
   }
