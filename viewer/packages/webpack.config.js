@@ -85,6 +85,10 @@ module.exports = env => {
           }
         },
         {
+          test: /VisualTest.browser\.tsx?/,
+          use: path.resolve('./visual-tests/globImportLoader.js')
+        },
+        {
           test: /\.(glsl|vert|frag)$/,
           exclude: '/node_modules/',
           use: ['raw-loader', 'glslify-loader']

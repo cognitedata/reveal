@@ -2,12 +2,13 @@
  * Copyright 2022 Cognite AS
  */
 
-import * as visualTests from './../packages/visualTests.root';
+// @ts-ignore
+import visualTests from '**/*.VisualTestFixture.ts';
 
 async function testGenerator(): Promise<Map<string, () => Promise<void>>> {
   const testMap = new Map<string, () => Promise<void>>();
 
-  visualTests.default.forEach(visualTest => {
+  visualTests.forEach((visualTest: any) => {
     const testFixture = new visualTest();
     testMap.set(visualTest.name, () => testFixture.run());
   });
