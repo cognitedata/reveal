@@ -2,9 +2,9 @@ import React from 'react';
 
 import { EventFilter, InternalId } from '@cognite/sdk';
 import { useList } from '@cognite/sdk-react-query-hooks';
-import { useAggregatedEventFilter } from 'hooks/useAggregatedEventFilter';
 import { ResetFiltersButton } from './ResetFiltersButton';
 import { AggregatedFilter } from './AggregatedFilter/AggregatedFilter';
+import { AggregatedEventFilter } from './AggregatedEventFilter/AggregatedEventFilter';
 import { ByAssetFilter } from './ByAssetFilter/ByAssetFilter';
 import { DataSetFilter } from './DataSetFilter/DataSetFilter';
 import { DateFilter } from './DateFilter/DateFilter';
@@ -21,21 +21,6 @@ export const EventFilters = ({
 }) => {
   const { data: items = [] } = useList('events', { filter, limit: 1000 });
 
-  const typeFilter = useAggregatedEventFilter({
-    field: 'type',
-    filter,
-    onUpdate: newValue => setFilter({ ...filter, type: newValue }),
-    title: 'Type',
-    value: filter.type,
-  });
-  const subtypeFilter = useAggregatedEventFilter({
-    field: 'subtype',
-    filter,
-    onUpdate: newValue => setFilter({ ...filter, subtype: newValue }),
-    title: 'Sub-type',
-    value: filter.subtype,
-  });
-
   return (
     <div>
       <ResetFiltersButton setFilter={setFilter} />
@@ -49,7 +34,15 @@ export const EventFilters = ({
           })
         }
       />
-      {typeFilter}
+      <AggregatedEventFilter
+        field="type"
+        filter={filter}
+        setValue={newValue => {
+          setFilter({ ...filter, type: newValue });
+        }}
+        title="Type"
+        value={filter.type}
+      />
       <DateFilter
         title="Start Time"
         value={filter.startTime}
@@ -84,7 +77,15 @@ export const EventFilters = ({
         }
       />
       <AdvancedFiltersCollapse resourceType="event" filter={filter}>
-        {subtypeFilter}
+        <AggregatedEventFilter
+          field="subtype"
+          filter={filter}
+          setValue={newValue => {
+            setFilter({ ...filter, subtype: newValue });
+          }}
+          title="Sub-type"
+          value={filter.subtype}
+        />
         <ByAssetFilter
           value={filter.assetSubtreeIds?.map(el => (el as InternalId).id)}
           setValue={newValue =>

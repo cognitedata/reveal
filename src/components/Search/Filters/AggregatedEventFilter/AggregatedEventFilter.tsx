@@ -22,7 +22,6 @@ const useEventAggregate = (
   filter?: any
 ) => {
   const sdk = useSDK();
-
   return useQuery(eventAggregateKey(aggregate, field, filter), async () =>
     sdk.events.aggregate.uniqueValues({
       filter,
@@ -31,23 +30,23 @@ const useEventAggregate = (
   );
 };
 
-export const useAggregatedEventFilter = ({
+export const AggregatedEventFilter = ({
   field,
   filter,
   title,
-  onUpdate,
+  setValue,
   value,
 }: {
   field: EventFieldForAggregate;
   filter: EventFilter;
   title: string;
-  onUpdate: (newValue?: string) => void;
+  setValue: (newValue?: string) => void;
   value?: string;
 }): JSX.Element => {
   const { data = [] } = useEventAggregate('uniqueValues', field, filter);
 
   const handleUpdate = (newValue?: string): void => {
-    onUpdate(newValue && newValue.length > 0 ? newValue : undefined);
+    setValue(newValue && newValue.length > 0 ? newValue : undefined);
   };
 
   return (
@@ -61,7 +60,7 @@ export const useAggregatedEventFilter = ({
       </Body>
       <Select
         creatable
-        value={value ? { value, label: value } : undefined}
+        value={value ? { value, label: value } : null}
         onChange={item => {
           if (item) {
             handleUpdate((item as { value: string }).value);
