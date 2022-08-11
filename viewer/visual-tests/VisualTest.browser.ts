@@ -3,7 +3,7 @@
  */
 
 // @ts-ignore
-import visualTestsFixtures from '**/*.VisualTestFixture.ts';
+import visualTestsFixtures from '**/*.VisualTest.ts';
 
 async function testGenerator(): Promise<Map<string, () => Promise<void>>> {
   const testMap = new Map<string, () => Promise<void>>();

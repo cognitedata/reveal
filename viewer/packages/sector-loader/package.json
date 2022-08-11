@@ -3,7 +3,7 @@
   "private": true,
   "main": "index.ts",
   "scripts": {
-    "start": "yarn ws:serve --env testFixture=SectorLoader.VisualTestFixture.ts",
+    "start": "yarn ws:serve --env testFixture=SectorLoader.VisualTest.ts",
     "test": "yarn ws:test --config ./../../jest.config.js",
     "lint": "yarn ws:lint"
   },

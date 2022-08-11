@@ -16,7 +16,7 @@ function setTestFixture(testFixture) {
     throw new Error('Unkown test fixture arugment');
   }
 
-  return '?testfixture=' + parsedTestFixturePath.name.replace('.', '');
+  return '?testfixture=' + parsedTestFixturePath.name;
 }
 
 module.exports = env => {

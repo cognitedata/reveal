@@ -2,9 +2,9 @@
  * Copyright 2022 Cognite AS
  */
 
+import * as glob from 'glob';
+import path from 'path';
 import { Page } from 'puppeteer';
-
-const testFixtures = ((process.env as any).TEST_FIXTURES as string).split(',');
 
 describe('Visual tests', () => {
   let testPage: Page;
@@ -19,7 +19,7 @@ describe('Visual tests', () => {
     });
   });
 
-  test.each(testFixtures)('%p', async testName => {
+  test.each(glob.sync('**/*.VisualTest.ts').map(filePath => path.parse(filePath).name))('%p', async testName => {
     return runTest(testName);
   });
 
