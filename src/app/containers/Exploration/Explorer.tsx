@@ -6,15 +6,6 @@ import { ResourceDetailsPage } from 'app/containers/ResourceDetails';
 import SearchRedirect from './SearchRedirect';
 import { SearchResultsPage } from './SearchResultsPage';
 
-const AppWrapper = styled.div`
-  margin-left: 16px;
-  margin-right: 16px;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-`;
-
 export const Explorer = () => {
   return (
     <>
@@ -36,3 +27,14 @@ export const Explorer = () => {
     </>
   );
 };
+
+const AppWrapper = styled.div`
+  height: 100%;
+  max-width: 100vw;
+  padding-left: 16px;
+  padding-right: 16px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+`;

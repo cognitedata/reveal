@@ -36,12 +36,6 @@ import { PageTitle } from '@cognite/cdf-utilities';
 import { ThreeDSearchResults } from 'app/containers/ThreeD/ThreeDSearchResults';
 import FilterToggleButton from './FilterToggleButton';
 
-const Wrapper = styled.div`
-  width: 100%;
-  display: flex;
-  background: #fff;
-`;
-
 const getPageTitle = (query: string, resourceType: ResourceType): string => {
   return `${query}${query ? ' in' : ''} ${getTitle(resourceType, true)}`;
 };
@@ -272,24 +266,26 @@ function SearchPage() {
           </FilterWrapper>
         )}
 
-        <SearchFilters
-          assetFilter={assetFilter}
-          setAssetFilter={setAssetFilter}
-          timeseriesFilter={timeseriesFilter}
-          setTimeseriesFilter={setTimeseriesFilter}
-          sequenceFilter={sequenceFilter}
-          setSequenceFilter={setSequenceFilter}
-          eventFilter={eventFilter}
-          setEventFilter={setEventFilter}
-          fileFilter={fileFilter}
-          setFileFilter={setFileFilter}
-          resourceType={currentResourceType}
-          closeFilters={() => setShowFilter(false)}
-          visible={currentResourceType !== 'threeD' && showFilter}
-        />
+        <SearchFiltersWrapper>
+          <SearchFilters
+            assetFilter={assetFilter}
+            setAssetFilter={setAssetFilter}
+            timeseriesFilter={timeseriesFilter}
+            setTimeseriesFilter={setTimeseriesFilter}
+            sequenceFilter={sequenceFilter}
+            setSequenceFilter={setSequenceFilter}
+            eventFilter={eventFilter}
+            setEventFilter={setEventFilter}
+            fileFilter={fileFilter}
+            setFileFilter={setFileFilter}
+            resourceType={currentResourceType}
+            closeFilters={() => setShowFilter(false)}
+            visible={currentResourceType !== 'threeD' && showFilter}
+          />
+        </SearchFiltersWrapper>
 
         <Wrapper>
-          <StyledSplitter secondaryMinSize={440} primaryIndex={1}>
+          <StyledSplitter secondaryMinSize={415} primaryIndex={1}>
             <Flex
               direction="column"
               style={{
@@ -385,6 +381,17 @@ const FilterWrapper = styled.div`
   padding-top: 1rem;
   border-right: 1px solid ${Colors['greyscale-grey3'].hex()};
   padding-right: 10px;
+`;
+
+const SearchFiltersWrapper = styled.div`
+  flex: 0 0 auto;
+`;
+
+const Wrapper = styled.div`
+  display: flex;
+  background: #fff;
+  flex: 1 1 auto;
+  min-width: 0;
 `;
 
 const RootHeightWrapper = styled.div`
