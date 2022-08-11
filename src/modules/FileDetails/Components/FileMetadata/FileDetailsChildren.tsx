@@ -29,7 +29,6 @@ const FieldViewText = styled.span`
 `;
 const FieldViewInputContainer = styled.div`
   width: 100%;
-  max-width: 450px;
 `;
 
 const FlexContainer = styled.div`
@@ -165,7 +164,7 @@ const DropDownContainer = styled.div`
 `;
 
 const FieldContainer = styled.div`
-  width: 450px;
+  width: 100%;
 
   & div.title:first-child {
     color: var(--cogs-b2-color);
