@@ -4,6 +4,8 @@
 const path = require('path');
 const glob = require('glob');
 
+const testRunnerRegex = /VisualTest.browser\.ts/;
+
 const regex = /@?import + ?((\w+) +from )?([\'\"])(.*?);?\3/gm;
 const importModules = /import +(\w+) +from +([\'\"])(.*?)\2/gm;
 const importFiles = /import +([\'\"])(.*?)\1/gm;
@@ -12,7 +14,7 @@ let resourcePath;
 
 function getGlobImports(filename, resourcePath, match, obj) {
   return glob
-    .sync(filename, { absolute: true, ignore: '**/node_modules/**' })
+    .sync(filename, { absolute: true, ignore: ['**/node_modules/**', '**/dist/**'] })
     .map(file => path.normalize(path.relative(path.dirname(resourcePath), file)))
     .map(p => `./${p.slice(0, -3).replaceAll('\\', '/')}`)
     .map((file, index) => {
@@ -52,7 +54,9 @@ function replaceImportGlob(importStatement, fromStatement, moduleBlobVariableNam
 }
 
 module.exports = function (source) {
-  this.cacheable && this.cacheable(true);
+  if (!this.resourcePath.match(testRunnerRegex)) {
+    return source;
+  }
   resourcePath = this.resourcePath;
   return source.replace(regex, replaceImportGlob);
 };
