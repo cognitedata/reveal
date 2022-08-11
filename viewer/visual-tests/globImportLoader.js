@@ -38,7 +38,13 @@ function replaceImportGlob(importStatement, fromStatement, moduleBlobVariableNam
   const paths = getGlobImports(filename, resourcePath, importStatement, moduleBlobVariableName);
   let result = paths.map(path => path.importString).join(' ');
   if (result && paths.length) {
-    result += ` const ${moduleBlobVariableName} = [${paths.map(p => `${p.module}.default`).join(', ')}];`;
+    result += ` const ${moduleBlobVariableName} = [${paths
+      .map(p => {
+        const parsedPath = path.parse(p.path);
+        const filePath = parsedPath.name + parsedPath.ext.slice(0, -1);
+        return `{module: ${p.module}.default, fileName: '${filePath}'}`;
+      })
+      .join(', ')}];`;
   } else if (!result) {
     this.emitWarning('Empty results for "' + importStatement + '"');
   }

@@ -15,7 +15,7 @@ export default async (): Promise<void> => {
 
   const testFiles = testFilesPaths
     .map(filePath => {
-      return path.parse(filePath).name.replace('.', '');
+      return path.parse(filePath).name;
     })
     .join(',');
 

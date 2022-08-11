@@ -3,14 +3,14 @@
  */
 
 // @ts-ignore
-import visualTests from '**/*.VisualTestFixture.ts';
+import visualTestsFixtures from '**/*.VisualTestFixture.ts';
 
 async function testGenerator(): Promise<Map<string, () => Promise<void>>> {
   const testMap = new Map<string, () => Promise<void>>();
 
-  visualTests.forEach((visualTest: any) => {
-    const testFixture = new visualTest();
-    testMap.set(visualTest.name, () => testFixture.run());
+  visualTestsFixtures.forEach((visualTestsFixture: any) => {
+    const testFixture = new visualTestsFixture.module();
+    testMap.set(visualTestsFixture.fileName, () => testFixture.run());
   });
 
   return testMap;
