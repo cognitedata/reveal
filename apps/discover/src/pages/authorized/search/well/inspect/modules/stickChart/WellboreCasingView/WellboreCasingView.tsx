@@ -109,8 +109,17 @@ export const WellboreCasingView: React.FC<WellboreCasingsViewProps> = ({
         <Header
           wellName={wellName}
           wellboreName={wellboreName}
+          wellboreMatchingId={wellboreMatchingId}
           currentEventViewMode={currentEventViewMode}
           onEventViewModeChange={setCurrentEventViewMode}
+          onChangeDropdown={({ eventType }) => {
+            if (eventType === 'nds') {
+              setShowNdsDetailView(true);
+            }
+            if (eventType === 'npt') {
+              setShowNptDetailView(true);
+            }
+          }}
         />
 
         <ContentWrapper ref={depthScaleRef}>

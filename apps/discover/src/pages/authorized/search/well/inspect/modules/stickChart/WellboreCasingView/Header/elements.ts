@@ -5,6 +5,7 @@ import { Flex, FlexRow, sizes } from 'styles/layout';
 export const HeaderWrapper = styled(FlexRow)`
   padding: ${sizes.normal};
   box-shadow: inset 0px -1px 0px var(--cogs-greyscale-grey3);
+  gap: 8px;
 `;
 
 export const Title = styled(Flex)`
@@ -26,4 +27,11 @@ export const Subtitle = styled(Flex)`
   letter-spacing: -0.004em;
   color: rgba(0, 0, 0, 0.45);
   margin-top: ${sizes.extraSmall};
+`;
+
+export const SegmentedControlStyler = styled.div`
+  & > *.cogs-segmented-control.default {
+    background: rgba(83, 88, 127, 0.08) !important;
+    height: 90% !important;
+  ]
 `;

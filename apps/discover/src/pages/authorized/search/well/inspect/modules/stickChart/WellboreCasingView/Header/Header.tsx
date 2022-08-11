@@ -4,33 +4,38 @@
  */
 import React from 'react';
 
-// import { Button } from '@cognite/cogs.js';
+import { Button } from '@cognite/cogs.js';
 
-// import { Dropdown } from 'components/Dropdown';
+import { Dropdown } from 'components/Dropdown';
 import { SegmentedControl } from 'components/SegmentedControl/SegmentedControl';
 import { FlexColumn } from 'styles/layout';
 
-// import {
-//   NDS_EVENT_DETAILS_LABEL,
-//   NPT_EVENT_DETAILS_LABEL,
-// } from '../../../common/Events/constants';
+import {
+  NDS_EVENT_DETAILS_LABEL,
+  NPT_EVENT_DETAILS_LABEL,
+} from '../../../common/Events/constants';
 import { EventsColumnView } from '../../../common/Events/types';
 
-import { HeaderWrapper, Subtitle, Title } from './elements';
+import {
+  HeaderWrapper,
+  SegmentedControlStyler,
+  Subtitle,
+  Title,
+} from './elements';
 
 interface HeaderProps {
   wellName: string;
   wellboreName: string;
-  // wellboreMatchingId: string;
-  // onChangeDropdown: ({
-  //   wellName,
-  //   wellboreName,
-  // }: {
-  //   eventType: 'npt' | 'nds';
-  //   wellName: string;
-  //   wellboreName: string;
-  //   wellboreMatchingId: string;
-  // }) => void;
+  wellboreMatchingId: string;
+  onChangeDropdown: ({
+    wellName,
+    wellboreName,
+  }: {
+    eventType: 'npt' | 'nds';
+    wellName: string;
+    wellboreName: string;
+    wellboreMatchingId: string;
+  }) => void;
   currentEventViewMode: EventsColumnView;
   onEventViewModeChange: (viewMode: EventsColumnView) => void;
 }
@@ -38,28 +43,28 @@ interface HeaderProps {
 export const Header: React.FC<HeaderProps> = ({
   wellName,
   wellboreName,
-  // wellboreMatchingId,
-  // onChangeDropdown,
+  wellboreMatchingId,
+  onChangeDropdown,
   currentEventViewMode,
   onEventViewModeChange,
 }) => {
-  // const handleChangeNptDropdown = () => {
-  //   onChangeDropdown({
-  //     eventType: 'npt',
-  //     wellName,
-  //     wellboreName,
-  //     wellboreMatchingId,
-  //   });
-  // };
+  const handleChangeNptDropdown = () => {
+    onChangeDropdown({
+      eventType: 'npt',
+      wellName,
+      wellboreName,
+      wellboreMatchingId,
+    });
+  };
 
-  // const handleChangeNdsDropdown = () => {
-  //   onChangeDropdown({
-  //     eventType: 'nds',
-  //     wellName,
-  //     wellboreName,
-  //     wellboreMatchingId,
-  //   });
-  // };
+  const handleChangeNdsDropdown = () => {
+    onChangeDropdown({
+      eventType: 'nds',
+      wellName,
+      wellboreName,
+      wellboreMatchingId,
+    });
+  };
 
   return (
     <HeaderWrapper>
@@ -68,15 +73,17 @@ export const Header: React.FC<HeaderProps> = ({
         <Subtitle>{wellboreName}</Subtitle>
       </FlexColumn>
 
-      <SegmentedControl
-        onTabChange={(tabKey) => onEventViewModeChange(tabKey as any)}
-        currentTab={currentEventViewMode}
-        tabs={{
-          [EventsColumnView.Cluster]: 'Cluster view',
-          [EventsColumnView.Scatter]: 'Scatter view',
-        }}
-      />
-      {/* <Dropdown
+      <SegmentedControlStyler>
+        <SegmentedControl
+          onTabChange={(tabKey) => onEventViewModeChange(tabKey as any)}
+          currentTab={currentEventViewMode}
+          tabs={{
+            [EventsColumnView.Cluster]: 'Cluster view',
+            [EventsColumnView.Scatter]: 'Scatter view',
+          }}
+        />
+      </SegmentedControlStyler>
+      <Dropdown
         content={
           <Dropdown.Menu>
             <Dropdown.Item onClick={handleChangeNdsDropdown}>
@@ -91,7 +98,7 @@ export const Header: React.FC<HeaderProps> = ({
         <Button icon="ChevronDown" iconPlacement="right">
           Details
         </Button>
-      </Dropdown> */}
+      </Dropdown>
     </HeaderWrapper>
   );
 };
