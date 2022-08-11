@@ -108,3 +108,7 @@ Then you need to add the following ACL's to your account:
     }
   }
 ```
+
+## Migrating 3D Office Model
+
+If you need to update the current 3D model, please [see the guide here](https://cognitedata.atlassian.net/wiki/spaces/AD/pages/3653861472/Migrating+From+Model+Versions) on how to do so.
