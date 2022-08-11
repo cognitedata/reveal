@@ -14,9 +14,16 @@ export const ExplorerTabs = (props: ExplorerTabsPropType) => {
   };
 
   return (
-    <StyledTabs activeKey={selectedTabIndex.toString()} onChange={handleChange}>
-      {tabs.map((tab) => (
-        <Tabs.TabPane key={tab.name} tab={<span>{tab.name}</span>} />
+    <StyledTabs
+      defaultActiveKey={selectedTabIndex.toString()}
+      activeKey={selectedTabIndex.toString()}
+      onChange={handleChange}
+    >
+      {tabs.map((tab, index) => (
+        // tabs implementation has selectedIndex as activeKey, hence we've to use index as key for TabPane
+        // handleChange accepts the key from TabPane
+        // eslint-disable-next-line react/no-array-index-key
+        <Tabs.TabPane key={index.toString()} tab={<span>{tab.name}</span>} />
       ))}
     </StyledTabs>
   );

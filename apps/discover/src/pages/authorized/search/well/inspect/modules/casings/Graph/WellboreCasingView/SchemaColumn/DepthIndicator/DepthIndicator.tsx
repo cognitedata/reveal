@@ -55,8 +55,8 @@ export const DepthIndicator: React.FC<DepthIndicatorProps> = ({
        * This increases the zIndex of hovered depth indicator by one.
        * Then return it to the initial when the mouse left.
        */
-      onMouseEnter={() => setZIndex((zIndex) => zIndex + 1)}
-      onMouseLeave={() => setZIndex((zIndex) => zIndex - 1)}
+      onMouseEnter={() => setZIndex(layers.TOOLTIP_HOVERED)}
+      onMouseLeave={() => setZIndex(layers.MAIN_LAYER)}
     >
       <DepthSegment.Start height={depthSegmentStartHeight} />
       <Tooltip

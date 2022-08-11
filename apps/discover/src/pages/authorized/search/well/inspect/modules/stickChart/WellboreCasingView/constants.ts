@@ -15,13 +15,8 @@ export const MUD_LINE_COLOR = '#000000';
 export const DEPTH_SCALE_MIN_HEIGHT = 16;
 export const DEPTH_BLOCK_LABEL_MINIMUM_HEIGHT = 20;
 
-export const DEPTH_SCALE_LABEL_WIDTH = 74;
+export const DEPTH_SCALE_LABEL_WIDTH = 79;
 export const DEPTH_SCALE_LABEL_HEIGHT = 16;
-export const DEPTH_SCALE_BORDER_LABEL_COLOR =
-  'var(--cogs-decorative--blue--300)';
-export const DEPTH_SCALE_LABEL_COLOR = 'var(--cogs-decorative--blue--200)';
-export const DEPTH_SCALE_OVERLAP_LABEL_COLOR =
-  'var(--cogs-decorative--blue--100)';
 
 export const DEFAULT_DEPTH_MEASUREMENT_TYPE = DepthMeasurementUnit.MD;
 

@@ -1,3 +1,5 @@
+import Tag from 'images/tag.svg';
+import TagLight from 'images/tagLight.svg';
 import styled from 'styled-components/macro';
 import layers from 'utils/zindex';
 
@@ -9,9 +11,6 @@ import {
 } from '../../../common/Events/constants';
 import { DepthMeasurementScale } from '../../../common/Events/elements';
 import {
-  DEPTH_SCALE_BORDER_LABEL_COLOR,
-  DEPTH_SCALE_LABEL_COLOR,
-  DEPTH_SCALE_OVERLAP_LABEL_COLOR,
   DEPTH_SCALE_LABEL_HEIGHT,
   DEPTH_SCALE_LABEL_WIDTH,
   MUD_LINE_COLOR,
@@ -20,6 +19,8 @@ import {
 } from '../constants';
 
 import { DepthEndMarker } from './components/DepthIndicator/elements';
+
+type OverlappingProps = { overlapping: boolean };
 
 export const SchemaColumnContentWrapper = styled(FlexRow)`
   height: 100%;
@@ -129,56 +130,17 @@ export const DepthScaleLabel = styled(FlexRow)`
 `;
 
 export const DepthScaleLabelTag = styled(Flex)`
-  background: ${(props: { overlapping: boolean }) =>
-    props.overlapping
-      ? DEPTH_SCALE_OVERLAP_LABEL_COLOR
-      : DEPTH_SCALE_LABEL_COLOR};
-  font-size: 12px;
-  line-height: ${sizes.normal};
-  text-align: center;
-  letter-spacing: -0.008em;
+  background-image: ${(props: OverlappingProps) =>
+    props.overlapping ? `url(${TagLight})` : `url(${Tag})`};
+  background-repeat: no-repeat, no-repeat;
   color: var(--cogs-text-icon--strong);
   height: ${DEPTH_SCALE_LABEL_HEIGHT + 1}px; // +1 for the middle point pixel
   width: ${DEPTH_SCALE_LABEL_WIDTH}px;
   padding-left: ${sizes.extraSmall};
   align-items: center;
-  border: 1px solid
-    ${(props: { overlapping: boolean }) =>
-      props.overlapping
-        ? DEPTH_SCALE_LABEL_COLOR
-        : DEPTH_SCALE_BORDER_LABEL_COLOR};
-  border-right: none;
-  border-radius: ${sizes.extraSmall} 0 0 ${sizes.extraSmall};
-
-  &:after {
-    content: '';
-    position: absolute;
-    left: ${DEPTH_SCALE_LABEL_WIDTH -
-    1}px; // need for border to show arrow right side
-    width: 0;
-    height: 0;
-    border-top: ${DEPTH_SCALE_LABEL_HEIGHT / 2}px solid transparent;
-    border-bottom: ${DEPTH_SCALE_LABEL_HEIGHT / 2}px solid transparent;
-    border-left: ${sizes.extraSmall} solid
-      ${(props: { overlapping: boolean }) =>
-        props.overlapping
-          ? DEPTH_SCALE_OVERLAP_LABEL_COLOR
-          : DEPTH_SCALE_LABEL_COLOR};
-  }
-
-  &:before {
-    content: '';
-    position: absolute;
-    left: ${DEPTH_SCALE_LABEL_WIDTH}px;
-    width: 0;
-    height: 0;
-    border-top: ${DEPTH_SCALE_LABEL_HEIGHT / 2}px solid transparent;
-    border-bottom: ${DEPTH_SCALE_LABEL_HEIGHT / 2}px solid transparent;
-    border-left: ${sizes.extraSmall} solid
-      ${(props: { overlapping: boolean }) =>
-        props.overlapping
-          ? DEPTH_SCALE_LABEL_COLOR
-          : DEPTH_SCALE_BORDER_LABEL_COLOR};
+  &:hover {
+    z-index: ${layers.TOOLTIP_HOVERED};
+    background-image: ${`url(${Tag})`};
   }
 `;
 
