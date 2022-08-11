@@ -118,7 +118,6 @@ export const AnnotationTableRow = ({
             >
               <SegmentedControl.Button
                 type="primary"
-                size="small"
                 key="verified"
                 aria-label="verify annotation"
                 className="approveButton"
@@ -127,7 +126,6 @@ export const AnnotationTableRow = ({
               </SegmentedControl.Button>
               <SegmentedControl.Button
                 type="primary"
-                size="small"
                 key="rejected"
                 aria-label="reject annotation"
                 className="rejectButton"
