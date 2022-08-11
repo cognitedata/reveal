@@ -1,4 +1,4 @@
-import { Button, Flex } from '@cognite/cogs.js';
+import { Button, Title } from '@cognite/cogs.js';
 import { MapContext } from 'components/Map/MapProvider';
 import { Scalars } from 'graphql/generated';
 import { PAGES } from 'pages/constants';
@@ -9,10 +9,12 @@ import { isEditModeAtom } from 'recoil/popupShared/isEditModeAtom';
 
 import {
   FullWidthContainer,
-  ButtonWithMargin,
   DivWithMarginBottom,
-  FlexColumnSpaceAround,
+  FlexColumnSpaceBetween,
   FlexSpaceBetween,
+  DivLine,
+  DisplayContainer,
+  Content,
 } from '../elements';
 
 import { NavigationButton } from './NavigationButton';
@@ -20,12 +22,12 @@ import { NavigationButton } from './NavigationButton';
 interface Props {
   isEditable?: boolean;
   nodeId?: any;
-  Icon: () => JSX.Element | null;
+  name: string;
 }
 
 export const PopupContent: React.FC<React.PropsWithChildren<Props>> = ({
-  Icon,
   nodeId,
+  name,
   isEditable = true,
   children,
 }) => {
@@ -51,35 +53,35 @@ export const PopupContent: React.FC<React.PropsWithChildren<Props>> = ({
   const handleLocationButtonClick = () => zoomToNodeId(nodeId);
 
   return (
-    <FlexColumnSpaceAround>
-      <DivWithMarginBottom>
-        <FlexSpaceBetween>
-          <Icon />
-          <div>
-            {isEditable && (
-              <Button
-                icon="Edit"
-                onClick={handleEditButtonClick}
-                aria-label="Edit information"
-              />
-            )}
-            <Link to={PAGES.HOME}>
-              <ButtonWithMargin
-                type="ghost"
-                icon="Close"
-                aria-label="Close popup"
-              />
-            </Link>
-          </div>
-        </FlexSpaceBetween>
-        <FullWidthContainer>{children}</FullWidthContainer>
-      </DivWithMarginBottom>
-      <Flex justifyContent="flex-end">
-        <Button disabled={!nodeId} onClick={handleLocationButtonClick}>
-          Show Location
-        </Button>
-        <NavigationButton nodeId={nodeId} />
-      </Flex>
-    </FlexColumnSpaceAround>
+    <DisplayContainer>
+      <Content>
+        <FlexColumnSpaceBetween>
+          <Link to={PAGES.HOME}>
+            <DivLine />
+          </Link>
+          <DivWithMarginBottom>
+            <FlexSpaceBetween>
+              <Title level={3}>{name}</Title>
+              <div>
+                {isEditable && (
+                  <Button
+                    icon="Edit"
+                    type="ghost"
+                    onClick={handleEditButtonClick}
+                    aria-label="Edit information"
+                  />
+                )}
+              </div>
+            </FlexSpaceBetween>
+            <FullWidthContainer>{children}</FullWidthContainer>
+          </DivWithMarginBottom>
+
+          <NavigationButton nodeId={nodeId} />
+          <Button disabled={!nodeId} onClick={handleLocationButtonClick}>
+            Show Location
+          </Button>
+        </FlexColumnSpaceBetween>
+      </Content>
+    </DisplayContainer>
   );
 };

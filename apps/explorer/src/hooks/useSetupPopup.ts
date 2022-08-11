@@ -10,9 +10,9 @@ export const useSetupPopup = (
   formState: RecoilState<PopupDataTypes>
 ) => {
   const resetIsEditMode = useResetRecoilState(isEditModeAtom);
-  const setRoomFormState = useSetRecoilState(formState);
+  const setFormState = useSetRecoilState(formState);
   useEffect(() => {
-    setRoomFormState(data);
     resetIsEditMode();
-  }, []);
+    setFormState(data);
+  }, [data]);
 };

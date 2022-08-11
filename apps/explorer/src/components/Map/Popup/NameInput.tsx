@@ -1,7 +1,6 @@
-import { Input } from '@cognite/cogs.js';
+import { Input, Title } from '@cognite/cogs.js';
 import { ChangeEvent } from 'react';
 import { useRecoilState } from 'recoil';
-import { EditOptionItem } from 'components/Map/Popup/elements';
 import { nameAtom } from 'recoil/popupShared/nameAtom';
 
 export const NameInput: React.FC = () => {
@@ -10,9 +9,9 @@ export const NameInput: React.FC = () => {
     setNameInput(event.target.value);
 
   return (
-    <EditOptionItem>
-      Name
+    <>
+      <Title level={6}>Name</Title>
       <Input value={nameInput} onChange={handleChange} />
-    </EditOptionItem>
+    </>
   );
 };

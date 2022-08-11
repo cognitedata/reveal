@@ -1,30 +1,42 @@
+import { Icon } from '@cognite/cogs.js';
+import { LinkButton } from 'components/LinkButton/LinkButton';
 import { PAGES } from 'pages/constants';
-import { Link } from 'react-router-dom';
 
 import {
-  ButtonWithMargin,
+  CenteredTitle,
   DivWithMarginBottom,
-  FlexColumnSpaceAround,
-  FlexEnd,
+  EditContainer,
+  EditContent,
+  FlexColumnSpaceBetween,
+  GridPopupHeader,
 } from '../elements';
 
 interface Props {
-  SubmitButton: React.ComponentType;
+  SubmitButton: React.ComponentType<React.PropsWithChildren<unknown>>;
+  title: string;
 }
 
 export const EditPopupContent: React.FC<React.PropsWithChildren<Props>> = ({
   SubmitButton,
+  title,
   children,
 }) => {
   return (
-    <FlexColumnSpaceAround>
-      <DivWithMarginBottom>{children}</DivWithMarginBottom>
-      <FlexEnd>
-        <SubmitButton />
-        <Link to={PAGES.HOME}>
-          <ButtonWithMargin>Close</ButtonWithMargin>
-        </Link>
-      </FlexEnd>
-    </FlexColumnSpaceAround>
+    <EditContainer>
+      <EditContent>
+        <FlexColumnSpaceBetween>
+          <div>
+            <GridPopupHeader>
+              <LinkButton to={PAGES.HOME} type="ghost">
+                <Icon type="ChevronLeft" />
+              </LinkButton>
+              <CenteredTitle level={5}>Edit {title}</CenteredTitle>
+            </GridPopupHeader>
+            <DivWithMarginBottom>{children}</DivWithMarginBottom>
+          </div>
+          <SubmitButton> Save As </SubmitButton>
+        </FlexColumnSpaceBetween>
+      </EditContent>
+    </EditContainer>
   );
 };

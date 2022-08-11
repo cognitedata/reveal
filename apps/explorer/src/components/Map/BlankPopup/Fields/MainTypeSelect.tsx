@@ -1,4 +1,4 @@
-import { Select } from '@cognite/cogs.js';
+import { Select, Title } from '@cognite/cogs.js';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import {
   selectedTypeAtom,
@@ -9,8 +9,6 @@ import {
   MAP_OBJECTS,
   subTypeOptions,
 } from 'recoil/blankPopup/constants';
-
-import { EditOptionItem } from '../../Popup/elements';
 
 export const MainTypeSelect: React.FC = () => {
   const [selectedType, setSelectedType] = useRecoilState(selectedTypeAtom);
@@ -23,14 +21,13 @@ export const MainTypeSelect: React.FC = () => {
   };
 
   return (
-    <EditOptionItem>
-      Object Type
+    <>
+      <Title level={6}>Object Type</Title>
       <Select
         value={selectedType}
         options={mainTypeSelectOptions}
         onChange={handleChange}
-        width={150}
       />
-    </EditOptionItem>
+    </>
   );
 };

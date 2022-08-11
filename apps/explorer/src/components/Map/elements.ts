@@ -1,3 +1,4 @@
+import { Button } from '@cognite/cogs.js';
 import styled from 'styled-components/macro';
 
 export const Header = styled.header`
@@ -9,4 +10,8 @@ export const Header = styled.header`
   font-size: calc(10px + 2vmin);
   color: var(--cogs-greyscale-grey7);
   padding: 20px;
+`;
+
+export const FullWidthButton = styled(Button)`
+  width: 100%;
 `;

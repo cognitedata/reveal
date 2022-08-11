@@ -1,7 +1,6 @@
 import { useRoomMutate } from 'domain/node/internal/actions/room/useRoomMutate';
 import { useUpdateRoomEquipment } from 'domain/node/internal/actions/room/useUpdateRoomEquipment';
 
-import { Button } from '@cognite/cogs.js';
 import { Room } from 'graphql/generated';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import {
@@ -11,8 +10,12 @@ import {
 } from 'recoil/roomPopup/roomPopupAtoms';
 import { roomFormState } from 'recoil/roomPopup/roomFormState';
 import { isEditModeAtom } from 'recoil/popupShared/isEditModeAtom';
+import { FullWidthButton } from 'components/Map/elements';
+import React from 'react';
 
-export const RoomPopupSubmitButton = () => {
+export const RoomPopupSubmitButton: React.FC<
+  React.PropsWithChildren<unknown>
+> = ({ children }) => {
   const roomState = useRecoilValue(roomFormState);
   const prevRoom = useRecoilValue(prevRoomAtom);
   const oldEquipmentList = useRecoilValue(prevRoomEquipmentSelectAtom);
@@ -33,8 +36,8 @@ export const RoomPopupSubmitButton = () => {
   };
 
   return (
-    <Button onClick={handleSubmit} type="primary">
-      Done
-    </Button>
+    <FullWidthButton onClick={handleSubmit} type="primary">
+      {children}
+    </FullWidthButton>
   );
 };

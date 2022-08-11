@@ -12,7 +12,7 @@ export const NavigationButton: React.FC<Props> = ({ nodeId }) => {
   const toPath = `${HOME_ROUTES.HOME_NAVIGATE}?${urlSearchParams.toString()}`;
 
   return (
-    <LinkButton to={toPath} type="primary" disabled={!nodeId}>
+    <LinkButton to={toPath} type="primary" disabled={!nodeId} fullWidth>
       Directions
     </LinkButton>
   );

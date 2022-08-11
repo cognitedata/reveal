@@ -1,4 +1,3 @@
-import { Icon } from '@cognite/cogs.js';
 import React from 'react';
 import { EditPopupContentFieldsWrapper } from 'components/Map/Popup/elements';
 
@@ -12,8 +11,7 @@ import { EquipmentListSelect } from './Fields/EquipmentListSelect';
 
 export const RoomEditPopupContent: React.FC = () => {
   return (
-    <EditPopupContent SubmitButton={RoomPopupSubmitButton}>
-      <Icon size={54} type="Cube" />
+    <EditPopupContent title="Room" SubmitButton={RoomPopupSubmitButton}>
       <EditPopupContentFieldsWrapper>
         <NameInput />
         <DescriptionInput />

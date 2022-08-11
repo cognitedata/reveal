@@ -1,14 +1,12 @@
 import { useUnassignDesk } from 'domain/node/internal/actions/equipment/useUnassignDesk';
 
-import { Body, Button, Icon, Title } from '@cognite/cogs.js';
+import { Body, Button } from '@cognite/cogs.js';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { equipmentFormState } from 'recoil/equipmentPopup/equipmentFormState';
 import { prevEquipmentAtom } from 'recoil/equipmentPopup/equipmentPopupAtoms';
 
 import { TextWrapper } from '../Popup/elements';
 import { PopupContent } from '../Popup/PopupContent';
-
-const renderIcon = () => <Icon size={54} type="Grid" />;
 
 export const EquipmentPopupContent: React.FC = () => {
   const [{ name, isBroken, person, nodeId }, setEquipmentForm] =
@@ -28,9 +26,8 @@ export const EquipmentPopupContent: React.FC = () => {
   };
 
   return (
-    <PopupContent Icon={renderIcon} nodeId={nodeId}>
+    <PopupContent name={name || 'No name'} nodeId={nodeId}>
       <TextWrapper>
-        <Title level={3}>{name}</Title>
         <Body>{subtitle}</Body>
         <Body>
           {isBroken ? '❌ Sorry! Currently broken' : '✅  Functional'}

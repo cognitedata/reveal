@@ -1,4 +1,3 @@
-import { Icon } from '@cognite/cogs.js';
 import React from 'react';
 import { NameInput } from 'components/Map/Popup/NameInput';
 import { useRecoilValue } from 'recoil';
@@ -14,8 +13,10 @@ import { EditOwnerDropdown } from '../Fields/EditOwnerDropdown';
 export const EquipmentEditPopupContent: React.FC = () => {
   const equipmentType = useRecoilValue(equipmentTypeAtom);
   return (
-    <EditPopupContent SubmitButton={EquipmentPopupSubmitButton}>
-      <Icon size={54} type="Cube" />
+    <EditPopupContent
+      title="Equipment"
+      SubmitButton={EquipmentPopupSubmitButton}
+    >
       <EditPopupContentFieldsWrapper>
         <NameInput />
         <IsBrokenCheckbox />

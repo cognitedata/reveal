@@ -29,7 +29,7 @@ export const equipmentFormState = selector({
       set(equipmentIsBrokenAtom, !!newValues.isBroken);
       set(equipmentNodeIdAtom, newValues.nodeId);
       set(equipmentPersonAtom, {
-        ...newValues,
+        ...newValues.person,
         externalId: newValues.person?.externalId || '',
         name: newValues.person?.name || '',
       });

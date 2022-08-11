@@ -1,4 +1,4 @@
-import { Body, Icon, Title } from '@cognite/cogs.js';
+import { Body } from '@cognite/cogs.js';
 import { Person } from 'graphql/generated';
 
 import { TextWrapper } from '../Popup/elements';
@@ -8,19 +8,16 @@ export interface Props {
   data: Person;
 }
 
-const renderIcon = () => <Icon size={54} type="Grid" />;
-
 export const PersonPopup: React.FC<Props> = ({ data }) => {
   const desk = data.desk || { name: '' };
 
   return (
     <PopupContent
-      Icon={renderIcon}
+      name={data.name || 'No name'}
       isEditable={false}
       nodeId={data.desk?.nodeId}
     >
       <TextWrapper>
-        <Title level={3}>{data.name}</Title>
         <Body>Slack: {data.slackId || 'N/A'}</Body>
         <Body>
           {desk.name

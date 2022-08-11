@@ -1,43 +1,38 @@
-import { Dropdown, Menu, Button } from '@cognite/cogs.js';
+import { Body, OptionType, Select } from '@cognite/cogs.js';
 import { useListPeopleWithNoDeskQuery } from 'graphql/generated';
 import { useRecoilState } from 'recoil';
 import { equipmentPersonAtom } from 'recoil/equipmentPopup/equipmentPopupAtoms';
 
-import { EditOptionItem } from '../../Popup/elements';
-
 export const EditOwnerDropdown: React.FC = () => {
-  const { data, isLoading } = useListPeopleWithNoDeskQuery();
+  const { data } = useListPeopleWithNoDeskQuery();
   const people = data?.people?.items || [];
   const [person, setPerson] = useRecoilState(equipmentPersonAtom);
 
+  const peopleOptions = people.map((person) => ({
+    label: person?.name || 'No Name',
+    value: person,
+  }));
+
+  const currentValue = { label: person.name || 'N/A', value: person };
+
   return (
-    <EditOptionItem>
-      Owner
-      <Dropdown
-        content={
-          <Menu>
-            {isLoading
-              ? 'Loading'
-              : people.map((p) => {
-                  const handleClick = () =>
-                    setPerson({
-                      ...p,
-                      name: p?.name || '',
-                      externalId: p?.externalId || '',
-                    });
-                  return (
-                    <Menu.Item key={p?.externalId} onClick={handleClick}>
-                      {p?.name}
-                    </Menu.Item>
-                  );
-                })}
-          </Menu>
-        }
-      >
-        <Button icon="ChevronDown" iconPlacement="right">
-          <div>{person.name ? person.name : 'Select...'}</div>
-        </Button>
-      </Dropdown>
-    </EditOptionItem>
+    <>
+      <Body strong level={2}>
+        Owner
+      </Body>
+      <Select
+        value={currentValue}
+        options={peopleOptions}
+        onChange={(
+          selectedValue: OptionType<{ externalId: string; name: string }>
+        ) => {
+          const newPerson = {
+            externalId: selectedValue.value?.externalId || '',
+            name: selectedValue.value?.name || '',
+          };
+          setPerson(newPerson);
+        }}
+      />
+    </>
   );
 };

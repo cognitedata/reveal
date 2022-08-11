@@ -1,4 +1,4 @@
-import { Select } from '@cognite/cogs.js';
+import { Select, Title } from '@cognite/cogs.js';
 import { Equipment, useListFilteredEquipmentQuery } from 'graphql/generated';
 import { useRecoilState } from 'recoil';
 import { roomEquipmentSelectAtom } from 'recoil/roomPopup/roomPopupAtoms';
@@ -29,12 +29,15 @@ export const EquipmentListSelect: React.FC = () => {
   }));
 
   return (
-    <Select
-      value={roomEquipmentSelect}
-      options={allEquipmentOptions}
-      showCheckbox
-      isMulti
-      onChange={setRoomEquipmentSelect}
-    />
+    <>
+      <Title level={6}> Equipment</Title>
+      <Select
+        value={roomEquipmentSelect}
+        options={allEquipmentOptions}
+        showCheckbox
+        isMulti
+        onChange={setRoomEquipmentSelect}
+      />
+    </>
   );
 };

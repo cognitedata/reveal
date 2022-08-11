@@ -1,7 +1,6 @@
 import { useCreateEquipment } from 'domain/node/internal/actions/equipment/useCreateEquipmentMutate';
 import { useCreateRoom } from 'domain/node/internal/actions/room/useCreateRoomMutate';
 
-import { Button } from '@cognite/cogs.js';
 import { Room } from 'graphql/generated';
 import { useRecoilValue } from 'recoil';
 import { blankFormState } from 'recoil/blankPopup/blankFormState';
@@ -10,7 +9,11 @@ import { useHistory } from 'react-router-dom';
 import { PAGES } from 'pages/constants';
 import { MAP_OBJECTS } from 'recoil/blankPopup/constants';
 
-export const BlankPopupSubmitButton = () => {
+import { FullWidthButton } from '../elements';
+
+export const BlankPopupSubmitButton: React.FC<
+  React.PropsWithChildren<unknown>
+> = ({ children }) => {
   const history = useHistory();
   const newState = useRecoilValue(blankFormState);
   const { value: mainType } = useRecoilValue(selectedTypeAtom);
@@ -36,8 +39,8 @@ export const BlankPopupSubmitButton = () => {
   };
 
   return (
-    <Button onClick={handleSubmit} type="primary">
-      Done
-    </Button>
+    <FullWidthButton onClick={handleSubmit} type="primary">
+      {children}
+    </FullWidthButton>
   );
 };

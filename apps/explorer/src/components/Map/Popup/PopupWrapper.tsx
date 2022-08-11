@@ -2,8 +2,6 @@ import React, { useContext, useEffect } from 'react';
 
 import { MapContext } from '../MapProvider';
 
-import { Content, Container } from './elements';
-
 export const PopupWrapper: React.FC<React.PropsWithChildren<unknown>> = ({
   children,
 }) => {
@@ -22,9 +20,5 @@ export const PopupWrapper: React.FC<React.PropsWithChildren<unknown>> = ({
 
   useEffect(() => cleanupFunction, []);
 
-  return (
-    <Container>
-      <Content className="z-2">{children} </Content>
-    </Container>
-  );
+  return <>{children} </>;
 };
