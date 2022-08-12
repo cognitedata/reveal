@@ -2,7 +2,6 @@
  * Copyright 2022 Cognite AS
  */
 
-// import assert from 'assert';
 import { Page } from 'puppeteer';
 
 const testFixtures = ((process.env as any).TEST_FIXTURES as string).split(',');
@@ -12,6 +11,9 @@ describe('Visual tests', () => {
 
   beforeAll(async () => {
     testPage = await browser.newPage();
+
+    testPage.setDefaultNavigationTimeout(80 * 1000);
+
     await testPage.goto('https://localhost:8080/', {
       waitUntil: ['domcontentloaded', 'load']
     });
