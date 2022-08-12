@@ -129,7 +129,7 @@ export const VirtualizedReviewAnnotations = <T,>({
           <Tree
             ref={treeRef}
             treeWalker={walkerFunction as any}
-            itemSize={30}
+            itemSize={40}
             height={height}
             width="100%"
           >
