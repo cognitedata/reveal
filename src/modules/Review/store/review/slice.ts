@@ -6,14 +6,15 @@ import {
 import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
 import { DeleteAnnotations } from 'src/store/thunks/Annotation/DeleteAnnotations';
 import { ReviewState } from 'src/modules/Review/store/review/types';
+import { AnnotationSettingsOption } from 'src/modules/Review/store/review/enums';
 
-const initialState: ReviewState = {
+export const initialState: ReviewState = {
   fileIds: [],
   selectedAnnotationIds: [],
   hiddenAnnotationIds: [],
   annotationSettings: {
     show: false,
-    activeView: 'shape',
+    activeView: AnnotationSettingsOption.SHAPE,
     createNew: {
       text: undefined,
       color: undefined,
@@ -52,7 +53,7 @@ const reviewSlice = createSlice({
     showAnnotationSettingsModel: {
       prepare: (
         show: boolean,
-        type = 'shape',
+        type = AnnotationSettingsOption.SHAPE,
         text?: string,
         color?: string
       ) => {
@@ -68,7 +69,7 @@ const reviewSlice = createSlice({
         action: PayloadAction<{
           show: boolean;
           options: {
-            type: 'keypoint' | 'shape';
+            type: AnnotationSettingsOption;
             text?: string;
             color?: string;
           };
@@ -87,9 +88,6 @@ const reviewSlice = createSlice({
     resetPreview(state) {
       state.selectedAnnotationIds = [];
       state.hiddenAnnotationIds = [];
-    },
-    resetReviewPage(state) {
-      Object.assign(state, initialState);
     },
   },
   extraReducers: (builder) => {
@@ -119,8 +117,6 @@ const reviewSlice = createSlice({
     );
   },
 });
-
-export { initialState as reviewReducerInitialState };
 
 export const {
   setReviewFileIds,
