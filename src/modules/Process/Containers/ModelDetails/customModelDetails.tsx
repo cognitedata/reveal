@@ -44,7 +44,7 @@ export const badge = ({
   return disabled ? (
     <>
       <Tooltip placement="bottom" content="Model is not configured correctly">
-        <Button icon="Scan" size="small" disabled>
+        <Button icon="Scan" size="small" aria-label="ScanIconDisabled" disabled>
           {!hideText && modelName}
         </Button>
       </Tooltip>
@@ -53,6 +53,7 @@ export const badge = ({
     <Button
       icon="Scan"
       size="small"
+      aria-label="ScanIcon"
       style={{
         backgroundColor: ColorsObjectDetection.backgroundColor, // custom model has same style as object detection
         color: ColorsObjectDetection.color,
@@ -92,19 +93,17 @@ export const content = (
     if (jobId) {
       setVerifyingModel(true);
       await AutoMLAPI.getAutoMLModel(jobId).then((job) => {
-        if (job.status === 'Completed') {
-          const newParams = {
-            modelIndex,
-            params: {
-              modelJobId: jobId,
-              threshold: params.threshold,
-              isValid: true,
-              modelName: name,
-            },
-          };
-          setVerifyingModel(false);
-          dispatch(setUnsavedDetectionModelSettings(newParams));
-        }
+        const newParams = {
+          modelIndex,
+          params: {
+            modelJobId: jobId,
+            threshold: params.threshold,
+            isValid: job.status === 'Completed',
+            modelName: name,
+          },
+        };
+        setVerifyingModel(false);
+        dispatch(setUnsavedDetectionModelSettings(newParams));
       });
     }
   };
@@ -158,7 +157,11 @@ export const content = (
                       wrapped
                       content="Select which model to perform prediction with"
                     >
-                      <Icon type="HelpFilled" style={{ marginLeft: '11px' }} />
+                      <Icon
+                        type="HelpFilled"
+                        aria-label="HelperIcon"
+                        style={{ marginLeft: '11px' }}
+                      />
                     </Tooltip>
                   </td>
                   <th>
@@ -176,6 +179,7 @@ export const content = (
                           <Icon
                             type={iconType}
                             style={{ marginRight: '5px' }}
+                            aria-label="modelVerificationIcon"
                           />
                           {loadingMessage}
                         </ModelSelectContainer>
