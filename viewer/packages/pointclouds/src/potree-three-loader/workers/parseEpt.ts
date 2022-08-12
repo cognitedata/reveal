@@ -1,5 +1,6 @@
 import { StylableObject } from '../../styling/StylableObject';
 import { computeObjectIdBuffer } from './assignObjects';
+import { assignPointsWithWasm } from './assignPointsWithWasm';
 
 import { addThree } from '../../../wasm';
 
@@ -246,7 +247,11 @@ export function parseEpt(
     indices[i] = i;
   }
 
-  const objectIdBuffer = computeObjectIdBuffer(xyz, objects, pointOffset, sectorBoundingBox);
+  // const objectIdBuffer = computeObjectIdBuffer(xyz, objects, pointOffset, sectorBoundingBox);
+
+  console.time(`wasm assignment for ${xyz.length / 3} points and ${objects.length} objects`);
+  const objectIdBuffer = (await assignPointsWithWasm(xyz, objects, pointOffset, sectorBoundingBox)).buffer;
+  console.timeEnd(`wasm assignment for ${xyz.length / 3} points and ${objects.length} objects`);
 
   const message: ParsedEptData = {
     numPoints: numPoints,
