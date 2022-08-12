@@ -18,7 +18,7 @@
           {"type": "refactor", "breaking": true, "release": "major"},
           {"type": "style", "release": "minor"},
           {"type": "style", "breaking": true, "release": "major"},
-          {"type": "test", "release": "minor"},
+          {"type": "test", "release": "patch"},
           {"type": "test", "breaking": true, "release": "major"}
         ]
       }

@@ -74,10 +74,10 @@ pods {
       }
     }
 
-    // container('node') {
-    //   stageWithNotify('Test', context_build) {
-    //     sh('yarn test');
-    //   }
-    // }
+    container('node') {
+      stageWithNotify('Test', context_build) {
+        sh('yarn test');
+      }
+    }
   }
 }
