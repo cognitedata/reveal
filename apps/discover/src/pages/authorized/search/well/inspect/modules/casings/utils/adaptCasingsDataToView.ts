@@ -7,12 +7,9 @@ import { WellInternal } from 'domain/wells/well/internal/types';
 import { getRkbLevel } from 'domain/wells/wellbore/internal/selectors/getRkbLevel';
 import { keyByWellbore } from 'domain/wells/wellbore/internal/transformers/keyByWellbore';
 
-import isUndefined from 'lodash/isUndefined';
-
 import { CasingSchematicView } from '../types';
 
 import { adaptCasingAssembliesDataToView } from './adaptCasingAssembliesDataToView';
-import { getEmptyCasingSchematicView } from './getEmptyCasingSchematicView';
 
 export const adaptCasingsDataToView = (
   wells: WellInternal[],
@@ -30,13 +27,8 @@ export const adaptCasingsDataToView = (
       const casingSchematic = keyedCasingsData[wellboreMatchingId];
       const trueVerticalDepths = tvdData[wellboreMatchingId];
 
-      // If no casings for the current wellbore.
-      if (isUndefined(casingSchematic)) {
-        return getEmptyCasingSchematicView(wellbore);
-      }
-
       const casingAssemblies = adaptCasingAssembliesDataToView(
-        casingSchematic.casingAssemblies,
+        casingSchematic?.casingAssemblies || [],
         trueVerticalDepths
       );
 
