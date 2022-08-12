@@ -8,6 +8,7 @@ use crate::linalg::{Mat4, Vec3, vec3, vec4};
 
 use crate::shapes::shape;
 
+#[derive(Clone)]
 #[wasm_bindgen]
 pub struct OrientedBox {
     inv_instance_matrix: Mat4,

@@ -14,6 +14,7 @@ mod point_octree;
 mod shapes;
 mod linalg;
 mod parse_inputs;
+mod bvh;
 
 use linalg::{Vec3WithIndex,BoundingBox,Vec3,to_bounding_box};
 
@@ -65,9 +66,9 @@ pub fn assign_points(input_shapes: js_sys::Array,
     let bounding_box = to_bounding_box(&input_bounding_box.into_serde::<InputBoundingBox>().unwrap());
 
 
-    console::time();
+    /* console::time();
     let octree = point_octree::PointOctree::new(point_vec, bounding_box);
-    console::time_end();
+    console::time_end(); */
 
     let mut input_shape_vec: Vec<InputShape> =
         Vec::<InputShape>::with_capacity(input_shapes.length() as usize);
@@ -81,9 +82,20 @@ pub fn assign_points(input_shapes: js_sys::Array,
 
     let shape_vec = parse_inputs::parse_objects(input_shape_vec);
 
+    let shapes_with_boxes = shape_vec.into_iter().map(|shape| (shape.create_bounding_box(), shape)).collect();
+    let bounding_volume_hierarchy = bvh::BoundingVolumeHierarchy::new(shapes_with_boxes);
 
-    let object_ids = js_sys::Uint16Array::new_with_length(points.length() / 3).fill(0, 0, points.length() / 3);
+    let object_ids = js_sys::Uint16Array::new_with_length(points.length() / 3);
 
+    for i in 0..point_vec.len() {
+        let id = bounding_volume_hierarchy.get_object_id(&point_vec[i].vec);
+        object_ids.set_index(i as u32, id as u16);
+    }
+
+    /* let object_ids = js_sys::Uint16Array::new_with_length(points.length() / 3).fill(0, 0, points.length() / 3);
+    console::log_1(&JsValue::from_str("Done constructing tree and parsing, running search now"));
+
+    console::time();
     for shape in shape_vec.iter() {
         let points_in_box = octree.get_points_in_box(&shape.create_bounding_box());
         for point in points_in_box {
@@ -92,6 +104,7 @@ pub fn assign_points(input_shapes: js_sys::Array,
             }
         }
     }
+    console::time_end(); */
 
     object_ids
 }

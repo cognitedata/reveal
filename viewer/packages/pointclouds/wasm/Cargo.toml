@@ -22,9 +22,10 @@ js-sys = "0.3.59"
 
 nalgebra = "0.31.1"
 nalgebra-glm = "0.17.0"
+dyn-clone = "1.0.9"
 
 console_error_panic_hook = "0.1.7"
 
 # These crates are used for running unit tests.
 [dev-dependencies]
-wasm-bindgen-test = "0.3.32"
+wasm-bindgen-test = "0.2.45"

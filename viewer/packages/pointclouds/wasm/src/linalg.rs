@@ -1,6 +1,6 @@
 
 use nalgebra::base::Matrix4;
-use nalgebra_glm::{TVec3, TVec4};
+use nalgebra_glm::{TVec3, TVec4, min2, max2};
 
 pub type Vec3 = TVec3<f64>;
 pub type Vec4 = TVec4<f64>;
@@ -42,4 +42,16 @@ pub fn boxes_overlap(b0: &BoundingBox, b1: &BoundingBox) -> bool {
         b0.min.x < b1.max.x && b0.max.x > b1.min.x &&
         b0.min.y < b1.max.y && b0.max.y > b1.min.y &&
         b0.min.z < b1.max.z && b0.max.z > b1.min.z;
+}
+
+impl BoundingBox {
+    pub fn union(&mut self, other: &BoundingBox) -> () {
+        self.min = min2(&self.min, &other.min);
+        self.max = max2(&self.max, &other.max);
+    }
+
+    pub fn contains_point(&self, point: &Vec3) -> bool {
+        min2(&self.min, &point) == self.min &&
+            max2(&self.max, &point) == self.max
+    }
 }
