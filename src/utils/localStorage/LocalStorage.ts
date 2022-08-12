@@ -6,7 +6,7 @@ import {
 } from 'src/modules/Process/store/slice';
 import { initialState as annotatorWrapperInitialState } from 'src/modules/Review/store/annotatorWrapper/slice';
 import { AnnotatorWrapperState } from 'src/modules/Review/store/annotatorWrapper/type';
-import { reviewReducerInitialState } from 'src/modules/Review/store/review/slice';
+import { initialState as reviewReducerInitialState } from 'src/modules/Review/store/review/slice';
 import { RootState } from 'src/store/rootReducer';
 import sdk from '@cognite/cdf-sdk-singleton';
 import { validatePersistedState } from 'src/utils/localStorage/validatePersistedState';
