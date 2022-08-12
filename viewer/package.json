@@ -56,7 +56,6 @@
     "geo-three": "0.1.0",
     "glslify": "7.1.1",
     "glslify-import": "3.1.0",
-    "jest-environment-jsdom": "^28.1.2",
     "lodash": "4.17.21",
     "loglevel": "1.8.0",
     "mixpanel-browser": "2.45.0",
