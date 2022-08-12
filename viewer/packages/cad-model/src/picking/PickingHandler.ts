@@ -23,6 +23,7 @@ type PickingInput = {
   camera: THREE.PerspectiveCamera;
   renderer: THREE.WebGLRenderer;
   domElement: HTMLElement;
+  coordsArray?: {x: number, y: number} [];
 };
 
 type TreeIndexPickingInput = PickingInput & {
@@ -175,7 +176,7 @@ export class PickingHandler {
     clearAlpha: number
   ) {
     const { renderTarget, pixelBuffer } = this._pickPixelColorStorage;
-    const { camera, normalizedCoords, renderer, domElement } = input;
+    const { camera, normalizedCoords, renderer, domElement, coordsArray } = input;
 
     // Prepare camera that only renders the single pixel we are interested in
     const pickCamera = camera.clone() as THREE.PerspectiveCamera;
@@ -183,12 +184,15 @@ export class PickingHandler {
       x: ((normalizedCoords.x + 1.0) / 2.0) * domElement.clientWidth,
       y: ((1.0 - normalizedCoords.y) / 2.0) * domElement.clientHeight
     };
-    pickCamera.setViewOffset(domElement.clientWidth, domElement.clientHeight, absoluteCoords.x, absoluteCoords.y, 1, 1);
+    if (!coordsArray) pickCamera.setViewOffset(domElement.clientWidth, domElement.clientHeight, absoluteCoords.x, absoluteCoords.y, 1, 1);
 
     const stateHelper = new WebGLRendererStateHelper(renderer);
     try {
       stateHelper.setClearColor(clearColor, clearAlpha);
       this._pipelineExecutor.render(renderPipeline, pickCamera);
+      if (coordsArray) {
+        renderer.readRenderTargetPixels(renderTarget, 0, 0, domElement.clientWidth, domElement.clientHeight, pixelBuffer);
+      }
       renderer.readRenderTargetPixels(renderTarget, 0, 0, 1, 1, pixelBuffer);
     } finally {
       stateHelper.resetState();

@@ -13,6 +13,7 @@ export interface IntersectInput {
   clippingPlanes: THREE.Plane[];
   renderer: THREE.WebGLRenderer;
   domElement: HTMLElement;
+  coordsArray?: {x: number, y: number} [];
 }
 
 /**
