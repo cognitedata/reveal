@@ -853,7 +853,7 @@ describe('test convertTempKeypointCollectionToRegions', () => {
         ...dummyTempKeypointCollection,
         data: {
           ...dummyTempKeypointCollection.data,
-          keypoints: [],
+          keypoints: {},
         },
       })
     ).toEqual([]);

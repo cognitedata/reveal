@@ -70,5 +70,5 @@ export const ReviewAssetLinkAnnotationRow = ({
 
 type WarningShawn = { showWarning: boolean };
 const AssetLinkSidePanelRow = styled(SidePanelRow)<WarningShawn>`
-  height: ${(props) => (props.showWarning ? '26px' : '30px')};
+  height: ${(props) => (props.showWarning ? '36px' : '40px')};
 `;

@@ -8,8 +8,8 @@ import {
 import {
   selectAnnotation,
   toggleAnnotationVisibility,
-  selectVisionReviewAnnotationsForFile,
-} from 'src/modules/Review/store/reviewSlice';
+} from 'src/modules/Review/store/review/slice';
+import { selectVisionReviewAnnotationsForFile } from 'src/modules/Review/store/review/selectors';
 import { deselectAllSelectionsReviewPage } from 'src/store/commonActions';
 import styled from 'styled-components';
 import { RootState } from 'src/store/rootReducer';
@@ -48,6 +48,7 @@ import {
   AnnotationDetailPanelRowDataBase,
 } from 'src/modules/Review/Containers/AnnotationDetailPanel/types';
 import { selectTempKeypointCollection } from 'src/modules/Review/store/annotatorWrapper/selectors';
+import { Detail, Icon, Tooltip } from '@cognite/cogs.js';
 
 export const AnnotationDetailPanel = ({
   file,
@@ -293,7 +294,20 @@ export const AnnotationDetailPanel = ({
   );
 
   return (
-    <Container>
+    <Container showInfoLabel={showEditOptions}>
+      {showEditOptions && (
+        <StyledDetail>
+          {'Approve and reject detected annotations '}
+          <Tooltip
+            wrapped
+            content={`
+                Pressing True or False will set the status of the suggested annotation. Pressing
+                False will not delete the annotation.`}
+          >
+            <ToolTipIcon type="HelpFilled" />
+          </Tooltip>
+        </StyledDetail>
+      )}
       <AnnotationDetailPanelHotKeys
         nodeTree={rootNodeArr}
         scrollId={scrollId}
@@ -310,14 +324,32 @@ export const AnnotationDetailPanel = ({
     </Container>
   );
 };
-
-const Container = styled.div`
+interface showInfoLabel {
+  showInfoLabel: boolean;
+}
+const Container = styled.div<showInfoLabel>`
   height: 100%;
   width: 100%;
   padding: 15px 0;
   box-sizing: border-box;
+  display: grid;
+  grid-template-columns: 100%;
+  grid-template-rows: ${(props) =>
+    props.showInfoLabel ? `30px calc(100% - 30px)` : '100%'};
+  grid-row-gap: 10px;
 `;
 
-const TableContainer = styled.div`
-  height: 100%;
+const TableContainer = styled.div``;
+
+const StyledDetail = styled(Detail)`
+  color: #595959;
+  display: flex;
+  align-items: center;
+  justify-content: start;
+  gap: 10px;
+`;
+const ToolTipIcon = styled(Icon)`
+  color: #bfbfbf;
+  align-self: center;
+  display: flex;
 `;

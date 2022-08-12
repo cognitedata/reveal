@@ -3,6 +3,7 @@ import { Modal } from 'antd';
 import { getContainer } from 'src/utils';
 import styled from 'styled-components';
 import { PredefinedVisionAnnotations } from 'src/modules/Review/types';
+import { AnnotationSettingsOption } from 'src/modules/Review/store/review/enums';
 import { AnnotationSettingsModalContent } from './AnnotationSettingsModalContent';
 
 export type AnnotationSettingsModalProps = {
@@ -12,7 +13,7 @@ export type AnnotationSettingsModalProps = {
   onCancel: () => void;
   options?: {
     createNew: { text?: string; color?: string };
-    activeView: 'keypoint' | 'shape';
+    activeView: AnnotationSettingsOption;
   };
 };
 

@@ -178,7 +178,7 @@ export const DirectoryPrefixFilter = ({
       </OptionList>
       <Footer>
         <Body level={3}>
-          <i>Not showing all directories that are in the tenant.</i>
+          <i>Not showing all directories that are in the project.</i>
         </Body>
         <Body level={3}>
           <i>

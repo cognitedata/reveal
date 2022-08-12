@@ -6,6 +6,7 @@ import {
   PredefinedShape,
 } from 'src/modules/Review/types';
 import styled from 'styled-components';
+import { AnnotationSettingsOption } from 'src/modules/Review/store/review/enums';
 import { Shapes } from './Body/Shapes';
 import { Keypoints } from './Body/Keypoints';
 
@@ -20,11 +21,11 @@ export const AnnotationSettingsModalContent = ({
   onCancel: () => void;
   options?: {
     createNew: { text?: string; color?: string };
-    activeView: 'keypoint' | 'shape';
+    activeView: AnnotationSettingsOption;
   };
 }) => {
   const [activeView, setActiveView] = useState<string>(
-    options?.activeView || 'shape'
+    options?.activeView || AnnotationSettingsOption.SHAPE
   );
 
   const [newCollection, setNewCollection] =
@@ -93,7 +94,11 @@ export const AnnotationSettingsModalContent = ({
               predefinedShapes={predefinedAnnotations.predefinedShapes}
               unsavedShapes={newCollection.predefinedShapes}
               setUnsavedShapes={setUnsavedShapes}
-              options={options?.activeView === 'shape' ? options : undefined}
+              options={
+                options?.activeView === AnnotationSettingsOption.SHAPE
+                  ? options
+                  : undefined
+              }
               creationInProgress={setShapesInProgressState}
             />
           </Body>

@@ -6,11 +6,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import { AnnotationSettingsModal } from 'src/modules/Review/Components/AnnotationSettingsModal/AnnotationSettingsModal';
 import { KeyboardShortcutModal } from 'src/modules/Review/Components/KeyboardShortcutModal/KeyboardShortcutModal';
 import { ReactImageAnnotateWrapper } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/ReactImageAnnotateWrapper';
+import { showAnnotationSettingsModel } from 'src/modules/Review/store/review/slice';
 import {
   selectAnnotationSettingsState,
   selectNonRejectedVisionReviewAnnotationsForFile,
-  showAnnotationSettingsModel,
-} from 'src/modules/Review/store/reviewSlice';
+} from 'src/modules/Review/store/review/selectors';
 import { PredefinedVisionAnnotations } from 'src/modules/Review/types';
 import { AppDispatch } from 'src/store';
 import { RootState } from 'src/store/rootReducer';
@@ -43,6 +43,7 @@ import {
   selectTempKeypointCollection,
 } from 'src/modules/Review/store/annotatorWrapper/selectors';
 import { ImageKeyboardShortKeys } from 'src/modules/Review/Containers/KeyboardShortKeys/ImageKeyboardShortKeys';
+import { AnnotationSettingsOption } from 'src/modules/Review/store/review/enums';
 
 export const ImagePreview = ({
   file,
@@ -160,7 +161,7 @@ export const ImagePreview = ({
   );
 
   const onOpenAnnotationSettings = useCallback(
-    (type = 'shape', text?: string, color?: string) => {
+    (type = AnnotationSettingsOption.SHAPE, text?: string, color?: string) => {
       dispatch(setKeepUnsavedRegion(true));
       dispatch(showAnnotationSettingsModel(true, type, text, color));
     },
@@ -182,7 +183,8 @@ export const ImagePreview = ({
             await dispatch(SaveAnnotationTemplates(newCollection)).unwrap();
             if (!isEmpty(annotationSettings.createNew)) {
               if (
-                annotationSettings.activeView === 'shape' &&
+                annotationSettings.activeView ===
+                  AnnotationSettingsOption.SHAPE &&
                 newCollection.predefinedShapes.length > 0
               ) {
                 dispatch(
@@ -193,7 +195,8 @@ export const ImagePreview = ({
                   )
                 );
               } else if (
-                annotationSettings.activeView === 'keypoint' &&
+                annotationSettings.activeView ===
+                  AnnotationSettingsOption.KEYPOINT &&
                 newCollection.predefinedKeypointCollections.length > 0
               ) {
                 dispatch(

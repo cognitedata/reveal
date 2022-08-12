@@ -66,7 +66,7 @@ const PanelHeader = styled.div`
   font-weight: 700;
   font-size: 12px;
   line-height: 16px;
-  height: 30px;
+  height: 40px;
 
   &:hover {
     background-color: var(--cogs-greyscale-grey2);

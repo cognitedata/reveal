@@ -1,9 +1,7 @@
 import { FileInfo } from '@cognite/sdk';
-import sdk, { getFlow } from '@cognite/cdf-sdk-singleton';
 import { Tabs, Title } from '@cognite/cogs.js';
-import { DataExplorationProvider } from '@cognite/data-exploration';
 import { Spin, notification } from 'antd';
-import React, { ReactText, useCallback, useRef, useState } from 'react';
+import React, { ReactText, useCallback, useEffect, useState } from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
@@ -11,16 +9,13 @@ import { StyledTabs } from 'src/modules/Common/Components/StyledTabs/StyledTabs'
 import { FileDetailsReview } from 'src/modules/FileDetails/Containers/FileDetailsReview/FileDetailsReview';
 import { ThumbnailCarousel } from 'src/modules/Review/Components/ThumbnailCarousel/ThumbnailCarousel';
 import { ImagePreview } from 'src/modules/Review/Containers/ImagePreview';
-import {
-  selectAllReviewFiles,
-  setScrollToId,
-} from 'src/modules/Review/store/reviewSlice';
+import { setScrollToId } from 'src/modules/Review/store/review/slice';
+import { selectAllReviewFiles } from 'src/modules/Review/store/review/selectors';
 import { RootState } from 'src/store/rootReducer';
 import { getParamLink, workflowRoutes } from 'src/utils/workflowRoutes';
 import styled from 'styled-components';
 import { VideoPreview } from 'src/modules/Review/Components/VideoPreview/VideoPreview';
 import { isVideo } from 'src/modules/Common/Components/FileUploader/utils/FileUtils';
-import { useUserInformation } from 'src/hooks/useUserInformation';
 import { FileProcessStatusWrapper } from 'src/modules/Review/Containers/FileProcessStatusWrapper';
 import { PreviewProcessingOverlay } from 'src/modules/Review/Components/PreviewProcessingOverlay/PreviewProcessingOverlay';
 import { AnnotationDetailPanel } from './AnnotationDetailPanel/AnnotationDetailPanel';
@@ -33,11 +28,7 @@ const ReviewBody = (props: { file: FileInfo; prev: string | undefined }) => {
   const dispatch = useDispatch();
   const [inFocus, setInFocus] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
-  const loadingState = useRef<boolean>(false);
   const [currentTab, tabChange] = useState('1');
-
-  const { flow } = getFlow();
-  const { data: userInfo } = useUserInformation();
 
   const reviewFiles = useSelector((state: RootState) =>
     selectAllReviewFiles(state)
@@ -52,7 +43,6 @@ const ReviewBody = (props: { file: FileInfo; prev: string | undefined }) => {
 
   const handleLoad = useCallback((status: boolean) => {
     setLoading(status);
-    loadingState.current = status;
   }, []);
 
   const handleError = ({
@@ -68,7 +58,6 @@ const ReviewBody = (props: { file: FileInfo; prev: string | undefined }) => {
   const onItemClick = (fileId: number) => {
     if (fileId !== file.id) {
       setLoading(true);
-      loadingState.current = true;
 
       // Go to this file
       history.replace(
@@ -78,17 +67,15 @@ const ReviewBody = (props: { file: FileInfo; prev: string | undefined }) => {
     }
   };
 
-  // todo: re- add this if red flash becomes visible in review page before image is loaded
-  // useEffect(() => {
-  //   if (loading && loadingState.current) {
-  //     // timeout loading spinner
-  //     setTimeout(() => {
-  //       if (loadingState.current) {
-  //         setLoading(false);
-  //       }
-  //     }, 10000);
-  //   }
-  // }, [loading]);
+  // remove loading icon if handle load was not called due to error
+  useEffect(() => {
+    if (loading) {
+      // timeout loading spinner
+      setTimeout(() => {
+        setLoading(false);
+      }, 3000);
+    }
+  }, [loading]);
 
   const scrollToItem = useCallback(
     (id: ReactText) => {
@@ -153,19 +140,9 @@ const ReviewBody = (props: { file: FileInfo; prev: string | undefined }) => {
               </Tabs.TabPane>
               <Tabs.TabPane tab="File details" key="2">
                 {file && (
-                  <DataExplorationProvider
-                    flow={flow}
-                    sdk={sdk}
-                    userInfo={userInfo}
-                    overrideURLMap={{
-                      pdfjsWorkerSrc:
-                        '/dependencies/pdfjs-dist@2.6.347/build/pdf.worker.min.js',
-                    }}
-                  >
-                    <QueryClientProvider client={queryClient}>
-                      <FileDetailsReview fileObj={file} />
-                    </QueryClientProvider>
-                  </DataExplorationProvider>
+                  <QueryClientProvider client={queryClient}>
+                    <FileDetailsReview fileObj={file} />
+                  </QueryClientProvider>
                 )}
               </Tabs.TabPane>
             </StyledTabs>
@@ -182,7 +159,7 @@ const AnnotationContainer = styled.div`
   height: 100%;
   width: 100%;
   display: grid;
-  grid-template-columns: auto minmax(520px, 32%);
+  grid-template-columns: auto minmax(400px, 25%);
   grid-template-rows: 100%;
 `;
 

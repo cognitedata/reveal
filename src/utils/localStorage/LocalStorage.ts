@@ -6,13 +6,11 @@ import {
 } from 'src/modules/Process/store/slice';
 import { initialState as annotatorWrapperInitialState } from 'src/modules/Review/store/annotatorWrapper/slice';
 import { AnnotatorWrapperState } from 'src/modules/Review/store/annotatorWrapper/type';
-import {
-  reviewReducerInitialState,
-  ReviewReducerState,
-} from 'src/modules/Review/store/reviewSlice';
+import { initialState as reviewReducerInitialState } from 'src/modules/Review/store/review/slice';
 import { RootState } from 'src/store/rootReducer';
 import sdk from '@cognite/cdf-sdk-singleton';
 import { validatePersistedState } from 'src/utils/localStorage/validatePersistedState';
+import { ReviewState } from 'src/modules/Review/store/review/types';
 
 const VISION_STATE_NAME = 'visionState';
 const OLD_VISION_STATE_NAME = 'state';
@@ -103,7 +101,7 @@ export const saveState = (state: any): void => {
 
 export type OfflineState = {
   annotatorWrapperReducer: Pick<AnnotatorWrapperState, 'predefinedAnnotations'>;
-  reviewSlice: Pick<ReviewReducerState, 'fileIds'>;
+  reviewSlice: Pick<ReviewState, 'fileIds'>;
   explorerReducer: Pick<
     ExplorerState,
     'filter' | 'query' | 'sortMeta' | 'focusedFileId'

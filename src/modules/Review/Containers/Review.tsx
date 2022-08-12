@@ -10,7 +10,7 @@ import styled from 'styled-components';
 import { Button, Icon, Popconfirm, ToastContainer } from '@cognite/cogs.js';
 import { useHistory, useLocation, useParams } from 'react-router-dom';
 import { batch, useDispatch, useSelector } from 'react-redux';
-import { resetPreview } from 'src/modules/Review/store/reviewSlice';
+import { resetPreview } from 'src/modules/Review/store/review/slice';
 import ReviewBody from 'src/modules/Review/Containers/ReviewBody';
 import { resetEditHistory } from 'src/modules/FileDetails/slice';
 import { StatusToolBar } from 'src/modules/Process/Containers/StatusToolBar';
