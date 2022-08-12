@@ -127,7 +127,7 @@ export const MetaDataTable = (props: MetadataTableProps) => {
 
   return (
     <Container>
-      <TitleHeader width={props.columnWidth * 2}>
+      <TitleHeader width={props.columnWidth * 1.8}>
         <Left>
           <Title level={6}>{props.title}</Title>
           {props.details?.geoLocation && (

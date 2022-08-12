@@ -97,16 +97,7 @@ export const FileDetails = ({
           </Title>
         </TitleRow>
         <DetailsContainer>
-          <StyledTabs
-            activeKey={activeTab}
-            onChange={setActiveTab}
-            style={{
-              fontSize: 14,
-              fontWeight: 600,
-              lineHeight: '20px',
-              paddingBottom: '13px',
-            }}
-          >
+          <StyledTabs activeKey={activeTab} onChange={setActiveTab}>
             <Tabs.TabPane tab="Annotations" key="1">
               <FileDetailsAnnotationsPreview
                 fileInfo={fileDetails}
