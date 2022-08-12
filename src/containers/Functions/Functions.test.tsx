@@ -90,7 +90,7 @@ describe('Functions', () => {
     expect(sdk.get).toHaveBeenCalled();
 
     expect(sdk.get).toHaveBeenCalledWith(
-      '/api/playground/projects/mockProject/functions'
+      '/api/v1/projects/mockProject/functions'
     );
   });
 
@@ -99,7 +99,7 @@ describe('Functions', () => {
     await sleep(100);
 
     expect(sdk.get).toHaveBeenCalledWith(
-      '/api/playground/projects/mockProject/functions'
+      '/api/v1/projects/mockProject/functions'
     );
 
     await sleep(100);
@@ -112,7 +112,7 @@ describe('Functions', () => {
     expect(refreshButton).toBeDefined();
 
     expect(sdk.get).toHaveBeenCalledWith(
-      '/api/playground/projects/mockProject/functions'
+      '/api/v1/projects/mockProject/functions'
     );
   });
 

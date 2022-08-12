@@ -28,7 +28,7 @@ export const useFunctions = (config?: QueryConfig<CogFunction[], unknown>) => {
     [allFunctionsKey],
     () =>
       sdk
-        .get(`/api/playground/projects/${getProject()}/functions`)
+        .get(`/api/v1/projects/${getProject()}/functions`)
         .then(r => r.data?.items),
     {
       onSuccess: functions => {
@@ -50,7 +50,7 @@ export const useFunction = (
     functionKey({ id }),
     () =>
       sdk
-        .get(`/api/playground/projects/${getProject()}/functions/${id}`)
+        .get(`/api/v1/projects/${getProject()}/functions/${id}`)
         .then(r => r.data),
     config
   );
@@ -59,7 +59,7 @@ export const useSchedules = (config?: QueryConfig<Schedule[], unknown>) =>
     [allSchedulesKey],
     () =>
       sdk
-        .get(`/api/playground/projects/${getProject()}/functions/schedules`, {
+        .get(`/api/v1/projects/${getProject()}/functions/schedules`, {
           params: { limit: 1000 },
         })
         .then(r => r.data?.items),
@@ -130,7 +130,7 @@ export const useCheckActivateFunction = (
     ['activation', project],
     () =>
       sdk
-        .get(`api/playground/projects/${project}/functions/status`)
+        .get(`api/v1/projects/${project}/functions/status`)
         .then(res => res.data),
     config
   );
@@ -144,7 +144,7 @@ export const useActivateFunction = (
   return useMutation<ActivationResponse, ActivationError>(
     () =>
       sdk
-        .post(`/api/playground/projects/${project}/functions/status`)
+        .post(`/api/v1/projects/${project}/functions/status`)
         .then(res => res.data),
     {
       ...config,

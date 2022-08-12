@@ -25,12 +25,9 @@ const getCallsSdk = ({ id, scheduleId }: GetCallsArgs): Promise<Call[]> => {
   }
   const filter = scheduleId ? { scheduleId } : {};
   return sdk
-    .post(
-      `/api/playground/projects/${getProject()}/functions/${id}/calls/list`,
-      {
-        data: { filter },
-      }
-    )
+    .post(`/api/v1/projects/${getProject()}/functions/${id}/calls/list`, {
+      data: { filter },
+    })
     .then(response => response.data?.items);
 };
 
@@ -58,9 +55,7 @@ export const getCall = (_: QueryKey, { id, callId }: GetCallArgs) => {
     throw new Error('callId missing');
   }
   return sdk
-    .get(
-      `/api/playground/projects/${getProject()}/functions/${id}/calls/${callId}`
-    )
+    .get(`/api/v1/projects/${getProject()}/functions/${id}/calls/${callId}`)
     .then(response => response.data);
 };
 
@@ -77,7 +72,7 @@ export const getResponse = (_: QueryKey, { id, callId }: GetResponseArgs) => {
   }
   return sdk
     .get(
-      `/api/playground/projects/${getProject()}/functions/${id}/calls/${callId}/response`
+      `/api/v1/projects/${getProject()}/functions/${id}/calls/${callId}/response`
     )
     .then(response => response?.data?.response);
 };
@@ -91,7 +86,7 @@ export const getLogs = (_: QueryKey, { id, callId }: GetResponseArgs) => {
   }
   return sdk
     .get(
-      `/api/playground/projects/${getProject()}/functions/${id}/calls/${callId}/logs`
+      `/api/v1/projects/${getProject()}/functions/${id}/calls/${callId}/logs`
     )
     .then(response => response?.data?.items);
 };
@@ -111,7 +106,7 @@ export const createFunctionCall = async ({
 
   const { nonce } = isOIDC && (await createSession());
   return sdk
-    .post(`/api/playground/projects/${getProject()}/functions/${id}/call`, {
+    .post(`/api/v1/projects/${getProject()}/functions/${id}/call`, {
       data: { data: data || {}, nonce },
     })
     .then(response => response?.data);
@@ -124,7 +119,7 @@ export const createSchedule = async ({
   const { nonce } =
     !!clientCredentials && (await createSession(clientCredentials));
   return sdk
-    .post(`/api/playground/projects/${getProject()}/functions/schedules`, {
+    .post(`/api/v1/projects/${getProject()}/functions/schedules`, {
       data: { items: [{ ...schedule, nonce }] },
     })
     .then(response => response?.data);
@@ -132,19 +127,16 @@ export const createSchedule = async ({
 
 export const deleteSchedule = (id: number) =>
   sdk
-    .post(
-      `/api/playground/projects/${getProject()}/functions/schedules/delete`,
-      {
-        data: { items: [{ id }] },
-      }
-    )
+    .post(`/api/v1/projects/${getProject()}/functions/schedules/delete`, {
+      data: { items: [{ id }] },
+    })
     .then(response => response?.data);
 
 const createFunction = (
   cogfunction: CogFunctionUpload
 ): Promise<CogFunction> => {
   return sdk
-    .post(`/api/playground/projects/${getProject()}/functions`, {
+    .post(`/api/v1/projects/${getProject()}/functions`, {
       data: { items: [cogfunction] },
     })
     .then(response => response?.data);
@@ -160,7 +152,7 @@ export const deleteFunction = async ({
     throw new Error('id missing');
   }
   const deleteResponse = await sdk
-    .post(`/api/playground/projects/${getProject()}/functions/delete`, {
+    .post(`/api/v1/projects/${getProject()}/functions/delete`, {
       data: { items: [{ id }] },
     })
     .then(response => response?.data);
