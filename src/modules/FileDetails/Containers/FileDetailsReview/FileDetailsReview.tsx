@@ -95,7 +95,7 @@ export const FileDetailsReview: React.FC<FileDetailCompProps> = ({
           rowHeight={35}
           editMode={tableEditMode}
           data={fileMetadata}
-          columnWidth={220}
+          columnWidth={200}
           details={fileDetails}
           toolBar={
             <MetadataTableToolBar

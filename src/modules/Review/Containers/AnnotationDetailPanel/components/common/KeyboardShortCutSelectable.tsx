@@ -44,6 +44,7 @@ export const KeyboardShortCutExpandChildSelectable = ({
 
 const SelectableRow = styled.div`
   width: 100%;
+  height: 100%;
   border-radius: 4px;
   &:hover {
     background-color: var(--cogs-greyscale-grey2);
