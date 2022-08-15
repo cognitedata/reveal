@@ -37,6 +37,7 @@ import { Runtime } from 'types';
 import FunctionMetadata, {
   MetaType,
 } from 'components/FunctionModals/FunctionMetadata';
+import { isVendorGKE } from 'utils/environment';
 
 export interface Secret {
   key: string;
@@ -89,6 +90,7 @@ export default function UploadFunctionModal({ onCancel }: Props) {
   );
 
   const disableForm = isLoading;
+  const isGKE = isVendorGKE();
 
   const [functionName, setFunctionName] = useState({
     value: '',
@@ -101,8 +103,8 @@ export default function UploadFunctionModal({ onCancel }: Props) {
   const [file, setFile] = useState<UploadFile>();
   const [fileTouched, setFileTouched] = useState(false);
   const [secrets, setSecrets] = useState([] as Secret[]);
-  const [cpu, setCpu] = useState('0.25');
-  const [memory, setMemory] = useState('1');
+  const [cpu, setCpu] = useState(isGKE ? '0.25' : '1');
+  const [memory, setMemory] = useState(isGKE ? '1' : '1.5');
   const [runtime, setRuntime] = useState<RuntimeOption>(runtimes[1]);
   const [metadata, setMetadata] = useState([] as MetaType[]);
 
@@ -384,8 +386,10 @@ export default function UploadFunctionModal({ onCancel }: Props) {
             </Form.Item>
             <Form.Item
               label="CPU"
-              validateStatus={checkCPU(cpu).error ? 'error' : 'success'}
-              help={checkCPU(cpu).message}
+              validateStatus={
+                isGKE && checkCPU(cpu).error ? 'error' : 'success'
+              }
+              help={isGKE && checkCPU(cpu).message}
               style={{ fontWeight: 'bold' }}
             >
               <Input
@@ -396,13 +400,16 @@ export default function UploadFunctionModal({ onCancel }: Props) {
                 max="0.6"
                 value={cpu}
                 onChange={handleCpuChange}
+                disabled={!isGKE}
                 allowClear
               />
             </Form.Item>
             <Form.Item
               label="Memory"
-              validateStatus={checkMemory(memory).error ? 'error' : 'success'}
-              help={checkMemory(memory).message}
+              validateStatus={
+                isGKE && checkMemory(memory).error ? 'error' : 'success'
+              }
+              help={isGKE && checkMemory(memory).message}
               style={{ fontWeight: 'bold' }}
             >
               <Input
@@ -413,6 +420,7 @@ export default function UploadFunctionModal({ onCancel }: Props) {
                 min="0.1"
                 max="2.5"
                 onChange={handleMemoryChange}
+                disabled={!isGKE}
                 allowClear
               />
             </Form.Item>
