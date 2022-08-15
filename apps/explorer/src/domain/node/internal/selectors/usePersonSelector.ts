@@ -1,17 +1,13 @@
-import {
-  GetSearchDataQueryTypeGenerated,
-  useGetSearchDataQuery,
-} from 'graphql/generated';
-import { useQueryClient } from 'react-query';
+import { useGetSearchDataQuery } from 'graphql/generated';
 
 export const usePersonSelector = ({ externalId }: { externalId?: string }) => {
-  const queryClient = useQueryClient();
-  const searchQueryKey = useGetSearchDataQuery.getKey();
-  const cachedData =
-    queryClient.getQueryData<GetSearchDataQueryTypeGenerated>(searchQueryKey) ||
-    {};
+  const { data, isError, isLoading } = useGetSearchDataQuery();
 
-  return cachedData?.people?.items.find(
+  if (isLoading || isError) {
+    return { name: 'Unknown' };
+  }
+
+  return data?.people?.items.find(
     (person) => person?.externalId === externalId
   );
 };

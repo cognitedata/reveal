@@ -482,6 +482,11 @@ export type _IntCondition = {
   lte?: InputMaybe<Scalars['Int']>;
 };
 
+export type _ListBooleanFilter = {
+  containsAll?: InputMaybe<Array<InputMaybe<Scalars['Boolean']>>>;
+  containsAny?: InputMaybe<Array<InputMaybe<Scalars['Boolean']>>>;
+};
+
 export type _ListBuildingFilter = {
   and?: InputMaybe<Array<_ListBuildingFilter>>;
   description?: InputMaybe<_StringCondition>;
@@ -504,6 +509,26 @@ export type _ListEquipmentFilter = {
   person?: InputMaybe<_ListPersonFilter>;
   room?: InputMaybe<_ListRoomFilter>;
   type?: InputMaybe<_StringCondition>;
+};
+
+export type _ListFloatFilter = {
+  containsAll?: InputMaybe<Array<InputMaybe<Scalars['Float']>>>;
+  containsAny?: InputMaybe<Array<InputMaybe<Scalars['Float']>>>;
+};
+
+export type _ListIdFilter = {
+  containsAll?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
+  containsAny?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
+};
+
+export type _ListInt64Filter = {
+  containsAll?: InputMaybe<Array<InputMaybe<Scalars['Int64']>>>;
+  containsAny?: InputMaybe<Array<InputMaybe<Scalars['Int64']>>>;
+};
+
+export type _ListIntFilter = {
+  containsAll?: InputMaybe<Array<InputMaybe<Scalars['Int']>>>;
+  containsAny?: InputMaybe<Array<InputMaybe<Scalars['Int']>>>;
 };
 
 export type _ListPersonFilter = {
@@ -530,12 +555,22 @@ export type _ListRoomFilter = {
   type?: InputMaybe<_StringCondition>;
 };
 
+export type _ListStringFilter = {
+  containsAll?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
+  containsAny?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
+};
+
 export type _ListTeamFilter = {
   and?: InputMaybe<Array<_ListTeamFilter>>;
   externalId?: InputMaybe<_IdCondition>;
   name?: InputMaybe<_StringCondition>;
   not?: InputMaybe<_ListTeamFilter>;
   or?: InputMaybe<Array<_ListTeamFilter>>;
+};
+
+export type _ListTimestampFilter = {
+  containsAll?: InputMaybe<Array<InputMaybe<Scalars['Timestamp']>>>;
+  containsAny?: InputMaybe<Array<InputMaybe<Scalars['Timestamp']>>>;
 };
 
 export type _PersonAggregateEdge = {
@@ -738,6 +773,17 @@ export type _TimestampCondition = {
   lte?: InputMaybe<Scalars['Timestamp']>;
 };
 
+export type EquipmentLocationQueryVariables = Exact<{ [key: string]: never }>;
+
+export type EquipmentLocationQueryTypeGenerated = {
+  equipment?: {
+    items: Array<{
+      type?: string | null;
+      room?: { externalId: string } | null;
+    } | null>;
+  } | null;
+};
+
 export type GetMapDataQueryVariables = Exact<{
   equipmentFilter?: InputMaybe<_ListEquipmentFilter>;
   roomFilter?: InputMaybe<_ListRoomFilter>;
@@ -750,6 +796,7 @@ export type GetMapDataQueryTypeGenerated = {
       name?: string | null;
       type?: string | null;
       nodeId?: any | null;
+      isBroken?: boolean | null;
       person?: { externalId: string; name?: string | null } | null;
     } | null>;
   } | null;
@@ -795,11 +842,11 @@ export type GetSearchDataQueryTypeGenerated = {
   } | null;
 };
 
-export type ListFilteredEquipmentQueryVariables = Exact<{
+export type ListEquipmentForRoomQueryVariables = Exact<{
   equipmentFilter?: InputMaybe<_ListEquipmentFilter>;
 }>;
 
-export type ListFilteredEquipmentQueryTypeGenerated = {
+export type ListEquipmentForRoomQueryTypeGenerated = {
   equipment?: {
     items: Array<{
       externalId: string;
@@ -812,16 +859,52 @@ export type ListFilteredEquipmentQueryTypeGenerated = {
   } | null;
 };
 
-export type ListPeopleWithNoEquipmentQueryVariables = Exact<{
+export type ListPeopleWithNoDeskQueryVariables = Exact<{
   [key: string]: never;
 }>;
 
-export type ListPeopleWithNoEquipmentQueryTypeGenerated = {
+export type ListPeopleWithNoDeskQueryTypeGenerated = {
   people?: {
     items: Array<{ externalId: string; name?: string | null } | null>;
   } | null;
 };
 
+export const EquipmentLocationDocument = `
+    query equipmentLocation {
+  equipment: listEquipment {
+    items {
+      type
+      room {
+        externalId
+      }
+    }
+  }
+}
+    `;
+export const useEquipmentLocationQuery = <
+  TData = EquipmentLocationQueryTypeGenerated,
+  TError = unknown
+>(
+  variables?: EquipmentLocationQueryVariables,
+  options?: UseQueryOptions<EquipmentLocationQueryTypeGenerated, TError, TData>
+) =>
+  useQuery<EquipmentLocationQueryTypeGenerated, TError, TData>(
+    variables === undefined
+      ? ['equipmentLocation']
+      : ['equipmentLocation', variables],
+    graphqlFetcher<
+      EquipmentLocationQueryTypeGenerated,
+      EquipmentLocationQueryVariables
+    >(EquipmentLocationDocument, variables),
+    options
+  );
+
+useEquipmentLocationQuery.getKey = (
+  variables?: EquipmentLocationQueryVariables
+) =>
+  variables === undefined
+    ? ['equipmentLocation']
+    : ['equipmentLocation', variables];
 export const GetMapDataDocument = `
     query getMapData($equipmentFilter: _ListEquipmentFilter, $roomFilter: _ListRoomFilter) {
   equipment: listEquipment(first: 15, filter: $equipmentFilter) {
@@ -911,8 +994,8 @@ export const useGetSearchDataQuery = <
 
 useGetSearchDataQuery.getKey = (variables?: GetSearchDataQueryVariables) =>
   variables === undefined ? ['getSearchData'] : ['getSearchData', variables];
-export const ListFilteredEquipmentDocument = `
-    query ListFilteredEquipment($equipmentFilter: _ListEquipmentFilter) {
+export const ListEquipmentForRoomDocument = `
+    query listEquipmentForRoom($equipmentFilter: _ListEquipmentFilter) {
   equipment: listEquipment(filter: $equipmentFilter) {
     items {
       externalId
@@ -928,36 +1011,36 @@ export const ListFilteredEquipmentDocument = `
   }
 }
     `;
-export const useListFilteredEquipmentQuery = <
-  TData = ListFilteredEquipmentQueryTypeGenerated,
+export const useListEquipmentForRoomQuery = <
+  TData = ListEquipmentForRoomQueryTypeGenerated,
   TError = unknown
 >(
-  variables?: ListFilteredEquipmentQueryVariables,
+  variables?: ListEquipmentForRoomQueryVariables,
   options?: UseQueryOptions<
-    ListFilteredEquipmentQueryTypeGenerated,
+    ListEquipmentForRoomQueryTypeGenerated,
     TError,
     TData
   >
 ) =>
-  useQuery<ListFilteredEquipmentQueryTypeGenerated, TError, TData>(
+  useQuery<ListEquipmentForRoomQueryTypeGenerated, TError, TData>(
     variables === undefined
-      ? ['ListFilteredEquipment']
-      : ['ListFilteredEquipment', variables],
+      ? ['listEquipmentForRoom']
+      : ['listEquipmentForRoom', variables],
     graphqlFetcher<
-      ListFilteredEquipmentQueryTypeGenerated,
-      ListFilteredEquipmentQueryVariables
-    >(ListFilteredEquipmentDocument, variables),
+      ListEquipmentForRoomQueryTypeGenerated,
+      ListEquipmentForRoomQueryVariables
+    >(ListEquipmentForRoomDocument, variables),
     options
   );
 
-useListFilteredEquipmentQuery.getKey = (
-  variables?: ListFilteredEquipmentQueryVariables
+useListEquipmentForRoomQuery.getKey = (
+  variables?: ListEquipmentForRoomQueryVariables
 ) =>
   variables === undefined
-    ? ['ListFilteredEquipment']
-    : ['ListFilteredEquipment', variables];
-export const ListPeopleWithNoEquipmentDocument = `
-    query listPeopleWithNoEquipment {
+    ? ['listEquipmentForRoom']
+    : ['listEquipmentForRoom', variables];
+export const ListPeopleWithNoDeskDocument = `
+    query listPeopleWithNoDesk {
   people: listPerson(filter: {desk: {externalId: {isNull: true}}}) {
     items {
       externalId
@@ -967,30 +1050,30 @@ export const ListPeopleWithNoEquipmentDocument = `
 }
     `;
 export const useListPeopleWithNoDeskQuery = <
-  TData = ListPeopleWithNoEquipmentQueryTypeGenerated,
+  TData = ListPeopleWithNoDeskQueryTypeGenerated,
   TError = unknown
 >(
-  variables?: ListPeopleWithNoEquipmentQueryVariables,
+  variables?: ListPeopleWithNoDeskQueryVariables,
   options?: UseQueryOptions<
-    ListPeopleWithNoEquipmentQueryTypeGenerated,
+    ListPeopleWithNoDeskQueryTypeGenerated,
     TError,
     TData
   >
 ) =>
-  useQuery<ListPeopleWithNoEquipmentQueryTypeGenerated, TError, TData>(
+  useQuery<ListPeopleWithNoDeskQueryTypeGenerated, TError, TData>(
     variables === undefined
-      ? ['listPeopleWithNoEquipment']
-      : ['listPeopleWithNoEquipment', variables],
+      ? ['listPeopleWithNoDesk']
+      : ['listPeopleWithNoDesk', variables],
     graphqlFetcher<
-      ListPeopleWithNoEquipmentQueryTypeGenerated,
-      ListPeopleWithNoEquipmentQueryVariables
-    >(ListPeopleWithNoEquipmentDocument, variables),
+      ListPeopleWithNoDeskQueryTypeGenerated,
+      ListPeopleWithNoDeskQueryVariables
+    >(ListPeopleWithNoDeskDocument, variables),
     options
   );
 
 useListPeopleWithNoDeskQuery.getKey = (
-  variables?: ListPeopleWithNoEquipmentQueryVariables
+  variables?: ListPeopleWithNoDeskQueryVariables
 ) =>
   variables === undefined
-    ? ['listPeopleWithNoEquipment']
-    : ['listPeopleWithNoEquipment', variables];
+    ? ['listPeopleWithNoDesk']
+    : ['listPeopleWithNoDesk', variables];

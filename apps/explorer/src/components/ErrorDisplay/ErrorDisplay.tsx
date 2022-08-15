@@ -1,6 +1,6 @@
 import { AvatarButton } from 'components/AvatarButton';
 import { RegularHeader } from 'components/Header';
-import { NavigateToSearchButton } from 'components/SearchBar';
+import { SearchBarAndList } from 'components/SearchBarAndList';
 import { PAGES } from 'pages/constants';
 import React from 'react';
 import { Link } from 'react-router-dom';
@@ -15,7 +15,7 @@ export const ErrorDisplay: React.FC<React.PropsWithChildren<unknown>> = ({
       <MarginWrapper>
         <RegularHeader>
           <RegularHeader.Left>
-            <NavigateToSearchButton />
+            <SearchBarAndList placeholder="What are you looking for?" />
           </RegularHeader.Left>
           <Link to={PAGES.PROFILE}>
             <AvatarButton />

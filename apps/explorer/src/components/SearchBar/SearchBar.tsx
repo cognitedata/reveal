@@ -1,40 +1,36 @@
-import { Icon, IconType } from '@cognite/cogs.js';
 import React from 'react';
+import { useRecoilState } from 'recoil';
+import { searchQueryAtom } from 'recoil/search/searchQueryAtom';
 
-import { SearchInput, SearchInputWrapper } from './elements';
+import { SearchInput } from './elements';
 
 interface Props {
   autoFocus?: boolean;
-  icon?: IconType;
   placeholder: string;
-  query: string;
-  handleChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  handleClose?: () => void;
+  fullWidth?: boolean;
 }
 
 export const SearchBar: React.FC<Props> = ({
   autoFocus,
-  icon = 'Search',
   placeholder,
-  query,
-  handleChange,
-  handleClose,
+  fullWidth,
 }) => {
-  const iconDisplay =
-    icon === 'ArrowLeft' ? (
-      <Icon style={{ cursor: 'pointer' }} onClick={handleClose} type={icon} />
-    ) : (
-      <Icon type={icon} />
-    );
+  const [searchQuery, setSearchQuery] = useRecoilState(searchQueryAtom);
+  const handleOnClear = () => {
+    setSearchQuery('');
+  };
+
   return (
-    <SearchInputWrapper>
-      {iconDisplay}
-      <SearchInput
-        value={query}
-        onChange={handleChange}
-        autoFocus={autoFocus}
-        placeholder={placeholder}
-      />
-    </SearchInputWrapper>
+    <SearchInput
+      icon="Search"
+      fullWidth={fullWidth}
+      onChange={(e) => setSearchQuery(e.target.value)}
+      autoFocus={autoFocus}
+      placeholder={placeholder}
+      value={searchQuery}
+      clearable={{
+        callback: handleOnClear,
+      }}
+    />
   );
 };

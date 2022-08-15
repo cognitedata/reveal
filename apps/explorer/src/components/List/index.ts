@@ -1,3 +1,8 @@
 export { List } from './List';
 export { ListItem } from './ListItem';
-export type { ListData, Props as ListProps } from './List';
+export type {
+  ListData,
+  ListDataPerson,
+  ListDataRoom,
+  Props as ListProps,
+} from './List';

@@ -1,4 +1,4 @@
-import { Equipment, useListFilteredEquipmentQuery } from 'graphql/generated';
+import { Equipment, useListEquipmentForRoomQuery } from 'graphql/generated';
 import { useQueryClient } from 'react-query';
 import { EQUIPMENT_TYPES } from 'recoil/equipmentPopup/constants';
 
@@ -15,7 +15,7 @@ export const useUpdateEquipment = (type: string) => {
   }
 
   const onEquipmentMutateSuccess = () => {
-    queryClient.invalidateQueries(useListFilteredEquipmentQuery.getKey());
+    queryClient.invalidateQueries(useListEquipmentForRoomQuery.getKey());
   };
   const updateEquipment = useEquipmentMutate(onEquipmentMutateSuccess);
 

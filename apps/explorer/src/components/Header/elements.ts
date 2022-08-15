@@ -6,7 +6,6 @@ const baseHeaderStyles = `
   z-index: ${layers.OVERLAY};
   gap: ${sizes.small};
   justify-content: space-around;
-  align-items: center;
   display: flex;
   margin-bottom: ${sizes.small};
   width: 100%;
@@ -26,4 +25,5 @@ export const StyledAbsoluteHeader = styled.div`
 
 export const HeaderLeft = styled.div`
   flex: 1;
+  width: 0;
 `;

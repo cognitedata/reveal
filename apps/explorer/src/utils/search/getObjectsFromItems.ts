@@ -10,7 +10,6 @@ export const getObjectsFromItems = (items: SearchDataFormat[]) => {
       ...item,
       externalId: item.externalId,
       name: item.name,
-      iconSrc: item.iconSrc ? item.iconSrc : 'Cube',
       description: item.description,
     };
     if (!itemsObj[item.section]) itemsObj[item.section] = [filteredItem];

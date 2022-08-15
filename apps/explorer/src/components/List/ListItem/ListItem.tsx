@@ -1,6 +1,6 @@
 import { Body, Detail, Icon, IconType } from '@cognite/cogs.js';
 
-import { ListItemStyle } from './elements';
+import { ListItemStyle, ListItemTextWrapper } from './elements';
 
 // In the future we should switch to using image and icons
 export interface Props {
@@ -20,13 +20,13 @@ export const ListItem: React.FC<Props> = ({
 }) => {
   return (
     <ListItemStyle onClick={handleClick} selected={selected}>
-      <Icon size={30} type={iconSrc} />
-      <div>
+      <Icon size={20} type={iconSrc} />
+      <ListItemTextWrapper>
         <Body level={2} strong>
           {mainText}
         </Body>
-        {subText ? <Detail>{subText}</Detail> : null}
-      </div>
+        <Detail>{subText}</Detail>
+      </ListItemTextWrapper>
     </ListItemStyle>
   );
 };

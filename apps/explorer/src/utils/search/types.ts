@@ -1,3 +1,7 @@
-import { ListData } from 'components/List';
+import { ListDataPerson, ListDataRoom } from 'components/List';
 
-export type SearchDataFormat = ListData & { section: string };
+export type SearchDataFormatRoom = ListDataRoom & { section: string };
+
+export type SearchDataFormatPerson = ListDataPerson & { section: string };
+
+export type SearchDataFormat = SearchDataFormatRoom | SearchDataFormatPerson;

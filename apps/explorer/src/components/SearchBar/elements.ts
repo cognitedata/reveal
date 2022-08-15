@@ -1,4 +1,5 @@
-import { Button } from '@cognite/cogs.js';
+import { Button, Input } from '@cognite/cogs.js';
+import { AVATAR_SIZE } from 'components/AvatarButton/AvatarButton';
 import styled from 'styled-components';
 import { sizes } from 'styles/layout';
 
@@ -13,14 +14,8 @@ export const SearchInputWrapper = styled.div`
   background: #f5f5f5;
 `;
 
-export const SearchInput = styled.input`
-  height: 100%;
-  outline: none;
-  border: none;
-  width: 100%;
-  padding: 1px 5px;
-  border-radius: 6px;
-  background: #f5f5f5;
+export const SearchInput = styled(Input)`
+  height: ${AVATAR_SIZE}px;
 `;
 
 export const SearchButton = styled(Button)`

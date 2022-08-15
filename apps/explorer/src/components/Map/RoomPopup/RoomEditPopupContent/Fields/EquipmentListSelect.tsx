@@ -1,5 +1,5 @@
 import { Select, Title } from '@cognite/cogs.js';
-import { Equipment, useListFilteredEquipmentQuery } from 'graphql/generated';
+import { Equipment, useListEquipmentForRoomQuery } from 'graphql/generated';
 import { useRecoilState } from 'recoil';
 import { roomEquipmentSelectAtom } from 'recoil/roomPopup/roomPopupAtoms';
 
@@ -16,7 +16,7 @@ export const EquipmentListSelect: React.FC = () => {
     roomEquipmentSelectAtom
   );
 
-  const { data } = useListFilteredEquipmentQuery(
+  const { data } = useListEquipmentForRoomQuery(
     { equipmentFilter },
     { staleTime: Infinity }
   );

@@ -1,4 +1,4 @@
-import { useListFilteredEquipmentQuery } from 'graphql/generated';
+import { useListEquipmentForRoomQuery } from 'graphql/generated';
 import difference from 'lodash/difference';
 import { useQueryClient } from 'react-query';
 import { useRecoilValue } from 'recoil';
@@ -12,7 +12,7 @@ import { useEquipmentMutate } from '../equipment/useEquipmentMutate';
 export const useUpdateRoomEquipment = () => {
   const queryClient = useQueryClient();
   const onEquipmentMutateSuccess = () => {
-    queryClient.invalidateQueries(useListFilteredEquipmentQuery.getKey());
+    queryClient.invalidateQueries(useListEquipmentForRoomQuery.getKey());
   };
   const updateEquipment = useEquipmentMutate(onEquipmentMutateSuccess);
   const prevRoom = useRecoilValue(prevRoomAtom);

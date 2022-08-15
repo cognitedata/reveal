@@ -1,7 +1,7 @@
 import {
   Equipment,
   Room,
-  useListFilteredEquipmentQuery,
+  useListEquipmentForRoomQuery,
 } from 'graphql/generated';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { roomFormState } from 'recoil/roomPopup/roomFormState';
@@ -29,13 +29,23 @@ export const RoomPopup: React.FC<Props> = ({ data }) => {
 
   const roomExternalId = data.externalId;
   const equipmentFilter = {
-    room: {
-      externalId: {
-        eq: roomExternalId,
+    and: [
+      {
+        type: {
+          in: ['tv', 'whiteboard'],
+        },
       },
-    },
+      {
+        room: {
+          externalId: {
+            eq: roomExternalId,
+          },
+        },
+      },
+    ],
   };
-  const { data: equipmentData, isLoading } = useListFilteredEquipmentQuery(
+
+  const { data: equipmentData, isLoading } = useListEquipmentForRoomQuery(
     {
       equipmentFilter,
     },

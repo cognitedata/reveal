@@ -1,7 +1,7 @@
 import { gql } from 'graphql-request';
 
-export const ListFilteredEquipment = gql`
-  query ListFilteredEquipment($equipmentFilter: _ListEquipmentFilter) {
+export const ListEquipmentForRoom = gql`
+  query listEquipmentForRoom($equipmentFilter: _ListEquipmentFilter) {
     equipment: listEquipment(filter: $equipmentFilter) {
       items {
         externalId
