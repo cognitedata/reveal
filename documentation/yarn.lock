@@ -4037,10 +4037,10 @@ concat-map@0.0.1:
   resolved "https://registry.yarnpkg.com/concat-map/-/concat-map-0.0.1.tgz#d8a96bd77fd68df7793a73036a3ba0d5405d477b"
   integrity sha1-2Klr13/Wjfd5OnMDajug1UBdR3s=
 
-concat-md@0.4.0:
-  version "0.4.0"
-  resolved "https://registry.yarnpkg.com/concat-md/-/concat-md-0.4.0.tgz#4555a66a737d05af6d466ee2e1f5b28fa68f6941"
-  integrity sha512-86jhWjmNVF6CHhCwZdA+LKExlyz305lsUfYeOC12xrLcJKyi+EXzS44/FvH1wu/+lVXaSIgj8lWGnCtSKtR6Vw==
+concat-md@0.5.0:
+  version "0.5.0"
+  resolved "https://registry.yarnpkg.com/concat-md/-/concat-md-0.5.0.tgz#fa33d4544577160ffc0ddfe1cf0c7e30a8ef5dbb"
+  integrity sha512-PmGLIZDLKknKk+KqHgFqcW7lpTsAgmMDnZA20ElhgoqlXs+9hcWplpUOfzoQcWDEF/HndnkOTxapwf4YtUKE8Q==
   dependencies:
     doctoc "^1.4.0"
     front-matter "^4.0.2"
