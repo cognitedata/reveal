@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import isEmpty from 'lodash/isEmpty';
 
@@ -11,11 +11,16 @@ import {
   trajectoryPageLoadQuery,
 } from 'components/Performance';
 
-import { TrajectoryGraph } from './Graph';
+import { TrajectoryGraph, TrajectoryGraphProps } from './Graph';
 import { useTrajectoryData } from './hooks/useTrajectoryData';
 
 export const Trajectory: React.FC = () => {
   const { data, isLoading } = useTrajectoryData();
+
+  // https://cognitedata.atlassian.net/browse/PP-3086
+  // keeping the expandedChart state here so that refreshing data doesn't close the expanded mode on remounting
+  const [expandedChartIndex, setExpandedChartIndex] =
+    useState<TrajectoryGraphProps['expandedChartIndex']>();
 
   const handlePerformanceObserved = ({ mutations }: PerformanceObserved) => {
     if (mutations) {
@@ -35,7 +40,11 @@ export const Trajectory: React.FC = () => {
 
   return (
     <PerformanceMetricsObserver onChange={handlePerformanceObserved}>
-      <TrajectoryGraph data={data} />
+      <TrajectoryGraph
+        data={data}
+        expandedChartIndex={expandedChartIndex}
+        setExpandedChartIndex={setExpandedChartIndex}
+      />
     </PerformanceMetricsObserver>
   );
 };

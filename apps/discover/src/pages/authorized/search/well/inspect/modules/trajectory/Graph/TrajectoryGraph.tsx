@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, Dispatch } from 'react';
 import { useDispatch } from 'react-redux';
 
 import isEmpty from 'lodash/isEmpty';
+import isUndefined from 'lodash/isUndefined';
 
 import { NoUnmountShowHide } from 'components/NoUnmountShowHide';
 import { useDeepMemo } from 'hooks/useDeep';
@@ -16,13 +17,18 @@ import { TrajectoryChart, TrajectoryChartProps } from './TrajectoryChart';
 
 export interface TrajectoryGraphProps {
   data: TrajectoryView[];
+  expandedChartIndex: number | undefined;
+  setExpandedChartIndex: Dispatch<React.SetStateAction<number | undefined>>;
 }
 
-export const TrajectoryGraph: React.FC<TrajectoryGraphProps> = ({ data }) => {
+export const TrajectoryGraph: React.FC<TrajectoryGraphProps> = ({
+  data,
+  expandedChartIndex,
+  setExpandedChartIndex,
+}) => {
   const dispatch = useDispatch();
   const { data: config } = useWellConfig();
 
-  const [expandedChart, setExpandedChart] = useState<TrajectoryChartProps>();
   const [autosizeGridView, setAutosizeGridView] = useState<boolean>(true);
 
   /**
@@ -54,8 +60,8 @@ export const TrajectoryGraph: React.FC<TrajectoryGraphProps> = ({ data }) => {
     dispatch(inspectTabsActions.setErrors(errors));
   }, [errors]);
 
-  const handleExpandFullSizedView = ({ data, index }: TrajectoryChartProps) => {
-    setExpandedChart({ data, index });
+  const handleExpandFullSizedView = ({ index }: TrajectoryChartProps) => {
+    setExpandedChartIndex(index);
     /**
      * Disable autosizing for grid view charts.
      * This is to prevent triggering an unnecessary resize after the full sized view is collapsed.
@@ -64,21 +70,19 @@ export const TrajectoryGraph: React.FC<TrajectoryGraphProps> = ({ data }) => {
   };
 
   const handleCollapseFullSizedView = () => {
-    setExpandedChart(undefined);
+    setExpandedChartIndex(undefined);
   };
 
   const renderTrajectoryFullSizedView = () => {
-    if (!expandedChart) {
+    if (isUndefined(expandedChartIndex)) {
       return null;
     }
-
-    const { data, index } = expandedChart;
 
     return (
       <FullSizedTrajectoryView>
         <TrajectoryChart
-          data={data}
-          index={index}
+          data={charts[expandedChartIndex]}
+          index={expandedChartIndex}
           onCollapse={handleCollapseFullSizedView}
         />
       </FullSizedTrajectoryView>
@@ -91,7 +95,7 @@ export const TrajectoryGraph: React.FC<TrajectoryGraphProps> = ({ data }) => {
 
   return (
     <>
-      <NoUnmountShowHide show={!expandedChart} fullHeight>
+      <NoUnmountShowHide show={isUndefined(expandedChartIndex)} fullHeight>
         <TrajectoryGrid>
           {charts.map((data, index) => (
             <TrajectoryChart
