@@ -54,3 +54,6 @@ export const columns: ColumnMap<DocumentType> = {
     width: '140px',
   },
 };
+
+export const LIMITATION_WARNING =
+  'We are only showing related documents for the first hundred selected wellbores from the left panel';

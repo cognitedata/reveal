@@ -1,4 +1,4 @@
-import { useWellInspectWells } from 'domain/wells/well/internal/hooks/useWellInspectWells';
+import { useSidebarWells } from 'domain/wells/well/internal/hooks/useSidebarWells';
 import { WellInternal } from 'domain/wells/well/internal/types';
 import { DEFAULT_WELLBORE_COLOR } from 'domain/wells/wellbore/constants';
 
@@ -32,7 +32,8 @@ import {
 import { WellboreErrorWarning } from './WellboreErrorWarning';
 
 export const SidebarContent: React.FC = () => {
-  const { wells } = useWellInspectWells();
+  const wells = useSidebarWells();
+
   const errors = useOverviewPageErrors();
   const isColoredWellbores = useColoredWellbores();
   const { selectedWellIds, selectedWellboreIds } = useWellInspectSelection();

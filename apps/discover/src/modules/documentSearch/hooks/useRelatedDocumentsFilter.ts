@@ -1,4 +1,5 @@
 import { SearchRequestOptions } from 'domain/documents/service/network/searchDocument';
+import { LIMIT_WELLBORES_NUMBER } from 'domain/wells/constants';
 import { useWellInspectSelectedWellboreIds } from 'domain/wells/well/internal/hooks/useWellInspectSelectedWellboreIds';
 
 export const useRelatedDocumentsFilter = () => {
@@ -10,7 +11,7 @@ export const useRelatedDocumentsFilter = () => {
         {
           containsAny: {
             property: ['assetExternalIds'],
-            values: wellboreIds,
+            values: wellboreIds.slice(0, LIMIT_WELLBORES_NUMBER),
           },
         },
       ],

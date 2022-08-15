@@ -95,3 +95,7 @@ export const InputContainer = styled.div`
     width: 100%;
   }
 `;
+
+export const WarningWrapper = styled.div`
+  margin-top: 20px;
+`;
