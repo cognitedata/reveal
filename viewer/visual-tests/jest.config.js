@@ -16,9 +16,9 @@ module.exports = {
     }
   },
   rootDir: '.',
-  globalSetup: path.resolve(__dirname, './globalTestSetup.ts'),
+  globalSetup: 'jest-environment-puppeteer/setup',
   globalTeardown: 'jest-environment-puppeteer/teardown',
   testEnvironment: 'jest-environment-puppeteer',
   setupFilesAfterEnv: [path.resolve(__dirname, './setupTests.ts')],
-  testTimeout: 80 * 1000 // typical test ~5s, so 5*retryTimes should be less than timeout or test will fail during retry
+  testTimeout: 80 * 1000
 };
