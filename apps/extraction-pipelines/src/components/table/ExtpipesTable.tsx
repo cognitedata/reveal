@@ -21,7 +21,7 @@ import ExtpipeTableSearch from 'components/table/ExtpipeTableSearch';
 import { EXTRACTION_PIPELINE_LOWER } from 'utils/constants';
 import { Colors } from '@cognite/cogs.js';
 import styled from 'styled-components';
-import { Span3, StyledTable } from 'components/styled'; // mainContentSpaceAround,
+import { Span3, StyledTable } from 'components/styled';
 import Layers from 'utils/zindex';
 import { Extpipe } from 'model/Extpipe';
 import { getProject } from '@cognite/cdf-utilities';
@@ -215,9 +215,8 @@ const ExtpipesTable = <T extends { id: ReactText }>({
                       );
                     }
                   };
+                  // Name column has focusable link for accessibility. Cell click handler is for easy access for mouse users
                   return (
-                    // Name column has focusable link for accessibility. Cell click handler is for easy access for mouse users
-                    // eslint-disable-next-line
                     <td
                       {...cell.getCellProps()}
                       className={`${cell.column.id}-cell`}

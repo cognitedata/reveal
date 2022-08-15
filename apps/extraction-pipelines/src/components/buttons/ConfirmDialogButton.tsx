@@ -3,17 +3,11 @@ import React, { ReactNode } from 'react';
 
 export interface ConfirmDialogButtonProps {
   onClick: () => void;
-  // eslint-disable-next-line
   type?: ButtonType;
-  // eslint-disable-next-line
   cancelText?: string;
-  // eslint-disable-next-line
   okText?: string;
-  // eslint-disable-next-line
   popConfirmContent?: string;
-  // eslint-disable-next-line
   primaryText?: string | ReactNode;
-  // eslint-disable-next-line
   testId?: string;
 }
 export const ConfirmDialogButton = ({

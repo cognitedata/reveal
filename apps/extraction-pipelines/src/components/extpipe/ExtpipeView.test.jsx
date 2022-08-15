@@ -10,7 +10,7 @@ import { ExtpipeDetails } from 'components/extpipe/ExtpipeDetails';
 import { trackUsage } from 'utils/Metrics';
 import { useSDK } from '@cognite/sdk-provider';
 import { render } from 'utils/test';
-// eslint-disable-next-line
+// 
 import { useCapabilities } from '@cognite/sdk-react-query-hooks';
 import { EXTRACTION_PIPELINES_ACL } from 'model/AclAction';
 
@@ -75,7 +75,7 @@ describe('ExtpipeView', () => {
     ).toBeInTheDocument();
     expect(screen.getByText(mockDataSet.name)).toBeInTheDocument();
 
-    // eslint-disable-next-line no-unused-expressions
+    //  no-unused-expressions
     mockExtpipe.rawTables?.forEach(({ dbName, tableName }) => {
       expect(screen.getByText(dbName)).toBeInTheDocument();
       expect(screen.getByText(tableName)).toBeInTheDocument();

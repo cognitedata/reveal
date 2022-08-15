@@ -20,7 +20,7 @@ import { RunTableHeading } from 'components/extpipe/RunLogsCols';
 import { useFilteredRuns, useRuns } from 'hooks/useRuns';
 import ExtpipePage from 'pages/Extpipe/ExtpipePage';
 import { useDataSetsList } from 'hooks/useDataSetsList';
-// eslint-disable-next-line
+// 
 import { useCapabilities } from '@cognite/sdk-react-query-hooks';
 import { EXTRACTION_PIPELINES_ACL } from 'model/AclAction';
 

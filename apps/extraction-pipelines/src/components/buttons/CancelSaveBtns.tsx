@@ -13,9 +13,7 @@ export const StyledButtonGroup = styled.div`
 interface CancelSaveBtnsProps {
   onCancel: () => void;
   onSave: () => void;
-  // eslint-disable-next-line
   dateTestIdCancelBtn?: string;
-  // eslint-disable-next-line
   dateTestIdSaveBtn?: string;
 }
 

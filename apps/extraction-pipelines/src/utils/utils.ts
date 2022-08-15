@@ -1,5 +1,3 @@
-// import queryString from 'query-string';
-// import { getEnv, getProject } from '@cognite/cdf-utilities';
 import { styleScope } from 'styles/styleScope';
 
 export { styleScope } from 'styles/styleScope';

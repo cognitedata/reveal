@@ -23,9 +23,9 @@ import {
 import { useRawDBAndTables } from 'hooks/useRawDBAndTables';
 import { databaseListMock, mockDataSetResponse } from 'utils/mockResponse';
 import { CREATE_EXTPIPE_PAGE_PATH } from 'routing/CreateRouteConfig';
-// eslint-disable-next-line
+// 
 import sdk from '@cognite/cdf-sdk-singleton';
-// eslint-disable-next-line
+// 
 import { useCapabilities } from '@cognite/sdk-react-query-hooks';
 import { EXTRACTION_PIPELINES_ACL } from 'model/AclAction';
 
@@ -127,7 +127,7 @@ describe('CreateExtpipe', () => {
       isLoading: false,
       data: databaseListMock,
     });
-    // eslint-disable-next-line
+    // 
     const { container } = renderRegisterContext(<CreateExtpipe />, {
       ...props,
     });

@@ -32,7 +32,6 @@ const RawTableWrapper = styled.table`
 `;
 
 interface OwnProps {
-  // eslint-disable-next-line
   rawTables?: ExtpipeRawTable[];
 }
 

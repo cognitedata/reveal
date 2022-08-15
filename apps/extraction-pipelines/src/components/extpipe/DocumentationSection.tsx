@@ -113,7 +113,7 @@ export const DocumentationSection: FunctionComponent<
           setError('server', {
             type: 'server',
             message: error.data?.message,
-            // @ts-ignore
+            //@ts-ignore
             shouldFocus: true,
           });
         },

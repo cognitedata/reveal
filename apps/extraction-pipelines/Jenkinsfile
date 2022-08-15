@@ -33,7 +33,6 @@ def pods = { body ->
         //  2. Create a PR similar to:
         //     https://github.com/cognitedata/terraform/pull/1923
         //  3. Get that PR approved, applied, and merged
-        //
         // If you don't want codecoverage, then you can just remove this.
         testcafe.pod() {
           properties([

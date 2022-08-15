@@ -1,4 +1,4 @@
-// eslint-disable-next-line no-unused-vars
+//  no-unused-vars
 export function useUserInfo() {
   return {
     data: {

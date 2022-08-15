@@ -36,6 +36,7 @@ import { useFlag } from '@cognite/react-feature-flags';
 import { ErrorBox } from 'components/error/ErrorBox';
 import { SectionWithoutHeader } from 'components/extpipe/Section';
 import { trackUsage } from 'utils/Metrics';
+import { DEFAULT_ITEMS_PER_PAGE } from 'utils/constants';
 
 const TableWrapper = styled(PageWrapperColumn)`
   ${Span3};
@@ -74,7 +75,7 @@ const FilterWrapper = styled.div`
 interface LogsViewProps {
   extpipe: Extpipe | null;
 }
-export const PAGE_SIZE_DEFAULT: Readonly<number> = 100;
+
 const ERROR_SEARCH_LABEL: Readonly<string> = 'Search error message';
 const MESSAGE_SEARCH_PLACEHOLDER: Readonly<string> = 'Search in messages';
 const isForbidden = (statusCode: number) => statusCode === 403;
@@ -107,7 +108,7 @@ export const ExtpipeRunHistory: FunctionComponent<LogsViewProps> = ({
     DateFormatsRecord.DATE_FORMAT
   );
   const [nextCursor, setNextCursor] = useState<string | undefined>();
-  const [pageSize] = useState(PAGE_SIZE_DEFAULT);
+  const [pageSize] = useState(DEFAULT_ITEMS_PER_PAGE);
   const [pageCount, setPageCount] = React.useState(0);
   const chartEnabled = useFlag('EXTPIPES_CHART_allowlist', {
     fallback: false,
@@ -158,7 +159,15 @@ export const ExtpipeRunHistory: FunctionComponent<LogsViewProps> = ({
       const { pass: runsData } = partition(data.runs, (item) => {
         return item.status !== RunStatusUI.SEEN;
       });
-      setAll(data.runs);
+      // setAll(data.runs);
+      setAll([
+        {
+          id: 123,
+          message: 'test',
+          createdTime: 1660554948648,
+          status: RunStatusUI.SUCCESS,
+        },
+      ]);
       setRunsList(runsData);
     }
   }, [data, isPreviousData]);
@@ -197,11 +206,84 @@ export const ExtpipeRunHistory: FunctionComponent<LogsViewProps> = ({
           <Loader />
         ) : (
           <div style={{ margin: '1rem' }}>
-            {chartEnabled ? (
+            {chartEnabled && all?.length ? (
               <RunChart allRuns={all} timeFormat={timeFormat} />
             ) : null}
             <RunLogsTable
-              data={runsList}
+              data={[
+                {
+                  id: 1,
+                  message: 'test',
+                  createdTime: 1660554948648,
+                  status: RunStatusUI.SUCCESS,
+                },
+                {
+                  id: 2,
+                  message: 'test',
+                  createdTime: 1660554948648,
+                  status: RunStatusUI.SUCCESS,
+                },
+                {
+                  id: 3,
+                  message: 'test',
+                  createdTime: 1660554948648,
+                  status: RunStatusUI.SUCCESS,
+                },
+                {
+                  id: 4,
+                  message: 'test',
+                  createdTime: 1660554948648,
+                  status: RunStatusUI.SUCCESS,
+                },
+                {
+                  id: 5,
+                  message: 'test',
+                  createdTime: 1660554948648,
+                  status: RunStatusUI.SUCCESS,
+                },
+                {
+                  id: 6,
+                  message: 'test',
+                  createdTime: 1660554948648,
+                  status: RunStatusUI.SUCCESS,
+                },
+                {
+                  id: 7,
+                  message: 'test',
+                  createdTime: 1660554948648,
+                  status: RunStatusUI.SUCCESS,
+                },
+                {
+                  id: 8,
+                  message: 'test',
+                  createdTime: 1660554948648,
+                  status: RunStatusUI.SUCCESS,
+                },
+                {
+                  id: 9,
+                  message: 'test',
+                  createdTime: 1660554948648,
+                  status: RunStatusUI.SUCCESS,
+                },
+                {
+                  id: 10,
+                  message: 'test',
+                  createdTime: 1660554948648,
+                  status: RunStatusUI.SUCCESS,
+                },
+                {
+                  id: 11,
+                  message: 'test',
+                  createdTime: 1660554948648,
+                  status: RunStatusUI.SUCCESS,
+                },
+                {
+                  id: 12,
+                  message: 'test',
+                  createdTime: 1660554948648,
+                  status: RunStatusUI.SEEN,
+                },
+              ]} // {runsList}
               columns={columns}
               pageCount={pageCount}
               fetchData={fetchData}

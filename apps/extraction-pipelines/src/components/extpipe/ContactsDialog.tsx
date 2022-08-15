@@ -162,16 +162,14 @@ export const ContactsDialogView = ({
           <tbody>
             {contacts.map((contact, index) => {
               return (
-                <tr className="row-style-even row-height-4" key={index}>
+                <tr className="row-style-even row-height-4">
                   <td>
                     <Input
                       fullWidth
                       placeholder="E.g. Data engineer"
                       disabled={index === 0 && contact.role === 'Owner'}
                       value={contact.role}
-                      onChange={(ev: any) =>
-                        onEdit(index, 'role', ev.target.value)
-                      }
+                      onChange={(ev) => onEdit(index, 'role', ev.target.value)}
                     />
                   </td>
                   <td>

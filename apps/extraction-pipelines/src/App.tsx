@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { I18nWrapper } from '@cognite/cdf-i18n-utils';
+import { FlagProvider } from '@cognite/react-feature-flags';
 import {
   AuthWrapper,
   getEnv,
@@ -27,12 +28,25 @@ import rootStyles from 'styles/index.css';
 import Home from 'pages/Home';
 import { EXTRACTION_PIPELINES } from 'utils/constants';
 import { AppEnvProvider } from 'hooks/useAppEnv';
+import isObject from 'lodash/isObject';
 
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      retry: false,
-      staleTime: 10 * 60 * 1000,
+      retry: (failureCount, error) => {
+        if (isObject(error) && 'status' in error) {
+          switch ((error as any).status) {
+            case 400:
+            case 401:
+            case 403:
+            case 404:
+            case 409:
+              return false;
+          }
+        }
+        return failureCount < 3;
+      },
+      refetchOnWindowFocus: false,
     },
   },
 });
@@ -57,42 +71,42 @@ const App = () => {
 
   return (
     <I18nWrapper
-      flagProviderProps={{
-        apiToken: 'v2Qyg7YqvhyAMCRMbDmy1qA6SuG8YCBE',
-        appName,
-        projectName,
-      }}
       translations={translations}
       defaultNamespace="cdf-integrations-ui"
     >
-      <QueryClientProvider client={queryClient}>
-        <AppScopeStyles>
-          <SubAppWrapper title={EXTRACTION_PIPELINES}>
-            <AuthWrapper
-              loadingScreen={<Loader />}
-              login={() => loginAndAuthIfNeeded(projectName, env)}
-            >
-              <SDKProvider sdk={sdk}>
-                <ThemeProvider theme={theme}>
-                  {/* remove this  */}
-                  <AppEnvProvider
-                    cdfEnv={env}
-                    project={projectName}
-                    origin={origin}
-                  >
-                    <Router history={history}>
-                      <Switch>
-                        <Route path="/:tenant" component={Home} />
-                      </Switch>
-                    </Router>
-                  </AppEnvProvider>
-                </ThemeProvider>
-                <GlobalStyles theme={theme} />
-              </SDKProvider>
-            </AuthWrapper>
-          </SubAppWrapper>
-        </AppScopeStyles>
-      </QueryClientProvider>
+      <FlagProvider
+        apiToken="v2Qyg7YqvhyAMCRMbDmy1qA6SuG8YCBE"
+        appName={appName}
+        projectName={projectName}
+      >
+        <QueryClientProvider client={queryClient}>
+          <AppScopeStyles>
+            <SubAppWrapper title={EXTRACTION_PIPELINES}>
+              <AuthWrapper
+                loadingScreen={<Loader />}
+                login={() => loginAndAuthIfNeeded(projectName, env)}
+              >
+                <SDKProvider sdk={sdk}>
+                  <ThemeProvider theme={theme}>
+                    <AppEnvProvider
+                      cdfEnv={env}
+                      project={projectName}
+                      origin={origin}
+                    >
+                      <Router history={history}>
+                        <Switch>
+                          <Route path="/:tenant" component={Home} />
+                        </Switch>
+                      </Router>
+                    </AppEnvProvider>
+                  </ThemeProvider>
+                  <GlobalStyles theme={theme} />
+                </SDKProvider>
+              </AuthWrapper>
+            </SubAppWrapper>
+          </AppScopeStyles>
+        </QueryClientProvider>
+      </FlagProvider>
     </I18nWrapper>
   );
 };

@@ -19,7 +19,6 @@ interface InteractiveCopyProps {
   text: string;
   copyType: CopyType;
   showTextInTooltip: boolean;
-  // eslint-disable-next-line
   onCopy?: () => void;
 }
 

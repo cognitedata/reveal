@@ -1,11 +1,7 @@
 import styled from 'styled-components';
 import React from 'react';
 import { Colors, Input } from '@cognite/cogs.js';
-import {
-  PaddedGridForm,
-  // hintBottomSpacing,
-  // sideBarLabelColor,
-} from 'components/styled';
+import { PaddedGridForm } from 'components/styled';
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   inputWidth?: number;

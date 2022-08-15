@@ -8,7 +8,6 @@ const Email = styled.a`
 `;
 
 interface OwnProps {
-  // eslint-disable-next-line
   email?: string;
 }
 

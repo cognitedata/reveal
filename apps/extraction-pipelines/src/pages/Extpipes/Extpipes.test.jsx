@@ -12,7 +12,6 @@ import {
   ORIGIN_DEV,
   PROJECT_ITERA_INT_GREEN,
 } from 'utils/baseURL';
-// eslint-disable-next-line
 import { useCapabilities } from '@cognite/sdk-react-query-hooks';
 import { EXTRACTION_PIPELINES_ACL } from 'model/AclAction';
 

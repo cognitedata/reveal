@@ -10,6 +10,7 @@ export const CDF_ENV_GREENFIELD: Readonly<string> = 'greenfield';
 const getBaseUrl = (project: string): string => {
   return `/api/v1/projects/${project}/${EXTRACTION_PIPELINES_PATH}`;
 };
+
 const createExtPipePath = (
   path: string = '',
   queries?: any,
@@ -17,6 +18,7 @@ const createExtPipePath = (
 ) => {
   return createLink(`/${EXTRACTION_PIPELINES_PATH}${path}`, queries, opts);
 };
+
 const get = async <D extends object>(
   sdk: CogniteClient,
   route: string,

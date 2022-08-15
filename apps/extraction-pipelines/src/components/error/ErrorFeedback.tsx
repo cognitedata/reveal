@@ -52,13 +52,9 @@ const ErrorIcon = styled((props) => <Icon {...props} />)`
 
 interface ErrorFeedbackProps {
   error: ErrorVariations;
-  // eslint-disable-next-line
   onClick?: () => void;
-  // eslint-disable-next-line
   btnText?: string;
-  // eslint-disable-next-line
   fallbackTitle?: string;
-  // eslint-disable-next-line
   contentText?: string;
 }
 

@@ -1,5 +1,6 @@
 import React, { ReactFragment } from 'react';
 import { ExternalLink } from 'components/links/ExternalLink';
+import { OptionType } from '@cognite/cogs.js';
 
 export const CDF_LABEL: Readonly<string> = 'Cognite Data Fusion';
 export const EXTRACTION_PIPELINE: Readonly<string> = 'Extraction pipeline';
@@ -86,3 +87,27 @@ export const ContactBtnTestIds = {
   CANCEL_BTN: 'cancel-contact-btn-',
   SAVE_BTN: 'save-contact-btn-',
 };
+
+export const DEFAULT_ITEMS_PER_PAGE = 100;
+export const PAGINATION_OPTIONS: OptionType<unknown>[] = [
+  {
+    label: '10',
+    value: 10,
+  },
+  {
+    label: '25',
+    value: 25,
+  },
+  {
+    label: '50',
+    value: 50,
+  },
+  {
+    label: '100',
+    value: 100,
+  },
+  {
+    label: '250',
+    value: 250,
+  },
+];

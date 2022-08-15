@@ -1,11 +1,6 @@
 import styled from 'styled-components';
 import { Colors } from '@cognite/cogs.js';
-import {
-  // mainContentSpaceAround,
-  // mainContentSpaceSides,
-  MainFullWidthGrid,
-  Span3,
-} from 'components/styled';
+import { MainFullWidthGrid, Span3 } from 'components/styled';
 
 export const PageWrapper = styled.div`
   flex: 1;

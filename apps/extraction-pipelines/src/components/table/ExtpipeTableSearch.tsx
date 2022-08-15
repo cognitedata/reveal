@@ -11,12 +11,11 @@ interface GlobalSearchProps<D extends object> {
 }
 
 const ExtpipeTableSearch = <D extends object>({
-  preGlobalFilteredRows,
+  // preGlobalFilteredRows,
   globalFilter,
   setGlobalFilter,
 }: GlobalSearchProps<D>) => {
-  // eslint-disable-next-line
-  const count = preGlobalFilteredRows.length;
+  // const count = preGlobalFilteredRows.length;
   const [value, setValue] = React.useState(globalFilter);
   const onChange = useAsyncDebounce((val) => {
     trackUsage({ t: 'Search', query: val });

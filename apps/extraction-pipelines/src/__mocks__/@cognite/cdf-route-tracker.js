@@ -1,2 +1,2 @@
-// eslint-disable-next-line no-unused-vars
-export function trackEvent(a, b) {}
+//  no-unused-vars
+export function trackEvent(a, b) { }

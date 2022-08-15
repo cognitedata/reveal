@@ -8,7 +8,7 @@ import { QueryClient } from 'react-query';
 import { ORIGIN_DEV, PROJECT_ITERA_INT_GREEN } from 'utils/baseURL';
 import { useSDK } from '@cognite/sdk-provider';
 import { ExtpipeHeading } from 'components/extpipe/ExtpipeHeading';
-// eslint-disable-next-line
+// 
 import { useCapabilities } from '@cognite/sdk-react-query-hooks';
 import { EXTRACTION_PIPELINES_ACL } from 'model/AclAction';
 
