@@ -15,5 +15,5 @@ This app is served as an example [React]-based application served using frontend
 4. To run this app connected to local SimConfig services
    - First setup and run Sim Config services locally [how-do-i-run-my-service-locally](https://github.com/cognitedata/application-services/tree/master/services/simconfig-api#how-do-i-run-my-service-locally) in a separate terminal/IDE
    - Run `yalc add @cognite/simconfig-api-sdk` at the root repo and also at `cd app/simconfig/`
-   - Run `yarn start:local:bazel` (at`app/simconfig/`)
-   - To test and run local SimConfig services SDK changes on local UI, first follow the step 3 from [here](https://github.com/cognitedata/application-services/tree/master/services/simconfig-api#how-do-i-run-my-service-locally) and then remove `package.json` changes from main repo and simconfig app (`git checkout package.json` & `git checkout app/simconfig/package.json`) and run `yarn start:local:bazel`
+   - Run `yarn start:local` (at`apps/simconfig/`)
+   - To test and run local SimConfig services SDK changes on local UI, first follow the step 3 from [here](https://github.com/cognitedata/application-services/tree/master/services/simconfig-api#how-do-i-run-my-service-locally) and then remove `package.json` changes from main repo and simconfig app (`git checkout package.json` & `git checkout apps/simconfig/package.json`) and run `yarn start:local:bazel`

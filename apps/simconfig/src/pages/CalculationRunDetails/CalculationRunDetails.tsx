@@ -1,6 +1,7 @@
 import type { Reducer } from 'react';
 import { useEffect, useMemo, useReducer } from 'react';
 import { Link, useMatch } from 'react-location';
+import { useSelector } from 'react-redux';
 
 import { ParentSizeModern } from '@visx/responsive';
 
@@ -9,8 +10,12 @@ import styled from 'styled-components/macro';
 import type { OptionType } from '@cognite/cogs.js';
 import { Button, Collapse, Graphic, Skeleton, toast } from '@cognite/cogs.js';
 import { useAuthContext } from '@cognite/react-container';
-import type { CogniteEvent } from '@cognite/sdk';
-import type { CalculationRunMetadata } from '@cognite/simconfig-api-sdk/rtk';
+import type { CogniteEvent, Sequence } from '@cognite/sdk';
+import type {
+  CalculationRunMetadata,
+  DefinitionMap,
+} from '@cognite/simconfig-api-sdk/rtk';
+import { useGetDefinitionsQuery } from '@cognite/simconfig-api-sdk/rtk';
 
 import { CalculationResultChart } from 'components/charts/CalculationResultChart';
 import { CalculationRunTypeIndicator } from 'components/models/CalculationList/CalculationRunTypeIndicator';
@@ -18,6 +23,7 @@ import { CalculationStatusIndicator } from 'components/models/CalculationList/Ca
 import { CalculationTimeLabel } from 'components/models/CalculationList/CalculationTimeLabel';
 import type { ValueUnitType } from 'components/shared/PropertyGrid';
 import { ValueUnitGrid } from 'components/shared/PropertyGrid';
+import { selectProject } from 'store/simconfigApiProperties/selectors';
 import { recordsToDsv } from 'utils/stringUtils';
 
 import { calculationSchema } from './constants';
@@ -26,6 +32,7 @@ import type { AppLocationGenerics } from 'routes';
 
 export function CalculationRunDetails() {
   const { client } = useAuthContext();
+  const project = useSelector(selectProject);
   const {
     params: { runId },
     search: { sourceQuery },
@@ -36,12 +43,36 @@ export function CalculationRunDetails() {
     Reducer<CalculationRunState, CalculationRunAction>
   >(calculationRunReducer, getCalculationRunInitialState());
 
+  const { data: definitionList } = useGetDefinitionsQuery({
+    project,
+  });
+
   useEffect(() => {
     async function loadCalculation() {
       if (!client) {
         return;
       }
 
+      dispatch({
+        definitions: definitionList,
+      });
+
+      const parseUnitLabel = (unitType: string) => {
+        const defaultValue = '(Unknown)';
+        if (!unitType) {
+          return defaultValue;
+        }
+
+        const labels = definitionList?.map.unitLabel;
+        if (!labels) {
+          return defaultValue;
+        }
+
+        return (
+          labels[unitType as keyof DefinitionMap['map']['unitLabel']] ||
+          defaultValue
+        );
+      };
       const getSequenceRows = async (
         externalId?: string,
         start?: number | string,
@@ -64,14 +95,17 @@ export function CalculationRunDetails() {
 
       dispatch({
         run,
-        isChartEnabled: Object.keys(calculationSchema).includes(
-          run.metadata?.calcType
-        ),
       });
 
       if (!run.metadata) {
         return;
       }
+
+      dispatch({
+        isChartEnabled: Object.keys(calculationSchema).includes(
+          run.metadata.calcType
+        ),
+      });
 
       if (
         run.metadata.outputResultsRowStart !== run.metadata.outputResultsRowEnd
@@ -113,7 +147,8 @@ export function CalculationRunDetails() {
       const xAxisColumn =
         columns.find((column) =>
           column.name?.startsWith(schema?.xAxis.column ?? '')
-        )?.name ?? '(unknown)';
+        )?.name ?? '(Unknown)';
+
       const yAxisColumns = columns
         .filter((column) =>
           schema?.yAxis.columns.some((calcColumn) =>
@@ -125,7 +160,56 @@ export function CalculationRunDetails() {
           (acc, cur) => [...acc, ...(cur !== undefined ? [cur] : [])],
           []
         );
+
       const dataColumns = [xAxisColumn, ...yAxisColumns];
+
+      const [sequence] = await client.sequences.retrieve([
+        {
+          externalId: run.metadata.outputCurvesSequence,
+        },
+      ]);
+
+      const yAxisLabelMetadata = sequence.columns.find((column) =>
+        yAxisColumns.some((c) => column.name === c)
+      );
+
+      let yAxisLabel = '(Unknown)';
+
+      if (yAxisLabelMetadata?.metadata) {
+        yAxisLabel = `${parseUnitLabel(
+          yAxisLabelMetadata.metadata.unitType
+        )} [${yAxisLabelMetadata.metadata.unit}]`;
+      }
+
+      /**
+       * Fallback for backward compatibility and when sequence doenst have any metadata
+       */
+      if (!yAxisLabelMetadata?.metadata && yAxisLabelMetadata?.name && schema) {
+        yAxisLabel = `${parseUnitLabel(
+          schema.yAxis.unitType
+        )} ${yAxisLabelMetadata.name.match(/\[.+?\]/g)}`;
+      }
+
+      const xAxisLabelMetadata = sequence.columns.find(
+        (column) => xAxisColumn === column.name
+      );
+
+      let xAxisLabel = '(Unknown)';
+
+      if (xAxisLabelMetadata?.metadata) {
+        xAxisLabel = `${parseUnitLabel(
+          xAxisLabelMetadata.metadata.unitType
+        )} [${xAxisLabelMetadata.metadata.unit}]`;
+      }
+
+      /**
+       * Fallback for backward compatibility and when sequence doenst have any metadata
+       */
+      if (!xAxisLabelMetadata?.metadata && xAxisLabelMetadata?.name && schema) {
+        xAxisLabel = `${parseUnitLabel(
+          schema.xAxis.unitType
+        )} ${xAxisLabelMetadata.name.match(/\[.+?\]/g)}`;
+      }
 
       const curveTable = outputCurves
         .map(({ values }) => values)
@@ -161,13 +245,13 @@ export function CalculationRunDetails() {
           y: yAxisColumns,
         },
         axisLabels: {
-          x: xAxisColumn,
-          y: yAxisColumns.join(' / '),
+          x: xAxisLabel,
+          y: yAxisLabel,
         },
       });
     }
     void loadCalculation();
-  }, [client, runId, state.isChartEnabled]);
+  }, [client, runId, state.isChartEnabled, definitionList]);
 
   const chart = useMemo(() => {
     if (state.data.length && state.axisColumns?.y) {
@@ -381,6 +465,8 @@ interface CalculationRunState {
   };
   curveTable: Record<string, number>[];
   isChartEnabled: boolean;
+  sequence?: Sequence;
+  definitions?: DefinitionMap;
 }
 
 type CalculationRunAction = Partial<CalculationRunState>;
