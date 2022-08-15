@@ -739,7 +739,7 @@ __metadata:
     "@types/mixpanel-browser": 2.38.0
     "@types/node": 16.11.48
     "@types/offscreencanvas": 2019.7.0
-    "@types/proj4": ^2.5.2
+    "@types/proj4": 2.5.2
     "@types/random-seed": 0.3.3
     "@types/skmeans": 0.11.3
     "@types/three": 0.141.0
@@ -748,11 +748,11 @@ __metadata:
     "@typescript-eslint/parser": 5.33.0
     assert: 2.0.0
     comlink: 4.3.1
-    concurrently: ^7.3.0
+    concurrently: 7.3.0
     copy-pkg-json-webpack-plugin: 0.0.40
     copy-webpack-plugin: 11.0.0
     core-js: 3.24.1
-    cross-env: ^7.0.3
+    cross-env: 7.0.3
     cross-var: 1.1.0
     dat.gui: 0.7.9
     eslint: 8.21.0
@@ -784,13 +784,13 @@ __metadata:
     mixpanel-browser: 2.45.0
     moq.ts: 9.0.2
     nock: 13.2.9
-    path-browserify: ^1.0.1
+    path-browserify: 1.0.1
     prettier: 2.7.1
-    process: ^0.11.10
-    proj4: ^2.8.0
+    process: 0.11.10
+    proj4: 2.8.0
     puppeteer: 16.1.0
     random-seed: 0.3.0
-    raw-loader: ^4.0.2
+    raw-loader: 4.0.2
     rimraf: 3.0.2
     run-script-os: 1.1.6
     rxjs: 7.5.6
@@ -802,13 +802,13 @@ __metadata:
     tsc-alias: 1.7.0
     typescript: 4.7.4
     webpack: 5.74.0
-    webpack-bundle-analyzer: ^4.5.0
-    webpack-cli: ^4.10.0
+    webpack-bundle-analyzer: 4.5.0
+    webpack-cli: 4.10.0
     webpack-dev-server: 4.9.3
-    webpack-log: ^3.0.2
-    webpack-node-externals: ^3.0.0
+    webpack-log: 3.0.2
+    webpack-node-externals: 3.0.0
     whatwg-fetch: 3.6.2
-    worker-loader: ^3.0.8
+    worker-loader: 3.0.8
   peerDependencies:
     "@cognite/sdk": ^5.0.0 || ^6.0.0 || ^7.0.0
     "@cognite/sdk-core": ^4.1.0
@@ -2065,7 +2065,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/proj4@npm:^2.5.2":
+"@types/proj4@npm:2.5.2":
   version: 2.5.2
   resolution: "@types/proj4@npm:2.5.2"
   checksum: f70fb89fe1e234faa164b57095624e054ead1b14653b1eb04e1aa50489ae9a6a30c90518efe571d53f5fcc12a25bee61e8cf8d9cc79b5a01586d051bdad4a992
@@ -4606,7 +4606,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"concurrently@npm:^7.3.0":
+"concurrently@npm:7.3.0":
   version: 7.3.0
   resolution: "concurrently@npm:7.3.0"
   dependencies:
@@ -4724,7 +4724,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cross-env@npm:^7.0.3":
+"cross-env@npm:7.0.3":
   version: 7.0.3
   resolution: "cross-env@npm:7.0.3"
   dependencies:
@@ -9788,7 +9788,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"path-browserify@npm:^1.0.1":
+"path-browserify@npm:1.0.1":
   version: 1.0.1
   resolution: "path-browserify@npm:1.0.1"
   checksum: c6d7fa376423fe35b95b2d67990060c3ee304fc815ff0a2dc1c6c3cfaff2bd0d572ee67e18f19d0ea3bbe32e8add2a05021132ac40509416459fffee35200699
@@ -10032,7 +10032,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"process@npm:^0.11.10":
+"process@npm:0.11.10":
   version: 0.11.10
   resolution: "process@npm:0.11.10"
   checksum: bfcce49814f7d172a6e6a14d5fa3ac92cc3d0c3b9feb1279774708a719e19acd673995226351a082a9ae99978254e320ccda4240ddc474ba31a76c79491ca7c3
@@ -10046,7 +10046,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"proj4@npm:^2.8.0":
+"proj4@npm:2.8.0":
   version: 2.8.0
   resolution: "proj4@npm:2.8.0"
   dependencies:
@@ -10253,7 +10253,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"raw-loader@npm:^4.0.2":
+"raw-loader@npm:4.0.2":
   version: 4.0.2
   resolution: "raw-loader@npm:4.0.2"
   dependencies:
@@ -12274,7 +12274,7 @@ typescript@4.7.4:
   languageName: node
   linkType: hard
 
-"webpack-bundle-analyzer@npm:^4.5.0":
+"webpack-bundle-analyzer@npm:4.5.0":
   version: 4.5.0
   resolution: "webpack-bundle-analyzer@npm:4.5.0"
   dependencies:
@@ -12293,7 +12293,7 @@ typescript@4.7.4:
   languageName: node
   linkType: hard
 
-"webpack-cli@npm:^4.10.0":
+"webpack-cli@npm:4.10.0":
   version: 4.10.0
   resolution: "webpack-cli@npm:4.10.0"
   dependencies:
@@ -12385,7 +12385,7 @@ typescript@4.7.4:
   languageName: node
   linkType: hard
 
-"webpack-log@npm:^3.0.2":
+"webpack-log@npm:3.0.2":
   version: 3.0.2
   resolution: "webpack-log@npm:3.0.2"
   dependencies:
@@ -12406,7 +12406,7 @@ typescript@4.7.4:
   languageName: node
   linkType: hard
 
-"webpack-node-externals@npm:^3.0.0":
+"webpack-node-externals@npm:3.0.0":
   version: 3.0.0
   resolution: "webpack-node-externals@npm:3.0.0"
   checksum: 355080c35c821115b97dda8c93d9d0565a90a6012a532324eb0d6a64f8f0d609431fd29504fc7ce414755841ac14f601f3eef99472c2c5dc00233b504ebe73f2
@@ -12616,7 +12616,7 @@ typescript@4.7.4:
   languageName: node
   linkType: hard
 
-"worker-loader@npm:^3.0.8":
+"worker-loader@npm:3.0.8":
   version: 3.0.8
   resolution: "worker-loader@npm:3.0.8"
   dependencies:
