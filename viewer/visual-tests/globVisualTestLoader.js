@@ -16,7 +16,7 @@ function getGlobImports(filename, resourcePath, match, obj) {
   return glob
     .sync(filename, { absolute: true, ignore: ['**/node_modules/**', '**/dist/**'] })
     .map(file => path.normalize(path.relative(path.dirname(resourcePath), file)))
-    .map(p => `./${p.slice(0, -3).replaceAll('\\', '/')}`)
+    .map(p => `./${p.slice(0, -3).replace(/\\/g, '/')}`)
     .map((file, index) => {
       let fileNameToken = `'${file}'`;
       let importString;
