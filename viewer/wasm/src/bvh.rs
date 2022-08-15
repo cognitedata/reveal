@@ -7,18 +7,28 @@ use crate::linalg::{BoundingBox, Vec3};
 use std::vec::Vec;
 use crate::shapes::shape::Shape;
 
-pub struct BoundingVolumeHierarchy {
-    root: BvhNode
+pub struct BoundingVolumeHierarchy<'a>{
+    root: Option<BvhNode<'a>>
 }
 
-impl BoundingVolumeHierarchy {
-    pub fn new(objects: Vec<(BoundingBox, Box<dyn Shape>)>) -> BoundingVolumeHierarchy {
-        BoundingVolumeHierarchy {
-            root: BvhNode::new(objects)
+impl BoundingVolumeHierarchy<'_> {
+    pub fn new(objects: &mut [(BoundingBox, Box<dyn Shape>)]) -> BoundingVolumeHierarchy {
+        if objects.len() == 0 {
+            BoundingVolumeHierarchy {
+                root: Option::None
+            }
+        } else {
+            BoundingVolumeHierarchy {
+                root: Option::Some(BvhNode::new(objects))
+            }
         }
     }
 
     pub fn get_object_id(&self, point: &Vec3) -> u32 {
-        self.root.get_object_id(point)
+        if self.root.is_some() {
+            self.root.as_ref().unwrap().get_object_id(point)
+        } else {
+            0
+        }
     }
 }

@@ -12,7 +12,7 @@ pub struct BoundingBox {
     pub max: Vec3
 }
 
-#[derive(Clone,Copy,Debug)]
+#[derive(Clone,Copy,Debug,PartialEq)]
 pub struct Vec3WithIndex {
     pub vec: Vec3,
     pub index: u32

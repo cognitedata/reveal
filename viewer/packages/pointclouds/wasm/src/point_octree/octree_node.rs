@@ -3,7 +3,7 @@ use crate::Vec3WithIndex;
 use std::vec::Vec;
 use std::convert::TryInto;
 
-use crate::linalg::{Vec3, vec3, BoundingBox,boxes_overlap};
+use crate::linalg::{Vec3, vec3,BoundingBox,boxes_overlap};
 
 pub const MAX_POINTS_PER_NODE: usize = 1_000;
 pub const MIN_OCTREE_SIZE: f64 = 0.0625;

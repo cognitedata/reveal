@@ -7,22 +7,22 @@ use std::vec::Vec;
 
 type BvhElement = (BoundingBox, Box<dyn Shape>);
 
-pub struct BvhNode {
-    children: Option<Box<(BvhNode, BvhNode)>>,
-    element: Option<Box<dyn Shape>>,
+pub struct BvhNode<'a> {
+    children: Option<Box<(BvhNode<'a>, BvhNode<'a>)>>,
+    element: Option<&'a Box<dyn Shape>>,
     bounding_box: BoundingBox
 }
 
-impl BvhNode {
-    pub fn new(mut elements: Vec<BvhElement>) -> BvhNode {
+impl BvhNode<'_> {
+    pub fn new(elements: &mut [BvhElement]) -> BvhNode {
         if elements.len() == 1 {
             BvhNode {
-                element: Option::Some(elements[0].1.clone()),
+                element: Option::Some(&elements[0].1),
                 children: Option::None,
                 bounding_box: elements[0].0
             }
         } else {
-            let split = find_best_split(&mut elements);
+            let split = find_best_split(elements);
 
             let mut bounds = split.0.0;
             bounds.union(&split.1.0);
@@ -39,8 +39,8 @@ impl BvhNode {
 
     pub fn get_object_id(&self, point: &Vec3) -> u32 {
         if self.element.is_some() {
-            if self.element.as_ref().unwrap().contains_point(point) {
-                self.element.as_ref().unwrap().get_object_id()
+            if self.element.unwrap().contains_point(point) {
+                self.element.unwrap().get_object_id()
             } else {
                 0
             }
@@ -59,39 +59,42 @@ impl BvhNode {
     }
 }
 
-fn find_best_split(shapes: &mut Vec<BvhElement>) -> ((BoundingBox, Vec<BvhElement>), (BoundingBox, Vec<BvhElement>)) {
+fn find_best_split(shapes: &mut [BvhElement]) -> ((BoundingBox, &mut [BvhElement]), (BoundingBox, &mut [BvhElement])) {
     let mut best_score = f64::NEG_INFINITY;
-    let mut best_separation = (Vec::<BvhElement>::new(), Vec::<BvhElement>::new());
+    let mut best_axis = 0;
+    /* let mut best_separation = shapes.split_at_mut(shapes.len() / 2);
     let mut best_boxes = (BoundingBox { min: vec3(0.0, 0.0, 0.0),
                                         max: vec3(0.0, 0.0, 0.0) },
                           BoundingBox { min: vec3(0.0, 0.0, 0.0),
-                                        max: vec3(0.0, 0.0, 0.0) });
+                                        max: vec3(0.0, 0.0, 0.0) }); */
 
     for axis in 0..3 {
         sort_on_axis(axis, shapes);
+        let split = shapes.split_at_mut(shapes.len() / 2);
 
-        let mut first_split = shapes.clone();
-        let second_split = first_split.split_off(first_split.len() / 2);
-
-        let split = (first_split, second_split);
         let boxes = (union_boxes(&split.0), union_boxes(&split.1));
         let score = evaluate_separatism(&boxes.0, &boxes.1);
 
         if score > best_score {
-            best_separation = split;
+            // best_separation = split;
             best_score = score;
-            best_boxes = boxes
+            best_axis = axis;
+            // best_boxes = boxes
         }
     }
 
-    ((best_boxes.0, best_separation.0), (best_boxes.1, best_separation.1))
+    sort_on_axis(best_axis, shapes);
+    let best_split = shapes.split_at_mut(shapes.len() / 2);
+    let best_boxes = (union_boxes(&best_split.0), union_boxes(&best_split.1));
+
+    ((best_boxes.0, best_split.0), (best_boxes.1, best_split.1))
 }
 
-fn sort_on_axis(axis: usize, objects: &mut Vec<BvhElement>) -> () {
+fn sort_on_axis(axis: usize, objects: &mut [BvhElement]) -> () {
     objects.sort_by(|a, b| cmp_f64(&a.0.min[axis], &b.0.min[axis]))
 }
 
-fn union_boxes(elements: &Vec<BvhElement>) -> BoundingBox {
+fn union_boxes(elements: &[BvhElement]) -> BoundingBox {
     let mut b: BoundingBox = BoundingBox {
         min: vec3(f64::INFINITY, f64::INFINITY, f64::INFINITY),
         max: vec3(f64::NEG_INFINITY, f64::NEG_INFINITY, f64::NEG_INFINITY)
