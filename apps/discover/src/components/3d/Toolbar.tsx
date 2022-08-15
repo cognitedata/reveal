@@ -25,6 +25,28 @@ const getIcon = (id: string): JSX.Element => {
 const getIconId = (groupId: string, index: number): string =>
   `${groupId}${index}`;
 
+const getButtonTestId = (
+  visualizerId: string,
+  groupId: string,
+  button: IToolbarButton
+) => {
+  const { tooltip } = button;
+
+  /**
+   * Check if tooltip contains `\n`.
+   * If contains, take the first part of the tooltip. Otherwise, take the full text.
+   */
+  const tooltipNewLineIndex = tooltip.indexOf('\n');
+  const tooltipActionKeyPoint =
+    tooltipNewLineIndex > 0
+      ? tooltip.substring(0, tooltipNewLineIndex)
+      : tooltip;
+  const tooltipStringForTestId = tooltipActionKeyPoint.replace(/\s+/g, '-');
+
+  const testIdString = `${visualizerId}-${groupId}-${tooltipStringForTestId}`;
+  return testIdString.toLowerCase();
+};
+
 const renderGroup = (
   visualizerId: string,
   groupId: string,
@@ -42,8 +64,10 @@ const renderGroup = (
 
       if (!isVisible) return null;
 
+      const testId = getButtonTestId(visualizerId, groupId, button);
+
       return (
-        <ToolbarItem key={key}>
+        <ToolbarItem key={key} data-testid={testId}>
           <Tooltip content={tooltip}>
             {isDropdown
               ? renderDropdown(button, selectHandler)
