@@ -95,6 +95,7 @@ jobs:
     name: Visual Tests
     runs-on: ubuntu-latest
     needs: build-viewer
+    steps:
     - uses: actions/checkout@v3
 
     - name: Download viewer build artifact 
