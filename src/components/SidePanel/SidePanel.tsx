@@ -12,6 +12,7 @@ import SidePanelTableList from 'components/SidePanelTableList/SidePanelTableList
 import SidePanelDatabaseList from 'components/SidePanelDatabaseList/SidePanelDatabaseList';
 import SidePanelItemHeader from 'components/SidePanelItem/SidePanelItemHeader';
 import { RawExplorerSideMenuItem } from 'containers/RawExplorer/RawExplorer';
+import { useTranslation } from 'common/i18n';
 
 const RawSidePanel = (
   props: Omit<
@@ -20,6 +21,8 @@ const RawSidePanel = (
   >
 ): JSX.Element => {
   const { activePanelKey, onChange, onClose } = props;
+
+  const { t } = useTranslation();
 
   const { setSelectedSidePanelDatabase, selectedSidePanelDatabase } =
     useContext(RawExplorerContext);
@@ -37,7 +40,7 @@ const RawSidePanel = (
         activePanelKey={activePanelKey}
         onChange={onChange!}
         onClose={onClose!}
-        title="RAW Explorer" // TODO
+        title={t('raw-explorer-title')}
       />
       <StyledContentWithLevels>
         {!selectedSidePanelDatabase ? (
