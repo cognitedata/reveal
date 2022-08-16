@@ -5,7 +5,6 @@ import {
   Matrix4,
   OrthographicCamera,
   PerspectiveCamera,
-  Ray,
   Vector2,
   Vector3,
   WebGLRenderer
@@ -21,9 +20,7 @@ import { EptLoader } from './loading/EptLoader';
 import { EptBinaryLoader } from './loading/EptBinaryLoader';
 import { ClipMode } from './rendering';
 import { PointCloudOctree } from './tree/PointCloudOctree';
-import { PickParams, PointCloudOctreePicker } from './tree/PointCloudOctreePicker';
 import { isGeometryNode, isTreeNode, isOptionalTreeNode } from './types/type-predicates';
-import { PickPoint } from './types/types';
 import { IPotree } from './types/IPotree';
 import { IVisibilityUpdateResult } from './types/IVisibilityUpdateResult';
 import { IPointCloudTreeNodeBase } from './tree/IPointCloudTreeNodeBase';
@@ -62,7 +59,6 @@ type VisibilitySceneParameters = {
 };
 
 export class Potree implements IPotree {
-  private static picker: PointCloudOctreePicker | undefined;
   private _pointBudget: number = DEFAULT_POINT_BUDGET;
   private readonly _rendererSize: Vector2 = new Vector2();
   private readonly _modelDataProvider: ModelDataProvider;
@@ -102,17 +98,6 @@ export class Potree implements IPotree {
     this.lru.freeMemory();
 
     return result;
-  }
-
-  static pick(
-    pointClouds: PointCloudOctree[],
-    renderer: WebGLRenderer,
-    camera: Camera,
-    ray: Ray,
-    params: Partial<PickParams> = {}
-  ): PickPoint | null {
-    Potree.picker = Potree.picker || new PointCloudOctreePicker();
-    return Potree.picker.pick(renderer, camera, ray, pointClouds, params);
   }
 
   get pointBudget(): number {
