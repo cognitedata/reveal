@@ -126,7 +126,7 @@ jobs:
       working-directory: viewer
       run: |
         yarn
-        yarn test:ghprcomment
+        yarn test:visual:onfail
       env:
         ACTIONS_RUNTIME_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 

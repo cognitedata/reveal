@@ -33,6 +33,7 @@
     "test:visual:client": "cross-env JEST_PUPPETEER_CONFIG=visual-tests/jest-puppeteer.config.js jest --config=visual-tests/jest.config.js --verbose",
     "test:visual:server": "webpack-dev-server --config packages/webpack.config.js",
     "test:visual": "concurrently -k -s \"first\" \"yarn run test:visual:client\" \"yarn run test:visual:server\"",
+    "test:visual:onfail": "node visual-tests/GithubActionsPRComment.js",
     "coverage": "jest --coverage",
     "lint": "eslint . --ext .ts,.js --max-warnings 0 --cache",
     "prebump": "yarn version --no-git-tag-version && yarn && cd ../documentation && yarn replace-latest-by-next",
@@ -66,6 +67,8 @@
     "three": "0.141.0"
   },
   "devDependencies": {
+    "@actions/core": "1.9.1",
+    "@actions/github": "5.0.3",
     "@azure/msal-browser": "2.28.1",
     "@cognite/sdk": "7.8.1",
     "@cognite/sdk-core": "4.4.0",
