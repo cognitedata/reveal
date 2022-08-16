@@ -11,6 +11,7 @@ import styled from 'styled-components';
 import { useHistory, useParams } from 'react-router-dom';
 import { createLink } from '@cognite/cdf-utilities';
 import { useTranslation } from 'common';
+import { trackUsage } from 'utils';
 
 const CreateExtractor = () => {
   const { t } = useTranslation();
@@ -19,6 +20,7 @@ const CreateExtractor = () => {
   return (
     <StyledContainer
       onClick={() => {
+        trackUsage({ e: 'Create.Extractor.Click' });
         history.push(createLink(`/${subAppPath}/new`));
       }}
     >
