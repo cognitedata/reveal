@@ -145,7 +145,9 @@ export const WellResultTable: React.FC = () => {
         ? Object.keys(favoriteWellIds).includes(String(row.original.id))
         : false;
 
-      if (!isAlreadyInFavorite) return null;
+      if (!isAlreadyInFavorite) {
+        return null;
+      }
 
       return <FavoriteStarIcon />;
     },

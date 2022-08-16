@@ -124,7 +124,9 @@ export const SavedSearches: React.FC = React.memo(() => {
   };
 
   const handleSave = () => {
-    if (currentName === '') return;
+    if (currentName === '') {
+      return;
+    }
 
     if (isCurrentNameInSavedSearch) {
       setIsOverwriteSearchModalOpen(true);

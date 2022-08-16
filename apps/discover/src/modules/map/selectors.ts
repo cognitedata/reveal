@@ -17,7 +17,9 @@ export const useGeoFilter = () => {
 
 export const useCurrentPolygon = () => {
   const geoFilter = useGeoFilter();
-  if (!geoFilter) return null;
+  if (!geoFilter) {
+    return null;
+  }
   return geoFilter[0]?.geometry as Geometry;
 };
 

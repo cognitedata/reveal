@@ -38,7 +38,9 @@ export const getSelectedWellboresFromOptionType = (
         return [...acc, ...filterItems];
       }
 
-      if (value) return [...acc, value];
+      if (value) {
+        return [...acc, value];
+      }
 
       return acc;
     },

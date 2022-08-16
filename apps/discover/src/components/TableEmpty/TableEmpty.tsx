@@ -57,12 +57,16 @@ export const TableEmpty: React.FC<TableEmptyProps> = ({
 
   const resetAllFilters = () => {
     updatePolygonMap();
-    if (clearAllFilters) clearAllFilters();
+    if (clearAllFilters) {
+      clearAllFilters();
+    }
   };
 
   const resetPolygon = () => {
     updatePolygonMap();
-    if (clearPolygon) clearPolygon();
+    if (clearPolygon) {
+      clearPolygon();
+    }
   };
 
   if (isLoading) {

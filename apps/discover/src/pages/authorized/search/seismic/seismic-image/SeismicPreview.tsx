@@ -121,7 +121,9 @@ export const SeismicImagePreviewImage: React.FC<Props> = (props) => {
     }
   }, [slice, colorScale]);
 
-  if (!image) return <div />;
+  if (!image) {
+    return <div />;
+  }
   return (
     <SeismicImage
       data={image.array}

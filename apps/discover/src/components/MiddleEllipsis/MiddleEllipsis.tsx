@@ -52,7 +52,9 @@ export const getMiddleEllipsisWrapper = (
     return <></>;
   }
   // spotted a case where the input might be a number.
-  if (typeof value !== 'string') return value;
+  if (typeof value !== 'string') {
+    return value;
+  }
 
   const textBreakLength = value.length - fixedLength;
   const isValueGreaterThanFixedLength = value.length > fixedLength;

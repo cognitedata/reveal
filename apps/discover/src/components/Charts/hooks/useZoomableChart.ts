@@ -45,7 +45,9 @@ export const useZoomableChart = <T>({
   );
 
   useDeepEffect(() => {
-    if (!chartRef) return;
+    if (!chartRef) {
+      return;
+    }
 
     const height = spacings.y * yScaleDomain.length;
 

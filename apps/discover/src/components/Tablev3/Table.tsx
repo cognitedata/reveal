@@ -212,7 +212,9 @@ const TableInner = <T extends Object>({
   }, [options?.rowOptions?.selectedStyle, options?.rowOptions?.hoveredStyle]);
 
   const handleColumnHeadClick = (column: TS_FIX_ME) => {
-    if (column.disableSorting) return;
+    if (column.disableSorting) {
+      return;
+    }
     column?.toggleSortBy?.(!column.isSortedDesc);
   };
 

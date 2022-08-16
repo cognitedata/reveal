@@ -14,15 +14,17 @@ export const isWellboreFavored = (
   if (
     isUndefined(favoriteWellIds) ||
     !Object.keys(favoriteWellIds).includes(String(wellId))
-  )
+  ) {
     return false;
+  }
 
   // wellbore list not empty and wellbore row not in welbore list
   if (
     !isEmpty(favoriteWellIds[wellId]) &&
     !favoriteWellIds[wellId].includes(String(wellboreId))
-  )
+  ) {
     return false;
+  }
 
   return true;
 };

@@ -65,7 +65,9 @@ export const getFilteredData = <T extends DataObject<T>>(
 export const getDefaultColorConfig = (
   accessor?: string
 ): ColorConfig | undefined => {
-  if (isUndefined(accessor)) return undefined;
+  if (isUndefined(accessor)) {
+    return undefined;
+  }
 
   return {
     colors: {},
@@ -76,7 +78,9 @@ export const getDefaultColorConfig = (
 };
 
 export const getRangeScaleFactor = (scaleFactor?: number): ScaleRange => {
-  if (!scaleFactor) return [1, 1];
+  if (!scaleFactor) {
+    return [1, 1];
+  }
 
   const scaleFactorMin = Number((1 - scaleFactor).toFixed(2));
   const scaleFactorMax = Number((1 + scaleFactor).toFixed(2));

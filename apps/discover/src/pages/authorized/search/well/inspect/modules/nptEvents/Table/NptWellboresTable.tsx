@@ -48,7 +48,9 @@ export const NptWellboresTable: React.FC<NptWellboresTableProps> = ({
   }, [data]);
 
   useDeepEffect(() => {
-    if (isEmpty(wellbores)) return;
+    if (isEmpty(wellbores)) {
+      return;
+    }
 
     setExpandedWellbores({
       ...expandedWellbores,

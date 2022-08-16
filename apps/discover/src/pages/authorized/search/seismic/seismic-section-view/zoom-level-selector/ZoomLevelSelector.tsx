@@ -18,7 +18,9 @@ export const ZoomLevelSelector: React.FC<Props> = ({ zoomLevel, onChange }) => {
 
   const onDecrement = () => {
     const newZoomLevel = zoomLevel - ZOOM_FACTOR;
-    if (newZoomLevel >= 1) onChange(newZoomLevel);
+    if (newZoomLevel >= 1) {
+      onChange(newZoomLevel);
+    }
   };
 
   return (

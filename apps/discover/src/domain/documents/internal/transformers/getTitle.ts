@@ -56,8 +56,11 @@ export const titleFilterList: string[] = [
 export const DEFAULT_DOCMENT_TITLE = NOT_AVAILABLE;
 
 export const getTitle = (doc: Document) => {
-  if (!doc.title) return DEFAULT_DOCMENT_TITLE;
-  if (titleFilterList.includes(doc.title.toLowerCase()))
+  if (!doc.title) {
     return DEFAULT_DOCMENT_TITLE;
+  }
+  if (titleFilterList.includes(doc.title.toLowerCase())) {
+    return DEFAULT_DOCMENT_TITLE;
+  }
   return doc.title || DEFAULT_DOCMENT_TITLE;
 };

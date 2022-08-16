@@ -49,10 +49,11 @@ export const useWellsCacheQuery = (
       const uncachedWellIds = difference(requiredWellIds, cachedWellIds);
       // console.log('uncachedWellIds', uncachedWellIds);
 
-      if (isEmpty(uncachedWellIds))
+      if (isEmpty(uncachedWellIds)) {
         return {
           wells: cachedWells,
         };
+      }
 
       // console.log('Fetching wells:', uncachedWellIds);
       let uncachedWells: WellInternal[];

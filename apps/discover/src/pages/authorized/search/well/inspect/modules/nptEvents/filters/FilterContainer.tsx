@@ -48,7 +48,9 @@ export const FilterContainer: React.FC<{
     }
   }, [isLoading]);
 
-  if (!isVisible) return null;
+  if (!isVisible) {
+    return null;
+  }
 
   return (
     <Row>

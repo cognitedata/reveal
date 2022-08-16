@@ -126,8 +126,9 @@ export const GlobalSearch: React.FC = () => {
      * Expression: labelMeta.context === 'value'
      * New option ( typed in ) should not get styled as a option
      */
-    if (get(option, '__isNew__') || labelMeta.context === 'value')
+    if (get(option, '__isNew__') || labelMeta.context === 'value') {
       return option.label;
+    }
 
     const { filters, count } = getSearchHistoryFilters(option.data);
 

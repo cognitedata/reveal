@@ -18,7 +18,9 @@ export const convertToSG = (
   tvd?: number,
   tvdUnit?: string
 ) => {
-  if (valueUnit === SG) return value;
+  if (valueUnit === SG) {
+    return value;
+  }
   let tvdInFeet = tvd || 1;
   if (tvdUnit === METER) {
     tvdInFeet *= METER_TO_FEET_FACTOR;

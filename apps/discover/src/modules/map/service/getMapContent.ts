@@ -44,7 +44,9 @@ export function getMapContent(url: string): Promise<FeatureCollection> {
     window.caches
       .match(url)
       .then((response) => {
-        if (!response) throw Error('No data');
+        if (!response) {
+          throw Error('No data');
+        }
         return response.json();
       })
       .then((data) => {

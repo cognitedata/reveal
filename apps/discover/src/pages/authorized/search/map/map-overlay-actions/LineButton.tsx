@@ -38,7 +38,9 @@ export const LineButton: React.FC<{ disabled?: boolean }> = React.memo(
       );
     };
 
-    if (!selectedSurveyData) return null;
+    if (!selectedSurveyData) {
+      return null;
+    }
 
     return (
       <ButtonContainer selected={selected}>

@@ -19,12 +19,9 @@ const Toolbar = ({ chartRef }: Props) => {
           size="small"
           aria-label="Zoom in"
           onClick={() => {
-            const inbuiltButtons = (
-              chartRef.current?.el as HTMLDivElement
-            ).querySelector("[data-val='in']");
-
-            if (!inbuiltButtons) return;
-            (inbuiltButtons as HTMLAnchorElement).click();
+            const inbuiltButtons: HTMLAnchorElement =
+              chartRef.current?.el.querySelector("[data-val='in']");
+            inbuiltButtons?.click();
           }}
         />
       </Tooltip>
@@ -37,12 +34,9 @@ const Toolbar = ({ chartRef }: Props) => {
           size="small"
           aria-label="Zoom out"
           onClick={() => {
-            const inbuiltButtons = (
-              chartRef.current?.el as HTMLDivElement
-            ).querySelector("[data-val='out']");
-
-            if (!inbuiltButtons) return;
-            (inbuiltButtons as HTMLAnchorElement).click();
+            const inbuiltButtons: HTMLAnchorElement =
+              chartRef.current?.el.querySelector("[data-val='out']");
+            inbuiltButtons?.click();
           }}
         />
       </Tooltip>

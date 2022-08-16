@@ -26,8 +26,9 @@ export const getVisibleWellboreColumns = (
       if (
         commonColumnsNames.includes(currentColumnName) &&
         !selectedColumns.includes(currentColumnName)
-      )
+      ) {
         return resultColumns;
+      }
 
       return [...resultColumns, wellboreColumns[currentColumnName]];
     },

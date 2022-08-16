@@ -71,7 +71,9 @@ export const EntityFeedbackContent: React.FC<Props> = React.memo((props) => {
   >();
 
   useEffect(() => {
-    if (!isIncorrectDocType) setDocumentTypeDropdownValue(undefined);
+    if (!isIncorrectDocType) {
+      setDocumentTypeDropdownValue(undefined);
+    }
   }, [isIncorrectDocType]);
 
   const documentTypesOptions: OptionType<string>[] = useMemo(

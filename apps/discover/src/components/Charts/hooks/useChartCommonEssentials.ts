@@ -80,13 +80,17 @@ export const useChartCommonEssentials = <T>({
       : undefined;
 
   const initialCheckboxState: LegendCheckboxState = useDeepMemo(() => {
-    if (isEmpty(data) || isUndefined(colorConfig)) return {};
+    if (isEmpty(data) || isUndefined(colorConfig)) {
+      return {};
+    }
     return getLegendInitialCheckboxState<T>(data, colorConfig.accessor);
   }, [data]);
 
   const onChangeLegendCheckbox = useDeepCallback(
     (option: string, checked: boolean) => {
-      if (isUndefined(colorConfig)) return;
+      if (isUndefined(colorConfig)) {
+        return;
+      }
 
       const updatedCheckboxState = {
         ...legendCheckboxState,
@@ -102,7 +106,9 @@ export const useChartCommonEssentials = <T>({
       setLegendCheckboxState(updatedCheckboxState);
       setTimeout(() => setFilteredData(filteredData));
 
-      if (onUpdate) onUpdate();
+      if (onUpdate) {
+        onUpdate();
+      }
     },
     [data, legendCheckboxState]
   );
@@ -110,7 +116,9 @@ export const useChartCommonEssentials = <T>({
   const handleResetToDefault = useDeepCallback(() => {
     setFilteredData(data);
     setLegendCheckboxState(initialCheckboxState);
-    if (onUpdate) onUpdate();
+    if (onUpdate) {
+      onUpdate();
+    }
   }, [data]);
 
   useDeepEffect(() => {

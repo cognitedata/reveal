@@ -14,8 +14,12 @@ export const useSavedSearchNavigation = () => {
   const getNavigationUrlForSavedSearch = (item: SavedSearchItem) => {
     const { documents, wells } = item.value.filters;
 
-    if (isAnyFilterApplied(documents)) return navigation.SEARCH_DOCUMENTS;
-    if (isAnyFilterApplied(wells)) return navigation.SEARCH_WELLS;
+    if (isAnyFilterApplied(documents)) {
+      return navigation.SEARCH_DOCUMENTS;
+    }
+    if (isAnyFilterApplied(wells)) {
+      return navigation.SEARCH_WELLS;
+    }
 
     return DEFAULT_SAVED_SEARCH_NAVIGATION;
   };

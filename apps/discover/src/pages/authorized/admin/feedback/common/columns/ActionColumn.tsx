@@ -53,7 +53,9 @@ export const ActionColumn = <FeedbackObject extends { id: string }>(
     );
   };
 
-  if (showDeleted) return deletedActionColumn();
+  if (showDeleted) {
+    return deletedActionColumn();
+  }
 
   return (
     <TableResultActions

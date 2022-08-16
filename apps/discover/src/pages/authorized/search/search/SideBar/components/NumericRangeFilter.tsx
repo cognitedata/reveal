@@ -46,7 +46,9 @@ export const NumericFacetRangeFilter: React.FC<Props> = React.memo(
       appliedFilters.documents[docQueryFacetType];
 
     useDeepEffect(() => {
-      if (isUndefined(categoryData)) return;
+      if (isUndefined(categoryData)) {
+        return;
+      }
 
       const min = minBy(categoryData, (item) => Number(item.name));
       const max = maxBy(categoryData, (item) => Number(item.name));

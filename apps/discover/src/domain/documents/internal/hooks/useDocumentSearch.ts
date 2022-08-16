@@ -25,7 +25,9 @@ export const useDocumentSearch = () => {
     const sortBy = get(searchQuery, 'sortBy.documents', []);
 
     // Skip document search if any of these are not mutated
-    if (phraseUndefined && !documentFilters && !geoFilter) return;
+    if (phraseUndefined && !documentFilters && !geoFilter) {
+      return;
+    }
 
     /**
      * Clear `extractParentFolderPath` if exists.

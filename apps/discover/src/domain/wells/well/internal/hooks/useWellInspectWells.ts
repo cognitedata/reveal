@@ -14,11 +14,12 @@ export const useWellInspectWells = () => {
   const { wells, error } = useWellsByIds(inspectWellIds);
 
   return useDeepMemo(() => {
-    if (!wells)
+    if (!wells) {
       return {
         wells: [],
         error,
       };
+    }
 
     const unsortedWells = wells.map((well) => {
       const unsortedWellbores = well.wellbores?.filter((wellbore) =>

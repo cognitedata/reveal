@@ -84,7 +84,9 @@ export const useSelectedWellboreNptEventsTableColumns = () => {
         Header: 'Duration',
         accessor: (row) => {
           const duration = processAccessor(row, 'duration');
-          if (duration) return getTimeDuration(duration, 'hours');
+          if (duration) {
+            return getTimeDuration(duration, 'hours');
+          }
           return '';
         },
       },

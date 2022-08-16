@@ -10,9 +10,13 @@ export const isParentShouldUpdate = (
   selectedValues: WellFilterMapValue,
   updatingValues: string[]
 ) => {
-  if (!updatingValues || !Array.isArray(updatingValues)) return false;
+  if (!updatingValues || !Array.isArray(updatingValues)) {
+    return false;
+  }
 
-  if (!selectedValues) return true;
+  if (!selectedValues) {
+    return true;
+  }
 
   return !isEmpty(
     updatingValues.find((value) => !selectedValues.includes(value))

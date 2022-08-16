@@ -53,7 +53,9 @@ export const useClickPreventionOnDoubleClick = (
       .catch((errorInfo) => {
         api.removePendingPromise(waitForClick);
         if (errorInfo && !errorInfo.isCanceled) {
-          if (errorInfo.error) throw errorInfo.error;
+          if (errorInfo.error) {
+            throw errorInfo.error;
+          }
         }
       });
   };

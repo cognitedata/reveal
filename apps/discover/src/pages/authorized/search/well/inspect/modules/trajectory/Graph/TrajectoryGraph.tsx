@@ -56,7 +56,9 @@ export const TrajectoryGraph: React.FC<TrajectoryGraphProps> = ({
   );
 
   useEffect(() => {
-    if (!errors || isEmpty(errors)) return;
+    if (!errors || isEmpty(errors)) {
+      return;
+    }
     dispatch(inspectTabsActions.setErrors(errors));
   }, [errors]);
 

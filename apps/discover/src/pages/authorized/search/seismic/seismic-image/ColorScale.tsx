@@ -5,8 +5,9 @@ const getGradient = (
   middleColor: string,
   endColor: string
 ) => {
-  if (middleColor)
+  if (middleColor) {
     return `linear-gradient(to bottom, ${startColor} 0%, ${middleColor} 50%, ${endColor} 100%)`;
+  }
   return `linear-gradient(to bottom, ${startColor} 0%, ${endColor} 100%)`;
 };
 

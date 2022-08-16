@@ -12,11 +12,15 @@ export const useHoverListener = (onHoverChange?: (value: boolean) => void) => {
     const el = elRef.current;
     if (el) {
       const onMouseLeave = () => {
-        if (onHoverChange) onHoverChange(false);
+        if (onHoverChange) {
+          onHoverChange(false);
+        }
       };
 
       const onMouseEnter = () => {
-        if (onHoverChange) onHoverChange(true);
+        if (onHoverChange) {
+          onHoverChange(true);
+        }
       };
 
       el.addEventListener('mouseleave', onMouseLeave);

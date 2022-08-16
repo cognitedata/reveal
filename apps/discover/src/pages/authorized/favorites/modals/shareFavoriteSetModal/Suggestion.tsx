@@ -42,7 +42,9 @@ interface SuggestionComponentProps {
 const SuggestionComponent: React.FC<SuggestionComponentProps> = (props) => {
   const { suggestion } = props;
 
-  if (!suggestion) return null;
+  if (!suggestion) {
+    return null;
+  }
   return (
     <div role="menuitem">
       <Suggestion as={FlexColumn}>

@@ -44,7 +44,9 @@ export const getCommonColumns = (unit?: string): ColumnType<NptView>[] => {
       width: '150px',
       accessor: (row) => {
         const depth = row.measuredDepth?.value;
-        if (depth) return depth.toFixed(0);
+        if (depth) {
+          return depth.toFixed(0);
+        }
         return 'N/A';
       },
     },
@@ -110,7 +112,9 @@ export const getExtendedColumns = (
   Object.keys(keyedMutateColumns).forEach((id) => {
     const column = keyedColumns[id];
 
-    if (!column) return;
+    if (!column) {
+      return;
+    }
 
     set(keyedColumns, id, {
       ...column,

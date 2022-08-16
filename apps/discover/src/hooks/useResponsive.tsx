@@ -13,7 +13,9 @@ export const useResponsive = () => {
   }, []);
 
   const screenSize = React.useMemo(() => {
-    if (screenWidth <= 1920) return 'MEDIUM';
+    if (screenWidth <= 1920) {
+      return 'MEDIUM';
+    }
     return 'LARGE';
   }, [screenWidth]);
 

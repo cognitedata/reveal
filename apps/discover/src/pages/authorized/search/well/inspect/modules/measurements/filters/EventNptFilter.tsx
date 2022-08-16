@@ -38,7 +38,9 @@ export const EventNptFilter: React.FC<Props> = ({
 
   // Automatically select all the events when the component is mounted
   useEffect(() => {
-    if (!events) return;
+    if (!events) {
+      return;
+    }
     onChange(events);
   }, [events]);
 

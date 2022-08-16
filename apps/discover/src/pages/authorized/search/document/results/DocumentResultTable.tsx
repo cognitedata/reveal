@@ -312,7 +312,9 @@ export const DocumentResultTable: React.FC<Props> = ({ onHandleRowClick }) => {
         Number(row.original.id)
       );
 
-      if (!isAlreadyInFavorite) return null;
+      if (!isAlreadyInFavorite) {
+        return null;
+      }
 
       return <FavoriteStarIcon />;
     },

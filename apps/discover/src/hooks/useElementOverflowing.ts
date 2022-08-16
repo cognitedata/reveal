@@ -3,7 +3,9 @@ import React from 'react';
 import isNil from 'lodash/isNil';
 
 const isElementOverflowing = (element: HTMLElement): boolean => {
-  if (isNil(element)) return false;
+  if (isNil(element)) {
+    return false;
+  }
   return element.offsetWidth < element.scrollWidth;
 };
 

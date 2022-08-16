@@ -335,7 +335,9 @@ export const DocumentFeedbackTable: React.FC<Props> = ({
   );
 
   const toggleDocumentFeedbackData = React.useMemo(() => {
-    if (!documentFeedbackItems) return [];
+    if (!documentFeedbackItems) {
+      return [];
+    }
     return documentFeedbackItems
       .filter((item) => item.deleted === objectFeedbackShowDeleted)
       .sort((a, b) => {

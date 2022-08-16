@@ -17,7 +17,9 @@ export const useWellsSearch = () => {
     const geoFilter = get(searchQuery, 'geoFilter');
 
     // Skip well search if any of these are not mutated
-    if (phraseUnDefined && !wellFilters && !geoFilter) return;
+    if (phraseUnDefined && !wellFilters && !geoFilter) {
+      return;
+    }
 
     /**
      * Set well filters to state

@@ -71,7 +71,9 @@ export const LinePositionSelector: React.FC<Props> = ({
 
   useEffect(() => {
     if (!isUndefined(position)) {
-      if (position !== fastPosition) setFastPosition(position);
+      if (position !== fastPosition) {
+        setFastPosition(position);
+      }
       onChange(position);
     }
   }, [position]);

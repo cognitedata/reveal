@@ -182,7 +182,9 @@ export const Map: React.FC = () => {
   });
 
   const updateArea = React.useCallback((event: TS_FIX_ME) => {
-    if (isEmpty(event.features)) return;
+    if (isEmpty(event.features)) {
+      return;
+    }
 
     const eventType = event && event.type;
 
@@ -361,7 +363,9 @@ export const Map: React.FC = () => {
     } else {
       dispatch(showResults());
 
-      if (sidebarCategory !== 'landing') return;
+      if (sidebarCategory !== 'landing') {
+        return;
+      }
 
       if (isUndefined(activePanel)) {
         sidebarCategoryUnsetRef.current = true;
@@ -437,7 +441,9 @@ export const Map: React.FC = () => {
   };
 
   const renderBlockExpander = React.useMemo(() => {
-    if (showSearchResults) return null;
+    if (showSearchResults) {
+      return null;
+    }
 
     return (
       <BlockExpander

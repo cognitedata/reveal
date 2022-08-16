@@ -54,7 +54,9 @@ describe('Should render the AuthorFilter checkbox with values from a query', () 
   const defaultTestInit = async (props?: any, selectedItem?: Array<string>) => {
     const store = getMockedStore();
     const appliedFilters = getEmptyAppliedFilterType();
-    if (selectedItem) appliedFilters.documents.authors = selectedItem;
+    if (selectedItem) {
+      appliedFilters.documents.authors = selectedItem;
+    }
     (useFilterAppliedFilters as jest.Mock).mockImplementation(
       () => appliedFilters
     );

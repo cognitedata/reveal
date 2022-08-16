@@ -42,8 +42,12 @@ export const formatWellFilters = (
 ) =>
   filterConfig.filterConfigIds.reduce((result: FilterValues[], id) => {
     const wellFilter = wellFilters[id];
-    if (isUndefined(wellFilter) || (isArray(wellFilter) && !wellFilter.length))
+    if (
+      isUndefined(wellFilter) ||
+      (isArray(wellFilter) && !wellFilter.length)
+    ) {
       return result;
+    }
 
     const field = find(filterConfig.filterConfigs, { id })?.name;
     const category = find(filterConfig.filterConfigs, { id })?.category;

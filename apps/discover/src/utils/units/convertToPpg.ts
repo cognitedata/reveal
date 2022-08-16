@@ -22,7 +22,9 @@ export const convertToPpg = (
   tvd?: number,
   tvdUnit?: string
 ) => {
-  if (valueUnit === PPG) return value;
+  if (valueUnit === PPG) {
+    return value;
+  }
 
   let tvdInFeet = tvd || 1;
   if (tvdUnit === METER) {

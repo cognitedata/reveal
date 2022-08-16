@@ -35,7 +35,9 @@ export const WellLogsTable: React.FC = () => {
   const { data, isLoading } = useWellLogsData();
 
   useDeepEffect(() => {
-    if (!data || !isEmpty(selectedIds)) return;
+    if (!data || !isEmpty(selectedIds)) {
+      return;
+    }
 
     const wellLogIds = map(data, 'id');
     const allSelectedWellLogsMap = toBooleanMap(wellLogIds, true);

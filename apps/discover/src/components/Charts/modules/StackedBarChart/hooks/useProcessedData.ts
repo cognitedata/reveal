@@ -13,7 +13,9 @@ export const useProcessedData = <T>({
   options?: StackedBarChartOptions<T>;
 }) => {
   return useDeepMemo(() => {
-    if (!options?.fixXValuesToDecimalPlaces) return data;
+    if (!options?.fixXValuesToDecimalPlaces) {
+      return data;
+    }
 
     return fixValuesToDecimalPlaces<T>(
       data,

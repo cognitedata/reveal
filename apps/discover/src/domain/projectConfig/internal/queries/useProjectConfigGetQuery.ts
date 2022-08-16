@@ -20,7 +20,9 @@ export function useProjectConfigGetQuery(): UseQueryResult<ProjectConfig> {
     {
       enabled: Boolean(project),
       retry: (failureCount) => {
-        if (failureCount <= THRESHOLD) return true;
+        if (failureCount <= THRESHOLD) {
+          return true;
+        }
 
         setTimeout(() => {
           window.location.href = window.location.origin;

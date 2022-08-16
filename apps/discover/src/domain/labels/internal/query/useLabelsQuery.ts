@@ -22,7 +22,9 @@ export const useLabelsQuery = () => {
       .catch((error) => handleServiceError<Labels>(error))
   );
 
-  if (!data || 'error' in data) return {};
+  if (!data || 'error' in data) {
+    return {};
+  }
 
   return data || {};
 };

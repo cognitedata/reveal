@@ -5,11 +5,15 @@ import { PlotConfig } from '@cognite/videx-wellog/dist/tracks/graph/interfaces';
 import { WellLogPreviewData } from '../types';
 
 export const updateRanges = (logData: WellLogPreviewData, tracks: any[]) => {
-  if (isEmpty(tracks)) return;
+  if (isEmpty(tracks)) {
+    return;
+  }
 
   Object.keys(logData).forEach((columnExternalId) => {
     tracks.forEach((track) => {
-      if (!track.plots || !track.setPlotOption || !track.legendUpdate) return;
+      if (!track.plots || !track.setPlotOption || !track.legendUpdate) {
+        return;
+      }
 
       track.plots.forEach((plot: PlotConfig) => {
         if (

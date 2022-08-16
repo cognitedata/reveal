@@ -43,8 +43,11 @@ const CreateFavoriteSetModal: React.FC = () => {
   ) => {
     const { name: field, value } = event.target;
 
-    if (field === 'name') setName(value);
-    else if (field === 'description') setDescription(value);
+    if (field === 'name') {
+      setName(value);
+    } else if (field === 'description') {
+      setDescription(value);
+    }
   };
 
   const clearState = () => {

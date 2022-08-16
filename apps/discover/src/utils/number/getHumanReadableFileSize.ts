@@ -10,16 +10,23 @@ export const getHumanReadableFileSize = (bytes?: number | string) => {
 
   const parsedBytes = Number(bytes);
 
-  if (isString(bytes) && !isNumber(parsedBytes)) return bytes;
+  if (isString(bytes) && !isNumber(parsedBytes)) {
+    return bytes;
+  }
 
   // for bad data ingestion
   if (isNaN(bytes) || !bytes || !parsedBytes) {
     return 'Unknown';
   }
 
-  if (parsedBytes < 1024) return `${parsedBytes} Bytes`;
-  if (parsedBytes < 1048576) return `${(parsedBytes / 1024).toFixed(2)} KB`;
-  if (parsedBytes < 1073741824)
+  if (parsedBytes < 1024) {
+    return `${parsedBytes} Bytes`;
+  }
+  if (parsedBytes < 1048576) {
+    return `${(parsedBytes / 1024).toFixed(2)} KB`;
+  }
+  if (parsedBytes < 1073741824) {
     return `${(parsedBytes / 1048576).toFixed(2)} MB`;
+  }
   return `${(parsedBytes / 1073741824).toFixed(2)} GB`;
 };

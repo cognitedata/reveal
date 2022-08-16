@@ -31,7 +31,9 @@ export const SyntaxInfoContainer: React.FC = () => {
     setShowInfoContainer(false);
   };
 
-  if (!showInfoContainer) return null;
+  if (!showInfoContainer) {
+    return null;
+  }
 
   return (
     <SyntaxRuleInfoContainer data-testid="syntax-rule-info-container">

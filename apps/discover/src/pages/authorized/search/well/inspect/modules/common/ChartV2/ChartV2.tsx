@@ -177,7 +177,9 @@ const ChartV2 = React.forwardRef(
     );
 
     const manageGraphRangeChange = (figure: Figure, graph: HTMLElement) => {
-      if (!adaptiveChart) return;
+      if (!adaptiveChart) {
+        return;
+      }
 
       const visibleYValues = findVisibleYTicksValues(graph);
 
@@ -226,7 +228,9 @@ const ChartV2 = React.forwardRef(
       // Reset the graph to the show the whole plot on init.
       const inbuiltButtons = graph.querySelector("[data-val='auto']");
 
-      if (!inbuiltButtons) return;
+      if (!inbuiltButtons) {
+        return;
+      }
       (inbuiltButtons as HTMLAnchorElement).click();
     };
 

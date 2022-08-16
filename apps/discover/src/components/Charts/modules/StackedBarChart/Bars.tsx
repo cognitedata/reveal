@@ -56,7 +56,9 @@ export const Bars = <T extends DataObject<T>>({
       const xValue = get(dataElement, xAccessor);
       const barWidth = xScale(xValue);
 
-      if (isUndefined(barWidth)) return null;
+      if (isUndefined(barWidth)) {
+        return null;
+      }
 
       const key = `${groupKey}-${get(
         dataElement,
@@ -115,13 +117,19 @@ export const Bars = <T extends DataObject<T>>({
   };
 
   const getBarSegmentBorderRadius = (data: T[], index: number) => {
-    if (data.length === 1) return `${sizes.extraSmall}`;
+    if (data.length === 1) {
+      return `${sizes.extraSmall}`;
+    }
 
     const isFirstBar = index === 0;
     const isLastBar = index === data.length - 1;
 
-    if (isFirstBar) return `${sizes.extraSmall} 0 0 ${sizes.extraSmall}`;
-    if (isLastBar) return `0 ${sizes.extraSmall} ${sizes.extraSmall} 0`;
+    if (isFirstBar) {
+      return `${sizes.extraSmall} 0 0 ${sizes.extraSmall}`;
+    }
+    if (isLastBar) {
+      return `0 ${sizes.extraSmall} ${sizes.extraSmall} 0`;
+    }
     return null;
   };
 

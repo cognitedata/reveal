@@ -20,8 +20,9 @@ export const isChildShouldUpdateWith = (
     !selectedChildValues ||
     !Array.isArray(selectedChildValues) ||
     !wellGroups
-  )
+  ) {
     return {};
+  }
 
   const childFilters = (selectedChildValues as string[]).map(
     (field: string) =>
@@ -37,10 +38,13 @@ export const isChildShouldUpdateWith = (
   if (
     selectedValues &&
     selectedValues.toString().indexOf(uniqueChildSet.toString()) > -1 // checks, uniqueChildSet is a subset of selected values
-  )
+  ) {
     return { isUpdate: false, value: undefined };
+  }
 
-  if (!selectedValues) return { isUpdate: true, value: [] };
+  if (!selectedValues) {
+    return { isUpdate: true, value: [] };
+  }
 
   return {
     isUpdate: true,

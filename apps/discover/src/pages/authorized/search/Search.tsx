@@ -214,7 +214,9 @@ export const Search: React.FC = () => {
 
   // Set map container width to balance space of search container only if in inspect mode
   const setMapContainer = (el: HTMLDivElement | null) => {
-    if (!anythingHasSearched) return;
+    if (!anythingHasSearched) {
+      return;
+    }
     mapContainer = el;
     if (mapContainer) {
       mapContainer.style.width = `calc(100% - ${get(

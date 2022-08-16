@@ -58,9 +58,12 @@ export const usePatchSavedSearchMutate = (
           doCommonSearch(data, headers);
         }
 
-        if (seismicConfig && !seismicConfig?.disabled)
+        if (seismicConfig && !seismicConfig?.disabled) {
           queryClient.invalidateQueries(SURVEYS_QUERY_KEY);
-        if (successCallback) successCallback(data);
+        }
+        if (successCallback) {
+          successCallback(data);
+        }
       },
     }
   );

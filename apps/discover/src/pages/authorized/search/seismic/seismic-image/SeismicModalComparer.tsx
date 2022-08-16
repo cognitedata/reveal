@@ -85,7 +85,9 @@ const renderSelectItem = (
   disabled: boolean,
   onChange: (item: Slices) => void
 ) => {
-  if (!(item.file && item.file.name)) return null;
+  if (!(item.file && item.file.name)) {
+    return null;
+  }
   const handleOnChange = () => onChange(item);
 
   return (
@@ -142,8 +144,9 @@ export const SeismicModalComparer: React.FC<Props> = ({ isOpen, onClose }) => {
   }, [seismicState.sliceCollection]);
 
   useEffect(() => {
-    if (sliceCollection && sliceCollection.slices.length > 0)
+    if (sliceCollection && sliceCollection.slices.length > 0) {
       setSelectedSlice(sliceCollection.slices[0]);
+    }
     setComparingSlices([]);
   }, [sliceCollection]);
 
@@ -171,7 +174,9 @@ export const SeismicModalComparer: React.FC<Props> = ({ isOpen, onClose }) => {
     }
   };
 
-  if (!sliceCollection) return null;
+  if (!sliceCollection) {
+    return null;
+  }
 
   return (
     <BlankModal visible={isOpen} onCancel={onClose} fullWidth>
@@ -280,15 +285,18 @@ const SeismicDisplay: React.FC<SeismicDisplayProps> = (props) => {
   const { comparingSlices, isLoading, slice } = props;
   const isImageComparerEnabled = comparingSlices.length === 2;
 
-  if (isLoading) return <Loader darkMode={false} />;
+  if (isLoading) {
+    return <Loader darkMode={false} />;
+  }
 
-  if (isImageComparerEnabled)
+  if (isImageComparerEnabled) {
     return (
       <ImageComparer
         leftSlice={comparingSlices[0]}
         rightSlice={comparingSlices[1]}
       />
     );
+  }
 
   if (slice) {
     return <SeismicSliceDisplay slice={slice} />;

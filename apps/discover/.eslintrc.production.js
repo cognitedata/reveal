@@ -6,6 +6,7 @@ module.exports = {
     ...baseConfig.rules,
     // We can extend apps rules below
     'arrow-body-style': 0,
+    curly: ['error', 'all'],
     'no-underscore-dangle': 0,
     'no-console': ['error', { allow: ['warn', 'error'] }],
 

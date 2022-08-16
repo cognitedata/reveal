@@ -7,7 +7,9 @@ interface Props {
 }
 
 export const XAxisTitle: React.FC<Props> = React.memo(({ title }) => {
-  if (!title) return null;
+  if (!title) {
+    return null;
+  }
 
   return (
     <AxisTitleContainer>

@@ -53,7 +53,9 @@ export const NptWellsTable: React.FC<NptWellsTableProps> = ({ data }) => {
   }, [data]);
 
   useDeepEffect(() => {
-    if (isEmpty(wells)) return;
+    if (isEmpty(wells)) {
+      return;
+    }
 
     setExpandedWells({
       ...expandedWells,

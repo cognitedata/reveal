@@ -38,7 +38,9 @@ export const ColorScale: React.FC<Props> = (props) => {
   const { t } = useTranslation();
 
   const setSliderValue = (values: number[]) => {
-    if (values[0] > 50 || values[1] < 50) return;
+    if (values[0] > 50 || values[1] < 50) {
+      return;
+    }
     if (values[0] !== sliderRange[0]) {
       setSliderRange([values[0], symmetricMode ? 100 - values[0] : values[1]]);
     } else if (values[1] !== sliderRange[1]) {
@@ -101,8 +103,9 @@ export const ColorScale: React.FC<Props> = (props) => {
 
   // Color gradient based on color band and color scale
   const colorGradient = useMemo(() => {
-    if (middleColor)
+    if (middleColor) {
       return `linear-gradient(to right, ${startColor} ${sliderRange[0]}%, ${middleColor} 50%, ${endColor} ${sliderRange[1]}%)`;
+    }
     return `linear-gradient(to right, ${startColor} ${sliderRange[0]}%, ${endColor} ${sliderRange[1]}%)`;
   }, [startColor, middleColor, endColor, sliderRange]);
 

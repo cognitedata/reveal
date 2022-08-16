@@ -58,7 +58,9 @@ export const CurveCentricView: React.FC<Props> = ({
   const [chartRendering, setChartRendering] = useState<boolean>(false);
 
   const updateChartData = useCallback(() => {
-    if (isUndefined(data) || !userPreferredUnit) return;
+    if (isUndefined(data) || !userPreferredUnit) {
+      return;
+    }
     const wellboreChartData = selectedInspectWellbores
       .map((wellbore) => ({
         wellbore,
@@ -192,7 +194,9 @@ export const CurveCentricView: React.FC<Props> = ({
     return <Loading />;
   }
 
-  if (!chartRendering && isEmpty(wellCards)) return <NoDataAvailable />;
+  if (!chartRendering && isEmpty(wellCards)) {
+    return <NoDataAvailable />;
+  }
 
   return (
     <>

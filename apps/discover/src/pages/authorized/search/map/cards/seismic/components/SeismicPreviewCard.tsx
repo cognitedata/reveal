@@ -31,7 +31,9 @@ export const SeismicPreviewCard: React.FC<Props> = ({ seismicFiles }) => {
       if (!item || !seismicFiles.includes(item)) {
         setItem(seismicFiles[0]);
       }
-    } else if (item) setItem(null);
+    } else if (item) {
+      setItem(null);
+    }
 
     if (item) {
       seismicService
@@ -63,7 +65,9 @@ export const SeismicPreviewCard: React.FC<Props> = ({ seismicFiles }) => {
     }
   };
 
-  if (!item) return null;
+  if (!item) {
+    return null;
+  }
 
   return (
     <BasePreviewCard

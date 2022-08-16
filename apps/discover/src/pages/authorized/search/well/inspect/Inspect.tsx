@@ -52,7 +52,9 @@ export const WellInspect: React.FC = () => {
   const tabs = useTabs();
 
   useEffect(() => {
-    if (isUndefined(error)) return;
+    if (isUndefined(error)) {
+      return;
+    }
     /**
      * If wells are not fetched and error is present, redirect to home page
      */

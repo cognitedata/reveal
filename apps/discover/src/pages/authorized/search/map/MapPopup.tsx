@@ -20,7 +20,9 @@ export const MapPopup = ({ children, map, point, className }: Props) => {
     .join(' ');
 
   useEffect(() => {
-    if (!map || !popupRef.current) return undefined;
+    if (!map || !popupRef.current) {
+      return undefined;
+    }
 
     currentPopup.current = new Popup({
       className: extendedClassnames,

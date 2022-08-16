@@ -7,7 +7,9 @@ export const getAssigneeName = (
   assignedUser?: UMSUser,
   currentUserId?: string
 ) => {
-  if (!assignedUser) return undefined;
+  if (!assignedUser) {
+    return undefined;
+  }
 
   const splittedUserName = getSplitUserName(assignedUser?.displayName).name;
 

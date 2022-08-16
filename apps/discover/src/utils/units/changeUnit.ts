@@ -41,11 +41,13 @@ export const changeUnit = <Item>(
         .from(standardFromUnit || fromUnit)
         .to(to as any);
     } catch (e) {
-      if (errorHandler)
+      if (errorHandler) {
         errorHandler(
           `{rowId: ${rowId}, accessor: ${accessor}, message: ${e} }`
         );
-      else log(String(e));
+      } else {
+        log(String(e));
+      }
 
       return convertedObj;
     }

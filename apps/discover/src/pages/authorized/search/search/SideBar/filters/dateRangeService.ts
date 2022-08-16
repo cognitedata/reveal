@@ -13,7 +13,9 @@ export const syncDatesWithSavedSearch = (
   filters: DocumentsFacets,
   setDateState: (value: Range) => void
 ) => {
-  if (!dateState.startDate || !dateState.endDate) return;
+  if (!dateState.startDate || !dateState.endDate) {
+    return;
+  }
   // No filters applied for this date (i.e., created or modified)
 
   if (((filters && filters[key]) || []).length !== 2) {

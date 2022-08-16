@@ -22,12 +22,18 @@ export const NumberInput: React.FC<NumberInputProps> = ({
     (event: React.ChangeEvent<HTMLInputElement>) => {
       const inputValue = event.target.value;
 
-      if (isEmpty(inputValue)) return onChange(0);
+      if (isEmpty(inputValue)) {
+        return onChange(0);
+      }
 
       const newValue = parseFloat(inputValue);
 
-      if (newValue < min) return onChange(min);
-      if (newValue > max) return onChange(max);
+      if (newValue < min) {
+        return onChange(min);
+      }
+      if (newValue > max) {
+        return onChange(max);
+      }
       return onChange(newValue);
     },
     [max, min, onChange]

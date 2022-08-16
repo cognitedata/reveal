@@ -11,7 +11,9 @@ export const useYScaleDomain = <T>(
   yScaleDomainCustom?: string[]
 ) => {
   return useDeepMemo(() => {
-    if (yScaleDomainCustom) return yScaleDomainCustom;
+    if (yScaleDomainCustom) {
+      return yScaleDomainCustom;
+    }
 
     const yScaleValues = data.map((dataElement) => get(dataElement, yAccessor));
     return uniq(getValidatedValues(yScaleValues));

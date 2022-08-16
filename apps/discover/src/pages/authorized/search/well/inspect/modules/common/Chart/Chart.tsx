@@ -14,7 +14,9 @@ const chartStyles = {
 };
 
 const getWidth = (isTrajectory: boolean, width: number | null) => {
-  if (!width) return undefined;
+  if (!width) {
+    return undefined;
+  }
   return isTrajectory && width ? width - 10 : width;
 };
 

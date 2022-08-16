@@ -35,7 +35,9 @@ export const DragDropContainer: React.FC<
     }, [elements]);
 
     useDeepEffect(() => {
-      if (!elementsOrder || isEmpty(elementsOrder)) return;
+      if (!elementsOrder || isEmpty(elementsOrder)) {
+        return;
+      }
 
       const orderedElementsByKey = orderElementsByKey(elements, elementsOrder);
       setOrderedElements([...orderedElementsByKey]);

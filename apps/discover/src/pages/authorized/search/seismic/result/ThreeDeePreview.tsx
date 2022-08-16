@@ -19,7 +19,9 @@ export const ThreeDeePreview: React.FC<Props> = ({ onClose }: Props) => {
 
   const fileId = !isEmpty(selectedFiles) ? selectedFiles[0].fileId : undefined;
 
-  if (!fileId) return null;
+  if (!fileId) {
+    return null;
+  }
 
   return (
     <BlankModal visible onCancel={onClose} title={t('3d preview')} fullWidth>

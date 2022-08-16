@@ -69,7 +69,9 @@ export const useDocumentFeedbackMutate = () => {
     originalDocumentType: string | undefined,
     { documentId, reporterInfo }: DocumentFeedbackAssessmentData['payload']
   ) => {
-    if (!originalDocumentType) return;
+    if (!originalDocumentType) {
+      return;
+    }
 
     const originalDocumentTypes = originalDocumentType?.split(', ');
 

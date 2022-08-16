@@ -178,7 +178,9 @@ export const useMapEvents = () => {
       (
         e.target.getSource(GROUPED_CLUSTER_LAYER_ID) as any
       ).getClusterExpansionZoom(clusterId, (err: any, zoom: number) => {
-        if (err) return;
+        if (err) {
+          return;
+        }
 
         e.target.easeTo({
           center: view[0].geometry.coordinates,
@@ -189,7 +191,9 @@ export const useMapEvents = () => {
   };
 
   const markerClickEvent = (e: MapMouseEvent) => {
-    if (drawMode === 'draw_polygon') return;
+    if (drawMode === 'draw_polygon') {
+      return;
+    }
 
     // prevent bubbling the event to other layers
     const event = e.originalEvent;

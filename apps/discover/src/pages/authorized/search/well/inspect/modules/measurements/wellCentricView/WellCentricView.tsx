@@ -87,7 +87,9 @@ export const WellCentricView: React.FC<Props> = ({
    * Extract errors from processed data and dispath to state
    */
   useEffect(() => {
-    if (!wellboreProcessedData) return;
+    if (!wellboreProcessedData) {
+      return;
+    }
     dispatch(
       inspectTabsActions.setErrors(
         extractWellboreErrorsFromProcessedData(wellboreProcessedData)
@@ -139,7 +141,9 @@ export const WellCentricView: React.FC<Props> = ({
     return <Loading />;
   }
 
-  if (!isLoading && isEmpty(wellboreChartData)) return <NoDataAvailable />;
+  if (!isLoading && isEmpty(wellboreChartData)) {
+    return <NoDataAvailable />;
+  }
 
   return (
     <>

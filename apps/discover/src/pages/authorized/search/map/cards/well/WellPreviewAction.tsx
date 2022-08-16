@@ -46,7 +46,9 @@ export const WellPreviewAction: React.FC<Props> = (props) => {
   };
 
   const isFavored = useDeepMemo(() => {
-    if (!favoriteWellIds || !well?.id) return false;
+    if (!favoriteWellIds || !well?.id) {
+      return false;
+    }
 
     return Object.keys(favoriteWellIds).includes(well?.id);
   }, [favoriteWellIds, well?.id]);

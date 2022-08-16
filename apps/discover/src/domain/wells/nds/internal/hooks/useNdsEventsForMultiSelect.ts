@@ -18,7 +18,9 @@ export const useNdsEventsForMultiSelect = () => {
 
   return useDeepMemo(() => {
     return data?.reduce((accumulator, { riskType, ndsCodeColor, subtype }) => {
-      if (!riskType) return accumulator;
+      if (!riskType) {
+        return accumulator;
+      }
 
       const ndsDetailCodesBag = (accumulator[riskType] ||
         []) as MultiSelectOptionObject[];

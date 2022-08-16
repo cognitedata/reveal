@@ -20,9 +20,12 @@ export const NPTDetailCodeFilter = React.memo(
     const dispatch = useDispatch();
 
     const displayValue = useDeepMemo(() => {
-      if (nptDetailCode.length === 1) return nptDetailCode[0];
-      if (nptDetailCode.length === nptDetailCodes.length)
+      if (nptDetailCode.length === 1) {
+        return nptDetailCode[0];
+      }
+      if (nptDetailCode.length === nptDetailCodes.length) {
         return SELECTED_ALL_DISPLAY_VALUE;
+      }
       return undefined;
     }, [nptDetailCode, nptDetailCodes]);
 

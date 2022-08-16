@@ -30,7 +30,9 @@ export const useGroupedData = <T>({
   return useDeepMemo(() => {
     const groupedDataWithoutSummedValues = groupBy(processedData, yAccessor);
 
-    if (!groupDataInsideBarsBy) return groupedDataWithoutSummedValues;
+    if (!groupDataInsideBarsBy) {
+      return groupedDataWithoutSummedValues;
+    }
 
     return Object.keys(groupedDataWithoutSummedValues).reduce(
       (dataWithSummedValues, key) => ({

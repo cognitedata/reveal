@@ -67,7 +67,9 @@ const ManageColumnsPanel: React.FC<Props> = ({
       labelText: 'Search',
       callback: () => {
         setSearchValue('');
-        if (searchInputChange) searchInputChange('');
+        if (searchInputChange) {
+          searchInputChange('');
+        }
       },
     };
   }, [searchInputChange]);
@@ -75,7 +77,9 @@ const ManageColumnsPanel: React.FC<Props> = ({
   const handleOnChanged = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       setSearchValue(e.target.value);
-      if (searchInputChange) searchInputChange(e.target.value);
+      if (searchInputChange) {
+        searchInputChange(e.target.value);
+      }
     },
     [searchInputChange]
   );
@@ -158,7 +162,9 @@ const ManageColumnsPanel: React.FC<Props> = ({
           data-testid="organize-columns"
           onClick={() => {
             setVisible((current) => !current);
-            if (onVisibilityToggle) onVisibilityToggle(!visible);
+            if (onVisibilityToggle) {
+              onVisibilityToggle(!visible);
+            }
           }}
         />
       </Tooltip>
@@ -174,7 +180,9 @@ const ManageColumnsPanel: React.FC<Props> = ({
       visible={visible}
       onClickOutside={() => {
         setVisible(false);
-        if (onVisibilityToggle) onVisibilityToggle(false);
+        if (onVisibilityToggle) {
+          onVisibilityToggle(false);
+        }
       }}
     >
       {customRenderDropDown || renderDropDown}

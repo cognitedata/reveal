@@ -25,7 +25,9 @@ export const FormationColumn: React.FC<WithDragHandleProps<Props>> = ({
 }: Props) => {
   const wellTopSurface = wellTop?.tops;
 
-  if (isLoading || isUndefined(wellTopSurface)) return null;
+  if (isLoading || isUndefined(wellTopSurface)) {
+    return null;
+  }
 
   return (
     <>

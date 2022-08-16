@@ -37,7 +37,9 @@ export const CurveCentricCard: React.FC<Props> = ({
   measurementType,
 }) => {
   const chartDataItem = head(chartData);
-  if (isUndefined(chartDataItem)) return <NoDataAvailable />;
+  if (isUndefined(chartDataItem)) {
+    return <NoDataAvailable />;
+  }
   const isOtherType =
     measurementType === MeasurementType.FIT ||
     measurementType === MeasurementType.LOT;

@@ -13,7 +13,9 @@ export const NPTFilterByName = () => {
 
   const handleFilterByName = useCallback(
     (name: string) => {
-      if (searchPhrase === name) return;
+      if (searchPhrase === name) {
+        return;
+      }
       dispatch(inspectTabsActions.setNptSearchPhrase(name));
     },
     [searchPhrase]

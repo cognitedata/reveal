@@ -19,7 +19,9 @@ export const StandaloneHeader: React.FC<Props> = ({
   const { t } = useTranslation();
   const history = useHistory();
 
-  if (hidden) return null;
+  if (hidden) {
+    return null;
+  }
 
   return (
     <StandaloneHeaderWrapper>

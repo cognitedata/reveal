@@ -11,7 +11,9 @@ export const useSearchHistoryOptionData =
     const { data: searchHistory } = useSearchHistoryListQuery();
 
     return useMemo(() => {
-      if (!searchHistory) return [];
+      if (!searchHistory) {
+        return [];
+      }
 
       const history = searchHistory
         .filter((item) => !isEmpty(item.query))

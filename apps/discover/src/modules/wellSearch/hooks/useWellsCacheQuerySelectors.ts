@@ -50,9 +50,13 @@ export const useWellboresOfWellById = (
   const well = useWellById(wellId);
 
   return useDeepMemo(() => {
-    if (!well) return [];
+    if (!well) {
+      return [];
+    }
 
-    if (!filterWellboresByIds) return well.wellbores || [];
+    if (!filterWellboresByIds) {
+      return well.wellbores || [];
+    }
 
     return (
       well.wellbores?.filter((wellbore) =>

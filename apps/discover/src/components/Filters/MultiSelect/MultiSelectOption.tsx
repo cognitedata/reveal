@@ -18,7 +18,9 @@ export const MultiSelectOption: React.FC<MultiSelectOptionProps> = ({
   isTextCapitalized = true,
 }) => {
   const getName = () => {
-    if (isTextCapitalized) return capitalize(value);
+    if (isTextCapitalized) {
+      return capitalize(value);
+    }
     return value;
   };
 

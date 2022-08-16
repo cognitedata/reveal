@@ -11,7 +11,9 @@ const filterByName = (npt: NptView, searchPhrase: string) =>
   includes(npt.wellboreName, searchPhrase);
 
 const filterByDuration = (npt: NptInternal, duration: number[]) => {
-  if (!duration) return false;
+  if (!duration) {
+    return false;
+  }
 
   const eventNPTDuration = npt?.duration || 0;
   const [min, max] = duration;

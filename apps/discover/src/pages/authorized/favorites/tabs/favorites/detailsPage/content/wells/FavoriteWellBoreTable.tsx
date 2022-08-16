@@ -73,7 +73,9 @@ const WellboreResult: React.FC<Props> = ({
   }
 
   const handleRemoveWellbore = (): void => {
-    if (isUndefined(hoveredWellbore)) return;
+    if (isUndefined(hoveredWellbore)) {
+      return;
+    }
     onRemoveWellbores([hoveredWellbore?.id]);
     handleCloseDeleteModal();
   };

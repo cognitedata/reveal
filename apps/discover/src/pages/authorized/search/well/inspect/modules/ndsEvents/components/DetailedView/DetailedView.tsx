@@ -92,7 +92,9 @@ export const DetailedView: React.FC<DetailedViewProps> = ({
   }, [appliedFilters, data]);
 
   useEffect(() => {
-    if (isUndefined(ndsAggregate)) return;
+    if (isUndefined(ndsAggregate)) {
+      return;
+    }
     const { riskTypesAndSubtypes, severities, probabilities } = ndsAggregate;
     setAppliedFilters({
       riskType: riskTypesAndSubtypes,

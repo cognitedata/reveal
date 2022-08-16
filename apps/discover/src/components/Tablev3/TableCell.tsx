@@ -32,7 +32,9 @@ const CellText = ({ children }: any) => {
     );
   };
 
-  if (isCellValueEmpty(value)) return null;
+  if (isCellValueEmpty(value)) {
+    return null;
+  }
 
   // render expandable content
   if (children.props.column.expandableContent) {

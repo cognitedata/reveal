@@ -20,7 +20,9 @@ export const ClearButton: React.FC<{
     );
   };
 
-  if (!filters) return <></>;
+  if (!filters) {
+    return <></>;
+  }
 
   if (isLastCreatedOrLastModifiedFiltersActive()) {
     return (

@@ -22,7 +22,9 @@ export const SearchInputValues: React.FC<Props> = ({
 }) => {
   const { t } = useTranslation();
 
-  if (!value) return null;
+  if (!value) {
+    return null;
+  }
 
   return (
     <SearchInputContainer>

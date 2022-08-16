@@ -18,7 +18,9 @@ export const convertToPsi = (
   tvd?: number,
   tvdUnit?: string
 ) => {
-  if (valueUnit === PSI) return value;
+  if (valueUnit === PSI) {
+    return value;
+  }
   let tvdInFeet = tvd || 1;
   if (tvdUnit === METER) {
     tvdInFeet *= METER_TO_FEET_FACTOR;

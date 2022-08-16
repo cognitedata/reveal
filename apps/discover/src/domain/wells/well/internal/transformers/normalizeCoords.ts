@@ -16,7 +16,9 @@ export const normalizeCoords = ({
   y?: string | number;
   crs?: string;
 }): Partial<WellInternal> => {
-  if (!crs) return {};
+  if (!crs) {
+    return {};
+  }
 
   const CRS = crs.toUpperCase();
 

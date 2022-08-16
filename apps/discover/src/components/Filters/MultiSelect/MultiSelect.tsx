@@ -65,7 +65,9 @@ export const MultiSelect: React.FC<MultiSelectProps> = React.memo(
     const [value, setValue] = useState<OptionType<MultiSelectOptionType>[]>([]);
 
     useDeepEffect(() => {
-      if (isUndefined(selectedOptions)) return;
+      if (isUndefined(selectedOptions)) {
+        return;
+      }
 
       const value = options.filter((option) =>
         selectedOptions.includes(getValueFromOption(option))

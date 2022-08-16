@@ -34,8 +34,9 @@ const Log: React.FC<Props> = ({
     if (
       !logViewerContainer ||
       logViewerContainer.getElementsByClassName('overlay').length > 0
-    )
+    ) {
       return;
+    }
 
     const { domain, unit: depthUnit } = logData[depthIndexColumnExternalId];
 

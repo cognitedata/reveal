@@ -29,7 +29,9 @@ export const EntityFeedback = () => {
     FeedbackState['objectFeedbackModalDocumentId']
   >((state) => state.feedback.objectFeedbackModalDocumentId);
 
-  if (!documentId) return null;
+  if (!documentId) {
+    return null;
+  }
 
   return <EntityFeedbackModal documentId={documentId} />;
 };

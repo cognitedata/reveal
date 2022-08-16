@@ -35,7 +35,9 @@ export const InfoViewerWrapper = styled.div`
 `;
 
 const getThePosition = (position: Tuplet): number => {
-  if (position.length <= 1) return 0;
+  if (position.length <= 1) {
+    return 0;
+  }
 
   return position[1] < 100 ? position[1] + 10 : position[1] - 100;
 };

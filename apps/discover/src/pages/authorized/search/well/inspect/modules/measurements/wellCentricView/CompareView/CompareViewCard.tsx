@@ -56,7 +56,9 @@ export const CompareViewCard: React.FC<Props> = ({
     curveName: string,
     fitChart: MeasurementChartData
   ) => {
-    if (!fitChart || !fitChart.customdata) return null;
+    if (!fitChart || !fitChart.customdata) {
+      return null;
+    }
     const [, wellboreName] = fitChart.customdata as string[];
     return (
       <FlexRow key={`${curveName.toLowerCase()}-${wellboreName}`}>

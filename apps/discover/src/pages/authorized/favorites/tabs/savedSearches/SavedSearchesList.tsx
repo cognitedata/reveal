@@ -78,7 +78,9 @@ export const SavedSearches: React.FC<{
   };
 
   const handleSavedSearchShare = (users: UserOption[]) => {
-    if (!selectedItem?.value.id || users?.length === 0) return;
+    if (!selectedItem?.value.id || users?.length === 0) {
+      return;
+    }
 
     const shareWithUsers = users.map((item) => item.value);
 
@@ -93,7 +95,9 @@ export const SavedSearches: React.FC<{
   };
 
   const handleSavedSearchDelete = () => {
-    if (!selectedItem?.value.id) return;
+    if (!selectedItem?.value.id) {
+      return;
+    }
 
     showSuccessMessage(t(SAVED_SEARCH_DELETED_MESSAGE));
     deleteSavedSearch(selectedItem.value.id);

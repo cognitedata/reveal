@@ -13,7 +13,9 @@ export const OverlayNavigation: React.FC<OverlayNavigationProps> = ({
   backgroundInvisibleMount,
   children,
 }) => {
-  if (!backgroundInvisibleMount && !mount) return null;
+  if (!backgroundInvisibleMount && !mount) {
+    return null;
+  }
 
   return (
     <OverlayNavigationContainer mount={mount}>

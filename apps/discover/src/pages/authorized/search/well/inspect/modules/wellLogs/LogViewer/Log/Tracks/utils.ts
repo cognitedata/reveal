@@ -85,7 +85,9 @@ export const convertEventsDataToArray = (data: WellLogNdsEventsData[]) => {
 export const setNdsEventsBlocksTitle = (ndsTrack: BlockScaleTrack) => {
   const majorTicks = ndsTrack.elm.getElementsByClassName('major-tick');
 
-  if (isEmpty(majorTicks)) return;
+  if (isEmpty(majorTicks)) {
+    return;
+  }
 
   for (let i = 0; i < majorTicks.length; i++) {
     if (ndsTrack.labels[i] === null || ndsTrack.labels[i] === undefined) {
@@ -105,7 +107,9 @@ export const setNdsEventsBlocksTitle = (ndsTrack: BlockScaleTrack) => {
 
 // This greys out the column when there is no data (curves) to display.
 export const disableGraphTrack = (graphTrack: GraphTrack) => {
-  if (!graphTrack.elm) return;
+  if (!graphTrack.elm) {
+    return;
+  }
 
   const trackContainer = graphTrack.elm;
   const track = graphTrack.elm.parentElement;

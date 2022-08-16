@@ -61,7 +61,9 @@ export const MultiSelectCategorized: React.FC<MultiSelectCategorizedProps> = ({
   >({});
 
   useEffect(() => {
-    if (!selectedOptionsProp) return;
+    if (!selectedOptionsProp) {
+      return;
+    }
 
     const multiSelectCategorizedOptions =
       getMultiSelectCategorizedOptions(selectedOptionsProp);

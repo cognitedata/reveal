@@ -139,7 +139,9 @@ export const SearchableAssets: React.FC<Props> = React.memo(
             }}
             onSuggestionSelected={(_event, e2) => {
               setTextValueState(e2.suggestion.title);
-              if (onSelect) onSelect(e2.suggestion);
+              if (onSelect) {
+                onSelect(e2.suggestion);
+              }
             }}
             theme={theme as any}
             renderSuggestionsContainer={(options) => (

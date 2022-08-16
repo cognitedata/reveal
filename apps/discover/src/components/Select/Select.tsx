@@ -44,20 +44,29 @@ export const Select = <T,>({
   const [anchorEl, setAnchorEl] = useState(null);
 
   const handleClose = () => {
-    if (onClose) onClose();
+    if (onClose) {
+      onClose();
+    }
     setAnchorEl(null);
   };
   const handleClick = (event: TS_FIX_ME) => {
-    if (anchorEl) setAnchorEl(null);
-    else {
-      if (onOpen) onOpen();
+    if (anchorEl) {
+      setAnchorEl(null);
+    } else {
+      if (onOpen) {
+        onOpen();
+      }
       setAnchorEl(event.currentTarget);
     }
   };
 
   const handleOnClick = (item: T) => () => {
-    if (onClick) onClick(item);
-    if (!disableCloseOnClick) handleClose();
+    if (onClick) {
+      onClick(item);
+    }
+    if (!disableCloseOnClick) {
+      handleClose();
+    }
   };
   const selectedDisplayValue = useMemo(() => {
     return selectedItem ? renderDisplay(selectedItem) : '';

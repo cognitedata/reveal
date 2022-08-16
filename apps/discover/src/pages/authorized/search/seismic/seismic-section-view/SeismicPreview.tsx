@@ -84,9 +84,13 @@ export const SeismicPreview: React.FC<Props> = (props) => {
     return { horizontalRange, horizontalRangeType };
   }, [slice, displayType]);
 
-  if (isLoading) return <Loader darkMode={false} />;
+  if (isLoading) {
+    return <Loader darkMode={false} />;
+  }
 
-  if (!slice || !image) return <div />;
+  if (!slice || !image) {
+    return <div />;
+  }
 
   return (
     <SeismicImage

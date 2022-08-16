@@ -15,7 +15,9 @@ export const useRemoveSensitiveDocument = () => {
   return (documentId: string) => {
     const hits = results.hits.filter((hit) => hit.id !== documentId);
 
-    if (hits.length === results.hits.length) return;
+    if (hits.length === results.hits.length) {
+      return;
+    }
 
     queryClient.setQueryData(
       [DOCUMENTS_QUERY_KEY.SEARCH, searchQuery, options],

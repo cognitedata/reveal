@@ -77,7 +77,9 @@ export const SeismicSectionView: React.FC<Props> = ({ onClose }) => {
   const datasets = useSelectedFiles();
 
   const getSliceData = () => {
-    if (!rangeMap || isUndefined(linePosition)) return;
+    if (!rangeMap || isUndefined(linePosition)) {
+      return;
+    }
 
     const slices: SliceData[] = [];
 
@@ -177,7 +179,9 @@ export const SeismicSectionView: React.FC<Props> = ({ onClose }) => {
 
   // Get selected line range
   const lineRange = useMemo(() => {
-    if (!rangeMap || selectedDatasets.length === 0) return undefined;
+    if (!rangeMap || selectedDatasets.length === 0) {
+      return undefined;
+    }
     const selectedRanges = selectedDatasets.map((dataset) =>
       get(rangeMap, dataset.fileId)
     );

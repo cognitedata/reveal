@@ -19,7 +19,9 @@ export const FilterClearButton: React.FC<Props> = React.memo(
 
     const handleClickClearButton = () => {
       metrics.track('click-clear-button');
-      if (handleClearFilters) handleClearFilters();
+      if (handleClearFilters) {
+        handleClearFilters();
+      }
     };
 
     const hasSomeFiltersApplied =

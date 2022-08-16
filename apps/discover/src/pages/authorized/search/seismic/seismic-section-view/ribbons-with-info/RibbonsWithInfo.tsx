@@ -36,7 +36,9 @@ export const RibbonsWithInfo: React.FC<Props> = (props) => {
 
   // Get closest x axis informations on mouse move
   const xInfo = useMemo(() => {
-    if (!xData.length) return null;
+    if (!xData.length) {
+      return null;
+    }
     return xData.reduce((prev, curr) => {
       return Math.abs(curr.left - position[2]) <
         Math.abs(prev.left - position[2])
@@ -47,7 +49,9 @@ export const RibbonsWithInfo: React.FC<Props> = (props) => {
 
   // Get closest y axis informations on mouse move
   const yInfo = useMemo(() => {
-    if (!yData.length) return null;
+    if (!yData.length) {
+      return null;
+    }
     return yData.reduce((prev, curr) => {
       return Math.abs(curr.top - position[3]) < Math.abs(prev.top - position[3])
         ? curr
@@ -55,7 +59,9 @@ export const RibbonsWithInfo: React.FC<Props> = (props) => {
     });
   }, [position, yData]);
 
-  if (hide) return null;
+  if (hide) {
+    return null;
+  }
 
   return (
     <>

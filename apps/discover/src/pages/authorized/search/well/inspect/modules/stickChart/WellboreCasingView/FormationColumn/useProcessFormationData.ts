@@ -21,8 +21,9 @@ export const useProcessSurfaceData = (
   return wellTopsSurface.reduce((list, surface, index) => {
     const baseMeasuredDepth = surface.base?.measuredDepth;
 
-    if (surface.heightDifference <= 0 || isUndefined(baseMeasuredDepth))
+    if (surface.heightDifference <= 0 || isUndefined(baseMeasuredDepth)) {
       return list;
+    }
 
     const wellTopScaledStartDepth = getScaledDepth(surface.top.measuredDepth);
     const wellTopScaledHeight = getScaledDepth(

@@ -62,7 +62,9 @@ const renderGroup = (
       const selectHandler = (event: string) =>
         onToolbarSelectionChange(visualizerId, groupId, index, event);
 
-      if (!isVisible) return null;
+      if (!isVisible) {
+        return null;
+      }
 
       const testId = getButtonTestId(visualizerId, groupId, button);
 

@@ -302,7 +302,9 @@ export const mapCurveToPlotly = (
       CHART_BREAK_POINTS.includes(yValue)
     ) {
       // If this is the first value it should be ok
-      if (isEmpty(x)) return;
+      if (isEmpty(x)) {
+        return;
+      }
       // Consider already collected values list as a one line and clear the arrays
       pushCurveToChart(
         chartData,

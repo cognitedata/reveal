@@ -13,7 +13,9 @@ export const getOverflownElementsInfo = (
 
   ((ref.current?.childNodes || []) as NodeListOf<HTMLElement>).forEach(
     (child) => {
-      if (ignoreElements.includes(child.id)) return;
+      if (ignoreElements.includes(child.id)) {
+        return;
+      }
       const elementOffsetRight = child.offsetLeft + child.offsetWidth;
       if (elementOffsetRight < offsetRight) {
         lastOffset = elementOffsetRight;

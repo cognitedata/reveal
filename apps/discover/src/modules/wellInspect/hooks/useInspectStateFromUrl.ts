@@ -38,7 +38,9 @@ export const useInspectStateFromUrl = () => {
      * If the user comes to inspect via search, well preview card, favorite, etc.
      * Then we just need to render the inspect views normally.
      */
-    if (!isEmpty(selectedWellIds)) return;
+    if (!isEmpty(selectedWellIds)) {
+      return;
+    }
 
     /**
      * If the user enters the inspect directly.

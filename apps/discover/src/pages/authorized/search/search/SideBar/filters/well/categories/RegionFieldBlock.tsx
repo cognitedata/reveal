@@ -74,7 +74,9 @@ export const RegionFieldBlock: React.FC<RegionFieldBlockProps> = ({
   );
 
   React.useEffect(() => {
-    if (!regionConfig || isEmpty(selectedOptions)) return;
+    if (!regionConfig || isEmpty(selectedOptions)) {
+      return;
+    }
 
     const {
       [FilterIDs.FIELD]: updatingField,
@@ -92,14 +94,18 @@ export const RegionFieldBlock: React.FC<RegionFieldBlockProps> = ({
       wellGroups
     );
 
-    if (!isUpdate || isUndefined(value)) return;
+    if (!isUpdate || isUndefined(value)) {
+      return;
+    }
 
     // Triggered on 'Field'-field updates
     updateFieldSelection(value);
   }, [selectedRegions, regionConfig]);
 
   React.useEffect(() => {
-    if (!fieldConfig || isEmpty(selectedOptions)) return;
+    if (!fieldConfig || isEmpty(selectedOptions)) {
+      return;
+    }
 
     const {
       [FilterIDs.REGION]: updatingRegion,
@@ -121,7 +127,9 @@ export const RegionFieldBlock: React.FC<RegionFieldBlockProps> = ({
       wellGroups
     );
 
-    if (!isUpdate || isUndefined(value)) return;
+    if (!isUpdate || isUndefined(value)) {
+      return;
+    }
 
     parentToChild = true;
 
@@ -130,7 +138,9 @@ export const RegionFieldBlock: React.FC<RegionFieldBlockProps> = ({
   }, [selectedFields, fieldConfig]);
 
   React.useEffect(() => {
-    if (!blockConfig || isEmpty(selectedOptions)) return;
+    if (!blockConfig || isEmpty(selectedOptions)) {
+      return;
+    }
 
     const {
       [FilterIDs.REGION]: updatingRegion,

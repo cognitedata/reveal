@@ -70,7 +70,9 @@ export const FavoriteDetailsContent: React.FC<Props> = ({
     metrics.track(`click-${tabKey.toLowerCase()}-tab`);
 
     const tabItem = navigationTabItems.find((item) => item.key === tabKey);
-    if (tabItem) history.push(tabItem.path);
+    if (tabItem) {
+      history.push(tabItem.path);
+    }
   };
 
   const handleModalClose = () => {

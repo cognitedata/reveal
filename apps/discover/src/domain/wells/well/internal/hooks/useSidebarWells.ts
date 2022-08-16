@@ -17,7 +17,9 @@ export const useSidebarWells = () => {
 
   const wellboresAreUnderLimit = wellbores.length <= LIMIT_WELLBORES_NUMBER;
 
-  if (!isOnRelatedDocumentsPage || wellboresAreUnderLimit) return wells;
+  if (!isOnRelatedDocumentsPage || wellboresAreUnderLimit) {
+    return wells;
+  }
 
   const limitedWellbores = wellbores.slice(0, LIMIT_WELLBORES_NUMBER);
   const wellsList = limitedWellbores.map((wellbore) => wellbore.wellId);

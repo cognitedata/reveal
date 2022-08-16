@@ -19,7 +19,9 @@ export const useFilterConfigByCategory = () => {
       userPreferredUnit,
       config?.well_characteristics_filter?.dls
     ).filter((item) => {
-      if (!item.key) return true;
+      if (!item.key) {
+        return true;
+      }
       // when we add data_availabilty into project config
       // we can change this back to:
       // const filterItem = get(config, item.key);

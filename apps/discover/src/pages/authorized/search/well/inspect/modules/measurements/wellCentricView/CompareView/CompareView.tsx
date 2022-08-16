@@ -83,7 +83,9 @@ export const CompareView: React.FC<Props> = ({ wellbores, onBack }) => {
    * Extract errors from processed data and dispath to state
    */
   useEffect(() => {
-    if (!wellboreProcessedData) return;
+    if (!wellboreProcessedData) {
+      return;
+    }
     dispatch(
       inspectTabsActions.setErrors(
         extractWellboreErrorsFromProcessedData(wellboreProcessedData)
@@ -92,7 +94,9 @@ export const CompareView: React.FC<Props> = ({ wellbores, onBack }) => {
   }, [wellboreProcessedData]);
 
   useDeepEffect(() => {
-    if (isEmpty(groupedData) || !userPreferredUnit) return;
+    if (isEmpty(groupedData) || !userPreferredUnit) {
+      return;
+    }
     const wellboreProcessedData = wellbores.map((wellbore) => ({
       wellbore,
       proccessedData: formatChartData(
@@ -116,7 +120,9 @@ export const CompareView: React.FC<Props> = ({ wellbores, onBack }) => {
   ]);
 
   const graphCards = useMemo(() => {
-    if (!wellboreProcessedData) return [];
+    if (!wellboreProcessedData) {
+      return [];
+    }
     const wellboreCharts = extractChartDataFromProcessedData(
       wellboreProcessedData
     );

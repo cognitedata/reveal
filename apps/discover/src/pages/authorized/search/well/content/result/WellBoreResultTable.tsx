@@ -126,8 +126,9 @@ export const WellboreResultTable: React.FC<Props> = React.memo(({ well }) => {
         String(well.id),
         String(row.original.id)
       )
-    )
+    ) {
       return null;
+    }
 
     return <FavoriteStarIcon />;
   };

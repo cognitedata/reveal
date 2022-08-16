@@ -56,7 +56,9 @@ export const MultiSelectGroup: React.FC<MultiSelectGroupProps> = ({
   const [value, setValue] = useState<OptionType<MultiSelectOptionType>[]>([]);
 
   useDeepEffect(() => {
-    if (isUndefined(selectedOptions)) return;
+    if (isUndefined(selectedOptions)) {
+      return;
+    }
 
     const value = groupedOptions
       .flatMap((item) => [...item.options])

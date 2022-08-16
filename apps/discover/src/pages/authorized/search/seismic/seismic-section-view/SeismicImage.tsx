@@ -126,10 +126,14 @@ const SeismicImage: React.FC<Props> = ({
 
   // Change zoomlevel on mouse wheel change
   const handleMouseWheel = (event: WheelEvent) => {
-    if (!onZoomLevelChange) return;
+    if (!onZoomLevelChange) {
+      return;
+    }
     if (event.nativeEvent.wheelDelta < 0) {
       const newZoomLevel = zoomLevel - ZOOM_FACTOR;
-      if (newZoomLevel >= 1) onZoomLevelChange(newZoomLevel);
+      if (newZoomLevel >= 1) {
+        onZoomLevelChange(newZoomLevel);
+      }
     } else {
       onZoomLevelChange(zoomLevel + ZOOM_FACTOR);
     }

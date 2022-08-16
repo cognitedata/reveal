@@ -98,7 +98,9 @@ export const AddToFavoriteSetMenu: React.FC<Props> = ({
       () => showSuccessMessage(t(NOTIFICATION_MESSAGE))
     );
 
-    if (handleSelectOption) handleSelectOption();
+    if (handleSelectOption) {
+      handleSelectOption();
+    }
   };
 
   return (

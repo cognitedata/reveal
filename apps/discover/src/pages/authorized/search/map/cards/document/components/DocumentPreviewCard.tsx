@@ -81,7 +81,9 @@ export const DocumentPreviewCard: React.FC<{
     }
   };
 
-  if (!doc) return null;
+  if (!doc) {
+    return null;
+  }
 
   const fileName = doc.doc.filename;
 

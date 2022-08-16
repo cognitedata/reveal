@@ -12,7 +12,9 @@ export const getIndeterminateWells = (
   selectedWellboreIds: TableResults
 ) => {
   return wells.reduce<TableResults>((intermediateWells, well) => {
-    if (!well.wellbores) return intermediateWells;
+    if (!well.wellbores) {
+      return intermediateWells;
+    }
 
     const selectedWellboresCount = well.wellbores.filter(
       (wellbore) => selectedWellboreIds[wellbore.id]
@@ -36,7 +38,9 @@ export const getWellsOfWellIds = (
 
   return wellIds.reduce<WellInternal[]>((wells, wellId) => {
     const well = wellsById[wellId];
-    if (isUndefined(well)) return wells;
+    if (isUndefined(well)) {
+      return wells;
+    }
     return [...wells, well];
   }, []);
 };

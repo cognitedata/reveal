@@ -16,12 +16,16 @@ import {
 // helpers for using the SDK
 export const filters = {
   toContainsAny: <T extends string | number>(items?: T[]) => {
-    if (isUndefined(items)) return undefined;
+    if (isUndefined(items)) {
+      return undefined;
+    }
     return { containsAny: items };
   },
 
   toContainsAll: <T extends string | number>(items?: T[]) => {
-    if (isUndefined(items)) return undefined;
+    if (isUndefined(items)) {
+      return undefined;
+    }
     return { containsAll: items };
   },
 
@@ -33,7 +37,9 @@ export const filters = {
     filter?: string[],
     isSet = true
   ): PropertyFilter | undefined => {
-    if (isUndefined(filter)) return undefined;
+    if (isUndefined(filter)) {
+      return undefined;
+    }
 
     return {
       isSet,

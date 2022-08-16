@@ -77,7 +77,9 @@ export const getBarFillColorForDisabledBar = (colorConfig?: ColorConfig) => {
 export const getDefaultColorConfig = (
   accessor?: string
 ): ColorConfig | undefined => {
-  if (isUndefined(accessor)) return undefined;
+  if (isUndefined(accessor)) {
+    return undefined;
+  }
 
   return {
     colors: {},

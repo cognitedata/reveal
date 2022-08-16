@@ -182,12 +182,24 @@ export const getTimeDuration = (
 
   let timeDuration = '';
 
-  if (years) timeDuration += `${years}Y `;
-  if (months) timeDuration += `${months}M `;
-  if (days) timeDuration += `${days}d `;
-  if (hours) timeDuration += `${hours}h `;
-  if (minutes) timeDuration += `${minutes}m `;
-  if (seconds) timeDuration += `${seconds}s `;
+  if (years) {
+    timeDuration += `${years}Y `;
+  }
+  if (months) {
+    timeDuration += `${months}M `;
+  }
+  if (days) {
+    timeDuration += `${days}d `;
+  }
+  if (hours) {
+    timeDuration += `${hours}h `;
+  }
+  if (minutes) {
+    timeDuration += `${minutes}m `;
+  }
+  if (seconds) {
+    timeDuration += `${seconds}s `;
+  }
 
   return timeDuration.trim();
 };
