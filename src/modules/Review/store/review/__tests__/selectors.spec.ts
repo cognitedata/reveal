@@ -186,7 +186,7 @@ describe('Test Review selectors', () => {
 
     test("return empty to selected file don't have annotations", () => {
       const selectedAnnotations = selectVisionReviewAnnotationsForFile(
-        rootState,
+        mockRootState,
         2
       );
       expect(selectedAnnotations).toStrictEqual([]);
@@ -196,7 +196,7 @@ describe('Test Review selectors', () => {
       const fileId = 1;
 
       const selectedAnnotations = selectVisionReviewAnnotationsForFile(
-        rootState,
+        mockRootState,
         fileId
       );
 
@@ -262,7 +262,7 @@ describe('Test Review selectors', () => {
 
   describe('selectNonRejectedVisionReviewAnnotationsForFile selector', () => {
     const selectedAnnotations = selectNonRejectedVisionReviewAnnotationsForFile(
-      rootState,
+      mockRootState,
       1
     );
 
