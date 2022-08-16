@@ -1,17 +1,14 @@
-import React, { useContext, useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
 import { getFlow } from '@cognite/cdf-sdk-singleton';
-import { Body, Button, Colors } from '@cognite/cogs.js';
+import { Button } from '@cognite/cogs.js';
 import { RawDB } from '@cognite/sdk/';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
-import styled from 'styled-components';
 
 import SidePanelLevelWrapper from 'components/SidePanel/SidePanelLevelWrapper';
 import CreateDatabaseModal from 'components/CreateDatabaseModal/CreateDatabaseModal';
 import Tooltip from 'components/Tooltip/Tooltip';
-import { RawExplorerContext } from 'contexts';
 import { useDatabases } from 'hooks/sdk-queries';
-import { useActiveTable } from 'hooks/table-tabs';
 
 import SidePanelDatabaseListContent from './SidePanelDatabaseListContent';
 import { Trans, useTranslation } from 'common/i18n';
@@ -25,8 +22,6 @@ const SidePanelDatabaseList = (): JSX.Element => {
   const { data, fetchNextPage, isFetching, hasNextPage } = useDatabases();
 
   const { data: hasWriteAccess } = usePermissions(flow, 'rawAcl', 'WRITE');
-
-  const [[activeDatabase, activeTable] = []] = useActiveTable();
 
   useEffect(() => {
     if (hasNextPage && !isFetching) {
@@ -45,41 +40,9 @@ const SidePanelDatabaseList = (): JSX.Element => {
     [data]
   );
 
-  const { setIsSidePanelOpen } = useContext(RawExplorerContext);
-
   return (
     <SidePanelLevelWrapper
-      header={
-        <StyledSidePanelDatabaseListHeaderWrapper>
-          <StyledSidePanelDatabaseListHeaderTitle strong>
-            RAW Explorer
-          </StyledSidePanelDatabaseListHeaderTitle>
-          <Tooltip
-            content={
-              <Trans i18nKey="explorer-side-panel-databases-access-warning" />
-            }
-            disabled={hasWriteAccess}
-          >
-            <Button
-              aria-label="Create database"
-              disabled={!hasWriteAccess}
-              icon="Add"
-              onClick={() => setIsCreateModalOpen(true)}
-              size="small"
-              type="primary"
-            />
-          </Tooltip>
-          <StyledSidePanelDatabaseListHeaderIconDivider />
-          <Button
-            aria-label="Hide side panel"
-            disabled={!(activeDatabase && activeTable)}
-            icon="PanelLeft"
-            onClick={() => setIsSidePanelOpen(false)}
-            size="small"
-            type="secondary"
-          />
-        </StyledSidePanelDatabaseListHeaderWrapper>
-      }
+      openCreateModal={() => setIsCreateModalOpen(true)}
       searchInputPlaceholder={t(
         'explorer-side-panel-databases-filter-placeholder'
       )}
@@ -116,26 +79,5 @@ const SidePanelDatabaseList = (): JSX.Element => {
     </SidePanelLevelWrapper>
   );
 };
-
-const StyledSidePanelDatabaseListHeaderWrapper = styled.div`
-  align-items: center;
-  display: flex;
-  width: 100%;
-`;
-
-const StyledSidePanelDatabaseListHeaderTitle = styled(Body)`
-  margin-right: 8px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  width: calc(100% - 62px);
-`;
-
-const StyledSidePanelDatabaseListHeaderIconDivider = styled.div`
-  background-color: ${Colors['bg-control--disabled']};
-  height: 16px;
-  margin: 0 8px;
-  width: 2px;
-`;
 
 export default SidePanelDatabaseList;

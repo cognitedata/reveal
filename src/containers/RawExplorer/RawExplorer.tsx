@@ -16,6 +16,8 @@ import { useDatabases } from 'hooks/sdk-queries';
 import RawExplorerFirstTimeUser from './RawExplorerFirstTimeUser';
 import { Allotment, LayoutPriority } from 'allotment';
 
+export type RawExplorerSideMenuItem = 'raw';
+
 const RawExplorer = (): JSX.Element => {
   const { flow } = getFlow();
   const { data: hasReadAccess, isFetched: isReadAccessFetched } =
@@ -38,7 +40,8 @@ const RawExplorer = (): JSX.Element => {
     [data]
   );
 
-  const { isSidePanelOpen } = useContext(RawExplorerContext);
+  const { isSidePanelOpen, setIsSidePanelOpen } =
+    useContext(RawExplorerContext);
 
   if (!isReadAccessFetched || !isListAccessFetched || isFetchingDatabases) {
     return <Loader />;
@@ -57,7 +60,12 @@ const RawExplorer = (): JSX.Element => {
               priority={LayoutPriority.Low}
               visible={isSidePanelOpen}
             >
-              <SidePanel />
+              <SidePanel
+                activePanelKey="raw"
+                onChange={() => {}}
+                onClose={() => setIsSidePanelOpen(false)}
+                key="raw"
+              />
             </Allotment.Pane>
             <Allotment.Pane key="content" priority={LayoutPriority.High}>
               <StyledRawExplorerTableContentWrapper>
