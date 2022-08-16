@@ -1,15 +1,16 @@
 import { PriceScenariosChart } from 'components/PriceScenariosChart';
 import { SetStateAction, useEffect, useState } from 'react';
-import { pickChartColor, TIME_ZONE } from 'utils/utils';
+import { pickChartColor } from 'utils/utils';
 import { PriceAreaWithData, TableData, TableColumn } from 'types';
 import { Column } from 'react-table';
 import { HeadlessTable } from 'components/HeadlessTable';
 import { useAuthContext } from '@cognite/react-container';
-import { DoubleDatapoint, ExternalId } from '@cognite/sdk';
+import { DoubleDatapoint } from '@cognite/sdk';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
 import { useMetrics } from '@cognite/metrics';
+import { DEFAULT_CONFIG } from '@cognite/power-ops-api-types';
 
 import {
   getActiveColumns,
@@ -35,7 +36,9 @@ export const PriceScenarios = ({
   const metrics = useMetrics('price-scenarios');
   const { client } = useAuthContext();
 
-  const bidDate = dayjs(priceArea.bidDate).tz(TIME_ZONE);
+  const bidDate = dayjs(priceArea.bidDate).tz(
+    priceArea.marketConfiguration?.timezone || DEFAULT_CONFIG.TIME_ZONE
+  );
 
   const [priceExternalIds, setPriceExternalIds] = useState<
     { externalId: string }[] | undefined
@@ -62,17 +65,18 @@ export const PriceScenarios = ({
       (scenario) => scenario.externalId === activeTab
     );
 
-    // Create array of column externalids
-    const productionTsExternalIds: ExternalId[] = [];
+    // Create array of column externalids for plants
+    const totalProductionTsExternalIds: string[] = [];
+    const plantProductionTsExternalIds: string[] = [];
     tableColumns.forEach(async (column, index) => {
       if (column.accessor?.includes('scenario')) {
         const scenario = priceArea?.priceScenarios.find(
           (scenario) => scenario.externalId === column.id
         );
-        if (scenario) {
-          productionTsExternalIds.push({
-            externalId: scenario?.totalProduction.shopProductionExternalId,
-          });
+        if (scenario?.totalProduction?.shopProductionExternalIds) {
+          totalProductionTsExternalIds.push(
+            ...scenario.totalProduction.shopProductionExternalIds
+          );
         }
       } else {
         // Get Plant from current scenario (activeTab)
@@ -80,52 +84,71 @@ export const PriceScenarios = ({
           (scenario) => scenario.externalId === activeTab
         )?.plantProduction?.[index - 2];
 
-        if (plant) {
-          productionTsExternalIds.push({
-            externalId: plant?.production.shopProductionExternalId,
-          });
+        if (plant?.production?.shopProductionExternalIds) {
+          plantProductionTsExternalIds.push(
+            ...plant.production.shopProductionExternalIds
+          );
         }
       }
     });
 
-    // Get SHOP production data for the next day
-    const shopProductionDatapoints =
-      productionTsExternalIds &&
+    // We aggregate synthetically all total SHOP timeseries of the same Scenario for a give day (24h)
+    const shopTotalProductionDatapoints =
+      totalProductionTsExternalIds &&
+      (await client?.timeseries.syntheticQuery([
+        {
+          expression: totalProductionTsExternalIds
+            .map((externalId) => `TS{externalId='${externalId}'}`)
+            .join(' + '),
+          start: bidDate.startOf('day').valueOf(),
+          end: bidDate.endOf('day').valueOf(),
+        },
+      ]));
+
+    // Fetch data points of each plant's SHOP result for a given day (24h)
+    const shopPlantProductionDatapoints =
+      plantProductionTsExternalIds.length &&
       (await client?.datapoints.retrieve({
-        items: productionTsExternalIds.map((externalId) => {
-          return externalId;
+        items: plantProductionTsExternalIds.map((externalId) => {
+          return { externalId };
         }),
         start: bidDate.startOf('day').valueOf(),
         end: bidDate.endOf('day').valueOf(),
       }));
 
-    const shopProductionData = shopProductionDatapoints
-      ? await Promise.all(
-          shopProductionDatapoints.map(async ({ datapoints }, index) => {
-            let accessor = '';
-            if (activeTab === 'total') {
-              accessor = `shop-${index}`;
-            } else {
-              accessor =
-                index === 0
-                  ? `shop-${activeScenarioIndex}`
-                  : `shop-plant-${index - 1}`;
-            }
+    const combinedShopProductionDatapoints = [
+      ...(shopTotalProductionDatapoints || []),
+      ...(shopPlantProductionDatapoints || []),
+    ];
 
-            const convertedDatapoints = (datapoints as DoubleDatapoint[]).map(
-              (point) => ({
-                ...point,
-                // Multiply by (-1) all Total SHOP production for presentation (leave Plants unchanged)
-                value: accessor.includes('plant')
-                  ? point.value
-                  : point.value * -1,
-              })
-            );
+    const shopProductionData =
+      combinedShopProductionDatapoints?.map(({ datapoints }, index) => {
+        // Tabs look like: [Total, Scenario 1, Scenario 2, ..., Scenario n]
+        let accessor = '';
+        if (activeTab === 'total') {
+          // When "Total" tab is selected, table looks like:
+          // [Scenario 1, Scenario 2, ..., Scenario n]
+          accessor = `shop-${index}`;
+        } else {
+          // When a "Scenario" tab is selected, table looks like:
+          // [Total (for this scenario), Plant 1, Plant 2, ..., Plant n]
+          // Therefore we need to use "activeScenarioIndex" for the total column
+          accessor =
+            index === 0
+              ? `shop-${activeScenarioIndex}`
+              : `shop-plant-${index - 1}`;
+        }
 
-            return getFormattedProductionColumn(convertedDatapoints, accessor);
+        const convertedDatapoints = (datapoints as DoubleDatapoint[]).map(
+          (point) => ({
+            ...point,
+            // Multiply by (-1) all Total SHOP production for presentation (leave Plants unchanged)
+            value: accessor.includes('plant') ? point.value : point.value * -1,
           })
-        )
-      : [];
+        );
+
+        return getFormattedProductionColumn(convertedDatapoints, accessor);
+      }) || [];
 
     const priceTimeseries =
       activeTab === 'total'
@@ -188,8 +211,11 @@ export const PriceScenarios = ({
   useEffect(() => {
     const activeColumns = getActiveColumns(activeTab, priceArea);
     setTableColumns(activeColumns as TableColumn[]);
-    getTableData();
   }, [priceExternalIds, priceArea]);
+
+  useEffect(() => {
+    getTableData();
+  }, [tableColumns]);
 
   return (
     <Main>

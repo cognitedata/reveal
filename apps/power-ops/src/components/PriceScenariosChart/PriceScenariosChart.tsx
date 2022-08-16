@@ -2,9 +2,9 @@ import { Data, PlotMouseEvent } from 'plotly.js';
 import { SetStateAction, useEffect, useState } from 'react';
 import { Datapoints, DoubleDatapoint, ExternalId } from '@cognite/sdk';
 import { useAuthContext } from '@cognite/react-container';
-import { pickChartColor, TIME_ZONE } from 'utils/utils';
+import { pickChartColor } from 'utils/utils';
+import { DEFAULT_CONFIG, PriceArea } from '@cognite/power-ops-api-types';
 import { useMetrics } from '@cognite/metrics';
-import { PriceArea } from '@cognite/power-ops-api-types';
 import { TableData } from 'types';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
@@ -75,7 +75,9 @@ export const PriceScenariosChart = ({
   };
 
   const getChartData = async () => {
-    const bidDate = dayjs(priceArea.bidDate).tz(TIME_ZONE);
+    const timeZone =
+      priceArea.marketConfiguration?.timezone || DEFAULT_CONFIG.TIME_ZONE;
+    const bidDate = dayjs(priceArea.bidDate).tz(timeZone);
 
     const timeseries =
       externalIds &&
@@ -90,7 +92,7 @@ export const PriceScenariosChart = ({
           const xvals = ts.datapoints.map((dataPoint) => {
             // Convert date timezone for plotly chart
             const convertedDate = dayjs(dataPoint.timestamp)
-              .tz(TIME_ZONE)
+              .tz(timeZone)
               .format('MMM D, YYYY HH:mm');
             return new Date(convertedDate);
           });

@@ -1,6 +1,7 @@
 import { Button, Dropdown, Icon, Label, Menu } from '@cognite/cogs.js';
 import { useAuthContext } from '@cognite/react-container';
 import { downloadBidMatrices, formatDate } from 'utils/utils';
+import { DEFAULT_CONFIG } from '@cognite/power-ops-api-types';
 import { PriceAreaWithData } from 'types';
 import { MouseEvent, useContext, useEffect, useState } from 'react';
 import { CogniteClient } from '@cognite/sdk';
@@ -18,7 +19,8 @@ import { formatMethod } from './utils';
 
 export const useBidMatrixProcessStartDate = (
   externalId: string | undefined,
-  client: CogniteClient | undefined
+  client: CogniteClient | undefined,
+  timeZone: string | undefined
 ) => {
   const [startDate, setStartDate] = useState<string>('');
 
@@ -30,7 +32,9 @@ export const useBidMatrixProcessStartDate = (
         ignoreUnknownIds: true,
       })
       .then(([event]) => {
-        setStartDate(formatDate(event.createdTime));
+        setStartDate(
+          formatDate(event.createdTime, timeZone || DEFAULT_CONFIG.TIME_ZONE)
+        );
       });
   };
 
@@ -58,7 +62,8 @@ export const PortfolioHeader = ({
 
   const { startDate, getStartDate } = useBidMatrixProcessStartDate(
     priceArea?.bidProcessExternalId,
-    client
+    client,
+    priceArea.marketConfiguration?.timezone
   );
 
   const downloadMatrix = async (_e: MouseEvent) => {

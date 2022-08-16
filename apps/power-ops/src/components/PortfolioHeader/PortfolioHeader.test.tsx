@@ -10,6 +10,7 @@ import {
 import { testRenderer } from 'utils/test/render';
 import * as utils from 'utils/utils';
 import { formatDate } from 'utils/utils';
+import { DEFAULT_CONFIG } from '@cognite/power-ops-api-types';
 
 import {
   PortfolioHeader,
@@ -33,12 +34,16 @@ describe('Portfolio header tests', () => {
   });
 
   it('Should calculate the correct start date of the matrix generation process', async () => {
-    const startDate = formatDate(mockCreatedTime);
+    const startDate = formatDate(
+      mockCreatedTime,
+      mockPriceArea.marketConfiguration?.timezone || DEFAULT_CONFIG.TIME_ZONE
+    );
 
     const TestComponent: React.FC = () => {
       const { startDate } = useBidMatrixProcessStartDate(
         mockPriceArea.bidProcessExternalId!,
-        getTestCogniteClient()
+        getTestCogniteClient(),
+        mockPriceArea.marketConfiguration?.timezone || DEFAULT_CONFIG.TIME_ZONE
       );
       return <div>{startDate}</div>;
     };

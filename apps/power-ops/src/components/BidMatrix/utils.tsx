@@ -10,14 +10,20 @@ interface BidMatrixResponse {
 }
 
 export const formatBidMatrixData = async (
-  matrix: MatrixWithData
+  matrix: MatrixWithData,
+  tickSize: string
 ): Promise<BidMatrixResponse> => {
+  // Get desired number of decimal places from market configuration tick_size
+  const numberOfDecimals = Number.isInteger(Number(tickSize))
+    ? 0
+    : tickSize?.split('.')[1].length;
+
   // Create array of table columns
   const formattedColumnHeaders: TableColumn[] = matrix.columnHeaders.map(
     (columnHeader, index) => {
       const formattedValue =
         typeof columnHeader === 'number'
-          ? `${roundWithDec(columnHeader, 1)}`
+          ? `${roundWithDec(columnHeader, numberOfDecimals || 1)}`
           : columnHeader;
       const accessor = columnHeader?.toString().replace('.', '');
       return {

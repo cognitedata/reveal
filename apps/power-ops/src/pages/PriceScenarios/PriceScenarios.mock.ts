@@ -133,3 +133,15 @@ export const getMockTimeseriesData = (): MSWRequest => {
     );
   });
 };
+
+export const getMockSyntheticTimeseriesData = (): MSWRequest => {
+  const url = `${sidecar.cdfApiBaseUrl}/api/v1/projects/test-project/timeseries/synthetic/query`;
+
+  return rest.post<Request>(url, (_req, res, ctx) => {
+    return res(
+      ctx.json({
+        items: mockShopData,
+      })
+    );
+  });
+};

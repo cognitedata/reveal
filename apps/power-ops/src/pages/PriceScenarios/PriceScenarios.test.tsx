@@ -4,9 +4,15 @@ import { setupServer } from 'msw/node';
 import { useAuthContext } from '@cognite/react-container';
 
 import { PriceScenarios } from './PriceScenarios';
-import { getMockTimeseriesData } from './PriceScenarios.mock';
+import {
+  getMockTimeseriesData,
+  getMockSyntheticTimeseriesData,
+} from './PriceScenarios.mock';
 
-const mockServer = setupServer(getMockTimeseriesData());
+const mockServer = setupServer(
+  getMockTimeseriesData(),
+  getMockSyntheticTimeseriesData()
+);
 
 jest.mock('@cognite/react-container', () => ({
   useAuthContext: jest.fn(),

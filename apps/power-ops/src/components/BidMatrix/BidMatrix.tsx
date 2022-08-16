@@ -8,11 +8,10 @@ import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
 import { TableData, PriceAreaWithData, MatrixWithData } from 'types';
-import { EVENT_TYPES } from '@cognite/power-ops-api-types';
+import { EVENT_TYPES, DEFAULT_CONFIG } from '@cognite/power-ops-api-types';
 import { EventStreamContext } from 'providers/eventStreamProvider';
 import { HeadlessTable } from 'components/HeadlessTable';
 import { useMetrics } from '@cognite/metrics';
-import { TIME_ZONE } from 'utils/utils';
 
 import {
   StyledTitle,
@@ -54,10 +53,16 @@ export const BidMatrix = ({ priceArea }: { priceArea: PriceAreaWithData }) => {
   const [currentMatrix, setCurrentMatrix] = useState<MatrixWithData | null>();
   const [matrixHeaderConfig, setMatrixHeaderConfig] =
     useState<Column<TableData>[]>();
+  const marketConfig: { [key: string]: string } = {
+    tick_size:
+      priceArea.marketConfiguration?.tick_size || DEFAULT_CONFIG.DECIMAL_POINTS,
+    timezone:
+      priceArea.marketConfiguration?.timezone || DEFAULT_CONFIG.TIME_ZONE,
+  };
   const [matrixData, setMatrixData] = useState<TableData[]>();
   const [mainScenarioData, setMainScenarioData] = useState<TableData[]>();
   const [bidDate, setBidDate] = useState<dayjs.Dayjs>(
-    dayjs(priceArea.bidDate).tz(TIME_ZONE)
+    dayjs(priceArea.bidDate).tz(marketConfig.timezone)
   );
   const [newMatrixAvailable, setNewMatrixAvailable] = useState<boolean>(false);
 
@@ -73,7 +78,10 @@ export const BidMatrix = ({ priceArea }: { priceArea: PriceAreaWithData }) => {
     setCurrentMatrix(matrix);
 
     if (matrix?.columnHeaders && matrix?.dataRows) {
-      const { columns, data } = await formatBidMatrixData(matrix);
+      const { columns, data } = await formatBidMatrixData(
+        matrix,
+        marketConfig.tick_size
+      );
 
       setMatrixHeaderConfig(columns);
       setMatrixData(data);
@@ -144,42 +152,25 @@ export const BidMatrix = ({ priceArea }: { priceArea: PriceAreaWithData }) => {
 
   useEffect(() => {
     if (plantExternalId && priceArea) {
-      setBidDate(dayjs(priceArea.bidDate).tz(TIME_ZONE));
+      setBidDate(dayjs(priceArea.bidDate).tz(marketConfig.timezone));
       const priceExternalId = priceArea.priceScenarios.find(
         (scenario) => scenario.externalId === priceArea.mainScenarioExternalId
       )?.externalId;
       if (!priceExternalId) return;
 
-      if (plantExternalId === 'total') {
-        const bidMatrix = priceArea.totalMatrixWithData;
-        const production = priceArea.priceScenarios.find(
-          (scenario) => scenario.externalId === priceArea.mainScenarioExternalId
-        )?.totalProduction;
+      const bidMatrix =
+        plantExternalId === 'total'
+          ? priceArea.totalMatrixWithData
+          : priceArea.plantMatrixesWithData?.find(
+              (p) =>
+                p.plantName ===
+                priceArea.plants?.find(
+                  (plant) => plant.externalId === plantExternalId
+                )?.name
+            )?.matrixWithData;
 
-        if (bidMatrix && production?.shopProductionExternalId) {
-          updateMatrixData(bidMatrix, priceExternalId);
-        }
-      } else {
-        const plant = priceArea.plants?.find(
-          (p) => p.externalId === plantExternalId
-        );
-        const plantMatrixes = priceArea.plantMatrixesWithData?.find(
-          (p) => p.plantName === plant?.name
-        );
-        const production = priceArea.priceScenarios
-          .find(
-            (scenario) =>
-              scenario.externalId === priceArea.mainScenarioExternalId
-          )
-          ?.plantProduction.find(
-            (p) => p.plantName === plant?.name
-          )?.production;
-        if (
-          plantMatrixes?.matrixWithData &&
-          production?.shopProductionExternalId
-        ) {
-          updateMatrixData(plantMatrixes?.matrixWithData, priceExternalId);
-        }
+      if (bidMatrix) {
+        updateMatrixData(bidMatrix, priceExternalId);
       }
     }
   }, [priceArea, plantExternalId]);

@@ -55,19 +55,19 @@ export const mockPriceArea: PriceAreaWithData = {
       name: 'Scenario 1',
       externalId: 'scenario1_externalId',
       totalProduction: {
-        shopProductionExternalId: 'scenario1_shop_total_externalId',
+        shopProductionExternalIds: ['scenario1_shop_total_externalId'],
       },
       plantProduction: [
         {
           plantName: 'plant1',
           production: {
-            shopProductionExternalId: 'scenario1_shop_plant1_externalId',
+            shopProductionExternalIds: ['scenario1_shop_plant1_externalId'],
           },
         },
         {
           plantName: 'plant2',
           production: {
-            shopProductionExternalId: 'scenario1_shop_plant2_externalId',
+            shopProductionExternalIds: ['scenario1_shop_plant2_externalId'],
           },
         },
       ],
@@ -76,19 +76,19 @@ export const mockPriceArea: PriceAreaWithData = {
       name: 'Scenario 2',
       externalId: 'scenario2_externalId',
       totalProduction: {
-        shopProductionExternalId: 'scenario2_shop_total_externalId',
+        shopProductionExternalIds: ['scenario2_shop_total_externalId'],
       },
       plantProduction: [
         {
           plantName: 'plant1',
           production: {
-            shopProductionExternalId: 'scenario2_shop_plant1_externalId',
+            shopProductionExternalIds: ['scenario2_shop_plant1_externalId'],
           },
         },
         {
           plantName: 'plant2',
           production: {
-            shopProductionExternalId: 'scenario2_shop_plant2_externalId',
+            shopProductionExternalIds: ['scenario2_shop_plant2_externalId'],
           },
         },
       ],
@@ -140,6 +140,10 @@ export const mockPriceArea: PriceAreaWithData = {
       },
     },
   ],
+  marketConfiguration: {
+    timezone: 'Europe/Oslo',
+    tick_size: '0.1',
+  },
 };
 
 export const getMockPriceArea = (project: string | undefined): MSWRequest => {

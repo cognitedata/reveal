@@ -16,8 +16,6 @@ dayjs.extend(timezone);
 dayjs.extend(isToday);
 dayjs.extend(isYesterday);
 
-export const TIME_ZONE = 'Europe/Oslo';
-
 export const CHART_COLORS: string[] = [
   '#008b8b',
   '#ffa500',
@@ -193,16 +191,16 @@ export const triggerDownloadFromBlob = (fileName: string, blob: Blob) => {
   link.parentNode?.removeChild(link);
 };
 
-export const formatDate = (date: Date | string) => {
-  const formatDate = dayjs(date).tz(TIME_ZONE);
-
+export const formatDate = (date: Date | string, timeZone?: string) => {
+  const formatDate = dayjs(date).tz(timeZone);
+  const timeZoneString = timeZone ? formatDate.format(' UTC Z') : '';
   if (formatDate.isToday()) {
-    return `Today ${formatDate.format('HH:mm Z')}`;
+    return `Today ${formatDate.format('HH:mm')}${timeZoneString}`;
   }
   if (formatDate.isYesterday()) {
-    return `Yesterday ${formatDate.format('HH:mm Z')}`;
+    return `Yesterday ${formatDate.format('HH:mm')}${timeZoneString}`;
   }
-  return formatDate.format('MMM DD, YYYY HH:mm Z');
+  return formatDate.format('MMM DD, YYYY HH:mm') + timeZoneString;
 };
 
 export const handleLogout = (history: History) => {
