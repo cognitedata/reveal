@@ -1,11 +1,14 @@
 import get from 'lodash/get';
+import groupBy from 'lodash/groupBy';
 import isArray from 'lodash/isArray';
+import uniqBy from 'lodash/uniqBy';
 import { toBooleanMap } from 'utils/booleanMap';
 
 import { OptionType } from '@cognite/cogs.js';
 
 import { ExtraLabels } from '../interfaces';
 import {
+  MultiSelectOptionObject,
   MultiSelectOptionType,
   MultiSelectOptionValue,
 } from '../MultiSelect/types';
@@ -14,7 +17,9 @@ import {
   MultiSelectCategorizedOption,
   CategorizedOptionType,
   PossibleOptionsType,
+  MultiSelectCategorizedOptionMap,
 } from './types';
+import { EMPTY_SUBMENU_OPTIONS } from './views/DropdownMenuOptions';
 
 export const getProcessedOptions = (
   options: MultiSelectCategorizedOption[],
@@ -84,3 +89,31 @@ export const selectionMap = (
       return option.label;
     })
   );
+
+export const adaptToMultiSelectCategorizedOptionMap = <T>(
+  data: T[],
+  accessors: {
+    category: DeepKeyOf<T>;
+    options: DeepKeyOf<T>;
+    checkboxColor?: DeepKeyOf<T>;
+  }
+) => {
+  const groupedData = groupBy(data, accessors.category);
+
+  return Object.keys(groupedData).reduce((optionsMap, category) => {
+    const categoryOptions: MultiSelectOptionObject[] = uniqBy(
+      groupedData[category],
+      accessors.options
+    ).map((dataElement) => ({
+      value: get(dataElement, accessors.options) || EMPTY_SUBMENU_OPTIONS,
+      checkboxColor: accessors.checkboxColor
+        ? get(dataElement, accessors.checkboxColor)
+        : undefined,
+    }));
+
+    return {
+      ...optionsMap,
+      [category]: categoryOptions,
+    };
+  }, {} as MultiSelectCategorizedOptionMap);
+};

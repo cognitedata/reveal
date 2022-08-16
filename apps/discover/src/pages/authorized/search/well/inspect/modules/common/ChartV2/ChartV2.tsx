@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import Plot, { Figure } from 'react-plotly.js';
 
 import { Datum, LayoutAxis } from 'plotly.js';
@@ -7,6 +7,7 @@ import { maxMin, minMax } from 'utils/number';
 import { Loader } from '@cognite/cogs.js';
 
 import { useDebounce } from 'hooks/useDebounce';
+import { useDeepEffect, useDeepMemo } from 'hooks/useDeep';
 
 import {
   BodyColumnHeaderLegend,
@@ -15,7 +16,7 @@ import {
 } from '../Events/elements';
 
 import DetailCard from './DetailCard';
-import { ChartWrapper, Container } from './elements';
+import { ChartSubtitle, ChartWrapper, Container } from './elements';
 import Toolbar from './Toolbar';
 import { calculateYTicksGap, findVisibleYTicksValues } from './utils';
 
@@ -40,6 +41,7 @@ export type ChartProps = {
   };
   axisTicksuffixes?: { x?: string; y?: string; z?: string; x2?: string };
   title: string;
+  subtitle?: string;
   autosize?: boolean;
   showLegend?: boolean;
   hovermode?: 'closest' | 'x' | 'y' | 'x unified' | 'y unified' | false;
@@ -68,6 +70,7 @@ const ChartV2 = React.forwardRef(
       axisAutorange,
       axisTicksuffixes,
       title,
+      subtitle,
       autosize = false,
       showLegend = false,
       hovermode = 'closest',
@@ -91,7 +94,7 @@ const ChartV2 = React.forwardRef(
     // Typing this anything besides 'any', causes a mismatch in LegacyRef for Plotly (investigate this the future).
     const chartRef = useRef<any>();
 
-    const axisConfigs: AxisConfig = React.useMemo(
+    const axisConfigs: AxisConfig = useDeepMemo(
       () => ({
         xaxis: {
           autorange: adaptiveChart ? false : axisAutorange?.x,
@@ -117,7 +120,7 @@ const ChartV2 = React.forwardRef(
         },
       }),
       // Do not include the other variable in this fn as deps. It causes plotly onUpdate to be triggered twice
-      [yRange, xRange, adaptiveChart]
+      [axisNames, yRange, xRange, adaptiveChart]
     );
 
     if (axisNames?.x2) {
@@ -137,7 +140,7 @@ const ChartV2 = React.forwardRef(
       };
     }
 
-    const layout: Partial<Plotly.Layout> = React.useMemo(
+    const layout: Partial<Plotly.Layout> = useDeepMemo(
       () => ({
         legend: { orientation: 'v' },
         // title: {
@@ -227,7 +230,7 @@ const ChartV2 = React.forwardRef(
       (inbuiltButtons as HTMLAnchorElement).click();
     };
 
-    const renderPlot = useMemo(
+    const renderPlot = useDeepMemo(
       () => (
         <Plot
           ref={chartRef}
@@ -263,12 +266,22 @@ const ChartV2 = React.forwardRef(
           }}
         />
       ),
-      [data, layout]
+      [data]
     );
 
-    const renderDetailCard = useMemo(() => {
+    const renderDetailCard = useDeepMemo(() => {
       return <DetailCard data={detailCardData} />;
     }, [detailCardData]);
+
+    const resetChart = () => {
+      const inbuiltButtons =
+        chartRef.current?.el.querySelector("[data-val='auto']");
+      inbuiltButtons?.click();
+    };
+
+    useDeepEffect(() => {
+      setTimeout(() => resetChart());
+    }, [data]);
 
     return (
       <React.Suspense fallback={<Loader darkMode={false} />}>
@@ -279,7 +292,13 @@ const ChartV2 = React.forwardRef(
               <Toolbar chartRef={chartRef} />
             </BodyColumnHeaderLegend>
           </BodyColumnHeaderWrapper>
+
           <ChartWrapper ref={ref}>
+            {subtitle && (
+              <ChartSubtitle data-testid="chart-subtitle">
+                {subtitle}
+              </ChartSubtitle>
+            )}
             {renderDetailCard}
             {renderPlot}
           </ChartWrapper>

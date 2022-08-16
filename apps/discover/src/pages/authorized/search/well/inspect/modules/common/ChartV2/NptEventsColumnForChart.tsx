@@ -6,7 +6,6 @@ import isEmpty from 'lodash/isEmpty';
 
 import EmptyState from 'components/EmptyState';
 
-import { EventTabs } from '../../measurements/wellCentricView/constants';
 import { NPT_COLUMN_TITLE } from '../Events/constants';
 import {
   BodyColumn,
@@ -17,6 +16,7 @@ import {
 } from '../Events/elements';
 import NptEventsBadge from '../Events/NptEventsBadge';
 import { NptEventsScatterView } from '../Events/NptEventsScatterView';
+import { EventsColumnView } from '../Events/types';
 
 import { DepthMeasurementScaleForChart, ScaleLineForChart } from './elements';
 
@@ -25,7 +25,7 @@ export type Props = {
   events: NptInternal[];
   isEventsLoading?: boolean;
   scaleLineGap?: number;
-  view?: EventTabs;
+  view?: EventsColumnView;
 };
 
 export const EMPTY_STATE_TEXT =
@@ -55,7 +55,7 @@ export const NptEventsColumnForChart: React.FC<Props> = ({
               return null;
             }
 
-            if (view === EventTabs.scatter) {
+            if (view === EventsColumnView.Scatter) {
               return <NptEventsScatterView events={blockEvents} />;
             }
 

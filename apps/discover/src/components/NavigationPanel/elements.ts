@@ -15,6 +15,7 @@ export const NavigationPanelContainer = styled(FlexRow)`
   align-items: center;
   z-index: ${layers.TOP_BAR};
   border-bottom: 1px solid var(--cogs-border-default);
+  background: var(--cogs-bg-accent);
 `;
 
 export const Title = styled(Body)`

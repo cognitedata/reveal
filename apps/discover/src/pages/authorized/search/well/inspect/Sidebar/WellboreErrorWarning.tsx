@@ -1,34 +1,54 @@
 import React from 'react';
 
-import { v4 as uuid } from 'uuid';
+import isEmpty from 'lodash/isEmpty';
 
-import { Dropdown } from '@cognite/cogs.js';
+import { Tooltip } from '@cognite/cogs.js';
 
 import { DataError } from 'modules/inspectTabs/types';
 
-import { WellboreErrorWarningButton, WellboreErrorsWrapper } from './elements';
+import {
+  WellboreErrorWarningButton,
+  WellboreErrorsWrapper,
+  WellboreErrorItemsTitle,
+} from './elements';
 
-export type Props = {
+export type WellboreErrorWarningProps = {
   errors: DataError[];
 };
 
-export const WellboreErrorWarning: React.FC<Props> = ({ errors }) => {
+export const WellboreErrorWarning: React.FC<WellboreErrorWarningProps> = ({
+  errors,
+}) => {
   return (
-    <Dropdown
-      placement="left-start"
-      openOnHover
+    <Tooltip
+      placement="right-start"
       appendTo={document.body}
       content={
         <WellboreErrorsWrapper>
-          <ul>
-            {errors.map((error) => (
-              <li key={`${error.message}-${uuid()}`}>{error.message}</li>
-            ))}
-          </ul>
+          {errors.map((error, index) => (
+            // eslint-disable-next-line react/no-array-index-key
+            <DataErrorItem key={`${error.message}-${index}`} {...error} />
+          ))}
         </WellboreErrorsWrapper>
       }
     >
       <WellboreErrorWarningButton />
-    </Dropdown>
+    </Tooltip>
+  );
+};
+
+export const DataErrorItem: React.FC<DataError> = ({ message, items }) => {
+  if (!items || isEmpty(items)) {
+    return <li>{message}</li>;
+  }
+
+  return (
+    <>
+      <WellboreErrorItemsTitle>{message}</WellboreErrorItemsTitle>
+      {items.map((item, index) => (
+        // eslint-disable-next-line react/no-array-index-key
+        <li key={`${item}-${index}`}>{item}</li>
+      ))}
+    </>
   );
 };

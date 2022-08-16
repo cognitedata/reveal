@@ -12,8 +12,8 @@ export const ToolbarWrapper = styled.div`
 `;
 
 export const Container = styled.div`
-  width: 100%;
-  padding-bottom: 8px;
+  width: calc(100% - ${sizes.normal}); // padding
+  padding-bottom: ${sizes.small};
   border: 1px solid var(--cogs-greyscale-grey3);
   border-radius: 12px;
   margin: ${sizes.small};
@@ -134,6 +134,15 @@ export const ChartWrapper = styled.div`
   }
 
   background-color: var(--cogs-greyscale-grey1);
+`;
+
+export const ChartSubtitle = styled(Flex)`
+  font-size: 10px;
+  line-height: 14px;
+  letter-spacing: -0.004em;
+  color: var(--cogs-greyscale-grey6);
+  text-align: center;
+  margin-top: ${sizes.small};
 `;
 
 export const DetailcardWrapper = styled(FlexColumn)`

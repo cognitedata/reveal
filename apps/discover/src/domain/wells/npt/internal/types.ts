@@ -44,3 +44,8 @@ export interface NptAggregateView
   wellName: string;
   wellboreName: string;
 }
+
+export type NptCodesSelection = Record<
+  NptInternal['nptCode'],
+  NptInternal['nptCodeDetail'][]
+>;

@@ -40,14 +40,18 @@ describe('Wells: Geomechanics & Ppfg', () => {
     /**
      * Check if all wellbores in filter section is rendered in well centric view
      */
-    cy.findAllByTestId('wellbore-selection-block').each(($element) => {
-      cy.findAllByTestId('wellbore-descriptor').contains($element.text());
-    });
+    cy.findAllByTestId('wellbore-selection-block')
+      .its('length')
+      .then((length) =>
+        cy
+          .findAllByTestId('well-centric-view-card')
+          .should('have.length', length)
+      );
   });
 
   it('Allow user to see geomechanics and ppfg curves in curve centric mode', () => {
     cy.findByRole('button', { name: 'Curves' }).click();
 
-    cy.findAllByTestId('curve-centric-card-header').contains('Geomechanics');
+    cy.findAllByTestId('chart-subtitle').contains('Geomechanics');
   });
 });

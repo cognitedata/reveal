@@ -5,7 +5,7 @@ import { TAB_NAMES } from './constants';
 import ThreeDee from './modules/3d';
 import Casing from './modules/casings';
 import DigitalRocks from './modules/digitalRocks';
-import Measurements from './modules/measurements';
+import GeomechanicsAndPPFG from './modules/geomechanicsAndPPFG';
 import NdsEvents from './modules/ndsEvents';
 import NptEvents from './modules/nptEvents';
 import Overview from './modules/overview';
@@ -86,7 +86,7 @@ export const useTabs = () => {
       key: 'measurements',
       name: TAB_NAMES.GEOMECHANICS_PPFG,
       path: navigation.SEARCH_WELLS_INSPECT_MEASUREMENTS,
-      componentToRender: Measurements,
+      componentToRender: GeomechanicsAndPPFG,
       enabled: !!wellsConfig?.measurements?.enabled,
     },
     {

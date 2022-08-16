@@ -137,9 +137,27 @@ export const CheckboxContent = styled(Flex)`
 export const WellboreErrorWarningButton = styled(WarningButton)`
   background-color: rgba(255, 187, 0, 0.12);
   color: #bb5b00;
+  :hover {
+    background-color: rgba(255, 187, 0, 0.24);
+    color: #bd5b00;
+  }
 `;
 
-export const WellboreErrorsWrapper = styled.div`
-  background: var(--cogs-black);
+export const WellboreErrorsWrapper = styled.ul`
   color: var(--cogs-white);
+  max-width: 300px;
+  li {
+    margin-left: -20px;
+    margin-bottom: ${sizes.extraSmall};
+  }
+  margin-bottom: -5px;
+`;
+
+export const WellboreErrorItemsTitle = styled.div`
+  margin-left: -36px;
+  margin-bottom: ${sizes.extraSmall};
+
+  &:not(:first-child) {
+    margin-top: ${sizes.small};
+  }
 `;

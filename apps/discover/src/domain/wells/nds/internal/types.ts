@@ -25,5 +25,7 @@ export type NdsAggregatesSummary = Record<string, WellboreNdsAggregatesSummary>;
 export interface WellboreNdsAggregatesSummary {
   severities: string[];
   probabilities: string[];
-  riskTypesAndSubtypes: Record<string, string[]>;
+  riskTypesAndSubtypes: NdsRiskTypesSelection;
 }
+
+export type NdsRiskTypesSelection = Record<string, string[]>;

@@ -6,7 +6,7 @@ export type SearchInput = string;
 export type NumericRange = number[];
 export type MultiSelect = string[];
 export type SelectedMap = { [key: string]: boolean };
-export type DataError = { message: string };
+export type DataError = { message: string; items?: string[] };
 export type Errors = { [key: string]: DataError[] };
 
 export interface InspectTabsState {

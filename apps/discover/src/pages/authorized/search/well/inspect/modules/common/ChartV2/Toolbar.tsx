@@ -55,12 +55,9 @@ const Toolbar = ({ chartRef }: Props) => {
           size="small"
           aria-label="Refresh"
           onClick={() => {
-            const inbuiltButtons = (
-              chartRef.current?.el as HTMLDivElement
-            ).querySelector("[data-val='auto']");
-
-            if (!inbuiltButtons) return;
-            (inbuiltButtons as HTMLAnchorElement).click();
+            const inbuiltButtons: HTMLAnchorElement =
+              chartRef.current?.el.querySelector("[data-val='auto']");
+            inbuiltButtons?.click();
           }}
         />
       </Tooltip>

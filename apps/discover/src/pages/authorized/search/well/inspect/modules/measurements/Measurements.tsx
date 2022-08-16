@@ -66,9 +66,7 @@ export const MeasurementsComponent: React.FC = () => {
   useEffect(() => {
     if (isEmpty(data)) return;
     const wellboreErrors = getMeasurementDataFetchErrors(groupedData);
-    if (!isEmpty(wellboreErrors)) {
-      dispatch(inspectTabsActions.setErrors(wellboreErrors));
-    }
+    dispatch(inspectTabsActions.setErrors(wellboreErrors));
   }, [JSON.stringify(data)]);
 
   if (isEmpty(data)) {
