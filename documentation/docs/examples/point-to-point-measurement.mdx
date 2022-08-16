@@ -78,22 +78,19 @@ measurementTool.enterMeasurementMode();
 // Add few measurements
 
 //Change measurement line color & width to random values on "spacebar" key.
-document.onkeydown = function(event) {
-  event = event || window.event;
-  if (event.keyCode == 32) {
-    const measurementRefArray = measurementTool.getAllMeasurements();
+setInterval(() => {
+    const measurements = measurementTool.getAllMeasurements();
 
-    measurementRefArray.forEach(measurementRef => {
-        const color = Math.floor(Math.random() * 16777215);
-        measurementTool.updateLineColor(measurementRef.measurementId, color);
+    measurements.forEach(measurement => {
+      const color = Math.floor(Math.random() * 16777215);
+      measurementTool.updateLineColor(measurement.measurementId, color);
 
-        //Update line width
-        const lineWidth = (Math.random() * 1.0) + 0.2;
-        measurementTool.updateLineWidth(measurementRef.measurementId, lineWidth);
-        viewer.requestRedraw();
-      });
-    }
-}
+      //Update line width
+      const lineWidth = (Math.random() * 1.0) + 0.2;
+      measurementTool.updateLineWidth(measurement.measurementId, lineWidth);
+      viewer.requestRedraw();
+    });
+}, 5000);
 ```
 ## Change unit
 
@@ -119,7 +116,7 @@ returns array of measurement reference `MeasurementRef` having
   - `endPoint` : end point of the measurement.
   - `distanceInMeters` : measured distance in meters.
 
-```jsx
+```jsx runnable
 // import { MeasurementTool } from '@cognite/reveal/tools';
 
 const measurementTool = new MeasurementTool(viewer);
@@ -128,10 +125,12 @@ measurementTool.enterMeasurementMode();
 //add measurements
 
 //get all measurements
-const measurements = measurementTool.getAllMeasurements();
-meausrements.forEach(measurement => {
-  alert(measurement.distanceInMeters);
-});
+setTimeout(() => {
+  const measurements = measurementTool.getAllMeasurements();
+  measurements.forEach(measurement => {
+    alert(measurement.distanceInMeters);
+  });
+}, 6000);
 ```
 
 ### Remove measurement
@@ -144,17 +143,15 @@ To remove a measurement from the viewer, we have `MeasurementTool.removeMeasurem
 const measurementTool = new MeasurementTool(viewer);
 measurementTool.enterMeasurementMode();
 
-//On key 'r', remove the first measurement added
-document.onkeydown = function(event) {
-  event = event || window.event;
-  if (event.keyCode == 82) {
-    // Before retrival of measurements, add some measurement
+//remove the first measurement in the added list
+setTimeout(() => {
     const measurements = measurementTool.getAllMeasurements();
 
-    measurementTool.removeMeasurement(measurements[0].measurementId);
-    viewer.requestRedraw();
+    if (measurements[0]) {
+      measurementTool.removeMeasurement(measurements[0].measurementId);
+      viewer.requestRedraw();
     }
-}
+  }, 6000);
 ```
 
 To remove all measurement from the viewer, use `MeasurementTool.removeAllMeasurement()`
