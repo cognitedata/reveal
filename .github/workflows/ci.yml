@@ -129,7 +129,7 @@ jobs:
       with:
         msg: |
           There were failures in the visual tests workflow.
-          Image diffs for visual tests can be downloaded as an artifact [here](${{ env.GITHUB_RUN_ID }}/${{ github.GITHUB_RUN_ID }}).
+          Image diffs for visual tests can be downloaded as an artifact ${{ GITHUB_RUN_ID }} - ${{ github.GITHUB_RUN_ID }} [here]().
 
     - name: Upload image diffs for failed visual tests
       if: (always() && steps.viewerVisualTests.outcome == 'failure')
