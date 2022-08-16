@@ -1,6 +1,6 @@
 use crate::linalg::{BoundingBox,vec3,Vec3,Vec3WithIndex,boxes_overlap};
 
-pub const MAX_POINTS_PER_NODE: usize = 10_000;
+pub const MAX_POINTS_PER_NODE: usize = 1_000;
 pub const MIN_OCTREE_NODE_SIZE: f64 = 0.0625;
 
 use std::convert::TryInto;
