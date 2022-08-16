@@ -164,7 +164,6 @@ const TitleHeader = styled.div<{ width: number }>`
   grid-template-columns: auto auto;
   grid-gap: 10px;
   margin-bottom: 14px;
-  width: ${(props) => `${props.width}px`};
 `;
 
 const Left = styled.div`
