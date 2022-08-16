@@ -9,6 +9,7 @@ import cogsStyles from '@cognite/cogs.js/dist/cogs.css';
 import reactTableStyles from 'react-base-table/styles.css';
 import { createGlobalStyle } from 'styled-components';
 import { styleScope } from 'styles/styleScope';
+import allotmentStyles from 'allotment/dist/style.css';
 
 // This will override the appendTo prop on all Tooltips used from cogs
 CogsTooltip.defaultProps = {
@@ -17,7 +18,7 @@ CogsTooltip.defaultProps = {
 };
 
 export default function GlobalStyles(props: { children: React.ReactNode }) {
-  useGlobalStyles([cogsStyles, reactTableStyles]);
+  useGlobalStyles([cogsStyles, reactTableStyles, allotmentStyles]);
 
   return (
     <ConfigProvider getPopupContainer={getContainer}>
