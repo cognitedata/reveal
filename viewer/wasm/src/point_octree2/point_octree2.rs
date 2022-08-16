@@ -24,4 +24,11 @@ impl PointOctree2<'_> {
     pub fn assign_object_ids(&self, bounding_box: &BoundingBox, shape: &Box<dyn Shape>, object_ids: &js_sys::Uint16Array) -> () {
         self.root.assign_object_ids(bounding_box, shape, object_ids);
     }
+
+    pub fn get_points_in_box(&self, bounding_box: &BoundingBox) -> Vec<Vec3WithIndex> {
+        let mut vec = Vec::<Vec3WithIndex>::new();
+        self.root.get_points_in_box(bounding_box, &mut vec);
+
+        vec
+    }
 }

@@ -102,12 +102,21 @@ pub fn assign_points(input_shapes: js_sys::Array,
             }
         }
     } */
-    // console::time_end();
-
     let octree2 = point_octree2::point_octree2::PointOctree2::new(bounding_box, &mut point_vec);
     for shape in shape_vec.iter() {
+        octree2.assign_object_ids(&shape.create_bounding_box(), shape, &object_ids);
+    }
+    /* for shape in shape_vec.iter() {
+        let points_in_box = octree2.get_points_in_box(&shape.create_bounding_box());
+        for point in points_in_box {
+            if shape.contains_point(&point.vec) {
+                object_ids.set_index(point.index, shape.get_object_id() as u16);
+            }
+        }
+    } */
 
-        /* let mut point_callback = |points: &[Vec3WithIndex]| {
+    /* for shape in shape_vec.iter() {
+        let mut point_callback = |points: &[Vec3WithIndex]| {
             for point in points {
                 if shape.contains_point(&point.vec) {
                     object_ids.set_index(point.index, shape.get_object_id() as u16);
@@ -115,9 +124,10 @@ pub fn assign_points(input_shapes: js_sys::Array,
             }
         };
 
-        octree2.traverse_points_in_box(&shape.create_bounding_box(), &mut point_callback); */
-        octree2.assign_object_ids(&shape.create_bounding_box(), shape, &object_ids);
-    }
+        octree2.traverse_points_in_box(&shape.create_bounding_box(), &mut point_callback);
+} */
+    // console::time_end();
+
 
     object_ids
 }

@@ -4,6 +4,7 @@ pub const MAX_POINTS_PER_NODE: usize = 1_000;
 pub const MIN_OCTREE_NODE_SIZE: f64 = 0.0625;
 
 use std::convert::TryInto;
+use std::vec::Vec;
 
 use crate::shapes::shape::Shape;
 
@@ -61,6 +62,18 @@ impl<'a> OctreeNode2<'a> {
             }
         }
     }
+
+    pub fn get_points_in_box(&self, bounding_box: &BoundingBox, results: &mut Vec<Vec3WithIndex> ) -> () {
+        if self.children.is_some() {
+            for child in self.children.as_ref().unwrap().iter() {
+                if boxes_overlap(&child.bounding_box, bounding_box) {
+                    child.get_points_in_box(bounding_box, results);
+                }
+            }
+        } else {
+            results.extend_from_slice(self.points.unwrap());
+        }
+    }
 }
 
 fn split<'a>(points: &'a mut [Vec3WithIndex], bounding_box: BoundingBox) -> Box<[OctreeNode2<'a>; 8]> {
@@ -78,11 +91,7 @@ fn split<'a>(points: &'a mut [Vec3WithIndex], bounding_box: BoundingBox) -> Box<
 
     let mut children = std::vec::Vec::<OctreeNode2<'a>>::with_capacity(8);
 
-    // let mut point_splits = split_points(points, &splits);
-    // let mut split_iter = point_splits.into_iter();
-
     for i in 0..8 {
-        // let point_split = split_iter.next().unwrap();
         let bb = box_iter.next().unwrap();
 
         unsafe {
@@ -93,21 +102,6 @@ fn split<'a>(points: &'a mut [Vec3WithIndex], bounding_box: BoundingBox) -> Box<
             children.push(OctreeNode2::new(*bb,  slc/* *point_split */));
 
         }
-
-
-        // children.push(OctreeNode2::new(boxes[i], &mut points[splits[i]..split_maxes[i]]));
-
-        // let split = get_split(points, &splits, i);
-        // children.push(OctreeNode2::new(boxes[i], split));
-
-        /* unsafe {
-            children.push(OctreeNode2::new(boxes[i], point_splits[i]));
-    } */
-        /* let (_, mut last) = points.split_at_mut(splits[i]);
-        let size = if i == 7 { points.len() - splits[i] } else { splits[i + 1] - splits[i] };
-        let (mut res, _) = points.split_at_mut(size);
-
-        children.push(OctreeNode2::new(boxes[i], res)); */
     }
 
     Box::<[OctreeNode2<'a>; 8]>::new(children.try_into().unwrap())
@@ -127,20 +121,6 @@ fn find_splits(points: &mut [Vec3WithIndex], middle: &Vec3) -> [usize; 8] {
     }
 
     accum_counts
-}
-
-fn split_points<'a>(points: &'a mut [Vec3WithIndex], splits: &[usize; 8]) -> [&'a mut [Vec3WithIndex]; 8] {
-    unsafe {
-        let mut arr: std::mem::MaybeUninit<[&'a mut [Vec3WithIndex]; 8]> = std::mem::MaybeUninit::zeroed();
-        let arr_ptr = arr.as_mut_ptr();
-        for i in 0..8 {
-            let num_elements = if i == 7 { points.len() - splits[i] } else { splits[i + 1]  - splits[i] };
-            let ptr = points.as_mut_ptr().add(splits[i]);
-            (*arr_ptr)[i] = std::slice::from_raw_parts_mut(ptr, num_elements);
-        }
-
-        arr.assume_init()
-    }
 }
 
 fn get_octree_child_index(point: &Vec3WithIndex, middle: &Vec3) -> usize {
