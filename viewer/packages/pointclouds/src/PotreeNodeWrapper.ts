@@ -25,6 +25,8 @@ export class PotreeNodeWrapper {
   private _needsRedraw = false;
   private readonly _classification: IClassification = {} as IClassification;
 
+  private static readonly pickingWindowSize = 20;
+
   get needsRedraw(): boolean {
     return this._needsRedraw;
   }
@@ -79,7 +81,7 @@ export class PotreeNodeWrapper {
   }
 
   pick(renderer: THREE.WebGLRenderer, camera: THREE.Camera, ray: THREE.Ray): PickPoint | null {
-    return this.octree.pick(renderer, camera, ray, { pickWindowSize: 20 });
+    return this.octree.pick(renderer, camera, ray, { pickWindowSize: PotreeNodeWrapper.pickingWindowSize });
   }
 
   setClassificationAndRecompute(pointClass: number | WellKnownAsprsPointClassCodes, visible: boolean): void {
