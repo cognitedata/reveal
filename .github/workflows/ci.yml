@@ -130,10 +130,6 @@ jobs:
           msg: |
             There were failures in the visual tests workflow.
             Image diffs for visual tests can be downloaded as an artifact [here](https://github.com/cognitedata/reveal/actions/runs/${{ env.GITHUB_RUN_ID }}).
-          check_for_duplicate_msg: false
-          duplicate_msg_pattern: |
-            :orange_book: Documentation preview is available from
-            https://cognitedata.github.io/reveal-docs-preview/${{ env.PR_NUMBER }}/docs/next/.
 
     - name: Upload image diffs for failed visual tests
       if: (always() && steps.viewerVisualTests.outcome == 'failure')
