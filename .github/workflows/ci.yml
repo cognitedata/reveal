@@ -121,12 +121,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         msg: |
-          "${{ GITHUB_RUN_ID }}"
-          ${{ GITHUB_RUN_ID }}
-          "${{ env.GITHUB_RUN_ID }}"
-          ${{ env.GITHUB_RUN_ID }}
-          "${{ github.GITHUB_RUN_ID }}"
-          ${{ github.GITHUB_RUN_ID }}
           There were failures in the visual tests workflow.
           Image diffs for visual tests can be downloaded as an artifact [here](https://github.com/cognitedata/reveal/actions/runs/${{ github.run_id }}).
 
