@@ -1,5 +1,6 @@
 import { NdsInternal } from 'domain/wells/nds/internal/types';
 import { NptInternal } from 'domain/wells/npt/internal/types';
+import { WellTopSurfaceInternal } from 'domain/wells/wellTops/internal/types';
 
 import compact from 'lodash/compact';
 import isEmpty from 'lodash/isEmpty';
@@ -10,7 +11,8 @@ import { CasingAssemblyInternal } from '../types';
 export const getDepthRange = (
   casingAssemblies: CasingAssemblyInternal[],
   nptEvents: NptInternal[],
-  ndsEvents: NdsInternal[]
+  ndsEvents: NdsInternal[],
+  tops?: WellTopSurfaceInternal[]
 ) => {
   const measuredDepthTopValues = casingAssemblies.map(
     ({ measuredDepthTop }) => measuredDepthTop.value
@@ -28,6 +30,13 @@ export const getDepthRange = (
     ndsEvents.map(({ holeEnd }) => holeEnd?.value)
   );
 
+  const topsTopMeasuredDepths = (tops || []).map(
+    (top) => top.top.measuredDepth
+  );
+  const topsBaseMeasuredDepths = compact(
+    (tops || []).map((top) => top.base?.measuredDepth)
+  );
+
   const casingsMin = getMinOrDefaultValue(measuredDepthTopValues);
   const casingsMax = getMaxOrDefaultValue(measuredDepthBaseValues);
 
@@ -36,9 +45,12 @@ export const getDepthRange = (
   const ndsMin = getMinOrDefaultValue(ndsHoleStartValues);
   const ndsMax = getMaxOrDefaultValue(ndsHoleEndValues);
 
+  const topsMin = getMinOrDefaultValue(topsBaseMeasuredDepths);
+  const topsMax = getMaxOrDefaultValue(topsTopMeasuredDepths);
+
   return [
-    Math.min(casingsMin, nptMin, ndsMin),
-    Math.max(casingsMax, nptMax, ndsMax),
+    Math.min(casingsMin, nptMin, ndsMin, topsMin),
+    Math.max(casingsMax, nptMax, ndsMax, topsMax),
   ];
 };
 

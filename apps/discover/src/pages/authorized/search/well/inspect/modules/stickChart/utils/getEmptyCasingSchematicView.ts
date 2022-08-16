@@ -1,9 +1,11 @@
 import { WellboreInternal } from 'domain/wells/wellbore/internal/types';
+import { WellTopsInternal } from 'domain/wells/wellTops/internal/types';
 
 import { CasingSchematicView } from '../types';
 
 export const getEmptyCasingSchematicView = (
-  wellbore: WellboreInternal
+  wellbore: WellboreInternal,
+  wellTop?: WellTopsInternal
 ): CasingSchematicView => {
   const { wellName, name, matchingId } = wellbore;
 
@@ -20,5 +22,6 @@ export const getEmptyCasingSchematicView = (
     phase: '',
     nptEvents: [],
     ndsEvents: [],
+    wellTop,
   };
 };

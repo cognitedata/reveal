@@ -19,6 +19,7 @@ import { getScaleBlocks } from '../utils/scale';
 
 import { DEPTH_SCALE_MIN_HEIGHT } from './constants';
 import { ContentWrapper, WellboreCasingsViewWrapper } from './elements';
+import { FormationColumn } from './FormationColumn/FormationColumn';
 import { Header } from './Header';
 import { NdsEventsColumn } from './NdsEventsColumn';
 import { NptEventsColumn } from './NptEventsColumn';
@@ -34,6 +35,7 @@ interface WellboreCasingsViewProps {
   selectedNdsCodes: MultiSelectCategorizedOptionMap;
   isNptEventsLoading?: boolean;
   isNdsEventsLoading?: boolean;
+  isWellTopsLoading: boolean;
   showBothSides?: boolean;
 }
 
@@ -45,6 +47,7 @@ export const WellboreCasingView: React.FC<WellboreCasingsViewProps> = ({
   selectedNdsCodes = {},
   isNptEventsLoading,
   isNdsEventsLoading,
+  isWellTopsLoading,
   showBothSides = false,
 }) => {
   const depthScaleRef = useRef<HTMLElement>(null);
@@ -65,6 +68,7 @@ export const WellboreCasingView: React.FC<WellboreCasingsViewProps> = ({
     ndsEvents,
     rkbLevel,
     waterDepth,
+    wellTop,
   } = data;
 
   const filteredNptEvents = useDeepMemo(
@@ -78,7 +82,13 @@ export const WellboreCasingView: React.FC<WellboreCasingsViewProps> = ({
   );
 
   const [_, maxDepth] = useDeepMemo(
-    () => getDepthRange(casingAssemblies, nptEvents, ndsEvents),
+    () =>
+      getDepthRange(
+        casingAssemblies,
+        nptEvents,
+        ndsEvents,
+        wellTop?.tops || []
+      ),
     [data]
   );
 
@@ -127,6 +137,14 @@ export const WellboreCasingView: React.FC<WellboreCasingsViewProps> = ({
             id="welbore-casing-view-content"
             elementsOrder={columnOrder}
           >
+            {isColumnVisible(ChartColumn.CASINGS) && (
+              <FormationColumn
+                key="formation"
+                scaleBlocks={scaleBlocks}
+                isLoading={isWellTopsLoading}
+                wellTop={wellTop}
+              />
+            )}
             {isColumnVisible(ChartColumn.CASINGS) && (
               <SchemaColumn
                 key={ChartColumn.CASINGS}

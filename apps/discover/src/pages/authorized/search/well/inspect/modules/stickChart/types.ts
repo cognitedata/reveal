@@ -4,6 +4,7 @@ import {
 } from 'domain/wells/casings/internal/types';
 import { NdsInternal } from 'domain/wells/nds/internal/types';
 import { NptInternal } from 'domain/wells/npt/internal/types';
+import { WellTopsInternal } from 'domain/wells/wellTops/internal/types';
 
 import { ConvertedDistance } from 'utils/units/constants';
 
@@ -15,6 +16,7 @@ export interface CasingSchematicView extends CasingSchematicInternal {
   waterDepth?: ConvertedDistance;
   nptEvents: NptInternal[];
   ndsEvents: NdsInternal[];
+  wellTop?: WellTopsInternal;
 }
 
 export interface CasingAssemblyView extends CasingAssemblyInternal {
@@ -25,6 +27,7 @@ export interface CasingAssemblyView extends CasingAssemblyInternal {
 }
 
 export enum ChartColumn {
+  FORMATION = 'Formation',
   CASINGS = 'Casings',
   NDS = 'NDS',
   NPT = 'NPT',

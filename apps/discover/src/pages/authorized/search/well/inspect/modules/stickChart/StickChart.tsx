@@ -18,8 +18,13 @@ import { WellboreCasingView } from './WellboreCasingView';
 import { DEFAULT_COLUMN_ORDER } from './WellboreCasingView/constants';
 
 const StickChart: React.FC = () => {
-  const { data, isLoading, isNptEventsLoading, isNdsEventsLoading } =
-    useCasingsData();
+  const {
+    data,
+    isLoading,
+    isNptEventsLoading,
+    isNdsEventsLoading,
+    isWellTopsLoading,
+  } = useCasingsData();
 
   const scrollRef = useRef<HTMLDivElement>(null);
   const [columnOrder, setColumnOrder] = useState(DEFAULT_COLUMN_ORDER);
@@ -71,6 +76,7 @@ const StickChart: React.FC = () => {
             selectedNdsCodes={selectedNdsCodes}
             isNptEventsLoading={isNptEventsLoading}
             isNdsEventsLoading={isNdsEventsLoading}
+            isWellTopsLoading={isWellTopsLoading}
           />
         ))}
       </WellboreCasingsViewsWrapper>

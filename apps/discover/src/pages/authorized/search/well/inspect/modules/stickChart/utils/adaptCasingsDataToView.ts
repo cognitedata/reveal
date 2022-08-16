@@ -6,6 +6,7 @@ import { KeyedTvdData } from 'domain/wells/trajectory/internal/types';
 import { WellInternal } from 'domain/wells/well/internal/types';
 import { getRkbLevel } from 'domain/wells/wellbore/internal/selectors/getRkbLevel';
 import { keyByWellbore } from 'domain/wells/wellbore/internal/transformers/keyByWellbore';
+import { WellTopsInternal } from 'domain/wells/wellTops/internal/types';
 
 import isUndefined from 'lodash/isUndefined';
 
@@ -19,7 +20,8 @@ export const adaptCasingsDataToView = (
   casingsData: CasingSchematicInternal[],
   tvdData: KeyedTvdData,
   nptData: Record<string, NptInternal[]>,
-  ndsData: Record<string, NdsInternal[]>
+  ndsData: Record<string, NdsInternal[]>,
+  wellTops: WellTopsInternal[]
 ): CasingSchematicView[] => {
   const keyedCasingsData = keyByWellbore(casingsData);
 
@@ -30,9 +32,12 @@ export const adaptCasingsDataToView = (
       const casingSchematic = keyedCasingsData[wellboreMatchingId];
       const trueVerticalDepths = tvdData[wellboreMatchingId];
 
+      const wellTop = wellTops.find(
+        (top) => top.wellboreMatchingId === wellboreMatchingId
+      );
       // If no casings for the current wellbore.
       if (isUndefined(casingSchematic)) {
-        return getEmptyCasingSchematicView(wellbore);
+        return getEmptyCasingSchematicView(wellbore, wellTop);
       }
 
       const casingAssemblies = adaptCasingAssembliesDataToView(
@@ -49,6 +54,7 @@ export const adaptCasingsDataToView = (
         waterDepth: well.waterDepth,
         nptEvents: nptData[wellboreMatchingId] || [],
         ndsEvents: ndsData[wellboreMatchingId] || [],
+        wellTop,
       };
     })
   );

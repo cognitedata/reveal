@@ -49,7 +49,11 @@ export const FilterBar: React.FC<FilterBarProps> = ({
         id="casing-filter-content"
         onRearranged={handleRearrange}
       >
-        {/* <FilterItem text="Formations" key="formations" /> */}
+        <FilterItem
+          key={ChartColumn.FORMATION}
+          column={ChartColumn.FORMATION}
+          onFiterVisiblityChange={handleColumnVisibilityChange}
+        />
         <FilterItem
           key={ChartColumn.CASINGS}
           column={ChartColumn.CASINGS}

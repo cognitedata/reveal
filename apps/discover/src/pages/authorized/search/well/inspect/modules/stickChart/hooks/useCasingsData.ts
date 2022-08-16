@@ -4,6 +4,7 @@ import { useNdsEventsForCasings } from 'domain/wells/nds/internal/hooks/useNdsEv
 import { useNptEventsForCasings } from 'domain/wells/npt/internal/hooks/useNptEventsForCasings';
 import { useWellInspectSelectedWellboreIds } from 'domain/wells/well/internal/hooks/useWellInspectSelectedWellboreIds';
 import { useWellInspectSelectedWells } from 'domain/wells/well/internal/hooks/useWellInspectSelectedWells';
+import { useWellTopsQuery } from 'domain/wells/wellTops/internal/queries/useWellTopsQuery';
 
 import { useMemo } from 'react';
 
@@ -25,20 +26,25 @@ export const useCasingsData = () => {
   const { data: ndsData, isLoading: isNdsEventsLoading } =
     useNdsEventsForCasings({ wellboreIds });
 
+  const { data: wellTopsData, isLoading: isWellTopsLoading } =
+    useWellTopsQuery();
+
   const adaptedCasingsData = useMemo(() => {
     return adaptCasingsDataToView(
       wells,
       casingsData || [],
       tvdData,
       nptData,
-      ndsData
+      ndsData,
+      wellTopsData || []
     );
-  }, [wells, casingsData, tvdData, nptData, ndsData]);
+  }, [wells, casingsData, tvdData, nptData, ndsData, wellTopsData]);
 
   return {
     data: adaptedCasingsData,
     isLoading,
     isNptEventsLoading,
     isNdsEventsLoading,
+    isWellTopsLoading,
   };
 };
