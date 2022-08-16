@@ -4,7 +4,7 @@ import { ThunkConfig } from 'src/store/rootReducer';
 import { DeleteAnnotationsForDeletedFiles } from 'src/store/thunks/Annotation/DeleteAnnotationsForDeletedFiles';
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
-const SLEEP_DELAY_MS = 800;
+const SLEEP_DELAY_MS = 1600;
 
 export const DeleteFilesById = createAsyncThunk<
   number[],
