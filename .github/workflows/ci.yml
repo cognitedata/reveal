@@ -121,7 +121,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         msg: |
-          "$GITHUB_RUN_ID"
           "${{ GITHUB_RUN_ID }}"
           ${{ GITHUB_RUN_ID }}
           "${{ env.GITHUB_RUN_ID }}"
