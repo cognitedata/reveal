@@ -127,7 +127,9 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        msg: Test ${{ github.run_id }}
+        msg: |
+          There were failures in the examples workflow.
+          Image diffs for visual tests can be downloaded as an artifact [here](https://github.com/cognitedata/reveal/actions/runs/${{ github.run_id }}).
 
     - name: Upload image diffs for failed visual tests
       if: (always() && steps.viewerVisualTests.outcome == 'failure')
