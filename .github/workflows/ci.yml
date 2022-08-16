@@ -109,6 +109,7 @@ jobs:
       run: yarn install --immutable
 
     - name: Execute visual tests
+      uses: GabrielBB/xvfb-action@v1
       id: viewerVisualTests
       working-directory: viewer
       run: 'yarn test:visual'
