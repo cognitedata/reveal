@@ -9,10 +9,8 @@ import { SectorCuller } from './SectorCuller';
 import { ByVisibilityGpuSectorCuller } from './ByVisibilityGpuSectorCuller';
 import { GpuOrderSectorsByVisibilityCoverage } from './OrderSectorsByVisibilityCoverage';
 
-export function createV8SectorCuller(
-  renderer: THREE.WebGLRenderer,
-  depthOnlyRenderPipeline: CadGeometryRenderModePipelineProvider
-): SectorCuller {
-  const coverageUtil = new GpuOrderSectorsByVisibilityCoverage({ renderer, depthOnlyRenderPipeline });
-  return new ByVisibilityGpuSectorCuller({ renderer, coverageUtil });
+export function createV8SectorCuller(depthOnlyRenderPipeline: CadGeometryRenderModePipelineProvider): SectorCuller {
+  const renderer = new THREE.WebGLRenderer();
+  const coverageUtil = new GpuOrderSectorsByVisibilityCoverage({ renderer: renderer, depthOnlyRenderPipeline });
+  return new ByVisibilityGpuSectorCuller({ renderer: renderer, coverageUtil });
 }

@@ -126,17 +126,10 @@ export function createRevealManager(
     renderer
   );
   sceneHandler.customObjects.push(pointCloudManager.pointCloudGroupWrapper);
-  const cadManager = createCadManager(
-    modelMetadataProvider,
-    modelDataProvider,
-    renderer,
-    materialManager,
-    depthRenderPipeline,
-    {
-      ...revealOptions.internal?.cad,
-      continuousModelStreaming: revealOptions.continuousModelStreaming
-    }
-  );
+  const cadManager = createCadManager(modelMetadataProvider, modelDataProvider, materialManager, depthRenderPipeline, {
+    ...revealOptions.internal?.cad,
+    continuousModelStreaming: revealOptions.continuousModelStreaming
+  });
   return new RevealManager(cadManager, pointCloudManager, pipelineExecutor, defaultRenderPipeline, materialManager);
 }
 
