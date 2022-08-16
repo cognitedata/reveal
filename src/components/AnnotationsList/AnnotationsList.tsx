@@ -9,8 +9,7 @@ import {
   Icon,
   SegmentedControl,
 } from '@cognite/cogs.js';
-import BreadcrumbItem from 'antd/lib/breadcrumb/BreadcrumbItem';
-import { lightGrey } from 'utils';
+import { Breadcrumb } from 'antd';
 import { ResourceIcons } from 'components';
 import {
   ProposedCogniteAnnotation,
@@ -134,8 +133,8 @@ const AnnotationsList = ({
     </ListItem>
   );
   return (
-    <div style={{ width: 360, borderLeft: `1px solid ${lightGrey}` }}>
-      <ResourcePreviewWrapper>
+    <>
+      <AnnotationListContainer>
         <Flex direction="row" style={{ flex: '0 0 auto' }}>
           <Button
             icon="ArrowLeft"
@@ -143,9 +142,11 @@ const AnnotationsList = ({
             style={{ color: 'black', marginTop: '-7px' }}
             type="ghost"
           />
-          <BreadcrumbItem separator={<span />}>
-            {capitalize(type)}
-          </BreadcrumbItem>
+          <Breadcrumb>
+            <Breadcrumb.Item separator={<span />}>
+              {capitalize(type)}
+            </Breadcrumb.Item>
+          </Breadcrumb>
         </Flex>
         <SegmentedControl
           style={{ marginRight: 24, flex: '0 0 auto' }}
@@ -176,8 +177,8 @@ const AnnotationsList = ({
             <EmptyState type={filterType} />
           )}
         </ListWrapper>
-      </ResourcePreviewWrapper>
-    </div>
+      </AnnotationListContainer>
+    </>
   );
 };
 
@@ -210,9 +211,7 @@ const ListItem = styled.div<TagProps>`
   }
 `;
 
-const ResourcePreviewWrapper = styled.div`
-  height: calc(100vh - 250px);
-  overflow: hidden;
+const AnnotationListContainer = styled.div`
   min-width: 360px;
   background: #fff;
   display: flex;

@@ -5,10 +5,10 @@ import {
   Body,
   Collapse,
   Menu,
-  Icon,
   toast,
   Modal,
   Detail,
+  Flex,
 } from '@cognite/cogs.js';
 import {
   useSelectedAnnotations,
@@ -16,8 +16,8 @@ import {
   useExtractFromCanvas,
   useZoomControls,
 } from '@cognite/react-picture-annotation';
-import { Divider, InfoGrid, InfoCell } from 'components';
-import { Dropdown, Pagination, Spin } from 'antd';
+import { Divider, InfoCell } from 'components';
+import { Dropdown, Pagination, Spin, Breadcrumb } from 'antd';
 import {
   AnnotationStatus,
   CogniteAnnotation,
@@ -43,7 +43,6 @@ import { CogniteEvent, EventChange, FileInfo } from '@cognite/sdk';
 import { ResourcePreviewSidebar } from 'containers';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 import { AppContext } from 'context/AppContext';
-import BreadcrumbItem from 'antd/lib/breadcrumb/BreadcrumbItem';
 import capitalize from 'lodash/capitalize';
 import { useDisclosure } from 'hooks';
 
@@ -398,17 +397,9 @@ const AnnotationPreviewSidebar = ({
     }
     if (!isEditingMode) {
       return (
-        <InfoGrid>
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'row',
-              marginTop: '20px',
-              justifyContent: 'space-between',
-              width: '100%',
-            }}
-          >
-            <div style={{ display: 'flex', flexDirection: 'row' }}>
+        <>
+          <HeaderContainer>
+            <BreadcrumbContainer>
               <Button
                 icon="ArrowLeft"
                 onClick={() => {
@@ -420,30 +411,27 @@ const AnnotationPreviewSidebar = ({
                   );
                   onClose();
                 }}
-                style={{ color: 'black', marginTop: '-7px' }}
                 type="ghost"
               />
-              <BreadcrumbItem> {capitalize(type)}</BreadcrumbItem>
-              <BreadcrumbItem separator={<span />}>
-                {annotation.label ?? 'N/A'}
-              </BreadcrumbItem>
-            </div>
-            <div>
-              <div>
-                <Dropdown overlay={menuOptions}>
-                  <Icon type="EllipsisVertical" />
-                </Dropdown>
-                <Button
-                  icon="Close"
-                  type="ghost"
-                  onClick={() => {
-                    reset?.();
-                    onClose();
-                  }}
-                />
-              </div>
-            </div>
-          </div>
+              <Breadcrumb>
+                <Breadcrumb.Item>{capitalize(type)}</Breadcrumb.Item>
+                <Breadcrumb.Item>{annotation.label || 'N/A'}</Breadcrumb.Item>
+              </Breadcrumb>
+            </BreadcrumbContainer>
+            <Flex direction="row">
+              <Dropdown overlay={menuOptions}>
+                <Button icon="EllipsisVertical" type="ghost" />
+              </Dropdown>
+              <Button
+                icon="Close"
+                type="ghost"
+                onClick={() => {
+                  reset?.();
+                  onClose();
+                }}
+              />
+            </Flex>
+          </HeaderContainer>
 
           {selectedAnnotations?.length > 1 && (
             <Pagination
@@ -467,14 +455,9 @@ const AnnotationPreviewSidebar = ({
             ) : (
               ''
             )}
-            <div
-              style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-              }}
-            >
+            <Flex justifyContent="space-between">
               <Title level={5}>{annotation.label} </Title>
-            </div>
+            </Flex>
             <Body level={2}>
               {annotation.description ||
                 (item as { description?: string })?.description ||
@@ -501,7 +484,7 @@ const AnnotationPreviewSidebar = ({
             </InfoCell>
           )}
           <Divider.Horizontal />
-        </InfoGrid>
+        </>
       );
     }
     return <></>;
@@ -509,7 +492,7 @@ const AnnotationPreviewSidebar = ({
 
   if (selectedAnnotation) {
     return (
-      <div style={{ width: 360, borderLeft: `1px solid ${lightGrey}` }}>
+      <>
         <Modal visible={isOpen} {...annotationModalState}>
           {annotationModalState.content}
         </Modal>
@@ -587,7 +570,7 @@ const AnnotationPreviewSidebar = ({
           }
           onClose={() => setSelectedAnnotations([])}
         />
-      </div>
+      </>
     );
   }
   return (
@@ -602,6 +585,24 @@ const AnnotationPreviewSidebar = ({
     />
   );
 };
+
+const HeaderContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  margin-top: 20px;
+  justify-content: space-between;
+  width: 100%;
+`;
+
+const BreadcrumbContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  flex-shrink: 1;
+
+  & > nav.ant-breadcrumb {
+    margin-top: 8px;
+  }
+`;
 
 const PreviewImage = styled.img`
   max-height: 200px;

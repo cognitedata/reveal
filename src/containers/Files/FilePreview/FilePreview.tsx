@@ -7,9 +7,10 @@ import {
   convertCogniteAnnotationToIAnnotation,
 } from '@cognite/react-picture-annotation';
 import { Loader } from 'components';
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 import {
   isFilePreviewable,
+  lightGrey,
   readablePreviewableFileTypes,
   removeSimilarAnnotations,
 } from 'utils';
@@ -105,8 +106,8 @@ export const FilePreview = ({
   };
 
   return (
-    <StyledFilePreviewWrapper>
-      <StyledWrapper>
+    <FullHeightWrapper>
+      <FullHeightWrapper>
         <CogniteFileViewer.FileViewer
           file={file}
           creatable={creatable}
@@ -140,34 +141,34 @@ export const FilePreview = ({
             onUpdate: () => false,
           }}
         />
-      </StyledWrapper>
-      <AnnotationPreviewSidebar
-        file={file}
-        setPendingAnnotations={setPendingAnnotations}
-        setZoomedAnnotation={setZoomedAnnotation}
-        contextualization={contextualization}
-        onItemClicked={onItemClicked}
-        annotations={allAnnotations}
-        fileIcon={fileIcon}
-      />
-    </StyledFilePreviewWrapper>
+      </FullHeightWrapper>
+      <SidebarWrapper>
+        <AnnotationPreviewSidebar
+          file={file}
+          setPendingAnnotations={setPendingAnnotations}
+          setZoomedAnnotation={setZoomedAnnotation}
+          contextualization={contextualization}
+          onItemClicked={onItemClicked}
+          annotations={allAnnotations}
+          fileIcon={fileIcon}
+        />
+      </SidebarWrapper>
+    </FullHeightWrapper>
   );
 };
 
-const commonStyling = css`
+const FullHeightWrapper = styled.div`
+  display: flex;
   flex: 1;
-  overflow: hidden;
   height: 100%;
 `;
 
-const StyledWrapper = styled.div`
-  ${commonStyling}
-  position: relative;
-`;
-
-const StyledFilePreviewWrapper = styled.div`
-  display: flex;
-  ${commonStyling}
+const SidebarWrapper = styled.div`
+  height: 100%;
+  max-width: 360px;
+  overflow: auto;
+  flex-grow: 0;
+  border-left: 1px solid ${lightGrey};
 `;
 
 const CenteredPlaceholder = styled.div`

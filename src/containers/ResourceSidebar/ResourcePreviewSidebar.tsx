@@ -102,19 +102,17 @@ export const ResourcePreviewSidebar = ({
   }
 
   return (
-    <ResourcePreviewWrapper>
+    <ResourcePreviewSidebarContainer>
       {closable && <CloseButton icon="Close" type="ghost" onClick={onClose} />}
       {header}
       {!hideContent && (propContent || content)}
       {footer}
-    </ResourcePreviewWrapper>
+    </ResourcePreviewSidebarContainer>
   );
 };
 
-const ResourcePreviewWrapper = styled.div`
-  height: calc(100vh - 250px);
+const ResourcePreviewSidebarContainer = styled.div`
   min-width: 360px;
-  overflow: auto;
 `;
 
 const CloseButton = styled(Button)`

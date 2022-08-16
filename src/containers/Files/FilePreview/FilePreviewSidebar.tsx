@@ -1,7 +1,6 @@
 import { ResourcePreviewSidebar } from 'containers';
 import React, { useContext } from 'react';
 import styled from 'styled-components';
-import { lightGrey } from 'utils';
 import { Detail, Icon, Title, Modal } from '@cognite/cogs.js';
 
 import { FileInfo } from '@cognite/sdk';
@@ -100,7 +99,7 @@ const FilePreviewSidebar = ({
     );
   }
   return (
-    <FilePreviewSidebarWrapper>
+    <>
       <Modal
         okText="Approve tags"
         title="Are you sure?"
@@ -120,7 +119,7 @@ const FilePreviewSidebar = ({
         header={
           <TitleWrapper>
             {fileIcon || <Icon type="Document" />}
-            <Title level={4}>{file?.name} </Title>
+            <FileTitle level={4}>{file?.name}</FileTitle>
             {file?.id && (
               <div>
                 <DiagramReviewStatus fileId={file.id} />
@@ -138,19 +137,19 @@ const FilePreviewSidebar = ({
         }
         onClose={() => setSelectedAnnotations([])}
       />
-    </FilePreviewSidebarWrapper>
+    </>
   );
 };
 
 export default FilePreviewSidebar;
-
-const FilePreviewSidebarWrapper = styled.div`
-  border-left: 1px solid ${lightGrey};
-`;
 
 const TitleWrapper = styled.div`
   padding: 20px 10px;
   gap: 15px;
   display: flex;
   flex-direction: column;
+`;
+
+const FileTitle = styled(Title)`
+  word-break: break-word;
 `;
