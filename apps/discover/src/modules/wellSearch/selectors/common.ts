@@ -1,7 +1,6 @@
-import { useWellInspectSelectedWellboreIds } from 'domain/wells/well/internal/hooks/useWellInspectSelectedWellboreIds';
-
 import { useMemo } from 'react';
 
+import { useWellInspectSelectedWellboreIds } from 'modules/wellInspect/selectors';
 import { Sequence } from 'modules/wellSearch/types';
 
 import { useWellboreData } from './wellbore';

@@ -1,5 +1,4 @@
 import { useTrajectoriesQuery } from 'domain/wells/trajectory/internal/queries/useTrajectoriesQuery';
-import { useWellInspectSelectedWellboreIds } from 'domain/wells/well/internal/hooks/useWellInspectSelectedWellboreIds';
 import { useWellInspectSelectedWells } from 'domain/wells/well/internal/hooks/useWellInspectSelectedWells';
 import { keyByWellbore } from 'domain/wells/wellbore/internal/transformers/keyByWellbore';
 
@@ -8,6 +7,7 @@ import { useMemo } from 'react';
 import flatten from 'lodash/flatten';
 
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
+import { useWellInspectSelectedWellboreIds } from 'modules/wellInspect/selectors';
 import { OverviewModel } from 'pages/authorized/search/well/inspect/modules/overview/types';
 
 export const useDataLayer = () => {

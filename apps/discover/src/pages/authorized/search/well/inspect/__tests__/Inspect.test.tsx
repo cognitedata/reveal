@@ -1,13 +1,9 @@
-import { useWellInspectSelectedWellboreIds } from 'domain/wells/well/internal/hooks/useWellInspectSelectedWellboreIds';
 import { useWellInspectWells } from 'domain/wells/well/internal/hooks/useWellInspectWells';
 
 import { screen } from '@testing-library/react';
 import { Store } from 'redux';
 
-import {
-  mockedWellsFixture,
-  mockedWellsFixtureWellboreIds,
-} from '__test-utils/fixtures/well';
+import { mockedWellsFixture } from '__test-utils/fixtures/well';
 import { testRenderer } from '__test-utils/renderer';
 import { getMockedStore } from '__test-utils/store.utils';
 import navigation from 'constants/navigation';
@@ -28,12 +24,6 @@ jest.mock('modules/wellSearch/hooks/useWellConfig', () => ({
   }),
 }));
 
-jest.mock(
-  'domain/wells/well/internal/hooks/useWellInspectSelectedWellboreIds',
-  () => ({
-    useWellInspectSelectedWellboreIds: jest.fn(),
-  })
-);
 jest.mock('domain/wells/well/internal/hooks/useWellInspectWells', () => ({
   useWellInspectWells: jest.fn(),
 }));
@@ -52,9 +42,6 @@ describe('Well Inspect', () => {
     (useWellInspectWells as jest.Mock).mockImplementation(() => ({
       wells: mockedWellsFixture,
     }));
-    (useWellInspectSelectedWellboreIds as jest.Mock).mockImplementation(
-      () => mockedWellsFixtureWellboreIds
-    );
   });
 
   const page = (viewStore: Store) => testRenderer(WellInspect, viewStore);
@@ -82,9 +69,6 @@ describe('Well Inspect fetch errors', () => {
         message: 'Error',
       },
     }));
-    (useWellInspectSelectedWellboreIds as jest.Mock).mockImplementation(
-      () => mockedWellsFixtureWellboreIds
-    );
   });
 
   const page = (viewStore: Store) => testRenderer(WellInspect, viewStore);

@@ -1,5 +1,4 @@
 import { useNdsEventsQuery } from 'domain/wells/nds/internal/queries/useNdsEventsQuery';
-import { useWellInspectSelectedWellboreIds } from 'domain/wells/well/internal/hooks/useWellInspectSelectedWellboreIds';
 import { groupByWellbore } from 'domain/wells/wellbore/internal/transformers/groupByWellbore';
 
 import React, { useMemo, useState } from 'react';
@@ -13,6 +12,7 @@ import { Dropdown, Menu } from '@cognite/cogs.js';
 import { ExpandButton } from 'components/Buttons';
 import { Loading } from 'components/Loading';
 import { useTranslation } from 'hooks/useTranslation';
+import { useWellInspectSelectedWellboreIds } from 'modules/wellInspect/selectors';
 
 import { ModuleFilterDropdownWrapper } from '../common/elements';
 

@@ -1,4 +1,3 @@
-import { useWellInspectSelectedWellboreIds } from 'domain/wells/well/internal/hooks/useWellInspectSelectedWellboreIds';
 import { useWellInspectWells } from 'domain/wells/well/internal/hooks/useWellInspectWells';
 
 import React, { useEffect, useMemo, useState } from 'react';
@@ -8,7 +7,7 @@ import { useLocation, useHistory } from 'react-router-dom';
 import isEmpty from 'lodash/isEmpty';
 import isUndefined from 'lodash/isUndefined';
 
-import { Button, Icon, Menu, Tabs, Dropdown, Loader } from '@cognite/cogs.js';
+import { Button, Icon, Menu, Tabs, Dropdown } from '@cognite/cogs.js';
 import { PerfMetrics } from '@cognite/metrics';
 
 import { WELL_INSPECT_ID } from 'constants/metrics';
@@ -18,6 +17,7 @@ import { useHorizontalScroll } from 'hooks/useHorizontalScroll';
 import { useTranslation } from 'hooks/useTranslation';
 import { inspectTabsActions } from 'modules/inspectTabs/actions';
 import { useInspectStateFromUrl } from 'modules/wellInspect/hooks/useInspectStateFromUrl';
+import { useWellInspectSelectedWellboreIds } from 'modules/wellInspect/selectors';
 
 import {
   InspectContainer,
@@ -160,10 +160,6 @@ export const WellInspect: React.FC = () => {
   const width = `calc(100% - ${
     isOpen ? inspectSidebarWidth : SIDEBAR_SIZE.closed
   }px)`;
-
-  if (isEmpty(wells)) {
-    return <Loader darkMode={false} />;
-  }
 
   return (
     <>

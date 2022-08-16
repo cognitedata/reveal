@@ -1,4 +1,3 @@
-import { useWellInspectSelectedWellboreIds } from 'domain/wells/well/internal/hooks/useWellInspectSelectedWellboreIds';
 import { useWellInspectSelectedWellbores } from 'domain/wells/well/internal/hooks/useWellInspectSelectedWellbores';
 import { useWellInspectSelectedWells } from 'domain/wells/well/internal/hooks/useWellInspectSelectedWells';
 
@@ -14,18 +13,16 @@ import {
 } from '__test-utils/fixtures/well';
 import { testWrapper } from '__test-utils/renderer';
 import { getMockedStore } from '__test-utils/store.utils';
+import { useWellInspectSelectedWellboreIds } from 'modules/wellInspect/selectors';
 
 import {
   useDigitalRocksSamples,
   useSelectedWellBoresDigitalRocks,
 } from '../digitalRocks';
 
-jest.mock(
-  'domain/wells/well/internal/hooks/useWellInspectSelectedWellboreIds',
-  () => ({
-    useWellInspectSelectedWellboreIds: jest.fn(),
-  })
-);
+jest.mock('modules/wellInspect/selectors', () => ({
+  useWellInspectSelectedWellboreIds: jest.fn(),
+}));
 jest.mock(
   'domain/wells/well/internal/hooks/useWellInspectSelectedWells',
   () => ({

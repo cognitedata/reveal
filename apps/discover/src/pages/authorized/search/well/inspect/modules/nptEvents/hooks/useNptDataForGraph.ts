@@ -1,10 +1,10 @@
 import { useNptDefinitions } from 'domain/wells/npt/internal/hooks/useNptDefinitions';
 import { useNptAggregatesByCodeQuery } from 'domain/wells/npt/internal/queries/useNptAggregatesByCodeQuery';
-import { useWellInspectSelectedWellboreIds } from 'domain/wells/well/internal/hooks/useWellInspectSelectedWellboreIds';
 import { useWellInspectSelectedWellboreNames } from 'domain/wells/well/internal/hooks/useWellInspectSelectedWellboreNames';
 import { useWellInspectSelectedWellbores } from 'domain/wells/well/internal/hooks/useWellInspectSelectedWellbores';
 
 import { useDeepMemo } from 'hooks/useDeep';
+import { useWellInspectSelectedWellboreIds } from 'modules/wellInspect/selectors';
 
 import { adaptNptAggregatesDataToView } from '../utils/adaptNptAggregatesDataToView';
 

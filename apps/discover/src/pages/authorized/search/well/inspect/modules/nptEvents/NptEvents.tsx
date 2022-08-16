@@ -1,10 +1,9 @@
-import { useWellInspectSelectedWellboreIds } from 'domain/wells/well/internal/hooks/useWellInspectSelectedWellboreIds';
-
 import React, { useCallback, useState } from 'react';
 
 import { WhiteLoaderOverlay } from 'components/Loading';
 import { MultiStateToggle } from 'components/MultiStateToggle';
 import { NoUnmountShowHide } from 'components/NoUnmountShowHide';
+import { useWellInspectSelectedWellboreIds } from 'modules/wellInspect/selectors';
 import { ViewModes } from 'pages/authorized/search/common/types';
 
 import { Separator } from '../../elements';

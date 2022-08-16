@@ -3,10 +3,10 @@ import { useNdsEventsQuery } from 'domain/wells/nds/internal/queries/useNdsEvent
 import { adaptNdsEventsToMultiSelect } from 'domain/wells/nds/internal/transformers/adaptNdsEventsToMultiSelect';
 import { useNptEventsQuery } from 'domain/wells/npt/internal/queries/useNptEventsQuery';
 import { adaptNptEventsToMultiSelect } from 'domain/wells/npt/internal/transformers/adaptNptEventsToMultiSelect';
-import { useWellInspectSelectedWellboreIds } from 'domain/wells/well/internal/hooks/useWellInspectSelectedWellboreIds';
 import { useWellInspectSelectedWellbores } from 'domain/wells/well/internal/hooks/useWellInspectSelectedWellbores';
 
 import { useDeepMemo } from 'hooks/useDeep';
+import { useWellInspectSelectedWellboreIds } from 'modules/wellInspect/selectors';
 
 import { adaptMeasurementDataToView } from '../utils/adaptMeasurementDataToView';
 import { getCurveFilterOptions } from '../utils/getCurveFilterOptions';

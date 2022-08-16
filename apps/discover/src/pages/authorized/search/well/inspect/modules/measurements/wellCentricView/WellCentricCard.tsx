@@ -4,7 +4,6 @@ import { filterNdsBySelectedEvents } from 'domain/wells/nds/internal/selectors/f
 import { useNptEventsForCasings } from 'domain/wells/npt/internal/hooks/useNptEventsForCasings';
 import { filterNptByMeasuredDepth } from 'domain/wells/npt/internal/selectors/filterNptByMeasuredDepth';
 import { filterNptBySelectedEvents } from 'domain/wells/npt/internal/selectors/filterNptBySelectedEvents';
-import { useWellInspectSelectedWellboreIds } from 'domain/wells/well/internal/hooks/useWellInspectSelectedWellboreIds';
 import { getWellboreTitle } from 'domain/wells/wellbore/internal/selectors/getWellboreTitle';
 import { WellboreInternal } from 'domain/wells/wellbore/internal/types';
 
@@ -19,6 +18,7 @@ import { Checkbox } from '@cognite/cogs.js';
 import { BaseButton } from 'components/Buttons';
 import { MultiSelectCategorizedOptionMap } from 'components/Filters/MultiSelectCategorized/types';
 import { SegmentedControl } from 'components/SegmentedControl/SegmentedControl';
+import { useWellInspectSelectedWellboreIds } from 'modules/wellInspect/selectors';
 import {
   MeasurementChartData,
   MeasurementType,

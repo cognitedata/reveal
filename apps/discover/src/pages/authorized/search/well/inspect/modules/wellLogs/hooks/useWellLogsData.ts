@@ -1,8 +1,9 @@
 import { useDepthMeasurementsForWellLogs } from 'domain/wells/measurements/internal/hooks/useDepthMeasurementsForWellLogs';
-import { useWellInspectSelectedWellboreIds } from 'domain/wells/well/internal/hooks/useWellInspectSelectedWellboreIds';
 import { useWellInspectSelectedWellboresKeyed } from 'domain/wells/well/internal/hooks/useWellInspectSelectedWellboresKeyed';
 
 import { useMemo } from 'react';
+
+import { useWellInspectSelectedWellboreIds } from 'modules/wellInspect/selectors';
 
 import { adaptToWellLogView } from '../utils/adaptToWellLogView';
 

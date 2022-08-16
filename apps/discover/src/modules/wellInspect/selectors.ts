@@ -3,6 +3,7 @@ import { useWellInspectWells } from 'domain/wells/well/internal/hooks/useWellIns
 import { useMemo } from 'react';
 
 import pickBy from 'lodash/pickBy';
+import { sortByCaseInsensitive } from 'utils/sort';
 
 import { useDeepMemo } from 'hooks/useDeep';
 import useSelector from 'hooks/useSelector';
@@ -33,6 +34,22 @@ export const useWellInspectWellboreIds = () => {
 export const useWellInspectSelection = () => {
   const { selectedWellIds, selectedWellboreIds } = useWellInspect();
   return { selectedWellIds, selectedWellboreIds };
+};
+
+export const useWellInspectSelectedWellIds = () => {
+  const { selectedWellIds } = useWellInspect();
+  return useDeepMemo(
+    () => Object.keys(pickBy(selectedWellIds)).sort(sortByCaseInsensitive),
+    [selectedWellIds]
+  );
+};
+
+export const useWellInspectSelectedWellboreIds = () => {
+  const { selectedWellboreIds } = useWellInspect();
+  return useDeepMemo(
+    () => Object.keys(pickBy(selectedWellboreIds)).sort(sortByCaseInsensitive),
+    [selectedWellboreIds]
+  );
 };
 
 export const useWellInspectSelectionStats = () => {

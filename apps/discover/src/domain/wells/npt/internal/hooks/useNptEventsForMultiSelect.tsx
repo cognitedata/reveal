@@ -1,9 +1,8 @@
-import { useWellInspectSelectedWellboreIds } from 'domain/wells/well/internal/hooks/useWellInspectSelectedWellboreIds';
-
 import { MultiSelectCategorizedOptionMap } from 'components/Filters/MultiSelectCategorized/types';
 import { EMPTY_SUBMENU_OPTIONS } from 'components/Filters/MultiSelectCategorized/views/DropdownMenuOptions';
 import { MultiSelectOptionObject } from 'components/Filters/types';
 import { useDeepMemo } from 'hooks/useDeep';
+import { useWellInspectSelectedWellboreIds } from 'modules/wellInspect/selectors';
 
 import { useNptEventsQuery } from '../queries/useNptEventsQuery';
 

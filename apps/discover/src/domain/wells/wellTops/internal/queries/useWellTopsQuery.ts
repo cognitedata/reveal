@@ -1,4 +1,3 @@
-import { useWellInspectSelectedWellboreIds } from 'domain/wells/well/internal/hooks/useWellInspectSelectedWellboreIds';
 import { groupByWellbore } from 'domain/wells/wellbore/internal/transformers/groupByWellbore';
 
 import { handleServiceError } from 'utils/errors/handleServiceError';
@@ -6,6 +5,7 @@ import { handleServiceError } from 'utils/errors/handleServiceError';
 import { WELL_QUERY_KEY } from 'constants/react-query';
 import { useArrayCache } from 'hooks/useArrayCache';
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
+import { useWellInspectSelectedWellboreIds } from 'modules/wellInspect/selectors';
 
 import { ERROR_LOADING_WELL_TOPS } from '../../constants';
 import { getWellTops } from '../../service/network/getWellTops';
