@@ -32,7 +32,7 @@
     "test": "jest --maxWorkers=4",
     "test:visual:client": "cross-env JEST_PUPPETEER_CONFIG=visual-tests/jest-puppeteer.config.js jest --config=visual-tests/jest.config.js --verbose",
     "test:visual:server": "webpack-dev-server --config packages/webpack.config.js",
-    "test:visual": "concurrently --k --i --default-input-target 1 \"yarn run test:visual:server\" \"yarn run test:visual:client\"",
+    "test:visual": "concurrently -k -s \"last\" \"yarn run test:visual:server\" \"yarn run test:visual:client\"",
     "coverage": "jest --coverage",
     "lint": "eslint . --ext .ts,.js --max-warnings 0 --cache",
     "prebump": "yarn version --no-git-tag-version && yarn && cd ../documentation && yarn replace-latest-by-next",
