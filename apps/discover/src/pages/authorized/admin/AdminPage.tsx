@@ -7,6 +7,7 @@ import navigation from 'constants/navigation';
 
 import { ProtectedRoute } from '../../../core';
 
+import { CodeDefinitions } from './codeDefinitions';
 import FeedbackPage from './feedback';
 import { MapConfig } from './mapConfig';
 import { ProjectConfig } from './projectConfig';
@@ -33,6 +34,13 @@ const AdminPage = () => {
         returnPath="/"
         path={navigation.ADMIN_PROJECT_CONFIG}
         render={() => <ProjectConfig />}
+      />
+
+      <ProtectedRoute
+        isAuthenticated={isAuthenticated}
+        returnPath="/"
+        path={navigation.ADMIN_LEGEND}
+        render={() => <CodeDefinitions />}
       />
 
       {SIDECAR.useFDMConfig && (
