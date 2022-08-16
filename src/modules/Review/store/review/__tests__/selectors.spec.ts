@@ -91,7 +91,7 @@ const mockAnnotatorWrapperState: AnnotatorWrapperState = {
   ...annotatorWrapperInitialState,
 };
 
-const rootState: RootState = {
+const mockRootState: RootState = {
   fileReducer: mockFilesState,
   reviewSlice: mockReviewState,
   annotationReducer: mockAnnotationState,
