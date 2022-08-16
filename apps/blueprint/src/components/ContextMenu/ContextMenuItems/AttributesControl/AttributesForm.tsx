@@ -234,6 +234,12 @@ export const AttributeForm = ({
       />
       {renderExtractorSelector()}
       {renderSubExtractorSelector()}
+      <Input
+        className="attribute-url-input"
+        value={attribute.url}
+        onChange={(e) => handleChange({ url: e.target.value })}
+        placeholder="URL"
+      />
       <Button
         type="primary"
         onClick={() => {

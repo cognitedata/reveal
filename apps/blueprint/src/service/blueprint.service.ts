@@ -1,5 +1,12 @@
 import { CogniteClient, ExternalFileInfo } from '@cognite/sdk';
-import { BlueprintDefinition, BlueprintReference, User } from 'typings';
+import {
+  AccessRight,
+  AccessRightType,
+  AccessType,
+  BlueprintDefinition,
+  BlueprintReference,
+  User,
+} from 'typings';
 import { v4 as uuid } from 'uuid';
 
 export const DATASET_EXTERNAL_ID = 'BLUEPRINT_APP_DATASET';
@@ -63,14 +70,23 @@ class BlueprintService {
     return true;
   }
 
-  getAccessRights(
+  getAccessRights = (
     blueprintReference: BlueprintReference | BlueprintDefinition
-  ): AccessRights {
+  ): AccessRightType => {
     if (blueprintReference.createdBy.uid === this.user.uid) {
       return 'WRITE';
     }
-    return 'READ';
-  }
+    const accessRight = blueprintReference.accessRights?.find(
+      (right) => right.email === this.user.uid
+    );
+    if (accessRight) {
+      return accessRight.access;
+    }
+    if (blueprintReference.accessType === 'PUBLIC') {
+      return 'READ';
+    }
+    return 'NONE';
+  };
 
   async list(): Promise<BlueprintReference[]> {
     const list = await this.client.files.list({
@@ -92,27 +108,66 @@ class BlueprintService {
             uid: '',
             email: 'unknown',
           },
+
+      accessRights: item.metadata?.accessRights
+        ? JSON.parse(item.metadata?.accessRights)
+        : [],
+      accessType: item.metadata?.accessType as AccessType,
     }));
-    return references;
+
+    const allowedBlueprints = references.filter(
+      (bpReference) =>
+        this.getAccessRights(bpReference) !== 'NONE' ||
+        bpReference.accessType === 'PUBLIC'
+    );
+    return allowedBlueprints;
   }
 
-  async load(blueprintId: string): Promise<BlueprintDefinition> {
-    const definition = await this.client.files
+  async listOne(externalId: string): Promise<BlueprintReference> {
+    const item = await this.client.files
+      .retrieve([{ externalId }])
+      .then((res) => res[0]);
+    const reference: BlueprintReference = {
+      id: item.id,
+      externalId: item.externalId || 'unknown',
+      name: item.metadata?.name || 'Untitled Blueprint',
+      lastOpened: Number(item.metadata?.lastOpened || Date.now()),
+      createdBy: item.metadata?.createdBy
+        ? JSON.parse(item.metadata?.createdBy)
+        : {
+            uid: '',
+            email: 'unknown',
+          },
+
+      accessRights: item.metadata?.accessRights
+        ? JSON.parse(item.metadata?.accessRights)
+        : [],
+      accessType: item.metadata?.accessType as AccessType,
+    };
+    return reference;
+  }
+
+  async load(blueprintId: string): Promise<{
+    definition: BlueprintDefinition;
+    reference: BlueprintReference;
+  }> {
+    const reference = await this.listOne(blueprintId);
+    if (!reference) {
+      throw new Error('This blueprint does not exist');
+    }
+    if (this.getAccessRights(reference) === 'NONE') {
+      throw new Error('You do not have access to view this blueprint');
+    }
+    const definition: BlueprintDefinition = await this.client.files
       .getDownloadUrls([{ externalId: blueprintId }])
       .then((res) =>
         this.client.get(res[0].downloadUrl).then((res) => res.data)
       );
-    if (!definition) {
-      throw new Error('This blueprint does not exist');
-    }
     if (!this.isValidBlueprint(definition)) {
       throw new Error('Blueprint file is not valid.');
     }
-    if (this.getAccessRights(definition) === 'NONE') {
-      throw new Error('You do not have access to view this blueprint');
-    }
 
-    return definition as BlueprintDefinition;
+    return { definition, reference };
   }
 
   async delete(blueprintId: string): Promise<void> {
@@ -139,9 +194,11 @@ class BlueprintService {
       source: 'Blueprint Application',
       metadata: {
         lastOpened: String(Date.now()),
-        createdBy: JSON.stringify(this.user),
+        createdBy: JSON.stringify(blueprint.createdBy || this.user),
         type: 'blueprint_definition',
         name: blueprint?.name || 'Untitled Blueprint',
+        accessRights: JSON.stringify(blueprint?.accessRights || []),
+        accessType: blueprint?.accessType || 'PRIVATE',
       },
     };
 
@@ -161,6 +218,19 @@ class BlueprintService {
     };
   }
 
+  async updateAccess(
+    externalId: string,
+    accessRights?: AccessRight[],
+    accessType?: AccessType
+  ) {
+    const { definition } = await this.load(externalId);
+    return this.save({
+      ...definition,
+      accessRights,
+      accessType,
+    });
+  }
+
   makeEmptyBlueprint = (externalId: string): BlueprintDefinition => ({
     externalId,
     name: 'Untitled Blueprint',
@@ -169,6 +239,8 @@ class BlueprintService {
     ornateShapes: [],
     nonPDFFiles: [],
     timeSeriesTags: [],
+    accessRights: [],
+    accessType: 'PRIVATE',
   });
 
   uploadDiskFile = async (

@@ -97,8 +97,20 @@ export const AttributeDisplay = ({
       <Icon type={getIcon()} style={{ width: 16, flexShrink: 0 }} />
       <Flex direction="column" className="details">
         <Flex justifyContent="space-between">
-          <strong>{attribute?.name}</strong>
-          <strong>{renderAttributeValue()}</strong>
+          <strong>
+            {attribute?.name}
+            {attribute?.url && (
+              <Button
+                type="ghost"
+                size="small"
+                icon="ExternalLink"
+                onClick={() => {
+                  window.open(attribute.url, '_blank');
+                }}
+              />
+            )}
+          </strong>
+          <strong>{renderAttributeValue()} </strong>
         </Flex>
         <div style={{ overflowWrap: 'anywhere' }}>
           {selectedResource?.name} <Icon type="ArrowRight" />{' '}

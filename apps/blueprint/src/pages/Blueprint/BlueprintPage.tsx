@@ -43,7 +43,7 @@ const BlueprintPage: React.FC = () => {
   const [isCDFSidebarOpen, toggleCDFSidebar] = useState(false);
   const [isTimeSeriesSidebarOpen, toggleTimseriesSidebar] = useState(false);
   const [selectedTagId, setSelectedTagId] = useState<string>();
-  const [shapes, setShapes] = useState<OrnateExport>();
+
   const [disabledRuleSets, setDisabledRuleSets] = useState<
     Record<string, boolean>
   >({});
@@ -52,14 +52,16 @@ const BlueprintPage: React.FC = () => {
   const { externalId } = useParams<{ externalId: string }>();
   const { addFile } = useBlueprint(ornateViewer);
   const saveBlueprintMutation = useSaveBlueprintMutation();
-  const { data: blueprintDefinition, isLoading } =
-    useFetchBlueprintDefinition(externalId);
+  const { data, isLoading } = useFetchBlueprintDefinition(externalId);
+  const { definition: blueprintDefinition, reference: blueprintReference } =
+    data || {};
+  const [shapes, setShapes] = useState<OrnateExport>();
 
   useEffect(() => {
     if (!blueprintDefinition) return;
 
     setBlueprint(blueprintDefinition);
-
+    setShapes(blueprintDefinition.ornateShapes);
     if (
       ornateViewer.current &&
       blueprintDefinition.ornateShapes &&
@@ -230,14 +232,15 @@ const BlueprintPage: React.FC = () => {
         >
           {isMinimized ? 'Maximize all' : 'Minimize all'}
         </Button>
-        {blueprint && blueprintService?.getAccessRights(blueprint) === 'WRITE' && (
-          <Button
-            onClick={() => onSave()}
-            disabled={saveBlueprintMutation.isLoading}
-          >
-            Save
-          </Button>
-        )}
+        {blueprintReference &&
+          blueprintService?.getAccessRights(blueprintReference) === 'WRITE' && (
+            <Button
+              onClick={() => onSave()}
+              disabled={saveBlueprintMutation.isLoading}
+            >
+              Save
+            </Button>
+          )}
         <Dropdown
           content={
             <Menu>
@@ -315,6 +318,7 @@ const BlueprintPage: React.FC = () => {
               setShapes(ornateViewer.current?.export());
             }
           );
+          setShapes(ornateViewer.current?.export());
         }}
         onUpdate={setBlueprint}
         onSelectTag={setSelectedTagId}

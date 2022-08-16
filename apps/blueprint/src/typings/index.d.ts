@@ -57,6 +57,8 @@ export type BlueprintReference = {
   name: string;
   lastOpened: number;
   createdBy: User;
+  accessRights?: AccessRight[];
+  accessType?: AccessType;
 };
 export type NonPDFFile = {
   x: number;
@@ -72,6 +74,7 @@ export type ShapeAttribute = {
   externalId: string;
   extractor: 'CURRENT_VALUE' | 'METADATA' | 'TIMESTAMP';
   subExtractor?: string;
+  url?: string;
 };
 
 export type RuleOutput = {
@@ -91,6 +94,13 @@ export type RuleSet = {
   rules: Rule<RuleOutput>[];
 };
 
+export type AccessRightType = 'NONE' | 'READ' | 'WRITE';
+export type AccessRight = {
+  email: string;
+  access: AccessRightType;
+};
+export type AccessType = 'PRIVATE' | 'PROTECTED' | 'PUBLIC';
+
 export type BlueprintDefinition = {
   id?: string;
   externalId: string;
@@ -104,4 +114,6 @@ export type BlueprintDefinition = {
   shapeAttributes?: Record<string, ShapeAttribute[]>;
   ruleSets?: RuleSet[];
   shapeRuleSets?: Record<string, string[]>;
+  accessRights?: AccessRight[];
+  accessType?: AccessType;
 };

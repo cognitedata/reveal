@@ -6,8 +6,6 @@ export const RightWrapper = styled.div`
   background: white;
   top: 0;
   width: 400px;
-  max-height: 80vh;
-  overflow: auto;
   box-shadow: var(--cogs-z-8);
 `;
 
