@@ -116,11 +116,12 @@ jobs:
       run: yarn install --immutable
 
     - name: Execute visual tests
-      uses: GabrielBB/xvfb-action@v1
       id: viewerVisualTests
-      working-directory: viewer
-      run: 'yarn test:visual'
       continue-on-error: true
+      uses: GabrielBB/xvfb-action@v1
+      with:
+        run: 'yarn test:visual'
+        working-directory: viewer
 
     - name: Check for failed visual test diffs
       if: (always() && steps.viewerVisualTests.outcome == 'failure')
