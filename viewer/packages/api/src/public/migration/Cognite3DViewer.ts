@@ -1037,12 +1037,8 @@ export class Cognite3DViewer {
    * @obvious
    * @param offsetX
    * @param offsetY
-   * @param options
    */
-  async getIntersectionFromPixel(
-    offsetX: number,
-    offsetY: number
-  ): Promise<null | Intersection> {
+  async getIntersectionFromPixel(offsetX: number, offsetY: number): Promise<null | Intersection> {
     const cadModels = this.getModels('cad');
     const pointCloudModels = this.getModels('pointcloud');
     const cadNodes = cadModels.map(x => x.cadNode);
