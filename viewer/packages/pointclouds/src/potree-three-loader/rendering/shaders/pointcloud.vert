@@ -550,7 +550,7 @@ void main() {
 	#elif defined color_type_point_index
 		vColor = indices.rgb;
 	#elif defined color_type_classification
-		vColor = classification.rgb;
+		vColor = classification.xyz / 2.0 + getRGB() / 2.0;
 	#elif defined color_type_return_number
 		vColor = getReturnNumber();
 	#elif defined color_type_source

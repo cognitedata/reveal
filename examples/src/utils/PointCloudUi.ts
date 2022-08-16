@@ -5,7 +5,7 @@ export class PointCloudUi {
   private readonly _viewer: Cognite3DViewer;
   private readonly _params =
     {
-      pointSize: 1.0,
+      pointSize: 0.025,
       pointSizeType: PotreePointSizeType.Adaptive,
       budget: 2_000_000,
       pointColorType: PotreePointColorType.Rgb,
@@ -15,7 +15,7 @@ export class PointCloudUi {
   constructor(viewer: Cognite3DViewer, ui: dat.GUI) {
     this._viewer = viewer;
 
-    ui.add(this._params, 'budget', 0, 20_000_000, 100_000).onChange(() => this.applyToAllModels());
+    ui.add(this._params, 'budget', 0, 200_000_000, 100_000).onChange(() => this.applyToAllModels());
     ui.add(this._params, 'pointSize', 0, 2, 0.025).onChange(() => this.applyToAllModels());
     ui.add(this._params, 'pointSizeType', { 
       Adaptive: PotreePointSizeType.Adaptive, 
@@ -30,6 +30,7 @@ export class PointCloudUi {
       LevelOfDetail: PotreePointColorType.LevelOfDetail,
       Classification: PotreePointColorType.Classification,
       Intensity: PotreePointColorType.Intensity,
+      Composite: PotreePointColorType.Composite,
     }).onChange(valueStr => {
       this._params.pointColorType = parseInt(valueStr, 10);
       this.applyToAllModels()
