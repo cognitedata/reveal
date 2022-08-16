@@ -29,7 +29,7 @@ export const DropdownWrapper = styled(Flex)`
     }
     .cogs-select--title {
       color: #262626;
-      font-weight: normal;
+      font-weight: bold;
     }
     .cogs-select__clear-indicator {
       display: none;

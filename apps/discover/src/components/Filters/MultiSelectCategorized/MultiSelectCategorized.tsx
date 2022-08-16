@@ -10,7 +10,7 @@ import isEmpty from 'lodash/isEmpty';
 import isUndefined from 'lodash/isUndefined';
 import unset from 'lodash/unset';
 
-import { Body, Checkbox, Dropdown, Icon, OptionType } from '@cognite/cogs.js';
+import { Title, Checkbox, Dropdown, Icon, OptionType } from '@cognite/cogs.js';
 
 import { useDeepMemo } from 'hooks/useDeep';
 
@@ -245,7 +245,7 @@ export const MultiSelectCategorized: React.FC<MultiSelectCategorizedProps> = ({
             <Icon type={iconInsteadText} />
           ) : (
             <>
-              <Body level={2}>{title}:</Body>
+              <Title level={6}>{title}:</Title>
               <DropdownValue $placeholder={!isAnySelected}>
                 {dropdownValue}
               </DropdownValue>

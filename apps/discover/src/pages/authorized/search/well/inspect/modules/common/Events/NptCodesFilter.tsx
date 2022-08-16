@@ -56,7 +56,7 @@ export const NptCodesFilter: React.FC<NptCodesFilterProps> = ({
       renderCategoryHelpText={renderNptHelpText}
       options={options}
       selectedOptions={selectedOptions}
-      width={iconInsteadText ? undefined : 160}
+      width={iconInsteadText ? undefined : 180}
       viewMode="submenu"
       iconInsteadText={iconInsteadText}
     />
