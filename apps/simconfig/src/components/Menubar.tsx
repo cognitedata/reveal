@@ -35,31 +35,51 @@ export function MenuBar() {
     window.location.href = '/logout';
   };
 
+  const isModelLibraryNavActive = () =>
+    !!matchRoute({ to: '/model-library/*' }) &&
+    // Should not be active when path is at calculation editor or details page
+    !matchRoute({
+      to: '/model-library/models/:simulator/:modelName/calculations/:calculationType/configuration',
+    }) &&
+    !matchRoute({
+      to: '/model-library/models/:simulator/:modelName/calculations/:calculationType/',
+    }) &&
+    !matchRoute({
+      to: '/model-library/models/:simulator/:modelName/calculations/UserDefined/*',
+    });
+
   return (
     <TopBar data-cy="top-bar">
       {isLabelsEnabled && <LabelsModal isOpen={isOpen} setOpen={setOpen} />}
       <TopBar.Left>
         <TopBar.Logo
-          subtitle={<div id="project-name">{project}</div>}
+          subtitle={
+            <div id="project-name" style={{ textAlign: 'left' }}>
+              {project}
+            </div>
+          }
           title="Cognite Simulator Configuration"
+          onClick={() => {
+            navigate({ to: '/model-library' });
+          }}
         />
         <TopBar.Navigation
           links={[
             {
               name: 'Model library',
-              isActive: !!matchRoute({ to: '/model-library/*' }),
+              isActive: isModelLibraryNavActive(),
               onClick: () => {
                 navigate({ to: '/model-library' });
-                // history.push('/model-library');
               },
             },
             {
               name: 'Run browser',
-              isActive: !!matchRoute({ to: 'calculations/runs' }),
+              isActive:
+                !!matchRoute({ to: 'calculations/runs' }) ||
+                !!matchRoute({ to: 'calculations/runs/*' }),
               onClick: () => {
                 trackUsage(TRACKING_EVENTS.RUN_BROWSER_VIEW, {});
                 navigate({ to: '/calculations/runs' });
-                // history.push('/calculations/runs');
               },
             },
           ]}
