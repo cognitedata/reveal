@@ -8,8 +8,22 @@ import { NewExtractorHeader } from 'components/NewExtractorHeader';
 import pythonImgPath from 'assets/python.png';
 import dotnetImgPath from 'assets/dotnet.png';
 
+import {
+  NET_EXTRACTOR_UTILS_SRC_CODE,
+  NET_UTILS,
+  PY_EXTRACTOR_EXAMPLE,
+  PY_EXTRACTOR_UTILS_PKG,
+  PY_EXTRACTOR_UTILS_SRC_CODE,
+  PY_SDK,
+} from './links';
+import { trackUsage } from 'utils';
+
 const NewExtractor = () => {
   const { t } = useTranslation();
+
+  const trackEvent = (document: string, url: string) =>
+    trackUsage({ e: 'Create.Extractor.Documentation.Click', document, url });
+
   return (
     <Layout>
       <NewExtractorHeader />
@@ -27,16 +41,43 @@ const NewExtractor = () => {
                 </Title>
               </Flex>
               <DocsLinkGrid>
-                <DocsLinkGridItem href="https://cognite-extractor-utils.readthedocs-hosted.com/en/latest/">
+                <DocsLinkGridItem
+                  href={PY_EXTRACTOR_UTILS_PKG}
+                  onClick={() =>
+                    trackEvent(
+                      PY_EXTRACTOR_UTILS_PKG,
+                      t('python-extractor-utils-package')
+                    )
+                  }
+                >
                   {t('python-extractor-utils-package')}
                 </DocsLinkGridItem>
-                <DocsLinkGridItem href="https://docs.cognite.com/dev/guides/sdk/python/">
+                <DocsLinkGridItem
+                  href={PY_SDK}
+                  onClick={() => trackEvent(PY_SDK, t('python-sdk'))}
+                >
                   {t('python-sdk')}
                 </DocsLinkGridItem>
-                <DocsLinkGridItem href="https://github.com/cognitedata/python-extractor-utils">
+                <DocsLinkGridItem
+                  href={PY_EXTRACTOR_UTILS_SRC_CODE}
+                  onClick={() =>
+                    trackEvent(
+                      PY_EXTRACTOR_UTILS_SRC_CODE,
+                      t('python-extractor-utils-source-code')
+                    )
+                  }
+                >
                   {t('python-extractor-utils-source-code')}
                 </DocsLinkGridItem>
-                <DocsLinkGridItem href="https://github.com/cognitedata/python-extractor-example">
+                <DocsLinkGridItem
+                  href={PY_EXTRACTOR_EXAMPLE}
+                  onClick={() =>
+                    trackEvent(
+                      PY_EXTRACTOR_EXAMPLE,
+                      t('python-extractor-example')
+                    )
+                  }
+                >
                   {t('python-extractor-example')}
                 </DocsLinkGridItem>
               </DocsLinkGrid>
@@ -52,10 +93,23 @@ const NewExtractor = () => {
                 </Title>
               </Flex>
               <DocsLinkGrid>
-                <DocsLinkGridItem href="https://cognitedata.github.io/dotnet-extractor-utils/tutorials/intro.html">
+                <DocsLinkGridItem
+                  href={NET_UTILS}
+                  onClick={() =>
+                    trackEvent(NET_UTILS, t('net-utils-documentation'))
+                  }
+                >
                   {t('net-utils-documentation')}
                 </DocsLinkGridItem>
-                <DocsLinkGridItem href="https://github.com/cognitedata/dotnet-extractor-utils">
+                <DocsLinkGridItem
+                  href={NET_EXTRACTOR_UTILS_SRC_CODE}
+                  onClick={() =>
+                    trackEvent(
+                      NET_EXTRACTOR_UTILS_SRC_CODE,
+                      t('net-extractor-utils-code')
+                    )
+                  }
+                >
                   {t('net-extractor-utils-code')}
                 </DocsLinkGridItem>
               </DocsLinkGrid>

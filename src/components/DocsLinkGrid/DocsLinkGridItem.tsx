@@ -4,6 +4,7 @@ import styled from 'styled-components';
 
 export type DocsLinkGridItemProps = {
   href: string;
+  onClick?: () => void;
 };
 
 const DocsLinkGridItem = styled(

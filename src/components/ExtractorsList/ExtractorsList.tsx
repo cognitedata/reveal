@@ -4,6 +4,7 @@ import { Link, useParams } from 'react-router-dom';
 import { createLink } from '@cognite/cdf-utilities';
 
 import { useTranslation } from 'common';
+import { trackUsage } from 'utils';
 
 type ExtractorsListProps = {
   extractorsList: any[];
@@ -24,6 +25,9 @@ const ExtractorsList = ({ extractorsList }: ExtractorsListProps) => {
           <StyledExtractorContainer
             key={extractor.externalId}
             to={createLink(`/${subAppPath}/${extractor.externalId}`)}
+            onClick={() => {
+              trackUsage({ e: 'View.Extractor.Click', name: extractor.name });
+            }}
           >
             <Flex gap={24} direction="column">
               {extractor?.imageUrl && (

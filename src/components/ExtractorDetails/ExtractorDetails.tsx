@@ -22,6 +22,7 @@ import { ContentContainer } from 'components/ContentContainer';
 import { useTranslation } from 'common';
 import { Artifact, getDownloadUrl } from 'service/extractors';
 import { DocsLinkGrid, DocsLinkGridItem } from 'components/DocsLinkGrid';
+import { trackUsage } from 'utils';
 
 const ExtractorDetails = () => {
   const { t } = useTranslation();
@@ -82,7 +83,18 @@ const ExtractorDetails = () => {
                   <Title level="4">{t('user-guide-from-cognite-docs')}</Title>
                   <DocsLinkGrid>
                     {externalLinks?.map((link) => (
-                      <DocsLinkGridItem key={link?.name} href={link?.url}>
+                      <DocsLinkGridItem
+                        key={link?.name}
+                        href={link?.url}
+                        onClick={() => {
+                          trackUsage({
+                            e: 'Documentation.Click',
+                            name: extractor?.name,
+                            document: link?.name,
+                            url: link?.url,
+                          });
+                        }}
+                      >
                         {link?.name}
                       </DocsLinkGridItem>
                     ))}
@@ -107,6 +119,11 @@ const ExtractorDetails = () => {
                         iconPlacement="right"
                         size="large"
                         onClick={() => {
+                          trackUsage({
+                            e: 'Download.Extractor.Click',
+                            name: extractor?.name,
+                            artifact: artifact.displayName,
+                          });
                           handleDownload(artifact);
                         }}
                       >
@@ -122,6 +139,10 @@ const ExtractorDetails = () => {
                     type="link"
                     size="small"
                     onClick={() => {
+                      trackUsage({
+                        e: 'Versions.ViewAll.Click',
+                        name: extractor?.name,
+                      });
                       setIsModalOpen(true);
                     }}
                   >
@@ -264,7 +285,15 @@ const ExtractorDetails = () => {
                       type="link"
                       icon="Download"
                       iconPlacement="right"
-                      onClick={() => handleDownload(artifact)}
+                      onClick={() => {
+                        trackUsage({
+                          e: 'Versions.Download.Click',
+                          name: extractor?.name,
+                          version: release.version,
+                          artifact: artifact.displayName,
+                        });
+                        handleDownload(artifact);
+                      }}
                       size="small"
                     >
                       {artifact.displayName}

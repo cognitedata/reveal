@@ -7,6 +7,7 @@ import { Layout } from 'components/Layout';
 import { Breadcrumb } from '@cognite/cdf-utilities';
 import { HeaderContainer } from 'components/HeaderContainer';
 import { Dispatch } from 'react';
+import { trackUsage } from 'utils';
 
 type ListHeaderProps = {
   search: string;
@@ -39,6 +40,7 @@ const ListHeader = ({ search, setSearch }: ListHeaderProps) => {
               placeholder={t('search-for-source-systems')}
               value={search}
               onChange={(evt) => {
+                trackUsage({ e: 'Search.Extractor' });
                 setSearch(evt.currentTarget.value);
               }}
             />
