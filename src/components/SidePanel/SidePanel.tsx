@@ -1,27 +1,19 @@
 import React, { useContext, useEffect } from 'react';
 
-import { Colors, Flex } from '@cognite/cogs.js';
+import { Button, Colors, Flex, Title } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
-import { RawExplorerContext } from 'contexts';
-
-import { useActiveTable } from 'hooks/table-tabs';
-
-import { SidePanelItemProps } from 'components/SidePanelItem/SidePanelItem';
 import SidePanelTableList from 'components/SidePanelTableList/SidePanelTableList';
 import SidePanelDatabaseList from 'components/SidePanelDatabaseList/SidePanelDatabaseList';
-import SidePanelItemHeader from 'components/SidePanelItem/SidePanelItemHeader';
-import { RawExplorerSideMenuItem } from 'containers/RawExplorer/RawExplorer';
 import { useTranslation } from 'common/i18n';
+import { RawExplorerContext } from 'contexts';
+import { useActiveTable } from 'hooks/table-tabs';
 
-const RawSidePanel = (
-  props: Omit<
-    SidePanelItemProps<RawExplorerSideMenuItem>,
-    'children' | 'footer' | 'title' | 'onChange'
-  >
-): JSX.Element => {
-  const { activePanelKey, onClose } = props;
+type RawSidePanelProps = {
+  onClose: () => void;
+};
 
+const RawSidePanel = ({ onClose }: RawSidePanelProps): JSX.Element => {
   const { t } = useTranslation();
 
   const {
@@ -49,11 +41,12 @@ const RawSidePanel = (
 
   return (
     <Flex direction="column" style={{ height: '100%' }}>
-      <SidePanelItemHeader<RawExplorerSideMenuItem>
-        activePanelKey={activePanelKey}
-        onClose={onClose}
-        title={t('raw-explorer-title')}
-      />
+      <StyledHeader>
+        <StyledTitle level={5}>{t('raw-explorer-title')}</StyledTitle>
+        <StyledHeaderRight>
+          <Button icon="PanelLeft" onClick={onClose} size="small" />
+        </StyledHeaderRight>
+      </StyledHeader>
       <StyledContentWithLevels>
         {!selectedSidePanelDatabase ? (
           <StyledSidePanelItemLevelContainer>
@@ -68,6 +61,25 @@ const RawSidePanel = (
     </Flex>
   );
 };
+
+const StyledHeader = styled.div`
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  padding: 12px;
+`;
+
+const StyledTitle = styled(Title)`
+  white-space: nowrap;
+
+  :not(:first-child) {
+    margin-left: 8px;
+  }
+`;
+
+const StyledHeaderRight = styled.div`
+  margin-left: auto;
+`;
 
 const StyledContentWithLevels = styled.div`
   border-color: ${Colors['border-default']};

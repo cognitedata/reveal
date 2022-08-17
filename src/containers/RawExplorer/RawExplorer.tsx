@@ -60,11 +60,7 @@ const RawExplorer = (): JSX.Element => {
               priority={LayoutPriority.Low}
               visible={isSidePanelOpen}
             >
-              <SidePanel
-                activePanelKey="raw"
-                onClose={() => setIsSidePanelOpen(false)}
-                key="raw"
-              />
+              <SidePanel onClose={() => setIsSidePanelOpen(false)} />
             </Allotment.Pane>
             <Allotment.Pane key="content" priority={LayoutPriority.High}>
               <StyledRawExplorerTableContentWrapper>
