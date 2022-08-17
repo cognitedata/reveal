@@ -24,9 +24,22 @@ const RawSidePanel = (
 
   const { t } = useTranslation();
 
-  const { setSelectedSidePanelDatabase, selectedSidePanelDatabase } =
-    useContext(RawExplorerContext);
-  const [[activeDatabase] = []] = useActiveTable();
+  const {
+    isSidePanelOpen,
+    setIsSidePanelOpen,
+    setSelectedSidePanelDatabase,
+    selectedSidePanelDatabase,
+  } = useContext(RawExplorerContext);
+  const [active] = useActiveTable();
+  const [activeDatabase] = active ?? [];
+
+  useEffect(() => {
+    // Force the sidebar to open when we close all of the tabs,
+    // which wouldn't allow the user to open the sidebar again.
+    if (!active && !isSidePanelOpen) {
+      setIsSidePanelOpen(true);
+    }
+  }, [active, isSidePanelOpen, setIsSidePanelOpen]);
 
   useEffect(() => {
     if (activeDatabase && !selectedSidePanelDatabase)
