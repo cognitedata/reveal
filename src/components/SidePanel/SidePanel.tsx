@@ -17,10 +17,10 @@ import { useTranslation } from 'common/i18n';
 const RawSidePanel = (
   props: Omit<
     SidePanelItemProps<RawExplorerSideMenuItem>,
-    'children' | 'footer' | 'title'
+    'children' | 'footer' | 'title' | 'onChange'
   >
 ): JSX.Element => {
-  const { activePanelKey, onChange, onClose } = props;
+  const { activePanelKey, onClose } = props;
 
   const { t } = useTranslation();
 
@@ -51,8 +51,7 @@ const RawSidePanel = (
     <Flex direction="column" style={{ height: '100%' }}>
       <SidePanelItemHeader<RawExplorerSideMenuItem>
         activePanelKey={activePanelKey}
-        onChange={onChange!}
-        onClose={onClose!}
+        onClose={onClose}
         title={t('raw-explorer-title')}
       />
       <StyledContentWithLevels>

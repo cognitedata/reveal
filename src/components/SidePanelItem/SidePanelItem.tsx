@@ -24,7 +24,6 @@ export type SidePanelItemProps<T extends string> = {
 
 export type SidePanelItemInternalProps<T extends string> = {
   activePanelKey: T;
-  onChange: (key: T) => void;
   onClose: () => void;
 };
 
@@ -41,7 +40,6 @@ const SidePanelItem = <T extends string>(
     className,
     extraContent,
     footer,
-    onChange,
     onClose,
     title,
   } = props;
@@ -53,8 +51,7 @@ const SidePanelItem = <T extends string>(
       <SidePanelItemHeader<T>
         activePanelKey={activePanelKey}
         extraContent={extraContent}
-        onChange={onChange!}
-        onClose={onClose!}
+        onClose={onClose}
         title={title}
       />
       <StyledContent className={className} ref={contentRef}>
@@ -62,15 +59,13 @@ const SidePanelItem = <T extends string>(
           ...children.props,
           activePanelKey,
           contentRef,
-          onChange,
           onClose,
         })}
       </StyledContent>
       <SidePanelItemFooter<T>
         activePanelKey={activePanelKey}
         footer={footer}
-        onChange={onChange!}
-        onClose={onClose!}
+        onClose={onClose}
       />
     </StyledSidePanelItemContainer>
   );

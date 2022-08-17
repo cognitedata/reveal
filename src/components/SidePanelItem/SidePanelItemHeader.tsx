@@ -14,22 +14,19 @@ type SidePanelItemHeaderProps<T extends string> = Pick<
 const SidePanelItemHeader = <T extends string>({
   activePanelKey,
   extraContent,
-  onChange,
   onClose,
   title,
 }: SidePanelItemHeaderProps<T>): JSX.Element => {
   return (
     <StyledHeader>
-      {extraContent?.left?.({ activePanelKey, onChange, onClose })}
+      {extraContent?.left?.({ activePanelKey, onClose })}
       <StyledTitle level={5}>
-        {typeof title === 'string'
-          ? title
-          : title({ activePanelKey, onChange, onClose })}
+        {typeof title === 'string' ? title : title({ activePanelKey, onClose })}
       </StyledTitle>
       <StyledHeaderRight>
         {extraContent?.right && (
           <StyledHeaderExtraContentRight>
-            {extraContent.right({ activePanelKey, onChange, onClose })}
+            {extraContent.right({ activePanelKey, onClose })}
           </StyledHeaderExtraContentRight>
         )}
         <Button icon="PanelLeft" onClick={onClose} size="small" />

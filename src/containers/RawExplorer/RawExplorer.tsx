@@ -62,7 +62,6 @@ const RawExplorer = (): JSX.Element => {
             >
               <SidePanel
                 activePanelKey="raw"
-                onChange={() => {}}
                 onClose={() => setIsSidePanelOpen(false)}
                 key="raw"
               />

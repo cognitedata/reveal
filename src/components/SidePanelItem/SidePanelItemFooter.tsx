@@ -17,7 +17,6 @@ type SidePanelItemFooterProps<T extends string> = Pick<
 const SidePanelItemFooter = <T extends string>({
   activePanelKey,
   footer = true,
-  onChange,
   onClose,
 }: SidePanelItemFooterProps<T>): JSX.Element => {
   const { t } = useTranslation();
@@ -31,7 +30,6 @@ const SidePanelItemFooter = <T extends string>({
       <>
         {footer({
           activePanelKey,
-          onChange,
           onClose,
         })}
       </>
