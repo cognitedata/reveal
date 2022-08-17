@@ -7,8 +7,8 @@ import type { BoundaryConditionObject } from '@cognite/simconfig-api-sdk/rtk';
 export interface ModelFormState
   extends Omit<SimconfigApi.CreateModelFile, 'boundaryConditions' | 'file'> {
   file?: File;
-  boundaryConditions: (OptionType<SimconfigApi.BoundaryCondition> & {
-    value: SimconfigApi.BoundaryCondition;
+  boundaryConditions: (OptionType<string> & {
+    value: string;
   })[];
   availableBoundaryConditions: BoundaryConditionObject[];
   labels: ({ label: string; value: string } & { labelName: string })[];
