@@ -75,6 +75,7 @@ export class AxisViewTool extends Cognite3DViewerToolBase {
       throw new Error('Could not find canvas');
     }
     const divElement = document.createElement('div');
+    divElement.id = 'reveal-axis-view';
     divElement.style.position = 'absolute';
     divElement.style.height = `${this._layoutConfig.size}px`;
     divElement.style.width = `${this._layoutConfig.size}px`;

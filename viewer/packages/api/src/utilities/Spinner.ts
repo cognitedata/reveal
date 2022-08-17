@@ -43,6 +43,7 @@ export class Spinner {
   constructor(parent: HTMLElement) {
     Spinner.loadStyles();
     this.el = document.createElement('div');
+    this.el.id = Spinner.stylesId;
     this.el.title = Spinner.titles.idle;
 
     this.el.className = Spinner.classnames.base;

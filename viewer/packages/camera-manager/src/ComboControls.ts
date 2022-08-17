@@ -386,21 +386,11 @@ export class ComboControls extends EventDispatcher {
   private readonly onFocusChanged = (event: MouseEvent | TouchEvent | FocusEvent) => {
     this._isFocused =
       event.type !== 'blur' &&
-      (this.isDescendant(this._domElement.parentElement!, event.target as HTMLElement) ||
-        document.activeElement === this._domElement);
+      ((event.target as HTMLElement).id === 'reveal-axis-view' ||
+        (event.target as HTMLElement).id.includes('reveal-viewer-spinner') ||
+        event.target == this._domElement);
 
     this._keyboard.disabled = !this._isFocused;
-  };
-
-  private readonly isDescendant = (parent: HTMLElement, child: HTMLElement) => {
-    let node = child.parentNode;
-    while (node !== null) {
-      if (node === parent) {
-        return true;
-      }
-      node = node.parentNode;
-    }
-    return false;
   };
 
   private readonly onContextMenu = (event: MouseEvent) => {
