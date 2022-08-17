@@ -1,28 +1,30 @@
 use nalgebra::Const;
-use crate::linalg::{Vec3WithIndex, vec3, Vec3, Mat4};
-
 use std::vec::Vec;
 
+use crate::linalg::{Vec3WithIndex, vec3, Vec3, Mat4};
 use crate::shapes;
-
 use crate::{InputShape,InputCylinder,InputOrientedBox};
 
-pub fn parse_points(array: &js_sys::Float32Array,
-                    point_offset: Vec3) -> Vec<Vec3WithIndex> {
+pub fn parse_points(input_array: &js_sys::Float32Array,
+                    input_point_offset: js_sys::Array) -> Vec<Vec3WithIndex> {
 
-    let num_points = array.length() / 3;
-    let mut vec = Vec::<Vec3WithIndex>::with_capacity(num_points as usize);
+    let point_offset = Vec3::new(input_point_offset.get(0).as_f64().unwrap(),
+                                 input_point_offset.get(1).as_f64().unwrap(),
+                                 input_point_offset.get(2).as_f64().unwrap());
+
+    let num_points = input_array.length() / 3;
+    let mut point_vec = Vec::<Vec3WithIndex>::with_capacity(num_points as usize);
 
     for i in 0..num_points {
-        vec.push(Vec3WithIndex {
-            vec: vec3(array.get_index(3 * i + 0) as f64,
-                      array.get_index(3 * i + 1) as f64,
-                      array.get_index(3 * i + 2) as f64) + point_offset,
+        point_vec.push(Vec3WithIndex {
+            vec: vec3(input_array.get_index(3 * i + 0) as f64,
+                      input_array.get_index(3 * i + 1) as f64,
+                      input_array.get_index(3 * i + 2) as f64) + point_offset,
             index: i
         });
     }
 
-    vec
+    point_vec
 }
 
 fn create_cylinder(input: InputCylinder, id: u32) -> Box<shapes::cylinder::Cylinder> {
@@ -54,12 +56,15 @@ fn create_shape(obj: InputShape) -> Box<dyn shapes::shape::Shape> {
     }
 }
 
-pub fn parse_objects(shapes: Vec<InputShape>) -> Vec<Box<dyn shapes::shape::Shape>> {
-    let mut new_vec = Vec::<Box<dyn shapes::shape::Shape>>::with_capacity(shapes.len());
+pub fn parse_objects(input_shapes: js_sys::Array) -> Vec<Box<dyn shapes::shape::Shape>> {
+    let mut shape_vec = Vec::<Box<dyn shapes::shape::Shape>>::with_capacity(input_shapes.length() as usize);
 
-    for obj in shapes.into_iter() {
-        new_vec.push(create_shape(obj));
+    for value in input_shapes.iter() {
+        assert!(value.is_object());
+
+        let input_shape = value.into_serde::<InputShape>().unwrap();
+        shape_vec.push(create_shape(input_shape));
     }
 
-    new_vec
+    shape_vec
 }
