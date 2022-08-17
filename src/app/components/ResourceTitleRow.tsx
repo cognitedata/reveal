@@ -43,6 +43,13 @@ export default function ResourceTitleRow({
 
   const navigate = useNavigate();
   const location = useLocation();
+  const isInitialPage = location.key === 'default';
+
+  const prevLinkDefault = location.pathname.replace(
+    'explore/',
+    'explore/search/'
+  );
+
   const isPreview =
     location.pathname.includes('/search') ||
     location.pathname.includes('/threeD');
@@ -68,51 +75,46 @@ export default function ResourceTitleRow({
       style={isPreview ? { maxWidth: 'calc(100vw - 480px)' } : {}}
     >
       {!isPreview && (
-        <div
-          style={{
-            overflow: 'hidden',
-            flex: '0 0 auto',
-          }}
-        >
+        <StyledGoBackWrapper>
           <Space>
             {/* Go back */}
-            <Button icon="ArrowLeft" onClick={() => navigate(-1)} />
+
+            <Button
+              icon="ArrowLeft"
+              onClick={() =>
+                isInitialPage
+                  ? navigate(prevLinkDefault + location.search)
+                  : navigate(-1)
+              }
+            />
+
             <Divider type="vertical" style={{ height: '36px' }} />
           </Space>
-        </div>
+        </StyledGoBackWrapper>
       )}
-      <div
-        style={{
-          overflow: 'hidden',
-          verticalAlign: 'bottom',
-          flex: '1 1 auto',
-        }}
-      >
+      <PreviewLinkWrapper>
         {isPreview ? (
-          <Link
-            style={{ color: 'var(--cogs-primary)' }}
-            to={createLink(`/explore/${type}/${id}`, { [SEARCH_KEY]: query })}
+          <StyledLink
+            to={createLink(`/explore/${type}/${id}`, {
+              [SEARCH_KEY]: query,
+            })}
+            state={{ prevPath: location.pathname }}
             onClick={() => trackUsage('Exploration.FullPage', { type, id })}
           >
             {name}{' '}
-          </Link>
+          </StyledLink>
         ) : (
           name
         )}
-      </div>
-      <div
-        style={{
-          overflow: 'hidden',
-          flex: '0 0 auto',
-        }}
-      >
+      </PreviewLinkWrapper>
+      <StyledGoBackWrapper>
         <TitleRowActions
           dateFilter={datefilter}
           item={{ type, id }}
           beforeDefaultActions={beforeDefaultActions}
           afterDefaultActions={afterDefaultActions}
         />
-      </div>
+      </StyledGoBackWrapper>
     </TitleRowWrapper>
   );
 }
@@ -140,4 +142,19 @@ const NameHeader = styled.h1`
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+`;
+
+const StyledGoBackWrapper = styled.div`
+  overflow: hidden;
+  flex: 0 0 auto;
+`;
+
+const PreviewLinkWrapper = styled.div`
+  overflow: hidden;
+  vertical-align: bottom;
+  flex: 1 1 auto;
+`;
+
+const StyledLink = styled(Link)`
+  color: var(--cogs-primary);
 `;
