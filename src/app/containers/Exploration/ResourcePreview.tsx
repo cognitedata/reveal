@@ -4,6 +4,7 @@ import { FilePreview } from 'app/containers/File/FilePreview';
 import { SequencePreview } from 'app/containers/Sequence/SequencePreview';
 import { TimeseriesPreview } from 'app/containers/Timeseries/TimeseriesPreview';
 import { EventPreview } from 'app/containers/Event/EventPreview';
+import { ThreeDPreview } from 'app/containers/ThreeD/ThreeDPreview';
 import { ResourceItem } from '@cognite/data-exploration';
 import { Button } from '@cognite/cogs.js';
 import { Tooltip } from 'antd';
@@ -34,7 +35,9 @@ export default function ResourcePreview({
       );
     case 'event':
       return <EventPreview eventId={id} actions={closePreviewButton} />;
+    case 'threeD':
+      return <ThreeDPreview threeDId={id} actions={closePreviewButton} />;
     default:
-      return <>{null}</>;
+      return null;
   }
 }

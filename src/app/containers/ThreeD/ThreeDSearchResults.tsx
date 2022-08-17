@@ -1,18 +1,23 @@
 import React from 'react';
 import { ThreeDModelsResponse } from 'app/containers/ThreeD/hooks';
 import { Loader } from '@cognite/cogs.js';
-import { ThreeDGridPreview } from 'app/containers/ThreeD/ThreeDGridPreview';
+import {
+  ThreeDGridPreview,
+  Model3DWithType,
+} from 'app/containers/ThreeD/ThreeDGridPreview';
 import { Model3D } from '@cognite/sdk';
 import AutoSizer from 'react-virtualized-auto-sizer';
 import { FixedSizeGrid as Grid } from 'react-window';
 import InfiniteLoader from 'react-window-infinite-loader';
 import { Alert } from 'antd';
-import { useInfinite3DModels } from '@cognite/data-exploration';
+import { ResourceType, useInfinite3DModels } from '@cognite/data-exploration';
 
 export const ThreeDSearchResults = ({
   query = '',
+  onClick,
 }: {
   query: string | undefined;
+  onClick: (item: Model3DWithType) => void;
 }) => {
   const {
     data: modelData = { pages: [] as ThreeDModelsResponse[] },
@@ -95,13 +100,19 @@ export const ThreeDSearchResults = ({
                   {({ columnIndex, rowIndex, data, style }) => {
                     const { list } = data;
                     const item = list[rowIndex * columnCount + columnIndex];
+                    const modelItem = {
+                      ...item,
+                      type: 'threeD' as ResourceType,
+                    };
                     return item ? (
                       <ThreeDGridPreview
+                        item={modelItem}
                         key={item.id}
                         name={item.name}
                         modelId={item.id}
                         query={query}
                         style={style}
+                        onClick={onClick}
                       />
                     ) : null;
                   }}

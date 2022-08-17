@@ -6,7 +6,7 @@ import { EventPage } from 'app/containers/Event/EventPage';
 import { TimeseriesPage } from 'app/containers/Timeseries/TimeseriesPage';
 import { FilePage } from 'app/containers/File/FilePage';
 import { SequencePage } from 'app/containers/Sequence/SequencePage';
-import { ThreeDPreview } from 'app/containers/ThreeD/ThreeDPreview';
+import { ThreeDPage } from 'app/containers/ThreeD/ThreeDPage';
 
 const resourcePageType = {
   asset: AssetPage,
@@ -14,7 +14,7 @@ const resourcePageType = {
   timeSeries: TimeseriesPage,
   file: FilePage,
   sequence: SequencePage,
-  threeD: ThreeDPreview,
+  threeD: ThreeDPage,
 };
 
 export const ResourceDetailsPage = () => {

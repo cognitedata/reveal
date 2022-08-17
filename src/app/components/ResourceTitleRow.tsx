@@ -5,7 +5,7 @@ import { createLink } from '@cognite/cdf-utilities';
 import { Icon, Button, Colors } from '@cognite/cogs.js';
 
 import {
-  convertResourceType,
+  convertResourceThreeDWrapper,
   ResourceItem,
   ResourceIcons,
 } from '@cognite/data-exploration';
@@ -20,6 +20,7 @@ import { DatapointsMultiQuery } from '@cognite/sdk';
 
 export type DateFilter = Pick<DatapointsMultiQuery, 'start' | 'end'>;
 type Props = {
+  title?: string;
   item: ResourceItem;
   datefilter?: DateFilter;
   getTitle?: (_: any) => string | undefined;
@@ -28,6 +29,7 @@ type Props = {
 };
 
 export default function ResourceTitleRow({
+  title,
   item: { type, id },
   datefilter,
   getTitle = (i: any) => i?.name,
@@ -35,7 +37,7 @@ export default function ResourceTitleRow({
   afterDefaultActions,
 }: Props) {
   const { data, isFetched } = useCdfItem<{ name?: string }>(
-    convertResourceType(type),
+    convertResourceThreeDWrapper(type),
     {
       id,
     }
@@ -50,11 +52,8 @@ export default function ResourceTitleRow({
     'explore/search/'
   );
 
-  const isPreview =
-    location.pathname.includes('/search') ||
-    location.pathname.includes('/threeD');
+  const isPreview = location.pathname.includes('/search');
   const [query] = useQueryString(SEARCH_KEY);
-
   const name = (
     <NameWrapper>
       {!isPreview &&
@@ -64,7 +63,7 @@ export default function ResourceTitleRow({
           <Icon type="Loader" />
         ))}
       <NameHeader>
-        {getTitle(data) || id}
+        {title || getTitle(data) || id}
         {isPreview && '→'}
       </NameHeader>
     </NameWrapper>

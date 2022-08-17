@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { PageTitle } from '@cognite/cdf-utilities';
 import { useSDK } from '@cognite/sdk-provider';
 import {
@@ -6,6 +6,7 @@ import {
   Cognite3DModel,
   DefaultCameraManager,
 } from '@cognite/reveal';
+import ResourceTitleRow from 'app/components/ResourceTitleRow';
 import { useParams } from 'react-router-dom';
 import {
   useDefault3DModelRevision,
@@ -18,17 +19,24 @@ import { HomeButton, ExpandButton } from 'app/containers/ThreeD/ThreeDToolbar';
 import { AssetPreviewSidebar } from 'app/containers/ThreeD/AssetPreviewSidebar';
 import { Alert } from 'antd';
 
-export const ThreeDPreview = () => {
+export const ThreeDPreview = ({
+  threeDId,
+  actions,
+}: {
+  threeDId: number;
+  actions?: React.ReactNode;
+}) => {
   const { id: modelId } = useParams<{
     id: string;
   }>();
 
   const sdk = useSDK();
-  const revealContainer = React.useRef<HTMLDivElement | null>(null);
+  const revealContainer = useRef<HTMLDivElement | null>(null);
 
   const { data: threeDModel, isLoading: isThreeDModelLoading } = use3DModel(
     Number(modelId)
   );
+
   const { data: revision, isLoading: isRevisionLoading } =
     useDefault3DModelRevision(Number(modelId));
 
@@ -38,37 +46,44 @@ export const ThreeDPreview = () => {
   const [isAssetMappingSidebarVisible, setIsAssetMappingSidebarVisible] =
     useState<boolean>(false);
 
-  const initializeModel = useCallback(async () => {
+  const createViewerWithCameraAndModel = useCallback(() => {
     if (!threeDModel || !revision || !revealContainer.current) {
-      return;
+      return null;
     }
 
-    if (!viewer) {
-      const threeDViewer = new Cognite3DViewer({
-        sdk,
-        domElement: revealContainer.current,
-        continuousModelStreaming: true,
-      });
-      const cameraManager = threeDViewer.cameraManager as DefaultCameraManager;
-      cameraManager.setCameraControlsOptions({
-        mouseWheelAction: 'zoomToCursor',
-        changeCameraTargetOnClick: true,
-      });
+    const threeDViewer = new Cognite3DViewer({
+      sdk,
+      domElement: revealContainer.current,
+      continuousModelStreaming: true,
+    });
+    const cameraManager = threeDViewer.cameraManager as DefaultCameraManager;
+    cameraManager.setCameraControlsOptions({
+      mouseWheelAction: 'zoomToCursor',
+      changeCameraTargetOnClick: true,
+    });
 
-      const model = (await threeDViewer.addModel({
+    threeDViewer
+      .addModel({
         modelId: Number(modelId),
-        revisionId: revision?.id,
-      })) as Cognite3DModel;
-      threeDViewer.loadCameraFromModel(model);
-
-      setViewer(threeDViewer);
-      setViewerModel(model);
-    }
-  }, [sdk, modelId, threeDModel, revision, viewer]);
+        revisionId: revision!.id,
+      } as Cognite3DModel)
+      .then(model => {
+        threeDViewer.loadCameraFromModel(model);
+        setViewerModel(model as Cognite3DModel);
+      });
+    return threeDViewer;
+  }, [sdk, modelId, threeDModel, revision]);
 
   useEffect(() => {
-    initializeModel();
-  }, [initializeModel]);
+    if (!viewer) {
+      const threeDViewer = createViewerWithCameraAndModel();
+      setViewer(threeDViewer);
+    } else if (viewer && viewer.models.length === 1) {
+      viewer.dispose();
+      const threeDViewer = createViewerWithCameraAndModel();
+      setViewer(threeDViewer);
+    }
+  }, [viewer, createViewerWithCameraAndModel]);
 
   if (isThreeDModelLoading || isRevisionLoading) {
     return <Loader />;
@@ -88,6 +103,11 @@ export const ThreeDPreview = () => {
   return (
     <>
       <PageTitle title={threeDModel?.name} />
+      <ResourceTitleRow
+        title={threeDModel?.name}
+        item={{ id: threeDId, type: 'threeD' }}
+        afterDefaultActions={actions}
+      />
       <RevealContainer ref={revealContainer} />
       {!isAssetMappingSidebarVisible && (
         <ToolBarWrapper>
@@ -130,9 +150,8 @@ const RevealContainer = styled.div`
 
 const ToolBarWrapper = styled.div`
   position: absolute;
-  top: 70px;
-  left: 16px;
-  z-index: 100;
+  top: 96px;
+  left: 96px;
 
   button {
     margin-left: 5px;

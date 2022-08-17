@@ -240,7 +240,14 @@ function SearchPage() {
           />
         );
       case 'threeD':
-        return <ThreeDSearchResults query={query} />;
+        return (
+          <ThreeDSearchResults
+            onClick={(item: ResourceItem) => {
+              openPreview(item.id !== activeId ? item.id : undefined);
+            }}
+            query={query}
+          />
+        );
       default:
         return null;
     }
@@ -300,14 +307,12 @@ function SearchPage() {
             </Flex>
 
             {active && activeId && (
-              <div>
-                <SearchResultWrapper>
-                  <ResourcePreview
-                    item={{ id: activeId, type: currentResourceType }}
-                    onCloseClicked={() => openPreview(undefined)}
-                  />
-                </SearchResultWrapper>
-              </div>
+              <SearchResultWrapper>
+                <ResourcePreview
+                  item={{ id: activeId, type: currentResourceType }}
+                  onCloseClicked={() => openPreview(undefined)}
+                />
+              </SearchResultWrapper>
             )}
             {!activeId && cart.length > 0 && (
               <SelectedResults

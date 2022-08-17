@@ -13,27 +13,37 @@ import {
   Graphic,
   Tooltip,
 } from '@cognite/cogs.js';
-import { createLink } from '@cognite/cdf-utilities';
-import { Link } from 'react-router-dom';
-import { SEARCH_KEY } from 'app/utils/constants';
 import Highlighter from 'react-highlight-words';
+import { Model3D } from '@cognite/sdk';
+import { ResourceType } from '@cognite/data-exploration';
+import { useCurrentResourceId } from 'app/hooks';
+
+export type Model3DWithType = Model3D & {
+  type: ResourceType;
+};
 
 type ThreeDGridPreviewProps = {
+  item: Model3DWithType;
   query: string;
   name: string;
   modelId: number;
   style?: React.CSSProperties;
+  onClick: (item: Model3DWithType) => void;
 };
 export const ThreeDGridPreview = ({
+  item,
   query,
   name,
   modelId,
   style,
+  onClick,
 }: ThreeDGridPreviewProps) => {
   const { data: revision, isLoading } = useDefault3DModelRevision(modelId);
   const { data, isFetched } = use3DModelThumbnail(revision?.thumbnailURL);
 
   const [imageUrl, setImage] = useState<string | undefined>(undefined);
+  const [activeId] = useCurrentResourceId();
+  const isSelected = activeId === item.id;
 
   useEffect(() => {
     if (data) {
@@ -75,28 +85,29 @@ export const ThreeDGridPreview = ({
   }
 
   return (
-    <Link
-      to={createLink(`/explore/threeD/${modelId}`, { [SEARCH_KEY]: query })}
+    <div
+      style={style}
+      onClick={() => {
+        onClick(item);
+      }}
     >
-      <GridItemContainer style={style}>
-        <GridItemWrapper>
-          <Thumbnail>
-            {revision?.thumbnailURL && image}
-            {!revision?.thumbnailURL && <Graphic type="ThreeDModel" />}
-          </Thumbnail>
-          <Tooltip content={name} arrow={false}>
-            <Title level={6}>
-              <Highlighter
-                className="highlighter-wrapper"
-                searchWords={query.split(' ')}
-                autoEscape
-                textToHighlight={name}
-              />
-            </Title>
-          </Tooltip>
-        </GridItemWrapper>
-      </GridItemContainer>
-    </Link>
+      <GridItemWrapper isSelected={isSelected}>
+        <Thumbnail>
+          {revision?.thumbnailURL && image}
+          {!revision?.thumbnailURL && <Graphic type="ThreeDModel" />}
+        </Thumbnail>
+        <Tooltip content={name} arrow={false}>
+          <Title level={6}>
+            <Highlighter
+              className="highlighter-wrapper"
+              searchWords={query.split(' ')}
+              autoEscape
+              textToHighlight={name}
+            />
+          </Title>
+        </Tooltip>
+      </GridItemWrapper>
+    </div>
   );
 };
 
@@ -113,13 +124,18 @@ const Thumbnail = styled.div`
   }
 `;
 
-const GridItemContainer = styled.div`
+type GridItemType = {
+  isSelected: boolean;
+};
+const GridItemWrapper = styled.div<GridItemType>`
+  background-color: ${props => props.isSelected && 'var(--cogs-midblue-6)'};
+  &:hover {
+    background-color: ${props =>
+      !props.isSelected && 'var(--cogs-greyscale-grey1)'};
+    cursor: pointer;
+  }
   padding: 15px;
-  cursor: pointer;
-`;
-
-const GridItemWrapper = styled.div`
-  padding: 15px;
+  margin: 15px;
   border: 1px solid var(--cogs-greyscale-grey4);
   .highlighter-wrapper {
     display: block;
