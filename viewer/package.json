@@ -20,8 +20,7 @@
   "main": "index.js",
   "types": "index.d.ts",
   "workspaces": [
-    "packages/*",
-    "wasm/*"
+    "packages/*"
   ],
   "scripts": {
     "build": "yarn run clean && yarn run build:wasm && webpack --env development",
