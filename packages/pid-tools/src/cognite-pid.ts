@@ -774,6 +774,7 @@ export class CognitePid {
     this.parseLineNumbers();
 
     this.emit(EventType.LOAD);
+
     this.refresh();
   }
 

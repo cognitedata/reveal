@@ -55,6 +55,7 @@ export const ReactPid = ({
 
   const {
     file,
+    savedJsonState,
     unit,
     handleFileUpload,
     loadFileIfProvided,
@@ -340,6 +341,18 @@ export const ReactPid = ({
       }
     }
   }, [file]);
+
+  useEffect(() => {
+    if (savedJsonState) {
+      if (pidViewer.current) {
+        pidViewer.current.loadJson(savedJsonState);
+      } else {
+        throw new Error(
+          'Failed to load saved JSON state from CDF to pidViewer'
+        );
+      }
+    }
+  }, [savedJsonState]);
 
   useEffect(() => {
     if (isAutoMode) {
