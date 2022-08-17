@@ -33,7 +33,9 @@ export const FileNamePreview = ({
         <Flex gap={4} alignItems="center">
           <DocumentIconWrapper>
             {file?.mimeType && (
-              <DocumentIcon file={fileIconMapper[file.mimeType]} />
+              <DocumentIcon
+                file={fileIconMapper[file.mimeType] || 'file.txt'}
+              />
             )}
           </DocumentIconWrapper>
 
