@@ -1858,7 +1858,11 @@ export class CognitePid {
     this.svg?.insertBefore(this.backgroundRect, this.svg.children[0]);
 
     this.backgroundRect.addEventListener('mousedown', (e) => {
-      if (e.button !== MouseButton.LEFT_CLICK) return;
+      if (
+        this.activeTool !== 'addSymbol' ||
+        e.button !== MouseButton.LEFT_CLICK
+      )
+        return;
 
       this.selectionRectStart = this.mouseEventToPidPoint(e);
 
@@ -1866,7 +1870,7 @@ export class CognitePid {
     });
 
     this.backgroundRect.addEventListener('mousemove', (e) => {
-      if (!this.selectionRectStart) return;
+      if (this.activeTool !== 'addSymbol' || !this.selectionRectStart) return;
 
       const selectionRectStop = this.mouseEventToPidPoint(e);
 
@@ -1894,7 +1898,7 @@ export class CognitePid {
     });
 
     this.backgroundRect.addEventListener('mouseup', (e) => {
-      if (!this.selectionRectStart) return;
+      if (this.activeTool !== 'addSymbol' || !this.selectionRectStart) return;
 
       const selectionRectStop = this.mouseEventToPidPoint(e);
 
