@@ -9,6 +9,7 @@ import {
 import {
   AutoComplete as CogsAutoComplete,
   Button as CogsButton,
+  Icon,
   Row,
   Title,
 } from '@cognite/cogs.js';
@@ -57,6 +58,15 @@ const AutoCompleteButton = styled(CogsButton)`
 const AutoCompleteButtonContainer = styled.div`
   display: flex;
   flex-direction: row;
+`;
+
+const RemovableRow = styled.div`
+  display: flex;
+  flex: 1;
+  width: 100%;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
 `;
 
 interface Option {
@@ -150,6 +160,16 @@ export const AddAssetController: React.FC<AddAssetControllerProps> = ({
     );
   };
 
+  const unassignAsset = () => {
+    const updatedSymbolInstances = [...symbolInstances];
+    const toUnassignSymbolInstance = updatedSymbolInstances.find(
+      (symbolInstance) => symbolInstance.id === labelSelection
+    )!;
+    delete toUnassignSymbolInstance.assetId;
+    delete toUnassignSymbolInstance.assetName;
+    setSymbolInstances(updatedSymbolInstances);
+  };
+
   return (
     <div>
       <CollapseSeperator>Selected Symbol Instance</CollapseSeperator>
@@ -173,9 +193,19 @@ export const AddAssetController: React.FC<AddAssetControllerProps> = ({
           </Row>
           <Row cols={1}>
             <Title level={6}>Asset name</Title>
-            {selectedSymbolInstance?.assetName
-              ? selectedSymbolInstance?.assetName
-              : 'undefined'}
+            {selectedSymbolInstance?.assetName ? (
+              <RemovableRow>
+                {selectedSymbolInstance?.assetName}
+                <Icon
+                  onClick={unassignAsset}
+                  type="Close"
+                  size={12}
+                  style={{ cursor: 'pointer' }}
+                />
+              </RemovableRow>
+            ) : (
+              'undefined'
+            )}
           </Row>
         </SelectedSymbolInstanceInfo>
       )}
