@@ -43,7 +43,6 @@ export async function parseEpt(
   pointOffset: THREE.Vector3,
   sectorBoundingBox: THREE.Box3
 ): Promise<ParsedEptData> {
-
   const buffer = data.buffer;
   const view = new DataView(buffer);
   const schema: SchemaEntry[] = data.schema;
