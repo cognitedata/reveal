@@ -13,6 +13,7 @@ type Event =
       e: 'Documentation.Click';
       name?: string | undefined;
       document?: string | undefined;
+      url?: string | undefined;
     }
   | {
       e: 'Versions.ViewAll.Click';

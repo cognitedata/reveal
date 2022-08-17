@@ -91,6 +91,7 @@ const ExtractorDetails = () => {
                             e: 'Documentation.Click',
                             name: extractor?.name,
                             document: link?.name,
+                            url: link?.url,
                           });
                         }}
                       >
