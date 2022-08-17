@@ -386,7 +386,7 @@ export class ComboControls extends EventDispatcher {
   private readonly onFocusChanged = (event: MouseEvent | TouchEvent | FocusEvent) => {
     this._isFocused =
       event.type !== 'blur' &&
-      ((event.target as HTMLElement).id === 'reveal-axis-view' ||
+      ((event.target as HTMLElement).id === 'reveal-axis-view' || //TODO pramodcog 17-08-2022 check for better way to handle non reveal ui elements
         (event.target as HTMLElement).id.includes('reveal-viewer-spinner') ||
         event.target == this._domElement);
 
