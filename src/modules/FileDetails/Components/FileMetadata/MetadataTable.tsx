@@ -127,7 +127,7 @@ export const MetaDataTable = (props: MetadataTableProps) => {
 
   return (
     <Container>
-      <TitleHeader width={props.columnWidth * 1.8}>
+      <TitleHeader>
         <Left>
           <Title level={6}>{props.title}</Title>
           {props.details?.geoLocation && (
@@ -159,7 +159,7 @@ const Container = styled.div`
   padding-bottom: 10px;
 `;
 
-const TitleHeader = styled.div<{ width: number }>`
+const TitleHeader = styled.div`
   display: grid;
   grid-template-columns: auto auto;
   grid-gap: 10px;
