@@ -1,21 +1,24 @@
+import { useState } from 'react';
 import { Link, useMatch } from 'react-location';
 import { useSelector } from 'react-redux';
 
 import styled from 'styled-components/macro';
 
-import { Button, Skeleton } from '@cognite/cogs.js';
+import { Button, Skeleton, Switch } from '@cognite/cogs.js';
 import {
   useGetModelCalculationQuery,
   useGetModelFileQuery,
 } from '@cognite/simconfig-api-sdk/rtk';
 
 import { CalculationSummary } from 'components/calculation/CalculationSummary';
+import { Editor } from 'components/shared/Editor';
 import { useTitle } from 'hooks/useTitle';
 import { selectProject } from 'store/simconfigApiProperties/selectors';
 
 import type { AppLocationGenerics } from 'routes';
 
 export function CalculationDetails() {
+  const [isJsonModeEnabled, setJsonModeEnabled] = useState<boolean>(false);
   const project = useSelector(selectProject);
   const {
     params: {
@@ -54,6 +57,7 @@ export function CalculationDetails() {
   const modelLibraryPath = modelCalculation.configuration.calcTypeUserDefined
     ? '../../..'
     : '../..';
+
   return (
     <CalculationDetailsContainer>
       <h2>
@@ -66,35 +70,55 @@ export function CalculationDetails() {
           <Button icon="ArrowLeft">Return to model library</Button>
         </Link>
       </h2>
-      <ConfigurationMetadata>
-        {modelCalculation.configuration.calcTypeUserDefined ? (
-          <div className="entry">
-            <div>Calculation Type</div>
-            <div>{modelCalculation.configuration.calcTypeUserDefined}</div>
-          </div>
-        ) : null}
-        <div className="entry">
-          <div>Simulator</div>
-          <div>{modelCalculation.configuration.simulator}</div>
-        </div>
-        <div className="entry">
-          <div>Unit system</div>
-          <div>{modelCalculation.configuration.unitSystem}</div>
-        </div>
-        <div className="entry">
-          <div>Model name</div>
-          <div>{modelCalculation.configuration.modelName}</div>
-        </div>
-        <div className="entry">
-          <div>User e-mail</div>
-          <div>{modelCalculation.configuration.userEmail}</div>
-        </div>
-        <div className="entry">
-          <div>Connector</div>
-          <div>{modelCalculation.configuration.connector}</div>
-        </div>
-      </ConfigurationMetadata>
-      <CalculationSummary configuration={modelCalculation.configuration} />
+      <Switch
+        checked={isJsonModeEnabled}
+        name="json-preview"
+        onChange={() => {
+          setJsonModeEnabled(!isJsonModeEnabled);
+        }}
+      >
+        JSON Preview
+      </Switch>
+      {!isJsonModeEnabled ? (
+        <>
+          <ConfigurationMetadata>
+            {modelCalculation.configuration.calcTypeUserDefined ? (
+              <div className="entry">
+                <div>Calculation Type</div>
+                <div>{modelCalculation.configuration.calcTypeUserDefined}</div>
+              </div>
+            ) : null}
+            <div className="entry">
+              <div>Simulator</div>
+              <div>{modelCalculation.configuration.simulator}</div>
+            </div>
+            <div className="entry">
+              <div>Unit system</div>
+              <div>{modelCalculation.configuration.unitSystem}</div>
+            </div>
+            <div className="entry">
+              <div>Model name</div>
+              <div>{modelCalculation.configuration.modelName}</div>
+            </div>
+            <div className="entry">
+              <div>User e-mail</div>
+              <div>{modelCalculation.configuration.userEmail}</div>
+            </div>
+            <div className="entry">
+              <div>Connector</div>
+              <div>{modelCalculation.configuration.connector}</div>
+            </div>
+          </ConfigurationMetadata>
+          <CalculationSummary configuration={modelCalculation.configuration} />
+        </>
+      ) : (
+        <Editor
+          height="75vh"
+          value={JSON.stringify(modelCalculation.configuration, null, 2)}
+          highlightActiveLine
+          readOnly
+        />
+      )}
     </CalculationDetailsContainer>
   );
 }

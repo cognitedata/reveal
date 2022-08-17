@@ -98,6 +98,8 @@ DEPENDENCIES = [
     "@npm//@visx/threshold",
     "@npm//@visx/tooltip",
     "@npm//@visx/xychart",
+    "@npm//react-ace",
+    "@npm//ace-builds",
     "@npm//classnames",
     "@npm//color",
     "@npm//d3",
