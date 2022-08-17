@@ -10,6 +10,14 @@ const GlobalStyle = createGlobalStyle<{ theme: typeof theme }>`
   .ant-input,
   .ant-tag {
     font-family: BlinkMacSystemFont,Arial,sans-serif;
+    background: transparent !important;
+    border: 2px solid #D9D9D9 !important;
+    border-radius: 6px !important;
+  }
+  .ant-input-disabled {
+    background: var(--cogs-greyscale-grey2) !important;
+    border: 2px solid #D9D9D9 !important;
+    border-radius: 6px !important;
   }
 
   .ant-form-explain-holder {
