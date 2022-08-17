@@ -10,7 +10,10 @@ import { setupServer } from 'msw/node';
 import { testRenderer } from '__test-utils/renderer';
 import { getMockedStore } from '__test-utils/store.utils';
 
+import { getMockCasingSchematicInternal } from '../../__fixtures/getMockCasingSchematicInternal';
 import { useCasingSchematicsQuery } from '../useCasingSchematicsQuery';
+
+const mockCasingSchematicInternal = getMockCasingSchematicInternal();
 
 const mockCasingSchematic = getMockCasingSchematic();
 
@@ -31,7 +34,22 @@ describe('useCreateAllWellCollection', () => {
     const wellboreIds = [mockCasingSchematic.wellboreMatchingId];
     const { data } = useCasingSchematicsQuery({ wellboreIds });
 
-    return <div>Total: {data?.length}</div>;
+    return (
+      <div>
+        <div>
+          {data
+            ? data.map((item) => (
+                <div key={item.wellboreAssetExternalId}>
+                  <textarea data-testid="Json-String">
+                    {JSON.stringify(item)}
+                  </textarea>
+                  <div>{item.wellboreAssetExternalId}</div>
+                </div>
+              ))
+            : 'Empty'}
+        </div>
+      </div>
+    );
   };
 
   it('should return normalized casing schematics', async () => {
@@ -40,7 +58,15 @@ describe('useCreateAllWellCollection', () => {
 
     testRenderer(TestComponent, store);
 
-    expect(await screen.findByText('Total: 1')).toBeInTheDocument();
+    expect(
+      await screen.findByText(
+        mockCasingSchematicInternal.wellboreAssetExternalId
+      )
+    ).toBeInTheDocument();
+
+    expect(
+      JSON.parse((await screen.getByTestId('Json-String').textContent) || '')
+    ).toEqual(mockCasingSchematicInternal);
   });
 
   it('should return empty array for server error', async () => {
@@ -49,6 +75,6 @@ describe('useCreateAllWellCollection', () => {
 
     testRenderer(TestComponent, store);
 
-    expect(await screen.findByText('Total: 0')).toBeInTheDocument();
+    expect(await screen.findByText('Empty')).toBeInTheDocument();
   });
 });
