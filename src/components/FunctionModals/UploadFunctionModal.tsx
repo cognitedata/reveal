@@ -30,6 +30,7 @@ import {
   checkSecrets,
   checkFile,
   checkFloat,
+  skipValidation,
 } from 'utils/formValidations';
 import ErrorFeedback from 'components/Common/atoms/ErrorFeedback';
 import { allFunctionsKey } from 'utils/queryKeys';
@@ -186,8 +187,8 @@ export default function UploadFunctionModal({ onCancel }: Props) {
     }
   };
 
-  const checkCPU = checkFloat(0.1, 0.6);
-  const checkMemory = checkFloat(0.1, 2.5);
+  const checkCPU = isVendorGKE() ? checkFloat(0.1, 0.6) : skipValidation;
+  const checkMemory = isVendorGKE() ? checkFloat(0.1, 2.5) : skipValidation;
 
   const canBeSubmitted =
     !!file &&
