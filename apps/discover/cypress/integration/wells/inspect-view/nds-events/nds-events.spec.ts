@@ -8,7 +8,10 @@ import {
   PROBABILITY_FILTER_TITLE,
 } from '../../../../../src/pages/authorized/search/well/inspect/modules/ndsEvents/components/Filters/constants';
 import { interceptCoreNetworkRequests } from '../../../../support/commands/helpers';
-import { STATIC_WELLBORE_1 } from '../../../../support/constants';
+import {
+  STATIC_WELLBORE_1,
+  STATIC_WELL_2,
+} from '../../../../support/constants';
 import { WELLS_SEARCH_ALIAS } from '../../../../support/interceptions';
 
 const DATA_AVAILABILITY_NDS = 'NDS events';
@@ -122,6 +125,11 @@ describe('Wells: nds-events', () => {
     cy.log('click on table button');
     cy.contains('Table').click();
 
+    cy.log('scroll table to bottom');
+    cy.findByTestId('nds-wells-table').scrollTo('bottom');
+
+    cy.get(`[aria-label=${STATIC_WELL_2}]`).click({ force: true });
+
     cy.findByTitle(`${STATIC_WELLBORE_1}`).invoke(
       'attr',
       'style',
@@ -133,7 +141,7 @@ describe('Wells: nds-events', () => {
 
     cy.log('Risk type should be visible');
     cy.findAllByTestId('treemap-tile-title').should(
-      'have.text',
+      'contain.text',
       `${RISK_TYPE}`
     );
 
