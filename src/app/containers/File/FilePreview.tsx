@@ -123,57 +123,46 @@ export const FilePreview = ({
           }
           afterDefaultActions={actions}
         />
-        <div
-          style={{
-            flex: '1',
-            display: 'flex',
-            flexDirection: 'column',
+        <ResourceDetailsTabs
+          parentResource={{
+            type: 'file',
+            id: fileId,
+            externalId: fileInfo.externalId,
           }}
-        >
-          <ResourceDetailsTabs
-            parentResource={{
-              type: 'file',
-              id: fileId,
-              externalId: fileInfo.externalId,
-            }}
-            tab={activeTab}
-            onTabChange={onTabChange}
-            additionalTabs={[
-              <Tabs.TabPane tab={<TabTitle>Preview</TabTitle>} key="preview">
+          tab={activeTab}
+          onTabChange={onTabChange}
+          additionalTabs={[
+            <Tabs.TabPane tab={<TabTitle>Preview</TabTitle>} key="preview">
+              <PreviewTabWrapper>
                 {editMode && (
                   <Banner>
                     <Body level={3}>You have entered editing mode.</Body>
                   </Banner>
                 )}
-                <div
-                  style={{
-                    flex: '1',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    height: '100%',
-                  }}
-                >
-                  <CogniteFilePreview
-                    fileId={fileId!}
-                    creatable={editMode}
-                    contextualization={writeAccess}
-                    onItemClicked={item =>
-                      navigate(createLink(`/explore/${item.type}/${item.id}`))
-                    }
-                  />
-                </div>
-              </Tabs.TabPane>,
-              <Tabs.TabPane tab={<TabTitle>File details</TabTitle>} key="info">
-                <FileDetails file={fileInfo} />
-                <Metadata metadata={fileInfo.metadata} />
-              </Tabs.TabPane>,
-            ]}
-          />
-        </div>
+                <CogniteFilePreview
+                  fileId={fileId!}
+                  creatable={editMode}
+                  contextualization={writeAccess}
+                  onItemClicked={item =>
+                    navigate(createLink(`/explore/${item.type}/${item.id}`))
+                  }
+                />
+              </PreviewTabWrapper>
+            </Tabs.TabPane>,
+            <Tabs.TabPane tab={<TabTitle>File details</TabTitle>} key="info">
+              <FileDetails file={fileInfo} />
+              <Metadata metadata={fileInfo.metadata} />
+            </Tabs.TabPane>,
+          ]}
+        />
       </CogniteFileViewer.Provider>
     </>
   );
 };
+
+const PreviewTabWrapper = styled.div`
+  height: calc(100vh - 350px);
+`;
 
 const Banner = styled.div`
   padding: 16px;

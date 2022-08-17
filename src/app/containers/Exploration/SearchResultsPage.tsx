@@ -384,6 +384,7 @@ const FilterWrapper = styled.div`
 `;
 
 const SearchFiltersWrapper = styled.div`
+  display: flex;
   flex: 0 0 auto;
 `;
 
