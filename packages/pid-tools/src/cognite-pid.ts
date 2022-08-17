@@ -220,6 +220,7 @@ export class CognitePid {
   private selectionRectStart: Point | null = null;
   private selectionRect: Node | null = null;
   private backgroundRect: SVGRectElement | null = null;
+  private mouseDown = false;
 
   constructor(options: CognitePidOptions) {
     const host = document.querySelector(options.container) as SVGElement;
@@ -970,7 +971,7 @@ export class CognitePid {
 
   private onMouseEnter = (mouseEvent: MouseEvent, node: SVGElement) => {
     if (this.activeTool === 'addSymbol' && !(node instanceof SVGTSpanElement)) {
-      if (mouseEvent.altKey) {
+      if (mouseEvent.altKey && !this.mouseDown) {
         this.setSymbolSelection(
           this.symbolSelection.filter((select) => select !== node.id)
         );
@@ -1868,6 +1869,7 @@ export class CognitePid {
       this.selectionRectStart = this.mouseEventToPidPoint(e);
 
       setSelectablilityOfAllText({ document, selectable: false });
+      this.mouseDown = true;
     });
 
     this.backgroundRect.addEventListener('mousemove', (e) => {
@@ -1890,7 +1892,7 @@ export class CognitePid {
         id: 'selection',
         color: 'white',
         opacity: 0,
-        strokeColor: 'red',
+        strokeColor: e.altKey ? 'blue' : 'red',
         strokeOpacity: 1,
         strokeWidth: 0.5,
       });
@@ -1908,15 +1910,26 @@ export class CognitePid {
         selectionRectStop
       );
 
-      const pathsToSelect =
+      const rectangleEnclosedPaths =
         this.pidDocument!.getPathsEnclosedByBoundingBox(selectionBoundingBox);
 
-      this.setSymbolSelection(
-        uniq([
-          ...this.symbolSelection,
-          ...pathsToSelect.map((path) => path.pathId),
-        ])
-      );
+      if (e.altKey) {
+        this.setSymbolSelection(
+          this.symbolSelection.filter(
+            (selectedPath) =>
+              !rectangleEnclosedPaths.some(
+                (deselectPath) => selectedPath === deselectPath.pathId
+              )
+          )
+        );
+      } else {
+        this.setSymbolSelection(
+          uniq([
+            ...this.symbolSelection,
+            ...rectangleEnclosedPaths.map((selectPath) => selectPath.pathId),
+          ])
+        );
+      }
 
       if (this.selectionRect) {
         (this.svg!.parentNode as SVGSVGElement).removeChild(this.selectionRect);
@@ -1926,6 +1939,7 @@ export class CognitePid {
 
       this.selectionRect = null;
       this.selectionRectStart = null;
+      this.mouseDown = false;
     });
   }
 }
