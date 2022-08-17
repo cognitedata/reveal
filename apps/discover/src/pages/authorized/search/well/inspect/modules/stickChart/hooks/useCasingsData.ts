@@ -2,18 +2,18 @@ import { useCasingSchematicsQuery } from 'domain/wells/casings/internal/queries/
 import { useCasingsTvdDataQuery } from 'domain/wells/casings/internal/queries/useCasingsTvdDataQuery';
 import { useNdsEventsForCasings } from 'domain/wells/nds/internal/hooks/useNdsEventsForCasings';
 import { useNptEventsForCasings } from 'domain/wells/npt/internal/hooks/useNptEventsForCasings';
-import { useWellInspectSelectedWells } from 'domain/wells/well/internal/hooks/useWellInspectSelectedWells';
+import { useWellInspectWells } from 'domain/wells/well/internal/hooks/useWellInspectWells';
 import { useWellTopsQuery } from 'domain/wells/wellTops/internal/queries/useWellTopsQuery';
 
 import { useMemo } from 'react';
 
-import { useWellInspectSelectedWellboreIds } from 'modules/wellInspect/selectors';
+import { useWellInspectWellboreIds } from 'modules/wellInspect/selectors';
 
 import { adaptCasingsDataToView } from '../utils/adaptCasingsDataToView';
 
 export const useCasingsData = () => {
-  const wells = useWellInspectSelectedWells();
-  const wellboreIds = useWellInspectSelectedWellboreIds();
+  const { wells } = useWellInspectWells();
+  const wellboreIds = useWellInspectWellboreIds();
 
   const { data: casingsData, isLoading } = useCasingSchematicsQuery({
     wellboreIds,

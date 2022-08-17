@@ -7,6 +7,10 @@ export const WellboreCasingsViewWrapper = styled(FlexColumn)`
   width: fit-content;
   background: var(--cogs-bg-accent);
   border-radius: 12px;
+  ${(props: { visible: boolean }) =>
+    props.visible
+      ? `visibility: visible; width: fit-content;`
+      : `visibility: hidden; width: 0; margin-right: -${sizes.normal};`}
 `;
 
 export const ContentWrapper = styled(Flex)`

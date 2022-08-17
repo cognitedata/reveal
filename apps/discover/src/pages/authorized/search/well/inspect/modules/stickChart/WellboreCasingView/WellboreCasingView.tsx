@@ -7,6 +7,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { DragDropContainer } from 'components/DragDropContainer';
 import { MultiSelectCategorizedOptionMap } from 'components/Filters/MultiSelectCategorized/types';
 import { useDeepMemo } from 'hooks/useDeep';
+import { useWellInspectSelection } from 'modules/wellInspect/selectors';
 
 import {
   SCALE_BOTTOM_PADDING,
@@ -50,6 +51,8 @@ export const WellboreCasingView: React.FC<WellboreCasingsViewProps> = ({
   isWellTopsLoading,
   showBothSides = false,
 }) => {
+  const { selectedWellboreIds } = useWellInspectSelection();
+
   const depthScaleRef = useRef<HTMLElement>(null);
 
   const [scaleBlocks, setScaleBlocks] = useState<number[]>([]);
@@ -115,7 +118,9 @@ export const WellboreCasingView: React.FC<WellboreCasingsViewProps> = ({
 
   return (
     <>
-      <WellboreCasingsViewWrapper>
+      <WellboreCasingsViewWrapper
+        visible={Boolean(selectedWellboreIds[wellboreMatchingId])}
+      >
         <Header
           wellName={wellName}
           wellboreName={wellboreName}
