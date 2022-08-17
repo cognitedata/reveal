@@ -6,15 +6,19 @@ export const Overlay = styled.div`
   height: 100%;
   width: 100%;
   background-color: rgba(0, 0, 0, 0.5);
+  padding: 50px 100px;
+  z-index: ${3};
 `;
 
 export const ListContainer = styled.div`
   position: relative;
-  margin: 50px 100px;
+  height: fit-content;
+  max-height: 100%;
   background-color: #fff;
   box-shadow: var(--cogs-z-20);
   border-radius: 8px;
   padding: 16px;
+  overflow: auto;
 
   th:last-of-type {
     display: flex;
@@ -26,6 +30,10 @@ export const ListContainer = styled.div`
   }
   td:last-of-type {
     text-align: right;
+  }
+  .cogs-table-pagination {
+    margin: unset;
+    padding-top: 16px;
   }
 `;
 
