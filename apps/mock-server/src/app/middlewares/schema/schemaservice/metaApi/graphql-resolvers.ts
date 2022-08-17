@@ -56,11 +56,19 @@ export const graphQlMetaApiResolvers = (
         const version = req.apiVersion.version || 1;
 
         const solution = store.find({ externalId: apiExternalId });
+        if (!solution) {
+          return [];
+        }
+
         const versions = (solution.versions || []) as CdfResourceObject[];
 
         const currentSchemaVersion = versions.find(
           (schemaVersion: any) => schemaVersion.version === version
         ) as any;
+
+        if (!currentSchemaVersion) {
+          return [];
+        }
 
         const breakingChanges = await validateBreakingChanges(
           graphQl,

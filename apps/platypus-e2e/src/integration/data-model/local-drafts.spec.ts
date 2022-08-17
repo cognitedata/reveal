@@ -1,4 +1,22 @@
 describe('Data Model Page - Local Drafts', () => {
+  function createDataModel(name: string) {
+    // Create new data model
+    cy.visit('/');
+    cy.getBySel('create-data-model-btn').click();
+    cy.getBySel('input-data-model-name').type(name);
+    cy.getBySel('modal-ok-button').click();
+  }
+
+  function typeShouldNotExist(typeName: string) {
+    cy.get(`div#${typeName}.node`).should('not.exist');
+    cy.getBySel(`type-list-item-${typeName}`).should('not.exist');
+  }
+
+  function typeShouldExist(typeName: string) {
+    cy.get(`div#${typeName}.node`).should('exist');
+    cy.getBySel(`type-list-item-${typeName}`).should('exist');
+  }
+
   beforeEach(() => {
     cy.request('http://localhost:4200/reset');
     cy.visit('/platypus/data-models/blog/latest/data');
@@ -28,26 +46,35 @@ describe('Data Model Page - Local Drafts', () => {
       cy.deleteDataModelType(typeName);
     });
 
+    function checkIfLocalDraftIsEmpty() {
+      cy.getBySel('schema-version-select')
+        .click()
+        .contains('Local draft')
+        .click();
+      typeNames.forEach((typeName) => typeShouldNotExist(typeName));
+    }
+
     // No types are present after page refresh
     cy.reload();
-    cy.getBySel('schema-version-select')
-      .click()
-      .contains('Local draft')
-      .click();
-    typeNames.forEach((typeName) => {
-      cy.getBySel(`type-list-item-${typeName}`).should('not.exist');
-    });
+    checkIfLocalDraftIsEmpty();
 
     // Discard button should still be visible when schema is empty
     cy.getBySel('discard-btn').should('be.visible');
+
+    // after switching versions, local draft should still be empty
+    cy.getBySel('schema-version-select').click().contains('Latest').click();
+
+    // Discard button should still be visible when schema is empty
+    cy.getBySel('edit-schema-btn').should('be.visible');
+    cy.getBySel('type-list-item-Post').should('exist');
+    typeShouldExist('Post');
+
+    checkIfLocalDraftIsEmpty();
   });
 
   it('clears the draft when user removes all types from an unpublished data model', () => {
     // Create new data model
-    cy.visit('/');
-    cy.getBySel('create-data-model-btn').click();
-    cy.getBySel('input-data-model-name').type('cypress-test');
-    cy.getBySel('modal-ok-button').click();
+    createDataModel('cypress-test');
 
     // Add and then remove a type
     cy.get('[aria-label="Add type"]').click();
@@ -84,8 +111,8 @@ describe('Data Model Page - Local Drafts', () => {
     cy.ensureCurrentVersionIsNotDraft();
 
     // UI editor, code editor and schema visualizer should be updated
-    cy.get('div#Currency.node').should('not.exist');
-    cy.getBySel('type-list-item-Currency').should('not.exist');
+    typeShouldNotExist('Currency');
+
     cy.get('[aria-label="Code editor"]').click();
     cy.get('.monaco-editor textarea:first')
       .type('{selectAll}')
@@ -109,7 +136,24 @@ describe('Data Model Page - Local Drafts', () => {
 
     // Publish button should be disabled until we make a change
     cy.getBySel('publish-schema-btn').should('have.attr', 'disabled');
+    cy.getBySel(`type-list-item-Currency`).click();
     cy.addDataModelTypeField('Currency', 'foo');
     cy.getBySel('publish-schema-btn').should('not.have.attr', 'disabled');
+  });
+
+  it('Loads only drafts owned by Data Model ', () => {
+    // Edit current data model and create a draft
+    cy.visit('/platypus/data-models/blog/latest/data');
+    cy.addDataModelType('Currency');
+
+    // Go back to Data Models Page and Create new Data Model
+    createDataModel('cypress-test-drafts');
+
+    typeShouldNotExist('Currency');
+
+    cy.get('[aria-label="Code editor"]').click();
+    cy.get('.monaco-editor textarea:first')
+      .type('{selectAll}')
+      .should('not.have.text', 'type Currency');
   });
 });

@@ -1,12 +1,12 @@
-import { Icon } from '@cognite/cogs.js';
-import { ColDef, ColGroupDef, GridOptions } from 'ag-grid-community';
-import { AgGridReact, AgGridReactProps } from 'ag-grid-react';
-import { ForwardedRef, forwardRef, useEffect, useState } from 'react';
-import ReactDOM from 'react-dom';
-import { CogDataGridStyled } from './cog-data-grid-styled';
 import './cog-data-grid.module.css';
-import { gridConfigService } from './core/services/grid-config.service';
 import { ColumnTypes, GridConfig, KeyValueMap } from './core/types';
+import { AgGridReact, AgGridReactProps } from 'ag-grid-react';
+import { useEffect, useState, forwardRef, ForwardedRef } from 'react';
+import { ColDef, ColGroupDef, GridOptions } from 'ag-grid-community';
+import { gridConfigService } from './core/services/grid-config.service';
+import { Icon } from '@cognite/cogs.js';
+import { CogDataGridStyled } from './cog-data-grid-styled';
+import ReactDOM from 'react-dom';
 
 export interface CogDataGridProps extends AgGridReactProps {
   theme?: 'default' | 'compact';
@@ -66,10 +66,8 @@ export const CogDataGrid = forwardRef<AgGridReact, CogDataGridProps>(
     return (
       <CogDataGridStyled theme={theme}>
         <AgGridReact
-          // components={components}
           ref={ref}
           columnDefs={colDefs}
-          gridOptions={gridOptions}
           icons={{
             sortAscending: () => {
               const domNode = document.createElement('div');
@@ -84,7 +82,6 @@ export const CogDataGrid = forwardRef<AgGridReact, CogDataGridProps>(
           }}
           {...gridOptions}
           {...gridProps}
-          // rowData={props.data}
         >
           {props.children}
         </AgGridReact>

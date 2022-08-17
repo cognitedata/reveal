@@ -5,7 +5,8 @@ import {
   Wrapper,
 } from '@platypus-app/components/Styles/storybook';
 import { mockComplexGraphqlModel } from '@platypus-app/mocks/graphqlModels';
-import { useState } from 'react';
+import { initialState } from '@platypus-app/redux/reducers/global/dataModelReducer';
+import configureStory from '@platypus-app/tests/configureStorybook';
 import { UIEditor } from './UIEditor';
 
 export default {
@@ -14,7 +15,6 @@ export default {
 };
 
 export const Default = () => {
-  const [schema, setSchema] = useState<string>(mockComplexGraphqlModel);
   return (
     <Wrapper>
       <MainTitle>UIEditor</MainTitle>
@@ -25,13 +25,18 @@ export const Default = () => {
       </MainDescription>
       <Group>
         <div style={{ height: '600px' }}>
-          <UIEditor
-            builtInTypes={[]}
-            graphQLSchemaString={schema}
-            onSchemaChange={setSchema}
-          />
+          <UIEditor builtInTypes={[]} disabled={false} />
         </div>
       </Group>
     </Wrapper>
   );
 };
+
+Default.story = configureStory({
+  redux: {
+    dataModel: {
+      ...initialState,
+      graphQlSchema: mockComplexGraphqlModel,
+    },
+  },
+});

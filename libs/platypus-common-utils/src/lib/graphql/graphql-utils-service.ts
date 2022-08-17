@@ -112,7 +112,8 @@ export class GraphQlUtilsService implements IGraphQlUtilsService {
       fieldProps as FieldDefinitionNodeProps
     );
     return this.toSolutionDataModelField(
-      createdType.getField(updatedFieldName)
+      createdType.getField(updatedFieldName),
+      fieldProps.id
     );
   }
 
@@ -127,9 +128,15 @@ export class GraphQlUtilsService implements IGraphQlUtilsService {
       fieldName,
       updates
     );
-    return this.toSolutionDataModelField(
-      updatedType.getField(updatedFieldName)
+
+    const updatedField = this.toSolutionDataModelField(
+      updatedType.getField(updatedFieldName),
+      updates.id
     );
+    if (!updatedField.location && updates.location) {
+      updatedField.location = updates.location;
+    }
+    return updatedField;
   }
 
   removeField(typeName: string, fieldName: string): void {
@@ -138,6 +145,13 @@ export class GraphQlUtilsService implements IGraphQlUtilsService {
   }
 
   parseSchema(graphQlSchema: string): DataModelTypeDefs {
+    if (!graphQlSchema) {
+      this.clear();
+      return {
+        types: [],
+      } as DataModelTypeDefs;
+    }
+
     const schemaAst = parse(graphQlSchema);
     this.schemaAst = documentApi().addSDL(schemaAst);
     const types = [...this.schemaAst.typeMap.keys()].map((type) =>
@@ -199,9 +213,11 @@ export class GraphQlUtilsService implements IGraphQlUtilsService {
   }
 
   private toSolutionDataModelField(
-    field: FieldDefinitionApi
+    field: FieldDefinitionApi,
+    fieldId?: string
   ): DataModelTypeDefsField {
     return {
+      id: fieldId || field.getName(),
       name: field.getName(),
       description: field.getDescription(),
       type: {
@@ -279,6 +295,17 @@ export class GraphQlUtilsService implements IGraphQlUtilsService {
         }
       });
     };
+
+    if (graphQlString === '') {
+      return [
+        {
+          message: 'Your Data Model Schema is empty',
+          errorMessage: 'Your Data Model Schema is empty',
+          status: 400,
+        },
+      ];
+    }
+
     // we need this to be able to parse and validate the schema properly
     const schemaToValidate = `${graphQlString}
 ${generateBuiltIntTypes().join('\n')}

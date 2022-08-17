@@ -11,7 +11,6 @@ import { Notification } from '@platypus-app/components/Notification/Notification
 import { TOKENS } from '@platypus-app/di';
 import {
   ErrorType,
-  BuiltInType,
   DataModelVersionStatus,
   DataModelVersion,
   Result,
@@ -64,6 +63,8 @@ export const DataModelPage = ({ dataModelExternalId }: DataModelPageProps) => {
     setGraphQlSchema,
     setIsDirty,
     setSelectedVersionNumber,
+    setBuiltInTypes,
+    parseGraphQLSchema,
   } = useDataModelState();
   const {
     setLocalDraft,
@@ -93,7 +94,7 @@ export const DataModelPage = ({ dataModelExternalId }: DataModelPageProps) => {
   const [updating, setUpdating] = useState(false);
   const [isInit, setInit] = useState(false);
   const [breakingChanges, setBreakingChanges] = useState('');
-  const [builtInTypes, setBuiltInTypes] = useState<BuiltInType[]>([]);
+
   const dataModelTypeDefsBuilder = useInjection(
     TOKENS.dataModelTypeDefsBuilderService
   );
@@ -102,6 +103,7 @@ export const DataModelPage = ({ dataModelExternalId }: DataModelPageProps) => {
   const onSelectDataModelVersion = (dataModelVersion: DataModelVersion) => {
     dataModelTypeDefsBuilder.clear();
     setGraphQlSchema(dataModelVersion.schema);
+    parseGraphQLSchema(dataModelVersion.schema);
     setIsDirty(false);
     setCurrentTypeName(null);
     setSelectedVersionNumber(dataModelVersion.version);
@@ -115,33 +117,32 @@ export const DataModelPage = ({ dataModelExternalId }: DataModelPageProps) => {
     );
   };
 
+  // Use this hook as init livecycle
   useEffect(() => {
-    function fetchSchemaAndTypes() {
-      const builtInTypesResponse = dataModelTypeDefsBuilder.getBuiltinTypes();
-      setBuiltInTypes(builtInTypesResponse);
-      dataModelTypeDefsBuilder.clear();
-      setGraphQlSchema(selectedDataModelVersion.schema);
-      setInit(true);
-    }
-
     if (!isInit) {
-      fetchSchemaAndTypes();
+      setBuiltInTypes(dataModelTypeDefsBuilder.getBuiltinTypes());
+      dataModelTypeDefsBuilder.clear();
+      if (localDraft) {
+        setGraphQlSchema(localDraft.schema);
+        setMode(SchemaEditorMode.Edit);
+
+        if (latestDataModelVersion.schema !== localDraft.schema) {
+          setIsDirty(true);
+        }
+      } else {
+        setMode(
+          selectedDataModelVersion.status === DataModelVersionStatus.DRAFT
+            ? SchemaEditorMode.Edit
+            : SchemaEditorMode.View
+        );
+        setGraphQlSchema(selectedDataModelVersion.schema);
+        setIsDirty(false);
+      }
+
+      setInit(true);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedDataModelVersion, isInit]);
-
-  useEffect(() => {
-    if (localDraft) {
-      dataModelTypeDefsBuilder.clear();
-      setGraphQlSchema(localDraft.schema);
-      setMode(SchemaEditorMode.Edit);
-
-      if (latestDataModelVersion.schema !== localDraft.schema) {
-        setIsDirty(true);
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   const onSaveOrPublish = async () => {
     try {
@@ -260,18 +261,28 @@ export const DataModelPage = ({ dataModelExternalId }: DataModelPageProps) => {
 
   const onSchemaChanged = useCallback(
     (schemaString) => {
-      setGraphQlSchema(schemaString);
-      setIsDirty(selectedDataModelVersion.schema !== schemaString);
+      if (isInit) {
+        // update local storage only when schema is changed
+        if (selectedDataModelVersion.schema !== schemaString) {
+          setIsDirty(selectedDataModelVersion.schema !== schemaString);
 
-      setLocalDraft({
-        ...selectedDataModelVersion,
-        schema: schemaString,
-        status: DataModelVersionStatus.DRAFT,
-      });
+          setLocalDraft({
+            ...selectedDataModelVersion,
+            schema: schemaString,
+            status: DataModelVersionStatus.DRAFT,
+          });
+        }
+      }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [selectedDataModelVersion]
+    [selectedDataModelVersion, isInit]
   );
+
+  useEffect(() => {
+    if (mode === SchemaEditorMode.Edit) {
+      onSchemaChanged(graphQlSchema);
+    }
+  }, [graphQlSchema, mode, onSchemaChanged]);
 
   const renderTools = () => {
     const onEditClick = () => {
@@ -321,7 +332,10 @@ export const DataModelPage = ({ dataModelExternalId }: DataModelPageProps) => {
                 content={`Version v. ${latestDataModelVersion.version} has been published by another user, and this draft is currently based on an outdated version.`}
               >
                 <Label size="medium" variant="warning">
-                  Your draft is based on an outdated version
+                  {t(
+                    'outdated_draft_version_warning',
+                    `Your draft is based on an outdated version`
+                  )}
                 </Label>
               </Tooltip>
             </Flex>
@@ -440,9 +454,6 @@ export const DataModelPage = ({ dataModelExternalId }: DataModelPageProps) => {
                   <EditorPanel
                     editorMode={mode}
                     externalId={dataModelExternalId}
-                    builtInTypes={builtInTypes}
-                    graphQlSchema={graphQlSchema}
-                    onSchemaChanged={onSchemaChanged}
                     isPublishing={saving || updating}
                   />
                 </ErrorBoundary>

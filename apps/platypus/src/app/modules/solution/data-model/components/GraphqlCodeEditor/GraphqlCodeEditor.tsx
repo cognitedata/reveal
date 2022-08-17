@@ -1,36 +1,30 @@
 import Editor, { Monaco } from '@monaco-editor/react';
 import { Spinner } from '@platypus-app/components/Spinner/Spinner';
-import {
-  BuiltInType,
-  DataModelValidationError,
-  DataModelVersionHandler,
-} from '@platypus/platypus-core';
+import { TOKENS } from '@platypus-app/di';
+import { useInjection } from '@platypus-app/hooks/useInjection';
+import { BuiltInType, DataModelValidationError } from '@platypus/platypus-core';
 import debounce from 'lodash/debounce';
 import { MarkerSeverity } from 'monaco-editor';
-import React, { useEffect, useMemo, useState } from 'react';
-import { config } from './utils/config';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { setupGraphql } from './utils/graphqlSetup';
 import { ValidationMarker } from './utils/types';
 
 type Props = {
   code: string;
   builtInTypes: BuiltInType[];
-  dataModelVersionHandler: DataModelVersionHandler;
   externalId: string;
-  onChange: (code: string) => void;
   disabled?: boolean;
+  onChange: (code: string) => void;
 };
 
 export const GraphqlCodeEditor = React.memo(
-  ({
-    onChange,
-    code,
-    builtInTypes,
-    dataModelVersionHandler,
-    externalId,
-    disabled = false,
-  }: Props) => {
+  ({ code, builtInTypes, externalId, disabled = false, onChange }: Props) => {
     const [editorValue, setEditorValue] = useState(code);
+    const langProviders = useRef<any>(null);
+
+    const dataModelVersionHandler = useInjection(
+      TOKENS.dataModelVersionHandler
+    );
 
     const validateFn = async (graphQLString: string) => {
       const result = await dataModelVersionHandler.validate({
@@ -70,10 +64,7 @@ export const GraphqlCodeEditor = React.memo(
     };
 
     function editorWillMount(monaco: Monaco) {
-      const languageId = config.languageId;
-      monaco.languages.onLanguage(languageId, () => {
-        setupGraphql(monaco, builtInTypes, validateFn);
-      });
+      langProviders.current = setupGraphql(monaco, builtInTypes, validateFn);
     }
     const debouncedOnChange = useMemo(
       () => debounce((value: string) => onChange(value), 500),
@@ -84,9 +75,19 @@ export const GraphqlCodeEditor = React.memo(
         debouncedOnChange.cancel();
       };
     }, [debouncedOnChange]);
+
     useEffect(() => {
       setEditorValue(code);
     }, [code]);
+
+    useEffect(() => {
+      // Destroy lang services when component is unmounted
+      return () => {
+        if (langProviders.current) {
+          langProviders.current.dispose();
+        }
+      };
+    }, []);
 
     return (
       <div style={{ height: 'calc(100% - 56px)' }}>

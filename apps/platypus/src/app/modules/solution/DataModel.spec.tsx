@@ -6,7 +6,12 @@ import { mockSchemas, mockSolutions } from '@platypus-app/tests/mockData';
 import {
   useDataModel,
   useDataModelVersions,
+  useSelectedDataModelVersion,
 } from '@platypus-app/hooks/useDataModelActions';
+import {
+  DataModelReducerState,
+  initialState,
+} from '@platypus-app/redux/reducers/global/dataModelReducer';
 
 const mockSolution = mockSolutions[0];
 const mockSchema = mockSchemas[0];
@@ -22,10 +27,11 @@ jest.mock('react-router-dom', () => ({
 jest.mock('@platypus-app/hooks/useDataModelActions');
 
 const solutionReduxMock = {
+  ...initialState,
   dataModel: mockSolution,
   selectedVersion: mockSchema,
   versions: mockSchemas,
-};
+} as DataModelReducerState;
 
 describe('DataModelPage Test', () => {
   beforeEach(() => {
@@ -45,6 +51,15 @@ describe('DataModelPage Test', () => {
     (useDataModelVersions as any).mockImplementation(() => {
       return {
         data: mockSchemas,
+        isLoading: false,
+        isError: false,
+        isSuccess: true,
+      };
+    });
+
+    (useSelectedDataModelVersion as any).mockImplementation(() => {
+      return {
+        data: mockSchema,
         isLoading: false,
         isError: false,
         isSuccess: true,

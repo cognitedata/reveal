@@ -45,9 +45,9 @@ describe('Data Model Page - Existing Solution Preview', () => {
     cy.contains('Post').click();
     cy.get('h5').contains('Post').should('be.visible');
     cy.getBySel('edit-schema-btn').should('be.visible').click();
-    cy.get('button[aria-label="Add field"]').click();
-    cy.getBySel('schema-type-field').last().type('phone');
-    cy.getBySel('checkbox-field-required').last().click();
+
+    cy.addDataModelTypeField('Post', 'phone', true);
+
     // checks if visualizer updated with edited value
     cy.get('div#Post')
       .should('be.visible')
@@ -65,8 +65,8 @@ describe('Data Model Page - Existing Solution Preview', () => {
     cy.addDataModelTypeField('Person', 'age');
     cy.editDataModelTypeFieldName('Person', 'last_name', 'lastName', false);
 
-    cy.getBySel('data_model_type_field_age').should('be.visible');
-    cy.getBySel('data_model_type_field_lastName').should('be.visible');
+    cy.getDataModelFieldRow('age').should('be.visible');
+    cy.getDataModelFieldRow('lastName').should('be.visible');
 
     // checks if visualizer updated with edited value
     cy.get('div#Person')
@@ -128,11 +128,16 @@ describe('Data Model Page - Existing Solution Preview', () => {
     cy.get('h5').contains('Author').should('be.visible');
 
     cy.addDataModelTypeField('Author', 'user', true);
-    cy.get('input[aria-autocomplete="list"]')
-      .last()
+    cy.getDataModelFieldRow('user').find('[col-id="type"]').click();
+
+    // for type, we are using popup cell editor and we should handle it differently
+    cy.get('.ag-popup')
+      .find('input[aria-autocomplete="list"]')
+      .click({ force: true })
       .focus()
+      .type('{selectAll}')
       .type('User{enter}');
-    cy.getBySel('select-User').contains('User');
+
     cy.get('div#Author.node')
       .should('be.visible')
       .children()

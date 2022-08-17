@@ -1,4 +1,5 @@
 import { actions as solutionActions } from '@platypus-app/redux/reducers/global/dataModelReducer';
+import { BuiltInType } from '@platypus/platypus-core';
 import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 
@@ -24,6 +25,7 @@ export const useDataModelState = () => {
   const setGraphQlSchema = useCallback(
     (graphQlSchema) => {
       dispatch(solutionActions.setGraphQlSchema(graphQlSchema));
+      dispatch(solutionActions.parseGraphQlSchema(graphQlSchema));
     },
     [dispatch]
   );
@@ -42,11 +44,31 @@ export const useDataModelState = () => {
     [dispatch]
   );
 
+  const setBuiltInTypes = useCallback(
+    (builtInTypes: BuiltInType[]) => {
+      dispatch(solutionActions.setBuiltInTypes(builtInTypes));
+    },
+    [dispatch]
+  );
+
+  const clearState = useCallback(() => {
+    dispatch(solutionActions.clearState());
+  }, [dispatch]);
+
+  const parseGraphQLSchema = useCallback(
+    (graphQLSchemaString: string) =>
+      dispatch(solutionActions.parseGraphQlSchema(graphQLSchemaString)),
+    [dispatch]
+  );
+
   return {
     setCurrentTypeName,
     setDataModelFieldErrors,
     setGraphQlSchema,
     setIsDirty,
     setSelectedVersionNumber,
+    setBuiltInTypes,
+    clearState,
+    parseGraphQLSchema,
   };
 };

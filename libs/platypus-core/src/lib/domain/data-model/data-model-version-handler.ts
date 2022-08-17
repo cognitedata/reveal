@@ -115,7 +115,7 @@ export class DataModelVersionHandler {
       return Promise.resolve(Result.fail(errors));
     }
 
-    if (!validateBreakingChanges) {
+    if (!validateBreakingChanges || !dto.externalId) {
       return Promise.resolve(Result.ok(errors));
     }
 

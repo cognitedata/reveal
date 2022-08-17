@@ -4,6 +4,7 @@ import { Spinner } from '@platypus-app/components/Spinner/Spinner';
 import {
   useDataModel,
   useDataModelVersions,
+  useSelectedDataModelVersion,
 } from '@platypus-app/hooks/useDataModelActions';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import { lazy, Suspense, useEffect, useState } from 'react';
@@ -47,7 +48,12 @@ export const DataModel = () => {
     dataModelExternalId: string;
     version: string;
   }>();
-  const { setCurrentTypeName, setSelectedVersionNumber } = useDataModelState();
+  const {
+    setCurrentTypeName,
+    setSelectedVersionNumber,
+    clearState,
+    setGraphQlSchema,
+  } = useDataModelState();
 
   const [isReady, setIsReady] = useState(false);
 
@@ -58,15 +64,41 @@ export const DataModel = () => {
   } = useDataModel(dataModelExternalId);
 
   const {
+    data: dataModelVersions,
     isLoading: areDataModelVersionsLoading,
     isError: hasDataModelVersionError,
     isSuccess: areDataModelVersionsLoaded,
   } = useDataModelVersions(dataModelExternalId);
 
+  // Keep this here, we need to have this loaded before any other child page is being loaded
+  // Otherwise you will end up having race condition and unpredictable state
+  // Think twice before changing anything from here!
+  const selectedDataModelVersion = useSelectedDataModelVersion(
+    version,
+    dataModelVersions || [],
+    dataModelExternalId
+  );
+
+  // Init livecycle hook, need to run first before everything else
+  // Run after data is loaded or selected schema is being changed
   useEffect(
     () => {
       // wait for both requests to finish and update redux store
-      if (isDataModelLoaded && areDataModelVersionsLoaded) {
+      if (
+        isDataModelLoaded &&
+        areDataModelVersionsLoaded &&
+        selectedDataModelVersion
+      ) {
+        // Reset any previous state in redux
+        // we don't want to deal with any dirty state from before
+        clearState();
+
+        // set the current graphql schema in store
+        // this will parse typeDefs, validate and few other things
+        // keep it here if you want to have predictable state
+        // and keep react-query and redux playing nicely
+
+        setGraphQlSchema(selectedDataModelVersion.schema);
         // set selected version based on the param in the route we landed on
         setSelectedVersionNumber(version);
         setCurrentTypeName(null);
@@ -74,7 +106,13 @@ export const DataModel = () => {
       }
     },
     // eslint-disable-next-line
-    [isDataModelLoaded, areDataModelVersionsLoaded, version]
+    [
+      isDataModelLoaded,
+      areDataModelVersionsLoaded,
+      version, // run when version in url is changed
+      selectedDataModelVersion.schema, // run when selected schema is changed
+      selectedDataModelVersion.externalId, // or run when externalId is changed
+    ]
   );
 
   if (hasDataModelError || hasDataModelVersionError) {

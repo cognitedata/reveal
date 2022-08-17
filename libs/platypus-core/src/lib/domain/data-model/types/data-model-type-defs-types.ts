@@ -24,6 +24,7 @@ export type DataModelTypeDefsFieldArgument = {
 };
 
 export type DataModelTypeDefsField = {
+  id?: string;
   name: string;
   description?: string;
   arguments?: DataModelTypeDefsFieldArgument[];

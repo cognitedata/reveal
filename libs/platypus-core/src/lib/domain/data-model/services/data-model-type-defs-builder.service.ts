@@ -89,6 +89,13 @@ export class DataModelTypeDefsBuilderService {
     fieldName: string,
     props: Partial<UpdateDataModelFieldDTO>
   ): DataModelTypeDefs {
+    if (
+      state.types
+        .find((type) => type.name === typeName)
+        ?.fields.some((field) => field.name === fieldName)
+    ) {
+      return this.updateField(state, typeName, fieldName, props);
+    }
     const newField = this.graphqlService.addField(typeName, fieldName, props);
     return {
       ...state,
@@ -160,5 +167,10 @@ export class DataModelTypeDefsBuilderService {
   /** Clears the state */
   clear() {
     this.graphqlService.clear();
+  }
+
+  /** Clears the state */
+  validate(graphQlString: string, builtInTypes: BuiltInType[]) {
+    return this.graphqlService.validate(graphQlString, builtInTypes);
   }
 }

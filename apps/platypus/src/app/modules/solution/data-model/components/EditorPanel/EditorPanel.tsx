@@ -1,5 +1,5 @@
 import { Spinner } from '@platypus-app/components/Spinner/Spinner';
-import React, { Suspense, useState, useEffect } from 'react';
+import React, { Suspense, useState } from 'react';
 import { SegmentedControl } from '@cognite/cogs.js';
 import {
   PageToolbar,
@@ -10,10 +10,11 @@ import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import { SchemaEditorMode } from '../../types';
 import { UIEditor } from './UIEditor';
 import { ErrorBoundary } from '@platypus-app/components/ErrorBoundary/ErrorBoundary';
-import { BuiltInType } from '@platypus/platypus-core';
 import { ErrorPlaceholder } from '../ErrorBoundary/ErrorPlaceholder';
-import { useInjection } from '@platypus-app/hooks/useInjection';
-import { TOKENS } from '@platypus-app/di';
+
+import { useDataModelState } from '@platypus-app/modules/solution/hooks/useDataModelState';
+import { DataModelState } from '@platypus-app/redux/reducers/global/dataModelReducer';
+import useSelector from '@platypus-app/hooks/useSelector';
 
 const GraphqlCodeEditor = React.lazy(() =>
   import('../GraphqlCodeEditor/GraphqlCodeEditor').then((module) => ({
@@ -22,34 +23,22 @@ const GraphqlCodeEditor = React.lazy(() =>
 );
 
 export interface EditorPanelProps {
-  graphQlSchema: string;
   externalId: string;
   editorMode: SchemaEditorMode;
-  builtInTypes: BuiltInType[];
-  onSchemaChanged: (schemaString: string) => void;
   isPublishing: boolean;
 }
 
 export const EditorPanel = (props: EditorPanelProps) => {
   const { t } = useTranslation('EditorPanel');
-  const [builtInTypes, setBuiltInTypes] = useState<BuiltInType[]>([]);
-  const dataModelTypeDefsBuilder = useInjection(
-    TOKENS.dataModelTypeDefsBuilderService
-  );
-  const dataModelVersionHandler = useInjection(TOKENS.dataModelVersionHandler);
 
-  useEffect(() => {
-    async function getOptions() {
-      const builtInTypesResponse =
-        await dataModelTypeDefsBuilder.getBuiltinTypes();
-      setBuiltInTypes(builtInTypesResponse);
-    }
-
-    // Load built in types only once, since they are not going to change
-    getOptions();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
   const [currentView, setCurrentView] = useState('ui');
+  const { graphQlSchema, builtInTypes } = useSelector<DataModelState>(
+    (state) => state.dataModel
+  );
+
+  const isUIDisabled =
+    props.editorMode === SchemaEditorMode.View || props.isPublishing;
+  const { setGraphQlSchema } = useDataModelState();
 
   return (
     <div
@@ -82,27 +71,17 @@ export const EditorPanel = (props: EditorPanelProps) => {
       {currentView === 'code' ? (
         <Suspense fallback={<Spinner />}>
           <GraphqlCodeEditor
-            builtInTypes={props.builtInTypes}
-            dataModelVersionHandler={dataModelVersionHandler}
+            builtInTypes={builtInTypes}
             externalId={props.externalId}
-            code={props.graphQlSchema}
-            onChange={props.onSchemaChanged}
-            disabled={props.editorMode === SchemaEditorMode.View}
+            code={graphQlSchema}
+            disabled={isUIDisabled}
+            onChange={setGraphQlSchema}
           />
         </Suspense>
       ) : (
         <ErrorBoundary errorComponent={<ErrorPlaceholder />}>
           <div style={{ flexGrow: 1, overflow: 'auto' }}>
-            <UIEditor
-              builtInTypes={builtInTypes}
-              disabled={
-                props.editorMode === SchemaEditorMode.View || props.isPublishing
-              }
-              graphQLSchemaString={props.graphQlSchema}
-              onSchemaChange={(schemaString) =>
-                props.onSchemaChanged(schemaString)
-              }
-            />
+            <UIEditor builtInTypes={builtInTypes} disabled={isUIDisabled} />
           </div>
         </ErrorBoundary>
       )}

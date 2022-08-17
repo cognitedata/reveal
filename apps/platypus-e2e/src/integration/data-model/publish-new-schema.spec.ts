@@ -49,18 +49,18 @@ describe('Data Model Page - Publish new schema', () => {
     // click to select published v1, new field is not there
     cy.getBySel('schema-version-select').click().contains('Latest').click();
     cy.getBySel('type-list-item-User').click();
-    cy.getBySel('schema-type-field').should('have.value', 'name');
+    cy.getBySel('schema-type-field').get('.input-value').contains('name');
 
     // click to select local draft again, new field is there
     cy.getBySel('schema-version-select').click().contains('draft').click();
     cy.getBySel('type-list-item-User').click();
-    cy.getBySel('schema-type-field').should('have.value', 'userName');
+    cy.getBySel('schema-type-field').get('.input-value').contains('userName');
 
     // click to select published v1, then click edit, new field is there
     cy.getBySel('schema-version-select').click().contains('Latest').click();
     cy.getBySel('edit-schema-btn').click();
     cy.getBySel('type-list-item-User').click();
-    cy.getBySel('schema-type-field').should('have.value', 'userName');
+    cy.getBySel('schema-type-field').get('.input-value').contains('userName');
 
     cy.getBySel('publish-schema-btn').click();
 

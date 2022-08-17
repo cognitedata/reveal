@@ -51,6 +51,12 @@ describe('GraphQlUtilsServiceTest', () => {
     );
   });
 
+  it('should parse empty graphql schema into SolutionDataModel', () => {
+    const service = createInstance();
+    const result = service.parseSchema('');
+    expect(result).toEqual({ types: [] });
+  });
+
   it('should convert DataModelTypeDefsField and map directives and args', () => {
     const service = createInstance();
     const customMockSchema = `type Post {
@@ -218,6 +224,14 @@ describe('GraphQlUtilsServiceTest', () => {
       }`;
       const result = service.validate(validSchema, mixerApiBuiltInTypes);
       expect(result).toEqual([]);
+    });
+
+    it('should validate empty schema', () => {
+      const service = createInstance();
+
+      const result = service.validate('', mixerApiBuiltInTypes);
+      expect(result.length).toEqual(1);
+      expect(result[0].message).toEqual('Your Data Model Schema is empty');
     });
 
     it('should validate syntax errors', () => {
