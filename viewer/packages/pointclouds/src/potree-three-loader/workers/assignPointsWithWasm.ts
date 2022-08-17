@@ -4,8 +4,8 @@
 
 import { StylableObject } from '../../styling/StylableObject';
 
-import init, { assign_points } from '@reveal/wasm';
-import wasmData from '@reveal/wasm/reveal_rust_wasm_bg.wasm';
+import { assign_points } from '../../../../../wasm/pkg';
+
 import { Cylinder } from '../../styling/shapes/Cylinder';
 import { Box } from '../../styling/shapes/Box';
 
@@ -50,13 +50,11 @@ export async function assignPointsWithWasm(
                               pointOffset); */
   const wasmShapes = objects.map(obj => getWasmShape(obj));
 
-  const res = await init(wasmData).then(() =>
-    assign_points(wasmShapes,
-                  points,
-                  { min: sectorBoundingBox.min.toArray(),
-                    max: sectorBoundingBox.max.toArray() },
-                  pointOffset.toArray()));
-  // console.log("Result = ", mod.main_js(30, arr));
+  const res = assign_points(wasmShapes,
+                            points,
+                            { min: sectorBoundingBox.min.toArray(),
+                              max: sectorBoundingBox.max.toArray() },
+                            pointOffset.toArray());
 
   return res;
 }
