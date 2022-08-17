@@ -3,16 +3,19 @@ import { Column } from 'react-table';
 import StatusMarker from 'components/extpipes/cols/StatusMarker';
 import { TimeDisplay } from 'components/TimeDisplay/TimeDisplay';
 import { RunUI } from 'model/Runs';
-import { TableHeadings } from 'components/table/ExtpipeTableCol';
+import { TranslationKeys } from 'common';
 
 export enum RunTableHeading {
   TIMESTAMP = 'Timestamp',
   MESSAGE = 'Message',
 }
-export const getRunLogTableCol = (): Column<RunUI>[] => {
+
+export const getRunLogTableCol = (
+  _t: (key: TranslationKeys) => string
+): Column<RunUI>[] => {
   return [
     {
-      Header: RunTableHeading.TIMESTAMP,
+      Header: _t('timestamp'),
       accessor: 'createdTime',
       sortType: 'basic',
       Cell: ({ row }) => {
@@ -21,7 +24,7 @@ export const getRunLogTableCol = (): Column<RunUI>[] => {
       disableFilters: true,
     },
     {
-      Header: TableHeadings.LAST_RUN_STATUS,
+      Header: _t('last-run-status'),
       accessor: 'status',
       Cell: ({ row }) => {
         return <StatusMarker status={row.original.status} />;
@@ -29,7 +32,7 @@ export const getRunLogTableCol = (): Column<RunUI>[] => {
       disableFilters: true,
     },
     {
-      Header: RunTableHeading.MESSAGE,
+      Header: _t('message'),
       accessor: 'message',
       Cell: ({ row }) => {
         return <p>{row.original.message}</p>;

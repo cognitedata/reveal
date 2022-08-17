@@ -3,6 +3,20 @@ import { Colors, Icon } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { StyledTitle2 } from 'components/styled';
 
+export const ErrorBox: FunctionComponent<
+  PropsWithChildren<{ heading: string }>
+> = (props) => {
+  return (
+    <Wrapper className="z-1">
+      <StyledErrorHeader>
+        <Icon type="Warning" css="margin-right: 0.5rem" />
+        {props.heading}
+      </StyledErrorHeader>
+      {props.children}
+    </Wrapper>
+  );
+};
+
 const Wrapper = styled.div`
   padding: 2rem;
 
@@ -18,17 +32,3 @@ const StyledErrorHeader = styled(StyledTitle2)`
     color: ${Colors['yellow-1'].hex()};
   }
 `;
-
-export const ErrorBox: FunctionComponent<
-  PropsWithChildren<{ heading: string }>
-> = (props) => {
-  return (
-    <Wrapper className="z-1">
-      <StyledErrorHeader>
-        <Icon type="Warning" css="margin-right: 0.5rem" />
-        {props.heading}
-      </StyledErrorHeader>
-      {props.children}
-    </Wrapper>
-  );
-};

@@ -4,6 +4,7 @@ import { Colors, Icon } from '@cognite/cogs.js';
 import { StyledTooltip } from 'components/styled';
 
 import { trackUsage } from 'utils/Metrics';
+import { useTranslation } from 'common';
 
 export type CopyType =
   | 'id'
@@ -28,6 +29,7 @@ const InteractiveCopy = ({
   onCopy: onCopyCallback,
   showTextInTooltip,
 }: InteractiveCopyProps) => {
+  const { t } = useTranslation();
   const [hasCopied, setHasCopied] = useState(false);
 
   useEffect(() => {
@@ -55,8 +57,8 @@ const InteractiveCopy = ({
       content={
         <div style={{ padding: '0.3125rem 0.5625rem' }}>
           {hasCopied
-            ? 'Copied!'
-            : `Copy ${showTextInTooltip ? text : ''}`.trim()}
+            ? t('copied')
+            : `${t('copy')} ${showTextInTooltip ? text : ''}`.trim()}
         </div>
       }
     >
@@ -72,6 +74,7 @@ const InteractiveCopy = ({
     </StyledTooltip>
   );
 };
+
 const IconWrapper = styled.div`
   display: flex;
   justify-content: center;

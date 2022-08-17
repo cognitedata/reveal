@@ -1,23 +1,10 @@
 import { StyledDropdown } from 'components/styled';
 import { Badge, Button, Colors, Menu } from '@cognite/cogs.js';
-import { TableHeadings } from 'components/table/ExtpipeTableCol';
 import React, { PropsWithoutRef } from 'react';
 import { RunStatusUI } from 'model/Status';
 import StatusMarker from 'components/extpipes/cols/StatusMarker';
 import styled from 'styled-components';
-
-const StyledMenu = styled((props) => <Menu {...props}>{props.children}</Menu>)`
-  .cogs-menu-item {
-    .cogs-icon-Checkmark {
-      svg {
-        path {
-          fill: ${Colors.primary.hex()};
-        }
-      }
-    }
-  }
-`;
-
+import { useTranslation } from 'common';
 export interface StatusMenuProps {
   setSelected: (status?: RunStatusUI) => void;
   selected: RunStatusUI;
@@ -29,6 +16,8 @@ export const StatusMenu = ({
   setSelected,
   btnType = 'ghost',
 }: StatusMenuProps) => {
+  const { t } = useTranslation();
+
   return (
     <StyledDropdown
       content={
@@ -41,9 +30,9 @@ export const StatusMenu = ({
         iconPlacement="right"
         data-testid="status-menu-button"
       >
-        {TableHeadings.LAST_RUN_STATUS}{' '}
+        {t('last-run-status')}{' '}
         {selected === RunStatusUI.NOT_ACTIVATED ? (
-          '- ALL'
+          `- ${t('all')}`
         ) : (
           <StatusMarker
             status={selected}
@@ -58,6 +47,7 @@ const StatusMenuContent = ({
   selected,
   setSelected,
 }: PropsWithoutRef<StatusMenuProps>) => {
+  const { t } = useTranslation();
   const onClick = (status?: RunStatusUI) => {
     return () => setSelected(status);
   };
@@ -97,7 +87,7 @@ const StatusMenuContent = ({
         data-testid="status-menu-item-all"
       >
         <Badge
-          text="ALL"
+          text={t('all')}
           background="white"
           aria-label="All"
           data-testid="status-menu-item-all"
@@ -106,3 +96,15 @@ const StatusMenuContent = ({
     </StyledMenu>
   );
 };
+
+const StyledMenu = styled((props) => <Menu {...props}>{props.children}</Menu>)`
+  .cogs-menu-item {
+    .cogs-icon-Checkmark {
+      svg {
+        path {
+          fill: ${Colors.primary.hex()};
+        }
+      }
+    }
+  }
+`;

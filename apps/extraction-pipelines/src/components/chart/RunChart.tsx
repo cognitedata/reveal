@@ -10,10 +10,9 @@ import {
   mapDataForChart,
 } from 'components/chart/runChartUtils';
 import { Colors } from '@cognite/cogs.js';
-import { uppercaseFirstWord } from 'utils/primitivesUtils';
 import Plotly from 'plotly.js';
-import { RunStatusUI } from 'model/Status';
 import { RunUI } from 'model/Runs';
+import { useTranslation } from 'common';
 
 interface ChartProps {
   allRuns: RunUI[];
@@ -24,6 +23,7 @@ export const RunChart: FunctionComponent<ChartProps> = ({
   allRuns,
   timeFormat,
 }: PropsWithChildren<ChartProps>) => {
+  const { t } = useTranslation();
   const [seen, setSeen] = useState<number[]>([]);
   const [success, setSuccess] = useState<number[]>([]);
   const [failure, setFailure] = useState<number[]>([]);
@@ -50,14 +50,14 @@ export const RunChart: FunctionComponent<ChartProps> = ({
       height: 400,
       title: 'Runs',
       xaxis: {
-        title: `Grouped by date: ${text}`,
+        title: t('run-chart-group-by-date', { text }),
         tickfont: {
           size: 14,
           color: 'rgb(107, 107, 107)',
         },
       },
       yaxis: {
-        title: 'Count',
+        title: t('run-chart-count'),
         tickformat: ',d',
         tickfont: {
           size: 14,
@@ -83,12 +83,17 @@ export const RunChart: FunctionComponent<ChartProps> = ({
     {
       x: dates, // dates
       y: success, // number of occuences per date
-      name: `${uppercaseFirstWord(RunStatusUI.SUCCESS)}`,
+      name: t('success'),
       type: 'bar',
       mode: 'lines',
       customdata: customData,
-      hovertemplate:
-        '<span style="padding: 20px">Total: <b>%{customdata[2]}</b> Failure: <span style="color: red">%{customdata[1]}</span> Success: %{customdata[0]}</span><extra></extra>',
+      hovertemplate: `<span style="padding: 20px">${t(
+        'total'
+      )}: <b>%{customdata[2]}</b> ${t(
+        'failure'
+      )}: <span style="color: red">%{customdata[1]}</span> ${t(
+        'success'
+      )}: %{customdata[0]}</span><extra></extra>`,
       marker: {
         color: `${Colors.success.hex()}`,
       },
@@ -97,7 +102,7 @@ export const RunChart: FunctionComponent<ChartProps> = ({
     {
       x: dates,
       y: failure,
-      name: `${uppercaseFirstWord(RunStatusUI.FAILURE)}`,
+      name: t('failure'),
       type: 'bar',
       mode: 'markers',
       hoverinfo: 'x',
@@ -109,7 +114,7 @@ export const RunChart: FunctionComponent<ChartProps> = ({
     {
       x: dates,
       y: seen,
-      name: `${uppercaseFirstWord(RunStatusUI.SEEN)}`,
+      name: t('seen'),
       type: 'scatter',
       marker: {
         color: `${Colors.primary.hex()}`,

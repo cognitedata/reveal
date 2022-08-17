@@ -5,7 +5,7 @@ import { QueryClient } from 'react-query';
 import { mapDataSetToExtpipe } from 'utils/dataSetUtils';
 import { getMockResponse, mockDataSetResponse } from 'utils/mockResponse';
 import {
-  extpipeTableColumns,
+  getExtpipeTableColumns,
   TableHeadings,
 } from 'components/table/ExtpipeTableCol';
 import { renderWithSelectedExtpipeContext } from 'utils/test/render';
@@ -23,6 +23,7 @@ describe('<ExtpipesTable/>', () => {
       getMockResponse(),
       mockDataSetResponse()
     );
+    const { extpipeTableColumns } = getExtpipeTableColumns();
     renderWithSelectedExtpipeContext(
       <ExtpipesTable extpipes={extpipes} columns={extpipeTableColumns} />,
       { initExtpipe: mockExtpipe, client: new QueryClient() }

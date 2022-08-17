@@ -1,10 +1,8 @@
 import React, { FunctionComponent } from 'react';
 import InlineEdit from 'components/extpipe/InlineEdit';
-import { DetailFieldNames } from 'model/Extpipe';
 import * as yup from 'yup';
 import { useSelectedExtpipe } from 'hooks/useSelectedExtpipe';
 import { useExtpipeById } from 'hooks/useExtpipe';
-import { TableHeadings } from 'components/table/ExtpipeTableCol';
 import { Schedule } from 'components/extpipe/edit/Schedule';
 import { rootUpdate } from 'hooks/details/useDetailsUpdate';
 import { FieldVerticalDisplay } from 'components/extpipe/fields/FieldVerticalDisplay';
@@ -20,6 +18,8 @@ import {
   sourceSchema,
 } from 'utils/validation/extpipeSchemas';
 import { getProject } from '@cognite/cdf-utilities';
+import { useTranslation } from 'common';
+import { DetailFieldNames } from 'model/Extpipe';
 
 interface ExtpipeInformationProps {
   canEdit: boolean;
@@ -28,9 +28,11 @@ interface ExtpipeInformationProps {
 export const ExtpipeInformation: FunctionComponent<ExtpipeInformationProps> = ({
   canEdit,
 }) => {
+  const { t } = useTranslation();
   const project = getProject();
   const { extpipe: selected } = useSelectedExtpipe();
   const { data: extpipe } = useExtpipeById(selected?.id);
+
   if (!extpipe || !project) {
     return null;
   }
@@ -40,9 +42,9 @@ export const ExtpipeInformation: FunctionComponent<ExtpipeInformationProps> = ({
       <Section title="Basic information" icon="World">
         <InlineEdit
           name="description"
-          hintText="Describe the extraction pipeline."
-          placeholder="Enter description"
-          label={DetailFieldNames.DESCRIPTION}
+          hintText={'description-hint'}
+          placeholder={t('description-placeholder')}
+          label={t('description')}
           canEdit={canEdit}
           schema={metaDescriptionSchema}
           defaultValues={{ description: extpipe?.description }}
@@ -54,9 +56,9 @@ export const ExtpipeInformation: FunctionComponent<ExtpipeInformationProps> = ({
         <EditDataSetId canEdit={canEdit} />
         <InlineEdit
           name="source"
-          hintText="Enter the name of the extraction pipeline source system."
-          placeholder="Enter source"
-          label={DetailFieldNames.SOURCE}
+          hintText={t('source-hint')}
+          placeholder={t('source-placeholder')}
+          label={t('source')}
           canEdit={canEdit}
           schema={sourceSchema}
           updateFn={rootUpdate({ extpipe, name: 'source', project })}
@@ -69,9 +71,9 @@ export const ExtpipeInformation: FunctionComponent<ExtpipeInformationProps> = ({
         />
         <InlineEdit
           name="externalId"
-          hintText="Enter a unique identifier. Use this ID when setting up status and heartbeat reporting for extractors."
-          placeholder="Enter external ID"
-          label={DetailFieldNames.EXTERNAL_ID}
+          hintText={t('external-id-hint')}
+          placeholder={t('external-id-placeholder')}
+          label={t('external-id')}
           canEdit={canEdit}
           schema={yup.object().shape(externalIdRule)}
           defaultValues={{ externalId: extpipe?.externalId }}
@@ -83,7 +85,7 @@ export const ExtpipeInformation: FunctionComponent<ExtpipeInformationProps> = ({
         <Schedule
           name="schedule"
           extpipe={extpipe}
-          label={TableHeadings.SCHEDULE}
+          label={t('schedule')}
           canEdit={canEdit}
         />
       </Section>
@@ -91,25 +93,25 @@ export const ExtpipeInformation: FunctionComponent<ExtpipeInformationProps> = ({
       <ContactsSection canEdit={canEdit} />
       <RawTablesSection canEdit={canEdit} />
       <MetaDataSection canEdit={canEdit} />
-      <Section title="About extraction pipeline" icon="Info">
+      <Section title={t('about-ext-pipeline')} icon="Info">
         <Column>
           <FieldVerticalDisplay
-            label={DetailFieldNames.ID}
+            label={t('ext-pipeline-id') as DetailFieldNames}
             fieldName="id"
             fieldValue={extpipe?.id}
           />
           <FieldVerticalDisplay
-            label={DetailFieldNames.CREATED_BY}
+            label={t('created-by') as DetailFieldNames}
             fieldName="createdBy"
             fieldValue={extpipe?.createdBy}
           />
           <FieldVerticalDisplay
-            label={DetailFieldNames.CREATED_TIME}
+            label={t('created-time') as DetailFieldNames}
             fieldName="createdTime"
             fieldValue={extpipe?.createdTime}
           />
           <FieldVerticalDisplay
-            label={DetailFieldNames.LAST_UPDATED_TIME}
+            label={t('last-updated-time') as DetailFieldNames}
             fieldName="lastUpdatedTime"
             fieldValue={extpipe?.lastUpdatedTime}
           />

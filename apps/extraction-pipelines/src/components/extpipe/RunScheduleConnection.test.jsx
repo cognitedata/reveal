@@ -1,3 +1,4 @@
+import React from 'react';
 import {
   getMockResponse,
   mockDataRunsResponse,
@@ -7,15 +8,14 @@ import { renderWithSelectedExtpipeContext } from 'utils/test/render';
 import { QueryClient } from 'react-query';
 import { render, screen, waitFor } from '@testing-library/react';
 import { TableHeadings } from 'components/table/ExtpipeTableCol';
-import React from 'react';
 import {
-  FAILED_PAST_WEEK_HEADING,
   RunScheduleConnection,
 } from 'components/extpipe/RunScheduleConnection';
 import { parseCron } from 'utils/cronUtils';
 import { useSDK } from '@cognite/sdk-provider';
 import moment from 'moment';
 import { renderError } from 'components/extpipe/ExtpipeRunHistory';
+import { FAILED_PAST_WEEK_HEADING } from "common/test"
 
 describe('RunScheduleConnection', () => {
   test('Renders information when last connected is more recent than latest run', async () => {
@@ -116,6 +116,7 @@ describe('RunScheduleConnection', () => {
     expect(screen.getByText(TableHeadings.SCHEDULE)).toBeInTheDocument();
     expect(
       screen.queryByText(FAILED_PAST_WEEK_HEADING)
+
     ).not.toBeInTheDocument();
     expect(screen.getByText(TableHeadings.LAST_SEEN)).toBeInTheDocument();
   });

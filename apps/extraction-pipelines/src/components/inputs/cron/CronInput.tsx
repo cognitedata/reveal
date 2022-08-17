@@ -6,23 +6,13 @@ import { Link } from 'components/buttons/Link';
 import { InputController } from 'components/inputs/InputController';
 import { Hint, StyledLabel } from 'components/styled';
 import ValidationError from 'components/form/ValidationError';
-import { EXTRACTION_PIPELINE_LOWER } from 'utils/constants';
-
-const ReadBack = styled.i`
-  margin-bottom: 1rem;
-`;
-const StyledHint = styled(Hint)`
-  margin-bottom: 0;
-  p {
-    margin-bottom: 0;
-  }
-`;
-export const CRON_LABEL: Readonly<string> = 'Cron expression';
-export const CRON_TIP: Readonly<string> = `Enter a cron expression for when the ${EXTRACTION_PIPELINE_LOWER} is scheduled to run.`;
+import { CRON_LINK } from 'utils/constants';
+import { useTranslation } from 'common';
 
 interface CronPageProps {}
 
 const CronInput: FunctionComponent<CronPageProps> = () => {
+  const { t } = useTranslation();
   const {
     formState: { errors },
     control,
@@ -39,13 +29,10 @@ const CronInput: FunctionComponent<CronPageProps> = () => {
   };
   return (
     <>
-      <StyledLabel htmlFor="cron-input">{CRON_LABEL}</StyledLabel>
+      <StyledLabel htmlFor="cron-input">{t('cron-title')}</StyledLabel>
       <StyledHint id="cron-hint">
-        <p>{CRON_TIP}</p>
-        <Link
-          href="https://crontab.guru/"
-          linkText="How do I write a cron expression?"
-        />
+        <p>{t('cron-info')}</p>
+        <Link href={CRON_LINK} linkText={t('cron-learn-more')} />
       </StyledHint>
       <ValidationError id="cron-error" errors={errors} name="cron" />
       <InputController
@@ -60,4 +47,16 @@ const CronInput: FunctionComponent<CronPageProps> = () => {
     </>
   );
 };
+
+const ReadBack = styled.i`
+  margin-bottom: 1rem;
+`;
+
+const StyledHint = styled(Hint)`
+  margin-bottom: 0;
+  p {
+    margin-bottom: 0;
+  }
+`;
+
 export default CronInput;

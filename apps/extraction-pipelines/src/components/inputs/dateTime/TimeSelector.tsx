@@ -14,56 +14,14 @@ import {
   updateDateRangeAction,
   useRunFilterContext,
 } from 'hooks/runs/RunsFilterContext';
-
-const TimeWrapper = styled(DivFlex)`
-  .cogs-input-container {
-    height: 100%;
-    .cogs-input {
-      width: 5rem;
-      &:hover {
-        background-color: transparent;
-      }
-    }
-    .input__postfix--node {
-      .cogs-btn {
-        padding: 0.5rem;
-        height: 100%;
-        background-color: ${Colors.white.hex()};
-        border-top: 1px solid ${Colors['greyscale-grey5'].hex()};
-        border-right: 1px solid ${Colors['greyscale-grey5'].hex()};
-        border-bottom: 1px solid ${Colors['greyscale-grey5'].hex()};
-        &:hover {
-          background-color: transparent;
-        }
-      }
-    }
-  }
-  .cogs-select {
-    width: 100%;
-    height: 0;
-    .cogs-select__control {
-      display: none;
-      clip: rect(0 0 0 0);
-      clip-path: inset(50%);
-      height: 1px;
-      overflow: hidden;
-      position: static;
-      white-space: nowrap;
-      width: 1px;
-    }
-    .cogs-select__menu {
-      position: absolute;
-    }
-  }
-`;
-
-export const RANGE_END_LABEL: Readonly<string> = 'Date range end time';
-export const RANGE_START_LABEL: Readonly<string> = 'Date range start time';
+import { useTranslation } from 'common';
 
 interface TimeSelectorProps {}
 
 export type Time = { hours: number; min: number };
+
 export const TimeSelector: FunctionComponent<TimeSelectorProps> = () => {
+  const { t } = useTranslation();
   const {
     state: { dateRange },
     dispatch,
@@ -172,7 +130,7 @@ export const TimeSelector: FunctionComponent<TimeSelectorProps> = () => {
               onClick={toggleStartDropDown}
             />
           }
-          aria-label={RANGE_START_LABEL}
+          aria-label={t('date-range-start-label')}
         />
         <Select
           inputId="startTime"
@@ -189,7 +147,7 @@ export const TimeSelector: FunctionComponent<TimeSelectorProps> = () => {
           value={endString}
           onChange={endInputChanged}
           onClick={toggleEndDropDown}
-          aria-label={RANGE_END_LABEL}
+          aria-label={t('date-range-end-label')}
           size="large"
           postfix={
             <Button
@@ -212,3 +170,45 @@ export const TimeSelector: FunctionComponent<TimeSelectorProps> = () => {
     </TimeWrapper>
   );
 };
+
+const TimeWrapper = styled(DivFlex)`
+  .cogs-input-container {
+    height: 100%;
+    .cogs-input {
+      width: 5rem;
+      &:hover {
+        background-color: transparent;
+      }
+    }
+    .input__postfix--node {
+      .cogs-btn {
+        padding: 0.5rem;
+        height: 100%;
+        background-color: ${Colors.white.hex()};
+        border-top: 1px solid ${Colors['greyscale-grey5'].hex()};
+        border-right: 1px solid ${Colors['greyscale-grey5'].hex()};
+        border-bottom: 1px solid ${Colors['greyscale-grey5'].hex()};
+        &:hover {
+          background-color: transparent;
+        }
+      }
+    }
+  }
+  .cogs-select {
+    width: 100%;
+    height: 0;
+    .cogs-select__control {
+      display: none;
+      clip: rect(0 0 0 0);
+      clip-path: inset(50%);
+      height: 1px;
+      overflow: hidden;
+      position: static;
+      white-space: nowrap;
+      width: 1px;
+    }
+    .cogs-select__menu {
+      position: absolute;
+    }
+  }
+`;

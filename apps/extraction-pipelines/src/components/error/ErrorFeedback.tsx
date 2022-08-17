@@ -3,6 +3,68 @@ import styled from 'styled-components';
 import { CenterFullVH } from 'components/styled';
 import { Button, Icon, Title } from '@cognite/cogs.js';
 import { ErrorObj, ErrorVariations } from 'model/SDKErrors';
+import { useTranslation } from 'common';
+interface ErrorFeedbackProps {
+  error: ErrorVariations;
+  onClick?: () => void;
+  btnText?: string;
+  fallbackTitle?: string;
+  contentText?: string;
+}
+
+const findErrorText = (error: ErrorVariations): ErrorObj | null => {
+  if (error.error) {
+    return {
+      code: error.error.code,
+      message: error.error.message,
+    };
+  }
+  if (error.data) {
+    return {
+      code: error.data.code,
+      message: error.data.message,
+    };
+  }
+  if (error.code && error.message) {
+    return {
+      code: error.code,
+      message: error.message,
+    };
+  }
+  return null;
+};
+
+export const ErrorFeedback = (props: ErrorFeedbackProps) => {
+  const { t } = useTranslation();
+  const {
+    error,
+    onClick = () => null,
+    btnText = t('done'),
+    fallbackTitle = '',
+    contentText = '',
+  } = props;
+  let showBtn = true;
+  const errorObj = findErrorText(error);
+  const title = errorObj?.code ?? fallbackTitle;
+  const message = errorObj?.message ?? contentText;
+
+  if (errorObj?.code === 403 || errorObj?.code === 401) {
+    showBtn = false;
+  }
+
+  return (
+    <ErrorCard>
+      <ErrorIcon type="Error" />
+      <Title level={2}>{title}</Title>
+      <p className="content">{message}</p>
+      {showBtn && (
+        <Button type="primary" onClick={onClick}>
+          {btnText}
+        </Button>
+      )}
+    </ErrorCard>
+  );
+};
 
 const ErrorCard = styled((props) => (
   <CenterFullVH {...props}>{props.children}</CenterFullVH>
@@ -38,6 +100,7 @@ const ErrorCard = styled((props) => (
     grid-area: content;
   }
 `;
+
 const ErrorIcon = styled((props) => <Icon {...props} />)`
   width: 1.5rem;
   svg {
@@ -49,61 +112,3 @@ const ErrorIcon = styled((props) => <Icon {...props} />)`
     }
   }
 `;
-
-interface ErrorFeedbackProps {
-  error: ErrorVariations;
-  onClick?: () => void;
-  btnText?: string;
-  fallbackTitle?: string;
-  contentText?: string;
-}
-
-const findErrorText = (error: ErrorVariations): ErrorObj | null => {
-  if (error.error) {
-    return {
-      code: error.error.code,
-      message: error.error.message,
-    };
-  }
-  if (error.data) {
-    return {
-      code: error.data.code,
-      message: error.data.message,
-    };
-  }
-  if (error.code && error.message) {
-    return {
-      code: error.code,
-      message: error.message,
-    };
-  }
-  return null;
-};
-
-export const ErrorFeedback = ({
-  error,
-  onClick = () => null,
-  btnText = 'Done',
-  fallbackTitle = '',
-  contentText = '',
-}: ErrorFeedbackProps) => {
-  let showBtn = true;
-  const errorObj = findErrorText(error);
-  const title = errorObj?.code ?? fallbackTitle;
-  const message = errorObj?.message ?? contentText;
-  if (errorObj?.code === 403 || errorObj?.code === 401) {
-    showBtn = false;
-  }
-  return (
-    <ErrorCard>
-      <ErrorIcon type="Error" />
-      <Title level={2}>{title}</Title>
-      <p className="content">{message}</p>
-      {showBtn && (
-        <Button type="primary" onClick={onClick}>
-          {btnText}
-        </Button>
-      )}
-    </ErrorCard>
-  );
-};

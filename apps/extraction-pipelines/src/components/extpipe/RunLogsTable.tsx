@@ -18,7 +18,8 @@ import { Extpipe } from 'model/Extpipe';
 import { calculateStatus } from 'utils/extpipeUtils';
 import { RunStatusUI } from 'model/Status';
 import { ExternalLink } from 'components/links/ExternalLink';
-import { DEFAULT_ITEMS_PER_PAGE } from 'utils/constants'; // PAGINATION_OPTIONS
+import { DEFAULT_ITEMS_PER_PAGE } from 'utils/constants';
+import { useTranslation } from 'common';
 interface LogsTableProps {
   data: RunUI[];
   columns: Column<RunUI>[];
@@ -35,6 +36,7 @@ export const RunLogsTable: FunctionComponent<LogsTableProps> = ({
   pageSize: controlledPageSize,
   extpipe,
 }: PropsWithChildren<LogsTableProps>) => {
+  const { t } = useTranslation();
   const {
     getTableProps,
     getTableBodyProps,
@@ -86,18 +88,16 @@ export const RunLogsTable: FunctionComponent<LogsTableProps> = ({
 
   const reasonForNoRows = pipelineNotActivated ? (
     <>
-      <p style={{ fontWeight: 'bold' }}>
-        Activate the extraction pipeline to monitor the status.
-      </p>
+      <p style={{ fontWeight: 'bold' }}>{t('no-run-logs')}</p>
       <p>
-        Learn how to activate an extraction pipeline in the{' '}
+        {t('no-run-logs-desc')}{' '}
         <ExternalLink href="https://docs.cognite.com/cdf/integration/guides/interfaces/about_integrations.html">
-          documentation
+          {t('documentation', { postProcess: 'lowercase' })}
         </ExternalLink>
       </p>
     </>
   ) : (
-    <p>No data is available for this criteria.</p>
+    <p>{t('no-data-available')}</p>
   );
 
   return rows.length === 0 ? (

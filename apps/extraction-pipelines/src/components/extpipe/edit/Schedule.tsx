@@ -18,12 +18,7 @@ import {
   mapScheduleInputToScheduleValue,
 } from 'utils/cronUtils';
 import MessageDialog from 'components/buttons/MessageDialog';
-import {
-  ContactBtnTestIds,
-  EXTPIPE_SCHEDULE_HINT,
-  SERVER_ERROR_CONTENT,
-  SERVER_ERROR_TITLE,
-} from 'utils/constants';
+import { ContactBtnTestIds } from 'utils/constants';
 import { Extpipe, ExtpipeFieldName } from 'model/Extpipe';
 import {
   createUpdateSpec,
@@ -39,35 +34,7 @@ import { AddFieldInfoText } from 'components/message/AddFieldInfoText';
 import { NoDataAdded } from 'components/buttons/AddFieldValueBtn';
 import { trackUsage } from 'utils/Metrics';
 import { getProject } from '@cognite/cdf-utilities';
-
-export const CronWrapper = styled(DivFlex)`
-  margin: 1rem 0 1rem 2rem;
-  padding: 1rem 0;
-  border-top: 0.0625rem solid ${Colors['greyscale-grey3'].hex()};
-  border-bottom: 0.0625rem solid ${Colors['greyscale-grey3'].hex()};
-  label {
-    margin-left: 0;
-  }
-`;
-const ScheduleWrapper = styled(DivFlex)`
-  display: grid;
-  grid-template-areas: 'select btns' 'cron cron';
-  grid-template-columns: 1fr auto;
-  padding: 0 1rem;
-  grid-gap: 0.5rem;
-  .cogs-select {
-    grid-area: select;
-  }
-  #cron-expression {
-    grid-area: cron;
-  }
-`;
-const ButtonWrapper = styled.div`
-  grid-area: btns;
-  display: flex;
-  justify-content: flex-end;
-  gap: 0.5rem;
-`;
+import { useTranslation } from 'common';
 
 export interface ScheduleFormInput {
   schedule: string;
@@ -81,16 +48,13 @@ interface ScheduleProps {
   canEdit: boolean;
 }
 
-const HintStyled = styled(Hint)`
-  margin-left: 1rem;
-`;
-
 export const Schedule: FunctionComponent<ScheduleProps> = ({
   extpipe,
   name,
   label,
   canEdit,
 }: PropsWithChildren<ScheduleProps>) => {
+  const { t } = useTranslation();
   const [showCron, setShowCron] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
   const [errorVisible, setErrorVisible] = useState(false);
@@ -163,7 +127,7 @@ export const Schedule: FunctionComponent<ScheduleProps> = ({
   const whenNotEditing = () => {
     if (!canEdit) {
       return schedule == null ? (
-        <NoDataAdded>No schedule set</NoDataAdded>
+        <NoDataAdded>{t('no-schedule-set')}</NoDataAdded>
       ) : (
         <div css="padding: 0 1rem">
           <DisplaySchedule id="display-schedule" schedule={schedule} />
@@ -194,7 +158,7 @@ export const Schedule: FunctionComponent<ScheduleProps> = ({
 
   const whenEditing = (
     <>
-      <HintStyled>{EXTPIPE_SCHEDULE_HINT}</HintStyled>
+      <HintStyled>{t('schedule-hint')}</HintStyled>
       <ScheduleWrapper>
         <ScheduleSelector
           inputId="schedule-selector"
@@ -215,8 +179,8 @@ export const Schedule: FunctionComponent<ScheduleProps> = ({
           <MessageDialog
             visible={errorVisible}
             handleClickError={handleClickError}
-            title={SERVER_ERROR_TITLE}
-            contentText={SERVER_ERROR_CONTENT}
+            title={t('server-err-title')}
+            contentText={t('server-err-desc')}
           >
             <SaveButton
               htmlType="submit"
@@ -242,3 +206,38 @@ export const Schedule: FunctionComponent<ScheduleProps> = ({
     </FormProvider>
   );
 };
+
+const HintStyled = styled(Hint)`
+  margin-left: 1rem;
+`;
+
+export const CronWrapper = styled(DivFlex)`
+  margin: 1rem 0 1rem 2rem;
+  padding: 1rem 0;
+  border-top: 0.0625rem solid ${Colors['greyscale-grey3'].hex()};
+  border-bottom: 0.0625rem solid ${Colors['greyscale-grey3'].hex()};
+  label {
+    margin-left: 0;
+  }
+`;
+
+const ScheduleWrapper = styled(DivFlex)`
+  display: grid;
+  grid-template-areas: 'select btns' 'cron cron';
+  grid-template-columns: 1fr auto;
+  padding: 0 1rem;
+  grid-gap: 0.5rem;
+  .cogs-select {
+    grid-area: select;
+  }
+  #cron-expression {
+    grid-area: cron;
+  }
+`;
+
+const ButtonWrapper = styled.div`
+  grid-area: btns;
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+`;

@@ -4,9 +4,9 @@ import { useRunFilterContext } from 'hooks/runs/RunsFilterContext';
 import { createSearchParams } from 'utils/extpipeUtils';
 import { createExtPipePath } from 'utils/baseURL';
 import { EXT_PIPE_PATH } from 'routing/RoutingConfig';
-import { CDF_LABEL, DATA_SETS_LABEL } from 'utils/constants';
 import { Breadcrumbs } from 'components/navigation/breadcrumbs/Breadcrumbs';
 import { createLink } from '@cognite/cdf-utilities';
+import { useTranslation } from 'common';
 
 interface ExtpipeBreadcrumbsProps {
   extpipe?: Extpipe;
@@ -15,15 +15,16 @@ interface ExtpipeBreadcrumbsProps {
 export const ExtpipeBreadcrumbs: FunctionComponent<ExtpipeBreadcrumbsProps> = ({
   extpipe,
 }: PropsWithChildren<ExtpipeBreadcrumbsProps>) => {
+  const { t } = useTranslation();
   const {
     state: { dateRange, statuses, search },
   } = useRunFilterContext();
 
   const currentPageBreadCrumbs = [
-    { href: createLink(''), label: CDF_LABEL },
+    { href: createLink(''), label: t('cognite-data-fusion') },
     {
       href: createLink('/data-sets'),
-      label: DATA_SETS_LABEL,
+      label: t('data-sets'),
     },
     ...(extpipe?.dataSetId
       ? [

@@ -1,8 +1,5 @@
-import React, { ReactFragment } from 'react';
-import { ExternalLink } from 'components/links/ExternalLink';
 import { OptionType } from '@cognite/cogs.js';
 
-export const CDF_LABEL: Readonly<string> = 'Cognite Data Fusion';
 export const EXTRACTION_PIPELINE: Readonly<string> = 'Extraction pipeline';
 export const EXTRACTION_PIPELINE_LOWER: Readonly<string> =
   'extraction pipeline';
@@ -58,16 +55,6 @@ export const EXT_PIPE_NAME_HEADING: Readonly<string> = `${EXTRACTION_PIPELINE} n
 export const DATA_SET_ID_HINT: Readonly<string> =
   'Select the data set the extraction pipeline feeds data into.';
 export const DATA_SETS_LABEL: Readonly<string> = 'Data sets';
-// Documentation
-export const DOCUMENTATION_HINT: Readonly<ReactFragment> = (
-  <>
-    Add other documentation to provide context and insights about the extraction
-    pipeline.{' '}
-    <ExternalLink href="https://guides.github.com/features/mastering-markdown/">
-      Use markdown for page formatting
-    </ExternalLink>
-  </>
-);
 
 export const EXTPIPE_EXTERNAL_ID_HEADING: Readonly<string> = 'External ID';
 export const EXTERNAL_ID_HINT: Readonly<string> = `Enter a unique identifier. Use this ID when setting up status and heartbeat reporting for extractors.`;
@@ -111,3 +98,10 @@ export const PAGINATION_OPTIONS: OptionType<unknown>[] = [
     value: 250,
   },
 ];
+
+export const RANGE_END_LABEL: Readonly<string> = 'Date range end time';
+export const RANGE_START_LABEL: Readonly<string> = 'Date range start time';
+
+export const CRON_LABEL: Readonly<string> = 'Cron expression';
+export const CRON_TIP: Readonly<string> = `Enter a cron expression for when the extraction pipeline is scheduled to run.`;
+export const CRON_LINK = 'https://crontab.guru/';

@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import React, { PropsWithChildren } from 'react';
-import { AllIconTypes, Icon, Button } from '@cognite/cogs.js';
+import { IconType, Icon, Button } from '@cognite/cogs.js';
+import { useTranslation } from 'common';
 
 const SectionDiv = styled.div`
   background-color: white;
@@ -25,7 +26,7 @@ export const SectionWithoutHeader = (props: PropsWithChildren<{}>) => (
 );
 type Props = {
   title: string;
-  icon: AllIconTypes;
+  icon: IconType;
   editButton?: { onClick: () => void; canEdit: boolean };
 };
 export const Section = ({
@@ -34,6 +35,8 @@ export const Section = ({
   editButton,
   children,
 }: PropsWithChildren<Props>) => {
+  const { t } = useTranslation();
+
   return (
     <SectionDiv className="z-2">
       <SectionHeader>
@@ -45,7 +48,7 @@ export const Section = ({
             disabled={!editButton.canEdit}
             onClick={editButton.onClick}
           >
-            Edit
+            {t('edit')}
           </Button>
         )}
       </SectionHeader>

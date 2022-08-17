@@ -8,13 +8,6 @@ import {
   ExtpipeFieldName,
   ExtpipeFieldValue,
 } from 'model/Extpipe';
-
-export const FieldWrapper = styled.div`
-  display: flex;
-  padding: 0 1rem;
-  flex-direction: column;
-  align-items: start;
-`;
 interface FieldVerticalDisplayProps {
   label: TableHeadings | DetailFieldNames;
   fieldValue: ExtpipeFieldValue;
@@ -35,3 +28,10 @@ export const FieldVerticalDisplay: FunctionComponent<
     </FieldWrapper>
   );
 };
+
+export const FieldWrapper = styled.div`
+  display: flex;
+  padding: 0 1rem;
+  flex-direction: column;
+  align-items: start;
+`;

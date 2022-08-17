@@ -2,17 +2,8 @@ import React, { FunctionComponent } from 'react';
 import styled from 'styled-components';
 import LinkWithCopy from 'components/links/LinkWithCopy';
 import { getDataSetsLink } from 'utils/dataSetUtils';
-import {
-  NO_DATA_SET_ID_SET,
-  NO_DATA_SET_ID_SET_TOOLTIP,
-} from 'utils/constants';
 import { StyledTooltip } from 'components/styled';
-
-const DatasetTooltip = styled.div`
-  display: flex;
-  align-items: center;
-`;
-
+import { useTranslation } from 'common';
 interface OwnProps {
   id: string;
   dataSetName: string;
@@ -26,10 +17,12 @@ export const DataSet: FunctionComponent<Props> = ({
   dataSetName,
   ...rest
 }: Props) => {
+  const { t } = useTranslation();
+
   if (!dataSetId) {
     return (
-      <StyledTooltip content={NO_DATA_SET_ID_SET_TOOLTIP}>
-        <i>{NO_DATA_SET_ID_SET}</i>
+      <StyledTooltip content={t('no-data-set-info')}>
+        <i>{t('no-data-set')}</i>
       </StyledTooltip>
     );
   }
@@ -45,3 +38,8 @@ export const DataSet: FunctionComponent<Props> = ({
     </DatasetTooltip>
   );
 };
+
+const DatasetTooltip = styled.div`
+  display: flex;
+  align-items: center;
+`;

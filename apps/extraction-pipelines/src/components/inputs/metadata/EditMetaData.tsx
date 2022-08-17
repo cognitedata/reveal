@@ -7,14 +7,11 @@ import {
   useDetailsUpdate,
 } from 'hooks/details/useDetailsUpdate';
 import { Button, Input } from '@cognite/cogs.js';
-import {
-  METADATA_CONTENT_HEADING,
-  METADATA_DESC_HEADING,
-} from 'utils/constants';
 import { MetaData } from 'model/MetaData';
 import { ModalContent } from 'components/modals/ModalContent';
 import { StyledTableNoRowColor2 } from 'components/styled';
 import { getProject } from '@cognite/cdf-utilities';
+import { useTranslation } from 'common';
 
 type SuperProps = {
   close: () => void;
@@ -51,6 +48,7 @@ export const EditMetaDataView = ({
   onCancel,
   initialMetadata,
 }: ViewProps) => {
+  const { t } = useTranslation();
   const initialMetadataList = objectToArray(initialMetadata);
   const [metadata, setMetadata] = useState(
     (initialMetadataList.length >= 1
@@ -90,8 +88,8 @@ export const EditMetaDataView = ({
             <table className="cogs-table">
               <thead>
                 <tr>
-                  <td>{METADATA_DESC_HEADING}</td>
-                  <td>{METADATA_CONTENT_HEADING}</td>
+                  <td>{t('key')}</td>
+                  <td>{t('value')}</td>
                   <td />
                 </tr>
               </thead>
@@ -103,14 +101,14 @@ export const EditMetaDataView = ({
                         <Input
                           fullWidth
                           value={meta.key}
-                          placeholder="Text"
+                          placeholder={t('enter-key')}
                           onChange={(ev) => setKeyAt(index, ev.target.value)}
                         />
                       </td>
                       <td>
                         <Input
                           fullWidth
-                          placeholder="Text"
+                          placeholder={t('enter-value')}
                           value={meta.value}
                           onChange={(ev) => setValueAt(index, ev.target.value)}
                         />
@@ -131,17 +129,17 @@ export const EditMetaDataView = ({
           </StyledTableNoRowColor2>
           <div>
             <Button icon="AddLarge" onClick={addRow}>
-              Add fields
+              {t('add-fields')}
             </Button>
           </div>
         </div>
       </ModalContent>
       <div key="modal-footer" className="cogs-modal-footer-buttons">
         <Button type="ghost" onClick={onCancel}>
-          Cancel
+          {t('cancel')}
         </Button>
         <Button type="primary" onClick={() => onConfirm(arrayToMeta(metadata))}>
-          Confirm
+          {t('confirm')}
         </Button>
       </div>
     </>

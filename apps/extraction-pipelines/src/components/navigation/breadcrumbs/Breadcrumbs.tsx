@@ -3,37 +3,6 @@ import styled from 'styled-components';
 import { Colors } from '@cognite/cogs.js';
 import { NavLink } from 'react-router-dom';
 
-export const greyscaleGrey = (n: number) => Colors[`greyscale-grey${n}`].hex();
-const BreadcrumbsWrapper = styled.nav`
-  grid-area: breadcrumbs;
-  padding: 0.875rem 2rem;
-  display: flex;
-  justify-content: space-between;
-  border-bottom: 1px solid ${greyscaleGrey(3)};
-  ol {
-    margin: 0;
-    padding-left: 0;
-    list-style: none;
-    li {
-      display: inline;
-      + li::before {
-        display: inline-block;
-        margin: 0 0.1rem 0 0.3rem;
-        color: ${greyscaleGrey(6)};
-        content: '/\\00a0';
-      }
-      a {
-        color: ${greyscaleGrey(6)};
-        &:hover {
-          text-decoration: underline;
-        }
-        &.active {
-          color: ${greyscaleGrey(10)};
-        }
-      }
-    }
-  }
-`;
 interface Breadcrumb {
   href: string;
   label?: string;
@@ -73,3 +42,34 @@ export const Breadcrumbs: FunctionComponent<BreadcrumbsProps> = ({
     </BreadcrumbsWrapper>
   );
 };
+
+const BreadcrumbsWrapper = styled.nav`
+  grid-area: breadcrumbs;
+  padding: 0.875rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid ${Colors['greyscale-grey3'].hex()};
+  ol {
+    margin: 0;
+    padding-left: 0;
+    list-style: none;
+    li {
+      display: inline;
+      + li::before {
+        display: inline-block;
+        margin: 0 0.1rem 0 0.3rem;
+        color: ${Colors['greyscale-grey6'].hex()};
+        content: '/\\00a0';
+      }
+      a {
+        color: ${Colors['greyscale-grey6'].hex()};
+        &:hover {
+          text-decoration: underline;
+        }
+        &.active {
+          color: ${Colors['greyscale-grey10'].hex()};
+        }
+      }
+    }
+  }
+`;

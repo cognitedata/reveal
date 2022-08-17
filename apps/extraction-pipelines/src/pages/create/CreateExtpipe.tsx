@@ -1,15 +1,5 @@
 import React, { useEffect } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
-import {
-  CANCEL,
-  CREATE,
-  DESCRIPTION_HINT,
-  DESCRIPTION_LABEL,
-  EXT_PIPE_NAME_HEADING,
-  EXTERNAL_ID_HINT,
-  EXTPIPE_EXTERNAL_ID_HEADING,
-  NAME_HINT,
-} from 'utils/constants';
 import { RegisterExtpipeLayout } from 'components/layout/RegisterExtpipeLayout';
 import {
   ButtonPlaced,
@@ -48,26 +38,7 @@ import { trackUsage } from 'utils/Metrics';
 import { getContainer } from 'utils/utils';
 import { styleScope } from 'styles/styleScope';
 import { createLink } from '@cognite/cdf-utilities';
-
-const InfoMessage = styled.span`
-  display: flex;
-  align-items: center;
-  .cogs-icon {
-    margin-right: 1rem;
-    svg {
-      g {
-        path {
-          &:nth-child(2),
-          &:nth-child(3) {
-            fill: ${(props: { color?: string }) =>
-              props.color ?? `${Colors.primary.hex()}`};
-          }
-        }
-      }
-    }
-  }
-`;
-
+import { useTranslation } from 'common';
 export interface AddExtpipeFormInput extends ScheduleFormInput, FieldValues {
   name: string;
   externalId: string;
@@ -90,20 +61,8 @@ const findDataSetId = (search: string) => {
   return new URLSearchParams(search).get('dataSetId');
 };
 
-const CustomLabel = styled.label<{ required: boolean }>`
-  font-size: 1.1rem;
-  font-weight: 500;
-  display: block;
-  padding: 3px 0;
-
-  &::after {
-    content: ' *';
-    color: red;
-    visibility: ${(props) => (props.required ? 'visible' : 'hidden')};
-  }
-`;
-
 export const CreateExtpipe = (props: { customCancelCallback?: () => void }) => {
+  const { t } = useTranslation();
   const history = useHistory();
   const location = useLocation();
   const dataSetIdFromLocation = findDataSetId(location.search);
@@ -151,10 +110,13 @@ export const CreateExtpipe = (props: { customCancelCallback?: () => void }) => {
         },
         onError: (errorRes, variables) => {
           const serverErrorMessage =
-            translateServerErrorMessage<AddExtpipeFormInput>(
-              errorRes?.data,
-              variables.extpipeInfo
-            );
+            translateServerErrorMessage<AddExtpipeFormInput>(errorRes?.data, {
+              externalId: t('external-id-already-exist', {
+                externalId: variables.extpipeInfo.externalId,
+              }),
+              contacts: t('contact-must-provide'),
+              server: errorRes?.data?.message ?? t('try-again-later'),
+            });
           trackUsage({
             t: 'Create.Rejected',
             error: serverErrorMessage.message,
@@ -165,7 +127,7 @@ export const CreateExtpipe = (props: { customCancelCallback?: () => void }) => {
               setError(
                 fieldName,
                 {
-                  message: `'${fieldValue}' is already in use`,
+                  message: t('field-in-use', { field: fieldValue }),
                 },
                 { shouldFocus: true }
               );
@@ -214,8 +176,8 @@ export const CreateExtpipe = (props: { customCancelCallback?: () => void }) => {
             defaultValue=""
             control={control as any}
             errors={errors}
-            labelText={EXT_PIPE_NAME_HEADING}
-            hintText={NAME_HINT}
+            labelText={t('ext-pipeline-name')}
+            hintText={t('ext-pipeline-name-hint')}
             renderLabel={(labelText, inputId) => (
               <CustomLabel required htmlFor={inputId}>
                 {labelText}
@@ -228,8 +190,8 @@ export const CreateExtpipe = (props: { customCancelCallback?: () => void }) => {
             defaultValue=""
             control={control as any}
             errors={errors}
-            labelText={EXTPIPE_EXTERNAL_ID_HEADING}
-            hintText={EXTERNAL_ID_HINT}
+            labelText={t('external-id')}
+            hintText={t('external-id-hint')}
             renderLabel={(labelText, inputId) => (
               <CustomLabel required htmlFor={inputId}>
                 {labelText}
@@ -240,8 +202,8 @@ export const CreateExtpipe = (props: { customCancelCallback?: () => void }) => {
             name="description"
             control={control as any}
             defaultValue=""
-            labelText={DESCRIPTION_LABEL}
-            hintText={DESCRIPTION_HINT}
+            labelText={t('description')}
+            hintText={t('description-hint')}
             inputId="extpipe-description"
             errors={errors}
             renderLabel={(labelText, inputId) => (
@@ -261,15 +223,15 @@ export const CreateExtpipe = (props: { customCancelCallback?: () => void }) => {
                 )}
                 className="cogs-btn cogs-btn-ghost cogs-btn-secondary cogs-btn--padding"
               >
-                {CANCEL}
+                {t('cancel')}
               </a>
             ) : (
               <Button type="ghost" onClick={props.customCancelCallback}>
-                {CANCEL}
+                {t('cancel')}
               </Button>
             )}
             <ButtonPlaced type="primary" htmlType="submit" marginbottom={0}>
-              {CREATE}
+              {t('create')}
             </ButtonPlaced>
           </PriSecBtnWrapper>
         </CreateFormWrapper>
@@ -279,6 +241,8 @@ export const CreateExtpipe = (props: { customCancelCallback?: () => void }) => {
 };
 
 export default function CreateExtpipePage() {
+  const { t } = useTranslation();
+
   useEffect(() => {
     trackUsage({ t: 'Create.CreatePageLoaded' });
   }, []);
@@ -294,7 +258,7 @@ export default function CreateExtpipePage() {
           appElement={document.getElementsByClassName(styleScope).item(0)!}
           getContainer={getContainer}
           footer={null}
-          title="Create extraction pipeline"
+          title={t('create-ext-pipeline')}
         >
           <CreateExtpipe />
         </Modal>
@@ -302,3 +266,35 @@ export default function CreateExtpipePage() {
     </RegisterExtpipeLayout>
   );
 }
+
+const InfoMessage = styled.span`
+  display: flex;
+  align-items: center;
+  .cogs-icon {
+    margin-right: 1rem;
+    svg {
+      g {
+        path {
+          &:nth-child(2),
+          &:nth-child(3) {
+            fill: ${(props: { color?: string }) =>
+              props.color ?? `${Colors.primary.hex()}`};
+          }
+        }
+      }
+    }
+  }
+`;
+
+const CustomLabel = styled.label<{ required: boolean }>`
+  font-size: 1.1rem;
+  font-weight: 500;
+  display: block;
+  padding: 3px 0;
+
+  &::after {
+    content: ' *';
+    color: red;
+    visibility: ${(props) => (props.required ? 'visible' : 'hidden')};
+  }
+`;

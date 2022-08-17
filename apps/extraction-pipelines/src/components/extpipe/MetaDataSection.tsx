@@ -12,23 +12,18 @@ import { Hint } from 'components/styled';
 import { StyledTitle3 } from 'components/styled';
 import { Section } from 'components/extpipe/Section';
 import { Column } from 'components/extpipe/ContactsSection';
+import { useTranslation } from 'common';
 
-const MetaWrapper = styled.section`
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-`;
 interface MetaProps {
   testId?: string;
   canEdit: boolean;
 }
-const META_HINT: Readonly<string> =
-  'Information specific to your organization can be added using metadata fields with key/value pairs.';
 
 export const MetaDataSection = ({
   testId = 'meta-',
   canEdit,
 }: PropsWithChildren<MetaProps>) => {
+  const { t } = useTranslation();
   const [showMetaModal, setShowMetaModal] = useState(false);
   const { extpipe: selected } = useSelectedExtpipe();
   const { data: storedExtpipe } = useExtpipeById(selected?.id);
@@ -55,7 +50,7 @@ export const MetaDataSection = ({
   const openDialog = () => setShowMetaModal(true);
   return (
     <Section
-      title="Metadata"
+      title={t('meta-data')}
       icon="DataTable"
       editButton={{ onClick: openDialog, canEdit }}
     >
@@ -72,11 +67,9 @@ export const MetaDataSection = ({
           visible={showMetaModal}
           close={closeDialog}
         >
-          <StyledTitle3>
-            Document metadata associated with the extraction pipeline
-          </StyledTitle3>
+          <StyledTitle3>{t('meta-data-title')}</StyledTitle3>
           <p>
-            <Hint>{META_HINT}</Hint>
+            <Hint>{t('meta-data-hint')}</Hint>
           </p>
           <EditMetaData close={closeDialog} />
         </EditModal>
@@ -84,3 +77,9 @@ export const MetaDataSection = ({
     </Section>
   );
 };
+
+const MetaWrapper = styled.section`
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+`;

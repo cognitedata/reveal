@@ -18,7 +18,6 @@ import { createExtPipePath } from 'utils/baseURL';
 import { EXT_PIPE_PATH } from 'routing/RoutingConfig';
 import { useSelectedExtpipe } from 'hooks/useSelectedExtpipe';
 import ExtpipeTableSearch from 'components/table/ExtpipeTableSearch';
-import { EXTRACTION_PIPELINE_LOWER } from 'utils/constants';
 import { Colors } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { Span3, StyledTable } from 'components/styled';
@@ -52,38 +51,6 @@ const fuzzyTextFilterFn = <T extends { values: any }>(
   });
 };
 fuzzyTextFilterFn.autoRemove = (val: boolean) => !val;
-
-const TableTop = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-`;
-
-const StyledExtpipesTable = styled(StyledTable)`
-  ${Span3};
-  margin: 1rem 2rem;
-
-  table {
-    border-collapse: collapse;
-    width: 100%;
-    th,
-    td {
-      padding: 0.5rem 1rem;
-    }
-    th {
-      background: ${Colors.white.hex()};
-      z-index: ${Layers.MINIMUM};
-    }
-  }
-`;
-
-const StyledTable2 = styled.table`
-  table-layout: fixed;
-  tbody td {
-    word-break: break-word;
-    color: ${Colors['greyscale-grey8'].hex()};
-  }
-`;
 
 interface Props {
   extpipes: Extpipe[];
@@ -167,7 +134,7 @@ const ExtpipesTable = <T extends { id: ReactText }>({
         {...getTableProps()}
         className="cogs-table extpipes-table"
         role="grid"
-        aria-label={`List of ${EXTRACTION_PIPELINE_LOWER} for the ${project} project`}
+        aria-label={`List of extraction pipelines for the ${project} project`}
       >
         <thead>
           {headerGroups.map((headerGroup: HeaderGroup<any>) => (
@@ -192,7 +159,6 @@ const ExtpipesTable = <T extends { id: ReactText }>({
             prepareRow(row);
             const handleClickOnRow = () => {
               row.toggleRowSelected(true);
-              // @ts-ignore
               setExtpipe(row.original);
             };
             return (
@@ -234,4 +200,37 @@ const ExtpipesTable = <T extends { id: ReactText }>({
     </StyledExtpipesTable>
   );
 };
+
+const TableTop = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+`;
+
+const StyledExtpipesTable = styled(StyledTable)`
+  ${Span3};
+  margin: 1rem 2rem;
+
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    th,
+    td {
+      padding: 0.5rem 1rem;
+    }
+    th {
+      background: ${Colors.white.hex()};
+      z-index: ${Layers.MINIMUM};
+    }
+  }
+`;
+
+const StyledTable2 = styled.table`
+  table-layout: fixed;
+  tbody td {
+    word-break: break-word;
+    color: ${Colors['greyscale-grey8'].hex()};
+  }
+`;
+
 export default ExtpipesTable;

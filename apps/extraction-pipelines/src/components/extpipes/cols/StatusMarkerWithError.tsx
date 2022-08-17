@@ -2,6 +2,7 @@ import React, { FunctionComponent, PropsWithoutRef } from 'react';
 import { Badge } from '@cognite/cogs.js';
 import { StyledTooltip } from 'components/styled';
 import { RunStatusUI } from 'model/Status';
+import { useTranslation } from 'common';
 
 interface OwnProps {
   id?: string;
@@ -18,10 +19,11 @@ const StatusMarkerWithError: FunctionComponent<Props> = ({
   dataTestId = '',
   ...rest
 }: PropsWithoutRef<Props>) => {
+  const { t } = useTranslation();
   switch (status) {
     case RunStatusUI.SUCCESS:
       return (
-        <StyledTooltip content={`Status for latest run: ${status}`}>
+        <StyledTooltip content={`${t('latest-run-status')}: ${status}`}>
           <Badge
             className="cogs-badge badge-success"
             text={status}
@@ -33,7 +35,7 @@ const StatusMarkerWithError: FunctionComponent<Props> = ({
         </StyledTooltip>
       );
     case RunStatusUI.FAILURE: {
-      const tip = tooltipText ?? `No error message`;
+      const tip = tooltipText ?? t('latest-run-err-message-not-set');
       return (
         <StyledTooltip content={tip}>
           <Badge
@@ -49,7 +51,7 @@ const StatusMarkerWithError: FunctionComponent<Props> = ({
     }
     case RunStatusUI.SEEN:
       return (
-        <StyledTooltip content={`Status for latest run: ${status}`}>
+        <StyledTooltip content={`${t('latest-run-status')}: ${status}`}>
           <Badge
             text={status}
             background="greyscale-grey2"
@@ -61,7 +63,7 @@ const StatusMarkerWithError: FunctionComponent<Props> = ({
       );
     case RunStatusUI.NOT_ACTIVATED:
       return (
-        <StyledTooltip content="No runs yet">
+        <StyledTooltip content={t('no-run-history')}>
           <i
             aria-label={`Status ${status}`}
             data-testid={`status-marker-${dataTestId}`}

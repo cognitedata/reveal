@@ -3,11 +3,7 @@ import { Controller, FieldValues, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { ExtpipeFieldName } from 'model/Extpipe';
 import MessageDialog from 'components/buttons/MessageDialog';
-import {
-  ContactBtnTestIds,
-  SERVER_ERROR_CONTENT,
-  SERVER_ERROR_TITLE,
-} from 'utils/constants';
+import { ContactBtnTestIds } from 'utils/constants';
 import { DefaultValues } from 'react-hook-form/dist/types/form';
 import {
   DetailsUpdateContext,
@@ -22,6 +18,7 @@ import { Colors } from '@cognite/cogs.js';
 import { trackUsage } from 'utils/Metrics';
 import { ErrorVariations } from 'model/SDKErrors';
 import { AddInfo } from './AddInfo';
+import { useTranslation } from 'common';
 
 export interface InlineEditProps<Fields> {
   defaultValues: DefaultValues<Fields>;
@@ -52,6 +49,7 @@ const InlineEdit = <Fields extends FieldValues>({
   marginBottom = false,
   canEdit,
 }: PropsWithChildren<InlineEditProps<Fields>>) => {
+  const { t } = useTranslation();
   const [isEdit, setIsEdit] = useState(false);
   const { mutate } = useDetailsUpdate();
   const [errorMessage, setErrorMessage] = useState<null | string>(null);
@@ -72,8 +70,8 @@ const InlineEdit = <Fields extends FieldValues>({
         trackUsage({ t: 'EditField.Rejected', field: name });
         setErrorMessage(
           err?.duplicated
-            ? `This ${label.toLowerCase()} is already in use`
-            : SERVER_ERROR_CONTENT
+            ? t('duplicate-label', { label: label.toLowerCase() })
+            : t('server-err-desc')
         );
       },
       onSuccess: () => {
@@ -137,7 +135,7 @@ const InlineEdit = <Fields extends FieldValues>({
             <MessageDialog
               visible={errorMessage != null}
               handleClickError={handleClickError}
-              title={SERVER_ERROR_TITLE}
+              title={t('server-err-title')}
               contentText={errorMessage || ''}
             >
               <SaveButton
@@ -159,7 +157,7 @@ const InlineEdit = <Fields extends FieldValues>({
             <EditButton
               showPencilIcon={actualValue != null}
               onClick={onEditClick}
-              title="Toggle edit row"
+              title={t('toggle-edit-row')}
               aria-expanded={isEdit}
               aria-controls={name}
               disabled={!canEdit}
@@ -180,7 +178,7 @@ const InlineEdit = <Fields extends FieldValues>({
                     <span>{actualValue}</span>
                   ) : (
                     <span style={{ color: Colors['greyscale-grey6'] }}>
-                      No {name} added.
+                      {t('no-field-added', { field: name })}
                     </span>
                   )}
                 </>

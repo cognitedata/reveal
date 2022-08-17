@@ -5,7 +5,7 @@ import {
   CDF_LABEL,
   DATA_SETS_LABEL,
   EXTRACTION_PIPELINES,
-} from 'utils/constants';
+} from "common/test"
 import { ExtPipesBreadcrumbs } from 'components/navigation/breadcrumbs/ExtPipesBreadcrumbs';
 import { EXTRACTION_PIPELINES_PATH } from 'utils/baseURL';
 
