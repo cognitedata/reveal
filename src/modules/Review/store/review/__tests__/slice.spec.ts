@@ -210,7 +210,7 @@ describe('Test review slice', () => {
     });
 
     describe('DeleteAnnotations fulfilled action', () => {
-      test('Delete fullfil remove ids from selected ids', () => {
+      test('Delete fulfill remove ids from selected ids', () => {
         const action = {
           type: DeleteAnnotations.fulfilled,
           meta: { arg: [{ id: 4 }] },
@@ -219,7 +219,7 @@ describe('Test review slice', () => {
         expect(newState.selectedAnnotationIds).not.toContain(4);
       });
 
-      test('Delete fullfil remove ids from hidden ids', () => {
+      test('Delete fulfill remove ids from hidden ids', () => {
         const action = {
           type: DeleteAnnotations.fulfilled,
           meta: { arg: [{ id: 1 }] },

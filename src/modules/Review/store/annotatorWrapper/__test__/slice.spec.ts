@@ -1,8 +1,19 @@
 import {
   getDummyKeypointCollectionState,
   getDummyKeypointState,
+  getDummyPredefinedKeypointCollection,
+  getDummyPredefinedShape,
 } from 'src/__test-utils/annotations';
+import {
+  getDummyImageAssetLinkAnnotation,
+  getDummyImageClassificationAnnotation,
+  getDummyImageExtractedTextAnnotation,
+  getDummyImageKeypointCollectionAnnotation,
+  getDummyImageObjectDetectionBoundingBoxAnnotation,
+  getDummyImageObjectDetectionPolygonAnnotation,
+} from 'src/__test-utils/getDummyAnnotations';
 import { Status } from 'src/api/annotation/types';
+import { generateKeypointId } from 'src/modules/Common/Utils/AnnotationUtils/AnnotationUtils';
 import { getDummyRegionOriginatedInAnnotator } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/__test-utils/region';
 import { tools } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/Tools';
 import {
@@ -30,6 +41,13 @@ import {
   KeypointCollectionState,
 } from 'src/modules/Review/store/annotatorWrapper/type';
 import { PredefinedKeypoint, PredefinedShape } from 'src/modules/Review/types';
+import { deselectAllSelectionsReviewPage } from 'src/store/commonActions';
+import { PopulateAnnotationTemplates } from 'src/store/thunks/Annotation/PopulateAnnotationTemplates';
+import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotations';
+import { SaveAnnotations } from 'src/store/thunks/Annotation/SaveAnnotations';
+import { SaveAnnotationTemplates } from 'src/store/thunks/Annotation/SaveAnnotationTemplates';
+import { UpdateAnnotations } from 'src/store/thunks/Annotation/UpdateAnnotations';
+import { VisionJobUpdate } from 'src/store/thunks/Process/VisionJobUpdate';
 
 jest.mock('src/modules/Common/Utils/AnnotationUtils/AnnotationUtils', () => ({
   ...jest.requireActual(
@@ -41,135 +59,135 @@ jest.mock('src/modules/Common/Utils/AnnotationUtils/AnnotationUtils', () => ({
 }));
 
 describe('Test annotator slice', () => {
+  const gaugeKeypoints: PredefinedKeypoint[] = [
+    {
+      caption: 'left',
+      order: '1',
+      color: 'red',
+    },
+    {
+      caption: 'center',
+      order: '2',
+      color: 'red',
+    },
+    {
+      caption: 'right',
+      order: '3',
+      color: 'red',
+    },
+  ];
+  const valveKeypoints: PredefinedKeypoint[] = [
+    {
+      caption: 'up',
+      order: '1',
+      color: 'green',
+    },
+    {
+      caption: 'down',
+      order: '2',
+      color: 'green',
+    },
+  ];
+  const predefinedKeypointCollectionList = [
+    {
+      id: '1',
+      collectionName: 'gauge',
+      keypoints: gaugeKeypoints,
+      color: 'red',
+    },
+    {
+      id: '2',
+      collectionName: 'valve',
+      keypoints: valveKeypoints,
+      color: 'green',
+    },
+  ];
+
+  const predefinedShapesList: PredefinedShape[] = [
+    {
+      shapeName: 'box',
+      color: 'red',
+    },
+    {
+      shapeName: 'motor',
+      color: 'green',
+    },
+  ];
+
+  const modifiedInitialState = {
+    ...initialState,
+    isCreatingKeypointCollection: false,
+    predefinedAnnotations: {
+      predefinedKeypointCollections: predefinedKeypointCollectionList,
+      predefinedShapes: predefinedShapesList,
+    },
+    collections: {
+      byId: {
+        1: getDummyKeypointCollectionState({
+          id: 1,
+          label: 'valve',
+          keypointIds: ['V1', 'V2'],
+        }),
+      },
+      allIds: [1],
+      selectedIds: [1],
+    },
+    lastCollectionId: 1,
+    lastCollectionName: 'valve',
+    lastShape: 'motor',
+    keypointMap: {
+      byId: {
+        V1: getDummyKeypointState('up'),
+        V2: getDummyKeypointState('down'),
+      },
+      allIds: ['V1', 'V2'],
+      selectedIds: ['V2'],
+    },
+  };
+
+  const modifiedInitialStateDuringKeypointCreation = {
+    ...initialState,
+    isCreatingKeypointCollection: true,
+    predefinedAnnotations: {
+      predefinedKeypointCollections: predefinedKeypointCollectionList,
+      predefinedShapes: predefinedShapesList,
+    },
+    collections: {
+      byId: {
+        1: getDummyKeypointCollectionState({
+          id: 1,
+          label: 'valve',
+          keypointIds: ['V1', 'V2'],
+        }),
+        2: getDummyKeypointCollectionState({
+          id: 2,
+          label: 'gauge',
+          keypointIds: ['K1', 'K2'],
+        }),
+      },
+      allIds: [1, 2],
+      selectedIds: [2],
+    },
+    lastCollectionId: 2,
+    lastCollectionName: 'gauge',
+    lastShape: 'motor',
+    keypointMap: {
+      byId: {
+        V1: getDummyKeypointState('up'),
+        V2: getDummyKeypointState('down'),
+        K1: getDummyKeypointState('left'),
+        K2: getDummyKeypointState('right'),
+      },
+      allIds: ['V1', 'V2', 'K1', 'K2'],
+      selectedIds: ['K1'],
+    },
+  };
+
   test('reducer should return the initial state', () => {
     expect(reducer(undefined, { type: undefined })).toEqual(initialState);
   });
 
   describe('Test reducers', () => {
-    const gaugeKeypoints: PredefinedKeypoint[] = [
-      {
-        caption: 'left',
-        order: '1',
-        color: 'red',
-      },
-      {
-        caption: 'center',
-        order: '2',
-        color: 'red',
-      },
-      {
-        caption: 'right',
-        order: '3',
-        color: 'red',
-      },
-    ];
-    const valveKeypoints: PredefinedKeypoint[] = [
-      {
-        caption: 'up',
-        order: '1',
-        color: 'green',
-      },
-      {
-        caption: 'down',
-        order: '2',
-        color: 'green',
-      },
-    ];
-    const predefinedKeypointCollectionList = [
-      {
-        id: '1',
-        collectionName: 'gauge',
-        keypoints: gaugeKeypoints,
-        color: 'red',
-      },
-      {
-        id: '2',
-        collectionName: 'valve',
-        keypoints: valveKeypoints,
-        color: 'green',
-      },
-    ];
-
-    const predefinedShapesList: PredefinedShape[] = [
-      {
-        shapeName: 'box',
-        color: 'red',
-      },
-      {
-        shapeName: 'motor',
-        color: 'green',
-      },
-    ];
-
-    const modifiedInitialState = {
-      ...initialState,
-      isCreatingKeypointCollection: false,
-      predefinedAnnotations: {
-        predefinedKeypointCollections: predefinedKeypointCollectionList,
-        predefinedShapes: predefinedShapesList,
-      },
-      collections: {
-        byId: {
-          1: getDummyKeypointCollectionState({
-            id: 1,
-            label: 'valve',
-            keypointIds: ['V1', 'V2'],
-          }),
-        },
-        allIds: [1],
-        selectedIds: [1],
-      },
-      lastCollectionId: 1,
-      lastCollectionName: 'valve',
-      lastShape: 'motor',
-      keypointMap: {
-        byId: {
-          V1: getDummyKeypointState('up'),
-          V2: getDummyKeypointState('down'),
-        },
-        allIds: ['V1', 'V2'],
-        selectedIds: ['V2'],
-      },
-    };
-
-    const modifiedInitialStateDuringKeypointCreation = {
-      ...initialState,
-      isCreatingKeypointCollection: true,
-      predefinedAnnotations: {
-        predefinedKeypointCollections: predefinedKeypointCollectionList,
-        predefinedShapes: predefinedShapesList,
-      },
-      collections: {
-        byId: {
-          1: getDummyKeypointCollectionState({
-            id: 1,
-            label: 'valve',
-            keypointIds: ['V1', 'V2'],
-          }),
-          2: getDummyKeypointCollectionState({
-            id: 2,
-            label: 'gauge',
-            keypointIds: ['K1', 'k2'],
-          }),
-        },
-        allIds: [1, 2],
-        selectedIds: [2],
-      },
-      lastCollectionId: 2,
-      lastCollectionName: 'gauge',
-      lastShape: 'motor',
-      keypointMap: {
-        byId: {
-          V1: getDummyKeypointState('up'),
-          V2: getDummyKeypointState('down'),
-          k1: getDummyKeypointState('left'),
-          k2: getDummyKeypointState('right'),
-        },
-        allIds: ['V1', 'V2', 'k1', 'k2'],
-        selectedIds: ['k1'],
-      },
-    };
-
     describe('Test selectCollection reducer', () => {
       test('if collection is already selected should deselect', () => {
         const previousState = {
@@ -223,7 +241,7 @@ describe('Test annotator slice', () => {
             ...modifiedInitialState.collections.byId,
             2: getDummyKeypointCollectionState({
               id: 2,
-              keypointIds: ['k2'],
+              keypointIds: ['K2'],
               show: false,
               status: Status.Rejected,
             }),
@@ -274,7 +292,7 @@ describe('Test annotator slice', () => {
             ...modifiedInitialState.collections.byId,
             2: getDummyKeypointCollectionState({
               id: 2,
-              keypointIds: ['k2'],
+              keypointIds: ['K2'],
               show: false,
               status: Status.Rejected,
             }),
@@ -1185,7 +1203,7 @@ describe('Test annotator slice', () => {
       });
       test('when temp keypoint collection exist but region is already created', () => {
         const createdRegion = getDummyRegionOriginatedInAnnotator({
-          id: 'k2',
+          id: 'K2',
           annotationLabelOrText: 'gauge',
           type: AnnotatorRegionType.PointRegion,
           x: 0.5,
@@ -1202,7 +1220,7 @@ describe('Test annotator slice', () => {
         };
 
         const updatedRegion = getDummyRegionOriginatedInAnnotator({
-          id: 'k2',
+          id: 'K2',
           annotationLabelOrText: 'gauge',
           type: AnnotatorRegionType.PointRegion,
           x: 0.1,
@@ -1235,7 +1253,244 @@ describe('Test annotator slice', () => {
     });
   });
 
-  describe.skip('Test extraReducers', () => {
-    // ToDo: add tests for extraReducers after thunks were migrated to V2 types
+  describe('Test extraReducers', () => {
+    test('deselectAllSelectionsReviewPage extra reducer', () => {
+      const previousState = {
+        ...modifiedInitialStateDuringKeypointCreation,
+      };
+
+      const action = {
+        type: deselectAllSelectionsReviewPage,
+      };
+
+      const resultState = reducer(previousState, action);
+
+      expect(resultState.collections.selectedIds).toStrictEqual([]);
+      expect(resultState.keypointMap.selectedIds).toStrictEqual([]);
+      expect(resultState.temporaryRegion).toBeUndefined();
+      expect(resultState.isCreatingKeypointCollection).toEqual(false);
+      expect(resultState.lastCollectionId).toBeUndefined();
+      expect(resultState.collections.byId).toStrictEqual({
+        1: getDummyKeypointCollectionState({
+          id: 1,
+          label: 'valve',
+          keypointIds: ['V1', 'V2'],
+        }),
+      });
+      expect(resultState.collections.allIds).toStrictEqual([1]);
+      expect(resultState.collections.selectedIds).toStrictEqual([]);
+      expect(resultState.keypointMap).toStrictEqual({
+        byId: {
+          V1: getDummyKeypointState('up'),
+          V2: getDummyKeypointState('down'),
+        },
+        allIds: ['V1', 'V2'],
+        selectedIds: [],
+      });
+    });
+
+    describe('extra reducer for fulfilled actions for SaveAnnotations, VisionJobUpdate, UpdateAnnotations, RetrieveAnnotations', () => {
+      const actionsTypes = [
+        SaveAnnotations.fulfilled.type,
+        VisionJobUpdate.fulfilled.type,
+        UpdateAnnotations.fulfilled.type,
+        RetrieveAnnotations.fulfilled.type,
+      ];
+
+      const payload = [
+        getDummyImageClassificationAnnotation({
+          id: 1,
+          annotatedResourceId: 1,
+        }),
+        getDummyImageExtractedTextAnnotation({
+          id: 2,
+          annotatedResourceId: 1,
+        }),
+        getDummyImageObjectDetectionBoundingBoxAnnotation({
+          id: 3,
+          annotatedResourceId: 1,
+        }),
+        getDummyImageAssetLinkAnnotation({ id: 4, annotatedResourceId: 1 }),
+        getDummyImageObjectDetectionPolygonAnnotation({
+          id: 5,
+          annotatedResourceId: 1,
+        }),
+      ];
+
+      test('do nothing when annotations belong to more than 1 file', () => {
+        const previousState = {
+          ...modifiedInitialStateDuringKeypointCreation,
+        };
+
+        // eslint-disable-next-line no-restricted-syntax
+        for (const actionType of actionsTypes) {
+          const resultState = reducer(previousState, {
+            type: actionType,
+            payload: [
+              ...payload,
+              getDummyImageClassificationAnnotation({
+                id: 5,
+                annotatedResourceId: 2,
+              }),
+            ],
+          });
+
+          expect(resultState).toStrictEqual(previousState);
+        }
+      });
+
+      test("do nothing when annotations don't include keypoint annotations", () => {
+        const previousState = {
+          ...modifiedInitialStateDuringKeypointCreation,
+        };
+
+        // eslint-disable-next-line no-restricted-syntax
+        for (const actionType of actionsTypes) {
+          const resultState = reducer(previousState, {
+            type: actionType,
+            payload,
+          });
+
+          expect(resultState).toStrictEqual(previousState);
+        }
+      });
+
+      test('when keypoint annotations are available', () => {
+        const previousState = {
+          ...modifiedInitialState,
+        };
+
+        const dummyKeypointCollection =
+          getDummyImageKeypointCollectionAnnotation({
+            id: 5,
+            annotatedResourceId: 1,
+            status: Status.Approved,
+          });
+
+        // eslint-disable-next-line no-restricted-syntax
+        for (const actionType of actionsTypes) {
+          const resultState = reducer(previousState, {
+            type: actionType,
+            payload: [...payload, dummyKeypointCollection],
+          });
+
+          expect(resultState.temporaryRegion).toBeUndefined();
+          expect(resultState.isCreatingKeypointCollection).toEqual(false);
+          expect(resultState.lastCollectionId).toEqual(
+            previousState.lastCollectionId
+          );
+          expect(resultState.collections.byId).toStrictEqual({
+            ...previousState.collections.byId,
+            ...{
+              5: getDummyKeypointCollectionState({
+                id: dummyKeypointCollection.id,
+                keypointIds: Object.keys(dummyKeypointCollection.keypoints).map(
+                  (keypointLabel) =>
+                    generateKeypointId(
+                      dummyKeypointCollection.id,
+                      keypointLabel
+                    )
+                ),
+                label: dummyKeypointCollection.label,
+                status: dummyKeypointCollection.status,
+              }),
+            },
+          });
+
+          expect(resultState.collections.allIds).toStrictEqual([
+            ...previousState.collections.allIds,
+            5,
+          ]);
+          expect(resultState.collections.selectedIds).toStrictEqual(
+            previousState.collections.selectedIds
+          );
+          expect(resultState.keypointMap.byId).toStrictEqual({
+            ...previousState.keypointMap.byId,
+            ...Object.fromEntries(
+              Object.entries(dummyKeypointCollection.keypoints).map(
+                ([label, keypoint]) => {
+                  const id = generateKeypointId(
+                    dummyKeypointCollection.id,
+                    label
+                  );
+                  return [
+                    id,
+                    {
+                      ...keypoint,
+                      label,
+                    },
+                  ];
+                }
+              )
+            ),
+          });
+          expect(resultState.keypointMap.selectedIds).toStrictEqual(
+            previousState.keypointMap.selectedIds
+          );
+          expect(resultState.keypointMap.allIds).toStrictEqual([
+            ...previousState.keypointMap.allIds,
+            ...Object.keys(dummyKeypointCollection.keypoints).map((key) =>
+              generateKeypointId(dummyKeypointCollection.id, key)
+            ),
+          ]);
+        }
+      });
+    });
+
+    describe('matchers for PopulateAnnotationTemplates.fulfilled and SaveAnnotationTemplates.fulfilled', () => {
+      const previousState = {
+        ...initialState,
+      };
+
+      const actionTypes = [
+        PopulateAnnotationTemplates.fulfilled.type,
+        SaveAnnotationTemplates.fulfilled.type,
+      ];
+
+      test('when payload is empty', () => {
+        actionTypes.forEach((actionType) => {
+          const action = {
+            type: actionType,
+            payload: {
+              predefinedKeypointCollections: [],
+              predefinedShapes: [],
+            },
+          };
+
+          const resultState = reducer(previousState, action);
+
+          expect(resultState.predefinedAnnotations).toStrictEqual(
+            previousState.predefinedAnnotations
+          );
+        });
+      });
+
+      test('when payload is not empty', () => {
+        const payload = {
+          predefinedKeypointCollections: [
+            getDummyPredefinedKeypointCollection(1),
+            getDummyPredefinedKeypointCollection(2, 'dial'),
+          ],
+          predefinedShapes: [
+            getDummyPredefinedShape({}),
+            getDummyPredefinedShape({
+              id: 2,
+              shapeName: 'largeBox',
+              color: 'yellow',
+            }),
+          ],
+        };
+        actionTypes.forEach((actionType) => {
+          const action = {
+            type: actionType,
+            payload,
+          };
+
+          const resultState = reducer(previousState, action);
+
+          expect(resultState.predefinedAnnotations).toStrictEqual(payload);
+        });
+      });
+    });
   });
 });

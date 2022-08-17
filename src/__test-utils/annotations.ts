@@ -6,6 +6,7 @@ import {
 import {
   PredefinedKeypoint,
   PredefinedKeypointCollection,
+  PredefinedShape,
   ReviewKeypoint,
   TempKeypointCollection,
 } from 'src/modules/Review/types';
@@ -61,17 +62,34 @@ export const getDummyPredefinedKeypoint = (
   };
 };
 export const getDummyPredefinedKeypointCollection = (
-  id: number
+  id: number,
+  collectionName = 'gauge',
+  color = 'red',
+  keypoints = [
+    getDummyPredefinedKeypoint('left'),
+    getDummyPredefinedKeypoint('center'),
+    getDummyPredefinedKeypoint('right'),
+  ]
 ): PredefinedKeypointCollection => {
   return {
     id,
-    collectionName: 'gauge',
-    color: 'red',
-    keypoints: [
-      getDummyPredefinedKeypoint('left'),
-      getDummyPredefinedKeypoint('center'),
-      getDummyPredefinedKeypoint('right'),
-    ],
+    collectionName,
+    color,
+    keypoints,
+  };
+};
+
+export const getDummyPredefinedShape = ({
+  id = 1,
+  shapeName = 'box',
+  lastUpdated = Date.now(),
+  color = 'red',
+}: Partial<PredefinedShape>): PredefinedShape => {
+  return {
+    shapeName,
+    color,
+    lastUpdated,
+    id,
   };
 };
 

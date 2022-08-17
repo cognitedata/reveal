@@ -62,7 +62,7 @@ describe('test convertTempKeypointCollectionToUnsavedVisionImageKeypointCollecti
         ...dummyTempKeypointCollection,
         data: {
           ...dummyTempKeypointCollection.data,
-          keypoints: undefined as unknown as ReviewKeypoint[],
+          keypoints: undefined as unknown as Record<string, ReviewKeypoint>,
         },
       })
     ).toBeNull();
@@ -71,7 +71,7 @@ describe('test convertTempKeypointCollectionToUnsavedVisionImageKeypointCollecti
         ...dummyTempKeypointCollection,
         data: {
           ...dummyTempKeypointCollection.data,
-          keypoints: [],
+          keypoints: {},
         },
       })
     ).toBeNull();
