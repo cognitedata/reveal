@@ -61,7 +61,13 @@ const ThreeDee: React.FC<ThreeDeeProps> = ({
 
     modules.install();
 
-    setRoot(modules.createRoot());
+    setTimeout(() => {
+      /**
+       * Delaying the setRoot fixes [PP-3093]
+       * Specifically the part where changing the unit causes the 3D not to load at all
+       */
+      setRoot(modules.createRoot());
+    }, 1000);
   }, [fileId, wells, wellLogs]);
 
   return (

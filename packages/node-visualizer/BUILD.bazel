@@ -41,39 +41,41 @@ generate_package_json_helpers(
 
 # Dependencies from package.json
 DEPENDENCIES = [
+    "@npm//@cognite/cogs.js",
     "@npm//@cognite/geospatial-sdk-js",
     "@npm//@cognite/potree-core",
-    "@npm//@cognite/cogs.js",
-    "@npm//@cognite/seismic-sdk-js",
-    "@npm//@reduxjs/toolkit",
     "@npm//@cognite/sdk-wells",
+    "@npm//@cognite/seismic-sdk-js",
+    "@npm//@material-ui/core",
+    "@npm//@material-ui/icons",
+    "@npm//@material-ui/lab",
+    "@npm//@reduxjs/toolkit",
+    "@npm//camera-controls",
     "@npm//color",
+    "@npm//immer",
+    "@npm//lodash",
     "@npm//react",
     "@npm//react-color",
     "@npm//react-draggable",
-    "@npm//react-is",
     "@npm//react-redux",
     "@npm//react-split-pane",
     "@npm//react-virtualized",
-    "@npm//react-dom",
     "@npm//redux",
+    "@npm//styled-components",
     "@npm//three",
     "@npm//utm",
     "@npm//uuid",
-    "@npm//styled-components",
-    "@npm//camera-controls",
-    "@npm//immer",
+    "//packages/storage",
 ]
 
 # Type dependencies from package.json
 TYPE_DEPENDENCIES = [
-    "@npm//@types/lodash",
     "@npm//@types/color",
+    "@npm//@types/lodash",
     "@npm//@types/react",
-    "@npm//@types/react-dom",
     "@npm//@types/react-color",
-    "@npm//@types/react-virtualized",
     "@npm//@types/react-redux",
+    "@npm//@types/react-virtualized",
     "@npm//@types/styled-components",
     "@npm//@types/utm",
     "@npm//@types/uuid",
@@ -81,20 +83,30 @@ TYPE_DEPENDENCIES = [
 
 # Dev dependencies from package.json
 DEV_DEPENDENCIES = [
+    "@npm//@rollup/plugin-alias",
     "@npm//@rollup/plugin-image",
-    "@npm//@testing-library/jest-dom",
-    "@npm//@testing-library/react",
+    "@npm//@rollup/plugin-node-resolve",
+    "@npm//jest-canvas-mock",
     "@npm//rollup-plugin-json",
     "@npm//rollup-plugin-typescript2",
-    "@npm//@rollup/plugin-alias",
-    "@npm//@rollup/plugin-node-resolve",
     "@npm//typescript",
-    "@npm//jest-canvas-mock",
 ]
 
 # Mappings for absolute imports from baseUrl @unused
 mappings_dict = {
+    "Core": "dist/Core",
+    "Solutions": "dist/Solutions",
+    "SubSurface": "dist/SubSurface",
+    "Three": "dist/Three",
+    "ThreeSubSurface": "dist/ThreeSubSurface",
+    "UserInterface": "dist/UserInterface",
+    "__mocks__": "dist/__mocks__",
+    "__testUtils__": "dist/__testUtils__",
     "__tests__": "dist/__tests__",
+    "images": "dist/images",
+    "index": "dist/index",
+    "setupTests": "dist/setupTests",
+    "typings.d": "dist/typings.d",
 }
 
 ### end of auto-generated helpers ###

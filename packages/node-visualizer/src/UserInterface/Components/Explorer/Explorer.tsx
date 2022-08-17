@@ -3,14 +3,9 @@ import { ExplorerPropType } from '../../../UserInterface/Components/Explorer/Exp
 import { ExplorerTabs } from '../../../UserInterface/Components/Explorer/ExplorerTabs';
 import { VirtualTree } from '../../../UserInterface/Components/VirtualTree/VirtualTree';
 import styled from 'styled-components';
-
+import { PersistState } from './PersistState';
 // Renders Tree Controller
 export const Explorer = (props: ExplorerPropType) => {
-  // Handle Node Check
-  const handleToggleVisible = (uniqueId: string) => {
-    props.onToggleVisible(uniqueId);
-  };
-
   // Handle Node Expand
   const handleToggleNodeExpand = (uniqueId: string, expandState: boolean) => {
     props.onNodeExpandToggle(uniqueId, expandState);
@@ -23,17 +18,25 @@ export const Explorer = (props: ExplorerPropType) => {
 
   return (
     <ExplorerWrapper>
-      <ExplorerTabs
-        tabs={props.tabs}
-        selectedTabIndex={props.selectedTabIndex}
-        onTabChange={props.onTabChange}
-      />
-      <VirtualTree
-        data={props.data}
-        onToggleNodeSelect={handleToggleNodeSelect}
-        onToggleNodeExpand={handleToggleNodeExpand}
-        onToggleNodeCheck={handleToggleVisible}
-      />
+      <PersistState props={props}>
+        {(onToggleNode: (uniqueId: string) => void) => {
+          return (
+            <>
+              <ExplorerTabs
+                tabs={props.tabs}
+                selectedTabIndex={props.selectedTabIndex}
+                onTabChange={props.onTabChange}
+              />
+              <VirtualTree
+                data={props.data}
+                onToggleNodeSelect={handleToggleNodeSelect}
+                onToggleNodeExpand={handleToggleNodeExpand}
+                onToggleNodeCheck={onToggleNode}
+              />
+            </>
+          );
+        }}
+      </PersistState>
     </ExplorerWrapper>
   );
 };
