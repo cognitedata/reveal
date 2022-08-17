@@ -1,7 +1,7 @@
 import { ResourcePreviewSidebar } from 'containers';
 import React, { useContext } from 'react';
 import styled from 'styled-components';
-import { Detail, Icon, Title, Modal } from '@cognite/cogs.js';
+import { Detail, Icon, Title, Modal, Checkbox } from '@cognite/cogs.js';
 
 import { FileInfo } from '@cognite/sdk';
 import {
@@ -33,6 +33,8 @@ interface FilePreviewSidebarProps {
   setZoomedAnnotation: (
     zoomedAnnotation: CogniteAnnotation | undefined
   ) => void;
+  setIsAnnotationsShown: (isAnnotationsShown: boolean) => void;
+  isAnnotationsShown: boolean;
 }
 
 const FilePreviewSidebar = ({
@@ -43,6 +45,8 @@ const FilePreviewSidebar = ({
   viewingAnnotations,
   setViewingAnnotations,
   setZoomedAnnotation,
+  setIsAnnotationsShown,
+  isAnnotationsShown,
 }: FilePreviewSidebarProps) => {
   const sdk = useSDK();
   const context = useContext(AppContext);
@@ -118,7 +122,16 @@ const FilePreviewSidebar = ({
         closable={false}
         header={
           <TitleWrapper>
-            {fileIcon || <Icon type="Document" />}
+            <TitleIconWrapper>
+              {fileIcon || <Icon type="Document" />}
+              <Checkbox
+                onChange={() => setIsAnnotationsShown(!isAnnotationsShown)}
+                name="Hide annotations"
+                checked={!isAnnotationsShown}
+              >
+                Hide annotations
+              </Checkbox>
+            </TitleIconWrapper>
             <FileTitle level={4}>{file?.name}</FileTitle>
             {file?.id && (
               <div>
@@ -148,6 +161,11 @@ const TitleWrapper = styled.div`
   gap: 15px;
   display: flex;
   flex-direction: column;
+`;
+
+const TitleIconWrapper = styled.div`
+  display: flex;
+  justify-content: space-between;
 `;
 
 const FileTitle = styled(Title)`

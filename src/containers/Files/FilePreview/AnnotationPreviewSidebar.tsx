@@ -61,6 +61,8 @@ type Props = {
   setZoomedAnnotation: (
     zoomedAnnotation: CogniteAnnotation | undefined
   ) => void;
+  setIsAnnotationsShown: (isAnnotationShown: boolean) => void;
+  isAnnotationsShown: boolean;
   annotations: Array<CogniteAnnotation | ProposedCogniteAnnotation>;
   fileIcon?: React.ReactNode;
 };
@@ -74,6 +76,8 @@ interface AnnotationModalStateProps {
 }
 const AnnotationPreviewSidebar = ({
   file,
+  setIsAnnotationsShown,
+  isAnnotationsShown,
   setPendingAnnotations,
   setZoomedAnnotation,
   contextualization,
@@ -582,6 +586,8 @@ const AnnotationPreviewSidebar = ({
       viewingAnnotations={viewingAnnotations}
       setViewingAnnotations={setViewingAnnotations}
       setZoomedAnnotation={setZoomedAnnotation}
+      setIsAnnotationsShown={setIsAnnotationsShown}
+      isAnnotationsShown={isAnnotationsShown}
     />
   );
 };

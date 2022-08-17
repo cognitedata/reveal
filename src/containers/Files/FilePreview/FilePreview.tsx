@@ -46,6 +46,8 @@ export const FilePreview = ({
     CogniteAnnotation | undefined
   >();
 
+  const [isAnnotationsShown, setIsAnnotationsShown] = useState<boolean>(true);
+
   useEffect(() => {
     setPendingAnnotations([]);
   }, [fileId]);
@@ -105,13 +107,17 @@ export const FilePreview = ({
     setZoomedAnnotation(selectedAnnotation as CogniteAnnotation | undefined);
   };
 
+  const getAnnotations = () => {
+    return isAnnotationsShown ? allAnnotations : [];
+  };
+
   return (
     <FullHeightWrapper>
       <FullHeightWrapper>
         <CogniteFileViewer.FileViewer
           file={file}
           creatable={creatable}
-          annotations={allAnnotations}
+          annotations={getAnnotations()}
           renderItemPreview={annotation => (
             <AnnotationHoverPreview annotation={annotation} />
           )}
@@ -145,6 +151,8 @@ export const FilePreview = ({
       <SidebarWrapper>
         <AnnotationPreviewSidebar
           file={file}
+          setIsAnnotationsShown={setIsAnnotationsShown}
+          isAnnotationsShown={isAnnotationsShown}
           setPendingAnnotations={setPendingAnnotations}
           setZoomedAnnotation={setZoomedAnnotation}
           contextualization={contextualization}
