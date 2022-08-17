@@ -33,9 +33,9 @@ export const BulkEditTable = ({
     // (e.g., original and updated)
     const renderer = rendererMap[cellProps.column.key];
     if (renderer) {
-      return renderer(cellProps);
+      return <PaddingContainer>{renderer(cellProps)}</PaddingContainer>;
     }
-    return StringRenderer(cellProps);
+    return <PaddingContainer>{StringRenderer(cellProps)}</PaddingContainer>;
   };
   const HeaderCell = (cellProps: any) => {
     return StringHeaderRenderer(cellProps);
@@ -73,4 +73,8 @@ const TableContainer = styled.div`
   .BaseTable__row-cell-text {
     white-space: normal !important;
   }
+`;
+
+const PaddingContainer = styled.div`
+  padding: 10px 0px;
 `;

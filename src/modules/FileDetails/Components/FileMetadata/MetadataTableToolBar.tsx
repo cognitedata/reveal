@@ -8,8 +8,6 @@ import { Button } from '@cognite/cogs.js';
 import { MetadataItem } from 'src/modules/FileDetails/Components/FileMetadata/Types';
 import { useDispatch } from 'react-redux';
 
-const StyledButton = styled(Button)``;
-
 export const MetadataTableToolBar = ({
   editMode,
   metadata,
@@ -37,17 +35,17 @@ export const MetadataTableToolBar = ({
 
   return (
     <TableToolBar>
-      <StyledButton
-        type="ghost"
+      <Button
+        type="tertiary"
         disabled={!metadata.length}
         icon={editMode ? 'Checkmark' : 'Edit'}
         onClick={handleEditModeChange}
       >
         {editMode ? 'Finish Editing' : 'Edit table'}
-      </StyledButton>
-      <StyledButton type="ghost" icon="Add" onClick={handleAddMetadataRow}>
+      </Button>
+      <Button type="tertiary" icon="Add" onClick={handleAddMetadataRow}>
         Add row
-      </StyledButton>
+      </Button>
     </TableToolBar>
   );
 };
