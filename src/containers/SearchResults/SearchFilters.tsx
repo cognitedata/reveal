@@ -144,7 +144,7 @@ export const SearchFilters = ({
             <Col flex="auto">Filters</Col>
             {allowHide && (
               <Col flex="none">
-                <HideFiltersTooltip content="Hide">
+                <HideFiltersTooltip interactive content="Hide">
                   <Button
                     icon="PanelLeft"
                     type="ghost"

@@ -8,7 +8,7 @@
   "dependencies": {
     "@babel/runtime": "^7.12.5",
     "@cognite/annotations": "^1.1.0",
-    "@cognite/cogs.js": "^5.19.5",
+    "@cognite/cogs.js": "^7.13.2",
     "@cognite/gcs-browser-upload": "cognitedata/gcs-browser-upload#mn/temporary-azure-fix",
     "@cognite/react-document-table": "^1.22.2",
     "@cognite/react-picture-annotation": "3.0.0",
