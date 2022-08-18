@@ -8,6 +8,7 @@ on:
       - 'apps/mock-server/**'
       - 'libs/platypus-core/**'
       - 'libs/platypus-common-utils/**'
+      - 'yarn.lock'
 jobs:
   platypus-tests:
     runs-on: ubuntu-latest
