@@ -142,9 +142,9 @@ export const WellboreCasingView: React.FC<WellboreCasingsViewProps> = ({
             id="welbore-casing-view-content"
             elementsOrder={columnOrder}
           >
-            {isColumnVisible(ChartColumn.CASINGS) && (
+            {isColumnVisible(ChartColumn.FORMATION) && (
               <FormationColumn
-                key="formation"
+                key={ChartColumn.FORMATION}
                 scaleBlocks={scaleBlocks}
                 isLoading={isWellTopsLoading}
                 wellTop={wellTop}

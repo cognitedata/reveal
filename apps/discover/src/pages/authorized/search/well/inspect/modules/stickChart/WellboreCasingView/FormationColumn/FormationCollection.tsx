@@ -1,5 +1,7 @@
 import { WellTopSurfaceInternal } from 'domain/wells/wellTops/internal/types';
 
+import React from 'react';
+
 import { DepthSegment } from '../SchemaColumn/components/DepthIndicator/DepthSegment';
 
 import { Formation } from './Formation';
@@ -20,13 +22,13 @@ export const FormationCollection: React.FC<Props> = ({
     <>
       {processedData.map((data) => {
         return (
-          <>
+          <React.Fragment key={data.surface.name}>
             <DepthSegment.Start height={`${data.startPosition}px`} />
             <Formation
               surface={data.surface}
               wellTopScaledHeight={data.wellTopScaledHeight}
             />
-          </>
+          </React.Fragment>
         );
       })}
     </>
