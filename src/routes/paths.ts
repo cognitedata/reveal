@@ -1,7 +1,7 @@
 import { PathData } from './routesMap';
 
 export const root: string = 'interactive-diagrams';
-export const staticRoot: string = `/:tenant/${root}`;
+export const staticRoot: string = `/:project/${root}`;
 
 export const paths: { [key: string]: PathData } = {
   landingPage: {

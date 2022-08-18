@@ -9,11 +9,11 @@ import { StepsType } from './types';
 export const StepsList = () => {
   const location = useLocation();
   const {
-    tenant = 'unknown',
+    project = 'unknown',
     workflowId = 'unknown',
     fileId = 'unknown',
   } = useParams<{
-    tenant?: string;
+    project?: string;
     workflowId?: string;
     fileId?: string;
   }>();
@@ -41,9 +41,9 @@ export const StepsList = () => {
   });
 
   const currentStep = stepList.findIndex((step: StepsType) => {
-    const isCurrentStep = `/${tenant}${step.path}` === location.pathname;
+    const isCurrentStep = `/${project}${step.path}` === location.pathname;
     const isCurrentSubstep = step.substeps?.find(
-      (substep) => `/${tenant}${substep.path}` === location.pathname
+      (substep) => `/${project}${substep.path}` === location.pathname
     );
     return isCurrentStep || isCurrentSubstep;
   });

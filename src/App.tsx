@@ -26,16 +26,10 @@ import { AntStyles, GlobalStyles } from 'styles';
 import RootApp from 'pages/App';
 
 const App = () => {
-  const tenant = window.location.pathname.split('/')[1];
-
-  if (!tenant) {
-    throw new Error('tenant missing');
-  }
-
   const history = createBrowserHistory();
   const project = getProject();
   const env = getEnv();
-  const LS_KEY = `PNID_CONTEXTUALIZATION_${tenant}`;
+  const LS_KEY = `PNID_CONTEXTUALIZATION_${project}`;
 
   const updateLocalStorage = debounce(() => {
     const localStorageContent = persistedState(store.getState());
@@ -79,7 +73,7 @@ const App = () => {
                   <SubAppWrapper title="Interactive Engineering Diagrams">
                     <Router history={history}>
                       <Switch>
-                        <Route path={`/:tenant/${root}`} component={RootApp} />
+                        <Route path={`/:project/${root}`} component={RootApp} />
                       </Switch>
                     </Router>
                   </SubAppWrapper>
