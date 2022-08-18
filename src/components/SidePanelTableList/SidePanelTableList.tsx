@@ -1,10 +1,9 @@
 import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
 
 import { getFlow } from '@cognite/cdf-sdk-singleton';
-import { Body, Button, Colors } from '@cognite/cogs.js';
+import { Button } from '@cognite/cogs.js';
 import { RawDBTable } from '@cognite/sdk';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
-import styled from 'styled-components';
 
 import SidePanelLevelWrapper from 'components/SidePanel/SidePanelLevelWrapper';
 import Tooltip from 'components/Tooltip/Tooltip';
@@ -14,16 +13,11 @@ import SidePanelTableListContent from './SidePanelTableListContent';
 import SidePanelTableListHomeItem from './SidePanelTableListHomeItem';
 import CreateTableModal from 'components/CreateTableModal/CreateTableModal';
 import { useTables } from 'hooks/sdk-queries';
-import { useActiveTable } from 'hooks/table-tabs';
 import { Trans, useTranslation } from 'common/i18n';
 
 const SidePanelTableList = (): JSX.Element => {
   const { t } = useTranslation();
-  const {
-    selectedSidePanelDatabase = '',
-    setSelectedSidePanelDatabase,
-    setIsSidePanelOpen,
-  } = useContext(RawExplorerContext);
+  const { selectedSidePanelDatabase = '' } = useContext(RawExplorerContext);
   const { flow } = getFlow();
   const [query, setQuery] = useState('');
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -34,8 +28,6 @@ const SidePanelTableList = (): JSX.Element => {
   );
 
   const { data: hasWriteAccess } = usePermissions(flow, 'rawAcl', 'WRITE');
-
-  const [[activeDatabase, activeTable] = []] = useActiveTable();
 
   useEffect(() => {
     if (!isFetching && hasNextPage) {
@@ -71,47 +63,13 @@ const SidePanelTableList = (): JSX.Element => {
 
   return (
     <SidePanelLevelWrapper
-      header={
-        <StyledSidePanelTableListHeaderWrapper>
-          <Button
-            aria-label="Back"
-            icon="ArrowLeft"
-            onClick={() => setSelectedSidePanelDatabase(undefined)}
-            size="small"
-            type="ghost"
-          />
-          <StyledSidePanelTableListHeaderTitle strong>
-            {selectedSidePanelDatabase}
-          </StyledSidePanelTableListHeaderTitle>
-          <Tooltip
-            content={
-              <Trans i18nKey="explorer-side-panel-tables-access-warning" />
-            }
-            disabled={hasWriteAccess}
-          >
-            <Button
-              aria-label="Create table"
-              disabled={!hasWriteAccess}
-              icon="Add"
-              onClick={() => setIsCreateModalOpen(true)}
-              size="small"
-              type="primary"
-            />
-          </Tooltip>
-          <StyledSidePanelTableListHeaderIconDivider />
-          <Button
-            aria-label="Hide side panel"
-            disabled={!(activeDatabase && activeTable)}
-            icon="PanelLeft"
-            onClick={() => setIsSidePanelOpen(false)}
-            size="small"
-            type="secondary"
-          />
-        </StyledSidePanelTableListHeaderWrapper>
-      }
+      selectedSidePanelDatabase={selectedSidePanelDatabase}
+      openCreateModal={() => setIsCreateModalOpen(true)}
+      searchInputPlaceholder={t(
+        'explorer-side-panel-tables-filter-placeholder'
+      )}
       onQueryChange={setQuery}
       query={query}
-      searchInputPlaceholder="Filter tables"
     >
       <SidePanelTableListHomeItem isEmpty={isLoading || !tables.length} />
       <SidePanelTableListContent
@@ -149,26 +107,5 @@ const SidePanelTableList = (): JSX.Element => {
     </SidePanelLevelWrapper>
   );
 };
-
-const StyledSidePanelTableListHeaderWrapper = styled.div`
-  align-items: center;
-  display: flex;
-  width: 100%;
-`;
-
-const StyledSidePanelTableListHeaderTitle = styled(Body)`
-  margin: 0 8px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  width: calc(100% - 98px);
-`;
-
-const StyledSidePanelTableListHeaderIconDivider = styled.div`
-  background-color: ${Colors['bg-control--disabled']};
-  height: 16px;
-  margin: 0 8px;
-  width: 2px;
-`;
 
 export default SidePanelTableList;

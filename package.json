@@ -29,6 +29,7 @@
     "@visx/scale": "^2.2.2",
     "@visx/shape": "^2.4.0",
     "@visx/tooltip": "^2.2.2",
+    "allotment": "^1.15.0",
     "antd": "^4.15.2",
     "formik": "^2.2.9",
     "lodash": "^4.17.21",
