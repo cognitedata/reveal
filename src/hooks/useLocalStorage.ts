@@ -19,7 +19,7 @@ const useLocalStorage = <T>(
     try {
       const valueToStore = isFunction(value) ? value(storedValue) : value;
       setStoredValue(valueToStore);
-      window.localStorage.setItem(key, JSON.stringify(valueToStore));
+      window.localStorage.setItem(key, valueToStore);
     } catch (error) {
       // Silently fail
     }
@@ -32,7 +32,7 @@ export default useLocalStorage;
 
 export const setItemInStorage = (key: string, data: any) => {
   try {
-    localStorage.setItem(key, JSON.stringify(data));
+    localStorage.setItem(key, data);
   } catch (e) {
     // silently fail
   }
