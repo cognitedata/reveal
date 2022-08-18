@@ -1,19 +1,23 @@
 import * as React from 'react';
-import mapboxgl from 'maplibre-gl';
+
+import { MapType } from '../types';
 
 import { useDeepEffect } from './useDeep';
 
+/**
+ * Resize the map when the parent container changes size (e.g expanded mode)
+ */
 export const useResizeAware = ({
   map,
   mapRef,
 }: {
-  map?: mapboxgl.Map;
+  map?: MapType;
   mapRef: React.MutableRefObject<any>;
 }) => {
   useDeepEffect(() => {
-    // This is needed to resize the map when the parent container changes size (e.g expanded mode)
     if (map) {
       map.resize();
     }
+    // mapRef is needed to trigger the resize
   }, [!!map, mapRef?.current?.offsetWidth]);
 };

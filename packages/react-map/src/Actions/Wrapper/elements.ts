@@ -4,16 +4,18 @@ import { sizes } from '../../elements';
 
 export const Wrapper = styled.div`
   justify-content: flex-end;
-  margin-top: ${sizes.normal};
-  margin-right: ${sizes.normal};
   position: absolute;
-  z-index: ${(props: { zIndex?: number }) =>
+  z-index: ${(props: { zIndex?: number; ref: any }) =>
     props.zIndex === undefined ? 5 : props.zIndex};
   display: flex;
   right: 0;
   width: 100%;
-  padding-right: ${sizes.small};
+
+  // perhaps should consider removing these styles from this wrapper
+  // or making them configurable
+  margin-top: ${sizes.normal};
   padding-left: ${sizes.normal};
+  padding-right: ${sizes.small};
 
   > div {
     margin-right: ${sizes.small};

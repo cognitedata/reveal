@@ -3,13 +3,14 @@ import { Body, Checkbox } from '@cognite/cogs.js';
 import { SelectableLayer } from '../../layers/types';
 
 import { LayerItem } from './elements';
+import { LayerOnChange } from './types';
 
 export const LayersDropdownItem = ({
   item,
   onChange,
 }: {
   item: SelectableLayer;
-  onChange: (layer: SelectableLayer) => void;
+  onChange: LayerOnChange;
 }) => {
   const handleChange = () => onChange(item);
 

@@ -13,7 +13,6 @@ import {
   REMOVE_LAYER,
   SELECT_LAYER,
   SET_ASSETS,
-  SET_DRAW_MODE,
   SET_GEO_FILTERS,
   SET_OTHER_SHOWING_GEO,
   SET_SELECTED_DOCUMENT,
@@ -41,7 +40,6 @@ export const initialState: MapState = {
   selectedDocument: undefined,
   selectedWell: undefined,
   selectedPoint: undefined,
-  drawMode: 'simple_select',
 };
 
 export function map(
@@ -161,7 +159,6 @@ export function map(
     case ZOOM_TO_FEATURE:
     case SET_SELECTED_POINT:
     case SET_SELECTED_FEATURE:
-    case SET_DRAW_MODE:
     case SET_SELECTED_WELL:
     case SET_SELECTED_DOCUMENT:
     case CLEAR_POLYGON: {

@@ -1,13 +1,11 @@
-import mapboxgl from 'maplibre-gl';
-
+import { MapType, MapProps } from '../types';
 import { useDeepEffect } from '../hooks/useDeep';
-import { MapProps } from '../types';
 
 import { addLayer, removeLayer } from './addRemoveVisibleLayer';
 import { choosePreviousSelectedLayer } from './choosePreviousSelectedLayer';
 
 interface Props {
-  map?: mapboxgl.Map;
+  map?: MapType;
   layerData: MapProps['layerData'];
   layerConfigs: MapProps['layerConfigs'];
 }

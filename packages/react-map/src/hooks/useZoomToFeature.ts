@@ -8,7 +8,8 @@ import {
   Position,
 } from '@turf/helpers';
 
-import { MapProps } from '../types';
+import { MapProps, MapType } from '../types';
+import { isPolygon } from '../utils/isPolygon';
 
 import { useDeepEffect } from './useDeep';
 
@@ -20,7 +21,7 @@ const isSafe = (possibleGoodCoords: number[]) => {
   return safeCoords as [number, number];
 };
 
-const fitToBounds = (map: mapboxgl.Map, coordinates: Position[]) => {
+const fitToBounds = (map: MapType, coordinates: Position[]) => {
   if (coordinates) {
     try {
       const tupleCoords = isSafe(coordinates[0]);
@@ -49,14 +50,14 @@ const zoomToFeature = ({
   feature,
   map,
 }: {
-  map: mapboxgl.Map;
+  map: MapType;
   feature: Feature;
 }) => {
   if (!map) return;
   if (!feature) return;
   if (!feature.geometry) return;
 
-  if (feature.geometry.type === 'Polygon') {
+  if (isPolygon(feature)) {
     fitToBounds(map, (feature.geometry as Polygon).coordinates[0]);
   } else if (feature.geometry.type === 'Point') {
     fitToBounds(map, [
@@ -84,7 +85,7 @@ export const useZoomToFeature = ({
   map,
   zoomTo,
 }: {
-  map?: mapboxgl.Map;
+  map?: MapType;
   zoomTo: MapProps['focusedFeature'];
 }) => {
   useDeepEffect(() => {

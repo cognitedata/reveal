@@ -1,28 +1,28 @@
 import * as React from 'react';
-import { getFeature } from '__fixtures/getFeature';
-import { Story, Meta } from '@storybook/react';
+import { Story, ComponentMeta } from '@storybook/react';
 
 import { Actions } from '../../Actions';
 import { Map } from '../../../Map';
 import { drawModes } from '../../../FreeDraw';
-import { props } from '../../../__stories__/defaultProps';
+import { props as defaultProps } from '../../../__stories__/defaultProps';
 import { MapWrapper } from '../../../__stories__/elements';
 
 export default {
-  title: 'Map / Buttons / Status',
+  title: 'Map / Action Bar / Status',
   component: Actions.Status,
   argTypes: {
-    draw: {
+    drawMode: {
       name: 'Draw mode',
-      options: [
-        drawModes.DRAW_POLYGON,
-        drawModes.DIRECT_SELECT,
-        drawModes.SIMPLE_SELECT,
-      ],
+      options: ['Polygon', 'Click', 'Select'],
+      mapping: {
+        Polygon: drawModes.DRAW_POLYGON,
+        DIRECT_SELECT: drawModes.DIRECT_SELECT,
+        SIMPLE_SELECT: drawModes.SIMPLE_SELECT,
+      },
       control: { type: 'radio' },
     },
-    polygon: {
-      name: 'Polygon?',
+    drawnFeatures: {
+      name: 'User created polygon?',
       options: ['Yes', 'No'],
       mapping: { Yes: [1, 2], No: [] },
       control: { type: 'radio' },
@@ -34,30 +34,60 @@ export default {
       control: { type: 'radio' },
     },
   },
-} as Meta;
+} as ComponentMeta<typeof Actions.Status>;
 
-const BaseComponent: Story<React.ComponentProps<typeof Actions.Status>> = (
-  props: React.ComponentProps<typeof Actions.Status>
-) => (
-  <Actions.Wrapper>
-    <Actions.Status {...props} />
-  </Actions.Wrapper>
+type StatusProps = React.ComponentProps<typeof Actions.Status>;
+
+const BaseComponent: Story<StatusProps> = (props) => (
+  <Actions.Status {...props} />
 );
 
-export const Simple = BaseComponent.bind({});
+export const Editing = {
+  render: BaseComponent,
+  args: {
+    drawMode: drawModes.DRAW_POLYGON,
+    selectedFeatures: 'No',
+    drawnFeatures: [],
+  },
+};
 
-export const WithMap = () => {
-  const mapProps = {
-    ...props,
-    draw: drawModes.DRAW_POLYGON,
-    initialPolygon: getFeature(),
-  };
+export const Exists = {
+  render: BaseComponent,
+  args: {
+    drawMode: drawModes.DRAW_POLYGON,
+    selectedFeatures: 'No',
+    drawnFeatures: [1],
+  },
+};
 
+export const Nothing = {
+  render: BaseComponent,
+  args: {
+    drawMode: drawModes.SIMPLE_SELECT,
+    selectedFeatures: 'No',
+    drawnFeatures: [],
+  },
+};
+
+const WithMapWrapper = (props: StatusProps) => {
   return (
     <MapWrapper>
-      <Map {...mapProps}>
-        <BaseComponent />
-      </Map>
+      <Map
+        {...defaultProps}
+        {...props}
+        renderChildren={(props) => (
+          <Actions.Wrapper {...props} renderChildren={Actions.Status} />
+        )}
+      />
     </MapWrapper>
   );
+};
+
+export const WithMap = {
+  render: WithMapWrapper,
+  args: {
+    drawMode: drawModes.SIMPLE_SELECT,
+    selectedFeatures: 'No',
+    drawnFeatures: [],
+  },
 };

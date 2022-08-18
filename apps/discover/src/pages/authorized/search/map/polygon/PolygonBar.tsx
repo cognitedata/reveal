@@ -1,99 +1,66 @@
-import React, { useMemo } from 'react';
+import * as React from 'react';
+import { useDispatch } from 'react-redux';
 
-import { TS_FIX_ME } from 'core';
-
+import { Actions, MapAddedProps, SelectableLayer } from '@cognite/react-map';
 import { Point } from '@cognite/seismic-sdk-js';
 
+import { toggleLayer } from 'modules/map/actions';
 import { useMap } from 'modules/map/selectors';
-import { MapDataSource, MapState } from 'modules/map/types';
+import { MapDataSource } from 'modules/map/types';
 import { FlexGrow } from 'styles/layout';
 
 import { useSelectedLayers } from '../hooks';
 import { useLayers } from '../hooks/useLayers';
-import { useSearchableConfig } from '../hooks/useSearchableConfig';
-import {
-  ContentSelector,
-  InfoButton,
-  InfoCode,
-  LineButton,
-  PolygonButton,
-  SearchableAssets,
-} from '../map-overlay-actions';
-import { TopButtonMenu } from '../TopButtonMenu';
+import { ContentSelector } from '../map-overlay-actions';
+// import { SearchableAssetsOverlay } from '../map-overlay-actions/SearchableAssetsOverlay';
 
 interface Props {
-  polygon: MapState['geoFilter'];
+  mapAddedProps: MapAddedProps;
   sources: MapDataSource[];
-  onPolygonButtonToggle: () => void;
-  onQuickSearchSelection: (selection: TS_FIX_ME) => void;
+  onQuickSearchSelection: (selection: unknown) => void;
   zoomToAsset: (point: Point, changeZoom?: number | false) => void;
 }
-
 export const PolygonBar: React.FC<Props> = ({
-  polygon,
-  sources,
-  onPolygonButtonToggle,
-  onQuickSearchSelection,
+  // sources,
+  // onQuickSearchSelection,
   zoomToAsset,
+  mapAddedProps,
 }) => {
-  const {
-    selectedLayers: selected,
-    assets,
-    drawMode,
-    selectedFeature,
-  } = useMap();
+  const { selectedLayers: selected, assets } = useMap();
+  const dispatch = useDispatch();
 
-  const { allLayers, selectableLayers } = useLayers();
+  const { selectableLayers } = useLayers();
+
   // add selected status to layers from redux
   const layersWithUpdatedSelectedStatus = useSelectedLayers(
     selectableLayers,
     selected
   );
+  const handleLayerToggle = (item: SelectableLayer) => {
+    dispatch(toggleLayer(item));
+  };
 
-  const { layers: searchableAssets, title: searchableTitle } =
-    useSearchableConfig(allLayers, sources);
-
-  const isPolygonButtonActive =
-    drawMode === 'draw_polygon' || polygon.length > 0;
-
-  const infoCodes: InfoCode[] = useMemo(() => {
-    if (!isPolygonButtonActive) {
-      return [];
-    }
-    if (!selectedFeature && polygon.length) {
-      return ['edit'];
-    }
-    return ['finish', 'cancel'];
-  }, [isPolygonButtonActive, polygon, selectedFeature]);
-
-  return (
-    <TopButtonMenu>
-      <InfoButton infoCodes={infoCodes} />
-
-      <FlexGrow />
-
-      <PolygonButton
-        onToggle={onPolygonButtonToggle}
-        isActive={isPolygonButtonActive}
-      />
-
-      <LineButton />
-
+  const renderChildren = (props: MapAddedProps) => {
+    return (
       <>
-        {searchableTitle && (
-          <SearchableAssets
-            onSelect={onQuickSearchSelection}
-            items={searchableAssets}
-            placeholder={searchableTitle}
-          />
-        )}
+        <Actions.Status {...props} />
+        <FlexGrow />
+        <Actions.Polygon {...props} />
+        {/* 
+        <SearchableAssetsOverlay
+          sources={sources}
+          onQuickSearchSelection={onQuickSearchSelection}
+        />
+      */}
+        <ContentSelector zoomToAsset={zoomToAsset} assets={assets} />
+        <Actions.LayersButton
+          {...props}
+          layers={layersWithUpdatedSelectedStatus}
+          onChange={handleLayerToggle}
+        />
       </>
+    );
+  };
 
-      <ContentSelector
-        layers={layersWithUpdatedSelectedStatus}
-        zoomToAsset={zoomToAsset}
-        assets={assets}
-      />
-    </TopButtonMenu>
-  );
+  return <Actions.Wrapper renderChildren={renderChildren} {...mapAddedProps} />;
 };

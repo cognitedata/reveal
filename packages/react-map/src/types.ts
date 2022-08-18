@@ -1,15 +1,17 @@
+import * as React from 'react';
 import type {
+  Properties,
+  Geometry,
   Feature,
   FeatureCollection,
   Geometries,
   Point,
 } from '@turf/helpers';
 import type { MapboxOptions, Map, MapLayerEventType } from 'maplibre-gl';
-import type { Geometry } from 'geojson';
 
+import type { DrawMode, DrawEventType } from './FreeDraw';
 import type { FlyToProps } from './hooks/useFlyTo';
 import type { SelectableLayer } from './layers';
-import type { DrawMode } from './FreeDraw';
 
 export type MapType = Map;
 
@@ -17,9 +19,10 @@ export type MapType = Map;
 export type MapPoint = Point;
 export type MapFeature = Feature;
 export type MapGeometries = Geometries;
-export type MapFeatureCollection = FeatureCollection<Geometry, any>;
+export type MapFeatureCollection = FeatureCollection<Geometry, Properties>;
 export interface MapEvent {
-  type: keyof MapLayerEventType;
+  // not sure where zoom should be coming from
+  type: keyof MapLayerEventType | DrawEventType | 'zoom';
   layers?: string[];
   callback: any;
 }
@@ -38,14 +41,24 @@ export interface MapDataSource {
     clusterRadius: number;
   };
 }
+type DrawnFeatures = MapFeatureCollection;
+export type SetDrawnFeatures = (features: DrawnFeatures) => void;
+export type SetSelectedFeatures = (feature: MapFeature[]) => void;
+export type SetDrawMode = (mode: DrawMode) => void;
 
 export interface MapAddedProps {
-  draw?: MapboxDraw;
-  setDraw: (mode: MapboxDraw) => void;
+  map?: MapType;
 
-  selectedFeatures?: any[];
-  polygon?: MapFeature;
+  drawMode: DrawMode;
+  setDrawMode: SetDrawMode;
+
+  drawnFeatures?: DrawnFeatures;
+  setDrawnFeatures: SetDrawnFeatures;
+
+  selectedFeatures?: MapFeature[];
+  setSelectedFeatures: SetSelectedFeatures;
 }
+export type MapAddedPropsWithChildren = React.PropsWithChildren<MapAddedProps>;
 
 // type Marker = {
 //   id: string;
@@ -79,17 +92,28 @@ export interface MapConfig {
   };
 }
 
+export type SetupEventsProps = {
+  defaultEvents: MapEvent[];
+  setDrawnFeatures?: SetDrawnFeatures;
+};
+
 // Map Component props
 export interface MapProps {
+  ExtraContent?: React.ElementType;
+  extrasRef?: false | HTMLDivElement | null;
   center?: MapboxOptions['center'];
   disableMinimap?: boolean;
+  disableUnmountConfirmation?: boolean;
+  // how many polygons is the user allowed to draw at once
+  maxUserCreatedFeatures?: number;
   // the nagivation buttons that control zoom/rotation of the map
   // value is in PX
   hideShowNagivationWidth?: number;
-  drawMode: DrawMode;
-  setupEvents?: (props: { defaultEvents: MapEvent[] }) => MapEvent[];
+  setupEvents?: (props: SetupEventsProps) => MapEvent[];
   // polygons/lines drawn by user to display on the map
   features: MapFeatureCollection;
+  // ?
+  initialDrawnFeatures?: DrawnFeatures;
   // fly to x/y coords
   flyTo?: FlyToProps['flyTo'];
   // move the map to a feature
@@ -101,8 +125,8 @@ export interface MapProps {
   layerData: MapDataSource[];
   mapIcons?: MapIcon[];
   maxBounds?: MapboxOptions['maxBounds'];
-  renderNavigationControls?: (mapWidth: number) => React.ReactElement;
-  initialPolygon?: MapFeature;
+  renderWithWidth?: (mapWidth: number) => React.ReactElement;
+  renderChildren?: (props: MapAddedProps) => React.ReactElement;
   setMapReference?: (map: maplibregl.Map) => void;
   zoom?: MapboxOptions['zoom'];
 

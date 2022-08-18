@@ -1,11 +1,12 @@
 import { featureCollection } from '@turf/helpers';
 
+import { MapFeatureCollection } from '../types';
 import { drawModes } from '../FreeDraw';
 
 export const props = {
   drawMode: drawModes.DIRECT_SELECT,
   events: [],
-  features: featureCollection([], {}),
+  features: featureCollection([], {}) as MapFeatureCollection,
 
   layerConfigs: [],
   layerData: [],

@@ -1,63 +1,37 @@
-import * as React from 'react';
-// import { MapType } from '../types';
-import type { Map as MapType } from 'maplibre-gl';
+import { drawModes, DrawMode } from '../FreeDraw';
+import { MapType } from '../types';
 
-import { UnmountConfirmationDefaultContent } from './UnmountConfirmationDefaultContent';
-import { UnmountConfirmationModal } from './UnmountConfirmationModal';
+import { UnmountConfirmationListner } from './UnmountConfirmationListner';
 
-export interface UnmountConfirmationProps {
-  enabled?: boolean;
+/*
+ * A simple version of the unmount listner
+ * If you need to customise this
+ * then use UnmountConfirmationListner directly
+ */
+export const UnmountConfirmation = ({
+  map,
+  drawMode,
+  setDrawMode,
+}: {
   map?: MapType;
-  onCancel?: () => void;
-}
-export const UnmountConfirmation: React.FC<
-  React.PropsWithChildren<UnmountConfirmationProps>
-> = ({ children, enabled, map, onCancel }) => {
-  const [showModal, setShowModal] = React.useState(false);
+  drawMode: DrawMode;
+  setDrawMode: (mode: DrawMode) => void;
+}) => {
+  const enableUnmountWarning = drawMode === drawModes.DRAW_POLYGON;
 
-  // Handle clicking outside while in drawing mode
-  React.useEffect(() => {
-    const outsideListener = (event: MouseEvent) => {
-      const clickIsOutsideOfMap =
-        map && !map.getContainer().contains(event.target as Node);
-
-      if (clickIsOutsideOfMap && enabled) {
-        event.preventDefault();
-        event.stopPropagation();
-        setShowModal(true);
-      }
-    };
-
-    document.addEventListener('mousedown', outsideListener);
-    return () => {
-      document.removeEventListener('mousedown', outsideListener);
-    };
-  }, [map, enabled]);
-
-  const handleCancel = () => {
-    if (onCancel) {
-      onCancel();
+  const handleCancelUnmountWarning = () => {
+    if (drawMode === drawModes.DRAW_POLYGON) {
+      setDrawMode(drawModes.SIMPLE_SELECT);
+    } else {
+      setDrawMode(drawModes.DRAW_POLYGON);
     }
-    setShowModal(false);
   };
 
-  const handleOk = () => {
-    setShowModal(false);
-  };
-
-  if (showModal) {
-    return (
-      <UnmountConfirmationModal
-        open={showModal}
-        onCancel={handleCancel}
-        onOk={handleOk}
-      >
-        {children || (
-          <UnmountConfirmationDefaultContent onCancel={handleCancel} />
-        )}
-      </UnmountConfirmationModal>
-    );
-  }
-
-  return null;
+  return (
+    <UnmountConfirmationListner
+      map={map}
+      enabled={enableUnmountWarning}
+      onCancel={handleCancelUnmountWarning}
+    />
+  );
 };

@@ -1,6 +1,5 @@
 import { Feature, FeatureCollection } from '@turf/helpers';
 
-import { DrawMode } from '@cognite/react-map';
 import { Geometry, Point, Polygon, GeoJson } from '@cognite/seismic-sdk-js';
 
 import { WellId } from 'modules/wellSearch/types';
@@ -59,7 +58,6 @@ export interface MapState {
   selectedFeature: GeoJson | null;
   selectedDocument?: { id: string; point?: Point };
   selectedWell?: { id: WellId; point?: Point };
-  drawMode: DrawMode;
   // change this to an array of types
   // so it can contain many?
   selectedPoint?: { id: string; point?: Point; type: string };

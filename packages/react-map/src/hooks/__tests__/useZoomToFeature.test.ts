@@ -1,11 +1,11 @@
 import { renderHook } from '@testing-library/react-hooks';
-import mapboxgl from 'maplibre-gl';
 import {
   getFeature,
   getFeatureInvalidCoordinates,
   getFeatureTooFewPoints,
 } from '__fixtures/getFeature';
 
+import { MapType } from '../../types';
 import { useZoomToFeature } from '../useZoomToFeature';
 
 describe('useZoomToFeature', () => {
@@ -14,7 +14,7 @@ describe('useZoomToFeature', () => {
 
     renderHook(() =>
       useZoomToFeature({
-        map: map as unknown as mapboxgl.Map,
+        map: map as unknown as MapType,
         zoomTo: getFeature(),
       })
     );
@@ -30,7 +30,7 @@ describe('useZoomToFeature', () => {
 
     const { result } = renderHook(() =>
       useZoomToFeature({
-        map: map as unknown as mapboxgl.Map,
+        map: map as unknown as MapType,
         zoomTo: getFeatureInvalidCoordinates(),
       })
     );
@@ -45,7 +45,7 @@ describe('useZoomToFeature', () => {
 
     const { result } = renderHook(() =>
       useZoomToFeature({
-        map: map as unknown as mapboxgl.Map,
+        map: map as unknown as MapType,
         zoomTo: getFeatureTooFewPoints(),
       })
     );

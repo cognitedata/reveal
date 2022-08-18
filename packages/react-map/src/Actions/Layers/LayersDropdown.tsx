@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { Menu } from '@cognite/cogs.js';
-import { SelectableLayer } from '@cognite/react-map';
 
 import { LayerWrapper } from './elements';
 import { LayersDropdownItem } from './LayersDropdownItem';
+import { LayerOnChange, Layers } from './types';
 
 export interface Props {
-  layers: (SelectableLayer | false)[];
-  onChange: (layer: SelectableLayer) => void;
+  layers: Layers;
+  onChange: LayerOnChange;
 }
 export const LayersDropdown: React.FC<Props> = React.memo(
   ({ layers = [], onChange }) => {

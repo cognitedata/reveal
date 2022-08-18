@@ -8,7 +8,7 @@ import { ButtonContainer } from '../elements';
 export interface LineProps {
   disabled?: boolean;
   drawMode: DrawMode;
-  setDrawMode: (mode: string) => void;
+  setDrawMode: (mode: DrawMode) => void;
 }
 export const LineButton: React.FC<LineProps> = React.memo(
   ({ setDrawMode, drawMode, disabled }) => {

@@ -1,13 +1,13 @@
-import mapboxgl from 'maplibre-gl';
+import { MapType } from '../types';
 
 import { MapLayer } from './types';
 
-const getLayer = (innerMap: mapboxgl.Map, layerId: string) => {
+const getLayer = (innerMap: MapType, layerId: string) => {
   return innerMap.getLayer(layerId);
 };
 
 export const addLayer = (
-  innerMap: mapboxgl.Map,
+  innerMap: MapType,
   innerLayer: MapLayer,
   beforeLayer?: string
 ) => {
@@ -46,7 +46,7 @@ export const addLayer = (
   }
 };
 
-export const removeLayer = (innerMap: mapboxgl.Map, layerId: string) => {
+export const removeLayer = (innerMap: MapType, layerId: string) => {
   if (getLayer(innerMap, layerId)) {
     innerMap.removeLayer(layerId);
   }

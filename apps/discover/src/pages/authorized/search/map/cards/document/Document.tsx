@@ -1,33 +1,28 @@
 import React from 'react';
 
-import { Map } from 'maplibre-gl';
+import { MapAddedProps, drawModes, MapFeatures } from '@cognite/react-map';
 
 import { useMap } from 'modules/map/selectors';
 
-import MapPopup from '../../MapPopup';
-
 import DocumentPreviewCard from './components';
 
-interface Props {
-  map?: Map;
-}
-export const DocumentCard: React.FC<Props> = ({ map }) => {
-  const { drawMode, selectedDocument } = useMap();
+export const DocumentCard: React.FC<MapAddedProps> = ({ map, drawMode }) => {
+  const { selectedDocument } = useMap();
 
   if (
-    drawMode !== 'draw_polygon' &&
+    drawMode !== drawModes.DRAW_POLYGON &&
     map &&
     selectedDocument &&
     selectedDocument.point
   ) {
     return (
-      <MapPopup
+      <MapFeatures.Popup
         point={selectedDocument.point}
         map={map}
         className="mapbox-popup-previewcard"
       >
         <DocumentPreviewCard documentId={selectedDocument.id} />
-      </MapPopup>
+      </MapFeatures.Popup>
     );
   }
 

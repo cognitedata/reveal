@@ -51,3 +51,5 @@ export type SelectableLayer = {
   searchInputText?: string;
   disabled?: boolean;
 } & Orderable;
+
+// export type SelectableLayerList = (SelectableLayer | false)[];

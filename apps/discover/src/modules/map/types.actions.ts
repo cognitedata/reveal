@@ -1,7 +1,6 @@
 import { Feature } from '@turf/helpers';
 import { TS_FIX_ME } from 'core';
 
-import { DrawMode } from '@cognite/react-map';
 import { Geometry } from '@cognite/seismic-sdk-js';
 
 import { MapDataSource, MapState } from './types';
@@ -39,7 +38,6 @@ export const CLEAR_SELECTED_POINT = 'mapProvider/clearSelectedPoint';
 
 export const SET_SELECTED_FEATURE = 'mapProvider/setSelectedFeature';
 export const CLEAR_SELECTED_FEATURE = 'mapProvider/clearSelectedFeature';
-export const SET_DRAW_MODE = 'mapProvider/drawMode';
 export const CLEAR_POLYGON = 'mapProvider/clearPolygon';
 
 export interface SetGeo {
@@ -163,11 +161,6 @@ interface ClearSelectedPoint {
   type: typeof CLEAR_SELECTED_POINT;
 }
 
-interface SetDrawMode {
-  type: typeof SET_DRAW_MODE;
-  drawMode: DrawMode;
-}
-
 interface SetClearPolygon {
   type: typeof CLEAR_POLYGON;
   cancelPolygonSearch: boolean;
@@ -199,5 +192,4 @@ export type MapAction =
   | ClearSelectedWell
   | ClearSelectedPoint
   | SetSelectedPoint
-  | SetDrawMode
   | SetClearPolygon;

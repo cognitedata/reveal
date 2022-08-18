@@ -121,59 +121,12 @@ describe('Map', () => {
     });
   });
 
-  describe('Controls', () => {
-    before(() => {
-      cy.findByTestId('cognite-logo').click();
-    });
-
-    it('should show and hide controls based on table width', () => {
-      cy.checkPolygonButtonIsVisible();
-      cy.checkMapInputIsVisible();
-      cy.checkAssetsMenuButtonIsVisible();
-      cy.checkLayersMenuButtonIsVisible();
-      cy.checkZoomControlsAreVisible();
-
-      cy.expandResultTable();
-
-      cy.checkPolygonButtonIsNotVisible();
-      cy.checkMapInputIsNotVisible();
-      cy.checkAssetsMenuButtonIsNotVisible();
-      cy.checkLayersMenuButtonIsNotVisible();
-      cy.checkZoomControlsAreNotVisible();
-
-      cy.dragResultsTable(-20);
-      cy.checkPolygonButtonIsNotVisible();
-      cy.checkMapInputIsNotVisible();
-      cy.checkAssetsMenuButtonIsNotVisible();
-      cy.checkLayersMenuButtonIsNotVisible();
-      cy.checkZoomControlsAreVisible();
-
-      cy.dragResultsTable(-100);
-      cy.checkPolygonButtonIsNotVisible();
-      cy.checkMapInputIsNotVisible();
-      cy.checkAssetsMenuButtonIsNotVisible();
-      cy.checkLayersMenuButtonIsVisible();
-      cy.checkZoomControlsAreVisible();
-
-      cy.dragResultsTable(-100);
-      cy.checkPolygonButtonIsNotVisible();
-      cy.checkMapInputIsNotVisible();
-      cy.checkAssetsMenuButtonIsVisible();
-      cy.checkLayersMenuButtonIsVisible();
-      cy.checkZoomControlsAreVisible();
-
-      cy.dragResultsTable(-400);
-      cy.checkPolygonButtonIsVisible();
-      cy.checkMapInputIsVisible();
-      cy.checkAssetsMenuButtonIsVisible();
-      cy.checkLayersMenuButtonIsVisible();
-      cy.checkZoomControlsAreVisible();
-    });
-  });
-
   describe('Polygon Edit', () => {
     before(() => {
       cy.findByTestId('cognite-logo').click();
+    });
+    beforeEach(() => {
+      cy.closePolygonESC();
     });
 
     // Flaky test, pls fix
@@ -194,12 +147,7 @@ describe('Map', () => {
     // This is an edge case that was fixed. do not remove this test.
     it('should floating action buttons visible with one edge in bottom right', () => {
       cy.enterPolygonEditMode();
-
-      cy.drawPolygon(
-        [{ x: 300, y: 300 }, 'bottomRight', { x: 300, y: 500 }],
-        'enter'
-      );
-
+      cy.drawPolygon([...testPoints, 'bottomRight'], 'enter');
       cy.checkPolygonFloatingActionVisibility(true);
       cy.closePolygonWithCancelButton();
     });
@@ -209,6 +157,57 @@ describe('Map', () => {
       cy.drawPolygon(testPoints, 'enter');
       cy.drawPolygon(['bottom']);
       cy.checkClickOnPolygonToEditIsVisible();
+      cy.closePolygonWithCancelButton();
+    });
+  });
+
+  describe('Controls', () => {
+    before(() => {
+      cy.findByTestId('cognite-logo').click();
+    });
+
+    it('should show and hide controls based on table width', () => {
+      cy.checkPolygonButtonIsVisible();
+      // cy.checkMapInputIsVisible(); // removed feature till there is better test data
+      // cy.checkAssetsMenuButtonIsVisible(); // removed feature
+      cy.checkLayersMenuButtonIsVisible();
+      cy.checkZoomControlsAreVisible();
+
+      cy.expandResultTable();
+
+      cy.checkPolygonButtonIsNotVisible();
+      // cy.checkMapInputIsNotVisible();
+      // cy.checkAssetsMenuButtonIsNotVisible();
+      cy.checkLayersMenuButtonIsNotVisible();
+      cy.checkZoomControlsAreNotVisible();
+
+      cy.dragResultsTable(-20);
+      cy.checkPolygonButtonIsNotVisible();
+      // cy.checkMapInputIsNotVisible();
+      // cy.checkAssetsMenuButtonIsNotVisible();
+      cy.checkLayersMenuButtonIsNotVisible();
+      cy.checkZoomControlsAreVisible();
+
+      cy.dragResultsTable(-100);
+      cy.checkPolygonButtonIsNotVisible();
+      // cy.checkMapInputIsNotVisible();
+      // cy.checkAssetsMenuButtonIsNotVisible();
+      cy.checkLayersMenuButtonIsVisible();
+      cy.checkZoomControlsAreVisible();
+
+      cy.dragResultsTable(-100);
+      cy.checkPolygonButtonIsNotVisible();
+      // cy.checkMapInputIsNotVisible();
+      // cy.checkAssetsMenuButtonIsVisible();
+      cy.checkLayersMenuButtonIsVisible();
+      cy.checkZoomControlsAreVisible();
+
+      cy.dragResultsTable(-400);
+      cy.checkPolygonButtonIsVisible();
+      // cy.checkMapInputIsVisible(); // removed feature
+      // cy.checkAssetsMenuButtonIsVisible(); // removed feature
+      cy.checkLayersMenuButtonIsVisible();
+      cy.checkZoomControlsAreVisible();
     });
   });
 });

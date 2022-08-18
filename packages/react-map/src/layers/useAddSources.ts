@@ -1,10 +1,8 @@
-import mapboxgl from 'maplibre-gl';
-
+import { MapType, MapProps } from '../types';
 import { useDeepEffect } from '../hooks/useDeep';
-import { MapProps } from '../types';
 
 interface Props {
-  map?: mapboxgl.Map;
+  map?: MapType;
   layerData: MapProps['layerData'];
 }
 export const useAddSources = ({ map, layerData }: Props) => {
@@ -21,7 +19,7 @@ export const useAddSources = ({ map, layerData }: Props) => {
 };
 
 const addSource = (
-  mapInstance: mapboxgl.Map,
+  mapInstance: MapType,
   id: string,
   data: any,
   clusterProps?: {

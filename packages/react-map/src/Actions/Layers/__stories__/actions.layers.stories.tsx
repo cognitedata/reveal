@@ -1,15 +1,15 @@
 import * as React from 'react';
 import { getSelectableLayer } from '__fixtures/getSelectableLayer';
-import { Story, Meta } from '@storybook/react';
+import { Story, ComponentMeta } from '@storybook/react';
 
 import { SelectableLayer } from '../../../layers/types';
-import { Actions } from '../..';
+import { Actions } from '../../Actions';
 import { Map } from '../../../Map';
-import { props } from '../../../__stories__/defaultProps';
+import { props as defaultProps } from '../../../__stories__/defaultProps';
 import { MapWrapper } from '../../../__stories__/elements';
 
 export default {
-  title: 'Map / Buttons / Layers',
+  title: 'Map / Action Bar / Layers',
   component: Actions.LayersButton,
   argTypes: {
     layers: {
@@ -33,7 +33,9 @@ export default {
       control: { type: 'radio' },
     },
   },
-} as Meta;
+} as ComponentMeta<typeof Actions.LayersButton>;
+
+type LayerProps = React.ComponentProps<typeof Actions.LayersButton>;
 
 const useHandleToggle = () => {
   const [on, setOn] = React.useState<Record<string, boolean>>({});
@@ -43,47 +45,53 @@ const useHandleToggle = () => {
 
   return { handleToggle, on };
 };
-const getLayers = (on: Record<string, boolean>) => [
+const getLayers = (on: Record<string, boolean>): LayerProps['layers'] => [
   getSelectableLayer({ id: '1', name: 'Test Layer One', selected: on['1'] }),
   getSelectableLayer({ id: '2', name: 'Test Layer Two', selected: on['2'] }),
 ];
 
-const BaseComponent: Story<
-  React.ComponentProps<typeof Actions.LayersButton>
-> = (props) => {
+const BaseComponent: Story<LayerProps> = (props) => {
   const { handleToggle, on } = useHandleToggle();
+
   return (
-    <Actions.Wrapper>
-      <Actions.LayersButton
-        {...props}
-        layers={getLayers(on)}
-        onChange={handleToggle}
-      />
-    </Actions.Wrapper>
+    <Actions.LayersButton
+      {...props}
+      layers={getLayers(on)}
+      onChange={handleToggle}
+    />
   );
 };
 
 export const Simple = BaseComponent.bind({});
 
-export const WithMap = () => {
+export const WithMapWrapper = (props: LayerProps) => {
   const { handleToggle, on } = useHandleToggle();
+
   return (
     <MapWrapper>
-      <Map {...props}>
-        <Actions.Wrapper>
-          <Actions.LayersButton
-            layers={getLayers(on)}
-            onChange={handleToggle}
+      <Map
+        {...defaultProps}
+        {...props}
+        renderChildren={(props) => (
+          <Actions.Wrapper
+            {...props}
+            renderChildren={() => (
+              <BaseComponent
+                {...props}
+                onChange={handleToggle}
+                layers={getLayers(on)}
+              />
+            )}
           />
-        </Actions.Wrapper>
-      </Map>
+        )}
+      />
     </MapWrapper>
   );
 };
 
 export const WithMapGrouped = () => {
   const { handleToggle, on } = useHandleToggle();
-  const layers = [
+  const layers: LayerProps['layers'] = [
     getSelectableLayer({ id: '1', name: 'Test Layer One', selected: on['1'] }),
     getSelectableLayer({ id: '2', name: 'Test Layer Two', selected: on['2'] }),
     false,
@@ -91,13 +99,5 @@ export const WithMapGrouped = () => {
     getSelectableLayer({ id: '4', name: 'Bottom Two', selected: on['4'] }),
   ];
 
-  return (
-    <MapWrapper>
-      <Map {...props}>
-        <Actions.Wrapper>
-          <Actions.LayersButton layers={layers} onChange={handleToggle} />
-        </Actions.Wrapper>
-      </Map>
-    </MapWrapper>
-  );
+  return <WithMapWrapper layers={layers} onChange={handleToggle} />;
 };

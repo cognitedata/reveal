@@ -1,13 +1,14 @@
 import * as React from 'react';
-import { Tooltip, Button, ButtonProps, TooltipProps } from '@cognite/cogs.js';
+import { Tooltip, Button, ButtonProps } from '@cognite/cogs.js';
 
 import { MarginWrapper } from './elements';
 
+type ValidPlacements = 'top' | 'right' | 'bottom' | 'left';
 export interface BaseButtonProps extends ButtonProps {
   margin?: boolean;
   text?: string;
   tooltip?: string;
-  tooltipPlacement?: TooltipProps['position'];
+  tooltipPlacement?: ValidPlacements;
   hideIcon?: boolean;
 }
 export const BaseButton: React.FC<React.PropsWithChildren<BaseButtonProps>> = ({

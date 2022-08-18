@@ -1,8 +1,10 @@
-/* eslint-disable */
+/* eslint-disable no-underscore-dangle */
 import isFunction from 'lodash/isFunction';
 import isObject from 'lodash/isObject';
 import noop from 'lodash/noop';
 import mapboxgl, { MapMouseEvent } from 'maplibre-gl';
+
+import { MapType } from '../types';
 
 import { Options } from './types';
 
@@ -88,7 +90,7 @@ export class Minimap {
     this._parentMap = undefined;
   }
 
-  onAdd(parentMap: mapboxgl.Map): HTMLElement {
+  onAdd(parentMap: MapType): HTMLElement {
     this._parentMap = parentMap;
 
     const opts = this.options;
@@ -336,4 +338,3 @@ export class Minimap {
     trc[0][4][1] = ne.lat;
   }
 }
-export default Minimap;

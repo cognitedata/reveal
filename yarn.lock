@@ -6344,6 +6344,15 @@
     "@types/scheduler" "*"
     csstype "^3.0.2"
 
+"@types/react@18.0.17":
+  version "18.0.17"
+  resolved "https://registry.yarnpkg.com/@types/react/-/react-18.0.17.tgz#4583d9c322d67efe4b39a935d223edcc7050ccf4"
+  integrity sha512-38ETy4tL+rn4uQQi7mB81G7V1g0u2ryquNmsVIOKUAEIDK+3CUjZ6rSRpdvS99dNBnkLFL83qfmtLacGOTIhwQ==
+  dependencies:
+    "@types/prop-types" "*"
+    "@types/scheduler" "*"
+    csstype "^3.0.2"
+
 "@types/reactcss@*":
   version "1.2.6"
   resolved "https://registry.yarnpkg.com/@types/reactcss/-/reactcss-1.2.6.tgz#133c1e7e896f2726370d1d5a26bf06a30a038bcc"
@@ -17481,6 +17490,13 @@ jest-snapshot@^27.5.1:
     natural-compare "^1.4.0"
     pretty-format "^27.5.1"
     semver "^7.3.2"
+
+jest-styled-components@^7.1.0:
+  version "7.1.0"
+  resolved "https://registry.yarnpkg.com/jest-styled-components/-/jest-styled-components-7.1.0.tgz#81e75179dd2ac1ae60a407043ab7abb6bb8f814a"
+  integrity sha512-SygNRIffSiqdWq4FPAc52B31mT57TlOMf/jTLobXTd4YKyesNfpcjxLorUpps+vM5I59hUTkzFGK7n5DNiOMrg==
+  dependencies:
+    "@adobe/css-tools" "^4.0.1"
 
 jest-transform-stub@^2.0.0:
   version "2.0.0"

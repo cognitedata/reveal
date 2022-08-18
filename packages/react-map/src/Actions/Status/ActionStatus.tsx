@@ -1,55 +1,15 @@
-import React, { Fragment } from 'react';
+import * as React from 'react';
 import { Icon } from '@cognite/cogs.js';
 import { MapAddedProps } from 'types';
-import isEmpty from 'lodash/isEmpty';
-import MapboxGLDraw from '@mapbox/mapbox-gl-draw';
 
-import { POLYGON_EDIT_MESSAGE } from '../../constants';
-
-import {
-  StatusContainer,
-  StatusKey,
-  StatusMessage,
-  StatusSeparator,
-} from './elements';
-
-const allMessages: { [status: string]: React.ReactNode } = {
-  finish: (
-    <>
-      Press <StatusKey>Enter</StatusKey> to finish editing{' '}
-    </>
-  ),
-  cancel: (
-    <>
-      Press <StatusKey>Esc</StatusKey> to cancel polygon search
-    </>
-  ),
-  edit: POLYGON_EDIT_MESSAGE,
-};
-
-const getMessageCodes = ({
-  draw,
-  polygon,
-  selectedFeatures,
-}: MapAddedProps): (keyof typeof allMessages)[] => {
-  const isPolygonButtonActive =
-    draw === MapboxGLDraw.modes.DRAW_POLYGON || !isEmpty(polygon);
-
-  if (!isPolygonButtonActive) {
-    return [];
-  }
-
-  if (isEmpty(selectedFeatures) && !isEmpty(polygon)) {
-    return ['edit'];
-  }
-
-  return ['finish', 'cancel'];
-};
+import { StatusContainer, StatusMessage, StatusSeparator } from './elements';
+import { allMessages, getStatusMessage } from './getStatusMessage';
 
 export const ActionStatus: React.FC<MapAddedProps> = (props) => {
-  const messagesToShow = getMessageCodes(props);
+  const messagesToShow = getStatusMessage(props);
+  const hasNothingToShow = messagesToShow.length === 0;
 
-  if (messagesToShow.length === 0) {
+  if (hasNothingToShow) {
     return null;
   }
 
@@ -57,12 +17,12 @@ export const ActionStatus: React.FC<MapAddedProps> = (props) => {
     <StatusContainer data-testid="shortcut-helper">
       <Icon type="Info" />
       {messagesToShow.map((messageId, index) => (
-        <Fragment key={`${messageId}InfoMessage`}>
+        <React.Fragment key={`${messageId}InfoMessage`}>
           {!!index && <StatusSeparator data-testid="info-message-separator" />}
           <StatusMessage data-testid={`${messageId}-info-message`}>
             {allMessages[messageId]}
           </StatusMessage>
-        </Fragment>
+        </React.Fragment>
       ))}
     </StatusContainer>
   );

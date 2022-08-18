@@ -2,7 +2,6 @@ export const EMPTY_WELL_RESULT_TEXT = 'No results found';
 export const LOADING_TEXT = 'Loading wellbores...';
 export const NO_WELLBORES_FOUND = 'No wellbores found.';
 export const WELLBORE = 'Wellbore';
-export const CURRENT_SUPPORTING_CRS_LIST = ['WGS84'];
 export const WELL = 'Well';
 export const SOURCE = 'Source'; // deprecated, use: apps/discover/src/dataLayers/wells/wells/titles.ts
 export const OPERATOR = 'Operator'; // deprecated, use: apps/discover/src/dataLayers/wells/wells/titles.ts

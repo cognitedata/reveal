@@ -21,7 +21,6 @@ describe('Favourite Content', () => {
     const props: Props = {
       assets: [],
       zoomToAsset: noop,
-      selectedLayers: [],
       ...viewProps,
     };
 

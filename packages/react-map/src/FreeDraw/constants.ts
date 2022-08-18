@@ -11,5 +11,5 @@ export const drawModes: Record<string, DrawMode> = {
   STATIC: 'static',
 };
 
-// wish we could do:
+// wish we could do, but this doesn't get the right values exported:
 // export const drawModes = MapboxGLDraw.modes;

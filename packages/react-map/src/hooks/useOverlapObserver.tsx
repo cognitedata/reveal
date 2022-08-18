@@ -1,12 +1,6 @@
-import React from 'react';
+import * as React from 'react';
 
-import { TopButtonMenuContainer } from './elements';
-
-interface Props {
-  children: React.ReactElement[];
-}
-
-export const TopButtonMenu: React.FC<Props> = ({ children }) => {
+export const useOverlapObserver = () => {
   const containerRef = React.useRef<HTMLElement>(null);
 
   // When the page unloads, disconnect the IntersectionObserver
@@ -35,9 +29,5 @@ export const TopButtonMenu: React.FC<Props> = ({ children }) => {
     };
   });
 
-  return (
-    <TopButtonMenuContainer ref={containerRef}>
-      {children}
-    </TopButtonMenuContainer>
-  );
+  return containerRef;
 };

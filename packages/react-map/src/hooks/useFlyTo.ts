@@ -1,11 +1,12 @@
-import mapboxgl from 'maplibre-gl';
 import type { MapboxOptions } from 'maplibre-gl';
 import isArray from 'lodash/isArray';
+
+import { MapType } from '../types';
 
 import { useDeepEffect } from './useDeep';
 
 export interface FlyToProps {
-  map?: mapboxgl.Map;
+  map?: MapType;
   flyTo?: {
     center: MapboxOptions['center'];
     zoom?: MapboxOptions['zoom'];

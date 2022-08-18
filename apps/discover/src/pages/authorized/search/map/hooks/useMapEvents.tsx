@@ -3,7 +3,6 @@ import { render } from 'react-dom';
 import { batch, useDispatch } from 'react-redux';
 
 import simplify from '@turf/simplify';
-import { TS_FIX_ME } from 'core';
 import {
   // MapboxGeoJSONFeature,
   MapLayerMouseEvent,
@@ -12,16 +11,13 @@ import {
 } from 'maplibre-gl';
 import { log } from 'utils/log';
 
-import { MapEvent, DrawMode } from '@cognite/react-map';
+import { MapEvent } from '@cognite/react-map';
 
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
 import {
   clearSelectedDocument,
-  clearSelectedFeature,
   clearSelectedWell,
-  setDrawMode,
   setSelectedDocument,
-  setSelectedFeature,
   setSelectedWell,
 } from 'modules/map/actions';
 import { Modules } from 'modules/sidebar/types';
@@ -254,15 +250,6 @@ export const useMapEvents = () => {
     }
   };
 
-  // when the polygon you are drawing changes etc.
-  const onSelectionChange = (event: TS_FIX_ME) => {
-    if (event.features.length === 0) {
-      dispatch(clearSelectedFeature());
-    } else {
-      dispatch(setSelectedFeature(event.features[0]));
-    }
-  };
-
   // Note: This is causing way to many redux dispatch.
   // figure out why this is needed, and if it can be done differently.
   // const handleMouseDown = () => {
@@ -411,16 +398,6 @@ export const useMapEvents = () => {
       //   type: 'moveend',
       //   callback: handleMouseDown,
       // },
-      {
-        type: 'draw.selectionchange',
-        callback: onSelectionChange,
-      },
-      {
-        type: 'draw.modechange',
-        callback: (event: { mode: DrawMode; type: string }) => {
-          dispatch(setDrawMode(event.mode));
-        },
-      },
       {
         type: 'zoom',
         callback: () => {

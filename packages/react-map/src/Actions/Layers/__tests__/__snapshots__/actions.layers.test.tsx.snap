@@ -4,69 +4,65 @@ exports[`Action Layout Stories Renders Simple story 1`] = `
 <body>
   <div>
     <div
-      class="sc-llJcti byfDnd"
+      class="styled0 styled1"
     >
-      <div
-        class="sc-gsnTZi sc-dkzDqf dKRiIy fNTABv"
+      <span
+        aria-expanded="false"
       >
         <span
-          aria-expanded="false"
+          class="cogs-tooltip__content"
         >
-          <span
-            class="cogs-tooltip__content"
+          <button
+            aria-label="Layers"
+            class="cogs-btn cogs-btn-ghost cogs-btn-right--padding"
+            data-testid="map-button-layers"
+            type="button"
           >
-            <button
-              aria-label="Layers"
-              class="cogs-btn cogs-btn-ghost cogs-btn-right--padding"
-              data-testid="map-button-layers"
-              type="button"
+            Layers
+            <i
+              class="cogs-icon cogs-icon-ChevronDown icon-margin-left"
+              style="width: 16px;"
             >
-              Layers
-              <i
-                class="cogs-icon cogs-icon-ChevronDown icon-margin-left"
-                style="width: 16px;"
+              <svg
+                fill="none"
+                height="16"
+                role="img"
+                viewBox="0 0 16 16"
+                width="16"
+                xmlns="http://www.w3.org/2000/svg"
+                xmlns:xlink="http://www.w3.org/1999/xlink"
               >
-                <svg
-                  fill="none"
-                  height="16"
-                  role="img"
-                  viewBox="0 0 16 16"
-                  width="16"
-                  xmlns="http://www.w3.org/2000/svg"
-                  xmlns:xlink="http://www.w3.org/1999/xlink"
-                >
-                  <path
-                    clip-rule="evenodd"
-                    d="M3.293 6.293a1 1 0 0 1 1.414 0L8 9.586l3.293-3.293a1 1 0 1 1 1.414 1.414l-4 4a1 1 0 0 1-1.414 0l-4-4a1 1 0 0 1 0-1.414Z"
-                    fill="currentColor"
-                    fill-rule="evenodd"
-                  />
-                </svg>
-              </i>
-            </button>
-          </span>
+                <path
+                  clip-rule="evenodd"
+                  d="M3.293 6.293a1 1 0 0 1 1.414 0L8 9.586l3.293-3.293a1 1 0 1 1 1.414 1.414l-4 4a1 1 0 0 1-1.414 0l-4-4a1 1 0 0 1 0-1.414Z"
+                  fill="currentColor"
+                  fill-rule="evenodd"
+                />
+              </svg>
+            </i>
+          </button>
         </span>
-      </div>
+      </span>
     </div>
   </div>
 </body>
 `;
 
-exports[`Action Layout Stories Renders WithMap story 1`] = `
+exports[`Action Layout Stories Renders WithMapGrouped story 1`] = `
 <body>
   <div>
     <div
-      class="sc-ezWOiH iltyNU"
+      class="styled0"
     >
       <div
-        class="sc-bczRLJ glDwtp maplibregl-map mapboxgl-map"
+        class="styled1 maplibregl-map mapboxgl-map"
         data-testid="map-container"
       >
         <div
-          class="sc-llJcti byfDnd"
+          class="styled2"
         >
           <div
-            class="sc-gsnTZi sc-dkzDqf dKRiIy fNTABv"
+            class="styled3 styled4"
           >
             <span
               aria-expanded="false"
@@ -142,21 +138,21 @@ exports[`Action Layout Stories Renders WithMap story 1`] = `
 </body>
 `;
 
-exports[`Action Layout Stories Renders WithMapGrouped story 1`] = `
+exports[`Action Layout Stories Renders WithMapWrapper story 1`] = `
 <body>
   <div>
     <div
-      class="sc-ezWOiH iltyNU"
+      class="styled0"
     >
       <div
-        class="sc-bczRLJ glDwtp maplibregl-map mapboxgl-map"
+        class="styled1 maplibregl-map mapboxgl-map"
         data-testid="map-container"
       >
         <div
-          class="sc-llJcti byfDnd"
+          class="styled2"
         >
           <div
-            class="sc-gsnTZi sc-dkzDqf dKRiIy fNTABv"
+            class="styled3 styled4"
           >
             <span
               aria-expanded="false"

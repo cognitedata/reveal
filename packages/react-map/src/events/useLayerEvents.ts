@@ -1,27 +1,43 @@
-import mapboxgl from 'maplibre-gl';
 import noop from 'lodash/noop';
 
 import { useDeepEffect } from '../hooks/useDeep';
-import { MapProps } from '../types';
+import {
+  MapType,
+  MapProps,
+  SetDrawnFeatures,
+  SetDrawMode,
+  SetSelectedFeatures,
+} from '../types';
 
-import { defaultEvents } from './defaultEvents';
+import { useDefaultEvents } from './useDefaultEvents';
 
-interface Props {
-  map?: mapboxgl.Map;
+export interface EventSetters {
+  setDrawnFeatures?: SetDrawnFeatures;
+  setSelectedFeatures?: SetSelectedFeatures;
+  setDrawMode?: SetDrawMode;
+}
+export interface Props extends EventSetters {
+  map?: MapType;
   setupEvents?: MapProps['setupEvents'];
 }
-export const useLayerEvents = ({ setupEvents, map }: Props) => {
+export const useLayerEvents = (props: Props) => {
+  const { setupEvents, map, setDrawnFeatures } = props;
+  const defaultEvents = useDefaultEvents(props);
+
   useDeepEffect(() => {
     if (!map) return noop;
 
     const events =
       typeof setupEvents === 'function'
-        ? setupEvents({ defaultEvents })
+        ? setupEvents({ defaultEvents, setDrawnFeatures })
         : defaultEvents;
 
     events.forEach((event) => {
+      // console.log('Adding event:', event.type);
       if (event.layers) {
         event.layers.forEach((layer) => {
+          // not sure how to get maplibregl.Map to like my extended event types
+          // @ts-expect-error Type '"draw.create"' is not assignable to type 'keyof MapLayerEventType'
           map.on(event.type, layer, event.callback);
         });
       } else {
@@ -33,6 +49,8 @@ export const useLayerEvents = ({ setupEvents, map }: Props) => {
       events.forEach((event) => {
         if (event.layers) {
           event.layers.forEach((layer) => {
+            // not sure how to get maplibregl.Map to like my extended event types
+            // @ts-expect-error Type '"draw.create"' is not assignable to type 'keyof MapLayerEventType'
             map.off(event.type, layer, event.callback);
           });
         } else {

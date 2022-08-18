@@ -9,7 +9,7 @@ import { props } from '../../../__stories__/defaultProps';
 import { MapWrapper } from '../../../__stories__/elements';
 
 export default {
-  title: 'Map / Buttons / Line',
+  title: 'Map / Action Bar / Line',
   component: Actions.Line,
   argTypes: {},
 } as Meta;

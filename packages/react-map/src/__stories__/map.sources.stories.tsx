@@ -21,7 +21,7 @@ const getConfigsOff = () => {
 };
 
 export default {
-  title: 'Map / Sources',
+  title: 'Map / Map',
   component: Map,
   argTypes: {
     layerConfigs: {
@@ -55,5 +55,5 @@ const BaseComponent: Story<React.ComponentProps<typeof Map>> = (props) => {
   );
 };
 
-export const Simple = BaseComponent.bind({});
-Simple.args = {};
+export const WithSources = BaseComponent.bind({});
+WithSources.args = {};

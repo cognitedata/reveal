@@ -15,6 +15,7 @@ export const getWells = (
     actionProps: {
       ...wellFilterRequest,
       limit: WDL_PAGINATION_LIMITS.LIST,
+      outputCrs: 'EPSG:4326',
     },
   });
 };

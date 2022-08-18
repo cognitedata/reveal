@@ -1,29 +1,34 @@
-import mapboxgl from 'maplibre-gl';
+import * as React from 'react';
 import noop from 'lodash/noop';
 import MapboxDraw from '@mapbox/mapbox-gl-draw';
-import { Feature } from '@turf/helpers';
+import isEmpty from 'lodash/isEmpty';
 
 import { DrawMode, drawModes } from '../FreeDraw';
+import { MapType, MapFeature } from '../types';
 
 import { useDeepEffect } from './useDeep';
 
 export const useDrawMode = ({
   map,
   draw,
-  drawMode,
   selectedFeatures,
 }: {
-  map?: mapboxgl.Map;
+  map?: MapType;
   draw?: MapboxDraw;
-  drawMode: DrawMode;
-  selectedFeatures: Feature[];
+  selectedFeatures: MapFeature[];
 }) => {
+  const [drawMode, setDrawMode] = React.useState<DrawMode>(
+    drawModes.SIMPLE_SELECT
+  );
+
   useDeepEffect(() => {
     if (!map) return noop;
     if (!draw) return noop;
 
-    if (selectedFeatures.length > 0 && drawMode === drawModes.SIMPLE_SELECT)
+    const hasUserSelections = !isEmpty(selectedFeatures);
+    if (hasUserSelections && drawMode === drawModes.SIMPLE_SELECT) {
       return noop;
+    }
 
     if (drawMode === drawModes.DIRECT_SELECT) {
       const firstFeature = selectedFeatures[0];
@@ -38,12 +43,16 @@ export const useDrawMode = ({
       return noop;
     }
 
-    const currentDrawmode = draw.getMode();
-    if (currentDrawmode !== drawMode || drawMode !== drawModes.SIMPLE_SELECT) {
+    const currentDrawMode = draw.getMode();
+    const modeShowBeUpdated =
+      currentDrawMode !== drawMode || drawMode !== drawModes.SIMPLE_SELECT;
+    if (modeShowBeUpdated) {
       // @ts-expect-error No overload matches this call
       draw.changeMode(drawMode);
     }
 
     return noop;
-  }, [drawMode, !!draw, selectedFeatures.length]);
+  }, [drawMode, !!draw, selectedFeatures]);
+
+  return { drawMode, setDrawMode };
 };

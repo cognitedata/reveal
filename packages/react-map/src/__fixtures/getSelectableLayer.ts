@@ -2,7 +2,7 @@ import { SelectableLayer } from '../layers/types';
 
 export const getSelectableLayer = (layer?: Partial<SelectableLayer>) => {
   return {
-    id: 1,
+    id: '1',
     name: 'test layer',
     selected: false,
     layers: [],

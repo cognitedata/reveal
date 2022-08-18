@@ -1,12 +1,12 @@
 import { ActionContainer } from './elements';
 import { ActionStatus } from './Status';
-import { ActionWrapper } from './Wrapper';
+import { AddActionWrapper } from './Wrapper';
 import { LayersButton } from './Layers';
 import { LineButton } from './Line';
-import { PolygonButton } from './Polygon';
+import { PolygonAction } from './Polygon';
 
-const Actions: any = {
-  Wrapper: ActionWrapper,
+const Actions = {
+  Wrapper: AddActionWrapper,
   LayersButton: (props: React.ComponentProps<typeof LayersButton>) => {
     return (
       <ActionContainer>
@@ -16,10 +16,10 @@ const Actions: any = {
   },
   Line: LineButton,
   Status: ActionStatus,
-  Polygon: (props: React.ComponentProps<typeof PolygonButton>) => {
+  Polygon: (props: React.ComponentProps<typeof PolygonAction>) => {
     return (
       <ActionContainer>
-        <PolygonButton {...props} />
+        <PolygonAction {...props} />
       </ActionContainer>
     );
   },

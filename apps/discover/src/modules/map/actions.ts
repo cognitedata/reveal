@@ -1,6 +1,6 @@
 import { Feature } from '@turf/helpers';
 
-import { DrawMode, SelectableLayer } from '@cognite/react-map';
+import { SelectableLayer } from '@cognite/react-map';
 import { Geometry } from '@cognite/seismic-sdk-js';
 
 import { translateGeoType } from 'modules/map/helper';
@@ -37,7 +37,6 @@ import {
   CLEAR_SELECTED_WELL,
   SET_SELECTED_FEATURE,
   CLEAR_SELECTED_FEATURE,
-  SET_DRAW_MODE,
   CLEAR_POLYGON,
 } from 'modules/map/types.actions';
 
@@ -180,11 +179,6 @@ export const setSelectedFeature = (feature: MapState['selectedFeature']) => ({
 
 export const clearSelectedFeature = () => ({
   type: CLEAR_SELECTED_FEATURE,
-});
-
-export const setDrawMode = (drawMode: DrawMode) => ({
-  type: SET_DRAW_MODE,
-  drawMode,
 });
 
 export const setClearPolygon = (cancelPolygonSearch: boolean) => ({

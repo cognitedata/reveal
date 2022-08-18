@@ -11,7 +11,7 @@ import { Tooltip } from 'components/Tooltip/TooltipSlowly';
 import { useTranslation } from 'hooks/useTranslation';
 import { MarginRightSmallContainer } from 'styles/layout';
 
-import { TypeaheadResult } from '../hooks/useLayers';
+import { TypeaheadResult } from '../hooks/useSearchableLayers';
 
 import {
   SearchableAssetSuggestion,

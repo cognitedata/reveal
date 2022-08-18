@@ -6,7 +6,7 @@ export const searchWells = async (filter: WellFilter, query: string) => {
   const results = await getWellSDKClient().wells.search({
     filter,
     search: query ? { query } : undefined,
-    outputCrs: undefined,
+    outputCrs: 'EPSG:4326',
     limit: undefined,
     aggregates: ['count'],
   });

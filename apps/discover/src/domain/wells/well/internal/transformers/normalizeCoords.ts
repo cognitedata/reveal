@@ -22,7 +22,7 @@ export const normalizeCoords = ({
 
   const CRS = crs.toUpperCase();
 
-  if (CRS === 'WGS84') {
+  if (CRS === 'EPSG:4326') {
     return {
       geometry: {
         type: 'Point',

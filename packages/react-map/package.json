@@ -19,9 +19,9 @@
   "scripts": {
     "build": "bazel build :react-map",
     "test:preview": "../../node_modules/.bin/jest-preview",
-    "test": "../../node_modules/.bin/jest --no-watchman",
+    "test": "ibazel run :jest_test --",
+    "test:fast": "../../node_modules/.bin/jest --no-watchman",
     "test:watch": "yarn test --watchAll",
-    "test:bazel-run": "ibazel run :jest_test --",
     "lint": "bazel test :eslint_test :prettier_test",
     "eslint": "bazel test :eslint_test",
     "eslint:fix": "bazel run :eslint_test -- --fix",

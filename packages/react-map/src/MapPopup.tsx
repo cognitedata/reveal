@@ -3,13 +3,14 @@ import { Map, Popup } from 'maplibre-gl';
 
 import { MapPoint } from './types';
 
-interface Props {
+export interface Props {
   point: MapPoint;
   map?: Map;
   children: JSX.Element;
   // Add custom styles in 'globalStyles.ts' with prefix of 'mapbox-popup-X'
   className?: 'mapbox-popup-previewcard';
 }
+const wrapperStyle = { display: 'none' };
 export const MapPopup = ({ children, map, point, className }: Props) => {
   const popupRef = React.useRef<any>();
   const currentPopup = React.useRef<any>();
@@ -44,12 +45,10 @@ export const MapPopup = ({ children, map, point, className }: Props) => {
   }, []);
 
   return (
-    <div style={{ display: 'none' }}>
+    <div style={wrapperStyle}>
       <div ref={popupRef}>
         {React.cloneElement(children, { onPopupClose: handleClose })}
       </div>
     </div>
   );
 };
-
-export default MapPopup;
