@@ -55,11 +55,11 @@ export const NptEvents: React.FC = () => {
         <FilterContainer isVisible={isTableViewModeActive} />
       </NptEventsDataControlArea>
 
-      <NoUnmountShowHide show={isGraphViewModeActive} fullHeight>
+      <NoUnmountShowHide show={isGraphViewModeActive}>
         <NptGraph onSelectBar={handleSelectNptGraphBar} />
       </NoUnmountShowHide>
 
-      <NoUnmountShowHide show={isTableViewModeActive} fullHeight>
+      <NoUnmountShowHide show={isTableViewModeActive}>
         <NptTable />
       </NoUnmountShowHide>
 

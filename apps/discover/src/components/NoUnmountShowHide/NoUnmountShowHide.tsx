@@ -1,19 +1,17 @@
-import React, { ReactNode } from 'react';
+import React, { PropsWithChildren } from 'react';
 
 import { NoUnmountShowHideContainer } from './elements';
 
 export interface NoUnmountShowHideProps {
   show: boolean;
-  fullHeight?: boolean;
-  children?: ReactNode;
 }
 
-export const NoUnmountShowHide: React.FC<NoUnmountShowHideProps> = React.memo(
-  ({ show, fullHeight, children }) => {
-    return (
-      <NoUnmountShowHideContainer show={show} fullHeight={fullHeight}>
-        {children}
-      </NoUnmountShowHideContainer>
-    );
-  }
-);
+export const NoUnmountShowHide: React.FC<
+  PropsWithChildren<NoUnmountShowHideProps>
+> = React.memo(({ show, children }) => {
+  return (
+    <NoUnmountShowHideContainer show={show}>
+      {children}
+    </NoUnmountShowHideContainer>
+  );
+});

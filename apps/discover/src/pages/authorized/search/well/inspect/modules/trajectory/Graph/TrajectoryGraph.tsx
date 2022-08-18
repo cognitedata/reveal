@@ -97,7 +97,7 @@ export const TrajectoryGraph: React.FC<TrajectoryGraphProps> = ({
 
   return (
     <>
-      <NoUnmountShowHide show={isUndefined(expandedChartIndex)} fullHeight>
+      <NoUnmountShowHide show={isUndefined(expandedChartIndex)}>
         <TrajectoryGrid>
           {charts.map((data, index) => (
             <TrajectoryChart
