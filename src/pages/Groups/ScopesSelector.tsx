@@ -12,6 +12,7 @@ import PartitionSelector from './PartitionSelector';
 import ResourcesSelector from './ResourcesSelector';
 import RawSelector from './RawSelector';
 import { useTranslation } from 'common/i18n';
+import ExternalIdSelector from './ExternalIdSelector';
 
 const SelectorContainer = styled.div`
   margin-top: 10px;
@@ -53,6 +54,12 @@ const ScopesSelector = ({ capabilityKey, value, onChange }: Props) => {
       break;
     case 'partition':
       selectedResources = value.partition.partitionIds;
+      break;
+    case 'dataModelScope':
+      selectedResources = value.dataModelScope.externalIds;
+      break;
+    case 'spaceScope':
+      selectedResources = value.spaceScope.externalIds;
       break;
     default:
       break;
@@ -98,6 +105,12 @@ const ScopesSelector = ({ capabilityKey, value, onChange }: Props) => {
       case 'partition':
         scope = { partition: { partitionIds: [] } };
         break;
+      case 'dataModelScope':
+        scope = { dataModelScope: { externalIds: [] } };
+        break;
+      case 'spaceScope':
+        scope = { spaceScope: { externalIds: [] } };
+        break;
       default:
         break;
     }
@@ -134,6 +147,12 @@ const ScopesSelector = ({ capabilityKey, value, onChange }: Props) => {
       case 'partition':
         scope = { partition: { partitionIds: newSelectedResources } };
         break;
+      case 'dataModelScope':
+        scope = { dataModelScope: { externalIds: newSelectedResources } };
+        break;
+      case 'spaceScope':
+        scope = { spaceScope: { externalIds: newSelectedResources } };
+        break;
       default:
         break;
     }
@@ -162,6 +181,9 @@ const ScopesSelector = ({ capabilityKey, value, onChange }: Props) => {
             downloadAll
           />
         );
+      case 'spaceScope':
+      case 'dataModelScope':
+        return <ExternalIdSelector value={selectedResources} onChange={onChangeResource} />;
       case 'assetRootIdScope':
         return (
           <ResourcesSelector

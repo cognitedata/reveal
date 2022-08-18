@@ -401,8 +401,9 @@ export const getCapabilityScopes = (
       return ['datasetScope', 'all'];
     }
     case 'datamodels':
+      return ['dataModelScope', 'all'];
     case 'datamodelinstances':
-      return ['externalIdScope', 'all']
+      return ['spaceScope', 'all'];
     default:
       return ['all'];
   }
