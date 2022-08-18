@@ -14,6 +14,7 @@ import {
   Icon,
   Tooltip as CogsTooltip,
   Modal as CogsModal,
+  Tabs as CogsTabs,
 } from '@cognite/cogs.js';
 
 import affixStyle from 'antd/es/affix/style/index.less';
@@ -155,6 +156,12 @@ CogsModal.defaultProps = {
 
 Dropdown.defaultProp = {
   ...Dropdown.defaultProps,
+  getPopupContainer: () =>
+    document.getElementsByClassName(ids.styleScope).item(0)!,
+};
+
+CogsTabs.defaultProps = {
+  ...CogsTabs.defaultProps,
   getPopupContainer: () =>
     document.getElementsByClassName(ids.styleScope).item(0)!,
 };
