@@ -60,7 +60,7 @@ export const formatCalculationDate = (date?: DateType) => {
   return parsedDate ? formatISO9075(parsedDate) : 'n/a';
 };
 
-export const formatCalculationDuration = (start?: DateType, end?: DateType) =>
+export const formatCalculationDuration = (end?: DateType, start?: DateType) =>
   start && end
     ? formatDuration(
         intervalToDuration({
