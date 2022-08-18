@@ -1,5 +1,5 @@
 import React from 'react';
-import { useParams, useHistory } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import { Tooltip } from 'antd';
 import { Dropdown } from 'components/Common';
 import { Button } from '@cognite/cogs.js';
@@ -12,7 +12,6 @@ import { InfoWrapper } from './components';
 
 export default function DiagramActions() {
   const history = useHistory();
-  const { tenant } = useParams<{ tenant: string }>();
   const { workflowId } = useActiveWorkflow();
   const diagramsIds = useWorkflowDiagramsIds(workflowId, true, true);
   const { diagrams } = useWorkflowItems(Number(workflowId), true);
@@ -24,9 +23,7 @@ export default function DiagramActions() {
   const onPreviewAllClick = () => {
     if (!noSuccessfulFiles)
       history.push(
-        getUrlWithQueryParams(
-          diagramPreview.path(tenant, workflowId, diagramsIds[0])
-        )
+        getUrlWithQueryParams(diagramPreview.path(workflowId, diagramsIds[0]))
       );
   };
 

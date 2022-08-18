@@ -21,13 +21,13 @@ export const StepsList = () => {
 
   const stepList: StepsType[] = steps.map((route: PathData) => {
     const { title } = route;
-    const path = route.path(tenant, workflowId, fileId);
+    const path = route.path(workflowId, fileId);
 
     const workflowStep: WorkflowStep | undefined =
       route.workflowStepName ?? undefined;
     const substeps = route.substeps
       ? route.substeps.map((substep) => ({
-          path: substep.path(tenant, workflowId, fileId),
+          path: substep.path(workflowId, fileId),
           title: substep.title,
           workflowStep: substep.workflowStepName ?? undefined,
         }))

@@ -40,8 +40,7 @@ export const DiagramsSettingsBar = (props: Props) => {
     true
   );
 
-  const { tenant, workflowId } =
-    useParams<{ tenant: string; workflowId: string }>();
+  const { workflowId } = useParams<{ workflowId: string }>();
   const { isConverting } = useConvertToSVG(selectedDiagramsIds);
   const {
     onApproveDiagrams,
@@ -53,7 +52,7 @@ export const DiagramsSettingsBar = (props: Props) => {
   const onPreviewSelectedClick = () => {
     history.push(
       getUrlWithQueryParams(
-        diagramPreview.path(tenant, workflowId, selectedDiagramsIds[0])
+        diagramPreview.path(workflowId, selectedDiagramsIds[0])
       )
     );
   };

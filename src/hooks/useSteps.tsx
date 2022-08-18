@@ -1,8 +1,6 @@
-import { useContext } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 
-import { AppStateContext } from 'context';
 import {
   moveToStep,
   WorkflowStep,
@@ -16,7 +14,6 @@ import { RootState } from 'store';
 
 export const useSteps = (step?: WorkflowStep) => {
   const history = useHistory();
-  const { tenant } = useContext(AppStateContext);
   const { workflowId } = useActiveWorkflow();
 
   const routes = routesMap();
@@ -35,11 +32,8 @@ export const useSteps = (step?: WorkflowStep) => {
         stepNext = routes[nextStepIndex + 1];
       }
       if (args)
-        history.push(
-          getUrlWithQueryParams(stepNext.path(tenant, workflowId, ...args))
-        );
-      else
-        history.push(getUrlWithQueryParams(stepNext.path(tenant, workflowId)));
+        history.push(getUrlWithQueryParams(stepNext.path(workflowId, ...args)));
+      else history.push(getUrlWithQueryParams(stepNext.path(workflowId)));
     }
   };
 
@@ -54,11 +48,8 @@ export const useSteps = (step?: WorkflowStep) => {
     if (prevStepIndex >= 0) {
       const stepPrev = routes[prevStepIndex];
       if (args)
-        history.push(
-          getUrlWithQueryParams(stepPrev.path(tenant, workflowId, ...args))
-        );
-      else
-        history.push(getUrlWithQueryParams(stepPrev.path(tenant, workflowId)));
+        history.push(getUrlWithQueryParams(stepPrev.path(workflowId, ...args)));
+      else history.push(getUrlWithQueryParams(stepPrev.path(workflowId)));
     } else {
       history.goBack();
     }
@@ -72,7 +63,6 @@ export const useSteps = (step?: WorkflowStep) => {
 
 export const useGoToStep = () => {
   const history = useHistory();
-  const { tenant } = useContext(AppStateContext);
   const { workflowId } = useActiveWorkflow();
 
   const routes = routesMap();
@@ -83,7 +73,7 @@ export const useGoToStep = () => {
     });
     const step = routes.find((route) => route.workflowStepName === stepToGo);
     if (!step) return;
-    history.push(getUrlWithQueryParams(step.path(tenant, workflowId)));
+    history.push(getUrlWithQueryParams(step.path(workflowId)));
   };
 
   return { goToStep };
