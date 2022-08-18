@@ -54,6 +54,8 @@ const nameToAclTypeMap = {
   templateinstances: 'templateInstancesAcl',
   visionmodel: 'visionModelAcl',
   wells: 'wellsAcl',
+  datamodels: 'dataModelsAcl',
+  datamodelinstances: 'dataModelInstancesAcl',
 };
 
 const getCapabilityNameTranslationKey = {
@@ -78,6 +80,8 @@ const getCapabilityNameTranslationKey = {
   templateinstances: 'template-instances',
   visionmodel: 'vision-model',
   geospatialcrs: 'geospatial-crs',
+  datamodels: 'data-models',
+  datamodelinstances: 'data-model-instances',
 };
 
 const prepareCapabilityTypeGroups = (_t: (key: TranslationKeys) => string) => {
@@ -96,6 +100,8 @@ const prepareCapabilityTypeGroups = (_t: (key: TranslationKeys) => string) => {
         'timeseries',
         'templategroups',
         'templateinstances',
+        'datamodels',
+        'datamodelinstances'
       ],
     },
     {
@@ -162,6 +168,8 @@ export const capabilityDescriptions = {
   templateinstances: 'capability-desc-templateinstances',
   wells: 'capability-desc-wells',
   visionmodel: 'capability-desc-visionmodel',
+  datamodels: 'capability-desc-data-models',
+  datamodelinstances: 'capability-desc-data-model-instances',
 };
 
 const deprecatedAclTypes = ['genericsAcl', 'modelHostingAcl', 'typesAcl'];
@@ -392,6 +400,9 @@ export const getCapabilityScopes = (
     case 'labels': {
       return ['datasetScope', 'all'];
     }
+    case 'datamodels':
+    case 'datamodelinstances':
+      return ['externalIdScope', 'all']
     default:
       return ['all'];
   }
