@@ -17,7 +17,7 @@ import {
   NDS_RISKS,
   NPT_EVENTS,
   REGION_FIELD_BLOCK,
-  WELL_CHARACTERISTICS,
+  WELLBORE_CHARACTERISTICS,
   DATA_SOURCE,
   FIELD,
   WELL_TYPE,
@@ -133,7 +133,7 @@ export const filterConfigs = (
     id: FilterIDs.WELL_TYPE,
     name: WELL_TYPE,
     key: 'well_characteristics_filter.well_type',
-    category: WELL_CHARACTERISTICS,
+    category: WELLBORE_CHARACTERISTICS,
     type: FilterTypes.MULTISELECT,
     fetcher: () => wellFilterFetchers?.welltypes(),
     filterParameters: (values): WellFilter => ({
@@ -144,7 +144,7 @@ export const filterConfigs = (
     id: FilterIDs.KB,
     name: `${KB_ELEVATION_TEXT} (${unit})`,
     key: 'well_characteristics_filter.kb_elevation',
-    category: WELL_CHARACTERISTICS,
+    category: WELLBORE_CHARACTERISTICS,
     type: FilterTypes.NUMERIC_RANGE,
     fetcher: () => {
       return wellFilterFetchers
@@ -165,7 +165,7 @@ export const filterConfigs = (
     id: FilterIDs.MD,
     name: `${MD_ELEVATION_TEXT} (${unit})`,
     key: 'well_characteristics_filter.md',
-    category: WELL_CHARACTERISTICS,
+    category: WELLBORE_CHARACTERISTICS,
     type: FilterTypes.NUMERIC_RANGE,
     fetcher: () => {
       return wellFilterFetchers
@@ -188,7 +188,7 @@ export const filterConfigs = (
     id: FilterIDs.TVD,
     name: `${TVD} (${unit})`,
     key: 'well_characteristics_filter.tvd',
-    category: WELL_CHARACTERISTICS,
+    category: WELLBORE_CHARACTERISTICS,
     type: FilterTypes.NUMERIC_RANGE,
     fetcher: () => {
       return wellFilterFetchers
@@ -215,7 +215,7 @@ export const filterConfigs = (
         : wellCharacteristicsDls?.meterDistanceInterval
     } ${unit})`,
     key: 'well_characteristics_filter.dls',
-    category: WELL_CHARACTERISTICS,
+    category: WELLBORE_CHARACTERISTICS,
     type: FilterTypes.NUMERIC_RANGE,
     fetcher: () => {
       return wellFilterFetchers
@@ -249,7 +249,7 @@ export const filterConfigs = (
     id: FilterIDs.WATER_DEPTH,
     name: `${WATER_DEPTH} (${unit})`,
     key: 'well_characteristics_filter.water_depth',
-    category: WELL_CHARACTERISTICS,
+    category: WELLBORE_CHARACTERISTICS,
     type: FilterTypes.NUMERIC_RANGE,
     fetcher: () =>
       wellFilterFetchers
@@ -273,7 +273,7 @@ export const filterConfigs = (
     id: FilterIDs.SPUD_DATE,
     name: SPUD_DATE,
     key: 'well_characteristics_filter.spud_date',
-    category: WELL_CHARACTERISTICS,
+    category: WELLBORE_CHARACTERISTICS,
     type: FilterTypes.DATE_RANGE,
     fetcher: wellFilterFetchers?.spudDateLimits,
     filterParameters: (values): WellFilter => ({
@@ -287,7 +287,7 @@ export const filterConfigs = (
     id: FilterIDs.MAXIMUM_INCLINATION_ANGLE,
     name: MAXIMUM_INCLINATION_ANGLE,
     key: 'well_characteristics_filter.maximum_inclination_angle',
-    category: WELL_CHARACTERISTICS,
+    category: WELLBORE_CHARACTERISTICS,
     type: FilterTypes.NUMERIC_RANGE,
     fetcher: () =>
       // Later these will be taken from the sdk

@@ -324,20 +324,20 @@ export const getMockFilterConfigByCategory = (): FilterCategoricalData[] => [
     filterConfigIds: [2, 4],
   },
   {
-    title: 'Well Characteristics',
+    title: 'Wellbore Characteristics',
     filterConfigs: [
       {
         id: 7,
         name: 'Water Depth (ft)',
         key: 'well_characteristics_filter.water_depth',
-        category: 'Well Characteristics',
+        category: 'Wellbore Characteristics',
         type: 2,
       },
       {
         id: 8,
         name: 'Spud Date',
         key: 'well_characteristics_filter.spud_date',
-        category: 'Well Characteristics',
+        category: 'Wellbore Characteristics',
         type: 3,
       },
     ],

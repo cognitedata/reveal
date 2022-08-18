@@ -3,7 +3,7 @@ import {
   DATA_AVAILABILITY,
   MEASUREMENTS,
   NDS_RISKS,
-  WELL_CHARACTERISTICS,
+  WELLBORE_CHARACTERISTICS,
   NPT_EVENTS,
   OPERATOR,
   SPUD_DATE,
@@ -170,9 +170,9 @@ describe('Wells sidebar filters', () => {
     cy.clickOnFilterCategory(DATA_AVAILABILITY);
   });
 
-  it(`Should display wells sidebar filters: ${WELL_CHARACTERISTICS}`, () => {
-    cy.log(`Expand ${WELL_CHARACTERISTICS} filter`);
-    cy.clickOnFilterCategory(WELL_CHARACTERISTICS);
+  it(`Should display wells sidebar filters: ${WELLBORE_CHARACTERISTICS}`, () => {
+    cy.log(`Expand ${WELLBORE_CHARACTERISTICS} filter`);
+    cy.clickOnFilterCategory(WELLBORE_CHARACTERISTICS);
 
     cy.validateSelect(WELL_TYPE, ['Shallow'], 'Shallow');
 
@@ -183,7 +183,7 @@ describe('Wells sidebar filters', () => {
       },
     });
 
-    cy.log(`Checking visibility of ${WELL_CHARACTERISTICS} filters`);
+    cy.log(`Checking visibility of ${WELLBORE_CHARACTERISTICS} filters`);
     cy.findAllByTestId('filter-item-wrapper')
       .contains(KB_ELEVATION_TEXT)
       .as('kb-elevation')
@@ -346,7 +346,7 @@ describe('Wells sidebar filters', () => {
 
     checkMaxInclination();
 
-    cy.clickOnFilterCategory(WELL_CHARACTERISTICS);
+    cy.clickOnFilterCategory(WELLBORE_CHARACTERISTICS);
   });
 
   it(`should display wells sidebar filter: ${NDS_RISKS}`, () => {

@@ -90,7 +90,7 @@ export const WellsFilter = () => {
     setWellsFilters(filtersToApply);
   };
 
-  // eg: "Well Characteristics"
+  // eg: "Wellbore Characteristics"
   const WellFilters: React.FC<{
     filterConfigs: FilterConfig[];
     index: number;
