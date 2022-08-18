@@ -84,7 +84,10 @@ const getCapabilityNameTranslationKey = {
   datamodelinstances: 'data-model-instances',
 };
 
-const prepareCapabilityTypeGroups = (_t: (key: TranslationKeys) => string) => {
+const prepareCapabilityTypeGroups = (
+  _t: (key: TranslationKeys) => string,
+  isDataModelsEnabled: boolean
+) => {
   const capabilityTypeGroups = [
     {
       name: _t('data'),
@@ -100,8 +103,7 @@ const prepareCapabilityTypeGroups = (_t: (key: TranslationKeys) => string) => {
         'timeseries',
         'templategroups',
         'templateinstances',
-        'datamodels',
-        'datamodelinstances'
+        ...(isDataModelsEnabled ? ['datamodels', 'datamodelinstances'] : []),
       ],
     },
     {
@@ -261,9 +263,13 @@ export const getCapabilityFormattedName = (
 };
 
 export const getCapabilityTypeGroups = (
-  _t: (key: TranslationKeys) => string
+  _t: (key: TranslationKeys) => string,
+  isDataModelsEnabled: boolean
 ) => {
-  const { capabilityTypeGroups } = prepareCapabilityTypeGroups(_t);
+  const { capabilityTypeGroups } = prepareCapabilityTypeGroups(
+    _t,
+    isDataModelsEnabled
+  );
   const filteredGroups = capabilityTypeGroups.map((group) => {
     const filteredItems = group.items.filter(
       (item) => !!getCapabilityName(item)
@@ -320,6 +326,9 @@ export const getScopeLabel = (
         case 'securitycategories':
           return _t('security-categories');
       }
+    case 'dataModelScope':
+    case 'spaceScope':
+      return _t('external-ids');
   }
   return null;
 };

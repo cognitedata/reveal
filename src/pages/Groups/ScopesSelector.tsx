@@ -67,7 +67,11 @@ const ScopesSelector = ({ capabilityKey, value, onChange }: Props) => {
 
   selectedResources = Array.isArray(selectedResources)
     ? selectedResources.map((r) =>
-        typeof r === 'string' ? parseInt(r, 10) : r
+        selectedScope !== 'dataModelScope' &&
+        selectedScope !== 'spaceScope' &&
+        typeof r === 'string'
+          ? parseInt(r, 10)
+          : r
       )
     : selectedResources;
 
@@ -117,7 +121,7 @@ const ScopesSelector = ({ capabilityKey, value, onChange }: Props) => {
     onChange(scope);
   };
 
-  const onChangeResource = (newSelectedResources: number[]) => {
+  const onChangeResource = (newSelectedResources: (number | string)[]) => {
     let scope = value;
     switch (selectedScope) {
       case 'assetIdScope':
@@ -183,7 +187,12 @@ const ScopesSelector = ({ capabilityKey, value, onChange }: Props) => {
         );
       case 'spaceScope':
       case 'dataModelScope':
-        return <ExternalIdSelector value={selectedResources} onChange={onChangeResource} />;
+        return (
+          <ExternalIdSelector
+            value={selectedResources}
+            onChange={onChangeResource}
+          />
+        );
       case 'assetRootIdScope':
         return (
           <ResourcesSelector

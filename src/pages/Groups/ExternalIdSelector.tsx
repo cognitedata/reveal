@@ -2,7 +2,6 @@ import React from 'react';
 
 import Select from 'antd/lib/select';
 import { useTranslation } from 'common/i18n';
-import { Input } from 'antd';
 
 interface ExternalIdSelectorProps {
   value: number[];
