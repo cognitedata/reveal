@@ -3,5 +3,5 @@
  */
 
 module.exports = {
-  default: "/* some wasm that won't be used */"
+  default: '/* some wasm that won\'t be used */'
 };
