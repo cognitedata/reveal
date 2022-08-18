@@ -3,9 +3,7 @@
  */
 
 import { StylableObject } from '../../styling/StylableObject';
-
-import { assign_points } from '../../../../../wasm/pkg';
-
+import { assignPoints } from '../../../../../wasm';
 import { Cylinder } from '../../styling/shapes/Cylinder';
 import { Box } from '../../styling/shapes/Box';
 
@@ -41,7 +39,7 @@ export async function assignPointsWithWasm(
 ): Promise<Uint16Array> {
   const wasmShapes = objects.map(obj => getWasmShape(obj));
 
-  const res = assign_points(
+  const res = assignPoints(
     wasmShapes,
     points,
     { min: sectorBoundingBox.min.toArray(), max: sectorBoundingBox.max.toArray() },
