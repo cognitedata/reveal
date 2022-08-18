@@ -1,30 +1,36 @@
 import React from 'react';
 import { Link as ReactRouterLink } from 'react-router-dom';
+import { getUrlWithQueryParams } from 'utils/config';
 
-/*
- * Link that keeps the search state in the url.
- */
-export function Link(props: {
+type Props = {
   to?: string;
   href?: string;
   onClick?: () => void;
   children: React.ReactNode;
-}) {
-  if (props.href) {
+};
+
+/*
+ * Link that keeps the search state in the url.
+ */
+export function Link(props: Props) {
+  const { href, children, to, onClick } = props;
+  const pathname = to ? getUrlWithQueryParams(to) : undefined;
+
+  if (href) {
     return (
       <a
-        href={props.href}
+        href={href}
         target="_blank"
         rel="noopener noreferrer"
-        onClick={props.onClick}
+        onClick={onClick}
       >
-        {props.children}
+        {children}
       </a>
     );
   }
   return (
-    <ReactRouterLink to={{ pathname: props.to }} onClick={props.onClick}>
-      {props.children}
+    <ReactRouterLink to={{ pathname }} onClick={onClick}>
+      {children}
     </ReactRouterLink>
   );
 }

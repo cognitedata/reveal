@@ -3,6 +3,7 @@ import { useParams, useHistory } from 'react-router-dom';
 import { Tooltip } from 'antd';
 import { Dropdown } from 'components/Common';
 import { Button } from '@cognite/cogs.js';
+import { getUrlWithQueryParams } from 'utils/config';
 import { useWorkflowDiagramsIds, useWorkflowItems } from 'modules/workflows';
 import { diagramPreview } from 'routes/paths';
 import { MenuAll } from 'containers';
@@ -22,7 +23,11 @@ export default function DiagramActions() {
 
   const onPreviewAllClick = () => {
     if (!noSuccessfulFiles)
-      history.push(diagramPreview.path(tenant, workflowId, diagramsIds[0]));
+      history.push(
+        getUrlWithQueryParams(
+          diagramPreview.path(tenant, workflowId, diagramsIds[0])
+        )
+      );
   };
 
   const isApproveAllDisabled =

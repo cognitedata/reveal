@@ -5,6 +5,7 @@ import { useQueryClient } from 'react-query';
 import { message } from 'antd';
 import { landingPage, diagramSelection } from 'routes/paths';
 import { useActiveWorkflow, useJobStatus, useStartJobs } from 'hooks';
+import { getUrlWithQueryParams } from 'utils/config';
 import { AppStateContext } from 'context';
 import { DiagramsSettingsBar } from 'containers';
 import { Flex, PageTitle } from 'components/Common';
@@ -38,7 +39,8 @@ export default function PageResultsOverview(props: Props) {
 
   const areDiagramsSelected = Boolean(selectedDiagramsIds?.length);
 
-  const onGoBackHomePage = () => history.push(landingPage.path(tenant));
+  const onGoBackHomePage = () =>
+    history.push(getUrlWithQueryParams(landingPage.path(tenant)));
   const onSelectionClose = () => {
     dispatch(selectInteractiveDiagrams({ workflowId, diagramIds: [] }));
   };
@@ -46,7 +48,9 @@ export default function PageResultsOverview(props: Props) {
   useEffect(() => {
     if (!workflow) {
       message.error('Invalid data selections');
-      history.push(diagramSelection.path(tenant, String(workflowId)));
+      history.push(
+        getUrlWithQueryParams(diagramSelection.path(tenant, String(workflowId)))
+      );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [workflow]);

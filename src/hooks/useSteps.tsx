@@ -1,8 +1,8 @@
 import { useContext } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
-import { AppStateContext } from 'context';
 
+import { AppStateContext } from 'context';
 import {
   moveToStep,
   WorkflowStep,
@@ -11,6 +11,7 @@ import {
 import { useActiveWorkflow } from 'hooks';
 import { routesMap } from 'routes/routesMap';
 import { PNID_METRICS, trackUsage } from 'utils/Metrics';
+import { getUrlWithQueryParams } from 'utils/config';
 import { RootState } from 'store';
 
 export const useSteps = (step?: WorkflowStep) => {
@@ -33,8 +34,12 @@ export const useSteps = (step?: WorkflowStep) => {
       if (skipStep && stepNext.skippable && nextStepIndex + 1 < routes.length) {
         stepNext = routes[nextStepIndex + 1];
       }
-      if (args) history.push(stepNext.path(tenant, workflowId, ...args));
-      else history.push(stepNext.path(tenant, workflowId));
+      if (args)
+        history.push(
+          getUrlWithQueryParams(stepNext.path(tenant, workflowId, ...args))
+        );
+      else
+        history.push(getUrlWithQueryParams(stepNext.path(tenant, workflowId)));
     }
   };
 
@@ -48,8 +53,12 @@ export const useSteps = (step?: WorkflowStep) => {
     const prevStepIndex = currentStepIndex - 1;
     if (prevStepIndex >= 0) {
       const stepPrev = routes[prevStepIndex];
-      if (args) history.push(stepPrev.path(tenant, workflowId, ...args));
-      else history.push(stepPrev.path(tenant, workflowId));
+      if (args)
+        history.push(
+          getUrlWithQueryParams(stepPrev.path(tenant, workflowId, ...args))
+        );
+      else
+        history.push(getUrlWithQueryParams(stepPrev.path(tenant, workflowId)));
     } else {
       history.goBack();
     }
@@ -74,7 +83,7 @@ export const useGoToStep = () => {
     });
     const step = routes.find((route) => route.workflowStepName === stepToGo);
     if (!step) return;
-    history.push(step.path(tenant, workflowId));
+    history.push(getUrlWithQueryParams(step.path(tenant, workflowId)));
   };
 
   return { goToStep };
