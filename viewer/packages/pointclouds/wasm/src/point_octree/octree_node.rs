@@ -172,11 +172,12 @@ fn get_child_bounding_boxes(bounding_box: &BoundingBox) -> [BoundingBox; 8] {
 
 #[cfg(test)]
 mod tests {
+    use wasm_bindgen_test::wasm_bindgen_test;
 
     use super::{Vec3WithIndex,vec3};
     use super::{find_splits,sort_points_into_sectors,get_octree_child_index};
 
-    #[test]
+    #[wasm_bindgen_test]
     fn test_sector_inplace_sorting() {
         const NUM_POINTS: usize = 300;
 
