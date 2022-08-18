@@ -18,7 +18,7 @@ export const CompareViewChart: React.FC<CompareViewChartProps> = ({
   measurementUnits,
 }) => {
   return (
-    <ChartWrapper>
+    <ChartWrapper data-testid="compare-view-chart">
       <MeasurementsChart
         data={data}
         title={title}

@@ -192,7 +192,9 @@ export const CompareView: React.FC<Props> = ({ wellbores, onBack }) => {
           onChange={setMeasurementReference}
         /> */}
       </TopBar>
-      <CompareViewCardsWrapper>{graphCards}</CompareViewCardsWrapper>
+      <CompareViewCardsWrapper data-testid="compare-view-card">
+        {graphCards}
+      </CompareViewCardsWrapper>
     </OverlayNavigation>
   );
 };

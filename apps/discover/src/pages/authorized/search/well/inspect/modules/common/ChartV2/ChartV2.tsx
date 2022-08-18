@@ -291,7 +291,9 @@ const ChartV2 = React.forwardRef(
       <React.Suspense fallback={<Loader darkMode={false} />}>
         <Container>
           <BodyColumnHeaderWrapper>
-            <BodyColumnMainHeader>{title}</BodyColumnMainHeader>
+            <BodyColumnMainHeader data-testid={title}>
+              {title}
+            </BodyColumnMainHeader>
             <BodyColumnHeaderLegend>
               <Toolbar chartRef={chartRef} />
             </BodyColumnHeaderLegend>
