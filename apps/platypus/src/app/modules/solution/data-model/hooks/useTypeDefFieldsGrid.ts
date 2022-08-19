@@ -90,6 +90,7 @@ export const useTypeDefFieldsGrid = () => {
             resizable: false,
             sortable: false,
             suppressMovable: true,
+            suppressSizeToFit: true,
             headerClass: 'col-txt-center',
             cellRendererParams: {
               disabled: props.isRequiredDisabled,
@@ -116,6 +117,7 @@ export const useTypeDefFieldsGrid = () => {
             resizable: false,
             sortable: false,
             suppressMovable: true,
+            suppressSizeToFit: true,
             cellStyle: { padding: '0' },
             cellRenderer: FieldActionsCellRenderer,
             cellRendererParams: {

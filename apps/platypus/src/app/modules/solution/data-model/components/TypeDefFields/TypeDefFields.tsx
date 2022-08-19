@@ -93,9 +93,10 @@ export const TypeDefFields = ({
       const rowIdx = e.node?.rowIndex as number;
       const field = e.colDef.field as string;
 
-      if (rowIdx >= 0 && field) {
+      if (rowIdx >= 0 && field === 'type') {
         // focus cell after edit
         setTimeout(() => {
+          e.api.sizeColumnsToFit();
           e.api.setFocusedCell(rowIdx, field);
         });
       }
@@ -202,14 +203,10 @@ export const TypeDefFields = ({
         isRequiredDisabled,
         onDelete: handleDelete,
       }),
-    [
-      gridService,
-      builtInTypes,
-      customTypesNames,
-      disabled,
-      isRequiredDisabled,
-      handleDelete,
-    ]
+    // Regenerate colDefs this only and only when this are changed
+    // Otherwise, if colDefs are changed, the whole grid will re-render
+    // eslint-disable-next-line
+    [disabled, isRequiredDisabled, handleDelete]
   );
 
   return (

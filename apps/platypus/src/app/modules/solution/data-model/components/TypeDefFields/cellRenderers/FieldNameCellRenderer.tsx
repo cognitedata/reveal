@@ -33,5 +33,11 @@ export const FieldNameCellRenderer = React.memo(
       </div>
     );
   },
-  (prev, next) => prev.data.name === next.data.name
+  (prev, next) => {
+    if (prev.colDef?.field === 'type') {
+      return prev.data.type.name === next.data.type.name;
+    }
+
+    return prev.data.name === next.data.name;
+  }
 );
