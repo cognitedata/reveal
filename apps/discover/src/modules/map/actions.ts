@@ -37,7 +37,6 @@ import {
   CLEAR_SELECTED_WELL,
   SET_SELECTED_FEATURE,
   CLEAR_SELECTED_FEATURE,
-  CLEAR_POLYGON,
 } from 'modules/map/types.actions';
 
 export function zoomToAsset(id: string, geo: Geometry): ZoomToAsset {
@@ -179,9 +178,4 @@ export const setSelectedFeature = (feature: MapState['selectedFeature']) => ({
 
 export const clearSelectedFeature = () => ({
   type: CLEAR_SELECTED_FEATURE,
-});
-
-export const setClearPolygon = (cancelPolygonSearch: boolean) => ({
-  type: CLEAR_POLYGON,
-  cancelPolygonSearch,
 });

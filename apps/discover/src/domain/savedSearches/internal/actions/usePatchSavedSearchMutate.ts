@@ -13,6 +13,7 @@ import {
   SURVEYS_QUERY_KEY,
 } from 'constants/react-query';
 import { GenericApiError } from 'core/types';
+import { SearchOptions } from 'hooks/useCommonSearch';
 import { useJsonHeaders } from 'hooks/useJsonHeaders';
 import { useProjectConfigByKey } from 'hooks/useProjectConfig';
 import { useSearchActions } from 'hooks/useSearchActions';
@@ -21,12 +22,13 @@ import { Modules } from 'modules/sidebar/types';
 
 export const usePatchSavedSearchMutate = (
   doSearch = true,
-  successCallback?: (data: SavedSearchContent | GenericApiError) => void
+  successCallback?: (data: SavedSearchContent | GenericApiError) => void,
+  options: SearchOptions = {}
 ) => {
   const currentSavedSearch = useCurrentSavedSearchState();
   const headers = useJsonHeaders({}, true);
   const { data: seismicConfig } = useProjectConfigByKey(Modules.SEISMIC);
-  const { doCommonSearch } = useSearchActions();
+  const { doCommonSearch } = useSearchActions(options);
   const [tenant] = getProjectInfo();
   const queryClient = useQueryClient();
 

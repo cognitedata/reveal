@@ -19,6 +19,12 @@ export const useUserDrawnFeatures = ({
       hasInitialFeatures ? initialDrawnFeatures : featureCollection([])
     );
 
+  React.useEffect(() => {
+    if (initialDrawnFeatures) {
+      setDrawnFeatures(initialDrawnFeatures);
+    }
+  }, [initialDrawnFeatures]);
+
   // update with useFeatures and add stories
   useDeepEffect(() => {
     if (drawnFeatures && draw) {

@@ -1,10 +1,17 @@
+import { useClearPolygon } from 'domain/savedSearches/internal/hooks/useClearPolygon';
+
 import * as React from 'react';
-import { useDispatch } from 'react-redux';
+import { batch, useDispatch } from 'react-redux';
 
 import { Actions, MapAddedProps, SelectableLayer } from '@cognite/react-map';
 import { Point } from '@cognite/seismic-sdk-js';
 
-import { toggleLayer } from 'modules/map/actions';
+import {
+  toggleLayer,
+  clearSelectedWell,
+  clearSelectedDocument,
+  setGeo,
+} from 'modules/map/actions';
 import { useMap } from 'modules/map/selectors';
 import { MapDataSource } from 'modules/map/types';
 import { FlexGrow } from 'styles/layout';
@@ -28,7 +35,7 @@ export const PolygonBar: React.FC<Props> = ({
 }) => {
   const { selectedLayers: selected, assets } = useMap();
   const dispatch = useDispatch();
-
+  const clearPolygon = useClearPolygon({ hideResult: true });
   const { selectableLayers } = useLayers();
 
   // add selected status to layers from redux
@@ -40,12 +47,25 @@ export const PolygonBar: React.FC<Props> = ({
     dispatch(toggleLayer(item));
   };
 
+  const onPolygonToggle = (removed: boolean) => {
+    console.log('removed', removed);
+    if (removed) {
+      clearPolygon();
+      setGeo([]);
+    } else {
+      batch(() => {
+        dispatch(clearSelectedDocument());
+        dispatch(clearSelectedWell());
+      });
+    }
+  };
+
   const renderChildren = (props: MapAddedProps) => {
     return (
       <>
         <Actions.Status {...props} />
         <FlexGrow />
-        <Actions.Polygon {...props} />
+        <Actions.Polygon {...props} onToggle={onPolygonToggle} />
         {/* 
         <SearchableAssetsOverlay
           sources={sources}

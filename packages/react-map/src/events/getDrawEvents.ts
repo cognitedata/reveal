@@ -2,10 +2,8 @@ import isEmpty from 'lodash/isEmpty';
 import { Feature, featureCollection, Geometry } from '@turf/helpers';
 // import { DrawCreateEvent, DrawDeleteEvent } from '@mapbox/mapbox-gl-draw';
 
-import { MapEvent, MapFeature } from '../types';
+import { MapEvent, MapFeature, EventSetters } from '../types';
 import type { DrawMode } from '../FreeDraw';
-
-import { EventSetters } from './useLayerEvents';
 
 const handleFeatureChange =
   ({

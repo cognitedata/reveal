@@ -20,14 +20,24 @@ type SearchClicked = ({
 export const FloatingActionsPopup: React.FC<
   MapAddedProps & {
     onSearchClicked: SearchClicked;
+    onDeleteClicked?: () => void; // notify implementing component
   }
 > = (props) => {
-  const { map, selectedFeatures, drawnFeatures, onSearchClicked } = props;
+  const {
+    map,
+    selectedFeatures,
+    drawnFeatures,
+    onSearchClicked,
+    onDeleteClicked,
+  } = props;
   const { touched } = useTouchedEvent();
   const hasNoUserSelections = isEmpty(selectedFeatures);
 
   const handleDelete = () => {
     resetDrawState(props);
+    if (onDeleteClicked) {
+      onDeleteClicked();
+    }
   };
 
   const handleSearch = () => {

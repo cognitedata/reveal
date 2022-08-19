@@ -1,27 +1,16 @@
 import noop from 'lodash/noop';
 
 import { useDeepEffect } from '../hooks/useDeep';
-import {
-  MapType,
-  MapProps,
-  SetDrawnFeatures,
-  SetDrawMode,
-  SetSelectedFeatures,
-} from '../types';
+import { MapType, MapProps, EventSetters } from '../types';
 
 import { useDefaultEvents } from './useDefaultEvents';
 
-export interface EventSetters {
-  setDrawnFeatures?: SetDrawnFeatures;
-  setSelectedFeatures?: SetSelectedFeatures;
-  setDrawMode?: SetDrawMode;
-}
 export interface Props extends EventSetters {
   map?: MapType;
   setupEvents?: MapProps['setupEvents'];
 }
 export const useLayerEvents = (props: Props) => {
-  const { setupEvents, map, setDrawnFeatures } = props;
+  const { setupEvents, map, ...setters } = props;
   const defaultEvents = useDefaultEvents(props);
 
   useDeepEffect(() => {
@@ -29,7 +18,7 @@ export const useLayerEvents = (props: Props) => {
 
     const events =
       typeof setupEvents === 'function'
-        ? setupEvents({ defaultEvents, setDrawnFeatures })
+        ? setupEvents({ defaultEvents, ...setters })
         : defaultEvents;
 
     events.forEach((event) => {

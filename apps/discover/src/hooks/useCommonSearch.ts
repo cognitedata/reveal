@@ -15,7 +15,8 @@ import { useProjectConfig } from './useProjectConfig';
 import { useSeismicSearch } from './useSeismicSearch';
 import { useWellsSearch } from './useWellsSearch';
 
-export const useCommonSearch = () => {
+export type SearchOptions = { hideResult?: boolean };
+export const useCommonSearch = ({ hideResult }: SearchOptions = {}) => {
   const dispatch = useDispatch();
   const { data: projectConfig } = useProjectConfig();
 
@@ -42,7 +43,9 @@ export const useCommonSearch = () => {
       dispatch(setGeo(searchQuery.geoJson, true));
     }
 
-    dispatch(showResults());
+    if (!hideResult) {
+      dispatch(showResults());
+    }
 
     /**
      * Preserve search phrase into state

@@ -2,7 +2,6 @@ import { MapState } from 'modules/map/types';
 import {
   ADD_ARBITRARYLINE,
   ADD_SELECTABLE_LAYERS,
-  CLEAR_POLYGON,
   CLEAR_SELECTED_DOCUMENT,
   CLEAR_SELECTED_FEATURE,
   CLEAR_SELECTED_POINT,
@@ -160,8 +159,7 @@ export function map(
     case SET_SELECTED_POINT:
     case SET_SELECTED_FEATURE:
     case SET_SELECTED_WELL:
-    case SET_SELECTED_DOCUMENT:
-    case CLEAR_POLYGON: {
+    case SET_SELECTED_DOCUMENT: {
       return { ...state, ...action };
     }
 

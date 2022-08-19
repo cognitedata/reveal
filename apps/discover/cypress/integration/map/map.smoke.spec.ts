@@ -86,6 +86,7 @@ describe('Map', () => {
       cy.expandMap();
       cy.checkPolygonButtonIsVisible();
       cy.closePolygonESC();
+      cy.closePolygonESC();
       cy.checkPolygonIsClosed();
 
       cy.enterPolygonEditMode();
@@ -127,6 +128,7 @@ describe('Map', () => {
     });
     beforeEach(() => {
       cy.closePolygonESC();
+      cy.closePolygonESC();
     });
 
     // Flaky test, pls fix
@@ -145,14 +147,14 @@ describe('Map', () => {
     });
 
     // This is an edge case that was fixed. do not remove this test.
-    it('should floating action buttons visible with one edge in bottom right', () => {
+    it('should see floating action buttons visible with one edge in bottom right', () => {
       cy.enterPolygonEditMode();
       cy.drawPolygon([...testPoints, 'bottomRight'], 'enter');
       cy.checkPolygonFloatingActionVisibility(true);
       cy.closePolygonWithCancelButton();
     });
 
-    it('should view, edit polygon info icon', () => {
+    it('should draw polygon and close actions', () => {
       cy.enterPolygonEditMode();
       cy.drawPolygon(testPoints, 'enter');
       cy.drawPolygon(['bottom']);
@@ -164,6 +166,9 @@ describe('Map', () => {
   describe('Controls', () => {
     before(() => {
       cy.findByTestId('cognite-logo').click();
+    });
+    beforeEach(() => {
+      cy.closePolygonESC();
     });
 
     it('should show and hide controls based on table width', () => {

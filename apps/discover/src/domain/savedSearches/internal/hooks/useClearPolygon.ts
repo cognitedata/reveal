@@ -5,10 +5,12 @@ import { isOfType } from 'utils/type';
 
 import { Geometry, GeoJson } from '@cognite/seismic-sdk-js';
 
+import { SearchOptions } from 'hooks/useCommonSearch';
+
 import { convertGeometryToGeoJson } from '../transformers/normalizeSavedSearch';
 
-export const useClearPolygon = () => {
-  const { mutateAsync } = usePatchSavedSearchMutate();
+export const useClearPolygon = (options: SearchOptions = {}) => {
+  const { mutateAsync } = usePatchSavedSearchMutate(true, undefined, options);
   return () => mutateAsync({ geoJson: [] });
 };
 

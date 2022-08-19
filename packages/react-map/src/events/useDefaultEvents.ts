@@ -1,10 +1,9 @@
 import * as React from 'react';
 
-import { MapEvent } from '../types';
+import { MapEvent, EventSetters } from '../types';
 
 import { useTouchedEvent } from './useTouchedEvent';
 import { getDrawEvents } from './getDrawEvents';
-import { EventSetters } from './useLayerEvents';
 
 export const useDefaultEvents = (props: EventSetters): MapEvent[] => {
   const { touchedEvent } = useTouchedEvent();

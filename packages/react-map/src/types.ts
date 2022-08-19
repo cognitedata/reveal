@@ -91,11 +91,14 @@ export interface MapConfig {
     maxBounds?: MapboxOptions['maxBounds']; // deprecated
   };
 }
-
+export interface EventSetters {
+  setDrawnFeatures?: SetDrawnFeatures;
+  setSelectedFeatures?: SetSelectedFeatures;
+  setDrawMode?: SetDrawMode;
+}
 export type SetupEventsProps = {
   defaultEvents: MapEvent[];
-  setDrawnFeatures?: SetDrawnFeatures;
-};
+} & EventSetters;
 
 // Map Component props
 export interface MapProps {

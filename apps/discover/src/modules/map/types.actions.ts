@@ -38,7 +38,6 @@ export const CLEAR_SELECTED_POINT = 'mapProvider/clearSelectedPoint';
 
 export const SET_SELECTED_FEATURE = 'mapProvider/setSelectedFeature';
 export const CLEAR_SELECTED_FEATURE = 'mapProvider/clearSelectedFeature';
-export const CLEAR_POLYGON = 'mapProvider/clearPolygon';
 
 export interface SetGeo {
   type: typeof SET_GEO_FILTERS;
@@ -161,11 +160,6 @@ interface ClearSelectedPoint {
   type: typeof CLEAR_SELECTED_POINT;
 }
 
-interface SetClearPolygon {
-  type: typeof CLEAR_POLYGON;
-  cancelPolygonSearch: boolean;
-}
-
 export type MapAction =
   | SetGeo
   | ZoomToAsset
@@ -191,5 +185,4 @@ export type MapAction =
   | ClearSelectedDocument
   | ClearSelectedWell
   | ClearSelectedPoint
-  | SetSelectedPoint
-  | SetClearPolygon;
+  | SetSelectedPoint;

@@ -4,10 +4,10 @@ import { batch } from 'react-redux';
 
 import { FetchHeaders } from 'utils/fetch';
 
-import { useCommonSearch } from './useCommonSearch';
+import { SearchOptions, useCommonSearch } from './useCommonSearch';
 
-export const useSearchActions = () => {
-  const doCommonSearch = useCommonSearch();
+export const useSearchActions = (options: SearchOptions = {}) => {
+  const doCommonSearch = useCommonSearch(options);
 
   const doCommonSearchBatched = (
     searchQuery: Partial<SavedSearchContent>,

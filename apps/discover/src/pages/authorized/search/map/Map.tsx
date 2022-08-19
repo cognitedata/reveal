@@ -15,9 +15,7 @@ import {
 } from '@turf/helpers';
 import { TS_FIX_ME } from 'core';
 import get from 'lodash/get';
-import isEmpty from 'lodash/isEmpty';
 import isUndefined from 'lodash/isUndefined';
-import { v1 } from 'uuid';
 
 import { PerfMetrics } from '@cognite/metrics';
 import {
@@ -26,8 +24,9 @@ import {
   resetDrawState,
   MapFeatures,
   drawModes,
-  MapEvent,
   MapAddedProps,
+  MapFeatureCollection,
+  MapFeature,
 } from '@cognite/react-map';
 import { GeoJson, Point } from '@cognite/seismic-sdk-js';
 
@@ -35,17 +34,11 @@ import { BlockExpander } from 'components/BlockExpander/BlockExpander';
 import { useDeepEffect, useDeepMemo } from 'hooks/useDeep';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
 import { useTranslation } from 'hooks/useTranslation';
-import {
-  addArbitraryLine,
-  clearSelectedFeature,
-  setSelectedLayers,
-  setClearPolygon,
-} from 'modules/map/actions';
+import { setSelectedLayers } from 'modules/map/actions';
 import { MAPBOX_TOKEN, MAPBOX_MAP_ID } from 'modules/map/constants';
 import { getFeature } from 'modules/map/helper';
 import { useMapConfig } from 'modules/map/hooks/useMapConfig';
 import { useMap } from 'modules/map/selectors';
-import { MapState } from 'modules/map/types';
 import { useActivePanel } from 'modules/resultPanel/selectors';
 import { hideResults, showResults } from 'modules/search/actions';
 import { useSearchState } from 'modules/search/selectors';
@@ -90,17 +83,14 @@ export const Map: React.FC = () => {
     zoomToCoords,
     moveToCoords,
     selectedLayers,
-    cancelPolygonSearch,
   } = useMap();
   const extrasRef = React.useRef<any>();
   const { selectableLayers } = useLayers();
-  // const { data: selectedSurveyData } = useSelectedSurvey();
   const metrics = useGlobalMetrics('map');
   const [flyTo, setFlyTo] = React.useState<ReactMapProps['flyTo']>();
   const [mapReference, setMapReference] = React.useState<MapType>();
   const [focusedFeature, setFocusedFeature] = React.useState<Feature>();
   const { showSearchResults } = useSearchState();
-  const [polygon, setPolygon] = React.useState<MapState['geoFilter']>(() => []);
   const searchPendingRef = React.useRef<boolean>(false);
   const activePanel = useActivePanel();
   const sidebarCategory = useFilterCategory();
@@ -111,14 +101,12 @@ export const Map: React.FC = () => {
   const layers = useVisibleLayers(selectedLayers);
   const { t } = useTranslation();
   const setSavedPolygon = useSetPolygon();
-  const clearPolygon = useClearPolygon();
+  const clearPolygon = useClearPolygon({ hideResult: true });
 
-  React.useEffect(() => {
-    if (cancelPolygonSearch) {
-      deletePolygon();
-      dispatch(setClearPolygon(false));
-    }
-  }, [cancelPolygonSearch]);
+  const onDeleteClicked = () => {
+    searchPendingRef.current = false;
+    clearPolygon();
+  };
 
   useDeepEffect(() => {
     if (zoomToFeature) {
@@ -138,21 +126,6 @@ export const Map: React.FC = () => {
     }
   }, [moveToCoords]);
 
-  useDeepEffect(() => {
-    // Draw polygon when loads a saved search
-    if (!isEmpty(geoFilter)) {
-      const firstGeo = geoFilter[0];
-      if (getGeometryType(firstGeo) === 'LineString') {
-        dispatch(addArbitraryLine(v1(), firstGeo as Feature));
-      } else {
-        setPolygon(geoFilter);
-      }
-    } else if (!geoFilter.length && polygon.length) {
-      // Remove polygon from map when clearing the polygon search from results page
-      setPolygon([]);
-    }
-  }, [geoFilter]);
-
   React.useEffect(() => {
     if (mapReference && mapReference?.areTilesLoaded()) {
       PerfMetrics.trackPerfEnd('MAP_RENDER');
@@ -165,14 +138,13 @@ export const Map: React.FC = () => {
 
   const mapEvents = useMapEvents();
 
-  // Try to get these into the useMapEvents hooks, as of now they require some work if we're to avoid passing
-  // tons of props, perhaps go with a context instead of all the React.useStates.
-  const events = useDeepMemo(() => [...mapEvents] as MapEvent[], [mapEvents]);
-
-  const setupEvents: ReactMapProps['setupEvents'] = ({ defaultEvents }) => [
-    ...defaultEvents,
-    ...events,
-  ];
+  const setupEvents: ReactMapProps['setupEvents'] = useDeepMemo(
+    () =>
+      ({ defaultEvents }) => {
+        return [...defaultEvents, ...mapEvents];
+      },
+    [mapEvents]
+  );
 
   const zoomToAsset = (point: Point, changeZoom?: number | false) => {
     let zoom: number | undefined;
@@ -197,16 +169,6 @@ export const Map: React.FC = () => {
   const handleQuickSearchSelection = (selection: TS_FIX_ME) => {
     setFocusedFeature(selection.feature);
     metrics.track('click-asset-menu-item');
-  };
-
-  const deletePolygon = () => {
-    setPolygon([]);
-    dispatch(clearSelectedFeature());
-    searchPendingRef.current = false;
-
-    if (!isEmpty(geoFilter)) {
-      clearPolygon();
-    }
   };
 
   const handleSearchClicked: FloatingActionsProps['onSearchClicked'] = ({
@@ -280,9 +242,9 @@ export const Map: React.FC = () => {
 
     // remove any null or empty points and convert to an official 'featureCollection'
     return featureCollection(safeFeatures);
-  }, [polygon, otherGeo, arbitraryLine]);
+  }, [otherGeo, arbitraryLine]);
 
-  const renderBlockExpander = React.useMemo(() => {
+  const renderMapExpander = React.useMemo(() => {
     if (showSearchResults) {
       return null;
     }
@@ -296,12 +258,16 @@ export const Map: React.FC = () => {
     );
   }, [showSearchResults]);
 
+  const initialDrawnFeatures = featureCollection(
+    geoFilter as MapFeature[]
+  ) as MapFeatureCollection;
+
   return (
     <>
       <div ref={extrasRef} />
 
       <MapWrapper>
-        {renderBlockExpander}
+        {renderMapExpander}
 
         <MapboxMap
           MAPBOX_TOKEN={MAPBOX_TOKEN}
@@ -316,6 +282,7 @@ export const Map: React.FC = () => {
           setupEvents={setupEvents}
           features={features}
           mapIcons={mapIcons}
+          initialDrawnFeatures={initialDrawnFeatures}
           // others:
           flyTo={flyTo}
           focusedFeature={focusedFeature}
@@ -327,6 +294,7 @@ export const Map: React.FC = () => {
                 <MapFeatures.FloatingActions
                   {...props}
                   onSearchClicked={handleSearchClicked}
+                  onDeleteClicked={onDeleteClicked}
                 />
                 <MapFeatures.UnmountConfirmation
                   map={props.map}

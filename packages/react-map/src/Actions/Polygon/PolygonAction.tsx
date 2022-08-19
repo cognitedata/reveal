@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { featureCollection } from '@turf/helpers';
 
 import { MapAddedProps } from '../../types';
@@ -13,7 +12,7 @@ import { PolygonButton } from './PolygonButton';
  * Note: setting the drawn features is handled by the `draw` event
  */
 type Props = {
-  onToggle?: () => void;
+  onToggle?: (state: boolean) => void;
 } & MapAddedProps;
 export const PolygonAction = ({
   onToggle,
@@ -38,7 +37,7 @@ export const PolygonAction = ({
     }
 
     if (onToggle) {
-      onToggle();
+      onToggle(isActive);
     }
   };
 
