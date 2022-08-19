@@ -45,6 +45,7 @@ target
 viewer/public/
 viewer/false
 .eslintcache
+viewer/wasm/pkg/*
 
 # Examples
 

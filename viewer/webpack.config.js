@@ -95,6 +95,10 @@ module.exports = env => {
         {
           test: /\.css$/,
           use: ['raw-loader']
+        },
+        {
+          test: /\.wasm$/,
+          type: 'asset/inline'
         }
       ]
     },

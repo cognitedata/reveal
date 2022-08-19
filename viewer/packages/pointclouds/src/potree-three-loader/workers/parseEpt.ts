@@ -2,6 +2,8 @@ import { StylableObject } from '../../styling/StylableObject';
 import { Vec3 } from '../../styling/shapes/linalg';
 import { computeObjectIdBuffer } from './assignObjects';
 
+import { addThree } from '../../../../../wasm';
+
 export type ParsedEptData = {
   numPoints: number;
   tightBoundingBox: { min: number[]; max: number[] };
@@ -37,7 +39,7 @@ export type EptInputData = {
   mins: [number, number, number];
 };
 
-export function parseEpt(data: EptInputData, objects: StylableObject[], pointOffset: Vec3): ParsedEptData {
+export async function parseEpt(data: EptInputData, objects: StylableObject[], pointOffset: Vec3): Promise<ParsedEptData> {
   const buffer = data.buffer;
   const view = new DataView(buffer);
   const schema: SchemaEntry[] = data.schema;
@@ -241,6 +243,7 @@ export function parseEpt(data: EptInputData, objects: StylableObject[], pointOff
     indices[i] = i;
   }
 
+  console.log('The WASM answer is ', await addThree(39));
   const objectIdBuffer = computeObjectIdBuffer(xyz, objects, pointOffset);
 
   const message: ParsedEptData = {

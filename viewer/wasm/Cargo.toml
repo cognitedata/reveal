@@ -1,0 +1,29 @@
+# You must change these to your own details.
+[package]
+name = "reveal-rust-wasm"
+description = "Rust+Webassembly modules for Reveal"
+version = "0.1.0"
+authors = ["Håkon Flatval <hakon.flatval@cognite.com>"]
+categories = ["wasm"]
+readme = "README.md"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib"]
+
+[profile.release]
+# This makes the compiled code faster and smaller, but it makes compiling slower,
+# so it's only enabled in release mode.
+lto = true
+opt-level = 3
+
+[dependencies]
+
+wasm-bindgen = { version = "0.2.45", features = ["serde-serialize"] }
+web-sys = { version = "0.3.22", features = ["console"] }
+
+console_error_panic_hook = "0.1.5"
+
+# These crates are used for running unit tests.
+[dev-dependencies]
+wasm-bindgen-test = "0.3.32"
