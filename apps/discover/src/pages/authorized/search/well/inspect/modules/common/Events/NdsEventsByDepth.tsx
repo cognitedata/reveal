@@ -54,6 +54,7 @@ export const NdsEventsByDepth: React.FC<Props> = ({
           isLoading={isLoading}
           loadingSubtitle={isLoading ? LOADING_TEXT : ''}
           emptySubtitle={EMPTY_STATE_TEXT}
+          hideHeading
         />
       </EmptyStateWrapper>
     );

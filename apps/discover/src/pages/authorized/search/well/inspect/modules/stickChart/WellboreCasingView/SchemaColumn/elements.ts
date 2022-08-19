@@ -9,7 +9,10 @@ import {
   SCALE_BLOCK_HEIGHT,
   SCALE_PADDING,
 } from '../../../common/Events/constants';
-import { DepthMeasurementScale } from '../../../common/Events/elements';
+import {
+  DepthMeasurementScale,
+  EmptyStateWrapper,
+} from '../../../common/Events/elements';
 import {
   DEPTH_SCALE_LABEL_HEIGHT,
   DEPTH_SCALE_LABEL_WIDTH,
@@ -147,4 +150,9 @@ export const DepthScaleLabelTag = styled(Flex)`
 export const DepthScaleLabelMarker = styled(DepthEndMarker)`
   width: 22px;
   margin-top: ${DEPTH_SCALE_LABEL_HEIGHT / 2}px;
+`;
+
+export const SchemaEmptyStateWrapper = styled(EmptyStateWrapper)`
+  max-width: none;
+  width: 100%;
 `;

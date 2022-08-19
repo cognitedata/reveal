@@ -30,7 +30,10 @@ import { DepthMeasurementTypeSelector } from './components/DepthMeasurementTypeS
 import { DepthScaleLines } from './components/DepthScaleLines';
 import { Legend } from './components/Legend';
 import { TopContent } from './components/TopContent';
-import { SchemaColumnContentWrapper } from './elements';
+import {
+  SchemaColumnContentWrapper,
+  SchemaEmptyStateWrapper,
+} from './elements';
 
 interface SchemaColumnProps
   extends Pick<CasingSchematicView, 'rkbLevel' | 'waterDepth'> {
@@ -90,11 +93,14 @@ export const SchemaColumn = React.forwardRef<
     const renderSchemaColumnContent = () => {
       if (!hasCasingAssembliesData || isLoading) {
         return (
-          <EmptyState
-            isLoading={isLoading}
-            loadingSubtitle={LOADING_TEXT}
-            emptySubtitle={EMPTY_SCHEMA_TEXT}
-          />
+          <SchemaEmptyStateWrapper>
+            <EmptyState
+              isLoading={isLoading}
+              loadingSubtitle={isLoading ? LOADING_TEXT : ''}
+              emptySubtitle={EMPTY_SCHEMA_TEXT}
+              hideHeading
+            />
+          </SchemaEmptyStateWrapper>
         );
       }
 

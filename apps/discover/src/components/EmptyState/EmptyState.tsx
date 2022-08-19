@@ -20,6 +20,7 @@ interface Props {
   emptySubtitle?: string;
   img?: IllustrationType;
   isLoading?: boolean;
+  hideHeading?: boolean;
   children?: ReactNode;
 }
 
@@ -30,16 +31,19 @@ const EmptyState: React.FC<Props> = ({
   emptySubtitle,
   img = 'Search',
   isLoading = false,
+  hideHeading = false,
   children,
 }) => {
   return (
     <Container data-testid="empty-state-container">
       <Content>
         <Illustration type={img} />
-        <StyledTypography variant="h6" weight="semibold">
-          <Text visible={isLoading}>{loadingTitle}</Text>
-          <Text visible={!isLoading}>{emptyTitle}</Text>
-        </StyledTypography>
+        {!hideHeading && (
+          <StyledTypography variant="h6" weight="semibold">
+            <Text visible={isLoading}>{loadingTitle}</Text>
+            <Text visible={!isLoading}>{emptyTitle}</Text>
+          </StyledTypography>
+        )}
         <StyledTypography>
           {loadingSubtitle && (
             <SubtitleContainer>

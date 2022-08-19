@@ -3,11 +3,11 @@ import layers from 'utils/zindex';
 
 import { Center, Flex, FlexRow, sizes } from 'styles/layout';
 
+import { SCALE_BLOCK_HEIGHT } from '../../../../common/Events/constants';
 import {
-  SCALE_BLOCK_HEIGHT,
-  SCALE_BOTTOM_PADDING,
-} from '../../../../common/Events/constants';
-import { DepthMeasurementScale } from '../../../../common/Events/elements';
+  DepthMeasurementScale,
+  EmptyStateWrapper,
+} from '../../../../common/Events/elements';
 import { MUD_LINE_COLOR, RKB_COLOR, SEA_LEVEL_COLOR } from '../../constants';
 
 export const SchemaColumnHeaderWrapper = styled(FlexRow)`
@@ -21,7 +21,6 @@ export const SchemaColumnHeaderWrapper = styled(FlexRow)`
 
 export const SchemaColumnContentWrapper = styled(Flex)`
   height: calc(100% - 32px);
-  padding-bottom: ${SCALE_BOTTOM_PADDING}px;
   position: relative;
   > * h6 {
     display: none;
@@ -99,4 +98,9 @@ export const DepthLabel = styled.div`
   line-height: 14px;
   margin-left: 32px;
   cursor: pointer;
+`;
+
+export const SchemaEmptyStateWrapper = styled(EmptyStateWrapper)`
+  max-width: none;
+  width: 100%;
 `;

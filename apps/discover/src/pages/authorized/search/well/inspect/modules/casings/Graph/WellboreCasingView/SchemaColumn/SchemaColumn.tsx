@@ -14,6 +14,7 @@ import {
   HeaderText,
   SchemaColumnContentWrapper,
   SchemaColumnHeaderWrapper,
+  SchemaEmptyStateWrapper,
 } from './elements';
 import { Legend } from './Legend';
 import { TopContent } from './TopContent';
@@ -48,11 +49,13 @@ export const SchemaColumn: React.FC<SchemaColumnProps> = ({
   const renderSchemaColumnContent = () => {
     if (!hasCasingAssembliesData || isScaleCalculating) {
       return (
-        <EmptyState
-          isLoading={isScaleCalculating}
-          loadingSubtitle={LOADING_TEXT}
-          emptySubtitle={EMPTY_SCHEMA_TEXT}
-        />
+        <SchemaEmptyStateWrapper>
+          <EmptyState
+            isLoading={isScaleCalculating}
+            loadingSubtitle={isScaleCalculating ? LOADING_TEXT : ''}
+            emptySubtitle={EMPTY_SCHEMA_TEXT}
+          />
+        </SchemaEmptyStateWrapper>
       );
     }
 

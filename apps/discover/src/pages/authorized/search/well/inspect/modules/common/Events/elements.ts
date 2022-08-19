@@ -60,9 +60,6 @@ export const BodyColumnSubHeader = styled(Flex)`
 export const BodyColumnBody = styled(Flex)`
   height: 100%;
   position: relative;
-  > * h6 {
-    display: none;
-  }
 `;
 
 export const DepthMeasurementScale = styled(FlexColumn)`
