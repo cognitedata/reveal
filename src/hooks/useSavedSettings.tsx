@@ -4,11 +4,15 @@ import isEqual from 'lodash/isEqual';
 import { RootState } from 'store';
 import { AppStateContext } from 'context';
 import { changeOptions, standardModelOptions } from 'modules/workflows';
+import { ModelSelected, WorkflowOptions } from 'modules/types';
 import { useActiveWorkflow, useJobStarted } from 'hooks';
 
-/**
- *
- */
+export type SavedSettings = {
+  skip: boolean;
+  modelSelected?: ModelSelected;
+  options?: WorkflowOptions;
+};
+
 export const useSavedSettings = () => {
   const dispatch = useDispatch();
   const { setJobStarted } = useJobStarted();
