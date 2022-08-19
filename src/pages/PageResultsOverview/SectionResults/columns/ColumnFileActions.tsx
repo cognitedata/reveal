@@ -2,6 +2,7 @@ import React from 'react';
 import { useParams, useHistory } from 'react-router-dom';
 import { message } from 'antd';
 import { Tooltip } from '@cognite/cogs.js';
+import { getUrlWithQueryParams } from 'utils/config';
 import { diagramPreview } from 'routes/paths';
 import { MenuSingle } from 'containers';
 import { Flex, IconButton, Dropdown } from 'components/Common';
@@ -12,10 +13,7 @@ type Props = { file: any };
 export default function ColumnFileActions({ file }: Props): JSX.Element {
   const history = useHistory();
 
-  const { tenant, workflowId } = useParams<{
-    tenant: string;
-    workflowId: string;
-  }>();
+  const { workflowId } = useParams<{ workflowId: string }>();
 
   const { failedFiles } = useParsingJob();
   const jobStatus = useJobStatus();
@@ -37,7 +35,9 @@ export default function ColumnFileActions({ file }: Props): JSX.Element {
 
   const onFileViewClick = () => {
     if (file) {
-      history.push(diagramPreview.path(tenant, workflowId, file.id));
+      history.push(
+        getUrlWithQueryParams(diagramPreview.path(workflowId, file.id))
+      );
     } else {
       message.info('Please wait for the process to finish for this diagram.');
     }

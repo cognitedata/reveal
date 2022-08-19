@@ -6,6 +6,7 @@ import { useCdfItems } from '@cognite/sdk-react-query-hooks';
 import { Colors, Title, Tooltip } from '@cognite/cogs.js';
 import { diagramPreview } from 'routes/paths';
 import { PNID_METRICS, trackUsage } from 'utils/Metrics';
+import { getUrlWithQueryParams } from 'utils/config';
 import { ModalSaveSVG } from 'containers';
 import { Flex, MenuButton } from 'components/Common';
 import { useReviewFiles, useConvertToSVG, isFilePending } from 'hooks';
@@ -39,8 +40,7 @@ export const DiagramsSettingsBar = (props: Props) => {
     true
   );
 
-  const { tenant, workflowId } =
-    useParams<{ tenant: string; workflowId: string }>();
+  const { workflowId } = useParams<{ workflowId: string }>();
   const { isConverting } = useConvertToSVG(selectedDiagramsIds);
   const {
     onApproveDiagrams,
@@ -51,7 +51,9 @@ export const DiagramsSettingsBar = (props: Props) => {
 
   const onPreviewSelectedClick = () => {
     history.push(
-      diagramPreview.path(tenant, workflowId, selectedDiagramsIds[0])
+      getUrlWithQueryParams(
+        diagramPreview.path(workflowId, selectedDiagramsIds[0])
+      )
     );
   };
   const onSaveSVGClick = () => setShowModal(true);

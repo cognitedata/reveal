@@ -3,6 +3,7 @@ import { useHistory, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import { Body } from '@cognite/cogs.js';
 import { FileInfo } from '@cognite/sdk';
+import { getUrlWithQueryParams } from 'utils/config';
 import { diagramPreview } from 'routes/paths';
 import FileItem from './FileItem';
 
@@ -10,8 +11,8 @@ type ItemsListProps = { diagrams?: FileInfo[] };
 
 export default function ItemsList(props: ItemsListProps) {
   const history = useHistory();
-  const { tenant, workflowId, fileId } =
-    useParams<{ tenant: string; workflowId: string; fileId: string }>();
+  const { workflowId, fileId } =
+    useParams<{ workflowId: string; fileId: string }>();
 
   const { diagrams } = props;
 
@@ -27,7 +28,9 @@ export default function ItemsList(props: ItemsListProps) {
             file={file}
             isSelected={selectedFileId === file.id}
             onClick={() =>
-              history.push(diagramPreview.path(tenant, workflowId, file.id))
+              history.push(
+                getUrlWithQueryParams(diagramPreview.path(workflowId, file.id))
+              )
             }
           />
         ))}

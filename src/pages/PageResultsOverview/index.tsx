@@ -1,11 +1,11 @@
-import React, { useEffect, useContext } from 'react';
+import React, { useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { useQueryClient } from 'react-query';
 import { message } from 'antd';
 import { landingPage, diagramSelection } from 'routes/paths';
 import { useActiveWorkflow, useJobStatus, useStartJobs } from 'hooks';
-import { AppStateContext } from 'context';
+import { getUrlWithQueryParams } from 'utils/config';
 import { DiagramsSettingsBar } from 'containers';
 import { Flex, PageTitle } from 'components/Common';
 import { selectInteractiveDiagrams, WorkflowStep } from 'modules/workflows';
@@ -24,7 +24,6 @@ export default function PageResultsOverview(props: Props) {
   const history = useHistory();
   const dispatch = useDispatch();
   const client = useQueryClient();
-  const { tenant } = useContext(AppStateContext);
   const { workflowId } = useActiveWorkflow(step);
 
   const { workflow } = useSelector(getWorkflowItems(workflowId));
@@ -38,7 +37,8 @@ export default function PageResultsOverview(props: Props) {
 
   const areDiagramsSelected = Boolean(selectedDiagramsIds?.length);
 
-  const onGoBackHomePage = () => history.push(landingPage.path(tenant));
+  const onGoBackHomePage = () =>
+    history.push(getUrlWithQueryParams(landingPage.path()));
   const onSelectionClose = () => {
     dispatch(selectInteractiveDiagrams({ workflowId, diagramIds: [] }));
   };
@@ -46,7 +46,9 @@ export default function PageResultsOverview(props: Props) {
   useEffect(() => {
     if (!workflow) {
       message.error('Invalid data selections');
-      history.push(diagramSelection.path(tenant, String(workflowId)));
+      history.push(
+        getUrlWithQueryParams(diagramSelection.path(String(workflowId)))
+      );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [workflow]);
