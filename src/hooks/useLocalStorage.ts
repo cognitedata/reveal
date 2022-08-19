@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-const useLocalStorage = <T extends Object>(
+export const useLocalStorage = <T extends Object>(
   key: string,
   defaultValue: T
 ): [T, (value: T) => void] => {
@@ -25,8 +25,6 @@ const useLocalStorage = <T extends Object>(
 
   return [storedValue, setValue];
 };
-
-export default useLocalStorage;
 
 export const setItemInStorage = <T extends Object>(key: string, value: T) => {
   try {
