@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 
 import { endOf, currentDate, getDateOrDefaultText } from 'utils/date';
 import { SHORT_DATE_FORMAT } from 'utils/date/constants';

@@ -5,7 +5,7 @@ import { useClearPolygon } from 'domain/savedSearches/internal/hooks/useClearPol
 import { useClearQuery } from 'domain/savedSearches/internal/hooks/useClearQuery';
 import { useSetDocumentFilters } from 'domain/savedSearches/internal/hooks/useSetDocumentFilters';
 
-import React from 'react';
+import * as React from 'react';
 
 import isEmpty from 'lodash/isEmpty';
 

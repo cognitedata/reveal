@@ -1,6 +1,6 @@
 import { useIsOwner } from 'domain/user/internal/hooks/useIsOwner';
 
-import React from 'react';
+import * as React from 'react';
 import { useHistory } from 'react-router-dom';
 
 import {

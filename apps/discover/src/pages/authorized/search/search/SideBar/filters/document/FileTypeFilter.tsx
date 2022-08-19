@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 
 import { DEFAULT_FILTER_ITEM_LIMIT } from 'modules/documentSearch/constants';
 

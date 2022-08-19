@@ -2,7 +2,7 @@ import { useFeedbackDocumentStatus } from 'domain/documents/internal/hooks/useFe
 import { useDocumentFeedbackMutate } from 'domain/documents/service/queries/useDocumentFeedbackMutate';
 import { DocumentFeedbackType } from 'domain/documents/service/types';
 
-import React from 'react';
+import * as React from 'react';
 
 import styled from 'styled-components/macro';
 

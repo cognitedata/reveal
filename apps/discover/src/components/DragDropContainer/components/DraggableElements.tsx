@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import { Draggable } from 'react-beautiful-dnd';
 
 import { Flex } from 'styles/layout';

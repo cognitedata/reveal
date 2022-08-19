@@ -1,6 +1,6 @@
 import { SavedSearchItem } from 'domain/savedSearches/types';
 
-import React from 'react';
+import * as React from 'react';
 
 import { Button } from '@cognite/cogs.js';
 

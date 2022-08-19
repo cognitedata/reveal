@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 
 import { useDocumentResultRelatedCount } from 'modules/documentSearch/hooks/useDocumentResultRelatedCount';
 import { DocumentsFacets } from 'modules/documentSearch/types';

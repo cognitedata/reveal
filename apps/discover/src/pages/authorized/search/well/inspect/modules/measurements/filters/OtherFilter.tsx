@@ -1,6 +1,6 @@
 import { DepthMeasurementDataColumnInternal } from 'domain/wells/measurements/internal/types';
 
-import React from 'react';
+import * as React from 'react';
 
 import { useDeepEffect } from 'hooks/useDeep';
 

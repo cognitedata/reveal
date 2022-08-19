@@ -1,6 +1,6 @@
 import { DATA_AVAILABILITY_OPTIONS_LABELS } from 'domain/wells/well/internal/filters/getDataAvailabilityFilter';
 
-import React from 'react';
+import * as React from 'react';
 
 import { FilterIDs } from 'modules/wellSearch/constants';
 import { DATA_AVAILABILITY } from 'modules/wellSearch/constantsSidebarFilters';

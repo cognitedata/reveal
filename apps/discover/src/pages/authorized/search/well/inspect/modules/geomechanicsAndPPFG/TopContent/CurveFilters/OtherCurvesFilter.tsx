@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 
 import { CommonCurveFilter } from '../../components/CommonCurveFilter';
 import { CurvesFilterType } from '../../types';

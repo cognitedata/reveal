@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 
 import { BodyColumnMainHeader } from '../../../../common/Events/elements';
 import { SummarySection, SummarySectionContent } from '../elements';

@@ -3,7 +3,7 @@
  * using reselect selector & useSelect in combination for memoizing results
  * */
 
-import React from 'react';
+import * as React from 'react';
 
 import { useExternalLinksConfig } from 'hooks/useExternalLinksConfig';
 import useSelector from 'hooks/useSelector';

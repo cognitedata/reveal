@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-types */
-import React from 'react';
+import * as React from 'react';
 import { Cell, Row, TableOptions } from 'react-table';
 
 import { SortBy } from '../../pages/types';

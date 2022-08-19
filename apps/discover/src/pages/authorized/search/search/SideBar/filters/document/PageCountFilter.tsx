@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 
 import { useDocumentResultFacets } from 'modules/documentSearch/hooks/useDocumentResultFacets';
 import { FilterPayload } from 'pages/authorized/search/search/SideBar/types';

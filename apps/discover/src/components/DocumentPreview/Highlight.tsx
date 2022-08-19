@@ -1,6 +1,6 @@
 import { useDocumentHighlightedContent } from 'domain/documents/internal/hooks/useDocumentHighlightedContent';
 
-import React from 'react';
+import * as React from 'react';
 import SanitizedHTML from 'react-sanitized-html';
 
 import first from 'lodash/head';

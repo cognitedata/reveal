@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 
 import { Button, IconType, Label } from '@cognite/cogs.js';
 

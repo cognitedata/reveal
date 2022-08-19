@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 
 import { Distance } from 'convert-units';
 import { Fixed, toFixedNumberFromNumber } from 'utils/number';

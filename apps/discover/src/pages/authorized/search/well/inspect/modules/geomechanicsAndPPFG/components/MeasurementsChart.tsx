@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 
 import { ChartV2 } from '../../common/ChartV2';
 import { ChartProps } from '../../common/ChartV2/ChartV2';

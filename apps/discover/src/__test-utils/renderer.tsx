@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import Modal from 'react-modal';
 import { QueryClient } from 'react-query';
 import { Provider } from 'react-redux';

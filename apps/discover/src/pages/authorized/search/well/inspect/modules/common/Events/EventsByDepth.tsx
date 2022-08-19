@@ -1,7 +1,7 @@
 import { NdsInternal } from 'domain/wells/nds/internal/types';
 import { NptInternal } from 'domain/wells/npt/internal/types';
 
-import React from 'react';
+import * as React from 'react';
 
 import { FlexRow } from 'styles/layout';
 

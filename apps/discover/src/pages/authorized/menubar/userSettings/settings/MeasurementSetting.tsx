@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 
 import { Body, SegmentedControl } from '@cognite/cogs.js';
 import { UMSUserProfilePreferences } from '@cognite/user-management-service-types';

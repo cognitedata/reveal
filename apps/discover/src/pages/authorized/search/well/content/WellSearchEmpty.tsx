@@ -2,7 +2,7 @@ import { useClearAllFilters } from 'domain/savedSearches/internal/hooks/useClear
 import { useClearPolygon } from 'domain/savedSearches/internal/hooks/useClearPolygon';
 import { useClearQuery } from 'domain/savedSearches/internal/hooks/useClearQuery';
 
-import React from 'react';
+import * as React from 'react';
 
 import { TableEmpty } from 'components/TableEmpty';
 

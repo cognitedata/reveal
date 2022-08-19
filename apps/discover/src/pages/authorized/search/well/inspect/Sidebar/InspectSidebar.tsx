@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 
 import { BlockExpander } from 'components/BlockExpander/BlockExpander';
 import { HideButton } from 'components/Buttons';

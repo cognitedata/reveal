@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import { useLocation, useHistory } from 'react-router-dom';
 
 import styled from 'styled-components/macro';

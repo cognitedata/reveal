@@ -2,7 +2,7 @@ import { useDocumentSearchOneQuery } from 'domain/documents/service/queries/useD
 import { setObjectFeedbackSensitivityByAdmin } from 'domain/feedback/internal/actions/setObjectFeedbackSensitivityByAdmin';
 import { useFeedbackUpdateMutate } from 'domain/feedback/internal/actions/useFeedbackUpdateMutate';
 
-import React from 'react';
+import * as React from 'react';
 
 import { Button, Tooltip } from '@cognite/cogs.js';
 import { ObjectFeedbackResponse } from '@cognite/discover-api-types';

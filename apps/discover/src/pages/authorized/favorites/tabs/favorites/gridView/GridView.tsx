@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 
 import { CommentTarget } from '@cognite/comment-service-types';
 import { SetCommentTarget } from '@cognite/react-comments';

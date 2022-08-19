@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import { CellProps, Hooks, Row } from 'react-table';
 
 import { Icon } from '@cognite/cogs.js';

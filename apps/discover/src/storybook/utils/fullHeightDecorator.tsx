@@ -1,4 +1,4 @@
-// import React from 'react';
+// import * as React from 'react';
 // import { StoryFn, StoryContext } from '@storybook/addons';
 
 // function fullHeightDecorator<T>(storyFn: StoryFn<T>, context: StoryContext) {

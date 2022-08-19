@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
 import { useFilterAppliedFilters } from 'modules/sidebar/selectors';

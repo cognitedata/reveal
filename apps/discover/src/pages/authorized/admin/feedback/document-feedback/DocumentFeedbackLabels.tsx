@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 
 import { Label, Flex } from '@cognite/cogs.js';
 import { ObjectFeedbackResponse } from '@cognite/discover-api-types';

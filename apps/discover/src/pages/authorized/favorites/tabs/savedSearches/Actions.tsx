@@ -1,6 +1,6 @@
 import { SavedSearchItem } from 'domain/savedSearches/types';
 
-import React from 'react';
+import * as React from 'react';
 import { Row } from 'react-table';
 
 import styled from 'styled-components/macro';

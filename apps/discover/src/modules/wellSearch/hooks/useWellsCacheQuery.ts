@@ -2,7 +2,7 @@ import { normalizeWell } from 'domain/wells/well/internal/transformers/normalize
 import { WellInternal } from 'domain/wells/well/internal/types';
 import { getWellsByIds } from 'domain/wells/well/service/network/getWellsById';
 
-import React from 'react';
+import * as React from 'react';
 import { useQuery, useQueryClient, UseQueryResult } from 'react-query';
 
 import concat from 'lodash/concat';

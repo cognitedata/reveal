@@ -3,7 +3,7 @@ import { useClearQuery } from 'domain/savedSearches/internal/hooks/useClearQuery
 import { useClearWellsFilters } from 'domain/savedSearches/internal/hooks/useClearWellsFilters';
 import { useSetWellsFilters } from 'domain/savedSearches/internal/hooks/useSetWellsFilters';
 
-import React from 'react';
+import * as React from 'react';
 
 import isUndefined from 'lodash/isUndefined';
 import styled from 'styled-components/macro';

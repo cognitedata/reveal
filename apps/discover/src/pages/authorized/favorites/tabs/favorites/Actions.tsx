@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 
 import { MoreOptionsButton } from 'components/Buttons';
 import { Dropdown } from 'components/Dropdown';

@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 
 import { MUD_LINE_COLOR, RKB_COLOR, SEA_LEVEL_COLOR } from '../../constants';
 

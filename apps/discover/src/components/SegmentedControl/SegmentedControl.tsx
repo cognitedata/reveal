@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 
 import { SegmentedControl as SegmentedControlOriginal } from '@cognite/cogs.js';
 

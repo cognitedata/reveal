@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 
 import { NavigationPanel } from 'components/NavigationPanel';
 import { OverlayNavigation } from 'components/OverlayNavigation';

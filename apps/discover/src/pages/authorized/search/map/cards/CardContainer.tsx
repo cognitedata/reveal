@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 
 import { LngLatLike, Map } from 'maplibre-gl';
 

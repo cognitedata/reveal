@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import { useQueryClient } from 'react-query';
 import { useDispatch } from 'react-redux';
 import { Row } from 'react-table';

@@ -1,6 +1,6 @@
 import { WellInternal } from 'domain/wells/well/internal/types';
 
-import React from 'react';
+import * as React from 'react';
 
 import map from 'lodash/map';
 

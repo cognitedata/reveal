@@ -1,6 +1,6 @@
 import { useWellSearchResultQuery } from 'domain/wells/well/internal/queries/useWellSearchResultQuery';
 
-import React from 'react';
+import * as React from 'react';
 
 import isEmpty from 'lodash/isEmpty';
 

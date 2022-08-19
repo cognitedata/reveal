@@ -3,7 +3,7 @@ import {
   NptInternal,
 } from 'domain/wells/npt/internal/types';
 
-import React from 'react';
+import * as React from 'react';
 
 import { getDateOrDefaultText } from 'utils/date';
 

@@ -1,6 +1,6 @@
 import { NdsInternal } from 'domain/wells/nds/internal/types';
 
-import React from 'react';
+import * as React from 'react';
 
 import isEmpty from 'lodash/isEmpty';
 

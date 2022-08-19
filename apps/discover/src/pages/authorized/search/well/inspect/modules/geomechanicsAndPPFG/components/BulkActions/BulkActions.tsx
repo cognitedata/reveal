@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 
 import { CloseButton, BaseButton } from 'components/Buttons';
 import TableBulkActions from 'components/TableBulkActions';

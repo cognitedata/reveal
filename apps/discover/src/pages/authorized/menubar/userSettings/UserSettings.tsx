@@ -1,6 +1,6 @@
 import { useUpdateMyPreferencesMutate } from 'domain/userManagementService/internal/actions/useUpdateMyPreferencesMutate';
 
-import React from 'react';
+import * as React from 'react';
 
 import { Dropdown, Title, Menu, TopBar, Icon } from '@cognite/cogs.js';
 import { UMSUserProfilePreferences } from '@cognite/user-management-service-types';

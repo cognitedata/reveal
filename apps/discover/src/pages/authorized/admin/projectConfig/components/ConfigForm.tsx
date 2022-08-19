@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 
 import { ConfigFormFields } from '../fields';
 import { ConfigFormProps } from '../types';

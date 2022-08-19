@@ -1,6 +1,6 @@
 import { WellTopSurfaceInternal } from 'domain/wells/wellTops/internal/types';
 
-import React from 'react';
+import * as React from 'react';
 
 import { DepthSegment } from '../SchemaColumn/components/DepthIndicator/DepthSegment';
 

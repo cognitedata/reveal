@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 
 import { DEPTH_INDICATOR_END_HEIGHT, DEPTH_SEGMENT_COLOR } from './constants';
 import {

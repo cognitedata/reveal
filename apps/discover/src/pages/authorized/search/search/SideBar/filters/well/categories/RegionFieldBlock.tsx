@@ -1,6 +1,6 @@
 import { useWellGroupsQuery } from 'domain/wells/well/internal/queries/useWellGroupsQuery';
 
-import React from 'react';
+import * as React from 'react';
 
 import isEmpty from 'lodash/isEmpty';
 import isUndefined from 'lodash/isUndefined';

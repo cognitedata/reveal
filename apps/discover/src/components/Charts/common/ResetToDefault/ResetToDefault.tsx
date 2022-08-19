@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 
 import { BaseButton } from 'components/Buttons';
 import EmptyState from 'components/EmptyState';

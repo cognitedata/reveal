@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 
 import { CLEAR_ALL_TEXT } from 'components/TableEmpty/constants';
 import { useTranslation } from 'hooks/useTranslation';

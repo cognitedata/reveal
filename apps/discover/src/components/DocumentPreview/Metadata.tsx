@@ -1,7 +1,7 @@
 import { useDocumentLabelsByExternalIds } from 'domain/documents/internal/hooks/useDocumentLabels';
 import { useDocumentAssetNames } from 'domain/documents/internal/queries/useDocumentAssetNames';
 
-import React from 'react';
+import * as React from 'react';
 
 import MetadataTable from 'components/MetadataTable';
 import { EMPTY_ARRAY } from 'constants/empty';

@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 
 import { FilterIDs } from 'modules/wellSearch/constants';
 import { OPERATOR } from 'modules/wellSearch/constantsSidebarFilters';

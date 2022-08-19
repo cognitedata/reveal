@@ -2,7 +2,7 @@
  * Commented code it related to NDS/NPT detail page functionality. It has been remporarily
  * Removed from Stick chart tab so code is kept in case it is needed in future.
  */
-import React from 'react';
+import * as React from 'react';
 
 import { Button } from '@cognite/cogs.js';
 

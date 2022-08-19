@@ -1,6 +1,6 @@
 import { filterWellInspectNptData } from 'domain/wells/npt/internal/selectors/filterWellInspectNptData';
 
-import React from 'react';
+import * as React from 'react';
 
 import { Loading } from 'components/Loading';
 import { useDeepMemo } from 'hooks/useDeep';

@@ -1,6 +1,6 @@
 import { useUserInfoQuery } from 'domain/userManagementService/internal/queries/useUserInfoQuery';
 
-import React from 'react';
+import * as React from 'react';
 
 import { UserAvatar } from 'components/UserAvatar/UserAvatar';
 

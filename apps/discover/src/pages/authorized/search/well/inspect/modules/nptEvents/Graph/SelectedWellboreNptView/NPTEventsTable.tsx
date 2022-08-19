@@ -1,6 +1,6 @@
 import { NptView } from 'domain/wells/npt/internal/types';
 
-import React from 'react';
+import * as React from 'react';
 
 import { Table } from 'components/Tablev3';
 

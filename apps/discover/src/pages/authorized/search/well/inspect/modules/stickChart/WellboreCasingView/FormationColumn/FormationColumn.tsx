@@ -1,6 +1,6 @@
 import { WellTopsInternal } from 'domain/wells/wellTops/internal/types';
 
-import React from 'react';
+import * as React from 'react';
 
 import isUndefined from 'lodash/isUndefined';
 

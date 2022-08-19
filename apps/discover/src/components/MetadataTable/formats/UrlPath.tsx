@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import CopyToClipboard from 'react-copy-to-clipboard';
 
 import { openExternalPage } from 'utils/openExternalPage';
