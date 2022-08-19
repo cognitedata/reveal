@@ -1,5 +1,5 @@
 export interface AppState {
-  tenant?: string;
+  project?: string;
   cdfEnv?: string;
   loaded: boolean;
   groups: { [key: string]: string[] };

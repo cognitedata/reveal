@@ -2,11 +2,7 @@ import { WorkflowStep } from 'modules/workflows';
 import { paths } from './paths';
 
 export type PathData = {
-  path: (
-    tenant: string,
-    workflowId?: string | number,
-    fileId?: string | number
-  ) => string;
+  path: (workflowId?: string | number, fileId?: string | number) => string;
   staticPath: string;
   title: string;
   workflowStepName?: WorkflowStep;

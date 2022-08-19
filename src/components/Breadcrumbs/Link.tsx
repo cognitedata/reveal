@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link as RouterLink } from 'react-router-dom';
-import { createLink } from '@cognite/cdf-utilities';
+import { getUrlWithQueryParams } from 'utils/config';
 
 type Props = {
   to: string;
@@ -8,12 +8,12 @@ type Props = {
 };
 
 // Link replaces the default Link component from react-router-dom
-//   by prefixing all links with /tenant/ and suffixing them with
+//   by prefixing all links with /project/ and suffixing them with
 //   ?env=environment when necessary, so subapps don't have to add that
 //   to all links
 // Everything else behaves like the react-router-dom Link component
 const Link = ({ to, ...props }: Props) => {
-  const link = createLink(to);
+  const link = getUrlWithQueryParams(to);
   return (
     <RouterLink to={link} {...props}>
       {props.children}

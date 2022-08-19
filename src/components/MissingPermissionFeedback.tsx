@@ -13,7 +13,7 @@ type Props = {
 export default function MissingPermissionFeedback(props: Props) {
   const { acl, type } = props;
   const history = useHistory();
-  const { tenant } = useParams<{ tenant: string }>();
+  const { project } = useParams<{ project: string }>();
   const { flow } = getFlow();
   const { data: hasPermission } = usePermissions(flow, acl, type);
   const { data: groupPermission } = usePermissions(flow, 'groupsAcl', 'WRITE');
@@ -21,9 +21,9 @@ export default function MissingPermissionFeedback(props: Props) {
   const navigate = useMemo(
     () => (event: SyntheticEvent) => {
       event.preventDefault();
-      history.push(`/${tenant}/access-management`);
+      history.push(`/${project}/access-management`);
     },
-    [history, tenant]
+    [history, project]
   );
 
   useEffect(() => {
@@ -34,7 +34,7 @@ export default function MissingPermissionFeedback(props: Props) {
         description: (
           <p>
             Go to{' '}
-            <a onClick={navigate} href={`/${tenant}/access-management`}>
+            <a onClick={navigate} href={`/${project}/access-management`}>
               Access Management
             </a>{' '}
             and set up any missing permissions or contact your administrator!
@@ -42,7 +42,7 @@ export default function MissingPermissionFeedback(props: Props) {
         ),
       });
     }
-  }, [navigate, groupPermission, tenant]);
+  }, [navigate, groupPermission, project]);
 
   useEffect(() => {
     if (groupPermission && !hasPermission) {
@@ -51,7 +51,7 @@ export default function MissingPermissionFeedback(props: Props) {
         description: (
           <p>
             Go to{' '}
-            <a onClick={navigate} href={`/${tenant}/access-management`}>
+            <a onClick={navigate} href={`/${project}/access-management`}>
               Access Management
             </a>{' '}
             and set up any missing permissions or contact your administrator!
@@ -59,7 +59,7 @@ export default function MissingPermissionFeedback(props: Props) {
         ),
       });
     }
-  }, [navigate, groupPermission, hasPermission, acl, type, tenant]);
+  }, [navigate, groupPermission, hasPermission, acl, type, project]);
 
   return <></>;
 }

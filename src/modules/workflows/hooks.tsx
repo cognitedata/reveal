@@ -1,11 +1,10 @@
-import { useMemo, useContext } from 'react';
+import { useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { useCdfItems, useList } from '@cognite/sdk-react-query-hooks';
 import { Asset, FileInfo, IdEither } from '@cognite/sdk';
 import { useLocalStorage } from '@cognite/cogs.js';
 import { diagramSelection } from 'routes/paths';
-import { AppStateContext } from 'context';
 import { LS_SAVED_SETTINGS } from 'stringConstants';
 import { ResourceType } from 'modules/sdk-builder/types';
 import {
@@ -23,13 +22,12 @@ import {
 } from 'modules/workflows';
 import { selectParsingJobs } from 'hooks';
 import { RootState } from 'store/reducer';
-import { NUM_OF_RESOURCES_CHECKED } from 'utils/config';
+import { NUM_OF_RESOURCES_CHECKED, getUrlWithQueryParams } from 'utils/config';
 
 /**
  * Creates a new workflow.
  */
 export const useWorkflowCreateNew = () => {
-  const { tenant } = useContext(AppStateContext);
   const dispatch = useDispatch();
   const history = useHistory();
 
@@ -47,7 +45,9 @@ export const useWorkflowCreateNew = () => {
     dispatch(
       createNewWorkflow({ workflowId: newWorkflowId, options, ...(args ?? {}) })
     );
-    history.push(diagramSelection.path(tenant, String(newWorkflowId)));
+    history.push(
+      getUrlWithQueryParams(diagramSelection.path(String(newWorkflowId)))
+    );
   };
 
   return { createWorkflow };

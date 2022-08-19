@@ -1,5 +1,4 @@
 import React from 'react';
-import { generatePath } from 'react-router';
 import { useLocation, useParams } from 'react-router-dom';
 import 'antd/dist/antd.css';
 import { WorkflowStep } from 'modules/workflows';
@@ -10,11 +9,11 @@ import { StepsType } from './types';
 export const StepsList = () => {
   const location = useLocation();
   const {
-    tenant = 'unknown',
+    project = 'unknown',
     workflowId = 'unknown',
     fileId = 'unknown',
   } = useParams<{
-    tenant?: string;
+    project?: string;
     workflowId?: string;
     fileId?: string;
   }>();
@@ -22,20 +21,13 @@ export const StepsList = () => {
 
   const stepList: StepsType[] = steps.map((route: PathData) => {
     const { title } = route;
-    const path = generatePath(route.staticPath, {
-      tenant,
-      workflowId,
-      fileId,
-    });
+    const path = route.path(workflowId, fileId);
+
     const workflowStep: WorkflowStep | undefined =
       route.workflowStepName ?? undefined;
     const substeps = route.substeps
       ? route.substeps.map((substep) => ({
-          path: generatePath(substep.staticPath, {
-            tenant,
-            workflowId,
-            fileId,
-          }),
+          path: substep.path(workflowId, fileId),
           title: substep.title,
           workflowStep: substep.workflowStepName ?? undefined,
         }))
@@ -47,10 +39,11 @@ export const StepsList = () => {
       substeps,
     };
   });
+
   const currentStep = stepList.findIndex((step: StepsType) => {
-    const isCurrentStep = step.path === location.pathname;
+    const isCurrentStep = `/${project}${step.path}` === location.pathname;
     const isCurrentSubstep = step.substeps?.find(
-      (substep) => substep.path === location.pathname
+      (substep) => `/${project}${substep.path}` === location.pathname
     );
     return isCurrentStep || isCurrentSubstep;
   });
