@@ -47,6 +47,7 @@ export default function App() {
   const { username } = useUserId();
 
   const cdfEnvFromUrl = queryString.parse(window.location.search).env as string;
+  const LS_KEY = `${LS_KEY_PREFIX}${tenant}`;
 
   const { flow } = getFlow();
   const { data: userInfo } = useUserInformation();

@@ -17,7 +17,7 @@ import {
 import { createBrowserHistory } from 'history';
 import debounce from 'lodash/debounce';
 
-import { setItemInStorage } from 'hooks/useLocalStorage';
+import { LS_KEY_PREFIX, setItemInStorage } from 'hooks/useLocalStorage';
 import store, { persistedState, loadLocalStorage } from 'store';
 import { AppStateProvider } from 'context';
 import { root } from 'routes/paths';
@@ -29,11 +29,11 @@ const App = () => {
   const history = createBrowserHistory();
   const project = getProject();
   const env = getEnv();
-  const LS_KEY = `PNID_CONTEXTUALIZATION_${project}`;
+  const LS_KEY = `${LS_KEY_PREFIX}${project}`;
 
   const updateLocalStorage = debounce(() => {
     const localStorageContent = persistedState(store.getState());
-    setItemInStorage(LS_KEY, JSON.stringify(localStorageContent));
+    setItemInStorage(LS_KEY, localStorageContent);
   }, 333);
 
   const queryClient = new QueryClient({

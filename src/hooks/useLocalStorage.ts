@@ -1,25 +1,25 @@
 import { useState } from 'react';
-import isFunction from 'lodash/isFunction';
 
-const useLocalStorage = <T>(
+export const LS_KEY_PREFIX = `PNID_CONTEXTUALIZATION_`;
+
+const useLocalStorage = <T extends Object>(
   key: string,
   defaultValue: T
-): [T, (val: T) => void] => {
+): [T, (value: T) => void] => {
   const [storedValue, setStoredValue] = useState(() => {
     try {
-      const item = window.localStorage.getItem(key);
-      return item ? JSON.parse(item) : defaultValue;
+      const item = localStorage.getItem(key);
+      return item ? (JSON.parse(item) as T) : defaultValue;
     } catch (error) {
       // Silently fail
       return defaultValue;
     }
   });
 
-  const setValue = (value: any) => {
+  const setValue = (value: T) => {
     try {
-      const valueToStore = isFunction(value) ? value(storedValue) : value;
-      setStoredValue(valueToStore);
-      window.localStorage.setItem(key, valueToStore);
+      setStoredValue(value);
+      localStorage.setItem(key, JSON.stringify(value));
     } catch (error) {
       // Silently fail
     }
@@ -30,19 +30,19 @@ const useLocalStorage = <T>(
 
 export default useLocalStorage;
 
-export const setItemInStorage = (key: string, data: any) => {
+export const setItemInStorage = <T extends Object>(key: string, value: T) => {
   try {
-    localStorage.setItem(key, data);
-  } catch (e) {
+    localStorage.setItem(key, JSON.stringify(value));
+  } catch (error) {
     // silently fail
   }
 };
 
-export const getItemFromStorage = (key: string) => {
+export const getItemFromStorage = <T extends Object>(key: string) => {
   try {
     const data = localStorage.getItem(key);
-    return data ? JSON.parse(data) : undefined;
-  } catch (e) {
+    return data ? (JSON.parse(data) as T) : undefined;
+  } catch (error) {
     // silently fail
     return undefined;
   }
