@@ -2,7 +2,7 @@ import {
   MutationSearchProps,
   MutationSearchResults,
   mutationType,
-} from 'types';
+} from './types';
 
 /**
  * Used along with observeDOM, acts as a helper to find your desired mutations
