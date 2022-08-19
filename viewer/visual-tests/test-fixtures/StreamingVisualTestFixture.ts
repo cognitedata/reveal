@@ -77,6 +77,7 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
     this._sceneHandler = new SceneHandler();
 
     this._renderer = new THREE.WebGLRenderer();
+
     this._renderer.setPixelRatio(window.devicePixelRatio);
 
     this._controls = new OrbitControls(this._perspectiveCamera, this._renderer.domElement);
@@ -130,6 +131,7 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
 
     const { position, target } = fitCameraToBoundingBox(this._perspectiveCamera, boundingBox, 1.5);
     this._perspectiveCamera.position.copy(position);
+
     this._controls.target.copy(target);
     this._perspectiveCamera.updateMatrixWorld();
 
