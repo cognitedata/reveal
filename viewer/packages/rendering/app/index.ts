@@ -66,7 +66,14 @@ async function init() {
 
   const sceneHandler = new SceneHandler();
 
-  const pointCloudManager = createPointCloudManager(metadataProvider, dataProvider, sceneHandler.scene, renderer, undefined, true);
+  const pointCloudManager = createPointCloudManager(
+    metadataProvider,
+    dataProvider,
+    sceneHandler.scene,
+    renderer,
+    undefined,
+    true
+  );
   pointCloudManager.pointBudget = 1_000_000;
   const cadManager = new CadManager(materialManager, cadModelFactory, cadModelUpdateHandler);
   cadManager.budget = defaultDesktopCadModelBudget;
