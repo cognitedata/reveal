@@ -8,7 +8,7 @@ import ItemsList from './ItemsList';
 
 export default function JobDiagrams() {
   const { workflowId } =
-    useParams<{ tenant: string; workflowId: string; fileId: string }>();
+    useParams<{ project: string; workflowId: string; fileId: string }>();
   const { diagrams } = useWorkflowItems(Number(workflowId), true);
   const [query, setQuery] = useState<string>('');
 

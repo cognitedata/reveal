@@ -36,14 +36,14 @@ export default function App() {
   const {
     cdfEnv: cdfEnvFromContext,
     setCdfEnv,
-    setTenant,
+    setProject,
   } = useContext(AppStateContext);
   const history = useHistory();
   const { location } = history;
   const { pathname, search, hash } = useLocation();
   const {
-    params: { tenant: tenantFromUrl },
-  } = useRouteMatch<{ tenant: string }>();
+    params: { project: projectFromUrl },
+  } = useRouteMatch<{ project: string }>();
   const { username } = useUserId();
 
   const cdfEnvFromUrl = queryString.parse(window.location.search).env as string;
@@ -52,9 +52,9 @@ export default function App() {
   const { data: userInfo } = useUserInformation();
 
   useEffect(() => {
-    setTenant(tenantFromUrl);
+    setProject(projectFromUrl);
     setCdfEnv(cdfEnvFromUrl);
-  }, [tenantFromUrl, cdfEnvFromUrl, setTenant, setCdfEnv]);
+  }, [projectFromUrl, cdfEnvFromUrl, setCdfEnv, setProject]);
 
   useEffect(() => {
     if (cdfEnvFromContext && !cdfEnvFromUrl) {
@@ -106,7 +106,7 @@ export default function App() {
                   path={staticRoot}
                   component={useMemo(() => Routes, [])}
                 />
-                <Route path="/:tenant/*" component={() => <NotFound />} />
+                <Route path="/:project/*" component={() => <NotFound />} />
               </Switch>
             </DataExplorationProvider>
           </ResourceActionsProvider>

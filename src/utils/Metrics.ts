@@ -14,7 +14,7 @@ export const trackUsage = (
     return;
   }
 
-  const pathWithoutTenant = pathname.substring(pathname.indexOf('/', 1));
+  const pathWithoutProject = pathname.substring(pathname.indexOf('/', 1));
   const username = getItemFromStorage('context-ui-pnid-username') ?? 'unknown';
 
   if (host.indexOf('localhost') === -1) {
@@ -25,7 +25,7 @@ export const trackUsage = (
       appVersion: process.env.REACT_APP_VERSION,
       location: pathname,
       user: username,
-      pathname: pathWithoutTenant,
+      pathname: pathWithoutProject,
     });
   }
 };

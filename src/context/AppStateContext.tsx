@@ -5,8 +5,8 @@ import { ModelSelected, ResourceCount } from 'modules/types';
 
 export type PrefixType = 'custom' | 'original';
 export type AppStateContextType = {
-  tenant: string;
-  setTenant: (tenant: string) => void;
+  project: string;
+  setProject: (project: string) => void;
   cdfEnv: string;
   setCdfEnv: (cdfEnv: string) => void;
   setSavedSettings: (savedSettings: any) => void;
@@ -29,7 +29,7 @@ export const AppStateProvider = ({ children }: AppStateType) => {
     modelSelected: 'standard',
   });
 
-  const [tenant, setTenant] = useState<string>('');
+  const [project, setProject] = useState<string>('');
   const [cdfEnv, setCdfEnv] = useState<string>('');
   const [skipSettings, setSkipSettings] = useState<boolean>(
     () => savedSettings?.skip ?? false
@@ -44,8 +44,8 @@ export const AppStateProvider = ({ children }: AppStateType) => {
   return (
     <AppStateContext.Provider
       value={{
-        tenant,
-        setTenant,
+        project,
+        setProject,
         cdfEnv,
         setCdfEnv,
         setSavedSettings,
