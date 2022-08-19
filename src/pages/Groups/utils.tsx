@@ -54,6 +54,8 @@ const nameToAclTypeMap = {
   templateinstances: 'templateInstancesAcl',
   visionmodel: 'visionModelAcl',
   wells: 'wellsAcl',
+  datamodels: 'dataModelsAcl',
+  datamodelinstances: 'dataModelInstancesAcl',
 };
 
 const getCapabilityNameTranslationKey = {
@@ -78,9 +80,14 @@ const getCapabilityNameTranslationKey = {
   templateinstances: 'template-instances',
   visionmodel: 'vision-model',
   geospatialcrs: 'geospatial-crs',
+  datamodels: 'data-models',
+  datamodelinstances: 'data-model-instances',
 };
 
-const prepareCapabilityTypeGroups = (_t: (key: TranslationKeys) => string) => {
+const prepareCapabilityTypeGroups = (
+  _t: (key: TranslationKeys) => string,
+  isDataModelsEnabled: boolean
+) => {
   const capabilityTypeGroups = [
     {
       name: _t('data'),
@@ -96,6 +103,7 @@ const prepareCapabilityTypeGroups = (_t: (key: TranslationKeys) => string) => {
         'timeseries',
         'templategroups',
         'templateinstances',
+        ...(isDataModelsEnabled ? ['datamodels', 'datamodelinstances'] : []),
       ],
     },
     {
@@ -162,6 +170,8 @@ export const capabilityDescriptions = {
   templateinstances: 'capability-desc-templateinstances',
   wells: 'capability-desc-wells',
   visionmodel: 'capability-desc-visionmodel',
+  datamodels: 'capability-desc-data-models',
+  datamodelinstances: 'capability-desc-data-model-instances',
 };
 
 const deprecatedAclTypes = ['genericsAcl', 'modelHostingAcl', 'typesAcl'];
@@ -253,9 +263,13 @@ export const getCapabilityFormattedName = (
 };
 
 export const getCapabilityTypeGroups = (
-  _t: (key: TranslationKeys) => string
+  _t: (key: TranslationKeys) => string,
+  isDataModelsEnabled: boolean
 ) => {
-  const { capabilityTypeGroups } = prepareCapabilityTypeGroups(_t);
+  const { capabilityTypeGroups } = prepareCapabilityTypeGroups(
+    _t,
+    isDataModelsEnabled
+  );
   const filteredGroups = capabilityTypeGroups.map((group) => {
     const filteredItems = group.items.filter(
       (item) => !!getCapabilityName(item)
@@ -312,6 +326,9 @@ export const getScopeLabel = (
         case 'securitycategories':
           return _t('security-categories');
       }
+    case 'dataModelScope':
+    case 'spaceScope':
+      return _t('external-ids');
   }
   return null;
 };
@@ -392,6 +409,10 @@ export const getCapabilityScopes = (
     case 'labels': {
       return ['datasetScope', 'all'];
     }
+    case 'datamodels':
+      return ['dataModelScope', 'all'];
+    case 'datamodelinstances':
+      return ['spaceScope', 'all'];
     default:
       return ['all'];
   }

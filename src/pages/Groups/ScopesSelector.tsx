@@ -12,6 +12,7 @@ import PartitionSelector from './PartitionSelector';
 import ResourcesSelector from './ResourcesSelector';
 import RawSelector from './RawSelector';
 import { useTranslation } from 'common/i18n';
+import ExternalIdSelector from './ExternalIdSelector';
 
 const SelectorContainer = styled.div`
   margin-top: 10px;
@@ -54,13 +55,23 @@ const ScopesSelector = ({ capabilityKey, value, onChange }: Props) => {
     case 'partition':
       selectedResources = value.partition.partitionIds;
       break;
+    case 'dataModelScope':
+      selectedResources = value.dataModelScope.externalIds;
+      break;
+    case 'spaceScope':
+      selectedResources = value.spaceScope.externalIds;
+      break;
     default:
       break;
   }
 
   selectedResources = Array.isArray(selectedResources)
     ? selectedResources.map((r) =>
-        typeof r === 'string' ? parseInt(r, 10) : r
+        selectedScope !== 'dataModelScope' &&
+        selectedScope !== 'spaceScope' &&
+        typeof r === 'string'
+          ? parseInt(r, 10)
+          : r
       )
     : selectedResources;
 
@@ -98,13 +109,19 @@ const ScopesSelector = ({ capabilityKey, value, onChange }: Props) => {
       case 'partition':
         scope = { partition: { partitionIds: [] } };
         break;
+      case 'dataModelScope':
+        scope = { dataModelScope: { externalIds: [] } };
+        break;
+      case 'spaceScope':
+        scope = { spaceScope: { externalIds: [] } };
+        break;
       default:
         break;
     }
     onChange(scope);
   };
 
-  const onChangeResource = (newSelectedResources: number[]) => {
+  const onChangeResource = (newSelectedResources: (number | string)[]) => {
     let scope = value;
     switch (selectedScope) {
       case 'assetIdScope':
@@ -134,6 +151,12 @@ const ScopesSelector = ({ capabilityKey, value, onChange }: Props) => {
       case 'partition':
         scope = { partition: { partitionIds: newSelectedResources } };
         break;
+      case 'dataModelScope':
+        scope = { dataModelScope: { externalIds: newSelectedResources } };
+        break;
+      case 'spaceScope':
+        scope = { spaceScope: { externalIds: newSelectedResources } };
+        break;
       default:
         break;
     }
@@ -160,6 +183,14 @@ const ScopesSelector = ({ capabilityKey, value, onChange }: Props) => {
             limit={RESOURCE_SELECTOR_LIMIT}
             itemFilter={(ds: DataSet) => ds.metadata?.archived !== 'true'}
             downloadAll
+          />
+        );
+      case 'spaceScope':
+      case 'dataModelScope':
+        return (
+          <ExternalIdSelector
+            value={selectedResources}
+            onChange={onChangeResource}
           />
         );
       case 'assetRootIdScope':
