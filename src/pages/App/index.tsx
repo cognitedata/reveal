@@ -17,7 +17,7 @@ import {
 import sdk, { getFlow } from '@cognite/cdf-sdk-singleton';
 
 import queryString from 'query-string';
-import { trackUsage } from 'utils/Metrics';
+import { trackUsage, LS_KEY_METRICS } from 'utils/Metrics';
 import {
   ResourceActionsProvider,
   ResourceSelectionProvider,
@@ -47,7 +47,6 @@ export default function App() {
   const { username } = useUserId();
 
   const cdfEnvFromUrl = queryString.parse(window.location.search).env as string;
-  const LS_KEY = `${LS_KEY_PREFIX}${tenant}`;
 
   const { flow } = getFlow();
   const { data: userInfo } = useUserInformation();
@@ -69,7 +68,7 @@ export default function App() {
   useEffect(() => {
     if (username) {
       // to be used in metrics
-      setItemInStorage('context-ui-pnid-username', username);
+      setItemInStorage(LS_KEY_METRICS, { username });
     }
     trackUsage('App.Load');
   }, [username]);
