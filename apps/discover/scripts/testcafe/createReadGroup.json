@@ -123,6 +123,22 @@
               "all": {}
             }
           }
+        },
+        {
+          "dataModelsAcl": {
+            "actions": ["READ"],
+            "scope": {
+              "all": {}
+            }
+          }
+        },
+        {
+          "dataModelInstancesAcl": {
+            "actions": ["READ"],
+            "scope": {
+              "all": {}
+            }
+          }
         }
       ]
     }

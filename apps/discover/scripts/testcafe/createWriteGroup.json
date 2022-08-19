@@ -157,6 +157,22 @@
           }
         },
         {
+          "dataModelsAcl": {
+            "actions": ["READ", "WRITE"],
+            "scope": {
+              "all": {}
+            }
+          }
+        },
+        {
+          "dataModelInstancesAcl": {
+            "actions": ["READ", "WRITE"],
+            "scope": {
+              "all": {}
+            }
+          }
+        },
+        {
           "experimentAcl": {
             "actions": ["USE"],
             "scope": {
