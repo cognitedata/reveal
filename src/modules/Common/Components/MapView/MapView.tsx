@@ -1,5 +1,11 @@
 /* eslint-disable @cognite/no-number-z-index */
-import React, { useMemo, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { FileMapTableProps } from 'src/modules/Common/Components/FileTable/types';
 import { MapFileTable } from 'src/modules/Common/Components/MapFileTable/MapFileTable';
 import styled from 'styled-components';
@@ -26,6 +32,7 @@ export const MapView = (props: FileMapTableProps<TableDataItem>) => {
   const [mapActive, setMapActive] = useState<boolean>(true);
   const [center, setCenter] = useState<[number, number]>();
   const [zoom] = useState<[number] | undefined>([2]);
+  const mapObj = useRef<MapboxGL.Map | null>(null);
 
   const fitBounds = undefined; // TODO: calculate this based on the provided data
 
@@ -33,7 +40,10 @@ export const MapView = (props: FileMapTableProps<TableDataItem>) => {
     return props.data || [];
   }, [props.data]);
 
-  const handleStyleLoad = (map: MapboxGL.Map) => map.resize();
+  const handleStyleLoad = useCallback((map: MapboxGL.Map) => {
+    map.resize();
+    mapObj.current = map;
+  }, []);
 
   const mapStyle = {
     display: 'flex',
@@ -103,6 +113,14 @@ export const MapView = (props: FileMapTableProps<TableDataItem>) => {
       }
     }
   };
+
+  // resize map on rerender
+  useEffect(() => {
+    if (mapObj.current) {
+      mapObj.current?.resize();
+      console.log('map resized!');
+    }
+  });
 
   return (
     <Container>
