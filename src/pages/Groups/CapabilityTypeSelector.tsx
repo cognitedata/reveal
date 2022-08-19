@@ -35,7 +35,7 @@ const Capability = styled.div`
 `;
 
 const CapabilityName = styled.div`
-  width: 25%;
+  width: 32%;
   white-space: normal;
   padding-left: 10px;
 `;
