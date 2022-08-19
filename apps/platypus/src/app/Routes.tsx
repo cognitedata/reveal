@@ -7,9 +7,11 @@ import { DataModel } from './modules/solution/DataModel';
 import { NavigationDataModel } from './components/Navigations/NavigationDataModel';
 import { Spinner } from './components/Spinner/Spinner';
 import { useFusionQuery } from './hooks/useFusionQuery';
+import { useMixpanel } from './hooks/useMixpanel';
 
 const Routes = () => {
   useFusionQuery();
+  useMixpanel();
   return (
     <React.Suspense fallback={<Spinner />}>
       <Switch>

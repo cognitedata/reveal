@@ -25,6 +25,7 @@ import {
 } from '@platypus-app/hooks/useDataModelActions';
 import { usePreviewPageData } from '../hooks/usePreviewPageData';
 import { PreviewPageHeader } from '../components/PreviewPageHeader/PreviewPageHeader';
+import { Mixpanel, TRACKING_TOKENS } from '@platypus-app/utils/mixpanel';
 export interface PreviewProps {
   dataModelExternalId: string;
 }
@@ -77,6 +78,9 @@ export const Preview = ({ dataModelExternalId }: PreviewProps) => {
       },
       {
         onSuccess: () => {
+          Mixpanel.track(TRACKING_TOKENS.Transformations, {
+            dataModel: dataModelExternalId,
+          });
           setIsModalOpen(true);
         },
       }

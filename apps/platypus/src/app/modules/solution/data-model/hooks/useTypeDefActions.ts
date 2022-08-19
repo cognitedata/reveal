@@ -2,6 +2,7 @@ import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import { actions as dataModelActions } from '@platypus-app/redux/reducers/global/dataModelReducer';
 import { UpdateDataModelFieldDTO } from '@platypus/platypus-core';
+import { Mixpanel, TRACKING_TOKENS } from '@platypus-app/utils/mixpanel';
 
 export const useTypeDefActions = () => {
   const dispatch = useDispatch();
@@ -13,20 +14,32 @@ export const useTypeDefActions = () => {
   );
 
   const createType = useCallback(
-    (typeName: string) =>
-      dispatch(dataModelActions.createTypeDefsType(typeName)),
+    (typeName: string) => {
+      Mixpanel.track(TRACKING_TOKENS.UIEditor, {
+        type: 'Create type',
+      });
+      dispatch(dataModelActions.createTypeDefsType(typeName));
+    },
     [dispatch]
   );
 
   const renameType = useCallback(
-    (payload: { oldName: string; newName: string }) =>
-      dispatch(dataModelActions.renameTypeDefType(payload)),
+    (payload: { oldName: string; newName: string }) => {
+      Mixpanel.track(TRACKING_TOKENS.UIEditor, {
+        type: 'Rename type',
+      });
+      dispatch(dataModelActions.renameTypeDefType(payload));
+    },
     [dispatch]
   );
 
   const deleteType = useCallback(
-    (typeName: string) =>
-      dispatch(dataModelActions.deleteTypeDefType(typeName)),
+    (typeName: string) => {
+      Mixpanel.track(TRACKING_TOKENS.UIEditor, {
+        type: 'Delete type',
+      });
+      dispatch(dataModelActions.deleteTypeDefType(typeName));
+    },
     [dispatch]
   );
 
@@ -35,21 +48,34 @@ export const useTypeDefActions = () => {
       typeName: string;
       fieldName: string;
       updates: Partial<UpdateDataModelFieldDTO>;
-    }) => dispatch(dataModelActions.updateTypeDefField(payload)),
+    }) => {
+      Mixpanel.track(TRACKING_TOKENS.UIEditor, {
+        type: 'Update field',
+      });
+      dispatch(dataModelActions.updateTypeDefField(payload));
+    },
     [dispatch]
   );
 
   const createField = useCallback(
-    (fieldName: string, fieldId: string) =>
+    (fieldName: string, fieldId: string) => {
+      Mixpanel.track(TRACKING_TOKENS.UIEditor, {
+        type: 'Create field',
+      });
       dispatch(
         dataModelActions.createTypeDefField({ id: fieldId, name: fieldName })
-      ),
+      );
+    },
     [dispatch]
   );
 
   const removeField = useCallback(
-    (fieldName: string) =>
-      dispatch(dataModelActions.removeTypeDefField(fieldName)),
+    (fieldName: string) => {
+      Mixpanel.track(TRACKING_TOKENS.UIEditor, {
+        type: 'Remove field',
+      });
+      dispatch(dataModelActions.removeTypeDefField(fieldName));
+    },
     [dispatch]
   );
 

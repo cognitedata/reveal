@@ -2,6 +2,7 @@ import Editor, { Monaco } from '@monaco-editor/react';
 import { Spinner } from '@platypus-app/components/Spinner/Spinner';
 import { TOKENS } from '@platypus-app/di';
 import { useInjection } from '@platypus-app/hooks/useInjection';
+import { Mixpanel, TRACKING_TOKENS } from '@platypus-app/utils/mixpanel';
 import { BuiltInType, DataModelValidationError } from '@platypus/platypus-core';
 import debounce from 'lodash/debounce';
 import { MarkerSeverity } from 'monaco-editor';
@@ -80,6 +81,9 @@ export const GraphqlCodeEditor = React.memo(
       setEditorValue(code);
     }, [code]);
 
+    useEffect(() => {
+      Mixpanel.track(TRACKING_TOKENS.CodeEditor, { dataModel: externalId });
+    }, [externalId]);
     useEffect(() => {
       // Destroy lang services when component is unmounted
       return () => {
