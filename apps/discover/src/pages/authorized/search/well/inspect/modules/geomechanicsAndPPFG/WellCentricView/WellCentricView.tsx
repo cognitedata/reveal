@@ -1,13 +1,5 @@
-import { filterNdsEventsByRiskTypesSelection } from 'domain/wells/nds/internal/selectors/filterNdsEventsByRiskTypesSelection';
-import {
-  NdsInternal,
-  NdsRiskTypesSelection,
-} from 'domain/wells/nds/internal/types';
-import { filterNptEventsByCodeSelection } from 'domain/wells/npt/internal/selectors/filterNptEventsByCodeSelection';
-import {
-  NptCodesSelection,
-  NptInternal,
-} from 'domain/wells/npt/internal/types';
+import { NdsInternal } from 'domain/wells/nds/internal/types';
+import { NptInternal } from 'domain/wells/npt/internal/types';
 import { groupByWellbore } from 'domain/wells/wellbore/internal/transformers/groupByWellbore';
 
 import React, { useState } from 'react';
@@ -16,10 +8,13 @@ import { BooleanMap } from 'utils/booleanMap';
 
 import { useDeepMemo } from 'hooks/useDeep';
 
-import { MeasurementsView, MeasurementUnits } from '../types';
+import { BulkActions } from '../components/BulkActions';
+import {
+  MeasurementsView,
+  MeasurementUnits,
+  WellWellboreSelection,
+} from '../types';
 
-import { BulkActions } from './BulkActions';
-import { CompareView } from './CompareView';
 import { WellCentricViewWrapper } from './elements';
 import { WellCentricViewCard } from './WellCentricViewCard';
 
@@ -28,9 +23,10 @@ export interface WellCentricViewProps {
   nptEvents: NptInternal[];
   ndsEvents: NdsInternal[];
   curveSelection: BooleanMap;
-  nptCodesSelecton: NptCodesSelection;
-  ndsRiskTypesSelection: NdsRiskTypesSelection;
   measurementUnits: MeasurementUnits;
+  onNavigateToCompareView: (
+    compareViewSelection: WellWellboreSelection
+  ) => void;
 }
 
 export const WellCentricView: React.FC<WellCentricViewProps> = ({
@@ -38,43 +34,36 @@ export const WellCentricView: React.FC<WellCentricViewProps> = ({
   nptEvents,
   ndsEvents,
   curveSelection,
-  nptCodesSelecton,
-  ndsRiskTypesSelection,
   measurementUnits,
+  onNavigateToCompareView,
 }) => {
-  const [wellboreSelectionMap, setWellboreSelectionMap] = useState<
-    Record<string, string[]>
-  >({});
+  const [wellWellboreSelection, setWellWellboreSelection] =
+    useState<WellWellboreSelection>({});
   const [wellboreSelection, setWellboreSelection] = useState<BooleanMap>({});
-  const [compareViewData, setCompareViewData] = useState<MeasurementsView[]>(
-    []
+
+  const groupedNptEvents = useDeepMemo(
+    () => groupByWellbore(nptEvents),
+    [nptEvents]
   );
 
-  const groupedNptEvents = useDeepMemo(() => {
-    return groupByWellbore(
-      filterNptEventsByCodeSelection(nptEvents, nptCodesSelecton)
-    );
-  }, [nptEvents, nptCodesSelecton]);
-
-  const groupedNdsEvents = useDeepMemo(() => {
-    return groupByWellbore(
-      filterNdsEventsByRiskTypesSelection(ndsEvents, ndsRiskTypesSelection)
-    );
-  }, [ndsEvents, ndsRiskTypesSelection]);
+  const groupedNdsEvents = useDeepMemo(
+    () => groupByWellbore(ndsEvents),
+    [ndsEvents]
+  );
 
   const handleSelectWellbore = (
     wellName: string,
     wellboreMatchingId: string,
     isSelected: boolean
   ) => {
-    const currentWellbores = wellboreSelectionMap[wellName] || [];
+    const currentWellbores = wellWellboreSelection[wellName] || [];
 
     const updatedWellbores = isSelected
       ? [...currentWellbores, wellboreMatchingId]
       : currentWellbores.filter((id) => id !== wellboreMatchingId);
 
-    setWellboreSelectionMap((wellboreSelectionMap) => ({
-      ...wellboreSelectionMap,
+    setWellWellboreSelection((wellWellboreSelection) => ({
+      ...wellWellboreSelection,
       [wellName]: updatedWellbores,
     }));
     setWellboreSelection((wellboreSelection) => ({
@@ -84,14 +73,11 @@ export const WellCentricView: React.FC<WellCentricViewProps> = ({
   };
 
   const handleClickCompare = () => {
-    const compareViewData = data.filter(
-      ({ wellboreMatchingId }) => wellboreSelection[wellboreMatchingId]
-    );
-    setCompareViewData(compareViewData);
+    onNavigateToCompareView(wellWellboreSelection);
   };
 
   const handleCloseBulkActions = () => {
-    setWellboreSelectionMap({});
+    setWellWellboreSelection({});
     setWellboreSelection({});
   };
 
@@ -124,16 +110,9 @@ export const WellCentricView: React.FC<WellCentricViewProps> = ({
       </WellCentricViewWrapper>
 
       <BulkActions
-        wellboreSelectionMap={wellboreSelectionMap}
+        wellWellboreSelection={wellWellboreSelection}
         onClickCompare={handleClickCompare}
         onClose={handleCloseBulkActions}
-      />
-
-      <CompareView
-        data={compareViewData}
-        measurementUnits={measurementUnits}
-        wellboreSelectionMap={wellboreSelectionMap}
-        onBackClick={() => setCompareViewData([])}
       />
     </>
   );

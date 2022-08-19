@@ -60,3 +60,5 @@ export interface MeasurementUnits {
   depthMeasurementType: DepthMeasurementUnit;
   depthUnit: convert.Distance;
 }
+
+export type WellWellboreSelection = Record<string, string[]>;

@@ -1,4 +1,6 @@
+import { filterNdsEventsByRiskTypesSelection } from 'domain/wells/nds/internal/selectors/filterNdsEventsByRiskTypesSelection';
 import { NdsRiskTypesSelection } from 'domain/wells/nds/internal/types';
+import { filterNptEventsByCodeSelection } from 'domain/wells/npt/internal/selectors/filterNptEventsByCodeSelection';
 import { NptCodesSelection } from 'domain/wells/npt/internal/types';
 
 import React, { useState } from 'react';
@@ -8,8 +10,7 @@ import isEmpty from 'lodash/isEmpty';
 import { BooleanMap } from 'utils/booleanMap';
 
 import EmptyState from 'components/EmptyState';
-import { LOADING_TEXT } from 'components/Loading/constants';
-import { useDeepEffect } from 'hooks/useDeep';
+import { useDeepEffect, useDeepMemo } from 'hooks/useDeep';
 import { inspectTabsActions } from 'modules/inspectTabs/actions';
 import { FlexGrow } from 'styles/layout';
 
@@ -17,13 +18,15 @@ import { NdsRiskTypesFilter } from '../common/Events/NdsRiskTypesFilter';
 import { NptCodesFilter } from '../common/Events/NptCodesFilter';
 import { ViewModeControl } from '../common/ViewModeControl';
 
+import { CompareView } from './CompareView';
 import { MEASUREMENTS_UNIT_SELECTOR_OPTIONS } from './config/measurementUnits';
 import { CurveCentricView } from './CurveCentricView';
 import { TopContentWrapper } from './elements';
-import { useDefaultMeasurementUnits } from './hooks/useDefaultMeasurementUnits';
 import { useMeasurementsData } from './hooks/useMeasurementsData';
+import { useMeasurementUnits } from './hooks/useMeasurementUnits';
 import { CurveFilters, MeasurementUnitsSelector } from './TopContent';
-import { ViewModes } from './types';
+import { WellWellboreSelection, ViewModes } from './types';
+import { getCompareViewData } from './utils/getCompareViewData';
 import { WellCentricView } from './WellCentricView';
 
 export const GeomechanicsAndPPFG: React.FC = () => {
@@ -41,6 +44,7 @@ export const GeomechanicsAndPPFG: React.FC = () => {
   } = useMeasurementsData();
 
   const [viewMode, setViewMode] = useState<ViewModes>(ViewModes.Wells);
+  const [measurementUnits, setMeasurementUnits] = useMeasurementUnits();
 
   const [curveSelection, setCurveSelection] = useState<BooleanMap>({});
   const [nptCodesSelecton, setNptCodesSelection] = useState<NptCodesSelection>(
@@ -48,16 +52,31 @@ export const GeomechanicsAndPPFG: React.FC = () => {
   );
   const [ndsRiskTypesSelection, setNdsRiskTypesSelection] =
     useState<NdsRiskTypesSelection>({});
-  const [measurementUnits, setMeasurementUnits] = useState(
-    useDefaultMeasurementUnits()
-  );
+
+  const [compareViewSelection, setCompareViewSelection] =
+    useState<WellWellboreSelection>({});
 
   useDeepEffect(() => {
     dispatch(inspectTabsActions.setErrors(errors));
   }, [errors]);
 
-  if (isEmpty(data)) {
-    return <EmptyState isLoading={isLoading} loadingSubtitle={LOADING_TEXT} />;
+  const filteredNptEvents = useDeepMemo(
+    () => filterNptEventsByCodeSelection(nptEvents, nptCodesSelecton),
+    [nptEvents, nptCodesSelecton]
+  );
+
+  const filteredNdsEvents = useDeepMemo(
+    () => filterNdsEventsByRiskTypesSelection(ndsEvents, ndsRiskTypesSelection),
+    [ndsEvents, ndsRiskTypesSelection]
+  );
+
+  const compareViewData = useDeepMemo(
+    () => getCompareViewData(data, compareViewSelection),
+    [data, compareViewSelection]
+  );
+
+  if (isEmpty(data) && isEmpty(compareViewSelection)) {
+    return <EmptyState isLoading={isLoading} />;
   }
 
   return (
@@ -91,12 +110,11 @@ export const GeomechanicsAndPPFG: React.FC = () => {
       {viewMode === ViewModes.Wells && (
         <WellCentricView
           data={data}
-          nptEvents={nptEvents}
-          ndsEvents={ndsEvents}
+          nptEvents={filteredNptEvents}
+          ndsEvents={filteredNdsEvents}
           curveSelection={curveSelection}
-          nptCodesSelecton={nptCodesSelecton}
-          ndsRiskTypesSelection={ndsRiskTypesSelection}
           measurementUnits={measurementUnits}
+          onNavigateToCompareView={setCompareViewSelection}
         />
       )}
 
@@ -105,6 +123,16 @@ export const GeomechanicsAndPPFG: React.FC = () => {
           data={data}
           curveSelection={curveSelection}
           measurementUnits={measurementUnits}
+        />
+      )}
+
+      {!isEmpty(compareViewSelection) && (
+        <CompareView
+          data={compareViewData}
+          isLoading={isLoading}
+          measurementUnits={measurementUnits}
+          compareViewSelection={compareViewSelection}
+          onBackClick={() => setCompareViewSelection({})}
         />
       )}
     </>

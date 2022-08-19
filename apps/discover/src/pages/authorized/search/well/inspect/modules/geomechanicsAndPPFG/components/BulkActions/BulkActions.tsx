@@ -4,23 +4,25 @@ import { CloseButton, BaseButton } from 'components/Buttons';
 import TableBulkActions from 'components/TableBulkActions';
 import { CLEAR_SELECTION_TEXT } from 'pages/authorized/search/well/content/constants';
 
+import { WellWellboreSelection } from '../../types';
 import { getWellboreSelectionInfo } from '../../utils/getWellboreSelectionInfo';
 
 import { BulkActionsWrapper } from './elements';
 
 export type BulkActionsProps = {
-  wellboreSelectionMap: Record<string, string[]>;
+  wellWellboreSelection: WellWellboreSelection;
   onClickCompare: () => void;
   onClose: () => void;
 };
 
 export const BulkActions: React.FC<BulkActionsProps> = ({
-  wellboreSelectionMap,
+  wellWellboreSelection,
   onClickCompare,
   onClose,
 }) => {
-  const { title, subtitle, selectedWellboresCount } =
-    getWellboreSelectionInfo(wellboreSelectionMap);
+  const { title, subtitle, selectedWellboresCount } = getWellboreSelectionInfo(
+    wellWellboreSelection
+  );
 
   if (!selectedWellboresCount) {
     return null;

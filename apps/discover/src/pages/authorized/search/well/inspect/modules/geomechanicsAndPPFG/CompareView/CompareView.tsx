@@ -4,41 +4,52 @@ import groupBy from 'lodash/groupBy';
 import isEmpty from 'lodash/isEmpty';
 import { BooleanMap } from 'utils/booleanMap';
 
+import EmptyState from 'components/EmptyState';
 import { NavigationPanel } from 'components/NavigationPanel';
 import { OverlayNavigation } from 'components/OverlayNavigation';
-import { useDeepMemo } from 'hooks/useDeep';
+import { useDeepEffect, useDeepMemo } from 'hooks/useDeep';
 import { FlexGrow } from 'styles/layout';
 
-import { MEASUREMENTS_UNIT_SELECTOR_OPTIONS } from '../../config/measurementUnits';
-import { CurveFilters, MeasurementUnitsSelector } from '../../TopContent';
-import { MeasurementsView, MeasurementUnits } from '../../types';
-import { adaptToChartDataCompareView } from '../../utils/adaptToChartDataCompareView';
-import { filterChartDataBySelection } from '../../utils/filterChartDataBySelection';
-import { getCurveFilterOptions } from '../../utils/getCurveFilterOptions';
-import { getWellboreSelectionInfo } from '../../utils/getWellboreSelectionInfo';
+import { MEASUREMENTS_UNIT_SELECTOR_OPTIONS } from '../config/measurementUnits';
+import { CurveFilters, MeasurementUnitsSelector } from '../TopContent';
+import {
+  WellWellboreSelection,
+  MeasurementsView,
+  MeasurementUnits,
+} from '../types';
+import { adaptToChartDataCompareView } from '../utils/adaptToChartDataCompareView';
+import { filterChartDataBySelection } from '../utils/filterChartDataBySelection';
+import { getCurveFilterOptions } from '../utils/getCurveFilterOptions';
+import { getWellboreSelectionInfo } from '../utils/getWellboreSelectionInfo';
 
 import { CompareViewChart } from './CompareViewChart';
 import { ContentWrapper, TopContentWrapper } from './elements';
 
 export interface CompareViewProps {
   data: MeasurementsView[];
+  isLoading: boolean;
   measurementUnits: MeasurementUnits;
-  wellboreSelectionMap: Record<string, string[]>;
+  compareViewSelection: WellWellboreSelection;
   onBackClick: () => void;
 }
 
 export const CompareView: React.FC<CompareViewProps> = ({
   data,
+  isLoading,
   measurementUnits: measurementUnitsCurrent,
-  wellboreSelectionMap,
+  compareViewSelection,
   onBackClick,
 }) => {
-  const { title, subtitle } = getWellboreSelectionInfo(wellboreSelectionMap);
+  const { title, subtitle } = getWellboreSelectionInfo(compareViewSelection);
 
   const [curveSelection, setCurveSelection] = useState<BooleanMap>({});
   const [measurementUnits, setMeasurementUnits] = useState(
     measurementUnitsCurrent
   );
+
+  useDeepEffect(() => {
+    setMeasurementUnits(measurementUnitsCurrent);
+  }, [measurementUnitsCurrent]);
 
   const curveFilterOptions = useDeepMemo(
     () => getCurveFilterOptions(data),
@@ -64,7 +75,7 @@ export const CompareView: React.FC<CompareViewProps> = ({
   );
 
   return (
-    <OverlayNavigation mount={!isEmpty(data)}>
+    <OverlayNavigation mount>
       <NavigationPanel
         title={title}
         subtitle={subtitle}
@@ -85,21 +96,24 @@ export const CompareView: React.FC<CompareViewProps> = ({
       </TopContentWrapper>
 
       <ContentWrapper>
-        {!isEmpty(pressureChartData) && (
-          <CompareViewChart
-            title="Pore Pressure Fracture Gradient"
-            data={pressureChartData}
-            measurementUnits={measurementUnits}
+        {isEmpty(chartDataSelected) && (
+          <EmptyState
+            isLoading={isLoading}
+            emptySubtitle="Select dropdown item to see graph"
           />
         )}
 
-        {!isEmpty(angleChartData) && (
-          <CompareViewChart
-            title="Internal Friction Angle"
-            data={angleChartData}
-            measurementUnits={measurementUnits}
-          />
-        )}
+        <CompareViewChart
+          title="Pore Pressure Fracture Gradient"
+          data={pressureChartData}
+          measurementUnits={measurementUnits}
+        />
+
+        <CompareViewChart
+          title="Internal Friction Angle"
+          data={angleChartData}
+          measurementUnits={measurementUnits}
+        />
       </ContentWrapper>
     </OverlayNavigation>
   );

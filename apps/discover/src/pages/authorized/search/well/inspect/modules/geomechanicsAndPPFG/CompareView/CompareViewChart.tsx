@@ -1,8 +1,10 @@
 import React from 'react';
 
-import { MeasurementsChart } from '../../components/MeasurementsChart';
-import { MeasurementCurveData, MeasurementUnits } from '../../types';
-import { ChartLegend } from '../ChartLegend';
+import isEmpty from 'lodash/isEmpty';
+
+import { ChartLegend } from '../components/ChartLegend';
+import { MeasurementsChart } from '../components/MeasurementsChart';
+import { MeasurementCurveData, MeasurementUnits } from '../types';
 
 import { ChartWrapper } from './elements';
 
@@ -17,6 +19,10 @@ export const CompareViewChart: React.FC<CompareViewChartProps> = ({
   data,
   measurementUnits,
 }) => {
+  if (isEmpty(data)) {
+    return null;
+  }
+
   return (
     <ChartWrapper data-testid="compare-view-chart">
       <MeasurementsChart

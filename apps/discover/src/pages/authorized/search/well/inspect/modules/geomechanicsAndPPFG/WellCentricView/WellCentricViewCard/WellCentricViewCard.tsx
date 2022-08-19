@@ -12,10 +12,10 @@ import { useDeepMemo } from 'hooks/useDeep';
 import { NdsEventsColumnForChart } from '../../../common/ChartV2/NdsEventsColumnForChart';
 import { NptEventsColumnForChart } from '../../../common/ChartV2/NptEventsColumnForChart';
 import { EventsColumnView } from '../../../common/Events/types';
+import { ChartLegend } from '../../components/ChartLegend';
 import { MeasurementsView, MeasurementUnits } from '../../types';
 import { adaptToChartDataWellCentricView } from '../../utils/adaptToChartDataWellCentricView';
 import { filterChartDataBySelection } from '../../utils/filterChartDataBySelection';
-import { ChartLegend } from '../ChartLegend';
 
 import { ChartColumn } from './ChartColumn';
 import {

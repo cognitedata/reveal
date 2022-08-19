@@ -1,13 +1,15 @@
 import flatten from 'lodash/flatten';
 import { pluralize } from 'utils/pluralize';
 
+import { WellWellboreSelection } from '../types';
+
 export const getWellboreSelectionInfo = (
-  wellboreSelectionMap: Record<string, string[]>
+  wellWellboreSelection: WellWellboreSelection
 ) => {
-  const selectedWellsCount = Object.keys(wellboreSelectionMap).length;
+  const selectedWellsCount = Object.keys(wellWellboreSelection).length;
 
   const selectedWellboresCount = flatten(
-    Object.values(wellboreSelectionMap)
+    Object.values(wellWellboreSelection)
   ).length;
 
   const title = getSelectionTitle(selectedWellboresCount);
