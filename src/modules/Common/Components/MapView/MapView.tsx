@@ -1,4 +1,3 @@
-/* eslint-disable @cognite/no-number-z-index */
 import React, {
   useCallback,
   useEffect,
@@ -124,12 +123,7 @@ export const MapView = (props: FileMapTableProps<TableDataItem>) => {
 
   return (
     <Container>
-      <div
-        style={{
-          width: '400px',
-          paddingRight: '20px',
-        }}
-      >
+      <div>
         <MapFileTable
           {...props}
           mapCallback={showMapPopup}
@@ -138,10 +132,7 @@ export const MapView = (props: FileMapTableProps<TableDataItem>) => {
       </div>
       <div
         style={{
-          width: `calc(100% - 400px)`,
-          paddingRight: '20px',
-          // eslint-disable-next-line  @cognite/no-number-z-index
-          zIndex: 0, // HACK: popup overflows the map
+          position: 'relative',
         }}
       >
         <Mapbox
@@ -205,8 +196,11 @@ export const MapView = (props: FileMapTableProps<TableDataItem>) => {
 
 const Container = styled.div`
   width: 100%;
-  height: 99%;
-  display: flex;
+  height: 100%;
+  display: grid;
+  grid-template-rows: 100%;
+  grid-template-columns: 400px 1fr;
+  grid-column-gap: 20px;
 
   .mapboxgl-popup {
     position: absolute;
