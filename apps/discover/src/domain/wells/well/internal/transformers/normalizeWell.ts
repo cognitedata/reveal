@@ -8,18 +8,19 @@ import { UserPreferredUnit } from 'constants/units';
 
 import { WellInternal } from '../types';
 
-import { normalizeCoords } from './normalizeCoords';
-
 export const normalizeWell = (
   rawWell: Well,
   userPreferredUnit: UserPreferredUnit
 ): WellInternal => {
-  const { matchingId, wellhead, spudDate, waterDepth, sources } = rawWell;
+  const { matchingId, spudDate, waterDepth, sources } = rawWell;
 
   return {
     ...rawWell,
-    ...normalizeCoords(wellhead),
     id: matchingId,
+    geometry: {
+      type: 'Point',
+      coordinates: [Number(rawWell.wellhead.x), Number(rawWell.wellhead.y)],
+    },
     wellbores: normalizeWellbores(rawWell, userPreferredUnit),
     spudDate: spudDate ? new Date(spudDate) : undefined,
     waterDepth: waterDepth && convertDistance(waterDepth, userPreferredUnit),

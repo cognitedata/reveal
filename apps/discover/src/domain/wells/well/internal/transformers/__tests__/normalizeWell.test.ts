@@ -16,6 +16,7 @@ describe('Well utils', () => {
           value: 10,
         },
         wellbores: expect.any(Array),
+        geometry: { type: 'Point', coordinates: [1, 2] },
       }
     );
   });
