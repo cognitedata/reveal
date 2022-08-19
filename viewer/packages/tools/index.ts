@@ -41,5 +41,5 @@ export { TimelineDateUpdateDelegate } from './src/Timeline/types';
 export { Cognite3DViewerToolBase } from './src/Cognite3DViewerToolBase';
 export { DebugLoadedSectorsTool, DebugLoadedSectorsToolOptions } from './src/DebugLoadedSectorsTool';
 export { MeasurementTool } from './src/Measurement/MeasurementTool';
-export { Measurement, MeasurementRef } from './src/Measurement/Measurement';
+export { Measurement } from './src/Measurement/MeasurementControls';
 export { MeasurementOptions } from './src/Measurement/types';

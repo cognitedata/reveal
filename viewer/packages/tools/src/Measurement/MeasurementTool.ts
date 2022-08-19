@@ -6,7 +6,7 @@ import { Cognite3DViewer } from '@reveal/api';
 import { Cognite3DViewerToolBase } from '../Cognite3DViewerToolBase';
 import * as THREE from 'three';
 import { MeasurementOptions } from './types';
-import { Measurement, MeasurementRef } from './Measurement';
+import { MeasurementControls, Measurement } from './MeasurementControls';
 import { HtmlOverlayTool, HtmlOverlayToolOptions } from '../HtmlOverlay/HtmlOverlayTool';
 import rulerSvg from './styles/ruler.svg';
 import { MeasurementLabels } from './MeasurementLabels';
@@ -44,7 +44,7 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
 
   private readonly _viewer: Cognite3DViewer;
   private readonly _geometryGroup = new THREE.Group();
-  private readonly _measurements: Measurement[];
+  private readonly _measurements: MeasurementControls[];
   private _currentMeasurementIndex: number;
   private readonly _htmlOverlay: HtmlOverlayTool;
 
@@ -97,15 +97,16 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
 
   /**
    * Removes a measurement from the Cognite3DViewer.
-   * @param measurementId Measurement Id of a measurement to be removed from @Cognite3DViewer.
+   * @param measurement Measurement to be removed from @Cognite3DViewer.
    */
-  removeMeasurement(measurementId: number): void {
+  removeMeasurement(measurement: Measurement): void {
     const index = this._measurements.findIndex(
-      measurement => measurement.getMeasurementReference().measurementId === measurementId
+      measurementControl => measurementControl.getMeasurement() === measurement
     );
     if (index > -1) {
       this._measurements[index].removeMeasurement();
       this._measurements.splice(index, 1);
+      this._currentMeasurementIndex--;
     }
   }
 
@@ -137,20 +138,19 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
   setLineOptions(options: MeasurementOptions): void {
     //Line width & color value will be used for the next measuring line
     this._options = {
-      ...MeasurementTool.defaultLineOptions,
-      distanceToLabelCallback: this._options.distanceToLabelCallback,
+      ...this._options,
       ...options
     };
   }
 
   /**
    * Update selected line width.
-   * @param measurementId Measurement Id of a measurement.
+   * @param measurement Measurement.
    * @param lineWidth Width of the measuring line mesh.
    */
-  updateLineWidth(measurementId: number, lineWidth: number): void {
+  updateLineWidth(measurement: Measurement, lineWidth: number): void {
     const index = this._measurements.findIndex(
-      measurement => measurement.getMeasurementReference().measurementId === measurementId
+      measurementControl => measurementControl.getMeasurement() === measurement
     );
     if (index > -1) {
       this._measurements[index].updateLineWidth(lineWidth);
@@ -159,12 +159,12 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
 
   /**
    * Update selected line color.
-   * @param measurementId Measurement Id of a measurement.
+   * @param measurement Measurement.
    * @param color Color of the measuring line mesh.
    */
-  updateLineColor(measurementId: number, color: THREE.Color): void {
+  updateLineColor(measurement: Measurement, color: THREE.Color): void {
     const index = this._measurements.findIndex(
-      measurement => measurement.getMeasurementReference().measurementId === measurementId
+      measurementControl => measurementControl.getMeasurement() === measurement
     );
     if (index > -1) {
       this._measurements[index].updateLineColor(color);
@@ -173,14 +173,10 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
 
   /**
    * Get all measurements from {@link Cognite3DViewer}.
-   * @returns Array of Measurement reference consisting Id, start point, end point & measured distance.
+   * @returns Array of Measurement containing Id, start point, end point & measured distance.
    */
-  getAllMeasurements(): MeasurementRef[] {
-    const measurementRef: MeasurementRef[] = [];
-    this._measurements.forEach(measurement => {
-      measurementRef.push(measurement.getMeasurementReference());
-    });
-    return measurementRef;
+  getAllMeasurements(): Measurement[] {
+    return this._measurements.map(measurement => measurement.getMeasurement());
   }
 
   /**
@@ -188,7 +184,7 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
    */
   dispose(): void {
     this.removeAllMeasurements();
-    this._htmlOverlay.clear();
+    this._htmlOverlay.dispose();
     super.dispose();
   }
 
@@ -221,7 +217,14 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
       const camera = this._viewer.getCamera();
       const domElement = this._viewer.domElement;
       this._measurements.push(
-        new Measurement(domElement, camera, this._geometryGroup, this._options!, this._htmlOverlay, intersection.point)
+        new MeasurementControls(
+          domElement,
+          camera,
+          this._geometryGroup,
+          this._options!,
+          this._htmlOverlay,
+          intersection.point
+        )
       );
       this._currentMeasurementIndex = this._measurements.length - 1;
       this._viewer.domElement.addEventListener('mousemove', this._handlePointerMove);

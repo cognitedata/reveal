@@ -9,14 +9,14 @@ import { MeasurementLabels } from './MeasurementLabels';
 import { MeasurementLine } from './MeasurementLine';
 import { MeasurementOptions } from './types';
 
-export type MeasurementRef = {
+export type Measurement = {
   readonly measurementId: number;
   readonly startPoint: THREE.Vector3;
   readonly endPoint: THREE.Vector3;
   readonly distanceInMeters: number;
 };
 
-export class Measurement {
+export class MeasurementControls {
   private readonly _measurementLabel: MeasurementLabels;
   private _line: MeasurementLine | null = null;
   private readonly _options: Required<MeasurementOptions>;
@@ -26,12 +26,7 @@ export class Measurement {
   private readonly _htmlOverlay: HtmlOverlayTool;
   private _labelElement: HTMLDivElement | null = null;
   private readonly _distanceToCamera: number;
-  private _measurementRef: MeasurementRef = {
-    measurementId: 0,
-    startPoint: new THREE.Vector3(),
-    endPoint: new THREE.Vector3(),
-    distanceInMeters: 0
-  };
+  private _measurement!: Measurement;
 
   constructor(
     viewerDomElement: HTMLElement,
@@ -77,9 +72,9 @@ export class Measurement {
     const label = distanceToLabelCallback(this._line.getMeasuredDistance());
     //Add the measurement label.
     this._labelElement = this.addLabel(this._line.getMidPointOnLine(), label);
-    this._measurementRef = {
+    this._measurement = {
       measurementId: Date.now(),
-      startPoint: this._measurementRef.startPoint,
+      startPoint: this._measurement.startPoint,
       endPoint: point,
       distanceInMeters: this._line.getMeasuredDistance()
     };
@@ -111,8 +106,8 @@ export class Measurement {
     }
   }
 
-  getMeasurementReference(): MeasurementRef {
-    return this._measurementRef!;
+  getMeasurement(): Readonly<Measurement> {
+    return this._measurement;
   }
 
   /**
@@ -142,7 +137,7 @@ export class Measurement {
     const lineColor = this.determineLineColorFromOptions();
     this._line = new MeasurementLine(lineWidth, lineColor, point);
     this._meshGroup.add(this._line.meshes);
-    this._measurementRef.startPoint.copy(point);
+    this._measurement.startPoint.copy(point);
   }
 
   /**
