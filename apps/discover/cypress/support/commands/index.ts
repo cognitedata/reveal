@@ -13,6 +13,7 @@ import { SettingsCommands } from './settings.commands';
 import { SidebarCommands } from './sidebar.commands';
 import { TableCommands } from './table.commands';
 import { WellsCommands } from './wells.commands';
+import { CheckboxCommands } from './checkbox.commands';
 
 declare global {
   namespace Cypress {
@@ -30,6 +31,7 @@ declare global {
         SidebarCommands,
         TableCommands,
         WellsCommands,
+        CheckboxCommands,
         LoginCommand {}
   }
 }
@@ -48,3 +50,4 @@ export * from './feedback.commands';
 export * from './savedSearches.commands';
 export * from './settings.commands';
 export * from './document.commands';
+export * from './checkbox.commands';

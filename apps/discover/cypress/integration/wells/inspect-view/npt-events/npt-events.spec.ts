@@ -220,8 +220,7 @@ describe('Wells: NPT Events Table view', () => {
     cy.log('Selected fillter should be applied');
     cy.get('@checkbox-option')
       .eq(1)
-      .parent()
-      .invoke('text')
+      .getCheckboxLabel()
       .then((selectedCode) => {
         cy.findAllByTestId('table-cell-expanded')
           .findAllByTestId('npt-events-table')
@@ -257,8 +256,7 @@ describe('Wells: NPT Events Table view', () => {
     cy.log('Selected fillter should be applied');
     cy.get('@checkbox-option')
       .eq(1)
-      .parent()
-      .invoke('text')
+      .getCheckboxLabel()
       .then((selectedCode) => {
         cy.findAllByTestId('table-cell-expanded')
           .findAllByTestId('npt-events-table')

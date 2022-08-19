@@ -88,10 +88,7 @@ Cypress.Commands.add(
     if (select) {
       if (select === 'ALL') {
         cy.log('Select all wells');
-        cy.findByTestId('well-result-table')
-          .findByTitle('Toggle All Rows Selected')
-          .should('be.visible')
-          .click({ force: true });
+        cy.toggleSelectAllRows('well-result-table');
         return;
       }
 

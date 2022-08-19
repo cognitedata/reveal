@@ -1,6 +1,7 @@
 import { getMockWellbore } from 'domain/wells/wellbore/internal/__fixtures/getMockWellbore';
 
 import { fireEvent, screen } from '@testing-library/react';
+import { getElementById } from 'utils/general.helper';
 
 import { testRendererModal } from '__test-utils/renderer';
 import { getMockedStore } from '__test-utils/store.utils';
@@ -69,9 +70,10 @@ describe('Favorite Wellbore table', () => {
 
     fireEvent.click(screen.getByText('View'));
     expect(onViewWellbores).toHaveBeenCalledWith(['wellboreId1']);
-
-    const checkbox = screen.getByTitle('Toggle Row Selected');
-    fireEvent.click(checkbox);
+    const checkbox = getElementById('Toggle Row Selected');
+    if (checkbox) {
+      fireEvent.click(checkbox);
+    }
     expect(onSelectedWellbore).toHaveBeenCalled();
   });
 });

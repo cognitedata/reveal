@@ -10,6 +10,7 @@ import { getMockSavedSearchCurrentGet } from 'domain/savedSearches/service/__moc
 
 import { waitFor, screen, fireEvent, within } from '@testing-library/react';
 import { setupServer } from 'msw/node';
+import { getElementById } from 'utils/general.helper';
 
 import { getMockAPIResponse } from '__test-utils/fixtures/document';
 import { testRenderer } from '__test-utils/renderer';
@@ -167,24 +168,23 @@ describe('CheckboxTableResult', () => {
     // confirm page is loaded before moving on
     await screen.findByTitle('FIRST-DOC-AUTHOR');
 
-    const checkboxes = screen.getAllByRole('checkbox', {
-      name: 'Toggle Row Selected',
-    });
-    fireEvent.click(checkboxes[1]);
+    const selectOne = getElementById('Toggle Row Selected');
+    if (selectOne) {
+      fireEvent.click(selectOne);
+    }
 
     const actions = await store.getActions();
     expect(actions[0].type).toEqual(SELECT_DOCUMENT_IDS);
-    expect(actions[0].ids).toEqual(['2']);
+    expect(actions[0].ids).toEqual(['1']);
   });
 
   it('should dispatch relevant actions when select all check-boxes', async () => {
     const { store } = await renderPage(getMockedStore());
 
-    fireEvent.click(
-      screen.getByRole('checkbox', {
-        name: 'Toggle All Rows Selected',
-      })
-    );
+    const selectAll = getElementById('Toggle All Rows Selected');
+    if (selectAll) {
+      fireEvent.click(selectAll);
+    }
 
     const actions = await store.getActions();
     expect(actions.length).toEqual(1);

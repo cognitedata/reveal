@@ -108,7 +108,7 @@ describe('Documents', () => {
     cy.findAllByTestId('filter-checkbox-label')
       .contains(FILE_TYPE)
       .should('be.visible')
-      .click();
+      .clickCheckbox();
 
     cy.log('Close/Open File Type category and check that filter stays applied');
     cy.contains('File Type').click();
@@ -136,9 +136,11 @@ describe('Documents', () => {
     cy.findAllByTestId('filter-checkbox-label')
       .contains(FILE_TYPE)
       .should('be.visible')
-      .click();
+      .clickCheckbox();
 
-    cy.findAllByTestId('filter-checkbox-label').contains(SOURCE_DRIVE).click();
+    cy.findAllByTestId('filter-checkbox-label')
+      .contains(SOURCE_DRIVE)
+      .clickCheckbox();
 
     cy.log('Apply Date Range filter');
     cy.contains('Date Range').click();
@@ -209,7 +211,7 @@ describe('Documents', () => {
     cy.findAllByTestId('filter-checkbox-label')
       .contains(FILE_TYPE)
       .should('be.visible')
-      .click();
+      .clickCheckbox();
 
     cy.findByTestId('doc-result-table')
       .findAllByTestId('table-row')

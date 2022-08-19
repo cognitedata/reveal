@@ -10,6 +10,11 @@ import { setupServer } from 'msw/node';
 
 import { testRendererModal } from '__test-utils/renderer';
 import { getMockedStore } from '__test-utils/store.utils';
+import {
+  INCORRECT_GEO_CHECKBOX_LABEL,
+  OTHER_CHECKBOX_LABEL,
+  SENSITIVE_DATA_CHECKBOX_LABEL,
+} from 'components/Modals/constants';
 import { FEEDBACK_CONFIRM_TOAST } from 'constants/feedback';
 
 import { EntityFeedbackModal } from '../EntityFeedbackModal';
@@ -38,26 +43,26 @@ describe('EntityFeedbackModal Tests', () => {
   });
 
   it('fill the form and submit', async () => {
-    const { getByCheckbox } = await testInit({
+    await testInit({
       open: true,
     });
 
-    const sensitiveData = screen.getByTestId('sensitive-data-checkbox');
-    const sensitiveDataCheckbox = getByCheckbox(sensitiveData);
-    expect(sensitiveDataCheckbox).toBeTruthy();
+    const sensitiveDataCheckbox = screen.getByLabelText(
+      SENSITIVE_DATA_CHECKBOX_LABEL
+    );
+    expect(sensitiveDataCheckbox).toBeInTheDocument();
     if (sensitiveDataCheckbox) {
       fireEvent.click(sensitiveDataCheckbox);
     }
-
-    const incorrectGeo = screen.getByTestId('incorrect-geo-checkbox');
-    const incorrectGeoCheckbox = getByCheckbox(incorrectGeo);
-    expect(incorrectGeoCheckbox).toBeTruthy();
+    const incorrectGeoCheckbox = screen.getByLabelText(
+      INCORRECT_GEO_CHECKBOX_LABEL
+    );
+    expect(incorrectGeoCheckbox).toBeInTheDocument();
     if (incorrectGeoCheckbox) {
       fireEvent.click(incorrectGeoCheckbox);
     }
-    const feedbackOther = screen.getByTestId('feedback-other-checkbox');
-    const feedbackOtherCheckbox = getByCheckbox(feedbackOther);
-    expect(feedbackOtherCheckbox).toBeTruthy();
+    const feedbackOtherCheckbox = screen.getByLabelText(OTHER_CHECKBOX_LABEL);
+    expect(feedbackOtherCheckbox).toBeInTheDocument();
     if (feedbackOtherCheckbox) {
       fireEvent.click(feedbackOtherCheckbox);
     }

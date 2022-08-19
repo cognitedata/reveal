@@ -35,19 +35,23 @@ const LegendWithColorConfig = ({
       Object.keys(legendCheckboxState).map((option) => {
         const key = `${id}-${option}`;
         return (
-          <Checkbox
-            key={key}
-            name={key}
-            checked={legendCheckboxState[option]}
-            color={colors[option] || defaultColor}
-            onChange={(checked: boolean) =>
-              onChangeLegendCheckbox(option, checked)
-            }
+          <span
+            style={{ marginRight: '16px' }}
             data-testid="legend-checkbox"
+            key={key}
           >
-            {option}
-            {getInfoIcon && getInfoIcon(option)}
-          </Checkbox>
+            <Checkbox
+              name={key}
+              checked={legendCheckboxState[option]}
+              color={colors[option] || defaultColor}
+              onChange={(checked: boolean) =>
+                onChangeLegendCheckbox(option, checked)
+              }
+            >
+              {option}
+              {getInfoIcon && getInfoIcon(option)}
+            </Checkbox>
+          </span>
         );
       }),
     [

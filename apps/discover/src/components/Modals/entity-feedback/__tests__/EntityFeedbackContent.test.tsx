@@ -1,6 +1,12 @@
 import { screen, fireEvent } from '@testing-library/react';
 
 import { testRendererModal } from '__test-utils/renderer';
+import {
+  INCORRECT_DOCUMENT_TYPE_CHECKBOX_LABEL,
+  INCORRECT_GEO_CHECKBOX_LABEL,
+  OTHER_CHECKBOX_LABEL,
+  SENSITIVE_DATA_CHECKBOX_LABEL,
+} from 'components/Modals/constants';
 
 import { EntityFeedbackContent, Props } from '../EntityFeedbackContent';
 
@@ -11,7 +17,7 @@ describe('EntityFeedbackContent Tests', () => {
     const handleCheckChanged = jest.fn();
     const handleSetCorrectDocumentType = jest.fn();
     const handleTextChanged = jest.fn();
-    const { getByCheckbox } = await testInit({
+    await testInit({
       isSensitiveData: true,
       isIncorrectGeo: true,
       isIncorrectDocType: true,
@@ -27,47 +33,44 @@ describe('EntityFeedbackContent Tests', () => {
       handleTextChanged,
     });
 
-    const sensitiveData = screen.getByTestId('sensitive-data-checkbox');
-    const sensitiveDataCheckbox = getByCheckbox(sensitiveData);
-    expect(sensitiveDataCheckbox).toBeTruthy();
-    expect(sensitiveDataCheckbox).toHaveProperty('checked', true);
-    if (sensitiveDataCheckbox) {
-      fireEvent.click(sensitiveDataCheckbox);
-    }
+    const sensitiveDataCheckbox = screen.getByLabelText(
+      SENSITIVE_DATA_CHECKBOX_LABEL
+    );
+    expect(sensitiveDataCheckbox).toBeInTheDocument();
+    expect(sensitiveDataCheckbox).toBeChecked();
+
+    fireEvent.click(sensitiveDataCheckbox);
+
     expect(handleCheckChanged).toHaveBeenCalledWith('isSensitiveData', false);
 
-    const incorrectGeo = screen.getByTestId('incorrect-geo-checkbox');
-    const incorrectGeoCheckbox = getByCheckbox(incorrectGeo);
-    expect(incorrectGeoCheckbox).toBeTruthy();
-    expect(incorrectGeoCheckbox).toHaveProperty('checked', true);
+    const incorrectGeoCheckbox = screen.getByLabelText(
+      INCORRECT_GEO_CHECKBOX_LABEL
+    );
+    expect(incorrectGeoCheckbox).toBeInTheDocument();
+    expect(incorrectGeoCheckbox).toBeChecked();
     if (incorrectGeoCheckbox) {
       fireEvent.click(incorrectGeoCheckbox);
     }
     expect(handleCheckChanged).toHaveBeenCalledWith('isIncorrectGeo', false);
 
-    const feedbackIncorrectDocType = screen.getByTestId(
-      'feedback-incorrectdoctype-checkbox'
+    const feedbackIncorrectDocTypeCheckbox = screen.getByLabelText(
+      INCORRECT_DOCUMENT_TYPE_CHECKBOX_LABEL
     );
-    const feedbackIncorrectDocTypeCheckbox = getByCheckbox(
-      feedbackIncorrectDocType
-    );
-    expect(feedbackIncorrectDocTypeCheckbox).toBeTruthy();
-    expect(feedbackIncorrectDocTypeCheckbox).toHaveProperty('checked', true);
-    if (feedbackIncorrectDocTypeCheckbox) {
-      fireEvent.click(feedbackIncorrectDocTypeCheckbox);
-    }
+
+    expect(feedbackIncorrectDocTypeCheckbox).toBeInTheDocument();
+    expect(feedbackIncorrectDocTypeCheckbox).toBeChecked();
+
+    fireEvent.click(feedbackIncorrectDocTypeCheckbox);
     expect(handleCheckChanged).toHaveBeenCalledWith(
       'isIncorrectDocType',
       false
     );
 
-    const feedbackOther = screen.getByTestId('feedback-other-checkbox');
-    const feedbackOtherCheckbox = getByCheckbox(feedbackOther);
-    expect(feedbackOtherCheckbox).toBeTruthy();
-    expect(feedbackOtherCheckbox).toHaveProperty('checked', true);
-    if (feedbackOtherCheckbox) {
-      fireEvent.click(feedbackOtherCheckbox);
-    }
+    const feedbackOtherCheckbox = screen.getByLabelText(OTHER_CHECKBOX_LABEL);
+    expect(feedbackOtherCheckbox).toBeInTheDocument();
+    expect(feedbackOtherCheckbox).toBeChecked();
+
+    fireEvent.click(feedbackOtherCheckbox);
     expect(handleCheckChanged).toHaveBeenCalledWith('isOther', false);
     expect(screen.getByTestId('feedback-text')).toHaveValue('TEST_TEXT');
     expect(screen.getByTestId('imminent-remove-note')).toBeInTheDocument();

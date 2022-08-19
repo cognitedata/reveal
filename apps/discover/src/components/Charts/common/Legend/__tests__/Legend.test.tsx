@@ -39,7 +39,7 @@ describe('Charts -> Legend', () => {
   it('should render legend checkboxes as expected', () => {
     testInit();
 
-    expect(screen.getAllByTestId('legend-checkbox').length).toEqual(2);
+    expect(screen.getAllByTestId('CheckIcon').length).toEqual(2);
     expect(screen.getByText('Label1')).toBeInTheDocument();
     expect(screen.getByText('Label2')).toBeInTheDocument();
   });

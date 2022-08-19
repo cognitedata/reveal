@@ -1,5 +1,5 @@
 /* eslint-disable jest/no-conditional-expect */
-import { fireEvent, queryHelpers, screen } from '@testing-library/react';
+import { fireEvent, screen } from '@testing-library/react';
 
 import { testRendererModal } from '__test-utils/renderer';
 
@@ -41,11 +41,11 @@ describe('Check boxes filter', () => {
       onValueChange,
     };
 
-    const { getByCheckbox } = await defaultTestInit(props);
-    options.forEach((options) => {
-      const checkboxContainer = screen.getByTestId(options);
-      const checkbox = getByCheckbox(checkboxContainer);
-      expect(checkbox).toHaveProperty('checked', false);
+    await defaultTestInit(props);
+    options.forEach((option) => {
+      const checkbox = screen.getByLabelText(option);
+      expect(checkbox).toBeInTheDocument();
+      expect(checkbox).not.toBeChecked();
     });
   });
 
@@ -57,14 +57,13 @@ describe('Check boxes filter', () => {
       onValueChange,
     };
 
-    const { getByCheckbox } = await defaultTestInit(props);
+    await defaultTestInit(props);
     options.forEach((options) => {
-      const checkboxContainer = screen.getByTestId(options);
-      const checkbox = getByCheckbox(checkboxContainer);
+      const checkbox = screen.getByLabelText(options);
       if (selectedVals.includes(options)) {
-        expect(checkbox).toHaveProperty('checked', true);
+        expect(checkbox).toBeChecked();
       } else {
-        expect(checkbox).toHaveProperty('checked', false);
+        expect(checkbox).not.toBeChecked();
       }
     });
   });
@@ -76,14 +75,12 @@ describe('Check boxes filter', () => {
       onValueChange,
     };
 
-    const { getByCheckbox } = await defaultTestInit(props);
+    await defaultTestInit(props);
 
-    const checkboxContainer = screen.getByTestId(options[0]);
-    const checkbox = getByCheckbox(checkboxContainer);
-    expect(checkbox).toHaveProperty('checked', false);
-    if (checkbox) {
-      fireEvent.click(checkbox);
-    }
+    const checkbox = screen.getByLabelText(options[0]);
+    expect(checkbox).not.toBeChecked();
+
+    fireEvent.click(checkbox);
     expect(onValueChange).toBeCalledTimes(1);
   });
 
@@ -118,11 +115,10 @@ describe('Check boxes filter', () => {
       enableSelectAll: true,
     };
 
-    const { getByCheckbox } = await defaultTestInit(props);
+    await defaultTestInit(props);
 
-    const checkboxContainer = screen.getByTestId('All');
-    const checkbox = getByCheckbox(checkboxContainer);
-    expect(checkbox).toHaveProperty('checked', true);
+    const checkbox = screen.getByLabelText('All');
+    expect(checkbox).toBeChecked();
   });
 
   it(`should automatically uncheck 'All' when all options are not selected`, async () => {
@@ -133,11 +129,10 @@ describe('Check boxes filter', () => {
       enableSelectAll: true,
     };
 
-    const { getByCheckbox } = await defaultTestInit(props);
+    await defaultTestInit(props);
 
-    const checkboxContainer = screen.getByTestId('All');
-    const checkbox = getByCheckbox(checkboxContainer);
-    expect(checkbox).toHaveProperty('checked', false);
+    const checkbox = screen.getByLabelText('All');
+    expect(checkbox).not.toBeChecked();
   });
 
   it(`should automatically uncheck 'All' when any option is not selected`, async () => {
@@ -148,11 +143,9 @@ describe('Check boxes filter', () => {
       enableSelectAll: true,
     };
 
-    const { getByCheckbox } = await defaultTestInit(props);
-
-    const checkboxContainer = screen.getByTestId('All');
-    const checkbox = getByCheckbox(checkboxContainer);
-    expect(checkbox).toHaveProperty('checked', false);
+    await defaultTestInit(props);
+    const checkbox = screen.getByLabelText('All');
+    expect(checkbox).not.toBeChecked();
   });
 
   it(`should return all values to the callback when checking select all`, async () => {
@@ -163,13 +156,10 @@ describe('Check boxes filter', () => {
       enableSelectAll: true,
     };
 
-    const { getByCheckbox } = await defaultTestInit(props);
+    await defaultTestInit(props);
 
-    const checkboxContainer = screen.getByTestId('All');
-    const checkbox = getByCheckbox(checkboxContainer);
-    if (checkbox) {
-      fireEvent.click(checkbox);
-    }
+    const checkbox = screen.getByLabelText('All');
+    fireEvent.click(checkbox);
     expect(onValueChange).toHaveBeenCalledWith(options);
   });
 
@@ -181,13 +171,10 @@ describe('Check boxes filter', () => {
       enableSelectAll: true,
     };
 
-    const { getByCheckbox } = await defaultTestInit(props);
+    await defaultTestInit(props);
 
-    const checkboxContainer = screen.getByTestId('All');
-    const checkbox = getByCheckbox(checkboxContainer);
-    if (checkbox) {
-      fireEvent.click(checkbox);
-    }
+    const checkbox = screen.getByLabelText('All');
+    fireEvent.click(checkbox);
     expect(onValueChange).toHaveBeenCalledWith([]);
   });
 
@@ -198,15 +185,13 @@ describe('Check boxes filter', () => {
       onValueChange,
     };
 
-    const { getByCheckbox } = await defaultTestInit(props);
-    objectValues.forEach((object) =>
-      expect(screen.getByText(object.text)).toBeInTheDocument()
-    );
-    objectValues.forEach((options) => {
-      const checkboxContainer = screen.getByTestId(options.key);
-      const checkbox = getByCheckbox(checkboxContainer);
-      expect(checkbox).toHaveProperty('checked', true);
+    await defaultTestInit(props);
+    objectValues.forEach((object) => {
+      const checkbox = screen.getByLabelText(object.text);
+      expect(checkbox).toBeInTheDocument();
+      expect(checkbox).toBeChecked();
     });
+
     expect(screen.queryByText('All')).not.toBeInTheDocument();
   });
 
@@ -218,25 +203,16 @@ describe('Check boxes filter', () => {
       enableSelectAll: true,
     };
 
-    const { getByCheckbox } = await defaultTestInit(props);
-    objectValues.forEach((object) =>
-      expect(screen.getByText(object.text)).toBeInTheDocument()
-    );
-    objectValues.forEach((options) => {
-      const checkboxContainer = screen.getByTestId(options.key);
-      const checkbox = queryHelpers.queryByAttribute(
-        'type',
-        checkboxContainer,
-        'checkbox'
-      );
-      expect(checkbox).toHaveProperty('checked', true);
+    await defaultTestInit(props);
+    objectValues.forEach((object) => {
+      const checkbox = screen.getByLabelText(object.text);
+      expect(checkbox).toBeInTheDocument();
+      expect(checkbox).toBeChecked();
     });
 
-    const allCheckboxContainer = screen.getByTestId('All');
-    const allCheckboxs = getByCheckbox(allCheckboxContainer);
-
+    const allCheckboxs = screen.getByLabelText('All');
     expect(allCheckboxs).toBeInTheDocument();
-    expect(allCheckboxs).toHaveProperty('checked', true);
+    expect(allCheckboxs).toBeChecked();
   });
 
   it(`OBJECT array: should call the call back when select a value`, async () => {
@@ -247,15 +223,12 @@ describe('Check boxes filter', () => {
       onValueChange: mock,
     };
 
-    const { getByCheckbox } = await defaultTestInit(props);
+    await defaultTestInit(props);
 
-    const checkboxContainer = screen.getByTestId(objectValues[0].key);
-    const checkbox = getByCheckbox(checkboxContainer);
+    const checkbox = screen.getByLabelText(objectValues[0].text);
+    expect(checkbox).toBeInTheDocument();
 
-    expect(checkbox).toBeTruthy();
-    if (checkbox) {
-      fireEvent.click(checkbox);
-    }
+    fireEvent.click(checkbox);
     expect(mock).lastCalledWith([objectValues[0].key]);
   });
 });

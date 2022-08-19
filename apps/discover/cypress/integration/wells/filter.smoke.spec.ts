@@ -370,7 +370,7 @@ describe('Wells sidebar filters', () => {
       .eq(1)
       .findAllByTestId('filter-checkbox-label')
       .eq(2)
-      .click();
+      .clickCheckbox();
 
     cy.log('Scrolldown main sidebar container');
     checkRequestContainsFilter({
@@ -393,7 +393,7 @@ describe('Wells sidebar filters', () => {
       .eq(2)
       .findAllByTestId('filter-checkbox-label')
       .last()
-      .click();
+      .clickCheckbox();
 
     checkRequestContainsFilter({
       nds: {

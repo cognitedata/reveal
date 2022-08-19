@@ -1,5 +1,4 @@
 import { screen, fireEvent } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 
 import { getMockDocument } from '__test-utils/fixtures/document';
 import { testRenderer } from '__test-utils/renderer';
@@ -33,7 +32,7 @@ describe('DocumentResultTableHoverComponent', () => {
   it('should fire callbacks on click', async () => {
     await renderPage();
 
-    await userEvent.click(screen.getByTestId('menu-button'));
+    fireEvent.mouseEnter(screen.getByTestId('menu-button'), { bubbles: true });
 
     fireEvent.click(screen.getByTestId('button-preview-document'));
     fireEvent.click(screen.getByText(OPEN_PARENT_FOLDER_OPTION_TEXT));

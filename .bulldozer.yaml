@@ -25,17 +25,17 @@ merge:
 
   delete_after_merge: true
   whitelist:
-    labels: ["auto-merge"]
+    labels: ['auto-merge']
   blacklist:
-    labels: ["do-not-merge"]
+    labels: ['do-not-merge']
     comment_substrings:
-      - "do-not-merge"
-      - "no-auto-merge"
-      - "bulldont"
+      - 'do-not-merge'
+      - 'no-auto-merge'
+      - 'bulldont'
 
 update:
   whitelist:
     labels: ['auto-merge']
   blacklist:
-    labels: ["do-not-update"]
+    labels: ['do-not-update']
   ignore_drafts: true

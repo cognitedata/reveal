@@ -1,5 +1,4 @@
-import { screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import { fireEvent, screen } from '@testing-library/react';
 
 import { testRenderer } from '__test-utils/renderer';
 import { PressureUnit } from 'constants/units';
@@ -18,7 +17,9 @@ describe('View Mode Selector', () => {
       // onReferenceChange: jest.fn(),
     });
 
-    await userEvent.click(screen.getByTestId('menu-button'));
+    await fireEvent.mouseEnter(screen.getByTestId('menu-button'), {
+      bubbles: true,
+    });
 
     expect(screen.getByText(PressureUnit.PPG)).toBeInTheDocument();
     // expect(screen.getByText(DepthMeasurementUnit.MD)).toBeInTheDocument();

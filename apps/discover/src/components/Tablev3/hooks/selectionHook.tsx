@@ -57,6 +57,7 @@ export const selectionHook =
               checked={isSelected || isIndeterminate}
               indeterminate={isIndeterminate}
               onChange={onCheckboxChanged}
+              name="Toggle All Rows Selected"
             />
           );
         },
@@ -86,6 +87,7 @@ export const selectionHook =
                 indeterminate={get(row, 'isIndeterminate', false)}
                 onChange={onCheckboxChanged}
                 disabled={!isCheckboxEnabled}
+                name="Toggle Row Selected"
               />
             </>
           );

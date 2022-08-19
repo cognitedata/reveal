@@ -1,0 +1,19 @@
+diff --git a/node_modules/@cognite/cogs.js/dist/cogs.css b/node_modules/@cognite/cogs.js/dist/cogs.css
+index 580243c..08fbfc3 100644
+--- a/node_modules/@cognite/cogs.js/dist/cogs.css
++++ b/node_modules/@cognite/cogs.js/dist/cogs.css
+@@ -3525,10 +3525,13 @@ button.cogs-badge:active:before {
+   --Checkbox-border-pressed: var(--cogs-border--interactive--toggled-default);
+   --variant-borderWidth: 2px;
+   border-radius: 4px;
+-  background-color: var(--cogs-surface--muted);
+   color: var(--cogs-surface--muted);
++  display: inline-flex;
++  flex-direction: row;
++  align-items: center;
+ }
+ .cogs.cogs-checkbox .cogs-checkbox__checkbox {
++  background-color: var(--cogs-surface--muted);
+   border: 2px solid var(--Checkbox-border);
+ }
+ .cogs.cogs-checkbox:hover .cogs-checkbox__checkbox {
