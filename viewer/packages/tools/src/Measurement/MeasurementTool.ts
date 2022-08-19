@@ -59,7 +59,7 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
   private static readonly defaultLineOptions: Required<MeasurementOptions> = {
     distanceToLabelCallback: d => MeasurementTool.metersLabelCallback(d),
     lineWidth: 2.0,
-    color: 0x00ffff
+    color: new THREE.Color(0x00ffff)
   };
 
   constructor(viewer: Cognite3DViewer, options?: MeasurementOptions) {
@@ -162,7 +162,7 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
    * @param measurementId Measurement Id of a measurement.
    * @param color Color of the measuring line mesh.
    */
-  updateLineColor(measurementId: number, color: number): void {
+  updateLineColor(measurementId: number, color: THREE.Color): void {
     const index = this._measurements.findIndex(
       measurement => measurement.getMeasurementReference().measurementId === measurementId
     );
@@ -221,11 +221,10 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
       const camera = this._viewer.getCamera();
       const domElement = this._viewer.domElement;
       this._measurements.push(
-        new Measurement(domElement, camera, this._geometryGroup, this._options!, this._htmlOverlay)
+        new Measurement(domElement, camera, this._geometryGroup, this._options!, this._htmlOverlay, intersection.point)
       );
       this._currentMeasurementIndex = this._measurements.length - 1;
       this._viewer.domElement.addEventListener('mousemove', this._handlePointerMove);
-      this._measurements[this._currentMeasurementIndex].startMeasurement(intersection.point);
     } else {
       this._measurements[this._currentMeasurementIndex].endMeasurement(intersection.point);
       this._currentMeasurementIndex = -1;

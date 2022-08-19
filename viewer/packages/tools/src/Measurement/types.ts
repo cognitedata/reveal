@@ -19,5 +19,5 @@ export type MeasurementOptions = {
   /**
    * Line color in 32 bit hex.
    */
-  color?: number;
+  color?: THREE.Color;
 };

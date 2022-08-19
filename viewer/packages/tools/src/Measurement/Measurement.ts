@@ -25,6 +25,7 @@ export class Measurement {
   private readonly _meshGroup: THREE.Group;
   private readonly _htmlOverlay: HtmlOverlayTool;
   private _labelElement: HTMLDivElement | null = null;
+  private readonly _distanceToCamera: number;
   private _measurementRef: MeasurementRef = {
     measurementId: 0,
     startPoint: new THREE.Vector3(),
@@ -37,7 +38,8 @@ export class Measurement {
     camera: THREE.Camera,
     meshGroup: THREE.Group,
     options: Required<MeasurementOptions>,
-    overlay: HtmlOverlayTool
+    overlay: HtmlOverlayTool,
+    startPoint: THREE.Vector3
   ) {
     this._options = options;
     this._measurementLabel = new MeasurementLabels();
@@ -45,22 +47,8 @@ export class Measurement {
     this._domElement = viewerDomElement;
     this._camera = camera;
     this._meshGroup = meshGroup;
-  }
-
-  /**
-   * Start the measurement.
-   * @param point World position to start measurement operation from.
-   */
-  startMeasurement(point: THREE.Vector3): void {
-    assert(this._line === null, 'Already measuring');
-
-    const distanceToCamera = this._camera.getWorldPosition(new THREE.Vector3()).distanceTo(point);
-    const lineWidth = this.determineLineWidthFromOptions();
-    const lineColor = this.determineLineColorFromOptions();
-    this._line = new MeasurementLine(lineWidth, lineColor);
-    this._line.startLine(point, distanceToCamera);
-    this._meshGroup.add(this._line.meshes);
-    this._measurementRef.startPoint.copy(point);
+    this._distanceToCamera = this._camera.getWorldPosition(new THREE.Vector3()).distanceTo(startPoint);
+    this.startMeasurement(startPoint);
   }
 
   /**
@@ -71,7 +59,7 @@ export class Measurement {
       throw new Error('Not currently measuring, call startMeasurement() first');
     }
     const { offsetX, offsetY } = mouseEvent;
-    this._line.updateLine(offsetX, offsetY, this._domElement, this._camera);
+    this._line.updateLine(this.pointerTo3Dposition(offsetX, offsetY));
   }
 
   /**
@@ -85,7 +73,7 @@ export class Measurement {
 
     const { distanceToLabelCallback } = this._options;
     //Update the line with final end point.
-    this._line.updateLine(0, 0, this._domElement, this._camera, point);
+    this._line.updateLine(point);
     const label = distanceToLabelCallback(this._line.getMeasuredDistance());
     //Add the measurement label.
     this._labelElement = this.addLabel(this._line.getMidPointOnLine(), label);
@@ -139,8 +127,22 @@ export class Measurement {
    * Update current line color.
    * @param color Color of the measuring line mesh.
    */
-  updateLineColor(color: number): void {
+  updateLineColor(color: THREE.Color): void {
     this._line?.updateLineColor(color);
+  }
+
+  /**
+   * Start the measurement.
+   * @param point World position to start measurement operation from.
+   */
+  private startMeasurement(point: THREE.Vector3): void {
+    assert(this._line === null, 'Already measuring');
+
+    const lineWidth = this.determineLineWidthFromOptions();
+    const lineColor = this.determineLineColorFromOptions();
+    this._line = new MeasurementLine(lineWidth, lineColor, point);
+    this._meshGroup.add(this._line.meshes);
+    this._measurementRef.startPoint.copy(point);
   }
 
   /**
@@ -160,7 +162,30 @@ export class Measurement {
   }
 
   // TODO 2022-07-05 larsmoa: Return proper color
-  private determineLineColorFromOptions(): number {
+  private determineLineColorFromOptions(): THREE.Color {
     return this._options.color;
+  }
+
+  private pointerTo3Dposition(offsetX: number, offsetY: number) {
+    const position = new THREE.Vector3();
+    //Get position based on the mouse pointer X and Y value.
+    const mouse = new THREE.Vector2();
+    mouse.x = (offsetX / this._domElement.clientWidth) * 2 - 1;
+    mouse.y = -(offsetY / this._domElement.clientHeight) * 2 + 1;
+
+    const direction = new THREE.Vector3();
+    const ray = new THREE.Ray();
+    const origin = new THREE.Vector3();
+
+    //Set the origin of the Ray to camera.
+    origin.setFromMatrixPosition(this._camera.matrixWorld);
+    ray.origin.copy(origin);
+    //Calculate the camera direction.
+    direction.set(mouse.x, mouse.y, 0.5).unproject(this._camera).sub(ray.origin).normalize();
+    ray.direction.copy(direction);
+    //Note: Using the initial/start point as reference for ray to emit till that distance from camera.
+    ray.at(this._distanceToCamera, position);
+
+    return position;
   }
 }

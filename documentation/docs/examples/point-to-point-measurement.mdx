@@ -50,7 +50,8 @@ document.onkeydown = function(event) {
 ## Set width and color of the measuring line
 To change width and color of the line, use `MeasurementTool.setLineOptions(options: MeasurementOptions)`. MeasurementOptions expects
   - `lineWidth` : number
-  - `color` : number
+  - `color` : THREE.color
+
 The updated line width and color will be applied for the next measuring distance.
 
 ```jsx runnable
@@ -58,7 +59,7 @@ The updated line width and color will be applied for the next measuring distance
 
 const lineOptions = {
   lineWidth: 3,
-  color: 0xff0000
+  color: new THREE.Color(0xff0000)
 };
 const measurementTool = new MeasurementTool(viewer);
 measurementTool.enterMeasurementMode();
@@ -67,7 +68,7 @@ measurementTool.enterMeasurementMode();
 measurementTool.setLineOptions(lineOptions);
 ```
 
-To change existing measurement line width or color, use `MeasurementTool.updateLineWidth(lineWidth: number)` or `MeasurementTool.updateLineColor(color: number)`
+To change existing measurement line width or color, use `MeasurementTool.updateLineWidth(lineWidth: number)` or `MeasurementTool.updateLineColor(color: THREE.Color)`
 
 ```jsx runnable
 // import { MeasurementTool } from '@cognite/reveal/tools';
@@ -83,7 +84,7 @@ setInterval(() => {
 
     measurements.forEach(measurement => {
       const color = Math.floor(Math.random() * 16777215);
-      measurementTool.updateLineColor(measurement.measurementId, color);
+      measurementTool.updateLineColor(measurement.measurementId, new THREE.Color(color));
 
       //Update line width
       const lineWidth = (Math.random() * 1.0) + 0.2;
@@ -92,7 +93,7 @@ setInterval(() => {
     });
 }, 5000);
 ```
-## Change unit
+### Change unit
 
 It's also possible to apply custom label content for the measurement.
 The tool provides a callback, `MeasurementOptions.distanceToLabelCallback`, that can be
@@ -135,7 +136,7 @@ setTimeout(() => {
 
 ### Remove measurement
 To remove a measurement from the viewer, we have `MeasurementTool.removeMeasurement(measurementId: number)`
-  - 'measurementId` : Measurement Id of a measurement to be removed.
+  - `measurementId` : Measurement Id of a measurement to be removed.
 
 ```jsx runnable
 // import { MeasurementTool } from '@cognite/reveal/tools';
@@ -157,13 +158,12 @@ setTimeout(() => {
 To remove all measurement from the viewer, use `MeasurementTool.removeAllMeasurement()`
 
 ```jsx
-// import { MeasurementTool } from '@cognite/reveal/tools';
-
-const measurementTool = new MeasurementTool(viewer);
-measurementTool.enterMeasurementMode();
-
-//add measurements
-
 // Remove all measurement from the viewer
 measurementTool.removeAllMeasurement();
+```
+### Label Visibility
+Measurement labels can be hidden/visible using `MeasurementTool.showMeasurementLabels(enable: boolean)`.
+```jsx
+// Hide all measurement lables
+measurementTool.showMeasurementLabels(false);
 ```

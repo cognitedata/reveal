@@ -1,6 +1,7 @@
 import { Cognite3DViewer } from "@cognite/reveal";
 import { MeasurementTool } from "@cognite/reveal/tools";
 import dat from "dat.gui";
+import { THREE } from '@cognite/reveal';
 
 export class MeasurementUi {
   private readonly _viewer: Cognite3DViewer;
@@ -49,6 +50,7 @@ export class MeasurementUi {
       this.setMeasurementLineOptions();
     }));
     this._guiController.push(this._gui.addColor(this.state, 'color').name('Line Color').onFinishChange(color => {
+      debugger;
       this.state.color = color;
       this.setMeasurementLineOptions();
     }));
@@ -68,6 +70,12 @@ export class MeasurementUi {
   }
 
   private setMeasurementLineOptions() {
-    this._measurementTool.setLineOptions(this.state, );
+    const options = {
+      lineWidth: this.state.lineWidth,
+      color: new THREE.Color(this.state.color),
+      allMeasurement: this.state.allMeasurement,
+      showAllMeasurementLabels: this.state.showAllMeasurementLabels
+    }
+    this._measurementTool.setLineOptions(options);
   }
 }
