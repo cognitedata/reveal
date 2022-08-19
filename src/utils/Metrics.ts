@@ -1,6 +1,6 @@
 import { trackEvent } from '@cognite/cdf-route-tracker';
 import sdk from '@cognite/cdf-sdk-singleton';
-import { getItemFromStorage } from 'hooks/useLocalStorage';
+import { getItemFromStorage } from 'hooks';
 import { LS_KEY_METRICS } from 'stringConstants';
 
 export type LSMetrics = {
@@ -118,9 +118,5 @@ export const PNID_METRICS = {
     manualTags: 'fileViewer.manualTags',
     viewTab: 'fileViewer.viewTab',
     deleteAnnotations: 'fileViewer.deleteAnnotations',
-  },
-  betaBanner: {
-    close: 'betaBanner.close',
-    feedback: 'betaBanner.feedback',
   },
 };
