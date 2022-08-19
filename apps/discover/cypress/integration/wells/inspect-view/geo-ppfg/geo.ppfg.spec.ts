@@ -55,13 +55,15 @@ describe('Wells: Geomechanics & Ppfg', () => {
       .click({ force: true });
 
     cy.log('select options from drop down menu');
-    cy.findByText(GEOMECHANICS_CURVE_OPTION).click();
+    cy.findByText(GEOMECHANICS_CURVE_OPTION).clickCheckbox();
 
     cy.log('click on show more button');
     cy.get('[aria-label="Show more"]').eq(0).click({ force: true });
 
     cy.log('selected option should visible on legend');
-    cy.contains(GEOMECHANICS_CURVE_OPTION).should('be.visible');
+    cy.contains(GEOMECHANICS_CURVE_OPTION)
+      .scrollIntoView()
+      .should('be.visible');
 
     cy.log('click on PPFG curves filter');
     cy.findByText('PPFG curves:').click();
@@ -73,7 +75,7 @@ describe('Wells: Geomechanics & Ppfg', () => {
       .click({ force: true });
 
     cy.log('select options from drop down menu');
-    cy.findByText(PPFG_CURVE_OPTION).click();
+    cy.findByText(PPFG_CURVE_OPTION).clickCheckbox();
 
     cy.log('click on NPT filter');
     cy.findByText('NPT:').click();
@@ -94,7 +96,7 @@ describe('Wells: Geomechanics & Ppfg', () => {
       .click({ force: true });
 
     cy.log('select options from drop down menu');
-    cy.findByText(OTHER_CURVE_OPTION).click();
+    cy.findByText(OTHER_CURVE_OPTION).clickCheckbox();
   });
 
   it('should be able to change pressure unit', () => {
@@ -102,7 +104,9 @@ describe('Wells: Geomechanics & Ppfg', () => {
     cy.findByTestId('measurements-unit-selector').click();
 
     cy.log(`default pressure unit should be ${PressureUnit.PPG}`);
-    cy.contains(`Pressure (${PressureUnit.PPG})`).should('be.visible');
+    cy.contains(`Pressure (${PressureUnit.PPG})`)
+      .scrollIntoView()
+      .should('be.visible');
 
     cy.contains('Pressure unit').click();
 
@@ -130,7 +134,7 @@ describe('Wells: Geomechanics & Ppfg', () => {
 
   it('verify compare view', () => {
     cy.log('select first wellbore');
-    cy.findAllByTestId('wellbore-details').eq(0).click();
+    cy.findAllByTestId('wellbore-details').eq(0).clickCheckbox();
 
     cy.log('Check bulk actions selection count');
     cy.findByText('1 wellbore selected').should('be.visible');
@@ -139,7 +143,7 @@ describe('Wells: Geomechanics & Ppfg', () => {
     cy.get('[aria-label="Clear selection"]').click();
 
     cy.log('select again first wellbore');
-    cy.findAllByTestId('wellbore-details').eq(0).click();
+    cy.findAllByTestId('wellbore-details').eq(0).clickCheckbox();
 
     cy.log(`click ${COMPARE_TEXT} button`);
     cy.contains(COMPARE_TEXT).click();
@@ -159,13 +163,15 @@ describe('Wells: Geomechanics & Ppfg', () => {
     cy.findAllByTestId('curve-centric-view-card').should('be.visible');
 
     cy.log('verify chart options');
-    cy.get('[aria-label="Zoom in"]').eq(0).click();
-    cy.get('[aria-label="Zoom out"]').eq(0).click();
+    cy.get('[aria-label="Zoom in"]').eq(0).click({ force: true });
+    cy.get('[aria-label="Zoom out"]').eq(0).click({ force: true });
     cy.get('[aria-label="Refresh"]').eq(0).click();
 
     cy.log('filtered curves should be visible');
-    cy.findByTestId(GEOMECHANICS_CURVE_OPTION).should('be.visible');
-    cy.findByTestId(PPFG_CURVE_OPTION).should('be.visible');
-    cy.findByTestId(OTHER_CURVE_OPTION).should('be.visible');
+    cy.findByTestId(GEOMECHANICS_CURVE_OPTION)
+      .scrollIntoView()
+      .should('be.visible');
+    cy.findByTestId(PPFG_CURVE_OPTION).scrollIntoView().should('be.visible');
+    cy.findByTestId(OTHER_CURVE_OPTION).scrollIntoView().should('be.visible');
   });
 });
