@@ -1,8 +1,8 @@
 import { trackEvent } from '@cognite/cdf-route-tracker';
 import sdk from '@cognite/cdf-sdk-singleton';
-import { getItemFromStorage, LS_KEY_PREFIX } from 'hooks/useLocalStorage';
+import { getItemFromStorage } from 'hooks/useLocalStorage';
+import { LS_KEY_METRICS } from 'stringConstants';
 
-export const LS_KEY_METRICS = `${LS_KEY_PREFIX}metrics`;
 export type LSMetrics = {
   username: string;
 };
@@ -19,8 +19,8 @@ export const trackUsage = (
     return;
   }
   const pathWithoutProject = pathname.substring(pathname.indexOf('/', 1));
-  const metricsFromLs = <LSMetrics>getItemFromStorage(LS_KEY_METRICS) ?? {};
-  const username = metricsFromLs.username ?? 'unknown';
+  const metricsFromLs = getItemFromStorage<LSMetrics>(LS_KEY_METRICS);
+  const username = metricsFromLs?.username ?? 'unknown';
 
   if (host.indexOf('localhost') === -1) {
     trackEvent(`EngineeringDiagrams.${event}`, {

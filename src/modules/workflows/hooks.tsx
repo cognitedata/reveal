@@ -5,7 +5,7 @@ import { useCdfItems, useList } from '@cognite/sdk-react-query-hooks';
 import { Asset, FileInfo, IdEither } from '@cognite/sdk';
 import { useLocalStorage } from '@cognite/cogs.js';
 import { diagramSelection } from 'routes/paths';
-import { LS_SAVED_SETTINGS } from 'stringConstants';
+import { LS_KEY_SETTINGS } from 'stringConstants';
 import { ResourceType } from 'modules/sdk-builder/types';
 import {
   standardModelOptions,
@@ -31,7 +31,7 @@ export const useWorkflowCreateNew = () => {
   const dispatch = useDispatch();
   const history = useHistory();
 
-  const [savedSettings] = useLocalStorage(LS_SAVED_SETTINGS, {
+  const [savedSettings] = useLocalStorage(LS_KEY_SETTINGS, {
     skip: false,
     modelSelected: 'standard',
   });

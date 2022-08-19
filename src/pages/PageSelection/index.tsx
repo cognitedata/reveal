@@ -19,7 +19,7 @@ import {
   useSteps,
   useJobStarted,
 } from 'hooks';
-import { LS_SAVED_SETTINGS } from 'stringConstants';
+import { LS_KEY_SETTINGS } from 'stringConstants';
 import NavigationStickyBottomRow from 'components/NavigationStickyBottomRow';
 import { Flex } from 'components/Common';
 import { searchCountSelector } from 'pages/PageSelection/selectors';
@@ -57,7 +57,7 @@ export default function PageSelection(props: Props): JSX.Element {
 
   const [delayedFilter, setDelayedFilter] = useState<Filter>(filter);
   const [debouncedSetFilter] = useDebouncedCallback(setDelayedFilter, 200);
-  const [savedSettings] = useLocalStorage(LS_SAVED_SETTINGS, {
+  const [savedSettings] = useLocalStorage(LS_KEY_SETTINGS, {
     skip: false,
   });
   const count = useSelector(searchCountSelector(type, filter));

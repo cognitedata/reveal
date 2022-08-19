@@ -17,7 +17,8 @@ import {
 import { createBrowserHistory } from 'history';
 import debounce from 'lodash/debounce';
 
-import { LS_KEY_PREFIX, setItemInStorage } from 'hooks/useLocalStorage';
+import { LS_KEY_PREFIX } from 'stringConstants';
+import { setItemInStorage } from 'hooks/useLocalStorage';
 import store, { persistedState, loadLocalStorage } from 'store';
 import { AppStateProvider } from 'context';
 import { root } from 'routes/paths';

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useLocalStorage } from '@cognite/cogs.js';
-import { LS_SAVED_SETTINGS } from 'stringConstants';
+import { LS_KEY_SETTINGS } from 'stringConstants';
 import { ModelSelected, ResourceCount } from 'modules/types';
 
 export type PrefixType = 'custom' | 'original';
@@ -24,7 +24,7 @@ export type AppStateContextType = {
 type AppStateType = { children: React.ReactNode };
 
 export const AppStateProvider = ({ children }: AppStateType) => {
-  const [savedSettings, setSavedSettings] = useLocalStorage(LS_SAVED_SETTINGS, {
+  const [savedSettings, setSavedSettings] = useLocalStorage(LS_KEY_SETTINGS, {
     skip: false,
     modelSelected: 'standard',
   });

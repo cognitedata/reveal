@@ -17,7 +17,8 @@ import {
 import sdk, { getFlow } from '@cognite/cdf-sdk-singleton';
 
 import queryString from 'query-string';
-import { trackUsage, LS_KEY_METRICS } from 'utils/Metrics';
+import { trackUsage } from 'utils/Metrics';
+import { LS_KEY_METRICS } from 'stringConstants';
 import {
   ResourceActionsProvider,
   ResourceSelectionProvider,

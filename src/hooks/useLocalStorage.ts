@@ -1,7 +1,5 @@
 import { useState } from 'react';
 
-export const LS_KEY_PREFIX = `PNID_CONTEXTUALIZATION_`;
-
 const useLocalStorage = <T extends Object>(
   key: string,
   defaultValue: T
