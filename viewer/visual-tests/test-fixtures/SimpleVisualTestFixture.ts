@@ -4,18 +4,9 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
-import {
-  ModelMetadataProvider,
-  ModelDataProvider,
-  ModelIdentifier,
-  LocalModelMetadataProvider,
-  LocalModelDataProvider,
-  CdfModelMetadataProvider,
-  CdfModelDataProvider,
-  LocalModelIdentifier,
-  CdfModelIdentifier
-} from '../../packages/modeldata-api';
-import { createApplicationSDK } from '../../test-utilities/src/appUtils';
+import { ModelMetadataProvider, ModelDataProvider, ModelIdentifier } from '../../packages/modeldata-api';
+import { createDataProviders } from './utilities/createDataProviders';
+import { VisualTestFixture } from './VisualTestFixture';
 
 export type SimpleTestFixtureComponents = {
   renderer: THREE.WebGLRenderer;
@@ -29,7 +20,7 @@ export type SimpleTestFixtureComponents = {
   };
 };
 
-export abstract class SimpleVisualTestFixture {
+export abstract class SimpleVisualTestFixture implements VisualTestFixture {
   public readonly cadFromCdfToThreeMatrix = new THREE.Matrix4().set(1, 0, 0, 0, 0, 0, 1, 0, 0, -1, 0, 0, 0, 0, 0, 1);
 
   private readonly _perspectiveCamera: THREE.PerspectiveCamera;
@@ -62,7 +53,7 @@ export abstract class SimpleVisualTestFixture {
       cameraControls: this._controls,
       renderer: this._renderer,
       scene: this._scene,
-      dataProviders: await this.createDataProviders()
+      dataProviders: await createDataProviders()
     };
 
     await this.setup(components);
@@ -90,45 +81,5 @@ export abstract class SimpleVisualTestFixture {
 
     this._perspectiveCamera.position.copy(position);
     this._controls.target.copy(target);
-  }
-
-  private async createDataProviders(): Promise<{
-    modelMetadataProvider: ModelMetadataProvider;
-    modelDataProvider: ModelDataProvider;
-    modelIdentifier: ModelIdentifier;
-  }> {
-    const queryString = window.location.search;
-    const urlParams = new URLSearchParams(queryString);
-
-    if (urlParams.has('modelId') && urlParams.has('revisionId')) {
-      return this.createCdfDataProviders(urlParams);
-    }
-
-    return this.createLocalDataProviders(urlParams);
-  }
-
-  private createLocalDataProviders(urlParams: URLSearchParams) {
-    const modelUrl = urlParams.get('modelUrl') ?? 'primitives';
-    const modelIdentifier = new LocalModelIdentifier(modelUrl);
-    const modelMetadataProvider = new LocalModelMetadataProvider();
-    const modelDataProvider = new LocalModelDataProvider();
-    return { modelMetadataProvider, modelDataProvider, modelIdentifier };
-  }
-
-  private async createCdfDataProviders(urlParams: URLSearchParams) {
-    const client = await createApplicationSDK('reveal.example.simple', {
-      project: '3d-test',
-      cluster: 'greenfield',
-      clientId: 'a03a8caf-7611-43ac-87f3-1d493c085579',
-      tenantId: '20a88741-8181-4275-99d9-bd4451666d6e'
-    });
-
-    const modelId = parseInt(urlParams.get('modelId')!);
-    const revisionId = parseInt(urlParams.get('revisionId')!);
-
-    const modelIdentifier = new CdfModelIdentifier(modelId, revisionId);
-    const modelMetadataProvider = new CdfModelMetadataProvider(client);
-    const modelDataProvider = new CdfModelDataProvider(client);
-    return { modelMetadataProvider, modelDataProvider, modelIdentifier };
   }
 }
