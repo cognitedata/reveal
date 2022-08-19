@@ -130,7 +130,8 @@ export function createRevealManager(
     modelDataProvider,
     sceneHandler.scene,
     renderer,
-    sdkClient
+    sdkClient,
+    revealOptions.internal?.localModels ?? false
   );
   sceneHandler.customObjects.push(pointCloudManager.pointCloudGroupWrapper);
   const cadManager = createCadManager(

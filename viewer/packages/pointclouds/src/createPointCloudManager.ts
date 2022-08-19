@@ -18,13 +18,14 @@ export function createPointCloudManager(
   modelDataProvider: ModelDataProvider,
   scene: THREE.Scene,
   renderer: THREE.WebGLRenderer,
-  sdkClient?: CogniteClient | undefined
+  sdkClient: CogniteClient | undefined,
+  localModels: boolean
 ): PointCloudManager {
   const metadataRepository = new PointCloudMetadataRepository(modelMetadataProvider, modelDataProvider);
   const potreeInstance = new Potree(modelDataProvider);
 
   let modelFactory;
-  if (sdkClient) {
+  if (sdkClient && !localModels) {
     modelFactory = new CdfPointCloudFactory(potreeInstance, sdkClient);
   } else {
     modelFactory = new LocalPointCloudFactory(potreeInstance);

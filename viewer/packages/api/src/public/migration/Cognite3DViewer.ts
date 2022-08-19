@@ -1279,6 +1279,7 @@ function createRevealManagerOptions(viewerOptions: Cognite3DViewerOptions): Reve
   };
 
   revealOptions.internal!.cad = { sectorCuller: viewerOptions._sectorCuller };
+  revealOptions.internal!.localModels = viewerOptions._localModels;
   const device = determineCurrentDevice();
   const { antiAliasing, multiSampleCount } = determineAntiAliasingMode(viewerOptions.antiAliasingHint, device);
   const ssaoRenderParameters = determineSsaoRenderParameters(viewerOptions.ssaoQualityHint, device);
