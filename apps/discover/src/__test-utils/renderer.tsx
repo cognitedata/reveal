@@ -104,6 +104,17 @@ export const testRenderer = (
   );
 };
 
+export const testReRender = (
+  rerender: RenderResult['rerender'],
+  component: React.FC<any>,
+  store?: Store,
+  props?: any
+) => {
+  return rerender(
+    <WrappedWithProviders component={component} store={store} props={props} />
+  );
+};
+
 // this is usefull when you want to share the react-query state across multiple component renders
 // eg: for testing caching
 export const testRendererForHooks = (

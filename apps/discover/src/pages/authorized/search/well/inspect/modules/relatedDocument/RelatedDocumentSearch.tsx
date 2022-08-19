@@ -1,6 +1,6 @@
 import { documentFacetsStructure } from 'domain/documents/internal/types';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 
 import get from 'lodash/get';
 import { isEnterPressed } from 'utils/general.helper';
@@ -18,7 +18,13 @@ export const RelatedDocumentSearch: React.FC = () => {
   const setRelatedDocumentFilters = useSetRelatedDocumentsFilters();
   const facets = useMemo(() => get(data, 'filters.documents.facets'), [data]);
   const { t } = useTranslation();
-  const [searchValue, setSearchValue] = useState<string>('');
+  const [searchValue, setSearchValue] = useState<string>(data.query || '');
+
+  useEffect(() => {
+    if (data.query === '' && data.query !== searchValue) {
+      setSearchValue(data.query);
+    }
+  }, [data.query]);
 
   const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (isEnterPressed(event)) {
