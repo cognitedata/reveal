@@ -1,5 +1,7 @@
 import { Label } from '@cognite/cogs.js';
 
+import { MiddleEllipsis } from 'components/MiddleEllipsis';
+
 import { EMPTY_FIELD_PLACEHOLDER } from '../../../constants/general';
 import {
   EMPTY_COMMENT_PLACEHOLDER,
@@ -20,7 +22,7 @@ describe('meta data table', () => {
 
   it('should return value for non typed', async () => {
     const result = formatItem({ value: '123' });
-    expect(result).toMatchObject(<>123</>);
+    expect(result).toMatchObject(<MiddleEllipsis value="123" />);
 
     const emptyResult = formatItem({});
     expect(emptyResult).toMatchObject(

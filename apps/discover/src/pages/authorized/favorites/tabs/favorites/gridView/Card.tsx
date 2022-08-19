@@ -124,6 +124,7 @@ export const FavouriteCard: React.FC<Props> = ({
             {
               label: t(FAVORITE_SET_INFO_CREATED_BY),
               value: getFullNameOrDefaultText(favorite.owner),
+              styles: { maxWidth: '260px' },
             },
             {
               label: t(FAVORITE_SET_INFO_ASSETS),
@@ -140,6 +141,7 @@ export const FavouriteCard: React.FC<Props> = ({
                   );
                 }),
               type: 'componentlist',
+              styles: { wrap: 'nowrap' },
             },
             {
               label: t(FAVORITE_SET_INFO_DATE_UPDATED),
@@ -149,6 +151,7 @@ export const FavouriteCard: React.FC<Props> = ({
             {
               label: t(FAVORITE_SET_INFO_UPDATED_BY),
               value: getFavoriteLastUpdateByUserName(favorite.lastUpdatedBy),
+              styles: { maxWidth: '260px' },
             },
           ]}
         />

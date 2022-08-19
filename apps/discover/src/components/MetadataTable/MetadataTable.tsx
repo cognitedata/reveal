@@ -19,16 +19,18 @@ export const MetadataItem: React.FC<MetaDataItemProps> = ({
   type,
   actions,
   spacing,
+  styles,
 }) => {
   return (
     <MetadataContainer
       key={`metadata-label-${label}`}
       data-testid={`metadata-label-${label}`}
       spacing={spacing}
+      maxWidth={styles?.maxWidth}
     >
       {label && <Label>{label}</Label>}
       <Value styles={{ display: 'flex' }}>
-        {formatItem({ value, type, actions })}
+        {formatItem({ value, type, actions, styles })}
       </Value>
     </MetadataContainer>
   );
@@ -53,6 +55,7 @@ const MetadataTable: React.FC<Props> = ({
           label={item.label}
           value={item.value}
           type={item.type}
+          styles={item.styles}
         />
       ))}
     </MetadataTableContainer>

@@ -8,6 +8,7 @@ import { getHumanReadableFileSize } from 'utils/number';
 
 import { Flex, Label, Tooltip } from '@cognite/cogs.js';
 
+import { MiddleEllipsis } from 'components/MiddleEllipsis';
 import { EMPTY_FIELD_PLACEHOLDER } from 'constants/general';
 
 import { EMPTY_COMMENT_PLACEHOLDER, EMPTY_PATH_PLACEHOLDER } from './constants';
@@ -27,11 +28,17 @@ export interface FormatItemProps {
     | 'componentlist'
     | 'url';
   actions?: JSX.Element | JSX.Element[];
+  styles?: { wrap?: 'wrap' | 'nowrap' | 'wrap-reverse'; maxWidth?: string };
 }
 
 const maxLabels = 9;
 
-export const formatItem = ({ value, type, actions }: FormatItemProps) => {
+export const formatItem = ({
+  value,
+  type,
+  actions,
+  styles = { wrap: 'wrap' },
+}: FormatItemProps) => {
   if (type === 'text') {
     if (actions) {
       return (
@@ -74,7 +81,7 @@ export const formatItem = ({ value, type, actions }: FormatItemProps) => {
     const compactArray: string[] | React.ReactNode[] = compact(value);
 
     return compactArray.length ? (
-      <Flex gap={6} direction="row" wrap="wrap">
+      <Flex gap={6} direction="row" wrap={styles.wrap}>
         {compactArray.slice(0, maxLabels).map((item, i) =>
           type === 'componentlist' ? (
             <span key={`${item?.toString()}${i}`}>{item}</span>
@@ -145,7 +152,7 @@ export const formatItem = ({ value, type, actions }: FormatItemProps) => {
 
   // Otherwise, just return it
   return value ? (
-    <>{value}</>
+    <MiddleEllipsis value={String(value)} />
   ) : (
     <EmptyCell>{EMPTY_FIELD_PLACEHOLDER}</EmptyCell>
   );

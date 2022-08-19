@@ -47,7 +47,6 @@ export const Title = styled.div`
 `;
 
 export const CardContent = styled(FlexGrow)`
-  height: 202px;
   padding: 12px ${sizes.normal} 20px ${sizes.normal};
   cursor: pointer;
 `;

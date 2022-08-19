@@ -142,7 +142,7 @@ export const Container = styled.div`
 
 export const Grid = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(460px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(510px, 1fr));
   grid-auto-rows: minmax(100px, auto);
   gap: ${sizes.large};
   height: auto;

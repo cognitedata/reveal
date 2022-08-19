@@ -23,8 +23,8 @@ describe('Well metadata', () => {
       }),
     });
 
-    expect(screen.getByText('test-sources')).toBeInTheDocument();
-    expect(screen.getByText('test-operator')).toBeInTheDocument();
+    expect(screen.getByTitle('test-sources')).toBeInTheDocument();
+    expect(screen.getByTitle('test-operator')).toBeInTheDocument();
     expect(screen.getByText('06-Mar-1975')).toBeInTheDocument();
   });
 

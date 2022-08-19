@@ -43,7 +43,7 @@ export const Value = styled(TitleStyle)`
 export const OriginalPathValue = styled(Value)``;
 
 export const MetadataContainer = styled(FlexColumn)`
-  width: 100%;
+  max-width: ${({ maxWidth }: { maxWidth: string }) => maxWidth || '100%'};
   margin-bottom: ${({ spacing }: { spacing: keyof typeof sizes }) =>
     sizes[spacing || 'normal']};
 
