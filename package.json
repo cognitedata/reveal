@@ -115,7 +115,7 @@
     "@storybook/node-logger": "^6.5.9",
     "@storybook/preset-create-react-app": "^3.1.5",
     "@storybook/react": "^6.5.9",
-    "@storybook/test-runner": "^0.4.0",
+    "@storybook/test-runner": "^0.5.0",
     "@storybook/testing-library": "^0.0.13",
     "@testing-library/react": "^13.3.0",
     "@types/d3-array": "^2.8.0",
