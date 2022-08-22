@@ -5,6 +5,7 @@ import {
   SliceCaseReducers,
   ValidateSliceCaseReducers,
 } from '@reduxjs/toolkit';
+import { PageSize } from 'src/modules/Common/Components/FileTable/types';
 import { ViewMode } from 'src/modules/Common/types';
 
 export interface GenericTabularState {
@@ -18,7 +19,7 @@ export interface GenericTabularState {
     // this default key will override by the last selected choice for the Timestamp column
     defaultTimestampKey?: string;
     currentPage: number;
-    pageSize: number;
+    pageSize: PageSize;
   };
   isLoading: boolean;
 }
@@ -71,7 +72,7 @@ export const createGenericTabularDataSlice = <
       setCurrentPage(state, action: PayloadAction<number>) {
         state.sortMeta.currentPage = action.payload;
       },
-      setPageSize(state, action: PayloadAction<number>) {
+      setPageSize(state, action: PayloadAction<PageSize>) {
         state.sortMeta.pageSize = action.payload;
       },
       setIsLoading(state, action: PayloadAction<boolean>) {

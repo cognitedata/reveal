@@ -49,7 +49,10 @@ import { PageBasedGridView } from 'src/modules/Common/Components/GridView/PageBa
 import { VisionMode } from 'src/constants/enums/VisionEnums';
 import { FileInfo } from '@cognite/sdk';
 import { PaginationWrapper } from 'src/modules/Common/Components/SorterPaginationWrapper/PaginationWrapper';
-import { PaginatedTableProps } from 'src/modules/Common/Components/FileTable/types';
+import {
+  PageSize,
+  PaginatedTableProps,
+} from 'src/modules/Common/Components/FileTable/types';
 import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
 import { PollJobs } from 'src/store/thunks/Process/PollJobs';
 import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotations';
@@ -189,7 +192,7 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
     setCurrentPage: (currentPage: number) => {
       dispatch(setCurrentPage(currentPage));
     },
-    setPageSize: (pageSize: number) => {
+    setPageSize: (pageSize: PageSize) => {
       dispatch(setPageSize(pageSize));
     },
   };

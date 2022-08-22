@@ -32,7 +32,10 @@ import {
 } from 'src/modules/Explorer/store/hooks';
 import { VisionMode } from 'src/constants/enums/VisionEnums';
 import { PaginationWrapper } from 'src/modules/Common/Components/SorterPaginationWrapper/PaginationWrapper';
-import { PaginatedTableProps } from 'src/modules/Common/Components/FileTable/types';
+import {
+  PageSize,
+  PaginatedTableProps,
+} from 'src/modules/Common/Components/FileTable/types';
 import { SortKeys } from 'src/modules/Common/Utils/SortUtils';
 
 export const ExplorerSearchResults = ({
@@ -103,7 +106,7 @@ export const ExplorerSearchResults = ({
       setCurrentPage: (currentPage: number) => {
         dispatch(setCurrentPage(currentPage));
       },
-      setPageSize: (pageSize: number) => {
+      setPageSize: (pageSize: PageSize) => {
         dispatch(setPageSize(pageSize));
       },
     }),

@@ -1,3 +1,4 @@
+import { RANGE_OPTIONS } from '@cognite/cogs.js/dist/esm/Components/Pagination/types';
 import { BaseTableProps } from 'react-base-table';
 import { SelectFilter, TableDataItem } from 'src/modules/Common/types';
 
@@ -40,18 +41,20 @@ export type GridViewProps<T> = {
   emptyRenderer: () => JSX.Element;
 };
 
+export type PageSize = typeof RANGE_OPTIONS[number];
+
 export type SortPaginate = {
   sortKey?: string;
   reverse?: boolean;
   currentPage: number;
-  pageSize: number;
+  pageSize: PageSize;
 };
 
 export type SortPaginateControls = SortPaginate & {
   setSortKey?: (key: string) => void;
   setReverse?: (reverse: boolean) => void;
   setCurrentPage: (page: number) => void;
-  setPageSize: (size: number) => void;
+  setPageSize: (size: PageSize) => void;
 };
 
 export type FileGridTableProps<T> = Omit<BaseTableProps<T>, 'data' | 'width'> &
@@ -69,6 +72,6 @@ export type FileMapTableProps<T> = FileTableProps<T> &
   PaginatedTableProps<T> & {
     isLoading: boolean;
     mapTableTabKey: MapTableTabKey;
-    pageSize: number;
-    setPageSize: (size: number) => void;
+    pageSize: PageSize;
+    setPageSize: (size: PageSize) => void;
   };
