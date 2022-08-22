@@ -99,9 +99,14 @@ export const Select = (props: CustomSelectProps) => {
           onMouseDown={() => setBlockClose(true)}
           onBlur={() => setBlockClose(false)}
           onChange={onFilterChange}
-          onPressEnter={(e) => {
+          onPressEnter={(e: React.KeyboardEvent<HTMLInputElement>) => {
             setIsMenuOpen(false);
             e.preventDefault();
+          }}
+          onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
+            // In react-select, default action of spacebar press is to select first option.
+            // It prevents using space in the search input, so we disable propagation when spacebar is pressed.
+            if (e.key === ' ') e.stopPropagation();
           }}
           style={{ marginBottom: '4px' }}
         />
