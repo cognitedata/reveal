@@ -5,6 +5,7 @@ import { TypeSelect } from '../../SchemaTypeAndField/TypeSelect';
 
 interface FieldNameEditorState {
   initialFieldType: string;
+  initialIsFieldTypeList: boolean;
   field: DataModelTypeDefsField;
   error?: string;
   hasError: boolean;
@@ -27,6 +28,7 @@ export class FieldTypeCellEditor
     this.state = {
       field: JSON.parse(JSON.stringify(props.data)) as DataModelTypeDefsField,
       initialFieldType: props.data.type.name,
+      initialIsFieldTypeList: props.data.type.list,
       error: props.error,
       hasError: false,
     };
@@ -96,7 +98,10 @@ export class FieldTypeCellEditor
   // Gets called once when editing is finished (eg if Enter is pressed).
   // If you return true, then the result of the edit will be ignored.
   isCancelAfterEnd() {
-    return this.state.initialFieldType === this.state.field.type.name;
+    return (
+      this.state.initialFieldType === this.state.field.type.name &&
+      this.state.initialIsFieldTypeList === this.state.field.type.list
+    );
   }
 
   onValueChanged(field: DataModelTypeDefsField) {

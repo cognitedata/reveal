@@ -9,7 +9,11 @@ interface FieldNameCellRendererProps extends ICellRendererParams {
 
 export const FieldNameCellRenderer = React.memo(
   (props: FieldNameCellRendererProps) => {
-    const fieldName = props.value;
+    let fieldName = props.value;
+
+    if (props.colDef?.field === 'type' && props.data.type.list) {
+      fieldName = `[${fieldName}] list`;
+    }
     const showDropDownArrow = props.showDropDownArrow === true;
     return (
       <div
@@ -35,7 +39,10 @@ export const FieldNameCellRenderer = React.memo(
   },
   (prev, next) => {
     if (prev.colDef?.field === 'type') {
-      return prev.data.type.name === next.data.type.name;
+      return (
+        prev.data.type.name === next.data.type.name &&
+        prev.data.type.list === next.data.type.list
+      );
     }
 
     return prev.data.name === next.data.name;
