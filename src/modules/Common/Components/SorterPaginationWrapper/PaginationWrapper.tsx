@@ -7,7 +7,6 @@ import {
   PaginatedTableProps,
 } from 'src/modules/Common/Components/FileTable/types';
 import { Footer } from './Footer';
-import { Paginator } from './Paginator';
 
 const getPage = (
   data: TableDataItem[],
@@ -51,16 +50,8 @@ export const PaginationWrapper = ({
   isLoading,
   children,
 }: PaginationWrapperProps) => {
-  const {
-    sortKey,
-    reverse,
-    currentPage,
-    pageSize,
-    setSortKey,
-    setReverse,
-    setCurrentPage,
-    setPageSize,
-  } = sortPaginateControls;
+  const { sortKey, reverse, currentPage, pageSize, setSortKey, setReverse } =
+    sortPaginateControls;
   const fetchedCount = data.length;
   const totalPages =
     pageSize > 0
@@ -107,15 +98,7 @@ export const PaginationWrapper = ({
         })}
       </TableContainer>
       <PaginationContainer>
-        {pagination && !isLoading ? (
-          <Paginator
-            currentPage={currentPage}
-            pageSize={pageSize}
-            totalPages={totalPages}
-            setCurrentPage={setCurrentPage}
-            setPageSize={setPageSize}
-          />
-        ) : null}
+        {pagination && !isLoading ? <></> : null}
       </PaginationContainer>
     </Container>
   );
