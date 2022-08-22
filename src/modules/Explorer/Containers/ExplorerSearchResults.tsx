@@ -75,21 +75,24 @@ export const ExplorerSearchResults = ({
       explorerReducer.sortMeta.defaultTimestampKey
   );
 
-  const handleSelectAllFiles = (
-    value: boolean,
-    selectFilter?: SelectFilter
-  ) => {
-    dispatch(
-      setSelectedAllExplorerFiles({ selectStatus: value, filter: selectFilter })
-    );
-  };
-  const handleSetSelectedFiles = (fileIds: number[]) => {
+  const handleSelectAllFiles = useCallback(
+    (value: boolean, selectFilter?: SelectFilter) => {
+      dispatch(
+        setSelectedAllExplorerFiles({
+          selectStatus: value,
+          filter: selectFilter,
+        })
+      );
+    },
+    []
+  );
+  const handleSetSelectedFiles = useCallback((fileIds: number[]) => {
     dispatch(setExplorerSelectedFiles(fileIds));
-  };
+  }, []);
 
-  const setActiveKey = (key: string) => {
+  const setActiveKey = useCallback((key: string) => {
     dispatch(setMapTableTabKey({ mapTableTabKey: key }));
-  };
+  }, []);
 
   const sortPaginateControls = useMemo(
     () => ({
@@ -134,6 +137,10 @@ export const ExplorerSearchResults = ({
       dispatch(setDefaultTimestampKey(SortKeys.createdTime));
     }
   }, [sortPaginateControls.sortKey]);
+
+  const mapTableTabKey = useMemo(() => {
+    return { activeKey, setActiveKey };
+  }, [activeKey]);
 
   return (
     <ResultContainer>
@@ -181,7 +188,7 @@ export const ExplorerSearchResults = ({
                           selectedIds={selectedIds}
                           allRowsSelected={allFilesSelected}
                           onSelectAllRows={handleSelectAllFiles}
-                          mapTableTabKey={{ activeKey, setActiveKey }}
+                          mapTableTabKey={mapTableTabKey}
                           onSelectPage={handleSetSelectedFiles}
                           pageSize={sortPaginateState.pageSize}
                           setPageSize={sortPaginateControls.setPageSize}
@@ -225,4 +232,6 @@ export const ExplorerSearchResults = ({
 const ResultContainer = styled.div`
   width: 100%;
   height: 100%;
+  min-width: 0;
+  min-height: 0;
 `;
