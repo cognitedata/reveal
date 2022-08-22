@@ -79,6 +79,9 @@ jobs:
       working-directory: viewer
       run: yarn install --immutable
 
+    - name: Override Rust version
+      run: rustup override set nightly
+
     - name: Setup tools for coverage tests
       working-directory: viewer
       run: |
