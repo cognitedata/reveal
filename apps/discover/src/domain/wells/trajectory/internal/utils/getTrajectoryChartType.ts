@@ -1,4 +1,4 @@
-export const getChartType = (type?: string) => {
+export const getTrajectoryChartType = (type?: string) => {
   switch (type) {
     case 'line':
       return 'scatter';

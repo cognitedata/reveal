@@ -1,4 +1,7 @@
-import { TrajectoryDataInternal } from 'domain/wells/trajectory/internal/types';
+import {
+  TrajectoryCurveCoordinates,
+  TrajectoryDataInternal,
+} from 'domain/wells/trajectory/internal/types';
 
 import get from 'lodash/get';
 import isUndefined from 'lodash/isUndefined';
@@ -8,23 +11,21 @@ import { ProjectConfigWellsTrajectoryCharts } from '@cognite/discover-api-types'
 import { DataError } from 'modules/inspectTabs/types';
 
 import {
-  EMPTY_CHART_COORDINATES,
+  EMPTY_CURVE_COORDINATES,
   TRAJECTORY_COLUMN_NAME_MAP,
-} from '../constants';
-import { ChartCoordinates } from '../types';
+} from '../../constants';
+import { getTrajectoryDataErrors } from '../utils/getTrajectoryDataErrors';
 
-import { getDataErrors } from './getDataErrors';
-
-export const getChartCoordinates = (
+export const getTrajectoryCurveCoordinates = (
   rows: TrajectoryDataInternal['rows'],
   chartData?: ProjectConfigWellsTrajectoryCharts['chartData']
 ): {
-  coordinates: ChartCoordinates;
+  coordinates: TrajectoryCurveCoordinates;
   errors: DataError[];
 } => {
   if (!chartData) {
     return {
-      coordinates: EMPTY_CHART_COORDINATES,
+      coordinates: EMPTY_CURVE_COORDINATES,
       errors: [],
     };
   }
@@ -53,7 +54,7 @@ export const getChartCoordinates = (
         z: zValueError ? [...z] : [...z, rowZValue],
       };
 
-      const newErrors = getDataErrors(chartData, {
+      const newErrors = getTrajectoryDataErrors(chartData, {
         x: xValueError,
         y: yValueError,
         z: zValueError,
@@ -65,7 +66,7 @@ export const getChartCoordinates = (
       };
     },
     {
-      coordinates: EMPTY_CHART_COORDINATES,
+      coordinates: EMPTY_CURVE_COORDINATES,
       errors: [] as DataError[],
     }
   );

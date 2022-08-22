@@ -1,3 +1,5 @@
+import { useTrajectoryChartsConfig } from 'domain/wells/trajectory/internal/hooks/useTrajectoryChartsConfig';
+
 import React, { useEffect, useState, Dispatch } from 'react';
 import { useDispatch } from 'react-redux';
 
@@ -45,10 +47,7 @@ export const TrajectoryGraph: React.FC<TrajectoryGraphProps> = ({
     return () => window.removeEventListener('resize', enableAutosizeGridView);
   }, []);
 
-  const chartConfigs = useDeepMemo(
-    () => config?.trajectory?.charts || [],
-    [config?.trajectory?.charts]
-  );
+  const chartConfigs = useTrajectoryChartsConfig();
 
   const { data: charts, errors } = useDeepMemo(
     () => adaptToChartDataList(data, chartConfigs),

@@ -1,43 +1,26 @@
+import { adaptToTrajectoryChartDataList } from 'domain/wells/trajectory/internal/transformers/adaptToTrajectoryChartDataList';
+import { TrajectoryChartDataList } from 'domain/wells/trajectory/internal/types';
+
 import { ProjectConfigWellsTrajectoryCharts } from '@cognite/discover-api-types';
 
-import { DataError } from 'modules/inspectTabs/types';
-
-import { ChartDataList, TrajectoryView } from '../types';
-
-import { getChartCoordinates } from './getChartCoordinates';
-import { getChartType } from './getChartType';
+import { TrajectoryView } from '../types';
 
 export const adaptToChartDataList = (
   trajectories: TrajectoryView[],
   trajectoryCharts: ProjectConfigWellsTrajectoryCharts[]
-): ChartDataList => {
-  const errorsMap = new Map<string, DataError[]>();
+): TrajectoryChartDataList => {
+  return adaptToTrajectoryChartDataList(
+    trajectories,
+    trajectoryCharts,
+    ({ trajectory }) => {
+      const { wellboreName, wellboreColor } = trajectory;
 
-  const data = trajectoryCharts.map(({ type, chartData, chartExtraData }) => {
-    return trajectories.map(
-      ({ wellboreMatchingId, wellboreName, wellboreColor, rows }) => {
-        const { coordinates, errors } = getChartCoordinates(rows, chartData);
-
-        const currentErrors = errorsMap.get(wellboreMatchingId) || [];
-        const updatedErrors = [...currentErrors, ...errors];
-        errorsMap.set(wellboreMatchingId, updatedErrors);
-
-        return {
-          name: wellboreName,
-          mode: 'lines',
-          type: getChartType(type),
-          line: {
-            color: wellboreColor,
-          },
-          ...coordinates,
-          ...chartExtraData,
-        };
-      }
-    );
-  });
-
-  return {
-    data,
-    errors: Object.fromEntries(errorsMap),
-  };
+      return {
+        name: wellboreName,
+        line: {
+          color: wellboreColor,
+        },
+      };
+    }
+  );
 };

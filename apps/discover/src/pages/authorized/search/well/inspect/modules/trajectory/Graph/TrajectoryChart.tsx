@@ -1,12 +1,13 @@
+import { useTrajectoryChartsConfig } from 'domain/wells/trajectory/internal/hooks/useTrajectoryChartsConfig';
+import { getTrajectoryChartVizDataConfig } from 'domain/wells/trajectory/internal/utils/getTrajectoryChartVizDataConfig';
+
 import React, { useMemo } from 'react';
 
-import { useDeepCallback, useDeepMemo } from 'hooks/useDeep';
+import { useDeepCallback } from 'hooks/useDeep';
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
-import { useWellConfig } from 'modules/wellSearch/hooks/useWellConfig';
 
 import { Chart } from '../../common/Chart';
 import { ChartProps, Data } from '../../common/Chart/types';
-import { getChartVizDataConfig } from '../utils/getChartVizDataConfig';
 
 import { TrajectoryChildGrid } from './elements';
 
@@ -18,13 +19,8 @@ export interface TrajectoryChartProps {
 export const TrajectoryChart: React.FC<
   TrajectoryChartProps & Partial<ChartProps>
 > = ({ data, index, ...chartProps }) => {
-  const { data: config } = useWellConfig();
+  const chartConfigs = useTrajectoryChartsConfig();
   const { data: userPreferredUnit } = useUserPreferencesMeasurement();
-
-  const chartConfigs = useDeepMemo(
-    () => config?.trajectory?.charts || [],
-    [config?.trajectory?.charts]
-  );
 
   const chartConfig = useMemo(() => chartConfigs[index], [chartConfigs, index]);
 
@@ -40,7 +36,7 @@ export const TrajectoryChart: React.FC<
         autosize
         data={data}
         showLegend={isLegend(index)}
-        {...getChartVizDataConfig(
+        {...getTrajectoryChartVizDataConfig(
           chartConfigs[index].chartVizData,
           userPreferredUnit
         )}

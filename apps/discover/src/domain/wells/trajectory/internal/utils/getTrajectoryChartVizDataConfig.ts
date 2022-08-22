@@ -4,7 +4,7 @@ import { ProjectConfigWellsTrajectoryChartVizData } from '@cognite/discover-api-
 
 import { UserPreferredUnit } from 'constants/units';
 
-export const getChartVizDataConfig = (
+export const getTrajectoryChartVizDataConfig = (
   chartVizDataConfig: ProjectConfigWellsTrajectoryChartVizData | undefined,
   userPreferredUnit: UserPreferredUnit
 ): ProjectConfigWellsTrajectoryChartVizData => {
