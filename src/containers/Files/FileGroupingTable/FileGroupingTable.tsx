@@ -3,6 +3,7 @@ import React from 'react';
 import { Document, DocumentTable } from '@cognite/react-document-table';
 import { useList } from '@cognite/sdk-react-query-hooks';
 import { FileInfo } from '@cognite/sdk';
+import { docTypes } from './docTypes';
 
 const FileGroupingTable = ({
   parentResource,
@@ -39,7 +40,11 @@ const FileGroupingTable = ({
     }) ?? [];
 
   return (
-    <DocumentTable docs={modifiedData} handleDocumentClick={onItemClicked} />
+    <DocumentTable
+      docs={modifiedData}
+      docTypes={docTypes}
+      handleDocumentClick={onItemClicked}
+    />
   );
 };
 
