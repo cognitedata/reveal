@@ -12,14 +12,15 @@ import {
   CadMaterialManager,
   defaultRenderOptions,
   DefaultRenderPipelineProvider,
-  RenderPipelineExecutor
+  RenderPipelineExecutor,
+  RenderPipelineProvider
 } from '../../packages/rendering';
 import { createDataProviders } from './utilities/createDataProviders';
 import { VisualTestFixture } from './VisualTestFixture';
 import { DeferredPromise, SceneHandler } from '../../packages/utilities';
 import { ModelIdentifier, ModelMetadataProvider } from '../../packages/modeldata-api';
 import { LoadingState } from '../../packages/model-base';
-import { PointCloudManager, PointCloudNode } from '../../packages/pointclouds';
+import { PointCloudManager, PointCloudNode, PotreePointColorType } from '../../packages/pointclouds';
 import { PointCloudMetadataRepository } from '../../packages/pointclouds/src/PointCloudMetadataRepository';
 import { PointCloudFactory } from '../../packages/pointclouds/src/PointCloudFactory';
 import { fitCameraToBoundingBox } from './utilities/fitCameraToBoundingBox';
@@ -34,6 +35,7 @@ export type StreamingTestFixtureComponents = {
   };
   camera: THREE.PerspectiveCamera;
   cameraControls: OrbitControls;
+  cadMaterialManager: CadMaterialManager;
 };
 
 export abstract class StreamingVisualTestFixture implements VisualTestFixture {
@@ -41,17 +43,42 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
   private readonly _sceneHandler: SceneHandler;
   private readonly _renderer: THREE.WebGLRenderer;
   private readonly _controls: OrbitControls;
-  private readonly _pipelineExecutor: RenderPipelineExecutor;
   private readonly _materialManager: CadMaterialManager;
-  private readonly _renderPipelineProvider: DefaultRenderPipelineProvider;
   private readonly _gui: dat.GUI;
-  private _frameStatisticsGUIData: { drawCalls: number; pointCount: number; triangleCount: number };
+
+  protected readonly _frameStatisticsGUIData: { drawCalls: number; pointCount: number; triangleCount: number };
+  protected readonly _frameStatsGUIFolder: dat.GUI;
+
+  private _renderPipelineProvider: RenderPipelineProvider;
+  private _pipelineExecutor: RenderPipelineExecutor;
+
+  get gui(): dat.GUI {
+    return this._gui;
+  }
+
+  set pipelineExecutor(pipelineExecutor: RenderPipelineExecutor) {
+    this._pipelineExecutor = pipelineExecutor;
+  }
+
+  get pipelineExecutor(): RenderPipelineExecutor {
+    return this._pipelineExecutor;
+  }
+
+  set pipelineProvider(pipelineProvider: RenderPipelineProvider) {
+    this._renderPipelineProvider = pipelineProvider;
+  }
+
+  get pipelineProvider(): RenderPipelineProvider {
+    return this._renderPipelineProvider;
+  }
+
   constructor() {
-    this._perspectiveCamera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1.0, 1000);
+    this._perspectiveCamera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 1000);
 
     this._sceneHandler = new SceneHandler();
 
     this._renderer = new THREE.WebGLRenderer();
+    this._renderer.setPixelRatio(window.devicePixelRatio);
 
     this._controls = new OrbitControls(this._perspectiveCamera, this._renderer.domElement);
 
@@ -69,16 +96,14 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
       drawCalls: 0,
       pointCount: 0,
       triangleCount: 0
-      // steps: 6,
-      // canvasColor: '#50728c',
-      // clearColor: '#444',
-      // clearAlpha: 1
     };
 
-    const stats = this._gui.addFolder('frame stats');
-    stats.add(this._frameStatisticsGUIData, 'drawCalls').listen();
-    stats.add(this._frameStatisticsGUIData, 'pointCount').listen();
-    stats.add(this._frameStatisticsGUIData, 'triangleCount').listen();
+    this._frameStatsGUIFolder = this._gui.addFolder('frameStats');
+    this._frameStatsGUIFolder.open();
+    this._frameStatsGUIFolder.name = 'Frame Statistics';
+    this._frameStatsGUIFolder.add(this._frameStatisticsGUIData, 'drawCalls').listen();
+    this._frameStatsGUIFolder.add(this._frameStatisticsGUIData, 'pointCount').listen();
+    this._frameStatsGUIFolder.add(this._frameStatisticsGUIData, 'triangleCount').listen();
   }
 
   public async run(): Promise<void> {
@@ -127,8 +152,11 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
         boundingBox
       },
       camera: this._perspectiveCamera,
-      cameraControls: this._controls
+      cameraControls: this._controls,
+      cadMaterialManager: this._materialManager
     });
+
+    // this.gui.close();
 
     this.render();
   }
@@ -162,12 +190,15 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
     } else if (model instanceof PointCloudNode) {
       const subscriber = pointCloudManager.getLoadingStateObserver().subscribe(onLoadingStateChange);
       modelLoadedPromise.then(() => subscriber.unsubscribe());
+
+      // TODO: This is a workaround to deal with point cloud loading state currently not working as intended
+      // remove this in the future
+      setTimeout(() => modelLoadedPromise.resolve(), 1000);
     }
 
     return modelLoadedPromise;
 
     function onLoadingStateChange(loadingState: LoadingState) {
-      //Doesn't work for pointclouds :(
       if (loadingState.itemsRequested > 0 && loadingState.itemsRequested === loadingState.itemsLoaded) {
         modelLoadedPromise.resolve();
       }
@@ -195,37 +226,15 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
   ): Promise<CadNode | PointCloudNode> {
     const modelOutputs = (await modelMetadataProvider.getModelOutputs(modelIdentifier)).map(outputs => outputs.format);
 
-    // let boundingBox: THREE.Box3;
     if (modelOutputs.includes('gltf-directory') || modelOutputs.includes('reveal-directory')) {
       const cadModel = await cadManager.addModel(modelIdentifier);
       this._sceneHandler.addCadModel(cadModel, cadModel.cadModelIdentifier);
       return cadModel;
-      // model = cadModel;
-      // boundingBox = (cadModel as any)._cadModelMetadata.scene.getBoundsOfMostGeometry().clone();
-      // boundingBox.applyMatrix4(model.children[0].matrix);
-
-      // const nodeAppearanceProvider = materialManager.getModelNodeAppearanceProvider('0');
-      // nodeAppearanceProvider.assignStyledNodeCollection(
-      //   new TreeIndexNodeCollection(new NumericRange(0, 10)),
-      //   DefaultNodeAppearance.Ghosted
-      // );
-
-      // nodeAppearanceProvider.assignStyledNodeCollection(
-      //   new TreeIndexNodeCollection(new NumericRange(10, 20)),
-      //   DefaultNodeAppearance.Highlighted
-      // );
-
-      // nodeAppearanceProvider.assignStyledNodeCollection(new TreeIndexNodeCollection(new NumericRange(40, 41)), {
-      //   ...DefaultNodeAppearance.Default,
-      //   outlineColor: 6
-      // });
     } else if (modelOutputs.includes('ept-pointcloud')) {
       const pointCloudNode = await pointCloudManager.addModel(modelIdentifier);
+      pointCloudNode.pointColorType = PotreePointColorType.Height;
       this._sceneHandler.addCustomObject(pointCloudNode);
       return pointCloudNode;
-      // const pointcloudModel = new CognitePointCloudModel(0, 0, pointCloudNode);
-      // boundingBox = pointcloudModel.getModelBoundingBox();
-      // model = pointCloudNode;
     } else {
       throw Error(`Unknown output format ${modelOutputs}`);
     }

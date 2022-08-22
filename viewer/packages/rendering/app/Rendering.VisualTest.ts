@@ -2,17 +2,30 @@
  * Copyright 2022 Cognite AS
  */
 
+import { DefaultNodeAppearance, TreeIndexNodeCollection } from '@reveal/cad-styling';
+import { DeferredPromise, NumericRange, SceneHandler } from '@reveal/utilities';
 import * as THREE from 'three';
 import { TransformControls } from 'three/examples/jsm/controls/TransformControls';
+import { AntiAliasingMode, defaultRenderOptions, DefaultRenderPipelineProvider } from '..';
 
 import {
   StreamingVisualTestFixture,
   StreamingTestFixtureComponents
 } from '../../../visual-tests/test-fixtures/StreamingVisualTestFixture';
+import { CadMaterialManager } from '../src/CadMaterialManager';
+import { StepPipelineExecutor } from '../src/pipeline-executors/StepPipelineExecutor';
 
 export default class RenderingVisualTestFixture extends StreamingVisualTestFixture {
-  public setup(testFixtureComponents: StreamingTestFixtureComponents): Promise<void> {
-    const { sceneHandler, model, camera, renderer } = testFixtureComponents;
+  private readonly guiData = {
+    frameTime: 0.1,
+    steps: 0
+  };
+
+  public async setup(testFixtureComponents: StreamingTestFixtureComponents): Promise<void> {
+    const { sceneHandler, model, camera, renderer, cadMaterialManager } = testFixtureComponents;
+
+    const stepPipelineExecutor = new StepPipelineExecutor(renderer);
+    this.pipelineExecutor = stepPipelineExecutor;
 
     const grid = this.getGridFromBoundingBox(model.boundingBox);
     sceneHandler.addCustomObject(grid);
@@ -23,7 +36,141 @@ export default class RenderingVisualTestFixture extends StreamingVisualTestFixtu
     const transformControls = this.attachTransformControlsTo(customBox, camera, renderer.domElement);
     sceneHandler.addCustomObject(transformControls);
 
-    return Promise.resolve();
+    await this.setupMockCadStyling(cadMaterialManager, model.geometryNode.type);
+
+    this.setupGui(stepPipelineExecutor, renderer, cadMaterialManager, sceneHandler);
+  }
+
+  private setupGui(
+    stepPipelineExecutor: StepPipelineExecutor,
+    renderer: THREE.WebGLRenderer,
+    cadMaterialManager: CadMaterialManager,
+    sceneHandler: SceneHandler
+  ) {
+    this._frameStatsGUIFolder.add(this.guiData, 'frameTime').listen();
+    const executorOptions = this.gui.addFolder('Pipeline Executor Options');
+    executorOptions.open();
+
+    this.guiData.steps = stepPipelineExecutor.calcNumSteps(this.pipelineProvider);
+    executorOptions.add(this.guiData, 'steps', 1, this.guiData.steps, 1).onChange(async () => {
+      stepPipelineExecutor.numberOfSteps = this.guiData.steps;
+      this.render();
+    });
+
+    const renderOptions = defaultRenderOptions;
+    renderOptions.multiSampleCountHint = 4;
+
+    const updateRenderOptions = () => {
+      this.pipelineProvider.dispose();
+      this.pipelineProvider = new DefaultRenderPipelineProvider(cadMaterialManager, sceneHandler, renderOptions);
+      this.render();
+    };
+
+    const edgeDetectionParametersGUI = this.gui.addFolder('Edge Detection');
+    edgeDetectionParametersGUI.add(renderOptions.edgeDetectionParameters, 'enabled').onChange(updateRenderOptions);
+    edgeDetectionParametersGUI.open();
+
+    const antiAliasingGui = this.gui.addFolder('Anti Aliasing');
+    antiAliasingGui
+      .add(renderOptions, 'antiAliasing', { NoAA: AntiAliasingMode.NoAA, FXAA: AntiAliasingMode.FXAA })
+      .onChange(updateRenderOptions);
+    antiAliasingGui
+      .add(renderOptions, 'multiSampleCountHint', [0, 2, 4, 8, 16])
+      .name('MSAA count')
+      .onChange(async () => {
+        updateRenderOptions();
+      });
+    antiAliasingGui.open();
+
+    const ssaoOptionsGui = this.gui.addFolder('SSAO');
+    ssaoOptionsGui.add(renderOptions.ssaoRenderParameters, 'sampleRadius', 0, 30).onChange(updateRenderOptions);
+    ssaoOptionsGui.add(renderOptions.ssaoRenderParameters, 'sampleSize', 0, 256, 1).onChange(updateRenderOptions);
+    ssaoOptionsGui.add(renderOptions.ssaoRenderParameters, 'depthCheckBias', 0, 1).onChange(updateRenderOptions);
+    ssaoOptionsGui.open();
+
+    this.setupBackgroundColorGUI(renderer);
+  }
+
+  private timings: number[] = [];
+  public render(): void {
+    const stepPipelineExecutor = this.pipelineExecutor as StepPipelineExecutor;
+
+    if (stepPipelineExecutor === undefined) {
+      super.render();
+      return;
+    }
+
+    if (stepPipelineExecutor.timings.length > 0) {
+      if (this.timings.length >= 20) {
+        const frameTime = this.timings.reduce((sum, current) => sum + current, 0) / this.timings.length;
+        this.guiData.frameTime = frameTime;
+        this.timings = [];
+      } else {
+        this.timings.push(stepPipelineExecutor.timings[stepPipelineExecutor.timings.length - 1]);
+      }
+    }
+    super.render();
+  }
+
+  private setupBackgroundColorGUI(renderer: THREE.WebGLRenderer) {
+    const backgroundGuiData = {
+      canvasColor: '#50728c',
+      clearColor: '#444',
+      clearAlpha: 1
+    };
+
+    renderer.setClearColor(backgroundGuiData.clearColor);
+    renderer.setClearAlpha(backgroundGuiData.clearAlpha);
+    renderer.domElement.style.backgroundColor = backgroundGuiData.canvasColor;
+
+    const renderOptionsGUI = this.gui.addFolder('Render Options');
+    renderOptionsGUI.open();
+
+    renderOptionsGUI.addColor(backgroundGuiData, 'clearColor').onChange(async () => {
+      renderer.setClearColor(backgroundGuiData.clearColor);
+      renderer.setClearAlpha(backgroundGuiData.clearAlpha);
+      this.render();
+    });
+
+    renderOptionsGUI.add(backgroundGuiData, 'clearAlpha', 0, 1).onChange(async () => {
+      renderer.setClearColor(backgroundGuiData.clearColor);
+      renderer.setClearAlpha(backgroundGuiData.clearAlpha);
+      this.render();
+    });
+
+    renderOptionsGUI.addColor(backgroundGuiData, 'canvasColor').onChange(async () => {
+      renderer.domElement.style.backgroundColor = backgroundGuiData.canvasColor;
+    });
+  }
+
+  private setupMockCadStyling(materialManager: CadMaterialManager, modelType: string): Promise<void> {
+    if (modelType !== 'CadNode') {
+      return Promise.resolve();
+    }
+
+    const nodeAppearanceProvider = materialManager.getModelNodeAppearanceProvider('0');
+    nodeAppearanceProvider.assignStyledNodeCollection(
+      new TreeIndexNodeCollection(new NumericRange(0, 10)),
+      DefaultNodeAppearance.Ghosted
+    );
+
+    nodeAppearanceProvider.assignStyledNodeCollection(
+      new TreeIndexNodeCollection(new NumericRange(10, 20)),
+      DefaultNodeAppearance.Highlighted
+    );
+
+    nodeAppearanceProvider.assignStyledNodeCollection(new TreeIndexNodeCollection(new NumericRange(40, 41)), {
+      ...DefaultNodeAppearance.Default,
+      outlineColor: 6
+    });
+
+    return resolveOnNodeAppearanceChanged();
+
+    function resolveOnNodeAppearanceChanged(): Promise<void> {
+      const deferredPromise = new DeferredPromise<void>();
+      nodeAppearanceProvider.on('changed', () => deferredPromise.resolve());
+      return deferredPromise;
+    }
   }
 
   private getGridFromBoundingBox(boundingBox: THREE.Box3): THREE.GridHelper {
