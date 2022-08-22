@@ -8,7 +8,11 @@ type ExplorerDataAutoSaverProps = {
   children: any;
 };
 
-type filterKeys = 'name' | 'uniqueId';
+type KeyOfType<T, V> = keyof {
+  [P in keyof T as T[P] extends V ? P : never]: any;
+};
+
+type filterKeys = KeyOfType<ITreeNode, string>;
 
 const localStorageKey = '3d-wellnames';
 const saveDataToLS = (data: string[]) =>
@@ -21,7 +25,6 @@ export const PersistState = ({
 }: ExplorerDataAutoSaverProps) => {
   const { data, onToggleVisible } = props;
   const [processed, setProcessed] = React.useState(false);
-
   React.useEffect(() => {
     // we want this hook to run once initially but we could not use an empty dependency array here
     // because the first time this hook is called, the data is empty (even if there is data)
@@ -56,20 +59,18 @@ export const PersistState = ({
       }
       saveDataToLS(newSelectedWellNames);
     }
+
     onToggleVisible(uniqueId);
   };
 
   return <>{children(onToggleNode)}</>;
 };
 const translateObject = (findKey: filterKeys, returnKey: filterKeys) => {
-  return (match: string, data: ITreeNode[]) => {
-    const output = data.filter((item) => {
+  return (match: string, data: ITreeNode[]): string | undefined => {
+    const output = data.find((item) => {
       return item[findKey] === match;
     });
-    if (output.length > 0) {
-      return output[0][returnKey];
-    }
-    return null;
+    return output ? output[returnKey] : undefined;
   };
 };
 const nameToId = translateObject('name', 'uniqueId');
