@@ -4,16 +4,21 @@
 
 import { Cognite3DViewer } from '@reveal/api';
 import { Cognite3DViewerToolBase } from '../Cognite3DViewerToolBase';
-import { assertNever, EventTrigger } from '@reveal/utilities';
+import { assertNever, DisposedDelegate, EventTrigger } from '@reveal/utilities';
 import * as THREE from 'three';
-import { MeasurementDelegate, MeasurementOptions } from './types';
+import {
+  MeasurementAddedDelegate,
+  MeasurementStartedDelegate,
+  MeasurementEndedDelegate,
+  MeasurementOptions
+} from './types';
 import { MeasurementManager, Measurement } from './MeasurementManager';
 import { MeasurementLabels } from './MeasurementLabels';
 import { HtmlOverlayTool, HtmlOverlayToolOptions } from '../HtmlOverlay/HtmlOverlayTool';
 import rulerSvg from './styles/ruler.svg';
 import assert from 'assert';
 
-type MeasurementEvents = 'added' | 'started' | 'ended';
+type MeasurementEvents = 'added' | 'started' | 'ended' | 'disposed';
 
 /**
  * Enables {@see Cognite3DViewer} to perform a point to point measurement.
@@ -57,9 +62,10 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
   private readonly _handleMeasurementCancel = this.onKeyDown.bind(this);
 
   private readonly _events = {
-    measurementAdded: new EventTrigger<MeasurementDelegate>(),
-    measurementStarted: new EventTrigger<MeasurementDelegate>(),
-    measurementEnded: new EventTrigger<MeasurementDelegate>()
+    measurementAdded: new EventTrigger<MeasurementAddedDelegate>(),
+    measurementStarted: new EventTrigger<MeasurementStartedDelegate>(),
+    measurementEnded: new EventTrigger<MeasurementEndedDelegate>(),
+    disposed: new EventTrigger<DisposedDelegate>()
   };
 
   private readonly _overlayOptions: HtmlOverlayToolOptions = {
@@ -68,8 +74,8 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
 
   private static readonly defaultLineOptions: Required<MeasurementOptions> = {
     distanceToLabelCallback: d => MeasurementTool.metersLabelCallback(d),
-    lineWidth: 2.0,
-    color: new THREE.Color(0xf5f5f5)
+    lineWidth: 0.1,
+    color: new THREE.Color(0xff8746)
   };
 
   constructor(viewer: Cognite3DViewer, options?: MeasurementOptions) {
@@ -92,7 +98,10 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
    * @param event `MeasurementEvents` event
    * @param callback Callback to measurements events
    */
-  subscribe(event: MeasurementEvents, callback: MeasurementDelegate): void {
+  on(
+    event: MeasurementEvents,
+    callback: MeasurementAddedDelegate | MeasurementStartedDelegate | MeasurementEndedDelegate
+  ): void {
     switch (event) {
       case 'added':
         this._events.measurementAdded.subscribe(callback);
@@ -102,6 +111,9 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
         break;
       case 'ended':
         this._events.measurementEnded.subscribe(callback);
+        break;
+      case 'disposed':
+        this._events.disposed.subscribe(callback);
         break;
       default:
         assertNever(event, `Unsupported event: '${event}'`);
@@ -113,7 +125,10 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
    * @param event `MeasurementEvents` event
    * @param callback Callback to measurements events
    */
-  unsubscribe(event: MeasurementEvents, callback: MeasurementDelegate): void {
+  off(
+    event: MeasurementEvents,
+    callback: MeasurementAddedDelegate | MeasurementStartedDelegate | MeasurementEndedDelegate | DisposedDelegate
+  ): void {
     switch (event) {
       case 'added':
         this._events.measurementAdded.unsubscribe(callback);
@@ -123,6 +138,9 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
         break;
       case 'ended':
         this._events.measurementEnded.unsubscribe(callback);
+        break;
+      case 'disposed':
+        this._events.disposed.unsubscribe(callback);
         break;
       default:
         assertNever(event, `Unsupported event: '${event}'`);
@@ -176,10 +194,8 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
    * Sets the visiblity of labels in the Measurement.
    * @param enable
    */
-  showMeasurementLabels(enable: boolean): void {
-    if (this._htmlOverlay) {
-      this._htmlOverlay.visible(enable);
-    }
+  setMeasurementLabelsVisible(enable: boolean): void {
+    this._htmlOverlay.visible(enable);
   }
 
   /**

@@ -13,6 +13,7 @@ export class MeasurementLine {
   private readonly _fixedWidthLineMaterial: LineMaterial;
   private readonly _adaptiveWidthLineMaterial: LineMaterial;
   private _position: Float32Array;
+  private readonly _centimeterToMeterFactor = 100.0;
 
   constructor(lineWidth: number, lineColor: THREE.Color, startPoint: THREE.Vector3) {
     this._position = new Float32Array(6);
@@ -21,7 +22,8 @@ export class MeasurementLine {
     //Adaptive Line width & line width is multipled with scale factor due to adaptive calculation in shaders.
     this._adaptiveWidthLineMaterial = new LineMaterial({
       color: lineColor.getHex(),
-      linewidth: lineWidth,
+      linewidth: lineWidth * this._centimeterToMeterFactor, //According to threejs LineMaterial, width is in meters when worldUnits is true,
+      // but it seems to render with centimeters, so x 100 for converting to meters
       worldUnits: true,
       depthTest: false
     });
@@ -105,7 +107,7 @@ export class MeasurementLine {
    * @param lineWidth Width of the measuring line mesh.
    */
   updateLineWidth(lineWidth: number): void {
-    this._adaptiveWidthLineMaterial.linewidth = lineWidth;
+    this._adaptiveWidthLineMaterial.linewidth = lineWidth * this._centimeterToMeterFactor;
   }
 
   /**

@@ -8,9 +8,19 @@
 export type DistanceToLabelDelegate = (distanceInMeters: number) => string;
 
 /**
- * Delegate for measurement events.
+ * Delegate for measurement added events.
  */
-export type MeasurementDelegate = () => void;
+export type MeasurementAddedDelegate = () => void;
+
+/**
+ * Delegate for measurement started events.
+ */
+export type MeasurementStartedDelegate = () => void;
+
+/**
+ * Delegate for measurement ended events.
+ */
+export type MeasurementEndedDelegate = () => void;
 
 /**
  * Measurement tool option with user custom callback, line width & color.

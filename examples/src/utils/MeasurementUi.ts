@@ -10,8 +10,8 @@ export class MeasurementUi {
   private _guiController: dat.GUIController[];
 
   private state = {
-    lineWidth: 2.0,
-    color: 0xf5f5f5,
+    lineWidth: 0.1,
+    color: 0xff8746,
     allMeasurement: false,
     showAllMeasurementLabels: true
   };
@@ -56,7 +56,7 @@ export class MeasurementUi {
     }));
     this._guiController.push(this._gui.add(this.state, 'showAllMeasurementLabels').name('Show Measurement Labels').onChange(showAllMeasurementLabels => {
       this.state.showAllMeasurementLabels = showAllMeasurementLabels;
-      this._measurementTool.showMeasurementLabels(showAllMeasurementLabels);
+      this._measurementTool.setMeasurementLabelsVisible(showAllMeasurementLabels);
     }));
   }
 
