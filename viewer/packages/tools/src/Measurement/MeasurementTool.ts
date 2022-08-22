@@ -100,7 +100,7 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
    */
   on(
     event: MeasurementEvents,
-    callback: MeasurementAddedDelegate | MeasurementStartedDelegate | MeasurementEndedDelegate
+    callback: MeasurementAddedDelegate | MeasurementStartedDelegate | MeasurementEndedDelegate | DisposedDelegate
   ): void {
     switch (event) {
       case 'added':
