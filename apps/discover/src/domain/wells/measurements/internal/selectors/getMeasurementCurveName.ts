@@ -1,6 +1,8 @@
-import { DepthMeasurementDataColumnInternal } from 'domain/wells/measurements/internal/types';
+import { DepthMeasurementDataColumnInternal } from '../types';
 
-export const getCurveName = (column: DepthMeasurementDataColumnInternal) => {
+export const getMeasurementCurveName = (
+  column: DepthMeasurementDataColumnInternal
+) => {
   const { externalId, measurementTypeParent } = column;
 
   if (

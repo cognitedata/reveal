@@ -21,6 +21,8 @@ export const BodyColumnHeaderWrapper = styled(FlexRow)`
   border-bottom: 1px solid var(--cogs-greyscale-grey3);
   border-top-left-radius: inherit;
   border-top-right-radius: inherit;
+  display: ${(props: { visible: boolean }) =>
+    props.visible ? 'content' : 'none'};
 `;
 
 export const ColumnHeaderWrapper = styled(FlexRow)`

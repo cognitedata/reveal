@@ -15,6 +15,7 @@ import {
   BodyColumnBody,
   BodyColumnMainHeader,
 } from '../../../common/Events/elements';
+import { DepthScaleLines } from '../../components/DepthScaleLines';
 import { CasingAssemblyView, CasingSchematicView } from '../../types';
 import { getDepthValuesMap } from '../../utils/getDepthValuesMap';
 import {
@@ -27,7 +28,6 @@ import { ColumnHeaderWrapper } from '../elements';
 import DepthColumn from './components/DepthColumn';
 import { DepthIndicators } from './components/DepthIndicators';
 import { DepthMeasurementTypeSelector } from './components/DepthMeasurementTypeSelector';
-import { DepthScaleLines } from './components/DepthScaleLines';
 import { Legend } from './components/Legend';
 import { TopContent } from './components/TopContent';
 import {

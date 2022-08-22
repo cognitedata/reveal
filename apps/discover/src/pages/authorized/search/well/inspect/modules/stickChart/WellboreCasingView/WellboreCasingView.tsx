@@ -2,7 +2,13 @@ import { getDepthRange } from 'domain/wells/casings/internal/selectors/getDepthR
 import { filterNdsBySelectedEvents } from 'domain/wells/nds/internal/selectors/filterNdsBySelectedEvents';
 import { filterNptBySelectedEvents } from 'domain/wells/npt/internal/selectors/filterNptBySelectedEvents';
 
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 
 import { DragDropContainer } from 'components/DragDropContainer';
 import { MultiSelectCategorizedOptionMap } from 'components/Filters/MultiSelectCategorized/types';
@@ -22,6 +28,7 @@ import { DEPTH_SCALE_MIN_HEIGHT } from './constants';
 import { ContentWrapper, WellboreCasingsViewWrapper } from './elements';
 import { FormationColumn } from './FormationColumn/FormationColumn';
 import { Header } from './Header';
+import { MeasurementsColumn } from './MeasurementsColumn';
 import { NdsEventsColumn } from './NdsEventsColumn';
 import { NptEventsColumn } from './NptEventsColumn';
 import { SchemaColumn } from './SchemaColumn';
@@ -72,6 +79,7 @@ export const WellboreCasingView: React.FC<WellboreCasingsViewProps> = ({
     rkbLevel,
     waterDepth,
     wellTop,
+    measurementsData,
   } = data;
 
   const filteredNptEvents = useDeepMemo(
@@ -95,15 +103,19 @@ export const WellboreCasingView: React.FC<WellboreCasingsViewProps> = ({
     [data]
   );
 
-  const setDepthScaleBlocks = useCallback(() => {
-    setSchamaLoading(true);
+  const columnContentHeight = useMemo(() => {
     const depthColumnHeight = depthScaleRef.current?.offsetHeight;
     const height = depthColumnHeight || DEPTH_SCALE_MIN_HEIGHT;
     const usableHeight = height - SCALE_BLOCK_HEIGHT - SCALE_BOTTOM_PADDING;
-    const depthScaleBlocks = getScaleBlocks(usableHeight, maxDepth);
+    return usableHeight;
+  }, [depthScaleRef.current?.offsetHeight]);
+
+  const setDepthScaleBlocks = useCallback(() => {
+    setSchamaLoading(true);
+    const depthScaleBlocks = getScaleBlocks(columnContentHeight, maxDepth);
     setScaleBlocks(depthScaleBlocks);
     setSchamaLoading(false);
-  }, [depthScaleRef.current?.offsetHeight, maxDepth]);
+  }, [columnContentHeight, maxDepth]);
 
   useEffect(() => setDepthScaleBlocks(), [setDepthScaleBlocks]);
 
@@ -186,6 +198,14 @@ export const WellboreCasingView: React.FC<WellboreCasingsViewProps> = ({
               <SummaryColumn
                 key={ChartColumn.SUMMARY}
                 casingAssemblies={casingAssemblies}
+              />
+            )}
+
+            {isColumnVisible(ChartColumn.MEASUREMENTS) && (
+              <MeasurementsColumn
+                key={ChartColumn.MEASUREMENTS}
+                data={measurementsData}
+                scaleBlocks={scaleBlocks}
               />
             )}
           </DragDropContainer>

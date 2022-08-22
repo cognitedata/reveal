@@ -20,6 +20,10 @@ import { ChartSubtitle, ChartWrapper, Container } from './elements';
 import Toolbar from './Toolbar';
 import { calculateYTicksGap, findVisibleYTicksValues } from './utils';
 
+export const AXIS_AUTO_RANGE: ChartProps['axisAutorange'] = {
+  y: 'reversed',
+};
+
 type Data = any;
 
 type Autorange = true | false | 'reversed';
@@ -33,6 +37,10 @@ type AxisConfig = {
 export type ChartProps = {
   data: Data[];
   axisNames?: { x?: string; y?: string; z?: string; x2?: string };
+  axisConfig?: {
+    x?: Partial<LayoutAxis>;
+    y?: Partial<LayoutAxis>;
+  };
   axisAutorange?: {
     x?: Autorange;
     y?: Autorange;
@@ -50,6 +58,7 @@ export type ChartProps = {
   onLayoutChange?: (height: number, lines: number[]) => void;
   /** scales the graph to match with events by depth */
   adaptiveChart?: boolean;
+  hideHeader?: boolean;
 };
 
 const chartStyles = {
@@ -67,6 +76,7 @@ const ChartV2 = React.forwardRef(
     {
       data,
       axisNames,
+      axisConfig,
       axisAutorange,
       axisTicksuffixes,
       title,
@@ -78,6 +88,7 @@ const ChartV2 = React.forwardRef(
       onMinMaxChange,
       onLayoutChange,
       adaptiveChart,
+      hideHeader,
     }: ChartProps,
     ref
   ) => {
@@ -106,6 +117,7 @@ const ChartV2 = React.forwardRef(
           spikemode: 'across',
           spikethickness: 1,
           tickformat: 'digit',
+          ...axisConfig?.x,
         },
         yaxis: {
           autorange: adaptiveChart ? false : axisAutorange?.y,
@@ -117,10 +129,11 @@ const ChartV2 = React.forwardRef(
           spikemode: 'across',
           spikethickness: 1,
           tickformat: 'digit',
+          ...axisConfig?.y,
         },
       }),
       // Do not include the other variable in this fn as deps. It causes plotly onUpdate to be triggered twice
-      [axisNames, yRange, xRange, adaptiveChart]
+      [axisNames, axisConfig, yRange, xRange, adaptiveChart]
     );
 
     if (axisNames?.x2) {
@@ -173,7 +186,7 @@ const ChartV2 = React.forwardRef(
         },
         dragmode: 'pan',
       }),
-      [axisConfigs]
+      [axisConfigs, height]
     );
 
     const manageGraphRangeChange = (figure: Figure, graph: HTMLElement) => {
@@ -270,7 +283,7 @@ const ChartV2 = React.forwardRef(
           }}
         />
       ),
-      [data]
+      [data, layout]
     );
 
     const renderDetailCard = useDeepMemo(() => {
@@ -284,13 +297,16 @@ const ChartV2 = React.forwardRef(
     };
 
     useDeepEffect(() => {
+      if (axisConfigs.xaxis.autorange || axisConfigs.yaxis.autorange) {
+        return;
+      }
       setTimeout(() => resetChart());
-    }, [data]);
+    }, [renderPlot]);
 
     return (
       <React.Suspense fallback={<Loader darkMode={false} />}>
-        <Container>
-          <BodyColumnHeaderWrapper>
+        <Container className="plotly-chart-container">
+          <BodyColumnHeaderWrapper visible={!hideHeader}>
             <BodyColumnMainHeader data-testid={title}>
               {title}
             </BodyColumnMainHeader>
@@ -299,7 +315,7 @@ const ChartV2 = React.forwardRef(
             </BodyColumnHeaderLegend>
           </BodyColumnHeaderWrapper>
 
-          <ChartWrapper ref={ref}>
+          <ChartWrapper ref={ref} className="plotly-chart-wrapper">
             {subtitle && (
               <ChartSubtitle data-testid="chart-subtitle">
                 {subtitle}

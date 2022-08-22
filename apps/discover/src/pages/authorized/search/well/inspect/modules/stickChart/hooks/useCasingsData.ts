@@ -1,5 +1,6 @@
 import { useCasingSchematicsQuery } from 'domain/wells/casings/internal/queries/useCasingSchematicsQuery';
 import { useCasingsTvdDataQuery } from 'domain/wells/casings/internal/queries/useCasingsTvdDataQuery';
+import { useFitLotDepthMeasurements } from 'domain/wells/measurements/internal/hooks/useFitLotDepthMeasurements';
 import { useNdsEventsForCasings } from 'domain/wells/nds/internal/hooks/useNdsEventsForCasings';
 import { useNptEventsForCasings } from 'domain/wells/npt/internal/hooks/useNptEventsForCasings';
 import { useWellInspectWells } from 'domain/wells/well/internal/hooks/useWellInspectWells';
@@ -30,6 +31,11 @@ export const useCasingsData = () => {
   const { data: wellTopsData, isLoading: isWellTopsLoading } =
     useWellTopsQuery();
 
+  const { data: measurementsData, isLoading: isMeasurementsDataLoading } =
+    useFitLotDepthMeasurements({
+      wellboreIds,
+    });
+
   const adaptedCasingsData = useMemo(() => {
     return adaptCasingsDataToView(
       wells,
@@ -37,9 +43,18 @@ export const useCasingsData = () => {
       tvdData,
       nptData,
       ndsData,
-      wellTopsData || []
+      wellTopsData || [],
+      measurementsData
     );
-  }, [wells, casingsData, tvdData, nptData, ndsData, wellTopsData]);
+  }, [
+    wells,
+    casingsData,
+    tvdData,
+    nptData,
+    ndsData,
+    wellTopsData,
+    measurementsData,
+  ]);
 
   return {
     data: adaptedCasingsData,
@@ -47,5 +62,6 @@ export const useCasingsData = () => {
     isNptEventsLoading,
     isNdsEventsLoading,
     isWellTopsLoading,
+    isMeasurementsDataLoading,
   };
 };

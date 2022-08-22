@@ -1,5 +1,6 @@
 import { sortCasingAssembliesByMDBase } from 'domain/wells/casings/internal/transformers/sortCasingAssembliesByMDBase';
 import { CasingSchematicInternal } from 'domain/wells/casings/internal/types';
+import { DepthMeasurementWithData } from 'domain/wells/measurements/internal/types';
 import { NdsInternal } from 'domain/wells/nds/internal/types';
 import { NptInternal } from 'domain/wells/npt/internal/types';
 import { KeyedTvdData } from 'domain/wells/trajectory/internal/types';
@@ -21,9 +22,11 @@ export const adaptCasingsDataToView = (
   tvdData: KeyedTvdData,
   nptData: Record<string, NptInternal[]>,
   ndsData: Record<string, NdsInternal[]>,
-  wellTops: WellTopsInternal[]
+  wellTops: WellTopsInternal[],
+  measurementsData: DepthMeasurementWithData[]
 ): CasingSchematicView[] => {
   const keyedCasingsData = keyByWellbore(casingsData);
+  const keyedMeasurementsData = keyByWellbore(measurementsData);
 
   return wells.flatMap((well) =>
     (well.wellbores || []).map((wellbore) => {
@@ -55,6 +58,7 @@ export const adaptCasingsDataToView = (
         nptEvents: nptData[wellboreMatchingId] || [],
         ndsEvents: ndsData[wellboreMatchingId] || [],
         wellTop,
+        measurementsData: keyedMeasurementsData[wellboreMatchingId],
       };
     })
   );

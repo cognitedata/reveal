@@ -1,4 +1,4 @@
-import { MeasurementTypeParent } from 'domain/wells/measurements/internal/types';
+import { MeasurementTypeParent } from '../types';
 
 export const isMeasurementTypeFitOrLot = (
   measurementType: MeasurementTypeParent

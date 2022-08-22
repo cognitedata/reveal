@@ -8,5 +8,5 @@ export const NPT_EVENT_DETAILS_LABEL = 'NPT events';
 export const NDS_EVENT_DETAILS_LABEL = 'NDS events';
 
 export const SCALE_BLOCK_HEIGHT = 40;
-export const SCALE_PADDING = 16;
+export const SCALE_PADDING = 40;
 export const SCALE_BOTTOM_PADDING = 24;

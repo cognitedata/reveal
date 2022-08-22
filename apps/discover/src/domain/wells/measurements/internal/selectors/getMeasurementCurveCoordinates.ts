@@ -2,29 +2,32 @@ import { DepthMeasurementDataColumnInternal } from 'domain/wells/measurements/in
 
 import { DepthMeasurementRow } from '@cognite/sdk-wells';
 
-import { MeasurementUnits } from '../types';
+import { PressureUnit } from 'constants/units';
 
-import { getRowValues } from './getRowValues';
+import { getMeasurementRowValues } from './getMeasurementRowValues';
 
-export const getCurveValues = ({
+export const getMeasurementCurveCoordinates = ({
   column,
   columnIndex,
   rows,
-  measurementUnits,
+  depthUnit,
+  pressureUnit,
 }: {
   column: DepthMeasurementDataColumnInternal;
   columnIndex: number;
   rows: DepthMeasurementRow[];
-  measurementUnits: MeasurementUnits;
+  depthUnit: convert.Distance;
+  pressureUnit: PressureUnit;
 }) => {
   return rows.reduce(
     ({ x, y }, row, rowIndex) => {
-      const { depthValue, columnValue } = getRowValues({
+      const { depthValue, columnValue } = getMeasurementRowValues({
         column,
         columnIndex,
         row,
         rowIndex,
-        measurementUnits,
+        depthUnit,
+        pressureUnit,
       });
 
       return {

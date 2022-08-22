@@ -1,28 +1,30 @@
 import { DepthMeasurementDataColumnInternal } from 'domain/wells/measurements/internal/types';
 import { isValidDepthMeasurement } from 'domain/wells/measurements/internal/utils/isValidDepthMeasurement';
 
+import convert from 'convert-units';
 import { convertPressure } from 'utils/units';
 
 import { DepthMeasurementRow } from '@cognite/sdk-wells';
 
-import { MeasurementUnits } from '../types';
+import { PressureUnit } from 'constants/units';
 
-export const getRowValues = ({
+export const getMeasurementRowValues = ({
   column,
   columnIndex,
   row,
   rowIndex,
-  measurementUnits,
+  depthUnit,
+  pressureUnit,
 }: {
   column: DepthMeasurementDataColumnInternal;
   columnIndex: number;
   row: DepthMeasurementRow;
   rowIndex: number;
-  measurementUnits: MeasurementUnits;
+  depthUnit: convert.Distance;
+  pressureUnit: PressureUnit;
 }) => {
   const { unit: columnUnit } = column;
   const { depth: depthValue, values } = row;
-  const { pressureUnit, depthUnit } = measurementUnits;
 
   let columnValue = values[columnIndex];
 

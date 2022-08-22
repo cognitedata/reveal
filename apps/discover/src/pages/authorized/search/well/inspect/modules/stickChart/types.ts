@@ -2,6 +2,7 @@ import {
   CasingAssemblyInternal,
   CasingSchematicInternal,
 } from 'domain/wells/casings/internal/types';
+import { DepthMeasurementWithData } from 'domain/wells/measurements/internal/types';
 import { NdsInternal } from 'domain/wells/nds/internal/types';
 import { NptInternal } from 'domain/wells/npt/internal/types';
 import { WellTopsInternal } from 'domain/wells/wellTops/internal/types';
@@ -17,6 +18,7 @@ export interface CasingSchematicView extends CasingSchematicInternal {
   nptEvents: NptInternal[];
   ndsEvents: NdsInternal[];
   wellTop?: WellTopsInternal;
+  measurementsData?: DepthMeasurementWithData;
 }
 
 export interface CasingAssemblyView extends CasingAssemblyInternal {
@@ -32,4 +34,5 @@ export enum ChartColumn {
   NDS = 'NDS',
   NPT = 'NPT',
   SUMMARY = 'Section Summary',
+  MEASUREMENTS = 'FIT and LOT',
 }

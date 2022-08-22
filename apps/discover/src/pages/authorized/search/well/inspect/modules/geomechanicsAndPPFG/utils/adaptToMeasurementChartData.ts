@@ -1,9 +1,10 @@
+import { DepthMeasurementDataColumnInternal } from 'domain/wells/measurements/internal/types';
+
 import compact from 'lodash/compact';
 
 import {
   MeasurementCurveData,
   MeasurementsView,
-  MeasurementsViewColumn,
   MeasurementUnits,
 } from '../types';
 
@@ -21,7 +22,7 @@ export const adaptToMeasurementChartData = (
     curveData,
   }: {
     data: MeasurementsView;
-    column: MeasurementsViewColumn;
+    column: DepthMeasurementDataColumnInternal;
     curveData: MeasurementCurveData;
   }) => Partial<MeasurementCurveData>
 ): MeasurementCurveData[] => {

@@ -1,12 +1,8 @@
 import * as React from 'react';
 
 import { ChartV2 } from '../../common/ChartV2';
-import { ChartProps } from '../../common/ChartV2/ChartV2';
+import { AXIS_AUTO_RANGE, ChartProps } from '../../common/ChartV2/ChartV2';
 import { MeasurementCurveData, MeasurementUnits } from '../types';
-
-export const AXIS_AUTO_RANGE: ChartProps['axisAutorange'] = {
-  y: 'reversed',
-};
 
 export interface MeasurementsChartProps extends ChartProps {
   data: MeasurementCurveData[];

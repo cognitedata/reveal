@@ -1,10 +1,10 @@
-import { DepthMeasurementDataColumnInternal } from 'domain/wells/measurements/internal/types';
+import { MEASUREMENT_CURVE_CONFIG } from '../config/measurementCurveConfig';
+import { DepthMeasurementDataColumnInternal } from '../types';
+import { isMeasurementTypeFitOrLot } from '../utils/isMeasurementTypeFitOrLot';
 
-import { MEASUREMENT_CURVE_CONFIG } from '../config/curveConfig';
-
-import { isMeasurementTypeFitOrLot } from './isMeasurementTypeFitOrLot';
-
-export const getCurveConfig = (column: DepthMeasurementDataColumnInternal) => {
+export const getMeasurementCurveConfig = (
+  column: DepthMeasurementDataColumnInternal
+) => {
   const { measurementTypeParent, externalId } = column;
 
   if (!measurementTypeParent) {
@@ -16,7 +16,9 @@ export const getCurveConfig = (column: DepthMeasurementDataColumnInternal) => {
   return curveConfigCategory[externalId] || curveConfigCategory.default;
 };
 
-export const hasCurveConfig = (column: DepthMeasurementDataColumnInternal) => {
+export const hasMeasurementCurveConfig = (
+  column: DepthMeasurementDataColumnInternal
+) => {
   const { measurementTypeParent, externalId } = column;
 
   if (!measurementTypeParent) {

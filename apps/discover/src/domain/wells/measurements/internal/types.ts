@@ -1,6 +1,7 @@
 import { DatumInternal } from 'domain/wells/wellbore/internal/types';
 
 import { Distance } from 'convert-units';
+import { PlotData } from 'plotly.js';
 
 import {
   DepthIndexTypeEnum,
@@ -45,4 +46,31 @@ export interface DepthIndexColumnInternal {
 export interface DepthMeasurementDataColumnInternal
   extends DepthMeasurementDataColumn {
   description?: string;
+  measurementTypeParent?: MeasurementTypeParent;
+  isAngle: boolean;
+}
+
+export enum MeasurementTypeParent {
+  GEOMECHANNICS = 'Geomechanics',
+  PPFG = 'PPFG',
+  FIT = 'FIT',
+  LOT = 'LOT',
+}
+
+export type MeasurementCurveConfig = Record<
+  MeasurementTypeParent,
+  Record<string, Partial<PlotData>>
+>;
+
+export interface MeasurementCurveData extends Partial<PlotData> {
+  id: string;
+  columnExternalId: string;
+  curveName: string;
+  measurementTypeParent: MeasurementTypeParent;
+}
+
+export interface MeasurementCurveFormatterData<T> {
+  data: T;
+  column: DepthMeasurementDataColumnInternal;
+  curveData: MeasurementCurveData;
 }

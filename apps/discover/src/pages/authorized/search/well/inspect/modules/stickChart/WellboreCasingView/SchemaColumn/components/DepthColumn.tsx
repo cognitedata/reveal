@@ -54,7 +54,7 @@ const DepthColumn: React.FC<Props> = ({
               depthValues.length === index + 1
                 ? 0
                 : Number(depthValues[index + 1]);
-            const depthOffset = getScaledDepth(md);
+            const depthOffset = getScaledDepth(md) - 24;
             const precedingDepthOffset = getScaledDepth(precedingMdDepth);
             const areDepthsOverlapping =
               depthOffset - precedingDepthOffset < DEPTH_SCALE_LABEL_HEIGHT;

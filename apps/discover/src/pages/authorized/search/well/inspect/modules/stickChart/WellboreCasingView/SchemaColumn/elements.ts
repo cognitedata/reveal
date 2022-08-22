@@ -9,10 +9,7 @@ import {
   SCALE_BLOCK_HEIGHT,
   SCALE_PADDING,
 } from '../../../common/Events/constants';
-import {
-  DepthMeasurementScale,
-  EmptyStateWrapper,
-} from '../../../common/Events/elements';
+import { EmptyStateWrapper } from '../../../common/Events/elements';
 import {
   DEPTH_SCALE_LABEL_HEIGHT,
   DEPTH_SCALE_LABEL_WIDTH,
@@ -48,10 +45,6 @@ export const LegendIndicator = styled.div`
   border-radius: 50%;
   margin: 0 ${sizes.extraSmall} 2px ${sizes.normal};
   background: ${(props: { color: string }) => props.color};
-`;
-
-export const DepthMeasurementScaleWrapper = styled(DepthMeasurementScale)`
-  align-content: center;
 `;
 
 export const DepthIndicatorsContainer = styled(Center)`

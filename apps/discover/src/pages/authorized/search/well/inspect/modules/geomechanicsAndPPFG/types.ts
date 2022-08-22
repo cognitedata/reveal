@@ -1,6 +1,6 @@
 import {
-  DepthMeasurementDataColumnInternal,
   DepthMeasurementWithData,
+  MeasurementTypeParent,
 } from 'domain/wells/measurements/internal/types';
 
 import { PlotData } from 'plotly.js';
@@ -11,13 +11,6 @@ export interface MeasurementsView extends DepthMeasurementWithData {
   wellName: string;
   wellboreName: string;
   wellboreColor: string;
-  columns: MeasurementsViewColumn[];
-}
-
-export interface MeasurementsViewColumn
-  extends DepthMeasurementDataColumnInternal {
-  measurementTypeParent?: MeasurementType;
-  isAngle: boolean;
 }
 
 export interface MeasurementCurveData extends Partial<PlotData> {
@@ -25,7 +18,7 @@ export interface MeasurementCurveData extends Partial<PlotData> {
   columnExternalId: string;
   wellboreName: string;
   curveName: string;
-  measurementType: MeasurementType;
+  measurementType: MeasurementTypeParent;
 }
 
 export enum ViewModes {
