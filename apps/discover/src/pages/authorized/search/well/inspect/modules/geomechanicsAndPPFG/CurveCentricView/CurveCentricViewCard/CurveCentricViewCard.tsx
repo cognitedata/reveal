@@ -1,9 +1,11 @@
+import { MeasurementCurveData } from 'domain/wells/measurements/internal/types';
+
 import * as React from 'react';
 
 import isEmpty from 'lodash/isEmpty';
 
 import { MeasurementsChart } from '../../components/MeasurementsChart';
-import { MeasurementCurveData, MeasurementUnits } from '../../types';
+import { MeasurementUnits } from '../../types';
 
 import { CurveCentricViewCardWrapper } from './elements';
 
@@ -22,10 +24,12 @@ export const CurveCentricViewCard: React.FC<CurveCentricViewCardProps> = ({
     return null;
   }
 
-  const { columnExternalId, measurementType } = data[0];
+  const { columnExternalId, measurementTypeParent } = data[0];
 
   const subtitle =
-    columnExternalId !== measurementType ? measurementType : undefined;
+    columnExternalId !== measurementTypeParent
+      ? measurementTypeParent
+      : undefined;
 
   return (
     <CurveCentricViewCardWrapper

@@ -1,3 +1,5 @@
+import { filterChartDataBySelection } from 'domain/wells/measurements/internal/selectors/filterChartDataBySelection';
+
 import React, { useState } from 'react';
 
 import groupBy from 'lodash/groupBy';
@@ -18,7 +20,6 @@ import {
   MeasurementUnits,
 } from '../types';
 import { adaptToChartDataCompareView } from '../utils/adaptToChartDataCompareView';
-import { filterChartDataBySelection } from '../utils/filterChartDataBySelection';
 import { getCurveFilterOptions } from '../utils/getCurveFilterOptions';
 import { getWellboreSelectionInfo } from '../utils/getWellboreSelectionInfo';
 
@@ -47,6 +48,8 @@ export const CompareView: React.FC<CompareViewProps> = ({
     measurementUnitsCurrent
   );
 
+  const { pressureUnit } = measurementUnits;
+
   useDeepEffect(() => {
     setMeasurementUnits(measurementUnitsCurrent);
   }, [measurementUnitsCurrent]);
@@ -59,9 +62,9 @@ export const CompareView: React.FC<CompareViewProps> = ({
   const chartData = useDeepMemo(
     () =>
       data.flatMap((wellboreMeasurementData) =>
-        adaptToChartDataCompareView(wellboreMeasurementData, measurementUnits)
+        adaptToChartDataCompareView(wellboreMeasurementData, pressureUnit)
       ),
-    [data, measurementUnits]
+    [data, pressureUnit]
   );
 
   const chartDataSelected = useDeepMemo(

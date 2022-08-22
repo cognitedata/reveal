@@ -1,8 +1,14 @@
+import { MeasurementCurveData } from 'domain/wells/measurements/internal/types';
+
 import * as React from 'react';
 
 import { ChartV2 } from '../../common/ChartV2';
-import { AXIS_AUTO_RANGE, ChartProps } from '../../common/ChartV2/ChartV2';
-import { MeasurementCurveData, MeasurementUnits } from '../types';
+import { ChartProps } from '../../common/ChartV2/ChartV2';
+import { MeasurementUnits } from '../types';
+
+const axisAutorange: ChartProps['axisAutorange'] = {
+  y: 'reversed',
+};
 
 export interface MeasurementsChartProps extends ChartProps {
   data: MeasurementCurveData[];
@@ -24,7 +30,7 @@ export const MeasurementsChart: React.FC<MeasurementsChartProps> = ({
         x2: 'Angle (deg)',
         y: `${depthMeasurementType} (${depthUnit})`,
       }}
-      axisAutorange={AXIS_AUTO_RANGE}
+      axisAutorange={axisAutorange}
       {...props}
     />
   );

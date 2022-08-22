@@ -1,10 +1,12 @@
+import { MeasurementCurveData } from 'domain/wells/measurements/internal/types';
+
 import * as React from 'react';
 
 import isEmpty from 'lodash/isEmpty';
 
 import { ChartLegend } from '../components/ChartLegend';
 import { MeasurementsChart } from '../components/MeasurementsChart';
-import { MeasurementCurveData, MeasurementUnits } from '../types';
+import { MeasurementUnits } from '../types';
 
 import { ChartWrapper } from './elements';
 
@@ -31,10 +33,7 @@ export const CompareViewChart: React.FC<CompareViewChartProps> = ({
         measurementUnits={measurementUnits}
       />
 
-      <ChartLegend
-        data={data}
-        formatCustomData={({ wellboreName }) => [wellboreName]}
-      />
+      <ChartLegend data={data} />
     </ChartWrapper>
   );
 };

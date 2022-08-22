@@ -1,8 +1,10 @@
 import { getCodeDefinition } from 'domain/wells/npt/internal/selectors/getCodeDefinition';
 import { adaptNptEventsToListView } from 'domain/wells/npt/internal/transformers/adaptNptEventsToListView';
-import { NptInternal } from 'domain/wells/npt/internal/types';
+import {
+  NptCodeDefinitionType,
+  NptInternal,
+} from 'domain/wells/npt/internal/types';
 
-import { NptCodeDefinitionType } from '../../../../../../../../domain/wells/npt/NptCodeDefinitionType';
 import { NptCodeDefinition } from '../../nptEvents/components/NptCodeDefinition';
 import { IconStyles } from '../../nptEvents/Table/elements';
 

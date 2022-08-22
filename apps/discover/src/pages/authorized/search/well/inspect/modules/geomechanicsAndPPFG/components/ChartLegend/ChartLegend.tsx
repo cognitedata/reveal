@@ -1,10 +1,10 @@
+import { MeasurementCurveData } from 'domain/wells/measurements/internal/types';
+
 import React, { useEffect, useRef, useState } from 'react';
 
 import head from 'lodash/head';
 
 import { useDeepCallback, useDeepMemo } from 'hooks/useDeep';
-
-import { MeasurementCurveData } from '../../types';
 
 import { ChartLegendItem } from './ChartLegendItem';
 import { ChartLegendWrapper, LegendsHolder } from './elements';
@@ -14,28 +14,19 @@ const LEGEND_LINE_HEIGHT = 21;
 
 export interface GraphLegendProps {
   data: MeasurementCurveData[];
-  formatCustomData?: (curve: MeasurementCurveData) => string[];
 }
 
-export const ChartLegend: React.FC<GraphLegendProps> = ({
-  data,
-  formatCustomData,
-}) => {
+export const ChartLegend: React.FC<GraphLegendProps> = ({ data }) => {
   const legendRef = useRef<HTMLElement>(null);
 
   const [showAll, setShowAll] = useState<boolean>(false);
   const [displayShowAllButton, setDisplayShowAllButton] =
     useState<boolean>(false);
 
-  const legendItemLinesHeight = useDeepMemo(() => {
-    const firstDataElement = head(data);
-    const customDataLinesCount =
-      firstDataElement && formatCustomData
-        ? formatCustomData(firstDataElement).length
-        : 0;
-    const legendItemLinesCount = customDataLinesCount + 1;
-    return legendItemLinesCount * LEGEND_LINE_HEIGHT;
-  }, [data, formatCustomData]);
+  const legendItemLinesHeight = useDeepMemo(
+    () => (head(data)?.customdata?.length || 1) * LEGEND_LINE_HEIGHT,
+    [data]
+  );
 
   const updateShowAllButtonVisibility = useDeepCallback(() => {
     setDisplayShowAllButton(
@@ -56,11 +47,7 @@ export const ChartLegend: React.FC<GraphLegendProps> = ({
         height={legendItemLinesHeight}
       >
         {data.map((curve) => (
-          <ChartLegendItem
-            key={curve.id}
-            curve={curve}
-            formatCustomData={formatCustomData}
-          />
+          <ChartLegendItem key={curve.id} curve={curve} />
         ))}
       </LegendsHolder>
 

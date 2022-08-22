@@ -1,6 +1,6 @@
-import { BooleanMap } from 'utils/booleanMap';
+import { MeasurementCurveData } from 'domain/wells/measurements/internal/types';
 
-import { MeasurementCurveData } from '../types';
+import { BooleanMap } from 'utils/booleanMap';
 
 export const filterChartDataBySelection = (
   chartData: MeasurementCurveData[],

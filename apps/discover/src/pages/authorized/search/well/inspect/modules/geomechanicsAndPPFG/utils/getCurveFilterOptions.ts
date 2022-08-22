@@ -1,6 +1,8 @@
+import { MeasurementTypeParent } from 'domain/wells/measurements/internal/types';
+
 import uniqBy from 'lodash/uniqBy';
 
-import { CurvesFilterType, MeasurementsView, MeasurementType } from '../types';
+import { CurvesFilterType, MeasurementsView } from '../types';
 
 const initialCurveFilterOptions = Object.values(CurvesFilterType).reduce(
   (optionsMap, filterType) => ({
@@ -21,13 +23,13 @@ export const getCurveFilterOptions = (data: MeasurementsView[]) => {
       }
 
       switch (measurementTypeParent) {
-        case MeasurementType.GEOMECHANNICS:
+        case MeasurementTypeParent.GEOMECHANNICS:
           return mergeCurveFilterOption(
             optionsMap,
             CurvesFilterType.GEOMECHANNICS,
             externalId
           );
-        case MeasurementType.PPFG:
+        case MeasurementTypeParent.PPFG:
           return mergeCurveFilterOption(
             optionsMap,
             CurvesFilterType.PPFG,

@@ -1,9 +1,4 @@
-import {
-  DepthMeasurementWithData,
-  MeasurementTypeParent,
-} from 'domain/wells/measurements/internal/types';
-
-import { PlotData } from 'plotly.js';
+import { DepthMeasurementWithData } from 'domain/wells/measurements/internal/types';
 
 import { DepthMeasurementUnit, PressureUnit } from 'constants/units';
 
@@ -13,24 +8,9 @@ export interface MeasurementsView extends DepthMeasurementWithData {
   wellboreColor: string;
 }
 
-export interface MeasurementCurveData extends Partial<PlotData> {
-  id: string;
-  columnExternalId: string;
-  wellboreName: string;
-  curveName: string;
-  measurementType: MeasurementTypeParent;
-}
-
 export enum ViewModes {
   Wells = 'Wells',
   Curves = 'Curves',
-}
-
-export enum MeasurementType {
-  GEOMECHANNICS = 'Geomechanics',
-  PPFG = 'PPFG',
-  FIT = 'FIT',
-  LOT = 'LOT',
 }
 
 export enum CurvesFilterType {
@@ -42,11 +22,6 @@ export enum CurvesFilterType {
 export enum UnitSelectorType {
   PRESSURE = 'Pressure unit',
 }
-
-export type MeasurementCurveConfig = Record<
-  MeasurementType,
-  Record<string, Partial<PlotData>>
->;
 
 export interface MeasurementUnits {
   pressureUnit: PressureUnit;

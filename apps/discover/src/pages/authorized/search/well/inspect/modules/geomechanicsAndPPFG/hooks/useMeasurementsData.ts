@@ -1,4 +1,5 @@
 import { useDepthMeasurementsForMeasurementTypes } from 'domain/wells/measurements/internal/hooks/useDepthMeasurementsForMeasurementTypes';
+import { getErrors } from 'domain/wells/measurements/internal/utils/getErrors';
 import { useNdsEventsQuery } from 'domain/wells/nds/internal/queries/useNdsEventsQuery';
 import { adaptNdsEventsToMultiSelect } from 'domain/wells/nds/internal/transformers/adaptNdsEventsToMultiSelect';
 import { useNptEventsQuery } from 'domain/wells/npt/internal/queries/useNptEventsQuery';
@@ -10,7 +11,6 @@ import { useWellInspectSelectedWellboreIds } from 'modules/wellInspect/selectors
 
 import { adaptMeasurementDataToView } from '../utils/adaptMeasurementDataToView';
 import { getCurveFilterOptions } from '../utils/getCurveFilterOptions';
-import { getErrors } from '../utils/getErrors';
 
 export const useMeasurementsData = () => {
   const wellbores = useWellInspectSelectedWellbores();

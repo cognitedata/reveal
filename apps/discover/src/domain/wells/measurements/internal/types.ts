@@ -67,6 +67,7 @@ export interface MeasurementCurveData extends Partial<PlotData> {
   columnExternalId: string;
   curveName: string;
   measurementTypeParent: MeasurementTypeParent;
+  customdata?: string[];
 }
 
 export interface MeasurementCurveFormatterData<T> {

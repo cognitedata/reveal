@@ -3,8 +3,8 @@ import {
   DepthMeasurementWithData,
   MeasurementCurveData,
 } from 'domain/wells/measurements/internal/types';
+import { isMeasurementTypeFitOrLot } from 'domain/wells/measurements/internal/utils/isMeasurementTypeFitOrLot';
 
-import { isMeasurementTypeFitOrLot } from '../../geomechanicsAndPPFG/utils/isMeasurementTypeFitOrLot';
 import { PRESSURE_UNIT } from '../WellboreCasingView/MeasurementsColumn/constants';
 
 export const adaptMeasurementsDataToChart = (

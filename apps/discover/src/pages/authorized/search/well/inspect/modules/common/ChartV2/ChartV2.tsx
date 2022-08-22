@@ -20,10 +20,6 @@ import { ChartSubtitle, ChartWrapper, Container } from './elements';
 import Toolbar from './Toolbar';
 import { calculateYTicksGap, findVisibleYTicksValues } from './utils';
 
-export const AXIS_AUTO_RANGE: ChartProps['axisAutorange'] = {
-  y: 'reversed',
-};
-
 type Data = any;
 
 type Autorange = true | false | 'reversed';

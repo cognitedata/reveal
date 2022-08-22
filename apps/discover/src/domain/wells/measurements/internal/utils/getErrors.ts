@@ -1,10 +1,9 @@
+import { DepthMeasurementWithData } from 'domain/wells/measurements/internal/types';
+import { hasMeasurementCurveConfig } from 'domain/wells/measurements/internal/utils/hasMeasurementCurveConfig';
+
 import { DataError, Errors } from 'modules/inspectTabs/types';
 
-import { MeasurementsView } from '../types';
-
-import { hasCurveConfig } from './getCurveConfig';
-
-export const getErrors = (data: MeasurementsView[]): Errors => {
+export const getErrors = (data: DepthMeasurementWithData[]): Errors => {
   return data.reduce((errors, { wellboreMatchingId, columns }) => {
     const wellboreErrors = new Set<DataError>();
     const measurementTypesWithoutParent = new Set<string>();
@@ -15,7 +14,7 @@ export const getErrors = (data: MeasurementsView[]): Errors => {
 
       if (!measurementTypeParent) {
         measurementTypesWithoutParent.add(measurementType);
-      } else if (!hasCurveConfig(column)) {
+      } else if (!hasMeasurementCurveConfig(column)) {
         curvesWithoutConfig.add(externalId);
       }
     });

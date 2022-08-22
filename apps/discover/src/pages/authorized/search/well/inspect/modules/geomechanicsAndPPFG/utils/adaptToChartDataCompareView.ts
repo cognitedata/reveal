@@ -1,20 +1,19 @@
-import { MeasurementsView, MeasurementUnits } from '../types';
+import { adaptToMeasurementChartData } from 'domain/wells/measurements/internal/transformers/adaptToMeasurementChartData';
 
-import { adaptToMeasurementChartData } from './adaptToMeasurementChartData';
+import { PressureUnit } from 'constants/units';
+
+import { MeasurementsView } from '../types';
 
 export const adaptToChartDataCompareView = (
   data: MeasurementsView,
-  measurementUnits: MeasurementUnits
+  pressureUnit: PressureUnit
 ) => {
-  return adaptToMeasurementChartData(
-    data,
-    measurementUnits,
-    ({ curveData }) => {
-      const { curveName, wellboreName } = curveData;
+  return adaptToMeasurementChartData(data, pressureUnit, ({ curveData }) => {
+    const { curveName } = curveData;
+    const { wellboreName } = data;
 
-      return {
-        customdata: [curveName, wellboreName],
-      };
-    }
-  );
+    return {
+      customdata: [curveName, wellboreName],
+    };
+  });
 };

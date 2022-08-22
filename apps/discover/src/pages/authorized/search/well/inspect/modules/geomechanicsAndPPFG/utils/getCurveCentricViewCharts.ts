@@ -1,15 +1,17 @@
 import groupBy from 'lodash/groupBy';
 
-import { MeasurementsView, MeasurementUnits } from '../types';
+import { PressureUnit } from 'constants/units';
+
+import { MeasurementsView } from '../types';
 
 import { adaptToChartDataCurveCentricView } from './adaptToChartDataCurveCentricView';
 
 export const getCurveCentricViewCharts = (
   data: MeasurementsView[],
-  measurementUnits: MeasurementUnits
+  pressureUnit: PressureUnit
 ) => {
   const chartsData = data.flatMap((wellboreMeasurementData) =>
-    adaptToChartDataCurveCentricView(wellboreMeasurementData, measurementUnits)
+    adaptToChartDataCurveCentricView(wellboreMeasurementData, pressureUnit)
   );
 
   return groupBy(chartsData, 'columnExternalId');

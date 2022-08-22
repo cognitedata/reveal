@@ -52,6 +52,7 @@ export const adaptToMeasurementChartData = <T extends DepthMeasurementWithData>(
           ? 'markers'
           : 'lines',
         xaxis: isAngle ? 'x2' : 'x',
+        customdata: [],
       };
 
       return {

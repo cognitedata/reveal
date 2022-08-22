@@ -1,22 +1,24 @@
+import { MeasurementCurveData } from 'domain/wells/measurements/internal/types';
+
 import * as React from 'react';
+
+import head from 'lodash/head';
 
 import { FlexColumn, FlexRow } from 'styles/layout';
 
 import CurveColorCode from '../../../common/ChartV2/CurveColorCode';
-import { MeasurementCurveData } from '../../types';
 
 import { CurveColorCodeWrapper, CurveName, LegendCustomData } from './elements';
 
 export interface GraphLegendItemProps {
   curve: MeasurementCurveData;
-  formatCustomData?: (curve: MeasurementCurveData) => string[];
 }
 
-export const ChartLegendItem: React.FC<GraphLegendItemProps> = ({
-  curve,
-  formatCustomData,
-}) => {
-  const { line, marker, curveName } = curve;
+export const ChartLegendItem: React.FC<GraphLegendItemProps> = ({ curve }) => {
+  const { line, marker, customdata = [] } = curve;
+
+  const customDataHeader = head(customdata);
+  const customDataSubContent = customdata.slice(1);
 
   return (
     <FlexRow>
@@ -25,9 +27,9 @@ export const ChartLegendItem: React.FC<GraphLegendItemProps> = ({
       </CurveColorCodeWrapper>
 
       <FlexColumn>
-        <CurveName>{curveName}</CurveName>
+        <CurveName>{customDataHeader}</CurveName>
 
-        {formatCustomData?.(curve).map((customDataElement) => (
+        {customDataSubContent.map((customDataElement) => (
           <LegendCustomData key={customDataElement}>
             {customDataElement}
           </LegendCustomData>

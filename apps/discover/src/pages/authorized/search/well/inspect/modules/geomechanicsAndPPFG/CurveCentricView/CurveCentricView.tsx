@@ -25,6 +25,8 @@ export const CurveCentricView: React.FC<CurveCentricViewProps> = ({
 }) => {
   const dispatch = useDispatch();
 
+  const { pressureUnit } = measurementUnits;
+
   useEffect(() => {
     dispatch(wellInspectActions.setColoredWellbores(true));
     return () => {
@@ -33,8 +35,8 @@ export const CurveCentricView: React.FC<CurveCentricViewProps> = ({
   }, []);
 
   const charts = useDeepMemo(
-    () => getCurveCentricViewCharts(data, measurementUnits),
-    [data, measurementUnits]
+    () => getCurveCentricViewCharts(data, pressureUnit),
+    [data, pressureUnit]
   );
 
   return (

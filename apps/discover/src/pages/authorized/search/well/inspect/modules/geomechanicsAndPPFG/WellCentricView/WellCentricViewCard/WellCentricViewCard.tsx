@@ -1,3 +1,4 @@
+import { filterChartDataBySelection } from 'domain/wells/measurements/internal/selectors/filterChartDataBySelection';
 import { filterNdsByMeasuredDepth } from 'domain/wells/nds/internal/selectors/filterNdsByMeasuredDepth';
 import { NdsInternal } from 'domain/wells/nds/internal/types';
 import { filterNptByMeasuredDepth } from 'domain/wells/npt/internal/selectors/filterNptByMeasuredDepth';
@@ -15,7 +16,6 @@ import { EventsColumnView } from '../../../common/Events/types';
 import { ChartLegend } from '../../components/ChartLegend';
 import { MeasurementsView, MeasurementUnits } from '../../types';
 import { adaptToChartDataWellCentricView } from '../../utils/adaptToChartDataWellCentricView';
-import { filterChartDataBySelection } from '../../utils/filterChartDataBySelection';
 
 import { ChartColumn } from './ChartColumn';
 import {
@@ -45,6 +45,7 @@ export const WellCentricViewCard: React.FC<WellCentricViewCardProps> = ({
   onSelectWellbore,
 }) => {
   const { wellName, wellboreName, depthRange } = data;
+  const { pressureUnit } = measurementUnits;
 
   const [eventsColumnView, setEventsColumnView] = useState(
     EventsColumnView.Cluster
@@ -57,8 +58,8 @@ export const WellCentricViewCard: React.FC<WellCentricViewCardProps> = ({
   const [scaleBlocks, setScaleBlocks] = useState<number[]>([]);
 
   const chartData = useDeepMemo(
-    () => adaptToChartDataWellCentricView(data, measurementUnits),
-    [data, measurementUnits]
+    () => adaptToChartDataWellCentricView(data, pressureUnit),
+    [data, pressureUnit]
   );
 
   const chartDataSelected = useDeepMemo(

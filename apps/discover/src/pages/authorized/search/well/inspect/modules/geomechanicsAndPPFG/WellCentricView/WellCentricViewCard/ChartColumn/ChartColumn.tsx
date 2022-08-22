@@ -1,9 +1,11 @@
+import { MeasurementCurveData } from 'domain/wells/measurements/internal/types';
+
 import React, { useRef } from 'react';
 
 import { FlexColumn } from 'styles/layout';
 
 import { MeasurementsChart } from '../../../components/MeasurementsChart';
-import { MeasurementCurveData, MeasurementUnits } from '../../../types';
+import { MeasurementUnits } from '../../../types';
 
 export interface GraphColumnProps {
   data: MeasurementCurveData[];

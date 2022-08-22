@@ -1,33 +1,31 @@
-import { MeasurementsView, MeasurementUnits } from '../types';
+import { adaptToMeasurementChartData } from 'domain/wells/measurements/internal/transformers/adaptToMeasurementChartData';
 
-import { adaptToMeasurementChartData } from './adaptToMeasurementChartData';
+import { PressureUnit } from 'constants/units';
+
+import { MeasurementsView } from '../types';
 
 export const adaptToChartDataCurveCentricView = (
   data: MeasurementsView,
-  measurementUnits: MeasurementUnits
+  pressureUnit: PressureUnit
 ) => {
-  return adaptToMeasurementChartData(
-    data,
-    measurementUnits,
-    ({ data, curveData }) => {
-      const { wellName, wellboreName, wellboreColor } = data;
-      const { line = {}, marker = {} } = curveData;
+  return adaptToMeasurementChartData(data, pressureUnit, ({ curveData }) => {
+    const { wellName, wellboreName, wellboreColor } = data;
+    const { line = {}, marker = {} } = curveData;
 
-      return {
+    return {
+      line: {
+        ...line,
+        color: wellboreColor,
+      },
+      marker: {
+        ...marker,
+        color: wellboreColor,
         line: {
-          ...line,
+          ...(marker.line || {}),
           color: wellboreColor,
         },
-        marker: {
-          ...marker,
-          color: wellboreColor,
-          line: {
-            ...(marker.line || {}),
-            color: wellboreColor,
-          },
-        },
-        customdata: [wellName, wellboreName],
-      };
-    }
-  );
+      },
+      customdata: [wellName, wellboreName],
+    };
+  });
 };
