@@ -69,7 +69,7 @@ export const DescriptionFlipped = styled(Description)`
 export const TriangleBottom = styled.div`
   width: 0;
   height: 0;
-  border-bottom: ${DEPTH_INDICATOR_END_HEIGHT} solid ${DEPTH_SEGMENT_COLOR};
+  border-bottom: 12px solid ${DEPTH_SEGMENT_COLOR};
   border-right: ${DEPTH_INDICATOR_END_HEIGHT} solid transparent;
   border-left: ${DEPTH_INDICATOR_LINE_WIDTH} solid ${DEPTH_SEGMENT_COLOR};
   margin-left: ${DEPTH_INDICATOR_END_HEIGHT};
