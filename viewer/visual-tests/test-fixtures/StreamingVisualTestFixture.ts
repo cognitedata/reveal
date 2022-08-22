@@ -156,8 +156,6 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
       cadMaterialManager: this._materialManager
     });
 
-    // this.gui.close();
-
     this.render();
   }
 
