@@ -42,7 +42,7 @@ jobs:
     #   working-directory: viewer
     #   run: yarn run build:prod
 
-    - name: Update Rust
+    - name: Override Rust version
       run: rustup override set nightly
 
     - name: Build development version
@@ -260,6 +260,9 @@ jobs:
         if: steps.npm_cache.outputs.cache-hit != 'true'
         working-directory: viewer
         run: yarn install --immutable
+
+      - name: Override Rust version
+        run: rustup override set nightly
 
       - name: Build production version
         working-directory: viewer
