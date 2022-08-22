@@ -1,5 +1,9 @@
 import { useState } from 'react';
 
+/**
+ * The useLocalStorage hook supports only object types.
+ * It is highly discouraged to use non-object types as a value.
+ */
 export const useLocalStorage = <T extends Object>(
   key: string,
   defaultValue: T
@@ -9,7 +13,7 @@ export const useLocalStorage = <T extends Object>(
       const item = localStorage.getItem(key);
       return item ? (JSON.parse(item) as T) : defaultValue;
     } catch (error) {
-      // Silently fail
+      // silently fail
       return defaultValue;
     }
   });
@@ -19,7 +23,7 @@ export const useLocalStorage = <T extends Object>(
       setStoredValue(value);
       localStorage.setItem(key, JSON.stringify(value));
     } catch (error) {
-      // Silently fail
+      // silently fail
     }
   };
 

@@ -30,7 +30,7 @@ const App = () => {
   const history = createBrowserHistory();
   const project = getProject();
   const env = getEnv();
-  const LS_KEY = `${LS_KEY_PREFIX}${project}`;
+  const LS_KEY = `${LS_KEY_PREFIX}_${project}`;
 
   const updateLocalStorage = debounce(() => {
     const localStorageContent = persistedState(store.getState());
