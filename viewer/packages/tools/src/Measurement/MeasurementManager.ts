@@ -16,7 +16,7 @@ export type Measurement = {
   readonly distanceInMeters: number;
 };
 
-export class MeasurementControls {
+export class MeasurementManager {
   private readonly _measurementLabel: MeasurementLabels;
   private _line: MeasurementLine | null = null;
   private readonly _options: Required<MeasurementOptions>;
@@ -26,6 +26,7 @@ export class MeasurementControls {
   private readonly _htmlOverlay: HtmlOverlayTool;
   private _labelElement: HTMLDivElement | null = null;
   private readonly _distanceToCamera: number;
+  private readonly _startPoint: THREE.Vector3;
   private _measurement!: Measurement;
 
   constructor(
@@ -42,6 +43,7 @@ export class MeasurementControls {
     this._domElement = viewerDomElement;
     this._camera = camera;
     this._meshGroup = meshGroup;
+    this._startPoint = startPoint;
     this._distanceToCamera = this._camera.getWorldPosition(new THREE.Vector3()).distanceTo(startPoint);
     this.startMeasurement(startPoint);
   }
@@ -54,7 +56,7 @@ export class MeasurementControls {
       throw new Error('Not currently measuring, call startMeasurement() first');
     }
     const { offsetX, offsetY } = mouseEvent;
-    this._line.updateLine(this.pointerTo3Dposition(offsetX, offsetY));
+    this._line.updateLine(this.pointerTo3DPosition(offsetX, offsetY));
   }
 
   /**
@@ -74,21 +76,10 @@ export class MeasurementControls {
     this._labelElement = this.addLabel(this._line.getMidPointOnLine(), label);
     this._measurement = {
       measurementId: Date.now(),
-      startPoint: this._measurement.startPoint,
+      startPoint: this._startPoint,
       endPoint: point,
       distanceInMeters: this._line.getMeasuredDistance()
     };
-  }
-
-  /**
-   * Clear the measurement line objects.
-   */
-  dispose(): void {
-    if (this._line !== null) {
-      this.removeMeasurement();
-      this._line.dispose();
-      this._line = null;
-    }
   }
 
   /**
@@ -104,10 +95,18 @@ export class MeasurementControls {
     if (this._htmlOverlay && this._labelElement) {
       this._htmlOverlay.remove(this._labelElement);
     }
+
+    if (this._line !== null) {
+      this._line.dispose();
+      this._line = null;
+    }
   }
 
-  getMeasurement(): Readonly<Measurement> {
-    return this._measurement;
+  getMeasurement(): Readonly<Measurement> | null {
+    if (this._measurement) {
+      return this._measurement;
+    }
+    return null;
   }
 
   /**
@@ -137,7 +136,6 @@ export class MeasurementControls {
     const lineColor = this.determineLineColorFromOptions();
     this._line = new MeasurementLine(lineWidth, lineColor, point);
     this._meshGroup.add(this._line.meshes);
-    this._measurement.startPoint.copy(point);
   }
 
   /**
@@ -161,7 +159,7 @@ export class MeasurementControls {
     return this._options.color;
   }
 
-  private pointerTo3Dposition(offsetX: number, offsetY: number) {
+  private pointerTo3DPosition(offsetX: number, offsetY: number) {
     const position = new THREE.Vector3();
     //Get position based on the mouse pointer X and Y value.
     const mouse = new THREE.Vector2();

@@ -17,7 +17,6 @@ export class MeasurementLine {
   constructor(lineWidth: number, lineColor: THREE.Color, startPoint: THREE.Vector3) {
     this._position = new Float32Array(6);
     this._geometry = null;
-    debugger;
 
     //Adaptive Line width & line width is multipled with scale factor due to adaptive calculation in shaders.
     this._adaptiveWidthLineMaterial = new LineMaterial({

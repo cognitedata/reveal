@@ -26,6 +26,20 @@ To enter point-to-point measurement mode, use `MeasurementTool.enterMeasurementM
 const measurementTool = new MeasurementTool(viewer);
 measurementTool.enterMeasurementMode();
 ```
+
+## Events
+The tool contains events for subscribe to measurement start, end & added.
+```jsx runnable
+// import { MeasurementTool } from '@cognite/reveal/tools';
+
+const measurementTool = new MeasurementTool(viewer);
+// Subscribe to measurement events
+measurementTool.subscribe('started', () => alert('Measurement is active'));
+measurementTool.subscribe('added', () => alert('Measurement is added'));
+
+measurementTool.enterMeasurementMode();
+```
+
 ## Cancel measurement
 To exit from measurement mode, use `MeasurementTool.exitMeasurementMode()`.
 
@@ -33,23 +47,23 @@ To exit from measurement mode, use `MeasurementTool.exitMeasurementMode()`.
 // import { MeasurementTool } from '@cognite/reveal/tools';
 
 const measurementTool = new MeasurementTool(viewer);
+measurementTool.subscribe('ended', () => alert('Measurement is ended'));
+
 measurementTool.enterMeasurementMode();
 
 //Add point to point distance measurement before existing from measurement tool.
-
-document.onkeydown = function(event) {
-  event = event || window.event;
-  //On "Esc" key, removes all measured distance before exiting from measurement tool.
-  if (event.keyCode == 27) {
-    measurementTool.exitMeasurementMode();
-    viewer.requestRedraw();
-  }
-}
+setTimeout(() => {
+  measurementTool.exitMeasurementMode();
+  viewer.requestRedraw();
+}, 10000);
 ```
+
+### Cancel active measurement
+To cancel the current/active measurement, the user can use `ESC` key which will kill the active measurement
 
 ## Set width and color of the measuring line
 To change width and color of the line, use `MeasurementTool.setLineOptions(options: MeasurementOptions)`. MeasurementOptions expects
-  - `lineWidth` : number
+  - `lineWidth` : number - units in meters
   - `color` : THREE.color
 
 The updated line width and color will be applied for the next measuring distance.
@@ -78,17 +92,17 @@ measurementTool.enterMeasurementMode();
 
 // Add few measurements
 
-//Change measurement line color & width to random values on "spacebar" key.
+//Changes measurement line color & width to random values every 5 seconds.
 setInterval(() => {
     const measurements = measurementTool.getAllMeasurements();
 
     measurements.forEach(measurement => {
       const color = Math.floor(Math.random() * 16777215);
-      measurementTool.updateLineColor(measurement.measurementId, new THREE.Color(color));
+      measurementTool.updateLineColor(measurement, new THREE.Color(color));
 
       //Update line width
       const lineWidth = (Math.random() * 1.0) + 0.2;
-      measurementTool.updateLineWidth(measurement.measurementId, lineWidth);
+      measurementTool.updateLineWidth(measurement, lineWidth);
       viewer.requestRedraw();
     });
 }, 5000);
@@ -111,7 +125,7 @@ measurementTool.enterMeasurementMode();
 
 ### Get all measurement
 To get all measurements added in the viewer, we can provide `MeasurementTool.getAllMeasurements()` which will
-returns array of measurement reference `MeasurementRef` having
+returns array of measurement reference `Measurement` having
   - `measurementId` : unique id of measurement.
   - `startPoint` : start point of the measurement.
   - `endPoint` : end point of the measurement.
@@ -135,8 +149,8 @@ setTimeout(() => {
 ```
 
 ### Remove measurement
-To remove a measurement from the viewer, we have `MeasurementTool.removeMeasurement(measurementId: number)`
-  - `measurementId` : Measurement Id of a measurement to be removed.
+To remove a measurement from the viewer, we have `MeasurementTool.removeMeasurement(measurement: Measurement)`
+  - `measurement` : Measurement to be removed.
 
 ```jsx runnable
 // import { MeasurementTool } from '@cognite/reveal/tools';
@@ -149,7 +163,7 @@ setTimeout(() => {
     const measurements = measurementTool.getAllMeasurements();
 
     if (measurements[0]) {
-      measurementTool.removeMeasurement(measurements[0].measurementId);
+      measurementTool.removeMeasurement(measurements[0]);
       viewer.requestRedraw();
     }
   }, 6000);
@@ -167,3 +181,4 @@ Measurement labels can be hidden/visible using `MeasurementTool.showMeasurementL
 // Hide all measurement lables
 measurementTool.showMeasurementLabels(false);
 ```
+

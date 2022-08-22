@@ -11,7 +11,7 @@ export class MeasurementUi {
 
   private state = {
     lineWidth: 2.0,
-    color: 0x00FFFF,
+    color: 0xf5f5f5,
     allMeasurement: false,
     showAllMeasurementLabels: true
   };
