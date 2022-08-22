@@ -25,8 +25,8 @@
   "scripts": {
     "build": "yarn run clean && yarn run build:wasm && webpack --env development",
     "build:wasm": "wasm-pack build ./wasm --target web",
-    "build:watch": "yarn run clean && webpack --env development --watch",
-    "build:prod": "yarn run clean && webpack --env production",
+    "build:watch": "yarn run clean && yarn run build:wasm && webpack --env development --watch",
+    "build:prod": "yarn run clean && yarn run build:wasm && webpack --env production",
     "mkdist": "shx mkdir -p dist && shx cp README.md LICENSE dist",
     "clean": "shx rm -rf dist/ && yarn run mkdist",
     "clean:wasm": "cargo clean --manifest-path ./wasm/Cargo.toml",
