@@ -26,5 +26,6 @@ export const DEFAULT_COLUMN_ORDER = [
   ChartColumn.NPT,
   ChartColumn.NDS,
   ChartColumn.SUMMARY,
+  ChartColumn.TRAJECTORY,
   ChartColumn.MEASUREMENTS,
 ];

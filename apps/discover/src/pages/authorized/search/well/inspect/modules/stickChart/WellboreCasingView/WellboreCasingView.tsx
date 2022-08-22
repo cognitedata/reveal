@@ -33,6 +33,7 @@ import { NdsEventsColumn } from './NdsEventsColumn';
 import { NptEventsColumn } from './NptEventsColumn';
 import { SchemaColumn } from './SchemaColumn';
 import { SummaryColumn } from './SummaryColumn';
+import { TrajectoryColumn } from './TrajectoryColumn';
 import { WellboreNdsDetailedView } from './WellboreNdsDetailedView';
 
 interface WellboreCasingsViewProps {
@@ -73,12 +74,14 @@ export const WellboreCasingView: React.FC<WellboreCasingsViewProps> = ({
     wellboreMatchingId,
     wellName,
     wellboreName,
+    wellboreColor,
     casingAssemblies,
     nptEvents,
     ndsEvents,
     rkbLevel,
     waterDepth,
     wellTop,
+    trajectoriesData,
     measurementsData,
   } = data;
 
@@ -198,6 +201,15 @@ export const WellboreCasingView: React.FC<WellboreCasingsViewProps> = ({
               <SummaryColumn
                 key={ChartColumn.SUMMARY}
                 casingAssemblies={casingAssemblies}
+              />
+            )}
+
+            {isColumnVisible(ChartColumn.TRAJECTORY) && (
+              <TrajectoryColumn
+                key={ChartColumn.TRAJECTORY}
+                data={trajectoriesData}
+                scaleBlocks={scaleBlocks}
+                curveColor={wellboreColor}
               />
             )}
 

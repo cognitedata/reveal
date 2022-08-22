@@ -1,9 +1,11 @@
 import React from 'react';
 
 import head from 'lodash/head';
+import isEmpty from 'lodash/isEmpty';
 import last from 'lodash/last';
 
 import { WithDragHandleProps } from 'components/DragDropContainer';
+import EmptyState from 'components/EmptyState';
 import { useDeepMemo } from 'hooks/useDeep';
 
 import { ChartV2 } from '../../common/ChartV2';
@@ -18,13 +20,16 @@ import {
 } from '../../common/Events/elements';
 
 import { DepthScaleLines } from './DepthScaleLines';
-import { ChartTitle, ChartWrapper } from './elements';
+import { ChartTitle, ChartWrapper, EmptyStateWrapper } from './elements';
 
 export interface PlotlyChartColumnProps
   extends Pick<ChartProps, 'data' | 'axisNames'> {
   header: string;
   title: string;
   scaleBlocks: number[];
+  isLoading?: boolean;
+  emptyTitle?: string;
+  emptySubtitle?: string;
   width?: number;
 }
 
@@ -36,6 +41,9 @@ export const PlotlyChartColumn: React.FC<
   axisNames,
   title,
   scaleBlocks,
+  isLoading = false,
+  emptyTitle,
+  emptySubtitle,
   width = 320,
   ...dragHandleProps
 }) => {
@@ -61,6 +69,44 @@ export const PlotlyChartColumn: React.FC<
     [scaleBlocks]
   );
 
+  const renderContent = () => {
+    if (isEmpty(data)) {
+      return (
+        <EmptyStateWrapper>
+          <EmptyState
+            isLoading={isLoading}
+            emptyTitle={emptyTitle}
+            emptySubtitle={emptySubtitle}
+            hideHeading={
+              !isLoading && isEmpty(emptyTitle) && !isEmpty(emptySubtitle)
+            }
+          />
+        </EmptyStateWrapper>
+      );
+    }
+
+    return (
+      <>
+        <ChartTitle>{title}</ChartTitle>
+
+        <BodyColumnBody>
+          <DepthScaleLines scaleBlocks={scaleBlocks} />
+          <ChartWrapper>
+            <ChartV2
+              autosize
+              hideHeader
+              axisNames={axisNames}
+              axisConfig={axisConfig}
+              data={data}
+              title={title}
+              height={height}
+            />
+          </ChartWrapper>
+        </BodyColumnBody>
+      </>
+    );
+  };
+
   return (
     <BodyColumn width={width}>
       <ColumnDragger {...dragHandleProps} />
@@ -69,23 +115,7 @@ export const PlotlyChartColumn: React.FC<
         <BodyColumnMainHeader>{header}</BodyColumnMainHeader>
       </ColumnHeaderWrapper>
 
-      <ChartTitle>{title}</ChartTitle>
-
-      <BodyColumnBody>
-        <DepthScaleLines scaleBlocks={scaleBlocks} />
-
-        <ChartWrapper>
-          <ChartV2
-            autosize
-            hideHeader
-            axisNames={axisNames}
-            axisConfig={axisConfig}
-            data={data}
-            title={title}
-            height={height}
-          />
-        </ChartWrapper>
-      </BodyColumnBody>
+      {renderContent()}
     </BodyColumn>
   );
 };

@@ -30,6 +30,10 @@ export const ChartWrapper = styled.div`
   }
 `;
 
+export const EmptyStateWrapper = styled.div`
+  display: contents;
+`;
+
 export const DepthMeasurementScaleWrapper = styled(DepthMeasurementScale)`
   align-content: center;
 `;

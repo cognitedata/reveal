@@ -22,7 +22,7 @@ const DetailCard = ({ data }: Props) => {
   const position = useMemo(() => getChartPositionValues(data), [data]);
   const displayValues = useMemo(() => getChartDisplayValues(data), [data]);
   return (
-    <DetailcardWrapper {...position}>
+    <DetailcardWrapper {...position} className="plotly-chart-detail-card">
       <DetailcardMainRow>
         <CurveColorCode
           line={displayValues.line}

@@ -17,7 +17,7 @@ import {
 import { getTrajectoryDataErrors } from '../utils/getTrajectoryDataErrors';
 
 export const getTrajectoryCurveCoordinates = (
-  rows: TrajectoryDataInternal['rows'],
+  rows: TrajectoryDataInternal['rows'] = [],
   chartData?: ProjectConfigWellsTrajectoryCharts['chartData']
 ): {
   coordinates: TrajectoryCurveCoordinates;
