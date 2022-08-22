@@ -6,10 +6,6 @@ import { FilePreview } from './FilePreview';
 // @ts-ignore
 import pdfFileUrl from './pnid.pdf';
 
-const randomId = () => {
-  return Math.random().toString(36).substr(2, 9);
-};
-
 const pdfFile = {
   id: 111,
   externalId: 'PH-ME-P-0153-001.pdf',

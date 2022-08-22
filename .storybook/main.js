@@ -26,10 +26,11 @@ module.exports = {
     },
   },
   addons: [
-    '@storybook/preset-create-react-app',
     {
       name: '@storybook/addon-docs',
-      options: { configureJSX: true },
+      options: {
+        configureJSX: true,
+      },
     },
     '@storybook/addon-essentials',
     {
@@ -40,7 +41,10 @@ module.exports = {
           include: [path.resolve(__dirname, '../')], // You can specify directories
         },
         loaderOptions: {
-          prettierConfig: { printWidth: 80, singleQuote: false },
+          prettierConfig: {
+            printWidth: 80,
+            singleQuote: false,
+          },
         },
       },
     },
@@ -48,5 +52,8 @@ module.exports = {
   ],
   features: {
     interactionsDebugger: true,
+  },
+  core: {
+    builder: 'webpack5',
   },
 };

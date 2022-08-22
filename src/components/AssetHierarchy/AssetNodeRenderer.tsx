@@ -53,6 +53,7 @@ const AssetNodeRenderer: React.FC<AssetNodeRendererProps> = ({
 
   useEffect(() => {
     measure();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleExpand = () => {

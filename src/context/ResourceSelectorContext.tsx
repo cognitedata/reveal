@@ -120,7 +120,6 @@ export const ResourceSelectorProvider = ({
         }}
         visible={isOpen}
         {...props}
-        // eslint-disable-next-line react/prop-types
         selectionMode={props.selectionMode || 'single'}
         isSelected={item =>
           resourceItemState.some(

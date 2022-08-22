@@ -223,7 +223,6 @@ export const AssetTreeTable = ({
       }}
       rowRenderer={({ rowData, cells }) => {
         // @ts-ignore
-        // eslint-disable-next-line react/prop-types
         if (rowData.loading) {
           return <Loader />;
         }

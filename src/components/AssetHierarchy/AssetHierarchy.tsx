@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import {
   Asset,
   AssetIdEither,
@@ -505,3 +506,4 @@ const AssetHierarchy: React.FC<AssetHierarchyProps> = ({
 };
 
 export default React.memo(AssetHierarchy);
+/* eslint-enable react-hooks/exhaustive-deps */

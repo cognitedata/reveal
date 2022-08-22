@@ -7,7 +7,6 @@ import {
   byIdKey,
   listKey,
   listApi,
-  useCdfItem,
 } from '@cognite/sdk-react-query-hooks';
 import { useQueryClient, useQuery, UseQueryOptions } from 'react-query';
 
