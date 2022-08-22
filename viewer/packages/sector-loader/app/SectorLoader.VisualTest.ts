@@ -60,6 +60,16 @@ export default class SectorLoaderVisualTestFixture extends SimpleVisualTestFixtu
     const internalId = modelIdentifier.revealInternalId.toString();
 
     cadMaterialManager.addModelMaterials(internalId, sceneJson.maxTreeIndex);
+    for (const material of Object.values(
+      cadMaterialManager.getModelMaterials(internalId)
+    ) as THREE.RawShaderMaterial[]) {
+      material.blending = THREE.CustomBlending;
+      material.blendDst = THREE.ZeroFactor;
+      material.blendDstAlpha = THREE.OneFactor;
+      material.blendSrc = THREE.OneFactor;
+      material.blendSrcAlpha = THREE.ZeroFactor;
+      material.needsUpdate = true;
+    }
 
     const model = new THREE.Group();
 
