@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { useLocalStorage } from '@cognite/cogs.js';
-import { LS_SAVED_SETTINGS } from 'stringConstants';
+import { LS_KEY_SETTINGS } from 'stringConstants';
 import { ModelSelected, ResourceCount } from 'modules/types';
+import { useLocalStorage, SavedSettings } from 'hooks';
 
 export type PrefixType = 'custom' | 'original';
 export type AppStateContextType = {
@@ -9,7 +9,7 @@ export type AppStateContextType = {
   setProject: (project: string) => void;
   cdfEnv: string;
   setCdfEnv: (cdfEnv: string) => void;
-  setSavedSettings: (savedSettings: any) => void;
+  setSavedSettings: (savedSettings: SavedSettings) => void;
   skipSettings: boolean;
   setSkipSettings: (skipSettings: boolean) => void;
   modelSelected: ModelSelected;
@@ -24,10 +24,13 @@ export type AppStateContextType = {
 type AppStateType = { children: React.ReactNode };
 
 export const AppStateProvider = ({ children }: AppStateType) => {
-  const [savedSettings, setSavedSettings] = useLocalStorage(LS_SAVED_SETTINGS, {
-    skip: false,
-    modelSelected: 'standard',
-  });
+  const [savedSettings, setSavedSettings] = useLocalStorage<SavedSettings>(
+    LS_KEY_SETTINGS,
+    {
+      skip: false,
+      modelSelected: 'standard',
+    }
+  );
 
   const [project, setProject] = useState<string>('');
   const [cdfEnv, setCdfEnv] = useState<string>('');

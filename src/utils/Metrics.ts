@@ -1,6 +1,11 @@
 import { trackEvent } from '@cognite/cdf-route-tracker';
 import sdk from '@cognite/cdf-sdk-singleton';
-import { getItemFromStorage } from 'hooks/useLocalStorage';
+import { getItemFromStorage } from 'hooks';
+import { LS_KEY_METRICS } from 'stringConstants';
+
+export type LSMetrics = {
+  username: string;
+};
 
 export type Props = { [key: string]: string | number | boolean | Props | null };
 
@@ -13,9 +18,9 @@ export const trackUsage = (
   if (!host || !pathname) {
     return;
   }
-
   const pathWithoutProject = pathname.substring(pathname.indexOf('/', 1));
-  const username = getItemFromStorage('context-ui-pnid-username') ?? 'unknown';
+  const metricsFromLs = getItemFromStorage<LSMetrics>(LS_KEY_METRICS);
+  const username = metricsFromLs?.username ?? 'unknown';
 
   if (host.indexOf('localhost') === -1) {
     trackEvent(`EngineeringDiagrams.${event}`, {
@@ -113,9 +118,5 @@ export const PNID_METRICS = {
     manualTags: 'fileViewer.manualTags',
     viewTab: 'fileViewer.viewTab',
     deleteAnnotations: 'fileViewer.deleteAnnotations',
-  },
-  betaBanner: {
-    close: 'betaBanner.close',
-    feedback: 'betaBanner.feedback',
   },
 };

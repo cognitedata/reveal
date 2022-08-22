@@ -18,6 +18,7 @@ import sdk, { getFlow } from '@cognite/cdf-sdk-singleton';
 
 import queryString from 'query-string';
 import { trackUsage } from 'utils/Metrics';
+import { LS_KEY_METRICS } from 'stringConstants';
 import {
   ResourceActionsProvider,
   ResourceSelectionProvider,
@@ -26,8 +27,7 @@ import {
 import NotFound from 'pages/NotFound';
 import { staticRoot } from 'routes/paths';
 
-import { setItemInStorage } from 'hooks/useLocalStorage';
-import { useUserId } from 'hooks';
+import { setItemInStorage, useUserId } from 'hooks';
 import { useUserInformation } from 'hooks/useUserInformation';
 
 const Routes = React.lazy(() => import('routes'));
@@ -68,7 +68,7 @@ export default function App() {
   useEffect(() => {
     if (username) {
       // to be used in metrics
-      setItemInStorage('context-ui-pnid-username', username);
+      setItemInStorage(LS_KEY_METRICS, { username });
     }
     trackUsage('App.Load');
   }, [username]);

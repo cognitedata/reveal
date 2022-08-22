@@ -2,7 +2,15 @@ import React, { useState, useCallback, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useDebouncedCallback } from 'use-debounce';
 import { message } from 'antd';
-import { useLocalStorage } from '@cognite/cogs.js';
+import {
+  useLocalStorage,
+  usePreviousSelection,
+  usePreviousFilter,
+  useActiveWorkflow,
+  useSteps,
+  useJobStarted,
+  SavedSettings,
+} from 'hooks';
 import { doSearch } from 'modules/search';
 import {
   PendingResourceSelection,
@@ -12,14 +20,7 @@ import {
   getActiveWorkflowItems,
 } from 'modules/workflows';
 import { ResourceType, Filter } from 'modules/types';
-import {
-  usePreviousSelection,
-  usePreviousFilter,
-  useActiveWorkflow,
-  useSteps,
-  useJobStarted,
-} from 'hooks';
-import { LS_SAVED_SETTINGS } from 'stringConstants';
+import { LS_KEY_SETTINGS } from 'stringConstants';
 import NavigationStickyBottomRow from 'components/NavigationStickyBottomRow';
 import { Flex } from 'components/Common';
 import { searchCountSelector } from 'pages/PageSelection/selectors';
@@ -57,7 +58,7 @@ export default function PageSelection(props: Props): JSX.Element {
 
   const [delayedFilter, setDelayedFilter] = useState<Filter>(filter);
   const [debouncedSetFilter] = useDebouncedCallback(setDelayedFilter, 200);
-  const [savedSettings] = useLocalStorage(LS_SAVED_SETTINGS, {
+  const [savedSettings] = useLocalStorage<SavedSettings>(LS_KEY_SETTINGS, {
     skip: false,
   });
   const count = useSelector(searchCountSelector(type, filter));

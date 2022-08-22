@@ -1,3 +1,5 @@
-export const LS_SAVED_SETTINGS = 'pnid-parsing-ui-saved-settings';
-export const LS_BETA_BANNER = 'beta-banner';
 export const CURRENT_LS_VERSION = 1;
+
+export const LS_KEY_PREFIX = `PNID_CONTEXTUALIZATION`;
+export const LS_KEY_METRICS = `${LS_KEY_PREFIX}-METRICS`;
+export const LS_KEY_SETTINGS = `${LS_KEY_PREFIX}-SETTINGS`;

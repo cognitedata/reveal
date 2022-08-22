@@ -3,9 +3,8 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { useCdfItems, useList } from '@cognite/sdk-react-query-hooks';
 import { Asset, FileInfo, IdEither } from '@cognite/sdk';
-import { useLocalStorage } from '@cognite/cogs.js';
 import { diagramSelection } from 'routes/paths';
-import { LS_SAVED_SETTINGS } from 'stringConstants';
+import { LS_KEY_SETTINGS } from 'stringConstants';
 import { ResourceType } from 'modules/sdk-builder/types';
 import {
   standardModelOptions,
@@ -20,7 +19,7 @@ import {
   workflowResourceStatusSelector,
   workflowAllResourcesStatusSelector,
 } from 'modules/workflows';
-import { selectParsingJobs } from 'hooks';
+import { useLocalStorage, selectParsingJobs, SavedSettings } from 'hooks';
 import { RootState } from 'store/reducer';
 import { NUM_OF_RESOURCES_CHECKED, getUrlWithQueryParams } from 'utils/config';
 
@@ -30,8 +29,7 @@ import { NUM_OF_RESOURCES_CHECKED, getUrlWithQueryParams } from 'utils/config';
 export const useWorkflowCreateNew = () => {
   const dispatch = useDispatch();
   const history = useHistory();
-
-  const [savedSettings] = useLocalStorage(LS_SAVED_SETTINGS, {
+  const [savedSettings] = useLocalStorage<SavedSettings>(LS_KEY_SETTINGS, {
     skip: false,
     modelSelected: 'standard',
   });

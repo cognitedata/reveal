@@ -19,6 +19,7 @@ export * from './useFileStatus';
 export * from './useJobStarted';
 export * from './useJobs';
 export * from './useUserId';
+export * from './useLocalStorage';
 
 // dev
 export * from './useTraceRerender';
