@@ -67,13 +67,14 @@ export const VideoPreview: React.FC<FilePreviewProps> = ({
     retrieveDownloadUrl(sdk, fileObj.id).then((data) => {
       setUrl(data || '');
     });
-  }, []);
+  }, [fileObj.id]);
 
   return url ? (
     <ReactPlayer
       className="react-player"
       url={url}
       controls
+      playing
       width="100%"
       height="100%"
       muted
