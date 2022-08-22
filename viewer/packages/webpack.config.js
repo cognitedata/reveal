@@ -5,16 +5,35 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const webpack = require('webpack');
 
+function setTestFixture(testFixture) {
+  if (testFixture === undefined) {
+    return false;
+  }
+
+  const parsedTestFixturePath = path.parse(testFixture);
+
+  if (parsedTestFixturePath === undefined) {
+    throw new Error('Unkown test fixture arugment');
+  }
+
+  return '?testfixture=' + parsedTestFixturePath.name;
+}
+
 module.exports = env => {
-  const entryFile = env.example ?? './app/index.ts';
+  const entryFile = '../visual-tests/VisualTest.browser.ts';
+  const open = setTestFixture(env.testFixture);
   return {
     mode: 'development',
 
-    entry: path.resolve(env.dir, entryFile),
+    entry: path.resolve(__dirname, entryFile),
 
     output: {
-      path: path.resolve(env.dir, 'dist'),
+      path: path.resolve(__dirname, 'dist'),
       filename: 'index.js'
+    },
+
+    experiments: {
+      topLevelAwait: true
     },
 
     resolve: {
@@ -29,7 +48,7 @@ module.exports = env => {
     devServer: {
       static: [
         {
-          directory: path.resolve(__dirname, env.dir + '/app')
+          directory: path.resolve(__dirname, 'sector-parser/app')
         },
         {
           directory: path.resolve(__dirname, '../../examples/public'),
@@ -37,7 +56,9 @@ module.exports = env => {
         }
       ],
       allowedHosts: 'all',
-      server: 'https'
+      server: 'https',
+      port: 8080,
+      open
     },
 
     module: {
@@ -61,8 +82,11 @@ module.exports = env => {
                 noUnusedParameters: false
               }
             }
-          },
-          exclude: [/.*\.test\.tsx?/g, /.*\/stubs\//]
+          }
+        },
+        {
+          test: /VisualTest.browser\.tsx?/,
+          use: path.resolve('./visual-tests/globVisualTestLoader.js')
         },
         {
           test: /\.(glsl|vert|frag)$/,
@@ -71,14 +95,11 @@ module.exports = env => {
         }
       ]
     },
-    watchOptions: {
-      poll: 1000
-    },
 
     devtool: 'inline-source-map',
 
     plugins: [
-      new HtmlWebpackPlugin({ title: require(path.resolve(env.dir, './package.json')).name }),
+      new HtmlWebpackPlugin({ title: require(path.resolve('./packages/sector-parser', './package.json')).name }),
       new webpack.ProvidePlugin({
         process: 'process/browser'
       })
