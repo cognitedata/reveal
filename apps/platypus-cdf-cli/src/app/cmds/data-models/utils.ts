@@ -1,7 +1,7 @@
 import { GraphQlUtilsService } from '@platypus/platypus-common-utils';
 import {
   DataModelsHandler,
-  DataModelStorageApiService,
+  DmsApiService,
   DataModelVersionHandler,
   MixerApiService,
 } from '@platypus/platypus-core';
@@ -14,7 +14,7 @@ export const getMixerApiService = () => {
 
 export const getDataModelStorageApiService = () => {
   const client = getCogniteSDKClient();
-  return new DataModelStorageApiService(client);
+  return new DmsApiService(client);
 };
 
 export const getDataModelsHandler = () => {

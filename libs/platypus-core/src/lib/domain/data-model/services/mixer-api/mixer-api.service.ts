@@ -12,7 +12,7 @@ import {
   ConflictMode,
   DataModelStorageBindingsDTO,
   ValidateDataModelDTO,
-} from '../dto';
+} from '../../dto';
 
 export class MixerApiService {
   private schemaServiceBaseUrl: string;

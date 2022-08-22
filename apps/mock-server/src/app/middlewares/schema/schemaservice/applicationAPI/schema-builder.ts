@@ -140,9 +140,12 @@ export class SchemaServiceGraphqlApiBuilder {
             matches.forEach((match) => {
               extendedSchema = extendedSchema.replace(
                 match,
-                `${field.name}(filter: _List${this.capitalize(
-                  fieldSchemaType
-                )}Filter): ${match.replace(`${field.name}:`, '')}`
+                `${field.name}(
+                  first: Int
+                  after: String
+                  filter: _List${this.capitalize(fieldSchemaType)}Filter
+                  sort: [_${this.capitalize(fieldSchemaType)}Sort!]
+                  ): ${this.capitalize(fieldSchemaType)}Connection`
               );
             });
           }

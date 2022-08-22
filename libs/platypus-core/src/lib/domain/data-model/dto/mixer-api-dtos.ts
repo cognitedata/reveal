@@ -5,6 +5,27 @@ export interface ApiVersionDataModel {
   graphqlRepresentation: string;
 }
 
+export type DataModelStorageBindingsPropertyOneToMany = {
+  connection: {
+    edgeFilter: {
+      hasData: {
+        models: [[string, string]];
+      };
+    };
+    outwards: boolean;
+  };
+};
+
+export type DataModelStorageBindingsPropertyOneToOne = {
+  property: [string, string, string];
+};
+export interface DataModelStorageBindingsProperty {
+  from:
+    | DataModelStorageBindingsPropertyOneToOne
+    | DataModelStorageBindingsPropertyOneToMany;
+  as?: string;
+}
+
 export interface DataModelStorageBindingsDTO {
   targetName: string;
   dataModelStorageMappingSource: {
@@ -17,23 +38,7 @@ export interface DataModelStorageBindingsDTO {
         }
       ];
     };
-    properties: {
-      from:
-        | {
-            property: [string, string, string];
-          }
-        | {
-            connection: {
-              edgeFilter: {
-                hasData: {
-                  dataContainer: [string, string];
-                };
-              };
-            };
-            outwards: boolean;
-          };
-      as?: string;
-    }[];
+    properties: DataModelStorageBindingsProperty[];
   };
 }
 

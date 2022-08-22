@@ -1,4 +1,4 @@
-import { DataModelStorageApiService } from './data-model-storage-api.service';
+import { DmsApiService } from './dms-api.service';
 
 const cdfClientMock = {
   working: {
@@ -26,7 +26,7 @@ describe('data-model-storage-api-service', () => {
   describe('listSpaces', () => {
     test('sends valid POST request', () => {
       const cdfClient = cdfClientMock.working;
-      const service = new DataModelStorageApiService(cdfClient);
+      const service = new DmsApiService(cdfClient);
       service.listSpaces();
 
       expect(cdfClient.post).toHaveBeenCalledWith(
@@ -42,14 +42,14 @@ describe('data-model-storage-api-service', () => {
 
     test('returns an array when called successfully', async () => {
       const cdfClient = cdfClientMock.working;
-      const service = new DataModelStorageApiService(cdfClient);
+      const service = new DmsApiService(cdfClient);
 
       expect(Array.isArray(await service.listSpaces())).toBeTruthy;
     });
 
     test('handles and returns errors', async () => {
       const cdfClient = cdfClientMock.broken;
-      const service = new DataModelStorageApiService(cdfClient);
+      const service = new DmsApiService(cdfClient);
       try {
         await service.listSpaces();
       } catch (e) {
@@ -72,7 +72,7 @@ describe('data-model-storage-api-service', () => {
 
     test('sends valid POST request', () => {
       const cdfClient = cdfClientMock.working;
-      const service = new DataModelStorageApiService(cdfClient);
+      const service = new DmsApiService(cdfClient);
       service.applySpaces(payload);
 
       expect(cdfClient.post).toHaveBeenCalledWith(
@@ -90,14 +90,14 @@ describe('data-model-storage-api-service', () => {
 
     test('returns an array when called successfully', async () => {
       const cdfClient = cdfClientMock.working;
-      const service = new DataModelStorageApiService(cdfClient);
+      const service = new DmsApiService(cdfClient);
 
       expect(Array.isArray(await service.applySpaces(payload))).toBeTruthy;
     });
 
     test('handles and returns errors', async () => {
       const cdfClient = cdfClientMock.broken;
-      const service = new DataModelStorageApiService(cdfClient);
+      const service = new DmsApiService(cdfClient);
 
       return await expect(service.applySpaces(payload)).rejects.toMatchObject({
         code: 400,
@@ -115,7 +115,7 @@ describe('data-model-storage-api-service', () => {
 
     test('sends valid POST request', () => {
       const cdfClient = cdfClientMock.working;
-      const service = new DataModelStorageApiService(cdfClient);
+      const service = new DmsApiService(cdfClient);
       service.deleteSpaces(payload);
 
       expect(cdfClient.post).toHaveBeenCalledWith(
@@ -131,14 +131,14 @@ describe('data-model-storage-api-service', () => {
 
     test('returns an array when called successfully', async () => {
       const cdfClient = cdfClientMock.working;
-      const service = new DataModelStorageApiService(cdfClient);
+      const service = new DmsApiService(cdfClient);
 
       expect(Array.isArray(await service.deleteSpaces(payload))).toBeTruthy;
     });
 
     test('handles and returns errors', async () => {
       const cdfClient = cdfClientMock.broken;
-      const service = new DataModelStorageApiService(cdfClient);
+      const service = new DmsApiService(cdfClient);
 
       return await expect(service.deleteSpaces(payload)).rejects.toMatchObject({
         code: 400,
@@ -156,7 +156,7 @@ describe('data-model-storage-api-service', () => {
 
     test('sends valid POST request', async () => {
       const cdfClient = cdfClientMock.working;
-      const service = new DataModelStorageApiService(cdfClient);
+      const service = new DmsApiService(cdfClient);
       await service.getSpacesById(payload);
 
       expect(cdfClient.post).toHaveBeenCalledWith(
@@ -172,14 +172,14 @@ describe('data-model-storage-api-service', () => {
 
     test('returns an array when called successfully', async () => {
       const cdfClient = cdfClientMock.working;
-      const service = new DataModelStorageApiService(cdfClient);
+      const service = new DmsApiService(cdfClient);
 
       expect(Array.isArray(await service.getSpacesById(payload))).toBeTruthy;
     });
 
     test('handles and returns errors', async () => {
       const cdfClient = cdfClientMock.broken;
-      const service = new DataModelStorageApiService(cdfClient);
+      const service = new DmsApiService(cdfClient);
 
       return await expect(service.getSpacesById(payload)).rejects.toMatchObject(
         {
@@ -197,7 +197,7 @@ describe('data-model-storage-api-service', () => {
 
     test('sends valid POST request', async () => {
       const cdfClient = cdfClientMock.working;
-      const service = new DataModelStorageApiService(cdfClient);
+      const service = new DmsApiService(cdfClient);
       await service.listModels(payload);
 
       expect(cdfClient.post).toHaveBeenCalledWith(
@@ -215,14 +215,14 @@ describe('data-model-storage-api-service', () => {
 
     test('returns an array when called successfully', async () => {
       const cdfClient = cdfClientMock.working;
-      const service = new DataModelStorageApiService(cdfClient);
+      const service = new DmsApiService(cdfClient);
 
       expect(Array.isArray(await service.listModels(payload))).toBeTruthy;
     });
 
     test('handles and returns errors', async () => {
       const cdfClient = cdfClientMock.broken;
-      const service = new DataModelStorageApiService(cdfClient);
+      const service = new DmsApiService(cdfClient);
 
       return await expect(service.listModels(payload)).rejects.toMatchObject({
         code: 400,
@@ -245,7 +245,7 @@ describe('data-model-storage-api-service', () => {
     };
     test('sends valid POST request', () => {
       const cdfClient = cdfClientMock.working;
-      const service = new DataModelStorageApiService(cdfClient);
+      const service = new DmsApiService(cdfClient);
       service.filterNodes(payload);
 
       expect(cdfClient.post).toHaveBeenCalledWith(
@@ -261,14 +261,14 @@ describe('data-model-storage-api-service', () => {
 
     test('returns an array when called successfully', async () => {
       const cdfClient = cdfClientMock.working;
-      const service = new DataModelStorageApiService(cdfClient);
+      const service = new DmsApiService(cdfClient);
 
       expect(Array.isArray(await service.filterNodes(payload))).toBeTruthy;
     });
 
     test('handles and returns errors', async () => {
       const cdfClient = cdfClientMock.broken;
-      const service = new DataModelStorageApiService(cdfClient);
+      const service = new DmsApiService(cdfClient);
 
       return await expect(service.filterNodes(payload)).rejects.toMatchObject({
         code: 400,
@@ -299,7 +299,7 @@ describe('data-model-storage-api-service', () => {
 
     test('sends valid POST request', () => {
       const cdfClient = cdfClientMock.working;
-      const service = new DataModelStorageApiService(cdfClient);
+      const service = new DmsApiService(cdfClient);
 
       service.upsertModel(payload);
 
@@ -316,14 +316,14 @@ describe('data-model-storage-api-service', () => {
 
     test('returns an array when called successfully', async () => {
       const cdfClient = cdfClientMock.working;
-      const service = new DataModelStorageApiService(cdfClient);
+      const service = new DmsApiService(cdfClient);
 
       expect(Array.isArray(await service.upsertModel(payload))).toBeTruthy;
     });
 
     test('handles and returns errors', async () => {
       const cdfClient = cdfClientMock.broken;
-      const service = new DataModelStorageApiService(cdfClient);
+      const service = new DmsApiService(cdfClient);
 
       return await expect(service.upsertModel(payload)).rejects.toMatchObject({
         code: 400,
@@ -348,7 +348,7 @@ describe('data-model-storage-api-service', () => {
 
     test('sends valid POST request', () => {
       const cdfClient = cdfClientMock.working;
-      const service = new DataModelStorageApiService(cdfClient);
+      const service = new DmsApiService(cdfClient);
       service.ingestNodes(payload);
 
       expect(cdfClient.post).toHaveBeenCalledWith(
@@ -364,14 +364,14 @@ describe('data-model-storage-api-service', () => {
 
     test('returns an array when called successfully', async () => {
       const cdfClient = cdfClientMock.working;
-      const service = new DataModelStorageApiService(cdfClient);
+      const service = new DmsApiService(cdfClient);
 
       expect(Array.isArray(await service.ingestNodes(payload))).toBeTruthy;
     });
 
     test('handles and returns errors', async () => {
       const cdfClient = cdfClientMock.broken;
-      const service = new DataModelStorageApiService(cdfClient);
+      const service = new DmsApiService(cdfClient);
 
       return await expect(service.ingestNodes(payload)).rejects.toMatchObject({
         code: 400,

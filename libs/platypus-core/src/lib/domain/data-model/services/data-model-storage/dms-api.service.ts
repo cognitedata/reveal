@@ -15,17 +15,17 @@ import {
   DmsDeleteEdgesRequestDTO,
   RetrieveEdgesByIdsRequestDTO,
   RetrieveEdgesByIdsResponseDTO,
-} from '../dto';
+} from '../../dto';
 
-import { DataModelStorageModel } from '../types';
-import { PlatypusError } from '../../../boundaries/types';
+import { DataModelStorageModel } from '../../types';
+import { PlatypusError } from '@platypus-core/boundaries/types';
 
 /**
  * Data Model Storage API
  * Docs can be found here:
  * https://pr-ark-codegen-1692.specs.preview.cogniteapp.com/v1.json.html#tag/Models
  */
-export class DataModelStorageApiService {
+export class DmsApiService {
   constructor(private readonly cdfClient: CogniteClient) {}
 
   /******* Spaces Apis **********/

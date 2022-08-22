@@ -14,10 +14,15 @@ import {
   ListDataModelVersionsDTO,
   RunQueryDTO,
 } from './dto';
-import { DataModelStorageApiService, MixerApiService } from './services';
+import {
+  MixerApiService,
+  MixerBindingsBuilder,
+  DmsApiService,
+  DmsModelBuilder,
+} from './services';
 import { DataModelVersionDataMapper } from './services/data-mappers/data-model-version-data-mapper';
 import { DataModelValidationErrorDataMapper } from './services/data-mappers/data-model-validation-error-data-mapper';
-import { DataModelStorageBuilderService } from './services/data-model-storage-builder.service';
+
 import {
   DataModelValidationError,
   DataModelVersion,
@@ -27,17 +32,19 @@ import { mixerApiBuiltInTypes } from './constants';
 
 export class DataModelVersionHandler {
   private dataModelVersionDataMapper: DataModelVersionDataMapper;
-  private dmsServiceBuilder: DataModelStorageBuilderService;
+  private dmsBuilderService: DmsModelBuilder;
+  private mixerBindingsBuilderService: MixerBindingsBuilder;
   private validationErrorDataMapper: DataModelValidationErrorDataMapper;
 
   constructor(
     private mixerApiService: MixerApiService,
-    private dmsApiService: DataModelStorageApiService,
+    private dmsApiService: DmsApiService,
     private graphqlService: IGraphQlUtilsService
   ) {
     // Internal services, no need to export to the outside world
     this.dataModelVersionDataMapper = new DataModelVersionDataMapper();
-    this.dmsServiceBuilder = new DataModelStorageBuilderService();
+    this.dmsBuilderService = new DmsModelBuilder();
+    this.mixerBindingsBuilderService = new MixerBindingsBuilder();
     this.validationErrorDataMapper = new DataModelValidationErrorDataMapper();
   }
 
@@ -209,13 +216,13 @@ export class DataModelVersionHandler {
       } else {
         // if no bindings are provided then try to autogenerate them
         const typeDefs = this.graphqlService.parseSchema(dto.schema);
-        const bindings = this.dmsServiceBuilder.buildBindings(
+        const bindings = this.mixerBindingsBuilderService.build(
           dto.externalId,
           dataModelVersionDto,
           typeDefs
         );
 
-        const models = this.dmsServiceBuilder.buildModels(
+        const models = this.dmsBuilderService.build(
           dto.externalId,
           dataModelVersionDto,
           typeDefs

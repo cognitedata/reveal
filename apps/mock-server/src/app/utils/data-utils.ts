@@ -74,6 +74,61 @@ export function isPrimitive(test) {
   return typeof test !== 'object';
 }
 
+export function paginateCollection(
+  data: CdfResourceObject[],
+  limit = 100,
+  cursor = ''
+) {
+  let total = data.length;
+  let start = 0;
+
+  if (cursor) {
+    try {
+      const cursorData = JSON.parse(base64Decode(cursor));
+      total = cursorData.total;
+      start = cursorData.start;
+    } catch (err) {
+      console.log('Error parsing cursor for query', err);
+    }
+  }
+
+  const resultsLimit = start + limit < total ? start + limit : total;
+
+  let nextCursor = undefined;
+  const startCursor = base64Encode(JSON.stringify({ start: 0, limit, total }));
+  let hasNextPage = false;
+  let hasPreviousPage = false;
+
+  if (total && total > limit) {
+    if (start + limit < total) {
+      nextCursor = base64Encode(
+        JSON.stringify({ start: start + limit, limit, total })
+      );
+      hasNextPage = true;
+    }
+
+    if (start - limit >= limit) {
+      nextCursor = base64Encode(
+        JSON.stringify({ start: start - limit, limit, total })
+      );
+      hasPreviousPage = true;
+    }
+  }
+
+  data = data.slice(start, resultsLimit);
+
+  return {
+    items: data,
+    edges: data.map((item) => ({ node: item })),
+    pageInfo: {
+      endCursor: nextCursor,
+      startCursor: startCursor,
+      hasNextPage: hasNextPage,
+      hasPreviousPage: hasPreviousPage,
+    },
+  };
+}
+
 export function sortCollection(
   data: CdfResourceObject[],
   sortCriteria: KeyValuePair[]

@@ -1,14 +1,14 @@
-import { mixerApiInlineTypeDirectiveName } from '../constants';
+import { mixerApiInlineTypeDirectiveName } from '../../constants';
 import {
   DataModel,
   DataModelVersion,
   DataModelTypeDefs,
   DataModelVersionStatus,
-} from '../types';
+} from '../../types';
 
-import { DataModelStorageBuilderService } from './data-model-storage-builder.service';
+import { DmsModelBuilder } from './dms-model-builder';
 
-const solutionMock: DataModel = {
+const dataModelMock: DataModel = {
   id: 'app-dev-test-1',
   name: 'App Dev Test',
   createdTime: 0,
@@ -16,7 +16,7 @@ const solutionMock: DataModel = {
   owners: [''],
   version: '1',
 };
-const solutionSchemaMock: DataModelVersion = {
+const dataModelVersionMock: DataModelVersion = {
   externalId: 'app-dev-test-1-schema-1',
   status: DataModelVersionStatus.DRAFT,
   createdTime: 0,
@@ -24,7 +24,7 @@ const solutionSchemaMock: DataModelVersion = {
   schema: '',
   version: '1',
 };
-const dataModelMock: DataModelTypeDefs = {
+const dataModelTypeDefsMock: DataModelTypeDefs = {
   types: [
     {
       name: 'Post',
@@ -37,6 +37,15 @@ const dataModelMock: DataModelTypeDefs = {
             nonNull: true,
           },
           nonNull: true,
+        },
+        {
+          name: 'authors',
+          type: {
+            name: 'User',
+            list: true,
+            nonNull: false,
+          },
+          nonNull: false,
         },
       ],
     },
@@ -96,7 +105,7 @@ const dataModelMock: DataModelTypeDefs = {
 
 describe('DataModelStorageBuilderServiceTest', () => {
   const createInstance = () => {
-    return new DataModelStorageBuilderService();
+    return new DmsModelBuilder();
   };
 
   it('should create instance', () => {
@@ -107,10 +116,10 @@ describe('DataModelStorageBuilderServiceTest', () => {
   it('should build models', () => {
     const service = createInstance();
 
-    const dmsModels = service.buildModels(
-      solutionMock.id,
-      solutionSchemaMock,
-      dataModelMock
+    const dmsModels = service.build(
+      dataModelMock.id,
+      dataModelVersionMock,
+      dataModelTypeDefsMock
     );
 
     const expected = {
@@ -143,66 +152,20 @@ describe('DataModelStorageBuilderServiceTest', () => {
             },
           },
         },
+        {
+          externalId: 'Post_User_authors_1',
+          allowNode: false,
+          allowEdge: true,
+          properties: {
+            dummy: {
+              nullable: true,
+              type: 'text',
+            },
+          },
+        },
       ],
     };
 
     expect(dmsModels).toEqual(expected);
-  });
-
-  it('should build bindings', () => {
-    const service = createInstance();
-
-    const dmsBindings = service.buildBindings(
-      solutionMock.id,
-      solutionSchemaMock,
-      dataModelMock
-    );
-
-    const expected = [
-      {
-        targetName: 'Post',
-        dataModelStorageMappingSource: {
-          filter: {
-            and: [
-              {
-                hasData: {
-                  models: [['app-dev-test-1', 'Post_1']],
-                },
-              },
-            ],
-          },
-          properties: [
-            {
-              from: {
-                property: ['app-dev-test-1', 'Post_1', '.*'],
-              },
-            },
-          ],
-        },
-      },
-      {
-        targetName: 'Comment',
-        dataModelStorageMappingSource: {
-          filter: {
-            and: [
-              {
-                hasData: {
-                  models: [['app-dev-test-1', 'Comment_1']],
-                },
-              },
-            ],
-          },
-          properties: [
-            {
-              from: {
-                property: ['app-dev-test-1', 'Comment_1', '.*'],
-              },
-            },
-          ],
-        },
-      },
-    ];
-
-    expect(dmsBindings).toEqual(expected);
   });
 });

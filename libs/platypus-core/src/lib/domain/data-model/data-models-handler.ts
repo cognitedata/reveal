@@ -10,7 +10,8 @@ import {
   DeleteDataModelDTO,
   FetchDataModelDTO,
 } from './dto';
-import { DataModelStorageApiService, MixerApiService } from './services';
+
+import { MixerApiService, DmsApiService } from './services/';
 import { DataModelDataMapper } from './services/data-mappers/data-model-data-mapper';
 import { DataModel } from './types';
 
@@ -19,7 +20,7 @@ export class DataModelsHandler {
 
   constructor(
     private mixerApiService: MixerApiService,
-    private dmsApiService: DataModelStorageApiService
+    private dmsApiService: DmsApiService
   ) {
     // Internal services, no need to export to the outside world
     this.dataModelDataMapper = new DataModelDataMapper();

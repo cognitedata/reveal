@@ -1,9 +1,9 @@
-import { mixerApiInlineTypeDirectiveName } from '../constants';
-import { MixerApiQueryBuilderService } from './mixer-api-query-builder.service';
+import { mixerApiInlineTypeDirectiveName } from '../../constants';
+import { MixerQueryBuilder } from './mixer-query-builder';
 
 describe('MixerApiQueryBuilderServiceTest', () => {
   const createInstance = () => {
-    return new MixerApiQueryBuilderService();
+    return new MixerQueryBuilder();
   };
 
   const normalizeString = (input: string) =>
@@ -123,7 +123,7 @@ describe('MixerApiQueryBuilderServiceTest', () => {
         items {
           externalId
           name
-posts { externalId }
+posts { items { externalId } }
 user { name }
         }
         pageInfo {

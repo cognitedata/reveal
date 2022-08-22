@@ -1,15 +1,13 @@
 import { Result } from '../../boundaries/types';
 import { FetchDataDTO } from './dto';
-import {
-  MixerApiQueryBuilderService,
-  MixerApiService,
-  TransformationApiService,
-} from './services';
+import { MixerQueryBuilder, MixerApiService } from './services/mixer-api';
+
+import { TransformationApiService } from './services';
 import { DataModelTransformation, PaginatedResponse } from './types';
 
 export class DataManagementHandler {
   constructor(
-    private queryBuilder: MixerApiQueryBuilderService,
+    private queryBuilder: MixerQueryBuilder,
     private mixerApiService: MixerApiService,
     private transformationApiService: TransformationApiService
   ) {}

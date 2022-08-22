@@ -9,6 +9,7 @@ import {
   getType,
   isObjectContainingPrimitiveValues,
   objToFilter,
+  paginateCollection,
   sortCollection,
 } from '../../../../utils';
 import { capitalize } from '../../../../utils/text-utils';
@@ -68,16 +69,7 @@ export const buildQueryResolvers = (params: BuildQueryResolversParams) => {
         items = sortCollection(items, filterParams.sort);
       }
 
-      return {
-        items,
-        edges: items.map((item) => ({ node: item })),
-        pageInfo: {
-          endCursor: undefined,
-          startCursor: undefined,
-          hasNextPage: false,
-          hasPreviousPage: false,
-        },
-      };
+      return paginateCollection(items, filterParams.first, filterParams.after);
     };
 
     const tableResolver = {};
@@ -143,13 +135,13 @@ export const buildQueryResolvers = (params: BuildQueryResolversParams) => {
       }
 
       if (fieldKind === 'LIST') {
-        tableResolver[field.name] = (ref, prms) => {
+        tableResolver[field.name] = (ref, filterParams) => {
           // Fix for inline types
           if (!isBuiltInType && !params.tablesList.includes(fieldSchemaType)) {
             return ref[fieldName];
           }
 
-          const listData = fetchAndQueryData({
+          let items = fetchAndQueryData({
             globalDb: params.db,
             templateDb,
             isBuiltInType,
@@ -157,10 +149,18 @@ export const buildQueryResolvers = (params: BuildQueryResolversParams) => {
             schemaType: fieldStorageTableName,
             schemaFieldName: fieldName,
             isFetchingObject: false,
-            filterParams: prms,
+            filterParams,
           });
 
-          return listData;
+          if (filterParams.sort) {
+            items = sortCollection(items, filterParams.sort);
+          }
+
+          return paginateCollection(
+            items,
+            filterParams.first,
+            filterParams.after
+          );
         };
       }
     });

@@ -82,7 +82,12 @@ type Post {
   title: String!
   views: Int!
   user: User
-  comments(filter: _ListCommentFilter): [Comment]
+  comments(
+    first: Int
+    after: String
+    filter: _ListCommentFilter
+    sort: [_CommentSort!]
+  ): CommentConnection
 }
 
 type User {
@@ -375,4 +380,5 @@ schema {
   query: Query
 }
 
-`;
+
+  `;

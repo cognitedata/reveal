@@ -1,17 +1,17 @@
 import { Container, token } from 'brandi';
 
 import {
+  MixerApiService,
+  MixerQueryBuilder,
+  DmsApiService,
   DataModelsHandler,
   DataModelVersionHandler,
-  MixerApiService,
   DataModelTypeDefsBuilderService,
-  DataModelStorageApiService,
+  TransformationApiService,
   DateUtils,
   TimeUtils,
   StorageProviderFactory,
   DataManagementHandler,
-  MixerApiQueryBuilderService,
-  TransformationApiService,
 } from '@platypus/platypus-core';
 
 import { DateUtilsImpl, TimeUtilsImpl } from '@platypus-app/utils/data';
@@ -34,7 +34,7 @@ export const TOKENS = {
     'dataModelVersionHandler'
   ),
   mixerApiService: token<MixerApiService>('mixerApiService'),
-  dataModelStorageApiService: token<DataModelStorageApiService>(
+  dataModelStorageApiService: token<DmsApiService>(
     'dataModelStorageApiService'
   ),
   dataModelTypeDefsBuilderService: token<DataModelTypeDefsBuilderService>(
@@ -76,7 +76,7 @@ rootInjector
   .bind(TOKENS.dataModelStorageApiService)
   .toInstance(() => {
     const sdkClient = getCogniteSDKClient();
-    return new DataModelStorageApiService(sdkClient);
+    return new DmsApiService(sdkClient);
   })
   .inSingletonScope();
 
@@ -115,7 +115,7 @@ rootInjector
   .toInstance(
     () =>
       new DataManagementHandler(
-        new MixerApiQueryBuilderService(),
+        new MixerQueryBuilder(),
         rootInjector.get(TOKENS.mixerApiService),
         new TransformationApiService(getCogniteSDKClient())
       )

@@ -1,11 +1,10 @@
-import {
-  mixerApiBuiltInTypes,
-  mixerApiInlineTypeDirectiveName,
-} from '../constants';
-import { BuildQueryDTO } from '../dto';
-import { DataModelTypeDefsField, DataModelTypeDefsType } from '../types';
+import { mixerApiBuiltInTypes } from '../../constants';
 
-export class MixerApiQueryBuilderService {
+import { isInlineType } from '../utils';
+import { BuildQueryDTO } from '../../dto';
+import { DataModelTypeDefsField, DataModelTypeDefsType } from '../../types';
+
+export class MixerQueryBuilder {
   getOperationName(typeName: string): string {
     return `list${typeName}`;
   }
@@ -21,7 +20,7 @@ export class MixerApiQueryBuilderService {
         externalId
         ${dataModelType.fields
           .map((field) =>
-            this.buildQryItem(
+            this.buildQueryItem(
               field,
               dataModelTypeDefs.types.find(
                 (typeDef) => typeDef.name === field.type.name
@@ -40,7 +39,7 @@ export class MixerApiQueryBuilderService {
   }`;
   }
 
-  private buildQryItem(
+  private buildQueryItem(
     field: DataModelTypeDefsField,
     fieldTypeDef: DataModelTypeDefsType
   ): string {
@@ -48,25 +47,22 @@ export class MixerApiQueryBuilderService {
       .filter((t) => t.type === 'SCALAR')
       .map((t) => t.name)
       .includes(field.type.name);
-    let qryItem = `${field.name}`;
+    let queryItem = `${field.name}`;
 
     if (!isPrimitive) {
-      qryItem = this.isInlineType(fieldTypeDef)
-        ? `${qryItem} { ${fieldTypeDef.fields
-            .map((typeDefField) => typeDefField.name)
-            .join('\n')} }`
-        : `${qryItem} { externalId }`;
+      if (isInlineType(fieldTypeDef)) {
+        queryItem = `${queryItem} { ${fieldTypeDef.fields
+          .map((typeDefField) => typeDefField.name)
+          .join('\n')} }`;
+      } else {
+        if (field.type.list) {
+          queryItem = `${queryItem} { items { externalId } }`;
+        } else {
+          queryItem = `${queryItem} { externalId }`;
+        }
+      }
     }
-    return qryItem;
-  }
 
-  private isInlineType(typeDef: DataModelTypeDefsType): boolean {
-    return (
-      typeDef.directives !== undefined &&
-      typeDef.directives.length > 0 &&
-      typeDef.directives.some(
-        (directive) => directive.name === mixerApiInlineTypeDirectiveName
-      )
-    );
+    return queryItem;
   }
 }

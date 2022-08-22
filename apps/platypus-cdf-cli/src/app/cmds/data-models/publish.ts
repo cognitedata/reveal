@@ -86,14 +86,11 @@ export class PublishCmd extends CLICommand {
     const dto: CreateDataModelVersionDTO = {
       externalId: args['external-id'],
       schema: graphqlSchema,
+      version: latestSchema ? latestSchema.version : '1',
     };
 
     if (publishConflictMode === 'NEW_VERSION' && latestSchema) {
-      const nextSchemaVersion = latestSchema
-        ? parseInt(latestSchema.version) + 1
-        : 1;
-
-      dto.version = nextSchemaVersion.toString();
+      dto.version = (parseInt(dto.version) + 1).toString();
     }
 
     const response = await this.dataModelVersionsHandler.publish(
@@ -122,9 +119,7 @@ export class PublishCmd extends CLICommand {
             'Allow for a breaking change, resulting in a new version of the data model?',
         });
         if (prompt['allow-breaking-change']) {
-          dto.version = (
-            latestSchema ? parseInt(latestSchema.version) + 1 : 1
-          ).toString();
+          dto.version = (parseInt(dto.version) + 1).toString();
           const publishResponse = await this.dataModelVersionsHandler.publish(
             dto,
             'NEW_VERSION'

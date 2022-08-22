@@ -453,15 +453,36 @@ describe('SchemaService Solutions Test', () => {
     // test equal
     const response = await runRequest(
       apiPath,
-      buildQuery('', 'title comments { body }')
+      buildQuery('', 'title comments { items { body } }')
     );
 
     const qryResult = response.body;
     expect(response.statusCode).toEqual(200);
     expect(qryResult.data.listPost.items[0].title).toEqual('Lorem Ipsum');
-    expect(qryResult.data.listPost.items[0].comments.length).toEqual(2);
-    expect(qryResult.data.listPost.items[0].comments[0].body).toEqual(
+    expect(qryResult.data.listPost.items[0].comments.items.length).toEqual(4);
+    expect(qryResult.data.listPost.items[0].comments.items[0].body).toEqual(
       'Consectetur adipiscing elit'
+    );
+  });
+
+  it('Should paginate lists with relation to other types', async () => {
+    const apiPath = '/schema/api/blog/1/graphql';
+
+    // test equal
+    const response = await runRequest(
+      apiPath,
+      buildQuery(
+        '',
+        'title comments(first: 1, after: "eyJzdGFydCI6MiwibGltaXQiOjEsInRvdGFsIjo0fQ==") { items { body } }'
+      )
+    );
+
+    const qryResult = response.body;
+    expect(response.statusCode).toEqual(200);
+    expect(qryResult.data.listPost.items[0].title).toEqual('Lorem Ipsum');
+    expect(qryResult.data.listPost.items[0].comments.items.length).toEqual(1);
+    expect(qryResult.data.listPost.items[0].comments.items[0].body).toEqual(
+      'Random comment 996'
     );
   });
 
@@ -508,15 +529,15 @@ describe('SchemaService Solutions Test', () => {
       apiPath,
       buildQuery(
         '',
-        'title comments(filter: { externalId: { eq: "987"} }) { body }'
+        'title comments(filter: { externalId: { eq: "987"} }) { items { body } }'
       )
     );
 
     const qryResult = response.body;
     expect(response.statusCode).toEqual(200);
     expect(qryResult.data.listPost.items[0].title).toEqual('Lorem Ipsum');
-    expect(qryResult.data.listPost.items[0].comments.length).toEqual(1);
-    expect(qryResult.data.listPost.items[0].comments[0].body).toEqual(
+    expect(qryResult.data.listPost.items[0].comments.items.length).toEqual(1);
+    expect(qryResult.data.listPost.items[0].comments.items[0].body).toEqual(
       'Consectetur adipiscing elit'
     );
   });

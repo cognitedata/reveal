@@ -1,5 +1,5 @@
 import { DataModelsHandler } from './data-models-handler';
-import { DataModelStorageApiService, MixerApiService } from './services';
+import { MixerApiService, DmsApiService } from './services';
 
 describe('DataModelsHandlerTest', () => {
   const mixerApiMock = {
@@ -11,7 +11,7 @@ describe('DataModelsHandlerTest', () => {
 
   const dmsApiMock = {
     applySpaces: jest.fn().mockImplementation(() => Promise.resolve([])),
-  } as any as DataModelStorageApiService;
+  } as any as DmsApiService;
 
   const createInstance = () => {
     return new DataModelsHandler(mixerApiMock, dmsApiMock);
