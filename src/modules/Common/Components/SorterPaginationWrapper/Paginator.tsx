@@ -37,7 +37,6 @@ const getPageOptionButtons = (
         <SegmentedControl.Button
           key={page}
           title={`${page}`}
-          size="small"
           style={{ height: '22px' }}
         >
           {page}
@@ -51,7 +50,6 @@ const getPageOptionButtons = (
       key="Start"
       icon="ArrowLeft"
       title="Start"
-      size="small"
       style={{ height: '22px' }}
       aria-label="start-only-icon"
       disabled={currentPage === 1}
@@ -64,7 +62,6 @@ const getPageOptionButtons = (
       key="End"
       icon="ArrowRight"
       title="End"
-      size="small"
       style={{ height: '22px' }}
       aria-label="end-only-icon"
       disabled={currentPage === totalPages}
@@ -97,35 +94,39 @@ export const Paginator = (props: {
     }
   };
 
-  return (
-    <Container>
-      <SegmentedControl
-        onButtonClicked={handleButtonClicked}
-        currentKey={`${currentPage}`}
-        style={{ height: '26px', zIndex: 1 }}
-      >
-        {pageOptionButtons}
-      </SegmentedControl>
-      <InputNumber
-        size="small"
-        min={1}
-        max={totalPages}
-        defaultValue={currentPage}
-        value={currentPage}
-        onChange={setCurrentPage}
-        style={{ backgroundColor: '#ffffff', width: '64px', fontSize: '12px' }}
-      />
-      <InputNumber
-        size="small"
-        min={CONSTS.MIN_PAGE_SIZE}
-        max={CONSTS.MAX_PAGE_SIZE}
-        defaultValue={pageSize}
-        value={pageSize}
-        onChange={setPageSize}
-        style={{ backgroundColor: '#ffffff', width: '64px', fontSize: '12px' }}
-      />
-    </Container>
-  );
+  return <></>;
+  // This component will be removed with the next immediate PRs VIS-944
+
+  // return (
+  //   <Container>
+  //     <SegmentedControl
+  //       onButtonClicked={handleButtonClicked}
+  //       currentKey={`${currentPage}`}
+  //       style={{ height: '26px', zIndex: 1 }}
+  //       size="small"
+  //     >
+  //       {pageOptionButtons}
+  //     </SegmentedControl>
+  //     <InputNumber
+  //       size="small"
+  //       min={1}
+  //       max={totalPages}
+  //       defaultValue={currentPage}
+  //       value={currentPage}
+  //       onChange={setCurrentPage}
+  //       style={{ backgroundColor: '#ffffff', width: '64px', fontSize: '12px' }}
+  //     />
+  //     <InputNumber
+  //       size="small"
+  //       min={CONSTS.MIN_PAGE_SIZE}
+  //       max={CONSTS.MAX_PAGE_SIZE}
+  //       defaultValue={pageSize}
+  //       value={pageSize}
+  //       onChange={setPageSize}
+  //       style={{ backgroundColor: '#ffffff', width: '64px', fontSize: '12px' }}
+  //     />
+  //   </Container>
+  // );
 };
 
 const Container = styled.div`

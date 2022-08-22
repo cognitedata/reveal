@@ -95,6 +95,7 @@ export const AnnotationTableRow = ({
         <>
           <ApproveBtnContainer onClick={(evt) => evt.stopPropagation()}>
             <StyledSegmentedControl
+              size="small"
               status={reviewAnnotation.annotation.status}
               className="approvalButton"
               currentKey={
@@ -117,7 +118,6 @@ export const AnnotationTableRow = ({
               }}
             >
               <SegmentedControl.Button
-                type="primary"
                 key="verified"
                 aria-label="verify annotation"
                 className="approveButton"
@@ -125,7 +125,6 @@ export const AnnotationTableRow = ({
                 TRUE
               </SegmentedControl.Button>
               <SegmentedControl.Button
-                type="primary"
                 key="rejected"
                 aria-label="reject annotation"
                 className="rejectButton"
