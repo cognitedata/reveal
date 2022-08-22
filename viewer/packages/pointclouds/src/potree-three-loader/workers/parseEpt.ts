@@ -1,8 +1,6 @@
 import { StylableObject } from '../../styling/StylableObject';
 import { assignPointsWithWasm } from './assignPointsWithWasm';
 
-import { addThree } from '../../../wasm';
-
 export type ParsedEptData = {
   numPoints: number;
   tightBoundingBox: { min: number[]; max: number[] };
