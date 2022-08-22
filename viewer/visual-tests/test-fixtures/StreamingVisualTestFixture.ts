@@ -77,6 +77,7 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
     this._sceneHandler = new SceneHandler();
 
     this._renderer = new THREE.WebGLRenderer();
+    this._renderer.setPixelRatio(window.devicePixelRatio);
 
     this._renderer.setPixelRatio(window.devicePixelRatio);
 
@@ -157,6 +158,8 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
       cameraControls: this._controls,
       cadMaterialManager: this._materialManager
     });
+
+    // this.gui.close();
 
     this.render();
   }
