@@ -220,8 +220,8 @@ const ViewContainer = styled.div`
   padding: 20px 16px;
   min-width: 1200px;
   display: grid;
-  grid-template-rows: 32px 40px auto;
-  grid-template-columns: 100%;
+  grid-template-rows: 35px 40px 1fr;
+  grid-template-columns: 1fr;
   grid-row-gap: 15px;
 `;
 
