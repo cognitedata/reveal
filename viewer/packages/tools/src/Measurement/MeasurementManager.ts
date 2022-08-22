@@ -151,7 +151,7 @@ export class MeasurementManager {
   }
 
   private determineLineWidthFromOptions(): number {
-    return this._options.lineWidth * 0.01;
+    return this._options.lineWidth;
   }
 
   // TODO 2022-07-05 larsmoa: Return proper color
