@@ -1,13 +1,13 @@
 import { getEmptyNdsAggregatesMerged } from 'domain/wells/nds/internal/utils/getEmptyNdsAggregatesMerged';
 import { useWellInspectSelectedWellbores } from 'domain/wells/well/internal/hooks/useWellInspectSelectedWellbores';
 
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import isEmpty from 'lodash/isEmpty';
 import { mergeUniqueArray } from 'utils/merge';
 
 import EmptyState from 'components/EmptyState';
-import { useDeepMemo } from 'hooks/useDeep';
+import { useDeepEffect, useDeepMemo } from 'hooks/useDeep';
 
 import { ViewModeControl } from '../common/ViewModeControl';
 
@@ -37,7 +37,6 @@ const NdsEvents: React.FC = () => {
     string | undefined
   >(undefined);
 
-  const [filteredData, setFilteredData] = useState<NdsView[]>(data);
   const [appliedFilters, setAppliedFilters] = useState<AppliedFilters>(
     EMPTY_APPLIED_FILTERS
   );
@@ -46,7 +45,12 @@ const NdsEvents: React.FC = () => {
   );
   const [detailedViewNdsData, setDetailedViewNdsData] = useState<NdsView[]>([]);
 
-  const treemapData = useMemo(
+  const filteredData = useDeepMemo(
+    () => getFilteredNdsData(data, appliedFilters),
+    [data, appliedFilters]
+  );
+
+  const treemapData = useDeepMemo(
     () => generateNdsTreemapData(wellbores, filteredData),
     [wellbores, filteredData]
   );
@@ -60,7 +64,7 @@ const NdsEvents: React.FC = () => {
     [ndsAggregates]
   );
 
-  const detailedViewNdsAggregate = useMemo(
+  const detailedViewNdsAggregate = useDeepMemo(
     () => getNdsAggregateForWellbore(detailedViewNdsData || [], ndsAggregates),
     [detailedViewNdsData]
   );
@@ -91,16 +95,7 @@ const NdsEvents: React.FC = () => {
     }));
   };
 
-  useEffect(() => {
-    setFilteredData(data);
-  }, [data]);
-
-  useEffect(() => {
-    const filteredData = getFilteredNdsData(data, appliedFilters);
-    setFilteredData(filteredData);
-  }, [appliedFilters]);
-
-  useEffect(() => {
+  useDeepEffect(() => {
     const { riskTypesAndSubtypes, severities, probabilities } = filtersData;
 
     setAppliedFilters({
@@ -108,7 +103,7 @@ const NdsEvents: React.FC = () => {
       severity: severities,
       probability: probabilities,
     });
-  }, [data, filtersData]);
+  }, [filtersData]);
 
   const handlePreviousClick = () => {
     const wellboreId = wellbores[(selectedWellboreIndex || 0) - 1]?.matchingId;
