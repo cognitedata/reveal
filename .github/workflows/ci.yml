@@ -49,6 +49,9 @@ jobs:
     #   working-directory: viewer
     #   run: yarn run build:prod
 
+    - name: Update Rust
+      run: rustup update
+
     - name: Build development version
       working-directory: viewer
       run: yarn run build
