@@ -115,7 +115,7 @@ jobs:
       continue-on-error: true
 
     - name: Check for failed visual test diffs
-      if: (always() && steps.viewerVisualTests.outcome == 'failure')
+      if: (steps.viewerVisualTests.outcome == 'failure')
       uses: savokr/comment-on-pr@v1.3.2
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -125,14 +125,14 @@ jobs:
           Image diffs for visual tests can be downloaded as an artifact [here](https://github.com/cognitedata/reveal/actions/runs/${{ github.run_id }}).
 
     - name: Upload image diffs for failed visual tests
-      if: (always() && steps.viewerVisualTests.outcome == 'failure')
+      if: (steps.viewerVisualTests.outcome == 'failure')
       uses: actions/upload-artifact@v3
       with:
         name: image-diffs-${{ github.sha }}
         path: viewer/visual-tests/__diff_output__/*
 
     - name: Report failed visual tests
-      if: (always() && steps.viewerVisualTests.outcome == 'failure')
+      if: (steps.viewerVisualTests.outcome == 'failure')
       run: |
         echo There are failed visual tests, please inspect test results.
         exit 1
@@ -185,7 +185,7 @@ jobs:
       continue-on-error: true
 
     - name: Check for failed visual test diffs
-      if: (steps.visualtests.outcome == 'failure')
+      if: (always() && steps.visualtests.outcome == 'failure')
       working-directory: examples
       run: |
         yarn
@@ -194,14 +194,14 @@ jobs:
         ACTIONS_RUNTIME_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Upload image diffs for failed visual tests
-      if: (steps.visualtests.outcome == 'failure')
+      if: (always() && steps.visualtests.outcome == 'failure')
       uses: actions/upload-artifact@v3
       with:
         name: image-diffs-${{ github.sha }}
         path: examples/src/visual_tests/__image_snapshots__/__diff_output__/*
 
     - name: Report failed visual tests
-      if: (steps.visualtests.outcome == 'failure')
+      if: (always() && steps.visualtests.outcome == 'failure')
       run: |
         echo There are failed visual tests, please inspect test results.
         exit 1
