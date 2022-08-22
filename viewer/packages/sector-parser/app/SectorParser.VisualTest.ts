@@ -45,7 +45,7 @@ export default class SectorParserVisualTestFixture extends SimpleVisualTestFixtu
 
     await this.loadSectors(blobs, loader, materialMap, camera, group);
 
-    this.fitCameraToBoundingBox(boundingBox, 2.0);
+    this.fitCameraToBoundingBox(boundingBox, 1.3);
 
     return Promise.resolve();
   }
