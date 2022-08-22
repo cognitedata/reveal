@@ -1,3 +1,7 @@
+## 6.0.6 August 22 2022
+
+- no changes, just need deps versions to be updated for react-package-selector
+
 ## 6.0.5 July 28 2022
 
 - always use sidecar.cdfCluster as the initial one

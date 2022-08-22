@@ -1,3 +1,7 @@
+## 0.1.6 August 22 2022
+
+Bump version to publish with updated dependencies (SDK)
+
 ## 0.1.5 June 29 2022
 
 - Fix users redirected to OIDC when trying to use legacy login in some situations.
