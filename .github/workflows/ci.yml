@@ -50,7 +50,7 @@ jobs:
     #   run: yarn run build:prod
 
     - name: Update Rust
-      run: rustup default nightly && rustup update
+      run: rustup override nightly
 
     - name: Build development version
       working-directory: viewer
