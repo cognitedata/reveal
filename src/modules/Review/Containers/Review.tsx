@@ -1,3 +1,4 @@
+import { notification } from 'antd';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { PageTitle } from '@cognite/cdf-utilities';
 import { selectFileById } from 'src/modules/Common/store/files/selectors';
@@ -120,6 +121,8 @@ const Review = () => {
     if (file) {
       dispatch(RetrieveAnnotations({ fileIds: [+fileId], clearCache: true }));
     }
+    // reset notifications
+    notification.destroy();
   }, [file, fileId, reviewFileIds]);
 
   useEffect(() => {
