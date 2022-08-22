@@ -10,6 +10,14 @@ import { sectorShaders } from '../../../packages/rendering/src/rendering/shaders
 const matCapTexture = new THREE.Texture(matCapTextureImage);
 matCapTexture.needsUpdate = true;
 
+const blendingOptions = {
+  blending: THREE.CustomBlending,
+  blendDst: THREE.ZeroFactor,
+  blendDstAlpha: THREE.OneFactor,
+  blendSrc: THREE.OneFactor,
+  blendSrcAlpha: THREE.ZeroFactor
+};
+
 export function createInstancedMeshMaterial(): THREE.RawShaderMaterial {
   return new THREE.RawShaderMaterial({
     name: 'Instanced meshes',
@@ -29,7 +37,8 @@ export function createInstancedMeshMaterial(): THREE.RawShaderMaterial {
     side: THREE.DoubleSide,
     fragmentShader: sectorShaders.instancedMesh.fragment,
     vertexShader: sectorShaders.instancedMesh.vertex,
-    glslVersion: THREE.GLSL3
+    glslVersion: THREE.GLSL3,
+    ...blendingOptions
   });
 }
 
@@ -52,7 +61,8 @@ export function createGeneralCylinderMaterial(): THREE.RawShaderMaterial {
     vertexShader: sectorShaders.generalCylinderPrimitive.vertex,
     fragmentShader: sectorShaders.generalCylinderPrimitive.fragment,
     side: THREE.DoubleSide,
-    glslVersion: THREE.GLSL3
+    glslVersion: THREE.GLSL3,
+    ...blendingOptions
   });
 
   material.uniforms.colorDataTexture.value.needsUpdate = true;
@@ -79,7 +89,8 @@ export function createTriangleMeshMaterial(): THREE.RawShaderMaterial {
     side: THREE.DoubleSide,
     fragmentShader: sectorShaders.detailedMesh.fragment,
     vertexShader: sectorShaders.detailedMesh.vertex,
-    glslVersion: THREE.GLSL3
+    glslVersion: THREE.GLSL3,
+    ...blendingOptions
   });
 
   material.uniforms.colorDataTexture.value.needsUpdate = true;
@@ -103,7 +114,8 @@ export function createBoxMaterial(): THREE.RawShaderMaterial {
       treeIndexTextureSize: { value: new THREE.Vector2(1, 1) },
       colorDataTexture: { value: new THREE.DataTexture(new Uint8ClampedArray([0, 0, 0, 1]), 1, 1) }
     },
-    glslVersion: THREE.GLSL3
+    glslVersion: THREE.GLSL3,
+    ...blendingOptions
   });
 
   material.uniforms.colorDataTexture.value.needsUpdate = true;
@@ -127,7 +139,8 @@ export function createCircleMaterial(): THREE.RawShaderMaterial {
       treeIndexTextureSize: { value: new THREE.Vector2(1, 1) },
       colorDataTexture: { value: new THREE.DataTexture(new Uint8ClampedArray([0, 0, 0, 1]), 1, 1) }
     },
-    glslVersion: THREE.GLSL3
+    glslVersion: THREE.GLSL3,
+    ...blendingOptions
   });
 
   material.uniforms.colorDataTexture.value.needsUpdate = true;
@@ -151,7 +164,8 @@ export function createConeMaterial(): THREE.RawShaderMaterial {
       treeIndexTextureSize: { value: new THREE.Vector2(1, 1) },
       colorDataTexture: { value: new THREE.DataTexture(new Uint8ClampedArray([0, 0, 0, 1]), 1, 1) }
     },
-    glslVersion: THREE.GLSL3
+    glslVersion: THREE.GLSL3,
+    ...blendingOptions
   });
 
   material.uniforms.colorDataTexture.value.needsUpdate = true;
@@ -175,7 +189,8 @@ export function createEccentricConeMaterial(): THREE.RawShaderMaterial {
     vertexShader: sectorShaders.eccentricConePrimitive.vertex,
     fragmentShader: sectorShaders.eccentricConePrimitive.fragment,
     side: THREE.DoubleSide,
-    glslVersion: THREE.GLSL3
+    glslVersion: THREE.GLSL3,
+    ...blendingOptions
   });
 
   material.uniforms.colorDataTexture.value.needsUpdate = true;
@@ -199,7 +214,8 @@ export function createGeneralRingMaterial(): THREE.RawShaderMaterial {
     vertexShader: sectorShaders.generalRingPrimitive.vertex,
     fragmentShader: sectorShaders.generalRingPrimitive.fragment,
     side: THREE.DoubleSide,
-    glslVersion: THREE.GLSL3
+    glslVersion: THREE.GLSL3,
+    ...blendingOptions
   });
 
   material.uniforms.colorDataTexture.value.needsUpdate = true;
@@ -223,7 +239,8 @@ export function createEllipsoidSegmentMaterial(): THREE.RawShaderMaterial {
     vertexShader: sectorShaders.ellipsoidSegmentPrimitive.vertex,
     fragmentShader: sectorShaders.ellipsoidSegmentPrimitive.fragment,
     side: THREE.DoubleSide,
-    glslVersion: THREE.GLSL3
+    glslVersion: THREE.GLSL3,
+    ...blendingOptions
   });
 
   material.uniforms.colorDataTexture.value.needsUpdate = true;
@@ -247,7 +264,8 @@ export function createNutMaterial(): THREE.RawShaderMaterial {
     vertexShader: sectorShaders.nutPrimitive.vertex,
     fragmentShader: sectorShaders.nutPrimitive.fragment,
     side: THREE.DoubleSide,
-    glslVersion: THREE.GLSL3
+    glslVersion: THREE.GLSL3,
+    ...blendingOptions
   });
 
   material.uniforms.colorDataTexture.value.needsUpdate = true;
@@ -271,7 +289,8 @@ export function createQuadMaterial(): THREE.RawShaderMaterial {
     vertexShader: sectorShaders.quadPrimitive.vertex,
     fragmentShader: sectorShaders.quadPrimitive.fragment,
     side: THREE.DoubleSide,
-    glslVersion: THREE.GLSL3
+    glslVersion: THREE.GLSL3,
+    ...blendingOptions
   });
 
   material.uniforms.colorDataTexture.value.needsUpdate = true;
@@ -295,7 +314,8 @@ export function createTrapeziumMaterial(): THREE.RawShaderMaterial {
     vertexShader: sectorShaders.trapeziumPrimitive.vertex,
     fragmentShader: sectorShaders.trapeziumPrimitive.fragment,
     side: THREE.DoubleSide,
-    glslVersion: THREE.GLSL3
+    glslVersion: THREE.GLSL3,
+    ...blendingOptions
   });
 
   material.uniforms.colorDataTexture.value.needsUpdate = true;
@@ -322,7 +342,8 @@ export function createTorusSegmentMaterial(): THREE.RawShaderMaterial {
     vertexShader: sectorShaders.torusSegmentPrimitive.vertex,
     fragmentShader: sectorShaders.torusSegmentPrimitive.fragment,
     side: THREE.DoubleSide,
-    glslVersion: THREE.GLSL3
+    glslVersion: THREE.GLSL3,
+    ...blendingOptions
   });
 
   material.uniforms.colorDataTexture.value.needsUpdate = true;
