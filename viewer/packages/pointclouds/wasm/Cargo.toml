@@ -4,7 +4,7 @@ description = "Rust+Webassembly for point clouds"
 version = "0.1.0"
 authors = ["Håkon Flatval <hakon.flatval@cognite.com>"]
 categories = ["wasm"]
-edition = "2021"
+edition = "2018"
 
 repository = "https://github.com/cognitedata/reveal"
 license-file = "../../../../LICENSE"
