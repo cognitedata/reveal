@@ -169,7 +169,7 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
    */
   removeMeasurement(measurement: Measurement): void {
     const index = this._measurements.findIndex(
-      measurementControl => measurementControl.getMeasurement() === measurement
+      measurementManager => measurementManager.getMeasurement() === measurement
     );
     if (index > -1) {
       this._measurements[index].removeMeasurement();
@@ -216,7 +216,7 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
    */
   updateLineWidth(measurement: Measurement, lineWidth: number): void {
     const index = this._measurements.findIndex(
-      measurementControl => measurementControl.getMeasurement() === measurement
+      measurementManager => measurementManager.getMeasurement() === measurement
     );
     if (index > -1) {
       this._measurements[index].updateLineWidth(lineWidth);
@@ -230,7 +230,7 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
    */
   updateLineColor(measurement: Measurement, color: THREE.Color): void {
     const index = this._measurements.findIndex(
-      measurementControl => measurementControl.getMeasurement() === measurement
+      measurementManager => measurementManager.getMeasurement() === measurement
     );
     if (index > -1) {
       this._measurements[index].updateLineColor(color);
