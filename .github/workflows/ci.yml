@@ -91,6 +91,52 @@ jobs:
     - name: Publish to codecov
       uses: codecov/codecov-action@v3
 
+  run-visual-tests:
+    name: Visual Tests
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - uses: actions/cache@v2
+      id: npm_cache
+      with:
+        path: '**/node_modules'
+        key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
+
+    - name: Install NPM viewer dependencies
+      if: steps.npm_cache.outputs.cache-hit != 'true'
+      working-directory: viewer
+      run: yarn install --immutable
+
+    - name: Execute visual tests
+      id: viewerVisualTests
+      working-directory: viewer
+      run: 'yarn test:visual'
+      continue-on-error: true
+
+    - name: Check for failed visual test diffs
+      if: (steps.viewerVisualTests.outcome == 'failure')
+      uses: savokr/comment-on-pr@v1.3.2
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        msg: |
+          There were failures in the Visual regression tests workflow.
+          Image diffs for visual tests can be downloaded as an artifact [here](https://github.com/cognitedata/reveal/actions/runs/${{ github.run_id }}).
+
+    - name: Upload image diffs for failed visual tests
+      if: (steps.viewerVisualTests.outcome == 'failure')
+      uses: actions/upload-artifact@v3
+      with:
+        name: image-diffs-${{ github.sha }}
+        path: viewer/visual-tests/__diff_output__/*
+
+    - name: Report failed visual tests
+      if: (steps.viewerVisualTests.outcome == 'failure')
+      run: |
+        echo There are failed visual tests, please inspect test results.
+        exit 1
+
   ci-examples:
     name: Examples
     runs-on: ubuntu-latest 
@@ -326,7 +372,7 @@ jobs:
           keep_files: false
 
       - name: Add comment about preview URL
-        uses: unsplash/comment-on-pr@v1.2.0
+        uses: savokr/comment-on-pr@v1.3.2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -334,6 +380,9 @@ jobs:
             :orange_book: Documentation preview is available from
             https://cognitedata.github.io/reveal-docs-preview/${{ env.PR_NUMBER }}/docs/next/.
           check_for_duplicate_msg: true
+          duplicate_msg_pattern: |
+            :orange_book: Documentation preview is available from
+            https://cognitedata.github.io/reveal-docs-preview/${{ env.PR_NUMBER }}/docs/next/.
 
 
   cleanup:

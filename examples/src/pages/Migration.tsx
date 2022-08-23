@@ -363,7 +363,7 @@ export function Migration() {
 
       viewer.renderer.setPixelRatio(window.devicePixelRatio);
 
-      const measurementTool = new MeasurementUi(viewer, gui.addFolder('Measurement'));
+      new MeasurementUi(viewer, gui.addFolder('Measurement'));
 
       viewer.on('click', async (event) => {
         const { offsetX, offsetY } = event; 
@@ -388,8 +388,6 @@ export function Migration() {
               break;
           }
         }
-
-        measurementTool.reset();
       });
 
       new AxisViewTool(viewer);

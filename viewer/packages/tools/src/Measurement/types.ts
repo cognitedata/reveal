@@ -5,22 +5,38 @@
 /**
  * Custom callback for users to change measurement label content.
  */
-export type MeasurementLabelUpdateDelegate = (distance: number) => MeasurementLabelData | undefined;
+export type DistanceToLabelDelegate = (distanceInMeters: number) => string;
 
 /**
- * Measurment tool option with user custom callback, line width & color.
+ * Delegate for measurement added events.
+ */
+export type MeasurementAddedDelegate = () => void;
+
+/**
+ * Delegate for measurement started events.
+ */
+export type MeasurementStartedDelegate = () => void;
+
+/**
+ * Delegate for measurement ended events.
+ */
+export type MeasurementEndedDelegate = () => void;
+
+/**
+ * Measurement tool option with user custom callback, line width & color.
  */
 export type MeasurementOptions = {
-  changeMeasurementLabelMetrics?: MeasurementLabelUpdateDelegate | undefined;
+  distanceToLabelCallback?: DistanceToLabelDelegate | undefined;
+  /**
+   * Line width in cm. Note that the minium drawn line will be ~2 pixels.
+   */
   lineWidth?: number;
-  color?: number;
-  axesComponents?: boolean;
-};
-
-/**
- * Measurement data the user can change for the label.
- */
-export type MeasurementLabelData = {
-  distance?: number;
-  units: string;
+  /**
+   * Line color in 32 bit hex.
+   */
+  color?: THREE.Color;
+  /**
+   * Axes component visible
+   */
+  axesComponentsVisible?: boolean;
 };
