@@ -58,28 +58,20 @@ export const Select = (props: CustomSelectProps) => {
     <FilterWrapper hasPermission={tooltipProps?.hasPermission}>
       <Spin spinning={!fixedTooltipProps.isLoaded} size="small">
         <Dropdown content={selectMenu} ref={dropdownRef}>
-          <Button
+          <StyledButton
             type="tertiary"
             icon="ChevronDown"
             iconPlacement="right"
-            style={{
-              display: 'flex',
-              flexDirection: 'row',
-              flexWrap: 'nowrap',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              width: '100%',
-            }}
           >
             <Flex row>
               <Body level={2} strong>
                 {title}
-              </Body>
+              </Body>{' '}
               <FilterPlaceholder
                 text={selectedNr ? `${selectedNr} selected` : 'All'}
               />
             </Flex>
-          </Button>
+          </StyledButton>
         </Dropdown>
       </Spin>
     </FilterWrapper>
@@ -90,23 +82,32 @@ const FilterWrapper = styled.div`
   max-width: 220px;
   min-width: 220px;
   box-sizing: border-box;
-  z-index: ${Layers.POPOVER};
   cursor: ${({ hasPermission }: { hasPermission?: boolean }) =>
     !hasPermission ? 'not-allowed' : 'pointer'};
 `;
 
-export const DropdownWrapper = styled.div`
+const StyledButton = styled(Button)`
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+`;
+
+const DropdownWrapper = styled.div`
   display: flex;
   flex-direction: column;
   max-width: 220px;
   min-width: 220px;
-  padding: 4px;
+  padding: 8px;
   box-sizing: border-box;
   overflow-x: hidden;
   background-color: white;
   box-shadow: 0px 8px 16px 4px rgba(0, 0, 0, 0.04),
     0px 2px 12px rgba(0, 0, 0, 0.08);
   border-radius: 8px;
+  z-index: ${Layers.POPOVER};
 
   .cogs-select .cogs-select__menu {
     padding: 0;
@@ -118,5 +119,8 @@ export const DropdownWrapper = styled.div`
   }
   .cogs-select .cogs-select__divider {
     margin: 4px 0 4px -4px;
+  }
+  .cogs-select .cogs-select__indicator {
+    display: none;
   }
 `;
