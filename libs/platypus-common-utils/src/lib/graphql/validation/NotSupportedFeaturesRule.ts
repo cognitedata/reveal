@@ -89,6 +89,24 @@ export function NotSupportedFeaturesRule(
       }
     }
 
+    if (fieldDef.isListType()) {
+      const isListTypeRequired = fieldDef.getType().node.kind === 'NonNullType';
+      const isListElementTypeRequired =
+        fieldDef.getNamedType()?.name?.loc?.endToken?.next?.kind === '!';
+
+      if (
+        (isListTypeRequired && !isListElementTypeRequired) ||
+        (!isListTypeRequired && isListElementTypeRequired)
+      ) {
+        context.reportError(
+          new GraphQLError(
+            `Field "${fieldDef.getName()}" should be a required type if the list element type is required. For example, the valid cases are "[${fieldDef.getTypename()}]" and "[${fieldDef.getTypename()}!]!"`,
+            node
+          )
+        );
+      }
+    }
+
     return false;
   }
 

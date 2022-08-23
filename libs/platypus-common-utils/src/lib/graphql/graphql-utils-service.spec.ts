@@ -502,6 +502,19 @@ describe('GraphQlUtilsServiceTest', () => {
           ],
         },
         {
+          message:
+            'Field "appearsIn" should be a required type if the list element type is required. For example, the valid cases are "[Episode]" and "[Episode!]!"',
+          status: 400,
+          errorMessage:
+            'Field "appearsIn" should be a required type if the list element type is required. For example, the valid cases are "[Episode]" and "[Episode!]!"',
+          locations: [
+            {
+              column: 9,
+              line: 16,
+            },
+          ],
+        },
+        {
           message: 'Type extensions are not supported.',
           status: 400,
           errorMessage: 'Type extensions are not supported.',
