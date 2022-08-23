@@ -114,3 +114,50 @@ impl Shape for Cylinder {
         self.object_id
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use wasm_bindgen_test::wasm_bindgen_test;
+
+    use super::Cylinder;
+
+    use crate::shapes::shape::Shape;
+    use crate::linalg::{vec3};
+
+    #[wasm_bindgen_test]
+    fn cylinder_at_origin_contains_middle_point() {
+        let cylinder = Cylinder::new(vec3(0.0, -0.5, 0.0), vec3(0.0, 0.5, 0.0), 1.0, 0);
+
+        assert!(cylinder.contains_point(&vec3(0.0, 0.0, 0.0)));
+    }
+
+    #[wasm_bindgen_test]
+    fn thin_diagonal_cylinder_contains_point_in_middle() {
+        let center_a = vec3(213.0, -33.0, 983.12);
+        let center_b = vec3(-12.0, 234.0, -10.0);
+
+        let middle = (center_a + center_b) / 2.0;
+        let outside_middle = middle + vec3(0.1, 0.1, 0.1);
+
+        let cylinder = Cylinder::new(center_a, center_b, 1e-2, 0);
+
+        assert!(cylinder.contains_point(&middle));
+        assert!(!cylinder.contains_point(&outside_middle));
+    }
+
+    #[wasm_bindgen_test]
+    fn cylinder_bounding_box_contains_centers_but_not_more_along_axis() {
+        let center_a = vec3(21.0, -33.0, 98.0);
+        let center_b = vec3(-12.0, 23.0, -10.0);
+
+        let axis = (center_a - center_b).normalize();
+
+        let cylinder = Cylinder::new(center_a, center_b, 1e-2, 0);
+        let bounding_box = cylinder.create_bounding_box();
+
+        assert!(bounding_box.contains_point(&center_a));
+        assert!(bounding_box.contains_point(&center_b));
+        assert!(!bounding_box.contains_point(&(center_a + axis)));
+
+    }
+}
