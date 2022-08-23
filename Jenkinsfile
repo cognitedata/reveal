@@ -4,10 +4,9 @@ static final String PR_COMMENT_MARKER = "🚀[pr-server]\n"
 static final String STORYBOOK_COMMENT_MARKER = "📖[storybook-server]\n"
 static final String SLACK_ALERTS_CHANNEL = "#cdf-ui-devs-alerts"
 static final String APP_ID = 'cdf-raw-explorer'
-static final String APPLICATION_REPO_ID = 'cdf-hub-raw-explorer'
+static final String APPLICATION_REPO_ID = 'cdf-ui-raw-explorer'
 static final String NODE_VERSION = 'node:14'
 static final String VERSIONING_STRATEGY = "single-branch"
-
 
 def pods = { body ->
   yarn.pod(nodeVersion: NODE_VERSION) {
