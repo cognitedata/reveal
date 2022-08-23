@@ -166,11 +166,14 @@ jobs:
   ci-parser-worker:
     name: Parser worker
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: legacy-parser-worker
     steps:
       - uses: actions/checkout@v3
       - uses: technote-space/get-diff-action@v6
         with:
-          PREFIX_FILTER: parser-worker
+          PREFIX_FILTER: legacy-parser-worker/parser-worker
 
       - name: Setup Rust
         if: env.GIT_DIFF
@@ -226,12 +229,12 @@ jobs:
 
       - name: Install NPM dependencies
         if: env.GIT_DIFF
-        working-directory: parser-worker
+        working-directory: legacy-parser-worker/parser-worker
         run: yarn
 
       - name: Build parser-worker
         if: env.GIT_DIFF
-        working-directory: parser-worker
+        working-directory: legacy-parser-worker/parser-worker
         run: yarn build:prod
 
   build-preview-documentation:
