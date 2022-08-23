@@ -22,7 +22,7 @@ export const DataSet: FunctionComponent<Props> = ({
   if (!dataSetId) {
     return (
       <StyledTooltip content={t('no-data-set-info')}>
-        <i data-testId="no-data-set">{t('no-data-set')}</i>
+        <i data-testid="no-data-set">{t('no-data-set')}</i>
       </StyledTooltip>
     );
   }

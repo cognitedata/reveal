@@ -182,7 +182,7 @@ export const CreateExtpipe = (props: { customCancelCallback?: () => void }) => {
               <CustomLabel
                 required
                 htmlFor={inputId}
-                data-testId="ext-pipeline-name"
+                data-testid="ext-pipeline-name"
               >
                 {labelText}
               </CustomLabel>
@@ -197,7 +197,7 @@ export const CreateExtpipe = (props: { customCancelCallback?: () => void }) => {
             labelText={t('external-id')}
             hintText={t('external-id-hint')}
             renderLabel={(labelText, inputId) => (
-              <CustomLabel required htmlFor={inputId} data-testId="external-id">
+              <CustomLabel required htmlFor={inputId} data-testid="external-id">
                 {labelText}
               </CustomLabel>
             )}
@@ -214,7 +214,7 @@ export const CreateExtpipe = (props: { customCancelCallback?: () => void }) => {
               <CustomLabel
                 required={false}
                 htmlFor={inputId}
-                data-testId="description"
+                data-testid="description"
               >
                 {labelText}
               </CustomLabel>
@@ -242,7 +242,7 @@ export const CreateExtpipe = (props: { customCancelCallback?: () => void }) => {
               type="primary"
               htmlType="submit"
               marginbottom={0}
-              data-testId="create=extpipe"
+              data-testid="create=extpipe"
             >
               {t('create')}
             </ButtonPlaced>

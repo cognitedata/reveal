@@ -18,7 +18,7 @@ export const AddFieldInfoText: FunctionComponent<AddFieldInfoTextProps> = ({
       <Icon
         type="AddLarge"
         style={{ marginRight: '1rem' }}
-        data-testId={dataTestId}
+        data-testid={dataTestId}
       />{' '}
       {t('add')} {children}
     </Styled>

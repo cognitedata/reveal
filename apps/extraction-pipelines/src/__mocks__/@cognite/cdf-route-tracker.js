@@ -1,2 +1,2 @@
-//  no-unused-vars
-export function trackEvent(a, b) { }
+// @ts-nocheck
+export function trackEvent(a, b) {}

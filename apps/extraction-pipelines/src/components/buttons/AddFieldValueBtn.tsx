@@ -24,7 +24,7 @@ export const AddFieldValueBtn = ({
       showPencilIcon={false}
       onClick={onClick}
       $full
-      data-testId="add-field-btn"
+      data-testid="add-field-btn"
     >
       <AddFieldInfoText>{children}</AddFieldInfoText>
     </EditButton>

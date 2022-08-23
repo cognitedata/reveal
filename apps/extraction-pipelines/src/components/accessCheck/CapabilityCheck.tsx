@@ -19,7 +19,7 @@ export const MissingCapabilityBox = (props: MissingCapabilityBoxProps) => {
 
   return (
     <ErrorBox heading={heading}>
-      <p data-testId="no-access">{text}</p>
+      <p data-testid="no-access">{text}</p>
       <MissingCapabilityList>
         {requiredPermissions.map((requiredPermission) => {
           const permissionName = `${requiredPermission.acl}:${requiredPermission.action}`;

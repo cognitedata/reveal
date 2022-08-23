@@ -71,7 +71,7 @@ export const RunScheduleConnection: FunctionComponent = () => {
         <CardInWrapper>
           <StyledTitleCard
             className="card-title"
-            data-testId="last-run-time-text"
+            data-testid="last-run-time-text"
           >
             <Icon type="Calendar" />
             {t('last-run-time')}
@@ -83,7 +83,7 @@ export const RunScheduleConnection: FunctionComponent = () => {
         </CardInWrapper>
       </CardNavLink>
       <CardInWrapper>
-        <StyledTitleCard className="card-title" data-testId="schedule-text">
+        <StyledTitleCard className="card-title" data-testid="schedule-text">
           <Icon type="Clock" />
           {t('schedule')}
         </StyledTitleCard>

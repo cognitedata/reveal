@@ -85,14 +85,14 @@ const DeleteDialog: FunctionComponent<DeleteDialogProps> = ({
         />
       </p>
       <DivFlex justify="flex-end" css="gap: 0.5rem">
-        <Button type="ghost" onClick={closeCallback} data-testId="cancel-btn">
+        <Button type="ghost" onClick={closeCallback} data-testid="cancel-btn">
           {t('cancel')}
         </Button>
         <Button
           type="danger"
           disabled={isDisabled}
           onClick={doDelete}
-          data-testId="delete-btn"
+          data-testid="delete-btn"
         >
           {t('delete')}
         </Button>
@@ -214,7 +214,7 @@ const ExtpipePageComponent: FunctionComponent<ExtpipePageProps> = () => {
                         setIsDeleteDialogOpen(true);
                       }}
                       color="danger"
-                      data-testId="delete-menu-item"
+                      data-testid="delete-menu-item"
                     >
                       {t('delete')}
                     </Menu.Item>

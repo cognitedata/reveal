@@ -224,7 +224,7 @@ export const ContactsDialogView = ({
         <Button
           onClick={() => onConfirm(contacts)}
           type="primary"
-          data-testId="confirm"
+          data-testid="confirm"
         >
           {t('confirm')}
         </Button>

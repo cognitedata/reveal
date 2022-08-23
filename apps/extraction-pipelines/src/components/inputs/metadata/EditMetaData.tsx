@@ -131,7 +131,7 @@ export const EditMetaDataView = ({
             <Button
               icon="AddLarge"
               onClick={addRow}
-              data-testId="add-fields-btn"
+              data-testid="add-fields-btn"
             >
               {t('add-fields')}
             </Button>
@@ -145,7 +145,7 @@ export const EditMetaDataView = ({
         <Button
           type="primary"
           onClick={() => onConfirm(arrayToMeta(metadata))}
-          data-testId="confirm-btn"
+          data-testid="confirm-btn"
         >
           {t('confirm')}
         </Button>

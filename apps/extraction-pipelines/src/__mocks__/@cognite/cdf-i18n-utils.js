@@ -1,3 +1,3 @@
 export const useTypedTranslation = () => ({
-    t: jest.fn(),
+  t: jest.fn(),
 });

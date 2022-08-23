@@ -29,11 +29,11 @@ const CronInput: FunctionComponent<CronPageProps> = () => {
   };
   return (
     <>
-      <StyledLabel htmlFor="cron-input" data-testId="cron-title">
+      <StyledLabel htmlFor="cron-input" data-testid="cron-title">
         {t('cron-title')}
       </StyledLabel>
       <StyledHint id="cron-hint">
-        <p data-testId="cron-info">{t('cron-info')}</p>
+        <p data-testid="cron-info">{t('cron-info')}</p>
         <Link href={CRON_LINK} linkText={t('cron-learn-more')} />
       </StyledHint>
       <ValidationError id="cron-error" errors={errors} name="cron" />
@@ -44,7 +44,7 @@ const CronInput: FunctionComponent<CronPageProps> = () => {
         defaultValue=""
         aria-invalid={!!errors.cron}
         aria-describedby="cron-hint cron-error"
-        data-testId="cron-title-input"
+        data-testid="cron-title-input"
       />
       {readCron(i)}
     </>

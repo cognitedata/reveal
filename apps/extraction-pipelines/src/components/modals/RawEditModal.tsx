@@ -217,7 +217,7 @@ export const RawEditModalView = ({
             <Button
               icon="AddLarge"
               onClick={addRow}
-              data-testId="add-new-table=btn"
+              data-testid="add-new-table=btn"
             >
               {t('add-new-table')}
             </Button>
@@ -231,7 +231,7 @@ export const RawEditModalView = ({
         <Button
           type="primary"
           onClick={onConfirmClicked}
-          data-testId="raw-edit-confirm-btn"
+          data-testid="raw-edit-confirm-btn"
         >
           {t('confirm')}
         </Button>

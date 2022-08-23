@@ -15,7 +15,7 @@ const RawTable: FunctionComponent<Props> = ({ rawTables }: OwnProps) => {
   const { t } = useTranslation();
 
   if (!rawTables || rawTables.length === 0) {
-    return <i data-testId="no-raw-tables">{t('no-raw-tables')}</i>;
+    return <i data-testid="no-raw-tables">{t('no-raw-tables')}</i>;
   }
 
   return (

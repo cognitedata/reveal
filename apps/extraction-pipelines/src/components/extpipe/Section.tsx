@@ -40,7 +40,7 @@ export const Section = ({
   const { t } = useTranslation();
 
   return (
-    <SectionDiv className="z-2" data-testId={dataTestId}>
+    <SectionDiv className="z-2" data-testid={dataTestId}>
       <SectionHeader>
         <Icon type={icon} style={{ marginRight: '0.5rem' }} /> {title}
         {editButton && (

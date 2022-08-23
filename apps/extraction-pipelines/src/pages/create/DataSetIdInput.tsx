@@ -96,7 +96,7 @@ const DataSetIdInput: FunctionComponent<DataSetIdPageProps> = ({
       <Hint
         id="data-set-id-hint"
         className="input-hint"
-        data-testId="data-set-id-hint"
+        data-testid="data-set-id-hint"
       >
         {t('data-set-id-hint')}
       </Hint>
