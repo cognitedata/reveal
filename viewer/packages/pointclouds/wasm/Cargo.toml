@@ -1,6 +1,5 @@
-# You must change these to your own details.
 [package]
-name = "point-clouds-wasm"
+name = "pointclouds-wasm"
 description = "Rust+Webassembly for point clouds"
 version = "0.1.0"
 authors = ["Håkon Flatval <hakon.flatval@cognite.com>"]
