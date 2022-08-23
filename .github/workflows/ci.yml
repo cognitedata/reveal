@@ -42,9 +42,6 @@ jobs:
     #   working-directory: viewer
     #   run: yarn run build:prod
 
-    - name: Override Rust version
-      run: rustup override set nightly
-
     - name: Build development version
       working-directory: viewer
       run: yarn run build
@@ -78,9 +75,6 @@ jobs:
       if: steps.npm_cache.outputs.cache-hit != 'true'
       working-directory: viewer
       run: yarn install --immutable
-
-    - name: Override Rust version
-      run: rustup override set nightly
 
     - name: Setup tools for coverage tests
       working-directory: viewer
@@ -263,9 +257,6 @@ jobs:
         if: steps.npm_cache.outputs.cache-hit != 'true'
         working-directory: viewer
         run: yarn install --immutable
-
-      - name: Override Rust version
-        run: rustup override set nightly
 
       - name: Build production version
         working-directory: viewer
