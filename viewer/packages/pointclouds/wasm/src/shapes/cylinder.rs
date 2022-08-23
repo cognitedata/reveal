@@ -5,7 +5,6 @@ use crate::linalg::{Vec3, Mat4, vec3, vec4, BoundingBox};
 use crate::shapes::shape::Shape;
 
 #[derive(Clone)]
-#[wasm_bindgen]
 pub struct Cylinder {
     center_a: Vec3,
     center_b: Vec3,
