@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, Input, Title, Tooltip, Flex, Loader } from '@cognite/cogs.js';
+import { Button, Input, Tooltip, Flex, Loader } from '@cognite/cogs.js';
 import {
   AssetNodeCollection,
   Cognite3DModel,
@@ -9,8 +9,8 @@ import {
 } from '@cognite/reveal';
 import { useSDK } from '@cognite/sdk-provider';
 import { AssetMappingsList } from 'app/containers/ThreeD/AssetMappingsList';
-import { use3DModel, useAssetMappings } from 'app/containers/ThreeD/hooks';
-import { ExpandButton, HomeButton } from 'app/containers/ThreeD/ThreeDToolbar';
+import { useAssetMappings } from 'app/containers/ThreeD/hooks';
+import { ExpandButton } from 'app/containers/ThreeD/ThreeDToolbar';
 import {
   getAssetMappingsByAssetId,
   selectAssetBoundingBox,
@@ -39,7 +39,6 @@ export const AssetMappingsSidebar = ({
   const [query, setQuery] = useState('');
 
   const sdk = useSDK();
-  const { data: model } = use3DModel(modelId);
 
   const { data: assetListData, isFetched } = useAssetMappings(
     modelId,
@@ -96,11 +95,7 @@ export const AssetMappingsSidebar = ({
   return (
     <SidebarContainer>
       <SidebarHeader>
-        <Title level={4} style={{ marginBottom: 15 }}>
-          {model?.name}
-        </Title>
         <Flex direction="row" justifyContent="flex-end">
-          <HomeButton />
           <ExpandButton viewer={viewer} viewerModel={viewerModel} />
           <Tooltip content="Hide">
             <Button icon="PanelLeft" onClick={onClose} aria-label="Hide" />
@@ -113,7 +108,7 @@ export const AssetMappingsSidebar = ({
             <Input
               value={query}
               onChange={e => setQuery(e.target.value)}
-              placeholder="Filter assets"
+              placeholder="Search assets"
               fullWidth
             />
           </InputContainer>
@@ -147,8 +142,8 @@ const SidebarHeader = styled.div`
 const SidebarContainer = styled.div`
   position: absolute;
   width: 300px;
-  height: 100%;
-  top: 0;
+  height: calc(100% - 85px);
+  top: 85px;
   left: 0;
   z-index: 100;
   background: var(--cogs-white);

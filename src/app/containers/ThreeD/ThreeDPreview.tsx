@@ -15,7 +15,7 @@ import {
 import styled from 'styled-components';
 import { Button, Tooltip, Loader } from '@cognite/cogs.js';
 import { AssetMappingsSidebar } from 'app/containers/ThreeD/AssetMappingsSidebar';
-import { HomeButton, ExpandButton } from 'app/containers/ThreeD/ThreeDToolbar';
+import { ExpandButton } from 'app/containers/ThreeD/ThreeDToolbar';
 import { AssetPreviewSidebar } from 'app/containers/ThreeD/AssetPreviewSidebar';
 import { Alert } from 'antd';
 
@@ -44,7 +44,7 @@ export const ThreeDPreview = ({
   const [viewerModel, setViewerModel] = useState<Cognite3DModel | null>(null);
   const [selectedAssetId, setSelectedAssetId] = useState<number | null>(null);
   const [isAssetMappingSidebarVisible, setIsAssetMappingSidebarVisible] =
-    useState<boolean>(false);
+    useState<boolean>(true);
 
   const createViewerWithCameraAndModel = useCallback(() => {
     if (!threeDModel || !revision || !revealContainer.current) {
@@ -111,7 +111,6 @@ export const ThreeDPreview = ({
       <RevealContainer ref={revealContainer} />
       {!isAssetMappingSidebarVisible && (
         <ToolBarWrapper>
-          <HomeButton />
           <ExpandButton viewer={viewer} viewerModel={viewerModel} />
           <Tooltip content="Search">
             <Button
@@ -137,6 +136,7 @@ export const ThreeDPreview = ({
         <AssetPreviewSidebar
           assetId={selectedAssetId}
           onClose={() => setSelectedAssetId(null)}
+          isBackButtonAvailable={false}
         />
       )}
     </>

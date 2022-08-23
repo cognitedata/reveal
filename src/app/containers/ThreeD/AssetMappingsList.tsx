@@ -57,74 +57,76 @@ export const AssetMappingsList = ({
       );
     }) || [];
 
+  if (filteredAssets.length === 0) {
+    return <EmptyAssetMappingsList />;
+  }
   return (
-    <>
-      {filteredAssets.length === 0 && <EmptyAssetMappingsList />}
-      {filteredAssets.length > 0 && (
-        <div style={{ height: 'calc(100% - 135px)' }}>
-          <AutoSizer>
-            {({ height, width }) => (
-              <InfiniteLoader
-                isItemLoaded={isItemLoaded}
-                itemCount={query ? filteredAssets.length : itemCount}
-                loadMoreItems={loadMoreItems}
+    <AssetList>
+      <AutoSizer>
+        {({ height, width }) => (
+          <InfiniteLoader
+            isItemLoaded={isItemLoaded}
+            itemCount={query ? filteredAssets.length : itemCount}
+            loadMoreItems={loadMoreItems}
+          >
+            {({ onItemsRendered, ref }) => (
+              <List
+                height={height}
+                width={width}
+                itemCount={filteredAssets.length}
+                itemSize={90}
+                onItemsRendered={onItemsRendered}
+                ref={ref}
               >
-                {({ onItemsRendered, ref }) => (
-                  <List
-                    height={height}
-                    width={width}
-                    itemCount={filteredAssets.length}
-                    itemSize={90}
-                    onItemsRendered={onItemsRendered}
-                    ref={ref}
-                  >
-                    {({ index, style }) => {
-                      if (!filteredAssets[index]) {
-                        return null;
-                      }
+                {({ index, style }) => {
+                  if (!filteredAssets[index]) {
+                    return null;
+                  }
 
-                      return (
-                        <AssetListItem
-                          key={filteredAssets[index].id}
-                          onClick={() => onClick(filteredAssets[index].id)}
-                          onKeyDown={() => onClick(filteredAssets[index].id)}
-                          className={
-                            selectedAssetId === filteredAssets[index].id
-                              ? 'selected'
-                              : ''
-                          }
-                          role="button"
-                          tabIndex={0}
-                          style={style}
-                        >
-                          <Flex direction="row" alignItems="center">
-                            <Icon type="Assets" style={{ marginRight: 5 }} />
-                            <Highlighter
-                              searchWords={query.split(' ')}
-                              textToHighlight={filteredAssets[index].name}
-                              autoEscape
-                            />
-                          </Flex>
-                          <Highlighter
-                            searchWords={query.split(' ')}
-                            textToHighlight={
-                              filteredAssets[index].description || ''
-                            }
-                            autoEscape
-                          />
-                        </AssetListItem>
-                      );
-                    }}
-                  </List>
-                )}
-              </InfiniteLoader>
+                  return (
+                    <AssetListItem
+                      key={filteredAssets[index].id}
+                      onClick={() => onClick(filteredAssets[index].id)}
+                      onKeyDown={() => onClick(filteredAssets[index].id)}
+                      className={
+                        selectedAssetId === filteredAssets[index].id
+                          ? 'selected'
+                          : ''
+                      }
+                      role="button"
+                      tabIndex={0}
+                      style={style}
+                    >
+                      <Flex direction="row" alignItems="center">
+                        <Icon type="Assets" style={{ marginRight: 5 }} />
+                        <Highlighter
+                          searchWords={query.split(' ')}
+                          textToHighlight={filteredAssets[index].name}
+                          autoEscape
+                        />
+                      </Flex>
+                      <Highlighter
+                        searchWords={query.split(' ')}
+                        textToHighlight={
+                          filteredAssets[index].description || ''
+                        }
+                        autoEscape
+                      />
+                    </AssetListItem>
+                  );
+                }}
+              </List>
             )}
-          </AutoSizer>
-        </div>
-      )}
-    </>
+          </InfiniteLoader>
+        )}
+      </AutoSizer>
+    </AssetList>
   );
 };
+
+const AssetList = styled.div`
+  height: calc(100% - 125px);
+`;
 
 const AssetListItem = styled.div`
   width: 100%;

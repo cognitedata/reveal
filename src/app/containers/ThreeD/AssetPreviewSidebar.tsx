@@ -6,9 +6,11 @@ import { Tooltip, Button } from '@cognite/cogs.js';
 export const AssetPreviewSidebar = ({
   assetId,
   onClose,
+  isBackButtonAvailable = true,
 }: {
   assetId: number | null;
   onClose: () => void;
+  isBackButtonAvailable?: boolean;
 }) => {
   const closePreviewButton = (
     <Tooltip content="Close preview">
@@ -20,7 +22,11 @@ export const AssetPreviewSidebar = ({
     <SidebarContainer>
       {assetId && (
         <PreviewWrapper>
-          <AssetPreview assetId={assetId} actions={closePreviewButton} />
+          <AssetPreview
+            assetId={assetId}
+            actions={closePreviewButton}
+            isBackButtonAvailable={isBackButtonAvailable}
+          />
         </PreviewWrapper>
       )}
     </SidebarContainer>
@@ -29,9 +35,10 @@ export const AssetPreviewSidebar = ({
 
 const SidebarContainer = styled.div`
   position: absolute;
+  padding-inline: 8px;
   width: 600px;
-  height: 100%;
-  top: 0;
+  height: calc(100% - 85px);
+  top: 85px;
   right: 0;
   z-index: 100;
   background: var(--cogs-white);

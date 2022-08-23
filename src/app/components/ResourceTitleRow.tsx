@@ -26,6 +26,7 @@ type Props = {
   getTitle?: (_: any) => string | undefined;
   beforeDefaultActions?: React.ReactNode;
   afterDefaultActions?: React.ReactNode;
+  isBackButtonAvailable?: boolean;
 };
 
 export default function ResourceTitleRow({
@@ -35,6 +36,7 @@ export default function ResourceTitleRow({
   getTitle = (i: any) => i?.name,
   beforeDefaultActions,
   afterDefaultActions,
+  isBackButtonAvailable = true,
 }: Props) {
   const { data, isFetched } = useCdfItem<{ name?: string }>(
     convertResourceThreeDWrapper(type),
@@ -70,10 +72,8 @@ export default function ResourceTitleRow({
   );
 
   return (
-    <TitleRowWrapper
-      style={isPreview ? { maxWidth: 'calc(100vw - 480px)' } : {}}
-    >
-      {!isPreview && (
+    <TitleRowWrapper>
+      {!isPreview && isBackButtonAvailable && (
         <StyledGoBackWrapper>
           <Space>
             {/* Go back */}
@@ -127,6 +127,7 @@ export const TitleRowWrapper = styled.div`
   flex-wrap: nowrap;
   margin: 16px 0px;
   padding-left: 16px;
+  padding-right: 16px;
   border-bottom: 1px solid ${Colors['greyscale-grey3'].hex()};
   padding-bottom: 10px;
 `;

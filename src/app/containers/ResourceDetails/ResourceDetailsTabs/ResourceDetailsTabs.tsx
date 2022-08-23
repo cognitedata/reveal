@@ -132,6 +132,7 @@ export const ResourceDetailsTabs = ({
 
 const StyledTabs = styled(Tabs)`
   padding-left: 16px;
+  padding-right: 16px;
   flex: 1;
   overflow: auto;
   .rc-tabs-nav-wrap {
