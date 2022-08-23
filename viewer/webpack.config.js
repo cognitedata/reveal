@@ -9,7 +9,7 @@ const logger = require('webpack-log')('reveal');
 const packageJSON = require('./package.json');
 const workerPackageJSON = require('./node_modules/@cognite/reveal-parser-worker/package.json');
 const webpack = require('webpack');
-const { publicPath, getWorkerCdnUrl, getEnvArg } = require('../lecagy-parser-worker/parser-worker/buildUtils');
+const { publicPath, getWorkerCdnUrl, getEnvArg } = require('../legacy-parser-worker/parser-worker/buildUtils');
 const exec = require('child_process').exec;
 
 const MIXPANEL_TOKEN_DEV = '00193ed55feefdfcf8a70a76bc97ec6f';
