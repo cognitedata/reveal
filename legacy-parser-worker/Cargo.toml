@@ -5,9 +5,6 @@ members = [
     "openctm",
     "parser-worker",
 ]
-exclude = [
-    "viewer/wasm",
-]
 
 # [profile.release]
 # This enables debug symbols - remove when actually releasing to reduce file size
