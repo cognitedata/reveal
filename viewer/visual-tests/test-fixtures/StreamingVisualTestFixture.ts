@@ -43,10 +43,14 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
   private readonly _renderer: THREE.WebGLRenderer;
   private readonly _controls: OrbitControls;
   private readonly _materialManager: CadMaterialManager;
-  private readonly _gui: dat.GUI;
+  private _gui!: dat.GUI;
 
-  protected readonly _frameStatisticsGUIData: { drawCalls: number; pointCount: number; triangleCount: number };
-  protected readonly _frameStatsGUIFolder: dat.GUI;
+  protected readonly _frameStatisticsGUIData = {
+    drawCalls: 0,
+    pointCount: 0,
+    triangleCount: 0
+  };
+  protected _frameStatsGUIFolder!: dat.GUI;
 
   private _renderPipelineProvider: RenderPipelineProvider;
   private _pipelineExecutor: RenderPipelineExecutor;
@@ -90,25 +94,13 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
       this._sceneHandler,
       defaultRenderOptions
     );
-
-    this._gui = new dat.GUI();
-
-    this._frameStatisticsGUIData = {
-      drawCalls: 0,
-      pointCount: 0,
-      triangleCount: 0
-    };
-
-    this._frameStatsGUIFolder = this._gui.addFolder('frameStats');
-    this._frameStatsGUIFolder.open();
-    this._frameStatsGUIFolder.name = 'Frame Statistics';
-    this._frameStatsGUIFolder.add(this._frameStatisticsGUIData, 'drawCalls').listen();
-    this._frameStatsGUIFolder.add(this._frameStatisticsGUIData, 'pointCount').listen();
-    this._frameStatsGUIFolder.add(this._frameStatisticsGUIData, 'triangleCount').listen();
   }
 
   public async run(): Promise<void> {
+    this.setupDatGui();
+
     this.updateRenderer();
+
     const { modelDataProvider, modelIdentifier, modelMetadataProvider } = await createDataProviders();
 
     const cadModelFactory = new CadModelFactory(this._materialManager, modelMetadataProvider, modelDataProvider);
@@ -159,7 +151,20 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
       cadMaterialManager: this._materialManager
     });
 
+    this._gui.close();
+
     this.render();
+  }
+
+  private setupDatGui() {
+    this._gui = new dat.GUI();
+
+    this._frameStatsGUIFolder = this._gui.addFolder('frameStats');
+    this._frameStatsGUIFolder.open();
+    this._frameStatsGUIFolder.name = 'Frame Statistics';
+    this._frameStatsGUIFolder.add(this._frameStatisticsGUIData, 'drawCalls').listen();
+    this._frameStatsGUIFolder.add(this._frameStatisticsGUIData, 'pointCount').listen();
+    this._frameStatsGUIFolder.add(this._frameStatisticsGUIData, 'triangleCount').listen();
   }
 
   public abstract setup(testFixtureComponents: StreamingTestFixtureComponents): Promise<void>;
