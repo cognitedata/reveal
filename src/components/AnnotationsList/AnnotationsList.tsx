@@ -215,9 +215,8 @@ const AnnotationListContainer = styled.div`
   min-width: 360px;
   background: #fff;
   display: flex;
+  height: 100%;
   flex-direction: column;
-  position: relative;
-  margin-top: -1px;
   gap: 15px;
   padding: 20px 16px;
 `;
