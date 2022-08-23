@@ -3,7 +3,6 @@ use nalgebra_glm::{min2, max2, dot, vec3_to_vec4, vec4_to_vec3};
 use crate::linalg::{Vec3, Mat4, vec3, vec4, BoundingBox};
 use crate::shapes::shape::Shape;
 
-#[derive(Clone)]
 pub struct Cylinder {
     center_a: Vec3,
     center_b: Vec3,

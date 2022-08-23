@@ -1,10 +1,7 @@
-use crate::linalg::{Vec3, BoundingBox};
-use dyn_clone::DynClone;
+use crate::linalg::{BoundingBox, Vec3};
 
-pub trait Shape: DynClone {
+pub trait Shape {
     fn create_bounding_box(&self) -> BoundingBox;
     fn contains_point(&self, point: &Vec3) -> bool;
     fn get_object_id(&self) -> u32;
 }
-
-dyn_clone::clone_trait_object!(Shape);
