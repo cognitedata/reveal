@@ -20,7 +20,7 @@ export const AddFieldInfoText: FunctionComponent<AddFieldInfoTextProps> = ({
         style={{ marginRight: '1rem' }}
         data-testId={dataTestId}
       />{' '}
-      {t('add', { postProcess: 'lowercase' })} {children}
+      {t('add')} {children}
     </Styled>
   );
 };

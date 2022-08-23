@@ -57,7 +57,7 @@ type Props = OwnProps;
 const Extpipes: FunctionComponent<Props> = () => {
   const { t } = useTranslation();
   const project = getProject();
-  const { extpipeTableColumns } = getExtpipeTableColumns();
+  const { extpipeTableColumns } = getExtpipeTableColumns(t);
 
   useEffect(() => {
     trackUsage({ t: 'Overview', tenant: project! });
