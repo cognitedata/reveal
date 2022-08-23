@@ -3,16 +3,19 @@ import { Colors, Icon } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { useTranslation } from 'common';
 
-interface AddFieldInfoTextProps {}
+interface AddFieldInfoTextProps {
+  dataTestId?: string;
+}
 
 export const AddFieldInfoText: FunctionComponent<AddFieldInfoTextProps> = ({
   children,
+  dataTestId
 }: PropsWithChildren<AddFieldInfoTextProps>) => {
   const { t } = useTranslation();
 
   return (
     <Styled>
-      <Icon type="AddLarge" style={{ marginRight: '1rem' }} />{' '}
+      <Icon type="AddLarge" style={{ marginRight: '1rem' }} data-testId={dataTestId} />{' '}
       {t('add', { postProcess: 'lowercase' })} {children}
     </Styled>
   );

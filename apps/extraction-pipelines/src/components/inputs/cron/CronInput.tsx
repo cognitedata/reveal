@@ -9,7 +9,7 @@ import ValidationError from 'components/form/ValidationError';
 import { CRON_LINK } from 'utils/constants';
 import { useTranslation } from 'common';
 
-interface CronPageProps {}
+interface CronPageProps { }
 
 const CronInput: FunctionComponent<CronPageProps> = () => {
   const { t } = useTranslation();
@@ -29,10 +29,15 @@ const CronInput: FunctionComponent<CronPageProps> = () => {
   };
   return (
     <>
-      <StyledLabel htmlFor="cron-input">{t('cron-title')}</StyledLabel>
+      <StyledLabel htmlFor="cron-input" data-testId="cron-title">
+        {t('cron-title')}
+      </StyledLabel>
       <StyledHint id="cron-hint">
-        <p>{t('cron-info')}</p>
-        <Link href={CRON_LINK} linkText={t('cron-learn-more')} />
+        <p data-testId="cron-info">{t('cron-info')}</p>
+        <Link
+          href={CRON_LINK}
+          linkText={t('cron-learn-more')}
+        />
       </StyledHint>
       <ValidationError id="cron-error" errors={errors} name="cron" />
       <InputController
@@ -42,6 +47,7 @@ const CronInput: FunctionComponent<CronPageProps> = () => {
         defaultValue=""
         aria-invalid={!!errors.cron}
         aria-describedby="cron-hint cron-error"
+        data-testId="cron-title-input"
       />
       {readCron(i)}
     </>

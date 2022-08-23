@@ -7,6 +7,7 @@ interface Breadcrumb {
   href: string;
   label?: string;
   params?: string;
+  dataTestId?: string;
 }
 interface BreadcrumbsProps {
   breadcrumbs: Breadcrumb[];
@@ -20,9 +21,9 @@ export const Breadcrumbs: FunctionComponent<BreadcrumbsProps> = ({
   return (
     <BreadcrumbsWrapper aria-label="Breadcrumb">
       <ol>
-        {breadcrumbs.map(({ href, label, params }) => {
+        {breadcrumbs.map(({ href, label, dataTestId, params }) => {
           return (
-            <li key={href}>
+            <li key={href} data-testId={dataTestId}>
               <NavLink
                 to={{
                   pathname: href,

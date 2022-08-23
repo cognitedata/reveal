@@ -127,7 +127,7 @@ export const DocumentationSection: FunctionComponent<
         onClick={onEditClick}
         disabled={!canEdit}
       >
-        <AddFieldInfoText>
+        <AddFieldInfoText dataTestId="add-documentation">
           {t('documentation', { postProcess: 'lowercase' })}
         </AddFieldInfoText>
       </EditButton>
@@ -206,6 +206,7 @@ export const DocumentationSection: FunctionComponent<
       title={t('documentation')}
       icon="Documentation"
       editButton={{ onClick: onEditClick, canEdit }}
+      dataTestId='documentation'
     >
       <DocumentationForm onSubmit={handleSubmit(onValid)}>
         {isEdit ? whenEditing : whenNotEditing}

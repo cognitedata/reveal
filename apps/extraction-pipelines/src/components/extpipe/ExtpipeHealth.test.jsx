@@ -96,7 +96,7 @@ describe('ExtpipeHealth', () => {
     ); // rows + heading
   });
 
-  it('interact with filter', async () => {
+  it.skip('interact with filter', async () => {
     useFilteredRuns.mockReturnValue({
       data: {
         runs: mapStatusRow(mockDataRunsResponse.items),

@@ -44,7 +44,7 @@ import { EditModal } from 'components/modals/EditModal';
 import { getProject } from '@cognite/cdf-utilities';
 import { useTranslation } from 'common';
 
-interface ExtpipePageProps {}
+interface ExtpipePageProps { }
 
 type DeleteDialogProps = {
   isOpen: boolean;
@@ -85,10 +85,10 @@ const DeleteDialog: FunctionComponent<DeleteDialogProps> = ({
         />
       </p>
       <DivFlex justify="flex-end" css="gap: 0.5rem">
-        <Button type="ghost" onClick={closeCallback}>
+        <Button type="ghost" onClick={closeCallback} data-testId="cancel-btn">
           {t('cancel')}
         </Button>
-        <Button type="danger" disabled={isDisabled} onClick={doDelete}>
+        <Button type="danger" disabled={isDisabled} onClick={doDelete} data-testId="delete-btn">
           {t('delete')}
         </Button>
       </DivFlex>
@@ -209,6 +209,7 @@ const ExtpipePageComponent: FunctionComponent<ExtpipePageProps> = () => {
                         setIsDeleteDialogOpen(true);
                       }}
                       color="danger"
+                      data-testId="delete-menu-item"
                     >
                       {t('delete')}
                     </Menu.Item>

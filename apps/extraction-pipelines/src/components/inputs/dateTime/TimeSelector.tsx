@@ -16,7 +16,7 @@ import {
 } from 'hooks/runs/RunsFilterContext';
 import { useTranslation } from 'common';
 
-interface TimeSelectorProps {}
+interface TimeSelectorProps { }
 
 export type Time = { hours: number; min: number };
 
@@ -131,6 +131,7 @@ export const TimeSelector: FunctionComponent<TimeSelectorProps> = () => {
             />
           }
           aria-label={t('date-range-start-label')}
+          data-testId="date-range-start-input"
         />
         <Select
           inputId="startTime"
@@ -148,6 +149,7 @@ export const TimeSelector: FunctionComponent<TimeSelectorProps> = () => {
           onChange={endInputChanged}
           onClick={toggleEndDropDown}
           aria-label={t('date-range-end-label')}
+          data-testId="date-range-end-input"
           size="large"
           postfix={
             <Button

@@ -27,8 +27,8 @@ type MetadataEditType = { key: string; value: string };
 const objectToArray = (metadata: MetaData): MetadataEditType[] =>
   metadata
     ? Object.entries(metadata).map(([k, v]) => {
-        return { key: uppercaseFirstWord(k), value: v };
-      })
+      return { key: uppercaseFirstWord(k), value: v };
+    })
     : [];
 
 const arrayToMeta = (updatedMetadata: MetadataEditType[]) =>
@@ -128,7 +128,7 @@ export const EditMetaDataView = ({
             </table>
           </StyledTableNoRowColor2>
           <div>
-            <Button icon="AddLarge" onClick={addRow}>
+            <Button icon="AddLarge" onClick={addRow} data-testId="add-fields-btn">
               {t('add-fields')}
             </Button>
           </div>
@@ -138,7 +138,7 @@ export const EditMetaDataView = ({
         <Button type="ghost" onClick={onCancel}>
           {t('cancel')}
         </Button>
-        <Button type="primary" onClick={() => onConfirm(arrayToMeta(metadata))}>
+        <Button type="primary" onClick={() => onConfirm(arrayToMeta(metadata))} data-testId="confirm-btn">
           {t('confirm')}
         </Button>
       </div>

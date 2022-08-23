@@ -48,9 +48,7 @@ describe('MetaData', () => {
   test('Should render add metadata meta does not exist', () => {
     sdk.get.mockResolvedValue({ data: { ...mock, metadata: undefined } });
     render(<MetaDataSection canEdit />, { wrapper: wrapper.wrapper });
-    expect(
-      screen.getByText(`add ${DetailFieldNames.META_DATA.toLowerCase()}`)
-    ).toBeInTheDocument();
+    expect(screen.getByTestId('add-field-btn')).toBeInTheDocument();
   });
 
   test('Should render add metadata meta when none to display exist', () => {
@@ -64,8 +62,6 @@ describe('MetaData', () => {
       },
     });
     render(<MetaDataSection canEdit />, { wrapper: wrapper.wrapper });
-    expect(
-      screen.getByText(`add ${DetailFieldNames.META_DATA.toLowerCase()}`)
-    ).toBeInTheDocument();
+    expect(screen.getByTestId('add-field-btn')).toBeInTheDocument();
   });
 });

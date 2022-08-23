@@ -196,9 +196,9 @@ export const RawEditModalView = ({
                       table.dbName === ''
                         ? { value: null, label: t('select-raw-table') }
                         : {
-                            value: table,
-                            label: `${table.dbName} • ${table.tableName}`,
-                          }
+                          value: table,
+                          label: `${table.dbName} • ${table.tableName}`,
+                        }
                     }
                   />
                 </div>
@@ -214,7 +214,7 @@ export const RawEditModalView = ({
             ))}
           </Col>
           <div>
-            <Button icon="AddLarge" onClick={addRow}>
+            <Button icon="AddLarge" onClick={addRow} data-testId="add-new-table=btn">
               {t('add-new-table')}
             </Button>
           </div>
@@ -224,7 +224,7 @@ export const RawEditModalView = ({
         <Button type="ghost" onClick={close}>
           {t('cancel')}
         </Button>
-        <Button type="primary" onClick={onConfirmClicked}>
+        <Button type="primary" onClick={onConfirmClicked} data-testId="raw-edit-confirm-btn">
           {t('confirm')}
         </Button>
       </div>

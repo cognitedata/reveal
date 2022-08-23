@@ -1,1 +1,3 @@
-export const useTypedTranslation = jest.fn()
+export const useTypedTranslation = () => ({
+    t: jest.fn(),
+});

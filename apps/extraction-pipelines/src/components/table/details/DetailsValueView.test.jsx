@@ -46,7 +46,7 @@ describe('<DetailsValueView />', () => {
 
   test('Display no data set when no data set is registered on extpipe', () => {
     render(<DetailsValueView fieldValue="" fieldName="dataSetId" />);
-    const view = screen.getByText(NO_DATA_SET_ID_SET);
+    const view = screen.getByTestId('no-data-set');
     expect(view).toBeInTheDocument();
     const copy = screen.queryByTestId('interactive-copy');
     expect(copy).not.toBeInTheDocument();

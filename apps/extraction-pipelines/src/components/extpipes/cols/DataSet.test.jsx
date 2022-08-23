@@ -24,15 +24,15 @@ describe('<DataSet />', () => {
     render(
       <DataSet id="data-set-id" dataSetId={undefined} dataSetName={undefined} />
     );
-    expect(screen.getByText(NO_DATA_SET_ID_SET)).toBeInTheDocument();
+    expect(screen.getByTestId('no-data-set')).toBeInTheDocument();
   });
   test('Should display no data set message when data set id is null', () => {
     render(<DataSet id="data-set-id" dataSetId={null} dataSetName={null} />);
-    expect(screen.getByText(NO_DATA_SET_ID_SET)).toBeInTheDocument();
+    expect(screen.getByTestId('no-data-set')).toBeInTheDocument();
   });
 
   test('Should display no data set message when data set id is empty', () => {
     render(<DataSet id="data-set-id" dataSetId="" dataSetName="" />);
-    expect(screen.getByText(NO_DATA_SET_ID_SET)).toBeInTheDocument();
+    expect(screen.getByTestId('no-data-set')).toBeInTheDocument();
   });
 });

@@ -37,8 +37,8 @@ const DataSetIdInput: FunctionComponent<DataSetIdPageProps> = ({
   const getOptions = (): SelectOption[] => {
     return data
       ? data.map(({ id, name, externalId }) => {
-          return { value: id, label: name, externalId };
-        })
+        return { value: id, label: name, externalId };
+      })
       : [];
   };
   const options = getOptions();
@@ -93,7 +93,7 @@ const DataSetIdInput: FunctionComponent<DataSetIdPageProps> = ({
   return (
     <>
       {renderLabel && renderLabel(TableHeadings.DATA_SET, 'data-set-id-input')}
-      <Hint id="data-set-id-hint" className="input-hint">
+      <Hint id="data-set-id-hint" className="input-hint" data-testId="data-set-id-hint">
         {t('data-set-id-hint')}
       </Hint>
       <ValidationError errors={errors} name="dataSetId" />

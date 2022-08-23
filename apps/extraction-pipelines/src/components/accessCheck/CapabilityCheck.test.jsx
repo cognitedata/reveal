@@ -33,8 +33,8 @@ describe('CapabilityCheck', () => {
       </CapabilityCheck>
     );
     expect(
-      screen.getByText(
-        `You have insufficient access rights to access this feature`
+      screen.getByTestId(
+        'no-access'
       )
     ).toBeInTheDocument();
     expect(screen.getByText(`extractionPipelinesAcl:READ`)).toBeInTheDocument();

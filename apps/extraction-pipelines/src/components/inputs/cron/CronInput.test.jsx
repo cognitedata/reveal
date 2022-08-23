@@ -10,12 +10,12 @@ describe('CronInput', () => {
     renderWithReactHookForm(<CronInput />, { defaultValues: {} });
   });
   test('Renders', () => {
-    expect(screen.getByText(CRON_LABEL)).toBeInTheDocument();
-    expect(screen.getByText(CRON_TIP)).toBeInTheDocument();
+    expect(screen.getByTestId('cron-title')).toBeInTheDocument();
+    expect(screen.getByTestId('cron-info')).toBeInTheDocument();
   });
 
   test('Interact with form', async () => {
-    const dataSetId = screen.getByLabelText(CRON_LABEL);
+    const dataSetId = screen.getByTestId('cron-title-input');
 
     const value = '0 0 9 1/1 * ? *';
     fireEvent.change(dataSetId, { target: { value } });

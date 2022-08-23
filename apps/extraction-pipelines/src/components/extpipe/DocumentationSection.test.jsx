@@ -48,7 +48,7 @@ describe('DocumentationSection', () => {
       wrapper: wrapper.wrapper,
     });
     await waitFor(() => {
-      screen.getByText(DetailFieldNames.DOCUMENTATION);
+      screen.getByTestId('documentation');
     });
 
     const documentation = screen.getByText(mock.documentation);
@@ -87,8 +87,8 @@ describe('DocumentationSection', () => {
       wrapper: wrapper.wrapper,
     });
     await waitFor(() => {
-      screen.getByText(DetailFieldNames.DOCUMENTATION);
+      screen.getByTestId('documentation');
     });
-    expect(screen.getByText(/add documentation/i)).toBeInTheDocument();
+    expect(screen.getByTestId('add-documentation')).toBeInTheDocument();
   });
 });

@@ -221,7 +221,11 @@ export const ContactsDialogView = ({
         <Button onClick={onCancel} type="ghost">
           {t('cancel')}
         </Button>
-        <Button onClick={() => onConfirm(contacts)} type="primary">
+        <Button
+          onClick={() => onConfirm(contacts)}
+          type="primary"
+          data-testId="confirm"
+        >
           {t('confirm')}
         </Button>
       </div>

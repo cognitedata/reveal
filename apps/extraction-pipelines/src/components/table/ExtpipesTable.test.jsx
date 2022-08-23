@@ -23,7 +23,7 @@ describe('<ExtpipesTable/>', () => {
       getMockResponse(),
       mockDataSetResponse()
     );
-    const { extpipeTableColumns } = getExtpipeTableColumns();
+    const { extpipeTableColumns } = getExtpipeTableColumns(jest.fn());
     renderWithSelectedExtpipeContext(
       <ExtpipesTable extpipes={extpipes} columns={extpipeTableColumns} />,
       { initExtpipe: mockExtpipe, client: new QueryClient() }
