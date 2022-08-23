@@ -45,6 +45,7 @@
     "release": "yarn build:prod && cd dist && yarn publish --non-interactive",
     "ws:start": "cd $INIT_CWD && webpack-dev-server --config ../webpack.config.js --open --env dir=$INIT_CWD",
     "ws:test": "cd $INIT_CWD && jest --runInBand",
+    "ws:test:wasm": "cd $INIT_CWD && wasm-pack test --chrome --headless ./wasm",
     "ws:lint": "cd $INIT_CWD && eslint . --ext .ts,.js --max-warnings 0 --cache"
   },
   "dependencies": {
