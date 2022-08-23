@@ -11,8 +11,8 @@ export const FilterPlaceholder = (props: Props) => {
     <Body
       level={2}
       style={{
-        fontFamily: 'Inter',
         color: Colors['greyscale-grey6'].hex(),
+        textOverflow: 'ellipsis',
         margin: 0,
         padding: 0,
       }}
