@@ -44,7 +44,7 @@ import { EditModal } from 'components/modals/EditModal';
 import { getProject } from '@cognite/cdf-utilities';
 import { useTranslation } from 'common';
 
-interface ExtpipePageProps { }
+interface ExtpipePageProps {}
 
 type DeleteDialogProps = {
   isOpen: boolean;
@@ -88,7 +88,12 @@ const DeleteDialog: FunctionComponent<DeleteDialogProps> = ({
         <Button type="ghost" onClick={closeCallback} data-testId="cancel-btn">
           {t('cancel')}
         </Button>
-        <Button type="danger" disabled={isDisabled} onClick={doDelete} data-testId="delete-btn">
+        <Button
+          type="danger"
+          disabled={isDisabled}
+          onClick={doDelete}
+          data-testId="delete-btn"
+        >
           {t('delete')}
         </Button>
       </DivFlex>

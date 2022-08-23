@@ -179,7 +179,11 @@ export const CreateExtpipe = (props: { customCancelCallback?: () => void }) => {
             labelText={t('ext-pipeline-name')}
             hintText={t('ext-pipeline-name-hint')}
             renderLabel={(labelText, inputId) => (
-              <CustomLabel required htmlFor={inputId} data-testId="ext-pipeline-name">
+              <CustomLabel
+                required
+                htmlFor={inputId}
+                data-testId="ext-pipeline-name"
+              >
                 {labelText}
               </CustomLabel>
             )}
@@ -207,7 +211,11 @@ export const CreateExtpipe = (props: { customCancelCallback?: () => void }) => {
             inputId="extpipe-description"
             errors={errors}
             renderLabel={(labelText, inputId) => (
-              <CustomLabel required={false} htmlFor={inputId} data-testId="description">
+              <CustomLabel
+                required={false}
+                htmlFor={inputId}
+                data-testId="description"
+              >
                 {labelText}
               </CustomLabel>
             )}
@@ -216,8 +224,9 @@ export const CreateExtpipe = (props: { customCancelCallback?: () => void }) => {
             {props.customCancelCallback == null ? (
               <a
                 href={createLink(
-                  `/data-sets${dataSetIdFromLocation &&
-                  `/data-set/${dataSetIdFromLocation}`
+                  `/data-sets${
+                    dataSetIdFromLocation &&
+                    `/data-set/${dataSetIdFromLocation}`
                   }`
                 )}
                 className="cogs-btn cogs-btn-ghost cogs-btn-secondary cogs-btn--padding"
@@ -229,7 +238,12 @@ export const CreateExtpipe = (props: { customCancelCallback?: () => void }) => {
                 {t('cancel')}
               </Button>
             )}
-            <ButtonPlaced type="primary" htmlType="submit" marginbottom={0} data-testId="create=extpipe">
+            <ButtonPlaced
+              type="primary"
+              htmlType="submit"
+              marginbottom={0}
+              data-testId="create=extpipe"
+            >
               {t('create')}
             </ButtonPlaced>
           </PriSecBtnWrapper>
@@ -277,7 +291,7 @@ const InfoMessage = styled.span`
           &:nth-child(2),
           &:nth-child(3) {
             fill: ${(props: { color?: string }) =>
-    props.color ?? `${Colors.primary.hex()}`};
+              props.color ?? `${Colors.primary.hex()}`};
           }
         }
       }

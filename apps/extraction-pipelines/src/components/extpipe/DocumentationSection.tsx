@@ -206,7 +206,7 @@ export const DocumentationSection: FunctionComponent<
       title={t('documentation')}
       icon="Documentation"
       editButton={{ onClick: onEditClick, canEdit }}
-      dataTestId='documentation'
+      dataTestId="documentation"
     >
       <DocumentationForm onSubmit={handleSubmit(onValid)}>
         {isEdit ? whenEditing : whenNotEditing}

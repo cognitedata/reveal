@@ -69,7 +69,10 @@ export const RunScheduleConnection: FunctionComponent = () => {
     <CardWrapper className={`${lastRun.status.toLowerCase()} z-2`}>
       <CardNavLink to={`${url}/${HEALTH_PATH}${search}`} exact>
         <CardInWrapper>
-          <StyledTitleCard className="card-title" data-testId="last-run-time-text">
+          <StyledTitleCard
+            className="card-title"
+            data-testId="last-run-time-text"
+          >
             <Icon type="Calendar" />
             {t('last-run-time')}
           </StyledTitleCard>

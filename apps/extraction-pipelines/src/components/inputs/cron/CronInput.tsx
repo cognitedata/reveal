@@ -9,7 +9,7 @@ import ValidationError from 'components/form/ValidationError';
 import { CRON_LINK } from 'utils/constants';
 import { useTranslation } from 'common';
 
-interface CronPageProps { }
+interface CronPageProps {}
 
 const CronInput: FunctionComponent<CronPageProps> = () => {
   const { t } = useTranslation();
@@ -34,10 +34,7 @@ const CronInput: FunctionComponent<CronPageProps> = () => {
       </StyledLabel>
       <StyledHint id="cron-hint">
         <p data-testId="cron-info">{t('cron-info')}</p>
-        <Link
-          href={CRON_LINK}
-          linkText={t('cron-learn-more')}
-        />
+        <Link href={CRON_LINK} linkText={t('cron-learn-more')} />
       </StyledHint>
       <ValidationError id="cron-error" errors={errors} name="cron" />
       <InputController

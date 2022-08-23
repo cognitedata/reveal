@@ -16,7 +16,7 @@ import {
 } from 'hooks/runs/RunsFilterContext';
 import { useTranslation } from 'common';
 
-interface TimeSelectorProps { }
+interface TimeSelectorProps {}
 
 export type Time = { hours: number; min: number };
 

@@ -20,7 +20,12 @@ export const AddFieldValueBtn = ({
   return !canEdit ? (
     <NoDataAdded>{t('no-field-added', { field: children })}</NoDataAdded>
   ) : (
-    <EditButton showPencilIcon={false} onClick={onClick} $full data-testId="add-field-btn">
+    <EditButton
+      showPencilIcon={false}
+      onClick={onClick}
+      $full
+      data-testId="add-field-btn"
+    >
       <AddFieldInfoText>{children}</AddFieldInfoText>
     </EditButton>
   );

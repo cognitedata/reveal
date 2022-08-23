@@ -35,7 +35,7 @@ export const Section = ({
   title,
   editButton,
   children,
-  dataTestId
+  dataTestId,
 }: PropsWithChildren<Props>) => {
   const { t } = useTranslation();
 

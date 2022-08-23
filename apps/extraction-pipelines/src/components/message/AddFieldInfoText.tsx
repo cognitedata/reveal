@@ -9,13 +9,17 @@ interface AddFieldInfoTextProps {
 
 export const AddFieldInfoText: FunctionComponent<AddFieldInfoTextProps> = ({
   children,
-  dataTestId
+  dataTestId,
 }: PropsWithChildren<AddFieldInfoTextProps>) => {
   const { t } = useTranslation();
 
   return (
     <Styled>
-      <Icon type="AddLarge" style={{ marginRight: '1rem' }} data-testId={dataTestId} />{' '}
+      <Icon
+        type="AddLarge"
+        style={{ marginRight: '1rem' }}
+        data-testId={dataTestId}
+      />{' '}
       {t('add', { postProcess: 'lowercase' })} {children}
     </Styled>
   );
