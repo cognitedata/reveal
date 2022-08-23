@@ -1,4 +1,3 @@
-use wasm_bindgen::prelude::wasm_bindgen;
 use nalgebra_glm::{min2, max2, dot, vec3_to_vec4, vec4_to_vec3};
 
 use crate::linalg::{Vec3, Mat4, vec3, vec4, BoundingBox};

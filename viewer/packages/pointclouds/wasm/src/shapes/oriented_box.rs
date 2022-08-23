@@ -1,7 +1,5 @@
-
 use crate::linalg::BoundingBox;
 
-use wasm_bindgen::prelude::wasm_bindgen;
 use nalgebra_glm::{inverse, max2, min2, abs, vec4_to_vec3};
 
 use crate::linalg::{Mat4, Vec3, vec3, vec4};

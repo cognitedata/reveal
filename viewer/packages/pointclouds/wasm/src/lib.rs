@@ -16,28 +16,8 @@ use linalg::to_bounding_box;
 
 #[derive(Deserialize)]
 pub struct InputBoundingBox {
-    min: [f64; 3],
-    max: [f64; 3]
-}
-
-#[derive(Debug,Deserialize)]
-struct InputCylinder {
-    center_a: [f64; 3],
-    center_b: [f64; 3],
-    radius: f64
-}
-
-#[derive(Debug,Deserialize)]
-struct InputOrientedBox {
-    inv_instance_matrix: [f64; 16]
-}
-
-#[wasm_bindgen]
-#[derive(Debug,Deserialize)]
-pub struct InputShape {
-    object_id: u32,
-    cylinder: Option<Box<InputCylinder>>,
-    oriented_box: Option<Box<InputOrientedBox>>
+    pub min: [f64; 3],
+    pub max: [f64; 3]
 }
 
 fn init() -> () {
@@ -48,10 +28,10 @@ fn init() -> () {
 }
 
 #[wasm_bindgen]
-pub fn assign_points(input_shapes: js_sys::Array,
+pub fn assign_points(input_shapes: Vec<JsValue>,
                      input_points: js_sys::Float32Array,
                      input_bounding_box: js_sys::Object,
-                     input_point_offset: js_sys::Array) -> js_sys::Uint16Array {
+                     input_point_offset: Vec<f64>) -> js_sys::Uint16Array {
     init();
 
     let mut point_vec = parse_inputs::parse_points(&input_points, input_point_offset);

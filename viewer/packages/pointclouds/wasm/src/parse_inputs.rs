@@ -3,14 +3,34 @@ use std::vec::Vec;
 
 use crate::linalg::{Vec3WithIndex, vec3, Vec3, Mat4};
 use crate::shapes;
-use crate::{InputShape,InputCylinder,InputOrientedBox};
+
+use serde::Deserialize;
+
+#[derive(Debug,Deserialize)]
+struct InputCylinder {
+    pub center_a: [f64; 3],
+    pub center_b: [f64; 3],
+    pub radius: f64
+}
+
+#[derive(Debug,Deserialize)]
+struct InputOrientedBox {
+    inv_instance_matrix: [f64; 16]
+}
+
+#[derive(Debug,Deserialize)]
+pub struct InputShape {
+    pub object_id: u32,
+    cylinder: Option<Box<InputCylinder>>,
+    oriented_box: Option<Box<InputOrientedBox>>
+}
 
 pub fn parse_points(input_array: &js_sys::Float32Array,
-                    input_point_offset: js_sys::Array) -> Vec<Vec3WithIndex> {
+                    input_point_offset: Vec<f64>) -> Vec<Vec3WithIndex> {
 
-    let point_offset = Vec3::new(input_point_offset.get(0).as_f64().unwrap(),
-                                 input_point_offset.get(1).as_f64().unwrap(),
-                                 input_point_offset.get(2).as_f64().unwrap());
+    let point_offset = Vec3::new(input_point_offset[0],
+                                 input_point_offset[1],
+                                 input_point_offset[2]);
 
     let num_points = input_array.length() / 3;
     let mut point_vec = Vec::<Vec3WithIndex>::with_capacity(num_points as usize);
@@ -56,12 +76,10 @@ fn create_shape(obj: InputShape) -> Box<dyn shapes::shape::Shape> {
     }
 }
 
-pub fn parse_objects(input_shapes: js_sys::Array) -> Vec<Box<dyn shapes::shape::Shape>> {
-    let mut shape_vec = Vec::<Box<dyn shapes::shape::Shape>>::with_capacity(input_shapes.length() as usize);
+pub fn parse_objects(input_shapes: Vec<wasm_bindgen::prelude::JsValue>) -> Vec<Box<dyn shapes::shape::Shape>> {
+    let mut shape_vec = Vec::<Box<dyn shapes::shape::Shape>>::with_capacity(input_shapes.len() as usize);
 
     for value in input_shapes.iter() {
-        assert!(value.is_object());
-
         let input_shape = value.into_serde::<InputShape>().unwrap();
         shape_vec.push(create_shape(input_shape));
     }
