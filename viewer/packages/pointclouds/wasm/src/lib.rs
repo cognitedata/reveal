@@ -19,7 +19,10 @@ pub fn add_three(input: u32) -> u32 {
     init();
 
     use web_sys::console;
-    console::log_1(&JsValue::from_str(&format!("[add_three.rs] Retrieved the input number {}", input)));
+    console::log_1(&JsValue::from_str(&format!(
+        "[add_three.rs] Retrieved the input number {}",
+        input
+    )));
 
     add_three::add_three(input)
 }
