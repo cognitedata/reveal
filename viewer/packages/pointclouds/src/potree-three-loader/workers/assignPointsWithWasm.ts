@@ -3,7 +3,7 @@
  */
 
 import { StylableObject } from '../../styling/StylableObject';
-import { assignPoints } from '../../../../../wasm';
+import { assignPoints } from '../../../wasm';
 import { Cylinder } from '../../styling/shapes/Cylinder';
 import { Box } from '../../styling/shapes/Box';
 
