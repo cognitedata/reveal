@@ -40,7 +40,9 @@ jobs:
     - name: Rust fmt
       working-directory: viewer
       continue-on-error: false
-      run: cargo fmt --check
+      run: |
+           rustup component add rustfmt
+           cargo fmt --check
 
     # Skip to save time - development version is enough
     # - name: Build prod version
