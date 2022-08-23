@@ -5,13 +5,6 @@
 use wasm_bindgen::prelude::*;
 extern crate console_error_panic_hook;
 
- #[cfg(test)]
-mod test_setup {
-    use wasm_bindgen_test;
-
-    wasm_bindgen_test::wasm_bindgen_test_configure!(run_in_browser);
-}
-
 use serde::Deserialize;
 
 mod shapes;
