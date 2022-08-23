@@ -3,7 +3,7 @@
 static final String PR_COMMENT_MARKER = "🚀[pr-server]\n"
 static final String SLACK_ALERTS_CHANNEL = "#cdf-ui-devs-alerts"
 static final String APP_ID = 'cdf-data-sets'
-static final String APPLICATION_REPO_ID = 'cdf-data-sets'
+static final String APPLICATION_REPO_ID = 'cdf-ui-data-sets'
 static final String NODE_VERSION = 'node:14'
 static final String VERSIONING_STRATEGY = "single-branch"
 
