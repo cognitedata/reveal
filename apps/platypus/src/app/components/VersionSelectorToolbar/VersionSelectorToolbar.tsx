@@ -4,17 +4,17 @@ import { SchemaVersionDropdown } from '@platypus-app/components/SchemaVersionDro
 import { DataModelVersion } from '@platypus/platypus-core';
 import { SelectorWrapper } from './elements';
 
-export interface DataModelHeaderProps {
+export interface VersionSelectorToolbarProps {
   title: string;
   selectedDataModelVersion: DataModelVersion;
-  onSelectDataModelVersion: (schema: DataModelVersion) => void;
+  onDataModelVersionSelect: (schema: DataModelVersion) => void;
   schemas: DataModelVersion[];
   children?: React.ReactNode;
   draftSaved: boolean;
 }
 
-export const DataModelHeader = (props: DataModelHeaderProps) => {
-  const { t } = useTranslation('DataModelHeader');
+export const VersionSelectorToolbar = (props: VersionSelectorToolbarProps) => {
+  const { t } = useTranslation('VersionSelectorToolbar');
 
   return (
     <div>
@@ -25,7 +25,7 @@ export const DataModelHeader = (props: DataModelHeaderProps) => {
             {props.selectedDataModelVersion ? (
               <SchemaVersionDropdown
                 onVersionSelect={(solutionSchema) => {
-                  props.onSelectDataModelVersion(solutionSchema);
+                  props.onDataModelVersionSelect(solutionSchema);
                 }}
                 selectedVersion={props.selectedDataModelVersion}
                 versions={props.schemas}

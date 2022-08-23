@@ -35,7 +35,7 @@ export const NavigationDataModel = () => {
         <StyledFlex alignItems="center">
           <Tooltip content="Go Back to data model list page">
             <StyledTitleButton
-              variant="ghost"
+              type="ghost"
               icon="ArrowLeft"
               iconPlacement="left"
               aria-label="Go Back to data model list page"

@@ -14,7 +14,9 @@ describe('Platypus Data Models Page - Delete Data Model', () => {
     cy.getBySel('modal-ok-button').click();
 
     cy.url().should('include', `/data-models/${modelName}/latest`);
-    cy.getCogsToast('success').contains('Data Model successfully created');
+    cy.getCogsToast('success')
+      .contains('Data Model successfully created')
+      .click();
 
     cy.getBySel('no-types-add-type-btn').click();
 
@@ -28,7 +30,9 @@ describe('Platypus Data Models Page - Delete Data Model', () => {
       .contains(modelTypeField);
 
     cy.getBySel('publish-schema-btn').click();
-    cy.getBySel('toast-title').should('have.text', 'Data model published');
+    cy.getBySel('toast-title')
+      .should('have.text', 'Data model published')
+      .click();
 
     cy.getBySel('back-to-all-models-btn').click();
     cy.url().should('not.include', `${modelName}/latest`);

@@ -3,7 +3,7 @@ import { useHistory } from 'react-router-dom';
 
 import { PageContentLayout } from '@platypus-app/components/Layouts/PageContentLayout';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
-import { Button, Flex, Label, Tooltip } from '@cognite/cogs.js';
+import { Flex } from '@cognite/cogs.js';
 import useSelector from '@platypus-app/hooks/useSelector';
 import { DataModelState } from '@platypus-app/redux/reducers/global/dataModelReducer';
 import { SplitPanelLayout } from '@platypus-app/components/Layouts/SplitPanelLayout';
@@ -21,7 +21,7 @@ import { useDataModelState } from '../../hooks/useDataModelState';
 import { SchemaEditorMode } from '../types';
 import { BreakingChangesModal } from '../components/BreakingChangesModal';
 import { EditorPanel } from '../components/EditorPanel';
-import { DataModelHeader } from '../../../../components/DataModelHeader';
+import { DataModelHeader } from '../components/DataModelHeader';
 import {
   PageToolbar,
   Size,
@@ -31,7 +31,6 @@ import { Spinner } from '@platypus-app/components/Spinner/Spinner';
 import { ErrorBoundary } from '@platypus-app/components/ErrorBoundary/ErrorBoundary';
 import { ErrorPlaceholder } from '../components/ErrorBoundary/ErrorPlaceholder';
 import { useLocalDraft } from '@platypus-app/modules/solution/data-model/hooks/useLocalDraft';
-import { DiscardButton, ReturnButton } from './elements';
 import { useInjection } from '@platypus-app/hooks/useInjection';
 import {
   useDataModelVersions,
@@ -52,27 +51,12 @@ export const DataModelPage = ({ dataModelExternalId }: DataModelPageProps) => {
   const { data: dataModelVersions, refetch: refetchDataModelVersions } =
     useDataModelVersions(dataModelExternalId);
   const queryClient = useQueryClient();
-  const {
-    currentTypeName,
-    graphQlSchema,
-    isDirty,
-    selectedVersionNumber,
-    typeFieldErrors,
-  } = useSelector<DataModelState>((state) => state.dataModel);
-  const {
-    setCurrentTypeName,
-    setGraphQlSchema,
-    setIsDirty,
-    setSelectedVersionNumber,
-    setBuiltInTypes,
-    parseGraphQLSchema,
-  } = useDataModelState();
-  const {
-    setLocalDraft,
-    removeLocalDraft,
-    getRemoteAndLocalSchemas,
-    getLocalDraft,
-  } = useLocalDraft(dataModelExternalId);
+  const { currentTypeName, editorMode, graphQlSchema, selectedVersionNumber } =
+    useSelector<DataModelState>((state) => state.dataModel);
+  const { setEditorMode, setGraphQlSchema, setIsDirty, setBuiltInTypes } =
+    useDataModelState();
+  const { setLocalDraft, removeLocalDraft, getLocalDraft } =
+    useLocalDraft(dataModelExternalId);
 
   const selectedDataModelVersion = useSelectedDataModelVersion(
     selectedVersionNumber,
@@ -86,11 +70,6 @@ export const DataModelPage = ({ dataModelExternalId }: DataModelPageProps) => {
   );
   const localDraft = getLocalDraft(selectedDataModelVersion.version);
 
-  const [mode, setMode] = useState<SchemaEditorMode>(
-    localDraft || dataModelVersions?.length === 0
-      ? SchemaEditorMode.Edit
-      : SchemaEditorMode.View
-  );
   const [saving, setSaving] = useState(false);
   const [updating, setUpdating] = useState(false);
   const [isInit, setInit] = useState(false);
@@ -101,22 +80,18 @@ export const DataModelPage = ({ dataModelExternalId }: DataModelPageProps) => {
   );
   const dataModelVersionHandler = useInjection(TOKENS.dataModelVersionHandler);
 
-  const onSelectDataModelVersion = (dataModelVersion: DataModelVersion) => {
+  /*
+  If in view mode and there are no published versions, set to edit mode. This should
+  only happen on mount and we can avoid using an effect here because that would involve
+  a wasted render.
+  */
+  if (editorMode === SchemaEditorMode.View && dataModelVersions?.length === 0) {
+    setEditorMode(SchemaEditorMode.Edit);
+  }
+
+  const handleDataModelVersionSelect = (dataModelVersion: DataModelVersion) => {
     dataModelTypeDefsBuilder.clear();
-    setGraphQlSchema(dataModelVersion.schema);
-    parseGraphQLSchema(dataModelVersion.schema);
-    setIsDirty(false);
-    setCurrentTypeName(null);
-    setSelectedVersionNumber(dataModelVersion.version);
-    setMode(
-      dataModelVersion.status === DataModelVersionStatus.DRAFT
-        ? SchemaEditorMode.Edit
-        : SchemaEditorMode.View
-    );
-    Mixpanel.track(TRACKING_TOKENS.SelectDM, {
-      dataModel: dataModelExternalId,
-      version: dataModelVersion.version,
-    });
+
     history.replace(
       `/data-models/${dataModelExternalId}/${dataModelVersion.version}/data`
     );
@@ -129,13 +104,13 @@ export const DataModelPage = ({ dataModelExternalId }: DataModelPageProps) => {
       dataModelTypeDefsBuilder.clear();
       if (localDraft) {
         setGraphQlSchema(localDraft.schema);
-        setMode(SchemaEditorMode.Edit);
+        setEditorMode(SchemaEditorMode.Edit);
 
         if (latestDataModelVersion.schema !== localDraft.schema) {
           setIsDirty(true);
         }
       } else {
-        setMode(
+        setEditorMode(
           selectedDataModelVersion.status === DataModelVersionStatus.DRAFT
             ? SchemaEditorMode.Edit
             : SchemaEditorMode.View
@@ -149,7 +124,7 @@ export const DataModelPage = ({ dataModelExternalId }: DataModelPageProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedDataModelVersion, isInit]);
 
-  const onSaveOrPublish = async () => {
+  const handleSaveOrPublish = async () => {
     try {
       const publishNewVersion =
         breakingChanges || !dataModelVersions || dataModelVersions.length === 0;
@@ -250,7 +225,7 @@ export const DataModelPage = ({ dataModelExternalId }: DataModelPageProps) => {
         });
         // Must be located here for fetching versions correctly and updating schema version selector.
         //
-        setMode(SchemaEditorMode.View);
+        setEditorMode(SchemaEditorMode.View);
       }
     } catch (error) {
       Notification({
@@ -286,176 +261,35 @@ export const DataModelPage = ({ dataModelExternalId }: DataModelPageProps) => {
     [selectedDataModelVersion, isInit]
   );
 
+  const handleDiscardClick = () => {
+    dataModelTypeDefsBuilder.clear();
+    setInit(false);
+  };
+
+  // TODO need this?
   useEffect(() => {
-    if (mode === SchemaEditorMode.Edit) {
+    if (editorMode === SchemaEditorMode.Edit) {
       onSchemaChanged(graphQlSchema);
     }
-  }, [graphQlSchema, mode, onSchemaChanged]);
-
-  const renderTools = () => {
-    const onEditClick = () => {
-      if (localDraft) {
-        setGraphQlSchema(localDraft.schema);
-      } else {
-        setLocalDraft({
-          ...selectedDataModelVersion,
-          status: DataModelVersionStatus.DRAFT,
-        });
-      }
-
-      setMode(SchemaEditorMode.Edit);
-    };
-
-    const onDiscardClick = () => {
-      // if there is no published version yet, stay in edit mode
-      if (dataModelVersions && dataModelVersions.length > 0) {
-        setMode(SchemaEditorMode.View);
-      }
-      if (localDraft) {
-        removeLocalDraft(localDraft.version);
-      }
-      setIsDirty(false);
-      dataModelTypeDefsBuilder.clear();
-      setCurrentTypeName(null);
-      setSelectedVersionNumber(DEFAULT_VERSION_PATH);
-      setInit(false);
-      Mixpanel.track(TRACKING_TOKENS.Discard, {
-        dataModel: dataModelExternalId,
-      });
-    };
-
-    const onReturnToLatestClick = () => {
-      onSelectDataModelVersion(latestDataModelVersion);
-    };
-
-    const isDraftOld =
-      !!localDraft &&
-      parseInt(latestDataModelVersion.version, 10) >
-        parseInt(localDraft.version, 10);
-
-    if (mode === SchemaEditorMode.Edit) {
-      return (
-        <div data-cy="data-model-toolbar-actions" style={{ display: 'flex' }}>
-          {isDraftOld && (
-            <Flex alignItems={'center'} style={{ marginRight: '8px' }}>
-              <Tooltip
-                position="bottom"
-                content={`Version v. ${latestDataModelVersion.version} has been published by another user, and this draft is currently based on an outdated version.`}
-              >
-                <Label size="medium" variant="warning">
-                  {t(
-                    'outdated_draft_version_warning',
-                    `Your draft is based on an outdated version`
-                  )}
-                </Label>
-              </Tooltip>
-            </Flex>
-          )}
-
-          <DiscardButton
-            type="secondary"
-            data-cy="discard-btn"
-            disabled={saving || updating}
-            onClick={onDiscardClick}
-            style={{ marginRight: '10px' }}
-          >
-            {t('discard_changes', 'Discard changes')}
-          </DiscardButton>
-
-          <Button
-            type="primary"
-            data-cy="publish-schema-btn"
-            onClick={() => {
-              onSaveOrPublish();
-            }}
-            loading={saving || updating}
-            disabled={
-              !isDirty ||
-              !graphQlSchema ||
-              selectedDataModelVersion.schema === graphQlSchema ||
-              Object.keys(typeFieldErrors).length !== 0
-            }
-          >
-            {t('publish', 'Publish')}
-          </Button>
-        </div>
-      );
-    }
-
-    if (selectedDataModelVersion.version !== latestDataModelVersion.version) {
-      return (
-        <Flex
-          className="cogs-body-2 strong"
-          style={{
-            backgroundColor: 'var(--cogs-border--status-warning--muted)',
-            borderRadius: '6px',
-            flexGrow: 1,
-            height: '36px',
-            marginLeft: '8px',
-            padding: '0 12px',
-          }}
-        >
-          <Flex
-            alignItems="center"
-            justifyContent="space-between"
-            style={{ flexGrow: 1 }}
-          >
-            {t('viewing_older_version', 'You are viewing an older version')}
-            <ReturnButton
-              data-cy="return-to-latest-btn"
-              iconPlacement="left"
-              icon="Reply"
-              onClick={onReturnToLatestClick}
-            >
-              {t('return_to_latest', 'Return to latest')}
-            </ReturnButton>
-          </Flex>
-        </Flex>
-      );
-    }
-
-    return (
-      <Button
-        type="primary"
-        data-cy="edit-schema-btn"
-        onClick={onEditClick}
-        className="editButton"
-        style={{ minWidth: '140px' }}
-      >
-        {t('edit_data_model', 'Edit data model')}
-      </Button>
-    );
-  };
-
-  const getDataModelHeaderSchemas = () => {
-    /*
-    if there's neither a draft nor any published data model versions, for example when
-    we're in a newly created data model, return an array with a default data model version
-    */
-    if (!localDraft && dataModelVersions?.length === 0) {
-      return [selectedDataModelVersion];
-    } else {
-      return getRemoteAndLocalSchemas(dataModelVersions || []);
-    }
-  };
+  }, [graphQlSchema, editorMode, onSchemaChanged]);
 
   return (
     <>
       <PageContentLayout>
         <PageContentLayout.Header>
           <DataModelHeader
+            dataModelExternalId={dataModelExternalId}
+            dataModelVersions={dataModelVersions}
+            isSaving={saving}
+            isUpdating={updating}
+            latestDataModelVersion={latestDataModelVersion}
+            localDraft={localDraft}
+            onDiscardClick={handleDiscardClick}
+            onPublishClick={handleSaveOrPublish}
             title={t('data_model_title', 'Data model')}
-            schemas={getDataModelHeaderSchemas()}
-            draftSaved={isDirty && Object.keys(typeFieldErrors).length === 0}
-            onSelectDataModelVersion={onSelectDataModelVersion}
-            selectedDataModelVersion={
-              mode === SchemaEditorMode.Edit && localDraft
-                ? localDraft
-                : selectedDataModelVersion
-            }
-          >
-            {renderTools()}
-          </DataModelHeader>
+            onDataModelVersionSelect={handleDataModelVersionSelect}
+            selectedDataModelVersion={selectedDataModelVersion}
+          />
         </PageContentLayout.Header>
         <PageContentLayout.Body style={{ flexDirection: 'row' }}>
           {isInit ? (
@@ -463,7 +297,7 @@ export const DataModelPage = ({ dataModelExternalId }: DataModelPageProps) => {
               sidebar={
                 <ErrorBoundary errorComponent={<ErrorPlaceholder />}>
                   <EditorPanel
-                    editorMode={mode}
+                    editorMode={editorMode}
                     externalId={dataModelExternalId}
                     isPublishing={saving || updating}
                   />
@@ -501,7 +335,7 @@ export const DataModelPage = ({ dataModelExternalId }: DataModelPageProps) => {
           breakingChanges={breakingChanges}
           onCancel={() => setBreakingChanges('')}
           onUpdate={() => {
-            onSaveOrPublish();
+            handleSaveOrPublish();
             Mixpanel.track(TRACKING_TOKENS.BreakingChanges, {
               dataModel: dataModelExternalId,
             });

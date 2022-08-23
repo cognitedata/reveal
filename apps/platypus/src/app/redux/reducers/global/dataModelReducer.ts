@@ -1,4 +1,5 @@
 /* eslint-disable no-param-reassign */
+import { SchemaEditorMode } from '@platypus-app/modules/solution/data-model/types';
 import { DEFAULT_VERSION_PATH } from '@platypus-app/utils/config';
 import {
   BuiltInType,
@@ -12,6 +13,7 @@ import { rootInjector, TOKENS } from '@platypus-app/di';
 
 export interface DataModelReducerState {
   currentTypeName: null | string;
+  editorMode: SchemaEditorMode;
   graphQlSchema: string;
   isDirty: boolean;
   selectedVersionNumber: string;
@@ -24,6 +26,7 @@ export interface DataModelReducerState {
 
 export const initialState = {
   currentTypeName: null as null | string,
+  editorMode: SchemaEditorMode.View,
   graphQlSchema: '',
   isDirty: false,
   selectedVersionNumber: DEFAULT_VERSION_PATH,
@@ -81,6 +84,9 @@ const dataModelSlice = createSlice({
     },
     setIsDirty: (state, action: PayloadAction<boolean>) => {
       state.isDirty = action.payload;
+    },
+    setEditorMode: (state, action: PayloadAction<SchemaEditorMode>) => {
+      state.editorMode = action.payload;
     },
     setSelectedVersionNumber: (state, action: PayloadAction<string>) => {
       state.selectedVersionNumber = action.payload;

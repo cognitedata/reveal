@@ -11,7 +11,7 @@ import {
 import useSelector from '@platypus-app/hooks/useSelector';
 import { DataModelState } from '@platypus-app/redux/reducers/global/dataModelReducer';
 import { DataModelVersion } from '@platypus/platypus-core';
-import { DataModelHeader } from '../../../components/DataModelHeader';
+import { VersionSelectorToolbar } from '@platypus-app/components/VersionSelectorToolbar';
 
 type TabType = 'preview' | 'pipelines' | 'data-quality';
 
@@ -63,7 +63,7 @@ export const DataManagementPage = ({
     dataModelExternalId
   );
 
-  const onSelectDataModelVersion = (dataModelVersion: DataModelVersion) => {
+  const handleDataModelVersionSelect = (dataModelVersion: DataModelVersion) => {
     history.replace(
       `/data-models/${dataModelExternalId}/${dataModelVersion.version}/data/data-management/preview`
     );
@@ -96,11 +96,11 @@ export const DataManagementPage = ({
   return (
     <PageContentLayout>
       <PageContentLayout.Header>
-        <DataModelHeader
+        <VersionSelectorToolbar
           title={t('data_management_title', 'Data management')}
           schemas={dataModelVersions || []}
           draftSaved={false}
-          onSelectDataModelVersion={onSelectDataModelVersion}
+          onDataModelVersionSelect={handleDataModelVersionSelect}
           selectedDataModelVersion={selectedDataModelVersion}
         />
       </PageContentLayout.Header>

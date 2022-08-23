@@ -37,6 +37,13 @@ export const useDataModelState = () => {
     [dispatch]
   );
 
+  const setEditorMode = useCallback(
+    (editorMode) => {
+      dispatch(solutionActions.setEditorMode(editorMode));
+    },
+    [dispatch]
+  );
+
   const setSelectedVersionNumber = useCallback(
     (versionNumber: string) => {
       dispatch(solutionActions.setSelectedVersionNumber(versionNumber));
@@ -64,6 +71,7 @@ export const useDataModelState = () => {
   return {
     setCurrentTypeName,
     setDataModelFieldErrors,
+    setEditorMode,
     setGraphQlSchema,
     setIsDirty,
     setSelectedVersionNumber,

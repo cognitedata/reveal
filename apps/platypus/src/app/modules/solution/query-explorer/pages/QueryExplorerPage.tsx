@@ -11,9 +11,9 @@ import {
 } from '@platypus-app/hooks/useDataModelActions';
 import useSelector from '@platypus-app/hooks/useSelector';
 import { DataModelState } from '@platypus-app/redux/reducers/global/dataModelReducer';
-import { DataModelHeader } from '../../../../components/DataModelHeader';
 import { DataModelVersion } from '@platypus/platypus-core';
 import { useHistory } from 'react-router-dom';
+import { VersionSelectorToolbar } from '@platypus-app/components/VersionSelectorToolbar';
 
 export interface QueryExplorerPageProps {
   dataModelExternalId: string;
@@ -34,7 +34,7 @@ export const QueryExplorerPage = ({
     dataModelExternalId
   );
 
-  const onSelectDataModelVersion = (dataModelVersion: DataModelVersion) => {
+  const handleDataModelVersionSelect = (dataModelVersion: DataModelVersion) => {
     history.replace(
       `/data-models/${dataModelExternalId}/${dataModelVersion.version}/data/query-explorer`
     );
@@ -43,11 +43,11 @@ export const QueryExplorerPage = ({
   return (
     <PageContentLayout>
       <PageContentLayout.Header>
-        <DataModelHeader
+        <VersionSelectorToolbar
           title={t('query_explorer_title', 'Query explorer')}
           schemas={dataModelVersions || []}
           draftSaved={false}
-          onSelectDataModelVersion={onSelectDataModelVersion}
+          onDataModelVersionSelect={handleDataModelVersionSelect}
           selectedDataModelVersion={selectedDataModelVersion}
         />
       </PageContentLayout.Header>

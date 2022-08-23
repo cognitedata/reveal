@@ -163,7 +163,7 @@ export const SchemaVisualizer = React.memo(
           />
           {isVisualizerExpanded && (
             <Button
-              variant="ghost"
+              type="ghost"
               icon="CloseLarge"
               onClick={() => setIsVisualizerExpanded(false)}
             />
