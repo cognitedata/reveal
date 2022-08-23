@@ -17,7 +17,6 @@ export class MeasurementLine {
   private _xAxisMidPoint: THREE.Vector3;
   private _yAxisMidPoint: THREE.Vector3;
   private _zAxisMidPoint: THREE.Vector3;
-  private readonly _lineWidth: number;
 
   constructor(lineWidth: number, lineColor: THREE.Color, startPoint: THREE.Vector3) {
     this._position = new Float32Array(6);
@@ -26,7 +25,6 @@ export class MeasurementLine {
     this._yAxisMidPoint = new THREE.Vector3();
     this._zAxisMidPoint = new THREE.Vector3();
     this._geometry = null;
-    this._lineWidth = lineWidth;
 
     //Adaptive Line width
     this._adaptiveWidthLineMaterial = new LineMaterial({
@@ -205,14 +203,9 @@ export class MeasurementLine {
     axisLine.setPositions(position);
     const axesLineMaterial = new LineMaterial({
       color: color,
-      linewidth: this._lineWidth,
-      depthTest: false,
-      dashed: true,
-      dashSize: 1,
-      dashScale: 10,
-      gapSize: 1,
-      transparent: true,
-      opacity: 0.5
+      linewidth: 2, // TODO 2022-07-05 larsmoa: Should this be variable?
+      worldUnits: false,
+      depthTest: false
     });
     const axisLineMesh = new Line2(axisLine, axesLineMaterial);
     axisLineMesh.computeLineDistances();
