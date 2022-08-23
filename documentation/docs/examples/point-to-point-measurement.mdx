@@ -38,8 +38,8 @@ The tool exposes events for subscribing to measurement start, end & added.
 
 const measurementTool = new MeasurementTool(viewer);
 // Subscribe to measurement events
-measurementTool.subscribe('started', () => alert('Measurement is active'));
-measurementTool.subscribe('added', () => alert('Measurement is added'));
+measurementTool.on('started', () => alert('Measurement is active'));
+measurementTool.on('added', () => alert('Measurement is added'));
 
 measurementTool.enterMeasurementMode();
 ```
@@ -51,7 +51,7 @@ To exit from measurement mode, use `MeasurementTool.exitMeasurementMode()`.
 // import { MeasurementTool } from '@cognite/reveal/tools';
 
 const measurementTool = new MeasurementTool(viewer);
-measurementTool.subscribe('ended', () => alert('Measurement is ended'));
+measurementTool.on('ended', () => alert('Measurement is ended'));
 
 measurementTool.enterMeasurementMode();
 

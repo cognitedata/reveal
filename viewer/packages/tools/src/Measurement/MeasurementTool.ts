@@ -94,6 +94,36 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
   }
 
   /**
+   * Triggered when the tool is disposed. Listeners should clean up any
+   * resources held and remove the reference to the tool.
+   */
+  on(event: 'disposed', callback: DisposedDelegate): void;
+
+  /**
+   * @example
+   * ```js
+   * measurementTool.on('added', () => alert('Measurement is added'));
+   * ```
+   */
+  on(event: 'added', callback: MeasurementAddedDelegate): void;
+
+  /**
+   * @example
+   * ```js
+   * measurementTool.on('started', () => alert('Measurement is active'));
+   * ```
+   */
+  on(event: 'started', callback: MeasurementStartedDelegate): void;
+
+  /**
+   * @example
+   * ```js
+   * measurementTool.on('ended', () => alert('Measurement is ended'));
+   * ```
+   */
+  on(event: 'ended', callback: MeasurementEndedDelegate): void;
+
+  /**
    * Subscribe to the Measurement events
    * @param event `MeasurementEvents` event
    * @param callback Callback to measurements events
@@ -174,6 +204,8 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
     if (index > -1) {
       this._measurements[index].removeMeasurement();
       this._measurements.splice(index, 1);
+    } else {
+      throw new Error('Measurement not found');
     }
   }
 
@@ -198,11 +230,10 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
   }
 
   /**
-   * Sets Measurement line width and color with @options value for the next measurment.
-   * @param options MeasurementOptions to set line width and/or color.
+   * Sets Measurement line width, color of the line and label units value for the next measurment.
+   * @param options MeasurementOptions to set line width, color and callback for custom operation on measurement labels.
    */
   setLineOptions(options: MeasurementOptions): void {
-    //Line width & color value will be used for the next measuring line
     this._options = {
       ...this._options,
       ...options
