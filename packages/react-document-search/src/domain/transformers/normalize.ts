@@ -11,19 +11,15 @@ import { getModifiedDate } from './getModifiedDate';
 import { getModifiedDateDisplay } from './getModifiedDateDisplay';
 import { getTitle } from './getTitle';
 
-/*
- * Normalize document type
- *
- * From a document search API type -> discover internal legacy document type
- *
- * This is also useful to make some fields safe
- *
- */
+/**
+ * Normalize the API Document type to an internal type that is more readable and safe
+ * */
 export const normalize = (rawAPIDoc: Document): DocumentType => {
   const possiblePath = getFilepath(rawAPIDoc);
   const splitPath = possiblePath ? possiblePath.split('/') : [];
 
   return {
+    _id: rawAPIDoc.id,
     id: String(rawAPIDoc.id), // needed to add this id here, so the selection in the table works.
     /**
      * The externalId should be used to persist the documents to feedback or favorite.
@@ -35,25 +31,27 @@ export const normalize = (rawAPIDoc: Document): DocumentType => {
     createdDisplay: getCreatedDateDisplay(rawAPIDoc),
     modifiedDisplay: getModifiedDateDisplay(rawAPIDoc),
     fullFilePath: getFullFilepath(rawAPIDoc),
-    doc: {
-      id: String(rawAPIDoc.id),
-      assetIds: rawAPIDoc.sourceFile.assetIds || [],
-      filename: rawAPIDoc.sourceFile.name,
-      fileCategory: rawAPIDoc.type || '',
-      labels: rawAPIDoc.labels || [],
-      location: rawAPIDoc.sourceFile.source || '',
-      author: rawAPIDoc.author || '',
-      title: getTitle(rawAPIDoc),
-      filesize: rawAPIDoc.sourceFile.size,
-      size: getFilesize(rawAPIDoc),
-      filepath: possiblePath || '',
-      url: rawAPIDoc.sourceFile.metadata?.url,
-      topfolder: splitPath[1] || '',
-      truncatedContent: rawAPIDoc.truncatedContent || '',
-      pageCount: rawAPIDoc.pageCount,
-    },
+
+    // NOTE: We want to mimic the response from document api as much as possible,
+    // But in this case, I feel like this is more of quality of life, thoughts?
+    sourceFile: rawAPIDoc.sourceFile,
+
+    assetIds: rawAPIDoc.sourceFile.assetIds || [],
+    filename: rawAPIDoc.sourceFile.name,
+    location: rawAPIDoc.sourceFile.source || '',
+    url: rawAPIDoc.sourceFile.metadata?.url,
+    filesize: rawAPIDoc.sourceFile.size,
+
+    fileCategory: rawAPIDoc.type || '',
+    labels: rawAPIDoc.labels || [],
+    author: rawAPIDoc.author || '',
     title: getTitle(rawAPIDoc),
+    size: getFilesize(rawAPIDoc),
+    filepath: possiblePath || '',
+    topfolder: splitPath[1] || '',
+    truncatedContent: rawAPIDoc.truncatedContent || '',
+    pageCount: rawAPIDoc.pageCount,
     highlight: { content: [] },
-    geolocation: rawAPIDoc.geoLocation as any, // Remove 'any' once type issue fixed in sdk
+    geolocation: rawAPIDoc.geoLocation,
   };
 };

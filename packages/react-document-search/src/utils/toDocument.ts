@@ -1,13 +1,9 @@
 import {
   DocumentHighlight,
   DocumentSearchItem,
+  Document,
   DocumentSearchResponse,
 } from '@cognite/sdk';
-
-import { normalize } from '../domain/transformers/normalize';
-
-import { DocumentType } from './types';
-import { detectDuplicates } from './detectDuplicates';
 
 export const getHighlight = (info?: DocumentHighlight) => {
   let result: string[] = [];
@@ -26,9 +22,9 @@ export const getHighlight = (info?: DocumentHighlight) => {
 export const toDocument = ({
   item,
   highlight,
-}: DocumentSearchItem): DocumentType => {
+}: DocumentSearchItem): Document => {
   const documentResponse = {
-    ...normalize(item),
+    ...item,
     highlight: {
       content: getHighlight(highlight),
     },
@@ -37,7 +33,6 @@ export const toDocument = ({
   return documentResponse;
 };
 
-export const toDocuments = (result: DocumentSearchResponse): DocumentType[] => {
-  const originalList = result.items.map(toDocument);
-  return detectDuplicates(originalList);
+export const toDocuments = (result: DocumentSearchResponse): Document[] => {
+  return result.items.map(toDocument);
 };

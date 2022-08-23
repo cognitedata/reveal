@@ -84,6 +84,7 @@ DEPENDENCIES = [
     "@npm//react-router-dom",
     "@npm//styled-components",
     "//packages/react-container",
+    "//packages/react-document-search",
     "//packages/metrics",
     "//packages/sidecar",
     "//packages/z-index",

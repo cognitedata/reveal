@@ -11,6 +11,7 @@ import Home from 'pages/Home';
 import Info from 'pages/Info';
 import Intercom from 'pages/Intercom';
 import { MenuBar, PAGES } from 'pages/Menubar';
+import DocumentSearch from 'pages/DocumentSearch';
 
 const App = () => (
   <Container sidecar={sidecar}>
@@ -27,6 +28,7 @@ const App = () => (
         <Route path={PAGES.COMMENTS} exact render={() => <Comments />} />
         <Route path={PAGES.COMMENTS_DRAWER} render={() => <CommentDrawer />} />
         <Route path={PAGES.COMMENTS_SLIDER} render={() => <CommentSlider />} />
+        <Route path={PAGES.DOCUMENTS} render={() => <DocumentSearch />} />
         <Redirect from="" to={PAGES.HOME} />
         <Redirect from="/" to={PAGES.HOME} />
         <Route render={() => <NotFoundPage />} />

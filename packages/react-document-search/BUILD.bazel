@@ -13,7 +13,9 @@ load("//rules/npm:append_deps.bzl", "append_deps")
 SOURCES = glob(
     [
         "src/*.tsx",
+        "src/*.ts",
         "src/**/*.ts",
+        "src/**/*.tsx",
     ],
     exclude = ["src/**/*.spec.ts"],
 )
@@ -37,25 +39,49 @@ generate_package_json_helpers(
 
 # Dependencies from package.json
 DEPENDENCIES = [
+    "@npm//@cognite/cogs.js",
+    "@npm//@cognite/discover-api-types",
     "@npm//@cognite/sdk",
     "@npm//@cognite/seismic-sdk-js",
     "@npm//lodash",
-    "@npm//react-query",
     "@npm//moment",
+    "@npm//react",
+    "@npm//react-copy-to-clipboard",
+    "@npm//react-query",
+    "@npm//react-router-dom",
+    "@npm//react-select",
+    "@npm//styled-components",
+    "//packages/react-container",
+    "//packages/auth-utils",
+    "//packages/storage",
 ]
 
 # Type dependencies from package.json
 TYPE_DEPENDENCIES = [
     "@npm//@types/lodash",
+    "@npm//@types/react",
+    "@npm//@types/react-copy-to-clipboard",
+    "@npm//@types/react-router-dom",
+    "@npm//@types/react-select",
+    "@npm//@types/styled-components",
 ]
 
 # Dev dependencies from package.json
-DEV_DEPENDENCIES = []
+DEV_DEPENDENCIES = [
+    "@npm//rollup-plugin-json",
+    "@npm//rollup-plugin-typescript2",
+    "@npm//typescript",
+]
 
 # Mappings for absolute imports from baseUrl @unused
 mappings_dict = {
-    "index.spec": "dist/index.spec",
+    "api": "dist/api",
+    "components": "dist/components",
+    "domain": "dist/domain",
+    "hooks": "dist/hooks",
     "index": "dist/index",
+    "providers": "dist/providers",
+    "utils": "dist/utils",
 }
 
 ### end of auto-generated helpers ###

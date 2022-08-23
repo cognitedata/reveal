@@ -1,7 +1,10 @@
 import {
   DocumentFilter,
   DocumentSearch,
+  DocumentSourceFile,
   DocumentSearchAggregate,
+  DocumentGeoJsonGeometry,
+  Document,
 } from '@cognite/sdk';
 import { GeoJson, Geometry } from '@cognite/seismic-sdk-js';
 
@@ -38,6 +41,11 @@ export interface DocumentQueryFacet extends QueryFacet {
   count: number;
 }
 
+export type CategoryResponse = {
+  facets: DocumentQueryFacet[];
+  total: number;
+};
+
 export type DocumentResultFacets = Record<AggregateNames, DocumentQueryFacet[]>;
 
 export type DocumentQueryFacetsNames =
@@ -59,6 +67,8 @@ export type AggregateNames =
   | 'lastcreated'
   | 'total'
   | 'pageCount';
+
+export type BatchedDocumentsFilters = { filters: DocumentFilter }[];
 
 /**
  * This is the structure that we pass into document service. This should decouple app from api side.
@@ -104,23 +114,22 @@ export interface DocumentMetadata {
   assetIds?: number[];
 }
 
-export interface DocumentType {
+export interface DocumentType extends DocumentMetadata {
   // data state
+  _id: number;
   id: string;
   externalId?: string;
-  doc: DocumentMetadata;
   highlight: DocumentHighlight;
-  filepath?: string;
   fullFilePath?: string;
   title: string;
-  labels?: string[];
-  filename?: string;
-  geolocation: Geometry | null;
+  // labels?: string[];
+  geolocation: DocumentGeoJsonGeometry | undefined;
 
   modified?: Date;
   modifiedDisplay: string;
   created?: Date;
   createdDisplay: string;
+  sourceFile: DocumentSourceFile;
 
   // ui state
   selected?: boolean;
@@ -131,7 +140,7 @@ export interface DocumentType {
 export interface DocumentResult {
   count: number;
   nextCursor?: string;
-  hits: DocumentType[];
+  hits: Document[];
   facets: DocumentResultFacets;
   aggregates?: DocumentSearchAggregate[];
 }
