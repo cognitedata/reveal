@@ -1,28 +1,31 @@
 use crate::linalg::BoundingBox;
 
-use nalgebra_glm::{inverse, max2, min2, abs, vec4_to_vec3};
+use nalgebra_glm::{abs, inverse, max2, min2, vec4_to_vec3};
 
-use crate::linalg::{Mat4, Vec3, vec3, vec4};
+use crate::linalg::{vec3, vec4, Mat4, Vec3};
 
 use crate::shapes::shape;
 
 pub struct OrientedBox {
     inv_instance_matrix: Mat4,
-    object_id: u32
+    object_id: u32,
 }
 
 impl OrientedBox {
     pub fn new(inv_instance_matrix: Mat4, object_id: u32) -> OrientedBox {
         OrientedBox {
             inv_instance_matrix: inv_instance_matrix,
-            object_id: object_id
+            object_id: object_id,
         }
     }
 }
 
 impl shape::Shape for OrientedBox {
     fn contains_point(&self, point: &Vec3) -> bool {
-        let maxv4 = max2(&abs(&(self.inv_instance_matrix * vec4(point.x, point.y, point.z, 1.0))), &vec4(0.5, 0.5, 0.5, 1.0));
+        let maxv4 = max2(
+            &abs(&(self.inv_instance_matrix * vec4(point.x, point.y, point.z, 1.0))),
+            &vec4(0.5, 0.5, 0.5, 1.0),
+        );
 
         vec4_to_vec3(&maxv4) == vec3(0.5, 0.5, 0.5)
     }
@@ -34,10 +37,12 @@ impl shape::Shape for OrientedBox {
         let instance_matrix = inverse(&self.inv_instance_matrix);
 
         for corner_index in 0..8 {
-            let corner = vec4(if (corner_index & 1) == 0 { - 0.5 } else { 0.5 },
-                              if (corner_index & 2) == 0 { - 0.5 } else { 0.5 },
-                              if (corner_index & 4) == 0 { - 0.5 } else { 0.5 },
-                              1.0);
+            let corner = vec4(
+                if (corner_index & 1) == 0 { -0.5 } else { 0.5 },
+                if (corner_index & 2) == 0 { -0.5 } else { 0.5 },
+                if (corner_index & 4) == 0 { -0.5 } else { 0.5 },
+                1.0,
+            );
 
             let transformed_corner = instance_matrix * corner;
 
@@ -45,7 +50,10 @@ impl shape::Shape for OrientedBox {
             max = max2(&max, &transformed_corner);
         }
 
-        BoundingBox { min: vec4_to_vec3(&min), max: vec4_to_vec3(&max) }
+        BoundingBox {
+            min: vec4_to_vec3(&min),
+            max: vec4_to_vec3(&max),
+        }
     }
 
     fn get_object_id(&self) -> u32 {
@@ -58,9 +66,9 @@ mod tests {
     use wasm_bindgen_test::wasm_bindgen_test;
 
     use super::OrientedBox;
-    use crate::shapes::shape::Shape;
-    use crate::linalg::Mat4;
     use super::{vec3, vec4};
+    use crate::linalg::Mat4;
+    use crate::shapes::shape::Shape;
 
     use nalgebra_glm::{abs, comp_max, half_pi, inverse, rotate_x, scale, translate, vec4_to_vec3};
 
@@ -78,22 +86,19 @@ mod tests {
         assert!(!ob.contains_point(&vec3(0.0, 0.0, 1.0)));
     }
 
-
     #[wasm_bindgen_test]
     fn translated_oriented_box_contains_only_translated_origin() {
         let ob = OrientedBox::new(
             nalgebra_glm::inverse(&translate(&Mat4::identity(), &vec3(1.0, 1.0, 1.0))),
-            0);
+            0,
+        );
         assert!(!ob.contains_point(&vec3(0.0, 0.0, 0.0)));
         assert!(ob.contains_point(&vec3(1.0, 1.0, 1.0)));
     }
 
-
     #[wasm_bindgen_test]
     fn scaled_oriented_box_contains_only_points_in_scaled_direction() {
-        let ob = OrientedBox::new(
-            inverse(&scale(&Mat4::identity(), &vec3(3.0, 1.0, 1.0))),
-            0);
+        let ob = OrientedBox::new(inverse(&scale(&Mat4::identity(), &vec3(3.0, 1.0, 1.0))), 0);
         assert!(ob.contains_point(&vec3(1.0, 0.0, 0.0)));
         assert!(!ob.contains_point(&vec3(0.0, 1.0, 0.0)));
         assert!(!ob.contains_point(&vec3(0.0, 0.0, 1.0)));
@@ -101,11 +106,10 @@ mod tests {
 
     #[wasm_bindgen_test]
     fn scaled_and_rotated_oriented_box_contains_the_right_points() {
-
-        let matrix = inverse(
-            &scale(
-                &rotate_x(
-                    &Mat4::identity(), half_pi()), &vec3(1.0, 3.0, 1.0)));
+        let matrix = inverse(&scale(
+            &rotate_x(&Mat4::identity(), half_pi()),
+            &vec3(1.0, 3.0, 1.0),
+        ));
 
         let ob = OrientedBox::new(matrix, 0);
         assert!(!ob.contains_point(&vec3(1.0, 0.0, 0.0)));
@@ -115,7 +119,6 @@ mod tests {
 
     #[wasm_bindgen_test]
     fn identitys_bounding_box_is_identity() {
-
         let original_box = OrientedBox::new(Mat4::identity(), 0);
         let bounding_box = original_box.create_bounding_box();
 
@@ -125,14 +128,10 @@ mod tests {
 
     #[wasm_bindgen_test]
     fn bounding_box_contains_transformed_origin() {
-
-        let matrix =
-            translate(
-                &scale(
-                    &rotate_x(&Mat4::identity(), 1.0),
-                    &vec3(2.0, 1.0, 0.5)),
-                &vec3(10.0, 93.0, 0.2));
-
+        let matrix = translate(
+            &scale(&rotate_x(&Mat4::identity(), 1.0), &vec3(2.0, 1.0, 0.5)),
+            &vec3(10.0, 93.0, 0.2),
+        );
 
         let original_box = OrientedBox::new(inverse(&matrix), 0);
         let bounding_box = original_box.create_bounding_box();

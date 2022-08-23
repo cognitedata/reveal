@@ -1,4 +1,4 @@
-use crate::linalg::{BoundingBox,vec3,Vec3,Vec3WithIndex,boxes_overlap};
+use crate::linalg::{boxes_overlap, vec3, BoundingBox, Vec3, Vec3WithIndex};
 
 pub const MAX_POINTS_PER_NODE: usize = 1_000;
 pub const MIN_OCTREE_NODE_SIZE: f64 = 0.0625;
@@ -11,30 +11,35 @@ use crate::shapes::shape::Shape;
 pub struct OctreeNode<'a> {
     children: Option<Box<[OctreeNode<'a>; 8]>>,
     points: Option<&'a [Vec3WithIndex]>,
-    bounding_box: BoundingBox
+    bounding_box: BoundingBox,
 }
 
 impl<'a> OctreeNode<'a> {
     pub fn new(bounding_box: BoundingBox, points: &'a mut [Vec3WithIndex]) -> OctreeNode {
-        if points.len() <= MAX_POINTS_PER_NODE ||
-            bounding_box.max.x - bounding_box.min.x < MIN_OCTREE_NODE_SIZE {
-
+        if points.len() <= MAX_POINTS_PER_NODE
+            || bounding_box.max.x - bounding_box.min.x < MIN_OCTREE_NODE_SIZE
+        {
             OctreeNode {
                 children: Option::None,
                 points: Option::Some(points),
-                bounding_box: bounding_box
+                bounding_box: bounding_box,
             }
         } else {
             let children = split(points, bounding_box);
             OctreeNode {
                 children: Option::Some(children),
                 points: Option::None,
-                bounding_box: bounding_box
+                bounding_box: bounding_box,
             }
         }
     }
 
-    pub fn assign_object_ids(&self, bounding_box: &BoundingBox, shape: &Box<dyn Shape>, object_ids: &js_sys::Uint16Array) -> () {
+    pub fn assign_object_ids(
+        &self,
+        bounding_box: &BoundingBox,
+        shape: &Box<dyn Shape>,
+        object_ids: &js_sys::Uint16Array,
+    ) -> () {
         if self.children.is_some() {
             for child in self.children.as_ref().unwrap().iter() {
                 if boxes_overlap(&child.bounding_box, bounding_box) {
@@ -51,7 +56,10 @@ impl<'a> OctreeNode<'a> {
     }
 }
 
-fn split<'a>(points: &'a mut [Vec3WithIndex], bounding_box: BoundingBox) -> Box<[OctreeNode<'a>; 8]> {
+fn split<'a>(
+    points: &'a mut [Vec3WithIndex],
+    bounding_box: BoundingBox,
+) -> Box<[OctreeNode<'a>; 8]> {
     let middle = (bounding_box.min + bounding_box.max) / 2.0;
     let splits = find_splits(points, &middle);
 
@@ -75,7 +83,6 @@ fn split<'a>(points: &'a mut [Vec3WithIndex], bounding_box: BoundingBox) -> Box<
             let slc = std::slice::from_raw_parts_mut(ptr, split_maxes[i] - splits[i]);
 
             children.push(OctreeNode::new(*bb, slc));
-
         }
     }
 
@@ -83,7 +90,7 @@ fn split<'a>(points: &'a mut [Vec3WithIndex], bounding_box: BoundingBox) -> Box<
 }
 
 fn find_splits(points: &mut [Vec3WithIndex], middle: &Vec3) -> [usize; 8] {
-    let mut sector_counts = [0;8];
+    let mut sector_counts = [0; 8];
     for point in points.iter() {
         let index = get_octree_child_index(point, &middle);
         sector_counts[index] += 1;
@@ -99,9 +106,9 @@ fn find_splits(points: &mut [Vec3WithIndex], middle: &Vec3) -> [usize; 8] {
 }
 
 fn get_octree_child_index(point: &Vec3WithIndex, middle: &Vec3) -> usize {
-    ( if point.vec[0] < middle.x { 0 } else { 1 } ) +
-        ( if point.vec[1] < middle.y { 0 } else { 2 } ) +
-        ( if point.vec[2] < middle.z { 0 } else { 4 } )
+    (if point.vec[0] < middle.x { 0 } else { 1 })
+        + (if point.vec[1] < middle.y { 0 } else { 2 })
+        + (if point.vec[2] < middle.z { 0 } else { 4 })
 }
 
 /// Takes the indices with a starting index for each of the eight children and groups
@@ -111,14 +118,12 @@ fn get_octree_child_index(point: &Vec3WithIndex, middle: &Vec3) -> usize {
 /// Whenever it comes back to the point where it started the current iteration, it breaks
 /// and continues from the next slice that is not fully "sorted"
 fn sort_points_into_sectors(points: &mut [Vec3WithIndex], splits: [usize; 8], middle: &Vec3) -> () {
-
     let mut offsets = splits.clone();
     let mut max_inds = splits.clone();
     max_inds.rotate_left(1);
     max_inds[7] = points.len();
 
     for current_partition in 0..8 {
-
         if offsets[current_partition] >= max_inds[current_partition] {
             // This slice is filled, don't iterate from this
             continue;
@@ -151,7 +156,10 @@ fn sort_points_into_sectors(points: &mut [Vec3WithIndex], splits: [usize; 8], mi
 }
 
 fn get_child_bounding_boxes(bounding_box: &BoundingBox) -> [BoundingBox; 8] {
-    let vecc = BoundingBox { min: vec3(0., 0., 0.), max: vec3(0., 0., 0.) };
+    let vecc = BoundingBox {
+        min: vec3(0., 0., 0.),
+        max: vec3(0., 0., 0.),
+    };
     let mut boxes: [BoundingBox; 8] = [vecc; 8];
 
     let middle = (bounding_box.min + bounding_box.max) / 2.0;
@@ -160,9 +168,21 @@ fn get_child_bounding_boxes(bounding_box: &BoundingBox) -> [BoundingBox; 8] {
         let mut min = vec3(0., 0., 0.);
         let mut max = vec3(0., 0., 0.);
 
-        (min.x, max.x) = if (i & 1) == 0 { (bounding_box.min.x, middle.x) } else { (middle.x, bounding_box.max.x) };
-        (min.y, max.y) = if (i & 2) == 0 { (bounding_box.min.y, middle.y) } else { (middle.y, bounding_box.max.y) };
-        (min.z, max.z) = if (i & 4) == 0 { (bounding_box.min.z, middle.z) } else { (middle.z, bounding_box.max.z) };
+        (min.x, max.x) = if (i & 1) == 0 {
+            (bounding_box.min.x, middle.x)
+        } else {
+            (middle.x, bounding_box.max.x)
+        };
+        (min.y, max.y) = if (i & 2) == 0 {
+            (bounding_box.min.y, middle.y)
+        } else {
+            (middle.y, bounding_box.max.y)
+        };
+        (min.z, max.z) = if (i & 4) == 0 {
+            (bounding_box.min.z, middle.z)
+        } else {
+            (middle.z, bounding_box.max.z)
+        };
 
         boxes[i] = BoundingBox { min: min, max: max };
     }
@@ -174,8 +194,8 @@ fn get_child_bounding_boxes(bounding_box: &BoundingBox) -> [BoundingBox; 8] {
 mod tests {
     use wasm_bindgen_test::wasm_bindgen_test;
 
-    use super::{Vec3WithIndex,vec3};
-    use super::{find_splits,sort_points_into_sectors,get_octree_child_index};
+    use super::{find_splits, get_octree_child_index, sort_points_into_sectors};
+    use super::{vec3, Vec3WithIndex};
 
     #[wasm_bindgen_test]
     fn test_sector_inplace_sorting() {
@@ -186,10 +206,14 @@ mod tests {
         let original_points = points.clone();
 
         for i in 0..NUM_POINTS {
-            let p = vec3(((i * 4) as f64).sin(), ((i * 7) as f64).cos(), ((i * 3) as f64 + 0.12).sin());
+            let p = vec3(
+                ((i * 4) as f64).sin(),
+                ((i * 7) as f64).cos(),
+                ((i * 3) as f64 + 0.12).sin(),
+            );
             points.push(Vec3WithIndex {
                 vec: p,
-                index: i as u32
+                index: i as u32,
             });
         }
 
@@ -201,9 +225,16 @@ mod tests {
         let mut num_points_checked = 0;
 
         for sector_index in 0..8 {
-            let max_ind = if sector_index == 7 { points.len() } else { splits[sector_index + 1] };
+            let max_ind = if sector_index == 7 {
+                points.len()
+            } else {
+                splits[sector_index + 1]
+            };
             for point_index in splits[sector_index]..max_ind {
-                assert_eq!(get_octree_child_index(&points[point_index], &middle), sector_index);
+                assert_eq!(
+                    get_octree_child_index(&points[point_index], &middle),
+                    sector_index
+                );
                 num_points_checked += 1;
             }
         }

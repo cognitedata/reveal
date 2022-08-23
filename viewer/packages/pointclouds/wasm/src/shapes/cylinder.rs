@@ -1,6 +1,6 @@
-use nalgebra_glm::{min2, max2, dot, vec3_to_vec4, vec4_to_vec3};
+use nalgebra_glm::{dot, max2, min2, vec3_to_vec4, vec4_to_vec3};
 
-use crate::linalg::{Vec3, Mat4, vec3, vec4, BoundingBox};
+use crate::linalg::{vec3, vec4, BoundingBox, Mat4, Vec3};
 use crate::shapes::shape::Shape;
 
 pub struct Cylinder {
@@ -18,7 +18,7 @@ impl Cylinder {
             center_b: center_b,
             radius: radius,
             object_id: object_id,
-            _middle: (center_a + center_b) / 2.0
+            _middle: (center_a + center_b) / 2.0,
         }
     }
 }
@@ -38,13 +38,16 @@ impl Shape for Cylinder {
     }
 
     fn create_bounding_box(&self) -> BoundingBox {
-
         let axis_vec = (self.center_a - self.center_b) / 2.0;
         let axis_option_0 = vec3(1.0, 0.0, 0.0);
         let axis_option_1 = vec3(0.0, 1.0, 0.0);
 
         let chosen_axis =
-            if dot(&axis_option_0, &axis_vec).abs() < dot(&axis_option_1, &axis_vec).abs() { axis_option_0 } else { axis_option_1 };
+            if dot(&axis_option_0, &axis_vec).abs() < dot(&axis_option_1, &axis_vec).abs() {
+                axis_option_0
+            } else {
+                axis_option_1
+            };
 
         let perp_vector_0: Vec3 = chosen_axis.cross(&axis_vec).normalize() * self.radius;
         let perp_vector_1: Vec3 = perp_vector_0.cross(&axis_vec).normalize() * self.radius;
@@ -53,16 +56,21 @@ impl Shape for Cylinder {
         matrix.set_column(0, &vec3_to_vec4(&axis_vec));
         matrix.set_column(1, &vec3_to_vec4(&perp_vector_0));
         matrix.set_column(2, &vec3_to_vec4(&perp_vector_1));
-        matrix.set_column(3, &vec4(self._middle.x, self._middle.y, self._middle.z, 1.0));
+        matrix.set_column(
+            3,
+            &vec4(self._middle.x, self._middle.y, self._middle.z, 1.0),
+        );
 
         let mut min = vec4(f64::INFINITY, f64::INFINITY, f64::INFINITY, 0.0);
         let mut max = vec4(f64::NEG_INFINITY, f64::NEG_INFINITY, f64::NEG_INFINITY, 0.0);
 
         for corner_index in 0..8 {
-            let corner = vec4(if (corner_index & 1) == 0 { - 1.0 } else { 1.0 },
-                              if (corner_index & 2) == 0 { - 1.0 } else { 1.0 },
-                              if (corner_index & 4) == 0 { - 1.0 } else { 1.0 },
-                              1.0);
+            let corner = vec4(
+                if (corner_index & 1) == 0 { -1.0 } else { 1.0 },
+                if (corner_index & 2) == 0 { -1.0 } else { 1.0 },
+                if (corner_index & 4) == 0 { -1.0 } else { 1.0 },
+                1.0,
+            );
 
             let transformed_corner = matrix * corner;
 
@@ -70,7 +78,10 @@ impl Shape for Cylinder {
             max = max2(&max, &transformed_corner);
         }
 
-        BoundingBox { min: vec4_to_vec3(&min), max: vec4_to_vec3(&max) }
+        BoundingBox {
+            min: vec4_to_vec3(&min),
+            max: vec4_to_vec3(&max),
+        }
     }
 
     fn get_object_id(&self) -> u32 {
@@ -84,8 +95,8 @@ mod tests {
 
     use super::Cylinder;
 
+    use crate::linalg::vec3;
     use crate::shapes::shape::Shape;
-    use crate::linalg::{vec3};
 
     #[wasm_bindgen_test]
     fn cylinder_at_origin_contains_middle_point() {
@@ -121,6 +132,5 @@ mod tests {
         assert!(bounding_box.contains_point(&center_a));
         assert!(bounding_box.contains_point(&center_b));
         assert!(!bounding_box.contains_point(&(center_a + axis)));
-
     }
 }
