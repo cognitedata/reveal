@@ -49,7 +49,6 @@ type MeasurementEvents = 'added' | 'started' | 'ended' | 'disposed';
  */
 export class MeasurementTool extends Cognite3DViewerToolBase {
   private _options: Required<MeasurementOptions>;
-
   private readonly _viewer: Cognite3DViewer;
   private readonly _geometryGroup = new THREE.Group();
   private readonly _measurements: MeasurementManager[];
@@ -96,13 +95,17 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
   /**
    * Triggered when the tool is disposed. Listeners should clean up any
    * resources held and remove the reference to the tool.
+   * @example
+   * ```js
+   * measurementTool.on('disposed', onMeasurementDispose);
+   * ```
    */
   on(event: 'disposed', callback: DisposedDelegate): void;
 
   /**
    * @example
    * ```js
-   * measurementTool.on('added', () => alert('Measurement is added'));
+   * measurementTool.on('added', onMeasurementAdded);
    * ```
    */
   on(event: 'added', callback: MeasurementAddedDelegate): void;
@@ -110,7 +113,7 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
   /**
    * @example
    * ```js
-   * measurementTool.on('started', () => alert('Measurement is active'));
+   * measurementTool.on('started', onMeasurementStarted);
    * ```
    */
   on(event: 'started', callback: MeasurementStartedDelegate): void;
@@ -118,7 +121,7 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
   /**
    * @example
    * ```js
-   * measurementTool.on('ended', () => alert('Measurement is ended'));
+   * measurementTool.on('ended', onMeasurementEnded);
    * ```
    */
   on(event: 'ended', callback: MeasurementEndedDelegate): void;
@@ -149,6 +152,38 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
         assertNever(event, `Unsupported event: '${event}'`);
     }
   }
+
+  /**
+   * @example
+   * ```js
+   * measurementTool.off('disposed', onMeasurementDispose);
+   * ```
+   */
+  off(event: 'disposed', callback: DisposedDelegate): void;
+
+  /**
+   * @example
+   * ```js
+   * measurementTool.off('added', onMeasurementAdded);
+   * ```
+   */
+  off(event: 'added', callback: MeasurementAddedDelegate): void;
+
+  /**
+   * @example
+   * ```js
+   * measurementTool.off('started', onMeasurementStarted);
+   * ```
+   */
+  off(event: 'started', callback: MeasurementStartedDelegate): void;
+
+  /**
+   * @example
+   * ```js
+   * measurementTool.off('ended', onMeasurementEnded);
+   * ```
+   */
+  off(event: 'ended', callback: MeasurementEndedDelegate): void;
 
   /**
    * Unsubscribe to the Measurement event
@@ -195,7 +230,7 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
 
   /**
    * Removes a measurement from the Cognite3DViewer.
-   * @param measurement Measurement to be removed from @Cognite3DViewer.
+   * @param measurement Measurement to be removed from Cognite3DViewer.
    */
   removeMeasurement(measurement: Measurement): void {
     const index = this._measurements.findIndex(
@@ -230,7 +265,7 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
   }
 
   /**
-   * Sets Measurement line width, color of the line and label units value for the next measurment.
+   * Sets Measurement line width, color and label units value for the next measurment.
    * @param options MeasurementOptions to set line width, color and callback for custom operation on measurement labels.
    */
   setLineOptions(options: MeasurementOptions): void {
@@ -243,7 +278,7 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
   /**
    * Update selected line width.
    * @param measurement Measurement.
-   * @param lineWidth Width of the measuring line mesh.
+   * @param lineWidth Width of the measuring line.
    */
   updateLineWidth(measurement: Measurement, lineWidth: number): void {
     const index = this._measurements.findIndex(
@@ -257,7 +292,7 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
   /**
    * Update selected line color.
    * @param measurement Measurement.
-   * @param color Color of the measuring line mesh.
+   * @param color Color of the measuring line.
    */
   updateLineColor(measurement: Measurement, color: THREE.Color): void {
     const index = this._measurements.findIndex(
@@ -270,7 +305,7 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
 
   /**
    * Get all measurements from {@link Cognite3DViewer}.
-   * @returns Array of Measurement containing Id, start point, end point & measured distance.
+   * @returns Array of Measurements containing Id, start point, end point & measured distance.
    */
   getAllMeasurements(): Measurement[] {
     return this._measurements.map(measurement => measurement.getMeasurement()!);
@@ -365,6 +400,10 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
     return `${distanceInMeters.toFixed(2)} m`;
   }
 
+  /**
+   * To cancel an active measurement `Escape` key is processed and remove all its related data & events.
+   * @param event Keyboard event to process for `Escape` key
+   */
   private onKeyDown(event: KeyboardEvent) {
     if (event.metaKey || event.altKey || event.ctrlKey) {
       return;

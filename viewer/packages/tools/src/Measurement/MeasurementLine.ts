@@ -18,7 +18,7 @@ export class MeasurementLine {
     this._position = new Float32Array(6);
     this._geometry = null;
 
-    //Adaptive Line width & line width is multipled with scale factor due to adaptive calculation in shaders.
+    //Adaptive Line width
     this._adaptiveWidthLineMaterial = new LineMaterial({
       color: lineColor.getHex(),
       linewidth: lineWidth,
@@ -87,8 +87,8 @@ export class MeasurementLine {
   }
 
   /**
-   * Calculate mid point betwen in the Line.
-   * @returns Returns mid point between two points.
+   * Calculate mid point on the Line.
+   * @returns Returns mid point between start and end points.
    */
   getMidPointOnLine(): THREE.Vector3 {
     const startPoint = new THREE.Vector3(this._position[0], this._position[1], this._position[2]);
@@ -117,7 +117,7 @@ export class MeasurementLine {
   }
 
   /**
-   * Generating Line geometry and create the mesh.
+   * Generate line geometry and create the mesh.
    * @param point Point from where the line will be generated.
    */
   private startLine(point: THREE.Vector3): void {

@@ -49,7 +49,7 @@ export class MeasurementManager {
   }
 
   /**
-   * Update the measurement line to end at the provided mouse coordinates
+   * Update the measurement line end point to the provided mouse coordinates
    */
   update(mouseEvent: { offsetX: number; offsetY: number }): void {
     if (this._line === null) {
@@ -92,7 +92,7 @@ export class MeasurementManager {
 
     this._meshGroup.remove(this._line.meshes);
 
-    if (this._htmlOverlay && this._labelElement) {
+    if (this._labelElement) {
       this._htmlOverlay.remove(this._labelElement);
     }
 
@@ -154,7 +154,6 @@ export class MeasurementManager {
     return this._options.lineWidth;
   }
 
-  // TODO 2022-07-05 larsmoa: Return proper color
   private determineLineColorFromOptions(): THREE.Color {
     return this._options.color;
   }
