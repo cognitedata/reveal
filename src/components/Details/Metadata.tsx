@@ -1,14 +1,22 @@
 import React, { useState, useMemo } from 'react';
 import { Input } from 'antd';
+import { Row } from 'react-table';
 import { Checkbox, Table } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
-type RowType = {
-  [key: string]: string;
-};
+// TODO  Needs to be removed once implemented in our library
+interface DataSource {
+  id: string;
+  key: string;
+  value: string;
+}
 
 const sortTypes = {
-  alphanumeric: (row1: RowType, row2: RowType, columnName: number) => {
+  alphanumeric: (
+    row1: Row<DataSource>,
+    row2: Row<DataSource>,
+    columnName: string
+  ) => {
     const value1 = row1.values[columnName];
     const value2 = row2.values[columnName];
     const string1 = value1.toLowerCase();
@@ -67,12 +75,13 @@ export function Metadata({ metadata }: { metadata?: { [k: string]: string } }) {
         </FilterContainer>
       </MetadataHeader>
       <MetadataTableContainer>
-        <Table
+        <Table<DataSource>
           dataSource={filteredMetadata.map(item => ({
             key: item[0],
             id: item[0],
             value: item[1],
           }))}
+          // @ts-ignore
           tableConfig={{ sortTypes }}
           columns={[
             {

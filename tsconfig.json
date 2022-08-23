@@ -26,6 +26,6 @@
     "node_modules",
     "tests/*",
     "**/*.(spec|test).ts+(|x)",
-    "**/*.test.ts",
+    "**/*.test.ts"
   ]
 }
