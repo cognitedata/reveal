@@ -8,14 +8,15 @@ import { DemoWrapper } from '@site/docs/components/DemoWrapper';
 import useBaseUrl from '@docusaurus/useBaseUrl';
 
 The `MeasurementTool` is a measuring tool for point to point distance in 3D models, by clicking to- and from-points. The default measurement unit is meters, but the tool provides callbacks to allow configuring the unit.
+When exiting from the tool, all the measurement will be removed from the `Cognite3DViewer`.
 
-To effectively edit measuring line values, tool is configurable with `MeasurementOptions` options to set
+To effectively edit measuring line properties, tool is configurable with `MeasurementOptions` options to set
 - Custom label content for each measurement.
 - Size of line width in meters.
 - Color of line.
 
 :::note
-Recommended: `CameraControlsOptions.changeCameraTargetOnClick` should be set to `false` to avoid click event when `MeasurementTool` is active.
+Recommended: `CameraControlsOptions.changeCameraTargetOnClick` should be set to `false` to avoid click event registering for camera when `MeasurementTool` is active.
 :::
 
 <DemoWrapper name="Cognite3DViewerDemo" />
@@ -31,7 +32,7 @@ measurementTool.enterMeasurementMode();
 ```
 
 ## Events
-The tool contains events for subscribe to measurement start, end & added.
+The tool exposes events for subscribing to measurement start, end & added.
 ```jsx runnable
 // import { MeasurementTool } from '@cognite/reveal/tools';
 
@@ -64,8 +65,25 @@ setTimeout(() => {
 ### Cancel active measurement
 To cancel the current/active measurement, the user can use `ESC` key which will kill the active measurement
 
-## Set width and color of the measuring line
+### Change unit
+
+It's also possible to apply custom label content for the measurement.
+The tool provides a callback, `MeasurementOptions.distanceToLabelCallback`, that can be
+used to trigger custom operation like changing the measuring units to feet:
+
+```jsx runnable
+// import { MeasurementTool } from '@cognite/reveal/tools';
+
+const measurementTool = new MeasurementTool(viewer, {distanceToLabelCallback: (distanceInMeters) => {
+  // 1 meter = 3.281 feet
+  return `${(distanceInMeters * 3.281).toFixed(2)} ft`;
+  }});
+measurementTool.enterMeasurementMode();
+```
+
+## Set width, color & label units of the measuring line
 To change width and color of the line, use `MeasurementTool.setLineOptions(options: MeasurementOptions)`. MeasurementOptions expects
+  - `distanceToLabelCallback` : callback for custom operation on measurement labels
   - `lineWidth` : number - units in meters
   - `color` : THREE.color
 
@@ -75,7 +93,11 @@ The updated line width and color will be applied for the next measuring distance
 // import { MeasurementTool } from '@cognite/reveal/tools';
 
 const lineOptions = {
-  lineWidth: 3,
+  distanceToLabelCallback: (distanceInMeters) => {
+  // 1 meter = 0.01 centimeter
+  return `${(distanceInMeters * 0.01).toFixed(2)} cm`;
+  }
+  lineWidth: 0.3,
   color: new THREE.Color(0xff0000)
 };
 const measurementTool = new MeasurementTool(viewer);
@@ -123,33 +145,18 @@ measurementTool.enterMeasurementMode();
 
 //Changes measurement line color & width to random values every 5 seconds.
 setInterval(() => {
-    const measurements = measurementTool.getAllMeasurements();
+  const measurements = measurementTool.getAllMeasurements();
 
-    measurements.forEach(measurement => {
-      const color = Math.floor(Math.random() * 16777215);
-      measurementTool.updateLineColor(measurement, new THREE.Color(color));
+  measurements.forEach(measurement => {
+    const color = Math.floor(Math.random() * 16777215);
+    measurementTool.updateLineColor(measurement, new THREE.Color(color));
 
-      //Update line width
-      const lineWidth = (Math.random() * 1.0) + 0.2;
-      measurementTool.updateLineWidth(measurement, lineWidth);
-      viewer.requestRedraw();
-    });
+    //Update line width
+    const lineWidth = (Math.random() * 1.0) + 0.2;
+    measurementTool.updateLineWidth(measurement, lineWidth);
+    viewer.requestRedraw();
+  });
 }, 5000);
-```
-### Change unit
-
-It's also possible to apply custom label content for the measurement.
-The tool provides a callback, `MeasurementOptions.distanceToLabelCallback`, that can be
-used to trigger custom operation like changing the measuring units to feet:
-
-```jsx runnable
-// import { MeasurementTool } from '@cognite/reveal/tools';
-
-const measurementTool = new MeasurementTool(viewer, {distanceToLabelCallback: (distanceInMeters) => {
-      // 1 meter = 3.281 feet
-      return `${(distanceInMeters * 3.281).toFixed(2)} ft`;
-     }});
-measurementTool.enterMeasurementMode();
 ```
 
 ### Remove measurement
@@ -164,13 +171,13 @@ measurementTool.enterMeasurementMode();
 
 //remove the first measurement in the added list
 setTimeout(() => {
-    const measurements = measurementTool.getAllMeasurements();
+  const measurements = measurementTool.getAllMeasurements();
 
-    if (measurements[0]) {
-      measurementTool.removeMeasurement(measurements[0]);
-      viewer.requestRedraw();
-    }
-  }, 6000);
+  if (measurements[0]) {
+    measurementTool.removeMeasurement(measurements[0]);
+    viewer.requestRedraw();
+  }
+}, 6000);
 ```
 
 To remove all measurement from the viewer, use `MeasurementTool.removeAllMeasurement()`

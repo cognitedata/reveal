@@ -10,7 +10,7 @@ export class MeasurementUi {
   private _guiController: dat.GUIController[];
 
   private state = {
-    lineWidth: 2,
+    lineWidth: 0.1,
     color: 0xff8746,
     allMeasurement: false,
     showAllMeasurementLabels: true
@@ -45,7 +45,7 @@ export class MeasurementUi {
   }
 
   private addGUI() {
-    this._guiController.push(this._gui.add(this.state, 'lineWidth', 0.001, 25, 0.001).name('Line width').onFinishChange(lineWidth => {
+    this._guiController.push(this._gui.add(this.state, 'lineWidth', 0.001, 10, 0.001).name('Line width').onFinishChange(lineWidth => {
       this.state.lineWidth = lineWidth;
       this.setMeasurementLineOptions();
     }));

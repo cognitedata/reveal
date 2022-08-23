@@ -74,7 +74,7 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
 
   private static readonly defaultLineOptions: Required<MeasurementOptions> = {
     distanceToLabelCallback: d => MeasurementTool.metersLabelCallback(d),
-    lineWidth: 2,
+    lineWidth: 0.1,
     color: new THREE.Color(0xff8746)
   };
 
@@ -159,8 +159,6 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
    * Exit measurement mode.
    */
   exitMeasurementMode(): void {
-    //clear all mesh, geometry & event handling.
-    this.removeAllMeasurements();
     this.removeEventHandling();
     this._events.measurementEnded.fire();
   }
@@ -183,6 +181,7 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
    * Removes all measurements from the Cognite3DViewer.
    */
   removeAllMeasurements(): void {
+    //clear all mesh, geometry & labels.
     this._measurements.forEach(measurement => {
       measurement.removeMeasurement();
     });
@@ -250,6 +249,7 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
    * Dispose Measurement Tool.
    */
   dispose(): void {
+    this.removeAllMeasurements();
     this.exitMeasurementMode();
     this._htmlOverlay.dispose();
     this._events.measurementAdded.unsubscribeAll();
