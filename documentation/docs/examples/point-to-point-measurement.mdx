@@ -94,10 +94,10 @@ The updated line width and color will be applied for the next measuring distance
 
 const lineOptions = {
   distanceToLabelCallback: (distanceInMeters) => {
-  // 1 meter = 0.01 centimeter
-  return `${(distanceInMeters * 0.01).toFixed(2)} cm`;
+  // 1 meter = 100 centimeter
+  return `${(distanceInMeters * 100).toFixed(2)} cm`;
   },
-  lineWidth: 0.3,
+  lineWidth: 0.1,
   color: new THREE.Color(0xff0000)
 };
 const measurementTool = new MeasurementTool(viewer);
