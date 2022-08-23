@@ -1,6 +1,6 @@
 use crate::linalg::BoundingBox;
 
-use nalgebra_glm::{abs, inverse, max2, min2, vec4_to_vec3};
+use nalgebra_glm::{inverse, max2, min2, vec4_to_vec3};
 
 use crate::linalg::{vec3, vec4, Mat4, Vec3};
 
@@ -22,12 +22,11 @@ impl OrientedBox {
 
 impl shape::Shape for OrientedBox {
     fn contains_point(&self, point: &Vec3) -> bool {
-        let maxv4 = max2(
-            &abs(&(self.inv_instance_matrix * vec4(point.x, point.y, point.z, 1.0))),
-            &vec4(0.5, 0.5, 0.5, 1.0),
-        );
-
-        vec4_to_vec3(&maxv4) == vec3(0.5, 0.5, 0.5)
+        let transformed_point = vec4_to_vec3(&(self.inv_instance_matrix * vec4(point.x, point.y, point.z, 1.0)));
+        BoundingBox {
+            min: vec3(-0.5, -0.5, -0.5),
+            max: vec3(0.5, 0.5, 0.5)
+        }.contains_point(&transformed_point)
     }
 
     fn create_bounding_box(&self) -> BoundingBox {
