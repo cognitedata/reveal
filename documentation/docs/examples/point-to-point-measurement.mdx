@@ -82,12 +82,12 @@ measurementTool.enterMeasurementMode();
 ```
 
 ## Set width, color & label units of the measuring line
-To change width and color of the line, use `MeasurementTool.setLineOptions(options: MeasurementOptions)`. MeasurementOptions expects
+To change width, color of the line and label units, use `MeasurementTool.setLineOptions(options: MeasurementOptions)`. MeasurementOptions expects
   - `distanceToLabelCallback` : callback for custom operation on measurement labels
   - `lineWidth` : number - units in meters
   - `color` : THREE.color
 
-The updated line width and color will be applied for the next measuring distance.
+The updated line width, color and label units will be applied for the next measuring distance.
 
 ```jsx runnable
 // import { MeasurementTool } from '@cognite/reveal/tools';
