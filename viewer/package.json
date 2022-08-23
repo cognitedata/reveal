@@ -34,7 +34,7 @@
     "retarget-types": "tsc-alias -p tsconfig.webpack.json -v true",
     "test": "yarn run test:ts && yarn run test:wasm",
     "test:ts": "yarn run build:wasm-test && jest --maxWorkers=4",
-    "test:wasm": "yarn workspaces foreach run run-wasm-pack test --headless --firefox ./wasm",
+    "test:wasm": "yarn workspaces foreach run run-wasm-pack test --headless --chrome ./wasm",
     "coverage": "yarn run build:wasm-test && jest --coverage",
     "lint": "eslint . --ext .ts,.js --max-warnings 0 --cache",
     "prebump": "yarn version --no-git-tag-version && yarn && cd ../documentation && yarn replace-latest-by-next",
