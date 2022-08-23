@@ -4,8 +4,8 @@
   ],
   "packageRules": [
     {
-      "matchPaths": ["parser-worker", "i3df", "f3df", "openctm"],
-      "groupName": "parser-worker",
+      "matchPaths": ["legacy-parser-worker"],
+      "groupName": "legacy-parser-worker",
       "enabled": false
     },
     {
@@ -19,15 +19,15 @@
     {
       "matchUpdateTypes": ["major"],
       "automerge": false
-    },    
+    },
     {
       "matchPackagePrefixes": [""],
       "addLabels": ["dependencies", "auto-update"],
       "prConcurrentLimit": 5
     },
     {
-      "matchLanguages": ["rust"],
-      "enabled": false
+      "matchPaths": ["viewer"],
+      "extends": ["github>Turbo87/renovate-config//rust/updateToolchain"]
     },
     {
       "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
