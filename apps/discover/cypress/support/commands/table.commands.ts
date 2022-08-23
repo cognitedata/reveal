@@ -5,14 +5,14 @@ const getResultsTable = (tableDataTestId?: string) => {
 const toggleSelectAllRows = (tableDataTestId?: string) => {
   cy.getResultsTable(tableDataTestId)
     .get('[name="Toggle All Rows Selected"]')
-    //.should('be.visible') // 08-08-22 this doesnt work on new cogs.js checkboxes
+    // .should('be.visible') // 08-08-22 this doesnt work on new cogs.js checkboxes
     .click({ force: true });
 };
 
 const checkIfAllRowsSelected = (selected = true, tableDataTestId?: string) => {
   cy.getResultsTable(tableDataTestId)
     .get('[name="Toggle All Rows Selected"]')
-    //.find('input[type=checkbox]')
+    // .find('input[type=checkbox]')
     .should(selected ? 'be.checked' : 'not.be.checked');
 };
 
@@ -21,11 +21,12 @@ const toggleSelectNthRow = (nth: number, tableDataTestId?: string) => {
     .findAllByTestId('table-row')
     .eq(nth)
     .get('[name="Toggle Row Selected"]')
-    /*.then(item => {
+    .eq(nth)
+    /* .then(item => {
       console.log("Item toggler", item);
       //item.parent().should('be.visible');
       return item;
-    })*/
+    }) */
     .click({ force: true });
 };
 
@@ -47,7 +48,7 @@ const checkIfNthRowIsSelected = (
     .findAllByTestId('table-row')
     .eq(nth)
     .get('[name="Toggle Row Selected"]')
-    //.find('input[type=checkbox]')
+    // .find('input[type=checkbox]')
     .should(selected ? 'be.checked' : 'not.be.checked');
 };
 
