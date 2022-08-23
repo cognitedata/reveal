@@ -121,7 +121,9 @@ If you want to add Rust/Webassembly code to a package, you should add the follow
   }
 }
 ```
-and let the Cargo crate reside in `<package-name>/wasm`. Then the crate will automatically be built and tested by the `build` and `test` scripts in the workspace root.
+and let the Cargo crate reside in `<package-name>/wasm`. Then the crate will automatically be built and tested by the `build` and `test` scripts in the workspace root respectively.
+
+When writing tests in Rust, the tests must be annotated with the `#[wasm_bindgen_test]` attribute, instead of the conventional `#[test]`, and `wasm-bindgen-test` must be added as a (dev-)dependency. All tests are run as part of the normal `yarn test` script in the root folder, but can also be run manually with e.g. `wasm-pack test --chrome --headless` in the relevant `wasm` folder.
 
 It is also possible to run and test a local package in isolation from the rest of Reveal.
 Convenience functionality has been created to make this easy.
