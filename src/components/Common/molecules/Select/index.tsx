@@ -10,7 +10,6 @@ import { Spin } from 'antd';
 import { Flex } from 'components/Common';
 import { FilterPlaceholder } from 'components/Filters';
 import styled from 'styled-components';
-// import { getContainer } from 'utils/utils';
 import Layers from 'utils/zindex';
 import { CustomSelectProps } from './types';
 import { selectStyles } from './styles';
@@ -66,7 +65,7 @@ export const Select = (props: CustomSelectProps) => {
             <Flex row>
               <Body level={2} strong>
                 {title}
-              </Body>{' '}
+              </Body>
               <FilterPlaceholder
                 text={selectedNr ? `${selectedNr} selected` : 'All'}
               />

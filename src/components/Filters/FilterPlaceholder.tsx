@@ -12,8 +12,7 @@ export const FilterPlaceholder = (props: Props) => {
       level={2}
       style={{
         color: Colors['greyscale-grey6'].hex(),
-        textOverflow: 'ellipsis',
-        margin: 0,
+        margin: '0 0 0 2px',
         padding: 0,
       }}
     >
