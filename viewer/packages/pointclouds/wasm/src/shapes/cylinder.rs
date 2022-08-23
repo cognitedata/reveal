@@ -28,22 +28,6 @@ impl Cylinder {
 
 impl Shape for Cylinder {
     fn contains_point(&self, point: &Vec3) -> bool {
-        /* const { tempPoint0, tempPoint1, tempAxis } = cylinderContainsPointVars;
-
-        tempPoint0.copy(point);
-        tempPoint1.copy(point);
-        tempAxis.copy(this._axis);
-
-        const distAlongAxis = tempPoint0.sub(this._middle).dot(this._axis);
-        const distVectorAlongAxis = tempAxis.multiplyScalar(distAlongAxis);
-        const axisRelativeMiddle = tempPoint1.sub(distVectorAlongAxis);
-
-        const distToAxis = axisRelativeMiddle.sub(this._middle).length();
-
-        return Math.abs(distAlongAxis) < this._halfHeight && distToAxis < this._radius; */
-
-        //
-
         let axis = (self.center_a - self.center_b).normalize();
         let half_height = (self.center_a - self.center_b).magnitude() / 2.0;
 
@@ -57,24 +41,6 @@ impl Shape for Cylinder {
     }
 
     fn create_bounding_box(&self) -> BoundingBox {
-        /* const axisVec = this._middle.clone().sub(this._centerB);
-
-        const axisOption0 = new THREE.Vector3(1, 0, 0);
-        const axisOption1 = new THREE.Vector3(0, 1, 0);
-
-        const chosenAxis =
-        Math.abs(axisOption0.dot(axisVec)) < Math.abs(axisOption1.dot(axisVec)) ? axisOption0 : axisOption1;
-
-        const perpVector0 = chosenAxis.clone().cross(axisVec).normalize().multiplyScalar(this.radius);
-        const perpVector1 = perpVector0.clone().cross(axisVec).normalize().multiplyScalar(this.radius);
-
-        const matrix = new THREE.Matrix4().makeBasis(axisVec, perpVector0, perpVector1);
-        matrix.setPosition(this._middle);
-
-        const baseBox = new THREE.Box3(new THREE.Vector3(-1, -1, -1), new THREE.Vector3(1, 1, 1));
-        return baseBox.applyMatrix4(matrix); */
-
-        //
 
         let axis_vec = (self.center_a - self.center_b) / 2.0;
         let axis_option_0 = vec3(1.0, 0.0, 0.0);
