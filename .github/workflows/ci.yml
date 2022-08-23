@@ -37,6 +37,11 @@ jobs:
       continue-on-error: false
       run: yarn run lint
 
+    - name: Rust fmt
+      working-directory: viewer
+      continue-on-error: false
+      run: cargo fmt --check
+
     # Skip to save time - development version is enough
     # - name: Build prod version
     #   working-directory: viewer
