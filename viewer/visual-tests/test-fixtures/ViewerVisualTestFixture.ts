@@ -3,21 +3,21 @@
  */
 import { Cognite3DViewer, Cognite3DModel } from '../../packages/api';
 import { VisualTestFixture } from './VisualTestFixture';
-import { addModel, createCognite3DViewer } from './utilities/cognite3DViewerHelpers';
+import { addModels, createCognite3DViewer } from './utilities/cognite3DViewerHelpers';
 import { DeferredPromise } from '../../packages/utilities';
 import { CognitePointCloudModel } from '../../packages/pointclouds';
 import { AxisViewTool } from '../../packages/tools';
 
 export type ViewerTestFixtureComponents = {
   viewer: Cognite3DViewer;
-  model: Cognite3DModel | CognitePointCloudModel;
+  models: (Cognite3DModel | CognitePointCloudModel)[];
 };
 
 export abstract class ViewerVisualTestFixture implements VisualTestFixture {
-  private readonly _localModelUrl: string | undefined;
+  private readonly _localModelUrls: string[];
 
-  constructor(localModelUrl?: string) {
-    this._localModelUrl = localModelUrl;
+  constructor(...localModelUrls: string[]) {
+    this._localModelUrls = localModelUrls.length > 0 ? localModelUrls : ['primitives'];
   }
 
   public async run(): Promise<void> {
@@ -26,14 +26,14 @@ export abstract class ViewerVisualTestFixture implements VisualTestFixture {
 
     this.setupDom(viewer);
 
-    const model = await addModel(viewer, this._localModelUrl);
+    const models = await addModels(viewer, this._localModelUrls);
     new AxisViewTool(viewer);
 
-    viewer.fitCameraToModel(model);
+    viewer.fitCameraToModel(models[0]);
 
-    await this.modelLoaded(model, modelLoadedPromise);
+    await this.modelLoaded(models[0], modelLoadedPromise);
 
-    await this.setup({ viewer, model });
+    await this.setup({ viewer, models });
 
     function modelLoadingCallback(itemsLoaded: number, itemsRequested: number, _: number) {
       if (itemsRequested > 0 && itemsLoaded === itemsRequested) {

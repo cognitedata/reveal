@@ -33,8 +33,9 @@ function createFirstTreeIndicesSet(nodeCount: number): IndexSet {
 
 export default class ReassignNodeStyleVisualTest extends ViewerVisualTestFixture {
   public setup(testFixtureComponents: ViewerTestFixtureComponents): Promise<void> {
-    const { model } = testFixtureComponents;
+    const { models } = testFixtureComponents;
 
+    const model = models[0];
     if (!(model instanceof Cognite3DModel)) {
       return Promise.resolve();
     }

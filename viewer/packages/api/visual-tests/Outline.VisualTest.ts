@@ -13,9 +13,11 @@ import {
 
 export default class OutlineVisualTest extends ViewerVisualTestFixture {
   public setup(testFixtureComponents: ViewerTestFixtureComponents): Promise<void> {
-    const { viewer, model } = testFixtureComponents;
+    const { viewer, models } = testFixtureComponents;
 
     viewer.setBackgroundColor(new THREE.Color('lightGray'));
+
+    const model = models[0];
 
     if (model instanceof Cognite3DModel) {
       model.setRotationFromEuler(new THREE.Euler(Math.PI / 4, 0, 0));

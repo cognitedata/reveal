@@ -11,12 +11,12 @@ import {
 
 export default class HighlightWithDefaultGhostingTestPage extends ViewerVisualTestFixture {
   public setup(testFixtureComponents: ViewerTestFixtureComponents): Promise<void> {
-    const { model } = testFixtureComponents;
+    const { models } = testFixtureComponents;
 
-    if (model instanceof Cognite3DModel) {
-      model.setDefaultNodeAppearance(DefaultNodeAppearance.Ghosted);
+    if (models[0] instanceof Cognite3DModel) {
+      models[0].setDefaultNodeAppearance(DefaultNodeAppearance.Ghosted);
       const nodes = new TreeIndexNodeCollection([...Array(15).keys()]);
-      model.assignStyledNodeCollection(nodes, DefaultNodeAppearance.Highlighted);
+      models[0].assignStyledNodeCollection(nodes, DefaultNodeAppearance.Highlighted);
     }
 
     return Promise.resolve();

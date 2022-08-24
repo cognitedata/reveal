@@ -11,7 +11,9 @@ import {
 
 export default class NodeTransformVisualTest extends ViewerVisualTestFixture {
   public async setup(testFixtureComponents: ViewerTestFixtureComponents): Promise<void> {
-    const { model } = testFixtureComponents;
+    const { models } = testFixtureComponents;
+
+    const model = models[0];
 
     if (model instanceof Cognite3DModel) {
       const scale = new THREE.Matrix4().makeScale(3, 3, 3);
