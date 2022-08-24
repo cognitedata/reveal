@@ -10,7 +10,12 @@ export type DistanceToLabelDelegate = (distanceInMeters: number) => string;
 /**
  * Delegate for measurement added events.
  */
-export type MeasurementAddedDelegate = () => void;
+export type MeasurementAddedDelegate = (event: {
+  measurementId: number;
+  startPoint: THREE.Vector3;
+  endPoint: THREE.Vector3;
+  distanceInMeters: number;
+}) => void;
 
 /**
  * Delegate for measurement started events.

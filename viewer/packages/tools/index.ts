@@ -42,4 +42,9 @@ export { Cognite3DViewerToolBase } from './src/Cognite3DViewerToolBase';
 export { DebugLoadedSectorsTool, DebugLoadedSectorsToolOptions } from './src/DebugLoadedSectorsTool';
 export { MeasurementTool } from './src/Measurement/MeasurementTool';
 export { Measurement } from './src/Measurement/MeasurementManager';
-export { MeasurementOptions } from './src/Measurement/types';
+export {
+  MeasurementOptions,
+  MeasurementAddedDelegate,
+  MeasurementStartedDelegate,
+  MeasurementEndedDelegate
+} from './src/Measurement/types';

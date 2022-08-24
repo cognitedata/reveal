@@ -39,7 +39,7 @@ The tool exposes events for subscribing to measurement start, end & added.
 const measurementTool = new MeasurementTool(viewer);
 // Subscribe to measurement events
 measurementTool.on('started', () => alert('Measurement is active'));
-measurementTool.on('added', () => alert('Measurement is added'));
+measurementTool.on('added', (measurement) => { alert(`Measurement added with ${JSON.stringify(measurement.distanceInMeters)} distance!`) });
 
 measurementTool.enterMeasurementMode();
 ```

@@ -2,7 +2,6 @@
  * Copyright 2022 Cognite AS
  */
 
-import assert from 'assert';
 import * as THREE from 'three';
 import { HtmlOverlayTool } from '../HtmlOverlay/HtmlOverlayTool';
 import { MeasurementLabels } from './MeasurementLabels';
@@ -18,16 +17,21 @@ export type Measurement = {
 
 export class MeasurementManager {
   private readonly _measurementLabel: MeasurementLabels;
-  private _line: MeasurementLine | null = null;
+  private readonly _line: MeasurementLine;
   private readonly _options: Required<MeasurementOptions>;
   private readonly _domElement: HTMLElement;
   private readonly _camera: THREE.Camera;
   private readonly _meshGroup: THREE.Group;
   private readonly _htmlOverlay: HtmlOverlayTool;
-  private _labelElement: HTMLDivElement | null = null;
+  private _labelElement: HTMLDivElement | undefined;
   private readonly _distanceToCamera: number;
   private readonly _startPoint: THREE.Vector3;
-  private _measurement!: Measurement;
+  private _measurement: Measurement = {
+    measurementId: 0,
+    startPoint: new THREE.Vector3(),
+    endPoint: new THREE.Vector3(),
+    distanceInMeters: 0
+  };
 
   constructor(
     viewerDomElement: HTMLElement,
@@ -45,16 +49,14 @@ export class MeasurementManager {
     this._meshGroup = meshGroup;
     this._startPoint = startPoint;
     this._distanceToCamera = this._camera.getWorldPosition(new THREE.Vector3()).distanceTo(startPoint);
-    this.startMeasurement(startPoint);
+    this._line = this.startMeasurement(startPoint);
+    this._meshGroup.add(this._line.meshes);
   }
 
   /**
    * Update the measurement line end point to the provided mouse coordinates
    */
   update(mouseEvent: { offsetX: number; offsetY: number }): void {
-    if (this._line === null) {
-      throw new Error('Not currently measuring, call startMeasurement() first');
-    }
     const { offsetX, offsetY } = mouseEvent;
     this._line.updateLine(this.pointerTo3DPosition(offsetX, offsetY));
   }
@@ -64,10 +66,6 @@ export class MeasurementManager {
    * @param point World position at which measuring line ends.
    */
   endMeasurement(point: THREE.Vector3): void {
-    if (this._line === null) {
-      throw new Error('Not currently measuring, call startMeasurement() first');
-    }
-
     const { distanceToLabelCallback } = this._options;
     //Update the line with final end point.
     this._line.updateLine(point);
@@ -86,27 +84,19 @@ export class MeasurementManager {
    * Remove the measurement.
    */
   removeMeasurement(): void {
-    if (this._line === null) {
-      throw new Error('Not currently measuring, call startMeasurement() first');
-    }
-
     this._meshGroup.remove(this._line.meshes);
 
     if (this._labelElement) {
       this._htmlOverlay.remove(this._labelElement);
     }
 
-    if (this._line !== null) {
+    if (this._line) {
       this._line.dispose();
-      this._line = null;
     }
   }
 
-  getMeasurement(): Readonly<Measurement> | null {
-    if (this._measurement) {
-      return this._measurement;
-    }
-    return null;
+  getMeasurement(): Readonly<Measurement> {
+    return this._measurement;
   }
 
   /**
@@ -114,7 +104,7 @@ export class MeasurementManager {
    * @param lineWidth Width of the measuring line mesh.
    */
   updateLineWidth(lineWidth: number): void {
-    this._line?.updateLineWidth(lineWidth);
+    this._line.updateLineWidth(lineWidth);
   }
 
   /**
@@ -122,20 +112,17 @@ export class MeasurementManager {
    * @param color Color of the measuring line mesh.
    */
   updateLineColor(color: THREE.Color): void {
-    this._line?.updateLineColor(color);
+    this._line.updateLineColor(color);
   }
 
   /**
    * Start the measurement.
    * @param point World position to start measurement operation from.
    */
-  private startMeasurement(point: THREE.Vector3): void {
-    assert(this._line === null, 'Already measuring');
-
+  private startMeasurement(point: THREE.Vector3): MeasurementLine {
     const lineWidth = this.determineLineWidthFromOptions();
     const lineColor = this.determineLineColorFromOptions();
-    this._line = new MeasurementLine(lineWidth, lineColor, point);
-    this._meshGroup.add(this._line.meshes);
+    return new MeasurementLine(lineWidth, lineColor, point);
   }
 
   /**

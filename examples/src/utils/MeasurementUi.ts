@@ -10,7 +10,7 @@ export class MeasurementUi {
   private _guiController: dat.GUIController[];
 
   private state = {
-    lineWidth: 0.1,
+    lineWidth: 0.01,
     color: 0xff8746,
     allMeasurement: false,
     showAllMeasurementLabels: true

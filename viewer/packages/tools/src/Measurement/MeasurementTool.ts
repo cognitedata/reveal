@@ -16,7 +16,6 @@ import { MeasurementManager, Measurement } from './MeasurementManager';
 import { MeasurementLabels } from './MeasurementLabels';
 import { HtmlOverlayTool, HtmlOverlayToolOptions } from '../HtmlOverlay/HtmlOverlayTool';
 import rulerSvg from './styles/ruler.svg';
-import assert from 'assert';
 
 type MeasurementEvents = 'added' | 'started' | 'ended' | 'disposed';
 
@@ -52,7 +51,7 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
   private readonly _viewer: Cognite3DViewer;
   private readonly _geometryGroup = new THREE.Group();
   private readonly _measurements: MeasurementManager[];
-  private _currentMeasurementIndex: number;
+  private _activeMeasurement: MeasurementManager | undefined;
   private readonly _htmlOverlay: HtmlOverlayTool;
 
   private readonly _handleLabelClustering = this.createCombineClusterElement.bind(this);
@@ -73,7 +72,7 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
 
   private static readonly defaultLineOptions: Required<MeasurementOptions> = {
     distanceToLabelCallback: d => MeasurementTool.metersLabelCallback(d),
-    lineWidth: 0.1,
+    lineWidth: 0.01,
     color: new THREE.Color(0xff8746)
   };
 
@@ -86,7 +85,6 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
     };
     this._measurements = [];
     this._htmlOverlay = new HtmlOverlayTool(this._viewer, this._overlayOptions);
-    this._currentMeasurementIndex = -1;
 
     this._geometryGroup.name = MeasurementTool.name;
     this._viewer.addObject3D(this._geometryGroup);
@@ -137,16 +135,16 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
   ): void {
     switch (event) {
       case 'added':
-        this._events.measurementAdded.subscribe(callback);
+        this._events.measurementAdded.subscribe(callback as MeasurementAddedDelegate);
         break;
       case 'started':
-        this._events.measurementStarted.subscribe(callback);
+        this._events.measurementStarted.subscribe(callback as MeasurementStartedDelegate);
         break;
       case 'ended':
-        this._events.measurementEnded.subscribe(callback);
+        this._events.measurementEnded.subscribe(callback as MeasurementEndedDelegate);
         break;
       case 'disposed':
-        this._events.disposed.subscribe(callback);
+        this._events.disposed.subscribe(callback as DisposedDelegate);
         break;
       default:
         assertNever(event, `Unsupported event: '${event}'`);
@@ -196,16 +194,16 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
   ): void {
     switch (event) {
       case 'added':
-        this._events.measurementAdded.unsubscribe(callback);
+        this._events.measurementAdded.unsubscribe(callback as MeasurementAddedDelegate);
         break;
       case 'started':
-        this._events.measurementStarted.unsubscribe(callback);
+        this._events.measurementStarted.unsubscribe(callback as MeasurementStartedDelegate);
         break;
       case 'ended':
-        this._events.measurementEnded.unsubscribe(callback);
+        this._events.measurementEnded.unsubscribe(callback as MeasurementEndedDelegate);
         break;
       case 'disposed':
-        this._events.disposed.unsubscribe(callback);
+        this._events.disposed.unsubscribe(callback as DisposedDelegate);
         break;
       default:
         assertNever(event, `Unsupported event: '${event}'`);
@@ -253,7 +251,6 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
       measurement.removeMeasurement();
     });
     this._measurements.splice(0);
-    this._currentMeasurementIndex = -1;
   }
 
   /**
@@ -308,7 +305,7 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
    * @returns Array of Measurements containing Id, start point, end point & measured distance.
    */
   getAllMeasurements(): Measurement[] {
-    return this._measurements.map(measurement => measurement.getMeasurement()!);
+    return this._measurements.map(measurement => measurement.getMeasurement());
   }
 
   /**
@@ -317,6 +314,7 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
   dispose(): void {
     this.removeAllMeasurements();
     this.exitMeasurementMode();
+    this._activeMeasurement?.removeMeasurement();
     this._htmlOverlay.dispose();
     this._events.measurementAdded.unsubscribeAll();
     this._events.measurementStarted.unsubscribeAll();
@@ -338,7 +336,7 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
     this._viewer.off('click', this._handlePointerClick);
   }
 
-  private async onPointerClick(event: any): Promise<void> {
+  private async onPointerClick(event: { offsetX: number; offsetY: number }): Promise<void> {
     const { offsetX, offsetY } = event;
 
     const intersection = await this._viewer.getIntersectionFromPixel(offsetX, offsetY);
@@ -347,37 +345,32 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
       return;
     }
 
-    const measurementActive = this._currentMeasurementIndex !== -1;
-
-    if (!measurementActive) {
+    if (!this._activeMeasurement) {
       const camera = this._viewer.getCamera();
       const domElement = this._viewer.domElement;
-      this._measurements.push(
-        new MeasurementManager(
-          domElement,
-          camera,
-          this._geometryGroup,
-          this._options!,
-          this._htmlOverlay,
-          intersection.point
-        )
+      this._activeMeasurement = new MeasurementManager(
+        domElement,
+        camera,
+        this._geometryGroup,
+        this._options,
+        this._htmlOverlay,
+        intersection.point
       );
-      this._currentMeasurementIndex = this._measurements.length - 1;
       this._viewer.domElement.addEventListener('mousemove', this._handlePointerMove);
       window.addEventListener('keydown', this._handleMeasurementCancel);
     } else {
-      this._measurements[this._currentMeasurementIndex].endMeasurement(intersection.point);
-      this._currentMeasurementIndex = -1;
+      this._activeMeasurement.endMeasurement(intersection.point);
+      this._events.measurementAdded.fire(this._activeMeasurement.getMeasurement());
+      this._measurements.push(this._activeMeasurement);
+      this._activeMeasurement = undefined;
       this._viewer.domElement.removeEventListener('mousemove', this._handlePointerMove);
       window.removeEventListener('keydown', this._handleMeasurementCancel);
-      this._events.measurementAdded.fire();
     }
     this._viewer.requestRedraw();
   }
 
   private onPointerMove(event: { offsetX: number; offsetY: number }) {
-    assert(this._currentMeasurementIndex !== -1);
-    this._measurements[this._currentMeasurementIndex].update(event);
+    this._activeMeasurement!.update(event);
     this._viewer.requestRedraw();
   }
 
@@ -411,11 +404,15 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
 
     if (event.key === 'Escape') {
       //Cancel active measurement
-      this._measurements[this._currentMeasurementIndex].removeMeasurement();
-      this._viewer.requestRedraw();
-      this._currentMeasurementIndex = -1;
-      this._viewer.domElement.removeEventListener('mousemove', this._handlePointerMove);
+      this.cancelActiveMeasurement();
       event.preventDefault();
     }
+  }
+
+  private cancelActiveMeasurement() {
+    this._activeMeasurement!.removeMeasurement();
+    this._activeMeasurement = undefined;
+    this._viewer.requestRedraw();
+    this._viewer.domElement.removeEventListener('mousemove', this._handlePointerMove);
   }
 }
