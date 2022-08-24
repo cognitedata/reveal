@@ -16,11 +16,18 @@ export function SelectionRenderer(props: SelectableTableCellRenderer) {
     evt.stopPropagation();
   };
   return (
-    <Checkbox
+    <div
+      role="button"
+      tabIndex={0}
       onClick={handleClick}
-      name={`check-${props.rowData.rowKey}`}
-      checked={selectedIds?.includes(props.rowData.id)}
-      onChange={handleChange}
-    />
+      onKeyDown={handleClick}
+    >
+      <Checkbox
+        // onClick={handleClick}
+        name={`check-${props.rowData.rowKey}`}
+        checked={selectedIds?.includes(props.rowData.id)}
+        onChange={handleChange}
+      />
+    </div>
   );
 }
