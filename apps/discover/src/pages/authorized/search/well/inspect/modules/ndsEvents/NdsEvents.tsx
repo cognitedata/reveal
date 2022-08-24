@@ -83,7 +83,7 @@ const NdsEvents: React.FC = () => {
           )
         : []
     );
-  }, [selectedWellboreId]);
+  }, [selectedWellboreId, data]);
 
   const handleChangeFilter = (
     filter: keyof AppliedFilters,
