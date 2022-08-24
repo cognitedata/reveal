@@ -20,6 +20,7 @@ import {
   Sequence,
   Timeseries,
   FileInfo,
+  IdEither,
 } from '@cognite/sdk';
 import flatten from 'lodash/flatten';
 import {
@@ -29,6 +30,7 @@ import {
 } from '@cognite/annotations';
 import uniqueBy from 'lodash/uniqBy';
 import { AppContext } from 'context/AppContext';
+import { useUniqueCdfItems } from 'hooks';
 
 const PAGE_SIZE = 20;
 
@@ -507,25 +509,37 @@ export const useFilesAnnotatedWithResourceCount = (
     enabled
   );
 
-  const ids = useMemo(
+  const fileIds = useMemo(
     () =>
-      new Set(
-        annotations
-          .map(
-            ({ metadata = {} }) =>
-              metadata[`${PREFIX}file_external_id`] ||
-              metadata[`${PREFIX}file_id`]
-          )
-          .filter(Boolean)
-      ),
+      uniqueBy(
+        annotations.map(({ metadata = {} }) => {
+          if (metadata[`${PREFIX}file_external_id`]) {
+            return {
+              externalId: metadata[`${PREFIX}file_external_id`],
+            };
+          }
+          if (metadata[`${PREFIX}file_id`]) {
+            return { id: parseInt(metadata[`${PREFIX}file_id`], 10) };
+          }
+          return undefined;
+        }),
+        (
+          i:
+            | { id: number; externalId: undefined }
+            | { id: undefined; externalId: string }
+            | undefined
+        ) => i?.externalId || i?.id
+      ).filter(Boolean) as IdEither[],
     [annotations]
   );
 
-  let count = 0;
-  if (ids.size > 0) {
-    count = ids.size;
-  }
-  return { data: count, ...rest };
+  const { data: items = [] } = useUniqueCdfItems<FileInfo>(
+    'files',
+    fileIds,
+    true
+  );
+
+  return { data: items.length, ...rest };
 };
 
 export const useRelatedResourceCount = (
