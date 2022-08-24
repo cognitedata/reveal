@@ -4,12 +4,7 @@ import { memo, useState } from 'react';
 import { NodeProps, Position } from 'react-flow-renderer';
 import styled from 'styled-components/macro';
 import { NodeTypes, SourceOption } from '../types';
-import {
-  ColorBlock,
-  InputWrapper,
-  NodeWrapper,
-  NoDragWrapper,
-} from './elements';
+import { ColorBlock, InputWrapper, NodeWrapper } from './elements';
 import NodeHandle from './NodeHandle';
 import NodeWithActionBar from './NodeWithActionBar';
 
@@ -84,16 +79,14 @@ const SourceNode = memo(({ id, data, selected }: NodeProps<SourceNodeData>) => {
           <InputWrapper>
             <ColorBlock color={sourceItem.color} />
             <SelectWrapper>
-              <NoDragWrapper>
-                <Select
-                  value={sourceItem}
-                  options={sourceOptions}
-                  onChange={(option: SourceOption) =>
-                    onSourceItemChange(id, option.value, option.type)
-                  }
-                  closeMenuOnSelect
-                />
-              </NoDragWrapper>
+              <Select
+                value={sourceItem}
+                options={sourceOptions}
+                onChange={(option: SourceOption) =>
+                  onSourceItemChange(id, option.value, option.type)
+                }
+                closeMenuOnSelect
+              />
             </SelectWrapper>
           </InputWrapper>
         )}
