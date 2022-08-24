@@ -12,6 +12,8 @@ import {
   DIAGRAM_PARSER_TYPE,
   DIAGRAM_PARSER_SITE_KEY,
   DIAGRAM_PARSER_UNIT_KEY,
+  DIAGRAM_PARSER_JSON_EXTERNAL_ID,
+  DIAGRAM_PARSER_LAST_PARSED_KEY,
 } from '@cognite/pid-tools';
 
 import SiteContext from '../../../components/SiteContext/SiteContext';
@@ -79,12 +81,12 @@ const useCdfDiagrams = () => {
     const fileNameWithoutExtension = getFileNameWithoutExtension(
       graph.documentMetadata.name
     );
-    const externalId = `${fileNameWithoutExtension}.json`;
+    const jsonExternalId = `${fileNameWithoutExtension}.json`;
     const pdfExternalId = `${fileNameWithoutExtension}.pdf`;
 
-    const fileInfo: ExternalFileInfo = {
-      name: externalId,
-      externalId,
+    const jsonFileInfo: ExternalFileInfo = {
+      name: jsonExternalId,
+      externalId: jsonExternalId,
       mimeType: 'application/json',
       source: DIAGRAM_PARSER_SOURCE,
       metadata: {
@@ -97,7 +99,7 @@ const useCdfDiagrams = () => {
       },
     };
     try {
-      await client?.files.upload(fileInfo, JSON.stringify(graph), true);
+      await client?.files.upload(jsonFileInfo, JSON.stringify(graph), true);
       setSaveStatus(SaveState.Saved);
 
       const lineNumbersToAddToPdfMetadata =
@@ -105,6 +107,7 @@ const useCdfDiagrams = () => {
           ? [graph.documentMetadata.lineNumber]
           : graph.lineNumbers;
 
+      // Update PDF metadata
       await client?.files.update([
         {
           externalId: pdfExternalId,
@@ -113,7 +116,7 @@ const useCdfDiagrams = () => {
               add: {
                 [DIAGRAM_PARSER_TYPE]: graph.documentMetadata.type,
                 [DIAGRAM_PARSER_SITE_KEY]: site,
-                [getGraphExternalIdKey(LINEWALK_DATA_VERSION)]: externalId,
+                [getGraphExternalIdKey(LINEWALK_DATA_VERSION)]: jsonExternalId,
                 ...lineNumbersMetadata(
                   LINEWALK_DATA_VERSION,
                   site,
@@ -121,6 +124,22 @@ const useCdfDiagrams = () => {
                   lineNumbersToAddToPdfMetadata
                 ),
                 unit: graph.documentMetadata.unit,
+              },
+              remove: [],
+            },
+          },
+        },
+      ]);
+
+      // Update SVG metadata
+      await client?.files.update([
+        {
+          externalId: graph.documentMetadata.name,
+          update: {
+            metadata: {
+              add: {
+                [DIAGRAM_PARSER_JSON_EXTERNAL_ID]: jsonExternalId,
+                [DIAGRAM_PARSER_LAST_PARSED_KEY]: `${Date.now()}`,
               },
               remove: [],
             },

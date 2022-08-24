@@ -6,9 +6,10 @@ import {
   Select,
   TextInput,
 } from '@cognite/cogs.js';
-import { FileInfo } from '@cognite/sdk';
+import { FileInfo, Metadata } from '@cognite/sdk';
 import { Dispatch, useContext, useRef, useState } from 'react';
 import styled from 'styled-components';
+import { DIAGRAM_PARSER_LAST_PARSED_KEY } from '@cognite/pid-tools';
 
 import SiteContext from '../../../../components/SiteContext/SiteContext';
 import mapValueToOption from '../../../../utils/mapValueToOption';
@@ -42,7 +43,7 @@ interface DiagramListProps {
 
 interface DiagramTableData extends TableData {
   externalId: string;
-  uploadedDate: string;
+  lastParsed: string;
 }
 
 const useTableSelection = (dispatch: Dispatch<DiagramsReducerAction>) => {
@@ -63,6 +64,25 @@ const useTableSelection = (dispatch: Dispatch<DiagramsReducerAction>) => {
   return { setSelection, dispatchSelection };
 };
 
+const fileMetadataLastParsedToString = (
+  metadata: Metadata | undefined
+): string => {
+  if (!metadata) return '';
+
+  const lastParsedString = metadata[DIAGRAM_PARSER_LAST_PARSED_KEY];
+  if (!lastParsedString) return '';
+
+  const epoch = parseInt(lastParsedString, 10);
+  return new Date(epoch).toLocaleDateString([], {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+  });
+};
+
 const DiagramList = ({
   diagrams,
   selectedUnparsedDiagrams,
@@ -75,7 +95,7 @@ const DiagramList = ({
     .map((file) => ({
       id: file.id,
       externalId: file.externalId!,
-      uploadedDate: file.lastUpdatedTime.toLocaleDateString(),
+      lastParsed: fileMetadataLastParsedToString(file.metadata),
     }));
 
   const preSelected = selectedUnparsedDiagrams.reduce((record, externalId) => {
@@ -136,7 +156,7 @@ const DiagramList = ({
         <Table<DiagramTableData>
           columns={[
             { Header: 'Document name', accessor: 'externalId' },
-            { Header: 'Date added', accessor: 'uploadedDate' },
+            { Header: 'Last parsed', accessor: 'lastParsed' },
           ]}
           dataSource={tableData}
           onSelectionChange={setSelection}

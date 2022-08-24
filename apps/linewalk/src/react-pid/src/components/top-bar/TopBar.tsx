@@ -1,4 +1,4 @@
-import { Button, ButtonProps } from '@cognite/cogs.js';
+import { Button, ButtonProps, Switch } from '@cognite/cogs.js';
 import { Dispatch } from 'react';
 
 import {
@@ -47,6 +47,8 @@ interface TopBarProps {
   saveGraph: () => void;
   saveState: SaveState;
   isAutoMode: boolean;
+  loadStateFromCdf: boolean;
+  toggleLoadStateFromCdf: () => void;
 }
 
 const TopBar = ({
@@ -56,6 +58,8 @@ const TopBar = ({
   saveGraph,
   saveState,
   isAutoMode,
+  loadStateFromCdf,
+  toggleLoadStateFromCdf,
 }: TopBarProps) => {
   const showDiagramList = () => {
     dispatch({ type: DiagramsReducerActionTypes.TOGGLE_SHOW_LIST });
@@ -93,6 +97,13 @@ const TopBar = ({
         />
       </Left>
       <Right>
+        <Switch
+          name="Load state from CDF"
+          checked={loadStateFromCdf}
+          onChange={toggleLoadStateFromCdf}
+        >
+          Load state from CDF
+        </Switch>
         <Button
           icon="OutputData"
           onClick={toggleAutoMode}

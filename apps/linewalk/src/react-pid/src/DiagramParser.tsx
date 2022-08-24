@@ -1,4 +1,4 @@
-import { useEffect, useReducer } from 'react';
+import { useEffect, useReducer, useState } from 'react';
 
 import { HandlerContainer } from './elements';
 import { ReactPid } from './ReactPid';
@@ -17,6 +17,8 @@ const DiagramParser = () => {
   const { diagrams, pidViewer, saveGraph, saveState } = useCdfDiagrams();
   const diagramExternalId = selectedExternalIds[currentIndex];
 
+  const [loadStateFromCdf, setLoadStateFromCdf] = useState<boolean>(true);
+
   useEffect(() => {
     dispatch({
       type: DiagramsReducerActionTypes.SET_DIAGRAMS,
@@ -30,6 +32,9 @@ const DiagramParser = () => {
     }
   }, [isAutoMode, saveState]);
 
+  const toggleLoadStateFromCdf = () =>
+    setLoadStateFromCdf((prevState) => !prevState);
+
   return (
     <HandlerContainer>
       <TopBar
@@ -39,6 +44,8 @@ const DiagramParser = () => {
         saveGraph={saveGraph}
         saveState={saveState}
         isAutoMode={isAutoMode}
+        loadStateFromCdf={loadStateFromCdf}
+        toggleLoadStateFromCdf={toggleLoadStateFromCdf}
       />
       <ReactPid
         isAutoMode={isAutoMode}
@@ -47,6 +54,7 @@ const DiagramParser = () => {
         diagramExternalId={diagramExternalId}
         saveState={saveState}
         onAutoAnalysisCompleted={saveGraph}
+        loadStateFromCDF={loadStateFromCdf}
       />
       {state.showList && (
         <DiagramList

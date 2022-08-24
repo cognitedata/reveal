@@ -33,6 +33,7 @@ interface ReactPidProps {
   diagramExternalId?: string;
   isAutoMode?: boolean;
   onAutoAnalysisCompleted?: () => void;
+  loadStateFromCDF?: boolean;
 }
 
 export const ReactPid = ({
@@ -41,6 +42,7 @@ export const ReactPid = ({
   isAutoMode = false,
   diagramExternalId,
   onAutoAnalysisCompleted,
+  loadStateFromCDF = true,
 }: ReactPidProps) => {
   const [hasDocumentLoaded, setHasDocumentLoaded] = useState(false);
 
@@ -61,7 +63,12 @@ export const ReactPid = ({
     loadFileIfProvided,
     isLoading,
     documentMetadata,
-  } = useDiagramFile(pidViewer, hasDocumentLoaded, diagramExternalId);
+  } = useDiagramFile(
+    pidViewer,
+    hasDocumentLoaded,
+    loadStateFromCDF,
+    diagramExternalId
+  );
 
   const { symbols, setSymbols, symbolInstances, setSymbolInstances } =
     useSymbolState(pidViewer.current, documentMetadata.type, hasDocumentLoaded);

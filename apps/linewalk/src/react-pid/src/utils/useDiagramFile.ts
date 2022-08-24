@@ -1,6 +1,11 @@
 import { useAuthContext } from '@cognite/react-container';
 import { useEffect, useState } from 'react';
-import { CognitePid, DocumentMetadata, DiagramType } from '@cognite/pid-tools';
+import {
+  CognitePid,
+  DocumentMetadata,
+  DiagramType,
+  DIAGRAM_PARSER_JSON_EXTERNAL_ID,
+} from '@cognite/pid-tools';
 import { getJsonsByExternalIds } from 'modules/lineReviews/api';
 
 import { fetchFileByExternalId } from './api';
@@ -8,6 +13,7 @@ import { fetchFileByExternalId } from './api';
 const useDiagramFile = (
   pidViewer: React.MutableRefObject<CognitePid | undefined>,
   hasDocumentLoaded: boolean,
+  loadStateFromCdf: boolean,
   diagramExternalId?: string
 ) => {
   const [file, setFile] = useState<File | null>(null);
@@ -47,12 +53,9 @@ const useDiagramFile = (
       setUnit(fileInfo.metadata?.unit ?? null);
       setFile(file);
 
-      const savedJsonFileName = diagramExternalId.replace('svg', 'json');
-      const savedJsonExist =
-        (await client.files.list({ filter: { name: savedJsonFileName } })).items
-          .length > 0;
-
-      if (savedJsonExist) {
+      const savedJsonFileName =
+        fileInfo.metadata![DIAGRAM_PARSER_JSON_EXTERNAL_ID];
+      if (loadStateFromCdf && savedJsonFileName) {
         const savedJsonState = (
           await getJsonsByExternalIds(client, [savedJsonFileName])
         )[0] as Record<string, unknown>;
