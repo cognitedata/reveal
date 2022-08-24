@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React from 'react';
+import styled from 'styled-components';
 import { Dropdown, Menu, Button } from '@cognite/cogs.js';
 
 type FileMenuProps = {
@@ -6,25 +7,27 @@ type FileMenuProps = {
 };
 
 export const FilterMenu = ({ options }: FileMenuProps): JSX.Element => {
-  const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
-
   const filterMenu = (
-    <Menu>
+    <StyledMenu>
       {options.map((option, index) => (
-        <Menu.Item key={`menu-filter-${String(index)}`}>{option}</Menu.Item>
+        <React.Fragment key={`menu-filter-${String(index)}`}>
+          {option}
+        </React.Fragment>
       ))}
-    </Menu>
+    </StyledMenu>
   );
 
   return (
-    <Dropdown content={filterMenu} visible={isMenuOpen}>
-      <Button
-        icon="ChevronDown"
-        iconPlacement="right"
-        onClick={() => setIsMenuOpen(!isMenuOpen)}
-      >
+    <Dropdown content={filterMenu}>
+      <Button icon="ChevronDown" iconPlacement="right">
         More filters
       </Button>
     </Dropdown>
   );
 };
+
+const StyledMenu = styled(Menu)`
+  & > :not(:last-child) {
+    margin-bottom: 8px;
+  }
+`;
