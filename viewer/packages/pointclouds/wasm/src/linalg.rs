@@ -50,7 +50,30 @@ pub fn boxes_overlap(b0: &BoundingBox, b1: &BoundingBox) -> bool {
 }
 
 impl BoundingBox {
+    pub fn empty() -> BoundingBox {
+        BoundingBox {
+            min: vec3(f64::INFINITY, f64::INFINITY, f64::INFINITY),
+            max: vec3(f64::NEG_INFINITY, f64::NEG_INFINITY, f64::NEG_INFINITY),
+        }
+    }
+
+    pub fn add_point(&mut self, point: &Vec3) {
+        self.min = min2(&self.min, &point);
+        self.max = max2(&self.max, &point);
+    }
+
     pub fn contains_point(&self, point: &Vec3) -> bool {
         min2(&self.min, &point) == self.min && max2(&self.max, &point) == self.max
     }
+
+
+    pub fn get_centered_unit_cube_corner(corner_index: u32) -> Vec4 {
+        vec4(
+            if (corner_index & 1) == 0 { -0.5 } else { 0.5 },
+            if (corner_index & 2) == 0 { -0.5 } else { 0.5 },
+            if (corner_index & 4) == 0 { -0.5 } else { 0.5 },
+            1.0,
+        )
+    }
+
 }

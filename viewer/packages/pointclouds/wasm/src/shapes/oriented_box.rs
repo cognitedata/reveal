@@ -1,8 +1,8 @@
 use crate::linalg::BoundingBox;
 
-use nalgebra_glm::{inverse, max2, min2, vec4_to_vec3};
+use nalgebra_glm::{inverse, vec4_to_vec3};
 
-use crate::linalg::{vec3, vec4, Mat4, Vec3};
+use crate::linalg::{Mat4, vec3, vec4, Vec3};
 
 use crate::shapes::shape;
 
@@ -30,29 +30,18 @@ impl shape::Shape for OrientedBox {
     }
 
     fn create_bounding_box(&self) -> BoundingBox {
-        let mut min = vec4(f64::INFINITY, f64::INFINITY, f64::INFINITY, 0.0);
-        let mut max = vec4(f64::NEG_INFINITY, f64::NEG_INFINITY, f64::NEG_INFINITY, 0.0);
+        let mut bounding_box = BoundingBox::empty();
 
         let instance_matrix = inverse(&self.inv_instance_matrix);
 
         for corner_index in 0..8 {
-            let corner = vec4(
-                if (corner_index & 1) == 0 { -0.5 } else { 0.5 },
-                if (corner_index & 2) == 0 { -0.5 } else { 0.5 },
-                if (corner_index & 4) == 0 { -0.5 } else { 0.5 },
-                1.0,
-            );
-
+            let corner = BoundingBox::get_centered_unit_cube_corner(corner_index);
             let transformed_corner = instance_matrix * corner;
 
-            min = min2(&min, &transformed_corner);
-            max = max2(&max, &transformed_corner);
+            bounding_box.add_point(&vec4_to_vec3(&transformed_corner));
         }
 
-        BoundingBox {
-            min: vec4_to_vec3(&min),
-            max: vec4_to_vec3(&max),
-        }
+        bounding_box
     }
 
     fn get_object_id(&self) -> u32 {
@@ -65,7 +54,7 @@ mod tests {
     use wasm_bindgen_test::wasm_bindgen_test;
 
     use super::OrientedBox;
-    use super::{vec3, vec4};
+    use crate::linalg::{vec3, vec4};
     use crate::linalg::Mat4;
     use crate::shapes::shape::Shape;
 

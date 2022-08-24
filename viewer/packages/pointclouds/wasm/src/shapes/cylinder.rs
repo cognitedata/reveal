@@ -1,4 +1,4 @@
-use nalgebra_glm::{dot, max2, min2, vec3_to_vec4, vec4_to_vec3};
+use nalgebra_glm::{dot, vec3_to_vec4, vec4_to_vec3};
 
 use crate::linalg::{vec3, vec4, BoundingBox, Mat4, Vec3};
 use crate::shapes::shape::Shape;
@@ -21,6 +21,37 @@ impl Cylinder {
             _middle: (center_a + center_b) / 2.0,
         }
     }
+
+    fn get_scaled_orthogonal_basis(&self) -> [Vec3; 3] {
+        let axis_vec = self.center_a - self.center_b;
+        let axis_option_0 = vec3(1.0, 0.0, 0.0);
+        let axis_option_1 = vec3(0.0, 1.0, 0.0);
+
+        let chosen_axis =
+            if dot(&axis_option_0, &axis_vec).abs() < dot(&axis_option_1, &axis_vec).abs() {
+                axis_option_0
+            } else {
+                axis_option_1
+            };
+
+        let perp_vector_0: Vec3 = chosen_axis.cross(&axis_vec).normalize() * 2.0 * self.radius;
+        let perp_vector_1: Vec3 = perp_vector_0.cross(&axis_vec).normalize() * 2.0 * self.radius;
+
+        [axis_vec, perp_vector_0, perp_vector_1]
+    }
+}
+
+fn create_transform_from_axes(axis: &[Vec3; 3], middle: &Vec3) -> Mat4 {
+    let mut matrix: Mat4 = Mat4::identity();
+    matrix.set_column(0, &vec3_to_vec4(&axis[0]));
+    matrix.set_column(1, &vec3_to_vec4(&axis[1]));
+    matrix.set_column(2, &vec3_to_vec4(&axis[2]));
+    matrix.set_column(
+        3,
+        &vec4(middle.x, middle.y, middle.z, 1.0),
+    );
+
+    matrix
 }
 
 impl Shape for Cylinder {
@@ -38,50 +69,20 @@ impl Shape for Cylinder {
     }
 
     fn create_bounding_box(&self) -> BoundingBox {
-        let axis_vec = (self.center_a - self.center_b) / 2.0;
-        let axis_option_0 = vec3(1.0, 0.0, 0.0);
-        let axis_option_1 = vec3(0.0, 1.0, 0.0);
 
-        let chosen_axis =
-            if dot(&axis_option_0, &axis_vec).abs() < dot(&axis_option_1, &axis_vec).abs() {
-                axis_option_0
-            } else {
-                axis_option_1
-            };
+        let axes = self.get_scaled_orthogonal_basis();
+        let matrix = create_transform_from_axes(&axes, &self._middle);
 
-        let perp_vector_0: Vec3 = chosen_axis.cross(&axis_vec).normalize() * self.radius;
-        let perp_vector_1: Vec3 = perp_vector_0.cross(&axis_vec).normalize() * self.radius;
-
-        let mut matrix: Mat4 = Mat4::identity();
-        matrix.set_column(0, &vec3_to_vec4(&axis_vec));
-        matrix.set_column(1, &vec3_to_vec4(&perp_vector_0));
-        matrix.set_column(2, &vec3_to_vec4(&perp_vector_1));
-        matrix.set_column(
-            3,
-            &vec4(self._middle.x, self._middle.y, self._middle.z, 1.0),
-        );
-
-        let mut min = vec4(f64::INFINITY, f64::INFINITY, f64::INFINITY, 0.0);
-        let mut max = vec4(f64::NEG_INFINITY, f64::NEG_INFINITY, f64::NEG_INFINITY, 0.0);
+        let mut bounding_box = BoundingBox::empty();
 
         for corner_index in 0..8 {
-            let corner = vec4(
-                if (corner_index & 1) == 0 { -1.0 } else { 1.0 },
-                if (corner_index & 2) == 0 { -1.0 } else { 1.0 },
-                if (corner_index & 4) == 0 { -1.0 } else { 1.0 },
-                1.0,
-            );
+            let corner = BoundingBox::get_centered_unit_cube_corner(corner_index);
 
             let transformed_corner = matrix * corner;
-
-            min = min2(&min, &transformed_corner);
-            max = max2(&max, &transformed_corner);
+            bounding_box.add_point(&vec4_to_vec3(&transformed_corner));
         }
 
-        BoundingBox {
-            min: vec4_to_vec3(&min),
-            max: vec4_to_vec3(&max),
-        }
+        bounding_box
     }
 
     fn get_object_id(&self) -> u32 {
@@ -114,6 +115,9 @@ mod tests {
         let outside_middle = middle + vec3(0.1, 0.1, 0.1);
 
         let cylinder = Cylinder::new(center_a, center_b, 1e-2, 0);
+        let basis = cylinder.get_scaled_orthogonal_basis();
+        use web_sys::console;
+        console::log_1(&wasm_bindgen::prelude::JsValue::from_str(&format!("Basis: {:?}", basis)));
 
         assert!(cylinder.contains_point(&middle));
         assert!(!cylinder.contains_point(&outside_middle));
