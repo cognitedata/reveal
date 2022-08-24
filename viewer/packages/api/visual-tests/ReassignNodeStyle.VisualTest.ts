@@ -1,10 +1,15 @@
 /*!
- * Copyright 2021 Cognite AS
+ * Copyright 2022 Cognite AS
  */
-import { THREE } from '@cognite/reveal';
-import { Cognite3DModel, Cognite3DViewer, DefaultNodeAppearance, IndexSet, TreeIndexNodeCollection } from '@cognite/reveal';
-import { registerVisualTest } from '../../../visual_tests';
-import { Cognite3DTestViewer } from '../Cognite3DTestViewer';
+import * as THREE from 'three';
+
+import { DefaultNodeAppearance, TreeIndexNodeCollection } from '@reveal/cad-styling';
+import { IndexSet } from '@reveal/utilities';
+import { Cognite3DModel } from '..';
+import {
+  ViewerTestFixtureComponents,
+  ViewerVisualTestFixture
+} from '../../../visual-tests/test-fixtures/ViewerVisualTestFixture';
 
 function createAlternatingIndexSet(nodeCount: number): IndexSet {
   const indexSet = new IndexSet();
@@ -22,24 +27,29 @@ function createFirstTreeIndicesSet(nodeCount: number): IndexSet {
   for (let i = 0; i < nodeCount / 2; i++) {
     indexSet.add(i);
   }
-  
+
   return indexSet;
 }
 
-/**
- * Regression issue where ghosting one model made the other invisible (ACEPC-110).
- */
-function ReassignNodeStyle() {
-  function handleModelAdded(model: Cognite3DModel, modelIndex: number) {
+export default class DefaultVisualTest extends ViewerVisualTestFixture {
+  public setup(testFixtureComponents: ViewerTestFixtureComponents): Promise<void> {
+    const { model } = testFixtureComponents;
+
+    if (!(model instanceof Cognite3DModel)) {
+      return Promise.resolve();
+    }
+
+    model.setRotationFromEuler(new THREE.Euler(Math.PI / 4, 0, 0));
+    model.updateMatrix();
+    model.updateMatrixWorld();
+
     const alternatingIndexSet = createAlternatingIndexSet(model.nodeCount);
     const invertedRanges = alternatingIndexSet.invertedRanges();
     const invertedSet = new IndexSet();
 
     const firstTreeIndicesSet = createFirstTreeIndicesSet(model.nodeCount);
 
-    console.log("Inserting invertedRanges into new index set");
     for (const invertedRange of invertedRanges) {
-      console.dir(invertedRange);
       invertedSet.addRange(invertedRange);
     }
 
@@ -48,22 +58,11 @@ function ReassignNodeStyle() {
     const firstIndicesNodeCollection = new TreeIndexNodeCollection(firstTreeIndicesSet);
 
     model.assignStyledNodeCollection(alternatingNodeCollection, DefaultNodeAppearance.Highlighted);
-    
+
     model.assignStyledNodeCollection(firstIndicesNodeCollection, DefaultNodeAppearance.Ghosted);
     model.assignStyledNodeCollection(invertedNodeCollection, DefaultNodeAppearance.Default);
 
     model.assignStyledNodeCollection(alternatingNodeCollection, DefaultNodeAppearance.Outlined);
+    return Promise.resolve();
   }
-
-  return (
-    <Cognite3DTestViewer 
-      modelUrls={['primitives']}
-      cadModelAddedCallback={handleModelAdded} 
-      initializeCallback={(viewer: Cognite3DViewer) => {
-        viewer.cameraManager.setCameraState({position: new THREE.Vector3(30,10,50), 
-          target: new THREE.Vector3()});
-      }}/>
-  );
 }
-
-registerVisualTest('cad', 'reassign-node-style', 'Reassign node style on previously styled node collection', <ReassignNodeStyle />)
