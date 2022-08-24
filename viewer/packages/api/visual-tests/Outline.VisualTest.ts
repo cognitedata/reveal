@@ -11,7 +11,7 @@ import {
   ViewerVisualTestFixture
 } from '../../../visual-tests/test-fixtures/ViewerVisualTestFixture';
 
-export default class DefaultVisualTest extends ViewerVisualTestFixture {
+export default class OutlineVisualTest extends ViewerVisualTestFixture {
   public setup(testFixtureComponents: ViewerTestFixtureComponents): Promise<void> {
     const { viewer, model } = testFixtureComponents;
 

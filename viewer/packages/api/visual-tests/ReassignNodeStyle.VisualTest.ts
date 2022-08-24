@@ -31,7 +31,7 @@ function createFirstTreeIndicesSet(nodeCount: number): IndexSet {
   return indexSet;
 }
 
-export default class DefaultVisualTest extends ViewerVisualTestFixture {
+export default class ReassignNodeStyleVisualTest extends ViewerVisualTestFixture {
   public setup(testFixtureComponents: ViewerTestFixtureComponents): Promise<void> {
     const { model } = testFixtureComponents;
 

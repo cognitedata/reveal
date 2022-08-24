@@ -9,7 +9,7 @@ import {
   ViewerVisualTestFixture
 } from '../../../visual-tests/test-fixtures/ViewerVisualTestFixture';
 
-export default class DefaultVisualTest extends ViewerVisualTestFixture {
+export default class NodeTransformVisualTest extends ViewerVisualTestFixture {
   public async setup(testFixtureComponents: ViewerTestFixtureComponents): Promise<void> {
     const { model } = testFixtureComponents;
 
