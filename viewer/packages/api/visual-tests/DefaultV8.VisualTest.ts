@@ -2,14 +2,17 @@
  * Copyright 2022 Cognite AS
  */
 
-import { ViewerVisualTestFixture } from '../../../visual-tests/test-fixtures/ViewerVisualTestFixture';
+import {
+  ViewerTestFixtureComponents,
+  ViewerVisualTestFixture
+} from '../../../visual-tests/test-fixtures/ViewerVisualTestFixture';
 
 // Sanity test for loading v8 model
 export default class DefaultV8VisualTest extends ViewerVisualTestFixture {
   constructor() {
     super('primitives_v8');
   }
-  public setup(): Promise<void> {
+  public setup(_: ViewerTestFixtureComponents): Promise<void> {
     return Promise.resolve();
   }
 }

@@ -8,6 +8,11 @@ import { DeferredPromise } from '../../packages/utilities';
 import { CognitePointCloudModel } from '../../packages/pointclouds';
 import { AxisViewTool } from '../../packages/tools';
 
+export type ViewerTestFixtureComponents = {
+  viewer: Cognite3DViewer;
+  model: Cognite3DModel | CognitePointCloudModel;
+};
+
 export abstract class ViewerVisualTestFixture implements VisualTestFixture {
   private readonly _localModelUrl: string | undefined;
 
@@ -28,7 +33,7 @@ export abstract class ViewerVisualTestFixture implements VisualTestFixture {
 
     await this.modelLoaded(model, modelLoadedPromise);
 
-    await this.setup();
+    await this.setup({ viewer, model });
 
     function modelLoadingCallback(itemsLoaded: number, itemsRequested: number, _: number) {
       if (itemsRequested > 0 && itemsLoaded === itemsRequested) {
@@ -54,5 +59,5 @@ export abstract class ViewerVisualTestFixture implements VisualTestFixture {
     document.body.style.margin = '0px 0px 0px 0px';
   }
 
-  public abstract setup(): Promise<void>;
+  public abstract setup(testFixtureComponents: ViewerTestFixtureComponents): Promise<void>;
 }
