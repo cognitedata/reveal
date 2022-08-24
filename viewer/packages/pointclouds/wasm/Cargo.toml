@@ -31,3 +31,8 @@ console_error_panic_hook = "0.1.7"
 wasm-bindgen-test = "0.3.32"
 futures = "0.1.27"
 wasm-bindgen-futures = "0.3.22"
+rand = "0.8.5"
+rand_chacha = "0.3.1"
+
+# Only used in rand, but need to add `js` feature for wasm compatibility
+getrandom = { version = "0.2", features = ["js"] }

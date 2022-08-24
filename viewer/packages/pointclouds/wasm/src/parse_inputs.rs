@@ -20,7 +20,7 @@ struct InputOrientedBox {
 
 #[derive(Debug, Deserialize)]
 pub struct InputShape {
-    pub object_id: u32,
+    pub object_id: u16,
     cylinder: Option<Box<InputCylinder>>,
     oriented_box: Option<Box<InputOrientedBox>>,
 }
@@ -52,7 +52,7 @@ pub fn parse_points(
     point_vec
 }
 
-fn create_cylinder(input: InputCylinder, id: u32) -> Box<shapes::cylinder::Cylinder> {
+fn create_cylinder(input: InputCylinder, id: u16) -> Box<shapes::cylinder::Cylinder> {
     Box::<shapes::cylinder::Cylinder>::new(shapes::cylinder::Cylinder::new(
         vec3(input.center_a[0], input.center_a[1], input.center_a[2]),
         vec3(input.center_b[0], input.center_b[1], input.center_b[2]),
@@ -61,7 +61,7 @@ fn create_cylinder(input: InputCylinder, id: u32) -> Box<shapes::cylinder::Cylin
     ))
 }
 
-fn create_box(input: InputOrientedBox, id: u32) -> Box<shapes::oriented_box::OrientedBox> {
+fn create_box(input: InputOrientedBox, id: u16) -> Box<shapes::oriented_box::OrientedBox> {
     Box::<shapes::oriented_box::OrientedBox>::new(shapes::oriented_box::OrientedBox::new(
         Mat4::from_column_slice_generic(Const, Const, &input.inv_instance_matrix),
         id,

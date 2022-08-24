@@ -2,17 +2,17 @@ use crate::linalg::BoundingBox;
 
 use nalgebra_glm::{inverse, vec4_to_vec3};
 
-use crate::linalg::{Mat4, vec3, vec4, Vec3};
+use crate::linalg::{vec3, vec4, Mat4, Vec3};
 
 use crate::shapes::shape;
 
 pub struct OrientedBox {
     inv_instance_matrix: Mat4,
-    object_id: u32,
+    object_id: u16,
 }
 
 impl OrientedBox {
-    pub fn new(inv_instance_matrix: Mat4, object_id: u32) -> OrientedBox {
+    pub fn new(inv_instance_matrix: Mat4, object_id: u16) -> OrientedBox {
         OrientedBox {
             inv_instance_matrix: inv_instance_matrix,
             object_id: object_id,
@@ -22,29 +22,22 @@ impl OrientedBox {
 
 impl shape::Shape for OrientedBox {
     fn contains_point(&self, point: &Vec3) -> bool {
-        let transformed_point = vec4_to_vec3(&(self.inv_instance_matrix * vec4(point.x, point.y, point.z, 1.0)));
+        let transformed_point =
+            vec4_to_vec3(&(self.inv_instance_matrix * vec4(point.x, point.y, point.z, 1.0)));
         BoundingBox {
             min: vec3(-0.5, -0.5, -0.5),
-            max: vec3(0.5, 0.5, 0.5)
-        }.contains_point(&transformed_point)
+            max: vec3(0.5, 0.5, 0.5),
+        }
+        .contains_point(&transformed_point)
     }
 
     fn create_bounding_box(&self) -> BoundingBox {
-        let mut bounding_box = BoundingBox::empty();
-
         let instance_matrix = inverse(&self.inv_instance_matrix);
 
-        for corner_index in 0..8 {
-            let corner = BoundingBox::get_centered_unit_cube_corner(corner_index);
-            let transformed_corner = instance_matrix * corner;
-
-            bounding_box.add_point(&vec4_to_vec3(&transformed_corner));
-        }
-
-        bounding_box
+        BoundingBox::get_transformed_unit_cube(&instance_matrix)
     }
 
-    fn get_object_id(&self) -> u32 {
+    fn get_object_id(&self) -> u16 {
         self.object_id
     }
 }
@@ -54,8 +47,8 @@ mod tests {
     use wasm_bindgen_test::wasm_bindgen_test;
 
     use super::OrientedBox;
-    use crate::linalg::{vec3, vec4};
     use crate::linalg::Mat4;
+    use crate::linalg::{vec3, vec4};
     use crate::shapes::shape::Shape;
 
     use nalgebra_glm::{abs, comp_max, half_pi, inverse, rotate_x, scale, translate, vec4_to_vec3};

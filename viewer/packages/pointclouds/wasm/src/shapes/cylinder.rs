@@ -1,4 +1,4 @@
-use nalgebra_glm::{dot, vec3_to_vec4, vec4_to_vec3};
+use nalgebra_glm::{dot, vec3_to_vec4};
 
 use crate::linalg::{vec3, vec4, BoundingBox, Mat4, Vec3};
 use crate::shapes::shape::Shape;
@@ -7,12 +7,12 @@ pub struct Cylinder {
     center_a: Vec3,
     center_b: Vec3,
     radius: f64,
-    object_id: u32,
+    object_id: u16,
     _middle: Vec3,
 }
 
 impl Cylinder {
-    pub fn new(center_a: Vec3, center_b: Vec3, radius: f64, object_id: u32) -> Cylinder {
+    pub fn new(center_a: Vec3, center_b: Vec3, radius: f64, object_id: u16) -> Cylinder {
         Cylinder {
             center_a: center_a,
             center_b: center_b,
@@ -46,10 +46,7 @@ fn create_transform_from_axes(axis: &[Vec3; 3], middle: &Vec3) -> Mat4 {
     matrix.set_column(0, &vec3_to_vec4(&axis[0]));
     matrix.set_column(1, &vec3_to_vec4(&axis[1]));
     matrix.set_column(2, &vec3_to_vec4(&axis[2]));
-    matrix.set_column(
-        3,
-        &vec4(middle.x, middle.y, middle.z, 1.0),
-    );
+    matrix.set_column(3, &vec4(middle.x, middle.y, middle.z, 1.0));
 
     matrix
 }
@@ -69,23 +66,13 @@ impl Shape for Cylinder {
     }
 
     fn create_bounding_box(&self) -> BoundingBox {
-
         let axes = self.get_scaled_orthogonal_basis();
         let matrix = create_transform_from_axes(&axes, &self._middle);
 
-        let mut bounding_box = BoundingBox::empty();
-
-        for corner_index in 0..8 {
-            let corner = BoundingBox::get_centered_unit_cube_corner(corner_index);
-
-            let transformed_corner = matrix * corner;
-            bounding_box.add_point(&vec4_to_vec3(&transformed_corner));
-        }
-
-        bounding_box
+        BoundingBox::get_transformed_unit_cube(&matrix)
     }
 
-    fn get_object_id(&self) -> u32 {
+    fn get_object_id(&self) -> u16 {
         self.object_id
     }
 }
@@ -115,9 +102,6 @@ mod tests {
         let outside_middle = middle + vec3(0.1, 0.1, 0.1);
 
         let cylinder = Cylinder::new(center_a, center_b, 1e-2, 0);
-        let basis = cylinder.get_scaled_orthogonal_basis();
-        use web_sys::console;
-        console::log_1(&wasm_bindgen::prelude::JsValue::from_str(&format!("Basis: {:?}", basis)));
 
         assert!(cylinder.contains_point(&middle));
         assert!(!cylinder.contains_point(&outside_middle));

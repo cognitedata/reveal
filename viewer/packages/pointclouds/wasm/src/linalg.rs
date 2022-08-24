@@ -1,5 +1,5 @@
 use nalgebra::base::Matrix4;
-use nalgebra_glm::{max2, min2, TVec3, TVec4};
+use nalgebra_glm::{max2, min2, vec4_to_vec3, TVec3, TVec4};
 
 pub type Vec3 = TVec3<f64>;
 pub type Vec4 = TVec4<f64>;
@@ -66,7 +66,6 @@ impl BoundingBox {
         min2(&self.min, &point) == self.min && max2(&self.max, &point) == self.max
     }
 
-
     pub fn get_centered_unit_cube_corner(corner_index: u32) -> Vec4 {
         vec4(
             if (corner_index & 1) == 0 { -0.5 } else { 0.5 },
@@ -76,4 +75,16 @@ impl BoundingBox {
         )
     }
 
+    pub fn get_transformed_unit_cube(matrix: &Mat4) -> BoundingBox {
+        let mut bounding_box = BoundingBox::empty();
+
+        for corner_index in 0..8 {
+            let corner = BoundingBox::get_centered_unit_cube_corner(corner_index);
+
+            let transformed_corner = matrix * corner;
+            bounding_box.add_point(&vec4_to_vec3(&transformed_corner));
+        }
+
+        bounding_box
+    }
 }
