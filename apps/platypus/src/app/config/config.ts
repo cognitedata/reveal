@@ -26,6 +26,9 @@ export default {
     'platypus',
   MIXER_API_GROUP_NAME: 'schema',
   DMS_API_GROUP_NAME: 'datamodelstorage',
+  DATA_MODELS_GROUP_NAME: 'datamodels',
+  DATA_MODELS_INSTANCES_ACL: 'dataModelInstancesAcl',
+  DATA_MODELS_ACL: 'dataModelsAcl',
   MIXPANEL_TOKEN:
     process.env.MIXPANEL_TOKEN || 'c89f3ee3b5ea00b299a923a376f19637',
 };

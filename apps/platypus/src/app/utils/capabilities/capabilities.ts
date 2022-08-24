@@ -8,9 +8,16 @@ type ExperimentScope = {
     experiments: string[];
   };
 };
+type AclDataModelActions = 'READ' | 'WRITE';
 
 export type Capability =
   | SingleCogniteCapability
+  | {
+      dataModelsAcl: Acl<AclDataModelActions, AclScopeAll>;
+    }
+  | {
+      dataModelInstancesAcl: Acl<AclDataModelActions, AclScopeAll>;
+    }
   | {
       transformationsAcl: Acl<AclTransformationActions, AclScopeAll>;
     }

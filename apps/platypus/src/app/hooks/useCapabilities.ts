@@ -12,7 +12,7 @@ import {
   CombinedSCC,
 } from '@platypus-app/utils/capabilities';
 
-const DEFAULT_GROUPS = [config.MIXER_API_GROUP_NAME, config.DMS_API_GROUP_NAME];
+const DEFAULT_GROUPS = [config.DATA_MODELS_GROUP_NAME];
 
 export function useCapabilities<T extends KeysOfSCC>(
   aclName?: T,

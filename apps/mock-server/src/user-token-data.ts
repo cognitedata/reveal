@@ -204,5 +204,29 @@ export const userTokenData = {
         projects: ['platypus'],
       },
     },
+    {
+      dataModelsAcl: {
+        actions: ['READ', 'WRITE'],
+        scope: {
+          all: {},
+        },
+        version: 1,
+      },
+      projectScope: {
+        projects: ['platypus'],
+      },
+    },
+    {
+      dataModelInstancesAcl: {
+        actions: ['READ', 'WRITE'],
+        scope: {
+          all: {},
+        },
+        version: 1,
+      },
+      projectScope: {
+        projects: ['platypus'],
+      },
+    },
   ],
 };

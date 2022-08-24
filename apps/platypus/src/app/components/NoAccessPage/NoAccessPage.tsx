@@ -33,23 +33,24 @@ const NoAccessPage = (): JSX.Element => {
       </Instructions>
       <AccessInfo className="z-4">
         <p>
-          To use Flexible Data Models, you need to be have the following
-          experimental ACLs:
+          To use Flexible Data Models, you need to be have the following{' '}
+          {config.DATA_MODELS_GROUP_NAME} ACLs:
         </p>
         <ul>
           <li>
-            <strong>{config.MIXER_API_GROUP_NAME}</strong>
+            <strong>{config.DATA_MODELS_ACL}</strong>
           </li>
           <li>
-            <strong>{config.DMS_API_GROUP_NAME}</strong>
+            <strong>{config.DATA_MODELS_INSTANCES_ACL}</strong>
           </li>
         </ul>
       </AccessInfo>
       <p>
         To grant this, make sure to contact your admin and link your account
-        with a Cognite Group that has these two experimental ACLs. Below are
-        some sample code on how you can create a CDF group with these ACLs and
-        link it to your IdP group.
+        with a Cognite Group that has these two {config.DATA_MODELS_GROUP_NAME}{' '}
+        ACLs. You can do this via the "manage access" tool in this UI under the
+        "manage" tab, or you can run the sample code belowto create a CDF group
+        with these ACLs and link it to your IdP group.
       </p>
       <Tabs defaultActiveKey="Postman">
         <Tabs.TabPane key="Postman" tab="Postman (CURL)">
@@ -62,36 +63,45 @@ const NoAccessPage = (): JSX.Element => {
             "name": "FDM",
             "sourceId": "<my AD group UUID>",
             "capabilities": [
-                {
-                    "experimentAcl": {
-                        "actions": [
-                            "USE"
-                        ],
-                        "scope": {
-                            "experimentscope": {
-                                "experiments": [
-                                    "schema",
-                                    "datamodelstorage"
-                                ]
-                            }
-                        }
-                    }
-                }
+              {
+                dataModelsAcl: {
+                  actions: ['READ', 'WRITE'],
+                  scope: {
+                    all: {},
+                  },
+                },
+              },
+              {
+                dataModelInstancesAcl: {
+                  actions: ['READ', 'WRITE'],
+                  scope: {
+                    all: {},
+                  },
+                },
+              },
             ]
-        }
+      },
     ]
 }'`}</pre>
         </Tabs.TabPane>
         <Tabs.TabPane key="Python" tab="Python">
           <pre>{`my_capabilities = [
-    {"experimentAcl": 
-     {"actions": ["USE"],
-      "scope": 
-      {"experimentscope": 
-       {"experiments": ["schema", "datamodelstorage"]}
-      }
-     }
-    }
+    {
+      "dataModelsAcl": {
+        "actions": ['READ', 'WRITE'],
+        "scope": {
+          "all": {},
+        },
+      },
+    },
+    {
+      "dataModelInstancesAcl": {
+        "actions": ['READ', 'WRITE'],
+        "scope": {
+          "all": {},
+        },
+      },
+    },
 ]
 my_group = Group(
   name="FDM",
