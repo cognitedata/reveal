@@ -1,11 +1,11 @@
 import { DatapointAggregate, DoubleDatapoint } from '@cognite/sdk';
-import { ChartThreshold } from 'models/charts/charts/types/types';
+import { ChartThreshold } from 'models/chart/types';
 import {
   convertThresholdUnits,
   convertUnits,
+  convertValue,
   getUnitConvertedDatapointsSummary,
 } from './units';
-import { convertValue } from '../models/charts/units/utils/convertValue';
 
 describe('convertUnits', () => {
   it('should convert units successfully (double data points)', () => {

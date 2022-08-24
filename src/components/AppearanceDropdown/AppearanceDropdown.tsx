@@ -4,7 +4,7 @@ import { availableColors } from 'utils/colors';
 import { trackUsage } from 'services/metrics';
 
 import { makeDefaultTranslations } from 'utils/translations';
-import { Interpolation, LineStyle } from 'models/charts/charts/types/types';
+import { Interpolation, LineStyle } from 'models/chart/types';
 import {
   DropdownWrapper,
   MenuWrapper,

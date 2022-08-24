@@ -25,9 +25,7 @@ export default function useAssetsTimeseries(assets: Asset[]) {
         )[0].count,
       }),
       enabled: !!assetId,
-      retry: false,
-      cacheTime: 6 * 60 * 60 * 1000,
-      staleTime: Infinity,
+      staleTime: 60 * 60 * 1000,
       refetchOnWindowFocus: false,
     }))
   );

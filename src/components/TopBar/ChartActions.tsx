@@ -3,10 +3,11 @@ import styled from 'styled-components/macro';
 import { Button, Popconfirm, toast, Tooltip } from '@cognite/cogs.js';
 import { useNavigate } from 'hooks/navigation';
 import { useDeleteChart, useUpdateChart } from 'hooks/charts-storage';
+import { duplicate, updateChartDateRange } from 'models/chart/updates';
 import { trackUsage } from 'services/metrics';
 import { useUserInfo } from '@cognite/sdk-react-query-hooks';
 import { useRecoilState } from 'recoil';
-import chartAtom from 'models/charts/charts/atoms/atom';
+import chartAtom from 'models/chart/atom';
 import DownloadDropdown from 'components/DownloadDropdown/DownloadDropdown';
 import { useTranslations } from 'hooks/translations';
 import { useIsChartOwner } from 'hooks/user';
@@ -17,13 +18,9 @@ import {
 } from 'utils/charts';
 import useScreenshot from 'use-screenshot-hook';
 import CSVModal from 'components/DownloadDropdown/CSVModal';
-import { isProduction } from 'models/charts/config/utils/environment';
-import ConnectedSharingDropdown from 'containers/SharingDropdown/ConnectedSharingDropdown';
-import {
-  duplicate,
-  updateChartDateRange,
-} from 'models/charts/charts/selectors/updates';
-import Locale from 'models/charts/user-preferences/classes/Locale';
+import { isProduction } from 'utils/environment';
+import { currentDateRangeLocale } from 'config/locale';
+import ConnectedSharingDropdown from 'components/SharingDropdown/ConnectedSharingDropdown';
 
 export const ChartActions = () => {
   const { t } = useTranslations(
@@ -202,7 +199,7 @@ export const ChartActions = () => {
         dateFrom={new Date(chart.dateFrom)}
         dateTo={new Date(chart.dateTo)}
         onDateChange={handleDateChange}
-        locale={Locale.currentDateFnsLocale}
+        locale={currentDateRangeLocale()}
       />
     </div>
   );

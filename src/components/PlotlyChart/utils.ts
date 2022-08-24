@@ -6,14 +6,13 @@ import {
   ChartTimeSeries,
   ChartWorkflow,
   LineStyle,
-} from 'models/charts/charts/types/types';
+} from 'models/chart/types';
 import { roundToSignificantDigits } from 'utils/numbers';
 import { hexToRGBA } from 'utils/colors';
-import { convertUnits, convertThresholdUnits } from 'utils/units';
-import { WorkflowState } from 'models/calculation-backend/calculation-results/types';
-import { TimeseriesEntry } from 'models/charts/timeseries-results/types';
+import { convertUnits, convertThresholdUnits, units } from 'utils/units';
+import { WorkflowState } from 'models/calculation-results/types';
+import { TimeseriesEntry } from 'models/timeseries-results/types';
 import { isThresholdValid } from 'utils/threshold';
-import units from 'models/charts/units/data/units';
 
 export type PlotlyEventData = {
   [key: string]: any;

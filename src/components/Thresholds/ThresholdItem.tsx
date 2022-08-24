@@ -17,9 +17,9 @@ import {
   ChartThresholdEventFilter,
   ChartTimeSeries,
   ChartWorkflow,
-} from 'models/charts/charts/types/types';
+} from 'models/chart/types';
 import convertMSToDisplay from 'utils/date';
-import { getUnitConverter } from 'models/charts/units/utils/getUnitConverter';
+import { getUnitConverter } from 'utils/units';
 import { makeDefaultTranslations, translationKeys } from 'utils/translations';
 import { isThresholdValid } from 'utils/threshold';
 import {

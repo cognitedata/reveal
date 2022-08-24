@@ -11,18 +11,18 @@ import {
   useCalculationStatus,
   useCreateCalculation,
 } from 'hooks/calculation-backend';
-import { workflowsAtom } from 'models/calculation-backend/calculation-results/atoms/atom';
-import chartAtom from 'models/charts/charts/atoms/atom';
-import { ChartWorkflowV2 } from 'models/charts/charts/types/types';
+import { workflowsAtom } from 'models/calculation-results/atom';
+import chartAtom from 'models/chart/atom';
+import { ChartWorkflowV2 } from 'models/chart/types';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { CHART_POINTS_PER_SERIES } from 'utils/constants';
 import { getHash } from 'utils/hash';
 import { calculateGranularity } from 'utils/timeseries';
 import { useDebounce } from 'use-debounce';
+import { updateWorkflow } from 'models/chart/updates';
 import { isEqual } from 'lodash';
-import { updateWorkflow } from 'models/charts/charts/selectors/updates';
-import useOperations from 'models/calculation-backend/operations/queries/useOperations';
+import { useOperations } from 'models/operations/atom';
 
 export function CalculationCollectionEffects() {
   const [chart] = useRecoilState(chartAtom);
@@ -46,7 +46,7 @@ function CalculationEffects({ calculation }: { calculation: ChartWorkflowV2 }) {
   const [chart, mutate] = useRecoilState(chartAtom);
   const { id, enabled, calls } = calculation;
   const call = [...(calls || [])].sort((c) => c.callDate)[0];
-  const { data: operations } = useOperations();
+  const [, , operations] = useOperations();
   const [refetchInterval, setRefetchInterval] = useState<number | false>(2000);
 
   const steps = useMemo(

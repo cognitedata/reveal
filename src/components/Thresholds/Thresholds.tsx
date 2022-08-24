@@ -3,12 +3,12 @@ import {
   ChartThreshold,
   ChartTimeSeries,
   ChartWorkflow,
-} from 'models/charts/charts/types/types';
+} from 'models/chart/types';
 import ThresholdItem from 'components/Thresholds/ThresholdItem';
 import { Button, Collapse } from '@cognite/cogs.js';
 import TranslatedEditableText from 'components/EditableText/TranslatedEditableText';
 import { ExpandIcon, ThresholdCollapse } from 'components/Thresholds/elements';
-import { Container } from '../Common/SidebarElements';
+import { Container } from 'components/DetailsSidebar/elements';
 
 interface Props
   extends Omit<ComponentProps<typeof ThresholdItem>, 'threshold'> {

@@ -1,37 +1,40 @@
 import { Router } from 'react-router-dom';
+import { SDKProvider } from '@cognite/sdk-provider';
 import { QueryClientProvider, QueryClient } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
 import { ToastContainer } from '@cognite/cogs.js';
 import { RecoilRoot } from 'recoil';
+import config from 'config/config';
 import { IntercomProvider } from 'react-use-intercom';
-import Locale from 'models/charts/user-preferences/classes/Locale';
-import I18N from 'models/charts/user-preferences/classes/I18N';
 
+import 'antd/dist/antd.css';
+import '@cognite/cogs.js/dist/cogs.css';
+import './config/i18n';
+import './config/locale';
 import 'services/metrics';
 
 // START SENTRY CODE
 import * as Sentry from '@sentry/react';
 import { Integrations } from '@sentry/tracing';
 import SentryRRWeb from '@sentry/rrweb';
-import { isDevelopment } from 'models/charts/config/utils/environment';
+import { isDevelopment } from 'utils/environment';
 import { createBrowserHistory } from 'history';
-import Config from 'models/charts/config/classes/Config';
+import { getSDK } from 'utils/cdf-sdk';
 import Routes from './pages/Routes';
 
-if (!isDevelopment && !Config.sentryDSN) {
+if (!isDevelopment && !config.sentryDSN) {
   throw new Error('SENTRY DSN is not present!');
 }
 
 const history = createBrowserHistory();
 
-if (Config.sentryDSN && !isDevelopment) {
+if (config.sentryDSN && !isDevelopment) {
   Sentry.init({
-    dsn: Config.sentryDSN,
-    release: Config.version,
-    environment: Config.environment,
+    dsn: config.sentryDSN,
+    release: config.version,
+    environment: config.environment,
     integrations: [
       new Integrations.BrowserTracing({
-        tracingOrigins: [/calculation-backend.([A-Za-z0-9-]+\.)?cognite\.ai/],
         routingInstrumentation: Sentry.reactRouterV5Instrumentation(history),
       }),
       new SentryRRWeb(),
@@ -42,9 +45,6 @@ if (Config.sentryDSN && !isDevelopment) {
 }
 
 // END SENTRY CODE
-
-I18N.initialize();
-Locale.initialize();
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -58,12 +58,14 @@ const queryClient = new QueryClient({
   },
 });
 
+const sdkClient = getSDK();
+
 export default function RootApp() {
   return (
     <Sentry.ErrorBoundary fallback={<p>An error has occurred</p>} showDialog>
       <QueryClientProvider client={queryClient}>
         <IntercomProvider
-          appId={Config.intercomAppId}
+          appId={config.intercomAppId}
           autoBoot
           initializeDelay={1000}
           autoBootProps={{
@@ -74,10 +76,12 @@ export default function RootApp() {
           }}
         >
           <RecoilRoot>
-            <Router history={history}>
-              <ToastContainer />
-              <Routes />
-            </Router>
+            <SDKProvider sdk={sdkClient}>
+              <Router history={history}>
+                <ToastContainer />
+                <Routes />
+              </Router>
+            </SDKProvider>
           </RecoilRoot>
         </IntercomProvider>
         <ReactQueryDevtools />

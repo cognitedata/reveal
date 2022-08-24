@@ -6,9 +6,11 @@ import { AnnotationPopover } from 'components/FileViewer/AnnotationPopover';
 import styled from 'styled-components/macro';
 import { makeDefaultTranslations } from 'utils/translations';
 import { useTranslations } from 'hooks/translations';
-import { useFileAssetAnnotations } from 'models/cdf/files/queries/useFileAssetAnnotations';
-import { readablePreviewableFileTypes } from 'models/cdf/files/utils/readablePreviewableFileTypes';
-import { isFilePreviewable } from 'models/cdf/files/utils/isFilePreviewable';
+import { useAssetAnnotations } from 'components/FileList/hooks';
+import {
+  isFilePreviewable,
+  readablePreviewableFileTypes,
+} from 'components/FileList/utils';
 
 pdfjs.GlobalWorkerOptions.workerSrc = `https://cdf-hub-bundles.cogniteapp.com/dependencies/pdfjs-dist@2.6.347/build/pdf.worker.js`;
 
@@ -22,7 +24,7 @@ const defaultTranslations = makeDefaultTranslations(
 
 export const FileViewer = ({ file }: { file?: File }) => {
   const sdk = useSDK();
-  const { data: assetAnnotations } = useFileAssetAnnotations(file);
+  const { data: assetAnnotations } = useAssetAnnotations(file);
   const t = {
     ...defaultTranslations,
     ...useTranslations(Object.keys(defaultTranslations), 'FileViewer').t,

@@ -4,12 +4,12 @@ import { useNavigate } from 'hooks/navigation';
 import styled from 'styled-components/macro';
 import dayjs from 'dayjs';
 import { useRecoilState } from 'recoil';
-import chartAtom from 'models/charts/charts/atoms/atom';
+import chartAtom from 'models/chart/atom';
 import { useTranslations } from 'hooks/translations';
 import TranslatedEditableText from 'components/EditableText/TranslatedEditableText';
+import config from 'config/config';
 import { useIntercom } from 'react-use-intercom';
 import { useCallback } from 'react';
-import Config from 'models/charts/config/classes/Config';
 import { ChartActions } from './ChartActions';
 
 const TopBarWrapper = () => {
@@ -94,7 +94,7 @@ const TopBarWrapper = () => {
                 menu: (
                   <Menu>
                     <Menu.Item
-                      href={Config.cogniteHubGroupUrl}
+                      href={config.cogniteHubGroupUrl}
                       style={{ color: 'var(--cogs-text-color)' }}
                       // @ts-ignore
                       target="_blank"
@@ -102,7 +102,7 @@ const TopBarWrapper = () => {
                       {t['Early Adopter Group on Cognite Hub']}
                     </Menu.Item>
                     <Menu.Item
-                      href={Config.privacyPolicyUrl}
+                      href={config.privacyPolicyUrl}
                       style={{ color: 'var(--cogs-text-color)' }}
                       // @ts-ignore
                       target="_blank"
@@ -111,7 +111,7 @@ const TopBarWrapper = () => {
                     </Menu.Item>
                     <Menu.Item onClick={showIntercom}>{t.Feedback}</Menu.Item>
                     <Menu.Footer>
-                      v {Config.version.substring(0, 7)}
+                      v {config.version.substring(0, 7)}
                     </Menu.Footer>
                   </Menu>
                 ),

@@ -1,6 +1,6 @@
 import { Aggregate, CogniteClient, DatapointAggregate } from '@cognite/sdk';
 import { subDays } from 'date-fns';
-import { Chart } from 'models/charts/charts/types/types';
+import { Chart } from 'models/chart/types';
 import { convertUnits } from 'utils/units';
 import { roundToSignificantDigits } from './numbers';
 

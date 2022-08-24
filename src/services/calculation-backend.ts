@@ -26,8 +26,8 @@ import {
   DatapointsMultiQuery,
   DoubleDatapoint,
 } from '@cognite/sdk';
-import { isProduction } from 'models/charts/config/utils/environment';
-import { WorkflowResult } from 'models/calculation-backend/calculation-results/types';
+import { isProduction } from 'utils/environment';
+import { WorkflowResult } from 'models/calculation-results/types';
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 

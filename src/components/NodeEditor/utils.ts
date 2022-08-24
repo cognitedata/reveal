@@ -1,8 +1,4 @@
-import {
-  Chart,
-  ChartTimeSeries,
-  ChartWorkflow,
-} from 'models/charts/charts/types/types';
+import { Chart, ChartTimeSeries, ChartWorkflow } from 'models/chart/types';
 import { SourceOption } from 'components/NodeEditor/V2/types';
 import { ComputationStep, Operation } from '@cognite/calculation-backend';
 import { uniq } from 'lodash';

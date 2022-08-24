@@ -1,17 +1,13 @@
+import config from 'config/config';
 import mixpanel from 'mixpanel-browser';
-import Config from 'models/charts/config/classes/Config';
-import {
-  isDevelopment,
-  isProduction,
-  isStaging,
-} from 'models/charts/config/utils/environment';
+import { isDevelopment, isProduction, isStaging } from 'utils/environment';
 
 const mixpanelConfig = {
   prefix: 'Charts',
 };
 
-if (Config.mixpanelToken) {
-  mixpanel.init(Config.mixpanelToken, { debug: isDevelopment });
+if (config.mixpanelToken) {
+  mixpanel.init(config.mixpanelToken, { debug: isDevelopment });
 } else if (isProduction || isStaging) {
   throw new Error('Mixpanel token must be present outside of development!');
 } else {
@@ -20,7 +16,7 @@ if (Config.mixpanelToken) {
 }
 
 export function trackUsage(eventName: string, properties = {}) {
-  if (!Config.mixpanelToken) return;
+  if (!config.mixpanelToken) return;
   if (!eventName) {
     throw new Error('Event Name is missing!');
   }
@@ -32,14 +28,14 @@ export function trackUsage(eventName: string, properties = {}) {
   const pathWithoutTenant = pathname.substring(pathname.indexOf('/', 1));
   mixpanel.track([mixpanelConfig.prefix, eventName].join('.'), {
     ...properties,
-    appVersion: Config.version,
+    appVersion: config.version,
     location: window.location.pathname,
     pathname: pathWithoutTenant,
   });
 }
 
 export function startTimer(eventName: string) {
-  if (!Config.mixpanelToken) return;
+  if (!config.mixpanelToken) return;
   if (!eventName) {
     throw new Error('Event Name is missing!');
   }
@@ -48,6 +44,6 @@ export function startTimer(eventName: string) {
 }
 
 export function stopTimer(eventName: string, properties = {}) {
-  if (!Config.mixpanelToken) return;
+  if (!config.mixpanelToken) return;
   trackUsage(eventName, properties);
 }

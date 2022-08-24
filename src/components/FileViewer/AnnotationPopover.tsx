@@ -1,14 +1,13 @@
 import { CogniteAnnotation } from '@cognite/annotations';
 import { ProposedCogniteAnnotation } from '@cognite/react-picture-annotation';
 import { Body, Checkbox, Icon, Menu, Overline, Title } from '@cognite/cogs.js';
-import { useAssetTimeseries } from 'hooks/cdf-assets';
-import { useAsset } from 'models/cdf/assets/queries/useAsset';
+import { useAsset, useAssetTimeseries } from 'hooks/cdf-assets';
 import styled from 'styled-components/macro';
 import { TimeseriesChart } from '@cognite/data-exploration';
 import dayjs from 'dayjs';
 import { trackUsage } from 'services/metrics';
 import { useRecoilState } from 'recoil';
-import chartAtom from 'models/charts/charts/atoms/atom';
+import chartAtom from 'models/chart/atom';
 import { useAddRemoveTimeseries } from 'components/Search/hooks';
 
 export const AnnotationPopover = ({

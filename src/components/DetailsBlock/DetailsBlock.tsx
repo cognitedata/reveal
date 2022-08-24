@@ -1,10 +1,10 @@
 import { Title } from '@cognite/cogs.js';
-import { CSSProperties } from 'react';
+import { CSSProperties, FC } from 'react';
 import * as React from 'react';
 import styled from 'styled-components';
 
-interface Props {
-  title?: string;
+interface DetailsBlockProps {
+  title: string;
   children: React.ReactNode;
   style?: CSSProperties;
 }
@@ -20,14 +20,10 @@ const MainDiv = styled.div`
   margin: 8px 0;
 `;
 
-const DetailsBlock = ({ title, children, ...props }: Props) => (
+const DetailsBlock: FC<DetailsBlockProps> = ({ title, children, ...props }) => (
   <MainDiv {...props}>
-    {title && <Title level={6}>{title}</Title>}
-    <RoundedBox>
-      {children || (
-        <div style={{ padding: '0.5rem 1rem' }}>No info to display</div>
-      )}
-    </RoundedBox>
+    <Title level={6}>{title}</Title>
+    <RoundedBox>{children || 'No info to display'}</RoundedBox>
   </MainDiv>
 );
 

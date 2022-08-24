@@ -1,5 +1,5 @@
 import { useTranslations } from 'hooks/translations';
-import { ChartTimeSeries } from 'models/charts/charts/types/types';
+import { ChartTimeSeries } from 'models/chart/types';
 import { Modes } from 'pages/types';
 import { ComponentProps } from 'react';
 import TimeSeriesRow from './TimeSeriesRow';

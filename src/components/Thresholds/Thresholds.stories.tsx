@@ -4,7 +4,7 @@
 import { Meta, Story } from '@storybook/react';
 import { useArgs } from '@storybook/client-api';
 import useThresholdsResults from 'hooks/threshold-calculations';
-import { ChartThreshold } from 'models/charts/charts/types/types';
+import { ChartThreshold } from 'models/chart/types';
 import { v4 as uuidv4 } from 'uuid';
 import ThresholdsComponent from './Thresholds';
 

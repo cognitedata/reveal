@@ -6,9 +6,9 @@ import {
   ChartThreshold,
   ChartTimeSeries,
   ChartWorkflow,
-} from 'models/charts/charts/types/types';
-import { TimeseriesEntry } from 'models/charts/timeseries-results/types';
-import { WorkflowState } from 'models/calculation-backend/calculation-results/types';
+} from 'models/chart/types';
+import { TimeseriesEntry } from 'models/timeseries-results/types';
+import { WorkflowState } from 'models/calculation-results/types';
 import { PlotWrapper } from './elements';
 import {
   calculateSeriesData,

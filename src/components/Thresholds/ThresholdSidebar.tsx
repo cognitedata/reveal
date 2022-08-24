@@ -12,7 +12,19 @@ import {
   ChartThresholdEventFilter,
   ChartTimeSeries,
   ChartWorkflow,
-} from 'models/charts/charts/types/types';
+} from 'models/chart/types';
+import {
+  addChartThreshold,
+  initializeThresholdCollections,
+  removeChartThreshold,
+  updateChartThresholdName,
+  updateChartThresholdSelectedSource,
+  updateChartThresholdType,
+  updateChartThresholdLowerLimit,
+  updateChartThresholdUpperLimit,
+  updateChartThresholdVisibility,
+  updateChartThresholdEventFilters,
+} from 'models/chart/updates';
 import Thresholds from 'components/Thresholds/Thresholds';
 import {
   Sidebar,
@@ -22,18 +34,6 @@ import {
   ContentOverflowWrapper,
 } from 'components/Common/SidebarElements';
 import useThresholdsResults from 'hooks/threshold-calculations';
-import {
-  addChartThreshold,
-  initializeThresholdCollections,
-  removeChartThreshold,
-  updateChartThresholdEventFilters,
-  updateChartThresholdLowerLimit,
-  updateChartThresholdName,
-  updateChartThresholdSelectedSource,
-  updateChartThresholdType,
-  updateChartThresholdUpperLimit,
-  updateChartThresholdVisibility,
-} from 'models/charts/charts/selectors/updates';
 
 type OptionType = {
   value: string;
@@ -41,6 +41,7 @@ type OptionType = {
 };
 
 type Props = {
+  visible: boolean;
   onClose: () => void;
   chart: Chart;
   updateChart: (update: (c: Chart | undefined) => Chart) => void;
@@ -48,6 +49,7 @@ type Props = {
 };
 
 const ThresholdSidebar: FunctionComponent<Props> = ({
+  visible,
   onClose,
   chart,
   updateChart,
@@ -143,7 +145,7 @@ const ThresholdSidebar: FunctionComponent<Props> = ({
   }, [chart, updateChart]);
 
   return (
-    <Sidebar>
+    <Sidebar visible={visible}>
       <TopContainer>
         <TopContainerTitle>{t.Thresholds}</TopContainerTitle>
         <TopContainerAside>

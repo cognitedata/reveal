@@ -32,14 +32,7 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_READONLY_TOKEN }}
 
       - name: Linting
-        run: yarn lint:sarif
-
-      - name: Upload analysis results to GitHub
-        uses: github/codeql-action/upload-sarif@v2
-        if: always()
-        with:
-          sarif_file: eslint-results.sarif
-          wait-for-processing: true
+        run: yarn lint
   tests:
     name: Tests
     needs: lint

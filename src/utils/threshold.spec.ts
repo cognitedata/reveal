@@ -1,4 +1,4 @@
-import { ChartThreshold } from 'models/charts/charts/types/types';
+import { ChartThreshold } from 'models/chart/types';
 import { isThresholdValid } from './threshold';
 
 describe('isThresholdValid', () => {

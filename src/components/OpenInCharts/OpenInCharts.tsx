@@ -9,7 +9,7 @@ import {
 import * as React from 'react';
 import { compact } from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
-import { Chart, ChartTimeSeries } from 'models/charts/charts/types/types';
+import { Chart, ChartTimeSeries } from 'models/chart/types';
 import styled from 'styled-components';
 import dayjs from 'dayjs';
 import { useSDK } from '@cognite/sdk-provider';
@@ -24,13 +24,10 @@ import {
 import { useMyCharts, useUpdateChart, useChart } from 'hooks/charts-storage';
 import { Timeseries } from '@cognite/sdk';
 import { calculateDefaultYAxis } from 'utils/axis';
+import { addTimeseries, convertTSToChartTS } from 'models/chart/updates';
 import { useUserInfo } from '@cognite/sdk-react-query-hooks';
 import { makeDefaultTranslations } from 'utils/translations';
 import { useTranslations } from 'hooks/translations';
-import {
-  addTimeseries,
-  convertTSToChartTS,
-} from 'models/charts/charts/selectors/updates';
 
 const TIMESERIE_IDS_KEY = 'timeserieIds';
 const TIMESERIE_EXTERNAL_IDS_KEY = 'timeserieExternalIds';

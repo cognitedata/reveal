@@ -3,7 +3,7 @@
  */
 import { Meta, Story } from '@storybook/react';
 import useThresholdsResults from 'hooks/threshold-calculations';
-import chartAtom from 'models/charts/charts/atoms/atom';
+import chartAtom from 'models/chart/atom';
 import { RecoilRoot, useRecoilState } from 'recoil';
 import ThresholdSidebar from './ThresholdSidebar';
 
@@ -242,5 +242,6 @@ All.args = {
     ],
     version: 1,
   },
+  visible: true,
   onClose: () => {},
 };

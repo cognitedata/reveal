@@ -6,7 +6,7 @@ import { useLinkedAsset } from 'hooks/cdf-assets';
 import { trackUsage } from 'services/metrics';
 import { useNavigate } from 'hooks/navigation';
 import { StatusIcon } from 'components/StatusIcon/StatusIcon';
-import useAssetAnnotatedFiles from 'models/cdf/assets/queries/useAssetAnnotatedFiles';
+import { useFilesAssetAppearsIn } from 'components/FileList/hooks';
 
 export const PnidButton = ({
   asset,
@@ -29,7 +29,7 @@ export const PnidButton = ({
     shouldFetchLinkedAsset
   );
 
-  const { data: files = [], isFetched } = useAssetAnnotatedFiles(
+  const { data: files = [], isFetched } = useFilesAssetAppearsIn(
     asset || linkedAsset,
     shouldFetchLinkedAsset ? isAssetFetched : true
   );

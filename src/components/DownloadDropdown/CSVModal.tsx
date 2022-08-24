@@ -1,7 +1,7 @@
 import { Button, Checkbox, SegmentedControl, Tooltip } from '@cognite/cogs.js';
 import { useSDK } from '@cognite/sdk-provider';
 import DateTimeRangeSelector from 'components/DateTime/DateTimeRangeSelector';
-import chartAtom from 'models/charts/charts/atoms/atom';
+import chartAtom from 'models/chart/atom';
 import { ComponentProps, useCallback, useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { datapointsToCSV, Delimiters, downloadCSV } from 'utils/csv';

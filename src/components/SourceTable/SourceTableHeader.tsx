@@ -5,7 +5,7 @@
 import { ShowHideButton } from 'components/ShowHideButton/ShowHideButton';
 import { Modes } from 'pages/types';
 import { MouseEventHandler } from 'react';
-import { makeDefaultTranslations, translationKeys } from 'utils/translations';
+import { makeDefaultTranslations } from 'utils/translations';
 import { SourceItem, SourceName } from './elements';
 
 interface Props {
@@ -145,8 +145,5 @@ const SourceTableHeader = ({
   );
 };
 
-SourceTableHeader.defaultTranslations = defaultTranslation;
-SourceTableHeader.translationKeys = translationKeys(defaultTranslation);
-SourceTableHeader.translationNamespace = 'SourceTableHeader';
-
+SourceTableHeader.translationKeys = Object.keys(defaultTranslation);
 export { SourceTableHeader };

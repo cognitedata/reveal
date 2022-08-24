@@ -1,8 +1,8 @@
 import { useCallback, useMemo, useState } from 'react';
-import { Chart } from 'models/charts/charts/types/types';
-import { TimeseriesEntry } from 'models/charts/timeseries-results/types';
-import { WorkflowState } from 'models/calculation-backend/calculation-results/types';
-import { updateSourceAxisForChart } from 'models/charts/charts/selectors/updates';
+import { Chart } from 'models/chart/types';
+import { updateSourceAxisForChart } from 'models/chart/updates';
+import { TimeseriesEntry } from 'models/timeseries-results/types';
+import { WorkflowState } from 'models/calculation-results/types';
 import { ChartingContainer } from './elements';
 import { cleanTimeseriesCollection, cleanWorkflowCollection } from './utils';
 import PlotlyChart, { PlotNavigationUpdate } from './PlotlyChart';

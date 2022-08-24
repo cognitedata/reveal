@@ -38,4 +38,3 @@ results/
 
 # Cypress
 cypress/videos
-eslint-results.sarif

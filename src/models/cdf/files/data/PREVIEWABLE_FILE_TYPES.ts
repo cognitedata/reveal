@@ -1,3 +1,0 @@
-import { PREVIEWABLE_IMAGE_TYPES } from 'models/cdf/files/data/PREVIEWABLE_IMAGE_TYPES';
-
-export const PREVIEWABLE_FILE_TYPES = [...PREVIEWABLE_IMAGE_TYPES, 'pdf'];

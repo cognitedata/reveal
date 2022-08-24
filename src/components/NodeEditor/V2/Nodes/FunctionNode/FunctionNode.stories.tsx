@@ -1,6 +1,6 @@
 import { ComponentProps } from 'react';
 import { Meta, Story } from '@storybook/react';
-import { fullListOfOperations } from 'models/calculation-backend/operations/mocks/mocks';
+import { fullListOfOperations } from 'models/operations/mocks';
 import { ReactFlowProvider } from 'react-flow-renderer';
 import { defaultTranslations } from 'components/NodeEditor/translations';
 import { Operation } from '@cognite/calculation-backend';

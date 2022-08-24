@@ -7,7 +7,7 @@ import {
   XYPosition,
   FlowTransform,
 } from 'react-flow-renderer';
-import { ChartWorkflowV2 } from 'models/charts/charts/types/types';
+import { ChartWorkflowV2 } from 'models/chart/types';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { ComputationStep, Operation } from '@cognite/calculation-backend';

@@ -16,7 +16,7 @@ import {
   isEdge,
   removeElements,
 } from 'react-flow-renderer';
-import { ChartWorkflowV2 } from 'models/charts/charts/types/types';
+import { ChartWorkflowV2 } from 'models/chart/types';
 import { NodeDataVariants } from 'components/NodeEditor/V2/types';
 import {
   FunctionNodeData,

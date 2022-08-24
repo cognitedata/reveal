@@ -1,4 +1,4 @@
-import useMyChartsList from 'models/charts/my-charts/hooks/useMyChartsList';
+import useMyChartsList from 'models/charts/hooks/useMyChartsList';
 import { useNavigate } from 'hooks/navigation';
 import { useComponentTranslations } from 'hooks/translations';
 import { ComponentProps } from 'react';

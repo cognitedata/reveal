@@ -1,7 +1,7 @@
 import TenantSelector, { Background } from '@cognite/cdf-hub-tenant-selector';
+import config from 'config/config';
 import { useCluster } from 'hooks/config';
-import Config from 'models/charts/config/classes/Config';
-import { isProduction } from 'models/charts/config/utils/environment';
+import { isProduction } from 'utils/environment';
 
 const clusters = [
   {
@@ -9,12 +9,7 @@ const clusters = [
     options: [
       { value: '', label: 'Europe 1 (Google)', legacyAuth: true },
       { value: 'westeurope-1', label: 'Europe 2 (Microsoft)' },
-      {
-        value: 'asia-northeast1-1',
-        label: 'Asia 1 (Google)',
-        legacyAuth: true,
-      },
-      { value: 'az-tyo-gp-001', label: 'Asia 2 (Microsoft)' },
+      { value: 'asia-northeast1-1', label: 'Asia 1', legacyAuth: true },
       { value: 'az-eastus-1', label: 'US East 1' },
     ],
   },
@@ -45,8 +40,8 @@ export default function TenantSelectorView() {
   return (
     <Background>
       <TenantSelector
-        appName={Config.appName}
-        clientId={Config.azureAppId}
+        appName={config.appName}
+        clientId={config.azureAppId}
         clusters={clusters}
         cluster={cluster || ''}
         setCluster={setCluster}

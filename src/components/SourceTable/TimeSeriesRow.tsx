@@ -1,5 +1,5 @@
 import { ComponentProps, useState } from 'react';
-import { ChartTimeSeries } from 'models/charts/charts/types/types';
+import { ChartTimeSeries } from 'models/chart/types';
 import { Button, Tooltip, Popconfirm } from '@cognite/cogs.js';
 import { useLinkedAsset } from 'hooks/cdf-assets';
 import AppearanceDropdown from 'components/AppearanceDropdown/AppearanceDropdown';
@@ -14,7 +14,7 @@ import { useComponentTranslations, useTranslations } from 'hooks/translations';
 import { makeDefaultTranslations } from 'utils/translations';
 import TranslatedEditableText from 'components/EditableText/TranslatedEditableText';
 import Dropdown from 'components/Dropdown/Dropdown';
-import { TimeseriesEntry } from 'models/charts/timeseries-results/types';
+import { TimeseriesEntry } from 'models/timeseries-results/types';
 import {
   SourceItem,
   SourceName,

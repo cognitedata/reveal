@@ -16,9 +16,9 @@ import {
   useSearch,
 } from '@cognite/sdk-react-query-hooks';
 import TimeseriesSearchResultItem from 'components/SearchResultTable/TimeseriesSearchResultItem';
-import { useAsset } from 'models/cdf/assets/queries/useAsset';
+import { useAsset } from 'hooks/cdf-assets';
 import { useSearchParam } from 'hooks/navigation';
-import chartAtom from 'models/charts/charts/atoms/atom';
+import chartAtom from 'models/chart/atom';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useRecoilState } from 'recoil';
 import { trackUsage } from 'services/metrics';

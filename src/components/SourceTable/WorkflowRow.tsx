@@ -3,7 +3,7 @@ import AppearanceDropdown from 'components/AppearanceDropdown/AppearanceDropdown
 import UnitDropdown from 'components/UnitDropdown/UnitDropdown';
 import { ComponentProps, useState } from 'react';
 import { DraggableProvided } from 'react-beautiful-dnd';
-import { ChartWorkflow } from 'models/charts/charts/types/types';
+import { ChartWorkflow } from 'models/chart/types';
 import { DatapointsSummary } from 'utils/units';
 import { StyleButton } from 'components/StyleButton/StyleButton';
 import { useComponentTranslations, useTranslations } from 'hooks/translations';
@@ -12,7 +12,7 @@ import TranslatedEditableText from 'components/EditableText/TranslatedEditableTe
 import Dropdown from 'components/Dropdown/Dropdown';
 import { trackUsage } from 'services/metrics';
 import { formatValueForDisplay } from 'utils/numbers';
-import { WorkflowState } from 'models/calculation-backend/calculation-results/types';
+import { WorkflowState } from 'models/calculation-results/types';
 import { getIconTypeFromStatus } from 'components/StatusIcon/StatusIcon';
 import {
   DropdownWithoutMaxWidth,

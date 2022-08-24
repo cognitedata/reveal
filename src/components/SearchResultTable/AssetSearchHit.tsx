@@ -9,7 +9,7 @@ import { useAddRemoveTimeseries } from 'components/Search/hooks';
 import { useSearchParam } from 'hooks/navigation';
 import { ASSET_KEY } from 'utils/constants';
 import { useRecoilState } from 'recoil';
-import chartAtom from 'models/charts/charts/atoms/atom';
+import chartAtom from 'models/chart/atom';
 import { removeIllegalCharacters } from 'utils/text';
 import { makeDefaultTranslations } from 'utils/translations';
 import { useTranslations } from 'hooks/translations';

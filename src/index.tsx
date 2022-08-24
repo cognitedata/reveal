@@ -1,14 +1,14 @@
+import config from 'config/config';
 import ReactDOM from 'react-dom';
-import Config from 'models/charts/config/classes/Config';
-import { isDevelopment, isPR } from './models/charts/config/utils/environment';
+import { isDevelopment, isPR } from './utils/environment';
 import App from './App';
 
 // eslint-disable-next-line no-console
-console.log(`Cognite Charts running in ${Config.environment}`);
+console.log(`Cognite Charts running in ${config.environment}`);
 
 if (isDevelopment || isPR) {
   // eslint-disable-next-line no-console
-  console.log('Config', Config);
+  console.log('Config', config);
 }
 
 ReactDOM.render(<App />, document.getElementById('root'));

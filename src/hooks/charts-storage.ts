@@ -1,7 +1,7 @@
 import omit from 'lodash/omit';
 import isEqual from 'lodash/isEqual';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
-import { Chart } from 'models/charts/charts/types/types';
+import { Chart } from 'models/chart/types';
 import { useUserInfo } from '@cognite/sdk-react-query-hooks';
 import {
   deleteChart,

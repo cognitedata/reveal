@@ -1,6 +1,6 @@
 import { ComponentMeta, Story } from '@storybook/react';
 import { defaultTranslations } from 'components/NodeEditor/translations';
-import { fullListOfOperations } from 'models/calculation-backend/operations/mocks/mocks';
+import { fullListOfOperations } from 'models/operations/mocks';
 import { ComponentProps } from 'react';
 import ActionBar from './ActionBar';
 

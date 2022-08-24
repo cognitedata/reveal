@@ -1,5 +1,5 @@
 import { Calculation } from '@cognite/calculation-backend';
-import { fullListOfOperations } from 'models/calculation-backend/operations/mocks/mocks';
+import { fullListOfOperations } from 'models/operations/mocks';
 import { validateSteps } from './calculations';
 
 describe('validateSteps', () => {

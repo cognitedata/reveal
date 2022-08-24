@@ -1,10 +1,7 @@
 import { uuid4 } from '@sentry/utils';
 import { SourceNodeData } from 'components/NodeEditor/V2/Nodes/SourceNode';
 import { NodeDataVariants } from 'components/NodeEditor/V2/types';
-import {
-  ChartWorkflow,
-  ChartWorkflowV2,
-} from 'models/charts/charts/types/types';
+import { ChartWorkflow, ChartWorkflowV2 } from 'models/chart/types';
 import { FlowElement, FlowExportObject } from 'react-flow-renderer';
 
 export const toggleDownloadChartElements = (hide: boolean, height?: number) => {
