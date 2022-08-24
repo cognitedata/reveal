@@ -68,20 +68,6 @@ export async function addModels(
       })
   );
 
-  // const fullModelUrl = `${window.location.origin}/${modelName}`;
-
-  // const modelOptions: AddModelOptions = {
-  //   modelId: -1,
-  //   revisionId: -1,
-  //   localPath: fullModelUrl
-  // };
-
-  // if (await isLocalUrlPointCloudModel(fullModelUrl)) {
-  //   return viewer.addPointCloudModel(modelOptions);
-  // } else {
-  //   return viewer.addCadModel(modelOptions);
-  // }
-
   async function isLocalUrlPointCloudModel(modelBaseUrl: string) {
     // The hacky check below is due to webpack-dev-server returning 200 for non-existing files. We therefore check if the
     // response is a valid json.
