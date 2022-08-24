@@ -5,6 +5,8 @@ import { TAB_NAMES } from '../../../../../src/pages/authorized/search/well/inspe
 import { interceptCoreNetworkRequests } from '../../../../support/commands/helpers';
 import { WELL_SOURCE_WITH_ALL } from '../../../../support/constants';
 
+const FILE_TYPE = 'Plain Text';
+
 describe('Wells: Related documents', () => {
   before(() => {
     const coreRequests = interceptCoreNetworkRequests();
@@ -102,18 +104,13 @@ describe('Wells: Related documents', () => {
     cy.get('@checkbox-option').eq(1).click({ force: true });
 
     cy.log('Selected fillter should be applied');
-    cy.get('@checkbox-option')
-      .eq(1)
-      .parent()
-      .invoke('text')
-      .then((selectedFileType) => {
-        cy.findAllByTestId('table-cell')
-          .eq(4)
-          .invoke('text')
-          .then((valInCell) => {
-            expect(valInCell).eql(selectedFileType);
-          });
-      });
+    cy.findAllByTestId('table-row')
+      .first()
+      .findAllByTestId('table-cell')
+      .eq(4)
+      .children()
+      .last()
+      .contains(FILE_TYPE);
 
     cy.log('remove filter by clicking on filter tag');
     cy.clickButton('filter-tag', 'data-testid');
