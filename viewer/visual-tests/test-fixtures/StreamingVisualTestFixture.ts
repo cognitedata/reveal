@@ -35,6 +35,8 @@ export type StreamingTestFixtureComponents = {
   camera: THREE.PerspectiveCamera;
   cameraControls: OrbitControls;
   cadMaterialManager: CadMaterialManager;
+  cadModelUpdateHandler: CadModelUpdateHandler;
+  cadManager: CadManager;
 };
 
 export abstract class StreamingVisualTestFixture implements VisualTestFixture {
@@ -82,6 +84,7 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
 
     this._renderer = new THREE.WebGLRenderer();
     this._renderer.setPixelRatio(window.devicePixelRatio);
+    this._renderer.localClippingEnabled = true;
 
     this._renderer.setPixelRatio(window.devicePixelRatio);
 
@@ -148,7 +151,9 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
       },
       camera: this._perspectiveCamera,
       cameraControls: this._controls,
-      cadMaterialManager: this._materialManager
+      cadMaterialManager: this._materialManager,
+      cadModelUpdateHandler,
+      cadManager
     });
 
     this._gui.close();
@@ -157,7 +162,10 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
   }
 
   private setupDatGui() {
-    this._gui = new dat.GUI();
+    this._gui = new dat.GUI({ autoPlace: false });
+    this._gui.domElement.style.position = 'absolute';
+    this._gui.domElement.style.right = '0px';
+    document.body.appendChild(this._gui.domElement);
 
     this._frameStatsGUIFolder = this._gui.addFolder('frameStats');
     this._frameStatsGUIFolder.open();
