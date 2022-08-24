@@ -1,7 +1,12 @@
-import { useSelectionCheckbox } from '@cognite/data-exploration';
+import { Checkbox } from '@cognite/cogs.js';
 import React from 'react';
 import { TableDataItem } from 'src/modules/Common/types';
 import styled from 'styled-components';
+
+const handleClick = (evt: any) => {
+  // dummy handler to stop event propagation
+  evt.stopPropagation();
+};
 
 export const SelectionCheckbox = ({
   dataItem,
@@ -11,17 +16,22 @@ export const SelectionCheckbox = ({
   dataItem: TableDataItem;
   selected: boolean;
   handleItemSelect: (item: TableDataItem, selected: boolean) => void;
-}) => {
-  const selectionCheckbox = useSelectionCheckbox(
-    'multiple',
-    dataItem.id,
-    selected,
-    () => handleItemSelect(dataItem, !selected)
-  );
-  return <Selection>{selectionCheckbox}</Selection>;
-};
+}) => (
+  <CheckboxContainer
+    role="button"
+    tabIndex={0}
+    onClick={handleClick}
+    onKeyDown={handleClick}
+  >
+    <Checkbox
+      name="ckbGridItem"
+      checked={selected}
+      onChange={(nextState) => handleItemSelect(dataItem, nextState)}
+    />
+  </CheckboxContainer>
+);
 
-const Selection = styled.div`
+const CheckboxContainer = styled.div`
   position: absolute;
   top: 14px;
   left: 9px;
