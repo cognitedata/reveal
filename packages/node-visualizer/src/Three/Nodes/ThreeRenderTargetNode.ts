@@ -462,7 +462,10 @@ export class ThreeRenderTargetNode extends BaseRenderTargetNode {
 
     vectorLength = Math.max(vectorLength, 100_000); // Move the light far away
     vectorToCenter.multiplyScalar(vectorLength);
-    vectorToCenter.add(target);
+
+    if (this.viewMode !== ViewModes.Overlay) {
+      vectorToCenter.add(target);
+    }
 
     light.position.copy(vectorToCenter);
   }
