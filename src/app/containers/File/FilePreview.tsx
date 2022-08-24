@@ -161,7 +161,7 @@ export const FilePreview = ({
 };
 
 const PreviewTabWrapper = styled.div`
-  height: calc(100vh - 350px);
+  height: 100%;
 `;
 
 const Banner = styled.div`

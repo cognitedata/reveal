@@ -134,12 +134,15 @@ const StyledTabs = styled(Tabs)`
   padding-left: 16px;
   padding-right: 16px;
   flex: 1;
-  overflow: auto;
+  height: 100%;
   .rc-tabs-nav-wrap {
     border-bottom: 1px solid ${Colors['greyscale-grey3'].hex()};
   }
   .rc-tabs-content-holder {
     display: flex;
+    /* We need to consider the height of the tab switcher part at the top which is 48px in height */
+    height: calc(100% - 48px);
+    overflow: auto;
   }
 `;
 

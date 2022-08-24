@@ -143,9 +143,11 @@ export const ThreeDPreview = ({
   );
 };
 
+// This container has an inline style 'position: relative' given by @cognite/reveal.
+// We can not cancel it, so we had to use that -85px trick here!
 const RevealContainer = styled.div`
+  height: calc(100% - 85px);
   width: 100%;
-  height: 100%;
 `;
 
 const ToolBarWrapper = styled.div`

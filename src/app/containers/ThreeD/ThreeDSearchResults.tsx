@@ -11,6 +11,7 @@ import { FixedSizeGrid as Grid } from 'react-window';
 import InfiniteLoader from 'react-window-infinite-loader';
 import { Alert } from 'antd';
 import { ResourceType, useInfinite3DModels } from '@cognite/data-exploration';
+import styled from 'styled-components';
 
 export const ThreeDSearchResults = ({
   query = '',
@@ -60,7 +61,7 @@ export const ThreeDSearchResults = ({
   }
 
   return (
-    <div style={{ height: 'calc(100% - 80px)' }}>
+    <StyledThreeDSearchResults>
       <AutoSizer>
         {({ height, width }) => {
           const columnCount = Math.floor(width / 225);
@@ -122,6 +123,10 @@ export const ThreeDSearchResults = ({
           );
         }}
       </AutoSizer>
-    </div>
+    </StyledThreeDSearchResults>
   );
 };
+
+const StyledThreeDSearchResults = styled.div`
+  height: 100%;
+`;
