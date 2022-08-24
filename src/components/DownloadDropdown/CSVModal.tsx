@@ -45,7 +45,10 @@ export const defaultTranslations = makeDefaultTranslations(
   'Exporting - please wait',
   'Export successful',
   'Cancel',
-  'Export'
+  'Export',
+  'Nothing to export',
+  'At least one time series must be enabled in the chart to be able to export',
+  'Sorry, we currently do not support exporting calculations to CSV. For now, you can only download time series as CSV.'
 );
 
 type Props = {
@@ -90,6 +93,15 @@ const CSVModal = ({
   const selectedDelimiter = delimiterOptions.find(
     ({ id }) => id === selectedDelimiterId
   )?.value;
+
+  const hasNoSourcesVisible = [
+    ...(chart?.timeSeriesCollection || []),
+    ...(chart?.workflowCollection || []),
+  ].every((source) => !source.enabled);
+
+  const hasOnlyCalculationsVisible =
+    !hasNoSourcesVisible &&
+    [...(chart?.timeSeriesCollection || [])].every((source) => !source.enabled);
 
   useEffect(() => {
     setIsModalVisible(isOpen);
@@ -382,9 +394,45 @@ const CSVModal = ({
         <StatusContainer>
           {error && (
             <Tooltip maxWidth={350} content={error.message}>
-              <StatusText>
+              <StatusText title={error.message}>
                 <StatusIcon style={{ color: 'var(--cogs-red)' }} type="Error" />{' '}
                 {t['Export failed']}
+              </StatusText>
+            </Tooltip>
+          )}
+          {!error && hasNoSourcesVisible && (
+            <Tooltip
+              maxWidth={350}
+              content={
+                t[
+                  'At least one time series must be enabled in the chart to be able to export'
+                ]
+              }
+            >
+              <StatusText>
+                <StatusIcon
+                  style={{ color: 'var(--cogs-yellow)' }}
+                  type="WarningFilled"
+                />{' '}
+                {t['Nothing to export']}
+              </StatusText>
+            </Tooltip>
+          )}
+          {!error && hasOnlyCalculationsVisible && (
+            <Tooltip
+              maxWidth={350}
+              content={
+                t[
+                  'Sorry, we currently do not support exporting calculations to CSV. For now, you can only download time series as CSV.'
+                ]
+              }
+            >
+              <StatusText>
+                <StatusIcon
+                  style={{ color: 'var(--cogs-yellow)' }}
+                  type="WarningFilled"
+                />{' '}
+                {t['Nothing to export']}
               </StatusText>
             </Tooltip>
           )}
@@ -411,7 +459,13 @@ const CSVModal = ({
           >
             {t.Cancel}
           </Button>
-          <Button disabled={isExporting} onClick={handleExport} type="primary">
+          <Button
+            disabled={
+              isExporting || hasNoSourcesVisible || hasOnlyCalculationsVisible
+            }
+            onClick={handleExport}
+            type="primary"
+          >
             {t.Export}
           </Button>
         </ButtonGroup>
