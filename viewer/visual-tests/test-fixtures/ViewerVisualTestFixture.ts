@@ -12,7 +12,6 @@ export abstract class ViewerVisualTestFixture implements VisualTestFixture {
   private readonly _localModelUrl: string | undefined;
 
   constructor(localModelUrl?: string) {
-    console.log('asd');
     this._localModelUrl = localModelUrl;
   }
 

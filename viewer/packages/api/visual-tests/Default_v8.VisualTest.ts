@@ -4,7 +4,7 @@
 
 import { ViewerVisualTestFixture } from '../../../visual-tests/test-fixtures/ViewerVisualTestFixture';
 
-// Sanity test for loading model
+// Sanity test for loading v8 model
 export default class DefaultV8VisualTest extends ViewerVisualTestFixture {
   constructor() {
     super('primitives_v8');
