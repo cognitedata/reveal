@@ -54,13 +54,12 @@ export function SelectAllHeaderRenderer({
     </Menu>
   );
   return (
-    <Checkbox
-      className="cogs-body-2"
-      name={columnHeaderKey}
-      checked={column.allSelected}
-      onChange={handleSelectAllFiles}
-      style={{ margin: 0 }}
-    >
+    <>
+      <Checkbox
+        name={columnHeaderKey}
+        checked={column.allSelected}
+        onChange={handleSelectAllFiles}
+      />
       <Dropdown content={MenuContent}>
         <Button
           type="ghost"
@@ -68,6 +67,6 @@ export function SelectAllHeaderRenderer({
           aria-label="dropdown button"
         />
       </Dropdown>
-    </Checkbox>
+    </>
   );
 }
