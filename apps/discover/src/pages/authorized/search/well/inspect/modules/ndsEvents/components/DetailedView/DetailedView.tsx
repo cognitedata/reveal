@@ -4,6 +4,7 @@ import head from 'lodash/head';
 import isEmpty from 'lodash/isEmpty';
 import isUndefined from 'lodash/isUndefined';
 
+import EmptyState from 'components/EmptyState';
 import { Modal } from 'components/Modal';
 import { NavigationPanel } from 'components/NavigationPanel';
 import { OverlayNavigation } from 'components/OverlayNavigation';
@@ -131,23 +132,30 @@ export const DetailedView: React.FC<DetailedViewProps> = ({
         </FiltersBar>
 
         <DetailedViewContent>
-          {selectedViewMode === NdsDetailedViewModes.RiskType && (
-            <Treemap
-              data={riskTypeTreemapData}
-              onTileClicked={handleRickTypeTileClicked}
-            />
+          {(isEmpty(data) || isEmpty(filteredData)) && (
+            <EmptyState isLoading={false} />
           )}
 
-          {selectedViewMode === NdsDetailedViewModes.Subtype && (
-            <Treemap
-              data={subtypeTreemapData}
-              onTileClicked={handleSubtypeTileClicked}
-            />
-          )}
+          {!isEmpty(filteredData) &&
+            selectedViewMode === NdsDetailedViewModes.RiskType && (
+              <Treemap
+                data={riskTypeTreemapData}
+                onTileClicked={handleRickTypeTileClicked}
+              />
+            )}
 
-          {selectedViewMode === NdsDetailedViewModes.Table && (
-            <DetailedViewTable data={filteredData} />
-          )}
+          {!isEmpty(filteredData) &&
+            selectedViewMode === NdsDetailedViewModes.Subtype && (
+              <Treemap
+                data={subtypeTreemapData}
+                onTileClicked={handleSubtypeTileClicked}
+              />
+            )}
+
+          {!isEmpty(filteredData) &&
+            selectedViewMode === NdsDetailedViewModes.Table && (
+              <DetailedViewTable data={filteredData} />
+            )}
         </DetailedViewContent>
 
         <Modal

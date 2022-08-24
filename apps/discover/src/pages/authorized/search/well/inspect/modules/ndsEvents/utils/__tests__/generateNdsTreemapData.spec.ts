@@ -80,8 +80,20 @@ describe('generateNdsTreemapData', () => {
           description: '0 events (0%)',
           value: 1,
           id: 'other',
-          wellbores: [
-            { id: 'wellboreId3', name: 'wellbore 3', numberOfEvents: 0 },
+          wells: [
+            {
+              id: 'test-wellbore',
+              wellName: 'test-wellbore',
+              wellbores: [
+                {
+                  id: 'wellboreId3',
+                  name: 'wellbore 3',
+                  numberOfEvents: 0,
+                  percentage: 0,
+                  wellName: 'test-wellbore',
+                },
+              ],
+            },
           ],
         },
       ],
@@ -157,9 +169,27 @@ describe('generateNdsTreemapData', () => {
           description: '1 events (8%)',
           value: 3,
           id: 'other',
-          wellbores: [
-            { id: 'wellboreId4', name: 'wellbore 4', numberOfEvents: 1 },
-            { id: 'wellboreId3', name: 'wellbore 3', numberOfEvents: 0 },
+          wells: [
+            {
+              id: 'test-wellbore',
+              wellName: 'test-wellbore',
+              wellbores: [
+                {
+                  id: 'wellboreId4',
+                  name: 'wellbore 4',
+                  numberOfEvents: 1,
+                  percentage: 8.33,
+                  wellName: 'test-wellbore',
+                },
+                {
+                  id: 'wellboreId3',
+                  name: 'wellbore 3',
+                  numberOfEvents: 0,
+                  percentage: 0,
+                  wellName: 'test-wellbore',
+                },
+              ],
+            },
           ],
         },
       ],
@@ -186,10 +216,34 @@ describe('generateNdsTreemapData', () => {
           title: 'Other (3)',
           value: 100,
           description: '0 events (0%)',
-          wellbores: [
-            { id: 'wellboreId1', name: 'wellbore 1', numberOfEvents: 0 },
-            { id: 'wellboreId2', name: 'wellbore 2', numberOfEvents: 0 },
-            { id: 'wellboreId3', name: 'wellbore 3', numberOfEvents: 0 },
+          wells: [
+            {
+              id: 'test-wellbore',
+              wellName: 'test-wellbore',
+              wellbores: [
+                {
+                  id: 'wellboreId1',
+                  name: 'wellbore 1',
+                  numberOfEvents: 0,
+                  percentage: 0,
+                  wellName: 'test-wellbore',
+                },
+                {
+                  id: 'wellboreId2',
+                  name: 'wellbore 2',
+                  numberOfEvents: 0,
+                  percentage: 0,
+                  wellName: 'test-wellbore',
+                },
+                {
+                  id: 'wellboreId3',
+                  name: 'wellbore 3',
+                  numberOfEvents: 0,
+                  percentage: 0,
+                  wellName: 'test-wellbore',
+                },
+              ],
+            },
           ],
         },
       ],

@@ -2,6 +2,7 @@ import { NdsInternal } from 'domain/wells/nds/internal/types';
 import { groupByWellbore } from 'domain/wells/wellbore/internal/transformers/groupByWellbore';
 import { WellboreInternal } from 'domain/wells/wellbore/internal/types';
 
+import groupBy from 'lodash/groupBy';
 import isEmpty from 'lodash/isEmpty';
 import minBy from 'lodash/minBy';
 import sumBy from 'lodash/sumBy';
@@ -43,7 +44,12 @@ export const generateNdsTreemapData = (
             : previousValue.numberOfWellsWithEvents,
           wellbores: [
             ...previousValue.wellbores,
-            { name: currentValue.name, numberOfEvents, id: currentValue.id },
+            {
+              name: currentValue.name,
+              numberOfEvents,
+              id: currentValue.id,
+              wellName: currentValue.wellName,
+            },
           ],
         };
       },
@@ -79,6 +85,21 @@ export const generateNdsTreemapData = (
       wellbores.length > wellboresToDisplay.length ||
       wellboresToDisplay.length === 0
     ) {
+      const remainingWellbores = [...sortedWellboresWithEvents]
+        .slice(wellboresToDisplay.length, sortedWellboresWithEvents.length)
+        .map((wellbore) => {
+          return {
+            ...wellbore,
+            percentage: getFixedPercent(
+              wellbore.numberOfEvents,
+              totalNumberOfEvents,
+              2
+            ),
+          };
+        });
+
+      const wellsGrouped = groupBy(remainingWellbores, 'wellName');
+
       OtherNode = {
         id: 'other',
         title: `Other (${wellbores.length - wellboresToDisplay.length})`,
@@ -89,10 +110,11 @@ export const generateNdsTreemapData = (
           totalNumberOfEvents - numberOfEventsFromDisplayedWellbores,
           totalNumberOfEvents
         )}%)`,
-        wellbores: [...sortedWellboresWithEvents].slice(
-          wellboresToDisplay.length,
-          sortedWellboresWithEvents.length
-        ),
+        wells: Object.keys(wellsGrouped).map((wellName) => ({
+          wellName,
+          wellbores: wellsGrouped[wellName],
+          id: wellName,
+        })),
       };
     }
 

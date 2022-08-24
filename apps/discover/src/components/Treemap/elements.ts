@@ -10,6 +10,7 @@ export const TreemapWrapper = styled.div`
   .rect {
     background: var(--cogs-surface--status-neutral--muted--default);
     border-radius: 4px;
+    overflow: hidden;
 
     &:hover {
       background: var(--cogs-surface--status-neutral--muted--hover);
