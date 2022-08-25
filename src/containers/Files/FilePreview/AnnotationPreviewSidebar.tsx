@@ -318,6 +318,22 @@ const AnnotationPreviewSidebar = ({
           </span>
         ),
         onOk: async () => {
+          if (
+            annotation.resourceType === 'asset' &&
+            annotation?.resourceId &&
+            file
+          ) {
+            await sdk.files.update([
+              {
+                id: file.id,
+                update: {
+                  assetIds: {
+                    remove: [annotation.resourceId],
+                  },
+                },
+              },
+            ]);
+          }
           deleteAnnotations([annotation as CogniteAnnotation]);
           setSelectedAnnotations([]);
         },
