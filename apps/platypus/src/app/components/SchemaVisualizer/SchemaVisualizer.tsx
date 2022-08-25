@@ -52,29 +52,34 @@ export const SchemaVisualizer = React.memo(
     );
     const [searchFilterValue, setSearchFilterValue] = useState('');
     const [isVisualizerExpanded, setIsVisualizerExpanded] = useState(false);
-    const [isErrorState, setIsError] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
     const [isLoaded, setIsLoaded] = useState(false);
 
     const graphRef = useRef<GraphFns | null>(null);
 
     const schemaTypes = useMemo(() => {
+      setErrorMessage('');
       if (!graphQLSchemaString) {
-        setIsError(false);
         setIsLoaded(true);
         return [];
       }
 
       try {
         const { definitions } = parse(graphQLSchemaString || '');
-        setIsError(false);
+        if (definitions.length > 30) {
+          setErrorMessage(
+            'The visualizer currently only support up to 30 types.'
+          );
+          return [];
+        }
         return definitions;
       } catch {
         // TODO: Add sentry
-        setIsError(true);
+        setErrorMessage('There’s a validation error in your data model.');
         setIsLoaded(true);
         return [];
       }
-    }, [graphQLSchemaString, setIsError]);
+    }, [graphQLSchemaString, setErrorMessage]);
 
     const [popover, setPopover] = useState<React.ReactNode | undefined>(
       undefined
@@ -169,7 +174,7 @@ export const SchemaVisualizer = React.memo(
             />
           )}
         </Flex>
-        {isErrorState ? (
+        {errorMessage ? (
           <Flex
             alignItems="center"
             justifyContent="center"
@@ -179,12 +184,7 @@ export const SchemaVisualizer = React.memo(
             <Title level={2} style={{ textAlign: 'center', marginBottom: 16 }}>
               {t('failed_to_load', 'Unable to visualize the Data Model.')}
             </Title>
-            <Body>
-              {t(
-                'failed_to_load_description',
-                'Have you created a Data Model already?'
-              )}
-            </Body>
+            <Body>{t('failed_to_load_description', errorMessage)}</Body>
           </Flex>
         ) : (
           <Graph<SchemaDefinitionNode>
