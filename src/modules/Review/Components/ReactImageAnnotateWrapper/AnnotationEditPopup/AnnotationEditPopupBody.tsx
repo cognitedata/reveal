@@ -80,14 +80,14 @@ export const AnnotationEditPopupBody = ({
     if (labelOptions && labelOptions.length) {
       return (
         <>
-          <Col span={4}>
+          <Col span={5}>
             <PopupUIElementContainer title="Collection">
               <VisionAutoComplete
                 value={labelOption}
                 options={labelOptions}
                 onChange={onSelectLabel}
                 placeholder="Select Keypoint"
-                maxHeight={40 * 4}
+                maxHeight={150}
                 onClickCreateNew={onOpenAnnotationSettings}
               />
             </PopupUIElementContainer>
@@ -100,14 +100,14 @@ export const AnnotationEditPopupBody = ({
   if (labelOptions && labelOptions.length) {
     return (
       <>
-        <Col span={4}>
+        <Col span={5}>
           <PopupUIElementContainer title="Label">
             <VisionAutoComplete
               value={labelOption}
               options={labelOptions}
               onChange={onSelectLabel}
               placeholder="Select Shape"
-              maxHeight={40 * 4}
+              maxHeight={150}
               onClickCreateNew={onOpenAnnotationSettings}
             />
           </PopupUIElementContainer>
