@@ -27,7 +27,7 @@ import { NodeEventArgs } from '../../Core/Views/NodeEventArgs';
 import { BaseGroupThreeView } from '../BaseViews/BaseGroupThreeView';
 import { SpriteCreator } from '../Utilities/SpriteCreator';
 import { ThreeConverter } from '../Utilities/ThreeConverter';
-import { ThreeDUnits, Units } from '../../Core/Primitives/Units';
+import { ThreeDUnits } from '../../Core/Primitives/Units';
 
 const wallIndex0Name = 'wallIndex0';
 const wallIndex1Name = 'wallIndex1';
@@ -332,7 +332,7 @@ export class AxisThreeView extends BaseGroupThreeView {
 
             // Add label
             const label = SpriteCreator.createByPositionAndDirection(
-              Units.convertFeetToUnit(unit, tick), // Label value for axis
+              `${tick}`, // Label value for axis
               end,
               tickDirection,
               tickFontSize,

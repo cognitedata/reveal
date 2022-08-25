@@ -2,7 +2,8 @@ export type ThreeDUnits = 'ft' | 'm';
 
 export class Units {
   public static readonly Feet = 0.3048;
-
+  public static readonly FeetToMetre = Units.Feet;
+  public static readonly MetreToFeet = 3.28084;
   public static isMeter(unit: string): boolean {
     const comparator = unit.toLowerCase();
 
@@ -30,13 +31,18 @@ export class Units {
   }
 
   public static convertMeterToFeet(value: number): number {
-    return value / Units.Feet;
+    return value / Units.FeetToMetre;
   }
 
   public static convertFeetToMeter(value: number): number {
-    return value * Units.Feet;
+    return value * Units.FeetToMetre;
   }
 
+  /*
+  // No need to use this function
+  // because we are already getting 
+  // converted data
+  */
   public static convertFeetToUnit(
     unit: string | undefined,
     value: number,

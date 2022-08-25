@@ -41,4 +41,6 @@ export interface ITrajectoryRows {
   externalId: string;
   columns: ITrajectoryColumnR[];
   rows: ITrajectoryRow[];
+  measuredDepthUnit: string;
+  trueVerticalDepthUnit: string;
 }

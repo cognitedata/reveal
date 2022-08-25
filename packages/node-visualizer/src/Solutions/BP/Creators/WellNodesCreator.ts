@@ -52,15 +52,24 @@ export class WellNodesCreator {
 
       const { metadata } = wellBoreToWell.data;
       wellNode.elevationType = metadata.elevation_type; // KB
-      const elevationUnit = metadata.elevation_value_unit;
+      const elevationUnit = metadata.elevation_value_unit; // this is the unit set locally in Discover
       let startMd = Util.getNumberWithUnit(
         metadata.elevation_value,
         elevationUnit
       );
       if (Number.isNaN(startMd)) startMd = 0;
-
-      const unit = Units.isFeet(elevationUnit) ? Units.Feet : 1;
       const trajectoryRows = trajectoryDataMap.get(trajectory.id);
+      const trajectoryRowsUnit = trajectoryRows?.measuredDepthUnit || ''; // this is the unit on the data received from WDL
+      let unit = 1;
+      if (trajectoryRowsUnit) {
+        if (Units.isMeter(trajectoryRowsUnit) && Units.isFeet(elevationUnit)) {
+          unit = Units.MetreToFeet;
+        }
+        if (Units.isFeet(trajectoryRowsUnit) && Units.isMeter(elevationUnit)) {
+          unit = Units.FeetToMetre;
+        }
+      }
+
       const trajectoryNode = WellTrajectoryNodeCreator.create(
         bpData.trajectoryDataColumnIndexes,
         trajectoryRows,
