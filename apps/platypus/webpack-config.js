@@ -91,6 +91,10 @@ module.exports = (config) => {
     (process.env.NX_TASK_TARGET_PROJECT &&
       process.env.NX_TASK_TARGET_PROJECT === 'platypus-e2e')
   ) {
+    // add your own webpack tweaks if needed
+    config.resolve.alias['@cognite/cdf-sdk-singleton'] = require.resolve(
+      './src/environments/mock/cogniteSdkSingleton.ts'
+    );
     return config;
   }
 

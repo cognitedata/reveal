@@ -37,7 +37,7 @@ import {
   useSelectedDataModelVersion,
 } from '@platypus-app/hooks/useDataModelActions';
 import { useQueryClient } from 'react-query';
-import { Mixpanel, TRACKING_TOKENS } from '@platypus-app/utils/mixpanel';
+import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
 
 export interface DataModelPageProps {
   dataModelExternalId: string;
@@ -47,6 +47,8 @@ export const DataModelPage = ({ dataModelExternalId }: DataModelPageProps) => {
   const history = useHistory();
 
   const { t } = useTranslation('SolutionDataModel');
+
+  const { track } = useMixpanel();
 
   const { data: dataModelVersions, refetch: refetchDataModelVersions } =
     useDataModelVersions(dataModelExternalId);
@@ -91,7 +93,6 @@ export const DataModelPage = ({ dataModelExternalId }: DataModelPageProps) => {
 
   const handleDataModelVersionSelect = (dataModelVersion: DataModelVersion) => {
     dataModelTypeDefsBuilder.clear();
-
     history.replace(
       `/data-models/${dataModelExternalId}/${dataModelVersion.version}/data`
     );
@@ -172,7 +173,7 @@ export const DataModelPage = ({ dataModelExternalId }: DataModelPageProps) => {
       }
 
       if (result.isSuccess) {
-        Mixpanel.track(TRACKING_TOKENS.Publishing, {
+        track('Publishing', {
           dataModel: dataModelExternalId,
         });
         removeLocalDraft(draftVersion);
@@ -336,7 +337,7 @@ export const DataModelPage = ({ dataModelExternalId }: DataModelPageProps) => {
           onCancel={() => setBreakingChanges('')}
           onUpdate={() => {
             handleSaveOrPublish();
-            Mixpanel.track(TRACKING_TOKENS.BreakingChanges, {
+            track('BreakingChanges', {
               dataModel: dataModelExternalId,
             });
           }}

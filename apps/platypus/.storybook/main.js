@@ -16,6 +16,9 @@ module.exports = {
     }
 
     // add your own webpack tweaks if needed
+    config.resolve.alias['@cognite/cdf-sdk-singleton'] = require.resolve(
+      '../src/environments/mock/cogniteSdkSingleton.ts'
+    );
 
     return config;
   },

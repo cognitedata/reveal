@@ -12,7 +12,7 @@ import { DataModelState } from '@platypus-app/redux/reducers/global/dataModelRed
 import { DEFAULT_VERSION_PATH } from '@platypus-app/utils/config';
 import { VersionSelectorToolbar } from '@platypus-app/components/VersionSelectorToolbar';
 import { useDataModelState } from '@platypus-app/modules/solution/hooks/useDataModelState';
-import { Mixpanel, TRACKING_TOKENS } from '@platypus-app/utils/mixpanel';
+import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
 
 export interface DataModelHeaderProps {
   dataModelExternalId: string;
@@ -42,6 +42,8 @@ export const DataModelHeader = ({
   title,
 }: DataModelHeaderProps) => {
   const { t } = useTranslation('DataModelHeader');
+
+  const { track } = useMixpanel();
 
   const { editorMode, graphQlSchema, isDirty, typeFieldErrors } =
     useSelector<DataModelState>((state) => state.dataModel);
@@ -100,7 +102,7 @@ export const DataModelHeader = ({
     setCurrentTypeName(null);
     setSelectedVersionNumber(DEFAULT_VERSION_PATH);
 
-    Mixpanel.track(TRACKING_TOKENS.Discard, {
+    track('Discard', {
       dataModel: dataModelExternalId,
     });
 
@@ -123,7 +125,7 @@ export const DataModelHeader = ({
         : SchemaEditorMode.View
     );
 
-    Mixpanel.track(TRACKING_TOKENS.SelectDM, {
+    track('SelectDM', {
       dataModel: dataModelExternalId,
       version: dataModelVersion.version,
     });
