@@ -5,11 +5,13 @@ export const selectStyles = {
   container: (original: React.CSSProperties) => ({
     ...original,
     flex: 1,
-    cursor: 'pointer',
+    cursor: 'text',
   }),
   option: () => ({
     cursor: 'pointer !important',
     wordBreak: 'break-word',
+    padding: '8px 4px !important',
+    boxSizing: 'border-box',
   }),
   valueContainer: (original: React.CSSProperties) => ({
     ...original,
@@ -21,8 +23,12 @@ export const selectStyles = {
     borderRadius: '6px !important',
     boxSizing: 'border-box',
     fontWeight: 'bold',
+    minWidth: '206px',
   }),
-  placeholder: () => ({
-    color: Colors['greyscale-grey6'].hex(),
+  menu: () => ({
+    marginTop: '4px',
+  }),
+  indicatorContainer: () => ({
+    display: 'none',
   }),
 };
