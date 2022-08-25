@@ -111,9 +111,6 @@ function Functions() {
         description={
           <span>
             Cognite Functions is getting ready. This might take some time.
-            <br />
-            <b>Testing Period:</b> Please request your project to be whitelisted
-            as well.
           </span>
         }
         message="Activation in Progress"
