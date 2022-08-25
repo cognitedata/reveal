@@ -1,5 +1,7 @@
 import isFinite from 'lodash-es/isFinite';
 import { createSelector } from '@reduxjs/toolkit';
+import { getRandomColor } from 'src/modules/Review/Components/AnnotationSettingsModal/AnnotationSettingsUtils';
+import { AnnotatorRegion } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/types';
 import { AnnotatorWrapperState } from 'src/modules/Review/store/annotatorWrapper/type';
 import { RootState } from 'src/store/rootReducer';
 import {
@@ -20,11 +22,15 @@ export const selectNextPredefinedShape = createSelector(
   (state: RootState) => state.annotatorWrapperReducer.lastShape,
   (annotationSettingsNewLabel, predefinedShapes, lastShape) => {
     let shape = predefinedShapes[0];
-    const nextShapeName = annotationSettingsNewLabel.text || lastShape;
-    if (nextShapeName) {
-      const template = predefinedShapes.find(
-        (c) => c.shapeName === nextShapeName
-      );
+
+    if (annotationSettingsNewLabel.text) {
+      return {
+        shapeName: annotationSettingsNewLabel.text,
+        color: annotationSettingsNewLabel.color || getRandomColor(),
+      };
+    }
+    if (lastShape) {
+      const template = predefinedShapes.find((c) => c.shapeName === lastShape);
       if (template) {
         shape = template;
       }
@@ -49,7 +55,14 @@ export const selectNextPredefinedKeypointCollection = createSelector(
     lastCollectionName
   ) => {
     let collection = predefinedKeypointCollections[0];
-    if (annotationSettingsNewLabel.text || lastCollectionName) {
+
+    if (annotationSettingsNewLabel.text) {
+      return {
+        collectionName: annotationSettingsNewLabel.text,
+        color: annotationSettingsNewLabel.color || getRandomColor(),
+      };
+    }
+    if (lastCollectionName) {
       const collectionLabel =
         annotationSettingsNewLabel.text || lastCollectionName;
       const template = predefinedKeypointCollections.find(
@@ -151,6 +164,16 @@ export const selectTempKeypointCollection = createSelector(
         remainingKeypoints,
         color: keypointColor,
       } as TempKeypointCollection;
+    }
+    return null;
+  }
+);
+
+export const selectTemporaryRegion = createSelector(
+  (state: AnnotatorWrapperState) => state.temporaryRegion,
+  (tempRegion) => {
+    if (tempRegion?.annotationLabelOrText) {
+      return tempRegion as AnnotatorRegion;
     }
     return null;
   }

@@ -132,3 +132,37 @@ export const populateTempKeypointCollection = (
     }
   }
 };
+
+export const updateLastShape = (
+  state: AnnotatorWrapperState,
+  shape: string
+) => {
+  if (
+    state.predefinedAnnotations.predefinedShapes
+      .map((predefinedShape) => predefinedShape.shapeName)
+      .includes(shape)
+  ) {
+    state.lastShape = shape;
+  } else {
+    console.warn(
+      'Provided shape name is not one of the predefined annotations'
+    );
+  }
+};
+
+export const updateLastCollectionName = (
+  state: AnnotatorWrapperState,
+  collectionName: string
+) => {
+  if (
+    state.predefinedAnnotations.predefinedKeypointCollections
+      .map((predefinedCollection) => predefinedCollection.collectionName)
+      .includes(collectionName)
+  ) {
+    state.lastCollectionName = collectionName;
+  } else {
+    console.warn(
+      'Provided collection name is not one of the predefined annotations'
+    );
+  }
+};

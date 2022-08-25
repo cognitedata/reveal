@@ -33,7 +33,7 @@ import { UpdateAnnotations } from 'src/store/thunks/Annotation/UpdateAnnotations
 import { AnnotationChangeById } from '@cognite/sdk-playground';
 import { DeleteAnnotationsAndHandleLinkedAssetsOfFile } from 'src/store/thunks/Review/DeleteAnnotationsAndHandleLinkedAssetsOfFile';
 import {
-  setKeepUnsavedRegion,
+  clearTemporaryRegion,
   setLastCollectionName,
   setLastShape,
 } from 'src/modules/Review/store/annotatorWrapper/slice';
@@ -41,6 +41,7 @@ import {
   selectNextPredefinedKeypointCollection,
   selectNextPredefinedShape,
   selectTempKeypointCollection,
+  selectTemporaryRegion,
 } from 'src/modules/Review/store/annotatorWrapper/selectors';
 import { ImageKeyboardShortKeys } from 'src/modules/Review/Containers/KeyboardShortKeys/ImageKeyboardShortKeys';
 import { AnnotationSettingsOption } from 'src/modules/Review/store/review/enums';
@@ -86,6 +87,11 @@ export const ImagePreview = ({
       })
   );
 
+  const temporaryUnsavedRegion = useSelector(
+    ({ annotatorWrapperReducer }: RootState) =>
+      selectTemporaryRegion(annotatorWrapperReducer)
+  );
+
   const nextPredefinedShape = useSelector((rootState: RootState) =>
     selectNextPredefinedShape(rootState)
   );
@@ -93,15 +99,6 @@ export const ImagePreview = ({
   const selectedTool = useSelector(
     ({ annotatorWrapperReducer }: RootState) =>
       annotatorWrapperReducer.currentTool
-  );
-  const keepUnsavedRegion = useSelector(
-    ({ annotatorWrapperReducer }: RootState) =>
-      annotatorWrapperReducer.keepUnsavedRegion
-  );
-
-  const isCreatingKeypointCollection = useSelector(
-    ({ annotatorWrapperReducer }: RootState) =>
-      annotatorWrapperReducer.isCreatingKeypointCollection
   );
 
   const scrollId = useSelector(
@@ -134,6 +131,8 @@ export const ImagePreview = ({
       );
       const createdAnnotations = unwrapResult(res);
 
+      dispatch(clearTemporaryRegion());
+
       if (createdAnnotations.length && createdAnnotations[0].id) {
         scrollIntoView(createdAnnotations[0].id);
       }
@@ -162,7 +161,6 @@ export const ImagePreview = ({
 
   const onOpenAnnotationSettings = useCallback(
     (type = AnnotationSettingsOption.SHAPE, text?: string, color?: string) => {
-      dispatch(setKeepUnsavedRegion(true));
       dispatch(showAnnotationSettingsModel(true, type, text, color));
     },
     [dispatch]
@@ -210,7 +208,6 @@ export const ImagePreview = ({
             }
           }
           dispatch(showAnnotationSettingsModel(false));
-          dispatch(setKeepUnsavedRegion(false));
         }
       } catch (e) {
         console.error('Error occurred while saving predefined annotations!');
@@ -229,10 +226,10 @@ export const ImagePreview = ({
           predefinedAnnotations={predefinedAnnotations}
           nextPredefinedKeypointCollection={nextPredefinedKeypointCollection}
           tempKeypointCollection={tempKeypointCollection}
+          tempRegion={temporaryUnsavedRegion}
           isLoading={isLoading}
           focusIntoView={scrollIntoView}
           nextPredefinedShape={nextPredefinedShape}
-          keepUnsavedRegion={isCreatingKeypointCollection || keepUnsavedRegion}
           selectedTool={selectedTool}
           scrollId={scrollId}
           onCreateAnnotation={handleCreateAnnotation}
@@ -298,7 +295,6 @@ export const ImagePreview = ({
         showModal={annotationSettings.show}
         onCancel={() => {
           dispatch(showAnnotationSettingsModel(false));
-          dispatch(setKeepUnsavedRegion(false));
         }}
         onDone={onDoneAnnotationSettings}
         options={annotationSettings}

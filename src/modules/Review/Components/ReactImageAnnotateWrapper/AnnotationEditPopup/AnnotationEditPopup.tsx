@@ -7,6 +7,7 @@ import {
   Row,
   Title,
 } from '@cognite/cogs.js';
+import { clearTemporaryRegion } from 'src/modules/Review/store/annotatorWrapper/slice';
 import { deselectAllSelectionsReviewPage } from 'src/store/commonActions';
 import styled from 'styled-components';
 import { useDispatch } from 'react-redux';
@@ -129,6 +130,7 @@ export const AnnotationEditPopup = ({
 
   const handleOnCancel = () => {
     onClose(region);
+    dispatch(clearTemporaryRegion());
     if (alreadyCreated) {
       dispatch(deselectAllSelectionsReviewPage());
     } else {

@@ -32,7 +32,6 @@ export type AnnotatorWrapperState = {
   lastShape: string | undefined; // shapeName (label) of last used predefined shapes, use to select for the next time
   lastKeyPoint: string | undefined; // label of last created keypoint to get next keypoint
   currentTool: Tool;
-  keepUnsavedRegion: boolean;
   isCreatingKeypointCollection: boolean;
   temporaryRegion: AnnotatorNewRegion | undefined;
 };

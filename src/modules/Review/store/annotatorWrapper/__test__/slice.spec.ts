@@ -15,11 +15,10 @@ import reducer, {
   deleteTempKeypointCollection,
   initialState,
   keypointSelectStatusChange,
-  onCreateKeypointRegion,
-  onUpdateKeypointRegion,
+  onCreateRegion,
+  onUpdateRegion,
   selectCollection,
   setCollectionStatus,
-  setKeepUnsavedRegion,
   setLastCollectionName,
   setLastShape,
   setSelectedTool,
@@ -510,31 +509,6 @@ describe('Test annotator slice', () => {
       });
     });
 
-    describe('Test setKeepUnsavedRegion reducer', () => {
-      test('when provided value true, should be equal to the value in state', () => {
-        const previousState = {
-          ...modifiedInitialState,
-        };
-        const actionPayload = true;
-
-        expect(
-          reducer(previousState, setKeepUnsavedRegion(actionPayload))
-            .keepUnsavedRegion
-        ).toEqual(actionPayload);
-      });
-      test('when provided value false, should be equal to the value in state', () => {
-        const previousState = {
-          ...modifiedInitialState,
-        };
-        const actionPayload = false;
-
-        expect(
-          reducer(previousState, setKeepUnsavedRegion(actionPayload))
-            .keepUnsavedRegion
-        ).toEqual(actionPayload);
-      });
-    });
-
     describe('Test createTempKeypointCollection reducer', () => {
       const consoleSpy = jest
         .spyOn(console, 'warn')
@@ -722,7 +696,7 @@ describe('Test annotator slice', () => {
       });
     });
 
-    describe('Test onCreateKeypointRegion reducer', () => {
+    describe('Test onCreateRegion reducer', () => {
       const consoleSpy = jest
         .spyOn(console, 'warn')
         .mockImplementation(() => {});
@@ -749,7 +723,7 @@ describe('Test annotator slice', () => {
         expect(
           reducer(
             previousState,
-            onCreateKeypointRegion(tempRegionWithLabels as AnnotatorPointRegion)
+            onCreateRegion(tempRegionWithLabels as AnnotatorPointRegion)
           ).keypointMap.byId[tempRegionWithLabels.id]
         ).toBeUndefined();
         expect(consoleSpy).toHaveBeenCalled();
@@ -763,7 +737,7 @@ describe('Test annotator slice', () => {
         expect(
           reducer(
             previousState,
-            onCreateKeypointRegion(tempRegionWithLabels as AnnotatorPointRegion)
+            onCreateRegion(tempRegionWithLabels as AnnotatorPointRegion)
           ).keypointMap.byId[tempRegionWithLabels.id]
         ).toBeUndefined();
         expect(consoleSpy).toHaveBeenCalled();
@@ -788,7 +762,7 @@ describe('Test annotator slice', () => {
         expect(
           reducer(
             previousState,
-            onCreateKeypointRegion(tempBoxRegion as AnnotatorPointRegion)
+            onCreateRegion(tempBoxRegion as AnnotatorPointRegion)
           ).keypointMap.byId[tempRegionWithLabels.id]
         ).toBeUndefined();
         expect(consoleSpy).toHaveBeenCalled();
@@ -799,10 +773,8 @@ describe('Test annotator slice', () => {
         };
 
         expect(
-          reducer(
-            previousState,
-            onCreateKeypointRegion({} as AnnotatorPointRegion)
-          ).keypointMap.byId[tempRegionWithLabels.id]
+          reducer(previousState, onCreateRegion({} as AnnotatorPointRegion))
+            .keypointMap.byId[tempRegionWithLabels.id]
         ).toBeUndefined();
         expect(consoleSpy).toHaveBeenCalled();
       });
@@ -821,16 +793,14 @@ describe('Test annotator slice', () => {
         expect(
           reducer(
             previousState,
-            onCreateKeypointRegion(
-              tempRegionWithoutLabel as AnnotatorPointRegion
-            )
+            onCreateRegion(tempRegionWithoutLabel as AnnotatorPointRegion)
           ).keypointMap.byId[tempRegionWithoutLabel.id]
         ).toBeUndefined();
         expect(consoleSpy).toHaveBeenCalled();
         expect(
           reducer(
             previousState,
-            onCreateKeypointRegion({
+            onCreateRegion({
               ...tempRegionWithLabels,
               x: NaN,
               y: NaN,
@@ -857,8 +827,9 @@ describe('Test annotator slice', () => {
         });
 
         expect(
-          reducer(previousState, onCreateKeypointRegion(newRegion)).keypointMap
-            .byId[newRegion.id]
+          reducer(previousState, onCreateRegion(newRegion)).keypointMap.byId[
+            newRegion.id
+          ]
         ).toBeUndefined();
         expect(consoleSpy).toHaveBeenCalled();
       });
@@ -880,8 +851,9 @@ describe('Test annotator slice', () => {
         });
 
         expect(
-          reducer(previousState, onCreateKeypointRegion(newRegion)).keypointMap
-            .byId[newRegion.id]
+          reducer(previousState, onCreateRegion(newRegion)).keypointMap.byId[
+            newRegion.id
+          ]
         ).toBeUndefined();
         expect(consoleSpy).toHaveBeenCalled();
       });
@@ -903,8 +875,9 @@ describe('Test annotator slice', () => {
         });
 
         expect(
-          reducer(previousState, onCreateKeypointRegion(newRegion)).keypointMap
-            .byId[newRegion.id]
+          reducer(previousState, onCreateRegion(newRegion)).keypointMap.byId[
+            newRegion.id
+          ]
         ).toBeUndefined();
         expect(consoleSpy).toHaveBeenCalled();
       });
@@ -915,8 +888,7 @@ describe('Test annotator slice', () => {
       updatedRegion: AnnotatorPointRegion
     ) => {
       expect(
-        reducer(previousState, onUpdateKeypointRegion(updatedRegion))
-          .temporaryRegion
+        reducer(previousState, onUpdateRegion(updatedRegion)).temporaryRegion
       ).toStrictEqual(
         expect.objectContaining({
           x: (updatedRegion as AnnotatorPointRegion).x,
@@ -963,16 +935,12 @@ describe('Test annotator slice', () => {
         };
 
         expect(
-          reducer(
-            previousState,
-            onUpdateKeypointRegion({} as AnnotatorPointRegion)
-          ).temporaryRegion
+          reducer(previousState, onUpdateRegion({} as AnnotatorPointRegion))
+            .temporaryRegion
         ).toStrictEqual(tempRegionWithoutLabel);
         expect(
-          reducer(
-            previousState,
-            onUpdateKeypointRegion({} as AnnotatorPointRegion)
-          ).keypointMap.byId[tempRegionWithLabels.id]
+          reducer(previousState, onUpdateRegion({} as AnnotatorPointRegion))
+            .keypointMap.byId[tempRegionWithLabels.id]
         ).toBeUndefined();
         expect(consoleSpy).toHaveBeenCalled();
       });
@@ -1011,10 +979,8 @@ describe('Test annotator slice', () => {
         }) as AnnotatorPointRegion;
 
         expect(
-          reducer(
-            previousState,
-            onUpdateKeypointRegion(updatedRegionOfKeypoint)
-          ).keypointMap.byId[updatedRegionOfKeypoint.id]
+          reducer(previousState, onUpdateRegion(updatedRegionOfKeypoint))
+            .keypointMap.byId[updatedRegionOfKeypoint.id]
         ).toStrictEqual(
           expect.objectContaining({
             point: expect.objectContaining({
@@ -1036,7 +1002,7 @@ describe('Test annotator slice', () => {
         expect(
           reducer(
             previousState,
-            onUpdateKeypointRegion({
+            onUpdateRegion({
               ...tempRegionWithLabels,
               id: 'S1',
               annotationLabelOrText: 'invalid-collection-name',
@@ -1045,7 +1011,7 @@ describe('Test annotator slice', () => {
         ).toStrictEqual(tempRegionWithoutLabel);
 
         expect(
-          reducer(previousState, onUpdateKeypointRegion(tempRegionWithoutLabel))
+          reducer(previousState, onUpdateRegion(tempRegionWithoutLabel))
             .keypointMap.byId[tempRegionWithoutLabel.id]
         ).toBeUndefined();
 
@@ -1072,13 +1038,12 @@ describe('Test annotator slice', () => {
         expect(
           reducer(
             previousState,
-            onUpdateKeypointRegion(tempBoxRegion as AnnotatorPointRegion)
+            onUpdateRegion(tempBoxRegion as AnnotatorPointRegion)
           ).keypointMap.byId[tempRegionWithLabels.id]
         ).toBeUndefined();
         expect(consoleSpy).toHaveBeenCalled();
         expect(
-          reducer(previousState, onUpdateKeypointRegion(tempBoxRegion))
-            .temporaryRegion
+          reducer(previousState, onUpdateRegion(tempBoxRegion)).temporaryRegion
         ).toStrictEqual(tempRegionWithoutLabel);
         expect(consoleSpy).toHaveBeenCalled();
       });
@@ -1097,7 +1062,7 @@ describe('Test annotator slice', () => {
         expect(
           reducer(
             previousState,
-            onUpdateKeypointRegion(tempRegionWithLabels as AnnotatorPointRegion)
+            onUpdateRegion(tempRegionWithLabels as AnnotatorPointRegion)
           ).keypointMap.byId[tempRegionWithLabels.id]
         ).toBeUndefined();
       });
@@ -1116,7 +1081,7 @@ describe('Test annotator slice', () => {
         expect(
           reducer(
             previousState,
-            onUpdateKeypointRegion(tempRegionWithLabels as AnnotatorPointRegion)
+            onUpdateRegion(tempRegionWithLabels as AnnotatorPointRegion)
           ).keypointMap.byId[tempRegionWithLabels.id]
         ).toBeUndefined();
       });
@@ -1135,16 +1100,14 @@ describe('Test annotator slice', () => {
         expect(
           reducer(
             previousState,
-            onUpdateKeypointRegion(
-              tempRegionWithoutLabel as AnnotatorPointRegion
-            )
+            onUpdateRegion(tempRegionWithoutLabel as AnnotatorPointRegion)
           ).keypointMap.byId[tempRegionWithoutLabel.id]
         ).toBeUndefined();
         expect(consoleSpy).toHaveBeenCalled();
         expect(
           reducer(
             previousState,
-            onUpdateKeypointRegion({
+            onUpdateRegion({
               ...tempRegionWithLabels,
               x: NaN,
               y: NaN,
@@ -1178,8 +1141,9 @@ describe('Test annotator slice', () => {
         );
 
         expect(
-          reducer(previousState, onUpdateKeypointRegion(newRegion)).keypointMap
-            .byId[newRegion.id]
+          reducer(previousState, onUpdateRegion(newRegion)).keypointMap.byId[
+            newRegion.id
+          ]
         ).toBeUndefined();
         expect(consoleSpy).toHaveBeenCalled();
       });
@@ -1218,8 +1182,8 @@ describe('Test annotator slice', () => {
           updatedRegion as AnnotatorPointRegion
         );
         expect(
-          reducer(previousState, onUpdateKeypointRegion(updatedRegion))
-            .keypointMap.byId[updatedRegion.id]
+          reducer(previousState, onUpdateRegion(updatedRegion)).keypointMap
+            .byId[updatedRegion.id]
         ).toStrictEqual(
           expect.objectContaining({
             point: expect.objectContaining({
