@@ -8,7 +8,7 @@ import { LineMaterial } from 'three/examples/jsm/lines/LineMaterial';
 import { Line2 } from 'three/examples/jsm/lines/Line2';
 
 export class MeasurementLine {
-  private _geometry: LineGeometry | null;
+  private readonly _geometry: LineGeometry;
   private readonly _meshes: THREE.Group;
   private readonly _fixedWidthLineMaterial: LineMaterial;
   private readonly _adaptiveWidthLineMaterial: LineMaterial;
@@ -16,7 +16,7 @@ export class MeasurementLine {
 
   constructor(lineWidth: number, lineColor: THREE.Color, startPoint: THREE.Vector3) {
     this._position = new Float32Array(6);
-    this._geometry = null;
+    this._geometry = new LineGeometry();
 
     //Adaptive Line width
     this._adaptiveWidthLineMaterial = new LineMaterial({
@@ -52,7 +52,7 @@ export class MeasurementLine {
   }
 
   dispose(): void {
-    if (this._geometry !== null) {
+    if (this._geometry) {
       this._geometry.dispose();
     }
     this._meshes.clear();
@@ -73,7 +73,7 @@ export class MeasurementLine {
     this._position[4] = endPoint.y;
     this._position[5] = endPoint.z;
     //Update the line geometry end point.
-    this._geometry?.setPositions(this._position);
+    this._geometry.setPositions(this._position);
   }
 
   /**
@@ -125,7 +125,6 @@ export class MeasurementLine {
     this._position[1] = this._position[4] = point.y;
     this._position[2] = this._position[5] = point.z;
 
-    this._geometry = new LineGeometry();
     this._geometry.setPositions(this._position);
 
     const adaptiveMesh = new Line2(this._geometry, this._adaptiveWidthLineMaterial);
