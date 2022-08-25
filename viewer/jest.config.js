@@ -31,7 +31,7 @@ module.exports = () => {
     coverageDirectory: './coverage',
     collectCoverageFrom: [
       '!**/.*.test.ts',
-      '!**/.*.VisualTest.ts',
+      '!**/*.VisualTest.ts',
       '!./visual-tests/**',
       '!./test-utilities/**',
       '!**/*.d.ts',
