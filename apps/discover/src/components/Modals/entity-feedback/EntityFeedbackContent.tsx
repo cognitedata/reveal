@@ -1,3 +1,5 @@
+import { filterNotAssignedDocumentTypes } from 'domain/feedback/utils/filterNotAssignedDocumentTypes';
+
 import React, { useEffect, useState, useMemo } from 'react';
 
 import { Checkbox, OptionType } from '@cognite/cogs.js';
@@ -78,9 +80,12 @@ export const EntityFeedbackContent: React.FC<Props> = React.memo((props) => {
 
   const documentTypesOptions: OptionType<string>[] = useMemo(
     () =>
-      documentTypes
-        .filter((docType) => !currentDocumentType?.includes(docType.name))
-        .map((docType) => ({ label: docType.name, value: docType.id })),
+      filterNotAssignedDocumentTypes(documentTypes, currentDocumentType).map(
+        (docType) => ({
+          label: docType.name,
+          value: docType.id,
+        })
+      ),
     [documentTypes, currentDocumentType]
   );
 

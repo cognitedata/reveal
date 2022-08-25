@@ -1,3 +1,5 @@
+import { OTHER_DOCUMENT_TYPE } from 'domain/documents/constants';
+
 import { useQuery } from 'react-query';
 
 import {
@@ -32,7 +34,7 @@ export const useQueryDocumentLabels = () => {
   let data: DocumentPayload[] = [];
 
   if (categoryData && 'labels' in categoryData) {
-    data = categoryData.labels as DocumentPayload[];
+    data = [...categoryData.labels, OTHER_DOCUMENT_TYPE] as DocumentPayload[];
   }
 
   return { data, ...rest };

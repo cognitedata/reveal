@@ -1,4 +1,6 @@
+import { OTHER_DOCUMENT_TYPE } from 'domain/documents/constants';
 import { adaptToDocumentFeedbackPayload } from 'domain/documents/internal/adapters/adaptToDocumentFeedback';
+import { useDocumentCategoryId } from 'domain/documents/internal/hooks/useDocumentCategoryId';
 import { adaptLabelNamesToLabelsQuery } from 'domain/labels/internal/transformers/adaptLabelNamesToLabelsQuery';
 import { getAllLabelsByQuery } from 'domain/labels/service/network/getAllLabelsByQuery';
 
@@ -14,7 +16,11 @@ import { useJsonHeaders } from 'hooks/useJsonHeaders';
 import { acceptDocumentFeedback } from '../network/acceptDocumentFeedback';
 import { createDocumentFeedback } from '../network/createDocumentFeedback';
 import { rejectDocumentFeedback } from '../network/rejectDocumentFeedback';
-import { DocumentFeedbackCreateBody, DocumentFeedbackType } from '../types';
+import {
+  ActionType,
+  DocumentFeedbackCreateBody,
+  DocumentFeedbackType,
+} from '../types';
 
 type DocumentFeedbackAssessmentData = {
   type: DocumentFeedbackType;
@@ -26,10 +32,11 @@ type DocumentFeedbackAssessmentData = {
   };
 };
 
-export const useDocumentFeedbackMutate = () => {
+export const useDocumentFeedbackMutate = (originalDocumentType?: string) => {
   const headers = useJsonHeaders();
   const [project] = getProjectInfo();
   const queryClient = useQueryClient();
+  const originalDocumentTypeId = useDocumentCategoryId(originalDocumentType);
 
   const getFeedbackIdOnCreation = async (
     payload: DocumentFeedbackCreateBody[]
@@ -82,7 +89,7 @@ export const useDocumentFeedbackMutate = () => {
     const transformToDocumentFeedbackPayloads = matchingLabels.map(
       ({ externalId }) => {
         return adaptToDocumentFeedbackPayload(
-          'DETACH',
+          ActionType.DETACH,
           documentId,
           externalId,
           reporterInfo
@@ -108,10 +115,24 @@ export const useDocumentFeedbackMutate = () => {
           originalDocumentType,
           payload
         );
+        if (payload.labelExternalId === OTHER_DOCUMENT_TYPE.id) {
+          return Promise.resolve({});
+        }
+      }
+
+      let action: ActionType = ActionType.ATTACH;
+
+      if (
+        type === 'reject' &&
+        payload.labelExternalId === OTHER_DOCUMENT_TYPE.id &&
+        originalDocumentType
+      ) {
+        payload.labelExternalId = originalDocumentTypeId;
+        action = ActionType.DETACH;
       }
 
       const adaptPayloadToDocumentFeedback = adaptToDocumentFeedbackPayload(
-        'ATTACH',
+        action,
         payload.documentId,
         payload.labelExternalId,
         payload.reporterInfo

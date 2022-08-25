@@ -1,3 +1,5 @@
+import { OTHER_DOCUMENT_TYPE } from 'domain/documents/constants';
+
 import { toISOStringDate } from 'utils/date';
 import { sortByDate } from 'utils/sort';
 
@@ -38,8 +40,7 @@ export const useFeedbackDocumentStatus = (
 
       return (
         item.documentId === documentId &&
-        item.label.externalId === label &&
-        item.action === 'ATTACH' &&
+        (item.label.externalId === label || label === OTHER_DOCUMENT_TYPE.id) &&
         feedbackCreatedTimeDate >= documentFeedbackAssessedTimeDate
       );
     });

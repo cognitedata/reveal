@@ -1,7 +1,10 @@
-import { DocumentFeedbackCreateBody } from 'domain/documents/service/types';
+import {
+  ActionType,
+  DocumentFeedbackCreateBody,
+} from 'domain/documents/service/types';
 
 export const adaptToDocumentFeedbackPayload = (
-  action: 'ATTACH' | 'DETACH',
+  action: ActionType,
   documentId: number,
   labelExternalId: string,
   reporterInfo?: string

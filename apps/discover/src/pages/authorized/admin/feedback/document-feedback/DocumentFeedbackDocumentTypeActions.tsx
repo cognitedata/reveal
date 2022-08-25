@@ -54,7 +54,7 @@ export const DocumentFeedbackDocumentTypeActions: React.FC<Props> = ({
   //   setBeenAssessed(assessed);
   // }, [assessed]);
 
-  const assessment = useDocumentFeedbackMutate();
+  const assessment = useDocumentFeedbackMutate(originalDocumentType);
 
   const performAssessment = (type: DocumentFeedbackType) => {
     assessment.mutate({

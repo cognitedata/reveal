@@ -5,3 +5,9 @@ export const LAST_CREATED_KEY = `sourceFile.${LAST_CREATED_KEY_VALUE}` as const;
 export const INVALID_POLYGON_SEARCH_MESSAGE =
   'Please make sure polygon is valid. Eg: does not cross lines';
 export const SMALLER_POLYGON_SEARCH_MESSAGE = 'Please draw a smaller polygon';
+
+export const OTHER_DOCUMENT_TYPE = Object.freeze({
+  name: 'Other',
+  count: 0,
+  id: 'other',
+});

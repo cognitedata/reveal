@@ -10,12 +10,17 @@ export interface DocumentCategoriesResult extends BaseAPIResult {
 
 export type DocumentFeedbackType = 'accept' | 'reject';
 
+export enum ActionType {
+  ATTACH = 'ATTACH',
+  DETACH = 'DETACH',
+}
+
 export type DocumentFeedbackCreateBody = {
   documentId: number;
   label: {
     externalId: string;
   };
-  action: 'ATTACH' | 'DETACH';
+  action: ActionType;
   reporterInfo?: string;
 };
 
