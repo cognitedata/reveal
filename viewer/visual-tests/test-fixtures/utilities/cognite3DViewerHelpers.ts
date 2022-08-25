@@ -5,7 +5,7 @@
 import { createApplicationSDK } from '../../../test-utilities/src/appUtils';
 import { AddModelOptions, Cognite3DModel, Cognite3DViewer, OnLoadingCallback } from '../../../packages/api';
 import { CogniteClient } from '@cognite/sdk';
-import { CognitePointCloudModel } from '@reveal/pointclouds';
+import { CognitePointCloudModel } from '../../../packages/pointclouds';
 
 export async function createCognite3DViewer(onLoading: OnLoadingCallback = () => {}): Promise<Cognite3DViewer> {
   const queryString = window.location.search;

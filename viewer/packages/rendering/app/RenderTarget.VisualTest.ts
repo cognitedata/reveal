@@ -11,7 +11,6 @@ import {
 import { DefaultRenderPipelineProvider } from '../src/render-pipeline-providers/DefaultRenderPipelineProvider';
 import { defaultRenderOptions } from '../src/rendering/types';
 
-// Sanity test for loading model
 export default class CadClippingVisualTest extends StreamingVisualTestFixture {
   private readonly _orthographicCamera: THREE.OrthographicCamera;
   private readonly _testScene: THREE.Scene;

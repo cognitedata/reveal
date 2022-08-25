@@ -9,7 +9,6 @@ import {
   StreamingVisualTestFixture
 } from '../../../visual-tests/test-fixtures/StreamingVisualTestFixture';
 
-// Sanity test for loading model
 export default class HighlightedVisualTest extends StreamingVisualTestFixture {
   public async setup(testFixtureComponents: StreamingTestFixtureComponents): Promise<void> {
     const { sceneHandler, cadMaterialManager, model } = testFixtureComponents;

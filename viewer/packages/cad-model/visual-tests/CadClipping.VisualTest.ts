@@ -10,7 +10,6 @@ import {
   StreamingVisualTestFixture
 } from '../../../visual-tests/test-fixtures/StreamingVisualTestFixture';
 
-// Sanity test for loading model
 export default class CadClippingVisualTest extends StreamingVisualTestFixture {
   public setup(testFixtureComponents: StreamingTestFixtureComponents): Promise<void> {
     const { model, cadManager } = testFixtureComponents;
