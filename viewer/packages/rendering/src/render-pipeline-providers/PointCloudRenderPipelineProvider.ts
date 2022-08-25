@@ -21,29 +21,29 @@ export class PointCloudRenderPipelineProvider implements RenderPipelineProvider 
   private readonly _attributePass: PointCloudEffectsPass;
   private readonly _standardPass: PointCloudEffectsPass;
 
-  private DepthPassParameters: PointCloudPassParameters = {
+  private readonly DepthPassParameters: PointCloudPassParameters = {
     material: {
-        weighted: false,
-        hqDepthPass: true,
-        depthWrite: true,
-        blending: THREE.NormalBlending,
-        colorWrite: false
+      weighted: false,
+      hqDepthPass: true,
+      depthWrite: true,
+      blending: THREE.NormalBlending,
+      colorWrite: false
     }
-  }
-  private AttributePassParameters: PointCloudPassParameters = {
+  };
+  private readonly AttributePassParameters: PointCloudPassParameters = {
     material: {
-        weighted: true,
-        hqDepthPass: false,
-        depthWrite: false,
-        blending: THREE.CustomBlending,
-        blendSrc: THREE.SrcAlphaFactor,
-        blendDst: THREE.OneFactor,
-        colorWrite: true
+      weighted: true,
+      hqDepthPass: false,
+      depthWrite: false,
+      blending: THREE.CustomBlending,
+      blendSrc: THREE.SrcAlphaFactor,
+      blendDst: THREE.OneFactor,
+      colorWrite: true
     },
     renderer: {
-        autoClearDepth: false
+      autoClearDepth: false
     }
-  }
+  };
 
   constructor(sceneHandler: SceneHandler, renderParameters: PointCloudParameters) {
     this._renderTargetData = {
@@ -53,7 +53,8 @@ export class PointCloudRenderPipelineProvider implements RenderPipelineProvider 
         magFilter: THREE.NearestFilter,
         format: THREE.RGBAFormat,
         type: THREE.FloatType,
-        depthTexture: new THREE.DepthTexture(1, 1, THREE.UnsignedIntType)})
+        depthTexture: new THREE.DepthTexture(1, 1, THREE.UnsignedIntType)
+      })
     };
 
     this._renderParameters = renderParameters;
@@ -64,29 +65,29 @@ export class PointCloudRenderPipelineProvider implements RenderPipelineProvider 
   }
 
   get pointCloudRenderTargets(): PointCloudRenderTargets {
-    return { 
-        pointCloud: this._renderTargetData.output,
-    }
+    return {
+      pointCloud: this._renderTargetData.output
+    };
   }
 
   public *pipeline(renderer: THREE.WebGLRenderer): Generator<RenderPass> {
-      this.updateRenderTargetSizes(renderer);
-      
-      try {
-          renderer.setRenderTarget(this._renderTargetData.output);
-          
-          if (this._renderParameters.pointBlending) {
-            yield this._depthPass;
-            
-            renderer.setClearColor('#000000', 0.0);
-            renderer.clearColor();
-            yield this._attributePass;
-          } else {
-            yield this._standardPass;
-          }
-      } finally {
-         renderer.setClearColor('#FFFFFF', 0.0);
+    this.updateRenderTargetSizes(renderer);
+
+    try {
+      renderer.setRenderTarget(this._renderTargetData.output);
+
+      if (this._renderParameters.pointBlending) {
+        yield this._depthPass;
+
+        renderer.setClearColor('#000000', 0.0);
+        renderer.clearColor();
+        yield this._attributePass;
+      } else {
+        yield this._standardPass;
       }
+    } finally {
+      renderer.setClearColor('#FFFFFF', 0.0);
+    }
   }
 
   public dispose(): void {

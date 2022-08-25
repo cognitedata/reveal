@@ -606,7 +606,7 @@ export class Cognite3DViewer {
     this._models.push(model);
 
     this._sceneHandler.addPointCloudModel(model, pointCloudNode.potreeNode.modelIdentifier);
-   
+
     return model;
   }
 
@@ -1287,7 +1287,8 @@ function createRevealManagerOptions(viewerOptions: Cognite3DViewerOptions): Reve
     ssaoRenderParameters,
     edgeDetectionParameters,
     pointCloudParameters: {
-      pointBlending: viewerOptions?.pointCloudEffects?.pointBlending ?? defaultRenderOptions.pointCloudParameters.pointBlending,
+      pointBlending:
+        viewerOptions?.pointCloudEffects?.pointBlending ?? defaultRenderOptions.pointCloudParameters.pointBlending
     }
   };
   return revealOptions;

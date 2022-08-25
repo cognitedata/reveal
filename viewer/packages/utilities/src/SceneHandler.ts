@@ -9,7 +9,7 @@ import { CognitePointCloudModel } from '@reveal/pointclouds';
 export class SceneHandler {
   private readonly _scene: THREE.Scene;
   private readonly _cadModels: { object: THREE.Object3D; modelIdentifier: string }[];
-  private readonly _pointCloudModels: { object: CognitePointCloudModel; modelIdentifier: symbol}[];
+  private readonly _pointCloudModels: { object: CognitePointCloudModel; modelIdentifier: symbol }[];
   private readonly _customObjects: THREE.Object3D[];
 
   get scene(): THREE.Scene {

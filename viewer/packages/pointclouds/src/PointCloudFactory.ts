@@ -21,7 +21,7 @@ export class PointCloudFactory {
   }
 
   async createModel(modelMetadata: PointCloudMetadata): Promise<PotreeNodeWrapper> {
-    const { modelBaseUrl, modelIdentifier} = modelMetadata;
+    const { modelBaseUrl, modelIdentifier } = modelMetadata;
 
     return this._potreeInstance.loadPointCloud(modelBaseUrl, 'ept.json').then((pco: PointCloudOctree) => {
       pco.name = `PointCloudOctree: ${modelBaseUrl}`;

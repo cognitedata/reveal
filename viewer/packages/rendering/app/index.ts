@@ -161,16 +161,16 @@ async function init() {
   const controlsTest = new TransformControls(camera, renderer.domElement);
   controlsTest.attach(customBox);
   sceneHandler.addCustomObject(controlsTest);
-  
+
   renderer.domElement.style.backgroundColor = guiData.canvasColor;
-  
+
   const controls = new OrbitControls(camera, renderer.domElement);
-  
+
   controlsTest.addEventListener('change', () => {
     needsRedraw = true;
   });
 
-  controlsTest.addEventListener('dragging-changed', (e) => {
+  controlsTest.addEventListener('dragging-changed', e => {
     controls.enabled = !e.value;
     needsRedraw = true;
   });

@@ -64,7 +64,7 @@ export const defaultRenderOptions: Required<RenderOptions> = {
   multiSampleCountHint: 1,
   ssaoRenderParameters: { sampleSize: SsaoSampleQuality.Default, sampleRadius: 1.0, depthCheckBias: 0.0125 },
   edgeDetectionParameters: { enabled: true },
-  pointCloudParameters: { pointBlending: false}
+  pointCloudParameters: { pointBlending: false }
 };
 
 /**
@@ -99,5 +99,5 @@ export type PointCloudParameters = {
   /**
    * Effect of blending close points together. Creates smoother texture on object surfaces.
    */
-  pointBlending: boolean
+  pointBlending: boolean;
 };

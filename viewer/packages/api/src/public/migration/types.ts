@@ -108,7 +108,7 @@ export interface Cognite3DViewerOptions {
      * big enough. Can cause significant decrease in performance on some machines.
      */
     pointBlending?: boolean;
-  }
+  };
 
   /**
    * Enables / disables visualizing the edges of geometry. Defaults to true.

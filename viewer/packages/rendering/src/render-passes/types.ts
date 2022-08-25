@@ -58,9 +58,9 @@ export type PointCloudPassParameters = {
     blendSrc?: THREE.BlendingDstFactor | THREE.BlendingSrcFactor;
     blendDst?: THREE.BlendingDstFactor;
     colorWrite?: boolean;
-  }; 
+  };
   renderer?: {
     autoClearDepth?: boolean;
     autoClearColor?: boolean;
-  }
-}
+  };
+};

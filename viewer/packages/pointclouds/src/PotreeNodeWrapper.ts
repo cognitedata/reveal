@@ -24,7 +24,7 @@ export class PotreeNodeWrapper {
   readonly octree: PointCloudOctree;
   private _needsRedraw = false;
   private readonly _classification: IClassification = {} as IClassification;
-  private _modelIdentifier: symbol;
+  private readonly _modelIdentifier: symbol;
 
   get needsRedraw(): boolean {
     return this._needsRedraw;
