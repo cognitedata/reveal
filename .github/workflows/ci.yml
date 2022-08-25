@@ -168,14 +168,9 @@ jobs:
       working-directory: examples
       run: yarn install --immutable
       
-    # - name: Increase number of inotify watches
-    # run: 'echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p'
-
-    # - name: Build examples
-    #   working-directory: examples
-    #   run: |
-    #     echo "NODE_OPTIONS=--max-old-space-size=8192" >> $GITHUB_ENV
-    #     yarn build
+    - name: Build examples
+      working-directory: examples
+      run: yarn build
 
   # runs only when there are changes in parser-worker/
   # we use it here because github haven't figured out conditionally required checks
