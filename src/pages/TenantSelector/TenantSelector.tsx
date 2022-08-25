@@ -9,7 +9,12 @@ const clusters = [
     options: [
       { value: '', label: 'Europe 1 (Google)', legacyAuth: true },
       { value: 'westeurope-1', label: 'Europe 2 (Microsoft)' },
-      { value: 'asia-northeast1-1', label: 'Asia 1', legacyAuth: true },
+      {
+        value: 'asia-northeast1-1',
+        label: 'Asia 1 (Google)',
+        legacyAuth: true,
+      },
+      { value: 'az-tyo-gp-001', label: 'Asia 2 (Microsoft)' },
       { value: 'az-eastus-1', label: 'US East 1' },
     ],
   },
