@@ -214,7 +214,7 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
    * Enter into point to point measurement mode.
    */
   enterMeasurementMode(): void {
-    this.setupEventHandling();
+    this._viewer.on('click', this._handlePointerClick);
     this._events.measurementStarted.fire();
   }
 
@@ -222,7 +222,7 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
    * Exit measurement mode.
    */
   exitMeasurementMode(): void {
-    this.removeEventHandling();
+    this._viewer.off('click', this._handlePointerClick);
     this._events.measurementEnded.fire();
   }
 
@@ -274,7 +274,7 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
 
   /**
    * Update selected line width.
-   * @param measurement Measurement.
+   * @param measurement Measurement to be updated.
    * @param lineWidth Width of the measuring line.
    */
   updateLineWidth(measurement: Measurement, lineWidth: number): void {
@@ -288,7 +288,7 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
 
   /**
    * Update selected line color.
-   * @param measurement Measurement.
+   * @param measurement Measurement to be updated.
    * @param color Color of the measuring line.
    */
   updateLineColor(measurement: Measurement, color: THREE.Color): void {
@@ -320,20 +320,6 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
     this._events.measurementStarted.unsubscribeAll();
     this._events.measurementEnded.unsubscribeAll();
     super.dispose();
-  }
-
-  /**
-   * Set input handling.
-   */
-  private setupEventHandling() {
-    this._viewer.on('click', this._handlePointerClick);
-  }
-
-  /**
-   * Remove input handling.
-   */
-  private removeEventHandling() {
-    this._viewer.off('click', this._handlePointerClick);
   }
 
   private async onPointerClick(event: { offsetX: number; offsetY: number }): Promise<void> {
@@ -409,6 +395,9 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
     }
   }
 
+  /**
+   * Cancel the active measurement.
+   */
   private cancelActiveMeasurement() {
     this._activeMeasurement!.removeMeasurement();
     this._activeMeasurement = undefined;

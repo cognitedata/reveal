@@ -120,9 +120,7 @@ export class MeasurementManager {
    * @param point World position to start measurement operation from.
    */
   private startMeasurement(point: THREE.Vector3): MeasurementLine {
-    const lineWidth = this.determineLineWidthFromOptions();
-    const lineColor = this.determineLineColorFromOptions();
-    return new MeasurementLine(lineWidth, lineColor, point);
+    return new MeasurementLine(this._options.lineWidth, this._options.color, point);
   }
 
   /**
@@ -135,14 +133,6 @@ export class MeasurementManager {
     const labelElement = this._measurementLabel.createLabel(label);
     this._htmlOverlay.add(labelElement, position);
     return labelElement;
-  }
-
-  private determineLineWidthFromOptions(): number {
-    return this._options.lineWidth;
-  }
-
-  private determineLineColorFromOptions(): THREE.Color {
-    return this._options.color;
   }
 
   private pointerTo3DPosition(offsetX: number, offsetY: number) {
