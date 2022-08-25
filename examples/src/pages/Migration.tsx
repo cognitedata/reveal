@@ -76,9 +76,12 @@ export function Migration() {
         domElement: canvasWrapperRef.current!,
         onLoading: progress,
         logMetrics: false,
-        antiAliasingHint: (urlParams.get('antialias') || undefined) as any,
-        ssaoQualityHint: (urlParams.get('ssao') || undefined) as any,
-        continuousModelStreaming: true
+        antiAliasingHint: (urlParams.get('antialias') ?? undefined) as any,
+        ssaoQualityHint: (urlParams.get('ssao') ?? undefined) as any,
+        continuousModelStreaming: true,
+        pointCloudEffects: {
+          pointBlending: (urlParams.get('pointBlending') === "true" ?? undefined)
+        }
       };
 
       if (modelUrl !== null) {

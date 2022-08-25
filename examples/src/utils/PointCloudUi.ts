@@ -10,10 +10,15 @@ export class PointCloudUi {
       budget: 2_000_000,
       pointColorType: PotreePointColorType.Rgb,
       pointShape: PotreePointShape.Circle,
+      pointBlending: true
     };
 
   constructor(viewer: Cognite3DViewer, ui: dat.GUI) {
+    const url = new URL(window.location.href);
+    const urlParams = url.searchParams;
+    
     this._viewer = viewer;
+    this._params.pointBlending = urlParams.get('pointBlending') === 'true';
 
     ui.add(this._params, 'budget', 0, 20_000_000, 100_000).onChange(() => this.applyToAllModels());
     ui.add(this._params, 'pointSize', 0, 2, 0.025).onChange(() => this.applyToAllModels());
@@ -41,6 +46,11 @@ export class PointCloudUi {
       this._params.pointShape = parseInt(valueStr, 10);
       this.applyToAllModels()
     });
+    ui.add(this._params, 'pointBlending').onChange(value => {
+      urlParams.set('pointBlending', value);
+      window.location.href = url.toString()
+    });
+
   }
 
   applyToAllModels() {

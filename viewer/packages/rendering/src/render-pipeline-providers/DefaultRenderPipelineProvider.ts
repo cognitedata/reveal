@@ -29,7 +29,7 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider {
   private readonly _outputRenderTarget: THREE.WebGLRenderTarget | null;
   private readonly _cadGeometryRenderPipeline: CadGeometryRenderPipelineProvider;
   private readonly _pointCloudRenderPipeline: PointCloudRenderPipelineProvider;
-  private readonly _postProcessingRenderPipeline: PostProcessingPass;
+  private readonly _postProcessingPass: PostProcessingPass;
   private readonly _ssaoPass: SSAOPass;
   private readonly _blitToScreenMaterial: THREE.RawShaderMaterial;
   private readonly _blitToScreenMesh: THREE.Mesh;
@@ -81,6 +81,7 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider {
 
     const ssaoParameters = renderOptions.ssaoRenderParameters ?? defaultRenderOptions.ssaoRenderParameters;
     const edges = renderOptions.edgeDetectionParameters ?? defaultRenderOptions.edgeDetectionParameters;
+    const pointCloudParameters = renderOptions?.pointCloudParameters ?? defaultRenderOptions.pointCloudParameters;
 
     this._cadGeometryRenderPipeline = new CadGeometryRenderPipelineProvider(
       sceneHandler,
@@ -92,11 +93,12 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider {
       ssaoParameters
     );
 
-    this._pointCloudRenderPipeline = new PointCloudRenderPipelineProvider(sceneHandler);
+    this._pointCloudRenderPipeline = new PointCloudRenderPipelineProvider(sceneHandler, pointCloudParameters);
 
-    this._postProcessingRenderPipeline = new PostProcessingPass(sceneHandler.scene, {
+    this._postProcessingPass = new PostProcessingPass(sceneHandler.scene, {
       ssaoTexture: this._renderTargetData.ssaoRenderTarget.texture,
       edges: edges.enabled,
+      pointBlending: pointCloudParameters.pointBlending,
       ...this._pointCloudRenderPipeline.pointCloudRenderTargets,
       ...this._cadGeometryRenderPipeline.cadGeometryRenderTargets
     });
@@ -139,11 +141,11 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider {
 
       yield* this._pointCloudRenderPipeline.pipeline(renderer);
 
-      this._postProcessingRenderPipeline.updateRenderObjectsVisability(hasStyling);
+      this._postProcessingPass.updateRenderObjectsVisability(hasStyling);
       renderer.setRenderTarget(this._renderTargetData.postProcessingRenderTarget);
       this._rendererStateHelper!.resetState();
       this._rendererStateHelper!.autoClear = true;
-      yield this._postProcessingRenderPipeline;
+      yield this._postProcessingPass;
 
       renderer.setRenderTarget(this._outputRenderTarget);
 
@@ -160,7 +162,7 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider {
   public dispose(): void {
     this._cadGeometryRenderPipeline.dispose();
     this._pointCloudRenderPipeline.dispose();
-    this._postProcessingRenderPipeline.dispose();
+    this._postProcessingPass.dispose();
 
     this._renderTargetData.postProcessingRenderTarget.dispose();
 

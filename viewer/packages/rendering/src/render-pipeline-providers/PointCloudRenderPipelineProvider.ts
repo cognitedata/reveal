@@ -7,22 +7,19 @@ import { RenderPass } from '../RenderPass';
 import { RenderPipelineProvider } from '../RenderPipelineProvider';
 import { SceneHandler } from '@reveal/utilities';
 import { PointCloudEffectsPass } from '../render-passes/PointCloudEffectsPass';
-import { CognitePointCloudModel } from '@reveal/pointclouds';
 import { PointCloudRenderTargets } from './types';
 import { PointCloudPassParameters } from '../render-passes/types';
+import { PointCloudParameters } from '../rendering/types';
 
 export class PointCloudRenderPipelineProvider implements RenderPipelineProvider {
   private readonly _renderTargetData: {
     currentRenderSize: THREE.Vector2;
-    depth: THREE.WebGLRenderTarget;
-    attribute: THREE.WebGLRenderTarget;
+    output: THREE.WebGLRenderTarget;
   };
-  private readonly _pointCloudModels: {
-    object: CognitePointCloudModel;
-    modelIdentifier: symbol;
-  }[];
+  private readonly _renderParameters: PointCloudParameters;
   private readonly _depthPass: PointCloudEffectsPass;
   private readonly _attributePass: PointCloudEffectsPass;
+  private readonly _standardPass: PointCloudEffectsPass;
 
   private DepthPassParameters: PointCloudPassParameters = {
     material: {
@@ -48,66 +45,52 @@ export class PointCloudRenderPipelineProvider implements RenderPipelineProvider 
     }
   }
 
-  public readonly scene: THREE.Scene;
-
-  constructor(sceneHandler: SceneHandler) {
-    this.scene = sceneHandler.scene;
-    this._pointCloudModels = sceneHandler.pointCloudModels;
+  constructor(sceneHandler: SceneHandler, renderParameters: PointCloudParameters) {
     this._renderTargetData = {
-      currentRenderSize: new THREE.Vector2(1000, 1000),
-      depth: new THREE.WebGLRenderTarget(1000, 1000, {
+      currentRenderSize: new THREE.Vector2(1, 1),
+      output: new THREE.WebGLRenderTarget(1, 1, {
         minFilter: THREE.NearestFilter,
         magFilter: THREE.NearestFilter,
         format: THREE.RGBAFormat,
         type: THREE.FloatType,
-        depthBuffer: true,
-        depthTexture: new THREE.DepthTexture(1000, 1000, THREE.UnsignedIntType)}),
-      attribute: new THREE.WebGLRenderTarget(1, 1)
+        depthTexture: new THREE.DepthTexture(1, 1, THREE.UnsignedIntType)})
     };
 
+    this._renderParameters = renderParameters;
 
-    this._renderTargetData.attribute = new THREE.WebGLRenderTarget(1000, 1000, {
-        minFilter: THREE.NearestFilter,
-        magFilter: THREE.NearestFilter,
-        format: THREE.RGBAFormat,
-        type: THREE.FloatType, 
-        depthTexture: this._renderTargetData.depth.depthTexture
-    });
-
-    this._renderTargetData.attribute.depthTexture.format = THREE.DepthFormat;
-    this._renderTargetData.attribute.depthTexture.type = THREE.UnsignedIntType;
-
+    this._standardPass = new PointCloudEffectsPass(sceneHandler);
     this._depthPass = new PointCloudEffectsPass(sceneHandler, this.DepthPassParameters);
     this._attributePass = new PointCloudEffectsPass(sceneHandler, this.AttributePassParameters);
   }
 
   get pointCloudRenderTargets(): PointCloudRenderTargets {
     return { 
-        pointCloud: this._renderTargetData.attribute,
-        pointCloudDepth: this._renderTargetData.depth
+        pointCloud: this._renderTargetData.output,
     }
   }
 
   public *pipeline(renderer: THREE.WebGLRenderer): Generator<RenderPass> {
       this.updateRenderTargetSizes(renderer);
-
+      
       try {
-          renderer.setRenderTarget(this._renderTargetData.depth);
-          yield this._depthPass;
-
+          renderer.setRenderTarget(this._renderTargetData.output);
           
-          renderer.setRenderTarget(this._renderTargetData.attribute);
-          renderer.setClearColor('#000000', 0.0);
-          renderer.clearColor();
-          yield this._attributePass;
+          if (this._renderParameters.pointBlending) {
+            yield this._depthPass;
+            
+            renderer.setClearColor('#000000', 0.0);
+            renderer.clearColor();
+            yield this._attributePass;
+          } else {
+            yield this._standardPass;
+          }
       } finally {
          renderer.setClearColor('#FFFFFF', 0.0);
       }
   }
 
   public dispose(): void {
-    this._renderTargetData.depth.dispose();
-    this._renderTargetData.attribute.dispose();
+    this._renderTargetData.output.dispose();
   }
 
   private updateRenderTargetSizes(renderer: THREE.WebGLRenderer): void {
@@ -122,7 +105,6 @@ export class PointCloudRenderPipelineProvider implements RenderPipelineProvider 
     }
 
     this._renderTargetData.currentRenderSize.set(width, height);
-    this._renderTargetData.attribute.setSize(width, height);
-    this._renderTargetData.depth.setSize(width, height);
+    this._renderTargetData.output.setSize(width, height);
   }
 }

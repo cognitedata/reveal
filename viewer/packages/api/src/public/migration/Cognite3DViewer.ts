@@ -1285,7 +1285,10 @@ function createRevealManagerOptions(viewerOptions: Cognite3DViewerOptions): Reve
     antiAliasing,
     multiSampleCountHint: multiSampleCount,
     ssaoRenderParameters,
-    edgeDetectionParameters
+    edgeDetectionParameters,
+    pointCloudParameters: {
+      pointBlending: viewerOptions?.pointCloudEffects?.pointBlending ?? defaultRenderOptions.pointCloudParameters.pointBlending,
+    }
   };
   return revealOptions;
 }

@@ -14,10 +14,10 @@ export class PointCloudEffectsPass implements RenderPass {
   private readonly _sceneHandler: SceneHandler;
   private readonly _passMaterialParameters: PointCloudPassParameters;
 
-  constructor(sceneHandler: SceneHandler, materialParameters: PointCloudPassParameters) {
+  constructor(sceneHandler: SceneHandler, materialParameters?: PointCloudPassParameters) {
     this._viewerScene = sceneHandler.scene;
     this._sceneHandler = sceneHandler;
-    this._passMaterialParameters = materialParameters;
+    this._passMaterialParameters = materialParameters ?? {};
 }
 
     public render(renderer: THREE.WebGLRenderer, camera: THREE.Camera): void {

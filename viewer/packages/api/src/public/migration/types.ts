@@ -100,6 +100,17 @@ export interface Cognite3DViewerOptions {
   ssaoQualityHint?: 'medium' | 'high' | 'veryhigh' | 'disabled';
 
   /**
+   * Point cloud visualisation effects parameteres.
+   */
+  pointCloudEffects?: {
+    /**
+     * Point blending effect, creates more "stable" texture on objects surfaces if point sizing is
+     * big enough. Can cause significant decrease in performance on some machines.
+     */
+    pointBlending?: boolean;
+  }
+
+  /**
    * Enables / disables visualizing the edges of geometry. Defaults to true.
    */
   enableEdges?: boolean;

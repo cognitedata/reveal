@@ -1,4 +1,4 @@
-import { Box3, Camera, Object3D, Points, Ray, Sphere, Vector3, WebGLRenderer, AdditiveBlending } from 'three';
+import { Box3, Camera, Object3D, Points, Ray, Sphere, Vector3, WebGLRenderer } from 'three';
 import { DEFAULT_MIN_NODE_PIXEL_SIZE } from '../rendering/constants';
 import { PointCloudMaterial, PotreePointSizeType } from '../rendering';
 import { IPointCloudTreeGeometry } from '../geometry/IPointCloudTreeGeometry';

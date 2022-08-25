@@ -55,9 +55,9 @@ export class PostProcessingPass implements RenderPass {
         tDiffuse: { value: postProcessingPipelineOptions.pointCloud.texture },
         tDepth: { value: postProcessingPipelineOptions.pointCloud.depthTexture }
       },
-      defines: {
+      defines: postProcessingPipelineOptions?.pointBlending ? {
         points_blend: ''
-      },
+      } : {},
       glslVersion: THREE.GLSL3,
       depthTest: true,
       depthWrite: true,

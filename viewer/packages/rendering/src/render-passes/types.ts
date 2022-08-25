@@ -2,7 +2,6 @@
  * Copyright 2022 Cognite AS
  */
 
-import { PointCloudMaterial } from '@reveal/pointclouds/src/potree-three-loader';
 import * as THREE from 'three';
 
 export type BlendOptions = {
