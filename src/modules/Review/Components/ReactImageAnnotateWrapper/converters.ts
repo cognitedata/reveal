@@ -430,7 +430,6 @@ export const convertAnnotatorPointRegionToAnnotationChangeProperties = (
       data: {
         set: {
           label: region.annotationLabelOrText,
-          confidence: 1,
           keypoints: {
             ...annotationKeypoints,
             [region.keypointLabel]: {
