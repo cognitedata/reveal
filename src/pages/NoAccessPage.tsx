@@ -156,7 +156,7 @@ const Infobox = styled.div`
 
   position: static;
   width: 665px;
-  height: 110px;
+  height: 100%;
   left: 0;
   top: 40px;
 

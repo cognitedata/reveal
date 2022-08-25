@@ -70,6 +70,10 @@ const routes = [
         acl: 'groupsAcl',
         actions: ['LIST'],
       },
+      {
+        acl: 'annotationsAcl',
+        actions: ['WRITE'],
+      },
     ],
   },
   {
