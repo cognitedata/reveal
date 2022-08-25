@@ -4,14 +4,15 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
-import { CadManager, CadModelUpdateHandler } from '../../packages/cad-geometry-loaders';
-import { ByScreenSizeSectorCuller } from '../../packages/cad-geometry-loaders/src/sector/culling/ByScreenSizeSectorCuller';
+import { CadManager, CadModelUpdateHandler, createV8SectorCuller } from '../../packages/cad-geometry-loaders';
 import { CadModelFactory, CadNode } from '../../packages/cad-model';
 import {
   BasicPipelineExecutor,
+  CadGeometryRenderModePipelineProvider,
   CadMaterialManager,
   defaultRenderOptions,
   DefaultRenderPipelineProvider,
+  RenderMode,
   RenderPipelineExecutor,
   RenderPipelineProvider
 } from '../../packages/rendering';
@@ -45,6 +46,7 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
   private readonly _renderer: THREE.WebGLRenderer;
   private readonly _controls: OrbitControls;
   private readonly _materialManager: CadMaterialManager;
+  private readonly _localModelUrl: string;
   private _gui!: dat.GUI;
 
   protected readonly _frameStatisticsGUIData = {
@@ -57,6 +59,7 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
   private _renderPipelineProvider: RenderPipelineProvider;
   private _pipelineExecutor: RenderPipelineExecutor;
   private _cadManager!: CadManager;
+  private readonly _depthRenderPipeline: CadGeometryRenderModePipelineProvider;
 
   get gui(): dat.GUI {
     return this._gui;
@@ -78,7 +81,9 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
     return this._renderPipelineProvider;
   }
 
-  constructor() {
+  constructor(localModelUrl = 'primitives') {
+    this._localModelUrl = localModelUrl;
+
     this._perspectiveCamera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 1000);
 
     this._sceneHandler = new SceneHandler();
@@ -98,6 +103,12 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
       this._sceneHandler,
       defaultRenderOptions
     );
+
+    this._depthRenderPipeline = new CadGeometryRenderModePipelineProvider(
+      RenderMode.DepthBufferOnly,
+      this._materialManager,
+      this._sceneHandler
+    );
   }
 
   public async run(): Promise<void> {
@@ -105,10 +116,15 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
 
     this.updateRenderer();
 
-    const { modelDataProvider, modelIdentifier, modelMetadataProvider } = await createDataProviders();
+    const { modelDataProvider, modelIdentifier, modelMetadataProvider } = await createDataProviders(
+      this._localModelUrl
+    );
 
     const cadModelFactory = new CadModelFactory(this._materialManager, modelMetadataProvider, modelDataProvider);
-    const cadModelUpdateHandler = new CadModelUpdateHandler(new ByScreenSizeSectorCuller(), true);
+    const cadModelUpdateHandler = new CadModelUpdateHandler(
+      createV8SectorCuller(this._renderer, this._depthRenderPipeline),
+      false
+    );
     this._cadManager = new CadManager(this._materialManager, cadModelFactory, cadModelUpdateHandler);
 
     const pointCloudMetadataRepository = new PointCloudMetadataRepository(modelMetadataProvider, modelDataProvider);
@@ -258,6 +274,7 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
   public dispose(): void {
     this._controls.dispose();
     this._sceneHandler.dispose();
+    this._depthRenderPipeline.dispose();
     this._renderPipelineProvider.dispose();
     this._cadManager.dispose();
     this._renderer.dispose();
