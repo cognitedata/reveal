@@ -15,6 +15,7 @@ import { PostProcessingPass } from '../render-passes/PostProcessingPass';
 import { SSAOPass } from '../render-passes/SSAOPass';
 import { blitShaders } from '../rendering/shaders';
 import { SceneHandler, WebGLRendererStateHelper } from '@reveal/utilities';
+import { PointCloudRenderPipelineProvider } from './PointCloudRenderPipelineProvider';
 
 export class DefaultRenderPipelineProvider implements RenderPipelineProvider {
   private readonly _cadScene: THREE.Scene;
@@ -27,6 +28,7 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider {
   private readonly _autoResizeOutputTarget: boolean;
   private readonly _outputRenderTarget: THREE.WebGLRenderTarget | null;
   private readonly _cadGeometryRenderPipeline: CadGeometryRenderPipelineProvider;
+  private readonly _pointCloudRenderPipeline: PointCloudRenderPipelineProvider;
   private readonly _postProcessingRenderPipeline: PostProcessingPass;
   private readonly _ssaoPass: SSAOPass;
   private readonly _blitToScreenMaterial: THREE.RawShaderMaterial;
@@ -90,9 +92,12 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider {
       ssaoParameters
     );
 
+    this._pointCloudRenderPipeline = new PointCloudRenderPipelineProvider(sceneHandler);
+
     this._postProcessingRenderPipeline = new PostProcessingPass(sceneHandler.scene, {
       ssaoTexture: this._renderTargetData.ssaoRenderTarget.texture,
       edges: edges.enabled,
+      ...this._pointCloudRenderPipeline.pointCloudRenderTargets,
       ...this._cadGeometryRenderPipeline.cadGeometryRenderTargets
     });
 
@@ -132,6 +137,8 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider {
         yield this._ssaoPass;
       }
 
+      yield* this._pointCloudRenderPipeline.pipeline(renderer);
+
       this._postProcessingRenderPipeline.updateRenderObjectsVisability(hasStyling);
       renderer.setRenderTarget(this._renderTargetData.postProcessingRenderTarget);
       this._rendererStateHelper!.resetState();
@@ -152,6 +159,7 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider {
 
   public dispose(): void {
     this._cadGeometryRenderPipeline.dispose();
+    this._pointCloudRenderPipeline.dispose();
     this._postProcessingRenderPipeline.dispose();
 
     this._renderTargetData.postProcessingRenderTarget.dispose();

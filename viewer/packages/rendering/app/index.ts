@@ -110,7 +110,7 @@ async function init() {
   model.updateMatrix();
   model.updateWorldMatrix(true, true);
 
-  const camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 1000);
+  const camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 1000);
 
   let needsRedraw = false;
 
@@ -161,10 +161,19 @@ async function init() {
   const controlsTest = new TransformControls(camera, renderer.domElement);
   controlsTest.attach(customBox);
   sceneHandler.addCustomObject(controlsTest);
-
+  
   renderer.domElement.style.backgroundColor = guiData.canvasColor;
-
+  
   const controls = new OrbitControls(camera, renderer.domElement);
+  
+  controlsTest.addEventListener('change', () => {
+    needsRedraw = true;
+  });
+
+  controlsTest.addEventListener('dragging-changed', (e) => {
+    controls.enabled = !e.value;
+    needsRedraw = true;
+  });
 
   fitCameraToBoundingBox(boundingBox, camera, controls);
 

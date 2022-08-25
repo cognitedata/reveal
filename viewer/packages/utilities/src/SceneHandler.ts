@@ -4,10 +4,12 @@
 
 import * as THREE from 'three';
 import remove from 'lodash/remove';
+import { CognitePointCloudModel } from '@reveal/pointclouds';
 
 export class SceneHandler {
   private readonly _scene: THREE.Scene;
   private readonly _cadModels: { object: THREE.Object3D; modelIdentifier: string }[];
+  private readonly _pointCloudModels: { object: CognitePointCloudModel; modelIdentifier: symbol}[];
   private readonly _customObjects: THREE.Object3D[];
 
   get scene(): THREE.Scene {
@@ -18,12 +20,17 @@ export class SceneHandler {
     return this._cadModels;
   }
 
+  get pointCloudModels(): { object: CognitePointCloudModel; modelIdentifier: symbol }[] {
+    return this._pointCloudModels;
+  }
+
   get customObjects(): THREE.Object3D[] {
     return this._customObjects;
   }
 
   constructor() {
     this._cadModels = [];
+    this._pointCloudModels = [];
     this._customObjects = [];
     this._scene = new THREE.Scene();
 
@@ -33,6 +40,16 @@ export class SceneHandler {
   public addCadModel(object: THREE.Object3D, modelIdentifier: string): void {
     this._cadModels.push({ object, modelIdentifier });
     this._scene.add(object);
+  }
+
+  public addPointCloudModel(object: CognitePointCloudModel, modelIdentifier: symbol): void {
+    this._pointCloudModels.push({ object, modelIdentifier });
+    this._scene.add(object);
+  }
+
+  public removePointCloudModel(object: CognitePointCloudModel): void {
+    this.scene.remove(object);
+    remove(this._pointCloudModels, { object });
   }
 
   public removeCadModel(object: THREE.Object3D): void {
@@ -52,6 +69,7 @@ export class SceneHandler {
 
   public dispose(): void {
     this._cadModels.splice(0);
+    this._pointCloudModels.splice(0);
     this._customObjects.splice(0);
 
     this.scene.traverse(object => {

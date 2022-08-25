@@ -84,7 +84,7 @@ void main() {
 		float v = 2.0 * gl_PointCoord.y - 1.0;
 	#endif
 
-	#if defined(circle_point_shape) || defined (weighted_splats)
+	#if defined(circle_point_shape)
 		float cc = u*u + v*v;
 		if(cc > 1.0){
 			discard;
@@ -92,11 +92,11 @@ void main() {
 	#endif
 
 	#if defined weighted_splats
-		vec2 uv = gl_FragCoord.xy / vec2(screenWidth, screenHeight);
-		float sDepth = texture(depthMap, uv).r;
-		if(vLinearDepth > sDepth + vRadius + blendDepthSupplement){
-			discard;
-		}
+		// vec2 uv = gl_FragCoord.xy / vec2(screenWidth, screenHeight);
+		// float sDepth = gl_Fra//texture(depthMap, uv).r;
+		// if(vLinearDepth > sDepth + vRadius + blendDepthSupplement){
+		// 	discard;
+		// }
 	#endif
 
 	#if defined color_type_point_index
@@ -255,19 +255,6 @@ void main() {
 
 	#endif
 
-	#if defined weighted_splats
-	    //float w = pow(1.0 - (u*u + v*v), blendHardness);
-
-		float wx = 2.0 * length(2.0 * gl_PointCoord - 1.0);
-		float w = exp(-wx * wx * 0.5);
-
-		//float distance = length(2.0 * gl_PointCoord - 1.0);
-		//float w = exp( -(distance * distance) / blendHardness);
-
-		outputColor.rgb = outputColor.rgb * w;
-		outputColor.a = w;
-	#endif
-
 	#if defined paraboloid_point_shape
 		float wi = 0.0 - ( u*u + v*v);
 		vec4 pos = vec4(vViewPosition, 1.0);
@@ -294,6 +281,16 @@ void main() {
 		#endif
 	#endif
 
+	#if defined weighted_splats
+		float distance = 2.0 * length(gl_PointCoord.xy - 0.5);
+		float weight = max(0.0, 1.0 - distance);
+		weight = pow(weight, 1.5);
+
+		outputColor.a = weight;
+		outputColor.rgb = outputColor.rgb * weight;
+		
+	#endif
+	
 	#ifdef highlight_point
 		if (vHighlight > 0.0) {
 			outputColor = highlightedPointColor;

@@ -285,6 +285,7 @@ export class PointCloudMaterial extends RawShaderMaterial {
 
   @requiresShaderUpdate() useClipBox: boolean = false;
   @requiresShaderUpdate() weighted: boolean = false;
+  @requiresShaderUpdate() hqDepthPass: boolean = false;
   @requiresShaderUpdate() pointColorType: PotreePointColorType = PotreePointColorType.Rgb;
   @requiresShaderUpdate() pointSizeType: PotreePointSizeType = PotreePointSizeType.Adaptive;
   @requiresShaderUpdate() clipMode: ClipMode = ClipMode.DISABLED;
@@ -432,6 +433,10 @@ export class PointCloudMaterial extends RawShaderMaterial {
 
     if (this.weighted) {
       define('weighted_splats');
+    }
+
+    if (this.hqDepthPass) {
+      define('hq_depth_pass');
     }
 
     if (this.numClipBoxes > 0) {

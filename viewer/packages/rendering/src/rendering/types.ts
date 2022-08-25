@@ -39,6 +39,10 @@ export type RenderOptions = {
    * Determines the parameters used for visualizing edges of the geometry.
    */
   edgeDetectionParameters?: EdgeDetectionParameters;
+  /**
+   * Point cloud effects parameters.
+   */
+  pointCloudParameters?: PointCloudParameters;
 };
 
 /**
@@ -59,7 +63,8 @@ export const defaultRenderOptions: Required<RenderOptions> = {
   antiAliasing: AntiAliasingMode.FXAA,
   multiSampleCountHint: 1,
   ssaoRenderParameters: { sampleSize: SsaoSampleQuality.Default, sampleRadius: 1.0, depthCheckBias: 0.0125 },
-  edgeDetectionParameters: { enabled: true }
+  edgeDetectionParameters: { enabled: true },
+  pointCloudParameters: { pointBlending: false}
 };
 
 /**
@@ -85,4 +90,14 @@ export type SsaoParameters = {
    * Applied bias when depth testing to reduce output noise.
    */
   depthCheckBias: number;
+};
+
+/**
+ * Point cloud rendering parameters supported by Reveal.
+ */
+export type PointCloudParameters = {
+  /**
+   * Effect of blending close points together. Creates smoother texture on object surfaces.
+   */
+  pointBlending: boolean
 };

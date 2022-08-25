@@ -169,6 +169,7 @@ export enum RenderLayer {
   Back = RenderMode.Color,
   InFront = RenderMode.Effects,
   Ghost = RenderMode.Ghost,
+  PointCloud = 11,
   Default = 0
 }
 

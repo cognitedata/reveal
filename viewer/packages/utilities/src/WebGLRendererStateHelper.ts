@@ -6,6 +6,7 @@ import { Vector4 } from 'three';
 
 type WebGLRendererState = {
   autoClear?: boolean;
+  autoClearDepth?: boolean;
   clearColor?: THREE.Color | string | number;
   clearAlpha?: number;
   size?: THREE.Vector2;
@@ -93,6 +94,11 @@ export class WebGLRendererStateHelper {
     this._renderer.autoClear = enabled;
   }
 
+  set autoClearDepth(enabled: boolean) {
+    this._originalState = { autoClearDepth: this._renderer.autoClearDepth, ...this._originalState };
+    this._renderer.autoClearDepth = enabled;
+  }
+
   setRenderTarget(renderTarget: THREE.WebGLRenderTarget | null): void {
     this._originalState = { renderTarget: this._renderer.getRenderTarget(), ...this._originalState };
     this._renderer.setRenderTarget(renderTarget);
@@ -101,6 +107,9 @@ export class WebGLRendererStateHelper {
   resetState(): void {
     if (this._originalState.autoClear !== undefined) {
       this._renderer.autoClear = this._originalState.autoClear;
+    }
+    if (this._originalState.autoClearDepth !== undefined) {
+      this._renderer.autoClearDepth = this._originalState.autoClearDepth;
     }
     if (this._originalState.clearColor !== undefined) {
       this._renderer.setClearColor(this._originalState.clearColor, this._originalState.clearAlpha);

@@ -11,6 +11,7 @@
     "@reveal/metrics": "workspace:*",
     "@reveal/model-base": "workspace:*",
     "@reveal/modeldata-api": "workspace:*",
+    "@reveal/rendering": "workspace:*",
     "@reveal/utilities": "workspace:*"
   }
 }

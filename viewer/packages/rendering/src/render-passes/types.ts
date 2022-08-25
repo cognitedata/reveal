@@ -2,6 +2,7 @@
  * Copyright 2022 Cognite AS
  */
 
+import { PointCloudMaterial } from '@reveal/pointclouds/src/potree-three-loader';
 import * as THREE from 'three';
 
 export type BlendOptions = {
@@ -48,3 +49,19 @@ export const transparentBlendOptions: BlendOptions = {
 export type ThreeUniforms = {
   [uniform: string]: THREE.IUniform<any>;
 };
+
+export type PointCloudPassParameters = {
+  material?: {
+    weighted?: boolean;
+    hqDepthPass?: boolean;
+    depthWrite?: boolean;
+    blending?: THREE.Blending;
+    blendSrc?: THREE.BlendingDstFactor | THREE.BlendingSrcFactor;
+    blendDst?: THREE.BlendingDstFactor;
+    colorWrite?: boolean;
+  }; 
+  renderer?: {
+    autoClearDepth?: boolean;
+    autoClearColor?: boolean;
+  }
+}

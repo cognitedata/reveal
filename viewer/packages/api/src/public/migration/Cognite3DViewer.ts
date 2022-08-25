@@ -605,9 +605,8 @@ export class Cognite3DViewer {
     const model = new CognitePointCloudModel(modelId, revisionId, pointCloudNode);
     this._models.push(model);
 
-    this._sceneHandler.addCustomObject(model);
-    this._extraObjects.push(model);
-
+    this._sceneHandler.addPointCloudModel(model, pointCloudNode.potreeNode.modelIdentifier);
+   
     return model;
   }
 
@@ -1179,9 +1178,6 @@ export class Cognite3DViewer {
     });
 
     this._extraObjects.forEach(obj => {
-      if (obj instanceof CognitePointCloudModel) {
-        return;
-      }
       bbox.setFromObject(obj);
       if (!bbox.isEmpty()) {
         combinedBbox.union(bbox);

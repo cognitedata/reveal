@@ -11,6 +11,7 @@ export const Container = styled.div`
 
 export const CanvasWrapper = styled(Container)`
   position: relative;
+  background: rgb(0,0,0);
   overflow: hidden;
   & > canvas {
     display: flex;

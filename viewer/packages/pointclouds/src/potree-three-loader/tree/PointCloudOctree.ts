@@ -1,4 +1,4 @@
-import { Box3, Camera, Object3D, Points, Ray, Sphere, Vector3, WebGLRenderer } from 'three';
+import { Box3, Camera, Object3D, Points, Ray, Sphere, Vector3, WebGLRenderer, AdditiveBlending } from 'three';
 import { DEFAULT_MIN_NODE_PIXEL_SIZE } from '../rendering/constants';
 import { PointCloudMaterial, PotreePointSizeType } from '../rendering';
 import { IPointCloudTreeGeometry } from '../geometry/IPointCloudTreeGeometry';
@@ -11,6 +11,7 @@ import { IPotree } from '../types/IPotree';
 import { IPointCloudTreeNodeBase } from './IPointCloudTreeNodeBase';
 import { IPointCloudTreeNode } from './IPointCloudTreeNode';
 import { computeTransformedBoundingBox } from '../utils/bounds';
+import { RenderLayer } from '@reveal/rendering/';
 
 export class PointCloudOctree extends PointCloudTree {
   potree: IPotree;
@@ -90,6 +91,7 @@ export class PointCloudOctree extends PointCloudTree {
     points.position.copy(geometryNode.boundingBox.min);
     points.frustumCulled = false;
     points.onBeforeRender = PointCloudMaterial.makeOnBeforeRender(this, node);
+    points.layers.set(RenderLayer.PointCloud);
 
     if (parent) {
       parent.sceneNode.add(points);
