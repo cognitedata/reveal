@@ -56,6 +56,7 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
 
   private _renderPipelineProvider: RenderPipelineProvider;
   private _pipelineExecutor: RenderPipelineExecutor;
+  private _cadManager!: CadManager;
 
   get gui(): dat.GUI {
     return this._gui;
@@ -108,7 +109,7 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
 
     const cadModelFactory = new CadModelFactory(this._materialManager, modelMetadataProvider, modelDataProvider);
     const cadModelUpdateHandler = new CadModelUpdateHandler(new ByScreenSizeSectorCuller(), true);
-    const cadManager = new CadManager(this._materialManager, cadModelFactory, cadModelUpdateHandler);
+    this._cadManager = new CadManager(this._materialManager, cadModelFactory, cadModelUpdateHandler);
 
     const pointCloudMetadataRepository = new PointCloudMetadataRepository(modelMetadataProvider, modelDataProvider);
     const pointCloudFactory = new PointCloudFactory(modelDataProvider);
@@ -119,9 +120,9 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
       this._renderer
     );
 
-    const model = await this.addModel(modelIdentifier, modelMetadataProvider, cadManager, pointCloudManager);
+    const model = await this.addModel(modelIdentifier, modelMetadataProvider, this._cadManager, pointCloudManager);
 
-    const modelLoadedPromise = this.getModelLoadedPromise(model, cadManager, pointCloudManager);
+    const modelLoadedPromise = this.getModelLoadedPromise(model, this._cadManager, pointCloudManager);
 
     const boundingBox = this.getModelBoundingBox(model);
 
@@ -131,11 +132,11 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
     this._controls.target.copy(target);
     this._perspectiveCamera.updateMatrixWorld();
 
-    cadManager.updateCamera(this._perspectiveCamera);
+    this._cadManager.updateCamera(this._perspectiveCamera);
     pointCloudManager.updateCamera(this._perspectiveCamera);
 
     this._controls.addEventListener('change', () => {
-      cadManager.updateCamera(this._perspectiveCamera);
+      this._cadManager.updateCamera(this._perspectiveCamera);
       pointCloudManager.updateCamera(this._perspectiveCamera);
       this.render();
     });
@@ -153,7 +154,7 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
       cameraControls: this._controls,
       cadMaterialManager: this._materialManager,
       cadModelUpdateHandler,
-      cadManager
+      cadManager: this._cadManager
     });
 
     this._gui.close();
@@ -252,5 +253,14 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
     } else {
       throw Error(`Unknown output format ${modelOutputs}`);
     }
+  }
+
+  public dispose(): void {
+    this._controls.dispose();
+    this._sceneHandler.dispose();
+    this._renderPipelineProvider.dispose();
+    this._cadManager.dispose();
+    this._renderer.dispose();
+    this._renderer.forceContextLoss();
   }
 }

@@ -15,6 +15,7 @@ export type ViewerTestFixtureComponents = {
 
 export abstract class ViewerVisualTestFixture implements VisualTestFixture {
   private readonly _localModelUrls: string[];
+  private _viewer!: Cognite3DViewer;
 
   constructor(...localModelUrls: string[]) {
     this._localModelUrls = localModelUrls.length > 0 ? localModelUrls : ['primitives'];
@@ -22,18 +23,18 @@ export abstract class ViewerVisualTestFixture implements VisualTestFixture {
 
   public async run(): Promise<void> {
     const modelLoadedPromise = new DeferredPromise<void>();
-    const viewer = await createCognite3DViewer(modelLoadingCallback);
+    this._viewer = await createCognite3DViewer(modelLoadingCallback);
 
-    this.setupDom(viewer);
+    this.setupDom(this._viewer);
 
-    const models = await addModels(viewer, this._localModelUrls);
-    new AxisViewTool(viewer);
+    const models = await addModels(this._viewer, this._localModelUrls);
+    new AxisViewTool(this._viewer);
 
-    viewer.fitCameraToModel(models[0]);
+    this._viewer.fitCameraToModel(models[0]);
 
     await this.modelLoaded(models[0], modelLoadedPromise);
 
-    await this.setup({ viewer, models });
+    await this.setup({ viewer: this._viewer, models });
 
     function modelLoadingCallback(itemsLoaded: number, itemsRequested: number, _: number) {
       if (itemsRequested > 0 && itemsLoaded === itemsRequested) {
@@ -60,4 +61,9 @@ export abstract class ViewerVisualTestFixture implements VisualTestFixture {
   }
 
   public abstract setup(testFixtureComponents: ViewerTestFixtureComponents): Promise<void>;
+
+  public dispose(): void {
+    this._viewer.renderer.forceContextLoss();
+    this._viewer.dispose();
+  }
 }
