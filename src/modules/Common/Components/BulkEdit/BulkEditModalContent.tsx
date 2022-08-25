@@ -130,45 +130,50 @@ export const BulkEditModalContent = ({
   }, [selectedBulkEditOption]);
 
   useEffect(() => {
-    const assetIds: number[] = [
-      assetIdsFromFiles,
-      unsavedAssetIds?.addedAssetIds,
-      unsavedAssetIds?.removedAssetIds,
-    ]
-      .flat()
-      .filter((v, i, a) => a.indexOf(v) === i && v !== undefined) as number[];
+    if (selectedBulkEditOption.label === BulkEditOptions.assets) {
+      const assetIds: number[] = [
+        assetIdsFromFiles,
+        unsavedAssetIds?.addedAssetIds,
+        unsavedAssetIds?.removedAssetIds,
+      ]
+        .flat()
+        .filter((v, i, a) => a.indexOf(v) === i && v !== undefined) as number[];
 
-    (async () => {
-      try {
-        const assets = await retrieveAsset(assetIds);
-        assets.forEach((asset) => {
-          setAssetsDetails((currentAssets) => ({
-            ...currentAssets,
-            [asset.id]: { name: asset.name },
-          }));
-        });
-      } catch (e: any) {
-        const error = e.errors[0].message.split(' | ')[0];
+      (async () => {
+        try {
+          if (assetIds.length > 0) {
+            const assets = await retrieveAsset(assetIds);
+            assets.forEach((asset) => {
+              setAssetsDetails((currentAssets) => ({
+                ...currentAssets,
+                [asset.id]: { name: asset.name },
+              }));
+            });
+          }
+          setErrors({});
+        } catch (e: any) {
+          const error = e.errors[0].message.split(' | ')[0];
 
-        if (error === 'Asset id not found') {
-          setErrors({
-            ...errors,
-            [BulkEditOptions.assets]: {
-              message: 'Some files are linked to non-existing assets',
-              description: 'Please remove these and try again',
-            },
-          });
-        } else {
-          setErrors({
-            ...errors,
-            [BulkEditOptions.assets]: {
-              message: 'Retrieve asset failed',
-              description: e.errors[0].message,
-            },
-          });
+          if (error === 'Asset id not found') {
+            setErrors({
+              ...errors,
+              [BulkEditOptions.assets]: {
+                message: 'Some files are linked to non-existing assets',
+                description: 'Please remove these and try again',
+              },
+            });
+          } else {
+            setErrors({
+              ...errors,
+              [BulkEditOptions.assets]: {
+                message: 'Retrieve asset failed',
+                description: e.errors[0].message,
+              },
+            });
+          }
         }
-      }
-    })();
+      })();
+    }
   }, [selectedBulkEditOption, unsavedAssetIds?.addedAssetIds]);
 
   const handleBulkEditOptionChange = (value: {
