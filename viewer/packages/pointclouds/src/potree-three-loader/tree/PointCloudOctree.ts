@@ -203,8 +203,8 @@ export class PointCloudOctree extends PointCloudTree {
   }
 
   pick(renderer: WebGLRenderer, camera: Camera, ray: Ray, params: Partial<PickParams> = {}): PickPoint | null {
-    this.picker = this.picker || new PointCloudOctreePicker();
-    return this.picker.pick(renderer, camera, ray, [this], params);
+    this.picker = this.picker || new PointCloudOctreePicker(renderer);
+    return this.picker.pick(camera, ray, [this], params);
   }
 
   get progress(): number {
