@@ -26,10 +26,10 @@ import {
 import { MetricsLogger } from '@reveal/metrics';
 import { PickingHandler, CadModelSectorLoadStatistics, Cognite3DModel } from '@reveal/cad-model';
 import {
-  intersectPointClouds,
   PointCloudIntersection,
   PointCloudBudget,
-  CognitePointCloudModel
+  CognitePointCloudModel,
+  PointCloudPickingHandler
 } from '@reveal/pointclouds';
 
 import {
@@ -112,6 +112,7 @@ export class Cognite3DViewer {
   private readonly _renderer: THREE.WebGLRenderer;
 
   private readonly _pickingHandler: PickingHandler;
+  private readonly _pointCloudPickingHandler: PointCloudPickingHandler;
 
   private readonly _boundAnimate = this.animate.bind(this);
 
@@ -267,6 +268,8 @@ export class Cognite3DViewer {
       this._revealManagerHelper.revealManager.materialManager,
       this._sceneHandler
     );
+
+    this._pointCloudPickingHandler = new PointCloudPickingHandler(this._renderer);
 
     this._subscription.add(
       fromEventPattern<LoadingState>(
@@ -1036,13 +1039,8 @@ export class Cognite3DViewer {
    * @obvious
    * @param offsetX
    * @param offsetY
-   * @param options
    */
-  async getIntersectionFromPixel(
-    offsetX: number,
-    offsetY: number,
-    options?: IntersectionFromPixelOptions
-  ): Promise<null | Intersection> {
+  async getIntersectionFromPixel(offsetX: number, offsetY: number): Promise<null | Intersection> {
     const cadModels = this.getModels('cad');
     const pointCloudModels = this.getModels('pointcloud');
     const cadNodes = cadModels.map(x => x.cadNode);
@@ -1061,7 +1059,7 @@ export class Cognite3DViewer {
       domElement: this.renderer.domElement
     };
     const cadResults = await this._pickingHandler.intersectCadNodes(cadNodes, input);
-    const pointCloudResults = intersectPointClouds(pointCloudNodes, input, options?.pointIntersectionThreshold);
+    const pointCloudResults = this._pointCloudPickingHandler.intersectPointClouds(pointCloudNodes, input);
 
     const intersections: Intersection[] = [];
     if (pointCloudResults.length > 0) {

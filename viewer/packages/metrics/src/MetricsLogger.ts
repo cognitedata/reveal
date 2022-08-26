@@ -2,11 +2,12 @@
  * Copyright 2021 Cognite AS
  */
 
+import * as THREE from 'three';
 import mixpanel from 'mixpanel-browser';
-
 import log from '@reveal/logger';
 
 import { TrackedEvents, EventProps } from './types';
+import throttle from 'lodash/throttle';
 
 /**
  * Source: https://stackoverflow.com/a/2117523/167251
@@ -25,18 +26,22 @@ const { VERSION, MIXPANEL_TOKEN } = process.env;
 const mixpanelDistinctId = 'reveal-single-user';
 
 export class MetricsLogger {
-  _sessionProps: {
+  private readonly _sessionProps: {
     VERSION: string;
     project: string;
     application: string;
     sessionId: string;
   };
 
+  private static readonly TrackCameraNavigationThrottleDelay = 5000;
+  private static readonly TrackCadNodeTransformOverriddenThrottleDelay = 1000;
+
   private constructor(project: string, applicationId: string, eventProps: EventProps) {
     // Even though mixpanel has an opt out property, the mixpanel object
     // used by Metrics is not available here, so we have our own way of opting out.
 
     mixpanel.init(MIXPANEL_TOKEN!, {
+      batch_requests: true,
       disable_cookie: true,
       disable_persistence: true,
       // Don't send IP which disables geolocation
@@ -115,6 +120,56 @@ export class MetricsLogger {
     MetricsLogger.trackEvent('cadModelStyleAssigned', { nodeCollectionClassToken, style: appearance });
   }
 
+  private static readonly trackCadNodeTransformOverriddenVars = {
+    zeroVector: new THREE.Vector3(0, 0, 0),
+    oneVector: new THREE.Vector3(1, 1, 1),
+    identityRotation: new THREE.Quaternion().identity(),
+
+    translation: new THREE.Vector3(),
+    scale: new THREE.Vector3(),
+    rotation: new THREE.Quaternion()
+  };
+
+  /**
+   * Track use of CAD node transform overrides. Note that the metric is throttled and will only trigger
+   * once per second.
+   * @param nodeCount Number of nodes affected by the transform override
+   * @param matrix  Matrix used to override the node transform
+   */
+  static readonly trackCadNodeTransformOverridden = throttle(
+    (nodeCount: number, matrix: THREE.Matrix4) => MetricsLogger.trackCadNodeTransformOverriddenImpl(nodeCount, matrix),
+    MetricsLogger.TrackCadNodeTransformOverriddenThrottleDelay
+  );
+
+  private static trackCadNodeTransformOverriddenImpl(nodeCount: number, matrix: THREE.Matrix4): void {
+    const { zeroVector, oneVector, identityRotation, translation, scale, rotation } =
+      MetricsLogger.trackCadNodeTransformOverriddenVars;
+    matrix.decompose(translation, rotation, scale);
+
+    const hasRotation = Math.abs(rotation.angleTo(identityRotation)) > 1e-5;
+    const hasTranslation = translation.distanceToSquared(zeroVector) > 1e-5;
+    const hasScale = scale.distanceToSquared(oneVector) > 1e-5;
+    MetricsLogger.trackEvent('cadNodeTransformOverridden', {
+      nodeCount,
+      hasTranslation,
+      hasRotation,
+      hasScale
+    });
+  }
+
+  /**
+   * Track camera navigation events. Note that the metric is throttled and will only trigger
+   * once per second.
+   */
+  static readonly trackCameraNavigation = throttle(
+    (eventProps: EventProps) => MetricsLogger.trackCameraNavigationImpl(eventProps),
+    MetricsLogger.TrackCameraNavigationThrottleDelay
+  );
+
+  private static trackCameraNavigationImpl(eventProps: EventProps): void {
+    MetricsLogger.trackEvent('cameraNavigated', eventProps);
+  }
+
   static trackError(error: Error, eventProps: EventProps): void {
     log.error(error);
 
@@ -131,9 +186,5 @@ export class MetricsLogger {
         ...eventProps
       });
     }
-  }
-
-  static trackCameraNavigation(eventProps: EventProps): void {
-    MetricsLogger.trackEvent('cameraNavigated', eventProps);
   }
 }

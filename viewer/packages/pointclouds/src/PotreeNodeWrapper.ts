@@ -29,6 +29,7 @@ export class PotreeNodeWrapper {
   private readonly _classification: IClassification = {} as IClassification;
 
   private readonly _annotations: PointCloudObjectAnnotation[];
+  private static readonly pickingWindowSize = 20;
 
   get needsRedraw(): boolean {
     return this._needsRedraw;
@@ -104,7 +105,7 @@ export class PotreeNodeWrapper {
   }
 
   pick(renderer: THREE.WebGLRenderer, camera: THREE.Camera, ray: THREE.Ray): PickPoint | null {
-    return this.octree.pick(renderer, camera, ray, { pickWindowSize: 20 });
+    return this.octree.pick(renderer, camera, ray, { pickWindowSize: PotreeNodeWrapper.pickingWindowSize });
   }
 
   assignObjectStyle(styledCollection: StyledPointCloudObjectCollection): void {

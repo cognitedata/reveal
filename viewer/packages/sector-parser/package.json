@@ -3,11 +3,14 @@
   "private": true,
   "main": "index.ts",
   "scripts": {
-    "start": "yarn ws:start",
+    "start": "yarn ws:serve --env testFixture=SectorParser.VisualTest.ts",
     "test": "yarn ws:test --config ./../../jest.config.js",
     "lint": "yarn ws:lint"
   },
   "dependencies": {
     "@reveal/utilities": "workspace:*"
+  },
+  "devDependencies": {
+    "@reveal/rendering": "workspace:*"
   }
 }

@@ -46,6 +46,7 @@ target
 viewer/public/
 viewer/false
 .eslintcache
+__diff_output__/
 
 # Examples
 

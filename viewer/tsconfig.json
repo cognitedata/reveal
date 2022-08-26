@@ -15,6 +15,7 @@
     "strict": true,
     // Module Resolution Options
     "allowJs": true,
+    "resolveJsonModule": true,
     "moduleResolution": "node",
     "experimentalDecorators": true,
     "esModuleInterop": true,

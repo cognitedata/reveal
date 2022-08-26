@@ -1,7 +1,6 @@
 import { Camera, WebGLRenderer } from 'three';
 import { LRU } from '../utils/lru';
 import { PointCloudOctree } from '../tree/PointCloudOctree';
-import { IVisibilityUpdateResult } from './IVisibilityUpdateResult';
 import { PointCloudObjectProvider } from '../../styling/PointCloudObjectProvider';
 
 export interface IPotree {
@@ -15,5 +14,5 @@ export interface IPotree {
     stylableObjectInfo: PointCloudObjectProvider
   ): Promise<PointCloudOctree>;
 
-  updatePointClouds(pointClouds: PointCloudOctree[], camera: Camera, renderer: WebGLRenderer): IVisibilityUpdateResult;
+  updatePointClouds(pointClouds: PointCloudOctree[], camera: Camera, renderer: WebGLRenderer): void;
 }
