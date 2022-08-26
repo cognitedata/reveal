@@ -533,7 +533,7 @@ void main() {
 	#elif defined color_type_depth
 		float linearDepth = -mvPosition.z ;
 		float expDepth = (gl_Position.z / gl_Position.w) * 0.5 + 0.5;
-		vColor = vec3(0.3*pointSize, 0.6/(pointSize*pointSize), 0.4*pointSize);
+		vColor = vec3(linearDepth, expDepth, 0.0);
 	#elif defined color_type_intensity
 		float w = getIntensity();
 		vColor = vec3(w, w, w);

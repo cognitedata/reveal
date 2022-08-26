@@ -91,14 +91,6 @@ void main() {
 		}
 	#endif
 
-	#if defined weighted_splats
-		// vec2 uv = gl_FragCoord.xy / vec2(screenWidth, screenHeight);
-		// float sDepth = gl_Fra//texture(depthMap, uv).r;
-		// if(vLinearDepth > sDepth + vRadius + blendDepthSupplement){
-		// 	discard;
-		// }
-	#endif
-
 	#if defined color_type_point_index
 		outputColor = vec4(color, pcIndex / 255.0);
 	#else
