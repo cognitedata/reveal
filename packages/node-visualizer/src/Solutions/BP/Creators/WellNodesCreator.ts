@@ -1,4 +1,8 @@
-import { Units } from '../../../Core/Primitives/Units';
+import {
+  getUnitConversionDefault,
+  UnitConversionType,
+  Units,
+} from '../../../Core/Primitives/Units';
 import { Util } from '../../../Core/Primitives/Util';
 import { WellNode } from '../../../SubSurface/Wells/Nodes/WellNode';
 import { BPData } from '../BPData';
@@ -61,11 +65,16 @@ export class WellNodesCreator {
       const trajectoryRows = trajectoryDataMap.get(trajectory.id);
       const trajectoryRowsUnit = trajectoryRows?.measuredDepthUnit || ''; // this is the unit on the data received from WDL
       let unit = 1;
+      const unitConvertor: UnitConversionType = getUnitConversionDefault();
       if (trajectoryRowsUnit) {
         if (Units.isMeter(trajectoryRowsUnit) && Units.isFeet(elevationUnit)) {
+          unitConvertor.toUnit = 'ft';
+          unitConvertor.factor = Units.MetreToFeet;
           unit = Units.MetreToFeet;
         }
         if (Units.isFeet(trajectoryRowsUnit) && Units.isMeter(elevationUnit)) {
+          unitConvertor.toUnit = 'm';
+          unitConvertor.factor = Units.FeetToMetre;
           unit = Units.FeetToMetre;
         }
       }
@@ -74,7 +83,7 @@ export class WellNodesCreator {
         bpData.trajectoryDataColumnIndexes,
         trajectoryRows,
         startMd,
-        unit
+        unitConvertor
       );
       if (!trajectoryNode) continue;
 
@@ -101,7 +110,10 @@ export class WellNodesCreator {
       }
       if (wellBoreToCasingDataMap) {
         const casingData = wellBoreToCasingDataMap.get(wellBoreId);
-        const logNode = WellCasingCreator.createCasingNodeNew(casingData, unit);
+        const logNode = WellCasingCreator.createCasingNodeNew(
+          casingData,
+          unitConvertor
+        );
         if (logNode) {
           logNode.name = 'Casing';
           trajectoryNode.addChild(logNode);

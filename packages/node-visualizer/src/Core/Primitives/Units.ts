@@ -1,12 +1,23 @@
 export type ThreeDUnits = 'ft' | 'm';
 
+export type UnitConversionType = {
+  toUnit: ThreeDUnits;
+  factor: number;
+};
+
+export const getUnitConversionDefault: () => UnitConversionType = () => {
+  return {
+    toUnit: 'm',
+    factor: 1,
+  };
+};
+
 export class Units {
   public static readonly Feet = 0.3048;
   public static readonly FeetToMetre = Units.Feet;
   public static readonly MetreToFeet = 3.28084;
   public static isMeter(unit: string): boolean {
     const comparator = unit.toLowerCase();
-
     return comparator === 'm' || comparator === 'meter';
   }
 

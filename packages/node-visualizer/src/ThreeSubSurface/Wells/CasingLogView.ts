@@ -119,7 +119,6 @@ export class CasingLogView extends BaseGroupThreeView {
       intersection
     );
     if (md === undefined) return;
-
     const { node } = this;
     viewInfo.addPickedNode(node);
 

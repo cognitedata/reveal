@@ -1,3 +1,4 @@
+import { UnitConversionType } from 'Core/Primitives/Units';
 import { Vector3 } from '../../../Core/Geometry/Vector3';
 import {
   ITrajectoryColumnIndices,
@@ -12,7 +13,7 @@ export class WellTrajectoryNodeCreator {
     trajectoryDataColumnIndices: ITrajectoryColumnIndices,
     trajectoryRows: ITrajectoryRows | null | undefined,
     startMd: number,
-    unit: number
+    unit: UnitConversionType
   ): WellTrajectoryNode | null {
     const trajectory = WellTrajectoryNodeCreator.createTrajectory(
       trajectoryDataColumnIndices,
@@ -23,6 +24,7 @@ export class WellTrajectoryNodeCreator {
     if (trajectory == null) return null; // Missing data
 
     const node = new WellTrajectoryNode();
+    node.unit = unit;
     node.trajectory = trajectory;
     return node;
   }
@@ -31,7 +33,7 @@ export class WellTrajectoryNodeCreator {
     trajectoryDataColumnIndices: ITrajectoryColumnIndices,
     trajectoryRows: ITrajectoryRows | null | undefined,
     startMd: number,
-    unit: number
+    unit: UnitConversionType
   ): WellTrajectory | null {
     function getIndex(value?: number): number {
       return value === undefined ? -1 : value;
@@ -65,9 +67,9 @@ export class WellTrajectoryNodeCreator {
         let md = Number.NaN;
         if (mdIndex >= 0) {
           md = curvePoint[mdIndex];
-          if (!Number.isNaN(md)) md *= unit;
+          if (!Number.isNaN(md)) md *= unit.factor;
         }
-        z *= unit;
+        z *= unit.factor;
         const sample = new TrajectorySample(
           new Vector3(x, y, startMd - z),
           Number.isNaN(md) ? z : md
@@ -91,7 +93,7 @@ export class WellTrajectoryNodeCreator {
         if (Number.isNaN(azimuth)) continue;
         const inclination = curvePoint[inclinationIndex];
         if (Number.isNaN(inclination)) continue;
-        md *= unit;
+        md *= unit.factor;
         const sample = new TrajectorySample(new Vector3(0, 0, startMd), md);
         sample.inclination = inclination;
         sample.azimuth = azimuth;

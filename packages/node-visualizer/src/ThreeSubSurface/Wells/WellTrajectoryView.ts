@@ -23,7 +23,7 @@ import { TrajectoryBufferGeometry } from '../../ThreeSubSurface/Wells/Helpers/Tr
 import { BaseNode } from '../../Core/Nodes/BaseNode';
 import { Appearance } from '../../Core/States/Appearance';
 import { PointLogNode } from '../../SubSurface/Wells/Nodes/PointLogNode';
-import { Units } from '../../Core/Primitives/Units';
+import { UnitConversionType, Units } from '../../Core/Primitives/Units';
 import { WellNode } from '../../SubSurface/Wells/Nodes/WellNode';
 import { BaseThreeView } from '../../Three/BaseViews/BaseThreeView';
 import { ViewInfo } from '../../Core/Views/ViewInfo';
@@ -220,14 +220,18 @@ export class WellTrajectoryView extends BaseGroupThreeView {
     viewInfo: ViewInfo,
     intersection: THREE.Intersection
   ): void {
+    const { node } = this;
+
     const md = WellTrajectoryView.startPickingAndReturnMd(
       this,
       viewInfo,
-      intersection
+      intersection,
+      undefined,
+      undefined,
+      node.unit
     );
     if (md === undefined) return;
 
-    const { node } = this;
     let counter = 0;
     for (const logNode of node.getDescendantsByType(BaseLogNode)) {
       if (!logNode.isVisible(this.renderTarget)) continue;
@@ -712,19 +716,18 @@ export class WellTrajectoryView extends BaseGroupThreeView {
   // STATIC METHODS:
   //= =================================================
 
-  private static generateMeterAndFeetMdValues(
+  private static generateMeterAndFeetValues(
     md: number,
-    mdUnit?: string
+    mdUnit?: string,
+    unit?: UnitConversionType
   ): string {
     const mdRounded = md.toFixed(2);
-    /**
-     * This is an assumption. If unit is not provided assumed to be ft
-     */
-    if (!mdUnit || Units.isFeet(mdUnit)) {
-      return `${Units.covertFeetToMeterAndRounded(md)} m / ${mdRounded} ft`;
-    }
-    if (Units.isMeter(mdUnit)) {
+
+    if (unit && unit.toUnit === 'm') {
       return `${mdRounded} m / ${Units.covertMeterToFeetAndRounded(md)} ft`;
+    }
+    if (unit && unit.toUnit === 'ft') {
+      return `${mdRounded} ft / ${Units.covertFeetToMeterAndRounded(md)} m`;
     }
     return `${mdRounded} ${mdUnit}`;
   }
@@ -734,7 +737,8 @@ export class WellTrajectoryView extends BaseGroupThreeView {
     viewInfo: ViewInfo,
     intersection: THREE.Intersection,
     md?: number,
-    mdUnit?: string
+    mdUnit?: string,
+    unit?: UnitConversionType
   ): number | undefined {
     const node = view.getNode();
     const wellNode = node.getThisOrAncestorByType(WellNode);
@@ -762,10 +766,10 @@ export class WellTrajectoryView extends BaseGroupThreeView {
 
     viewInfo.addValue('Well', wellNode.displayName);
     viewInfo.addValue('Trajectory', trajectoryNode.displayName);
-    viewInfo.addValue('Md', this.generateMeterAndFeetMdValues(md, mdUnit));
+    viewInfo.addValue('Md', this.generateMeterAndFeetValues(md, mdUnit, unit));
     viewInfo.addValue(
       'Tvd',
-      `${Units.convertFeetToMeter(tvd).toFixed(2)} m / ${tvd.toFixed(2)} ft`
+      this.generateMeterAndFeetValues(tvd, undefined, unit)
     );
     return md;
   }

@@ -1,3 +1,4 @@
+import { UnitConversionType } from 'Core/Primitives/Units';
 import { Ma } from '../../../Core/Primitives/Ma';
 import { Util } from '../../../Core/Primitives/Util';
 import { ICasing } from '../../../SubSurface/Wells/Interfaces/ICasing';
@@ -8,7 +9,7 @@ import { CasingLogSample } from '../../../SubSurface/Wells/Samples/CasingLogSamp
 export class WellCasingCreator {
   public static createCasingNodeNew(
     casings: ICasing[] | undefined,
-    unit: number
+    unit: UnitConversionType
   ): CasingLogNode | null {
     const log = WellCasingCreator.createCasingLog(casings, unit);
     if (!log) return null;
@@ -20,7 +21,7 @@ export class WellCasingCreator {
 
   public static createCasingLog(
     casings: ICasing[] | undefined,
-    unit: number
+    unit: UnitConversionType
   ): CasingLog | null {
     if (!casings) return null;
 
@@ -43,8 +44,8 @@ export class WellCasingCreator {
       let baseMd = Util.getNumber(casing.metadata.assy_original_md_base);
       if (Number.isNaN(baseMd)) continue;
 
-      topMd *= unit;
-      baseMd *= unit;
+      topMd *= unit.factor;
+      baseMd *= unit.factor;
 
       const sample = new CasingLogSample(radius, topMd, baseMd);
 

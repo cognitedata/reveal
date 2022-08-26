@@ -24,8 +24,13 @@ import { FilterLogFolder } from '../../../SubSurface/Wells/Filters/FilterLogFold
 import Icon from '../../../images/Nodes/WellTrajectoryNode.png';
 import { DataNode } from '../../../Core/Nodes/DataNode';
 import { BasePropertyFolder } from '../../../Core/Property/Base/BasePropertyFolder';
+import {
+  UnitConversionType,
+  getUnitConversionDefault,
+} from '../../../Core/Primitives/Units';
 
 export class WellTrajectoryNode extends DataNode {
+  public unit: UnitConversionType = getUnitConversionDefault();
   //= =================================================
   // STATIC FIELDS
   //= =================================================
