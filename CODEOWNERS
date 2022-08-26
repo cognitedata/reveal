@@ -1,5 +1,5 @@
-# By default, @cognitedata/cdf-user-experience receives all PRs.
+# By default, @cognitedata/team-hebe receives all PRs.
 #
-# Make sure that @cognitedata/cdf-user-experience is on all other specifications in
+# Make sure that @cognitedata/team-hebe is on all other specifications in
 # this file.
-* @cognitedata/cdf-user-experience
+* @cognitedata/team-hebe
