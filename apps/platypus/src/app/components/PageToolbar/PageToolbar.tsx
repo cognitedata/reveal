@@ -34,7 +34,7 @@ export const PageToolbar = ({
         borderBottom: '1px solid var(--cogs-border-default)',
         flexShrink: 0,
         height: size === Size.LARGE ? '56px' : '40px',
-        padding: size === Size.LARGE ? '0 16px' : '0 10px 0 16px',
+        padding: size === Size.LARGE ? '0 10px 0 16px' : '0 10px 0 16px',
       }}
     >
       <Flex alignItems="center">

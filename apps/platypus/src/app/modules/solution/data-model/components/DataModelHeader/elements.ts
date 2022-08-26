@@ -19,3 +19,15 @@ export const ReturnButton = styled(Button)`
     background: rgba(83, 88, 127, 0.16);
   }
 `;
+
+export const DocLinkWrapper = styled('div')`
+  display: flex;
+
+  &:before {
+    border-left: 1px solid rgba(0, 0, 0, 0.15);
+    content: '';
+    height: 36px;
+    margin: 0 8px 0 0;
+    width: 1px;
+  }
+`;

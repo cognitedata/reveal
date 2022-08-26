@@ -3,7 +3,7 @@ import {
   DataModelVersion,
   DataModelVersionStatus,
 } from '@platypus/platypus-core';
-import { DiscardButton, ReturnButton } from './elements';
+import { DiscardButton, DocLinkWrapper, ReturnButton } from './elements';
 import { SchemaEditorMode } from '@platypus-app/modules/solution/data-model/types';
 import { Button, Flex, Label, Tooltip } from '@cognite/cogs.js';
 import { useLocalDraft } from '@platypus-app/modules/solution/data-model/hooks/useLocalDraft';
@@ -12,6 +12,7 @@ import { DataModelState } from '@platypus-app/redux/reducers/global/dataModelRed
 import { DEFAULT_VERSION_PATH } from '@platypus-app/utils/config';
 import { VersionSelectorToolbar } from '@platypus-app/components/VersionSelectorToolbar';
 import { useDataModelState } from '@platypus-app/modules/solution/hooks/useDataModelState';
+import { DocLinkButtonGroup } from '@platypus-app/components/DocLinkButtonGroup/DocLinkButtonGroup';
 import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
 
 export interface DataModelHeaderProps {
@@ -174,55 +175,70 @@ export const DataModelHeader = ({
               selectedDataModelVersion.schema === graphQlSchema ||
               Object.keys(typeFieldErrors).length !== 0
             }
+            style={{ marginRight: '8px' }}
           >
             {t('publish', 'Publish')}
           </Button>
+          <DocLinkWrapper>
+            <DocLinkButtonGroup />
+          </DocLinkWrapper>
         </div>
       );
     }
 
     if (selectedDataModelVersion.version !== latestDataModelVersion.version) {
       return (
-        <Flex
-          className="cogs-body-2 strong"
-          style={{
-            backgroundColor: 'var(--cogs-border--status-warning--muted)',
-            borderRadius: '6px',
-            flexGrow: 1,
-            height: '36px',
-            marginLeft: '8px',
-            padding: '0 12px',
-          }}
-        >
+        <Flex style={{ flexGrow: 1 }}>
           <Flex
-            alignItems="center"
-            justifyContent="space-between"
-            style={{ flexGrow: 1 }}
+            className="cogs-body-2 strong"
+            style={{
+              backgroundColor: 'var(--cogs-border--status-warning--muted)',
+              borderRadius: '6px',
+              flexGrow: 1,
+              height: '36px',
+              marginLeft: '8px',
+              marginRight: '8px',
+              padding: '0 0 0 12px',
+            }}
           >
-            {t('viewing_older_version', 'You are viewing an older version')}
-            <ReturnButton
-              data-cy="return-to-latest-btn"
-              iconPlacement="left"
-              icon="Reply"
-              onClick={handleReturnToLatestClick}
+            <Flex
+              alignItems="center"
+              justifyContent="space-between"
+              style={{ flexGrow: 1 }}
             >
-              {t('return_to_latest', 'Return to latest')}
-            </ReturnButton>
+              {t('viewing_older_version', 'You are viewing an older version')}
+              <ReturnButton
+                data-cy="return-to-latest-btn"
+                iconPlacement="left"
+                icon="Reply"
+                onClick={handleReturnToLatestClick}
+              >
+                {t('return_to_latest', 'Return to latest')}
+              </ReturnButton>
+            </Flex>
           </Flex>
+          <DocLinkWrapper>
+            <DocLinkButtonGroup />
+          </DocLinkWrapper>
         </Flex>
       );
     }
 
     return (
-      <Button
-        type="primary"
-        data-cy="edit-schema-btn"
-        onClick={handleEditClick}
-        className="editButton"
-        style={{ minWidth: '140px' }}
-      >
-        {t('edit_data_model', 'Edit data model')}
-      </Button>
+      <Flex>
+        <Button
+          type="primary"
+          data-cy="edit-schema-btn"
+          onClick={handleEditClick}
+          className="editButton"
+          style={{ minWidth: '140px', marginRight: '8px' }}
+        >
+          {t('edit_data_model', 'Edit data model')}
+        </Button>
+        <DocLinkWrapper>
+          <DocLinkButtonGroup />
+        </DocLinkWrapper>
+      </Flex>
     );
   };
 

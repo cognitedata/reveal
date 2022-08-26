@@ -12,6 +12,8 @@ import useSelector from '@platypus-app/hooks/useSelector';
 import { DataModelState } from '@platypus-app/redux/reducers/global/dataModelReducer';
 import { DataModelVersion } from '@platypus/platypus-core';
 import { VersionSelectorToolbar } from '@platypus-app/components/VersionSelectorToolbar';
+import { DocLinkButtonGroup } from '@platypus-app/components/DocLinkButtonGroup/DocLinkButtonGroup';
+import { Flex } from '@cognite/cogs.js';
 
 type TabType = 'preview' | 'pipelines' | 'data-quality';
 
@@ -102,7 +104,11 @@ export const DataManagementPage = ({
           draftSaved={false}
           onDataModelVersionSelect={handleDataModelVersionSelect}
           selectedDataModelVersion={selectedDataModelVersion}
-        />
+        >
+          <Flex justifyContent="space-between">
+            <DocLinkButtonGroup />
+          </Flex>
+        </VersionSelectorToolbar>
       </PageContentLayout.Header>
 
       <PageContentLayout.Body>

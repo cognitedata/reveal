@@ -14,6 +14,8 @@ import { DataModelState } from '@platypus-app/redux/reducers/global/dataModelRed
 import { DataModelVersion } from '@platypus/platypus-core';
 import { useHistory } from 'react-router-dom';
 import { VersionSelectorToolbar } from '@platypus-app/components/VersionSelectorToolbar';
+import { Flex } from '@cognite/cogs.js';
+import { DocLinkButtonGroup } from '@platypus-app/components/DocLinkButtonGroup/DocLinkButtonGroup';
 
 export interface QueryExplorerPageProps {
   dataModelExternalId: string;
@@ -49,7 +51,11 @@ export const QueryExplorerPage = ({
           draftSaved={false}
           onDataModelVersionSelect={handleDataModelVersionSelect}
           selectedDataModelVersion={selectedDataModelVersion}
-        />
+        >
+          <Flex justifyContent="space-between">
+            <DocLinkButtonGroup />
+          </Flex>
+        </VersionSelectorToolbar>
       </PageContentLayout.Header>
       <PageContentLayout.Body>
         {selectedDataModelVersion.version ? (

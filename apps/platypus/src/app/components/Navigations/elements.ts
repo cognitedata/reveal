@@ -4,7 +4,7 @@ import { Button, TopBar, Body, Flex } from '@cognite/cogs.js';
 export const StyledTopBarRight = styled(TopBar.Right)`
   display: flex;
   align-items: center;
-  padding-right: 10px;
+  padding-right: 12px;
 `;
 
 export const StyledTopBarLeft = styled(TopBar.Left)`
