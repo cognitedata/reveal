@@ -43,7 +43,7 @@ const checkPolygonIsInvalid = () => {
 
 const closePolygonESC = () => {
   cy.log('Close polygon tool by pressing ESC');
-  cy.get('body').type('{esc}');
+  cy.findAllByRole('region').first().should('be.visible').type('{esc}');
 };
 
 const closePolygonWithCancelButton = () => {
@@ -53,7 +53,7 @@ const closePolygonWithCancelButton = () => {
 
 const closePolygonENTER = () => {
   cy.log('Close polygon tool by pressing ENTER');
-  cy.findAllByRole('region').first().type('{enter}');
+  cy.findAllByRole('region').first().should('be.visible').type('{enter}');
 };
 
 const drawPolygon = (
@@ -71,10 +71,9 @@ const drawPolygon = (
     }
   };
 
-  points.forEach((point, index) => {
-    clickOnPoint(point);
-
+  cy.wrap(points).each((point: Coordinate, index) => {
     cy.wait(500); // map is slow sometimes
+    clickOnPoint(point);
 
     /**
      * If the current point is the last point,
@@ -202,7 +201,7 @@ const dragResultsTable = (offset: number) => {
 
 const checkClickOnPolygonToEditIsVisible = () => {
   cy.log('Check click on the polygon to edit info icon');
-  cy.findByTestId('edit-info-message').should('be.visible');
+  cy.findByTestId('floating-search-button').should('be.visible');
 };
 
 Cypress.Commands.add('enterPolygonEditMode', enterPolygonEditMode);

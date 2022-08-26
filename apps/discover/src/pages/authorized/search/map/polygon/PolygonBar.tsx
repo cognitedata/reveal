@@ -48,7 +48,6 @@ export const PolygonBar: React.FC<Props> = ({
   };
 
   const onPolygonToggle = (removed: boolean) => {
-    console.log('removed', removed);
     if (removed) {
       clearPolygon();
       setGeo([]);

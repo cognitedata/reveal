@@ -28,7 +28,7 @@ const invalidPolygon = [
 ];
 
 describe('Map', () => {
-  before(() => {
+  beforeEach(() => {
     const coreRequests = interceptCoreNetworkRequests();
     cy.visit(Cypress.env('BASE_URL'));
     cy.login();
@@ -57,8 +57,15 @@ describe('Map', () => {
 
       // Close by pressing ENTER
       cy.enterPolygonEditMode();
-      cy.closePolygonENTER();
+      cy.drawPolygon([], 'enter');
       cy.checkPolygonIsClosed();
+
+      // This is an edge case that was fixed. do not remove this test.
+      // should see floating action buttons visible with one edge in bottom right
+      cy.enterPolygonEditMode();
+      cy.drawPolygon([...testPoints, 'bottomRight'], 'enter');
+      cy.checkPolygonFloatingActionVisibility(true);
+      cy.closePolygonWithCancelButton();
 
       // Close by pressing outside of map
       cy.enterPolygonEditMode();
@@ -122,55 +129,7 @@ describe('Map', () => {
     });
   });
 
-  describe('Polygon Edit', () => {
-    before(() => {
-      cy.findByTestId('cognite-logo').click();
-    });
-    beforeEach(() => {
-      cy.closePolygonESC();
-      cy.closePolygonESC();
-    });
-
-    // Flaky test, pls fix
-    // eslint-disable-next-line jest/no-disabled-tests
-    it.skip('should enable editing when click on not completed polygon', () => {
-      cy.enterPolygonEditMode();
-      cy.drawPolygon(testPoints, 'esc');
-
-      cy.checkPolygonButtonIsVisible();
-
-      cy.drawPolygon([{ x: 650, y: 300 }], 'enter');
-
-      cy.checkPolygonFloatingActionVisibility(true);
-      cy.deletePolygon();
-      cy.closePolygonWithCancelButton();
-    });
-
-    // This is an edge case that was fixed. do not remove this test.
-    it('should see floating action buttons visible with one edge in bottom right', () => {
-      cy.enterPolygonEditMode();
-      cy.drawPolygon([...testPoints, 'bottomRight'], 'enter');
-      cy.checkPolygonFloatingActionVisibility(true);
-      cy.closePolygonWithCancelButton();
-    });
-
-    it('should draw polygon and close actions', () => {
-      cy.enterPolygonEditMode();
-      cy.drawPolygon(testPoints, 'enter');
-      cy.drawPolygon(['bottom']);
-      cy.checkClickOnPolygonToEditIsVisible();
-      cy.closePolygonWithCancelButton();
-    });
-  });
-
   describe('Controls', () => {
-    before(() => {
-      cy.findByTestId('cognite-logo').click();
-    });
-    beforeEach(() => {
-      cy.closePolygonESC();
-    });
-
     it('should show and hide controls based on table width', () => {
       cy.checkPolygonButtonIsVisible();
       // cy.checkMapInputIsVisible(); // removed feature till there is better test data
