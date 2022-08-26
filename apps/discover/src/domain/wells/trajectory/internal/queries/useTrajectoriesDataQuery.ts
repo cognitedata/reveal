@@ -23,7 +23,9 @@ export const useTrajectoriesDataQuery = ({
     fetchAction: (sequenceExternalIds) =>
       getTrajectoriesData({ sequenceExternalIds, unit })
         .then((trajectoriesData) =>
-          trajectoriesData.map(normalizeTrajectoryData)
+          trajectoriesData.map((trajectory) =>
+            normalizeTrajectoryData(trajectory, unit)
+          )
         )
         .then(groupBySequence),
   });
