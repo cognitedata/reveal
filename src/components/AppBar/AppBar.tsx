@@ -21,6 +21,7 @@ type Props = {
   onProfileClick: ComponentProps<typeof AppBarCommonActions>['onProfileClick'];
   onLogoutClick: ComponentProps<typeof AppBarCommonActions>['onLogoutClick'];
   translations?: typeof defaultTranslations;
+  hideAppSwitcher?: boolean;
 };
 
 const AppBar = ({
@@ -30,8 +31,10 @@ const AppBar = ({
   onProfileClick,
   onLogoutClick,
   userName,
+  hideAppSwitcher = true,
 }: Props) => {
   const t = { ...defaultTranslations, ...translations };
+
   return (
     <TopBar style={{ backgroundColor: '#FFF' }}>
       <TopBar.Left>
@@ -47,6 +50,7 @@ const AppBar = ({
           userName={userName}
           translations={getTranslationsForComponent(t, AppBarCommonActions)}
         />
+        {!hideAppSwitcher && <TopBar.AppSwitcher />}
       </TopBar.Right>
     </TopBar>
   );
