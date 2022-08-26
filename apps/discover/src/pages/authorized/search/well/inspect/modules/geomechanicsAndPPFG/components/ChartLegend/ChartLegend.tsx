@@ -42,6 +42,7 @@ export const ChartLegend: React.FC<GraphLegendProps> = ({ data }) => {
   return (
     <ChartLegendWrapper>
       <LegendsHolder
+        data-testid="legends-wrapper"
         ref={legendRef}
         expand={showAll}
         height={legendItemLinesHeight}

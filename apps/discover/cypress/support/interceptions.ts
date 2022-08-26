@@ -1,4 +1,4 @@
-//import { SIDECAR } from '../../src/constants/app';
+// import { SIDECAR } from '../../src/constants/app';
 
 /**
  * ALIASES
@@ -23,6 +23,9 @@ export const USERS_SEARCH_ALIAS = 'usersSearch';
 
 export const UMS_ME_GET = 'getUMS';
 export const UMS_ME_UPDATE = 'updateUMS';
+
+export const NPT_CODE = 'nptCode';
+export const NPT_DETAIL_CODE = 'nptDetailCode';
 
 /**
  * INTERCEPTIONS
@@ -153,4 +156,18 @@ export const cancelFrontendMetricsRequest = () => {
   cy.intercept('POST', `**/metrics`, (req) => {
     req.destroy();
   }).as(FRONTEND_METRICS_ALIAS);
+};
+
+export const interceptGetNptCodes = () => {
+  cy.intercept({
+    url: '**/well/legend/npt/code',
+    method: 'GET',
+  }).as(NPT_CODE);
+};
+
+export const interceptGetNptDetailCodes = () => {
+  cy.intercept({
+    url: '**/well/legend/npt/detailCode',
+    method: 'GET',
+  }).as(NPT_DETAIL_CODE);
 };

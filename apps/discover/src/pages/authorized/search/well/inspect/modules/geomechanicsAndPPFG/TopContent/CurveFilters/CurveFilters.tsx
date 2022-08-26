@@ -49,24 +49,31 @@ export const CurveFilters: React.FC<CurveFiltersProps> = ({
 
   return (
     <>
-      <GeomechanicsCurvesFilter
-        options={options[CurvesFilterType.GEOMECHANNICS]}
-        onChange={(selectedOptions) =>
-          handleChangeFilter(CurvesFilterType.GEOMECHANNICS, selectedOptions)
-        }
-      />
-      <PpfgCurvesFilter
-        options={options[CurvesFilterType.PPFG]}
-        onChange={(selectedOptions) =>
-          handleChangeFilter(CurvesFilterType.PPFG, selectedOptions)
-        }
-      />
-      <OtherCurvesFilter
-        options={options[CurvesFilterType.OTHER]}
-        onChange={(selectedOptions) =>
-          handleChangeFilter(CurvesFilterType.OTHER, selectedOptions)
-        }
-      />
+      <div data-testid="geo-curves-filter">
+        <GeomechanicsCurvesFilter
+          options={options[CurvesFilterType.GEOMECHANNICS]}
+          onChange={(selectedOptions) =>
+            handleChangeFilter(CurvesFilterType.GEOMECHANNICS, selectedOptions)
+          }
+        />
+      </div>
+      <div data-testid="ppfg-curves-filter">
+        <PpfgCurvesFilter
+          options={options[CurvesFilterType.PPFG]}
+          onChange={(selectedOptions) =>
+            handleChangeFilter(CurvesFilterType.PPFG, selectedOptions)
+          }
+        />
+      </div>
+
+      <div data-testid="other-curves-filter">
+        <OtherCurvesFilter
+          options={options[CurvesFilterType.OTHER]}
+          onChange={(selectedOptions) =>
+            handleChangeFilter(CurvesFilterType.OTHER, selectedOptions)
+          }
+        />
+      </div>
     </>
   );
 };

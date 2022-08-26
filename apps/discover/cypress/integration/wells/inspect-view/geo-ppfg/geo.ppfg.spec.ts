@@ -4,19 +4,43 @@ import {
   MEASUREMENTS,
 } from '../../../../../src/modules/wellSearch/constantsSidebarFilters';
 import { COMPARE_TEXT } from '../../../../../src/pages/authorized/search/well/inspect/modules/measurements/wellCentricView/constants';
-import { cancelFrontendMetricsRequest } from '../../../../support/interceptions';
+import { interceptCoreNetworkRequests } from '../../../../support/commands/helpers';
+import {
+  cancelFrontendMetricsRequest,
+  interceptGetNptCodes,
+  interceptGetNptDetailCodes,
+  NPT_CODE,
+  NPT_DETAIL_CODE,
+  WELLS_SEARCH_ALIAS,
+} from '../../../../support/interceptions';
 
-const GEOMECHANICS_CURVE_OPTION = 'GEO';
+const GEOMECHANICS_CURVE_OPTION = 'GEO_PRE_DRILL';
 const PPFG_CURVE_OPTION = 'FP';
 const OTHER_CURVE_OPTION = 'FIT';
 
 describe('Wells: Geomechanics & Ppfg', () => {
   before(() => {
     cancelFrontendMetricsRequest();
+    const coreRequests = interceptCoreNetworkRequests();
+    cy.addWaitForWdlResources('nds/list', 'POST', 'ndsEvents');
+    cy.addWaitForWdlResources('npt/list', 'POST', 'nptEvents');
+    cy.addWaitForWdlResources(
+      'measurements/depth/list',
+      'POST',
+      'measurementDepthList'
+    );
+    cy.addWaitForWdlResources(
+      'measurements/depth/data',
+      'POST',
+      'measurementDepthData'
+    );
+    interceptGetNptCodes();
+    interceptGetNptDetailCodes();
 
     cy.visit(Cypress.env('BASE_URL'));
     cy.login();
     cy.acceptCookies();
+    cy.wait(coreRequests);
 
     cy.log('Perform empty search');
     cy.selectCategory('Wells');
@@ -35,35 +59,74 @@ describe('Wells: Geomechanics & Ppfg', () => {
         ],
       },
     });
-    cy.validateSelect(DATA_AVAILABILITY, ['NDS events'], 'NDS events');
-    cy.validateSelect(DATA_AVAILABILITY, ['NPT events'], 'NPT events');
-
+    cy.validateSelect(
+      DATA_AVAILABILITY,
+      ['NDS events', 'NPT events'],
+      ['NDS events', 'NPT events']
+    );
+    cy.wait(`@${WELLS_SEARCH_ALIAS}`);
     cy.selectFirstWellInResults();
 
     cy.openInspectView();
     cy.goToWellsInspectTab('Geomechanics & PPFG');
+    cy.wait([
+      '@measurementDepthList',
+      '@measurementDepthData',
+      '@ndsEvents',
+      '@nptEvents',
+    ]);
+
+    cy.wait([`@${NPT_CODE}`, `@${NPT_DETAIL_CODE}`], {
+      requestTimeout: 100000,
+    });
   });
 
   it('verify well centric view filters', () => {
     cy.log('click on Geomechanics curves filter');
-    cy.findByText('Geomechanics curves:').click();
+    const geoCurvesFilterTestId = 'geo-curves-filter';
+    cy.findByTestId(geoCurvesFilterTestId).click();
 
     cy.log('`All` option should be checked');
-    cy.get('[id="checkbox-option"]')
+    cy.findByTestId(geoCurvesFilterTestId)
+      .get('[id="checkbox-option"]')
       .eq(0)
-      .should('be.checked')
-      .click({ force: true });
+      .should('be.checked');
 
-    cy.log('select options from drop down menu');
-    cy.findByText(GEOMECHANICS_CURVE_OPTION).clickCheckbox();
+    cy.findByTestId(geoCurvesFilterTestId)
+      .get('[id="checkbox-option"]')
+      .eq(0)
+      .clickCheckbox();
+
+    cy.findByTestId(geoCurvesFilterTestId)
+      .get('[id="checkbox-option"]')
+      .each((checkbox) => {
+        cy.wrap(checkbox).should('not.be.checked');
+      });
+    cy.findByTestId(geoCurvesFilterTestId).click();
+
+    cy.findAllByTestId('legends-wrapper')
+      .first()
+      .click()
+      .should('not.contain', 'GEO')
+      .should('not.contain', 'GEO_PRE_DRILL')
+      .should('not.contain', 'GEO_POST_DRILL');
+
+    cy.findByTestId(geoCurvesFilterTestId).click();
+
+    /**
+     * There is a bug where clicking one item it's checking all the items.
+     * It's probably the components fault but didn't find a lead why it happens yet.
+     * */
+    cy.findByTestId(geoCurvesFilterTestId)
+      .findByText(GEOMECHANICS_CURVE_OPTION)
+      .clickCheckbox();
 
     cy.log('click on show more button');
     cy.get('[aria-label="Show more"]').eq(0).click({ force: true });
 
-    cy.log('selected option should visible on legend');
-    cy.contains(GEOMECHANICS_CURVE_OPTION)
-      .scrollIntoView()
-      .should('be.visible');
+    cy.findAllByTestId('legends-wrapper')
+      .first()
+      .should('contain', GEOMECHANICS_CURVE_OPTION);
 
     cy.log('click on PPFG curves filter');
     cy.findByText('PPFG curves:').click();
