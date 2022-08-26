@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Icons } from '@cognite/cogs.js';
+import { Icon } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { Trans, useTranslation } from 'common/i18n';
 
@@ -10,7 +10,7 @@ const NoAccessPage = (): JSX.Element => {
   return (
     <NoAccessContent>
       <Warning>
-        <Icons.WarningFilled />
+        <Icon type="WarningFilled" />
         <div>{t('error-page-no-access-title')}</div>
       </Warning>
       <Instructions>{t('error-page-no-access-instructions')}</Instructions>

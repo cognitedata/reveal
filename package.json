@@ -15,7 +15,7 @@
   "dependencies": {
     "@cognite/cdf-i18n-utils": "^0.3.0",
     "@cognite/cdf-utilities": "^1.4.7",
-    "@cognite/cogs.js": "^5.2.1",
+    "@cognite/cogs.js": "^7.5.0",
     "@cognite/login-utils": "^2.0.0",
     "@cognite/metrics": "^1.2.1",
     "@cognite/react-feature-flags": "^1.0.0",
@@ -30,7 +30,7 @@
     "@visx/shape": "^2.4.0",
     "@visx/tooltip": "^2.2.2",
     "allotment": "^1.15.0",
-    "antd": "^4.15.2",
+    "antd": "^4.22.4",
     "formik": "^2.2.9",
     "lodash": "^4.17.21",
     "papaparse": "^5.3.1",

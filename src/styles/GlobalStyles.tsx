@@ -4,12 +4,13 @@ import { Tooltip as CogsTooltip } from '@cognite/cogs.js';
 import { getContainer } from 'utils/utils';
 import ConfigProvider from 'antd/lib/config-provider';
 import { useGlobalStyles } from '@cognite/cdf-utilities';
-// import antdStyle from '@cognite/cogs.js/dist/antd.css'; // Uncomment to add antd
-import cogsStyles from '@cognite/cogs.js/dist/cogs.css';
+import cogsStyles from '@cognite/cogs.js/dist/cogs-without-fonts.css';
 import reactTableStyles from 'react-base-table/styles.css';
 import { createGlobalStyle } from 'styled-components';
 import { styleScope } from 'styles/styleScope';
 import allotmentStyles from 'allotment/dist/style.css';
+
+import antdTheme from './antd-theme.less';
 
 // This will override the appendTo prop on all Tooltips used from cogs
 CogsTooltip.defaultProps = {
@@ -18,7 +19,7 @@ CogsTooltip.defaultProps = {
 };
 
 export default function GlobalStyles(props: { children: React.ReactNode }) {
-  useGlobalStyles([cogsStyles, reactTableStyles, allotmentStyles]);
+  useGlobalStyles([cogsStyles, antdTheme, reactTableStyles, allotmentStyles]);
 
   return (
     <ConfigProvider getPopupContainer={getContainer}>
