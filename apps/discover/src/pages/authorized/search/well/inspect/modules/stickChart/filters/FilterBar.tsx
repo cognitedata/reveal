@@ -1,8 +1,12 @@
+import { NdsRiskTypesSelection } from 'domain/wells/nds/internal/types';
+import { NptCodesSelection } from 'domain/wells/npt/internal/types';
+
 import { useCallback } from 'react';
+import * as React from 'react';
 
 import { DragDropContainer } from 'components/DragDropContainer';
-import { MultiSelectCategorizedOptionMap } from 'components/Filters/MultiSelectCategorized/types';
 
+import { useFilterOptions } from '../hooks/useFilterOptions';
 import { ChartColumn } from '../types';
 
 import { FilterBarWrapper } from './elements';
@@ -11,70 +15,67 @@ import { NdsFilterItem } from './NdsFilterItem';
 import { NptFilterItem } from './NptFilterItem';
 
 interface FilterBarProps {
-  visibleColumns: ChartColumn[];
-  onNptCodesChange: (events: MultiSelectCategorizedOptionMap) => void;
-  onNdsCodesChange: (eventCodes: MultiSelectCategorizedOptionMap) => void;
+  onNptCodesChange: (selection: NptCodesSelection) => void;
+  onNdsCodesChange: (selection: NdsRiskTypesSelection) => void;
   onRearrange: (order: ChartColumn[]) => void;
-  onVisibleColumnChange: (visibleColumns: ChartColumn[]) => void;
+  onColumnVisibilityChange: (column: ChartColumn, isVisible: boolean) => void;
 }
 
-export const FilterBar: React.FC<FilterBarProps> = ({
-  visibleColumns,
-  onNptCodesChange,
-  onNdsCodesChange,
-  onRearrange,
-  onVisibleColumnChange,
-}) => {
-  const handleColumnVisibilityChange = useCallback(
-    (columnIdentifier: ChartColumn, isVisible: boolean) => {
-      const columns = isVisible
-        ? [...visibleColumns, columnIdentifier]
-        : visibleColumns.filter((column) => column !== columnIdentifier);
+export const FilterBar: React.FC<FilterBarProps> = React.memo(
+  ({
+    onNptCodesChange,
+    onNdsCodesChange,
+    onRearrange,
+    onColumnVisibilityChange,
+  }) => {
+    const { nptFilterOptions, ndsFilterOptions } = useFilterOptions();
 
-      onVisibleColumnChange(columns);
-    },
-    [onVisibleColumnChange]
-  );
+    const handleRearrange = useCallback(
+      (columnKeysOrder: string[]) => {
+        onRearrange(columnKeysOrder as ChartColumn[]);
+      },
+      [onRearrange]
+    );
 
-  const handleRearrange = useCallback(
-    (columnKeysOrder: string[]) => {
-      onRearrange(columnKeysOrder as ChartColumn[]);
-    },
-    [onRearrange]
-  );
+    return (
+      <FilterBarWrapper>
+        <DragDropContainer
+          id="casing-filter-content"
+          onRearranged={handleRearrange}
+        >
+          <FilterItem
+            key={ChartColumn.FORMATION}
+            column={ChartColumn.FORMATION}
+            onFiterVisiblityChange={onColumnVisibilityChange}
+          />
 
-  return (
-    <FilterBarWrapper>
-      <DragDropContainer
-        id="casing-filter-content"
-        onRearranged={handleRearrange}
-      >
-        <FilterItem
-          key={ChartColumn.FORMATION}
-          column={ChartColumn.FORMATION}
-          onFiterVisiblityChange={handleColumnVisibilityChange}
-        />
-        <FilterItem
-          key={ChartColumn.CASINGS}
-          column={ChartColumn.CASINGS}
-          onFiterVisiblityChange={handleColumnVisibilityChange}
-        />
-        <NptFilterItem
-          key={ChartColumn.NPT}
-          onFiterVisiblityChange={handleColumnVisibilityChange}
-          onNptCodesChange={onNptCodesChange}
-        />
-        <NdsFilterItem
-          key={ChartColumn.NDS}
-          onFiterVisiblityChange={handleColumnVisibilityChange}
-          onNdsCodesChange={onNdsCodesChange}
-        />
-        <FilterItem
-          key={ChartColumn.SUMMARY}
-          column={ChartColumn.SUMMARY}
-          onFiterVisiblityChange={handleColumnVisibilityChange}
-        />
-      </DragDropContainer>
-    </FilterBarWrapper>
-  );
-};
+          <FilterItem
+            key={ChartColumn.CASINGS}
+            column={ChartColumn.CASINGS}
+            onFiterVisiblityChange={onColumnVisibilityChange}
+          />
+
+          <NptFilterItem
+            key={ChartColumn.NPT}
+            options={nptFilterOptions}
+            onChange={onNptCodesChange}
+            onFiterVisiblityChange={onColumnVisibilityChange}
+          />
+
+          <NdsFilterItem
+            key={ChartColumn.NDS}
+            options={ndsFilterOptions}
+            onChange={onNdsCodesChange}
+            onFiterVisiblityChange={onColumnVisibilityChange}
+          />
+
+          <FilterItem
+            key={ChartColumn.SUMMARY}
+            column={ChartColumn.SUMMARY}
+            onFiterVisiblityChange={onColumnVisibilityChange}
+          />
+        </DragDropContainer>
+      </FilterBarWrapper>
+    );
+  }
+);

@@ -1,7 +1,9 @@
 import { useNptCodeHelpText } from 'domain/wells/npt/internal/hooks/useNptCodeHelpText';
 import { NptCodesSelection } from 'domain/wells/npt/internal/types';
 
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
+
+import isEmpty from 'lodash/isEmpty';
 
 import { IconType } from '@cognite/cogs.js';
 
@@ -11,6 +13,7 @@ import { useDeepEffect } from 'hooks/useDeep';
 
 import { Definition } from '../../nptEvents/components/Definition';
 import { NoCodeDefinition } from '../../nptEvents/components/NoCodeDefinition';
+import { getEventsFilterSelection } from '../utils';
 
 interface NptCodesFilterProps {
   options: MultiSelectCategorizedOptionMap;
@@ -24,6 +27,8 @@ export const NptCodesFilter: React.FC<NptCodesFilterProps> = ({
   iconInsteadText,
 }) => {
   const nptCodeHelpText = useNptCodeHelpText();
+
+  const [isInitialized, setInitialized] = useState(false);
 
   const [selectedOptions, setSelectedOptions] =
     useState<MultiSelectCategorizedOptionMap>({});
@@ -40,18 +45,28 @@ export const NptCodesFilter: React.FC<NptCodesFilterProps> = ({
 
   // Automatically select all the options when the component is mounted
   useDeepEffect(() => {
-    setSelectedOptions(options);
+    if (!isEmpty(options) && !isInitialized) {
+      setSelectedOptions(options);
+      setInitialized(true);
+    }
   }, [options]);
 
-  useDeepEffect(() => {
-    onChange(selectedOptions as NptCodesSelection);
-  }, [selectedOptions]);
+  const handleValueChange = useCallback(
+    (selectedOptions: MultiSelectCategorizedOptionMap) => {
+      const selection =
+        getEventsFilterSelection<NptCodesSelection>(selectedOptions);
+
+      setSelectedOptions(selectedOptions);
+      onChange(selection);
+    },
+    [setSelectedOptions, onChange]
+  );
 
   return (
     <MultiSelectCategorized
       title="NPT"
       onValueChange={(selectedOptions) =>
-        setSelectedOptions(selectedOptions as MultiSelectCategorizedOptionMap)
+        handleValueChange(selectedOptions as MultiSelectCategorizedOptionMap)
       }
       renderCategoryHelpText={renderNptHelpText}
       options={options}

@@ -5,13 +5,15 @@ import {
 } from 'domain/wells/measurements/internal/types';
 import { isMeasurementTypeFitOrLot } from 'domain/wells/measurements/internal/utils/isMeasurementTypeFitOrLot';
 
-import { PRESSURE_UNIT } from '../WellboreCasingView/MeasurementsColumn/constants';
+import { EMPTY_ARRAY } from 'constants/empty';
+
+import { PRESSURE_UNIT } from '../WellboreStickChart/MeasurementsColumn/constants';
 
 export const adaptMeasurementsDataToChart = (
   data?: DepthMeasurementWithData
 ): MeasurementCurveData[] => {
   if (!data) {
-    return [];
+    return EMPTY_ARRAY;
   }
 
   const curves = adaptToMeasurementChartData(

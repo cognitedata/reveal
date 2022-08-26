@@ -1,36 +1,26 @@
-import { useState } from 'react';
+import { NptCodesSelection } from 'domain/wells/npt/internal/types';
 
 import { WithDragHandleProps } from 'components/DragDropContainer';
 import { MultiSelectCategorizedOptionMap } from 'components/Filters/MultiSelectCategorized/types';
 
-import { EventNptFilter } from '../../measurements/filters/EventNptFilter';
+import { NptCodesFilter } from '../../common/Events/NptCodesFilter';
 import { ChartColumn } from '../types';
 
 import { DropDownIconStyler } from './elements';
 import { FilterItem } from './FilterItem';
 
 export interface NptFilterProps {
-  onNptCodesChange: (events: MultiSelectCategorizedOptionMap) => void;
-  onFiterVisiblityChange: (
-    columnIdentifier: ChartColumn,
-    visibility: boolean
-  ) => void;
+  options: MultiSelectCategorizedOptionMap;
+  onChange: (events: NptCodesSelection) => void;
+  onFiterVisiblityChange: (column: ChartColumn, visibility: boolean) => void;
 }
 
 export const NptFilterItem: React.FC<WithDragHandleProps<NptFilterProps>> = ({
-  onNptCodesChange,
+  options,
+  onChange,
   onFiterVisiblityChange,
   ...dragHandleProps
 }) => {
-  const [nptCodes, setNptEvents] = useState<MultiSelectCategorizedOptionMap>(
-    {}
-  );
-
-  const handleChangeNptFilter = (nptCodes: MultiSelectCategorizedOptionMap) => {
-    setNptEvents(nptCodes);
-    onNptCodesChange(nptCodes);
-  };
-
   return (
     <FilterItem
       column={ChartColumn.NPT}
@@ -38,9 +28,9 @@ export const NptFilterItem: React.FC<WithDragHandleProps<NptFilterProps>> = ({
       {...dragHandleProps}
     >
       <DropDownIconStyler>
-        <EventNptFilter
-          selectedEvents={nptCodes}
-          onChange={handleChangeNptFilter}
+        <NptCodesFilter
+          options={options}
+          onChange={onChange}
           iconInsteadText="Configure"
         />
       </DropDownIconStyler>

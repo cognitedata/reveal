@@ -6,13 +6,15 @@ import { PlotData } from 'plotly.js';
 
 import { ProjectConfigWellsTrajectoryCharts } from '@cognite/discover-api-types';
 
+import { EMPTY_ARRAY } from 'constants/empty';
+
 export const adapTrajectoryDataToChart = (
   data: TrajectoryWithData,
   curveColor: string,
   chartConfig?: ProjectConfigWellsTrajectoryCharts
 ): Partial<PlotData>[] => {
   if (!chartConfig) {
-    return [];
+    return EMPTY_ARRAY;
   }
 
   const { data: chartData } = adaptToTrajectoryChartDataList(

@@ -8,6 +8,7 @@ import { CasingAssemblyView } from '../types';
 import { getCasingAssemblyTvdData } from './getCasingAssemblyTvdData';
 
 export const adaptCasingAssembliesDataToView = (
+  wellboreMatchingId: string,
   casingAssemblies: CasingAssemblyInternal[],
   trueVerticalDepths?: TrueVerticalDepthsDataLayer
 ): CasingAssemblyView[] => {
@@ -17,6 +18,7 @@ export const adaptCasingAssembliesDataToView = (
     return {
       ...casingAssembly,
       ...getCasingAssemblyTvdData(casingAssembly, trueVerticalDepths),
+      wellboreMatchingId,
       outsideDiameterFormatted,
       isLiner: isLiner(casingAssembly),
     };

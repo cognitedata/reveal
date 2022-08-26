@@ -16,6 +16,7 @@ export type Props = {
   scaleBlocks: number[];
   events: NdsInternal[];
   isLoading?: boolean;
+  emptySubtitle?: string;
   renderBlockEvents: (blockEvents: NdsInternal[]) => JSX.Element | null;
 };
 
@@ -26,6 +27,7 @@ export const NdsEventsByDepth: React.FC<Props> = ({
   scaleBlocks,
   events,
   isLoading,
+  emptySubtitle = EMPTY_STATE_TEXT,
   renderBlockEvents,
 }: Props) => {
   const blockElements = useMemo(() => {
@@ -53,7 +55,7 @@ export const NdsEventsByDepth: React.FC<Props> = ({
         <EmptyState
           isLoading={isLoading}
           loadingSubtitle={isLoading ? LOADING_TEXT : ''}
-          emptySubtitle={EMPTY_STATE_TEXT}
+          emptySubtitle={emptySubtitle}
           hideHeading
         />
       </EmptyStateWrapper>

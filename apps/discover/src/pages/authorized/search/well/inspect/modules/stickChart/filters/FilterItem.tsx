@@ -6,20 +6,11 @@ import { WithDragHandleProps } from 'components/DragDropContainer';
 
 import { ChartColumn } from '../types';
 
-import {
-  FilterItemWrapper,
-  FilterItemElement,
-  FilterText,
-  VertSeperator,
-  DragHandler,
-} from './elements';
+import { FilterItemWrapper, VertSeperator, DragHandler } from './elements';
 
 export interface FilterItemProps {
   column: ChartColumn;
-  onFiterVisiblityChange: (
-    columnIdentifier: ChartColumn,
-    visibility: boolean
-  ) => void;
+  onFiterVisiblityChange: (column: ChartColumn, visibility: boolean) => void;
   children?: React.ReactNode;
 }
 
@@ -27,6 +18,7 @@ export const FilterItem: React.FC<WithDragHandleProps<FilterItemProps>> =
   React.memo(
     ({ column, onFiterVisiblityChange, children, ...dragHandleProps }) => {
       const [checked, setChecked] = useState<boolean>(true);
+
       const handleChange = (selected: boolean) => {
         setChecked(selected);
         onFiterVisiblityChange(column, selected);
@@ -34,24 +26,13 @@ export const FilterItem: React.FC<WithDragHandleProps<FilterItemProps>> =
 
       return (
         <FilterItemWrapper>
-          <FilterItemElement>
-            <DragHandler
-              type="DragHandleHorizontal"
-              size={25}
-              {...dragHandleProps}
-            />
-          </FilterItemElement>
-          <FilterItemElement>
-            <Checkbox
-              name={column}
-              checked={checked}
-              onChange={(selected: boolean) => handleChange(selected)}
-            />
-          </FilterItemElement>
-          <FilterItemElement>
-            <FilterText>{column}</FilterText>
-          </FilterItemElement>
-          {children && <VertSeperator />}
+          <DragHandler type="DragHandleHorizontal" {...dragHandleProps} />
+
+          <Checkbox name={column} checked={checked} onChange={handleChange}>
+            {column}
+          </Checkbox>
+
+          {Boolean(children) && <VertSeperator />}
           {children}
         </FilterItemWrapper>
       );

@@ -20,8 +20,6 @@ export const DetailedViewContent = styled.div`
 `;
 
 export const DetailedViewWrapper = styled.div`
-  margin-left: 11%;
-  margin-right: 11%;
   height: 100%;
   display: flex;
   flex-direction: column;

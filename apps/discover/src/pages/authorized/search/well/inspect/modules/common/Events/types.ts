@@ -1,4 +1,4 @@
 export enum EventsColumnView {
-  Cluster = 'Cluster',
-  Scatter = 'Scatter',
+  Cluster = 'Cluster view',
+  Scatter = 'Scatter view',
 }

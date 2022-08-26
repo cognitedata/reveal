@@ -26,7 +26,7 @@ export const adaptNdsEventsToScatterView = (
   // flatten the structure, and get a sorted list of events based on npt code.
   const flatBucket = sortedBucketStacks.flat(1);
 
-  const transformedData = flatBucket.map((event) => {
+  const transformedData = flatBucket.map((event, index) => {
     const {
       riskType,
       subtype,
@@ -39,7 +39,7 @@ export const adaptNdsEventsToScatterView = (
     } = event;
 
     return {
-      id: `${riskType}-${subtype}-${holeStart?.value}-${holeEnd?.value}-${severity}-${probability}`,
+      id: `${riskType}-${subtype}-${holeStart?.value}-${holeEnd?.value}-${severity}-${probability}-${index}`,
       dotColor: ndsCodeColor,
       original: event,
       metadata: [

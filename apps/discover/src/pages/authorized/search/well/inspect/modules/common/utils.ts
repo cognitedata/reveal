@@ -8,6 +8,7 @@ import map from 'lodash/map';
 
 import { OptionType } from '@cognite/cogs.js';
 
+import { MultiSelectCategorizedOptionMap } from 'components/Filters/MultiSelectCategorized/types';
 import { GroupedColumn } from 'components/ManageColumnsPanel/ManageColumnsPanel';
 
 export const getFilteredOptionTypeValues = (
@@ -144,5 +145,17 @@ export const mapToGroupColumns = (
         item: wellbore,
       })),
     })
+  );
+};
+
+export const getEventsFilterSelection = <T>(
+  selectedOptions: MultiSelectCategorizedOptionMap
+) => {
+  return Object.keys(selectedOptions).reduce(
+    (selection, nptCode) => ({
+      ...selection,
+      [nptCode]: map(selectedOptions[nptCode], 'value'),
+    }),
+    {} as T
   );
 };

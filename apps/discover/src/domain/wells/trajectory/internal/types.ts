@@ -90,3 +90,10 @@ export interface TrajectoryCurveFormatterData<T> {
   trajectoryChart: ProjectConfigWellsTrajectoryCharts;
   trajectory: T;
 }
+
+export interface MaxDepthData {
+  wellboreMatchingId: string;
+  maxMeasuredDepth: number;
+  maxTrueVerticalDepth: number;
+  depthUnit: Distance;
+}

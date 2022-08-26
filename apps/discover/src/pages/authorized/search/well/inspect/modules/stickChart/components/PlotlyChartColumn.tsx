@@ -6,7 +6,7 @@ import last from 'lodash/last';
 
 import { WithDragHandleProps } from 'components/DragDropContainer';
 import EmptyState from 'components/EmptyState';
-import { useDeepMemo } from 'hooks/useDeep';
+import { useDeepCallback, useDeepMemo } from 'hooks/useDeep';
 
 import { ChartV2 } from '../../common/ChartV2';
 import { ChartProps } from '../../common/ChartV2/ChartV2';
@@ -18,9 +18,10 @@ import {
   BodyColumnMainHeader,
   ColumnHeaderWrapper,
 } from '../../common/Events/elements';
+import { LOADING_TEXT } from '../WellboreStickChart/constants';
 
 import { DepthScaleLines } from './DepthScaleLines';
-import { ChartTitle, ChartWrapper, EmptyStateWrapper } from './elements';
+import { ChartTitle, ChartWrapper, ChartEmptyStateWrapper } from './elements';
 
 export interface PlotlyChartColumnProps
   extends Pick<ChartProps, 'data' | 'axisNames'> {
@@ -28,7 +29,6 @@ export interface PlotlyChartColumnProps
   title: string;
   scaleBlocks: number[];
   isLoading?: boolean;
-  emptyTitle?: string;
   emptySubtitle?: string;
   width?: number;
 }
@@ -41,8 +41,7 @@ export const PlotlyChartColumn: React.FC<
   axisNames,
   title,
   scaleBlocks,
-  isLoading = false,
-  emptyTitle,
+  isLoading,
   emptySubtitle,
   width = 320,
   ...dragHandleProps
@@ -69,19 +68,17 @@ export const PlotlyChartColumn: React.FC<
     [scaleBlocks]
   );
 
-  const renderContent = () => {
+  const renderContent = useDeepCallback(() => {
     if (isEmpty(data)) {
       return (
-        <EmptyStateWrapper>
+        <ChartEmptyStateWrapper>
           <EmptyState
             isLoading={isLoading}
-            emptyTitle={emptyTitle}
+            loadingSubtitle={isLoading ? LOADING_TEXT : ''}
             emptySubtitle={emptySubtitle}
-            hideHeading={
-              !isLoading && isEmpty(emptyTitle) && !isEmpty(emptySubtitle)
-            }
+            hideHeading
           />
-        </EmptyStateWrapper>
+        </ChartEmptyStateWrapper>
       );
     }
 
@@ -105,7 +102,7 @@ export const PlotlyChartColumn: React.FC<
         </BodyColumnBody>
       </>
     );
-  };
+  }, [data, isLoading, scaleBlocks]);
 
   return (
     <BodyColumn width={width}>

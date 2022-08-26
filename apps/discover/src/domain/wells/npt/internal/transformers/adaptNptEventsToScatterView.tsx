@@ -22,7 +22,7 @@ export const adaptNptEventsToScatterView = (
   // flatten the structure, and get a sorted list of events based on npt code.
   const flatBucket = sortedBucketStacks.flat(1);
 
-  const transformedData = flatBucket.map((event) => {
+  const transformedData = flatBucket.map((event, index) => {
     const {
       nptCode,
       nptCodeDetail,
@@ -34,7 +34,7 @@ export const adaptNptEventsToScatterView = (
     } = event;
 
     return {
-      id: `${nptCode}-${nptCodeDetail}-${measuredDepth?.value}-${startTime}-${endTime}`,
+      id: `${nptCode}-${nptCodeDetail}-${measuredDepth?.value}-${startTime}-${endTime}-${index}`,
       dotColor: nptCodeColor,
       original: event,
       metadata: [

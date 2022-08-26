@@ -3,6 +3,7 @@ import styled from 'styled-components/macro';
 import {
   BodyColumnMainHeader,
   DepthMeasurementScale,
+  EmptyStateWrapper,
 } from '../../common/Events/elements';
 
 export const ChartTitle = styled(BodyColumnMainHeader)`
@@ -30,8 +31,9 @@ export const ChartWrapper = styled.div`
   }
 `;
 
-export const EmptyStateWrapper = styled.div`
-  display: contents;
+export const ChartEmptyStateWrapper = styled(EmptyStateWrapper)`
+  max-width: none;
+  width: 100%;
 `;
 
 export const DepthMeasurementScaleWrapper = styled(DepthMeasurementScale)`

@@ -3,6 +3,8 @@ import head from 'lodash/head';
 import last from 'lodash/last';
 import times from 'lodash/times';
 
+import { EMPTY_ARRAY } from 'constants/empty';
+
 import {
   SCALE_BLOCK_HEIGHT,
   SCALE_PADDING,
@@ -15,7 +17,7 @@ export const getScaleBlocks = (scaleHeight: number, maxDepth: number) => {
    * Hence, return an empty array.
    */
   if (!scaleHeight || !maxDepth) {
-    return [];
+    return EMPTY_ARRAY;
   }
 
   const blocksCountWithoutZero = Math.floor(
@@ -28,7 +30,8 @@ export const getScaleBlocks = (scaleHeight: number, maxDepth: number) => {
        */
       blocksCountWithoutZero - 1 - 1
     : blocksCountWithoutZero;
-  const interval = Math.round(maxDepth / blocksCount);
+  const intervalValue = Math.round(maxDepth / blocksCount);
+  const interval = Math.round(intervalValue / 100) * 100;
 
   return [
     0, // Scale min depth

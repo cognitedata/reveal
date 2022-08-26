@@ -1,84 +1,98 @@
-import React, { useRef, useState } from 'react';
+import { NdsRiskTypesSelection } from 'domain/wells/nds/internal/types';
+import { NptCodesSelection } from 'domain/wells/npt/internal/types';
+import { useWellInspectWellbores } from 'domain/wells/well/internal/hooks/useWellInspectWellbores';
+
+import React, { useCallback, useRef, useState } from 'react';
 
 import isEmpty from 'lodash/isEmpty';
+import { toBooleanMap } from 'utils/booleanMap';
 
 import { PerfMetrics } from '@cognite/metrics';
 
 import EmptyState from 'components/EmptyState';
-import { MultiSelectCategorizedOptionMap } from 'components/Filters/MultiSelectCategorized/types';
 import {
   PerformanceMetricsObserver,
   PerformanceObserved,
 } from 'components/Performance';
+import { useWellInspectSelection } from 'modules/wellInspect/selectors';
 
 import { WellboreCasingsViewsWrapper } from './elements';
-import { FilterBar } from './filters/FilterBar';
-import { useCasingsData } from './hooks/useCasingsData';
-import { WellboreCasingView } from './WellboreCasingView';
-import { DEFAULT_COLUMN_ORDER } from './WellboreCasingView/constants';
+import { FilterBar } from './filters';
+import { useMaxDepths } from './hooks/useMaxDepths';
+import { useWellboreStickChartColumns } from './hooks/useWellboreStickChartData';
+import { ChartColumn } from './types';
+import { getWellboreData } from './utils/getWellboreData';
+import { WellboreStickChart } from './WellboreStickChart';
+import { DEFAULT_COLUMN_ORDER } from './WellboreStickChart/constants';
 
 const StickChart: React.FC = () => {
-  const {
-    data,
-    isLoading,
-    isNptEventsLoading,
-    isNdsEventsLoading,
-    isWellTopsLoading,
-  } = useCasingsData();
+  const wellbores = useWellInspectWellbores();
+  const { selectedWellboreIds } = useWellInspectSelection();
 
-  const scrollRef = useRef<HTMLDivElement>(null);
+  const viewRef = useRef<HTMLDivElement>(null);
+
+  const { data: maxDepths, isLoading } = useMaxDepths();
+
+  const getWellboreStickChartColumns = useWellboreStickChartColumns();
+
+  const [columnVisibility, setColumnVisibility] = useState(
+    toBooleanMap(DEFAULT_COLUMN_ORDER)
+  );
   const [columnOrder, setColumnOrder] = useState(DEFAULT_COLUMN_ORDER);
-  const [visibleColumns, setVisibleColumns] = useState(DEFAULT_COLUMN_ORDER);
 
-  const [selectedNptCodes, setSelectedNptCodes] =
-    useState<MultiSelectCategorizedOptionMap>({});
+  const [nptCodesSelecton, setNptCodesSelection] =
+    useState<NptCodesSelection>();
 
-  const [selectedNdsCodes, setSelectedNdsCodes] =
-    useState<MultiSelectCategorizedOptionMap>({});
+  const [ndsRiskTypesSelection, setNdsRiskTypesSelection] =
+    useState<NdsRiskTypesSelection>();
 
-  const handlePerformanceObserved = ({
-    mutations,
-    data,
-  }: PerformanceObserved) => {
+  const handleColumnVisibilityChange = useCallback(
+    (column: ChartColumn, visibility: boolean) => {
+      setColumnVisibility((columnVisibility) => ({
+        ...columnVisibility,
+        [column]: visibility,
+      }));
+    },
+    [setColumnVisibility]
+  );
+
+  const handlePerformanceObserved = ({ mutations }: PerformanceObserved) => {
     if (mutations) {
-      PerfMetrics.trackPerfEnd('CASING_PAGE_LOAD');
-    }
-    if (isEmpty(data)) {
-      PerfMetrics.trackPerfEnd('CASING_PAGE_LOAD');
+      PerfMetrics.trackPerfEnd('STICK_CHART_PAGE_LOAD');
     }
   };
 
-  if (isLoading) {
+  if (isEmpty(maxDepths)) {
     return <EmptyState isLoading={isLoading} />;
   }
 
   return (
-    <PerformanceMetricsObserver
-      onChange={handlePerformanceObserved}
-      data={data}
-    >
+    <PerformanceMetricsObserver onChange={handlePerformanceObserved}>
       <FilterBar
-        visibleColumns={visibleColumns}
-        onNptCodesChange={setSelectedNptCodes}
-        onNdsCodesChange={setSelectedNdsCodes}
+        onNptCodesChange={setNptCodesSelection}
+        onNdsCodesChange={setNdsRiskTypesSelection}
         onRearrange={setColumnOrder}
-        onVisibleColumnChange={setVisibleColumns}
+        onColumnVisibilityChange={handleColumnVisibilityChange}
       />
 
-      <WellboreCasingsViewsWrapper ref={scrollRef}>
-        {data.map((casingsView) => (
-          <WellboreCasingView
-            key={`casings-view-${casingsView.wellboreName}`}
-            data={casingsView}
-            columnOrder={columnOrder}
-            visibleColumns={visibleColumns}
-            selectedNptCodes={selectedNptCodes}
-            selectedNdsCodes={selectedNdsCodes}
-            isNptEventsLoading={isNptEventsLoading}
-            isNdsEventsLoading={isNdsEventsLoading}
-            isWellTopsLoading={isWellTopsLoading}
-          />
-        ))}
+      <WellboreCasingsViewsWrapper ref={viewRef}>
+        {wellbores.map((wellbore) => {
+          const { matchingId } = wellbore;
+
+          return (
+            <WellboreStickChart
+              key={matchingId}
+              {...getWellboreData(wellbore)}
+              {...getWellboreStickChartColumns(matchingId)}
+              isWellboreSelected={Boolean(selectedWellboreIds[matchingId])}
+              maxDepth={maxDepths[matchingId]}
+              columnVisibility={columnVisibility}
+              columnOrder={columnOrder}
+              nptCodesSelecton={nptCodesSelecton}
+              ndsRiskTypesSelection={ndsRiskTypesSelection}
+            />
+          );
+        })}
       </WellboreCasingsViewsWrapper>
     </PerformanceMetricsObserver>
   );

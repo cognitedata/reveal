@@ -1,4 +1,5 @@
 import { ColorMap } from 'utils/colorize';
+import { convertDistance } from 'utils/units/convertDistance';
 
 import { Well, Wellbore } from '@cognite/sdk-wells';
 
@@ -16,7 +17,8 @@ export const normalizeWellbore = (
   userPreferredUnit: UserPreferredUnit,
   wellboresColorMap: ColorMap = {}
 ): WellboreInternal => {
-  const { matchingId: wellMatchingId, name: wellName } = rawWell;
+  const { matchingId: wellMatchingId, name: wellName, waterDepth } = rawWell;
+
   const { matchingId, name, datum } = rawWellbore;
 
   return {
@@ -25,6 +27,8 @@ export const normalizeWellbore = (
     wellMatchingId,
     wellId: wellMatchingId,
     wellName,
+    wellWaterDepth:
+      waterDepth && convertDistance(waterDepth, userPreferredUnit),
     title: getWellboreTitle(rawWellbore),
     datum: datum && normalizeDatum(datum, userPreferredUnit),
     color: wellboresColorMap[name] || DEFAULT_WELLBORE_COLOR,

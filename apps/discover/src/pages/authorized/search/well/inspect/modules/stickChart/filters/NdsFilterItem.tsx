@@ -1,36 +1,26 @@
-import { useState } from 'react';
+import { NdsRiskTypesSelection } from 'domain/wells/nds/internal/types';
 
 import { WithDragHandleProps } from 'components/DragDropContainer';
 import { MultiSelectCategorizedOptionMap } from 'components/Filters/MultiSelectCategorized/types';
 
-import { EventNdsFilter } from '../../measurements/filters/EventNdsFilter';
+import { NdsRiskTypesFilter } from '../../common/Events/NdsRiskTypesFilter';
 import { ChartColumn } from '../types';
 
 import { DropDownIconStyler } from './elements';
 import { FilterItem } from './FilterItem';
 
 export interface NdsFilterProps {
-  onNdsCodesChange: (events: MultiSelectCategorizedOptionMap) => void;
-  onFiterVisiblityChange: (
-    columnIdentifier: ChartColumn,
-    visibility: boolean
-  ) => void;
+  options: MultiSelectCategorizedOptionMap;
+  onChange: (events: NdsRiskTypesSelection) => void;
+  onFiterVisiblityChange: (column: ChartColumn, visibility: boolean) => void;
 }
 
 export const NdsFilterItem: React.FC<WithDragHandleProps<NdsFilterProps>> = ({
-  onNdsCodesChange,
+  options,
+  onChange,
   onFiterVisiblityChange,
   ...dragHandleProps
 }) => {
-  const [ndsCodes, setNdsEvents] = useState<MultiSelectCategorizedOptionMap>(
-    {}
-  );
-
-  const handleChangeNptFilter = (ndsCodes: MultiSelectCategorizedOptionMap) => {
-    setNdsEvents(ndsCodes);
-    onNdsCodesChange(ndsCodes);
-  };
-
   return (
     <FilterItem
       column={ChartColumn.NDS}
@@ -38,9 +28,9 @@ export const NdsFilterItem: React.FC<WithDragHandleProps<NdsFilterProps>> = ({
       {...dragHandleProps}
     >
       <DropDownIconStyler>
-        <EventNdsFilter
-          selectedEvents={ndsCodes}
-          onChange={handleChangeNptFilter}
+        <NdsRiskTypesFilter
+          options={options}
+          onChange={onChange}
           iconInsteadText="Configure"
         />
       </DropDownIconStyler>

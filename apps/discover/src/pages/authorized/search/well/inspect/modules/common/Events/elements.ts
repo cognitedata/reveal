@@ -195,6 +195,7 @@ export const EventsCodeCount = styled(Flex)`
 `;
 
 export const EmptyStateWrapper = styled(Flex)`
+  display: contents;
   white-space: break-spaces;
   max-width: 148px;
   & ${SubTitleText} {
