@@ -38,12 +38,15 @@ generate_package_json_helpers(
 # Dependencies from package.json
 DEPENDENCIES = [
     "@npm//@cognite/sdk",
+    "@npm//react",
     "@npm//graphql",
     "@npm//graphql-request",
 ]
 
 # Type dependencies from package.json
-TYPE_DEPENDENCIES = []
+TYPE_DEPENDENCIES = [
+    "@npm//@types/react",
+]
 
 # Dev dependencies from package.json
 DEV_DEPENDENCIES = []

@@ -49,7 +49,7 @@ type Error = {
 
 *
 */
-export const getQueryCreator = <TData, TVariables>({
+export const getQueryCreator = ({
   project,
   schemaVersion,
   schemaName,
@@ -69,12 +69,12 @@ export const getQueryCreator = <TData, TVariables>({
     headers,
   });
 
-  return ({
+  return <TData, TVariables = Record<string, unknown>>({
     query,
     variables,
   }: {
     query: string;
     variables?: TVariables;
-  }): Promise<TData | Error> =>
+  }): Promise<Error | TData> =>
     graphQLClient.request<TData, TVariables>(query, variables, headers);
 };

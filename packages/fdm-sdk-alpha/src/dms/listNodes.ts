@@ -16,9 +16,9 @@ export const listNodes = async ({
 }: {
   client: CogniteClient;
   query: Query;
-}): Promise<Response<unknown> | DMSError> => {
+}): Promise<Response<{ externalId: string }> | DMSError> => {
   try {
-    const createNodesResponse = await client.post(
+    const response = await client.post(
       `api/v1/projects/${client.project}/datamodelstorage/nodes/list`,
       {
         data: query,
@@ -28,7 +28,7 @@ export const listNodes = async ({
       }
     );
 
-    return createNodesResponse;
+    return response;
   } catch (error) {
     // console.error(error);
     return error as DMSError;

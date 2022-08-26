@@ -2,18 +2,21 @@ import { CogniteClient } from '@cognite/sdk';
 
 import { Response, DMSError } from './types';
 
-export const listModels = async ({
+// eslint-disable-next-line @typescript-eslint/ban-types
+type Query = {};
+
+export const listSpaces = async ({
   client,
-  spaceExternalId,
+  query,
 }: {
   client: CogniteClient;
-  spaceExternalId: string;
+  query?: Query;
 }): Promise<Response<{ externalId: string }> | DMSError> => {
   try {
     const response = await client.post(
-      `api/v1/projects/${client.project}/datamodelstorage/models/list`,
+      `api/v1/projects/${client.project}/datamodelstorage/spaces/list`,
       {
-        data: { spaceExternalId },
+        data: query,
         headers: {
           'cdf-version': 'alpha',
         },

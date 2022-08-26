@@ -4,7 +4,7 @@ import { getSchemaVersionListQuery } from './utils/getSchemaVersionListQuery';
 import { createGraphqlPostRequest } from './utils/createGraphqlPostRequest';
 
 type Node = {
-  versions: { version: string }[];
+  versions: { version: number }[];
   name: string;
   externalId: string;
 };
