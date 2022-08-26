@@ -28,18 +28,50 @@ export const useFilesAssetAppearsIn = (asset?: Asset, enabled = true) => {
   return useQuery<File[]>(
     ['annotated-files', { assetId: asset?.id }],
     async () => {
-      const annotatedFiles = await listFilesAnnotatedWithAssetId(sdk, asset!);
+      let annotatedFiles: File[] = [];
+      try {
+        annotatedFiles = await listFilesAnnotatedWithAssetId(sdk, asset!);
+      } catch (ignoredErr) {
+        // eslint-disable-next-line no-empty
+      }
 
-      const linkedSvgs = await sdk.files.list({
-        filter: { assetIds: [asset?.id!], mimeType: 'image/svg+xml' },
-      });
-      const linkedPdfs = await sdk.files.list({
-        filter: { assetIds: [asset?.id!], mimeType: 'application/pdf' },
-      });
+      let linkedSvgFiles: File[] = [];
+      try {
+        const linkedSvgs = await sdk.files.list({
+          filter: {
+            /**
+             * NOTE: assetExternalIds is not supported by the SDK client,
+             * but is supported by the api (for some reason).
+             */
+            assetExternalIds: [asset?.externalId!],
+            mimeType: 'image/svg+xml',
+          } as any,
+        });
+        linkedSvgFiles = linkedSvgs.items;
+      } catch (ignoredErr) {
+        // eslint-disable-next-line no-empty
+      }
+
+      let linkedPdfFiles: File[] = [];
+      try {
+        const linkedPdfs = await sdk.files.list({
+          filter: {
+            /**
+             * NOTE: assetExternalIds is not supported by the SDK client,
+             * but is supported by the api (for some reason).
+             */
+            assetExternalIds: [asset?.externalId!],
+            mimeType: 'application/pdf',
+          } as any,
+        });
+        linkedPdfFiles = linkedPdfs.items;
+      } catch (ignoredErr) {
+        // eslint-disable-next-line no-empty
+      }
 
       return unionBy(
         annotatedFiles,
-        [...linkedSvgs.items, ...linkedPdfs.items],
+        [...linkedSvgFiles, ...linkedPdfFiles],
         'id'
       );
     },
