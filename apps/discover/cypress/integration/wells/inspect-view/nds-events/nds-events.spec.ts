@@ -194,4 +194,46 @@ describe('Wells: nds-events', () => {
     cy.log('treemap view should visible');
     cy.findAllByTestId(`treemap-tile`).should('be.visible');
   });
+
+  it('should be able to navigate detail view by clicking treemap tile', () => {
+    cy.wait('@listNds');
+    cy.wait('@trajectoriesInterpolate');
+
+    cy.log('click on first treemap tile');
+    cy.findAllByTestId('treemap-tile').first().click({ force: true });
+
+    cy.log('risk type, subtype, table buttons should visible');
+    cy.findByTestId('view-mode-Risk type').should('be.visible');
+    cy.findByTestId('view-mode-Subtype').should('be.visible');
+    cy.findAllByTestId('view-mode-Table').should('be.visible');
+
+    cy.log('navigate to next wellbore');
+    cy.findByTestId('title').invoke('text').as('currentWellbore');
+
+    cy.get('@currentWellbore').then((currentWellbore) => {
+      cy.get('[aria-label="next-wellbore"]').click();
+      cy.findByTestId('title').invoke('text').as('nextWellbore');
+
+      cy.get('@nextWellbore').then((nextWellbore) => {
+        expect(nextWellbore).not.eql(currentWellbore);
+      });
+    });
+
+    cy.log('navigate to previous wellbore');
+    cy.findByTestId('title').invoke('text').as('currentWellbore');
+
+    cy.get('@currentWellbore').then((currentWellbore) => {
+      cy.get('[aria-label="previous-wellbore"]').click();
+      cy.findByTestId('title').invoke('text').as('previousWellbore');
+
+      cy.get('@previousWellbore').then((previousWellbore) => {
+        expect(previousWellbore).not.eql(currentWellbore);
+      });
+    });
+    cy.log('click on go back button');
+    cy.get('[aria-label="Go back"]').eq(1).click();
+
+    cy.log('treemap wrapper should visible');
+    cy.findByTestId('treemap-wrapper').should('be.visible');
+  });
 });

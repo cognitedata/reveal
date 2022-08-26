@@ -96,5 +96,5 @@ export const Treemap: React.FC<Props> = ({
     };
   }, [debouncedHandleResize]);
 
-  return <TreemapWrapper ref={divRef} />;
+  return <TreemapWrapper data-testid="treemap-wrapper" ref={divRef} />;
 };

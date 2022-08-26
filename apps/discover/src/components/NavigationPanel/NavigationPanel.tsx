@@ -33,7 +33,7 @@ export const NavigationPanel: React.FC<Props> = ({
       <BackButton type="secondary" onClick={onBackClick} />
 
       <DetailsContainer>
-        <Title>{title}</Title>
+        <Title data-testid="title">{title}</Title>
         <Subtitle>{subtitle}</Subtitle>
       </DetailsContainer>
 
