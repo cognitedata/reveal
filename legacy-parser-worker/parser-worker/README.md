@@ -38,7 +38,7 @@ You can either run the same command as in Windows, or install it faster through 
 ### Build
 
 ```bash
-cd ./parser-worker
+cd ./legacy-parser-worker/parser-worker
 yarn
 yarn build
 ```
@@ -63,13 +63,13 @@ If you set the env variable correctly, during the build you should see this prin
 > ⬡ <webpack-log>:  { publicPath: 'https://static.server/parser-worker/' }
 ```
 
-Now `parser-worker/dist/local` folder contains the built worker and wasm files.
+Now `legacy-parser-worker/parser-worker/dist/local` folder contains the built worker and wasm files.
 You can host them at your static server.
 
 ### Local development
 
 If you want to test your own changes in worker or rust module locally,
-all you need to do is to copy files from `parser-worker/dist/local` to some folder in examples.
+all you need to do is to copy files from `legacy-parser-worker/parser-worker/dist/local` to some folder in examples.
 
 You can simply use `yarn local-cdn` it does:
 
@@ -80,7 +80,7 @@ You can simply use `yarn local-cdn` it does:
 
 You will also need to link `@cognite/reveal-parser-worker` to the local version in order to get proper type declarations:
 
-* From `parser-worker/`: `yarn link`
+* From `legacy-parser-worker/parser-worker/`: `yarn link`
 * From `viewer/`: `yarn link @cognite/reveal-parser-worker`
 
 Notice that it builds the viewer with the same
