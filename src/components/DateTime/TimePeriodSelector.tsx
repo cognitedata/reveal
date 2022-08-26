@@ -2,7 +2,7 @@ import dayjs from 'dayjs';
 import { Button } from '@cognite/cogs.js';
 import { DetailedHTMLProps, HTMLAttributes } from 'react';
 
-const relativeTimeOptions = [
+export const relativeTimeOptions = [
   {
     label: '1d' as const,
     dateFrom: () => dayjs().subtract(1, 'day').startOf('minute'),
