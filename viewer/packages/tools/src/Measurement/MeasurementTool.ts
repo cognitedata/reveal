@@ -53,6 +53,7 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
   private readonly _measurements: MeasurementManager[];
   private _activeMeasurement: MeasurementManager | undefined;
   private readonly _htmlOverlay: HtmlOverlayTool;
+  private _measurementMode: boolean;
 
   private readonly _handleLabelClustering = this.createCombineClusterElement.bind(this);
   private readonly _handlePointerClick = this.onPointerClick.bind(this);
@@ -84,6 +85,7 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
       ...options
     };
     this._measurements = [];
+    this._measurementMode = false;
     this._htmlOverlay = new HtmlOverlayTool(this._viewer, this._overlayOptions);
 
     this._geometryGroup.name = MeasurementTool.name;
@@ -214,16 +216,23 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
    * Enter into point to point measurement mode.
    */
   enterMeasurementMode(): void {
-    this._viewer.on('click', this._handlePointerClick);
-    this._events.measurementStarted.fire();
+    if (!this._measurementMode) {
+      this._viewer.on('click', this._handlePointerClick);
+      this._events.measurementStarted.fire();
+      this._measurementMode = true;
+    }
   }
 
   /**
    * Exit measurement mode.
    */
   exitMeasurementMode(): void {
+    if (this._activeMeasurement) {
+      this.cancelActiveMeasurement();
+    }
     this._viewer.off('click', this._handlePointerClick);
     this._events.measurementEnded.fire();
+    this._measurementMode = false;
   }
 
   /**
@@ -283,6 +292,8 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
     );
     if (index > -1) {
       this._measurements[index].updateLineWidth(lineWidth);
+    } else {
+      throw new Error('Measurement not found');
     }
   }
 
@@ -297,6 +308,8 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
     );
     if (index > -1) {
       this._measurements[index].updateLineColor(color);
+    } else {
+      throw new Error('Measurement not found');
     }
   }
 
@@ -356,8 +369,10 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
   }
 
   private onPointerMove(event: { offsetX: number; offsetY: number }) {
-    this._activeMeasurement!.update(event);
-    this._viewer.requestRedraw();
+    if (this._activeMeasurement) {
+      this._activeMeasurement!.update(event);
+      this._viewer.requestRedraw();
+    }
   }
 
   /**
@@ -399,9 +414,11 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
    * Cancel the active measurement.
    */
   private cancelActiveMeasurement() {
-    this._activeMeasurement!.removeMeasurement();
-    this._activeMeasurement = undefined;
-    this._viewer.requestRedraw();
-    this._viewer.domElement.removeEventListener('mousemove', this._handlePointerMove);
+    if (this._activeMeasurement) {
+      this._activeMeasurement.removeMeasurement();
+      this._activeMeasurement = undefined;
+      this._viewer.requestRedraw();
+      this._viewer.domElement.removeEventListener('mousemove', this._handlePointerMove);
+    }
   }
 }
