@@ -192,3 +192,23 @@ export function useCloseTable() {
     }
   };
 }
+
+export function useCloseTables() {
+  const [[activeDb, activeTable] = [], setActive] = useUrlTable();
+  const [tabs, setTabs] = useUrlTabList();
+  return (tabsToClose: SpecificTable[]) => {
+    const filteredTabs = tabs.filter(
+      ([testDb, testTable]) =>
+        !tabsToClose.some(([db, table]) => db === testDb && table === testTable)
+    );
+    setTabs(filteredTabs);
+
+    if (
+      tabsToClose.some(
+        ([db, table]) => activeDb === db && activeTable === table
+      )
+    ) {
+      setActive(filteredTabs?.[0]);
+    }
+  };
+}

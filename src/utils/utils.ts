@@ -1,6 +1,7 @@
 import { Count } from 'hooks/profiling-service';
 import handleError from './handleError';
 import { styleScope } from 'styles/styleScope';
+import { RAW_EXPLORER_TAB_PANE_KEY_SEPARATOR } from './constants';
 
 const nameToAclTypeMap = {
   '3d': 'threedAcl',
@@ -129,4 +130,14 @@ export const reduceHistogramBins = (
   }
 
   return reducedBins;
+};
+
+export const getTableTabKey = (db: string = '', table: string = ''): string => {
+  return `${db}${RAW_EXPLORER_TAB_PANE_KEY_SEPARATOR}${table}`;
+};
+
+export const parseTableTabKey = (key: string): [string, string] => {
+  const [db = '', table = ''] = key.split(RAW_EXPLORER_TAB_PANE_KEY_SEPARATOR);
+
+  return [db, table];
 };

@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import styled from 'styled-components';
-import { Colors, Icon, Button, Flex } from '@cognite/cogs.js';
+import { Colors, Button } from '@cognite/cogs.js';
 import { Tabs as AntdTabs } from 'antd';
 
 import {
@@ -9,12 +9,10 @@ import {
   useTableTabList,
 } from 'hooks/table-tabs';
 import { RawExplorerContext } from 'contexts';
-import { getContainer } from 'utils/utils';
+import { getContainer, getTableTabKey } from 'utils/utils';
+import TableTabListTitle from './TableTabListTitle';
 
 const { TabPane } = AntdTabs;
-
-const RAW_EXPLORER_TAB_PANE_KEY_SEPARATOR =
-  'RAW_EXPLORER_TAB_PANE_KEY_SEPARATOR';
 
 export default function TableTabList() {
   const list = useTableTabList() || [];
@@ -45,10 +43,6 @@ export default function TableTabList() {
     }
   };
 
-  const isActive = (db: string, table: string) => {
-    return activeDb === db && activeTable && table;
-  };
-
   return (
     <StyledTabs
       getPopupContainer={getContainer}
@@ -58,7 +52,7 @@ export default function TableTabList() {
       hideAdd={true}
       onEdit={handleTabEdit}
       onChange={handleActiveTabChange}
-      activeKey={`${activeDb}${RAW_EXPLORER_TAB_PANE_KEY_SEPARATOR}${activeTable}`}
+      activeKey={getTableTabKey(activeDb, activeTable)}
       tabBarExtraContent={{
         ...(isSidePanelOpen
           ? {}
@@ -78,20 +72,8 @@ export default function TableTabList() {
       {list.map(([db, table]) => (
         <TabPane
           closeIcon={<Button icon="Close" size="small" type="ghost" />}
-          key={`${db}${RAW_EXPLORER_TAB_PANE_KEY_SEPARATOR}${table}`}
-          tab={
-            <Flex alignItems="center" gap={6}>
-              <Icon
-                type="DataTable"
-                style={{
-                  ...(isActive(db, table)
-                    ? { color: Colors['text-icon--status-success'] }
-                    : {}),
-                }}
-              />
-              {table}
-            </Flex>
-          }
+          key={getTableTabKey(db, table)}
+          tab={<TableTabListTitle db={db} table={table} />}
         />
       ))}
     </StyledTabs>
