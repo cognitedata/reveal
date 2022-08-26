@@ -5,6 +5,8 @@
   "scripts": {
     "start": "yarn ws:start",
     "test": "yarn ws:test --config ./../../jest.config.js",
+    "run-wasm-pack": "wasm-pack",
+    "test:wasm": "yarn ws:test:wasm",
     "lint": "yarn ws:lint"
   },
   "dependencies": {

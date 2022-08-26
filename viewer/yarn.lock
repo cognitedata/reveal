@@ -802,8 +802,9 @@ __metadata:
     ts-loader: 9.3.1
     tsc-alias: 1.7.0
     typescript: 4.7.4
+    wasm-pack: ^0.10.3
     webpack: 5.74.0
-    webpack-bundle-analyzer: 4.5.0
+    webpack-bundle-analyzer: ^4.5.0
     webpack-cli: 4.10.0
     webpack-dev-server: 4.9.3
     webpack-log: 3.0.2
@@ -3014,6 +3015,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"axios@npm:^0.21.1":
+  version: 0.21.4
+  resolution: "axios@npm:0.21.4"
+  dependencies:
+    follow-redirects: ^1.14.0
+  checksum: 44245f24ac971e7458f3120c92f9d66d1fc695e8b97019139de5b0cc65d9b8104647db01e5f46917728edfc0cfd88eb30fc4c55e6053eef4ace76768ce95ff3c
+  languageName: node
+  linkType: hard
+
 "axios@npm:^0.25.0":
   version: 0.25.0
   resolution: "axios@npm:0.25.0"
@@ -3964,6 +3974,17 @@ __metadata:
   version: 2.2.0
   resolution: "binary-extensions@npm:2.2.0"
   checksum: ccd267956c58d2315f5d3ea6757cf09863c5fc703e50fbeb13a7dc849b812ef76e3cf9ca8f35a0c48498776a7478d7b4a0418e1e2b8cb9cb9731f2922aaad7f8
+  languageName: node
+  linkType: hard
+
+"binary-install@npm:^0.1.0":
+  version: 0.1.1
+  resolution: "binary-install@npm:0.1.1"
+  dependencies:
+    axios: ^0.21.1
+    rimraf: ^3.0.2
+    tar: ^6.1.0
+  checksum: a3df9c07a3ab81533cff610527263181c4c34a44efb115555be910b6011ac047bf875ad57469cc2259dfaba58e971c7ba2958038e9d222c546eef7b58b826ecc
   languageName: node
   linkType: hard
 
@@ -6168,7 +6189,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"follow-redirects@npm:^1.14.7":
+"follow-redirects@npm:^1.14.0, follow-redirects@npm:^1.14.7":
   version: 1.15.1
   resolution: "follow-redirects@npm:1.15.1"
   peerDependenciesMeta:
@@ -12472,6 +12493,17 @@ typescript@4.7.4:
   languageName: node
   linkType: hard
 
+"wasm-pack@npm:^0.10.3":
+  version: 0.10.3
+  resolution: "wasm-pack@npm:0.10.3"
+  dependencies:
+    binary-install: ^0.1.0
+  bin:
+    wasm-pack: run.js
+  checksum: b980b33fc8adcd208556a1f5c4656b02d1ae584792259874f09ab5647dd52d0cdd3179d970ba99eed72ac1a422445c3c81122a3e9d7c05ebb2a3ff83bd7ec7db
+  languageName: node
+  linkType: hard
+
 "watchpack@npm:^2.4.0":
   version: 2.4.0
   resolution: "watchpack@npm:2.4.0"
@@ -12505,9 +12537,9 @@ typescript@4.7.4:
   languageName: node
   linkType: hard
 
-"webpack-bundle-analyzer@npm:4.5.0":
-  version: 4.5.0
-  resolution: "webpack-bundle-analyzer@npm:4.5.0"
+"webpack-bundle-analyzer@npm:^4.5.0":
+  version: 4.6.1
+  resolution: "webpack-bundle-analyzer@npm:4.6.1"
   dependencies:
     acorn: ^8.0.4
     acorn-walk: ^8.0.0
@@ -12520,7 +12552,7 @@ typescript@4.7.4:
     ws: ^7.3.1
   bin:
     webpack-bundle-analyzer: lib/bin/analyzer.js
-  checksum: 158e96810ec213d5665ca1c0b257097db44e1f11c4befefab8352b9e5b10890fcb3e3fc1f7bb400dd58762a8edce5621c92afeca86eb4687d2eb64e93186bfcb
+  checksum: 4bc97ac6a1d9cd1f133444b0fc9d9091c97f4bd8388f97636ce27abd1ebffaa7dd45d29f6693661a666e77bcc08dff43ab7c2f5e2600a3101b956c94c1d038d0
   languageName: node
   linkType: hard
 
