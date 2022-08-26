@@ -135,9 +135,3 @@ export const reduceHistogramBins = (
 export const getTableTabKey = (db: string = '', table: string = ''): string => {
   return `${db}${RAW_EXPLORER_TAB_PANE_KEY_SEPARATOR}${table}`;
 };
-
-export const parseTableTabKey = (key: string): [string, string] => {
-  const [db = '', table = ''] = key.split(RAW_EXPLORER_TAB_PANE_KEY_SEPARATOR);
-
-  return [db, table];
-};
