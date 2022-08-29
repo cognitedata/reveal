@@ -35,11 +35,17 @@ measurementTool.enterMeasurementMode();
 The tool exposes events for subscribing to measurement start, end & added.
 ```jsx runnable
 // import { MeasurementTool } from '@cognite/reveal/tools';
-
 const measurementTool = new MeasurementTool(viewer);
+
 // Subscribe to measurement events
-measurementTool.on('started', () => alert('Measurement is active'));
-measurementTool.on('added', (measurement) => { alert(`Measurement added with ${JSON.stringify(measurement.distanceInMeters)} distance!`) });
+measurementTool.on('started', 
+  () => viewer.domElement.style.cursor = 'crosshair');
+measurementTool.on('ended', 
+  () => viewer.domElement.attributeStyleMap.delete('cursor'));
+measurementTool.on('added', (measurement) => { 
+  alert(`Measurement added with ${JSON.stringify(measurement.distanceInMeters)} distance!`);
+  measruementTool.exitMeasurementMode();
+});
 
 measurementTool.enterMeasurementMode();
 ```
