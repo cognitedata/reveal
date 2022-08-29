@@ -21,7 +21,7 @@ function getWasmShape(obj: StylableObject): WasmShape {
       }
     };
   } else if (obj.shape instanceof Box) {
-    const box = obj.shape as Box ;
+    const box = obj.shape as Box;
     return {
       object_id: obj.objectId,
       oriented_box: {

@@ -16,17 +16,17 @@ export type WasmCylinder = {
   center_a: Vec3;
   center_b: Vec3;
   radius: number;
-}
+};
 
 export type WasmOrientedBox = {
   inv_instance_matrix: number[];
-}
+};
 
 export type WasmShape = {
   object_id: number;
   cylinder?: WasmCylinder | undefined;
   oriented_box?: WasmOrientedBox | undefined;
-}
+};
 
 export async function assignPoints(
   input_shapes: Array<WasmShape>,
