@@ -2,7 +2,7 @@
  * Copyright 2022 Cognite AS
  */
 
-import { PointCloudMaterial } from '@reveal/pointclouds/src/potree-three-loader';
+import { CognitePointCloudModel, PointCloudMaterial } from '@reveal/pointclouds/';
 import { SceneHandler, WebGLRendererStateHelper } from '@reveal/utilities';
 import * as THREE from 'three';
 import { RenderPass } from '../RenderPass';
@@ -27,7 +27,7 @@ export class PointCloudEffectsPass implements RenderPass {
       camera.layers.mask = getLayerMask(RenderLayer.PointCloud);
 
       this._sceneHandler.pointCloudModels.forEach(model =>
-        this.setMaterialParameters(model.object.pointCloudNode.potreeNode.octree.material)
+        this.setMaterialParameters((model.object as CognitePointCloudModel).pointCloudNode.potreeNode.octree.material)
       );
 
       this.setRendererParameters(rendererStateHelper);
@@ -45,7 +45,7 @@ export class PointCloudEffectsPass implements RenderPass {
     if (parameters) {
       for (const prop of Object.entries(parameters)) {
         try {
-          //@ts-expect-error
+          //@ts-ignore
           material[prop[0]] = prop[1];
         } catch {
           console.error(`Undefined point cloud material property: ${prop[0]}`);
@@ -59,7 +59,7 @@ export class PointCloudEffectsPass implements RenderPass {
     if (parameters) {
       for (const prop of Object.entries(parameters)) {
         try {
-          //@ts-expect-error
+          //@ts-ignore
           rendererHelper[prop[0]] = prop[1];
         } catch {
           console.error(`Undefined WebGLRendererStateHelper property: ${prop[0]}`);

@@ -38,6 +38,12 @@ export type DepthBlendBlitOptions = {
   outline?: boolean;
 };
 
+export type PointCloudPostProcessingOptions = {
+  texture: THREE.Texture;
+  depthTexture: THREE.DepthTexture;
+  pointBlending: boolean;
+};
+
 export const transparentBlendOptions: BlendOptions = {
   blendDestination: THREE.OneMinusSrcAlphaFactor,
   blendSource: THREE.SrcAlphaFactor,

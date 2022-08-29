@@ -10,10 +10,10 @@ import {
   getBlitMaterial,
   getDepthBlendBlitMaterial,
   getLayerMask,
+  getPointCloudPostProcessingMaterial,
   RenderLayer
 } from '../utilities/renderUtilities';
 import { PostProcessingPipelineOptions } from '../render-pipeline-providers/types';
-import { pointCloudShaders } from '../rendering/shaders';
 
 /**
  * Single pass that applies post processing effects and
@@ -48,23 +48,12 @@ export class PostProcessingPass implements RenderPass {
     backBlitObject.name = 'Back Styling';
     backBlitObject.renderOrder = -1;
 
-    const pointcloudBlitMaterial = new THREE.RawShaderMaterial({
-      vertexShader: pointCloudShaders.normalize.vertex,
-      fragmentShader: pointCloudShaders.normalize.fragment,
-      uniforms: {
-        tDiffuse: { value: postProcessingPipelineOptions.pointCloud.texture },
-        tDepth: { value: postProcessingPipelineOptions.pointCloud.depthTexture }
-      },
-      defines: postProcessingPipelineOptions?.pointBlending
-        ? {
-            points_blend: ''
-          }
-        : {},
-      glslVersion: THREE.GLSL3,
-      depthTest: true,
-      depthWrite: true,
-      transparent: true
+    const pointcloudBlitMaterial = getPointCloudPostProcessingMaterial({
+      texture: postProcessingPipelineOptions.pointCloud.texture,
+      depthTexture: postProcessingPipelineOptions.pointCloud.depthTexture,
+      pointBlending: postProcessingPipelineOptions?.pointBlending ?? false
     });
+
     // rendered pointcloud data
     const pointcloudBlitObject = createFullScreenTriangleMesh(pointcloudBlitMaterial);
     backBlitObject.name = 'Pointcloud';
