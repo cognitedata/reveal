@@ -5,7 +5,7 @@ import { convertToIdentifiers } from 'domain/wells/utils/convertToIdentifiers';
 
 import { fetchAllCursors } from 'utils/fetchAllCursors';
 
-import { WellTops } from '@cognite/sdk-wells/dist/src/model/wellTops';
+import { WellTops } from '@cognite/sdk-wells';
 
 export const getWellTops = async ({
   wellboreIds,

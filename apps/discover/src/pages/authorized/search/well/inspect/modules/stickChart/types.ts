@@ -4,7 +4,12 @@ import { NdsInternal } from 'domain/wells/nds/internal/types';
 import { NptInternal } from 'domain/wells/npt/internal/types';
 import { TrajectoryWithData } from 'domain/wells/trajectory/internal/types';
 import { WellboreInternal } from 'domain/wells/wellbore/internal/types';
+import {
+  WellTopSurfaceDepthInternal,
+  WellTopSurfaceInternal,
+} from 'domain/wells/wellTops/internal/types';
 
+import { Distance } from 'convert-units';
 import { ConvertedDistance } from 'utils/units/constants';
 
 export interface WellboreData {
@@ -17,6 +22,7 @@ export interface WellboreData {
 }
 
 export interface ColumnsData {
+  formationColumn: DataWithLoadingStatus<WellTopSurfaceView[]>;
   casingsColumn: DataWithLoadingStatus<CasingAssemblyView[]>;
   nptColumn: DataWithLoadingStatus<NptInternal[]>;
   ndsColumn: DataWithLoadingStatus<NdsInternal[]>;
@@ -26,6 +32,15 @@ export interface ColumnsData {
 
 export interface ColumnVisibilityProps {
   isVisible?: boolean;
+}
+
+export interface WellTopSurfaceView extends WellTopSurfaceInternal {
+  wellboreMatchingId: string;
+  depthUnit: Distance;
+  top: WellTopSurfaceDepthInternal;
+  base: WellTopSurfaceDepthInternal;
+  depthDifference: WellTopSurfaceDepthInternal;
+  isComputedBase: boolean;
 }
 
 export interface CasingAssemblyView extends CasingAssemblyInternal {

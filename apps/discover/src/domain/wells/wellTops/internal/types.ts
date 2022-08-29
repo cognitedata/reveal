@@ -1,8 +1,10 @@
 import { Distance } from 'convert-units';
 
-import { WellTops } from '@cognite/sdk-wells/dist/src/model/wellTops';
-import { WellTopSurface } from '@cognite/sdk-wells/dist/src/model/wellTopSurface';
-import { WellTopSurfaceDepth } from '@cognite/sdk-wells/dist/src/model/wellTopSurfaceDepth';
+import {
+  WellTops,
+  WellTopSurface,
+  WellTopSurfaceDepth,
+} from '@cognite/sdk-wells';
 
 export interface WellTopsInternal
   extends Omit<
@@ -14,9 +16,10 @@ export interface WellTopsInternal
   tops: Array<WellTopSurfaceInternal>;
 }
 
-export interface WellTopSurfaceInternal extends WellTopSurface {
+export interface WellTopSurfaceInternal extends Omit<WellTopSurface, 'top'> {
+  top: WellTopSurfaceDepthInternal;
+  base?: WellTopSurfaceDepthInternal;
   color: string;
-  heightDifference: number;
 }
 
 export type WellTopSurfaceDepthInternal = WellTopSurfaceDepth;

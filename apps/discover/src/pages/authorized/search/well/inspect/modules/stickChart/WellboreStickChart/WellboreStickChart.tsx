@@ -27,6 +27,7 @@ import {
   DEPTH_SCALE_MIN_HEIGHT,
 } from './constants';
 import { ContentWrapper, WellboreStickChartWrapper } from './elements';
+import { FormationColumn } from './FormationColumn';
 import { Header } from './Header';
 import { MeasurementsColumn } from './MeasurementsColumn';
 import { NdsEventsColumn } from './NdsEventsColumn';
@@ -57,6 +58,7 @@ export const WellboreStickChart: React.FC<WellboreStickChartProps> = ({
   columnOrder,
   nptCodesSelecton,
   ndsRiskTypesSelection,
+  formationColumn,
   casingsColumn,
   nptColumn,
   ndsColumn,
@@ -148,6 +150,13 @@ export const WellboreStickChart: React.FC<WellboreStickChartProps> = ({
               id="welbore-stick-chart-view-content"
               elementsOrder={columnOrder}
             >
+              <FormationColumn
+                key={ChartColumn.FORMATION}
+                {...formationColumn}
+                scaleBlocks={scaleBlocks}
+                isVisible={columnVisibility[ChartColumn.FORMATION]}
+              />
+
               <CasingsColumn
                 key={ChartColumn.CASINGS}
                 {...casingsColumn}

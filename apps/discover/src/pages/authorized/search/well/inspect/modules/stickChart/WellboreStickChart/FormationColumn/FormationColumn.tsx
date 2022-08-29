@@ -1,45 +1,56 @@
-import { WellTopsInternal } from 'domain/wells/wellTops/internal/types';
-
 import * as React from 'react';
 
-import isUndefined from 'lodash/isUndefined';
+import isEmpty from 'lodash/isEmpty';
 
 import { WithDragHandleProps } from 'components/DragDropContainer';
+import { NoUnmountShowHide } from 'components/NoUnmountShowHide';
+import { useDeepCallback } from 'hooks/useDeep';
 
 import { ColumnDragger } from '../../../common/Events/ColumnDragger';
+import { BodyColumn, BodyColumnBody } from '../../../common/Events/elements';
+import { useScaledDepth } from '../../hooks/useScaledDepth';
+import { ColumnVisibilityProps, WellTopSurfaceView } from '../../types';
 
-import { FormationTops, FormationWrapper } from './elements';
-import { FormationCollection } from './FormationCollection';
+import { FormationColumnEmptyState } from './components/FormationColumnEmptyState';
+import { FormationLayer } from './components/FormationLayer';
 
-type Props = {
-  scaleBlocks: number[];
+export interface FormationColumnProps extends ColumnVisibilityProps {
+  data?: WellTopSurfaceView[];
   isLoading: boolean;
-  wellTop?: WellTopsInternal;
-};
+  scaleBlocks: number[];
+}
 
-export const FormationColumn: React.FC<WithDragHandleProps<Props>> = ({
-  scaleBlocks,
-  isLoading,
-  wellTop,
-  ...dragHandleProps
-}: Props) => {
-  const wellTopSurface = wellTop?.tops;
+export const FormationColumn: React.FC<
+  WithDragHandleProps<FormationColumnProps>
+> = React.memo(
+  ({ data, isLoading, scaleBlocks, isVisible = true, ...dragHandleProps }) => {
+    const getScaledDepth = useScaledDepth(scaleBlocks);
 
-  if (isLoading || isUndefined(wellTopSurface)) {
-    return null;
-  }
+    const renderFormationLayers = useDeepCallback(() => {
+      if (!data || isEmpty(data)) {
+        return <FormationColumnEmptyState isLoading={isLoading} />;
+      }
 
-  return (
-    <>
-      <FormationWrapper>
-        <ColumnDragger {...dragHandleProps} />
-        <FormationTops>
-          <FormationCollection
-            wellTopsSurface={wellTopSurface}
-            scaleBlocks={scaleBlocks}
+      return data.map(({ name, top, depthDifference, color }) => {
+        return (
+          <FormationLayer
+            key={name}
+            name={name}
+            scaledTop={getScaledDepth(top.measuredDepth)}
+            scaledHeight={getScaledDepth(depthDifference.measuredDepth)}
+            color={color}
           />
-        </FormationTops>
-      </FormationWrapper>
-    </>
-  );
-};
+        );
+      });
+    }, [data, isLoading, getScaledDepth]);
+
+    return (
+      <NoUnmountShowHide show={isVisible}>
+        <BodyColumn data-testid="formation-column">
+          <ColumnDragger {...dragHandleProps} />
+          <BodyColumnBody>{renderFormationLayers()}</BodyColumnBody>
+        </BodyColumn>
+      </NoUnmountShowHide>
+    );
+  }
+);

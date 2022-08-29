@@ -8,6 +8,7 @@ import { EMPTY_OBJECT } from 'constants/empty';
 import { useDeepMemo } from 'hooks/useDeep';
 import { useWellInspectWellboreIds } from 'modules/wellInspect/selectors';
 
+import { CasingAssemblyView } from '../types';
 import { adaptToCasingsColumnData } from '../utils/adaptToCasingsColumnData';
 
 export const useCasingsColumnsData = () => {
@@ -30,7 +31,7 @@ export const useCasingsColumnsData = () => {
       isTvdDataLoading
     ) {
       return {
-        data: EMPTY_OBJECT,
+        data: EMPTY_OBJECT as Record<string, CasingAssemblyView[]>,
         isLoading: isCasingsLoading || isTvdDataLoading,
       };
     }

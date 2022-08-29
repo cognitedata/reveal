@@ -1,36 +1,37 @@
 import styled from 'styled-components/macro';
 
-import { FlexColumn, sizes } from 'styles/layout';
+import { Center, sizes } from 'styles/layout';
 
-export const WellTopName = styled.div`
-  margin: 2px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  text-align: center;
-`;
+import { FORMATION_COLUMN_SCALE_CORRECTION } from './constants';
 
-export const FormationWrapper = styled(FlexColumn)`
-  width: 30px;
-  border: 1px solid var(--cogs-greyscale-grey3);
-  border-radius: 12px;
-  background: var(--cogs-bg-accent);
-  margin: ${sizes.small};
-`;
+type FormationLayerProps = {
+  top: number;
+  height: number;
+  color: string;
+  overflow: boolean;
+};
 
-export const ColorBox = styled.div`
-  writing-mode: vertical-rl;
-  transform: rotate(180deg);
-  background: ${(props: { color: string }) => props.color};
-  height: ${(props: { height: number }) => props.height}px;
+export const FormationLayerBlock = styled(Center)`
+  position: absolute;
   width: 100%;
-  display: flex;
-  justify-content: center;
   align-items: center;
+  ${(props: FormationLayerProps) => `
+    top: ${props.top + FORMATION_COLUMN_SCALE_CORRECTION}px;
+    height: ${props.height}px;
+    background: ${props.color};
+    cursor: ${props.overflow ? 'pointer' : 'default'};
+  `}
 `;
 
-export const FormationTops = styled.div`
-  display: flex;
-  flex-direction: column;
+export const FormationColumnEmptyStateWrapper = styled(FormationLayerBlock)`
   height: 100%;
+`;
+
+export const FormationColumnBlockText = styled.div`
+  transform: rotate(-90deg);
+  position: relative;
+  height: fit-content;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: ${sizes.normal};
 `;
