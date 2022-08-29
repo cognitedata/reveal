@@ -14,10 +14,7 @@ import {
   LocalModelIdentifier,
   CdfModelIdentifier
 } from '../../../packages/modeldata-api';
-<<<<<<< HEAD
 import cdfEnvironments from '../../.cdf-environments.json';
-=======
->>>>>>> chore: initial port of rendering package
 
 export function createDataProviders(defaultModelLocalUrl = 'primitives'): Promise<{
   modelMetadataProvider: ModelMetadataProvider;
