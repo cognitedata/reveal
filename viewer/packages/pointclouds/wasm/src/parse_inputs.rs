@@ -8,9 +8,9 @@ use serde::Deserialize;
 
 #[derive(Debug, Deserialize)]
 struct InputCylinder {
-    pub center_a: [f64; 3],
-    pub center_b: [f64; 3],
-    pub radius: f64,
+    center_a: [f64; 3],
+    center_b: [f64; 3],
+    radius: f64,
 }
 
 #[derive(Debug, Deserialize)]
@@ -20,7 +20,7 @@ struct InputOrientedBox {
 
 #[derive(Debug, Deserialize)]
 pub struct InputShape {
-    pub object_id: u16,
+    object_id: u16,
     cylinder: Option<Box<InputCylinder>>,
     oriented_box: Option<Box<InputOrientedBox>>,
 }

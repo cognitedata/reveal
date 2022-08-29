@@ -7,23 +7,25 @@ import { assignPoints } from '../../../wasm';
 import { Cylinder } from '../../styling/shapes/Cylinder';
 import { Box } from '../../styling/shapes/Box';
 
-function getWasmShape(obj: StylableObject): any {
+import { WasmShape } from '../../../wasm';
+
+function getWasmShape(obj: StylableObject): WasmShape {
   if (obj.shape instanceof Cylinder) {
     const cylinder = obj.shape as Cylinder;
     return {
       object_id: obj.objectId,
       cylinder: {
-        center_a: cylinder.centerA,
-        center_b: cylinder.centerB,
+        center_a: cylinder.centerA.toArray(),
+        center_b: cylinder.centerB.toArray(),
         radius: cylinder.radius
       }
     };
   } else if (obj.shape instanceof Box) {
-    const box = obj.shape as Box;
+    const box = obj.shape as Box ;
     return {
       object_id: obj.objectId,
       oriented_box: {
-        inv_instance_matrix: box.invMatrix
+        inv_instance_matrix: box.invMatrix.toArray()
       }
     };
   } else {
