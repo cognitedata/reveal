@@ -20,16 +20,16 @@ export const createLines = (pathIds: string[]) => {
   );
 };
 
-export const createSymbols = (pathIds: string[]) => {
-  return pathIds.map(
-    (pathId) =>
+export const createSymbols = (pathIdsList: string[][]) => {
+  return pathIdsList.map(
+    (pathIds) =>
       ({
         type: 'Instrument',
         symbolId: 'symbolId',
-        id: getDiagramInstanceIdFromPathIds([pathId]),
+        id: getDiagramInstanceIdFromPathIds(pathIds),
         scale: 1,
         rotation: 0,
-        pathIds: [pathId],
+        pathIds,
         labelIds: [],
         lineNumbers: [],
         inferedLineNumbers: [],
@@ -40,7 +40,7 @@ export const createSymbols = (pathIds: string[]) => {
 describe('findLines', () => {
   test('simple symbol line square all connected', () => {
     const lineInstances: DiagramLineInstance[] = [];
-    const symbolInstances = createSymbols(['path001', 'path003']);
+    const symbolInstances = createSymbols([['path001'], ['path003']]);
 
     const potentialLineInstanceList = createLines(['path002']);
 
@@ -62,7 +62,7 @@ describe('findLines', () => {
 
   test('simple line symbol line', () => {
     const lineInstances: DiagramLineInstance[] = createLines(['path002']);
-    const symbolInstances = createSymbols(['path001']);
+    const symbolInstances = createSymbols([['path001']]);
 
     const potentialLineInstanceList = createLines(['path003']);
 
@@ -83,7 +83,7 @@ describe('findLines', () => {
 
   test('simple loop', () => {
     const lineInstances: DiagramLineInstance[] = createLines(['path002']);
-    const symbolInstances = createSymbols(['path001']);
+    const symbolInstances = createSymbols([['path001']]);
 
     const potentialLineInstanceList = createLines(['path003', 'path004']);
 

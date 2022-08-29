@@ -1,5 +1,7 @@
+/* eslint-disable no-restricted-syntax */
+import intersection from 'lodash/intersection';
+
 import { EQUIPMENT_TAG_REGEX, UNIT_REGEX } from '../constants';
-import { PidDocument } from '../pid/PidDocument';
 import {
   DiagramConnection,
   DiagramInstance,
@@ -85,60 +87,23 @@ export const connectionExists = (
   );
 };
 
-export const hasOverlappingPathIds = (
-  diagramInstance1: DiagramInstanceWithPaths,
-  diagramInstance2: DiagramInstanceWithPaths
-) => {
-  return diagramInstance1.pathIds.some((e) =>
-    diagramInstance2.pathIds.includes(e)
-  );
-};
-
-export const getLeastComplexDiagramSymbol = (
-  pidDocument: PidDocument,
-  diagramInstance1: DiagramSymbolInstance,
-  diagramInstance2: DiagramSymbolInstance
-) => {
-  // Most complicated in this sense, is the element with the most pathSegments.
-  // Out idea is to use this when labeling circles, and circles with square,
-  // to be able to determine that circle with square is the bigger/more complicated object.
-  const count1 = pidDocument.getPathSegmentsToPaths(
-    diagramInstance1.pathIds
-  ).length;
-
-  const count2 = pidDocument.getPathSegmentsToPaths(
-    diagramInstance2.pathIds
-  ).length;
-
-  return count1 > count2 ? diagramInstance2 : diagramInstance1;
-};
-
 export const getNoneOverlappingSymbolInstances = (
-  pidDocument: PidDocument,
   symbolInstances: DiagramSymbolInstance[],
   newSymbolInstances: DiagramSymbolInstance[]
 ) => {
   const instancesToRemove: DiagramInstanceWithPaths[] = [];
-  for (let i = 0; i < newSymbolInstances.length; i++) {
-    const potentialInstance = newSymbolInstances[i];
-
-    for (let j = 0; j < symbolInstances.length; j++) {
-      const oldInstance = symbolInstances[j];
-
-      const pathIdOverlap = hasOverlappingPathIds(
-        oldInstance,
-        potentialInstance
+  for (const potentialInstance of newSymbolInstances) {
+    for (const oldInstance of symbolInstances) {
+      const intersectionPathIds = intersection(
+        potentialInstance.pathIds,
+        oldInstance.pathIds
       );
 
-      // eslint-disable-next-line no-continue
-      if (!pathIdOverlap) continue;
-
-      const objectToRemove = getLeastComplexDiagramSymbol(
-        pidDocument,
-        potentialInstance,
-        oldInstance
-      );
-      instancesToRemove.push(objectToRemove);
+      if (potentialInstance.pathIds.length === intersectionPathIds.length) {
+        instancesToRemove.push(potentialInstance);
+      } else if (oldInstance.pathIds.length === intersectionPathIds.length) {
+        instancesToRemove.push(oldInstance);
+      }
     }
   }
 
@@ -157,26 +122,27 @@ export const pruneSymbolOverlappingPathsFromLines = (
   lines: DiagramLineInstance[],
   symbolInstances: DiagramSymbolInstance[]
 ) => {
-  const symbolIds = symbolInstances.flatMap((symbol) => symbol.pathIds);
+  const symbolInstancesPathIds = new Set(
+    symbolInstances.flatMap((symbol) => symbol.pathIds)
+  );
 
-  const prunedLines = [];
-  const linesToDelete = [];
+  const linesToKeep: DiagramLineInstance[] = [];
+  const linesToDelete: DiagramLineInstance[] = [];
 
-  for (let i = 0; i < lines.length; i++) {
-    const line = lines[i];
-
-    const nonSymbolPaths = line.pathIds.filter(
-      (pathId) => symbolIds.includes(pathId) === false
+  // eslint-disable-next-line no-restricted-syntax
+  for (const line of lines) {
+    const lineIdInSymbolInstance = line.pathIds.some((pathId) =>
+      symbolInstancesPathIds.has(pathId)
     );
 
-    if (nonSymbolPaths.length) {
-      prunedLines.push({ ...line, pathIds: nonSymbolPaths });
-    } else {
+    if (lineIdInSymbolInstance) {
       linesToDelete.push(line);
+    } else {
+      linesToKeep.push(line);
     }
   }
 
-  return { prunedLines, linesToDelete };
+  return { linesToKeep, linesToDelete };
 };
 
 /* eslint-disable no-param-reassign */

@@ -51,6 +51,8 @@ DEPENDENCIES = [
     "@npm//uuid",
     "@npm//kd-tree-javascript",
     "@npm//@cognite/sdk",
+    "@npm//line-segment-distance",
+    "@npm//yargs",
 ]
 
 # Type dependencies from package.json
@@ -74,6 +76,7 @@ DEV_DEPENDENCIES = [
 mappings_dict = {
     "cognite-pid": "dist/cognite-pid",
     "constants": "dist/constants",
+    "dms": "dist/dms",
     "findLinesAndConnections": "dist/findLinesAndConnections",
     "geometry": "dist/geometry",
     "graph": "dist/graph",

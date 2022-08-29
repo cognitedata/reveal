@@ -1271,19 +1271,19 @@ export class CognitePid {
         this.pidDocument
       );
 
-    const { prunedLines, linesToDelete } = pruneSymbolOverlappingPathsFromLines(
+    const { linesToKeep, linesToDelete } = pruneSymbolOverlappingPathsFromLines(
       this.lines,
       symbolInstancesToKeep
     );
-    const prunedConnections = getConnectionsWithoutInstances(
+    const connectionsToKeep = getConnectionsWithoutInstances(
       [...symbolInstancesToDelete, ...linesToDelete],
       this.connections
     );
 
     this.clearSymbolSelection();
     this.setSymbols([...this.symbols, ...newSymbols], false);
-    this.setConnections(prunedConnections, false);
-    this.setLines(prunedLines, false);
+    this.setConnections(connectionsToKeep, false);
+    this.setLines(linesToKeep, false);
     this.setSymbolInstances(symbolInstancesToKeep, false);
 
     if (refresh) {

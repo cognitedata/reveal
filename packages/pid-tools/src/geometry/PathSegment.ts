@@ -1,4 +1,5 @@
 import clamp from 'lodash/clamp';
+import { dist3D_Segment_to_Segment as segmentToSegment3d } from 'line-segment-distance';
 
 import { Rect } from '../types';
 
@@ -145,56 +146,26 @@ export abstract class PathSegment {
   }
 
   getClosestPointsOnSegments(other: PathSegment): ClosestPointsOnSegment {
-    const intersectionData = this.getIntersection(other);
-    if (intersectionData !== undefined) {
-      let { thisPercentAlongPath, otherPercentAlongPath } = intersectionData;
-      thisPercentAlongPath = Math.max(0, Math.min(1, thisPercentAlongPath));
-      otherPercentAlongPath = Math.max(0, Math.min(1, otherPercentAlongPath));
-
-      const thisPoint = this.getPointOnSegment(thisPercentAlongPath);
-      const otherPoint = other.getPointOnSegment(otherPercentAlongPath);
-      const distance = thisPoint.distance(otherPoint);
-      return {
-        thisPoint,
-        thisPercentAlongPath,
-        otherPoint,
-        otherPercentAlongPath,
-        distance,
-      };
-    }
-
-    // parallell
-    const {
-      pointOnSegment: closestPointStart,
-      percentAlongPath: startPercentAlongPath,
-      distance: startDistance,
-    } = other.getClosestPointOnSegment(this.start);
-    const {
-      pointOnSegment: closestPointStop,
-      percentAlongPath: stopPercentAlongPath,
-      distance: stopDistance,
-    } = other.getClosestPointOnSegment(this.stop);
-
-    if (startDistance < stopDistance) {
-      return {
-        thisPoint: this.start,
-        thisPercentAlongPath: 0,
-        otherPoint: closestPointStart,
-        otherPercentAlongPath: startPercentAlongPath,
-        distance: startDistance,
-      };
-    }
+    const s1 = {
+      start: [this.start.x, this.start.y, 0],
+      end: [this.stop.x, this.stop.y, 0],
+    };
+    const s2 = {
+      start: [other.start.x, other.start.y, 0],
+      end: [other.stop.x, other.stop.y, 0],
+    };
+    const result = segmentToSegment3d(s1, s2);
     return {
-      thisPoint: this.stop,
-      thisPercentAlongPath: 1,
-      otherPoint: closestPointStop,
-      otherPercentAlongPath: stopPercentAlongPath,
-      distance: stopDistance,
+      thisPoint: this.getPointOnSegment(result.s1_scale),
+      thisPercentAlongPath: result.s1_scale,
+      otherPoint: other.getPointOnSegment(result.s2_scale),
+      otherPercentAlongPath: result.s2_scale,
+      distance: result.distance,
     };
   }
 }
 
-export enum EdgePoint {
+export enum EndPoint {
   Start,
   Stop,
   Other,
@@ -203,8 +174,8 @@ export enum EdgePoint {
 export interface DistanceWithLineJump {
   distance: number;
   isLineJump: boolean;
-  thisClosestPoint: EdgePoint;
-  otherClosestPoint: EdgePoint;
+  thisClosestPoint: EndPoint;
+  otherClosestPoint: EndPoint;
 }
 
 export class LineSegment extends PathSegment {
@@ -282,18 +253,16 @@ export class LineSegment extends PathSegment {
     const angle2 = other.angle;
     const angle3 = new LineSegment(thisPoint, otherPoint).angle;
 
-    let thisClosestPoint = EdgePoint.Other;
+    let thisClosestPoint = EndPoint.Other;
     if (isCloseToEdge(thisPercentAlongPath)) {
       thisClosestPoint =
-        thisPercentAlongPath < edgeThreshold ? EdgePoint.Start : EdgePoint.Stop;
+        thisPercentAlongPath < edgeThreshold ? EndPoint.Start : EndPoint.Stop;
     }
 
-    let otherClosestPoint = EdgePoint.Other;
+    let otherClosestPoint = EndPoint.Other;
     if (isCloseToEdge(otherPercentAlongPath)) {
       otherClosestPoint =
-        otherPercentAlongPath < edgeThreshold
-          ? EdgePoint.Start
-          : EdgePoint.Stop;
+        otherPercentAlongPath < edgeThreshold ? EndPoint.Start : EndPoint.Stop;
     }
 
     const isLineJump =

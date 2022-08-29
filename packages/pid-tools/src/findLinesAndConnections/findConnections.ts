@@ -1,31 +1,39 @@
 /* eslint-disable no-continue */
 import min from 'lodash/min';
+import inRange from 'lodash/inRange';
 
 import { isLineSegment } from '../utils';
-import {
-  AUTO_ANALYSIS_DISTANCE_THRESHOLD_ISO,
-  AUTO_ANALYSIS_DISTANCE_THRESHOLD_PID,
-  AUTO_ANALYSIS_LINE_JUMP_THRESHOLD,
-} from '../constants';
+import { AUTO_ANALYSIS_THRESHOLD } from '../constants';
 import { PidDocument, PidInstance } from '../pid';
 import {
   DiagramConnection,
   DiagramLineInstance,
   DiagramSymbolInstance,
-  DiagramType,
 } from '../types';
 import {
+  angleDifference,
   BoundingBox,
-  EdgePoint,
+  EndPoint,
   getClosestPointsOnSegments,
 } from '../geometry';
 
 export const findConnectionsByTraversal = (
   symbolInstances: DiagramSymbolInstance[],
   lineInstances: DiagramLineInstance[],
-  pidDocument: PidDocument,
-  diagramType: DiagramType
+  pidDocument: PidDocument
 ) => {
+  const symbolToSymbolThreshold =
+    pidDocument.viewBox.width * AUTO_ANALYSIS_THRESHOLD.SYMBOL_TO_SYMBOL;
+  const symbolToLineThreshold =
+    pidDocument.viewBox.width * AUTO_ANALYSIS_THRESHOLD.SYMBOL_TO_LINE;
+  const lineToLineThreshold =
+    pidDocument.viewBox.width * AUTO_ANALYSIS_THRESHOLD.LINE_TO_LINE;
+  const lineJumpThreshold =
+    pidDocument.viewBox.width * AUTO_ANALYSIS_THRESHOLD.LINE_JUMP;
+  const pruneConnectionStartPointThreshold =
+    pidDocument.viewBox.width *
+    AUTO_ANALYSIS_THRESHOLD.PRUNE_CONNECTION_START_POINT;
+
   const newConnectionsSet = new Set<string>();
 
   const symbols = symbolInstances.map((diagramInstance) =>
@@ -35,8 +43,6 @@ export const findConnectionsByTraversal = (
   const linesToVisit = lineInstances.map((diagramInstance) =>
     PidInstance.fromDiagramInstance(pidDocument, diagramInstance)
   );
-
-  const allInstances = [...symbols, ...linesToVisit];
 
   const toVisit: PidInstance[] = [...symbols];
   const hasVisited: PidInstance[] = [];
@@ -51,21 +57,29 @@ export const findConnectionsByTraversal = (
     }
     hasVisited.push(potentialInstance);
 
-    const closePidGroups = getClosePidInstances(
+    const unprunedClosePidInstances = getClosePidInstances({
+      instance: potentialInstance,
+      symbolInstances: symbols,
+      lineInstances: linesToVisit,
+      symbolToSymbolThreshold,
+      symbolToLineThreshold,
+      lineToLineThreshold,
+      lineJumpThreshold,
+    }).filter((pidInstance) => pidInstance.id !== potentialInstance.id);
+
+    const closePidInstances = pruneClosePidInstances(
       potentialInstance,
-      allInstances,
-      diagramType
+      unprunedClosePidInstances,
+      pruneConnectionStartPointThreshold
     );
 
-    closePidGroups.forEach((closePidGroup) => {
-      if (potentialInstance.id !== closePidGroup.id) {
-        if (!hasVisited.includes(closePidGroup)) {
-          toVisit.push(closePidGroup);
-        }
-        newConnectionsSet.add(
-          [potentialInstance.id, closePidGroup.id].sort().join('|')
-        );
+    closePidInstances.forEach((closePidGroup) => {
+      if (!hasVisited.includes(closePidGroup)) {
+        toVisit.push(closePidGroup);
       }
+      newConnectionsSet.add(
+        [potentialInstance.id, closePidGroup.id].sort().join('|')
+      );
     });
   }
 
@@ -84,24 +98,37 @@ export const findConnectionsByTraversal = (
   return newConnections;
 };
 
-const edgeThreshold = 0.05;
+const endPointThreshold = 0.05;
 interface ClosestConnection {
   distance: number;
-  pidGroup: PidInstance;
+  pidInstance: PidInstance;
 }
 
-const getCloseWithLineJumps = (
-  lineInstance: PidInstance,
-  pidInstances: PidInstance[],
-  threshold: number
-) => {
+const getCloseWithLineJumps = ({
+  lineInstance,
+  pidInstances,
+  symbolToLineThreshold,
+  lineToLineThreshold,
+  lineJumpThreshold,
+}: {
+  lineInstance: PidInstance;
+  pidInstances: PidInstance[];
+  symbolToLineThreshold: number;
+  lineToLineThreshold: number;
+  lineJumpThreshold: number;
+}) => {
   const linePathSegments = lineInstance.getPathSegments();
 
-  // This function should only be called it the `linePidGroup` only has one `LineSegment`.
-  if (linePathSegments.length > 1) return [];
+  if (linePathSegments.length > 1)
+    throw new Error(
+      'This function should only be called it the `lineInstance` only has one `LineSegment` (has multiple segments)'
+    );
 
   const lineSegment = linePathSegments[0];
-  if (!isLineSegment(lineSegment)) return [];
+  if (!isLineSegment(lineSegment))
+    throw new Error(
+      'This function should only be called it the `lineInstance` only has one `LineSegment` (is not `LineSegment`)'
+    );
 
   const closeInstances: PidInstance[] = [];
 
@@ -110,131 +137,204 @@ const getCloseWithLineJumps = (
 
   const addIfClosestStartConnection = (
     distance: number,
-    pidGroup: PidInstance
+    pidInstance: PidInstance
   ) => {
     if (!closestStartConnection || closestStartConnection.distance > distance) {
-      closestStartConnection = { distance, pidGroup };
+      closestStartConnection = { distance, pidInstance };
     }
   };
   const addIfClosestEndConnection = (
     distance: number,
-    pidGroup: PidInstance
+    pidInstance: PidInstance
   ) => {
     if (!closestEndConnection || closestEndConnection.distance > distance) {
-      closestEndConnection = { distance, pidGroup };
+      closestEndConnection = { distance, pidInstance };
     }
   };
 
   for (let i = 0; i < pidInstances.length; i++) {
-    const pidGroup = pidInstances[i];
-    if (lineInstance.id === pidGroup.id) continue;
+    const pidInstance = pidInstances[i];
+    if (lineInstance.id === pidInstance.id) continue;
 
-    const otherPathSegments = pidGroup.getPathSegments();
+    const otherPathSegments = pidInstance.getPathSegments();
     const firstOtherPathSegment = otherPathSegments[0];
 
     if (
       otherPathSegments.length === 1 &&
       isLineSegment(firstOtherPathSegment)
     ) {
-      const lineJumpDistance = lineSegment.distanceWithLineJump(
+      const distanceWithLineJump = lineSegment.distanceWithLineJump(
         firstOtherPathSegment,
-        edgeThreshold
+        endPointThreshold
       );
 
-      // Is close enough so it don't need to be a line jump
-      if (lineJumpDistance.distance < threshold) {
-        if (lineJumpDistance.thisClosestPoint === EdgePoint.Start) {
-          addIfClosestStartConnection(lineJumpDistance.distance, pidGroup);
-        } else if (lineJumpDistance.thisClosestPoint === EdgePoint.Stop) {
-          addIfClosestEndConnection(lineJumpDistance.distance, pidGroup);
+      // Is close enough so it doesn't need to be a line jump
+      if (distanceWithLineJump.distance < lineToLineThreshold) {
+        if (distanceWithLineJump.thisClosestPoint === EndPoint.Start) {
+          addIfClosestStartConnection(
+            distanceWithLineJump.distance,
+            pidInstance
+          );
+        } else if (distanceWithLineJump.thisClosestPoint === EndPoint.Stop) {
+          addIfClosestEndConnection(distanceWithLineJump.distance, pidInstance);
         } else {
-          closeInstances.push(pidGroup);
+          closeInstances.push(pidInstance);
         }
       }
 
       // Check for line jump
       if (
-        lineJumpDistance.isLineJump &&
-        lineJumpDistance.distance < AUTO_ANALYSIS_LINE_JUMP_THRESHOLD
+        distanceWithLineJump.isLineJump &&
+        distanceWithLineJump.distance < lineJumpThreshold
       ) {
-        if (lineJumpDistance.thisClosestPoint === EdgePoint.Start) {
-          addIfClosestStartConnection(lineJumpDistance.distance, pidGroup);
-        } else if (lineJumpDistance.thisClosestPoint === EdgePoint.Stop) {
-          addIfClosestEndConnection(lineJumpDistance.distance, pidGroup);
+        if (distanceWithLineJump.thisClosestPoint === EndPoint.Start) {
+          addIfClosestStartConnection(
+            distanceWithLineJump.distance,
+            pidInstance
+          );
+        } else if (distanceWithLineJump.thisClosestPoint === EndPoint.Stop) {
+          addIfClosestEndConnection(distanceWithLineJump.distance, pidInstance);
         }
       }
-    } else if (lineInstance.isClose(pidGroup, threshold)) {
+    } else if (lineInstance.isClose(pidInstance, symbolToLineThreshold)) {
       const closestData = getClosestPointsOnSegments(
         linePathSegments,
-        pidGroup.getPathSegments()
+        pidInstance.getPathSegments()
       );
       if (closestData === undefined) continue;
 
-      if (closestData.percentAlongPath1 < edgeThreshold) {
-        addIfClosestStartConnection(closestData.distance, pidGroup);
-      } else if (closestData.percentAlongPath1 > 1 - edgeThreshold) {
-        addIfClosestEndConnection(closestData.distance, pidGroup);
-      } else {
-        closeInstances.push(pidGroup);
+      if (closestData.percentAlongPath1 < endPointThreshold) {
+        addIfClosestStartConnection(closestData.distance, pidInstance);
+      } else if (closestData.percentAlongPath1 > 1 - endPointThreshold) {
+        addIfClosestEndConnection(closestData.distance, pidInstance);
       }
     }
   }
 
   if (closestStartConnection) {
-    closeInstances.push(closestStartConnection.pidGroup);
+    closeInstances.push(closestStartConnection.pidInstance);
   }
   if (closestEndConnection) {
-    closeInstances.push(closestEndConnection.pidGroup);
+    closeInstances.push(closestEndConnection.pidInstance);
   }
   return closeInstances;
 };
 
-const getCloseForSymbols = (
+const getCloseSymbolToLine = (
   symbol: PidInstance,
-  pidInstances: PidInstance[],
+  lineInstances: PidInstance[],
   threshold: number
 ) => {
   const smallSymbolBoundingBox = BoundingBox.fromRect(symbol.boundingBox).pad(
     -(1 / 5) * min([symbol.boundingBox.width, symbol.boundingBox.height])!
   );
 
-  return pidInstances.filter((pidInstance) => {
-    if (pidInstance.isLine) {
-      if (!symbol.isClose(pidInstance, 2 * threshold)) return false;
+  return lineInstances.filter((lineInstance) => {
+    if (symbol.efficientIsFartherAway(lineInstance, threshold)) return false;
 
-      const pointsTowardSymbol = pidInstance
-        .getPathSegments()
-        .some((pathSegment) =>
-          smallSymbolBoundingBox.encloses(
-            pathSegment.getClosestPointOnSegment(symbol.midPoint, false)
-              .pointOnSegment
-          )
-        );
+    const connectionPoints =
+      symbol.getPathSegmentsConnectionPoints(lineInstance)!;
 
-      return pointsTowardSymbol;
-    }
+    if (
+      connectionPoints.distance > threshold ||
+      inRange(connectionPoints.percentAlongPath2, 0.1, 0.9)
+    )
+      return false;
 
-    return symbol.isClose(pidInstance, threshold);
+    const pointsTowardSymbol = lineInstance
+      .getPathSegments()
+      .some((pathSegment) =>
+        smallSymbolBoundingBox.encloses(
+          pathSegment.getClosestPointOnSegment(symbol.midPoint, false)
+            .pointOnSegment
+        )
+      );
+
+    return pointsTowardSymbol;
   });
 };
 
-export const getClosePidInstances = (
+export const getClosePidInstances = ({
+  instance,
+  symbolInstances,
+  lineInstances,
+  symbolToSymbolThreshold,
+  symbolToLineThreshold,
+  lineToLineThreshold,
+  lineJumpThreshold,
+}: {
+  instance: PidInstance;
+  symbolInstances: PidInstance[];
+  lineInstances: PidInstance[];
+  symbolToSymbolThreshold: number;
+  symbolToLineThreshold: number;
+  lineToLineThreshold: number;
+  lineJumpThreshold: number;
+}): PidInstance[] => {
+  if (instance.isLine) {
+    if (instance.getPathSegments().length === 1) {
+      return getCloseWithLineJumps({
+        lineInstance: instance,
+        pidInstances: [...symbolInstances, ...lineInstances],
+        symbolToLineThreshold,
+        lineToLineThreshold,
+        lineJumpThreshold,
+      });
+    }
+
+    return lineInstances.filter((lineInstance) =>
+      instance.isClose(lineInstance, lineToLineThreshold)
+    );
+  }
+
+  // `instance` is a symbolInstance
+  return [
+    ...getCloseSymbolToLine(instance, lineInstances, symbolToLineThreshold),
+    ...symbolInstances.filter((symbolInstance) =>
+      instance.isClose(symbolInstance, symbolToSymbolThreshold)
+    ),
+  ];
+};
+
+export const pruneClosePidInstances = (
   instance: PidInstance,
   pidInstances: PidInstance[],
-  diagramType: DiagramType
-) => {
-  const threshold =
-    diagramType === DiagramType.PID
-      ? AUTO_ANALYSIS_DISTANCE_THRESHOLD_PID
-      : AUTO_ANALYSIS_DISTANCE_THRESHOLD_ISO;
+  distanceTheshold: number
+): PidInstance[] => {
+  const angleTheshold = 10;
 
-  if (instance.isLine && instance.getPathSegments().length === 1)
-    return getCloseWithLineJumps(instance, pidInstances, threshold);
+  const connectionSegments = pidInstances.map((pidInstance) =>
+    instance.getConnectionSegment(pidInstance)
+  );
 
-  if (!instance.isLine)
-    return getCloseForSymbols(instance, pidInstances, threshold);
+  const pidInstancesToPrune = new Set<string>();
 
-  return pidInstances.filter((pidGroup) =>
-    instance.isClose(pidGroup, threshold)
+  for (let i = 0; i < connectionSegments.length; i++) {
+    const connectionSegments1 = connectionSegments[i];
+    for (let j = i + 1; j < connectionSegments.length; j++) {
+      const connectionSegments2 = connectionSegments[j];
+      const startPointsDistance = connectionSegments1.start.distance(
+        connectionSegments2.start
+      );
+      const angleDiff = angleDifference(
+        connectionSegments1.angle,
+        connectionSegments2.angle,
+        'directed'
+      );
+      if (
+        startPointsDistance < distanceTheshold &&
+        Math.abs(angleDiff) < angleTheshold
+      ) {
+        if (connectionSegments1.length < connectionSegments2.length) {
+          pidInstancesToPrune.add(pidInstances[j].id);
+        } else {
+          pidInstancesToPrune.add(pidInstances[i].id);
+        }
+      }
+    }
+  }
+
+  return pidInstances.filter(
+    (pidInstance) => !pidInstancesToPrune.has(pidInstance.id)
   );
 };

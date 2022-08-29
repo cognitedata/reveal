@@ -39,7 +39,6 @@ export const computeSymbolInstances = (
       );
 
     symbolInstancesToKeep = getNoneOverlappingSymbolInstances(
-      pidDocument,
       symbolInstancesToKeep,
       newSymbolInstances
     ).instancesToKeep;

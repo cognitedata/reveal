@@ -89,8 +89,7 @@ export const findLinesAndConnections = (
   const potentialConnections: DiagramConnection[] = findConnectionsByTraversal(
     relevantSymbolInstances,
     [...lineInstances, ...potentialLineInstanceList],
-    pidDocument,
-    diagramType
+    pidDocument
   );
 
   const newLines = detectLines(

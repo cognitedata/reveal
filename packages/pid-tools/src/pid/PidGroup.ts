@@ -8,6 +8,8 @@ import { PidDocument, PidPath } from '../pid';
 import {
   getClosestPointOnSegments,
   getClosestPointsOnSegments,
+  getPointTowardOtherPoint,
+  LineSegment,
   PathSegment,
   Point,
 } from '../geometry';
@@ -25,53 +27,47 @@ export class PidGroup {
   }
 
   getPathSegments(): PathSegment[] {
-    const allPathSegments: PathSegment[] = [];
-    this.pidPaths.forEach((path) => allPathSegments.push(...path.segmentList));
-    return allPathSegments;
+    return this.pidPaths.flatMap((path) => path.segmentList);
   }
 
-  distance(other: PidInstance | Point): number {
-    if (other instanceof PidInstance) {
-      const closestPoints = getClosestPointsOnSegments(
-        this.getPathSegments(),
-        other.getPathSegments()
-      );
+  distance(other: Point): number | undefined {
+    const closestPoints = getClosestPointOnSegments(
+      other,
+      this.getPathSegments()
+    );
 
-      if (closestPoints === undefined) return Infinity;
-      return closestPoints.distance;
-    }
-
-    if (other instanceof Point) {
-      const closestPoints = getClosestPointOnSegments(
-        other,
-        this.getPathSegments()
-      );
-
-      if (closestPoints === undefined) return Infinity;
-      return closestPoints.distance;
-    }
-    return Infinity;
+    return closestPoints?.distance;
   }
 
-  isClose(other: PidInstance, threshold = 2): boolean {
-    const efficientIsTooFarAway = () => {
-      // Checks if the bounding boxes is farther away than `threshold`.
-      // This method can return false even though `this` and `other` is farther
-      // away than `threshold`
-      const maxDistanceBetweenBoxesIfConnected = Math.sqrt(
-        (this.boundingBox.width / 2 + other.boundingBox.width / 2) ** 2 +
-          (this.boundingBox.height / 2 + other.boundingBox.height / 2) ** 2
-      );
-      return (
-        this.midPoint.distance(other.midPoint) -
-          maxDistanceBetweenBoxesIfConnected >
-        threshold
-      );
-    };
+  getPathSegmentsConnectionPoints(other: PidGroup) {
+    return getClosestPointsOnSegments(
+      this.getPathSegments(),
+      other.getPathSegments()
+    );
+  }
 
-    if (efficientIsTooFarAway()) return false;
+  efficientIsFartherAway(other: PidGroup, threshold: number): boolean {
+    // Checks if the bounding boxes is farther away than `threshold`.
+    // This method can return false even though `this` and `other` is farther
+    // away than `threshold`
+    const maxDistanceBetweenBoxesIfConnected = Math.sqrt(
+      (this.boundingBox.width / 2 + other.boundingBox.width / 2) ** 2 +
+        (this.boundingBox.height / 2 + other.boundingBox.height / 2) ** 2
+    );
+    return (
+      this.midPoint.distance(other.midPoint) -
+        maxDistanceBetweenBoxesIfConnected >
+      threshold
+    );
+  }
 
-    return this.distance(other) < threshold;
+  isClose(other: PidGroup, threshold: number): boolean {
+    if (this.efficientIsFartherAway(other, threshold)) return false;
+
+    const connectionPoints = this.getPathSegmentsConnectionPoints(other);
+    return (
+      connectionPoints !== undefined && connectionPoints.distance < threshold
+    );
   }
 
   createSvgRepresentation(
@@ -96,6 +92,60 @@ export class PidInstance extends PidGroup {
     super(pidPaths);
     this.isLine = isLine;
     this.id = id;
+  }
+
+  getConnectionSegment(other: PidInstance): LineSegment {
+    // Use the midpoint if the instance is a symbol, otherwise use closest point on the path segments
+
+    const offset = 1; // FIX: Normalize based on document size
+
+    // Both are symbols
+    if (!this.isLine && !other.isLine) {
+      const point1 = this.midPoint;
+      const point2 = other.midPoint;
+      return new LineSegment(point1, point2);
+    }
+    // Both are lines
+    if (this.isLine && other.isLine) {
+      const connectionPoints = this.getPathSegmentsConnectionPoints(other)!;
+      return new LineSegment(connectionPoints.point1, connectionPoints.point2);
+    }
+
+    // `this` is symbol and `other` is line
+    if (!this.isLine) {
+      const otherPathSegments = other.getPathSegments();
+      const closestPoint = getClosestPointOnSegments(
+        this.midPoint,
+        otherPathSegments
+      )!;
+
+      const point2 = getPointTowardOtherPoint(
+        closestPoint.point,
+        closestPoint.percentAlongPath < 0.5
+          ? otherPathSegments[closestPoint.index].stop
+          : otherPathSegments[closestPoint.index].start,
+        offset
+      );
+      return new LineSegment(this.midPoint, point2);
+    }
+
+    // `this` is line and `other` is symbol
+    const thisPathSegments = this.getPathSegments();
+
+    const closestPoint = getClosestPointOnSegments(
+      other.midPoint,
+      thisPathSegments
+    )!;
+
+    const point1 = getPointTowardOtherPoint(
+      closestPoint.point,
+      closestPoint.percentAlongPath < 0.5
+        ? thisPathSegments[closestPoint.index].stop
+        : thisPathSegments[closestPoint.index].start,
+      offset
+    );
+
+    return new LineSegment(point1, other.midPoint);
   }
 
   static fromDiagramInstance(

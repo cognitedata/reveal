@@ -9,18 +9,15 @@ import {
   PidDocument,
   DiagramConnection,
   Point,
-  getPointsCloserToEachOther,
-  getPointTowardOtherPoint,
   connectionExists,
   DiagramInstanceWithPaths,
   DiagramSymbolInstance,
-  getClosestPointsOnSegments,
-  getClosestPointOnSegments,
   getEncolosingBoundingBox,
   assertNever,
   isLine,
   BoundingBox,
   getDiagramInstanceByPathId,
+  PidInstance,
 } from '../index';
 
 import isNotUndefined from './isNotUndefined';
@@ -441,7 +438,6 @@ export const visualizeConnections = (
   symbolInstances: DiagramSymbolInstance[],
   lines: DiagramLineInstance[]
 ): ConnectionVisualization[] => {
-  const offset = 2;
   const instanceIdMap = new Map<DiagramInstanceId, DiagramInstanceWithPaths>();
 
   [...symbolInstances, ...lines].forEach((diagramInstance) => {
@@ -456,78 +452,22 @@ export const visualizeConnections = (
         return undefined;
       }
 
-      let startPoint: Point | undefined;
-      let endPoint: Point | undefined;
-      if (startInstance.type !== 'Line' && endInstance.type !== 'Line') {
-        // Both is symbol
-        startPoint = pidDocument.getMidPointToPaths(startInstance.pathIds);
-        endPoint = pidDocument.getMidPointToPaths(endInstance.pathIds);
+      const startPidInstance = PidInstance.fromDiagramInstance(
+        pidDocument,
+        startInstance
+      );
 
-        [startPoint, endPoint] = getPointsCloserToEachOther(
-          startPoint,
-          endPoint,
-          offset
-        );
-      } else if (startInstance.type === 'Line' && endInstance.type === 'Line') {
-        // Both is line
+      const endPidInstance = PidInstance.fromDiagramInstance(
+        pidDocument,
+        endInstance
+      );
 
-        const startPathSegments = pidDocument.getPathSegmentsToPaths(
-          startInstance.pathIds
-        );
-        const endPathSegments = pidDocument.getPathSegmentsToPaths(
-          endInstance.pathIds
-        );
-
-        const closestPoints = getClosestPointsOnSegments(
-          startPathSegments,
-          endPathSegments
-        );
-
-        if (closestPoints === undefined) {
-          return undefined;
-        }
-
-        startPoint = closestPoints.point1;
-        endPoint = closestPoints.point2;
-      } else {
-        // One symbol and one line
-        const [symbol, line] =
-          startInstance.type !== 'Line'
-            ? [startInstance, endInstance]
-            : [endInstance, startInstance];
-
-        const symbolPoint = pidDocument.getMidPointToPaths(symbol.pathIds);
-        const lineSegments = pidDocument.getPathSegmentsToPaths(line.pathIds);
-
-        const closestPoint = getClosestPointOnSegments(
-          symbolPoint,
-          lineSegments
-        );
-        if (closestPoint === undefined) {
-          return undefined;
-        }
-
-        if (closestPoint.percentAlongPath < 0.05) {
-          endPoint = getPointTowardOtherPoint(
-            closestPoint.point,
-            lineSegments[closestPoint.index].stop,
-            offset
-          );
-        } else if (closestPoint.percentAlongPath > 0.95) {
-          endPoint = getPointTowardOtherPoint(
-            closestPoint.point,
-            lineSegments[closestPoint.index].start,
-            offset
-          );
-        } else {
-          endPoint = closestPoint.point;
-        }
-        startPoint = getPointTowardOtherPoint(symbolPoint, endPoint, offset);
-      }
+      const connectionsLineSegment =
+        startPidInstance.getConnectionSegment(endPidInstance)!;
 
       const svgPath = getSvgPath({
-        startPoint,
-        endPoint,
+        startPoint: connectionsLineSegment.start,
+        endPoint: connectionsLineSegment.stop,
         id: `convis-${connection.start}-${connection.end}`,
         color: COLORS.connection.color,
         strokeWidth: COLORS.connection.strokeWidth,

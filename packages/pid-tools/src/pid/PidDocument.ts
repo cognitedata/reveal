@@ -198,7 +198,7 @@ export class PidDocument {
   xmlns="http://www.w3.org/2000/svg"
   viewBox="${this.viewBox.x.toFixed(2)} ${this.viewBox.y.toFixed(
       2
-    )} ${this.viewBox.height.toFixed(2)} ${this.viewBox.width.toFixed(2)}">
+    )} ${this.viewBox.width.toFixed(2)} ${this.viewBox.height.toFixed(2)}">
 `);
 
     this.pidPaths.forEach((pidPath) => {
@@ -237,8 +237,11 @@ export class PidDocument {
 
   static fromNormalizedSvgString(svgString: string) {
     const doc = parse(svgString);
+    const svgElementNode = doc.children[0] as ElementNode;
+
     const pidPaths: PidPath[] = [];
-    (doc.children[0] as ElementNode).children.forEach((element) => {
+
+    svgElementNode.children.forEach((element) => {
       const elementNode = element as ElementNode;
       if (elementNode.tagName === 'path') {
         const { properties } = elementNode;
@@ -265,7 +268,16 @@ export class PidDocument {
       }
     });
 
-    const viewBox: Rect = { x: 0, y: 0, width: 10, height: 10 }; // Fix: Retrieve from svgString
+    // Extract viewBox
+    const viewBoxString = svgElementNode.properties!.viewBox as string;
+    const viewBoxNumbers = viewBoxString.split(' ').map((s) => parseFloat(s));
+    const viewBox = {
+      x: viewBoxNumbers[0],
+      y: viewBoxNumbers[1],
+      width: viewBoxNumbers[2],
+      height: viewBoxNumbers[3],
+    };
+
     return new PidDocument(pidPaths, [], viewBox);
   }
 

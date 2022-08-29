@@ -1,8 +1,4 @@
-import {
-  DiagramConnection,
-  getDiagramInstanceId,
-  DiagramInstanceWithPaths,
-} from '../index';
+import { DiagramConnection, DiagramInstanceWithPaths } from '../index';
 
 export const connectionHasInstanceId = (
   instanceId: string,
@@ -15,14 +11,10 @@ export const getConnectionsWithoutInstances = (
   instances: DiagramInstanceWithPaths[],
   connections: DiagramConnection[]
 ) => {
-  const instanceIds = instances.map((instance) =>
-    getDiagramInstanceId(instance)
-  );
+  const instanceIds = new Set(instances.map((instance) => instance.id));
 
   return connections.filter(
     (connection) =>
-      instanceIds.some((lineInstanceId) =>
-        connectionHasInstanceId(lineInstanceId, connection)
-      ) === false
+      !instanceIds.has(connection.start) && !instanceIds.has(connection.end)
   );
 };

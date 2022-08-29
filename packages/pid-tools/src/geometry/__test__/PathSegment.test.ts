@@ -1,4 +1,4 @@
-import { EdgePoint } from '..';
+import { EndPoint } from '..';
 import { LineSegment } from '../PathSegment';
 import { Point } from '../Point';
 
@@ -162,21 +162,21 @@ describe('LineSegment', () => {
       lineSegment1.distanceWithLineJump(lineSegment2);
     expect(distanceWithLineJump12.isLineJump).toBeTruthy();
     expect(distanceWithLineJump12.distance).toBeCloseTo(5);
-    expect(distanceWithLineJump12.thisClosestPoint).toBe(EdgePoint.Stop);
-    expect(distanceWithLineJump12.otherClosestPoint).toBe(EdgePoint.Start);
+    expect(distanceWithLineJump12.thisClosestPoint).toBe(EndPoint.Stop);
+    expect(distanceWithLineJump12.otherClosestPoint).toBe(EndPoint.Start);
 
     const distanceWithLineJump13 =
       lineSegment1.distanceWithLineJump(lineSegment3);
     expect(distanceWithLineJump13.isLineJump).toBeFalsy();
     expect(distanceWithLineJump13.distance).toBeCloseTo(0);
-    expect(distanceWithLineJump13.thisClosestPoint).toBe(EdgePoint.Other);
-    expect(distanceWithLineJump13.otherClosestPoint).toBe(EdgePoint.Start);
+    expect(distanceWithLineJump13.thisClosestPoint).toBe(EndPoint.Other);
+    expect(distanceWithLineJump13.otherClosestPoint).toBe(EndPoint.Start);
 
     const distanceWithLineJump21 =
       lineSegment2.distanceWithLineJump(lineSegment1);
     expect(distanceWithLineJump21.isLineJump).toBeTruthy();
     expect(distanceWithLineJump21.distance).toBeCloseTo(5);
-    expect(distanceWithLineJump21.thisClosestPoint).toBe(EdgePoint.Start);
-    expect(distanceWithLineJump21.otherClosestPoint).toBe(EdgePoint.Stop);
+    expect(distanceWithLineJump21.thisClosestPoint).toBe(EndPoint.Start);
+    expect(distanceWithLineJump21.otherClosestPoint).toBe(EndPoint.Stop);
   });
 });
