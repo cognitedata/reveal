@@ -1,4 +1,4 @@
-import { THREE } from '@cognite/reveal';
+import { fitCameraToBoundingBox, THREE } from '@cognite/reveal';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
 import { CameraManager, CameraManagerHelper, CameraState, CameraChangeDelegate } from '@cognite/reveal';
@@ -60,7 +60,7 @@ export class CustomCameraManager implements CameraManager {
     }
 
     fitCameraToBoundingBox(boundingBox: THREE.Box3, duration?: number, radiusFactor?: number): void {
-        const { position, target } = CameraManagerHelper.calculateCameraStateToFitBoundingBox(this._camera, boundingBox, radiusFactor);
+        const { position, target } = fitCameraToBoundingBox(this._camera, boundingBox, radiusFactor);
 
         this.setCameraState({ position, target });
     }
