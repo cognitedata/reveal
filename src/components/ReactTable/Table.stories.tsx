@@ -155,3 +155,16 @@ const Container = styled.div`
   overflow: auto;
   width: 100%;
 `;
+
+export const ExampleWithNavigation: ComponentStory<typeof Table> = args => {
+  const data = useMemo(() => exampleDatas, []);
+  const columns = useMemo(() => exampleColumns, []);
+  return (
+    <Table<DataType>
+      {...args}
+      data={data}
+      columns={columns}
+      isKeyboardNavigationEnabled
+    />
+  );
+};

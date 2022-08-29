@@ -7,6 +7,7 @@ import {
   useTable,
 } from 'react-table';
 import styled from 'styled-components';
+import { useCellSelection } from './hooks';
 import { SortIcon } from './SortIcon';
 
 export interface TableProps<T extends Record<string, any>> {
@@ -15,6 +16,7 @@ export interface TableProps<T extends Record<string, any>> {
   isSortingEnabled?: boolean;
   isStickyHeader?: boolean;
   onSort?: (props: OnSortProps<T>) => void;
+  isKeyboardNavigationEnabled?: boolean;
 }
 
 export interface OnSortProps<T> {
@@ -28,10 +30,12 @@ export function Table<T extends TableData>({
   onSort,
   isSortingEnabled = false,
   isStickyHeader = false,
+  isKeyboardNavigationEnabled = true,
 }: TableProps<T>) {
-  const plugins = [isSortingEnabled && useSortBy].filter(
-    Boolean
-  ) as PluginHook<T>[];
+  const plugins = [
+    isSortingEnabled && useSortBy,
+    isKeyboardNavigationEnabled && useCellSelection,
+  ].filter(Boolean) as PluginHook<T>[];
   const {
     getTableProps,
     getTableBodyProps,
@@ -103,6 +107,14 @@ const Th = styled.th`
 
 const Td = styled.td`
   padding: 8px 12px;
+  &[data-selected='true'] {
+    background: var(--cogs-surface--interactive--toggled-hover);
+  }
+
+  &:focus {
+    outline: 2px solid var(--cogs-border--interactive--toggled-default);
+    outline-offset: -1px;
+  }
 `;
 
 const Thead = styled.thead<{ isStickyHeader?: boolean }>`
