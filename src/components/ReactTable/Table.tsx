@@ -1,12 +1,15 @@
 import React, { useEffect } from 'react';
 import {
   Column,
+  IdType,
   PluginHook,
   SortingRule,
   useSortBy,
   useTable,
 } from 'react-table';
 import styled from 'styled-components';
+import { Flex } from '@cognite/cogs.js';
+import { ColumnToggle } from './ColumnToggle';
 import { useCellSelection } from './hooks';
 import { SortIcon } from './SortIcon';
 
@@ -15,19 +18,23 @@ export interface TableProps<T extends Record<string, any>> {
   columns: Column<T>[];
   isSortingEnabled?: boolean;
   isStickyHeader?: boolean;
+  isColumnSelectEnabled?: boolean;
   onSort?: (props: OnSortProps<T>) => void;
+  hiddenColumns?: IdType<T>[];
   isKeyboardNavigationEnabled?: boolean;
 }
 
 export interface OnSortProps<T> {
   sortBy?: SortingRule<T>[];
 }
-
 export type TableData = Record<string, any>;
+
 export function Table<T extends TableData>({
   data,
   columns,
   onSort,
+  hiddenColumns = [],
+  isColumnSelectEnabled = false,
   isSortingEnabled = false,
   isStickyHeader = false,
   isKeyboardNavigationEnabled = true,
@@ -41,9 +48,22 @@ export function Table<T extends TableData>({
     getTableBodyProps,
     headerGroups,
     rows,
+    allColumns,
+
+    getToggleHideAllColumnsProps,
     state: { sortBy },
     prepareRow,
-  } = useTable<T>({ data, columns, manualSortBy: Boolean(onSort) }, ...plugins);
+  } = useTable<T>(
+    {
+      data,
+      columns,
+      manualSortBy: Boolean(onSort),
+      initialState: {
+        hiddenColumns,
+      },
+    },
+    ...plugins
+  );
 
   useEffect(() => {
     if (onSort && sortBy && sortBy.length > 0) {
@@ -53,42 +73,54 @@ export function Table<T extends TableData>({
   }, [JSON.stringify(sortBy)]);
 
   return (
-    <StyledTable {...getTableProps()}>
-      <Thead isStickyHeader={isStickyHeader}>
-        {headerGroups.map(headerGroup => (
-          <Tr {...headerGroup.getHeaderGroupProps()}>
-            {headerGroup.headers.map(column => (
-              <Th
-                {...column.getHeaderProps(
-                  isSortingEnabled ? column.getSortByToggleProps() : undefined
-                )}
-              >
-                <ThWrapper>
-                  {column.render('Header')}
-                  <SortIcon
-                    canSort={column.canSort}
-                    isSorted={column.isSorted}
-                    isSortedDesc={column.isSortedDesc}
-                  />
-                </ThWrapper>
-              </Th>
-            ))}
-          </Tr>
-        ))}
-      </Thead>
-      <tbody {...getTableBodyProps()}>
-        {rows.map(row => {
-          prepareRow(row);
-          return (
-            <Tr {...row.getRowProps()}>
-              {row.cells.map(cell => {
-                return <Td {...cell.getCellProps()}>{cell.render('Cell')}</Td>;
-              })}
+    <>
+      {isColumnSelectEnabled && (
+        <Flex justifyContent="flex-end">
+          <ColumnToggle<T>
+            allColumns={allColumns}
+            getToggleHideAllColumnsProps={getToggleHideAllColumnsProps}
+          />
+        </Flex>
+      )}
+      <StyledTable {...getTableProps()}>
+        <Thead isStickyHeader={isStickyHeader}>
+          {headerGroups.map(headerGroup => (
+            <Tr {...headerGroup.getHeaderGroupProps()}>
+              {headerGroup.headers.map(column => (
+                <Th
+                  {...column.getHeaderProps(
+                    isSortingEnabled ? column.getSortByToggleProps() : undefined
+                  )}
+                >
+                  <ThWrapper>
+                    {column.render('Header')}
+                    <SortIcon
+                      canSort={column.canSort}
+                      isSorted={column.isSorted}
+                      isSortedDesc={column.isSortedDesc}
+                    />
+                  </ThWrapper>
+                </Th>
+              ))}
             </Tr>
-          );
-        })}
-      </tbody>
-    </StyledTable>
+          ))}
+        </Thead>
+        <tbody {...getTableBodyProps()}>
+          {rows.map(row => {
+            prepareRow(row);
+            return (
+              <Tr {...row.getRowProps()}>
+                {row.cells.map(cell => {
+                  return (
+                    <Td {...cell.getCellProps()}>{cell.render('Cell')}</Td>
+                  );
+                })}
+              </Tr>
+            );
+          })}
+        </tbody>
+      </StyledTable>
+    </>
   );
 }
 

@@ -156,6 +156,42 @@ const Container = styled.div`
   width: 100%;
 `;
 
+export const ExampleWithColumnToggle: ComponentStory<typeof Table> = args => {
+  const data = useMemo(() => exampleDatas, []);
+  const columns = useMemo(() => exampleColumns, []);
+  return (
+    <Table<DataType>
+      {...args}
+      data={data}
+      columns={columns}
+      hiddenColumns={['col3']}
+    />
+  );
+};
+
+ExampleWithColumnToggle.args = {
+  isColumnSelectEnabled: true,
+};
+
+ExampleWithColumnToggle.play = async ({ canvasElement }) => {
+  const canvas = within(canvasElement);
+  const table = canvasElement.querySelector('table');
+  expect(table).toBeInTheDocument();
+
+  const tbody = canvasElement.querySelector('tbody');
+  expect(tbody).toBeInTheDocument();
+  const TbodyElement = within(tbody as HTMLElement);
+  let rows: HTMLTableRowElement[] = TbodyElement.getAllByRole('row');
+  expect(rows[0].cells.length).toBe(2);
+  expect(rows.length).toBe(3);
+  const columnSelectButton = canvas.getByLabelText('Column Selection');
+  userEvent.click(columnSelectButton);
+  const column1 = canvas.getByLabelText('Column 1');
+  userEvent.click(column1);
+  let firstCell = rows[0].querySelector('td')?.innerHTML;
+  expect(firstCell).not.toBe('Hello');
+};
+
 export const ExampleWithNavigation: ComponentStory<typeof Table> = args => {
   const data = useMemo(() => exampleDatas, []);
   const columns = useMemo(() => exampleColumns, []);
