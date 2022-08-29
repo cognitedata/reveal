@@ -13,7 +13,6 @@ export const mapCasingsTo3D = (
   casingSchematics: CasingSchematicInternal[]
 ) => {
   const keyedWellbores = keyBy(wellbores, 'matchingId');
-  console.log('casingSchematics', casingSchematics);
   return casingSchematics.flatMap((casingSchematic) =>
     casingSchematic.casingAssemblies.map((casingAssembly) =>
       mapCasingTo3D(

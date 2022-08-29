@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import * as React from 'react';
 
 import isEmpty from 'lodash/isEmpty';
 import { ThemeProvider } from 'styled-components/macro';
@@ -29,7 +29,7 @@ const ThreeDee: React.FC<ThreeDeeProps> = ({
   wellLogs,
   fileId,
 }) => {
-  const [root, setRoot] = useState<BaseRootNode>();
+  const [root, setRoot] = React.useState<BaseRootNode>();
   const { data } = useUserPreferencesMeasurement();
 
   useDeepEffect(() => {
@@ -58,25 +58,21 @@ const ThreeDee: React.FC<ThreeDeeProps> = ({
     }
 
     modules.add(subsurfaceModule);
-
     modules.install();
-
-    setTimeout(() => {
-      /**
-       * Delaying the setRoot fixes [PP-3093]
-       * Specifically the part where changing the unit causes the 3D not to load at all
-       */
-      setRoot(modules.createRoot());
-    }, 1000);
+    setRoot(modules.createRoot());
   }, [fileId, wells, wellLogs]);
+
+  const rootElement = React.useMemo(() => {
+    return (
+      root && (
+        <NodeVisualizerProvider root={root} toolbar={Toolbar} unit={data} />
+      )
+    );
+  }, [root]);
 
   return (
     <React.StrictMode>
-      <ThemeProvider theme={ThreeDeeTheme}>
-        {root && (
-          <NodeVisualizerProvider root={root} toolbar={Toolbar} unit={data} />
-        )}
-      </ThemeProvider>
+      <ThemeProvider theme={ThreeDeeTheme}>{rootElement}</ThemeProvider>
     </React.StrictMode>
   );
 };
