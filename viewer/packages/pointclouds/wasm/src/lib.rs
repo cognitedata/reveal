@@ -13,7 +13,7 @@ mod test_setup {
 }
 
 #[cfg(test)]
-mod dev_utils;
+mod test_utils;
 
 use serde::Deserialize;
 

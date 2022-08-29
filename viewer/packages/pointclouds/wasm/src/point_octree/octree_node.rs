@@ -204,7 +204,7 @@ mod tests {
 
     use nalgebra_glm::comp_max;
 
-    use crate::dev_utils::normalize_coordinate;
+    use crate::test_utils::normalize_coordinate;
 
     use super::{
         find_splits, get_child_bounding_boxes, get_octree_child_index, get_split_ends,

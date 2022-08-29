@@ -43,7 +43,7 @@ mod tests {
 
     use wasm_bindgen_test::wasm_bindgen_test;
 
-    use crate::dev_utils::normalize_coordinate;
+    use crate::test_utils::normalize_coordinate;
 
     fn create_random_points_in_unit_box(num_points: u32) -> Vec<Vec3WithIndex> {
         let mut rng = ChaCha8Rng::seed_from_u64(0xbaadf00d);
