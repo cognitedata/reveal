@@ -1,4 +1,3 @@
-import { Units } from '../../../Core/Primitives/Units';
 import { Polyline } from '../../../Core/Geometry/Polyline';
 import { Vector3 } from '../../../Core/Geometry/Vector3';
 import MeasureDistanceToolIcon from '../../../images/Commands/MeasureDistanceTool.png';
@@ -112,17 +111,13 @@ export class MeasureDistanceTool extends BaseTool {
       worldEndPosition.add(transformer.translation);
       const decimalPosition = 2;
 
-      const twoDeeDistance = Units.convertFeetToUnit(
-        target.unit,
-        this._worldCoordinates.getLength(2),
-        decimalPosition
-      );
+      const twoDeeDistance = this._worldCoordinates
+        .getLength(2)
+        .toFixed(decimalPosition);
 
-      const threeDeeDistance = Units.convertFeetToUnit(
-        target.unit,
-        this._worldCoordinates.getLength(3),
-        decimalPosition
-      );
+      const threeDeeDistance = this._worldCoordinates
+        .getLength(3)
+        .toFixed(decimalPosition);
 
       const sumDelta = this._worldCoordinates.getSumDelta();
       viewInfo.addValue(
