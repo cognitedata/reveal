@@ -16,5 +16,7 @@ export async function assignPoints(
   input_point_offset: Array<number>
 ): Promise<Uint16Array> {
   const wasm_init = getWasmInitPromise();
-  return wasm_init.then(() => assign_points(input_shapes, input_points, input_bounding_box, new Float64Array(input_point_offset)));
+  return wasm_init.then(() =>
+    assign_points(input_shapes, input_points, input_bounding_box, new Float64Array(input_point_offset))
+  );
 }
