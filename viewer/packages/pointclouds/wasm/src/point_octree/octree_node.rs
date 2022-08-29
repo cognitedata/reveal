@@ -97,7 +97,7 @@ fn get_split_ends<'a>(points: &'a [Vec3WithIndex], splits: &[usize; 8]) -> [usiz
 fn find_splits(points: &mut [Vec3WithIndex], middle: &Vec3) -> [usize; 8] {
     let mut sector_counts = [0; 8];
     for point in points.iter() {
-        let index = get_octree_child_index(point, &middle);
+        let index = get_octree_child_index(&point.vec, &middle);
         sector_counts[index] += 1;
     }
 
@@ -110,10 +110,10 @@ fn find_splits(points: &mut [Vec3WithIndex], middle: &Vec3) -> [usize; 8] {
     accum_counts
 }
 
-fn get_octree_child_index(point: &Vec3WithIndex, middle: &Vec3) -> usize {
-    (if point.vec[0] < middle.x { 0 } else { 1 })
-        + (if point.vec[1] < middle.y { 0 } else { 2 })
-        + (if point.vec[2] < middle.z { 0 } else { 4 })
+fn get_octree_child_index(point: &Vec3, middle: &Vec3) -> usize {
+    (if point[0] < middle.x { 0 } else { 1 })
+        + (if point[1] < middle.y { 0 } else { 2 })
+        + (if point[2] < middle.z { 0 } else { 4 })
 }
 
 /// Takes the points slice and a starting index for each of the eight octree node children slices, and groups
@@ -124,9 +124,7 @@ fn get_octree_child_index(point: &Vec3WithIndex, middle: &Vec3) -> usize {
 /// and continues from the next slice that is not fully "sorted"
 fn sort_points_into_sectors(points: &mut [Vec3WithIndex], splits: [usize; 8], middle: &Vec3) -> () {
     let mut offsets = splits.clone();
-    let mut max_inds = splits.clone();
-    max_inds.rotate_left(1);
-    max_inds[7] = points.len();
+    let max_inds = get_split_ends(points, &splits);
 
     for current_partition in 0..8 {
         if offsets[current_partition] >= max_inds[current_partition] {
@@ -142,7 +140,7 @@ fn sort_points_into_sectors(points: &mut [Vec3WithIndex], splits: [usize; 8], mi
         let mut current_point = points[current_point_index];
 
         loop {
-            let octree_index = get_octree_child_index(&current_point, middle);
+            let octree_index = get_octree_child_index(&current_point.vec, middle);
 
             let next_point_index = offsets[octree_index];
             let next_point = points[next_point_index];
@@ -204,10 +202,52 @@ mod tests {
     use rand::prelude::*;
     use rand_chacha::ChaCha8Rng;
 
+    use nalgebra_glm::comp_max;
+
     use crate::dev_utils::normalize_coordinate;
 
-    use super::{find_splits, get_octree_child_index, get_split_ends, sort_points_into_sectors};
-    use super::{vec3, Vec3WithIndex};
+    use super::{
+        find_splits, get_child_bounding_boxes, get_octree_child_index, get_split_ends,
+        sort_points_into_sectors,
+    };
+    use super::{vec3, BoundingBox, Vec3WithIndex};
+
+    const EPSILON: f64 = 1e-4;
+
+    #[wasm_bindgen_test]
+    fn test_point_in_first_octant_gets_index_0() {
+        let point = vec3(-0.1, -0.4, -0.2);
+        let middle = vec3(0.0, 0.0, 0.0);
+        assert_eq!(get_octree_child_index(&point, &middle), 0);
+    }
+
+    #[wasm_bindgen_test]
+    fn test_point_in_last_octant_gets_index_7() {
+        let point = vec3(0.1, 0.4, 0.2);
+        let middle = vec3(0.0, 0.0, 0.0);
+        assert_eq!(get_octree_child_index(&point, &middle), 7);
+    }
+
+    #[wasm_bindgen_test]
+    fn test_child_box_centers_average_to_parent_center() {
+        let bounding_box = BoundingBox {
+            min: vec3(-2.0, -1.0, 0.0),
+            max: vec3(0.0, 1.0, 2.0),
+        };
+
+        let middle = (bounding_box.min + bounding_box.max) / 2.0;
+
+        let child_boxes = get_child_bounding_boxes(&bounding_box);
+
+        let mut accumulative_middle = vec3(0.0, 0.0, 0.0);
+        for child in child_boxes.iter() {
+            accumulative_middle = accumulative_middle + (child.min + child.max) / 2.0;
+        }
+
+        let average_middle = accumulative_middle / (child_boxes.len() as f64);
+
+        assert!(comp_max(&(average_middle - middle).abs()) < EPSILON);
+    }
 
     #[wasm_bindgen_test]
     fn test_sector_inplace_sorting() {
@@ -220,7 +260,6 @@ mod tests {
         let mut rng = ChaCha8Rng::seed_from_u64(0xbaadf00d);
 
         for i in 0..NUM_POINTS {
-
             let p = vec3(
                 normalize_coordinate(rng.next_u32()),
                 normalize_coordinate(rng.next_u32()),
@@ -244,7 +283,7 @@ mod tests {
             let max_ind = split_ends[sector_index];
             for point_index in splits[sector_index]..max_ind {
                 assert_eq!(
-                    get_octree_child_index(&points[point_index], &middle),
+                    get_octree_child_index(&points[point_index].vec, &middle),
                     sector_index
                 );
                 num_points_checked += 1;

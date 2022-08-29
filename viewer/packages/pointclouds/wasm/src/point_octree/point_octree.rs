@@ -43,14 +43,13 @@ mod tests {
 
     use crate::dev_utils::normalize_coordinate;
 
-    #[wasm_bindgen_test]
-    fn all_points_returned_for_all_enclosing_box_shape() {
+    fn create_random_points_in_unit_box(num_points: u32) -> Vec<Vec3WithIndex> {
         let mut rng = ChaCha8Rng::seed_from_u64(0xbaadf00d);
 
         const NUM_POINTS: u32 = 1_000;
         const OBJECT_ID: u16 = 42;
 
-        let mut points = Vec::<Vec3WithIndex>::with_capacity(NUM_POINTS as usize);
+        let mut points = Vec::<Vec3WithIndex>::with_capacity(num_points as usize);
 
         for i in 0..NUM_POINTS {
             points.push(Vec3WithIndex {
@@ -62,6 +61,14 @@ mod tests {
                 index: i,
             });
         }
+    }
+
+    #[wasm_bindgen_test]
+    fn all_points_returned_for_all_enclosing_box_shape() {
+        const NUM_POINTS: u32 = 1_000;
+        const OBJECT_ID: u16 = 42;
+
+        let mut points = create_random_points_in_unit_box(NUM_POINTS);
 
         let shape: Box<dyn Shape> =
             Box::<OrientedBox>::new(OrientedBox::new(Mat4::identity(), OBJECT_ID));
@@ -74,6 +81,25 @@ mod tests {
         for i in 0..NUM_POINTS {
             let set_object_id = array.get_index(i);
             assert_eq!(set_object_id, OBJECT_ID);
+        }
+    }
+
+    #[wasm_bindgen_test]
+    fn no_points_returned_for_non_overlapping_shape() {
+        let mut points = create_random_points_in_unit_box(NUM_POINTS);
+
+        let box_matrix = Mat4::translate(Mat4::identity(), &vec3(1.0, 0.0, 0.0));
+        let bounding_box = BoundingBox::get_transformed_unit_cube(&box_matrix);
+        let shape: Box<dyn Shape> =
+            Box::<OrientedBox>::new(OrientedBox::new(box_matrix, OBJECT_ID));
+        let array = Uint16Array::new_with_length(NUM_POINTS);
+
+        let octree = PointOctree::new(bounding_box.clone(), &mut points);
+        octree.assign_object_ids(&shape.create_bounding_box(), &shape, &array);
+
+        for i in 0..NUM_POINTS {
+            let set_object_id = array.get_index(i);
+            assert_eq!(set_object_id, 0);
         }
     }
 }
