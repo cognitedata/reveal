@@ -33,7 +33,7 @@ scriptName(CONSTANTS.APP_ID)
   `
   )
   .middleware([init, authenticate])
-  .version(true)
+  .version()
   .demandCommand(1)
   .command(signin)
   .command(dataModelsCmds)
