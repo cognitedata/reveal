@@ -15,7 +15,7 @@ import { IPointCloudTreeGeometry } from './IPointCloudTreeGeometry';
 import proj4 from 'proj4';
 import { ModelDataProvider } from '@reveal/modeldata-api';
 import { toVector3, toBox3 } from './translationUtils';
-import { PointCloudObjectProvider } from '../../styling/PointCloudObjectProvider';
+import { RawStylableObject } from '../../styling/StylableObject';
 
 function findDim(schema: EptSchemaEntry[], name: string): EptSchemaEntry {
   const dim = schema.find(dim => dim.name == name);
@@ -89,7 +89,7 @@ export class PointCloudEptGeometry implements IPointCloudTreeGeometry {
     return this._eptOffset;
   }
 
-  constructor(url: string, info: EptJson, dataLoader: ModelDataProvider, stylableObjects: PointCloudObjectProvider) {
+  constructor(url: string, info: EptJson, dataLoader: ModelDataProvider, stylableObjects: RawStylableObject[]) {
     if (info.dataType !== 'binary') {
       throw new Error('Could not read data type: ' + info.dataType);
     }

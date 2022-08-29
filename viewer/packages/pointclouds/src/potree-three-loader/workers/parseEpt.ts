@@ -1,5 +1,8 @@
 import { StylableObject } from '../../styling/StylableObject';
+import { AABB, Vec3 } from '../../styling/shapes/linalg';
 import { assignPointsWithWasm } from './assignPointsWithWasm';
+
+import * as THREE from 'three';
 
 export type ParsedEptData = {
   numPoints: number;
@@ -35,11 +38,12 @@ export type EptInputData = {
   offset: RawVector3;
   mins: [number, number, number];
 };
+
 export async function parseEpt(
   data: EptInputData,
   objects: StylableObject[],
-  pointOffset: THREE.Vector3,
-  sectorBoundingBox: THREE.Box3
+  pointOffset: Vec3,
+  sectorBoundingBox: AABB
 ): Promise<ParsedEptData> {
   const buffer = data.buffer;
   const view = new DataView(buffer);
@@ -244,7 +248,17 @@ export async function parseEpt(
     indices[i] = i;
   }
 
-  const objectIdBuffer = (await assignPointsWithWasm(xyz, objects, pointOffset, sectorBoundingBox)).buffer;
+  const objectIdBuffer = (
+    await assignPointsWithWasm(
+      xyz,
+      objects,
+      new THREE.Vector3().fromArray(pointOffset),
+      new THREE.Box3(
+        new THREE.Vector3().fromArray(sectorBoundingBox.min),
+        new THREE.Vector3().fromArray(sectorBoundingBox.max)
+      )
+    )
+  ).buffer;
 
   const message: ParsedEptData = {
     numPoints: numPoints,

@@ -11,8 +11,6 @@ import { PointCloudMetadata } from '../PointCloudMetadata';
 import { Potree, PointCloudOctree, PointCloudMaterial } from '../potree-three-loader';
 import { PotreeNodeWrapper } from '../PotreeNodeWrapper';
 
-import * as THREE from 'three';
-
 const dummyAnnotationsResponse = {
   items: [
     {
@@ -77,15 +75,18 @@ describe(CdfPointCloudFactory.name, () => {
   });
 
   test('contains right geometries for annotations provided by SDK', async () => {
-    const expectedContainedPoints: THREE.Vector3[] = [
-      new THREE.Vector3(-0.03, 0.1, -500),
-      new THREE.Vector3(0.4, -0.4, 0)
+    const expectedContainedPoints: [number, number, number][] = [
+      [-0.03, 0.1, -500],
+      [0.4, -0.4, 0]
     ];
-    const expectedUncontainedPoints: THREE.Vector3[] = [new THREE.Vector3(1, 1, 1), new THREE.Vector3(300, 300, 300)];
+    const expectedUncontainedPoints: [number, number, number][] = [
+      [1, 1, 1],
+      [300, 300, 300]
+    ];
 
     const shapes = model.stylableObjects.map(obj => obj.stylableObject.shape);
 
-    function containedInAnyShape(p: THREE.Vector3): boolean {
+    function containedInAnyShape(p: [number, number, number]): boolean {
       let contained = false;
       for (const shape of shapes) {
         contained ||= shape.containsPoint(p);

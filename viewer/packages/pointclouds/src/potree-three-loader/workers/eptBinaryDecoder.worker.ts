@@ -5,9 +5,7 @@
 import { RawStylableObject, rawToStylableObject } from '../../styling/StylableObject';
 
 import { parseEpt, EptInputData, ParsedEptData } from './parseEpt';
-import { Vec3 } from '../../styling/shapes/linalg';
-import * as THREE from 'three';
-
+import { AABB, Vec3 } from '../../styling/shapes/linalg';
 import { setupTransferableMethodsOnWorker } from '@reveal/utilities';
 
 setupTransferableMethodsOnWorker({
@@ -33,15 +31,10 @@ export async function parse(
   data: EptInputData,
   objects: RawStylableObject[],
   pointOffset: Vec3,
-  sectorBoundingBox: [Vec3, Vec3]
+  boundingBox: AABB
 ): Promise<ParsedEptData> {
   const objectList = objects.map(rawToStylableObject);
-  const point = new THREE.Vector3().fromArray(pointOffset);
-  const boundingBox = new THREE.Box3(
-    new THREE.Vector3().fromArray(sectorBoundingBox[0]),
-    new THREE.Vector3().fromArray(sectorBoundingBox[1])
-  );
-  return parseEpt(data, objectList, point, boundingBox);
+  return parseEpt(data, objectList, pointOffset, boundingBox);
 }
 
 function assertDefined(buffer: ArrayBuffer | undefined): buffer is ArrayBuffer {

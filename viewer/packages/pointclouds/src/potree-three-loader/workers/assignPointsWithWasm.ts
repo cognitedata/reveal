@@ -13,8 +13,8 @@ function getWasmShape(obj: StylableObject): any {
     return {
       object_id: obj.objectId,
       cylinder: {
-        center_a: cylinder.centerA.toArray(),
-        center_b: cylinder.centerB.toArray(),
+        center_a: cylinder.centerA,
+        center_b: cylinder.centerB,
         radius: cylinder.radius
       }
     };
@@ -23,7 +23,7 @@ function getWasmShape(obj: StylableObject): any {
     return {
       object_id: obj.objectId,
       oriented_box: {
-        inv_instance_matrix: box.invMatrix.toArray()
+        inv_instance_matrix: box.invMatrix
       }
     };
   } else {

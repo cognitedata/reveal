@@ -5,9 +5,7 @@
 import { ShapeType } from './IRawShape';
 import { IShape } from './IShape';
 
-import { Vec3 } from './linalg';
-
-import * as THREE from 'three';
+import { Vec3, v3Scale, v3Middle, v3Length, v3Sub, v3Normalized, v3Dot } from './linalg';
 
 export type RawCylinder = {
   type: ShapeType.Cylinder;
@@ -16,36 +14,22 @@ export type RawCylinder = {
   radius: number;
 };
 
-const cylinderContainsPointVars = {
-  tempPoint0: new THREE.Vector3(),
-  tempPoint1: new THREE.Vector3(),
-  tempAxis: new THREE.Vector3()
-};
-
 export class Cylinder implements IShape {
-  private readonly _centerA: THREE.Vector3;
-  private readonly _centerB: THREE.Vector3;
+  private readonly _centerA: Vec3;
+  private readonly _centerB: Vec3;
   private readonly _radius: number;
 
-  private readonly _halfHeight: number;
-  private readonly _middle: THREE.Vector3;
-  private readonly _axis: THREE.Vector3;
-
-  constructor(centerA: THREE.Vector3, centerB: THREE.Vector3, radius: number) {
+  constructor(centerA: Vec3, centerB: Vec3, radius: number) {
     this._centerA = centerA;
     this._centerB = centerB;
     this._radius = radius;
-
-    this._halfHeight = this._centerA.clone().sub(this._centerB).length() * 0.5;
-    this._middle = this._centerA.clone().add(this._centerB).multiplyScalar(0.5);
-    this._axis = this._centerA.clone().sub(this._centerB).normalize();
   }
 
-  get centerA(): THREE.Vector3 {
+  get centerA(): Vec3 {
     return this._centerA;
   }
 
-  get centerB(): THREE.Vector3 {
+  get centerB(): Vec3 {
     return this._centerB;
   }
 
@@ -53,47 +37,36 @@ export class Cylinder implements IShape {
     return this._radius;
   }
 
-  containsPoint(point: THREE.Vector3): boolean {
-    const { tempPoint0, tempPoint1, tempAxis } = cylinderContainsPointVars;
+  private getHalfHeight(): number {
+    return v3Length(v3Sub(this._centerA, this._centerB));
+  }
 
-    tempPoint0.copy(point);
-    tempPoint1.copy(point);
-    tempAxis.copy(this._axis);
+  private getMiddle(): Vec3 {
+    return v3Middle(this._centerA, this._centerB);
+  }
 
-    const distAlongAxis = tempPoint0.sub(this._middle).dot(this._axis);
-    const distVectorAlongAxis = tempAxis.multiplyScalar(distAlongAxis);
-    const axisRelativeMiddle = tempPoint1.sub(distVectorAlongAxis);
+  private getAxis(): Vec3 {
+    return v3Normalized(v3Sub(this._centerA, this._centerB));
+  }
 
-    const distToAxis = axisRelativeMiddle.sub(this._middle).length();
+  containsPoint(point: Vec3): boolean {
+    const halfHeight = this.getHalfHeight();
+    const middle = this.getMiddle();
+    const dir = this.getAxis();
+    const distAlongAxis = v3Dot(v3Sub(point, middle), dir);
+    const axisRelativeMiddle = v3Sub(point, v3Scale(dir, distAlongAxis));
 
-    return Math.abs(distAlongAxis) < this._halfHeight && distToAxis < this._radius;
+    const distToAxis = v3Length(v3Sub(axisRelativeMiddle, middle));
+
+    return Math.abs(distAlongAxis) < halfHeight && distToAxis < this._radius;
   }
 
   toRawShape(): RawCylinder {
     return {
       type: ShapeType.Cylinder,
-      centerA: this._centerA.toArray(),
-      centerB: this._centerB.toArray(),
+      centerA: this._centerA,
+      centerB: this._centerB,
       radius: this._radius
     };
-  }
-
-  createBoundingBox(): THREE.Box3 {
-    const axisVec = this._middle.clone().sub(this._centerB);
-
-    const axisOption0 = new THREE.Vector3(1, 0, 0);
-    const axisOption1 = new THREE.Vector3(0, 1, 0);
-
-    const chosenAxis =
-      Math.abs(axisOption0.dot(axisVec)) < Math.abs(axisOption1.dot(axisVec)) ? axisOption0 : axisOption1;
-
-    const perpVector0 = chosenAxis.clone().cross(axisVec).normalize().multiplyScalar(this.radius);
-    const perpVector1 = perpVector0.clone().cross(axisVec).normalize().multiplyScalar(this.radius);
-
-    const matrix = new THREE.Matrix4().makeBasis(axisVec, perpVector0, perpVector1);
-    matrix.setPosition(this._middle);
-
-    const baseBox = new THREE.Box3(new THREE.Vector3(-1, -1, -1), new THREE.Vector3(1, 1, 1));
-    return baseBox.applyMatrix4(matrix);
   }
 }

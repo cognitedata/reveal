@@ -5,7 +5,7 @@
 import { IShape } from './IShape';
 import { IRawShape, ShapeType } from './IRawShape';
 
-import * as THREE from 'three';
+import { Vec3 } from './linalg';
 
 export type RawCompositeShape = {
   type: ShapeType.Composite;
@@ -19,7 +19,7 @@ export class CompositeShape implements IShape {
     this._innerShapes = shapes.slice();
   }
 
-  containsPoint(point: THREE.Vector3): boolean {
+  containsPoint(point: Vec3): boolean {
     for (const shape of this._innerShapes) {
       if (shape.containsPoint(point)) {
         return true;
@@ -34,18 +34,5 @@ export class CompositeShape implements IShape {
       type: ShapeType.Composite,
       shapes: this._innerShapes.map(shape => shape.toRawShape())
     };
-  }
-
-  createBoundingBox(): THREE.Box3 {
-    const box = new THREE.Box3();
-    for (const shape of this._innerShapes) {
-      box.union(shape.createBoundingBox());
-    }
-
-    return box;
-  }
-
-  getInnerShapes(): IShape[] {
-    return this._innerShapes;
   }
 }

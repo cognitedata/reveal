@@ -4,31 +4,25 @@
 
 import { ShapeType } from './IRawShape';
 import { IShape } from './IShape';
-import { Mat4 } from './linalg';
-
-import * as THREE from 'three';
+import { m4MultiplyV3WithTranslation, Mat4, Vec3 } from './linalg';
 
 export type RawBox = {
   type: ShapeType.Box;
   invMatrix: Mat4;
 };
 
-const boxContainsPointVars = { tempPoint: new THREE.Vector3() };
-
 export class Box implements IShape {
-  readonly invMatrix: THREE.Matrix4;
+  readonly invMatrix: Mat4;
 
-  constructor(invertedInstanceMatrix: THREE.Matrix4) {
-    this.invMatrix = invertedInstanceMatrix.clone();
+  constructor(invertedInstanceMatrix: Mat4) {
+    this.invMatrix = invertedInstanceMatrix;
   }
 
-  containsPoint(point: THREE.Vector3): boolean {
-    const { tempPoint } = boxContainsPointVars;
-    tempPoint.copy(point);
-    const transformedPoint = tempPoint.applyMatrix4(this.invMatrix);
+  containsPoint(point: Vec3): boolean {
+    const transformedPoint = m4MultiplyV3WithTranslation(this.invMatrix, point);
 
     return (
-      Math.max(Math.abs(transformedPoint.x), Math.max(Math.abs(transformedPoint.y), Math.abs(transformedPoint.z))) <=
+      Math.max(Math.abs(transformedPoint[0]), Math.max(Math.abs(transformedPoint[1]), Math.abs(transformedPoint[2]))) <=
       0.5
     );
   }
@@ -36,14 +30,7 @@ export class Box implements IShape {
   toRawShape(): RawBox {
     return {
       type: ShapeType.Box,
-      invMatrix: { data: this.invMatrix.clone().transpose().toArray() }
+      invMatrix: this.invMatrix
     };
-  }
-
-  createBoundingBox(): THREE.Box3 {
-    const baseBox = new THREE.Box3(new THREE.Vector3(-0.5, -0.5, -0.5), new THREE.Vector3(0.5, 0.5, 0.5));
-    const instanceMatrix = this.invMatrix.clone().invert();
-
-    return baseBox.applyMatrix4(instanceMatrix);
   }
 }
