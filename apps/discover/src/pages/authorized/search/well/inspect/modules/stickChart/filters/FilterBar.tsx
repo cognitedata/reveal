@@ -4,10 +4,13 @@ import { NptCodesSelection } from 'domain/wells/npt/internal/types';
 import { useCallback } from 'react';
 import * as React from 'react';
 
+import { sortArrayBySubarrayOrder } from 'utils/sort/sortArrayBySubarrayOrder';
+
 import { DragDropContainer } from 'components/DragDropContainer';
 
 import { useFilterOptions } from '../hooks/useFilterOptions';
 import { ChartColumn } from '../types';
+import { DEFAULT_COLUMN_ORDER } from '../WellboreStickChart/constants';
 
 import { FilterBarWrapper } from './elements';
 import { FilterItem } from './FilterItem';
@@ -31,8 +34,12 @@ export const FilterBar: React.FC<FilterBarProps> = React.memo(
     const { nptFilterOptions, ndsFilterOptions } = useFilterOptions();
 
     const handleRearrange = useCallback(
-      (columnKeysOrder: string[]) => {
-        onRearrange(columnKeysOrder as ChartColumn[]);
+      (columnOrder: string[]) => {
+        const updatedColumnOrder = sortArrayBySubarrayOrder<ChartColumn>(
+          DEFAULT_COLUMN_ORDER,
+          columnOrder as ChartColumn[]
+        );
+        onRearrange(updatedColumnOrder);
       },
       [onRearrange]
     );
@@ -40,7 +47,7 @@ export const FilterBar: React.FC<FilterBarProps> = React.memo(
     return (
       <FilterBarWrapper>
         <DragDropContainer
-          id="casing-filter-content"
+          id="stick-chart-filter-content"
           onRearranged={handleRearrange}
         >
           <FilterItem

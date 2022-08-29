@@ -8,6 +8,7 @@ import { NoUnmountShowHide } from 'components/NoUnmountShowHide';
 import { useDeepCallback } from 'hooks/useDeep';
 
 import { ColumnDragger } from '../../../common/Events/ColumnDragger';
+import { EmptyStateWrapper } from '../../../common/Events/elements';
 import { ColumnVisibilityProps, CasingAssemblyView } from '../../types';
 import { EMPTY_SUMMARY_TEXT, LOADING_TEXT } from '../constants';
 
@@ -33,12 +34,14 @@ export const SummaryColumn: React.FC<WithDragHandleProps<SummaryColumnProps>> =
     const renderColumnContent = useDeepCallback(() => {
       if (!data || isEmpty(data)) {
         return (
-          <EmptyState
-            isLoading={isLoading}
-            loadingSubtitle={isLoading ? LOADING_TEXT : ''}
-            emptySubtitle={EMPTY_SUMMARY_TEXT}
-            hideHeading
-          />
+          <EmptyStateWrapper>
+            <EmptyState
+              isLoading={isLoading}
+              loadingSubtitle={isLoading ? LOADING_TEXT : ''}
+              emptySubtitle={EMPTY_SUMMARY_TEXT}
+              hideHeading
+            />
+          </EmptyStateWrapper>
         );
       }
 

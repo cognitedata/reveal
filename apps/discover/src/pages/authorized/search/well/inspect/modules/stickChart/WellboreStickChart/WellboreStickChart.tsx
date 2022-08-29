@@ -9,8 +9,6 @@ import { BooleanMap } from 'utils/booleanMap';
 
 import { DragDropContainer } from 'components/DragDropContainer';
 import { NoUnmountShowHide } from 'components/NoUnmountShowHide';
-import { DepthMeasurementUnit } from 'constants/units';
-import { useDeepMemo } from 'hooks/useDeep';
 
 import {
   SCALE_BLOCK_HEIGHT,
@@ -19,7 +17,8 @@ import {
 import { EventsColumnView } from '../../common/Events/types';
 import { SelectedWellboreNptView } from '../../nptEvents/Graph';
 import { ChartColumn, ColumnsData, WellboreData } from '../types';
-import { getScaleBlocks } from '../utils/scale';
+import { getScaleBlocksByCount } from '../utils/scale/getScaleBlocksByCount';
+import { getScaleBlocksByHeight } from '../utils/scale/getScaleBlocksByHeight';
 
 import { CasingsColumn } from './CasingsColumn';
 import {
@@ -95,22 +94,15 @@ export const WellboreStickChart: React.FC<WellboreStickChartProps> = ({
     updateColumnHeight();
   }, [updateColumnHeight]);
 
-  const scaleBlocksMD = useMemo(
-    () => getScaleBlocks(columnHeight, maxMeasuredDepth),
-    [columnHeight, maxMeasuredDepth]
+  const scaleBlocks = useMemo(
+    () => getScaleBlocksByHeight(maxMeasuredDepth, columnHeight),
+    [maxMeasuredDepth, columnHeight]
   );
 
   const scaleBlocksTVD = useMemo(
-    () => getScaleBlocks(columnHeight, maxTrueVerticalDepth),
-    [columnHeight, maxTrueVerticalDepth]
+    () => getScaleBlocksByCount(maxTrueVerticalDepth, scaleBlocks.length),
+    [maxTrueVerticalDepth, scaleBlocks]
   );
-
-  const scaleBlocks = useDeepMemo(() => {
-    if (depthMeasurementType === DepthMeasurementUnit.MD) {
-      return scaleBlocksMD;
-    }
-    return scaleBlocksTVD;
-  }, [depthMeasurementType, scaleBlocksMD, scaleBlocksTVD]);
 
   const handleChangeDropdown = useCallback(
     (eventType: 'npt' | 'nds') => {
@@ -161,6 +153,7 @@ export const WellboreStickChart: React.FC<WellboreStickChartProps> = ({
                 key={ChartColumn.CASINGS}
                 {...casingsColumn}
                 scaleBlocks={scaleBlocks}
+                scaleBlocksTVD={scaleBlocksTVD}
                 rkbLevel={rkbLevel}
                 wellWaterDepth={wellWaterDepth}
                 depthMeasurementType={depthMeasurementType}
@@ -197,6 +190,7 @@ export const WellboreStickChart: React.FC<WellboreStickChartProps> = ({
                 {...trajectoryColumn}
                 scaleBlocks={scaleBlocks}
                 curveColor={wellboreColor}
+                depthMeasurementType={depthMeasurementType}
                 isVisible={columnVisibility[ChartColumn.TRAJECTORY]}
               />
 

@@ -7,6 +7,7 @@ import isEmpty from 'lodash/isEmpty';
 import { WithDragHandleProps } from 'components/DragDropContainer';
 import EmptyState from 'components/EmptyState';
 import { NoUnmountShowHide } from 'components/NoUnmountShowHide';
+import { EMPTY_ARRAY } from 'constants/empty';
 import { DepthMeasurementUnit } from 'constants/units';
 import { useDeepCallback } from 'hooks/useDeep';
 import { FullWidth } from 'styles/layout';
@@ -34,6 +35,7 @@ export interface CasingsColumnProps extends ColumnVisibilityProps {
   data?: CasingAssemblyView[];
   isLoading: boolean;
   scaleBlocks: number[];
+  scaleBlocksTVD?: number[];
   rkbLevel: WellboreInternal['datum'];
   wellWaterDepth: WellboreInternal['wellWaterDepth'];
   depthMeasurementType: DepthMeasurementUnit;
@@ -51,6 +53,7 @@ export const CasingsColumn: React.FC<WithDragHandleProps<CasingsColumnProps>> =
       rkbLevel,
       wellWaterDepth,
       scaleBlocks,
+      scaleBlocksTVD = EMPTY_ARRAY,
       showBothSides = false,
       depthMeasurementType,
       onChangeDepthMeasurementType,
@@ -73,7 +76,11 @@ export const CasingsColumn: React.FC<WithDragHandleProps<CasingsColumnProps>> =
 
         return (
           <>
-            <DepthColumn scaleBlocks={scaleBlocks} />
+            <DepthColumn
+              scaleBlocks={scaleBlocks}
+              scaleBlocksTVD={scaleBlocksTVD}
+              depthMeasurementType={depthMeasurementType}
+            />
 
             <FullWidth>
               <BodyColumnBody>

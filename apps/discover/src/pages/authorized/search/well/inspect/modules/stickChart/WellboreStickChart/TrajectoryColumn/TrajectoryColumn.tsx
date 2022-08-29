@@ -9,6 +9,7 @@ import { PlotData } from 'plotly.js';
 import { WithDragHandleProps } from 'components/DragDropContainer';
 import { NoUnmountShowHide } from 'components/NoUnmountShowHide';
 import { EMPTY_ARRAY } from 'constants/empty';
+import { DepthMeasurementUnit } from 'constants/units';
 import { useDeepMemo } from 'hooks/useDeep';
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 
@@ -28,7 +29,7 @@ export interface TrajectoryColumnProps extends ColumnVisibilityProps {
   isLoading?: boolean;
   scaleBlocks: number[];
   curveColor: string;
-  isTvdScaleSelected?: boolean;
+  depthMeasurementType?: DepthMeasurementUnit;
 }
 
 export const TrajectoryColumn: React.FC<
@@ -39,11 +40,14 @@ export const TrajectoryColumn: React.FC<
     isLoading,
     scaleBlocks,
     curveColor,
-    isTvdScaleSelected = true,
+    depthMeasurementType = DepthMeasurementUnit.TVD,
     isVisible = true,
     ...dragHandleProps
   }) => {
     const { data: depthUnit } = useUserPreferencesMeasurement();
+
+    const isTvdScaleSelected =
+      depthMeasurementType === DepthMeasurementUnit.TVD;
 
     const chartConfig = useTrajectoryChartConfigByAccessors({
       x: 'ed',
@@ -77,7 +81,7 @@ export const TrajectoryColumn: React.FC<
         return SELECT_TVD_MESSAGE;
       }
       return undefined;
-    }, [chartData, isTvdScaleSelected]);
+    }, [chartData, depthMeasurementType]);
 
     return (
       <NoUnmountShowHide show={isVisible}>
