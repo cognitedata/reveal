@@ -5,7 +5,7 @@ static final String STORYBOOK_COMMENT_MARKER = "📖[storybook-server]\n"
 static final String SLACK_ALERTS_CHANNEL = "#cdf-ui-devs-alerts"
 // deploySpinnakerPipelineConfigs {}
 static final String APP_ID = 'cdf-functions-ui'
-static final String APPLICATION_REPO_ID = 'functions-ui'
+static final String APPLICATION_REPO_ID = 'cdf-ui-functions'
 static final String NODE_VERSION = 'node:12'
 static final String VERSIONING_STRATEGY = "single-branch"
 static final String SENTRY_PROJECT_NAME = "watchtower"
