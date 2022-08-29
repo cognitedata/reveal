@@ -4,6 +4,7 @@
 
 import * as THREE from 'three';
 import range from 'lodash/range';
+import { fitCameraToBoundingBox } from '@reveal/utilities';
 
 /**
  * Helper methods for implementing a camera manager.
@@ -84,6 +85,21 @@ export class CameraManagerHelper {
     camera.near = near;
     camera.far = far;
     camera.updateProjectionMatrix();
+  }
+
+  /**
+   * Calculates camera position and target that allows to see the content of provided bounding box.
+   * @param camera Used camera instance.
+   * @param box Bounding box to be fitted.
+   * @param radiusFactor The ratio of the distance from camera to center of box and radius of the box.
+   * @returns
+   */
+  static calculateCameraStateToFitBoundingBox(
+    camera: THREE.PerspectiveCamera,
+    box: THREE.Box3,
+    radiusFactor: number = 2
+  ): { position: THREE.Vector3; target: THREE.Vector3 } {
+    return fitCameraToBoundingBox(camera, box, radiusFactor);
   }
 
   private static calculateCameraFar(
