@@ -1,3 +1,4 @@
+import get from 'lodash/get';
 import isEmpty from 'lodash/isEmpty';
 
 import { Checkbox, Flex, Icon, Menu, Tooltip } from '@cognite/cogs.js';
@@ -20,7 +21,11 @@ export const DropdownMenuOptions: React.FC<DropdownViewOption> = ({
   onChangeOption,
   onChangeCategory,
 }) => {
-  const categoryColor = options?.[0].checkboxColor;
+  if (!options) {
+    return null;
+  }
+
+  const categoryColor = get(options[0], 'checkboxColor');
   const isAnySelected = !isEmpty(selectedOptions);
   const isAllSelected =
     (selectedOptions && selectedOptions.length) === options?.length;

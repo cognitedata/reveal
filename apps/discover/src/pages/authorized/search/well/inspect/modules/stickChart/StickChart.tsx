@@ -5,7 +5,7 @@ import { useWellInspectWellbores } from 'domain/wells/well/internal/hooks/useWel
 import React, { useCallback, useRef, useState } from 'react';
 
 import isEmpty from 'lodash/isEmpty';
-import { toBooleanMap } from 'utils/booleanMap';
+import { BooleanMap, toBooleanMap } from 'utils/booleanMap';
 
 import { PerfMetrics } from '@cognite/metrics';
 
@@ -46,6 +46,11 @@ const StickChart: React.FC = () => {
   const [ndsRiskTypesSelection, setNdsRiskTypesSelection] =
     useState<NdsRiskTypesSelection>();
 
+  const [summaryVisibility, setSummaryVisibility] = useState<BooleanMap>({});
+
+  const [measurementTypesSelection, setMeasurementTypesSelection] =
+    useState<BooleanMap>();
+
   const handleColumnVisibilityChange = useCallback(
     (column: ChartColumn, visibility: boolean) => {
       setColumnVisibility((columnVisibility) => ({
@@ -71,6 +76,8 @@ const StickChart: React.FC = () => {
       <FilterBar
         onNptCodesChange={setNptCodesSelection}
         onNdsCodesChange={setNdsRiskTypesSelection}
+        onSummaryVisibilityChange={setSummaryVisibility}
+        onMeasurementTypesChange={setMeasurementTypesSelection}
         onRearrange={setColumnOrder}
         onColumnVisibilityChange={handleColumnVisibilityChange}
       />
@@ -90,6 +97,8 @@ const StickChart: React.FC = () => {
               columnOrder={columnOrder}
               nptCodesSelecton={nptCodesSelecton}
               ndsRiskTypesSelection={ndsRiskTypesSelection}
+              summaryVisibility={summaryVisibility}
+              measurementTypesSelection={measurementTypesSelection}
             />
           );
         })}

@@ -9,6 +9,7 @@ import { BooleanMap } from 'utils/booleanMap';
 
 import { DragDropContainer } from 'components/DragDropContainer';
 import { NoUnmountShowHide } from 'components/NoUnmountShowHide';
+import { useDeepEffect } from 'hooks/useDeep';
 
 import { EventsColumnView } from '../../common/Events/types';
 import { SelectedWellboreNptView } from '../../nptEvents/Graph';
@@ -25,7 +26,7 @@ import { Header } from './Header';
 import { MeasurementsColumn } from './MeasurementsColumn';
 import { NdsEventsColumn } from './NdsEventsColumn';
 import { NptEventsColumn } from './NptEventsColumn';
-import { SummaryColumn } from './SummaryColumn';
+// import { SummaryColumn } from './SummaryColumn';
 import { TrajectoryColumn } from './TrajectoryColumn';
 import { WellboreNdsDetailedView } from './WellboreNdsDetailedView';
 
@@ -40,27 +41,40 @@ export interface WellboreStickChartProps extends WellboreData, ColumnsData {
   columnOrder: string[];
   nptCodesSelecton?: NptCodesSelection;
   ndsRiskTypesSelection?: NdsRiskTypesSelection;
+  summaryVisibility?: BooleanMap;
+  measurementTypesSelection?: BooleanMap;
 }
 
 export const WellboreStickChart: React.FC<WellboreStickChartProps> = ({
-  isWellboreSelected = true,
+  /**
+   * WellboreData
+   */
   wellName,
   wellboreName,
   wellboreColor,
   wellboreMatchingId,
   rkbLevel,
   wellWaterDepth,
-  maxDepth,
-  columnVisibility,
-  columnOrder,
-  nptCodesSelecton,
-  ndsRiskTypesSelection,
+  /**
+   * WellboreStickChartColumns
+   */
   formationColumn,
   casingsColumn,
   nptColumn,
   ndsColumn,
   trajectoryColumn,
   measurementsColumn,
+  /**
+   * Other props
+   */
+  isWellboreSelected = true,
+  maxDepth,
+  columnVisibility,
+  columnOrder,
+  nptCodesSelecton,
+  ndsRiskTypesSelection,
+  // summaryVisibility,
+  measurementTypesSelection,
 }) => {
   const { contentRef, columnHeight } = useColumnHeight();
 
@@ -69,12 +83,17 @@ export const WellboreStickChart: React.FC<WellboreStickChartProps> = ({
     columnHeight,
   });
 
+  const [columnOrderInternal, setColumnOrderInternal] = useState(columnOrder);
   const [depthMeasurementType, setDepthMeasurementType] = useState(
     DEFAULT_DEPTH_MEASUREMENT_TYPE
   );
   const [eventViewMode, setEventViewMode] = useState(EventsColumnView.Cluster);
   const [showNptDetailView, setShowNptDetailView] = useState(false);
   const [showNdsDetailView, setShowNdsDetailView] = useState(false);
+
+  useDeepEffect(() => {
+    setColumnOrderInternal(columnOrder);
+  }, [columnOrder]);
 
   const handleChangeDropdown = useCallback(
     (eventType: 'npt' | 'nds') => {
@@ -112,7 +131,8 @@ export const WellboreStickChart: React.FC<WellboreStickChartProps> = ({
           <ContentWrapper ref={contentRef}>
             <DragDropContainer
               id="welbore-stick-chart-view-content"
-              elementsOrder={columnOrder}
+              elementsOrder={columnOrderInternal}
+              onRearranged={setColumnOrderInternal}
             >
               <FormationColumn
                 key={ChartColumn.FORMATION}
@@ -151,11 +171,12 @@ export const WellboreStickChart: React.FC<WellboreStickChartProps> = ({
                 isVisible={columnVisibility[ChartColumn.NDS]}
               />
 
-              <SummaryColumn
+              {/* <SummaryColumn
                 key={ChartColumn.SUMMARY}
                 {...casingsColumn}
+                summaryVisibility={summaryVisibility}
                 isVisible={columnVisibility[ChartColumn.SUMMARY]}
-              />
+              /> */}
 
               <DepthColumn
                 key={ChartColumn.DEPTH}
@@ -177,6 +198,7 @@ export const WellboreStickChart: React.FC<WellboreStickChartProps> = ({
                 key={ChartColumn.MEASUREMENTS}
                 {...measurementsColumn}
                 scaleBlocks={scaleBlocks}
+                measurementTypesSelection={measurementTypesSelection}
                 isVisible={columnVisibility[ChartColumn.MEASUREMENTS]}
               />
             </DragDropContainer>

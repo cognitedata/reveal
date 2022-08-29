@@ -31,17 +31,14 @@ export const DragDropContainer: React.FC<
     );
 
     useDeepEffect(() => {
-      setOrderedElements(elements);
-    }, [elements]);
-
-    useDeepEffect(() => {
       if (!elementsOrder || isEmpty(elementsOrder)) {
+        setOrderedElements(elements);
         return;
       }
 
       const orderedElementsByKey = orderElementsByKey(elements, elementsOrder);
       setOrderedElements([...orderedElementsByKey]);
-    }, [elementsOrder]);
+    }, [elements, elementsOrder]);
 
     const handleDragEnd = (result: DropResult) => {
       if (

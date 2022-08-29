@@ -40,7 +40,7 @@ export const FormationLayer: React.FC<FormationLayerProps> = ({
         top={scaledTop}
         height={scaledHeight}
         color={color}
-        overflow={!isFitting}
+        $overflow={!isFitting}
       >
         {isFitting && (
           <FormationColumnBlockText>{name}</FormationColumnBlockText>

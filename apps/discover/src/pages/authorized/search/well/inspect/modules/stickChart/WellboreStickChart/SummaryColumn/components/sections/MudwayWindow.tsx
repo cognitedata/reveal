@@ -1,13 +1,17 @@
 import * as React from 'react';
 
-import { BodyColumnMainHeader } from '../../../../common/Events/elements';
-import { Depth, SummarySection, SummarySectionContent } from '../elements';
+import { SummarySection, SummaryVisibilityProps } from '../../../../types';
+import { Depth, SummarySectionContent } from '../../elements';
+import { SummaryColumnSection } from '../SummaryColumnSection';
 
-export const MudwayWindow: React.FC = () => {
+export type HighlightEventProps = SummaryVisibilityProps;
+
+export const MudwayWindow: React.FC<HighlightEventProps> = ({ isExpanded }) => {
   return (
-    <SummarySection>
-      <BodyColumnMainHeader>Mudway window</BodyColumnMainHeader>
-
+    <SummaryColumnSection
+      name={SummarySection.MudwayWindow}
+      isExpanded={isExpanded}
+    >
       <SummarySectionContent>
         FG = 14.2 ppg, Drilled out with 11.0ppg SMW, 12.15 ppg EDS for PIT 13.6
         ppge DHMW PIT achieved
@@ -24,6 +28,6 @@ export const MudwayWindow: React.FC = () => {
 
       <SummarySectionContent>Up to 13.0 ppge Max ECDs</SummarySectionContent>
       <Depth>200 meter</Depth>
-    </SummarySection>
+    </SummaryColumnSection>
   );
 };

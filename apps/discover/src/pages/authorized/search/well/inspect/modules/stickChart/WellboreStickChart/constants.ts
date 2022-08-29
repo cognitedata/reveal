@@ -30,7 +30,7 @@ export const DEFAULT_COLUMN_ORDER = [
   ChartColumn.CASINGS,
   ChartColumn.NPT,
   ChartColumn.NDS,
-  ChartColumn.SUMMARY,
+  // ChartColumn.SUMMARY,
   ChartColumn.DEPTH,
   ChartColumn.TRAJECTORY,
   ChartColumn.MEASUREMENTS,

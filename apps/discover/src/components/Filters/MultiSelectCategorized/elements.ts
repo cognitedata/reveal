@@ -57,7 +57,7 @@ export const DropdownLabel = styled(Label)`
   width: 100%;
   border: 2px solid transparent;
   height: 36px;
-  font-weight: ${(props: any) => (props.bold ? '500' : '400')};
+  font-weight: ${(props: any) => (props.$bold ? '500' : '400')};
   i {
     color: var(--cogs-graphics-unknown);
   }

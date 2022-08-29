@@ -1,5 +1,7 @@
 import { NdsRiskTypesSelection } from 'domain/wells/nds/internal/types';
 
+import React from 'react';
+
 import { WithDragHandleProps } from 'components/DragDropContainer';
 import { MultiSelectCategorizedOptionMap } from 'components/Filters/MultiSelectCategorized/types';
 
@@ -15,25 +17,23 @@ export interface NdsFilterProps {
   onFiterVisiblityChange: (column: ChartColumn, visibility: boolean) => void;
 }
 
-export const NdsFilterItem: React.FC<WithDragHandleProps<NdsFilterProps>> = ({
-  options,
-  onChange,
-  onFiterVisiblityChange,
-  ...dragHandleProps
-}) => {
-  return (
-    <FilterItem
-      column={ChartColumn.NDS}
-      onFiterVisiblityChange={onFiterVisiblityChange}
-      {...dragHandleProps}
-    >
-      <DropDownIconStyler>
-        <NdsRiskTypesFilter
-          options={options}
-          onChange={onChange}
-          iconInsteadText="Configure"
-        />
-      </DropDownIconStyler>
-    </FilterItem>
+export const NdsFilterItem: React.FC<WithDragHandleProps<NdsFilterProps>> =
+  React.memo(
+    ({ options, onChange, onFiterVisiblityChange, ...dragHandleProps }) => {
+      return (
+        <FilterItem
+          column={ChartColumn.NDS}
+          onFiterVisiblityChange={onFiterVisiblityChange}
+          {...dragHandleProps}
+        >
+          <DropDownIconStyler>
+            <NdsRiskTypesFilter
+              options={options}
+              onChange={onChange}
+              iconInsteadText="Configure"
+            />
+          </DropDownIconStyler>
+        </FilterItem>
+      );
+    }
   );
-};

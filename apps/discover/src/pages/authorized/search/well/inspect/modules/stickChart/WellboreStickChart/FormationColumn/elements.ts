@@ -8,7 +8,7 @@ type FormationLayerProps = {
   top: number;
   height: number;
   color: string;
-  overflow: boolean;
+  $overflow: boolean;
 };
 
 export const FormationLayerBlock = styled(Center)`
@@ -19,7 +19,7 @@ export const FormationLayerBlock = styled(Center)`
     top: ${props.top + FORMATION_COLUMN_SCALE_CORRECTION}px;
     height: ${props.height}px;
     background: ${props.color};
-    cursor: ${props.overflow ? 'pointer' : 'default'};
+    cursor: ${props.$overflow ? 'pointer' : 'default'};
   `}
 `;
 

@@ -15,6 +15,10 @@ export const MultiSelectTitle = styled(FlexColumn)`
 
 export const MultiSelectContainer = styled.div`
   width: 100%;
+  .cogs-menu-divider {
+    width: calc(100% + 8px);
+    align-self: center;
+  }
   .cogs-select--title {
     color: var(--cogs-text-primary);
   }

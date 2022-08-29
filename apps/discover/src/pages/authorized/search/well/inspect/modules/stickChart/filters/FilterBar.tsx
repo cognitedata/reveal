@@ -4,6 +4,8 @@ import { NptCodesSelection } from 'domain/wells/npt/internal/types';
 import { useCallback } from 'react';
 import * as React from 'react';
 
+import { BooleanMap } from 'utils/booleanMap';
+
 import { DragDropContainer } from 'components/DragDropContainer';
 
 import { useFilterOptions } from '../hooks/useFilterOptions';
@@ -11,12 +13,16 @@ import { ChartColumn } from '../types';
 
 import { FilterBarWrapper } from './elements';
 import { FilterItem } from './FilterItem';
+import { MeasurementsFilterItem } from './MeasurementsFilterItem';
 import { NdsFilterItem } from './NdsFilterItem';
 import { NptFilterItem } from './NptFilterItem';
+// import { SummaryFilterItem } from './SummaryFilterItem';
 
 interface FilterBarProps {
   onNptCodesChange: (selection: NptCodesSelection) => void;
   onNdsCodesChange: (selection: NdsRiskTypesSelection) => void;
+  onSummaryVisibilityChange: (selection: BooleanMap) => void;
+  onMeasurementTypesChange: (selection: BooleanMap) => void;
   onRearrange: (order: ChartColumn[]) => void;
   onColumnVisibilityChange: (column: ChartColumn, isVisible: boolean) => void;
 }
@@ -25,6 +31,8 @@ export const FilterBar: React.FC<FilterBarProps> = React.memo(
   ({
     onNptCodesChange,
     onNdsCodesChange,
+    // onSummaryVisibilityChange,
+    onMeasurementTypesChange,
     onRearrange,
     onColumnVisibilityChange,
   }) => {
@@ -69,11 +77,11 @@ export const FilterBar: React.FC<FilterBarProps> = React.memo(
             onFiterVisiblityChange={onColumnVisibilityChange}
           />
 
-          <FilterItem
+          {/* <SummaryFilterItem
             key={ChartColumn.SUMMARY}
-            column={ChartColumn.SUMMARY}
+            onChange={onSummaryVisibilityChange}
             onFiterVisiblityChange={onColumnVisibilityChange}
-          />
+          /> */}
 
           <FilterItem key={ChartColumn.DEPTH} column={ChartColumn.DEPTH} />
 
@@ -83,9 +91,9 @@ export const FilterBar: React.FC<FilterBarProps> = React.memo(
             onFiterVisiblityChange={onColumnVisibilityChange}
           />
 
-          <FilterItem
+          <MeasurementsFilterItem
             key={ChartColumn.MEASUREMENTS}
-            column={ChartColumn.MEASUREMENTS}
+            onChange={onMeasurementTypesChange}
             onFiterVisiblityChange={onColumnVisibilityChange}
           />
         </DragDropContainer>

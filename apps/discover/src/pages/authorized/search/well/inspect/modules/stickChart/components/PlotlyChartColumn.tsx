@@ -43,7 +43,7 @@ export const PlotlyChartColumn: React.FC<
   scaleBlocks,
   isLoading,
   emptySubtitle,
-  width = 320,
+  width = 340,
   ...dragHandleProps
 }) => {
   const axisConfig = useDeepMemo(() => {
@@ -102,7 +102,7 @@ export const PlotlyChartColumn: React.FC<
         </BodyColumnBody>
       </>
     );
-  }, [data, isLoading, scaleBlocks]);
+  }, [data, isLoading, scaleBlocks, emptySubtitle]);
 
   return (
     <BodyColumn width={width}>

@@ -1,6 +1,6 @@
 import styled from 'styled-components/macro';
 
-import { Icon } from '@cognite/cogs.js';
+import { Icon, Label } from '@cognite/cogs.js';
 
 import { FlexRow, sizes } from 'styles/layout';
 
@@ -45,5 +45,24 @@ export const DropDownIconStyler = styled.div`
   }
   & > * i.cogs-icon {
     color: rgba(0, 0, 0, 0.7) !important;
+  }
+`;
+
+export const MultiSelectIconWrapper = styled(Label)`
+  cursor: pointer;
+`;
+
+export const MultiSelectWrapper = styled.div`
+  .cogs-select__control {
+    display: none;
+  }
+  .cogs-select__menu {
+    margin-top: 2px;
+    padding: ${sizes.small};
+
+    .cogs-select__option {
+      padding-left: ${sizes.small};
+      padding-right: ${sizes.small};
+    }
   }
 `;
