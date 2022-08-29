@@ -1,5 +1,7 @@
 import { CogniteClient } from '@cognite/sdk';
 
+import { postDMS } from '../utils/post';
+
 import { DMSError, Response } from './types';
 
 type Field = Record<string, boolean | string | number>;
@@ -18,20 +20,15 @@ export const createModels = async ({
   items: Model[];
 }): Promise<Response<unknown> | DMSError> => {
   try {
-    const createModelsResponse = await client.post(
-      `api/v1/projects/${client.project}/datamodelstorage/models`,
-      {
-        data: {
-          items,
-          spaceExternalId,
-        },
-        headers: {
-          'cdf-version': 'alpha',
-        },
-      }
-    );
-
-    return createModelsResponse;
+    const response = await postDMS({
+      client,
+      data: {
+        items,
+        spaceExternalId,
+      },
+      url: 'models',
+    });
+    return response;
   } catch (error) {
     return error as DMSError;
   }

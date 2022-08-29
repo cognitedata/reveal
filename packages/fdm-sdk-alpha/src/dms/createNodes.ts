@@ -1,6 +1,7 @@
 import { CogniteClient } from '@cognite/sdk';
 
 import { ExternalId } from '../types';
+import { postDMS } from '../utils/post';
 
 import { DMSError, Response } from './types';
 
@@ -20,22 +21,17 @@ export const createNodes = async ({
   modelName: string;
 }): Promise<Response<unknown> | DMSError> => {
   try {
-    const createNodesResponse = await client.post(
-      `api/v1/projects/${client.project}/datamodelstorage/nodes`,
-      {
-        data: {
-          spaceExternalId: spaceName,
-          model: [spaceName, modelName],
-          overwrite: true,
-          items,
-        },
-        headers: {
-          'cdf-version': 'alpha',
-        },
-      }
-    );
-
-    return createNodesResponse;
+    const response = await postDMS({
+      client,
+      data: {
+        spaceExternalId: spaceName,
+        model: [spaceName, modelName],
+        overwrite: true,
+        items,
+      },
+      url: 'nodes',
+    });
+    return response;
   } catch (error) {
     // cdf client is breaking our errors
     // convert it back
