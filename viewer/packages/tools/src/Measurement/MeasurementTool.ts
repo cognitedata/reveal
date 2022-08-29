@@ -47,6 +47,13 @@ type MeasurementEvents = 'added' | 'started' | 'ended' | 'disposed';
 ```
  */
 export class MeasurementTool extends Cognite3DViewerToolBase {
+  /**
+   * Returns measurement mode state, is measurement mode started or ended.
+   */
+  get isInMeasurementMode(): boolean {
+    return this._measurementMode;
+  }
+
   private _options: Required<MeasurementOptions>;
   private readonly _viewer: Cognite3DViewer;
   private readonly _geometryGroup = new THREE.Group();
@@ -103,6 +110,7 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
   on(event: 'disposed', callback: DisposedDelegate): void;
 
   /**
+   * Triggered when a measurement is added into the Cognite3DViewer.
    * @example
    * ```js
    * measurementTool.on('added', onMeasurementAdded);
@@ -111,6 +119,7 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
   on(event: 'added', callback: MeasurementAddedDelegate): void;
 
   /**
+   * Triggered when a measurement mode is started.
    * @example
    * ```js
    * measurementTool.on('started', onMeasurementStarted);
@@ -119,6 +128,7 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
   on(event: 'started', callback: MeasurementStartedDelegate): void;
 
   /**
+   * Triggered when measurement mode is ended.
    * @example
    * ```js
    * measurementTool.on('ended', onMeasurementEnded);
@@ -216,17 +226,21 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
    * Enter into point to point measurement mode.
    */
   enterMeasurementMode(): void {
-    if (!this._measurementMode) {
-      this._viewer.on('click', this._handlePointerClick);
-      this._events.measurementStarted.fire();
-      this._measurementMode = true;
+    if (this._measurementMode) {
+      throw new Error('Measurement mode is active, call exitMeasurementMode()');
     }
+    this._viewer.on('click', this._handlePointerClick);
+    this._events.measurementStarted.fire();
+    this._measurementMode = true;
   }
 
   /**
    * Exit measurement mode.
    */
   exitMeasurementMode(): void {
+    if (!this._measurementMode) {
+      throw new Error('Measurement mode is not active, call enterMeasurementMode()');
+    }
     if (this._activeMeasurement) {
       this.cancelActiveMeasurement();
     }
@@ -355,14 +369,14 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
         this._htmlOverlay,
         intersection.point
       );
-      this._viewer.domElement.addEventListener('mousemove', this._handlePointerMove);
+      this._viewer.domElement.addEventListener('pointermove', this._handlePointerMove);
       window.addEventListener('keydown', this._handleMeasurementCancel);
     } else {
       this._activeMeasurement.endMeasurement(intersection.point);
       this._events.measurementAdded.fire(this._activeMeasurement.getMeasurement());
       this._measurements.push(this._activeMeasurement);
       this._activeMeasurement = undefined;
-      this._viewer.domElement.removeEventListener('mousemove', this._handlePointerMove);
+      this._viewer.domElement.removeEventListener('pointermove', this._handlePointerMove);
       window.removeEventListener('keydown', this._handleMeasurementCancel);
     }
     this._viewer.requestRedraw();
@@ -418,7 +432,7 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
       this._activeMeasurement.removeMeasurement();
       this._activeMeasurement = undefined;
       this._viewer.requestRedraw();
-      this._viewer.domElement.removeEventListener('mousemove', this._handlePointerMove);
+      this._viewer.domElement.removeEventListener('pointermove', this._handlePointerMove);
     }
   }
 }

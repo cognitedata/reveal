@@ -34,7 +34,6 @@ export class MeasurementUi {
   }
 
   private addDistanceOptions(enable: boolean) {
-
     if (enable && this._guiController.length === 0) {
       //add the point to point measurement distance
       this._measurementTool.enterMeasurementMode();

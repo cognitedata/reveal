@@ -14,6 +14,7 @@
   background: #232323da;
   border: #ffffff22 solid 1px;
   overflow: hidden;
+  white-space: nowrap;
 
   /*Font - fallback to generic font if Inter not available*/
   font-family: 'Inter', sans-serif;

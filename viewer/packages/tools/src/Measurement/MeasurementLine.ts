@@ -40,12 +40,11 @@ export class MeasurementLine {
     const onBeforeRenderTrigger = new THREE.Mesh(new THREE.BufferGeometry());
     onBeforeRenderTrigger.name = 'onBeforeRenderTrigger trigger (no geometry)';
     onBeforeRenderTrigger.frustumCulled = false;
+    const resolution = new THREE.Vector2();
     onBeforeRenderTrigger.onBeforeRender = renderer => {
       const { width, height } = renderer.domElement.getBoundingClientRect();
-      this._adaptiveWidthLineMaterial.resolution = this._fixedWidthLineMaterial.resolution = new THREE.Vector2(
-        width,
-        height
-      );
+      resolution.set(width, height);
+      this._adaptiveWidthLineMaterial.resolution = this._fixedWidthLineMaterial.resolution = resolution;
     };
     this._meshes.add(onBeforeRenderTrigger);
     this.startLine(startPoint);
