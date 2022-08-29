@@ -11,6 +11,7 @@ import { DepthMeasurementUnit } from 'constants/units';
 import { useScaledDepth } from '../../../hooks/useScaledDepth';
 import { CasingAssemblyView } from '../../../types';
 import { isDepthLabelOverlapping } from '../../../utils/isDepthLabelOverlapping';
+import { DEFAULT_DEPTH_MEASUREMENT_TYPE } from '../../constants';
 import { DepthIndicatorsContainer } from '../elements';
 
 import { DepthIndicator } from './DepthIndicator';
@@ -31,7 +32,7 @@ export const DepthIndicators = React.forwardRef<
       casingAssemblies,
       scaleBlocks,
       showBothSides = false,
-      depthMeasurementType = DepthMeasurementUnit.MD,
+      depthMeasurementType = DEFAULT_DEPTH_MEASUREMENT_TYPE,
     },
     ref
   ) => {

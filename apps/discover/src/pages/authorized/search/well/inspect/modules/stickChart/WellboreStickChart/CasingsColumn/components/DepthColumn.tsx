@@ -15,6 +15,7 @@ import {
   ScaleLineAbsolute,
   ScaleLineDepth,
 } from '../../../../common/Events/elements';
+import { DEFAULT_DEPTH_MEASUREMENT_TYPE } from '../../constants';
 import { DepthColumnContainer } from '../elements';
 
 export type Props = {
@@ -26,7 +27,7 @@ export type Props = {
 const DepthColumn: React.FC<Props> = ({
   scaleBlocks,
   scaleBlocksTVD = EMPTY_ARRAY,
-  depthMeasurementType = DepthMeasurementUnit.MD,
+  depthMeasurementType = DEFAULT_DEPTH_MEASUREMENT_TYPE,
 }) => {
   const renderScaleMaxDepth = useDeepCallback(() => {
     const scaleMaxDepthMD = last(scaleBlocks);

@@ -54,6 +54,7 @@ export interface CasingAssemblyView extends CasingAssemblyInternal {
 export enum ChartColumn {
   FORMATION = 'Formation',
   CASINGS = 'Casings',
+  DEPTH = 'Depth',
   NDS = 'NDS',
   NPT = 'NPT',
   SUMMARY = 'Section Summary',

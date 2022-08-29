@@ -30,6 +30,12 @@ export const DragHandler = styled(Icon)`
   margin-right: 2px;
 `;
 
+export const ColumnName = styled.span`
+  font-size: 14px;
+  line-height: 20px;
+  color: rgba(0, 0, 0, 0.9);
+`;
+
 export const DropDownIconStyler = styled.div`
   margin-left: -${sizes.small};
   margin-right: -${sizes.small};

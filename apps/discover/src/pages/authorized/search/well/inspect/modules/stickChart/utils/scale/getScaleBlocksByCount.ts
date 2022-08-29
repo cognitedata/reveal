@@ -28,7 +28,7 @@ export const getScaleBlocksByCount = (
   );
 
   return [
-    0,
+    0, // Scale min depth
     ...times(blocksCountWithoutBounds).map(
       (blockIndex) => interval * (blockIndex + 1)
     ),

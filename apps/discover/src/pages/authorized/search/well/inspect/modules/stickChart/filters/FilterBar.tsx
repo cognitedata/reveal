@@ -62,6 +62,8 @@ export const FilterBar: React.FC<FilterBarProps> = React.memo(
             onFiterVisiblityChange={onColumnVisibilityChange}
           />
 
+          <FilterItem key={ChartColumn.DEPTH} column={ChartColumn.DEPTH} />
+
           <NptFilterItem
             key={ChartColumn.NPT}
             options={nptFilterOptions}

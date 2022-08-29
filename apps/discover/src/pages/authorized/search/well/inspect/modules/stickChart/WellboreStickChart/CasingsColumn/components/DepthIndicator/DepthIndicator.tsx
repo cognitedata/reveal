@@ -8,6 +8,7 @@ import { Tooltip } from 'components/PopperTooltip';
 import { DepthMeasurementUnit } from 'constants/units';
 
 import { CasingAssemblyView } from '../../../../types';
+import { DEFAULT_DEPTH_MEASUREMENT_TYPE } from '../../../constants';
 
 import { DEPTH_INDICATOR_END_HEIGHT, TOOLTIP_PLACEMENT } from './constants';
 import { DepthSegment } from './DepthSegment';
@@ -42,7 +43,7 @@ export const DepthIndicator: React.FC<DepthIndicatorProps> = ({
   casingDepthScaled,
   isTied,
   flip = false,
-  depthMeasurementType = DepthMeasurementUnit.MD,
+  depthMeasurementType = DEFAULT_DEPTH_MEASUREMENT_TYPE,
   isOverlapping = false,
 }) => {
   const depthIndicatorRef = useRef<HTMLElement>(null);

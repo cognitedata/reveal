@@ -25,6 +25,7 @@ import {
   DEFAULT_DEPTH_MEASUREMENT_TYPE,
   DEPTH_SCALE_MIN_HEIGHT,
 } from './constants';
+import { DepthColumn } from './DepthColumn';
 import { ContentWrapper, WellboreStickChartWrapper } from './elements';
 import { FormationColumn } from './FormationColumn';
 import { Header } from './Header';
@@ -159,6 +160,13 @@ export const WellboreStickChart: React.FC<WellboreStickChartProps> = ({
                 depthMeasurementType={depthMeasurementType}
                 onChangeDepthMeasurementType={setDepthMeasurementType}
                 isVisible={columnVisibility[ChartColumn.CASINGS]}
+              />
+
+              <DepthColumn
+                key={ChartColumn.DEPTH}
+                scaleBlocks={scaleBlocks}
+                scaleBlocksTVD={scaleBlocksTVD}
+                depthMeasurementType={depthMeasurementType}
               />
 
               <NptEventsColumn

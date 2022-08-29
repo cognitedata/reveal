@@ -1,56 +1,84 @@
 import * as React from 'react';
 
-import { Distance } from 'convert-units';
-import { Fixed, toFixedNumberFromNumber } from 'utils/number';
-
-import {
-  DepthMeasurementUnit,
-  DistanceUnit,
-  UserPreferredUnit,
-} from 'constants/units';
+import { WithDragHandleProps } from 'components/DragDropContainer';
+import { NoUnmountShowHide } from 'components/NoUnmountShowHide';
+import { EMPTY_ARRAY } from 'constants/empty';
+import { DepthMeasurementUnit } from 'constants/units';
+import { useDeepMemo } from 'hooks/useDeep';
+import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 import { FlexGrow } from 'styles/layout';
 
+import { ColumnDragger } from '../../../common/Events/ColumnDragger';
 import {
   BodyColumn,
   BodyColumnBody,
-  BodyColumnHeaderWrapper,
   BodyColumnMainHeader,
-  BodyColumnSubHeader,
+  ColumnHeaderWrapper,
   DepthMeasurementScale,
   ScaleLine,
   ScaleLineDepth,
 } from '../../../common/Events/elements';
+import { formatScaleValue } from '../../utils/scale/formatScaleValue';
 
-export type Props = {
+export type DepthColumnProps = {
   scaleBlocks: number[];
-  measurementUnit: DepthMeasurementUnit;
-  unit: UserPreferredUnit | DistanceUnit | Distance;
+  scaleBlocksTVD?: number[];
+  depthMeasurementType?: DepthMeasurementUnit;
 };
 
-export const DepthColumn = React.forwardRef<HTMLElement, Props>(
-  ({ scaleBlocks, measurementUnit, unit }, ref) => {
-    return (
-      <BodyColumn width={100} ref={ref}>
-        <BodyColumnHeaderWrapper>
-          <BodyColumnMainHeader>{measurementUnit}</BodyColumnMainHeader>
-          <FlexGrow />
-          <BodyColumnSubHeader>{unit}</BodyColumnSubHeader>
-        </BodyColumnHeaderWrapper>
+export const DepthColumn: React.FC<WithDragHandleProps<DepthColumnProps>> =
+  React.memo(
+    ({
+      scaleBlocks,
+      scaleBlocksTVD = EMPTY_ARRAY,
+      depthMeasurementType,
+      ...dragHandleProps
+    }) => {
+      const { data: depthUnit } = useUserPreferencesMeasurement();
 
-        <BodyColumnBody>
-          <DepthMeasurementScale>
-            {scaleBlocks.map((scaleValue) => {
-              return (
-                <ScaleLine key={scaleValue}>
-                  <ScaleLineDepth>
-                    {toFixedNumberFromNumber(scaleValue, Fixed.TwoDecimals)}
-                  </ScaleLineDepth>
-                </ScaleLine>
-              );
-            })}
-          </DepthMeasurementScale>
-        </BodyColumnBody>
-      </BodyColumn>
-    );
-  }
-);
+      const isMdScale = depthMeasurementType === DepthMeasurementUnit.MD;
+      const isTvdScale = depthMeasurementType === DepthMeasurementUnit.TVD;
+
+      const MdScale = useDeepMemo(() => {
+        return scaleBlocks.map((scaleValue) => {
+          return (
+            <ScaleLine key={`${DepthMeasurementUnit.MD}-${scaleValue}`}>
+              <ScaleLineDepth>{formatScaleValue(scaleValue)}</ScaleLineDepth>
+            </ScaleLine>
+          );
+        });
+      }, [scaleBlocks]);
+
+      const TvdScale = useDeepMemo(() => {
+        return scaleBlocksTVD.map((scaleValue) => {
+          return (
+            <ScaleLine key={`${DepthMeasurementUnit.TVD}-${scaleValue}`}>
+              <ScaleLineDepth>{formatScaleValue(scaleValue)}</ScaleLineDepth>
+            </ScaleLine>
+          );
+        });
+      }, [scaleBlocksTVD]);
+
+      return (
+        <BodyColumn width={100}>
+          <ColumnDragger {...dragHandleProps} />
+
+          <ColumnHeaderWrapper>
+            <BodyColumnMainHeader>{depthMeasurementType}</BodyColumnMainHeader>
+            <FlexGrow />
+            <BodyColumnMainHeader>{depthUnit}</BodyColumnMainHeader>
+          </ColumnHeaderWrapper>
+
+          <BodyColumnBody>
+            <DepthMeasurementScale>
+              <NoUnmountShowHide show={isMdScale}>{MdScale}</NoUnmountShowHide>
+
+              <NoUnmountShowHide show={isTvdScale}>
+                {TvdScale}
+              </NoUnmountShowHide>
+            </DepthMeasurementScale>
+          </BodyColumnBody>
+        </BodyColumn>
+      );
+    }
+  );

@@ -6,11 +6,16 @@ import { WithDragHandleProps } from 'components/DragDropContainer';
 
 import { ChartColumn } from '../types';
 
-import { FilterItemWrapper, VertSeperator, DragHandler } from './elements';
+import {
+  FilterItemWrapper,
+  VertSeperator,
+  DragHandler,
+  ColumnName,
+} from './elements';
 
 export interface FilterItemProps {
   column: ChartColumn;
-  onFiterVisiblityChange: (column: ChartColumn, visibility: boolean) => void;
+  onFiterVisiblityChange?: (column: ChartColumn, visibility: boolean) => void;
   children?: React.ReactNode;
 }
 
@@ -21,16 +26,20 @@ export const FilterItem: React.FC<WithDragHandleProps<FilterItemProps>> =
 
       const handleChange = (selected: boolean) => {
         setChecked(selected);
-        onFiterVisiblityChange(column, selected);
+        onFiterVisiblityChange?.(column, selected);
       };
 
       return (
         <FilterItemWrapper>
           <DragHandler type="DragHandleHorizontal" {...dragHandleProps} />
 
-          <Checkbox name={column} checked={checked} onChange={handleChange}>
-            {column}
-          </Checkbox>
+          {onFiterVisiblityChange ? (
+            <Checkbox name={column} checked={checked} onChange={handleChange}>
+              <ColumnName>{column}</ColumnName>
+            </Checkbox>
+          ) : (
+            <ColumnName>{column}</ColumnName>
+          )}
 
           {Boolean(children) && <VertSeperator />}
           {children}

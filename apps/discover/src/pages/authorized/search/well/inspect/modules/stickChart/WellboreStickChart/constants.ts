@@ -28,6 +28,7 @@ export const DEFAULT_DEPTH_MEASUREMENT_TYPE = DepthMeasurementUnit.MD;
 export const DEFAULT_COLUMN_ORDER = [
   ChartColumn.FORMATION,
   ChartColumn.CASINGS,
+  ChartColumn.DEPTH,
   ChartColumn.NPT,
   ChartColumn.NDS,
   ChartColumn.SUMMARY,
