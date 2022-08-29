@@ -373,9 +373,10 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
       window.addEventListener('keydown', this._handleMeasurementCancel);
     } else {
       this._activeMeasurement.endMeasurement(intersection.point);
-      this._events.measurementAdded.fire(this._activeMeasurement.getMeasurement());
       this._measurements.push(this._activeMeasurement);
       this._activeMeasurement = undefined;
+      // To avoid issue when exiting measurement mode when a measurement 'added' event called
+      this._events.measurementAdded.fire(this._measurements[this._measurements.length - 1].getMeasurement());
       this._viewer.domElement.removeEventListener('pointermove', this._handlePointerMove);
       window.removeEventListener('keydown', this._handleMeasurementCancel);
     }
