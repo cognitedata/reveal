@@ -14,6 +14,7 @@ import {
   LocalModelIdentifier,
   CdfModelIdentifier
 } from '../../../packages/modeldata-api';
+import cdfEnvironments from '../../.cdf-environments.json';
 
 export function createDataProviders(): Promise<{
   modelMetadataProvider: ModelMetadataProvider;
@@ -43,11 +44,18 @@ async function createCdfDataProviders(urlParams: URLSearchParams): Promise<{
   modelDataProvider: ModelDataProvider;
   modelIdentifier: ModelIdentifier;
 }> {
+  const tenant = urlParams.get('env') as keyof typeof cdfEnvironments.environments;
+
+  const tenantInfo = cdfEnvironments.environments[tenant ?? 'cog-3d'];
+
+  const project = urlParams.get('project') ?? '3d-test';
+  const cluster = urlParams.get('cluster') ?? 'greenfield';
+
   const client = await createApplicationSDK('reveal.example.simple', {
-    project: '3d-test',
-    cluster: 'greenfield',
-    clientId: 'a03a8caf-7611-43ac-87f3-1d493c085579',
-    tenantId: '20a88741-8181-4275-99d9-bd4451666d6e'
+    project,
+    cluster,
+    clientId: tenantInfo.clientId,
+    tenantId: tenantInfo.tenantId
   });
 
   const modelId = parseInt(urlParams.get('modelId')!);
