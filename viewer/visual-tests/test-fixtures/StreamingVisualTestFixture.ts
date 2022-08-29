@@ -17,13 +17,12 @@ import {
 } from '../../packages/rendering';
 import { createDataProviders } from './utilities/createDataProviders';
 import { VisualTestFixture } from './VisualTestFixture';
-import { DeferredPromise, SceneHandler } from '../../packages/utilities';
+import { DeferredPromise, fitCameraToBoundingBox, SceneHandler } from '../../packages/utilities';
 import { ModelIdentifier, ModelMetadataProvider } from '../../packages/modeldata-api';
 import { LoadingState } from '../../packages/model-base';
 import { PointCloudManager, PointCloudNode, PotreePointColorType } from '../../packages/pointclouds';
 import { PointCloudMetadataRepository } from '../../packages/pointclouds/src/PointCloudMetadataRepository';
 import { PointCloudFactory } from '../../packages/pointclouds/src/PointCloudFactory';
-import { fitCameraToBoundingBox } from './utilities/fitCameraToBoundingBox';
 import dat from 'dat.gui';
 
 export type StreamingTestFixtureComponents = {
@@ -129,7 +128,8 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
 
     const boundingBox = this.getModelBoundingBox(model);
 
-    const { target } = fitCameraToBoundingBox(this._perspectiveCamera, boundingBox, 1.5);
+    const { position, target } = fitCameraToBoundingBox(this._perspectiveCamera, boundingBox, 1.5);
+    this._perspectiveCamera.position.copy(position);
     this._controls.target.copy(target);
     this._perspectiveCamera.updateMatrixWorld();
 
