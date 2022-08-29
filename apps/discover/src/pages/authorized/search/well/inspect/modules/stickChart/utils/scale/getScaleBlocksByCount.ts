@@ -1,6 +1,8 @@
 import times from 'lodash/times';
 import { toNextHundred } from 'utils/number/toNextHundred';
 
+import { EMPTY_ARRAY } from 'constants/empty';
+
 /**
  * @maxDepth Maximum depth.
  * @blocksCount The number of blocks to be included in the scale.
@@ -12,6 +14,15 @@ export const getScaleBlocksByCount = (
   maxDepth: number,
   blocksCount: number
 ) => {
+  /**
+   * If scaleHeight or maxDepth value is 0,
+   * no point of calculating scale blocks.
+   * Hence, return an empty array.
+   */
+  if (!maxDepth) {
+    return EMPTY_ARRAY;
+  }
+
   /**
    * If the blocks count is less than or equal to 2,
    * No point of calculating the scale blocks.

@@ -3,28 +3,21 @@ import { NptCodesSelection } from 'domain/wells/npt/internal/types';
 import { MaxDepthData } from 'domain/wells/trajectory/internal/types';
 
 import * as React from 'react';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useState } from 'react';
 
 import { BooleanMap } from 'utils/booleanMap';
 
 import { DragDropContainer } from 'components/DragDropContainer';
 import { NoUnmountShowHide } from 'components/NoUnmountShowHide';
 
-import {
-  SCALE_BLOCK_HEIGHT,
-  SCALE_PADDING,
-} from '../../common/Events/constants';
 import { EventsColumnView } from '../../common/Events/types';
 import { SelectedWellboreNptView } from '../../nptEvents/Graph';
+import { useColumnHeight } from '../hooks/useColumnHeight';
+import { useScaleBlocks } from '../hooks/useScaleBlocks';
 import { ChartColumn, ColumnsData, WellboreData } from '../types';
-import { getScaleBlocksByCount } from '../utils/scale/getScaleBlocksByCount';
-import { getScaleBlocksByHeight } from '../utils/scale/getScaleBlocksByHeight';
 
 import { CasingsColumn } from './CasingsColumn';
-import {
-  DEFAULT_DEPTH_MEASUREMENT_TYPE,
-  DEPTH_SCALE_MIN_HEIGHT,
-} from './constants';
+import { DEFAULT_DEPTH_MEASUREMENT_TYPE } from './constants';
 import { DepthColumn } from './DepthColumn';
 import { ContentWrapper, WellboreStickChartWrapper } from './elements';
 import { FormationColumn } from './FormationColumn';
@@ -38,7 +31,11 @@ import { WellboreNdsDetailedView } from './WellboreNdsDetailedView';
 
 export interface WellboreStickChartProps extends WellboreData, ColumnsData {
   isWellboreSelected?: boolean;
-  maxDepth: MaxDepthData;
+  /**
+   * If the wellbore doesn't have any data (casings, trajectories, etc.),
+   * max depth data is not available.
+   */
+  maxDepth?: MaxDepthData;
   columnVisibility: BooleanMap;
   columnOrder: string[];
   nptCodesSelecton?: NptCodesSelection;
@@ -65,45 +62,19 @@ export const WellboreStickChart: React.FC<WellboreStickChartProps> = ({
   trajectoryColumn,
   measurementsColumn,
 }) => {
-  const contentRef = React.useRef<HTMLDivElement>(null);
+  const { contentRef, columnHeight } = useColumnHeight();
+
+  const { scaleBlocks, scaleBlocksTVD } = useScaleBlocks({
+    maxDepth,
+    columnHeight,
+  });
 
   const [depthMeasurementType, setDepthMeasurementType] = useState(
     DEFAULT_DEPTH_MEASUREMENT_TYPE
   );
-
-  const [columnHeight, setColumnHeight] = useState(0);
   const [eventViewMode, setEventViewMode] = useState(EventsColumnView.Cluster);
-
   const [showNptDetailView, setShowNptDetailView] = useState(false);
   const [showNdsDetailView, setShowNdsDetailView] = useState(false);
-
-  const { maxMeasuredDepth, maxTrueVerticalDepth } = maxDepth;
-
-  const updateColumnHeight = useCallback(() => {
-    const depthColumnHeight = contentRef.current?.offsetHeight;
-    const height = depthColumnHeight || DEPTH_SCALE_MIN_HEIGHT;
-    const columnHeight = height - SCALE_BLOCK_HEIGHT - SCALE_PADDING;
-    setColumnHeight(columnHeight);
-  }, [contentRef.current]);
-
-  useEffect(() => {
-    window.addEventListener('resize', updateColumnHeight);
-    return () => window.removeEventListener('resize', updateColumnHeight);
-  }, []);
-
-  useEffect(() => {
-    updateColumnHeight();
-  }, [updateColumnHeight]);
-
-  const scaleBlocks = useMemo(
-    () => getScaleBlocksByHeight(maxMeasuredDepth, columnHeight),
-    [maxMeasuredDepth, columnHeight]
-  );
-
-  const scaleBlocksTVD = useMemo(
-    () => getScaleBlocksByCount(maxTrueVerticalDepth, scaleBlocks.length),
-    [maxTrueVerticalDepth, scaleBlocks]
-  );
 
   const handleChangeDropdown = useCallback(
     (eventType: 'npt' | 'nds') => {
