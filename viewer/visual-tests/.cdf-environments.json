@@ -1,0 +1,8 @@
+{
+  "environments": {
+    "cog-3d": {
+      "tenantId": "...",
+      "clientId": "..."
+    }
+  }
+}
