@@ -31,6 +31,7 @@ import { Appearance } from '../../Core/States/Appearance';
 import { Changes } from '../../Core/Views/Changes';
 import { NodeEventArgs } from '../../Core/Views/NodeEventArgs';
 import { ViewInfo } from '../../Core/Views/ViewInfo';
+import { BaseRenderTargetNode } from 'Core/Nodes/BaseRenderTargetNode';
 
 const selectedRadiusFactor = 1.2;
 
@@ -203,13 +204,16 @@ export class PointLogView extends BaseGroupThreeView {
 
     const sample = log.getAt(index);
     if (!sample) return;
-
+    const target = this.hasTarget
+      ? (this.getTarget() as BaseRenderTargetNode)
+      : undefined;
     const md = WellTrajectoryView.startPickingAndReturnMd(
       this,
       viewInfo,
       intersection,
       sample.md,
-      sample.mdUnit
+      sample.mdUnit,
+      target?.unit
     );
     if (md === undefined) return;
 

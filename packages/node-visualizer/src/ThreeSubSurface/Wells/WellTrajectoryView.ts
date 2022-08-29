@@ -730,7 +730,7 @@ export class WellTrajectoryView extends BaseGroupThreeView {
     if (unit === 'ft') {
       return `${mdRounded} ft / ${Units.covertFeetToMeterAndRounded(value)} m`;
     }
-    return `${mdRounded} ${value}`;
+    return `${mdRounded} ${unit}`;
   }
 
   public static startPickingAndReturnMd(

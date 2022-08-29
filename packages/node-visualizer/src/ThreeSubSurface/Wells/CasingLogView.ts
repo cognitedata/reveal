@@ -32,6 +32,7 @@ import { NodeEventArgs } from '../../Core/Views/NodeEventArgs';
 
 import { ViewInfo } from '../../Core/Views/ViewInfo';
 import { Changes } from '../../Core/Views/Changes';
+import { BaseRenderTargetNode } from 'Core/Nodes/BaseRenderTargetNode';
 
 export class CasingLogView extends BaseGroupThreeView {
   //= =================================================
@@ -113,13 +114,19 @@ export class CasingLogView extends BaseGroupThreeView {
     viewInfo: ViewInfo,
     intersection: THREE.Intersection
   ): void {
+    const { node } = this;
+    const target = this.hasTarget
+      ? (this.getTarget() as BaseRenderTargetNode)
+      : undefined;
     const md = WellTrajectoryView.startPickingAndReturnMd(
       this,
       viewInfo,
-      intersection
+      intersection,
+      undefined,
+      undefined,
+      target?.unit
     );
     if (md === undefined) return;
-    const { node } = this;
     viewInfo.addPickedNode(node);
 
     const { log } = node;
