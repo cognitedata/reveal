@@ -1198,39 +1198,35 @@ export class Cognite3DViewer {
     // TODO christjt 03-05-2021: This seems ridiculous, and the number seems to be pulled out of thin air.
     // On low end it might not downscale enough, and on high end it looks bad / blurred.
     // For the love of God someone move this to the render manager and make it dynamic based on the device.
-    const maxTextureSize = 1.4e6;
+    const maxPhysicalFrameBufferSize = 1.4e6;
 
-    const rendererSize = this.renderer.getSize(new THREE.Vector2());
-    const devicePixelRatio = this.renderer.getPixelRatio();
-    const rendererPixelWidth = rendererSize.width;
-    const rendererPixelHeight = rendererSize.height;
+    const virtualFramebufferSize = this.renderer.getSize(new THREE.Vector2());
+    const pixelRatio = window.devicePixelRatio;
 
-    // client width and height are in virtual pixels and not yet scaled by dpr
-    // TODO VERSION 5.0.0 remove the test for dom element size once we have removed the getCanvas function
-    const clientWidth = this.domElement.clientWidth !== 0 ? this.domElement.clientWidth : this.canvas.clientWidth;
-    const clientHeight = this.domElement.clientHeight !== 0 ? this.domElement.clientHeight : this.canvas.clientHeight;
-    const clientTextureSize = clientWidth * clientHeight;
+    const virtualDomElementWidth =
+      this.domElement.clientWidth !== 0 ? this.domElement.clientWidth : this.canvas.clientWidth;
 
-    const scale = clientTextureSize > maxTextureSize ? Math.sqrt(maxTextureSize / clientTextureSize) : 1;
+    const virtualDomElementHeight =
+      this.domElement.clientHeight !== 0 ? this.domElement.clientHeight : this.canvas.clientHeight;
 
-    let width = clientWidth * scale;
-    let height = clientHeight * scale;
+    const domElementPhysicalWidth = virtualDomElementWidth * pixelRatio;
+    const domElementPhysicalHeight = virtualDomElementHeight * pixelRatio;
+    const domElementPhysicalNumberOfPixels = domElementPhysicalWidth * domElementPhysicalHeight;
 
-    const maxError = 0.1; // pixels
-    const isOptimalSize =
-      Math.abs(rendererPixelWidth - width) < maxError && Math.abs(rendererPixelHeight - height) < maxError;
+    const downScale =
+      domElementPhysicalNumberOfPixels > maxPhysicalFrameBufferSize
+        ? Math.sqrt(maxPhysicalFrameBufferSize / domElementPhysicalNumberOfPixels)
+        : 1;
 
-    if (isOptimalSize) {
+    const newVirtualWidth = virtualDomElementWidth * downScale;
+    const newVirtualHeight = virtualDomElementHeight * downScale;
+
+    if (newVirtualWidth === virtualFramebufferSize.x && newVirtualHeight === virtualFramebufferSize.y) {
       return false;
     }
 
-    // This needs to be done such that users don't unintentionally bypass the
-    // resolution cap by setting a high device pixel ratio
-    width /= devicePixelRatio;
-    height /= devicePixelRatio;
-
-    adjustCamera(this.camera, width, height);
-    this.renderer.setSize(width, height);
+    adjustCamera(this.camera, newVirtualWidth, newVirtualHeight);
+    this.renderer.setDrawingBufferSize(newVirtualWidth, newVirtualHeight, pixelRatio);
 
     return true;
   }

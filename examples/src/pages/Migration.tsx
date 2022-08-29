@@ -66,9 +66,11 @@ export function Migration() {
       if (project && environmentParam) {
         client = await createSDKFromEnvironment('reveal.example.example', project, environmentParam);
       } else {
-        client = new CogniteClient({ appId: 'reveal.example.example',
-                                     project: 'dummy',
-                                     getToken: async () => 'dummy' });
+        client = new CogniteClient({
+          appId: 'reveal.example.example',
+          project: 'dummy',
+          getToken: async () => 'dummy'
+        });
       }
 
       let viewerOptions: Cognite3DViewerOptions = {
@@ -89,8 +91,8 @@ export function Migration() {
         };
       } else if (!(project && environmentParam)) {
         throw new Error('Must either provide URL parameters "env", "project", ' +
-                        '"modelId" and "revisionId" to load model from CDF ' +
-                        '"or "modelUrl" to load model from URL.');
+          '"modelId" and "revisionId" to load model from CDF ' +
+          '"or "modelUrl" to load model from URL.');
       }
 
       // Prepare viewer
@@ -360,10 +362,8 @@ export function Migration() {
 
       const inspectNodeUi = new InspectNodeUI(gui.addFolder('Last clicked node'), client, viewer);
 
-      viewer.renderer.setPixelRatio(window.devicePixelRatio);
-
       viewer.on('click', async (event) => {
-        const { offsetX, offsetY } = event; 
+        const { offsetX, offsetY } = event;
         console.log('2D coordinates', event);
         const start = performance.now();
         const intersection = await viewer.getIntersectionFromPixel(offsetX, offsetY);
