@@ -116,6 +116,34 @@ describe('Wells: Related documents', () => {
     cy.clickButton('filter-tag', 'data-testid');
   });
 
+  it('should be able to filter related documents by created date range', () => {
+    cy.log('click on Date Range filter');
+    cy.findAllByText('Date Range').click();
+
+    cy.log('set start date to - 2020/01/01');
+    cy.get('[aria-label="Select month"]').select(0);
+    cy.get('[aria-label="Select year"]').select('2020');
+    cy.findAllByRole('button', { name: '1' }).first().click();
+
+    cy.log('set end date to - 2020/12/31');
+    cy.get('[aria-label="Select month"]').select(11);
+    cy.findAllByRole('button', { name: '31' }).first().click();
+
+    cy.log('filtered result should appear');
+    cy.findAllByTestId('table-row').its('length').should('be.gt', 0);
+
+    cy.log('filter tag should visible');
+    cy.findByTestId('filter-tag')
+      .contains('Created: 01-Jan-2020-31-Dec-2020')
+      .should('be.visible');
+
+    cy.log('clear filter');
+    cy.contains('Clear').click();
+
+    cy.log('filter tag should be disappeared');
+    cy.findAllByTestId('filter-tag').should('not.exist');
+  });
+
   it('should be able to filter related documents by Document Type', () => {
     cy.log('click on Document Type option from the right side panel');
     cy.findAllByTestId('histogram-btn').eq(0).click();
