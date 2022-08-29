@@ -36,6 +36,8 @@ mod tests {
 
     use js_sys::Uint16Array;
 
+    use nalgebra_glm::translate;
+
     use rand::prelude::*;
     use rand_chacha::ChaCha8Rng;
 
@@ -46,12 +48,9 @@ mod tests {
     fn create_random_points_in_unit_box(num_points: u32) -> Vec<Vec3WithIndex> {
         let mut rng = ChaCha8Rng::seed_from_u64(0xbaadf00d);
 
-        const NUM_POINTS: u32 = 1_000;
-        const OBJECT_ID: u16 = 42;
-
         let mut points = Vec::<Vec3WithIndex>::with_capacity(num_points as usize);
 
-        for i in 0..NUM_POINTS {
+        for i in 0..num_points {
             points.push(Vec3WithIndex {
                 vec: vec3(
                     normalize_coordinate(rng.next_u32()) / 2.0,
@@ -61,6 +60,8 @@ mod tests {
                 index: i,
             });
         }
+
+        points
     }
 
     #[wasm_bindgen_test]
@@ -86,9 +87,12 @@ mod tests {
 
     #[wasm_bindgen_test]
     fn no_points_returned_for_non_overlapping_shape() {
+        const NUM_POINTS: u32 = 1_000;
+        const OBJECT_ID: u16 = 42;
+
         let mut points = create_random_points_in_unit_box(NUM_POINTS);
 
-        let box_matrix = Mat4::translate(Mat4::identity(), &vec3(1.0, 0.0, 0.0));
+        let box_matrix = translate(&Mat4::identity(), &vec3(1.0, 0.0, 0.0));
         let bounding_box = BoundingBox::get_transformed_unit_cube(&box_matrix);
         let shape: Box<dyn Shape> =
             Box::<OrientedBox>::new(OrientedBox::new(box_matrix, OBJECT_ID));
