@@ -19,7 +19,7 @@ import { WellboreSubtableOptions } from 'pages/authorized/constant';
 import { REMOVE_FROM_SET_TEXT } from 'pages/authorized/favorites/constants';
 import { DeleteWellFromSetModal } from 'pages/authorized/favorites/modals';
 import { NO_WELLBORES_FOUND } from 'pages/authorized/search/well/content/constants';
-import { Message } from 'pages/authorized/search/well/content/result/WellBoreResultTable';
+import { Message } from 'pages/authorized/search/well/content/result/elements';
 import { FlexRow } from 'styles/layout';
 
 import {

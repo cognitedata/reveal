@@ -2,12 +2,12 @@ import { useFavoriteWellIds } from 'domain/favorites/internal/hooks/useFavoriteW
 import { WellInternal } from 'domain/wells/well/internal/types';
 import { WellboreInternal } from 'domain/wells/wellbore/internal/types';
 
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import { Row } from 'react-table';
 
+import isEmpty from 'lodash/isEmpty';
 import sortBy from 'lodash/sortBy';
-import styled from 'styled-components/macro';
 
 import { Dropdown, Menu } from '@cognite/cogs.js';
 
@@ -15,6 +15,7 @@ import AddToFavoriteSetMenu from 'components/AddToFavoriteSetMenu';
 import { MoreOptionsButton, ViewButton } from 'components/Buttons';
 import { FavoriteStarIcon } from 'components/Icons/FavoriteStarIcon';
 import { Table, RowProps } from 'components/Tablev3';
+import { useDeepMemo } from 'hooks/useDeep';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
 import { useTranslation } from 'hooks/useTranslation';
 import { useVisibleWellboreColumns } from 'hooks/useVisibleWellboreColumns';
@@ -28,18 +29,12 @@ import { FlexRow } from 'styles/layout';
 
 import { NO_WELLBORES_FOUND } from '../constants';
 
-import { OverlayCellPadding } from './elements';
+import { OverlayCellPadding, WellBoreGroupCoumn, Message } from './elements';
+import UnmatchingWellboreResultTable from './UnmatchingWellboreResultTable';
 
 interface Props {
   well: WellInternal;
 }
-
-const TABLE_ROW_HEIGHT = 50;
-
-export const Message = styled.div`
-  line-height: ${TABLE_ROW_HEIGHT}px;
-  padding: 0 12px;
-`;
 
 export const WellboreResultTable: React.FC<Props> = React.memo(({ well }) => {
   const { wellbores } = well;
@@ -51,9 +46,9 @@ export const WellboreResultTable: React.FC<Props> = React.memo(({ well }) => {
   const metrics = useGlobalMetrics('wells');
   const visibleWellboreColumns = useVisibleWellboreColumns();
 
-  const sortedWellbores = useMemo(
+  const sortedWellbores = useDeepMemo(
     () => sortBy(wellbores, 'name'),
-    [JSON.stringify(wellbores)]
+    [wellbores]
   );
 
   const handleRowSelect = useCallback(
@@ -133,22 +128,31 @@ export const WellboreResultTable: React.FC<Props> = React.memo(({ well }) => {
     return <FavoriteStarIcon />;
   };
 
-  if (sortedWellbores.length === 0) {
+  if (isEmpty(sortedWellbores)) {
     return <Message>{t(NO_WELLBORES_FOUND)}</Message>;
   }
 
   return (
-    <Table<WellboreInternal>
-      id="wellbore-result-table"
-      indent
-      data={sortedWellbores}
-      columns={visibleWellboreColumns}
-      handleRowSelect={handleRowSelect}
-      options={WellboreSubtableOptions}
-      selectedIds={selectedWellboreIds}
-      renderRowOverlayComponent={renderRowOverlayComponent}
-      renderRowHoverComponent={renderHoverRowSubComponent}
-      hideHeaders
-    />
+    <WellBoreGroupCoumn>
+      <Table<WellboreInternal>
+        id="wellbore-result-table"
+        indent
+        data={sortedWellbores}
+        columns={visibleWellboreColumns}
+        handleRowSelect={handleRowSelect}
+        options={WellboreSubtableOptions}
+        selectedIds={selectedWellboreIds}
+        renderRowOverlayComponent={renderRowOverlayComponent}
+        renderRowHoverComponent={renderHoverRowSubComponent}
+        hideHeaders
+      />
+      <UnmatchingWellboreResultTable
+        well={well}
+        matchingWellbores={sortedWellbores}
+        visibleWellboreColumns={visibleWellboreColumns}
+        renderHoverRowSubComponent={renderHoverRowSubComponent}
+        renderRowOverlayComponent={renderRowOverlayComponent}
+      />
+    </WellBoreGroupCoumn>
   );
 });

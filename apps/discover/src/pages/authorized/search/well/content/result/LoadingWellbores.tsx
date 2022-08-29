@@ -3,7 +3,7 @@ import { useTranslation } from 'hooks/useTranslation';
 
 import { LOADING_TEXT } from '../constants';
 
-import { Message } from './WellBoreResultTable';
+import { Message } from './elements';
 
 export const LoadingWellbores = () => {
   const { t } = useTranslation('WellData');

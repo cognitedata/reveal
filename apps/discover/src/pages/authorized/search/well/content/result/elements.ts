@@ -1,6 +1,8 @@
 import styled from 'styled-components/macro';
 
-import { sizes } from 'styles/layout';
+import { FlexColumn, FlexRow, sizes } from 'styles/layout';
+
+const TABLE_ROW_HEIGHT = 50;
 
 export const WellsContainer = styled.div`
   height: 100%;
@@ -21,4 +23,30 @@ export const WelboreResultsTableWrapper = styled.div`
 export const SearchResultsContainer = styled.div`
   height: 100%;
   width: 100%;
+`;
+
+export const WellBoreGroupCoumn = styled(FlexColumn)``;
+
+export const OtherWellboresRow = styled(FlexRow)`
+  margin-left: 30px;
+  gap: 5px;
+`;
+
+export const ExpandCollapseIcon = styled.div`
+  padding-left: 12px;
+  padding-top: 8px;
+`;
+
+export const OtherWellboresSectionHeader = styled(FlexRow)`
+  padding: 8px;
+  gap: 5px;
+`;
+
+export const TooltipContainer = styled.div`
+  padding: 4px;
+`;
+
+export const Message = styled.div`
+  line-height: ${TABLE_ROW_HEIGHT}px;
+  padding: 0 12px;
 `;

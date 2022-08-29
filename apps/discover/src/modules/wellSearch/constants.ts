@@ -5,6 +5,9 @@ import { MeasurementCurveConfig, MeasurementType } from './types';
 export const WELL_SEARCH_ACCESS_ERROR =
   'Your account cannot search wells, please contact support.';
 
+export const WELLBORE_FETCH_ACCESS_ERROR =
+  'Your account cannot search wellbores, please contact support.';
+
 export const NO_WELLS_SELECTED_ERROR_MESSAGE = `No wells are selected. At least one well has to be selected.`;
 
 export const CONTEXTUALIZE_TEXT = 'Contextualize';
