@@ -21,6 +21,7 @@ export { unionBoxes } from './src/three/unionBoxes';
 export { determineCurrentDevice, DeviceDescriptor } from './src/device';
 export { createRenderTriangle } from './src/three/createFullScreenTriangleGeometry';
 
+export { fitCameraToBoundingBox } from './src/three/fitCameraToBoundingBox';
 export { isBox3OnPositiveSideOfPlane } from './src/three/isBox3OnPositiveSideOfPlane';
 export { visitBox3CornerPoints } from './src/three/visitBox3CornerPoints';
 export { isMobileOrTablet } from './src/isMobileOrTablet';

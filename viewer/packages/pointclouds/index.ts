@@ -2,7 +2,7 @@
  * Copyright 2022 Cognite AS
  */
 
-export { intersectPointClouds } from './src/picking';
+export { PointCloudPickingHandler } from './src/PointCloudPickingHandler';
 
 export { WellKnownAsprsPointClassCodes } from './src/types';
 

@@ -39,12 +39,14 @@ target
 
 **/.env
 **/.env.*
+**/.cdf-environments.json
 !**/.env.example
 
 # Viewer ignores
 viewer/public/
 viewer/false
 .eslintcache
+__diff_output__/
 
 # Examples
 

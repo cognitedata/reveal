@@ -30,6 +30,15 @@ export class WebGLRendererStateHelper {
   private _originalState: WebGLRendererState = {};
   private readonly _renderer: THREE.WebGLRenderer;
 
+  private static readonly DefaultWebGLState: WebGLState = {
+    buffers: {
+      depth: {
+        mask: true,
+        test: true
+      }
+    }
+  };
+
   constructor(renderer: THREE.WebGLRenderer) {
     this._renderer = renderer;
     this._originalState = {};
@@ -37,7 +46,7 @@ export class WebGLRendererStateHelper {
 
   setScissor(x: number, y: number, width: number, height: number): void {
     const scissorData = this._renderer.getScissor(new Vector4());
-    this._originalState = { scissorData: scissorData ? scissorData : undefined, ...this._originalState };
+    this._originalState = { scissorData, ...this._originalState };
     this._renderer.setScissor(x, y, width, height);
   }
 
@@ -55,9 +64,7 @@ export class WebGLRendererStateHelper {
     this._renderer.setClearColor(color, alpha);
   }
 
-  setWebGLState(state: WebGLState): void {
-    const gl = this._renderer.getContext();
-
+  setWebGLState(state: WebGLState, resetState: WebGLState = WebGLRendererStateHelper.DefaultWebGLState): void {
     this._originalState = {
       webGLState: {
         buffers: state?.buffers ? {} : undefined
@@ -70,12 +77,12 @@ export class WebGLRendererStateHelper {
       const newMask = state.buffers.depth?.mask;
 
       this._originalState.webGLState!.buffers!.depth = {
-        test: newTest ? gl.getParameter(gl.DEPTH_TEST) : undefined,
-        mask: newMask ? gl.getParameter(gl.DEPTH_WRITEMASK) : undefined
+        test: newTest !== undefined ? resetState.buffers?.depth?.test : undefined,
+        mask: newMask !== undefined ? resetState.buffers?.depth?.mask : undefined
       };
 
-      if (newMask) this._renderer.state.buffers.depth.setMask(newMask);
-      if (newTest) this._renderer.state.buffers.depth.setTest(newTest);
+      if (newMask !== undefined) this._renderer.state.buffers.depth.setMask(newMask);
+      if (newTest !== undefined) this._renderer.state.buffers.depth.setTest(newTest);
     }
   }
 
@@ -130,12 +137,14 @@ export class WebGLRendererStateHelper {
       this._renderer.setScissorTest(this._originalState.scissorTest);
     }
     if (this._originalState.webGLState !== undefined) {
+      this._renderer.state.reset();
+
       if (this._originalState.webGLState?.buffers?.depth) {
         const lastTest = this._originalState.webGLState.buffers.depth?.test;
         const lastMask = this._originalState.webGLState.buffers.depth?.mask;
 
-        if (lastMask) this._renderer.state.buffers.depth.setMask(lastMask);
-        if (lastTest) this._renderer.state.buffers.depth.setTest(lastTest);
+        if (lastMask !== undefined) this._renderer.state.buffers.depth.setMask(lastMask);
+        if (lastTest !== undefined) this._renderer.state.buffers.depth.setTest(lastTest);
       }
     }
 
