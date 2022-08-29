@@ -12,6 +12,9 @@ mod test_setup {
     wasm_bindgen_test_configure!(run_in_browser);
 }
 
+#[cfg(test)]
+mod dev_utils;
+
 use serde::Deserialize;
 
 mod linalg;

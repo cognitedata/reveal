@@ -63,10 +63,6 @@ fn split<'a>(
     let middle = (bounding_box.min + bounding_box.max) / 2.0;
     let splits = find_splits(points, &middle);
 
-    let mut split_maxes = splits.clone();
-    split_maxes.rotate_left(1);
-    split_maxes[7] = points.len();
-
     sort_points_into_sectors(points, splits, &middle);
 
     let boxes = get_child_bounding_boxes(&bounding_box);
@@ -74,19 +70,28 @@ fn split<'a>(
 
     let mut children = std::vec::Vec::<OctreeNode<'a>>::with_capacity(8);
 
+    let split_maxes = get_split_ends(points, &splits);
+
     for i in 0..8 {
         let bb = box_iter.next().unwrap();
 
         unsafe {
             let ptr = points.as_mut_ptr().add(splits[i]);
+            let slice = std::slice::from_raw_parts_mut(ptr, split_maxes[i] - splits[i]);
 
-            let slc = std::slice::from_raw_parts_mut(ptr, split_maxes[i] - splits[i]);
-
-            children.push(OctreeNode::new(*bb, slc));
+            children.push(OctreeNode::new(*bb, slice));
         }
     }
 
     Box::<[OctreeNode<'a>; 8]>::new(children.try_into().unwrap())
+}
+
+fn get_split_ends<'a>(points: &'a [Vec3WithIndex], splits: &[usize; 8]) -> [usize; 8] {
+    let mut split_maxes = splits.clone();
+    split_maxes.rotate_left(1);
+    split_maxes[7] = points.len();
+
+    split_maxes
 }
 
 fn find_splits(points: &mut [Vec3WithIndex], middle: &Vec3) -> [usize; 8] {
@@ -111,10 +116,10 @@ fn get_octree_child_index(point: &Vec3WithIndex, middle: &Vec3) -> usize {
         + (if point.vec[2] < middle.z { 0 } else { 4 })
 }
 
-/// Takes the indices with a starting index for each of the eight children and groups
-/// the points into their corresponding slice. It does not allocate a new vector.
+/// Takes the points slice and a starting index for each of the eight octree node children slices, and groups
+/// the points into their corresponding child's slice. It does not allocate a new vector.
 /// In essence, it moves one point at a time and puts it in the next available spot in
-/// its slice. It then takes the point that was there before and repeats the process.
+/// the slice where it belongs. It then takes the point that was there before and repeats the process.
 /// Whenever it comes back to the point where it started the current iteration, it breaks
 /// and continues from the next slice that is not fully "sorted"
 fn sort_points_into_sectors(points: &mut [Vec3WithIndex], splits: [usize; 8], middle: &Vec3) -> () {
@@ -129,6 +134,8 @@ fn sort_points_into_sectors(points: &mut [Vec3WithIndex], splits: [usize; 8], mi
             continue;
         }
 
+        // Start from the end of the current partition, so that we know
+        // it's full when we encounter this index again
         let initial_point_index = max_inds[current_partition] - 1;
 
         let mut current_point_index = initial_point_index;
@@ -194,7 +201,12 @@ fn get_child_bounding_boxes(bounding_box: &BoundingBox) -> [BoundingBox; 8] {
 mod tests {
     use wasm_bindgen_test::wasm_bindgen_test;
 
-    use super::{find_splits, get_octree_child_index, sort_points_into_sectors};
+    use rand::prelude::*;
+    use rand_chacha::ChaCha8Rng;
+
+    use crate::dev_utils::normalize_coordinate;
+
+    use super::{find_splits, get_octree_child_index, get_split_ends, sort_points_into_sectors};
     use super::{vec3, Vec3WithIndex};
 
     #[wasm_bindgen_test]
@@ -205,11 +217,14 @@ mod tests {
 
         let original_points = points.clone();
 
+        let mut rng = ChaCha8Rng::seed_from_u64(0xbaadf00d);
+
         for i in 0..NUM_POINTS {
+
             let p = vec3(
-                ((i * 4) as f64).sin(),
-                ((i * 7) as f64).cos(),
-                ((i * 3) as f64 + 0.12).sin(),
+                normalize_coordinate(rng.next_u32()),
+                normalize_coordinate(rng.next_u32()),
+                normalize_coordinate(rng.next_u32()),
             );
             points.push(Vec3WithIndex {
                 vec: p,
@@ -220,16 +235,13 @@ mod tests {
         let middle = vec3(0.0, 0.0, 0.0);
 
         let splits = find_splits(&mut points[..], &middle);
+        let split_ends = get_split_ends(&points[..], &splits);
         sort_points_into_sectors(&mut points[..], splits, &middle);
 
         let mut num_points_checked = 0;
 
         for sector_index in 0..8 {
-            let max_ind = if sector_index == 7 {
-                points.len()
-            } else {
-                splits[sector_index + 1]
-            };
+            let max_ind = split_ends[sector_index];
             for point_index in splits[sector_index]..max_ind {
                 assert_eq!(
                     get_octree_child_index(&points[point_index], &middle),
@@ -238,6 +250,8 @@ mod tests {
                 num_points_checked += 1;
             }
         }
+
+        assert_eq!(num_points_checked, points.len());
 
         for og_point in original_points {
             let mut found = false;
@@ -250,7 +264,5 @@ mod tests {
 
             assert!(found);
         }
-
-        assert_eq!(num_points_checked, points.len());
     }
 }
