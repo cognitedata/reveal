@@ -13,7 +13,8 @@ import {
   EventTrigger,
   InputHandler,
   disposeOfAllEventListeners,
-  PointerEventDelegate
+  PointerEventDelegate,
+  fitCameraToBoundingBox
 } from '@reveal/utilities';
 
 /**
@@ -125,11 +126,7 @@ export class DefaultCameraManager implements CameraManager {
   }
 
   fitCameraToBoundingBox(box: THREE.Box3, duration?: number, radiusFactor: number = 2): void {
-    const { position, target } = CameraManagerHelper.calculateCameraStateToFitBoundingBox(
-      this._camera,
-      box,
-      radiusFactor
-    );
+    const { position, target } = fitCameraToBoundingBox(this._camera, box, radiusFactor);
 
     this.moveCameraTo(position, target, duration);
   }
