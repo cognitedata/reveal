@@ -51,8 +51,7 @@ export {
   NumericRange,
   SceneRenderedDelegate,
   PointerEventDelegate,
-  DisposedDelegate,
-  fitCameraToBoundingBox
+  DisposedDelegate
 } from './packages/utilities';
 
 export { Cognite3DModel, BoundingBoxClipper, GeometryFilter, WellKnownUnit } from './packages/cad-model';
