@@ -29,7 +29,7 @@ export class MeasurementLine {
     //Fixed line Width.
     this._fixedWidthLineMaterial = new LineMaterial({
       color: lineColor.getHex(),
-      linewidth: 2, // TODO 2022-07-05 larsmoa: Should this be variable?
+      linewidth: 2, // Tests have shown this to work reasonable on tested devices
       worldUnits: false,
       depthTest: false
     });
