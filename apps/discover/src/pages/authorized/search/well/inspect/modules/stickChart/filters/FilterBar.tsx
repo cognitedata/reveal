@@ -4,13 +4,10 @@ import { NptCodesSelection } from 'domain/wells/npt/internal/types';
 import { useCallback } from 'react';
 import * as React from 'react';
 
-import { sortArrayBySubarrayOrder } from 'utils/sort/sortArrayBySubarrayOrder';
-
 import { DragDropContainer } from 'components/DragDropContainer';
 
 import { useFilterOptions } from '../hooks/useFilterOptions';
 import { ChartColumn } from '../types';
-import { DEFAULT_COLUMN_ORDER } from '../WellboreStickChart/constants';
 
 import { FilterBarWrapper } from './elements';
 import { FilterItem } from './FilterItem';
@@ -35,11 +32,7 @@ export const FilterBar: React.FC<FilterBarProps> = React.memo(
 
     const handleRearrange = useCallback(
       (columnOrder: string[]) => {
-        const updatedColumnOrder = sortArrayBySubarrayOrder<ChartColumn>(
-          DEFAULT_COLUMN_ORDER,
-          columnOrder as ChartColumn[]
-        );
-        onRearrange(updatedColumnOrder);
+        onRearrange(columnOrder as ChartColumn[]);
       },
       [onRearrange]
     );
@@ -62,8 +55,6 @@ export const FilterBar: React.FC<FilterBarProps> = React.memo(
             onFiterVisiblityChange={onColumnVisibilityChange}
           />
 
-          <FilterItem key={ChartColumn.DEPTH} column={ChartColumn.DEPTH} />
-
           <NptFilterItem
             key={ChartColumn.NPT}
             options={nptFilterOptions}
@@ -81,6 +72,20 @@ export const FilterBar: React.FC<FilterBarProps> = React.memo(
           <FilterItem
             key={ChartColumn.SUMMARY}
             column={ChartColumn.SUMMARY}
+            onFiterVisiblityChange={onColumnVisibilityChange}
+          />
+
+          <FilterItem key={ChartColumn.DEPTH} column={ChartColumn.DEPTH} />
+
+          <FilterItem
+            key={ChartColumn.TRAJECTORY}
+            column={ChartColumn.TRAJECTORY}
+            onFiterVisiblityChange={onColumnVisibilityChange}
+          />
+
+          <FilterItem
+            key={ChartColumn.MEASUREMENTS}
+            column={ChartColumn.MEASUREMENTS}
             onFiterVisiblityChange={onColumnVisibilityChange}
           />
         </DragDropContainer>

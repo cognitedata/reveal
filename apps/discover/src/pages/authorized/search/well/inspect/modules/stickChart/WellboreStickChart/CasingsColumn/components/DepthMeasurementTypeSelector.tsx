@@ -12,6 +12,10 @@ import {
   DepthMeasurementTypeWrapper,
 } from '../elements';
 
+export const DEPTH_MEASUREMENT_TYPES = [
+  DepthMeasurementUnit.TVD,
+  DepthMeasurementUnit.MD,
+];
 export interface DepthMeasurementTypeSelectorProps {
   selectedDepthMeasurementType: DepthMeasurementUnit;
   onChangeDepthMeasurementType: (type: DepthMeasurementUnit) => void;
@@ -24,21 +28,14 @@ export const DepthMeasurementTypeSelector: React.FC<
     <Dropdown
       content={
         <Dropdown.Menu>
-          <Dropdown.Item
-            onClick={() =>
-              onChangeDepthMeasurementType(DepthMeasurementUnit.MD)
-            }
-          >
-            {DepthMeasurementUnit.MD}
-          </Dropdown.Item>
-
-          <Dropdown.Item
-            onClick={() =>
-              onChangeDepthMeasurementType(DepthMeasurementUnit.TVD)
-            }
-          >
-            {DepthMeasurementUnit.TVD}
-          </Dropdown.Item>
+          {DEPTH_MEASUREMENT_TYPES.map((depthMeasurementType) => (
+            <Dropdown.Item
+              key={depthMeasurementType}
+              onClick={() => onChangeDepthMeasurementType(depthMeasurementType)}
+            >
+              {depthMeasurementType}
+            </Dropdown.Item>
+          ))}
         </Dropdown.Menu>
       }
     >

@@ -133,13 +133,6 @@ export const WellboreStickChart: React.FC<WellboreStickChartProps> = ({
                 isVisible={columnVisibility[ChartColumn.CASINGS]}
               />
 
-              <DepthColumn
-                key={ChartColumn.DEPTH}
-                scaleBlocks={scaleBlocks}
-                scaleBlocksTVD={scaleBlocksTVD}
-                depthMeasurementType={depthMeasurementType}
-              />
-
               <NptEventsColumn
                 key={ChartColumn.NPT}
                 {...nptColumn}
@@ -162,6 +155,13 @@ export const WellboreStickChart: React.FC<WellboreStickChartProps> = ({
                 key={ChartColumn.SUMMARY}
                 {...casingsColumn}
                 isVisible={columnVisibility[ChartColumn.SUMMARY]}
+              />
+
+              <DepthColumn
+                key={ChartColumn.DEPTH}
+                scaleBlocks={scaleBlocks}
+                scaleBlocksTVD={scaleBlocksTVD}
+                depthMeasurementType={depthMeasurementType}
               />
 
               <TrajectoryColumn

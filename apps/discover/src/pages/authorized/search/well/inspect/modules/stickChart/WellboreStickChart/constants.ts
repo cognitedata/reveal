@@ -23,15 +23,15 @@ export const DEPTH_BLOCK_LABEL_MINIMUM_HEIGHT = 20;
 export const DEPTH_SCALE_LABEL_WIDTH = 79;
 export const DEPTH_SCALE_LABEL_HEIGHT = 16;
 
-export const DEFAULT_DEPTH_MEASUREMENT_TYPE = DepthMeasurementUnit.MD;
+export const DEFAULT_DEPTH_MEASUREMENT_TYPE = DepthMeasurementUnit.TVD;
 
 export const DEFAULT_COLUMN_ORDER = [
   ChartColumn.FORMATION,
   ChartColumn.CASINGS,
-  ChartColumn.DEPTH,
   ChartColumn.NPT,
   ChartColumn.NDS,
   ChartColumn.SUMMARY,
+  ChartColumn.DEPTH,
   ChartColumn.TRAJECTORY,
   ChartColumn.MEASUREMENTS,
 ];
