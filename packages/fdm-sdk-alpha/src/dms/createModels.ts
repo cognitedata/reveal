@@ -2,13 +2,7 @@ import { CogniteClient } from '@cognite/sdk';
 
 import { postDMS } from '../utils/post';
 
-import { DMSError, Response } from './types';
-
-type Field = Record<string, boolean | string | number>;
-type Model = {
-  externalId: string;
-  properties: Record<string, Field>;
-};
+import { DMSError, DMSModel, Response } from './types';
 
 export const createModels = async ({
   client,
@@ -17,7 +11,7 @@ export const createModels = async ({
 }: {
   client: CogniteClient;
   spaceExternalId: string;
-  items: Model[];
+  items: DMSModel[];
 }): Promise<Response<unknown> | DMSError> => {
   try {
     const response = await postDMS({

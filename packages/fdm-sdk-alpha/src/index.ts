@@ -56,3 +56,5 @@ export const getCogniteClientFDM = () => {
     getQueryCreator,
   };
 };
+
+export * from './types';

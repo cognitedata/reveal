@@ -20,5 +20,3 @@ export type Binding = {
     externalId: string;
   };
 };
-
-export type Response = { status: number; data: { items: unknown[] } };

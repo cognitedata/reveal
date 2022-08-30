@@ -4,15 +4,15 @@ import { createGraphqlPostRequest } from './utils/createGraphqlPostRequest';
 import { getSchemaUpsertApiQuery } from './utils/getSchemaUpsertApiQuery';
 import { SchemaAPI } from './types';
 
-type CreateVersionResponseError = {
+type CreateResponseError = {
   message: string;
   locations: string[];
   extensions: unknown[];
 };
-type CreateVersionResponse = {
-  errors?: CreateVersionResponseError[];
+type CreateResponse = {
+  errors?: CreateResponseError[];
 };
-type Response = unknown;
+type Response = CreateResponse | Error;
 
 export const createSchema = ({
   client,
@@ -21,7 +21,7 @@ export const createSchema = ({
   client: CogniteClient;
   schemaDefinition: Omit<SchemaAPI, 'versions'>;
 }): Promise<Response> => {
-  return createGraphqlPostRequest<CreateVersionResponse>(
+  return createGraphqlPostRequest<CreateResponse>(
     client,
     getSchemaUpsertApiQuery({
       externalId: schemaDefinition.externalId,

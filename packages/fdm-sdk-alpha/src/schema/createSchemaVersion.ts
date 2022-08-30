@@ -12,7 +12,7 @@ type CreateVersionResponseError = {
 type CreateVersionResponse = {
   errors?: CreateVersionResponseError[];
 };
-type Response = unknown;
+type Response = CreateVersionResponse | Error;
 
 export const createSchemaVersion = ({
   client,
