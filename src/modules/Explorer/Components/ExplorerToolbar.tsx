@@ -103,7 +103,6 @@ export const ExplorerToolbar = ({
           onButtonClicked={onViewChange}
           currentKey={currentView}
           style={{ zIndex: 1 }}
-          size="small"
         >
           <SegmentedControl.Button key="list" icon="List" title="List">
             List
