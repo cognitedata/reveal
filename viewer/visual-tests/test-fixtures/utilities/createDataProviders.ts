@@ -16,7 +16,7 @@ import {
 } from '../../../packages/modeldata-api';
 import cdfEnvironments from '../../.cdf-environments.json';
 
-export function createDataProviders(): Promise<{
+export function createDataProviders(defaultModelLocalUrl = 'primitives'): Promise<{
   modelMetadataProvider: ModelMetadataProvider;
   modelDataProvider: ModelDataProvider;
   modelIdentifier: ModelIdentifier;
@@ -28,11 +28,11 @@ export function createDataProviders(): Promise<{
     return createCdfDataProviders(urlParams);
   }
 
-  return Promise.resolve(createLocalDataProviders(urlParams));
+  return Promise.resolve(createLocalDataProviders(urlParams, defaultModelLocalUrl));
 }
 
-function createLocalDataProviders(urlParams: URLSearchParams) {
-  const modelUrl = urlParams.get('modelUrl') ?? 'primitives';
+function createLocalDataProviders(urlParams: URLSearchParams, defaultModelLocalUrl: string) {
+  const modelUrl = urlParams.get('modelUrl') ?? defaultModelLocalUrl;
   const modelIdentifier = new LocalModelIdentifier(modelUrl);
   const modelMetadataProvider = new LocalModelMetadataProvider();
   const modelDataProvider = new LocalModelDataProvider();
