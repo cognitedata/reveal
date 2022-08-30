@@ -44,7 +44,7 @@ measurementTool.on('ended',
   () => viewer.domElement.attributeStyleMap.delete('cursor'));
 measurementTool.on('added', (measurement) => { 
   alert(`Measurement added with ${JSON.stringify(measurement.distanceInMeters)} distance!`);
-  measruementTool.exitMeasurementMode();
+  measurementTool.exitMeasurementMode();
 });
 
 measurementTool.enterMeasurementMode();
@@ -72,7 +72,7 @@ setTimeout(() => {
 To cancel the current/active measurement, the user can use `ESC` key which will kill the active measurement
 
 ### Mode of measurement
-To get the mode of measurement `MeasurementTool.isInMeasurementMode()`. It returns `true` if the tool has called `MeasurementTool.enterMeasurementMode()` else `fasle`.
+To get the mode of measurement `MeasurementTool.isInMeasurementMode`. It returns `true` if the measurement is active else `false`.
 
 ### Change unit
 
@@ -112,7 +112,7 @@ const lineOptions = {
 const measurementTool = new MeasurementTool(viewer);
 measurementTool.enterMeasurementMode();
 
-//Update line width & color for the next measuring line.
+//Update line width, color and label units for the next measuring line.
 measurementTool.setLineOptions(lineOptions);
 ```
 
@@ -148,24 +148,31 @@ To change existing measurement line width or color, use `MeasurementTool.updateL
 // import { MeasurementTool } from '@cognite/reveal/tools';
 
 const measurementTool = new MeasurementTool(viewer);
+let measurementIterator;
+measurementTool.on('ended',
+  () => {
+    //Changes measurement line color & width to random values.
+    setInterval(() => {
+      const measurement = measurementIterator.next().value[1];
+      const color = Math.floor(Math.random() * 16777215);
+      measurementTool.updateLineColor(measurement, new THREE.Color(color));
+
+      //Update line width
+      const lineWidth = (Math.random() * 1.0) + 0.2;
+      measurementTool.updateLineWidth(measurement, lineWidth);
+      viewer.requestRedraw();
+    }, 2000);
+  });
 measurementTool.enterMeasurementMode();
 
 // Add few measurements
 
-//Changes measurement line color & width to random values every 5 seconds.
-setInterval(() => {
-  const measurements = measurementTool.getAllMeasurements();
 
-  measurements.forEach(measurement => {
-    const color = Math.floor(Math.random() * 16777215);
-    measurementTool.updateLineColor(measurement, new THREE.Color(color));
-
-    //Update line width
-    const lineWidth = (Math.random() * 1.0) + 0.2;
-    measurementTool.updateLineWidth(measurement, lineWidth);
-    viewer.requestRedraw();
-  });
-}, 5000);
+//get all measurements
+setTimeout(() => {
+  measurementIterator = measurementTool.getAllMeasurements().entries();
+  measurementTool.exitMeasurementMode();
+}, 8000);
 ```
 
 ### Remove measurement
