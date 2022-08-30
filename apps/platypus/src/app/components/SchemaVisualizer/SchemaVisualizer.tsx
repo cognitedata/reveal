@@ -181,10 +181,10 @@ export const SchemaVisualizer = React.memo(
             style={{ flex: 1 }}
             direction="column"
           >
-            <Title level={2} style={{ textAlign: 'center', marginBottom: 16 }}>
+            <Title level={5} style={{ textAlign: 'center', marginBottom: 16 }}>
               {t('failed_to_load', 'Unable to visualize the Data Model.')}
             </Title>
-            <Body>{t('failed_to_load_description', errorMessage)}</Body>
+            <i>{t('failed_to_load_description', errorMessage)}</i>
           </Flex>
         ) : (
           <Graph<SchemaDefinitionNode>
