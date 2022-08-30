@@ -1,13 +1,13 @@
 import React, { AriaAttributes } from 'react';
 import { ColumnInstance } from 'react-table';
-import { AllIconTypes, Button } from '@cognite/cogs.js';
+import { IconType, Button } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
 import { trackUsage } from 'utils/Metrics';
 
 const getSortOrder = <T extends object>(
   column: ColumnInstance<T>
-): { icon: AllIconTypes; ariaSort: AriaAttributes['aria-sort'] } => {
+): { icon: IconType; ariaSort: AriaAttributes['aria-sort'] } => {
   if (column.isSorted) {
     return column.isSortedDesc
       ? {
@@ -35,7 +35,7 @@ const ButtonWithNoPadding = styled(Button)`
     padding: 0;
   }
 
-  display: block;
+  display: flex;
   color: inherit;
 `;
 const SorterIndicator = <T extends object>({

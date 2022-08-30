@@ -1,6 +1,5 @@
 import { useQuery } from 'react-query';
 import { DEFAULT_RUN_LIMIT, getFilteredRuns, getRuns } from 'utils/RunsAPI';
-import { useAppEnv } from 'hooks/useAppEnv';
 import { ErrorObj } from 'model/SDKErrors';
 import { RunsAPIResponse, RunUI } from 'model/Runs';
 import { Range } from '@cognite/cogs.js';
@@ -8,6 +7,7 @@ import { RunStatusAPI } from 'model/Status';
 import { mapStatusRow } from 'utils/runsUtils';
 import { useCallback } from 'react';
 import { useSDK } from '@cognite/sdk-provider';
+import { getProject } from '@cognite/cdf-utilities';
 
 export const useRuns = (
   externalId?: string,
@@ -15,7 +15,7 @@ export const useRuns = (
   limit?: number
 ) => {
   const sdk = useSDK();
-  const { project } = useAppEnv();
+  const project = getProject();
   return useQuery<RunsAPIResponse, ErrorObj>(
     [project, externalId, nextCursor],
     () => {
@@ -36,7 +36,7 @@ export const useRuns = (
 
 export const useFilteredRuns = (params: CreateRunFilterParam) => {
   const sdk = useSDK();
-  const { project } = useAppEnv();
+  const project = getProject();
   const data = createRunsFilter(params);
   return useQuery<
     RunsAPIResponse,

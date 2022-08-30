@@ -3,7 +3,6 @@ import { screen } from '@testing-library/react';
 import { render } from 'utils/test';
 import { CapabilityCheck } from 'components/accessCheck/CapabilityCheck';
 import { EXTPIPES_READS, EXTRACTION_PIPELINES_ACL } from 'model/AclAction';
-// eslint-disable-next-line
 import { useCapabilities } from '@cognite/sdk-react-query-hooks';
 
 describe('CapabilityCheck', () => {
@@ -33,8 +32,8 @@ describe('CapabilityCheck', () => {
       </CapabilityCheck>
     );
     expect(
-      screen.getByText(
-        `You have insufficient access rights to access this feature`
+      screen.getByTestId(
+        'no-access'
       )
     ).toBeInTheDocument();
     expect(screen.getByText(`extractionPipelinesAcl:READ`)).toBeInTheDocument();

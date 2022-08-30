@@ -17,16 +17,13 @@ import { useHistory } from 'react-router-dom';
 import { createExtPipePath } from 'utils/baseURL';
 import { EXT_PIPE_PATH } from 'routing/RoutingConfig';
 import { useSelectedExtpipe } from 'hooks/useSelectedExtpipe';
-import { useAppEnv } from 'hooks/useAppEnv';
 import ExtpipeTableSearch from 'components/table/ExtpipeTableSearch';
-import { EXTRACTION_PIPELINE_LOWER } from 'utils/constants';
 import { Colors } from '@cognite/cogs.js';
 import styled from 'styled-components';
-import { Span3 } from 'styles/grid/StyledGrid';
-import { mainContentSpaceAround } from 'styles/StyledVariables';
+import { Span3, StyledTable } from 'components/styled';
 import Layers from 'utils/zindex';
-import { StyledTable } from 'styles/StyledTable';
 import { Extpipe } from 'model/Extpipe';
+import { getProject } from '@cognite/cdf-utilities';
 
 const selectReducer = (
   newState: TableState,
@@ -55,38 +52,6 @@ const fuzzyTextFilterFn = <T extends { values: any }>(
 };
 fuzzyTextFilterFn.autoRemove = (val: boolean) => !val;
 
-const TableTop = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-`;
-
-const StyledExtpipesTable = styled(StyledTable)`
-  ${Span3};
-  margin: ${mainContentSpaceAround};
-
-  table {
-    border-collapse: collapse;
-    width: 100%;
-    th,
-    td {
-      padding: 0.5rem 1rem;
-    }
-    th {
-      background: ${Colors.white.hex()};
-      z-index: ${Layers.MINIMUM};
-    }
-  }
-`;
-
-const StyledTable2 = styled.table`
-  table-layout: fixed;
-  tbody td {
-    word-break: break-word;
-    color: ${Colors['greyscale-grey8'].hex()};
-  }
-`;
-
 interface Props {
   extpipes: Extpipe[];
   columns: Column<Extpipe>[];
@@ -98,7 +63,7 @@ const ExtpipesTable = <T extends { id: ReactText }>({
   tableActionButtons,
 }: Props) => {
   const { setExtpipe } = useSelectedExtpipe();
-  const { project } = useAppEnv();
+  const project = getProject();
   const history = useHistory();
 
   const filterTypes = React.useMemo(
@@ -143,6 +108,7 @@ const ExtpipesTable = <T extends { id: ReactText }>({
       autoResetSortBy: false,
       autoResetSelectedRows: false,
       stateReducer: selectReducer as any,
+      //@ts-ignore
       filterTypes,
       initialState: {
         hiddenColumns: ['externalId'],
@@ -168,7 +134,7 @@ const ExtpipesTable = <T extends { id: ReactText }>({
         {...getTableProps()}
         className="cogs-table extpipes-table"
         role="grid"
-        aria-label={`List of ${EXTRACTION_PIPELINE_LOWER} for the ${project} project`}
+        aria-label={`List of extraction pipelines for the ${project} project`}
       >
         <thead>
           {headerGroups.map((headerGroup: HeaderGroup<any>) => (
@@ -193,7 +159,6 @@ const ExtpipesTable = <T extends { id: ReactText }>({
             prepareRow(row);
             const handleClickOnRow = () => {
               row.toggleRowSelected(true);
-              // @ts-ignore
               setExtpipe(row.original);
             };
             return (
@@ -216,9 +181,8 @@ const ExtpipesTable = <T extends { id: ReactText }>({
                       );
                     }
                   };
+                  // Name column has focusable link for accessibility. Cell click handler is for easy access for mouse users
                   return (
-                    // Name column has focusable link for accessibility. Cell click handler is for easy access for mouse users
-                    // eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-noninteractive-element-interactions
                     <td
                       {...cell.getCellProps()}
                       className={`${cell.column.id}-cell`}
@@ -236,4 +200,37 @@ const ExtpipesTable = <T extends { id: ReactText }>({
     </StyledExtpipesTable>
   );
 };
+
+const TableTop = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+`;
+
+const StyledExtpipesTable = styled(StyledTable)`
+  ${Span3};
+  margin: 1rem 2rem;
+
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    th,
+    td {
+      padding: 0.5rem 1rem;
+    }
+    th {
+      background: ${Colors.white.hex()};
+      z-index: ${Layers.MINIMUM};
+    }
+  }
+`;
+
+const StyledTable2 = styled.table`
+  table-layout: fixed;
+  tbody td {
+    word-break: break-word;
+    color: ${Colors['greyscale-grey8'].hex()};
+  }
+`;
+
 export default ExtpipesTable;

@@ -1,7 +1,7 @@
 import React, { FunctionComponent } from 'react';
 import { trackUsage } from 'utils/Metrics';
 import { ExternalLink } from 'components/links/ExternalLink';
-import { createRedirectLink } from 'utils/utils';
+import { createLink } from '@cognite/cdf-utilities';
 
 interface LinkBase {
   linkText: string;
@@ -25,7 +25,7 @@ const ExtractorDownloadsLink: FunctionComponent<OwnProps> = ({
   linkText,
   link: { url, path },
 }: OwnProps) => {
-  const displayHref = url || createRedirectLink(path || '');
+  const displayHref = url || createLink(path || '');
 
   const onLinkClick = () => {
     trackUsage({ t: 'Navigation', href: displayHref });

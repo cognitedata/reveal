@@ -2,9 +2,52 @@ import React, { FunctionComponent } from 'react';
 import styled from 'styled-components';
 import { Colors } from '@cognite/cogs.js';
 import LinkWithCopy from 'components/links/LinkWithCopy';
-import { NO_RAW_TABLES_MESSAGE } from 'utils/constants';
 import { ExtpipeRawTable } from 'model/Extpipe';
-import { createRedirectLink } from 'utils/utils';
+import { createLink } from '@cognite/cdf-utilities';
+import { useTranslation } from 'common';
+interface OwnProps {
+  rawTables?: ExtpipeRawTable[];
+}
+
+type Props = OwnProps;
+
+const RawTable: FunctionComponent<Props> = ({ rawTables }: OwnProps) => {
+  const { t } = useTranslation();
+
+  if (!rawTables || rawTables.length === 0) {
+    return <i data-testid="no-raw-tables">{t('no-raw-tables')}</i>;
+  }
+
+  return (
+    <RawTableWrapper role="grid">
+      <tbody>
+        <tr className="grid-heading">
+          <th scope="col">{t('database-name')}</th>
+          <th scope="col">{t('table-name')}</th>
+        </tr>
+        {rawTables?.map(({ dbName, tableName }, index) => {
+          const key = `${dbName}-${tableName}-${index}`;
+          return (
+            <tr className="grid-row" key={key}>
+              <td className="grid-cell cell-0">{dbName}</td>
+              <td className="grid-cell cell-1">
+                <LinkWithCopy
+                  href={createLink(`/raw`, {
+                    activeTable: `["${dbName}","${tableName}",null]`,
+                    tabs: `[["${dbName}","${tableName}",null]]`,
+                  })}
+                  copyText={tableName}
+                  linkText={tableName}
+                  copyType="tableName"
+                />
+              </td>
+            </tr>
+          );
+        })}
+      </tbody>
+    </RawTableWrapper>
+  );
+};
 
 const RawTableWrapper = styled.table`
   width: 50%;
@@ -30,47 +73,5 @@ const RawTableWrapper = styled.table`
     }
   }
 `;
-
-interface OwnProps {
-  // eslint-disable-next-line
-  rawTables?: ExtpipeRawTable[];
-}
-
-type Props = OwnProps;
-
-const RawTable: FunctionComponent<Props> = ({ rawTables }: OwnProps) => {
-  if (!rawTables || rawTables.length === 0) {
-    return <i>{NO_RAW_TABLES_MESSAGE}</i>;
-  }
-  return (
-    <RawTableWrapper role="grid">
-      <tbody>
-        <tr className="grid-heading">
-          <th scope="col">Database name</th>
-          <th scope="col">Table name</th>
-        </tr>
-        {rawTables?.map(({ dbName, tableName }, index) => {
-          const key = `${dbName}-${tableName}-${index}`;
-          return (
-            <tr className="grid-row" key={key}>
-              <td className="grid-cell cell-0">{dbName}</td>
-              <td className="grid-cell cell-1">
-                <LinkWithCopy
-                  href={createRedirectLink(`/raw`, {
-                    activeTable: `["${dbName}","${tableName}",null]`,
-                    tabs: `[["${dbName}","${tableName}",null]]`,
-                  })}
-                  copyText={tableName}
-                  linkText={tableName}
-                  copyType="tableName"
-                />
-              </td>
-            </tr>
-          );
-        })}
-      </tbody>
-    </RawTableWrapper>
-  );
-};
 
 export default RawTable;

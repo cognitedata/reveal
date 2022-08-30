@@ -1,30 +1,28 @@
 import { Button, ButtonType, Popconfirm } from '@cognite/cogs.js';
+import { useTranslation } from 'common';
 import React, { ReactNode } from 'react';
 
 export interface ConfirmDialogButtonProps {
   onClick: () => void;
-  // eslint-disable-next-line react/require-default-props
   type?: ButtonType;
-  // eslint-disable-next-line react/require-default-props
   cancelText?: string;
-  // eslint-disable-next-line react/require-default-props
   okText?: string;
-  // eslint-disable-next-line react/require-default-props
   popConfirmContent?: string;
-  // eslint-disable-next-line react/require-default-props
   primaryText?: string | ReactNode;
-  // eslint-disable-next-line react/require-default-props
   testId?: string;
 }
-export const ConfirmDialogButton = ({
-  onClick,
-  cancelText = 'Cancel',
-  okText = 'Confirm',
-  popConfirmContent,
-  primaryText,
-  type,
-  testId = 'confirm-dialog-btn',
-}: ConfirmDialogButtonProps) => {
+export const ConfirmDialogButton = (props: ConfirmDialogButtonProps) => {
+  const { t } = useTranslation();
+  const {
+    onClick,
+    cancelText = t('cancel'),
+    okText = t('confirm'),
+    popConfirmContent,
+    primaryText,
+    type,
+    testId = 'confirm-dialog-btn',
+  } = props;
+
   return (
     <Popconfirm
       onConfirm={onClick}

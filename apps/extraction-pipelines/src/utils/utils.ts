@@ -1,8 +1,6 @@
-import queryString from 'query-string';
-import { getEnv, getProject } from '@cognite/cdf-utilities';
-import { styleScope } from './styleScope';
+import { styleScope } from 'styles/styleScope';
 
-export { styleScope } from './styleScope';
+export { styleScope } from 'styles/styleScope';
 
 // Use this getContainer for all antd components such as: dropdown, tooltip, popover, modals etc
 export const getContainer = () => {
@@ -11,34 +9,26 @@ export const getContainer = () => {
   return el;
 };
 
-// TODO(CDFUX-1655) : Refractor & use createRedirectLink i.e. createLink from @cognite/cdf-utilities
-export const getQueryParameter = (parameterKey: any) => {
-  const parameters = queryString.parse(window.location.search) ?? {};
-  return parameters[parameterKey] ?? '';
+const MINUTES_IN_HOUR = 60;
+const MINUTES_IN_DAY = 24 * MINUTES_IN_HOUR;
+export const timeUnitToMinutesMultiplier = {
+  minutes: 1,
+  hours: MINUTES_IN_HOUR,
+  days: MINUTES_IN_DAY,
 };
 
-export const getCluster = () => {
-  const cluster = getQueryParameter('cluster');
-  return Array.isArray(cluster) ? cluster[0] : cluster;
+export const minutesToUnit = (
+  minutes: number
+): { unit: 'hours' | 'days' | 'minutes'; n: number } => {
+  if (minutes === 0) return { n: 0, unit: 'hours' };
+  if (minutes % MINUTES_IN_DAY === 0)
+    return { n: minutes / MINUTES_IN_DAY, unit: 'days' };
+  if (minutes % MINUTES_IN_HOUR === 0)
+    return { n: minutes / MINUTES_IN_HOUR, unit: 'hours' };
+  return { n: minutes, unit: 'minutes' };
 };
 
-export const createRedirectLink = (
-  path: string,
-  queries: any = {},
-  opts?: queryString.StringifyOptions
-): string => {
-  const project = getProject() || '';
-  const env = getEnv();
-  const cluster = getCluster();
-  const query = queryString.stringify(
-    { ...queries, ...(env ? { env } : {}), ...(cluster ? { cluster } : {}) },
-    opts
-  );
-  if (query.length > 0) {
-    return `/${project}${path}?${query}`;
-  }
-  if (path.length > 0 && path !== '/') {
-    return `/${project}${path}`;
-  }
-  return `/${project}`;
-};
+export const isForbidden = (statusCode: number) => statusCode === 403;
+
+export const MASTERING_MARKDOWN_LINK =
+  'https://guides.github.com/features/mastering-markdown/';

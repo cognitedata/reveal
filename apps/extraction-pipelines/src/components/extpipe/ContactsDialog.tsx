@@ -1,55 +1,31 @@
-import React, { FunctionComponent, useState } from 'react';
+import React, { FunctionComponent, useState, ChangeEvent } from 'react';
+import { getProject, isValidEmail } from '@cognite/cdf-utilities';
 import { useSelectedExtpipe } from 'hooks/useSelectedExtpipe';
 import { useExtpipeById } from 'hooks/useExtpipe';
 import styled from 'styled-components';
-import {
-  CONTACTS_HINT,
-  EMAIL_LABEL,
-  NAME_LABEL,
-  NOTIFICATION_LABEL,
-  ROLE_LABEL,
-} from 'utils/constants';
-import { Hint } from 'styles/StyledForm';
+import { StyledTableNoRowColor2, Grid, Hint } from 'components/styled';
 import { User } from 'model/User';
-import { Grid } from 'styles/grid/StyledGrid';
-import { StyledTableNoRowColor2 } from 'styles/StyledTable';
 import { Button, Input, Switch } from '@cognite/cogs.js';
 import {
   createUpdateSpec,
   useDetailsUpdate,
 } from 'hooks/details/useDetailsUpdate';
-import { useAppEnv } from 'hooks/useAppEnv';
 import { ErrorMessage } from 'components/error/ErrorMessage';
 import { InfoBox } from 'components/message/InfoBox';
-
-export const ContactsSectionWrapper = styled(Grid)`
-  align-content: flex-start;
-  gap: 1rem;
-`;
-export const OwnerWrapper = styled.div`
-  margin-bottom: 2rem;
-`;
-export const Row = styled.div`
-  display: grid;
-  grid-template-columns: 2rem 10rem 6rem 2fr 2fr 5rem;
-  grid-column-gap: 0.5rem;
-  align-items: center;
-  input {
-    width: 100%;
-  }
-`;
-
+import { useTranslation } from 'common';
 interface ContactsSectionProps {
   close: () => void;
 }
 
 export const isOwnerRole = (role: string) => role.toLowerCase() === 'owner';
+
 export const ContactsDialog: FunctionComponent<ContactsSectionProps> = ({
   close,
 }) => {
+  const { t } = useTranslation();
   const { extpipe } = useSelectedExtpipe();
   const { data: current } = useExtpipeById(extpipe?.id);
-  const { project } = useAppEnv();
+  const project = getProject();
   const { mutate } = useDetailsUpdate();
   const [showErrors, setShowErrors] = useState(false);
   const onConfirm = async (updatedContacts: User[]) => {
@@ -72,7 +48,7 @@ export const ContactsDialog: FunctionComponent<ContactsSectionProps> = ({
 
   return (
     <ContactsSectionWrapper role="grid">
-      <Hint>{CONTACTS_HINT}</Hint>
+      <Hint>{t('contact-hint')}</Hint>
       {current && (
         <ContactsDialogView
           initialContacts={current.contacts || []}
@@ -83,11 +59,6 @@ export const ContactsDialog: FunctionComponent<ContactsSectionProps> = ({
       )}
     </ContactsSectionWrapper>
   );
-};
-
-const isValidEmail = (email: string) => {
-  // backend regex = @Email(regexp = "^[\\w-\\+]+(\\.[\\w-]+)*@[\\w-]+(\\.[\\w-]+)*(\\.[a-zA-Z]{2,})$")
-  return /^[\w-+]+(\.[\w-]+)*@[\w-]+(\.[\w-]+)*(\.[a-zA-Z]{2,})$/.test(email);
 };
 
 type ViewProps = {
@@ -102,6 +73,7 @@ export const ContactsDialogView = ({
   onConfirm,
   showErrors,
 }: ViewProps) => {
+  const { t } = useTranslation();
   const emptyContact = {
     name: '',
     email: '',
@@ -154,10 +126,10 @@ export const ContactsDialogView = ({
         <table className="cogs-table">
           <thead>
             <tr>
-              <td>{ROLE_LABEL}</td>
-              <td>{NAME_LABEL}</td>
-              <td>{EMAIL_LABEL}</td>
-              <td>{NOTIFICATION_LABEL}</td>
+              <td>{t('role')}</td>
+              <td>{t('name')}</td>
+              <td>{t('email')}</td>
+              <td>{t('notification_one', { count: 1 })}</td>
               <td />
             </tr>
           </thead>
@@ -168,33 +140,37 @@ export const ContactsDialogView = ({
                   <td>
                     <Input
                       fullWidth
-                      placeholder="E.g. Data engineer"
+                      placeholder={t('role-placeholder')}
                       disabled={index === 0 && contact.role === 'Owner'}
                       value={contact.role}
-                      onChange={(ev) => onEdit(index, 'role', ev.target.value)}
+                      onChange={(ev: ChangeEvent<HTMLInputElement>) =>
+                        onEdit(index, 'role', ev.target.value)
+                      }
                     />
                   </td>
                   <td>
                     <Input
                       fullWidth
-                      placeholder="Firstname Lastname"
+                      placeholder={t('name-placeholder')}
                       value={contact.name}
-                      onChange={(ev) => onEdit(index, 'name', ev.target.value)}
+                      onChange={(ev: ChangeEvent<HTMLInputElement>) =>
+                        onEdit(index, 'name', ev.target.value)
+                      }
                     />
                   </td>
                   <td>
                     <Input
                       fullWidth
-                      placeholder="name@example.com"
+                      placeholder={t('email-placeholder')}
                       value={contact.email}
-                      onChange={(ev) => onEdit(index, 'email', ev.target.value)}
+                      onChange={(ev: ChangeEvent<HTMLInputElement>) =>
+                        onEdit(index, 'email', ev.target.value)
+                      }
                     />
 
                     {showErrors && !isValidEmail(contact.email) && (
-                      <div css="font-size: 0.8rem">
-                        <ErrorMessage>
-                          Enter a valid email: name@example.com
-                        </ErrorMessage>
+                      <div style={{ fontSize: '0.8rem' }}>
+                        <ErrorMessage>{t('email-err')}</ErrorMessage>
                       </div>
                     )}
                   </td>
@@ -202,7 +178,7 @@ export const ContactsDialogView = ({
                     <Switch
                       name={`notification-switch-${index}`}
                       value={contact.sendNotification}
-                      onChange={(newValue) =>
+                      onChange={(newValue: any) =>
                         onEdit(index, 'sendNotification', newValue)
                       }
                     />
@@ -224,29 +200,54 @@ export const ContactsDialogView = ({
 
       <div>
         <Button icon="AddLarge" onClick={addRow}>
-          Add {numOwners === 0 ? 'owner' : 'contact'}
+          {numOwners === 0 ? t('add-owner') : t('add-contact')}
         </Button>
       </div>
 
       {numOwners === 0 && (
         <InfoBox iconType="WarningFilled" color="warning">
-          There should be an owner.
+          {t('owner-err')}
         </InfoBox>
       )}
       {numOwners >= 2 && (
         <InfoBox iconType="WarningFilled" color="warning">
-          There should only be one owner.
+          {t('one-owner-err')}
         </InfoBox>
       )}
 
-      <div css="display: flex; justify-content: flex-end; gap: 0.5rem">
+      <div
+        style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem' }}
+      >
         <Button onClick={onCancel} type="ghost">
-          Cancel
+          {t('cancel')}
         </Button>
-        <Button onClick={() => onConfirm(contacts)} type="primary">
-          Confirm
+        <Button
+          onClick={() => onConfirm(contacts)}
+          type="primary"
+          data-testid="confirm"
+        >
+          {t('confirm')}
         </Button>
       </div>
     </>
   );
 };
+
+export const ContactsSectionWrapper = styled(Grid)`
+  align-content: flex-start;
+  gap: 1rem;
+`;
+
+export const OwnerWrapper = styled.div`
+  margin-bottom: 2rem;
+`;
+
+export const Row = styled.div`
+  display: grid;
+  grid-template-columns: 2rem 10rem 6rem 2fr 2fr 5rem;
+  grid-column-gap: 0.5rem;
+  align-items: center;
+  input {
+    width: 100%;
+  }
+`;

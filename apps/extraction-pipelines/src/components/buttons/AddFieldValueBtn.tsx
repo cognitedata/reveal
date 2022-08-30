@@ -1,29 +1,37 @@
 import React, { PropsWithChildren } from 'react';
-import { EditButton } from 'styles/StyledButton';
+import { EditButton } from 'components/styled';
 import { AddFieldInfoText } from 'components/message/AddFieldInfoText';
-import { greyscaleGrey } from 'components/navigation/breadcrumbs/Breadcrumbs';
 import styled from 'styled-components';
+import { useTranslation } from 'common';
+import { Colors } from '@cognite/cogs.js';
 
 interface AddFieldValueBtnProps {
   onClick: () => void;
   canEdit: boolean;
 }
 
-export const NoDataAdded = styled.div`
-  color: ${greyscaleGrey(6)};
-  padding: 0 1rem;
-`;
-
 export const AddFieldValueBtn = ({
   onClick,
   children,
   canEdit,
 }: PropsWithChildren<AddFieldValueBtnProps>) => {
+  const { t } = useTranslation();
+
   return !canEdit ? (
-    <NoDataAdded>No {children} added.</NoDataAdded>
+    <NoDataAdded>{t('no-field-added', { field: children })}</NoDataAdded>
   ) : (
-    <EditButton showPencilIcon={false} onClick={onClick} $full>
+    <EditButton
+      showPencilIcon={false}
+      onClick={onClick}
+      $full
+      data-testid="add-field-btn"
+    >
       <AddFieldInfoText>{children}</AddFieldInfoText>
     </EditButton>
   );
 };
+
+export const NoDataAdded = styled.div`
+  color: ${Colors['greyscale-grey6'].hex()};
+  padding: 0 1rem;
+`;

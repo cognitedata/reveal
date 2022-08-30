@@ -8,8 +8,7 @@ import {
   CardValue,
   CardWrapper,
   StyledTitleCard,
-} from 'styles/StyledCard';
-import { TableHeadings } from 'components/table/ExtpipeTableCol';
+} from 'components/styled';
 import {
   addIfExist,
   calculateLatest,
@@ -30,10 +29,10 @@ import { useSelectedExtpipe } from 'hooks/useSelectedExtpipe';
 import { useExtpipeById } from 'hooks/useExtpipe';
 import { useLocation, useRouteMatch } from 'react-router-dom';
 import { HEALTH_PATH } from 'routing/RoutingConfig';
+import { useTranslation } from 'common';
 
-export const FAILED_PAST_WEEK_HEADING: Readonly<string> =
-  'Failed runs past week';
 export const RunScheduleConnection: FunctionComponent = () => {
+  const { t } = useTranslation();
   const { search } = useLocation();
   const { url } = useRouteMatch();
   const { extpipe: selectedExtpipe } = useSelectedExtpipe();
@@ -65,13 +64,17 @@ export const RunScheduleConnection: FunctionComponent = () => {
     ...addIfExist(extpipe?.lastSuccess),
     ...addIfExist(extpipe?.lastFailure),
   ]);
+
   return (
     <CardWrapper className={`${lastRun.status.toLowerCase()} z-2`}>
       <CardNavLink to={`${url}/${HEALTH_PATH}${search}`} exact>
         <CardInWrapper>
-          <StyledTitleCard className="card-title">
+          <StyledTitleCard
+            className="card-title"
+            data-testid="last-run-time-text"
+          >
             <Icon type="Calendar" />
-            {TableHeadings.LATEST_RUN_TIME}
+            {t('last-run-time')}
           </StyledTitleCard>
           <CardValue className="card-value">
             <TimeDisplay value={lastRun.time} relative />
@@ -80,9 +83,9 @@ export const RunScheduleConnection: FunctionComponent = () => {
         </CardInWrapper>
       </CardNavLink>
       <CardInWrapper>
-        <StyledTitleCard className="card-title">
+        <StyledTitleCard className="card-title" data-testid="schedule-text">
           <Icon type="Clock" />
-          {TableHeadings.SCHEDULE}
+          {t('schedule')}
         </StyledTitleCard>
         <CardValue className="card-value">
           <Schedule id="top-schedule" schedule={extpipe?.schedule} />
@@ -92,10 +95,12 @@ export const RunScheduleConnection: FunctionComponent = () => {
         <CardInWrapper>
           <StyledTitleCard className="card-title">
             <Tag color="danger">{errorsInThePastWeek.length}</Tag>
-            {FAILED_PAST_WEEK_HEADING}
+            {t('failed-runs-past-week')}
           </StyledTitleCard>
           <CardValue className="card-value">
-            {errorsComparedToLastWeek} runs compared to last week
+            {t('runs-compared-to-last-week', {
+              count: errorsComparedToLastWeek,
+            })}
           </CardValue>
         </CardInWrapper>
       )}
@@ -103,7 +108,7 @@ export const RunScheduleConnection: FunctionComponent = () => {
         <CardInWrapper>
           <StyledTitleCard className="card-title">
             <Icon type="Checkmark" />
-            {TableHeadings.LAST_SEEN}
+            {t('last-seen')}
           </StyledTitleCard>
           <CardValue className="card-value">
             {lastConnected && <TimeDisplay value={lastConnected} relative />}

@@ -2,10 +2,10 @@ import React, { FunctionComponent, useState } from 'react';
 import { EditModal } from 'components/modals/EditModal';
 import { Button, Input, Select } from '@cognite/cogs.js';
 
-import { DivFlex } from 'styles/flex/StyledFlex';
-import { IconHeading } from 'styles/StyledHeadings';
+import { DivFlex } from 'components/styled';
+import { IconHeading } from 'components/styled';
 import styled from 'styled-components';
-import { StyledLabel } from 'styles/StyledForm';
+import { StyledLabel } from 'components/styled';
 import { OptionTypeBase } from 'react-select';
 import { Extpipe } from 'model/Extpipe';
 import { InfoBox } from 'components/message/InfoBox';
@@ -13,32 +13,10 @@ import {
   createUpdateSpec,
   useDetailsUpdate,
 } from 'hooks/details/useDetailsUpdate';
-import { useAppEnv } from 'hooks/useAppEnv';
 import { ErrorMessage } from 'components/error/ErrorMessage';
-
-const Hr = styled.hr`
-  border: 0;
-  border-bottom: 1px solid #ddd;
-  margin: 1.5rem 0;
-`;
-
-const MINUTES_IN_HOUR = 60;
-const MINUTES_IN_DAY = 24 * MINUTES_IN_HOUR;
-const timeUnitToMinutesMultiplier = {
-  minutes: 1,
-  hours: MINUTES_IN_HOUR,
-  days: MINUTES_IN_DAY,
-};
-export const minutesToUnit = (
-  minutes: number
-): { unit: 'hours' | 'days' | 'minutes'; n: number } => {
-  if (minutes === 0) return { n: 0, unit: 'hours' };
-  if (minutes % MINUTES_IN_DAY === 0)
-    return { n: minutes / MINUTES_IN_DAY, unit: 'days' };
-  if (minutes % MINUTES_IN_HOUR === 0)
-    return { n: minutes / MINUTES_IN_HOUR, unit: 'hours' };
-  return { n: minutes, unit: 'minutes' };
-};
+import { getProject } from '@cognite/cdf-utilities';
+import { minutesToUnit, timeUnitToMinutesMultiplier } from 'utils/utils';
+import { useTranslation } from 'common';
 
 type NotificationDialogProps = {
   isOpen: boolean;
@@ -50,7 +28,8 @@ export const NotificationDialog: FunctionComponent<NotificationDialogProps> = ({
   extpipe,
   close,
 }) => {
-  const { project } = useAppEnv();
+  const { t } = useTranslation();
+  const project = getProject();
   const { mutate } = useDetailsUpdate();
   const oldValue = minutesToUnit(
     extpipe.notificationConfig?.allowedNotSeenRangeInMinutes ?? 0
@@ -70,7 +49,7 @@ export const NotificationDialog: FunctionComponent<NotificationDialogProps> = ({
   const onConfirm = async () => {
     if (!extpipe || !project) return;
     if (!Number.isFinite(value) || value <= 0) {
-      setErrorMessage('Enter a value greater than 0');
+      setErrorMessage(t('notification-setting-err-invalid-time'));
       return;
     }
     const items = createUpdateSpec({
@@ -84,9 +63,7 @@ export const NotificationDialog: FunctionComponent<NotificationDialogProps> = ({
     });
     await mutate(items, {
       onError: () => {
-        setErrorMessage(
-          'An error occurred. The new notification settings was not saved due to an error. Make sure everything is filled out correctly, and try again.'
-        );
+        setErrorMessage(t('notification-setting-err'));
       },
       onSuccess: () => {
         close();
@@ -96,20 +73,17 @@ export const NotificationDialog: FunctionComponent<NotificationDialogProps> = ({
   return (
     <EditModal
       width={700}
-      title="Notifications settings"
+      title={t('notification-setting')}
       visible={isOpen}
       close={close}
     >
-      <IconHeading icon="BellFilled">Run alerts</IconHeading>
-      <p>Get alerted when runs fail.</p>
+      <IconHeading icon="BellFilled">{t('run-alerts')}</IconHeading>
+      <p> {t('run-alerts-info')}</p>
       <Hr />
-      <IconHeading icon="BellFilled">Last seen status</IconHeading>
-      <p>
-        Allows you to track if the extraction pipeline is down due to connection
-        issues.
-      </p>
+      <IconHeading icon="BellFilled">{t('last-seen-status')}</IconHeading>
+      <p>{t('last-seen-alerts-info')}</p>
       <StyledLabel htmlFor="time-amount-input">
-        Send an alert if there has been no activity for
+        {t('no-activity-alert')}
       </StyledLabel>
       <DivFlex css="width: 250px; margin-top: 0.5rem;" gap="0.5rem">
         <div css="flex: 1">
@@ -138,22 +112,25 @@ export const NotificationDialog: FunctionComponent<NotificationDialogProps> = ({
       <Hr />
       {numContactsWithNotificationsTurnedOn === 0 ? (
         <InfoBox iconType="WarningFilled" color="warning">
-          There are currently no contacts that will receive notifications. You
-          can manage this in the contact section.
+          {t('no-contact-added-desc')}
         </InfoBox>
       ) : (
-        <InfoBox iconType="InfoFilled">
-          You can manage who will receive notifications in the contacts section.
-        </InfoBox>
+        <InfoBox iconType="InfoFilled">{t('add-contact-info')}</InfoBox>
       )}
       <DivFlex justify="flex-end" css="gap: 0.5rem; margin-top: 1rem">
         <Button type="ghost" onClick={close}>
-          Cancel
+          {t('cancel')}
         </Button>
         <Button type="primary" onClick={onConfirm}>
-          Confirm
+          {t('confirm')}
         </Button>
       </DivFlex>
     </EditModal>
   );
 };
+
+const Hr = styled.hr`
+  border: 0;
+  border-bottom: 1px solid #ddd;
+  margin: 1.5rem 0;
+`;

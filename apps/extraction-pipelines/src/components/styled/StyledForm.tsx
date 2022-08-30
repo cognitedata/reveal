@@ -1,8 +1,7 @@
 import styled from 'styled-components';
 import React from 'react';
 import { Colors, Input } from '@cognite/cogs.js';
-import { PaddedGridForm } from 'styles/grid/StyledGrid';
-import { hintBottomSpacing, sideBarLabelColor } from 'styles/StyledVariables';
+import { PaddedGridForm } from 'components/styled';
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   inputWidth?: number;
@@ -44,7 +43,7 @@ export const StyledLabel = styled.label`
 
 export const Hint = styled.span`
   color: ${Colors['greyscale-grey8'].hex()};
-  margin-bottom: ${hintBottomSpacing};
+  margin-bottom: 0.5rem;
   display: block;
 `;
 
@@ -88,7 +87,7 @@ export const ColumnForm = styled.form`
     props.marginBottom ? '1rem' : '0'};
   label {
     margin-left: 1rem;
-    color: ${sideBarLabelColor};
+    color: Colors[ 'greyscale-grey10' ].hex();
   }
   .cogs-input-container {
     width: 100%;

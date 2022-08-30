@@ -11,7 +11,7 @@ import { Extpipe } from 'model/Extpipe';
 import { RunLogsTable } from 'components/extpipe/RunLogsTable';
 import { getRunLogTableCol } from 'components/extpipe/RunLogsCols';
 import { ErrorFeedback } from 'components/error/ErrorFeedback';
-import { PageWrapperColumn } from 'styles/StyledPage';
+import { PageWrapperColumn, Span3 } from 'components/styled';
 import { DebouncedSearch } from 'components/inputs/DebouncedSearch';
 import { DateRangeFilter } from 'components/inputs/dateTime/DateRangeFilter';
 import { Colors, Loader } from '@cognite/cogs.js';
@@ -32,83 +32,50 @@ import {
   DateFormatsRecord,
   mapRangeToGraphTimeFormat,
 } from 'components/chart/runChartUtils';
-import { Span3 } from 'styles/grid/StyledGrid';
 import { useFlag } from '@cognite/react-feature-flags';
 import { ErrorBox } from 'components/error/ErrorBox';
 import { SectionWithoutHeader } from 'components/extpipe/Section';
 import { trackUsage } from 'utils/Metrics';
-
-const TableWrapper = styled(PageWrapperColumn)`
-  ${Span3};
-  padding: 0 2rem;
-`;
-const FilterWrapper = styled.div`
-  display: flex;
-  padding: 1rem;
-  > :first-child,
-  > :nth-child(2) {
-    margin-right: 1rem;
-  }
-  > :nth-child(3),
-  > :nth-child(4) {
-    padding-right: 1rem;
-    margin-right: 1rem;
-    border-right: 1px solid ${Colors['greyscale-grey5'].hex()};
-  }
-  .cogs-btn-tertiary {
-    height: 100%;
-    background-color: ${Colors.white.hex()};
-    &:hover {
-      border: 1px solid ${Colors.primary.hex()};
-    }
-  }
-  .cogs-input-container {
-    flex: 1;
-    .addons-input-wrapper {
-      height: 100%;
-      .cogs-input {
-        height: 100%;
-      }
-    }
-  }
-`;
+import { DEFAULT_ITEMS_PER_PAGE } from 'utils/constants';
+import { TranslationKeys, useTranslation } from 'common';
+import { isForbidden } from 'utils/utils';
 interface LogsViewProps {
   extpipe: Extpipe | null;
 }
-export const PAGE_SIZE_DEFAULT: Readonly<number> = 100;
-const ERROR_SEARCH_LABEL: Readonly<string> = 'Search error message';
-const MESSAGE_SEARCH_PLACEHOLDER: Readonly<string> = 'Search in messages';
-const isForbidden = (statusCode: number) => statusCode === 403;
-
 export interface RangeType {
   startDate: Date;
   endDate: Date;
 }
 
-export const renderError = (error: Error & { status: number }) =>
-  !isForbidden(error.status) ? (
+export const renderError = (
+  error: Error & { status: number },
+  _t: (key: TranslationKeys) => string
+) => {
+  return !isForbidden(error.status) ? (
     <ErrorFeedback error={error} />
   ) : (
     <PageWrapperColumn>
-      <ErrorBox heading="You have insufficient access rights to access this feature">
+      <ErrorBox heading={_t('no-access')}>
         <p>
-          To access this page you must have the capability{' '}
+          {_t('no-access-desc')}
           <code>extractionruns:read</code>.
         </p>
       </ErrorBox>
     </PageWrapperColumn>
   );
+};
 
 export const ExtpipeRunHistory: FunctionComponent<LogsViewProps> = ({
   extpipe,
 }: PropsWithChildren<LogsViewProps>) => {
+  const { t } = useTranslation();
   const [all, setAll] = useState<RunUI[]>([]);
   const [runsList, setRunsList] = useState<RunUI[]>([]);
   const [timeFormat, setTimeFormat] = useState<DateFormatRecordType>(
     DateFormatsRecord.DATE_FORMAT
   );
   const [nextCursor, setNextCursor] = useState<string | undefined>();
-  const [pageSize] = useState(PAGE_SIZE_DEFAULT);
+  const [pageSize] = useState(DEFAULT_ITEMS_PER_PAGE);
   const [pageCount, setPageCount] = React.useState(0);
   const chartEnabled = useFlag('EXTPIPES_CHART_allowlist', {
     fallback: false,
@@ -175,10 +142,10 @@ export const ExtpipeRunHistory: FunctionComponent<LogsViewProps> = ({
   );
 
   if (error) {
-    return renderError(error);
+    return renderError(error, t);
   }
 
-  const columns = getRunLogTableCol();
+  const columns = getRunLogTableCol(t);
 
   return (
     <TableWrapper>
@@ -190,15 +157,15 @@ export const ExtpipeRunHistory: FunctionComponent<LogsViewProps> = ({
           <TimeSelector />
           <StatusFilterMenu />
           <DebouncedSearch
-            label={ERROR_SEARCH_LABEL}
-            placeholder={MESSAGE_SEARCH_PLACEHOLDER}
+            label={t('search-err-message')}
+            placeholder={t('search-err-message-placeholder')}
           />
         </FilterWrapper>
         {isFetching ? (
           <Loader />
         ) : (
           <div style={{ margin: '1rem' }}>
-            {chartEnabled ? (
+            {chartEnabled && all?.length ? (
               <RunChart allRuns={all} timeFormat={timeFormat} />
             ) : null}
             <RunLogsTable
@@ -215,3 +182,39 @@ export const ExtpipeRunHistory: FunctionComponent<LogsViewProps> = ({
     </TableWrapper>
   );
 };
+
+const TableWrapper = styled(PageWrapperColumn)`
+  ${Span3};
+  padding: 0 2rem;
+`;
+
+const FilterWrapper = styled.div`
+  display: flex;
+  padding: 1rem;
+  > :first-child,
+  > :nth-child(2) {
+    margin-right: 1rem;
+  }
+  > :nth-child(3),
+  > :nth-child(4) {
+    padding-right: 1rem;
+    margin-right: 1rem;
+    border-right: 1px solid ${Colors['greyscale-grey5'].hex()};
+  }
+  .cogs-btn-tertiary {
+    height: 100%;
+    background-color: ${Colors.white.hex()};
+    &:hover {
+      border: 1px solid ${Colors.primary.hex()};
+    }
+  }
+  .cogs-input-container {
+    flex: 1;
+    .addons-input-wrapper {
+      height: 100%;
+      .cogs-input {
+        height: 100%;
+      }
+    }
+  }
+`;

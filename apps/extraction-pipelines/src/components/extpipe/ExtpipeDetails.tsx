@@ -3,32 +3,19 @@ import styled from 'styled-components';
 import { useParams } from 'react-router';
 import { useSelectedExtpipe } from 'hooks/useSelectedExtpipe';
 import { RouterParams } from 'routing/RoutingConfig';
-import { EXTRACTION_PIPELINE_LOWER } from 'utils/constants';
-import { PageWrapperColumn } from 'styles/StyledPage';
+import { PageWrapperColumn } from 'components/styled';
 import { DocumentationSection } from 'components/extpipe/DocumentationSection';
 import { RunScheduleConnection } from 'components/extpipe/RunScheduleConnection';
 import { ExtpipeInformation } from 'components/extpipe/ExtpipeInformation';
 import { useOneOfPermissions } from 'hooks/useOneOfPermissions';
 import { EXTPIPES_WRITES } from 'model/AclAction';
 import { trackUsage } from 'utils/Metrics';
-
-const MiddleSection = styled.div`
-  display: flex;
-  margin-bottom: 1rem;
-  gap: 1rem;
-`;
-const TopSection = styled.section`
-  display: flex;
-  flex-direction: column;
-  margin-top: 1rem;
-`;
-
-export const createNoExtpipeFoundMessage = (id: string): Readonly<string> =>
-  `Found no ${EXTRACTION_PIPELINE_LOWER} with id: ${id}`;
+import { useTranslation } from 'common';
 
 interface ExtpipeViewProps {}
 
 export const ExtpipeDetails: FunctionComponent<ExtpipeViewProps> = () => {
+  const { t } = useTranslation();
   const { id } = useParams<RouterParams>();
   // take as param??
   const { extpipe } = useSelectedExtpipe();
@@ -43,7 +30,7 @@ export const ExtpipeDetails: FunctionComponent<ExtpipeViewProps> = () => {
   }, [extpipeId]);
 
   if (!extpipe) {
-    return <p>{createNoExtpipeFoundMessage(id)}</p>;
+    return <p>{t('ext-pipeline-id-not-found', { id })}</p>;
   }
   return (
     <PageWrapperColumn>
@@ -61,3 +48,15 @@ export const ExtpipeDetails: FunctionComponent<ExtpipeViewProps> = () => {
     </PageWrapperColumn>
   );
 };
+
+const MiddleSection = styled.div`
+  display: flex;
+  margin-bottom: 1rem;
+  gap: 1rem;
+`;
+
+const TopSection = styled.section`
+  display: flex;
+  flex-direction: column;
+  margin-top: 1rem;
+`;
