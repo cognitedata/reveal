@@ -54,7 +54,6 @@ const GlobalStyle = createGlobalStyle<{ theme: typeof theme }>`
     color: #333333;
     text-shadow: 0 0 0.25px currentColor;
   }
-  
 
   // TODO: [VIS-793] This can be removed when Cogs fix styles of Dropdown
   .cogs-tooltip {
