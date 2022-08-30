@@ -731,11 +731,11 @@ __metadata:
     "@types/expect-puppeteer": 5.0.1
     "@types/geojson": 7946.0.10
     "@types/glob": 7.2.0
-    "@types/jest": 28.1.7
+    "@types/jest": 28.1.8
     "@types/jest-environment-puppeteer": 5.0.2
     "@types/jest-image-snapshot": 5.1.0
     "@types/jsdom": 20.0.0
-    "@types/lodash": 4.14.182
+    "@types/lodash": 4.14.184
     "@types/mixpanel-browser": 2.38.0
     "@types/node": 16.11.49
     "@types/offscreencanvas": 2019.7.0
@@ -788,7 +788,7 @@ __metadata:
     prettier: 2.7.1
     process: 0.11.10
     proj4: 2.8.0
-    puppeteer: 16.1.0
+    puppeteer: 16.2.0
     random-seed: 0.3.0
     raw-loader: 4.0.2
     rimraf: 3.0.2
@@ -802,7 +802,7 @@ __metadata:
     tsc-alias: 1.7.0
     typescript: 4.7.4
     webpack: 5.74.0
-    webpack-bundle-analyzer: 4.5.0
+    webpack-bundle-analyzer: 4.6.1
     webpack-cli: 4.10.0
     webpack-dev-server: 4.9.3
     webpack-log: 3.0.2
@@ -1947,13 +1947,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/jest@npm:28.1.7":
-  version: 28.1.7
-  resolution: "@types/jest@npm:28.1.7"
+"@types/jest@npm:28.1.8":
+  version: 28.1.8
+  resolution: "@types/jest@npm:28.1.8"
   dependencies:
     expect: ^28.0.0
     pretty-format: ^28.0.0
-  checksum: 17c9bf9667cd4f062eba5aa9eaea248927bf6479da1cc009e0b7d26d501f460f068dd23eddb67d2602264e915a30b63ae7c9cbb516723ffd18589f6f9d267d43
+  checksum: d4cd36158a3ae1d4b42cc48a77c95de74bc56b84cf81e09af3ee0399c34f4a7da8ab9e787570f10004bd642f9e781b0033c37327fbbf4a8e4b6e37e8ee3693a7
   languageName: node
   linkType: hard
 
@@ -1993,10 +1993,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/lodash@npm:4.14.182":
-  version: 4.14.182
-  resolution: "@types/lodash@npm:4.14.182"
-  checksum: 7dd137aa9dbabd632408bd37009d984655164fa1ecc3f2b6eb94afe35bf0a5852cbab6183148d883e9c73a958b7fec9a9bcf7c8e45d41195add6a18c34958209
+"@types/lodash@npm:4.14.184":
+  version: 4.14.184
+  resolution: "@types/lodash@npm:4.14.184"
+  checksum: 6d9a4d67f7f9d0ec3fd21174f3dd3d00629dc1227eb469450eace53adbc1f7e2330699c28d0fe093e5f0fef0f0e763098be1f779268857213224af082b62be21
   languageName: node
   linkType: hard
 
@@ -9899,7 +9899,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pkg-dir@npm:4.2.0, pkg-dir@npm:^4.2.0":
+"pkg-dir@npm:^4.2.0":
   version: 4.2.0
   resolution: "pkg-dir@npm:4.2.0"
   dependencies:
@@ -10155,23 +10155,22 @@ __metadata:
   languageName: node
   linkType: hard
 
-"puppeteer@npm:16.1.0":
-  version: 16.1.0
-  resolution: "puppeteer@npm:16.1.0"
+"puppeteer@npm:16.2.0":
+  version: 16.2.0
+  resolution: "puppeteer@npm:16.2.0"
   dependencies:
     cross-fetch: 3.1.5
     debug: 4.3.4
     devtools-protocol: 0.0.1019158
     extract-zip: 2.0.1
     https-proxy-agent: 5.0.1
-    pkg-dir: 4.2.0
     progress: 2.0.3
     proxy-from-env: 1.1.0
     rimraf: 3.0.2
     tar-fs: 2.1.1
     unbzip2-stream: 1.4.3
     ws: 8.8.1
-  checksum: fca08c33f1096f15b7461326f28725f463e458190844b09dc34f55dee86b6455f0078497c861cdf0af8931797c1f60a64389f531ca9c0758ce68427d27736596
+  checksum: b0f96f27e48e421410800b2a61ba8d45b3d4f60295a0d5189dfa0c442eedeea4b936cfe2c7cf00ba92057b9f42a1f000e5d843d0288137b0f76800a57ccbafdc
   languageName: node
   linkType: hard
 
@@ -12274,9 +12273,9 @@ typescript@4.7.4:
   languageName: node
   linkType: hard
 
-"webpack-bundle-analyzer@npm:4.5.0":
-  version: 4.5.0
-  resolution: "webpack-bundle-analyzer@npm:4.5.0"
+"webpack-bundle-analyzer@npm:4.6.1":
+  version: 4.6.1
+  resolution: "webpack-bundle-analyzer@npm:4.6.1"
   dependencies:
     acorn: ^8.0.4
     acorn-walk: ^8.0.0
@@ -12289,7 +12288,7 @@ typescript@4.7.4:
     ws: ^7.3.1
   bin:
     webpack-bundle-analyzer: lib/bin/analyzer.js
-  checksum: 158e96810ec213d5665ca1c0b257097db44e1f11c4befefab8352b9e5b10890fcb3e3fc1f7bb400dd58762a8edce5621c92afeca86eb4687d2eb64e93186bfcb
+  checksum: 4bc97ac6a1d9cd1f133444b0fc9d9091c97f4bd8388f97636ce27abd1ebffaa7dd45d29f6693661a666e77bcc08dff43ab7c2f5e2600a3101b956c94c1d038d0
   languageName: node
   linkType: hard
 
