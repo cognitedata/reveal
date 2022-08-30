@@ -3,4 +3,5 @@
  */
 export interface VisualTestFixture {
   run(): Promise<void>;
+  dispose(): void;
 }
