@@ -3,8 +3,8 @@ import { setupServer } from 'msw/node';
 import { configure, mount } from 'enzyme';
 import Adapter from '@wojtekmaj/enzyme-adapter-react-17';
 import {
-  mockPriceArea,
-  getMockPriceArea,
+  mockBidProcessResult,
+  getMockBidProcessResult,
   getTestCogniteClient,
 } from 'utils/test';
 import { testRenderer } from 'utils/test/render';
@@ -20,30 +20,35 @@ import { getMockCdfEvents, mockCreatedTime } from './PortfolioHeader.mock';
 
 configure({ adapter: new Adapter() });
 
-const mockServer = setupServer(getMockCdfEvents(), getMockPriceArea(undefined));
+const mockServer = setupServer(
+  getMockCdfEvents(),
+  getMockBidProcessResult(undefined)
+);
 
 describe('Portfolio header tests', () => {
   beforeAll(() => mockServer.listen());
   afterAll(() => mockServer.close());
 
   it('Should render the price area name', async () => {
-    testRenderer(<PortfolioHeader priceArea={mockPriceArea} />);
+    testRenderer(<PortfolioHeader bidProcessResult={mockBidProcessResult} />);
 
-    const priceAreaName = new RegExp(mockPriceArea.name);
+    const priceAreaName = new RegExp(mockBidProcessResult.priceAreaName);
     expect(await screen.findByText(priceAreaName)).toBeInTheDocument();
   });
 
   it('Should calculate the correct start date of the matrix generation process', async () => {
     const startDate = formatDate(
       mockCreatedTime,
-      mockPriceArea.marketConfiguration?.timezone || DEFAULT_CONFIG.TIME_ZONE
+      mockBidProcessResult.marketConfiguration?.timezone ||
+        DEFAULT_CONFIG.TIME_ZONE
     );
 
     const TestComponent: React.FC = () => {
       const { startDate } = useBidMatrixProcessStartDate(
-        mockPriceArea.bidProcessExternalId!,
+        mockBidProcessResult.bidProcessExternalId!,
         getTestCogniteClient(),
-        mockPriceArea.marketConfiguration?.timezone || DEFAULT_CONFIG.TIME_ZONE
+        mockBidProcessResult.marketConfiguration?.timezone ||
+          DEFAULT_CONFIG.TIME_ZONE
       );
       return <div>{startDate}</div>;
     };
@@ -55,14 +60,16 @@ describe('Portfolio header tests', () => {
     const handleDownload = jest.spyOn(utils, 'downloadBidMatrices');
 
     it('Should render the download button', () => {
-      testRenderer(<PortfolioHeader priceArea={mockPriceArea} />);
+      testRenderer(<PortfolioHeader bidProcessResult={mockBidProcessResult} />);
 
       const downloadButton = screen.getByRole('button', { name: /Download/i });
       expect(downloadButton).toBeInTheDocument();
     });
 
     it('Should show loading state on click', () => {
-      const wrapper = mount(<PortfolioHeader priceArea={mockPriceArea} />);
+      const wrapper = mount(
+        <PortfolioHeader bidProcessResult={mockBidProcessResult} />
+      );
 
       const button = wrapper.findWhere((node) => {
         return node.type() === 'button' && node.text() === 'Download';
@@ -73,7 +80,7 @@ describe('Portfolio header tests', () => {
     });
 
     it('Should handle click', () => {
-      testRenderer(<PortfolioHeader priceArea={mockPriceArea} />);
+      testRenderer(<PortfolioHeader bidProcessResult={mockBidProcessResult} />);
 
       const downloadButton = screen.getByRole('button', { name: /Download/i });
       fireEvent.click(downloadButton);

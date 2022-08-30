@@ -2,7 +2,7 @@ import { Button, Dropdown, Icon, Label, Menu } from '@cognite/cogs.js';
 import { useAuthContext } from '@cognite/react-container';
 import { downloadBidMatrices, formatDate } from 'utils/utils';
 import { DEFAULT_CONFIG } from '@cognite/power-ops-api-types';
-import { PriceAreaWithData } from 'types';
+import { BidProcessResultWithData } from 'types';
 import { MouseEvent, useContext, useEffect, useState } from 'react';
 import { CogniteClient } from '@cognite/sdk';
 import { PriceAreasContext } from 'providers/priceAreaProvider';
@@ -44,9 +44,9 @@ export const useBidMatrixProcessStartDate = (
 };
 
 export const PortfolioHeader = ({
-  priceArea,
+  bidProcessResult,
 }: {
-  priceArea: PriceAreaWithData;
+  bidProcessResult: BidProcessResultWithData;
 }) => {
   const metrics = useMetrics('portfolio');
 
@@ -61,17 +61,21 @@ export const PortfolioHeader = ({
   const [downloading, setDownloading] = useState<boolean>(false);
 
   const { startDate, getStartDate } = useBidMatrixProcessStartDate(
-    priceArea?.bidProcessExternalId,
+    bidProcessResult?.bidProcessExternalId,
     client,
-    priceArea.marketConfiguration?.timezone
+    bidProcessResult.marketConfiguration?.timezone
   );
 
   const downloadMatrix = async (_e: MouseEvent) => {
     setDownloading(true);
-    await downloadBidMatrices(priceArea, client?.project, authState?.token);
+    await downloadBidMatrices(
+      bidProcessResult,
+      client?.project,
+      authState?.token
+    );
     setDownloading(false);
     metrics.track(`click-download-matrices-button`, {
-      bidProcessExternalId: priceArea.bidProcessExternalId,
+      bidProcessExternalId: bidProcessResult.bidProcessExternalId,
     });
   };
 
@@ -86,15 +90,17 @@ export const PortfolioHeader = ({
   };
 
   useEffect(() => {
-    if (priceArea?.bidProcessExternalId) {
+    if (bidProcessResult?.bidProcessExternalId) {
       getStartDate();
     }
-  }, [priceArea]);
+  }, [bidProcessResult]);
 
   return (
     <Header>
       <div>
-        <StyledTitle level={5}>Price Area {priceArea.name}</StyledTitle>
+        <StyledTitle level={5}>
+          Price Area {bidProcessResult.priceAreaName}
+        </StyledTitle>
         <Label size="small" variant="unknown">
           {`Matrix generation started: ${startDate}`}
         </Label>

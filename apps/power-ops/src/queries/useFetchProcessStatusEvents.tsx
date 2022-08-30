@@ -1,5 +1,5 @@
 import { CogniteClient } from '@cognite/sdk';
-import { POWEROPS_LABELS } from '@cognite/power-ops-api-types';
+import { PROCESS_LABELS } from '@cognite/power-ops-api-types';
 import { useQuery } from 'react-query';
 
 export const fetchProcessStatusEvents = async ({
@@ -23,9 +23,9 @@ export const fetchProcessStatusEvents = async ({
       targetTypes: ['event'],
       labels: {
         containsAny: [
-          { externalId: POWEROPS_LABELS.STATUS_EVENT_STARTED_LABEL },
-          { externalId: POWEROPS_LABELS.STATUS_EVENT_FINISHED_LABEL },
-          { externalId: POWEROPS_LABELS.STATUS_EVENT_FAILED_LABEL },
+          { externalId: PROCESS_LABELS.STATUS_EVENT_STARTED_LABEL },
+          { externalId: PROCESS_LABELS.STATUS_EVENT_FINISHED_LABEL },
+          { externalId: PROCESS_LABELS.STATUS_EVENT_FAILED_LABEL },
         ],
       },
     },

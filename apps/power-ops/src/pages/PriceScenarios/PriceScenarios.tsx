@@ -1,7 +1,7 @@
 import { PriceScenariosChart } from 'components/PriceScenariosChart';
 import { SetStateAction, useEffect, useState } from 'react';
 import { pickChartColor } from 'utils/utils';
-import { PriceAreaWithData, TableData, TableColumn } from 'types';
+import { BidProcessResultWithData, TableData, TableColumn } from 'types';
 import { Column } from 'react-table';
 import { HeadlessTable } from 'components/HeadlessTable';
 import { useAuthContext } from '@cognite/react-container';
@@ -9,6 +9,7 @@ import { DoubleDatapoint } from '@cognite/sdk';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
+import zip from 'lodash/zip';
 import { useMetrics } from '@cognite/metrics';
 import { DEFAULT_CONFIG } from '@cognite/power-ops-api-types';
 
@@ -29,15 +30,15 @@ dayjs.extend(utc);
 dayjs.extend(timezone);
 
 export const PriceScenarios = ({
-  priceArea,
+  bidProcessResult,
 }: {
-  priceArea: PriceAreaWithData;
+  bidProcessResult: BidProcessResultWithData;
 }) => {
   const metrics = useMetrics('price-scenarios');
   const { client } = useAuthContext();
 
-  const bidDate = dayjs(priceArea.bidDate).tz(
-    priceArea.marketConfiguration?.timezone || DEFAULT_CONFIG.TIME_ZONE
+  const bidDate = dayjs(bidProcessResult.bidDate).tz(
+    bidProcessResult.marketConfiguration?.timezone || DEFAULT_CONFIG.TIME_ZONE
   );
 
   const [priceExternalIds, setPriceExternalIds] = useState<
@@ -61,8 +62,8 @@ export const PriceScenarios = ({
   const [tableData, setTableData] = useState<TableData[]>([]);
 
   const getTableData = async () => {
-    const activeScenarioIndex = priceArea?.priceScenarios.findIndex(
-      (scenario) => scenario.externalId === activeTab
+    const activeScenarioIndex = bidProcessResult?.priceScenarios.findIndex(
+      (scenario) => scenario.priceTsExternalId === activeTab
     );
 
     // Create array of column externalids for plants
@@ -70,8 +71,8 @@ export const PriceScenarios = ({
     const plantProductionTsExternalIds: string[] = [];
     tableColumns.forEach(async (column, index) => {
       if (column.accessor?.includes('scenario')) {
-        const scenario = priceArea?.priceScenarios.find(
-          (scenario) => scenario.externalId === column.id
+        const scenario = bidProcessResult?.priceScenarios.find(
+          (scenario) => scenario.priceTsExternalId === column.id
         );
         if (scenario?.totalProduction?.shopProductionExternalIds) {
           totalProductionTsExternalIds.push(
@@ -80,8 +81,8 @@ export const PriceScenarios = ({
         }
       } else {
         // Get Plant from current scenario (activeTab)
-        const plant = priceArea?.priceScenarios.find(
-          (scenario) => scenario.externalId === activeTab
+        const plant = bidProcessResult?.priceScenarios.find(
+          (scenario) => scenario.priceTsExternalId === activeTab
         )?.plantProduction?.[index - 2];
 
         if (plant?.production?.shopProductionExternalIds) {
@@ -93,28 +94,28 @@ export const PriceScenarios = ({
     });
 
     // We aggregate synthetically all total SHOP timeseries of the same Scenario for a give day (24h)
-    const shopTotalProductionDatapoints =
-      totalProductionTsExternalIds &&
-      (await client?.timeseries.syntheticQuery([
-        {
-          expression: totalProductionTsExternalIds
-            .map((externalId) => `TS{externalId='${externalId}'}`)
-            .join(' + '),
-          start: bidDate.startOf('day').valueOf(),
-          end: bidDate.endOf('day').valueOf(),
-        },
-      ]));
+    const shopTotalProductionDatapoints = totalProductionTsExternalIds.length
+      ? await client?.timeseries.syntheticQuery([
+          {
+            expression: totalProductionTsExternalIds
+              .map((externalId) => `TS{externalId='${externalId}'}`)
+              .join(' + '),
+            start: bidDate.startOf('day').valueOf(),
+            end: bidDate.endOf('day').valueOf(),
+          },
+        ])
+      : [];
 
     // Fetch data points of each plant's SHOP result for a given day (24h)
-    const shopPlantProductionDatapoints =
-      plantProductionTsExternalIds.length &&
-      (await client?.datapoints.retrieve({
-        items: plantProductionTsExternalIds.map((externalId) => {
-          return { externalId };
-        }),
-        start: bidDate.startOf('day').valueOf(),
-        end: bidDate.endOf('day').valueOf(),
-      }));
+    const shopPlantProductionDatapoints = plantProductionTsExternalIds.length
+      ? await client?.datapoints.retrieve({
+          items: plantProductionTsExternalIds.map((externalId) => {
+            return { externalId };
+          }),
+          start: bidDate.startOf('day').valueOf(),
+          end: bidDate.endOf('day').valueOf(),
+        })
+      : [];
 
     const combinedShopProductionDatapoints = [
       ...(shopTotalProductionDatapoints || []),
@@ -160,12 +161,13 @@ export const PriceScenarios = ({
             start: bidDate.startOf('day').valueOf(),
             end: bidDate.endOf('day').valueOf(),
           }))
-        : priceArea?.priceScenarios[activeScenarioIndex] &&
+        : bidProcessResult?.priceScenarios[activeScenarioIndex] &&
           (await client?.datapoints.retrieve({
             items: [
               {
                 externalId:
-                  priceArea?.priceScenarios[activeScenarioIndex].externalId,
+                  bidProcessResult?.priceScenarios[activeScenarioIndex]
+                    .priceTsExternalId,
               },
             ],
             start: bidDate.startOf('day').valueOf(),
@@ -177,7 +179,7 @@ export const PriceScenarios = ({
           activeTab,
           activeScenarioIndex,
           priceTimeseries,
-          priceArea
+          bidProcessResult
         )
       : [];
 
@@ -185,9 +187,7 @@ export const PriceScenarios = ({
     const combinedData = [...shopProductionData, ...calcProductionData];
 
     // Transpose rows and columns
-    const transposedColumns = combinedData[0].map((_, index: number) =>
-      combinedData.map((row) => row[index])
-    );
+    const transposedColumns = zip(...combinedData);
     const priceScenarioTableData = transposedColumns.map(
       (row: any, index: number) => {
         // Convert each row from array of objects to object
@@ -200,18 +200,20 @@ export const PriceScenarios = ({
   };
 
   useEffect(() => {
-    if (priceArea) {
-      const priceExternalIds = priceArea?.priceScenarios.map((scenario) => {
-        return { externalId: scenario.externalId };
-      });
+    if (bidProcessResult) {
+      const priceExternalIds = bidProcessResult?.priceScenarios.map(
+        (scenario) => {
+          return { externalId: scenario.priceTsExternalId };
+        }
+      );
       setPriceExternalIds(priceExternalIds);
     }
-  }, [activeTab, priceArea]);
+  }, [activeTab, bidProcessResult]);
 
   useEffect(() => {
-    const activeColumns = getActiveColumns(activeTab, priceArea);
+    const activeColumns = getActiveColumns(activeTab, bidProcessResult);
     setTableColumns(activeColumns as TableColumn[]);
-  }, [priceExternalIds, priceArea]);
+  }, [priceExternalIds, bidProcessResult]);
 
   useEffect(() => {
     getTableData();
@@ -221,7 +223,7 @@ export const PriceScenarios = ({
     <Main>
       <PriceScenariosContainer>
         <PriceScenariosChart
-          priceArea={priceArea}
+          bidProcessResult={bidProcessResult}
           externalIds={priceExternalIds}
           activeTab={activeTab}
           changeTab={(selectedTab: SetStateAction<string>) =>
@@ -235,10 +237,10 @@ export const PriceScenarios = ({
           onChange={(activeKey: string) => handleTabClickEvent(activeKey)}
         >
           <StyledTabs.TabPane key="total" tab="Total" />
-          {priceArea?.priceScenarios.map((scenario, index) => {
+          {bidProcessResult?.priceScenarios.map((scenario, index) => {
             return (
               <StyledTabs.TabPane
-                key={scenario.externalId}
+                key={scenario.priceTsExternalId}
                 tab={
                   <>
                     <StyledIcon type="Stop" color={pickChartColor(index)} />

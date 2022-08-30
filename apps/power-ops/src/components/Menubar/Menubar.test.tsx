@@ -6,7 +6,7 @@ import {
 import * as React from 'react';
 import * as utils from 'utils/utils';
 import { useLocation } from 'react-router-dom';
-import { mockPriceArea } from 'utils/test';
+import { mockBidProcessResult, mockPriceArea } from 'utils/test';
 import { testRenderer } from 'utils/test/render';
 
 import { MenuBar } from './Menubar';
@@ -47,16 +47,17 @@ describe('Menubar tests', () => {
 
   it('Should show price area in portfolio dropdown', async () => {
     const MockMenubar: React.FC = () => {
-      const priceAreas: PriceAreasContextType = React.useMemo(
+      const priceAreaContext: PriceAreasContextType = React.useMemo(
         () => ({
           allPriceAreas: [mockPriceArea],
           priceAreaChanged: () => false,
+          bidProcessConfigurationChanged: () => false,
         }),
         []
       );
 
       return (
-        <PriceAreasContext.Provider value={priceAreas}>
+        <PriceAreasContext.Provider value={priceAreaContext}>
           <MenuBar />
         </PriceAreasContext.Provider>
       );
@@ -68,7 +69,7 @@ describe('Menubar tests', () => {
     fireEvent.click(portfolioTab);
 
     const priceAreaButton = await screen.findByRole('button', {
-      name: mockPriceArea.name,
+      name: mockBidProcessResult.priceAreaName,
     });
 
     expect(priceAreaButton).toBeInTheDocument();
@@ -76,16 +77,17 @@ describe('Menubar tests', () => {
 
   it('Should navigate to correct url when selecting price area', async () => {
     const MockMenubar: React.FC = () => {
-      const priceAreas: PriceAreasContextType = React.useMemo(
+      const priceAreaContext: PriceAreasContextType = React.useMemo(
         () => ({
           allPriceAreas: [mockPriceArea],
           priceAreaChanged: () => false,
+          bidProcessConfigurationChanged: () => false,
         }),
         []
       );
 
       return (
-        <PriceAreasContext.Provider value={priceAreas}>
+        <PriceAreasContext.Provider value={priceAreaContext}>
           <MenuBar />
         </PriceAreasContext.Provider>
       );
@@ -97,12 +99,12 @@ describe('Menubar tests', () => {
     fireEvent.click(portfolioTab);
 
     const priceAreaButton = await screen.findByRole('button', {
-      name: mockPriceArea.name,
+      name: mockBidProcessResult.priceAreaName,
     });
     fireEvent.click(priceAreaButton);
 
     expect(global.window.location.href).toContain(
-      `/portfolio/${mockPriceArea.externalId}/total`
+      `/portfolio/${mockBidProcessResult.priceAreaExternalId}/total`
     );
   });
 

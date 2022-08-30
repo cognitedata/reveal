@@ -1,5 +1,9 @@
 import { fireEvent, screen, waitFor } from '@testing-library/react';
-import { mockPriceArea, testRenderer, getTestCogniteClient } from 'utils/test';
+import {
+  mockBidProcessResult,
+  testRenderer,
+  getTestCogniteClient,
+} from 'utils/test';
 import { setupServer } from 'msw/node';
 import { useAuthContext } from '@cognite/react-container';
 
@@ -30,9 +34,9 @@ describe('Price scenario page tests', () => {
 
   describe('Tabs tests', () => {
     it('Should display correct tabs', async () => {
-      testRenderer(<PriceScenarios priceArea={mockPriceArea} />);
+      testRenderer(<PriceScenarios bidProcessResult={mockBidProcessResult} />);
 
-      const expectedScenarioTabs = mockPriceArea.priceScenarios.map(
+      const expectedScenarioTabs = mockBidProcessResult.priceScenarios.map(
         (scenario) => scenario.name
       );
       const expectedTabs = ['Total', ...expectedScenarioTabs];
@@ -43,9 +47,9 @@ describe('Price scenario page tests', () => {
     });
 
     it('Should switch to new tab onclick', async () => {
-      testRenderer(<PriceScenarios priceArea={mockPriceArea} />);
+      testRenderer(<PriceScenarios bidProcessResult={mockBidProcessResult} />);
 
-      const firstScenario = mockPriceArea.priceScenarios[0].name;
+      const firstScenario = mockBidProcessResult.priceScenarios[0].name;
       const tab = await screen.findByRole('tab', {
         name: firstScenario,
       });
@@ -57,14 +61,14 @@ describe('Price scenario page tests', () => {
 
   describe('Price scenario table tests', () => {
     it('Should render price scenario table', async () => {
-      testRenderer(<PriceScenarios priceArea={mockPriceArea} />);
+      testRenderer(<PriceScenarios bidProcessResult={mockBidProcessResult} />);
 
       const table = await screen.findByRole('table');
       await waitFor(() => expect(table).toBeInTheDocument());
     });
 
     it('Should have the correct number of rows', async () => {
-      testRenderer(<PriceScenarios priceArea={mockPriceArea} />);
+      testRenderer(<PriceScenarios bidProcessResult={mockBidProcessResult} />);
 
       await waitFor(async () => {
         const rows = await screen.findAllByRole('row');
@@ -72,10 +76,12 @@ describe('Price scenario page tests', () => {
       });
     });
 
-    it.each(mockPriceArea.priceScenarios)(
+    it.each(mockBidProcessResult.priceScenarios)(
       'Should display correct column headers when on total tab',
       async (scenario) => {
-        testRenderer(<PriceScenarios priceArea={mockPriceArea} />);
+        testRenderer(
+          <PriceScenarios bidProcessResult={mockBidProcessResult} />
+        );
 
         expect(
           await screen.findByRole('columnheader', { name: scenario.name })
@@ -83,13 +89,15 @@ describe('Price scenario page tests', () => {
       }
     );
 
-    it.each(mockPriceArea.priceScenarios[0].plantProduction)(
+    it.each(mockBidProcessResult.priceScenarios[0].plantProduction)(
       'Should display correct column headers when on scenario tab',
       async (plant) => {
-        testRenderer(<PriceScenarios priceArea={mockPriceArea} />);
+        testRenderer(
+          <PriceScenarios bidProcessResult={mockBidProcessResult} />
+        );
 
         // Go to first scenario tab
-        const firstScenario = mockPriceArea.priceScenarios[0];
+        const firstScenario = mockBidProcessResult.priceScenarios[0];
         const tab = await screen.findByRole('tab', {
           name: firstScenario.name,
         });
@@ -103,9 +111,9 @@ describe('Price scenario page tests', () => {
     );
 
     it('Should display column subheaders', async () => {
-      testRenderer(<PriceScenarios priceArea={mockPriceArea} />);
+      testRenderer(<PriceScenarios bidProcessResult={mockBidProcessResult} />);
 
-      const expectedLength = mockPriceArea.priceScenarios.length;
+      const expectedLength = mockBidProcessResult.priceScenarios.length;
       const matrixSubcolumn = await screen.findAllByRole('columnheader', {
         name: /matrix/i,
       });

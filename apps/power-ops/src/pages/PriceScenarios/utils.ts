@@ -1,20 +1,23 @@
-import { PriceAreaWithData, TableColumn } from 'types';
+import { BidProcessResultWithData, TableColumn } from 'types';
 import { calculateScenarioProduction, roundWithDec } from 'utils/utils';
 import { DatapointAggregates, Datapoints, DoubleDatapoint } from '@cognite/sdk';
-import { PriceArea, CalculatedProduction } from '@cognite/power-ops-api-types';
+import {
+  BidProcessResult,
+  CalculatedProduction,
+} from '@cognite/power-ops-api-types';
 
 export function getActiveColumns(
   activeTab: string,
-  priceArea: PriceArea
+  bidProcessResult: BidProcessResult
 ): TableColumn[] {
   let columns: TableColumn[] = [];
 
   // If on total tab, one column for each Scenario
   if (activeTab === 'total') {
-    columns = priceArea?.priceScenarios.map((scenario, index) => {
+    columns = bidProcessResult?.priceScenarios.map((scenario, index) => {
       const header: TableColumn = {
         Header: scenario.name,
-        id: scenario.externalId,
+        id: scenario.priceTsExternalId,
         accessor: `scenario-${index}`,
         columns: [
           {
@@ -32,16 +35,16 @@ export function getActiveColumns(
     });
   } else {
     // If on Scenario tab, filter by specific scenario
-    const index = priceArea?.priceScenarios.findIndex(
-      (scenario) => scenario.externalId === activeTab
+    const index = bidProcessResult?.priceScenarios.findIndex(
+      (scenario) => scenario.priceTsExternalId === activeTab
     );
-    columns = priceArea?.priceScenarios
-      .filter((scenario) => scenario.externalId === activeTab)
+    columns = bidProcessResult?.priceScenarios
+      .filter((scenario) => scenario.priceTsExternalId === activeTab)
       .flatMap((scenario) => {
         // First column is Total Volume
         const totalColumn: TableColumn = {
           Header: 'Total Volume',
-          id: scenario.externalId,
+          id: scenario.priceTsExternalId,
           accessor: `scenario-${index}`,
           columns: [
             {
@@ -62,7 +65,7 @@ export function getActiveColumns(
           )
           .map((plant, plantIndex) => {
             return {
-              Header: priceArea?.plants.find(
+              Header: bidProcessResult?.plants.find(
                 (specificPlant) => specificPlant.name === plant.plantName
               )?.name,
               id: `plant-${plantIndex}`,
@@ -123,7 +126,7 @@ export const calculateProduction = async (
   activeTab: string,
   activeScenarioIndex: number,
   priceTimeseries: DatapointAggregates[] | Datapoints[],
-  priceArea: PriceAreaWithData
+  bidProcessResult: BidProcessResultWithData
 ): Promise<{ [accessor: string]: string }[][]> => {
   let calcProductionData: { [accessor: string]: string }[][];
   if (activeTab === 'total') {
@@ -131,14 +134,14 @@ export const calculateProduction = async (
       const accessor = `calc-${index}`;
       const calulatedProduction = calculateScenarioProduction(
         scenarioPricePerHour.datapoints as DoubleDatapoint[],
-        priceArea.totalMatrixWithData
+        bidProcessResult.totalMatrixWithData
       );
       return getFormattedProductionColumn(calulatedProduction, accessor);
     });
   } else {
     // Calculate Plant Columns
-    calcProductionData = priceArea.plantMatrixesWithData
-      ? priceArea.plantMatrixesWithData
+    calcProductionData = bidProcessResult.plantMatrixesWithData
+      ? bidProcessResult.plantMatrixesWithData
           .sort((plantA, plantB) =>
             plantA.plantName.localeCompare(plantB.plantName)
           )
@@ -159,7 +162,7 @@ export const calculateProduction = async (
           const accessor = `calc-${activeScenarioIndex}`;
           const calulatedProduction = calculateScenarioProduction(
             scenarioPricePerHour.datapoints as DoubleDatapoint[],
-            priceArea.totalMatrixWithData
+            bidProcessResult.totalMatrixWithData
           );
           return getFormattedProductionColumn(calulatedProduction, accessor);
         })

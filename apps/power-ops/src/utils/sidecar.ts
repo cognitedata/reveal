@@ -44,6 +44,7 @@ const getAadApplicationId = (cluster: string) => {
   }),
   ...getAadApplicationId(CLUSTER),
   __sidecarFormatVersion: 1,
+  disableLegacyLogin: true,
   // to be used only locally as a sidecar placeholder
   // when deployed with FAS the values below are partly overriden
   applicationId: 'power-ops',

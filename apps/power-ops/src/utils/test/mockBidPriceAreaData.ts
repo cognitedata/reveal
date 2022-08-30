@@ -1,7 +1,8 @@
-import { PriceAreaWithData } from 'types';
 import { rest } from 'msw';
-import sidecar from 'utils/sidecar';
 import { MSWRequest } from 'utils/test';
+import { BidProcessResultWithData } from 'types';
+import sidecar from 'utils/sidecar';
+import { PriceArea } from '@cognite/power-ops-api-types';
 
 const mockColumnHeaders = ['hour', 1, 2, 3];
 
@@ -32,9 +33,14 @@ const mockDataRows = [
   ['23', 103.21, -0.87, -0.32],
 ];
 
-export const mockPriceArea: PriceAreaWithData = {
+export const mockPriceArea: PriceArea = {
   externalId: 'mock_price_area_NO1',
   name: 'Mock NO 1',
+};
+
+export const mockBidProcessResult: BidProcessResultWithData = {
+  priceAreaExternalId: mockPriceArea.externalId,
+  priceAreaName: mockPriceArea.name,
   plants: [
     {
       externalId: 'plant1_externalId',
@@ -53,7 +59,7 @@ export const mockPriceArea: PriceAreaWithData = {
   priceScenarios: [
     {
       name: 'Scenario 1',
-      externalId: 'scenario1_externalId',
+      priceTsExternalId: 'scenario1_externalId',
       totalProduction: {
         shopProductionExternalIds: ['scenario1_shop_total_externalId'],
       },
@@ -74,7 +80,7 @@ export const mockPriceArea: PriceAreaWithData = {
     },
     {
       name: 'Scenario 2',
-      externalId: 'scenario2_externalId',
+      priceTsExternalId: 'scenario2_externalId',
       totalProduction: {
         shopProductionExternalIds: ['scenario2_shop_total_externalId'],
       },
@@ -96,27 +102,23 @@ export const mockPriceArea: PriceAreaWithData = {
   ],
   totalMatrix: {
     externalId: 'total_matrixes_externalId',
-    startTime: 1651830168688,
   },
   plantMatrixes: [
     {
       plantName: 'plant1',
       matrix: {
         externalId: 'plant1_externalId',
-        startTime: 1651830150988,
       },
     },
     {
       plantName: 'plant2',
       matrix: {
         externalId: 'plant2_externalId',
-        startTime: 1651830151224,
       },
     },
   ],
   totalMatrixWithData: {
     externalId: 'total_matrixes_with_data_externalId',
-    startTime: 1651830168688,
     columnHeaders: mockColumnHeaders,
     dataRows: mockDataRows,
   },
@@ -125,7 +127,6 @@ export const mockPriceArea: PriceAreaWithData = {
       plantName: 'plant1',
       matrixWithData: {
         externalId: 'plant1_with_data_externalId',
-        startTime: 1651830150988,
         columnHeaders: mockColumnHeaders,
         dataRows: mockDataRows,
       },
@@ -134,7 +135,6 @@ export const mockPriceArea: PriceAreaWithData = {
       plantName: 'plant2',
       matrixWithData: {
         externalId: 'plant2_with_data_externalId',
-        startTime: 1651830151224,
         columnHeaders: mockColumnHeaders,
         dataRows: mockDataRows,
       },
@@ -146,10 +146,12 @@ export const mockPriceArea: PriceAreaWithData = {
   },
 };
 
-export const getMockPriceArea = (project: string | undefined): MSWRequest => {
-  const url = `${sidecar.powerOpsApiBaseUrl}/${project}/price-area/${mockPriceArea.externalId}/data`;
+export const getMockBidProcessResult = (
+  project: string | undefined
+): MSWRequest => {
+  const url = `${sidecar.powerOpsApiBaseUrl}/${project}/price-area/${mockBidProcessResult.priceAreaExternalId}/data`;
 
   return rest.get<Request>(url, (_req, res, ctx) => {
-    return res(ctx.json(mockPriceArea));
+    return res(ctx.json(mockBidProcessResult));
   });
 };

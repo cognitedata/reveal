@@ -1,7 +1,7 @@
 import { screen, fireEvent } from '@testing-library/react';
 import React from 'react';
 import { useLocation } from 'react-router-dom';
-import { mockPriceArea, testRenderer } from 'utils/test';
+import { mockBidProcessResult, testRenderer } from 'utils/test';
 
 import { Sidebar } from './Sidebar';
 
@@ -9,7 +9,7 @@ jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
   useLocation: jest.fn(),
   useRouteMatch: () => ({
-    url: `/portfolio/${mockPriceArea.externalId}`,
+    url: `/portfolio/${mockBidProcessResult.priceAreaExternalId}`,
   }),
 }));
 
@@ -27,7 +27,7 @@ describe('Sidebar tests', () => {
 
       return (
         <Sidebar
-          priceArea={mockPriceArea}
+          bidProcessResult={mockBidProcessResult}
           opened={openedSidePanel}
           setOpened={setOpenedSidePanel}
         />
@@ -51,7 +51,7 @@ describe('Sidebar tests', () => {
 
         return (
           <Sidebar
-            priceArea={mockPriceArea}
+            bidProcessResult={mockBidProcessResult}
             opened={openedSidePanel}
             setOpened={setOpenedSidePanel}
           />
@@ -79,7 +79,7 @@ describe('Sidebar tests', () => {
 
         return (
           <Sidebar
-            priceArea={mockPriceArea}
+            bidProcessResult={mockBidProcessResult}
             opened={openedSidePanel}
             setOpened={setOpenedSidePanel}
           />
@@ -109,7 +109,7 @@ describe('Sidebar tests', () => {
 
         return (
           <Sidebar
-            priceArea={mockPriceArea}
+            bidProcessResult={mockBidProcessResult}
             opened={openedSidePanel}
             setOpened={setOpenedSidePanel}
           />
@@ -128,7 +128,7 @@ describe('Sidebar tests', () => {
 
     it('Should return all plants + total and price scenarios if no query entered', async () => {
       (useLocation as jest.Mock).mockImplementation(() => ({
-        pathname: `/portfolio/${mockPriceArea.externalId}/Total`,
+        pathname: `/portfolio/${mockBidProcessResult.priceAreaExternalId}/Total`,
       }));
 
       const MockSidebar: React.FC = () => {
@@ -137,7 +137,7 @@ describe('Sidebar tests', () => {
 
         return (
           <Sidebar
-            priceArea={mockPriceArea}
+            bidProcessResult={mockBidProcessResult}
             opened={openedSidePanel}
             setOpened={setOpenedSidePanel}
           />
@@ -147,13 +147,13 @@ describe('Sidebar tests', () => {
       testRenderer(<MockSidebar />);
 
       const results = (await screen.findAllByRole('link')).length;
-      const expectedResults = mockPriceArea.plants.length + 2; // +2 for Total and Price Scenarios buttons
+      const expectedResults = mockBidProcessResult.plants.length + 2; // +2 for Total and Price Scenarios buttons
       expect(results).toEqual(expectedResults);
     });
 
     it('Should display the correct plant names', async () => {
       (useLocation as jest.Mock).mockImplementation(() => ({
-        pathname: `/portfolio/${mockPriceArea.externalId}/Total`,
+        pathname: `/portfolio/${mockBidProcessResult.priceAreaExternalId}/Total`,
       }));
 
       const MockSidebar: React.FC = () => {
@@ -162,7 +162,7 @@ describe('Sidebar tests', () => {
 
         return (
           <Sidebar
-            priceArea={mockPriceArea}
+            bidProcessResult={mockBidProcessResult}
             opened={openedSidePanel}
             setOpened={setOpenedSidePanel}
           />
@@ -180,7 +180,7 @@ describe('Sidebar tests', () => {
         )
         .map((result) => result.textContent);
 
-      const expectedPlants = mockPriceArea.plants.map(
+      const expectedPlants = mockBidProcessResult.plants.map(
         (plant) => plant.displayName
       );
 
@@ -189,7 +189,7 @@ describe('Sidebar tests', () => {
 
     it('Should return correct results when given a query', async () => {
       (useLocation as jest.Mock).mockImplementation(() => ({
-        pathname: `/portfolio/${mockPriceArea.externalId}/Total`,
+        pathname: `/portfolio/${mockBidProcessResult.priceAreaExternalId}/Total`,
       }));
 
       const MockSidebar: React.FC = () => {
@@ -198,7 +198,7 @@ describe('Sidebar tests', () => {
 
         return (
           <Sidebar
-            priceArea={mockPriceArea}
+            bidProcessResult={mockBidProcessResult}
             opened={openedSidePanel}
             setOpened={setOpenedSidePanel}
           />
@@ -209,7 +209,7 @@ describe('Sidebar tests', () => {
 
       const searchBar = screen.getByPlaceholderText('Search plants');
       // Search for the first plant in the price area
-      const query = mockPriceArea.plants[0].displayName;
+      const query = mockBidProcessResult.plants[0].displayName;
       fireEvent.change(searchBar, {
         target: { value: query },
       });
@@ -218,7 +218,9 @@ describe('Sidebar tests', () => {
         (button) => button.textContent
       );
 
-      const results = mockPriceArea.plants.map((plant) => plant.displayName);
+      const results = mockBidProcessResult.plants.map(
+        (plant) => plant.displayName
+      );
       results.push('Total');
       results.push('Price Scenarios');
       const expectedResults = results.filter((result) =>
@@ -232,7 +234,7 @@ describe('Sidebar tests', () => {
   describe('Matrix button tests', () => {
     it('Should navigate to correct url on click of button', async () => {
       (useLocation as jest.Mock).mockImplementation(() => ({
-        pathname: `/portfolio/${mockPriceArea.externalId}/Total`,
+        pathname: `/portfolio/${mockBidProcessResult.priceAreaExternalId}/Total`,
       }));
 
       const MockSidebar: React.FC = () => {
@@ -241,7 +243,7 @@ describe('Sidebar tests', () => {
 
         return (
           <Sidebar
-            priceArea={mockPriceArea}
+            bidProcessResult={mockBidProcessResult}
             opened={openedSidePanel}
             setOpened={setOpenedSidePanel}
           />
@@ -250,14 +252,14 @@ describe('Sidebar tests', () => {
 
       testRenderer(<MockSidebar />);
 
-      const testPlant = mockPriceArea.plants[0];
+      const testPlant = mockBidProcessResult.plants[0];
       const testButton = screen.getByRole('link', {
         name: testPlant.displayName,
       });
       fireEvent.click(testButton);
 
       expect(global.window.location.href).toContain(
-        `/portfolio/${mockPriceArea.externalId}/${testPlant.externalId}`
+        `/portfolio/${mockBidProcessResult.priceAreaExternalId}/${testPlant.externalId}`
       );
     });
   });

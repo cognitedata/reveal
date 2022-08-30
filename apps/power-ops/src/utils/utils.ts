@@ -1,6 +1,6 @@
 import { CalculatedProduction } from '@cognite/power-ops-api-types';
 import { DoubleDatapoint } from '@cognite/sdk';
-import { MatrixWithData, PriceAreaWithData } from 'types';
+import { MatrixWithData, BidProcessResultWithData } from 'types';
 import sidecar from 'utils/sidecar';
 import axios from 'axios';
 import dayjs from 'dayjs';
@@ -160,13 +160,16 @@ export const fetchBidMatricesData = async (
 };
 
 export const downloadBidMatrices = async (
-  priceArea: PriceAreaWithData,
+  bidProcessResult: BidProcessResultWithData,
   project: string | undefined,
   token: string | undefined
 ) => {
-  if (priceArea.totalMatrix?.externalId && priceArea.plantMatrixes) {
-    const totalMatrixExternalId = priceArea.totalMatrix.externalId;
-    const plantMatrixExternalIds = priceArea.plantMatrixes.map(
+  if (
+    bidProcessResult.totalMatrix?.externalId &&
+    bidProcessResult.plantMatrixes
+  ) {
+    const totalMatrixExternalId = bidProcessResult.totalMatrix.externalId;
+    const plantMatrixExternalIds = bidProcessResult.plantMatrixes.map(
       (plant) => plant.matrix!.externalId
     );
     await fetchBidMatricesData(

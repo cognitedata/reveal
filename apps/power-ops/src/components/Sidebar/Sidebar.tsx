@@ -2,7 +2,7 @@ import { Button, Detail } from '@cognite/cogs.js';
 import { SetStateAction, useCallback, useEffect, useState } from 'react';
 import { NavLink, useLocation, useRouteMatch } from 'react-router-dom';
 import debounce from 'lodash/debounce';
-import { PriceAreaWithData } from 'types';
+import { BidProcessResultWithData } from 'types';
 import { Plant } from '@cognite/power-ops-api-types';
 import { useMetrics } from '@cognite/metrics';
 
@@ -16,11 +16,11 @@ import {
 } from './elements';
 
 export const Sidebar = ({
-  priceArea,
+  bidProcessResult,
   opened,
   setOpened,
 }: {
-  priceArea: PriceAreaWithData;
+  bidProcessResult: BidProcessResultWithData;
   opened: boolean;
   setOpened: (opened: SetStateAction<boolean>) => void;
 }) => {
@@ -56,7 +56,7 @@ export const Sidebar = ({
         metrics.track('type-search-input', { query });
       }
 
-      const searchResults = priceArea.plants?.filter((plant) =>
+      const searchResults = bidProcessResult.plants?.filter((plant) =>
         plant.displayName.toLowerCase().includes(query.toLowerCase())
       );
       callback(searchResults);
@@ -65,11 +65,11 @@ export const Sidebar = ({
   );
 
   useEffect(() => {
-    if (priceArea.plants) {
+    if (bidProcessResult.plants) {
       debouncedSearch(query, (result: Plant[]) => {
         setSearchPrice('price scenarios'.includes(query.toLowerCase()));
         setSearchTotal('total'.includes(query.toLowerCase()));
-        setFilteredPlants(query?.length ? result : priceArea.plants);
+        setFilteredPlants(query?.length ? result : bidProcessResult.plants);
         setIsSearching(!!query?.length);
       });
     }
@@ -115,7 +115,7 @@ export const Sidebar = ({
             >
               <StyledButton
                 toggled={currentPath === `${match.url}/total`}
-                key={`${priceArea.externalId}-total`}
+                key={`${bidProcessResult.priceAreaExternalId}-total`}
                 onClick={() => setQuery('')}
               >
                 <p>Total</p>
@@ -129,7 +129,7 @@ export const Sidebar = ({
             >
               <StyledButton
                 toggled={currentPath === `${match.url}/price-scenarios`}
-                key={`${priceArea.externalId}-price-scenarios-link`}
+                key={`${bidProcessResult.priceAreaExternalId}-price-scenarios-link`}
                 onClick={() => setQuery('')}
               >
                 <p>Price Scenarios</p>
@@ -142,8 +142,12 @@ export const Sidebar = ({
               return (
                 <NavLink
                   to={`${match.url}/${plant.externalId}`}
-                  key={`${priceArea.externalId}-${plant.externalId}`}
-                  onClick={() => trackSidebarNavLinkClick(priceArea.externalId)}
+                  key={`${bidProcessResult.priceAreaExternalId}-${plant.externalId}`}
+                  onClick={() =>
+                    trackSidebarNavLinkClick(
+                      bidProcessResult.priceAreaExternalId
+                    )
+                  }
                 >
                   <StyledButton
                     toggled={currentPath === `${match.url}/${plant.externalId}`}

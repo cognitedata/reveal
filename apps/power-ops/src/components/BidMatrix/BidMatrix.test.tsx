@@ -3,7 +3,7 @@ import dayjs from 'dayjs';
 import { useParams } from 'react-router-dom';
 import { SequenceItem } from '@cognite/sdk';
 
-import { mockPriceArea, testRenderer } from '../../utils/test';
+import { mockBidProcessResult, testRenderer } from '../../utils/test';
 
 import * as utils from './utils';
 import { BidMatrix } from './BidMatrix';
@@ -37,50 +37,50 @@ describe('Bid matrix tests', () => {
   describe('Bid matrix header tests', () => {
     it('Should display the correct display name in Bid matrix title', async () => {
       const { rerender } = testRenderer(
-        <BidMatrix priceArea={mockPriceArea} />
+        <BidMatrix bidProcessResult={mockBidProcessResult} />
       );
 
       let title = await screen.findByRole('heading', { name: /Bid matrix:/i });
       expect(title).toHaveTextContent('Total');
 
       // First plant bidmatrix
-      const testPlant = mockPriceArea.plants[0];
+      const testPlant = mockBidProcessResult.plants[0];
       (useParams as jest.Mock).mockImplementation(() => ({
         plantExternalId: testPlant.externalId,
       }));
-      rerender(<BidMatrix priceArea={mockPriceArea} />);
+      rerender(<BidMatrix bidProcessResult={mockBidProcessResult} />);
 
       title = await screen.findByRole('heading', { name: /Bid matrix:/i });
       expect(title).toHaveTextContent(testPlant.displayName);
     });
 
     it('Should display the correct date generated', async () => {
-      testRenderer(<BidMatrix priceArea={mockPriceArea} />);
+      testRenderer(<BidMatrix bidProcessResult={mockBidProcessResult} />);
 
       const dateGenerated = await screen.findByText(/Generated/i);
       expect(dateGenerated).toHaveTextContent(
-        dayjs(mockPriceArea.bidDate).format('MMM DD, YYYY')
+        dayjs(mockBidProcessResult.bidDate).format('MMM DD, YYYY')
       );
     });
 
     it('Should display the correct external id', async () => {
       const { rerender } = testRenderer(
-        <BidMatrix priceArea={mockPriceArea} />
+        <BidMatrix bidProcessResult={mockBidProcessResult} />
       );
 
       let externalId = await screen.findByText(/Generated/i);
       expect(externalId).toHaveTextContent(
-        mockPriceArea.totalMatrixWithData.externalId
+        mockBidProcessResult.totalMatrixWithData.externalId
       );
 
       // Test a plant bidmatrix
-      const testPlant = mockPriceArea.plants[0];
+      const testPlant = mockBidProcessResult.plants[0];
       (useParams as jest.Mock).mockImplementation(() => ({
         plantExternalId: testPlant.externalId,
       }));
-      rerender(<BidMatrix priceArea={mockPriceArea} />);
+      rerender(<BidMatrix bidProcessResult={mockBidProcessResult} />);
 
-      const plant = mockPriceArea.plantMatrixesWithData.find(
+      const plant = mockBidProcessResult.plantMatrixesWithData.find(
         (plant) => plant.plantName === testPlant.name
       );
       const expectedExternalId = plant?.matrixWithData?.externalId;
@@ -93,31 +93,31 @@ describe('Bid matrix tests', () => {
 
   describe('Bid matrix table tests', () => {
     it('Should render bidmatrix table', async () => {
-      testRenderer(<BidMatrix priceArea={mockPriceArea} />);
+      testRenderer(<BidMatrix bidProcessResult={mockBidProcessResult} />);
 
       const table = await screen.findByRole('table');
       expect(table).toBeInTheDocument();
     });
 
     it('Should have the correct number of rows', async () => {
-      testRenderer(<BidMatrix priceArea={mockPriceArea} />);
+      testRenderer(<BidMatrix bidProcessResult={mockBidProcessResult} />);
 
       const rows = await screen.findAllByRole('row');
       expect(rows).toHaveLength(26); // 24 hours + 1 header + 1 blank filler row
     });
 
     it('Should have the correct number of columns', async () => {
-      testRenderer(<BidMatrix priceArea={mockPriceArea} />);
+      testRenderer(<BidMatrix bidProcessResult={mockBidProcessResult} />);
 
       const expectedColumnLength =
-        mockPriceArea.totalMatrixWithData.dataRows[0].length;
+        mockBidProcessResult.totalMatrixWithData.dataRows[0].length;
       const columns = await screen.findAllByRole('columnheader');
 
       expect(columns).toHaveLength(expectedColumnLength);
     });
 
     it('Should display correct data', async () => {
-      testRenderer(<BidMatrix priceArea={mockPriceArea} />);
+      testRenderer(<BidMatrix bidProcessResult={mockBidProcessResult} />);
 
       const tableData = (await screen.findAllByRole('cell')).map(
         (cell) => cell.textContent
@@ -128,7 +128,7 @@ describe('Bid matrix tests', () => {
       });
 
       const expectedFirstColumn: SequenceItem[] =
-        mockPriceArea.totalMatrixWithData.dataRows.map(
+        mockBidProcessResult.totalMatrixWithData.dataRows.map(
           (row: Array<string | number>) => {
             return Number(row.splice(1, 1)).toFixed(2);
           }
@@ -142,14 +142,14 @@ describe('Bid matrix tests', () => {
     const handleCopy = jest.spyOn(utils, 'copyMatrixToClipboard');
 
     it('Should render copy button', async () => {
-      testRenderer(<BidMatrix priceArea={mockPriceArea} />);
+      testRenderer(<BidMatrix bidProcessResult={mockBidProcessResult} />);
 
       const copyButton = await screen.findByRole('button');
       expect(copyButton).toBeInTheDocument();
     });
 
     it('Should display informational tooltip on hover', async () => {
-      testRenderer(<BidMatrix priceArea={mockPriceArea} />);
+      testRenderer(<BidMatrix bidProcessResult={mockBidProcessResult} />);
 
       const copyButton = await screen.findByRole('button');
       fireEvent.mouseEnter(copyButton);
@@ -161,7 +161,7 @@ describe('Bid matrix tests', () => {
     // FIX_ME:
     // eslint-disable-next-line jest/no-disabled-tests
     it.skip('Should change tooltip text on click', async () => {
-      testRenderer(<BidMatrix priceArea={mockPriceArea} />);
+      testRenderer(<BidMatrix bidProcessResult={mockBidProcessResult} />);
 
       const copyButton = await screen.findByRole('button');
       fireEvent.mouseEnter(copyButton);
@@ -176,7 +176,7 @@ describe('Bid matrix tests', () => {
     // FIX_ME:
     // eslint-disable-next-line jest/no-disabled-tests
     it.skip('Should call copy function', async () => {
-      testRenderer(<BidMatrix priceArea={mockPriceArea} />);
+      testRenderer(<BidMatrix bidProcessResult={mockBidProcessResult} />);
 
       const copyButton = await screen.findByRole('button');
       fireEvent.click(copyButton);
@@ -189,7 +189,7 @@ describe('Bid matrix tests', () => {
 
     // eslint-disable-next-line jest/no-disabled-tests
     it.skip('Should copy bidmatrix correctly', async () => {
-      testRenderer(<BidMatrix priceArea={mockPriceArea} />);
+      testRenderer(<BidMatrix bidProcessResult={mockBidProcessResult} />);
 
       const copyButton = await screen.findByRole('button');
       fireEvent.click(copyButton);

@@ -3,7 +3,7 @@ import { SetStateAction, useEffect, useState } from 'react';
 import { Datapoints, DoubleDatapoint, ExternalId } from '@cognite/sdk';
 import { useAuthContext } from '@cognite/react-container';
 import { pickChartColor } from 'utils/utils';
-import { DEFAULT_CONFIG, PriceArea } from '@cognite/power-ops-api-types';
+import { DEFAULT_CONFIG, BidProcessResult } from '@cognite/power-ops-api-types';
 import { useMetrics } from '@cognite/metrics';
 import { TableData } from 'types';
 import dayjs from 'dayjs';
@@ -28,7 +28,7 @@ interface TooltipData {
 
 interface PriceScenariosChartProps {
   externalIds: ExternalId[] | undefined;
-  priceArea: PriceArea;
+  bidProcessResult: BidProcessResult;
   activeTab: string | number;
   changeTab: (tab: SetStateAction<string>) => void;
   tableData: TableData[];
@@ -39,7 +39,7 @@ dayjs.extend(timezone);
 
 export const PriceScenariosChart = ({
   externalIds,
-  priceArea,
+  bidProcessResult,
   activeTab,
   changeTab,
   tableData,
@@ -76,8 +76,9 @@ export const PriceScenariosChart = ({
 
   const getChartData = async () => {
     const timeZone =
-      priceArea.marketConfiguration?.timezone || DEFAULT_CONFIG.TIME_ZONE;
-    const bidDate = dayjs(priceArea.bidDate).tz(timeZone);
+      bidProcessResult.marketConfiguration?.timezone ||
+      DEFAULT_CONFIG.TIME_ZONE;
+    const bidDate = dayjs(bidProcessResult.bidDate).tz(timeZone);
 
     const timeseries =
       externalIds &&
@@ -113,7 +114,7 @@ export const PriceScenariosChart = ({
                 type: 'scatter',
                 mode: 'lines+markers',
                 name: ts.externalId,
-                text: priceArea?.priceScenarios[index]?.name,
+                text: bidProcessResult?.priceScenarios[index]?.name,
                 hoverinfo: 'none',
                 line: { color: pickChartColor(index) },
                 opacity,
@@ -168,7 +169,7 @@ export const PriceScenariosChart = ({
 
   useEffect(() => {
     getChartData();
-  }, [priceArea, externalIds, activeTab]);
+  }, [bidProcessResult, externalIds, activeTab]);
 
   return (
     (chartData && (

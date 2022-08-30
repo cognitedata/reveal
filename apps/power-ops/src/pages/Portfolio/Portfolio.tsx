@@ -21,7 +21,7 @@ import { Container, MainDiv } from './elements';
 
 const PortfolioPage = () => {
   const {
-    priceArea,
+    bidProcessResult,
     allPriceAreas,
     bidProcessEventExternalId,
     priceAreaChanged,
@@ -60,10 +60,10 @@ const PortfolioPage = () => {
 
   useEffect(() => {
     setLoading(true);
-    if (priceArea) {
+    if (bidProcessResult) {
       setLoading(false);
     }
-  }, [priceArea, bidProcessEventExternalId]);
+  }, [bidProcessResult, bidProcessEventExternalId]);
 
   if (!allPriceAreas) {
     return loading ? (
@@ -73,7 +73,7 @@ const PortfolioPage = () => {
     );
   }
 
-  if (loading && !priceArea && priceAreaExternalId) {
+  if (loading && !bidProcessResult && priceAreaExternalId) {
     const found = allPriceAreas.filter(
       (pricearea) => pricearea.externalId === priceAreaExternalId
     ).length;
@@ -90,25 +90,25 @@ const PortfolioPage = () => {
     );
   }
 
-  return priceArea ? (
+  return bidProcessResult ? (
     <BaseContainer>
-      <PortfolioHeader priceArea={priceArea} />
+      <PortfolioHeader bidProcessResult={bidProcessResult} />
       <Container>
         <Sidebar
-          priceArea={priceArea}
+          bidProcessResult={bidProcessResult}
           opened={openedSidePanel}
           setOpened={setOpenedSidePanel}
         />
         <MainDiv sidePanelOpened={openedSidePanel}>
           <Switch>
             <Route path={`${match.path}/price-scenarios`}>
-              <PriceScenarios priceArea={priceArea} />
+              <PriceScenarios bidProcessResult={bidProcessResult} />
             </Route>
             <Route exact path={`${match.path}/:plantExternalId`}>
-              <BidMatrix priceArea={priceArea} />
+              <BidMatrix bidProcessResult={bidProcessResult} />
             </Route>
             <Route path={`${match.path}/:plantExternalId/price-scenarios`}>
-              <PriceScenarios priceArea={priceArea} />
+              <PriceScenarios bidProcessResult={bidProcessResult} />
             </Route>
           </Switch>
         </MainDiv>

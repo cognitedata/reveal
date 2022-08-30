@@ -7,7 +7,7 @@ import { useParams } from 'react-router-dom';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
-import { TableData, PriceAreaWithData, MatrixWithData } from 'types';
+import { TableData, BidProcessResultWithData, MatrixWithData } from 'types';
 import { EVENT_TYPES, DEFAULT_CONFIG } from '@cognite/power-ops-api-types';
 import { EventStreamContext } from 'providers/eventStreamProvider';
 import { HeadlessTable } from 'components/HeadlessTable';
@@ -43,7 +43,11 @@ export const mainScenarioTableHeaderConfig = [
   },
 ];
 
-export const BidMatrix = ({ priceArea }: { priceArea: PriceAreaWithData }) => {
+export const BidMatrix = ({
+  bidProcessResult,
+}: {
+  bidProcessResult: BidProcessResultWithData;
+}) => {
   const metrics = useMetrics('bid-matrix');
   const { client } = useAuthContext();
   const { eventStore } = useContext(EventStreamContext);
@@ -55,14 +59,16 @@ export const BidMatrix = ({ priceArea }: { priceArea: PriceAreaWithData }) => {
     useState<Column<TableData>[]>();
   const marketConfig: { [key: string]: string } = {
     tick_size:
-      priceArea.marketConfiguration?.tick_size || DEFAULT_CONFIG.DECIMAL_POINTS,
+      bidProcessResult.marketConfiguration?.tick_size ||
+      DEFAULT_CONFIG.DECIMAL_POINTS,
     timezone:
-      priceArea.marketConfiguration?.timezone || DEFAULT_CONFIG.TIME_ZONE,
+      bidProcessResult.marketConfiguration?.timezone ||
+      DEFAULT_CONFIG.TIME_ZONE,
   };
   const [matrixData, setMatrixData] = useState<TableData[]>();
   const [mainScenarioData, setMainScenarioData] = useState<TableData[]>();
   const [bidDate, setBidDate] = useState<dayjs.Dayjs>(
-    dayjs(priceArea.bidDate).tz(marketConfig.timezone)
+    dayjs(bidProcessResult.bidDate).tz(marketConfig.timezone)
   );
   const [newMatrixAvailable, setNewMatrixAvailable] = useState<boolean>(false);
 
@@ -86,7 +92,7 @@ export const BidMatrix = ({ priceArea }: { priceArea: PriceAreaWithData }) => {
       setMatrixHeaderConfig(columns);
       setMatrixData(data);
 
-      if (!priceArea.bidDate) return;
+      if (!bidProcessResult.bidDate) return;
 
       const priceTs = await client?.datapoints.retrieve({
         items: [{ externalId: scenarioPriceTsExternalId }],
@@ -111,7 +117,7 @@ export const BidMatrix = ({ priceArea }: { priceArea: PriceAreaWithData }) => {
     if (event.type === EVENT_TYPES.PROCESS_FINISHED) {
       const status = isNewBidMatrixAvailable(
         event,
-        priceArea?.bidProcessExternalId || ''
+        bidProcessResult.bidProcessExternalId || ''
       );
       setNewMatrixAvailable(status);
     }
@@ -119,7 +125,7 @@ export const BidMatrix = ({ priceArea }: { priceArea: PriceAreaWithData }) => {
 
   const getMatrixTitle = () => {
     if (plantExternalId !== 'total') {
-      const plant = priceArea.plants?.find(
+      const plant = bidProcessResult.plants?.find(
         (p) => p.externalId === plantExternalId
       );
       return plant?.displayName || plantExternalId;
@@ -145,26 +151,27 @@ export const BidMatrix = ({ priceArea }: { priceArea: PriceAreaWithData }) => {
 
   const reloadMatrixData = async (_e: MouseEvent) => {
     metrics.track('click-reload-bid-matrix-button', {
-      priceAreaExternalId: priceArea.externalId,
+      priceAreaExternalId: bidProcessResult.priceAreaExternalId,
     });
     window.location.reload();
   };
 
   useEffect(() => {
-    if (plantExternalId && priceArea) {
-      setBidDate(dayjs(priceArea.bidDate).tz(marketConfig.timezone));
-      const priceExternalId = priceArea.priceScenarios.find(
-        (scenario) => scenario.externalId === priceArea.mainScenarioExternalId
-      )?.externalId;
+    if (plantExternalId && bidProcessResult) {
+      setBidDate(dayjs(bidProcessResult.bidDate).tz(marketConfig.timezone));
+      const priceExternalId = bidProcessResult.priceScenarios.find(
+        (scenario) =>
+          scenario.priceTsExternalId === bidProcessResult.mainScenarioExternalId
+      )?.priceTsExternalId;
       if (!priceExternalId) return;
 
       const bidMatrix =
         plantExternalId === 'total'
-          ? priceArea.totalMatrixWithData
-          : priceArea.plantMatrixesWithData?.find(
+          ? bidProcessResult.totalMatrixWithData
+          : bidProcessResult.plantMatrixesWithData?.find(
               (p) =>
                 p.plantName ===
-                priceArea.plants?.find(
+                bidProcessResult.plants?.find(
                   (plant) => plant.externalId === plantExternalId
                 )?.name
             )?.matrixWithData;
@@ -173,7 +180,7 @@ export const BidMatrix = ({ priceArea }: { priceArea: PriceAreaWithData }) => {
         updateMatrixData(bidMatrix, priceExternalId);
       }
     }
-  }, [priceArea, plantExternalId]);
+  }, [bidProcessResult, plantExternalId]);
 
   useEffect(() => {
     const subscription = eventStore?.subscribe(({ event }) => {

@@ -1,4 +1,8 @@
-import { EVENT_TYPES, POWEROPS_LABELS } from '@cognite/power-ops-api-types';
+import {
+  PROCESS_TYPES,
+  EVENT_TYPES,
+  POWEROPS_LABELS,
+} from '@cognite/power-ops-api-types';
 import { CogniteClient, CogniteEvent, Relationship } from '@cognite/sdk';
 import { useContext, useEffect, useState } from 'react';
 import { AuthenticatedUser } from '@cognite/auth-utils';
@@ -45,7 +49,7 @@ export const BidProcessPage = ({
   const { data: allSubProcesses, refetch: refetchSubProcesses } =
     useFetchProcesses({
       project: client.project,
-      processTypes: [EVENT_TYPES.FUNCTION_CALL, EVENT_TYPES.SHOP_RUN],
+      processTypes: [PROCESS_TYPES.FUNCTION_CALL, PROCESS_TYPES.SHOP_RUN],
       token: authState?.token,
     });
 
@@ -101,8 +105,8 @@ export const BidProcessPage = ({
 
       if (partOfBidProcess) {
         switch (event.type) {
-          case EVENT_TYPES.SHOP_RUN:
-          case EVENT_TYPES.FUNCTION_CALL:
+          case PROCESS_TYPES.SHOP_RUN:
+          case PROCESS_TYPES.FUNCTION_CALL:
           case EVENT_TYPES.PROCESS_STARTED:
           case EVENT_TYPES.PROCESS_FAILED:
           case EVENT_TYPES.PROCESS_FINISHED:

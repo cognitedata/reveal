@@ -1,12 +1,13 @@
 import axios from 'axios';
 import {
   PriceArea,
+  BidProcessResult,
   BidProcessConfiguration,
 } from '@cognite/power-ops-api-types';
 import { QueryClient, useQuery } from 'react-query';
 import sidecar from 'utils/sidecar';
 import { CogniteClient } from '@cognite/sdk';
-import { PriceAreaWithData } from 'types';
+import { BidProcessResultWithData } from 'types';
 import { fetchBidMatricesData } from 'utils/utils';
 
 export const fetchProcessConfigurations = async ({
@@ -67,7 +68,7 @@ const getMatrixDataFromCache = async (
   return queryData;
 };
 
-export const fetchPriceArea = async ({
+export const fetchBidProcessResultWithData = async ({
   client,
   queryClient,
   token,
@@ -79,38 +80,39 @@ export const fetchPriceArea = async ({
   token: string;
   priceAreaExternalId: string;
   bidProcessEventExternalId?: string;
-}) => {
+}): Promise<BidProcessResultWithData | undefined> => {
   if (!(client.project && token)) return undefined;
 
   const { powerOpsApiBaseUrl } = sidecar;
 
   const url = `${powerOpsApiBaseUrl}/${client.project}/price-area/${priceAreaExternalId}/data`;
 
-  const { data: priceArea }: { data: PriceArea } = await axios.get(
-    url + (bidProcessEventExternalId ? `/${bidProcessEventExternalId}` : ''),
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }
-  );
-  if (!priceArea) return undefined;
+  const { data: bidProcessResult }: { data: BidProcessResult } =
+    await axios.get(
+      url + (bidProcessEventExternalId ? `/${bidProcessEventExternalId}` : ''),
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+  if (!bidProcessResult) return undefined;
 
   const totalMatrixData = await getMatrixDataFromCache(
-    priceArea.totalMatrix!.externalId,
+    bidProcessResult.totalMatrix!.externalId,
     queryClient,
     client.project,
     token
   );
-  const priceAreaWithData: PriceAreaWithData = {
-    ...priceArea,
+  const bidProcessResultWithData: BidProcessResultWithData = {
+    ...bidProcessResult,
     totalMatrixWithData: {
-      ...priceArea.totalMatrix!,
+      ...bidProcessResult.totalMatrix!,
       ...totalMatrixData,
     },
-    plantMatrixesWithData: priceArea.plantMatrixes
+    plantMatrixesWithData: bidProcessResult.plantMatrixes
       ? await Promise.all(
-          priceArea.plantMatrixes.map(async (plant) => {
+          bidProcessResult.plantMatrixes.map(async (plant) => {
             const plantMatrixData = await getMatrixDataFromCache(
               plant.matrix!.externalId,
               queryClient,
@@ -128,7 +130,7 @@ export const fetchPriceArea = async ({
         )
       : [],
   };
-  return priceAreaWithData;
+  return bidProcessResultWithData;
 };
 
 const fetchAllPriceAreas = async ({
@@ -137,7 +139,7 @@ const fetchAllPriceAreas = async ({
 }: {
   client: CogniteClient;
   token: string;
-}) => {
+}): Promise<PriceArea[] | undefined> => {
   if (!(client.project && token)) return undefined;
 
   const { powerOpsApiBaseUrl } = sidecar;

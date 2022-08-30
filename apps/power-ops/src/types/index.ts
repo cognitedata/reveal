@@ -1,4 +1,4 @@
-import { Matrix, PriceArea } from '@cognite/power-ops-api-types';
+import { Matrix, BidProcessResult } from '@cognite/power-ops-api-types';
 
 export interface TableData {
   id: number | undefined;
@@ -29,7 +29,7 @@ export interface MatrixWithData extends Matrix {
   dataRows: Array<string | number>[];
 }
 
-export interface PriceAreaWithData extends PriceArea {
+export interface BidProcessResultWithData extends BidProcessResult {
   totalMatrixWithData: MatrixWithData;
   plantMatrixesWithData: {
     plantName: string;
