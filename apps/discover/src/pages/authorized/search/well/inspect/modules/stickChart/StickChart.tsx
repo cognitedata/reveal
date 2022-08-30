@@ -2,7 +2,7 @@ import { NdsRiskTypesSelection } from 'domain/wells/nds/internal/types';
 import { NptCodesSelection } from 'domain/wells/npt/internal/types';
 import { useWellInspectWellbores } from 'domain/wells/well/internal/hooks/useWellInspectWellbores';
 
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 
 import isEmpty from 'lodash/isEmpty';
 import { BooleanMap, toBooleanMap } from 'utils/booleanMap';
@@ -32,8 +32,6 @@ const StickChart: React.FC = () => {
   const wellbores = useWellInspectWellbores();
   const { selectedWellboreIds } = useWellInspectSelection();
 
-  const viewRef = useRef<HTMLDivElement>(null);
-
   const { data: maxDepths, isLoading } = useMaxDepths();
 
   const getWellboreStickChartColumns = useWellboreStickChartColumns();
@@ -61,7 +59,7 @@ const StickChart: React.FC = () => {
         [column]: visibility,
       }));
     },
-    [setColumnVisibility]
+    []
   );
 
   const handlePerformanceObserved = ({ mutations }: PerformanceObserved) => {
@@ -77,6 +75,7 @@ const StickChart: React.FC = () => {
   return (
     <PerformanceMetricsObserver onChange={handlePerformanceObserved}>
       <FilterBar
+        columnOrder={columnOrder}
         onNptCodesChange={setNptCodesSelection}
         onNdsCodesChange={setNdsRiskTypesSelection}
         onSummaryVisibilityChange={setSummaryVisibility}
@@ -85,7 +84,7 @@ const StickChart: React.FC = () => {
         onColumnVisibilityChange={handleColumnVisibilityChange}
       />
 
-      <WellboreCasingsViewsWrapper ref={viewRef}>
+      <WellboreCasingsViewsWrapper>
         {wellbores.map((wellbore) => {
           const { matchingId } = wellbore;
 

@@ -19,6 +19,7 @@ import { NptFilterItem } from './NptFilterItem';
 // import { SummaryFilterItem } from './SummaryFilterItem';
 
 interface FilterBarProps {
+  columnOrder: ChartColumn[];
   onNptCodesChange: (selection: NptCodesSelection) => void;
   onNdsCodesChange: (selection: NdsRiskTypesSelection) => void;
   onSummaryVisibilityChange: (selection: BooleanMap) => void;
@@ -29,6 +30,7 @@ interface FilterBarProps {
 
 export const FilterBar: React.FC<FilterBarProps> = React.memo(
   ({
+    columnOrder,
     onNptCodesChange,
     onNdsCodesChange,
     // onSummaryVisibilityChange,
@@ -49,6 +51,7 @@ export const FilterBar: React.FC<FilterBarProps> = React.memo(
       <FilterBarWrapper>
         <DragDropContainer
           id="stick-chart-filter-content"
+          elementsOrder={columnOrder}
           onRearranged={handleRearrange}
         >
           <FilterItem

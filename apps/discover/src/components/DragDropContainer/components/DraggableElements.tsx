@@ -3,12 +3,14 @@ import { Draggable } from 'react-beautiful-dnd';
 
 import { Flex } from 'styles/layout';
 
-const getDraggableElement = (element: React.ReactNode, index: number) => {
+const getDraggableElement = (element: JSX.Element, index: number) => {
+  const id = String(element.key || index);
+
   return (
-    <Draggable key={index} draggableId={String(index)} index={index}>
+    <Draggable key={id} draggableId={id} index={index}>
       {(provided) => (
         <Flex ref={provided.innerRef} {...provided.draggableProps}>
-          {React.cloneElement(element as JSX.Element, {
+          {React.cloneElement(element, {
             ...provided.dragHandleProps,
           })}
         </Flex>
@@ -17,7 +19,7 @@ const getDraggableElement = (element: React.ReactNode, index: number) => {
   );
 };
 
-export const DraggableElements: React.FC<React.PropsWithChildren<unknown>> =
+export const DraggableElements: React.FC<{ children: JSX.Element[] }> =
   React.memo(({ children }) => {
     return <>{React.Children.map(children, getDraggableElement)}</>;
   });
