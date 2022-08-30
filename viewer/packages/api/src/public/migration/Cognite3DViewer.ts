@@ -200,7 +200,7 @@ export class Cognite3DViewer {
   }
 
   constructor(options: Cognite3DViewerOptions) {
-    this._renderer = options.renderer ?? new THREE.WebGLRenderer();
+    this._renderer = options.renderer ?? createRenderer();
     this._renderer.localClippingEnabled = true;
 
     this.canvas.style.width = '640px';
@@ -1201,7 +1201,7 @@ export class Cognite3DViewer {
     const maxPhysicalFrameBufferSize = 1.4e6;
 
     const virtualFramebufferSize = this.renderer.getSize(new THREE.Vector2());
-    const pixelRatio = window.devicePixelRatio;
+    const pixelRatio = this._renderer.getPixelRatio();
 
     const virtualDomElementWidth =
       this.domElement.clientWidth !== 0 ? this.domElement.clientWidth : this.canvas.clientWidth;
@@ -1252,6 +1252,12 @@ function createCanvasWrapper(): HTMLElement {
   domElement.style.width = '100%';
   domElement.style.height = '100%';
   return domElement;
+}
+
+function createRenderer(): THREE.WebGLRenderer {
+  const renderer = new THREE.WebGLRenderer();
+  renderer.setPixelRatio(window.devicePixelRatio);
+  return renderer;
 }
 
 function createRevealManagerOptions(viewerOptions: Cognite3DViewerOptions): RevealOptions {
