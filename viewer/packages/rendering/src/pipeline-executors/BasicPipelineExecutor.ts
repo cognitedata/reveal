@@ -18,10 +18,10 @@ export class BasicPipelineExecutor implements RenderPipelineExecutor {
 
   constructor(renderer: THREE.WebGLRenderer, options?: BasicPipelineExecutorOptions) {
     this._renderer = renderer;
-    this._shouldResize = false;
     this._resolutionThreshold = options?.resolutionThreshold ?? 1.4e6;
 
     const autoResizeRenderer = options?.autoResizeRenderer ?? false;
+    this._shouldResize = autoResizeRenderer;
 
     this.setupResizeListener(autoResizeRenderer, renderer);
 
