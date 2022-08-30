@@ -178,6 +178,7 @@ describe('Test annotationLabel selectors', () => {
           annotationSettings: {
             createNew: {
               text: annotationSettingsNewLabel,
+              color: 'red',
             },
           },
         } as Partial<ReviewState>,
@@ -191,7 +192,9 @@ describe('Test annotationLabel selectors', () => {
         },
       } as CombinedState<RootState>;
 
-      expect(selectNextPredefinedKeypointCollection(previousState)).toEqual(
+      expect(
+        selectNextPredefinedKeypointCollection(previousState)
+      ).toStrictEqual(
         predefinedKeypointCollectionList.find(
           (item) => item.collectionName === annotationSettingsNewLabel
         )
