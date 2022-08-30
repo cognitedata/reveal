@@ -3,7 +3,7 @@
  */
 
 import css from './spinnerStyles.css';
-import svg from './spinnerCogniteLogo.svg';
+import svg from '!!raw-loader!./spinnerCogniteLogo.svg';
 import * as THREE from 'three';
 
 import { assertNever } from '@reveal/utilities';

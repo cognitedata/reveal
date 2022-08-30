@@ -83,7 +83,7 @@ module.exports = env => {
           exclude: [/src\/.*\.test\.tsx?/, /src\/.*\/stubs\//]
         },
         {
-          test: /\.(png|jpg|jpeg|gif)$/,
+          test: /\.(png|svg|jpg|jpeg|gif)$/,
           use: ['file-loader']
         },
         {
@@ -92,7 +92,7 @@ module.exports = env => {
           use: ['raw-loader', 'glslify-loader']
         },
         {
-          test: /\.(css|svg)$/,
+          test: /\.css$/,
           use: ['raw-loader']
         }
       ]

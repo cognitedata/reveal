@@ -15,7 +15,7 @@ import {
 import { MeasurementManager, Measurement } from './MeasurementManager';
 import { MeasurementLabels } from './MeasurementLabels';
 import { HtmlOverlayTool, HtmlOverlayToolOptions } from '../HtmlOverlay/HtmlOverlayTool';
-import rulerSvg from './styles/ruler.svg';
+import rulerSvg from '!!raw-loader!./styles/ruler.svg';
 
 type MeasurementEvents = 'added' | 'started' | 'ended' | 'disposed';
 
