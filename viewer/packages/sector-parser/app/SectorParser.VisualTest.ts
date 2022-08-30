@@ -16,8 +16,6 @@ export default class SectorParserVisualTestFixture extends SimpleVisualTestFixtu
 
     const group = this.initializeGroup(scene);
 
-    const materialMap = this.setMaterialMap();
-
     const loader = new GltfSectorParser();
 
     const gltfOutput = (await modelMetadataProvider.getModelOutputs(modelIdentifier)).find(
@@ -25,6 +23,8 @@ export default class SectorParserVisualTestFixture extends SimpleVisualTestFixtu
     )!;
     const modelUri = await modelMetadataProvider.getModelUri(modelIdentifier, gltfOutput);
     const sceneJson = await modelDataProvider.getJsonFile(modelUri, 'scene.json');
+
+    const materialMap = TestMaterials.getMaterialsMap((sceneJson.maxTreeIndex as number) + 1);
 
     const sectors = sceneJson.sectors as [
       {
@@ -73,24 +73,6 @@ export default class SectorParserVisualTestFixture extends SimpleVisualTestFixtu
         });
       })
     );
-  }
-
-  private setMaterialMap(): Map<RevealGeometryCollectionType, THREE.RawShaderMaterial> {
-    return new Map([
-      [RevealGeometryCollectionType.BoxCollection, TestMaterials.createBoxMaterial()],
-      [RevealGeometryCollectionType.CircleCollection, TestMaterials.createCircleMaterial()],
-      [RevealGeometryCollectionType.ConeCollection, TestMaterials.createConeMaterial()],
-      [RevealGeometryCollectionType.EccentricConeCollection, TestMaterials.createEccentricConeMaterial()],
-      [RevealGeometryCollectionType.EllipsoidSegmentCollection, TestMaterials.createEllipsoidSegmentMaterial()],
-      [RevealGeometryCollectionType.GeneralCylinderCollection, TestMaterials.createGeneralCylinderMaterial()],
-      [RevealGeometryCollectionType.GeneralRingCollection, TestMaterials.createGeneralRingMaterial()],
-      [RevealGeometryCollectionType.QuadCollection, TestMaterials.createQuadMaterial()],
-      [RevealGeometryCollectionType.TorusSegmentCollection, TestMaterials.createTorusSegmentMaterial()],
-      [RevealGeometryCollectionType.TrapeziumCollection, TestMaterials.createTrapeziumMaterial()],
-      [RevealGeometryCollectionType.NutCollection, TestMaterials.createNutMaterial()],
-      [RevealGeometryCollectionType.TriangleMesh, TestMaterials.createTriangleMeshMaterial()],
-      [RevealGeometryCollectionType.InstanceMesh, TestMaterials.createInstancedMeshMaterial()]
-    ]);
   }
 
   private initializeGroup(scene: THREE.Scene) {
