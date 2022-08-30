@@ -8,28 +8,36 @@ import { Cylinder } from '../../styling/shapes/Cylinder';
 import { Box } from '../../styling/shapes/Box';
 
 import { WasmShape } from '../../../wasm';
+import { ShapeType } from '../../styling/shapes/IShape';
+import { assertNever } from '@reveal/utilities';
 
 function getWasmShape(obj: StylableObject): WasmShape {
-  if (obj.shape instanceof Cylinder) {
-    const cylinder = obj.shape as Cylinder;
-    return {
-      object_id: obj.objectId,
-      cylinder: {
-        center_a: cylinder.centerA,
-        center_b: cylinder.centerB,
-        radius: cylinder.radius
-      }
-    };
-  } else if (obj.shape instanceof Box) {
-    const box = obj.shape as Box;
-    return {
-      object_id: obj.objectId,
-      oriented_box: {
-        inv_instance_matrix: box.invMatrix.data
-      }
-    };
-  } else {
-    throw Error('Unrecognized shape type');
+  switch (obj.shape.shapeType) {
+    case ShapeType.Cylinder: {
+      const cylinder = obj.shape as Cylinder;
+      return {
+        object_id: obj.objectId,
+        cylinder: {
+          center_a: cylinder.centerA,
+          center_b: cylinder.centerB,
+          radius: cylinder.radius
+        }
+      };
+    }
+    case ShapeType.Box: {
+      const box = obj.shape as Box;
+      return {
+        object_id: obj.objectId,
+        oriented_box: {
+          inv_instance_matrix: box.invMatrix.data
+        }
+      };
+    }
+    case ShapeType.Composite: {
+      throw Error('Composite types should not be sent to the parser worker, they should be decomposed first');
+    }
+    default:
+      assertNever(obj.shape.shapeType);
   }
 }
 

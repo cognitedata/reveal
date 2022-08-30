@@ -15,11 +15,13 @@ import * as EptDecoderWorker from '../workers/eptBinaryDecoder.worker';
 import { ParsedEptData, EptInputData } from '../workers/parseEpt';
 
 import { fromThreeVector3, setupTransferableMethodsOnMain } from '@reveal/utilities';
-import { RawStylableObject } from '../../styling/StylableObject';
+import { StylableObject } from '../../styling/StylableObject';
+import { createShapeBoundingBox } from '../../styling/shapes/createShapeBoundingBox';
+import { decomposeStylableObjects } from '../../styling/decomposeStylableObjects';
 
 export class EptBinaryLoader implements ILoader {
   private readonly _dataLoader: ModelDataProvider;
-  private readonly _stylableObjects: RawStylableObject[];
+  private readonly _stylableObjectsWithBox: [StylableObject, THREE.Box3][];
 
   static readonly WORKER_POOL = new WorkerPool(32, EptDecoderWorker as unknown as new () => Worker);
 
@@ -27,9 +29,12 @@ export class EptBinaryLoader implements ILoader {
     return '.bin';
   }
 
-  constructor(dataLoader: ModelDataProvider, stylableObjects: RawStylableObject[]) {
+  constructor(dataLoader: ModelDataProvider, stylableObjects: StylableObject[]) {
     this._dataLoader = dataLoader;
-    this._stylableObjects = stylableObjects;
+    this._stylableObjectsWithBox = decomposeStylableObjects(stylableObjects).map(obj => [
+      obj,
+      createShapeBoundingBox(obj.shape)
+    ]);
   }
 
   async load(node: PointCloudEptGeometryNode): Promise<void> {
@@ -70,7 +75,11 @@ export class EptBinaryLoader implements ILoader {
       }
     });
 
-    const result = await eptDecoderWorker.parse(eptData, this._stylableObjects, node.boundingBox.min.toArray(), {
+    const relevantObjects = this._stylableObjectsWithBox
+      .filter(objAndBox => objAndBox[1].intersectsBox(node.boundingBox))
+      .map(objAndBox => objAndBox[0]);
+
+    const result = await eptDecoderWorker.parse(eptData, relevantObjects, node.boundingBox.min.toArray(), {
       min: node.boundingBox.min.toArray(),
       max: node.boundingBox.max.toArray()
     });

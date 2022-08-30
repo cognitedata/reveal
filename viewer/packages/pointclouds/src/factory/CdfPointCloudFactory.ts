@@ -16,10 +16,11 @@ import { DEFAULT_POINT_CLOUD_METADATA_FILE } from '../constants';
 import { CogniteClient } from '@cognite/sdk';
 
 import { Box } from '../styling/shapes/Box';
-import { createInvertedRevealTransformationFromCdfTransformation } from '../styling/shapes/linalg';
 import { Cylinder } from '../styling/shapes/Cylinder';
-import { IShape } from '../styling/shapes/IShape';
+import { IShape, ShapeType } from '../styling/shapes/IShape';
 import { PointCloudFactory } from '../IPointCloudFactory';
+
+import * as THREE from 'three';
 
 export class CdfPointCloudFactory implements PointCloudFactory {
   private readonly _potreeInstance: Potree;
@@ -36,11 +37,19 @@ export class CdfPointCloudFactory implements PointCloudFactory {
 
   private annotationGeometryToLocalGeometry(geometry: any): IShape {
     if (geometry.box) {
-      return new Box(createInvertedRevealTransformationFromCdfTransformation({ data: geometry.box.matrix }));
+      return {
+        shapeType: ShapeType.Box,
+        invMatrix: { data: new THREE.Matrix4().fromArray(geometry.box.matrix).transpose().invert().toArray() }
+      } as Box;
     }
 
     if (geometry.cylinder) {
-      return new Cylinder(geometry.cylinder.centerA, geometry.cylinder.centerB, geometry.cylinder.radius);
+      return {
+        shapeType: ShapeType.Cylinder,
+        centerA: geometry.cylinder.centerA,
+        centerB: geometry.cylinder.centerB,
+        radius: geometry.cylinder.radius
+      } as Cylinder;
     }
 
     throw Error('Annotation geometry type not recognized');

@@ -85,9 +85,7 @@ export class Potree implements IPotree {
     fileName: string,
     annotationObjectInfo: PointCloudObjectProvider
   ): Promise<PointCloudOctree> {
-    const rawObjects = annotationObjectInfo.createRawObjectArray();
-
-    const geometry = await EptLoader.load(baseUrl, fileName, this._modelDataProvider, rawObjects);
+    const geometry = await EptLoader.load(baseUrl, fileName, this._modelDataProvider, annotationObjectInfo);
     return new PointCloudOctree(this, geometry, annotationObjectInfo);
   }
 

@@ -5,6 +5,7 @@
 import { PointCloudObjectAnnotation, CdfPointCloudObjectAnnotation } from '../annotationTypes';
 import { PointCloudObjectProvider } from './PointCloudObjectProvider';
 import { CompositeShape } from './shapes/CompositeShape';
+import { ShapeType } from './shapes/IShape';
 import { StylableObject } from './StylableObject';
 
 function cdfAnnotationsToRevealAnnotations(
@@ -17,7 +18,7 @@ function cdfAnnotationsToRevealAnnotations(
 
     const shapes = cdfAnnotation.region;
 
-    const compShape = new CompositeShape(shapes);
+    const compShape: CompositeShape = { shapeType: ShapeType.Composite, innerShapes: shapes };
     const stylableObject: StylableObject = {
       shape: compShape,
       objectId: idCounter

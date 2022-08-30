@@ -2,7 +2,6 @@
  * Copyright 2022 Cognite AS
  */
 
-import { RawStylableObject, stylableObjectToRaw } from './StylableObject';
 import { PointCloudObjectAnnotation } from '../annotationTypes';
 
 export type ObjectsMaps = {
@@ -15,10 +14,6 @@ export class PointCloudObjectProvider {
 
   constructor(annotations: PointCloudObjectAnnotation[]) {
     this._annotations = annotations;
-  }
-
-  createRawObjectArray(): RawStylableObject[] {
-    return this._annotations.map(annotation => stylableObjectToRaw(annotation.stylableObject));
   }
 
   createObjectsMaps(): ObjectsMaps {
