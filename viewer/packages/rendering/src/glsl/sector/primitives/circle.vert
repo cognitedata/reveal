@@ -19,7 +19,7 @@ in vec3 a_normal;
 out vec2 v_xy;
 out vec3 v_color;
 out vec3 v_normal;
-out float v_treeIndex;
+flat out float v_treeIndex;
 out vec3 vViewPosition;
 
 void main() {
@@ -27,10 +27,10 @@ void main() {
     v_treeIndex = a_treeIndex;
 
     mat4 treeIndexWorldTransform = determineMatrixOverride(
-      a_treeIndex, 
-      treeIndexTextureSize, 
-      transformOverrideIndexTexture, 
-      transformOverrideTextureSize, 
+      a_treeIndex,
+      treeIndexTextureSize,
+      transformOverrideIndexTexture,
+      transformOverrideTextureSize,
       transformOverrideTexture
     );
 
