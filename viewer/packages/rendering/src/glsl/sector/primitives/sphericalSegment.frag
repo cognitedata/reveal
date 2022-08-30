@@ -22,7 +22,7 @@ in float height;
 in vec4 U;
 in vec4 V;
 in vec4 sphereNormal;
-in float v_treeIndex;
+flat in float v_treeIndex;
 in vec3 v_color;
 in vec3 v_normal;
 
@@ -32,7 +32,7 @@ void main() {
         discard;
     }
 
-    vec4 color = determineColor(v_color, appearance);    
+    vec4 color = determineColor(v_color, appearance);
     vec3 normal = normalize(sphereNormal.xyz);
 
     float vRadius = center.w;
