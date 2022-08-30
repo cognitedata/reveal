@@ -27,29 +27,31 @@ export const adaptToTrajectoryChartDataList = <T extends TrajectoryWithData>(
   const data = trajectoryCharts.map((trajectoryChart) => {
     const { type, chartData, chartExtraData } = trajectoryChart;
 
-    return trajectories.map((trajectory) => {
-      const { wellboreMatchingId, rows } = trajectory;
+    return trajectories
+      .filter((trajectory): trajectory is T => !!trajectory)
+      .map((trajectory) => {
+        const { wellboreMatchingId, rows } = trajectory;
 
-      const { coordinates, errors } = getTrajectoryCurveCoordinates(
-        rows,
-        chartData
-      );
+        const { coordinates, errors } = getTrajectoryCurveCoordinates(
+          rows,
+          chartData
+        );
 
-      const currentErrors = errorsMap.get(wellboreMatchingId) || [];
-      const updatedErrors = [...currentErrors, ...errors];
-      errorsMap.set(wellboreMatchingId, updatedErrors);
+        const currentErrors = errorsMap.get(wellboreMatchingId) || [];
+        const updatedErrors = [...currentErrors, ...errors];
+        errorsMap.set(wellboreMatchingId, updatedErrors);
 
-      return {
-        mode: 'lines',
-        type: getTrajectoryChartType(type),
-        line: {
-          color: DEFAULT_TRAJECTORY_CURVE_COLOR,
-        },
-        ...coordinates,
-        ...chartExtraData,
-        ...formatCurveData?.({ trajectoryChart, trajectory }),
-      };
-    });
+        return {
+          mode: 'lines',
+          type: getTrajectoryChartType(type),
+          line: {
+            color: DEFAULT_TRAJECTORY_CURVE_COLOR,
+          },
+          ...coordinates,
+          ...chartExtraData,
+          ...formatCurveData?.({ trajectoryChart, trajectory }),
+        };
+      });
   });
 
   return {
