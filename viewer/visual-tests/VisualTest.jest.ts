@@ -9,6 +9,9 @@ import { Page } from 'puppeteer';
 describe('Visual tests', () => {
   let testPage: Page;
 
+  const red = '\x1b[31m';
+  const green = '\x1b[32m';
+
   beforeAll(async () => {
     testPage = await browser.newPage();
 
@@ -20,7 +23,9 @@ describe('Visual tests', () => {
   });
 
   test.each(glob.sync('**/*.VisualTest.ts').map(filePath => path.parse(filePath)))('%p', async testFilePath => {
-    return runTest(testFilePath);
+    const start = Date.now();
+    await runTest(testFilePath);
+    console.log(green, testFilePath.name, red, `${(Date.now() - start) / 1000}s`); // eslint-disable-line
   });
 
   afterAll(() => {
