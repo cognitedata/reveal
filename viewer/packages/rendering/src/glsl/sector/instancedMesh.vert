@@ -13,17 +13,17 @@ in mat4 a_instanceMatrix;
 in float a_treeIndex;
 in vec3 a_color;
 
-out float v_treeIndex;
+flat out float v_treeIndex;
 out vec3 v_color;
 out vec3 v_viewPosition;
 
 void main()
 {
     mat4 treeIndexWorldTransform = determineMatrixOverride(
-      a_treeIndex, 
-      treeIndexTextureSize, 
-      transformOverrideIndexTexture, 
-      transformOverrideTextureSize, 
+      a_treeIndex,
+      treeIndexTextureSize,
+      transformOverrideIndexTexture,
+      transformOverrideTextureSize,
       transformOverrideTexture
     );
 
