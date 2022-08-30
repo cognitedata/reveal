@@ -27,7 +27,7 @@ import { TrajectoryChartWrapper } from './elements';
 export interface TrajectoryColumnProps extends ColumnVisibilityProps {
   data?: TrajectoryWithData;
   isLoading?: boolean;
-  scaleBlocks: number[];
+  scaleBlocksTVD: number[];
   curveColor: string;
   depthMeasurementType?: DepthMeasurementUnit;
 }
@@ -38,7 +38,7 @@ export const TrajectoryColumn: React.FC<
   ({
     data,
     isLoading,
-    scaleBlocks,
+    scaleBlocksTVD,
     curveColor,
     depthMeasurementType = DepthMeasurementUnit.TVD,
     isVisible = true,
@@ -92,7 +92,7 @@ export const TrajectoryColumn: React.FC<
             header={ChartColumn.TRAJECTORY}
             title={CHART_TITLE}
             axisNames={axisNames}
-            scaleBlocks={scaleBlocks}
+            scaleBlocks={scaleBlocksTVD}
             emptySubtitle={emptySubtitle}
             {...dragHandleProps}
           />
