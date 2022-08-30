@@ -1406,47 +1406,54 @@ export class CognitePid {
     // Assign assets to symbol instances
     const toUpdateInstances = this.symbolInstances.filter(
       (symbolInstance) =>
-        !symbolInstance.assetId && symbolInstance.type === 'Instrument'
+        symbolInstance.assetId === undefined &&
+        symbolInstance.type === 'Instrument' &&
+        symbolInstance.labelIds.length > 0
     );
 
-    // eslint-disable-next-line no-restricted-syntax
-    for (const symbolInstance of toUpdateInstances) {
-      const labelNames = symbolInstance.labelIds.map(
-        (labelId) => this.pidDocument!.getPidTspanById(labelId)!
-      );
+    const fireSearchEveryMs = 25;
+    await Promise.all(
+      toUpdateInstances.map((instance, i) => {
+        return new Promise<void>((resolve) => {
+          setTimeout(async () => {
+            const labelNames = instance.labelIds.map(
+              (labelId) => this.pidDocument!.getPidTspanById(labelId)!
+            );
 
-      if (labelNames.length < 2) continue;
+            const querySubstrings = [
+              documentMetadata.unit,
+              ...labelNames.map((label) => label?.text),
+            ];
+            const query = querySubstrings.join('-');
 
-      const querySubstrings = [
-        documentMetadata.unit,
-        ...labelNames.map((label) => label?.text),
-      ];
-      const query = querySubstrings.join('-');
+            const assets = await client?.assets.search({
+              search: {
+                query,
+              },
+              limit: 1,
+            });
 
-      // eslint-disable-next-line no-await-in-loop
-      const assets = await client?.assets.search({
-        search: {
-          query,
-        },
-        limit: 1,
-      });
+            if (!assets || assets.length < 1) {
+              resolve();
+              return;
+            }
 
-      if (!assets || assets.length < 1) continue;
-
-      if (
-        querySubstrings.every((querySubstring) =>
-          assets[0].name
-            .split(/[-.]+/)
-            .slice(-querySubstrings.length)
-            .includes(querySubstring)
-        )
-      ) {
-        symbolInstance.assetId = assets[0].id;
-        symbolInstance.assetName = assets[0].name;
-      } else {
-        console.log(`"${query}" not found for instrument`, symbolInstance);
-      }
-    }
+            if (
+              querySubstrings.every((querySubstring) =>
+                assets[0].name.includes(querySubstring)
+              )
+            ) {
+              instance.assetId = assets[0].id;
+              instance.assetName = assets[0].name;
+              resolve();
+              return;
+            }
+            console.log(`"${query}" not found for instrument`, instance);
+            resolve();
+          }, i * fireSearchEveryMs);
+        });
+      })
+    );
 
     this.setSymbolInstances([...this.symbolInstances]);
   }
