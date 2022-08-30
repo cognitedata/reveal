@@ -18,13 +18,14 @@ import {
   ScaleLine,
   ScaleLineDepth,
 } from '../../../common/Events/elements';
+import { ColumnVisibilityProps } from '../../types';
 import { formatScaleValue } from '../../utils/scale/formatScaleValue';
 
-export type DepthColumnProps = {
+export interface DepthColumnProps extends ColumnVisibilityProps {
   scaleBlocks: number[];
   scaleBlocksTVD?: number[];
   depthMeasurementType?: DepthMeasurementUnit;
-};
+}
 
 export const DepthColumn: React.FC<WithDragHandleProps<DepthColumnProps>> =
   React.memo(
@@ -32,6 +33,7 @@ export const DepthColumn: React.FC<WithDragHandleProps<DepthColumnProps>> =
       scaleBlocks,
       scaleBlocksTVD = EMPTY_ARRAY,
       depthMeasurementType,
+      isVisible = true,
       ...dragHandleProps
     }) => {
       const { data: depthUnit } = useUserPreferencesMeasurement();
@@ -60,25 +62,31 @@ export const DepthColumn: React.FC<WithDragHandleProps<DepthColumnProps>> =
       }, [scaleBlocksTVD]);
 
       return (
-        <BodyColumn width={100}>
-          <ColumnDragger {...dragHandleProps} />
+        <NoUnmountShowHide show={isVisible}>
+          <BodyColumn width={100}>
+            <ColumnDragger {...dragHandleProps} />
 
-          <ColumnHeaderWrapper>
-            <BodyColumnMainHeader>{depthMeasurementType}</BodyColumnMainHeader>
-            <FlexGrow />
-            <BodyColumnMainHeader>{depthUnit}</BodyColumnMainHeader>
-          </ColumnHeaderWrapper>
+            <ColumnHeaderWrapper>
+              <BodyColumnMainHeader>
+                {depthMeasurementType}
+              </BodyColumnMainHeader>
+              <FlexGrow />
+              <BodyColumnMainHeader>{depthUnit}</BodyColumnMainHeader>
+            </ColumnHeaderWrapper>
 
-          <BodyColumnBody>
-            <DepthMeasurementScale>
-              <NoUnmountShowHide show={isMdScale}>{MdScale}</NoUnmountShowHide>
+            <BodyColumnBody>
+              <DepthMeasurementScale>
+                <NoUnmountShowHide show={isVisible && isMdScale}>
+                  {MdScale}
+                </NoUnmountShowHide>
 
-              <NoUnmountShowHide show={isTvdScale}>
-                {TvdScale}
-              </NoUnmountShowHide>
-            </DepthMeasurementScale>
-          </BodyColumnBody>
-        </BodyColumn>
+                <NoUnmountShowHide show={isVisible && isTvdScale}>
+                  {TvdScale}
+                </NoUnmountShowHide>
+              </DepthMeasurementScale>
+            </BodyColumnBody>
+          </BodyColumn>
+        </NoUnmountShowHide>
       );
     }
   );

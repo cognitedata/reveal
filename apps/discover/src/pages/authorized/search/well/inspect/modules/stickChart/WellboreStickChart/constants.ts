@@ -13,6 +13,8 @@ export const NO_OPTIONS_SELECTED_TEXT = 'No options selected';
 export const NO_DATA_AMONG_SELECTED_OPTIONS_TEXT =
   'No data among selected options';
 
+export const NO_COLUMNS_SELECTED_TEXT = 'No columns selected';
+
 export const RKB_COLOR = 'var(--cogs-green-5)';
 export const SEA_LEVEL_COLOR = 'var(--cogs-midblue-4)';
 export const MUD_LINE_COLOR = '#000000';
@@ -35,3 +37,7 @@ export const DEFAULT_COLUMN_ORDER = [
   ChartColumn.TRAJECTORY,
   ChartColumn.MEASUREMENTS,
 ];
+
+export const DEFAULT_VISIBLE_COLUMNS = DEFAULT_COLUMN_ORDER.filter(
+  (column) => column !== ChartColumn.DEPTH
+);

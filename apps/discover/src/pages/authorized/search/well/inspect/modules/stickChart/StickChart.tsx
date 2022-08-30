@@ -23,7 +23,10 @@ import { useWellboreStickChartColumns } from './hooks/useWellboreStickChartData'
 import { ChartColumn } from './types';
 import { getWellboreData } from './utils/getWellboreData';
 import { WellboreStickChart } from './WellboreStickChart';
-import { DEFAULT_COLUMN_ORDER } from './WellboreStickChart/constants';
+import {
+  DEFAULT_COLUMN_ORDER,
+  DEFAULT_VISIBLE_COLUMNS,
+} from './WellboreStickChart/constants';
 
 const StickChart: React.FC = () => {
   const wellbores = useWellInspectWellbores();
@@ -36,7 +39,7 @@ const StickChart: React.FC = () => {
   const getWellboreStickChartColumns = useWellboreStickChartColumns();
 
   const [columnVisibility, setColumnVisibility] = useState(
-    toBooleanMap(DEFAULT_COLUMN_ORDER)
+    toBooleanMap(DEFAULT_VISIBLE_COLUMNS)
   );
   const [columnOrder, setColumnOrder] = useState(DEFAULT_COLUMN_ORDER);
 

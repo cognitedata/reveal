@@ -35,3 +35,7 @@ export const NptEventAvatar = styled.div`
   align-self: center;
   cursor: pointer;
 `;
+
+export const WellboreStickChartEmptyStateWrapper = styled(ContentWrapper)`
+  margin-top: 25%;
+`;

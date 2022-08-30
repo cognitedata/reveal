@@ -9,7 +9,7 @@ import { BooleanMap } from 'utils/booleanMap';
 
 import { DragDropContainer } from 'components/DragDropContainer';
 import { NoUnmountShowHide } from 'components/NoUnmountShowHide';
-import { useDeepEffect } from 'hooks/useDeep';
+import { useDeepEffect, useDeepMemo } from 'hooks/useDeep';
 
 import { EventsColumnView } from '../../common/Events/types';
 import { SelectedWellboreNptView } from '../../nptEvents/Graph';
@@ -29,6 +29,7 @@ import { NptEventsColumn } from './NptEventsColumn';
 // import { SummaryColumn } from './SummaryColumn';
 import { TrajectoryColumn } from './TrajectoryColumn';
 import { WellboreNdsDetailedView } from './WellboreNdsDetailedView';
+import { WellboreStickChartEmptyState } from './WellboreStickChartEmptyState';
 
 export interface WellboreStickChartProps extends WellboreData, ColumnsData {
   isWellboreSelected?: boolean;
@@ -95,6 +96,10 @@ export const WellboreStickChart: React.FC<WellboreStickChartProps> = ({
     setColumnOrderInternal(columnOrder);
   }, [columnOrder]);
 
+  const isAnyColumnVisible = useDeepMemo(() => {
+    return Object.values(columnVisibility).some(Boolean);
+  }, [columnVisibility]);
+
   const handleChangeDropdown = useCallback(
     (eventType: 'npt' | 'nds') => {
       switch (eventType) {
@@ -126,6 +131,10 @@ export const WellboreStickChart: React.FC<WellboreStickChartProps> = ({
             onChangeDropdown={({ eventType }) => {
               handleChangeDropdown(eventType);
             }}
+          />
+
+          <WellboreStickChartEmptyState
+            isAnyColumnVisible={isAnyColumnVisible}
           />
 
           <ContentWrapper ref={contentRef}>
@@ -183,6 +192,7 @@ export const WellboreStickChart: React.FC<WellboreStickChartProps> = ({
                 scaleBlocks={scaleBlocks}
                 scaleBlocksTVD={scaleBlocksTVD}
                 depthMeasurementType={depthMeasurementType}
+                isVisible={isAnyColumnVisible}
               />
 
               <TrajectoryColumn
