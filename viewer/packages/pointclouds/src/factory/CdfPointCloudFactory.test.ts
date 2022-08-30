@@ -10,6 +10,9 @@ import { Mock } from 'moq.ts';
 import { PointCloudMetadata } from '../PointCloudMetadata';
 import { Potree, PointCloudOctree, PointCloudMaterial } from '../potree-three-loader';
 import { PotreeNodeWrapper } from '../PotreeNodeWrapper';
+import { ShapeType } from '../styling/shapes/IShape';
+import { decomposeStylableObjects } from '../styling/decomposeStylableObjects';
+import { CompositeShape } from '../styling/shapes/CompositeShape';
 
 const dummyAnnotationsResponse = {
   items: [
@@ -74,32 +77,10 @@ describe(CdfPointCloudFactory.name, () => {
     expect(gottenIds).toContainAllValues(expectedIds);
   });
 
-  test('contains right geometries for annotations provided by SDK', async () => {
-    const expectedContainedPoints: [number, number, number][] = [
-      [-0.03, 0.1, -500],
-      [0.4, -0.4, 0]
-    ];
-    const expectedUncontainedPoints: [number, number, number][] = [
-      [1, 1, 1],
-      [300, 300, 300]
-    ];
-
+  test('contains right geometry types for annotations provided by SDK', async () => {
     const shapes = model.stylableObjects.map(obj => obj.stylableObject.shape);
 
-    function containedInAnyShape(p: [number, number, number]): boolean {
-      let contained = false;
-      for (const shape of shapes) {
-        contained ||= shape.containsPoint(p);
-      }
-      return contained;
-    }
-
-    for (const expectedContainedPoint of expectedContainedPoints) {
-      expect(containedInAnyShape(expectedContainedPoint)).toBeTrue();
-    }
-
-    for (const expectedUncontainedPoint of expectedUncontainedPoints) {
-      expect(containedInAnyShape(expectedUncontainedPoint)).toBeFalse();
-    }
+    expect((shapes[0] as CompositeShape).innerShapes[0].shapeType).toEqual(ShapeType.Cylinder);
+    expect((shapes[1] as CompositeShape).innerShapes[0].shapeType).toEqual(ShapeType.Box);
   });
 });
