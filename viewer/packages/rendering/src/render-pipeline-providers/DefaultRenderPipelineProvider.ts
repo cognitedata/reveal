@@ -24,6 +24,10 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider {
     object: THREE.Object3D;
     modelIdentifier: string;
   }[];
+  private readonly _pointCloudModels: {
+    object: THREE.Object3D;
+    modelIdentifier: symbol;
+  }[];
   private readonly _customObjects: THREE.Object3D[];
   private readonly _autoResizeOutputTarget: boolean;
   private readonly _outputRenderTarget: THREE.WebGLRenderTarget | null;
@@ -77,6 +81,7 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider {
       postProcessingRenderTarget: createRenderTarget()
     };
     this._cadModels = sceneHandler.cadModels;
+    this._pointCloudModels = sceneHandler.pointCloudModels;
     this._customObjects = sceneHandler.customObjects;
 
     const ssaoParameters = renderOptions.ssaoRenderParameters ?? defaultRenderOptions.ssaoRenderParameters;
@@ -139,9 +144,14 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider {
         yield this._ssaoPass;
       }
 
-      yield* this._pointCloudRenderPipeline.pipeline(renderer);
+      if (this.shouldRenderPointClouds()) {
+        yield* this._pointCloudRenderPipeline.pipeline(renderer);
+      }
 
-      this._postProcessingPass.updateRenderObjectsVisability(hasStyling);
+      this._postProcessingPass.updateRenderObjectsVisability({
+        cad: hasStyling,
+        pointCloud: this.shouldRenderPointClouds()
+      });
       renderer.setRenderTarget(this._renderTargetData.postProcessingRenderTarget);
       this._rendererStateHelper!.resetState();
       this._rendererStateHelper!.autoClear = true;
@@ -210,5 +220,9 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider {
       this.renderOptions?.ssaoRenderParameters?.sampleSize ?? defaultRenderOptions.ssaoRenderParameters.sampleSize;
 
     return ssaoSampleSize > 0 && hasBackStyling;
+  }
+
+  private shouldRenderPointClouds(): boolean {
+    return this._pointCloudModels.length > 0;
   }
 }

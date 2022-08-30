@@ -67,6 +67,14 @@ export type PointCloudPassParameters = {
   };
   renderer?: {
     autoClearDepth?: boolean;
-    autoClearColor?: boolean;
   };
+};
+
+export type PostProcessingObjectsVisibilityParameters = {
+  cad: {
+    back: boolean;
+    ghost: boolean;
+    inFront: boolean;
+  };
+  pointCloud: boolean;
 };

@@ -641,7 +641,7 @@ export class Cognite3DViewer {
 
       case 'pointcloud':
         const pcModel = model as CognitePointCloudModel;
-        this._sceneHandler.removeCustomObject(pcModel);
+        this._sceneHandler.removePointCloudModel(pcModel);
         this.revealManager.removeModel(model.type, pcModel.pointCloudNode);
         break;
 

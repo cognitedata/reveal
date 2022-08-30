@@ -20,6 +20,7 @@ export class PointCloudRenderPipelineProvider implements RenderPipelineProvider 
   private readonly _depthPass: PointCloudEffectsPass;
   private readonly _attributePass: PointCloudEffectsPass;
   private readonly _standardPass: PointCloudEffectsPass;
+  private readonly _sceneHandler: SceneHandler;
 
   private readonly DepthPassParameters: PointCloudPassParameters = {
     material: {
@@ -57,6 +58,7 @@ export class PointCloudRenderPipelineProvider implements RenderPipelineProvider 
       })
     };
 
+    this._sceneHandler = sceneHandler;
     this._renderParameters = renderParameters;
 
     this._standardPass = new PointCloudEffectsPass(sceneHandler);
@@ -72,6 +74,9 @@ export class PointCloudRenderPipelineProvider implements RenderPipelineProvider 
 
   public *pipeline(renderer: THREE.WebGLRenderer): Generator<RenderPass> {
     this.updateRenderTargetSizes(renderer);
+
+    // Needs to be updated manually since automatic update is disabled because of CAD pipeline.
+    this._sceneHandler.pointCloudModels.forEach(model => model.object.updateMatrixWorld(true));
 
     try {
       renderer.setRenderTarget(this._renderTargetData.output);

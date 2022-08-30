@@ -3,7 +3,7 @@
  */
 
 import * as THREE from 'three';
-import { transparentBlendOptions } from './types';
+import { PostProcessingObjectsVisibilityParameters, transparentBlendOptions } from './types';
 import { RenderPass } from '../RenderPass';
 import {
   createFullScreenTriangleMesh,
@@ -25,10 +25,11 @@ export class PostProcessingPass implements RenderPass {
   private readonly _scene: THREE.Scene;
   private readonly _postProcessingObjects: THREE.Mesh[];
 
-  public updateRenderObjectsVisability(hasStyling: { back: boolean; inFront: boolean; ghost: boolean }): void {
-    this._postProcessingObjects[0].visible = hasStyling.back;
-    this._postProcessingObjects[1].visible = hasStyling.ghost;
-    this._postProcessingObjects[2].visible = hasStyling.inFront;
+  public updateRenderObjectsVisability(visibilityParameters: PostProcessingObjectsVisibilityParameters): void {
+    this._postProcessingObjects[0].visible = visibilityParameters.cad.back;
+    this._postProcessingObjects[1].visible = visibilityParameters.cad.ghost;
+    this._postProcessingObjects[2].visible = visibilityParameters.cad.inFront;
+    this._postProcessingObjects[3].visible = visibilityParameters.pointCloud;
   }
 
   constructor(scene: THREE.Scene, postProcessingPipelineOptions: PostProcessingPipelineOptions) {
