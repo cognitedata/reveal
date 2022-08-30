@@ -3,7 +3,6 @@ import { screen } from '@testing-library/react';
 import { render } from 'utils/test';
 import { CapabilityCheck } from 'components/accessCheck/CapabilityCheck';
 import { EXTPIPES_READS, EXTRACTION_PIPELINES_ACL } from 'model/AclAction';
-// 
 import { useCapabilities } from '@cognite/sdk-react-query-hooks';
 
 describe('CapabilityCheck', () => {

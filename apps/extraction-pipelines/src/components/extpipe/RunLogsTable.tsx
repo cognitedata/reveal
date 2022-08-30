@@ -151,13 +151,13 @@ export const RunLogsTable: FunctionComponent<LogsTableProps> = ({
           onPageChange={paginationChanged}
         />
         {/* onPageChange doesn't work for pageSize, component doesn't provide necessary event details */}
-        {/* <InlineBlockDiv>
+        {/*
           <Select
             value={findOptionValue(PAGINATION_OPTIONS, pageSize)}
             onChange={handleSelectItemsPrPage}
             options={PAGINATION_OPTIONS}
           />
-        </InlineBlockDiv> */}
+        */}
       </DivFlex>
     </Wrapper>
   );
@@ -190,9 +190,3 @@ const StyledTable = styled.table`
     }
   }
 `;
-
-// const InlineBlockDiv = styled.div`
-//   display: inline-block;
-//   margin-left: 12px;
-//   width: 5rem;
-// `;
