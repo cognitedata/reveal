@@ -7,13 +7,13 @@ import styled from 'styled-components/macro';
 
 import { getAuthHeaders } from '@cognite/react-container';
 
-import {
-  LOG_DOCUMENT_PREVIEW,
-  LOG_DOCUMENT_PREVIEW_NAMESPACE,
-} from 'constants/logging';
-import { useMetricLogger, TimeLogStages } from 'hooks/useTimeLog';
+// import {
+//   LOG_DOCUMENT_PREVIEW,
+//   LOG_DOCUMENT_PREVIEW_NAMESPACE,
+// } from 'constants/logging';
+// import { useMetricLogger, TimeLogStages } from 'hooks/useTimeLog';
 
-pdfjs.GlobalWorkerOptions.workerSrc = `https://storage.googleapis.com/discover-pdfjs-2/pdf.worker.js`;
+pdfjs.GlobalWorkerOptions.workerSrc = `https://storage.googleapis.com/discover-pdfjs-2-12-313/pdf-worker.js`;
 
 const PdfPreviewContainer = styled.div`
   display: flex;
@@ -41,21 +41,22 @@ export const PdfPreview: React.FC<Props> = ({
   const [numberOfPages, setNumberOfPages] = useState<number>();
   const [documentUrl, setDocumentUrl] = useState<string>();
 
-  const [startTimer, stopTimer] = useMetricLogger(
-    LOG_DOCUMENT_PREVIEW,
-    TimeLogStages.Network,
-    LOG_DOCUMENT_PREVIEW_NAMESPACE
-  );
+  // const [startTimer, stopTimer] = useMetricLogger(
+  //   LOG_DOCUMENT_PREVIEW,
+  //   TimeLogStages.Network,
+  //   LOG_DOCUMENT_PREVIEW_NAMESPACE
+  // );
 
   function onDocumentLoadSuccess({ numPages }: { numPages: number }) {
-    stopTimer();
+    // stopTimer();
     setNumberOfPages(numPages);
     onSuccess();
   }
 
   useEffect(() => {
     const loadPdf = async () => {
-      startTimer();
+      // Adding the `startTimer` function in the dependency list makes it re-render infinitely. Removed it for now.
+      // startTimer();
       getPdfPreview(documentId)
         .then((url) => setDocumentUrl(url))
         .catch(onError);
@@ -63,7 +64,7 @@ export const PdfPreview: React.FC<Props> = ({
     if (documentId) {
       loadPdf();
     }
-  }, [documentId, startTimer, onSuccess, onError]);
+  }, [documentId]);
 
   return (
     <PdfPreviewContainer>
