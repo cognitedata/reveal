@@ -82,4 +82,10 @@ export abstract class SimpleVisualTestFixture implements VisualTestFixture {
     this._perspectiveCamera.position.copy(position);
     this._controls.target.copy(target);
   }
+
+  public dispose(): void {
+    this._controls.dispose();
+    this._renderer.dispose();
+    this._renderer.forceContextLoss();
+  }
 }

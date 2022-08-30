@@ -12,7 +12,6 @@ import { SimplePointcloud } from './pages/SimplePointcloud';
 import { SSAO } from './pages/SSAO';
 import { TwoModels } from './pages/TwoModels';
 import { WalkablePath } from './pages/WalkablePath';
-import { visualTests } from './pages/e2e/visualTests';
 import { CustomDataSource } from './pages/CustomDataSource';
 
 const cadTestBasePath = '/test/cad/';
@@ -143,33 +142,6 @@ export const exampleRoutes: Array<ExampleRoute> = [
 const cadTestPages: Record<string, { testDescription: string, testPage: JSX.Element }> = {};
 const pointcloudTestPages: Record<string, { testDescription: string, testPage: JSX.Element }> = {};
 
-export function registerVisualTest(
-  category: 'cad' | 'pointcloud', 
-  testKey: string, 
-  testDescription: string, 
-  testPage: JSX.Element) {
-
-  // Ensure test is registered in visualTests so it is actually part of the 
-  // test stage
-  const found = visualTests.find(x => x.category === category && x.testKey === testKey) !== undefined;
-  if (!found) { 
-    throw new Error(`registerVisualTest() was invoked for test '${testKey}' (${category}), but has not been registered. Add the test to pages/e2e/visualTests.ts`);
-  }
-
-  switch (category) {
-    case 'cad':
-      cadTestPages[testKey] = { testDescription, testPage };
-      break;
-
-    case 'pointcloud':
-      pointcloudTestPages[testKey] = { testDescription, testPage };
-      break;
-
-    default:
-      throw new Error(`Unknown test category: '${category}'`);
-  }
-}
-
 export function cadTestRoutes(): Array<ExampleRoute> {
   return Object.entries(cadTestPages).map(([testName, test]) => {
     return {
@@ -181,7 +153,7 @@ export function cadTestRoutes(): Array<ExampleRoute> {
   }).sort((x, y) => x.menuTitle.localeCompare(y.menuTitle));
 }
 
-export function pointCloudTestRoutes(): Array<ExampleRoute> { 
+export function pointCloudTestRoutes(): Array<ExampleRoute> {
   return Object.entries(pointcloudTestPages).map(([testName, test]) => {
     return {
       name: testName,
@@ -191,9 +163,3 @@ export function pointCloudTestRoutes(): Array<ExampleRoute> {
     };
   }).sort((x, y) => x.menuTitle.localeCompare(y.menuTitle));
 }
-
-// Register all visual tests
-const context = require.context('./pages/e2e', true, /\.tsx$/);
-context.keys().forEach((key) => {
-  context(key);
-});
