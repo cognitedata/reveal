@@ -168,43 +168,9 @@ jobs:
       working-directory: examples
       run: yarn install --immutable
       
-    - name: Increase number of inotify watches
-      run: 'echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p'
-
-    # Disabled because visual tests also builds examples
-    # - name: Build examples
-    #   working-directory: examples
-    #   run: |
-    #     echo "NODE_OPTIONS=--max-old-space-size=8192" >> $GITHUB_ENV
-    #     yarn build
-
-    - name: Visual regression tests
-      id: visualtests
+    - name: Build examples
       working-directory: examples
-      run: 'yarn ci:e2e'
-      continue-on-error: true
-
-    - name: Check for failed visual test diffs
-      if: (always() && steps.visualtests.outcome == 'failure')
-      working-directory: examples
-      run: |
-        yarn
-        yarn test:ghprcomment
-      env:
-        ACTIONS_RUNTIME_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-    - name: Upload image diffs for failed visual tests
-      if: (always() && steps.visualtests.outcome == 'failure')
-      uses: actions/upload-artifact@v3
-      with:
-        name: image-diffs-${{ github.sha }}
-        path: examples/src/visual_tests/__image_snapshots__/__diff_output__/*
-
-    - name: Report failed visual tests
-      if: (always() && steps.visualtests.outcome == 'failure')
-      run: |
-        echo There are failed visual tests, please inspect test results.
-        exit 1
+      run: yarn build
 
   # runs only when there are changes in parser-worker/
   # we use it here because github haven't figured out conditionally required checks

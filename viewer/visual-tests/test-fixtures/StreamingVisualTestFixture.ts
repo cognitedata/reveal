@@ -4,14 +4,15 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
-import { CadManager, CadModelUpdateHandler } from '../../packages/cad-geometry-loaders';
-import { ByScreenSizeSectorCuller } from '../../packages/cad-geometry-loaders/src/sector/culling/ByScreenSizeSectorCuller';
+import { CadManager, CadModelUpdateHandler, createV8SectorCuller } from '../../packages/cad-geometry-loaders';
 import { CadModelFactory, CadNode } from '../../packages/cad-model';
 import {
   BasicPipelineExecutor,
+  CadGeometryRenderModePipelineProvider,
   CadMaterialManager,
   defaultRenderOptions,
   DefaultRenderPipelineProvider,
+  RenderMode,
   RenderPipelineExecutor,
   RenderPipelineProvider
 } from '../../packages/rendering';
@@ -35,6 +36,8 @@ export type StreamingTestFixtureComponents = {
   camera: THREE.PerspectiveCamera;
   cameraControls: OrbitControls;
   cadMaterialManager: CadMaterialManager;
+  cadModelUpdateHandler: CadModelUpdateHandler;
+  cadManager: CadManager;
 };
 
 export abstract class StreamingVisualTestFixture implements VisualTestFixture {
@@ -43,13 +46,20 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
   private readonly _renderer: THREE.WebGLRenderer;
   private readonly _controls: OrbitControls;
   private readonly _materialManager: CadMaterialManager;
-  private readonly _gui: dat.GUI;
+  private readonly _localModelUrl: string;
+  private _gui!: dat.GUI;
 
-  protected readonly _frameStatisticsGUIData: { drawCalls: number; pointCount: number; triangleCount: number };
-  protected readonly _frameStatsGUIFolder: dat.GUI;
+  protected readonly _frameStatisticsGUIData = {
+    drawCalls: 0,
+    pointCount: 0,
+    triangleCount: 0
+  };
+  protected _frameStatsGUIFolder!: dat.GUI;
 
   private _renderPipelineProvider: RenderPipelineProvider;
   private _pipelineExecutor: RenderPipelineExecutor;
+  private _cadManager!: CadManager;
+  private readonly _depthRenderPipeline: CadGeometryRenderModePipelineProvider;
 
   get gui(): dat.GUI {
     return this._gui;
@@ -71,12 +81,17 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
     return this._renderPipelineProvider;
   }
 
-  constructor() {
+  constructor(localModelUrl = 'primitives') {
+    this._localModelUrl = localModelUrl;
+
     this._perspectiveCamera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 1000);
 
     this._sceneHandler = new SceneHandler();
 
     this._renderer = new THREE.WebGLRenderer();
+    this._renderer.setPixelRatio(window.devicePixelRatio);
+    this._renderer.localClippingEnabled = true;
+
     this._renderer.setPixelRatio(window.devicePixelRatio);
 
     this._controls = new OrbitControls(this._perspectiveCamera, this._renderer.domElement);
@@ -89,29 +104,28 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
       defaultRenderOptions
     );
 
-    this._gui = new dat.GUI();
-
-    this._frameStatisticsGUIData = {
-      drawCalls: 0,
-      pointCount: 0,
-      triangleCount: 0
-    };
-
-    this._frameStatsGUIFolder = this._gui.addFolder('frameStats');
-    this._frameStatsGUIFolder.open();
-    this._frameStatsGUIFolder.name = 'Frame Statistics';
-    this._frameStatsGUIFolder.add(this._frameStatisticsGUIData, 'drawCalls').listen();
-    this._frameStatsGUIFolder.add(this._frameStatisticsGUIData, 'pointCount').listen();
-    this._frameStatsGUIFolder.add(this._frameStatisticsGUIData, 'triangleCount').listen();
+    this._depthRenderPipeline = new CadGeometryRenderModePipelineProvider(
+      RenderMode.DepthBufferOnly,
+      this._materialManager,
+      this._sceneHandler
+    );
   }
 
   public async run(): Promise<void> {
+    this.setupDatGui();
+
     this.updateRenderer();
-    const { modelDataProvider, modelIdentifier, modelMetadataProvider } = await createDataProviders();
+
+    const { modelDataProvider, modelIdentifier, modelMetadataProvider } = await createDataProviders(
+      this._localModelUrl
+    );
 
     const cadModelFactory = new CadModelFactory(this._materialManager, modelMetadataProvider, modelDataProvider);
-    const cadModelUpdateHandler = new CadModelUpdateHandler(new ByScreenSizeSectorCuller(), true);
-    const cadManager = new CadManager(this._materialManager, cadModelFactory, cadModelUpdateHandler);
+    const cadModelUpdateHandler = new CadModelUpdateHandler(
+      createV8SectorCuller(this._renderer, this._depthRenderPipeline),
+      false
+    );
+    this._cadManager = new CadManager(this._materialManager, cadModelFactory, cadModelUpdateHandler);
 
     const pointCloudMetadataRepository = new PointCloudMetadataRepository(modelMetadataProvider, modelDataProvider);
     const pointCloudFactory = new PointCloudFactory(modelDataProvider);
@@ -122,22 +136,23 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
       this._renderer
     );
 
-    const model = await this.addModel(modelIdentifier, modelMetadataProvider, cadManager, pointCloudManager);
+    const model = await this.addModel(modelIdentifier, modelMetadataProvider, this._cadManager, pointCloudManager);
 
-    const modelLoadedPromise = this.getModelLoadedPromise(model, cadManager, pointCloudManager);
+    const modelLoadedPromise = this.getModelLoadedPromise(model, this._cadManager, pointCloudManager);
 
     const boundingBox = this.getModelBoundingBox(model);
 
     const { position, target } = fitCameraToBoundingBox(this._perspectiveCamera, boundingBox, 1.5);
     this._perspectiveCamera.position.copy(position);
+
     this._controls.target.copy(target);
     this._perspectiveCamera.updateMatrixWorld();
 
-    cadManager.updateCamera(this._perspectiveCamera);
+    this._cadManager.updateCamera(this._perspectiveCamera);
     pointCloudManager.updateCamera(this._perspectiveCamera);
 
     this._controls.addEventListener('change', () => {
-      cadManager.updateCamera(this._perspectiveCamera);
+      this._cadManager.updateCamera(this._perspectiveCamera);
       pointCloudManager.updateCamera(this._perspectiveCamera);
       this.render();
     });
@@ -153,10 +168,28 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
       },
       camera: this._perspectiveCamera,
       cameraControls: this._controls,
-      cadMaterialManager: this._materialManager
+      cadMaterialManager: this._materialManager,
+      cadModelUpdateHandler,
+      cadManager: this._cadManager
     });
 
+    this._gui.close();
+
     this.render();
+  }
+
+  private setupDatGui() {
+    this._gui = new dat.GUI({ autoPlace: false });
+    this._gui.domElement.style.position = 'absolute';
+    this._gui.domElement.style.right = '0px';
+    document.body.appendChild(this._gui.domElement);
+
+    this._frameStatsGUIFolder = this._gui.addFolder('frameStats');
+    this._frameStatsGUIFolder.open();
+    this._frameStatsGUIFolder.name = 'Frame Statistics';
+    this._frameStatsGUIFolder.add(this._frameStatisticsGUIData, 'drawCalls').listen();
+    this._frameStatsGUIFolder.add(this._frameStatisticsGUIData, 'pointCount').listen();
+    this._frameStatsGUIFolder.add(this._frameStatisticsGUIData, 'triangleCount').listen();
   }
 
   public abstract setup(testFixtureComponents: StreamingTestFixtureComponents): Promise<void>;
@@ -236,5 +269,15 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
     } else {
       throw Error(`Unknown output format ${modelOutputs}`);
     }
+  }
+
+  public dispose(): void {
+    this._controls.dispose();
+    this._sceneHandler.dispose();
+    this._depthRenderPipeline.dispose();
+    this._renderPipelineProvider.dispose();
+    this._cadManager.dispose();
+    this._renderer.dispose();
+    this._renderer.forceContextLoss();
   }
 }
