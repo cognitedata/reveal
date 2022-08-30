@@ -72,7 +72,7 @@
     "@types/dat.gui": "0.7.7",
     "@types/expect-puppeteer": "5.0.1",
     "@types/glob": "7.2.0",
-    "@types/jest": "28.1.7",
+    "@types/jest": "28.1.8",
     "@types/jest-environment-puppeteer": "5.0.2",
     "@types/jest-image-snapshot": "5.1.0",
     "@types/jsdom": "20.0.0",
