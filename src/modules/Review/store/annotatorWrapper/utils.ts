@@ -99,6 +99,7 @@ export const populateTempKeypointCollection = (
 
         // keypoint is one of the remaining ones
         if (remainingKeypointLabels.includes(keypointLabel)) {
+          state.temporaryRegion = undefined; // reset temp region - otherwise keypoint can be duplicated
           tempCollection.keypointIds.push(String(id));
 
           // update keypoints

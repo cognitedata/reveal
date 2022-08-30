@@ -200,11 +200,7 @@ const annotatorWrapperSlice = createSlice({
       state.temporaryRegion = action.payload;
 
       // update last shape and collection name if label is available
-      if (
-        action.payload.annotationLabelOrText &&
-        state.temporaryRegion.annotationLabelOrText !==
-          action.payload.annotationLabelOrText
-      ) {
+      if (action.payload.annotationLabelOrText) {
         if (isAnnotatorPointRegion(action.payload)) {
           updateLastCollectionName(state, action.payload.annotationLabelOrText);
         } else {
@@ -225,7 +221,9 @@ const annotatorWrapperSlice = createSlice({
             populateTempKeypointCollection(state, action.payload);
           }
         } else {
-          console.warn('temp keypoint collection does not exist');
+          console.warn(
+            'This region cannot be added. temp keypoint collection does not exist'
+          );
         }
       }
     },
@@ -252,11 +250,7 @@ const annotatorWrapperSlice = createSlice({
         };
 
         // update last shape and collection name if label changed on a temporary annotation (before clicking create button)
-        if (
-          action.payload.annotationLabelOrText &&
-          state.temporaryRegion.annotationLabelOrText !==
-            action.payload.annotationLabelOrText
-        ) {
+        if (action.payload.annotationLabelOrText) {
           if (isAnnotatorPointRegion(action.payload)) {
             updateLastCollectionName(
               state,
@@ -272,7 +266,6 @@ const annotatorWrapperSlice = createSlice({
           state.isCreatingKeypointCollection &&
           state.lastCollectionId // temp keypoint collection is available and temp region is available
         ) {
-          state.temporaryRegion = undefined; // reset temp region - otherwise keypoint can be duplicated
           // populate temp keypoint collection
           populateTempKeypointCollection(state, action.payload);
         }
