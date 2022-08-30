@@ -24,7 +24,7 @@ in float v_angle;
 in float v_arcAngle;
 in vec4 v_centerA;
 in vec4 v_V;
-in float v_treeIndex;
+flat in float v_treeIndex;
 in vec3 v_color;
 in vec3 v_normal;
 
