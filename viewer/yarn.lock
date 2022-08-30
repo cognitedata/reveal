@@ -802,7 +802,7 @@ __metadata:
     tsc-alias: 1.7.0
     typescript: 4.7.4
     webpack: 5.74.0
-    webpack-bundle-analyzer: 4.5.0
+    webpack-bundle-analyzer: 4.6.1
     webpack-cli: 4.10.0
     webpack-dev-server: 4.9.3
     webpack-log: 3.0.2
@@ -12273,9 +12273,9 @@ typescript@4.7.4:
   languageName: node
   linkType: hard
 
-"webpack-bundle-analyzer@npm:4.5.0":
-  version: 4.5.0
-  resolution: "webpack-bundle-analyzer@npm:4.5.0"
+"webpack-bundle-analyzer@npm:4.6.1":
+  version: 4.6.1
+  resolution: "webpack-bundle-analyzer@npm:4.6.1"
   dependencies:
     acorn: ^8.0.4
     acorn-walk: ^8.0.0
@@ -12288,7 +12288,7 @@ typescript@4.7.4:
     ws: ^7.3.1
   bin:
     webpack-bundle-analyzer: lib/bin/analyzer.js
-  checksum: 158e96810ec213d5665ca1c0b257097db44e1f11c4befefab8352b9e5b10890fcb3e3fc1f7bb400dd58762a8edce5621c92afeca86eb4687d2eb64e93186bfcb
+  checksum: 4bc97ac6a1d9cd1f133444b0fc9d9091c97f4bd8388f97636ce27abd1ebffaa7dd45d29f6693661a666e77bcc08dff43ab7c2f5e2600a3101b956c94c1d038d0
   languageName: node
   linkType: hard
 
