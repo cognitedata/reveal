@@ -45,19 +45,37 @@ export const checkPermissions = <T extends KeysOfSCC>(
   name: T | undefined,
   capability: CombinedSCC[], // User token's capabilities
   userGroups: CombinedSCC[], // Groups' capabilities
-  permissions?: CombinedSCC[T]['actions']
+  permission?: CombinedSCC[T]['actions'][0],
+  externalId?: string, // i.e. string of the data model
+  checkAll?: boolean // should we check if "all" is allowed, useful for deciding write action
 ) => {
   // check wether user has the required capabilities in his current groups of his token
   // as this func consumes array of permissions, we need to check if the user has all of them
   if (name) {
     //check first for user's token capabilities if not found then check group capabilities
-    const tokenCapability = capability.find((cap) => cap[name]);
-    if (tokenCapability) {
-      return diff(permissions, tokenCapability[name].actions).length === 0;
-    }
-    const groupCapability = userGroups.find((cap) => cap[name]);
-    if (groupCapability) {
-      return diff(permissions, groupCapability[name].actions).length === 0;
+    const capabilities = capability
+      .filter((cap) => cap[name])
+      .concat(userGroups.filter((cap) => cap[name]));
+    if (capabilities.length > 0) {
+      return capabilities.some((capabilities) => {
+        if (diff([permission], capabilities[name].actions).length === 0) {
+          if (externalId) {
+            return (
+              'all' in capabilities[name].scope ||
+              // check if external id is present in the scope
+              (
+                (
+                  capabilities[name].scope as {
+                    dataModelScope?: { externalIds: string[] };
+                  }
+                ).dataModelScope || { externalIds: [] }
+              ).externalIds.includes(externalId)
+            );
+          }
+          return checkAll ? 'all' in capabilities[name].scope : true;
+        }
+        return false;
+      });
     }
   }
   return false;

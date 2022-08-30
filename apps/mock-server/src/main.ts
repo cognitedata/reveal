@@ -19,6 +19,8 @@ const args = getArgs();
 const PORT = args.port || 4002;
 const dbPath = (args._[0] || args.db) as string;
 
+let mockTokenData = userTokenData;
+
 const mockData = loadMockData(dbPath);
 const mockDataInitalState = JSON.parse(JSON.stringify(mockData));
 const mockServerConfig = args.config ? loadConfig(args.config) : null;
@@ -42,7 +44,7 @@ server.get('/reset', (req, res) => {
   // otherwise we will end up with prev state being modified
   cdfMiddlewares.reset(JSON.parse(JSON.stringify(mockDataInitalState)));
   console.log('Application state was reseted to its initial state');
-
+  mockTokenData = userTokenData;
   res.jsonp({ items: [] });
 });
 
@@ -61,13 +63,20 @@ server.get('/login/status', (req, res) => {
     },
   });
 });
+
 server.get('/api/v1/token/inspect', (req, res) => {
   res.set({
     'content-type': 'application/json',
     'access-control-allow-credentials': true,
     'access-control-allow-origin': baseUrl,
   });
-  res.jsonp(userTokenData);
+  res.jsonp(mockTokenData);
+});
+
+// updates the JSON token at runtime
+server.post('/api/v1/token/inspect', (req, res) => {
+  mockTokenData = req.body;
+  res.jsonp({ updated: mockTokenData });
 });
 
 server.use(cdfMiddlewares);

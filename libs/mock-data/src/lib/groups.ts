@@ -159,29 +159,4 @@ export const groupsMockData = [
       },
     ],
   },
-  {
-    id: 1658310948211,
-    isDeleted: false,
-    deletedTime: -1,
-    name: 'datamodels',
-    sourceId: '1c0a7f13-ac64-46d3-a94e-0bed87688bd4',
-    capabilities: [
-      {
-        dataModelsAcl: {
-          actions: ['READ', 'WRITE'],
-          scope: {
-            all: {},
-          },
-        },
-      },
-      {
-        dataModelInstancesAcl: {
-          actions: ['READ', 'WRITE'],
-          scope: {
-            all: {},
-          },
-        },
-      },
-    ],
-  },
 ];

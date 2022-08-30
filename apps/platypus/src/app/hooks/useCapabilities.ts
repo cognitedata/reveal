@@ -1,24 +1,21 @@
 import { useQuery } from 'react-query';
 import { getCogniteSDKClient } from '../../environments/cogniteSdk';
 
-import config from '@platypus-app/config/config';
 import { getTenant } from '@platypus-app/utils/tenant-utils';
 import {
   checkPermissions,
-  checkAuthorized,
   KeysOfSCC,
   Capability,
   Combine,
   CombinedSCC,
 } from '@platypus-app/utils/capabilities';
 
-const DEFAULT_GROUPS = [config.DATA_MODELS_GROUP_NAME];
-
 export function useCapabilities<T extends KeysOfSCC>(
   aclName?: T,
   permissions?: CombinedSCC[T]['actions'],
-  requestedGroups = DEFAULT_GROUPS
+  options?: { externalId?: string; checkAll?: boolean }
 ) {
+  const { externalId, checkAll } = options || {};
   const tenant = getTenant();
   const cdfClient = getCogniteSDKClient();
   const {
@@ -41,7 +38,6 @@ export function useCapabilities<T extends KeysOfSCC>(
     };
   }
 
-  const userGroupNames = groups?.map((group) => group.name) ?? [];
   const userGroupCapabilities = (groups?.flatMap((gr) => gr.capabilities) ??
     []) as Combine<Capability>[];
 
@@ -50,23 +46,20 @@ export function useCapabilities<T extends KeysOfSCC>(
       cap.projectScope.projects.includes(tenant)
   ) || []) as Combine<Capability>[];
 
-  const hasPermissions = checkPermissions(
-    aclName,
-    platypusUserCapabilities,
-    userGroupCapabilities,
-    permissions
-  );
-
-  const isAuthorized = checkAuthorized(
-    platypusUserCapabilities,
-    requestedGroups,
-    userGroupNames
+  const hasPermissions = (permissions as string[]).every((el) =>
+    checkPermissions(
+      aclName,
+      platypusUserCapabilities,
+      userGroupCapabilities,
+      el as CombinedSCC[T]['actions'][0],
+      externalId,
+      checkAll
+    )
   );
 
   return {
     isError: isGroupError && isTokenError,
     isFetched: isTokenFetched && isGroupsFetched,
     isAclSupported: hasPermissions,
-    isAuthorized,
   };
 }

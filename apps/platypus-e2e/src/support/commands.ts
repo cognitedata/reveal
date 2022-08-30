@@ -43,6 +43,7 @@ declare namespace Cypress {
     ): Chainable<JQuery<E>>;
     ensureCurrentVersionIsDraft(): void;
     ensureCurrentVersionIsNotDraft(): void;
+    mockUserToken(): void;
   }
 }
 //
@@ -188,4 +189,42 @@ Cypress.Commands.add('ensureCurrentVersionIsNotDraft', () => {
   cy.getBySel('changes-saved-status-text').should('not.exist');
   // Version selector should not display "Local draft"
   cy.getBySel('schema-version-select').should('not.have.text', 'Local draft');
+});
+
+Cypress.Commands.add('mockUserToken', () => {
+  cy.request('POST', 'http://localhost:4200/api/v1/token/inspect', {
+    subject: 'OcJ9QWErtY35I-uzLiS2Razr7-i3ayRFG3oY5wbS-12345',
+    projects: [
+      {
+        projectUrlName: 'platypus',
+        groups: [123456789],
+      },
+    ],
+    capabilities: [
+      {
+        dataModelsAcl: {
+          actions: ['READ', 'WRITE'],
+          scope: {
+            dataModelScope: { externalIds: [] },
+          },
+          version: 1,
+        },
+        projectScope: {
+          projects: ['platypus'],
+        },
+      },
+      {
+        dataModelInstancesAcl: {
+          actions: ['READ', 'WRITE'],
+          scope: {
+            dataModelScope: { externalIds: [] },
+          },
+          version: 1,
+        },
+        projectScope: {
+          projects: ['platypus'],
+        },
+      },
+    ],
+  });
 });

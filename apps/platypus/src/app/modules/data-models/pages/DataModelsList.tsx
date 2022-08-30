@@ -1,7 +1,9 @@
-import { Button, Flex, Title } from '@cognite/cogs.js';
+import { Button, Flex, Title, Tooltip } from '@cognite/cogs.js';
 import { StyledPageWrapper } from '@platypus-app/components/Layouts/elements';
 import { FlexPlaceholder } from '@platypus-app/components/Placeholder/FlexPlaceholder';
 import { Spinner } from '@platypus-app/components/Spinner/Spinner';
+import config from '@platypus-app/config/config';
+import { useCapabilities } from '@platypus-app/hooks/useCapabilities';
 import { useDataModels } from '@platypus-app/hooks/useDataModelActions';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import { DataModelCard } from '@platypus-app/modules/data-models/components/DataModelCard/DataModelCard';
@@ -21,6 +23,10 @@ export const DataModelsList = () => {
   const [dataModelToDelete, setDataModelToDelete] = useState<
     DataModel | undefined
   >(undefined);
+
+  const dataModelsWriteAcl = useCapabilities('dataModelsAcl', ['WRITE'], {
+    checkAll: true,
+  });
 
   const {
     data: dataModels,
@@ -101,13 +107,22 @@ export const DataModelsList = () => {
         <Title level={3} data-cy="data-models-title">
           {t('data_models_title', 'Data Models')}
         </Title>
-        <Button
-          type="primary"
-          data-cy="create-data-model-btn"
-          onClick={() => setCreateDataModel(true)}
+        <Tooltip
+          disabled={dataModelsWriteAcl.isAclSupported}
+          content={t(
+            'create_data_model_btn_disabled_text',
+            `Missing "${config.DATA_MODELS_ACL}.write" permission`
+          )}
         >
-          {t('create_data_model_btn', 'Create Data Model')}
-        </Button>
+          <Button
+            type="primary"
+            disabled={!dataModelsWriteAcl.isAclSupported}
+            data-cy="create-data-model-btn"
+            onClick={() => setCreateDataModel(true)}
+          >
+            {t('create_data_model_btn', 'Create Data Model')}
+          </Button>
+        </Tooltip>
       </Flex>
       {dataModels && dataModels.length ? renderList() : renderEmptyList()}
       <CreateDataModel

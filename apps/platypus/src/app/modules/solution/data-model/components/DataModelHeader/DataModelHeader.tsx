@@ -14,6 +14,8 @@ import { VersionSelectorToolbar } from '@platypus-app/components/VersionSelector
 import { useDataModelState } from '@platypus-app/modules/solution/hooks/useDataModelState';
 import { DocLinkButtonGroup } from '@platypus-app/components/DocLinkButtonGroup/DocLinkButtonGroup';
 import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
+import { useCapabilities } from '@platypus-app/hooks/useCapabilities';
+import config from '@platypus-app/config/config';
 
 export interface DataModelHeaderProps {
   dataModelExternalId: string;
@@ -43,6 +45,10 @@ export const DataModelHeader = ({
   title,
 }: DataModelHeaderProps) => {
   const { t } = useTranslation('DataModelHeader');
+
+  const dataModelsWriteAcl = useCapabilities('dataModelsAcl', ['WRITE'], {
+    externalId: dataModelExternalId,
+  });
 
   const { track } = useMixpanel();
 
@@ -226,15 +232,24 @@ export const DataModelHeader = ({
 
     return (
       <Flex>
-        <Button
-          type="primary"
-          data-cy="edit-schema-btn"
-          onClick={handleEditClick}
-          className="editButton"
-          style={{ minWidth: '140px', marginRight: '8px' }}
+        <Tooltip
+          disabled={dataModelsWriteAcl.isAclSupported}
+          content={t(
+            'edit_data_model_disabled_text',
+            `Missing "${config.DATA_MODELS_ACL}.write" permission`
+          )}
         >
-          {t('edit_data_model', 'Edit data model')}
-        </Button>
+          <Button
+            type="primary"
+            data-cy="edit-schema-btn"
+            onClick={handleEditClick}
+            className="editButton"
+            disabled={!dataModelsWriteAcl.isAclSupported}
+            style={{ minWidth: '140px', marginRight: '8px' }}
+          >
+            {t('edit_data_model', 'Edit data model')}
+          </Button>
+        </Tooltip>
         <DocLinkWrapper>
           <DocLinkButtonGroup />
         </DocLinkWrapper>
