@@ -8,6 +8,7 @@ module.exports = {
   projectName: 'reveal',
   themeConfig: {
     algolia: {
+      appId: 'reveal-docs',
       apiKey: 'd2f00b2aa78a3b4ca8877d9b764916d4',
       indexName: 'reveal-docs',
 
@@ -73,5 +74,5 @@ module.exports = {
     ],
   ],
   themes: ['@docusaurus/theme-live-codeblock'],
-  plugins: ['docusaurus2-dotenv'],
+  plugins: [require.resolve('./docusaurus_plugins/docusaurusWebpack5Plugin')],
 };
