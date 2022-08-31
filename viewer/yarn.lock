@@ -1183,15 +1183,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@jest/source-map@npm:^28.1.2":
-  version: 28.1.2
-  resolution: "@jest/source-map@npm:28.1.2"
-  dependencies:
-    "@sinclair/typebox": ^0.24.1
-  checksum: 41355c78f09eb1097e57a3c5d0ca11c9099e235e01ea5fa4e3953562a79a6a9296c1d300f1ba50ca75236048829e056b00685cd2f1ff8285e56fd2ce01249acb
-  languageName: node
-  linkType: hard
-
 "@jest/source-map@npm:^29.0.0":
   version: 29.0.0
   resolution: "@jest/source-map@npm:29.0.0"
@@ -7790,8 +7781,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jest-diff@npm:^29.0.1":
-
+"jest-diff@npm:^29.0.0, jest-diff@npm:^29.0.1":
   version: 29.0.1
   resolution: "jest-diff@npm:29.0.1"
   dependencies:
