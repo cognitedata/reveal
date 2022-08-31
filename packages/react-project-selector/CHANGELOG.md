@@ -1,3 +1,7 @@
+## 0.2.0 August 26 2022
+
+Implement support for the "disableLegacyAuth" sidecar property, which forces the user into the OIDC login flow
+
 ## 0.1.6 August 22 2022
 
 Bump version to publish with updated dependencies (SDK)

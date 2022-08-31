@@ -46,8 +46,13 @@ type Props = {
 export function TenantSelectorWrapper({ sidecar }: Props) {
   const [cluster, setCluster] = useCluster(sidecar);
 
-  const { aadApplicationId, applicationName, availableClusters, fakeIdp } =
-    sidecar;
+  const {
+    aadApplicationId,
+    applicationName,
+    availableClusters,
+    fakeIdp,
+    disableLegacyLogin,
+  } = sidecar;
 
   const handleSubmit = async (selectedProject: string) => {
     // Get the general auth flow. FakeIDP and Azure set it right away
@@ -85,6 +90,7 @@ export function TenantSelectorWrapper({ sidecar }: Props) {
         setCluster={setCluster}
         move={handleSubmit}
         isProduction={isProduction}
+        hideLegacyAuth={disableLegacyLogin ?? false}
       />
       {fakeIdp && (
         <div

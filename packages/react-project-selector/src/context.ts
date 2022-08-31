@@ -9,6 +9,7 @@ type LoginContextType = {
   clusters: ClusterGroup[];
   move: (project: string) => void;
   isProduction: boolean;
+  hideLegacyAuth: boolean;
 };
 
 const LoginContext = createContext<LoginContextType>(undefined!);

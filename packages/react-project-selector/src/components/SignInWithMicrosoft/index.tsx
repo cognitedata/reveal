@@ -22,7 +22,8 @@ const SignInWithMicrosoft = ({
   login,
   isLoading,
 }: SignInWithMicrosoftProps) => {
-  const { cluster, clientId, clusters } = useContext(LoginContext);
+  const { cluster, clientId, clusters, hideLegacyAuth } =
+    useContext(LoginContext);
 
   const history = useHistory();
 
@@ -33,7 +34,7 @@ const SignInWithMicrosoft = ({
   };
 
   return (
-    <LoginScreen backTo="/">
+    <LoginScreen backTo={!hideLegacyAuth ? '/' : undefined}>
       <Box m={32}>
         <Box spaceY={20}>
           <InfoMessage

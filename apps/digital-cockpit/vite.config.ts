@@ -40,15 +40,13 @@ export default defineConfig(({ command }) => {
     resolve: {
       dedupe: ['react', 'react-dom'],
       preserveSymlinks: true,
+      alias: {
+        crypto: require.resolve('rollup-plugin-node-builtins'),
+      },
     },
     base: command === 'build' ? '/PUBLIC_URL_VALUE/' : '/',
     define: {
       'process.env': env,
-    },
-    resolve: {
-      alias: {
-        crypto: require.resolve('rollup-plugin-node-builtins'),
-      },
     },
     build: {
       sourcemap: command === 'build',

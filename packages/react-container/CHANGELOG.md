@@ -1,3 +1,11 @@
+## 6.1.0 August 26 2022
+
+- react-project-selector version bump
+
+> Add support for disabling legacy auth flow
+
+- Implement support for the "disableLegacyAuth" sidecar property, which forces the user into the OIDC login flow
+
 ## 6.0.6 August 22 2022
 
 - no changes, just need deps versions to be updated for react-package-selector

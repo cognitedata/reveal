@@ -35,6 +35,7 @@ type LoginProps = {
   setCluster: (cluster: string) => void;
   move: (project: string) => void;
   isProduction: boolean;
+  hideLegacyAuth: boolean;
 };
 
 const cache = new QueryClient({
@@ -54,6 +55,7 @@ const LoginOuter = ({
   appName,
   move,
   isProduction,
+  hideLegacyAuth,
 }: LoginProps) => {
   return (
     <LoginContext.Provider
@@ -66,6 +68,7 @@ const LoginOuter = ({
         move,
         isProduction,
         appName,
+        hideLegacyAuth,
       }}
     >
       <QueryClientProvider client={cache}>
@@ -80,8 +83,28 @@ const LoginOuter = ({
   );
 };
 
+// Redirect component of React DOM does not work for some reason.
+const OIDCLoginRedirect = () => {
+  const history = useHistory();
+  history.push('/signInWithMicrosoft');
+
+  return null;
+};
+
+const withLegacyDisabledFallback =
+  <P extends object>(
+    Component: React.ComponentType<P>,
+    hideLegacyAuth: boolean
+  ) =>
+  (props: P) => {
+    if (hideLegacyAuth) {
+      return <OIDCLoginRedirect />;
+    }
+    return <Component {...props} />;
+  };
+
 const Login = () => {
-  const { cluster, clientId } = useContext(LoginContext);
+  const { cluster, clientId, hideLegacyAuth } = useContext(LoginContext);
   const [, setSavedTenants] = useSavedTenants();
   const history = useHistory();
   const {
@@ -141,7 +164,11 @@ const Login = () => {
   return (
     <Switch>
       <Route exact path="/">
-        {isLoading ? <Loader /> : <StartPage />}
+        {isLoading ? (
+          <Loader />
+        ) : (
+          withLegacyDisabledFallback(StartPage, hideLegacyAuth)
+        )}
       </Route>
       <Route exact path="/signInWithMicrosoft">
         <SignInWithMicrosoft login={login} isLoading={isLoading} />
@@ -154,7 +181,7 @@ const Login = () => {
         />
       </Route>
       <Route exact path="/signInWithProjectName">
-        <SignInWithProjectName />
+        {withLegacyDisabledFallback(SignInWithProjectName, hideLegacyAuth)}
       </Route>
     </Switch>
   );

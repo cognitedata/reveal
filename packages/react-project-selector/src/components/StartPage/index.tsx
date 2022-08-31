@@ -5,10 +5,12 @@ import LoginScreen from '../common/LoginScreen';
 import { Box } from '../common';
 
 import Button from './Button';
+
 import 'tippy.js/dist/tippy.css';
 
 const StartPage: React.FC = () => {
   const history = useHistory();
+
   const navigateTo = (route: string) => () => history.push(route);
 
   return (
