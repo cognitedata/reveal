@@ -1,8 +1,8 @@
 import { Asset } from '@cognite/sdk';
 import dayjs from 'dayjs';
 import LinkedAssetsSidebar from 'components/LinkedAssetsSidebar/LinkedAssetsSidebar';
-import useAssetsTimeseries from 'models/cdf/assets/queries/useAssetsTimeseries';
-import useTimeseriesAggregatedDatapoints from 'models/cdf/timeseries/queries/useTimeseriesAggregatedDatapoints';
+import useAssetsTimeseries from 'hooks/cdf/assets/queries/useAssetsTimeseries';
+import useTimeseriesAggregatedDatapoints from 'hooks/cdf/timeseries/queries/useTimeseriesAggregatedDatapoints';
 import { ComponentProps } from 'react';
 import useSimpleMemo from 'hooks/useSimpleMemo';
 import isTruthy from 'utils/isTruthy';

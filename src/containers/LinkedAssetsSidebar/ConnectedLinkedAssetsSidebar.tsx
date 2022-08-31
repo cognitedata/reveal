@@ -3,7 +3,7 @@ import LinkedAssetsSidebar from 'components/LinkedAssetsSidebar/LinkedAssetsSide
 import { useAddRemoveTimeseries } from 'components/Search/hooks';
 import { useNavigate } from 'hooks/navigation';
 import { useComponentTranslations } from 'hooks/translations';
-import useLinkedAssets from 'models/charts/linked-assets/hooks/useLinkedAssets';
+import useLinkedAssets from 'hooks/charts/linked-assets/hooks/useLinkedAssets';
 
 type Props = {
   onClose: () => void;
