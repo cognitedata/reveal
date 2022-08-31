@@ -11,7 +11,6 @@ import { PointCloudMetadata } from '../PointCloudMetadata';
 import { Potree, PointCloudOctree, PointCloudMaterial } from '../potree-three-loader';
 import { PotreeNodeWrapper } from '../PotreeNodeWrapper';
 import { ShapeType } from '../styling/shapes/IShape';
-import { decomposeStylableObjects } from '../styling/decomposeStylableObjects';
 import { CompositeShape } from '../styling/shapes/CompositeShape';
 
 const dummyAnnotationsResponse = {
