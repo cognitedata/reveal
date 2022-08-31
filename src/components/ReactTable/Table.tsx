@@ -22,6 +22,10 @@ export interface TableProps<T extends Record<string, any>> {
   onSort?: (props: OnSortProps<T>) => void;
   hiddenColumns?: IdType<T>[];
   isKeyboardNavigationEnabled?: boolean;
+  onRowClick?: (
+    row?: T,
+    evt?: React.MouseEvent<HTMLTableRowElement, MouseEvent>
+  ) => void;
 }
 
 export interface OnSortProps<T> {
@@ -32,6 +36,7 @@ export type TableData = Record<string, any>;
 export function Table<T extends TableData>({
   data,
   columns,
+  onRowClick = () => {},
   onSort,
   hiddenColumns = [],
   isColumnSelectEnabled = false,
@@ -109,7 +114,15 @@ export function Table<T extends TableData>({
           {rows.map(row => {
             prepareRow(row);
             return (
-              <Tr {...row.getRowProps()}>
+              <Tr
+                {...row.getRowProps()}
+                onClick={evt => onRowClick(row.original, evt)}
+                onKeyDown={evt => {
+                  if (evt.key === 'Enter') {
+                    onRowClick(row.original);
+                  }
+                }}
+              >
                 {row.cells.map(cell => {
                   return (
                     <Td {...cell.getCellProps()}>{cell.render('Cell')}</Td>
@@ -161,6 +174,7 @@ const Tr = styled.tr`
   background: white;
   &:hover {
     background: #fafafa;
+    cursor: pointer;
   }
 
   ${Thead} &:hover {

@@ -204,3 +204,43 @@ export const ExampleWithNavigation: ComponentStory<typeof Table> = args => {
     />
   );
 };
+
+export const ExampleWithOnClickRow: ComponentStory<typeof Table> = args => {
+  const data = useMemo(() => exampleDatas, []);
+  const columns = useMemo(() => exampleColumns, []);
+  const [value, setValue] = useState<DataType>();
+  const onClick = (currentRow?: DataType) => {
+    setValue(currentRow);
+  };
+  return (
+    <>
+      <Table<DataType>
+        {...args}
+        data={data}
+        columns={columns}
+        onRowClick={onClick}
+        isKeyboardNavigationEnabled
+      />
+      <pre>Current Value:{value && JSON.stringify(value)}</pre>
+    </>
+  );
+};
+
+ExampleWithOnClickRow.play = async ({ canvasElement }) => {
+  const canvas = within(canvasElement);
+  const table = canvasElement.querySelector('table');
+  expect(table).toBeInTheDocument();
+
+  const tbody = canvasElement.querySelector('tbody');
+  expect(tbody).toBeInTheDocument();
+  const TbodyElement = within(tbody as HTMLElement);
+  let rows = TbodyElement.getAllByRole('row');
+  expect(rows.length).toBe(3);
+  let firstCell = rows[0].querySelector('td');
+  expect(firstCell).not.toBe(null);
+  userEvent.click(firstCell!);
+  const preElement = canvasElement.querySelector('pre');
+  expect(preElement?.innerHTML).toBe(
+    'Current Value:{"col1":"Hello","col2":"World"}'
+  );
+};
