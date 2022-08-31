@@ -46,7 +46,7 @@ export class PostProcessingPass implements RenderPass {
 
     // Normal un-styled opaque geometry
     const backBlitObject = createFullScreenTriangleMesh(backBlitMaterial);
-    backBlitObject.name = 'Back Styling';
+    backBlitObject.name = 'Back Styling blit object';
     backBlitObject.renderOrder = -1;
 
     const pointcloudBlitMaterial = getPointCloudPostProcessingMaterial({
@@ -57,8 +57,8 @@ export class PostProcessingPass implements RenderPass {
 
     // rendered pointcloud data
     const pointcloudBlitObject = createFullScreenTriangleMesh(pointcloudBlitMaterial);
-    backBlitObject.name = 'Pointcloud';
-    backBlitObject.renderOrder = 0;
+    pointcloudBlitObject.name = 'Point Cloud blit object';
+    pointcloudBlitObject.renderOrder = 0;
 
     const ghostBlitMaterial = getBlitMaterial({
       texture: postProcessingPipelineOptions.ghost.texture,
@@ -68,7 +68,7 @@ export class PostProcessingPass implements RenderPass {
 
     // Ghosted geometry
     const ghostBlitObject = createFullScreenTriangleMesh(ghostBlitMaterial);
-    ghostBlitObject.name = 'Ghost Styling';
+    ghostBlitObject.name = 'Ghost Styling blit object';
     ghostBlitObject.renderOrder = 1;
 
     const inFrontBlitMaterial = getDepthBlendBlitMaterial({
@@ -83,7 +83,7 @@ export class PostProcessingPass implements RenderPass {
 
     //In front geometry
     const inFrontBlitObject = createFullScreenTriangleMesh(inFrontBlitMaterial);
-    inFrontBlitObject.name = 'In-front Styling';
+    inFrontBlitObject.name = 'In-front Styling blit object';
     inFrontBlitObject.renderOrder = 2;
 
     this._scene.add(backBlitObject);

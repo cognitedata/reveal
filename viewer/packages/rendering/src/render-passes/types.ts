@@ -2,6 +2,7 @@
  * Copyright 2022 Cognite AS
  */
 
+import { PotreePointShape } from '@reveal/pointclouds';
 import * as THREE from 'three';
 
 export type BlendOptions = {
@@ -58,6 +59,7 @@ export type ThreeUniforms = {
 export type PointCloudPassParameters = {
   material?: {
     weighted?: boolean;
+    shape?: PotreePointShape;
     hqDepthPass?: boolean;
     depthWrite?: boolean;
     blending?: THREE.Blending;

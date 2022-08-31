@@ -74,6 +74,7 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
   }
 
   set pipelineProvider(pipelineProvider: RenderPipelineProvider) {
+    this._renderPipelineProvider.dispose();
     this._renderPipelineProvider = pipelineProvider;
   }
 
