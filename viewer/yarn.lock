@@ -793,7 +793,7 @@ __metadata:
     jest-canvas-mock: 2.4.0
     jest-environment-jsdom: 29.0.1
     jest-extended: 3.1.0
-    jest-image-snapshot: 5.1.1
+    jest-image-snapshot: 5.2.0
     jest-puppeteer: 6.1.1
     jsdom: 20.0.0
     lint-staged: 13.0.3
@@ -7921,9 +7921,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jest-image-snapshot@npm:5.1.1":
-  version: 5.1.1
-  resolution: "jest-image-snapshot@npm:5.1.1"
+"jest-image-snapshot@npm:5.2.0":
+  version: 5.2.0
+  resolution: "jest-image-snapshot@npm:5.2.0"
   dependencies:
     chalk: ^1.1.3
     get-stdin: ^5.0.1
@@ -7936,7 +7936,7 @@ __metadata:
     ssim.js: ^3.1.1
   peerDependencies:
     jest: ">=20 <=28"
-  checksum: 19b5a9665876d22cbce97dbc5e03db85b96aac93df7d4b7eb364d51681d6374a312c562b08e6fdbefce5e2f07b7e96d479d4305c70d60c80ee0055f84968e5cc
+  checksum: 37c7e03a9969c484c963a5a7293df63ce73f69e3a54b269966b11555793fe7b21ed3de708208b5234809e2e02f8088a242e13848a6634d191fea81fc0d70fb79
   languageName: node
   linkType: hard
 
