@@ -5,12 +5,12 @@ import * as THREE from 'three';
 
 import { createRevealManager } from './createRevealManager';
 import { RevealManager } from './RevealManager';
-import { createGlContext } from '../../../../test-utilities';
 
 import { ModelDataProvider, ModelMetadataProvider } from '@reveal/modeldata-api';
 import { SectorCuller } from '@reveal/cad-geometry-loaders';
 import { SceneHandler } from '@reveal/utilities';
 import { LoadingStateChangeListener } from './types';
+import { It, Mock, SetPropertyExpression } from 'moq.ts';
 
 describe('RevealManager', () => {
   const stubMetadataProvider: ModelMetadataProvider = {} as any;
@@ -21,27 +21,34 @@ describe('RevealManager', () => {
     dispose: jest.fn()
   };
   let manager: RevealManager;
-  let renderer: THREE.WebGLRenderer;
 
   beforeEach(() => {
     jest.clearAllMocks();
-    manager = createRevealManager(
-      'test',
-      'myAppId',
-      stubMetadataProvider,
-      stubDataProvider,
-      renderer,
-      new SceneHandler(),
-      {
-        internal: { cad: { sectorCuller } }
-      }
-    );
-    jest.useFakeTimers();
-  });
 
-  beforeAll(() => {
-    const context = createGlContext(64, 64, { preserveDrawingBuffer: true });
-    renderer = new THREE.WebGLRenderer({ context });
+    const rendererMock = new Mock<THREE.WebGLRenderer>()
+      .setup(_ => It.Is((expression: SetPropertyExpression) => expression.name === 'info'))
+      .returns({})
+      .setup(p => p.domElement)
+      .returns(
+        new Mock<HTMLCanvasElement>()
+          .setup(p => p.parentElement)
+          .returns(new Mock<HTMLElement>().object())
+          .object()
+      );
+
+    new SceneHandler(),
+      (manager = createRevealManager(
+        'test',
+        'myAppId',
+        stubMetadataProvider,
+        stubDataProvider,
+        rendererMock.object(),
+        new SceneHandler(),
+        {
+          internal: { cad: { sectorCuller } }
+        }
+      ));
+    jest.useFakeTimers();
   });
 
   afterAll(() => {
