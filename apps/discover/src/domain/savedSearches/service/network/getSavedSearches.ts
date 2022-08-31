@@ -27,6 +27,13 @@ export const getSavedSearches = async (
       if (value.id === SAVED_SEARCHES_CURRENT_KEY) {
         return result;
       }
+      // also never show relatedDocuments, as that is our internal state
+      if (
+        value.id === 'relatedDocuments' ||
+        value.name === 'relatedDocuments'
+      ) {
+        return result;
+      }
 
       const { name = '?', owner, ...values } = value;
       // the server should return a parsed format
