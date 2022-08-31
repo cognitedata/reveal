@@ -246,6 +246,14 @@ export class CasingLogView extends BaseGroupThreeView {
         new RenderSample(basePosition.clone(), sample.baseMd, 0, color)
       );
     }
+    /*
+     * Sort sample.md values in ascending order before transform.
+     * Because, casing will draw/render according to the md values in the sample array.
+     * Ex: if there is a sample array with md values like [1,5,6,8,9,2]
+     *     then it will draw/render a casing, starting from 1 and end from 2.
+     *     so that cause to render double lines. (1->5->6->8->9->2)
+     */
+    samples.sort((sample1, sample2) => sample1.md - sample2.md);
     const { transformer } = this;
     for (const sample of samples)
       transformer.transformRelativeTo3D(sample.point);
