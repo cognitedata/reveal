@@ -11,59 +11,15 @@ import {
   useTable,
 } from 'react-table';
 import styled from 'styled-components';
-import { Graphic, OptionType, Pagination, Select } from '@cognite/cogs.js';
+import { Graphic, Pagination } from '@cognite/cogs.js'; // OptionType, Select
 import { RunUI } from 'model/Runs';
-import { DivFlex } from 'styles/flex/StyledFlex';
+import { DivFlex } from 'components/styled';
 import { Extpipe } from 'model/Extpipe';
 import { calculateStatus } from 'utils/extpipeUtils';
 import { RunStatusUI } from 'model/Status';
 import { ExternalLink } from 'components/links/ExternalLink';
-
-const Wrapper = styled.div`
-  margin-bottom: 5rem;
-`;
-const StyledTable = styled.table`
-  grid-area: table;
-  thead {
-    tr {
-      .createdTime-col {
-        width: 12rem;
-      }
-      .status-col {
-        width: 9rem;
-      }
-    }
-  }
-  tbody {
-    tr {
-      &:hover,
-      &:nth-child(2n):hover {
-        background-color: unset;
-      }
-      &:nth-child(2n) {
-        background-color: white;
-      }
-    }
-  }
-`;
-const itemsPrPageOptions: OptionType<unknown>[] = [
-  {
-    label: '10',
-    value: 10,
-  },
-  {
-    label: '50',
-    value: 50,
-  },
-  {
-    label: '100',
-    value: 100,
-  },
-];
-const InlineBlockDiv = styled.div`
-  display: inline-block;
-  width: 5rem;
-`;
+import { DEFAULT_ITEMS_PER_PAGE } from 'utils/constants';
+import { useTranslation } from 'common';
 interface LogsTableProps {
   data: RunUI[];
   columns: Column<RunUI>[];
@@ -80,6 +36,7 @@ export const RunLogsTable: FunctionComponent<LogsTableProps> = ({
   pageSize: controlledPageSize,
   extpipe,
 }: PropsWithChildren<LogsTableProps>) => {
+  const { t } = useTranslation();
   const {
     getTableProps,
     getTableBodyProps,
@@ -88,7 +45,7 @@ export const RunLogsTable: FunctionComponent<LogsTableProps> = ({
     rows,
     prepareRow,
     gotoPage,
-    setPageSize,
+    // setPageSize,
     state: { pageIndex, pageSize },
   } = useTable(
     {
@@ -111,16 +68,16 @@ export const RunLogsTable: FunctionComponent<LogsTableProps> = ({
     gotoPage(current - 1);
   };
 
-  const handleSelectItemsPrPage = (option: OptionType<any>) => {
-    setPageSize(option?.value);
-  };
+  // const handleSelectItemsPrPage = (option: OptionType<any>) => {
+  //   setPageSize(option?.value);
+  // };
 
-  const findOptionValue = (
-    options: OptionType<unknown>[],
-    innerPageSize: number
-  ) => {
-    return options.find(({ value }) => value === innerPageSize)!;
-  };
+  // const findOptionValue = (
+  //   options: OptionType<unknown>[],
+  //   innerPageSize: number
+  // ) => {
+  //   return options.find(({ value }) => value === innerPageSize)!;
+  // };
 
   const pipelineNotActivated =
     extpipe != null &&
@@ -131,18 +88,16 @@ export const RunLogsTable: FunctionComponent<LogsTableProps> = ({
 
   const reasonForNoRows = pipelineNotActivated ? (
     <>
-      <p style={{ fontWeight: 'bold' }}>
-        Activate the extraction pipeline to monitor the status.
-      </p>
+      <p style={{ fontWeight: 'bold' }}>{t('no-run-logs')}</p>
       <p>
-        Learn how to activate an extraction pipeline in the{' '}
+        {t('no-run-logs-desc')}{' '}
         <ExternalLink href="https://docs.cognite.com/cdf/integration/guides/interfaces/about_integrations.html">
-          documentation
+          {t('documentation', { postProcess: 'lowercase' })}
         </ExternalLink>
       </p>
     </>
   ) : (
-    <p>No data is available for this criteria.</p>
+    <p>{t('no-data-available')}</p>
   );
 
   return rows.length === 0 ? (
@@ -187,26 +142,51 @@ export const RunLogsTable: FunctionComponent<LogsTableProps> = ({
           })}
         </tbody>
       </StyledTable>
-      <DivFlex align="center" justify="space-between">
+      <DivFlex align="center" justify="flex-end" style={{ margin: '12px 0' }}>
         <Pagination
-          current={pageIndex + 1}
-          defaultCurrent={pageIndex + 1}
-          total={rows.length}
-          pageSize={pageSize}
-          onChange={paginationChanged}
-          locale={{ goTo: 'Go to' }}
+          initialCurrentPage={pageIndex + 1}
+          hideItemsPerPage
+          itemsPerPage={DEFAULT_ITEMS_PER_PAGE}
+          totalPages={Math.ceil(rows.length / pageSize)}
+          onPageChange={paginationChanged}
         />
-        <div>
-          <InlineBlockDiv>
-            <Select
-              value={findOptionValue(itemsPrPageOptions, pageSize)}
-              onChange={handleSelectItemsPrPage}
-              options={itemsPrPageOptions}
-            />
-          </InlineBlockDiv>
-          <span className="select-post-fix">&nbsp; pr page</span>
-        </div>
+        {/* onPageChange doesn't work for pageSize, component doesn't provide necessary event details */}
+        {/*
+          <Select
+            value={findOptionValue(PAGINATION_OPTIONS, pageSize)}
+            onChange={handleSelectItemsPrPage}
+            options={PAGINATION_OPTIONS}
+          />
+        */}
       </DivFlex>
     </Wrapper>
   );
 };
+
+const Wrapper = styled.div`
+  margin: 3rem 0;
+`;
+const StyledTable = styled.table`
+  grid-area: table;
+  thead {
+    tr {
+      .createdTime-col {
+        width: 12rem;
+      }
+      .status-col {
+        width: 9rem;
+      }
+    }
+  }
+  tbody {
+    tr {
+      &:hover,
+      &:nth-child(2n):hover {
+        background-color: unset;
+      }
+      &:nth-child(2n) {
+        background-color: white;
+      }
+    }
+  }
+`;

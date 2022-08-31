@@ -5,7 +5,6 @@ import React, {
   useContext,
   useState,
 } from 'react';
-import { EXTRACTION_PIPELINE_LOWER } from 'utils/constants';
 
 interface ContextProps {
   extpipe: Extpipe | null;
@@ -36,7 +35,7 @@ const useSelectedExtpipe = () => {
   const context = useContext(SelectedExtpipeContext);
   if (context === undefined) {
     throw new Error(
-      `You can not use selected ${EXTRACTION_PIPELINE_LOWER} context with out SelectedExtpipeProvider`
+      `You can not use selected extraction pipelines context with out SelectedExtpipeProvider`
     );
   }
   return context;

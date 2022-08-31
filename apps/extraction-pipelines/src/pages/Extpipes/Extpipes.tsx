@@ -1,46 +1,48 @@
 import React, { FunctionComponent, useEffect, useState } from 'react';
 import { FullPageLayout } from 'components/layout/FullPageLayout';
-import { ERROR_NOT_GET_EXT_PIPE, EXTRACTION_PIPELINES } from 'utils/constants';
 import { useExtpipes } from 'hooks/useExtpipes';
 import NoExtpipes from 'components/error/NoExtpipes';
 import { Button, Loader, Modal } from '@cognite/cogs.js';
 import { ErrorFeedback } from 'components/error/ErrorFeedback';
 import ExtractorDownloadsLink from 'components/links/ExtractorDownloadsLink';
-import { MainFullWidthGrid } from 'styles/grid/StyledGrid';
-import { useAppEnv } from 'hooks/useAppEnv';
-import { LinkWrapper } from 'styles/StyledLinks';
+import {
+  MainFullWidthGrid,
+  LinkWrapper,
+  StyledTooltip,
+} from 'components/styled';
 import { ExtPipesBreadcrumbs } from 'components/navigation/breadcrumbs/ExtPipesBreadcrumbs';
 import { CapabilityCheck } from 'components/accessCheck/CapabilityCheck';
 import { EXTPIPES_READS, EXTPIPES_WRITES } from 'model/AclAction';
 import ExtpipesTable from 'components/table/ExtpipesTable';
-import { extpipeTableColumns } from 'components/table/ExtpipeTableCol';
+import { getExtpipeTableColumns } from 'components/table/ExtpipeTableCol';
 import { useOneOfPermissions } from 'hooks/useOneOfPermissions';
 import styled from 'styled-components';
-import { ids } from 'cogs-variables';
+import { getContainer } from 'utils/utils';
+import { styleScope } from 'styles/styleScope';
 import { CreateExtpipe } from 'pages/create/CreateExtpipe';
-import { StyledTooltip } from 'styles/StyledToolTip';
 
 import { trackUsage } from 'utils/Metrics';
+import { getProject } from '@cognite/cdf-utilities';
+import { useTranslation } from 'common';
 
 export const LEARNING_AND_RESOURCES_URL: Readonly<string> =
   'https://docs.cognite.com/cdf/integration/guides/interfaces/about_integrations.html';
 
-const VerticalSpace = styled.div`
-  height: 16px;
-`;
-const CreateExtpipeModal = (props: { visible: boolean; close: () => void }) => {
+const CreateExtpipeModal = (props: {
+  title: string;
+  visible: boolean;
+  close: () => void;
+}) => {
   return (
     <Modal
       visible={props.visible}
       width={600}
       closable
       onCancel={props.close}
-      appElement={document.getElementsByClassName(ids.styleScope).item(0)!}
-      getContainer={() =>
-        document.getElementsByClassName(ids.styleScope).item(0) as any
-      }
+      appElement={document.getElementsByClassName(styleScope).item(0)!}
+      getContainer={getContainer}
       footer={null}
-      title="Create extraction pipeline"
+      title={props.title}
     >
       <VerticalSpace />
       <CreateExtpipe customCancelCallback={props.close} />
@@ -53,10 +55,14 @@ interface OwnProps {}
 type Props = OwnProps;
 
 const Extpipes: FunctionComponent<Props> = () => {
-  const { project } = useAppEnv();
+  const { t } = useTranslation();
+  const project = getProject();
+  const { extpipeTableColumns } = getExtpipeTableColumns(t);
+
   useEffect(() => {
     trackUsage({ t: 'Overview', tenant: project! });
   }, [project]);
+
   const {
     data: extpipes,
     isLoading,
@@ -79,10 +85,7 @@ const Extpipes: FunctionComponent<Props> = () => {
   };
 
   const createExtpipeButton = (
-    <StyledTooltip
-      disabled={canEdit}
-      content="You have insufficient access rights to create an extraction pipeline."
-    >
+    <StyledTooltip disabled={canEdit} content={t('no-create-access')}>
       <Button
         variant="default"
         type="primary"
@@ -90,7 +93,7 @@ const Extpipes: FunctionComponent<Props> = () => {
         disabled={!canEdit}
         onClick={onClickCreateButton}
       >
-        Create extraction pipeline
+        {t('create-ext-pipeline')}
       </Button>
     </StyledTooltip>
   );
@@ -101,6 +104,7 @@ const Extpipes: FunctionComponent<Props> = () => {
         <CreateExtpipeModal
           visible={createModalOpen}
           close={() => setCreateModalOpen(false)}
+          title={t('create-ext-pipeline')}
         />
         <NoExtpipes actionButton={createExtpipeButton} />
       </>
@@ -119,8 +123,8 @@ const Extpipes: FunctionComponent<Props> = () => {
         <ErrorFeedback
           btnText="Retry"
           onClick={handleErrorDialogClick}
-          fallbackTitle={ERROR_NOT_GET_EXT_PIPE}
-          contentText="Please try again later."
+          fallbackTitle={t('fail-to-get-ext-pipeline')}
+          contentText={t('try-again-later')}
           error={errorExtpipes}
         />
       </MainFullWidthGrid>
@@ -129,7 +133,11 @@ const Extpipes: FunctionComponent<Props> = () => {
 
   return (
     <>
-      <CreateExtpipeModal visible={createModalOpen} close={closeCreateDialog} />
+      <CreateExtpipeModal
+        visible={createModalOpen}
+        close={closeCreateDialog}
+        title={t('create-ext-pipeline')}
+      />
       <ExtpipesTable
         columns={extpipeTableColumns}
         tableActionButtons={createExtpipeButton}
@@ -140,17 +148,18 @@ const Extpipes: FunctionComponent<Props> = () => {
 };
 
 export default function CombinedComponent() {
+  const { t } = useTranslation();
   return (
     <FullPageLayout
-      pageHeadingText={EXTRACTION_PIPELINES}
+      pageHeadingText={t('extraction-pipeline', { count: 0 })}
       headingSide={
         <LinkWrapper>
           <ExtractorDownloadsLink
-            linkText="Download Extractors"
+            linkText={t('download-extractors')}
             link={{ path: '/extractors' }}
           />
           <ExtractorDownloadsLink
-            linkText="Learning and resources"
+            linkText={t('learning-and-resources')}
             link={{ url: LEARNING_AND_RESOURCES_URL }}
           />
         </LinkWrapper>
@@ -164,3 +173,7 @@ export default function CombinedComponent() {
     </FullPageLayout>
   );
 }
+
+const VerticalSpace = styled.div`
+  height: 16px;
+`;

@@ -32,9 +32,9 @@ describe('RawEditModal', () => {
 
     screen.getByText('Good db • Table A').click();
 
-    screen.getByText('Add new table').click();
+    screen.getByTestId('add-new-table=btn').click();
 
-    screen.getByText('Confirm').click();
+    screen.getByTestId('raw-edit-confirm-btn').click();
 
     expect(onSave).toHaveBeenCalledWith([
       {

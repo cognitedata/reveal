@@ -4,7 +4,7 @@ import { Switch, Redirect } from 'react-router-dom';
 import { EXTRACTION_PIPELINES_PATH } from 'utils/baseURL';
 import { Routes } from 'routing/RoutingConfig';
 import { SelectedExtpipeProvider } from 'hooks/useSelectedExtpipe';
-import { createRedirectLink } from 'utils/utils';
+import { createLink } from '@cognite/cdf-utilities';
 
 const Home = () => {
   return (
@@ -15,7 +15,7 @@ const Home = () => {
           <Routes />
           <Redirect
             to={{
-              pathname: createRedirectLink(`/${EXTRACTION_PIPELINES_PATH}`),
+              pathname: createLink(`/${EXTRACTION_PIPELINES_PATH}`),
             }}
           />
         </Switch>

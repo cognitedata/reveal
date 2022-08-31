@@ -1,7 +1,5 @@
 import React, { FunctionComponent, PropsWithChildren, ReactNode } from 'react';
-import { PageWrapper } from 'styles/StyledPage';
-import { MainFullWidthGrid } from 'styles/grid/StyledGrid';
-import { PageTitle } from 'styles/StyledHeadings';
+import { MainFullWidthGrid, PageTitle, PageWrapper } from 'components/styled';
 
 interface LayoutProps {
   pageHeadingText: string;

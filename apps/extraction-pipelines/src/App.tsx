@@ -1,35 +1,62 @@
 import React, { useEffect } from 'react';
-import Home from 'pages/Home';
+import { I18nWrapper } from '@cognite/cdf-i18n-utils';
+import { FlagProvider } from '@cognite/react-feature-flags';
 import {
   AuthWrapper,
   getEnv,
   getProject,
   SubAppWrapper,
 } from '@cognite/cdf-utilities';
-import GlobalStyles from 'styles/GlobalStyles';
 import { Loader } from '@cognite/cogs.js';
-import { ThemeProvider } from 'styled-components';
-import cogsStyles from '@cognite/cogs.js/dist/cogs.css';
-import collapseStyle from 'rc-collapse/assets/index.css';
-import { QueryClient, QueryClientProvider } from 'react-query';
-import { EXTRACTION_PIPELINES } from 'utils/constants';
-import { AppEnvProvider } from 'hooks/useAppEnv';
-import { Route, Router, Switch } from 'react-router-dom';
-import { createBrowserHistory } from 'history';
-import { FlagProvider } from '@cognite/react-feature-flags';
-// eslint-disable-next-line
 import { SDKProvider } from '@cognite/sdk-provider';
 import sdk, { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';
+import { QueryClient, QueryClientProvider } from 'react-query';
+
+import { Route, Router, Switch } from 'react-router-dom';
+import { createBrowserHistory } from 'history';
+
+import { translations } from 'common/i18n';
+
+import { ThemeProvider } from 'styled-components';
+import AppScopeStyles from './styles';
+import GlobalStyles from 'styles/GlobalStyles';
+import theme from 'styles/theme';
+import cogsStyles from '@cognite/cogs.js/dist/cogs.css';
+import collapseStyle from 'rc-collapse/assets/index.css';
+import rootStyles from 'styles/index.css';
+
+import Home from 'pages/Home';
+import { EXTRACTION_PIPELINES } from 'utils/constants';
+import { AppEnvProvider } from 'hooks/useAppEnv';
 import isObject from 'lodash/isObject';
-import theme from './styles/theme';
-import AppScopeStyles from './styles/AppScopeStyles';
-import rootStyles from './styles/index.css';
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: (failureCount, error) => {
+        if (isObject(error) && 'status' in error) {
+          switch ((error as any).status) {
+            case 400:
+            case 401:
+            case 403:
+            case 404:
+            case 409:
+              return false;
+          }
+        }
+        return failureCount < 3;
+      },
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 const App = () => {
-  const project = getProject();
+  const appName = 'cdf-integrations-ui';
+  const projectName = getProject();
   const env = getEnv();
-  const { origin } = window.location;
   const history = createBrowserHistory();
+  const { origin } = window.location;
 
   useEffect(() => {
     cogsStyles.use();
@@ -42,61 +69,45 @@ const App = () => {
     };
   }, []);
 
-  const queryClient = new QueryClient({
-    defaultOptions: {
-      queries: {
-        retry: (failureCount, error) => {
-          if (isObject(error) && 'status' in error) {
-            switch ((error as any).status) {
-              case 400:
-              case 401:
-              case 403:
-              case 404:
-              case 409:
-                return false;
-            }
-          }
-          return failureCount < 3;
-        },
-        refetchOnWindowFocus: false,
-      },
-    },
-  });
-
   return (
-    <QueryClientProvider client={queryClient}>
-      <SDKProvider sdk={sdk}>
-        <AppScopeStyles>
-          <SubAppWrapper title={EXTRACTION_PIPELINES}>
-            <AuthWrapper
-              loadingScreen={<Loader />}
-              login={() => loginAndAuthIfNeeded(project, env)}
-            >
-              <FlagProvider
-                apiToken="v2Qyg7YqvhyAMCRMbDmy1qA6SuG8YCBE"
-                appName="cdf-console"
-                projectName={project}
+    <I18nWrapper
+      translations={translations}
+      defaultNamespace="cdf-integrations-ui"
+    >
+      <FlagProvider
+        apiToken="v2Qyg7YqvhyAMCRMbDmy1qA6SuG8YCBE"
+        appName={appName}
+        projectName={projectName}
+      >
+        <QueryClientProvider client={queryClient}>
+          <AppScopeStyles>
+            <SubAppWrapper title={EXTRACTION_PIPELINES}>
+              <AuthWrapper
+                loadingScreen={<Loader />}
+                login={() => loginAndAuthIfNeeded(projectName, env)}
               >
-                <ThemeProvider theme={theme}>
-                  <AppEnvProvider
-                    cdfEnv={env}
-                    project={project}
-                    origin={origin}
-                  >
-                    <Router history={history}>
-                      <Switch>
-                        <Route path="/:tenant" component={Home} />
-                      </Switch>
-                    </Router>
-                  </AppEnvProvider>
-                </ThemeProvider>
-                <GlobalStyles theme={theme} />
-              </FlagProvider>
-            </AuthWrapper>
-          </SubAppWrapper>
-        </AppScopeStyles>
-      </SDKProvider>
-    </QueryClientProvider>
+                <SDKProvider sdk={sdk}>
+                  <ThemeProvider theme={theme}>
+                    <AppEnvProvider
+                      cdfEnv={env}
+                      project={projectName}
+                      origin={origin}
+                    >
+                      <Router history={history}>
+                        <Switch>
+                          <Route path="/:tenant" component={Home} />
+                        </Switch>
+                      </Router>
+                    </AppEnvProvider>
+                  </ThemeProvider>
+                  <GlobalStyles theme={theme} />
+                </SDKProvider>
+              </AuthWrapper>
+            </SubAppWrapper>
+          </AppScopeStyles>
+        </QueryClientProvider>
+      </FlagProvider>
+    </I18nWrapper>
   );
 };
 

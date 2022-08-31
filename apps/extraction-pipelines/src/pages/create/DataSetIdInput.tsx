@@ -6,27 +6,10 @@ import { MutationStatus } from 'react-query';
 import { DataSet } from '@cognite/sdk';
 import { DataSetSelectOption } from 'components/inputs/dataset/DataSetSelectOption';
 import { InputController } from 'components/inputs/InputController';
-import { Hint } from 'styles/StyledForm';
+import { Hint } from 'components/styled';
 import ValidationError from 'components/form/ValidationError';
 import { TableHeadings } from 'components/table/ExtpipeTableCol';
-import { DATA_SET_ID_HINT } from 'utils/constants';
-
-const StyledAutoComplete = styled(AutoComplete)`
-  width: 50%;
-  align-self: flex-start;
-  margin-bottom: 1rem;
-  .cogs-select__control--is-focused {
-    outline: ${Colors.primary.hex()} auto 0.0625rem;
-    outline-offset: 0.0625rem;
-  }
-  .cogs-select__single-value {
-    color: ${Colors.black.hex()};
-  }
-  .cogs-select__clear-indicator::after {
-    display: none;
-  }
-`;
-
+import { useTranslation } from 'common';
 interface DataSetIdPageProps {
   data?: DataSet[];
   renderLabel?: (labelText: string, inputId: string) => React.ReactNode;
@@ -42,6 +25,7 @@ const DataSetIdInput: FunctionComponent<DataSetIdPageProps> = ({
   renderLabel,
   autoFocus = false,
 }: PropsWithoutRef<DataSetIdPageProps>) => {
+  const { t } = useTranslation();
   const {
     setValue,
     formState: { errors },
@@ -97,7 +81,7 @@ const DataSetIdInput: FunctionComponent<DataSetIdPageProps> = ({
         options={innerOptions}
         isClearable
         noOptionsMessage={({ inputValue }: { inputValue: string }) =>
-          `Data set with name/id: "${inputValue}" does not exist`
+          t('data-set-not-exist', { dataset: inputValue })
         }
         onChange={handleSelectChange}
         data-testid="dataset-select"
@@ -109,12 +93,33 @@ const DataSetIdInput: FunctionComponent<DataSetIdPageProps> = ({
   return (
     <>
       {renderLabel && renderLabel(TableHeadings.DATA_SET, 'data-set-id-input')}
-      <Hint id="data-set-id-hint" className="input-hint">
-        {DATA_SET_ID_HINT}
+      <Hint
+        id="data-set-id-hint"
+        className="input-hint"
+        data-testid="data-set-id-hint"
+      >
+        {t('data-set-id-hint')}
       </Hint>
       <ValidationError errors={errors} name="dataSetId" />
       {renderInput(status, options, selectedValue)}
     </>
   );
 };
+
+const StyledAutoComplete = styled(AutoComplete)`
+  width: 50%;
+  align-self: flex-start;
+  margin-bottom: 1rem;
+  .cogs-select__control--is-focused {
+    outline: ${Colors.primary.hex()} auto 0.0625rem;
+    outline-offset: 0.0625rem;
+  }
+  .cogs-select__single-value {
+    color: ${Colors.black.hex()};
+  }
+  .cogs-select__clear-indicator::after {
+    display: none;
+  }
+`;
+
 export default DataSetIdInput;

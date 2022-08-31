@@ -1,6 +1,5 @@
 // MaybeDo: Move to '@cognite/sdk-react-query-hooks'
 import { AclAction } from 'model/AclAction';
-// eslint-disable-next-line
 import { useCapabilities } from '@cognite/sdk-react-query-hooks';
 import { getFlow } from '@cognite/cdf-sdk-singleton';
 

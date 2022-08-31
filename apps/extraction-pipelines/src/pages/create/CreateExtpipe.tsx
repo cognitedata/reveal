@@ -1,18 +1,12 @@
 import React, { useEffect } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
-import {
-  CANCEL,
-  CREATE,
-  DESCRIPTION_HINT,
-  DESCRIPTION_LABEL,
-  EXT_PIPE_NAME_HEADING,
-  EXTERNAL_ID_HINT,
-  EXTPIPE_EXTERNAL_ID_HEADING,
-  NAME_HINT,
-} from 'utils/constants';
 import { RegisterExtpipeLayout } from 'components/layout/RegisterExtpipeLayout';
-import { CreateFormWrapper } from 'styles/StyledForm';
-import { ButtonPlaced } from 'styles/StyledButton';
+import {
+  ButtonPlaced,
+  CreateFormWrapper,
+  InfoIcon,
+  PriSecBtnWrapper,
+} from 'components/styled';
 import * as yup from 'yup';
 import { FieldValues, FormProvider, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -20,7 +14,6 @@ import { FullInput } from 'components/inputs/FullInput';
 import { usePostExtpipe } from 'hooks/usePostExtpipe';
 import styled from 'styled-components';
 import { Button, Colors, Modal } from '@cognite/cogs.js';
-import { PriSecBtnWrapper } from 'styles/StyledWrapper';
 import {
   dataSetIdRule,
   descriptionRule,
@@ -38,33 +31,14 @@ import { EXT_PIPE_PATH } from 'routing/RoutingConfig';
 import { translateServerErrorMessage } from 'utils/error/TranslateErrorMessages';
 import { ExtpipeRawTable } from 'model/Extpipe';
 import { User } from 'model/User';
-import { InfoIcon } from 'styles/StyledIcon';
 import { createAddExtpipeInfo } from 'utils/extpipeUtils';
 import { EXTPIPES_WRITES } from 'model/AclAction';
 import { CapabilityCheck } from 'components/accessCheck/CapabilityCheck';
-import { ids } from 'cogs-variables';
 import { trackUsage } from 'utils/Metrics';
-import { createRedirectLink } from 'utils/utils';
-
-const InfoMessage = styled.span`
-  display: flex;
-  align-items: center;
-  .cogs-icon {
-    margin-right: 1rem;
-    svg {
-      g {
-        path {
-          &:nth-child(2),
-          &:nth-child(3) {
-            fill: ${(props: { color?: string }) =>
-              props.color ?? `${Colors.primary.hex()}`};
-          }
-        }
-      }
-    }
-  }
-`;
-
+import { getContainer } from 'utils/utils';
+import { styleScope } from 'styles/styleScope';
+import { createLink } from '@cognite/cdf-utilities';
+import { useTranslation } from 'common';
 export interface AddExtpipeFormInput extends ScheduleFormInput, FieldValues {
   name: string;
   externalId: string;
@@ -87,27 +61,14 @@ const findDataSetId = (search: string) => {
   return new URLSearchParams(search).get('dataSetId');
 };
 
-const CustomLabel = styled.label<{ required: boolean }>`
-  font-size: 1.1rem;
-  font-weight: 500;
-  display: block;
-  padding: 3px 0;
-
-  &::after {
-    content: ' *';
-    color: red;
-    visibility: ${(props) => (props.required ? 'visible' : 'hidden')};
-  }
-`;
-
 export const CreateExtpipe = (props: { customCancelCallback?: () => void }) => {
+  const { t } = useTranslation();
   const history = useHistory();
   const location = useLocation();
   const dataSetIdFromLocation = findDataSetId(location.search);
   const { data: userInfo } = useUserInformation();
-  const { data: dataSets, status: dataSetsStatus } = useDataSetsList(
-    DATASET_LIST_LIMIT
-  );
+  const { data: dataSets, status: dataSetsStatus } =
+    useDataSetsList(DATASET_LIST_LIMIT);
   const { mutate } = usePostExtpipe();
   const methods = useForm<AddExtpipeFormInput>({
     resolver: yupResolver(pageSchema),
@@ -148,10 +109,14 @@ export const CreateExtpipe = (props: { customCancelCallback?: () => void }) => {
           history.push(createExtPipePath(`/${EXT_PIPE_PATH}/${newExtpipeId}`));
         },
         onError: (errorRes, variables) => {
-          const serverErrorMessage = translateServerErrorMessage<AddExtpipeFormInput>(
-            errorRes?.data,
-            variables.extpipeInfo
-          );
+          const serverErrorMessage =
+            translateServerErrorMessage<AddExtpipeFormInput>(errorRes?.data, {
+              externalId: t('external-id-already-exist', {
+                externalId: variables.extpipeInfo.externalId,
+              }),
+              contacts: t('contact-must-provide'),
+              server: errorRes?.data?.message ?? t('try-again-later'),
+            });
           trackUsage({
             t: 'Create.Rejected',
             error: serverErrorMessage.message,
@@ -162,7 +127,7 @@ export const CreateExtpipe = (props: { customCancelCallback?: () => void }) => {
               setError(
                 fieldName,
                 {
-                  message: `'${fieldValue}' is already in use`,
+                  message: t('field-in-use', { field: fieldValue }),
                 },
                 { shouldFocus: true }
               );
@@ -171,7 +136,6 @@ export const CreateExtpipe = (props: { customCancelCallback?: () => void }) => {
             setError('server', {
               type: 'server',
               message: serverErrorMessage.message,
-              shouldFocus: true,
             });
           }
         },
@@ -212,10 +176,14 @@ export const CreateExtpipe = (props: { customCancelCallback?: () => void }) => {
             defaultValue=""
             control={control as any}
             errors={errors}
-            labelText={EXT_PIPE_NAME_HEADING}
-            hintText={NAME_HINT}
+            labelText={t('ext-pipeline-name')}
+            hintText={t('ext-pipeline-name-hint')}
             renderLabel={(labelText, inputId) => (
-              <CustomLabel required htmlFor={inputId}>
+              <CustomLabel
+                required
+                htmlFor={inputId}
+                data-testid="ext-pipeline-name"
+              >
                 {labelText}
               </CustomLabel>
             )}
@@ -226,10 +194,10 @@ export const CreateExtpipe = (props: { customCancelCallback?: () => void }) => {
             defaultValue=""
             control={control as any}
             errors={errors}
-            labelText={EXTPIPE_EXTERNAL_ID_HEADING}
-            hintText={EXTERNAL_ID_HINT}
+            labelText={t('external-id')}
+            hintText={t('external-id-hint')}
             renderLabel={(labelText, inputId) => (
-              <CustomLabel required htmlFor={inputId}>
+              <CustomLabel required htmlFor={inputId} data-testid="external-id">
                 {labelText}
               </CustomLabel>
             )}
@@ -238,12 +206,16 @@ export const CreateExtpipe = (props: { customCancelCallback?: () => void }) => {
             name="description"
             control={control as any}
             defaultValue=""
-            labelText={DESCRIPTION_LABEL}
-            hintText={DESCRIPTION_HINT}
+            labelText={t('description')}
+            hintText={t('description-hint')}
             inputId="extpipe-description"
             errors={errors}
             renderLabel={(labelText, inputId) => (
-              <CustomLabel required={false} htmlFor={inputId}>
+              <CustomLabel
+                required={false}
+                htmlFor={inputId}
+                data-testid="description"
+              >
                 {labelText}
               </CustomLabel>
             )}
@@ -251,7 +223,7 @@ export const CreateExtpipe = (props: { customCancelCallback?: () => void }) => {
           <PriSecBtnWrapper>
             {props.customCancelCallback == null ? (
               <a
-                href={createRedirectLink(
+                href={createLink(
                   `/data-sets${
                     dataSetIdFromLocation &&
                     `/data-set/${dataSetIdFromLocation}`
@@ -259,15 +231,20 @@ export const CreateExtpipe = (props: { customCancelCallback?: () => void }) => {
                 )}
                 className="cogs-btn cogs-btn-ghost cogs-btn-secondary cogs-btn--padding"
               >
-                {CANCEL}
+                {t('cancel')}
               </a>
             ) : (
               <Button type="ghost" onClick={props.customCancelCallback}>
-                {CANCEL}
+                {t('cancel')}
               </Button>
             )}
-            <ButtonPlaced type="primary" htmlType="submit" marginbottom={0}>
-              {CREATE}
+            <ButtonPlaced
+              type="primary"
+              htmlType="submit"
+              marginbottom={0}
+              data-testid="create=extpipe"
+            >
+              {t('create')}
             </ButtonPlaced>
           </PriSecBtnWrapper>
         </CreateFormWrapper>
@@ -277,9 +254,12 @@ export const CreateExtpipe = (props: { customCancelCallback?: () => void }) => {
 };
 
 export default function CreateExtpipePage() {
+  const { t } = useTranslation();
+
   useEffect(() => {
     trackUsage({ t: 'Create.CreatePageLoaded' });
   }, []);
+
   return (
     <RegisterExtpipeLayout>
       <CapabilityCheck requiredPermissions={EXTPIPES_WRITES}>
@@ -288,12 +268,10 @@ export default function CreateExtpipePage() {
           width={600}
           closable={false}
           closeIcon={false}
-          appElement={document.getElementsByClassName(ids.styleScope).item(0)!}
-          getContainer={() =>
-            document.getElementsByClassName(ids.styleScope).item(0) as any
-          }
+          appElement={document.getElementsByClassName(styleScope).item(0)!}
+          getContainer={getContainer}
           footer={null}
-          title="Create extraction pipeline"
+          title={t('create-ext-pipeline')}
         >
           <CreateExtpipe />
         </Modal>
@@ -301,3 +279,35 @@ export default function CreateExtpipePage() {
     </RegisterExtpipeLayout>
   );
 }
+
+const InfoMessage = styled.span`
+  display: flex;
+  align-items: center;
+  .cogs-icon {
+    margin-right: 1rem;
+    svg {
+      g {
+        path {
+          &:nth-child(2),
+          &:nth-child(3) {
+            fill: ${(props: { color?: string }) =>
+              props.color ?? `${Colors.primary.hex()}`};
+          }
+        }
+      }
+    }
+  }
+`;
+
+const CustomLabel = styled.label<{ required: boolean }>`
+  font-size: 1.1rem;
+  font-weight: 500;
+  display: block;
+  padding: 3px 0;
+
+  &::after {
+    content: ' *';
+    color: red;
+    visibility: ${(props) => (props.required ? 'visible' : 'hidden')};
+  }
+`;

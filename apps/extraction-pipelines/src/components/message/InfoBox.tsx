@@ -1,10 +1,10 @@
 import React, { FunctionComponent, PropsWithChildren } from 'react';
-import { IconFilled } from 'styles/StyledIcon';
+import { IconFilled } from 'components/styled';
 import styled from 'styled-components';
-import { AllIconTypes, Colors } from '@cognite/cogs.js';
+import { Colors } from '@cognite/cogs.js';
 
 interface InfoBoxProps {
-  iconType: AllIconTypes;
+  iconType: string;
   color?: 'primary' | 'warning';
 }
 const colorMap = {

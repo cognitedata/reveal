@@ -4,8 +4,8 @@ interface RegisterExtpipeLayoutProps {
   backPath?: string;
 }
 
-export const RegisterExtpipeLayout: FunctionComponent<RegisterExtpipeLayoutProps> = ({
-  children,
-}: PropsWithChildren<RegisterExtpipeLayoutProps>) => {
+export const RegisterExtpipeLayout: FunctionComponent<
+  RegisterExtpipeLayoutProps
+> = ({ children }: PropsWithChildren<RegisterExtpipeLayoutProps>) => {
   return <>{children}</>;
 };

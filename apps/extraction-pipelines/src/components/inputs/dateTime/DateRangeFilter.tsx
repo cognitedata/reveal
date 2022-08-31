@@ -1,5 +1,5 @@
 import React, { FunctionComponent } from 'react';
-import { DivFlex } from 'styles/flex/StyledFlex';
+import { DivFlex } from 'components/styled';
 import styled from 'styled-components';
 import { Colors, DateRange, Range } from '@cognite/cogs.js';
 import { createDateWithTime } from 'components/inputs/dateTime/TimeSelectorUtils';

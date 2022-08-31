@@ -11,7 +11,9 @@ import { trackUsage } from 'utils/Metrics';
 
 interface StatusFilterMenuProps {}
 
-export const StatusFilterMenu: FunctionComponent<StatusFilterMenuProps> = () => {
+export const StatusFilterMenu: FunctionComponent<
+  StatusFilterMenuProps
+> = () => {
   const {
     state: { statuses },
     dispatch,

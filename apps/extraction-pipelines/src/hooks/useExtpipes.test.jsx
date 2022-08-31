@@ -48,7 +48,7 @@ describe('useExtpipes', () => {
     });
     const extpipes = result?.current?.data;
 
-    // eslint-disable-next-line no-unused-expressions
+    //  no-unused-expressions
     extpipes?.forEach((extpipe) => {
       expect(extpipe.dataSetId).toEqual(extpipe?.dataSet?.id);
     });
@@ -79,7 +79,7 @@ describe('useExtpipes', () => {
     });
     const extpipes = result?.current?.data;
 
-    // eslint-disable-next-line no-unused-expressions
+    //  no-unused-expressions
     extpipes?.forEach((extpipe) => {
       expect(extpipe.dataSetId).toBeDefined();
       expect(extpipe.dataSet).toBeUndefined();

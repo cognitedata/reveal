@@ -5,7 +5,7 @@ import {
 } from 'components/inputs/InputController';
 import { ErrorMessage as Error } from 'components/error/ErrorMessage';
 import { ErrorMessage } from '@hookform/error-message';
-import { Hint, StyledLabel } from 'styles/StyledForm';
+import { Hint, StyledLabel } from 'components/styled';
 
 export interface FullInputProps extends InputControllerProps {
   errors: any;

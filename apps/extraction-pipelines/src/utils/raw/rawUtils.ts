@@ -1,5 +1,4 @@
 import { ExtpipeRawTable } from 'model/Extpipe';
-import { DatabaseWithTablesItem } from 'hooks/useRawDBAndTables';
 
 export enum RawTableOptions {
   YES = 'Yes',
@@ -8,12 +7,6 @@ export enum RawTableOptions {
 export interface RawTableFormInput {
   rawTable: RawTableOptions | '';
   selectedRawTables: ExtpipeRawTable[];
-}
-
-interface Args {
-  databaseList: DatabaseWithTablesItem[];
-  selectedDb: string;
-  tableSearch: string;
 }
 
 export const mapStoredToDefault = (

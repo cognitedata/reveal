@@ -1,5 +1,4 @@
 import React, { FunctionComponent, useEffect, useState } from 'react';
-import { useAppEnv } from 'hooks/useAppEnv';
 import {
   createUpdateSpec,
   useDetailsUpdate,
@@ -14,45 +13,16 @@ import DataSetIdInput, {
 } from 'pages/create/DataSetIdInput';
 import { useDataSetsList } from 'hooks/useDataSetsList';
 import MessageDialog from 'components/buttons/MessageDialog';
-import {
-  BtnTestIds,
-  SERVER_ERROR_CONTENT,
-  SERVER_ERROR_TITLE,
-} from 'utils/constants';
-import { CloseButton, EditButton, SaveButton } from 'styles/StyledButton';
+import { BtnTestIds } from 'utils/constants';
+import { CloseButton, EditButton, SaveButton } from 'components/styled';
 import { AddInfo } from 'components/extpipe/AddInfo';
-import { ColumnForm, StyledLabel } from 'styles/StyledForm';
+import { ColumnForm, StyledLabel } from 'components/styled';
 import styled from 'styled-components';
-import { DivFlex } from 'styles/flex/StyledFlex';
-import { TableHeadings } from 'components/table/ExtpipeTableCol';
+import { DivFlex } from 'components/styled';
 import DetailsValueView from 'components/table/details/DetailsValueView';
 import { trackUsage } from 'utils/Metrics';
-
-const Wrapper = styled.div`
-  display: grid;
-  grid-template-areas: 'hint hint' 'error error' 'input btns';
-  grid-template-columns: 1fr auto;
-  padding: 0 1rem;
-  grid-gap: 0.5rem;
-  .input-hint {
-    grid-area: hint;
-    margin: 0;
-  }
-  .cogs-select {
-    width: 100%;
-    grid-area: input;
-    height: 2.25rem;
-    margin: 0;
-  }
-  .input-btns {
-    grid-area: btns;
-  }
-  .error-message {
-    margin-left: 1rem;
-    grid-area: error;
-  }
-`;
-
+import { getProject } from '@cognite/cdf-utilities';
+import { useTranslation } from 'common';
 interface FormInput {
   dataSetId: number;
 }
@@ -60,7 +30,8 @@ interface FormInput {
 export const EditDataSetId: FunctionComponent<{ canEdit: boolean }> = ({
   canEdit,
 }) => {
-  const { project } = useAppEnv();
+  const { t } = useTranslation();
+  const project = getProject();
   const [isEdit, setIsEdit] = useState(false);
   const [errorVisible, setErrorVisible] = useState(false);
   const { extpipe: selected } = useSelectedExtpipe();
@@ -124,7 +95,7 @@ export const EditDataSetId: FunctionComponent<{ canEdit: boolean }> = ({
     return (
       <div css="padding: 0 1rem; margin-bottom: 1rem">
         <StyledLabel id="data-set-id-label" htmlFor="data-set-id">
-          {TableHeadings.DATA_SET}
+          {t('data-set')}
         </StyledLabel>
         <DetailsValueView fieldName="dataSet" fieldValue={extpipe.dataSet} />
       </div>
@@ -135,7 +106,7 @@ export const EditDataSetId: FunctionComponent<{ canEdit: boolean }> = ({
     <FormProvider {...methods}>
       <ColumnForm onSubmit={handleSubmit(onSave)} marginBottom>
         <StyledLabel id="data-set-id-label" htmlFor="data-set-id">
-          {TableHeadings.DATA_SET}
+          {t('data-set')}
         </StyledLabel>
         {isEdit ? (
           <Wrapper>
@@ -144,8 +115,8 @@ export const EditDataSetId: FunctionComponent<{ canEdit: boolean }> = ({
               <MessageDialog
                 visible={errorVisible}
                 handleClickError={handleClickError}
-                title={SERVER_ERROR_TITLE}
-                contentText={SERVER_ERROR_CONTENT}
+                title={t('server-err-title')}
+                contentText={t('server-err-desc')}
               >
                 <SaveButton
                   htmlType="submit"
@@ -165,7 +136,7 @@ export const EditDataSetId: FunctionComponent<{ canEdit: boolean }> = ({
             showPencilIcon={extpipe.dataSet != null}
             onClick={onEditClick}
             disabled={!canEdit}
-            title="Toggle edit row"
+            title={t('toggle-edit-row')}
             aria-expanded={isEdit}
             aria-controls="dataSetId"
             data-testid={`${BtnTestIds.EDIT_BTN}dataSetId`}
@@ -178,3 +149,28 @@ export const EditDataSetId: FunctionComponent<{ canEdit: boolean }> = ({
     </FormProvider>
   );
 };
+
+const Wrapper = styled.div`
+  display: grid;
+  grid-template-areas: 'hint hint' 'error error' 'input btns';
+  grid-template-columns: 1fr auto;
+  padding: 0 1rem;
+  grid-gap: 0.5rem;
+  .input-hint {
+    grid-area: hint;
+    margin: 0;
+  }
+  .cogs-select {
+    width: 100%;
+    grid-area: input;
+    height: 2.25rem;
+    margin: 0;
+  }
+  .input-btns {
+    grid-area: btns;
+  }
+  .error-message {
+    margin-left: 1rem;
+    grid-area: error;
+  }
+`;

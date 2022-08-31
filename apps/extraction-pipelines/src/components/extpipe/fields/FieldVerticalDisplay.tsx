@@ -1,5 +1,5 @@
 import React, { FunctionComponent, PropsWithChildren } from 'react';
-import { StyledLabel } from 'styles/StyledForm';
+import { StyledLabel } from 'components/styled';
 import DetailsValueView from 'components/table/details/DetailsValueView';
 import styled from 'styled-components';
 import { TableHeadings } from 'components/table/ExtpipeTableCol';
@@ -8,20 +8,15 @@ import {
   ExtpipeFieldName,
   ExtpipeFieldValue,
 } from 'model/Extpipe';
-
-export const FieldWrapper = styled.div`
-  display: flex;
-  padding: 0 1rem;
-  flex-direction: column;
-  align-items: start;
-`;
 interface FieldVerticalDisplayProps {
   label: TableHeadings | DetailFieldNames;
   fieldValue: ExtpipeFieldValue;
   fieldName: ExtpipeFieldName;
 }
 
-export const FieldVerticalDisplay: FunctionComponent<FieldVerticalDisplayProps> = ({
+export const FieldVerticalDisplay: FunctionComponent<
+  FieldVerticalDisplayProps
+> = ({
   label,
   fieldName,
   fieldValue,
@@ -33,3 +28,10 @@ export const FieldVerticalDisplay: FunctionComponent<FieldVerticalDisplayProps> 
     </FieldWrapper>
   );
 };
+
+export const FieldWrapper = styled.div`
+  display: flex;
+  padding: 0 1rem;
+  flex-direction: column;
+  align-items: start;
+`;

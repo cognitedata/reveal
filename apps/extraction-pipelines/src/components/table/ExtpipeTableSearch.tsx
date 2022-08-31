@@ -1,9 +1,8 @@
 import React from 'react';
 import { FilterValue, Row, useAsyncDebounce } from 'react-table';
 import { Icon, Input } from '@cognite/cogs.js';
-
 import { trackUsage } from 'utils/Metrics';
-
+import { useTranslation } from 'common';
 interface GlobalSearchProps<D extends object> {
   preGlobalFilteredRows: Array<Row<D>>;
   globalFilter: any;
@@ -11,17 +10,16 @@ interface GlobalSearchProps<D extends object> {
 }
 
 const ExtpipeTableSearch = <D extends object>({
-  preGlobalFilteredRows,
   globalFilter,
   setGlobalFilter,
 }: GlobalSearchProps<D>) => {
-  // eslint-disable-next-line
-  const count = preGlobalFilteredRows.length;
+  const { t } = useTranslation();
   const [value, setValue] = React.useState(globalFilter);
   const onChange = useAsyncDebounce((val) => {
     trackUsage({ t: 'Search', query: val });
     setGlobalFilter(val || []);
   }, 200);
+
   return (
     <Input
       aria-describedby="tippy-1"
@@ -32,7 +30,7 @@ const ExtpipeTableSearch = <D extends object>({
       }}
       icon={<Icon type="Search" />}
       iconPlacement="right"
-      placeholder="Search"
+      placeholder={t('search')}
       data-testid="search-extpipes"
       id="search-extpipes"
     />

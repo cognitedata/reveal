@@ -1,23 +1,26 @@
 import React from 'react';
-import {
-  CDF_LABEL,
-  DATA_SETS_LABEL,
-  EXTRACTION_PIPELINES,
-} from 'utils/constants';
 import { Breadcrumbs } from 'components/navigation/breadcrumbs/Breadcrumbs';
 import { createExtPipePath } from 'utils/baseURL';
-import { createRedirectLink } from 'utils/utils';
+import { createLink } from '@cognite/cdf-utilities';
+import { useTranslation } from 'common';
 
 export const ExtPipesBreadcrumbs = () => {
+  const { t } = useTranslation();
   const currentPageBreadCrumbs = [
-    { href: createRedirectLink(''), label: CDF_LABEL },
     {
-      href: createRedirectLink('/data-sets'),
-      label: DATA_SETS_LABEL,
+      href: createLink(''),
+      label: t('cognite-data-fusion'),
+      dataTestId: 'cognite-data-fusion',
+    },
+    {
+      href: createLink('/data-sets'),
+      label: t('data-sets'),
+      dataTestId: 'data-sets',
     },
     {
       href: createExtPipePath(),
-      label: EXTRACTION_PIPELINES,
+      label: t('extraction-pipeline_other', { count: 0 }),
+      dataTestId: 'extraction-pipeline',
     },
   ];
   return <Breadcrumbs breadcrumbs={currentPageBreadCrumbs} />;

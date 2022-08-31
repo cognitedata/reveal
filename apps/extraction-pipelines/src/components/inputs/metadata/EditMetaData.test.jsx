@@ -14,7 +14,7 @@ function fillKeyValue(key, value) {
 
 describe('Edit metadata tests', () => {
   const clickAddFields = () => {
-    screen.getByText('Add fields').click();
+    screen.getByTestId('add-fields-btn').click();
   };
 
   test('Component testing', async () => {
@@ -34,7 +34,7 @@ describe('Edit metadata tests', () => {
     clickAddFields();
     fillKeyValue('Wind speed', '14 m/s');
     clickAddFields();
-    screen.getByText('Confirm').click();
+    screen.getByTestId('confirm-btn').click();
     expect(onConfirm).toHaveBeenCalledWith({
       weather: 'Very rainy',
       windSpeed: '14 m/s',
@@ -54,7 +54,7 @@ describe('Edit metadata tests', () => {
       />
     );
     screen.getByLabelText('Remove metadata row').click();
-    screen.getByText('Confirm').click();
+    screen.getByTestId('confirm-btn').click();
     expect(onConfirm).toHaveBeenCalledWith({});
   });
 
@@ -69,7 +69,7 @@ describe('Edit metadata tests', () => {
       />
     );
     fillKeyValue(' temperature ', ' low ');
-    screen.getByText('Confirm').click();
+    screen.getByTestId('confirm-btn').click();
     expect(onConfirm).toHaveBeenCalledWith({ temperature: 'low' });
   });
 });

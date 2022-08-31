@@ -4,33 +4,9 @@ import { SupportedScheduleStrings } from 'components/extpipes/cols/Schedule';
 import { Extpipe } from 'model/Extpipe';
 import { OptionTypeBase } from 'react-select';
 import { CSSObject } from '@emotion/serialize';
+import { TranslationKeys, useTranslation } from 'common';
 
 type ScheduleValue = Pick<Extpipe, 'schedule'>;
-const customStyles = {
-  control: (styles: CSSObject) => ({
-    ...styles,
-    backgroundColor: 'white',
-    color: 'red',
-  }),
-};
-const options = [
-  {
-    value: SupportedScheduleStrings.SCHEDULED,
-    label: SupportedScheduleStrings.SCHEDULED,
-  },
-  {
-    value: SupportedScheduleStrings.CONTINUOUS,
-    label: SupportedScheduleStrings.CONTINUOUS,
-  },
-  {
-    value: SupportedScheduleStrings.ON_TRIGGER,
-    label: SupportedScheduleStrings.ON_TRIGGER,
-  },
-  {
-    value: SupportedScheduleStrings.NOT_DEFINED,
-    label: SupportedScheduleStrings.NOT_DEFINED,
-  },
-];
 
 interface SelectorProps extends ScheduleValue {
   inputId?: string;
@@ -39,6 +15,36 @@ interface SelectorProps extends ScheduleValue {
   handleOnBlur?: (e: React.FocusEvent) => void;
 }
 
+const customStyles = {
+  control: (styles: CSSObject) => ({
+    ...styles,
+    backgroundColor: 'white',
+    color: 'red',
+  }),
+};
+
+const getOptions = (_t: (key: TranslationKeys) => string) => {
+  const options = [
+    {
+      value: SupportedScheduleStrings.SCHEDULED,
+      label: _t('scheduled'),
+    },
+    {
+      value: SupportedScheduleStrings.CONTINUOUS,
+      label: _t('continuous'),
+    },
+    {
+      value: SupportedScheduleStrings.ON_TRIGGER,
+      label: _t('on-trigger'),
+    },
+    {
+      value: SupportedScheduleStrings.NOT_DEFINED,
+      label: _t('not-defined'),
+    },
+  ];
+  return { options };
+};
+
 export const ScheduleSelector: FunctionComponent<SelectorProps> = ({
   inputId,
   schedule,
@@ -46,6 +52,9 @@ export const ScheduleSelector: FunctionComponent<SelectorProps> = ({
   handleOnBlur,
   autoFocus = false,
 }: PropsWithChildren<SelectorProps>) => {
+  const { t } = useTranslation();
+  const { options } = getOptions(t);
+
   const selectedValue = (scheduleValue?: string) => {
     return options.find(({ value }) => {
       return value === scheduleValue;
@@ -66,7 +75,7 @@ export const ScheduleSelector: FunctionComponent<SelectorProps> = ({
       onBlur={handleOnBlur}
       menuPosition="fixed"
       autoFocus={autoFocus}
-      placeholderSelectText="Select schedule"
+      placeholderSelectText={t('select-schedule')}
     />
   );
 };

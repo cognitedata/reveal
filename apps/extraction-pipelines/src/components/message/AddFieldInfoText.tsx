@@ -1,8 +1,29 @@
 import React, { FunctionComponent, PropsWithChildren } from 'react';
 import { Colors, Icon } from '@cognite/cogs.js';
 import styled from 'styled-components';
+import { useTranslation } from 'common';
 
-interface AddFieldInfoTextProps {}
+interface AddFieldInfoTextProps {
+  dataTestId?: string;
+}
+
+export const AddFieldInfoText: FunctionComponent<AddFieldInfoTextProps> = ({
+  children,
+  dataTestId,
+}: PropsWithChildren<AddFieldInfoTextProps>) => {
+  const { t } = useTranslation();
+
+  return (
+    <Styled>
+      <Icon
+        type="AddLarge"
+        style={{ marginRight: '1rem' }}
+        data-testid={dataTestId}
+      />{' '}
+      {t('add')} {children}
+    </Styled>
+  );
+};
 
 const Styled = styled.span`
   display: flex;
@@ -12,13 +33,3 @@ const Styled = styled.span`
     color: ${Colors.primary.hex()};
   }
 `;
-
-export const AddFieldInfoText: FunctionComponent<AddFieldInfoTextProps> = ({
-  children,
-}: PropsWithChildren<AddFieldInfoTextProps>) => {
-  return (
-    <Styled>
-      <Icon type="AddLarge" style={{ marginRight: '1rem' }} /> add {children}
-    </Styled>
-  );
-};

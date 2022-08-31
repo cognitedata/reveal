@@ -1,7 +1,6 @@
 import React from 'react';
 import {
-  RANGE_END_LABEL,
-  RANGE_START_LABEL,
+
   TimeSelector,
 } from 'components/inputs/dateTime/TimeSelector';
 import { render } from 'utils/test';
@@ -11,9 +10,9 @@ import { renderWithRunFilterContext } from 'utils/test/render';
 describe('TimeSelector', () => {
   test('Render default', () => {
     render(<TimeSelector />);
-    const start = screen.getByLabelText(RANGE_START_LABEL);
+    const start = screen.getByTestId('date-range-start-input');
     expect(start).toBeInTheDocument();
-    const end = screen.getByLabelText(RANGE_END_LABEL);
+    const end = screen.getByTestId('date-range-end-input');
     expect(end).toBeInTheDocument();
     expect(start.textContent).toEqual('');
     expect(end.textContent).toEqual('');
@@ -31,9 +30,9 @@ describe('TimeSelector', () => {
     renderWithRunFilterContext(<TimeSelector />, {
       providerProps: { dateRange },
     });
-    const startInput = screen.getByLabelText(RANGE_START_LABEL);
+    const startInput = screen.getByTestId('date-range-start-input');
     expect(startInput).toBeInTheDocument();
-    const endInput = screen.getByLabelText(RANGE_END_LABEL);
+    const endInput = screen.getByTestId('date-range-end-input');
     expect(endInput).toBeInTheDocument();
     expect(
       screen.getByDisplayValue(`${startHours}:${startMin}`)
@@ -45,10 +44,10 @@ describe('TimeSelector', () => {
 
   test('Interact with input', () => {
     renderWithRunFilterContext(<TimeSelector />, {});
-    expect(screen.getByLabelText(RANGE_START_LABEL)).toBeInTheDocument();
-    expect(screen.getByLabelText(RANGE_END_LABEL)).toBeInTheDocument();
+    expect(screen.getByTestId('date-range-start-input')).toBeInTheDocument();
+    expect(screen.getByTestId('date-range-end-input')).toBeInTheDocument();
     const newEndTime = '10:23';
-    fireEvent.change(screen.getByLabelText(RANGE_END_LABEL), {
+    fireEvent.change(screen.getByTestId('date-range-end-input'), {
       target: { value: newEndTime },
     });
     expect(screen.getByDisplayValue(newEndTime)).toBeInTheDocument();

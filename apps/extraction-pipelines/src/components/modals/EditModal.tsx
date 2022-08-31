@@ -1,8 +1,8 @@
 import React, { FunctionComponent, PropsWithChildren } from 'react';
-import { ids } from 'cogs-variables';
+import { styleScope } from 'utils/utils';
 import Modal from 'components/modals/Modal';
 import { Button } from '@cognite/cogs.js';
-import { StyledTitle2 } from 'styles/StyledHeadings';
+import { StyledTitle2 } from 'components/styled';
 
 interface EditModalProps {
   visible: boolean;
@@ -22,7 +22,7 @@ export const EditModal: FunctionComponent<EditModalProps> = ({
     <Modal
       visible={visible}
       width={width}
-      appElement={document.getElementsByClassName(ids.styleScope).item(0)!}
+      appElement={document.getElementsByClassName(styleScope).item(0)!}
     >
       <div css="display: flex; justify-content: space-between;">
         <StyledTitle2>{title}</StyledTitle2>

@@ -2,15 +2,10 @@ import { Button } from '@cognite/cogs.js';
 import React from 'react';
 
 export interface ModalFooterProps {
-  // eslint-disable-next-line
   okText?: string;
-  // eslint-disable-next-line
   onOk?: () => void;
-  // eslint-disable-next-line
   cancelText?: string;
-  // eslint-disable-next-line
   onCancel?: () => void;
-  // eslint-disable-next-line
   footer?: React.ReactNode;
 }
 export const ModalFooter = ({

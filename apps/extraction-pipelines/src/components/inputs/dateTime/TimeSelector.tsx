@@ -1,8 +1,8 @@
 import React, { FunctionComponent, useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { DivFlex } from 'styles/flex/StyledFlex';
+import { DivFlex } from 'components/styled';
 import { OptionTypeBase } from 'react-select';
-import { Button, Colors, Icon, Input, Range, Select } from '@cognite/cogs.js';
+import { Button, Colors, Input, Range, Select } from '@cognite/cogs.js';
 import {
   createDateFromTimeChange,
   createHalfHourOptions,
@@ -14,55 +14,14 @@ import {
   updateDateRangeAction,
   useRunFilterContext,
 } from 'hooks/runs/RunsFilterContext';
-
-const TimeWrapper = styled(DivFlex)`
-  .cogs-input-container {
-    height: 100%;
-    .cogs-input {
-      width: 5rem;
-      &:hover {
-        background-color: transparent;
-      }
-    }
-    .input-postfix-node {
-      .cogs-btn {
-        padding: 0.5rem;
-        height: 100%;
-        background-color: ${Colors.white.hex()};
-        border-top: 1px solid ${Colors['greyscale-grey5'].hex()};
-        border-right: 1px solid ${Colors['greyscale-grey5'].hex()};
-        border-bottom: 1px solid ${Colors['greyscale-grey5'].hex()};
-        &:hover {
-          background-color: transparent;
-        }
-      }
-    }
-  }
-  .cogs-select {
-    width: 100%;
-    height: 0;
-    .cogs-select__control {
-      clip: rect(0 0 0 0);
-      clip-path: inset(50%);
-      height: 1px;
-      overflow: hidden;
-      position: static;
-      white-space: nowrap;
-      width: 1px;
-    }
-    .cogs-select__menu {
-      position: absolute;
-    }
-  }
-`;
-
-export const RANGE_END_LABEL: Readonly<string> = 'Date range end time';
-export const RANGE_START_LABEL: Readonly<string> = 'Date range start time';
+import { useTranslation } from 'common';
 
 interface TimeSelectorProps {}
 
 export type Time = { hours: number; min: number };
+
 export const TimeSelector: FunctionComponent<TimeSelectorProps> = () => {
+  const { t } = useTranslation();
   const {
     state: { dateRange },
     dispatch,
@@ -147,10 +106,12 @@ export const TimeSelector: FunctionComponent<TimeSelectorProps> = () => {
   };
 
   const toggleStartDropDown = () => {
+    setShowEndDropDown(false);
     setShowStartDropDown((prev) => !prev);
   };
 
   const toggleEndDropDown = () => {
+    setShowStartDropDown(false);
     setShowEndDropDown((prev) => !prev);
   };
 
@@ -163,11 +124,14 @@ export const TimeSelector: FunctionComponent<TimeSelectorProps> = () => {
           onChange={startInputChanged}
           onClick={toggleStartDropDown}
           postfix={
-            <Button type="ghost" onClick={toggleStartDropDown}>
-              <Icon type="ChevronDownSmall" />
-            </Button>
+            <Button
+              type="ghost"
+              icon="ChevronDownSmall"
+              onClick={toggleStartDropDown}
+            />
           }
-          aria-label={RANGE_START_LABEL}
+          aria-label={t('date-range-start-label')}
+          data-testid="date-range-start-input"
         />
         <Select
           inputId="startTime"
@@ -184,11 +148,15 @@ export const TimeSelector: FunctionComponent<TimeSelectorProps> = () => {
           value={endString}
           onChange={endInputChanged}
           onClick={toggleEndDropDown}
-          aria-label={RANGE_END_LABEL}
+          aria-label={t('date-range-end-label')}
+          data-testid="date-range-end-input"
+          size="large"
           postfix={
-            <Button type="ghost" onClick={toggleEndDropDown}>
-              <Icon type="ChevronDownSmall" />
-            </Button>
+            <Button
+              type="ghost"
+              icon="ChevronDownSmall"
+              onClick={toggleEndDropDown}
+            />
           }
         />
         <Select
@@ -204,3 +172,45 @@ export const TimeSelector: FunctionComponent<TimeSelectorProps> = () => {
     </TimeWrapper>
   );
 };
+
+const TimeWrapper = styled(DivFlex)`
+  .cogs-input-container {
+    height: 100%;
+    .cogs-input {
+      width: 5rem;
+      &:hover {
+        background-color: transparent;
+      }
+    }
+    .input__postfix--node {
+      .cogs-btn {
+        padding: 0.5rem;
+        height: 100%;
+        background-color: ${Colors.white.hex()};
+        border-top: 1px solid ${Colors['greyscale-grey5'].hex()};
+        border-right: 1px solid ${Colors['greyscale-grey5'].hex()};
+        border-bottom: 1px solid ${Colors['greyscale-grey5'].hex()};
+        &:hover {
+          background-color: transparent;
+        }
+      }
+    }
+  }
+  .cogs-select {
+    width: 100%;
+    height: 0;
+    .cogs-select__control {
+      display: none;
+      clip: rect(0 0 0 0);
+      clip-path: inset(50%);
+      height: 1px;
+      overflow: hidden;
+      position: static;
+      white-space: nowrap;
+      width: 1px;
+    }
+    .cogs-select__menu {
+      position: absolute;
+    }
+  }
+`;

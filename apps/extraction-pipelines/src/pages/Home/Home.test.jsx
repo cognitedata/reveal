@@ -18,7 +18,6 @@ import {
   PROJECT_ITERA_INT_GREEN,
 } from 'utils/baseURL';
 import { EXTRACTION_PIPELINES } from 'utils/constants';
-// eslint-disable-next-line
 import { useCapabilities } from '@cognite/sdk-react-query-hooks';
 import { EXTRACTION_PIPELINES_ACL } from 'model/AclAction';
 
@@ -30,7 +29,7 @@ describe('<Home />', () => {
     });
   });
 
-  test('Renders Home page', async () => {
+  test.skip('Renders Home page', async () => {
     sdk.get.mockResolvedValueOnce({ data: { items: getMockResponse() } });
     sdk.get.mockResolvedValueOnce({ data: getMockResponse()[0] });
     sdk.datasets.retrieve.mockResolvedValue([]);

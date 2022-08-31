@@ -72,10 +72,8 @@ export const MarkdownView: FunctionComponent<MarkdownViewProps> = ({
   children,
 }: PropsWithChildren<MarkdownViewProps>) => {
   const styledComponents = {
-    // eslint-disable-next-line jsx-a11y/heading-has-content
     h1: ({ ...props }) => <h1 className="docs-heading" {...props} />,
     table: ({ ...props }) => <table className="cogs-table" {...props} />,
-    // eslint-disable-next-line jsx-a11y/alt-text
     img: ({ ...props }) => <img className="docs-image" {...props} />,
   };
   return (

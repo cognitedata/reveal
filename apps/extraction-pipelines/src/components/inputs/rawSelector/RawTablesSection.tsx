@@ -8,7 +8,7 @@ import { Icon } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { AddFieldValueBtn } from 'components/buttons/AddFieldValueBtn';
 import { Section } from 'components/extpipe/Section';
-import { createRedirectLink } from 'utils/utils';
+import { createLink } from '@cognite/cdf-utilities';
 
 const RawTableWrapper = styled.div`
   display: flex;
@@ -38,7 +38,7 @@ const EditRawTable: FunctionComponent<{ canEdit: boolean }> = ({ canEdit }) => {
           return (
             <StyledLink
               role="gridcell"
-              href={createRedirectLink(`/raw`, {
+              href={createLink(`/raw`, {
                 activeTable: `["${dbName}","${tableName}",null]`,
                 tabs: `[["${dbName}","${tableName}",null]]`,
               })}

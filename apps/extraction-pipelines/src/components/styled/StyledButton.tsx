@@ -1,10 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Button, Colors } from '@cognite/cogs.js';
-import { DivFlexProps } from 'styles/flex/StyledFlex';
-import { bottomSpacing } from 'styles/StyledVariables';
+import { bottomSpacing, DivFlexProps } from 'components/styled';
 import { CLOSE, SAVE } from 'utils/constants';
-import { ButtonProps } from '@cognite/cogs.js/dist/Components/Button/Button';
+import { ButtonProps } from '@cognite/cogs.js';
 
 type ButtonPlacedProps = DivFlexProps & { marginbottom?: number };
 export const ButtonPlaced = styled(Button)`

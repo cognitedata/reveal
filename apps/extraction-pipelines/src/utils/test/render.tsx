@@ -32,7 +32,12 @@ export const renderWithRouter = (
 ) => {
   const history = createMemoryHistory();
   history.push(route);
-  return render(<Router history={history}>{ui}</Router>, renderOptions);
+  return render(
+    <Router history={history}>
+      <>{ui}</>
+    </Router>,
+    renderOptions
+  );
 };
 
 export const renderWithSelectedExtpipeContext = (
@@ -152,7 +157,9 @@ export const renderRegisterContext = (
       <QueryClientProvider client={client}>
         <AppEnvProvider cdfEnv={cdfEnv} project={project} origin={origin}>
           <RegisterExtpipeProvider initExtpipe={initRegisterExtpipe}>
-            <Router history={history}>{ui}</Router>
+            <Router history={history}>
+              <>{ui}</>
+            </Router>
           </RegisterExtpipeProvider>
         </AppEnvProvider>
       </QueryClientProvider>,

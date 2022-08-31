@@ -8,7 +8,7 @@ import { ModalContent } from 'components/modals/ModalContent';
 import { useSelectedExtpipe } from 'hooks/useSelectedExtpipe';
 import { useExtpipeById } from 'hooks/useExtpipe';
 import * as yup from 'yup';
-import { StyledTitle3 } from 'styles/StyledHeadings';
+import { StyledTitle3 } from 'components/styled';
 import { DetailFieldNames, ExtpipeRawTable } from 'model/Extpipe';
 import { selectedRawTablesRule } from 'utils/validation/extpipeSchemas';
 import { useForm } from 'react-hook-form';
@@ -17,7 +17,6 @@ import {
   createUpdateSpec,
   useDetailsUpdate,
 } from 'hooks/details/useDetailsUpdate';
-import { useAppEnv } from 'hooks/useAppEnv';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { EditModal } from 'components/modals/EditModal';
 import { Button, Select } from '@cognite/cogs.js';
@@ -27,13 +26,15 @@ import {
 } from 'hooks/useRawDBAndTables';
 import styled from 'styled-components';
 import { MissingCapabilityBox } from 'components/accessCheck/CapabilityCheck';
+import { getProject } from '@cognite/cdf-utilities';
+import { useTranslation } from 'common';
 
 interface RawEditModalProps {
   visible: boolean;
   close: () => void;
 }
-const pageSchema = yup.object().shape({ ...selectedRawTablesRule });
 
+const pageSchema = yup.object().shape({ ...selectedRawTablesRule });
 interface ModalFormInput {
   selectedRawTables: ExtpipeRawTable[];
 }
@@ -42,7 +43,8 @@ export const RawEditModal: FunctionComponent<RawEditModalProps> = ({
   visible,
   close,
 }: PropsWithChildren<RawEditModalProps>) => {
-  const { project } = useAppEnv();
+  const { t } = useTranslation();
+  const project = getProject();
   const { data: databases, isError } = useRawDBAndTables();
   const { extpipe: selected } = useSelectedExtpipe();
   const { data: storedExtpipe } = useExtpipeById(selected?.id);
@@ -64,7 +66,7 @@ export const RawEditModal: FunctionComponent<RawEditModalProps> = ({
     setValue('selectedRawTables', storedExtpipe?.rawTables ?? []);
   }, [setValue, storedExtpipe]);
 
-  const saveChanges = async (values: ExtpipeRawTable[]) => {
+  const saveChanges = async (values: ExtpipeRawTable[], errMsg: string) => {
     clearErrors('selectedRawTables');
     if (storedExtpipe && project) {
       const t = createUpdateSpec({
@@ -80,14 +82,14 @@ export const RawEditModal: FunctionComponent<RawEditModalProps> = ({
         onError: () => {
           setError('selectedRawTables', {
             type: 'server',
-            message: `Could not store raw table`,
+            message: errMsg,
           });
         },
       });
     } else {
       setError('selectedRawTables', {
         type: 'server',
-        message: `Could not store raw table`,
+        message: errMsg,
       });
     }
   };
@@ -101,18 +103,13 @@ export const RawEditModal: FunctionComponent<RawEditModalProps> = ({
     >
       <ModalContent>
         <StyledTitle3 data-testid="raw-table-edit-modal">
-          Document RAW tables associated with the extraction pipeline
+          {t('edit-raw-title')}
         </StyledTitle3>
-        <p>
-          Select the CDF RAW tables used in the extraction pipeline ingestion.
-          Note: This is for documentation only and does not affect operations.
-          The selected tables appear in the data set lineage.
-        </p>
+        <p>{t('edit-raw-desc')}</p>
         <div css="height: 1rem" />
         {isError &&
           MissingCapabilityBox({
-            text:
-              'Cannot load list of tables. Make sure you have permission to read raw tables. Ask administrator for access.',
+            text: t('edit-raw-missing-capability'),
             requiredPermissions: [
               { acl: 'raw', action: 'READ' },
               { acl: 'raw', action: 'LIST' },
@@ -123,7 +120,9 @@ export const RawEditModal: FunctionComponent<RawEditModalProps> = ({
           <RawEditModalView
             close={close}
             databases={databases}
-            onSave={(tables) => saveChanges(tables)}
+            onSave={(tables) =>
+              saveChanges(tables, t('could-not-store-raw-table'))
+            }
             initial={storedExtpipe?.rawTables || []}
           />
         )}
@@ -131,12 +130,6 @@ export const RawEditModal: FunctionComponent<RawEditModalProps> = ({
     </EditModal>
   );
 };
-
-const Col = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-`;
 
 type ViewProps = {
   initial: ExtpipeRawTable[];
@@ -150,6 +143,7 @@ export const RawEditModalView = ({
   onSave,
   databases,
 }: ViewProps) => {
+  const { t } = useTranslation();
   const [tables, setTables] = useState(
     initial.length >= 1 ? initial : [{ dbName: '', tableName: '' }]
   );
@@ -196,11 +190,11 @@ export const RawEditModalView = ({
                         )
                       );
                     }}
-                    placeholderSelectText="Select RAW table"
+                    placeholderSelectText={t('select-raw-table')}
                     options={dropdownOptions}
                     value={
                       table.dbName === ''
-                        ? { value: null, label: 'Select RAW table' }
+                        ? { value: null, label: t('select-raw-table') }
                         : {
                             value: table,
                             label: `${table.dbName} • ${table.tableName}`,
@@ -220,20 +214,34 @@ export const RawEditModalView = ({
             ))}
           </Col>
           <div>
-            <Button icon="AddLarge" onClick={addRow}>
-              Add new table
+            <Button
+              icon="AddLarge"
+              onClick={addRow}
+              data-testid="add-new-table=btn"
+            >
+              {t('add-new-table')}
             </Button>
           </div>
         </Col>
       </ModalContent>
       <div key="modal-footer" className="cogs-modal-footer-buttons">
         <Button type="ghost" onClick={close}>
-          Cancel
+          {t('cancel')}
         </Button>
-        <Button type="primary" onClick={onConfirmClicked}>
-          Confirm
+        <Button
+          type="primary"
+          onClick={onConfirmClicked}
+          data-testid="raw-edit-confirm-btn"
+        >
+          {t('confirm')}
         </Button>
       </div>
     </Col>
   );
 };
+
+const Col = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+`;

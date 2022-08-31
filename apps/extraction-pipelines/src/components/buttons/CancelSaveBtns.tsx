@@ -1,21 +1,11 @@
-import { Button } from '@cognite/cogs.js';
 import React from 'react';
+import { Button } from '@cognite/cogs.js';
 import styled from 'styled-components';
-
-export const StyledButtonGroup = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  button {
-    margin: 0.2rem;
-  }
-`;
-
+import { useTranslation } from 'common';
 interface CancelSaveBtnsProps {
   onCancel: () => void;
   onSave: () => void;
-  // eslint-disable-next-line react/require-default-props
   dateTestIdCancelBtn?: string;
-  // eslint-disable-next-line react/require-default-props
   dateTestIdSaveBtn?: string;
 }
 
@@ -25,6 +15,7 @@ export const CancelSaveBtns = ({
   dateTestIdCancelBtn = 'cancel-btn',
   dateTestIdSaveBtn = 'save-btn',
 }: CancelSaveBtnsProps) => {
+  const { t } = useTranslation();
   return (
     <StyledButtonGroup>
       <Button
@@ -32,11 +23,19 @@ export const CancelSaveBtns = ({
         onClick={onCancel}
         data-testid={dateTestIdCancelBtn}
       >
-        Cancel
+        {t('cancel')}
       </Button>
       <Button type="primary" onClick={onSave} data-testid={dateTestIdSaveBtn}>
-        Save
+        {t('save')}
       </Button>
     </StyledButtonGroup>
   );
 };
+
+export const StyledButtonGroup = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  button {
+    margin: 0.2rem;
+  }
+`;

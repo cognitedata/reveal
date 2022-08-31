@@ -1,66 +1,37 @@
 import React, { FunctionComponent, useState } from 'react';
-import { Hint, StyledTextArea } from 'styles/StyledForm';
 import styled from 'styled-components';
-import { bottomSpacing } from 'styles/StyledVariables';
-import {
-  ContactBtnTestIds,
-  DOCUMENTATION_HINT,
-  SERVER_ERROR_CONTENT,
-  SERVER_ERROR_TITLE,
-} from 'utils/constants';
-import { useForm } from 'react-hook-form';
+import { ContactBtnTestIds } from 'utils/constants';
+import { FieldErrors, useForm } from 'react-hook-form';
 import ValidationError from 'components/form/ValidationError';
 import { useSelectedExtpipe } from 'hooks/useSelectedExtpipe';
 import {
   createUpdateSpec,
   useDetailsUpdate,
 } from 'hooks/details/useDetailsUpdate';
-import { useAppEnv } from 'hooks/useAppEnv';
 import { useExtpipeById } from 'hooks/useExtpipe';
 import {
   documentationSchema,
   MAX_DOCUMENTATION_LENGTH,
 } from 'utils/validation/extpipeSchemas';
-import { CountSpan } from 'styles/StyledWrapper';
 import MessageDialog from 'components/buttons/MessageDialog';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { EditButton } from 'styles/StyledButton';
-import { DetailFieldNames } from 'model/Extpipe';
+import {
+  bottomSpacing,
+  CountSpan,
+  DivFlex,
+  EditButton,
+  Hint,
+  StyledTextArea,
+} from 'components/styled';
 import { MarkdownView } from 'components/markDown/MarkdownView';
 import { AddFieldInfoText } from 'components/message/AddFieldInfoText';
 import { Button, Graphic } from '@cognite/cogs.js';
 import { Section } from 'components/extpipe/Section';
-import { DivFlex } from 'styles/flex/StyledFlex';
 import { trackUsage } from 'utils/Metrics';
 import { ExternalLink } from 'components/links/ExternalLink';
-
-const DocumentationForm = styled.form`
-  padding: 0 1rem;
-  .hint {
-    grid-area: hint;
-  }
-  .error-message {
-    grid-area: error;
-  }
-  .count {
-    grid-area: count;
-  }
-  .edit-button {
-    grid-area: text;
-  }
-  textarea {
-    grid-area: text;
-    margin-bottom: ${bottomSpacing};
-  }
-  span[aria-expanded] {
-    grid-area: btn1;
-    justify-self: end;
-  }
-  button[aria-label='Close'] {
-    grid-area: btn2;
-    justify-self: end;
-  }
-`;
+import { getProject } from '@cognite/cdf-utilities';
+import { useTranslation } from 'common';
+import { MASTERING_MARKDOWN_LINK } from 'utils/utils';
 
 export const TEST_ID_BTN_SAVE: Readonly<string> = 'btn-save-';
 interface DocumentationSectionProps {
@@ -69,10 +40,11 @@ interface DocumentationSectionProps {
 
 type Fields = { documentation: string; server: string };
 
-export const DocumentationSection: FunctionComponent<DocumentationSectionProps> = ({
-  canEdit,
-}) => {
-  const { project } = useAppEnv();
+export const DocumentationSection: FunctionComponent<
+  DocumentationSectionProps
+> = ({ canEdit }) => {
+  const { t } = useTranslation();
+  const project = getProject();
   const [isEdit, setEdit] = useState(false);
   const { extpipe } = useSelectedExtpipe();
   const { data: currentExtpipe } = useExtpipeById(extpipe?.id);
@@ -110,6 +82,7 @@ export const DocumentationSection: FunctionComponent<DocumentationSectionProps> 
           setError('server', {
             type: 'server',
             message: error.data?.message,
+            //@ts-ignore
             shouldFocus: true,
           });
         },
@@ -142,13 +115,11 @@ export const DocumentationSection: FunctionComponent<DocumentationSectionProps> 
   const infoHowEdit = (
     <>
       <p style={{ margin: '3rem 0', textAlign: 'center' }}>
-        Use{' '}
-        <ExternalLink href="https://guides.github.com/features/mastering-markdown/">
-          markdown
+        {t('ext-pipeline-how-to-edit-info-1')}{' '}
+        <ExternalLink href={MASTERING_MARKDOWN_LINK}>
+          {t('ext-pipeline-how-to-edit-info-2')}
         </ExternalLink>{' '}
-        to document important information about the extraction pipeline, for
-        troubleshooting or more detailed information about the data such as
-        selection criteria.
+        {t('ext-pipeline-how-to-edit-info-3')}
       </p>
       <EditButton
         showPencilIcon={false}
@@ -156,15 +127,15 @@ export const DocumentationSection: FunctionComponent<DocumentationSectionProps> 
         onClick={onEditClick}
         disabled={!canEdit}
       >
-        <AddFieldInfoText>
-          {DetailFieldNames.DOCUMENTATION.toLowerCase()}
+        <AddFieldInfoText dataTestId="add-documentation">
+          {t('documentation', { postProcess: 'lowercase' })}
         </AddFieldInfoText>
       </EditButton>
     </>
   );
   const infoNoDocumentation = (
     <p style={{ margin: '3rem 0', textAlign: 'center', color: 'grey' }}>
-      No documentation added.
+      {t('no-documentation-added')}
     </p>
   );
   const whenNotEditing =
@@ -178,8 +149,13 @@ export const DocumentationSection: FunctionComponent<DocumentationSectionProps> 
     );
   const whenEditing = (
     <>
-      <Hint className="hint">{DOCUMENTATION_HINT}</Hint>
-      <ValidationError errors={errors} name="documentation" />
+      <Hint className="hint">
+        {t('ext-pipeline-edit-info-1')}{' '}
+        <ExternalLink href={MASTERING_MARKDOWN_LINK}>
+          {t('ext-pipeline-edit-info-2')}
+        </ExternalLink>
+      </Hint>
+      <ValidationError errors={errors as FieldErrors} name="documentation" />
       <StyledTextArea
         id="documentation-textarea"
         data-testid="documentation-textarea"
@@ -204,13 +180,13 @@ export const DocumentationSection: FunctionComponent<DocumentationSectionProps> 
             aria-controls="documentation"
             data-testid={`${ContactBtnTestIds.CANCEL_BTN}documentation`}
           >
-            Cancel
+            {t('cancel')}
           </Button>
           <MessageDialog
             visible={!!errors.server}
             handleClickError={handleClickError}
-            title={SERVER_ERROR_TITLE}
-            contentText={SERVER_ERROR_CONTENT}
+            title={t('server-err-title')}
+            contentText={t('server-err-desc')}
           >
             <Button
               htmlType="submit"
@@ -218,7 +194,7 @@ export const DocumentationSection: FunctionComponent<DocumentationSectionProps> 
               aria-controls="documentation"
               data-testid={`${TEST_ID_BTN_SAVE}documentation`}
             >
-              Confirm
+              {t('confirm')}
             </Button>
           </MessageDialog>
         </div>
@@ -227,9 +203,10 @@ export const DocumentationSection: FunctionComponent<DocumentationSectionProps> 
   );
   return (
     <Section
-      title={DetailFieldNames.DOCUMENTATION}
+      title={t('documentation')}
       icon="Documentation"
       editButton={{ onClick: onEditClick, canEdit }}
+      dataTestId="documentation"
     >
       <DocumentationForm onSubmit={handleSubmit(onValid)}>
         {isEdit ? whenEditing : whenNotEditing}
@@ -237,3 +214,31 @@ export const DocumentationSection: FunctionComponent<DocumentationSectionProps> 
     </Section>
   );
 };
+
+const DocumentationForm = styled.form`
+  padding: 0 1rem;
+  .hint {
+    grid-area: hint;
+  }
+  .error-message {
+    grid-area: error;
+  }
+  .count {
+    grid-area: count;
+  }
+  .edit-button {
+    grid-area: text;
+  }
+  textarea {
+    grid-area: text;
+    margin-bottom: ${bottomSpacing};
+  }
+  span[aria-expanded] {
+    grid-area: btn1;
+    justify-self: end;
+  }
+  button[aria-label='Close'] {
+    grid-area: btn2;
+    justify-self: end;
+  }
+`;

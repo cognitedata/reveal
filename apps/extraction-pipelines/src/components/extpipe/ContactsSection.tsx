@@ -1,6 +1,4 @@
 import React, { FunctionComponent, useState } from 'react';
-import { TableHeadings } from 'components/table/ExtpipeTableCol';
-import { useAppEnv } from 'hooks/useAppEnv';
 import { useSelectedExtpipe } from 'hooks/useSelectedExtpipe';
 import { useExtpipeById } from 'hooks/useExtpipe';
 import { User } from 'model/User';
@@ -10,15 +8,8 @@ import { ContactsDialog, isOwnerRole } from 'components/extpipe/ContactsDialog';
 import styled from 'styled-components';
 import { Section } from 'components/extpipe/Section';
 import { Icon } from '@cognite/cogs.js';
-
-const Wrapper = styled.div``;
-
-export const Column = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-`;
-
+import { getProject } from '@cognite/cdf-utilities';
+import { useTranslation } from 'common';
 interface ContactsViewProps {
   canEdit: boolean;
 }
@@ -26,7 +17,8 @@ interface ContactsViewProps {
 export const ContactsSection: FunctionComponent<ContactsViewProps> = ({
   canEdit,
 }) => {
-  const { project } = useAppEnv();
+  const { t } = useTranslation();
+  const project = getProject();
   const { extpipe: selected } = useSelectedExtpipe();
   const { data: extpipe } = useExtpipeById(selected?.id);
   const [showModal, setShowModal] = useState(false);
@@ -50,59 +42,57 @@ export const ContactsSection: FunctionComponent<ContactsViewProps> = ({
 
   return (
     <Section
-      title="Contacts"
+      title={t('contacts')}
       icon="Users"
       editButton={{ onClick: openEdit, canEdit }}
     >
-      <Wrapper>
-        {contacts && contacts.length > 0 ? (
-          <div css="padding: 0 1rem;">
-            <Column>
-              {contactsSorted.map((contact: User) => {
-                return (
-                  <div
-                    css="display: flex; align-items: center; justify-content: space-between; gap: 1rem"
-                    key={contact.email}
-                  >
+      {contacts && contacts.length > 0 ? (
+        <div css="padding: 0 1rem;">
+          <Column>
+            {contactsSorted.map((contact: User) => {
+              return (
+                <div
+                  css="display: flex; align-items: center; justify-content: space-between; gap: 1rem"
+                  key={contact.email}
+                >
+                  <div>
                     <div>
-                      <div>
-                        <span>{contact.name}</span>
-                      </div>
-                      <div css="line-height: 1.5rem">
-                        <a href={`mailto:${contact.email}`}>{contact.email}</a>
-                        {contact.sendNotification && (
-                          <Icon
-                            type="BellFilled"
-                            size={12}
-                            css="margin-left: 6px; vertical-align: middle;"
-                          />
-                        )}
-                      </div>
+                      <span>{contact.name}</span>
                     </div>
-                    <div
-                      css={`
-                        color: #777;
-                        text-align: right;
-                        font-weight: ${contact.role === 'Owner'
-                          ? 'bold'
-                          : 'normal'};
-                      `}
-                    >
-                      {contact.role}
+                    <div css="line-height: 1.5rem">
+                      <a href={`mailto:${contact.email}`}>{contact.email}</a>
+                      {contact.sendNotification && (
+                        <Icon
+                          type="BellFilled"
+                          size={12}
+                          css="margin-left: 6px; vertical-align: middle;"
+                        />
+                      )}
                     </div>
                   </div>
-                );
-              })}
-            </Column>
-          </div>
-        ) : (
-          <AddFieldValueBtn canEdit={canEdit} onClick={openEdit}>
-            {TableHeadings.CONTACTS.toLowerCase()}
-          </AddFieldValueBtn>
-        )}
-      </Wrapper>
+                  <div
+                    css={`
+                      color: #777;
+                      text-align: right;
+                      font-weight: ${contact.role === 'Owner'
+                        ? 'bold'
+                        : 'normal'};
+                    `}
+                  >
+                    {contact.role}
+                  </div>
+                </div>
+              );
+            })}
+          </Column>
+        </div>
+      ) : (
+        <AddFieldValueBtn canEdit={canEdit} onClick={openEdit}>
+          {t('contacts', { postProcess: 'lowercase' })}
+        </AddFieldValueBtn>
+      )}
       <EditModal
-        title={TableHeadings.CONTACTS}
+        title={t('contacts')}
         visible={showModal}
         close={closeModal}
         width={1024}
@@ -112,3 +102,9 @@ export const ContactsSection: FunctionComponent<ContactsViewProps> = ({
     </Section>
   );
 };
+
+export const Column = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+`;

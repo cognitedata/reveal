@@ -28,7 +28,7 @@ describe('ContactSection', () => {
     fireEvent.change(screen.getByDisplayValue(mock.contacts[0].name), {
       target: { value: newName },
     });
-    fireEvent.click(screen.getByText('Confirm'));
+    fireEvent.click(screen.getByTestId('confirm'));
 
     const updatedUsers = onConfirm.mock.calls[0][0];
     expect(updatedUsers[0].name).toEqual('New name');
