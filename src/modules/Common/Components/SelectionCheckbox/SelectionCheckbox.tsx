@@ -1,5 +1,5 @@
-import { Checkbox } from '@cognite/cogs.js';
 import React from 'react';
+import { Checkbox } from '@cognite/cogs.js';
 import { TableDataItem } from 'src/modules/Common/types';
 import styled from 'styled-components';
 
