@@ -209,8 +209,10 @@ export class Cognite3DViewer {
     this.canvas.style.minHeight = '100%';
     this.canvas.style.maxWidth = '100%';
     this.canvas.style.maxHeight = '100%';
+
     this._domElement = options.domElement ?? createCanvasWrapper();
     this._domElement.appendChild(this.canvas);
+    this.setupDomElementResizeListener(this._domElement);
 
     this.spinner = new Spinner(this.domElement);
     this.spinner.placement = options.loadingIndicatorStyle?.placement ?? 'topLeft';
@@ -1129,10 +1131,6 @@ export class Cognite3DViewer {
     if (isVisible) {
       const { renderController } = this;
       TWEEN.update(time);
-      const didResize = this.resizeIfNecessary();
-      if (didResize) {
-        this.requestRedraw();
-      }
       this.recalculateBoundingBox();
       this._cameraManager.update(this.clock.getDelta(), this._updateNearAndFarPlaneBuffers.combinedBbox);
       renderController.update();
@@ -1188,47 +1186,13 @@ export class Cognite3DViewer {
   }
 
   /** @private */
-  private resizeIfNecessary(): boolean {
-    if (this.isDisposed) {
-      return false;
-    }
-    // The maxTextureSize is chosen from testing on low-powered hardware,
-    // and could be increased in the future.
-    // TODO Increase maxTextureSize if SSAO performance is improved
-    // TODO christjt 03-05-2021: This seems ridiculous, and the number seems to be pulled out of thin air.
-    // On low end it might not downscale enough, and on high end it looks bad / blurred.
-    // For the love of God someone move this to the render manager and make it dynamic based on the device.
-    const maxPhysicalFrameBufferSize = 1.4e6;
+  private setupDomElementResizeListener(domElement: HTMLElement): ResizeObserver {
+    const resizeObserver = new ResizeObserver(() => {
+      this.revealManager.requestRedraw();
+    });
 
-    const virtualFramebufferSize = this.renderer.getSize(new THREE.Vector2());
-    const pixelRatio = this._renderer.getPixelRatio();
-
-    const virtualDomElementWidth =
-      this.domElement.clientWidth !== 0 ? this.domElement.clientWidth : this.canvas.clientWidth;
-
-    const virtualDomElementHeight =
-      this.domElement.clientHeight !== 0 ? this.domElement.clientHeight : this.canvas.clientHeight;
-
-    const domElementPhysicalWidth = virtualDomElementWidth * pixelRatio;
-    const domElementPhysicalHeight = virtualDomElementHeight * pixelRatio;
-    const domElementPhysicalNumberOfPixels = domElementPhysicalWidth * domElementPhysicalHeight;
-
-    const downScale =
-      domElementPhysicalNumberOfPixels > maxPhysicalFrameBufferSize
-        ? Math.sqrt(maxPhysicalFrameBufferSize / domElementPhysicalNumberOfPixels)
-        : 1;
-
-    const newVirtualWidth = virtualDomElementWidth * downScale;
-    const newVirtualHeight = virtualDomElementHeight * downScale;
-
-    if (newVirtualWidth === virtualFramebufferSize.x && newVirtualHeight === virtualFramebufferSize.y) {
-      return false;
-    }
-
-    adjustCamera(this.camera, newVirtualWidth, newVirtualHeight);
-    this.renderer.setDrawingBufferSize(newVirtualWidth, newVirtualHeight, pixelRatio);
-
-    return true;
+    resizeObserver.observe(domElement);
+    return resizeObserver;
   }
 
   private readonly startPointerEventListeners = () => {
@@ -1272,6 +1236,7 @@ function createRevealManagerOptions(viewerOptions: Cognite3DViewerOptions): Reve
   const revealOptions: RevealOptions = {
     continuousModelStreaming: viewerOptions.continuousModelStreaming,
     outputRenderTarget,
+    rendererResolutionThreshold: viewerOptions.rendererResolutionThreshold,
     internal: {}
   };
 

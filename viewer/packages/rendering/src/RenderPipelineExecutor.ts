@@ -11,4 +11,5 @@ import { RenderPipelineProvider } from './RenderPipelineProvider';
  */
 export interface RenderPipelineExecutor {
   render(renderPipeline: RenderPipelineProvider, camera: THREE.Camera): void;
+  dipose(): void;
 }

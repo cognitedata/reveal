@@ -15,6 +15,7 @@ export class BasicPipelineExecutor implements RenderPipelineExecutor {
   private readonly _renderer: THREE.WebGLRenderer;
   private readonly _resolutionThreshold: number;
   private _shouldResize: boolean;
+  private readonly _resizeObserver: ResizeObserver | undefined;
 
   constructor(renderer: THREE.WebGLRenderer, options?: BasicPipelineExecutorOptions) {
     this._renderer = renderer;
@@ -23,7 +24,7 @@ export class BasicPipelineExecutor implements RenderPipelineExecutor {
     const autoResizeRenderer = options?.autoResizeRenderer ?? false;
     this._shouldResize = autoResizeRenderer;
 
-    this.setupResizeListener(autoResizeRenderer, renderer);
+    this._resizeObserver = this.setupResizeListener(autoResizeRenderer, renderer);
 
     renderer.info.autoReset = false;
   }
@@ -41,7 +42,7 @@ export class BasicPipelineExecutor implements RenderPipelineExecutor {
     }
   }
 
-  private setupResizeListener(autoResizeRenderer: boolean, renderer: THREE.WebGLRenderer): void {
+  private setupResizeListener(autoResizeRenderer: boolean, renderer: THREE.WebGLRenderer): ResizeObserver | undefined {
     if (!autoResizeRenderer) {
       return;
     }
@@ -51,6 +52,8 @@ export class BasicPipelineExecutor implements RenderPipelineExecutor {
     }
     const resizeObserver = new ResizeObserver(() => (this._shouldResize = true));
     resizeObserver.observe(domElement);
+
+    return resizeObserver;
   }
 
   private resize(camera: THREE.PerspectiveCamera): void {
@@ -87,5 +90,9 @@ export class BasicPipelineExecutor implements RenderPipelineExecutor {
     camera.aspect = newVirtualWidth / newVirtualHeight;
     camera.updateProjectionMatrix();
     this._renderer.setDrawingBufferSize(newVirtualWidth, newVirtualHeight, pixelRatio);
+  }
+
+  dipose(): void {
+    this._resizeObserver?.disconnect();
   }
 }
