@@ -13,7 +13,7 @@
     "lint": "yarn prettier && yarn eslint",
     "eslint": "yarn eslint:changed 'src/**/*.{ts,tsx}'",
     "eslint:changed": "eslint --config .eslintrc.production.js",
-    "prettier": "prettier --config .prettierrc -l 'src/**/*.{js,ts,tsx}' || (echo \nThese files are not formatted correctly && false)",
+    "prettier": "prettier --config .prettierrc -l 'src/**/*.{js,ts,tsx}'",
     "pull-keys": "cdf-i18n-utils-cli pull-keys-from-remote --namespace cdf-integrations-ui",
     "remove-deleted": "cdf-i18n-utils-cli remove-deleted-keys-from-remote --namespace cdf-integrations-ui",
     "save-missing": "cdf-i18n-utils-cli save-missing-keys-to-remote --namespace cdf-integrations-ui",
