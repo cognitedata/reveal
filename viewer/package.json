@@ -71,7 +71,7 @@
     "@cognite/sdk-core": "4.4.0",
     "@types/dat.gui": "0.7.7",
     "@types/expect-puppeteer": "5.0.1",
-    "@types/glob": "7.2.0",
+    "@types/glob": "8.0.0",
     "@types/jest": "28.1.8",
     "@types/jest-environment-puppeteer": "5.0.2",
     "@types/jest-image-snapshot": "5.1.0",
