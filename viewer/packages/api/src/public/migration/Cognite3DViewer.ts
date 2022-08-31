@@ -71,6 +71,7 @@ type Cognite3DViewerEvents = 'click' | 'hover' | 'cameraChange' | 'sceneRendered
  * @module @cognite/reveal
  */
 export class Cognite3DViewer {
+  private readonly _domElementResizeObserver: ResizeObserver;
   private get canvas(): HTMLCanvasElement {
     return this.renderer.domElement;
   }
@@ -212,7 +213,7 @@ export class Cognite3DViewer {
 
     this._domElement = options.domElement ?? createCanvasWrapper();
     this._domElement.appendChild(this.canvas);
-    this.setupDomElementResizeListener(this._domElement);
+    this._domElementResizeObserver = this.setupDomElementResizeListener(this._domElement);
 
     this.spinner = new Spinner(this.domElement);
     this.spinner.placement = options.loadingIndicatorStyle?.placement ?? 'topLeft';
@@ -357,6 +358,7 @@ export class Cognite3DViewer {
     this._cameraManager.dispose();
     this.revealManager.dispose();
     this.domElement.removeChild(this.canvas);
+    this._domElementResizeObserver.disconnect();
     this.renderer.dispose();
 
     this.spinner.dispose();
