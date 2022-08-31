@@ -5,7 +5,8 @@ import { ResourceIcons } from 'components';
 import { ResourceType } from 'index';
 import React from 'react';
 import styled from 'styled-components';
-import { capitalizeFirstLetter, createLink } from 'utils';
+import { createLink } from '@cognite/cdf-utilities';
+import { capitalizeFirstLetter } from 'utils';
 
 const ReviewTagBar = ({
   annotation,

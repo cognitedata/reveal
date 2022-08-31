@@ -35,22 +35,3 @@ export const getEnvironment = () => {
   }
   return 'production';
 };
-
-export const createLink = (
-  path: string,
-  queries: any = {},
-  opts?: queryString.StringifyOptions
-): string => {
-  const project = getProject() || '';
-  const env = getEnv(PARAMS.ENV);
-  const cluster = getEnv(PARAMS.CLUSTER);
-  const query = queryString.stringify({ ...queries, env, cluster }, opts);
-
-  if (query.length > 0) {
-    return `/${project}${path}?${query}`;
-  }
-  if (path.length > 0 && path !== '/') {
-    return `/${project}${path}`;
-  }
-  return `/${project}`;
-};

@@ -6,7 +6,7 @@ import { List } from 'antd';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 import { convertResourceType, ResourceType } from 'types';
 import { DataSet } from '@cognite/sdk';
-import { createLink } from 'utils';
+import { createLink } from '@cognite/cdf-utilities';
 
 const { Text } = Typography;
 

@@ -29,8 +29,8 @@ import { TimeseriesSmallPreview } from 'containers/Timeseries';
 import { FileSmallPreview } from 'containers/Files';
 import { SelectableItemProps, SmallPreviewProps } from 'types';
 import { useSelectionButton } from 'hooks/useSelection';
-
-import { lightGrey, createLink } from 'utils';
+import { createLink } from '@cognite/cdf-utilities';
+import { lightGrey } from 'utils';
 
 const RowItem = ({
   style,

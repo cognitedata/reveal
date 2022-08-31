@@ -12,7 +12,7 @@ import {
 import { ResultTableLoader } from 'containers/ResultTableLoader';
 import { useRelationshipCount } from 'hooks/RelationshipHooks';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
-import { createLink } from 'utils';
+import { createLink } from '@cognite/cdf-utilities';
 import { A } from '@cognite/cogs.js';
 import { AppContext } from 'context/AppContext';
 
