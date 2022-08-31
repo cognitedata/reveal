@@ -1,7 +1,13 @@
 import { CogniteClient } from '@cognite/sdk';
-import { Extpipe, ExtpipeFieldValue, RegisterExtpipeInfo } from 'model/Extpipe';
+import {
+  Extpipe,
+  ExtpipeConfig,
+  ExtpipeConfigRevision,
+  ExtpipeFieldValue,
+  RegisterExtpipeInfo,
+} from 'model/Extpipe';
 import { ExtpipeAPIResponse } from 'model/ExtpipeAPIResponse';
-import { get, getBaseUrl } from 'utils/baseURL';
+import { get, post, getBaseUrl } from 'utils/baseURL';
 import { getDataSets } from 'utils/DataSetAPI';
 import { mapDataSetToExtpipe, mapUniqueDataSetIds } from 'utils/dataSetUtils';
 
@@ -20,21 +26,71 @@ export const getExtpipeById = async (
   sdk: CogniteClient,
   extpipeId: number
 ): Promise<Extpipe> => {
-  const response = await get<Extpipe>(sdk, `/${extpipeId}`);
-  if (response.data.dataSetId) {
+  const extPipe = await post<{ items: Extpipe[] }, { items: { id: number }[] }>(
+    sdk,
+    `/byids`,
+    { items: [{ id: extpipeId }] }
+  ).then((r) => r.data.items[0]);
+
+  if (extPipe.dataSetId) {
     try {
-      const dataSetRes = await getDataSets(sdk, [
-        { id: response.data.dataSetId },
-      ]);
+      const dataSetRes = await getDataSets(sdk, [{ id: extPipe.dataSetId }]);
       return {
-        ...response.data,
+        ...extPipe,
         ...(dataSetRes[0] && { dataSet: dataSetRes[0] }),
       } as Extpipe;
     } catch (e) {
-      return response.data;
+      return extPipe;
     }
   }
-  return response.data;
+  return extPipe;
+};
+
+export const getExtpipeConfigRevisions = async (
+  sdk: CogniteClient,
+  externalId: string,
+  limit: number = 100,
+  cursor?: string
+) =>
+  get<{ items: ExtpipeConfigRevision[] }>(
+    sdk,
+    `/config/revisions`,
+    `?externalId=${externalId}&limit=${limit}${
+      cursor ? `&cursor=${cursor}` : ''
+    }`,
+    'playground'
+  ).then((r) => r.data.items);
+
+export const createExtpipeConfigRevision = async (
+  sdk: CogniteClient,
+  opts: {
+    externalId: string;
+    config: string;
+    description?: string;
+  }
+) =>
+  post<
+    ExtpipeConfigRevision,
+    {
+      externalId: string;
+      config: string;
+      description?: string;
+    }
+  >(sdk, `/config`, opts, '', 'playground');
+
+export const getExtpipeConfig = async (
+  sdk: CogniteClient,
+  externalId: string,
+  revision?: number
+): Promise<ExtpipeConfig> => {
+  return get<ExtpipeConfig>(
+    sdk,
+    `/config`,
+    `?externalId=${externalId}${
+      Number.isFinite(revision) ? `&revision=${revision}` : ''
+    }`,
+    'playground'
+  ).then((r) => r.data);
 };
 
 type Update = {

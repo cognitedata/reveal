@@ -24,6 +24,7 @@ export interface RegisterExtpipeInfo {
 export type NotificationConfig = {
   allowedNotSeenRangeInMinutes?: number;
 };
+
 export interface Extpipe extends Omit<RegisterExtpipeInfo, 'id'> {
   id: number;
   createdTime: number; // milliseconds
@@ -36,6 +37,21 @@ export interface Extpipe extends Omit<RegisterExtpipeInfo, 'id'> {
   lastSeen?: number; // milliseconds
   lastMessage?: string;
   rawTables?: ExtpipeRawTable[];
+}
+
+export interface ExtpipeConfigRevision {
+  externalId: string;
+  revision: number;
+  createdTime?: number;
+  description?: string;
+}
+
+export interface ExtpipeConfig {
+  externalId: string;
+  config: string;
+  revision: number;
+  createdTime: number;
+  description: number;
 }
 
 export type ExtpipeFieldName =
