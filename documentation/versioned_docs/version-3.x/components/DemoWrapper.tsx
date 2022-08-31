@@ -53,7 +53,7 @@ export function DemoWrapper({
     ids || (modelType === 'pointcloud' ? env.pointCloud : env.cad);
 
   return (
-    <DemoContainer id="demo-wrapper">
+    <DemoContainer>
       <Suspense fallback={<div>Loading demo...</div>}>
         <DemoLoginCover>
           {(client: CogniteClient) => (
