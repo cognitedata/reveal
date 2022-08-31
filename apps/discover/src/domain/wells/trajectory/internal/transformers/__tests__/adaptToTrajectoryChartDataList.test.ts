@@ -1,7 +1,6 @@
 import { getMockTrajectoryChartConfig } from 'domain/wells/trajectory/service/__mocks/getMockTrajectoryChartConfig';
 
-import { getMockTrajectoryWithData } from '__test-utils/fixtures/well/trajectory';
-
+import { getMockTrajectoryWithData } from '../../__mocks/getMockTrajectoryWithData';
 import { adaptToTrajectoryChartDataList } from '../adaptToTrajectoryChartDataList';
 
 describe('adaptToTrajectoryChartDataList', () => {
