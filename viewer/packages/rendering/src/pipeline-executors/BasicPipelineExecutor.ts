@@ -62,7 +62,7 @@ export class BasicPipelineExecutor implements RenderPipelineExecutor {
     }
 
     const virtualFramebufferSize = this._renderer.getSize(new THREE.Vector2());
-    const pixelRatio = window.devicePixelRatio;
+    const pixelRatio = this._renderer.getPixelRatio();
 
     const virtualDomElementWidth = domElement.clientWidth !== 0 ? domElement.clientWidth : canvas.clientWidth;
 
