@@ -4,15 +4,12 @@ import { groupByWellbore } from 'domain/wells/wellbore/internal/transformers/gro
 import compact from 'lodash/compact';
 import { toDistanceUnit } from 'utils/units/toDistanceUnit';
 
-import {
-  DistanceUnitEnum,
-  Nds,
-  TrajectoryInterpolationRequest,
-} from '@cognite/sdk-wells';
+import { Nds, TrajectoryInterpolationRequest } from '@cognite/sdk-wells';
 
 import { UserPreferredUnit } from 'constants/units';
 
 import { NdsInternal } from '../../internal/types';
+import { DEFAULT_MEASURED_DEPTH_UNIT } from '../constants';
 
 export const getInterpolateRequests = (
   ndsData: Nds[] | NdsInternal[],
@@ -32,7 +29,7 @@ export const getInterpolateRequests = (
     const measuredDepthUnit =
       ndsWithMeasurement?.holeStart?.unit ||
       ndsWithMeasurement?.holeEnd?.unit ||
-      DistanceUnitEnum.Meter;
+      DEFAULT_MEASURED_DEPTH_UNIT;
 
     return {
       wellboreId: toIdentifierWithMatchingId(wellboreMatchingId),

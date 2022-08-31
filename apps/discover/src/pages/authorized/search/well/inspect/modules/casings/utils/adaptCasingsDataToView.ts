@@ -2,10 +2,11 @@ import { sortCasingAssembliesByMDBase } from 'domain/wells/casings/internal/tran
 import { CasingSchematicInternal } from 'domain/wells/casings/internal/types';
 import { NdsInternal } from 'domain/wells/nds/internal/types';
 import { NptInternal } from 'domain/wells/npt/internal/types';
-import { KeyedTvdData } from 'domain/wells/trajectory/internal/types';
 import { WellInternal } from 'domain/wells/well/internal/types';
 import { getRkbLevel } from 'domain/wells/wellbore/internal/selectors/getRkbLevel';
 import { keyByWellbore } from 'domain/wells/wellbore/internal/transformers/keyByWellbore';
+
+import { EMPTY_ARRAY } from 'constants/empty';
 
 import { CasingSchematicView } from '../types';
 
@@ -14,7 +15,6 @@ import { adaptCasingAssembliesDataToView } from './adaptCasingAssembliesDataToVi
 export const adaptCasingsDataToView = (
   wells: WellInternal[],
   casingsData: CasingSchematicInternal[],
-  tvdData: KeyedTvdData,
   nptData: Record<string, NptInternal[]>,
   ndsData: Record<string, NdsInternal[]>
 ): CasingSchematicView[] => {
@@ -25,11 +25,9 @@ export const adaptCasingsDataToView = (
       const { matchingId: wellboreMatchingId, name: wellboreName } = wellbore;
 
       const casingSchematic = keyedCasingsData[wellboreMatchingId];
-      const trueVerticalDepths = tvdData[wellboreMatchingId];
 
       const casingAssemblies = adaptCasingAssembliesDataToView(
-        casingSchematic?.casingAssemblies || [],
-        trueVerticalDepths
+        casingSchematic?.casingAssemblies || EMPTY_ARRAY
       );
 
       return {
@@ -39,8 +37,8 @@ export const adaptCasingsDataToView = (
         wellboreName,
         rkbLevel: getRkbLevel(wellbore),
         waterDepth: well.waterDepth,
-        nptEvents: nptData[wellboreMatchingId] || [],
-        ndsEvents: ndsData[wellboreMatchingId] || [],
+        nptEvents: nptData[wellboreMatchingId] || EMPTY_ARRAY,
+        ndsEvents: ndsData[wellboreMatchingId] || EMPTY_ARRAY,
       };
     })
   );

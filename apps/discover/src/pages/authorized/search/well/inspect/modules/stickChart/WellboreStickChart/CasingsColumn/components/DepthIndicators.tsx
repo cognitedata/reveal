@@ -38,6 +38,8 @@ export const DepthIndicators = React.forwardRef<
   ) => {
     const getScaledDepth = useScaledDepth(scaleBlocks);
 
+    const isMdScale = depthMeasurementType === DepthMeasurementUnit.MD;
+
     const depthIndicatorsReducer = useCallback(
       (
         depthIndicators: JSX.Element[],
@@ -46,12 +48,22 @@ export const DepthIndicators = React.forwardRef<
         _: any,
         flip = false
       ) => {
-        const { measuredDepthTop, measuredDepthBase } = casingAssembly;
+        const {
+          measuredDepthTop,
+          measuredDepthBase,
+          trueVerticalDepthTop,
+          trueVerticalDepthBase,
+        } = casingAssembly;
 
-        const casingStartDepthScaled = getScaledDepth(measuredDepthTop.value);
-        const casingDepthScaled = getScaledDepth(
-          measuredDepthBase.value - measuredDepthTop.value
-        );
+        const depthTop = isMdScale ? measuredDepthTop : trueVerticalDepthTop;
+        const depthBase = isMdScale ? measuredDepthBase : trueVerticalDepthBase;
+
+        if (!depthTop || !depthBase) {
+          return EMPTY_ARRAY;
+        }
+
+        const depthTopScaled = getScaledDepth(depthTop.value);
+        const heightScaled = getScaledDepth(depthBase.value - depthTop.value);
 
         return [
           ...depthIndicators,
@@ -59,11 +71,11 @@ export const DepthIndicators = React.forwardRef<
             // eslint-disable-next-line react/no-array-index-key
             key={`casing-assembly-${index}`}
             casingAssembly={casingAssembly}
-            casingStartDepthScaled={casingStartDepthScaled}
-            casingDepthScaled={casingDepthScaled}
+            depthTopScaled={depthTopScaled}
+            depthBase={depthBase.value}
+            heightScaled={heightScaled}
             isTied={isTied(casingAssemblies, index)}
             flip={flip}
-            depthMeasurementType={depthMeasurementType}
             isOverlapping={isDepthLabelOverlapping(
               casingAssemblies,
               index,

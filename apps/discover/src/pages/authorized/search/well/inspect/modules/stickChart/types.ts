@@ -1,7 +1,7 @@
-import { CasingAssemblyInternal } from 'domain/wells/casings/internal/types';
+import { CasingAssemblyInternalWithTvd } from 'domain/wells/casings/internal/types';
 import { DepthMeasurementWithData } from 'domain/wells/measurements/internal/types';
-import { NdsInternal } from 'domain/wells/nds/internal/types';
-import { NptInternal } from 'domain/wells/npt/internal/types';
+import { NdsInternalWithTvd } from 'domain/wells/nds/internal/types';
+import { NptInternalWithTvd } from 'domain/wells/npt/internal/types';
 import { TrajectoryWithData } from 'domain/wells/trajectory/internal/types';
 import { WellboreInternal } from 'domain/wells/wellbore/internal/types';
 import {
@@ -10,7 +10,6 @@ import {
 } from 'domain/wells/wellTops/internal/types';
 
 import { Distance } from 'convert-units';
-import { ConvertedDistance } from 'utils/units/constants';
 
 export interface WellboreData {
   wellboreMatchingId: string;
@@ -24,8 +23,8 @@ export interface WellboreData {
 export interface ColumnsData {
   formationColumn: DataWithLoadingStatus<WellTopSurfaceView[]>;
   casingsColumn: DataWithLoadingStatus<CasingAssemblyView[]>;
-  nptColumn: DataWithLoadingStatus<NptInternal[]>;
-  ndsColumn: DataWithLoadingStatus<NdsInternal[]>;
+  nptColumn: DataWithLoadingStatus<NptInternalWithTvd[]>;
+  ndsColumn: DataWithLoadingStatus<NdsInternalWithTvd[]>;
   trajectoryColumn: DataWithLoadingStatus<TrajectoryWithData>;
   measurementsColumn: DataWithLoadingStatus<DepthMeasurementWithData>;
 }
@@ -43,10 +42,8 @@ export interface WellTopSurfaceView extends WellTopSurfaceInternal {
   isComputedBase: boolean;
 }
 
-export interface CasingAssemblyView extends CasingAssemblyInternal {
+export interface CasingAssemblyView extends CasingAssemblyInternalWithTvd {
   wellboreMatchingId: string;
-  trueVerticalDepthTop?: ConvertedDistance;
-  trueVerticalDepthBase?: ConvertedDistance;
   outsideDiameterFormatted: string;
   isLiner: boolean;
 }

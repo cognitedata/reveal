@@ -2,7 +2,7 @@ import { useNptDefinitions } from 'domain/wells/npt/internal/hooks/useNptDefinit
 import { filterNptEventsByCodeSelection } from 'domain/wells/npt/internal/selectors/filterNptEventsByCodeSelection';
 import {
   NptCodesSelection,
-  NptInternal,
+  NptInternalWithTvd,
 } from 'domain/wells/npt/internal/types';
 
 import React, { useCallback } from 'react';
@@ -12,6 +12,7 @@ import isEmpty from 'lodash/isEmpty';
 import { WithDragHandleProps } from 'components/DragDropContainer';
 import { NoUnmountShowHide } from 'components/NoUnmountShowHide';
 import { EMPTY_ARRAY } from 'constants/empty';
+import { DepthMeasurementUnit } from 'constants/units';
 import { useDeepMemo } from 'hooks/useDeep';
 
 import { ColumnDragger } from '../../../common/Events/ColumnDragger';
@@ -39,10 +40,11 @@ import { NptScatterTooltip } from './components/NptScatterTooltip';
 
 export interface NptEventsColumnProps extends ColumnVisibilityProps {
   scaleBlocks: number[];
-  data?: NptInternal[];
+  data?: NptInternalWithTvd[];
   isLoading?: boolean;
   view?: EventsColumnView;
   nptCodesSelecton?: NptCodesSelection;
+  depthMeasurementType?: DepthMeasurementUnit;
 }
 
 export const NptEventsColumn: React.FC<
@@ -54,6 +56,7 @@ export const NptEventsColumn: React.FC<
     isLoading,
     view,
     nptCodesSelecton,
+    depthMeasurementType,
     isVisible = true,
     ...dragHandleProps
   }) => {
@@ -77,7 +80,7 @@ export const NptEventsColumn: React.FC<
     }, [data, filteredData]);
 
     const renderBlockEvents = useCallback(
-      (data: NptInternal[]) => {
+      (data: NptInternalWithTvd[]) => {
         if (isEmpty(data)) {
           return null;
         }
@@ -90,6 +93,7 @@ export const NptEventsColumn: React.FC<
                 <NptScatterTooltip
                   event={original}
                   nptCodeDefinitions={nptCodeDefinitions}
+                  depthMeasurementType={depthMeasurementType}
                 />
               )}
             />
@@ -98,7 +102,7 @@ export const NptEventsColumn: React.FC<
 
         return <NptEventsBadge events={data} />;
       },
-      [view]
+      [view, depthMeasurementType]
     );
 
     return (
@@ -116,6 +120,7 @@ export const NptEventsColumn: React.FC<
               events={filteredData}
               isLoading={isLoading}
               emptySubtitle={emptySubtitle}
+              depthMeasurementType={depthMeasurementType}
               renderBlockEvents={renderBlockEvents}
             />
           </BodyColumnBody>

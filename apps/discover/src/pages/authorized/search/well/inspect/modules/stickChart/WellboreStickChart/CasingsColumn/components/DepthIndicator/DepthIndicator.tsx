@@ -5,10 +5,8 @@ import { Fixed, toFixedNumberFromNumber } from 'utils/number';
 import layers from 'utils/zindex';
 
 import { Tooltip } from 'components/PopperTooltip';
-import { DepthMeasurementUnit } from 'constants/units';
 
 import { CasingAssemblyView } from '../../../../types';
-import { DEFAULT_DEPTH_MEASUREMENT_TYPE } from '../../../constants';
 
 import { DEPTH_INDICATOR_END_HEIGHT, TOOLTIP_PLACEMENT } from './constants';
 import { DepthSegment } from './DepthSegment';
@@ -25,12 +23,12 @@ import { TooltipContent } from './TooltipContent';
 
 export interface DepthIndicatorProps {
   casingAssembly: CasingAssemblyView;
-  casingStartDepthScaled: number;
-  casingDepthScaled: number;
+  depthTopScaled: number;
+  depthBase: number;
+  heightScaled: number;
   // If the assembly is tied (connected) with another assembly.
   isTied: boolean;
   flip?: boolean;
-  depthMeasurementType?: DepthMeasurementUnit;
   isOverlapping?: boolean;
 }
 
@@ -39,11 +37,11 @@ export interface DepthIndicatorProps {
  */
 export const DepthIndicator: React.FC<DepthIndicatorProps> = ({
   casingAssembly,
-  casingStartDepthScaled,
-  casingDepthScaled,
+  depthTopScaled,
+  depthBase,
+  heightScaled,
   isTied,
   flip = false,
-  depthMeasurementType = DEFAULT_DEPTH_MEASUREMENT_TYPE,
   isOverlapping = false,
 }) => {
   const depthIndicatorRef = useRef<HTMLElement>(null);
@@ -51,15 +49,10 @@ export const DepthIndicator: React.FC<DepthIndicatorProps> = ({
   const [zIndex, setZIndex] = useState<number>(layers.MAIN_LAYER);
   const [depthMarkerWidth, setDepthMarkerWidth] = useState<number>();
 
-  const depthSegmentStartHeight = `${casingStartDepthScaled}px`;
-  const depthSegmentMiddleHeight = `calc(${casingDepthScaled}px - ${DEPTH_INDICATOR_END_HEIGHT})`;
+  const depthSegmentStartHeight = `${depthTopScaled}px`;
+  const depthSegmentMiddleHeight = `calc(${heightScaled}px - ${DEPTH_INDICATOR_END_HEIGHT})`;
 
-  const {
-    isLiner,
-    outsideDiameterFormatted,
-    measuredDepthBase,
-    trueVerticalDepthBase,
-  } = casingAssembly;
+  const { isLiner, outsideDiameterFormatted } = casingAssembly;
 
   const tooltipContent = <TooltipContent {...casingAssembly} />;
 
@@ -71,12 +64,6 @@ export const DepthIndicator: React.FC<DepthIndicatorProps> = ({
   );
 
   useEffect(() => updateDepthMarkerWidth(), [updateDepthMarkerWidth]);
-
-  const isTvdBased = depthMeasurementType === DepthMeasurementUnit.TVD;
-
-  const depthLabelValue = isTvdBased
-    ? trueVerticalDepthBase?.value
-    : measuredDepthBase.value;
 
   const DepthEndMarker = isLiner
     ? DepthEndMarkerForLine
@@ -110,13 +97,13 @@ export const DepthIndicator: React.FC<DepthIndicatorProps> = ({
         </FlipHorizontal>
       </Tooltip>
 
-      {!isUndefined(depthMarkerWidth) && !isUndefined(depthLabelValue) && (
+      {!isUndefined(depthMarkerWidth) && (
         <>
           <DepthScaleLabelTag
             left={depthMarkerWidth}
             $overlapping={isOverlapping}
           >
-            {toFixedNumberFromNumber(Number(depthLabelValue), Fixed.NoDecimals)}
+            {toFixedNumberFromNumber(depthBase, Fixed.NoDecimals)}
           </DepthScaleLabelTag>
           <DepthEndMarker width={depthMarkerWidth} />
         </>

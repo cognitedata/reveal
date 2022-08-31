@@ -2,9 +2,7 @@ import * as React from 'react';
 
 import { WithDragHandleProps } from 'components/DragDropContainer';
 import { NoUnmountShowHide } from 'components/NoUnmountShowHide';
-import { EMPTY_ARRAY } from 'constants/empty';
 import { DepthMeasurementUnit } from 'constants/units';
-import { useDeepMemo } from 'hooks/useDeep';
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 import { FlexGrow } from 'styles/layout';
 
@@ -23,43 +21,18 @@ import { formatScaleValue } from '../../utils/scale/formatScaleValue';
 
 export interface DepthColumnProps extends ColumnVisibilityProps {
   scaleBlocks: number[];
-  scaleBlocksTVD?: number[];
-  depthMeasurementType?: DepthMeasurementUnit;
+  depthMeasurementType: DepthMeasurementUnit;
 }
 
 export const DepthColumn: React.FC<WithDragHandleProps<DepthColumnProps>> =
   React.memo(
     ({
       scaleBlocks,
-      scaleBlocksTVD = EMPTY_ARRAY,
       depthMeasurementType,
       isVisible = true,
       ...dragHandleProps
     }) => {
       const { data: depthUnit } = useUserPreferencesMeasurement();
-
-      const isMdScale = depthMeasurementType === DepthMeasurementUnit.MD;
-      const isTvdScale = depthMeasurementType === DepthMeasurementUnit.TVD;
-
-      const MdScale = useDeepMemo(() => {
-        return scaleBlocks.map((scaleValue) => {
-          return (
-            <ScaleLine key={`${DepthMeasurementUnit.MD}-${scaleValue}`}>
-              <ScaleLineDepth>{formatScaleValue(scaleValue)}</ScaleLineDepth>
-            </ScaleLine>
-          );
-        });
-      }, [scaleBlocks]);
-
-      const TvdScale = useDeepMemo(() => {
-        return scaleBlocksTVD.map((scaleValue) => {
-          return (
-            <ScaleLine key={`${DepthMeasurementUnit.TVD}-${scaleValue}`}>
-              <ScaleLineDepth>{formatScaleValue(scaleValue)}</ScaleLineDepth>
-            </ScaleLine>
-          );
-        });
-      }, [scaleBlocksTVD]);
 
       return (
         <NoUnmountShowHide show={isVisible}>
@@ -76,13 +49,15 @@ export const DepthColumn: React.FC<WithDragHandleProps<DepthColumnProps>> =
 
             <BodyColumnBody>
               <DepthMeasurementScale>
-                <NoUnmountShowHide show={isVisible && isMdScale}>
-                  {MdScale}
-                </NoUnmountShowHide>
-
-                <NoUnmountShowHide show={isVisible && isTvdScale}>
-                  {TvdScale}
-                </NoUnmountShowHide>
+                {scaleBlocks.map((scaleValue) => {
+                  return (
+                    <ScaleLine key={`${depthMeasurementType}-${scaleValue}`}>
+                      <ScaleLineDepth>
+                        {formatScaleValue(scaleValue)}
+                      </ScaleLineDepth>
+                    </ScaleLine>
+                  );
+                })}
               </DepthMeasurementScale>
             </BodyColumnBody>
           </BodyColumn>

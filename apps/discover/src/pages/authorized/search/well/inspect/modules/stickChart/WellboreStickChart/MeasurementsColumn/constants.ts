@@ -6,3 +6,6 @@ export const CHART_TITLE = 'Depth vs Pressure';
 
 export const EMPTY_MEASUREMENTS_DATA_TEXT =
   'This wellbore has no FIT or LOT data';
+
+export const SELECT_TVD_MESSAGE =
+  'FIT and LOT is not available in MD, switch to TVD to see graph';

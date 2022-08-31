@@ -8,6 +8,8 @@ import { BooleanMap } from 'utils/booleanMap';
 
 import { WithDragHandleProps } from 'components/DragDropContainer';
 import { NoUnmountShowHide } from 'components/NoUnmountShowHide';
+import { EMPTY_ARRAY } from 'constants/empty';
+import { DepthMeasurementUnit } from 'constants/units';
 import { useDeepMemo } from 'hooks/useDeep';
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 
@@ -23,6 +25,7 @@ import {
   CHART_TITLE,
   EMPTY_MEASUREMENTS_DATA_TEXT,
   PRESSURE_UNIT,
+  SELECT_TVD_MESSAGE,
 } from './constants';
 
 export interface MeasurementsColumnProps extends ColumnVisibilityProps {
@@ -30,6 +33,7 @@ export interface MeasurementsColumnProps extends ColumnVisibilityProps {
   isLoading?: boolean;
   scaleBlocks: number[];
   measurementTypesSelection?: BooleanMap;
+  depthMeasurementType?: DepthMeasurementUnit;
 }
 
 export const MeasurementsColumn: React.FC<
@@ -40,10 +44,14 @@ export const MeasurementsColumn: React.FC<
     isLoading,
     scaleBlocks,
     measurementTypesSelection,
+    depthMeasurementType = DepthMeasurementUnit.TVD,
     isVisible = true,
     ...dragHandleProps
   }) => {
     const { data: depthUnit } = useUserPreferencesMeasurement();
+
+    const isTvdScaleSelected =
+      depthMeasurementType === DepthMeasurementUnit.TVD;
 
     const chartData = useDeepMemo(
       () => adaptMeasurementsDataToChart(data),
@@ -69,19 +77,29 @@ export const MeasurementsColumn: React.FC<
     );
 
     const emptySubtitle = useDeepMemo(() => {
+      if (isEmpty(chartData)) {
+        return EMPTY_MEASUREMENTS_DATA_TEXT;
+      }
+      /**
+       * If chart data is available, but scale is selected to MD,
+       * we show the user a message to select TVD scale to see the graph.
+       */
+      if (!isTvdScaleSelected) {
+        return SELECT_TVD_MESSAGE;
+      }
       if (measurementTypesSelection && isEmpty(measurementTypesSelection)) {
         return NO_OPTIONS_SELECTED_TEXT;
       }
-      if (!isEmpty(chartData) && isEmpty(filteredChartData)) {
+      if (isEmpty(filteredChartData)) {
         return NO_DATA_AMONG_SELECTED_OPTIONS_TEXT;
       }
-      return EMPTY_MEASUREMENTS_DATA_TEXT;
+      return undefined;
     }, [chartData, filteredChartData, measurementTypesSelection]);
 
     return (
       <NoUnmountShowHide show={isVisible}>
         <PlotlyChartColumn
-          data={filteredChartData}
+          data={isTvdScaleSelected ? filteredChartData : EMPTY_ARRAY}
           isLoading={isLoading}
           header={ChartColumn.MEASUREMENTS}
           title={CHART_TITLE}

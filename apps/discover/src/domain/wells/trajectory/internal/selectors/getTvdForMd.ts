@@ -13,7 +13,7 @@ import { TrueVerticalDepthsDataLayer } from '../types';
 export const getTvdForMd = (
   measuredDepth: Distance | ConvertedDistance | number,
   trueVerticalDepths: TrueVerticalDepthsDataLayer,
-  toFixed?: Fixed,
+  toFixed: Fixed = Fixed.ThreeDecimals,
   unit?: UserPreferredUnit
 ) => {
   const { mdTvdMap, trueVerticalDepthUnit } = trueVerticalDepths;

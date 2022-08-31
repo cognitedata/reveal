@@ -1,6 +1,6 @@
 import { filterNdsEventsByRiskTypesSelection } from 'domain/wells/nds/internal/selectors/filterNdsEventsByRiskTypesSelection';
 import {
-  NdsInternal,
+  NdsInternalWithTvd,
   NdsRiskTypesSelection,
 } from 'domain/wells/nds/internal/types';
 
@@ -11,6 +11,7 @@ import isEmpty from 'lodash/isEmpty';
 import { WithDragHandleProps } from 'components/DragDropContainer';
 import { NoUnmountShowHide } from 'components/NoUnmountShowHide';
 import { EMPTY_ARRAY } from 'constants/empty';
+import { DepthMeasurementUnit } from 'constants/units';
 import { useDeepMemo } from 'hooks/useDeep';
 
 import { ColumnDragger } from '../../../common/Events/ColumnDragger';
@@ -36,10 +37,11 @@ import {
 
 export interface NdsEventsColumnProps extends ColumnVisibilityProps {
   scaleBlocks: number[];
-  data?: NdsInternal[];
+  data?: NdsInternalWithTvd[];
   isLoading?: boolean;
   view?: EventsColumnView;
   ndsRiskTypesSelection?: NdsRiskTypesSelection;
+  depthMeasurementType?: DepthMeasurementUnit;
 }
 
 export const NdsEventsColumn: React.FC<
@@ -52,6 +54,7 @@ export const NdsEventsColumn: React.FC<
     view,
     isVisible = true,
     ndsRiskTypesSelection,
+    depthMeasurementType,
     ...dragHandleProps
   }) => {
     const filteredData = useDeepMemo(() => {
@@ -72,7 +75,7 @@ export const NdsEventsColumn: React.FC<
     }, [data, filteredData, ndsRiskTypesSelection]);
 
     const renderBlockEvents = useCallback(
-      (data: NdsInternal[]) => {
+      (data: NdsInternalWithTvd[]) => {
         if (isEmpty(data)) {
           return null;
         }
@@ -101,6 +104,7 @@ export const NdsEventsColumn: React.FC<
               events={filteredData}
               isLoading={isLoading}
               emptySubtitle={emptySubtitle}
+              depthMeasurementType={depthMeasurementType}
               renderBlockEvents={renderBlockEvents}
             />
           </BodyColumnBody>

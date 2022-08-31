@@ -1,10 +1,12 @@
-import { NptInternal } from 'domain/wells/npt/internal/types';
+import { NptInternalWithTvd } from 'domain/wells/npt/internal/types';
 
-import React, { useMemo } from 'react';
+import React from 'react';
 
 import isEmpty from 'lodash/isEmpty';
 
 import EmptyState from 'components/EmptyState';
+import { DepthMeasurementUnit } from 'constants/units';
+import { useDeepCallback } from 'hooks/useDeep';
 
 import {
   ScaleLine,
@@ -14,53 +16,68 @@ import {
 
 export type Props = {
   scaleBlocks: number[];
-  events: NptInternal[];
+  events: NptInternalWithTvd[];
   isLoading?: boolean;
   emptySubtitle?: string;
-  renderBlockEvents: (blockEvents: NptInternal[]) => JSX.Element | null;
+  depthMeasurementType?: DepthMeasurementUnit;
+  renderBlockEvents: (blockEvents: NptInternalWithTvd[]) => JSX.Element | null;
 };
 
 export const EMPTY_STATE_TEXT = 'This wellbore has no NPT events data';
 export const LOADING_TEXT = 'Loading';
 
-export const NptEventsByDepth: React.FC<Props> = ({
-  scaleBlocks,
-  events,
-  isLoading,
-  emptySubtitle = EMPTY_STATE_TEXT,
-  renderBlockEvents,
-}: Props) => {
-  const blockElements = useMemo(() => {
-    return (
-      <>
-        {scaleBlocks.map((depth, index) => {
-          const blockEvents = events.filter(
-            (event) =>
-              event.measuredDepth &&
-              event.measuredDepth?.value < depth &&
-              (!index || event.measuredDepth.value >= scaleBlocks[index - 1])
-          );
+export const NptEventsByDepth: React.FC<Props> = React.memo(
+  ({
+    scaleBlocks,
+    events,
+    isLoading,
+    emptySubtitle = EMPTY_STATE_TEXT,
+    depthMeasurementType = DepthMeasurementUnit.MD,
+    renderBlockEvents,
+  }: Props) => {
+    const isMdScale = depthMeasurementType === DepthMeasurementUnit.MD;
 
-          return (
-            <ScaleLine key={depth}>{renderBlockEvents(blockEvents)}</ScaleLine>
-          );
-        })}
-      </>
-    );
-  }, [scaleBlocks, events, renderBlockEvents]);
+    const getBlockElements = useDeepCallback(() => {
+      return (
+        <>
+          {scaleBlocks.map((depth, index) => {
+            const blockEvents = events.filter(
+              ({ measuredDepth, trueVerticalDepth }) => {
+                const eventDepth = isMdScale
+                  ? measuredDepth
+                  : trueVerticalDepth;
 
-  if (isLoading || isEmpty(events)) {
-    return (
-      <EmptyStateWrapper>
-        <EmptyState
-          isLoading={isLoading}
-          loadingSubtitle={isLoading ? LOADING_TEXT : ''}
-          emptySubtitle={emptySubtitle}
-          hideHeading
-        />
-      </EmptyStateWrapper>
-    );
+                return (
+                  eventDepth &&
+                  eventDepth.value < depth &&
+                  (!index || eventDepth.value >= scaleBlocks[index - 1])
+                );
+              }
+            );
+
+            return (
+              <ScaleLine key={depth}>
+                {renderBlockEvents(blockEvents)}
+              </ScaleLine>
+            );
+          })}
+        </>
+      );
+    }, [scaleBlocks, events, depthMeasurementType, renderBlockEvents]);
+
+    if (isLoading || isEmpty(events)) {
+      return (
+        <EmptyStateWrapper>
+          <EmptyState
+            isLoading={isLoading}
+            loadingSubtitle={isLoading ? LOADING_TEXT : ''}
+            emptySubtitle={emptySubtitle}
+            hideHeading
+          />
+        </EmptyStateWrapper>
+      );
+    }
+
+    return <DepthMeasurementScale>{getBlockElements()}</DepthMeasurementScale>;
   }
-
-  return <DepthMeasurementScale>{blockElements}</DepthMeasurementScale>;
-};
+);

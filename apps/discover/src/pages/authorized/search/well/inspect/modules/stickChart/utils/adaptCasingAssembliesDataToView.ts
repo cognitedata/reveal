@@ -1,23 +1,18 @@
 import { formatOutsideDiameter } from 'domain/wells/casings/internal/transformers/formatOutsideDiameter';
-import { CasingAssemblyInternal } from 'domain/wells/casings/internal/types';
+import { CasingAssemblyInternalWithTvd } from 'domain/wells/casings/internal/types';
 import { isLiner } from 'domain/wells/casings/internal/utils/isLiner';
-import { TrueVerticalDepthsDataLayer } from 'domain/wells/trajectory/internal/types';
 
 import { CasingAssemblyView } from '../types';
 
-import { getCasingAssemblyTvdData } from './getCasingAssemblyTvdData';
-
 export const adaptCasingAssembliesDataToView = (
   wellboreMatchingId: string,
-  casingAssemblies: CasingAssemblyInternal[],
-  trueVerticalDepths?: TrueVerticalDepthsDataLayer
+  casingAssemblies: CasingAssemblyInternalWithTvd[]
 ): CasingAssemblyView[] => {
   return casingAssemblies.map((casingAssembly) => {
     const outsideDiameterFormatted = formatOutsideDiameter(casingAssembly);
 
     return {
       ...casingAssembly,
-      ...getCasingAssemblyTvdData(casingAssembly, trueVerticalDepths),
       wellboreMatchingId,
       outsideDiameterFormatted,
       isLiner: isLiner(casingAssembly),

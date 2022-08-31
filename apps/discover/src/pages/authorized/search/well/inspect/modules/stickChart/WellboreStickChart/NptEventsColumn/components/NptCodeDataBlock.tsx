@@ -1,4 +1,4 @@
-import { NptInternal } from 'domain/wells/npt/internal/types';
+import { NptInternalWithTvd } from 'domain/wells/npt/internal/types';
 
 import * as React from 'react';
 
@@ -18,7 +18,10 @@ import { ButtonHighlightEvent } from './ButtonHighlightEvent';
 import { ButtonRemoveHighlightedEvent } from './ButtonRemoveHighlightedEvent';
 
 export interface NptCodeDataBlockProps
-  extends Pick<NptInternal, 'nptCode' | 'nptCodeDetail' | 'nptCodeColor'> {
+  extends Pick<
+    NptInternalWithTvd,
+    'nptCode' | 'nptCodeDetail' | 'nptCodeColor'
+  > {
   nptCodeDefinition?: string;
   isHighlighted?: boolean;
 }

@@ -1,6 +1,8 @@
-import { useNptEventsQuery } from 'domain/wells/npt/internal/queries/useNptEventsQuery';
-import { NptInternal } from 'domain/wells/npt/internal/types';
+import { useNptWithTvdData } from 'domain/wells/npt/internal/hooks/useNptWithTvdData';
+import { NptInternalWithTvd } from 'domain/wells/npt/internal/types';
 import { groupByWellbore } from 'domain/wells/wellbore/internal/transformers/groupByWellbore';
+
+import isEmpty from 'lodash/isEmpty';
 
 import { EMPTY_OBJECT } from 'constants/empty';
 import { useDeepMemo } from 'hooks/useDeep';
@@ -9,12 +11,12 @@ import { useWellInspectWellboreIds } from 'modules/wellInspect/selectors';
 export const useNptColumnsData = () => {
   const wellboreIds = useWellInspectWellboreIds();
 
-  const { data, isLoading } = useNptEventsQuery({ wellboreIds });
+  const { data, isLoading } = useNptWithTvdData({ wellboreIds });
 
   return useDeepMemo(() => {
-    if (!data) {
+    if (isEmpty(data)) {
       return {
-        data: EMPTY_OBJECT as Record<string, NptInternal[]>,
+        data: EMPTY_OBJECT as Record<string, NptInternalWithTvd[]>,
         isLoading,
       };
     }

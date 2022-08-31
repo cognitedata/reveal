@@ -49,3 +49,7 @@ export type NptCodesSelection = Record<
   NptInternal['nptCode'],
   NptInternal['nptCodeDetail'][]
 >;
+
+export interface NptInternalWithTvd extends NptInternal {
+  trueVerticalDepth?: ConvertedDistance;
+}

@@ -1,5 +1,4 @@
-import { useCasingSchematicsQuery } from 'domain/wells/casings/internal/queries/useCasingSchematicsQuery';
-import { useCasingsTvdDataQuery } from 'domain/wells/casings/internal/queries/useCasingsTvdDataQuery';
+import { useCasingsWithTvdData } from 'domain/wells/casings/internal/hooks/useCasingsWithTvdData';
 import { groupByWellbore } from 'domain/wells/wellbore/internal/transformers/groupByWellbore';
 
 import isEmpty from 'lodash/isEmpty';
@@ -14,33 +13,23 @@ import { adaptToCasingsColumnData } from '../utils/adaptToCasingsColumnData';
 export const useCasingsColumnsData = () => {
   const wellboreIds = useWellInspectWellboreIds();
 
-  const { data: casingsData, isLoading: isCasingsLoading } =
-    useCasingSchematicsQuery({
-      wellboreIds,
-    });
-
-  const { data: tvdData, isLoading: isTvdDataLoading } = useCasingsTvdDataQuery(
-    casingsData || []
-  );
+  const { data, isLoading } = useCasingsWithTvdData({
+    wellboreIds,
+  });
 
   return useDeepMemo(() => {
-    if (
-      !casingsData ||
-      isEmpty(tvdData) ||
-      isCasingsLoading ||
-      isTvdDataLoading
-    ) {
+    if (isEmpty(data)) {
       return {
         data: EMPTY_OBJECT as Record<string, CasingAssemblyView[]>,
-        isLoading: isCasingsLoading || isTvdDataLoading,
+        isLoading,
       };
     }
 
-    const adaptedData = adaptToCasingsColumnData(casingsData, tvdData);
+    const adaptedData = adaptToCasingsColumnData(data);
 
     return {
       data: groupByWellbore(adaptedData),
       isLoading: false,
     };
-  }, [casingsData, tvdData, isCasingsLoading, isTvdDataLoading]);
+  }, [data, isLoading]);
 };

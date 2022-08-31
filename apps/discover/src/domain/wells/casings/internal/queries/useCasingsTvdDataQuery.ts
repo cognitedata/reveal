@@ -21,12 +21,8 @@ export const useCasingsTvdDataQuery = (
     interpolateRequests
   );
 
-  if (!data) {
-    return { data: {}, ...rest };
-  }
-
   return {
-    data: getKeyedTvdData(data),
+    data: data && getKeyedTvdData(data),
     ...rest,
   };
 };

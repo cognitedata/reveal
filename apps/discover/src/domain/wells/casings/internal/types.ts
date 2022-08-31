@@ -15,3 +15,13 @@ export interface CasingAssemblyInternal
   measuredDepthTop: ConvertedDistance;
   measuredDepthBase: ConvertedDistance;
 }
+
+export interface CasingSchematicInternalWithTvd
+  extends CasingSchematicInternal {
+  casingAssemblies: Array<CasingAssemblyInternalWithTvd>;
+}
+
+export interface CasingAssemblyInternalWithTvd extends CasingAssemblyInternal {
+  trueVerticalDepthTop?: ConvertedDistance;
+  trueVerticalDepthBase?: ConvertedDistance;
+}

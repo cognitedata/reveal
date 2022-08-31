@@ -1,6 +1,8 @@
-import { useNdsEventsQuery } from 'domain/wells/nds/internal/queries/useNdsEventsQuery';
-import { NdsInternal } from 'domain/wells/nds/internal/types';
+import { useNdsWithTvdData } from 'domain/wells/nds/internal/hooks/useNdsWithTvdData';
+import { NdsInternalWithTvd } from 'domain/wells/nds/internal/types';
 import { groupByWellbore } from 'domain/wells/wellbore/internal/transformers/groupByWellbore';
+
+import isEmpty from 'lodash/isEmpty';
 
 import { EMPTY_OBJECT } from 'constants/empty';
 import { useDeepMemo } from 'hooks/useDeep';
@@ -9,12 +11,12 @@ import { useWellInspectWellboreIds } from 'modules/wellInspect/selectors';
 export const useNdsColumnsData = () => {
   const wellboreIds = useWellInspectWellboreIds();
 
-  const { data, isLoading } = useNdsEventsQuery({ wellboreIds });
+  const { data, isLoading } = useNdsWithTvdData({ wellboreIds });
 
   return useDeepMemo(() => {
-    if (!data) {
+    if (isEmpty(data)) {
       return {
-        data: EMPTY_OBJECT as Record<string, NdsInternal[]>,
+        data: EMPTY_OBJECT as Record<string, NdsInternalWithTvd[]>,
         isLoading,
       };
     }

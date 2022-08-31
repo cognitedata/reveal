@@ -1,12 +1,10 @@
-// import { getDateOrDefaultText } from 'utils/date';
-
 import { ScatterViewEvent } from 'components/ScatterView';
 
-import { NdsInternal } from '../types';
+import { NdsInternalWithTvd } from '../types';
 
 export const adaptNdsEventsToScatterView = (
-  nptEvents: NdsInternal[]
-): ScatterViewEvent<NdsInternal>[] => {
+  nptEvents: NdsInternalWithTvd[]
+): ScatterViewEvent<NdsInternalWithTvd>[] => {
   // create a bucket of npt codes with corresponding events.
   const ndsCodeBucket = nptEvents.reduce((buckets, item) => {
     if (!item.riskType) {
@@ -16,7 +14,7 @@ export const adaptNdsEventsToScatterView = (
     const stack = buckets[item.riskType] || [];
 
     return { ...buckets, [item.riskType]: [...stack, item] };
-  }, {} as Record<string, NdsInternal[]>);
+  }, {} as Record<string, NdsInternalWithTvd[]>);
 
   // sort the stack in the bucket by length of items.
   const sortedBucketStacks = Object.values(ndsCodeBucket).sort(
@@ -30,16 +28,16 @@ export const adaptNdsEventsToScatterView = (
     const {
       riskType,
       subtype,
-      holeStart,
       severity,
       probability,
-      holeEnd,
+      holeStartTvd,
+      holeEndTvd,
       holeDiameter,
       ndsCodeColor,
     } = event;
 
     return {
-      id: `${riskType}-${subtype}-${holeStart?.value}-${holeEnd?.value}-${severity}-${probability}-${index}`,
+      id: `${riskType}-${subtype}-${holeStartTvd?.value}-${holeEndTvd?.value}-${severity}-${probability}-${index}`,
       dotColor: ndsCodeColor,
       original: event,
       metadata: [
@@ -66,16 +64,19 @@ export const adaptNdsEventsToScatterView = (
           content: holeDiameter?.value,
         },
         {
-          title: ['TVD Hole Start', holeStart?.unit && `(${holeStart.unit})`]
+          title: [
+            'TVD Hole Start',
+            holeStartTvd?.unit && `(${holeStartTvd.unit})`,
+          ]
             .filter(Boolean)
             .join(' '),
-          content: holeStart?.value,
+          content: holeStartTvd?.value,
         },
         {
-          title: ['TVD Hole End', holeEnd?.unit && `(${holeEnd.unit})`]
+          title: ['TVD Hole End', holeEndTvd?.unit && `(${holeEndTvd.unit})`]
             .filter(Boolean)
             .join(' '),
-          content: holeEnd?.value,
+          content: holeEndTvd?.value,
         },
       ],
     };

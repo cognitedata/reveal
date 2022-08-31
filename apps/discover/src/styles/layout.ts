@@ -197,3 +197,23 @@ export const PageBottomPaddingWrapper = styled(PagePaddingWrapper)`
 export const NewLine = styled.div`
   margin-bottom: 8px;
 `;
+
+export const PrettyScrollBar = css`
+  ::-webkit-scrollbar {
+    width: ${sizes.small};
+    height: ${sizes.small};
+  }
+  ::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 1px var(--cogs-surface--interactive--pressed);
+    border-radius: ${sizes.small};
+    background-color: var(--cogs-surface--misc-code--medium);
+  }
+  ::-webkit-scrollbar-thumb {
+    border-radius: ${sizes.small};
+    background-color: var(--cogs-greyscale-grey5);
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    border-radius: ${sizes.small};
+    background-color: var(--cogs-surface--misc-backdrop);
+  }
+`;

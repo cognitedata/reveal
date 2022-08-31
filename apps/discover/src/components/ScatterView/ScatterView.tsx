@@ -2,6 +2,7 @@
 import styled from 'styled-components';
 
 import { Tooltip } from 'components/PopperTooltip';
+import { PrettyScrollBar } from 'styles/layout';
 
 import { DetailCard, DetailCardMetadata } from '../DetailCard';
 
@@ -52,6 +53,7 @@ const Content = styled.div`
   gap: 3px;
   align-content: flex-start;
   overflow-x: auto;
+  ${PrettyScrollBar}
 `;
 
 const Dot = styled.div<{ color?: string }>`
