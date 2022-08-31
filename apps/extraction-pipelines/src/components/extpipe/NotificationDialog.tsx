@@ -14,7 +14,6 @@ import {
   useDetailsUpdate,
 } from 'hooks/details/useDetailsUpdate';
 import { ErrorMessage } from 'components/error/ErrorMessage';
-import { getProject } from '@cognite/cdf-utilities';
 import { minutesToUnit, timeUnitToMinutesMultiplier } from 'utils/utils';
 import { useTranslation } from 'common';
 
@@ -29,7 +28,6 @@ export const NotificationDialog: FunctionComponent<NotificationDialogProps> = ({
   close,
 }) => {
   const { t } = useTranslation();
-  const project = getProject();
   const { mutate } = useDetailsUpdate();
   const oldValue = minutesToUnit(
     extpipe.notificationConfig?.allowedNotSeenRangeInMinutes ?? 0
@@ -47,13 +45,12 @@ export const NotificationDialog: FunctionComponent<NotificationDialogProps> = ({
     0
   );
   const onConfirm = async () => {
-    if (!extpipe || !project) return;
+    if (!extpipe) return;
     if (!Number.isFinite(value) || value <= 0) {
       setErrorMessage(t('notification-setting-err-invalid-time'));
       return;
     }
     const items = createUpdateSpec({
-      project,
       id: extpipe.id,
       fieldValue: {
         allowedNotSeenRangeInMinutes:

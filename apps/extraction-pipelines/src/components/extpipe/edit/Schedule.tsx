@@ -33,7 +33,6 @@ import { TableHeadings } from 'components/table/ExtpipeTableCol';
 import { AddFieldInfoText } from 'components/message/AddFieldInfoText';
 import { NoDataAdded } from 'components/buttons/AddFieldValueBtn';
 import { trackUsage } from 'utils/Metrics';
-import { getProject } from '@cognite/cdf-utilities';
 import { useTranslation } from 'common';
 
 export interface ScheduleFormInput {
@@ -58,7 +57,6 @@ export const Schedule: FunctionComponent<ScheduleProps> = ({
   const [showCron, setShowCron] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
   const [errorVisible, setErrorVisible] = useState(false);
-  const project = getProject();
   const { mutate } = useDetailsUpdate();
   const { schedule } = extpipe;
   const methods = useForm<ScheduleFormInput>({
@@ -82,11 +80,10 @@ export const Schedule: FunctionComponent<ScheduleProps> = ({
   }, [scheduleValue]);
 
   const onSave = async (field: ScheduleFormInput) => {
-    if (extpipe && project) {
+    if (extpipe) {
       const updatedSchedule = mapScheduleInputToScheduleValue(field);
       trackUsage({ t: 'EditField.Save', field: 'schedule' });
       const items = createUpdateSpec({
-        project,
         id: extpipe.id,
         fieldValue: updatedSchedule,
         fieldName: 'schedule',

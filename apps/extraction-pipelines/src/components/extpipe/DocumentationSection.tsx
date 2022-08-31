@@ -29,7 +29,6 @@ import { Button, Graphic } from '@cognite/cogs.js';
 import { Section } from 'components/extpipe/Section';
 import { trackUsage } from 'utils/Metrics';
 import { ExternalLink } from 'components/links/ExternalLink';
-import { getProject } from '@cognite/cdf-utilities';
 import { useTranslation } from 'common';
 import { MASTERING_MARKDOWN_LINK } from 'utils/utils';
 
@@ -44,7 +43,6 @@ export const DocumentationSection: FunctionComponent<
   DocumentationSectionProps
 > = ({ canEdit }) => {
   const { t } = useTranslation();
-  const project = getProject();
   const [isEdit, setEdit] = useState(false);
   const { extpipe } = useSelectedExtpipe();
   const { data: currentExtpipe } = useExtpipeById(extpipe?.id);
@@ -68,10 +66,9 @@ export const DocumentationSection: FunctionComponent<
   const count = watch('documentation')?.length ?? 0;
 
   const onValid = async (field: Fields) => {
-    if (currentExtpipe && project) {
+    if (currentExtpipe) {
       trackUsage({ t: 'EditField.Save', field: 'documentation' });
       const mutateObj = createUpdateSpec({
-        project,
         id: currentExtpipe.id,
         fieldValue: field.documentation,
         fieldName: 'documentation',

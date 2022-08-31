@@ -10,7 +10,6 @@ import { Button, Input } from '@cognite/cogs.js';
 import { MetaData } from 'model/MetaData';
 import { ModalContent } from 'components/modals/ModalContent';
 import { StyledTableNoRowColor2 } from 'components/styled';
-import { getProject } from '@cognite/cdf-utilities';
 import { useTranslation } from 'common';
 
 type SuperProps = {
@@ -155,16 +154,14 @@ export const EditMetaDataView = ({
 };
 
 export const EditMetaData = (props: SuperProps) => {
-  const project = getProject();
   const { extpipe } = useSelectedExtpipe();
   const { data: current } = useExtpipeById(extpipe?.id);
   const { mutate } = useDetailsUpdate();
 
   const onConfirm = (updatedMetadata: MetaData) => {
-    if (!current || !project) return;
+    if (!current) return;
     const updateSpec = createUpdateSpec({
       id: current.id,
-      project,
       fieldName: 'metadata',
       fieldValue: updatedMetadata,
     });

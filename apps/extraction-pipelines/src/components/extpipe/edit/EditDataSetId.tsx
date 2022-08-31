@@ -21,7 +21,6 @@ import styled from 'styled-components';
 import { DivFlex } from 'components/styled';
 import DetailsValueView from 'components/table/details/DetailsValueView';
 import { trackUsage } from 'utils/Metrics';
-import { getProject } from '@cognite/cdf-utilities';
 import { useTranslation } from 'common';
 interface FormInput {
   dataSetId: number;
@@ -31,7 +30,6 @@ export const EditDataSetId: FunctionComponent<{ canEdit: boolean }> = ({
   canEdit,
 }) => {
   const { t } = useTranslation();
-  const project = getProject();
   const [isEdit, setIsEdit] = useState(false);
   const [errorVisible, setErrorVisible] = useState(false);
   const { extpipe: selected } = useSelectedExtpipe();
@@ -51,10 +49,9 @@ export const EditDataSetId: FunctionComponent<{ canEdit: boolean }> = ({
   }, [register]);
 
   const onSave = async (field: FormInput) => {
-    if (extpipe && project) {
+    if (extpipe) {
       trackUsage({ t: 'EditField.Save', field: 'dataSet' });
       const items = createUpdateSpec({
-        project,
         id: extpipe.id,
         fieldValue: field.dataSetId,
         fieldName: 'dataSetId',
@@ -88,7 +85,7 @@ export const EditDataSetId: FunctionComponent<{ canEdit: boolean }> = ({
     setIsEdit(false);
   };
 
-  if (!extpipe || !project) {
+  if (!extpipe) {
     return <p />;
   }
   if (!canEdit) {
