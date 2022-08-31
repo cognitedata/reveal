@@ -52,7 +52,7 @@ type Props = {
 };
 
 export default function DemoLoginCover(props: Props): ReactElement {
-  const isDarkTheme = useColorMode().colorMode === 'dark'
+  const isDarkTheme = useColorMode().colorMode === 'dark';
 
   const client = new CogniteClient({
     appId: 'reveal-docs-' + REVEAL_VERSION,

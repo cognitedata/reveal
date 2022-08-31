@@ -51,7 +51,7 @@ type Props = {
 };
 
 export default function DemoLoginCover(props: Props): ReactElement {
-  const isDarkTheme = useColorMode().colorMode === 'dark'
+  const isDarkTheme = useColorMode().colorMode === 'dark';
   const [isLoggedIn, setIsLoggedIn] = React.useState(loginManager.isLoggedIn);
   useEffect(() => {
     return loginManager.onIsLoggedInChanged(setIsLoggedIn);
