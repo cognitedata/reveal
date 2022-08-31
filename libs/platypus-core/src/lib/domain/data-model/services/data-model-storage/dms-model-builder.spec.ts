@@ -153,7 +153,7 @@ describe('DataModelStorageBuilderServiceTest', () => {
           },
         },
         {
-          externalId: 'Post_User_authors_1',
+          externalId: 'Post_authors_1',
           allowNode: false,
           allowEdge: true,
           properties: {

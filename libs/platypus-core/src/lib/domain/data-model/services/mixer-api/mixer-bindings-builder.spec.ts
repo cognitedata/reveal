@@ -146,7 +146,7 @@ describe('DataModelStorageBuilderServiceTest', () => {
                 connection: {
                   edgeFilter: {
                     hasData: {
-                      models: [['app-dev-test-1', 'Post_User_authors_1']],
+                      models: [['app-dev-test-1', 'Post_authors_1']],
                     },
                   },
                   outwards: true,

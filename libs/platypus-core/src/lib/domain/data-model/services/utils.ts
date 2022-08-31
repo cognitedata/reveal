@@ -21,7 +21,7 @@ export const getOneToManyModelName = (
   referencingField: DataModelTypeDefsField,
   modelVersion: string
 ) => {
-  return `${referencingType.name}_${referencingField.type.name}_${referencingField.name}_${modelVersion}`;
+  return `${referencingType.name}_${referencingField.name}_${modelVersion}`;
 };
 
 export const isInlineType = (typeDef: DataModelTypeDefsType): boolean => {
