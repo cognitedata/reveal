@@ -197,16 +197,21 @@ const annotatorWrapperSlice = createSlice({
       }
     },
     onCreateRegion(state, action: PayloadAction<AnnotatorNewRegion>) {
-      state.temporaryRegion = action.payload;
-
       // update last shape and collection name if label is available
-      if (action.payload.annotationLabelOrText) {
+      if (
+        action.payload.annotationLabelOrText &&
+        (!state.temporaryRegion?.annotationLabelOrText ||
+          (state.temporaryRegion?.annotationLabelOrText &&
+            state.temporaryRegion?.annotationLabelOrText !==
+              action.payload.annotationLabelOrText)) // last shape should only be set only if tempRegion label is empty or if it exists provided region label is different from that
+      ) {
         if (isAnnotatorPointRegion(action.payload)) {
           updateLastCollectionName(state, action.payload.annotationLabelOrText);
         } else {
           updateLastShape(state, action.payload.annotationLabelOrText);
         }
       }
+      state.temporaryRegion = action.payload;
 
       if (isAnnotatorPointRegion(action.payload)) {
         if (state.isCreatingKeypointCollection && state.lastCollectionId) {
@@ -244,13 +249,14 @@ const annotatorWrapperSlice = createSlice({
 
       // if updated region same as temp region, update temp region in state
       if (state.temporaryRegion && regionId === state.temporaryRegion.id) {
-        state.temporaryRegion = {
-          ...state.temporaryRegion,
-          ...action.payload,
-        };
-
         // update last shape and collection name if label changed on a temporary annotation (before clicking create button)
-        if (action.payload.annotationLabelOrText) {
+        if (
+          action.payload.annotationLabelOrText &&
+          (!state.temporaryRegion?.annotationLabelOrText ||
+            (state.temporaryRegion?.annotationLabelOrText &&
+              state.temporaryRegion?.annotationLabelOrText !==
+                action.payload.annotationLabelOrText)) // last shape should only be set only if tempRegion label is empty or if it exists provided region label is different from that
+        ) {
           if (isAnnotatorPointRegion(action.payload)) {
             updateLastCollectionName(
               state,
@@ -260,6 +266,11 @@ const annotatorWrapperSlice = createSlice({
             updateLastShape(state, action.payload.annotationLabelOrText);
           }
         }
+
+        state.temporaryRegion = {
+          ...state.temporaryRegion,
+          ...action.payload,
+        };
 
         if (
           isAnnotatorPointRegion(action.payload) &&

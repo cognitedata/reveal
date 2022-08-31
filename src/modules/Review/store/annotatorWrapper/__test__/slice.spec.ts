@@ -1390,6 +1390,38 @@ describe('Test annotator slice', () => {
                 .lastCollectionName
             ).toEqual(updatedRegion.annotationLabelOrText);
           });
+          /**
+           * This scenario makes sure that seamless predefined shape/collection creation and using them while annotating.
+           * This ensures the case where user navigates to annotation settings to create predefined annotation but there user changes the prefilled text from the dropdown
+           * The label user changed to there, should be prefilled when user comes back to image preview to user the predefined shape/keypoint he just created
+           */
+          test('should not update last collection if tempRegion and provided region has the same label', () => {
+            const previousState = {
+              ...modifiedInitialStateDuringKeypointCreation,
+              temporaryRegion: {
+                ...tempPointRegionWithLabels,
+                id: 'k3',
+                keypointLabel: '',
+              },
+            };
+
+            const updatedRegion = {
+              // this will ensure that new keypoint will not be created due to missing keypoint label
+              ...tempPointRegionWithLabels,
+              keypointLabel: '',
+              x: 0.1,
+              y: 0.7,
+            };
+
+            isSameAsTempRegionOnUpdateKeypointRegion(
+              previousState,
+              updatedRegion as AnnotatorPointRegion
+            );
+            expect(
+              reducer(previousState, onUpdateRegion(updatedRegion))
+                .lastCollectionName
+            ).toEqual(previousState.lastCollectionName);
+          });
         });
         describe('when provided region is not a point region', () => {
           test('when provided region label is of an invalid predefined shape', () => {
@@ -1444,6 +1476,28 @@ describe('Test annotator slice', () => {
               reducer(previousState, onUpdateRegion(tempBoxRegionWithLabels))
                 .lastShape
             ).toStrictEqual(tempBoxRegionWithLabels.annotationLabelOrText);
+          });
+          test('should not update shape when temp region and provided region has the same label', () => {
+            const previousState: AnnotatorWrapperState = {
+              ...modifiedInitialState,
+              temporaryRegion: tempBoxRegionWithLabels,
+            };
+
+            const updatedRegion = {
+              ...tempBoxRegionWithLabels,
+              w: 0.1,
+              h: 0.5,
+              x: 0.6,
+              y: 0.1,
+            };
+
+            expect(
+              reducer(previousState, onUpdateRegion(updatedRegion))
+                .temporaryRegion
+            ).toStrictEqual(updatedRegion);
+            expect(
+              reducer(previousState, onUpdateRegion(updatedRegion)).lastShape
+            ).toStrictEqual(previousState.lastShape);
           });
         });
       });
