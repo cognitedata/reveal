@@ -26,6 +26,7 @@ describe('useRuns', () => {
   test('Returns runs on success', async () => {
     useSDK.mockReturnValue({
       get: () => Promise.resolve({ data: mockDataRunsResponse }),
+      project: 'test-project',
     });
     const { result, waitFor } = renderHook(() => useRuns(externalId), {
       wrapper,
@@ -67,6 +68,7 @@ describe('useFilteredRuns', () => {
   test('Returns runs on success', async () => {
     useSDK.mockReturnValue({
       post: jest.fn(() => Promise.resolve({ data: mockDataRunsResponse })),
+      project: 'test-project',
     });
     const params = {
       externalId: 'external_id_1',
@@ -79,14 +81,17 @@ describe('useFilteredRuns', () => {
       expect(result.current.data?.runs).toBeDefined();
     });
     expect(useSDK().post).toHaveBeenCalledTimes(1);
-    expect(useSDK().post).toHaveBeenCalledWith(`${getBaseUrl('')}/runs/list`, {
-      data: {
-        filter: { externalId: params.externalId },
-        cursor: undefined,
-        limit: DEFAULT_RUN_LIMIT,
-      },
-      withCredentials: true,
-    });
+    expect(useSDK().post).toHaveBeenCalledWith(
+      `${getBaseUrl('test-project')}/runs/list`,
+      {
+        data: {
+          filter: { externalId: params.externalId },
+          cursor: undefined,
+          limit: DEFAULT_RUN_LIMIT,
+        },
+        withCredentials: true,
+      }
+    );
     expect(result.current.data?.runs.length).toEqual(
       mockDataRunsResponse.items.length
     );

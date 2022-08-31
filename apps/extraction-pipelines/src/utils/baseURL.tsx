@@ -22,10 +22,9 @@ const createExtPipePath = (
 const get = async <D extends object>(
   sdk: CogniteClient,
   route: string,
-  project: string,
   params = ''
 ) => {
-  return sdk.get<D>(`${getBaseUrl(project)}${route}${params}`, {
+  return sdk.get<D>(`${getBaseUrl(sdk.project)}${route}${params}`, {
     withCredentials: true,
   });
 };
@@ -33,11 +32,10 @@ const get = async <D extends object>(
 const post = async <Response extends object, D>(
   sdk: CogniteClient,
   route: string,
-  project: string,
   data: D,
   params = ''
 ) => {
-  return sdk.post<Response>(`${getBaseUrl(project)}${route}${params}`, {
+  return sdk.post<Response>(`${getBaseUrl(sdk.project)}${route}${params}`, {
     data,
     withCredentials: true,
   });

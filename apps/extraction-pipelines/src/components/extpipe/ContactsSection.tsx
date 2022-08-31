@@ -8,7 +8,6 @@ import { ContactsDialog, isOwnerRole } from 'components/extpipe/ContactsDialog';
 import styled from 'styled-components';
 import { Section } from 'components/extpipe/Section';
 import { Icon } from '@cognite/cogs.js';
-import { getProject } from '@cognite/cdf-utilities';
 import { useTranslation } from 'common';
 interface ContactsViewProps {
   canEdit: boolean;
@@ -18,11 +17,10 @@ export const ContactsSection: FunctionComponent<ContactsViewProps> = ({
   canEdit,
 }) => {
   const { t } = useTranslation();
-  const project = getProject();
   const { extpipe: selected } = useSelectedExtpipe();
   const { data: extpipe } = useExtpipeById(selected?.id);
   const [showModal, setShowModal] = useState(false);
-  if (!extpipe || !project) {
+  if (!extpipe) {
     return <></>;
   }
   const { contacts } = extpipe;

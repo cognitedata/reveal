@@ -16,7 +16,7 @@ type Event =
   | { t: 'Filter'; field: string; value: any }
   | { t: 'Search'; query: string }
   | { t: 'Action.Copy'; copyType: string }
-  | { t: 'Overview'; tenant: string }
+  | { t: 'Overview' }
   | { t: 'Navigation'; href: string }
   | { t: 'Extraction pipeline.Details'; id: number }
   | { t: 'Extraction pipeline.Health'; id: number };

@@ -7,7 +7,6 @@ import { RunStatusAPI } from 'model/Status';
 import { mapStatusRow } from 'utils/runsUtils';
 import { useCallback } from 'react';
 import { useSDK } from '@cognite/sdk-provider';
-import { getProject } from '@cognite/cdf-utilities';
 
 export const useRuns = (
   externalId?: string,
@@ -15,17 +14,10 @@ export const useRuns = (
   limit?: number
 ) => {
   const sdk = useSDK();
-  const project = getProject();
   return useQuery<RunsAPIResponse, ErrorObj>(
-    [project, externalId, nextCursor],
+    ['runs', externalId, nextCursor],
     () => {
-      return getRuns(
-        sdk,
-        project ?? '',
-        externalId ?? '',
-        nextCursor ?? '',
-        limit
-      );
+      return getRuns(sdk, externalId ?? '', nextCursor ?? '', limit);
     },
     {
       enabled: !!externalId && nextCursor !== null,
@@ -36,7 +28,6 @@ export const useRuns = (
 
 export const useFilteredRuns = (params: CreateRunFilterParam) => {
   const sdk = useSDK();
-  const project = getProject();
   const data = createRunsFilter(params);
   return useQuery<
     RunsAPIResponse,
@@ -44,7 +35,7 @@ export const useFilteredRuns = (params: CreateRunFilterParam) => {
     { runs: RunUI[]; nextCursor?: string }
   >(
     [
-      project,
+      'runs',
       data.cursor,
       data.filter.externalId,
       data.filter?.statuses,
@@ -53,7 +44,7 @@ export const useFilteredRuns = (params: CreateRunFilterParam) => {
       data.filter.createdTime?.max,
     ],
     () => {
-      return getFilteredRuns(sdk, project ?? '', data);
+      return getFilteredRuns(sdk, data);
     },
     {
       enabled: !!data.filter.externalId,

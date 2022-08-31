@@ -18,7 +18,6 @@ export const createParams = (
 
 export const getRuns = async (
   sdk: CogniteClient,
-  project: string,
   externalId: string,
   nextCursor: Nullable<string>,
   limit: number = DEFAULT_RUN_LIMIT
@@ -26,7 +25,6 @@ export const getRuns = async (
   const response = await get<RunsAPIResponse>(
     sdk,
     `/runs`,
-    project,
     createParams(externalId, nextCursor, limit)
   );
   return response.data;
@@ -47,13 +45,11 @@ export interface FilteredRunsParams {
 
 export const getFilteredRuns = async (
   sdk: CogniteClient,
-  project: string,
   data: FilteredRunsParams
 ): Promise<RunsAPIResponse> => {
   const response = await post<RunsAPIResponse, FilteredRunsParams>(
     sdk,
     `/runs/list`,
-    project,
     data
   );
   return response.data;

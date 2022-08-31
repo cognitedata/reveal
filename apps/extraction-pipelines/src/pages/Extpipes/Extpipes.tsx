@@ -22,7 +22,6 @@ import { styleScope } from 'styles/styleScope';
 import { CreateExtpipe } from 'pages/create/CreateExtpipe';
 
 import { trackUsage } from 'utils/Metrics';
-import { getProject } from '@cognite/cdf-utilities';
 import { useTranslation } from 'common';
 
 export const LEARNING_AND_RESOURCES_URL: Readonly<string> =
@@ -56,12 +55,11 @@ type Props = OwnProps;
 
 const Extpipes: FunctionComponent<Props> = () => {
   const { t } = useTranslation();
-  const project = getProject();
   const { extpipeTableColumns } = getExtpipeTableColumns(t);
 
   useEffect(() => {
-    trackUsage({ t: 'Overview', tenant: project! });
-  }, [project]);
+    trackUsage({ t: 'Overview' });
+  }, []);
 
   const {
     data: extpipes,

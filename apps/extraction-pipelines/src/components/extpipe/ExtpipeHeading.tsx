@@ -12,17 +12,15 @@ import { EXTPIPES_WRITES } from 'model/AclAction';
 import StatusMarker from 'components/extpipes/cols/StatusMarker';
 import { calculateStatus } from 'utils/extpipeUtils';
 import { createExtPipePath } from 'utils/baseURL';
-import { getProject } from '@cognite/cdf-utilities';
 import { useTranslation } from 'common';
 
 export const ExtpipeHeading: FunctionComponent = () => {
   const { t } = useTranslation();
-  const project = getProject();
   const { extpipe: selected } = useSelectedExtpipe();
   const { data: extpipe } = useExtpipeById(selected?.id);
   const perm = useOneOfPermissions(EXTPIPES_WRITES);
   const canEdit = perm.data;
-  if (!extpipe || !project) {
+  if (!extpipe) {
     return <></>;
   }
 
@@ -49,7 +47,7 @@ export const ExtpipeHeading: FunctionComponent = () => {
             name="name"
             defaultValues={{ name: extpipe?.name }}
             schema={nameSchema}
-            updateFn={rootUpdate({ extpipe, name: 'name', project })}
+            updateFn={rootUpdate({ extpipe, name: 'name' })}
             label={t('ext-pipeline-name')}
             viewComp={<StyledTitle level={1}>{extpipe.name}</StyledTitle>}
             canEdit={canEdit}

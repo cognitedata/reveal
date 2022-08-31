@@ -1,5 +1,5 @@
 import React, { FunctionComponent, useState, ChangeEvent } from 'react';
-import { getProject, isValidEmail } from '@cognite/cdf-utilities';
+import { isValidEmail } from '@cognite/cdf-utilities';
 import { useSelectedExtpipe } from 'hooks/useSelectedExtpipe';
 import { useExtpipeById } from 'hooks/useExtpipe';
 import styled from 'styled-components';
@@ -25,13 +25,11 @@ export const ContactsDialog: FunctionComponent<ContactsSectionProps> = ({
   const { t } = useTranslation();
   const { extpipe } = useSelectedExtpipe();
   const { data: current } = useExtpipeById(extpipe?.id);
-  const project = getProject();
   const { mutate } = useDetailsUpdate();
   const [showErrors, setShowErrors] = useState(false);
   const onConfirm = async (updatedContacts: User[]) => {
-    if (!current || !project) return;
+    if (!current) return;
     const items = createUpdateSpec({
-      project,
       id: current.id,
       fieldValue: updatedContacts,
       fieldName: 'contacts',

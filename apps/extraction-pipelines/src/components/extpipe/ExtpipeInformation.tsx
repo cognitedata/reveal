@@ -17,7 +17,6 @@ import {
   metaDescriptionSchema,
   sourceSchema,
 } from 'utils/validation/extpipeSchemas';
-import { getProject } from '@cognite/cdf-utilities';
 import { useTranslation } from 'common';
 import { DetailFieldNames } from 'model/Extpipe';
 
@@ -29,11 +28,10 @@ export const ExtpipeInformation: FunctionComponent<ExtpipeInformationProps> = ({
   canEdit,
 }) => {
   const { t } = useTranslation();
-  const project = getProject();
   const { extpipe: selected } = useSelectedExtpipe();
   const { data: extpipe } = useExtpipeById(selected?.id);
 
-  if (!extpipe || !project) {
+  if (!extpipe) {
     return null;
   }
 
@@ -49,7 +47,7 @@ export const ExtpipeInformation: FunctionComponent<ExtpipeInformationProps> = ({
           schema={metaDescriptionSchema}
           defaultValues={{ description: extpipe?.description }}
           fullWidth
-          updateFn={rootUpdate({ extpipe, name: 'description', project })}
+          updateFn={rootUpdate({ extpipe, name: 'description' })}
           marginBottom
           showLabel
         />
@@ -61,7 +59,7 @@ export const ExtpipeInformation: FunctionComponent<ExtpipeInformationProps> = ({
           label={t('source')}
           canEdit={canEdit}
           schema={sourceSchema}
-          updateFn={rootUpdate({ extpipe, name: 'source', project })}
+          updateFn={rootUpdate({ extpipe, name: 'source' })}
           defaultValues={{
             source: extpipe?.source,
           }}
@@ -78,7 +76,7 @@ export const ExtpipeInformation: FunctionComponent<ExtpipeInformationProps> = ({
           schema={yup.object().shape(externalIdRule)}
           defaultValues={{ externalId: extpipe?.externalId }}
           fullWidth
-          updateFn={rootUpdate({ extpipe, name: 'externalId', project })}
+          updateFn={rootUpdate({ extpipe, name: 'externalId' })}
           marginBottom
           showLabel
         />

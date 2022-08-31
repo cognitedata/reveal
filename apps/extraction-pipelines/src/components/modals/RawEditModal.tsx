@@ -26,7 +26,6 @@ import {
 } from 'hooks/useRawDBAndTables';
 import styled from 'styled-components';
 import { MissingCapabilityBox } from 'components/accessCheck/CapabilityCheck';
-import { getProject } from '@cognite/cdf-utilities';
 import { useTranslation } from 'common';
 
 interface RawEditModalProps {
@@ -44,7 +43,6 @@ export const RawEditModal: FunctionComponent<RawEditModalProps> = ({
   close,
 }: PropsWithChildren<RawEditModalProps>) => {
   const { t } = useTranslation();
-  const project = getProject();
   const { data: databases, isError } = useRawDBAndTables();
   const { extpipe: selected } = useSelectedExtpipe();
   const { data: storedExtpipe } = useExtpipeById(selected?.id);
@@ -68,9 +66,8 @@ export const RawEditModal: FunctionComponent<RawEditModalProps> = ({
 
   const saveChanges = async (values: ExtpipeRawTable[], errMsg: string) => {
     clearErrors('selectedRawTables');
-    if (storedExtpipe && project) {
+    if (storedExtpipe) {
       const t = createUpdateSpec({
-        project,
         id: storedExtpipe.id,
         fieldValue: values,
         fieldName: 'rawTables',

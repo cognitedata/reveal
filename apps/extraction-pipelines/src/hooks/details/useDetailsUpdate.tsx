@@ -7,13 +7,11 @@ import { useSDK } from '@cognite/sdk-provider';
 
 export type UpdateSpec = {
   id: number;
-  project: string;
   fieldName: ExtpipeFieldName;
   fieldValue: ExtpipeFieldValue;
 };
 
 export type DetailsUpdateContext = {
-  project: string;
   items: ExtpipeUpdateSpec[];
   id: number;
 };
@@ -21,34 +19,30 @@ export const useDetailsUpdate = () => {
   const sdk = useSDK();
   const queryClient = useQueryClient();
   return useMutation<Extpipe, ErrorVariations, DetailsUpdateContext>(
-    ({ project, items }) => {
-      return saveUpdate(sdk, project, items);
+    ({ items }) => {
+      return saveUpdate(sdk, items);
     },
     {
       onMutate: (vars) => {
-        queryClient.cancelQueries(['extpipe', vars.id, vars.project]);
+        queryClient.cancelQueries(['extpipe', vars.id]);
         const previous: Extpipe | undefined = queryClient.getQueryData([
           'extpipe',
           vars.id,
-          vars.project,
         ]);
         if (previous) {
           const fields = mapUpdateToPartialExtpipe(vars);
           const update = Object.assign({}, previous, ...fields);
-          queryClient.setQueryData(['extpipe', vars.id, vars.project], update);
+          queryClient.setQueryData(['extpipe', vars.id], update);
         }
         return previous;
       },
       onError: (_, vars, previous) => {
         if (previous) {
-          queryClient.setQueryData(
-            ['extpipe', vars.id, vars.project],
-            previous
-          );
+          queryClient.setQueryData(['extpipe', vars.id], previous);
         }
       },
       onSettled: (_, __, vars) => {
-        queryClient.invalidateQueries(['extpipe', vars.id, vars.project]);
+        queryClient.invalidateQueries(['extpipe', vars.id]);
       },
     }
   );
@@ -65,12 +59,10 @@ export const mapUpdateToPartialExtpipe = (
 
 export const createUpdateSpec = ({
   id,
-  project,
   fieldName,
   fieldValue,
 }: UpdateSpec): DetailsUpdateContext => {
   return {
-    project,
     id,
     items: [
       {
@@ -83,17 +75,14 @@ export const createUpdateSpec = ({
 type RootUpdateParams = {
   extpipe: Extpipe;
   name: ExtpipeFieldName;
-  project: string;
 };
 export const rootUpdate = ({
   extpipe,
   name,
-  project,
 }: RootUpdateParams): ((field: FieldValues) => DetailsUpdateContext) => {
   return (field: FieldValues) => {
     return createUpdateSpec({
       id: extpipe.id,
-      project,
       fieldValue: field[name],
       fieldName: name,
     });

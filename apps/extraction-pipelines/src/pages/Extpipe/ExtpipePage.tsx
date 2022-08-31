@@ -41,7 +41,6 @@ import { useQueryClient } from 'react-query';
 import { deleteExtractionPipeline } from 'utils/ExtpipesAPI';
 import { ErrorBox } from 'components/error/ErrorBox';
 import { EditModal } from 'components/modals/EditModal';
-import { getProject } from '@cognite/cdf-utilities';
 import { useTranslation } from 'common';
 
 interface ExtpipePageProps {}
@@ -107,7 +106,6 @@ const ExtpipePageComponent: FunctionComponent<ExtpipePageProps> = () => {
   const { path, url } = useRouteMatch();
   const { id } = useParams<RouterParams>();
   const history = useHistory();
-  const project = getProject();
   const queryClient = useQueryClient();
   const { setExtpipe } = useSelectedExtpipe();
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
@@ -138,7 +136,7 @@ const ExtpipePageComponent: FunctionComponent<ExtpipePageProps> = () => {
           }
         );
         setIsDeleteDialogOpen(false);
-        queryClient.invalidateQueries(['extpipes', project]).then(() => {
+        queryClient.invalidateQueries(['extpipes']).then(() => {
           history.push(createExtPipePath());
         });
       })
@@ -155,7 +153,7 @@ const ExtpipePageComponent: FunctionComponent<ExtpipePageProps> = () => {
         );
         setIsDeleteDialogOpen(false);
       });
-  }, [extpipe, history, project, queryClient, sdk, t]);
+  }, [extpipe, history, queryClient, sdk, t]);
 
   const [dropdownVisible, setDropdownVisible] = useState(false);
 
