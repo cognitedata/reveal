@@ -11,7 +11,7 @@ import { IPotree } from '../types/IPotree';
 import { IPointCloudTreeNodeBase } from './IPointCloudTreeNodeBase';
 import { IPointCloudTreeNode } from './IPointCloudTreeNode';
 import { computeTransformedBoundingBox } from '../utils/bounds';
-import { RenderLayer } from '@reveal/rendering/';
+import { RenderLayer } from '@reveal/rendering';
 
 export class PointCloudOctree extends PointCloudTree {
   potree: IPotree;

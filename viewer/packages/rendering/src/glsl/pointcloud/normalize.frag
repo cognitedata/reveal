@@ -19,7 +19,6 @@ void main() {
 		color = color / color.w;
 	#endif
 
-
 	outputColor = vec4(color.xyz, 1.0);
 
 	gl_FragDepth = depth;

@@ -82,7 +82,7 @@ export function Migration() {
         ssaoQualityHint: (urlParams.get('ssao') ?? undefined) as any,
         continuousModelStreaming: true,
         pointCloudEffects: {
-          pointBlending: (urlParams.get('pointBlending') === "true" ?? undefined)
+          pointBlending: (urlParams.get('pointBlending') === 'true' ?? undefined)
         }
       };
 
