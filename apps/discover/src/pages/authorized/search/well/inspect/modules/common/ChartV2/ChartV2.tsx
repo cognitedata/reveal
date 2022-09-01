@@ -297,7 +297,7 @@ const ChartV2 = React.forwardRef(
         return;
       }
       setTimeout(() => resetChart());
-    }, [renderPlot]);
+    }, [data]);
 
     return (
       <React.Suspense fallback={<Loader darkMode={false} />}>
