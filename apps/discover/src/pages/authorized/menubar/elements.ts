@@ -26,6 +26,11 @@ export const LogoWrapper = styled.div`
 
 export const TopBarLogo = styled(TopBar.Logo)`
   cursor: pointer;
+  svg {
+    width: 30px;
+    margin-left: 12px;
+    margin-right: 10px;
+  }
 `;
 
 export const TopBarNavigationWrapper = styled(TopBar.Navigation)`

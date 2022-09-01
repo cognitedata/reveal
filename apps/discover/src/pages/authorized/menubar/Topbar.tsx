@@ -5,7 +5,7 @@ import * as React from 'react';
 import { batch, useDispatch } from 'react-redux';
 import { useHistory, useLocation } from 'react-router-dom';
 
-import { Graphic, TopBar } from '@cognite/cogs.js';
+import { ProductLogo, TopBar } from '@cognite/cogs.js';
 
 import navigation from 'constants/navigation';
 import { useGlobalMetrics } from 'hooks/useGlobalMetrics';
@@ -75,18 +75,8 @@ export const Topbar: React.FC = () => {
       <TopBarLogo
         onClick={handleLogoClick}
         title="Cognite Discover"
-        logo={
-          <Graphic
-            data-testid="cognite-logo"
-            type="Discover"
-            onClick={handleLogoClick}
-            style={{
-              width: 30,
-              margin: '6px 10px 0 12px',
-              cursor: 'pointer',
-            }}
-          />
-        }
+        data-testid="cognite-logo"
+        logo={<ProductLogo type="Discover" />}
       />
     );
   }, []);
