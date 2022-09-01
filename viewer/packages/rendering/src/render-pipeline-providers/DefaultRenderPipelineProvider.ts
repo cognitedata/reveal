@@ -148,7 +148,7 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider {
         yield* this._pointCloudRenderPipeline.pipeline(renderer);
       }
 
-      this._postProcessingPass.updateRenderObjectsVisability({
+      this._postProcessingPass.updateRenderObjectsVisibility({
         cad: hasStyling,
         pointCloud: this.shouldRenderPointClouds()
       });

@@ -25,7 +25,7 @@ export class PostProcessingPass implements RenderPass {
   private readonly _scene: THREE.Scene;
   private readonly _postProcessingObjects: THREE.Mesh[];
 
-  public updateRenderObjectsVisability(visibilityParameters: PostProcessingObjectsVisibilityParameters): void {
+  public updateRenderObjectsVisibility(visibilityParameters: PostProcessingObjectsVisibilityParameters): void {
     this._postProcessingObjects[0].visible = visibilityParameters.cad.back;
     this._postProcessingObjects[1].visible = visibilityParameters.cad.ghost;
     this._postProcessingObjects[2].visible = visibilityParameters.cad.inFront;

@@ -23,7 +23,7 @@ export class PointCloudRenderPipelineProvider implements RenderPipelineProvider 
   private readonly _standardPass: PointCloudEffectsPass;
   private readonly _sceneHandler: SceneHandler;
 
-  private readonly DepthPassParameters: PointCloudPassParameters = {
+  private static readonly DepthPassParameters: PointCloudPassParameters = {
     material: {
       weighted: false,
       shape: PotreePointShape.Circle,
@@ -33,7 +33,7 @@ export class PointCloudRenderPipelineProvider implements RenderPipelineProvider 
       colorWrite: false
     }
   };
-  private readonly AttributePassParameters: PointCloudPassParameters = {
+  private static readonly AttributePassParameters: PointCloudPassParameters = {
     material: {
       weighted: true,
       shape: PotreePointShape.Circle,
@@ -65,8 +65,11 @@ export class PointCloudRenderPipelineProvider implements RenderPipelineProvider 
     this._renderParameters = renderParameters;
 
     this._standardPass = new PointCloudEffectsPass(sceneHandler);
-    this._depthPass = new PointCloudEffectsPass(sceneHandler, this.DepthPassParameters);
-    this._attributePass = new PointCloudEffectsPass(sceneHandler, this.AttributePassParameters);
+    this._depthPass = new PointCloudEffectsPass(sceneHandler, PointCloudRenderPipelineProvider.DepthPassParameters);
+    this._attributePass = new PointCloudEffectsPass(
+      sceneHandler,
+      PointCloudRenderPipelineProvider.AttributePassParameters
+    );
   }
 
   get pointCloudRenderTargets(): PointCloudRenderTargets {
