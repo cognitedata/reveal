@@ -17,7 +17,13 @@ export type CadGeometryRenderTargets = {
   inFront: THREE.WebGLRenderTarget;
 };
 
-export type PostProcessingPipelineOptions = CadGeometryRenderTargets & {
-  ssaoTexture: THREE.Texture;
-  edges: boolean;
+export type PointCloudRenderTargets = {
+  pointCloud: THREE.WebGLRenderTarget;
 };
+
+export type PostProcessingPipelineOptions = CadGeometryRenderTargets &
+  PointCloudRenderTargets & {
+    ssaoTexture: THREE.Texture;
+    edges: boolean;
+    pointBlending?: boolean;
+  };
