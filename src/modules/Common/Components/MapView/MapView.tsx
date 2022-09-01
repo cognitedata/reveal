@@ -1,5 +1,10 @@
-/* eslint-disable @cognite/no-number-z-index */
-import React, { useMemo, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { FileMapTableProps } from 'src/modules/Common/Components/FileTable/types';
 import { MapFileTable } from 'src/modules/Common/Components/MapFileTable/MapFileTable';
 import styled from 'styled-components';
@@ -19,6 +24,30 @@ const Mapbox = ReactMapboxGl({
   trackResize: true,
 });
 
+const mapStyle = {
+  display: 'flex',
+  width: '100%',
+  height: '100%',
+  overflow: 'hidden',
+};
+
+const flyToOptions = {
+  speed: 0.8,
+};
+
+const circleLayout: MapboxGL.CircleLayout = { visibility: 'visible' };
+const pinStyle = {
+  'circle-radius': 7.5,
+  'circle-stroke-color': 'white',
+  'circle-stroke-width': 1,
+  'circle-color-transition': { duration: 0 },
+};
+
+const circlePaintSelected: MapboxGL.CirclePaint = {
+  'circle-color': '#4A67FB',
+  ...pinStyle,
+};
+
 export const MapView = (props: FileMapTableProps<TableDataItem>) => {
   const [selectedFile, setSelectedFile] = useState<ResultData | undefined>();
   const [popupState, setPopupState] =
@@ -26,6 +55,7 @@ export const MapView = (props: FileMapTableProps<TableDataItem>) => {
   const [mapActive, setMapActive] = useState<boolean>(true);
   const [center, setCenter] = useState<[number, number]>();
   const [zoom] = useState<[number] | undefined>([2]);
+  const mapObj = useRef<MapboxGL.Map | null>(null);
 
   const fitBounds = undefined; // TODO: calculate this based on the provided data
 
@@ -33,85 +63,82 @@ export const MapView = (props: FileMapTableProps<TableDataItem>) => {
     return props.data || [];
   }, [props.data]);
 
-  const handleStyleLoad = (map: MapboxGL.Map) => map.resize();
+  const handleStyleLoad = useCallback((map: MapboxGL.Map) => {
+    map.resize();
+    mapObj.current = map;
+  }, []);
 
-  const mapStyle = {
-    display: 'flex',
-    width: '100%',
-    height: '100%',
-    overflow: 'hidden',
-  };
+  const circlePaint: MapboxGL.CirclePaint = useMemo(() => {
+    return {
+      'circle-color': mapActive ? '#C844DB' : 'grey',
+      ...pinStyle,
+    };
+  }, [mapActive]);
 
-  const flyToOptions = {
-    speed: 0.8,
-  };
+  const features = useMemo(() => {
+    return Object.assign(
+      {},
+      ...files
+        .filter((f: ResultData) => f.geoLocation && f)
+        .map((s: ResultData) => ({
+          [s.id]: s.geoLocation?.geometry.coordinates as [number, number],
+        }))
+    );
+  }, [files]);
 
-  const circleLayout: MapboxGL.CircleLayout = { visibility: 'visible' };
-  const pinStyle = {
-    'circle-radius': 7.5,
-    'circle-stroke-color': 'white',
-    'circle-stroke-width': 1,
-    'circle-color-transition': { duration: 0 },
-  };
-  const circlePaint: MapboxGL.CirclePaint = {
-    'circle-color': mapActive ? '#C844DB' : 'grey',
-    ...pinStyle,
-  };
-
-  const circlePaintSelected: MapboxGL.CirclePaint = {
-    'circle-color': '#4A67FB',
-    ...pinStyle,
-  };
-
-  const features = Object.assign(
-    {},
-    ...files
-      .filter((f: ResultData) => f.geoLocation && f)
-      .map((s: ResultData) => ({
-        [s.id]: s.geoLocation?.geometry.coordinates as [number, number],
-      }))
+  const showMapPopup = useCallback(
+    (fileId: number) => {
+      if (fileId in features && mapActive) {
+        setPopupState('open');
+        setSelectedFile(files.find((file) => file.id === fileId));
+        setCenter(features[fileId.toString()]);
+      } else {
+        setSelectedFile(undefined);
+      }
+    },
+    [files, features, mapActive]
   );
 
-  const showMapPopup = (fileId: number) => {
-    if (fileId in features && mapActive) {
-      setPopupState('open');
-      setSelectedFile(files.find((file) => file.id === fileId));
-      setCenter(features[fileId.toString()]);
-    } else {
-      setSelectedFile(undefined);
-    }
-  };
+  const selectedFileIsInTable = useMemo(() => {
+    return !!(selectedFile && selectedFile.id in features);
+  }, [selectedFile]);
 
-  const selectedFileIsInTable = !!(selectedFile && selectedFile.id in features);
-
-  const handleOnClick = (fileId: number) => {
-    showMapPopup(fileId);
-    const item = files.find((file) => file.id === fileId);
-    if (item) props.onItemClick(item, false);
-  };
+  const handleOnClick = useCallback(
+    (fileId: number) => {
+      showMapPopup(fileId);
+      const item = files.find((file) => file.id === fileId);
+      if (item) props.onItemClick(item, false);
+    },
+    [files, props.onItemClick]
+  );
 
   // set popup visibility based on whether the selected file is within map bounds or not
-  const handleZoomAndDrag = (map: MapboxGL.Map, _: MapboxGL.EventData) => {
-    if (selectedFileIsInTable) {
-      const coords = features[selectedFile!.id.toString()];
-      const bounds = map.getBounds();
-      const isWhithin = bounds.contains(coords);
-      if (isWhithin && !['open', 'close'].includes(popupState)) {
-        setPopupState('open');
-      } else if (!isWhithin && popupState === 'open') {
-        setPopupState('hidden');
+  const handleZoomAndDrag = useCallback(
+    (map: MapboxGL.Map, _: MapboxGL.EventData) => {
+      if (selectedFileIsInTable) {
+        const coords = features[selectedFile!.id.toString()];
+        const bounds = map.getBounds();
+        const isWithin = bounds.contains(coords);
+        if (isWithin && !['open', 'close'].includes(popupState)) {
+          setPopupState('open');
+        } else if (!isWithin && popupState === 'open') {
+          setPopupState('hidden');
+        }
       }
+    },
+    [selectedFileIsInTable, features, selectedFile, popupState]
+  );
+
+  // resize map on rerender
+  useEffect(() => {
+    if (mapObj.current) {
+      mapObj.current?.resize();
     }
-  };
+  });
 
   return (
     <Container>
-      <div
-        style={{
-          width: '400px',
-          paddingRight: '20px',
-        }}
-      >
+      <div>
         <MapFileTable
           {...props}
           mapCallback={showMapPopup}
@@ -120,10 +147,7 @@ export const MapView = (props: FileMapTableProps<TableDataItem>) => {
       </div>
       <div
         style={{
-          width: `calc(100% - 400px)`,
-          paddingRight: '20px',
-          // eslint-disable-next-line  @cognite/no-number-z-index
-          zIndex: 0, // HACK: popup overflows the map
+          position: 'relative',
         }}
       >
         <Mapbox
@@ -187,8 +211,11 @@ export const MapView = (props: FileMapTableProps<TableDataItem>) => {
 
 const Container = styled.div`
   width: 100%;
-  height: 99%;
-  display: flex;
+  height: 100%;
+  display: grid;
+  grid-template-rows: 100%;
+  grid-template-columns: 400px 1fr;
+  grid-column-gap: 20px;
 
   .mapboxgl-popup {
     position: absolute;
