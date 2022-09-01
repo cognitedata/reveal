@@ -12,6 +12,7 @@ export const deleteCollection = (
   collectionId: number
 ) => {
   const collection = state.collections.byId[collectionId];
+  const { keypointIds } = collection;
   if (collection) {
     delete state.collections.byId[collection.id];
     state.collections.allIds = Object.keys(state.collections.byId).map(
@@ -25,22 +26,15 @@ export const deleteCollection = (
       );
     }
 
-    if (collection.keypointIds.length) {
-      const selectedKeyPointIds: string[] = [];
-      collection.keypointIds.forEach((id) => {
-        delete state.keypointMap.byId[id];
-
-        // keep track of deleted ids that are also selected
-        if (state.keypointMap.selectedIds.includes(id)) {
-          selectedKeyPointIds.push(id);
-        }
+    if (keypointIds.length) {
+      keypointIds.forEach((deletedKeypointId) => {
+        delete state.keypointMap.byId[deletedKeypointId];
       });
-      state.keypointMap.allIds = Object.keys(state.keypointMap.byId);
-
-      // remove deleted keypoints from selected list
+      // remove deleted keypoint ids from selected list
       state.keypointMap.selectedIds = state.keypointMap.selectedIds.filter(
-        (i: string) => !selectedKeyPointIds.some((j) => j === i)
+        (id: string) => !keypointIds.includes(id)
       );
+      state.keypointMap.allIds = Object.keys(state.keypointMap.byId);
     }
   } else {
     console.warn(
