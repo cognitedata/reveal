@@ -8,7 +8,7 @@ import { DemoWrapper } from '@site/docs/components/DemoWrapper';
 import useBaseUrl from '@docusaurus/useBaseUrl';
 
 The `MeasurementTool` is a measuring tool for point to point distance in 3D models, by clicking to- and from-points. The default measurement unit is meters, but the tool provides callbacks to allow configuring the unit.
-When exiting from the tool, all the measurement will be removed from the `Cognite3DViewer`.
+When exiting from the tool, all the measurement will be removed from the `Cognite3DViewer`. Note that the precision the tool can provide is limited, and the tool should only be used for approximate measurement - not high precision measurement for e.g. construction.
 
 To effectively edit measuring line properties, tool is configurable with `MeasurementOptions` options to set
 - Custom label content for each measurement.
