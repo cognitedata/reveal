@@ -62,50 +62,49 @@ describe('Test annotator slice', () => {
     expect(reducer(undefined, { type: undefined })).toEqual(initialState);
   });
 
-  describe('Test reducers', () => {
-    const gaugeKeypoints: PredefinedKeypoint[] = [
-      {
-        caption: 'left',
-        order: '1',
-        color: 'red',
-      },
-      {
-        caption: 'center',
-        order: '2',
-        color: 'red',
-      },
-      {
-        caption: 'right',
-        order: '3',
-        color: 'red',
-      },
-    ];
-    const valveKeypoints: PredefinedKeypoint[] = [
-      {
-        caption: 'up',
-        order: '1',
-        color: 'green',
-      },
-      {
-        caption: 'down',
-        order: '2',
-        color: 'green',
-      },
-    ];
-    const predefinedKeypointCollectionList = [
-      {
-        id: '1',
-        collectionName: 'gauge',
-        keypoints: gaugeKeypoints,
-        color: 'red',
-      },
-      {
-        id: '2',
-        collectionName: 'valve',
-        keypoints: valveKeypoints,
-        color: 'green',
-      },
-    ];
+  const gaugeKeypoints: PredefinedKeypoint[] = [
+    {
+      caption: 'left',
+      order: '1',
+      color: 'red',
+    },
+    {
+      caption: 'center',
+      order: '2',
+      color: 'red',
+    },
+    {
+      caption: 'right',
+      order: '3',
+      color: 'red',
+    },
+  ];
+  const valveKeypoints: PredefinedKeypoint[] = [
+    {
+      caption: 'up',
+      order: '1',
+      color: 'green',
+    },
+    {
+      caption: 'down',
+      order: '2',
+      color: 'green',
+    },
+  ];
+  const predefinedKeypointCollectionList = [
+    {
+      id: '1',
+      collectionName: 'gauge',
+      keypoints: gaugeKeypoints,
+      color: 'red',
+    },
+    {
+      id: '2',
+      collectionName: 'valve',
+      keypoints: valveKeypoints,
+      color: 'green',
+    },
+  ];
 
   const predefinedShapesList: PredefinedShape[] = [
     {
@@ -118,75 +117,76 @@ describe('Test annotator slice', () => {
     },
   ];
 
-    const modifiedInitialState = {
-      ...initialState,
-      isCreatingKeypointCollection: false,
-      predefinedAnnotations: {
-        predefinedKeypointCollections: predefinedKeypointCollectionList,
-        predefinedShapes: predefinedShapesList,
+  const modifiedInitialState = {
+    ...initialState,
+    isCreatingKeypointCollection: false,
+    predefinedAnnotations: {
+      predefinedKeypointCollections: predefinedKeypointCollectionList,
+      predefinedShapes: predefinedShapesList,
+    },
+    collections: {
+      byId: {
+        1: getDummyKeypointCollectionState({
+          id: 1,
+          label: 'valve',
+          keypointIds: ['V1', 'V2'],
+        }),
       },
-      collections: {
-        byId: {
-          1: getDummyKeypointCollectionState({
-            id: 1,
-            label: 'valve',
-            keypointIds: ['V1', 'V2'],
-          }),
-        },
-        allIds: [1],
-        selectedIds: [1],
+      allIds: [1],
+      selectedIds: [1],
+    },
+    lastCollectionId: 1,
+    lastCollectionName: 'valve',
+    lastShape: 'motor',
+    keypointMap: {
+      byId: {
+        V1: getDummyKeypointState('up'),
+        V2: getDummyKeypointState('down'),
       },
-      lastCollectionId: 1,
-      lastCollectionName: 'valve',
-      lastShape: 'motor',
-      keypointMap: {
-        byId: {
-          V1: getDummyKeypointState('up'),
-          V2: getDummyKeypointState('down'),
-        },
-        allIds: ['V1', 'V2'],
-        selectedIds: ['V2'],
-      },
-    };
+      allIds: ['V1', 'V2'],
+      selectedIds: ['V2'],
+    },
+  };
 
-    const modifiedInitialStateDuringKeypointCreation = {
-      ...initialState,
-      isCreatingKeypointCollection: true,
-      predefinedAnnotations: {
-        predefinedKeypointCollections: predefinedKeypointCollectionList,
-        predefinedShapes: predefinedShapesList,
+  const modifiedInitialStateDuringKeypointCreation = {
+    ...initialState,
+    isCreatingKeypointCollection: true,
+    predefinedAnnotations: {
+      predefinedKeypointCollections: predefinedKeypointCollectionList,
+      predefinedShapes: predefinedShapesList,
+    },
+    collections: {
+      byId: {
+        1: getDummyKeypointCollectionState({
+          id: 1,
+          label: 'valve',
+          keypointIds: ['V1', 'V2'],
+        }),
+        2: getDummyKeypointCollectionState({
+          id: 2,
+          label: 'gauge',
+          keypointIds: ['k1', 'k2'],
+        }),
       },
-      collections: {
-        byId: {
-          1: getDummyKeypointCollectionState({
-            id: 1,
-            label: 'valve',
-            keypointIds: ['V1', 'V2'],
-          }),
-          2: getDummyKeypointCollectionState({
-            id: 2,
-            label: 'gauge',
-            keypointIds: ['k1', 'k2'],
-          }),
-        },
-        allIds: [1, 2],
-        selectedIds: [2],
+      allIds: [1, 2],
+      selectedIds: [2],
+    },
+    lastCollectionId: 2,
+    lastCollectionName: 'gauge',
+    lastShape: 'motor',
+    keypointMap: {
+      byId: {
+        V1: getDummyKeypointState('up'),
+        V2: getDummyKeypointState('down'),
+        k1: getDummyKeypointState('left'),
+        k2: getDummyKeypointState('right'),
       },
-      lastCollectionId: 2,
-      lastCollectionName: 'gauge',
-      lastShape: 'motor',
-      keypointMap: {
-        byId: {
-          V1: getDummyKeypointState('up'),
-          V2: getDummyKeypointState('down'),
-          k1: getDummyKeypointState('left'),
-          k2: getDummyKeypointState('right'),
-        },
-        allIds: ['V1', 'V2', 'k1', 'k2'],
-        selectedIds: ['k1'],
-      },
-    };
+      allIds: ['V1', 'V2', 'k1', 'k2'],
+      selectedIds: ['k1'],
+    },
+  };
 
+  describe('Test reducers', () => {
     describe('Test selectCollection reducer', () => {
       test('if collection is already selected should deselect', () => {
         const previousState = {
