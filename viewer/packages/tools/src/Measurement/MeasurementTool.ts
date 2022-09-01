@@ -308,6 +308,7 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
     );
     if (index > -1) {
       this._measurements[index].updateLineWidth(lineWidth);
+      this._viewer.requestRedraw();
     } else {
       throw new Error('Measurement not found');
     }
@@ -324,6 +325,7 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
     );
     if (index > -1) {
       this._measurements[index].updateLineColor(color);
+      this._viewer.requestRedraw();
     } else {
       throw new Error('Measurement not found');
     }
