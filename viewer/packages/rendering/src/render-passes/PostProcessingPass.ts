@@ -3,13 +3,14 @@
  */
 
 import * as THREE from 'three';
-import { transparentBlendOptions } from './types';
+import { PostProcessingObjectsVisibilityParameters, transparentBlendOptions } from './types';
 import { RenderPass } from '../RenderPass';
 import {
   createFullScreenTriangleMesh,
   getBlitMaterial,
   getDepthBlendBlitMaterial,
   getLayerMask,
+  getPointCloudPostProcessingMaterial,
   RenderLayer
 } from '../utilities/renderUtilities';
 import { PostProcessingPipelineOptions } from '../render-pipeline-providers/types';
@@ -24,10 +25,11 @@ export class PostProcessingPass implements RenderPass {
   private readonly _scene: THREE.Scene;
   private readonly _postProcessingObjects: THREE.Mesh[];
 
-  public updateRenderObjectsVisability(hasStyling: { back: boolean; inFront: boolean; ghost: boolean }): void {
-    this._postProcessingObjects[0].visible = hasStyling.back;
-    this._postProcessingObjects[1].visible = hasStyling.ghost;
-    this._postProcessingObjects[2].visible = hasStyling.inFront;
+  public updateRenderObjectsVisibility(visibilityParameters: PostProcessingObjectsVisibilityParameters): void {
+    this._postProcessingObjects[0].visible = visibilityParameters.cad.back;
+    this._postProcessingObjects[1].visible = visibilityParameters.cad.ghost;
+    this._postProcessingObjects[2].visible = visibilityParameters.cad.inFront;
+    this._postProcessingObjects[3].visible = visibilityParameters.pointCloud;
   }
 
   constructor(scene: THREE.Scene, postProcessingPipelineOptions: PostProcessingPipelineOptions) {
@@ -44,8 +46,19 @@ export class PostProcessingPass implements RenderPass {
 
     // Normal un-styled opaque geometry
     const backBlitObject = createFullScreenTriangleMesh(backBlitMaterial);
-    backBlitObject.name = 'Back Styling';
+    backBlitObject.name = 'Back Styling blit object';
     backBlitObject.renderOrder = -1;
+
+    const pointcloudBlitMaterial = getPointCloudPostProcessingMaterial({
+      texture: postProcessingPipelineOptions.pointCloud.texture,
+      depthTexture: postProcessingPipelineOptions.pointCloud.depthTexture,
+      pointBlending: postProcessingPipelineOptions?.pointBlending ?? false
+    });
+
+    // rendered pointcloud data
+    const pointcloudBlitObject = createFullScreenTriangleMesh(pointcloudBlitMaterial);
+    pointcloudBlitObject.name = 'Point Cloud blit object';
+    pointcloudBlitObject.renderOrder = 0;
 
     const ghostBlitMaterial = getBlitMaterial({
       texture: postProcessingPipelineOptions.ghost.texture,
@@ -55,7 +68,7 @@ export class PostProcessingPass implements RenderPass {
 
     // Ghosted geometry
     const ghostBlitObject = createFullScreenTriangleMesh(ghostBlitMaterial);
-    ghostBlitObject.name = 'Ghost Styling';
+    ghostBlitObject.name = 'Ghost Styling blit object';
     ghostBlitObject.renderOrder = 1;
 
     const inFrontBlitMaterial = getDepthBlendBlitMaterial({
@@ -70,14 +83,15 @@ export class PostProcessingPass implements RenderPass {
 
     //In front geometry
     const inFrontBlitObject = createFullScreenTriangleMesh(inFrontBlitMaterial);
-    inFrontBlitObject.name = 'In-front Styling';
+    inFrontBlitObject.name = 'In-front Styling blit object';
     inFrontBlitObject.renderOrder = 2;
 
     this._scene.add(backBlitObject);
+    this._scene.add(pointcloudBlitObject);
     this._scene.add(ghostBlitObject);
     this._scene.add(inFrontBlitObject);
 
-    this._postProcessingObjects = [backBlitObject, ghostBlitObject, inFrontBlitObject];
+    this._postProcessingObjects = [backBlitObject, ghostBlitObject, inFrontBlitObject, pointcloudBlitObject];
   }
 
   public render(renderer: THREE.WebGLRenderer, camera: THREE.Camera): void {

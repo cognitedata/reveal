@@ -608,8 +608,7 @@ export class Cognite3DViewer {
     const model = new CognitePointCloudModel(modelId, revisionId, pointCloudNode);
     this._models.push(model);
 
-    this._sceneHandler.addCustomObject(model);
-    this._extraObjects.push(model);
+    this._sceneHandler.addPointCloudModel(model, pointCloudNode.potreeNode.modelIdentifier);
 
     return model;
   }
@@ -642,7 +641,7 @@ export class Cognite3DViewer {
 
       case 'pointcloud':
         const pcModel = model as CognitePointCloudModel;
-        this._sceneHandler.removeCustomObject(pcModel);
+        this._sceneHandler.removePointCloudModel(pcModel);
         this.revealManager.removeModel(model.type, pcModel.pointCloudNode);
         break;
 
@@ -1177,9 +1176,6 @@ export class Cognite3DViewer {
     });
 
     this._extraObjects.forEach(obj => {
-      if (obj instanceof CognitePointCloudModel) {
-        return;
-      }
       bbox.setFromObject(obj);
       if (!bbox.isEmpty()) {
         combinedBbox.union(bbox);
@@ -1289,7 +1285,11 @@ function createRevealManagerOptions(viewerOptions: Cognite3DViewerOptions): Reve
     antiAliasing,
     multiSampleCountHint: multiSampleCount,
     ssaoRenderParameters,
-    edgeDetectionParameters
+    edgeDetectionParameters,
+    pointCloudParameters: {
+      pointBlending:
+        viewerOptions?.pointCloudEffects?.pointBlending ?? defaultRenderOptions.pointCloudParameters.pointBlending
+    }
   };
   return revealOptions;
 }

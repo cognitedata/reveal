@@ -19,6 +19,7 @@ export {
 } from './src/rendering/types';
 
 export { RenderMode } from './src/rendering/RenderMode';
+export { RenderLayer } from './src/utilities/renderUtilities';
 export { coverageShaders } from './src/rendering/shaders';
 
 export { Materials } from './src/rendering/materials';
