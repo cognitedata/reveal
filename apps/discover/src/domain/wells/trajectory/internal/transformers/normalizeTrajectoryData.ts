@@ -1,5 +1,4 @@
 import { toAngel } from 'utils/units/toAngel';
-import { toDistance } from 'utils/units/toDistance';
 
 import { TrajectoryData } from '@cognite/sdk-wells';
 
@@ -30,12 +29,14 @@ export const normalizeTrajectoryData = (
     inclinationUnit: toAngel(inclinationUnit),
     azimuthUnit: toAngel(azimuthUnit),
     trueVerticalDepthUnit: userPreferredUnit,
-    equivalentDepartureUnit: toDistance(equivalentDepartureUnit),
-    offsetUnit: toDistance(offsetUnit),
+    equivalentDepartureUnit: userPreferredUnit,
+    offsetUnit: userPreferredUnit,
     doglegSeverityUnit: toDoglegSeverityUnitInternal(doglegSeverityUnit),
     rows: convertTrajectoryRowsToUserPreferredUnit(rows, userPreferredUnit, {
       trueVerticalDepthUnit,
       measuredDepthUnit,
+      equivalentDepartureUnit,
+      offsetUnit,
     }),
   };
 };
