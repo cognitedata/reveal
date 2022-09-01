@@ -104,7 +104,7 @@ export const AnnotationTableRow = ({
                   ? 'verified'
                   : reviewAnnotation.annotation.status === Status.Rejected
                   ? 'rejected'
-                  : undefined
+                  : 'suggested' // an invalid key to set all the segments inactive
               }
               onButtonClicked={(key) => {
                 if (key === 'verified') {
