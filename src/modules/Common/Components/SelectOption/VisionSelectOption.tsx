@@ -35,6 +35,7 @@ const CustomOptionContainer = styled.div`
   grid-template-rows: 100%;
   grid-column-gap: 10px;
   place-items: center start;
+  width: 100%;
 `;
 
 const CustomOptionLabel = styled.div`
