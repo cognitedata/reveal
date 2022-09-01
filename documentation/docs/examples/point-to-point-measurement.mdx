@@ -117,31 +117,17 @@ To change existing measurement line width or color, use `MeasurementTool.updateL
 // import { MeasurementTool } from '@cognite/reveal/tools';
 
 const measurementTool = new MeasurementTool(viewer);
-let measurementIterator;
-measurementTool.on('ended',
-  () => {
-    //Changes measurement line color & width to random values.
-    setInterval(() => {
-      const measurement = measurementIterator.next().value[1];
-      const color = Math.floor(Math.random() * 16777215);
-      measurementTool.updateLineColor(measurement, new THREE.Color(color));
-
-      //Update line width
-      const lineWidth = (Math.random() * 1.0) + 0.2;
-      measurementTool.updateLineWidth(measurement, lineWidth);
-      viewer.requestRedraw();
-    }, 2000);
-  });
+setInterval(() => {
+  const measurements = measurementTool.getAllMeasurements();
+  console.log(measurements);
+  for (const measurement of measurements) {
+    const color = Math.floor(Math.random() * 16777215);
+    const lineWidth = (Math.random() * 1.0) + 0.2;
+    measurementTool.updateLineColor(measurement, new THREE.Color(color));
+    measurementTool.updateLineWidth(measurement, lineWidth);
+  }
+}, 200);
 measurementTool.enterMeasurementMode();
-
-// Add few measurements
-
-
-//get all measurements
-setTimeout(() => {
-  measurementIterator = measurementTool.getAllMeasurements().entries();
-  measurementTool.exitMeasurementMode();
-}, 8000);
 ```
 
 ### Remove measurement
