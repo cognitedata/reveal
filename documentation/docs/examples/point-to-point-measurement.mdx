@@ -15,14 +15,16 @@ To effectively edit measuring line properties, tool is configurable with `Measur
 - Size of line width in meters.
 - Color of line.
 
-:::note
-Recommended: `CameraControlsOptions.changeCameraTargetOnClick` should be set to `false` to avoid click event registering for camera when `MeasurementTool` is active. Also avoid any custom click-handler that might interfere with the measurement tool.
+:::tip
+`CameraControlsOptions.changeCameraTargetOnClick` should be set to `false` to avoid click event registering for camera when `MeasurementTool` is active. Also avoid any custom click-handler that might interfere with the measurement tool.
 :::
 
 <DemoWrapper name="Cognite3DViewerDemo" />
 
 ## Point to point distance measurment
-To enter point-to-point measurement mode, use `MeasurementTool.enterMeasurementMode()`. This will register events for handling mouse clicks and touch events to allow placing the measurement end-points.
+To enter point-to-point measurement mode, use `MeasurementTool.enterMeasurementMode()`. This will register events for handling mouse clicks and touch events to allow placing the measurement end-points. Note that the tool is optimized for use with mouse.
+
+To exit measurement mode, call `exitMeasurementMode()`. The tool will also exit measurement mode if user presses Escape key.
 
 ```jsx runnable
 // import { MeasurementTool } from '@cognite/reveal/tools';
@@ -32,7 +34,8 @@ measurementTool.enterMeasurementMode();
 ```
 
 ## Events
-The tool exposes events for subscribing to measurement start, end & added.
+The tool exposes events for subscribing to measurement start, end & added. In the below example, the mouse cursor is changed to a cross-hair while measuring.
+
 ```jsx runnable
 // import { MeasurementTool } from '@cognite/reveal/tools';
 const measurementTool = new MeasurementTool(viewer);
@@ -50,45 +53,11 @@ measurementTool.on('added', (measurement) => {
 measurementTool.enterMeasurementMode();
 ```
 
-## Cancel measurement
-To exit from measurement mode, use `MeasurementTool.exitMeasurementMode()`.
 
-```jsx runnable
-// import { MeasurementTool } from '@cognite/reveal/tools';
-
-const measurementTool = new MeasurementTool(viewer);
-measurementTool.on('ended', () => alert('Measurement is ended'));
-
-measurementTool.enterMeasurementMode();
-
-//Add point to point distance measurement before existing from measurement tool.
-setTimeout(() => {
-  measurementTool.exitMeasurementMode();
-  viewer.requestRedraw();
-}, 10000);
-```
-
-### Cancel active measurement
-To cancel the current/active measurement, the user can use `ESC` key which will kill the active measurement
 
 ### Mode of measurement
 To get the mode of measurement `MeasurementTool.isInMeasurementMode`. It returns `true` if the measurement is active else `false`.
 
-### Change unit
-
-It's also possible to apply custom label content for the measurement.
-The tool provides a callback, `MeasurementOptions.distanceToLabelCallback`, that can be
-used to trigger custom operation like changing the measuring units to feet:
-
-```jsx runnable
-// import { MeasurementTool } from '@cognite/reveal/tools';
-
-const measurementTool = new MeasurementTool(viewer, {distanceToLabelCallback: (distanceInMeters) => {
-  // 1 meter = 3.281 feet
-  return `${(distanceInMeters * 3.281).toFixed(2)} ft`;
-  }});
-measurementTool.enterMeasurementMode();
-```
 
 ## Set width, color & label units of the measuring line
 To change width, color of the line and label units, use `MeasurementTool.setLineOptions(options: MeasurementOptions)`. MeasurementOptions expects
@@ -141,38 +110,24 @@ setTimeout(() => {
 }, 6000);
 ```
 
-### Change existing measurement property
+### Change appearance of existing measurement
 To change existing measurement line width or color, use `MeasurementTool.updateLineWidth(lineWidth: number)` or `MeasurementTool.updateLineColor(color: THREE.Color)`
 
 ```jsx runnable
 // import { MeasurementTool } from '@cognite/reveal/tools';
 
 const measurementTool = new MeasurementTool(viewer);
-let measurementIterator;
-measurementTool.on('ended',
-  () => {
-    //Changes measurement line color & width to random values.
-    setInterval(() => {
-      const measurement = measurementIterator.next().value[1];
-      const color = Math.floor(Math.random() * 16777215);
-      measurementTool.updateLineColor(measurement, new THREE.Color(color));
-
-      //Update line width
-      const lineWidth = (Math.random() * 1.0) + 0.2;
-      measurementTool.updateLineWidth(measurement, lineWidth);
-      viewer.requestRedraw();
-    }, 2000);
-  });
+setInterval(() => {
+  const measurements = measurementTool.getAllMeasurements();
+  console.log(measurements);
+  for (const measurement of measurements) {
+    const color = Math.floor(Math.random() * 16777215);
+    const lineWidth = (Math.random() * 1.0) + 0.2;
+    measurementTool.updateLineColor(measurement, new THREE.Color(color));
+    measurementTool.updateLineWidth(measurement, lineWidth);
+  }
+}, 200);
 measurementTool.enterMeasurementMode();
-
-// Add few measurements
-
-
-//get all measurements
-setTimeout(() => {
-  measurementIterator = measurementTool.getAllMeasurements().entries();
-  measurementTool.exitMeasurementMode();
-}, 8000);
 ```
 
 ### Remove measurement
@@ -191,7 +146,6 @@ setTimeout(() => {
 
   if (measurements[0]) {
     measurementTool.removeMeasurement(measurements[0]);
-    viewer.requestRedraw();
   }
 }, 6000);
 ```
