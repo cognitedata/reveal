@@ -38,10 +38,10 @@ type MeasurementEvents = 'added' | 'started' | 'ended' | 'disposed';
  * ```
  * @example
  * ```jsx runnable
- * const measurementTool = new MeasurementTool(viewer, {changeMeasurementLabelMetrics: (distance) => {
+ * const measurementTool = new MeasurementTool(viewer, {distanceToLabelCallback: (distanceInMeters) => {
  *    // 1 meters = 3.281 feet
- *    const distanceInFeet = distance * 3.281;
- *    return { distance: distanceInFeet, units: 'ft'};
+ *    const distancesInFeet = distanceInMeters * 3.281;
+ *    return { distanceInMeters: distancesInFeet, units: 'ft'};
  *  }});
  *  measurementTool.enterMeasurementMode();
 ```
