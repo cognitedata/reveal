@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from 'react';
 
-import { WhiteLoaderOverlay } from 'components/Loading';
+import { LoadingOverlay } from 'components/Loading';
 import { MultiStateToggle } from 'components/MultiStateToggle';
 import { NoUnmountShowHide } from 'components/NoUnmountShowHide';
 import { useWellInspectSelectedWellboreIds } from 'modules/wellInspect/selectors';
@@ -69,7 +69,7 @@ export const NptEvents: React.FC = () => {
         onCloseSelectedWellboreNptViewClick={handleCloseWellboreDetailView}
       />
 
-      {selectedWellboreViewLoading && <WhiteLoaderOverlay />}
+      {selectedWellboreViewLoading && <LoadingOverlay />}
     </>
   );
 };

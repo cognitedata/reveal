@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { WhiteLoader } from 'components/Loading';
+import { LoadingOverlay } from 'components/Loading';
 
 const Content = React.lazy(
   () => import(/* webpackChunkName: 'main-content' */ './Content')
@@ -8,7 +8,7 @@ const Content = React.lazy(
 
 const AuthorizedApp = () => {
   return (
-    <React.Suspense fallback={<WhiteLoader />}>
+    <React.Suspense fallback={<LoadingOverlay text="Loading Discover...." />}>
       <Content />
     </React.Suspense>
   );

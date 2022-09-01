@@ -1,11 +1,9 @@
 import * as React from 'react';
 
-import { Loading } from 'components/Loading';
-
 const MeasurementsLazy = React.lazy(() => import('./Measurements'));
 
 const Measurements = () => (
-  <React.Suspense fallback={<Loading loadingTitle="Loading" />}>
+  <React.Suspense fallback={null}>
     <MeasurementsLazy />
   </React.Suspense>
 );

@@ -1,7 +1,8 @@
 import styled from 'styled-components/macro';
 import layers from 'utils/zindex';
 
-import { WhiteLoader } from './WhiteLoader';
+import { LOADING_TEXT } from './constants';
+import { Loading } from './Loading';
 
 const Wrapper = styled.div`
   position: absolute;
@@ -12,11 +13,12 @@ const Wrapper = styled.div`
   height: 100%;
   width: 100%;
 `;
-
-export const WhiteLoaderOverlay: React.FC = () => {
+export const LoadingOverlay: React.FC<{ text?: string }> = (
+  { text } = { text: LOADING_TEXT }
+) => {
   return (
     <Wrapper>
-      <WhiteLoader />
+      <Loading loadingTitle={text} />
     </Wrapper>
   );
 };

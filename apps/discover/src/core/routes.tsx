@@ -4,7 +4,7 @@ import { BrowserRouter } from 'react-router-dom';
 
 import { Location } from 'history';
 
-import { WhiteLoader } from 'components/Loading';
+import { LoadingOverlay } from 'components/Loading';
 
 import { showErrorMessage } from '../components/Toast';
 
@@ -49,7 +49,7 @@ const AsyncContent = React.lazy(
 const Routes: React.FC<{ project: string }> = ({ project }) => {
   return (
     <BrowserRouter basename={project}>
-      <React.Suspense fallback={<WhiteLoader />}>
+      <React.Suspense fallback={<LoadingOverlay text="Loading Discover..." />}>
         <PageRoute path="/" component={AsyncContent} />
       </React.Suspense>
     </BrowserRouter>

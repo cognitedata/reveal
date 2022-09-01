@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 
-import { WhiteLoaderOverlay } from 'components/Loading';
+import { LoadingOverlay } from 'components/Loading';
 import { EMPTY_ARRAY } from 'constants/empty';
 
 import { DetailedView } from '../../ndsEvents/components/DetailedView';
@@ -45,7 +45,7 @@ export const WellboreNdsDetailedView: React.FC<
         onBackClick={onBackClick}
       />
 
-      {isLoading && <WhiteLoaderOverlay />}
+      {isLoading && <LoadingOverlay />}
     </>
   );
 };

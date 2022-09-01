@@ -1,11 +1,9 @@
 import * as React from 'react';
 
-import { Loading } from 'components/Loading';
-
 const RelatedDocumentLazy = React.lazy(() => import('./RelatedDocument'));
 
 const RelatedDocument = () => (
-  <React.Suspense fallback={<Loading loadingTitle="Loading" />}>
+  <React.Suspense fallback={null}>
     <RelatedDocumentLazy />
   </React.Suspense>
 );

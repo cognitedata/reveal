@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
 
-import { Loader } from '@cognite/cogs.js';
 import { Trace } from '@cognite/seismic-sdk-js';
 
 import SeismicImage from './SeismicImage';
@@ -85,7 +84,7 @@ export const SeismicPreview: React.FC<Props> = (props) => {
   }, [slice, displayType]);
 
   if (isLoading) {
-    return <Loader darkMode={false} />;
+    return null;
   }
 
   if (!slice || !image) {

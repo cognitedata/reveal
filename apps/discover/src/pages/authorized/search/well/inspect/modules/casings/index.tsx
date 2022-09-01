@@ -1,11 +1,9 @@
 import * as React from 'react';
 
-import { Loader } from '@cognite/cogs.js';
-
 const CasingsLazy = React.lazy(() => import('./Casings'));
 
 const Casing = () => (
-  <React.Suspense fallback={<Loader darkMode={false} />}>
+  <React.Suspense fallback={null}>
     <CasingsLazy />
   </React.Suspense>
 );

@@ -1,6 +1,5 @@
 import * as React from 'react';
 
-import { Loader } from '@cognite/cogs.js';
 import { AuthConsumer, ConditionalWrapper } from '@cognite/react-container';
 
 import { SIDECAR } from 'constants/app';
@@ -18,7 +17,7 @@ export const Providers: React.FC<React.PropsWithChildren<unknown>> = ({
       <AuthConsumer>
         {(authState) => {
           if (!authState || !authState.authState?.authenticated) {
-            return <Loader />;
+            return null;
           }
 
           return (

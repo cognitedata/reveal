@@ -1,7 +1,5 @@
 import * as React from 'react';
 
-import { Loader } from '@cognite/cogs.js';
-
 import { useProjectConfig } from 'hooks/useProjectConfig';
 
 export const ProvideProjectConfig: React.FC<
@@ -10,7 +8,7 @@ export const ProvideProjectConfig: React.FC<
   const { isLoading } = useProjectConfig(); // initialise Project Config
 
   if (isLoading) {
-    return <Loader />;
+    return null;
   }
 
   return <>{children}</>;

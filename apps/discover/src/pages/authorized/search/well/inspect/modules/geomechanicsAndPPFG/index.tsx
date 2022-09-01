@@ -1,13 +1,11 @@
 import * as React from 'react';
 
-import { Loading } from 'components/Loading';
-
 const GeomechanicsAndPPFGLazy = React.lazy(
   () => import('./GeomechanicsAndPPFG')
 );
 
 const GeomechanicsAndPPFG = () => (
-  <React.Suspense fallback={<Loading loadingTitle="Loading" />}>
+  <React.Suspense fallback={null}>
     <GeomechanicsAndPPFGLazy />
   </React.Suspense>
 );

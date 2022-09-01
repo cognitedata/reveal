@@ -13,6 +13,9 @@ const Wrapper = styled.div`
     position: relative;
   }
 `;
+/**
+ * @deprecated - use Loading instead
+ */
 export const WhiteLoaderInline: React.FC = () => {
   return (
     <Wrapper>

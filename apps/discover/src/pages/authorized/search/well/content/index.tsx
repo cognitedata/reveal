@@ -1,13 +1,13 @@
 import * as React from 'react';
 
-import { Loader } from '@cognite/cogs.js';
+import { LoadingOverlay } from 'components/Loading';
 
 const ContentLazy = React.lazy(
   () => import(/* webpackChunkName: 'well-content' */ './Content')
 );
 
 const Content = () => (
-  <React.Suspense fallback={<Loader darkMode={false} />}>
+  <React.Suspense fallback={<LoadingOverlay />}>
     <ContentLazy />
   </React.Suspense>
 );

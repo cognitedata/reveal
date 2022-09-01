@@ -3,7 +3,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import head from 'lodash/head';
 import isEmpty from 'lodash/isEmpty';
 
-import { WhiteLoaderOverlay } from 'components/Loading';
+import { LoadingOverlay } from 'components/Loading';
 import { OverlayNavigation } from 'components/OverlayNavigation';
 import { useDeepMemo } from 'hooks/useDeep';
 
@@ -81,7 +81,7 @@ export const SelectedWellboreNptView: React.FC<Props> = React.memo(
           {Content}
         </OverlayNavigation>
 
-        {(isLoading || chartRendering) && <WhiteLoaderOverlay />}
+        {(isLoading || chartRendering) && <LoadingOverlay />}
       </>
     );
   }
