@@ -63,7 +63,7 @@ export const FileToolbar = ({
     <>
       <Container>
         {!!processFilesLength && ( // Only show buttons if there are files available
-          <ButtonContainer>
+          <ButtonContainer style={{ zIndex: 1 }}>
             <BulkActionMenu
               selectedCount={selectedFileIds.length}
               maxSelectCount={processFilesLength}
@@ -72,36 +72,19 @@ export const FileToolbar = ({
               onDelete={onDelete}
               handleCancelOtherEdits={handleCancelOtherEdits}
               processingFiles={!isPollingFinished}
-              style={{ zIndex: 1 }}
             />
             <SegmentedControl
               onButtonClicked={onViewChange}
               currentKey={currentView}
-              style={{ zIndex: 1, marginLeft: '8px' }}
             >
-              <SegmentedControl.Button
-                key="list"
-                icon="List"
-                title="List"
-                size="small"
-              >
+              <SegmentedControl.Button key="list" icon="List" title="List">
                 List
               </SegmentedControl.Button>
-              <SegmentedControl.Button
-                key="grid"
-                icon="Grid"
-                title="Gallery"
-                size="small"
-              >
+              <SegmentedControl.Button key="grid" icon="Grid" title="Gallery">
                 Gallery
               </SegmentedControl.Button>
 
-              <SegmentedControl.Button
-                key="map"
-                icon="Map"
-                title="Map"
-                size="small"
-              >
+              <SegmentedControl.Button key="map" icon="Map" title="Map">
                 Map
               </SegmentedControl.Button>
             </SegmentedControl>
@@ -127,4 +110,5 @@ const Container = styled.div`
 
 const ButtonContainer = styled.div`
   display: flex;
+  gap: 8px;
 `;

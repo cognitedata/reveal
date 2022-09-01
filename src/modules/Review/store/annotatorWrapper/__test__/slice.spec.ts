@@ -1,8 +1,19 @@
 import {
   getDummyKeypointCollectionState,
   getDummyKeypointState,
+  getDummyPredefinedKeypointCollection,
+  getDummyPredefinedShape,
 } from 'src/__test-utils/annotations';
+import {
+  getDummyImageAssetLinkAnnotation,
+  getDummyImageClassificationAnnotation,
+  getDummyImageExtractedTextAnnotation,
+  getDummyImageKeypointCollectionAnnotation,
+  getDummyImageObjectDetectionBoundingBoxAnnotation,
+  getDummyImageObjectDetectionPolygonAnnotation,
+} from 'src/__test-utils/getDummyAnnotations';
 import { Status } from 'src/api/annotation/types';
+import { generateKeypointId } from 'src/modules/Common/Utils/AnnotationUtils/AnnotationUtils';
 import { getDummyRegionOriginatedInAnnotator } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/__test-utils/region';
 import { tools } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/Tools';
 import {
@@ -29,6 +40,13 @@ import {
   KeypointCollectionState,
 } from 'src/modules/Review/store/annotatorWrapper/type';
 import { PredefinedKeypoint, PredefinedShape } from 'src/modules/Review/types';
+import { deselectAllSelectionsReviewPage } from 'src/store/commonActions';
+import { PopulateAnnotationTemplates } from 'src/store/thunks/Annotation/PopulateAnnotationTemplates';
+import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotations';
+import { SaveAnnotations } from 'src/store/thunks/Annotation/SaveAnnotations';
+import { SaveAnnotationTemplates } from 'src/store/thunks/Annotation/SaveAnnotationTemplates';
+import { UpdateAnnotations } from 'src/store/thunks/Annotation/UpdateAnnotations';
+import { VisionJobUpdate } from 'src/store/thunks/Process/VisionJobUpdate';
 
 jest.mock('src/modules/Common/Utils/AnnotationUtils/AnnotationUtils', () => ({
   ...jest.requireActual(
@@ -89,16 +107,16 @@ describe('Test annotator slice', () => {
       },
     ];
 
-    const predefinedShapesList: PredefinedShape[] = [
-      {
-        shapeName: 'box',
-        color: 'red',
-      },
-      {
-        shapeName: 'motor',
-        color: 'green',
-      },
-    ];
+  const predefinedShapesList: PredefinedShape[] = [
+    {
+      shapeName: 'box',
+      color: 'red',
+    },
+    {
+      shapeName: 'motor',
+      color: 'green',
+    },
+  ];
 
     const modifiedInitialState = {
       ...initialState,
@@ -1550,7 +1568,244 @@ describe('Test annotator slice', () => {
     });
   });
 
-  describe.skip('Test extraReducers', () => {
-    // ToDo: add tests for extraReducers after thunks were migrated to V2 types
+  describe('Test extraReducers', () => {
+    test('deselectAllSelectionsReviewPage extra reducer', () => {
+      const previousState = {
+        ...modifiedInitialStateDuringKeypointCreation,
+      };
+
+      const action = {
+        type: deselectAllSelectionsReviewPage,
+      };
+
+      const resultState = reducer(previousState, action);
+
+      expect(resultState.collections.selectedIds).toStrictEqual([]);
+      expect(resultState.keypointMap.selectedIds).toStrictEqual([]);
+      expect(resultState.temporaryRegion).toBeUndefined();
+      expect(resultState.isCreatingKeypointCollection).toEqual(false);
+      expect(resultState.lastCollectionId).toBeUndefined();
+      expect(resultState.collections.byId).toStrictEqual({
+        1: getDummyKeypointCollectionState({
+          id: 1,
+          label: 'valve',
+          keypointIds: ['V1', 'V2'],
+        }),
+      });
+      expect(resultState.collections.allIds).toStrictEqual([1]);
+      expect(resultState.collections.selectedIds).toStrictEqual([]);
+      expect(resultState.keypointMap).toStrictEqual({
+        byId: {
+          V1: getDummyKeypointState('up'),
+          V2: getDummyKeypointState('down'),
+        },
+        allIds: ['V1', 'V2'],
+        selectedIds: [],
+      });
+    });
+
+    describe('extra reducer for fulfilled actions for SaveAnnotations, VisionJobUpdate, UpdateAnnotations, RetrieveAnnotations', () => {
+      const actionsTypes = [
+        SaveAnnotations.fulfilled.type,
+        VisionJobUpdate.fulfilled.type,
+        UpdateAnnotations.fulfilled.type,
+        RetrieveAnnotations.fulfilled.type,
+      ];
+
+      const payload = [
+        getDummyImageClassificationAnnotation({
+          id: 1,
+          annotatedResourceId: 1,
+        }),
+        getDummyImageExtractedTextAnnotation({
+          id: 2,
+          annotatedResourceId: 1,
+        }),
+        getDummyImageObjectDetectionBoundingBoxAnnotation({
+          id: 3,
+          annotatedResourceId: 1,
+        }),
+        getDummyImageAssetLinkAnnotation({ id: 4, annotatedResourceId: 1 }),
+        getDummyImageObjectDetectionPolygonAnnotation({
+          id: 5,
+          annotatedResourceId: 1,
+        }),
+      ];
+
+      test('do nothing when annotations belong to more than 1 file', () => {
+        const previousState = {
+          ...modifiedInitialStateDuringKeypointCreation,
+        };
+
+        // eslint-disable-next-line no-restricted-syntax
+        for (const actionType of actionsTypes) {
+          const resultState = reducer(previousState, {
+            type: actionType,
+            payload: [
+              ...payload,
+              getDummyImageClassificationAnnotation({
+                id: 5,
+                annotatedResourceId: 2,
+              }),
+            ],
+          });
+
+          expect(resultState).toStrictEqual(previousState);
+        }
+      });
+
+      test("do nothing when annotations don't include keypoint annotations", () => {
+        const previousState = {
+          ...modifiedInitialStateDuringKeypointCreation,
+        };
+
+        // eslint-disable-next-line no-restricted-syntax
+        for (const actionType of actionsTypes) {
+          const resultState = reducer(previousState, {
+            type: actionType,
+            payload,
+          });
+
+          expect(resultState).toStrictEqual(previousState);
+        }
+      });
+
+      test('when keypoint annotations are available', () => {
+        const previousState = {
+          ...modifiedInitialState,
+        };
+
+        const dummyKeypointCollection =
+          getDummyImageKeypointCollectionAnnotation({
+            id: 5,
+            annotatedResourceId: 1,
+            status: Status.Approved,
+          });
+
+        // eslint-disable-next-line no-restricted-syntax
+        for (const actionType of actionsTypes) {
+          const resultState = reducer(previousState, {
+            type: actionType,
+            payload: [...payload, dummyKeypointCollection],
+          });
+
+          expect(resultState.temporaryRegion).toBeUndefined();
+          expect(resultState.isCreatingKeypointCollection).toEqual(false);
+          expect(resultState.lastCollectionId).toEqual(
+            previousState.lastCollectionId
+          );
+          expect(resultState.collections.byId).toStrictEqual({
+            ...previousState.collections.byId,
+            ...{
+              5: getDummyKeypointCollectionState({
+                id: dummyKeypointCollection.id,
+                keypointIds: Object.keys(dummyKeypointCollection.keypoints).map(
+                  (keypointLabel) =>
+                    generateKeypointId(
+                      dummyKeypointCollection.id,
+                      keypointLabel
+                    )
+                ),
+                label: dummyKeypointCollection.label,
+                status: dummyKeypointCollection.status,
+              }),
+            },
+          });
+
+          expect(resultState.collections.allIds).toStrictEqual([
+            ...previousState.collections.allIds,
+            5,
+          ]);
+          expect(resultState.collections.selectedIds).toStrictEqual(
+            previousState.collections.selectedIds
+          );
+          expect(resultState.keypointMap.byId).toStrictEqual({
+            ...previousState.keypointMap.byId,
+            ...Object.fromEntries(
+              Object.entries(dummyKeypointCollection.keypoints).map(
+                ([label, keypoint]) => {
+                  const id = generateKeypointId(
+                    dummyKeypointCollection.id,
+                    label
+                  );
+                  return [
+                    id,
+                    {
+                      ...keypoint,
+                      label,
+                    },
+                  ];
+                }
+              )
+            ),
+          });
+          expect(resultState.keypointMap.selectedIds).toStrictEqual(
+            previousState.keypointMap.selectedIds
+          );
+          expect(resultState.keypointMap.allIds).toStrictEqual([
+            ...previousState.keypointMap.allIds,
+            ...Object.keys(dummyKeypointCollection.keypoints).map((key) =>
+              generateKeypointId(dummyKeypointCollection.id, key)
+            ),
+          ]);
+        }
+      });
+    });
+
+    describe('matchers for PopulateAnnotationTemplates.fulfilled and SaveAnnotationTemplates.fulfilled', () => {
+      const previousState = {
+        ...initialState,
+      };
+
+      const actionTypes = [
+        PopulateAnnotationTemplates.fulfilled.type,
+        SaveAnnotationTemplates.fulfilled.type,
+      ];
+
+      test('when payload is empty', () => {
+        actionTypes.forEach((actionType) => {
+          const action = {
+            type: actionType,
+            payload: {
+              predefinedKeypointCollections: [],
+              predefinedShapes: [],
+            },
+          };
+
+          const resultState = reducer(previousState, action);
+
+          expect(resultState.predefinedAnnotations).toStrictEqual(
+            previousState.predefinedAnnotations
+          );
+        });
+      });
+
+      test('when payload is not empty', () => {
+        const payload = {
+          predefinedKeypointCollections: [
+            getDummyPredefinedKeypointCollection(1),
+            getDummyPredefinedKeypointCollection(2, 'dial'),
+          ],
+          predefinedShapes: [
+            getDummyPredefinedShape({}),
+            getDummyPredefinedShape({
+              id: 2,
+              shapeName: 'largeBox',
+              color: 'yellow',
+            }),
+          ],
+        };
+        actionTypes.forEach((actionType) => {
+          const action = {
+            type: actionType,
+            payload,
+          };
+
+          const resultState = reducer(previousState, action);
+
+          expect(resultState.predefinedAnnotations).toStrictEqual(payload);
+        });
+      });
+    });
   });
 });

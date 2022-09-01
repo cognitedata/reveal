@@ -104,29 +104,14 @@ export const ExplorerToolbar = ({
           currentKey={currentView}
           style={{ zIndex: 1 }}
         >
-          <SegmentedControl.Button
-            key="list"
-            icon="List"
-            title="List"
-            size="small"
-          >
+          <SegmentedControl.Button key="list" icon="List" title="List">
             List
           </SegmentedControl.Button>
-          <SegmentedControl.Button
-            key="grid"
-            icon="Grid"
-            title="Gallery"
-            size="small"
-          >
+          <SegmentedControl.Button key="grid" icon="Grid" title="Gallery">
             Gallery
           </SegmentedControl.Button>
 
-          <SegmentedControl.Button
-            key="map"
-            icon="Map"
-            title="Map"
-            size="small"
-          >
+          <SegmentedControl.Button key="map" icon="Map" title="Map">
             Map
           </SegmentedControl.Button>
         </SegmentedControl>

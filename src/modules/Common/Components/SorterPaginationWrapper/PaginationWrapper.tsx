@@ -5,9 +5,10 @@ import styled from 'styled-components';
 import {
   SortPaginateControls,
   PaginatedTableProps,
+  PageSize,
 } from 'src/modules/Common/Components/FileTable/types';
+import { Pagination } from '@cognite/cogs.js';
 import { Footer } from './Footer';
-import { Paginator } from './Paginator';
 
 const getPage = (
   data: TableDataItem[],
@@ -108,12 +109,15 @@ export const PaginationWrapper = ({
       </TableContainer>
       <PaginationContainer>
         {pagination && !isLoading ? (
-          <Paginator
-            currentPage={currentPage}
-            pageSize={pageSize}
+          <Pagination
+            size="small"
+            initialCurrentPage={currentPage}
+            itemsPerPage={pageSize}
             totalPages={totalPages}
-            setCurrentPage={setCurrentPage}
-            setPageSize={setPageSize}
+            onPageChange={setCurrentPage}
+            setItemPerPage={(newPageSize: number) =>
+              setPageSize(newPageSize as PageSize)
+            }
           />
         ) : null}
       </PaginationContainer>
@@ -135,4 +139,5 @@ const TableContainer = styled.div`
 
 const PaginationContainer = styled.div`
   height: inherit;
+  padding: 10px;
 `;
