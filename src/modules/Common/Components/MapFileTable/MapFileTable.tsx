@@ -1,5 +1,8 @@
 import React, { useMemo, useState } from 'react';
-import { FileMapTableProps } from 'src/modules/Common/Components/FileTable/types';
+import {
+  FileMapTableProps,
+  PageSize,
+} from 'src/modules/Common/Components/FileTable/types';
 import { SelectableTable } from 'src/modules/Common/Components/SelectableTable/SelectableTable';
 import { ResultData, TableDataItem } from 'src/modules/Common/types';
 import styled from 'styled-components';
@@ -102,7 +105,7 @@ export const MapFileTable = (props: MapTableProps) => {
     }
   };
 
-  const handleSetPageSize = (pageSize: number) => {
+  const handleSetPageSize = (pageSize: PageSize) => {
     setCurrentPageFilesWithLocation(1);
     setCurrentPageFilesWithNoLocation(1);
     if (props.setPageSize) {
