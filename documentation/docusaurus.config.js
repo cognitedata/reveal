@@ -8,7 +8,7 @@ module.exports = {
   projectName: 'reveal',
   themeConfig: {
     algolia: {
-      appId: 'reveal-docs',
+      appId: 'BH4D9OD16A',
       apiKey: 'd2f00b2aa78a3b4ca8877d9b764916d4',
       indexName: 'reveal-docs',
 
