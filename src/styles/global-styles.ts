@@ -59,6 +59,10 @@ const GlobalStyle = createGlobalStyle<{ theme: typeof theme }>`
   .cogs-tooltip {
     padding: 8px 8px;
   }
+
+  .cogs-pagination-input {
+    -moz-appearance: textfield !important;
+  }
 `;
 
 export default GlobalStyle;
