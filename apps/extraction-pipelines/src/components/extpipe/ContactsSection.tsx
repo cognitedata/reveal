@@ -42,7 +42,7 @@ export const ContactsSection: FunctionComponent<ContactsViewProps> = ({
     <Section
       title={t('contacts')}
       icon="Users"
-      editButton={{ onClick: openEdit, canEdit }}
+      titleButton={{ onClick: openEdit, enabled: canEdit }}
     >
       {contacts && contacts.length > 0 ? (
         <div css="padding: 0 1rem;">

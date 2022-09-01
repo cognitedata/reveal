@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import React, { PropsWithChildren } from 'react';
-import { IconType, Icon, Button } from '@cognite/cogs.js';
+import { IconType, Icon, Button, Flex, Body } from '@cognite/cogs.js';
 import { useTranslation } from 'common';
 
 const SectionDiv = styled.div`
@@ -8,14 +8,14 @@ const SectionDiv = styled.div`
   margin-bottom: 1rem;
   border-radius: 3px;
 `;
-const SectionHeader = styled.div`
-  font-size: 1.1rem;
-  min-height: 3.5rem;
-  font-weight: 500;
-  padding-left: 1rem;
+const SectionHeaderRow = styled(Flex)`
+  padding: 0 1rem;
   border-bottom: 1px solid #eee;
-  display: flex;
-  align-items: center;
+  min-height: 3.5rem;
+`;
+const SectionHeader = styled(Flex)`
+  font-weight: 500;
+  font-size: 1.1rem;
 `;
 const SectionBody = styled.div`
   padding: 1rem 0;
@@ -26,14 +26,16 @@ export const SectionWithoutHeader = (props: PropsWithChildren<{}>) => (
 );
 type Props = {
   title: string;
+  rightTitle?: string | JSX.Element;
   icon: IconType;
-  editButton?: { onClick: () => void; canEdit: boolean };
+  titleButton?: { onClick: () => void; enabled: boolean };
   dataTestId?: string;
 };
 export const Section = ({
   icon,
   title,
-  editButton,
+  titleButton,
+  rightTitle,
   children,
   dataTestId,
 }: PropsWithChildren<Props>) => {
@@ -41,19 +43,23 @@ export const Section = ({
 
   return (
     <SectionDiv className="z-2" data-testid={dataTestId}>
-      <SectionHeader>
-        <Icon type={icon} style={{ marginRight: '0.5rem' }} /> {title}
-        {editButton && (
-          <Button
-            type="ghost"
-            css="margin-left: auto"
-            disabled={!editButton.canEdit}
-            onClick={editButton.onClick}
-          >
-            {t('edit')}
-          </Button>
-        )}
-      </SectionHeader>
+      <SectionHeaderRow alignItems="center" justifyContent="space-between">
+        <SectionHeader alignItems="center">
+          <Icon type={icon} style={{ marginRight: '0.5rem' }} /> {title}
+        </SectionHeader>
+        <div>
+          {titleButton && (
+            <Button
+              type="ghost"
+              disabled={!titleButton.enabled}
+              onClick={titleButton.onClick}
+            >
+              {t('edit')}
+            </Button>
+          )}
+          {rightTitle && <Body level={2}>{rightTitle}</Body>}
+        </div>
+      </SectionHeaderRow>
       <SectionBody>{children}</SectionBody>
     </SectionDiv>
   );

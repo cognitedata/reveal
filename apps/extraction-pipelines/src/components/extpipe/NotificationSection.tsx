@@ -29,7 +29,7 @@ export const NotificationSection: FunctionComponent<
     <Section
       icon="Bell"
       title={t('notification', { count: 0 })}
-      editButton={{ canEdit, onClick: openDialog }}
+      titleButton={{ enabled: canEdit, onClick: openDialog }}
     >
       <FieldWrapper>
         <StyledLabel htmlFor="nothing">{t('notification-setting')}</StyledLabel>
