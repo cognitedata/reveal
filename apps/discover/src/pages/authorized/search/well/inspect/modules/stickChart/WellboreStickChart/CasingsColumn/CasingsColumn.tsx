@@ -18,6 +18,7 @@ import {
   BodyColumnMainHeader,
   EmptyStateWrapper,
 } from '../../../common/Events/elements';
+import { ColumnOptionsSelector } from '../../components/ColumnOptionsSelector';
 import { DepthScaleLines } from '../../components/DepthScaleLines';
 import { ColumnVisibilityProps, CasingAssemblyView } from '../../types';
 import { EMPTY_SCHEMA_TEXT, LOADING_TEXT } from '../constants';
@@ -25,10 +26,14 @@ import { ColumnHeaderWrapper } from '../elements';
 
 import DepthColumn from './components/DepthColumn';
 import { DepthIndicators } from './components/DepthIndicators';
-import { DepthMeasurementTypeSelector } from './components/DepthMeasurementTypeSelector';
 import { Legend } from './components/Legend';
 import { TopContent } from './components/TopContent';
 import { CasingsColumnContentWrapper } from './elements';
+
+export const DEPTH_MEASUREMENT_TYPES = [
+  DepthMeasurementUnit.MD,
+  DepthMeasurementUnit.TVD,
+];
 
 export interface CasingsColumnProps extends ColumnVisibilityProps {
   data?: CasingAssemblyView[];
@@ -103,9 +108,11 @@ export const CasingsColumn: React.FC<WithDragHandleProps<CasingsColumnProps>> =
             <ColumnDragger {...dragHandleProps} />
 
             <ColumnHeaderWrapper>
-              <DepthMeasurementTypeSelector
-                selectedDepthMeasurementType={depthMeasurementType}
-                onChangeDepthMeasurementType={onChangeDepthMeasurementType}
+              <ColumnOptionsSelector
+                options={DEPTH_MEASUREMENT_TYPES}
+                selectedOption={depthMeasurementType}
+                width={24}
+                onChange={onChangeDepthMeasurementType}
               />
               <BodyColumnMainHeader>Schema</BodyColumnMainHeader>
               <Legend />

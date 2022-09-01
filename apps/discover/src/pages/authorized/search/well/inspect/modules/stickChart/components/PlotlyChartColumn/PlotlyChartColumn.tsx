@@ -8,20 +8,22 @@ import { WithDragHandleProps } from 'components/DragDropContainer';
 import EmptyState from 'components/EmptyState';
 import { useDeepCallback, useDeepMemo } from 'hooks/useDeep';
 
-import { ChartV2 } from '../../common/ChartV2';
-import { ChartProps } from '../../common/ChartV2/ChartV2';
-import { ColumnDragger } from '../../common/Events/ColumnDragger';
-import { SCALE_BLOCK_HEIGHT } from '../../common/Events/constants';
+import { ChartV2 } from '../../../common/ChartV2';
+import { ChartProps } from '../../../common/ChartV2/ChartV2';
+import { ColumnDragger } from '../../../common/Events/ColumnDragger';
+import { SCALE_BLOCK_HEIGHT } from '../../../common/Events/constants';
 import {
   BodyColumn,
   BodyColumnBody,
   BodyColumnMainHeader,
   ColumnHeaderWrapper,
-} from '../../common/Events/elements';
-import { LOADING_TEXT } from '../WellboreStickChart/constants';
+} from '../../../common/Events/elements';
+import {
+  CHART_COLUMN_WIDTH,
+  LOADING_TEXT,
+} from '../../WellboreStickChart/constants';
+import { DepthScaleLines } from '../DepthScaleLines';
 
-import { CHART_COLUMN_WIDTH } from './constants';
-import { DepthScaleLines } from './DepthScaleLines';
 import { ChartTitle, ChartWrapper, ChartEmptyStateWrapper } from './elements';
 
 export interface PlotlyChartColumnProps

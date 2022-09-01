@@ -1,5 +1,6 @@
 import { DepthMeasurementUnit } from 'constants/units';
 
+import { EventsColumnView } from '../../common/Events/types';
 import { ChartColumn } from '../types';
 
 export const RKB_LEVEL_LABEL = 'RKB level';
@@ -25,7 +26,11 @@ export const DEPTH_BLOCK_LABEL_MINIMUM_HEIGHT = 20;
 export const DEPTH_SCALE_LABEL_WIDTH = 79;
 export const DEPTH_SCALE_LABEL_HEIGHT = 16;
 
+export const EVENTS_COLUMN_WIDTH = 120;
+export const CHART_COLUMN_WIDTH = 312;
+
 export const DEFAULT_DEPTH_MEASUREMENT_TYPE = DepthMeasurementUnit.MD;
+export const DEFAULT_EVENTS_COLUMN_VIEW = EventsColumnView.Cluster;
 
 export const DEFAULT_COLUMN_ORDER = [
   ChartColumn.FORMATION,

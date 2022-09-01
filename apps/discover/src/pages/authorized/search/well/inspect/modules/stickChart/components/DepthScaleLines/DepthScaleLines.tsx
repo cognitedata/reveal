@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { ScaleLine } from '../../common/Events/elements';
+import { ScaleLine } from '../../../common/Events/elements';
 
 import { DepthMeasurementScaleWrapper } from './elements';
 

@@ -30,9 +30,3 @@ export const WellboreName = styled(Flex)`
   color: rgba(0, 0, 0, 0.9);
   margin-top: ${sizes.extraSmall};
 `;
-
-export const SegmentedControlStyler = styled.div`
-  & > *.cogs-segmented-control.default {
-    background: rgba(83, 88, 127, 0.08) !important;
-  ]
-`;

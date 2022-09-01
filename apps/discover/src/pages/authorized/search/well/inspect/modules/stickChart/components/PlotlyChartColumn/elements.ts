@@ -5,11 +5,9 @@ import { sizes } from 'styles/layout';
 
 import {
   BodyColumnMainHeader,
-  DepthMeasurementScale,
   EmptyStateWrapper,
-} from '../../common/Events/elements';
-
-import { CHART_COLUMN_WIDTH } from './constants';
+} from '../../../common/Events/elements';
+import { CHART_COLUMN_WIDTH } from '../../WellboreStickChart/constants';
 
 export const ChartTitle = styled(BodyColumnMainHeader)`
   align-self: center;
@@ -41,8 +39,4 @@ export const ChartEmptyStateWrapper = styled(EmptyStateWrapper)`
     width: ${CHART_COLUMN_WIDTH}px;
     padding: ${sizes.small};
   }
-`;
-
-export const DepthMeasurementScaleWrapper = styled(DepthMeasurementScale)`
-  align-content: center;
 `;

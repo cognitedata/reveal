@@ -84,18 +84,3 @@ export const DepthColumnContainer = styled.div`
   height: 100%;
   border-right: 1px solid var(--cogs-greyscale-grey3);
 `;
-
-export const DepthMeasurementTypeContainer = styled(FlexRow)`
-  width: 90px;
-  cursor: pointer;
-  align-items: center;
-  margin-top: -${sizes.extraSmall};
-`;
-
-export const DepthMeasurementTypeWrapper = styled.div`
-  width: 30px;
-`;
-
-export const DepthMeasurementTypeIconWrapper = styled.span`
-  padding-top: 2px;
-`;

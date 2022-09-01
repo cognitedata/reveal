@@ -11,7 +11,6 @@ import { DragDropContainer } from 'components/DragDropContainer';
 import { NoUnmountShowHide } from 'components/NoUnmountShowHide';
 import { useDeepEffect, useDeepMemo } from 'hooks/useDeep';
 
-import { EventsColumnView } from '../../common/Events/types';
 import { SelectedWellboreNptView } from '../../nptEvents/Graph';
 import { useColumnHeight } from '../hooks/useColumnHeight';
 import { useScaleBlocks } from '../hooks/useScaleBlocks';
@@ -81,7 +80,6 @@ export const WellboreStickChart: React.FC<WellboreStickChartProps> = ({
   const [depthMeasurementType, setDepthMeasurementType] = useState(
     DEFAULT_DEPTH_MEASUREMENT_TYPE
   );
-  const [eventViewMode, setEventViewMode] = useState(EventsColumnView.Cluster);
   const [showNptDetailView, setShowNptDetailView] = useState(false);
   const [showNdsDetailView, setShowNdsDetailView] = useState(false);
 
@@ -116,7 +114,6 @@ export const WellboreStickChart: React.FC<WellboreStickChartProps> = ({
             wellName={wellName}
             wellboreName={wellboreName}
             wellboreMatchingId={wellboreMatchingId}
-            onEventViewModeChange={setEventViewMode}
             onChangeDropdown={({ eventType }) => {
               handleChangeDropdown(eventType);
             }}
@@ -155,7 +152,6 @@ export const WellboreStickChart: React.FC<WellboreStickChartProps> = ({
                 key={ChartColumn.NPT}
                 {...nptColumn}
                 scaleBlocks={scaleBlocks}
-                view={eventViewMode}
                 nptCodesSelecton={nptCodesSelecton}
                 depthMeasurementType={depthMeasurementType}
                 isVisible={columnVisibility[ChartColumn.NPT]}
@@ -165,7 +161,6 @@ export const WellboreStickChart: React.FC<WellboreStickChartProps> = ({
                 key={ChartColumn.NDS}
                 {...ndsColumn}
                 scaleBlocks={scaleBlocks}
-                view={eventViewMode}
                 ndsRiskTypesSelection={ndsRiskTypesSelection}
                 depthMeasurementType={depthMeasurementType}
                 isVisible={columnVisibility[ChartColumn.NDS]}

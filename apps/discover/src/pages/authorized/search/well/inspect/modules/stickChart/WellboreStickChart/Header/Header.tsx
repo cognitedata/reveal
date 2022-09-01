@@ -1,9 +1,4 @@
-/**
- * Commented code it related to NDS/NPT detail page functionality. It has been remporarily
- * Removed from Stick chart tab so code is kept in case it is needed in future.
- */
 import * as React from 'react';
-import { useEffect, useState } from 'react';
 
 import { Button } from '@cognite/cogs.js';
 
@@ -14,15 +9,8 @@ import {
   NDS_EVENT_DETAILS_LABEL,
   NPT_EVENT_DETAILS_LABEL,
 } from '../../../common/Events/constants';
-import { EventsColumnView } from '../../../common/Events/types';
-import { ViewModeControl } from '../../../common/ViewModeControl';
 
-import {
-  HeaderWrapper,
-  SegmentedControlStyler,
-  WellboreName,
-  WellName,
-} from './elements';
+import { HeaderWrapper, WellboreName, WellName } from './elements';
 
 interface HeaderProps {
   wellName: string;
@@ -37,7 +25,6 @@ interface HeaderProps {
     wellboreName: string;
     wellboreMatchingId: string;
   }) => void;
-  onEventViewModeChange: (viewMode: EventsColumnView) => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -45,14 +32,7 @@ export const Header: React.FC<HeaderProps> = ({
   wellboreName,
   wellboreMatchingId,
   onChangeDropdown,
-  onEventViewModeChange,
 }) => {
-  const [eventViewMode, setEventViewMode] = useState(EventsColumnView.Cluster);
-
-  useEffect(() => {
-    onEventViewModeChange(eventViewMode);
-  }, [eventViewMode]);
-
   const handleChangeNptDropdown = () => {
     onChangeDropdown({
       eventType: 'npt',
@@ -78,13 +58,6 @@ export const Header: React.FC<HeaderProps> = ({
         <WellboreName>{wellboreName}</WellboreName>
       </FlexColumn>
 
-      <SegmentedControlStyler>
-        <ViewModeControl
-          views={Object.values(EventsColumnView)}
-          selectedView={eventViewMode}
-          onChangeView={setEventViewMode}
-        />
-      </SegmentedControlStyler>
       <Dropdown
         content={
           <Dropdown.Menu>

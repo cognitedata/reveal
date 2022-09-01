@@ -4,7 +4,7 @@ import {
   NdsRiskTypesSelection,
 } from 'domain/wells/nds/internal/types';
 
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 
 import isEmpty from 'lodash/isEmpty';
 
@@ -19,7 +19,6 @@ import { NDS_COLUMN_TITLE } from '../../../common/Events/constants';
 import {
   BodyColumn,
   BodyColumnBody,
-  BodyColumnMainHeader,
   ColumnHeaderWrapper,
 } from '../../../common/Events/elements';
 import NdsEventsBadge from '../../../common/Events/NdsEventsBadge';
@@ -29,8 +28,11 @@ import {
 } from '../../../common/Events/NdsEventsByDepth';
 import { NdsEventsScatterView } from '../../../common/Events/NdsEventsScatterView';
 import { EventsColumnView } from '../../../common/Events/types';
+import { ColumnOptionsSelector } from '../../components/ColumnOptionsSelector';
 import { ColumnVisibilityProps } from '../../types';
 import {
+  DEFAULT_EVENTS_COLUMN_VIEW,
+  EVENTS_COLUMN_WIDTH,
   NO_DATA_AMONG_SELECTED_OPTIONS_TEXT,
   NO_OPTIONS_SELECTED_TEXT,
 } from '../constants';
@@ -39,7 +41,6 @@ export interface NdsEventsColumnProps extends ColumnVisibilityProps {
   scaleBlocks: number[];
   data?: NdsInternalWithTvd[];
   isLoading?: boolean;
-  view?: EventsColumnView;
   ndsRiskTypesSelection?: NdsRiskTypesSelection;
   depthMeasurementType?: DepthMeasurementUnit;
 }
@@ -51,12 +52,13 @@ export const NdsEventsColumn: React.FC<
     scaleBlocks,
     data = EMPTY_ARRAY,
     isLoading,
-    view,
     isVisible = true,
     ndsRiskTypesSelection,
     depthMeasurementType,
     ...dragHandleProps
   }) => {
+    const [view, setView] = useState(DEFAULT_EVENTS_COLUMN_VIEW);
+
     const filteredData = useDeepMemo(() => {
       if (!ndsRiskTypesSelection) {
         return data;
@@ -91,11 +93,16 @@ export const NdsEventsColumn: React.FC<
 
     return (
       <NoUnmountShowHide show={isVisible}>
-        <BodyColumn width={130}>
+        <BodyColumn width={EVENTS_COLUMN_WIDTH}>
           <ColumnDragger {...dragHandleProps} />
 
           <ColumnHeaderWrapper>
-            <BodyColumnMainHeader>{NDS_COLUMN_TITLE}</BodyColumnMainHeader>
+            <ColumnOptionsSelector
+              options={Object.values(EventsColumnView)}
+              selectedOption={view}
+              displayValue={NDS_COLUMN_TITLE}
+              onChange={setView}
+            />
           </ColumnHeaderWrapper>
 
           <BodyColumnBody>

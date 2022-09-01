@@ -5,7 +5,7 @@ import {
   NptInternalWithTvd,
 } from 'domain/wells/npt/internal/types';
 
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 
 import isEmpty from 'lodash/isEmpty';
 
@@ -20,7 +20,6 @@ import { NPT_COLUMN_TITLE } from '../../../common/Events/constants';
 import {
   BodyColumn,
   BodyColumnBody,
-  BodyColumnMainHeader,
   ColumnHeaderWrapper,
 } from '../../../common/Events/elements';
 import NptEventsBadge from '../../../common/Events/NptEventsBadge';
@@ -30,8 +29,11 @@ import {
 } from '../../../common/Events/NptEventsByDepth';
 import { NptEventsScatterView } from '../../../common/Events/NptEventsScatterView';
 import { EventsColumnView } from '../../../common/Events/types';
+import { ColumnOptionsSelector } from '../../components/ColumnOptionsSelector';
 import { ColumnVisibilityProps } from '../../types';
 import {
+  DEFAULT_EVENTS_COLUMN_VIEW,
+  EVENTS_COLUMN_WIDTH,
   NO_DATA_AMONG_SELECTED_OPTIONS_TEXT,
   NO_OPTIONS_SELECTED_TEXT,
 } from '../constants';
@@ -42,7 +44,6 @@ export interface NptEventsColumnProps extends ColumnVisibilityProps {
   scaleBlocks: number[];
   data?: NptInternalWithTvd[];
   isLoading?: boolean;
-  view?: EventsColumnView;
   nptCodesSelecton?: NptCodesSelection;
   depthMeasurementType?: DepthMeasurementUnit;
 }
@@ -54,13 +55,14 @@ export const NptEventsColumn: React.FC<
     scaleBlocks,
     data = EMPTY_ARRAY,
     isLoading,
-    view,
     nptCodesSelecton,
     depthMeasurementType,
     isVisible = true,
     ...dragHandleProps
   }) => {
     const { nptCodeDefinitions } = useNptDefinitions();
+
+    const [view, setView] = useState(DEFAULT_EVENTS_COLUMN_VIEW);
 
     const filteredData = useDeepMemo(() => {
       if (!nptCodesSelecton) {
@@ -107,11 +109,16 @@ export const NptEventsColumn: React.FC<
 
     return (
       <NoUnmountShowHide show={isVisible}>
-        <BodyColumn width={130}>
+        <BodyColumn width={EVENTS_COLUMN_WIDTH}>
           <ColumnDragger {...dragHandleProps} />
 
           <ColumnHeaderWrapper>
-            <BodyColumnMainHeader>{NPT_COLUMN_TITLE}</BodyColumnMainHeader>
+            <ColumnOptionsSelector
+              options={Object.values(EventsColumnView)}
+              selectedOption={view}
+              displayValue={NPT_COLUMN_TITLE}
+              onChange={setView}
+            />
           </ColumnHeaderWrapper>
 
           <BodyColumnBody>
