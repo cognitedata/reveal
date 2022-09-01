@@ -7,8 +7,15 @@ import { createRenderTriangle } from '@reveal/utilities';
 import { CadMaterialManager } from '../CadMaterialManager';
 import { RenderMode } from '../rendering/RenderMode';
 import { CogniteColors, RevealColors } from './types';
-import { BlendOptions, BlitEffect, BlitOptions, DepthBlendBlitOptions, ThreeUniforms } from '../render-passes/types';
-import { blitShaders, depthBlendBlitShaders } from '../rendering/shaders';
+import {
+  BlendOptions,
+  BlitEffect,
+  BlitOptions,
+  DepthBlendBlitOptions,
+  PointCloudPostProcessingOptions,
+  ThreeUniforms
+} from '../render-passes/types';
+import { blitShaders, depthBlendBlitShaders, pointCloudShaders } from '../rendering/shaders';
 import { NodeOutlineColor } from '@reveal/cad-styling';
 
 export const unitOrthographicCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, -1, 1);
@@ -99,6 +106,29 @@ export function getBlitMaterial(options: BlitOptions): THREE.RawShaderMaterial {
   });
 }
 
+export function getPointCloudPostProcessingMaterial(options: PointCloudPostProcessingOptions): THREE.RawShaderMaterial {
+  const { texture, depthTexture, pointBlending } = options;
+
+  const uniforms: ThreeUniforms = {
+    tDiffuse: { value: texture },
+    tDepth: { value: depthTexture }
+  };
+
+  const defines: Record<string, boolean> = {};
+
+  if (pointBlending) {
+    defines['points_blend'] = true;
+  }
+
+  return new THREE.RawShaderMaterial({
+    vertexShader: pointCloudShaders.normalize.vertex,
+    fragmentShader: pointCloudShaders.normalize.fragment,
+    uniforms,
+    defines,
+    glslVersion: THREE.GLSL3
+  });
+}
+
 function createOutlineColorTexture(): THREE.DataTexture {
   const outlineColorBuffer = new Uint8Array(8 * 4);
   const outlineColorTexture = new THREE.DataTexture(outlineColorBuffer, 8, 1);
@@ -169,6 +199,7 @@ export enum RenderLayer {
   Back = RenderMode.Color,
   InFront = RenderMode.Effects,
   Ghost = RenderMode.Ghost,
+  PointCloud,
   Default = 0
 }
 

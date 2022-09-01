@@ -7,6 +7,7 @@ import { CameraConfiguration } from '@reveal/utilities';
 import { File3dFormat } from '@reveal/modeldata-api';
 
 export interface PointCloudMetadata {
+  readonly modelIdentifier: symbol;
   readonly format: File3dFormat;
   readonly formatVersion: number;
 
