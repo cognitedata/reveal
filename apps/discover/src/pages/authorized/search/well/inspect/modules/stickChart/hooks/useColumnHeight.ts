@@ -16,7 +16,7 @@ export const useColumnHeight = () => {
     const height = depthColumnHeight || DEPTH_SCALE_MIN_HEIGHT;
     const columnHeight = height - SCALE_BLOCK_HEIGHT - SCALE_PADDING;
     setColumnHeight(columnHeight);
-  }, [contentRef.current]);
+  }, [contentRef.current?.offsetHeight]);
 
   useEffect(() => {
     window.addEventListener('resize', updateColumnHeight);

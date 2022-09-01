@@ -67,7 +67,7 @@ export const FormationColumn: React.FC<
 
     return (
       <NoUnmountShowHide show={isVisible}>
-        <BodyColumn data-testid="formation-column">
+        <BodyColumn width={30} data-testid="formation-column">
           <ColumnDragger {...dragHandleProps} />
           <BodyColumnBody>{renderFormationLayers()}</BodyColumnBody>
         </BodyColumn>

@@ -20,6 +20,7 @@ import {
 } from '../../common/Events/elements';
 import { LOADING_TEXT } from '../WellboreStickChart/constants';
 
+import { CHART_COLUMN_WIDTH } from './constants';
 import { DepthScaleLines } from './DepthScaleLines';
 import { ChartTitle, ChartWrapper, ChartEmptyStateWrapper } from './elements';
 
@@ -30,7 +31,6 @@ export interface PlotlyChartColumnProps
   scaleBlocks: number[];
   isLoading?: boolean;
   emptySubtitle?: string;
-  width?: number;
 }
 
 export const PlotlyChartColumn: React.FC<
@@ -43,7 +43,6 @@ export const PlotlyChartColumn: React.FC<
   scaleBlocks,
   isLoading,
   emptySubtitle,
-  width = 340,
   ...dragHandleProps
 }) => {
   const axisConfig = useDeepMemo(() => {
@@ -105,7 +104,7 @@ export const PlotlyChartColumn: React.FC<
   }, [data, isLoading, scaleBlocks, emptySubtitle]);
 
   return (
-    <BodyColumn width={width}>
+    <BodyColumn width={CHART_COLUMN_WIDTH}>
       <ColumnDragger {...dragHandleProps} />
 
       <ColumnHeaderWrapper>

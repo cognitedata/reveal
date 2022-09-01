@@ -2,17 +2,24 @@ import styled from 'styled-components/macro';
 
 import { Flex, FlexColumn, FlexRow, sizes } from 'styles/layout';
 
+import { BodyColumn } from '../../common/Events/elements';
+
 export const WellboreStickChartWrapper = styled(FlexColumn)`
   height: 100%;
   width: fit-content;
   background: var(--cogs-bg-accent);
-  border-radius: 12px;
+  border-radius: ${sizes.small};
   margin-right: ${sizes.normal} !important;
+
+  ${BodyColumn} {
+    border-radius: ${sizes.small};
+    margin: ${sizes.extraSmall};
+  }
 `;
 
 export const ContentWrapper = styled(Flex)`
   height: 100%;
-  padding: ${sizes.small};
+  padding: ${sizes.extraSmall};
   justify-content: center;
   overflow: hidden;
 `;

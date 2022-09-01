@@ -91,7 +91,7 @@ export const NdsEventsColumn: React.FC<
 
     return (
       <NoUnmountShowHide show={isVisible}>
-        <BodyColumn width={150}>
+        <BodyColumn width={130}>
           <ColumnDragger {...dragHandleProps} />
 
           <ColumnHeaderWrapper>

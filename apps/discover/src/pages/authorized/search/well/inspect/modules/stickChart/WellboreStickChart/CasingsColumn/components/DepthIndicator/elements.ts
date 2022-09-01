@@ -139,7 +139,6 @@ export const DepthScaleLabelTag = styled(Flex)`
   background-repeat: no-repeat, no-repeat;
   color: var(--cogs-text-icon--strong);
   height: ${DEPTH_SCALE_LABEL_HEIGHT + 1}px; // +1 for the middle point pixel
-  width: ${DEPTH_SCALE_LABEL_WIDTH}px;
   padding-left: ${sizes.extraSmall};
   align-items: center;
   margin-top: -${DEPTH_SCALE_LABEL_HEIGHT / 2 + 1}px; // +1 for the middle point pixel

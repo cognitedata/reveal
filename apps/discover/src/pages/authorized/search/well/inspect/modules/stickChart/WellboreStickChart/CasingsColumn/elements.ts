@@ -80,13 +80,13 @@ export const DepthLabel = styled.div`
 `;
 
 export const DepthColumnContainer = styled.div`
-  width: 150px;
+  width: 130px;
   height: 100%;
   border-right: 1px solid var(--cogs-greyscale-grey3);
 `;
 
 export const DepthMeasurementTypeContainer = styled(FlexRow)`
-  width: 100px;
+  width: 90px;
   cursor: pointer;
   align-items: center;
   margin-top: -${sizes.extraSmall};

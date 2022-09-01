@@ -1,10 +1,15 @@
 import styled from 'styled-components/macro';
 
+import { SubTitleText } from 'components/EmptyState/elements';
+import { sizes } from 'styles/layout';
+
 import {
   BodyColumnMainHeader,
   DepthMeasurementScale,
   EmptyStateWrapper,
 } from '../../common/Events/elements';
+
+import { CHART_COLUMN_WIDTH } from './constants';
 
 export const ChartTitle = styled(BodyColumnMainHeader)`
   align-self: center;
@@ -27,13 +32,15 @@ export const ChartWrapper = styled.div`
     display: none;
   }
   & > div {
-    width: 320px;
+    width: calc(${CHART_COLUMN_WIDTH}px - ${sizes.normal});
   }
 `;
 
 export const ChartEmptyStateWrapper = styled(EmptyStateWrapper)`
-  max-width: none;
-  width: 100%;
+  ${SubTitleText} {
+    width: ${CHART_COLUMN_WIDTH}px;
+    padding: ${sizes.small};
+  }
 `;
 
 export const DepthMeasurementScaleWrapper = styled(DepthMeasurementScale)`

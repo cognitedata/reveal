@@ -36,7 +36,7 @@ export const DepthColumn: React.FC<WithDragHandleProps<DepthColumnProps>> =
 
       return (
         <NoUnmountShowHide show={isVisible}>
-          <BodyColumn width={100}>
+          <BodyColumn width={80}>
             <ColumnDragger {...dragHandleProps} />
 
             <ColumnHeaderWrapper>

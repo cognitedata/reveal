@@ -13,8 +13,8 @@ import {
 } from '../elements';
 
 export const DEPTH_MEASUREMENT_TYPES = [
-  DepthMeasurementUnit.TVD,
   DepthMeasurementUnit.MD,
+  DepthMeasurementUnit.TVD,
 ];
 export interface DepthMeasurementTypeSelectorProps {
   selectedDepthMeasurementType: DepthMeasurementUnit;

@@ -20,8 +20,8 @@ import { ViewModeControl } from '../../../common/ViewModeControl';
 import {
   HeaderWrapper,
   SegmentedControlStyler,
-  Subtitle,
-  Title,
+  WellboreName,
+  WellName,
 } from './elements';
 
 interface HeaderProps {
@@ -74,8 +74,8 @@ export const Header: React.FC<HeaderProps> = ({
   return (
     <HeaderWrapper>
       <FlexColumn>
-        <Title>{wellName}</Title>
-        <Subtitle>{wellboreName}</Subtitle>
+        <WellName>{wellName}</WellName>
+        <WellboreName>{wellboreName}</WellboreName>
       </FlexColumn>
 
       <SegmentedControlStyler>

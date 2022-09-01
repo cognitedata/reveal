@@ -5,7 +5,8 @@ import { Icon, Label } from '@cognite/cogs.js';
 import { FlexRow, sizes } from 'styles/layout';
 
 export const FilterItemWrapper = styled(FlexRow)`
-  padding: 2px 12px;
+  height: 36px;
+  padding: 0 12px;
   align-items: center;
   gap: ${sizes.small};
 

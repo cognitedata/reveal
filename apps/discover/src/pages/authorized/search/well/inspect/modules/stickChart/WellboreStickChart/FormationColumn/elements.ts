@@ -13,7 +13,8 @@ type FormationLayerProps = {
 
 export const FormationLayerBlock = styled(Center)`
   position: absolute;
-  width: 100%;
+  width: calc(100% + 2px); // border width
+  margin-left: -1px; // border width correction
   align-items: center;
   ${(props: FormationLayerProps) => `
     top: ${props.top + FORMATION_COLUMN_SCALE_CORRECTION}px;
