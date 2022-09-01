@@ -50,7 +50,7 @@ describe('Test explorer reducers', () => {
     sortMeta: {
       sortKey: 'test',
       currentPage: 1337,
-      pageSize: 123,
+      pageSize: 25,
       defaultTimestampKey: 'timestamp',
     },
     focusedFileId: 1,
