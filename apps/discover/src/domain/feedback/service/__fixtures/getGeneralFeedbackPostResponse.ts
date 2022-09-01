@@ -1,6 +1,6 @@
 import { FeedbackPostBody, GeneralFeedback } from '@cognite/discover-api-types';
 
-export const getGeneralFeedback = (
+export const getGeneralFeedbackPostResponse = (
   extras: Partial<GeneralFeedback>
 ): FeedbackPostBody => {
   return {

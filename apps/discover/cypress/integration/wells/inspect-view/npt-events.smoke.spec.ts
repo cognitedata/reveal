@@ -46,7 +46,11 @@ describe('Wells: NPT Events', () => {
     cy.contains('NPT Codes').should('be.visible');
 
     cy.log('Open single wellbore view');
-    cy.findAllByTestId('bar-label').first().click();
+    cy.findAllByTestId('bar-label')
+      .should('be.visible')
+      .first()
+      .should('be.visible')
+      .click();
     cy.findByLabelText('previous-wellbore')
       .should('be.visible')
       .should('be.disabled');

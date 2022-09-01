@@ -9,7 +9,7 @@ domain
 └── wells
   └── nds
     └── internal <-- internal type
-      ├── \_\_fixtures
+      ├── \_\_fixtures <- should not import types from sdk/external request - only for transofmred internal
       |
       | ├── actions <-- react-query - calls service->network
       | | └── xxxMutate.ts
@@ -34,7 +34,7 @@ domain
       |
       └── types.ts <-- internal type
     |── service <-- external API type
-    | ├── \_\_fixtures
+    | ├── \_\_fixtures - should only import types from sdk/external request
     | ├── \_\_mocks
     |
     | ├── network <-- axios/sdk - must return external API type
@@ -61,7 +61,9 @@ domain
     |── dataLayer
 ```
 
-| Folder       | Description                                                  |
-| :----------- | :----------------------------------------------------------- |
-| \_\_fixtures | generator functions to create objects of a type for testing  |
-| \_\_mocks    | network level mocks, one file for each endpoint/request type |
+| Folder             | Description                                                  |
+| :----------------- | :----------------------------------------------------------- |
+| \_\_fixtures       | generator functions to create objects of a type for testing  |
+| \internal_fixtures | only to have fixture data for internal types                 |
+| \service_fixtures  | only to have fixture data for external requests              |
+| \_\_mocks          | network level mocks, one file for each endpoint/request type |

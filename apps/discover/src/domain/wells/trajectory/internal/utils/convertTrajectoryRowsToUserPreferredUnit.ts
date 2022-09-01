@@ -1,10 +1,7 @@
 import { changeUnitTo } from 'utils/units';
 import { toDistance } from 'utils/units/toDistance';
 
-import {
-  DistanceUnitEnum,
-  TrajectoryDataRow,
-} from '@cognite/sdk-wells/dist/src';
+import { DistanceUnitEnum, TrajectoryDataRow } from '@cognite/sdk-wells';
 
 import { UserPreferredUnit } from 'constants/units';
 
@@ -24,7 +21,7 @@ export const convertTrajectoryRowsToUserPreferredUnit = (
     equivalentDepartureUnit,
     offsetUnit,
   }: DepthUnitsType
-) => {
+): TrajectoryDataRow[] => {
   const tvdUnit = toDistance(trueVerticalDepthUnit);
   const mdUnit = toDistance(measuredDepthUnit);
   const edUnit = toDistance(equivalentDepartureUnit);

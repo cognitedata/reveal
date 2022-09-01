@@ -1,6 +1,6 @@
 import { FeedbackPostBody, ObjectFeedback } from '@cognite/discover-api-types';
 
-export const getDocumentFeedback = (
+export const getDocumentFeedbackPostResponse = (
   extras: Partial<ObjectFeedback>
 ): FeedbackPostBody => {
   return {

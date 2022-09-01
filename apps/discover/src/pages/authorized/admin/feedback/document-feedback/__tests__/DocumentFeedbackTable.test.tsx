@@ -1,6 +1,5 @@
 import '__mocks/mockContainerAuth'; // should be first
 
-import { getMockedDocumentFeedbackItem } from 'domain/feedback/internal/__fixtures/feedback';
 import { getMockUserSearch } from 'domain/userManagementService/service/__mocks/getMockUserSearch';
 
 import { fireEvent, screen, waitFor } from '@testing-library/react';
@@ -10,11 +9,12 @@ import { Store } from 'redux';
 import { testRendererModal } from '__test-utils/renderer';
 import { getMockedStore } from '__test-utils/store.utils';
 
+import { getObjectFeedbackResponse } from '../../../../../../domain/feedback/service/__fixtures/getObjectFeedbackResponse';
 import { DocumentFeedbackTable } from '../DocumentFeedbackTable';
 
 const mockServer = setupServer(getMockUserSearch());
 
-const mockDocumentFeedbackItemOne = getMockedDocumentFeedbackItem({
+const mockDocumentFeedbackItemOne = getObjectFeedbackResponse({
   id: '111111',
   deleted: false,
   isSensitiveByAdmin: true,
@@ -22,7 +22,7 @@ const mockDocumentFeedbackItemOne = getMockedDocumentFeedbackItem({
   status: 1,
 });
 
-const mockDocumentFeedbackItemTwo = getMockedDocumentFeedbackItem({
+const mockDocumentFeedbackItemTwo = getObjectFeedbackResponse({
   id: '222222',
   deleted: false,
   isSensitiveByAdmin: true,
@@ -43,7 +43,7 @@ const mockDocumentFeedbackItemTwo = getMockedDocumentFeedbackItem({
   },
 });
 
-const mockDocumentFeedbackItemThree = getMockedDocumentFeedbackItem({
+const mockDocumentFeedbackItemThree = getObjectFeedbackResponse({
   id: '333333',
   deleted: false,
   isSensitiveData: true,

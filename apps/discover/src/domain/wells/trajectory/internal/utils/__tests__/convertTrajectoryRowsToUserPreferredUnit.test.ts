@@ -1,6 +1,6 @@
 import { UserPreferredUnit } from 'constants/units';
 
-import { trajectoryDataRow } from '../../__fixtures/trajectoryDataRow';
+import { trajectoryDataRow } from '../../../service/__fixtures/trajectoryDataRow';
 import {
   convertTrajectoryRowsToUserPreferredUnit,
   DepthUnitsType,

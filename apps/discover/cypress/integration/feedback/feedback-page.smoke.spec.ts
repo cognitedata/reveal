@@ -1,7 +1,7 @@
 import { FeedbackPostBody } from '@cognite/discover-api-types';
 
-import { getDocumentFeedback } from '../../../src/domain/feedback/service/__fixtures/getDocumentFeedback';
-import { getGeneralFeedback } from '../../../src/domain/feedback/service/__fixtures/getGeneralFeedback';
+import { getDocumentFeedbackPostResponse } from '../../../src/domain/feedback/service/__fixtures/getDocumentFeedbackPostResponse';
+import { getGeneralFeedbackPostResponse } from '../../../src/domain/feedback/service/__fixtures/getGeneralFeedbackPostResponse';
 import {
   DISMISSED,
   INCORRECT_DOCUMENT_TYPE,
@@ -225,7 +225,9 @@ describe.skip('Feedback', () => {
       const comment = `Feedback ${dateNow}`;
 
       before(() => {
-        const payload: FeedbackPostBody = getDocumentFeedback({ comment });
+        const payload: FeedbackPostBody = getDocumentFeedbackPostResponse({
+          comment,
+        });
         cy.createFeedback(payload, 'object');
       });
 
@@ -370,7 +372,7 @@ describe.skip('Feedback', () => {
       const comment = `Feedback ${dateNow}`;
 
       before(() => {
-        const payload = getGeneralFeedback({
+        const payload = getGeneralFeedbackPostResponse({
           comment,
           user: Cypress.env('REACT_APP_E2E_USER'),
         });

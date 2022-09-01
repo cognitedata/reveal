@@ -1,4 +1,4 @@
-import { TrajectoryDataRow } from '@cognite/sdk-wells/dist/src';
+import { TrajectoryDataRow } from '@cognite/sdk-wells';
 
 export const trajectoryDataRow = (
   extras: TrajectoryDataRow[] = []

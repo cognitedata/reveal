@@ -1,6 +1,6 @@
 import { getUser } from '__test-utils/fixtures/user';
 
-import { getMockedNewDocumentFeedbackItem } from '../../__fixtures/feedback';
+import { getObjectFeedback } from '../../../service/__fixtures/getObjectFeedback';
 import { assignGeneralFeedback } from '../assignGeneralFeedback';
 import { deleteGeneralFeedback } from '../deleteGeneralFeedback';
 import { deleteObjectFeedback } from '../deleteObjectFeedback';
@@ -38,7 +38,7 @@ describe('feedback actions', () => {
   });
 
   it('should call `sendObjectFeedback` as expected', async () => {
-    const feedback = getMockedNewDocumentFeedbackItem();
+    const feedback = getObjectFeedback();
     sendObjectFeedback(feedback, mutate);
     expect(mutate).toBeCalledTimes(1);
   });
@@ -122,7 +122,7 @@ describe('feedback api error handling', () => {
   });
 
   it('should handle error on call `sendObjectFeedback` as expected', async () => {
-    const feedback = getMockedNewDocumentFeedbackItem();
+    const feedback = getObjectFeedback();
     sendObjectFeedback(feedback, mutate);
     expect(mutate).toBeCalledTimes(1);
   });
