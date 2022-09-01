@@ -11,7 +11,7 @@ import {
 import { DefaultRenderPipelineProvider } from '../src/render-pipeline-providers/DefaultRenderPipelineProvider';
 import { defaultRenderOptions } from '../src/rendering/types';
 
-export default class CadClippingVisualTest extends StreamingVisualTestFixture {
+export default class RenderTargetVisualTest extends StreamingVisualTestFixture {
   private readonly _orthographicCamera: THREE.OrthographicCamera;
   private readonly _testScene: THREE.Scene;
   private _glRenderer!: THREE.WebGLRenderer;

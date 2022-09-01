@@ -11,6 +11,7 @@ import { IPotree } from '../types/IPotree';
 import { IPointCloudTreeNodeBase } from './IPointCloudTreeNodeBase';
 import { IPointCloudTreeNode } from './IPointCloudTreeNode';
 import { computeTransformedBoundingBox } from '../utils/bounds';
+import { RenderLayer } from '@reveal/rendering';
 
 export class PointCloudOctree extends PointCloudTree {
   potree: IPotree;
@@ -90,6 +91,7 @@ export class PointCloudOctree extends PointCloudTree {
     points.position.copy(geometryNode.boundingBox.min);
     points.frustumCulled = false;
     points.onBeforeRender = PointCloudMaterial.makeOnBeforeRender(this, node);
+    points.layers.set(RenderLayer.PointCloud);
 
     if (parent) {
       parent.sceneNode.add(points);

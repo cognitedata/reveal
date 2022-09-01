@@ -24,6 +24,7 @@ export class PotreeNodeWrapper {
   readonly octree: PointCloudOctree;
   private _needsRedraw = false;
   private readonly _classification: IClassification = {} as IClassification;
+  private readonly _modelIdentifier: symbol;
 
   private static readonly pickingWindowSize = 20;
 
@@ -31,12 +32,17 @@ export class PotreeNodeWrapper {
     return this._needsRedraw;
   }
 
-  constructor(octree: PointCloudOctree) {
+  constructor(octree: PointCloudOctree, modelIdentifier: symbol) {
     this.octree = octree;
     this.pointSize = 2;
     this.pointColorType = PotreePointColorType.Rgb;
     this.pointShape = PotreePointShape.Circle;
     this._classification = octree.material.classification;
+    this._modelIdentifier = modelIdentifier;
+  }
+
+  get modelIdentifier(): symbol {
+    return this._modelIdentifier;
   }
 
   get pointSize(): number {
