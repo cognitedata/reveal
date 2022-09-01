@@ -11,6 +11,7 @@ import { useOneOfPermissions } from 'hooks/useOneOfPermissions';
 import { EXTPIPES_WRITES } from 'model/AclAction';
 import { trackUsage } from 'utils/Metrics';
 import { useTranslation } from 'common';
+import ConfigurationSection from 'components/extpipe/ConfigurationSection';
 
 interface ExtpipeViewProps {}
 
@@ -40,6 +41,9 @@ export const ExtpipeDetails: FunctionComponent<ExtpipeViewProps> = () => {
       <MiddleSection>
         <div css="flex: 2;">
           <DocumentationSection canEdit={canEdit} />
+          {extpipe?.externalId && (
+            <ConfigurationSection externalId={extpipe?.externalId} />
+          )}
         </div>
         <div css="flex: 1; max-width: 35%">
           <ExtpipeInformation canEdit={canEdit} />

@@ -44,6 +44,8 @@
   "description-hint": "Describe the extraction pipeline.",
   "description-placeholder": "Enter description",
   "documentation": "Documentation",
+  "configuration": "Configuration",
+  "configuration-last-updated": "Last updated at {{date}}",
   "done": "Done",
   "download-extractors": "Download Extractors",
   "duplicate-label": "This {{label}} is already in use",
