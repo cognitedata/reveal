@@ -241,9 +241,7 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
     if (!this._measurementMode) {
       throw new Error('Measurement mode is not active, call enterMeasurementMode()');
     }
-    if (this._activeMeasurement) {
-      this.cancelActiveMeasurement();
-    }
+    this.cancelActiveMeasurement();
     this._viewer.off('click', this._handlePointerClick);
     this._events.measurementEnded.fire();
     this._measurementMode = false;
@@ -257,7 +255,7 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
     const index = this._measurements.findIndex(
       measurementManager => measurementManager.getMeasurement() === measurement
     );
-    if (index === -1) {          
+    if (index === -1) {
       throw new Error('Measurement not found');
     }
     this._measurements[index].removeMeasurement();
@@ -321,11 +319,11 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
     const index = this._measurements.findIndex(
       measurementManager => measurementManager.getMeasurement() === measurement
     );
-    if (index > -1) {
+    if (index === -1) {
+      throw new Error('Measurement not found');
+    } else {
       this._measurements[index].updateLineColor(color);
       this._viewer.requestRedraw();
-    } else {
-      throw new Error('Measurement not found');
     }
   }
 
