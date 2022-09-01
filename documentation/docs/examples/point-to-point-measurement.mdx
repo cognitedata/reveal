@@ -53,23 +53,6 @@ measurementTool.on('added', (measurement) => {
 measurementTool.enterMeasurementMode();
 ```
 
-## Cancel measurement
-To exit from measurement mode, use `MeasurementTool.exitMeasurementMode()`.
-
-```jsx runnable
-// import { MeasurementTool } from '@cognite/reveal/tools';
-
-const measurementTool = new MeasurementTool(viewer);
-measurementTool.on('ended', () => alert('Measurement is ended'));
-
-measurementTool.enterMeasurementMode();
-
-//Add point to point distance measurement before existing from measurement tool.
-setTimeout(() => {
-  measurementTool.exitMeasurementMode();
-  viewer.requestRedraw();
-}, 10000);
-```
 
 ### Cancel active measurement
 To cancel the current/active measurement, the user can use `ESC` key which will kill the active measurement
