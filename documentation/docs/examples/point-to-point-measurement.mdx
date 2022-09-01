@@ -58,21 +58,6 @@ measurementTool.enterMeasurementMode();
 ### Mode of measurement
 To get the mode of measurement `MeasurementTool.isInMeasurementMode`. It returns `true` if the measurement is active else `false`.
 
-### Change unit
-
-It's also possible to apply custom label content for the measurement.
-The tool provides a callback, `MeasurementOptions.distanceToLabelCallback`, that can be
-used to trigger custom operation like changing the measuring units to feet:
-
-```jsx runnable
-// import { MeasurementTool } from '@cognite/reveal/tools';
-
-const measurementTool = new MeasurementTool(viewer, {distanceToLabelCallback: (distanceInMeters) => {
-  // 1 meter = 3.281 feet
-  return `${(distanceInMeters * 3.281).toFixed(2)} ft`;
-  }});
-measurementTool.enterMeasurementMode();
-```
 
 ## Set width, color & label units of the measuring line
 To change width, color of the line and label units, use `MeasurementTool.setLineOptions(options: MeasurementOptions)`. MeasurementOptions expects
