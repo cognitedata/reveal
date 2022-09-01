@@ -321,10 +321,9 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
     );
     if (index === -1) {
       throw new Error('Measurement not found');
-    } else {
-      this._measurements[index].updateLineColor(color);
-      this._viewer.requestRedraw();
     }
+    this._measurements[index].updateLineColor(color);
+    this._viewer.requestRedraw();
   }
 
   /**
