@@ -7,6 +7,8 @@ import useColorForLabel from 'src/store/hooks/useColorForLabel';
 import { getIcon } from 'src/utils/iconUtils';
 import styled from 'styled-components';
 
+const CUSTOM_FOOTER_HEIGHT = 44;
+const DEFAULT_MENU_HEIGHT = 160;
 export const VisionAutoComplete = ({
   value,
   options,
@@ -22,6 +24,8 @@ export const VisionAutoComplete = ({
   maxHeight?: number;
   onClickCreateNew?: (text: string) => void;
 }) => {
+  const maxMenuheight =
+    (maxHeight || DEFAULT_MENU_HEIGHT) - CUSTOM_FOOTER_HEIGHT;
   return (
     <AutoComplete
       placeholder={placeholder}
@@ -29,13 +33,15 @@ export const VisionAutoComplete = ({
       closeMenuOnSelect
       onChange={onChange}
       options={options}
-      maxMenuHeight={maxHeight}
+      maxMenuHeight={maxMenuheight}
       components={{
         MenuList: (props: any) => {
           const color = useColorForLabel(props.selectProps.inputValue || '');
           return (
             <>
-              <CustomMenuList>{props.children}</CustomMenuList>
+              <CustomMenuList maxHeight={maxMenuheight}>
+                {props.children}
+              </CustomMenuList>
               <CustomMenuFooter>
                 <VisionSelectOption
                   {...props}
@@ -78,27 +84,27 @@ export const VisionAutoComplete = ({
   );
 };
 
-const CustomMenuList = styled.div`
-  max-height: 160px;
+interface MenuProps {
+  maxHeight: number;
+}
+
+const CustomMenuList = styled.div<MenuProps>`
+  max-height: ${(props) => props.maxHeight}px;
   overflow-y: auto;
-  padding-bottom: 4px;
-  padding-top: 4px;
   position: relative;
   -webkit-overflow-scrolling: touch;
   box-sizing: border-box;
 `;
 
 const OptionContainer = styled.div`
-  display: grid;
-  grid-template-rows: 100%;
-  grid-template-columns: auto auto;
-  width: 100%;
-  place-items: center start;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 `;
 
 const InputTextLabel = styled.span`
   overflow-x: hidden;
-  width: 80px;
+  width: 145px;
   white-space: nowrap;
   text-overflow: ellipsis;
   margin-right: 8px;
@@ -106,6 +112,10 @@ const InputTextLabel = styled.span`
 
 const CustomMenuFooter = styled.div`
   width: 100%;
+
+  .cogs-select__option {
+    padding: 8px 0 0 10px;
+  }
 `;
 
 const CreateNewLabelBtn = styled(Button)`
