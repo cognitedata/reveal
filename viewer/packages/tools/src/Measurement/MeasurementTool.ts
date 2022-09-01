@@ -257,13 +257,12 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
     const index = this._measurements.findIndex(
       measurementManager => measurementManager.getMeasurement() === measurement
     );
-    if (index > -1) {
-      this._measurements[index].removeMeasurement();
-      this._measurements.splice(index, 1);
-      this._viewer.requestRedraw();
-    } else {
+    if (index === -1) {          
       throw new Error('Measurement not found');
     }
+    this._measurements[index].removeMeasurement();
+    this._measurements.splice(index, 1);
+    this._viewer.requestRedraw();
   }
 
   /**
@@ -306,12 +305,11 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
     const index = this._measurements.findIndex(
       measurementManager => measurementManager.getMeasurement() === measurement
     );
-    if (index > -1) {
-      this._measurements[index].updateLineWidth(lineWidth);
-      this._viewer.requestRedraw();
-    } else {
+    if (index === -1) {
       throw new Error('Measurement not found');
     }
+    this._measurements[index].updateLineWidth(lineWidth);
+    this._viewer.requestRedraw();
   }
 
   /**

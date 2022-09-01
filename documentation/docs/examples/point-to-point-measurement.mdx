@@ -86,13 +86,12 @@ measurementTool.setLineOptions(lineOptions);
 ```
 
 ### Get all measurement
-To get all measurements added in the viewer, tool provides `MeasurementTool.getAllMeasurements()` API which will
-returns array of measurement `Measurement` having below details
+To get all measurements added the tool provides `MeasurementTool.getAllMeasurements()` which will 
+return an array of measurements of type `Measurement`, having below details
   - `measurementId` : unique id of measurement.
   - `startPoint` : start point of the measurement.
   - `endPoint` : end point of the measurement.
   - `distanceInMeters` : measured distance in meters.
-
 ```jsx runnable
 // import { MeasurementTool } from '@cognite/reveal/tools';
 
@@ -152,10 +151,6 @@ setTimeout(() => {
 
 To remove all measurement from the viewer, use `MeasurementTool.removeAllMeasurement()`
 
-```jsx
-// Remove all measurement from the viewer
-measurementTool.removeAllMeasurement();
-```
 ### Label visibility
 Measurement labels can be hidden/visible using `MeasurementTool.showMeasurementLabels(enable: boolean)`.
 ```jsx
