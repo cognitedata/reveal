@@ -22,7 +22,9 @@ To effectively edit measuring line properties, tool is configurable with `Measur
 <DemoWrapper name="Cognite3DViewerDemo" />
 
 ## Point to point distance measurment
-To enter point-to-point measurement mode, use `MeasurementTool.enterMeasurementMode()`. This will register events for handling mouse clicks and touch events to allow placing the measurement end-points.
+To enter point-to-point measurement mode, use `MeasurementTool.enterMeasurementMode()`. This will register events for handling mouse clicks and touch events to allow placing the measurement end-points. Note that the tool is optimized for use with mouse.
+
+To exit measurement mode, call `exitMeasurementMode()`. The tool will also exit measurement mode if user presses Escape key.
 
 ```jsx runnable
 // import { MeasurementTool } from '@cognite/reveal/tools';
