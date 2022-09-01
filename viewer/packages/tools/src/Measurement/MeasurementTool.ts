@@ -260,6 +260,7 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
     if (index > -1) {
       this._measurements[index].removeMeasurement();
       this._measurements.splice(index, 1);
+      this._viewer.requestRedraw();
     } else {
       throw new Error('Measurement not found');
     }
@@ -274,6 +275,7 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
       measurement.removeMeasurement();
     });
     this._measurements.splice(0);
+    this._viewer.requestRedraw();
   }
 
   /**
@@ -343,6 +345,8 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
     this.exitMeasurementMode();
     this._activeMeasurement?.removeMeasurement();
     this._htmlOverlay.dispose();
+    this._geometryGroup.clear();
+    this._viewer.removeObject3D(this._geometryGroup);
     this._events.measurementAdded.unsubscribeAll();
     this._events.measurementStarted.unsubscribeAll();
     this._events.measurementEnded.unsubscribeAll();

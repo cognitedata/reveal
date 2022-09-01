@@ -12,7 +12,7 @@ export class MeasurementLine {
   private readonly _meshes: THREE.Group;
   private readonly _fixedWidthLineMaterial: LineMaterial;
   private readonly _adaptiveWidthLineMaterial: LineMaterial;
-  private _position: Float32Array;
+  private readonly _position: Float32Array;
 
   constructor(lineWidth: number, lineColor: THREE.Color, startPoint: THREE.Vector3) {
     this._position = new Float32Array(6);
@@ -54,9 +54,10 @@ export class MeasurementLine {
     if (this._geometry) {
       this._geometry.dispose();
     }
-    this._meshes.clear();
     this._adaptiveWidthLineMaterial.dispose();
     this._fixedWidthLineMaterial.dispose();
+    this._meshes.clear();
+    this._meshes.removeFromParent();
   }
 
   get meshes(): THREE.Group {
