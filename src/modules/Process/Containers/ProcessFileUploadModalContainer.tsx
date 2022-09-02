@@ -1,5 +1,5 @@
 import { FileUploadModal } from 'src/modules/Common/Components/FileUploaderModal/FileUploaderModal';
-import React from 'react';
+import React, { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
 import {
@@ -25,11 +25,16 @@ export const ProcessFileUploadModalContainer = () => {
     ({ processSlice }: RootState) => processSlice.uploadedFileIds
   );
 
-  const onUploadSuccess = (fileId: number) => {
+  const onUploadSuccess = useCallback((fileId: number) => {
     dispatch(addProcessUploadedFileId(fileId));
-  };
+  }, []);
 
-  const onFinishUploadAndProcess = async () => {
+  const onCancel = useCallback(() => {
+    dispatch(setProcessViewFileUploadModalVisibility(false));
+  }, []);
+
+  const onFinishUpload = useCallback(async () => {
+    onCancel();
     dispatch(
       setProcessFileIds([
         ...processFiles.map((file) => file.id),
@@ -37,15 +42,15 @@ export const ProcessFileUploadModalContainer = () => {
       ])
     );
     dispatch(clearUploadedFiles());
-  };
+  }, [onCancel, processFiles, uploadedFileIds]);
 
   return (
     <FileUploadModal
       onUploadSuccess={onUploadSuccess}
-      onFinishUploadAndProcess={onFinishUploadAndProcess}
+      onFinishUpload={onFinishUpload}
       showModal={showFileUploadModal}
       processFileCount={processFiles.length}
-      onCancel={() => dispatch(setProcessViewFileUploadModalVisibility(false))}
+      onCancel={onCancel}
     />
   );
 };
