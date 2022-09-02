@@ -66,6 +66,15 @@ export interface Cognite3DViewerOptions {
   renderer?: THREE.WebGLRenderer;
 
   /**
+   * Generally Reveal will follow the resolution given by the size
+   * of the encapsulating DOM element of the Canvas {@link Cognite3DViewerOptions.domElement}.
+   * To ensure managable performance, Reveal will by default set an upper threshold to limit
+   * the resolution. Setting the {@link Cognite3DViewerOptions.rendererResolutionThreshold} will
+   * set this upper limit of what resolution Reveal will allow.
+   */
+  rendererResolutionThreshold?: number;
+
+  /**
    * Hints Reveal to use a given anti-aliasing technique.
    *
    * Fast approximate anti-aliasing (FXAA) is a fast technique that will remove some, but not all aliasing effects. See
