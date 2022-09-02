@@ -36,18 +36,18 @@ describe('RevealManager', () => {
           .object()
       );
 
-    new SceneHandler(),
-      (manager = createRevealManager(
-        'test',
-        'myAppId',
-        stubMetadataProvider,
-        stubDataProvider,
-        rendererMock.object(),
-        new SceneHandler(),
-        {
-          internal: { cad: { sectorCuller } }
-        }
-      ));
+    manager = createRevealManager(
+      'test',
+      'myAppId',
+      stubMetadataProvider,
+      stubDataProvider,
+      rendererMock.object(),
+      new SceneHandler(),
+      {
+        internal: { cad: { sectorCuller } }
+      }
+    );
+
     jest.useFakeTimers();
   });
 

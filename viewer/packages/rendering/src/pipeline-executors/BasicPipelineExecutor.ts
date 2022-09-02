@@ -17,9 +17,13 @@ export class BasicPipelineExecutor implements RenderPipelineExecutor {
   private _shouldResize: boolean;
   private readonly _resizeObserver: ResizeObserver | undefined;
 
+  static get defaultResolutionThreshold(): number {
+    return 1.4e6;
+  }
+
   constructor(renderer: THREE.WebGLRenderer, options?: BasicPipelineExecutorOptions) {
     this._renderer = renderer;
-    this._resolutionThreshold = options?.resolutionThreshold ?? 1.4e6;
+    this._resolutionThreshold = options?.resolutionThreshold ?? BasicPipelineExecutor.defaultResolutionThreshold;
 
     const autoResizeRenderer = options?.autoResizeRenderer ?? false;
     this._shouldResize = autoResizeRenderer;
@@ -92,7 +96,7 @@ export class BasicPipelineExecutor implements RenderPipelineExecutor {
     this._renderer.setDrawingBufferSize(newVirtualWidth, newVirtualHeight, pixelRatio);
   }
 
-  dipose(): void {
+  dispose(): void {
     this._resizeObserver?.disconnect();
   }
 }

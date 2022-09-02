@@ -55,5 +55,5 @@ export class StepPipelineExecutor implements RenderPipelineExecutor {
     return count;
   }
 
-  public dipose(): void {}
+  public dispose(): void {}
 }

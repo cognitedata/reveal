@@ -76,7 +76,7 @@ export class RevealManager {
       return;
     }
     this._cadManager.dispose();
-    this._pipelineExecutor.dipose();
+    this._pipelineExecutor.dispose();
     this._renderPipeline.dispose();
     this._subscriptions.unsubscribe();
     this._isDisposed = true;

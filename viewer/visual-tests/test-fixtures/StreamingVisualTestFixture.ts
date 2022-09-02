@@ -296,7 +296,7 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
     this._sceneHandler.dispose();
     this._depthRenderPipeline.dispose();
     this.pipelineProvider.dispose();
-    this.pipelineExecutor.dipose();
+    this.pipelineExecutor.dispose();
     this._cadManager.dispose();
     this._renderer.dispose();
     this._renderer.forceContextLoss();
