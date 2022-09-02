@@ -6,7 +6,6 @@ export enum MediaTypeOption {
 }
 
 export enum DateActions {
-  created = 'Created',
   uploaded = 'Uploaded',
   captured = 'Captured',
 }
