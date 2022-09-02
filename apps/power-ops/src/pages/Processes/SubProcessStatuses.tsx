@@ -1,5 +1,9 @@
 import { Tooltip } from '@cognite/cogs.js';
-import { EVENT_TYPES, POWEROPS_LABELS } from '@cognite/power-ops-api-types';
+import {
+  EVENT_TYPES,
+  POWEROPS_LABELS,
+  PROCESS_TYPES,
+} from '@cognite/power-ops-api-types';
 import { CogniteEvent, Relationship } from '@cognite/sdk';
 import { EventStreamContext } from 'providers/eventStreamProvider';
 import { useFetchEventRelationships } from 'queries/useFetchEventRelationships';
@@ -54,8 +58,8 @@ const SubProcessStatuses = ({
         case EVENT_TYPES.PROCESS_FINISHED:
           handleStatusEvent(event);
           break;
-        case EVENT_TYPES.SHOP_RUN:
-        case EVENT_TYPES.FUNCTION_CALL:
+        case PROCESS_TYPES.SHOP_RUN:
+        case PROCESS_TYPES.FUNCTION_CALL:
           handleSubProcessEvent(relationshipsAsTarget);
           break;
       }

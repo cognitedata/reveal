@@ -2,7 +2,7 @@ import { memo, useContext, useEffect } from 'react';
 import { AuthConsumer, AuthContext } from '@cognite/react-container';
 import { AuthenticatedUser } from '@cognite/auth-utils';
 import { CogniteClient, CogniteEvent, Relationship } from '@cognite/sdk';
-import { EVENT_TYPES } from '@cognite/power-ops-api-types';
+import { EVENT_TYPES, PROCESS_TYPES } from '@cognite/power-ops-api-types';
 import { EventStreamContext } from 'providers/eventStreamProvider';
 import { useFetchProcesses } from 'queries/useFetchProcesses';
 import { Route, Switch, useRouteMatch } from 'react-router-dom';
@@ -32,7 +32,7 @@ const ProcessesPage = ({
 
   const { data: processes, refetch: refetchProcesses } = useFetchProcesses({
     project: client.project,
-    processTypes: [EVENT_TYPES.BID_PROCESS],
+    processTypes: [PROCESS_TYPES.BID_PROCESS],
     token: authState?.token,
   });
 
@@ -41,7 +41,7 @@ const ProcessesPage = ({
     relationshipsAsTarget: Relationship[]
   ): Promise<void> => {
     switch (event.type) {
-      case EVENT_TYPES.BID_PROCESS:
+      case PROCESS_TYPES.BID_PROCESS:
         refetchProcesses();
         break;
       case EVENT_TYPES.PROCESS_STARTED:
@@ -50,7 +50,7 @@ const ProcessesPage = ({
         // For status Events, we check that they are attached to (parent) Bid Processes and not to sub-processes.
         if (
           relationshipsAsTarget.some((rel) =>
-            rel.sourceExternalId.includes(EVENT_TYPES.BID_PROCESS)
+            rel.sourceExternalId.includes(PROCESS_TYPES.BID_PROCESS)
           )
         )
           refetchProcesses();

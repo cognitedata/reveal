@@ -1,4 +1,4 @@
-import { EVENT_TYPES } from '@cognite/power-ops-api-types';
+import { PROCESS_TYPES } from '@cognite/power-ops-api-types';
 import { CogniteEvent, DoubleDatapoint } from '@cognite/sdk';
 import { Column } from 'react-table';
 import { TableData, TableRow, TableColumn, MatrixWithData } from 'types';
@@ -163,6 +163,6 @@ export const isNewBidMatrixAvailable = (
   return !!(
     parentProcessEventExternalId &&
     parentProcessEventExternalId !== currentBidProcessExternalId &&
-    parentProcessEventExternalId.includes(EVENT_TYPES.BID_PROCESS)
+    parentProcessEventExternalId.includes(PROCESS_TYPES.BID_PROCESS)
   );
 };
