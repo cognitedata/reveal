@@ -1,6 +1,6 @@
 import { StylableObject } from '../../styling/StylableObject';
 import { AABB, Vec3 } from '../../styling/shapes/linalg';
-import { assignPointsWithWasm } from './assignPointsWithWasm';
+import { assignPointsToObjectsWithWasm } from './assignPointsWithWasm';
 
 import * as THREE from 'three';
 
@@ -249,7 +249,7 @@ export async function parseEpt(
   }
 
   const objectIdBuffer = (
-    await assignPointsWithWasm(
+    await assignPointsToObjectsWithWasm(
       xyz,
       objects,
       new THREE.Vector3().fromArray(pointOffset),

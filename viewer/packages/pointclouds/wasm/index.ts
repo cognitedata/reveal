@@ -12,24 +12,24 @@ function getWasmInitPromise(): Promise<void> {
 }
 
 // Sadly, I was unable to generate these types automatically with wasm-bindgen
-export type WasmCylinder = {
+export type SerializedCylinder = {
   center_a: Vec3;
   center_b: Vec3;
   radius: number;
 };
 
-export type WasmOrientedBox = {
+export type SerializedOrientedBox = {
   inv_instance_matrix: number[];
 };
 
-export type WasmShape = {
+export type SerializedPointCloudObject = {
   object_id: number;
-  cylinder?: WasmCylinder | undefined;
-  oriented_box?: WasmOrientedBox | undefined;
+  cylinder?: SerializedCylinder | undefined;
+  oriented_box?: SerializedOrientedBox | undefined;
 };
 
 export async function assignPoints(
-  input_shapes: Array<WasmShape>,
+  input_shapes: Array<SerializedPointCloudObject>,
   input_points: Float32Array,
   input_bounding_box: AABB,
   input_point_offset: Vec3

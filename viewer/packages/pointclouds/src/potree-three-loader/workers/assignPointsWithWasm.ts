@@ -7,11 +7,11 @@ import { assignPoints } from '../../../wasm';
 import { Cylinder } from '../../styling/shapes/Cylinder';
 import { Box } from '../../styling/shapes/Box';
 
-import { WasmShape } from '../../../wasm';
+import { SerializedPointCloudObject } from '../../../wasm';
 import { ShapeType } from '../../styling/shapes/IShape';
 import { assertNever } from '@reveal/utilities';
 
-function getWasmShape(obj: StylableObject): WasmShape {
+function createSerializedObject(obj: StylableObject): SerializedPointCloudObject {
   switch (obj.shape.shapeType) {
     case ShapeType.Cylinder: {
       const cylinder = obj.shape as Cylinder;
@@ -41,13 +41,13 @@ function getWasmShape(obj: StylableObject): WasmShape {
   }
 }
 
-export async function assignPointsWithWasm(
+export async function assignPointsToObjectsWithWasm(
   points: Float32Array,
   objects: StylableObject[],
   pointOffset: THREE.Vector3,
   sectorBoundingBox: THREE.Box3
 ): Promise<Uint16Array> {
-  const wasmShapes = objects.map(obj => getWasmShape(obj));
+  const wasmShapes = objects.map(obj => createSerializedObject(obj));
 
   const res = assignPoints(
     wasmShapes,
