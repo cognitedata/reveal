@@ -16,7 +16,6 @@ import { Cylinder } from './shapes/Cylinder';
 import { annotationsToObjectInfo } from './annotationsToObjects';
 
 export class CdfAnnotationProvider implements IAnnotationProvider {
-
   private readonly _sdk: CogniteClient;
 
   constructor(sdk: CogniteClient) {
@@ -71,11 +70,10 @@ export class CdfAnnotationProvider implements IAnnotationProvider {
   }
 
   async getAnnotations(modelIdentifier: ModelIdentifier): Promise<PointCloudObjectAnnotationData> {
-
     assert(modelIdentifier instanceof CdfModelIdentifier);
 
     const annotations = await this.fetchAnnotations(modelIdentifier);
 
     return annotationsToObjectInfo(annotations);
   }
-};
+}

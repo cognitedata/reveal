@@ -7,4 +7,4 @@ import { PointCloudObjectAnnotationData } from './PointCloudObjectAnnotationData
 
 export interface IAnnotationProvider {
   getAnnotations(modelIdentifier: ModelIdentifier): Promise<PointCloudObjectAnnotationData>;
-};
+}
