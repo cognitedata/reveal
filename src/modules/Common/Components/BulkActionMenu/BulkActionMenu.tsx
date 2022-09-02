@@ -155,7 +155,7 @@ export const BulkActionMenu = ({
           style={{ marginLeft: 14 }}
           loading={bulkActionInProgress}
         >
-          Bulk actions {count}
+          Bulk Edit {count}
         </Button>
       </Dropdown>
     </div>

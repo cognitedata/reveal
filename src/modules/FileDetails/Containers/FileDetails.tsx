@@ -112,7 +112,7 @@ export const FileDetails = ({
                   updateInfo={updateFileInfo}
                 />
                 <MetaDataTable
-                  title="Metadata"
+                  title="Custom metadata"
                   rowHeight={35}
                   columnWidth={170}
                   editMode={tableEditMode}
