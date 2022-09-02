@@ -38,9 +38,9 @@ describe('Visual tests', () => {
       return (window as any).render(testName) as Promise<void>;
     }, name);
 
-    const canvas = await testPage.$('canvas');
+    await testPage.$('canvas');
 
-    const image = await canvas!.screenshot();
+    const image = await testPage!.screenshot();
 
     expect(image).toMatchImageSnapshot({
       failureThreshold: 0.005,

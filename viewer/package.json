@@ -121,6 +121,7 @@
     "puppeteer": "17.1.0",
     "random-seed": "0.3.0",
     "raw-loader": "4.0.2",
+    "resize-observer-polyfill": "1.5.1",
     "rimraf": "3.0.2",
     "run-script-os": "1.1.6",
     "shx": "0.3.4",
