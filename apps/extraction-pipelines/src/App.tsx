@@ -11,6 +11,7 @@ import { Loader } from '@cognite/cogs.js';
 import { SDKProvider } from '@cognite/sdk-provider';
 import sdk, { loginAndAuthIfNeeded } from '@cognite/cdf-sdk-singleton';
 import { QueryClient, QueryClientProvider } from 'react-query';
+import { ReactQueryDevtools } from 'react-query/devtools';
 
 import { Route, Router, Switch } from 'react-router-dom';
 import { createBrowserHistory } from 'history';
@@ -105,6 +106,7 @@ const App = () => {
               </AuthWrapper>
             </SubAppWrapper>
           </AppScopeStyles>
+          <ReactQueryDevtools />
         </QueryClientProvider>
       </FlagProvider>
     </I18nWrapper>

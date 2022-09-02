@@ -8,8 +8,8 @@
     "build": "react-app-rewired --max_old_space_size=4096 build",
     "generate-preview-artifacts": "cdf-ui-cli -pr -p @cognite/cdf-integrations-ui -o index.js -d ./build",
     "build:preview": "yarn build && yarn generate-preview-artifacts",
-    "test": "react-app-rewired test jest src --env=jest-environment-jsdom",
-    "test:coverage": "CI=true yarn test -- --env=jest-environment-jsdom --coverage",
+    "test": "react-app-rewired test jest src --env=jest-environment-jsdom  --transformIgnorePatterns 'node_modules/(?!@codemirror)/'",
+    "test:coverage": "CI=true yarn test -- --env=jest-environment-jsdom --coverage  --transformIgnorePatterns 'node_modules/(?!@codemirror)/'",
     "lint": "yarn prettier && yarn eslint",
     "eslint": "yarn eslint:changed 'src/**/*.{ts,tsx}'",
     "eslint:changed": "eslint --config .eslintrc.production.js",
@@ -21,6 +21,8 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.18.9",
+    "@codemirror/language": "^6.2.1",
+    "@codemirror/legacy-modes": "^6.1.0",
     "@cognite/cdf-i18n-utils": "^0.6.0",
     "@cognite/cdf-utilities": "^1.5.0",
     "@cognite/cogs.js": "^7.5.0",
@@ -33,6 +35,9 @@
     "@google-cloud/storage": "^5.8.3",
     "@hookform/error-message": "^2.0.0",
     "@hookform/resolvers": "^2.6.0",
+    "@uiw/codemirror-extensions-basic-setup": "^4.11.6",
+    "@uiw/codemirror-themes": "^4.11.6",
+    "@uiw/react-codemirror": "^4.11.6",
     "babel-polyfill": "^6.26.0",
     "commander": "^7.2.0",
     "cronstrue": "^1.111.0",
@@ -104,11 +109,6 @@
   },
   "eslintConfig": {
     "extends": "react-app"
-  },
-  "jest": {
-    "transformIgnorePatterns": [
-      "node_modules/(?!@hookform)/"
-    ]
   },
   "browserslist": {
     "production": [

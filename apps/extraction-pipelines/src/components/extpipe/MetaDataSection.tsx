@@ -52,7 +52,7 @@ export const MetaDataSection = ({
     <Section
       title={t('meta-data')}
       icon="DataTable"
-      editButton={{ onClick: openDialog, canEdit }}
+      titleButton={{ onClick: openDialog, enabled: canEdit }}
     >
       <MetaWrapper>
         {meta == null ? (

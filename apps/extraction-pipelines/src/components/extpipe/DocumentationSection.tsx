@@ -202,7 +202,7 @@ export const DocumentationSection: FunctionComponent<
     <Section
       title={t('documentation')}
       icon="Documentation"
-      editButton={{ onClick: onEditClick, canEdit }}
+      titleButton={{ onClick: onEditClick, enabled: canEdit }}
       dataTestId="documentation"
     >
       <DocumentationForm onSubmit={handleSubmit(onValid)}>
