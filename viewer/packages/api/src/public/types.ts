@@ -18,6 +18,7 @@ export type RevealOptions = {
   renderOptions?: RenderOptions;
   continuousModelStreaming?: boolean;
   outputRenderTarget?: { target: THREE.WebGLRenderTarget; autoSize?: boolean };
+  rendererResolutionThreshold?: number;
   internal?: {
     cad?: InternalRevealCadOptions;
   };
