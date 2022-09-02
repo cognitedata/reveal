@@ -1,19 +1,17 @@
 load("@bazel_skylib//rules:write_file.bzl", "write_file")
 load("@build_bazel_rules_nodejs//:index.bzl", "copy_to_bin")
-load("@npm//@storybook/react:index.bzl", "build_storybook", "start_storybook")
+load("@npm//@storybook/react:index.bzl", "start_storybook")
 load("@npm//vite:index.bzl", "vite")
 load("//rules/vite:vite_build.bzl", "vite_build")
 load("//rules/test:jest.bzl", "jest_test")
 load("@npm//jest:index.bzl", "jest")
 load("//rules/lint:index.bzl", "eslint_config", "eslint_test", "prettier_test")
 load("//rules/package_json_helpers:generate.bzl", "generate_package_json_helpers")
-load("//rules/publish:publish_storybook.bzl", "publish_storybook")
 load("//rules/build_sed:build_sed.bzl", "build_sed")
 load("//rules/publish:publish_fas.bzl", "publish_fas")
 load("@npm//@bazel/typescript:index.bzl", "ts_project")
 load("@npm//@bazel/cypress:index.bzl", "cypress_web_test")
 load("@npm//cypress:index.bzl", "cypress")
-load("//rules/storybook:move_assets.bzl", "move_assets")
 
 # Filename conventions described at
 # https://create-react-app.dev/docs/running-tests#filename-conventions
@@ -33,7 +31,6 @@ _TESTS = [
 ]
 
 _STORYBOOK = [
-    ".storybook/*",
     "src/**/__stories__/*",
     "src/**/*.stories.ts*",
 ]
@@ -47,8 +44,6 @@ _SOURCES = [
     "src/**/*.svg",
     "src/**/*.css",
 ]
-
-STORYBOOK = glob(_STORYBOOK + _TESTS)
 
 SOURCES = glob(
     _SOURCES,
@@ -401,49 +396,6 @@ build_sed(
 
 ### Storybook ###
 
-copy_to_bin(
-    name = "copy_storybook_files",
-    srcs = STORYBOOK,
-)
-
-build_storybook(
-    # Note: If you want to change the name make sure you pass that value with -o into args
-    # https://storybook.js.org/docs/react/api/cli-options
-    name = "storybook-static-tmp",
-    args = [
-        # Suppress verbose build output
-        "--quiet",
-        "-o",
-        "storybook-static-tmp",
-    ],
-    chdir = "$(RULEDIR)",
-    data = _RUNTIME_DEPS + DEPENDENCIES + DEV_DEPENDENCIES + TYPE_DEPENDENCIES + [
-        "copy_storybook_files",
-        "@npm//@storybook/addon-essentials",
-        "@npm//@storybook/addon-links",
-        "@npm//@storybook/react",
-        "@npm//@storybook/builder-vite",
-        "@npm//vite-plugin-babel-macros",
-        "@npm//vite-tsconfig-paths",
-        "@npm//@vitejs/plugin-react",
-        # # Files that have been excluded from the typeface-inter__files target above because
-        # # they are filtered out by 'included_files' or because they are not valid runfiles
-        # # See https://github.com/bazelbuild/bazel/issues/4327.
-        # # Adding those files is not possible for runtime targets due to spaces in the path
-        # "@npm//typeface-inter:typeface-inter__all_files",
-        # # Fix Property 'hot' does not exist on type 'NodeModule'.  TS2339
-        # "@npm//@types/webpack-env",
-    ],
-    output_dir = True,
-)
-
-move_assets(
-    name = "storybook-static",
-    out_dir = "storybook-static",
-    src_dir = ":storybook-static-tmp",
-    tmp_dir = "tmp",
-)
-
 start_storybook(
     name = "start-storybook",
     args = [
@@ -464,13 +416,6 @@ start_storybook(
         # So use this to prevent EOF.
         "ibazel_notify_changes",
     ],
-)
-
-publish_storybook(
-    name = "publish_storybook",
-    build = ":storybook-static-final",
-    # Storybook sub domain to be used
-    sub_domain = "discover",
 )
 
 ### FAS ###

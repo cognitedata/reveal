@@ -376,10 +376,12 @@ build_sed(
 # build_storybook(
 #     # Note: If you want to change the name make sure you pass that value with -o into args
 #     # https://storybook.js.org/docs/react/api/cli-options
-#     name = "storybook-static",
+#     name = "storybook-static-tmp",
 #     args = [
 #         # Suppress verbose build output
 #         "--quiet",
+#         "-o",
+#         "storybook-static-tmp",
 #     ],
 #     chdir = "$(RULEDIR)",
 #     data = _RUNTIME_DEPS + DEPENDENCIES + DEV_DEPENDENCIES + TYPE_DEPENDENCIES + [
@@ -395,9 +397,9 @@ build_sed(
 # )
 
 # move_assets(
-#     name = "storybook-static-final",
-#     out_dir = "storybook-static-final",
-#     src_dir = ":storybook-static",
+#     name = "storybook-static",
+#     out_dir = "storybook-static",
+#     src_dir = ":storybook-static-tmp",
 #     tmp_dir = "tmp",
 # )
 
@@ -425,7 +427,7 @@ build_sed(
 
 # publish_storybook(
 #     name = "publish_storybook",
-#     build = ":storybook-static-final",
+#     build = ":storybook-static",
 #     # Storybook sub domain to be used
 #     sub_domain = "power-ops",
 # )

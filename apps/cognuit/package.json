@@ -24,7 +24,6 @@
     "storybook": "../../node_modules/.bin/start-storybook -p 6006",
     "storybook:bazel": "bazel run :start-storybook",
     "build-storybook": "../../node_modules/.bin/build-storybook",
-    "build-storybook:bazel": "bazel build :storybook-static-final",
     "update-helpers": "bazel run :generate_package_json_helpers",
     "deploy": "cd ../.. && ./scripts/deploy.sh cognuit"
   },

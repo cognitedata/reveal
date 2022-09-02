@@ -16,7 +16,7 @@ def _publish_storybook(ctx):
         is_executable = True,
     )
     runfiles = ctx.runfiles(
-        files = [],
+        files = ctx.files.build,
     )
     return [DefaultInfo(
         files = depset([out_file]),

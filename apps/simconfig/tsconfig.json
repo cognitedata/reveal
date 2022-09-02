@@ -11,7 +11,6 @@
   "include": [
     "src/**/*.ts",
     "src/**/*.tsx",
-    ".storybook/**/*",
     ".storybook-dev/**/*",
     "public/sidecar.js",
     ".eslintrc.js",

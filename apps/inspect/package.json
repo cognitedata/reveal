@@ -20,7 +20,6 @@
     "prettier:bazel": "bazel test :prettier_test",
     "prettier:bazel-fix": "bazel run :prettier_test -- --write",
     "storybook": "ibazel run :start-storybook",
-    "build-storybook": "bazel build :storybook-static-final",
     "e2e:start-idp": "./scripts/start-fake-idp.sh",
     "update-helpers": "bazel run :generate_package_json_helpers",
     "deploy": "cd ../.. && ./scripts/deploy.sh inspect"

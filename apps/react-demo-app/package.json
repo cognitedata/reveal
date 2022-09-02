@@ -21,7 +21,7 @@
     "prettier:bazel": "bazel test :prettier_test",
     "prettier:bazel-fix": "bazel run :prettier_test -- --write",
     "storybook": "bazel run :start-storybook",
-    "build-storybook": "bazel build :storybook-static-final",
+    "build-storybook": "bazel build :storybook-static",
     "e2e:start-idp": "./scripts/start-fake-idp.sh",
     "cypress:run-live": "./scripts/cypress-run-live.sh",
     "cypress:bazel-run-live": "ibazel run :cypress",
