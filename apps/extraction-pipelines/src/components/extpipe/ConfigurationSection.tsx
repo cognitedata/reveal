@@ -3,6 +3,7 @@ import { useTranslation } from 'common';
 import { useExtpipeConfig } from 'hooks/config';
 import { Section } from './Section';
 import { StyledTooltip } from 'components/styled';
+import ConfigurationEditor from './ConfigurationEditor';
 
 type Props = {
   externalId: string;
@@ -37,7 +38,7 @@ export default function ConfigurationSection({ externalId }: Props) {
         )
       }
     >
-      <pre>{configuration?.config}</pre>
+      <ConfigurationEditor externalId={externalId} />
     </Section>
   );
 }
