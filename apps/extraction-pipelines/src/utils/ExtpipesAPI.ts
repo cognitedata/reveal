@@ -26,11 +26,31 @@ export const getExtpipeById = async (
   sdk: CogniteClient,
   extpipeId: number
 ): Promise<Extpipe> => {
-  const extPipe = await post<{ items: Extpipe[] }, { items: { id: number }[] }>(
-    sdk,
-    `/byids`,
-    { items: [{ id: extpipeId }] }
-  ).then((r) => r.data.items[0]);
+  const response = await get<Extpipe>(sdk, `/${extpipeId}`);
+  if (response.data.dataSetId) {
+    try {
+      const dataSetRes = await getDataSets(sdk, [
+        { id: response.data.dataSetId },
+      ]);
+      return {
+        ...response.data,
+        ...(dataSetRes[0] && { dataSet: dataSetRes[0] }),
+      } as Extpipe;
+    } catch (e) {
+      return response.data;
+    }
+  }
+  return response.data;
+};
+
+export const getExtpipeByExternalId = async (
+  sdk: CogniteClient,
+  externalId: string
+): Promise<Extpipe> => {
+  const extPipe = await post<
+    { items: Extpipe[] },
+    { items: { externalId: string }[] }
+  >(sdk, `/byids`, { items: [{ externalId }] }).then((r) => r.data.items[0]);
 
   if (extPipe.dataSetId) {
     try {
