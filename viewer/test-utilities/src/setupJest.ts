@@ -5,6 +5,7 @@
 // fetch() polyfill
 import 'whatwg-fetch';
 import { TextDecoder } from 'util';
+import ResizeObserver from 'resize-observer-polyfill';
 
 // Create document.currentScript required by potree-core
 Object.defineProperty(document, 'currentScript', {
@@ -31,6 +32,7 @@ class StubWorker {
   public postMessage(_: any) {}
 }
 (window as any).Worker = StubWorker;
+(window as any).ResizeObserver = ResizeObserver;
 
 // Filter away warning from ThreeJS about "THREE.WebGLRenderer: EXT_xxx extension not supported."
 // which is caused by using a mock WebGL implementation for unit testing

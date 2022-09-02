@@ -107,7 +107,10 @@ export function createRevealManager(
 
   const renderOptions: RenderOptions = revealOptions?.renderOptions ?? {};
   const materialManager = new CadMaterialManager();
-  const pipelineExecutor = new BasicPipelineExecutor(renderer);
+  const pipelineExecutor = new BasicPipelineExecutor(renderer, {
+    autoResizeRenderer: true,
+    resolutionThreshold: revealOptions.rendererResolutionThreshold
+  });
   const defaultRenderPipeline = new DefaultRenderPipelineProvider(
     materialManager,
     sceneHandler,
