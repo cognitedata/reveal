@@ -15,7 +15,12 @@ import {
   CadGeometryRenderModePipelineProvider,
   RenderMode
 } from '@reveal/rendering';
-import { createPointCloudManager } from '@reveal/pointclouds';
+import {
+  CdfAnnotationProvider,
+  createPointCloudManager,
+  IAnnotationProvider,
+  LocalAnnotationProvider
+} from '@reveal/pointclouds';
 import {
   ModelMetadataProvider,
   CdfModelMetadataProvider,
@@ -43,15 +48,16 @@ export function createLocalRevealManager(
 ): RevealManager {
   const modelMetadataProvider = new LocalModelMetadataProvider();
   const modelDataProvider = new LocalModelDataProvider();
+  const annotationProvider = new LocalAnnotationProvider();
   return createRevealManager(
     'local',
     'local-dataSource-appId',
     modelMetadataProvider,
     modelDataProvider,
+    annotationProvider,
     renderer,
     sceneHandler,
-    revealOptions,
-    undefined
+    revealOptions
   );
 }
 
@@ -71,15 +77,16 @@ export function createCdfRevealManager(
   const applicationId = getSdkApplicationId(client);
   const modelMetadataProvider = new CdfModelMetadataProvider(client);
   const modelDataProvider = new CdfModelDataProvider(client);
+  const annotationProvider = new CdfAnnotationProvider(client);
   return createRevealManager(
     client.project,
     applicationId,
     modelMetadataProvider,
     modelDataProvider,
+    annotationProvider,
     renderer,
     sceneHandler,
-    revealOptions,
-    client
+    revealOptions
   );
 }
 
@@ -90,20 +97,20 @@ export function createCdfRevealManager(
  * @param applicationId
  * @param modelMetadataProvider
  * @param modelDataProvider
+ * @param annotationProvider
  * @param renderer
  * @param sceneHandler
  * @param revealOptions
- * @param sdkClient
  */
 export function createRevealManager(
   project: string,
   applicationId: string,
   modelMetadataProvider: ModelMetadataProvider,
   modelDataProvider: ModelDataProvider,
+  annotationProvider: IAnnotationProvider,
   renderer: THREE.WebGLRenderer,
   sceneHandler: SceneHandler,
-  revealOptions: RevealOptions = {},
-  sdkClient?: CogniteClient | undefined
+  revealOptions: RevealOptions = {}
 ): RevealManager {
   MetricsLogger.init(revealOptions.logMetrics !== false, project, applicationId, {
     constructorOptions: revealOptions
@@ -129,9 +136,9 @@ export function createRevealManager(
   const pointCloudManager = createPointCloudManager(
     modelMetadataProvider,
     modelDataProvider,
+    annotationProvider,
     sceneHandler.scene,
-    renderer,
-    sdkClient
+    renderer
   );
   sceneHandler.customObjects.push(pointCloudManager.pointCloudGroupWrapper);
   const cadManager = createCadManager(

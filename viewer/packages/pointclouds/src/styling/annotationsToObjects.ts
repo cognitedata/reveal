@@ -3,7 +3,7 @@
  */
 
 import { PointCloudObjectAnnotation, CdfPointCloudObjectAnnotation } from '../annotationTypes';
-import { PointCloudObjectProvider } from './PointCloudObjectProvider';
+import { PointCloudObjectAnnotationData } from './PointCloudObjectAnnotationData';
 import { CompositeShape } from './shapes/CompositeShape';
 import { ShapeType } from './shapes/IShape';
 import { StylableObject } from './StylableObject';
@@ -36,8 +36,8 @@ function cdfAnnotationsToRevealAnnotations(
   return resultAnnotations;
 }
 
-export function annotationsToObjectInfo(annotations: CdfPointCloudObjectAnnotation[]): PointCloudObjectProvider {
+export function annotationsToObjectInfo(annotations: CdfPointCloudObjectAnnotation[]): PointCloudObjectAnnotationData {
   const translatedAnnotations = cdfAnnotationsToRevealAnnotations(annotations);
 
-  return new PointCloudObjectProvider(translatedAnnotations);
+  return new PointCloudObjectAnnotationData(translatedAnnotations);
 }

@@ -30,3 +30,9 @@ export { CompletePointCloudAppearance, PointCloudAppearance } from './src/stylin
 export { PointCloudObjectCollection } from './src/styling/PointCloudObjectCollection';
 export { AnnotationIdPointCloudObjectCollection } from './src/styling/AnnotationListPointCloudObjectCollection';
 export { DefaultPointCloudAppearance } from './src/styling/PointCloudAppearance';
+
+export { PointCloudFactory } from './src/PointCloudFactory';
+
+export { IAnnotationProvider } from './src/styling/IAnnotationProvider';
+export { CdfAnnotationProvider } from './src/styling/CdfAnnotationProvider';
+export { LocalAnnotationProvider } from './src/styling/LocalAnnotationProvider';

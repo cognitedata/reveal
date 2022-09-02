@@ -9,7 +9,7 @@ export type ObjectsMaps = {
   objectToAnnotationIds: Map<number, number>;
 };
 
-export class PointCloudObjectProvider {
+export class PointCloudObjectAnnotationData {
   private readonly _annotations: PointCloudObjectAnnotation[];
 
   constructor(annotations: PointCloudObjectAnnotation[]) {

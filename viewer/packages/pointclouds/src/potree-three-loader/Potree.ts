@@ -31,7 +31,7 @@ import { BinaryHeap } from './utils/BinaryHeap';
 import { Box3Helper } from './utils/box3-helper';
 import { LRU } from './utils/lru';
 import { ModelDataProvider } from '@reveal/modeldata-api';
-import { PointCloudObjectProvider } from '../styling/PointCloudObjectProvider';
+import { PointCloudObjectAnnotationData } from '../styling/PointCloudObjectAnnotationData';
 import throttle from 'lodash/throttle';
 
 export class QueueItem {
@@ -83,7 +83,7 @@ export class Potree implements IPotree {
   async loadPointCloud(
     baseUrl: string,
     fileName: string,
-    annotationObjectInfo: PointCloudObjectProvider
+    annotationObjectInfo: PointCloudObjectAnnotationData
   ): Promise<PointCloudOctree> {
     const geometry = await EptLoader.load(baseUrl, fileName, this._modelDataProvider, annotationObjectInfo);
     return new PointCloudOctree(this, geometry, annotationObjectInfo);

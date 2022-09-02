@@ -17,7 +17,7 @@ import { asyncScheduler, combineLatest, Observable, scan, Subject, throttleTime 
 import { ModelIdentifier } from '@reveal/modeldata-api';
 import { MetricsLogger } from '@reveal/metrics';
 import { SupportedModelTypes } from '@reveal/model-base';
-import { PointCloudFactory } from './IPointCloudFactory';
+import { PointCloudFactory } from './PointCloudFactory';
 
 export class PointCloudManager {
   private readonly _pointCloudMetadataRepository: PointCloudMetadataRepository;
