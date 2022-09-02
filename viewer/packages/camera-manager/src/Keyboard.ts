@@ -56,6 +56,11 @@ export default class Keyboard {
     return p;
   }
 
+  public dispose(): void {
+    this.clearPressedKeys();
+    this.removeEventListeners();
+  }
+
   private readonly addEventListeners = () => {
     this.clearPressedKeys();
 
