@@ -43,6 +43,7 @@ module.exports = {
         'examples/timelinetool',
         'examples/combine-models',
         'examples/controlsmodes',
+        'examples/point-to-point-measurement',
       ],
     },
     {
