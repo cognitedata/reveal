@@ -63,7 +63,7 @@ export const CasingsColumn: React.FC<WithDragHandleProps<CasingsColumnProps>> =
       ...dragHandleProps
     }) => {
       const renderCasingsColumnContent = useDeepCallback(() => {
-        if (!data || isEmpty(data) || isLoading) {
+        if (isLoading || !data || isEmpty(data)) {
           return (
             <EmptyStateWrapper>
               <EmptyState

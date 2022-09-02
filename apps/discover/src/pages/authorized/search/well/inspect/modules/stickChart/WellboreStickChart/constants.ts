@@ -17,6 +17,9 @@ export const NO_DATA_AMONG_SELECTED_OPTIONS_TEXT =
 
 export const NO_COLUMNS_SELECTED_TEXT = 'No columns selected';
 
+export const SOME_EVENT_MISSING_TVD_TEXT =
+  'Some event might be missing for TVD';
+
 export const RKB_COLOR = 'var(--cogs-green-5)';
 export const SEA_LEVEL_COLOR = 'var(--cogs-midblue-4)';
 export const MUD_LINE_COLOR = '#000000';

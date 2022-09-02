@@ -55,6 +55,7 @@ export const WellboreStickChartEmptyStateWrapper = styled(ContentWrapper)`
 `;
 
 export const EventsColumnBody = styled(BodyColumnBody)`
+  width: ${EVENTS_COLUMN_WIDTH}px;
   ${SubTitleText} {
     width: ${EVENTS_COLUMN_WIDTH}px;
     padding: ${sizes.small};

@@ -3,6 +3,7 @@ import {
   NdsInternalWithTvd,
   NdsRiskTypesSelection,
 } from 'domain/wells/nds/internal/types';
+import { isAnyNdsMissingTvd } from 'domain/wells/nds/internal/utils/isAnyNdsMissingTvd';
 
 import React, { useCallback, useState } from 'react';
 
@@ -27,6 +28,7 @@ import {
 } from '../../../common/Events/NdsEventsByDepth';
 import { NdsEventsScatterView } from '../../../common/Events/NdsEventsScatterView';
 import { EventsColumnView } from '../../../common/Events/types';
+import { ColumnNotification } from '../../components/ColumnNotification';
 import { ColumnOptionsSelector } from '../../components/ColumnOptionsSelector';
 import { ColumnVisibilityProps } from '../../types';
 import {
@@ -34,6 +36,7 @@ import {
   EVENTS_COLUMN_WIDTH,
   NO_DATA_AMONG_SELECTED_OPTIONS_TEXT,
   NO_OPTIONS_SELECTED_TEXT,
+  SOME_EVENT_MISSING_TVD_TEXT,
 } from '../constants';
 import { EventsColumnBody } from '../elements';
 
@@ -106,6 +109,14 @@ export const NdsEventsColumn: React.FC<
           </ColumnHeaderWrapper>
 
           <EventsColumnBody>
+            <ColumnNotification
+              content={SOME_EVENT_MISSING_TVD_TEXT}
+              visible={
+                depthMeasurementType === DepthMeasurementUnit.TVD &&
+                isAnyNdsMissingTvd(filteredData)
+              }
+            />
+
             <NdsEventsByDepth
               scaleBlocks={scaleBlocks}
               events={filteredData}

@@ -4,6 +4,7 @@ import {
   NptCodesSelection,
   NptInternalWithTvd,
 } from 'domain/wells/npt/internal/types';
+import { isAnyNptMissingTvd } from 'domain/wells/npt/internal/utils/isAnyNptMissingTvd';
 
 import React, { useCallback, useState } from 'react';
 
@@ -28,6 +29,7 @@ import {
 } from '../../../common/Events/NptEventsByDepth';
 import { NptEventsScatterView } from '../../../common/Events/NptEventsScatterView';
 import { EventsColumnView } from '../../../common/Events/types';
+import { ColumnNotification } from '../../components/ColumnNotification';
 import { ColumnOptionsSelector } from '../../components/ColumnOptionsSelector';
 import { ColumnVisibilityProps } from '../../types';
 import {
@@ -35,6 +37,7 @@ import {
   EVENTS_COLUMN_WIDTH,
   NO_DATA_AMONG_SELECTED_OPTIONS_TEXT,
   NO_OPTIONS_SELECTED_TEXT,
+  SOME_EVENT_MISSING_TVD_TEXT,
 } from '../constants';
 import { EventsColumnBody } from '../elements';
 
@@ -122,6 +125,14 @@ export const NptEventsColumn: React.FC<
           </ColumnHeaderWrapper>
 
           <EventsColumnBody>
+            <ColumnNotification
+              content={SOME_EVENT_MISSING_TVD_TEXT}
+              visible={
+                depthMeasurementType === DepthMeasurementUnit.TVD &&
+                isAnyNptMissingTvd(filteredData)
+              }
+            />
+
             <NptEventsByDepth
               scaleBlocks={scaleBlocks}
               events={filteredData}
