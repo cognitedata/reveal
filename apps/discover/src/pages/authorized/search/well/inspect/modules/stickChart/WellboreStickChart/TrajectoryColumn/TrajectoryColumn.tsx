@@ -19,6 +19,7 @@ import { adapTrajectoryDataToChart } from '../../utils/adapTrajectoryDataToChart
 
 import {
   CHART_TITLE,
+  EXPAND_TRAJECTORY_GRAPH_TEXT,
   EMPTY_TRAJECTORY_DATA_TEXT,
   SELECT_TVD_MESSAGE,
 } from './constants';
@@ -94,6 +95,7 @@ export const TrajectoryColumn: React.FC<
             axisNames={axisNames}
             scaleBlocks={scaleBlocks}
             emptySubtitle={emptySubtitle}
+            expandSubtitle={EXPAND_TRAJECTORY_GRAPH_TEXT}
             {...dragHandleProps}
           />
         </TrajectoryChartWrapper>

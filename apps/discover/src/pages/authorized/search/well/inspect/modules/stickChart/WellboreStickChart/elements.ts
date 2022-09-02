@@ -1,12 +1,16 @@
 import styled from 'styled-components/macro';
 
+import { SubTitleText } from 'components/EmptyState/elements';
 import { Flex, FlexColumn, sizes } from 'styles/layout';
 
 import {
   BodyColumn,
+  BodyColumnBody,
   ColumnHeaderWrapper as DefaultColumnHeaderWrapper,
 } from '../../common/Events/elements';
 import { ColumnOptionsSelectorContainer } from '../components/ColumnOptionsSelector/elements';
+
+import { EVENTS_COLUMN_WIDTH } from './constants';
 
 export const WellboreStickChartWrapper = styled(FlexColumn)`
   height: 100%;
@@ -48,4 +52,11 @@ export const NptEventAvatar = styled.div`
 
 export const WellboreStickChartEmptyStateWrapper = styled(ContentWrapper)`
   margin-top: 25%;
+`;
+
+export const EventsColumnBody = styled(BodyColumnBody)`
+  ${SubTitleText} {
+    width: ${EVENTS_COLUMN_WIDTH}px;
+    padding: ${sizes.small};
+  }
 `;

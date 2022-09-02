@@ -50,6 +50,7 @@ export const SubTitleText = styled.span`
   padding-top: ${sizes.small};
   letter-spacing: 0em;
   color: var(--cogs-text-color-secondary);
+  margin: auto;
 `;
 
 export const ChildrenContainer = styled.div`

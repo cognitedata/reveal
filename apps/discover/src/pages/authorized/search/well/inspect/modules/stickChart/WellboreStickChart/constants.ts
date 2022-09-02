@@ -9,6 +9,7 @@ export const WATER_DEPTH_LABEL = 'Water depth';
 export const EMPTY_SCHEMA_TEXT = 'This wellbore has no schema data';
 export const LOADING_TEXT = 'Loading';
 export const EMPTY_SUMMARY_TEXT = 'No summary to display';
+export const DEFAULT_EXPAND_GRAPH_TEXT = 'Expand to see graph';
 
 export const NO_OPTIONS_SELECTED_TEXT = 'No options selected';
 export const NO_DATA_AMONG_SELECTED_OPTIONS_TEXT =
@@ -28,6 +29,7 @@ export const DEPTH_SCALE_LABEL_HEIGHT = 16;
 
 export const EVENTS_COLUMN_WIDTH = 120;
 export const CHART_COLUMN_WIDTH = 312;
+export const CHART_COLUMN_WIDTH_COLLAPSED = 120;
 
 export const DEFAULT_DEPTH_MEASUREMENT_TYPE = DepthMeasurementUnit.MD;
 export const DEFAULT_EVENTS_COLUMN_VIEW = EventsColumnView.Cluster;

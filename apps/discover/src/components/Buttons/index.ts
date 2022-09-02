@@ -1,3 +1,6 @@
+/**
+ * Buttons
+ */
 export * from './BackButton';
 export * from './BaseButton';
 export * from './CloseButton';
@@ -22,3 +25,9 @@ export * from './ReorderButton';
 export * from './SearchButton';
 export * from './ShareButton';
 export * from './ViewButton';
+
+/**
+ * Icon buttons
+ */
+export * from './IconButton';
+export * from './ExpandCollapseIconButton';

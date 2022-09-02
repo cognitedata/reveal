@@ -5,3 +5,5 @@ export const SELECT_TVD_MESSAGE =
 
 export const EMPTY_TRAJECTORY_DATA_TEXT =
   'This wellbore has no trajectory data';
+
+export const EXPAND_TRAJECTORY_GRAPH_TEXT = 'Expand to see trajectory';

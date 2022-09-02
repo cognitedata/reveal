@@ -301,7 +301,7 @@ const ChartV2 = React.forwardRef(
 
     return (
       <React.Suspense fallback={<Loader darkMode={false} />}>
-        <Container className="plotly-chart-container">
+        <Container>
           <BodyColumnHeaderWrapper visible={!hideHeader}>
             <BodyColumnMainHeader data-testid={title}>
               {title}
@@ -311,7 +311,7 @@ const ChartV2 = React.forwardRef(
             </BodyColumnHeaderLegend>
           </BodyColumnHeaderWrapper>
 
-          <ChartWrapper ref={ref} className="plotly-chart-wrapper">
+          <ChartWrapper ref={ref}>
             {subtitle && (
               <ChartSubtitle data-testid="chart-subtitle">
                 {subtitle}

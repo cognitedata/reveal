@@ -19,7 +19,6 @@ import { ColumnDragger } from '../../../common/Events/ColumnDragger';
 import { NPT_COLUMN_TITLE } from '../../../common/Events/constants';
 import {
   BodyColumn,
-  BodyColumnBody,
   ColumnHeaderWrapper,
 } from '../../../common/Events/elements';
 import NptEventsBadge from '../../../common/Events/NptEventsBadge';
@@ -37,6 +36,7 @@ import {
   NO_DATA_AMONG_SELECTED_OPTIONS_TEXT,
   NO_OPTIONS_SELECTED_TEXT,
 } from '../constants';
+import { EventsColumnBody } from '../elements';
 
 import { NptScatterTooltip } from './components/NptScatterTooltip';
 
@@ -121,7 +121,7 @@ export const NptEventsColumn: React.FC<
             />
           </ColumnHeaderWrapper>
 
-          <BodyColumnBody>
+          <EventsColumnBody>
             <NptEventsByDepth
               scaleBlocks={scaleBlocks}
               events={filteredData}
@@ -130,7 +130,7 @@ export const NptEventsColumn: React.FC<
               depthMeasurementType={depthMeasurementType}
               renderBlockEvents={renderBlockEvents}
             />
-          </BodyColumnBody>
+          </EventsColumnBody>
         </BodyColumn>
       </NoUnmountShowHide>
     );

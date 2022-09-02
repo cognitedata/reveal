@@ -24,6 +24,7 @@ import {
 import {
   CHART_TITLE,
   EMPTY_MEASUREMENTS_DATA_TEXT,
+  EXPAND_FIT_LOT_GRAPH_TEXT,
   PRESSURE_UNIT,
   SELECT_TVD_MESSAGE,
 } from './constants';
@@ -106,6 +107,7 @@ export const MeasurementsColumn: React.FC<
           axisNames={axisNames}
           scaleBlocks={scaleBlocks}
           emptySubtitle={emptySubtitle}
+          expandSubtitle={EXPAND_FIT_LOT_GRAPH_TEXT}
           {...dragHandleProps}
         />
       </NoUnmountShowHide>

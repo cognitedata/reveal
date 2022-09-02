@@ -18,7 +18,6 @@ import { ColumnDragger } from '../../../common/Events/ColumnDragger';
 import { NDS_COLUMN_TITLE } from '../../../common/Events/constants';
 import {
   BodyColumn,
-  BodyColumnBody,
   ColumnHeaderWrapper,
 } from '../../../common/Events/elements';
 import NdsEventsBadge from '../../../common/Events/NdsEventsBadge';
@@ -36,6 +35,7 @@ import {
   NO_DATA_AMONG_SELECTED_OPTIONS_TEXT,
   NO_OPTIONS_SELECTED_TEXT,
 } from '../constants';
+import { EventsColumnBody } from '../elements';
 
 export interface NdsEventsColumnProps extends ColumnVisibilityProps {
   scaleBlocks: number[];
@@ -105,7 +105,7 @@ export const NdsEventsColumn: React.FC<
             />
           </ColumnHeaderWrapper>
 
-          <BodyColumnBody>
+          <EventsColumnBody>
             <NdsEventsByDepth
               scaleBlocks={scaleBlocks}
               events={filteredData}
@@ -114,7 +114,7 @@ export const NdsEventsColumn: React.FC<
               depthMeasurementType={depthMeasurementType}
               renderBlockEvents={renderBlockEvents}
             />
-          </BodyColumnBody>
+          </EventsColumnBody>
         </BodyColumn>
       </NoUnmountShowHide>
     );
