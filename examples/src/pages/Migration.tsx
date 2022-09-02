@@ -29,6 +29,7 @@ import { PointCloudUi } from '../utils/PointCloudUi';
 import { ModelUi } from '../utils/ModelUi';
 import { createSDKFromEnvironment } from '../utils/example-helpers';
 import { PointCloudClassificationFilterUI } from '../utils/PointCloudClassificationFilterUI';
+import { MeasurementUi } from '../utils/MeasurementUi';
 
 
 window.THREE = THREE;
@@ -103,7 +104,7 @@ export function Migration() {
       (window as any).viewer = viewer;
 
       const controlsOptions: CameraControlsOptions = {
-        changeCameraTargetOnClick: true,
+        changeCameraTargetOnClick: false,
         mouseWheelAction: 'zoomToCursor',
       };
       cameraManager = viewer.cameraManager as DefaultCameraManager;
@@ -152,7 +153,7 @@ export function Migration() {
         renderMode: 'Color',
         controls: {
           mouseWheelAction: 'zoomToCursor',
-          changeCameraTargetOnClick: true
+          changeCameraTargetOnClick: false
         }
       };
       const guiActions = {
@@ -365,6 +366,8 @@ export function Migration() {
 
       const inspectNodeUi = new InspectNodeUI(gui.addFolder('Last clicked node'), client, viewer);
 
+      new MeasurementUi(viewer, gui.addFolder('Measurement'));
+
       viewer.on('click', async (event) => {
         const { offsetX, offsetY } = event;
         console.log('2D coordinates', event);
@@ -384,9 +387,6 @@ export function Migration() {
               {
                 const { pointIndex, point } = intersection;
                 console.log(`Clicked point with pointIndex ${pointIndex} at`, point);
-                const sphere = new THREE.Mesh(new THREE.SphereBufferGeometry(0.1), new THREE.MeshBasicMaterial({ color: 'red' }));
-                sphere.position.copy(point);
-                viewer.addObject3D(sphere);
               }
               break;
           }
