@@ -80,8 +80,9 @@ export const AnnotationSettingsModalContent = ({
         Annotation settings
       </Title>
       <Detail style={{ paddingBottom: '16px' }}>
-        Create pre-defined annotations that can be used when creating manual
-        annotations. Individual points can be created under a shared group.
+        Pre-defined shapes and points are annotation labels that have been used
+        previously. Choose from the pre-defined list, or create new ones to add
+        to the list.
       </Detail>
       <Tabs
         style={{ overflow: 'visible' }}
