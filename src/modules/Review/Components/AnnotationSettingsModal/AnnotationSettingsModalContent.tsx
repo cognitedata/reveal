@@ -89,7 +89,7 @@ export const AnnotationSettingsModalContent = ({
         activeKey={activeView}
         onChange={(activeKey) => setActiveView(activeKey)}
       >
-        <Tabs.TabPane tab="Pre-defined Shapes" key="shape">
+        <Tabs.TabPane tab="Pre-defined shapes" key="shape">
           <Body>
             <Shapes
               predefinedShapes={predefinedAnnotations.predefinedShapes}
@@ -104,7 +104,7 @@ export const AnnotationSettingsModalContent = ({
             />
           </Body>
         </Tabs.TabPane>
-        <Tabs.TabPane tab="Pre-defined Points" key="keypoint">
+        <Tabs.TabPane tab="Pre-defined keypoint collections" key="keypoint">
           <Body>
             <Keypoints
               predefinedKeypointCollections={
