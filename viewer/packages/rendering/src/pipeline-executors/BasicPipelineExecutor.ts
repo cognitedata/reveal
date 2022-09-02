@@ -12,18 +12,17 @@ export type BasicPipelineExecutorOptions = {
 };
 
 export class BasicPipelineExecutor implements RenderPipelineExecutor {
+  private readonly _defaultResolutionThreshold = 1.4e6;
+
   private readonly _renderer: THREE.WebGLRenderer;
   private readonly _resolutionThreshold: number;
-  private _shouldResize: boolean;
   private readonly _resizeObserver: ResizeObserver | undefined;
 
-  static get defaultResolutionThreshold(): number {
-    return 1.4e6;
-  }
+  private _shouldResize: boolean;
 
   constructor(renderer: THREE.WebGLRenderer, options?: BasicPipelineExecutorOptions) {
     this._renderer = renderer;
-    this._resolutionThreshold = options?.resolutionThreshold ?? BasicPipelineExecutor.defaultResolutionThreshold;
+    this._resolutionThreshold = options?.resolutionThreshold ?? this._defaultResolutionThreshold;
 
     const autoResizeRenderer = options?.autoResizeRenderer ?? false;
     this._shouldResize = autoResizeRenderer;
