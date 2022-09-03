@@ -13,6 +13,7 @@ import { ClusteredAreaCollection } from './prioritized/ClusteredAreaCollection';
  * Helper class that populates an IndexSet based on a paged results from the Cognite SDK.
  */
 export class PopulateIndexSetFromPagedResponseHelper<T> {
+  private _filterItemsCallback: (item: T[]) => Promise<T[]>;
   private readonly _itemsToTreeIndexRangesCallback: (item: T[]) => NumericRange[];
   private readonly _itemsToAreasCallback: (item: T[]) => Promise<THREE.Box3[]>;
   private readonly _notifyChangedCallback: () => void;
@@ -30,6 +31,11 @@ export class PopulateIndexSetFromPagedResponseHelper<T> {
     this._itemsToTreeIndexRangesCallback = itemsToTreeIndexRangesCallback;
     this._itemsToAreasCallback = itemsToAreasCallback;
     this._notifyChangedCallback = notifySetChangedCallback;
+    this._filterItemsCallback = items => Promise.resolve(items); // No filter
+  }
+
+  setFilterItemsCallback(filterItemsCallback: (items: T[]) => Promise<T[]>): void {
+    this._filterItemsCallback = filterItemsCallback;
   }
 
   interrupt(): void {
@@ -62,10 +68,11 @@ export class PopulateIndexSetFromPagedResponseHelper<T> {
       while (!this._interrupted) {
         const nextRequest = response.next ? response.next() : undefined;
 
-        const ranges = this._itemsToTreeIndexRangesCallback(response.items);
+        const items = await this._filterItemsCallback(response.items);
+        const ranges = this._itemsToTreeIndexRangesCallback(items);
         ranges.forEach(range => indexSet.addRange(range));
 
-        const areas = await this._itemsToAreasCallback(response.items);
+        const areas = await this._itemsToAreasCallback(items);
         this._areas.addAreas(areas);
 
         this._notifyChangedCallback();

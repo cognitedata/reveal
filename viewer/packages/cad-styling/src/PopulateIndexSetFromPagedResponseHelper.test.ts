@@ -11,7 +11,7 @@ import { sleep } from '../../../test-utilities';
 import { NumericRange } from '@reveal/utilities';
 import { ListResponse } from '@cognite/sdk-core';
 
-describe('PopulateIndexSetFromPagedResponseHelper', () => {
+describe(PopulateIndexSetFromPagedResponseHelper.name, () => {
   let helper: PopulateIndexSetFromPagedResponseHelper<number>;
   let notifyChangedCallback: () => void;
 
@@ -91,6 +91,17 @@ describe('PopulateIndexSetFromPagedResponseHelper', () => {
     expect(helper.isLoading).toBeFalse();
 
     expect(notifyChangedCallback).toBeCalledTimes(4);
+  });
+
+  test('with filter, only processes and returns accepted items', async () => {
+    const response = createResponse([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 5);
+    const filterCallback = jest.fn(async (items: number[]) => items.filter(x => x % 2 === 0));
+    helper.setFilterItemsCallback(filterCallback);
+
+    await helper.pageResults(Promise.resolve(response));
+
+    expect(filterCallback).toBeCalledTimes(2); // two batches
+    expect(helper.indexSet.toIndexArray()).toEqual([2, 4, 6, 8, 10]);
   });
 });
 
