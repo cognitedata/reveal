@@ -34,8 +34,14 @@ export class PopulateIndexSetFromPagedResponseHelper<T> {
     this._filterItemsCallback = items => Promise.resolve(items); // No filter
   }
 
-  setFilterItemsCallback(filterItemsCallback: (items: T[]) => Promise<T[]>): void {
-    this._filterItemsCallback = filterItemsCallback;
+  /**
+   * Set a callback for filtering items from the result set. The callback is invoked before
+   * results are added to a {@link IndexSet} and before the callback to determine bounds is
+   * invoked.
+   * @param filterItemsCallback Filter callback, or `undefined` for no filtering (default).
+   */
+  setFilterItemsCallback(filterItemsCallback: ((items: T[]) => Promise<T[]>) | undefined): void {
+    this._filterItemsCallback = filterItemsCallback ?? ((items: T[]) => Promise.resolve(items));
   }
 
   interrupt(): void {
