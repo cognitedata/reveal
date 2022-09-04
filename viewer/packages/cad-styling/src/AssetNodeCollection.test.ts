@@ -56,11 +56,6 @@ describe(AssetNodeCollection.name, () => {
         target.copy(source);
         return target;
       });
-    // mockNodeCollectionDataProvider
-    //   .setup(x => x.modelId)
-    //   .returns(42)
-    //   .setup(x => x.revisionId)
-    //   .returns(13);
   });
 
   test('state is as expected after creation', () => {
@@ -117,6 +112,22 @@ describe(AssetNodeCollection.name, () => {
         ),
       Times.Once()
     );
+  });
+
+  test('executeFilter with asset mapping filter, invokes callback for each chunk', async () => {
+    mockAssetMappings3D
+      .setup(x => x.list(It.IsAny(), It.IsAny(), It.IsAny()))
+      .returnsAsync(createListResponse(createAssetMappings(8), 2));
+
+    const assetMappingFilter = jest.fn((mappings: AssetMapping3D[]) =>
+      Promise.resolve(mappings.filter((_, i) => i % 2 === 0))
+    );
+
+    const collection = new AssetNodeCollection(mockClient.object(), mockNodeCollectionDataProvider.object());
+    await collection.executeFilter({ assetMappingFilter });
+
+    expect(assetMappingFilter).toBeCalledTimes(4);
+    expect(collection.getIndexSet().toIndexArray()).toEqual([0, 2, 4, 6]);
   });
 });
 

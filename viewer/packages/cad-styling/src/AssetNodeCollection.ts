@@ -17,6 +17,32 @@ import { AssetMapping3D, CogniteClient } from '@cognite/sdk';
 import cloneDeep from 'lodash/cloneDeep';
 import { CdfModelNodeCollectionDataProvider } from './CdfModelNodeCollectionDataProvider';
 
+export type AssetMappingFilter = (candidates: AssetMapping3D[]) => Promise<AssetMapping3D[]>;
+
+export type AssetNodeCollectionFilter = {
+  /**
+   * When provided, only assets below this asset are included. By default,
+   * all assets are included.
+   */
+  assetId?: number;
+
+  /**
+   * When provided, only assets fully or partially inside this box are included.
+   */
+  boundingBox?: THREE.Box3;
+
+  /**
+   * When provided, only assets with at least one of the labels are included. Note that the label
+   * must be present on the asset that is mapped to the 3D model - labels from assets in
+   * the subtree below the asset that is mapped to the 3D model  is not accounted for.
+   *
+   * Enabling this can reduce performance of the collection.
+   *
+   * Ignored if undefined or an empty array.
+   */
+  assetMappingFilter?: AssetMappingFilter;
+};
+
 /**
  * Represents a set of nodes associated with an [asset in Cognite Fusion]{@link https://docs.cognite.com/api/v1/#tag/Assets}
  * linked to the 3D model using [asset mappings]{@link https://docs.cognite.com/api/v1/#tag/3D-Asset-Mapping}. A node
@@ -31,7 +57,15 @@ export class AssetNodeCollection extends NodeCollection {
   private _areas: AreaCollection = EmptyAreaCollection.instance();
   private readonly _modelMetadataProvider: CdfModelNodeCollectionDataProvider;
   private _fetchResultHelper: PopulateIndexSetFromPagedResponseHelper<AssetMapping3D> | undefined;
-  private _filter: { assetId?: number; boundingBox?: THREE.Box3 } | undefined;
+  private _filter:
+    | {
+        assetId?: number;
+        boundingBox?: THREE.Box3;
+        assetFilter?: {
+          label?: string;
+        };
+      }
+    | undefined;
 
   constructor(client: CogniteClient, modelMetadataProvider: CdfModelNodeCollectionDataProvider) {
     super(AssetNodeCollection.classToken);
@@ -51,7 +85,7 @@ export class AssetNodeCollection extends NodeCollection {
    * @param filter.assetId      ID of a single [asset]{@link https://docs.cognite.com/dev/concepts/resource_types/assets.html} (optional)
    * @param filter.boundingBox  When provided, only assets within the provided bounds will be included in the filter.
    */
-  async executeFilter(filter: { assetId?: number; boundingBox?: THREE.Box3 }): Promise<void> {
+  async executeFilter(filter: AssetNodeCollectionFilter): Promise<void> {
     const model = this._modelMetadataProvider;
 
     if (this._fetchResultHelper !== undefined) {
@@ -63,6 +97,7 @@ export class AssetNodeCollection extends NodeCollection {
       mappings => this.fetchBoundingBoxesForAssetMappings(mappings),
       () => this.notifyChanged()
     );
+    fetchResultHelper.setFilterItemsCallback(filter.assetMappingFilter);
     this._fetchResultHelper = fetchResultHelper;
 
     function mapBoundingBox(box?: THREE.Box3) {
@@ -140,4 +175,23 @@ export class AssetNodeCollection extends NodeCollection {
       state: cloneDeep(this._filter)
     };
   }
+}
+
+export class AssetNodeCollectionFilterHelper {
+  // static createAssetHasOneOfLabelsFilter(client: CogniteClient, acceptedLabels):
+  //   private readonly builderAssetFilter = (filter: AssetNodeCollectionFilter) => {
+  //   if (filter.assetHasOneOfLabels === undefined || filter.assetHasOneOfLabels.length === 0) {
+  //     return undefined;
+  //   }
+  //   const validLabels = new Set(filter.assetHasOneOfLabels);
+  //   const hasLabel = (asset: Asset) =>
+  //     asset.labels !== undefined && asset.labels.find(label => validLabels.has(label.externalId)) !== undefined;
+  //   const filterCallback = async (items: AssetMapping3D[]) => {
+  //     const assetIds = items.map(x => ({ id: x.assetId }));
+  //     const assets = await this._client.assets.retrieve(assetIds, { ignoreUnknownIds: true });
+  //     const acceptedAssetIds = new Set(assets.filter(hasLabel).map(asset => asset.id));
+  //     return items.filter(assetMapping => acceptedAssetIds.has(assetMapping.assetId));
+  //   };
+  //   return filterCallback;
+  // };
 }
