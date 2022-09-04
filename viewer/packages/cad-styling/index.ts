@@ -9,12 +9,8 @@ export { TreeIndexNodeCollection } from './src/TreeIndexNodeCollection';
 export { UnionNodeCollection } from './src/UnionNodeCollection';
 export { PropertyFilterNodeCollection } from './src/PropertyFilterNodeCollection';
 export { SinglePropertyFilterNodeCollection } from './src/SinglePropertyFilterNodeCollection';
-export {
-  AssetNodeCollection,
-  AssetNodeCollectionFilter,
-  AssetsFilter,
-  AssetsFilterFactory
-} from './src/AssetNodeCollection';
+export { AssetNodeCollection, AssetNodeCollectionFilter, AssetsFilter } from './src/AssetNodeCollection';
+export { AssetsFilterFactory } from './src/AssetsFilterFactory';
 export { InvertedNodeCollection } from './src/InvertedNodeCollection';
 export {
   registerCustomNodeCollectionType,
