@@ -9,7 +9,7 @@ import { PopulateIndexSetFromPagedResponseHelper } from './PopulateIndexSetFromP
 import { sleep } from '../../../test-utilities';
 
 import { NumericRange } from '@reveal/utilities';
-import { ListResponse } from '@cognite/sdk-core';
+import { createListResponse } from './stubs/createListResponse';
 
 describe(PopulateIndexSetFromPagedResponseHelper.name, () => {
   let helper: PopulateIndexSetFromPagedResponseHelper<number>;
@@ -25,7 +25,7 @@ describe(PopulateIndexSetFromPagedResponseHelper.name, () => {
   });
 
   test('is interrupted before paging results, returns not completed ', async () => {
-    const response = createResponse<number>([], 1000);
+    const response = createListResponse<number>([], 1000);
 
     helper.interrupt();
     const completed = await helper.pageResults(Promise.resolve(response));
@@ -36,7 +36,7 @@ describe(PopulateIndexSetFromPagedResponseHelper.name, () => {
   });
 
   test('is not interrupted, fetches all pages and populates set', async () => {
-    const response = createResponse([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 5);
+    const response = createListResponse([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 5);
 
     const completed = await helper.pageResults(Promise.resolve(response));
     expect(completed).toBeTrue();
@@ -46,7 +46,7 @@ describe(PopulateIndexSetFromPagedResponseHelper.name, () => {
   });
 
   test('is interrupted after first page is fetched, partially populates the set', async () => {
-    const response = createResponse([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 5);
+    const response = createListResponse([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 5);
     const originalNext = response.next!;
     response.next = () => {
       helper.interrupt();
@@ -62,7 +62,7 @@ describe(PopulateIndexSetFromPagedResponseHelper.name, () => {
   });
 
   test('isLoading returns true while processing pages', async () => {
-    const response = createResponse([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 5);
+    const response = createListResponse([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 5);
 
     const operation = helper.pageResults(Promise.resolve(response));
     expect(helper.isLoading).toBeTrue();
@@ -72,8 +72,8 @@ describe(PopulateIndexSetFromPagedResponseHelper.name, () => {
   });
 
   test('two concurrent load operations, both populate collections', async () => {
-    const response1 = createResponse([1, 2, 3, 4], 2, () => sleep(50));
-    const response2 = createResponse([5, 6, 7, 8], 2, () => sleep(100));
+    const response1 = createListResponse([1, 2, 3, 4], 2, () => sleep(50));
+    const response2 = createListResponse([5, 6, 7, 8], 2, () => sleep(100));
 
     const operation1 = helper.pageResults(Promise.resolve(response1));
     const operation2 = helper.pageResults(Promise.resolve(response2));
@@ -94,7 +94,7 @@ describe(PopulateIndexSetFromPagedResponseHelper.name, () => {
   });
 
   test('with filter, only processes and returns accepted items', async () => {
-    const response = createResponse([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 5);
+    const response = createListResponse([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 5);
     const filterCallback = jest.fn(async (items: number[]) => items.filter(x => x % 2 === 0));
     helper.setFilterItemsCallback(filterCallback);
 
@@ -104,23 +104,3 @@ describe(PopulateIndexSetFromPagedResponseHelper.name, () => {
     expect(helper.indexSet.toIndexArray()).toEqual([2, 4, 6, 8, 10]);
   });
 });
-
-function createResponse<T>(items: T[], pageSize: number, nextPageCallback?: () => Promise<void>): ListResponse<T[]> {
-  function createPage(offset: number): ListResponse<T[]> {
-    const page: ListResponse<T[]> = {
-      items: items.slice(offset, offset + pageSize),
-      nextCursor: items.length > offset + pageSize ? 'cursor' : undefined,
-      next:
-        items.length > offset + pageSize
-          ? async () => {
-              if (nextPageCallback !== undefined) {
-                await nextPageCallback();
-              }
-              return createPage(offset + pageSize);
-            }
-          : undefined
-    };
-    return page;
-  }
-  return createPage(0);
-}
