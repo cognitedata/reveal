@@ -202,22 +202,3 @@ export class AssetNodeCollection extends NodeCollection {
     };
   }
 }
-
-export class AssetsFilterFactory {
-  // static createAssetHasOneOfLabelsFilter(client: CogniteClient, acceptedLabels):
-  //   private readonly builderAssetFilter = (filter: AssetNodeCollectionFilter) => {
-  //   if (filter.assetHasOneOfLabels === undefined || filter.assetHasOneOfLabels.length === 0) {
-  //     return undefined;
-  //   }
-  //   const validLabels = new Set(filter.assetHasOneOfLabels);
-  //   const hasLabel = (asset: Asset) =>
-  //     asset.labels !== undefined && asset.labels.find(label => validLabels.has(label.externalId)) !== undefined;
-  //   const filterCallback = async (items: AssetMapping3D[]) => {
-  //     const assetIds = items.map(x => ({ id: x.assetId }));
-  //     const assets = await this._client.assets.retrieve(assetIds, { ignoreUnknownIds: true });
-  //     const acceptedAssetIds = new Set(assets.filter(hasLabel).map(asset => asset.id));
-  //     return items.filter(assetMapping => acceptedAssetIds.has(assetMapping.assetId));
-  //   };
-  //   return filterCallback;
-  // };
-}
