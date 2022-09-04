@@ -6,19 +6,25 @@ import * as THREE from 'three';
 
 import { PopulateIndexSetFromPagedResponseHelper } from './PopulateIndexSetFromPagedResponseHelper';
 import { NodeCollection } from './NodeCollection';
+import { CdfModelNodeCollectionDataProvider } from './CdfModelNodeCollectionDataProvider';
 import { SerializedNodeCollection } from './SerializedNodeCollection';
 import { EmptyAreaCollection } from './prioritized/EmptyAreaCollection';
 import { AreaCollection } from './prioritized/AreaCollection';
 
 import { IndexSet, NumericRange } from '@reveal/utilities';
 
-import { AssetMapping3D, CogniteClient } from '@cognite/sdk';
+import { Asset, AssetMapping3D, CogniteClient } from '@cognite/sdk';
 
 import cloneDeep from 'lodash/cloneDeep';
-import { CdfModelNodeCollectionDataProvider } from './CdfModelNodeCollectionDataProvider';
 
-export type AssetMappingFilter = (candidates: AssetMapping3D[]) => Promise<AssetMapping3D[]>;
+/**
+ * Filter that determines if a collection of {@see Asset} should be accepted or rejected.
+ */
+export type AssetsFilter = (candidates: Asset[]) => Promise<Asset[]>;
 
+/**
+ * Filtering options for {@see AssetNodeCollection}.
+ */
 export type AssetNodeCollectionFilter = {
   /**
    * When provided, only assets below this asset are included. By default,
@@ -32,15 +38,17 @@ export type AssetNodeCollectionFilter = {
   boundingBox?: THREE.Box3;
 
   /**
-   * When provided, only assets with at least one of the labels are included. Note that the label
-   * must be present on the asset that is mapped to the 3D model - labels from assets in
-   * the subtree below the asset that is mapped to the 3D model  is not accounted for.
+   * When provided, only assets that pass the provided check is included in the result.
+   * This can be used to filter results by properties of the respective assets, e.g.
+   * labels or metadata values.
    *
-   * Enabling this can reduce performance of the collection.
+   * Note that enabling this can reduce performance of the collection.
    *
-   * Ignored if undefined or an empty array.
+   * Ignored if undefined.
+   *
+   * @see {@link AssetsFilterFactory} for filters for common use cases.
    */
-  assetMappingFilter?: AssetMappingFilter;
+  assetsFilter?: AssetsFilter;
 };
 
 /**
@@ -48,6 +56,8 @@ export type AssetNodeCollectionFilter = {
  * linked to the 3D model using [asset mappings]{@link https://docs.cognite.com/api/v1/#tag/3D-Asset-Mapping}. A node
  * is considered to be part of an asset if it has a direct asset mapping or if one of its ancestors has an asset mapping
  * to the asset.
+ *
+ * The collection support various filtering mechanisms, see {@link AssetNodeCollectionFilter}.
  */
 export class AssetNodeCollection extends NodeCollection {
   public static readonly classToken = 'AssetNodeCollection';
@@ -97,7 +107,7 @@ export class AssetNodeCollection extends NodeCollection {
       mappings => this.fetchBoundingBoxesForAssetMappings(mappings),
       () => this.notifyChanged()
     );
-    fetchResultHelper.setFilterItemsCallback(filter.assetMappingFilter);
+    fetchResultHelper.setFilterItemsCallback(this.buildAssetMappingsFilter(filter.assetsFilter));
     this._fetchResultHelper = fetchResultHelper;
 
     function mapBoundingBox(box?: THREE.Box3) {
@@ -128,6 +138,22 @@ export class AssetNodeCollection extends NodeCollection {
       // Completed without being interrupted
       this._fetchResultHelper = undefined;
     }
+  }
+
+  private buildAssetMappingsFilter(
+    assetsFilter: AssetsFilter | undefined
+  ): ((items: AssetMapping3D[]) => Promise<AssetMapping3D[]>) | undefined {
+    if (assetsFilter === undefined) {
+      return undefined;
+    }
+
+    const filterCallback = async (items: AssetMapping3D[]) => {
+      const assetIds = items.map(x => ({ id: x.assetId }));
+      const assets = await this._client.assets.retrieve(assetIds, { ignoreUnknownIds: true });
+      const acceptedAssetIds = new Set<number>((await assetsFilter(assets)).map(x => x.id));
+      return items.filter(assetMapping => acceptedAssetIds.has(assetMapping.assetId));
+    };
+    return filterCallback;
   }
 
   private async fetchBoundingBoxesForAssetMappings(assetMappings: AssetMapping3D[]) {
@@ -177,7 +203,7 @@ export class AssetNodeCollection extends NodeCollection {
   }
 }
 
-export class AssetNodeCollectionFilterHelper {
+export class AssetsFilterFactory {
   // static createAssetHasOneOfLabelsFilter(client: CogniteClient, acceptedLabels):
   //   private readonly builderAssetFilter = (filter: AssetNodeCollectionFilter) => {
   //   if (filter.assetHasOneOfLabels === undefined || filter.assetHasOneOfLabels.length === 0) {

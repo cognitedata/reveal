@@ -4,9 +4,11 @@
 
 import * as THREE from 'three';
 import {
+  Asset,
   AssetMapping3D,
   AssetMappings3DAPI,
   AssetMappings3DListFilter,
+  AssetsAPI,
   CogniteClient,
   InternalId,
   Node3D,
@@ -22,6 +24,7 @@ describe(AssetNodeCollection.name, () => {
   let mockClient: Mock<CogniteClient>;
   let mockAssetMappings3D: Mock<AssetMappings3DAPI>;
   let mockRevisions3D: Mock<Revisions3DAPI>;
+  let mockAssets: Mock<AssetsAPI>;
   let mockNodeCollectionDataProvider: Mock<CdfModelNodeCollectionDataProvider>;
 
   beforeEach(() => {
@@ -36,9 +39,18 @@ describe(AssetNodeCollection.name, () => {
         return Promise.resolve(nodeIds.map(x => createNode(x.id)));
       });
 
+    mockAssets = new Mock<AssetsAPI>();
+    mockAssets
+      .setup(x => x.retrieve(It.IsAny(), It.IsAny()))
+      .callback(args => {
+        const ids = args.args[0] as InternalId[];
+        return Promise.resolve(ids.map(x => createAsset(x.id)));
+      });
+
     mockClient = new Mock<CogniteClient>();
     mockClient.setup(x => x.assetMappings3D).returns(mockAssetMappings3D.object());
     mockClient.setup(x => x.revisions3D).returns(mockRevisions3D.object());
+    mockClient.setup(x => x.assets).returns(mockAssets.object());
 
     mockNodeCollectionDataProvider = new Mock<CdfModelNodeCollectionDataProvider>();
     mockNodeCollectionDataProvider
@@ -114,19 +126,17 @@ describe(AssetNodeCollection.name, () => {
     );
   });
 
-  test('executeFilter with asset mapping filter, invokes callback for each chunk', async () => {
+  test('executeFilter with assets filter, invokes callback for each chunk', async () => {
     mockAssetMappings3D
       .setup(x => x.list(It.IsAny(), It.IsAny(), It.IsAny()))
       .returnsAsync(createListResponse(createAssetMappings(8), 2));
 
-    const assetMappingFilter = jest.fn((mappings: AssetMapping3D[]) =>
-      Promise.resolve(mappings.filter((_, i) => i % 2 === 0))
-    );
+    const assetsFilter = jest.fn((candidates: Asset[]) => Promise.resolve(candidates.filter((_, i) => i % 2 === 0)));
 
     const collection = new AssetNodeCollection(mockClient.object(), mockNodeCollectionDataProvider.object());
-    await collection.executeFilter({ assetMappingFilter });
+    await collection.executeFilter({ assetsFilter });
 
-    expect(assetMappingFilter).toBeCalledTimes(4);
+    expect(assetsFilter).toBeCalledTimes(4);
     expect(collection.getIndexSet().toIndexArray()).toEqual([0, 2, 4, 6]);
   });
 });
@@ -146,4 +156,15 @@ function createNode(id: number): Node3D {
     boundingBox: { min: [id, id, id], max: [id + 1, id + 1, id + 1] }
   };
   return node;
+}
+
+function createAsset(id: number): Asset {
+  const asset: Asset = {
+    rootId: 0,
+    name: `Asset ${id}`,
+    id,
+    lastUpdatedTime: new Date(),
+    createdTime: new Date()
+  };
+  return asset;
 }
