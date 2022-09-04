@@ -5,7 +5,7 @@ import { Asset } from '@cognite/sdk';
 import { AssetsFilterFactory } from './AssetsFilterFactory';
 
 describe(AssetsFilterFactory.name, () => {
-  test('createAssetHasOneOfLabelsFilter accepts correct', () => {
+  test('createAssetHasOneOfLabelsFilter accepts correct', async () => {
     const filter = AssetsFilterFactory.createAssetHasOneOfLabelsFilter(['lorem', 'ipsum']);
     const assets: Asset[] = [
       createAssetWithLabels('lorem'),
@@ -15,7 +15,7 @@ describe(AssetsFilterFactory.name, () => {
       createAssetWithLabels()
     ];
 
-    const accepted = filter(assets);
+    const accepted = await filter(assets);
 
     expect(accepted).toEqual([assets[0], assets[1]]);
   });
