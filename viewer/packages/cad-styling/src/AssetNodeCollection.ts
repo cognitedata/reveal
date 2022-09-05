@@ -67,15 +67,7 @@ export class AssetNodeCollection extends NodeCollection {
   private _areas: AreaCollection = EmptyAreaCollection.instance();
   private readonly _modelMetadataProvider: CdfModelNodeCollectionDataProvider;
   private _fetchResultHelper: PopulateIndexSetFromPagedResponseHelper<AssetMapping3D> | undefined;
-  private _filter:
-    | {
-        assetId?: number;
-        boundingBox?: THREE.Box3;
-        assetFilter?: {
-          label?: string;
-        };
-      }
-    | undefined;
+  private _filter: { assetId?: number; boundingBox?: THREE.Box3 } | undefined;
 
   constructor(client: CogniteClient, modelMetadataProvider: CdfModelNodeCollectionDataProvider) {
     super(AssetNodeCollection.classToken);
