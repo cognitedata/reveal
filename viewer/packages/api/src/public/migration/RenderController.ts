@@ -38,7 +38,10 @@ export default class RenderController {
     const { _viewer, _lastCameraPosition, _lastCameraRotation, _lastCameraZoom, _lastCameraFov } = this;
     const { position, rotation, zoom, fov } = _viewer.cameraManager.getCamera();
     const hasCameraChanged =
-      !position.equals(_lastCameraPosition) || !rotation.equals(_lastCameraRotation) || zoom !== _lastCameraZoom || fov !== _lastCameraFov;
+      !position.equals(_lastCameraPosition) ||
+      !rotation.equals(_lastCameraRotation) ||
+      zoom !== _lastCameraZoom ||
+      fov !== _lastCameraFov;
     _lastCameraPosition.copy(position);
     _lastCameraRotation.copy(rotation);
     this._lastCameraZoom = zoom;

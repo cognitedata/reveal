@@ -1233,7 +1233,7 @@ export class Cognite3DViewer {
     const newVirtualWidth = virtualDomElementWidth * downScale;
     const newVirtualHeight = virtualDomElementHeight * downScale;
 
-    if (newVirtualWidth/newVirtualHeight !== this.camera.aspect) {
+    if (newVirtualWidth / newVirtualHeight !== this.camera.aspect) {
       adjustCamera(this.camera, newVirtualWidth, newVirtualHeight);
     }
 
