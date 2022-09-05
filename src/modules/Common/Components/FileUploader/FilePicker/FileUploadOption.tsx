@@ -52,7 +52,7 @@ export function FileUploadOption({ isDisabled }: FileUploadOptionProps) {
         Extract Exif-data from files
         <Tooltip
           wrapped
-          content="Exif is a standard that defines specific information related to imagery data (e.g. camera exposure and GPS location). By selecting this option, Exif-data will be extracted from the files (if available) and stored as metadata on the files."
+          content="Exif is the format for storing camera-generated metadata. When this metadata exists, you can extract it, and include it with metadata on your image files."
         >
           <Icon type="HelpFilled" style={{ marginLeft: '11px' }} />
         </Tooltip>
