@@ -217,4 +217,5 @@ export type ToolType =
   | 'connectInstances'
   | 'connectLabels'
   | 'setLineNumber'
-  | 'addEquipmentTag';
+  | 'addEquipmentTag'
+  | 'graphQuery';

@@ -58,6 +58,7 @@ import {
   PathReplacementGroup,
   SymbolType,
   ToolType,
+  DiagramInstance,
 } from './types';
 import {
   addOrRemoveLabelToInstance,
@@ -161,14 +162,13 @@ export class CognitePid {
   private tags: DiagramTag[] = [];
   private tagsSubscriber: TagsCallback | undefined;
 
+  private lineNumbers: string[] = [];
+  private lineNumbersSubscriber: LineNumbersCallback | undefined;
   private activeLineNumber: string | null = null;
   private activeLineNumberSubscriber: ActiveLineNumberCallback | undefined;
 
   private activeTagId: string | null = null;
   private activeTagIdSubscriber: ActiveTagIdCallback | undefined;
-
-  private lineNumbers: string[] = [];
-  private lineNumbersSubscriber: LineNumbersCallback | undefined;
 
   private symbolSelection: string[] = [];
   private symbolSelectionSubscriber: PathIdsCallback | undefined;
@@ -184,6 +184,9 @@ export class CognitePid {
 
   private connectionSelection: DiagramInstanceId | null = null;
   private splitSelection: string | null = null;
+
+  private graphQuerySelection: DiagramInstanceId | null = null;
+  private graphQueryInstances: DiagramInstance[] = [];
 
   private pathReplacementGroups: PathReplacementGroup[] = [];
   private pathReplacementsSubscriber: PathReplacmentCallback | undefined;
@@ -783,22 +786,22 @@ export class CognitePid {
 
   getDocumentHeight = () => this.pidDocument?.viewBox.height ?? 0;
 
-  private applyNode(path: SVGElement) {
-    path.addEventListener('mouseenter', (mouseEvent) => {
-      this.onMouseEnter(mouseEvent, path);
+  private applyNode(node: SVGElement) {
+    node.addEventListener('mouseenter', (mouseEvent) => {
+      this.onMouseEnter(mouseEvent, node);
     });
 
-    path.addEventListener('mouseleave', () => {
-      this.onMouseLeave(path);
+    node.addEventListener('mouseleave', () => {
+      this.onMouseLeave(node);
     });
 
-    path.addEventListener('mousedown', (event: MouseEvent) =>
-      this.onMouseClick(event, path)
+    node.addEventListener('mousedown', (event: MouseEvent) =>
+      this.onMouseClick(event, node)
     );
 
-    this.nodeMap.set(path.id, {
-      node: path,
-      originalStyle: path.getAttribute('style')!,
+    this.nodeMap.set(node.id, {
+      node,
+      originalStyle: node.getAttribute('style')!,
     });
   }
 
@@ -827,6 +830,8 @@ export class CognitePid {
       activeTagId: this.activeTagId,
       splitSelection: this.splitSelection,
       hideSelection: this.hideSelection,
+      graphQuerySelection: this.graphQuerySelection,
+      graphQueryInstances: this.graphQueryInstances,
     });
   }
 
@@ -970,42 +975,72 @@ export class CognitePid {
   }
 
   private onMouseEnter = (mouseEvent: MouseEvent, node: SVGElement) => {
-    if (this.activeTool === 'addSymbol' && !(node instanceof SVGTSpanElement)) {
-      if (mouseEvent.altKey && !this.mouseDown) {
-        this.setSymbolSelection(
-          this.symbolSelection.filter((select) => select !== node.id)
+    switch (this.activeTool) {
+      case 'addSymbol': {
+        if (node instanceof SVGTSpanElement) return;
+
+        if (mouseEvent.altKey && !this.mouseDown) {
+          this.setSymbolSelection(
+            this.symbolSelection.filter((select) => select !== node.id)
+          );
+        }
+        if (mouseEvent.shiftKey) {
+          this.setSymbolSelection(uniq([...this.symbolSelection, node.id]));
+        }
+        break;
+      }
+      case 'connectInstances':
+      case 'connectLabels':
+      case 'setLineNumber': {
+        const diagramInstance = this.pathIdToDiagramInstanceWithPathsMap.get(
+          node.id
         );
-      }
-      if (
-        mouseEvent.shiftKey &&
-        !this.symbolSelection.some((select) => select === node.id)
-      ) {
-        this.setSymbolSelection([...this.symbolSelection, node.id]);
-      }
-    }
+        if (diagramInstance === undefined) return;
 
-    if (
-      this.activeTool === 'connectInstances' ||
-      this.activeTool === 'connectLabels' ||
-      this.activeTool === 'setLineNumber'
-    ) {
-      const symbolInstance = getDiagramInstanceByPathId(
-        [...this.symbolInstances, ...this.lines],
-        node.id
-      );
-
-      if (symbolInstance === undefined) return;
-      scaleStrokeWidthInstance(
-        hoverBoldStrokeScale,
-        symbolInstance,
-        this.nodeMap
-      );
-    } else if (this.activeTool === 'addEquipmentTag') {
-      if (node instanceof SVGTSpanElement) {
-        node.style.fontWeight = '600';
+        scaleStrokeWidthInstance(
+          hoverBoldStrokeScale,
+          diagramInstance,
+          this.nodeMap
+        );
+        break;
       }
-    } else {
-      scaleStrokeWidthPath(hoverBoldStrokeScale, node);
+      case 'addEquipmentTag': {
+        if (node instanceof SVGTSpanElement) {
+          node.style.fontWeight = '600';
+        }
+        break;
+      }
+      case 'graphQuery': {
+        const diagramInstance = this.pathIdToDiagramInstanceWithPathsMap.get(
+          node.id
+        );
+        if (!diagramInstance) return;
+
+        if (mouseEvent.shiftKey) {
+          this.graphQuerySelection = diagramInstance.id;
+
+          this.graphQueryInstances = PidDocument.getIsolationBoundary(
+            diagramInstance,
+            {
+              instances: this.diagramInstancesWithPaths,
+              connections: this.connections,
+            }
+          );
+
+          this.refresh();
+        }
+
+        scaleStrokeWidthInstance(
+          hoverBoldStrokeScale,
+          diagramInstance,
+          this.nodeMap
+        );
+
+        break;
+      }
+      default: {
+        scaleStrokeWidthPath(hoverBoldStrokeScale, node);
+      }
     }
   };
 
@@ -1013,15 +1048,15 @@ export class CognitePid {
     if (
       this.activeTool === 'connectInstances' ||
       this.activeTool === 'connectLabels' ||
-      this.activeTool === 'setLineNumber'
+      this.activeTool === 'setLineNumber' ||
+      this.activeTool === 'graphQuery'
     ) {
-      const symbolInstance = getDiagramInstanceByPathId(
-        [...this.symbolInstances, ...this.lines],
+      const diagramInstance = this.pathIdToDiagramInstanceWithPathsMap.get(
         node.id
       );
+      if (diagramInstance === undefined) return;
 
-      if (symbolInstance === undefined) return;
-      symbolInstance.pathIds.forEach((pathId) => {
+      diagramInstance.pathIds.forEach((pathId) => {
         this.applyStyleToNodeId(pathId);
       });
     } else {
@@ -1232,6 +1267,36 @@ export class CognitePid {
         }
 
         this.inferLineNumbers();
+        break;
+      }
+      case 'graphQuery': {
+        const diagramInstance = this.pathIdToDiagramInstanceWithPathsMap.get(
+          node.id
+        );
+        if (!diagramInstance) return;
+
+        if (this.graphQuerySelection === null) {
+          this.graphQuerySelection = diagramInstance.id;
+          this.graphQueryInstances = [];
+          this.refresh();
+        } else if (this.graphQuerySelection === diagramInstance.id) {
+          // Reset graph query selection
+          this.graphQuerySelection = null;
+          this.graphQueryInstances = [];
+          this.refresh();
+        } else {
+          this.graphQueryInstances =
+            PidDocument.getShortestPath({
+              from: this.graphQuerySelection,
+              to: diagramInstance.id,
+              graph: {
+                instances: this.diagramInstancesWithPaths,
+                connections: this.connections,
+              },
+            }) ?? [];
+
+          this.refresh();
+        }
         break;
       }
       default:

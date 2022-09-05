@@ -88,7 +88,6 @@ export const findLinesAndConnections = (
 
   // eslint-disable-next-line no-console
   console.log('Finding connections by traversal...');
-
   const potentialConnections: DiagramConnection[] = findConnectionsByTraversal(
     relevantSymbolInstances,
     [...lineInstances, ...potentialLineInstanceList],
@@ -96,8 +95,7 @@ export const findLinesAndConnections = (
   );
 
   // eslint-disable-next-line no-console
-  console.log('Detecting lines...');
-
+  console.log('Pruning lines...');
   const newLines = detectLines(
     potentialLineInstanceList,
     potentialConnections,

@@ -117,6 +117,8 @@ export interface ApplyStyleArgs {
   activeTagId: string | null;
   splitSelection: string | null;
   hideSelection: boolean;
+  graphQuerySelection: DiagramInstanceId | null;
+  graphQueryInstances: DiagramInstance[];
 }
 
 export const applyStyleToNode = ({
@@ -133,6 +135,8 @@ export const applyStyleToNode = ({
   activeTagId,
   splitSelection,
   hideSelection,
+  graphQuerySelection,
+  graphQueryInstances,
 }: ApplyStyleArgs) => {
   let color: string | undefined;
   let opacity: number | undefined;
@@ -164,8 +168,9 @@ export const applyStyleToNode = ({
     color = COLORS.labelSelection;
   }
 
+  const backgroundOpacity = 0.45;
   switch (activeTool) {
-    case 'setLineNumber':
+    case 'setLineNumber': {
       if (node instanceof SVGTSpanElement) {
         if (activeLineNumber && node.innerHTML.includes(activeLineNumber)) {
           node.style.fontWeight = '600';
@@ -196,10 +201,32 @@ export const applyStyleToNode = ({
         node.style.strokeWidth = `${2 * parseFloat(node.style.strokeWidth)}`;
         opacity = 0.1;
       } else {
-        opacity = 0.45;
+        opacity = backgroundOpacity;
       }
       break;
-    case 'connectLabels':
+    }
+    case 'graphQuery': {
+      if (!diagramInstance) {
+        opacity = backgroundOpacity;
+        break;
+      }
+
+      if (
+        graphQueryInstances.some(
+          (instance) => instance.id === diagramInstance.id
+        )
+      ) {
+        opacity = 1;
+      } else {
+        opacity = backgroundOpacity;
+      }
+
+      if (diagramInstance.id === graphQuerySelection) {
+        color = 'Teal';
+      }
+      break;
+    }
+    case 'connectLabels': {
       if (diagramInstance) {
         if (diagramInstance.id === labelSelection) {
           color = COLORS.labelSelection;
@@ -207,6 +234,7 @@ export const applyStyleToNode = ({
           ({ color, opacity } = COLORS.symbolWithAsset);
         }
       }
+    }
   }
 
   colorNode(node, color, opacity);
@@ -292,6 +320,11 @@ const applyPointerCursorStyleToNode = ({
       break;
     case 'addEquipmentTag':
       if (node instanceof SVGTSpanElement) {
+        node.style.cursor = 'pointer';
+      }
+      break;
+    case 'graphQuery':
+      if (diagramInstance) {
         node.style.cursor = 'pointer';
       }
       break;

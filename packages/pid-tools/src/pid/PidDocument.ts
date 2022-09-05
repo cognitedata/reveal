@@ -14,6 +14,7 @@ import {
   DiagramInstanceId,
   PathReplacement,
   DiagramInstanceWithPaths,
+  DiagramInstance,
 } from '../types';
 import { findLinesAndConnections } from '../findLinesAndConnections';
 import {
@@ -26,7 +27,11 @@ import {
   AUTO_ANALYSIS_LABEL_THRESHOLD_ISO,
   AUTO_ANALYSIS_LABEL_THRESHOLD_PID,
 } from '../constants';
-import { traverse } from '../graph/traversal';
+import {
+  calculateShortestPath,
+  IGraph,
+  breadthFirstTraversal,
+} from '../graph/traversal';
 
 import { calculatePidPathsBoundingBox, createSvgRepresentation } from './utils';
 import { PidTspan } from './PidTspan';
@@ -430,12 +435,11 @@ export class PidDocument {
       .filter((instance) => instance.lineNumbers.length > 0)
       .forEach((startInstance) => {
         const relevantLineNumber = startInstance.lineNumbers[0];
-        traverse({
+        breadthFirstTraversal({
           startInstance,
           graph: {
-            diagramConnections: connections,
-            diagramLineInstances: lines,
-            diagramSymbolInstances: symbolInstances,
+            instances: [...lines, ...symbolInstances],
+            connections,
           },
           processInstance: (instance) => {
             if (!instance.inferedLineNumbers.includes(relevantLineNumber)) {
@@ -514,6 +518,72 @@ export class PidDocument {
   ): SvgRepresentation {
     const pidPaths = pathIds.map((pathId) => this.getPidPathById(pathId)!);
     return createSvgRepresentation(pidPaths, normalized, toFixed);
+  }
+
+  static getIsolationBoundary(
+    diagramInstance: DiagramInstance,
+    graph: { instances: DiagramInstance[]; connections: DiagramConnection[] }
+  ): DiagramInstance[] {
+    let connectedInstance: DiagramInstance | undefined;
+    if (diagramInstance.type === 'Instrument') {
+      // Use the closest instance to the instrument as the base for the isolation boundary,
+      // since if the instrument is connected to a value, we want the isolation boundary to the connected valve instead of the instrument.
+      breadthFirstTraversal({
+        startInstance: diagramInstance,
+        graph,
+        processInstance: (instance) => {
+          if (!['Line', 'Instrument'].includes(instance.type)) {
+            connectedInstance = instance;
+          }
+        },
+        addNeighbour: () => connectedInstance === undefined,
+      });
+    }
+
+    const startInstance = connectedInstance ?? diagramInstance;
+
+    // Traverse until hitting valves
+    const isolationInstances: DiagramInstance[] = [];
+    breadthFirstTraversal({
+      startInstance,
+      graph,
+      processInstance: (instance) => isolationInstances.push(instance),
+      addNeighbour: (instance) =>
+        instance.id === startInstance.id || instance.type !== 'Valve',
+    });
+
+    // Traverse from all the valves to find the connected instruments
+    isolationInstances
+      .filter((instance) => instance.type === 'Valve')
+      .forEach((valve) => {
+        breadthFirstTraversal({
+          startInstance: valve,
+          graph,
+          processInstance: (instance, path) => {
+            if (instance.type === 'Instrument') {
+              isolationInstances.push(...path);
+            }
+          },
+          addNeighbour: (_, potNeibour) =>
+            !isolationInstances.some(
+              (diagramInstance) => diagramInstance.id === potNeibour.id
+            ) && ['Line', 'Instrument'].includes(potNeibour.type),
+        });
+      });
+
+    return isolationInstances;
+  }
+
+  static getShortestPath({
+    from,
+    to,
+    graph,
+  }: {
+    from: DiagramInstanceId;
+    to: DiagramInstanceId;
+    graph: IGraph;
+  }) {
+    return calculateShortestPath({ from, to, graph });
   }
 
   protected pruneReplacementDescendants(

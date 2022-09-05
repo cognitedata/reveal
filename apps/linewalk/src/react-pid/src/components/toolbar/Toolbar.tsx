@@ -71,6 +71,12 @@ export const Toolbar = ({
         className: `${activeTool === 'addEquipmentTag' && 'active'}`,
         description: 'Add equipment tag',
       },
+      {
+        icon: 'GraphTree',
+        onClick: () => setActiveTool('graphQuery'),
+        className: `${activeTool === 'graphQuery' && 'active'}`,
+        description: 'Graph query',
+      },
     ],
   ];
 

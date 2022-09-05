@@ -1,13 +1,12 @@
 /* eslint-disable no-continue */
 import {
   DiagramConnection,
+  DiagramInstance,
   DiagramInstanceId,
   DiagramInstanceOutputFormat,
-  DiagramInstanceWithPaths,
 } from '../types';
-import { getDiagramInstanceId } from '../utils';
 
-import { Graph, GraphOutputFormat } from './types';
+import { GraphOutputFormat } from './types';
 
 const getNeighbours = (
   instanceId: DiagramInstanceId,
@@ -31,7 +30,7 @@ export const calculateShortestPaths = (
   relevantSymbolTypes: string[]
 ): PathOutputFormat[] => {
   const shortestPaths: PathOutputFormat[] = [];
-  const visited: DiagramInstanceId[] = [];
+  const visited = new Set<DiagramInstanceId>();
 
   const queue = startInstanceIds.map((startInstanceId) => ({
     instanceId: startInstanceId,
@@ -51,10 +50,10 @@ export const calculateShortestPaths = (
       continue;
     }
     const { instanceId } = cur;
-    if (visited.includes(instanceId)) {
+    if (visited.has(instanceId)) {
       continue;
     }
-    visited.push(instanceId);
+    visited.add(instanceId);
 
     const diagramInstance = instanceIdMap.get(instanceId);
     if (diagramInstance === undefined) {
@@ -89,55 +88,94 @@ export const calculateShortestPaths = (
   return shortestPaths;
 };
 
-export interface TraverseProps {
-  startInstance: DiagramInstanceWithPaths;
-  graph: Graph;
-  processInstance: (instance: DiagramInstanceWithPaths) => void;
-  addNeighbour: (
-    instance: DiagramInstanceWithPaths,
-    potNeighbour: DiagramInstanceWithPaths
-  ) => boolean;
+export interface IGraph {
+  instances: DiagramInstance[];
+  connections: DiagramConnection[];
 }
 
-export const traverse = ({
+export const breadthFirstTraversal = ({
   startInstance,
   graph,
   processInstance,
   addNeighbour,
-}: TraverseProps) => {
-  const visited: DiagramInstanceId[] = [];
-  const queue: DiagramInstanceWithPaths[] = [startInstance];
+}: {
+  startInstance: DiagramInstance;
+  graph: IGraph;
+  processInstance: (instance: DiagramInstance, path: DiagramInstance[]) => void;
+  addNeighbour: (
+    // wheter or not to add `potNeighbour` to the queue
+    instance: DiagramInstance,
+    potNeighbour: DiagramInstance,
+    path: DiagramInstance[] // not including `potNeighbour`
+  ) => boolean;
+}) => {
+  const visited = new Set<DiagramInstanceId>();
+  const queue: { diagramInstance: DiagramInstance; path: DiagramInstance[] }[] =
+    [{ diagramInstance: startInstance, path: [startInstance] }];
 
-  const instancesMap = new Map<DiagramInstanceId, DiagramInstanceWithPaths>();
-  [...graph.diagramLineInstances, ...graph.diagramSymbolInstances].forEach(
-    (instance) => {
-      instancesMap.set(getDiagramInstanceId(instance), instance);
-    }
-  );
+  const instancesMap = new Map<DiagramInstanceId, DiagramInstance>();
+  graph.instances.forEach((instance) => {
+    instancesMap.set(instance.id, instance);
+  });
 
   while (queue.length > 0) {
-    const diagramInstance = queue.shift();
+    const current = queue.shift();
+    if (current === undefined) continue;
 
-    if (diagramInstance === undefined) continue;
+    const { diagramInstance, path } = current;
 
-    const instanceId = getDiagramInstanceId(diagramInstance);
-    processInstance(diagramInstance);
+    const instanceId = diagramInstance.id;
+    if (visited.has(instanceId)) continue;
 
-    if (visited.includes(instanceId)) continue;
+    processInstance(diagramInstance, path);
 
-    visited.push(instanceId);
+    visited.add(instanceId);
 
-    const neighbours: DiagramInstanceId[] = getNeighbours(
+    const neighbourIds: DiagramInstanceId[] = getNeighbours(
       instanceId,
-      graph.diagramConnections
+      graph.connections
     );
 
-    for (let i = 0; i < neighbours.length; i++) {
-      const newDiagramInstnace = instancesMap.get(neighbours[i])!;
+    // eslint-disable-next-line no-restricted-syntax
+    for (const potNeighbourId of neighbourIds) {
+      const potNeighbour = instancesMap.get(potNeighbourId)!;
 
-      if (addNeighbour(diagramInstance, newDiagramInstnace)) {
-        queue.push(newDiagramInstnace);
+      if (addNeighbour(diagramInstance, potNeighbour, path)) {
+        queue.push({
+          diagramInstance: potNeighbour,
+          path: [...path, potNeighbour],
+        });
       }
     }
   }
+};
+
+export const calculateShortestPath = ({
+  from,
+  to,
+  graph,
+}: {
+  from: DiagramInstanceId;
+  to: DiagramInstanceId;
+  graph: IGraph;
+}): DiagramInstance[] | undefined => {
+  const startInstance = graph.instances.find(
+    (instance) => instance.id === from
+  );
+  if (startInstance === undefined) return undefined;
+
+  let shortestPath: DiagramInstance[] | undefined;
+
+  breadthFirstTraversal({
+    startInstance,
+    graph,
+    processInstance: (instance, path) => {
+      if (instance.id === to && shortestPath === undefined) {
+        shortestPath = path;
+      }
+    },
+    addNeighbour: () => shortestPath === undefined,
+  });
+
+  return shortestPath;
 };
