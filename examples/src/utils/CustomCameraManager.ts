@@ -21,6 +21,14 @@ export class CustomCameraManager implements CameraManager {
         });
     }
 
+    set enabled(value: boolean) {
+        this._controls.enabled = value;
+    }
+
+    get enabled(): boolean {
+        return this._controls.enabled;
+    }
+
     getCamera(): THREE.PerspectiveCamera {
         return this._camera;
     }

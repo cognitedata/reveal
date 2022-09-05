@@ -35,7 +35,8 @@ export class RevealManager {
   private readonly _lastCamera = {
     position: new THREE.Vector3(NaN, NaN, NaN),
     quaternion: new THREE.Quaternion(NaN, NaN, NaN, NaN),
-    zoom: NaN
+    zoom: NaN,
+    fov: NaN
   };
 
   private _isDisposed = false;
@@ -102,6 +103,7 @@ export class RevealManager {
   public update(camera: THREE.PerspectiveCamera): void {
     const hasCameraChanged =
       this._lastCamera.zoom !== camera.zoom ||
+      this._lastCamera.fov !== camera.fov ||
       !this._lastCamera.position.equals(camera.position) ||
       !this._lastCamera.quaternion.equals(camera.quaternion);
 
@@ -109,6 +111,7 @@ export class RevealManager {
       this._lastCamera.position.copy(camera.position);
       this._lastCamera.quaternion.copy(camera.quaternion);
       this._lastCamera.zoom = camera.zoom;
+      this._lastCamera.fov = camera.fov;
 
       this._cadManager.updateCamera(camera);
       this._pointCloudManager.updateCamera(camera);

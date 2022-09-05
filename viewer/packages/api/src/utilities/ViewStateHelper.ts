@@ -36,14 +36,15 @@ export type ModelState = {
 };
 
 export class ViewStateHelper {
-  private readonly _cameraManager: CameraManager;
   private readonly _viewer: Cognite3DViewer;
   private readonly _cdfClient: CogniteClient;
+  private get _cameraManager (): CameraManager {
+    return this._viewer.cameraManager;
+  }
 
   constructor(viewer: Cognite3DViewer, cdfClient: CogniteClient) {
     this._viewer = viewer;
     this._cdfClient = cdfClient;
-    this._cameraManager = viewer.cameraManager;
   }
 
   public getCurrentState(): ViewerState {

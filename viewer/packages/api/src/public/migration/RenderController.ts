@@ -3,6 +3,7 @@
  */
 
 import * as THREE from 'three';
+import { Cognite3DViewer } from '../../migration';
 
 /* eslint-disable jsdoc/require-jsdoc */
 /**
@@ -11,18 +12,20 @@ import * as THREE from 'three';
  */
 export default class RenderController {
   private _needsRedraw: boolean;
-  private readonly _camera: THREE.PerspectiveCamera | THREE.OrthographicCamera;
+  private readonly _viewer: Cognite3DViewer;
   private readonly _lastCameraPosition: THREE.Vector3;
   private readonly _lastCameraRotation: THREE.Euler;
   private _lastCameraZoom: number;
+  private _lastCameraFov: number;
 
-  constructor(camera: THREE.PerspectiveCamera | THREE.OrthographicCamera) {
-    this._camera = camera;
+  constructor(viewer: Cognite3DViewer) {
+    this._viewer = viewer;
     this._needsRedraw = true;
 
     this._lastCameraPosition = new THREE.Vector3();
     this._lastCameraRotation = new THREE.Euler();
     this._lastCameraZoom = 0;
+    this._lastCameraFov = 0;
 
     window.addEventListener('focus', this.redraw);
   }
@@ -32,13 +35,14 @@ export default class RenderController {
   }
 
   update(): void {
-    const { _camera, _lastCameraPosition, _lastCameraRotation, _lastCameraZoom } = this;
-    const { position, rotation, zoom } = _camera;
+    const { _viewer, _lastCameraPosition, _lastCameraRotation, _lastCameraZoom, _lastCameraFov } = this;
+    const { position, rotation, zoom, fov } = _viewer.cameraManager.getCamera();
     const hasCameraChanged =
-      !position.equals(_lastCameraPosition) || !rotation.equals(_lastCameraRotation) || zoom !== _lastCameraZoom;
+      !position.equals(_lastCameraPosition) || !rotation.equals(_lastCameraRotation) || zoom !== _lastCameraZoom || fov !== _lastCameraFov;
     _lastCameraPosition.copy(position);
     _lastCameraRotation.copy(rotation);
     this._lastCameraZoom = zoom;
+    this._lastCameraFov = fov;
     if (hasCameraChanged) {
       this._needsRedraw = true;
     }

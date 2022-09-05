@@ -103,9 +103,8 @@ export class Cognite3DViewer {
   private readonly _cdfSdkClient: CogniteClient | undefined;
   private readonly _dataSource: DataSource;
 
-  private readonly camera: THREE.PerspectiveCamera;
   private readonly _sceneHandler: SceneHandler;
-  private readonly _cameraManager: CameraManager;
+  private _cameraManager: CameraManager;
   private readonly _subscription = new Subscription();
   private readonly _revealManagerHelper: RevealManagerHelper;
   private readonly _domElement: HTMLElement;
@@ -223,7 +222,6 @@ export class Cognite3DViewer {
     this._cameraManager =
       options.cameraManager ??
       new DefaultCameraManager(this.canvas, this._mouseHandler, this.modelIntersectionCallback.bind(this));
-    this.camera = this._cameraManager.getCamera();
 
     this._cameraManager.on('cameraChange', (position: THREE.Vector3, target: THREE.Vector3) => {
       this._events.cameraChange.fire(position.clone(), target.clone());
@@ -258,7 +256,7 @@ export class Cognite3DViewer {
       );
     }
 
-    this.renderController = new RenderController(this.camera);
+    this.renderController = new RenderController(this);
     this.startPointerEventListeners();
 
     this._pickingHandler = new PickingHandler(
@@ -495,6 +493,14 @@ export class Cognite3DViewer {
 
   get cameraManager(): CameraManager {
     return this._cameraManager;
+  }
+
+  set cameraManager(cameraManager: CameraManager) {
+    const currentState = this._cameraManager.getCameraState();
+    this._cameraManager = cameraManager;
+
+    this.requestRedraw();
+    cameraManager.setCameraState({ position: currentState.position, target: currentState.target });
   }
 
   /**
@@ -806,7 +812,7 @@ export class Cognite3DViewer {
    * @returns The THREE.Camera used for rendering.
    */
   getCamera(): THREE.PerspectiveCamera {
-    return this.camera;
+    return this._cameraManager.getCamera();
   }
 
   /**
@@ -1096,6 +1102,12 @@ export class Cognite3DViewer {
     intersections.sort((a, b) => a.distanceToCamera - b.distanceToCamera);
     return intersections.length > 0 ? intersections[0] : null;
   }
+  /**
+   * @obvious
+   */
+  private get camera(): THREE.PerspectiveCamera {
+    return this._cameraManager.getCamera();
+  }
 
   /** @private */
   private getModels(type: 'cad'): Cognite3DModel[];
@@ -1221,11 +1233,14 @@ export class Cognite3DViewer {
     const newVirtualWidth = virtualDomElementWidth * downScale;
     const newVirtualHeight = virtualDomElementHeight * downScale;
 
+    if (newVirtualWidth/newVirtualHeight !== this.camera.aspect) {
+      adjustCamera(this.camera, newVirtualWidth, newVirtualHeight);
+    }
+
     if (newVirtualWidth === virtualFramebufferSize.x && newVirtualHeight === virtualFramebufferSize.y) {
       return false;
     }
 
-    adjustCamera(this.camera, newVirtualWidth, newVirtualHeight);
     this.renderer.setDrawingBufferSize(newVirtualWidth, newVirtualHeight, pixelRatio);
 
     return true;

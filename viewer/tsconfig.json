@@ -9,6 +9,7 @@
     ],
     "stripInternal": true,
     "noUnusedLocals": true,
+    "sourceMap": true,
     "noUnusedParameters": true,
     // Strict Type-Checking Options
     "strict": true,
