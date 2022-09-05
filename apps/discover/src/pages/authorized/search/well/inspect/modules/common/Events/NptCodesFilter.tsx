@@ -48,6 +48,7 @@ export const NptCodesFilter: React.FC<NptCodesFilterProps> = ({
     if (!isEmpty(options) && !isInitialized) {
       setSelectedOptions(options);
       setInitialized(true);
+      onChange(getEventsFilterSelection<NptCodesSelection>(options));
     }
   }, [options]);
 

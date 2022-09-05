@@ -33,6 +33,7 @@ export const NdsRiskTypesFilter: React.FC<NdsRiskTypesFilterProps> = ({
     if (!isEmpty(options) && !isInitialized) {
       setSelectedOptions(options);
       setInitialized(true);
+      onChange(getEventsFilterSelection<NdsRiskTypesSelection>(options));
     }
   }, [options]);
 

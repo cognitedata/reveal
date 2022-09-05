@@ -34,7 +34,7 @@ export const GeomechanicsAndPPFG: React.FC = () => {
 
   const {
     isLoading,
-    data,
+    data: measurementViewList,
     nptEvents,
     ndsEvents,
     curveFilterOptions,
@@ -71,11 +71,11 @@ export const GeomechanicsAndPPFG: React.FC = () => {
   );
 
   const compareViewData = useDeepMemo(
-    () => getCompareViewData(data, compareViewSelection),
-    [data, compareViewSelection]
+    () => getCompareViewData(measurementViewList, compareViewSelection),
+    [measurementViewList, compareViewSelection]
   );
 
-  if (isEmpty(data) && isEmpty(compareViewSelection)) {
+  if (isEmpty(measurementViewList) && isEmpty(compareViewSelection)) {
     return <EmptyState isLoading={isLoading} />;
   }
 
@@ -109,7 +109,7 @@ export const GeomechanicsAndPPFG: React.FC = () => {
 
       {viewMode === ViewModes.Wells && (
         <WellCentricView
-          data={data}
+          measurementViewList={measurementViewList}
           nptEvents={filteredNptEvents}
           ndsEvents={filteredNdsEvents}
           curveSelection={curveSelection}
@@ -120,7 +120,7 @@ export const GeomechanicsAndPPFG: React.FC = () => {
 
       {viewMode === ViewModes.Curves && (
         <CurveCentricView
-          data={data}
+          measurementViewList={measurementViewList}
           curveSelection={curveSelection}
           measurementUnits={measurementUnits}
         />

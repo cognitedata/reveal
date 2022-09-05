@@ -21,7 +21,7 @@ describe('mapNPTTo3D', () => {
       {
         assetIds: ['759155409324993'],
         metadata: {
-          npt_md: '328.084',
+          npt_md: '100',
           description: '',
         },
       },

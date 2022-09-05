@@ -19,7 +19,7 @@ import { WellCentricViewWrapper } from './elements';
 import { WellCentricViewCard } from './WellCentricViewCard';
 
 export interface WellCentricViewProps {
-  data: MeasurementsView[];
+  measurementViewList: MeasurementsView[];
   nptEvents: NptInternal[];
   ndsEvents: NdsInternal[];
   curveSelection: BooleanMap;
@@ -30,7 +30,7 @@ export interface WellCentricViewProps {
 }
 
 export const WellCentricView: React.FC<WellCentricViewProps> = ({
-  data,
+  measurementViewList,
   nptEvents,
   ndsEvents,
   curveSelection,
@@ -84,8 +84,8 @@ export const WellCentricView: React.FC<WellCentricViewProps> = ({
   return (
     <>
       <WellCentricViewWrapper>
-        {data.map((measurementsView) => {
-          const { wellName, wellboreMatchingId } = measurementsView;
+        {measurementViewList.map((measurementsView) => {
+          const { wellName, wellboreMatchingId, id } = measurementsView;
 
           const wellboreNptEvents = groupedNptEvents[wellboreMatchingId] || [];
           const wellboreNdsEvents = groupedNdsEvents[wellboreMatchingId] || [];
@@ -96,7 +96,7 @@ export const WellCentricView: React.FC<WellCentricViewProps> = ({
 
           return (
             <WellCentricViewCard
-              key={wellboreMatchingId}
+              key={id}
               data={measurementsView}
               nptEvents={wellboreNptEvents}
               ndsEvents={wellboreNdsEvents}

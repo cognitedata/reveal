@@ -2,6 +2,7 @@ import { getEndTimeDisplay } from 'domain/wells/npt/internal/selectors/getEndTim
 import { getStartTimeDisplay } from 'domain/wells/npt/internal/selectors/getStartTimeDisplay';
 import { NptView } from 'domain/wells/npt/internal/types';
 
+import isUndefined from 'lodash/isUndefined';
 import keyBy from 'lodash/keyBy';
 import set from 'lodash/set';
 import { toFixedNumber } from 'utils/number';
@@ -44,10 +45,10 @@ export const getCommonColumns = (unit?: string): ColumnType<NptView>[] => {
       width: '150px',
       accessor: (row) => {
         const depth = row.measuredDepth?.value;
-        if (depth) {
-          return depth.toFixed(0);
+        if (isUndefined(depth)) {
+          return 'N/A';
         }
-        return 'N/A';
+        return String(depth);
       },
     },
     {

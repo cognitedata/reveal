@@ -13,13 +13,13 @@ import { CurveCentricViewCard } from './CurveCentricViewCard';
 import { CurveCentricViewWrapper } from './elements';
 
 export interface CurveCentricViewProps {
-  data: MeasurementsView[];
+  measurementViewList: MeasurementsView[];
   curveSelection: BooleanMap;
   measurementUnits: MeasurementUnits;
 }
 
 export const CurveCentricView: React.FC<CurveCentricViewProps> = ({
-  data,
+  measurementViewList,
   curveSelection,
   measurementUnits,
 }) => {
@@ -35,8 +35,8 @@ export const CurveCentricView: React.FC<CurveCentricViewProps> = ({
   }, []);
 
   const charts = useDeepMemo(
-    () => getCurveCentricViewCharts(data, pressureUnit),
-    [data, pressureUnit]
+    () => getCurveCentricViewCharts(measurementViewList, pressureUnit),
+    [measurementViewList, pressureUnit]
   );
 
   return (
