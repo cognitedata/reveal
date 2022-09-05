@@ -14,7 +14,7 @@ import {
   angleDifference,
   BoundingBox,
   EndPoint,
-  getClosestPointsOnSegments,
+  LineSegment,
 } from '../geometry';
 
 export const findConnectionsByTraversal = (
@@ -106,30 +106,19 @@ interface ClosestConnection {
 
 const getCloseWithLineJumps = ({
   lineInstance,
+  lineSegment,
   pidInstances,
   symbolToLineThreshold,
   lineToLineThreshold,
   lineJumpThreshold,
 }: {
   lineInstance: PidInstance;
+  lineSegment: LineSegment;
   pidInstances: PidInstance[];
   symbolToLineThreshold: number;
   lineToLineThreshold: number;
   lineJumpThreshold: number;
 }) => {
-  const linePathSegments = lineInstance.getPathSegments();
-
-  if (linePathSegments.length > 1)
-    throw new Error(
-      'This function should only be called it the `lineInstance` only has one `LineSegment` (has multiple segments)'
-    );
-
-  const lineSegment = linePathSegments[0];
-  if (!isLineSegment(lineSegment))
-    throw new Error(
-      'This function should only be called it the `lineInstance` only has one `LineSegment` (is not `LineSegment`)'
-    );
-
   const closeInstances: PidInstance[] = [];
 
   let closestStartConnection: ClosestConnection | undefined;
@@ -197,10 +186,8 @@ const getCloseWithLineJumps = ({
         }
       }
     } else if (lineInstance.isClose(pidInstance, symbolToLineThreshold)) {
-      const closestData = getClosestPointsOnSegments(
-        linePathSegments,
-        pidInstance.getPathSegments()
-      );
+      const closestData =
+        lineInstance.getPathSegmentsConnectionPoints(pidInstance);
       if (closestData === undefined) continue;
 
       if (closestData.percentAlongPath1 < endPointThreshold) {
@@ -272,9 +259,11 @@ export const getClosePidInstances = ({
   lineJumpThreshold: number;
 }): PidInstance[] => {
   if (instance.isLine) {
-    if (instance.getPathSegments().length === 1) {
+    const pathSegments = instance.getPathSegments();
+    if (pathSegments.length === 1 && isLineSegment(pathSegments[0])) {
       return getCloseWithLineJumps({
         lineInstance: instance,
+        lineSegment: pathSegments[0],
         pidInstances: [...symbolInstances, ...lineInstances],
         symbolToLineThreshold,
         lineToLineThreshold,

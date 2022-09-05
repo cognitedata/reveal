@@ -86,11 +86,17 @@ export const findLinesAndConnections = (
     (symbolInstance) => symbolInstance.type !== 'Arrow'
   );
 
+  // eslint-disable-next-line no-console
+  console.log('Finding connections by traversal...');
+
   const potentialConnections: DiagramConnection[] = findConnectionsByTraversal(
     relevantSymbolInstances,
     [...lineInstances, ...potentialLineInstanceList],
     pidDocument
   );
+
+  // eslint-disable-next-line no-console
+  console.log('Detecting lines...');
 
   const newLines = detectLines(
     potentialLineInstanceList,
