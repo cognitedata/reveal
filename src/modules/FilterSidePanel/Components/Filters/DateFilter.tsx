@@ -26,11 +26,8 @@ const getValue = (filter: VisionFileFilterProps, index: number) => {
   let selectedTime;
 
   switch (selectedAction) {
-    case DateActions.created:
-    default:
-      selectedTime = filter.createdTime;
-      break;
     case DateActions.uploaded:
+    default:
       selectedTime = filter.uploadedTime;
       break;
     case DateActions.captured:
@@ -70,7 +67,7 @@ const getValue = (filter: VisionFileFilterProps, index: number) => {
 
 export const DateFilter = ({ filter, setFilter }: VisionFilterItemProps) => {
   const [action, setAction] = useState<DateActions | undefined>(
-    filter.dateFilter?.action || DateActions.created
+    filter.dateFilter?.action || DateActions.uploaded
   );
   const [dateOption, setDateOption] = useState<DateOptions | undefined>(
     filter.dateFilter?.dateOption || DateOptions.before
@@ -113,26 +110,8 @@ export const DateFilter = ({ filter, setFilter }: VisionFilterItemProps) => {
       dateOption,
     };
     switch (newAction) {
-      case DateActions.created:
+      case DateActions.uploaded:
       default: {
-        let newRange: DateRange | undefined = {
-          ...filter.createdTime,
-          ...range,
-        };
-        if (!newRange.min && !newRange.max) {
-          newRange = undefined;
-          newDateFilter = undefined;
-        }
-        setFilter({
-          ...filter,
-          dateFilter: newDateFilter,
-          createdTime: newRange,
-          uploadedTime: undefined,
-          sourceCreatedTime: undefined,
-        });
-        break;
-      }
-      case DateActions.uploaded: {
         let newRange: DateRange | undefined = {
           ...filter.uploadedTime,
           ...range,
@@ -209,7 +188,7 @@ export const DateFilter = ({ filter, setFilter }: VisionFilterItemProps) => {
       filter.sourceCreatedTime === undefined &&
       filter.dateFilter === undefined
     ) {
-      setAction(DateActions.created);
+      setAction(DateActions.uploaded);
       setDateOption(DateOptions.before);
     }
   }, [filter]);
@@ -229,13 +208,10 @@ export const DateFilter = ({ filter, setFilter }: VisionFilterItemProps) => {
       <Title level={6}> Date </Title>
 
       <StyledSegmentedControl
-        currentKey={filter.dateFilter?.action || DateActions.created}
+        currentKey={filter.dateFilter?.action || DateActions.uploaded}
         onButtonClicked={handleActionChange}
         size="small"
       >
-        <SegmentedControl.Button key={DateActions.created}>
-          {DateActions.created}
-        </SegmentedControl.Button>
         <SegmentedControl.Button key={DateActions.uploaded}>
           {DateActions.uploaded}
         </SegmentedControl.Button>
