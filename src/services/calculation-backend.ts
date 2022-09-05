@@ -121,6 +121,16 @@ function getResultQueriesFromDatapointMultiQuery(
   });
 }
 
+export async function fetchCalculationQueriesResult(
+  sdk: CogniteClient,
+  ids: string[],
+  query: DatapointsMultiQuery
+): Promise<WorkflowResult[]> {
+  return Promise.all(
+    ids.map((callId) => fetchCalculationQueryResult(sdk, callId, query))
+  );
+}
+
 export async function fetchCalculationQueryResult(
   sdk: CogniteClient,
   id: string,

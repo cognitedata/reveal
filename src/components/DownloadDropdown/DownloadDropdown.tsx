@@ -8,7 +8,7 @@ import Dropdown from 'components/Dropdown/Dropdown';
 
 const defaultTranslations = makeDefaultTranslations(
   'PNG',
-  'CSV (Time series only)',
+  'CSV',
   'Download',
   'Calculations'
 );
@@ -36,7 +36,7 @@ const DownloadDropdown = ({
       onClick: onDownloadImage,
     },
     {
-      label: t['CSV (Time series only)'],
+      label: t.CSV,
       icon: 'DataTable',
       onClick: onCsvDownload,
     },

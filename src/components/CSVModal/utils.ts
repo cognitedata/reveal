@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars-experimental */
 import {
   DatapointAggregates,
   DatapointsMultiQuery,
@@ -11,7 +12,12 @@ import {
 import dayjs from 'dayjs';
 
 import { range, last } from 'lodash';
-import { ChartTimeSeries } from 'models/chart/types';
+import { ChartTimeSeries, ChartWorkflow } from 'models/chart/types';
+import {
+  fetchCalculationQueriesResult,
+  fetchCalculationQueryResult,
+  fetchCalculationResult,
+} from 'services/calculation-backend';
 import { pAll } from 'utils/helpers';
 import { calculateGranularity, getGranularityInMS } from 'utils/timeseries';
 
@@ -60,11 +66,14 @@ const getLimits = async (
   return { start, end };
 };
 
-export const fetchDataPoints = async (
+export const fetchTsDataPoints = async (
   sdk: CogniteClient,
   request: DatapointsMultiQuery
 ): Promise<DatapointAggregates[]> => {
-  const { start = 0, end = 0 } = await getLimits(sdk, request);
+  const { start = 0, end = 0 } = {
+    start: request.start as number,
+    end: request.end as number,
+  };
   const numericGranularity = getGranularityInMS(request.granularity!);
   const limit = Math.floor(CELL_LIMIT / request.items.length);
   const msPerRequest = limit * numericGranularity;
@@ -103,7 +112,67 @@ export const fetchDataPoints = async (
   });
 };
 
-export const fetchRawDatapoints = async (
+export const fetchCalculationDataPoints = async (
+  sdk: CogniteClient,
+  request: DatapointsMultiQuery
+): Promise<DatapointAggregates[]> => {
+  const { start = 0, end = 0 } = {
+    start: request.start as number,
+    end: request.end as number,
+  };
+  const numericGranularity = getGranularityInMS(request.granularity!);
+  const limit = Math.floor(CELL_LIMIT / request.items.length);
+  const msPerRequest = limit * numericGranularity;
+
+  const ranges = range(start, end, msPerRequest);
+  const chunks = ranges.map((subRange) => [
+    subRange,
+    subRange + msPerRequest - numericGranularity,
+  ]);
+  const lastChunk = last(chunks);
+
+  if (lastChunk![1] > end) {
+    lastChunk![1] = end;
+  }
+
+  const requests = chunks
+    .map(([chunkStart, chunkEnd]) => ({
+      ...request,
+      start: chunkStart,
+      end: chunkEnd,
+      limit,
+    }))
+    .map(
+      (params) => () =>
+        fetchCalculationQueriesResult(
+          sdk,
+          (params.items as DatapointsQueryExternalId[]).map(
+            (q) => q.externalId,
+            params
+          ),
+          params
+        )
+    );
+
+  const results = await pAll(requests, 5);
+
+  const formattedResults: DatapointAggregates[] = results
+    .flat()
+    .map((result, resultIndex) => {
+      return {
+        id: 0,
+        externalId: (request.items[resultIndex] as DatapointsQueryExternalId)
+          .externalId,
+        isString: false,
+        isStep: false,
+        datapoints: result.datapoints as DatapointAggregate[],
+      };
+    });
+
+  return formattedResults;
+};
+
+export const fetchRawTsDatapoints = async (
   sdk: CogniteClient,
   request: DatapointsMultiQuery,
   timeseriesCollection: ChartTimeSeries[] = []
@@ -184,4 +253,99 @@ export const fetchRawDatapoints = async (
   });
 
   return results;
+};
+
+export const fetchRawCalculationDatapoints = async (
+  sdk: CogniteClient,
+  request: DatapointsMultiQuery,
+  workflowCollection: ChartWorkflow[] = []
+): Promise<DatapointAggregates[]> => {
+  /**
+   * Check if any of the series being downloaded contain more than 100000 points
+   * (which is the limit for a single query)
+   */
+
+  const parallelizedQueries = request.items.map((item) => ({
+    ...request,
+    items: [item],
+  }));
+
+  // eslint-disable-next-line no-restricted-syntax
+  for (const parallelizedQuery of parallelizedQueries) {
+    const countRequest: DatapointsMultiQuery = {
+      ...parallelizedQuery,
+      granularity: calculateGranularity(
+        [dayjs(request.start).valueOf(), dayjs(request.end).valueOf()],
+        100
+      ),
+      aggregates: ['count'],
+    };
+
+    // eslint-disable-next-line no-await-in-loop
+    const countResult = await fetchCalculationQueryResult(
+      sdk,
+      (countRequest.items[0] as DatapointsQueryExternalId).externalId,
+      countRequest
+    );
+
+    const aggregatedCount = (
+      countResult?.datapoints as DatapointAggregate[]
+    ).reduce((point: number, c: DatapointAggregate) => {
+      return point + (c.count || 0);
+    }, 0);
+
+    const workflowName = workflowCollection.find(
+      (wf) =>
+        wf.calls?.[0].callId ===
+        (countRequest.items[0] as DatapointsQueryExternalId).externalId
+    )?.name;
+
+    if (aggregatedCount > 100000) {
+      throw new Error(
+        `You tried to download more than 100,000 data points for the time series named '${workflowName}'. Please choose a smaller time span and/or a larger granularity.`
+      );
+    }
+  }
+
+  const rawParallizedQueries = parallelizedQueries.map((query) => ({
+    ...query,
+    granularity: undefined,
+    aggregates: undefined,
+    includeOutsidePoints: true,
+    limit: 100000,
+  }));
+
+  const rawParallizedRequestThunks = rawParallizedQueries.map(
+    (query) => () =>
+      fetchCalculationResult(
+        sdk,
+        (query.items as DatapointsQueryExternalId[]).map(
+          (q) => q.externalId,
+          query
+        )[0]
+      )
+  );
+
+  const rawResults = await pAll(rawParallizedRequestThunks, 5);
+
+  const formattedResults: DatapointAggregates[] = rawResults.map(
+    (result, queryIndex) => {
+      return {
+        id: 0,
+        externalId: (
+          rawParallizedQueries[queryIndex].items[0] as DatapointsQueryExternalId
+        ).externalId,
+        isStep: false,
+        isString: false,
+        datapoints: result.datapoints?.map((dp) => {
+          return {
+            timestamp: new Date(dp.timestamp),
+            average: dp.value,
+          };
+        }) as DatapointAggregate[],
+      };
+    }
+  );
+
+  return formattedResults;
 };

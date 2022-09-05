@@ -1,17 +1,15 @@
 import { Button, Checkbox, SegmentedControl, Tooltip } from '@cognite/cogs.js';
-import { useSDK } from '@cognite/sdk-provider';
 import DateTimeRangeSelector from 'components/DateTime/DateTimeRangeSelector';
-import chartAtom from 'models/chart/atom';
-import { ComponentProps, useCallback, useEffect, useState } from 'react';
-import { useRecoilState } from 'recoil';
-import { datapointsToCSV, Delimiters, downloadCSV } from 'utils/csv';
-import { wait } from 'utils/helpers';
-import { format as formatDate } from 'date-fns';
-import { DatapointAggregates } from '@cognite/sdk';
-import JSZip from 'jszip';
-import { saveAs } from 'file-saver';
+import {
+  ComponentProps,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from 'react';
+import { Delimiters } from 'utils/csv';
 import { makeDefaultTranslations } from 'utils/translations';
-import { fetchDataPoints, fetchRawDatapoints } from './utils';
+import { CSVModalContext } from './CSVModalContext';
 import {
   ModalWrapper,
   ExampleText,
@@ -27,8 +25,7 @@ import {
 
 export const defaultTranslations = makeDefaultTranslations(
   'Export to CSV',
-  'Only the time series currently visible in your chart will be a part of the downloaded data. If applicable - adjust which time series are visible by using the eye icon for each time series.',
-  'Calculation results are not included',
+  'Only sources currently visible in your chart will be a part of the downloaded data. If applicable - adjust which sources are visible by using the eye icon for each time series.',
   'Time span of data to export',
   'Time span',
   'Granularity of the data to export (defaults to 1 day (1d))',
@@ -67,7 +64,7 @@ const delimiterOptions: { id: string; value: Delimiters; label: string }[] = [
   { id: '3', value: Delimiters.Tab, label: 'tab' },
 ];
 
-const CSVModal = ({
+export const CSVModal = ({
   isOpen = false,
   onClose = () => {},
   dateFrom,
@@ -76,18 +73,15 @@ const CSVModal = ({
   translations,
   locale,
 }: Props) => {
+  const { useChartAtom, useExportToCSV, useSDK } = useContext(CSVModalContext);
   const t = { ...defaultTranslations, ...translations };
-  const [chart] = useRecoilState(chartAtom);
+  const [chart] = useChartAtom();
   const [isModalVisible, setIsModalVisible] = useState(isOpen);
   const [selectedDelimiterId, setSelectedDelimiterId] = useState(
     delimiterOptions[0].id
   );
   const [selectedGranularity, setSelectedGranularity] = useState('1d');
   const [isHumanReadableDates, setIsHumanReadableDates] = useState(true);
-  const [isExporting, setIsExporting] = useState(false);
-  const [isDoneExporting, setIsDoneExporting] = useState(false);
-  const [isRawDownload, setIsRawDownload] = useState(false);
-  const [error, setError] = useState<Error>();
   const sdk = useSDK();
 
   const selectedDelimiter = delimiterOptions.find(
@@ -99,10 +93,6 @@ const CSVModal = ({
     ...(chart?.workflowCollection || []),
   ].every((source) => !source.enabled);
 
-  const hasOnlyCalculationsVisible =
-    !hasNoSourcesVisible &&
-    [...(chart?.timeSeriesCollection || [])].every((source) => !source.enabled);
-
   useEffect(() => {
     setIsModalVisible(isOpen);
   }, [isOpen]);
@@ -112,167 +102,20 @@ const CSVModal = ({
     onClose();
   }, [onClose]);
 
-  const handleExport = useCallback(() => {
-    (async function exportToCsv() {
-      setError(undefined);
-      setIsExporting(true);
-      setIsDoneExporting(false);
+  const [isRawDownload, setIsRawDownload] = useState(false);
 
-      try {
-        const sourceCollection = chart?.sourceCollection || [];
-        const timeseriesCollection = chart?.timeSeriesCollection || [];
-
-        /**
-         * Get all timeseries to download
-         */
-        const externalIds = sourceCollection
-          .filter(({ type }) => type === 'timeseries')
-          .map(({ id }) => timeseriesCollection.find((ts) => id === ts.id)!)
-          .filter((ts) => ts.enabled)
-          .map((ts) => ts.tsExternalId)
-          .filter((x) => x) as string[];
-
-        const aggregate = 'average';
-        const granularity = selectedGranularity || '1d';
-        const humanReadableDateFormat = 'yyyy-MM-dd HH:mm:ss';
-        const bundleName = `${chart?.name} ${formatDate(
-          new Date(),
-          humanReadableDateFormat
-        )}`;
-
-        /**
-         * Fetch all datapoints for all the visible time series
-         */
-        const data = isRawDownload
-          ? await fetchRawDatapoints(
-              sdk,
-              {
-                start: new Date(chart?.dateFrom || new Date()).getTime(),
-                end: new Date(chart?.dateTo || new Date()).getTime(),
-                items: externalIds.map((externalId) => ({ externalId })),
-                granularity,
-                aggregates: [aggregate],
-              },
-              chart?.timeSeriesCollection
-            )
-          : await fetchDataPoints(sdk, {
-              start: new Date(chart?.dateFrom || new Date()).getTime(),
-              end: new Date(chart?.dateTo || new Date()).getTime(),
-              items: externalIds.map((externalId) => ({ externalId })),
-              granularity,
-              aggregates: [aggregate],
-            });
-
-        /**
-         * Split into separate downloads if downloading raw data
-         */
-        const downloadChunks: {
-          filename: string;
-          output: DatapointAggregates[];
-        }[] = isRawDownload
-          ? data.map((item) => ({
-              filename:
-                chart?.timeSeriesCollection?.find(
-                  (ts) => item.externalId === ts.tsExternalId
-                )?.name ||
-                item.externalId ||
-                String(item.id),
-              output: [item],
-            }))
-          : [
-              {
-                filename: bundleName,
-                output: data,
-              },
-            ];
-
-        /**
-         * Handle download of single CSV (aggregates)
-         */
-        if (!isRawDownload) {
-          /**
-           * Convert to CSV
-           */
-          const csv = datapointsToCSV({
-            data: downloadChunks[0].output,
-            aggregate,
-            delimiter: selectedDelimiter,
-            format: isHumanReadableDates ? humanReadableDateFormat : undefined,
-            formatLabel: (externalId) =>
-              chart?.timeSeriesCollection?.find(
-                (ts) => externalId === ts.tsExternalId
-              )?.name || externalId,
-            granularity,
-            isRaw: isRawDownload,
-          });
-
-          /**
-           * Perform download
-           */
-          downloadCSV(csv, downloadChunks[0].filename);
-        } else {
-          /**
-           * Handle .zip bundle download for raw data
-           */
-          const zipBundle = new JSZip();
-
-          // eslint-disable-next-line no-restricted-syntax
-          for (const chunk of downloadChunks) {
-            /**
-             * Convert to CSV
-             */
-            const csv = datapointsToCSV({
-              data: chunk.output,
-              aggregate,
-              delimiter: selectedDelimiter,
-              format: isHumanReadableDates
-                ? humanReadableDateFormat
-                : undefined,
-              formatLabel: (externalId) =>
-                chart?.timeSeriesCollection?.find(
-                  (ts) => externalId === ts.tsExternalId
-                )?.name || externalId,
-              granularity,
-              isRaw: isRawDownload,
-            });
-
-            /**
-             * Add to .zip bundle
-             */
-            zipBundle.file(`${chunk.filename}.csv`, csv);
-          }
-
-          /**
-           * Perform download
-           */
-          const fileContent = await zipBundle.generateAsync({ type: 'blob' });
-          saveAs(fileContent as Blob, bundleName);
-        }
-
-        /**
-         * Success indicator
-         */
-        setIsExporting(false);
-        setIsDoneExporting(true);
-        await wait(2000);
-        setIsDoneExporting(false);
-      } catch (err) {
-        setError(err as Error);
-        setIsExporting(false);
-      }
-    })();
-  }, [
+  const { onExport, error, isExporting, isDoneExporting } = useExportToCSV({
+    name: chart?.name || 'Unnamed export',
+    timeseriesCollection: chart?.timeSeriesCollection,
+    workflowCollection: chart?.workflowCollection,
+    granularity: selectedGranularity || '1d',
+    delimiter: selectedDelimiter,
+    dateFrom: chart?.dateFrom || new Date().toJSON(),
+    dateTo: chart?.dateTo || new Date().toJSON(),
+    enableHumanReadableDates: isHumanReadableDates,
+    enableRawExport: isRawDownload,
     sdk,
-    chart?.dateFrom,
-    chart?.dateTo,
-    chart?.name,
-    chart?.sourceCollection,
-    chart?.timeSeriesCollection,
-    selectedDelimiter,
-    selectedGranularity,
-    isHumanReadableDates,
-    isRawDownload,
-  ]);
+  });
 
   return (
     <ModalWrapper
@@ -286,12 +129,10 @@ const CSVModal = ({
       <p>
         {
           t[
-            'Only the time series currently visible in your chart will be a part of the downloaded data. If applicable - adjust which time series are visible by using the eye icon for each time series.'
+            'Only sources currently visible in your chart will be a part of the downloaded data. If applicable - adjust which sources are visible by using the eye icon for each time series.'
           ]
         }
       </p>
-
-      <p>{t['Calculation results are not included']}</p>
 
       <FieldContainer>
         <Label>
@@ -418,24 +259,6 @@ const CSVModal = ({
               </StatusText>
             </Tooltip>
           )}
-          {!error && hasOnlyCalculationsVisible && (
-            <Tooltip
-              maxWidth={350}
-              content={
-                t[
-                  'Sorry, we currently do not support exporting calculations to CSV. For now, you can only download time series as CSV.'
-                ]
-              }
-            >
-              <StatusText>
-                <StatusIcon
-                  style={{ color: 'var(--cogs-yellow)' }}
-                  type="WarningFilled"
-                />{' '}
-                {t['Nothing to export']}
-              </StatusText>
-            </Tooltip>
-          )}
           {!error && isExporting && (
             <StatusText>
               <StatusIcon type="Loader" /> {t['Exporting - please wait']}
@@ -460,10 +283,8 @@ const CSVModal = ({
             {t.Cancel}
           </Button>
           <Button
-            disabled={
-              isExporting || hasNoSourcesVisible || hasOnlyCalculationsVisible
-            }
-            onClick={handleExport}
+            disabled={isExporting || hasNoSourcesVisible}
+            onClick={onExport}
             type="primary"
           >
             {t.Export}
