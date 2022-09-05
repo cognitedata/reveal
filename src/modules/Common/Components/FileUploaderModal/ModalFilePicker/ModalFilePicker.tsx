@@ -73,12 +73,16 @@ export function ModalFilePicker({
                     Select files
                   </Button>
                 </FilePickerButtonsContainer>
-                <div style={{ width: '190px' }}>
-                  <Detail strong>* Supported files:</Detail>
+                <div style={{ width: '270px' }}>
+                  <div>
+                    <Detail strong>Supported files: </Detail>
+                    <Detail>{acceptTypes}</Detail>
+                  </div>
+                  <Detail strong>Upload limits: </Detail>
                   <Detail>
-                    {acceptTypes}. Max. {maxFileCount} files, total{' '}
-                    {maxTotalSizeInGB} GB.
+                    Max. {maxFileCount} files, total {maxTotalSizeInGB} GB.
                   </Detail>
+                  <div />
                 </div>
               </UploadOptionsWrapper>
             </SelectFilesWrapper>

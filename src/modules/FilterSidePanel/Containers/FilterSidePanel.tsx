@@ -57,7 +57,7 @@ export const FilterSidePanel = () => {
       <FilterResult>
         <FilterTitle>
           <Title level={4} as="h1">
-            Filter result
+            Filters
           </Title>
           <HideFiltersTooltip content="Hide">
             <Button

@@ -57,10 +57,8 @@ export const filterByTime = (
   // filtering
   return items.filter((item) => {
     switch (dateFilter?.action) {
-      case DateActions.created:
-      default:
-        return validate(timeRange, item.createdTime);
       case DateActions.uploaded:
+      default:
         return validate(timeRange, item.uploadedTime);
       case DateActions.captured:
         return validate(timeRange, item.sourceCreatedTime);
