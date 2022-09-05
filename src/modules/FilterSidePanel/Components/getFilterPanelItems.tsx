@@ -26,7 +26,7 @@ export const getFilterPanelItems = (
 ): FilterPanelConfigItem[] => [
   {
     key: '1',
-    headerText: 'Date and Time',
+    headerText: 'Date and time',
     disableClear:
       !filter.createdTime &&
       !filter.uploadedTime &&
@@ -100,7 +100,7 @@ export const getFilterPanelItems = (
   },
   {
     key: '6',
-    headerText: 'Directory Prefix',
+    headerText: 'Directory prefix',
     disableClear: !(filter as any).directoryPrefix,
     clear: () => {
       setFilter({

@@ -185,7 +185,7 @@ export const Keypoints = ({
   return (
     <>
       <Header
-        title="Keypoints"
+        title="Keypoint collections"
         count={allKeypointCollections.length}
         disabledMessage={newKeypoints && 'Finish before creating a new one'}
         onClickNew={() => addNewKeypointGroup()}
