@@ -58,7 +58,7 @@ describe('PersistState Tests', () => {
     // using key from localStorage (instead of a static key) because the key
     // contains a prefixed string like "__v3__storage" added by the localStorage package
     // (which may change with an update in the storage package)
-    expect(localStorage.key(0)?.includes('3d-wellnames')).toBe(true);
+    expect(localStorage.key(0)?.includes('3d-well-names')).toBe(true);
     const key = localStorage.key(0) || '';
     expect(localStorage.setItem).toHaveBeenLastCalledWith(
       key,

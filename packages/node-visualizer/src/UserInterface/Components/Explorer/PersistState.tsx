@@ -1,7 +1,7 @@
 import React from 'react';
-import { ExplorerPropType } from './ExplorerTypes';
 import { getFromLocalStorage, saveToLocalStorage } from '@cognite/storage';
 import { ITreeNode } from '../VirtualTree/ITreeNode';
+import { ExplorerPropType } from './ExplorerTypes';
 
 type ExplorerDataAutoSaverProps = {
   props: ExplorerPropType;
@@ -14,7 +14,7 @@ type KeyOfType<T, V> = keyof {
 
 type filterKeys = KeyOfType<ITreeNode, string>;
 
-const localStorageKey = '3d-wellnames';
+const localStorageKey = '3d-well-names';
 const saveDataToLS = (data: string[]) =>
   saveToLocalStorage(localStorageKey, data);
 const getDataFromLS = () => getFromLocalStorage<string[]>(localStorageKey, []);
@@ -36,7 +36,12 @@ export const PersistState = ({
       if (wellNames) {
         wellNames.forEach((name) => {
           const id = nameToId(name, data);
-          if (id) setTimeout(() => onToggleVisible(id), 0);
+          if (id) {
+            // Reasoning for the delay
+            // not delaying before making the call toonToggleVisible sometimes works and mostly does not.
+            // But delaying it for about 300ms makes the checkboxes to be toggled. So I added a 700ms timeout, just to be safe.
+            setTimeout(() => onToggleVisible(id), 700);
+          }
         });
         setProcessed(true);
       }
