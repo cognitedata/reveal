@@ -106,7 +106,7 @@ export const AnnotationFilter = ({
       </OptionContainer>
       <OptionContainer>
         <HeaderContainer>
-          <Body level={3}>Annotation state</Body>
+          <Body level={3}>Annotation status</Body>
           <ClearButton
             clear={handleOnStateClear}
             disableClear={!annotation?.annotationState}

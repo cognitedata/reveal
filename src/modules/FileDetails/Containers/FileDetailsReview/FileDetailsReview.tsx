@@ -91,7 +91,7 @@ export const FileDetailsReview: React.FC<FileDetailCompProps> = ({
           />
         )}
         <MetaDataTable
-          title="Metadata"
+          title="Custom metadata"
           rowHeight={35}
           editMode={tableEditMode}
           data={fileMetadata}
