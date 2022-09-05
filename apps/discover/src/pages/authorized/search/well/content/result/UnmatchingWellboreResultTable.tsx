@@ -12,7 +12,6 @@ import { Icon, Tooltip } from '@cognite/cogs.js';
 import { ColumnType, RowProps, Table } from 'components/Tablev3';
 import { useDeepCallback } from 'hooks/useDeep';
 import { wellSearchActions } from 'modules/wellSearch/actions';
-import { useWellboresOfWellById } from 'modules/wellSearch/hooks/useWellsCacheQuerySelectors';
 import { useWells } from 'modules/wellSearch/selectors';
 import { WellboreSubtableOptions } from 'pages/authorized/constant';
 
@@ -28,6 +27,7 @@ export interface UnmatchingWellboreResultTableProps {
   well: WellInternal;
   matchingWellbores: WellboreInternal[];
   visibleWellboreColumns: ColumnType<WellboreInternal>[];
+  allWellbores: WellboreInternal[];
   renderRowOverlayComponent: ({
     row,
   }: {
@@ -53,13 +53,12 @@ const UnmatchingWellboreResultTable: React.FC<
   well,
   matchingWellbores,
   visibleWellboreColumns,
+  allWellbores,
   renderRowOverlayComponent,
   renderHoverRowSubComponent,
 }) => {
   const [unmatchingWellboresExpanded, setUnmatchingWellboresExpanded] =
     useState<boolean>(false);
-  // const [selectedWellbores, setSelectedWellbores] = useState<TableResults>({});
-  const allWellbores = useWellboresOfWellById(well.id);
   const { selectedWellboreIds } = useWells();
   const dispatch = useDispatch();
 

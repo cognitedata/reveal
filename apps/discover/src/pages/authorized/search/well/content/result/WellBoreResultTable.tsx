@@ -21,6 +21,7 @@ import { useTranslation } from 'hooks/useTranslation';
 import { useVisibleWellboreColumns } from 'hooks/useVisibleWellboreColumns';
 import { useNavigateToWellInspect } from 'modules/wellInspect/hooks/useNavigateToWellInspect';
 import { wellSearchActions } from 'modules/wellSearch/actions';
+import { useWellboresOfWellById } from 'modules/wellSearch/hooks/useWellsCacheQuerySelectors';
 import { useWells } from 'modules/wellSearch/selectors';
 import { isWellboreFavored } from 'modules/wellSearch/utils/isWellboreFavored';
 import { WellboreSubtableOptions } from 'pages/authorized/constant';
@@ -45,6 +46,7 @@ export const WellboreResultTable: React.FC<Props> = React.memo(({ well }) => {
   const { t } = useTranslation('WellData');
   const metrics = useGlobalMetrics('wells');
   const visibleWellboreColumns = useVisibleWellboreColumns();
+  const allWellbores = useWellboresOfWellById(well.id);
 
   const sortedWellbores = useDeepMemo(
     () => sortBy(wellbores, 'name'),
@@ -55,13 +57,16 @@ export const WellboreResultTable: React.FC<Props> = React.memo(({ well }) => {
     (row: RowProps<WellboreInternal>, isSelected: boolean) => {
       dispatch(
         wellSearchActions.toggleSelectedWellboreOfWell({
-          well,
+          well: {
+            ...well,
+            wellbores: allWellbores,
+          },
           wellboreId: row.original.id,
           isSelected,
         })
       );
     },
-    []
+    [allWellbores]
   );
 
   /**
@@ -150,6 +155,7 @@ export const WellboreResultTable: React.FC<Props> = React.memo(({ well }) => {
         well={well}
         matchingWellbores={sortedWellbores}
         visibleWellboreColumns={visibleWellboreColumns}
+        allWellbores={allWellbores}
         renderHoverRowSubComponent={renderHoverRowSubComponent}
         renderRowOverlayComponent={renderRowOverlayComponent}
       />
