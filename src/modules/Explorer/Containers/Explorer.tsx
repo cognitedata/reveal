@@ -3,11 +3,9 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { VerticalContainer } from 'src/modules/Common/Components/VerticalContainer';
 import {
-  hideContextMenu,
   hideFileMetadata,
   setExplorerFileSelectState,
   setFocusedFileId,
-  showContextMenu,
   showFileMetadata,
   toggleExplorerFilterView,
 } from 'src/modules/Explorer/store/slice';
@@ -34,18 +32,19 @@ import { FilterSidePanel } from 'src/modules/FilterSidePanel/Containers/FilterSi
 import FilterToggleButton from 'src/modules/FilterSidePanel/Components/FilterToggleButton';
 import { ExplorerToolbarContainer } from 'src/modules/Explorer/Containers/ExplorerToolbarContainer';
 import { cancelFileDetailsEdit } from 'src/modules/FileDetails/slice';
-import { ContextMenuPosition } from 'src/modules/Common/Components/ContextMenu/types';
 import { ContextMenuContainer } from 'src/modules/Explorer/Containers/ContextMenuContainer';
+import { useContextMenu } from 'src/modules/Common/hooks/useContextMenu';
 import { ExplorerModelTrainingModalContainer } from './ExplorerModelTrainingModalContainer';
 
 const Explorer = () => {
-  const [contextMenuDataItem, setContextMenuDataItem] =
-    useState<TableDataItem>();
-  const [contextMenuAnchorPoint, setContextMenuAnchorPoint] =
-    useState<ContextMenuPosition>({
-      x: 0,
-      y: 0,
-    });
+  const {
+    contextMenuDataItem,
+    contextMenuAnchorPoint,
+    showContextMenu,
+    setContextMenuDataItem,
+    setContextMenuAnchorPoint,
+    setShowContextMenu,
+  } = useContextMenu();
 
   const history = useHistory();
   const dispatch = useDispatch();
@@ -72,9 +71,6 @@ const Explorer = () => {
   );
   const query = useSelector(
     ({ explorerReducer }: RootState) => explorerReducer.query
-  );
-  const contextMenuShow = useSelector(
-    ({ explorerReducer }: RootState) => explorerReducer.showContextMenu
   );
 
   const selectedFileIds = useSelector((state: RootState) =>
@@ -112,15 +108,10 @@ const Explorer = () => {
         x: (event as any).pageX,
         y: (event as any).pageY,
       });
+      setShowContextMenu(true);
       dispatch(setFocusedFileId(item.id));
-      dispatch(showContextMenu());
     },
-    [
-      setContextMenuDataItem,
-      setContextMenuAnchorPoint,
-      setFocusedFileId,
-      showContextMenu,
-    ]
+    []
   );
 
   const handleRowSelect = useCallback(
@@ -143,18 +134,6 @@ const Explorer = () => {
       );
     }
   }, [focusedFileId]);
-
-  // To hide context menu for all the click events
-  const handleClick = useCallback(() => {
-    dispatch(hideContextMenu());
-  }, [contextMenuShow]);
-
-  useEffect(() => {
-    document.addEventListener('click', handleClick);
-    return () => {
-      document.removeEventListener('click', handleClick);
-    };
-  }, []);
 
   return (
     <VerticalContainer>
@@ -219,7 +198,7 @@ const Explorer = () => {
               </QueryClientProvider>
             </DrawerContainer>
           )}
-          {contextMenuShow && contextMenuDataItem && (
+          {showContextMenu && contextMenuDataItem && (
             <ContextMenuContainer
               rowData={contextMenuDataItem}
               position={contextMenuAnchorPoint}

@@ -44,7 +44,6 @@ const initialDetectionModelParameters = {
 export const initialState: ProcessState = {
   focusedFileId: null,
   showFileMetadata: false,
-  showContextMenu: false,
   currentView: 'list',
   mapTableTabKey: 'fileInMap',
   sortMeta: {
@@ -321,8 +320,6 @@ export const {
   setSelectedDetectionModels,
   hideFileMetadata,
   showFileMetadata,
-  showContextMenu,
-  hideContextMenu,
   setFocusedFileId,
   setUnsavedDetectionModelSettings,
   setDetectionModelParameters,

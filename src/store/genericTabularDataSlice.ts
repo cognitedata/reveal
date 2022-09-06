@@ -11,7 +11,6 @@ import { ViewMode } from 'src/modules/Common/types';
 export interface GenericTabularState {
   focusedFileId: number | null;
   showFileMetadata: boolean;
-  showContextMenu: boolean;
   currentView: ViewMode;
   mapTableTabKey: string;
   sortMeta: {
@@ -52,12 +51,6 @@ export const createGenericTabularDataSlice = <
       },
       showFileMetadata(state) {
         state.showFileMetadata = true;
-      },
-      showContextMenu(state) {
-        state.showContextMenu = true;
-      },
-      hideContextMenu(state) {
-        state.showContextMenu = false;
       },
       setCurrentView(state, action: PayloadAction<ViewMode>) {
         state.currentView = action.payload;

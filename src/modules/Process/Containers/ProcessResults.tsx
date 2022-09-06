@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import {
   setFileSelectState,
   setSelectedFiles,
@@ -20,8 +20,6 @@ import {
   setReverse,
   setCurrentPage,
   setPageSize,
-  showContextMenu,
-  hideContextMenu,
 } from 'src/modules/Process/store/slice';
 import {
   selectProcessSortedFiles,
@@ -58,17 +56,18 @@ import {
 import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
 import { PollJobs } from 'src/store/thunks/Process/PollJobs';
 import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotations';
-import { ContextMenuPosition } from 'src/modules/Common/Components/ContextMenu/types';
 import { ContextMenuContainer } from 'src/modules/Explorer/Containers/ContextMenuContainer';
+import { useContextMenu } from 'src/modules/Common/hooks/useContextMenu';
 
 export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
-  const [contextMenuDataItem, setContextMenuDataItem] =
-    useState<TableDataItem>();
-  const [contextMenuAnchorPoint, setContextMenuAnchorPoint] =
-    useState<ContextMenuPosition>({
-      x: 0,
-      y: 0,
-    });
+  const {
+    contextMenuDataItem,
+    contextMenuAnchorPoint,
+    showContextMenu,
+    setContextMenuDataItem,
+    setContextMenuAnchorPoint,
+    setShowContextMenu,
+  } = useContextMenu();
 
   const dispatch = useDispatch();
   const history = useHistory();
@@ -112,10 +111,6 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
   // todo: remove this hack to force a rerender when explorer model closes
   const showSelectFromExploreModal = useSelector(
     ({ processSlice }: RootState) => processSlice.showExploreModal
-  );
-
-  const contextMenuShow = useSelector(
-    ({ processSlice }: RootState) => processSlice.showContextMenu
   );
 
   const menuActions: FileActions = useMemo(
@@ -179,15 +174,10 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
         x: (event as any).pageX,
         y: (event as any).pageY,
       });
+      setShowContextMenu(true);
       dispatch(setFocusedFileId(item.id));
-      dispatch(showContextMenu());
     },
-    [
-      setContextMenuDataItem,
-      setContextMenuAnchorPoint,
-      setFocusedFileId,
-      showContextMenu,
-    ]
+    []
   );
 
   const handleRowSelect = useCallback(
@@ -255,18 +245,6 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
   useEffect(() => {
     // Resume Annotation Jobs
     dispatch(PollJobs(unfinishedJobs));
-  }, []);
-
-  // To hide context menu for all the click events
-  const handleClick = useCallback(() => {
-    dispatch(hideContextMenu());
-  }, [contextMenuShow]);
-
-  useEffect(() => {
-    document.addEventListener('click', handleClick);
-    return () => {
-      document.removeEventListener('click', handleClick);
-    };
   }, []);
 
   return (
@@ -357,7 +335,7 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
           );
         }}
       </PaginationWrapper>
-      {contextMenuShow && contextMenuDataItem && (
+      {showContextMenu && contextMenuDataItem && (
         <ContextMenuContainer
           rowData={contextMenuDataItem}
           position={contextMenuAnchorPoint}
