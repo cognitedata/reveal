@@ -24,10 +24,11 @@
   ],
   "scripts": {
     "build": "yarn run clean && yarn run build:wasm && webpack --env development",
-    "build:wasm": "yarn workspaces foreach run run-wasm-pack build --target web ./wasm",
-    "build:wasm-test": "yarn workspaces foreach run run-wasm-pack build --target nodejs ./wasm",
+    "build:wasm": "yarn workspaces foreach run run-wasm-pack build --target web ./wasm --dev",
+    "build:wasm-test": "yarn workspaces foreach run run-wasm-pack build --target nodejs ./wasm --dev",
     "build:watch": "yarn run clean && yarn run build:wasm && webpack --env development --watch",
     "build:prod": "yarn run clean && yarn run build:wasm && webpack --env production",
+    "build:wasm:prod": "yarn workspaces foreach run run-wasm-pack build --target web ./wasm --release",
     "mkdist": "shx mkdir -p dist && shx cp README.md LICENSE dist",
     "clean": "shx rm -rf dist/ && yarn run mkdist",
     "clean:wasm": "cargo clean --manifest-path ./wasm/Cargo.toml",
@@ -35,6 +36,7 @@
     "test": "yarn run test:wasm && yarn run test:ts",
     "test:ts": "yarn run build:wasm-test && jest --maxWorkers=4",
     "test:wasm": "yarn workspaces foreach run run-wasm-pack test --headless --chrome ./wasm",
+    "test:wasm": "yarn workspaces foreach run run-wasm-pack test --headless --chrome ./wasm --dev",
     "test:visual:client": "cross-env JEST_PUPPETEER_CONFIG=visual-tests/jest-puppeteer.config.js jest --config=visual-tests/jest.config.js --verbose",
     "test:visual:server": "webpack-dev-server --config packages/webpack.config.js",
     "test:visual": "yarn run build:wasm && concurrently -k -s \"first\" \"yarn run test:visual:client\" \"yarn run test:visual:server\"",
@@ -48,7 +50,7 @@
     "release": "yarn build:prod && cd dist && yarn publish --non-interactive",
     "ws:serve": "yarn run build:wasm && webpack-dev-server --config packages/webpack.config.js",
     "ws:test": "cd $INIT_CWD && jest --runInBand",
-    "ws:test:wasm": "cd $INIT_CWD && wasm-pack test --chrome --headless ./wasm",
+    "ws:test:wasm": "cd $INIT_CWD && wasm-pack test --chrome --headless ./wasm --dev",
     "ws:lint": "cd $INIT_CWD && eslint . --ext .ts,.js --max-warnings 0 --cache"
   },
   "dependencies": {
