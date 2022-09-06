@@ -40,7 +40,6 @@ import {
   IntersectionFromPixelOptions,
   CadIntersection
 } from './types';
-import RenderController from './RenderController';
 import { RevealManager } from '../RevealManager';
 import { RevealOptions } from '../types';
 
@@ -104,9 +103,8 @@ export class Cognite3DViewer {
   private readonly _cdfSdkClient: CogniteClient | undefined;
   private readonly _dataSource: DataSource;
 
-  private readonly camera: THREE.PerspectiveCamera;
   private readonly _sceneHandler: SceneHandler;
-  private readonly _cameraManager: CameraManager;
+  private _cameraManager: CameraManager;
   private readonly _subscription = new Subscription();
   private readonly _revealManagerHelper: RevealManagerHelper;
   private readonly _domElement: HTMLElement;
@@ -131,7 +129,6 @@ export class Cognite3DViewer {
 
   private isDisposed = false;
 
-  private readonly renderController: RenderController;
   private latestRequestId: number = -1;
   private readonly clock = new THREE.Clock();
   private _clippingNeedsUpdate: boolean = false;
@@ -226,7 +223,6 @@ export class Cognite3DViewer {
     this._cameraManager =
       options.cameraManager ??
       new DefaultCameraManager(this.canvas, this._mouseHandler, this.modelIntersectionCallback.bind(this));
-    this.camera = this._cameraManager.getCamera();
 
     this._cameraManager.on('cameraChange', (position: THREE.Vector3, target: THREE.Vector3) => {
       this._events.cameraChange.fire(position.clone(), target.clone());
@@ -261,7 +257,6 @@ export class Cognite3DViewer {
       );
     }
 
-    this.renderController = new RenderController(this.camera);
     this.startPointerEventListeners();
 
     this._pickingHandler = new PickingHandler(
@@ -353,7 +348,6 @@ export class Cognite3DViewer {
       this.removeModel(model);
     }
 
-    this.renderController.dispose();
     this._subscription.unsubscribe();
     this._cameraManager.dispose();
     this.revealManager.dispose();
@@ -499,6 +493,25 @@ export class Cognite3DViewer {
 
   get cameraManager(): CameraManager {
     return this._cameraManager;
+  }
+
+  /**
+   * Sets camera manager instance for current Cognite3Dviewer.
+   * @param cameraManager Camera manager instance.
+   * @param cameraStateUpdate Whether to set current camera state to new camera manager.
+   */
+  setCameraManager(cameraManager: CameraManager, cameraStateUpdate: boolean = true): void {
+    if (cameraStateUpdate) {
+      const currentState = this._cameraManager.getCameraState();
+      cameraManager.setCameraState({ position: currentState.position, target: currentState.target });
+    }
+    cameraManager.getCamera().aspect = this.getCamera().aspect;
+
+    this._cameraManager.enabled = false;
+    cameraManager.enabled = true;
+
+    this._cameraManager = cameraManager;
+    this.requestRedraw();
   }
 
   /**
@@ -653,7 +666,7 @@ export class Cognite3DViewer {
         assertNever(model.type, `Model type ${model.type} cannot be removed`);
     }
 
-    this.renderController.redraw();
+    this.revealManager.requestRedraw();
   }
 
   /**
@@ -721,7 +734,7 @@ export class Cognite3DViewer {
     object.updateMatrixWorld(true);
     this._extraObjects.push(object);
     this._sceneHandler.addCustomObject(object);
-    this.renderController.redraw();
+    this.revealManager.requestRedraw();
     this.recalculateBoundingBox();
   }
 
@@ -744,7 +757,7 @@ export class Cognite3DViewer {
     if (index >= 0) {
       this._extraObjects.splice(index, 1);
     }
-    this.renderController.redraw();
+    this.revealManager.requestRedraw();
     this.recalculateBoundingBox();
   }
 
@@ -809,7 +822,7 @@ export class Cognite3DViewer {
    * @returns The THREE.Camera used for rendering.
    */
   getCamera(): THREE.PerspectiveCamera {
-    return this.camera;
+    return this._cameraManager.getCamera();
   }
 
   /**
@@ -928,12 +941,12 @@ export class Cognite3DViewer {
    * ```
    */
   worldToScreen(point: THREE.Vector3, normalize?: boolean): THREE.Vector2 | null {
-    this.camera.updateMatrixWorld();
+    this.getCamera().updateMatrixWorld();
     const screenPosition = new THREE.Vector3();
     if (normalize) {
-      worldToNormalizedViewportCoordinates(this.camera, point, screenPosition);
+      worldToNormalizedViewportCoordinates(this.getCamera(), point, screenPosition);
     } else {
-      worldToViewportCoordinates(this.renderer, this.camera, point, screenPosition);
+      worldToViewportCoordinates(this.renderer, this.getCamera(), point, screenPosition);
     }
 
     if (
@@ -976,7 +989,7 @@ export class Cognite3DViewer {
 
     const { width: originalWidth, height: originalHeight } = this.canvas;
 
-    const screenshotCamera = this.camera.clone() as THREE.PerspectiveCamera;
+    const screenshotCamera = this.getCamera().clone() as THREE.PerspectiveCamera;
     adjustCamera(screenshotCamera, width, height);
 
     this.renderer.setSize(width, height);
@@ -985,7 +998,7 @@ export class Cognite3DViewer {
     const url = this.renderer.domElement.toDataURL();
 
     this.renderer.setSize(originalWidth, originalHeight);
-    this.renderer.render(this._sceneHandler.scene, this.camera);
+    this.renderer.render(this._sceneHandler.scene, this.getCamera());
 
     this.requestRedraw();
 
@@ -1054,7 +1067,7 @@ export class Cognite3DViewer {
 
     const input: IntersectInput = {
       normalizedCoords,
-      camera: this.camera,
+      camera: this.getCamera(),
       renderer: this.renderer,
       clippingPlanes: this.getClippingPlanes(),
       domElement: this.renderer.domElement
@@ -1130,23 +1143,20 @@ export class Cognite3DViewer {
     const isVisible = visibility === 'visible' && display !== 'none';
 
     if (isVisible) {
-      const { renderController } = this;
       TWEEN.update(time);
       this.recalculateBoundingBox();
       this._cameraManager.update(this.clock.getDelta(), this._updateNearAndFarPlaneBuffers.combinedBbox);
-      renderController.update();
-      this.revealManager.update(this.camera);
+      this.revealManager.update(this.getCamera());
 
-      if (renderController.needsRedraw || this.revealManager.needsRedraw || this._clippingNeedsUpdate) {
+      if (this.revealManager.needsRedraw || this._clippingNeedsUpdate) {
         const frameNumber = this.renderer.info.render.frame;
         const start = Date.now();
-        this.revealManager.render(this.camera);
-        renderController.clearNeedsRedraw();
+        this.revealManager.render(this.getCamera());
         this.revealManager.resetRedraw();
         this._clippingNeedsUpdate = false;
         const renderTime = Date.now() - start;
 
-        this._events.sceneRendered.fire({ frameNumber, renderTime, renderer: this.renderer, camera: this.camera });
+        this._events.sceneRendered.fire({ frameNumber, renderTime, renderer: this.renderer, camera: this.getCamera() });
       }
     }
   }
