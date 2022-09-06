@@ -59,5 +59,6 @@ Most usecases should be covered by the following abstraction levels:
 - ViewerVisualTestFixture: API-level abstraction on top of Cognite3DViewer.
 
 When creating new visual tests you should almost always use one of these abstractions.
-If they do not cover a certain use-case or you create something that you think could be useful for other tests, concider either adding a new base VisualTestFixture or extend the current ones.
+If they do not cover a certain use-case or you create something that you think could be useful for other tests, consider either adding a new base VisualTestFixture or extend the current ones.
+
 
