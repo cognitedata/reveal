@@ -171,19 +171,21 @@ fn get_child_bounding_boxes(bounding_box: &BoundingBox) -> [BoundingBox; 8] {
     let middle = (bounding_box.min + bounding_box.max) / 2.0;
 
     for i in 0..8 {
-        let mut min = vec3(0., 0., 0.);
-        let mut max = vec3(0., 0., 0.);
+        let mut min: DVec3 = Default::default();
+        let mut max: DVec3 = Default::default();
 
         (min.x, max.x) = if (i & 1) == 0 {
             (bounding_box.min.x, middle.x)
         } else {
             (middle.x, bounding_box.max.x)
         };
+
         (min.y, max.y) = if (i & 2) == 0 {
             (bounding_box.min.y, middle.y)
         } else {
             (middle.y, bounding_box.max.y)
         };
+
         (min.z, max.z) = if (i & 4) == 0 {
             (bounding_box.min.z, middle.z)
         } else {
