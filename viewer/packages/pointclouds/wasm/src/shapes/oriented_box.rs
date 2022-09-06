@@ -1,6 +1,6 @@
 use crate::linalg::BoundingBox;
 
-use nalgebra_glm::{DVec3, DMat4, inverse, vec3, vec4, vec4_to_vec3};
+use nalgebra_glm::{inverse, vec3, vec4, vec4_to_vec3, DMat4, DVec3};
 
 use crate::shapes::shape;
 
@@ -47,7 +47,9 @@ mod tests {
     use super::OrientedBox;
     use crate::shapes::shape::Shape;
 
-    use nalgebra_glm::{abs, comp_max, DVec3, DMat4, half_pi, inverse, rotate_x, scale, translate, vec4_to_vec3};
+    use nalgebra_glm::{
+        abs, comp_max, half_pi, inverse, rotate_x, scale, translate, vec4_to_vec3, DMat4, DVec3,
+    };
 
     #[wasm_bindgen_test]
     fn identity_oriented_box_contains_origin() {

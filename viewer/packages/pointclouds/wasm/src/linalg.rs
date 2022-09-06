@@ -1,4 +1,4 @@
-use nalgebra_glm::{DMat4, DVec3, DVec4, max2, min2, vec3, vec4, vec4_to_vec3};
+use nalgebra_glm::{max2, min2, vec3, vec4, vec4_to_vec3, DMat4, DVec3, DVec4};
 
 #[derive(Clone, Copy, Debug)]
 pub struct BoundingBox {

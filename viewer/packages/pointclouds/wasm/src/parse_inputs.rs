@@ -1,9 +1,9 @@
 use nalgebra::Const;
-use nalgebra_glm::{DMat4, DVec3, vec3};
+use nalgebra_glm::{vec3, DMat4, DVec3};
 use std::vec::Vec;
 
-use crate::linalg::Vec3WithIndex;
 use crate::linalg::BoundingBox;
+use crate::linalg::Vec3WithIndex;
 use crate::shapes;
 
 use serde::Deserialize;
@@ -36,16 +36,8 @@ pub struct InputBoundingBox {
 impl Into<BoundingBox> for InputBoundingBox {
     fn into(self) -> BoundingBox {
         BoundingBox {
-            min: DVec3::new(
-                self.min[0],
-                self.min[1],
-                self.min[2],
-            ),
-            max: DVec3::new(
-                self.max[0],
-                self.max[1],
-                self.max[2],
-            ),
+            min: DVec3::new(self.min[0], self.min[1], self.min[2]),
+            max: DVec3::new(self.max[0], self.max[1], self.max[2]),
         }
     }
 }
@@ -60,10 +52,15 @@ pub fn parse_points(
         input_point_offset[2],
     );
 
-    let point_vec = input_array.to_vec().chunks(3).enumerate().map(|(i, p)| Vec3WithIndex {
-        vec: vec3(p[0] as f64, p[1] as f64, p[2] as f64) + point_offset,
-        index: i
-    }).collect();
+    let point_vec = input_array
+        .to_vec()
+        .chunks(3)
+        .enumerate()
+        .map(|(i, p)| Vec3WithIndex {
+            vec: vec3(p[0] as f64, p[1] as f64, p[2] as f64) + point_offset,
+            index: i,
+        })
+        .collect();
 
     point_vec
 }

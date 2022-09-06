@@ -40,8 +40,11 @@ pub fn assign_points(
     init();
 
     let mut point_vec = parse_inputs::parse_points(&input_points, input_point_offset);
-    let bounding_box: BoundingBox = input_bounding_box.into_serde::<InputBoundingBox>().unwrap().into();
-        // to_bounding_box(&input_bounding_box.into_serde::<InputBoundingBox>().unwrap());
+    let bounding_box: BoundingBox = input_bounding_box
+        .into_serde::<InputBoundingBox>()
+        .unwrap()
+        .into();
+
     let shape_vec = parse_inputs::parse_objects(input_shapes);
 
     let object_ids = js_sys::Uint16Array::new_with_length(input_points.length() / 3).fill(

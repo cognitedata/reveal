@@ -1,7 +1,7 @@
-use nalgebra_glm::{dot, DVec3, DMat4, vec3, vec3_to_vec4, vec4};
+use nalgebra_glm::{dot, vec3, vec3_to_vec4, vec4, DMat4, DVec3};
 
-use crate::shapes::shape::Shape;
 use crate::linalg::BoundingBox;
+use crate::shapes::shape::Shape;
 
 pub struct Cylinder {
     center_a: DVec3,
