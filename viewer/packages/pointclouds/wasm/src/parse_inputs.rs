@@ -66,7 +66,7 @@ pub fn parse_points(
 }
 
 fn create_cylinder(input: InputCylinder, id: u16) -> Box<shapes::cylinder::Cylinder> {
-    Box::<shapes::cylinder::Cylinder>::new(shapes::cylinder::Cylinder::new(
+    Box::new(shapes::cylinder::Cylinder::new(
         vec3(input.center_a[0], input.center_a[1], input.center_a[2]),
         vec3(input.center_b[0], input.center_b[1], input.center_b[2]),
         input.radius,
@@ -75,7 +75,7 @@ fn create_cylinder(input: InputCylinder, id: u16) -> Box<shapes::cylinder::Cylin
 }
 
 fn create_box(input: InputOrientedBox, id: u16) -> Box<shapes::oriented_box::OrientedBox> {
-    Box::<shapes::oriented_box::OrientedBox>::new(shapes::oriented_box::OrientedBox::new(
+    Box::new(shapes::oriented_box::OrientedBox::new(
         DMat4::from_column_slice_generic(Const, Const, &input.inv_instance_matrix),
         id,
     ))
