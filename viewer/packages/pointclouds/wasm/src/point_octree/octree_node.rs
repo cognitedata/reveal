@@ -166,11 +166,7 @@ fn sort_points_into_sectors(
 }
 
 fn get_child_bounding_boxes(bounding_box: &BoundingBox) -> [BoundingBox; 8] {
-    let vecc = BoundingBox {
-        min: vec3(0., 0., 0.),
-        max: vec3(0., 0., 0.),
-    };
-    let mut boxes: [BoundingBox; 8] = [vecc; 8];
+    let mut boxes: [BoundingBox; 8] = [Default::default(); 8];
 
     let middle = (bounding_box.min + bounding_box.max) / 2.0;
 

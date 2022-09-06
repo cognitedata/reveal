@@ -13,12 +13,6 @@ pub struct Vec3WithIndex {
 }
 
 impl BoundingBox {
-    pub fn empty() -> BoundingBox {
-        BoundingBox {
-            min: vec3(f64::INFINITY, f64::INFINITY, f64::INFINITY),
-            max: vec3(f64::NEG_INFINITY, f64::NEG_INFINITY, f64::NEG_INFINITY),
-        }
-    }
 
     pub fn overlaps(&self, other: &BoundingBox) -> bool {
         self.min.x < other.max.x
@@ -59,11 +53,20 @@ impl BoundingBox {
     }
 }
 
+impl Default for BoundingBox {
+    fn default() -> BoundingBox {
+        BoundingBox {
+            min: vec3(f64::INFINITY, f64::INFINITY, f64::INFINITY),
+            max: vec3(f64::NEG_INFINITY, f64::NEG_INFINITY, f64::NEG_INFINITY),
+        }
+    }
+}
+
 impl FromIterator<DVec3> for BoundingBox {
     fn from_iter<T>(point_iter: T) -> Self
     where
     T: IntoIterator<Item = DVec3> {
-        let mut bounding_box = BoundingBox::empty();
+        let mut bounding_box: BoundingBox = Default::default();
 
         point_iter.into_iter().for_each(|p| bounding_box.add_point(&p));
 
