@@ -40,7 +40,6 @@ import {
   IntersectionFromPixelOptions,
   CadIntersection
 } from './types';
-import RenderController from './RenderController';
 import { RevealManager } from '../RevealManager';
 import { RevealOptions } from '../types';
 
@@ -129,7 +128,6 @@ export class Cognite3DViewer {
 
   private isDisposed = false;
 
-  private readonly renderController: RenderController;
   private latestRequestId: number = -1;
   private readonly clock = new THREE.Clock();
   private _clippingNeedsUpdate: boolean = false;
@@ -256,7 +254,6 @@ export class Cognite3DViewer {
       );
     }
 
-    this.renderController = new RenderController(this);
     this.startPointerEventListeners();
 
     this._pickingHandler = new PickingHandler(
@@ -348,7 +345,6 @@ export class Cognite3DViewer {
       this.removeModel(model);
     }
 
-    this.renderController.dispose();
     this._subscription.unsubscribe();
     this._cameraManager.dispose();
     this.revealManager.dispose();
@@ -656,7 +652,7 @@ export class Cognite3DViewer {
         assertNever(model.type, `Model type ${model.type} cannot be removed`);
     }
 
-    this.renderController.redraw();
+    this.revealManager.requestRedraw();
   }
 
   /**
@@ -724,7 +720,7 @@ export class Cognite3DViewer {
     object.updateMatrixWorld(true);
     this._extraObjects.push(object);
     this._sceneHandler.addCustomObject(object);
-    this.renderController.redraw();
+    this.revealManager.requestRedraw();
     this.recalculateBoundingBox();
   }
 
@@ -747,7 +743,7 @@ export class Cognite3DViewer {
     if (index >= 0) {
       this._extraObjects.splice(index, 1);
     }
-    this.renderController.redraw();
+    this.revealManager.requestRedraw();
     this.recalculateBoundingBox();
   }
 
@@ -1139,7 +1135,6 @@ export class Cognite3DViewer {
     const isVisible = visibility === 'visible' && display !== 'none';
 
     if (isVisible) {
-      const { renderController } = this;
       TWEEN.update(time);
       const didResize = this.resizeIfNecessary();
       if (didResize) {
@@ -1147,14 +1142,12 @@ export class Cognite3DViewer {
       }
       this.recalculateBoundingBox();
       this._cameraManager.update(this.clock.getDelta(), this._updateNearAndFarPlaneBuffers.combinedBbox);
-      renderController.update();
       this.revealManager.update(this.camera);
 
-      if (renderController.needsRedraw || this.revealManager.needsRedraw || this._clippingNeedsUpdate) {
+      if (this.revealManager.needsRedraw || this._clippingNeedsUpdate) {
         const frameNumber = this.renderer.info.render.frame;
         const start = Date.now();
         this.revealManager.render(this.camera);
-        renderController.clearNeedsRedraw();
         this.revealManager.resetRedraw();
         this._clippingNeedsUpdate = false;
         const renderTime = Date.now() - start;
