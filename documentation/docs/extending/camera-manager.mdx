@@ -16,7 +16,8 @@ In certain cases it can be useful to customize behaviour of the camera:
 ## Overview
 
 To create a custom camera manager class, `CameraManager` interface from `@cognite/reveal` must be implemented
-and provided to `Cognite3DViewer` on construction using the `cameraManager`-option. Interface looks like this:
+and provided to `Cognite3DViewer` on construction using the `cameraManager`-option. You can also set camera manager
+in runtime by setting `Cognite3DViewer` property called `cameraManager`. Interface looks like this:
 
 ```js
 export interface CameraManager {
