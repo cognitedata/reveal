@@ -382,10 +382,7 @@ export function Migration() {
         cameraManager.setCameraControlsOptions({ ...cameraManager.getCameraControlsOptions(), changeCameraTargetOnClick: value });
       });
       controlsGui.add(guiState.controls, 'cameraManager', cameraManagerTypes).name('Camera manager type').onFinishChange( (value: ('Default' | 'Custom')) => {
-        const newCameraManager = cameraManagers[value];
-        viewer.cameraManager.enabled = false;
-        newCameraManager.enabled = true;
-        viewer.cameraManager = newCameraManager;
+        viewer.setCameraManager(cameraManagers[value]);
       });
 
       const inspectNodeUi = new InspectNodeUI(gui.addFolder('Last clicked node'), client, viewer);

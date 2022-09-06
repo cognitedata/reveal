@@ -495,12 +495,23 @@ export class Cognite3DViewer {
     return this._cameraManager;
   }
 
-  set cameraManager(cameraManager: CameraManager) {
-    const currentState = this._cameraManager.getCameraState();
-    this._cameraManager = cameraManager;
+  /**
+   * Sets camera manager instance for current Cognite3Dviewer.
+   * @param cameraManager Camera manager instance.
+   * @param cameraStateUpdate Whether to set current camera state to new camera manager.
+   */
+  setCameraManager(cameraManager: CameraManager, cameraStateUpdate: boolean = true): void {
+    if (cameraStateUpdate) {
+      const currentState = this._cameraManager.getCameraState();
+      cameraManager.setCameraState({ position: currentState.position, target: currentState.target });
+    }
+    cameraManager.getCamera().aspect = this.getCamera().aspect;
 
+    this._cameraManager.enabled = false;
+    cameraManager.enabled = true;
+
+    this._cameraManager = cameraManager;
     this.requestRedraw();
-    cameraManager.setCameraState({ position: currentState.position, target: currentState.target });
   }
 
   /**
@@ -930,12 +941,12 @@ export class Cognite3DViewer {
    * ```
    */
   worldToScreen(point: THREE.Vector3, normalize?: boolean): THREE.Vector2 | null {
-    this.camera.updateMatrixWorld();
+    this.getCamera().updateMatrixWorld();
     const screenPosition = new THREE.Vector3();
     if (normalize) {
-      worldToNormalizedViewportCoordinates(this.camera, point, screenPosition);
+      worldToNormalizedViewportCoordinates(this.getCamera(), point, screenPosition);
     } else {
-      worldToViewportCoordinates(this.renderer, this.camera, point, screenPosition);
+      worldToViewportCoordinates(this.renderer, this.getCamera(), point, screenPosition);
     }
 
     if (
@@ -978,7 +989,7 @@ export class Cognite3DViewer {
 
     const { width: originalWidth, height: originalHeight } = this.canvas;
 
-    const screenshotCamera = this.camera.clone() as THREE.PerspectiveCamera;
+    const screenshotCamera = this.getCamera().clone() as THREE.PerspectiveCamera;
     adjustCamera(screenshotCamera, width, height);
 
     this.renderer.setSize(width, height);
@@ -987,7 +998,7 @@ export class Cognite3DViewer {
     const url = this.renderer.domElement.toDataURL();
 
     this.renderer.setSize(originalWidth, originalHeight);
-    this.renderer.render(this._sceneHandler.scene, this.camera);
+    this.renderer.render(this._sceneHandler.scene, this.getCamera());
 
     this.requestRedraw();
 
@@ -1056,7 +1067,7 @@ export class Cognite3DViewer {
 
     const input: IntersectInput = {
       normalizedCoords,
-      camera: this.camera,
+      camera: this.getCamera(),
       renderer: this.renderer,
       clippingPlanes: this.getClippingPlanes(),
       domElement: this.renderer.domElement
@@ -1101,12 +1112,6 @@ export class Cognite3DViewer {
     intersections.sort((a, b) => a.distanceToCamera - b.distanceToCamera);
     return intersections.length > 0 ? intersections[0] : null;
   }
-  /**
-   * @obvious
-   */
-  private get camera(): THREE.PerspectiveCamera {
-    return this._cameraManager.getCamera();
-  }
 
   /** @private */
   private getModels(type: 'cad'): Cognite3DModel[];
@@ -1141,17 +1146,17 @@ export class Cognite3DViewer {
       TWEEN.update(time);
       this.recalculateBoundingBox();
       this._cameraManager.update(this.clock.getDelta(), this._updateNearAndFarPlaneBuffers.combinedBbox);
-      this.revealManager.update(this.camera);
+      this.revealManager.update(this.getCamera());
 
       if (this.revealManager.needsRedraw || this._clippingNeedsUpdate) {
         const frameNumber = this.renderer.info.render.frame;
         const start = Date.now();
-        this.revealManager.render(this.camera);
+        this.revealManager.render(this.getCamera());
         this.revealManager.resetRedraw();
         this._clippingNeedsUpdate = false;
         const renderTime = Date.now() - start;
 
-        this._events.sceneRendered.fire({ frameNumber, renderTime, renderer: this.renderer, camera: this.camera });
+        this._events.sceneRendered.fire({ frameNumber, renderTime, renderer: this.renderer, camera: this.getCamera() });
       }
     }
   }

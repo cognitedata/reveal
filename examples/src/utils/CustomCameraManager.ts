@@ -64,7 +64,6 @@ export class CustomCameraManager implements CameraManager {
         if (index !== -1) {
             this._cameraChangedListener.splice(index, 1);
         }
-
     }
 
     fitCameraToBoundingBox(boundingBox: THREE.Box3, duration?: number, radiusFactor?: number): void {

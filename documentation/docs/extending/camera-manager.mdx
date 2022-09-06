@@ -17,7 +17,7 @@ In certain cases it can be useful to customize behaviour of the camera:
 
 To create a custom camera manager class, `CameraManager` interface from `@cognite/reveal` must be implemented
 and provided to `Cognite3DViewer` on construction using the `cameraManager`-option. You can also set camera manager
-in runtime by setting `Cognite3DViewer` property called `cameraManager`. Interface looks like this:
+in runtime by calling `setCameraManager` method of `Cognite3DViewer` class. Interface looks like this:
 
 ```js
 export interface CameraManager {
@@ -97,7 +97,7 @@ When implementing these functions you can use a helper class `CameraManagerHelpe
 Here is an example implementation of a custom camera manager that utilizes standard ThreeJS [`OrbitControls`](https://threejs.org/docs/index.html?q=orbit#examples/en/controls/OrbitControls) for mouse movement:
 
 ```js
-import * as THREE from 'three';
+import { THREE } from '@cognite/reveal';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
 import { CameraManager, CameraManagerHelper, CameraState, CameraChangeDelegate } from '@cognite/reveal';
@@ -116,9 +116,16 @@ export class CustomCameraManager implements CameraManager {
         this._controls.dampingFactor = 0.3;
 
         this._controls.addEventListener('change', () => {
-            this._cameraChangedListener.forEach( cb => cb(this._camera.position, 
-            this._controls.target));
+            this._cameraChangedListener.forEach( cb => cb(this._camera.position, this._controls.target));
         });
+    }
+
+    set enabled(value: boolean) {
+        this._controls.enabled = value;
+    }
+
+    get enabled(): boolean {
+        return this._controls.enabled;
     }
 
     getCamera(): THREE.PerspectiveCamera {
@@ -126,9 +133,7 @@ export class CustomCameraManager implements CameraManager {
     }
 
     setCameraState(state: CameraState): void {
-        if (state.rotation && state.target) throw 
-          new Error("Can't set both rotation and target");
-
+        if (state.rotation && state.target) throw new Error("Can't set both rotation and target");
         const position = state.position ?? this._camera.position;
         const rotation = state.rotation ?? this._camera.quaternion;
         const target = state.target ?? ( state.rotation ? 
@@ -161,8 +166,7 @@ export class CustomCameraManager implements CameraManager {
     }
 
     fitCameraToBoundingBox(boundingBox: THREE.Box3, duration?: number, radiusFactor?: number): void {
-        const { position, target } = CameraManagerHelper
-          .calculateCameraStateToFitBoundingBox(this._camera, boundingBox, radiusFactor);
+        const { position, target } = CameraManagerHelper.calculateCameraStateToFitBoundingBox(this._camera, boundingBox, radiusFactor);
 
         this.setCameraState({ position, target });
     }
