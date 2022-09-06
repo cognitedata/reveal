@@ -1,4 +1,5 @@
-import login from './login.test';
+/// <reference types="cypress" />
+import login from '../login.test';
 
 beforeEach(login);
 

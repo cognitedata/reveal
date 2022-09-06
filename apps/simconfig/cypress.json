@@ -1,6 +1,11 @@
 {
-  "integrationFolder": "cypress",
+  "integrationFolder": "cypress/specs",
+  "viewportWidth": 1280,
+  "viewportHeight": 760,
   "videoUploadOnPasses": false,
   "chromeWebSecurity": false,
-  "retries": 2
+  "retries": 2,
+  "env": {
+    "BASE_URL": "https://localhost:3000"
+  }
 }
