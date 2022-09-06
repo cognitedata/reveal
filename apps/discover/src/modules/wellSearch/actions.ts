@@ -19,6 +19,7 @@ import { Column } from 'pages/authorized/search/common/types';
 import { getChunkNumberList, wellSearchService } from './service';
 import {
   TOGGLE_EXPANDED_WELL_ID,
+  COLLAPSE_ALL_AND_EXPAND_WELLS,
   TOGGLE_SELECTED_WELLS,
   SET_WELLBORE_ASSETS,
   SET_WELLBORE_DIGITAL_ROCK_SAMPLES,
@@ -52,7 +53,7 @@ function getGrainAnalysisData(
                   rows,
                 },
               ];
-              dispatch({
+              dispatch<any>({
                 type: SET_GRAIN_ANALYSIS_DATA,
                 digitalRockSample,
                 grainAnalysisType,
@@ -81,6 +82,15 @@ function toggleExpandedWell(
       type: TOGGLE_EXPANDED_WELL_ID,
       id: well.id,
       reset,
+    });
+  };
+}
+
+function collapseAllAndExpandWells(ids: string[]): ThunkResult<void> {
+  return (dispatch) => {
+    dispatch({
+      type: COLLAPSE_ALL_AND_EXPAND_WELLS,
+      ids,
     });
   };
 }
@@ -293,6 +303,7 @@ export const wellSearchActions = {
   toggleSelectedWells,
   toggleSelectedWellboreOfWell,
   toggleExpandedWell,
+  collapseAllAndExpandWells,
   getDigitalRockSamples,
   getGrainAnalysisData,
   addSelectedColumn,

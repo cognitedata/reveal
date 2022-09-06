@@ -55,7 +55,7 @@ export const WellboreResultTable: React.FC<Props> = React.memo(({ well }) => {
 
   const handleRowSelect = useCallback(
     (row: RowProps<WellboreInternal>, isSelected: boolean) => {
-      dispatch(
+      dispatch<any>(
         wellSearchActions.toggleSelectedWellboreOfWell({
           well: {
             ...well,

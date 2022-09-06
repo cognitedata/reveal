@@ -81,7 +81,7 @@ const UnmatchingWellboreResultTable: React.FC<
 
   const handleRowSelect = useDeepCallback(
     (row: RowProps<WellboreInternal>, isSelected: boolean) => {
-      dispatch(
+      dispatch<any>(
         wellSearchActions.toggleSelectedWellboreOfWell({
           well: {
             ...well,

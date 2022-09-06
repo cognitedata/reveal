@@ -77,7 +77,9 @@ export const WellResultTable: React.FC = () => {
   useDeepEffect(() => {
     const firstWell = head(wells);
     if (firstWell) {
-      dispatch<any>(wellSearchActions.toggleExpandedWell(firstWell, true));
+      dispatch<any>(
+        wellSearchActions.collapseAllAndExpandWells([firstWell.id])
+      );
     }
   }, [wells]);
 

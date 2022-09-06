@@ -5,6 +5,7 @@ import unset from 'lodash/unset';
 
 import {
   TOGGLE_EXPANDED_WELL_ID,
+  COLLAPSE_ALL_AND_EXPAND_WELLS,
   TOGGLE_SELECTED_WELLS,
   WellState,
   WellSearchAction,
@@ -60,6 +61,16 @@ export function wellReducer(
           ...(action.reset ? {} : state.expandedWellIds),
           [action.id]: !state.expandedWellIds[action.id],
         },
+      };
+    }
+
+    case COLLAPSE_ALL_AND_EXPAND_WELLS: {
+      return {
+        ...state,
+        expandedWellIds: action.ids.reduce(
+          (result, current) => ({ ...result, [current]: true }),
+          {}
+        ),
       };
     }
 

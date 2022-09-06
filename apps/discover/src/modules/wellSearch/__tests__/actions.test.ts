@@ -18,17 +18,19 @@ import { wellSearchActions } from '../actions';
 import {
   TOGGLE_EXPANDED_WELL_ID,
   TOGGLE_SELECTED_WELLS,
+  COLLAPSE_ALL_AND_EXPAND_WELLS,
   SET_WELLBORE_DIGITAL_ROCK_SAMPLES,
   TOGGLE_SELECTED_WELLBORE_OF_WELL,
+  WellState,
 } from '../types';
 
-const getDefaultTestValues = () => {
+const getDefaultTestValues = (extras?: Partial<WellState>) => {
   const well = getDefaultWell();
   const wellbore = getDefaultWellbore();
 
   const initialStore: PartialStoreState = getInitialStore();
   const store: AppStore = getMockedStore({
-    wellSearch: { ...initialStore.wellSearch },
+    wellSearch: { ...initialStore.wellSearch, ...extras },
   });
 
   return { store, well, wellbore };
@@ -82,6 +84,25 @@ describe('Well search Actions', () => {
           type: TOGGLE_SELECTED_WELLS,
           wells: [well],
           isSelected,
+        },
+      ]);
+    });
+  });
+
+  describe('collapseAllAndExpandWells', () => {
+    it(`should reset all and set passed ids`, async () => {
+      const { store } = getDefaultTestValues({
+        expandedWellIds: {
+          1111: true,
+          1112: true,
+        },
+      });
+      const well = getMockWell() as unknown as WellInternal;
+      store.dispatch(wellSearchActions.collapseAllAndExpandWells([well.id]));
+      expect(store.getActions()).toEqual([
+        {
+          type: COLLAPSE_ALL_AND_EXPAND_WELLS,
+          ids: [well.id],
         },
       ]);
     });

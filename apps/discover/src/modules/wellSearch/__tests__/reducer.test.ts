@@ -5,6 +5,7 @@ import { mockedWellsFixture } from '__test-utils/fixtures/well';
 import { initialState, wellReducer } from '../reducer';
 import {
   TOGGLE_EXPANDED_WELL_ID,
+  COLLAPSE_ALL_AND_EXPAND_WELLS,
   TOGGLE_SELECTED_WELLS,
   TOGGLE_SELECTED_WELLBORE_OF_WELL,
   SET_WELLBORE_DIGITAL_ROCK_SAMPLES,
@@ -24,7 +25,7 @@ describe('Well Reducer', () => {
       },
       {
         type: TOGGLE_EXPANDED_WELL_ID,
-        id: 1235,
+        id: '1235',
         reset: false,
       }
     );
@@ -45,8 +46,25 @@ describe('Well Reducer', () => {
       },
       {
         type: TOGGLE_EXPANDED_WELL_ID,
-        id: 1235,
+        id: '1235',
         reset: true,
+      }
+    );
+    expect(state.expandedWellIds).toEqual({ 1235: true });
+  });
+
+  it('should clear all existing exapanded ids and set passed ids', () => {
+    const state = wellReducer(
+      {
+        ...initialState,
+        expandedWellIds: {
+          1234: true,
+          1235: false,
+        },
+      },
+      {
+        type: COLLAPSE_ALL_AND_EXPAND_WELLS,
+        ids: ['1235'],
       }
     );
     expect(state.expandedWellIds).toEqual({ 1235: true });
@@ -121,7 +139,7 @@ describe('Well Reducer', () => {
         type: SET_WELLBORE_DIGITAL_ROCK_SAMPLES,
         data: [
           {
-            wellboreId,
+            wellboreId: String(wellboreId),
             digitalRockId: digitalRock.id,
             digitalRockSamples,
           },

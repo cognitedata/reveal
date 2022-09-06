@@ -18,6 +18,7 @@ export const TOGGLE_SELECTED_WELLS = 'WELL_TOGGLE_SELECTED_WELLS';
 export const TOGGLE_SELECTED_WELLBORE_OF_WELL =
   'WELL_TOGGLE_SELECTED_WELLBORE_OF_WELL';
 export const TOGGLE_EXPANDED_WELL_ID = 'WELL_TOGGLE_EXPANDED_WELL_ID';
+export const COLLAPSE_ALL_AND_EXPAND_WELLS = 'COLLAPSE_ALL_AND_EXPAND_WELLS';
 
 export const SET_WELLBORE_ASSETS = 'WELL_SET_WELLBORE_ASSETS';
 export const SET_WELLBORE_DIGITAL_ROCK_SAMPLES =
@@ -59,6 +60,11 @@ interface ToggleExpandedWellId {
   type: typeof TOGGLE_EXPANDED_WELL_ID;
   id: string;
   reset?: boolean;
+}
+
+interface CollapseAllAndExpandWells {
+  type: typeof COLLAPSE_ALL_AND_EXPAND_WELLS;
+  ids: string[];
 }
 
 interface ToggleSelectedWells {
@@ -117,7 +123,8 @@ export type WellSearchAction =
   | SetGrainAnalysisData
   | AddSelectedColumn
   | RemoveSelectedColumn
-  | SetSelectedColumn;
+  | SetSelectedColumn
+  | CollapseAllAndExpandWells;
 
 export interface WellResult {
   wells: WellInternal[];
