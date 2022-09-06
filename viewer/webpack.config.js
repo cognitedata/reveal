@@ -32,18 +32,11 @@ module.exports = env => {
   return {
     mode: development ? 'development' : 'production',
     // Internals is not part of prod builds
-    entry: development
-      ? {
-          index: './index.ts',
-          tools: './tools.ts',
-          'extensions/datasource': './extensions/datasource.ts',
-          internals: './internals.ts'
-        }
-      : {
-          index: './index.ts',
-          tools: './tools.ts',
-          'extensions/datasource': './extensions/datasource.ts'
-        },
+    entry: {
+      index: './index.ts',
+      tools: './tools.ts',
+      'extensions/datasource': './extensions/datasource.ts'
+    },
     target: 'web',
     resolve: {
       fallback: {
