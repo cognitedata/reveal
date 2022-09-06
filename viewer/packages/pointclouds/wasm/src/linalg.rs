@@ -12,21 +12,6 @@ pub struct Vec3WithIndex {
     pub index: usize,
 }
 
-pub fn to_bounding_box(input_bounding_box: &crate::InputBoundingBox) -> BoundingBox {
-    BoundingBox {
-        min: DVec3::new(
-            input_bounding_box.min[0],
-            input_bounding_box.min[1],
-            input_bounding_box.min[2],
-        ),
-        max: DVec3::new(
-            input_bounding_box.max[0],
-            input_bounding_box.max[1],
-            input_bounding_box.max[2],
-        ),
-    }
-}
-
 pub fn boxes_overlap(b0: &BoundingBox, b1: &BoundingBox) -> bool {
     return b0.min.x < b1.max.x
         && b0.max.x > b1.min.x

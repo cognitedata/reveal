@@ -1,8 +1,9 @@
 use nalgebra::Const;
-use nalgebra_glm::{DMat4, vec3};
+use nalgebra_glm::{DMat4, DVec3, vec3};
 use std::vec::Vec;
 
 use crate::linalg::Vec3WithIndex;
+use crate::linalg::BoundingBox;
 use crate::shapes;
 
 use serde::Deserialize;
@@ -24,6 +25,29 @@ pub struct InputShape {
     object_id: u16,
     cylinder: Option<Box<InputCylinder>>,
     oriented_box: Option<Box<InputOrientedBox>>,
+}
+
+#[derive(Deserialize)]
+pub struct InputBoundingBox {
+    pub min: [f64; 3],
+    pub max: [f64; 3],
+}
+
+impl Into<BoundingBox> for InputBoundingBox {
+    fn into(self) -> BoundingBox {
+        BoundingBox {
+            min: DVec3::new(
+                self.min[0],
+                self.min[1],
+                self.min[2],
+            ),
+            max: DVec3::new(
+                self.max[0],
+                self.max[1],
+                self.max[2],
+            ),
+        }
+    }
 }
 
 pub fn parse_points(

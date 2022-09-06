@@ -15,20 +15,13 @@ mod test_setup {
 #[cfg(test)]
 mod test_utils;
 
-use serde::Deserialize;
-
 mod linalg;
 mod parse_inputs;
 mod point_octree;
 mod shapes;
 
-use linalg::to_bounding_box;
-
-#[derive(Deserialize)]
-pub struct InputBoundingBox {
-    pub min: [f64; 3],
-    pub max: [f64; 3],
-}
+use linalg::BoundingBox;
+use parse_inputs::InputBoundingBox;
 
 fn init() -> () {
     // This provides better error messages in debug mode.
@@ -47,8 +40,8 @@ pub fn assign_points(
     init();
 
     let mut point_vec = parse_inputs::parse_points(&input_points, input_point_offset);
-    let bounding_box =
-        to_bounding_box(&input_bounding_box.into_serde::<InputBoundingBox>().unwrap());
+    let bounding_box: BoundingBox = input_bounding_box.into_serde::<InputBoundingBox>().unwrap().into();
+        // to_bounding_box(&input_bounding_box.into_serde::<InputBoundingBox>().unwrap());
     let shape_vec = parse_inputs::parse_objects(input_shapes);
 
     let object_ids = js_sys::Uint16Array::new_with_length(input_points.length() / 3).fill(
