@@ -5,6 +5,11 @@ import { log } from './log';
 let globalClient: CogniteClient;
 
 export const setClient = (client: CogniteClient) => {
+  // we have to use the alpha API for events filtering in report manager
+  // should be removed after advancedFilters are moved to stable API
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  client.httpClient.setDefaultHeader('cdf-version', 'alpha');
   globalClient = client;
 };
 

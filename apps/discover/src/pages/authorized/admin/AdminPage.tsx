@@ -6,6 +6,7 @@ import { SIDECAR } from 'constants/app';
 import navigation from 'constants/navigation';
 
 import { ProtectedRoute } from '../../../core';
+import { ReportManager } from '../report-manager';
 
 import { CodeDefinitions } from './codeDefinitions';
 import FeedbackPage from './feedback';
@@ -41,6 +42,13 @@ const AdminPage = () => {
         returnPath="/"
         path={navigation.ADMIN_LEGEND}
         render={() => <CodeDefinitions />}
+      />
+
+      <ProtectedRoute
+        isAuthenticated={isAuthenticated}
+        returnPath="/"
+        path={navigation.ADMIN_REPORT_MANAGER}
+        render={() => <ReportManager isAdmin />}
       />
 
       {SIDECAR.useFDMConfig && (

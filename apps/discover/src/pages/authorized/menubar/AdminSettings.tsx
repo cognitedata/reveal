@@ -4,7 +4,6 @@ import { useLocation } from 'react-router-dom';
 import styled from 'styled-components/macro';
 
 import { Dropdown, Menu, TopBar } from '@cognite/cogs.js';
-import { useFlag } from '@cognite/react-feature-flags';
 
 import { Admin } from 'components/Admin';
 import { SIDECAR } from 'constants/app';
@@ -18,6 +17,7 @@ import {
   ADMIN_FEEDBACK_LINK_TEXT_KEY,
   ADMIN_PROJECT_CONFIG_LINK_TEXT_KEY,
   ADMIN_MAP_CONFIG,
+  ADMIN_REPORT_MANAGER,
   PATHNAMES,
 } from './constants';
 
@@ -49,7 +49,6 @@ export const AdminSettings: React.FC<Props> = ({
   handleNavigation,
 }) => {
   const [showDropdown, setShowDropdown] = useState<boolean>(false);
-  const layersEnabled = useFlag('DISCOVER_admin_layers');
   const { data: generalConfig } = useProjectConfigByKey('general');
 
   const { pathname } = useLocation();
@@ -90,12 +89,17 @@ export const AdminSettings: React.FC<Props> = ({
         handleNavigation(navigation.ADMIN_MAP_CONFIG, PATHNAMES.ADMIN);
       },
     },
+    {
+      key: 'ADMIN/REPORT_MANAGER',
+      configKey: 'reportManager',
+      name: t(ADMIN_REPORT_MANAGER) as string,
+      onClick: () => {
+        handleNavigation(navigation.ADMIN_REPORT_MANAGER, PATHNAMES.ADMIN);
+      },
+    },
   ].filter((item) => {
     if (item.disabled) {
       return false;
-    }
-    if (item.configKey === 'layers') {
-      return layersEnabled;
     }
     if (item.configKey === 'projectConfig') {
       return generalConfig?.showProjectConfig;

@@ -39,6 +39,11 @@ const ADMIN_LEGEND = `${ADMIN}/legend`;
 
 export const RELATED_DOCUMENTS = '/relatedDocuments';
 
+/* reportManager */
+
+export const REPORT_MANAGER = '/reportManager';
+export const ADMIN_REPORT_MANAGER = `${ADMIN}${REPORT_MANAGER}`;
+
 const navigationConfig = {
   LOGOUT: '/logout',
 
@@ -84,6 +89,9 @@ const navigationConfig = {
   INTERNAL_PROJECT_CONFIG,
 
   ADMIN_LEGEND,
+
+  REPORT_MANAGER,
+  ADMIN_REPORT_MANAGER,
 };
 
 export default navigationConfig;

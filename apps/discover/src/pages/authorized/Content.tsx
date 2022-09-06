@@ -16,6 +16,7 @@ import { ProjectConfig } from 'pages/authorized/admin/projectConfig';
 import { AppFrame } from 'pages/authorized/elements';
 import { Favorites } from 'pages/authorized/favorites';
 import { NotFoundPage } from 'pages/authorized/notfound';
+import { ReportManager } from 'pages/authorized/report-manager';
 import { Search } from 'pages/authorized/search';
 
 import { LOG_APP_CLOSED, LOG_APP_NAMESPACE } from '../../constants/logging';
@@ -85,6 +86,11 @@ const Content = () => {
                 <Route
                   path={navigation.INTERNAL_PROJECT_CONFIG}
                   render={() => <ProjectConfig />}
+                />
+
+                <Route
+                  path={navigation.REPORT_MANAGER}
+                  render={() => <ReportManager />}
                 />
 
                 <Route path={navigation.LOGOUT} render={() => <Logout />} />
