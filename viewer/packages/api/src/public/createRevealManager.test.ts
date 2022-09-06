@@ -22,6 +22,13 @@ describe('createRevealManager', () => {
         new Mock<THREE.WebGLRenderer>()
           .setup(_ => It.Is((expression: SetPropertyExpression) => expression.name === 'info'))
           .returns({})
+          .setup(p => p.domElement)
+          .returns(
+            new Mock<HTMLCanvasElement>()
+              .setup(p => p.parentElement)
+              .returns(new Mock<HTMLElement>().object())
+              .object()
+          )
           .object(),
         new SceneHandler(),
         {}

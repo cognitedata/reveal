@@ -60,6 +60,7 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
   private _pipelineExecutor: RenderPipelineExecutor;
   private _cadManager!: CadManager;
   private readonly _depthRenderPipeline: CadGeometryRenderModePipelineProvider;
+  private readonly _resizeObserver: ResizeObserver;
 
   get gui(): dat.GUI {
     return this._gui;
@@ -74,6 +75,10 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
   }
 
   set pipelineProvider(pipelineProvider: RenderPipelineProvider) {
+    if (pipelineProvider !== this._renderPipelineProvider) {
+      this._renderPipelineProvider.dispose();
+    }
+
     this._renderPipelineProvider = pipelineProvider;
   }
 
@@ -92,8 +97,6 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
     this._renderer.setPixelRatio(window.devicePixelRatio);
     this._renderer.localClippingEnabled = true;
 
-    this._renderer.setPixelRatio(window.devicePixelRatio);
-
     this._controls = new OrbitControls(this._perspectiveCamera, this._renderer.domElement);
 
     this._materialManager = new CadMaterialManager();
@@ -109,6 +112,8 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
       this._materialManager,
       this._sceneHandler
     );
+
+    this._resizeObserver = new ResizeObserver(() => this.render());
   }
 
   public async run(): Promise<void> {
@@ -201,11 +206,25 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
     this._frameStatisticsGUIData.pointCount = this._renderer.info.render.points;
   }
 
-  private updateRenderer(): void {
+  protected updateRenderer(): void {
+    const domElement = document.createElement('div');
+
     document.body.style.margin = '0px 0px 0px 0px';
-    this._renderer.setSize(window.innerWidth, window.innerHeight);
-    this._renderer.setPixelRatio(window.devicePixelRatio);
-    document.body.appendChild(this._renderer.domElement);
+
+    domElement.style.width = '100vw';
+    domElement.style.height = '100vh';
+
+    this._renderer.domElement.style.minHeight = '100%';
+    this._renderer.domElement.style.minWidth = '100%';
+    this._renderer.domElement.style.maxHeight = '100%';
+    this._renderer.domElement.style.maxWidth = '100%';
+
+    domElement.appendChild(this._renderer.domElement);
+    document.body.appendChild(domElement);
+
+    this._renderer.setSize(domElement.clientWidth, domElement.clientHeight);
+
+    this._resizeObserver.observe(domElement);
   }
 
   private getModelLoadedPromise(
@@ -272,10 +291,12 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
   }
 
   public dispose(): void {
+    this._resizeObserver.disconnect();
     this._controls.dispose();
     this._sceneHandler.dispose();
     this._depthRenderPipeline.dispose();
-    this._renderPipelineProvider.dispose();
+    this.pipelineProvider.dispose();
+    this.pipelineExecutor.dispose();
     this._cadManager.dispose();
     this._renderer.dispose();
     this._renderer.forceContextLoss();
