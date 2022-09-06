@@ -209,6 +209,7 @@ export const {
   hideFileMetadata,
   showFileMetadata,
   showContextMenu,
+  hideContextMenu,
   setExplorerQueryString,
   setExplorerModalQueryString,
   setExplorerFilter,

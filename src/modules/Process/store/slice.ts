@@ -322,6 +322,7 @@ export const {
   hideFileMetadata,
   showFileMetadata,
   showContextMenu,
+  hideContextMenu,
   setFocusedFileId,
   setUnsavedDetectionModelSettings,
   setDetectionModelParameters,

@@ -3,6 +3,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { VerticalContainer } from 'src/modules/Common/Components/VerticalContainer';
 import {
+  hideContextMenu,
   hideFileMetadata,
   setExplorerFileSelectState,
   setFocusedFileId,
@@ -114,7 +115,12 @@ const Explorer = () => {
       dispatch(setFocusedFileId(item.id));
       dispatch(showContextMenu());
     },
-    []
+    [
+      setContextMenuDataItem,
+      setContextMenuAnchorPoint,
+      setFocusedFileId,
+      showContextMenu,
+    ]
   );
 
   const handleRowSelect = useCallback(
@@ -137,6 +143,18 @@ const Explorer = () => {
       );
     }
   }, [focusedFileId]);
+
+  // To hide context menu for all the click events
+  const handleClick = useCallback(() => {
+    dispatch(hideContextMenu());
+  }, [contextMenuShow]);
+
+  useEffect(() => {
+    document.addEventListener('click', handleClick);
+    return () => {
+      document.removeEventListener('click', handleClick);
+    };
+  }, []);
 
   return (
     <VerticalContainer>

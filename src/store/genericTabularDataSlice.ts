@@ -56,6 +56,9 @@ export const createGenericTabularDataSlice = <
       showContextMenu(state) {
         state.showContextMenu = true;
       },
+      hideContextMenu(state) {
+        state.showContextMenu = false;
+      },
       setCurrentView(state, action: PayloadAction<ViewMode>) {
         state.currentView = action.payload;
       },

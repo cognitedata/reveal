@@ -21,6 +21,7 @@ import {
   setCurrentPage,
   setPageSize,
   showContextMenu,
+  hideContextMenu,
 } from 'src/modules/Process/store/slice';
 import {
   selectProcessSortedFiles,
@@ -181,7 +182,12 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
       dispatch(setFocusedFileId(item.id));
       dispatch(showContextMenu());
     },
-    []
+    [
+      setContextMenuDataItem,
+      setContextMenuAnchorPoint,
+      setFocusedFileId,
+      showContextMenu,
+    ]
   );
 
   const handleRowSelect = useCallback(
@@ -249,6 +255,18 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
   useEffect(() => {
     // Resume Annotation Jobs
     dispatch(PollJobs(unfinishedJobs));
+  }, []);
+
+  // To hide context menu for all the click events
+  const handleClick = useCallback(() => {
+    dispatch(hideContextMenu());
+  }, [contextMenuShow]);
+
+  useEffect(() => {
+    document.addEventListener('click', handleClick);
+    return () => {
+      document.removeEventListener('click', handleClick);
+    };
   }, []);
 
   return (
