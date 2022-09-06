@@ -108,6 +108,8 @@ describe('convertGraphToGlobalIds', () => {
       lineNumbers: ['L132'],
       tags: [],
       labels: [],
+      manuallyRemovedConnections: [],
+      manuallyRemovedLabelConnections: [],
     };
 
     const filename = graphDocument.documentMetadata.name;
@@ -152,6 +154,8 @@ describe('mergeGraphs', () => {
       lineNumbers: ['L132'],
       tags: [],
       labels: [],
+      manuallyRemovedConnections: [],
+      manuallyRemovedLabelConnections: [],
     };
 
     const graphDocument2: GraphDocument = {
@@ -170,6 +174,8 @@ describe('mergeGraphs', () => {
       lineNumbers: ['L132'],
       tags: [],
       labels: [],
+      manuallyRemovedConnections: [],
+      manuallyRemovedLabelConnections: [],
     };
 
     const combinedGraph = mergeGraphs([graphDocument1, graphDocument2]);
@@ -211,6 +217,8 @@ describe('match multifileGraphs', () => {
       lineNumbers: ['L001'],
       tags: [],
       labels: [],
+      manuallyRemovedConnections: [],
+      manuallyRemovedLabelConnections: [],
     };
 
     const pid2: GraphDocument = {
@@ -232,6 +240,8 @@ describe('match multifileGraphs', () => {
       lineNumbers: ['L001'],
       tags: [],
       labels: [],
+      manuallyRemovedConnections: [],
+      manuallyRemovedLabelConnections: [],
     };
 
     /*
@@ -262,6 +272,8 @@ describe('match multifileGraphs', () => {
       lineNumbers: ['L001'],
       tags: [],
       labels: [],
+      manuallyRemovedConnections: [],
+      manuallyRemovedLabelConnections: [],
     };
 
     const iso2: GraphDocument = {
@@ -289,6 +301,8 @@ describe('match multifileGraphs', () => {
       lineNumbers: ['L001'],
       tags: [],
       labels: [],
+      manuallyRemovedConnections: [],
+      manuallyRemovedLabelConnections: [],
     };
 
     const pid1Graph = mutateGraphToGlobalizedIds(pid1);

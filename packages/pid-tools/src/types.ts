@@ -182,6 +182,8 @@ export interface GraphDocument extends Legend {
   lineNumbers: string[];
   tags: DiagramTagOutputFormat[];
   labels: DiagramLabelOutputFormat[];
+  manuallyRemovedConnections: DiagramConnection[];
+  manuallyRemovedLabelConnections: [DiagramInstanceWithPaths, string][];
 }
 
 interface DocumentMetadataBase {

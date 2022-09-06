@@ -3,6 +3,7 @@ import { saveAs } from 'file-saver';
 import { PidDocumentWithDom } from '../pid';
 import {
   DiagramConnection,
+  DiagramInstanceWithPaths,
   DiagramLineInstance,
   DiagramSymbol,
   DiagramSymbolInstance,
@@ -27,17 +28,31 @@ export const isValidGraphDocumentJson = (
   return !requiredFields.some((field) => !(field in jsonData));
 };
 
-export const getGraphFormat = (
-  pidDocument: PidDocumentWithDom,
-  symbols: DiagramSymbol[],
-  lines: DiagramLineInstance[],
-  symbolInstances: DiagramSymbolInstance[],
-  connections: DiagramConnection[],
-  pathReplacementGroups: PathReplacementGroup[],
-  documentMetadata: DocumentMetadata,
-  lineNumbers: string[],
-  tags: DiagramTag[]
-): GraphDocument => {
+export const getGraphFormat = ({
+  pidDocument,
+  symbols,
+  lines,
+  symbolInstances,
+  connections,
+  pathReplacementGroups,
+  documentMetadata,
+  lineNumbers,
+  tags,
+  manuallyRemovedConnections,
+  manuallyRemovedLabelConnections,
+}: {
+  pidDocument: PidDocumentWithDom;
+  symbols: DiagramSymbol[];
+  lines: DiagramLineInstance[];
+  symbolInstances: DiagramSymbolInstance[];
+  connections: DiagramConnection[];
+  pathReplacementGroups: PathReplacementGroup[];
+  documentMetadata: DocumentMetadata;
+  lineNumbers: string[];
+  tags: DiagramTag[];
+  manuallyRemovedConnections: DiagramConnection[];
+  manuallyRemovedLabelConnections: [DiagramInstanceWithPaths, string][];
+}): GraphDocument => {
   const linesOutputFormat = getDiagramLineInstancesOutputFormat(
     pidDocument,
     lines
@@ -63,6 +78,8 @@ export const getGraphFormat = (
     lineNumbers,
     tags: tagsOutputFormat,
     labels,
+    manuallyRemovedConnections,
+    manuallyRemovedLabelConnections,
   };
 };
 
@@ -74,37 +91,4 @@ export const saveGraphAsJson = (graph: GraphDocument) => {
     type: 'application/json',
   });
   saveAs(fileToSave, fileName);
-};
-
-export const loadGraphFromJson = (
-  jsonData: GraphDocument,
-  setSymbols: (diagramSymbols: DiagramSymbol[]) => void,
-  setSymbolInstances: (diagramSymbolInstances: DiagramSymbolInstance[]) => void,
-  setLines: (diagramLines: DiagramLineInstance[]) => void,
-  setConnections: (diagramConnections: DiagramConnection[]) => void,
-  setPathReplacements: (args: PathReplacementGroup[]) => void,
-  setLineNumbers: (arg: string[]) => void,
-  setTags: (tags: DiagramTag[]) => void
-) => {
-  if ('pathReplacementGroups' in jsonData) {
-    setPathReplacements(jsonData.pathReplacementGroups);
-  }
-  if ('symbols' in jsonData) {
-    setSymbols(jsonData.symbols);
-  }
-  if ('symbolInstances' in jsonData) {
-    setSymbolInstances(jsonData.symbolInstances);
-  }
-  if ('tags' in jsonData) {
-    setTags(jsonData.tags);
-  }
-  if ('lines' in jsonData) {
-    setLines(jsonData.lines);
-  }
-  if ('lineNumbers' in jsonData) {
-    setLineNumbers(jsonData.lineNumbers);
-  }
-  if ('connections' in jsonData) {
-    setConnections(jsonData.connections);
-  }
 };

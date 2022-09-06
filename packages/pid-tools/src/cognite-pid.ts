@@ -12,14 +12,13 @@ import {
   getPathReplacementDescendants,
   ConnectionVisualization,
   LabelVisualization,
-  loadGraphFromJson,
-  isValidGraphDocumentJson,
-  isValidLegendJson,
   computeSymbolInstances,
   getGraphFormat,
   getLineNumberAndUnitFromText,
   assertNever,
   setSelectablilityOfAllText,
+  isValidGraphDocumentJson,
+  isValidLegendJson,
 } from './utils';
 import {
   applyPathReplacementInSvg,
@@ -567,7 +566,9 @@ export class CognitePid {
     this.lineNumbersSubscriber = callback;
   }
 
-  setPathReplacementGroups(pathReplacementGroups: PathReplacementGroup[]) {
+  private setPathReplacementGroups(
+    pathReplacementGroups: PathReplacementGroup[]
+  ) {
     this.pathReplacementGroups = pathReplacementGroups;
     if (this.pathReplacementsSubscriber) {
       this.pathReplacementsSubscriber(pathReplacementGroups);
@@ -689,39 +690,36 @@ export class CognitePid {
     this.clear();
     this.render();
 
-    const setSymbols = (symbols: DiagramSymbol[]) => {
-      this.setSymbols(symbols, false);
-    };
-    const setSymbolInstances = (symbolInstances: DiagramSymbolInstance[]) =>
-      this.setSymbolInstances(symbolInstances, false);
+    if ('symbols' in graphDocument) {
+      this.setSymbols(graphDocument.symbols, false);
+    }
+    if ('symbolInstances' in graphDocument) {
+      this.setSymbolInstances(graphDocument.symbolInstances, false);
+    }
+    if ('lines' in graphDocument) {
+      this.setLines(graphDocument.lines, false);
+    }
+    if ('tags' in graphDocument) {
+      this.setTags(graphDocument.tags, false);
+    }
+    if ('connections' in graphDocument) {
+      this.setConnections(graphDocument.connections, false);
+    }
+    if ('pathReplacementGroups' in graphDocument) {
+      this.addPathReplacementGroups(graphDocument.pathReplacementGroups, false);
+    }
+    if ('lineNumbers' in graphDocument) {
+      this.setLineNumbers(graphDocument.lineNumbers, false);
+    }
+    if ('manuallyRemovedConnections' in graphDocument) {
+      this.manuallyRemovedConnections =
+        graphDocument.manuallyRemovedConnections;
+    }
+    if ('manuallyRemovedLabelConnections' in graphDocument) {
+      this.manuallyRemovedLabelConnections =
+        graphDocument.manuallyRemovedLabelConnections;
+    }
 
-    const setLines = (lines: DiagramLineInstance[]) =>
-      this.setLines(lines, false);
-    const setConnections = (connections: DiagramConnection[]) => {
-      this.setConnections(connections, false);
-    };
-    const setPathReplacement = (
-      pathReplacementGroups: PathReplacementGroup[]
-    ) => {
-      this.addPathReplacementGroups(pathReplacementGroups);
-    };
-    const setLineNumbers = (lineNumbers: string[]) => {
-      this.setLineNumbers(lineNumbers, false);
-    };
-    const setTags = (tags: DiagramTag[]) => {
-      this.setTags(tags, false);
-    };
-
-    loadGraphFromJson(
-      graphDocument,
-      setSymbols,
-      setSymbolInstances,
-      setLines,
-      setConnections,
-      setPathReplacement,
-      setLineNumbers,
-      setTags
-    );
     this.refresh();
   }
 
@@ -1538,17 +1536,19 @@ export class CognitePid {
   getGraphDocument() {
     if (!this.pidDocument || !this.documentMetadata) return null;
 
-    return getGraphFormat(
-      this.pidDocument,
-      this.symbols,
-      this.lines,
-      this.symbolInstances,
-      this.connections,
-      this.pathReplacementGroups,
-      this.documentMetadata,
-      this.lineNumbers,
-      this.tags
-    );
+    return getGraphFormat({
+      pidDocument: this.pidDocument,
+      symbols: this.symbols,
+      lines: this.lines,
+      symbolInstances: this.symbolInstances,
+      connections: this.connections,
+      pathReplacementGroups: this.pathReplacementGroups,
+      documentMetadata: this.documentMetadata,
+      lineNumbers: this.lineNumbers,
+      tags: this.tags,
+      manuallyRemovedConnections: this.manuallyRemovedConnections,
+      manuallyRemovedLabelConnections: this.manuallyRemovedLabelConnections,
+    });
   }
 
   private applyNewPathReplacementGroups(
