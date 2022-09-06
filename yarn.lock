@@ -1232,16 +1232,18 @@
     tippy.js "6.2.0"
     ts-dedent "^2.2.0"
 
-"@cognite/data-exploration@4.13.1":
-  version "4.13.1"
-  resolved "https://registry.yarnpkg.com/@cognite/data-exploration/-/data-exploration-4.13.1.tgz#cb85e044608ceccb5757ff93775588e02bd1b058"
-  integrity sha512-A5LEg3fLdNdUTwyR+adMfcJgHTSjzUjmgUVUS/gkGpIrnD9DRalZrpyfuHH2mHyUf/i43r5LPxn7Rc9UunX7cA==
+"@cognite/data-exploration@4.15.1":
+  version "4.15.1"
+  resolved "https://registry.yarnpkg.com/@cognite/data-exploration/-/data-exploration-4.15.1.tgz#04edc9d779b7a84b8d57444966442ebd0558f064"
+  integrity sha512-2wI+tAKBp4QpJCMjIINxYMeeq29Gy4KcouVfAR33ewxoaxeSO58Ukansc8oVU//aXIF8xzqhejTZ2cl7dIyn7Q==
   dependencies:
     "@babel/runtime" "^7.12.5"
     "@cognite/annotations" "^1.1.0"
+    "@cognite/cdf-utilities" "^0.14.4"
     "@cognite/cogs.js" "^7.13.2"
-    "@cognite/gcs-browser-upload" cognitedata/gcs-browser-upload#mn/temporary-azure-fix
+    "@cognite/gcs-browser-upload" "github:cognitedata/gcs-browser-upload#mn/temporary-azure-fix"
     "@cognite/react-document-table" "^1.22.2"
+    "@cognite/react-feature-flags" "^1.0.1"
     "@cognite/react-picture-annotation" "3.0.0"
     "@cognite/sdk" "^6.3.1"
     "@cognite/sdk-provider" "^1.0.0"
@@ -1262,12 +1264,14 @@
     d3-scale "^4.0.2"
     d3-time "^3.0.0"
     dayjs "^1.11.1"
+    i18next "^21.9.1"
     lodash "^4.17.21"
     mime-types "^2.1.30"
     query-string "^7.0.0"
     react-base-table "^1.12.0"
     react-datepicker "^3.7.0"
     react-highlight-words "^0.18.0"
+    react-i18next "^11.18.5"
     react-query "^3.13.10"
     react-router-dom "^6.2.2"
     react-select "^4.3.0"
@@ -1306,7 +1310,7 @@
   dependencies:
     tslib "^2.2.0"
 
-"@cognite/react-feature-flags@^1.0.0":
+"@cognite/react-feature-flags@^1.0.0", "@cognite/react-feature-flags@^1.0.1":
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/@cognite/react-feature-flags/-/react-feature-flags-1.0.1.tgz#5afe17038c52ac22564b8cb6e9c08a5ea8eb6cf6"
   integrity sha512-iZ0X5GvaVd192VFUHf/UL4WGd7SmPChHP5MQJRRsXSAAXrGzf65reOzhOiVv5LRBCIvrwoDtRlGtEzMizRmS6g==
@@ -8016,6 +8020,13 @@ i18next@^21.8.14:
   dependencies:
     "@babel/runtime" "^7.17.2"
 
+i18next@^21.9.1:
+  version "21.9.1"
+  resolved "https://registry.yarnpkg.com/i18next/-/i18next-21.9.1.tgz#9e3428990f5b2cc9ac1b98dd025f3e411c368249"
+  integrity sha512-ITbDrAjbRR73spZAiu6+ex5WNlHRr1mY+acDi2ioTHuUiviJqSz269Le1xHAf0QaQ6GgIHResUhQNcxGwa/PhA==
+  dependencies:
+    "@babel/runtime" "^7.17.2"
+
 iconv-lite@0.4.24:
   version "0.4.24"
   resolved "https://registry.yarnpkg.com/iconv-lite/-/iconv-lite-0.4.24.tgz#2022b4b25fbddc21d2f524974a474aafe733908b"
@@ -12014,6 +12025,14 @@ react-i18next@^11.18.1:
   version "11.18.1"
   resolved "https://registry.yarnpkg.com/react-i18next/-/react-i18next-11.18.1.tgz#ba86ed09069e129b8623a28f2b9a03d7f105ea6f"
   integrity sha512-S8cl4mvIOSA7OQCE5jNy2yhv705Vwi+7PinpqKIYcBmX/trJtHKqrf6CL67WJSA8crr2JU+oxE9jn9DQIrQezg==
+  dependencies:
+    "@babel/runtime" "^7.14.5"
+    html-parse-stringify "^3.0.1"
+
+react-i18next@^11.18.5:
+  version "11.18.5"
+  resolved "https://registry.yarnpkg.com/react-i18next/-/react-i18next-11.18.5.tgz#985e87bc66ed1316381b464a4ecfd35a2c951357"
+  integrity sha512-cKcyuuzIv0YUZ4l9WORflVNuhISPAqQShOAsxwFyYuJoCA7HlLmHm7XnvO6hfAGmGpDNRhJHoBX8hG49Cb2xZQ==
   dependencies:
     "@babel/runtime" "^7.14.5"
     html-parse-stringify "^3.0.1"
