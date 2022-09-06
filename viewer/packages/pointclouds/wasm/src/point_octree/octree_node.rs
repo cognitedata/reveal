@@ -49,7 +49,7 @@ impl<'a> OctreeNode<'a> {
         } else {
             for point in self.points.as_ref().unwrap().iter() {
                 if shape.contains_point(&point.vec) {
-                    object_ids.set_index(point.index, shape.get_object_id() as u16);
+                    object_ids.set_index(point.index as u32, shape.get_object_id() as u16);
                 }
             }
         }

@@ -14,7 +14,7 @@ pub struct BoundingBox {
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Vec3WithIndex {
     pub vec: Vec3,
-    pub index: u32,
+    pub index: usize,
 }
 
 pub fn vec3(x: f64, y: f64, z: f64) -> Vec3 {

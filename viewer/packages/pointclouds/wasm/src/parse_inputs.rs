@@ -37,7 +37,7 @@ pub fn parse_points(
 
     let point_vec = input_array.to_vec().chunks(3).enumerate().map(|(i, p)| Vec3WithIndex {
         vec: vec3(p[0] as f64, p[1] as f64, p[2] as f64) + point_offset,
-        index: i as u32
+        index: i
     }).collect();
 
     point_vec
