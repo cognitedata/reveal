@@ -22,7 +22,8 @@ Changes made to the visual test will automatically rebuild the test server and r
 It is also possible to programatically start a visual test from the blank root page (`https://localhost:8080`) with `window.render` method (f.ex. `window.render('Rendering.VisualTest')`).
 
 For packages in Reveal you might want to create an visual test entrypoint in a `yarn start` command.
-This can be done by simply specifying and pass environment variable to webpack in the command call.
+This can be done by simply specifying and passing environment variable to webpack in the command call.
+
 
 An example script for a package.json would be something like this:
 ```
