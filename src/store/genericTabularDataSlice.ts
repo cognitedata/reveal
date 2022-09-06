@@ -11,7 +11,7 @@ import { ViewMode } from 'src/modules/Common/types';
 export interface GenericTabularState {
   focusedFileId: number | null;
   showFileMetadata: boolean;
-  showContextMenu?: boolean; // toDo: make this mandatory
+  showContextMenu: boolean;
   currentView: ViewMode;
   mapTableTabKey: string;
   sortMeta: {

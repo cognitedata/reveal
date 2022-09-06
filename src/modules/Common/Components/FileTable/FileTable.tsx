@@ -83,6 +83,17 @@ export function FileTable(props: FileListTableProps<TableDataItem>) {
     onClick: ({ rowData }: { rowData: TableDataItem }) => {
       props.onItemClick(rowData as ResultData);
     },
+    onContextMenu: ({
+      event,
+      rowData,
+    }: {
+      event: React.SyntheticEvent;
+      rowData: TableDataItem;
+    }) => {
+      if (props.onItemRightClick) {
+        props.onItemRightClick(event, rowData);
+      }
+    },
   };
 
   const overlayRenderer = () =>

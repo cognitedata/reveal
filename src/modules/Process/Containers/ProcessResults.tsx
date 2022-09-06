@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   setFileSelectState,
   setSelectedFiles,
@@ -20,6 +20,7 @@ import {
   setReverse,
   setCurrentPage,
   setPageSize,
+  showContextMenu,
 } from 'src/modules/Process/store/slice';
 import {
   selectProcessSortedFiles,
@@ -56,8 +57,18 @@ import {
 import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
 import { PollJobs } from 'src/store/thunks/Process/PollJobs';
 import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotations';
+import { ContextMenuPosition } from 'src/modules/Common/Components/ContextMenu/types';
+import { ExploreContextMenu } from 'src/modules/Explorer/Containers/ExploreContextMenu';
 
 export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
+  const [contextMenuDataItem, setContextMenuDataItem] =
+    useState<TableDataItem>();
+  const [contextMenuAnchorPoint, setContextMenuAnchorPoint] =
+    useState<ContextMenuPosition>({
+      x: 0,
+      y: 0,
+    });
+
   const dispatch = useDispatch();
   const history = useHistory();
   const focusedFileId = useSelector(
@@ -100,6 +111,10 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
   // todo: remove this hack to force a rerender when explorer model closes
   const showSelectFromExploreModal = useSelector(
     ({ processSlice }: RootState) => processSlice.showExploreModal
+  );
+
+  const contextMenuShow = useSelector(
+    ({ processSlice }: RootState) => processSlice.showContextMenu
   );
 
   const menuActions: FileActions = useMemo(
@@ -153,6 +168,20 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
       }
     },
     [dispatch]
+  );
+
+  const handleContextMenuOpen = useCallback(
+    (event: React.SyntheticEvent, item: TableDataItem) => {
+      event.preventDefault();
+      setContextMenuDataItem(item);
+      setContextMenuAnchorPoint({
+        x: (event as any).pageX,
+        y: (event as any).pageY,
+      });
+      dispatch(setFocusedFileId(item.id));
+      dispatch(showContextMenu());
+    },
+    []
   );
 
   const handleRowSelect = useCallback(
@@ -269,6 +298,7 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
                   {...otherProps}
                   onItemSelect={handleRowSelect}
                   onItemClick={handleItemClick}
+                  onItemRightClick={handleContextMenuOpen}
                   focusedId={focusedFileId}
                   selectedIds={selectedFileIds}
                   allRowsSelected={allFilesSelected}
@@ -288,6 +318,7 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
                 {...otherProps}
                 onItemSelect={handleRowSelect}
                 onItemClick={handleItemClick}
+                onItemRightClick={handleContextMenuOpen}
                 focusedId={focusedFileId}
                 selectedIds={selectedFileIds}
                 allRowsSelected={allFilesSelected}
@@ -308,6 +339,12 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
           );
         }}
       </PaginationWrapper>
+      {contextMenuShow && contextMenuDataItem && (
+        <ExploreContextMenu
+          rowData={contextMenuDataItem}
+          position={contextMenuAnchorPoint}
+        />
+      )}
     </>
   );
 };
