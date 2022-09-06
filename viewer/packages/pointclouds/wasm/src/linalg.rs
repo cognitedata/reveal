@@ -12,21 +12,21 @@ pub struct Vec3WithIndex {
     pub index: usize,
 }
 
-pub fn boxes_overlap(b0: &BoundingBox, b1: &BoundingBox) -> bool {
-    return b0.min.x < b1.max.x
-        && b0.max.x > b1.min.x
-        && b0.min.y < b1.max.y
-        && b0.max.y > b1.min.y
-        && b0.min.z < b1.max.z
-        && b0.max.z > b1.min.z;
-}
-
 impl BoundingBox {
     pub fn empty() -> BoundingBox {
         BoundingBox {
             min: vec3(f64::INFINITY, f64::INFINITY, f64::INFINITY),
             max: vec3(f64::NEG_INFINITY, f64::NEG_INFINITY, f64::NEG_INFINITY),
         }
+    }
+
+    pub fn overlaps(&self, other: &BoundingBox) -> bool {
+        self.min.x < other.max.x
+            && self.max.x > other.min.x
+            && self.min.y < other.max.y
+            && self.max.y > other.min.y
+            && self.min.z < other.max.z
+            && self.max.z > other.min.z
     }
 
     pub fn add_point(&mut self, point: &DVec3) {

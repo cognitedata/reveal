@@ -1,4 +1,4 @@
-use crate::linalg::{boxes_overlap, BoundingBox, Vec3WithIndex};
+use crate::linalg::{BoundingBox, Vec3WithIndex};
 
 pub const MAX_POINTS_PER_NODE: usize = 1_000;
 pub const MIN_OCTREE_NODE_SIZE: f64 = 0.0625;
@@ -43,7 +43,7 @@ impl<'a> OctreeNode<'a> {
     ) -> () {
         if self.children.is_some() {
             for child in self.children.as_ref().unwrap().iter() {
-                if boxes_overlap(&child.bounding_box, bounding_box) {
+                if child.bounding_box.overlaps(bounding_box) {
                     child.assign_object_ids(bounding_box, shape, object_ids);
                 }
             }
