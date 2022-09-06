@@ -87,6 +87,15 @@ export const MapFileTable = (props: MapTableProps) => {
       props.onItemClick(rowData as ResultData);
       props.mapCallback(rowData.id);
     },
+    onContextMenu: ({
+      event,
+      rowData,
+    }: {
+      event: React.SyntheticEvent;
+      rowData: TableDataItem;
+    }) => {
+      props.handleContextMenuOpen(event, rowData);
+    },
   };
 
   const handleSetSortKey = (key: string) => {

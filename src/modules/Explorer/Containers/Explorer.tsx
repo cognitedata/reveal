@@ -6,6 +6,7 @@ import {
   hideFileMetadata,
   setExplorerFileSelectState,
   setFocusedFileId,
+  showContextMenu,
   showFileMetadata,
   toggleExplorerFilterView,
 } from 'src/modules/Explorer/store/slice';
@@ -32,9 +33,19 @@ import { FilterSidePanel } from 'src/modules/FilterSidePanel/Containers/FilterSi
 import FilterToggleButton from 'src/modules/FilterSidePanel/Components/FilterToggleButton';
 import { ExplorerToolbarContainer } from 'src/modules/Explorer/Containers/ExplorerToolbarContainer';
 import { cancelFileDetailsEdit } from 'src/modules/FileDetails/slice';
+import { ContextMenuPosition } from 'src/modules/Common/Components/ContextMenu/types';
 import { ExplorerModelTrainingModalContainer } from './ExplorerModelTrainingModalContainer';
+import { ExploreContextMenu } from './ExploreContextMenu';
 
 const Explorer = () => {
+  const [contextMenuDataItem, setContextMenuDataItem] =
+    useState<TableDataItem>();
+  const [contextMenuAnchorPoint, setContextMenuAnchorPoint] =
+    useState<ContextMenuPosition>({
+      x: 0,
+      y: 0,
+    });
+
   const history = useHistory();
   const dispatch = useDispatch();
 
@@ -61,6 +72,9 @@ const Explorer = () => {
   const query = useSelector(
     ({ explorerReducer }: RootState) => explorerReducer.query
   );
+  const contextMenuShow = useSelector(
+    ({ explorerReducer }: RootState) => explorerReducer.showContextMenu
+  );
 
   const selectedFileIds = useSelector((state: RootState) =>
     selectExplorerSelectedFileIdsInSortedOrder(state)
@@ -85,6 +99,20 @@ const Explorer = () => {
       if (showFileDetailsOnClick) {
         dispatch(showFileMetadata());
       }
+    },
+    []
+  );
+
+  const handleContextMenuOpen = useCallback(
+    (event: React.SyntheticEvent, item: TableDataItem) => {
+      event.preventDefault();
+      setContextMenuDataItem(item);
+      setContextMenuAnchorPoint({
+        x: (event as any).pageX,
+        y: (event as any).pageY,
+      });
+      dispatch(setFocusedFileId(item.id));
+      dispatch(showContextMenu());
     },
     []
   );
@@ -156,6 +184,7 @@ const Explorer = () => {
                 selectedIds={selectedFileIds}
                 isLoading={isLoading}
                 onItemClick={handleItemClick}
+                onItemRightClick={handleContextMenuOpen}
                 onItemSelect={handleRowSelect}
               />
             </ViewContainer>
@@ -171,6 +200,12 @@ const Explorer = () => {
                 />
               </QueryClientProvider>
             </DrawerContainer>
+          )}
+          {contextMenuShow && contextMenuDataItem && (
+            <ExploreContextMenu
+              rowData={contextMenuDataItem}
+              position={contextMenuAnchorPoint}
+            />
           )}
           <ExplorerBulkEditModalContainer />
           <ExplorerModelTrainingModalContainer />

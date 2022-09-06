@@ -54,6 +54,7 @@ export const ExplorerSearchResults = ({
   selectedIds: number[];
   isLoading: boolean;
   onItemClick: (item: TableDataItem) => void;
+  onItemRightClick?: (event: React.SyntheticEvent, item: TableDataItem) => void;
   onItemSelect: (item: TableDataItem, selected: boolean) => void;
 }) => {
   const dispatch = useDispatch();

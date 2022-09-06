@@ -11,6 +11,7 @@ import { ViewMode } from 'src/modules/Common/types';
 export interface GenericTabularState {
   focusedFileId: number | null;
   showFileMetadata: boolean;
+  showContextMenu?: boolean; // toDo: make this mandatory
   currentView: ViewMode;
   mapTableTabKey: string;
   sortMeta: {
@@ -51,6 +52,9 @@ export const createGenericTabularDataSlice = <
       },
       showFileMetadata(state) {
         state.showFileMetadata = true;
+      },
+      showContextMenu(state) {
+        state.showContextMenu = true;
       },
       setCurrentView(state, action: PayloadAction<ViewMode>) {
         state.currentView = action.payload;

@@ -23,6 +23,7 @@ import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotat
 const initialState: ExplorerState = {
   focusedFileId: null,
   showFileMetadata: false,
+  showContextMenu: false,
   currentView: 'list',
   mapTableTabKey: 'fileInMap',
   sortMeta: {
@@ -207,6 +208,7 @@ export const {
   setExplorerModalFocusedFileId,
   hideFileMetadata,
   showFileMetadata,
+  showContextMenu,
   setExplorerQueryString,
   setExplorerModalQueryString,
   setExplorerFilter,

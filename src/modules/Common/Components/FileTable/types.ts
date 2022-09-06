@@ -17,6 +17,7 @@ type FileTableProps<T> = Omit<BaseTableProps<T>, 'data' | 'width'> & {
   totalCount: number;
   onItemSelect: (item: T, selected: boolean) => void;
   onItemClick: (item: T, showFileDetailsOnClick?: boolean) => void;
+  onItemRightClick?: (event: React.SyntheticEvent, item: T) => void;
   selectedIds: number[];
   allRowsSelected: boolean;
   onSelectAllRows: (value: boolean, filter?: SelectFilter) => void;
