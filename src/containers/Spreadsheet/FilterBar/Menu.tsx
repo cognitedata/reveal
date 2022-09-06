@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 
 import { getFlow } from '@cognite/cdf-sdk-singleton';
-import { Button, Icon, Menu as CogsMenu } from '@cognite/cogs.js';
+import { Menu as AntMenu } from 'antd';
+import { Icon } from '@cognite/cogs.js';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import styled from 'styled-components';
 
@@ -10,6 +11,7 @@ import DeleteTableModal from 'components/DeleteTableModal/DeleteTableModal';
 import DownloadTableModal from 'components/DownloadTableModal/DownloadTableModal';
 import { useActiveTableContext } from 'contexts';
 import { useTranslation } from 'common/i18n';
+import { ItemType } from 'antd/lib/menu/hooks/useItems';
 
 export const Menu = (): JSX.Element => {
   const { t } = useTranslation();
@@ -22,70 +24,54 @@ export const Menu = (): JSX.Element => {
 
   const canBeDownloaded = isFetched && !!rows?.length;
 
-  const stopPropagation = (
-    e: React.MouseEvent<HTMLButtonElement | HTMLElement>
-  ) => e.stopPropagation();
+  const items: ItemType[] = [
+    {
+      key: 'download',
+      label: t('spreadsheet-menu-download-table'),
+      icon: <Icon type="Download" />,
+      disabled: !canBeDownloaded,
+      onClick: () => setIsDownloadModalOpen(true),
+    },
+    { type: 'divider' },
+    {
+      type: 'group',
+      label: t('spreadsheet-menu-danger-zone'),
+      children: [
+        {
+          key: 'delete',
+          icon: <Icon type="Delete" />,
+          label: t('spreadsheet-menu-delete-table'),
+          danger: true,
+          disabled: !hasWriteAccess,
+          onClick: () => setIsDeleteModalOpen(true),
+        },
+      ],
+    },
+  ];
 
   return (
-    <StyledMenu>
-      <CogsMenu.Item
-        aria-label={`Button ${t(
-          'spreadsheet-menu-download-table'
-        ).toLowerCase()}`}
-        disabled={!canBeDownloaded}
-        onClick={() => setIsDownloadModalOpen(true)}
-      >
-        <Item>
-          <Icon type="Download" />
-          {t('spreadsheet-menu-download-table')}
-        </Item>
-      </CogsMenu.Item>
+    <>
+      <StyledMenu items={items} />
       <DownloadTableModal
         databaseName={database}
         tableName={table}
         visible={isDownloadModalOpen}
         onCancel={() => setIsDownloadModalOpen(false)}
       />
-      <CogsMenu.Divider />
-      <CogsMenu.Header>{t('spreadsheet-menu-danger-zone')}</CogsMenu.Header>
-      <CogsMenu.Item
-        aria-label={`Button ${t('spreadsheet-menu-delete-table')}`}
-        disabled={!hasWriteAccess}
-        onClick={(e: React.MouseEvent<HTMLElement, MouseEvent>) => {
-          stopPropagation(e);
-          setIsDeleteModalOpen(true);
-        }}
-      >
-        <DeleteButton type="ghost-danger" tabIndex={-1}>
-          <Icon type="Delete" />
-          <span>{t('spreadsheet-menu-delete-table')}</span>
-        </DeleteButton>
-      </CogsMenu.Item>
       <DeleteTableModal
         databaseName={database}
         tableName={table}
         visible={isDeleteModalOpen}
         onCancel={() => setIsDeleteModalOpen(false)}
       />
-    </StyledMenu>
+    </>
   );
 };
 
-const StyledMenu = styled(CogsMenu)`
+const StyledMenu = styled(AntMenu)`
   width: 250px;
   a {
     color: inherit;
   }
-`;
-const DeleteButton = styled(Button)`
-  flex-grow: 1;
-  margin: -8px;
-  height: 34px;
-  justify-content: flex-start;
-`;
-const Item = styled.span<{ danger?: boolean }>`
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  font-weight: 500;
+  border-radius: 8px;
 `;

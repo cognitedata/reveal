@@ -7,7 +7,7 @@ import { useQueryClient } from 'react-query';
 import styled from 'styled-components';
 
 import AccessButton from 'components/AccessButton';
-import Dropdown from 'components/Dropdown/Dropdown';
+import { Dropdown } from 'antd';
 import UploadCSV from 'components/UploadCSV';
 import { useActiveTableContext } from 'contexts';
 import { rowKey } from 'hooks/sdk-queries';
@@ -32,7 +32,7 @@ export const Actions = (): JSX.Element => {
       >
         {t('spreadsheet-filter-add-new-data')}
       </AccessButton>
-      <Dropdown content={<Menu />}>
+      <Dropdown overlay={<Menu />} trigger={['click']}>
         <Button
           aria-label="Options"
           icon="EllipsisHorizontal"
