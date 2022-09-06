@@ -35,19 +35,10 @@ pub fn parse_points(
         input_point_offset[2],
     );
 
-    let num_points = input_array.length() / 3;
-    let mut point_vec = Vec::<Vec3WithIndex>::with_capacity(num_points as usize);
-
-    for i in 0..num_points {
-        point_vec.push(Vec3WithIndex {
-            vec: vec3(
-                input_array.get_index(3 * i + 0) as f64,
-                input_array.get_index(3 * i + 1) as f64,
-                input_array.get_index(3 * i + 2) as f64,
-            ) + point_offset,
-            index: i,
-        });
-    }
+    let point_vec = input_array.to_vec().chunks(3).enumerate().map(|(i, p)| Vec3WithIndex {
+        vec: vec3(p[0] as f64, p[1] as f64, p[2] as f64) + point_offset,
+        index: i as u32
+    }).collect();
 
     point_vec
 }
