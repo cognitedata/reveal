@@ -11,7 +11,8 @@ function getWasmInitPromise(): Promise<void> {
   return typeof init === 'function' ? (init as (buffer: any) => Promise<any>)(wasm).then(() => {}) : Promise.resolve();
 }
 
-// Sadly, I was unable to generate these types automatically with wasm-bindgen
+// Sadly, I was unable to generate these types automatically with wasm-bindgen,
+// see https://github.com/rustwasm/wasm-bindgen/issues/111
 export type SerializedCylinder = {
   center_a: Vec3;
   center_b: Vec3;
