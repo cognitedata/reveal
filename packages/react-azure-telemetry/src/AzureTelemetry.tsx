@@ -4,7 +4,8 @@ import {
   useAppInsightsContext,
   useTrackEvent,
 } from '@microsoft/applicationinsights-react-js';
-import { RouteComponentProps } from 'react-router';
+import { RouteComponentProps, WithRouterStatics } from 'react-router';
+import { withRouter } from 'react-router-dom';
 
 import { AzureTelemetryOptions, telemetryService } from './TelemetryService';
 
@@ -58,11 +59,13 @@ const WithAITracking = withAITracking(
   TelemetryProvider
 );
 
-export const AzureTelemetryProvider =
-  WithAITracking as unknown as ComponentClass<
-    Pick<PropsType, 'instrumentationKey' | 'children' | 'options'>,
-    any
-  >;
+export const AzureTelemetryProvider = withRouter(
+  WithAITracking
+) as ComponentClass<
+  Pick<PropsType, 'instrumentationKey' | 'children' | 'options'>,
+  any
+> &
+  WithRouterStatics<ComponentClass<PropsType, any>>;
 
 export const useAzureTrackEvent = (eventName: string, eventData?: unknown) => {
   const appInsights = useAppInsightsContext();
