@@ -6,6 +6,9 @@ import {
   MenuContent,
 } from 'src/modules/Common/Components/ActionMenu/MenuContent';
 
+// need this correction because of top menu bar
+const TOP_OFFSET = 50;
+
 export const ContextMenu = ({
   position,
   showExifIcon,
@@ -17,12 +20,7 @@ export const ContextMenu = ({
   position: ContextMenuPosition;
 } & ActionMenuProps) => {
   return (
-    <ContextMenuWrapper
-      style={{
-        top: position.y,
-        left: position.x,
-      }}
-    >
+    <ContextMenuWrapper position={position}>
       <MenuContent
         showExifIcon={showExifIcon}
         reviewDisabled={reviewDisabled}
@@ -34,6 +32,8 @@ export const ContextMenu = ({
   );
 };
 
-const ContextMenuWrapper = styled.div`
+const ContextMenuWrapper = styled.div<{ position: ContextMenuPosition }>`
   position: absolute;
+  left: ${(props) => props.position.x}px;
+  top: ${(props) => props.position.y - TOP_OFFSET}px;
 `;
