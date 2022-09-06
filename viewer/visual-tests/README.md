@@ -29,7 +29,8 @@ An example script for a package.json would be something like this:
 ```
 Where the `testFixture` variable points to whatever you would like the entrypoint to be.
 
-### Specifying a specific 3D Model
+### Loading a specific 3D Model
+
 Visual tests also supports loading different 3d-models than the basic primitives scene.
 To load a local model in a visual test, simply specify a `modelUrl` url param that points to the 3d model you wish to use (f.ex. `https://localhost:8080/?testfixture=Rendering.VisualTest&modelUrl=[Path/to/my/3dmodel]`).
 
