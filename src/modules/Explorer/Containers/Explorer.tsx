@@ -35,8 +35,8 @@ import FilterToggleButton from 'src/modules/FilterSidePanel/Components/FilterTog
 import { ExplorerToolbarContainer } from 'src/modules/Explorer/Containers/ExplorerToolbarContainer';
 import { cancelFileDetailsEdit } from 'src/modules/FileDetails/slice';
 import { ContextMenuPosition } from 'src/modules/Common/Components/ContextMenu/types';
+import { ContextMenuContainer } from 'src/modules/Explorer/Containers/ContextMenuContainer';
 import { ExplorerModelTrainingModalContainer } from './ExplorerModelTrainingModalContainer';
-import { ExploreContextMenu } from './ExploreContextMenu';
 
 const Explorer = () => {
   const [contextMenuDataItem, setContextMenuDataItem] =
@@ -220,7 +220,7 @@ const Explorer = () => {
             </DrawerContainer>
           )}
           {contextMenuShow && contextMenuDataItem && (
-            <ExploreContextMenu
+            <ContextMenuContainer
               rowData={contextMenuDataItem}
               position={contextMenuAnchorPoint}
             />

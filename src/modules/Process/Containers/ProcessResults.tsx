@@ -59,7 +59,7 @@ import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
 import { PollJobs } from 'src/store/thunks/Process/PollJobs';
 import { RetrieveAnnotations } from 'src/store/thunks/Annotation/RetrieveAnnotations';
 import { ContextMenuPosition } from 'src/modules/Common/Components/ContextMenu/types';
-import { ExploreContextMenu } from 'src/modules/Explorer/Containers/ExploreContextMenu';
+import { ContextMenuContainer } from 'src/modules/Explorer/Containers/ContextMenuContainer';
 
 export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
   const [contextMenuDataItem, setContextMenuDataItem] =
@@ -358,7 +358,7 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
         }}
       </PaginationWrapper>
       {contextMenuShow && contextMenuDataItem && (
-        <ExploreContextMenu
+        <ContextMenuContainer
           rowData={contextMenuDataItem}
           position={contextMenuAnchorPoint}
         />

@@ -11,7 +11,7 @@ import { selectUpdatedFileDetails } from 'src/modules/FileDetails/selectors';
 import { makeSelectJobStatusForFile } from 'src/modules/Process/store/selectors';
 import { ContextMenu } from 'src/modules/Common/Components/ContextMenu/ContextMenu';
 
-export const ExploreContextMenu = ({
+export const ContextMenuContainer = ({
   rowData,
   position,
 }: {
