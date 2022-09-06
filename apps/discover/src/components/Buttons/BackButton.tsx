@@ -7,6 +7,7 @@ export const BackButton: React.FC<ExtendedButtonProps> = ({ ...props }) => (
     icon="ArrowLeft"
     tooltip={BACK_BUTTON_TOOLTIP}
     aria-label="Go back"
+    data-testid="go-back-button"
     {...props}
   />
 );

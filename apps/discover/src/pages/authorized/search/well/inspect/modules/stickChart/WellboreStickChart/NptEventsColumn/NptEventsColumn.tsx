@@ -112,7 +112,7 @@ export const NptEventsColumn: React.FC<
 
     return (
       <NoUnmountShowHide show={isVisible}>
-        <BodyColumn width={EVENTS_COLUMN_WIDTH}>
+        <BodyColumn width={EVENTS_COLUMN_WIDTH} data-testid="nptEvents-column">
           <ColumnDragger {...dragHandleProps} />
 
           <ColumnHeaderWrapper>

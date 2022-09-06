@@ -36,11 +36,11 @@ export const DepthColumn: React.FC<WithDragHandleProps<DepthColumnProps>> =
 
       return (
         <NoUnmountShowHide show={isVisible}>
-          <BodyColumn width={80}>
+          <BodyColumn width={80} data-testid="depth-column">
             <ColumnDragger {...dragHandleProps} />
 
             <ColumnHeaderWrapper>
-              <BodyColumnMainHeader>
+              <BodyColumnMainHeader data-testid="column-header">
                 {depthMeasurementType}
               </BodyColumnMainHeader>
               <FlexGrow />

@@ -86,7 +86,7 @@ export const TrajectoryColumn: React.FC<
 
     return (
       <NoUnmountShowHide show={isVisible}>
-        <TrajectoryChartWrapper>
+        <TrajectoryChartWrapper data-testid="trajectory-column">
           <PlotlyChartColumn
             data={isTvdScaleSelected ? chartData : EMPTY_ARRAY}
             isLoading={isLoading}

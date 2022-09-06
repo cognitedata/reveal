@@ -51,7 +51,7 @@ export const ColumnOptionsSelector = <T extends string>({
         </div>
 
         <ColumnOptionsSelectorIconWrapper>
-          <Icon type="ChevronDown" size={14} />
+          <Icon type="ChevronDown" size={14} data-testid="chevron-down-icon" />
         </ColumnOptionsSelectorIconWrapper>
       </ColumnOptionsSelectorContainer>
     </Dropdown>

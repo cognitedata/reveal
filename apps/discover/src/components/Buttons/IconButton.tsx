@@ -15,7 +15,7 @@ export const IconButton: React.FC<IconButtonProps> = ({
 }) => {
   return (
     <Tooltip content={tooltip} disabled={disabled || isEmpty(tooltip)}>
-      <IconWrapper $disabled={disabled}>
+      <IconWrapper $disabled={disabled} data-testid={tooltip}>
         <Icon type={icon} onClick={onClick} />
       </IconWrapper>
     </Tooltip>
