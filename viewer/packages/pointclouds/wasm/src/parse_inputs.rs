@@ -1,7 +1,8 @@
 use nalgebra::Const;
+use nalgebra_glm::{DMat4, vec3};
 use std::vec::Vec;
 
-use crate::linalg::{vec3, Mat4, Vec3, Vec3WithIndex};
+use crate::linalg::Vec3WithIndex;
 use crate::shapes;
 
 use serde::Deserialize;
@@ -29,7 +30,7 @@ pub fn parse_points(
     input_array: &js_sys::Float32Array,
     input_point_offset: Vec<f64>,
 ) -> Vec<Vec3WithIndex> {
-    let point_offset = Vec3::new(
+    let point_offset = vec3(
         input_point_offset[0],
         input_point_offset[1],
         input_point_offset[2],
@@ -54,7 +55,7 @@ fn create_cylinder(input: InputCylinder, id: u16) -> Box<shapes::cylinder::Cylin
 
 fn create_box(input: InputOrientedBox, id: u16) -> Box<shapes::oriented_box::OrientedBox> {
     Box::<shapes::oriented_box::OrientedBox>::new(shapes::oriented_box::OrientedBox::new(
-        Mat4::from_column_slice_generic(Const, Const, &input.inv_instance_matrix),
+        DMat4::from_column_slice_generic(Const, Const, &input.inv_instance_matrix),
         id,
     ))
 }

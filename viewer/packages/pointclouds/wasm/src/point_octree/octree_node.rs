@@ -1,9 +1,10 @@
-use crate::linalg::{boxes_overlap, vec3, BoundingBox, Vec3, Vec3WithIndex};
+use crate::linalg::{boxes_overlap, BoundingBox, Vec3WithIndex};
 
 pub const MAX_POINTS_PER_NODE: usize = 1_000;
 pub const MIN_OCTREE_NODE_SIZE: f64 = 0.0625;
 
 use std::convert::TryInto;
+use nalgebra_glm::{vec3, DVec3};
 
 use crate::shapes::shape::Shape;
 
@@ -94,7 +95,7 @@ fn get_split_ends<'a>(points: &'a [Vec3WithIndex], splits: &[usize; 8]) -> [usiz
     split_maxes
 }
 
-fn find_splits(points: &mut [Vec3WithIndex], middle: &Vec3) -> [usize; 8] {
+fn find_splits(points: &mut [Vec3WithIndex], middle: &DVec3) -> [usize; 8] {
     let mut sector_counts = [0; 8];
     for point in points.iter() {
         let index = get_octree_child_index(&point.vec, &middle);
@@ -110,7 +111,7 @@ fn find_splits(points: &mut [Vec3WithIndex], middle: &Vec3) -> [usize; 8] {
     accum_counts
 }
 
-fn get_octree_child_index(point: &Vec3, middle: &Vec3) -> usize {
+fn get_octree_child_index(point: &DVec3, middle: &DVec3) -> usize {
     (if point[0] < middle.x { 0 } else { 1 })
         + (if point[1] < middle.y { 0 } else { 2 })
         + (if point[2] < middle.z { 0 } else { 4 })
@@ -122,7 +123,7 @@ fn get_octree_child_index(point: &Vec3, middle: &Vec3) -> usize {
 /// the slice where it belongs. It then takes the point that was there before and repeats the process.
 /// Whenever it comes back to the point where it started the current iteration, it breaks
 /// and continues from the next slice that is not fully "sorted"
-fn sort_points_into_sectors(points: &mut [Vec3WithIndex], splits: [usize; 8], middle: &Vec3) -> () {
+fn sort_points_into_sectors(points: &mut [Vec3WithIndex], splits: [usize; 8], middle: &DVec3) -> () {
     let mut offsets = splits.clone();
     let max_inds = get_split_ends(points, &splits);
 

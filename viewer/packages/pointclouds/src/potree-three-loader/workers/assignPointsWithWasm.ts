@@ -49,7 +49,7 @@ export async function assignPointsToObjectsWithWasm(
 ): Promise<Uint16Array> {
   const wasmShapes = objects.map(obj => createSerializedObject(obj));
 
-  const res = assignPoints(
+  const res = await assignPoints(
     wasmShapes,
     points,
     { min: sectorBoundingBox.min.toArray(), max: sectorBoundingBox.max.toArray() },

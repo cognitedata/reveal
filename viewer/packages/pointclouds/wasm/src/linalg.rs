@@ -1,38 +1,25 @@
-use nalgebra::base::Matrix4;
-use nalgebra_glm::{max2, min2, vec4_to_vec3, TVec3, TVec4};
-
-pub type Vec3 = TVec3<f64>;
-pub type Vec4 = TVec4<f64>;
-pub type Mat4 = Matrix4<f64>;
+use nalgebra_glm::{DMat4, DVec3, DVec4, max2, min2, vec3, vec4, vec4_to_vec3};
 
 #[derive(Clone, Copy, Debug)]
 pub struct BoundingBox {
-    pub min: Vec3,
-    pub max: Vec3,
+    pub min: DVec3,
+    pub max: DVec3,
 }
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Vec3WithIndex {
-    pub vec: Vec3,
+    pub vec: DVec3,
     pub index: usize,
-}
-
-pub fn vec3(x: f64, y: f64, z: f64) -> Vec3 {
-    return Vec3::new(x, y, z);
-}
-
-pub fn vec4(x: f64, y: f64, z: f64, w: f64) -> Vec4 {
-    return Vec4::new(x, y, z, w);
 }
 
 pub fn to_bounding_box(input_bounding_box: &crate::InputBoundingBox) -> BoundingBox {
     BoundingBox {
-        min: Vec3::new(
+        min: DVec3::new(
             input_bounding_box.min[0],
             input_bounding_box.min[1],
             input_bounding_box.min[2],
         ),
-        max: Vec3::new(
+        max: DVec3::new(
             input_bounding_box.max[0],
             input_bounding_box.max[1],
             input_bounding_box.max[2],
@@ -57,16 +44,16 @@ impl BoundingBox {
         }
     }
 
-    pub fn add_point(&mut self, point: &Vec3) {
+    pub fn add_point(&mut self, point: &DVec3) {
         self.min = min2(&self.min, &point);
         self.max = max2(&self.max, &point);
     }
 
-    pub fn contains_point(&self, point: &Vec3) -> bool {
+    pub fn contains_point(&self, point: &DVec3) -> bool {
         min2(&self.min, &point) == self.min && max2(&self.max, &point) == self.max
     }
 
-    pub fn get_centered_unit_cube_corner(corner_index: u32) -> Vec4 {
+    pub fn get_centered_unit_cube_corner(corner_index: u32) -> DVec4 {
         vec4(
             if (corner_index & 1) == 0 { -0.5 } else { 0.5 },
             if (corner_index & 2) == 0 { -0.5 } else { 0.5 },
@@ -75,7 +62,7 @@ impl BoundingBox {
         )
     }
 
-    pub fn get_transformed_unit_cube(matrix: &Mat4) -> BoundingBox {
+    pub fn get_transformed_unit_cube(matrix: &DMat4) -> BoundingBox {
         let mut bounding_box = BoundingBox::empty();
 
         for corner_index in 0..8 {

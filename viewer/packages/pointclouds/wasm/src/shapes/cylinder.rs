@@ -1,18 +1,18 @@
-use nalgebra_glm::{dot, vec3_to_vec4};
+use nalgebra_glm::{dot, DVec3, DMat4, vec3, vec3_to_vec4, vec4};
 
-use crate::linalg::{vec3, vec4, BoundingBox, Mat4, Vec3};
 use crate::shapes::shape::Shape;
+use crate::linalg::BoundingBox;
 
 pub struct Cylinder {
-    center_a: Vec3,
-    center_b: Vec3,
+    center_a: DVec3,
+    center_b: DVec3,
     radius: f64,
     object_id: u16,
-    _middle: Vec3,
+    _middle: DVec3,
 }
 
 impl Cylinder {
-    pub fn new(center_a: Vec3, center_b: Vec3, radius: f64, object_id: u16) -> Cylinder {
+    pub fn new(center_a: DVec3, center_b: DVec3, radius: f64, object_id: u16) -> Cylinder {
         Cylinder {
             center_a: center_a,
             center_b: center_b,
@@ -22,7 +22,7 @@ impl Cylinder {
         }
     }
 
-    fn get_scaled_orthogonal_basis(&self) -> [Vec3; 3] {
+    fn get_scaled_orthogonal_basis(&self) -> [DVec3; 3] {
         let axis_vec = self.center_a - self.center_b;
         let axis_option_0 = vec3(1.0, 0.0, 0.0);
         let axis_option_1 = vec3(0.0, 1.0, 0.0);
@@ -34,15 +34,15 @@ impl Cylinder {
                 axis_option_1
             };
 
-        let perp_vector_0: Vec3 = chosen_axis.cross(&axis_vec).normalize() * 2.0 * self.radius;
-        let perp_vector_1: Vec3 = perp_vector_0.cross(&axis_vec).normalize() * 2.0 * self.radius;
+        let perp_vector_0: DVec3 = chosen_axis.cross(&axis_vec).normalize() * 2.0 * self.radius;
+        let perp_vector_1: DVec3 = perp_vector_0.cross(&axis_vec).normalize() * 2.0 * self.radius;
 
         [axis_vec, perp_vector_0, perp_vector_1]
     }
 }
 
-fn create_transform_from_axes(axis: &[Vec3; 3], middle: &Vec3) -> Mat4 {
-    let mut matrix: Mat4 = Mat4::identity();
+fn create_transform_from_axes(axis: &[DVec3; 3], middle: &DVec3) -> DMat4 {
+    let mut matrix: DMat4 = DMat4::identity();
     matrix.set_column(0, &vec3_to_vec4(&axis[0]));
     matrix.set_column(1, &vec3_to_vec4(&axis[1]));
     matrix.set_column(2, &vec3_to_vec4(&axis[2]));
@@ -52,7 +52,7 @@ fn create_transform_from_axes(axis: &[Vec3; 3], middle: &Vec3) -> Mat4 {
 }
 
 impl Shape for Cylinder {
-    fn contains_point(&self, point: &Vec3) -> bool {
+    fn contains_point(&self, point: &DVec3) -> bool {
         let axis = (self.center_a - self.center_b).normalize();
         let half_height = (self.center_a - self.center_b).magnitude() / 2.0;
 
