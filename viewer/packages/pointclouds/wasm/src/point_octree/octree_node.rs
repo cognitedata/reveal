@@ -3,10 +3,10 @@ use crate::linalg::{BoundingBox, Vec3WithIndex};
 pub const MAX_POINTS_PER_NODE: usize = 1_000;
 pub const MIN_OCTREE_NODE_SIZE: f64 = 0.0625;
 
-use nalgebra_glm::{vec3, DVec3};
+use nalgebra_glm::DVec3;
 use std::convert::TryInto;
 
-use crate::shapes::shape::Shape;
+use crate::shapes::Shape;
 
 #[derive(Debug)]
 pub struct OctreeNode<'a> {

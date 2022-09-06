@@ -3,7 +3,7 @@ use crate::linalg::{BoundingBox, Vec3WithIndex};
 use super::octree_node::OctreeNode;
 use std::vec::Vec;
 
-use crate::shapes::shape::Shape;
+use crate::shapes::Shape;
 
 pub struct PointOctree<'a> {
     root: OctreeNode<'a>,

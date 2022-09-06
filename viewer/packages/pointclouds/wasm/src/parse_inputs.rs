@@ -1,5 +1,4 @@
-use nalgebra::Const;
-use nalgebra_glm::{vec3, DMat4, DVec3};
+use nalgebra_glm::{vec3, DMat4};
 use std::vec::Vec;
 
 use crate::linalg::BoundingBox;
@@ -36,8 +35,8 @@ pub struct InputBoundingBox {
 impl Into<BoundingBox> for InputBoundingBox {
     fn into(self) -> BoundingBox {
         BoundingBox {
-            min: DVec3::new(self.min[0], self.min[1], self.min[2]),
-            max: DVec3::new(self.max[0], self.max[1], self.max[2]),
+            min: vec3(self.min[0], self.min[1], self.min[2]),
+            max: vec3(self.max[0], self.max[1], self.max[2]),
         }
     }
 }
@@ -65,8 +64,8 @@ pub fn parse_points(
     point_vec
 }
 
-fn create_cylinder(input: InputCylinder, id: u16) -> Box<shapes::cylinder::Cylinder> {
-    Box::new(shapes::cylinder::Cylinder::new(
+fn create_cylinder(input: InputCylinder, id: u16) -> Box<shapes::Cylinder> {
+    Box::new(shapes::Cylinder::new(
         vec3(input.center_a[0], input.center_a[1], input.center_a[2]),
         vec3(input.center_b[0], input.center_b[1], input.center_b[2]),
         input.radius,
@@ -74,14 +73,14 @@ fn create_cylinder(input: InputCylinder, id: u16) -> Box<shapes::cylinder::Cylin
     ))
 }
 
-fn create_box(input: InputOrientedBox, id: u16) -> Box<shapes::oriented_box::OrientedBox> {
-    Box::new(shapes::oriented_box::OrientedBox::new(
-        DMat4::from_column_slice_generic(Const, Const, &input.inv_instance_matrix),
+fn create_box(input: InputOrientedBox, id: u16) -> Box<shapes::OrientedBox> {
+    Box::new(shapes::OrientedBox::new(
+        DMat4::from_column_slice(&input.inv_instance_matrix),
         id,
     ))
 }
 
-fn create_shape(obj: InputShape) -> Box<dyn shapes::shape::Shape> {
+fn create_shape(obj: InputShape) -> Box<dyn shapes::Shape> {
     if obj.cylinder.is_some() {
         create_cylinder(*obj.cylinder.unwrap(), obj.object_id)
     } else if obj.oriented_box.is_some() {
@@ -93,9 +92,9 @@ fn create_shape(obj: InputShape) -> Box<dyn shapes::shape::Shape> {
 
 pub fn parse_objects(
     input_shapes: Vec<wasm_bindgen::prelude::JsValue>,
-) -> Vec<Box<dyn shapes::shape::Shape>> {
+) -> Vec<Box<dyn shapes::Shape>> {
     let mut shape_vec =
-        Vec::<Box<dyn shapes::shape::Shape>>::with_capacity(input_shapes.len() as usize);
+        Vec::<Box<dyn shapes::Shape>>::with_capacity(input_shapes.len() as usize);
 
     for value in input_shapes.iter() {
         let input_shape = value.into_serde::<InputShape>().unwrap();
