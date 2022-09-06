@@ -50,10 +50,12 @@ export function Migration() {
 
     async function main() {
       const project = urlParams.get('project');
-      const modelUrl = urlParams.get('modelUrl');
+      let modelUrl = urlParams.get('modelUrl');
 
       if (!modelUrl && !(environmentParam && project)) {
-        throw Error('Must specify URL parameters "project" and "env", or "modelUrl"');
+        modelUrl = 'primitives';
+        url.searchParams.set('modelUrl', 'primitives');
+        window.history.pushState({}, '', url.toString());
       }
 
       const progress = (itemsLoaded: number, itemsRequested: number, itemsCulled: number) => {
