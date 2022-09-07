@@ -21,11 +21,10 @@ describe('RevealManager', () => {
     filterSectorsToLoad: jest.fn(),
     dispose: jest.fn()
   };
-  const annotationProvider =
-    new Mock<IAnnotationProvider>()
-      .setup(p => p.getAnnotations(It.IsAny()))
-      .returns(Promise.resolve(new PointCloudObjectAnnotationData([])))
-      .object();
+  const annotationProvider = new Mock<IAnnotationProvider>()
+    .setup(p => p.getAnnotations(It.IsAny()))
+    .returns(Promise.resolve(new PointCloudObjectAnnotationData([])))
+    .object();
   let manager: RevealManager;
 
   beforeEach(() => {
