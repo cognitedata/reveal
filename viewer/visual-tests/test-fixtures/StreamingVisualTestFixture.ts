@@ -2,7 +2,7 @@
  * Copyright 2022 Cognite AS
  */
 import * as THREE from 'three';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import * as THREE_EXAMPLES from 'three-stdlib';
 
 import { CadManager, CadModelUpdateHandler, createV8SectorCuller } from '../../packages/cad-geometry-loaders';
 import { CadModelFactory, CadNode } from '../../packages/cad-model';
@@ -34,7 +34,7 @@ export type StreamingTestFixtureComponents = {
     boundingBox: THREE.Box3;
   };
   camera: THREE.PerspectiveCamera;
-  cameraControls: OrbitControls;
+  cameraControls: THREE_EXAMPLES.OrbitControls;
   cadMaterialManager: CadMaterialManager;
   cadModelUpdateHandler: CadModelUpdateHandler;
   cadManager: CadManager;
@@ -44,7 +44,7 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
   private readonly _perspectiveCamera: THREE.PerspectiveCamera;
   private readonly _sceneHandler: SceneHandler;
   private readonly _renderer: THREE.WebGLRenderer;
-  private readonly _controls: OrbitControls;
+  private readonly _controls: THREE_EXAMPLES.OrbitControls;
   private readonly _materialManager: CadMaterialManager;
   private readonly _localModelUrl: string;
   private _gui!: dat.GUI;
@@ -97,7 +97,7 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
     this._renderer.setPixelRatio(window.devicePixelRatio);
     this._renderer.localClippingEnabled = true;
 
-    this._controls = new OrbitControls(this._perspectiveCamera, this._renderer.domElement);
+    this._controls = new THREE_EXAMPLES.OrbitControls(this._perspectiveCamera, this._renderer.domElement);
 
     this._materialManager = new CadMaterialManager();
     this._pipelineExecutor = new BasicPipelineExecutor(this._renderer);

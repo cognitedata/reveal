@@ -5,7 +5,7 @@
 import { DefaultNodeAppearance, TreeIndexNodeCollection } from '@reveal/cad-styling';
 import { DeferredPromise, NumericRange, SceneHandler } from '@reveal/utilities';
 import * as THREE from 'three';
-import { TransformControls } from 'three/examples/jsm/controls/TransformControls';
+import * as THREE_EXAMPLES from 'three-stdlib';
 import { AntiAliasingMode, defaultRenderOptions, DefaultRenderPipelineProvider } from '..';
 
 import {
@@ -204,7 +204,7 @@ export default class RenderingVisualTestFixture extends StreamingVisualTestFixtu
     camera: THREE.PerspectiveCamera,
     canvas: HTMLCanvasElement
   ) {
-    const transformControls = new TransformControls(camera, canvas);
+    const transformControls = new THREE_EXAMPLES.TransformControls(camera, canvas);
     transformControls.attach(object);
     return transformControls;
   }
