@@ -4,14 +4,18 @@ pub const MAX_POINTS_PER_NODE: usize = 1_000;
 pub const MIN_OCTREE_NODE_SIZE: f64 = 0.0625;
 
 use nalgebra_glm::DVec3;
-use std::convert::TryInto;
 
 use crate::shapes::Shape;
 
 #[derive(Debug)]
+enum OctreeNodeContent<'a> {
+    Children(Box<[OctreeNode<'a>; 8]>),
+    Points(&'a [Vec3WithIndex])
+}
+
+#[derive(Debug)]
 pub struct OctreeNode<'a> {
-    children: Option<Box<[OctreeNode<'a>; 8]>>,
-    points: Option<&'a [Vec3WithIndex]>,
+    content: OctreeNodeContent<'a>,
     bounding_box: BoundingBox,
 }
 
@@ -21,15 +25,13 @@ impl<'a> OctreeNode<'a> {
             || bounding_box.max.x - bounding_box.min.x < MIN_OCTREE_NODE_SIZE
         {
             OctreeNode {
-                children: Option::None,
-                points: Option::Some(points),
+                content: OctreeNodeContent::Points(points),
                 bounding_box: bounding_box,
             }
         } else {
             let children = split(points, bounding_box);
             OctreeNode {
-                children: Option::Some(children),
-                points: Option::None,
+                content: OctreeNodeContent::Children(children),
                 bounding_box: bounding_box,
             }
         }
@@ -41,18 +43,17 @@ impl<'a> OctreeNode<'a> {
         shape: &Box<dyn Shape>,
         object_ids: &js_sys::Uint16Array,
     ) -> () {
-        if self.children.is_some() {
-            for child in self.children.as_ref().unwrap().iter() {
+        match &self.content {
+            OctreeNodeContent::Children(children) => children.iter().for_each(|child| {
                 if child.bounding_box.overlaps(bounding_box) {
                     child.assign_object_ids(bounding_box, shape, object_ids);
                 }
-            }
-        } else {
-            for point in self.points.as_ref().unwrap().iter() {
+            }),
+            OctreeNodeContent::Points(points) => points.iter().for_each(|point| {
                 if shape.contains_point(&point.vec) {
                     object_ids.set_index(point.index as u32, shape.get_object_id() as u16);
                 }
-            }
+            })
         }
     }
 }
@@ -67,24 +68,22 @@ fn split<'a>(
     sort_points_into_sectors(points, splits, &middle);
 
     let boxes = get_child_bounding_boxes(&bounding_box);
-    let mut box_iter = boxes.iter();
-
-    let mut children = std::vec::Vec::<OctreeNode<'a>>::with_capacity(8);
 
     let split_maxes = get_split_ends(points, &splits);
 
-    for i in 0..8 {
-        let bb = box_iter.next().unwrap();
+    let children: Box<[OctreeNode<'a>; 8]> = Box::<[OctreeNode<'a>; 8]>::new(std::array::from_fn(
+        |child_index| {
 
-        unsafe {
-            let ptr = points.as_mut_ptr().add(splits[i]);
-            let slice = std::slice::from_raw_parts_mut(ptr, split_maxes[i] - splits[i]);
+            unsafe {
+                let ptr = points.as_mut_ptr().add(splits[child_index]);
+                let slice = std::slice::from_raw_parts_mut(ptr, split_maxes[child_index] - splits[child_index]);
 
-            children.push(OctreeNode::new(*bb, slice));
-        }
-    }
+                OctreeNode::new(boxes[child_index], slice)
+            }
+        })
+    );
 
-    Box::<[OctreeNode<'a>; 8]>::new(children.try_into().unwrap())
+    children
 }
 
 fn get_split_ends<'a>(points: &'a [Vec3WithIndex], splits: &[usize; 8]) -> [usize; 8] {
