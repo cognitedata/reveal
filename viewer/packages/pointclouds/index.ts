@@ -36,3 +36,4 @@ export { PointCloudFactory } from './src/PointCloudFactory';
 export { IAnnotationProvider } from './src/styling/IAnnotationProvider';
 export { CdfAnnotationProvider } from './src/styling/CdfAnnotationProvider';
 export { LocalAnnotationProvider } from './src/styling/LocalAnnotationProvider';
+export { PointCloudObjectAnnotationData } from './src/styling/PointCloudObjectAnnotationData';
