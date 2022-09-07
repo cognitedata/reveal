@@ -32,7 +32,7 @@ fn init() -> () {
 
 #[wasm_bindgen]
 pub fn assign_points(
-    input_shapes: Vec<JsValue>,
+    input_objects: Vec<JsValue>,
     input_points: js_sys::Float32Array,
     input_bounding_box: js_sys::Object,
     input_point_offset: Vec<f64>,
@@ -45,7 +45,7 @@ pub fn assign_points(
         .map_err(|serde_error| format!("Got error while deserializing bounding box: {}", serde_error))?
         .into();
 
-    let shape_vec = parse_inputs::parse_objects(input_shapes)?;
+    let shape_vec = parse_inputs::parse_objects(input_objects)?;
 
     let object_ids = js_sys::Uint16Array::new_with_length(input_points.length() / 3).fill(
         0,

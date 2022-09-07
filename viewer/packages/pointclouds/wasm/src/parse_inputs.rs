@@ -91,17 +91,15 @@ fn create_shape(obj: InputShape) -> Result<Box<dyn shapes::Shape>, String> {
 }
 
 pub fn parse_objects(
-    input_shapes: Vec<wasm_bindgen::prelude::JsValue>,
+    input_objects: Vec<wasm_bindgen::prelude::JsValue>,
 ) -> Result<Vec<Box<dyn shapes::Shape>>, String> {
-    let mut shape_vec =
-        Vec::<Box<dyn shapes::Shape>>::with_capacity(input_shapes.len() as usize);
 
-    for value in input_shapes.iter() {
-        let input_shape = value.into_serde::<InputShape>()
+    let objects_result: Result<_, _> = input_objects.iter().map(|input_object| {
+        let input_shape = input_object.into_serde::<InputShape>()
             .map_err(|serde_error| format!("Got error while deserializing shape: {}", serde_error));
 
-        shape_vec.push(create_shape(input_shape?)?);
-    }
+        create_shape(input_shape?)
+    }).collect();
 
-    Ok(shape_vec)
+    objects_result
 }
