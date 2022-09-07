@@ -83,8 +83,8 @@ export class BasicPipelineExecutor implements RenderPipelineExecutor {
         ? Math.sqrt(this._resolutionThreshold / domElementPhysicalNumberOfPixels)
         : 1;
 
-    const newVirtualWidth = virtualDomElementWidth * downScale;
-    const newVirtualHeight = virtualDomElementHeight * downScale;
+    const newVirtualWidth = Math.round(virtualDomElementWidth * downScale);
+    const newVirtualHeight = Math.round(virtualDomElementHeight * downScale);
 
     if (newVirtualWidth === virtualFramebufferSize.x && newVirtualHeight === virtualFramebufferSize.y) {
       return;
