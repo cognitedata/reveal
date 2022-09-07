@@ -13,7 +13,6 @@ pub struct Vec3WithIndex {
 }
 
 impl BoundingBox {
-
     pub fn overlaps(&self, other: &BoundingBox) -> bool {
         self.min.x < other.max.x
             && self.max.x > other.min.x
@@ -42,12 +41,13 @@ impl BoundingBox {
     }
 
     pub fn get_transformed_unit_cube(matrix: &DMat4) -> BoundingBox {
-
-        let bounding_box = (0..8).map(|i: u32| {
-            let unit_corner = BoundingBox::get_centered_unit_cube_corner(i);
-            let transformed_corner = matrix * unit_corner;
-            vec4_to_vec3(&transformed_corner)
-        }).collect();
+        let bounding_box = (0..8)
+            .map(|i: u32| {
+                let unit_corner = BoundingBox::get_centered_unit_cube_corner(i);
+                let transformed_corner = matrix * unit_corner;
+                vec4_to_vec3(&transformed_corner)
+            })
+            .collect();
 
         bounding_box
     }
@@ -65,10 +65,13 @@ impl Default for BoundingBox {
 impl FromIterator<DVec3> for BoundingBox {
     fn from_iter<T>(point_iter: T) -> Self
     where
-    T: IntoIterator<Item = DVec3> {
+        T: IntoIterator<Item = DVec3>,
+    {
         let mut bounding_box: BoundingBox = Default::default();
 
-        point_iter.into_iter().for_each(|p| bounding_box.add_point(&p));
+        point_iter
+            .into_iter()
+            .for_each(|p| bounding_box.add_point(&p));
 
         bounding_box
     }

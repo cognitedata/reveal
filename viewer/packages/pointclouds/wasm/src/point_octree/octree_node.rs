@@ -10,7 +10,7 @@ use crate::shapes::Shape;
 #[derive(Debug)]
 enum OctreeNodeContent<'a> {
     Children(Box<[OctreeNode<'a>; 8]>),
-    Points(&'a [Vec3WithIndex])
+    Points(&'a [Vec3WithIndex]),
 }
 
 #[derive(Debug)]
@@ -53,7 +53,7 @@ impl<'a> OctreeNode<'a> {
                 if shape.contains_point(&point.vec) {
                     object_ids.set_index(point.index as u32, shape.get_object_id() as u16);
                 }
-            })
+            }),
         }
     }
 }
@@ -71,17 +71,14 @@ fn split<'a>(
 
     let split_maxes = get_split_ends(points, &splits);
 
-    let children: Box<[OctreeNode<'a>; 8]> = Box::<[OctreeNode<'a>; 8]>::new(std::array::from_fn(
-        |child_index| {
+    let children: Box<[OctreeNode<'a>; 8]> =
+        Box::<[OctreeNode<'a>; 8]>::new(std::array::from_fn(|child_index| unsafe {
+            let ptr = points.as_mut_ptr().add(splits[child_index]);
+            let slice =
+                std::slice::from_raw_parts_mut(ptr, split_maxes[child_index] - splits[child_index]);
 
-            unsafe {
-                let ptr = points.as_mut_ptr().add(splits[child_index]);
-                let slice = std::slice::from_raw_parts_mut(ptr, split_maxes[child_index] - splits[child_index]);
-
-                OctreeNode::new(boxes[child_index], slice)
-            }
-        })
-    );
+            OctreeNode::new(boxes[child_index], slice)
+        }));
 
     children
 }
@@ -204,7 +201,7 @@ mod tests {
     use rand::prelude::*;
     use rand_chacha::ChaCha8Rng;
 
-    use nalgebra_glm::{comp_max, DVec3, epsilon, vec3};
+    use nalgebra_glm::{comp_max, epsilon, vec3, DVec3};
 
     use crate::test_utils::normalize_coordinate;
 
@@ -265,10 +262,7 @@ mod tests {
                 normalize_coordinate(rng.next_u32()),
                 normalize_coordinate(rng.next_u32()),
             );
-            points.push(Vec3WithIndex {
-                vec: p,
-                index: i,
-            });
+            points.push(Vec3WithIndex { vec: p, index: i });
         }
 
         let middle: DVec3 = Default::default();

@@ -35,7 +35,7 @@ mod tests {
 
     use js_sys::Uint16Array;
 
-    use nalgebra_glm::{DMat4, translate, vec3};
+    use nalgebra_glm::{translate, vec3, DMat4};
 
     use rand::prelude::*;
     use rand_chacha::ChaCha8Rng;

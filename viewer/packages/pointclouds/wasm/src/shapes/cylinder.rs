@@ -7,7 +7,7 @@ pub struct Cylinder {
     center_a: DVec3,
     center_b: DVec3,
     radius: f64,
-    object_id: u16
+    object_id: u16,
 }
 
 impl Cylinder {
@@ -16,7 +16,7 @@ impl Cylinder {
             center_a: center_a,
             center_b: center_b,
             radius: radius,
-            object_id: object_id
+            object_id: object_id,
         }
     }
 
@@ -45,7 +45,10 @@ impl Cylinder {
 
 fn create_transform_from_axes(scaled_basis: &DMat3, cylinder_center: &DVec3) -> DMat4 {
     let mut matrix = mat3_to_mat4(scaled_basis);
-    matrix.set_column(3, &vec4(cylinder_center.x, cylinder_center.y, cylinder_center.z, 1.0));
+    matrix.set_column(
+        3,
+        &vec4(cylinder_center.x, cylinder_center.y, cylinder_center.z, 1.0),
+    );
 
     matrix
 }
@@ -80,8 +83,8 @@ impl Shape for Cylinder {
 
 #[cfg(test)]
 mod tests {
-    use wasm_bindgen_test::wasm_bindgen_test;
     use nalgebra_glm::vec3;
+    use wasm_bindgen_test::wasm_bindgen_test;
 
     use super::Cylinder;
     use crate::shapes::Shape;
