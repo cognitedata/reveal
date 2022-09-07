@@ -10,7 +10,11 @@ import {
   PidPath,
   PidPathPoint,
 } from '../pid';
-import { DiagramSymbol, DiagramSymbolInstance } from '../types';
+import {
+  DiagramInstanceId,
+  DiagramSymbol,
+  DiagramSymbolInstance,
+} from '../types';
 import { Point } from '../geometry/Point';
 
 const MATCH_DISTANCE_THRESHOLD = 0.35;
@@ -245,7 +249,12 @@ export const findAllInstancesOfSymbol = (
   pidDocument: PidDocument,
   symbol: DiagramSymbol
 ): DiagramSymbolInstance[] => {
-  const foundSymbolInstances: DiagramSymbolInstance[] = [];
+  // We don't want fully overlapping symbol instances.
+  // We keep one symbol instances per ID, and keep the ones with the lowest rotation.
+  const foundSymbolInstancesMap = new Map<
+    DiagramInstanceId,
+    DiagramSymbolInstance
+  >();
 
   const pidGroup = PidGroup.fromSvgPaths(symbol.svgRepresentation.svgPaths);
 
@@ -258,9 +267,14 @@ export const findAllInstancesOfSymbol = (
   detections.forEach((detection) => {
     const { pathIds, scale, rotation } = detection;
 
+    const id = getDiagramInstanceIdFromPathIds(pathIds);
+
+    const oldInstance = foundSymbolInstancesMap.get(id);
+    if (oldInstance !== undefined && oldInstance.rotation <= rotation) return;
+
     const newSymbolInstance: DiagramSymbolInstance = {
       type: symbol.symbolType,
-      id: getDiagramInstanceIdFromPathIds(pathIds),
+      id,
       symbolId: symbol.id,
       pathIds,
       scale,
@@ -273,8 +287,10 @@ export const findAllInstancesOfSymbol = (
     if (symbol.direction !== undefined) {
       newSymbolInstance.direction = (symbol.direction + rotation) % 360;
     }
-    foundSymbolInstances.push(newSymbolInstance);
+    foundSymbolInstancesMap.set(id, newSymbolInstance);
   });
+
+  const foundSymbolInstances = Array.from(foundSymbolInstancesMap.values());
 
   if (symbol.symbolType === 'File Connection') {
     const fileConnections = foundSymbolInstances.filter(isFileConnection);

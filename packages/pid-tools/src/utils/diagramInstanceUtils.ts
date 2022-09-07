@@ -1,4 +1,5 @@
 /* eslint-disable no-restricted-syntax */
+import uniqBy from 'lodash/uniqBy';
 import intersection from 'lodash/intersection';
 
 import { EQUIPMENT_TAG_REGEX, UNIT_REGEX } from '../constants';
@@ -88,34 +89,33 @@ export const connectionExists = (
 };
 
 export const getNoneOverlappingSymbolInstances = (
-  symbolInstances: DiagramSymbolInstance[],
+  oldSymbolInstances: DiagramSymbolInstance[],
   newSymbolInstances: DiagramSymbolInstance[]
 ) => {
-  const instancesToRemove: DiagramInstanceWithPaths[] = [];
-  for (const potentialInstance of newSymbolInstances) {
-    for (const oldInstance of symbolInstances) {
+  const instanceIdsToRemove = new Set<DiagramInstanceId>();
+  for (const newInstance of newSymbolInstances) {
+    for (const oldInstance of oldSymbolInstances) {
       const intersectionPathIds = intersection(
-        potentialInstance.pathIds,
+        newInstance.pathIds,
         oldInstance.pathIds
       );
 
-      if (potentialInstance.pathIds.length === intersectionPathIds.length) {
-        instancesToRemove.push(potentialInstance);
+      if (newInstance.pathIds.length === intersectionPathIds.length) {
+        instanceIdsToRemove.add(newInstance.id);
       } else if (oldInstance.pathIds.length === intersectionPathIds.length) {
-        instancesToRemove.push(oldInstance);
+        instanceIdsToRemove.add(oldInstance.id);
       }
     }
   }
 
-  const instancesToRemoveIds = new Set(
-    instancesToRemove.map((inst) => inst.id)
+  const instancesToKeep = uniqBy(
+    [...oldSymbolInstances, ...newSymbolInstances].filter(
+      (instance) => !instanceIdsToRemove.has(instance.id)
+    ),
+    'id'
   );
 
-  const instancesToKeep = [...symbolInstances, ...newSymbolInstances].filter(
-    (instance) => !instancesToRemoveIds.has(instance.id)
-  );
-
-  return { instancesToKeep, instancesToRemove };
+  return { instancesToKeep };
 };
 
 export const pruneSymbolOverlappingPathsFromLines = (

@@ -32,7 +32,8 @@ export const computeSymbolInstances = (
   symbols.forEach((symbol) => {
     const newSymbolInstances = pidDocument
       .findAllInstancesOfSymbol(symbol)
-      // remove equal symbol instance since it would have been removed otherwise
+      // remove equal symbol instances here, otherwise
+      // both the old one and the new would would have been removed
       .filter(
         (symbolInstance) =>
           !symbolInstancesToKeep.some((si) => si.id === symbolInstance.id)
