@@ -18,7 +18,7 @@ class ReportManager {
     return this.dao.search(filters);
   }
 
-  public async update(id: number, report: Report) {
+  public async update(id: number, report: Partial<Report>) {
     return this.dao.update(id, report);
   }
 
