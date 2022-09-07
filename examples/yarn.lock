@@ -160,10 +160,10 @@
   version "0.0.0"
   uid ""
 
-"@cognite/sdk-core@^4.6.0":
-  version "4.6.1"
-  resolved "https://registry.yarnpkg.com/@cognite/sdk-core/-/sdk-core-4.6.1.tgz#dcca3319db783f6cb4779559204101b188d85f4e"
-  integrity sha512-OPcY0l38OVuRMrkJdvnCafLASsK2YJPguwd4wQZtKQyLCiyYhqc1yTHhk0GEGlJcv1kYgEhdCEBTb83Mvq2+rw==
+"@cognite/sdk-core@^4.6.2":
+  version "4.6.3"
+  resolved "https://registry.yarnpkg.com/@cognite/sdk-core/-/sdk-core-4.6.3.tgz#06ddcd9538bfc0b440e995bf3041d1856e6c1657"
+  integrity sha512-xGCmvZoT5qoQP5OLkP5bxnwnMNxQFqDpyIYPioiDkzqfVNOqrNz5Gl7c22HpLNSpzHKOOeJYimrZ9IT7ga5HJQ==
   dependencies:
     cross-fetch "^3.0.4"
     is-buffer "^2.0.5"
@@ -1008,11 +1008,6 @@ camelize@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/camelize/-/camelize-1.0.0.tgz#164a5483e630fa4321e5af07020e531831b2609b"
   integrity sha1-FkpUg+Yw+kMh5a8HAg5TGDGyYJs=
-
-camera-controls@^1.25.1:
-  version "1.30.0"
-  resolved "https://registry.yarnpkg.com/camera-controls/-/camera-controls-1.30.0.tgz#ac7fe7c872339cb446313286ded1889867d63ebf"
-  integrity sha512-ZtYT/1YdjXjk+51xKF71J4NOJxDnRn7oVbO2LEjJsp3ffKN46QaMzfTLG1fjpp2VaZ4e2R1Gx9J9EWmzUKDftw==
 
 caniuse-lite@^1.0.30001349:
   version "1.0.30001358"

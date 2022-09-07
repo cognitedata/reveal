@@ -545,6 +545,8 @@ export class DefaultCameraManager implements CameraManager {
     };
 
     const onWheel = async (e: any) => {
+      e.preventDefault();
+
       const timeDelta = wheelClock.getDelta();
 
       if (timeDelta > DefaultCameraManager.DefaultMinimalTimeBetweenRaycasts) scrollStarted = false;
@@ -554,7 +556,13 @@ export class DefaultCameraManager implements CameraManager {
 
       if (wantNewScrollTarget && isZoomToCursor) {
         scrollStarted = true;
+
+        // Disable controls to prevent camera from moving while picking is happening.
+        // await is not working as expected because event itself is not awaited.
+        this._controls.temporaryDisable(false);
         const newTarget = await this.calculateNewTarget(e);
+        this._controls.temporaryDisable(this._controls.enabledCopy);
+
         this._controls.setScrollTarget(newTarget);
       }
     };
