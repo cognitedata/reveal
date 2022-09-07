@@ -237,6 +237,7 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
         onItemSelect={handleRowSelect}
         isSelected={useIsSelectedInProcess}
         isActionDisabled={useProcessFilesSelected}
+        onItemRightClick={handleContextMenuOpen}
       />
     ),
     []

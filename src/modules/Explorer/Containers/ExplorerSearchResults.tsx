@@ -125,6 +125,7 @@ export const ExplorerSearchResults = ({
         onItemSelect={otherProps.onItemSelect}
         isSelected={useIsSelectedInExplorer}
         isActionDisabled={useExplorerFilesSelected}
+        onItemRightClick={otherProps.onItemRightClick}
       />
     ),
     [otherProps.onItemSelect]

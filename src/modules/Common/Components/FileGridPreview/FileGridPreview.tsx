@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 import { Tooltip } from '@cognite/cogs.js';
 import { ActionMenu } from 'src/modules/Common/Components/ActionMenu/ActionMenu';
 import { ReviewButton } from 'src/modules/Common/Components/ReviewButton/ReviewButton';
@@ -23,6 +23,7 @@ export const FileGridPreview = ({
   isActionDisabled,
   onItemSelect,
   isSelected,
+  onItemRightClick,
 }: {
   item: TableDataItem;
   style?: React.CSSProperties;
@@ -30,6 +31,7 @@ export const FileGridPreview = ({
   isActionDisabled: () => boolean;
   onItemSelect?: (item: TableDataItem, selected: boolean) => void;
   isSelected: (id: number) => boolean;
+  onItemRightClick?: (event: React.SyntheticEvent, item: TableDataItem) => void;
 }) => {
   const selected = isSelected(item.id);
   const actionDisabled = isActionDisabled();
@@ -70,8 +72,28 @@ export const FileGridPreview = ({
 
   const showReviewButton = mode === VisionMode.Contextualize;
 
+  const gridItemRef = useRef<HTMLDivElement | null>(null);
+
+  const onContextMenu = useCallback((event: MouseEvent) => {
+    if (onItemRightClick) {
+      onItemRightClick(event as unknown as React.SyntheticEvent, item);
+    }
+  }, []);
+
+  useEffect(() => {
+    const element = gridItemRef.current;
+    if (element) {
+      element.addEventListener('contextmenu', onContextMenu);
+    }
+    return () => {
+      if (element) {
+        element.removeEventListener('contextmenu', onContextMenu);
+      }
+    };
+  });
+
   return (
-    <PreviewCell style={style} onClick={handleFileDetails}>
+    <PreviewCell style={style} onClick={handleFileDetails} ref={gridItemRef}>
       <div className="preview">
         <Thumbnail
           fileInfo={fileInfo as FileInfo}
