@@ -271,7 +271,7 @@ mod tests {
             });
         }
 
-        let middle = vec3(0.0, 0.0, 0.0);
+        let middle: DVec3 = Default::default();
 
         let splits = find_splits(&mut points[..], &middle);
         let split_ends = get_split_ends(&points[..], &splits);
