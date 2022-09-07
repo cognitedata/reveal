@@ -113,51 +113,67 @@ fn get_octree_child_index(point: &DVec3, middle: &DVec3) -> usize {
         + (if point[2] < middle.z { 0 } else { 4 })
 }
 
+/// Moves one point at a time to the element in `partition_first_unsorted_points` corresponding to
+/// its target partition (octree node). It then swaps it with the point at that index, and continues
+/// the process with this new point. Continues until the partition with index `index_of_partition_to_fill`
+/// has been filled
+fn sort_points_into_partitions_until_specific_partition_filled(
+    points: &mut [Vec3WithIndex],
+    partition_first_unsorted_points: &mut [usize; 8],
+    partition_end_points: &[usize; 8],
+    bounding_box_center: &DVec3,
+    index_of_partition_to_fill: usize,
+) {
+    // Start moving the last point in the current partition
+    // Iteration ends when we move something back to this index, i.e. this partition is full
+    let initial_point_index = partition_end_points[index_of_partition_to_fill] - 1;
+
+    let mut current_point_index = initial_point_index;
+    let mut current_point = points[current_point_index];
+
+    loop {
+        let next_partition_index = get_octree_child_index(&current_point.vec, bounding_box_center);
+
+        let next_point_index = partition_first_unsorted_points[next_partition_index];
+        let next_point = points[next_point_index];
+
+        points[next_point_index] = current_point;
+
+        current_point_index = next_point_index;
+        current_point = next_point;
+
+        partition_first_unsorted_points[next_partition_index] += 1;
+
+        if current_point_index == initial_point_index {
+            // We have reached a cycle - break loop
+            break;
+        }
+    }
+}
+
 /// Takes the points slice and a starting index for each of the eight octree node children slices, and groups
-/// the points into their corresponding child's slice. It does not allocate a new vector.
-/// In essence, it moves one point at a time and puts it in the next available spot in
-/// the slice where it belongs. It then takes the point that was there before and repeats the process.
-/// Whenever it comes back to the point where it started the current iteration, it breaks
-/// and continues from the next slice that is not fully "sorted"
+/// the points into their corresponding child's slice. It does not allocate a new vector
 fn sort_points_into_sectors(
     points: &mut [Vec3WithIndex],
     splits: [usize; 8],
     middle: &DVec3,
 ) -> () {
     let mut offsets = splits.clone();
-    let max_inds = get_split_ends(points, &splits);
+    let partition_end_points = get_split_ends(points, &splits);
 
     for current_partition in 0..8 {
-        if offsets[current_partition] >= max_inds[current_partition] {
-            // This slice is filled, don't iterate from this
+        if offsets[current_partition] >= partition_end_points[current_partition] {
+            // This partition is filled, don't start iterating here
             continue;
         }
 
-        // Start from the end of the current partition, so that we know
-        // it's full when we encounter this index again
-        let initial_point_index = max_inds[current_partition] - 1;
-
-        let mut current_point_index = initial_point_index;
-        let mut current_point = points[current_point_index];
-
-        loop {
-            let octree_index = get_octree_child_index(&current_point.vec, middle);
-
-            let next_point_index = offsets[octree_index];
-            let next_point = points[next_point_index];
-
-            points[next_point_index] = current_point;
-
-            current_point_index = next_point_index;
-            current_point = next_point;
-
-            offsets[octree_index] += 1;
-
-            if current_point_index == initial_point_index {
-                // We have reached a cycle - break loop
-                break;
-            }
-        }
+        sort_points_into_partitions_until_specific_partition_filled(
+            points,
+            &mut offsets,
+            &partition_end_points,
+            middle,
+            current_partition,
+        );
     }
 }
 
