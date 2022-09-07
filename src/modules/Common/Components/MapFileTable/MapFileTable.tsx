@@ -94,7 +94,9 @@ export const MapFileTable = (props: MapTableProps) => {
       event: React.SyntheticEvent;
       rowData: TableDataItem;
     }) => {
-      props.handleContextMenuOpen(event, rowData);
+      if (props.onItemRightClick) {
+        props.onItemRightClick(event, rowData);
+      }
     },
   };
 
