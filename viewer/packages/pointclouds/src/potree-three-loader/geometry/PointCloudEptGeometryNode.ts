@@ -301,7 +301,7 @@ export class PointCloudEptGeometryNode implements IPointCloudTreeGeometryNode {
     this.markAsNotLoading();
   }
 
-  markAsNotLoading() {
+  markAsNotLoading(): void {
     this._loading = false;
     decrementGlobalNumNodesLoading();
   }

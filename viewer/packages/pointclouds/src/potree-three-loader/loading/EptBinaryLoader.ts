@@ -47,7 +47,8 @@ export class EptBinaryLoader implements ILoader {
 
     const parsedResultOrError = await this.parse(node, data);
 
-    if (!(parsedResultOrError as any).position) { // Is an error
+    if (!(parsedResultOrError as any).position) {
+      // Is an error
       const error = parsedResultOrError as Error;
       MetricsLogger.trackError(error, { moduleName: 'EptBinaryLoader', methodName: 'load' });
 
