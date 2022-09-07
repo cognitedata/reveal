@@ -55,15 +55,7 @@ export const ProvideAuthSetup: React.FC<
         return;
       }
 
-      if (isAzure) {
-        doLoginActions(tokenToUse);
-      } else {
-        authState.client.login.status().then((status) => {
-          if (status?.project === project && authState.client) {
-            doLoginActions(tokenToUse);
-          }
-        });
-      }
+      doLoginActions(tokenToUse);
     }
   }, [
     authState.authState?.authenticated,
