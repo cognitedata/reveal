@@ -1,4 +1,9 @@
 import { CogniteInternalId, CogniteExternalId } from '@cognite/sdk';
+import {
+  ImageAssetLink,
+  ImageExtractedText,
+  ImageObjectDetection,
+} from 'src/api/annotation/types';
 
 // Vision API schema types
 export declare type FileIdEither = FileInternalId | FileExternalId;
@@ -78,7 +83,7 @@ export type GaugeReaderJobAnnotation = BaseVisionJobAnnotation & {
   } & (DigitalGaugeDataAttributes | AnalogLevelGaugeDataAttributes);
 };
 
-export type CusomModelJobAnnotation = BaseVisionJobAnnotation & {
+export type CustomModelJobAnnotation = BaseVisionJobAnnotation & {
   region?: AnnotationRegion; // Custom models can also be classification models
 };
 
@@ -87,14 +92,39 @@ export type VisionJobAnnotation =
   | ObjectDetectionJobAnnotation
   | TagDetectionJobAnnotation
   | GaugeReaderJobAnnotation
-  | CusomModelJobAnnotation;
+  | CustomModelJobAnnotation;
 
 export type VisionJobFailedItem = {
   errorMessage: string;
   items: Array<FileInternalId & Partial<FileExternalId>>;
 };
 
-export type VisionJobResultItem = FileInternalId &
+// todo: remove this once all api changes are completed
+export type VisionJobResultItem = LegacyVisionJobResultItem;
+
+type TextPredictions = {
+  textPredictions: Array<ImageExtractedText>;
+};
+type AssetTagPredictions = {
+  assetTagPredictions: Array<ImageAssetLink>;
+};
+type ObjectPredictions = {
+  industrialObjectPredictions: Array<ImageObjectDetection>;
+};
+type PeoplePredictions = {
+  peoplePredictions: Array<ImageObjectDetection>;
+};
+
+export type VisionExtractPredictions = Partial<
+  TextPredictions & AssetTagPredictions & ObjectPredictions & PeoplePredictions
+>;
+
+export type VisionExtractResultItem = FileInternalId &
+  Partial<FileExternalId> & {
+    predictions: VisionExtractPredictions;
+  };
+
+export type LegacyVisionJobResultItem = FileInternalId &
   Partial<FileExternalId> & {
     annotations: Array<VisionJobAnnotation>;
     width?: number;
@@ -125,6 +155,13 @@ export interface VisionJobCompleted extends VisionJobBase {
   jobId: number;
   items: Array<VisionJobResultItem>;
   failedItems?: Array<VisionJobFailedItem>;
+  parameters?: {
+    textDetectionParameters?: ParamsOCR;
+    assetTagDetectionParameters?: ParamsTagDetection;
+    peopleDetectionParameters?: ParamsPersonDetection;
+    industrialObjectDetectionParameters?: ParamsObjectDetection;
+    personalProtectiveEquipmentDetectionParameters?: ParamsObjectDetection;
+  };
 }
 export interface VisionJobFailed extends VisionJobBase {
   status: 'Failed';
@@ -143,15 +180,19 @@ export type VisionJobResponse =
 
 // Model parameters
 export interface ParamsOCR {
-  useCache: boolean;
+  threshold: number;
 }
 export interface ParamsTagDetection {
-  useCache: boolean;
+  threshold: number;
   partialMatch: boolean;
   assetSubtreeIds: Array<number>;
 }
 
 export interface ParamsObjectDetection {
+  threshold: number;
+}
+
+export interface ParamsPersonDetection {
   threshold: number;
 }
 
@@ -177,6 +218,7 @@ export enum VisionDetectionModelType {
   OCR = 1,
   TagDetection,
   ObjectDetection,
+  PeopleDetection,
   GaugeReader,
   CustomModel,
 }

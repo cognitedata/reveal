@@ -9,12 +9,11 @@ import {
 // in further, when api will be normalized, all these provides should be removed in favor
 // of using someone generic provider like that one
 
-export abstract class BaseDetectionModelDataProvider
+// @deprecated
+export abstract class BaseLegacyDetectionModelDataProvider
   implements DetectionModelDataProvider
 {
   protected abstract url: string;
-  protected abstract features: string[];
-  protected abstract getParams: (params?: {}) => {};
 
   postJob(fileIds: number[], parameters?: DetectionModelParams) {
     return sdk
@@ -25,8 +24,7 @@ export abstract class BaseDetectionModelDataProvider
               fileId: id,
             };
           }),
-          features: this.features,
-          parameters: this.getParams(parameters),
+          ...parameters,
         },
       })
       .then((response) => {

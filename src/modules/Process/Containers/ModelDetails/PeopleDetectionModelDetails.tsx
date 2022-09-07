@@ -1,11 +1,17 @@
 import { Button, Detail, Icon, Tooltip, Row, Title } from '@cognite/cogs.js';
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { ParamsObjectDetection } from 'src/api/vision/detectionModels/types';
+import {
+  ParamsObjectDetection,
+  ParamsPersonDetection,
+} from 'src/api/vision/detectionModels/types';
 import { setUnsavedDetectionModelSettings } from 'src/modules/Process/store/slice';
 import { RootState } from 'src/store/rootReducer';
-import { ColorsObjectDetection } from 'src/constants/Colors';
-import ObjectDetectionIllustration from 'src/assets/visualDescriptions/ObjectDetectionIllustration.svg';
+import {
+  ColorsObjectDetection,
+  ColorsPersonDetection,
+} from 'src/constants/Colors';
+import peopleDetectionIllustration from 'src/assets/visualDescriptions/PeopleDetectionIllustration.svg';
 import { InputNumber } from 'antd';
 import {
   ColorBox,
@@ -16,16 +22,16 @@ import {
 } from './modelDetailsStyles';
 
 export const description = () => {
-  return <Detail>Detects recognizable shapes and labels accordingly.</Detail>;
+  return <Detail>Detects people</Detail>;
 };
 export const badge = (modelName: string, hideText: boolean = false) => {
   return (
     <Button
-      icon="Scan"
+      icon="User"
       size="small"
       style={{
-        backgroundColor: ColorsObjectDetection.backgroundColor,
-        color: ColorsObjectDetection.color,
+        backgroundColor: ColorsPersonDetection.backgroundColor,
+        color: ColorsPersonDetection.color,
       }}
     >
       {!hideText && modelName}
@@ -44,7 +50,7 @@ export const content = (modelIndex: number) => {
   const params: ParamsObjectDetection = useSelector(
     ({ processSlice }: RootState) =>
       processSlice.availableDetectionModels[modelIndex]
-        .unsavedSettings as ParamsObjectDetection
+        .unsavedSettings as ParamsPersonDetection
   );
 
   const isValidThreshold = params.threshold >= 0.4 && params.threshold <= 1.0;
@@ -136,8 +142,8 @@ export const content = (modelIndex: number) => {
               {description()}
             </NameContainer>
             <img
-              src={ObjectDetectionIllustration}
-              alt="ObjectDetectionIllustration"
+              src={peopleDetectionIllustration}
+              alt="peopleDetectionIllustration"
             />
           </div>
         </StyledCol>

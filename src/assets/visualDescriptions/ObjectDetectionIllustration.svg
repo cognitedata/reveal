@@ -30,16 +30,6 @@
     <circle cx="165.501" cy="130.499" r="12.3333" fill="white" stroke="#BFBFBF"/>
     <path d="M171.051 126.801L156.867 134.817L172.284 129.884L171.051 126.801Z" fill="#CC512B"/>
     <circle cx="165.95" cy="130.951" r="2.58333" transform="rotate(-27.0847 165.95 130.951)" fill="white" stroke="#BFBFBF"/>
-    <path d="M34.9102 26.5H143.91V199.5H34.9102V26.5Z" fill="#FF6918" fill-opacity="0.2" stroke="#FF6918" stroke-width="5"/>
-    <rect width="100" height="24" transform="translate(32.4102)" fill="#FF6918"/>
-    <rect x="32.4102" y="24" width="10" height="10" fill="#FF6918"/>
-    <rect x="32.4102" y="192" width="10" height="10" fill="#FF6918"/>
-    <rect x="136.41" y="24" width="10" height="10" fill="#FF6918"/>
-    <rect x="136.41" y="192" width="10" height="10" fill="#FF6918"/>
-    <rect x="32.4102" y="24" width="10" height="10" fill="#FF6918"/>
-    <rect x="32.4102" y="192" width="10" height="10" fill="#FF6918"/>
-    <rect x="136.41" y="24" width="10" height="10" fill="#FF6918"/>
-    <rect x="136.41" y="192" width="10" height="10" fill="#FF6918"/>
     <path d="M141.5 108.5H187.5V152.5H141.5V108.5Z" fill="#FF6918" fill-opacity="0.2" stroke="#FF6918" stroke-width="5"/>
     <rect width="74" height="24" transform="translate(139 82)" fill="#FF6918"/>
     <rect x="139" y="106" width="10" height="10" fill="#FF6918"/>

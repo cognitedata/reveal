@@ -16,12 +16,12 @@ import {
 
 import {
   GaugeReaderJobAnnotation,
+  LegacyVisionJobResultItem,
   ObjectDetectionJobAnnotation,
   TagDetectionJobAnnotation,
   TextDetectionJobAnnotation,
   VisionDetectionModelType,
   VisionJobAnnotation,
-  VisionJobResultItem,
 } from './types';
 import {
   validBoundingBox,
@@ -194,7 +194,7 @@ export function convertVisionJobAnnotationToImageKeypointCollection(
 }
 
 export function convertVisionJobResultItemToUnsavedVisionAnnotation(
-  visionJobResultItem: VisionJobResultItem,
+  visionJobResultItem: LegacyVisionJobResultItem,
   visionDetectionModelType: VisionDetectionModelType
 ): UnsavedVisionAnnotation<VisionAnnotationDataType>[] {
   const commonProperties = {
