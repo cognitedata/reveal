@@ -1,18 +1,18 @@
 import { THREE } from '@cognite/reveal';
-import { THREE_EXAMPLES } from '@cognite/reveal';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
 import { CameraManager, CameraManagerHelper, CameraState, CameraChangeDelegate } from '@cognite/reveal';
 
 export class CustomCameraManager implements CameraManager {
     private _domElement: HTMLElement;
     private _camera: THREE.PerspectiveCamera;
-    private _controls: THREE_EXAMPLES.OrbitControls;
+    private _controls: OrbitControls;
     private readonly _cameraChangedListener: Array<CameraChangeDelegate> = [];
 
     constructor(domElement: HTMLElement, camera: THREE.PerspectiveCamera) {
         this._domElement = domElement;
         this._camera = camera;
-        this._controls = new THREE_EXAMPLES.OrbitControls(this._camera, domElement);
+        this._controls = new OrbitControls(this._camera, domElement);
         this._controls.enableDamping = true;
         this._controls.dampingFactor = 0.3;
 

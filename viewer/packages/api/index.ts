@@ -12,9 +12,5 @@ export * from './src/public/types';
 import * as THREE from 'three';
 export { THREE };
 
-// Export ThreeJS examples to enable easy import for our users
-import * as THREE_EXAMPLES from 'three-stdlib';
-export { THREE_EXAMPLES };
-
 const REVEAL_VERSION = process.env.VERSION;
 export { REVEAL_VERSION };
