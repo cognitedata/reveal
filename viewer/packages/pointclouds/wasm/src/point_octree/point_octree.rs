@@ -30,13 +30,12 @@ impl PointOctree<'_> {
 mod tests {
 
     use super::PointOctree;
-    use crate::linalg::{vec3, BoundingBox, Mat4, Vec3WithIndex};
-    use crate::shapes::oriented_box::OrientedBox;
-    use crate::shapes::shape::Shape;
+    use crate::linalg::{BoundingBox, Vec3WithIndex};
+    use crate::shapes::{OrientedBox, Shape};
 
     use js_sys::Uint16Array;
 
-    use nalgebra_glm::translate;
+    use nalgebra_glm::{DMat4, translate, vec3};
 
     use rand::prelude::*;
     use rand_chacha::ChaCha8Rng;
@@ -57,7 +56,7 @@ mod tests {
                     normalize_coordinate(rng.next_u32()) / 2.0,
                     normalize_coordinate(rng.next_u32()) / 2.0,
                 ),
-                index: i,
+                index: i as usize,
             });
         }
 
@@ -72,8 +71,8 @@ mod tests {
         let mut points = create_random_points_in_unit_box(NUM_POINTS);
 
         let shape: Box<dyn Shape> =
-            Box::<OrientedBox>::new(OrientedBox::new(Mat4::identity(), OBJECT_ID));
-        let bounding_box = BoundingBox::get_transformed_unit_cube(&Mat4::identity());
+            Box::<OrientedBox>::new(OrientedBox::new(DMat4::identity(), OBJECT_ID));
+        let bounding_box = BoundingBox::get_transformed_unit_cube(&DMat4::identity());
         let array = Uint16Array::new_with_length(NUM_POINTS);
 
         let octree = PointOctree::new(bounding_box.clone(), &mut points);
@@ -92,7 +91,7 @@ mod tests {
 
         let mut points = create_random_points_in_unit_box(NUM_POINTS);
 
-        let box_matrix = translate(&Mat4::identity(), &vec3(1.0, 0.0, 0.0));
+        let box_matrix = translate(&DMat4::identity(), &vec3(1.0, 0.0, 0.0));
         let bounding_box = BoundingBox::get_transformed_unit_cube(&box_matrix);
         let shape: Box<dyn Shape> =
             Box::<OrientedBox>::new(OrientedBox::new(box_matrix, OBJECT_ID));

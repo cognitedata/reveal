@@ -205,7 +205,7 @@ mod tests {
     use rand::prelude::*;
     use rand_chacha::ChaCha8Rng;
 
-    use nalgebra_glm::comp_max;
+    use nalgebra_glm::{comp_max, DVec3, vec3};
 
     use crate::test_utils::normalize_coordinate;
 
@@ -213,7 +213,7 @@ mod tests {
         find_splits, get_child_bounding_boxes, get_octree_child_index, get_split_ends,
         sort_points_into_sectors,
     };
-    use super::{vec3, BoundingBox, Vec3WithIndex};
+    use super::{BoundingBox, Vec3WithIndex};
 
     const EPSILON: f64 = 1e-4;
 
@@ -242,7 +242,7 @@ mod tests {
 
         let child_boxes = get_child_bounding_boxes(&bounding_box);
 
-        let mut accumulative_middle = vec3(0.0, 0.0, 0.0);
+        let mut accumulative_middle: DVec3 = Default::default();
         for child in child_boxes.iter() {
             accumulative_middle = accumulative_middle + (child.min + child.max) / 2.0;
         }
@@ -270,7 +270,7 @@ mod tests {
             );
             points.push(Vec3WithIndex {
                 vec: p,
-                index: i as u32,
+                index: i,
             });
         }
 

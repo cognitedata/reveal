@@ -45,10 +45,10 @@ mod tests {
     use wasm_bindgen_test::wasm_bindgen_test;
 
     use super::OrientedBox;
-    use crate::shapes::shape::Shape;
+    use crate::shapes::Shape;
 
     use nalgebra_glm::{
-        abs, comp_max, half_pi, inverse, rotate_x, scale, translate, vec4_to_vec3, DMat4, DVec3,
+        abs, comp_max, half_pi, inverse, rotate_x, scale, translate, vec4_to_vec3, DMat4, vec3, vec4,
     };
 
     #[wasm_bindgen_test]

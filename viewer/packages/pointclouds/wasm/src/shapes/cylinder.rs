@@ -80,11 +80,10 @@ impl Shape for Cylinder {
 #[cfg(test)]
 mod tests {
     use wasm_bindgen_test::wasm_bindgen_test;
+    use nalgebra_glm::vec3;
 
     use super::Cylinder;
-
-    use crate::linalg::vec3;
-    use crate::shapes::shape::Shape;
+    use crate::shapes::Shape;
 
     #[wasm_bindgen_test]
     fn cylinder_at_origin_contains_middle_point() {
