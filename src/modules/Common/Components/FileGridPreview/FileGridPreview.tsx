@@ -31,7 +31,7 @@ export const FileGridPreview = ({
   isActionDisabled: () => boolean;
   onItemSelect?: (item: TableDataItem, selected: boolean) => void;
   isSelected: (id: number) => boolean;
-  onItemRightClick?: (event: React.SyntheticEvent, item: TableDataItem) => void;
+  onItemRightClick?: (event: MouseEvent, item: TableDataItem) => void;
 }) => {
   const selected = isSelected(item.id);
   const actionDisabled = isActionDisabled();
@@ -76,7 +76,7 @@ export const FileGridPreview = ({
 
   const onContextMenu = useCallback((event: MouseEvent) => {
     if (onItemRightClick) {
-      onItemRightClick(event as unknown as React.SyntheticEvent, item);
+      onItemRightClick(event, item);
     }
   }, []);
 

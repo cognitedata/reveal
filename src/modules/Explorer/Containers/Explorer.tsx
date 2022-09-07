@@ -101,12 +101,12 @@ const Explorer = () => {
   );
 
   const handleContextMenuOpen = useCallback(
-    (event: React.SyntheticEvent, item: TableDataItem) => {
+    (event: MouseEvent, item: TableDataItem) => {
       event.preventDefault();
       setContextMenuDataItem(item);
       setContextMenuAnchorPoint({
-        x: (event as any).pageX,
-        y: (event as any).pageY,
+        x: event.pageX,
+        y: event.pageY,
       });
       setShowContextMenu(true);
       dispatch(setFocusedFileId(item.id));

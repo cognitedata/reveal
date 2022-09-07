@@ -91,7 +91,7 @@ export function FileTable(props: FileListTableProps<TableDataItem>) {
       rowData: TableDataItem;
     }) => {
       if (props.onItemRightClick) {
-        props.onItemRightClick(event, rowData);
+        props.onItemRightClick(event as unknown as MouseEvent, rowData);
       }
     },
   };

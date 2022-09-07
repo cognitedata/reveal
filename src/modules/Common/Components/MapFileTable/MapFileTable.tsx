@@ -95,7 +95,7 @@ export const MapFileTable = (props: MapTableProps) => {
       rowData: TableDataItem;
     }) => {
       if (props.onItemRightClick) {
-        props.onItemRightClick(event, rowData);
+        props.onItemRightClick(event as unknown as MouseEvent, rowData);
       }
     },
   };
