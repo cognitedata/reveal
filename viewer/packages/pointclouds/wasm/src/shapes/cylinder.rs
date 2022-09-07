@@ -1,4 +1,4 @@
-use nalgebra_glm::{dot, vec3, vec3_to_vec4, vec4, DMat4, DVec3};
+use nalgebra_glm::{dot, mat3_to_mat4, vec3, vec4, DMat3, DMat4, DVec3};
 
 use crate::linalg::BoundingBox;
 use crate::shapes::shape::Shape;
@@ -7,8 +7,7 @@ pub struct Cylinder {
     center_a: DVec3,
     center_b: DVec3,
     radius: f64,
-    object_id: u16,
-    _middle: DVec3,
+    object_id: u16
 }
 
 impl Cylinder {
@@ -17,12 +16,15 @@ impl Cylinder {
             center_a: center_a,
             center_b: center_b,
             radius: radius,
-            object_id: object_id,
-            _middle: (center_a + center_b) / 2.0,
+            object_id: object_id
         }
     }
 
-    fn get_scaled_orthogonal_basis(&self) -> [DVec3; 3] {
+    fn get_center(&self) -> DVec3 {
+        (self.center_a + self.center_b) / 2.0
+    }
+
+    fn get_scaled_orthogonal_basis(&self) -> DMat3 {
         let axis_vec = self.center_a - self.center_b;
         let axis_option_0 = vec3(1.0, 0.0, 0.0);
         let axis_option_1 = vec3(0.0, 1.0, 0.0);
@@ -37,37 +39,36 @@ impl Cylinder {
         let perp_vector_0: DVec3 = chosen_axis.cross(&axis_vec).normalize() * 2.0 * self.radius;
         let perp_vector_1: DVec3 = perp_vector_0.cross(&axis_vec).normalize() * 2.0 * self.radius;
 
-        [axis_vec, perp_vector_0, perp_vector_1]
+        DMat3::from_columns(&[axis_vec, perp_vector_0, perp_vector_1])
     }
 }
 
-fn create_transform_from_axes(axis: &[DVec3; 3], middle: &DVec3) -> DMat4 {
-    let mut matrix: DMat4 = DMat4::identity();
-    matrix.set_column(0, &vec3_to_vec4(&axis[0]));
-    matrix.set_column(1, &vec3_to_vec4(&axis[1]));
-    matrix.set_column(2, &vec3_to_vec4(&axis[2]));
-    matrix.set_column(3, &vec4(middle.x, middle.y, middle.z, 1.0));
+fn create_transform_from_axes(scaled_basis: &DMat3, cylinder_center: &DVec3) -> DMat4 {
+    let mut matrix = mat3_to_mat4(scaled_basis);
+    matrix.set_column(3, &vec4(cylinder_center.x, cylinder_center.y, cylinder_center.z, 1.0));
 
     matrix
 }
 
 impl Shape for Cylinder {
     fn contains_point(&self, point: &DVec3) -> bool {
+        let center = self.get_center();
         let axis = (self.center_a - self.center_b).normalize();
         let half_height = (self.center_a - self.center_b).magnitude() / 2.0;
 
-        let dist_along_axis = dot(&(point - self._middle), &axis);
+        let dist_along_axis = dot(&(point - center), &axis);
         let dist_vector_along_axis = axis * dist_along_axis;
         let axis_relative_middle = point - dist_vector_along_axis;
 
-        let dist_to_axis = (axis_relative_middle - self._middle).magnitude();
+        let dist_to_axis = (axis_relative_middle - center).magnitude();
 
         dist_along_axis.abs() < half_height && dist_to_axis < self.radius
     }
 
     fn create_bounding_box(&self) -> BoundingBox {
-        let axes = self.get_scaled_orthogonal_basis();
-        let matrix = create_transform_from_axes(&axes, &self._middle);
+        let center = self.get_center();
+        let scaled_basis = self.get_scaled_orthogonal_basis();
+        let matrix = create_transform_from_axes(&scaled_basis, &center);
 
         BoundingBox::get_transformed_unit_cube(&matrix)
     }
