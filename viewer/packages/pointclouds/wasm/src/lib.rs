@@ -36,7 +36,7 @@ pub fn assign_points(
     input_points: js_sys::Float32Array,
     input_bounding_box: js_sys::Object,
     input_point_offset: Vec<f64>,
-) -> js_sys::Uint16Array {
+) -> Result<js_sys::Uint16Array, String> {
     init();
 
     let mut point_vec = parse_inputs::parse_points(&input_points, input_point_offset);
@@ -45,7 +45,7 @@ pub fn assign_points(
         .unwrap()
         .into();
 
-    let shape_vec = parse_inputs::parse_objects(input_shapes);
+    let shape_vec = parse_inputs::parse_objects(input_shapes)?;
 
     let object_ids = js_sys::Uint16Array::new_with_length(input_points.length() / 3).fill(
         0,
@@ -54,9 +54,10 @@ pub fn assign_points(
     );
 
     let octree = point_octree::PointOctree::new(bounding_box, &mut point_vec);
-    for shape in shape_vec.iter() {
-        octree.assign_object_ids(&shape.create_bounding_box(), shape, &object_ids);
-    }
 
-    object_ids
+    shape_vec.iter().for_each(|shape| {
+        octree.assign_object_ids(&shape.create_bounding_box(), shape, &object_ids);
+    });
+
+    Ok(object_ids)
 }

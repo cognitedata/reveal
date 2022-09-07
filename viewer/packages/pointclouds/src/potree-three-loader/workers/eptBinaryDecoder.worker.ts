@@ -31,8 +31,8 @@ export async function parse(
   objects: StylableObject[],
   pointOffset: Vec3,
   boundingBox: AABB
-): Promise<ParsedEptData> {
-  return parseEpt(data, objects, pointOffset, boundingBox);
+): Promise<ParsedEptData | Error> {
+  return parseEpt(data, objects, pointOffset, boundingBox).catch(e => e as Error);
 }
 
 function assertDefined(buffer: ArrayBuffer | undefined): buffer is ArrayBuffer {

@@ -8,16 +8,18 @@ import * as THREE from 'three';
 
 import { WorkerPool } from '../utils/WorkerPool';
 import { ILoader } from './ILoader';
-import { ModelDataProvider } from '@reveal/modeldata-api';
 import { PointCloudEptGeometryNode } from '../geometry/PointCloudEptGeometryNode';
 import * as EptDecoderWorker from '../workers/eptBinaryDecoder.worker';
 
 import { ParsedEptData, EptInputData } from '../workers/parseEpt';
 
-import { fromThreeVector3, setupTransferableMethodsOnMain } from '@reveal/utilities';
 import { StylableObject } from '../../styling/StylableObject';
 import { createShapeBoundingBox } from '../../styling/shapes/createShapeBoundingBox';
 import { decomposeStylableObjects } from '../../styling/decomposeStylableObjects';
+
+import { fromThreeVector3, setupTransferableMethodsOnMain } from '@reveal/utilities';
+import { MetricsLogger } from '@reveal/metrics';
+import { ModelDataProvider } from '@reveal/modeldata-api';
 
 export class EptBinaryLoader implements ILoader {
   private readonly _dataLoader: ModelDataProvider;
@@ -43,8 +45,18 @@ export class EptBinaryLoader implements ILoader {
     const fullFileName = node.fileName() + this.extension();
     const data = await this._dataLoader.getBinaryFile(node.baseUrl(), fullFileName);
 
-    const parsedData = await this.parse(node, data);
-    this.finalizeLoading(parsedData, node);
+    const parsedResultOrError = await this.parse(node, data);
+
+    if (!(parsedResultOrError as any).position) { // Is an error
+      const error = parsedResultOrError as Error;
+      MetricsLogger.trackError(error, { moduleName: 'EptBinaryLoader', methodName: 'load' });
+
+      node.markAsNotLoading();
+
+      return;
+    }
+
+    this.finalizeLoading(parsedResultOrError as ParsedEptData, node);
   }
 
   private finalizeLoading(parsedData: ParsedEptData, node: PointCloudEptGeometryNode) {
@@ -56,7 +68,7 @@ export class EptBinaryLoader implements ILoader {
     node.doneLoading(geometry, tightBoundingBox, numPoints, new THREE.Vector3(...parsedData.mean));
   }
 
-  async parse(node: PointCloudEptGeometryNode, data: ArrayBuffer): Promise<ParsedEptData> {
+  async parse(node: PointCloudEptGeometryNode, data: ArrayBuffer): Promise<ParsedEptData | Error> {
     const autoTerminatingWorker = await EptBinaryLoader.WORKER_POOL.getWorker();
     const eptDecoderWorker = autoTerminatingWorker.worker as unknown as typeof EptDecoderWorker;
     const eptData: EptInputData = {
@@ -83,6 +95,7 @@ export class EptBinaryLoader implements ILoader {
       min: node.boundingBox.min.toArray(),
       max: node.boundingBox.max.toArray()
     });
+
     EptBinaryLoader.WORKER_POOL.releaseWorker(autoTerminatingWorker);
     return result;
   }

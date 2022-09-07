@@ -80,26 +80,26 @@ fn create_box(input: InputOrientedBox, id: u16) -> Box<shapes::OrientedBox> {
     ))
 }
 
-fn create_shape(obj: InputShape) -> Box<dyn shapes::Shape> {
+fn create_shape(obj: InputShape) -> Result<Box<dyn shapes::Shape>, String> {
     if obj.cylinder.is_some() {
-        create_cylinder(*obj.cylinder.unwrap(), obj.object_id)
+        Ok(create_cylinder(*obj.cylinder.unwrap(), obj.object_id))
     } else if obj.oriented_box.is_some() {
-        create_box(*obj.oriented_box.unwrap(), obj.object_id)
+        Ok(create_box(*obj.oriented_box.unwrap(), obj.object_id))
     } else {
-        panic!("Unrecognized input shape");
+        Err("Unrecognized geometry type found while parsing".to_string())
     }
 }
 
 pub fn parse_objects(
     input_shapes: Vec<wasm_bindgen::prelude::JsValue>,
-) -> Vec<Box<dyn shapes::Shape>> {
+) -> Result<Vec<Box<dyn shapes::Shape>>, String> {
     let mut shape_vec =
         Vec::<Box<dyn shapes::Shape>>::with_capacity(input_shapes.len() as usize);
 
     for value in input_shapes.iter() {
         let input_shape = value.into_serde::<InputShape>().unwrap();
-        shape_vec.push(create_shape(input_shape));
+        shape_vec.push(create_shape(input_shape)?);
     }
 
-    shape_vec
+    Ok(shape_vec)
 }
