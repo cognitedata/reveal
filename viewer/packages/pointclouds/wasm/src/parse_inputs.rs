@@ -81,10 +81,10 @@ fn create_box(input: InputOrientedBox, id: u16) -> Box<shapes::OrientedBox> {
 }
 
 fn create_shape(obj: InputShape) -> Result<Box<dyn shapes::Shape>, String> {
-    if obj.cylinder.is_some() {
-        Ok(create_cylinder(*obj.cylinder.unwrap(), obj.object_id))
-    } else if obj.oriented_box.is_some() {
-        Ok(create_box(*obj.oriented_box.unwrap(), obj.object_id))
+    if let Some(input_cylinder) = obj.cylinder {
+        Ok(create_cylinder(*input_cylinder, obj.object_id))
+    } else if let Some(input_box) = obj.oriented_box {
+        Ok(create_box(*input_box, obj.object_id))
     } else {
         Err("Unrecognized geometry type found while parsing".to_string())
     }
@@ -97,8 +97,10 @@ pub fn parse_objects(
         Vec::<Box<dyn shapes::Shape>>::with_capacity(input_shapes.len() as usize);
 
     for value in input_shapes.iter() {
-        let input_shape = value.into_serde::<InputShape>().unwrap();
-        shape_vec.push(create_shape(input_shape)?);
+        let input_shape = value.into_serde::<InputShape>()
+            .map_err(|serde_error| format!("Got error while deserializing shape: {}", serde_error));
+
+        shape_vec.push(create_shape(input_shape?)?);
     }
 
     Ok(shape_vec)
