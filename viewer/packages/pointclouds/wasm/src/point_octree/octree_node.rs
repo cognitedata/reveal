@@ -204,7 +204,7 @@ mod tests {
     use rand::prelude::*;
     use rand_chacha::ChaCha8Rng;
 
-    use nalgebra_glm::{comp_max, DVec3, vec3};
+    use nalgebra_glm::{comp_max, DVec3, epsilon, vec3};
 
     use crate::test_utils::normalize_coordinate;
 
@@ -213,8 +213,6 @@ mod tests {
         sort_points_into_sectors,
     };
     use super::{BoundingBox, Vec3WithIndex};
-
-    const EPSILON: f64 = 1e-4;
 
     #[wasm_bindgen_test]
     fn test_point_in_first_octant_gets_index_0() {
@@ -248,7 +246,7 @@ mod tests {
 
         let average_middle = accumulative_middle / (child_boxes.len() as f64);
 
-        assert!(comp_max(&(average_middle - middle).abs()) < EPSILON);
+        assert!(comp_max(&(average_middle - middle).abs()) < epsilon());
     }
 
     #[wasm_bindgen_test]
