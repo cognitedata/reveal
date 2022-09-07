@@ -1143,7 +1143,7 @@ export class Cognite3DViewer {
     const isVisible = visibility === 'visible' && display !== 'none';
 
     if (isVisible) {
-      TWEEN.update(TWEEN.now());
+      TWEEN.update(time);
       this.recalculateBoundingBox();
       this._cameraManager.update(this.clock.getDelta(), this._updateNearAndFarPlaneBuffers.combinedBbox);
       this.revealManager.update(this.getCamera());
