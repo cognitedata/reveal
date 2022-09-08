@@ -86,7 +86,7 @@
     "@types/tween.js": "18.5.1",
     "@typescript-eslint/eslint-plugin": "5.36.2",
     "@typescript-eslint/parser": "5.36.2",
-    "concurrently": "7.3.0",
+    "concurrently": "7.4.0",
     "copy-pkg-json-webpack-plugin": "0.0.40",
     "copy-webpack-plugin": "11.0.0",
     "core-js": "3.25.1",
