@@ -26,11 +26,10 @@ import reducer, {
   deleteTempKeypointCollection,
   initialState,
   keypointSelectStatusChange,
-  onCreateKeypointRegion,
-  onUpdateKeypointRegion,
+  onCreateRegion,
+  onUpdateRegion,
   selectCollection,
   setCollectionStatus,
-  setKeepUnsavedRegion,
   setLastCollectionName,
   setLastShape,
   setSelectedTool,
@@ -59,6 +58,10 @@ jest.mock('src/modules/Common/Utils/AnnotationUtils/AnnotationUtils', () => ({
 }));
 
 describe('Test annotator slice', () => {
+  test('reducer should return the initial state', () => {
+    expect(reducer(undefined, { type: undefined })).toEqual(initialState);
+  });
+
   const gaugeKeypoints: PredefinedKeypoint[] = [
     {
       caption: 'left',
@@ -162,7 +165,7 @@ describe('Test annotator slice', () => {
         2: getDummyKeypointCollectionState({
           id: 2,
           label: 'gauge',
-          keypointIds: ['K1', 'K2'],
+          keypointIds: ['k1', 'k2'],
         }),
       },
       allIds: [1, 2],
@@ -175,17 +178,13 @@ describe('Test annotator slice', () => {
       byId: {
         V1: getDummyKeypointState('up'),
         V2: getDummyKeypointState('down'),
-        K1: getDummyKeypointState('left'),
-        K2: getDummyKeypointState('right'),
+        k1: getDummyKeypointState('left'),
+        k2: getDummyKeypointState('right'),
       },
-      allIds: ['V1', 'V2', 'K1', 'K2'],
-      selectedIds: ['K1'],
+      allIds: ['V1', 'V2', 'k1', 'k2'],
+      selectedIds: ['k1'],
     },
   };
-
-  test('reducer should return the initial state', () => {
-    expect(reducer(undefined, { type: undefined })).toEqual(initialState);
-  });
 
   describe('Test reducers', () => {
     describe('Test selectCollection reducer', () => {
@@ -241,7 +240,7 @@ describe('Test annotator slice', () => {
             ...modifiedInitialState.collections.byId,
             2: getDummyKeypointCollectionState({
               id: 2,
-              keypointIds: ['K2'],
+              keypointIds: ['k2'],
               show: false,
               status: Status.Rejected,
             }),
@@ -292,7 +291,7 @@ describe('Test annotator slice', () => {
             ...modifiedInitialState.collections.byId,
             2: getDummyKeypointCollectionState({
               id: 2,
-              keypointIds: ['K2'],
+              keypointIds: ['k2'],
               show: false,
               status: Status.Rejected,
             }),
@@ -528,31 +527,6 @@ describe('Test annotator slice', () => {
       });
     });
 
-    describe('Test setKeepUnsavedRegion reducer', () => {
-      test('when provided value true, should be equal to the value in state', () => {
-        const previousState = {
-          ...modifiedInitialState,
-        };
-        const actionPayload = true;
-
-        expect(
-          reducer(previousState, setKeepUnsavedRegion(actionPayload))
-            .keepUnsavedRegion
-        ).toEqual(actionPayload);
-      });
-      test('when provided value false, should be equal to the value in state', () => {
-        const previousState = {
-          ...modifiedInitialState,
-        };
-        const actionPayload = false;
-
-        expect(
-          reducer(previousState, setKeepUnsavedRegion(actionPayload))
-            .keepUnsavedRegion
-        ).toEqual(actionPayload);
-      });
-    });
-
     describe('Test createTempKeypointCollection reducer', () => {
       const consoleSpy = jest
         .spyOn(console, 'warn')
@@ -677,6 +651,42 @@ describe('Test annotator slice', () => {
         expect(consoleSpy).toHaveBeenCalled();
       });
 
+      test('when temp region is available, but it is not an AnnotatorPointRegion', () => {
+        const collectionName = 'test-box';
+
+        const previousState = {
+          ...initialState,
+          predefinedAnnotations: {
+            predefinedKeypointCollections: [
+              ...predefinedKeypointCollectionList,
+              {
+                id: 3,
+                collectionName,
+                color: 'red',
+                keypoints: [],
+              },
+            ],
+            predefinedShapes: predefinedShapesList,
+          },
+          temporaryRegion: getDummyRegionOriginatedInAnnotator({
+            id: 1,
+            annotationLabelOrText: collectionName,
+            color: 'red',
+            type: AnnotatorRegionType.BoxRegion,
+            x: 0.5,
+            y: 0.5,
+            w: 0.2,
+            h: 0.5,
+          }),
+        };
+
+        expect(
+          reducer(previousState, createTempKeypointCollection())
+            .isCreatingKeypointCollection
+        ).toEqual(false);
+        expect(consoleSpy).toHaveBeenCalled();
+      });
+
       test('when temp region is available, also predefined keypoint collection for the collection also exist', () => {
         const collectionName = 'valve';
 
@@ -737,17 +747,20 @@ describe('Test annotator slice', () => {
         expect(
           reducer(previousState, createTempKeypointCollection()).lastKeyPoint
         ).toEqual(predefinedCollection!.keypoints[0].caption);
+        expect(
+          reducer(previousState, createTempKeypointCollection()).temporaryRegion
+        ).toBeUndefined();
       });
     });
 
-    describe('Test onCreateKeypointRegion reducer', () => {
+    describe('Test onCreateRegion reducer', () => {
       const consoleSpy = jest
         .spyOn(console, 'warn')
         .mockImplementation(() => {});
 
       const collectionName = 'valve';
 
-      const tempRegionWithLabels = getDummyRegionOriginatedInAnnotator({
+      const tempKeypointRegionWithLabels = getDummyRegionOriginatedInAnnotator({
         id: 1,
         annotationLabelOrText: collectionName,
         type: AnnotatorRegionType.PointRegion,
@@ -759,172 +772,309 @@ describe('Test annotator slice', () => {
         parentAnnotationId: 0,
       });
 
-      test('when isCreatingKeypointCollection is false', () => {
-        const previousState = {
-          ...modifiedInitialState,
-        };
+      describe('When provided region is empty', () => {
+        test('when provided region is empty', () => {
+          const previousState = {
+            ...modifiedInitialStateDuringKeypointCreation,
+          };
 
-        expect(
-          reducer(
-            previousState,
-            onCreateKeypointRegion(tempRegionWithLabels as AnnotatorPointRegion)
-          ).keypointMap.byId[tempRegionWithLabels.id]
-        ).toBeUndefined();
-        expect(consoleSpy).toHaveBeenCalled();
-      });
-      test('when lastCollectionId is undefined', () => {
-        const previousState = {
-          ...modifiedInitialStateDuringKeypointCreation,
-          lastCollectionId: undefined,
-        };
-
-        expect(
-          reducer(
-            previousState,
-            onCreateKeypointRegion(tempRegionWithLabels as AnnotatorPointRegion)
-          ).keypointMap.byId[tempRegionWithLabels.id]
-        ).toBeUndefined();
-        expect(consoleSpy).toHaveBeenCalled();
+          expect(
+            reducer(previousState, onCreateRegion({} as AnnotatorPointRegion))
+              .keypointMap.byId[tempKeypointRegionWithLabels.id]
+          ).toBeUndefined();
+          expect(
+            reducer(previousState, onCreateRegion({} as AnnotatorPointRegion))
+              .temporaryRegion
+          ).toStrictEqual({});
+        });
       });
 
-      test('when provided region is not a point region', () => {
-        const tempBoxRegion = getDummyRegionOriginatedInAnnotator({
-          id: 1,
-          annotationLabelOrText: 'Box',
-          type: AnnotatorRegionType.BoxRegion,
-          x: 0.5,
-          y: 0.5,
-          h: 1,
-          w: 1,
-          color: 'red',
+      describe('When provided region is not a keypoint collection', () => {
+        test('when provided region is not a point region', () => {
+          const tempBoxRegion = getDummyRegionOriginatedInAnnotator({
+            id: 1,
+            annotationLabelOrText: 'box',
+            type: AnnotatorRegionType.BoxRegion,
+            x: 0.5,
+            y: 0.5,
+            h: 1,
+            w: 1,
+            color: 'red',
+          });
+
+          const previousState = {
+            ...modifiedInitialState,
+          };
+
+          expect(
+            reducer(
+              previousState,
+              onCreateRegion(tempBoxRegion as AnnotatorPointRegion)
+            ).keypointMap.byId[tempBoxRegion.id]
+          ).toBeUndefined();
+
+          expect(
+            reducer(
+              previousState,
+              onCreateRegion(tempBoxRegion as AnnotatorPointRegion)
+            ).temporaryRegion
+          ).toStrictEqual(tempBoxRegion);
+          expect(
+            reducer(
+              previousState,
+              onCreateRegion(tempBoxRegion as AnnotatorPointRegion)
+            ).lastShape
+          ).toEqual(tempBoxRegion.annotationLabelOrText);
+        });
+        test('when provided region is not a point region and annotation label Text is empty', () => {
+          const tempBoxRegion = getDummyRegionOriginatedInAnnotator({
+            id: 1,
+            annotationLabelOrText: '',
+            type: AnnotatorRegionType.BoxRegion,
+            x: 0.5,
+            y: 0.5,
+            h: 1,
+            w: 1,
+            color: 'red',
+          });
+
+          const previousState = {
+            ...modifiedInitialState,
+          };
+
+          expect(
+            reducer(
+              previousState,
+              onCreateRegion(tempBoxRegion as AnnotatorPointRegion)
+            ).keypointMap.byId[tempBoxRegion.id]
+          ).toBeUndefined();
+
+          expect(
+            reducer(
+              previousState,
+              onCreateRegion(tempBoxRegion as AnnotatorPointRegion)
+            ).temporaryRegion
+          ).toStrictEqual(tempBoxRegion);
+          expect(
+            reducer(
+              previousState,
+              onCreateRegion(tempBoxRegion as AnnotatorPointRegion)
+            ).lastShape
+          ).toEqual(modifiedInitialState.lastShape);
+        });
+        test('when provided region is not a point region and annotation label Text is an invalid predefined shape', () => {
+          const tempBoxRegion = getDummyRegionOriginatedInAnnotator({
+            id: 1,
+            annotationLabelOrText: 'invalid-shape',
+            type: AnnotatorRegionType.BoxRegion,
+            x: 0.5,
+            y: 0.5,
+            h: 1,
+            w: 1,
+            color: 'red',
+          });
+
+          const previousState = {
+            ...modifiedInitialState,
+          };
+
+          expect(
+            reducer(
+              previousState,
+              onCreateRegion(tempBoxRegion as AnnotatorPointRegion)
+            ).temporaryRegion
+          ).toStrictEqual(tempBoxRegion);
+          expect(
+            reducer(
+              previousState,
+              onCreateRegion(tempBoxRegion as AnnotatorPointRegion)
+            ).lastShape
+          ).toEqual(modifiedInitialState.lastShape);
+        });
+      });
+
+      describe('When provided region is a keypoint collection', () => {
+        test('when provided region is a point region and annotationLabelText is Empty', () => {
+          const previousState = {
+            ...modifiedInitialStateDuringKeypointCreation,
+          };
+
+          const tempRegionWithoutLabel = {
+            ...tempKeypointRegionWithLabels,
+            annotationLabelOrText: '',
+          };
+
+          expect(
+            reducer(
+              previousState,
+              onCreateRegion(tempRegionWithoutLabel as AnnotatorPointRegion)
+            ).keypointMap.byId[tempRegionWithoutLabel.id]
+          ).toBeUndefined();
+          expect(
+            reducer(
+              previousState,
+              onCreateRegion(tempRegionWithoutLabel as AnnotatorPointRegion)
+            ).lastCollectionName
+          ).toEqual(previousState.lastCollectionName);
+          expect(consoleSpy).toHaveBeenCalled();
+        });
+        test('when provided region is a point region and isCreatingKeypointCollection is false', () => {
+          const previousState = {
+            ...modifiedInitialState,
+          };
+
+          expect(
+            reducer(
+              previousState,
+              onCreateRegion(
+                tempKeypointRegionWithLabels as AnnotatorPointRegion
+              )
+            ).keypointMap.byId[tempKeypointRegionWithLabels.id]
+          ).toBeUndefined();
+          expect(consoleSpy).toHaveBeenCalled();
+          expect(
+            reducer(
+              previousState,
+              onCreateRegion(
+                tempKeypointRegionWithLabels as AnnotatorPointRegion
+              )
+            ).lastCollectionName
+          ).toEqual(tempKeypointRegionWithLabels.annotationLabelOrText);
+        });
+        test('when lastCollectionId is undefined', () => {
+          const previousState = {
+            ...modifiedInitialStateDuringKeypointCreation,
+            lastCollectionId: undefined,
+          };
+
+          expect(
+            reducer(
+              previousState,
+              onCreateRegion(
+                tempKeypointRegionWithLabels as AnnotatorPointRegion
+              )
+            ).keypointMap.byId[tempKeypointRegionWithLabels.id]
+          ).toBeUndefined();
+          expect(consoleSpy).toHaveBeenCalled();
+          expect(
+            reducer(
+              previousState,
+              onCreateRegion(
+                tempKeypointRegionWithLabels as AnnotatorPointRegion
+              )
+            ).lastCollectionName
+          ).toEqual(tempKeypointRegionWithLabels.annotationLabelOrText);
         });
 
-        const previousState = {
-          ...modifiedInitialStateDuringKeypointCreation,
-        };
+        test('when keypoint label is not available', () => {
+          const previousState = {
+            ...modifiedInitialStateDuringKeypointCreation,
+          };
 
-        expect(
-          reducer(
-            previousState,
-            onCreateKeypointRegion(tempBoxRegion as AnnotatorPointRegion)
-          ).keypointMap.byId[tempRegionWithLabels.id]
-        ).toBeUndefined();
-        expect(consoleSpy).toHaveBeenCalled();
-      });
-      test('when provided region is empty', () => {
-        const previousState = {
-          ...modifiedInitialStateDuringKeypointCreation,
-        };
+          const tempRegionWithoutKeypointLabel = {
+            ...tempKeypointRegionWithLabels,
+            keypointLabel: '',
+          };
 
-        expect(
-          reducer(
-            previousState,
-            onCreateKeypointRegion({} as AnnotatorPointRegion)
-          ).keypointMap.byId[tempRegionWithLabels.id]
-        ).toBeUndefined();
-        expect(consoleSpy).toHaveBeenCalled();
-      });
-      test('when annotationLabel, keypoint label or keypoint data not available', () => {
-        const previousState = {
-          ...modifiedInitialStateDuringKeypointCreation,
-        };
-
-        const tempRegionWithoutLabel = {
-          id: 1,
-          type: AnnotatorRegionType.PointRegion,
-          x: 0.5,
-          y: 0.5,
-        };
-
-        expect(
-          reducer(
-            previousState,
-            onCreateKeypointRegion(
-              tempRegionWithoutLabel as AnnotatorPointRegion
-            )
-          ).keypointMap.byId[tempRegionWithoutLabel.id]
-        ).toBeUndefined();
-        expect(consoleSpy).toHaveBeenCalled();
-        expect(
-          reducer(
-            previousState,
-            onCreateKeypointRegion({
-              ...tempRegionWithLabels,
-              x: NaN,
-              y: NaN,
-            } as AnnotatorPointRegion)
-          ).keypointMap.byId[tempRegionWithoutLabel.id]
-        ).toBeUndefined();
-        expect(consoleSpy).toHaveBeenCalled();
-      });
-      test('when temp keypoint collection exist but region is of invalid keypoint collection', () => {
-        const previousState = {
-          ...modifiedInitialStateDuringKeypointCreation,
-        };
-
-        const newRegion = getDummyRegionOriginatedInAnnotator({
-          id: 1,
-          annotationLabelOrText: 'invalid-collection-name',
-          type: AnnotatorRegionType.PointRegion,
-          x: 0.5,
-          y: 0.5,
-          keypointLabel: 'up',
-          keypointConfidence: 1,
-          color: 'red',
-          parentAnnotationId: 0,
+          expect(
+            reducer(
+              previousState,
+              onCreateRegion(
+                tempRegionWithoutKeypointLabel as AnnotatorPointRegion
+              )
+            ).keypointMap.byId[tempRegionWithoutKeypointLabel.id]
+          ).toBeUndefined();
+          expect(consoleSpy).toHaveBeenCalled();
         });
+        test('when keypoint position data are not available', () => {
+          const previousState = {
+            ...modifiedInitialStateDuringKeypointCreation,
+          };
 
-        expect(
-          reducer(previousState, onCreateKeypointRegion(newRegion)).keypointMap
-            .byId[newRegion.id]
-        ).toBeUndefined();
-        expect(consoleSpy).toHaveBeenCalled();
-      });
-      test('when temp keypoint collection exist but region keypoint label is invalid', () => {
-        const previousState = {
-          ...modifiedInitialStateDuringKeypointCreation,
-        };
-
-        const newRegion = getDummyRegionOriginatedInAnnotator({
-          id: 1,
-          annotationLabelOrText: 'valve',
-          type: AnnotatorRegionType.PointRegion,
-          x: 0.5,
-          y: 0.5,
-          keypointLabel: 'up',
-          keypointConfidence: 1,
-          color: 'red',
-          parentAnnotationId: 0,
+          expect(
+            reducer(
+              previousState,
+              onCreateRegion({
+                ...tempKeypointRegionWithLabels,
+                x: NaN,
+                y: NaN,
+              } as AnnotatorPointRegion)
+            ).keypointMap.byId[tempKeypointRegionWithLabels.id]
+          ).toBeUndefined();
+          expect(consoleSpy).toHaveBeenCalled();
         });
+        test('when temp keypoint collection exist but region is of invalid keypoint collection', () => {
+          const previousState = {
+            ...modifiedInitialStateDuringKeypointCreation,
+          };
 
-        expect(
-          reducer(previousState, onCreateKeypointRegion(newRegion)).keypointMap
-            .byId[newRegion.id]
-        ).toBeUndefined();
-        expect(consoleSpy).toHaveBeenCalled();
-      });
-      test('when temp keypoint collection exist but region is already created', () => {
-        const previousState = {
-          ...modifiedInitialStateDuringKeypointCreation,
-        };
+          const newRegion = getDummyRegionOriginatedInAnnotator({
+            id: 1,
+            annotationLabelOrText: 'invalid-collection-name',
+            type: AnnotatorRegionType.PointRegion,
+            x: 0.5,
+            y: 0.5,
+            keypointLabel: 'up',
+            keypointConfidence: 1,
+            color: 'red',
+            parentAnnotationId: 0,
+          });
 
-        const newRegion = getDummyRegionOriginatedInAnnotator({
-          id: 1,
-          annotationLabelOrText: 'valve',
-          type: AnnotatorRegionType.PointRegion,
-          x: 0.5,
-          y: 0.5,
-          keypointLabel: 'one',
-          keypointConfidence: 1,
-          color: 'red',
-          parentAnnotationId: 0,
+          expect(
+            reducer(previousState, onCreateRegion(newRegion)).keypointMap.byId[
+              newRegion.id
+            ]
+          ).toBeUndefined();
+          expect(consoleSpy).toHaveBeenCalled();
         });
+        test('when temp keypoint collection exist but region keypoint label is invalid', () => {
+          const previousState = {
+            ...modifiedInitialStateDuringKeypointCreation,
+          };
 
-        expect(
-          reducer(previousState, onCreateKeypointRegion(newRegion)).keypointMap
-            .byId[newRegion.id]
-        ).toBeUndefined();
-        expect(consoleSpy).toHaveBeenCalled();
+          const newRegion = getDummyRegionOriginatedInAnnotator({
+            id: 1,
+            annotationLabelOrText: 'valve',
+            type: AnnotatorRegionType.PointRegion,
+            x: 0.5,
+            y: 0.5,
+            keypointLabel: 'up',
+            keypointConfidence: 1,
+            color: 'red',
+            parentAnnotationId: 0,
+          });
+
+          expect(
+            reducer(previousState, onCreateRegion(newRegion)).keypointMap.byId[
+              newRegion.id
+            ]
+          ).toBeUndefined();
+          expect(consoleSpy).toHaveBeenCalled();
+        });
+        test('when temp keypoint collection exist but region is already created', () => {
+          const previousState = {
+            ...modifiedInitialStateDuringKeypointCreation,
+          };
+
+          const newRegion = getDummyRegionOriginatedInAnnotator({
+            id: 1,
+            annotationLabelOrText: 'valve',
+            type: AnnotatorRegionType.PointRegion,
+            x: 0.5,
+            y: 0.5,
+            keypointLabel: 'one',
+            keypointConfidence: 1,
+            color: 'red',
+            parentAnnotationId: 0,
+          });
+
+          expect(
+            reducer(previousState, onCreateRegion(newRegion)).keypointMap.byId[
+              newRegion.id
+            ]
+          ).toBeUndefined();
+          expect(consoleSpy).toHaveBeenCalled();
+        });
       });
     });
 
@@ -933,8 +1083,7 @@ describe('Test annotator slice', () => {
       updatedRegion: AnnotatorPointRegion
     ) => {
       expect(
-        reducer(previousState, onUpdateKeypointRegion(updatedRegion))
-          .temporaryRegion
+        reducer(previousState, onUpdateRegion(updatedRegion)).temporaryRegion
       ).toStrictEqual(
         expect.objectContaining({
           x: (updatedRegion as AnnotatorPointRegion).x,
@@ -954,16 +1103,17 @@ describe('Test annotator slice', () => {
         .mockImplementation(() => {});
 
       const collectionName = 'valve';
+      const shapeName = 'box';
 
-      const tempRegionWithoutLabel = {
-        id: 1,
+      const tempPointRegionWithoutKeypointData = {
+        id: 'k3',
         type: AnnotatorRegionType.PointRegion,
         x: 0.5,
         y: 0.5,
       } as AnnotatorNewRegion;
 
-      const tempRegionWithLabels = getDummyRegionOriginatedInAnnotator({
-        id: 1,
+      const tempPointRegionWithLabels = getDummyRegionOriginatedInAnnotator({
+        id: 'k3',
         annotationLabelOrText: collectionName,
         type: AnnotatorRegionType.PointRegion,
         x: 0.6,
@@ -974,281 +1124,446 @@ describe('Test annotator slice', () => {
         parentAnnotationId: 0,
       });
 
-      test('when provided region is empty', () => {
-        const previousState: AnnotatorWrapperState = {
-          ...modifiedInitialStateDuringKeypointCreation,
-          temporaryRegion: tempRegionWithoutLabel,
-        };
+      const tempBoxRegionWithoutLabel = {
+        id: 1,
+        type: AnnotatorRegionType.PointRegion,
+        x: 0.5,
+        y: 0.5,
+      } as AnnotatorNewRegion;
 
-        expect(
-          reducer(
-            previousState,
-            onUpdateKeypointRegion({} as AnnotatorPointRegion)
-          ).temporaryRegion
-        ).toStrictEqual(tempRegionWithoutLabel);
-        expect(
-          reducer(
-            previousState,
-            onUpdateKeypointRegion({} as AnnotatorPointRegion)
-          ).keypointMap.byId[tempRegionWithLabels.id]
-        ).toBeUndefined();
-        expect(consoleSpy).toHaveBeenCalled();
+      const tempBoxRegionWithLabels = getDummyRegionOriginatedInAnnotator({
+        id: 1,
+        annotationLabelOrText: shapeName,
+        type: AnnotatorRegionType.BoxRegion,
+        x: 0.6,
+        y: 0.8,
+        w: 0.3,
+        h: 0.2,
+        color: 'red',
+      });
+      describe('when provided region is empty', () => {
+        test('when provided region is empty', () => {
+          const previousState: AnnotatorWrapperState = {
+            ...modifiedInitialStateDuringKeypointCreation,
+            temporaryRegion: tempPointRegionWithoutKeypointData,
+          };
+
+          expect(
+            reducer(previousState, onUpdateRegion({} as AnnotatorPointRegion))
+              .temporaryRegion
+          ).toStrictEqual(tempPointRegionWithoutKeypointData);
+          expect(
+            reducer(previousState, onUpdateRegion({} as AnnotatorPointRegion))
+              .keypointMap.byId[tempPointRegionWithLabels.id]
+          ).toBeUndefined();
+          expect(
+            reducer(previousState, onUpdateRegion({} as AnnotatorPointRegion))
+              .lastShape
+          ).toEqual(previousState.lastShape);
+          expect(
+            reducer(previousState, onUpdateRegion({} as AnnotatorPointRegion))
+              .lastCollectionName
+          ).toEqual(previousState.lastCollectionName);
+          expect(consoleSpy).toHaveBeenCalled();
+        });
       });
 
-      test('when tempRegion id is same as updated region id', () => {
-        const previousState: AnnotatorWrapperState = {
-          ...modifiedInitialStateDuringKeypointCreation,
-          temporaryRegion: tempRegionWithoutLabel,
-        };
+      describe('when provided region id is same as tempRegion id', () => {
+        describe('when provided region is a point region', () => {
+          test('when provided region is a point region and annotationLabelText is Empty', () => {
+            const previousState = {
+              ...modifiedInitialStateDuringKeypointCreation,
+              temporaryRegion: tempPointRegionWithoutKeypointData,
+            };
 
-        isSameAsTempRegionOnUpdateKeypointRegion(
-          previousState,
-          tempRegionWithLabels as AnnotatorPointRegion
-        );
-      });
+            const tempPointRegionWithoutLabel = {
+              ...tempPointRegionWithLabels,
+              annotationLabelOrText: '',
+            };
 
-      test('when updated region exists as a keypoint in keypoint map', () => {
-        const previousState: AnnotatorWrapperState = {
-          ...modifiedInitialStateDuringKeypointCreation,
-          temporaryRegion: {
-            ...tempRegionWithoutLabel,
-            id: 2,
-          },
-        };
+            expect(
+              reducer(
+                previousState,
+                onUpdateRegion(tempPointRegionWithoutLabel)
+              ).temporaryRegion
+            ).toStrictEqual(tempPointRegionWithoutLabel);
 
-        const updatedRegionOfKeypoint = getDummyRegionOriginatedInAnnotator({
-          id: 'V1',
-          annotationLabelOrText: 'valve',
-          type: AnnotatorRegionType.PointRegion,
-          x: 0.7,
-          y: 0.8,
-          keypointLabel: 'up',
-          keypointConfidence: 1,
-          color: 'red',
-          parentAnnotationId: 0,
-        }) as AnnotatorPointRegion;
+            expect(
+              reducer(
+                previousState,
+                onUpdateRegion(
+                  tempPointRegionWithoutLabel as AnnotatorPointRegion
+                )
+              ).keypointMap.byId[tempPointRegionWithoutLabel.id]
+            ).toBeUndefined();
+            expect(
+              reducer(
+                previousState,
+                onUpdateRegion(
+                  tempPointRegionWithoutLabel as AnnotatorPointRegion
+                )
+              ).lastCollectionName
+            ).toEqual(previousState.lastCollectionName);
+            expect(consoleSpy).toHaveBeenCalled();
+          });
 
-        expect(
-          reducer(
-            previousState,
-            onUpdateKeypointRegion(updatedRegionOfKeypoint)
-          ).keypointMap.byId[updatedRegionOfKeypoint.id]
-        ).toStrictEqual(
-          expect.objectContaining({
-            point: expect.objectContaining({
-              x: updatedRegionOfKeypoint.x,
-              y: updatedRegionOfKeypoint.y,
-            }),
-            label: updatedRegionOfKeypoint.keypointLabel,
-            confidence: updatedRegionOfKeypoint.keypointConfidence,
-          })
-        );
-      });
-
-      test('when updated region is invalid - invalid keypoint id and collection name', () => {
-        const previousState: AnnotatorWrapperState = {
-          ...modifiedInitialStateDuringKeypointCreation,
-          temporaryRegion: tempRegionWithoutLabel,
-        };
-
-        expect(
-          reducer(
-            previousState,
-            onUpdateKeypointRegion({
-              ...tempRegionWithLabels,
+          test('when provided region is invalid - invalid keypoint id and collection name', () => {
+            const previousState: AnnotatorWrapperState = {
+              ...modifiedInitialStateDuringKeypointCreation,
+              temporaryRegion: tempPointRegionWithoutKeypointData,
+            };
+            const tmpPointRegionWithInvalidCollectionNameAndKeypoint = {
+              ...tempPointRegionWithLabels,
               id: 'S1',
               annotationLabelOrText: 'invalid-collection-name',
+            };
+
+            expect(
+              reducer(
+                previousState,
+                onUpdateRegion(
+                  tmpPointRegionWithInvalidCollectionNameAndKeypoint
+                )
+              ).temporaryRegion
+            ).toStrictEqual(tempPointRegionWithoutKeypointData);
+
+            expect(
+              reducer(
+                previousState,
+                onUpdateRegion(
+                  tmpPointRegionWithInvalidCollectionNameAndKeypoint
+                )
+              ).keypointMap.byId[
+                tmpPointRegionWithInvalidCollectionNameAndKeypoint.id
+              ]
+            ).toBeUndefined();
+            expect(
+              reducer(
+                previousState,
+                onUpdateRegion(
+                  tmpPointRegionWithInvalidCollectionNameAndKeypoint
+                )
+              ).lastCollectionName
+            ).toEqual(previousState.lastCollectionName);
+
+            expect(consoleSpy).toHaveBeenCalled();
+          });
+
+          test('when isCreatingKeypointCollection is false', () => {
+            const previousState: AnnotatorWrapperState = {
+              ...modifiedInitialState,
+              temporaryRegion: tempPointRegionWithoutKeypointData,
+            };
+
+            isSameAsTempRegionOnUpdateKeypointRegion(
+              previousState,
+              tempPointRegionWithLabels as AnnotatorPointRegion
+            );
+
+            expect(
+              reducer(
+                previousState,
+                onUpdateRegion(
+                  tempPointRegionWithLabels as AnnotatorPointRegion
+                )
+              ).keypointMap.byId[tempPointRegionWithLabels.id]
+            ).toBeUndefined();
+            expect(
+              reducer(previousState, onUpdateRegion(tempPointRegionWithLabels))
+                .lastCollectionName
+            ).toEqual(tempPointRegionWithLabels.annotationLabelOrText);
+          });
+          test('when lastCollectionId is undefined', () => {
+            const previousState = {
+              ...modifiedInitialStateDuringKeypointCreation,
+              lastCollectionId: undefined,
+              temporaryRegion: tempPointRegionWithoutKeypointData,
+            };
+
+            isSameAsTempRegionOnUpdateKeypointRegion(
+              previousState,
+              tempPointRegionWithLabels as AnnotatorPointRegion
+            );
+
+            expect(
+              reducer(
+                previousState,
+                onUpdateRegion(
+                  tempPointRegionWithLabels as AnnotatorPointRegion
+                )
+              ).keypointMap.byId[tempPointRegionWithLabels.id]
+            ).toBeUndefined();
+            expect(
+              reducer(previousState, onUpdateRegion(tempPointRegionWithLabels))
+                .lastCollectionName
+            ).toEqual(tempPointRegionWithLabels.annotationLabelOrText);
+          });
+
+          test('when keypoint data is not available', () => {
+            const previousState = {
+              ...modifiedInitialStateDuringKeypointCreation,
+              temporaryRegion: tempPointRegionWithoutKeypointData,
+            };
+
+            isSameAsTempRegionOnUpdateKeypointRegion(
+              previousState,
+              tempPointRegionWithLabels as AnnotatorPointRegion
+            );
+
+            expect(
+              reducer(
+                previousState,
+                onUpdateRegion({
+                  ...tempPointRegionWithLabels,
+                  x: NaN,
+                  y: NaN,
+                } as AnnotatorPointRegion)
+              ).keypointMap.byId[tempPointRegionWithLabels.id]
+            ).toBeUndefined();
+            expect(consoleSpy).toHaveBeenCalled();
+            expect(
+              reducer(previousState, onUpdateRegion(tempPointRegionWithLabels))
+                .lastCollectionName
+            ).toEqual(tempPointRegionWithLabels.annotationLabelOrText);
+          });
+
+          test('when temp keypoint collection exist but region keypoint label is invalid', () => {
+            const previousState = {
+              ...modifiedInitialStateDuringKeypointCreation,
+              temporaryRegion: tempPointRegionWithoutKeypointData,
+            };
+
+            const newRegion = getDummyRegionOriginatedInAnnotator({
+              id: 'k3',
+              annotationLabelOrText: 'gauge',
+              type: AnnotatorRegionType.PointRegion,
+              x: 0.5,
+              y: 0.5,
+              keypointLabel: 'up',
+              keypointConfidence: 1,
+              color: 'red',
+              parentAnnotationId: 0,
+            });
+
+            isSameAsTempRegionOnUpdateKeypointRegion(
+              previousState,
+              newRegion as AnnotatorPointRegion
+            );
+            expect(
+              reducer(previousState, onUpdateRegion(newRegion)).keypointMap
+                .byId[newRegion.id]
+            ).toBeUndefined();
+            expect(consoleSpy).toHaveBeenCalled();
+            expect(
+              reducer(previousState, onUpdateRegion(newRegion))
+                .lastCollectionName
+            ).toEqual(newRegion.annotationLabelOrText);
+          });
+
+          test('when provided region, has annotation label, keypoint label and keypoint data, temp keypoint collection exist, is a point region, lastCollectionId is available and isCreatingKeypointCollection is true', () => {
+            const previousState = {
+              ...modifiedInitialStateDuringKeypointCreation,
+              temporaryRegion: {
+                ...tempPointRegionWithoutKeypointData,
+                id: 'k3',
+              },
+            };
+
+            const updatedRegion = getDummyRegionOriginatedInAnnotator({
+              id: 'k3',
+              annotationLabelOrText: 'gauge',
+              type: AnnotatorRegionType.PointRegion,
+              x: 0.1,
+              y: 0.7,
+              keypointLabel: 'center',
+              keypointConfidence: 1,
+              color: 'red',
+              parentAnnotationId: 0,
+            });
+
+            expect(
+              reducer(previousState, onUpdateRegion(updatedRegion))
+                .temporaryRegion
+            ).toBeUndefined();
+            expect(
+              reducer(previousState, onUpdateRegion(updatedRegion)).keypointMap
+                .byId[updatedRegion.id]
+            ).toStrictEqual(
+              expect.objectContaining({
+                point: expect.objectContaining({
+                  x: (updatedRegion as AnnotatorPointRegion).x,
+                  y: (updatedRegion as AnnotatorPointRegion).y,
+                }),
+                label: (updatedRegion as AnnotatorPointRegion).keypointLabel,
+                confidence: (updatedRegion as AnnotatorPointRegion)
+                  .keypointConfidence,
+              })
+            );
+            expect(
+              reducer(previousState, onUpdateRegion(updatedRegion)).keypointMap
+                .allIds
+            ).toEqual(expect.arrayContaining([String(updatedRegion.id)]));
+            expect(
+              reducer(previousState, onUpdateRegion(updatedRegion))
+                .lastCollectionName
+            ).toEqual(updatedRegion.annotationLabelOrText);
+          });
+          /**
+           * This scenario makes sure that seamless predefined shape/collection creation and using them while annotating.
+           * This ensures the case where user navigates to annotation settings to create predefined annotation but there user changes the prefilled text from the dropdown
+           * The label user changed to there, should be prefilled when user comes back to image preview to user the predefined shape/keypoint he just created
+           */
+          test('should not update last collection if tempRegion and provided region has the same label', () => {
+            const previousState = {
+              ...modifiedInitialStateDuringKeypointCreation,
+              temporaryRegion: {
+                ...tempPointRegionWithLabels,
+                id: 'k3',
+                keypointLabel: '',
+              },
+            };
+
+            const updatedRegion = {
+              // this will ensure that new keypoint will not be created due to missing keypoint label
+              ...tempPointRegionWithLabels,
+              keypointLabel: '',
+              x: 0.1,
+              y: 0.7,
+            };
+
+            isSameAsTempRegionOnUpdateKeypointRegion(
+              previousState,
+              updatedRegion as AnnotatorPointRegion
+            );
+            expect(
+              reducer(previousState, onUpdateRegion(updatedRegion))
+                .lastCollectionName
+            ).toEqual(previousState.lastCollectionName);
+          });
+        });
+        describe('when provided region is not a point region', () => {
+          test('when provided region label is of an invalid predefined shape', () => {
+            const invalidTempBoxRegion = getDummyRegionOriginatedInAnnotator({
+              id: 1,
+              annotationLabelOrText: 'invalid-shape',
+              type: AnnotatorRegionType.BoxRegion,
+              x: 0.5,
+              y: 0.5,
+              h: 1,
+              w: 1,
+              color: 'red',
+            });
+
+            const previousState = {
+              ...modifiedInitialStateDuringKeypointCreation,
+              temporaryRegion: tempBoxRegionWithoutLabel,
+            };
+
+            expect(
+              reducer(previousState, onUpdateRegion(invalidTempBoxRegion))
+                .temporaryRegion
+            ).toStrictEqual(invalidTempBoxRegion);
+            expect(
+              reducer(
+                previousState,
+                onUpdateRegion(invalidTempBoxRegion as AnnotatorPointRegion)
+              ).keypointMap.byId[invalidTempBoxRegion.id]
+            ).toBeUndefined();
+            expect(
+              reducer(previousState, onUpdateRegion(invalidTempBoxRegion))
+                .lastShape
+            ).toStrictEqual(previousState.lastShape);
+          });
+          test('when provided region contains a label from a valid predefined shape', () => {
+            const previousState: AnnotatorWrapperState = {
+              ...modifiedInitialState,
+              temporaryRegion: tempBoxRegionWithoutLabel,
+            };
+
+            expect(
+              reducer(previousState, onUpdateRegion(tempBoxRegionWithLabels))
+                .temporaryRegion
+            ).toStrictEqual(tempBoxRegionWithLabels);
+            expect(
+              reducer(
+                previousState,
+                onUpdateRegion(tempBoxRegionWithLabels as AnnotatorPointRegion)
+              ).keypointMap.byId[tempBoxRegionWithLabels.id]
+            ).toBeUndefined();
+            expect(
+              reducer(previousState, onUpdateRegion(tempBoxRegionWithLabels))
+                .lastShape
+            ).toStrictEqual(tempBoxRegionWithLabels.annotationLabelOrText);
+          });
+          test('should not update shape when temp region and provided region has the same label', () => {
+            const previousState: AnnotatorWrapperState = {
+              ...modifiedInitialState,
+              temporaryRegion: tempBoxRegionWithLabels,
+            };
+
+            const updatedRegion = {
+              ...tempBoxRegionWithLabels,
+              w: 0.1,
+              h: 0.5,
+              x: 0.6,
+              y: 0.1,
+            };
+
+            expect(
+              reducer(previousState, onUpdateRegion(updatedRegion))
+                .temporaryRegion
+            ).toStrictEqual(updatedRegion);
+            expect(
+              reducer(previousState, onUpdateRegion(updatedRegion)).lastShape
+            ).toStrictEqual(previousState.lastShape);
+          });
+        });
+      });
+
+      describe('when provided region is a point region and already exists', () => {
+        test('when updated region exists as a keypoint in keypoint map', () => {
+          const previousState: AnnotatorWrapperState = {
+            ...modifiedInitialStateDuringKeypointCreation,
+            temporaryRegion: {
+              ...tempPointRegionWithoutKeypointData,
+              id: 2,
+            },
+          };
+
+          const updatedRegionOfKeypoint = getDummyRegionOriginatedInAnnotator({
+            id: 'V1',
+            annotationLabelOrText: 'valve',
+            type: AnnotatorRegionType.PointRegion,
+            x: 0.7,
+            y: 0.8,
+            keypointLabel: 'up',
+            keypointConfidence: 1,
+            color: 'red',
+            parentAnnotationId: 0,
+          }) as AnnotatorPointRegion;
+
+          expect(
+            reducer(previousState, onUpdateRegion(updatedRegionOfKeypoint))
+              .keypointMap.byId[updatedRegionOfKeypoint.id]
+          ).toStrictEqual(
+            expect.objectContaining({
+              point: expect.objectContaining({
+                x: updatedRegionOfKeypoint.x,
+                y: updatedRegionOfKeypoint.y,
+              }),
+              label: updatedRegionOfKeypoint.keypointLabel,
+              confidence: updatedRegionOfKeypoint.keypointConfidence,
             })
-          ).temporaryRegion
-        ).toStrictEqual(tempRegionWithoutLabel);
-
-        expect(
-          reducer(previousState, onUpdateKeypointRegion(tempRegionWithoutLabel))
-            .keypointMap.byId[tempRegionWithoutLabel.id]
-        ).toBeUndefined();
-
-        expect(consoleSpy).toHaveBeenCalled();
-      });
-
-      test('when temp region is not a point region', () => {
-        const tempBoxRegion = getDummyRegionOriginatedInAnnotator({
-          id: 1,
-          annotationLabelOrText: 'Box',
-          type: AnnotatorRegionType.BoxRegion,
-          x: 0.5,
-          y: 0.5,
-          h: 1,
-          w: 1,
-          color: 'red',
+          );
+          expect(
+            reducer(previousState, onUpdateRegion(updatedRegionOfKeypoint))
+              .lastCollectionName
+          ).toEqual(previousState.lastCollectionName); // cannot update a collection name from a keypoint update
+          expect(
+            reducer(previousState, onUpdateRegion(updatedRegionOfKeypoint))
+              .temporaryRegion
+          ).toEqual(previousState.temporaryRegion);
         });
-
-        const previousState = {
-          ...modifiedInitialStateDuringKeypointCreation,
-          temporaryRegion: tempRegionWithoutLabel,
-        };
-
-        expect(
-          reducer(
-            previousState,
-            onUpdateKeypointRegion(tempBoxRegion as AnnotatorPointRegion)
-          ).keypointMap.byId[tempRegionWithLabels.id]
-        ).toBeUndefined();
-        expect(consoleSpy).toHaveBeenCalled();
-        expect(
-          reducer(previousState, onUpdateKeypointRegion(tempBoxRegion))
-            .temporaryRegion
-        ).toStrictEqual(tempRegionWithoutLabel);
-        expect(consoleSpy).toHaveBeenCalled();
-      });
-
-      test('when isCreatingKeypointCollection is false', () => {
-        const previousState: AnnotatorWrapperState = {
-          ...modifiedInitialState,
-          temporaryRegion: tempRegionWithoutLabel,
-        };
-
-        isSameAsTempRegionOnUpdateKeypointRegion(
-          previousState,
-          tempRegionWithLabels as AnnotatorPointRegion
-        );
-
-        expect(
-          reducer(
-            previousState,
-            onUpdateKeypointRegion(tempRegionWithLabels as AnnotatorPointRegion)
-          ).keypointMap.byId[tempRegionWithLabels.id]
-        ).toBeUndefined();
-      });
-      test('when lastCollectionId is undefined', () => {
-        const previousState = {
-          ...modifiedInitialStateDuringKeypointCreation,
-          lastCollectionId: undefined,
-          temporaryRegion: tempRegionWithoutLabel,
-        };
-
-        isSameAsTempRegionOnUpdateKeypointRegion(
-          previousState,
-          tempRegionWithLabels as AnnotatorPointRegion
-        );
-
-        expect(
-          reducer(
-            previousState,
-            onUpdateKeypointRegion(tempRegionWithLabels as AnnotatorPointRegion)
-          ).keypointMap.byId[tempRegionWithLabels.id]
-        ).toBeUndefined();
-      });
-
-      test('when annotationLabel, keypoint label or keypoint data not available', () => {
-        const previousState = {
-          ...modifiedInitialStateDuringKeypointCreation,
-          temporaryRegion: tempRegionWithoutLabel,
-        };
-
-        isSameAsTempRegionOnUpdateKeypointRegion(
-          previousState,
-          tempRegionWithLabels as AnnotatorPointRegion
-        );
-
-        expect(
-          reducer(
-            previousState,
-            onUpdateKeypointRegion(
-              tempRegionWithoutLabel as AnnotatorPointRegion
-            )
-          ).keypointMap.byId[tempRegionWithoutLabel.id]
-        ).toBeUndefined();
-        expect(consoleSpy).toHaveBeenCalled();
-        expect(
-          reducer(
-            previousState,
-            onUpdateKeypointRegion({
-              ...tempRegionWithLabels,
-              x: NaN,
-              y: NaN,
-            } as AnnotatorPointRegion)
-          ).keypointMap.byId[tempRegionWithoutLabel.id]
-        ).toBeUndefined();
-        expect(consoleSpy).toHaveBeenCalled();
-      });
-
-      test('when temp keypoint collection exist but region keypoint label is invalid', () => {
-        const previousState = {
-          ...modifiedInitialStateDuringKeypointCreation,
-          temporaryRegion: tempRegionWithoutLabel,
-        };
-
-        const newRegion = getDummyRegionOriginatedInAnnotator({
-          id: 1,
-          annotationLabelOrText: 'valve',
-          type: AnnotatorRegionType.PointRegion,
-          x: 0.5,
-          y: 0.5,
-          keypointLabel: 'up',
-          keypointConfidence: 1,
-          color: 'red',
-          parentAnnotationId: 0,
-        });
-
-        isSameAsTempRegionOnUpdateKeypointRegion(
-          previousState,
-          newRegion as AnnotatorPointRegion
-        );
-
-        expect(
-          reducer(previousState, onUpdateKeypointRegion(newRegion)).keypointMap
-            .byId[newRegion.id]
-        ).toBeUndefined();
-        expect(consoleSpy).toHaveBeenCalled();
-      });
-      test('when temp keypoint collection exist but region is already created', () => {
-        const createdRegion = getDummyRegionOriginatedInAnnotator({
-          id: 'K2',
-          annotationLabelOrText: 'gauge',
-          type: AnnotatorRegionType.PointRegion,
-          x: 0.5,
-          y: 0.5,
-          keypointLabel: 'right',
-          keypointConfidence: 1,
-          color: 'red',
-          parentAnnotationId: 0,
-        });
-
-        const previousState = {
-          ...modifiedInitialStateDuringKeypointCreation,
-          temporaryRegion: createdRegion,
-        };
-
-        const updatedRegion = getDummyRegionOriginatedInAnnotator({
-          id: 'K2',
-          annotationLabelOrText: 'gauge',
-          type: AnnotatorRegionType.PointRegion,
-          x: 0.1,
-          y: 0.7,
-          keypointLabel: 'right',
-          keypointConfidence: 1,
-          color: 'red',
-          parentAnnotationId: 0,
-        });
-
-        isSameAsTempRegionOnUpdateKeypointRegion(
-          previousState,
-          updatedRegion as AnnotatorPointRegion
-        );
-        expect(
-          reducer(previousState, onUpdateKeypointRegion(updatedRegion))
-            .keypointMap.byId[updatedRegion.id]
-        ).toStrictEqual(
-          expect.objectContaining({
-            point: expect.objectContaining({
-              x: (updatedRegion as AnnotatorPointRegion).x,
-              y: (updatedRegion as AnnotatorPointRegion).y,
-            }),
-            label: (updatedRegion as AnnotatorPointRegion).keypointLabel,
-            confidence: (updatedRegion as AnnotatorPointRegion)
-              .keypointConfidence,
-          })
-        );
       });
     });
   });
