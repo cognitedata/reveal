@@ -5,6 +5,7 @@ module.exports = {
   ...baseConfig,
   verbose: true,
   setupFiles: ['jest-localstorage-mock'],
+  testPathIgnorePatterns: ['test-data.ts'],
   coveragePathIgnorePatterns: ['node_modules', '__tests__', '.stories.'],
   moduleNameMapper: {
     '.+\\.(svg|png|jpg|ttf|woff|woff2)$': [

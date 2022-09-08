@@ -2,8 +2,7 @@ import React, { KeyboardEvent } from 'react';
 
 import styled from 'styled-components';
 
-import { AutoSizer } from 'react-virtualized/dist/es/AutoSizer';
-import { List as VirtualList } from 'react-virtualized/dist/es/List';
+import { AutoSizer, List as VirtualList } from 'react-virtualized';
 
 import { Detail, Icon } from '@cognite/cogs.js';
 

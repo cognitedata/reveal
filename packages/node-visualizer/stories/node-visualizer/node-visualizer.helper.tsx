@@ -194,7 +194,7 @@ export const NodeVisualizerWrapper: React.FC<NodeVisualizerWrapperProps> = ({
 
   return (
     <div style={{ width: '100%', height: '100%' }}>
-      <NodeVisualizerProvider root={root} {...nodeVisualizerProps} />
+      <NodeVisualizerProvider root={root} {...nodeVisualizerProps} unit="m" />
     </div>
   );
 };
@@ -232,7 +232,7 @@ export const HorizonNodeVisualizer: React.FC<HorizonNodeVisualizerProps> = ({
 
   return (
     <div style={{ width: '100%', height: '100%' }}>
-      <NodeVisualizerProvider root={root} />
+      <NodeVisualizerProvider root={root} unit="m" />
     </div>
   );
 };
@@ -334,7 +334,7 @@ export const NodeVisualiserWithWells = () => {
 
   return (
     <div style={{ width: '100%', height: '100%' }}>
-      <NodeVisualizerProvider root={root} />
+      <NodeVisualizerProvider root={root} unit="m" />
     </div>
   );
 };
@@ -367,7 +367,7 @@ export const NodeVisualiserWithWellsAndEvents = () => {
 
   return (
     <div style={{ width: '100%', height: '100%' }}>
-      <NodeVisualizerProvider root={root} />
+      <NodeVisualizerProvider root={root} unit="m" />
     </div>
   );
 };
@@ -442,7 +442,7 @@ export const NodeVisualiserWithWellsAndEventsInMeter = () => {
 
   return (
     <div style={{ width: '100%', height: '100%' }}>
-      <NodeVisualizerProvider root={root} />
+      <NodeVisualizerProvider root={root} unit="m" />
     </div>
   );
 };
@@ -475,7 +475,7 @@ export const NodeVisualiserWellboresWithNoData = () => {
 
   return (
     <div style={{ width: '100%', height: '100%' }}>
-      <NodeVisualizerProvider root={root} />
+      <NodeVisualizerProvider root={root} unit="m" />
     </div>
   );
 };
