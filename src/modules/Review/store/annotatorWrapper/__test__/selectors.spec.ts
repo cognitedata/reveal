@@ -178,6 +178,7 @@ describe('Test annotationLabel selectors', () => {
           annotationSettings: {
             createNew: {
               text: annotationSettingsNewLabel,
+              color: 'red',
             },
           },
         } as Partial<ReviewState>,
@@ -191,11 +192,17 @@ describe('Test annotationLabel selectors', () => {
         },
       } as CombinedState<RootState>;
 
-      expect(selectNextPredefinedKeypointCollection(previousState)).toEqual(
+      const predefinedKeypointCollection =
         predefinedKeypointCollectionList.find(
           (item) => item.collectionName === annotationSettingsNewLabel
-        )
-      );
+        );
+
+      expect(
+        selectNextPredefinedKeypointCollection(previousState)
+      ).toStrictEqual({
+        collectionName: predefinedKeypointCollection!.collectionName,
+        color: predefinedKeypointCollection!.color,
+      });
     });
 
     test('Should return matching predefinedKeypointCollection (lastCollectionName)', () => {
