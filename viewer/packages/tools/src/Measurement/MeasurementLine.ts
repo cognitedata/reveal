@@ -3,21 +3,21 @@
  */
 
 import * as THREE from 'three';
-import * as THREE_EXAMPLES from 'three-stdlib';
+import { LineGeometry, LineMaterial, Line2 } from 'three-stdlib';
 
 export class MeasurementLine {
-  private readonly _geometry: THREE_EXAMPLES.LineGeometry;
+  private readonly _geometry: LineGeometry;
   private readonly _meshes: THREE.Group;
-  private readonly _fixedWidthLineMaterial: THREE_EXAMPLES.LineMaterial;
-  private readonly _adaptiveWidthLineMaterial: THREE_EXAMPLES.LineMaterial;
+  private readonly _fixedWidthLineMaterial: LineMaterial;
+  private readonly _adaptiveWidthLineMaterial: LineMaterial;
   private readonly _position: Float32Array;
 
   constructor(lineWidth: number, lineColor: THREE.Color, startPoint: THREE.Vector3) {
     this._position = new Float32Array(6);
-    this._geometry = new THREE_EXAMPLES.LineGeometry();
+    this._geometry = new LineGeometry();
 
     //Adaptive Line width
-    this._adaptiveWidthLineMaterial = new THREE_EXAMPLES.LineMaterial({
+    this._adaptiveWidthLineMaterial = new LineMaterial({
       color: lineColor.getHex(),
       linewidth: lineWidth,
       worldUnits: true,
@@ -25,7 +25,7 @@ export class MeasurementLine {
     });
 
     //Fixed line Width.
-    this._fixedWidthLineMaterial = new THREE_EXAMPLES.LineMaterial({
+    this._fixedWidthLineMaterial = new LineMaterial({
       color: lineColor.getHex(),
       linewidth: 2, // Tests have shown this to work reasonable on tested devices
       worldUnits: false,
@@ -125,14 +125,14 @@ export class MeasurementLine {
 
     this._geometry.setPositions(this._position);
 
-    const adaptiveMesh = new THREE_EXAMPLES.Line2(this._geometry, this._adaptiveWidthLineMaterial);
+    const adaptiveMesh = new Line2(this._geometry, this._adaptiveWidthLineMaterial);
     //Assign bounding sphere & box for the line to support raycasting.
     adaptiveMesh.computeLineDistances();
     //Make sure line are rendered in-front of other objects.
     adaptiveMesh.renderOrder = 100;
 
     //Fixed line width when camera is zoom out or far away from the line.
-    const fixedMesh = new THREE_EXAMPLES.Line2(this._geometry, this._fixedWidthLineMaterial);
+    const fixedMesh = new Line2(this._geometry, this._fixedWidthLineMaterial);
     fixedMesh.computeLineDistances();
     fixedMesh.renderOrder = 100;
 

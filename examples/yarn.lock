@@ -3826,7 +3826,7 @@ terser@^5.10.0, terser@^5.7.2:
     commander "^2.20.0"
     source-map-support "~0.5.20"
 
-three-stdlib@^2.15.0:
+three-stdlib@2.15.0:
   version "2.15.0"
   resolved "https://registry.yarnpkg.com/three-stdlib/-/three-stdlib-2.15.0.tgz#2f5c43ea95c8f6eb1add95dd0e7c5bd6ea769838"
   integrity sha512-81jgpEajYB1HczIKAqcG8oEgRPbKJr/8KfxMY3xIHe9kDNw426PckStLt+GVmV15ezOS+QlUFVSuyjSRPpSLsg==

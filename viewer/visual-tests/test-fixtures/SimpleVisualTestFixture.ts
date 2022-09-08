@@ -2,7 +2,7 @@
  * Copyright 2022 Cognite AS
  */
 import * as THREE from 'three';
-import * as THREE_EXAMPLES from 'three-stdlib';
+import { OrbitControls } from 'three-stdlib';
 
 import { ModelMetadataProvider, ModelDataProvider, ModelIdentifier } from '../../packages/modeldata-api';
 import { createDataProviders } from './utilities/createDataProviders';
@@ -12,7 +12,7 @@ export type SimpleTestFixtureComponents = {
   renderer: THREE.WebGLRenderer;
   scene: THREE.Scene;
   camera: THREE.PerspectiveCamera;
-  cameraControls: THREE_EXAMPLES.OrbitControls;
+  cameraControls: OrbitControls;
   dataProviders: {
     modelMetadataProvider: ModelMetadataProvider;
     modelDataProvider: ModelDataProvider;
@@ -26,7 +26,7 @@ export abstract class SimpleVisualTestFixture implements VisualTestFixture {
   private readonly _perspectiveCamera: THREE.PerspectiveCamera;
   private readonly _scene: THREE.Scene;
   private readonly _renderer: THREE.WebGLRenderer;
-  private readonly _controls: THREE_EXAMPLES.OrbitControls;
+  private readonly _controls: OrbitControls;
 
   constructor() {
     this._perspectiveCamera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 10000);
@@ -35,7 +35,7 @@ export abstract class SimpleVisualTestFixture implements VisualTestFixture {
 
     this._renderer = new THREE.WebGLRenderer();
 
-    this._controls = new THREE_EXAMPLES.OrbitControls(this._perspectiveCamera, this._renderer.domElement);
+    this._controls = new OrbitControls(this._perspectiveCamera, this._renderer.domElement);
 
     this._controls.addEventListener('change', () => {
       this.render();

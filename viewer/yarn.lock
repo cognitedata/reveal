@@ -860,7 +860,7 @@ __metadata:
     shx: 0.3.4
     skmeans: 0.11.3
     three: 0.141.0
-    three-stdlib: ^2.15.0
+    three-stdlib: 2.15.0
     ts-jest: 28.0.8
     ts-loader: 9.3.1
     tsc-alias: 1.7.0
@@ -11990,7 +11990,7 @@ resolve@^1.9.0:
   languageName: node
   linkType: hard
 
-"three-stdlib@npm:^2.15.0":
+"three-stdlib@npm:2.15.0":
   version: 2.15.0
   resolution: "three-stdlib@npm:2.15.0"
   dependencies:
