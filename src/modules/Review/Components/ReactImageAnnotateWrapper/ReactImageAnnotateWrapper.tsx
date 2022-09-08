@@ -32,11 +32,12 @@ import {
 import { cropBoxRegionAtEdges } from 'src/modules/Review/Components/ReactImageAnnotateWrapper/utils/cropBoxRegionAtEdges';
 import { useIsCurrentKeypointCollectionComplete } from 'src/modules/Review/store/annotatorWrapper/hooks';
 import {
+  clearTemporaryRegion,
   createTempKeypointCollection,
   deleteTempKeypointCollection,
   keypointSelectStatusChange,
-  onCreateKeypointRegion,
-  onUpdateKeypointRegion,
+  onCreateRegion,
+  onUpdateRegion,
   setLastShape,
   setSelectedTool,
 } from 'src/modules/Review/store/annotatorWrapper/slice';
@@ -61,12 +62,12 @@ type ReactImageAnnotateWrapperProps = {
   nextPredefinedKeypointCollection: PredefinedKeypointCollection;
   nextPredefinedShape: PredefinedShape;
   tempKeypointCollection: TempKeypointCollection | null;
+  tempRegion: AnnotatorRegion | null;
   isLoading: (status: boolean) => void;
   focusIntoView: (id: ReactText) => void;
   // eslint-disable-next-line react/no-unused-prop-types
   onEditMode: (isEdit: boolean) => void; // todo: call this in edit mode to show border while in edit
   annotations: VisionReviewAnnotation<VisionAnnotationDataType>[];
-  keepUnsavedRegion: boolean;
   selectedTool: string;
   scrollId: string;
   onCreateAnnotation: (
@@ -87,9 +88,9 @@ export const ReactImageAnnotateWrapper = ({
   nextPredefinedKeypointCollection,
   nextPredefinedShape,
   tempKeypointCollection,
+  tempRegion,
   isLoading,
   focusIntoView,
-  keepUnsavedRegion,
   selectedTool,
   scrollId,
   onUpdateAnnotation,
@@ -109,12 +110,19 @@ export const ReactImageAnnotateWrapper = ({
     const currentCollectionAsRegions = convertTempKeypointCollectionToRegions(
       tempKeypointCollection
     );
+    if (tempRegion) {
+      return [
+        ...convertVisionReviewAnnotationsToRegions(annotations),
+        ...currentCollectionAsRegions,
+        tempRegion,
+      ];
+    }
 
     return [
       ...convertVisionReviewAnnotationsToRegions(annotations),
       ...currentCollectionAsRegions,
     ];
-  }, [annotations, tempKeypointCollection]);
+  }, [annotations, tempKeypointCollection, tempRegion]);
 
   const images = useMemo(() => {
     if (!imageUrl) {
@@ -128,7 +136,7 @@ export const ReactImageAnnotateWrapper = ({
         regions,
       },
     ];
-  }, [imageUrl, regions, fileInfo]);
+  }, [imageUrl, regions, fileInfo.name]);
 
   const collectionOptions = useMemo(() => {
     return predefinedAnnotations?.predefinedKeypointCollections.map(
@@ -170,6 +178,7 @@ export const ReactImageAnnotateWrapper = ({
       if (unsavedVisionImageKeypointCollectionAnnotation) {
         onCreateAnnotation(unsavedVisionImageKeypointCollectionAnnotation);
         dispatch(deleteTempKeypointCollection());
+        dispatch(clearTemporaryRegion());
       }
     }
   }, [
@@ -356,9 +365,7 @@ export const ReactImageAnnotateWrapper = ({
   }, [isLoading]);
 
   const regionCreateHandler = useCallback((region: AnnotatorRegion) => {
-    if (isAnnotatorPointRegion(region)) {
-      dispatch(onCreateKeypointRegion(region));
-    }
+    dispatch(onCreateRegion(region));
   }, []);
 
   const regionUpdateHandler = useCallback((region: AnnotatorRegion) => {
@@ -368,8 +375,8 @@ export const ReactImageAnnotateWrapper = ({
       region?.annotationMeta?.annotation?.lastUpdatedTime
     ) {
       handleUpdateRegion(region);
-    } else if (isAnnotatorPointRegion(region)) {
-      dispatch(onUpdateKeypointRegion(region));
+    } else {
+      dispatch(onUpdateRegion(region));
     }
   }, []);
   /* eslint-enable react/prop-types */
@@ -401,7 +408,6 @@ export const ReactImageAnnotateWrapper = ({
         zoomSensitivity={0.05}
         showTags
         selectedTool={selectedTool}
-        keepUnsavedRegions={keepUnsavedRegion}
         onSelectRegion={onRegionSelect}
         deSelectAllRegions={deselectAllRegionHandler}
         onSelectTool={toolChangeHandler}
