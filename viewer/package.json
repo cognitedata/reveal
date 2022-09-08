@@ -63,7 +63,8 @@
     "proj4": "2.8.0",
     "rxjs": "7.5.6",
     "skmeans": "0.11.3",
-    "three": "0.141.0"
+    "three": "0.141.0",
+    "three-stdlib": "2.15.0"
   },
   "devDependencies": {
     "@azure/msal-browser": "2.28.2",
