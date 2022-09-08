@@ -249,7 +249,10 @@ jobs:
       - name: Initialize variables
         run: |
           pwd
-          echo "PR_NUMBER=$(jq --raw-output .pull_request.number $GITHUB_EVENT_PATH)" >> $GITHUB_ENV
+          export "PR_NUMBER=$(jq --raw-output .pull_request.number $GITHUB_EVENT_PATH)"
+          export "PR_TIMESTAMP=$(date)"
+          echo "PR_NUMBER=$PR_NUMBER" >> $GITHUB_ENV
+          echo "PR_TIMESTAMP=$PR_TIMESTAMP" >> $GITHUB_ENV
           echo "name=PR_NUMBER::$PR_NUMBER" >> $GITHUB_ENV
 
       - uses: actions/cache@v3
@@ -279,13 +282,13 @@ jobs:
           replace: "baseUrl: '/reveal-docs-preview/${{ env.PR_NUMBER }}/',"
           include: "docusaurus.config.js"
           exclude: ".git"
-          regex: true
+          regex: true   
 
       - name: Update Docosaurus title
         uses: jacobtomlinson/gha-find-replace@v2
         with:
           find: "title: .*"
-          replace: "title: 'Reveal documentation (preview #${{ env.PR_NUMBER }})',"
+          replace: "title: 'Reveal documentation (preview #${{ env.PR_NUMBER }}, built ${PR_TIMESTAMP})',"
           include: "docusaurus.config.js"
           exclude: ".git"
           regex: true
