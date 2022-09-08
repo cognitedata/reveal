@@ -181,6 +181,7 @@ export const BulkEditModalContent = ({
     assetIdsFromFiles,
     selectedBulkEditOption,
     unsavedAssetIds?.addedAssetIds,
+    unsavedAssetIds?.removedAssetIds,
   ]);
 
   const handleBulkEditOptionChange = (value: {
