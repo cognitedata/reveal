@@ -21,7 +21,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - uses: actions/cache@v2
+    - uses: actions/cache@v3
       id: npm_cache
       with:
         path: '**/node_modules'
@@ -56,9 +56,9 @@ jobs:
     name: Run unit tests
     runs-on: ubuntu-latest 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
 
-    - uses: actions/cache@v2
+    - uses: actions/cache@v3
       id: npm_cache
       with:
         path: '**/node_modules'
@@ -90,7 +90,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - uses: actions/cache@v2
+    - uses: actions/cache@v3
       id: npm_cache
       with:
         path: '**/node_modules'
@@ -143,7 +143,7 @@ jobs:
         name: viewer
         path: viewer/dist/
 
-    - uses: actions/cache@v2
+    - uses: actions/cache@v3
       id: npm_cache
       with:
         path: '**/node_modules'
@@ -244,7 +244,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout 🛎️
-        uses: actions/checkout@v2 # If you're using actions/checkout@v2 you must set persist-credentials to false in most cases for the deployment to work correctly.
+        uses: actions/checkout@v3 # If you're using actions/checkout@v2 you must set persist-credentials to false in most cases for the deployment to work correctly.
 
       - name: Initialize variables
         run: |
@@ -252,7 +252,7 @@ jobs:
           echo "PR_NUMBER=$(jq --raw-output .pull_request.number $GITHUB_EVENT_PATH)" >> $GITHUB_ENV
           echo "name=PR_NUMBER::$PR_NUMBER" >> $GITHUB_ENV
 
-      - uses: actions/cache@v2
+      - uses: actions/cache@v3
         id: npm_cache
         with:
           path: '**/node_modules'
@@ -273,7 +273,7 @@ jobs:
         run: yarn install --immutable
 
       - name: Update Docosaurus base URL
-        uses: jacobtomlinson/gha-find-replace@v1
+        uses: jacobtomlinson/gha-find-replace@v2
         with:
           find: "baseUrl: .*"
           replace: "baseUrl: '/reveal-docs-preview/${{ env.PR_NUMBER }}/',"
@@ -281,7 +281,7 @@ jobs:
           exclude: ".git"
 
       - name: Update Docosaurus title
-        uses: jacobtomlinson/gha-find-replace@v1
+        uses: jacobtomlinson/gha-find-replace@v2
         with:
           find: "title: .*"
           replace: "title: 'Reveal documentation (preview #${{ env.PR_NUMBER }})',"
