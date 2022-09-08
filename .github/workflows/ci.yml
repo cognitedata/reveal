@@ -268,7 +268,7 @@ jobs:
         run: yarn run build:prod
 
       - name: Install NPM documentation dependencies
-        if: steps.npm_cache.outputs.cache-hit != 'true'
+        # if: steps.npm_cache.outputs.cache-hit != 'true' # Broken
         working-directory: documentation
         run: yarn install --immutable
 
