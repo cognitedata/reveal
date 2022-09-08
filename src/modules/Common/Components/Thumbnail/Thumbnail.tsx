@@ -2,7 +2,7 @@
 import { FileInfo } from '@cognite/sdk';
 import { Body, DocumentIcon, Button, Icon } from '@cognite/cogs.js';
 import { Loader, useFileIcon } from '@cognite/data-exploration';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { isFilePreviewable } from 'src/modules/Common/Components/FileUploader/utils/FileUtils';
 import styled from 'styled-components';
 import { ThumbnailProcessingOverlay } from './ThumbnailProcessingOverlay';
@@ -17,11 +17,18 @@ export const Thumbnail = ({
   onViewClicked?: (evt: any) => void;
 }) => {
   const [imageUrl, setImage] = useState<string | undefined>(undefined);
-  const { data, isError } = useFileIcon(fileInfo);
+  const { data, isError, isLoading } = useFileIcon(fileInfo);
+  const [imageLoadError, setImageLoadError] = useState<boolean>(false);
 
-  const isPreviewable = isFilePreviewable(fileInfo);
+  // reset previous image loading error if the icon is loading again - otherwise if error occurred image won't be shown again
   useEffect(() => {
-    if (data) {
+    if (isLoading && imageLoadError) {
+      setImageLoadError(false);
+    }
+  }, [isLoading, imageLoadError]);
+
+  useEffect(() => {
+    if (data && !imageLoadError) {
       const arrayBufferView = new Uint8Array(data);
       const blob = new Blob([arrayBufferView]);
       setImage(URL.createObjectURL(blob));
@@ -34,7 +41,7 @@ export const Thumbnail = ({
         return undefined;
       });
     };
-  }, [data]);
+  }, [data, imageLoadError]);
 
   const iconOverlay = () => {
     return (
@@ -52,12 +59,22 @@ export const Thumbnail = ({
     );
   };
 
+  const onImageLoadError = useCallback(() => {
+    setImageLoadError(true);
+  }, []);
+
   const image = useMemo(() => {
-    if (isPreviewable) {
+    const isPreviewable = isFilePreviewable(fileInfo);
+    if (isPreviewable && !imageLoadError) {
       if (imageUrl) {
         return (
           <>
-            <img src={imageUrl} className="image" alt="" />
+            <img
+              src={imageUrl}
+              className="image"
+              alt=""
+              onError={onImageLoadError}
+            />
             {onViewClicked && iconOverlay()}
           </>
         );
@@ -69,11 +86,13 @@ export const Thumbnail = ({
     return (
       <>
         <DocumentIcon file={fileInfo.name} style={{ height: 36, width: 36 }} />
-        {isError && <Body level={3}>Unable to preview file.</Body>}
+        {(isError || imageLoadError) && (
+          <Body level={3}>Unable to preview file.</Body>
+        )}
         {onViewClicked && iconOverlay()}
       </>
     );
-  }, [imageUrl, isPreviewable, fileInfo, isError]);
+  }, [imageUrl, fileInfo, isError, imageLoadError]);
 
   return (
     <Container>
