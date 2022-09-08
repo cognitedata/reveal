@@ -29,6 +29,7 @@ _TESTS = [
 
 _TESTS_CYPRESS = [
     "cypress/**/*.test.ts",
+    "cypress/**/*.json",
 ]
 
 _STORYBOOK = [

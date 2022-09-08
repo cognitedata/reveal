@@ -39,14 +39,19 @@ export function SimulatorInformation({
     );
 
   return (
-    <SimulatorInformationContainer>
-      <SimulatorInformationList id="simulator-info-details">
+    <SimulatorInformationContainer data-cy="simulator-information-container">
+      <SimulatorInformationList
+        data-cy="simulator-information-list"
+        id="simulator-info-details"
+      >
         <dt>Last seen</dt>
-        <dd>{formatDistanceToNow(new Date(heartbeat), { addSuffix: true })}</dd>
+        <dd data-cy="last-seen">
+          {formatDistanceToNow(new Date(heartbeat), { addSuffix: true })}
+        </dd>
         <dt>Data set</dt>
-        <dd>{dataSetName}</dd>
+        <dd data-cy="data-set">{dataSetName}</dd>
         <dt>Connector version</dt>
-        <dd>{connectorVersion}</dd>
+        <dd data-cy="connector-version">{connectorVersion}</dd>
       </SimulatorInformationList>
 
       {isFetchingSimulatorDetails ? <Skeleton.Rectangle /> : null}
@@ -57,13 +62,17 @@ export function SimulatorInformation({
             header="Data set details"
             key={`${simulator}-${connectorName}-dataset-details`}
           >
-            <SimulatorInformationList>
+            <SimulatorInformationList data-cy="simulator-information-list-details">
               <dt>Model files</dt>
-              <dd>{simulatorDetails.models}</dd>
+              <dd data-cy="model-files">{simulatorDetails.models}</dd>
               <dt>Calculation files</dt>
-              <dd>{simulatorDetails.calculations}</dd>
+              <dd data-cy="calculation-files">
+                {simulatorDetails.calculations}
+              </dd>
               <dt>Calculation run events</dt>
-              <dd>{simulatorDetails.calculationsRuns}</dd>
+              <dd data-cy="calculation-run-events">
+                {simulatorDetails.calculationsRuns}
+              </dd>
             </SimulatorInformationList>
           </Collapse.Panel>
         </Collapse>

@@ -6,11 +6,13 @@
     "module": "esnext",
     "types": ["vite/client", "jest", "@testing-library/jest-dom"],
     "incremental": true,
-    "noErrorTruncation": true
+    "noErrorTruncation": true,
+    "resolveJsonModule": true
   },
   "include": [
     "src/**/*.ts",
     "src/**/*.tsx",
+    "cypress/fixtures/**/*.json",
     ".storybook-dev/**/*",
     "public/sidecar.js",
     ".eslintrc.js",

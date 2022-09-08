@@ -1,9 +1,14 @@
 {
-  "integrationFolder": "cypress/specs",
+  "integrationFolder": "cypress/integrations",
   "viewportWidth": 1280,
   "viewportHeight": 760,
-  "videoUploadOnPasses": false,
+  "screenshotOnRunFailure": true,
+  "videoUploadOnPasses": true,
   "chromeWebSecurity": false,
+  "defaultCommandTimeout": 10000,
+  "pageLoadTimeout": 120000,
+  "responseTimeout": 120000,
+  "requestTimeout": 10000,
   "retries": 2,
   "env": {
     "BASE_URL": "https://localhost:3000"
