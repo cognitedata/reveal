@@ -54,6 +54,10 @@ export const FloatingActionsPopup: React.FC<
     return null;
   }
 
+  if (!drawnFeatures?.features?.length) {
+    return null;
+  }
+
   // we need to comment why we check for this:
   // i'm guessing it makes tablet/mobile usage possible?
   if (touched) {
