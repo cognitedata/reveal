@@ -36,6 +36,7 @@ export class DefaultCameraManager implements CameraManager {
 
   private isDisposed = false;
   private _nearAndFarNeedsUpdate = false;
+  // Used by onWheel() to temporarily disable (and reset enabled flag) during pick operations when in `zoomToCursor` -mode
   private _enabledCopy = true;
 
   private readonly _modelRaycastCallback: (x: number, y: number) => Promise<CameraManagerCallbackData>;
@@ -136,6 +137,7 @@ export class DefaultCameraManager implements CameraManager {
   /**
    * Gets instance of camera controls that are used by camera manager. See {@link ComboControls} for more
    * information on all adjustable properties.
+   * @deprecated Will be removed in 4.0.0.
    */
   get cameraControls(): ComboControls {
     return this._controls;
@@ -160,6 +162,7 @@ export class DefaultCameraManager implements CameraManager {
    * Sets whether camera controls through mouse, touch and keyboard are enabled.
    * This can be useful to e.g. temporarily disable navigation when manipulating other
    * objects in the scene or when implementing a "cinematic" viewer.
+   * @deprecated Will be removed in 4.0.0. Use {@link DefaultCameraManager.enabled} instead.
    */
   set cameraControlsEnabled(enabled: boolean) {
     this._controls.enabled = enabled;
@@ -168,6 +171,7 @@ export class DefaultCameraManager implements CameraManager {
 
   /**
    * Gets whether camera controls through mouse, touch and keyboard are enabled.
+   * @deprecated Will be removed in 4.0.0. Use {@link DefaultCameraManager.enabled} instead.
    */
   get cameraControlsEnabled(): boolean {
     return this._controls.enabled;
