@@ -47,7 +47,7 @@ const AdminPage = () => {
       <ProtectedRoute
         isAuthenticated={isAuthenticated}
         returnPath="/"
-        path={navigation.ADMIN_REPORT_MANAGER}
+        path={navigation.ADMIN_REPORT_PANEL}
         render={() => <ReportManager isAdmin />}
       />
 

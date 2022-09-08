@@ -10,8 +10,8 @@ class ReportManager {
     this.dao = new EventsReportDao();
   }
 
-  public async create(report: Report) {
-    return this.dao.create([report]);
+  public async create(reports: Report[]) {
+    return this.dao.create(reports);
   }
 
   public async search(filters: ReportFilter) {

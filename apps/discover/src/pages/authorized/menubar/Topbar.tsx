@@ -26,6 +26,7 @@ import { Container, TopBarLogo, TopBarNavigationWrapper } from './elements';
 import { Feedback } from './Feedback';
 import { TenantLogo } from './TenantLogo';
 import { UserProfileButton } from './UserProfileButton';
+import { UserReportPanel } from './UserReportPanel';
 import { UserSettings } from './userSettings';
 
 export const Topbar: React.FC = () => {
@@ -38,7 +39,7 @@ export const Topbar: React.FC = () => {
   const activePanel = useActivePanel();
   const { pathname } = useLocation();
 
-  const handleNavigate =
+  const getNavigationHandler =
     (page: string, id = -1) =>
     () => {
       setActive(id);
@@ -67,7 +68,7 @@ export const Topbar: React.FC = () => {
       dispatch(hideResults());
     });
 
-    handleNavigate(navigation.SEARCH, PATHNAMES.SEARCH)();
+    getNavigationHandler(navigation.SEARCH, PATHNAMES.SEARCH)();
   };
 
   const companyLogo = useMemo(() => {
@@ -90,7 +91,7 @@ export const Topbar: React.FC = () => {
             {
               name: t(SEARCH_LINK_TEXT_KEY) as string,
               isActive: activeTab === PATHNAMES.SEARCH,
-              onClick: handleNavigate(
+              onClick: getNavigationHandler(
                 `${navigation.SEARCH}${activePanel ? `/${activePanel}` : ''}`,
                 PATHNAMES.SEARCH
               ),
@@ -98,7 +99,7 @@ export const Topbar: React.FC = () => {
             {
               name: t(FAVORITES_LINK_TEXT_KEY) as string,
               isActive: activeTab === PATHNAMES.FAVORITES,
-              onClick: handleNavigate(
+              onClick: getNavigationHandler(
                 navigation.FAVORITES,
                 PATHNAMES.FAVORITES
               ),
@@ -115,9 +116,15 @@ export const Topbar: React.FC = () => {
       <TopBar.Right>
         <AdminSettings
           handleNavigation={(navigation: string, path: number) => {
-            handleNavigate(navigation, path)();
+            getNavigationHandler(navigation, path)();
           }}
           activeTab={activeTab}
+        />
+        <UserReportPanel
+          activeTab={activeTab}
+          handleNavigation={(navigation: string, path: number) => {
+            getNavigationHandler(navigation, path)();
+          }}
         />
 
         <UserSettings />

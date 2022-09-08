@@ -167,3 +167,10 @@ export const NPT_LEGEND_KEY = {
   all: ['nptLegend'],
   lists: (type: WellLegendNptType) => [...NPT_LEGEND_KEY.all, type],
 };
+
+// Reports
+const REPORTS = 'REPORTS';
+export const REPORTS_QUERY_KEY = {
+  ALL: [REPORTS, 'list'],
+  ACTIVE_REPORTS: [REPORTS, 'list', 'active'],
+};

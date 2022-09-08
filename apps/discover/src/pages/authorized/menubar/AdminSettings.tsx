@@ -17,7 +17,7 @@ import {
   ADMIN_FEEDBACK_LINK_TEXT_KEY,
   ADMIN_PROJECT_CONFIG_LINK_TEXT_KEY,
   ADMIN_MAP_CONFIG,
-  ADMIN_REPORT_MANAGER,
+  ADMIN_REPORT_PANEL,
   PATHNAMES,
 } from './constants';
 
@@ -90,11 +90,11 @@ export const AdminSettings: React.FC<Props> = ({
       },
     },
     {
-      key: 'ADMIN/REPORT_MANAGER',
+      key: 'ADMIN/REPORT_PANEL',
       configKey: 'reportManager',
-      name: t(ADMIN_REPORT_MANAGER) as string,
+      name: t(ADMIN_REPORT_PANEL) as string,
       onClick: () => {
-        handleNavigation(navigation.ADMIN_REPORT_MANAGER, PATHNAMES.ADMIN);
+        handleNavigation(navigation.ADMIN_REPORT_PANEL, PATHNAMES.ADMIN);
       },
     },
   ].filter((item) => {
@@ -137,7 +137,7 @@ export const AdminSettings: React.FC<Props> = ({
         onClickOutside={() => setShowDropdown(false)}
       >
         <TopBar.Navigation
-          className="admin-navigation"
+          className="topbar-navigation-padding-fix"
           links={[
             {
               name,

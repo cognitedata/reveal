@@ -89,7 +89,7 @@ const Content = () => {
                 />
 
                 <Route
-                  path={navigation.REPORT_MANAGER}
+                  path={navigation.REPORT_PANEL}
                   render={() => <ReportManager />}
                 />
 

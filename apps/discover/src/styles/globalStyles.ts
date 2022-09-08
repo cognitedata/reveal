@@ -86,7 +86,7 @@ export const GlobalStyles = createGlobalStyle`
     opacity: 1 !important;
   }
 
-  .admin-navigation {
+  .topbar-navigation-padding-fix {
     padding-left: 0px !important;
   }
 
