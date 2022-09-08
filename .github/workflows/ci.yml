@@ -276,22 +276,20 @@ jobs:
         run: yarn install --immutable
 
       - name: Update Docosaurus base URL
-        uses: jacobtomlinson/gha-find-replace@v2
+        uses: jacobtomlinson/gha-find-replace@v1
         with:
           find: "baseUrl: .*"
           replace: "baseUrl: '/reveal-docs-preview/${{ env.PR_NUMBER }}/',"
           include: "docusaurus.config.js"
           exclude: ".git"
-          regex: true   
 
       - name: Update Docosaurus title
-        uses: jacobtomlinson/gha-find-replace@v2
+        uses: jacobtomlinson/gha-find-replace@v1
         with:
           find: "title: .*"
           replace: "title: 'Reveal documentation (preview #${{ env.PR_NUMBER }}, built ${PR_TIMESTAMP})',"
           include: "docusaurus.config.js"
           exclude: ".git"
-          regex: true
 
       - name: Build documentation 🔧
         working-directory: documentation
