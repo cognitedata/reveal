@@ -35,6 +35,7 @@ export class DefaultCameraManager implements CameraManager {
 
   private isDisposed = false;
   private _nearAndFarNeedsUpdate = false;
+  private _enabledCopy = true;
 
   private readonly _modelRaycastCallback: (x: number, y: number) => Promise<CameraManagerCallbackData>;
   private _onClick: ((event: MouseEvent) => void) | undefined = undefined;
@@ -144,6 +145,7 @@ export class DefaultCameraManager implements CameraManager {
    */
   set enabled(enabled: boolean) {
     this._controls.enabled = enabled;
+    this._enabledCopy = enabled;
   }
 
   /**
@@ -160,6 +162,7 @@ export class DefaultCameraManager implements CameraManager {
    */
   set cameraControlsEnabled(enabled: boolean) {
     this._controls.enabled = enabled;
+    this._enabledCopy = enabled;
   }
 
   /**
@@ -374,7 +377,6 @@ export class DefaultCameraManager implements CameraManager {
 
         controls.lookAtViewTarget = false;
         controls.enableKeyboardNavigation = true;
-        controls.setState(this._camera.position, tempTarget);
 
         this._domElement.removeEventListener('pointerdown', stopTween);
       })
@@ -556,12 +558,16 @@ export class DefaultCameraManager implements CameraManager {
 
       if (wantNewScrollTarget && isZoomToCursor) {
         scrollStarted = true;
+        let newTarget: THREE.Vector3;
 
         // Disable controls to prevent camera from moving while picking is happening.
         // await is not working as expected because event itself is not awaited.
-        this._controls.temporaryEnabled = false;
-        const newTarget = await this.calculateNewTarget(e);
-        this._controls.temporaryEnabled = true;
+        try {
+          this._controls.enabled = false;
+          newTarget = await this.calculateNewTarget(e);
+        } finally {
+          this._controls.enabled = this._enabledCopy;
+        }
 
         this._controls.setScrollTarget(newTarget);
       }

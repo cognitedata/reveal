@@ -44,7 +44,6 @@ const defaultKeyboardRotationSpeed = defaultPointerRotationSpeed * 10;
 
 export class ComboControls extends EventDispatcher {
   public enabled: boolean = true;
-  public temporaryEnabled: boolean = true;
   public enableDamping: boolean = true;
   public dampingFactor: number = 0.25;
   public dynamicTarget: boolean = true;
@@ -139,9 +138,6 @@ export class ComboControls extends EventDispatcher {
 
       window.removeEventListener('pointerup', this.onMouseUp);
       window.removeEventListener('pointerdown', this.onFocusChanged);
-
-      // dipose all keyboard events registered. REV-461!
-      this._keyboard.dispose();
     };
   }
 
@@ -158,11 +154,10 @@ export class ComboControls extends EventDispatcher {
       dampingFactor,
       EPSILON,
       _targetFPS,
-      enabled,
-      temporaryEnabled
+      enabled
     } = this;
 
-    if (!forceUpdate && (!enabled || !temporaryEnabled)) {
+    if (!forceUpdate && !enabled) {
       return false;
     }
 
@@ -306,7 +301,7 @@ export class ComboControls extends EventDispatcher {
   };
 
   private readonly onMouseDown = (event: MouseEvent) => {
-    if (!this.enabled || !this.temporaryEnabled) {
+    if (!this.enabled) {
       return;
     }
 
@@ -334,7 +329,7 @@ export class ComboControls extends EventDispatcher {
   };
 
   private readonly onMouseWheel = (event: WheelEvent) => {
-    if (!this.enabled || !this.temporaryEnabled) {
+    if (!this.enabled) {
       return;
     }
     event.preventDefault();
@@ -365,7 +360,7 @@ export class ComboControls extends EventDispatcher {
   };
 
   private readonly onTouchStart = (event: TouchEvent) => {
-    if (!this.enabled || !this.temporaryEnabled) {
+    if (!this.enabled) {
       return;
     }
     event.preventDefault();
@@ -409,7 +404,7 @@ export class ComboControls extends EventDispatcher {
   };
 
   private readonly onContextMenu = (event: MouseEvent) => {
-    if (!this.enabled || !this.temporaryEnabled) {
+    if (!this.enabled) {
       return;
     }
     event.preventDefault();
@@ -557,7 +552,7 @@ export class ComboControls extends EventDispatcher {
   };
 
   private readonly handleKeyboard = () => {
-    if (!this.enabled || !this.temporaryEnabled || !this.enableKeyboardNavigation || !this._isFocused) {
+    if (!this.enabled || !this.enableKeyboardNavigation || !this._isFocused) {
       return;
     }
 
