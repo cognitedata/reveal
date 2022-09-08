@@ -49,7 +49,6 @@ export class MeasurementUi {
       this.setMeasurementLineOptions();
     }));
     this._guiController.push(this._gui.addColor(this.state, 'color').name('Line Color').onFinishChange(color => {
-      debugger;
       this.state.color = color;
       this.setMeasurementLineOptions();
     }));
