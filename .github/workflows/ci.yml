@@ -279,6 +279,7 @@ jobs:
           replace: "baseUrl: '/reveal-docs-preview/${{ env.PR_NUMBER }}/',"
           include: "docusaurus.config.js"
           exclude: ".git"
+          regex: true
 
       - name: Update Docosaurus title
         uses: jacobtomlinson/gha-find-replace@v2
