@@ -43,7 +43,7 @@ export const AnnotationActionMenuExtended = ({
         onConfirm={handleAnnotationDelete}
         content={
           deleteConfirmText ||
-          'Are you sure you want to permanently delete this annotation?'
+          'Are you sure you want to permanently\ndelete this annotation?'
         }
       >
         <Menu.Item>
