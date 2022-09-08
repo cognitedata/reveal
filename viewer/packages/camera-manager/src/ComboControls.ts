@@ -43,7 +43,8 @@ const defaultPointerRotationSpeed = Math.PI / 360; // half degree per pixel
 const defaultKeyboardRotationSpeed = defaultPointerRotationSpeed * 10;
 
 export class ComboControls extends EventDispatcher {
-  public enabledCopy: boolean = true;
+  public enabled: boolean = true;
+  public temporaryEnabled: boolean = true;
   public enableDamping: boolean = true;
   public dampingFactor: number = 0.25;
   public dynamicTarget: boolean = true;
@@ -81,7 +82,6 @@ export class ComboControls extends EventDispatcher {
   public minDeltaDownscaleCoefficient = 0.1;
   public maxDeltaDownscaleCoefficient = 1;
 
-  private _enabled: boolean = true;
   private _temporarilyDisableDamping: boolean = false;
   private readonly _camera: PerspectiveCamera | OrthographicCamera;
   private _firstPersonMode: boolean = false;
@@ -145,19 +145,6 @@ export class ComboControls extends EventDispatcher {
     };
   }
 
-  temporaryDisable(value: boolean): void {
-    this._enabled = value;
-  }
-
-  set enabled(value: boolean) {
-    this._enabled = value;
-    this.enabledCopy = value;
-  }
-
-  get enabled(): boolean {
-    return this._enabled;
-  }
-
   public update = (deltaTime: number, forceUpdate = false): boolean => {
     const {
       _camera,
@@ -171,10 +158,11 @@ export class ComboControls extends EventDispatcher {
       dampingFactor,
       EPSILON,
       _targetFPS,
-      _enabled: enabled
+      enabled,
+      temporaryEnabled
     } = this;
 
-    if (!forceUpdate && !enabled) {
+    if (!forceUpdate && (!enabled || !temporaryEnabled)) {
       return false;
     }
 
@@ -318,7 +306,7 @@ export class ComboControls extends EventDispatcher {
   };
 
   private readonly onMouseDown = (event: MouseEvent) => {
-    if (!this._enabled) {
+    if (!this.enabled || !this.temporaryEnabled) {
       return;
     }
 
@@ -346,7 +334,7 @@ export class ComboControls extends EventDispatcher {
   };
 
   private readonly onMouseWheel = (event: WheelEvent) => {
-    if (!this._enabled) {
+    if (!this.enabled || !this.temporaryEnabled) {
       return;
     }
     event.preventDefault();
@@ -377,7 +365,7 @@ export class ComboControls extends EventDispatcher {
   };
 
   private readonly onTouchStart = (event: TouchEvent) => {
-    if (!this._enabled) {
+    if (!this.enabled || !this.temporaryEnabled) {
       return;
     }
     event.preventDefault();
@@ -421,7 +409,7 @@ export class ComboControls extends EventDispatcher {
   };
 
   private readonly onContextMenu = (event: MouseEvent) => {
-    if (!this._enabled) {
+    if (!this.enabled || !this.temporaryEnabled) {
       return;
     }
     event.preventDefault();
@@ -569,7 +557,7 @@ export class ComboControls extends EventDispatcher {
   };
 
   private readonly handleKeyboard = () => {
-    if (!this._enabled || !this.enableKeyboardNavigation || !this._isFocused) {
+    if (!this.enabled || !this.temporaryEnabled || !this.enableKeyboardNavigation || !this._isFocused) {
       return;
     }
 

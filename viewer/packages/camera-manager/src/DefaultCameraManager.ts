@@ -559,9 +559,9 @@ export class DefaultCameraManager implements CameraManager {
 
         // Disable controls to prevent camera from moving while picking is happening.
         // await is not working as expected because event itself is not awaited.
-        this._controls.temporaryDisable(false);
+        this._controls.temporaryEnabled = false;
         const newTarget = await this.calculateNewTarget(e);
-        this._controls.temporaryDisable(this._controls.enabledCopy);
+        this._controls.temporaryEnabled = true;
 
         this._controls.setScrollTarget(newTarget);
       }
