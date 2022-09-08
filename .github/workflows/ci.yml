@@ -288,6 +288,7 @@ jobs:
           replace: "title: 'Reveal documentation (preview #${{ env.PR_NUMBER }})',"
           include: "docusaurus.config.js"
           exclude: ".git"
+          regex: true
 
       - name: Build documentation 🔧
         working-directory: documentation
