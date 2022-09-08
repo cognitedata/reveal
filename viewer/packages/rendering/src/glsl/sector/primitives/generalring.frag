@@ -17,7 +17,7 @@ in float v_oneMinusThicknessSqr;
 in vec2 v_xy;
 in float v_angle;
 in float v_arcAngle;
-in float v_treeIndex;
+flat in float v_treeIndex;
 in vec3 v_color;
 in vec3 v_normal;
 in vec3 vViewPosition;

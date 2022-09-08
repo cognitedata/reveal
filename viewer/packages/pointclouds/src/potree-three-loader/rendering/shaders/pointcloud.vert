@@ -138,7 +138,7 @@ out vec3 vColor;
 	out vec3 vViewPosition;
 #endif
 
-#if defined(weighted_splats) || defined(paraboloid_point_shape)
+#if defined(weighted_splats) || defined(paraboloid_point_shape) || defined(hq_depth_pass)
 	out float vRadius;
 #endif
 
@@ -421,8 +421,8 @@ vec3 getCompositeColor() {
 void main() {
 	vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
 
-        vec4 classification = getClassification();
-        float outColorAlpha = classification.a;
+    vec4 classification = getClassification();
+    float outColorAlpha = classification.a;
 
 	gl_Position = projectionMatrix * mvPosition;
 
@@ -462,7 +462,7 @@ void main() {
 	pointSize = max(minSize, pointSize);
 	pointSize = min(maxSize, pointSize);
 
-	#if defined(weighted_splats) || defined(paraboloid_point_shape)
+	#if defined(weighted_splats) || defined(paraboloid_point_shape) || defined(hq_depth_pass)
 		vRadius = pointSize / projFactor;
 	#endif
 
@@ -567,6 +567,15 @@ void main() {
                 gl_Position = vec4(100.0, 100.0, 100.0, 0.0);
                 return;
 	}
+
+	#if defined hq_depth_pass
+		float originalDepth = gl_Position.w;
+		float adjustedDepth = originalDepth + 2.0 * vRadius;
+		float adjust = adjustedDepth / originalDepth;
+	
+		mvPosition.xyz = mvPosition.xyz * adjust;
+		gl_Position = projectionMatrix * mvPosition;
+	#endif
 
 	// ---------------------
 	// CLIPPING

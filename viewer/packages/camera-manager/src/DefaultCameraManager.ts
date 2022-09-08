@@ -13,7 +13,8 @@ import {
   EventTrigger,
   InputHandler,
   disposeOfAllEventListeners,
-  PointerEventDelegate
+  PointerEventDelegate,
+  fitCameraToBoundingBox
 } from '@reveal/utilities';
 
 /**
@@ -125,11 +126,7 @@ export class DefaultCameraManager implements CameraManager {
   }
 
   fitCameraToBoundingBox(box: THREE.Box3, duration?: number, radiusFactor: number = 2): void {
-    const { position, target } = CameraManagerHelper.calculateCameraStateToFitBoundingBox(
-      this._camera,
-      box,
-      radiusFactor
-    );
+    const { position, target } = fitCameraToBoundingBox(this._camera, box, radiusFactor);
 
     this.moveCameraTo(position, target, duration);
   }
@@ -140,6 +137,20 @@ export class DefaultCameraManager implements CameraManager {
    */
   get cameraControls(): ComboControls {
     return this._controls;
+  }
+
+  /**
+   * Sets whether camera controls through mouse, touch and keyboard are enabled.
+   */
+  set enabled(enabled: boolean) {
+    this._controls.enabled = enabled;
+  }
+
+  /**
+   * Gets whether camera controls through mouse, touch and keyboard are enabled.
+   */
+  get enabled(): boolean {
+    return this._controls.enabled;
   }
 
   /**

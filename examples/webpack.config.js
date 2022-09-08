@@ -49,8 +49,9 @@ module.exports = {
   ],
   resolve: {
     extensions: ['.tsx', '.ts', '.js', '.css'],
+    symlinks: false
   },
-  devtool: 'inline-source-map',
+  devtool: 'eval-source-map',
   output: {
     filename: 'bundle.js',
     path: path.resolve(__dirname, 'public'),

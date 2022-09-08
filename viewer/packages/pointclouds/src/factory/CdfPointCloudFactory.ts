@@ -87,6 +87,6 @@ export class CdfPointCloudFactory implements PointCloudFactory {
     );
 
     pointCloudOctree.name = `PointCloudOctree: ${modelBaseUrl}`;
-    return new PotreeNodeWrapper(pointCloudOctree, annotationInfo.annotations);
+    return new PotreeNodeWrapper(pointCloudOctree, annotationInfo.annotations, modelIdentifier.revealInternalId);
   }
 }

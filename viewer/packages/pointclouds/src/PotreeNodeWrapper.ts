@@ -27,21 +27,28 @@ export class PotreeNodeWrapper {
   readonly octree: PointCloudOctree;
   private _needsRedraw = false;
   private readonly _classification: IClassification = {} as IClassification;
+  private readonly _modelIdentifier: symbol;
+
+  private static readonly pickingWindowSize = 20;
 
   private readonly _annotations: PointCloudObjectAnnotation[];
-  private static readonly pickingWindowSize = 20;
 
   get needsRedraw(): boolean {
     return this._needsRedraw;
   }
 
-  constructor(octree: PointCloudOctree, annotations: PointCloudObjectAnnotation[]) {
+  constructor(octree: PointCloudOctree, annotations: PointCloudObjectAnnotation[], modelIdentifier: symbol) {
     this.octree = octree;
     this.pointSize = 2;
     this.pointColorType = PotreePointColorType.Rgb;
     this.pointShape = PotreePointShape.Circle;
     this._classification = octree.material.classification;
     this._annotations = annotations;
+    this._modelIdentifier = modelIdentifier;
+  }
+
+  get modelIdentifier(): symbol {
+    return this._modelIdentifier;
   }
 
   get pointSize(): number {

@@ -65,9 +65,9 @@ module.exports = env => {
       rules: [
         {
           test: /\.worker\.ts$/,
-          loader: 'worker-loader',
+          loader: 'workerize-loader',
           options: {
-            inline: 'no-fallback'
+            inline: true
           }
         },
         {
@@ -92,6 +92,14 @@ module.exports = env => {
           test: /\.(glsl|vert|frag)$/,
           exclude: '/node_modules/',
           use: ['raw-loader', 'glslify-loader']
+        },
+        {
+          test: /\.css$/,
+          use: ['raw-loader']
+        },
+        {
+          test: /\.wasm$/,
+          type: 'asset/inline'
         }
       ]
     },

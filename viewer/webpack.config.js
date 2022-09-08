@@ -32,19 +32,11 @@ module.exports = env => {
 
   return {
     mode: development ? 'development' : 'production',
-    // Internals is not part of prod builds
-    entry: development
-      ? {
-          index: './index.ts',
-          tools: './tools.ts',
-          'extensions/datasource': './extensions/datasource.ts',
-          internals: './internals.ts'
-        }
-      : {
-          index: './index.ts',
-          tools: './tools.ts',
-          'extensions/datasource': './extensions/datasource.ts'
-        },
+    entry: {
+      index: './index.ts',
+      tools: './tools.ts',
+      'extensions/datasource': './extensions/datasource.ts'
+    },
     target: 'web',
     resolve: {
       fallback: {
@@ -118,7 +110,7 @@ module.exports = env => {
         type: 'umd'
       }
     },
-    devtool: development ? 'inline-source-map' : 'source-map',
+    devtool: development ? 'eval-source-map' : 'source-map',
     watchOptions: {
       aggregateTimeout: 1500,
       ignored: /node_modules/

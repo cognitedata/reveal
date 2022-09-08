@@ -40,6 +40,7 @@ target
 
 **/.env
 **/.env.*
+**/.cdf-environments.json
 !**/.env.example
 
 # Viewer ignores

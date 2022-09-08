@@ -111,9 +111,12 @@ export function createRevealManager(
     constructorOptions: revealOptions
   });
 
-  const renderOptions: RenderOptions = revealOptions.renderOptions || {};
+  const renderOptions: RenderOptions = revealOptions?.renderOptions ?? {};
   const materialManager = new CadMaterialManager();
-  const pipelineExecutor = new BasicPipelineExecutor(renderer);
+  const pipelineExecutor = new BasicPipelineExecutor(renderer, {
+    autoResizeRenderer: true,
+    resolutionThreshold: revealOptions.rendererResolutionThreshold
+  });
   const defaultRenderPipeline = new DefaultRenderPipelineProvider(
     materialManager,
     sceneHandler,
@@ -154,5 +157,5 @@ export function createRevealManager(
  */
 function getSdkApplicationId(sdk: CogniteClient): string {
   const headers = sdk.getDefaultRequestHeaders();
-  return headers['x-cdp-app'] || 'unknown';
+  return headers['x-cdp-app'] ?? 'unknown';
 }

@@ -29,7 +29,7 @@ in float v_arcAngle;
 in float v_surfacePointY;
 in vec4 v_planeA;
 in vec4 v_planeB;
-in float v_treeIndex;
+flat in float v_treeIndex;
 in vec3 v_color;
 in vec3 v_normal;
 
@@ -39,7 +39,7 @@ void main() {
         discard;
     }
 
-    vec4 color = determineColor(v_color, appearance);    
+    vec4 color = determineColor(v_color, appearance);
     vec3 normal = normalize( v_normal );
 
     float R1 = v_centerB.w;
