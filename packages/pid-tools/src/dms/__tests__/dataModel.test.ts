@@ -2,15 +2,14 @@
 import { isMatch } from 'lodash';
 
 import {
-  DiagramNode,
-  DiagramNodeAdapter,
   FilePageMixin,
+  LineNodeAdapter,
   PostGisGeometry,
   PostGisGeometryAdapter,
   SymbolTemplateNodeAdapter,
   ViewboxNodeAdapter,
 } from '../dataModel';
-import { DiagramSymbol, Rect } from '../..';
+import { DiagramLineInstanceOutputFormat, DiagramSymbol, Rect } from '../..';
 
 // Reusable objects
 const rect: Rect = {
@@ -27,7 +26,7 @@ const pgGeom: PostGisGeometry = {
   ],
 };
 const pgGeomString = 'LINESTRING(0 0, 1 1)';
-const fpInfo: FilePageMixin = {
+const fpInfo: Omit<FilePageMixin, 'modelName'> = {
   externalId: 'ext_id',
   fileId: 1,
   filePage: 1,
@@ -46,10 +45,34 @@ const diagramSymbol: DiagramSymbol = {
     svgPaths: [
       {
         svgCommands: 'some_svg_command',
-        style: 'some_svg_file',
+        style: 'some_svg_style',
       },
     ],
   },
+};
+
+const diagramLineInstance: DiagramLineInstanceOutputFormat = {
+  type: 'Line',
+  id: 'path22670',
+  pathIds: ['path22670'],
+  labelIds: [],
+  lineNumbers: [],
+  inferedLineNumbers: [],
+  svgRepresentation: {
+    boundingBox: {
+      x: 0,
+      y: 0,
+      width: 1,
+      height: 1,
+    },
+    svgPaths: [
+      {
+        svgCommands: 'some_svg_command',
+        style: 'some_svg_style',
+      },
+    ],
+  },
+  labels: [],
 };
 
 describe('PostGisGeometryAdapter', () => {
@@ -96,63 +119,6 @@ describe('ViewboxNodeAdapter', () => {
     expect(isMatch(viewboxNode, fpInfo)).toBeTruthy();
     expect(viewboxNode.box).toEqual(pgGeom);
   });
-  // sanitizing
-  test('sanitizeBeforeUpsert', () => {
-    const upsertFormat = ViewboxNodeAdapter.sanitizeBeforeUpsert(viewboxNode);
-    // upsertFormat must still have the same fields except for "box"
-    expect(isMatch(upsertFormat, fpInfo)).toBeTruthy();
-    // "box" must be transformed into PostGIS string
-    expect(upsertFormat.box).toEqual(pgGeomString);
-  });
-  test('sanitizeAfterUpsert', () => {
-    const upsertFormat = {
-      ...fpInfo,
-      box: pgGeomString,
-    };
-    const viewboxNodeAfterUpsert =
-      ViewboxNodeAdapter.sanitizeAfterUpsert(upsertFormat);
-    expect(viewboxNodeAfterUpsert).toEqual(viewboxNode);
-  });
-  test('sanitizeBeforeUpsert + sanitizeAfterUpsert roundtrip', () => {
-    const upsertFormat = ViewboxNodeAdapter.sanitizeBeforeUpsert(viewboxNode);
-    const afterRoundtrip = ViewboxNodeAdapter.sanitizeAfterUpsert(upsertFormat);
-    expect(afterRoundtrip).toEqual(viewboxNode);
-  });
-});
-
-describe('DiagramNodeAdapter', () => {
-  const diagramNodeWithoutGeometry = {
-    ...fpInfo,
-    svgCommands: [] as string[],
-    svgPathStyles: [] as string[],
-  };
-  const diagramNode: DiagramNode = {
-    ...diagramNodeWithoutGeometry,
-    geometry: pgGeom,
-  };
-  test('sanitizeBeforeUpsert', () => {
-    const upsertFormat = DiagramNodeAdapter.sanitizeBeforeUpsert(diagramNode);
-    // upsertFormat must still have the same fields except for "geometry"
-    expect(isMatch(upsertFormat, diagramNodeWithoutGeometry)).toBeTruthy();
-    // "geometry" must be transformed into PostGIS string
-    expect(upsertFormat.geometry).toEqual(pgGeomString);
-  });
-  test('sanitizeAfterUpsert', () => {
-    const upsertFormat = {
-      ...diagramNodeWithoutGeometry,
-      geometry: pgGeomString,
-    };
-    const diagramNode = DiagramNodeAdapter.sanitizeAfterUpsert(upsertFormat);
-    // All fields except "geometry" must be the same after sanitizing
-    expect(isMatch(diagramNode, diagramNodeWithoutGeometry)).toBeTruthy();
-    // "box" must be transformed into PostGIS JSON
-    expect(diagramNode.geometry).toEqual(pgGeom);
-  });
-  test('sanitizeBeforeUpsert + sanitizeAfterUpsert roundtrip', () => {
-    const upsertFormat = DiagramNodeAdapter.sanitizeBeforeUpsert(diagramNode);
-    const afterRoundtrip = DiagramNodeAdapter.sanitizeAfterUpsert(upsertFormat);
-    expect(afterRoundtrip).toEqual(diagramNode);
-  });
 });
 
 describe('SymbolTemplateNodeAdapter', () => {
@@ -165,7 +131,7 @@ describe('SymbolTemplateNodeAdapter', () => {
     expect(isMatch(symbolTemplateNode, fpInfo)).toBeTruthy();
 
     // svg fields must match the ones from svgRepresentation
-    expect(symbolTemplateNode.svgCommands[0]).toEqual(
+    expect(symbolTemplateNode.svgPathCommands[0]).toEqual(
       diagramSymbol.svgRepresentation.svgPaths[0].svgCommands
     );
     expect(symbolTemplateNode.svgPathStyles[0]).toEqual(
@@ -178,5 +144,34 @@ describe('SymbolTemplateNodeAdapter', () => {
 
     // DiagramSymbolid from is disregarded for now
     // DiagramSymbol.symbolType is disregarded for now
+  });
+});
+
+describe('LineNodeAdapter', () => {
+  test('fromDiagramLineInstance', () => {
+    const lineNode = LineNodeAdapter.fromDiagramLineInstance(
+      diagramLineInstance,
+      fpInfo
+    );
+    // Discriminator keys must be the correct hardcoded values
+    expect(lineNode.modelName).toEqual('Line');
+    expect(lineNode.lineType).toEqual('Process');
+
+    // All FilePageMixin fields must match the input fpInfo
+    expect(isMatch(lineNode, fpInfo)).toBeTruthy();
+
+    // svg fields must match the ones from svgRepresentation
+    expect(lineNode.svgPathCommands[0]).toEqual(
+      diagramLineInstance.svgRepresentation.svgPaths[0].svgCommands
+    );
+    expect(lineNode.svgPathStyles[0]).toEqual(
+      diagramLineInstance.svgRepresentation.svgPaths[0].style
+    );
+
+    // "geometry" must be correctly constructed from svgRepresentation
+    expect(lineNode.geometry).toEqual(pgGeom);
+
+    // Line must be indirected
+    expect(lineNode.isDirected).toEqual(0);
   });
 });

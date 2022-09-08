@@ -1,65 +1,214 @@
 import { CogniteClient } from '@cognite/sdk';
 
-import { DmsNode, NodeAdapter } from './dataModel';
+import { ModelNodeMap, ModelEdgeMap } from './dataModel';
 
 const CDF_ALPHA_VERSION_HEADERS = { 'cdf-version': 'alpha' };
 
-export async function upsertNodes<N extends DmsNode>(
+type ModelMap = ModelNodeMap & ModelEdgeMap;
+
+const NUM_CONCURRENT_WORKERS = 10;
+const INTERNAL_UPSERT_LIMIT = 1000;
+const INTERNAL_DELETE_LIMIT = 1000;
+
+async function upsertCommon<T extends keyof ModelMap>(
+  dmsEndpoint: 'nodes' | 'edges',
   client: CogniteClient,
   options: {
-    /** Class type of the node */
-    NodeAdapterType: NodeAdapter<N>;
+    model: T;
+    spaceExternalId: string;
+    items: ModelMap[T][];
+  }
+): Promise<ModelMap[T][]> {
+  type Model = ModelMap[T];
+
+  const resultChunks: { worker: number; items: Model[] }[] = [];
+  const postModelsWorker = async (worker: number) => {
+    // Get the slice from the items corresponding to the index of this worker
+    const offset = worker * INTERNAL_UPSERT_LIMIT;
+    const slice = options.items.slice(offset, offset + INTERNAL_UPSERT_LIMIT);
+    // If slice is empty, can stop work altogether
+    if (slice.length === 0) {
+      return;
+    }
+    // Do the post request, gather results on success and throw on failure
+    const res = await client.post<{ items: Model[] }>(
+      `/api/v1/projects/${client.project}/datamodelstorage/${dmsEndpoint}`,
+      {
+        data: {
+          items: slice,
+          spaceExternalId: options.spaceExternalId,
+          model: [options.spaceExternalId, options.model],
+          overwrite: true,
+          autoCreateStartNodes: dmsEndpoint === 'edges' ? false : undefined,
+          autoCreateEndNodes: dmsEndpoint === 'edges' ? false : undefined,
+        },
+        headers: CDF_ALPHA_VERSION_HEADERS,
+        responseType: 'json',
+      }
+    );
+    if (res.status !== 200) {
+      throw Error(
+        `Unexpected status (${res.status}) during upsert of ${dmsEndpoint}: ${res}`
+      );
+    }
+    resultChunks.push({ worker, items: res.data.items });
+
+    // Work on the next slice 'NUM_CONCURRENT_WORKERS' positions further
+    const nextWorker = worker + NUM_CONCURRENT_WORKERS;
+    await postModelsWorker(nextWorker);
+  };
+
+  // Spawn 'NUM_CONCURRENT_WORKERS' to work concurrently on upserting
+  const promises: Promise<void>[] = [];
+  for (let w = 0; w < NUM_CONCURRENT_WORKERS; w += 1) {
+    promises.push(postModelsWorker(w));
+  }
+  await Promise.all(promises);
+
+  return (
+    resultChunks
+      // sort by worker index to reconstruct original order of items
+      .sort((a, b) => a.worker - b.worker)
+      // remove offset and reduce to only the items
+      .flatMap((chunk) => chunk.items)
+      // Add the "modelName" discriminator again
+      .map((model) => {
+        return { ...model, modelName: options.model } as Model;
+      })
+  );
+}
+
+export async function upsertNodes<T extends keyof ModelNodeMap>(
+  client: CogniteClient,
+  options: {
+    /** Model name for the node */
+    model: T;
     /** DMS space to adress */
     spaceExternalId: string;
     /** Nodes to upsert */
-    items: N[];
+    items: ModelMap[T][];
   }
-): Promise<N[]> {
-  // Convert local node representation into format digestable by DMS
-  const nodesBeforeUpsert: any[] = options.items.map((node) =>
-    options.NodeAdapterType.sanitizeBeforeUpsert(node)
-  );
-
-  const data = {
-    items: nodesBeforeUpsert,
-    spaceExternalId: options.spaceExternalId,
-    model: [options.spaceExternalId, options.NodeAdapterType.modelName],
-    overwrite: true,
-  };
-
-  const res = await client.post(
-    `/api/v1/projects/${client.project}/datamodelstorage/nodes`,
-    {
-      data,
-      headers: CDF_ALPHA_VERSION_HEADERS,
-      responseType: 'json',
-    }
-  );
-
-  // Convert DMS node representation into local format
-  const nodesAfterUpsert: N[] = res.data.items.map((node) =>
-    options.NodeAdapterType.sanitizeAfterUpsert(node)
-  );
-  return nodesAfterUpsert;
+): Promise<ModelMap[T][]> {
+  return upsertCommon('nodes', client, options);
 }
 
-export interface NodeFilter {
+export async function upsertEdges<T extends keyof ModelEdgeMap>(
+  client: CogniteClient,
+  options: {
+    /** Model name for the node */
+    model: T;
+    /** DMS space to adress */
+    spaceExternalId: string;
+    /** Nodes to upsert */
+    items: ModelMap[T][];
+  }
+): Promise<ModelMap[T][]> {
+  // DMS currently runs into 409 errors when multiple process try to create
+  // the direct relation in the 'type' field concurrently.
+  // So we filter for edges with unique values for the "type" field and bootstrap them
+  const uniqueTypes = new Set<string>();
+  const itemsWithUniqueType = options.items.filter((item) => {
+    if (!uniqueTypes.has(item.type)) {
+      uniqueTypes.add(item.type);
+      return true;
+    }
+    return false;
+  });
+  // Bootstrapping
+  await upsertCommon('edges', client, {
+    model: options.model,
+    spaceExternalId: options.spaceExternalId,
+    items: itemsWithUniqueType,
+  });
+
+  // Concurrent upserting
+  return upsertCommon('edges', client, options);
+}
+
+export async function deleteCommon<T extends { externalId: string }>(
+  nodesOrEdges: 'nodes' | 'edges',
+  client: CogniteClient,
+  options: {
+    items: T[];
+  }
+): Promise<void> {
+  const reducedItems = options.items.map((item) => {
+    return { externalId: item.externalId };
+  });
+  const deleteModelsWorker = async (worker: number) => {
+    // Get the slice from the items corresponding to the index of this worker
+    const offset = worker * INTERNAL_DELETE_LIMIT;
+    const slice = reducedItems.slice(offset, offset + INTERNAL_DELETE_LIMIT);
+    // If slice is empty, can stop work altogether
+    if (slice.length === 0) {
+      return;
+    }
+    // Do the post request, gather results on success and throw on failure
+    const res = await client.post(
+      `/api/v1/projects/${client.project}/datamodelstorage/${nodesOrEdges}/delete`,
+      {
+        data: {
+          items: slice,
+        },
+        headers: CDF_ALPHA_VERSION_HEADERS,
+        responseType: 'json',
+      }
+    );
+    if (res.status !== 200) {
+      throw Error(`Unexpected status (${res.status}) during delete: ${res}`);
+    }
+
+    // Work on the next slice 'NUM_CONCURRENT_WORKERS' positions further
+    const nextWorker = worker + NUM_CONCURRENT_WORKERS;
+    await deleteModelsWorker(nextWorker);
+  };
+
+  // Spawn 'NUM_CONCURRENT_WORKERS' to work concurrently on upserting
+  const promises: Promise<void>[] = [];
+  for (let w = 0; w < NUM_CONCURRENT_WORKERS; w += 1) {
+    promises.push(deleteModelsWorker(w));
+  }
+  await Promise.all(promises);
+}
+
+export async function deleteNodes<T extends { externalId: string }>(
+  client: CogniteClient,
+  options: {
+    items: T[];
+  }
+): Promise<void> {
+  return deleteCommon<T>('nodes', client, options);
+}
+
+export async function deleteEdges<T extends { externalId: string }>(
+  client: CogniteClient,
+  options: {
+    items: T[];
+  }
+): Promise<void> {
+  return deleteCommon<T>('edges', client, options);
+}
+
+interface ModelFilter {
   property: string;
   values: any[];
 }
-export async function listNodes<N extends DmsNode>(
+async function listCommon<T extends keyof ModelMap>(
+  nodesOrEdges: 'nodes' | 'edges',
   client: CogniteClient,
   options: {
-    /** Class type of the node */
-    NodeAdapterType: NodeAdapter<N>;
+    /** Model name for the node */
+    model: T;
     /** DMS space to adress */
     spaceExternalId: string;
     /** Filters for node properties */
-    filters: NodeFilter[];
+    filters: ModelFilter[];
     /** Limit to the number of nodes to retrieve. Can be set to Infinity to retrieve all Nodes */
     limit: number;
   }
-): Promise<N[]> {
+): Promise<ModelMap[T][]> {
+  type Model = ModelMap[T];
+
   if (options.limit < 1) {
     throw Error('limit must be >= 1');
   }
@@ -71,11 +220,7 @@ export async function listNodes<N extends DmsNode>(
           and: options.filters.map((f) => {
             return {
               in: {
-                property: [
-                  options.spaceExternalId,
-                  options.NodeAdapterType.modelName,
-                  f.property,
-                ],
+                property: [options.spaceExternalId, options.model, f.property],
                 values: f.values,
               },
             };
@@ -87,32 +232,78 @@ export async function listNodes<N extends DmsNode>(
 
   // Repeatedly call endpoint with cursor pagination until the requested limit is reached
   // or there are no more pages to fetch
-  const data = {
-    model: [options.spaceExternalId, options.NodeAdapterType.modelName],
+
+  const data: {
+    model: [string, string];
+    filter: any;
+    limit: number;
+    cursor: string | undefined;
+  } = {
+    model: [options.spaceExternalId, options.model],
     filter,
     limit: internalPaginationLimit,
     cursor: undefined,
   };
-  const result: N[] = [];
+
+  const resultItems: Model[] = [];
   let remaining: number;
   do {
     // adjust the limit for the next chunk if we would fetch more then the requested items
-    remaining = options.limit - result.length;
+    remaining = options.limit - resultItems.length;
     if (remaining < data.limit) {
       data.limit = remaining;
     }
 
     // eslint-disable-next-line no-await-in-loop
-    const response = await client.post(
-      `/api/v1/projects/${client.project}/datamodelstorage/nodes/list`,
+    const response = await client.post<{
+      items: Model[];
+      nextCursor?: string;
+    }>(
+      `/api/v1/projects/${client.project}/datamodelstorage/${nodesOrEdges}/list`,
       {
         data,
         headers: CDF_ALPHA_VERSION_HEADERS,
         responseType: 'json',
       }
     );
-    result.push(...(response.data.items as N[]));
+    resultItems.push(...response.data.items);
     data.cursor = response.data.nextCursor;
   } while (remaining > 0 && data.cursor != null);
-  return result;
+
+  // Add the "modelName" discriminator before returning
+  return resultItems.map((item) => {
+    return { ...item, modelName: options.model } as Model;
+  });
+}
+
+export async function listNodes<T extends keyof ModelNodeMap>(
+  client: CogniteClient,
+  options: {
+    /** Model name for the node */
+    model: T;
+    /** DMS space to adress */
+    spaceExternalId: string;
+    /** Filters for node properties */
+    filters: ModelFilter[];
+    /** Limit to the number of nodes to retrieve. Can be set to Infinity to retrieve all Nodes */
+    limit: number;
+  }
+): Promise<ModelMap[T][]> {
+  return listCommon('nodes', client, options);
+}
+
+export async function listEdges<T extends keyof ModelEdgeMap>(
+  client: CogniteClient,
+  options: {
+    /** Model name for the edge */
+    model: T;
+    /** DMS space to adress */
+    spaceExternalId: string;
+    /** Filters for edge properties */
+    filters: ModelFilter[];
+    /** Limit to the number of edges to retrieve. Can be set to Infinity to retrieve all Edges */
+    limit: number;
+  }
+): Promise<ModelMap[T][]> {
+  return listCommon('edges', client, options);
 }

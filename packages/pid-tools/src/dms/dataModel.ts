@@ -1,4 +1,14 @@
-import { DiagramSymbol, Rect } from '..';
+import { createHash } from 'crypto';
+
+import {
+  bothSymbolTypes,
+  DiagramLineInstanceOutputFormat,
+  DiagramSymbol,
+  GraphDocument,
+  PidFileConnectionInstance,
+  Rect,
+  SvgRepresentation,
+} from '..';
 
 /**
  * PostGIS geometry JSON, see http://postgis.net/workshops/postgis-intro/geometries.html
@@ -59,149 +69,407 @@ export abstract class PostGisGeometryAdapter {
   }
 }
 
-/** This interface enables us to call static method and members through generics */
-export interface NodeAdapter<N extends DmsNode> {
-  /** The corresponding name of this Node Type in DMS */
-  modelName: string;
-
-  // NodeAdapter must allow to convert back and forth from the upsert format
-  /** Tranform given node node into the upsert data format */
-  sanitizeBeforeUpsert: (node: N) => any;
-  /** Tranform given node from upsert format into retrieve format */
-  sanitizeAfterUpsert: (node: any) => N;
-}
-
-export interface DmsNode {
-  /** external id for this node */
+interface DmsModel {
+  /** external id for this model */
   externalId: string;
 }
-export abstract class DmsNodeAdapter {
-  static modelName: 'node';
 
-  public static sanitizeBeforeUpsert(node: DmsNode): any {
-    // No-Op
-    return node;
-  }
-  public static sanitizeAfterUpsert(node: any): DmsNode {
-    // No-Op
-    return node;
-  }
+// ----- Nodes -----
+export type ModelNodeMap = {
+  node: DmsNode;
+  FilePageMixin: FilePageMixin;
+  Viewbox: ViewboxNode;
+  DiagramNode: DiagramNode;
+  Instance: InstanceNode;
+  Symbol: SymbolNode;
+  FileConnection: FileConnectionNode;
+  SymbolTemplate: SymbolTemplateNode;
+  Line: LineNode;
+};
+
+export interface DmsNode extends DmsModel {
+  modelName: 'node';
 }
 
-export interface FilePageMixin extends DmsNode {
+export interface FilePageMixin extends Omit<DmsNode, 'modelName'> {
+  modelName: 'FilePageMixin';
   /** id of the labeled SVG file in CDF */
   fileId: number;
   /** page on the file */
   filePage: number;
 }
-export abstract class FilePageMixinAdapter {
-  static modelName = 'FilePageMixin';
 
-  public static sanitizeBeforeUpsert(node: FilePageMixin): any {
-    // No-Op
-    return node;
-  }
-  public static sanitizeAfterUpsert(node: any): FilePageMixin {
-    // No-Op
-    return node;
-  }
-}
-
-export interface ViewboxNode extends FilePageMixin {
+export interface ViewboxNode extends Omit<FilePageMixin, 'modelName'> {
+  modelName: 'Viewbox';
   /** The rectangular box formated as PostGIS type http://postgis.net/workshops/postgis-intro/geometries.html
    * Since boxes are not available, we are using LINESTRING(x1 y1, x2 y2) to state the lower left and upper right corner.
    */
   box: PostGisGeometry;
 }
 export abstract class ViewboxNodeAdapter {
-  static modelName = 'Viewbox';
-
-  public static fromRect(rect: Rect, fpInfo: FilePageMixin): ViewboxNode {
+  public static fromRect(
+    rect: Rect,
+    fpInfo: Omit<FilePageMixin, 'modelName'>
+  ): ViewboxNode {
     return {
       ...fpInfo,
+      modelName: 'Viewbox',
       box: PostGisGeometryAdapter.fromRect(rect),
-    };
-  }
-  // Need to sanitize the "box", as the upsert format is a PostGIS string while the retrieval format is JSON
-  public static sanitizeBeforeUpsert(node: ViewboxNode): any {
-    return {
-      ...node,
-      box: PostGisGeometryAdapter.toString(node.box),
-    };
-  }
-  public static sanitizeAfterUpsert(node: any): ViewboxNode {
-    return {
-      ...node,
-      box: PostGisGeometryAdapter.fromString(node.box),
     };
   }
 }
 
-export interface DiagramNode extends FilePageMixin {
+export interface DiagramNode extends Omit<FilePageMixin, 'modelName'> {
+  modelName: 'DiagramNode';
   /** ids of the svg paths for the symbol template */
-  svgCommands: string[];
+  svgPathCommands: string[];
   /** svg styles of the paths for the symbol template */
   svgPathStyles: string[];
   /** geometric representation. Can be any PostGIS type: http://postgis.net/workshops/postgis-intro/geometries.html */
   geometry: PostGisGeometry;
 }
-export abstract class DiagramNodeAdapter {
-  static modelName = 'DiagramNode';
 
-  // Need to sanitize the "geometry", as the upsert format is a PostGIS string while the retrieval format is JSON
-  public static sanitizeBeforeUpsert(node: DiagramNode): any {
-    return {
-      ...node,
-      geometry: PostGisGeometryAdapter.toString(node.geometry),
-    };
-  }
-
-  public static sanitizeAfterUpsert(node: any): DiagramNode {
-    return {
-      ...node,
-      geometry: PostGisGeometryAdapter.fromString(node.geometry),
-    };
-  }
+// --- Symbol Instance Nodes ---
+export interface InstanceNode extends Omit<DiagramNode, 'modelName'> {
+  modelName: 'Instance';
+  /** Concrete ids of svg paths in the referenced file */
+  svgPathIds: string[];
+  /** Optional reference to a CDF asset by id */
+  assetId?: number;
+  /** Optional reference to a CDF asset by name */
+  assetName?: string;
 }
 
-interface SymbolTemplateNode extends DiagramNode {
+const dmsSupportedSymbolTypes = [
+  ...bothSymbolTypes,
+  'File Connection',
+] as const;
+type DmsSupportedSymbolTypes = typeof dmsSupportedSymbolTypes[number];
+export interface SymbolNode extends Omit<InstanceNode, 'modelName'> {
+  modelName: 'Symbol';
+  /** The name of the symbol type inside the parser tool */
+  symbolType: DmsSupportedSymbolTypes;
+  /** Rotation of the symbol relative to the symbol template in degrees */
+  rotation: number;
+  /** Scale of the symbol relative to the symbol template */
+  scale: number;
+}
+
+export interface FileConnectionNode extends Omit<SymbolNode, 'modelName'> {
+  modelName: 'FileConnection';
+  symbolType: 'File Connection';
+  /** direction in degrees this file connection is pointing to */
+  direction: number;
+  /** string describing whether or not the file connection is pointing outwards of the current file */
+  fileDirection: string;
+}
+
+function svgRepresentationToCommandsAndStyles(
+  svgRepresentation: SvgRepresentation
+): {
+  svgPathCommands: string[];
+  svgPathStyles: string[];
+} {
+  // flatten the svgPath structure into two arrays
+  const svgPathCommands: string[] = [];
+  const svgPathStyles: string[] = [];
+  svgRepresentation.svgPaths.forEach((svgPath) => {
+    svgPathCommands.push(svgPath.svgCommands);
+    svgPathStyles.push(svgPath.style!);
+  });
+  return { svgPathCommands, svgPathStyles };
+}
+
+/** Create a deterministic sha1 hash from an object. This is used to create
+ * unique but deterministic externalIDs for Nodes and Edges
+ */
+function externalIdFromObjectHash(obj: any): string {
+  const hash = createHash('sha1').update(JSON.stringify(obj)).digest('hex');
+  return hash;
+}
+
+// --- Symbol Template ---
+export interface SymbolTemplateNode extends Omit<DiagramNode, 'modelName'> {
+  modelName: 'SymbolTemplate';
   /** Human readable description */
   description: string;
 }
 export abstract class SymbolTemplateNodeAdapter {
-  static modelName = 'SymbolTemplate';
-
   public static fromDiagramSymbol(
     diagramSymbol: DiagramSymbol,
-    fpInfo: FilePageMixin
+    fpInfo: Omit<FilePageMixin, 'modelName'>
   ): SymbolTemplateNode {
-    // flatten the svgPath structure into two arrays
-    const svgCommands: string[] = [];
-    const svgPathStyles: string[] = [];
-    diagramSymbol.svgRepresentation.svgPaths.forEach((svgPath) => {
-      svgCommands.push(svgPath.svgCommands);
-      svgPathStyles.push(svgPath.style!);
-    });
-
     return {
+      modelName: 'SymbolTemplate',
       ...fpInfo,
-      svgCommands,
-      svgPathStyles,
+      ...svgRepresentationToCommandsAndStyles(diagramSymbol.svgRepresentation),
       geometry: PostGisGeometryAdapter.fromRect(
         diagramSymbol.svgRepresentation.boundingBox
       ),
       description: diagramSymbol.description,
     };
   }
+}
 
-  // Can reuse sanitize methods from DiagramNode
-  public static sanitizeBeforeUpsert(node: SymbolTemplateNode): any {
-    return DiagramNodeAdapter.sanitizeBeforeUpsert(node);
-  }
-  public static sanitizeAfterUpsert(node: any): SymbolTemplateNode {
+type LineType = 'Process';
+export interface LineNode extends Omit<InstanceNode, 'modelName'> {
+  modelName: 'Line';
+  /** Subtype of the line, e.g. what type of connection the line represents */
+  lineType: LineType;
+  /** Whether or not the line has a direction. Should be treated as a bool even though it is a number, as DMS does not know bools. */
+  isDirected: number;
+}
+export abstract class LineNodeAdapter {
+  public static fromDiagramLineInstance(
+    diagramLineInstance: DiagramLineInstanceOutputFormat,
+    fpInfo: Omit<FilePageMixin, 'modelName'>
+  ): LineNode {
     return {
-      ...DiagramNodeAdapter.sanitizeAfterUpsert(node),
-      description: node.description,
+      modelName: 'Line',
+      lineType: 'Process',
+      ...fpInfo,
+      ...svgRepresentationToCommandsAndStyles(
+        diagramLineInstance.svgRepresentation
+      ),
+      svgPathIds: diagramLineInstance.pathIds,
+      geometry: PostGisGeometryAdapter.fromRect(
+        diagramLineInstance.svgRepresentation.boundingBox
+      ),
+      isDirected: 0,
     };
   }
+}
+
+// ----- Edges -----
+export type ModelEdgeMap = {
+  edge: DmsEdge;
+  BaseEdge: BaseEdge;
+  InstanceEdge: InstanceEdge;
+  FileLink: FileLinkEdge;
+};
+
+export interface DmsEdge extends DmsModel {
+  modelName: 'edge';
+  type: string;
+  startNode: string;
+  endNode: string;
+}
+
+export interface BaseEdge extends Omit<DmsEdge, 'modelName'> {
+  modelName: 'BaseEdge';
+  /** The confidence between from 0.0 to 1.0 for the link between two instances is correct */
+  confidence?: number;
+}
+
+export interface InstanceEdge extends Omit<BaseEdge, 'modelName'> {
+  modelName: 'InstanceEdge';
+  /** id of the labeled SVG file in CDF */
+  fileId: number;
+  /** page on the file */
+  filePage: number;
+}
+
+export interface FileLinkEdge extends Omit<BaseEdge, 'modelName'> {
+  modelName: 'FileLink';
+}
+
+/**
+ * Create the graph topology of nodes and edges with all symbols,
+ * lines, and the edges connecting them. Takes the corresponding objects
+ * from the GraphDocument as an input
+ * @param options Object containing the GraphDocument to convert as well as the fileId and filePage
+ * @param fileId CDF id for the file
+ * @param filePage page number on the file
+ * @returns Object containing lists of all created nodes and edges, keyed by model name
+ */
+export function graphDocumentToNodesAndEdges(options: {
+  graphDocument: GraphDocument;
+  fileId: number;
+  filePage: number;
+}): {
+  nodes: {
+    Viewbox: ViewboxNode[];
+    Symbol: SymbolNode[];
+    FileConnection: FileConnectionNode[];
+    Line: LineNode[];
+  };
+  edges: {
+    InstanceEdge: InstanceEdge[];
+  };
+} {
+  // Used to avoid creating the same node twice when multiple identical instances occur in the GraphDocument
+  const instanceDeduplicator = new Set<string>();
+
+  const filePageInfo = {
+    fileId: options.fileId,
+    filePage: options.filePage,
+  };
+
+  // Create the viewbox with unique externalId
+  const viewboxNode = ViewboxNodeAdapter.fromRect(
+    options.graphDocument.viewBox,
+    {
+      externalId: `viewbox_${externalIdFromObjectHash({
+        ...options.graphDocument.viewBox,
+        ...filePageInfo,
+      })}`,
+      ...filePageInfo,
+    }
+  );
+
+  // Create symbol nodes from diagramSymbolInstances
+  // While doing this, map diagramSymbolInstance.id to the created NodeType and externalId in order
+  // to later create edges from DiagramConnections
+  const idToExternalIdMap = new Map<
+    string,
+    ['Symbol' | 'FileConnection' | 'Line', string]
+  >();
+  const symbolNodes: SymbolNode[] = [];
+  const fileConnectionNodes: FileConnectionNode[] = [];
+  options.graphDocument.symbolInstances.forEach((diagramSymbolInstance) => {
+    // Construct externalId
+    const externalIdHash = `${externalIdFromObjectHash({
+      ...diagramSymbolInstance,
+      ...filePageInfo,
+    })}`;
+    // Deal with potential duplicate instances
+    if (instanceDeduplicator.has(externalIdHash)) {
+      // eslint-disable-next-line no-console
+      console.warn(
+        `Ignoring duplicate diagramSymbolInstance with hash: ${externalIdHash}`
+      );
+      return;
+    }
+    instanceDeduplicator.add(externalIdHash);
+
+    // object with all the common fields, except externalId and modelName
+    const symbolNodePrecursor = {
+      ...filePageInfo,
+      ...svgRepresentationToCommandsAndStyles(
+        diagramSymbolInstance.svgRepresentation
+      ),
+      geometry: PostGisGeometryAdapter.fromRect(
+        diagramSymbolInstance.svgRepresentation.boundingBox
+      ),
+      svgPathIds: diagramSymbolInstance.pathIds,
+      rotation: diagramSymbolInstance.rotation,
+      scale: diagramSymbolInstance.scale,
+      assetId: diagramSymbolInstance.assetId,
+      assetName: diagramSymbolInstance.assetName,
+    };
+
+    if (diagramSymbolInstance.type === 'File Connection') {
+      // Create a FileConnectionNode
+      const fileConnectionNode: FileConnectionNode = {
+        symbolType: 'File Connection',
+        modelName: 'FileConnection',
+        ...symbolNodePrecursor,
+        direction: diagramSymbolInstance.direction!,
+        fileDirection: (diagramSymbolInstance as PidFileConnectionInstance)
+          .fileDirection!,
+        externalId: `fileConn_${externalIdHash}`,
+      };
+      idToExternalIdMap.set(diagramSymbolInstance.id, [
+        fileConnectionNode.modelName,
+        fileConnectionNode.externalId,
+      ]);
+      fileConnectionNodes.push(fileConnectionNode);
+    } else if (
+      dmsSupportedSymbolTypes.includes(
+        diagramSymbolInstance.type as DmsSupportedSymbolTypes
+      )
+    ) {
+      // Create a SymbolNode
+      const symbolNode: SymbolNode = {
+        symbolType: diagramSymbolInstance.type as DmsSupportedSymbolTypes,
+        modelName: 'Symbol',
+        ...symbolNodePrecursor,
+        externalId: `symbol_${externalIdHash}`,
+      };
+      idToExternalIdMap.set(diagramSymbolInstance.id, [
+        symbolNode.modelName,
+        symbolNode.externalId,
+      ]);
+      symbolNodes.push(symbolNode);
+    } else {
+      // Unsupported type of DiagramSymbolInstance
+      throw Error(
+        `Unsupported type of SymbolInstance: ${diagramSymbolInstance.type}`
+      );
+    }
+  });
+
+  // Create line nodes from DiagramLineInstances and add them to the id to externalId map as well
+  const lineNodes: LineNode[] = [];
+  options.graphDocument.lines.forEach((diagramLineInstance) => {
+    // Construct externalId
+    const externalIdHash = `${externalIdFromObjectHash({
+      ...diagramLineInstance,
+      ...filePageInfo,
+    })}`;
+    // Deal with potential duplicate instances
+    if (instanceDeduplicator.has(externalIdHash)) {
+      // eslint-disable-next-line no-console
+      console.warn(
+        `Ignoring duplicate diagramLineInstance with hash: ${externalIdHash}`
+      );
+      return;
+    }
+    instanceDeduplicator.add(externalIdHash);
+
+    // Construct lineNodes with unique externalId
+    const lineNode = LineNodeAdapter.fromDiagramLineInstance(
+      diagramLineInstance,
+      {
+        externalId: `line_${externalIdHash}`,
+        ...filePageInfo,
+      }
+    );
+    lineNodes.push(lineNode);
+    // Map diagramLineInstance.id to externalId
+    idToExternalIdMap.set(diagramLineInstance.id, [
+      lineNode.modelName,
+      lineNode.externalId,
+    ]);
+  });
+
+  // Create edges from DiagramConnections, using the mapping of id to externalId
+  const instanceEdges: InstanceEdge[] = [];
+  options.graphDocument.connections.forEach((diagramConnection) => {
+    const startInfo = idToExternalIdMap.get(diagramConnection.start);
+    const endInfo = idToExternalIdMap.get(diagramConnection.end);
+    if (startInfo === undefined || endInfo === undefined) {
+      throw Error(
+        `No corresponding start node or end node for connection ${diagramConnection}`
+      );
+    }
+    const [startModel, startNode] = startInfo;
+    const [endModel, endNode] = endInfo;
+    const externalIdHash = `${externalIdFromObjectHash({
+      ...diagramConnection,
+      ...filePageInfo,
+    })}`;
+
+    instanceEdges.push({
+      modelName: 'InstanceEdge',
+      fileId: options.fileId,
+      filePage: options.filePage,
+      type: `${startModel}-${endModel}`,
+      startNode,
+      endNode,
+      externalId: `instanceEdge_${externalIdHash}`,
+    });
+  });
+
+  return {
+    nodes: {
+      Viewbox: [viewboxNode],
+      Symbol: symbolNodes,
+      FileConnection: fileConnectionNodes,
+      Line: lineNodes,
+    },
+    edges: {
+      InstanceEdge: instanceEdges,
+    },
+  };
 }

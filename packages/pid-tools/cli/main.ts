@@ -11,6 +11,7 @@ import convertDwgToPdf from './convertDwgToPdf';
 import convertPdfToSvg from './convertPdfToSvg';
 import deleteDiagramParserFiles from './deleteDiagramParserFiles';
 import upsertDms from './upsertDms';
+import listDms from './listDms';
 
 const shamefulKeepProcessAlive = () => {
   // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -121,10 +122,30 @@ const run = async () => {
               describe: 'path to the JSON file containing the GraphDocument',
               demandOption: true,
             })
-            .option('file-id', {
+            .option('file-page', {
               type: 'number',
+              describe: 'page number in the file',
+              default: 1,
+            })
+            .option('space-external-id', {
+              type: 'string',
+              describe: 'external id of the DMS space you want to upsert to',
+              demandOption: true,
+            })
+        ),
+    })
+    .command({
+      command: 'list-dms',
+      describe:
+        'List all the nodes and edges that have previously been upserted to dms',
+      handler: (argv) => listDms(argv),
+      builder: (yargs) =>
+        addClientOptions(
+          yargs
+            .option('svg-file-name', {
+              type: 'string',
               describe:
-                'CDF file id corresponding to the SVG file the GraphDocument belongs to',
+                'Filename of the SVG file in CDF we want to check upserted nodes and edges for',
               demandOption: true,
             })
             .option('file-page', {
@@ -134,7 +155,8 @@ const run = async () => {
             })
             .option('space-external-id', {
               type: 'string',
-              describe: 'external id of the DMS space you want to upsert to',
+              describe:
+                'external id of the DMS space the nodes and edges have been upserted to',
               demandOption: true,
             })
         ),
