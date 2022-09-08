@@ -3,9 +3,7 @@
  */
 
 import * as THREE from 'three';
-import { LineGeometry } from 'three/examples/jsm/lines/LineGeometry';
-import { LineMaterial } from 'three/examples/jsm/lines/LineMaterial';
-import { Line2 } from 'three/examples/jsm/lines/Line2';
+import { LineGeometry, LineMaterial, Line2 } from 'three-stdlib';
 
 export class MeasurementLine {
   private readonly _geometry: LineGeometry;

@@ -5,7 +5,7 @@
 import { DefaultNodeAppearance, TreeIndexNodeCollection } from '@reveal/cad-styling';
 import { DeferredPromise, NumericRange, SceneHandler } from '@reveal/utilities';
 import * as THREE from 'three';
-import { TransformControls } from 'three/examples/jsm/controls/TransformControls';
+import { TransformControls } from 'three-stdlib';
 import { AntiAliasingMode, defaultRenderOptions, DefaultRenderPipelineProvider } from '..';
 
 import {
