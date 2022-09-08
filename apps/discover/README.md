@@ -190,7 +190,7 @@ Known bug: [Firefox cannot display maps](https://bugzilla.mozilla.org/show_bug.c
 | `gyp: No Xcode or CLT version detected!`   | [Follow these steps](https://medium.com/flawless-app-stories/gyp-no-xcode-or-clt-version-detected-macos-catalina-anansewaa-38b536389e8d)           |
 | `Yarn cannot find ...........`             | <ol><li>Did you run `npm login`?</li><li>Are you [added](https://github.com/cognitedata/terraform-npm/blob/master/cogniters.tf) here?</li></ol>    |
 | `iBazel ........... permission denied`     | Workaround until fixed: Run `bazel clean --expunge`. If that doesn't work, delete `/private/var/tmp/_bazel_***` and run the expunge command after. |
-| `gyp ERR! node-pre-gyp`                    | `rm -rf node_modules && yarn`                                                                                                                      |
+| `gyp ERR! node-pre-gyp`                    | `rm -rf node_modules && yarn` This is caused by binary files in node modules being made for different node versions.                               |
 | `[vite] error while updating dependencies` | This might be due to inconsistent/outdated .vite local caching of dependencies, try running `yarn clean:vite`                                      |
 
 #### Local debugging
@@ -274,6 +274,17 @@ Adding the following line to both /etc/systemd/system.conf and /etc/systemd/user
 ```
 DefaultLimitNOFILE=65536
 ```
+
+Also edit `sudo vi /etc/sysctl.conf` and add at the bottom:
+
+```
+fs.inotify.max_user_watches = 524288
+fs.inotify.max_user_instances = 4096
+```
+
+Then reload it with: `sudo sysctl -p`
+
+Then if things are still failing, update `ulimit` to 65535 (google it)
 
 ## Running E2E tests in the Docker container
 
