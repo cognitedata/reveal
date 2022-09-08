@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { notification } from 'antd';
 import {
   Body,
@@ -123,7 +123,10 @@ export const BulkEditModalContent = ({
     disabled,
   } = selectedBulkEditOption;
   const { assetIds: unsavedAssetIds } = bulkEditUnsaved;
-  const assetIdsFromFiles = selectedFiles.map((file) => file.assetIds).flat();
+  const assetIdsFromFiles = useMemo(
+    () => selectedFiles.map((file) => file.assetIds).flat(),
+    [selectedFiles]
+  );
 
   useEffect(() => {
     setEditing(false);
@@ -174,7 +177,11 @@ export const BulkEditModalContent = ({
         }
       })();
     }
-  }, [selectedBulkEditOption, unsavedAssetIds?.addedAssetIds]);
+  }, [
+    assetIdsFromFiles,
+    selectedBulkEditOption,
+    unsavedAssetIds?.addedAssetIds,
+  ]);
 
   const handleBulkEditOptionChange = (value: {
     label: string;
