@@ -120,7 +120,7 @@ export const PriceAreaProvider: React.FC<
   }, [bidProcessEventExternalId]);
 
   useEffect(() => {
-    if (!bidProcessEventExternalId && allProcessConfigurations) {
+    if (!bidProcessEventExternalId && allProcessConfigurations?.length) {
       setBidProcessEventExternalId(
         allProcessConfigurations[0].bidProcessEventExternalId
       );

@@ -1,21 +1,24 @@
-import { useTable, useFilters, useSortBy, usePagination } from 'react-table';
+import {
+  useTable,
+  useFilters,
+  useSortBy,
+  usePagination,
+  Column,
+} from 'react-table';
 import { Flex, Pagination } from '@cognite/cogs.js';
-import { useHistory, useRouteMatch } from 'react-router-dom';
 import { Process } from 'types';
 
 import { StyledTable } from './elements';
-import { processListColumns } from './utils';
 
-const ProcessList = ({
-  processes,
+export const ReusableTable = ({
+  data,
+  columns,
   className = '',
 }: {
-  processes: Process[];
+  data: Process[];
+  columns: Column[];
   className?: string;
 }) => {
-  const match = useRouteMatch();
-  const history = useHistory();
-
   const {
     headerGroups,
     page,
@@ -24,24 +27,13 @@ const ProcessList = ({
     ...tableInstance
   } = useTable(
     {
-      columns: processListColumns,
-      data: processes,
-      initialState: {
-        pageIndex: 0,
-        pageSize: 10,
-        hiddenColumns:
-          className === 'all-processes' ? [] : ['subProcessStatuses'],
-      },
+      columns,
+      data,
     },
     useFilters,
     useSortBy,
     usePagination
   );
-
-  const handleRowClick = (row: any) => {
-    if (match.path.split('/', -1).slice(-1)[0] === 'processes')
-      history.push(`${match.path}/${row.eventExternalId}`);
-  };
 
   // Render the UI for your table
   return (
@@ -53,7 +45,9 @@ const ProcessList = ({
             <tr {...headerGroup.getHeaderGroupProps()}>
               {headerGroup.headers.map((column) => (
                 // eslint-disable-next-line react/jsx-key
-                <th {...column.getHeaderProps()}>{column.render('Header')}</th>
+                <th {...column.getHeaderProps()} className="cogs-body-2 strong">
+                  {column.render('Header')}
+                </th>
               ))}
             </tr>
           ))}
@@ -63,14 +57,12 @@ const ProcessList = ({
             tableInstance.prepareRow(row);
             return (
               // eslint-disable-next-line react/jsx-key
-              <tr
-                {...row.getRowProps()}
-                onClick={() => handleRowClick(row.values)}
-                className={className}
-              >
+              <tr {...row.getRowProps()} className={className}>
                 {row.cells.map((cell) => (
                   // eslint-disable-next-line react/jsx-key
-                  <td {...cell.getCellProps()}>{cell.render('Cell')}</td>
+                  <td {...cell.getCellProps()} className="cogs-body-2">
+                    {cell.render('Cell')}
+                  </td>
                 ))}
               </tr>
             );
@@ -89,5 +81,3 @@ const ProcessList = ({
     </div>
   );
 };
-
-export default ProcessList;

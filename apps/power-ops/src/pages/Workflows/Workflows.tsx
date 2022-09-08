@@ -1,25 +1,26 @@
 import { memo, useContext, useEffect } from 'react';
+import { Route, Switch, useRouteMatch } from 'react-router-dom';
 import { AuthConsumer, AuthContext } from '@cognite/react-container';
 import { AuthenticatedUser } from '@cognite/auth-utils';
 import { CogniteClient, CogniteEvent, Relationship } from '@cognite/sdk';
 import { EVENT_TYPES, PROCESS_TYPES } from '@cognite/power-ops-api-types';
 import { EventStreamContext } from 'providers/eventStreamProvider';
-import { useFetchProcesses } from 'queries/useFetchProcesses';
-import { Route, Switch, useRouteMatch } from 'react-router-dom';
-import { BidProcessPage } from 'pages/BidProcessPage';
+import { useFetchWorkflows } from 'queries/useFetchWorkflows';
 
+import { WorkflowSingle } from './WorkflowSingle';
+import { ReusableTable } from './ReusableTable';
 import { TableContainer } from './elements';
-import ProcessList from './ProcessList';
+import { workflowsColumns } from './utils';
 
-const ProcessWrapper: React.FC = () => (
+const WorkflowsWrapper: React.FC = () => (
   <AuthConsumer>
     {({ client, authState }: AuthContext) =>
-      client ? <ProcessesPage client={client} authState={authState} /> : null
+      client ? <WorkflowsPage client={client} authState={authState} /> : null
     }
   </AuthConsumer>
 );
 
-const ProcessesPage = ({
+const WorkflowsPage = ({
   client,
   authState,
 }: {
@@ -30,9 +31,8 @@ const ProcessesPage = ({
 
   const match = useRouteMatch();
 
-  const { data: processes, refetch: refetchProcesses } = useFetchProcesses({
+  const { data: workflows, refetch: refetchWorkflows } = useFetchWorkflows({
     project: client.project,
-    processTypes: [PROCESS_TYPES.BID_PROCESS],
     token: authState?.token,
   });
 
@@ -42,7 +42,7 @@ const ProcessesPage = ({
   ): Promise<void> => {
     switch (event.type) {
       case PROCESS_TYPES.BID_PROCESS:
-        refetchProcesses();
+        refetchWorkflows();
         break;
       case EVENT_TYPES.PROCESS_STARTED:
       case EVENT_TYPES.PROCESS_FAILED:
@@ -53,7 +53,7 @@ const ProcessesPage = ({
             rel.sourceExternalId.includes(PROCESS_TYPES.BID_PROCESS)
           )
         )
-          refetchProcesses();
+          refetchWorkflows();
         break;
     }
   };
@@ -73,25 +73,20 @@ const ProcessesPage = ({
     <Switch>
       <Route exact path={`${match.path}`}>
         <TableContainer>
-          {processes && (
-            <ProcessList processes={processes} className="all-processes" />
+          {workflows && (
+            <ReusableTable data={workflows} columns={workflowsColumns} />
           )}
         </TableContainer>
       </Route>
       <Route
         exact
-        path={`${match.path}/:bidProcessExternalId`}
-        render={(props) => {
-          const process = processes?.find(
-            (process) =>
-              process.eventExternalId ===
-              props.match.params.bidProcessExternalId
-          );
+        path={`${match.path}/:workflowExternalId`}
+        render={({ match: { params } }) => {
           return (
-            process && (
-              <BidProcessPage
+            params?.workflowExternalId && (
+              <WorkflowSingle
                 client={client}
-                process={process}
+                workflowExternalId={params.workflowExternalId}
                 authState={authState}
               />
             )
@@ -102,4 +97,4 @@ const ProcessesPage = ({
   );
 };
 
-export const Processes = memo(ProcessWrapper);
+export const Workflows = memo(WorkflowsWrapper);

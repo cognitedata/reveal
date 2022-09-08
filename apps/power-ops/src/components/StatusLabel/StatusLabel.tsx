@@ -1,12 +1,21 @@
-import { Label } from '@cognite/cogs.js';
+import { LabelSize } from '@cognite/cogs.js';
 
-const StatusLabel = ({ status }: { status: string }) => {
+import { StyledLabel } from './elements';
+
+export const StatusLabel = ({
+  status,
+  size = 'medium',
+}: {
+  status: string;
+  size?: LabelSize;
+}) => {
   return (
-    <Label
+    <StyledLabel
+      size={size}
       variant={
         // eslint-disable-next-line no-nested-ternary
         status === 'RUNNING'
-          ? 'accent'
+          ? 'normal'
           : // eslint-disable-next-line no-nested-ternary
           status === 'FINISHED'
           ? 'success'
@@ -14,10 +23,10 @@ const StatusLabel = ({ status }: { status: string }) => {
           ? 'danger'
           : 'unknown'
       }
+      icon={status === 'RUNNING' && 'Loader'}
+      iconPlacement="right"
     >
-      {status}
-    </Label>
+      {status.charAt(0) + status.substring(1).toLowerCase()}
+    </StyledLabel>
   );
 };
-
-export default StatusLabel;

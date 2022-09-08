@@ -15,12 +15,12 @@ import { PriceAreaProvider } from 'providers/priceAreaProvider';
 import { Portfolio } from 'pages/Portfolio';
 import { MenuBar } from 'components/Menubar/Menubar';
 import { NotFoundPage } from 'pages/NotFound/NotFound';
-import { Processes } from 'pages/Processes';
+import { Workflows } from 'pages/Workflows';
 import { Monitoring } from 'pages/Monitoring';
 
 export enum PAGES {
   HOME = '/home',
-  PROCESSES = '/processes',
+  WORKFLOWS = '/workflows',
   MONITORING = '/monitoring',
   PORTFOLIO = '/portfolio',
   LOGOUT = '/logout',
@@ -42,7 +42,7 @@ const App = () => (
                     path={PAGES.MONITORING}
                     render={() => <Monitoring />}
                   />
-                  <Route path={PAGES.PROCESSES} render={() => <Processes />} />
+                  <Route path={PAGES.WORKFLOWS} render={() => <Workflows />} />
                   <Route
                     path={[
                       `${PAGES.PORTFOLIO}/:priceAreaExternalId`,

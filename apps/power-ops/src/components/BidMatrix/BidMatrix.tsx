@@ -1,6 +1,6 @@
 import { CogniteEvent, DoubleDatapoint } from '@cognite/sdk';
 import { useState, useEffect, useContext, MouseEvent } from 'react';
-import { Button, Tooltip, Detail } from '@cognite/cogs.js';
+import { Button, Detail } from '@cognite/cogs.js';
 import { useAuthContext } from '@cognite/react-container';
 import { Column } from 'react-table';
 import { useParams } from 'react-router-dom';
@@ -12,6 +12,8 @@ import { EVENT_TYPES, DEFAULT_CONFIG } from '@cognite/power-ops-api-types';
 import { EventStreamContext } from 'providers/eventStreamProvider';
 import { HeadlessTable } from 'components/HeadlessTable';
 import { useMetrics } from '@cognite/metrics';
+
+import { CopyButton } from '../CopyButton/CopyButton';
 
 import {
   StyledTitle,
@@ -72,10 +74,6 @@ export const BidMatrix = ({
   );
   const [newMatrixAvailable, setNewMatrixAvailable] = useState<boolean>(false);
 
-  const [copied, setCopied] = useState<boolean>(false);
-  const [tooltipContent, setTooltipContent] =
-    useState<string>('Copy to clipboard');
-
   const updateMatrixData = async (
     matrix: MatrixWithData,
     scenarioPriceTsExternalId: string
@@ -133,20 +131,18 @@ export const BidMatrix = ({
     return 'Total';
   };
 
-  const handleCopyBidMatrixClick = async (_e: MouseEvent) => {
+  const handleCopyBidMatrixClick = async () => {
     const isCopied =
       matrixHeaderConfig && matrixData
         ? await copyMatrixToClipboard(matrixHeaderConfig, matrixData)
         : false;
 
-    setCopied(true);
-
-    if (isCopied) setTooltipContent('Copied!');
-    else setTooltipContent('Unable to copy');
-
     metrics.track('click-copy-bid-matrix-button', {
       matrixExternalId: currentMatrix?.externalId,
     });
+
+    if (isCopied) return true;
+    return false;
   };
 
   const reloadMatrixData = async (_e: MouseEvent) => {
@@ -221,18 +217,7 @@ export const BidMatrix = ({
                 currentMatrix?.externalId
               }`}</Detail>
             </div>
-            <Tooltip position="left" visible={copied} content={tooltipContent}>
-              <Button
-                aria-label="Copy Bidmatrix"
-                icon="Copy"
-                onClick={handleCopyBidMatrixClick}
-                onMouseEnter={() => {
-                  setCopied(true);
-                  setTooltipContent('Copy to clipboard');
-                }}
-                onMouseLeave={() => setCopied(false)}
-              />
-            </Tooltip>
+            <CopyButton copyFunction={handleCopyBidMatrixClick} />
           </StyledHeader>
           <StyledBidMatrixTable>
             {matrixHeaderConfig && matrixData && (

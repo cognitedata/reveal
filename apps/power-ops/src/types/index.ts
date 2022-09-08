@@ -55,3 +55,15 @@ export type Process = {
   eventType: string;
   status: string;
 };
+
+export type Workflow = {
+  id: number;
+  cdfProject: string;
+  collectionId: number;
+  eventCreationTime: string;
+  eventStartTime: string;
+  eventEndTime: string;
+  eventExternalId: string;
+  eventType: string;
+  status: string;
+};

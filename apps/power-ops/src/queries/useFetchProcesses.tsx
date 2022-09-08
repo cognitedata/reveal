@@ -7,19 +7,19 @@ const { powerOpsApiBaseUrl } = sidecar;
 
 const fetchProcesses = async ({
   project,
-  processTypes,
+  workflowExternalId,
   token,
 }: {
   project: string;
-  processTypes: string[];
+  workflowExternalId: string;
   token: string | undefined;
 }): Promise<Process[]> => {
   const { data: processes }: { data: Process[] } = await axios.get(
-    `${powerOpsApiBaseUrl}/${project}/processes`,
+    `${powerOpsApiBaseUrl}/${project}/processesByWorkflowExternalId`,
     {
       headers: { Authorization: `Bearer ${token}` },
       params: {
-        type: processTypes,
+        workflowExternalId,
       },
     }
   );
@@ -28,15 +28,15 @@ const fetchProcesses = async ({
 
 export const useFetchProcesses = ({
   project,
-  processTypes,
+  workflowExternalId,
   token,
 }: {
   project: string;
-  processTypes: string[];
+  workflowExternalId: string;
   token: string | undefined;
 }) => {
   return useQuery({
-    queryKey: [processTypes],
-    queryFn: () => fetchProcesses({ project, processTypes, token }),
+    queryKey: `processes_${workflowExternalId}`,
+    queryFn: () => fetchProcesses({ project, workflowExternalId, token }),
   });
 };
