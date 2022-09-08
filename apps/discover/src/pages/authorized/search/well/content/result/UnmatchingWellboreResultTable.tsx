@@ -15,13 +15,7 @@ import { wellSearchActions } from 'modules/wellSearch/actions';
 import { useWells } from 'modules/wellSearch/selectors';
 import { WellboreSubtableOptions } from 'pages/authorized/constant';
 
-import {
-  ExpandCollapseIcon,
-  OtherWellboresRow,
-  OtherWellboresSectionHeader,
-  TooltipContainer,
-  Message,
-} from './elements';
+import { OtherWellboresRow, TooltipContainer, Message } from './elements';
 
 export interface UnmatchingWellboreResultTableProps {
   well: WellInternal;
@@ -98,20 +92,16 @@ const UnmatchingWellboreResultTable: React.FC<
   return (
     <>
       <OtherWellboresRow>
-        <ExpandCollapseIcon>
-          <Icon
-            type={unmatchingWellboresExpanded ? 'ChevronUp' : 'ChevronDown'}
-            onClick={handleExpandUnmatchingWellbores}
-          />
-        </ExpandCollapseIcon>
-        <OtherWellboresSectionHeader>
-          {OTHER_WELLBORES_SECTION_TITLE}
-          <TooltipContainer>
-            <Tooltip content={EMPTY_NOT_MATCHING_WELLBORES_TOOLTIP}>
-              <Icon type="Info" />
-            </Tooltip>
-          </TooltipContainer>
-        </OtherWellboresSectionHeader>
+        <Icon
+          type={unmatchingWellboresExpanded ? 'ChevronUp' : 'ChevronDown'}
+          onClick={handleExpandUnmatchingWellbores}
+        />
+        {OTHER_WELLBORES_SECTION_TITLE}
+        <TooltipContainer>
+          <Tooltip content={EMPTY_NOT_MATCHING_WELLBORES_TOOLTIP}>
+            <Icon type="Info" />
+          </Tooltip>
+        </TooltipContainer>
       </OtherWellboresRow>
       {unmatchingWellboresExpanded && isEmpty(unmatchingWellbores) && (
         <OtherWellboresRow>

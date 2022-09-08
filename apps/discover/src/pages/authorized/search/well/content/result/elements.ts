@@ -28,22 +28,14 @@ export const SearchResultsContainer = styled.div`
 export const WellBoreGroupCoumn = styled(FlexColumn)``;
 
 export const OtherWellboresRow = styled(FlexRow)`
-  margin-left: 30px;
-  gap: 5px;
-`;
-
-export const ExpandCollapseIcon = styled.div`
-  padding-left: 12px;
-  padding-top: 8px;
-`;
-
-export const OtherWellboresSectionHeader = styled(FlexRow)`
-  padding: 8px;
-  gap: 5px;
+  margin-left: 42px;
+  gap: 8px;
+  align-items: center;
+  height: 44px;
 `;
 
 export const TooltipContainer = styled.div`
-  padding: 4px;
+  padding-top: 8px;
 `;
 
 export const Message = styled.div`
