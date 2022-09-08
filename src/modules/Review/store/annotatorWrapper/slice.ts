@@ -9,6 +9,8 @@ import {
   deleteCollection,
   getKeypointForAnnotatorPointRegion,
   populateTempKeypointCollection,
+  updateLastCollectionName,
+  updateLastShape,
 } from 'src/modules/Review/store/annotatorWrapper/utils';
 import {
   VisionAnnotation,
@@ -55,7 +57,6 @@ export const initialState: AnnotatorWrapperState = {
   lastShape: undefined,
   lastKeyPoint: undefined,
   currentTool: 'select',
-  keepUnsavedRegion: false,
   isCreatingKeypointCollection: false,
   temporaryRegion: undefined,
 };
@@ -107,30 +108,10 @@ const annotatorWrapperSlice = createSlice({
       }
     },
     setLastShape(state, action: PayloadAction<string>) {
-      if (
-        state.predefinedAnnotations.predefinedShapes
-          .map((predefinedShape) => predefinedShape.shapeName)
-          .includes(action.payload)
-      ) {
-        state.lastShape = action.payload;
-      } else {
-        console.warn(
-          'Provided shape name is not one of the predefined annotations'
-        );
-      }
+      updateLastShape(state, action.payload);
     },
     setLastCollectionName(state, action: PayloadAction<string>) {
-      if (
-        state.predefinedAnnotations.predefinedKeypointCollections
-          .map((predefinedCollection) => predefinedCollection.collectionName)
-          .includes(action.payload)
-      ) {
-        state.lastCollectionName = action.payload;
-      } else {
-        console.warn(
-          'Provided collection name is not one of the predefined annotations'
-        );
-      }
+      updateLastCollectionName(state, action.payload);
     },
     setSelectedTool(state, action: PayloadAction<Tool>) {
       if (Object.values(tools).includes(action.payload)) {
@@ -145,9 +126,6 @@ const annotatorWrapperSlice = createSlice({
       if (currentCollectionId) {
         deleteCollection(state, currentCollectionId);
       }
-    },
-    setKeepUnsavedRegion(state, action: PayloadAction<boolean>) {
-      state.keepUnsavedRegion = action.payload;
     },
     createTempKeypointCollection(state) {
       const { id, annotationLabelOrText, keypointLabel, x, y } =
@@ -180,6 +158,8 @@ const annotatorWrapperSlice = createSlice({
               point: { x, y },
               confidence: 1, // 100% confident about manually created keypoints
             };
+
+            state.temporaryRegion = undefined; // reset temp region - otherwise keypoint will be duplicated
 
             // create temp keypoint collection
 
@@ -216,8 +196,23 @@ const annotatorWrapperSlice = createSlice({
         console.warn('annotation label or keypoint label not found!');
       }
     },
-    onCreateKeypointRegion(state, action: PayloadAction<AnnotatorNewRegion>) {
+    onCreateRegion(state, action: PayloadAction<AnnotatorNewRegion>) {
+      // update last shape and collection name if label is available
+      if (
+        action.payload.annotationLabelOrText &&
+        (!state.temporaryRegion?.annotationLabelOrText ||
+          (state.temporaryRegion?.annotationLabelOrText &&
+            state.temporaryRegion?.annotationLabelOrText !==
+              action.payload.annotationLabelOrText)) // last shape should only be set only if tempRegion label is empty or if it exists provided region label is different from that
+      ) {
+        if (isAnnotatorPointRegion(action.payload)) {
+          updateLastCollectionName(state, action.payload.annotationLabelOrText);
+        } else {
+          updateLastShape(state, action.payload.annotationLabelOrText);
+        }
+      }
       state.temporaryRegion = action.payload;
+
       if (isAnnotatorPointRegion(action.payload)) {
         if (state.isCreatingKeypointCollection && state.lastCollectionId) {
           // temp keypoint collection is available
@@ -231,13 +226,13 @@ const annotatorWrapperSlice = createSlice({
             populateTempKeypointCollection(state, action.payload);
           }
         } else {
-          console.warn('temp keypoint collection does not exist');
+          console.warn(
+            'This region cannot be added. temp keypoint collection does not exist'
+          );
         }
-      } else {
-        console.warn('provided region is not a point region');
       }
     },
-    onUpdateKeypointRegion(state, action: PayloadAction<AnnotatorNewRegion>) {
+    onUpdateRegion(state, action: PayloadAction<AnnotatorNewRegion>) {
       const regionId = action.payload.id;
 
       const updateKeypoint = (
@@ -252,36 +247,50 @@ const annotatorWrapperSlice = createSlice({
         }
       };
 
-      if (isAnnotatorPointRegion(action.payload)) {
-        // if updated region same as temp region, update temp region in state
-        if (state.temporaryRegion && regionId === state.temporaryRegion.id) {
-          state.temporaryRegion = {
-            ...state.temporaryRegion,
-            ...action.payload,
-          };
-
-          if (
-            state.isCreatingKeypointCollection &&
-            state.lastCollectionId // temp keypoint collection is available and temp region is available
-          ) {
-            const tempCollection =
-              state.collections.byId[state.lastCollectionId];
-
-            if (tempCollection.keypointIds.includes(String(regionId))) {
-              updateKeypoint(regionId, action.payload);
-            } else {
-              // populate temp keypoint collection
-              populateTempKeypointCollection(state, action.payload);
-            }
+      // if updated region same as temp region, update temp region in state
+      if (state.temporaryRegion && regionId === state.temporaryRegion.id) {
+        // update last shape and collection name if label changed on a temporary annotation (before clicking create button)
+        if (
+          action.payload.annotationLabelOrText &&
+          (!state.temporaryRegion?.annotationLabelOrText ||
+            (state.temporaryRegion?.annotationLabelOrText &&
+              state.temporaryRegion?.annotationLabelOrText !==
+                action.payload.annotationLabelOrText)) // last shape should only be set only if tempRegion label is empty or if it exists provided region label is different from that
+        ) {
+          if (isAnnotatorPointRegion(action.payload)) {
+            updateLastCollectionName(
+              state,
+              action.payload.annotationLabelOrText
+            );
+          } else {
+            updateLastShape(state, action.payload.annotationLabelOrText);
           }
-        } else if (state.keypointMap.allIds.includes(String(regionId))) {
-          updateKeypoint(regionId, action.payload);
-        } else {
-          console.warn('provided region is not a point update');
         }
+
+        state.temporaryRegion = {
+          ...state.temporaryRegion,
+          ...action.payload,
+        };
+
+        if (
+          isAnnotatorPointRegion(action.payload) &&
+          state.isCreatingKeypointCollection &&
+          state.lastCollectionId // temp keypoint collection is available and temp region is available
+        ) {
+          // populate temp keypoint collection
+          populateTempKeypointCollection(state, action.payload);
+        }
+      } else if (
+        isAnnotatorPointRegion(action.payload) &&
+        state.keypointMap.allIds.includes(String(regionId))
+      ) {
+        updateKeypoint(regionId, action.payload);
       } else {
-        console.warn('provided region is not a point region');
+        console.warn('provided region is not a valid region update');
       }
+    },
+    clearTemporaryRegion(state) {
+      state.temporaryRegion = undefined;
     },
   },
   extraReducers: (builder) => {
@@ -390,10 +399,10 @@ export const {
   setLastShape,
   setLastCollectionName,
   deleteTempKeypointCollection,
-  setKeepUnsavedRegion,
-  onCreateKeypointRegion,
-  onUpdateKeypointRegion,
+  onCreateRegion,
+  onUpdateRegion,
   createTempKeypointCollection,
+  clearTemporaryRegion,
 } = annotatorWrapperSlice.actions;
 
 export default annotatorWrapperSlice.reducer;
