@@ -14,6 +14,7 @@ import {
   InputHandler,
   disposeOfAllEventListeners,
   PointerEventDelegate,
+  PointerEventData,
   fitCameraToBoundingBox
 } from '@reveal/utilities';
 
@@ -39,7 +40,7 @@ export class DefaultCameraManager implements CameraManager {
 
   private readonly _modelRaycastCallback: (x: number, y: number) => Promise<CameraManagerCallbackData>;
   private _onClick: ((event: MouseEvent) => void) | undefined = undefined;
-  private _onWheel: ((event: MouseEvent) => void) | undefined = undefined;
+  private _onWheel: ((event: WheelEvent) => void) | undefined = undefined;
 
   private static readonly DefaultAnimationDuration = 300;
   private static readonly DefaultMinAnimationDuration = 300;
@@ -483,7 +484,7 @@ export class DefaultCameraManager implements CameraManager {
    * Calculates new camera target based on cursor position.
    * @param event MouseEvent that contains pointer location data.
    */
-  private async calculateNewTarget(event: MouseEvent): Promise<THREE.Vector3> {
+  private async calculateNewTarget(event: PointerEventData): Promise<THREE.Vector3> {
     const { offsetX, offsetY } = event;
     const { x, y } = this.convertPixelCoordinatesToNormalized(offsetX, offsetY);
 
@@ -540,13 +541,13 @@ export class DefaultCameraManager implements CameraManager {
 
     const wheelClock = new THREE.Clock();
 
-    const onClick = async (e: any) => {
+    const onClick = async (e: PointerEventData) => {
       this._controls.enableKeyboardNavigation = false;
       const newTarget = await this.calculateNewTarget(e);
       this.moveCameraTargetTo(newTarget, DefaultCameraManager.DefaultAnimationDuration);
     };
 
-    const onWheel = async (e: any) => {
+    const onWheel = async (e: WheelEvent) => {
       e.preventDefault();
 
       const timeDelta = wheelClock.getDelta();
