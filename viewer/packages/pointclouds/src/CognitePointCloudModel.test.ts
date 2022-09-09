@@ -21,8 +21,7 @@ describe(CognitePointCloudModel.name, () => {
     const annotationIds = [1, 2, 3];
     const color: [number, number, number] = [255, 0, 127];
 
-    model.assignStyledObjectCollection(new AnnotationIdPointCloudObjectCollection(annotationIds),
-                                       { color });
+    model.assignStyledObjectCollection(new AnnotationIdPointCloudObjectCollection(annotationIds), { color });
 
     const collections = model.styledCollections;
 
@@ -35,8 +34,7 @@ describe(CognitePointCloudModel.name, () => {
     const annotationIds = [1, 2, 3];
     const color: [number, number, number] = [255, 0, 127];
 
-    model.assignStyledObjectCollection(new AnnotationIdPointCloudObjectCollection(annotationIds),
-                                       { color });
+    model.assignStyledObjectCollection(new AnnotationIdPointCloudObjectCollection(annotationIds), { color });
 
     model.removeAllStyledObjectCollections();
     expect(model.styledCollections).toHaveLength(0);
