@@ -522,6 +522,7 @@ export class PointCloudMaterial extends RawShaderMaterial {
   }
 
   private recomputeClassification(): void {
+    this.classificationTexture?.dispose();
     this.classificationTexture = generateClassificationTexture(this._classification);
     this.setUniform('classificationLUT', this.classificationTexture);
   }
