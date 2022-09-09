@@ -81,18 +81,18 @@ export const MeasurementsColumn: React.FC<
       if (isEmpty(chartData)) {
         return EMPTY_MEASUREMENTS_DATA_TEXT;
       }
+      if (measurementTypesSelection && isEmpty(measurementTypesSelection)) {
+        return NO_OPTIONS_SELECTED_TEXT;
+      }
+      if (isEmpty(filteredChartData)) {
+        return NO_DATA_AMONG_SELECTED_OPTIONS_TEXT;
+      }
       /**
        * If chart data is available, but scale is selected to MD,
        * we show the user a message to select TVD scale to see the graph.
        */
       if (!isTvdScaleSelected) {
         return SELECT_TVD_MESSAGE;
-      }
-      if (measurementTypesSelection && isEmpty(measurementTypesSelection)) {
-        return NO_OPTIONS_SELECTED_TEXT;
-      }
-      if (isEmpty(filteredChartData)) {
-        return NO_DATA_AMONG_SELECTED_OPTIONS_TEXT;
       }
       return undefined;
     }, [chartData, filteredChartData, measurementTypesSelection]);
