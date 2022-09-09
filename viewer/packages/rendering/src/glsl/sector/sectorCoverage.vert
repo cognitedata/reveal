@@ -21,7 +21,7 @@ out vec3 v_viewPosition;
 void main()
 {
     v_visible = a_visible;
-    v_color = packIntToColor(int(a_sectorId));
+    v_color = packIntToColor(a_sectorId);
     v_coverageFactor = abs(dot(a_coverageFactor, normal));
     // A seed to ensure that two overlapping sectors A and B 
     // doesn't produce the same noise pattern
