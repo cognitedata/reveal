@@ -141,6 +141,20 @@ export class DefaultCameraManager implements CameraManager {
 
   /**
    * Sets whether camera controls through mouse, touch and keyboard are enabled.
+   */
+  set enabled(enabled: boolean) {
+    this._controls.enabled = enabled;
+  }
+
+  /**
+   * Gets whether camera controls through mouse, touch and keyboard are enabled.
+   */
+  get enabled(): boolean {
+    return this._controls.enabled;
+  }
+
+  /**
+   * Sets whether camera controls through mouse, touch and keyboard are enabled.
    * This can be useful to e.g. temporarily disable navigation when manipulating other
    * objects in the scene or when implementing a "cinematic" viewer.
    */

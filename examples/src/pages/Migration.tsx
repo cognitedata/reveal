@@ -29,6 +29,7 @@ import { PointCloudUi } from '../utils/PointCloudUi';
 import { ModelUi } from '../utils/ModelUi';
 import { createSDKFromEnvironment } from '../utils/example-helpers';
 import { PointCloudClassificationFilterUI } from '../utils/PointCloudClassificationFilterUI';
+import { CustomCameraManager } from '../utils/CustomCameraManager';
 import { MeasurementUi } from '../utils/MeasurementUi';
 
 
@@ -40,20 +41,31 @@ export function Migration() {
   const url = new URL(window.location.href);
   const urlParams = url.searchParams;
   const environmentParam = urlParams.get('env');
-
   const canvasWrapperRef = useRef<HTMLDivElement>(null);
-
+  
   useEffect(() => {
+    // Check in order to avoid double initialization of everything, especially dat.gui.
+    // See https://reactjs.org/docs/strict-mode.html#detecting-unexpected-side-effects for why its called twice.
+    if (!canvasWrapperRef.current) {
+      return () => {};
+    }
+
     const gui = new dat.GUI({ width: Math.min(500, 0.8 * window.innerWidth) });
     let viewer: Cognite3DViewer;
     let cameraManager: DefaultCameraManager;
+    let cameraManagers: {
+      Default: DefaultCameraManager;
+      Custom: CustomCameraManager;
+    }
 
     async function main() {
       const project = urlParams.get('project');
-      const modelUrl = urlParams.get('modelUrl');
+      let modelUrl = urlParams.get('modelUrl');
 
       if (!modelUrl && !(environmentParam && project)) {
-        throw Error('Must specify URL parameters "project" and "env", or "modelUrl"');
+        modelUrl = 'primitives';
+        url.searchParams.set('modelUrl', 'primitives');
+        window.history.pushState({}, '', url.toString());
       }
 
       const progress = (itemsLoaded: number, itemsRequested: number, itemsCulled: number) => {
@@ -111,6 +123,12 @@ export function Migration() {
 
       cameraManager.setCameraControlsOptions(controlsOptions);
 
+      cameraManagers = {
+        Default: viewer.cameraManager as DefaultCameraManager,
+        Custom: new CustomCameraManager(canvasWrapperRef.current!, new THREE.PerspectiveCamera(5, 1., 0.01, 1000))
+      };
+      cameraManagers.Custom.enabled = false;
+
       // Add GUI for loading models and such
       const guiState = {
         antiAliasing: urlParams.get('antialias'),
@@ -153,7 +171,8 @@ export function Migration() {
         renderMode: 'Color',
         controls: {
           mouseWheelAction: 'zoomToCursor',
-          changeCameraTargetOnClick: false
+          changeCameraTargetOnClick: true,
+          cameraManager: 'Default'
         }
       };
       const guiActions = {
@@ -357,11 +376,15 @@ export function Migration() {
 
       const controlsGui = gui.addFolder('Camera controls');
       const mouseWheelActionTypes = ['zoomToCursor', 'zoomPastCursor', 'zoomToTarget'];
+      const cameraManagerTypes = ['Default', 'Custom'];
       controlsGui.add(guiState.controls, 'mouseWheelAction', mouseWheelActionTypes).name('Mouse wheel action type').onFinishChange(value => {
         cameraManager.setCameraControlsOptions({ ...cameraManager.getCameraControlsOptions(), mouseWheelAction: value });
       });
       controlsGui.add(guiState.controls, 'changeCameraTargetOnClick').name('Change camera target on click').onFinishChange(value => {
         cameraManager.setCameraControlsOptions({ ...cameraManager.getCameraControlsOptions(), changeCameraTargetOnClick: value });
+      });
+      controlsGui.add(guiState.controls, 'cameraManager', cameraManagerTypes).name('Camera manager type').onFinishChange( (value: ('Default' | 'Custom')) => {
+        viewer.setCameraManager(cameraManagers[value]);
       });
 
       const inspectNodeUi = new InspectNodeUI(gui.addFolder('Last clicked node'), client, viewer);
@@ -424,6 +447,6 @@ export function Migration() {
       gui.destroy();
       viewer?.dispose();
     };
-  });
+  }, []);
   return <CanvasWrapper ref={canvasWrapperRef} />;
 }
