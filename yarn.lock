@@ -1382,16 +1382,18 @@
   resolved "https://registry.yarnpkg.com/@cognite/comment-service-types/-/comment-service-types-0.0.7.tgz#b97dd13a8dbf5b41ecc59d6edd93e9ac8b412f5a"
   integrity sha512-fp9THk+uv1MVBeVFRyPVpgBBzRchAazxDvk8S5vNg7kX56TUJk1KHkzdGVYE5Z3A6d18M/y3ybaLlCFrJEi/lg==
 
-"@cognite/discover-api-types@^0.2.64":
-  version "0.2.65"
-  resolved "https://registry.yarnpkg.com/@cognite/discover-api-types/-/discover-api-types-0.2.65.tgz#f014055339872bc3b776f1fbe5df7cf199cb62bb"
-  integrity sha512-h9Phut6dImMArQqbhFOWMQgvPFV9IPJuPhd0VErgKhu1GyWlHe1nb68+fTz0dHUNKpGLLmwFJZmPWHaJ1qFdow==
+"@cognite/discover-api-types@^0.2.66":
+  version "0.2.66"
+  resolved "https://registry.yarnpkg.com/@cognite/discover-api-types/-/discover-api-types-0.2.66.tgz#d945b91970ca0360cf21cd0cfa40102499cceb64"
+  integrity sha512-1zhkAl/iLRJTAXCYxS75fcG687LCmRlwfkH4e+y9CWJprfRq/sXRU+2eITKHcx8UyKv8PdM9tYokKHHfGeVYKw==
 
 "@cognite/eslint-config@link:packages/eslint-config":
   version "0.0.0"
+  uid ""
 
 "@cognite/eslint-plugin@link:packages/eslint-plugin":
   version "0.0.0"
+  uid ""
 
 "@cognite/fas-tools@^1.3.3":
   version "1.3.3"

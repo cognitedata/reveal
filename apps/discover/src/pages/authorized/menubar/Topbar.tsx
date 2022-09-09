@@ -13,14 +13,15 @@ import { useTranslation } from 'hooks/useTranslation';
 import { useActivePanel } from 'modules/resultPanel/selectors';
 import { hideResults } from 'modules/search/actions';
 
+import { useProjectConfigByKey } from '../../../hooks/useProjectConfig';
 import { setActivePanel } from '../../../modules/resultPanel/actions';
+import { openExternalPage } from '../../../utils/openExternalPage';
 
 import { AdminSettings } from './AdminSettings';
 import {
   SEARCH_LINK_TEXT_KEY,
   FAVORITES_LINK_TEXT_KEY,
   PATHNAMES,
-  // DASHBOARD_LINK_TEXT_KEY,
 } from './constants';
 import { Container, TopBarLogo, TopBarNavigationWrapper } from './elements';
 import { Feedback } from './Feedback';
@@ -38,6 +39,7 @@ export const Topbar: React.FC = () => {
   const clearAllFilters = useClearAllFilters();
   const activePanel = useActivePanel();
   const { pathname } = useLocation();
+  const { data: externalLinks } = useProjectConfigByKey('externalLinks');
 
   const getNavigationHandler =
     (page: string, id = -1) =>
@@ -45,6 +47,10 @@ export const Topbar: React.FC = () => {
       setActive(id);
       history.push(page);
     };
+
+  const handleExternalNavigate = (externalLink: string) => {
+    openExternalPage(externalLink, true);
+  };
 
   React.useEffect(() => {
     const mapOfPathNames = Object.entries(PATHNAMES);
@@ -104,11 +110,19 @@ export const Topbar: React.FC = () => {
                 PATHNAMES.FAVORITES
               ),
             },
-          ]}
+          ].concat(
+            ((externalLinks as Array<any>) || []).map((externalLink) => {
+              return {
+                name: externalLink.title,
+                isActive: false,
+                onClick: () => handleExternalNavigate(externalLink.link),
+              };
+            })
+          )}
         />
       </TopBar.Left>
     ),
-    [activeTab, activePanel]
+    [activeTab, activePanel, externalLinks]
   );
 
   const renderTopBarRight = React.useMemo(
