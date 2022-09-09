@@ -249,7 +249,10 @@ jobs:
       - name: Initialize variables
         run: |
           pwd
-          echo "PR_NUMBER=$(jq --raw-output .pull_request.number $GITHUB_EVENT_PATH)" >> $GITHUB_ENV
+          export "PR_NUMBER=$(jq --raw-output .pull_request.number $GITHUB_EVENT_PATH)"
+          export "PR_TIMESTAMP=$(date)"
+          echo "PR_NUMBER=$PR_NUMBER" >> $GITHUB_ENV
+          echo "PR_TIMESTAMP=$PR_TIMESTAMP" >> $GITHUB_ENV
           echo "name=PR_NUMBER::$PR_NUMBER" >> $GITHUB_ENV
 
       - uses: actions/cache@v3
@@ -268,12 +271,12 @@ jobs:
         run: yarn run build:prod
 
       - name: Install NPM documentation dependencies
-        if: steps.npm_cache.outputs.cache-hit != 'true'
+        # if: steps.npm_cache.outputs.cache-hit != 'true' # Broken
         working-directory: documentation
         run: yarn install --immutable
 
       - name: Update Docosaurus base URL
-        uses: jacobtomlinson/gha-find-replace@v2
+        uses: jacobtomlinson/gha-find-replace@v1
         with:
           find: "baseUrl: .*"
           replace: "baseUrl: '/reveal-docs-preview/${{ env.PR_NUMBER }}/',"
@@ -281,17 +284,16 @@ jobs:
           exclude: ".git"
 
       - name: Update Docosaurus title
-        uses: jacobtomlinson/gha-find-replace@v2
+        uses: jacobtomlinson/gha-find-replace@v1
         with:
           find: "title: .*"
-          replace: "title: 'Reveal documentation (preview #${{ env.PR_NUMBER }})',"
+          replace: "title: 'Reveal documentation (preview #${{ env.PR_NUMBER }}, built ${{ env.PR_TIMESTAMP }})',"
           include: "docusaurus.config.js"
           exclude: ".git"
 
       - name: Build documentation 🔧
         working-directory: documentation
         run: |
-          yarn install --immutable
           yarn build:fast
 
       - name: Upload documentation artifact 
