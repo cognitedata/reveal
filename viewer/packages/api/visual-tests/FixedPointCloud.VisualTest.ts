@@ -24,7 +24,7 @@ export default class DefaultPointCloudVisualTest extends ViewerVisualTestFixture
 
     model.pointColorType = PotreePointColorType.Height;
     model.pointSizeType = PotreePointSizeType.Fixed;
-    model.pointSize = 5.0;
+    model.pointSize = 50.0;
     return Promise.resolve();
   }
 }

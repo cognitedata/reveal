@@ -449,7 +449,7 @@ void main() {
 	float projFactor =  -0.5 * screenHeight / (slope * mvPosition.z);
 
 	#if defined fixed_point_size
-		pointSize = size * 10.0;
+		pointSize = size;
 	#elif defined attenuated_point_size
 		pointSize = size * spacing * projFactor;
 	#elif defined adaptive_point_size
