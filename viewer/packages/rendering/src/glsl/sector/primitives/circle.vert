@@ -19,7 +19,8 @@ in vec3 a_normal;
 out vec2 v_xy;
 out vec3 v_color;
 out vec3 v_normal;
-flat out float v_treeIndex;
+// Note! Not marked as flat as this makes performance on iOS horrible
+out float v_treeIndex;
 out vec3 vViewPosition;
 
 void main() {

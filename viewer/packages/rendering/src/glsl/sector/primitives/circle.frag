@@ -12,7 +12,8 @@ uniform sampler2D matCapTexture;
 uniform vec2 treeIndexTextureSize;
 uniform int renderMode;
 
-flat in float v_treeIndex;
+// Note! Not marked as flat as this makes performance on iOS horrible
+in float v_treeIndex;
 in vec2 v_xy;
 in vec3 v_color;
 in vec3 v_normal;

@@ -19,7 +19,8 @@ in vec4 matrix1;
 in vec4 matrix2;
 in vec4 matrix3;
 
-flat out float v_treeIndex;
+// Note! Not marked as flat as this makes performance on iOS horrible
+out float v_treeIndex;
 out vec3 v_color;
 out vec3 v_normal;
 out vec3 vViewPosition;

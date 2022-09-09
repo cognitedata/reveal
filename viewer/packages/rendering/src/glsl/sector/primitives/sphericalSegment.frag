@@ -22,7 +22,8 @@ in float height;
 in vec4 U;
 in vec4 V;
 in vec4 sphereNormal;
-flat in float v_treeIndex;
+// Note! Not marked as flat as this makes performance on iOS horrible
+in float v_treeIndex;
 in vec3 v_color;
 in vec3 v_normal;
 

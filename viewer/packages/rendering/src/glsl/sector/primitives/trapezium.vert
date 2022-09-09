@@ -18,7 +18,8 @@ in vec3 a_vertex2;
 in vec3 a_vertex3;
 in vec3 a_vertex4;
 
-flat out float v_treeIndex;
+// Note! Not marked as flat as this makes performance on iOS horrible
+out float v_treeIndex;
 out vec3 v_color;
 out vec3 v_normal;
 out vec3 vViewPosition;

@@ -13,11 +13,12 @@ in mat4 a_instanceMatrix;
 in float a_treeIndex;
 in vec3 a_color;
 
-flat out float v_treeIndex;
+// Note! Not marked as flat as this makes performance on iOS horrible
+out float v_treeIndex;
 out vec3 v_color;
 out vec3 v_viewPosition;
 
-void main()
+void main() 
 {
     mat4 treeIndexWorldTransform = determineMatrixOverride(
       a_treeIndex,

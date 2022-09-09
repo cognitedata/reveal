@@ -25,7 +25,8 @@ in vec3 a_localXAxis;
 in float a_angle;
 in float a_arcAngle;
 
-flat out float v_treeIndex;
+// Note! Not marked as flat as this makes performance on iOS horrible
+out float v_treeIndex;
 // We pack the radii into w-components
 out vec4 v_centerB;
 // U, V, axis represent the 3x3 cone basis.

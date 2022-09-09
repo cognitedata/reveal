@@ -19,7 +19,8 @@ in float a_arcAngle;
 in float a_thickness;
 in vec3 a_normal;
 
-flat out float v_treeIndex;
+// Note! Not marked as flat as this makes performance on iOS horrible
+out float v_treeIndex;
 out float v_oneMinusThicknessSqr;
 out vec2 v_xy;
 out float v_angle;

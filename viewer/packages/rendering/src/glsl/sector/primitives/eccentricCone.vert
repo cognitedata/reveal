@@ -22,7 +22,8 @@ in float a_radiusB;
 in vec3 a_normal;
 in vec3 a_color;
 
-flat out float v_treeIndex;
+// Note! Not marked as flat as this makes performance on iOS horrible
+out float v_treeIndex;
 // We pack the radii into w-components
 out vec4 v_centerA;
 out vec4 v_centerB;
