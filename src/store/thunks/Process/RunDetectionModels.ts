@@ -39,12 +39,15 @@ export const RunDetectionModels = createAsyncThunk<
           );
         });
 
-        dispatch(
-          CreateVisionJob({
-            modelType,
-            fileIds: filteredBatchFileIds,
-          })
-        );
+        if (filteredBatchFileIds.length) {
+          // post jobs only if number of unprocess files in that model type isn't 0
+          dispatch(
+            CreateVisionJob({
+              modelType,
+              fileIds: filteredBatchFileIds,
+            })
+          );
+        }
       });
     });
   }

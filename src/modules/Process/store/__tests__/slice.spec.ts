@@ -149,19 +149,19 @@ describe('Test process reducers', () => {
         {
           modelName: 'Text detection',
           type: VisionDetectionModelType.OCR,
-          settings: { useCache: true },
-          unsavedSettings: { useCache: false },
+          settings: { threshold: 0.4 },
+          unsavedSettings: { threshold: 0.6 },
         },
         {
           modelName: 'Asset tag detection',
           type: VisionDetectionModelType.TagDetection,
           settings: {
-            useCache: false,
+            threshold: 0.4,
             partialMatch: true,
             assetSubtreeIds: [1],
           },
           unsavedSettings: {
-            useCache: false,
+            threshold: 0.7,
             partialMatch: false,
             assetSubtreeIds: [1, 2],
           },
@@ -170,14 +170,24 @@ describe('Test process reducers', () => {
           modelName: 'Object detection',
           type: VisionDetectionModelType.ObjectDetection,
           settings: {
-            threshold: 0.85,
+            threshold: 0.4,
           },
           unsavedSettings: {
             threshold: 0.9,
           },
         },
         {
-          modelName: 'Gague reader',
+          modelName: 'People detection',
+          type: VisionDetectionModelType.PeopleDetection,
+          settings: {
+            threshold: 0.4,
+          },
+          unsavedSettings: {
+            threshold: 0.9,
+          },
+        },
+        {
+          modelName: 'Gauge reader',
           type: VisionDetectionModelType.GaugeReader,
           settings: {
             gaugeType: 'analog',
@@ -202,7 +212,7 @@ describe('Test process reducers', () => {
     describe('action setUnsavedDetectionModelSettings', () => {
       test('set Unsaved Detection Model Settings for OCR', () => {
         const modelIndex: number = 0;
-        const params: ParamsOCR = { useCache: false };
+        const params: ParamsOCR = { threshold: 0.5 };
         const newState = reducer(
           mockProcessState,
           setUnsavedDetectionModelSettings({
@@ -218,7 +228,7 @@ describe('Test process reducers', () => {
       test('set Unsaved Detection Model Settings for Tag Detection', () => {
         const modelIndex: number = 1;
         const params: ParamsTagDetection = {
-          useCache: false,
+          threshold: 0.5,
           partialMatch: false,
           assetSubtreeIds: [5],
         };
@@ -254,6 +264,8 @@ describe('Test process reducers', () => {
       test('set Unsaved Detection Model Settings for Custom Model', () => {
         const modelIndex: number = 3;
         const params: ParamsCustomModel = {
+          modelName: 'test custom model',
+          isValid: true,
           threshold: 0.6,
         };
         const newState = reducer(
@@ -271,6 +283,8 @@ describe('Test process reducers', () => {
       test('app should not crash if model index is not available', () => {
         const modelIndex: number = 4;
         const params: ParamsCustomModel = {
+          modelName: 'test custom model',
+          isValid: true,
           threshold: 0.6,
         };
         reducer(

@@ -153,6 +153,10 @@ const processSlice = createGenericTabularDataSlice({
             item.unsavedSettings =
               initialDetectionModelParameters.objectDetection;
             break;
+          case VisionDetectionModelType.PeopleDetection:
+            item.unsavedSettings =
+              initialDetectionModelParameters.peopleDetection;
+            break;
           case VisionDetectionModelType.GaugeReader:
             item.unsavedSettings = initialDetectionModelParameters.gaugeReader;
             break;

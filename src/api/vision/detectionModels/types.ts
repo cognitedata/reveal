@@ -99,8 +99,9 @@ export type VisionJobFailedItem = {
   items: Array<FileInternalId & Partial<FileExternalId>>;
 };
 
-// todo: remove this once all api changes are completed
-export type VisionJobResultItem = LegacyVisionJobResultItem;
+export type VisionJobResultItem =
+  | VisionExtractResultItem
+  | LegacyVisionJobResultItem;
 
 type TextPredictions = {
   textPredictions: Array<ImageExtractedText>;
