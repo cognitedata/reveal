@@ -286,6 +286,7 @@ export class CognitePointCloudModel extends THREE.Object3D implements CogniteMod
    */
   removeAllStyledObjectCollections(): void {
     this.pointCloudNode.removeAllStyledPointCloudObjects();
+    this._styledObjectCollections.splice(0);
   }
 
   /**
