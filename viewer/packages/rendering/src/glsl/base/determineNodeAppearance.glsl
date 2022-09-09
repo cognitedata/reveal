@@ -1,17 +1,14 @@
 #pragma glslify: import('../math/floatBitsSubset.glsl')
 
-NodeAppearance determineNodeAppearance(sampler2D nodeAppearanceTexture, vec2 textureSize, float treeIndex) {
-  treeIndex = floor(treeIndex + 0.5);
+NodeAppearance determineNodeAppearance(sampler2D nodeAppearanceTexture, vec2 textureSize, highp float treeIndex) {
+
   float dataTextureWidth = textureSize.x;
   float dataTextureHeight = textureSize.y;
 
-  float u = mod(treeIndex, dataTextureWidth);
-  float v = floor(treeIndex / dataTextureWidth);
-  float uCoord = (u + 0.5) / dataTextureWidth;
-  float vCoord = (v + 0.5) / dataTextureHeight;
-  vec2 treeIndexUv = vec2(uCoord, vCoord);
-  
-  vec4 texel = texture(nodeAppearanceTexture, treeIndexUv);
+  int xTreeIndexTextureCoord = int(mod(treeIndex, dataTextureWidth));
+  int yTreeIndexTextureCoord = int(floor(treeIndex / dataTextureWidth));
+
+  vec4 texel = texelFetch(nodeAppearanceTexture, ivec2(xTreeIndexTextureCoord, yTreeIndexTextureCoord), 0);
   float alphaUnwrapped = floor((texel.a * 255.0) + 0.5);
 
   bool isVisible = floatBitsSubset(alphaUnwrapped, 0, 1) == 1.0;

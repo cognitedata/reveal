@@ -185,7 +185,7 @@ export class PointCloudNode extends THREE.Group {
     this._potreeNode.assignObjectStyle(styledCollection);
   }
 
-  removeAllStyledPointCloudOjects(): void {
+  removeAllStyledPointCloudObjects(): void {
     this._potreeNode.octree.material.objectAppearanceTexture.removeAllStyledObjectSets();
   }
 }

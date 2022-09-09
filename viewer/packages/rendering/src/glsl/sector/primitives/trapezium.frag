@@ -12,7 +12,7 @@ uniform sampler2D matCapTexture;
 uniform vec2 treeIndexTextureSize;
 uniform int renderMode;
 
-in float v_treeIndex;
+flat in float v_treeIndex;
 in vec3 v_color;
 in vec3 v_normal;
 in vec3 vViewPosition;
@@ -26,7 +26,7 @@ void main() {
         discard;
     }
 
-    vec4 color = determineColor(v_color, appearance);    
+    vec4 color = determineColor(v_color, appearance);
     vec3 normal = normalize(v_normal);
     updateFragmentColor(renderMode, color, v_treeIndex, normal, gl_FragCoord.z, matCapTexture, GeometryType.Primitive);
 }

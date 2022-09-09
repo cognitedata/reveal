@@ -17,7 +17,7 @@ on:
 jobs:
   build-viewer:
     name: Build Reveal
-    runs-on: ubuntu-latest 
+    runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
 
@@ -53,7 +53,7 @@ jobs:
       working-directory: viewer
       run: yarn run build
 
-    - name: Upload dist/ artifact 
+    - name: Upload dist/ artifact
       uses: actions/upload-artifact@v3
       with:
         name: viewer
@@ -61,16 +61,9 @@ jobs:
 
   run-coverage-tests:
     name: Run unit tests
-    runs-on: ubuntu-latest 
-    needs: build-viewer
+    runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-
-    - name: Download viewer build artifact 
-      uses: actions/download-artifact@v3
-      with:
-        name: viewer
-        path: viewer/dist/
 
     - uses: actions/cache@v2
       id: npm_cache
@@ -128,7 +121,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         msg: |
-          There were failures in the Visual regression tests workflow.
+          There were failures in the visual tests workflow.
           Image diffs for visual tests can be downloaded as an artifact [here](https://github.com/cognitedata/reveal/actions/runs/${{ github.run_id }}).
 
     - name: Upload image diffs for failed visual tests
@@ -146,12 +139,12 @@ jobs:
 
   ci-examples:
     name: Examples
-    runs-on: ubuntu-latest 
+    runs-on: ubuntu-latest
     needs: build-viewer
     steps:
     - uses: actions/checkout@v3
 
-    - name: Download viewer build artifact 
+    - name: Download viewer build artifact
       uses: actions/download-artifact@v3
       with:
         name: viewer
@@ -174,44 +167,10 @@ jobs:
       # if: steps.npm_cache.outputs.cache-hit != 'true'
       working-directory: examples
       run: yarn install --immutable
-      
-    - name: Increase number of inotify watches
-      run: 'echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p'
 
-    # Disabled because visual tests also builds examples
-    # - name: Build examples
-    #   working-directory: examples
-    #   run: |
-    #     echo "NODE_OPTIONS=--max-old-space-size=8192" >> $GITHUB_ENV
-    #     yarn build
-
-    - name: Visual regression tests
-      id: visualtests
+    - name: Build examples
       working-directory: examples
-      run: 'yarn ci:e2e'
-      continue-on-error: true
-
-    - name: Check for failed visual test diffs
-      if: (always() && steps.visualtests.outcome == 'failure')
-      working-directory: examples
-      run: |
-        yarn
-        yarn test:ghprcomment
-      env:
-        ACTIONS_RUNTIME_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-    - name: Upload image diffs for failed visual tests
-      if: (always() && steps.visualtests.outcome == 'failure')
-      uses: actions/upload-artifact@v3
-      with:
-        name: image-diffs-${{ github.sha }}
-        path: examples/src/visual_tests/__image_snapshots__/__diff_output__/*
-
-    - name: Report failed visual tests
-      if: (always() && steps.visualtests.outcome == 'failure')
-      run: |
-        echo There are failed visual tests, please inspect test results.
-        exit 1
+      run: yarn build
 
   # runs only when there are changes in parser-worker/
   # we use it here because github haven't figured out conditionally required checks
@@ -345,7 +304,7 @@ jobs:
           yarn install --immutable
           yarn build:fast
 
-      - name: Upload documentation artifact 
+      - name: Upload documentation artifact
         uses: actions/upload-artifact@v3
         with:
           name: preview-docs
@@ -364,7 +323,7 @@ jobs:
         run: |
           echo "PR_NUMBER=$(jq --raw-output .pull_request.number $GITHUB_EVENT_PATH)" >> $GITHUB_ENV
 
-      - name: Download documentation artifact 
+      - name: Download documentation artifact
         uses: actions/download-artifact@v3
         if:
         with:

@@ -29,6 +29,8 @@ describe(DefaultRenderPipelineProvider.name, () => {
       .setup(p => p.setRenderTarget(It.IsAny()))
       .returns()
       .setup(p => p.clear())
+      .returns()
+      .setup(p => p.clearColor())
       .returns();
   });
 
@@ -143,5 +145,56 @@ describe(DefaultRenderPipelineProvider.name, () => {
     }
 
     expect(numberOfRenderPasses).toBe(3); //Back, Post, BlitToCanvas
+  });
+
+  test('Pipeline with one point cloud model returns 3 passes', () => {
+    const materialManagerMock = new Mock<CadMaterialManager>();
+
+    const sceneHandler = new SceneHandler();
+
+    sceneHandler.addPointCloudModel(new THREE.Object3D(), Symbol(0));
+
+    const defaultRenderPipelineProvider = new DefaultRenderPipelineProvider(
+      materialManagerMock.object(),
+      sceneHandler,
+      defaultRenderOptions
+    );
+
+    const pipeline = defaultRenderPipelineProvider.pipeline(rendererMock.object());
+
+    let numberOfRenderPasses = 0;
+    for (const _ of pipeline) {
+      numberOfRenderPasses++;
+    }
+
+    expect(numberOfRenderPasses).toBe(3); // Point cloud, Post, BlitToCanvas
+  });
+
+  test('Pipeline with one point cloud model and point blending enabled returns 4 passes', () => {
+    const materialManagerMock = new Mock<CadMaterialManager>();
+
+    const sceneHandler = new SceneHandler();
+
+    sceneHandler.addPointCloudModel(new THREE.Object3D(), Symbol(0));
+
+    const defaultRenderPipelineProvider = new DefaultRenderPipelineProvider(
+      materialManagerMock.object(),
+      sceneHandler,
+      {
+        ...defaultRenderOptions,
+        pointCloudParameters: {
+          pointBlending: true
+        }
+      }
+    );
+
+    const pipeline = defaultRenderPipelineProvider.pipeline(rendererMock.object());
+
+    let numberOfRenderPasses = 0;
+    for (const _ of pipeline) {
+      numberOfRenderPasses++;
+    }
+
+    expect(numberOfRenderPasses).toBe(4); // Point cloud, Post, BlitToCanvas
   });
 });

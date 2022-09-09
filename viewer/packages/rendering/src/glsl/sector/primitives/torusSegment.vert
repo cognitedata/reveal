@@ -18,7 +18,7 @@ in float a_arcAngle;
 in float a_radius;
 in float a_tubeRadius;
 
-out float v_treeIndex;
+flat out float v_treeIndex;
 out vec3 v_color;
 out vec3 v_normal;
 out vec3 vViewPosition;
@@ -36,13 +36,13 @@ void main() {
     pos3.z = a_tubeRadius * sin(phi);
 
     mat4 treeIndexWorldTransform = determineMatrixOverride(
-      a_treeIndex, 
-      treeIndexTextureSize, 
-      transformOverrideIndexTexture, 
-      transformOverrideTextureSize, 
+      a_treeIndex,
+      treeIndexTextureSize,
+      transformOverrideIndexTexture,
+      transformOverrideTextureSize,
       transformOverrideTexture
     );
-    
+
     vec3 transformed = (a_instanceMatrix * vec4(pos3, 1.0)).xyz;
 
     // Calculate normal vectors if we're not picking

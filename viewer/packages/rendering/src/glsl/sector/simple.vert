@@ -19,18 +19,18 @@ in vec4 matrix1;
 in vec4 matrix2;
 in vec4 matrix3;
 
-out float v_treeIndex;
+flat out float v_treeIndex;
 out vec3 v_color;
 out vec3 v_normal;
 out vec3 vViewPosition;
 
 void main() {
-    
+
     mat4 treeIndexWorldTransform = determineMatrixOverride(
-      treeIndex, 
-      treeIndexTextureSize, 
-      transformOverrideIndexTexture, 
-      transformOverrideTextureSize, 
+      treeIndex,
+      treeIndexTextureSize,
+      transformOverrideIndexTexture,
+      transformOverrideTextureSize,
       transformOverrideTexture
     );
 

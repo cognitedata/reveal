@@ -273,7 +273,7 @@ export class CognitePointCloudModel extends THREE.Object3D implements CogniteMod
     if (styledCollectionIndex !== -1) {
       this._styledObjectCollections.splice(styledCollectionIndex, 1);
 
-      this.pointCloudNode.removeAllStyledPointCloudOjects();
+      this.pointCloudNode.removeAllStyledPointCloudObjects();
 
       for (const styledObjectCollection of this._styledObjectCollections) {
         this.pointCloudNode.assignStyledPointCloudObjectCollection(styledObjectCollection);
@@ -285,7 +285,8 @@ export class CognitePointCloudModel extends THREE.Object3D implements CogniteMod
    * Removes styling on all object collections in this model
    */
   removeAllStyledObjectCollections(): void {
-    this.pointCloudNode.removeAllStyledPointCloudOjects();
+    this.pointCloudNode.removeAllStyledPointCloudObjects();
+    this._styledObjectCollections.splice(0);
   }
 
   /**

@@ -34,14 +34,12 @@ import { createCadManager } from '@reveal/cad-geometry-loaders';
  * @param renderer
  * @param sceneHandler
  * @param revealOptions
- * @param sdkClient
  * @returns RevealManager instance.
  */
 export function createLocalRevealManager(
   renderer: THREE.WebGLRenderer,
   sceneHandler: SceneHandler,
-  revealOptions: RevealOptions = {},
-  sdkClient?: CogniteClient | undefined
+  revealOptions: RevealOptions = {}
 ): RevealManager {
   const modelMetadataProvider = new LocalModelMetadataProvider();
   const modelDataProvider = new LocalModelDataProvider();
@@ -53,7 +51,7 @@ export function createLocalRevealManager(
     renderer,
     sceneHandler,
     revealOptions,
-    sdkClient
+    undefined
   );
 }
 
@@ -111,9 +109,12 @@ export function createRevealManager(
     constructorOptions: revealOptions
   });
 
-  const renderOptions: RenderOptions = revealOptions.renderOptions || {};
+  const renderOptions: RenderOptions = revealOptions?.renderOptions ?? {};
   const materialManager = new CadMaterialManager();
-  const pipelineExecutor = new BasicPipelineExecutor(renderer);
+  const pipelineExecutor = new BasicPipelineExecutor(renderer, {
+    autoResizeRenderer: true,
+    resolutionThreshold: revealOptions.rendererResolutionThreshold
+  });
   const defaultRenderPipeline = new DefaultRenderPipelineProvider(
     materialManager,
     sceneHandler,
@@ -154,5 +155,5 @@ export function createRevealManager(
  */
 function getSdkApplicationId(sdk: CogniteClient): string {
   const headers = sdk.getDefaultRequestHeaders();
-  return headers['x-cdp-app'] || 'unknown';
+  return headers['x-cdp-app'] ?? 'unknown';
 }

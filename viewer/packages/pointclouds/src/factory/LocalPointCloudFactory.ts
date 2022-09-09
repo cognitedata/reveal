@@ -27,7 +27,7 @@ export class LocalPointCloudFactory implements PointCloudFactory {
   }
 
   async createModel(modelMetadata: PointCloudMetadata): Promise<PotreeNodeWrapper> {
-    const { modelBaseUrl } = modelMetadata;
+    const { modelBaseUrl, modelIdentifier } = modelMetadata;
 
     const annotationInfo = new PointCloudObjectProvider([]);
 
@@ -38,6 +38,6 @@ export class LocalPointCloudFactory implements PointCloudFactory {
     );
 
     pointCloudOctree.name = `PointCloudOctree: ${modelBaseUrl}`;
-    return new PotreeNodeWrapper(pointCloudOctree, annotationInfo.annotations);
+    return new PotreeNodeWrapper(pointCloudOctree, annotationInfo.annotations, modelIdentifier.revealInternalId);
   }
 }
