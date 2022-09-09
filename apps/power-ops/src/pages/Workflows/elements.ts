@@ -157,3 +157,14 @@ export const Header = styled.span`
     margin-left: auto;
   }
 `;
+
+export const CellWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  max-width: fit-content;
+  margin-left: auto;
+
+  .cogs-btn {
+    margin-right: 4px;
+  }
+`;

@@ -2,9 +2,12 @@ import dayjs from 'dayjs';
 import { useMemo } from 'react';
 import { CellProps, Column } from 'react-table';
 import { Detail } from '@cognite/cogs.js';
-import { WorkflowActions } from 'components/WorkflowActions/WorkflowActions';
+import { ViewMoreButton } from 'components/ViewMoreButton/ViewMoreButton';
+import { OpenInFusion } from 'components/OpenInFusion/OpenInFusion';
 import { StatusLabel } from 'components/StatusLabel/StatusLabel';
 import { calculateDuration } from 'utils/utils';
+
+import { CellWrapper } from './elements';
 
 export const handleCopyButtonClick = async (text: string | undefined) => {
   if (!text) return false;
@@ -16,7 +19,7 @@ export const handleCopyButtonClick = async (text: string | undefined) => {
   }
 };
 
-export const processColumns: Column[] = [
+const reusableColumns: Column[] = [
   {
     accessor: 'eventType',
     Header: 'Workflow Type / External ID',
@@ -72,12 +75,27 @@ export const processColumns: Column[] = [
   },
 ];
 
-export const workflowsColumns: Column[] = [
-  ...processColumns,
+export const processColumns: Column[] = [
+  ...reusableColumns,
   {
     accessor: 'actions',
     Cell: ({ row }: CellProps<any>) => (
-      <WorkflowActions eventExternalId={row.original.eventExternalId} />
+      <CellWrapper>
+        <OpenInFusion eventExternalId={row.original.eventExternalId} />
+      </CellWrapper>
+    ),
+  },
+];
+
+export const workflowsColumns: Column[] = [
+  ...reusableColumns,
+  {
+    accessor: 'actions',
+    Cell: ({ row }: CellProps<any>) => (
+      <CellWrapper>
+        <ViewMoreButton eventExternalId={row.original.eventExternalId} />
+        <OpenInFusion eventExternalId={row.original.eventExternalId} />
+      </CellWrapper>
     ),
   },
 ];

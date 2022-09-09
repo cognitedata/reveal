@@ -13,7 +13,7 @@ const fetchWorkflows = async ({
   token: string | undefined;
 }): Promise<Workflow[]> => {
   const { data: workflows }: { data: Workflow[] } = await axios.get(
-    `${powerOpsApiBaseUrl}/${project}/processes`,
+    `${powerOpsApiBaseUrl}/${project}/workflows`,
     {
       headers: { Authorization: `Bearer ${token}` },
     }

@@ -6,7 +6,7 @@ import {
   Column,
 } from 'react-table';
 import { Flex, Pagination } from '@cognite/cogs.js';
-import { Process } from 'types';
+import { Process, Workflow } from 'types';
 
 import { StyledTable } from './elements';
 
@@ -15,7 +15,7 @@ export const ReusableTable = ({
   columns,
   className = '',
 }: {
-  data: Process[];
+  data: (Workflow | Process)[];
   columns: Column[];
   className?: string;
 }) => {

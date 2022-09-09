@@ -1,7 +1,7 @@
 import { Button } from '@cognite/cogs.js';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 
-export const WorkflowActions = ({
+export const ViewMoreButton = ({
   eventExternalId,
 }: {
   eventExternalId: string;
