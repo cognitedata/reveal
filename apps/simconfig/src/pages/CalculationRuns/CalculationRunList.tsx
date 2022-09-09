@@ -2,8 +2,6 @@ import React from 'react';
 import { Link, useRouter } from 'react-location';
 import { useSelector } from 'react-redux';
 
-import styled from 'styled-components/macro';
-
 import {
   Button,
   Dropdown,
@@ -19,6 +17,8 @@ import { CalculationRunTypeIndicator } from 'components/models/CalculationList/C
 import { CalculationStatusIndicator } from 'components/models/CalculationList/CalculationStatusIndicator';
 import { CalculationTimeLabel } from 'components/models/CalculationList/CalculationTimeLabel';
 import { selectProject } from 'store/simconfigApiProperties/selectors';
+
+import { CalculationRunsListContainer } from './styles';
 
 interface CalculationRunListProps extends React.HTMLAttributes<HTMLDivElement> {
   calculationRuns: CalculationRun[];
@@ -43,7 +43,7 @@ export function CalculationRunList({
           startTime: run.startTime,
         };
         return (
-          <React.Fragment key={run.id}>
+          <div className="grid-row" key={run.id}>
             <span className="model-name">{run.metadata.modelName}</span>
 
             <span className="model-version">
@@ -56,15 +56,16 @@ export function CalculationRunList({
 
             <span className="calculation-name">{run.metadata.calcName}</span>
 
-            <CalculationRunTypeIndicator
-              runType={run.metadata.runType}
-              userEmail={run.metadata.userEmail}
-            />
-
-            <CalculationStatusIndicator
-              status={run.metadata.status}
-              statusMessage={run.metadata.statusMessage}
-            />
+            <div className="col-status">
+              <CalculationRunTypeIndicator
+                runType={run.metadata.runType}
+                userEmail={run.metadata.userEmail}
+              />
+              <CalculationStatusIndicator
+                status={run.metadata.status}
+                statusMessage={run.metadata.statusMessage}
+              />
+            </div>
 
             <span className="date">
               <CalculationTimeLabel {...timestamps} />
@@ -81,28 +82,13 @@ export function CalculationRunList({
                 />
               </Dropdown>
             </div>
-          </React.Fragment>
+          </div>
         );
       })}
       {isFetchingCalculationsRunList ? <Skeleton.List lines={5} /> : null}
     </CalculationRunsListContainer>
   );
 }
-
-const CalculationRunsListContainer = styled.div`
-  overflow: auto;
-  padding: 0 24px;
-  display: grid;
-  grid-template-columns: auto auto 1fr auto auto auto auto;
-  grid-gap: 6px 12px;
-  align-items: center;
-  .cogs-tooltip__content {
-    cursor: help;
-    display: flex;
-    column-gap: 6px;
-    align-items: center;
-  }
-`;
 
 function ExpansionMenu({
   run,
