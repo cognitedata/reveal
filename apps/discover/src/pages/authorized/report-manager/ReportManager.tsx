@@ -14,15 +14,44 @@ export const ReportManager: FC<PropsWithChildren<Props>> = ({
 }) => {
   const reports = useRef<Report[]>([]);
   const createReports = () => {
-    return reportManagerAPI.create({
-      status: 'ACTIVE',
-      description: 'The NDS data was not sufficient for this wellbore',
-      reason: 'Insufficient',
-      reportType: 'NDS',
-      startTime: Date.now(),
-      externalId: 'wells/andromeda/well-AND15661828/wellbores/wb-01',
-      ownerUserId: '23',
-    });
+    return reportManagerAPI.create([
+      {
+        status: 'ACTIVE',
+        description: 'The NDS data was not sufficient for this wellbore',
+        reason: 'Insufficient',
+        reportType: 'NDS',
+        startTime: Date.now(),
+        externalId: 'wells/andromeda/well-AND15661828/wellbores/wb-01',
+        ownerUserId: '23',
+      },
+      {
+        status: 'IN_PROGRESS',
+        description: 'The NDS data was not sufficient for this wellbore',
+        reason: 'Faulty',
+        reportType: 'NDS',
+        startTime: Date.now(),
+        externalId: 'wells/andromeda/well-AND15661828/wellbores/wb-01',
+        ownerUserId: '23',
+      },
+      {
+        status: 'DISMISSED',
+        description: 'The NDS data was not sufficient for this wellbore',
+        reason: 'Faulty',
+        reportType: 'NDS',
+        startTime: Date.now(),
+        externalId: 'wells/andromeda/well-AND15661828/wellbores/wb-01',
+        ownerUserId: '23',
+      },
+      {
+        status: 'RESOLVED',
+        description: 'The NDS data was not sufficient for this wellbore',
+        reason: 'Faulty',
+        reportType: 'NDS',
+        startTime: Date.now(),
+        externalId: 'wells/andromeda/well-AND15661828/wellbores/wb-01',
+        ownerUserId: '23',
+      },
+    ]);
   };
 
   const showReports = async () => {
