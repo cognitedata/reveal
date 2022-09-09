@@ -32,7 +32,7 @@
     "clean": "shx rm -rf dist/ && yarn run mkdist",
     "clean:wasm": "cargo clean --manifest-path ./wasm/Cargo.toml",
     "retarget-types": "tsc-alias -p tsconfig.webpack.json -v true",
-    "test": "yarn run test:ts && yarn run test:wasm",
+    "test": "yarn run test:wasm && yarn run test:ts",
     "test:ts": "yarn run build:wasm-test && jest --maxWorkers=4",
     "test:wasm": "yarn workspaces foreach run run-wasm-pack test --headless --chrome ./wasm",
     "test:visual:client": "cross-env JEST_PUPPETEER_CONFIG=visual-tests/jest-puppeteer.config.js jest --config=visual-tests/jest.config.js --verbose",
