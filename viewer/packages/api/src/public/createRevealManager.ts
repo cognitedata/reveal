@@ -34,7 +34,6 @@ import { createCadManager } from '@reveal/cad-geometry-loaders';
  * @param renderer
  * @param sceneHandler
  * @param revealOptions
- * @param sdkClient
  * @returns RevealManager instance.
  */
 export function createLocalRevealManager(

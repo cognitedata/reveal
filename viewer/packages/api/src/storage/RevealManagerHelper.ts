@@ -55,7 +55,6 @@ export class RevealManagerHelper {
    * @param renderer
    * @param sceneHandler
    * @param revealOptions
-   * @param sdkClient
    */
   static createLocalHelper(
     renderer: THREE.WebGLRenderer,
