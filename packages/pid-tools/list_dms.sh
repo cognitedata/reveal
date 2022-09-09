@@ -10,7 +10,7 @@ BASE_URL="https://greenfield.cognitedata.com"
 PROJECT="atlas-greenfield"
 CLIENT_ID="ec3684fd-5517-45c1-8a13-1a925b000ab8"
 TENANT_ID="0b320d24-2c6f-45c6-be28-8d63e0804f51"
-SPACE="matchmakers-test-12-engineering-diagrams"
+SPACE="matchmakers-test-13-engineering-diagrams"
 PAGE=1
 
 yarn run cli list-dms \
