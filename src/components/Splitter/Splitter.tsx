@@ -68,6 +68,8 @@ const SplitterWrapper = styled.div(
     .splitter-layout .layout-pane.layout-pane-primary {
       flex: 1 1 auto;
       overflow: visible;
+      width: 100%;
+      height: 100%;
     }
 
     .splitter-layout > .layout-splitter {

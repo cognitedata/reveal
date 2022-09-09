@@ -127,4 +127,32 @@ export const assets: Asset[] = [
     source: 'some other source',
     id: 8493722957009725,
   },
+  {
+    createdTime: new Date(1649079372960),
+    lastUpdatedTime: new Date(1649079372960),
+    rootId: 4002438896594549,
+    aggregates: {
+      childCount: 0,
+    },
+    parentId: 4068389871948573,
+    parentExternalId: 'LOR_UMEA',
+    externalId: 'LOR_UMEA_WELL_02_WITH_SUPER_LONG_EXTERNAL_ID',
+    name: 'Umea 02',
+    metadata: {
+      'Network Level': 'well',
+    },
+    source: 'some other source',
+    labels: [
+      {
+        externalId: 'BEST_DAY_WELL_FLAG_GAS',
+      },
+      {
+        externalId: 'BEST_DAY_NETWORK_LEVEL_WELL',
+      },
+      {
+        externalId: 'BEST_DAY_ARTIFICIAL_LIFT_PUMP',
+      },
+    ],
+    id: 1794699442406419,
+  },
 ];

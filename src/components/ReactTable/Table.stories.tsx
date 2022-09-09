@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { Column, SortingRule } from 'react-table';
 import { userEvent, within } from '@storybook/testing-library';
 import { expect } from '@storybook/jest';
-import { Table } from './Table';
+import { NewTable as Table } from './Table';
 
 export default {
   title: 'Component/NewTable',
@@ -103,20 +103,23 @@ ExampleWithSorting.args = {
 
 ExampleWithSorting.play = async ({ canvasElement }) => {
   const canvas = within(canvasElement);
-  const table = canvasElement.querySelector('table');
+  const table = canvas.getByRole('table');
   expect(table).toBeInTheDocument();
-
-  const tbody = canvasElement.querySelector('tbody');
+  const tbody = canvas.getByRole('rowgroup');
   expect(tbody).toBeInTheDocument();
-  const TbodyElement = within(tbody as HTMLElement);
+
+  const TbodyElement = within(tbody);
   let rows = TbodyElement.getAllByRole('row');
   expect(rows.length).toBe(3);
-  let firstCell = rows[0].querySelector('td')?.innerHTML;
+
+  let firstCell = rows[0].querySelector('[role="cell"]')?.innerHTML;
   expect(firstCell).toBe('Hello');
+
   const button = canvas.getAllByRole('button');
   userEvent.dblClick(button[0]);
+
   rows = TbodyElement.getAllByRole('row');
-  firstCell = rows[0].querySelector('td')?.innerHTML;
+  firstCell = rows[0].querySelector('[role="cell"]')?.innerHTML;
   expect(firstCell).toBe('whatever');
 };
 
@@ -175,20 +178,21 @@ ExampleWithColumnToggle.args = {
 
 ExampleWithColumnToggle.play = async ({ canvasElement }) => {
   const canvas = within(canvasElement);
-  const table = canvasElement.querySelector('table');
+  const table = canvas.getByRole('table');
   expect(table).toBeInTheDocument();
-
-  const tbody = canvasElement.querySelector('tbody');
+  const tbody = canvas.getByRole('rowgroup');
   expect(tbody).toBeInTheDocument();
-  const TbodyElement = within(tbody as HTMLElement);
-  let rows: HTMLTableRowElement[] = TbodyElement.getAllByRole('row');
-  expect(rows[0].cells.length).toBe(2);
+
+  const TbodyElement = within(tbody);
+  let rows = TbodyElement.getAllByRole('row');
   expect(rows.length).toBe(3);
+
   const columnSelectButton = canvas.getByLabelText('Column Selection');
   userEvent.click(columnSelectButton);
+
   const column1 = canvas.getByLabelText('Column 1');
   userEvent.click(column1);
-  let firstCell = rows[0].querySelector('td')?.innerHTML;
+  let firstCell = rows[0].querySelector('[role="cell"]')?.innerHTML;
   expect(firstCell).not.toBe('Hello');
 };
 
@@ -228,17 +232,19 @@ export const ExampleWithOnClickRow: ComponentStory<typeof Table> = args => {
 
 ExampleWithOnClickRow.play = async ({ canvasElement }) => {
   const canvas = within(canvasElement);
-  const table = canvasElement.querySelector('table');
+  const table = canvas.getByRole('table');
   expect(table).toBeInTheDocument();
-
-  const tbody = canvasElement.querySelector('tbody');
+  const tbody = canvas.getByRole('rowgroup');
   expect(tbody).toBeInTheDocument();
-  const TbodyElement = within(tbody as HTMLElement);
+
+  const TbodyElement = within(tbody);
   let rows = TbodyElement.getAllByRole('row');
   expect(rows.length).toBe(3);
-  let firstCell = rows[0].querySelector('td');
+
+  let firstCell = rows[0].querySelector('[role="cell"]');
   expect(firstCell).not.toBe(null);
   userEvent.click(firstCell!);
+
   const preElement = canvasElement.querySelector('pre');
   expect(preElement?.innerHTML).toBe(
     'Current Value:{"col1":"Hello","col2":"World"}'

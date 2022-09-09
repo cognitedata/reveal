@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Dropdown, Menu } from '@cognite/cogs.js';
+import { Button, Checkbox, Dropdown, Menu } from '@cognite/cogs.js';
 import { ColumnInstance, TableToggleHideAllColumnProps } from 'react-table';
 import styled from 'styled-components';
 import { TableData } from './Table';
@@ -29,10 +29,12 @@ export function ColumnToggle<T>(props: ColumnToggleProps<T>) {
           {allColumns.map(column => (
             <Menu.Item key={column.id}>
               <Label>
-                {/*// TODO: Replace with cogs.js checkbox when bug is fixed  */}
-                <input
+                <Checkbox
                   type="checkbox"
                   {...column.getToggleHiddenProps()}
+                  onChange={(_, evt) =>
+                    column.getToggleHiddenProps().onChange(evt)
+                  }
                   className="cogs-checkbox__checkbox"
                 />
                 {column.Header}

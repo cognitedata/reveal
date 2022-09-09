@@ -3,12 +3,16 @@ import styled from 'styled-components';
 import { action } from '@storybook/addon-actions';
 import { assets } from 'stubs/assets';
 import { ComponentStory } from '@storybook/react';
-import { AssetTable } from './AssetTable';
+import { AssetTable } from './AssetNewTable';
 
 export default {
-  title: 'Assets/AssetTable',
+  title: 'Assets/AssetNewTable',
   component: AssetTable,
-  decorators: [(storyFn: any) => <Container>{storyFn()}</Container>],
+  decorators: [
+    (storyFn: any) => (
+      <AssetNewTableContainer>{storyFn()}</AssetNewTableContainer>
+    ),
+  ],
   argTypes: {
     query: {
       type: 'string',
@@ -22,18 +26,9 @@ export const Example: ComponentStory<typeof AssetTable> = args => (
 );
 Example.args = {
   data: assets,
-  onItemClicked: action('onItemClicked'),
+  onRowClick: action('onRowClicked'),
 };
 
-export const ExampleSingleSelect: ComponentStory<typeof AssetTable> = args => (
-  <AssetTable {...args} />
-);
-ExampleSingleSelect.args = {
-  selectionMode: 'single',
-  data: assets,
-  onItemClicked: action('onItemClicked'),
-};
-
-const Container = styled.div`
-  height: 600px;
+const AssetNewTableContainer = styled.div`
+  height: 100%;
 `;

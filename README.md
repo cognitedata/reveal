@@ -82,3 +82,26 @@ We use [semantic-release](https://github.com/semantic-release/semantic-release) 
 For the cases where testing a work-in-progress version of the library with the subapp is necessary, prerelease versions can be published to npm.
 
 Provided commits in the branch follow the conventional commit format above, creating a PR on a branch with `prerelease-` prefix will trigger the test version release. This version can then be used to create a second PR in the subapp repo.
+
+
+### Coding conventions to follow during development (TBD) / Some FAQ
+<details>
+  <summary>What is inside the `Container` folder?</summary>
+  
+  TBD
+</details>
+
+<details>
+  <summary>What is a `Container` in jsx?</summary>
+  
+  (TBD - below is subject to change!)
+  We use containers in order to create a wrapper around an element to provide extra style i.e. width, height, overflow, flex etc. (Then what is a `Wrapper`?)
+
+  We have a `Container` defined inside `stub.tsx`. It is exported and can be used via an import. Other containers should have more specific names i.e TableContainer, AssetTableContainer etc.
+</details>
+
+<details>
+  <summary>What is a `Wrapper` in jsx?</summary>
+  
+  TBD
+</details>

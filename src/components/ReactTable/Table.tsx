@@ -4,6 +4,7 @@ import {
   IdType,
   PluginHook,
   SortingRule,
+  useFlexLayout,
   useSortBy,
   useTable,
 } from 'react-table';
@@ -12,6 +13,7 @@ import { Flex } from '@cognite/cogs.js';
 import { ColumnToggle } from './ColumnToggle';
 import { useCellSelection } from './hooks';
 import { SortIcon } from './SortIcon';
+import { ResourceTableColumns } from './columns';
 
 export interface TableProps<T extends Record<string, any>> {
   data: T[];
@@ -24,16 +26,25 @@ export interface TableProps<T extends Record<string, any>> {
   isKeyboardNavigationEnabled?: boolean;
   onRowClick?: (
     row?: T,
-    evt?: React.MouseEvent<HTMLTableRowElement, MouseEvent>
+    evt?: React.MouseEvent<HTMLDivElement, MouseEvent>
   ) => void;
 }
-
 export interface OnSortProps<T> {
   sortBy?: SortingRule<T>[];
 }
+
 export type TableData = Record<string, any>;
 
-export function Table<T extends TableData>({
+NewTable.Columns = ResourceTableColumns;
+
+const defaultColumn = {
+  // When using the useFlexLayout:
+  minWidth: 30, // minWidth is only used as a limit for resizing
+  width: 150, // width is used for both the flex-basis and flex-grow
+  maxWidth: 200, // maxWidth is only used as a limit for resizing
+};
+
+export function NewTable<T extends TableData>({
   data,
   columns,
   onRowClick = () => {},
@@ -47,7 +58,9 @@ export function Table<T extends TableData>({
   const plugins = [
     isSortingEnabled && useSortBy,
     isKeyboardNavigationEnabled && useCellSelection,
+    useFlexLayout,
   ].filter(Boolean) as PluginHook<T>[];
+
   const {
     getTableProps,
     getTableBodyProps,
@@ -63,6 +76,7 @@ export function Table<T extends TableData>({
       data,
       columns,
       manualSortBy: Boolean(onSort),
+      defaultColumn,
       initialState: {
         hiddenColumns,
       },
@@ -78,14 +92,16 @@ export function Table<T extends TableData>({
   }, [JSON.stringify(sortBy)]);
 
   return (
-    <>
+    <TableContainer>
       {isColumnSelectEnabled && (
-        <Flex justifyContent="flex-end">
-          <ColumnToggle<T>
-            allColumns={allColumns}
-            getToggleHideAllColumnsProps={getToggleHideAllColumnsProps}
-          />
-        </Flex>
+        <ColumnSelectorWrapper>
+          <Flex justifyContent="flex-end">
+            <ColumnToggle<T>
+              allColumns={allColumns}
+              getToggleHideAllColumnsProps={getToggleHideAllColumnsProps}
+            />
+          </Flex>
+        </ColumnSelectorWrapper>
       )}
       <StyledTable {...getTableProps()}>
         <Thead isStickyHeader={isStickyHeader}>
@@ -110,7 +126,7 @@ export function Table<T extends TableData>({
             </Tr>
           ))}
         </Thead>
-        <tbody {...getTableBodyProps()}>
+        <div {...getTableBodyProps()}>
           {rows.map(row => {
             prepareRow(row);
             return (
@@ -131,27 +147,41 @@ export function Table<T extends TableData>({
               </Tr>
             );
           })}
-        </tbody>
+        </div>
       </StyledTable>
-    </>
+    </TableContainer>
   );
 }
 
-const StyledTable = styled.table`
-  color: var(--cogs-text-icon--medium);
-  position: relative;
-
+const TableContainer = styled.div`
   width: 100%;
 `;
 
-const Th = styled.th`
+const ColumnSelectorWrapper = styled.div`
+  width: 100%;
+`;
+
+const StyledTable = styled.div`
+  color: var(--cogs-text-icon--medium);
+  position: relative;
+  width: 100%;
+  overflow: auto;
+
+  & > div {
+    min-width: 100%;
+    width: fit-content;
+  }
+`;
+
+const Th = styled.div`
   color: var(--cogs-text-color-secondary);
   font-weight: 500;
   padding: 8px 12px;
 `;
 
-const Td = styled.td`
+const Td = styled.div`
   padding: 8px 12px;
+  word-wrap: break-word;
   &[data-selected='true'] {
     background: var(--cogs-surface--interactive--toggled-hover);
   }
@@ -162,18 +192,18 @@ const Td = styled.td`
   }
 `;
 
-const Thead = styled.thead<{ isStickyHeader?: boolean }>`
+const Thead = styled.div<{ isStickyHeader?: boolean }>`
   position: ${({ isStickyHeader }) => (isStickyHeader ? 'sticky' : 'relative')};
   top: 0;
   z-index: 1;
 `;
 
-const Tr = styled.tr`
+const Tr = styled.div`
   color: inherit;
-  border-bottom: 1px solid rgb(229, 229, 229);
+  border-bottom: 1px solid var(--cogs-border--muted);
   background: white;
   &:hover {
-    background: #fafafa;
+    background: var(--cogs-surface--medium);
     cursor: pointer;
   }
 

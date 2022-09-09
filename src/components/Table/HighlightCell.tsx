@@ -17,7 +17,7 @@ export const HighlightCell = ({
   const isEllipsisActive = useIsOverflow(textWrapperRef);
 
   return (
-    <EllipsisText level={2} strong lines={lines}>
+    <EllipsisText level={2} lines={lines}>
       <div ref={textWrapperRef}>
         {isEllipsisActive ? (
           <Tooltip

@@ -45,6 +45,7 @@ export type AssetTableProps = TableProps<AssetWithRelationshipLabels>;
 
 export const AssetTable = (props: AssetTableProps) => {
   const { onRowClick = () => {} } = props;
+
   const columns = [
     Table.Columns.name,
     Table.Columns.description,
