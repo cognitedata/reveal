@@ -23,7 +23,7 @@ in vec3 a_normal;
 in vec3 a_color;
 
 // Note! Not marked as flat as this makes performance on iOS horrible
-flat out int v_treeIndex;
+out float v_treeIndex;
 // We pack the radii into w-components
 out vec4 v_centerA;
 out vec4 v_centerB;
@@ -40,7 +40,7 @@ out vec3 v_normal;
 void main() {
 
   mat4 treeIndexWorldTransform = determineMatrixOverride(
-      float(a_treeIndex),
+      a_treeIndex,
       treeIndexTextureSize,
       transformOverrideIndexTexture,
       transformOverrideTextureSize,
@@ -117,7 +117,7 @@ void main() {
     V.w = surfacePoint.y;
     axis.w = surfacePoint.z;
 
-    v_treeIndex = int(a_treeIndex);
+    v_treeIndex = a_treeIndex;
     v_color = a_color;
     v_normal = normalMatrix * normal;
 

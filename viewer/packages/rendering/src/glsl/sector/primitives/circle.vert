@@ -20,12 +20,12 @@ out vec2 v_xy;
 out vec3 v_color;
 out vec3 v_normal;
 // Note! Not marked as flat as this makes performance on iOS horrible
-flat out int v_treeIndex;
+out float v_treeIndex;
 out vec3 vViewPosition;
 
 void main() {
     v_xy = vec2(position.x, position.y);
-    v_treeIndex = int(a_treeIndex);
+    v_treeIndex = a_treeIndex;
 
     mat4 treeIndexWorldTransform = determineMatrixOverride(
       a_treeIndex,

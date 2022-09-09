@@ -24,7 +24,7 @@ in vec4 v_centerA;
 in vec4 v_centerB;
 in float height;
 // Note! Not marked as flat as this makes performance on iOS horrible
-flat in int v_treeIndex;
+in float v_treeIndex;
 in vec3 v_color;
 in vec3 v_normal;
 

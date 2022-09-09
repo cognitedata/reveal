@@ -20,7 +20,7 @@ in vec4 matrix2;
 in vec4 matrix3;
 
 // Note! Not marked as flat as this makes performance on iOS horrible
-flat out int v_treeIndex;
+out float v_treeIndex;
 out vec3 v_color;
 out vec3 v_normal;
 out vec3 vViewPosition;
@@ -35,7 +35,7 @@ void main() {
       transformOverrideTexture
     );
 
-    v_treeIndex = int(treeIndex);
+    v_treeIndex = treeIndex;
     v_color = color;
     v_normal = normalize(normalMatrix * (inverseModelMatrix * treeIndexWorldTransform * modelMatrix * vec4(normalize(normal), 0.0)).xyz);
     mat4 instanceMatrix = mat4(matrix0, matrix1, matrix2, matrix3);

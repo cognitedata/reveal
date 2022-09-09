@@ -23,7 +23,7 @@ vec3 packNormalToRgb( const in vec3 normal ) {
 }
 
 void updateFragmentColor(
-    int renderMode, vec4 color, int treeIndex, 
+    int renderMode, vec4 color, float treeIndex, 
     vec3 normal, float depth, sampler2D matCapTexture, 
     int geometryType) {
     if (renderMode == RenderTypeColor || renderMode == RenderTypeEffects) {
