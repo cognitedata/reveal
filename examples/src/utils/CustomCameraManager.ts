@@ -21,6 +21,14 @@ export class CustomCameraManager implements CameraManager {
         });
     }
 
+    set enabled(value: boolean) {
+        this._controls.enabled = value;
+    }
+
+    get enabled(): boolean {
+        return this._controls.enabled;
+    }
+
     getCamera(): THREE.PerspectiveCamera {
         return this._camera;
     }
@@ -56,7 +64,6 @@ export class CustomCameraManager implements CameraManager {
         if (index !== -1) {
             this._cameraChangedListener.splice(index, 1);
         }
-
     }
 
     fitCameraToBoundingBox(boundingBox: THREE.Box3, duration?: number, radiusFactor?: number): void {
