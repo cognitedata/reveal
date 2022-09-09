@@ -63,12 +63,9 @@ const reusableColumns: Column[] = [
   {
     Header: 'Duration',
     accessor: 'duration',
-    Cell: ({ row }) => {
-      if (row.values.eventStartTime && row.values.eventEndTime) {
-        return calculateDuration(
-          row.values.eventStartTime,
-          row.values.eventEndTime
-        );
+    Cell: ({ row: { values } }) => {
+      if (values.eventCreationTime && values.eventEndTime) {
+        return calculateDuration(values.eventCreationTime, values.eventEndTime);
       }
       return '';
     },

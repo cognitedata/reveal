@@ -15,7 +15,12 @@ export const ViewMoreButton = ({
   };
 
   return (
-    <Button size="small" type="secondary" onClick={() => handleRowClick()}>
+    <Button
+      size="small"
+      type="secondary"
+      onClick={() => handleRowClick()}
+      style={{ whiteSpace: 'nowrap' }}
+    >
       View more
     </Button>
   );

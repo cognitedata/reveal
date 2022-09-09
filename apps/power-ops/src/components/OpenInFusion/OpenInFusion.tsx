@@ -1,5 +1,6 @@
 import { Button, Tooltip } from '@cognite/cogs.js';
 import { useAuthContext } from '@cognite/react-container';
+import { useEffect, useState } from 'react';
 import sidecar from 'utils/sidecar';
 
 export const OpenInFusion = ({
@@ -9,7 +10,9 @@ export const OpenInFusion = ({
 }) => {
   const { client } = useAuthContext();
 
-  const openInFusion = async () => {
+  const [fusionLink, setFusionLink] = useState<string>('');
+
+  const createFusionLink = async () => {
     const subdomain = await client?.assets
       .retrieve([{ externalId: 'configurations' }])
       .then((response) => {
@@ -22,10 +25,14 @@ export const OpenInFusion = ({
         return response[0].id || '';
       });
 
-    window.open(
+    setFusionLink(
       `https://${subdomain}.fusion.cognite.com/${client?.project}/explore/event/${eventId}?cluster=${sidecar.cdfApiBaseUrl}`
     );
   };
+
+  useEffect(() => {
+    createFusionLink();
+  }, [eventExternalId]);
 
   return (
     <Tooltip content="Open in CDF" placement="left">
@@ -34,7 +41,8 @@ export const OpenInFusion = ({
         icon="ExternalLink"
         aria-label="open-in-fusion"
         type="ghost"
-        onClick={() => openInFusion()}
+        href={fusionLink}
+        target="_blank"
       />
     </Tooltip>
   );

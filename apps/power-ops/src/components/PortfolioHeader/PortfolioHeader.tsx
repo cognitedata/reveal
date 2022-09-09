@@ -129,7 +129,7 @@ export const PortfolioHeader = ({
                       <p>
                         Process finished:{' '}
                         {formatDate(
-                          config.bidProcessFinishedDate.toLocaleString()
+                          config.bidProcessFinishedDate!.toLocaleString()
                         )}
                       </p>
                     </div>
