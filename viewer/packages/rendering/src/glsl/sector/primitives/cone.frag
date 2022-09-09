@@ -25,7 +25,7 @@ in float v_arcAngle;
 in vec4 v_centerA;
 in vec4 v_V;
 // Note! Not marked as flat as this makes performance on iOS horrible
-in float v_treeIndex;
+flat in int v_treeIndex;
 in vec3 v_color;
 in vec3 v_normal;
 

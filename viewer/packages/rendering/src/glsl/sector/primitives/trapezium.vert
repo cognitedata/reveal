@@ -19,7 +19,7 @@ in vec3 a_vertex3;
 in vec3 a_vertex4;
 
 // Note! Not marked as flat as this makes performance on iOS horrible
-out float v_treeIndex;
+flat out int v_treeIndex;
 out vec3 v_color;
 out vec3 v_normal;
 out vec3 vViewPosition;
@@ -43,7 +43,7 @@ void main() {
 
     vec3 objectNormal = cross(a_vertex1 - a_vertex2, a_vertex1 - a_vertex3);
 
-    v_treeIndex = a_treeIndex;
+    v_treeIndex = int(a_treeIndex);
     v_color = a_color;
     v_normal = normalMatrix * normalize(inverseModelMatrix * treeIndexWorldTransform * modelMatrix * vec4(objectNormal, 0.0)).xyz;
 

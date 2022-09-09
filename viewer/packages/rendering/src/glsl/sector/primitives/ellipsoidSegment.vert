@@ -23,7 +23,7 @@ in float a_verticalRadius;
 in float a_height;
 
 // Note! Not marked as flat as this makes performance on iOS horrible
-out float v_treeIndex;
+flat out int v_treeIndex;
 // We pack vRadius as w-component of center
 out vec4 center;
 out float hRadius;
@@ -91,7 +91,7 @@ void main() {
     vec3 surfacePoint = centerOfSegment + mat3(lDir, left, up) * displacement;
     vec3 transformed = surfacePoint;
 
-    v_treeIndex = a_treeIndex;
+    v_treeIndex = int(a_treeIndex);
     surfacePoint = mul3(modelViewMatrix, surfacePoint);
     center.xyz = mul3(modelViewMatrix, centerWithOffset);
     center.w = a_verticalRadius; // Pack radius into w-component

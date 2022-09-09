@@ -14,7 +14,7 @@ in float a_treeIndex;
 in vec3 a_color;
 
 // Note! Not marked as flat as this makes performance on iOS horrible
-out float v_treeIndex;
+flat out int v_treeIndex;
 out vec3 v_color;
 out vec3 v_viewPosition;
 
@@ -33,6 +33,6 @@ void main()
     vec3 transformed = (a_instanceMatrix * vec4(position, 1.0)).xyz;
     vec4 modelViewPosition = viewMatrix * treeIndexWorldTransform * modelMatrix * vec4(transformed, 1.0);
     v_viewPosition = modelViewPosition.xyz;
-    v_treeIndex = a_treeIndex;
+    v_treeIndex = int(a_treeIndex);
     gl_Position = projectionMatrix * modelViewPosition;
 }

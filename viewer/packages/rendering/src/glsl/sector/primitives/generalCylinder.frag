@@ -30,7 +30,7 @@ in float v_surfacePointY;
 in vec4 v_planeA;
 in vec4 v_planeB;
 // Note! Not marked as flat as this makes performance on iOS horrible
-in float v_treeIndex;
+flat in int v_treeIndex;
 in vec3 v_color;
 in vec3 v_normal;
 

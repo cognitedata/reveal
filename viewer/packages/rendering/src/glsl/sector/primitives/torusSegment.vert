@@ -19,7 +19,7 @@ in float a_radius;
 in float a_tubeRadius;
 
 // Note! Not marked as flat as this makes performance on iOS horrible
-out float v_treeIndex;
+flat out int v_treeIndex;
 out vec3 v_color;
 out vec3 v_normal;
 out vec3 vViewPosition;
@@ -50,7 +50,7 @@ void main() {
     vec3 center = (a_instanceMatrix * vec4(a_radius * cosTheta, a_radius * sinTheta, 0.0, 1.0)).xyz;
     vec3 objectNormal = normalize(transformed.xyz - center);
 
-    v_treeIndex = a_treeIndex;
+    v_treeIndex = int(a_treeIndex);
     v_color = a_color;
     v_normal = normalMatrix * normalize(inverseModelMatrix * treeIndexWorldTransform * modelMatrix * vec4(objectNormal, 0.0)).xyz;
 

@@ -18,7 +18,7 @@ in float a_verticalRadius;
 in float a_height;
 
 // Note! Not marked as flat as this makes performance on iOS horrible
-out float v_treeIndex;
+flat out int v_treeIndex;
 // We pack vRadius as w-component of center
 out vec4 center;
 out float hRadius;
@@ -34,7 +34,7 @@ out vec3 v_color;
 out vec3 v_normal;
 
 void main() {
-    v_treeIndex = a_treeIndex;
+    v_treeIndex = int(a_treeIndex);
     v_color = a_color;
 
     mat4 modelViewMatrix = viewMatrix * modelMatrix;

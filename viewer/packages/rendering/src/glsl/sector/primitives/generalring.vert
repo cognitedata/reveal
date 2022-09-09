@@ -20,7 +20,7 @@ in float a_thickness;
 in vec3 a_normal;
 
 // Note! Not marked as flat as this makes performance on iOS horrible
-out float v_treeIndex;
+flat out int v_treeIndex;
 out float v_oneMinusThicknessSqr;
 out vec2 v_xy;
 out float v_angle;
@@ -30,7 +30,7 @@ out vec3 v_normal;
 out vec3 vViewPosition;
 
 void main() {
-    v_treeIndex = a_treeIndex;
+    v_treeIndex = int(a_treeIndex);
     v_oneMinusThicknessSqr = (1.0 - a_thickness) * (1.0 - a_thickness);
     v_xy = vec2(position.x, position.y);
     v_angle = a_angle;

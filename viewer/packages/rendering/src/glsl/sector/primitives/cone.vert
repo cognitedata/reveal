@@ -26,7 +26,7 @@ in float a_angle;
 in float a_arcAngle;
 
 // Note! Not marked as flat as this makes performance on iOS horrible
-out float v_treeIndex;
+flat out int v_treeIndex;
 // We pack the radii into w-components
 out vec4 v_centerB;
 // U, V, axis represent the 3x3 cone basis.
@@ -84,7 +84,7 @@ void main() {
     surfacePoint = mul3(modelViewMatrix, surfacePoint);
 
     // out data
-    v_treeIndex = a_treeIndex;
+    v_treeIndex = int(a_treeIndex);
     v_angle = a_angle;
     v_arcAngle = a_arcAngle;
 
