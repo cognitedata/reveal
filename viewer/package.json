@@ -35,7 +35,7 @@
     "test": "yarn run test:ts && yarn run test:wasm",
     "test:ts": "yarn run build:wasm-test && jest --maxWorkers=4",
     "test:wasm": "yarn workspaces foreach run run-wasm-pack test --headless --chrome ./wasm",
-    "test:visual:client": "cross-env JEST_PUPPETEER_CONFIG=visual-tests/jest-puppeteer.config.js jest --config=visual-tests/jest.config.js --verbose",
+    "test:visual:client": "yarn run build:wasm && cross-env JEST_PUPPETEER_CONFIG=visual-tests/jest-puppeteer.config.js jest --config=visual-tests/jest.config.js --verbose",
     "test:visual:server": "webpack-dev-server --config packages/webpack.config.js",
     "test:visual": "concurrently -k -s \"first\" \"yarn run test:visual:client\" \"yarn run test:visual:server\"",
     "coverage": "yarn run build:wasm-test && jest --coverage",
@@ -46,7 +46,7 @@
     "bump:tag": "cross-var git tag $npm_package_name@$npm_package_version",
     "bump:push": "git push -u origin head && git push --tags",
     "release": "yarn build:prod && cd dist && yarn publish --non-interactive",
-    "ws:serve": "webpack-dev-server --config packages/webpack.config.js",
+    "ws:serve": "yarn run build:wasm && webpack-dev-server --config packages/webpack.config.js",
     "ws:test": "cd $INIT_CWD && jest --runInBand",
     "ws:test:wasm": "cd $INIT_CWD && wasm-pack test --chrome --headless ./wasm",
     "ws:lint": "cd $INIT_CWD && eslint . --ext .ts,.js --max-warnings 0 --cache"
