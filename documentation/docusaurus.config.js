@@ -64,6 +64,7 @@ module.exports = {
             require('./src/plugins/remark-npm2yarn'),
             require('./src/plugins/remark-runnable-reveal-demo'),
           ],
+          showLastUpdateTime: true,
         },
         theme: {
           customCss: require.resolve('./src/css/custom.css'),
