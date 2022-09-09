@@ -235,8 +235,7 @@ export class Cognite3DViewer {
       this._revealManagerHelper = RevealManagerHelper.createLocalHelper(
         this._renderer,
         this._sceneHandler,
-        revealOptions,
-        options.sdk
+        revealOptions
       );
     } else if (options.customDataSource !== undefined) {
       this._dataSource = options.customDataSource;

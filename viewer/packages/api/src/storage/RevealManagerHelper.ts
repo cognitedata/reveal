@@ -60,10 +60,9 @@ export class RevealManagerHelper {
   static createLocalHelper(
     renderer: THREE.WebGLRenderer,
     sceneHandler: SceneHandler,
-    revealOptions: RevealOptions,
-    sdkClient?: CogniteClient | undefined
+    revealOptions: RevealOptions
   ): RevealManagerHelper {
-    const revealManager = createLocalRevealManager(renderer, sceneHandler, revealOptions, sdkClient);
+    const revealManager = createLocalRevealManager(renderer, sceneHandler, revealOptions);
     return new RevealManagerHelper('local', revealManager);
   }
 

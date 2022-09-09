@@ -40,8 +40,7 @@ import { createCadManager } from '@reveal/cad-geometry-loaders';
 export function createLocalRevealManager(
   renderer: THREE.WebGLRenderer,
   sceneHandler: SceneHandler,
-  revealOptions: RevealOptions = {},
-  sdkClient?: CogniteClient | undefined
+  revealOptions: RevealOptions = {}
 ): RevealManager {
   const modelMetadataProvider = new LocalModelMetadataProvider();
   const modelDataProvider = new LocalModelDataProvider();
@@ -53,7 +52,7 @@ export function createLocalRevealManager(
     renderer,
     sceneHandler,
     revealOptions,
-    sdkClient
+    undefined
   );
 }
 
