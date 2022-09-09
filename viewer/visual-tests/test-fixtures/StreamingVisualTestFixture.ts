@@ -21,9 +21,9 @@ import { VisualTestFixture } from './VisualTestFixture';
 import { DeferredPromise, fitCameraToBoundingBox, SceneHandler } from '../../packages/utilities';
 import { ModelIdentifier, ModelMetadataProvider } from '../../packages/modeldata-api';
 import { LoadingState } from '../../packages/model-base';
-import { PointCloudManager, PointCloudNode, Potree, PotreePointColorType } from '../../packages/pointclouds';
+import { LocalAnnotationProvider, PointCloudManager, PointCloudNode, Potree, PotreePointColorType } from '../../packages/pointclouds';
 import { PointCloudMetadataRepository } from '../../packages/pointclouds/src/PointCloudMetadataRepository';
-import { LocalPointCloudFactory } from '../../packages/pointclouds/src/factory/LocalPointCloudFactory';
+import { PointCloudFactory } from '../../packages/pointclouds/src/PointCloudFactory';
 import dat from 'dat.gui';
 
 export type StreamingTestFixtureComponents = {
@@ -59,6 +59,7 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
   private _renderPipelineProvider: RenderPipelineProvider;
   private _pipelineExecutor: RenderPipelineExecutor;
   private _cadManager!: CadManager;
+  private _potreeInstance!: Potree;
   private readonly _depthRenderPipeline: CadGeometryRenderModePipelineProvider;
   private readonly _resizeObserver: ResizeObserver;
 
@@ -84,6 +85,18 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
 
   get pipelineProvider(): RenderPipelineProvider {
     return this._renderPipelineProvider;
+  }
+
+  get potreeInstance(): Potree {
+    return this._potreeInstance;
+  }
+
+  /*
+   * Overridable field creation methods
+   */
+
+  createPointCloudFactory(): PointCloudFactory {
+    return new PointCloudFactory(this.potreeInstance, new LocalAnnotationProvider());
   }
 
   constructor(localModelUrl = 'primitives') {
@@ -133,12 +146,12 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
     this._cadManager = new CadManager(this._materialManager, cadModelFactory, cadModelUpdateHandler);
 
     const pointCloudMetadataRepository = new PointCloudMetadataRepository(modelMetadataProvider, modelDataProvider);
-    const potreeInstance = new Potree(modelDataProvider);
-    const pointCloudFactory = new LocalPointCloudFactory(potreeInstance);
+    this._potreeInstance = new Potree(modelDataProvider);
+    const pointCloudFactory = this.createPointCloudFactory();
     const pointCloudManager = new PointCloudManager(
       pointCloudMetadataRepository,
       pointCloudFactory,
-      potreeInstance,
+      this._potreeInstance,
       this._sceneHandler.scene,
       this._renderer
     );
