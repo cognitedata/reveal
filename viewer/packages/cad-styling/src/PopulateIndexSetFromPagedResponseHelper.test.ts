@@ -103,4 +103,14 @@ describe(PopulateIndexSetFromPagedResponseHelper.name, () => {
     expect(filterCallback).toBeCalledTimes(2); // two batches
     expect(helper.indexSet.toIndexArray()).toEqual([2, 4, 6, 8, 10]);
   });
+
+  test('with filter, no asset mappings, does not invoke filter callback', async () => {
+    const response = createListResponse([], 5);
+    const filterCallback = jest.fn(async (items: number[]) => items.filter(x => x % 2 === 0));
+    helper.setFilterItemsCallback(filterCallback);
+
+    await helper.pageResults(Promise.resolve(response));
+
+    expect(filterCallback).not.toBeCalled();
+  });
 });

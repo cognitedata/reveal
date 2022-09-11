@@ -74,7 +74,7 @@ export class PopulateIndexSetFromPagedResponseHelper<T> {
       while (!this._interrupted) {
         const nextRequest = response.next ? response.next() : undefined;
 
-        const items = await this._filterItemsCallback(response.items);
+        const items = response.items.length > 0 ? await this._filterItemsCallback(response.items) : [];
         const ranges = this._itemsToTreeIndexRangesCallback(items);
         ranges.forEach(range => indexSet.addRange(range));
 
