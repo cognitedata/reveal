@@ -10,11 +10,12 @@ import { RenderPipelineProvider } from '../RenderPipelineProvider';
 import { getLayerMask, RenderLayer, setupCadModelsGeometryLayers } from '../utilities/renderUtilities';
 import { RenderMode } from '../rendering/RenderMode';
 import { SceneHandler } from '@reveal/utilities';
+import { CadNode } from '@reveal/cad-model';
 
 export class CadGeometryRenderModePipelineProvider implements RenderPipelineProvider {
   private readonly _materialManager: CadMaterialManager;
   private readonly _cadModels: {
-    object: THREE.Object3D<THREE.Event>;
+    cadNode: CadNode;
     modelIdentifier: string;
   }[];
   private readonly _renderTargetData: { currentRenderSize: THREE.Vector2 };

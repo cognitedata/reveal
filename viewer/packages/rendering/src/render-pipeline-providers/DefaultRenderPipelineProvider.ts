@@ -16,16 +16,18 @@ import { SSAOPass } from '../render-passes/SSAOPass';
 import { blitShaders } from '../rendering/shaders';
 import { SceneHandler, WebGLRendererStateHelper } from '@reveal/utilities';
 import { PointCloudRenderPipelineProvider } from './PointCloudRenderPipelineProvider';
+import { CadNode } from '@reveal/cad-model';
+import { PointCloudNode } from '@reveal/pointclouds';
 
 export class DefaultRenderPipelineProvider implements RenderPipelineProvider {
   private readonly _viewerScene: THREE.Scene;
   private readonly _renderTargetData: RenderTargetData;
   private readonly _cadModels: {
-    object: THREE.Object3D;
+    cadNode: CadNode;
     modelIdentifier: string;
   }[];
   private readonly _pointCloudModels: {
-    object: THREE.Object3D;
+    pointCloudNode: PointCloudNode;
     modelIdentifier: symbol;
   }[];
   private readonly _customObjects: THREE.Object3D[];
@@ -186,7 +188,7 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider {
     this._rendererStateHelper.setClearColor(renderer.getClearColor(new THREE.Color()), 0);
 
     this._cadModels.forEach(cadModel => {
-      cadModel.object.matrixAutoUpdate = false;
+      cadModel.cadNode.matrixAutoUpdate = false;
     });
     this._viewerScene.autoUpdate = false;
 

@@ -2,6 +2,7 @@
  * Copyright 2022 Cognite AS
  */
 
+import { CadNode } from '@reveal/cad-model';
 import { SceneHandler, WebGLRendererStateHelper } from '@reveal/utilities';
 import * as THREE from 'three';
 import { CadMaterialManager } from '../CadMaterialManager';
@@ -23,7 +24,7 @@ export class CadGeometryRenderPipelineProvider implements RenderPipelineProvider
   private readonly _cadGeometryRenderTargets: CadGeometryRenderTargets;
   private readonly _cadGeometryRenderPasses: CadGeometryRenderPasses;
   private readonly _cadModels: {
-    object: THREE.Object3D<THREE.Event>;
+    cadNode: CadNode;
     modelIdentifier: string;
   }[];
   private readonly _materialManager: CadMaterialManager;
