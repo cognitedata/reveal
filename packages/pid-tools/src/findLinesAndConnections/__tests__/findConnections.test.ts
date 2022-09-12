@@ -264,14 +264,14 @@ describe('findConnectionsByTraversal', () => {
     // each line should have one connection
     for (const line of lineInstances) {
       expect(
-        connections.filter((c) => connectionHasInstanceId(line.id, c)).length
+        connections.filter((c) => connectionHasInstanceId(c, line.id)).length
       ).toBe(1);
     }
 
     // each symbol should have two connections
     for (const symbol of symbolInstances) {
       expect(
-        connections.filter((c) => connectionHasInstanceId(symbol.id, c)).length
+        connections.filter((c) => connectionHasInstanceId(c, symbol.id)).length
       ).toBe(2);
     }
   });

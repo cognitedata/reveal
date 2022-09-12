@@ -10,27 +10,26 @@ import {
 import {
   connectionExists,
   getDiagramInstanceIdFromPathIds,
-  isDiagramInstanceInList,
+  isDiagramIdInList,
 } from '../utils';
 import { PidDocument, PidPath } from '../pid';
 
 import { findConnectionsByTraversal } from './findConnections';
 import { detectLines } from './findLines';
 
-export const getPotentialLines = (
-  symbolInstances: DiagramSymbolInstance[],
-  lineInstances: DiagramLineInstance[],
-  pidDocument: PidDocument,
-  diagramType: DiagramType
-) => {
-  const allInstances = [...symbolInstances, ...lineInstances];
-
-  const pathIdsInInstances = new Set(
-    allInstances.flatMap((instance) => instance.pathIds)
-  );
-  const isPathInAnyInstance = (path: PidPath) =>
-    pathIdsInInstances.has(path.pathId);
-
+const getPotentialLines = ({
+  symbolInstances,
+  oldLines,
+  manuallyRemovedLines,
+  pidDocument,
+  diagramType,
+}: {
+  symbolInstances: DiagramSymbolInstance[];
+  oldLines: DiagramLineInstance[];
+  manuallyRemovedLines: DiagramLineInstance[];
+  pidDocument: PidDocument;
+  diagramType: DiagramType;
+}): DiagramLineInstance[] => {
   const isPathValidForDiagramType = (path: PidPath) =>
     diagramType !== DiagramType.ISO ||
     path.segmentList.some(
@@ -42,45 +41,73 @@ export const getPotentialLines = (
       ? path.style?.strokeLinejoin === 'miter'
       : path.style?.stroke !== null;
 
-  const matches = pidDocument.pidPaths.filter(
+  const allInstancesPathIds = new Set(
+    [...symbolInstances, ...oldLines].flatMap((instance) => instance.pathIds)
+  );
+
+  const manuallyRemovedLinesPathIds = new Set(
+    manuallyRemovedLines.flatMap((instance) => instance.pathIds)
+  );
+
+  const potentialPidPaths = pidDocument.pidPaths.filter(
     (path) =>
       isPathValidForDiagramType(path) &&
-      !isPathInAnyInstance(path) &&
-      isPathStrokeValid(path)
+      isPathStrokeValid(path) &&
+      !allInstancesPathIds.has(path.pathId) &&
+      !manuallyRemovedLinesPathIds.has(path.pathId)
   );
 
-  const potentialLines: DiagramLineInstance[] = matches.map(
-    (pidPath) =>
-      ({
-        id: getDiagramInstanceIdFromPathIds([pidPath.pathId]),
-        type: 'Line',
-        pathIds: [pidPath.pathId],
-        labelIds: [],
-        lineNumbers: [],
-        inferedLineNumbers: [],
-      } as DiagramLineInstance)
-  );
-  return potentialLines;
+  return potentialPidPaths.map((pidPath) => {
+    const potentialLine: DiagramLineInstance = {
+      id: getDiagramInstanceIdFromPathIds([pidPath.pathId]),
+      type: 'Line',
+      pathIds: [pidPath.pathId],
+      labelIds: [],
+      lineNumbers: [],
+      inferedLineNumbers: [],
+    };
+    return potentialLine;
+  });
 };
 
-export interface FindLinesAndConnectionsOutput {
-  newConnections: DiagramConnection[];
-  newLines: DiagramLineInstance[];
+const connectsToKnownInstances = (
+  connection: DiagramConnection,
+  knownInstances: DiagramInstanceWithPaths[]
+) => {
+  return (
+    isDiagramIdInList(connection.end, knownInstances) &&
+    isDiagramIdInList(connection.start, knownInstances)
+  );
+};
+
+export interface FindLinesAndConnectionsArgs {
+  diagramType: DiagramType;
+  symbolInstances: DiagramSymbolInstance[];
+  oldLines: DiagramLineInstance[];
+  manuallyRemovedLines: DiagramLineInstance[];
+  oldConnections: DiagramConnection[];
 }
 
 export const findLinesAndConnections = (
   pidDocument: PidDocument,
-  diagramType: DiagramType,
-  symbolInstances: DiagramSymbolInstance[],
-  lineInstances: DiagramLineInstance[],
-  oldConnections: DiagramConnection[]
-): FindLinesAndConnectionsOutput => {
-  const potentialLineInstanceList: DiagramLineInstance[] = getPotentialLines(
+  {
+    diagramType,
     symbolInstances,
-    lineInstances,
+    oldLines,
+    manuallyRemovedLines,
+    oldConnections,
+  }: FindLinesAndConnectionsArgs
+): {
+  newLines: DiagramLineInstance[];
+  newAndOldConnections: DiagramConnection[];
+} => {
+  const potentialLines: DiagramLineInstance[] = getPotentialLines({
+    symbolInstances,
+    oldLines,
+    manuallyRemovedLines,
     pidDocument,
-    diagramType
-  );
+    diagramType,
+  });
 
   const relevantSymbolInstances = symbolInstances.filter(
     (symbolInstance) => symbolInstance.type !== 'Arrow'
@@ -90,47 +117,36 @@ export const findLinesAndConnections = (
   console.log('Finding connections by traversal...');
   const potentialConnections: DiagramConnection[] = findConnectionsByTraversal(
     relevantSymbolInstances,
-    [...lineInstances, ...potentialLineInstanceList],
+    [...oldLines, ...potentialLines],
     pidDocument
   );
 
   // eslint-disable-next-line no-console
   console.log('Pruning lines...');
   const newLines = detectLines(
-    potentialLineInstanceList,
+    potentialLines,
     potentialConnections,
-    lineInstances,
+    oldLines,
     relevantSymbolInstances
   );
 
-  const knownInstances = [
-    ...relevantSymbolInstances,
-    ...lineInstances,
-    ...newLines,
-  ];
-  const prunedConnections = potentialConnections.filter((con) =>
+  const knownInstances = [...relevantSymbolInstances, ...oldLines, ...newLines];
+
+  const newConnections = potentialConnections.filter((con) =>
     connectsToKnownInstances(con, knownInstances)
   );
 
-  const prunedNewConnections = [...oldConnections];
-  for (let i = 0; i < prunedConnections.length; i++) {
-    if (!connectionExists(prunedNewConnections, prunedConnections[i])) {
-      prunedNewConnections.push(prunedConnections[i]);
+  const newAndOldConnections = [...oldConnections];
+  // eslint-disable-next-line no-restricted-syntax
+  for (const newConnection of newConnections) {
+    // FIX: Use a different data structure to not do this in linear time?
+    if (!connectionExists(newAndOldConnections, newConnection)) {
+      newAndOldConnections.push(newConnection);
     }
   }
 
   return {
-    newConnections: prunedNewConnections,
     newLines,
+    newAndOldConnections,
   };
-};
-
-const connectsToKnownInstances = (
-  connection: DiagramConnection,
-  knownInstances: DiagramInstanceWithPaths[]
-) => {
-  return (
-    isDiagramInstanceInList(connection.end, knownInstances) &&
-    isDiagramInstanceInList(connection.start, knownInstances)
-  );
 };

@@ -108,6 +108,7 @@ describe('convertGraphToGlobalIds', () => {
       lineNumbers: ['L132'],
       tags: [],
       labels: [],
+      manuallyRemovedLines: [],
       manuallyRemovedConnections: [],
       manuallyRemovedLabelConnections: [],
     };
@@ -154,6 +155,7 @@ describe('mergeGraphs', () => {
       lineNumbers: ['L132'],
       tags: [],
       labels: [],
+      manuallyRemovedLines: [],
       manuallyRemovedConnections: [],
       manuallyRemovedLabelConnections: [],
     };
@@ -174,6 +176,7 @@ describe('mergeGraphs', () => {
       lineNumbers: ['L132'],
       tags: [],
       labels: [],
+      manuallyRemovedLines: [],
       manuallyRemovedConnections: [],
       manuallyRemovedLabelConnections: [],
     };
@@ -217,6 +220,7 @@ describe('match multifileGraphs', () => {
       lineNumbers: ['L001'],
       tags: [],
       labels: [],
+      manuallyRemovedLines: [],
       manuallyRemovedConnections: [],
       manuallyRemovedLabelConnections: [],
     };
@@ -240,6 +244,7 @@ describe('match multifileGraphs', () => {
       lineNumbers: ['L001'],
       tags: [],
       labels: [],
+      manuallyRemovedLines: [],
       manuallyRemovedConnections: [],
       manuallyRemovedLabelConnections: [],
     };
@@ -272,6 +277,7 @@ describe('match multifileGraphs', () => {
       lineNumbers: ['L001'],
       tags: [],
       labels: [],
+      manuallyRemovedLines: [],
       manuallyRemovedConnections: [],
       manuallyRemovedLabelConnections: [],
     };
@@ -301,6 +307,7 @@ describe('match multifileGraphs', () => {
       lineNumbers: ['L001'],
       tags: [],
       labels: [],
+      manuallyRemovedLines: [],
       manuallyRemovedConnections: [],
       manuallyRemovedLabelConnections: [],
     };

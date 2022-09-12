@@ -16,7 +16,10 @@ import {
   DiagramInstanceWithPaths,
   DiagramInstance,
 } from '../types';
-import { findLinesAndConnections } from '../findLinesAndConnections';
+import {
+  findLinesAndConnections,
+  FindLinesAndConnectionsArgs,
+} from '../findLinesAndConnections';
 import {
   getSceenCTMToSvgMatrix,
   svgCommandsToPathSegments,
@@ -296,19 +299,8 @@ export class PidDocument {
     return getFileConnectionsWithPosition(this, fileConnections);
   }
 
-  findLinesAndConnection(
-    diagramType: DiagramType,
-    symbolInstances: DiagramSymbolInstance[],
-    lineInstances: DiagramLineInstance[],
-    connections: DiagramConnection[]
-  ) {
-    return findLinesAndConnections(
-      this,
-      diagramType,
-      symbolInstances,
-      lineInstances,
-      connections
-    );
+  findLinesAndConnection(args: FindLinesAndConnectionsArgs) {
+    return findLinesAndConnections(this, args);
   }
 
   connectLabelsToInstances(

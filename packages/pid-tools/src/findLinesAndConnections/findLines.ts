@@ -5,10 +5,7 @@ import {
   DiagramInstanceId,
   DiagramSymbolInstance,
 } from '../types';
-import {
-  getDiagramInstanceIdFromPathIds,
-  isDiagramInstanceInList,
-} from '../utils';
+import { getDiagramInstanceIdFromPathIds, isDiagramIdInList } from '../utils';
 
 const getConnectedByInstanceId = (
   instanceId: DiagramInstanceId,
@@ -114,7 +111,7 @@ const findLinesInBetweenKnownInstances = (
   }
   visited.push(instanceId);
 
-  if (isDiagramInstanceInList(instanceId, knownInstances)) {
+  if (isDiagramIdInList(instanceId, knownInstances)) {
     return [];
   }
   const connectedInstances = getConnectedByInstanceId(instanceId, connections);

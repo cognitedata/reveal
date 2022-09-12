@@ -46,7 +46,7 @@ export function getDiagramInstancesByPathIds<
   );
 }
 
-export const isDiagramInstanceInList = (
+export const isDiagramIdInList = (
   diagramId: DiagramInstanceId,
   diagramInstances: DiagramInstanceWithPaths[]
 ) => {

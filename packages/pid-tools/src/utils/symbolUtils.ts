@@ -1,8 +1,8 @@
 import { DiagramConnection, DiagramInstanceWithPaths } from '../index';
 
 export const connectionHasInstanceId = (
-  instanceId: string,
-  connection: DiagramConnection
+  connection: DiagramConnection,
+  instanceId: string
 ) => {
   return connection.start === instanceId || connection.end === instanceId;
 };

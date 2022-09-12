@@ -38,6 +38,7 @@ export const getGraphFormat = ({
   documentMetadata,
   lineNumbers,
   tags,
+  manuallyRemovedLines,
   manuallyRemovedConnections,
   manuallyRemovedLabelConnections,
 }: {
@@ -50,6 +51,7 @@ export const getGraphFormat = ({
   documentMetadata: DocumentMetadata;
   lineNumbers: string[];
   tags: DiagramTag[];
+  manuallyRemovedLines: DiagramLineInstance[];
   manuallyRemovedConnections: DiagramConnection[];
   manuallyRemovedLabelConnections: [DiagramInstanceWithPaths, string][];
 }): GraphDocument => {
@@ -78,6 +80,7 @@ export const getGraphFormat = ({
     lineNumbers,
     tags: tagsOutputFormat,
     labels,
+    manuallyRemovedLines,
     manuallyRemovedConnections,
     manuallyRemovedLabelConnections,
   };

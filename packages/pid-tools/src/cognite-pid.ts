@@ -208,6 +208,8 @@ export class CognitePid {
   >();
   private diagramInstancesWithPaths: DiagramInstanceWithPaths[] = [];
   private connectionVisualizations: ConnectionVisualization[] = [];
+
+  private manuallyRemovedLines: DiagramLineInstance[] = [];
   private manuallyRemovedConnections: DiagramConnection[] = [];
   private manuallyRemovedLabelConnections: [
     DiagramInstanceWithPaths,
@@ -407,17 +409,18 @@ export class CognitePid {
     this.linesSubscriber = callback;
   }
 
-  deleteLine = (line: DiagramLineInstance) => {
-    const lineId = getDiagramInstanceId(line);
-
+  private manuallyDeleteLine = (lineToDelete: DiagramLineInstance) => {
     this.setConnections(
       this.connections.filter(
-        (connection) => !connectionHasInstanceId(lineId, connection)
+        (connection) => !connectionHasInstanceId(connection, lineToDelete.id)
       )
     );
 
-    this.setLines(
-      this.lines.filter((line) => getDiagramInstanceId(line) !== lineId)
+    this.setLines(this.lines.filter((line) => line.id !== lineToDelete.id));
+
+    this.manuallyRemovedLines = uniqBy(
+      [...this.manuallyRemovedLines, lineToDelete],
+      'id'
     );
   };
 
@@ -710,6 +713,10 @@ export class CognitePid {
     }
     if ('lineNumbers' in graphDocument) {
       this.setLineNumbers(graphDocument.lineNumbers, false);
+    }
+
+    if ('manuallyRemovedLines' in graphDocument) {
+      this.manuallyRemovedLines = graphDocument.manuallyRemovedLines;
     }
     if ('manuallyRemovedConnections' in graphDocument) {
       this.manuallyRemovedConnections =
@@ -1087,7 +1094,7 @@ export class CognitePid {
           node.id
         );
         if (isLine(diagramInstance)) {
-          this.deleteLine(diagramInstance);
+          this.manuallyDeleteLine(diagramInstance);
         } else {
           this.setLines([
             ...this.lines,
@@ -1407,17 +1414,18 @@ export class CognitePid {
   ) {
     if (this.pidDocument === undefined) return;
 
-    // find lines and connections
-    const { newLines, newConnections } =
-      this.pidDocument.findLinesAndConnection(
-        documentMetadata.type,
-        this.symbolInstances,
-        this.lines,
-        this.connections
-      );
+    const { newLines, newAndOldConnections } =
+      this.pidDocument.findLinesAndConnection({
+        diagramType: documentMetadata.type,
+        symbolInstances: this.symbolInstances,
+        oldLines: this.lines,
+        manuallyRemovedLines: this.manuallyRemovedLines,
+        oldConnections: this.connections,
+      });
+
     this.setLines([...this.lines, ...newLines]);
     this.setConnections(
-      newConnections.filter(
+      newAndOldConnections.filter(
         (connection) =>
           !this.manuallyRemovedConnections.some((c) =>
             isConnectionUnidirectionalMatch(c, connection)
@@ -1546,6 +1554,7 @@ export class CognitePid {
       documentMetadata: this.documentMetadata,
       lineNumbers: this.lineNumbers,
       tags: this.tags,
+      manuallyRemovedLines: this.manuallyRemovedLines,
       manuallyRemovedConnections: this.manuallyRemovedConnections,
       manuallyRemovedLabelConnections: this.manuallyRemovedLabelConnections,
     });
