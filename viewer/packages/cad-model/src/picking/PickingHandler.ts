@@ -14,6 +14,7 @@ import {
 import { SceneHandler, WebGLRendererStateHelper } from '@reveal/utilities';
 import { CadNode } from '../wrappers/CadNode';
 import { readPixelsFromTargetAsync } from './readPixelsFromTargetAsync';
+import { Mutex } from 'async-mutex';
 
 type PickingInput = {
   normalizedCoords: {
@@ -57,6 +58,7 @@ export class PickingHandler {
   private readonly _pipelineExecutor: BasicPipelineExecutor;
   private readonly _depthRenderPipeline: CadGeometryRenderModePipelineProvider;
   private readonly _treeIndexRenderPipeline: CadGeometryRenderModePipelineProvider;
+  private _mutex = new Mutex();
 
   constructor(renderer: THREE.WebGLRenderer, materialManager: CadMaterialManager, sceneHandler: SceneHandler) {
     this._clearColor = new THREE.Color('black');
@@ -85,13 +87,21 @@ export class PickingHandler {
 
   public async intersectCadNodes(cadNodes: CadNode[], input: IntersectInput): Promise<IntersectCadNodesResult[]> {
     const results: IntersectCadNodesResult[] = [];
-    for (const cadNode of cadNodes) {
-      const result = await this.intersectCadNode(cadNode, input);
-      if (result) {
-        results.push(result);
+    const release = await this._mutex.acquire();
+    //const start = performance.now();
+
+    try {
+      for (const cadNode of cadNodes) {
+        const result = await this.intersectCadNode(cadNode, input);
+        if (result) {
+          results.push(result);
+        }
       }
+      return results.sort((l, r) => l.distance - r.distance);
+    } finally {
+      //console.log('took', (performance.now() - start).toFixed(2), 'ms');
+      release();
     }
-    return results.sort((l, r) => l.distance - r.distance);
   }
 
   public async intersectCadNode(cadNode: CadNode, input: IntersectInput): Promise<IntersectCadNodesResult | undefined> {
@@ -175,30 +185,30 @@ export class PickingHandler {
     clearColor: THREE.Color,
     clearAlpha: number
   ) {
-    const { renderTarget, pixelBuffer } = this._pickPixelColorStorage;
-    const { camera, normalizedCoords, renderer, domElement } = input;
+      const { renderTarget, pixelBuffer } = this._pickPixelColorStorage;
+      const { camera, normalizedCoords, renderer, domElement } = input;
 
-    // Prepare camera that only renders the single pixel we are interested in
-    const pickCamera = camera.clone() as THREE.PerspectiveCamera;
-    const absoluteCoords = {
-      x: ((normalizedCoords.x + 1.0) / 2.0) * domElement.clientWidth,
-      y: ((1.0 - normalizedCoords.y) / 2.0) * domElement.clientHeight
-    };
-    pickCamera.setViewOffset(domElement.clientWidth, domElement.clientHeight, absoluteCoords.x, absoluteCoords.y, 1, 1);
+      // Prepare camera that only renders the single pixel we are interested in
+      const pickCamera = camera.clone() as THREE.PerspectiveCamera;
+      const absoluteCoords = {
+        x: ((normalizedCoords.x + 1.0) / 2.0) * domElement.clientWidth,
+        y: ((1.0 - normalizedCoords.y) / 2.0) * domElement.clientHeight
+      };
+      pickCamera.setViewOffset(domElement.clientWidth, domElement.clientHeight, absoluteCoords.x, absoluteCoords.y, 1, 1);
 
-    const stateHelper = new WebGLRendererStateHelper(renderer);
-    let readPixelsPromise: Promise<void>;
-    try {
-      stateHelper.setClearColor(clearColor, clearAlpha);
-      this._pipelineExecutor.render(renderPipeline, pickCamera);
-      readPixelsPromise = readPixelsFromTargetAsync(renderer, renderTarget, 0, 0, 1, 1, pixelBuffer);
-    } finally {
-      // Note! State is reset before promise is resolved as there might be rendering happening between
-      // "now" and when the result from readPixelsFromTargetAsync is ready
-      stateHelper.resetState();
-    }
-    await readPixelsPromise;
-    return pixelBuffer;
+      const stateHelper = new WebGLRendererStateHelper(renderer);
+      let readPixelsPromise: Promise<void>;
+      try {
+        stateHelper.setClearColor(clearColor, clearAlpha);
+        this._pipelineExecutor.render(renderPipeline, pickCamera);
+        readPixelsPromise = readPixelsFromTargetAsync(renderer, renderTarget, 0, 0, 1, 1, pixelBuffer);
+      } finally {
+        // Note! State is reset before promise is resolved as there might be rendering happening between
+        // "now" and when the result from readPixelsFromTargetAsync is ready
+        stateHelper.resetState();
+      }
+      await readPixelsPromise;
+      return pixelBuffer;
   }
 
   private unpackRGBAToDepth(rgbaBuffer: Uint8Array) {

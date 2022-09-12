@@ -88,6 +88,7 @@ export function Migration() {
 
       let viewerOptions: Cognite3DViewerOptions = {
         sdk: client,
+        rendererResolutionThreshold: Infinity,
         domElement: canvasWrapperRef.current!,
         onLoading: progress,
         logMetrics: false,
@@ -394,24 +395,12 @@ export function Migration() {
       viewer.on('click', async (event) => {
         const { offsetX, offsetY } = event;
         console.log('2D coordinates', event);
-        const start = performance.now();
-        const intersection = await viewer.getIntersectionFromPixel(offsetX, offsetY);
-        if (intersection !== null) {
-          switch (intersection.type) {
-            case 'cad':
-              {
-                const { treeIndex, point } = intersection;
-                console.log(`Clicked node with treeIndex ${treeIndex} at`, point, `took ${(performance.now() - start).toFixed(1)} ms`);
-
-                inspectNodeUi.inspectNode(intersection.model, treeIndex);
-              }
-              break;
-            case 'pointcloud':
-              {
-                const { pointIndex, point } = intersection;
-                console.log(`Clicked point with pointIndex ${pointIndex} at`, point);
-              }
-              break;
+        let start = performance.now();
+        let timeSum = 0;
+        const pickingCount = 10;
+        for (let i = 0; i < pickingCount; i++) {
+          const intersection = await viewer.getIntersectionFromPixel(offsetX, offsetY);
+          if (intersection) {
           }
         }
       });
