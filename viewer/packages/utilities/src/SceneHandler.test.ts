@@ -1,8 +1,11 @@
 /*!
  * Copyright 2021 Cognite AS
  */
+import { CadNode } from '@reveal/cad-model';
 import * as THREE from 'three';
 import { SceneHandler } from '..';
+
+import { Mock } from 'moq.ts';
 
 describe(SceneHandler.name, () => {
   test('Calling dispose correctly disposes all objects within the scene', () => {
@@ -13,15 +16,12 @@ describe(SceneHandler.name, () => {
     const disposeCustomObjectMeshGeometry = jest.spyOn(customObjectMesh.geometry, 'dispose');
     const disposeCustomObjectMeshMaterial = jest.spyOn(customObjectMesh.material, 'dispose');
 
-    const model = new THREE.SphereGeometry(1, 2, 2);
-    const modelMaterial = new THREE.MeshBasicMaterial();
-    const modelMesh = new THREE.Mesh(model, modelMaterial);
+    const cadNodeMock = new Mock<CadNode>().object();
 
-    const disposeModelMeshGeometry = jest.spyOn(modelMesh.geometry, 'dispose');
-    const disposeModelMeshMaterial = jest.spyOn(modelMesh.material, 'dispose');
+    const disposeCadNode = jest.spyOn(cadNodeMock, 'dispose');
 
     const sceneHandler = new SceneHandler();
-    sceneHandler.addCadModel(modelMesh, '0');
+    sceneHandler.addCadModel(cadNodeMock, '0');
     sceneHandler.addCustomObject(customObjectMesh);
 
     expect(sceneHandler.scene.children.length).toBe(2);
@@ -31,8 +31,7 @@ describe(SceneHandler.name, () => {
     expect(disposeCustomObjectMeshGeometry).toBeCalled();
     expect(disposeCustomObjectMeshMaterial).toBeCalled();
 
-    expect(disposeModelMeshGeometry).toBeCalled();
-    expect(disposeModelMeshMaterial).toBeCalled();
+    expect(disposeCadNode).toBeCalled();
 
     expect(sceneHandler.scene.children.length).toBe(0);
   });

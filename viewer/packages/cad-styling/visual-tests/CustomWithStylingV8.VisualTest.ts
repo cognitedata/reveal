@@ -19,7 +19,7 @@ export default class CustomWithStylingV8VisualTest extends StreamingVisualTestFi
     const { sceneHandler, cadMaterialManager, model } = testFixtureComponents;
 
     const { modelIdentifier } = sceneHandler.cadModels.find(
-      identifiedObject => identifiedObject.object === model.geometryNode
+      identifiedObject => identifiedObject.cadNode === model.geometryNode
     )!;
 
     const highlightedNodes = new TreeIndexNodeCollection([0, 2, 4, 6, 8, 10]);

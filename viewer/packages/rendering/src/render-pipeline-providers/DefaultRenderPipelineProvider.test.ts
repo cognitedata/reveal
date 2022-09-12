@@ -8,9 +8,13 @@ import { DefaultRenderPipelineProvider } from './DefaultRenderPipelineProvider';
 import { CadMaterialManager } from '../CadMaterialManager';
 import { IndexSet, SceneHandler } from '@reveal/utilities';
 import { defaultRenderOptions } from '../rendering/types';
+import { CadNode } from '@reveal/cad-model';
+import { PointCloudNode } from '@reveal/pointclouds';
 
 describe(DefaultRenderPipelineProvider.name, () => {
   let rendererMock: IMock<THREE.WebGLRenderer>;
+  let cadNodeMock: IMock<CadNode>;
+  let pointCloudNodeMock: IMock<PointCloudNode>;
 
   beforeEach(() => {
     rendererMock = new Mock<THREE.WebGLRenderer>()
@@ -32,6 +36,9 @@ describe(DefaultRenderPipelineProvider.name, () => {
       .returns()
       .setup(p => p.clearColor())
       .returns();
+
+    cadNodeMock = new Mock<CadNode>();
+    pointCloudNodeMock = new Mock<PointCloudNode>();
   });
 
   test('Pipeline with one cad model with back styling should return 4 passes', () => {
@@ -45,7 +52,7 @@ describe(DefaultRenderPipelineProvider.name, () => {
 
     const sceneHandler = new SceneHandler();
 
-    sceneHandler.addCadModel(new THREE.Object3D(), '0');
+    sceneHandler.addCadModel(cadNodeMock.object(), '0');
 
     const defaultRenderPipelineProvider = new DefaultRenderPipelineProvider(
       materialManagerMock.object(),
@@ -74,7 +81,7 @@ describe(DefaultRenderPipelineProvider.name, () => {
 
     const sceneHandler = new SceneHandler();
 
-    sceneHandler.addCadModel(new THREE.Object3D(), '0');
+    sceneHandler.addCadModel(cadNodeMock.object(), '0');
 
     const defaultRenderPipelineProvider = new DefaultRenderPipelineProvider(
       materialManagerMock.object(),
@@ -126,7 +133,7 @@ describe(DefaultRenderPipelineProvider.name, () => {
 
     const sceneHandler = new SceneHandler();
 
-    sceneHandler.addCadModel(new THREE.Object3D(), '0');
+    sceneHandler.addCadModel(cadNodeMock.object(), '0');
 
     const renderOptions = defaultRenderOptions;
     renderOptions.ssaoRenderParameters.sampleSize = 0;
@@ -152,7 +159,7 @@ describe(DefaultRenderPipelineProvider.name, () => {
 
     const sceneHandler = new SceneHandler();
 
-    sceneHandler.addPointCloudModel(new THREE.Object3D(), Symbol(0));
+    sceneHandler.addPointCloudModel(pointCloudNodeMock.object(), Symbol(0));
 
     const defaultRenderPipelineProvider = new DefaultRenderPipelineProvider(
       materialManagerMock.object(),
@@ -175,7 +182,7 @@ describe(DefaultRenderPipelineProvider.name, () => {
 
     const sceneHandler = new SceneHandler();
 
-    sceneHandler.addPointCloudModel(new THREE.Object3D(), Symbol(0));
+    sceneHandler.addPointCloudModel(pointCloudNodeMock.object(), Symbol(0));
 
     const defaultRenderPipelineProvider = new DefaultRenderPipelineProvider(
       materialManagerMock.object(),

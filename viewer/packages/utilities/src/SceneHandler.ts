@@ -48,7 +48,7 @@ export class SceneHandler {
     this._scene.add(pointCloudNode);
   }
 
-  public removePointCloudModel(pointCloudNode: THREE.Object3D): void {
+  public removePointCloudModel(pointCloudNode: PointCloudNode): void {
     this.scene.remove(pointCloudNode);
     remove(this._pointCloudModels, { pointCloudNode });
   }
