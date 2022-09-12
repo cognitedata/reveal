@@ -34,7 +34,7 @@ export function createPointCloudModel(modelId: number, revisionId: number): Cogn
     .returns(new PointCloudMaterial())
     .object();
 
-  const nodeWrapper = new PotreeNodeWrapper(dummyNode, [], Symbol('dummy'));
+  const nodeWrapper = new PotreeNodeWrapper(dummyNode, [], Symbol('dummy'), undefined);
 
   const pointCloudNode = new PointCloudNode(potreeGroup, nodeWrapper);
 
