@@ -21,7 +21,9 @@ import {
 import findUniqueFileByName from './utils/findUniqueFileByName';
 
 /** Load a valid GraphDocument from file, throwing Error if result would be invalid */
-async function loadGraphDocument(filePath: string): Promise<GraphDocument> {
+export async function loadGraphDocument(
+  filePath: string
+): Promise<GraphDocument> {
   const graphDocument = JSON.parse(
     await fsPromises.readFile(path.resolve(filePath), { encoding: 'utf-8' })
   );

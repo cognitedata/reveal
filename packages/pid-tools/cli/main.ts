@@ -3,6 +3,7 @@ import yargs from 'yargs/yargs';
 import { hideBin } from 'yargs/helpers';
 import Argv from 'yargs';
 
+import graphQuery from './graphQuery';
 import createSiteUnitEvents from './createSiteUnitEvents';
 import downloadDwgFiles from './downloadDwgFiles';
 import uploadDwgs from './uploadDwgs';
@@ -49,7 +50,7 @@ function addClientOptions<T>(yargs: Argv.Argv<T>) {
     });
 }
 
-function addSiteUnitOptions<T>(yargs: Argv.Argv<T>) {
+function addSiteUnitOptions<T>(yargs: Argv.Argv<T>): Argv.Argv<T> {
   return yargs
     .option('site', {
       type: 'string',
@@ -109,6 +110,29 @@ const run = async () => {
       describe: 'Upload all PDFs and SVGs from `dir` to CDF',
       handler: (argv) => deleteDiagramParserFiles(argv),
       builder: addAllOptions,
+    })
+    .command({
+      command: 'graph-query',
+      describe: 'Query for the isolation boundary around an instance',
+      handler: async (argv) => {
+        await graphQuery(argv);
+      },
+      builder: (yarg) =>
+        addClientOptions(yarg)
+          .option('svgFileName', {
+            type: 'string',
+            describe: 'file name of SVG',
+          })
+          .option('instanceId', {
+            type: 'string',
+            describe:
+              'Graph document ID of the diagram instance to find isolation boundary around. Either this or assetId must be specified',
+          })
+          .option('assetId', {
+            type: 'number',
+            describe:
+              'CDF asset ID of the diagram instance to find isolation boundary around. Either this or instanceId must be specified',
+          }),
     })
     .command({
       command: 'upsert-dms',

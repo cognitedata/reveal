@@ -6,12 +6,17 @@ import chunk from 'lodash/chunk';
 import getMsalClient, { MsalClientOptions } from '../src/utils/msalClient';
 import { DIAGRAM_PARSER_SITE_KEY, DIAGRAM_PARSER_UNIT_KEY } from '../src';
 
-import createdirIfNotExists from './utils/createDirIfNotExists';
+import createDirIfNotExists from './utils/createDirIfNotExists';
 import getDataDirPath from './utils/getDataDirPath';
+import { SiteAndUnit } from './createSiteUnitEvents';
 
 const MAX_RETRIES = 3;
 
-const downloadFileByUrl = (url: string, filePath: string, attempt = 0) => {
+export const downloadFileByUrl = (
+  url: string,
+  filePath: string,
+  attempt = 0
+) => {
   return new Promise<void>((resolve, reject) => {
     if (attempt >= MAX_RETRIES) {
       reject(new Error(`Failed to download ${url}`));
@@ -52,12 +57,11 @@ const downloadFileByUrl = (url: string, filePath: string, attempt = 0) => {
 };
 
 const downloadDwgFiles = async (argv: any) => {
-  const { site, unit } = argv as {
-    site: string;
-    unit: string;
-  };
+  const typedArgv = argv as SiteAndUnit & MsalClientOptions;
+
+  const { site, unit } = typedArgv;
   const dir = getDataDirPath(site, unit);
-  const client = await getMsalClient(argv as MsalClientOptions);
+  const client = await getMsalClient(typedArgv);
   const allFiles = await client.files
     .list({
       filter: {
@@ -77,7 +81,7 @@ const downloadDwgFiles = async (argv: any) => {
   // eslint-disable-next-line no-console
   console.log(`Downloading ${files.length} files...`);
 
-  createdirIfNotExists(`${dir}`);
+  createDirIfNotExists(`${dir}`);
 
   // eslint-disable-next-line no-restricted-syntax
   for (const chunkOfFiles of chunk(files, 10)) {

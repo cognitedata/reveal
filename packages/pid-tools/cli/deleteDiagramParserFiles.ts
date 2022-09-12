@@ -7,11 +7,10 @@ import {
 } from '../src';
 import getMsalClient, { MsalClientOptions } from '../src/utils/msalClient';
 
+import { SiteAndUnit } from './createSiteUnitEvents';
+
 const deleteDiagramParserFiles = async (argv: any) => {
-  const { site, unit } = argv as {
-    site: string;
-    unit: string;
-  };
+  const { site, unit } = argv as SiteAndUnit;
   const client = await getMsalClient(argv as MsalClientOptions);
 
   const allFiles1 = await client.files
@@ -42,6 +41,7 @@ const deleteDiagramParserFiles = async (argv: any) => {
 
   const relevantFileIds = relevantFiles.map((file) => ({ id: file.id }));
 
+  // eslint-disable-next-line no-console
   console.log(`Deleting ${relevantFileIds.length} files for unit ${unit}`);
 
   await client.files.delete(relevantFileIds);

@@ -9,6 +9,7 @@ import {
 import getMsalClient, { MsalClientOptions } from '../src/utils/msalClient';
 
 import getDataDirPath from './utils/getDataDirPath';
+import { SiteAndUnit } from './createSiteUnitEvents';
 
 const mimeTypeByFileExtension = {
   '.json': 'application/json',
@@ -29,12 +30,11 @@ const uploadFilesWithExtensions = async (
   argv: any,
   fileExtensionsToUpload: string[]
 ) => {
-  const { site, unit } = argv as {
-    site: string;
-    unit: string;
-  };
+  const typedArgv = argv as SiteAndUnit & MsalClientOptions;
+
+  const { site, unit } = typedArgv;
   const dir = getDataDirPath(site, unit);
-  const client = await getMsalClient(argv as MsalClientOptions);
+  const client = await getMsalClient(typedArgv);
 
   const fileNames = await fsPromises.readdir(dir);
   const supportedFileNames = fileNames.filter((fileName) => {

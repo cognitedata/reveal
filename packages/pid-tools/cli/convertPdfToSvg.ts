@@ -1,13 +1,11 @@
 import { spawnSync } from 'child_process';
 import fsPromises from 'fs/promises';
 
+import { SiteAndUnit } from './createSiteUnitEvents';
 import getDataDirPath from './utils/getDataDirPath';
 
 export const convertPdfToSvg = async (argv: any) => {
-  const { site, unit } = argv as {
-    site: string;
-    unit: string;
-  };
+  const { site, unit } = argv as SiteAndUnit;
   const dir = getDataDirPath(site, unit);
 
   // eslint-disable-next-line no-console

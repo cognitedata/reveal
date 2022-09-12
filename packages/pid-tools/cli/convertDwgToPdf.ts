@@ -6,7 +6,8 @@ import { CogniteClient, FileInfo } from '@cognite/sdk';
 import { DIAGRAM_PARSER_SITE_KEY, DIAGRAM_PARSER_UNIT_KEY } from '../src';
 import getMsalClient, { MsalClientOptions } from '../src/utils/msalClient';
 
-import createdirIfNotExists from './utils/createDirIfNotExists';
+import { SiteAndUnit } from './createSiteUnitEvents';
+import createDirIfNotExists from './utils/createDirIfNotExists';
 import getDataDirPath from './utils/getDataDirPath';
 
 const sleep = (ms: number) => {
@@ -83,10 +84,7 @@ const convertChunk = async (
 };
 
 export const convertDwgToPdf = async (argv: any) => {
-  const { site, unit } = argv as {
-    site: string;
-    unit: string;
-  };
+  const { site, unit } = argv as SiteAndUnit;
   const dir = getDataDirPath(site, unit);
   const client = await getMsalClient(argv as MsalClientOptions);
 
@@ -109,7 +107,7 @@ export const convertDwgToPdf = async (argv: any) => {
   // eslint-disable-next-line no-console
   console.log(`Will convert ${files.length} DWGs...`);
 
-  createdirIfNotExists(dir);
+  createDirIfNotExists(dir);
 
   // eslint-disable-next-line no-restricted-syntax
   for (const chunkOfFiles of chunk(files, 20)) {
