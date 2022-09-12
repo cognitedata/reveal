@@ -12,7 +12,7 @@ module.exports = () => {
     rootDir: '.',
     roots: ['<rootDir>'],
     transform: {
-      '^.+\\.tsx?$': 'ts-jest'
+      '^.+\\.tsx?$': ['ts-jest', { tsconfig: path.resolve(__dirname, './tsconfig.test.json') }]
     },
     testRegex: '(.*\\.test\\..*|\\.(test|spec|Test))\\.tsx?$',
     moduleFileExtensions: ['ts', 'js', 'json', 'node'],
@@ -22,11 +22,7 @@ module.exports = () => {
       '\\.svg$': path.resolve(__dirname, './test-utilities/src/filetype-mocks/svgMock.js')
     },
     globals: {
-      __webpack_public_path__: '',
-      // process.env globals are in setupJest
-      'ts-jest': {
-        tsconfig: path.resolve(__dirname, './tsconfig.test.json')
-      }
+      __webpack_public_path__: ''
     },
     coverageDirectory: './coverage',
     collectCoverageFrom: [
