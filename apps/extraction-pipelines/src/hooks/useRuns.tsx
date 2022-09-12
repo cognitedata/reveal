@@ -1,68 +1,75 @@
-import { useQuery } from 'react-query';
-import { DEFAULT_RUN_LIMIT, getFilteredRuns, getRuns } from 'utils/RunsAPI';
-import { ErrorObj } from 'model/SDKErrors';
-import { RunsAPIResponse, RunUI } from 'model/Runs';
+import omit from 'lodash/omit';
+import {
+  useInfiniteQuery,
+  UseInfiniteQueryResult,
+  useMutation,
+  useQueryClient,
+} from 'react-query';
+import { createRun, getFilteredRuns } from 'utils/RunsAPI';
+
+import {
+  CreateRunRequest,
+  RunApi,
+  RunsAPIResponse,
+  RunStatus,
+} from 'model/Runs';
 import { Range } from '@cognite/cogs.js';
-import { RunStatusAPI } from 'model/Status';
-import { mapStatusRow } from 'utils/runsUtils';
-import { useCallback } from 'react';
+import { useEffect } from 'react';
 import { useSDK } from '@cognite/sdk-provider';
+import { DEFAULT_RUN_LIMIT } from 'utils/constants';
+
+export const getRunsKey = (params: CreateRunFilterParam) => [
+  'runs',
+  params.externalId,
+  omit(params, ['externalId']),
+];
 
 export const useRuns = (
-  externalId?: string,
-  nextCursor?: string | null,
-  limit?: number
+  params: CreateRunFilterParam,
+  options?: { enabled: boolean }
 ) => {
   const sdk = useSDK();
-  return useQuery<RunsAPIResponse, ErrorObj>(
-    ['runs', externalId, nextCursor],
-    () => {
-      return getRuns(sdk, externalId ?? '', nextCursor ?? '', limit);
-    },
-    {
-      enabled: !!externalId && nextCursor !== null,
-      keepPreviousData: true,
-    }
-  );
-};
-
-export const useFilteredRuns = (params: CreateRunFilterParam) => {
-  const sdk = useSDK();
   const data = createRunsFilter(params);
-  return useQuery<
+  return useInfiniteQuery<
     RunsAPIResponse,
     Error & { status: number },
-    { runs: RunUI[]; nextCursor?: string }
+    { items: RunApi[] }
   >(
-    [
-      'runs',
-      data.cursor,
-      data.filter.externalId,
-      data.filter?.statuses,
-      data.filter.message?.substring,
-      data.filter.createdTime?.min,
-      data.filter.createdTime?.max,
-    ],
-    () => {
-      return getFilteredRuns(sdk, data);
+    getRunsKey(params),
+    ({ pageParam }) => {
+      return getFilteredRuns(sdk, {
+        ...data,
+        cursor: pageParam,
+      });
     },
     {
-      enabled: !!data.filter.externalId,
-      select: useCallback(selectMappedRuns, []),
+      getNextPageParam: (lastPage) => lastPage.nextCursor,
+      ...options,
     }
   );
 };
 
-const selectMappedRuns = (data: RunsAPIResponse) => {
-  return { runs: mapStatusRow(data.items), nextCursor: data.nextCursor };
+export const useAllRuns = (params: Omit<CreateRunFilterParam, 'limit'>) => {
+  const q = useRuns({ ...params, limit: 1000 });
+
+  useEffect(() => {
+    if (q.hasNextPage && !q.isFetchingNextPage) {
+      q.fetchNextPage();
+    }
+  }, [q]);
+
+  return q as Omit<
+    UseInfiniteQueryResult<{ items: RunApi[] }, Error & { status: number }>,
+    'fetchNextPage'
+  >;
 };
 
 type CreateRunFilterParam = {
-  externalId?: string;
+  externalId: string;
   nextCursor?: string;
   search?: string;
   dateRange?: Range;
-  statuses?: RunStatusAPI[];
+  statuses?: RunStatus[];
   limit?: number;
 };
 export const createRunsFilter = ({
@@ -75,7 +82,7 @@ export const createRunsFilter = ({
 }: CreateRunFilterParam) => {
   return {
     filter: {
-      ...(externalId && { externalId }),
+      externalId,
       ...(dateRange?.endDate && dateRange?.startDate
         ? {
             createdTime: {
@@ -94,4 +101,17 @@ export const createRunsFilter = ({
     limit,
     cursor: nextCursor,
   };
+};
+
+export const useCreateRuns = () => {
+  const sdk = useSDK();
+  const client = useQueryClient();
+  return useMutation({
+    mutationFn: (runs: CreateRunRequest[]) => {
+      return createRun(sdk, runs);
+    },
+    onSuccess() {
+      client.invalidateQueries(['runs']);
+    },
+  });
 };

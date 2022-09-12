@@ -1,23 +1,18 @@
-import React, { FunctionComponent } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import LinkWithCopy from 'components/links/LinkWithCopy';
 import { getDataSetsLink } from 'utils/dataSetUtils';
 import { StyledTooltip } from 'components/styled';
 import { useTranslation } from 'common';
-interface OwnProps {
-  id: string;
-  dataSetName: string;
+import { useDataSet } from 'hooks/useDataSets';
+type Props = {
   dataSetId: number;
-}
+};
 
-type Props = OwnProps;
-
-export const DataSet: FunctionComponent<Props> = ({
-  dataSetId,
-  dataSetName,
-  ...rest
-}: Props) => {
+export const DataSet = ({ dataSetId }: Props) => {
   const { t } = useTranslation();
+
+  const { data = [] } = useDataSet(dataSetId);
 
   if (!dataSetId) {
     return (
@@ -30,10 +25,9 @@ export const DataSet: FunctionComponent<Props> = ({
     <DatasetTooltip>
       <LinkWithCopy
         href={getDataSetsLink(dataSetId)}
-        linkText={dataSetName}
+        linkText={data[0]?.name || `${dataSetId}`}
         copyText={`${dataSetId}`}
         copyType="dataSetId"
-        {...rest}
       />
     </DatasetTooltip>
   );

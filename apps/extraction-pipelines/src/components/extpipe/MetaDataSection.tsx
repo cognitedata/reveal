@@ -1,6 +1,5 @@
 import React, { PropsWithChildren, useState } from 'react';
-import { useSelectedExtpipe } from 'hooks/useSelectedExtpipe';
-import { useExtpipeById } from 'hooks/useExtpipe';
+import { useSelectedExtpipe } from 'hooks/useExtpipe';
 import { DetailFieldNames } from 'model/Extpipe';
 import styled from 'styled-components';
 import { AddFieldValueBtn } from 'components/buttons/AddFieldValueBtn';
@@ -25,8 +24,7 @@ export const MetaDataSection = ({
 }: PropsWithChildren<MetaProps>) => {
   const { t } = useTranslation();
   const [showMetaModal, setShowMetaModal] = useState(false);
-  const { extpipe: selected } = useSelectedExtpipe();
-  const { data: storedExtpipe } = useExtpipeById(selected?.id);
+  const { data: storedExtpipe } = useSelectedExtpipe();
 
   const renderMeta = (meta: MetaDataModel) => {
     return (

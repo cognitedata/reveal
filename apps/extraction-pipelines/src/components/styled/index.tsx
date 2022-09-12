@@ -7,7 +7,6 @@ export * from './StyledForm';
 export * from './StyledHeadings';
 export * from './StyledIcon';
 export * from './StyledLinks';
-export * from './StyledModal';
 export * from './StyledPage';
 export * from './StyledTable';
 export * from './StyledText';

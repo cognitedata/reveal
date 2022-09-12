@@ -1,14 +1,11 @@
 import React, { ReactNode, ReactText, useMemo } from 'react';
 import {
-  ActionType,
   Cell,
-  Column,
   HeaderGroup,
   Row,
-  TableState,
   useFilters,
   useGlobalFilter,
-  useRowSelect,
+  usePagination,
   useSortBy,
   useTable,
 } from 'react-table';
@@ -16,30 +13,17 @@ import { matchSorter } from 'match-sorter';
 import { useHistory } from 'react-router-dom';
 import { createExtPipePath } from 'utils/baseURL';
 import { EXT_PIPE_PATH } from 'routing/RoutingConfig';
-import { useSelectedExtpipe } from 'hooks/useSelectedExtpipe';
-import ExtpipeTableSearch from 'components/table/ExtpipeTableSearch';
-import { Colors } from '@cognite/cogs.js';
-import styled from 'styled-components';
-import { Span3, StyledTable } from 'components/styled';
-import Layers from 'utils/zindex';
-import { Extpipe } from 'model/Extpipe';
-import { getProject } from '@cognite/cdf-utilities';
 
-const selectReducer = (
-  newState: TableState,
-  action: ActionType,
-  previousState: TableState
-) => {
-  switch (action.type) {
-    case 'toggleRowSelected':
-      return {
-        ...previousState,
-        selectedRowIds: { [action.id]: action.value },
-      };
-    default:
-      return { ...previousState, ...newState };
-  }
-};
+import ExtpipeTableSearch from 'components/table/ExtpipeTableSearch';
+import { Colors, Flex, Pagination } from '@cognite/cogs.js';
+import styled from 'styled-components';
+import { StyledTable } from 'components/styled';
+import Layers from 'utils/zindex';
+import { getProject } from '@cognite/cdf-utilities';
+import { Extpipe } from 'model/Extpipe';
+import { useAllExtpipes } from 'hooks/useExtpipes';
+import { getExtpipeTableColumns } from './ExtpipeTableCol';
+import { useTranslation } from 'common';
 
 const fuzzyTextFilterFn = <T extends { values: any }>(
   rows: ReadonlyArray<T>,
@@ -53,18 +37,20 @@ const fuzzyTextFilterFn = <T extends { values: any }>(
 fuzzyTextFilterFn.autoRemove = (val: boolean) => !val;
 
 interface Props {
-  extpipes: Extpipe[];
-  columns: Column<Extpipe>[];
   tableActionButtons: ReactNode;
 }
 const ExtpipesTable = <T extends { id: ReactText }>({
-  extpipes,
-  columns,
   tableActionButtons,
 }: Props) => {
-  const { setExtpipe } = useSelectedExtpipe();
+  const { t } = useTranslation();
   const project = getProject();
   const history = useHistory();
+  const { extpipeTableColumns: columns } = useMemo(
+    () => getExtpipeTableColumns(t),
+    [t]
+  );
+
+  const { data } = useAllExtpipes();
 
   const filterTypes = React.useMemo(
     () => ({
@@ -83,121 +69,139 @@ const ExtpipesTable = <T extends { id: ReactText }>({
     []
   );
 
-  const dataSource = useMemo(() => {
-    return extpipes;
-  }, [extpipes]);
-  const headerCols = useMemo(() => {
-    return columns;
-  }, [columns]);
+  const allPipelines = useMemo(
+    () =>
+      data?.pages.reduce((accl, p) => [...accl, ...p.items], [] as Extpipe[]) ||
+      [],
+    [data?.pages]
+  );
 
   const {
     getTableProps,
     getTableBodyProps,
     headerGroups,
-    rows,
+    //    rows,
+    page,
     prepareRow,
     state,
     setGlobalFilter,
     preGlobalFilteredRows,
+
+    gotoPage,
+    pageCount,
+    setPageSize,
   } = useTable<Extpipe>(
     {
-      columns: headerCols,
-      data: dataSource,
+      columns,
+      data: allPipelines,
+      pageCount: data?.pages.length,
       autoResetFilters: false,
       autoResetGlobalFilter: false,
       autoResetSortBy: false,
-      autoResetSelectedRows: false,
-      stateReducer: selectReducer as any,
       //@ts-ignore
       filterTypes,
       initialState: {
+        pageIndex: 0,
+        pageSize: 25,
         hiddenColumns: ['externalId'],
       },
     },
     useFilters,
     useGlobalFilter,
     useSortBy,
-    useRowSelect
+    usePagination
   );
 
   return (
-    <StyledExtpipesTable>
-      <TableTop>
-        <ExtpipeTableSearch
-          globalFilter={state.globalFilter}
-          preGlobalFilteredRows={preGlobalFilteredRows}
-          setGlobalFilter={setGlobalFilter}
-        />
-        <div>{tableActionButtons}</div>
-      </TableTop>
-      <StyledTable2
-        {...getTableProps()}
-        className="cogs-table extpipes-table"
-        role="grid"
-        aria-label={`List of extraction pipelines for the ${project} project`}
-      >
-        <thead>
-          {headerGroups.map((headerGroup: HeaderGroup<any>) => (
-            <tr {...headerGroup.getHeaderGroupProps()}>
-              {headerGroup.headers.map((col: HeaderGroup<T>) => {
-                return (
-                  <th
-                    scope="col"
-                    {...col.getHeaderProps(col.getSortByToggleProps())}
-                    className={`${col.id}-col`}
-                  >
-                    {col.disableFilters && col.render('Header')}
-                    {!col.disableFilters && col.render('Filter')}
-                  </th>
-                );
-              })}
-            </tr>
-          ))}
-        </thead>
-        <tbody {...getTableBodyProps()}>
-          {rows.map((row: Row<Extpipe>) => {
-            prepareRow(row);
-            const handleClickOnRow = () => {
-              row.toggleRowSelected(true);
-              setExtpipe(row.original);
-            };
-            return (
-              <tr
-                {...row.getRowProps()}
-                className={`cogs-table-row extpipes-table-row ${
-                  row.isSelected ? 'row-active' : ''
-                }`}
-                onClick={handleClickOnRow}
-              >
-                {row.cells.map((cell: Cell<Extpipe>) => {
-                  const handleCellClick = (
-                    e: React.MouseEvent<HTMLTableDataCellElement>
-                  ) => {
-                    if (e.currentTarget === e.target) {
-                      history.push(
-                        createExtPipePath(
-                          `/${EXT_PIPE_PATH}/${row.original.id}`
-                        )
-                      );
-                    }
-                  };
-                  // Name column has focusable link for accessibility. Cell click handler is for easy access for mouse users
+    <>
+      <StyledExtpipesTable>
+        <TableTop>
+          <ExtpipeTableSearch
+            globalFilter={state.globalFilter}
+            preGlobalFilteredRows={preGlobalFilteredRows}
+            setGlobalFilter={setGlobalFilter}
+          />
+          <div>{tableActionButtons}</div>
+        </TableTop>
+        <StyledTable2
+          {...getTableProps()}
+          className="cogs-table extpipes-table"
+          role="grid"
+          aria-label={`List of extraction pipelines for the ${project} project`}
+        >
+          <thead>
+            {headerGroups.map((headerGroup: HeaderGroup<any>) => (
+              <tr {...headerGroup.getHeaderGroupProps()}>
+                {headerGroup.headers.map((col: HeaderGroup<T>) => {
                   return (
-                    <td
-                      {...cell.getCellProps()}
-                      className={`${cell.column.id}-cell`}
-                      onClick={handleCellClick}
+                    <th
+                      scope="col"
+                      {...col.getHeaderProps(col.getSortByToggleProps())}
+                      className={`${col.id}-col`}
                     >
-                      {cell.render('Cell')}
-                    </td>
+                      {col.disableFilters && col.render('Header')}
+                      {!col.disableFilters && col.render('Filter')}
+                    </th>
                   );
                 })}
               </tr>
-            );
-          })}
-        </tbody>
-      </StyledTable2>
-    </StyledExtpipesTable>
+            ))}
+          </thead>
+          <tbody {...getTableBodyProps()}>
+            {page.map((row: Row<Extpipe>) => {
+              prepareRow(row);
+
+              return (
+                <tr
+                  {...row.getRowProps()}
+                  className={`cogs-table-row extpipes-table-row`}
+                >
+                  {row.cells.map((cell: Cell<Extpipe>) => {
+                    const handleCellClick = (
+                      e: React.MouseEvent<HTMLTableDataCellElement>
+                    ) => {
+                      if (e.currentTarget === e.target) {
+                        history.push(
+                          createExtPipePath(
+                            `/${EXT_PIPE_PATH}/${row.original.id}`
+                          )
+                        );
+                      }
+                    };
+                    // Name column has focusable link for accessibility. Cell click handler is for easy access for mouse users
+                    return (
+                      <td
+                        {...cell.getCellProps()}
+                        className={`${cell.column.id}-cell`}
+                        onClick={handleCellClick}
+                      >
+                        {cell.render('Cell')}
+                      </td>
+                    );
+                  })}
+                </tr>
+              );
+            })}
+          </tbody>
+        </StyledTable2>
+        <Flex
+          justifyContent="end"
+          direction="row"
+          style={{ marginTop: '1rem' }}
+        >
+          <Pagination
+            initialCurrentPage={1}
+            totalPages={pageCount}
+            hideItemsPerPage={pageCount <= 1}
+            itemsPerPage={state.pageSize as 50}
+            setItemPerPage={(size) => setPageSize(size)}
+            onPageChange={(page) => {
+              gotoPage(page - 1);
+            }}
+          />
+        </Flex>
+      </StyledExtpipesTable>
+    </>
   );
 };
 
@@ -208,8 +212,7 @@ const TableTop = styled.div`
 `;
 
 const StyledExtpipesTable = styled(StyledTable)`
-  ${Span3};
-  margin: 1rem 2rem;
+  margin: 1rem 0;
 
   table {
     border-collapse: collapse;

@@ -1,4 +1,5 @@
 import { CogniteClient } from '@cognite/sdk';
+
 import {
   Extpipe,
   ExtpipeConfig,
@@ -8,39 +9,25 @@ import {
 } from 'model/Extpipe';
 import { ExtpipeAPIResponse } from 'model/ExtpipeAPIResponse';
 import { get, post, getBaseUrl } from 'utils/baseURL';
-import { getDataSets } from 'utils/DataSetAPI';
-import { mapDataSetToExtpipe, mapUniqueDataSetIds } from 'utils/dataSetUtils';
 
-export const getExtpipes = async (sdk: CogniteClient): Promise<Extpipe[]> => {
-  const response = await get<ExtpipeAPIResponse>(sdk, '/');
-  const dataSetIds = mapUniqueDataSetIds(response.data.items);
-  try {
-    const dataSetRes = await getDataSets(sdk, dataSetIds);
-    return mapDataSetToExtpipe(response.data.items, dataSetRes);
-  } catch (e) {
-    return response.data.items;
-  }
+type ExtpipeAPIRequest = {
+  limit: number;
+  cursor?: string;
+};
+export const getExtpipes = async (
+  sdk: CogniteClient,
+  data: ExtpipeAPIRequest
+): Promise<ExtpipeAPIResponse> => {
+  return (await post<ExtpipeAPIResponse, ExtpipeAPIRequest>(sdk, '/list', data))
+    ?.data;
 };
 
 export const getExtpipeById = async (
   sdk: CogniteClient,
   extpipeId: number
 ): Promise<Extpipe> => {
-  const response = await get<Extpipe>(sdk, `/${extpipeId}`);
-  if (response.data.dataSetId) {
-    try {
-      const dataSetRes = await getDataSets(sdk, [
-        { id: response.data.dataSetId },
-      ]);
-      return {
-        ...response.data,
-        ...(dataSetRes[0] && { dataSet: dataSetRes[0] }),
-      } as Extpipe;
-    } catch (e) {
-      return response.data;
-    }
-  }
-  return response.data;
+  const extpipe = (await get<Extpipe>(sdk, `/${extpipeId}`))?.data;
+  return extpipe;
 };
 
 export const getExtpipeByExternalId = async (
@@ -51,18 +38,6 @@ export const getExtpipeByExternalId = async (
     { items: Extpipe[] },
     { items: { externalId: string }[] }
   >(sdk, `/byids`, { items: [{ externalId }] }).then((r) => r.data.items[0]);
-
-  if (extPipe.dataSetId) {
-    try {
-      const dataSetRes = await getDataSets(sdk, [{ id: extPipe.dataSetId }]);
-      return {
-        ...extPipe,
-        ...(dataSetRes[0] && { dataSet: dataSetRes[0] }),
-      } as Extpipe;
-    } catch (e) {
-      return extPipe;
-    }
-  }
   return extPipe;
 };
 
@@ -81,13 +56,14 @@ export const getExtpipeConfigRevisions = async (
     'playground'
   ).then((r) => r.data.items);
 
+export type CreateConfigRevisionArguments = {
+  externalId: string;
+  config: string;
+  description?: string;
+};
 export const createExtpipeConfigRevision = async (
   sdk: CogniteClient,
-  opts: {
-    externalId: string;
-    config: string;
-    description?: string;
-  }
+  opts: CreateConfigRevisionArguments
 ) =>
   post<
     ExtpipeConfigRevision,
@@ -96,19 +72,25 @@ export const createExtpipeConfigRevision = async (
       config: string;
       description?: string;
     }
-  >(sdk, `/config`, opts, '', 'playground');
+  >(sdk, `/config`, opts, '', 'playground').then((r) => r.data);
 
 export const getExtpipeConfig = async (
   sdk: CogniteClient,
   externalId: string,
-  revision?: number
+  {
+    revision,
+    activeAtTime,
+  }: {
+    revision?: number;
+    activeAtTime?: number;
+  } = {}
 ): Promise<ExtpipeConfig> => {
   return get<ExtpipeConfig>(
     sdk,
     `/config`,
     `?externalId=${externalId}${
       Number.isFinite(revision) ? `&revision=${revision}` : ''
-    }`,
+    }${Number.isFinite(activeAtTime) ? `&activeAtTime=${activeAtTime}` : ''}`,
     'playground'
   ).then((r) => r.data);
 };

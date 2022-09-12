@@ -1,6 +1,5 @@
 import { MetaData } from 'model/MetaData';
 import { User } from 'model/User';
-import { DataSetModel } from 'model/DataSetModel';
 
 export interface ExtpipeRawTable {
   dbName: string;
@@ -30,7 +29,6 @@ export interface Extpipe extends Omit<RegisterExtpipeInfo, 'id'> {
   createdTime: number; // milliseconds
   createdBy?: string; // milliseconds
   lastUpdatedTime: number; // milliseconds
-  dataSet?: DataSetModel;
   notificationConfig?: NotificationConfig;
   lastSuccess?: number; // milliseconds
   lastFailure?: number; // milliseconds

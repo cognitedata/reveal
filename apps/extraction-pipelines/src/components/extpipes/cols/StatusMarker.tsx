@@ -1,31 +1,29 @@
 import React, { FunctionComponent, PropsWithoutRef } from 'react';
 import { Label, LabelVariants } from '@cognite/cogs.js';
-import { RunStatusUI } from 'model/Status';
-import { TranslationKeys, useTranslation } from 'common';
+import { useTranslation } from 'common';
+import { RunStatus } from 'model/Runs';
+import { useRuns } from 'hooks/useRuns';
 
 interface OwnProps {
   id?: string;
-  status: RunStatusUI | null;
+  status?: RunStatus;
   dataTestId?: string;
 }
 
 type Props = OwnProps;
 
-const getVariantAndText = (
-  status: RunStatusUI,
-  _t: (key: TranslationKeys) => string
-): { variant: LabelVariants; text: string } => {
+const getVariant = (status?: RunStatus | 'not-activated'): LabelVariants => {
   switch (status) {
-    case RunStatusUI.SUCCESS:
-      return { variant: 'success', text: _t('success') };
-    case RunStatusUI.FAILURE:
-      return { variant: 'danger', text: _t('failure') };
-    case RunStatusUI.SEEN:
-      return { variant: 'default', text: _t('seen') };
-    case RunStatusUI.NOT_ACTIVATED:
-      return { variant: 'unknown', text: _t('not-activated') };
+    case 'success':
+      return 'success';
+    case 'failure':
+      return 'danger';
+    case 'seen':
+      return 'default';
+    case 'not-activated':
+      return 'default';
     default:
-      return { variant: 'unknown', text: status };
+      return 'unknown';
   }
 };
 
@@ -38,18 +36,54 @@ const StatusMarker: FunctionComponent<Props> = ({
 
   if (status == null) return <></>;
 
-  const variantAndText = getVariantAndText(status, t);
+  const variant = getVariant(status);
 
   return (
     <Label
       size="medium"
-      variant={variantAndText.variant}
+      variant={variant}
       data-testid={`status-marker-${dataTestId}`}
       {...rest}
     >
-      {variantAndText.text}
+      {t(status)}
     </Label>
   );
+};
+
+type LastRunStatusMarkerProps = { externalId: string };
+export const LastRunStatusMarker: FunctionComponent<
+  LastRunStatusMarkerProps
+> = ({ externalId }: PropsWithoutRef<LastRunStatusMarkerProps>) => {
+  const { t } = useTranslation();
+  const { data, isFetched } = useRuns({
+    limit: 1,
+    externalId,
+    statuses: ['success', 'failure'],
+  });
+  const lastRun = data?.pages?.[0]?.items?.[0];
+  if (lastRun) {
+    const variant = getVariant(lastRun.status);
+    return (
+      <Label
+        size="medium"
+        variant={variant}
+        data-testid={`status-marker-${externalId}`}
+      >
+        {t(lastRun.status)}
+      </Label>
+    );
+  } else if (isFetched) {
+    return (
+      <Label
+        size="medium"
+        variant="unknown"
+        data-testid={`status-marker-${externalId}`}
+      >
+        {t('not-activated')}
+      </Label>
+    );
+  }
+  return null;
 };
 
 export default StatusMarker;

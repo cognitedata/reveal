@@ -1,8 +1,7 @@
-import React, { FunctionComponent } from 'react';
+import React from 'react';
 import InlineEdit from 'components/extpipe/InlineEdit';
 import * as yup from 'yup';
-import { useSelectedExtpipe } from 'hooks/useSelectedExtpipe';
-import { useExtpipeById } from 'hooks/useExtpipe';
+import { useSelectedExtpipe } from 'hooks/useExtpipe';
 import { Schedule } from 'components/extpipe/edit/Schedule';
 import { rootUpdate } from 'hooks/details/useDetailsUpdate';
 import { FieldVerticalDisplay } from 'components/extpipe/fields/FieldVerticalDisplay';
@@ -20,16 +19,13 @@ import {
 import { useTranslation } from 'common';
 import { DetailFieldNames } from 'model/Extpipe';
 
-interface ExtpipeInformationProps {
+interface Props {
   canEdit: boolean;
 }
 
-export const ExtpipeInformation: FunctionComponent<ExtpipeInformationProps> = ({
-  canEdit,
-}) => {
+export const ExtpipeInformation = ({ canEdit }: Props) => {
   const { t } = useTranslation();
-  const { extpipe: selected } = useSelectedExtpipe();
-  const { data: extpipe } = useExtpipeById(selected?.id);
+  const { data: extpipe } = useSelectedExtpipe();
 
   if (!extpipe) {
     return null;

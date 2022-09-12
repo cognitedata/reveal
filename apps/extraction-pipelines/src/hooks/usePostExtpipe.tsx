@@ -9,7 +9,9 @@ interface Props {
 }
 export const usePostExtpipe = () => {
   const sdk = useSDK();
-  return useMutation<Extpipe, ErrorVariations, Props>(({ extpipeInfo }) => {
-    return registerExtpipe(sdk, extpipeInfo);
+  return useMutation<Extpipe, ErrorVariations, Props>({
+    mutationFn: ({ extpipeInfo }) => {
+      return registerExtpipe(sdk, extpipeInfo);
+    },
   });
 };

@@ -1,90 +1,76 @@
-import React, { FunctionComponent, PropsWithChildren } from 'react';
+import React, { useMemo } from 'react';
 import {
   Cell,
-  Column,
   HeaderGroup,
   Row,
-  useExpanded,
-  useFilters,
   usePagination,
   useSortBy,
   useTable,
 } from 'react-table';
 import styled from 'styled-components';
 import { Graphic, Pagination } from '@cognite/cogs.js'; // OptionType, Select
-import { RunUI } from 'model/Runs';
 import { DivFlex } from 'components/styled';
-import { Extpipe } from 'model/Extpipe';
-import { calculateStatus } from 'utils/extpipeUtils';
-import { RunStatusUI } from 'model/Status';
+
 import { ExternalLink } from 'components/links/ExternalLink';
-import { DEFAULT_ITEMS_PER_PAGE } from 'utils/constants';
 import { useTranslation } from 'common';
-interface LogsTableProps {
-  data: RunUI[];
-  columns: Column<RunUI>[];
-  fetchData: (params: { pageSize: number }) => void;
-  pageCount: number;
-  pageSize: number;
-  extpipe: Extpipe | null;
+import { useRunFilterContext } from 'hooks/runs/RunsFilterContext';
+import { useAllRuns, useRuns } from 'hooks/useRuns';
+import { useRunLogTableCol } from 'components/extpipe/RunLogsCols';
+import { RunApi } from 'model/Runs';
+
+interface Props {
+  externalId: string;
 }
-export const RunLogsTable: FunctionComponent<LogsTableProps> = ({
-  data,
-  columns,
-  fetchData,
-  pageCount: controlledPageCount,
-  pageSize: controlledPageSize,
-  extpipe,
-}: PropsWithChildren<LogsTableProps>) => {
+export const RunLogsTable = ({ externalId }: Props) => {
   const { t } = useTranslation();
+
+  const {
+    state: { dateRange, statuses, search },
+  } = useRunFilterContext();
+
+  const { data } = useAllRuns({
+    externalId,
+    statuses,
+    search,
+    dateRange,
+  });
+
+  const columns = useRunLogTableCol();
+  const allRuns = useMemo(
+    () =>
+      data?.pages.reduce(
+        (accl, page) => [...accl, ...page.items],
+        [] as RunApi[]
+      ) || [],
+    [data]
+  );
+
   const {
     getTableProps,
     getTableBodyProps,
     headerGroups,
     page,
-    rows,
     prepareRow,
+    state,
     gotoPage,
-    // setPageSize,
-    state: { pageIndex, pageSize },
+    pageCount,
+    setPageSize,
   } = useTable(
     {
       columns,
-      data,
-      initialState: { pageIndex: 0, pageSize: controlledPageSize },
-      pageCount: controlledPageCount,
+      data: allRuns,
+      initialState: {
+        pageIndex: 0,
+        pageSize: 25,
+      },
     },
-    useFilters,
     useSortBy,
-    useExpanded,
     usePagination
   );
 
-  React.useEffect(() => {
-    fetchData({ pageSize });
-  }, [fetchData, pageSize]);
+  const { data: runs, isFetched } = useRuns({ externalId, limit: 1 });
 
-  const paginationChanged = (current: number) => {
-    gotoPage(current - 1);
-  };
-
-  // const handleSelectItemsPrPage = (option: OptionType<any>) => {
-  //   setPageSize(option?.value);
-  // };
-
-  // const findOptionValue = (
-  //   options: OptionType<unknown>[],
-  //   innerPageSize: number
-  // ) => {
-  //   return options.find(({ value }) => value === innerPageSize)!;
-  // };
-
-  const pipelineNotActivated =
-    extpipe != null &&
-    calculateStatus({
-      lastSuccess: extpipe.lastSuccess,
-      lastFailure: extpipe.lastFailure,
-    }).status === RunStatusUI.NOT_ACTIVATED;
+  const pipelineNotActivated = isFetched && runs?.pages?.[0].items.length === 0;
 
   const reasonForNoRows = pipelineNotActivated ? (
     <>
@@ -100,7 +86,7 @@ export const RunLogsTable: FunctionComponent<LogsTableProps> = ({
     <p>{t('no-data-available')}</p>
   );
 
-  return rows.length === 0 ? (
+  return page.length === 0 ? (
     <DivFlex align="center" direction="column">
       <Graphic style={{ margin: '2rem 0' }} type="Search" />
       {reasonForNoRows}
@@ -110,9 +96,9 @@ export const RunLogsTable: FunctionComponent<LogsTableProps> = ({
     <Wrapper>
       <StyledTable {...getTableProps()} className="cogs-table">
         <thead>
-          {headerGroups.map((headerGroup: HeaderGroup<RunUI>) => (
+          {headerGroups.map((headerGroup: HeaderGroup<RunApi>) => (
             <tr {...headerGroup.getHeaderGroupProps()}>
-              {headerGroup.headers.map((col: HeaderGroup<RunUI>) => {
+              {headerGroup.headers.map((col: HeaderGroup<RunApi>) => {
                 return (
                   <th
                     scope="col"
@@ -128,11 +114,11 @@ export const RunLogsTable: FunctionComponent<LogsTableProps> = ({
           ))}
         </thead>
         <tbody {...getTableBodyProps()}>
-          {page.map((row: Row<RunUI>) => {
+          {page.map((row: Row<RunApi>) => {
             prepareRow(row);
             return (
               <tr {...row.getRowProps()}>
-                {row.cells.map((cell: Cell<RunUI>) => {
+                {row.cells.map((cell: Cell<RunApi>) => {
                   return (
                     <td {...cell.getCellProps()}>{cell.render('Cell')}</td>
                   );
@@ -144,20 +130,13 @@ export const RunLogsTable: FunctionComponent<LogsTableProps> = ({
       </StyledTable>
       <DivFlex align="center" justify="flex-end" style={{ margin: '12px 0' }}>
         <Pagination
-          initialCurrentPage={pageIndex + 1}
-          hideItemsPerPage
-          itemsPerPage={DEFAULT_ITEMS_PER_PAGE}
-          totalPages={Math.ceil(rows.length / pageSize)}
-          onPageChange={paginationChanged}
+          itemsPerPage={state.pageSize as 25}
+          setItemPerPage={(size) => setPageSize(size)}
+          onPageChange={(page) => {
+            gotoPage(page - 1);
+          }}
+          totalPages={pageCount}
         />
-        {/* onPageChange doesn't work for pageSize, component doesn't provide necessary event details */}
-        {/*
-          <Select
-            value={findOptionValue(PAGINATION_OPTIONS, pageSize)}
-            onChange={handleSelectItemsPrPage}
-            options={PAGINATION_OPTIONS}
-          />
-        */}
       </DivFlex>
     </Wrapper>
   );

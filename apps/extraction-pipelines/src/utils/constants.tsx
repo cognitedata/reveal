@@ -76,6 +76,9 @@ export const ContactBtnTestIds = {
 };
 
 export const DEFAULT_ITEMS_PER_PAGE = 100;
+
+export const DEFAULT_RUN_LIMIT: Readonly<number> = 100;
+
 export const PAGINATION_OPTIONS: OptionType<unknown>[] = [
   {
     label: '10',

@@ -7,6 +7,8 @@ import { EXT_PIPE_PATH } from 'routing/RoutingConfig';
 import { Breadcrumbs } from 'components/navigation/breadcrumbs/Breadcrumbs';
 import { createLink } from '@cognite/cdf-utilities';
 import { useTranslation } from 'common';
+import { useDataSets } from 'hooks/useDataSets';
+import { useParams } from 'react-router-dom';
 
 interface ExtpipeBreadcrumbsProps {
   extpipe?: Extpipe;
@@ -16,9 +18,17 @@ export const ExtpipeBreadcrumbs: FunctionComponent<ExtpipeBreadcrumbsProps> = ({
   extpipe,
 }: PropsWithChildren<ExtpipeBreadcrumbsProps>) => {
   const { t } = useTranslation();
+
+  const { revision } = useParams<{ revision?: string }>();
+
+  const { data } = useDataSets(
+    extpipe?.dataSetId ? [{ id: extpipe?.dataSetId }] : []
+  );
+
   const {
     state: { dateRange, statuses, search },
   } = useRunFilterContext();
+  const datasetName = data?.[0]?.name;
 
   const currentPageBreadCrumbs = [
     {
@@ -35,7 +45,7 @@ export const ExtpipeBreadcrumbs: FunctionComponent<ExtpipeBreadcrumbsProps> = ({
       ? [
           {
             href: createLink(`/data-sets/data-set/${extpipe?.dataSetId}`),
-            label: extpipe?.dataSet?.name,
+            label: datasetName || `${extpipe?.dataSetId}`,
           },
         ]
       : []),
@@ -45,6 +55,19 @@ export const ExtpipeBreadcrumbs: FunctionComponent<ExtpipeBreadcrumbsProps> = ({
             href: createExtPipePath(`/${EXT_PIPE_PATH}/${extpipe?.id}`),
             params: createSearchParams({ search, statuses, dateRange }),
             label: extpipe?.name,
+          },
+        ]
+      : []),
+    ...(revision
+      ? [
+          {
+            label: 'configuration revision',
+          },
+          {
+            label: revision,
+            href: createExtPipePath(
+              `/${EXT_PIPE_PATH}/${extpipe?.id}/config/${revision}`
+            ),
           },
         ]
       : []),

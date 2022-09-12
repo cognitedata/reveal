@@ -1,7 +1,6 @@
 import React, { FunctionComponent, useState, ChangeEvent } from 'react';
 import { isValidEmail } from '@cognite/cdf-utilities';
-import { useSelectedExtpipe } from 'hooks/useSelectedExtpipe';
-import { useExtpipeById } from 'hooks/useExtpipe';
+import { useSelectedExtpipe } from 'hooks/useExtpipe';
 import styled from 'styled-components';
 import { StyledTableNoRowColor2, Grid, Hint } from 'components/styled';
 import { User } from 'model/User';
@@ -23,9 +22,9 @@ export const ContactsDialog: FunctionComponent<ContactsSectionProps> = ({
   close,
 }) => {
   const { t } = useTranslation();
-  const { extpipe } = useSelectedExtpipe();
-  const { data: current } = useExtpipeById(extpipe?.id);
-  const { mutate } = useDetailsUpdate();
+
+  const { data: current } = useSelectedExtpipe();
+  const { mutateAsync: mutate } = useDetailsUpdate();
   const [showErrors, setShowErrors] = useState(false);
   const onConfirm = async (updatedContacts: User[]) => {
     if (!current) return;

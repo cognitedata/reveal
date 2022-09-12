@@ -1,20 +1,14 @@
 import React, { FunctionComponent, useEffect, useState } from 'react';
-import { FullPageLayout } from 'components/layout/FullPageLayout';
 import { useExtpipes } from 'hooks/useExtpipes';
 import NoExtpipes from 'components/error/NoExtpipes';
-import { Button, Loader, Modal } from '@cognite/cogs.js';
+import { Button, Flex, Loader, Modal } from '@cognite/cogs.js';
 import { ErrorFeedback } from 'components/error/ErrorFeedback';
 import ExtractorDownloadsLink from 'components/links/ExtractorDownloadsLink';
-import {
-  MainFullWidthGrid,
-  LinkWrapper,
-  StyledTooltip,
-} from 'components/styled';
+import { StyledTooltip, PageTitle, PageWrapperColumn } from 'components/styled';
 import { ExtPipesBreadcrumbs } from 'components/navigation/breadcrumbs/ExtPipesBreadcrumbs';
 import { CapabilityCheck } from 'components/accessCheck/CapabilityCheck';
 import { EXTPIPES_READS, EXTPIPES_WRITES } from 'model/AclAction';
 import ExtpipesTable from 'components/table/ExtpipesTable';
-import { getExtpipeTableColumns } from 'components/table/ExtpipeTableCol';
 import { useOneOfPermissions } from 'hooks/useOneOfPermissions';
 import styled from 'styled-components';
 import { getContainer } from 'utils/utils';
@@ -55,18 +49,12 @@ type Props = OwnProps;
 
 const Extpipes: FunctionComponent<Props> = () => {
   const { t } = useTranslation();
-  const { extpipeTableColumns } = getExtpipeTableColumns(t);
-
   useEffect(() => {
     trackUsage({ t: 'Overview' });
   }, []);
 
-  const {
-    data: extpipes,
-    isLoading,
-    error: errorExtpipes,
-    refetch,
-  } = useExtpipes();
+  const { data, isLoading, error: errorExtpipes, refetch } = useExtpipes(20);
+
   const permissions = useOneOfPermissions(EXTPIPES_WRITES);
   const canEdit = permissions.data;
   const [createModalOpen, setCreateModalOpen] = useState(false);
@@ -96,7 +84,11 @@ const Extpipes: FunctionComponent<Props> = () => {
     </StyledTooltip>
   );
 
-  if (extpipes && extpipes.length === 0) {
+  if (isLoading) {
+    return <Loader />;
+  }
+
+  if (data?.pages?.[0]?.items.length === 0) {
     return (
       <>
         <CreateExtpipeModal
@@ -108,24 +100,20 @@ const Extpipes: FunctionComponent<Props> = () => {
       </>
     );
   }
-  if (isLoading) {
-    return <Loader />;
-  }
+
   const handleErrorDialogClick = async () => {
     await refetch();
   };
 
   if (errorExtpipes) {
     return (
-      <MainFullWidthGrid>
-        <ErrorFeedback
-          btnText="Retry"
-          onClick={handleErrorDialogClick}
-          fallbackTitle={t('fail-to-get-ext-pipeline')}
-          contentText={t('try-again-later')}
-          error={errorExtpipes}
-        />
-      </MainFullWidthGrid>
+      <ErrorFeedback
+        btnText="Retry"
+        onClick={handleErrorDialogClick}
+        fallbackTitle={t('fail-to-get-ext-pipeline')}
+        contentText={t('try-again-later')}
+        error={errorExtpipes}
+      />
     );
   }
 
@@ -136,11 +124,7 @@ const Extpipes: FunctionComponent<Props> = () => {
         close={closeCreateDialog}
         title={t('create-ext-pipeline')}
       />
-      <ExtpipesTable
-        columns={extpipeTableColumns}
-        tableActionButtons={createExtpipeButton}
-        extpipes={extpipes!}
-      />
+      <ExtpipesTable tableActionButtons={createExtpipeButton} />
     </>
   );
 };
@@ -148,27 +132,31 @@ const Extpipes: FunctionComponent<Props> = () => {
 export default function CombinedComponent() {
   const { t } = useTranslation();
   return (
-    <FullPageLayout
-      pageHeadingText={t('extraction-pipeline', { count: 0 })}
-      headingSide={
-        <LinkWrapper>
-          <ExtractorDownloadsLink
-            linkText={t('download-extractors')}
-            link={{ path: '/extractors' }}
-          />
-          <ExtractorDownloadsLink
-            linkText={t('learning-and-resources')}
-            link={{ url: LEARNING_AND_RESOURCES_URL }}
-          />
-        </LinkWrapper>
-      }
-      breadcrumbs={<ExtPipesBreadcrumbs />}
-      hideDividerLine
-    >
-      <CapabilityCheck requiredPermissions={EXTPIPES_READS}>
-        <Extpipes />
-      </CapabilityCheck>
-    </FullPageLayout>
+    <div>
+      <ExtPipesBreadcrumbs />
+      <PageWrapperColumn>
+        <CapabilityCheck requiredPermissions={EXTPIPES_READS}>
+          <Flex direction="row" justifyContent="space-between">
+            <PageTitle>{t('extraction-pipeline', { count: 0 })}</PageTitle>
+            <Flex justifyContent="flex-end" alignItems="center">
+              <span style={{ margin: '0 2rem' }}>
+                <ExtractorDownloadsLink
+                  linkText={t('download-extractors')}
+                  link={{ path: '/extractors' }}
+                />
+              </span>
+              <ExtractorDownloadsLink
+                linkText={t('learning-and-resources')}
+                link={{ url: LEARNING_AND_RESOURCES_URL }}
+              />
+            </Flex>
+          </Flex>
+          <Flex>
+            <Extpipes />
+          </Flex>
+        </CapabilityCheck>
+      </PageWrapperColumn>
+    </div>
   );
 }
 

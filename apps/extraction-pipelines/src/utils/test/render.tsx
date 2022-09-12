@@ -5,7 +5,6 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 import { Router } from 'react-router-dom';
 import { createMemoryHistory } from 'history';
 import { useForm, FormProvider } from 'react-hook-form';
-import { SelectedExtpipeProvider } from 'hooks/useSelectedExtpipe';
 import { AppEnvProvider } from 'hooks/useAppEnv';
 import { Extpipe, RegisterExtpipeInfo } from 'model/Extpipe';
 import { RegisterExtpipeProvider } from 'hooks/useStoredRegisterExtpipe';
@@ -43,6 +42,7 @@ export const renderWithRouter = (
 export const renderWithSelectedExtpipeContext = (
   ui: React.ReactNode,
   {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     initExtpipe,
     client,
     route = EXTRACTION_PIPELINES_PATH,
@@ -53,13 +53,9 @@ export const renderWithSelectedExtpipeContext = (
   history.push(route);
   addModalElements();
   return render(
-    <QueryClientProvider client={client}>
-      <Router history={history}>
-        <SelectedExtpipeProvider initExtpipe={initExtpipe}>
-          {ui}
-        </SelectedExtpipeProvider>
-      </Router>
-    </QueryClientProvider>,
+    <Router history={history}>
+      <QueryClientProvider client={client}>{ui}</QueryClientProvider>
+    </Router>,
     renderOptions
   );
 };
@@ -117,13 +113,9 @@ export const renderWithReQueryCacheSelectedExtpipeContext = (
   const wrapper = ({ children }: { children: React.ReactNode }) => (
     <QueryClientProvider client={client}>
       <AppEnvProvider cdfEnv={cdfEnv} project={project} origin={origin}>
-        <RunFilterProvider {...runFilter}>
-          <Router history={history}>
-            <SelectedExtpipeProvider initExtpipe={initExtpipe}>
-              {children}
-            </SelectedExtpipeProvider>
-          </Router>
-        </RunFilterProvider>
+        <Router history={history}>
+          <RunFilterProvider {...runFilter}>{children}</RunFilterProvider>
+        </Router>
       </AppEnvProvider>
     </QueryClientProvider>
   );

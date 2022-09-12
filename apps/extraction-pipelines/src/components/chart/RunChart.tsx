@@ -1,34 +1,57 @@
-import React, {
-  FunctionComponent,
-  PropsWithChildren,
-  useEffect,
-  useState,
-} from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import Plot from 'react-plotly.js';
 import {
   DateFormatRecordType,
+  DateFormatsRecord,
   mapDataForChart,
+  mapRangeToGraphTimeFormat,
 } from 'components/chart/runChartUtils';
 import { Colors } from '@cognite/cogs.js';
 import Plotly from 'plotly.js';
-import { RunUI } from 'model/Runs';
 import { useTranslation } from 'common';
+import { useRunFilterContext } from 'hooks/runs/RunsFilterContext';
+import { useAllRuns } from 'hooks/useRuns';
 
 interface ChartProps {
-  allRuns: RunUI[];
-  timeFormat: DateFormatRecordType;
+  externalId: string;
 }
 
-export const RunChart: FunctionComponent<ChartProps> = ({
-  allRuns,
-  timeFormat,
-}: PropsWithChildren<ChartProps>) => {
+export const RunChart = ({ externalId }: ChartProps) => {
   const { t } = useTranslation();
   const [seen, setSeen] = useState<number[]>([]);
   const [success, setSuccess] = useState<number[]>([]);
   const [failure, setFailure] = useState<number[]>([]);
   const [customData, setCustomData] = useState<number[][]>([]);
   const [dates, setDates] = useState<string[]>([]);
+
+  const [timeFormat, setTimeFormat] = useState<DateFormatRecordType>(
+    DateFormatsRecord.DATE_FORMAT
+  );
+
+  const {
+    state: { dateRange, statuses, search },
+  } = useRunFilterContext();
+
+  useEffect(() => {
+    setTimeFormat(mapRangeToGraphTimeFormat(dateRange));
+  }, [dateRange, setTimeFormat]);
+
+  const { data } = useAllRuns({
+    externalId,
+    dateRange,
+    search,
+    statuses,
+  });
+
+  const allRuns = useMemo(
+    () =>
+      data
+        ? data.pages
+            .map((page) => page.items)
+            .reduce((accl, p) => [...accl, ...p], [])
+        : [],
+    [data]
+  );
 
   useEffect(() => {
     const {
@@ -44,6 +67,10 @@ export const RunChart: FunctionComponent<ChartProps> = ({
     setCustomData(statusCountAndTotal);
     setDates(allDates);
   }, [allRuns, timeFormat.format]);
+
+  if (!allRuns.length) {
+    return null;
+  }
 
   const layout = (text: string): Partial<Plotly.Layout> => {
     return {

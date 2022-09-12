@@ -2,10 +2,6 @@ import styled from 'styled-components';
 import React from 'react';
 import { DivFlex } from 'components/styled';
 
-export const WrapperMargin = styled.div`
-  margin: 1rem;
-`;
-
 export const CenterFullVH = styled.div`
   position: fixed;
   top: 50%;

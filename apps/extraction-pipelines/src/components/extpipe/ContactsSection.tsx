@@ -1,6 +1,5 @@
 import React, { FunctionComponent, useState } from 'react';
-import { useSelectedExtpipe } from 'hooks/useSelectedExtpipe';
-import { useExtpipeById } from 'hooks/useExtpipe';
+import { useSelectedExtpipe } from 'hooks/useExtpipe';
 import { User } from 'model/User';
 import { AddFieldValueBtn } from 'components/buttons/AddFieldValueBtn';
 import { EditModal } from 'components/modals/EditModal';
@@ -17,8 +16,8 @@ export const ContactsSection: FunctionComponent<ContactsViewProps> = ({
   canEdit,
 }) => {
   const { t } = useTranslation();
-  const { extpipe: selected } = useSelectedExtpipe();
-  const { data: extpipe } = useExtpipeById(selected?.id);
+  const { data: extpipe } = useSelectedExtpipe();
+
   const [showModal, setShowModal] = useState(false);
   if (!extpipe) {
     return <></>;
