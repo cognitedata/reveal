@@ -139,6 +139,27 @@ describe(AssetNodeCollection.name, () => {
     expect(assetsFilter).toBeCalledTimes(4);
     expect(collection.getIndexSet().toIndexArray()).toEqual([0, 2, 4, 6]);
   });
+
+  test('getAreas() returns areas in ThreeJS coordinates', async () => {
+    mockAssetMappings3D
+      .setup(x => x.list(It.IsAny(), It.IsAny(), It.IsAny()))
+      .returnsAsync(createListResponse(createAssetMappings(1), 10));
+    mockNodeCollectionDataProvider
+      .setup(x => x.mapBoxFromCdfToModelCoordinates(It.IsAny(), It.IsAny()))
+      .callback(exp => {
+        const box = exp.args[0] as THREE.Box3;
+        const out = exp.args[1] as THREE.Box3;
+        return out.copy(box).applyMatrix4(new THREE.Matrix4().makeTranslation(1, 2, 3));
+      });
+
+    const collection = new AssetNodeCollection(mockClient.object(), mockNodeCollectionDataProvider.object());
+    await collection.executeFilter({});
+
+    const areas = [...collection.getAreas().areas()];
+    expect(areas.length).toEqual(1);
+    // Original is [<0,0,0>,<1,1,1>] - result should be translated
+    expect(areas[0]).toEqual(new THREE.Box3(new THREE.Vector3(1, 2, 3), new THREE.Vector3(2, 3, 4)));
+  });
 });
 
 function createAssetMappings(count: number): AssetMapping3D[] {
