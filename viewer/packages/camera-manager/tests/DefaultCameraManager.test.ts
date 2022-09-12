@@ -8,7 +8,7 @@ import { InputHandler } from '@reveal/utilities';
 
 describe(DefaultCameraManager.name, () => {
   const domElement = document.createElement('canvas');
-  const mockRaycastFunction = async (x: number, y: number) => {
+  const mockRaycastFunction = async (_1: number, _2: number) => {
     return { intersection: null, modelsBoundingBox: new THREE.Box3() };
   };
   let cameraManager: DefaultCameraManager;
