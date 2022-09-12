@@ -1,4 +1,10 @@
-import { ComponentProps, useCallback, useEffect, useState } from 'react';
+import {
+  ComponentProps,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import get from 'lodash/get';
 import { toast, Loader } from '@cognite/cogs.js';
 import { useUserInfo } from '@cognite/sdk-react-query-hooks';
@@ -154,7 +160,8 @@ const ChartViewPage = ({ chartId: chartIdProp }: ChartViewProps) => {
     string | undefined
   >();
 
-  const [showSearch, setShowSearch] = useState(false);
+  const calledOnceEffect = useRef(false);
+  const [showSearch, setShowSearch] = useState(true);
   const [workspaceMode, setWorkspaceMode] = useState<Modes>('workspace');
   const [stackedMode, setStackedMode] = useState<boolean>(false);
 
@@ -203,6 +210,36 @@ const ChartViewPage = ({ chartId: chartIdProp }: ChartViewProps) => {
       setChart((oldChart) => initializeSourceCollection(oldChart!));
     }
   }, [chart, setChart]);
+
+  const sources = useRecoilValue(chartSources);
+
+  useEffect(() => {
+    /**
+     * We are using this calledOnceEffect here since we dont want the showSearch to
+     * become false after the user intentionally opens it by clicking the add time series
+     * button
+     */
+    if (calledOnceEffect.current) {
+      return;
+    }
+    if (isLoading === false) {
+      if (sources.length > 0) {
+        setShowSearch(false);
+        calledOnceEffect.current = true;
+      }
+    }
+  }, [isLoading, sources]);
+
+  useEffect(() => {
+    return () => {
+      /**
+       * We needed to do this because the chart is set in a recoil state
+       * so the next time we load this page, the previous chart is still
+       * there until the new one is initialized
+       */
+      setChart(undefined);
+    };
+  }, [setChart]);
 
   /**
    * Open search drawer if query is present in the url
@@ -274,8 +311,6 @@ const ChartViewPage = ({ chartId: chartIdProp }: ChartViewProps) => {
     },
     [setChart]
   );
-
-  const sources = useRecoilValue(chartSources);
 
   const isEveryRowHidden = sources.every(({ enabled }) => !enabled);
 

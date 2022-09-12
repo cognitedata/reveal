@@ -13,6 +13,7 @@ import { makeDefaultTranslations } from 'utils/translations';
 import { useTranslations } from 'hooks/translations';
 import AssetSearchHit from './AssetSearchHit';
 import TimeseriesSearchResultItem from './TimeseriesSearchResultItem';
+import SearchEmptyState from './SearchEmptyState';
 
 const defaultTranslation = makeDefaultTranslations('Recently viewed');
 
@@ -47,8 +48,35 @@ const RecentViewSources = ({ viewType }: Props) => {
     { enabled: !!rvResults && rvResults.length > 0 }
   );
 
+  const renderTimeSeries = (timeseries: Timeseries[]) => {
+    return timeseries?.map((ts) => (
+      <TimeseriesSearchResultItem
+        key={ts.id}
+        timeseries={ts}
+        renderCheckbox={() => (
+          <Checkbox
+            onClick={(e) => {
+              e.preventDefault();
+              handleTimeSeriesClick(ts);
+              trackUsage('ChartView.AddTimeSeries', {
+                source: 'search',
+              });
+            }}
+            name={`${ts.id}`}
+            checked={selectedExternalIds?.includes(ts.externalId || '')}
+          />
+        )}
+      />
+    ));
+  };
+
   if (!rvResults || rvResults.length === 0) {
-    return null;
+    return (
+      <SearchEmptyState
+        viewType={viewType}
+        renderTimeSeries={renderTimeSeries}
+      />
+    );
   }
 
   return (
@@ -67,25 +95,7 @@ const RecentViewSources = ({ viewType }: Props) => {
                 <AssetSearchHit asset={source as Asset} />
               </li>
             ))
-          : (sources as Timeseries[])?.map((ts) => (
-              <TimeseriesSearchResultItem
-                key={ts.id}
-                timeseries={ts}
-                renderCheckbox={() => (
-                  <Checkbox
-                    onClick={(e) => {
-                      e.preventDefault();
-                      handleTimeSeriesClick(ts);
-                      trackUsage('ChartView.AddTimeSeries', {
-                        source: 'search',
-                      });
-                    }}
-                    name={`${ts.id}`}
-                    checked={selectedExternalIds?.includes(ts.externalId || '')}
-                  />
-                )}
-              />
-            ))}
+          : renderTimeSeries(sources as Timeseries[])}
       </div>
     </Container>
   );

@@ -31,6 +31,20 @@ export const useRootAssets = () => {
   );
 };
 
+export const useRootTimeseries = () => {
+  const sdk = useSDK();
+
+  return useQuery<Timeseries[]>(
+    ['timeseries', 'root'],
+    async () => {
+      const timeseries = await sdk.timeseries.list();
+
+      return timeseries.items;
+    },
+    { enabled: true }
+  );
+};
+
 export const useAssetTimeseries = (assetId?: number) => {
   const sdk = useSDK();
 

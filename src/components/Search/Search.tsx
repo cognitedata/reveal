@@ -16,9 +16,6 @@ import { SEARCH_KEY } from 'utils/constants';
 import { useDebounce } from 'use-debounce';
 import { makeDefaultTranslations } from 'utils/translations';
 import { useTranslations } from 'hooks/translations';
-import InfoBox, {
-  defaultTranslations as infoBoxDefaultTranslation,
-} from 'components/InfoBox/InfoBox';
 import {
   defaultTranslations as filterDropdownDefaultTranslation,
   SearchFilterSettings,
@@ -30,6 +27,7 @@ import { useRootAssets } from 'hooks/cdf-assets';
 import { useRecoilState } from 'recoil';
 import { facilityAtom } from 'models/facility/atom';
 import FilterDropdown from './FilterDropdown';
+import SearchTooltip from './SearchTooltip';
 
 export type SearchFilter = {
   showEmpty: boolean;
@@ -120,14 +118,6 @@ const Search = ({ query, setQuery, onClose }: SearchProps) => {
     ...useTranslations(Object.keys(defaultTranslations), 'TimeseriesSearch').t,
   };
 
-  const infoBoxTranslations = {
-    ...infoBoxDefaultTranslation,
-    ...useTranslations(
-      Object.keys(infoBoxDefaultTranslation),
-      'TimeseriesSearch'
-    ).t,
-  };
-
   const filterDropdownTranslations = {
     ...filterDropdownDefaultTranslation,
     ...useTranslations(
@@ -146,32 +136,34 @@ const Search = ({ query, setQuery, onClose }: SearchProps) => {
 
   return (
     <>
-      <SearchBar>
-        <div style={{ flexGrow: 1 }}>
-          <Input
-            fullWidth
-            icon="Search"
-            placeholder={t['Find time series']}
-            value={query}
-            onChange={handleSearchInputChange}
-            size="large"
-            clearable={{
-              callback: () => {
-                setQuery('');
-              },
-            }}
-            autoFocus
-          />
-        </div>
-        <Tooltip content={t.Hide}>
-          <Button
-            icon="PanelLeft"
-            type="ghost"
-            onClick={onClose}
-            aria-label="close"
-          />
-        </Tooltip>
-      </SearchBar>
+      <SearchTooltip>
+        <SearchBar>
+          <div style={{ flexGrow: 1 }}>
+            <Input
+              fullWidth
+              icon="Search"
+              placeholder={t['Find time series']}
+              value={query}
+              onChange={handleSearchInputChange}
+              size="large"
+              clearable={{
+                callback: () => {
+                  setQuery('');
+                },
+              }}
+              autoFocus
+            />
+          </div>
+          <Tooltip content={t.Hide}>
+            <Button
+              icon="PanelLeft"
+              type="ghost"
+              onClick={onClose}
+              aria-label="close"
+            />
+          </Tooltip>
+        </SearchBar>
+      </SearchTooltip>
       <Flex style={{ marginTop: 16, marginRight: 10 }}>
         <SegmentedControl
           currentKey={searchType}
@@ -210,11 +202,6 @@ const Search = ({ query, setQuery, onClose }: SearchProps) => {
         <SearchResultsContainer>
           {searchType === 'assets' && (
             <>
-              <InfoBox
-                translations={infoBoxTranslations}
-                infoType="TagHelpBox"
-                query={debouncedUrlQuery.trim()}
-              />
               <SearchResultList
                 query={debouncedUrlQuery.trim()}
                 filter={filter}
@@ -223,11 +210,6 @@ const Search = ({ query, setQuery, onClose }: SearchProps) => {
           )}
           {searchType === 'timeseries' && (
             <>
-              <InfoBox
-                translations={infoBoxTranslations}
-                infoType="TimeSeriesHelpBox"
-                query={debouncedUrlQuery.trim()}
-              />
               <SearchTimeseries
                 query={debouncedUrlQuery.trim()}
                 filter={filter}

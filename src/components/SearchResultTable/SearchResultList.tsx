@@ -146,7 +146,7 @@ export default function SearchResultList({ query, filter }: Props) {
   );
 }
 
-const AssetList = styled.ul`
+export const AssetList = styled.ul`
   height: 100%;
   list-style: none;
   padding: 0 10px 0 0;
