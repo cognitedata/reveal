@@ -168,7 +168,9 @@ export const applyStyleToNode = ({
     color = COLORS.labelSelection;
   }
 
-  const backgroundOpacity = 0.45;
+  const BACKGROUND_OPACAITY = 0.35;
+  const HIGHLIGHT_SCALE_FACTOR = 1.8;
+
   switch (activeTool) {
     case 'setLineNumber': {
       if (node instanceof SVGTSpanElement) {
@@ -179,12 +181,12 @@ export const applyStyleToNode = ({
       }
 
       if (isNodeInLineNumber(node, activeLineNumber, instances)) {
-        node.style.strokeWidth = `${2.5 * parseFloat(node.style.strokeWidth)}`;
+        scaleNodeStrokeWidth(node, HIGHLIGHT_SCALE_FACTOR);
         color = 'green';
       } else if (isNodeInInferedLineNumber(node, activeLineNumber, instances)) {
-        node.style.strokeWidth = `${2 * parseFloat(node.style.strokeWidth)}`;
+        scaleNodeStrokeWidth(node, HIGHLIGHT_SCALE_FACTOR);
       } else if (diagramInstance && diagramInstance.lineNumbers.length > 0) {
-        node.style.strokeWidth = `${2 * parseFloat(node.style.strokeWidth)}`;
+        scaleNodeStrokeWidth(node, HIGHLIGHT_SCALE_FACTOR);
         opacity = 0.3;
         color = 'green';
       } else if (
@@ -192,22 +194,22 @@ export const applyStyleToNode = ({
         diagramInstance.type !== 'Equipment' &&
         diagramInstance.inferedLineNumbers.length > 1
       ) {
-        node.style.strokeWidth = `${2 * parseFloat(node.style.strokeWidth)}`;
+        scaleNodeStrokeWidth(node, HIGHLIGHT_SCALE_FACTOR);
         color = 'darkOrange';
       } else if (
         diagramInstance &&
         diagramInstance.inferedLineNumbers.length === 1
       ) {
-        node.style.strokeWidth = `${2 * parseFloat(node.style.strokeWidth)}`;
+        scaleNodeStrokeWidth(node, HIGHLIGHT_SCALE_FACTOR);
         opacity = 0.1;
       } else {
-        opacity = backgroundOpacity;
+        opacity = BACKGROUND_OPACAITY;
       }
       break;
     }
     case 'graphQuery': {
       if (!diagramInstance) {
-        opacity = backgroundOpacity;
+        opacity = BACKGROUND_OPACAITY;
         break;
       }
 
@@ -217,8 +219,9 @@ export const applyStyleToNode = ({
         )
       ) {
         opacity = 1;
+        scaleNodeStrokeWidth(node, HIGHLIGHT_SCALE_FACTOR);
       } else {
-        opacity = backgroundOpacity;
+        opacity = BACKGROUND_OPACAITY;
       }
 
       if (diagramInstance.id === graphQuerySelection) {
@@ -357,7 +360,7 @@ export const colorSymbol = (
 export const scaleStrokeWidth = (scale: number, strokeWidth: string): string =>
   `${scale * parseFloat(strokeWidth)}`;
 
-export const scaleStrokeWidthPath = (scale: number, node: SVGElement): void => {
+export const scaleNodeStrokeWidth = (node: SVGElement, scale: number): void => {
   node.style.strokeWidth = scaleStrokeWidth(scale, node.style.strokeWidth);
 };
 
@@ -371,7 +374,7 @@ export const scaleStrokeWidthInstance = (
     if (!nodeMapData) return;
 
     const { node } = nodeMapData;
-    scaleStrokeWidthPath(scale, node);
+    scaleNodeStrokeWidth(node, scale);
   });
 };
 

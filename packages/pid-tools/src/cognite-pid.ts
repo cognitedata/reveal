@@ -31,7 +31,7 @@ import {
   applyToLeafSVGElements,
   visualizeConnections,
   visualizeLabelsToInstances,
-  scaleStrokeWidthPath,
+  scaleNodeStrokeWidth,
   getSvgRect,
   visualizeSymbolInstanceBoundingBoxes,
   scaleStrokeWidth,
@@ -1037,7 +1037,7 @@ export class CognitePid {
         break;
       }
       default: {
-        scaleStrokeWidthPath(hoverBoldStrokeScale, node);
+        scaleNodeStrokeWidth(node, hoverBoldStrokeScale);
       }
     }
   };
