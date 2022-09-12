@@ -322,8 +322,8 @@ export class PointCloudMaterial extends RawShaderMaterial {
 
     this.treeType = getValid(parameters.treeType, TreeType.Octree);
     this.size = getValid(parameters.size, 1.0);
-    this.minSize = getValid(parameters.minSize, 2.0);
-    this.maxSize = getValid(parameters.maxSize, 50.0);
+    this.minSize = getValid(parameters.minSize, DEFAULT_MIN_POINT_SIZE);
+    this.maxSize = getValid(parameters.maxSize, DEFAULT_MAX_POINT_SIZE);
 
     this.classification = DEFAULT_CLASSIFICATION;
 
@@ -522,6 +522,7 @@ export class PointCloudMaterial extends RawShaderMaterial {
   }
 
   private recomputeClassification(): void {
+    this.classificationTexture?.dispose();
     this.classificationTexture = generateClassificationTexture(this._classification);
     this.setUniform('classificationLUT', this.classificationTexture);
   }

@@ -131,6 +131,16 @@ Add the following script to your package's `package.json`:
 Running the command `yarn start` will host a localhost site with a template HTML that includes the `/app/index.ts` script that has been transpiled to javascript.
 To see an example of this check out the `packages/camera-manager` package.
 
+## Creating and running visual tests
+
+Visual test files must be on the format `visual-tests/SomeTest.VisualTest.ts`. See one of the existing tests
+for example on how to create a test.
+
+Visual tests can be run from `viewer/` using `yarn test:visual`. This will run all visual tests. You can also
+run a single test by using `yarn test:visual -- -t="SomeTest"` (will run all tests with "SomeTest" in the name). Note that arguments only will be passed to the client, to pass arguments to the server you will need to manually start the server and client separately.
+
+For more information about visual tests, see [visual-tests/README.md](visual-tests/README.md).
+
 ### Recommended package folder structure
     ├── app                   # Runnable app
       └──index.ts             # Entry point for runnable app
