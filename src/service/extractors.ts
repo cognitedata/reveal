@@ -1,5 +1,4 @@
 import sdk from '@cognite/cdf-sdk-singleton';
-import { getEnv } from '@cognite/cdf-utilities';
 
 export type Artifact = {
   name: string;
@@ -56,15 +55,7 @@ type ExtractorDownload = {
 };
 
 export const getDownloadUrl = async (artifact: Artifact) => {
-  const cluster = getEnv() || 'api';
-  return (
-    await sdk.get<ExtractorDownload>(artifact.link, {
-      withCredentials: true,
-      headers: {
-        env: cluster as string,
-      },
-    })
-  ).data.downloadUrl;
+  return (await sdk.get<ExtractorDownload>(artifact.link)).data.downloadUrl;
 };
 
 export const getExtractorsWithReleases = async () => {
