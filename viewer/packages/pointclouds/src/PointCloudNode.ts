@@ -14,8 +14,6 @@ import { PickPoint, PotreePointColorType, PotreePointShape, PotreePointSizeType 
 import { CompletePointCloudAppearance } from './styling/PointCloudAppearance';
 import { StyledPointCloudObjectCollection } from './styling/StyledPointCloudObjectCollection';
 
-const PotreeDefaultPointClass = 'DEFAULT';
-
 export class PointCloudNode extends THREE.Group {
   private readonly _potreeGroup: PotreeGroupWrapper;
   private readonly _potreeNode: PotreeNodeWrapper;

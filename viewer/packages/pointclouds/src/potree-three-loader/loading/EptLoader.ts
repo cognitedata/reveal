@@ -3,7 +3,7 @@ import { RawStylableObject } from '../../styling/StylableObject';
 import { DEFAULT_POINT_CLOUD_CLASS_DEFINITION_FILE } from '../../constants';
 import { PointCloudEptGeometry } from '../geometry/PointCloudEptGeometry';
 import { PointCloudEptGeometryNode } from '../geometry/PointCloudEptGeometryNode';
-import { ClassDefinition } from './ClassDefinition';
+import { ClassificationInfo } from './ClassificationInfo';
 import { EptJson } from './EptJson';
 
 export class EptLoader {
@@ -12,15 +12,16 @@ export class EptLoader {
     fileName: string,
     modelDataProvider: ModelDataProvider,
     stylableObjects: RawStylableObject[]
-  ): Promise<[PointCloudEptGeometry, ClassDefinition | undefined]> {
+  ): Promise<[PointCloudEptGeometry, ClassificationInfo | undefined]> {
     const eptJsonPromise = modelDataProvider.getJsonFile(baseUrl, fileName);
 
-    const classesJsonPromise: Promise<ClassDefinition | undefined> = modelDataProvider.getJsonFile(baseUrl, DEFAULT_POINT_CLOUD_CLASS_DEFINITION_FILE)
-      .then(json => json as ClassDefinition)
+    const classesJsonPromise: Promise<ClassificationInfo | undefined> = modelDataProvider.getJsonFile(baseUrl, DEFAULT_POINT_CLOUD_CLASS_DEFINITION_FILE)
+      .then(json => json as ClassificationInfo)
       .catch(_ => {
         // Classes file not found, ignoring
         return undefined;
       });
+
 
     return eptJsonPromise.then(async (json: EptJson) => {
       const url = baseUrl + '/';

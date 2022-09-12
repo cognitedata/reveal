@@ -33,7 +33,7 @@ import { LRU } from './utils/lru';
 import { ModelDataProvider } from '@reveal/modeldata-api';
 import { PointCloudObjectProvider } from '../styling/PointCloudObjectProvider';
 import throttle from 'lodash/throttle';
-import { ClassDefinition } from './loading/ClassDefinition';
+import { ClassificationInfo } from './loading/ClassificationInfo';
 
 export class QueueItem {
   constructor(
@@ -85,7 +85,7 @@ export class Potree implements IPotree {
     baseUrl: string,
     fileName: string,
     annotationObjectInfo: PointCloudObjectProvider
-  ): Promise<[PointCloudOctree, ClassDefinition | undefined]> {
+  ): Promise<[PointCloudOctree, ClassificationInfo | undefined]> {
     const rawObjects = annotationObjectInfo.createRawObjectArray();
     const [geometry, classMap] = await EptLoader.load(baseUrl, fileName, this._modelDataProvider, rawObjects);
     return [new PointCloudOctree(this, geometry, annotationObjectInfo), classMap];
