@@ -102,7 +102,7 @@ export class AssetNodeCollection extends NodeCollection {
     fetchResultHelper.setFilterItemsCallback(this.buildAssetMappingsFilter(filter.assetsFilter));
     this._fetchResultHelper = fetchResultHelper;
 
-    function mapBoundingBox(box?: THREE.Box3) {
+    function mapBoundingBoxToCdf(box?: THREE.Box3) {
       if (box === undefined) {
         return undefined;
       }
@@ -114,7 +114,7 @@ export class AssetNodeCollection extends NodeCollection {
 
     const filterQuery = {
       assetId: filter.assetId,
-      intersectsBoundingBox: mapBoundingBox(filter.boundingBox),
+      intersectsBoundingBox: mapBoundingBoxToCdf(filter.boundingBox),
       limit: 1000
     };
 
@@ -162,7 +162,9 @@ export class AssetNodeCollection extends NodeCollection {
       .map(node => {
         const bmin = node.boundingBox!.min;
         const bmax = node.boundingBox!.max;
-        return new THREE.Box3().setFromArray([bmin[0], bmin[1], bmin[2], bmax[0], bmax[1], bmax[2]]);
+        const bounds = new THREE.Box3().setFromArray([bmin[0], bmin[1], bmin[2], bmax[0], bmax[1], bmax[2]]);
+        this._modelMetadataProvider.mapBoxFromCdfToModelCoordinates(bounds, bounds);
+        return bounds;
       });
 
     return boundingBoxes;
