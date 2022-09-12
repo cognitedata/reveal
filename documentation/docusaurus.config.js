@@ -8,8 +8,8 @@ module.exports = {
   projectName: 'reveal',
   themeConfig: {
     algolia: {
-      appId: 'BH4D9OD16A',
-      apiKey: 'd2f00b2aa78a3b4ca8877d9b764916d4',
+      appId: 'WK4NHSAX9S',
+      apiKey: '9fbcf243717342b4a9adfbe73bc2749d',
       indexName: 'reveal-docs',
 
       // doesn't look like it works for 1.x and next. Looks like 'next' considered unversioned
