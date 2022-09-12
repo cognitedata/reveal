@@ -1,8 +1,8 @@
-import { THREE } from '@cognite/reveal';
+import { Cognite3DViewer, THREE } from '@cognite/reveal';
 import dat from 'dat.gui';
 
 import { Cognite3DModel, NodeAppearance, DefaultNodeAppearance, TreeIndexNodeCollection, NumericRange, NodeOutlineColor, PropertyFilterNodeCollection } from '@cognite/reveal';
-import { CogniteClient } from '@cognite/sdk';
+import { CogniteClient, Viewer3DAPI } from '@cognite/sdk';
 
 type Mutable<T> = { -readonly [P in keyof T]: T[P] };
 interface DefaultNodeAppearanceByKeys {
@@ -23,10 +23,13 @@ const nodeOutlineColorValues = [
 export class NodeStylingUI {
   private readonly _client: CogniteClient;
   private readonly _model: Cognite3DModel;
+  private readonly _viewer: Cognite3DViewer;
+  private readonly _areaHelpers: THREE.Object3D[] = [];
 
-  constructor(uiFolder: dat.GUI, client: CogniteClient, model: Cognite3DModel) {
+  constructor(uiFolder: dat.GUI, client: CogniteClient, viewer: Cognite3DViewer, model: Cognite3DModel) {
     this._model = model;
     this._client = client;
+    this._viewer = viewer;
 
     this.createByTreeIndexUi(uiFolder.addFolder('By tree index'));
     this.createByNodePropertyUi(uiFolder.addFolder('By node property'));
@@ -57,6 +60,8 @@ export class NodeStylingUI {
   }
 
   resetStyling(): void {
+    this._areaHelpers.forEach(areaHelper => this._viewer.removeObject3D(areaHelper));
+    this._areaHelpers.splice(0);
     this._model.setDefaultNodeAppearance(DefaultNodeAppearance.Default);
     this._model.removeAllStyledNodeCollections();
   }
@@ -77,19 +82,27 @@ export class NodeStylingUI {
   }
 
   private createByNodePropertyUi(ui: dat.GUI) {
-    const state = { category: 'PDMS', property: 'Type', value: 'PIPE' };
+    const state = { category: 'PDMS', property: 'Type', value: 'PIPE', showAreas: false };
     const createAppearanceCb = this.createNodeAppearanceUi(ui, DefaultNodeAppearance.Highlighted);
     const actions = {
-      apply: () => {
+      apply: async () => {
         const appearance = createAppearanceCb();
         const nodes = new PropertyFilterNodeCollection(this._client, this._model, { requestPartitions: 10 });
-        nodes.executeFilter({ [state.category]: { [state.property]: state.value } });
         this._model.assignStyledNodeCollection(nodes, appearance);
+        await nodes.executeFilter({ [state.category]: { [state.property]: state.value } });
+        if (state.showAreas) {
+          for (const area of nodes.getAreas().areas()) {
+            const boxHelper = new THREE.Box3Helper(area);
+            this._viewer.addObject3D(boxHelper);
+            this._areaHelpers.push(boxHelper);
+          }
+        }
       }
     };
     ui.add(state, 'category').name('Category');
     ui.add(state, 'property').name('Property');
     ui.add(state, 'value').name('Value');
+    ui.add(state, 'showAreas').name('Show bounds of areas');
     ui.add(actions, 'apply').name('Apply');
   }
 
