@@ -61,8 +61,8 @@ export default function ConfigurationEditor({
 
   return (
     <>
-      <ConfigurationErrorFeedback error={error} />
-      {isSuccess && (
+      {!editable && <ConfigurationErrorFeedback error={error} />}
+      {(isSuccess || editable) && (
         <StyledReactCodeMirror
           editable={editable}
           readOnly={!editable}
