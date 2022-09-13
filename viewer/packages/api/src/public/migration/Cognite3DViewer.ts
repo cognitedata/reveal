@@ -55,7 +55,11 @@ import { IntersectInput, SupportedModelTypes, CogniteModelBase, LoadingState } f
 
 import { CogniteClient } from '@cognite/sdk';
 import log from '@reveal/logger';
-import { determineAntiAliasingMode, determineSsaoRenderParameters } from './renderOptionsHelpers';
+import {
+  determineAntiAliasingMode,
+  determineResolutionCap,
+  determineSsaoRenderParameters
+} from './renderOptionsHelpers';
 
 type Cognite3DViewerEvents = 'click' | 'hover' | 'cameraChange' | 'sceneRendered' | 'disposed';
 
@@ -228,7 +232,7 @@ export class Cognite3DViewer {
       this._events.cameraChange.fire(position.clone(), target.clone());
     });
 
-    const revealOptions = createRevealManagerOptions(options);
+    const revealOptions = createRevealManagerOptions(options, this._renderer.getPixelRatio());
     if (options._localModels === true) {
       this._dataSource = new LocalDataSource();
       this._cdfSdkClient = undefined;
@@ -1246,7 +1250,7 @@ function createRenderer(): THREE.WebGLRenderer {
   return renderer;
 }
 
-function createRevealManagerOptions(viewerOptions: Cognite3DViewerOptions): RevealOptions {
+function createRevealManagerOptions(viewerOptions: Cognite3DViewerOptions, devicePixelRatio: number): RevealOptions {
   const customTarget = viewerOptions.renderTargetOptions?.target;
   const outputRenderTarget = customTarget
     ? {
@@ -1255,15 +1259,17 @@ function createRevealManagerOptions(viewerOptions: Cognite3DViewerOptions): Reve
       }
     : undefined;
 
+  const device = determineCurrentDevice();
+  const resolutionCap = determineResolutionCap(viewerOptions.rendererResolutionThreshold, device, devicePixelRatio);
+
   const revealOptions: RevealOptions = {
     continuousModelStreaming: viewerOptions.continuousModelStreaming,
     outputRenderTarget,
-    rendererResolutionThreshold: viewerOptions.rendererResolutionThreshold,
+    rendererResolutionThreshold: resolutionCap,
     internal: {}
   };
 
   revealOptions.internal!.cad = { sectorCuller: viewerOptions._sectorCuller };
-  const device = determineCurrentDevice();
   const { antiAliasing, multiSampleCount } = determineAntiAliasingMode(viewerOptions.antiAliasingHint, device);
   const ssaoRenderParameters = determineSsaoRenderParameters(viewerOptions.ssaoQualityHint, device);
   const edgeDetectionParameters = {
