@@ -418,9 +418,9 @@ export function Migration() {
 
       new AxisViewTool(viewer);
       let textInput = document.createElement('input');
-      // textInput.addEventListener('focus', (event) => {
-      //   event.stopPropagation();
-      // });
+      textInput.addEventListener('keydown', (event) => {
+        event.stopPropagation();
+      });
       viewer.domElement.appendChild(textInput);
     }
 
