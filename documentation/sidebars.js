@@ -39,7 +39,6 @@ module.exports = {
         'examples/antialiasing',
         'examples/cad-explode',
         'examples/axisviewtool',
-        'examples/geomaptool',
         'examples/timelinetool',
         'examples/combine-models',
         'examples/controlsmodes',
