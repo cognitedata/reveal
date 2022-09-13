@@ -48,8 +48,9 @@ export class DefaultCameraManager implements CameraManager {
   private static readonly DefaultMaxAnimationDuration = 1250;
   private static readonly DefaultMinDistance = 0.8;
   private static readonly DefaultMinZoomDistance = 0.4;
-  private static readonly DefaultMinimalTimeBetweenRaycasts = 0.3;
-  private static readonly DefaultMouseDistanceThresholdBetweenRaycasts = 20;
+  private static readonly DefaultMinimalTimeBetweenRaycasts = 120;
+  private static readonly DefaultMaximumTimeBetweenRaycasts = 200;
+  private static readonly DefaultMouseDistanceThresholdBetweenRaycasts = 5;
   private static readonly DefaultCameraControlsOptions: Required<CameraControlsOptions> = {
     mouseWheelAction: 'zoomPastCursor',
     changeCameraTargetOnClick: false
@@ -543,10 +544,11 @@ export class DefaultCameraManager implements CameraManager {
    */
   private setupControls() {
     let scrollStarted = false;
-    let lastMousePosition = new THREE.Vector2();
-    let lastOnWheelId = 0;
+    let wasLastScrollZoomOut = false;
 
-    const wheelClock = new THREE.Clock();
+    let lastWheelEventTime = 0;
+
+    const lastMousePosition = new THREE.Vector2();
 
     const onClick = async (e: PointerEventData) => {
       this._controls.enableKeyboardNavigation = false;
@@ -555,25 +557,37 @@ export class DefaultCameraManager implements CameraManager {
     };
 
     const onWheel = async (e: WheelEvent) => {
+      // Added because cameraControls are disabled when doing picking, so
+      // preventDefault could be not called on wheel event and produce unwanted scrolling.
       e.preventDefault();
 
-      const timeDelta = wheelClock.getDelta();
+      const currentTime = performance.now();
       const currentMousePosition = new THREE.Vector2(e.offsetX, e.offsetY);
-      const currentOnWheelId = lastOnWheelId++;
 
-      if (timeDelta > DefaultCameraManager.DefaultMinimalTimeBetweenRaycasts) scrollStarted = false;
-      
-      const wantNewScrollTarget = (!scrollStarted || (currentMousePosition.distanceTo(lastMousePosition) > DefaultCameraManager.DefaultMouseDistanceThresholdBetweenRaycasts)) 
-        && e.deltaY < 0;
+      const onWheelTimeDelta = currentTime - lastWheelEventTime;
+
+      const mouseDelta = currentMousePosition.distanceTo(lastMousePosition);
+      const timeSinceLastPickingTookTooLong = onWheelTimeDelta > DefaultCameraManager.DefaultMaximumTimeBetweenRaycasts;
+
+      if (onWheelTimeDelta > DefaultCameraManager.DefaultMinimalTimeBetweenRaycasts) scrollStarted = false;
+
+      if (
+        !wasLastScrollZoomOut &&
+        timeSinceLastPickingTookTooLong &&
+        mouseDelta < DefaultCameraManager.DefaultMouseDistanceThresholdBetweenRaycasts
+      )
+        scrollStarted = true;
+
       const isZoomToCursor = this._cameraControlsOptions.mouseWheelAction === 'zoomToCursor';
-      
+      const wantNewScrollTarget = !scrollStarted && e.deltaY < 0;
+
       lastMousePosition.copy(currentMousePosition);
-      console.log(lastMousePosition);
-      
+      wasLastScrollZoomOut = e.deltaY > 0;
+      lastWheelEventTime = currentTime;
+
       if (wantNewScrollTarget && isZoomToCursor) {
         scrollStarted = true;
         let newTarget: THREE.Vector3;
-        console.log('picked');
 
         // Disable controls to prevent camera from moving while picking is happening.
         // await is not working as expected because event itself is not awaited.
@@ -584,9 +598,7 @@ export class DefaultCameraManager implements CameraManager {
           this._controls.enabled = this._enabledCopy;
         }
 
-        if (lastOnWheelId === currentOnWheelId) {
-          this._controls.setScrollTarget(newTarget);
-        }
+        this._controls.setScrollTarget(newTarget);
       }
     };
 
