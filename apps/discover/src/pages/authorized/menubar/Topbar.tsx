@@ -22,12 +22,12 @@ import {
   SEARCH_LINK_TEXT_KEY,
   FAVORITES_LINK_TEXT_KEY,
   PATHNAMES,
+  REPORT_MANAGER_TEXT_KEY,
 } from './constants';
 import { Container, TopBarLogo, TopBarNavigationWrapper } from './elements';
 import { Feedback } from './Feedback';
 import { TenantLogo } from './TenantLogo';
 import { UserProfileButton } from './UserProfileButton';
-import { UserReportPanel } from './UserReportPanel';
 import { UserSettings } from './userSettings';
 
 export const Topbar: React.FC = () => {
@@ -110,6 +110,14 @@ export const Topbar: React.FC = () => {
                 PATHNAMES.FAVORITES
               ),
             },
+            {
+              name: REPORT_MANAGER_TEXT_KEY,
+              isActive: activeTab === PATHNAMES.REPORTS,
+              onClick: getNavigationHandler(
+                navigation.REPORT_PANEL,
+                PATHNAMES.REPORTS
+              ),
+            },
           ].concat(
             ((externalLinks as Array<any>) || []).map((externalLink) => {
               return {
@@ -133,12 +141,6 @@ export const Topbar: React.FC = () => {
             getNavigationHandler(navigation, path)();
           }}
           activeTab={activeTab}
-        />
-        <UserReportPanel
-          activeTab={activeTab}
-          handleNavigation={(navigation: string, path: number) => {
-            getNavigationHandler(navigation, path)();
-          }}
         />
 
         <UserSettings />

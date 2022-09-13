@@ -1,80 +1,51 @@
+import { useReportUpdateMutate } from 'domain/reportManager/internal/actions/useReportUpdateMutate';
+import { useAllReportsQuery } from 'domain/reportManager/internal/queries/useReportsQuery';
 import { Report } from 'domain/reportManager/internal/types';
-import { reportManagerAPI } from 'domain/reportManager/service/network/reportManagerAPI';
+import { useUserRoles } from 'domain/user/internal/hooks/useUserRoles';
 
-import { FC, PropsWithChildren, useRef } from 'react';
+import * as React from 'react';
 
-import { Button } from '@cognite/cogs.js';
+import { showErrorMessage, showSuccessMessage } from 'components/Toast';
 
-type Props = {
-  isAdmin?: boolean;
-};
+import { ReportManagerList } from './ReportManagerList';
+import { adaptReportsForList } from './ReportManagerList/adaptReportsForList';
+import { TableReport } from './ReportManagerList/types';
 
-export const ReportManager: FC<PropsWithChildren<Props>> = ({
-  isAdmin: _isAdmin,
-}) => {
-  const reports = useRef<Report[]>([]);
-  const createReports = () => {
-    return reportManagerAPI.create([
-      {
-        status: 'ACTIVE',
-        description: 'The NDS data was not sufficient for this wellbore',
-        reason: 'Insufficient',
-        reportType: 'NDS',
-        startTime: Date.now(),
-        externalId: 'wells/andromeda/well-AND15661828/wellbores/wb-01',
-        ownerUserId: '23',
-      },
-      {
-        status: 'IN_PROGRESS',
-        description: 'The NDS data was not sufficient for this wellbore',
-        reason: 'Faulty',
-        reportType: 'NDS',
-        startTime: Date.now(),
-        externalId: 'wells/andromeda/well-AND15661828/wellbores/wb-01',
-        ownerUserId: '23',
-      },
-      {
-        status: 'DISMISSED',
-        description: 'The NDS data was not sufficient for this wellbore',
-        reason: 'Faulty',
-        reportType: 'NDS',
-        startTime: Date.now(),
-        externalId: 'wells/andromeda/well-AND15661828/wellbores/wb-01',
-        ownerUserId: '23',
-      },
-      {
-        status: 'RESOLVED',
-        description: 'The NDS data was not sufficient for this wellbore',
-        reason: 'Faulty',
-        reportType: 'NDS',
-        startTime: Date.now(),
-        externalId: 'wells/andromeda/well-AND15661828/wellbores/wb-01',
-        ownerUserId: '23',
-      },
-    ]);
+export const ReportManager: React.FC = () => {
+  const { data: roles } = useUserRoles();
+  const { mutate: updateReport } = useReportUpdateMutate();
+  const { data, isLoading, isFetching } = useAllReportsQuery();
+  const [processedData, setProcessedData] = React.useState<TableReport[]>([]);
+
+  const handleReportUpdate = async (
+    report: Partial<Report>,
+    id: Report['id']
+  ) => {
+    if (id) {
+      updateReport({ id, report });
+      showSuccessMessage('Report Updated');
+    } else {
+      showErrorMessage(`Error changing status for ${report.id}`);
+    }
   };
 
-  const showReports = async () => {
-    const searchedReports = await reportManagerAPI.search({});
-    reports.current = searchedReports;
-  };
+  React.useEffect(() => {
+    adaptReportsForList({ reports: data }).then((data) =>
+      setProcessedData(data)
+    );
+  }, [data, isFetching]);
 
-  const deleteReports = async () => {
-    await reportManagerAPI.delete(reports.current.map((item) => item.id!));
-  };
-
-  const updateReports = async () => {
-    await reportManagerAPI.update(reports.current[0].id!, {
-      status: 'IN_PROGRESS',
-    });
-  };
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
 
   return (
-    <div>
-      <Button onClick={() => createReports()}>Create Reports</Button>
-      <Button onClick={() => showReports()}>Show Reports</Button>
-      <Button onClick={() => deleteReports()}>Delete Reports</Button>
-      <Button onClick={() => updateReports()}>Update Reports</Button>
-    </div>
+    <>
+      <ReportManagerList
+        data={processedData}
+        isAdmin={roles?.isAdmin}
+        onReportUpdate={handleReportUpdate}
+      />
+    </>
   );
 };

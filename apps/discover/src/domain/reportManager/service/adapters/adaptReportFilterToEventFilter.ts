@@ -1,3 +1,5 @@
+import { DISCOVER_WELL_REPORT } from 'domain/reportManager/internal/constants';
+
 import { EventFilterRequest } from '@cognite/sdk';
 
 import { ReportFilter } from '../../internal/types';
@@ -5,6 +7,8 @@ import { ReportFilter } from '../../internal/types';
 export const adaptReportFilterToEventFilter = (
   filters: ReportFilter
 ): EventFilterRequest => {
+  const baseFilter = { source: DISCOVER_WELL_REPORT };
+
   const advancedFilters = [];
   if (filters.status) {
     advancedFilters.push({
@@ -51,7 +55,8 @@ export const adaptReportFilterToEventFilter = (
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore not updated in API
       advancedFilter: { and: advancedFilters },
+      filter: baseFilter,
     };
   }
-  return {};
+  return { filter: baseFilter };
 };

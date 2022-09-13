@@ -6,6 +6,7 @@ import { fetchAllCursors } from 'utils/fetchAllCursors';
 import { Well, Wellbore } from '@cognite/sdk-wells';
 
 export const getWellboresByWellIds = async (
+  // Matching id of a well or a wellbore.
   wellMatchingIds: Array<Well['matchingId']>
 ) => {
   return fetchAllCursors<Wellbore>({

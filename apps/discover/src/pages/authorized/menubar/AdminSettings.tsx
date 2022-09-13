@@ -17,7 +17,6 @@ import {
   ADMIN_FEEDBACK_LINK_TEXT_KEY,
   ADMIN_PROJECT_CONFIG_LINK_TEXT_KEY,
   ADMIN_MAP_CONFIG,
-  ADMIN_REPORT_PANEL,
   PATHNAMES,
 } from './constants';
 
@@ -87,14 +86,6 @@ export const AdminSettings: React.FC<Props> = ({
       name: t(ADMIN_MAP_CONFIG) as string,
       onClick: () => {
         handleNavigation(navigation.ADMIN_MAP_CONFIG, PATHNAMES.ADMIN);
-      },
-    },
-    {
-      key: 'ADMIN/REPORT_PANEL',
-      configKey: 'reportManager',
-      name: t(ADMIN_REPORT_PANEL) as string,
-      onClick: () => {
-        handleNavigation(navigation.ADMIN_REPORT_PANEL, PATHNAMES.ADMIN);
       },
     },
   ].filter((item) => {

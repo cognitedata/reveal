@@ -5082,6 +5082,25 @@
     content-type "^1.0.4"
     tslib "^2.4.0"
 
+"@tanstack/match-sorter-utils@^8.1.1":
+  version "8.1.1"
+  resolved "https://registry.yarnpkg.com/@tanstack/match-sorter-utils/-/match-sorter-utils-8.1.1.tgz#895f407813254a46082a6bbafad9b39b943dc834"
+  integrity sha512-IdmEekEYxQsoLOR0XQyw3jD1GujBpRRYaGJYQUw1eOT1eUugWxdc7jomh1VQ1EKHcdwDLpLaCz/8y4KraU4T9A==
+  dependencies:
+    remove-accents "0.4.2"
+
+"@tanstack/react-table@^8.5.13":
+  version "8.5.13"
+  resolved "https://registry.yarnpkg.com/@tanstack/react-table/-/react-table-8.5.13.tgz#a394c4db1cbcd63eb0c5fa2244a963da28f246c4"
+  integrity sha512-k52HsnonKwDZMCIy59HfehTnkJYlqkqyvC+BAV0DyWdN9WmSbVq+Kf+luJVENQnXcnEX47dBHiHAjqZu592ZLQ==
+  dependencies:
+    "@tanstack/table-core" "8.5.13"
+
+"@tanstack/table-core@8.5.13":
+  version "8.5.13"
+  resolved "https://registry.yarnpkg.com/@tanstack/table-core/-/table-core-8.5.13.tgz#7ad94fcc9db72f3eb0ed7dbb9c511a6bd7ff9a06"
+  integrity sha512-kvDRjC7LrLNNNgUMfsBz3nHOwbBLFdosWQ16dfbD9D/OJrvFHRXoUIPzF0MNqqSPghaj7/18fnwXHGypvzoh9Q==
+
 "@testing-library/cypress@^8.0.2":
   version "8.0.3"
   resolved "https://registry.yarnpkg.com/@testing-library/cypress/-/cypress-8.0.3.tgz#24ab34df34d7896866603ade705afbdd186e273c"

@@ -32,7 +32,6 @@ const Content = () => {
   const metrics = useGlobalMetrics(LOG_APP_NAMESPACE);
 
   useEffect(() => {
-    // For this metric to work, PR2537 needs to get merged in https://github.com/cognitedata/applications/pull/2537
     PerfMetrics.trackPerfStart('SEARCH_LOAD');
     const cleanup = () => {
       metrics.track(LOG_APP_CLOSED);

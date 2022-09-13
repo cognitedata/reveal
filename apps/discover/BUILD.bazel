@@ -79,6 +79,8 @@ DEPENDENCIES = [
     "@npm//@cognite/user-management-service-types",
     "@npm//@fontsource/inter",
     "@npm//@reduxjs/toolkit",
+    "@npm//@tanstack/match-sorter-utils",
+    "@npm//@tanstack/react-table",
     "@npm//@turf/centroid",
     "@npm//@turf/clean-coords",
     "@npm//@turf/helpers",

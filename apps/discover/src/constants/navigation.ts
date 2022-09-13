@@ -42,7 +42,6 @@ export const RELATED_DOCUMENTS = '/relatedDocuments';
 /* reportManager */
 
 export const REPORT_PANEL = '/reports';
-export const ADMIN_REPORT_PANEL = `${ADMIN}${REPORT_PANEL}`;
 
 const navigationConfig = {
   LOGOUT: '/logout',
@@ -91,7 +90,6 @@ const navigationConfig = {
   ADMIN_LEGEND,
 
   REPORT_PANEL,
-  ADMIN_REPORT_PANEL,
 };
 
 export default navigationConfig;
