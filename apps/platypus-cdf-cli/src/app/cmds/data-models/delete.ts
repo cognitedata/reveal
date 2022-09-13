@@ -47,7 +47,7 @@ export class DeleteCmd extends CLICommand {
       JSON.stringify(response.getValue(), null, 2)
     );
     Response.success(
-      `Data model - "${args['external-id']}" has been deleted successfully`
+      `Data model "${args['external-id']}" has been deleted successfully`
     );
   }
 }

@@ -5,6 +5,7 @@ import createCmd from './create';
 import deleteCmd from './delete';
 import publishCmd from './publish';
 import generateCmd from './generate';
+import listCmd from './list';
 
 export const command = 'data-models <command>';
 export const desc =
@@ -15,13 +16,15 @@ export const builder = (yargs: Argv) => {
   const cmds = yargs;
 
   if (process.env.ENABLE_EXPERIMENTAL_CMDS) {
-    cmds.command(storageCmds).command(apiCmds).command(deleteCmd);
+    cmds.command(storageCmds).command(apiCmds);
   }
 
   cmds
     .command(createCmd)
     .command(publishCmd)
+    .command(listCmd)
     .command(generateCmd)
+    .command(deleteCmd)
     .demandCommand(1)
     .version(false);
 

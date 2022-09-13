@@ -27,7 +27,7 @@ describe('platpus-cli', () => {
         dataModelName,
         dataModelExternalId
       );
-      // platypusCli.dataModelsDelete(dataModelExternalId);
+      platypusCli.dataModelsDelete(dataModelExternalId);
 
       expect(output).toMatch(
         `Data model "${dataModelName}" has been created successfully`
@@ -35,19 +35,18 @@ describe('platpus-cli', () => {
     });
   });
 
-  // Disabled temprorary because of API bug with delete
-  // describe('cdf data-models delete', () => {
-  //   it('can delete data models', async () => {
-  //     const dataModelName = `cdf-cli-delete-e2e-test-${Date.now()}`;
-  //     const dataModelExternalId = dataModelName;
+  describe('cdf data-models delete', () => {
+    it('can delete data models', async () => {
+      const dataModelName = `cdf-cli-delete-e2e-test-${Date.now()}`;
+      const dataModelExternalId = dataModelName;
 
-  //     await platypusCli.dataModelsCreate(dataModelName, dataModelExternalId);
-  //     const output = await platypusCli.dataModelsDelete(dataModelExternalId);
-  //     expect(output).toMatch(
-  //       `Data model - "${dataModelExternalId}" has been deleted successfully`
-  //     );
-  //   });
-  // });
+      await platypusCli.dataModelsCreate(dataModelName, dataModelExternalId);
+      const output = await platypusCli.dataModelsDelete(dataModelExternalId);
+      expect(output).toMatch(
+        `Data model "${dataModelExternalId}" has been deleted successfully`
+      );
+    });
+  });
 
   describe('cdf data-models publish', () => {
     jest.setTimeout(10000);
@@ -61,7 +60,22 @@ describe('platpus-cli', () => {
         dataModelExternalId,
         __dirname + '/graphql-schemas/valid_schema_v1.gql'
       );
+
+      platypusCli.dataModelsDelete(dataModelExternalId);
       expect(output).toMatch('Api version 1 has been published');
+    });
+  });
+
+  describe('cdf data-models list', () => {
+    it('can list data models', async () => {
+      const dataModelName = `cdf-cli-list-e2e-test-${getDatamodelNameTimeAppendix()}`;
+      const dataModelExternalId = dataModelName;
+
+      await platypusCli.dataModelsCreate(dataModelName, dataModelExternalId);
+
+      const output = await platypusCli.dataModelsList();
+      platypusCli.dataModelsDelete(dataModelExternalId);
+      expect(output).toContain(dataModelExternalId);
     });
   });
 

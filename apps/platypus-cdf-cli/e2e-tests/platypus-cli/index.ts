@@ -22,6 +22,10 @@ export async function dataModelsPublish(
   );
 }
 
+export async function dataModelsList() {
+  return await runCommand('data-models', 'list');
+}
+
 export async function dataModelsCreate(
   name: string,
   externalId?: string,
