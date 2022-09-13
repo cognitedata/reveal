@@ -66,47 +66,32 @@ You can find the code under `apps/platypus`.
 
 ## Running Platypus locally
 
-For development, you can use either `development` or `fusion` environments.
-The default environment is `development`. To use this environment, just run `yarn start`.
+*Note: make sure to use Node v14! There's a bug with the `cdf-utilities` requirement.*
 
-To run:
-
-`nx serve platypus`
-
-To build:
-
-`nx build platypus`
-
-To test:
-
-`nx test platypus`
-
-## How to run Platypus app in Fusion app
-
-You can run app as part of the Fusion UI (CDF Fusion platform app).
-This is the best way to test and verify you app, however, it doesn't provide the best experience for developing locally.
-
-To use it, First serve your bundle locally by running `yarn start fusion` or `yarn start fusion platypus`.
-
-MAKE SURE YOURE USING NODE v14!!!!
-(some bug with the `cdf-utilities` requiremnet...)
+For development, you can use either `development` or `fusion` environments. The default environment is `development`, which runs the app standalone outside of the CDF Fusion platform app. To use this environment, run:
 
 ```
 yarn
 yarn start
 ```
 
+### How to run Platypus app in Fusion app
+
+You can run the app as part of the Fusion UI (CDF Fusion platform app). This is the best way to test and verify your app, however, it doesn't provide the best experience for developing locally. For instance there is no HMR (hot module replacement).
+
+To use it, first serve your bundle locally by running `yarn start fusion`.
+
 Your bundle should now be hosted at https://localhost:3000/index.js. You can go there to verify. A bunch of javascript should show up.
 
 Then show it in unified CDF UI by following these steps:
 
-Go to [https://cog-appdev.dev.fusion.cogniteapp.com/](https://cog-appdev.dev.fusion.cogniteapp.com/)
-Open devtools
-In the console type: `importMapOverrides.enableUI()` (This sets some variables in localstorage)
-On the bottom right click the "{...}"-button
-Select @cognite/cdf-solutions-ui
-Type in "https://localhost:3000/index.js"
-Refresh the browser
+* Go to [https://cog-appdev.dev.fusion.cogniteapp.com/](https://cog-appdev.dev.fusion.cogniteapp.com/)
+* Open devtools
+* In the console type: `importMapOverrides.enableUI()` (This sets some variables in localstorage)
+* On the bottom right click the "{...}"-button
+* Select @cognite/cdf-solutions-ui
+* Type in "https://localhost:3000/index.js"
+* Refresh the browser
 
 Voila!
 
@@ -120,6 +105,16 @@ How to use the mock environment:
 - Run mock server `nx serve mock-server`
 - Open app as regularly you do on [https://localhost:3000/platypus](https://localhost:3000/platypus)
 - Everything should be there and working
+
+## Additional commands
+
+To build:
+
+`nx build platypus`
+
+To test:
+
+`nx test platypus`
 
 # Running Preview Server in PR
 
