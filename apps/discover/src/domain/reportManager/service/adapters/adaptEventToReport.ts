@@ -12,7 +12,7 @@ export const adaptEventToReport = (event: CogniteEvent): Report => {
     description: event.description!,
     reason: event.metadata!.reason,
     status: event.metadata!.status as Report['status'],
-    ownerUserId: event.metadata!.owneruserId,
+    ownerUserId: event.metadata!.ownerUserId,
     externalId: event.type!,
     reportType: event.subtype!,
     startTime: event.startTime!,

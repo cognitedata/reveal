@@ -1596,10 +1596,10 @@
   resolved "https://registry.yarnpkg.com/@cognite/simconfig-api-sdk/-/simconfig-api-sdk-1.4.2.tgz#9f717744a4a6c7c593de4f4cba133134070ba609"
   integrity sha512-myV15VwIZ+rl9bcX0rozDgf6TrPiVQ2p766ofErPAO8uJEVzM2yQ5xE8xZmPJJy2s6QwlrlpzxtR/7eQS6iBZw==
 
-"@cognite/user-management-service-types@^0.1.2":
-  version "0.1.5"
-  resolved "https://registry.yarnpkg.com/@cognite/user-management-service-types/-/user-management-service-types-0.1.5.tgz#138a53231c0e05db2bcd7b41a4ba6d1113e74e01"
-  integrity sha512-rRxeGQa8HKbZ+F+CqJ5JR3c3CYana/szRMSSX8NEJwWfXCtaR8wOwm77eNiQ0u3Dq8JEbk7MageaUKZtefnjlw==
+"@cognite/user-management-service-types@^0.1.6":
+  version "0.1.6"
+  resolved "https://registry.yarnpkg.com/@cognite/user-management-service-types/-/user-management-service-types-0.1.6.tgz#539bd3e76a023534c5d7fe2d14cbdbc1d3dbeaad"
+  integrity sha512-9Q8ysRHVHPuvuU1Zr8z4wAGcMIEjnLTKqQIVqJbwJwAksFlhfO0m6H9EUsKgiAmBctWesbauUbKeOW248gOgog==
 
 "@cognite/videx-wellog@^0.2.16-alpha3":
   version "0.2.16-alpha4"

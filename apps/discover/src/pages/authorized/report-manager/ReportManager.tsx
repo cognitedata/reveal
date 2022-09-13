@@ -2,6 +2,7 @@ import { useReportUpdateMutate } from 'domain/reportManager/internal/actions/use
 import { useAllReportsQuery } from 'domain/reportManager/internal/queries/useReportsQuery';
 import { Report } from 'domain/reportManager/internal/types';
 import { useUserRoles } from 'domain/user/internal/hooks/useUserRoles';
+import { useUserList } from 'domain/userManagementService/internal/queries/useUserList';
 
 import * as React from 'react';
 
@@ -14,8 +15,11 @@ import { TableReport } from './ReportManagerList/types';
 export const ReportManager: React.FC = () => {
   const { data: roles } = useUserRoles();
   const { mutate: updateReport } = useReportUpdateMutate();
-  const { data, isLoading, isFetching } = useAllReportsQuery();
+  const { data, isLoading } = useAllReportsQuery();
   const [processedData, setProcessedData] = React.useState<TableReport[]>([]);
+  const { data: users } = useUserList({
+    ids: (data || [])?.map((report) => report.ownerUserId),
+  });
 
   const handleReportUpdate = async (
     report: Partial<Report>,
@@ -30,10 +34,10 @@ export const ReportManager: React.FC = () => {
   };
 
   React.useEffect(() => {
-    adaptReportsForList({ reports: data }).then((data) =>
+    adaptReportsForList({ reports: data, users }).then((data) =>
       setProcessedData(data)
     );
-  }, [data, isFetching]);
+  }, [data, users]);
 
   if (isLoading) {
     return <div>Loading...</div>;

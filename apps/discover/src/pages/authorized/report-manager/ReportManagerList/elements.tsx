@@ -3,6 +3,26 @@ import layers from 'utils/zindex';
 
 import { Icon } from '@cognite/cogs.js';
 
+// Hover cell (the one that pops out from the right)
+export const HoverContentWrapper = styled.span`
+  align-items: center;
+  background: inherit;
+  display: flex;
+  height: 100%;
+  justify-content: center;
+  opacity: 0;
+  padding: 0 !important;
+  pointer-events: none;
+  position: sticky;
+  right: 0;
+  top: 0;
+  transform: translateX(-4px);
+  transition-delay: 0.025s;
+  transition-timing-function: ease-out;
+  transition: 0.2s;
+  z-index: ${layers.TABLE_ROW_HOVER};
+`;
+
 export const TableContainer = styled.div`
   height: 100%;
   display: flex;
@@ -11,6 +31,7 @@ export const TableContainer = styled.div`
 `;
 export const HeaderContainer = styled.div`
   display: flex;
+  min-width: ${(props: { size: number }) => `${props.size}px`};
 `;
 export const FloatingBox = styled.div`
   position: absolute;
@@ -43,37 +64,23 @@ export const MainRowContainer = styled.tr`
   font-size: 14px;
   line-height: 20px;
 `;
+
 export const SubRowContainer = styled.tr`
   background: #fafafa;
   padding: 12px 0px 12px 16px;
   box-shadow: inset 0px -1px 0px rgba(0, 0, 0, 0.15);
   height: 52px;
+
+  &:hover {
+    & td > ${HoverContentWrapper} {
+      opacity: 1;
+      pointer-events: initial;
+      transform: translateX(0);
+    }
+  }
 `;
 export const StyledIcon = styled(Icon)`
   svg {
     height: 13px;
   }
-`;
-// Hover cell (the one that pops out from the right)
-export const HoverContentWrapper = styled.span`
-  align-items: center;
-  background: inherit;
-  border-bottom: 1px solid #e5e5e5;
-  display: flex;
-  height: 100%;
-  justify-content: center;
-  opacity: 1;
-  padding: 0 !important;
-  pointer-events: none;
-  position: sticky;
-  right: 0;
-  top: 0;
-  transform: translateX(-4px);
-  transition-delay: 0.025s;
-  transition-timing-function: ease-out;
-  transition: 0.2s;
-  &:hover {
-    z-index: ${layers.APP_FRAME};
-  }
-  z-index: ${layers.TABLE_ROW_HOVER};
 `;

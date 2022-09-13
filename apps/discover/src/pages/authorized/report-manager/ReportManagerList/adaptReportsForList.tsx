@@ -1,13 +1,24 @@
 import { Report } from 'domain/reportManager/internal/types';
 
+import { UMSUser } from '@cognite/user-management-service-types';
+
 import { getLookupTableOfWells } from './getLookupTableOfWells';
-import { transformReportForDisplay } from './ReportManagerList';
 import { TableReport } from './types';
+
+const transformReportForDisplay = (report: Report, user?: UMSUser) => {
+  return {
+    ...report,
+    externalId: report.reportType,
+    ownerUserId: user && user.displayName ? user.displayName : 'Loading...',
+  };
+};
 
 export const adaptReportsForList = async ({
   reports,
+  users,
 }: {
   reports?: Report[];
+  users?: UMSUser[];
 }): Promise<TableReport[]> => {
   if (!reports) {
     return [];
@@ -23,6 +34,10 @@ export const adaptReportsForList = async ({
       return results;
     }
 
+    const user = users?.find((user) => {
+      return user.id === row.ownerUserId;
+    });
+
     const existingWellboreResult = results.find(
       (item) => item.externalId === well.name
     );
@@ -32,7 +47,7 @@ export const adaptReportsForList = async ({
       if (!existingWellboreResult.subRows) {
         existingWellboreResult.subRows = [];
       }
-      existingWellboreResult.subRows.push(transformReportForDisplay(row));
+      existingWellboreResult.subRows.push(transformReportForDisplay(row, user));
       return results;
     }
 
@@ -41,7 +56,7 @@ export const adaptReportsForList = async ({
       ...results,
       {
         externalId: well.name,
-        subRows: [transformReportForDisplay(row)],
+        subRows: [transformReportForDisplay(row, user)],
       },
     ];
   }, [] as TableReport[]);

@@ -117,6 +117,7 @@ const USER_MANAGEMENT_SYSTEM = 'userManagementSystem';
 export const USER_MANAGEMENT_SYSTEM_KEY = {
   ME: [USER_MANAGEMENT_SYSTEM, 'me'],
   SEARCH: [USER_MANAGEMENT_SYSTEM, 'search'],
+  LIST: [USER_MANAGEMENT_SYSTEM, 'list'],
   ADMIN_USERS: [USER_MANAGEMENT_SYSTEM, 'adminUsers'],
 } as const;
 

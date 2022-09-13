@@ -45,8 +45,8 @@ import {
   CellIcon,
   SubRowContainer,
   MainRowContainer,
-  HoverContentWrapper,
 } from './elements';
+import { RowHoverComponent } from './RowHoverComponent';
 import { StatusSelector } from './StatusSelector';
 import { TableColumnSortIcons } from './TableColumnSortIcons';
 import { TableReport, UpdateReport } from './types';
@@ -59,13 +59,6 @@ declare module '@tanstack/table-core' {
     itemRank: RankingInfo;
   }
 }
-
-export const transformReportForDisplay = (report: Report) => {
-  return {
-    ...report,
-    externalId: report.reportType,
-  };
-};
 
 const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
   // Rank the item
@@ -102,6 +95,7 @@ export const ReportManagerList: React.FC<Props> = ({
         accessorKey: 'externalId',
         filterFn: 'fuzzy',
         enableColumnFilter: false,
+        minSize: 300,
         cell: ({ row, getValue }) => {
           if (row.getCanExpand()) {
             return (
@@ -128,6 +122,7 @@ export const ReportManagerList: React.FC<Props> = ({
         accessorKey: 'status',
         filterFn: 'fuzzy',
         enableColumnFilter: false,
+        minSize: 100,
         footer: (props) => props.column.id,
         cell: ({ getValue, row }) => {
           const value = getValue() as Report['status'];
@@ -151,6 +146,7 @@ export const ReportManagerList: React.FC<Props> = ({
         accessorKey: 'reason',
         filterFn: 'fuzzy',
         enableColumnFilter: false,
+        minSize: 100,
         footer: (props) => props.column.id,
       },
       {
@@ -208,13 +204,10 @@ export const ReportManagerList: React.FC<Props> = ({
   // expand all by default:
   const expandAll = table.getToggleAllRowsExpandedHandler();
   React.useEffect(() => {
-    expandAll(false);
+    if (table.getExpandedDepth() === 0) {
+      expandAll(true);
+    }
   }, []);
-
-  const renderRowHoverComponent = React.useCallback(
-    ({ _row }: any) => <div>test</div>,
-    []
-  );
 
   return (
     <TableContainer>
@@ -235,6 +228,7 @@ export const ReportManagerList: React.FC<Props> = ({
                         }}
                         role="button"
                         tabIndex={index}
+                        size={header.getSize()}
                       >
                         <CellText>
                           {flexRender(
@@ -278,11 +272,7 @@ export const ReportManagerList: React.FC<Props> = ({
                   );
                 })}
                 <td>
-                  {renderRowHoverComponent && (
-                    <HoverContentWrapper>
-                      {renderRowHoverComponent({ row })}
-                    </HoverContentWrapper>
-                  )}
+                  <RowHoverComponent row={row} />
                 </td>
               </RowContainer>
             );
