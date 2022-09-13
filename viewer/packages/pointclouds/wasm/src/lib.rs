@@ -50,7 +50,7 @@ pub fn assign_points(
         })?
         .into();
 
-    let shape_vec = parse_inputs::parse_objects(input_objects)?;
+    let shape_vec = parse_inputs::try_parse_objects(input_objects)?;
 
     let object_ids = js_sys::Uint16Array::new_with_length(input_points.length() / 3).fill(
         0,

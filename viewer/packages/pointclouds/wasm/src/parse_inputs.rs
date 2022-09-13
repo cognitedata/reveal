@@ -90,7 +90,7 @@ fn create_shape(obj: InputShape) -> Result<Box<dyn shapes::Shape>, String> {
     }
 }
 
-pub fn parse_objects(
+pub fn try_parse_objects(
     input_objects: Vec<wasm_bindgen::prelude::JsValue>,
 ) -> Result<Vec<Box<dyn shapes::Shape>>, String> {
     let objects_result: Result<_, _> = input_objects
