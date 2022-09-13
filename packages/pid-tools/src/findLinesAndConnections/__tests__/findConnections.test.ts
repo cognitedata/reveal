@@ -150,6 +150,8 @@ describe('findConnectionsByTraversal', () => {
     const symbolInstances = createSymbols([['instrument'], ['valve']]);
     const lineInstances = createLines(['notConnectedLine', 'connectedLine']);
 
+    const connectedLine = lineInstances[1];
+
     const connections = findConnectionsByTraversal(
       symbolInstances,
       lineInstances,
@@ -158,12 +160,12 @@ describe('findConnectionsByTraversal', () => {
 
     expect(connections.length).toBe(2);
     expect(
-      connections[0].start === 'connectedLine' ||
-        connections[0].end === 'connectedLine'
+      connections[0].start === connectedLine.id ||
+        connections[0].end === connectedLine.id
     ).toBe(true);
     expect(
-      connections[1].start === 'connectedLine' ||
-        connections[1].end === 'connectedLine'
+      connections[1].start === connectedLine.id ||
+        connections[1].end === connectedLine.id
     ).toBe(true);
   });
 

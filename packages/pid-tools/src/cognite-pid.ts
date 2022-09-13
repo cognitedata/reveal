@@ -69,7 +69,6 @@ import {
   getDiagramTagInstanceByLabelId,
   getDiagramTagInstanceByTagId,
   getDiagramInstanceByPathId,
-  getDiagramInstanceId,
   getDiagramInstanceIdFromPathIds,
   getDiagramInstancesByPathIds,
   getPathReplacementId,
@@ -328,14 +327,14 @@ export class CognitePid {
   }
 
   deleteSymbol(diagramSymbol: DiagramSymbol) {
-    const instancesToRemove = this.symbolInstances
+    const instanceIdsToRemove = this.symbolInstances
       .filter((instance) => instance.symbolId === diagramSymbol.id)
-      .map((instance) => getDiagramInstanceId(instance));
+      .map((instance) => instance.id);
 
     const connectionsToKeep = this.connections.filter((connection) => {
       return !(
-        instancesToRemove.includes(connection.end) ||
-        instancesToRemove.includes(connection.start)
+        instanceIdsToRemove.includes(connection.end) ||
+        instanceIdsToRemove.includes(connection.start)
       );
     });
     this.setConnections(connectionsToKeep);
@@ -1225,21 +1224,18 @@ export class CognitePid {
       case 'connectLabels': {
         // selection or deselect symbol/line instance that will be used for adding labels
         if (!(node instanceof SVGTSpanElement)) {
-          const diagramInstance = getDiagramInstanceByPathId(
-            [...this.symbolInstances, ...this.lines],
+          const diagramInstance = this.pathIdToDiagramInstanceWithPathsMap.get(
             node.id
           );
-          const diagramInstanceId = diagramInstance
-            ? getDiagramInstanceId(diagramInstance)
-            : node.id;
+          if (diagramInstance === undefined) return;
 
-          if (diagramInstanceId === this.labelSelection) {
+          // Deselect if already selected
+          if (diagramInstance.id === this.labelSelection) {
             this.setLabelSelection(null);
             break;
           }
-          if (diagramInstance) {
-            this.setLabelSelection(diagramInstanceId);
-          }
+
+          this.setLabelSelection(diagramInstance.id);
         } else {
           // add or remove labels to symbol/line instance given `labelSelection`
           if (!this.labelSelection) {

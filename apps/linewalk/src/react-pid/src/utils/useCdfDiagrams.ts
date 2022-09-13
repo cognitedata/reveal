@@ -14,6 +14,8 @@ import {
   DIAGRAM_PARSER_UNIT_KEY,
   DIAGRAM_PARSER_JSON_EXTERNAL_ID,
   DIAGRAM_PARSER_LAST_PARSED_KEY,
+  upsertGraphDocumentToDms,
+  DMS_SPACE_EXTERNAL_ID,
 } from '@cognite/pid-tools';
 
 import SiteContext from '../../../components/SiteContext/SiteContext';
@@ -155,6 +157,13 @@ const useCdfDiagrams = () => {
           lineNumber: graph.documentMetadata.lineNumber,
         });
       }
+
+      // Upsert to DMS
+      console.log('Upserting graph to DMS...');
+      upsertGraphDocumentToDms(client, graph, {
+        filePage: 1,
+        spaceExternalId: DMS_SPACE_EXTERNAL_ID,
+      });
     } catch (error) {
       setSaveStatus(SaveState.Error);
       throw Error();

@@ -1,4 +1,5 @@
 /* eslint-disable no-restricted-syntax */
+import { v5 as uuidv5 } from 'uuid';
 import uniqBy from 'lodash/uniqBy';
 import intersection from 'lodash/intersection';
 
@@ -17,16 +18,14 @@ import {
 
 import { isFileConnection, isLineConnection, isEquipment } from './type';
 
-export const getDiagramInstanceId = (
-  diagramInstance: DiagramInstanceWithPaths
-): DiagramInstanceId => {
-  return getDiagramInstanceIdFromPathIds(diagramInstance.pathIds);
-};
-
+// Get an deterministic uuid from list of string
 export const getDiagramInstanceIdFromPathIds = (
   pathIds: string[]
 ): DiagramInstanceId => {
-  return pathIds.sort().join('-');
+  return uuidv5(
+    pathIds.sort().join('-'),
+    'ff086cf7-7214-47ef-969e-cfdc9e384dc7' // this is a random uuid
+  );
 };
 
 export function getDiagramInstanceByPathId<T extends DiagramInstanceWithPaths>(
@@ -51,16 +50,6 @@ export const isDiagramIdInList = (
   diagramInstances: DiagramInstanceWithPaths[]
 ) => {
   return diagramInstances.some((instance) => diagramId === instance.id);
-};
-
-export const getInstanceByDiagramInstanceId = (
-  diagramInstances: DiagramInstanceWithPaths[],
-  diagramInstanceId: DiagramInstanceId
-): DiagramInstanceWithPaths | undefined => {
-  return diagramInstances.find(
-    (diagramInstance) =>
-      getDiagramInstanceId(diagramInstance) === diagramInstanceId
-  );
 };
 
 export const isPathIdInInstance = (

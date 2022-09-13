@@ -6,73 +6,77 @@ import {
 } from '../../types';
 import { detectLines } from '../findLines';
 
-export const createLines = (pathIds: string[]) => {
+export const createLines = (pathIds: string[]): DiagramLineInstance[] => {
   return pathIds.map(
-    (pathId) =>
-      ({
-        type: 'Line',
-        id: getDiagramInstanceIdFromPathIds([pathId]),
-        pathIds: [pathId],
-        labelIds: [],
-        lineNumbers: [],
-        inferedLineNumbers: [],
-      } as DiagramLineInstance)
+    (pathId): DiagramLineInstance => ({
+      type: 'Line',
+      id: getDiagramInstanceIdFromPathIds([pathId]),
+      pathIds: [pathId],
+      labelIds: [],
+      lineNumbers: [],
+      inferedLineNumbers: [],
+    })
   );
 };
 
-export const createSymbols = (pathIdsList: string[][]) => {
+export const createSymbols = (
+  pathIdsList: string[][]
+): DiagramSymbolInstance[] => {
   return pathIdsList.map(
-    (pathIds) =>
-      ({
-        type: 'Instrument',
-        symbolId: 'symbolId',
-        id: getDiagramInstanceIdFromPathIds(pathIds),
-        scale: 1,
-        rotation: 0,
-        pathIds,
-        labelIds: [],
-        lineNumbers: [],
-        inferedLineNumbers: [],
-      } as DiagramSymbolInstance)
+    (pathIds): DiagramSymbolInstance => ({
+      type: 'Instrument',
+      symbolId: 'symbolId',
+      id: getDiagramInstanceIdFromPathIds(pathIds),
+      scale: 1,
+      rotation: 0,
+      pathIds,
+      labelIds: [],
+      lineNumbers: [],
+      inferedLineNumbers: [],
+    })
   );
 };
 
 describe('findLines', () => {
   test('simple symbol line square all connected', () => {
+    const symbolInstances = createSymbols([['path1'], ['path3']]);
     const lineInstances: DiagramLineInstance[] = [];
-    const symbolInstances = createSymbols([['path001'], ['path003']]);
+    const potentialLines = createLines(['path2']);
 
-    const potentialLineInstanceList = createLines(['path002']);
-
+    const [path1, path3] = symbolInstances;
+    const [path2] = potentialLines;
     const connections: DiagramConnection[] = [
-      { start: 'path001', end: 'path002', direction: 'unknown' },
-      { start: 'path002', end: 'path003', direction: 'unknown' },
+      { start: path1.id, end: path2.id, direction: 'unknown' },
+      { start: path2.id, end: path3.id, direction: 'unknown' },
     ];
 
     const lines = detectLines(
-      potentialLineInstanceList,
+      potentialLines,
       connections,
       lineInstances,
       symbolInstances
     );
 
     expect(lines.length).toBe(1);
-    expect(lines[0].pathIds[0]).toBe('path002');
+    expect(lines[0].pathIds[0]).toBe(path2.pathIds[0]);
   });
 
   test('simple line symbol line', () => {
-    const lineInstances: DiagramLineInstance[] = createLines(['path002']);
-    const symbolInstances = createSymbols([['path001']]);
+    const symbolInstances = createSymbols([['path1']]);
+    const lineInstances: DiagramLineInstance[] = createLines(['path2']);
+    const potentialLines = createLines(['path3']);
 
-    const potentialLineInstanceList = createLines(['path003']);
+    const [path1] = symbolInstances;
+    const [path2] = lineInstances;
+    const [path3] = potentialLines;
 
     const connections: DiagramConnection[] = [
-      { start: 'path001', end: 'path002', direction: 'unknown' },
-      { start: 'path001', end: 'path003', direction: 'unknown' },
+      { start: path1.id, end: path2.id, direction: 'unknown' },
+      { start: path1.id, end: path3.id, direction: 'unknown' },
     ];
 
     const lines = detectLines(
-      potentialLineInstanceList,
+      potentialLines,
       connections,
       lineInstances,
       symbolInstances
@@ -82,24 +86,28 @@ describe('findLines', () => {
   });
 
   test('simple loop', () => {
-    const lineInstances: DiagramLineInstance[] = createLines(['path002']);
-    const symbolInstances = createSymbols([['path001']]);
+    const symbolInstances = createSymbols([['path1']]);
+    const lineInstances: DiagramLineInstance[] = createLines(['path2']);
+    const potentialLines = createLines(['path3', 'path4']);
 
-    const potentialLineInstanceList = createLines(['path003', 'path004']);
+    const [path1] = symbolInstances;
+    const [path2] = lineInstances;
+    const [path3, path4] = potentialLines;
 
     const connections: DiagramConnection[] = [
-      { start: 'path001', end: 'path002', direction: 'unknown' },
-      { start: 'path002', end: 'path003', direction: 'unknown' },
-      { start: 'path003', end: 'path004', direction: 'unknown' },
-      { start: 'path004', end: 'path001', direction: 'unknown' },
+      { start: path1.id, end: path2.id, direction: 'unknown' },
+      { start: path2.id, end: path3.id, direction: 'unknown' },
+      { start: path3.id, end: path4.id, direction: 'unknown' },
+      { start: path4.id, end: path1.id, direction: 'unknown' },
     ];
 
     const lines = detectLines(
-      potentialLineInstanceList,
+      potentialLines,
       connections,
       lineInstances,
       symbolInstances
     );
+
     expect(lines.length).toBe(2);
   });
 });

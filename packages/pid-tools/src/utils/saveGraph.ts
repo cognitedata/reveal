@@ -9,8 +9,6 @@ import {
   DiagramTagOutputFormat,
 } from '../types';
 
-import { getDiagramInstanceId } from './diagramInstanceUtils';
-
 export const getDiagramLineInstancesOutputFormat = (
   pidDocument: PidDocument,
   diagramInstances: DiagramLineInstance[]
@@ -22,7 +20,7 @@ export const getDiagramLineInstancesOutputFormat = (
 
     return <DiagramLineInstanceOutputFormat>{
       ...diagramInstance,
-      id: getDiagramInstanceId(diagramInstance),
+      id: diagramInstance.id,
       svgRepresentation: pidDocument.createSvgRepresentation(
         diagramInstance.pathIds,
         true,
@@ -44,7 +42,7 @@ export const getDiagramSymbolInstancesOutputFormat = (
 
     return <DiagramSymbolInstanceOutputFormat>{
       ...diagramInstance,
-      id: getDiagramInstanceId(diagramInstance),
+      id: diagramInstance.id,
       svgRepresentation: pidDocument.createSvgRepresentation(
         diagramInstance.pathIds,
         true,

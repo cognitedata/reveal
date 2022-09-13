@@ -1,10 +1,15 @@
 import { FileInfo } from '@cognite/sdk';
 
+// DMS
+export const DMS_SPACE_EXTERNAL_ID = 'matchmakers-test-13-engineering-diagrams';
+
+// SVG
 export const SVG_ID = 'svg-id';
 export const PATH_REPLACEMENT_GROUP = 'path-replacement-group';
 export const T_JUNCTION = 'tjunction';
 export const BACKGROUND_OVERLAY_GROUP = 'background-overlay-group';
 
+// Auto analysis
 const TYPICAL_DOCUMENT_WIDTH = 1632;
 export const AUTO_ANALYSIS_THRESHOLD = {
   SYMBOL_TO_SYMBOL: 3 / TYPICAL_DOCUMENT_WIDTH,

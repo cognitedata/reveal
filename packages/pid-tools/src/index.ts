@@ -9,3 +9,4 @@ export * from './linewalk-parser';
 export * from './cognite-pid';
 export * from './graph';
 export * from './utils/type';
+export * from './dms';

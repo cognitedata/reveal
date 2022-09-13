@@ -1,5 +1,3 @@
-import { createHash } from 'crypto';
-
 import {
   bothSymbolTypes,
   DiagramLineInstanceOutputFormat,
@@ -180,13 +178,15 @@ function svgRepresentationToCommandsAndStyles(
   return { svgPathCommands, svgPathStyles };
 }
 
-/** Create a deterministic sha1 hash from an object. This is used to create
- * unique but deterministic externalIDs for Nodes and Edges
- */
-function externalIdFromObjectHash(obj: any): string {
-  const hash = createHash('sha1').update(JSON.stringify(obj)).digest('hex');
-  return hash;
-}
+const createExternalId = ({
+  fileId,
+  filePage,
+  id,
+}: {
+  fileId: number;
+  filePage: number;
+  id: string;
+}): string => `${fileId}-${filePage}-${id}`;
 
 // --- Symbol Template ---
 export interface SymbolTemplateNode extends Omit<DiagramNode, 'modelName'> {
@@ -309,9 +309,9 @@ export function graphDocumentToNodesAndEdges(options: {
   const viewboxNode = ViewboxNodeAdapter.fromRect(
     options.graphDocument.viewBox,
     {
-      externalId: `viewbox_${externalIdFromObjectHash({
-        ...options.graphDocument.viewBox,
+      externalId: `viewbox_${createExternalId({
         ...filePageInfo,
+        id: 'viewbox',
       })}`,
       ...filePageInfo,
     }
@@ -328,9 +328,9 @@ export function graphDocumentToNodesAndEdges(options: {
   const fileConnectionNodes: FileConnectionNode[] = [];
   options.graphDocument.symbolInstances.forEach((diagramSymbolInstance) => {
     // Construct externalId
-    const externalIdHash = `${externalIdFromObjectHash({
-      ...diagramSymbolInstance,
+    const externalIdHash = `${createExternalId({
       ...filePageInfo,
+      id: `symbolInstance_${diagramSymbolInstance.id}`,
     })}`;
     // Deal with potential duplicate instances
     if (instanceDeduplicator.has(externalIdHash)) {
@@ -403,9 +403,9 @@ export function graphDocumentToNodesAndEdges(options: {
   const lineNodes: LineNode[] = [];
   options.graphDocument.lines.forEach((diagramLineInstance) => {
     // Construct externalId
-    const externalIdHash = `${externalIdFromObjectHash({
-      ...diagramLineInstance,
+    const externalIdHash = `${createExternalId({
       ...filePageInfo,
+      id: `line_${diagramLineInstance.id}`,
     })}`;
     // Deal with potential duplicate instances
     if (instanceDeduplicator.has(externalIdHash)) {
@@ -445,9 +445,9 @@ export function graphDocumentToNodesAndEdges(options: {
     }
     const [startModel, startNode] = startInfo;
     const [endModel, endNode] = endInfo;
-    const externalIdHash = `${externalIdFromObjectHash({
-      ...diagramConnection,
+    const externalIdHash = `${createExternalId({
       ...filePageInfo,
+      id: `connection_${diagramConnection.start}_${diagramConnection.end}`,
     })}`;
 
     instanceEdges.push({

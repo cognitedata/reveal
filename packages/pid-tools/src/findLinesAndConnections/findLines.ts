@@ -1,11 +1,9 @@
 import {
   DiagramConnection,
   DiagramLineInstance,
-  DiagramInstanceWithPaths,
   DiagramInstanceId,
   DiagramSymbolInstance,
 } from '../types';
-import { getDiagramInstanceIdFromPathIds, isDiagramIdInList } from '../utils';
 
 const getConnectedByInstanceId = (
   instanceId: DiagramInstanceId,
@@ -17,117 +15,102 @@ const getConnectedByInstanceId = (
 };
 
 export const detectLines = (
-  potentialLineInstanceList: DiagramLineInstance[],
+  potentialLines: DiagramLineInstance[],
   connections: DiagramConnection[],
-  lineInstances: DiagramLineInstance[],
+  lines: DiagramLineInstance[],
   symbolInstances: DiagramSymbolInstance[]
 ) => {
-  const newLines: DiagramLineInstance[] = [];
-
-  const potLineSegmentsWithConnections = potentialLineInstanceList.filter(
-    (line) =>
-      connections.some(
-        (connection) =>
-          line.id === connection.end || line.id === connection.start
-      )
+  const potentialLinesWithConnection = potentialLines.filter((line) =>
+    connections.some(
+      (connection) => line.id === connection.end || line.id === connection.start
+    )
   );
 
-  potLineSegmentsWithConnections.forEach((newPotLine) => {
-    const { connectionCount, visitedLines } =
-      dfsCountConnectionsToSymbolsOrLines(
-        [...lineInstances, ...newLines],
-        symbolInstances,
-        connections,
-        newPotLine
-      );
-
-    if (connectionCount >= 2) {
-      const deduplicatedVisitedLines = [
-        ...visitedLines,
-        newPotLine.pathIds[0],
-      ].filter(
-        (visitedLine) =>
-          !newLines.some((line) => line.pathIds[0] === visitedLine)
-      );
-      newLines.push(
-        ...deduplicatedVisitedLines.map(
-          (newLine) =>
-            ({
-              type: 'Line',
-              id: getDiagramInstanceIdFromPathIds([newLine]),
-              pathIds: [newLine],
-              labelIds: [],
-              lineNumbers: [],
-              inferedLineNumbers: [],
-            } as DiagramLineInstance)
-        )
-      );
-    }
+  const knownInstanceIds = new Set<DiagramInstanceId>();
+  [...symbolInstances, ...lines].forEach((instance) => {
+    knownInstanceIds.add(instance.id);
   });
 
+  // eslint-disable-next-line no-restricted-syntax
+  for (const potentialLine of potentialLinesWithConnection) {
+    if (
+      hasMoreThanOneNonOverlappingPathToKnownInstances(
+        potentialLine.id,
+        knownInstanceIds,
+        connections
+      )
+    ) {
+      knownInstanceIds.add(potentialLine.id);
+    }
+  }
+
+  const newLines = potentialLinesWithConnection.filter((potentialLine) =>
+    knownInstanceIds.has(potentialLine.id)
+  );
   return newLines;
 };
 
-const dfsCountConnectionsToSymbolsOrLines = (
-  lineInstances: DiagramLineInstance[],
-  symbolInstances: DiagramSymbolInstance[],
-  connections: DiagramConnection[],
-  potentialLine: DiagramLineInstance
+const hasMoreThanOneNonOverlappingPathToKnownInstances = (
+  potentialInstance: DiagramInstanceId,
+  knownInstances: Set<DiagramInstanceId>,
+  connections: DiagramConnection[]
 ) => {
-  const instanceId = potentialLine.id;
+  const visited = new Set<DiagramInstanceId>();
+  visited.add(potentialInstance);
 
-  const visited = [instanceId];
-  const newLinesFound: string[] = [];
+  let numNonOverlappingPaths = 0;
 
-  let matchCount = 0;
-  const connectedInstances = getConnectedByInstanceId(instanceId, connections);
-  const knownInstances = [...lineInstances, ...symbolInstances];
-
-  connectedInstances.forEach((diagramInstanceId) => {
-    const newLinesVisited = findLinesInBetweenKnownInstances(
-      diagramInstanceId,
+  const neighbours = getConnectedByInstanceId(potentialInstance, connections);
+  // eslint-disable-next-line no-restricted-syntax
+  for (const neighbour of neighbours) {
+    const isUniquePath = hasNonOverlappingPathToKnownInstances(
+      neighbour,
       knownInstances,
       connections,
       visited
     );
 
-    if (newLinesVisited !== null) {
-      newLinesFound.push(...newLinesVisited);
-      matchCount += 1;
+    if (isUniquePath) {
+      numNonOverlappingPaths += 1;
+      if (numNonOverlappingPaths > 1) {
+        return true;
+      }
     }
-  });
+  }
 
-  return { connectionCount: matchCount, visitedLines: newLinesFound };
+  return false;
 };
 
-const findLinesInBetweenKnownInstances = (
+const hasNonOverlappingPathToKnownInstances = (
   instanceId: DiagramInstanceId,
-  knownInstances: DiagramInstanceWithPaths[],
+  knownInstances: Set<DiagramInstanceId>,
   connections: DiagramConnection[],
-  visited: DiagramInstanceId[]
-): DiagramInstanceId[] | null => {
-  if (visited.includes(instanceId)) {
-    return null;
+  visited: Set<DiagramInstanceId>
+): boolean => {
+  if (visited.has(instanceId)) {
+    return false;
   }
-  visited.push(instanceId);
+  visited.add(instanceId);
 
-  if (isDiagramIdInList(instanceId, knownInstances)) {
-    return [];
+  if (knownInstances.has(instanceId)) {
+    return true;
   }
+
   const connectedInstances = getConnectedByInstanceId(instanceId, connections);
 
-  for (let i = 0; i < connectedInstances.length; i++) {
-    const newLines = findLinesInBetweenKnownInstances(
-      connectedInstances[i],
+  // eslint-disable-next-line no-restricted-syntax
+  for (const connectedInstance of connectedInstances) {
+    const isUniquePathFromNeighbour = hasNonOverlappingPathToKnownInstances(
+      connectedInstance,
       knownInstances,
       connections,
       visited
     );
 
-    if (newLines !== null) {
-      newLines.push(instanceId);
-      return newLines;
+    if (isUniquePathFromNeighbour) {
+      return true;
     }
   }
-  return null;
+
+  return false;
 };

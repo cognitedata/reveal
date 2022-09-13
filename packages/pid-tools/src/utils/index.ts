@@ -15,3 +15,4 @@ export { default as getUnitAndLineNumberString } from './getUnitAndLineNumberStr
 export { default as setSelectablilityOfAllText } from './setSelectablilityOfAllText';
 export { default as assertNever } from './assertNever';
 export { default as mapAsyncEveryMs } from './mapAsyncEveryMs';
+export { default as findUniqueFileByName } from './findUniqueFileByName';

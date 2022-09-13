@@ -5,7 +5,6 @@ import { COLORS } from '../constants';
 import {
   DiagramInstanceId,
   DiagramLineInstance,
-  getDiagramInstanceId,
   PidDocument,
   DiagramConnection,
   Point,
@@ -345,27 +344,6 @@ const applyPointerCursorStyleToNode = ({
   }
 };
 
-export const colorSymbol = (
-  diagramInstanceId: DiagramInstanceId,
-  strokeColor: string,
-  diagramInstances: DiagramInstanceWithPaths[],
-  mainSvg: SVGSVGElement,
-  additionalStyles?: { [key: string]: string }
-) => {
-  const symbolInstance = diagramInstances.filter(
-    (instance) => getDiagramInstanceId(instance) === diagramInstanceId
-  )[0] as DiagramInstanceWithPaths;
-
-  if (symbolInstance) {
-    symbolInstance.pathIds.forEach((pathId) => {
-      Object.assign((mainSvg.getElementById(pathId) as SVGElement).style, {
-        ...additionalStyles,
-        stroke: strokeColor,
-      });
-    });
-  }
-};
-
 export const scaleStrokeWidth = (scale: number, strokeWidth: string): string =>
   `${scale * parseFloat(strokeWidth)}`;
 
@@ -566,7 +544,7 @@ export const visualizeLabelsToInstances = (
           const svgPath = getSvgPath({
             startPoint: instanceMidPoint,
             endPoint: labelPoint,
-            id: `labelConnection-${labelId}-${getDiagramInstanceId(instance)}`,
+            id: `labelConnection-${labelId}-${instance.id}`,
             color: COLORS.connection.color,
             strokeWidth: COLORS.connection.strokeWidth / 2,
             opacity: COLORS.connection.opacity,
