@@ -4,14 +4,18 @@ import {
   clearExplorerUploadedFileIds,
   setExplorerFileUploadModalVisibility,
 } from 'src/modules/Explorer/store/slice';
-import React from 'react';
+import React, { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
 import { useHistory } from 'react-router-dom';
 import { PopulateProcessFiles } from 'src/store/thunks/Process/PopulateProcessFiles';
 import { getLink, workflowRoutes } from 'src/utils/workflowRoutes';
 
-export const ExplorerFileUploadModalContainer = () => {
+export const ExplorerFileUploadModalContainer = ({
+  refetch,
+}: {
+  refetch: () => void;
+}) => {
   const dispatch = useDispatch();
   const history = useHistory();
 
@@ -23,23 +27,34 @@ export const ExplorerFileUploadModalContainer = () => {
     ({ explorerReducer }: RootState) => explorerReducer.uploadedFileIds
   );
 
-  const onUploadSuccess = (fileId: number) => {
+  const onUploadSuccess = useCallback((fileId: number) => {
     dispatch(addExplorerUploadedFileId(fileId));
-  };
+  }, []);
 
-  const onFinishUploadAndProcess = () => {
-    dispatch(PopulateProcessFiles(uploadedFileIds));
+  const onCancel = useCallback(() => {
     dispatch(clearExplorerUploadedFileIds());
-    history.push(getLink(workflowRoutes.process));
-  };
+    dispatch(setExplorerFileUploadModalVisibility(false));
+  }, []);
+
+  const onFinishUpload = useCallback(
+    (processAfter: boolean) => {
+      if (processAfter) {
+        dispatch(PopulateProcessFiles(uploadedFileIds));
+        history.push(getLink(workflowRoutes.process));
+      }
+      onCancel();
+      refetch();
+    },
+    [history, uploadedFileIds, onCancel, refetch]
+  );
 
   return (
     <FileUploadModal
       enableProcessAfter
       onUploadSuccess={onUploadSuccess}
-      onFinishUploadAndProcess={onFinishUploadAndProcess}
+      onFinishUpload={onFinishUpload}
       showModal={showFileUploadModal}
-      onCancel={() => dispatch(setExplorerFileUploadModalVisibility(false))}
+      onCancel={onCancel}
     />
   );
 };

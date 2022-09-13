@@ -1,5 +1,5 @@
 import { FileUploadModalProps } from 'src/modules/Common/Components/FileUploaderModal/FileUploaderModal';
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 
 let mockFileId = 0;
 // allows the test to set uploaded file id
@@ -14,34 +14,30 @@ export const FileUploadModal = ({
   showModal,
   onUploadSuccess,
   onCancel,
-  onFinishUploadAndProcess,
+  onFinishUpload,
 }: FileUploadModalProps) => {
   const fileId = getMockFileId();
   const [uploaded, setUploaded] = useState(false);
 
-  const onUpload = () => {
+  const onUpload = useCallback(() => {
     if (onUploadSuccess) {
       setMockFileId(fileId + 1);
       onUploadSuccess(fileId + 1);
       setUploaded(true);
     }
-  };
+  }, [onUploadSuccess, fileId]);
 
-  const onFinishUpload = () => {
+  const onFinish = useCallback(() => {
     setUploaded(false);
-    if (onFinishUploadAndProcess) {
-      onFinishUploadAndProcess();
+    if (onFinishUpload) {
+      onFinishUpload(false);
     }
-  };
+  }, [onFinishUpload]);
   if (showModal) {
     if (uploaded) {
       return (
         <div>
-          <button
-            type="submit"
-            onClick={onFinishUpload}
-            data-testid="finish-upload"
-          >
+          <button type="submit" onClick={onFinish} data-testid="finish-upload">
             Finish Uploading
           </button>
         </div>

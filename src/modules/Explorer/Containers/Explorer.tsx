@@ -52,7 +52,7 @@ const Explorer = () => {
   const queryClient = new QueryClient();
 
   const [reFetchProp, setReFetchProp] = useState(false);
-  const reFetch = () => setReFetchProp((i) => !i);
+  const reFetch = useCallback(() => setReFetchProp((i) => !i), []);
 
   const showFilter = useSelector(
     ({ explorerReducer }: RootState) => explorerReducer.showFilter
@@ -139,7 +139,7 @@ const Explorer = () => {
     <VerticalContainer>
       <StatusToolBar current="Vision Explore" />
       <Deselect />
-      <ExplorerFileUploadModalContainer />
+      <ExplorerFileUploadModalContainer refetch={reFetch} />
       <ExplorerFileDownloadModalContainer />
       <Wrapper>
         <QueryClientProvider client={queryClient}>
