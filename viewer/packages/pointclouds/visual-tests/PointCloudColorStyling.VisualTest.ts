@@ -11,13 +11,16 @@ import { annotationsToObjectInfo } from '../src/styling/annotationsToObjects';
 import { IAnnotationProvider } from '../src/styling/IAnnotationProvider';
 import { ShapeType } from '../src/styling/shapes/IShape';
 import { PointCloudObjectAnnotationData } from '../src/styling/PointCloudObjectAnnotationData';
-import { ModelIdentifier } from '@reveal/modeldata-api';
 import { PointCloudNode } from '../src/PointCloudNode';
-import assert from 'assert';
 import { AnnotationIdPointCloudObjectCollection } from '../src/styling/AnnotationListPointCloudObjectCollection';
 import { StyledPointCloudObjectCollection } from '../src/styling/StyledPointCloudObjectCollection';
-
 import { PotreePointColorType } from '../src/potree-three-loader';
+
+import { ModelIdentifier } from '@reveal/modeldata-api';
+
+import assert from 'assert';
+import * as THREE from 'three';
+import { applyDefaultsToPointCloudAppearance } from '../src/styling/PointCloudAppearance';
 
 class CustomAnnotationProvider implements IAnnotationProvider {
 
@@ -55,10 +58,10 @@ export default class PointCloudColorStylingVisualTest extends StreamingVisualTes
     const objectCollection = new AnnotationIdPointCloudObjectCollection(stylableObjectIds);
     const appearance = { color: [0, 255, 0] as [number, number, number], visible: true };
 
+    model.geometryNode.pointSize = 5;
     model.geometryNode.assignStyledPointCloudObjectCollection(
       new StyledPointCloudObjectCollection(objectCollection, appearance));
-
-    model.geometryNode.pointColorType = PotreePointColorType.Height;
+    model.geometryNode.defaultAppearance = applyDefaultsToPointCloudAppearance({ visible: false });
 
     return Promise.resolve();
   }
