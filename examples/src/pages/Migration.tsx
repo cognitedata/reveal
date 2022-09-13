@@ -88,7 +88,6 @@ export function Migration() {
 
       let viewerOptions: Cognite3DViewerOptions = {
         sdk: client,
-        rendererResolutionThreshold: Infinity,
         domElement: canvasWrapperRef.current!,
         onLoading: progress,
         logMetrics: false,

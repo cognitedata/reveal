@@ -1179,7 +1179,11 @@ export class Cognite3DViewer {
     return intersections.length > 0 ? intersections[0] : null;
   }
 
-  /** @private */
+  /**
+   * Callback used by DefaultCameraManager to do model intersection. Made synchronous to avoid
+   * input lag when zooming in and out. Default implementation is async. See PR #2405 for more info.
+   * @private
+   */
   private async modelIntersectionCallback(offsetX: number, offsetY: number) {
     const intersection = await this.intersectModels(offsetX, offsetY, { asyncCADIntersection: false });
 

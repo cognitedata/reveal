@@ -43,14 +43,14 @@ export class DefaultCameraManager implements CameraManager {
   private _onClick: ((event: MouseEvent) => void) | undefined = undefined;
   private _onWheel: ((event: WheelEvent) => void) | undefined = undefined;
 
-  private static readonly DefaultAnimationDuration = 300;
-  private static readonly DefaultMinAnimationDuration = 300;
-  private static readonly DefaultMaxAnimationDuration = 1250;
-  private static readonly DefaultMinDistance = 0.8;
-  private static readonly DefaultMinZoomDistance = 0.4;
-  private static readonly DefaultMinimalTimeBetweenRaycasts = 120;
-  private static readonly DefaultMaximumTimeBetweenRaycasts = 200;
-  private static readonly DefaultMouseDistanceThresholdBetweenRaycasts = 5;
+  private static readonly AnimationDuration = 300;
+  private static readonly MinAnimationDuration = 300;
+  private static readonly MaxAnimationDuration = 1250;
+  private static readonly MinDistance = 0.8;
+  private static readonly MinZoomDistance = 0.4;
+  private static readonly MinimalTimeBetweenRaycasts = 120;
+  private static readonly MaximumTimeBetweenRaycasts = 200;
+  private static readonly MouseDistanceThresholdBetweenRaycasts = 5;
   private static readonly DefaultCameraControlsOptions: Required<CameraControlsOptions> = {
     mouseWheelAction: 'zoomPastCursor',
     changeCameraTargetOnClick: false
@@ -101,7 +101,7 @@ export class DefaultCameraManager implements CameraManager {
 
     this.setCameraControlsOptions(this._cameraControlsOptions);
     this._controls = new ComboControls(this._camera, domElement);
-    this._controls.minZoomDistance = DefaultCameraManager.DefaultMinZoomDistance;
+    this._controls.minZoomDistance = DefaultCameraManager.MinZoomDistance;
 
     this._controls.addEventListener('cameraChange', event => {
       const { position, target } = event.camera;
@@ -412,7 +412,7 @@ export class DefaultCameraManager implements CameraManager {
       // but no more than a fraction of the bounding box of the system if inside
       this._controls.minDistance = Math.min(
         Math.max(diagonal * 0.02, 0.1 * camera.near),
-        DefaultCameraManager.DefaultMinDistance
+        DefaultCameraManager.MinDistance
       );
     }
   }
@@ -553,7 +553,7 @@ export class DefaultCameraManager implements CameraManager {
     const onClick = async (e: PointerEventData) => {
       this._controls.enableKeyboardNavigation = false;
       const newTarget = await this.calculateNewTarget(e);
-      this.moveCameraTargetTo(newTarget, DefaultCameraManager.DefaultAnimationDuration);
+      this.moveCameraTargetTo(newTarget, DefaultCameraManager.AnimationDuration);
     };
 
     const onWheel = async (e: WheelEvent) => {
@@ -567,14 +567,14 @@ export class DefaultCameraManager implements CameraManager {
       const onWheelTimeDelta = currentTime - lastWheelEventTime;
 
       const mouseDelta = currentMousePosition.distanceTo(lastMousePosition);
-      const timeSinceLastPickingTookTooLong = onWheelTimeDelta > DefaultCameraManager.DefaultMaximumTimeBetweenRaycasts;
+      const timeSinceLastPickingTookTooLong = onWheelTimeDelta > DefaultCameraManager.MaximumTimeBetweenRaycasts;
 
-      if (onWheelTimeDelta > DefaultCameraManager.DefaultMinimalTimeBetweenRaycasts) scrollStarted = false;
+      if (onWheelTimeDelta > DefaultCameraManager.MinimalTimeBetweenRaycasts) scrollStarted = false;
 
       if (
         !wasLastScrollZoomOut &&
         timeSinceLastPickingTookTooLong &&
-        mouseDelta < DefaultCameraManager.DefaultMouseDistanceThresholdBetweenRaycasts
+        mouseDelta < DefaultCameraManager.MouseDistanceThresholdBetweenRaycasts
       )
         scrollStarted = true;
 
@@ -629,8 +629,8 @@ export class DefaultCameraManager implements CameraManager {
   private calculateDefaultDuration(distanceToCamera: number): number {
     let duration = distanceToCamera * 125; // 125ms per unit distance
     duration = Math.min(
-      Math.max(duration, DefaultCameraManager.DefaultMinAnimationDuration),
-      DefaultCameraManager.DefaultMaxAnimationDuration
+      Math.max(duration, DefaultCameraManager.MinAnimationDuration),
+      DefaultCameraManager.MaxAnimationDuration
     );
 
     return duration;
