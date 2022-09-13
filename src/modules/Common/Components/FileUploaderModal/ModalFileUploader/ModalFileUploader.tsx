@@ -76,7 +76,7 @@ export type ModalFileUploaderProps = {
   onUploadFailure?: (error: string) => void;
   onCancel?: () => void;
   beforeUploadStart?: (fileList: CogsFileInfo[]) => void;
-  onFinishUploadAndProcess: () => void;
+  onFinishUpload: (processAfter: boolean) => void;
 };
 
 // vaguely described from console output
@@ -166,7 +166,7 @@ export const ModalFileUploader = ({
   onCancel = () => {},
   beforeUploadStart = () => {},
   onFileListChange = () => {},
-  onFinishUploadAndProcess,
+  onFinishUpload,
   ...props
 }: ModalFileUploaderProps) => {
   const sdk = useSDK();
@@ -441,16 +441,14 @@ export const ModalFileUploader = ({
     setFileList((list) => list.filter((el) => el.uid !== file.uid));
   };
 
-  const onCloseModal = () => {
+  const onCancelModal = () => {
     removeFiles();
     onCancel();
   };
 
   const onFinish = () => {
-    onCloseModal();
-    if (processAfter || !enableProcessAfter) {
-      onFinishUploadAndProcess();
-    }
+    removeFiles();
+    onFinishUpload(processAfter);
   };
 
   const [UploadButton, CancelButton, RemoveAllButton] = getUploadControls(
@@ -458,7 +456,7 @@ export const ModalFileUploader = ({
     startUpload,
     stopUpload,
     removeFiles,
-    onCloseModal,
+    onCancelModal,
     onFinish
   );
   return (

@@ -8,7 +8,7 @@ export const getUploadControls = (
   onUploadStart: () => unknown,
   onUploadStop: () => unknown,
   onRemoveFiles: () => unknown,
-  onCloseModal: () => unknown,
+  onCancelModal: () => unknown,
   onFinish: () => unknown
 ) => {
   let UploadButton;
@@ -23,7 +23,7 @@ export const getUploadControls = (
         </Button>
       );
       CancelButton = (
-        <Button type="secondary" onClick={onCloseModal}>
+        <Button type="secondary" onClick={onCancelModal}>
           Cancel
         </Button>
       );
@@ -40,7 +40,7 @@ export const getUploadControls = (
         </Button>
       );
       CancelButton = (
-        <Button type="secondary" onClick={onCloseModal}>
+        <Button type="secondary" onClick={onCancelModal}>
           Cancel
         </Button>
       );
