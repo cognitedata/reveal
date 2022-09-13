@@ -17,7 +17,7 @@ in float a_horizontalRadius;
 in float a_verticalRadius;
 in float a_height;
 
-flat out float v_treeIndex;
+out float v_treeIndex;
 // We pack vRadius as w-component of center
 out vec4 center;
 out float hRadius;

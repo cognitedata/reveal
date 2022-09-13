@@ -13,7 +13,7 @@ uniform sampler2D matCapTexture;
 uniform vec2 treeIndexTextureSize;
 uniform int renderMode;
 
-flat in float v_treeIndex;
+in float v_treeIndex;
 in vec3 v_color;
 in vec3 v_viewPosition;
 

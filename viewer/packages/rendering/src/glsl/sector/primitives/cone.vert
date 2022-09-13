@@ -25,7 +25,7 @@ in vec3 a_localXAxis;
 in float a_angle;
 in float a_arcAngle;
 
-flat out float v_treeIndex;
+out float v_treeIndex;
 // We pack the radii into w-components
 out vec4 v_centerB;
 // U, V, axis represent the 3x3 cone basis.
@@ -42,10 +42,10 @@ out vec3 v_normal;
 
 void main() {
     mat4 treeIndexWorldTransform = determineMatrixOverride(
-      a_treeIndex,
-      treeIndexTextureSize,
-      transformOverrideIndexTexture,
-      transformOverrideTextureSize,
+      a_treeIndex, 
+      treeIndexTextureSize, 
+      transformOverrideIndexTexture, 
+      transformOverrideTextureSize, 
       transformOverrideTexture
     );
 
