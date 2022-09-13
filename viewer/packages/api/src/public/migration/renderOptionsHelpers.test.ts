@@ -2,7 +2,11 @@
  * Copyright 2022 Cognite AS
  */
 import { Cognite3DViewerOptions } from './types';
-import { determineAntiAliasingMode, determineSsaoRenderParameters } from './renderOptionsHelpers';
+import {
+  determineAntiAliasingMode,
+  determineResolutionCap,
+  determineSsaoRenderParameters
+} from './renderOptionsHelpers';
 import { PropType } from '../../utilities/reflection';
 import { DeviceDescriptor } from '@reveal/utilities';
 import { AntiAliasingMode } from '@reveal/rendering';
@@ -65,5 +69,31 @@ describe(determineSsaoRenderParameters.name, () => {
   test.each(testCases)('ssao params %p on device %p, returns %p', (modeHint, device, expectedResult) => {
     const result = determineSsaoRenderParameters(modeHint, device);
     expect(result).toEqual(expectedResult);
+  });
+
+  test.each([mobileDevice, tabletDevice, desktopDevice])('default resolution cap on device %p', deviceDescriptor => {
+    const mockDPR = 2;
+    const defaultResolutionThreshold = 1.4e6;
+    const resolutionCap = determineResolutionCap(undefined, deviceDescriptor, mockDPR);
+
+    expect(resolutionCap).toEqual(
+      deviceDescriptor.deviceType !== 'desktop' ? defaultResolutionThreshold / mockDPR : defaultResolutionThreshold
+    );
+  });
+});
+
+describe(determineResolutionCap.name, () => {
+  const mobileDevice: DeviceDescriptor = { deviceType: 'mobile' };
+  const tabletDevice: DeviceDescriptor = { deviceType: 'tablet' };
+  const desktopDevice: DeviceDescriptor = { deviceType: 'desktop' };
+
+  test.each([mobileDevice, tabletDevice, desktopDevice])('default resolution cap on device %p', deviceDescriptor => {
+    const mockDPR = 2;
+    const defaultResolutionThreshold = 1.4e6;
+    const resolutionCap = determineResolutionCap(undefined, deviceDescriptor, mockDPR);
+
+    expect(resolutionCap).toEqual(
+      deviceDescriptor.deviceType !== 'desktop' ? defaultResolutionThreshold / mockDPR : defaultResolutionThreshold
+    );
   });
 });
