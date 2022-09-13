@@ -29,11 +29,14 @@ export const renderWithRouter = (
   ui: React.ReactNode,
   { route = EXTRACTION_PIPELINES_PATH, ...renderOptions }
 ) => {
+  const client = new QueryClient({});
   const history = createMemoryHistory();
   history.push(route);
   return render(
     <Router history={history}>
-      <>{ui}</>
+      <QueryClientProvider client={client}>
+        <>{ui}</>
+      </QueryClientProvider>
     </Router>,
     renderOptions
   );
@@ -75,6 +78,11 @@ export const renderWithReactQueryCacheProvider = (
     );
   };
   return wrapper;
+};
+
+export const renderWithReactQueryCacheProvider2 = (ui: React.ReactNode) => {
+  const client = new QueryClient({});
+  return <QueryClientProvider client={client}>{ui}</QueryClientProvider>;
 };
 
 export const renderQueryCacheExtpipe = (

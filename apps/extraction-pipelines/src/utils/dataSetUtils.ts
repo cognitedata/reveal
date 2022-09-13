@@ -14,22 +14,6 @@ export const mapUniqueDataSetIds = (extpipes?: Extpipe[]) => {
     : [];
 };
 
-export const mapDataSetToExtpipe = (
-  extpipes?: Extpipe[],
-  dataSets?: DataSetModel[]
-) => {
-  return extpipes
-    ? extpipes.map((extpipe) => {
-        const dataSetMatch = dataSets?.filter((data: DataSetModel) => {
-          return data.id === extpipe.dataSetId;
-        });
-        return {
-          ...extpipe,
-          dataSet: dataSetMatch ? dataSetMatch[0] : undefined,
-        };
-      })
-    : [];
-};
 export const parseDataSetMeta = (metadata: object): DataSetMetadata => {
   return Object.entries(metadata).reduce((acc, [k, v]) => {
     try {

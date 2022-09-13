@@ -30,17 +30,6 @@ export const getExtpipeById = async (
   return extpipe;
 };
 
-export const getExtpipeByExternalId = async (
-  sdk: CogniteClient,
-  externalId: string
-): Promise<Extpipe> => {
-  const extPipe = await post<
-    { items: Extpipe[] },
-    { items: { externalId: string }[] }
-  >(sdk, `/byids`, { items: [{ externalId }] }).then((r) => r.data.items[0]);
-  return extPipe;
-};
-
 export const getExtpipeConfigRevisions = async (
   sdk: CogniteClient,
   externalId: string,

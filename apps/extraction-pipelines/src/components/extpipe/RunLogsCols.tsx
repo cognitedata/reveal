@@ -49,7 +49,6 @@ export const useRunLogTableCol = (): Column<RunApi>[] => {
         },
         disableFilters: true,
       },
-      // TODO
       {
         Header: t('column-header-config'),
         accessor: 'externalId',

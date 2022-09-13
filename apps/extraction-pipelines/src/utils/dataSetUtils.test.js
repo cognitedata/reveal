@@ -1,7 +1,6 @@
 import {
   getDataSetsLink,
   mapDataSetResponse,
-  mapDataSetToExtpipe,
   mapUniqueDataSetIds,
   parseDataSetMeta,
 } from './dataSetUtils';
@@ -29,12 +28,6 @@ describe('Data set util', () => {
       { id: 12, name: 'no dataset' },
     ]);
     expect(res.length).toEqual(3);
-  });
-
-  test('mapDataSetToExtpipe -', () => {
-    const mockRes = getMockResponse();
-    const res = mapDataSetToExtpipe(mockRes);
-    expect(res.length).toEqual(mockRes.length);
   });
 
   test('parseDataSetMeta - empty object should return empty obj', () => {
@@ -101,26 +94,6 @@ describe('Data set util', () => {
     expect(res[0].description).toEqual(mockRes[0].description);
     expect(res[0].metadata).toBeDefined();
     expect(res[0].metadata.consoleOwners).toBeDefined();
-  });
-
-  test('mapDataSetToExtpipe - maps dataset to extpipe', () => {
-    const dataSetsResponse = mockDataSetResponse();
-    const result = mapDataSetToExtpipe(getMockResponse(), dataSetsResponse);
-    expect(result.length).toEqual(getMockResponse().length);
-    result.forEach((res) => {
-      expect(res.dataSet).toBeDefined();
-      expect(res.dataSet?.id).toEqual(parseInt(res.dataSetId, 10));
-      expect(res.dataSet?.name).toBeDefined();
-    });
-  });
-
-  test('mapDataSetToExtpipe - should not fail when dataset response is empty', () => {
-    const dataSetsResponse = [];
-    const result = mapDataSetToExtpipe(getMockResponse(), dataSetsResponse);
-    expect(result.length).toEqual(getMockResponse().length);
-    result.forEach((res) => {
-      expect(res.dataSet).toBeUndefined();
-    });
   });
 
   const dataSetId = '123123123';

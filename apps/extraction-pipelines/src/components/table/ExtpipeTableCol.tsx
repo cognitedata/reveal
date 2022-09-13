@@ -70,15 +70,11 @@ export const getExtpipeTableColumns = (
     {
       id: 'status',
       Header: _t('last-run-status') || TableHeadings.LAST_RUN_STATUS,
-      // accessor: ({ lastRun }: Extpipe) => {
-      //   return lastRun?.status;
-      // },
+
       Cell: ({ row }: CellProps<Extpipe>) => {
         return <LastRunStatusMarker externalId={row.values.externalId!} />;
       },
       disableSortBy: true,
-      // Filter: StatusFilterTableDropdown,
-      // filter: 'includes',
       disableFilters: true,
     },
     {

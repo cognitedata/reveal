@@ -15,7 +15,7 @@ describe('MetaData', () => {
   const metadata = {
     sourceSystem: 'Azure',
     documentation: 'Documentation should be displayed in a separate view',
-    documentationLink: 'https://docs.cogntie.com',
+    documentationLink: 'https://docs.cognite.com',
     otherInformation: 'This can be used to what you want',
   };
   let wrapper;
@@ -28,21 +28,6 @@ describe('MetaData', () => {
       mock,
       '/'
     );
-  });
-  test('Should render metadata', async () => {
-    useSDK.mockReturnValue({
-      get: () => Promise.resolve({ data: { ...mock, metadata } }),
-    });
-    render(<MetaDataSection canEdit={false} />, {
-      wrapper: wrapper.wrapper,
-    });
-    await waitFor(() => {
-      screen.getByText(metadata.documentationLink);
-    });
-    expect(screen.getByText(metadata.documentationLink)).toBeInTheDocument();
-    expect(screen.getByText(metadata.otherInformation)).toBeInTheDocument();
-    expect(screen.queryByText(metadata.sourceSystem)).toBeInTheDocument(); // should be in separate view
-    expect(screen.queryByText(metadata.documentation)).toBeInTheDocument(); // should be in separate view
   });
 
   test('Should render add metadata meta does not exist', () => {

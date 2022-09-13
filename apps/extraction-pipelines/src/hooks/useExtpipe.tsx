@@ -3,20 +3,19 @@ import {
   UseMutationOptions,
   useQuery,
   useQueryClient,
-  UseQueryOptions,
 } from 'react-query';
 import { useSDK } from '@cognite/sdk-provider';
-import {
-  deleteExtractionPipeline,
-  getExtpipeByExternalId,
-  getExtpipeById,
-} from 'utils/ExtpipesAPI';
+import { deleteExtractionPipeline, getExtpipeById } from 'utils/ExtpipesAPI';
 import { Extpipe } from 'model/Extpipe';
 import { ErrorVariations, SDKError } from 'model/SDKErrors';
 import { RouterParams } from 'routing/RoutingConfig';
 import { useParams } from 'react-router-dom';
 
-export const useExtpipeById = (extpipeId?: number) => {
+export const useSelectedExtpipeId = () => {
+  return parseInt(useParams<RouterParams>().id, 10);
+};
+
+const useExtpipeById = (extpipeId?: number) => {
   const sdk = useSDK();
   return useQuery<Extpipe, SDKError>(
     ['extpipe', extpipeId],
@@ -28,25 +27,6 @@ export const useExtpipeById = (extpipeId?: number) => {
     }
   );
 };
-
-export const useExtpipeByExternalId = (
-  externalId: string,
-  options?: Omit<UseQueryOptions<Extpipe, SDKError>, 'queryKey' | 'queryFn'>
-) => {
-  const sdk = useSDK();
-  return useQuery<Extpipe, SDKError>(
-    ['extpipe', externalId],
-    () => {
-      return getExtpipeByExternalId(sdk, externalId);
-    },
-    options
-  );
-};
-
-export const useSelectedExtpipeId = () => {
-  return parseInt(useParams<RouterParams>().id, 10);
-};
-
 export const useSelectedExtpipe = () => {
   const id = useSelectedExtpipeId();
   return useExtpipeById(id);

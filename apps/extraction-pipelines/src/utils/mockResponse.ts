@@ -2,7 +2,6 @@
 import { Extpipe } from 'model/Extpipe';
 import { DataSetModel } from 'model/DataSetModel';
 import { RunApi } from 'model/Runs';
-import { mapDataSetToExtpipe } from 'utils/dataSetUtils';
 import moment from 'moment';
 
 export const mockDataSetResponse = (): DataSetModel[] => [
@@ -212,9 +211,6 @@ const mockResponseV2: { nextCursor: string; items: Extpipe[] } = {
 
 export const getMockResponse = (): Extpipe[] => {
   return mockResponseV2.items;
-};
-export const getMockExtpipesWithDataSets = () => {
-  return mapDataSetToExtpipe(getMockResponse(), mockDataSetResponse());
 };
 
 export const mockError = {

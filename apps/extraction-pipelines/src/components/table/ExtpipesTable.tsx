@@ -80,13 +80,11 @@ const ExtpipesTable = <T extends { id: ReactText }>({
     getTableProps,
     getTableBodyProps,
     headerGroups,
-    //    rows,
     page,
     prepareRow,
     state,
     setGlobalFilter,
     preGlobalFilteredRows,
-
     gotoPage,
     pageCount,
     setPageSize,
