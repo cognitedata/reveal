@@ -44,6 +44,7 @@ export const SubSuiteTileContainer = styled(SmallTileContainer)`
     img {
       object-fit: cover;
       max-height: 90%;
+      object-fit: scale-down;
     }
     .cogs-graphic {
       display: flex;
