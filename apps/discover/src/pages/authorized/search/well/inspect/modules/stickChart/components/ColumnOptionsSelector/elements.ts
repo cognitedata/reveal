@@ -1,6 +1,6 @@
 import styled from 'styled-components/macro';
 
-import { Flex, FlexRow, sizes } from 'styles/layout';
+import { FlexRow } from 'styles/layout';
 
 export const ColumnOptionsSelectorContainer = styled(FlexRow)`
   cursor: pointer;
@@ -9,13 +9,6 @@ export const ColumnOptionsSelectorContainer = styled(FlexRow)`
 `;
 
 export const ColumnOptionsSelectorIconWrapper = styled.span`
-  padding-top: 2px;
-  padding-left: 6px;
-`;
-
-export const SelectedOptionIconWrapper = styled(Flex)`
-  padding-left: ${sizes.normal};
-  margin-left: auto;
-  margin-right: -${sizes.small};
-  color: var(--cogs-midblue-4);
+  padding-top: 3px;
+  padding-left: 4px;
 `;

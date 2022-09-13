@@ -1,9 +1,8 @@
 import { Icon } from '@cognite/cogs.js';
 
 import { Dropdown } from 'components/Dropdown';
-import { Flex } from 'styles/layout';
 
-import { SelectedOptionIconWrapper } from './elements';
+import { OptionWrapper, SelectedOptionIconWrapper } from './elements';
 
 export interface OptionProps<T> {
   option: T;
@@ -18,13 +17,11 @@ export const Option = <T extends string>({
 }: OptionProps<T>) => {
   return (
     <Dropdown.Item onClick={() => onChange(option)}>
-      <Flex>{option}</Flex>
+      <OptionWrapper $selected={isSelected}>{option}</OptionWrapper>
 
-      {isSelected && (
-        <SelectedOptionIconWrapper>
-          <Icon type="Checkmark" />
-        </SelectedOptionIconWrapper>
-      )}
+      <SelectedOptionIconWrapper $selected={isSelected}>
+        <Icon type="Checkmark" />
+      </SelectedOptionIconWrapper>
     </Dropdown.Item>
   );
 };

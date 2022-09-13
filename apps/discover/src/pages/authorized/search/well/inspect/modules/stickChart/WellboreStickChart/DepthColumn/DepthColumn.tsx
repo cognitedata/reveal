@@ -16,12 +16,17 @@ import {
   ScaleLine,
   ScaleLineDepth,
 } from '../../../common/Events/elements';
+import { ColumnOptionsSelector } from '../../components/ColumnOptionsSelector';
 import { ColumnVisibilityProps } from '../../types';
 import { formatScaleValue } from '../../utils/scale/formatScaleValue';
+import { DEPTH_MEASUREMENT_TYPES } from '../constants';
 
 export interface DepthColumnProps extends ColumnVisibilityProps {
   scaleBlocks: number[];
   depthMeasurementType: DepthMeasurementUnit;
+  onChangeDepthMeasurementType: (
+    depthMeasurementType: DepthMeasurementUnit
+  ) => void;
 }
 
 export const DepthColumn: React.FC<WithDragHandleProps<DepthColumnProps>> =
@@ -29,6 +34,7 @@ export const DepthColumn: React.FC<WithDragHandleProps<DepthColumnProps>> =
     ({
       scaleBlocks,
       depthMeasurementType,
+      onChangeDepthMeasurementType,
       isVisible = true,
       ...dragHandleProps
     }) => {
@@ -36,13 +42,15 @@ export const DepthColumn: React.FC<WithDragHandleProps<DepthColumnProps>> =
 
       return (
         <NoUnmountShowHide show={isVisible}>
-          <BodyColumn width={80} data-testid="depth-column">
+          <BodyColumn width={90} data-testid="depth-column">
             <ColumnDragger {...dragHandleProps} />
 
             <ColumnHeaderWrapper>
-              <BodyColumnMainHeader data-testid="column-header">
-                {depthMeasurementType}
-              </BodyColumnMainHeader>
+              <ColumnOptionsSelector
+                options={DEPTH_MEASUREMENT_TYPES}
+                selectedOption={depthMeasurementType}
+                onChange={onChangeDepthMeasurementType}
+              />
               <FlexGrow />
               <BodyColumnMainHeader>{depthUnit}</BodyColumnMainHeader>
             </ColumnHeaderWrapper>

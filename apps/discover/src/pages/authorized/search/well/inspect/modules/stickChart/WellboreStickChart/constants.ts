@@ -42,13 +42,18 @@ export const CHART_COLUMN_WIDTH_COLLAPSED = 120;
 export const DEFAULT_DEPTH_MEASUREMENT_TYPE = DepthMeasurementUnit.MD;
 export const DEFAULT_EVENTS_COLUMN_VIEW = EventsColumnView.Cluster;
 
+export const DEPTH_MEASUREMENT_TYPES = [
+  DepthMeasurementUnit.MD,
+  DepthMeasurementUnit.TVD,
+];
+
 export const DEFAULT_COLUMN_ORDER = [
   ChartColumn.FORMATION,
+  ChartColumn.DEPTH,
   ChartColumn.CASINGS,
   ChartColumn.NPT,
   ChartColumn.NDS,
   // ChartColumn.SUMMARY,
-  ChartColumn.DEPTH,
   ChartColumn.TRAJECTORY,
   ChartColumn.MEASUREMENTS,
 ];

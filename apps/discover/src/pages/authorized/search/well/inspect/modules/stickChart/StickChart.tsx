@@ -25,6 +25,7 @@ import { getWellboreData } from './utils/getWellboreData';
 import { WellboreStickChart } from './WellboreStickChart';
 import {
   DEFAULT_COLUMN_ORDER,
+  DEFAULT_DEPTH_MEASUREMENT_TYPE,
   DEFAULT_VISIBLE_COLUMNS,
 } from './WellboreStickChart/constants';
 
@@ -40,6 +41,10 @@ const StickChart: React.FC = () => {
     toBooleanMap(DEFAULT_VISIBLE_COLUMNS)
   );
   const [columnOrder, setColumnOrder] = useState(DEFAULT_COLUMN_ORDER);
+
+  const [depthMeasurementType, setDepthMeasurementType] = useState(
+    DEFAULT_DEPTH_MEASUREMENT_TYPE
+  );
 
   const [nptCodesSelecton, setNptCodesSelection] =
     useState<NptCodesSelection>();
@@ -76,6 +81,8 @@ const StickChart: React.FC = () => {
     <PerformanceMetricsObserver onChange={handlePerformanceObserved}>
       <FilterBar
         columnOrder={columnOrder}
+        depthMeasurementType={depthMeasurementType}
+        onChangeDepthMeasurementType={setDepthMeasurementType}
         onNptCodesChange={setNptCodesSelection}
         onNdsCodesChange={setNdsRiskTypesSelection}
         onSummaryVisibilityChange={setSummaryVisibility}
@@ -97,6 +104,7 @@ const StickChart: React.FC = () => {
               maxDepth={maxDepths[matchingId]}
               columnVisibility={columnVisibility}
               columnOrder={columnOrder}
+              depthMeasurementType={depthMeasurementType}
               nptCodesSelecton={nptCodesSelecton}
               ndsRiskTypesSelection={ndsRiskTypesSelection}
               summaryVisibility={summaryVisibility}

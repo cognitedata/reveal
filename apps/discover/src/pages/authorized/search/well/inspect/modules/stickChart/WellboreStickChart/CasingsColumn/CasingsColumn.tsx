@@ -20,7 +20,11 @@ import {
 } from '../../../common/Events/elements';
 import { ColumnOptionsSelector } from '../../components/ColumnOptionsSelector';
 import { DepthScaleLines } from '../../components/DepthScaleLines';
-import { ColumnVisibilityProps, CasingAssemblyView } from '../../types';
+import {
+  ColumnVisibilityProps,
+  CasingAssemblyView,
+  ChartColumn,
+} from '../../types';
 import { EMPTY_SCHEMA_TEXT, LOADING_TEXT } from '../constants';
 import { ColumnHeaderWrapper } from '../elements';
 
@@ -29,11 +33,6 @@ import { DepthIndicators } from './components/DepthIndicators';
 import { Legend } from './components/Legend';
 import { TopContent } from './components/TopContent';
 import { CasingsColumnContentWrapper } from './elements';
-
-export const DEPTH_MEASUREMENT_TYPES = [
-  DepthMeasurementUnit.MD,
-  DepthMeasurementUnit.TVD,
-];
 
 export interface CasingsColumnProps extends ColumnVisibilityProps {
   data?: CasingAssemblyView[];
@@ -109,9 +108,7 @@ export const CasingsColumn: React.FC<WithDragHandleProps<CasingsColumnProps>> =
 
             <ColumnHeaderWrapper>
               <ColumnOptionsSelector
-                options={DEPTH_MEASUREMENT_TYPES}
-                selectedOption={depthMeasurementType}
-                width={24}
+                displayValue={ChartColumn.CASINGS}
                 onChange={onChangeDepthMeasurementType}
               />
               <BodyColumnMainHeader>Schema</BodyColumnMainHeader>
