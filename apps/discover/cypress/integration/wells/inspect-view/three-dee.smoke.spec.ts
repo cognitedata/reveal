@@ -74,19 +74,14 @@ describe('Three-dee component', () => {
       .findAllByRole('treeitem')
       .should('have.length', 1)
       .first()
+      .as('wellsTree')
       .children()
       .first()
       .children()
       .first()
       .click();
 
-    cy.findAllByRole('rowgroup')
-      .eq(5)
-      .findAllByRole('treeitem')
-      .first()
-      .as('wellsTree')
-      .findAllByRole('rowgroup')
-      .should('have.length', 10);
+    cy.get('@wellsTree').findAllByRole('rowgroup').should('have.length', 10);
 
     cy.log('selecting all wellbores');
     cy.get('@wellsTree')
@@ -133,20 +128,12 @@ describe('Three-dee component', () => {
               type: 'select',
             },
           },
-          {
-            category: 'Data Availability',
-            subCategory: 'Data Availability',
-            value: {
-              name: 'NDS events',
-              type: 'select',
-            },
-          },
         ],
       },
       select: 'ALL',
     });
 
-    cy.openInspectView(2);
+    cy.openInspectView();
 
     cy.goToWellsInspectTab(TAB_NAMES.THREE_DEE);
 

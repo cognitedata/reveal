@@ -6,7 +6,7 @@ import { TAB_NAMES } from '../../../../src/pages/authorized/search/well/inspect/
 import { cancelFrontendMetricsRequest } from '../../../support/interceptions';
 
 describe('Wells: Well Logs', () => {
-  beforeEach(() => {
+  before(() => {
     cancelFrontendMetricsRequest();
 
     cy.visit(Cypress.env('BASE_URL'));
@@ -35,44 +35,24 @@ describe('Wells: Well Logs', () => {
     cy.goToWellsInspectTab(TAB_NAMES.WELL_LOGS);
   });
 
-  it('Should select and de-select well logs in the result table', () => {
+  it('Should select/unselect well logs, enable/disable preview button and open preview', () => {
     cy.log('Should select all logs by default');
     cy.checkIfAllRowsSelected();
 
-    cy.log('De-select and select all logs');
-    cy.toggleSelectAllRows();
-    cy.checkIfAllRowsSelected(false);
-    cy.toggleSelectAllRows();
-    cy.checkIfAllRowsSelected();
-
-    cy.log('De-select and select single log');
-    cy.toggleSelectNthRow(0);
-    cy.checkIfNthRowIsSelected(0, false);
-    cy.toggleSelectNthRow(0);
-    cy.checkIfNthRowIsSelected(0);
-  });
-
-  it('Should enable and disable preview button', () => {
     cy.log('Preview button should be enabled by default');
     cy.isButtonEnabled('Preview');
 
+    cy.log('Unselect all rows');
+    cy.toggleSelectAllRows();
+
+    cy.log('Check preview button is disabled');
+    cy.isButtonDisabled('Preview');
+
     cy.log('At least one log should be selected to enable the preview button');
-    // De-select and select all rows.
-    cy.toggleSelectAllRows();
-    cy.isButtonDisabled('Preview');
-    cy.toggleSelectAllRows();
+    cy.toggleSelectNthRow(0);
+    cy.checkIfNthRowIsSelected(0);
     cy.isButtonEnabled('Preview');
 
-    cy.toggleSelectAllRows();
-
-    // Select and de-select only one row.
-    cy.toggleSelectNthRow(0);
-    cy.isButtonEnabled('Preview');
-    cy.toggleSelectNthRow(0);
-    cy.isButtonDisabled('Preview');
-  });
-
-  it('Should open and close well log preview', () => {
     cy.log('Open well log preview');
     cy.clickButton('Preview');
 
