@@ -980,27 +980,24 @@ export class CognitePid {
   }
 
   private onMouseEnter = (mouseEvent: MouseEvent, node: SVGElement) => {
+    // Add hover style
     switch (this.activeTool) {
-      case 'addSymbol': {
-        if (node instanceof SVGTSpanElement) return;
-
-        if (mouseEvent.altKey && !this.mouseDown) {
-          this.setSymbolSelection(
-            this.symbolSelection.filter((select) => select !== node.id)
-          );
-        }
-        if (mouseEvent.shiftKey) {
-          this.setSymbolSelection(uniq([...this.symbolSelection, node.id]));
-        }
+      case 'addSymbol':
+      case 'addLine':
+      case 'splitLine': {
+        scaleNodeStrokeWidth(node, hoverBoldStrokeScale);
         break;
       }
+
       case 'connectInstances':
       case 'connectLabels':
+      case 'graphQuery':
       case 'setLineNumber': {
+        // Highlight DiagramInstance
         const diagramInstance = this.pathIdToDiagramInstanceWithPathsMap.get(
           node.id
         );
-        if (diagramInstance === undefined) return;
+        if (diagramInstance === undefined) break;
 
         scaleStrokeWidthInstance(
           hoverBoldStrokeScale,
@@ -1009,19 +1006,75 @@ export class CognitePid {
         );
         break;
       }
+
       case 'addEquipmentTag': {
         if (node instanceof SVGTSpanElement) {
           node.style.fontWeight = '600';
         }
         break;
       }
-      case 'graphQuery': {
+      default: {
+        assertNever(this.activeTool);
+      }
+    }
+
+    // Add hover actions
+    switch (this.activeTool) {
+      case 'addSymbol': {
+        if (node instanceof SVGTSpanElement) break;
+
+        // Add to symbol selection
+        if (mouseEvent.shiftKey) {
+          this.setSymbolSelection(uniq([...this.symbolSelection, node.id]));
+        }
+
+        // Remove from symbol selection
+        if (mouseEvent.altKey && !this.mouseDown) {
+          this.setSymbolSelection(
+            this.symbolSelection.filter((select) => select !== node.id)
+          );
+        }
+        break;
+      }
+      case 'addLine': {
+        if (node instanceof SVGTSpanElement) break;
+
         const diagramInstance = this.pathIdToDiagramInstanceWithPathsMap.get(
           node.id
         );
-        if (!diagramInstance) return;
 
+        // Add line
         if (mouseEvent.shiftKey) {
+          if (diagramInstance === undefined) {
+            this.setLines([
+              ...this.lines,
+              {
+                id: getDiagramInstanceIdFromPathIds([node.id]),
+                type: 'Line',
+                pathIds: [node.id],
+                labelIds: [],
+                lineNumbers: [],
+                inferedLineNumbers: [],
+              },
+            ]);
+          }
+        }
+
+        // Remove line
+        if (mouseEvent.altKey && !this.mouseDown) {
+          if (isLine(diagramInstance)) {
+            this.manuallyDeleteLine(diagramInstance);
+          }
+        }
+        break;
+      }
+      case 'graphQuery': {
+        if (mouseEvent.shiftKey) {
+          const diagramInstance = this.pathIdToDiagramInstanceWithPathsMap.get(
+            node.id
+          );
+          if (diagramInstance === undefined) break;
+
           this.graphQuerySelection = diagramInstance.id;
 
           this.graphQueryInstances = PidDocument.getIsolationBoundary(
@@ -1034,17 +1087,6 @@ export class CognitePid {
 
           this.refresh();
         }
-
-        scaleStrokeWidthInstance(
-          hoverBoldStrokeScale,
-          diagramInstance,
-          this.nodeMap
-        );
-
-        break;
-      }
-      default: {
-        scaleNodeStrokeWidth(node, hoverBoldStrokeScale);
       }
     }
   };
@@ -1076,7 +1118,7 @@ export class CognitePid {
 
     switch (this.activeTool) {
       case 'addSymbol': {
-        if (node instanceof SVGTSpanElement) return;
+        if (node instanceof SVGTSpanElement) break;
 
         if (!this.symbolSelection.includes(node.id)) {
           this.setSymbolSelection([...this.symbolSelection, node.id]);
@@ -1088,7 +1130,7 @@ export class CognitePid {
         break;
       }
       case 'addLine': {
-        if (node instanceof SVGTSpanElement) return;
+        if (node instanceof SVGTSpanElement) break;
 
         const diagramInstance = this.pathIdToDiagramInstanceWithPathsMap.get(
           node.id
@@ -1112,23 +1154,23 @@ export class CognitePid {
       }
       case 'splitLine': {
         if (node instanceof SVGTSpanElement || this.pidDocument === undefined)
-          return;
+          break;
 
         const diagramInstnace = this.pathIdToDiagramInstanceWithPathsMap.get(
           node.id
         );
         const isSymbolInstance =
           diagramInstnace !== undefined && !isLine(diagramInstnace);
-        if (isSymbolInstance) return;
+        if (isSymbolInstance) break;
 
         if (event.altKey) {
           this.deleteTJunction(node.id);
-          return;
+          break;
         }
         // Remove line if it was already selected
         if (this.splitSelection === node.id) {
           this.setSplitSelection(null);
-          return;
+          break;
         }
         if (this.splitSelection !== null) {
           const tJunctionPathReplacements = this.pidDocument
@@ -1138,7 +1180,7 @@ export class CognitePid {
             );
 
           if (!tJunctionPathReplacements) {
-            return;
+            break;
           }
 
           const pathReplacementGroup: PathReplacementGroup = {
@@ -1149,7 +1191,7 @@ export class CognitePid {
 
           this.addPathReplacementGroups(pathReplacementGroup);
           this.setSplitSelection(null);
-          return;
+          break;
         }
         this.setSplitSelection(node.id);
         break;
@@ -1158,7 +1200,7 @@ export class CognitePid {
         const diagramInstance = this.pathIdToDiagramInstanceWithPathsMap.get(
           node.id
         );
-        if (diagramInstance === undefined) return;
+        if (diagramInstance === undefined) break;
 
         if (this.connectionSelection === null) {
           this.setConnectionSelection(diagramInstance.id);
@@ -1170,7 +1212,7 @@ export class CognitePid {
             end: diagramInstance.id,
             direction: 'unknown',
           };
-          if (connectionExists(this.connections, newConnection)) return;
+          if (connectionExists(this.connections, newConnection)) break;
 
           this.setConnections([...this.connections, newConnection], false);
           this.setConnectionSelection(diagramInstance.id);
@@ -1190,7 +1232,7 @@ export class CognitePid {
 
           if (diagramInstanceId === this.labelSelection) {
             this.setLabelSelection(null);
-            return;
+            break;
           }
           if (diagramInstance) {
             this.setLabelSelection(diagramInstanceId);
@@ -1198,12 +1240,12 @@ export class CognitePid {
         } else {
           // add or remove labels to symbol/line instance given `labelSelection`
           if (!this.labelSelection) {
-            return;
+            break;
           }
           const diagramInstance = this.pathIdToDiagramInstanceWithPathsMap.get(
             this.labelSelection
           );
-          if (diagramInstance === undefined) return;
+          if (diagramInstance === undefined) break;
 
           if (isLine(diagramInstance)) {
             addOrRemoveLabelToInstance(
@@ -1224,11 +1266,11 @@ export class CognitePid {
         break;
       }
       case 'addEquipmentTag': {
-        if (!(node instanceof SVGTSpanElement)) return;
+        if (!(node instanceof SVGTSpanElement)) break;
 
         if (this.activeTagId) {
           const tag = getDiagramTagInstanceByTagId(this.activeTagId, this.tags);
-          if (tag === undefined) return;
+          if (tag === undefined) break;
           if (tag.labelIds.length < 1) {
             this.setActiveTagId(tag.id);
             this.setTags(this.tags.filter((tag) => tag.labelIds.length > 0));
@@ -1249,13 +1291,13 @@ export class CognitePid {
         break;
       }
       case 'setLineNumber': {
-        if (this.activeLineNumber === null) return;
+        if (this.activeLineNumber === null) break;
 
         const diagramInstance = getDiagramInstanceByPathId(
           [...this.symbolInstances, ...this.lines],
           node.id
         );
-        if (diagramInstance === undefined) return;
+        if (diagramInstance === undefined) break;
 
         if (isLine(diagramInstance)) {
           addOrRemoveLineNumberToInstance(
@@ -1278,7 +1320,7 @@ export class CognitePid {
         const diagramInstance = this.pathIdToDiagramInstanceWithPathsMap.get(
           node.id
         );
-        if (!diagramInstance) return;
+        if (!diagramInstance) break;
 
         if (this.graphQuerySelection === null) {
           this.graphQuerySelection = diagramInstance.id;
