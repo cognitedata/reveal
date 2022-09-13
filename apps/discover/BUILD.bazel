@@ -542,6 +542,7 @@ cypress_web_test(
         "--key 57e436d7-0dbb-401d-ac07-7a1ec69e7a90",
         "--tag \"discover,staging,nightly\"",
         "--config " +
+        "retries=1," +
         "supportFile=./apps/discover/cypress/support," +
         "integrationFolder=./apps/discover/cypress/integration," +
         "pluginsFile=./apps/discover/cypress/plugin.js," +
