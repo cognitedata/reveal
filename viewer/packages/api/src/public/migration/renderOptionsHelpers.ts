@@ -105,12 +105,12 @@ export function determineResolutionCap(
     return rendererResolutionThreshold;
   }
 
-  let resolutionThreshold = 1.4e6;
+  const resolutionThreshold = 1.4e6;
 
   // This is an attempt at increasing performance for high-resolution mobile devices
   // by mapping resolution to physical pixel size
   if (device.deviceType === 'mobile' || device.deviceType === 'tablet') {
-    resolutionThreshold = Math.floor(resolutionThreshold / devicePixelRatio);
+    return Math.floor(resolutionThreshold / devicePixelRatio);
   }
 
   return resolutionThreshold;
