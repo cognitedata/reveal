@@ -1,6 +1,7 @@
 import styled from 'styled-components/macro';
 
-import { SubTitleText } from 'components/EmptyState/elements';
+import { Content, SubTitleText } from 'components/EmptyState/elements';
+import { Img } from 'components/Illustration/elements';
 import { Flex, FlexColumn, sizes } from 'styles/layout';
 
 import {
@@ -22,6 +23,22 @@ export const WellboreStickChartWrapper = styled(FlexColumn)`
   ${BodyColumn} {
     border-radius: ${sizes.small};
     margin: ${sizes.extraSmall};
+  }
+
+  ${Content} {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    ${Img} {
+      margin-top: -93px;
+      margin-bottom: 0;
+    }
+
+    ${SubTitleText} {
+      padding: ${sizes.extraSmall};
+    }
   }
 `;
 

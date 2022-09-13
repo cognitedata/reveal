@@ -8,7 +8,7 @@ import { BooleanMap } from 'utils/booleanMap';
 
 import { WithDragHandleProps } from 'components/DragDropContainer';
 import { NoUnmountShowHide } from 'components/NoUnmountShowHide';
-import { EMPTY_ARRAY } from 'constants/empty';
+import { EMPTY_OBJECT } from 'constants/empty';
 import { DepthMeasurementUnit } from 'constants/units';
 import { useDeepMemo } from 'hooks/useDeep';
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
@@ -17,17 +17,13 @@ import { PlotlyChartColumn } from '../../components/PlotlyChartColumn';
 import { ChartColumn, ColumnVisibilityProps } from '../../types';
 import { adaptMeasurementsDataToChart } from '../../utils/adaptMeasurementsDataToChart';
 import {
+  DATA_NOT_AVAILABLE_IN_TVD_MODE_TEXT,
   NO_DATA_AMONG_SELECTED_OPTIONS_TEXT,
   NO_OPTIONS_SELECTED_TEXT,
+  SWITCH_BUTTON_TEXT,
 } from '../constants';
 
-import {
-  CHART_TITLE,
-  EMPTY_MEASUREMENTS_DATA_TEXT,
-  EXPAND_FIT_LOT_GRAPH_TEXT,
-  PRESSURE_UNIT,
-  SELECT_TVD_MESSAGE,
-} from './constants';
+import { CHART_TITLE, PRESSURE_UNIT } from './constants';
 
 export interface MeasurementsColumnProps extends ColumnVisibilityProps {
   data?: DepthMeasurementWithData;
@@ -35,6 +31,9 @@ export interface MeasurementsColumnProps extends ColumnVisibilityProps {
   scaleBlocks: number[];
   measurementTypesSelection?: BooleanMap;
   depthMeasurementType?: DepthMeasurementUnit;
+  onChangeDepthMeasurementType?: (
+    depthMeasurementType: DepthMeasurementUnit
+  ) => void;
 }
 
 export const MeasurementsColumn: React.FC<
@@ -46,6 +45,7 @@ export const MeasurementsColumn: React.FC<
     scaleBlocks,
     measurementTypesSelection,
     depthMeasurementType = DepthMeasurementUnit.TVD,
+    onChangeDepthMeasurementType,
     isVisible = true,
     ...dragHandleProps
   }) => {
@@ -78,36 +78,38 @@ export const MeasurementsColumn: React.FC<
     );
 
     const emptySubtitle = useDeepMemo(() => {
-      if (isEmpty(chartData)) {
-        return EMPTY_MEASUREMENTS_DATA_TEXT;
-      }
       if (measurementTypesSelection && isEmpty(measurementTypesSelection)) {
         return NO_OPTIONS_SELECTED_TEXT;
       }
-      if (isEmpty(filteredChartData)) {
+      if (!isEmpty(data) && isEmpty(filteredChartData)) {
         return NO_DATA_AMONG_SELECTED_OPTIONS_TEXT;
-      }
-      /**
-       * If chart data is available, but scale is selected to MD,
-       * we show the user a message to select TVD scale to see the graph.
-       */
-      if (!isTvdScaleSelected) {
-        return SELECT_TVD_MESSAGE;
       }
       return undefined;
     }, [chartData, filteredChartData, measurementTypesSelection]);
 
+    const swichToTvdActionProps = useMemo(() => {
+      if (isTvdScaleSelected) {
+        return EMPTY_OBJECT;
+      }
+      return {
+        actionMessage: DATA_NOT_AVAILABLE_IN_TVD_MODE_TEXT,
+        actionButtonText: SWITCH_BUTTON_TEXT,
+        onClickActionButton: () =>
+          onChangeDepthMeasurementType?.(DepthMeasurementUnit.TVD),
+      };
+    }, [depthMeasurementType, onChangeDepthMeasurementType]);
+
     return (
       <NoUnmountShowHide show={isVisible}>
         <PlotlyChartColumn
-          data={isTvdScaleSelected ? filteredChartData : EMPTY_ARRAY}
+          data={filteredChartData}
           isLoading={isLoading}
           header={ChartColumn.MEASUREMENTS}
-          title={CHART_TITLE}
+          chartHeader={CHART_TITLE}
           axisNames={axisNames}
           scaleBlocks={scaleBlocks}
           emptySubtitle={emptySubtitle}
-          expandSubtitle={EXPAND_FIT_LOT_GRAPH_TEXT}
+          {...swichToTvdActionProps}
           {...dragHandleProps}
         />
       </NoUnmountShowHide>

@@ -1,17 +1,14 @@
 import { DepthMeasurementUnit } from '../../../../../src/constants/units';
 import { DATA_AVAILABILITY } from '../../../../../src/modules/wellSearch/constantsSidebarFilters';
 import { TAB_NAMES } from '../../../../../src/pages/authorized/search/well/inspect/constants';
-import {
-  EXPAND_TRAJECTORY_GRAPH_TEXT,
-  CHART_TITLE,
-} from '../../../../../src/pages/authorized/search/well/inspect/modules/stickChart/WellboreStickChart/TrajectoryColumn/constants';
+import { CHART_TITLE } from '../../../../../src/pages/authorized/search/well/inspect/modules/stickChart/WellboreStickChart/TrajectoryColumn/constants';
 import { interceptCoreNetworkRequests } from '../../../../support/commands/helpers';
 import { WELLS_SEARCH_ALIAS } from '../../../../support/interceptions';
 
 const DATA_AVAILABILITY_CASINGS = 'Casings';
 const NO_COLUMNS_SELECTED_TEXT = 'No columns selected';
-const EXPAND_FIT_LOT_GRAPH_TEXT = 'Expand to see FIT and LOT';
 const FIT_LOT_CHART_TITLE = 'Depth vs Pressure';
+const SEE_GRAPH_BUTTON_TEXT = 'See graph';
 
 describe('Wells: stick chart', () => {
   before(() => {
@@ -113,11 +110,8 @@ describe('Wells: stick chart', () => {
       .findByTestId('column-header')
       .should('contain', DepthMeasurementUnit.TVD);
 
-    cy.log('expand trajectory graph text should be visible');
-    cy.findByText(EXPAND_TRAJECTORY_GRAPH_TEXT).should('be.visible');
-
-    cy.log('expand FIT LOT graph text should be visible ');
-    cy.findByText(EXPAND_FIT_LOT_GRAPH_TEXT).should('be.visible');
+    cy.log('see graph buttons should be visible');
+    cy.findAllByText(SEE_GRAPH_BUTTON_TEXT).should('be.visible');
   });
 
   it('Should be able to expand & collapse charts', () => {

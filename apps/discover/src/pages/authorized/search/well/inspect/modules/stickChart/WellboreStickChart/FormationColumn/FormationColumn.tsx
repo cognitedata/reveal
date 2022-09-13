@@ -55,7 +55,7 @@ export const FormationColumn: React.FC<
 
         return (
           <FormationLayer
-            key={name}
+            key={`${top.measuredDepth}-${name}`}
             name={name}
             scaledTop={getScaledDepth(topDepth)}
             scaledHeight={getScaledDepth(differenceDepth)}

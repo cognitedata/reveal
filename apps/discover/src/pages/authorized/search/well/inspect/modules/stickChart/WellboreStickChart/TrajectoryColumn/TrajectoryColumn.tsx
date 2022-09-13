@@ -3,12 +3,11 @@ import { TrajectoryWithData } from 'domain/wells/trajectory/internal/types';
 
 import React, { useMemo } from 'react';
 
-import isEmpty from 'lodash/isEmpty';
 import { PlotData } from 'plotly.js';
 
 import { WithDragHandleProps } from 'components/DragDropContainer';
 import { NoUnmountShowHide } from 'components/NoUnmountShowHide';
-import { EMPTY_ARRAY } from 'constants/empty';
+import { EMPTY_ARRAY, EMPTY_OBJECT } from 'constants/empty';
 import { DepthMeasurementUnit } from 'constants/units';
 import { useDeepMemo } from 'hooks/useDeep';
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
@@ -16,13 +15,12 @@ import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 import { PlotlyChartColumn } from '../../components/PlotlyChartColumn';
 import { ChartColumn, ColumnVisibilityProps } from '../../types';
 import { adapTrajectoryDataToChart } from '../../utils/adapTrajectoryDataToChart';
-
 import {
-  CHART_TITLE,
-  EXPAND_TRAJECTORY_GRAPH_TEXT,
-  EMPTY_TRAJECTORY_DATA_TEXT,
-  SELECT_TVD_MESSAGE,
-} from './constants';
+  DATA_NOT_AVAILABLE_IN_TVD_MODE_TEXT,
+  SWITCH_BUTTON_TEXT,
+} from '../constants';
+
+import { CHART_TITLE } from './constants';
 import { TrajectoryChartWrapper } from './elements';
 
 export interface TrajectoryColumnProps extends ColumnVisibilityProps {
@@ -31,6 +29,9 @@ export interface TrajectoryColumnProps extends ColumnVisibilityProps {
   scaleBlocks: number[];
   curveColor: string;
   depthMeasurementType?: DepthMeasurementUnit;
+  onChangeDepthMeasurementType?: (
+    depthMeasurementType: DepthMeasurementUnit
+  ) => void;
 }
 
 export const TrajectoryColumn: React.FC<
@@ -42,6 +43,7 @@ export const TrajectoryColumn: React.FC<
     scaleBlocks,
     curveColor,
     depthMeasurementType = DepthMeasurementUnit.TVD,
+    onChangeDepthMeasurementType,
     isVisible = true,
     ...dragHandleProps
   }) => {
@@ -70,32 +72,29 @@ export const TrajectoryColumn: React.FC<
       [depthUnit]
     );
 
-    const emptySubtitle = useDeepMemo(() => {
-      if (isEmpty(chartData)) {
-        return EMPTY_TRAJECTORY_DATA_TEXT;
+    const swichToTvdActionProps = useMemo(() => {
+      if (isTvdScaleSelected) {
+        return EMPTY_OBJECT;
       }
-      /**
-       * If chart data is available, but scale is selected to MD,
-       * we show the user a message to select TVD scale to see the graph.
-       */
-      if (!isTvdScaleSelected) {
-        return SELECT_TVD_MESSAGE;
-      }
-      return undefined;
-    }, [chartData, depthMeasurementType]);
+      return {
+        actionMessage: DATA_NOT_AVAILABLE_IN_TVD_MODE_TEXT,
+        actionButtonText: SWITCH_BUTTON_TEXT,
+        onClickActionButton: () =>
+          onChangeDepthMeasurementType?.(DepthMeasurementUnit.TVD),
+      };
+    }, [depthMeasurementType, onChangeDepthMeasurementType]);
 
     return (
       <NoUnmountShowHide show={isVisible}>
         <TrajectoryChartWrapper data-testid="trajectory-column">
           <PlotlyChartColumn
-            data={isTvdScaleSelected ? chartData : EMPTY_ARRAY}
+            data={chartData}
             isLoading={isLoading}
             header={ChartColumn.TRAJECTORY}
-            title={CHART_TITLE}
+            chartHeader={CHART_TITLE}
             axisNames={axisNames}
             scaleBlocks={scaleBlocks}
-            emptySubtitle={emptySubtitle}
-            expandSubtitle={EXPAND_TRAJECTORY_GRAPH_TEXT}
+            {...swichToTvdActionProps}
             {...dragHandleProps}
           />
         </TrajectoryChartWrapper>

@@ -1,47 +1,26 @@
 import React, { useCallback, useState } from 'react';
 
-import head from 'lodash/head';
 import isEmpty from 'lodash/isEmpty';
-import last from 'lodash/last';
 
-import { ExpandCollapseIconButton } from 'components/Buttons';
 import { WithDragHandleProps } from 'components/DragDropContainer';
-import EmptyState from 'components/EmptyState';
-import { useDeepEffect, useDeepMemo } from 'hooks/useDeep';
-import { FlexGrow } from 'styles/layout';
+import { useDeepEffect } from 'hooks/useDeep';
 
-import { ChartV2 } from '../../../common/ChartV2';
 import { ChartProps } from '../../../common/ChartV2/ChartV2';
-import { ColumnDragger } from '../../../common/Events/ColumnDragger';
-import { SCALE_BLOCK_HEIGHT } from '../../../common/Events/constants';
-import {
-  BodyColumnBody,
-  BodyColumnMainHeader,
-  ColumnHeaderWrapper,
-} from '../../../common/Events/elements';
-import {
-  CHART_COLUMN_WIDTH,
-  CHART_COLUMN_WIDTH_COLLAPSED,
-  DEFAULT_EXPAND_GRAPH_TEXT,
-  LOADING_TEXT,
-} from '../../WellboreStickChart/constants';
-import { DepthScaleLines } from '../DepthScaleLines';
-
-import {
-  ChartTitle,
-  ChartWrapper,
-  ChartEmptyStateWrapper,
-  ChartContainer,
-} from './elements';
+import { Chart } from '../Chart';
+import { ColumnAction } from '../ColumnAction';
+import { ColumnEmptyState } from '../ColumnEmptyState';
+import { ExpandableColumn } from '../ExpandableColumn';
 
 export interface PlotlyChartColumnProps
   extends Pick<ChartProps, 'data' | 'axisNames'> {
-  header: string;
-  title: string;
   scaleBlocks: number[];
+  header: string;
+  chartHeader: string;
   isLoading?: boolean;
   emptySubtitle?: string;
-  expandSubtitle?: string;
+  actionMessage?: string;
+  actionButtonText?: string;
+  onClickActionButton?: () => void;
 }
 
 export const PlotlyChartColumn: React.FC<
@@ -49,13 +28,15 @@ export const PlotlyChartColumn: React.FC<
 > = React.memo(
   ({
     data,
-    header,
     axisNames,
-    title,
     scaleBlocks,
+    header,
+    chartHeader,
     isLoading,
     emptySubtitle,
-    expandSubtitle = DEFAULT_EXPAND_GRAPH_TEXT,
+    actionMessage,
+    actionButtonText,
+    onClickActionButton,
     ...dragHandleProps
   }) => {
     const [expanded, setExpanded] = useState(false);
@@ -65,114 +46,73 @@ export const PlotlyChartColumn: React.FC<
     useDeepEffect(() => {
       if (isEmpty(data)) {
         setLastExpandedState(expanded);
-        handleExpandCollapse(false);
+        handleToggleExpand(false);
       } else {
-        handleExpandCollapse(lastExpandedState);
+        handleToggleExpand(lastExpandedState);
       }
     }, [data]);
 
-    const axisConfig = useDeepMemo(() => {
-      return {
-        x: {
-          fixedrange: true,
-        },
-        y: {
-          dtick: scaleBlocks[1] - scaleBlocks[0],
-          nticks: scaleBlocks.length,
-          range: [last(scaleBlocks), head(scaleBlocks)],
-          autorange: false,
-          fixedrange: true,
-          showticklabels: false,
-          showgrid: false,
-        },
-      };
-    }, [scaleBlocks]);
-
-    const height = useDeepMemo(
-      () => (scaleBlocks.length + 1) * SCALE_BLOCK_HEIGHT,
-      [scaleBlocks]
-    );
-
-    const ChartContent = useDeepMemo(() => {
-      return (
-        <>
-          <ChartTitle>{title}</ChartTitle>
-
-          <BodyColumnBody>
-            <DepthScaleLines scaleBlocks={scaleBlocks} />
-            <ChartWrapper>
-              <ChartV2
-                autosize
-                hideHeader
-                axisNames={axisNames}
-                axisConfig={axisConfig}
-                data={data}
-                title={title}
-                height={height}
-              />
-            </ChartWrapper>
-          </BodyColumnBody>
-        </>
-      );
-    }, [scaleBlocks, data]);
+    const handleToggleExpand = useCallback((expanded: boolean) => {
+      setExpanded(expanded);
+      if (expanded) {
+        setTimeout(() => setShowChart(true), 200);
+      } else {
+        setShowChart(false);
+      }
+    }, []);
 
     const renderContent = () => {
-      if (isEmpty(data)) {
+      if (isEmpty(data) || isLoading) {
         return (
-          <ChartEmptyStateWrapper>
-            <EmptyState
-              isLoading={isLoading}
-              loadingSubtitle={isLoading ? LOADING_TEXT : ''}
-              emptySubtitle={emptySubtitle}
-              hideHeading
-            />
-          </ChartEmptyStateWrapper>
+          <ColumnEmptyState
+            isLoading={isLoading}
+            emptySubtitle={emptySubtitle}
+          />
+        );
+      }
+
+      if (actionMessage) {
+        return (
+          <ColumnAction
+            actionMessage={actionMessage}
+            actionButtonText={actionButtonText}
+            onClickActionButton={onClickActionButton}
+          />
         );
       }
 
       if (!expanded && !showChart) {
         return (
-          <ChartEmptyStateWrapper>
-            <EmptyState emptySubtitle={expandSubtitle} hideHeading />
-          </ChartEmptyStateWrapper>
+          <ColumnAction
+            actionButtonText="See graph"
+            onClickActionButton={() => handleToggleExpand(true)}
+          />
         );
       }
 
       if (showChart) {
-        return ChartContent;
+        return (
+          <Chart
+            data={data}
+            axisNames={axisNames}
+            scaleBlocks={scaleBlocks}
+            header={chartHeader}
+          />
+        );
       }
 
       return null;
     };
 
-    const handleExpandCollapse = useCallback((expanded: boolean) => {
-      if (expanded) {
-        setExpanded(true);
-        setTimeout(() => setShowChart(true), 200);
-      } else {
-        setShowChart(false);
-        setExpanded(false);
-      }
-    }, []);
-
     return (
-      <ChartContainer
-        width={expanded ? CHART_COLUMN_WIDTH : CHART_COLUMN_WIDTH_COLLAPSED}
+      <ExpandableColumn
+        expanded={expanded}
+        header={header}
+        onToggleExpand={handleToggleExpand}
+        {...dragHandleProps}
       >
-        <ColumnDragger {...dragHandleProps} />
-
-        <ColumnHeaderWrapper>
-          <BodyColumnMainHeader>{header}</BodyColumnMainHeader>
-          <FlexGrow />
-          <ExpandCollapseIconButton
-            expanded={expanded}
-            disabled={isEmpty(data)}
-            onChange={handleExpandCollapse}
-          />
-        </ColumnHeaderWrapper>
-
         {renderContent()}
-      </ChartContainer>
+      </ExpandableColumn>
     );
   }
 );
