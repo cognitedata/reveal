@@ -1,6 +1,7 @@
 import get from 'lodash/get';
 
-type CursorActionResult<T> = { items: T[]; nextCursor: string };
+import { CursorResponse } from '@cognite/sdk';
+
 type ActionProps = Record<string, unknown>;
 export type FetchOptions = { signal?: AbortSignal };
 
@@ -13,7 +14,7 @@ export const fetchAllCursors = async <T>({
   firstActionProps,
   signal,
 }: {
-  action: (props: ActionProps) => Promise<CursorActionResult<T>>;
+  action: (props: ActionProps) => Promise<CursorResponse<T[]>>;
   actionProps: ActionProps;
   firstActionProps?: ActionProps;
   signal?: AbortSignal;

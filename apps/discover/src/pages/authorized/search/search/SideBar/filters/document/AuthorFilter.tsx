@@ -1,17 +1,18 @@
+import { getAuthorsFilter } from 'domain/documents/internal/transformers/getAuthorsFilter';
 import { AuthorItem } from 'domain/documents/internal/types';
 import { useDocumentAuthorsQuery } from 'domain/documents/service/queries/useDocumentAuthorsQuery';
 import { useSetDocumentFilters } from 'domain/savedSearches/internal/hooks/useSetDocumentFilters';
 
 import { memo, useState } from 'react';
-import { OptionProps, OptionTypeBase } from 'react-select';
+import { OptionProps, OptionTypeBase, components } from 'react-select';
 
-import { Checkbox, Flex, Label, Select } from '@cognite/cogs.js';
+import { Select, Menu, Icon } from '@cognite/cogs.js';
 
-import { renderTitleAboveSelectComponent } from 'components/Filters/MultiSelect/commonMultiSelectComponents';
+import { MultiSelectContainer } from 'components/Filters/MultiSelect/elements';
+import { EMPTY_ARRAY, NOT_AVAILABLE } from 'constants/empty';
 import { useDeepEffect } from 'hooks/useDeep';
 import { useFilterAppliedFilters } from 'modules/sidebar/selectors';
 import { FilterPayload } from 'pages/authorized/search/search/SideBar/types';
-import { FlexGrow } from 'styles/layout';
 
 import { FilterCollapse } from '../../components/FilterCollapse';
 
@@ -19,31 +20,43 @@ interface AuthorOptionType extends OptionProps<OptionTypeBase, boolean> {
   data: AuthorItem;
 }
 
-const AuthorOption = ({
-  innerProps,
-  isDisabled,
-  data,
-  isSelected,
-}: AuthorOptionType) => {
-  const { value, documentCount } = data;
-
-  if (isDisabled) {
-    return null;
-  }
-
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+const MenuList = ({ children, ...props }) => {
   return (
-    <Flex
-      {...innerProps}
-      style={{ padding: '5px' }}
-      data-testid="filter-option-label"
-    >
-      <div>
-        <Checkbox name={innerProps.id} checked={isSelected} />
+    <>
+      {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
+      {/* @ts-ignore */}
+      <components.MenuList {...props}>
+        {
+          Array.isArray(children)
+            ? children.slice(0, props.selectProps?.maxOptions) /* Options */
+            : children /* NoOptionsLabel */
+        }
+        {children?.length > props.selectProps?.maxOptions && (
+          <Menu.Footer>
+            and {children.length - (props.selectProps?.maxOptions || 0)} more...
+          </Menu.Footer>
+        )}
+      </components.MenuList>
+    </>
+  );
+};
+
+const Option = ({ data, isSelected, ...props }: AuthorOptionType) => {
+  return (
+    <components.Option {...props} data={data} isSelected={isSelected}>
+      <div
+        style={{
+          overflow: 'hidden',
+          whiteSpace: 'nowrap',
+          textOverflow: 'ellipsis',
+        }}
+      >
+        {data.value.trim() !== '' ? data.value : NOT_AVAILABLE}
       </div>
-      <div>{value}</div>
-      <FlexGrow />
-      <Label size="small">{documentCount}</Label>
-    </Flex>
+      {isSelected && <Icon style={{ flexShrink: 0 }} type="Checkmark" />}
+    </components.Option>
   );
 };
 
@@ -53,16 +66,18 @@ export const AuthorFilter = memo(({ title, ...rest }: FilterPayload) => {
   const currentFilterStateFacets =
     appliedFilters.documents[docQueryFacetType] || [];
 
-  const allAuthors = useDocumentAuthorsQuery();
+  const { data, isLoading } = useDocumentAuthorsQuery();
 
   const [value, setValue] = useState<Array<AuthorItem>>([]);
+
+  const allAuthors = getAuthorsFilter(data || EMPTY_ARRAY);
 
   useDeepEffect(() => {
     const selectedAuthors = allAuthors.filter((item: AuthorItem) => {
       return currentFilterStateFacets.includes(item.value);
     });
     setValue(selectedAuthors);
-  }, [currentFilterStateFacets, allAuthors]);
+  }, [currentFilterStateFacets, allAuthors.length]);
 
   const setDocumentFilters = useSetDocumentFilters();
 
@@ -77,17 +92,21 @@ export const AuthorFilter = memo(({ title, ...rest }: FilterPayload) => {
   return (
     <FilterCollapse.Panel title={title} showApplyButton={false} {...rest}>
       <div data-testid="filter-item-wrapper" aria-label={`${title} list`}>
-        {renderTitleAboveSelectComponent(title, 'top')}
-        <Select
-          components={{ Option: AuthorOption }}
-          menuPlacement="bottom"
-          value={value}
-          options={allAuthors}
-          showCheckbox
-          onChange={onChange}
-          isMulti
-          menuIsOpen
-        />
+        <MultiSelectContainer>
+          <Select
+            options={allAuthors}
+            isMulti
+            showSelectedItemCount
+            components={{
+              MenuList,
+              Option,
+            }}
+            maxOptions={10}
+            onChange={onChange}
+            value={value}
+            isLoading={isLoading}
+          />
+        </MultiSelectContainer>
       </div>
     </FilterCollapse.Panel>
   );

@@ -1,14 +1,21 @@
-import { getAuthorsFilter } from 'domain/documents/internal/transformers/getAuthorsFilter';
-
 import { useQuery } from 'react-query';
+
+import { fetchAllCursors } from 'utils/fetchAllCursors';
+
+import { DocumentsAggregateAllUniqueValuesItem } from '@cognite/sdk';
 
 import { DOCUMENT_AUTHORS_QUERY_KEY } from 'constants/react-query';
 
-import { getDocumentAuthors } from '../network/getDocumentAuthors';
+import { getDocumentSDKClient } from '../utils/getDocumentSDKClient';
 
 export const useDocumentAuthorsQuery = () => {
-  const results = useQuery([DOCUMENT_AUTHORS_QUERY_KEY], () => {
-    return getDocumentAuthors();
+  return useQuery([DOCUMENT_AUTHORS_QUERY_KEY], () => {
+    return fetchAllCursors<DocumentsAggregateAllUniqueValuesItem>({
+      action: getDocumentSDKClient().aggregate.allUniqueValues,
+      actionProps: {
+        properties: [{ property: ['author'] }],
+        limit: 10000,
+      },
+    });
   });
-  return getAuthorsFilter(results);
 };

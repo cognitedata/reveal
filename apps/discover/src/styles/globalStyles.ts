@@ -47,18 +47,7 @@ export const GlobalStyles = createGlobalStyle`
   .cogs-select__indicator-separator {
     display: none;
   }
-
-  // Search input state (focus and background change) management
-  .cogs-select__control {
-    && {
-      border: 2px solid transparent !important;
-      &:focus-within {
-        background-color: white ;
-        border: 2px solid var(--cogs-primary) !important;
-        transition: all 300ms;
-      }
-    }
-  }
+  
 
   // Search input text
   .cogs-select__single-value {

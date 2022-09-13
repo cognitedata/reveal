@@ -1,17 +1,9 @@
-import { UseQueryResult } from 'react-query';
+import { DocumentsAggregateAllUniqueValuesItem } from '@cognite/sdk';
 
-import {
-  DocumentsAggregateAllUniqueValuesItem,
-  ListResponse,
-} from '@cognite/sdk';
+type AuthorData = DocumentsAggregateAllUniqueValuesItem[];
 
-type authorData = UseQueryResult<
-  ListResponse<DocumentsAggregateAllUniqueValuesItem[]>,
-  unknown
->;
-
-export const getAuthorsFilter = (authorsData: authorData) => {
-  return (authorsData.data?.items || [])
+export const getAuthorsFilter = (authorsData: AuthorData) => {
+  return (authorsData || [])
     .filter((item) => item.values.length > 0)
     .map((item) => {
       return {

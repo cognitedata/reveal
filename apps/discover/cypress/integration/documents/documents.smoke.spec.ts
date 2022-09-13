@@ -77,7 +77,9 @@ describe('Documents', () => {
       const firstCheckboxLabel = interception.response.body.items[0].values[0];
       cy.log(`Attempting to select ${firstCheckboxLabel}`);
 
-      cy.validateSelect('Author', [firstCheckboxLabel], firstCheckboxLabel);
+      cy.findByLabelText('Author list').click();
+      cy.findByText(firstCheckboxLabel).should('be.visible').click();
+
       cy.log(
         'Verifying if the author selection was made by checking the documents'
       );
