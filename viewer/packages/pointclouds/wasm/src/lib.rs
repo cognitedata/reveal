@@ -12,9 +12,6 @@ mod test_setup {
     wasm_bindgen_test_configure!(run_in_browser);
 }
 
-#[cfg(test)]
-mod test_utils;
-
 mod linalg;
 mod parse_inputs;
 mod point_octree;

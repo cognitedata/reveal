@@ -42,19 +42,19 @@ mod tests {
 
     use wasm_bindgen_test::wasm_bindgen_test;
 
-    use crate::test_utils::normalize_coordinate;
-
     fn create_random_points_in_unit_box(num_points: u32) -> Vec<Vec3WithIndex> {
         let mut rng = ChaCha8Rng::seed_from_u64(0xbaadf00d);
 
         let mut points = Vec::<Vec3WithIndex>::with_capacity(num_points as usize);
 
+        let unit_box = BoundingBox::get_unit_bounding_box();
+
         for i in 0..num_points {
             points.push(Vec3WithIndex {
                 vec: vec3(
-                    normalize_coordinate(rng.next_u32()) / 2.0,
-                    normalize_coordinate(rng.next_u32()) / 2.0,
-                    normalize_coordinate(rng.next_u32()) / 2.0,
+                    rng.gen_range(unit_box.min.x..unit_box.max.x),
+                    rng.gen_range(unit_box.min.y..unit_box.max.y),
+                    rng.gen_range(unit_box.min.z..unit_box.max.z),
                 ),
                 index: i as usize,
             });

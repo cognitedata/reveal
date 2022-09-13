@@ -219,8 +219,6 @@ mod tests {
 
     use nalgebra_glm::{comp_max, epsilon, vec3, DVec3};
 
-    use crate::test_utils::normalize_coordinate;
-
     use super::{
         find_splits, get_child_bounding_boxes, get_octree_child_index, get_split_ends,
         sort_points_into_sectors,
@@ -274,9 +272,9 @@ mod tests {
 
         for i in 0..NUM_POINTS {
             let p = vec3(
-                normalize_coordinate(rng.next_u32()),
-                normalize_coordinate(rng.next_u32()),
-                normalize_coordinate(rng.next_u32()),
+                rng.gen_range(-1.0..1.0),
+                rng.gen_range(-1.0..1.0),
+                rng.gen_range(-1.0..1.0),
             );
             points.push(Vec3WithIndex { vec: p, index: i });
         }
