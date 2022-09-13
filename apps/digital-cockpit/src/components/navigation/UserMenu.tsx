@@ -7,15 +7,13 @@ import { MenuItemWrapper } from './elements';
 
 type UserMenuProps = {
   email: string;
-  client: CdfClient;
   openUploadLogoModal: () => void;
   openAppConfigModal: () => void;
   isAdmin: boolean;
 };
 
 const UserMenu = (props: UserMenuProps) => {
-  const { email, client, openUploadLogoModal, openAppConfigModal, isAdmin } =
-    props;
+  const { email, openUploadLogoModal, openAppConfigModal, isAdmin } = props;
   const { changeLanguage, availableLanguages, currentLanguage } =
     useTranslation('UserMenu');
 
@@ -38,7 +36,7 @@ const UserMenu = (props: UserMenuProps) => {
       >
         <span>{currentLanguage?.name}</span>
       </Menu.Submenu>
-      <Menu.Item appendIcon="Logout" onClick={() => logout(client)}>
+      <Menu.Item appendIcon="Logout" onClick={() => logout()}>
         Log out
       </Menu.Item>
       <Menu.Item style={{ background: '#FAFAFA', borderRadius: '4px' }}>

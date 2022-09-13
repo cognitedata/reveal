@@ -177,7 +177,6 @@ const AppHeader: React.FC = () => {
       menu: (
         <UserMenu
           email={authState?.email || ''}
-          client={client}
           openUploadLogoModal={openUploadLogoModal}
           openAppConfigModal={openAppConfigModal}
           isAdmin={admin}
