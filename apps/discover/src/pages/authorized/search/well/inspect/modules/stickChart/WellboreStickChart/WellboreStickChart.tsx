@@ -197,7 +197,6 @@ export const WellboreStickChart: React.FC<WellboreStickChartProps> = ({
                 curveColor={wellboreColor}
                 depthMeasurementType={depthMeasurementType}
                 trajectoryCurveConfigs={trajectoryCurveConfigs}
-                onChangeDepthMeasurementType={setDepthMeasurementType}
                 isVisible={columnVisibility[ChartColumn.TRAJECTORY]}
               />
 

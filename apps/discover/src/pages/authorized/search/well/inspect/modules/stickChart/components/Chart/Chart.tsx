@@ -15,7 +15,7 @@ import { ChartContentWrapper, ChartHeader, ChartWrapper } from './elements';
 export interface ChartProps
   extends Pick<CommonChartProps, 'data' | 'axisNames'> {
   scaleBlocks: number[];
-  header?: string;
+  header?: string | JSX.Element;
 }
 
 export const Chart: React.FC<ChartProps> = React.memo(

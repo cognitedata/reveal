@@ -18,11 +18,8 @@ import {
   TrajectoryCurveConfig,
 } from '../../types';
 import { adaptToTrajectoryCurveDataProps } from '../../utils/adaptToTrajectoryCurveDataProps';
-import {
-  DATA_NOT_AVAILABLE_IN_TVD_MODE_TEXT,
-  SWITCH_BUTTON_TEXT,
-} from '../constants';
 
+import { TRAJECTORY_CURVES_MD, TRAJECTORY_CURVES_TVD } from './constants';
 import { TrajectoryChartWrapper } from './elements';
 import { TrajectoryCurveSelector } from './TrajectoryCurveSelector';
 
@@ -33,9 +30,6 @@ export interface TrajectoryColumnProps extends ColumnVisibilityProps {
   curveColor: string;
   depthMeasurementType?: DepthMeasurementUnit;
   trajectoryCurveConfigs: TrajectoryCurveConfig[];
-  onChangeDepthMeasurementType?: (
-    depthMeasurementType: DepthMeasurementUnit
-  ) => void;
 }
 
 export const TrajectoryColumn: React.FC<
@@ -48,7 +42,6 @@ export const TrajectoryColumn: React.FC<
     curveColor,
     depthMeasurementType = DepthMeasurementUnit.TVD,
     trajectoryCurveConfigs,
-    onChangeDepthMeasurementType,
     isVisible = true,
     ...dragHandleProps
   }) => {
@@ -65,21 +58,16 @@ export const TrajectoryColumn: React.FC<
       );
     }, [data, trajectoryCurveConfigs]);
 
-    const swichToTvdActionProps = useMemo(() => {
-      if (depthMeasurementType === DepthMeasurementUnit.TVD) {
-        return EMPTY_OBJECT;
+    const trajectoryCurves = useMemo(() => {
+      if (depthMeasurementType === DepthMeasurementUnit.MD) {
+        return TRAJECTORY_CURVES_MD;
       }
-      return {
-        actionMessage: DATA_NOT_AVAILABLE_IN_TVD_MODE_TEXT,
-        actionButtonText: SWITCH_BUTTON_TEXT,
-        onClickActionButton: () =>
-          onChangeDepthMeasurementType?.(DepthMeasurementUnit.TVD),
-      };
-    }, [depthMeasurementType, onChangeDepthMeasurementType]);
+      return TRAJECTORY_CURVES_TVD;
+    }, [depthMeasurementType]);
 
     useDeepEffect(() => {
-      setSelectedCurve(head(Object.keys(trajectoryCurveDataProps)) || '');
-    }, [trajectoryCurveDataProps]);
+      setSelectedCurve(head(trajectoryCurves) || '');
+    }, [trajectoryCurves]);
 
     return (
       <NoUnmountShowHide show={isVisible}>
@@ -90,13 +78,12 @@ export const TrajectoryColumn: React.FC<
             scaleBlocks={scaleBlocks}
             chartHeader={
               <TrajectoryCurveSelector
-                curves={Object.keys(trajectoryCurveDataProps)}
+                curves={trajectoryCurves}
                 selectedCurve={selectedCurve}
                 onChangeCurve={setSelectedCurve}
               />
             }
             {...trajectoryCurveDataProps[selectedCurve]}
-            {...swichToTvdActionProps}
             {...dragHandleProps}
           />
         </TrajectoryChartWrapper>

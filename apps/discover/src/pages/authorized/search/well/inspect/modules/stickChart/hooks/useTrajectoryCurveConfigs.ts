@@ -1,3 +1,4 @@
+import { useTrajectoryChartConfigMdVsEd } from 'domain/wells/trajectory/internal/hooks/useTrajectoryChartConfigMdVsEd';
 import { useTrajectoryChartsConfig } from 'domain/wells/trajectory/internal/hooks/useTrajectoryChartsConfig';
 import {
   TrajectoryChartDataAccessor,
@@ -16,18 +17,29 @@ import { TrajectoryCurveConfig } from '../types';
 export const CHARTS: Partial<
   Record<TrajectoryChartPlane, TrajectoryChartDataAccessor>
 >[] = [
+  { x: 'ed', y: 'md' },
   { x: 'ed', y: 'tvd' },
   { x: 'x_offset', y: 'y_offset' },
 ];
 
 export const useTrajectoryCurveConfigs = (): TrajectoryCurveConfig[] => {
-  const chartConfigs = useTrajectoryChartsConfig();
   const { data: unit } = useUserPreferencesMeasurement();
+
+  const chartConfigs = useTrajectoryChartsConfig();
+  const mdVsEdChartConfig = useTrajectoryChartConfigMdVsEd();
+
+  const allTrajectoryChartsConfigs = compact([
+    ...chartConfigs,
+    mdVsEdChartConfig,
+  ]);
 
   return useDeepMemo(() => {
     return compact(
       CHARTS.map((accessors) => {
-        const chartConfig = findChartConfigByAccessors(chartConfigs, accessors);
+        const chartConfig = findChartConfigByAccessors(
+          allTrajectoryChartsConfigs,
+          accessors
+        );
 
         if (!chartConfig || !chartConfig.chartVizData) {
           return null;

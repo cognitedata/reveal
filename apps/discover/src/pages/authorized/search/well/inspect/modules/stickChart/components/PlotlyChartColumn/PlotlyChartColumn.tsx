@@ -15,8 +15,8 @@ import { ExpandableColumn } from '../ExpandableColumn';
 export interface PlotlyChartColumnProps extends Pick<ChartProps, 'axisNames'> {
   data?: Partial<PlotData>[];
   scaleBlocks: number[];
-  header: string;
-  chartHeader: string;
+  header: string | JSX.Element;
+  chartHeader: string | JSX.Element;
   isLoading?: boolean;
   emptySubtitle?: string;
   actionMessage?: string;
