@@ -11,7 +11,7 @@ pub struct Cylinder {
 }
 
 impl Cylinder {
-    pub fn new(center_a: DVec3, center_b: DVec3, radius: f64, object_id: u16) -> Cylinder {
+    pub fn new(center_a: DVec3, center_b: DVec3, radius: f64, object_id: u16) -> Self {
         Cylinder {
             center_a: center_a,
             center_b: center_b,

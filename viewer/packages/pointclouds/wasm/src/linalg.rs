@@ -13,7 +13,7 @@ pub struct Vec3WithIndex {
 }
 
 impl BoundingBox {
-    pub fn overlaps(&self, other: &BoundingBox) -> bool {
+    pub fn overlaps(&self, other: &Self) -> bool {
         self.min.x < other.max.x
             && self.max.x > other.min.x
             && self.min.y < other.max.y
@@ -40,7 +40,7 @@ impl BoundingBox {
         )
     }
 
-    pub fn get_transformed_unit_cube(matrix: &DMat4) -> BoundingBox {
+    pub fn get_transformed_unit_cube(matrix: &DMat4) -> Self {
         let bounding_box = (0..8)
             .map(|i: u32| {
                 let unit_corner = BoundingBox::get_centered_unit_cube_corner(i);
@@ -52,7 +52,7 @@ impl BoundingBox {
         bounding_box
     }
 
-    pub fn get_unit_bounding_box() -> BoundingBox {
+    pub fn get_unit_bounding_box() -> Self {
         let points = (0..8).map(|i| vec4_to_vec3(&BoundingBox::get_centered_unit_cube_corner(i)));
         let min_point: DVec3 = points.clone().reduce(|v0, v1| min2(&v0, &v1)).unwrap();
         let max_point: DVec3 = points.reduce(|v0, v1| max2(&v0, &v1)).unwrap();
@@ -64,7 +64,7 @@ impl BoundingBox {
 }
 
 impl Default for BoundingBox {
-    fn default() -> BoundingBox {
+    fn default() -> Self {
         BoundingBox {
             min: vec3(f64::INFINITY, f64::INFINITY, f64::INFINITY),
             max: vec3(f64::NEG_INFINITY, f64::NEG_INFINITY, f64::NEG_INFINITY),

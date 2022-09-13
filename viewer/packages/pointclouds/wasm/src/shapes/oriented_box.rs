@@ -10,7 +10,7 @@ pub struct OrientedBox {
 }
 
 impl OrientedBox {
-    pub fn new(inv_instance_matrix: DMat4, object_id: u16) -> OrientedBox {
+    pub fn new(inv_instance_matrix: DMat4, object_id: u16) -> Self {
         OrientedBox {
             inv_instance_matrix: inv_instance_matrix,
             object_id: object_id,
