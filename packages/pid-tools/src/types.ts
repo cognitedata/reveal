@@ -75,6 +75,8 @@ export interface PidFileConnectionInstance extends DiagramSymbolInstance {
   unit?: string; // // points to `DocumentMetadata.unit`
   direction: number;
   fileDirection?: FileDirection;
+  linkedCdfFileName?: string;
+  linkedCdfFileId?: number;
 }
 
 interface LineConnectionInfo {

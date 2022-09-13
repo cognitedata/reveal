@@ -1,6 +1,5 @@
 import {
   DiagramLineInstance,
-  DiagramAnnotationType,
   PidFileConnectionInstance,
   PidDocumentMetadata,
   IsoDocumentMetadata,
@@ -17,45 +16,38 @@ import { LineSegment, PathSegment } from '../geometry';
 
 export const isFileConnection = (
   diagramInstance: any
-): diagramInstance is PidFileConnectionInstance => {
-  const fileConnection: DiagramAnnotationType = 'File Connection';
-  return diagramInstance.type === fileConnection;
-};
+): diagramInstance is PidFileConnectionInstance =>
+  diagramInstance && diagramInstance.type === 'File Connection';
 
 export const isLineConnection = (
   diagramInstance: any
-): diagramInstance is LineConnectionInstance => {
-  const lineConnection: DiagramAnnotationType = 'Line Connection';
-  return diagramInstance.type === lineConnection;
-};
+): diagramInstance is LineConnectionInstance =>
+  diagramInstance && diagramInstance.type === 'Line Connection';
 
 export const isLineConnectionTag = (
   diagramInstance: DiagramInstance
-): diagramInstance is DiagramLineConnectionTag => {
-  return diagramInstance.type === 'Line Connection Tag';
-};
+): diagramInstance is DiagramLineConnectionTag =>
+  diagramInstance && diagramInstance.type === 'Line Connection Tag';
 
 export const isEquipment = (
   diagramInstance: DiagramInstance
 ): diagramInstance is DiagramEquipmentInstance =>
-  diagramInstance.type === 'Equipment';
+  diagramInstance && diagramInstance.type === 'Equipment';
 
 export const isEquipmentTag = (
   diagramInstance: DiagramInstance
 ): diagramInstance is DiagramEquipmentTag =>
-  diagramInstance.type === 'Equipment Tag';
+  diagramInstance && diagramInstance.type === 'Equipment Tag';
 
 export const isInstrument = (
   diagramInstance: DiagramInstance
 ): diagramInstance is DiagramInstrumentInstance =>
-  diagramInstance.type === 'Instrument';
+  diagramInstance && diagramInstance.type === 'Instrument';
 
 export const isLine = (
   diagramInstance: any
-): diagramInstance is DiagramLineInstance => {
-  const line: DiagramAnnotationType = 'Line';
-  return diagramInstance && diagramInstance.type === line;
-};
+): diagramInstance is DiagramLineInstance =>
+  diagramInstance && diagramInstance.type === 'Line';
 
 export const isPid = (
   documentMetadata: DocumentMetadata

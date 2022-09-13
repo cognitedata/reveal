@@ -1,7 +1,10 @@
 import React, { useCallback, useState, useEffect } from 'react';
 import { useAuthContext } from '@cognite/react-container';
 import debounce from 'lodash/debounce';
-import { DiagramSymbolInstance, DocumentMetadata } from '@cognite/pid-tools';
+import {
+  DIAGRAM_PARSER_SOURCE,
+  PidFileConnectionInstance,
+} from '@cognite/pid-tools';
 import {
   AutoComplete as CogsAutoComplete,
   Button as CogsButton,
@@ -10,13 +13,13 @@ import {
   Title,
 } from '@cognite/cogs.js';
 import styled from 'styled-components';
-import { Asset } from '@cognite/sdk-v5/dist/src/types';
+import { FileInfo } from '@cognite/sdk';
 
 import { CollapseSeperator } from './CollapsableInstanceList';
 
 const multiColName = 'col-2';
 
-const SelectedSymbolInstanceInfo = styled.div`
+const SelectedInstanceInfo = styled.div`
   padding: 0.5rem 1rem;
   border-bottom: 1px solid var(--cogs-greyscale-grey3);
   .${multiColName} {
@@ -66,51 +69,52 @@ const RemovableRow = styled.div`
 `;
 
 interface Option {
-  value: Asset;
+  value: FileInfo;
   label: string;
 }
 
-interface AddAssetControllerProps {
-  documentMetadata: DocumentMetadata;
-  updateSymbolInstance: (diagramInstance: DiagramSymbolInstance) => void;
-  selectedSymbolInstance: DiagramSymbolInstance;
+interface FileConnectionControllerProps {
+  fileConnection: PidFileConnectionInstance;
+  updateFileConnection: (fileConnection: PidFileConnectionInstance) => void;
 }
 
-export const AddAssetController: React.FC<AddAssetControllerProps> = ({
-  documentMetadata,
-  updateSymbolInstance,
-  selectedSymbolInstance,
-}) => {
+export const FileConnectionController: React.FC<
+  FileConnectionControllerProps
+> = ({ fileConnection, updateFileConnection }) => {
   const [labelNames, setLabelNames] = useState<string[]>([]);
   const [search, setSearch] = useState<string>('');
-  const [assets, setAssets] = useState<Asset[]>([]);
-  const [clickedAssetOption, setClickedAssetOption] = useState<Asset>();
+  const [fileInfos, setFileInfos] = useState<FileInfo[]>([]);
+  const [clickedFileOption, setClickedFileOption] = useState<FileInfo>();
 
   const { client } = useAuthContext();
 
   useEffect(() => {
-    const labels = selectedSymbolInstance.labelIds.map(
+    const labels = fileConnection.labelIds.map(
       (labelId) => document.getElementById(labelId)!.textContent!
     );
-    const formattedAssetName = [documentMetadata.unit, ...labels].join('-');
+    const formattedLabels = labels.join('-');
 
-    onSearchInputChange(formattedAssetName);
+    onSearchInputChange(formattedLabels);
     setLabelNames(labels);
-  }, [selectedSymbolInstance]);
+  }, [fileConnection]);
 
   const searchInputChangedHandler = useCallback(
     debounce((newValue: string): void => {
       if (newValue === '' && search.length > 1) return;
 
       setSearch(newValue);
-      client?.assets
+      client?.files
         .search({
+          filter: {
+            mimeType: 'image/svg+xml',
+            source: DIAGRAM_PARSER_SOURCE,
+          },
           search: {
-            query: newValue,
+            name: newValue,
           },
           limit: 20,
         })
-        .then((assets) => setAssets(assets));
+        .then((files) => setFileInfos(files));
     }, 300),
     []
   );
@@ -124,80 +128,75 @@ export const AddAssetController: React.FC<AddAssetControllerProps> = ({
 
   const handleClickedOption = (result: Option): void => {
     onSearchInputChange(result.label);
-    setClickedAssetOption(result.value);
+    setClickedFileOption(result.value);
   };
 
-  const assignAsset = (): void => {
-    updateSymbolInstance({
-      ...selectedSymbolInstance,
-      assetId: clickedAssetOption!.id,
-      assetName: clickedAssetOption!.name,
+  const assignFileLink = (): void => {
+    updateFileConnection({
+      ...fileConnection,
+      linkedCdfFileId: clickedFileOption!.id,
+      linkedCdfFileName: clickedFileOption!.name,
     });
   };
 
-  const unassignAsset = () => {
-    updateSymbolInstance({
-      ...selectedSymbolInstance,
-      assetId: undefined,
-      assetName: undefined,
+  const unassignFileLink = () => {
+    updateFileConnection({
+      ...fileConnection,
+      linkedCdfFileId: undefined,
+      linkedCdfFileName: undefined,
     });
   };
 
   const isDisabled = (): boolean => {
     return (
-      !assets.some((asset) => asset.name === search) ||
-      clickedAssetOption?.id === selectedSymbolInstance.assetId
+      !fileInfos.some((files) => files.name === search) ||
+      clickedFileOption?.id === fileConnection.linkedCdfFileId
     );
   };
 
   return (
     <div>
       <CollapseSeperator>Selected Symbol Instance</CollapseSeperator>
-      {selectedSymbolInstance && (
-        <SelectedSymbolInstanceInfo>
+      <SelectedInstanceInfo>
+        <Row cols={1}>
+          <Title level={6}>File Connection Id</Title>
+          <span>{fileConnection.id}</span>
+        </Row>
+        <Row cols={2} className={multiColName}>
           <Row cols={1}>
-            <Title level={6}>Symbol Id</Title>
-            <span>{selectedSymbolInstance.id}</span>
-          </Row>
-          <Row cols={2} className={multiColName}>
-            <Row cols={1}>
-              <Title level={6}>Asset id</Title>
-              {selectedSymbolInstance.assetId}
-            </Row>
-            <Row cols={1}>
-              <Title level={6}>Label name</Title>
-              {labelNames.join(' ')}
-            </Row>
+            <Title level={6}>File Direction</Title>
+            {`${fileConnection.direction}°: ${fileConnection.fileDirection}`}
           </Row>
           <Row cols={1}>
-            <Title level={6}>Asset name</Title>
-            {selectedSymbolInstance.assetName ? (
-              <RemovableRow>
-                {selectedSymbolInstance.assetName}
-                <Icon
-                  onClick={unassignAsset}
-                  type="Close"
-                  size={12}
-                  style={{ cursor: 'pointer' }}
-                />
-              </RemovableRow>
-            ) : (
-              'undefined'
-            )}
+            <Title level={6}>Label name</Title>
+            {labelNames.join(' ')}
           </Row>
-        </SelectedSymbolInstanceInfo>
-      )}
+        </Row>
+        <Row cols={1}>
+          <Title level={6}>Linked File Name</Title>
+          {fileConnection.linkedCdfFileName ? (
+            <RemovableRow>
+              {fileConnection.linkedCdfFileName}
+              <Icon
+                onClick={unassignFileLink}
+                type="Close"
+                size={12}
+                style={{ cursor: 'pointer' }}
+              />
+            </RemovableRow>
+          ) : (
+            'undefined'
+          )}
+        </Row>
+      </SelectedInstanceInfo>
       <AutoCompleteButtonContainer>
         <AutoComplete
-          placeholder="Search for Assets"
-          value={selectedSymbolInstance ? { value: search, label: search } : ''}
-          options={
-            selectedSymbolInstance &&
-            assets.map((asset: Asset) => ({
-              value: asset,
-              label: asset.name,
-            }))
-          }
+          placeholder="Search for Files"
+          value={{ value: search, label: search }}
+          options={fileInfos.map((fileInfo) => ({
+            value: fileInfo,
+            label: fileInfo.name,
+          }))}
           handleInputChange={onSearchInputChange}
           onChange={handleClickedOption}
           menuPlacement="top"
@@ -205,7 +204,7 @@ export const AddAssetController: React.FC<AddAssetControllerProps> = ({
         />
         <AutoCompleteButton
           type="primary"
-          onClick={assignAsset}
+          onClick={assignFileLink}
           disabled={isDisabled()}
         >
           Add

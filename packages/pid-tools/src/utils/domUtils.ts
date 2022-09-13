@@ -18,6 +18,7 @@ import {
   BoundingBox,
   getDiagramInstanceByPathId,
   PidInstance,
+  isFileConnection,
 } from '../index';
 
 import isNotUndefined from './isNotUndefined';
@@ -176,7 +177,7 @@ export const applyStyleToNode = ({
       if (node instanceof SVGTSpanElement) {
         if (activeLineNumber && node.innerHTML.includes(activeLineNumber)) {
           node.style.fontWeight = '600';
-          return;
+          break;
         }
       }
 
@@ -230,12 +231,20 @@ export const applyStyleToNode = ({
       break;
     }
     case 'connectLabels': {
-      if (diagramInstance) {
-        if (diagramInstance.id === labelSelection) {
-          color = COLORS.labelSelection;
-        } else if (diagramInstance.assetId) {
-          ({ color, opacity } = COLORS.symbolWithAsset);
+      if (diagramInstance === undefined) break;
+
+      if (diagramInstance.assetId) {
+        ({ color, opacity } = COLORS.symbolWithAsset);
+      }
+
+      if (isFileConnection(diagramInstance)) {
+        if (diagramInstance.linkedCdfFileId !== undefined) {
+          color = 'DarkOrange';
         }
+      }
+
+      if (diagramInstance.id === labelSelection) {
+        scaleNodeStrokeWidth(node, HIGHLIGHT_SCALE_FACTOR);
       }
     }
   }

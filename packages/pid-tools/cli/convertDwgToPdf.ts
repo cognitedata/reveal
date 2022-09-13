@@ -5,16 +5,11 @@ import { CogniteClient, FileInfo } from '@cognite/sdk';
 
 import { DIAGRAM_PARSER_SITE_KEY, DIAGRAM_PARSER_UNIT_KEY } from '../src';
 import getMsalClient, { MsalClientOptions } from '../src/utils/msalClient';
+import sleepMs from '../src/utils/sleepMs';
 
 import { SiteAndUnit } from './createSiteUnitEvents';
 import createDirIfNotExists from './utils/createDirIfNotExists';
 import getDataDirPath from './utils/getDataDirPath';
-
-const sleep = (ms: number) => {
-  return new Promise((resolve) => {
-    setTimeout(resolve, ms);
-  });
-};
 
 // eslint-disable-next-line no-constant-condition
 const getJobStatus = async (
@@ -27,7 +22,7 @@ const getJobStatus = async (
   );
 
   if (responseJobStatus.data.status === 'Running') {
-    await sleep(200);
+    await sleepMs(200);
     return getJobStatus(client, jobId);
   }
   return responseJobStatus.data.status as unknown as string;

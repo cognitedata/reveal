@@ -1,3 +1,4 @@
+import uniqBy from 'lodash/uniqBy';
 import styled from 'styled-components';
 import { DiagramSymbol, parseStyleString } from '@cognite/pid-tools';
 import { Icon } from '@cognite/cogs.js';
@@ -23,6 +24,10 @@ export const CollapsableSymbolHeader: React.FC<
   const strokeWidth = 1;
   const viewboxPadding = 2 * strokeWidth;
 
+  // Fix: This is needed to supress very spammy warnings from react.
+  // Ideally this should be fixed at an other level since this probably hurts rendering performance.
+  const paths = uniqBy(symbol.svgRepresentation.svgPaths, 'svgCommands');
+
   return (
     <CollapseHeader>
       <span>{`${symbol.symbolType} - ${symbol.description} (${symbolInstanceCount})`}</span>
@@ -34,7 +39,7 @@ export const CollapsableSymbolHeader: React.FC<
         }`}
         style={{ aspectRatio: '1 / 1', height: '2rem' }}
       >
-        {symbol.svgRepresentation.svgPaths.map((path) => {
+        {paths.map((path) => {
           const fill =
             path.style === undefined
               ? 'none'

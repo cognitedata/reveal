@@ -19,6 +19,7 @@ import {
   setSelectablilityOfAllText,
   isValidGraphDocumentJson,
   isValidLegendJson,
+  mapAsyncEveryMs,
 } from './utils';
 import {
   applyPathReplacementInSvg,
@@ -58,6 +59,7 @@ import {
   SymbolType,
   ToolType,
   DiagramInstance,
+  PidFileConnectionInstance,
 } from './types';
 import {
   addOrRemoveLabelToInstance,
@@ -75,10 +77,11 @@ import {
   pruneSymbolOverlappingPathsFromLines,
   addOrRemoveLineNumberToInstance,
 } from './utils/diagramInstanceUtils';
-import { isLine } from './utils/type';
+import { isFileConnection, isLine } from './utils/type';
 import {
   BACKGROUND_OVERLAY_GROUP,
   COLORS,
+  DIAGRAM_PARSER_SOURCE,
   EQUIPMENT_TAG_REGEX,
 } from './constants';
 import { getMetadataFromFileName } from './utils/fileNameUtils';
@@ -1516,56 +1519,93 @@ export class CognitePid {
 
     this.inferLineNumbers();
 
-    // Assign assets to symbol instances
-    const toUpdateInstances = this.symbolInstances.filter(
+    const fireSearchEveryMs = 35;
+
+    // Assign instrument to CDF assets
+    const toUpdateInstruments = this.symbolInstances.filter(
       (symbolInstance) =>
         symbolInstance.assetId === undefined &&
         symbolInstance.type === 'Instrument' &&
         symbolInstance.labelIds.length > 0
     );
 
-    const fireSearchEveryMs = 25;
-    await Promise.all(
-      toUpdateInstances.map((instance, i) => {
-        return new Promise<void>((resolve) => {
-          setTimeout(async () => {
-            const labelNames = instance.labelIds.map(
-              (labelId) => this.pidDocument!.getPidTspanById(labelId)!
-            );
+    // We don't wan to overload CDF with requests, so we will fire them with a delay — each request every `fireSearchEveryMs` ms.
+    await mapAsyncEveryMs(
+      toUpdateInstruments,
+      async (instrument) => {
+        const labels = instrument.labelIds.map(
+          (labelId) => this.pidDocument!.getPidTspanById(labelId)!.text
+        );
 
-            const querySubstrings = [
-              documentMetadata.unit,
-              ...labelNames.map((label) => label?.text),
-            ];
-            const query = querySubstrings.join('-');
+        const querySubstrings = [documentMetadata.unit, ...labels];
+        const query = querySubstrings.join('-');
 
-            const assets = await client?.assets.search({
-              search: {
-                query,
-              },
-              limit: 1,
-            });
-
-            if (!assets || assets.length < 1) {
-              resolve();
-              return;
-            }
-
-            if (
-              querySubstrings.every((querySubstring) =>
-                assets[0].name.includes(querySubstring)
-              )
-            ) {
-              instance.assetId = assets[0].id;
-              instance.assetName = assets[0].name;
-              resolve();
-              return;
-            }
-            console.log(`"${query}" not found for instrument`, instance);
-            resolve();
-          }, i * fireSearchEveryMs);
+        const assets = await client?.assets.search({
+          search: {
+            query,
+          },
+          limit: 1,
         });
-      })
+
+        if (!assets || assets.length < 1) return;
+
+        if (
+          querySubstrings.every((querySubstring) =>
+            assets[0].name.includes(querySubstring)
+          )
+        ) {
+          instrument.assetId = assets[0].id;
+          instrument.assetName = assets[0].name;
+          return;
+        }
+        console.log(`"${query}" not found for instrument:`, instrument);
+      },
+      fireSearchEveryMs
+    );
+
+    // Assign file connection to CDF files
+    const toUpdateFileConnections = this.symbolInstances.filter(
+      (symbolInstance): symbolInstance is PidFileConnectionInstance =>
+        isFileConnection(symbolInstance) &&
+        symbolInstance.linkedCdfFileId === undefined &&
+        symbolInstance.labelIds.length > 0
+    );
+
+    // We don't wan to overload CDF with requests, so we will fire them with a delay — each request every `fireSearchEveryMs` ms.
+    await mapAsyncEveryMs(
+      toUpdateFileConnections,
+      async (fileConnection) => {
+        const labels = fileConnection.labelIds.map(
+          (labelId) => this.pidDocument!.getPidTspanById(labelId)!.text
+        );
+
+        const query = labels.join('-');
+
+        const fileInfos = await client?.files.search({
+          filter: {
+            mimeType: 'image/svg+xml',
+            source: DIAGRAM_PARSER_SOURCE,
+          },
+          search: {
+            name: query,
+          },
+          limit: 1,
+        });
+
+        const fileInfo = fileInfos?.[0];
+        if (fileInfo === undefined) return;
+
+        if (labels.every((label) => fileInfo.name.includes(label))) {
+          fileConnection.linkedCdfFileId = fileInfo.id;
+          fileConnection.linkedCdfFileName = fileInfo.name;
+          return;
+        }
+        console.log(
+          `"${query}" not found for file connection:`,
+          fileConnection
+        );
+      },
+      fireSearchEveryMs
     );
 
     this.setSymbolInstances([...this.symbolInstances]);

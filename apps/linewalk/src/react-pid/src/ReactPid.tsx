@@ -12,6 +12,7 @@ import {
   PathReplacementGroup,
   DiagramTag,
   DiagramInstanceId,
+  DiagramSymbolInstance,
 } from '@cognite/pid-tools';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useAuthContext } from '@cognite/react-container';
@@ -338,6 +339,11 @@ export const ReactPid = ({
     pidViewer.current.deletePathReplacementGroups(pathReplacementGroupIds);
   };
 
+  const updateSymbolInstances = (symbolInstances: DiagramSymbolInstance[]) => {
+    if (!pidViewer.current) return;
+    pidViewer.current.setSymbolInstances(symbolInstances);
+  };
+
   useEffect(() => {
     if (file) {
       if (pidViewer.current && pidViewer.current.document === undefined) {
@@ -376,7 +382,7 @@ export const ReactPid = ({
           symbols={symbols}
           lines={lines}
           symbolInstances={symbolInstances}
-          setSymbolInstances={setSymbolInstances}
+          setSymbolInstances={updateSymbolInstances}
           symbolSelection={symbolSelection}
           labelSelection={labelSelection}
           loadJson={loadJson}

@@ -11,6 +11,7 @@ import {
   AddSymbolData,
   DiagramTag,
   DiagramInstanceId,
+  isFileConnection,
 } from '@cognite/pid-tools';
 
 import { CollapsableInstanceList } from './CollapsableInstanceList';
@@ -19,6 +20,7 @@ import { AddSymbolController } from './AddSymbolController';
 import { AddLineNumberController } from './AddLineNumberController';
 import { DocumentInfo } from './DocumentInfo';
 import { AddAssetController } from './AddAssetController';
+import { FileConnectionController } from './FileConnectionController';
 
 const SidePanelWrapper = styled.div`
   display: grid;
@@ -112,6 +114,10 @@ export const SidePanel = ({
     setActiveTagId(arg);
   };
 
+  const labelSelectionInstance = symbolInstances.find(
+    (instance) => instance.id === labelSelection
+  );
+
   return (
     <SidePanelWrapper>
       <FileControllerWrapper>
@@ -161,14 +167,38 @@ export const SidePanel = ({
             setActiveLineNumber={setActiveLineNumber}
           />
         )}
-        {activeTool === 'connectLabels' && (
-          <AddAssetController
-            documentMetadata={documentMetadata}
-            symbolInstances={symbolInstances}
-            setSymbolInstances={setSymbolInstances}
-            labelSelection={labelSelection}
-          />
-        )}
+        {activeTool === 'connectLabels' &&
+          labelSelectionInstance &&
+          (isFileConnection(labelSelectionInstance) ? (
+            <FileConnectionController
+              fileConnection={labelSelectionInstance}
+              updateFileConnection={(fileConnection) => {
+                setSymbolInstances(
+                  symbolInstances.map((instance) => {
+                    if (instance.id === fileConnection.id) {
+                      return fileConnection;
+                    }
+                    return instance;
+                  })
+                );
+              }}
+            />
+          ) : (
+            <AddAssetController
+              documentMetadata={documentMetadata}
+              updateSymbolInstance={(symbolInstance) => {
+                setSymbolInstances(
+                  symbolInstances.map((instance) => {
+                    if (instance.id === symbolInstance.id) {
+                      return symbolInstance;
+                    }
+                    return instance;
+                  })
+                );
+              }}
+              selectedSymbolInstance={labelSelectionInstance}
+            />
+          ))}
       </div>
     </SidePanelWrapper>
   );
