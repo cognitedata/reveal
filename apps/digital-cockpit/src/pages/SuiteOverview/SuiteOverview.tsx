@@ -1,6 +1,13 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { Redirect, useHistory, useParams } from 'react-router-dom';
-import { Button, Graphic, Loader, Title, Tooltip } from '@cognite/cogs.js';
+import {
+  Body,
+  Button,
+  Graphic,
+  Loader,
+  Title,
+  Tooltip,
+} from '@cognite/cogs.js';
 import SuiteAvatar from 'components/suiteAvatar';
 import Suitebar from 'components/suitebar';
 import { SuiteMenu } from 'components/menus';
@@ -29,7 +36,7 @@ import isEmpty from 'lodash/isEmpty';
 import SuiteBreadcrumb from 'components/navigation/SuiteBreadcrumb';
 import { SubSuiteTile } from 'components/tiles';
 
-import { ContainerTitle, StyledTitle } from './elements';
+import { ContainerTitle, DescriptionContainer, StyledTitle } from './elements';
 import SuiteOverviewGrid from './SuiteOverviewGrid';
 
 const SuiteOverview: React.FC = () => {
@@ -263,6 +270,14 @@ const SuiteOverview: React.FC = () => {
         actionsPanel={renderActionButtons()}
       />
       <OverviewContainer key={`${sidebarToggled}`}>
+        {suite.description && (
+          <DescriptionContainer>
+            <ContainerTitle>
+              <Title level={6}>Description</Title>
+            </ContainerTitle>
+            <Body>{suite.description}</Body>
+          </DescriptionContainer>
+        )}
         {childSuites?.length ? (
           <>
             <ContainerTitle>
