@@ -38,6 +38,11 @@ export class LocalPointCloudFactory implements PointCloudFactory {
     );
 
     pointCloudOctree.name = `PointCloudOctree: ${modelBaseUrl}`;
-    return new PotreeNodeWrapper(pointCloudOctree, annotationInfo.annotations, modelIdentifier.revealInternalId, classSchema);
+    return new PotreeNodeWrapper(
+      pointCloudOctree,
+      annotationInfo.annotations,
+      modelIdentifier.revealInternalId,
+      classSchema
+    );
   }
 }

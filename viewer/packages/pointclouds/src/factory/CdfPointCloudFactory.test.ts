@@ -45,12 +45,13 @@ const sdkMock = new Mock<CogniteClient>()
 const potreeMock = new Mock<Potree>()
   .setup(p => p.loadPointCloud)
   .returns(() =>
-    Promise.resolve(
-      [new Mock<PointCloudOctree>()
+    Promise.resolve([
+      new Mock<PointCloudOctree>()
         .setup(p => p.material)
         .returns(new Mock<PointCloudMaterial>().object())
-        .object(), undefined]
-    )
+        .object(),
+      undefined
+    ])
   );
 
 describe(CdfPointCloudFactory.name, () => {

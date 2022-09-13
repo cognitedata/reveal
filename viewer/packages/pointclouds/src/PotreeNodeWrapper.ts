@@ -7,7 +7,7 @@ import * as THREE from 'three';
 export type PotreeClassification = { [pointClass: number]: { x: number; y: number; z: number; w: number } };
 const PotreeDefaultPointClass = 'DEFAULT';
 
-type ClassificationMap = { [key: string]: { rgb: string, code: number } };
+type ClassificationMap = { [key: string]: { rgb: string; code: number } };
 
 import {
   PointCloudOctree,
@@ -44,10 +44,12 @@ export class PotreeNodeWrapper {
     return this._needsRedraw;
   }
 
-  constructor(octree: PointCloudOctree,
-              annotations: PointCloudObjectAnnotation[],
-              modelIdentifier: symbol,
-              classificationInfo: ClassificationInfo | undefined) {
+  constructor(
+    octree: PointCloudOctree,
+    annotations: PointCloudObjectAnnotation[],
+    modelIdentifier: symbol,
+    classificationInfo: ClassificationInfo | undefined
+  ) {
     this.octree = octree;
     this.pointSize = 2;
     this.pointColorType = PotreePointColorType.Rgb;
@@ -64,7 +66,7 @@ export class PotreeNodeWrapper {
 
   private createClassNameToCodeMap(classificationInfo: ClassificationInfo): ClassificationMap {
     assert(classificationInfo.classificationSets.length > 0);
-    const classMap: { [key: string]: { rgb: string, code: number } } = {};
+    const classMap: { [key: string]: { rgb: string; code: number } } = {};
     classificationInfo.classificationSets[0].classificationSet.forEach(c => {
       classMap[c.name] = { ...c };
     });
@@ -73,11 +75,10 @@ export class PotreeNodeWrapper {
   }
 
   private updateMaterialClassMap(classificationMap: ClassificationMap) {
-    Object.keys(classificationMap).forEach(
-      name => {
-        const color = new THREE.Color(classificationMap[name].rgb);
-        this._classification[classificationMap[name].code] = new THREE.Vector4(color.r, color.g, color.b, 1.0);
-      });
+    Object.keys(classificationMap).forEach(name => {
+      const color = new THREE.Color(classificationMap[name].rgb);
+      this._classification[classificationMap[name].code] = new THREE.Vector4(color.r, color.g, color.b, 1.0);
+    });
     this.octree.material.classification = this._classification;
   }
 
@@ -171,7 +172,7 @@ export class PotreeNodeWrapper {
       return this._classNameToCodeMap[pointClass].code;
     }
 
-    if (typeof(pointClass) === 'string') {
+    if (typeof pointClass === 'string') {
       throw Error(`Unrecognized string ${pointClass} used as class name`);
     }
 
