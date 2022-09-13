@@ -1,16 +1,11 @@
-//@ts-nocheck
 import React from 'react';
 import { Cell, CellProps, Column, HeaderProps } from 'react-table';
-import {
-  addIfExist,
-  calculateLatest,
-  calculateStatus,
-} from 'utils/extpipeUtils';
+import { addIfExist, calculateLatest } from 'utils/extpipeUtils';
 import { Extpipe } from 'model/Extpipe';
 import Name from 'components/extpipes/cols/Name';
 import Schedule from 'components/extpipes/cols/Schedule';
 import { DataSet } from 'components/extpipes/cols/DataSet';
-import StatusMarker from 'components/extpipes/cols/StatusMarker';
+import { LastRunStatusMarker } from 'components/extpipes/cols/StatusMarker';
 import { User } from 'model/User';
 import RelativeTimeWithTooltip from 'components/extpipes/cols/RelativeTimeWithTooltip';
 import SorterIndicator from 'components/table/SorterIndicator';
@@ -39,7 +34,7 @@ export const createSearchStringForDataSet = (
 };
 
 export const getExtpipeTableColumns = (
-  _t?: (key: TranslationKeys) => string
+  _t: (key: TranslationKeys) => string
 ) => {
   const extpipeTableColumns: Column<Extpipe>[] = [
     {
@@ -74,33 +69,31 @@ export const getExtpipeTableColumns = (
     },
     {
       id: 'status',
+      Header: _t('last-run-status') || TableHeadings.LAST_RUN_STATUS,
+
+      Cell: ({ row }: CellProps<Extpipe>) => {
+        return <LastRunStatusMarker externalId={row.values.externalId!} />;
+      },
+      disableSortBy: true,
+      disableFilters: true,
+    },
+    {
+      id: 'latestRun',
       Header: ({ column }: HeaderProps<Extpipe>) => {
         return (
           <SorterIndicator
-            name={_t('last-run-status') || TableHeadings.LAST_RUN_STATUS}
+            name={_t('last-run-time') || TableHeadings.LATEST_RUN_TIME}
             column={column}
           />
         );
       },
       accessor: ({ lastSuccess, lastFailure }: Extpipe) => {
-        const status = calculateStatus({ lastSuccess, lastFailure });
-        return status.status;
+        return calculateLatest([
+          ...addIfExist(lastSuccess),
+          ...addIfExist(lastFailure),
+        ]);
       },
-      Cell: ({ row }: CellProps<Extpipe>) => {
-        return <StatusMarker status={row.values.status} />;
-      },
-      disableSortBy: false,
-      // Filter: StatusFilterTableDropdown,
-      // filter: 'includes',
-      disableFilters: true,
-    },
-    {
-      id: 'latestRun',
-      Header: _t('last-run-time') || TableHeadings.LATEST_RUN_TIME,
-      accessor: ({ lastSuccess, lastFailure }: Extpipe) => {
-        const status = calculateStatus({ lastSuccess, lastFailure });
-        return status.time;
-      },
+      // @ts-ignore
       Cell: ({ row }: Cell<Extpipe>) => {
         const { latestRun } = row.values;
         if (latestRun == null || latestRun === 0) return '–';
@@ -108,12 +101,19 @@ export const getExtpipeTableColumns = (
           <RelativeTimeWithTooltip id="latest-run" time={latestRun as number} />
         );
       },
-      disableSortBy: true,
+      disableSortBy: false,
       disableFilters: true,
     },
     {
       id: 'lastConnected',
-      Header: _t('last-seen') || TableHeadings.LAST_SEEN,
+      Header: ({ column }: HeaderProps<Extpipe>) => {
+        return (
+          <SorterIndicator
+            name={_t('last-seen') || TableHeadings.LAST_SEEN}
+            column={column}
+          />
+        );
+      },
       accessor: ({ lastSuccess, lastFailure, lastSeen }: Extpipe) => {
         return calculateLatest([
           ...addIfExist(lastSuccess),
@@ -121,6 +121,7 @@ export const getExtpipeTableColumns = (
           ...addIfExist(lastSeen),
         ]);
       },
+      // @ts-ignore
       Cell: ({ row }: Cell<Extpipe>) => {
         const { lastConnected } = row.values;
         if (lastConnected == null || lastConnected === 0) return '–';
@@ -131,13 +132,14 @@ export const getExtpipeTableColumns = (
           />
         );
       },
-      disableSortBy: true,
+      disableSortBy: false,
       disableFilters: true,
     },
     {
       id: 'schedule',
       Header: _t('schedule') || TableHeadings.SCHEDULE,
       accessor: 'schedule',
+      // @ts-ignore
       Cell: ({ row }: Cell<Extpipe>) => {
         return <Schedule id="schedule" schedule={row.values.schedule} />;
       },
@@ -155,17 +157,11 @@ export const getExtpipeTableColumns = (
         );
       },
       accessor: (row: Extpipe) => {
-        return createSearchStringForDataSet(row.dataSetId, row.dataSet);
+        return row.dataSetId;
       },
+      // @ts-ignore
       Cell: ({ row }: Cell<Extpipe>) => {
-        const id = row.original.dataSet?.name ?? row.original.dataSetId;
-        return (
-          <DataSet
-            id="data-set-id"
-            dataSetId={row.original.dataSetId}
-            dataSetName={`${id}`}
-          />
-        );
+        return <DataSet dataSetId={row.original.dataSetId} />;
       },
       sortType: 'basic',
       disableSortBy: false,
@@ -184,14 +180,15 @@ export const getExtpipeTableColumns = (
       accessor: (row: Extpipe) => {
         return createSearchStringForContacts(row.contacts);
       },
+      // @ts-ignore
       Cell: ({ row }: Cell<Extpipe>) => {
         const { contacts } = row.original;
         const noOwner = '–';
-        if (contacts == null) return noOwner;
+        if (contacts == null) return <>{noOwner}</>;
         const owner = contacts.find(
           (user) => user.role?.toLowerCase() === 'owner'
         );
-        if (owner == null) return noOwner;
+        if (owner == null) return <>{noOwner}</>;
         const displayName = owner.name ?? owner.email;
         return <span>{displayName}</span>;
       },

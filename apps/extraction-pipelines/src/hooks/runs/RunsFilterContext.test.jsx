@@ -4,7 +4,6 @@ import {
   updateSearchAction,
   updateStatusAction,
 } from 'hooks/runs/RunsFilterContext';
-import { RunStatusAPI } from 'model/Status';
 
 describe('RunsFilterContext', () => {
   const dateRange = {
@@ -14,9 +13,9 @@ describe('RunsFilterContext', () => {
   const cases = [
     {
       field: 'statuses',
-      action: updateStatusAction([RunStatusAPI.SUCCESS]),
+      action: updateStatusAction(['success']),
       otherFields: ['search', 'dateRange'],
-      expected: [RunStatusAPI.SUCCESS],
+      expected: ['success'],
     },
     {
       field: 'search',

@@ -9,7 +9,11 @@ import {
 import { renderWithReQueryCacheSelectedExtpipeContext } from 'utils/test/render';
 import { ORIGIN_DEV, PROJECT_ITERA_INT_GREEN } from 'utils/baseURL';
 import { render } from 'utils/test';
-import { useExtpipeById } from 'hooks/useExtpipe';
+import {
+  useSelectedExtpipe,
+  useSelectedExtpipeId,
+  useDeletePipeline,
+} from 'hooks/useExtpipe';
 import {
   getMockResponse,
   mockDataRunsResponse,
@@ -17,10 +21,10 @@ import {
 } from 'utils/mockResponse';
 import { TableHeadings } from 'components/table/ExtpipeTableCol';
 import { RunTableHeading } from 'components/extpipe/RunLogsCols';
-import { useFilteredRuns, useRuns } from 'hooks/useRuns';
+import { useFilteredRuns, useRuns, useAllRuns } from 'hooks/useRuns';
 import ExtpipePage from 'pages/Extpipe/ExtpipePage';
 import { useDataSetsList } from 'hooks/useDataSetsList';
-// 
+//
 import { useCapabilities } from '@cognite/sdk-react-query-hooks';
 import { EXTRACTION_PIPELINES_ACL } from 'model/AclAction';
 
@@ -36,12 +40,15 @@ jest.mock('react-router-dom', () => {
 
 jest.mock('hooks/useExtpipe', () => {
   return {
-    useExtpipeById: jest.fn(),
+    useSelectedExtpipe: jest.fn(),
+    useSelectedExtpipeId: jest.fn(),
+    useDeletePipeline: jest.fn(),
   };
 });
 jest.mock('hooks/useRuns', () => {
   return {
     useRuns: jest.fn(),
+    useAllRuns: jest.fn(),
     useFilteredRuns: jest.fn(),
   };
 });
@@ -59,10 +66,14 @@ jest.mock('components/chart/RunChart', () => {
 });
 describe('ExtpipePage', () => {
   beforeEach(() => {
+    useDeletePipeline.mockReturnValue({ mutate: () => {} });
+    useSelectedExtpipeId.mockReturnValue(1);
+    useSelectedExtpipe.mockReturnValue({ data: {}, isLoading: false });
     useLocation.mockReturnValue({ pathname: '', search: '' });
     useRouteMatch.mockReturnValue({ path: 'path', url: '/' });
     useParams.mockReturnValue({ id: 1 });
     useDataSetsList.mockReturnValue({ data: mockDataSetResponse() });
+    useAllRuns.mockReturnValue({ data: { pages: [] } });
     useCapabilities.mockReturnValue({
       isLoading: false,
       data: [{ acl: EXTRACTION_PIPELINES_ACL, actions: ['READ', 'WRITE'] }],
@@ -76,7 +87,7 @@ describe('ExtpipePage', () => {
   });
 
   test('Should not showing page while loading', () => {
-    useExtpipeById.mockReturnValue({ data: {}, isLoading: true });
+    useSelectedExtpipe.mockReturnValue({ data: {}, isLoading: true });
     const { wrapper } = renderWithReQueryCacheSelectedExtpipeContext(
       new QueryClient(),
       PROJECT_ITERA_INT_GREEN,
@@ -96,10 +107,10 @@ describe('ExtpipePage', () => {
   const mockDataSet = mockDataSetResponse()[2];
   const mockData = { ...mockExtpipe, dataSet: mockDataSet };
   function renderExtpipePage() {
-    useExtpipeById.mockReturnValue({
-      data: mockData,
-      isLoading: false,
-    });
+    // useSelectedExtpipe.mockReturnValue({
+    //   data: mockData,
+    //   isLoading: false,
+    // });
     useRouteMatch.mockReturnValue({ path: '/', url: '/' });
     useRuns.mockReturnValue({ data: mockDataRunsResponse.items });
     useFilteredRuns.mockReturnValue({

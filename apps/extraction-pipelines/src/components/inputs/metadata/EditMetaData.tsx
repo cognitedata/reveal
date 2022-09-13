@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { useSelectedExtpipe } from 'hooks/useSelectedExtpipe';
-import { useExtpipeById } from 'hooks/useExtpipe';
+import { useSelectedExtpipe } from 'hooks/useExtpipe';
 import { toCamelCase, uppercaseFirstWord } from 'utils/primitivesUtils';
 import {
   createUpdateSpec,
@@ -154,8 +153,7 @@ export const EditMetaDataView = ({
 };
 
 export const EditMetaData = (props: SuperProps) => {
-  const { extpipe } = useSelectedExtpipe();
-  const { data: current } = useExtpipeById(extpipe?.id);
+  const { data: current } = useSelectedExtpipe();
   const { mutate } = useDetailsUpdate();
 
   const onConfirm = (updatedMetadata: MetaData) => {

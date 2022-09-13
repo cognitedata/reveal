@@ -18,34 +18,32 @@ export type DetailsUpdateContext = {
 export const useDetailsUpdate = () => {
   const sdk = useSDK();
   const queryClient = useQueryClient();
-  return useMutation<Extpipe, ErrorVariations, DetailsUpdateContext>(
-    ({ items }) => {
+  return useMutation<Extpipe, ErrorVariations, DetailsUpdateContext>({
+    mutationFn: ({ items }) => {
       return saveUpdate(sdk, items);
     },
-    {
-      onMutate: (vars) => {
-        queryClient.cancelQueries(['extpipe', vars.id]);
-        const previous: Extpipe | undefined = queryClient.getQueryData([
-          'extpipe',
-          vars.id,
-        ]);
-        if (previous) {
-          const fields = mapUpdateToPartialExtpipe(vars);
-          const update = Object.assign({}, previous, ...fields);
-          queryClient.setQueryData(['extpipe', vars.id], update);
-        }
-        return previous;
-      },
-      onError: (_, vars, previous) => {
-        if (previous) {
-          queryClient.setQueryData(['extpipe', vars.id], previous);
-        }
-      },
-      onSettled: (_, __, vars) => {
-        queryClient.invalidateQueries(['extpipe', vars.id]);
-      },
-    }
-  );
+    onMutate: (vars) => {
+      queryClient.cancelQueries(['extpipe', vars.id]);
+      const previous: Extpipe | undefined = queryClient.getQueryData([
+        'extpipe',
+        vars.id,
+      ]);
+      if (previous) {
+        const fields = mapUpdateToPartialExtpipe(vars);
+        const update = Object.assign({}, previous, ...fields);
+        queryClient.setQueryData(['extpipe', vars.id], update);
+      }
+      return previous;
+    },
+    onError: (_, vars, previous) => {
+      if (previous) {
+        queryClient.setQueryData(['extpipe', vars.id], previous);
+      }
+    },
+    onSettled: (_, __, vars) => {
+      queryClient.invalidateQueries(['extpipe', vars.id]);
+    },
+  });
 };
 
 export const mapUpdateToPartialExtpipe = (

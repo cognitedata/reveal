@@ -2,8 +2,7 @@ import React, { FunctionComponent, useState } from 'react';
 import { DetailFieldNames, Extpipe } from 'model/Extpipe';
 import { RawEditModal } from 'components/modals/RawEditModal';
 import { TEST_ID_BTN_SAVE } from 'components/extpipe/DocumentationSection';
-import { useSelectedExtpipe } from 'hooks/useSelectedExtpipe';
-import { useExtpipeById } from 'hooks/useExtpipe';
+import { useSelectedExtpipe } from 'hooks/useExtpipe';
 import { Icon } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { AddFieldValueBtn } from 'components/buttons/AddFieldValueBtn';
@@ -19,8 +18,7 @@ const RawTableWrapper = styled.div`
 
 const EditRawTable: FunctionComponent<{ canEdit: boolean }> = ({ canEdit }) => {
   const [showRawModal, setShowRawModal] = useState(false);
-  const { extpipe: selected } = useSelectedExtpipe();
-  const { data: storedExtpipe } = useExtpipeById(selected?.id);
+  const { data: storedExtpipe } = useSelectedExtpipe();
 
   const openDialog = () => canEdit && setShowRawModal(true);
   const closeDialog = () => setShowRawModal(false);

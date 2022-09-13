@@ -1,6 +1,13 @@
-import { useMutation, useQuery, UseQueryOptions } from 'react-query';
+import {
+  useMutation,
+  UseMutationOptions,
+  useQueries,
+  useQuery,
+  UseQueryOptions,
+} from 'react-query';
 import { useSDK } from '@cognite/sdk-provider';
 import {
+  CreateConfigRevisionArguments,
   createExtpipeConfigRevision,
   getExtpipeConfig,
   getExtpipeConfigRevisions,
@@ -8,14 +15,13 @@ import {
 import { ExtpipeConfig, ExtpipeConfigRevision } from 'model/Extpipe';
 import { ErrorVariations } from 'model/SDKErrors';
 
+type ExtPipeConfigRequest = {
+  externalId: string;
+  revision?: number;
+  activeAtTime?: number;
+};
 export const useExtpipeConfig = (
-  {
-    externalId,
-    revision,
-  }: {
-    externalId: string;
-    revision?: number;
-  },
+  { externalId, revision, activeAtTime }: ExtPipeConfigRequest,
   options?: Omit<
     UseQueryOptions<ExtpipeConfig, ErrorVariations>,
     'queryKey' | 'queryFn'
@@ -23,9 +29,25 @@ export const useExtpipeConfig = (
 ) => {
   const sdk = useSDK();
   return useQuery<ExtpipeConfig, ErrorVariations>(
-    ['extpipe', 'config', externalId, revision],
-    () => getExtpipeConfig(sdk, externalId, revision),
+    ['extpipe', 'config', externalId, { revision, activeAtTime }],
+    () => getExtpipeConfig(sdk, externalId, { revision, activeAtTime }),
     options
+  );
+};
+
+export const useExtpipeConfigs = (
+  reqs: ExtPipeConfigRequest[],
+  options?: { enabled?: boolean }
+) => {
+  const sdk = useSDK();
+
+  return useQueries(
+    reqs.map(({ externalId, activeAtTime, revision }) => ({
+      queryKey: ['extpipe', 'config', externalId, { revision, activeAtTime }],
+      queryFn: () =>
+        getExtpipeConfig(sdk, externalId, { revision, activeAtTime }),
+      ...options,
+    }))
   );
 };
 
@@ -48,10 +70,18 @@ export const useExtpipeConfigRevisions = (
   );
 };
 
-export const useCreateConfigRevision = () => {
+export const useCreateConfigRevision = (
+  opts?: Omit<
+    UseMutationOptions<void, ErrorVariations, CreateConfigRevisionArguments>,
+    'mutationFn' | 'mutationKey'
+  >
+) => {
   const sdk = useSDK();
-  return useMutation(
-    (opts: { externalId: string; config: string; description?: string }) =>
-      createExtpipeConfigRevision(sdk, opts)
-  );
+  return useMutation<void, ErrorVariations, CreateConfigRevisionArguments>({
+    mutationFn: async (o: CreateConfigRevisionArguments) => {
+      await createExtpipeConfigRevision(sdk, o);
+    },
+    mutationKey: ['create-config-revision'],
+    ...opts,
+  });
 };

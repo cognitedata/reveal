@@ -1,8 +1,7 @@
-import { RunUI } from 'model/Runs';
 import moment from 'moment';
-import { RunStatusUI } from 'model/Status';
 import { DATE_FORMAT } from 'components/TimeDisplay/TimeDisplay';
 import { Range } from '@cognite/cogs.js';
+import { RunApi, RunStatus } from 'model/Runs';
 
 export const DATE_HOUR_FORMAT: Readonly<string> = 'YYYY-MM-DD HH';
 export const DATE_HOUR_MIN_FORMAT: Readonly<string> = 'YYYY-MM-DD HH:mm';
@@ -38,8 +37,8 @@ export const mapRangeToGraphTimeFormat = (range: Range) => {
 };
 
 interface GroupByParams {
-  data: RunUI[];
-  status?: RunStatusUI;
+  data: RunApi[];
+  status?: RunStatus;
   by: AllDateFormats;
 }
 
@@ -47,7 +46,7 @@ export const creatTimeFormatterBy =
   (format: AllDateFormats) => (milliseconds: number) =>
     moment(milliseconds).format(format);
 
-type RunGroupedByDate = { [key in string]: RunUI[] };
+type RunGroupedByDate = { [key in string]: RunApi[] };
 export const groupRunsByDate = ({ data, by }: GroupByParams) => {
   const format = creatTimeFormatterBy(by);
   return data.reduce((acc, curr) => {
@@ -65,12 +64,9 @@ export const getDatesForXAxis = (params: GroupByParams) => {
   return Object.keys(grouped);
 };
 
-const countStatusesByDate = (
-  grouped: RunGroupedByDate,
-  status?: RunStatusUI
-) => {
+const countStatusesByDate = (grouped: RunGroupedByDate, status?: RunStatus) => {
   return Object.keys(grouped).map((key) => {
-    return grouped[key].reduce((acc: number, curr: RunUI) => {
+    return grouped[key].reduce((acc: number, curr: RunApi) => {
       if (curr.status === status) {
         return acc + 1;
       }
@@ -88,12 +84,12 @@ export const getStatusCountAndTotalByDate = (
       return grouped[key].reduce(
         (
           acc: { success: number; failure: number; total: number },
-          curr: RunUI
+          curr: RunApi
         ) => {
-          if (curr.status === RunStatusUI.SUCCESS) {
+          if (curr.status === 'success') {
             return { ...acc, success: acc.success + 1, total: acc.total + 1 };
           }
-          if (curr.status === RunStatusUI.FAILURE) {
+          if (curr.status === 'failure') {
             return { ...acc, failure: acc.failure + 1, total: acc.total + 1 };
           }
           return acc;
@@ -116,17 +112,17 @@ export const mapDataForChart = (params: GroupByParams) => {
   const allDates = getDatesForXAxis(params);
   const seenByDate = getStatusCountGroupedByDate({
     data,
-    status: RunStatusUI.SEEN,
+    status: 'seen',
     by,
   });
   const successByDate = getStatusCountGroupedByDate({
     data,
-    status: RunStatusUI.SUCCESS,
+    status: 'success',
     by,
   });
   const failureByDate = getStatusCountGroupedByDate({
     data,
-    status: RunStatusUI.FAILURE,
+    status: 'failure',
     by,
   });
   const statusCountAndTotal = getStatusCountAndTotalByDate({

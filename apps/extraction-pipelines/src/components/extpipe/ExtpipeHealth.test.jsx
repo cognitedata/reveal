@@ -1,13 +1,10 @@
 import { fireEvent, screen, waitFor } from '@testing-library/react';
 import { QueryClient } from 'react-query';
 import React from 'react';
-import { RunStatusAPI, RunStatusUI } from 'model/Status';
 import { renderWithReQueryCacheSelectedExtpipeContext } from 'utils/test/render';
 import { ORIGIN_DEV, PROJECT_ITERA_INT_GREEN } from 'utils/baseURL';
 import { render } from 'utils/test';
-import {
-  ExtpipeRunHistory,
-} from 'components/extpipe/ExtpipeRunHistory';
+import ExtpipeRunHistory from 'components/extpipe/ExtpipeRunHistory';
 import {
   getMockResponse,
   mockDataRunsResponse,
@@ -38,29 +35,6 @@ jest.mock('components/chart/RunChart', () => {
 describe('ExtpipeHealth', () => {
   afterEach(() => {
     jest.resetAllMocks();
-  });
-
-  it('renders error on request fail', () => {
-    useFilteredRuns.mockReturnValue(mockError);
-    const mockExtpipe = getMockResponse()[0];
-    const { wrapper } = renderWithReQueryCacheSelectedExtpipeContext(
-      new QueryClient(),
-      PROJECT_ITERA_INT_GREEN,
-      PROJECT_ITERA_INT_GREEN,
-      ORIGIN_DEV,
-      undefined,
-      '/'
-    );
-    render(<ExtpipeRunHistory extpipe={mockExtpipe} />, {
-      wrapper,
-    });
-    expect(screen.getByText(mockError.error.message)).toBeInTheDocument();
-
-    // test tracking
-    expect(trackUsage).toHaveBeenCalledWith({
-      t: 'Extraction pipeline.Health',
-      id: mockExtpipe.id,
-    });
   });
 
   it.skip('renders runs on success', async () => {

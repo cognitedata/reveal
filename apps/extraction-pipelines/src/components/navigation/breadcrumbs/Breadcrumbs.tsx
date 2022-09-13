@@ -2,10 +2,11 @@ import React, { FunctionComponent, PropsWithChildren } from 'react';
 import styled from 'styled-components';
 import { Colors } from '@cognite/cogs.js';
 import { NavLink } from 'react-router-dom';
+import { PAGE_MARGIN } from 'components/styled';
 
 interface Breadcrumb {
-  href: string;
-  label?: string;
+  href?: string;
+  label: string;
   params?: string;
   dataTestId?: string;
 }
@@ -22,19 +23,26 @@ export const Breadcrumbs: FunctionComponent<BreadcrumbsProps> = ({
     <BreadcrumbsWrapper aria-label="Breadcrumb">
       <ol>
         {breadcrumbs.map(({ href, label, dataTestId, params }) => {
+          if (href) {
+            return (
+              <li key={href} data-testid={dataTestId}>
+                <NavLink
+                  to={{
+                    pathname: href,
+                    search: params,
+                  }}
+                  isActive={(match, linkLoc) => {
+                    return !!href && href.includes(linkLoc.pathname);
+                  }}
+                >
+                  {label}
+                </NavLink>
+              </li>
+            );
+          }
           return (
             <li key={href} data-testid={dataTestId}>
-              <NavLink
-                to={{
-                  pathname: href,
-                  search: params,
-                }}
-                isActive={(match, linkLoc) => {
-                  return href.includes(linkLoc.pathname);
-                }}
-              >
-                {label}
-              </NavLink>
+              {label}
             </li>
           );
         })}
@@ -46,10 +54,11 @@ export const Breadcrumbs: FunctionComponent<BreadcrumbsProps> = ({
 
 const BreadcrumbsWrapper = styled.nav`
   grid-area: breadcrumbs;
-  padding: 0.875rem 2rem;
+  padding: 0.875rem ${PAGE_MARGIN};
   display: flex;
   justify-content: space-between;
   border-bottom: 1px solid ${Colors['greyscale-grey3'].hex()};
+  background-color: white;
   ol {
     margin: 0;
     padding-left: 0;

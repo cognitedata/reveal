@@ -1,43 +1,64 @@
-import React from 'react';
-import { Column } from 'react-table';
+import React, { useMemo } from 'react';
+import { Column, HeaderProps } from 'react-table';
 import StatusMarker from 'components/extpipes/cols/StatusMarker';
 import { TimeDisplay } from 'components/TimeDisplay/TimeDisplay';
-import { RunUI } from 'model/Runs';
-import { TranslationKeys } from 'common';
+import { RunApi } from 'model/Runs';
+import { useTranslation } from 'common';
+import { ConfigurationLink } from './ConfigurationLink';
+import SorterIndicator from 'components/table/SorterIndicator';
 
 export enum RunTableHeading {
   TIMESTAMP = 'Timestamp',
   MESSAGE = 'Message',
 }
 
-export const getRunLogTableCol = (
-  _t: (key: TranslationKeys) => string
-): Column<RunUI>[] => {
-  return [
-    {
-      Header: _t('timestamp'),
-      accessor: 'createdTime',
-      sortType: 'basic',
-      Cell: ({ row }) => {
-        return <TimeDisplay value={row.original.createdTime} withTooltip />;
+export const useRunLogTableCol = (): Column<RunApi>[] => {
+  const { t } = useTranslation();
+  return useMemo(
+    () => [
+      {
+        Header: ({ column }: HeaderProps<RunApi>) => {
+          return <SorterIndicator name={t('timestamp')} column={column} />;
+        },
+        accessor: 'createdTime',
+        sortType: 'basic',
+        Cell: ({ row }) => {
+          return <TimeDisplay value={row.original.createdTime} withTooltip />;
+        },
+        disableFilters: true,
       },
-      disableFilters: true,
-    },
-    {
-      Header: _t('last-run-status'),
-      accessor: 'status',
-      Cell: ({ row }) => {
-        return <StatusMarker status={row.original.status} />;
+      {
+        Header: ({ column }: HeaderProps<RunApi>) => {
+          return (
+            <SorterIndicator name={t('last-run-status')} column={column} />
+          );
+        },
+        accessor: 'status',
+        Cell: ({ row }) => {
+          return <StatusMarker status={row.original.status} />;
+        },
+        disableFilters: true,
       },
-      disableFilters: true,
-    },
-    {
-      Header: _t('message'),
-      accessor: 'message',
-      Cell: ({ row }) => {
-        return <p>{row.original.message}</p>;
+      {
+        Header: ({ column }: HeaderProps<RunApi>) => {
+          return <SorterIndicator name={t('message')} column={column} />;
+        },
+        accessor: 'message',
+        Cell: ({ row }) => {
+          return <p>{row.original.message}</p>;
+        },
+        disableFilters: true,
       },
-      disableFilters: true,
-    },
-  ];
+      {
+        Header: t('column-header-config'),
+        accessor: 'externalId',
+        Cell: ({ row }) => {
+          return <ConfigurationLink createdTime={row.values.createdTime} />;
+        },
+        disableFilters: true,
+        disableSortBy: true,
+      },
+    ],
+    [t]
+  );
 };

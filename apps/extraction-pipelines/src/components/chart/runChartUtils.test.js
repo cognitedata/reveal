@@ -10,7 +10,6 @@ import {
   mapRangeToGraphTimeFormat,
 } from 'components/chart/runChartUtils';
 import { DATE_FORMAT } from 'components/TimeDisplay/TimeDisplay';
-import { mapStatusRow } from 'utils/runsUtils';
 import moment from 'moment';
 
 describe('Chart utils', () => {
@@ -49,7 +48,7 @@ describe('Chart utils', () => {
 
   test('mapDataForChart', () => {
     const data = mockDataRuns.items;
-    const res = mapDataForChart({ data: mapStatusRow(data), by: 'YYYY-MM-DD' });
+    const res = mapDataForChart({ data, by: 'YYYY-MM-DD' });
     expect(res.allDates.length).toEqual(numberOfDates);
     expect(res.seenByDate.length).toEqual(numberOfDates);
     const seen = [2, 1, 1, 4];

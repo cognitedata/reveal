@@ -1,59 +1,11 @@
 import moment from 'moment';
 import { User } from 'model/User';
 import { DetailFieldNames } from 'model/Extpipe';
-import {
-  LastStatuses,
-  RunStatusAPI,
-  RunStatusUI,
-  StatusObj,
-} from 'model/Status';
 import { toCamelCase } from 'utils/primitivesUtils';
 import { mapScheduleInputToScheduleValue } from 'utils/cronUtils';
 import { AddExtpipeFormInput } from 'pages/create/CreateExtpipe';
 import { Range } from '@cognite/cogs.js';
-
-export const calculateStatus = (status: LastStatuses): StatusObj => {
-  return calculate(status);
-};
-export const calculate = ({
-  lastFailure,
-  lastSuccess,
-}: LastStatuses): StatusObj => {
-  if (
-    (lastSuccess && lastSuccess > 0 && lastFailure === 0) ||
-    (lastSuccess && moment(lastSuccess).isAfter(moment(lastFailure)))
-  ) {
-    return {
-      status: RunStatusUI.SUCCESS,
-      time: lastSuccess,
-    };
-  }
-  if (
-    (lastFailure && lastFailure > 0 && lastSuccess === 0) ||
-    (lastFailure &&
-      lastSuccess &&
-      moment(lastFailure).isAfter(moment(lastSuccess)))
-  ) {
-    return {
-      status: RunStatusUI.FAILURE,
-      time: lastFailure,
-    };
-  }
-  if (
-    lastFailure &&
-    lastSuccess &&
-    moment(lastFailure).isSame(moment(lastSuccess))
-  ) {
-    return {
-      status: RunStatusUI.FAILURE,
-      time: lastFailure,
-    };
-  }
-  return {
-    status: RunStatusUI.NOT_ACTIVATED,
-    time: 0,
-  };
-};
+import { RunStatus } from 'model/Runs';
 
 export const calculateLatest = (timesStampsInMs: number[]): number => {
   if (timesStampsInMs.length === 0) {
@@ -177,7 +129,7 @@ export const getQueryParams = (search: string): QueryParams => {
 
 interface CreateSearchParams {
   search: string;
-  statuses: RunStatusAPI[];
+  statuses: RunStatus[];
   dateRange: Range;
   env?: string;
   cluster?: string;

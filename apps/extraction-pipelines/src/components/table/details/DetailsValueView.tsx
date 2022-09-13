@@ -4,7 +4,6 @@ import Schedule, {
 import React from 'react';
 import { DataSet } from '@cognite/sdk';
 import StatusMarker from 'components/extpipes/cols/StatusMarker';
-import { RunStatusUI } from 'model/Status';
 import InteractiveCopy from 'components/InteractiveCopy/InteractiveCopy';
 import { DataSet as DataSetDisplay } from 'components/extpipes/cols/DataSet';
 import RelativeTimeWithTooltip from 'components/extpipes/cols/RelativeTimeWithTooltip';
@@ -14,6 +13,7 @@ import {
   ExtpipeRawTable,
 } from 'model/Extpipe';
 import RawTable from 'components/extpipes/cols/RawTable';
+import { RunStatus } from 'model/Runs';
 
 interface DetailsValueViewProps {
   fieldValue: ExtpipeFieldValue;
@@ -37,27 +37,13 @@ const DetailsValueView = ({ fieldValue, fieldName }: DetailsValueViewProps) => {
       const val = (fieldValue as number) ?? undefined;
       return (
         <>
-          <DataSetDisplay
-            id={fieldName}
-            dataSetId={val}
-            dataSetName={`${val}`}
-          />
+          <DataSetDisplay dataSetId={val} />
         </>
       );
     }
     case 'dataSet': {
-      const { name, id } = fieldValue as DataSet;
-      return (
-        <>
-          {fieldValue && (
-            <DataSetDisplay
-              id={fieldName}
-              dataSetId={id}
-              dataSetName={name ?? `${id}`}
-            />
-          )}
-        </>
-      );
+      const { id } = fieldValue as DataSet;
+      return <>{fieldValue && <DataSetDisplay dataSetId={id} />}</>;
     }
     case 'rawTables': {
       return <RawTable rawTables={fieldValue as ExtpipeRawTable[]} />;
@@ -98,7 +84,7 @@ const DetailsValueView = ({ fieldValue, fieldName }: DetailsValueViewProps) => {
         </InteractiveCopyWrapper>
       );
     case 'status': {
-      return <StatusMarker id={fieldName} status={fieldValue as RunStatusUI} />;
+      return <StatusMarker id={fieldName} status={fieldValue as RunStatus} />;
     }
     case 'createdBy':
     case 'name':

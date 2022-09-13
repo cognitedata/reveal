@@ -1,6 +1,4 @@
 import React, { FunctionComponent } from 'react';
-import { mapStatus, mapStatusRun } from 'utils/runsUtils';
-import { RunStatusUI } from 'model/Status';
 import { StatusMenu } from 'components/menu/StatusMenu';
 import {
   updateStatusAction,
@@ -8,6 +6,7 @@ import {
 } from 'hooks/runs/RunsFilterContext';
 
 import { trackUsage } from 'utils/Metrics';
+import { RunStatus } from 'model/Runs';
 
 interface StatusFilterMenuProps {}
 
@@ -19,8 +18,7 @@ export const StatusFilterMenu: FunctionComponent<
     dispatch,
   } = useRunFilterContext();
 
-  const updateStatus = (newStatus?: RunStatusUI) => {
-    const run = mapStatusRun(newStatus);
+  const updateStatus = (run?: RunStatus) => {
     trackUsage({ t: 'Filter', field: 'status', value: run ?? 'All' });
     dispatch(updateStatusAction(run ? [run] : []));
   };
@@ -28,7 +26,7 @@ export const StatusFilterMenu: FunctionComponent<
   return (
     <StatusMenu
       setSelected={updateStatus}
-      selected={mapStatus(statuses[0])}
+      selected={statuses[0]}
       btnType="tertiary"
     />
   );

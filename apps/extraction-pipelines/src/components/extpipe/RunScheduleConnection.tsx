@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from 'react';
+import React, { useMemo } from 'react';
 import { Icon, Tag } from '@cognite/cogs.js';
 import { TimeDisplay } from 'components/TimeDisplay/TimeDisplay';
 import Schedule from 'components/extpipes/cols/Schedule';
@@ -9,61 +9,60 @@ import {
   CardWrapper,
   StyledTitleCard,
 } from 'components/styled';
-import {
-  addIfExist,
-  calculateLatest,
-  calculateStatus,
-} from 'utils/extpipeUtils';
-import { RunStatusUI } from 'model/Status';
-import { useRuns } from 'hooks/useRuns';
-import {
-  and,
-  filterByStatus,
-  filterByTimeBetween,
-  filterRuns,
-  isWithinDaysInThePast,
-} from 'utils/runsUtils';
-import { RunUI } from 'model/Runs';
+import { addIfExist, calculateLatest } from 'utils/extpipeUtils';
+import { useAllRuns } from 'hooks/useRuns';
+import { filterByTimeBetween, isWithinDaysInThePast } from 'utils/runsUtils';
 import moment from 'moment';
-import { useSelectedExtpipe } from 'hooks/useSelectedExtpipe';
-import { useExtpipeById } from 'hooks/useExtpipe';
+import { useSelectedExtpipe } from 'hooks/useExtpipe';
 import { useLocation, useRouteMatch } from 'react-router-dom';
 import { HEALTH_PATH } from 'routing/RoutingConfig';
 import { useTranslation } from 'common';
 
-export const RunScheduleConnection: FunctionComponent = () => {
+export const RunScheduleConnection = ({
+  externalId,
+}: {
+  externalId: string;
+}) => {
   const { t } = useTranslation();
   const { search } = useLocation();
   const { url } = useRouteMatch();
-  const { extpipe: selectedExtpipe } = useSelectedExtpipe();
-  const { data: extpipe } = useExtpipeById(selectedExtpipe?.id);
-  const { data: runsData, status: runsStatus } = useRuns(extpipe?.externalId);
+  const { data: extpipe } = useSelectedExtpipe();
+  const { data, status: runsStatus } = useAllRuns({ externalId });
 
-  const runs = filterRuns(runsData?.items);
-  const errorsInThePastWeek = runs.filter(
-    and<RunUI>(filterByStatus(RunStatusUI.FAILURE), isWithinDaysInThePast(7))
+  const allRuns = useMemo(
+    () =>
+      data?.pages
+        .map((p) => p.items)
+        .reduce((accl, p) => [...accl, ...p], []) || [],
+    [data?.pages]
   );
-  const errorLastWeek = runs.filter(
-    and(
-      filterByStatus(RunStatusUI.FAILURE),
+
+  const errorsInThePastWeek = allRuns.filter(
+    (r) => r.status === 'failure' && isWithinDaysInThePast(7)(r)
+  );
+  const errorLastWeek = allRuns.filter(
+    (r) =>
+      r.status === 'failure' &&
       filterByTimeBetween(
         moment().subtract(14, 'days'),
         moment().subtract(7, 'days')
-      )
-    )
+      )(r)
   );
+
   const errorsComparedToLastWeek =
     errorsInThePastWeek.length - errorLastWeek.length;
 
-  const lastRun = calculateStatus({
-    lastSuccess: extpipe?.lastSuccess,
-    lastFailure: extpipe?.lastFailure,
-  });
+  const lastRun = allRuns[0];
+
   const lastConnected = calculateLatest([
     ...addIfExist(extpipe?.lastSeen),
     ...addIfExist(extpipe?.lastSuccess),
     ...addIfExist(extpipe?.lastFailure),
   ]);
+
+  if (!lastRun) {
+    return null;
+  }
 
   return (
     <CardWrapper className={`${lastRun.status.toLowerCase()} z-2`}>
@@ -77,7 +76,7 @@ export const RunScheduleConnection: FunctionComponent = () => {
             {t('last-run-time')}
           </StyledTitleCard>
           <CardValue className="card-value">
-            <TimeDisplay value={lastRun.time} relative />
+            <TimeDisplay value={lastRun.createdTime} relative />
           </CardValue>
           <Icon type="ArrowRight" />
         </CardInWrapper>

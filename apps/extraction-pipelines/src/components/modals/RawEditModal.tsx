@@ -5,8 +5,7 @@ import React, {
   useState,
 } from 'react';
 import { ModalContent } from 'components/modals/ModalContent';
-import { useSelectedExtpipe } from 'hooks/useSelectedExtpipe';
-import { useExtpipeById } from 'hooks/useExtpipe';
+import { useSelectedExtpipe } from 'hooks/useExtpipe';
 import * as yup from 'yup';
 import { StyledTitle3 } from 'components/styled';
 import { DetailFieldNames, ExtpipeRawTable } from 'model/Extpipe';
@@ -44,8 +43,7 @@ export const RawEditModal: FunctionComponent<RawEditModalProps> = ({
 }: PropsWithChildren<RawEditModalProps>) => {
   const { t } = useTranslation();
   const { data: databases, isError } = useRawDBAndTables();
-  const { extpipe: selected } = useSelectedExtpipe();
-  const { data: storedExtpipe } = useExtpipeById(selected?.id);
+  const { data: storedExtpipe } = useSelectedExtpipe();
   const { mutate } = useDetailsUpdate();
   const methods = useForm<ModalFormInput>({
     resolver: yupResolver(pageSchema),

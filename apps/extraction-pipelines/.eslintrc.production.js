@@ -36,6 +36,7 @@ module.exports = {
     'react/prop-types': 'off',
     'react/require-default-props': 'off',
     'lodash/prefer-lodash-method': ['off'],
+    'lodash/prefer-noop': ['off'],
     'lodash/prop-shorthand': ['off'],
     'lodash/prefer-constant': ['off'],
     'lodash/prefer-is-nil': ['off'],

@@ -3,7 +3,6 @@ import { render } from 'utils/test';
 import { fireEvent, screen } from '@testing-library/react';
 import { renderWithRunFilterContext } from 'utils/test/render';
 import { StatusFilterMenu } from 'components/table/StatusFilterMenu';
-import { RunStatusAPI, RunStatusUI } from 'model/Status';
 
 describe('StatusFilterMenu', () => {
   test('Render default', () => {
@@ -12,25 +11,25 @@ describe('StatusFilterMenu', () => {
   });
 
   test.skip('Shows value from provider', () => {
-    const statuses = [RunStatusAPI.SUCCESS];
+    const statuses = ['success'];
     renderWithRunFilterContext(<StatusFilterMenu />, {
       providerProps: { statuses },
     });
-    const statusesFilterBtn = screen.getByText(RunStatusUI.SUCCESS);
+    const statusesFilterBtn = screen.getByText('Success');
     expect(statusesFilterBtn).toBeInTheDocument();
     fireEvent.click(statusesFilterBtn);
     // menu
     expect(screen.getByText(RunStatusUI.FAILURE)).toBeInTheDocument();
-    expect(screen.getAllByText(RunStatusUI.SUCCESS).length).toEqual(2); // menu item + text on menu button
+    expect(screen.getAllByText('Success').length).toEqual(2); // menu item + text on menu button
     expect(screen.getByText('ALL')).toBeInTheDocument();
   });
 
   test.skip('Interact with input', () => {
-    const statuses = [RunStatusAPI.SUCCESS];
+    const statuses = ['success'];
     renderWithRunFilterContext(<StatusFilterMenu />, {
       providerProps: { statuses },
     });
-    const statusesFilterBtn = screen.getByText(RunStatusUI.SUCCESS);
+    const statusesFilterBtn = screen.getByText('Success');
     expect(statusesFilterBtn).toBeInTheDocument();
     fireEvent.click(statusesFilterBtn);
     // menu

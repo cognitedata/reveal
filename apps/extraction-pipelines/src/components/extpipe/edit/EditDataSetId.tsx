@@ -6,8 +6,7 @@ import {
 import { FormProvider, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { dataSetIdSchema } from 'utils/validation/extpipeSchemas';
-import { useSelectedExtpipe } from 'hooks/useSelectedExtpipe';
-import { useExtpipeById } from 'hooks/useExtpipe';
+import { useSelectedExtpipe } from 'hooks/useExtpipe';
 import DataSetIdInput, {
   DATASET_LIST_LIMIT,
 } from 'pages/create/DataSetIdInput';
@@ -22,6 +21,7 @@ import { DivFlex } from 'components/styled';
 import DetailsValueView from 'components/table/details/DetailsValueView';
 import { trackUsage } from 'utils/Metrics';
 import { useTranslation } from 'common';
+
 interface FormInput {
   dataSetId: number;
 }
@@ -32,10 +32,9 @@ export const EditDataSetId: FunctionComponent<{ canEdit: boolean }> = ({
   const { t } = useTranslation();
   const [isEdit, setIsEdit] = useState(false);
   const [errorVisible, setErrorVisible] = useState(false);
-  const { extpipe: selected } = useSelectedExtpipe();
-  const { data: extpipe } = useExtpipeById(selected?.id);
+  const { data: extpipe } = useSelectedExtpipe();
   const { data, status } = useDataSetsList(DATASET_LIST_LIMIT);
-  const { mutate } = useDetailsUpdate();
+  const { mutateAsync: mutate } = useDetailsUpdate();
   const methods = useForm<FormInput>({
     resolver: yupResolver(dataSetIdSchema),
     defaultValues: {
@@ -94,7 +93,10 @@ export const EditDataSetId: FunctionComponent<{ canEdit: boolean }> = ({
         <StyledLabel id="data-set-id-label" htmlFor="data-set-id">
           {t('data-set')}
         </StyledLabel>
-        <DetailsValueView fieldName="dataSet" fieldValue={extpipe.dataSet} />
+        <DetailsValueView
+          fieldName="dataSetId"
+          fieldValue={extpipe.dataSetId}
+        />
       </div>
     );
   }
@@ -130,7 +132,7 @@ export const EditDataSetId: FunctionComponent<{ canEdit: boolean }> = ({
           </Wrapper>
         ) : (
           <EditButton
-            showPencilIcon={extpipe.dataSet != null}
+            showPencilIcon={extpipe.dataSetId != null}
             onClick={onEditClick}
             disabled={!canEdit}
             title={t('toggle-edit-row')}
@@ -139,7 +141,7 @@ export const EditDataSetId: FunctionComponent<{ canEdit: boolean }> = ({
             data-testid={`${BtnTestIds.EDIT_BTN}dataSetId`}
             $full
           >
-            <AddInfo fieldValue={extpipe.dataSet} fieldName="dataSet" />
+            <AddInfo fieldValue={extpipe.dataSetId} fieldName="dataSetId" />
           </EditButton>
         )}
       </ColumnForm>

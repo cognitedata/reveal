@@ -1,18 +1,42 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'common';
-import { useExtpipeConfig } from 'hooks/config';
+import { useCreateConfigRevision, useExtpipeConfig } from 'hooks/config';
 import { Section } from './Section';
-import { StyledTooltip } from 'components/styled';
 import ConfigurationEditor from './ConfigurationEditor';
+import CreatedTime from './CreatedTime';
+import { useQueryClient } from 'react-query';
+import { Button, Flex, Icon, toast } from '@cognite/cogs.js';
 
 type Props = {
   externalId: string;
 };
 export default function ConfigurationSection({ externalId }: Props) {
   const { t } = useTranslation();
+  const queryClient = useQueryClient();
+  const [editMode, setEditMode] = useState(false);
+  const [newConfig, setNewConfig] = useState('');
 
   const { data: configuration, isLoading } = useExtpipeConfig({
     externalId,
+  });
+
+  useEffect(() => {
+    if (!editMode && configuration) {
+      setNewConfig(configuration.config);
+    }
+  }, [configuration, editMode]);
+
+  const { mutate, isLoading: isSaving } = useCreateConfigRevision({
+    onSuccess() {
+      queryClient.invalidateQueries(['extpipe', 'config', externalId]);
+      setEditMode(false);
+    },
+    onError({ message }) {
+      toast.error(message, {
+        toastId: 'config-create-error',
+        position: 'bottom-right',
+      });
+    },
   });
 
   const created = configuration?.createdTime
@@ -20,25 +44,48 @@ export default function ConfigurationSection({ externalId }: Props) {
     : undefined;
 
   return (
-    <Section
-      title={t('configuration')}
-      icon={isLoading ? 'Loader' : 'Document'}
-      dataTestId="configuration"
-      rightTitle={
-        created && (
-          <StyledTooltip content={new Date(created).toUTCString()}>
-            <>
-              {new Intl.DateTimeFormat(undefined, {
-                day: '2-digit',
-                month: 'short',
-                year: '2-digit',
-              }).format(new Date(created))}
-            </>
-          </StyledTooltip>
-        )
-      }
-    >
-      <ConfigurationEditor externalId={externalId} />
-    </Section>
+    <div>
+      <Section
+        title={t('configuration')}
+        icon={isLoading ? 'Loader' : 'Document'}
+        dataTestId="configuration"
+        rightTitle={
+          <Flex style={{ gap: 10 }} alignItems="center">
+            {created && (
+              <>
+                {isSaving && <Icon type="Loader" />}
+                <CreatedTime prefix={t('last-updated-at')} date={created} />
+              </>
+            )}
+            {editMode ? (
+              <>
+                <Button onClick={() => setEditMode(!editMode)}>
+                  {t('discard-changes')}
+                </Button>
+                <Button
+                  type="primary"
+                  disabled={isSaving || configuration?.config === newConfig}
+                  onClick={() => {
+                    mutate({ config: newConfig, externalId });
+                  }}
+                >
+                  {t('publish')}
+                </Button>
+              </>
+            ) : (
+              <Button type="ghost" onClick={() => setEditMode(!editMode)}>
+                {t('edit')}
+              </Button>
+            )}
+          </Flex>
+        }
+      >
+        <ConfigurationEditor
+          externalId={externalId}
+          editable={editMode}
+          onChange={setNewConfig}
+        />
+      </Section>
+    </div>
   );
 }

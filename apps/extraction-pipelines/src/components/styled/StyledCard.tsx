@@ -2,34 +2,6 @@ import styled from 'styled-components';
 import { Colors } from '@cognite/cogs.js';
 import { NavLink } from 'react-router-dom';
 
-export const Card2Sides = styled.div`
-  flex: 1;
-  display: flex;
-  background: white;
-  margin-right: 0.5rem;
-  border-radius: 8px;
-  &:last-child {
-    margin-right: 0;
-  }
-  .card-section {
-    display: flex;
-    flex-direction: column;
-    h2 {
-      .cogs-icon {
-        margin-right: 1rem;
-      }
-    }
-    &:first-child {
-      padding-right: 1rem;
-      border-right: 1px solid ${Colors['greyscale-grey2'].hex()};
-    }
-    &:nth-child(2) {
-      padding-left: 1rem;
-      flex: 1;
-    }
-  }
-`;
-
 export const StyledTitleCard = styled.h2`
   display: flex;
   align-items: center;

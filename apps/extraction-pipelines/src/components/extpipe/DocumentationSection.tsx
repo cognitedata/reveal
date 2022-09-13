@@ -3,12 +3,11 @@ import styled from 'styled-components';
 import { ContactBtnTestIds } from 'utils/constants';
 import { FieldErrors, useForm } from 'react-hook-form';
 import ValidationError from 'components/form/ValidationError';
-import { useSelectedExtpipe } from 'hooks/useSelectedExtpipe';
 import {
   createUpdateSpec,
   useDetailsUpdate,
 } from 'hooks/details/useDetailsUpdate';
-import { useExtpipeById } from 'hooks/useExtpipe';
+import { useSelectedExtpipe } from 'hooks/useExtpipe';
 import {
   documentationSchema,
   MAX_DOCUMENTATION_LENGTH,
@@ -44,8 +43,7 @@ export const DocumentationSection: FunctionComponent<
 > = ({ canEdit }) => {
   const { t } = useTranslation();
   const [isEdit, setEdit] = useState(false);
-  const { extpipe } = useSelectedExtpipe();
-  const { data: currentExtpipe } = useExtpipeById(extpipe?.id);
+  const { data: currentExtpipe } = useSelectedExtpipe();
   const { mutate } = useDetailsUpdate();
   const {
     handleSubmit,
