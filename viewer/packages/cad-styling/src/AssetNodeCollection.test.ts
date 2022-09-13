@@ -30,6 +30,9 @@ describe(AssetNodeCollection.name, () => {
   beforeEach(() => {
     mockAssetMappings3D = new Mock<AssetMappings3DAPI>();
     mockAssetMappings3D.setup(x => x.list(It.IsAny(), It.IsAny(), It.IsAny())).returnsAsync(createListResponse([], 10));
+    mockAssetMappings3D
+      .setup(x => x.filter(It.IsAny(), It.IsAny(), It.IsAny()))
+      .returnsAsync(createListResponse([], 10));
 
     mockRevisions3D = new Mock<Revisions3DAPI>();
     mockRevisions3D
@@ -159,6 +162,25 @@ describe(AssetNodeCollection.name, () => {
     expect(areas.length).toEqual(1);
     // Original is [<0,0,0>,<1,1,1>] - result should be translated
     expect(areas[0]).toEqual(new THREE.Box3(new THREE.Vector3(1, 2, 3), new THREE.Vector3(2, 3, 4)));
+  });
+
+  test('executeFilter with multiple assets and bounding box, throws', async () => {
+    const collection = new AssetNodeCollection(mockClient.object(), mockNodeCollectionDataProvider.object());
+    await expect(() =>
+      collection.executeFilter({ assetId: [1, 2, 3], boundingBox: new THREE.Box3() })
+    ).rejects.toThrowError();
+  });
+
+  test('executeFilter with single asset, uses list endpoint', async () => {
+    const collection = new AssetNodeCollection(mockClient.object(), mockNodeCollectionDataProvider.object());
+    await collection.executeFilter({ assetId: 1 });
+    mockAssetMappings3D.verify(x => x.list(It.IsAny(), It.IsAny(), It.IsAny()), Times.Once());
+  });
+
+  test('executeFilter with multiple assets, uses filter endpoint', async () => {
+    const collection = new AssetNodeCollection(mockClient.object(), mockNodeCollectionDataProvider.object());
+    await collection.executeFilter({ assetId: [1, 2, 3, 4, 5] });
+    mockAssetMappings3D.verify(x => x.filter(It.IsAny(), It.IsAny(), It.IsAny()), Times.Once());
   });
 });
 

@@ -13,7 +13,13 @@ import { AreaCollection } from './prioritized/AreaCollection';
 
 import { IndexSet, NumericRange } from '@reveal/utilities';
 
-import { Asset, AssetMapping3D, CogniteClient } from '@cognite/sdk';
+import {
+  Asset,
+  AssetMapping3D,
+  AssetMappings3DListFilter,
+  CogniteClient,
+  Filter3DAssetMappingsQuery
+} from '@cognite/sdk';
 
 import cloneDeep from 'lodash/cloneDeep';
 
@@ -27,10 +33,10 @@ export type AssetsFilter = (candidates: Asset[]) => Promise<Asset[]>;
  */
 export type AssetNodeCollectionFilter = {
   /**
-   * When provided, only assets below this asset are included. By default,
-   * all assets are included.
+   * When provided, only assets below this assets are included. Supports maximum 100
+   * asset IDs. By default, all assets are included.
    */
-  assetId?: number;
+  assetId?: number | number[];
 
   /**
    * When provided, only assets fully or partially inside this box are included.
@@ -67,7 +73,7 @@ export class AssetNodeCollection extends NodeCollection {
   private _areas: AreaCollection = EmptyAreaCollection.instance();
   private readonly _modelMetadataProvider: CdfModelNodeCollectionDataProvider;
   private _fetchResultHelper: PopulateIndexSetFromPagedResponseHelper<AssetMapping3D> | undefined;
-  private _filter: { assetId?: number; boundingBox?: THREE.Box3 } | undefined;
+  private _filter: AssetNodeCollectionFilter | undefined;
 
   constructor(client: CogniteClient, modelMetadataProvider: CdfModelNodeCollectionDataProvider) {
     super(AssetNodeCollection.classToken);
@@ -88,8 +94,6 @@ export class AssetNodeCollection extends NodeCollection {
    * @param filter.boundingBox  When provided, only assets within the provided bounds will be included in the filter.
    */
   async executeFilter(filter: AssetNodeCollectionFilter): Promise<void> {
-    const model = this._modelMetadataProvider;
-
     if (this._fetchResultHelper !== undefined) {
       // Interrupt any ongoing operation to avoid fetching results unnecessary
       this._fetchResultHelper.interrupt();
@@ -102,6 +106,26 @@ export class AssetNodeCollection extends NodeCollection {
     fetchResultHelper.setFilterItemsCallback(this.buildAssetMappingsFilter(filter.assetsFilter));
     this._fetchResultHelper = fetchResultHelper;
 
+    this._indexSet = fetchResultHelper.indexSet;
+    this._areas = fetchResultHelper.areas;
+
+    this._filter = filter;
+    const request = this.executeRequestForFilter(filter);
+    const completed = await fetchResultHelper.pageResults(request);
+
+    if (completed) {
+      // Completed without being interrupted
+      this._fetchResultHelper = undefined;
+    }
+  }
+
+  private executeRequestForFilter(filter: AssetNodeCollectionFilter) {
+    const model = this._modelMetadataProvider;
+
+    if (filter.assetId !== undefined && filter.boundingBox !== undefined && Array.isArray(filter.assetId)) {
+      throw new Error(`Cannot provide both list of assets and bounds`);
+    }
+
     function mapBoundingBoxToCdf(box?: THREE.Box3) {
       if (box === undefined) {
         return undefined;
@@ -112,23 +136,26 @@ export class AssetNodeCollection extends NodeCollection {
       return { min: [result.min.x, result.min.y, result.min.z], max: [result.max.x, result.max.y, result.max.z] };
     }
 
-    const filterQuery = {
-      assetId: filter.assetId,
-      intersectsBoundingBox: mapBoundingBoxToCdf(filter.boundingBox),
-      limit: 1000
-    };
-
-    this._indexSet = fetchResultHelper.indexSet;
-    this._areas = fetchResultHelper.areas;
-
-    this._filter = filter;
-
-    const request = this._client.assetMappings3D.list(model.modelId, model.revisionId, filterQuery);
-    const completed = await fetchResultHelper.pageResults(request);
-
-    if (completed) {
-      // Completed without being interrupted
-      this._fetchResultHelper = undefined;
+    if (filter.assetId !== undefined && Array.isArray(filter.assetId)) {
+      if (filter.boundingBox !== undefined) {
+        throw new Error(`Cannot provide both list of assets and bounds`);
+      }
+      // TODO 2022-09-12 larsmoa: Should be quite easy to split into multiple request
+      if (filter.assetId.length > 100) {
+        throw new Error(`Cannot provide more than 100 assetIds.`);
+      }
+      const filterQuery: Filter3DAssetMappingsQuery = {
+        filter: { assetIds: filter.assetId },
+        limit: 1000
+      };
+      return this._client.assetMappings3D.filter(model.modelId, model.revisionId, filterQuery);
+    } else {
+      const filterQuery: AssetMappings3DListFilter = {
+        assetId: filter.assetId,
+        intersectsBoundingBox: mapBoundingBoxToCdf(filter.boundingBox),
+        limit: 1000
+      };
+      return this._client.assetMappings3D.list(model.modelId, model.revisionId, filterQuery);
     }
   }
 
@@ -170,7 +197,7 @@ export class AssetNodeCollection extends NodeCollection {
     return boundingBoxes;
   }
 
-  getFilter(): { assetId?: number | undefined; boundingBox?: THREE.Box3 | undefined } | undefined {
+  getFilter(): AssetNodeCollectionFilter | undefined {
     return this._filter;
   }
 
