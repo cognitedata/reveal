@@ -26,6 +26,7 @@ const keyMap: { [s: string]: string } = {
 export default class Keyboard {
   private keys: { [s: string]: number } = {};
   private _disabled = false;
+  private _domElement: HTMLElement;
 
   get disabled(): boolean {
     return this._disabled;
@@ -40,7 +41,8 @@ export default class Keyboard {
     }
   }
 
-  constructor() {
+  constructor(domElement: HTMLElement) {
+    this._domElement = domElement;
     this.addEventListeners();
   }
 
@@ -80,17 +82,17 @@ export default class Keyboard {
       return;
     }
 
-    if (event.keyCode in keyMap) {
-      if (this.keys[keyMap[event.keyCode]] === 0) {
-        this.keys[keyMap[event.keyCode]] = 2;
+    if (event.key in keyMap) {
+      if (this.keys[keyMap[event.key]] === 0) {
+        this.keys[keyMap[event.key]] = 2;
       }
       event.preventDefault();
     }
   };
 
   private readonly onKeyup = (event: KeyboardEvent) => {
-    if (event.keyCode in keyMap) {
-      this.keys[keyMap[event.keyCode]] = 0;
+    if (event.key in keyMap) {
+      this.keys[keyMap[event.key]] = 0;
     }
   };
 

@@ -417,6 +417,11 @@ export function Migration() {
       });
 
       new AxisViewTool(viewer);
+      let textInput = document.createElement('input');
+      // textInput.addEventListener('focus', (event) => {
+      //   event.stopPropagation();
+      // });
+      viewer.domElement.appendChild(textInput);
     }
 
     function showBoundsForAllGeometries(model: Cognite3DModel) {
