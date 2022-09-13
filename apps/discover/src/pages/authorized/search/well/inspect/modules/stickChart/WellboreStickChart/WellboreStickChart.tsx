@@ -88,7 +88,7 @@ export const WellboreStickChart: React.FC<WellboreStickChartProps> = ({
 
   const { contentRef, columnHeight } = useColumnHeight();
 
-  const { scaleBlocks, scaleBlocksTVD } = useScaleBlocks({
+  const { scaleBlocks } = useScaleBlocks({
     maxDepth,
     columnHeight,
     depthMeasurementType,
@@ -193,7 +193,7 @@ export const WellboreStickChart: React.FC<WellboreStickChartProps> = ({
               <TrajectoryColumn
                 key={ChartColumn.TRAJECTORY}
                 {...trajectoryColumn}
-                scaleBlocks={scaleBlocksTVD}
+                scaleBlocks={scaleBlocks}
                 curveColor={wellboreColor}
                 depthMeasurementType={depthMeasurementType}
                 trajectoryCurveConfigs={trajectoryCurveConfigs}

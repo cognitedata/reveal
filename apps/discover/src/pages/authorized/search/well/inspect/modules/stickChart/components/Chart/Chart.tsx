@@ -33,6 +33,7 @@ export const Chart: React.FC<ChartProps> = React.memo(
           fixedrange: true,
           showticklabels: false,
           showgrid: false,
+          zeroline: false,
         },
       };
     }, [scaleBlocks]);
