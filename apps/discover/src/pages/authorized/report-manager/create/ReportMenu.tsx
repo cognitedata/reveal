@@ -6,6 +6,7 @@ import {
   ReportMenuItemWrapper,
   ReportMenuItemBody,
   ReportMenuItemDetail,
+  ReportDetailColumn,
 } from './elements';
 
 export type ReportMenuProps = {
@@ -31,7 +32,7 @@ export const ReportMenuItem = ({
       alignItems="flex-start"
       justifyContent="space-between"
     >
-      <Flex direction="column">
+      <ReportDetailColumn direction="column">
         <Flex direction="column">
           <ReportMenuItemBody level={6} strong>
             {title}
@@ -44,7 +45,7 @@ export const ReportMenuItem = ({
         </Flex>
 
         <ReportMenuItemDetail>Created: {createdTime}</ReportMenuItemDetail>
-      </Flex>
+      </ReportDetailColumn>
 
       <Label size="small">{status}</Label>
     </ReportMenuItemWrapper>
@@ -71,7 +72,7 @@ const ActiveReportsSection = ({
           <ReportMenuItem
             title={`${report.reportType} / ${report.reason}`}
             status={report.status}
-            createdTime={new Date(report.createdTime!).toDateString()}
+            createdTime={report.displayCreatedTime!}
           />
         </Menu.Item>
       ))}

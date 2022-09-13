@@ -17,5 +17,6 @@ export const adaptEventToReport = (event: CogniteEvent): Report => {
     reportType: event.subtype!,
     startTime: event.startTime!,
     endTime: event.endTime,
+    displayCreatedTime: new Date(event.createdTime).toLocaleDateString(),
   };
 };

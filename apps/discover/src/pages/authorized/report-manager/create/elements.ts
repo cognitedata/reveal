@@ -9,7 +9,12 @@ export const ReportMenuItemWrapper = styled(Flex)`
 export const ReportMenuItemBody = styled(Body)`
   text-align: left;
 `;
+
 export const ReportMenuItemDetail = styled(Detail)`
   text-align: left;
   color: var(--cogs-text-icon--muted);
+`;
+
+export const ReportDetailColumn = styled(Flex)`
+  margin-right: 16px;
 `;

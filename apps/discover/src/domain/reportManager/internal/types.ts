@@ -11,6 +11,7 @@ export interface Report
   status: 'ACTIVE' | 'IN_PROGRESS' | 'RESOLVED' | 'DISMISSED';
   startTime: Timestamp;
   endTime?: Timestamp;
+  displayCreatedTime?: string;
 }
 
 export type ReportFilter = {
