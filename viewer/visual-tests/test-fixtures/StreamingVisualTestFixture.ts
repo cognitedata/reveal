@@ -99,10 +99,14 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
     return new PointCloudFactory(this.potreeInstance, new LocalAnnotationProvider());
   }
 
+  createCamera(): THREE.PerspectiveCamera {
+    return new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 1000);
+  }
+
   constructor(localModelUrl = 'primitives') {
     this._localModelUrl = localModelUrl;
 
-    this._perspectiveCamera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 1000);
+    this._perspectiveCamera = this.createCamera();
 
     this._sceneHandler = new SceneHandler();
 

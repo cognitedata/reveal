@@ -40,6 +40,10 @@ export default class PointCloudColorStylingVisualTest extends StreamingVisualTes
     return new PointCloudFactory(this.potreeInstance, new CustomAnnotationProvider());
   }
 
+  override createCamera(): THREE.PerspectiveCamera {
+    return new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 1.5);
+  }
+
   public setup(testFixtureComponents: StreamingTestFixtureComponents): Promise<void> {
     const { model } = testFixtureComponents;
 
