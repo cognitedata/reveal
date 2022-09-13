@@ -26,8 +26,6 @@ export interface DepthIndicatorProps {
   depthTopScaled: number;
   depthBase: number;
   heightScaled: number;
-  // If the assembly is tied (connected) with another assembly.
-  isTied: boolean;
   flip?: boolean;
   isOverlapping?: boolean;
 }
@@ -40,7 +38,6 @@ export const DepthIndicator: React.FC<DepthIndicatorProps> = ({
   depthTopScaled,
   depthBase,
   heightScaled,
-  isTied,
   flip = false,
   isOverlapping = false,
 }) => {
@@ -91,9 +88,9 @@ export const DepthIndicator: React.FC<DepthIndicatorProps> = ({
         <FlipHorizontal flip={flip}>
           <DepthSegment.Middle
             height={depthSegmentMiddleHeight}
-            isTied={isTied}
+            isLiner={isLiner}
           />
-          <DepthSegment.End isLiner={isLiner} />
+          <DepthSegment.End />
         </FlipHorizontal>
       </Tooltip>
 

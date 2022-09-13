@@ -24,7 +24,6 @@ export const useCasingsColumnsData = () => {
         isLoading,
       };
     }
-
     const adaptedData = adaptToCasingsColumnData(data);
 
     return {

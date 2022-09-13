@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { DEPTH_INDICATOR_END_HEIGHT, DEPTH_SEGMENT_COLOR } from './constants';
+import { DEPTH_SEGMENT_COLOR } from './constants';
 import {
   DepthIndicatorLine,
   DepthIndicatorLineWrapper,
@@ -20,11 +20,11 @@ const Start: React.FC<{
 
 const Middle: React.FC<{
   height: string;
-  isTied?: boolean;
-}> = ({ height, isTied }) => {
+  isLiner?: boolean;
+}> = ({ height, isLiner }) => {
   return (
     <>
-      {isTied && <SideLine />}
+      {isLiner && <SideLine />}
       <DepthIndicatorLineWrapper height={height}>
         <DepthIndicatorLine
           color={DEPTH_SEGMENT_COLOR}
@@ -35,17 +35,7 @@ const Middle: React.FC<{
   );
 };
 
-const End: React.FC<{
-  isLiner?: boolean;
-}> = ({ isLiner }) => {
-  if (isLiner) {
-    return (
-      <DepthIndicatorLineWrapper height={DEPTH_INDICATOR_END_HEIGHT}>
-        <DepthIndicatorLine color={DEPTH_SEGMENT_COLOR} />
-      </DepthIndicatorLineWrapper>
-    );
-  }
-
+const End: React.FC = () => {
   return (
     <DepthIndicatorLineWrapper>
       <TriangleBottom />

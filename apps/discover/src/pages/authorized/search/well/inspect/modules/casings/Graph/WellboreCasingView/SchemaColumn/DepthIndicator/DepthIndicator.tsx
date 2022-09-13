@@ -20,8 +20,6 @@ export interface DepthIndicatorProps {
   casingAssembly: CasingAssemblyView;
   casingStartDepthScaled: number;
   casingDepthScaled: number;
-  // If the assembly is tied (connected) with another assembly.
-  isTied: boolean;
   flip?: boolean;
 }
 
@@ -32,7 +30,6 @@ export const DepthIndicator: React.FC<DepthIndicatorProps> = ({
   casingAssembly,
   casingStartDepthScaled,
   casingDepthScaled,
-  isTied,
   flip = false,
 }) => {
   const [zIndex, setZIndex] = useState<number>(layers.MAIN_LAYER);
@@ -67,9 +64,9 @@ export const DepthIndicator: React.FC<DepthIndicatorProps> = ({
         <FlipHorizontal flip={flip}>
           <DepthSegment.Middle
             height={depthSegmentMiddleHeight}
-            isTied={isTied}
+            isLiner={isLiner}
           />
-          <DepthSegment.End isLiner={isLiner} />
+          <DepthSegment.End />
         </FlipHorizontal>
       </Tooltip>
 

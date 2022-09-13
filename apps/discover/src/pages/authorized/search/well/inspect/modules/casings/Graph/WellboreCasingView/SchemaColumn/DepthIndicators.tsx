@@ -1,5 +1,3 @@
-import { isTied } from 'domain/wells/casings/internal/utils/isTied';
-
 import React, { useCallback, useMemo } from 'react';
 
 import reduce from 'lodash/reduce';
@@ -47,7 +45,6 @@ export const DepthIndicators: React.FC<DepthIndicatorsProps> = ({
           casingAssembly={casingAssembly}
           casingStartDepthScaled={casingStartDepthScaled}
           casingDepthScaled={casingDepthScaled}
-          isTied={isTied(casingAssemblies, index)}
           flip={flip}
         />,
       ];

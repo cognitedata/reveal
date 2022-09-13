@@ -1,5 +1,3 @@
-import { isTied } from 'domain/wells/casings/internal/utils/isTied';
-
 import React, { useCallback, useMemo } from 'react';
 
 import reduce from 'lodash/reduce';
@@ -74,7 +72,6 @@ export const DepthIndicators = React.forwardRef<
             depthTopScaled={depthTopScaled}
             depthBase={depthBase.value}
             heightScaled={heightScaled}
-            isTied={isTied(casingAssemblies, index)}
             flip={flip}
             isOverlapping={isDepthLabelOverlapping(
               casingAssemblies,
