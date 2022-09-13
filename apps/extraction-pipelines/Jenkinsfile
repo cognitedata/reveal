@@ -36,7 +36,7 @@ def pods = { body ->
         // If you don't want codecoverage, then you can just remove this.
         testcafe.pod() {
           properties([
-            
+
           ])
 
           node(POD_LABEL) {
@@ -57,16 +57,16 @@ pods {
   def isRelease = env.BRANCH_NAME == 'master'
 
   def context_checkout = "continuous-integration/jenkins/checkout"
-    def context_install = "continuous-integration/jenkins/install"
-    def context_setup = "continuous-integration/jenkins/setup"
-    def context_lint = "continuous-integration/jenkins/lint"
-    def context_test = "continuous-integration/jenkins/test"
-    def context_unitTests = "continuous-integration/jenkins/unit-tests"
-    def context_buildPrPreview = "continuous-integration/jenkins/build-pr-preview"
-    def context_build_fas = "continuous-integration/jenkins/build-fas"
-    def context_build = "continuous-integration/jenkins/build"
-    def context_deploy_app = "continuous-integration/jenkins/deploy-app"
-    def context_publishRelease = "continuous-integration/jenkins/publish-release"
+  def context_install = "continuous-integration/jenkins/install"
+  def context_setup = "continuous-integration/jenkins/setup"
+  def context_lint = "continuous-integration/jenkins/lint"
+  def context_test = "continuous-integration/jenkins/test"
+  def context_unitTests = "continuous-integration/jenkins/unit-tests"
+  def context_buildPrPreview = "continuous-integration/jenkins/build-pr-preview"
+  def context_build_fas = "continuous-integration/jenkins/build-fas"
+  def context_build = "continuous-integration/jenkins/build"
+  def context_deploy_app = "continuous-integration/jenkins/deploy-app"
+  def context_publishRelease = "continuous-integration/jenkins/publish-release"
   static final Map<String, Boolean> version = versioning.getEnv(
     versioningStrategy: VERSIONING_STRATEGY
   )
@@ -78,11 +78,11 @@ pods {
       gitTitle = sh(returnStdout: true, script: "git show -s --format='%s' HEAD").trim()
       gitAuthor = sh(returnStdout: true, script: "git show -s --format='%ae' HEAD").trim()
     }
-  
+
     githubNotifyWrapper(context_install) {
-        stage('Install dependencies') {
-            yarn.setup()
-        }
+      stage('Install dependencies') {
+        yarn.setup()
+      }
     }
 
     parallel(
@@ -106,28 +106,35 @@ pods {
           return;
         }
         stageWithNotify('Build and deploy PR') {
+          def package_name = "@cognite/cdf-integrations-ui";
+          def prefix = jenkinsHelpersUtil.determineRepoName();
+          def domain = "fusion-preview";
           previewServer(
-            buildCommand: 'yarn build:preview',
-            prefix: 'pr',
+            buildCommand: 'yarn build',
             buildFolder: 'build',
-            commentPrefix: PR_COMMENT_MARKER
+            prefix: prefix,
+            repo: domain
           )
+          deleteComments("[pr-server]")
+          deleteComments("[FUSION_PREVIEW_URL]")
+          def url = "https://fusion-pr-preview.cogniteapp.com/?externalOverride=${package_name}&overrideUrl=https://${prefix}-${env.CHANGE_ID}.${domain}.preview.cogniteapp.com/index.js";
+          pullRequest.comment("[FUSION_PREVIEW_URL] [$url]($url)");
         }
       },
       'Build': {
-            if (isPullRequest) {
-                println "Skipping build for pull requests"
-                return
-            }
-            stageWithNotify('Build for FAS') {
-                fas.build(
-                appId: APP_ID,
-                repo: APPLICATION_REPO_ID,
-                buildCommand: 'yarn build',
-                shouldPublishSourceMap: false
-                )
-            }   
+        if (isPullRequest) {
+          println "Skipping build for pull requests"
+          return
         }
+        stageWithNotify('Build for FAS') {
+          fas.build(
+            appId: APP_ID,
+            repo: APPLICATION_REPO_ID,
+            buildCommand: 'yarn build',
+            shouldPublishSourceMap: false
+          )
+        }
+      }
     )
 
     if (isRelease) {
