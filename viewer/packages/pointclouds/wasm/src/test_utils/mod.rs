@@ -1,5 +1,5 @@
 /// Takes a u32, perturbs it, and scales it down to a
-/// number between -1.0
+/// number between -1.0 and 1.0
 pub fn normalize_coordinate(a: u32) -> f64 {
     const COORD_GRANULARITY: i32 = 100_000;
 
