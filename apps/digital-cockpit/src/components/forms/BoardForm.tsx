@@ -15,11 +15,6 @@ import {
 } from 'validators';
 import { RootDispatcher } from 'store/types';
 import { CdfClientContext } from 'providers/CdfClientProvider';
-import {
-  deleteFileFromQueue,
-  flushFilesQueue,
-  replaceNewFileKey,
-} from 'utils/files';
 import { useMetrics } from 'utils/metrics';
 import { addLayoutItemToDeleteQueue } from 'store/layout/actions';
 import { Formik, FormikProps, FormikHelpers, Form, Field } from 'formik';
@@ -32,6 +27,7 @@ import {
 import { CogniteExternalId } from '@cognite/sdk';
 import * as actions from 'store/forms/actions';
 import * as layoutActions from 'store/layout/actions';
+import { NEW_FILE_KEY, replaceNewFileKey } from 'utils/files';
 
 import {
   FormContainer,
@@ -143,7 +139,7 @@ export const BoardForm: React.FC<BoardFormProps> = ({
   };
 
   const openBoard = (boardItem: Board) => {
-    flushFilesQueue(filesUploadQueue);
+    filesUploadQueue.delete(NEW_FILE_KEY);
     metrics.track('Select_Board', {
       boardKey: boardItem.key,
       board: boardItem.title,
@@ -156,11 +152,7 @@ export const BoardForm: React.FC<BoardFormProps> = ({
 
   const clear = (values: Board) => {
     // remove current file from upload queue
-    if (values.key) {
-      deleteFileFromQueue(filesUploadQueue, values.key);
-    } else {
-      flushFilesQueue(filesUploadQueue);
-    }
+    filesUploadQueue.delete(values.key ? values.key : NEW_FILE_KEY);
 
     // remove current file from delete queue
     if (deleteQueue.includes(values.imageFileId)) {
@@ -254,10 +246,10 @@ export const BoardForm: React.FC<BoardFormProps> = ({
                 <Field
                   name="imageFileId"
                   component={FileUpload}
-                  filesUploadQueue={filesUploadQueue}
                   setCustomErrors={setCustomErrors}
-                  boardKey={values.key}
-                  boardTitle={values.title}
+                  itemKey={values.key}
+                  labelText="or upload an image"
+                  filesUploadQueue={filesUploadQueue}
                 />
                 <Field
                   name="visibleTo"

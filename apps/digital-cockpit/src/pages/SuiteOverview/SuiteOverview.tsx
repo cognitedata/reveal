@@ -1,8 +1,9 @@
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { Redirect, useHistory, useParams } from 'react-router-dom';
 import {
   Body,
   Button,
+  Flex,
   Graphic,
   Loader,
   Title,
@@ -85,6 +86,10 @@ const SuiteOverview: React.FC = () => {
 
   const gridComponentRef = useRef(null);
 
+  const hasSuiteThumbnails = childSuites?.some(
+    (childKey) => !!byKey[childKey].imageFileId
+  );
+
   useEffect(() => {
     if (currentOpenedModal) {
       return;
@@ -105,10 +110,28 @@ const SuiteOverview: React.FC = () => {
     return () => document.removeEventListener('sidebar-toggle', toggle);
   }, [suite?.key, currentOpenedModal]);
 
-  const imageFileIds: string[] =
-    boards
-      ?.filter((board) => board.imageFileId)
-      .map((board) => board.imageFileId) || [];
+  // gather all image file ids to fetch them all at once
+  const imageFileIds = useMemo(() => {
+    // boards images
+    return boards
+      .reduce<string[]>((acc, board) => {
+        if (board.imageFileId) {
+          acc.push(board.imageFileId);
+        }
+        return acc;
+      }, [])
+      .concat(
+        hasSuiteThumbnails
+          ? // sub-suites images
+            childSuites!.reduce<string[]>((acc, child) => {
+              if (byKey[child].imageFileId) {
+                acc.push(byKey[child].imageFileId as string);
+              }
+              return acc;
+            }, [])
+          : []
+      );
+  }, [boards, hasSuiteThumbnails, childSuites, byKey]);
 
   useEffect(() => {
     const unsubscribe = history.listen(() => {
@@ -283,26 +306,29 @@ const SuiteOverview: React.FC = () => {
             <ContainerTitle>
               <Title level={6}>Subsuites</Title>
             </ContainerTitle>
-            {childSuites?.map((subSuiteKey) => (
-              <SubSuiteTile
-                suiteKey={subSuiteKey}
-                key={subSuiteKey}
-                handleClick={() =>
-                  metrics.track('Suite_Click:Subsuite', {
-                    subSuiteKey,
-                    suite: suite.title,
-                  })
-                }
-                menu={
-                  canEdit ? (
-                    <SuiteMenu
-                      suiteItem={byKey[subSuiteKey]}
-                      className="subsuite-tile-menu"
-                    />
-                  ) : undefined
-                }
-              />
-            ))}
+            <Flex wrap="wrap">
+              {childSuites?.map((subSuiteKey) => (
+                <SubSuiteTile
+                  suiteKey={subSuiteKey}
+                  key={subSuiteKey}
+                  size={hasSuiteThumbnails ? 'medium' : 'small'}
+                  handleClick={() =>
+                    metrics.track('Suite_Click:Subsuite', {
+                      subSuiteKey,
+                      suite: suite.title,
+                    })
+                  }
+                  menu={
+                    canEdit ? (
+                      <SuiteMenu
+                        suiteItem={byKey[subSuiteKey]}
+                        className="subsuite-tile-menu"
+                      />
+                    ) : undefined
+                  }
+                />
+              ))}
+            </Flex>
           </>
         ) : null}
         {!boards?.length ? (

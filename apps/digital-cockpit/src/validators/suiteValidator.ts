@@ -8,4 +8,8 @@ export const suiteValidator: Validator = {
     validate: (value: string) =>
       value.length > 250 ? 'The description is too long' : '',
   },
+  imageFileId: {
+    maxSize: { message: 'This image is too big. Please upload one under 1Mb' },
+    mimeType: { message: 'For now we only allow .jpeg, .png and .svg' },
+  },
 };

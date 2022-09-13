@@ -10,7 +10,7 @@ export const validImgTypes = ['image/jpeg', 'image/png', 'image/svg+xml'];
 export const maximumFileSize = 1 * 1024 * 1024; // maximum 1Mb
 export const maximumLogoSize = 0.1 * 1024 * 1024; // maximum 100Kb
 
-export const newFileKey = '_new';
+export const NEW_FILE_KEY = '_new';
 
 export function validateFileType(file: File): boolean {
   return validImgTypes.includes(file?.type);
@@ -64,21 +64,12 @@ export function getExternalFileInfo(
   return fileInfo;
 }
 
-export function flushFilesQueue(filesUploadQueue: Map<string, File>) {
-  deleteFileFromQueue(filesUploadQueue, newFileKey);
-}
 export function replaceNewFileKey(
   filesUploadQueue: Map<string, File>,
   key: string
 ) {
-  if (filesUploadQueue.get(newFileKey)) {
-    filesUploadQueue.set(key, filesUploadQueue.get(newFileKey) as File);
-    flushFilesQueue(filesUploadQueue);
+  if (filesUploadQueue.has(NEW_FILE_KEY)) {
+    filesUploadQueue.set(key, filesUploadQueue.get(NEW_FILE_KEY) as File);
+    filesUploadQueue.delete(NEW_FILE_KEY);
   }
-}
-export function deleteFileFromQueue(
-  filesUploadQueue: Map<string, File>,
-  key: string
-) {
-  filesUploadQueue.delete(key);
 }

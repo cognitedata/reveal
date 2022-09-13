@@ -3,7 +3,7 @@ import {
   validImgTypes,
   validateFileType,
   validateFileSize,
-  newFileKey,
+  NEW_FILE_KEY,
 } from 'utils/files';
 import {
   UploadFileNameContainer,
@@ -18,19 +18,19 @@ import { addFileToDeleteQueue } from 'store/forms/actions';
 import { FieldProps } from 'formik';
 
 type Props = {
-  filesUploadQueue: Map<string, File>;
   setCustomErrors: (errors: any) => void;
-  boardKey: string;
-  boardTitle: string;
+  itemKey?: string;
+  labelText: string;
+  filesUploadQueue: Map<string, File>;
 };
 
 export const FileUpload: React.FC<Props & FieldProps<string | undefined>> = ({
-  boardKey,
-  boardTitle,
-  filesUploadQueue,
+  itemKey,
+  labelText,
   setCustomErrors,
   field: { name, value: imageFileId = '' },
   form: { errors, setTouched },
+  filesUploadQueue,
 }) => {
   const dispatch = useDispatch();
   const { loading, fileInfo: currentFileInfo } = useSelector(imageFileState);
@@ -39,7 +39,7 @@ export const FileUpload: React.FC<Props & FieldProps<string | undefined>> = ({
   const [uploadQueuedName, setUploadQueuedName] = useState('');
   const inDeleteQueue = deleteQueue.includes(imageFileId);
   const error = errors[name];
-  const fileName = filesUploadQueue.get(boardKey || newFileKey)?.name || '';
+  const fileName = filesUploadQueue.get(itemKey || NEW_FILE_KEY)?.name || '';
   if (uploadQueuedName !== fileName) {
     setUploadQueuedName(fileName);
   }
@@ -55,8 +55,6 @@ export const FileUpload: React.FC<Props & FieldProps<string | undefined>> = ({
       });
       setTouched({ [name]: true }, true);
       metrics.track('FileUploadValidationError_FileType', {
-        boardKey,
-        board: boardTitle,
         fileType: file?.type,
       });
       return;
@@ -65,21 +63,16 @@ export const FileUpload: React.FC<Props & FieldProps<string | undefined>> = ({
       setCustomErrors({ [name]: boardValidator.imageFileId?.maxSize?.message });
       setTouched({ [name]: true }, true);
       metrics.track('FileUploadValidationError_MaxSize', {
-        boardKey,
-        board: boardTitle,
         fileSize: file?.size,
       });
       return;
     }
     setCustomErrors({ [name]: undefined });
-    filesUploadQueue.set(boardKey || newFileKey, file);
+    filesUploadQueue.set(itemKey || NEW_FILE_KEY, file);
     setUploadQueuedName(file.name);
     setTouched({ [name]: true }, true);
 
     metrics.track('FileUpload', {
-      boardKey,
-      board: boardTitle,
-      fileOriginalName: file.name,
       fileSize: file?.size,
       fileType: file?.type,
     });
@@ -87,21 +80,13 @@ export const FileUpload: React.FC<Props & FieldProps<string | undefined>> = ({
   };
 
   const cancelUpload = () => {
-    const key = boardKey || newFileKey;
+    const key = itemKey || NEW_FILE_KEY;
     key && filesUploadQueue.delete(key);
     setUploadQueuedName('');
-    metrics.track('FileUpload_Cancel', {
-      boardKey,
-      board: boardTitle,
-    });
   };
 
   const deleteCurrentFile = () => {
     dispatch(addFileToDeleteQueue(imageFileId));
-    metrics.track('FileUpload_Delete', {
-      boardKey,
-      board: boardTitle,
-    });
   };
 
   const renderFileName = (
@@ -159,7 +144,7 @@ export const FileUpload: React.FC<Props & FieldProps<string | undefined>> = ({
       />
       {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
       <label htmlFor="uploadImage">
-        <span>Or upload an image</span>
+        <span>{labelText}</span>
         <Icon type="ChevronRight" />
       </label>
       {renderFileNameContainer()}

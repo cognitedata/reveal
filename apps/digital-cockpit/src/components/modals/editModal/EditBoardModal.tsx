@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext } from 'react';
 import { CdfClientContext } from 'providers/CdfClientProvider';
 import { ApiClientContext } from 'providers/ApiClientProvider';
 import { useDispatch, useSelector } from 'react-redux';
@@ -20,19 +20,20 @@ interface Props {
   suiteItem: Suite;
   parentSuiteItem?: Suite;
   boardItem?: Board;
+  filesUploadQueue?: Map<string, File>;
 }
 
 const EditBoardModal: React.FC<Props> = ({
   suiteItem,
   parentSuiteItem,
   boardItem,
+  filesUploadQueue = new Map(),
 }: Props) => {
   const client = useContext(CdfClientContext);
   const apiClient = useContext(ApiClientContext);
   const dispatch = useDispatch<RootDispatcher>();
   const { deleteQueue: filesDeleteQueue } = useSelector(filesUploadState);
   const layoutDeleteQueue = useSelector(getLayoutDeleteQueue);
-  const [filesUploadQueue] = useState(new Map());
   const { dataSetId } = useSelector(getConfigState);
   const metrics = useMetrics('EditSuite');
   const history = useHistory();

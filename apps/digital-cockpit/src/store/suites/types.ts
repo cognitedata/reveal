@@ -40,6 +40,7 @@ export type Suite = {
   order: number;
   parent?: string | null;
   suites?: string[];
+  imageFileId?: string;
 };
 
 export type ImgUrlLink = FileLink & IdEither;

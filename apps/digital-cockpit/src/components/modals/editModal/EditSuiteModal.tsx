@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { Suite } from 'store/suites/types';
 import { SuiteForm } from 'components/forms';
 import { useDispatch, useSelector } from 'react-redux';
@@ -10,9 +10,12 @@ import { ApiClientContext } from 'providers/ApiClientProvider';
 import { saveForm, addChildSuite } from 'store/forms/thunks';
 import { getNextSuiteOrder } from 'store/suites/selectors';
 import { getEmptySuite } from 'utils/forms';
+import { filesUploadState } from 'store/forms/selectors';
+import { getConfigState } from 'store/config/selectors';
+import { CdfClientContext } from 'providers/CdfClientProvider';
 
-import { ModalContainer } from '../elements';
 import Modal from '../simpleModal/Modal';
+import { ModalContainer } from '../elements';
 
 interface Props {
   suiteItem?: Suite;
@@ -24,12 +27,16 @@ const EditSuiteModal: React.FC<Props> = ({
   parentSuiteItem,
 }: Props) => {
   const dispatch = useDispatch<RootDispatcher>();
+  const client = useContext(CdfClientContext);
   const apiClient = useContext(ApiClientContext);
   const history = useHistory();
   const metrics = useMetrics('EditSuite');
   const [isNew, setIsNew] = useState(false);
   const [suite, setSuite] = useState(suiteItem);
   const nextSuiteOrder = useSelector(getNextSuiteOrder);
+  const [filesUploadQueue] = useState<Map<string, File>>(new Map());
+  const { deleteQueue: filesDeleteQueue } = useSelector(filesUploadState);
+  const { dataSetId } = useSelector(getConfigState);
 
   const trackMetrics = (name: string, props?: any) => {
     metrics.track(name, { ...props, component: 'EditSuiteModal' });
@@ -45,6 +52,11 @@ const EditSuiteModal: React.FC<Props> = ({
     }
   }, []);
 
+  if (!suite) {
+    // wait for empty suite initialization
+    return null;
+  }
+
   const handleSave = async (values: Partial<Suite>) => {
     const updatedSuite = {
       ...suite,
@@ -54,8 +66,12 @@ const EditSuiteModal: React.FC<Props> = ({
     // save updated suite
     await dispatch(
       saveForm({
+        client,
         apiClient,
         suite: updatedSuite,
+        filesUploadQueue,
+        filesDeleteQueue,
+        dataSetId,
       })
     );
 
@@ -83,7 +99,11 @@ const EditSuiteModal: React.FC<Props> = ({
       dispatch(
         modalOpen({
           modalType: 'EditBoard',
-          modalProps: { suiteItem: updatedSuite, parentSuiteItem },
+          modalProps: {
+            suiteItem: updatedSuite,
+            parentSuiteItem,
+            filesUploadQueue,
+          },
         })
       )
     );
@@ -104,11 +124,13 @@ const EditSuiteModal: React.FC<Props> = ({
     >
       <ModalContainer>
         <SuiteForm
-          suite={suite as Suite}
+          suite={suite}
           isNew={isNew}
+          withThumbnail={Boolean(parentSuiteItem || suite.parent)}
           handleSave={handleSave}
           handleEditBoards={handleEditBoards}
           handleCancel={cancel}
+          filesUploadQueue={filesUploadQueue}
         />
       </ModalContainer>
     </Modal>

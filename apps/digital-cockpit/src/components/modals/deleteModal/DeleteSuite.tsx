@@ -41,10 +41,17 @@ const DeleteSuite: React.FC<Props> = ({ suiteItem: suite }: Props) => {
     });
     handleClose();
 
-    // delete boards image preview files
-    const imageFileIds = suite.boards
-      .filter((board) => !!board.imageFileId)
-      .map((board) => board.imageFileId);
+    // delete image preview files from the suite and from boards
+    const imageFileIds = suite.boards.reduce<string[]>(
+      (acc, board) => {
+        if (board.imageFileId) {
+          acc.push(board.imageFileId);
+        }
+        return acc;
+      },
+      suite.imageFileId ? [suite.imageFileId] : []
+    );
+
     if (imageFileIds.length) {
       dispatch(deleteFiles(client, imageFileIds));
     }
@@ -57,7 +64,7 @@ const DeleteSuite: React.FC<Props> = ({ suiteItem: suite }: Props) => {
       );
     }
 
-    // actually delete the suite
+    // delete the suite
     await dispatch(deleteSuite(apiClient, suite.key));
 
     // delete boards layout items

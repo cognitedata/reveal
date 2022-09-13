@@ -44,11 +44,11 @@ export interface FormState {
 }
 
 export type FileUploadResult = {
-  boardKey: string;
+  itemKey: string;
   fileExternalId: CogniteExternalId;
 };
 
 export type FileUpdateError = {
-  boardKey: string;
+  itemKey: string;
   error: string;
 };

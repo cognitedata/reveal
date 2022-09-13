@@ -8,7 +8,8 @@ import { MixedHttpError, setHttpError } from 'store/notification/thunks';
 import * as Sentry from '@sentry/browser';
 import { setError } from 'store/notification/actions';
 import { deleteLayoutItems } from 'store/layout/thunks';
-import { updateBoardWithFileId } from 'utils/forms';
+import { updateItemWithFileId } from 'utils/forms';
+import size from 'lodash/size';
 
 import * as actions from './actions';
 
@@ -53,7 +54,9 @@ export function saveForm({
       if (!dataSetId) {
         dispatch(setError(['Cannot upload image files', 'Missing DataSetId']));
         Sentry.captureMessage(
-          `Skipping upload of ${filesUploadQueue.size} file(s): missing dataSetId`,
+          `Skipping upload of ${size(
+            filesUploadQueue
+          )} file(s): missing dataSetId`,
           Sentry.Severity.Error
         );
       } else {
@@ -86,18 +89,18 @@ function uploadFiles({
   return async (dispatch: RootDispatcher) => {
     dispatch(actions.filesUpload());
     // eslint-disable-next-line no-restricted-syntax
-    for await (const [boardKey, file] of filesUploadQueue.entries()) {
-      const fileInfo = getExternalFileInfo(file as File, boardKey, dataSetId);
+    for await (const [itemKey, file] of filesUploadQueue.entries()) {
+      const fileInfo = getExternalFileInfo(file as File, itemKey, dataSetId);
       const { externalId } = fileInfo;
       try {
         await uploadFile(client, fileInfo, file);
-        updateBoardWithFileId(suite, {
-          boardKey,
+        updateItemWithFileId(suite, {
+          itemKey,
           fileExternalId: externalId as CogniteExternalId,
         });
       } catch (e) {
         const error = e as MixedHttpError;
-        dispatch(actions.fileUploadError({ boardKey, error: error?.message }));
+        dispatch(actions.fileUploadError({ itemKey, error: error?.message }));
         dispatch(setHttpError(`Failed to upload file ${externalId}`, error));
         Sentry.captureException(e);
       }

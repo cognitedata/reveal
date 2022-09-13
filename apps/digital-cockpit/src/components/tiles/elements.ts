@@ -35,6 +35,25 @@ export const SubSuiteTileContainer = styled(SmallTileContainer)`
     display: flex;
     align-items: center;
   }
+  &.medium-tile {
+    height: 200px;
+    width: 200px;
+    .flex-aligned-content {
+      flex-direction: column;
+    }
+    img {
+      object-fit: cover;
+      max-height: 90%;
+    }
+    .cogs-graphic {
+      display: flex;
+    }
+    .cogs-btn {
+      position: absolute;
+      bottom: -5px;
+      right: -5px;
+    }
+  }
 `;
 
 export const TileContainer = styled(TileBasic)<{

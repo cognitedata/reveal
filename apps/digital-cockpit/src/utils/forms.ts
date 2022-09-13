@@ -46,14 +46,20 @@ export const excludeFileFromBoard = (suite: Suite, boardKey: string): Suite => {
   return { ...suite };
 };
 
+// updates suite or board with uploaded file id
 // modifies existing suite
-export const updateBoardWithFileId = (
+export const updateItemWithFileId = (
   suite: Suite,
   fileUploadResult: FileUploadResult
 ): void => {
-  const { boards } = suite;
-  const boardUpdated = boards.find(
-    (board) => board.key === fileUploadResult.boardKey
-  );
-  boardUpdated && (boardUpdated.imageFileId = fileUploadResult.fileExternalId);
+  const { key, boards } = suite;
+  if (key === fileUploadResult.itemKey) {
+    suite.imageFileId = fileUploadResult.fileExternalId;
+  } else {
+    const boardUpdated = boards.find(
+      (board) => board.key === fileUploadResult.itemKey
+    );
+    boardUpdated &&
+      (boardUpdated.imageFileId = fileUploadResult.fileExternalId);
+  }
 };
