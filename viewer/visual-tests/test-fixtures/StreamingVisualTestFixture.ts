@@ -302,7 +302,12 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
     } else if (modelOutputs.includes('ept-pointcloud')) {
       const pointCloudNode = await pointCloudManager.addModel(modelIdentifier);
       pointCloudNode.pointColorType = PotreePointColorType.Height;
-      this._sceneHandler.addCustomObject(pointCloudNode);
+
+      // TODO, Håkon Flatval Sep. 12 2022: Make SceneHandler operate on PointCloudNode directly
+      const mockObject = new THREE.Group();
+      (mockObject as any).pointCloudNode = pointCloudNode;
+      mockObject.add(pointCloudNode);
+      this._sceneHandler.addPointCloudModel(mockObject, modelIdentifier.revealInternalId);
       return pointCloudNode;
     } else {
       throw Error(`Unknown output format ${modelOutputs}`);
