@@ -107,8 +107,8 @@ export class CognitePointCloudModel extends THREE.Object3D implements CogniteMod
 
   /**
    * Sets a visible filter on points of a given class.
-   * @param pointClass ASPRS classification class code. Either one of the well known
-   * classes from {@link WellKnownAsprsPointClassCodes} or a number for user defined classes.
+   * @param pointClass ASPRS classification class code or custom class name. Either one of the well known
+   * classes from {@link WellKnownAsprsPointClassCodes} or a name or a number for user defined classes.
    * @param visible Boolean flag that determines if the point class type should be visible or not.
    * @throws Error if the model doesn't have the class given.
    */
@@ -118,8 +118,9 @@ export class CognitePointCloudModel extends THREE.Object3D implements CogniteMod
 
   /**
    * Determines if points from a given class are visible.
-   * @param pointClass ASPRS classification class code. Either one of the well known
-   * classes from {@link WellKnownAsprsPointClassCodes} or a number for user defined classes.
+   * @param pointClass ASPRS classification class code or custom class name.
+   * Either one of the well known classes from {@link WellKnownAsprsPointClassCodes}
+   * or a name or a number for user defined classes.
    * @returns True if points from the given class will be visible.
    * @throws Error if the model doesn't have the class given.
    */
@@ -129,8 +130,9 @@ export class CognitePointCloudModel extends THREE.Object3D implements CogniteMod
 
   /**
    * Returns true if the model has values with the given classification class.
-   * @param pointClass ASPRS classification class code. Either one of the well known
-   * classes from {@link WellKnownAsprsPointClassCodes} or a number for user defined classes.
+   * @param pointClass ASPRS classification class code or custom class name.
+   * Either one of the well known classes from {@link WellKnownAsprsPointClassCodes}
+   * or a name or a number for user defined classes.
    * @returns True if model has values in the class given.
    */
   hasClass(pointClass: number | WellKnownAsprsPointClassCodes | string): boolean {
@@ -138,8 +140,8 @@ export class CognitePointCloudModel extends THREE.Object3D implements CogniteMod
   }
 
   /**
-   * Returns a list of sorted classification codes present in the model.
-   * @returns A sorted list of classification codes from the model.
+   * Returns a list of sorted classification codes or names present in the model.
+   * @returns A sorted list of classification codes or custom names from the model.
    */
   getClasses(): Array<number | WellKnownAsprsPointClassCodes | string> {
     return this.pointCloudNode.getClasses();
