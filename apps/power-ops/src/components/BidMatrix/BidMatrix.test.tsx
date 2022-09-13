@@ -59,7 +59,9 @@ describe('Bid matrix tests', () => {
 
       const dateGenerated = await screen.findByText(/Generated/i);
       expect(dateGenerated).toHaveTextContent(
-        dayjs(mockBidProcessResult.bidDate).format('MMM DD, YYYY')
+        dayjs(mockBidProcessResult.bidDate)
+          .tz(mockBidProcessResult.marketConfiguration!.timezone)
+          .format('MMM DD, YYYY')
       );
     });
 
