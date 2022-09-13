@@ -21,7 +21,13 @@ import { VisualTestFixture } from './VisualTestFixture';
 import { DeferredPromise, fitCameraToBoundingBox, SceneHandler } from '../../packages/utilities';
 import { ModelIdentifier, ModelMetadataProvider } from '../../packages/modeldata-api';
 import { LoadingState } from '../../packages/model-base';
-import { LocalAnnotationProvider, PointCloudManager, PointCloudNode, Potree, PotreePointColorType } from '../../packages/pointclouds';
+import {
+  LocalAnnotationProvider,
+  PointCloudManager,
+  PointCloudNode,
+  Potree,
+  PotreePointColorType
+} from '../../packages/pointclouds';
 import { PointCloudMetadataRepository } from '../../packages/pointclouds/src/PointCloudMetadataRepository';
 import { PointCloudFactory } from '../../packages/pointclouds/src/PointCloudFactory';
 import dat from 'dat.gui';

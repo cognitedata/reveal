@@ -14,7 +14,6 @@ import { PointCloudObjectAnnotationData } from '../src/styling/PointCloudObjectA
 import { PointCloudNode } from '../src/PointCloudNode';
 import { AnnotationIdPointCloudObjectCollection } from '../src/styling/AnnotationListPointCloudObjectCollection';
 import { StyledPointCloudObjectCollection } from '../src/styling/StyledPointCloudObjectCollection';
-import { PotreePointColorType } from '../src/potree-three-loader';
 
 import { ModelIdentifier } from '@reveal/modeldata-api';
 
@@ -23,11 +22,15 @@ import * as THREE from 'three';
 import { applyDefaultsToPointCloudAppearance } from '../src/styling/PointCloudAppearance';
 
 class CustomAnnotationProvider implements IAnnotationProvider {
-
   async getAnnotations(_modelIdentifier: ModelIdentifier): Promise<PointCloudObjectAnnotationData> {
-    const cdfAnnotations = [{ annotationId: 123,  region:
-                              [ { shapeType: ShapeType.Cylinder, centerA: [-0.03, 0.1, -1000], centerB: [-0.03, 0.1, 1000], radius: 0.04 } ]
-                            }]
+    const cdfAnnotations = [
+      {
+        annotationId: 123,
+        region: [
+          { shapeType: ShapeType.Cylinder, centerA: [-0.03, 0.1, -1000], centerB: [-0.03, 0.1, 1000], radius: 0.04 }
+        ]
+      }
+    ];
     const annotationData = annotationsToObjectInfo(cdfAnnotations);
 
     return annotationData;
@@ -60,7 +63,8 @@ export default class PointCloudColorStylingVisualTest extends StreamingVisualTes
 
     model.geometryNode.pointSize = 5;
     model.geometryNode.assignStyledPointCloudObjectCollection(
-      new StyledPointCloudObjectCollection(objectCollection, appearance));
+      new StyledPointCloudObjectCollection(objectCollection, appearance)
+    );
     model.geometryNode.defaultAppearance = applyDefaultsToPointCloudAppearance({ visible: false });
 
     return Promise.resolve();
