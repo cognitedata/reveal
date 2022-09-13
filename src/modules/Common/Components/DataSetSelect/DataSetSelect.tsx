@@ -9,6 +9,7 @@ import styled from 'styled-components';
 import { A, Body, Colors } from '@cognite/cogs.js';
 import { createLink } from '@cognite/cdf-utilities';
 import { getFlow } from '@cognite/cdf-sdk-singleton';
+import { AuthFlow } from '@cognite/auth-utils';
 
 export type DataSetSelectProps = {
   onSelectionChange: (ids: number[]) => void;
@@ -42,7 +43,7 @@ export const DataSetSelect = ({
   );
   const flow = getFlow();
   const { data: canReadDataSets } = usePermissions(
-    flow!,
+    flow.flow as AuthFlow,
     'datasetsAcl',
     'READ',
     undefined,
