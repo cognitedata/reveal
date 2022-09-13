@@ -5,7 +5,7 @@ import { Well, WellFilter } from '@cognite/sdk-wells';
 export const searchWells = async (filter: WellFilter, query: string) => {
   const results = await getWellSDKClient().wells.search({
     filter,
-    search: query ? { query } : undefined,
+    search: query ? { query: query.replace(/(^['"]|['"]$)/g, '') } : undefined,
     outputCrs: 'EPSG:4326',
     limit: undefined,
     aggregates: ['count'],

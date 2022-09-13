@@ -12,12 +12,12 @@ export const useWellsSearch = () => {
   const dispatch = useDispatch();
 
   const doWellsSearch = (searchQuery: SavedSearchQuery) => {
-    const phraseUnDefined = isUndefined(searchQuery.phrase);
+    const phraseUndefined = isUndefined(searchQuery.phrase);
     const wellFilters = searchQuery.filters?.wells;
     const geoFilter = get(searchQuery, 'geoFilter');
 
     // Skip well search if any of these are not mutated
-    if (phraseUnDefined && !wellFilters && !geoFilter) {
+    if (phraseUndefined && !wellFilters && !geoFilter) {
       return;
     }
 
