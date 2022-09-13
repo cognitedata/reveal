@@ -1,6 +1,6 @@
 use crate::linalg::BoundingBox;
 
-use nalgebra_glm::{inverse, vec3, vec4, vec4_to_vec3, DMat4, DVec3};
+use nalgebra_glm::{inverse, vec4, vec4_to_vec3, DMat4, DVec3};
 
 use crate::shapes::shape;
 
@@ -22,11 +22,7 @@ impl shape::Shape for OrientedBox {
     fn contains_point(&self, point: &DVec3) -> bool {
         let transformed_point =
             vec4_to_vec3(&(self.inv_instance_matrix * vec4(point.x, point.y, point.z, 1.0)));
-        BoundingBox {
-            min: vec3(-0.5, -0.5, -0.5),
-            max: vec3(0.5, 0.5, 0.5),
-        }
-        .contains_point(&transformed_point)
+        BoundingBox::get_unit_bounding_box().contains_point(&transformed_point)
     }
 
     fn create_bounding_box(&self) -> BoundingBox {

@@ -51,6 +51,16 @@ impl BoundingBox {
 
         bounding_box
     }
+
+    pub fn get_unit_bounding_box() -> BoundingBox {
+        let points = (0..8).map(|i| vec4_to_vec3(&BoundingBox::get_centered_unit_cube_corner(i)));
+        let min_point: DVec3 = points.clone().reduce(|v0, v1| min2(&v0, &v1)).unwrap();
+        let max_point: DVec3 = points.reduce(|v0, v1| max2(&v0, &v1)).unwrap();
+        BoundingBox {
+            min: min_point,
+            max: max_point,
+        }
+    }
 }
 
 impl Default for BoundingBox {
