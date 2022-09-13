@@ -23,6 +23,7 @@ const reusableColumns: Column[] = [
   {
     accessor: 'eventType',
     Header: 'Workflow Type / External ID',
+    disableSortBy: true,
     Cell: ({ row }: CellProps<any>) => (
       <>
         <div className="cogs-body-2 strong">{row.values.eventType}</div>
@@ -62,10 +63,12 @@ const reusableColumns: Column[] = [
   },
   {
     Header: 'Duration',
-    accessor: 'duration',
-    Cell: ({ row: { values } }) => {
-      if (values.eventCreationTime && values.eventEndTime) {
-        return calculateDuration(values.eventCreationTime, values.eventEndTime);
+    accessor: (values: any) => {
+      if (values?.eventCreationTime && values?.eventEndTime) {
+        return calculateDuration(
+          values?.eventCreationTime,
+          values?.eventEndTime
+        );
       }
       return '';
     },
@@ -76,6 +79,7 @@ export const processColumns: Column[] = [
   ...reusableColumns,
   {
     accessor: 'actions',
+    disableSortBy: true,
     Cell: ({ row }: CellProps<any>) => (
       <CellWrapper>
         <OpenInFusion eventExternalId={row.original.eventExternalId} />
@@ -88,6 +92,7 @@ export const workflowsColumns: Column[] = [
   ...reusableColumns,
   {
     accessor: 'actions',
+    disableSortBy: true,
     Cell: ({ row }: CellProps<any>) => (
       <CellWrapper>
         <ViewMoreButton eventExternalId={row.original.eventExternalId} />

@@ -15,6 +15,14 @@ export const StyledTable = styled.table`
       th {
         padding: 12px 16px;
         color: var(--cogs-text-icon--medium);
+        span {
+          display: flex;
+          align-items: center;
+
+          .cogs-icon {
+            margin-left: 4px;
+          }
+        }
       }
     }
   }

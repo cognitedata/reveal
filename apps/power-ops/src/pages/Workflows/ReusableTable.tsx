@@ -4,8 +4,9 @@ import {
   useSortBy,
   usePagination,
   Column,
+  HeaderGroup,
 } from 'react-table';
-import { Flex, Pagination } from '@cognite/cogs.js';
+import { Flex, Icon, Pagination } from '@cognite/cogs.js';
 import { Process, Workflow } from 'types';
 
 import { StyledTable } from './elements';
@@ -35,6 +36,17 @@ export const ReusableTable = ({
     usePagination
   );
 
+  const sortColumnIcon = (column: HeaderGroup) => {
+    if (column.isSorted) {
+      return column.isSortedDesc ? (
+        <Icon type="ReorderDescending" />
+      ) : (
+        <Icon type="ReorderAscending" />
+      );
+    }
+    return <Icon type="ReorderDefault" />;
+  };
+
   // Render the UI for your table
   return (
     <div className="tableContainer">
@@ -45,8 +57,14 @@ export const ReusableTable = ({
             <tr {...headerGroup.getHeaderGroupProps()}>
               {headerGroup.headers.map((column) => (
                 // eslint-disable-next-line react/jsx-key
-                <th {...column.getHeaderProps()} className="cogs-body-2 strong">
-                  {column.render('Header')}
+                <th
+                  {...column.getHeaderProps(column.getSortByToggleProps())}
+                  className="cogs-body-2 strong"
+                >
+                  <span>
+                    {column.render('Header')}
+                    {column.canSort && sortColumnIcon(column)}
+                  </span>
                 </th>
               ))}
             </tr>
