@@ -462,7 +462,6 @@ CYPRESS_EXTERNAL_FILES = [
     "src/pages/authorized/search/well/inspect/constants.ts",
     "src/pages/authorized/search/well/inspect/modules/measurements/wellCentricView/constants.ts",
     "src/pages/authorized/search/well/inspect/modules/ndsEvents/components/Filters/constants.ts",
-    "src/pages/authorized/search/well/inspect/modules/stickChart/WellboreStickChart/TrajectoryColumn/constants.ts",
     "src/pages/authorized/search/well/inspect/modules/wellLogs/constants.ts",
     "src/utils/isISODateRegex.ts",
 ]

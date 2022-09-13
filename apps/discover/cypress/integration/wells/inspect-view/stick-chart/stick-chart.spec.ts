@@ -1,7 +1,6 @@
 import { DepthMeasurementUnit } from '../../../../../src/constants/units';
 import { DATA_AVAILABILITY } from '../../../../../src/modules/wellSearch/constantsSidebarFilters';
 import { TAB_NAMES } from '../../../../../src/pages/authorized/search/well/inspect/constants';
-import { CHART_TITLE } from '../../../../../src/pages/authorized/search/well/inspect/modules/stickChart/WellboreStickChart/TrajectoryColumn/constants';
 import { interceptCoreNetworkRequests } from '../../../../support/commands/helpers';
 import { WELLS_SEARCH_ALIAS } from '../../../../support/interceptions';
 
@@ -9,6 +8,7 @@ const DATA_AVAILABILITY_CASINGS = 'Casings';
 const NO_COLUMNS_SELECTED_TEXT = 'No columns selected';
 const FIT_LOT_CHART_TITLE = 'Depth vs Pressure';
 const SEE_GRAPH_BUTTON_TEXT = 'See graph';
+const DEFAULT_TRAJECTORY_CHART_TITLE = 'TVD vs ED';
 
 describe('Wells: stick chart', () => {
   before(() => {
@@ -119,11 +119,11 @@ describe('Wells: stick chart', () => {
     cy.findAllByTestId('Expand').first().click();
 
     cy.log('trajectory graph should visible');
-    cy.findAllByText(CHART_TITLE).should('be.visible');
+    cy.findAllByText(DEFAULT_TRAJECTORY_CHART_TITLE).should('be.visible');
 
     cy.log('collapse trajectory graph');
     cy.findAllByTestId('Collapse').first().click();
-    cy.findAllByText(CHART_TITLE).should('not.exist');
+    cy.findAllByText(DEFAULT_TRAJECTORY_CHART_TITLE).should('not.exist');
 
     cy.log('expand FIT LOT graph');
     cy.findAllByTestId('Expand').eq(1).click();

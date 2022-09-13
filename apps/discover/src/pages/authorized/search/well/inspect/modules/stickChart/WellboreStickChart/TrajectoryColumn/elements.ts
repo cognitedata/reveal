@@ -1,4 +1,5 @@
 import styled from 'styled-components/macro';
+import layers from 'utils/zindex';
 
 export const TrajectoryChartWrapper = styled.div`
   display: contents;
@@ -7,5 +8,13 @@ export const TrajectoryChartWrapper = styled.div`
   }
   > * .hovertext {
     display: initial !important;
+  }
+`;
+
+export const TrajectoryCurveSelectorWrapper = styled.div`
+  margin-top: -6px;
+  z-index: ${layers.TABLE_HEADER};
+  button {
+    font-size: 12px;
   }
 `;

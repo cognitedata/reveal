@@ -1,9 +1,10 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import isEmpty from 'lodash/isEmpty';
+import { PlotData } from 'plotly.js';
 
 import { WithDragHandleProps } from 'components/DragDropContainer';
-import { useDeepEffect } from 'hooks/useDeep';
+import { EMPTY_ARRAY } from 'constants/empty';
 
 import { ChartProps } from '../../../common/ChartV2/ChartV2';
 import { Chart } from '../Chart';
@@ -11,8 +12,8 @@ import { ColumnAction } from '../ColumnAction';
 import { ColumnEmptyState } from '../ColumnEmptyState';
 import { ExpandableColumn } from '../ExpandableColumn';
 
-export interface PlotlyChartColumnProps
-  extends Pick<ChartProps, 'data' | 'axisNames'> {
+export interface PlotlyChartColumnProps extends Pick<ChartProps, 'axisNames'> {
+  data?: Partial<PlotData>[];
   scaleBlocks: number[];
   header: string;
   chartHeader: string;
@@ -27,7 +28,7 @@ export const PlotlyChartColumn: React.FC<
   WithDragHandleProps<PlotlyChartColumnProps>
 > = React.memo(
   ({
-    data,
+    data = EMPTY_ARRAY,
     axisNames,
     scaleBlocks,
     header,
@@ -43,14 +44,14 @@ export const PlotlyChartColumn: React.FC<
     const [lastExpandedState, setLastExpandedState] = useState(false);
     const [showChart, setShowChart] = useState(false);
 
-    useDeepEffect(() => {
+    useEffect(() => {
       if (isEmpty(data)) {
         setLastExpandedState(expanded);
         handleToggleExpand(false);
       } else {
         handleToggleExpand(lastExpandedState);
       }
-    }, [data]);
+    }, [isEmpty(data)]);
 
     const handleToggleExpand = useCallback((expanded: boolean) => {
       setExpanded(expanded);
@@ -108,6 +109,7 @@ export const PlotlyChartColumn: React.FC<
       <ExpandableColumn
         expanded={expanded}
         header={header}
+        disableExpandButton={isEmpty(data) || Boolean(actionMessage)}
         onToggleExpand={handleToggleExpand}
         {...dragHandleProps}
       >

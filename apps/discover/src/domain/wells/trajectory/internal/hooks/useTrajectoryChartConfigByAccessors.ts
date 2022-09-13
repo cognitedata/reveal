@@ -1,10 +1,9 @@
-import isEqual from 'lodash/isEqual';
-
 import { ProjectConfigWellsTrajectoryCharts } from '@cognite/discover-api-types';
 
 import { useDeepMemo } from 'hooks/useDeep';
 
 import { TrajectoryChartDataAccessor, TrajectoryChartPlane } from '../types';
+import { findChartConfigByAccessors } from '../utils/findChartConfigByAccessors';
 
 import { useTrajectoryChartsConfig } from './useTrajectoryChartsConfig';
 
@@ -21,7 +20,7 @@ export const useTrajectoryChartConfigByAccessors = (
   const chartConfigs = useTrajectoryChartsConfig();
 
   return useDeepMemo(
-    () => chartConfigs.find(({ chartData }) => isEqual(chartData, accessors)),
+    () => findChartConfigByAccessors(chartConfigs, accessors),
     [chartConfigs, accessors]
   );
 };

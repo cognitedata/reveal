@@ -14,6 +14,7 @@ import { useDeepEffect, useDeepMemo } from 'hooks/useDeep';
 import { SelectedWellboreNptView } from '../../nptEvents/Graph';
 import { useColumnHeight } from '../hooks/useColumnHeight';
 import { useScaleBlocks } from '../hooks/useScaleBlocks';
+import { useTrajectoryCurveConfigs } from '../hooks/useTrajectoryCurveConfigs';
 import { ChartColumn, ColumnsData, WellboreData } from '../types';
 
 import { CasingsColumn } from './CasingsColumn';
@@ -90,6 +91,8 @@ export const WellboreStickChart: React.FC<WellboreStickChartProps> = ({
     columnHeight,
     depthMeasurementType,
   });
+
+  const trajectoryCurveConfigs = useTrajectoryCurveConfigs();
 
   useDeepEffect(() => {
     setColumnOrderInternal(columnOrder);
@@ -186,6 +189,7 @@ export const WellboreStickChart: React.FC<WellboreStickChartProps> = ({
                 scaleBlocks={scaleBlocksTVD}
                 curveColor={wellboreColor}
                 depthMeasurementType={depthMeasurementType}
+                trajectoryCurveConfigs={trajectoryCurveConfigs}
                 onChangeDepthMeasurementType={setDepthMeasurementType}
                 isVisible={columnVisibility[ChartColumn.TRAJECTORY]}
               />

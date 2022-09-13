@@ -1,27 +1,30 @@
-import { useTrajectoryChartConfigByAccessors } from 'domain/wells/trajectory/internal/hooks/useTrajectoryChartConfigByAccessors';
 import { TrajectoryWithData } from 'domain/wells/trajectory/internal/types';
 
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 
-import { PlotData } from 'plotly.js';
+import head from 'lodash/head';
+import isEmpty from 'lodash/isEmpty';
 
 import { WithDragHandleProps } from 'components/DragDropContainer';
 import { NoUnmountShowHide } from 'components/NoUnmountShowHide';
-import { EMPTY_ARRAY, EMPTY_OBJECT } from 'constants/empty';
+import { EMPTY_OBJECT } from 'constants/empty';
 import { DepthMeasurementUnit } from 'constants/units';
-import { useDeepMemo } from 'hooks/useDeep';
-import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
+import { useDeepEffect, useDeepMemo } from 'hooks/useDeep';
 
 import { PlotlyChartColumn } from '../../components/PlotlyChartColumn';
-import { ChartColumn, ColumnVisibilityProps } from '../../types';
-import { adapTrajectoryDataToChart } from '../../utils/adapTrajectoryDataToChart';
+import {
+  ChartColumn,
+  ColumnVisibilityProps,
+  TrajectoryCurveConfig,
+} from '../../types';
+import { adaptToTrajectoryCurveDataProps } from '../../utils/adaptToTrajectoryCurveDataProps';
 import {
   DATA_NOT_AVAILABLE_IN_TVD_MODE_TEXT,
   SWITCH_BUTTON_TEXT,
 } from '../constants';
 
-import { CHART_TITLE } from './constants';
 import { TrajectoryChartWrapper } from './elements';
+import { TrajectoryCurveSelector } from './TrajectoryCurveSelector';
 
 export interface TrajectoryColumnProps extends ColumnVisibilityProps {
   data?: TrajectoryWithData;
@@ -29,6 +32,7 @@ export interface TrajectoryColumnProps extends ColumnVisibilityProps {
   scaleBlocks: number[];
   curveColor: string;
   depthMeasurementType?: DepthMeasurementUnit;
+  trajectoryCurveConfigs: TrajectoryCurveConfig[];
   onChangeDepthMeasurementType?: (
     depthMeasurementType: DepthMeasurementUnit
   ) => void;
@@ -43,37 +47,26 @@ export const TrajectoryColumn: React.FC<
     scaleBlocks,
     curveColor,
     depthMeasurementType = DepthMeasurementUnit.TVD,
+    trajectoryCurveConfigs,
     onChangeDepthMeasurementType,
     isVisible = true,
     ...dragHandleProps
   }) => {
-    const { data: depthUnit } = useUserPreferencesMeasurement();
+    const [selectedCurve, setSelectedCurve] = useState<string>('');
 
-    const isTvdScaleSelected =
-      depthMeasurementType === DepthMeasurementUnit.TVD;
-
-    const chartConfig = useTrajectoryChartConfigByAccessors({
-      x: 'ed',
-      y: 'tvd',
-    });
-
-    const chartData = useDeepMemo(() => {
+    const trajectoryCurveDataProps = useDeepMemo(() => {
       if (!data) {
-        return EMPTY_ARRAY as Partial<PlotData>[];
+        return EMPTY_OBJECT as Record<string, unknown>;
       }
-      return adapTrajectoryDataToChart(data, curveColor, chartConfig);
-    }, [data]);
-
-    const axisNames = useMemo(
-      () => ({
-        x: `Equivalent Departure (${depthUnit})`,
-        y: `Depth (${depthUnit})`,
-      }),
-      [depthUnit]
-    );
+      return adaptToTrajectoryCurveDataProps(
+        trajectoryCurveConfigs,
+        data,
+        curveColor
+      );
+    }, [data, trajectoryCurveConfigs]);
 
     const swichToTvdActionProps = useMemo(() => {
-      if (isTvdScaleSelected) {
+      if (depthMeasurementType === DepthMeasurementUnit.TVD) {
         return EMPTY_OBJECT;
       }
       return {
@@ -84,16 +77,25 @@ export const TrajectoryColumn: React.FC<
       };
     }, [depthMeasurementType, onChangeDepthMeasurementType]);
 
+    useDeepEffect(() => {
+      setSelectedCurve(head(Object.keys(trajectoryCurveDataProps)) || '');
+    }, [trajectoryCurveDataProps]);
+
     return (
       <NoUnmountShowHide show={isVisible}>
         <TrajectoryChartWrapper data-testid="trajectory-column">
           <PlotlyChartColumn
-            data={chartData}
-            isLoading={isLoading}
+            isLoading={isLoading || (!isEmpty(data) && !selectedCurve)}
             header={ChartColumn.TRAJECTORY}
-            chartHeader={CHART_TITLE}
-            axisNames={axisNames}
             scaleBlocks={scaleBlocks}
+            chartHeader={
+              <TrajectoryCurveSelector
+                curves={Object.keys(trajectoryCurveDataProps)}
+                selectedCurve={selectedCurve}
+                onChangeCurve={setSelectedCurve}
+              />
+            }
+            {...trajectoryCurveDataProps[selectedCurve]}
             {...swichToTvdActionProps}
             {...dragHandleProps}
           />

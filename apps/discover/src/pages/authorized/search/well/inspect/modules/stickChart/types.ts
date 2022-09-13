@@ -11,6 +11,8 @@ import {
 
 import { Distance } from 'convert-units';
 
+import { ProjectConfigWellsTrajectoryCharts } from '@cognite/discover-api-types';
+
 export interface WellboreData {
   wellboreMatchingId: string;
   wellName: string;
@@ -74,4 +76,10 @@ export enum SummarySection {
 
 export interface SummaryVisibilityProps {
   isExpanded?: boolean;
+}
+
+export interface TrajectoryCurveConfig {
+  chartConfig: ProjectConfigWellsTrajectoryCharts;
+  axisNames: Record<string, string>;
+  title?: string;
 }

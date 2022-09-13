@@ -18,8 +18,9 @@ export const ChartWrapper = styled(BodyColumnBody)`
   justify-content: center;
 `;
 
-export const ChartTitle = styled(BodyColumnMainHeader)`
-  align-self: center;
+export const ChartHeader = styled(BodyColumnMainHeader)`
+  position: absolute;
+  top: 0;
   margin: 12px;
   margin-bottom: -28px;
 `;
@@ -27,6 +28,9 @@ export const ChartTitle = styled(BodyColumnMainHeader)`
 export const ChartContentWrapper = styled.div`
   > ${Container} {
     border: none;
+    position: absolute;
+    top: 0;
+    left: 0;
 
     > ${CommonChartWrapper} {
       background-color: transparent;

@@ -1,7 +1,6 @@
 import React from 'react';
 
 import head from 'lodash/head';
-import isString from 'lodash/isString';
 import last from 'lodash/last';
 
 import { useDeepMemo } from 'hooks/useDeep';
@@ -11,7 +10,7 @@ import { ChartProps as CommonChartProps } from '../../../common/ChartV2/ChartV2'
 import { SCALE_BLOCK_HEIGHT } from '../../../common/Events/constants';
 import { DepthScaleLines } from '../DepthScaleLines';
 
-import { ChartContentWrapper, ChartTitle, ChartWrapper } from './elements';
+import { ChartContentWrapper, ChartHeader, ChartWrapper } from './elements';
 
 export interface ChartProps
   extends Pick<CommonChartProps, 'data' | 'axisNames'> {
@@ -43,18 +42,11 @@ export const Chart: React.FC<ChartProps> = React.memo(
       [scaleBlocks]
     );
 
-    const renderHeader = () => {
-      if (isString(header)) {
-        return <ChartTitle>{header}</ChartTitle>;
-      }
-      return header;
-    };
-
     return (
       <ChartWrapper>
         <DepthScaleLines scaleBlocks={scaleBlocks} />
 
-        {renderHeader()}
+        <ChartHeader>{header}</ChartHeader>
 
         <ChartContentWrapper>
           <ChartV2
