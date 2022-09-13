@@ -70,16 +70,6 @@ describe(determineSsaoRenderParameters.name, () => {
     const result = determineSsaoRenderParameters(modeHint, device);
     expect(result).toEqual(expectedResult);
   });
-
-  test.each([mobileDevice, tabletDevice, desktopDevice])('default resolution cap on device %p', deviceDescriptor => {
-    const mockDPR = 2;
-    const defaultResolutionThreshold = 1.4e6;
-    const resolutionCap = determineResolutionCap(undefined, deviceDescriptor, mockDPR);
-
-    expect(resolutionCap).toEqual(
-      deviceDescriptor.deviceType !== 'desktop' ? defaultResolutionThreshold / mockDPR : defaultResolutionThreshold
-    );
-  });
 });
 
 describe(determineResolutionCap.name, () => {
