@@ -118,17 +118,15 @@ export const Topbar: React.FC = () => {
                 PATHNAMES.REPORTS
               ),
             },
-          ]
-            .concat(
-              ((externalLinks as Array<any>) || []).map((externalLink) => {
-                return {
-                  name: externalLink.title,
-                  isActive: false,
-                  onClick: () => handleExternalNavigate(externalLink.link),
-                };
-              })
-            )
-            .filter((item) => item.name !== REPORT_MANAGER_TEXT_KEY)} // disabled for now
+          ].concat(
+            ((externalLinks as Array<any>) || []).map((externalLink) => {
+              return {
+                name: externalLink.title,
+                isActive: false,
+                onClick: () => handleExternalNavigate(externalLink.link),
+              };
+            })
+          )}
         />
       </TopBar.Left>
     ),

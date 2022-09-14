@@ -7,12 +7,6 @@ import { Report } from 'domain/reportManager/internal/types';
 
 import * as React from 'react';
 
-/*
- * Filters are off for now
- * https://github.com/TanStack/table/issues/4190
- * fixed via potentially: https://github.com/TanStack/table/pull/4376
- */
-
 import { RankingInfo, rankItem } from '@tanstack/match-sorter-utils';
 import {
   // Column,
@@ -30,7 +24,10 @@ import {
   FilterFn,
   ColumnDef,
   flexRender,
+  SortingState,
 } from '@tanstack/react-table';
+import { getSearchParamsFromCurrentUrl } from 'utils/url';
+import { useSetUrlParams } from 'utils/url/setUrlParams';
 
 import { ColumnFilter } from './ColumnFilter';
 import {
@@ -50,6 +47,7 @@ import { RowHoverComponent } from './RowHoverComponent';
 import { StatusSelector } from './StatusSelector';
 import { TableColumnSortIcons } from './TableColumnSortIcons';
 import { TableReport, UpdateReport } from './types';
+import { getParamsForUrl, getStateFromUrlParams } from './urlState';
 
 declare module '@tanstack/table-core' {
   interface FilterFns {
@@ -83,10 +81,25 @@ export const ReportManagerList: React.FC<Props> = ({
   isAdmin,
   onReportUpdate,
 }) => {
+  const urlSetter = useSetUrlParams();
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   );
   const [expanded, setExpanded] = React.useState<ExpandedState>({});
+  const [sorting, setSorting] = React.useState<SortingState>([]);
+
+  const existingParams = getParamsForUrl({ sorting, filters: columnFilters });
+  React.useEffect(() => {
+    urlSetter(existingParams);
+  }, [existingParams]);
+
+  // apply initial filters/sorting
+  React.useLayoutEffect(() => {
+    const params = getSearchParamsFromCurrentUrl();
+    const stateFromUrl = getStateFromUrlParams(params);
+    setSorting(stateFromUrl.sort);
+    setColumnFilters(stateFromUrl.filters);
+  }, []);
 
   const columns = React.useMemo<ColumnDef<TableReport>[]>(
     () => [
@@ -94,7 +107,6 @@ export const ReportManagerList: React.FC<Props> = ({
         header: () => <HeaderPadded>Wellbore / Data sets</HeaderPadded>,
         accessorKey: 'externalId',
         filterFn: 'fuzzy',
-        enableColumnFilter: false,
         minSize: 300,
         cell: ({ row, getValue }) => {
           if (row.getCanExpand()) {
@@ -121,7 +133,6 @@ export const ReportManagerList: React.FC<Props> = ({
         header: () => 'Status',
         accessorKey: 'status',
         filterFn: 'fuzzy',
-        enableColumnFilter: false,
         minSize: 100,
         footer: (props) => props.column.id,
         cell: ({ getValue, row }) => {
@@ -145,7 +156,6 @@ export const ReportManagerList: React.FC<Props> = ({
         header: () => 'Reported issues',
         accessorKey: 'reason',
         filterFn: 'fuzzy',
-        enableColumnFilter: false,
         minSize: 100,
         footer: (props) => props.column.id,
       },
@@ -160,14 +170,12 @@ export const ReportManagerList: React.FC<Props> = ({
         header: () => 'Description',
         accessorKey: 'description',
         filterFn: 'fuzzy',
-        enableColumnFilter: false,
         footer: (props) => props.column.id,
       },
       {
         header: () => 'Reported by',
         accessorKey: 'ownerUserId',
         filterFn: 'fuzzy',
-        enableColumnFilter: false,
         footer: (props) => props.column.id,
       },
     ],
@@ -181,12 +189,14 @@ export const ReportManagerList: React.FC<Props> = ({
       fuzzy: fuzzyFilter,
     },
     state: {
+      sorting,
       expanded,
       columnFilters,
     },
     filterFromLeafRows: true,
     onColumnFiltersChange: setColumnFilters,
     onExpandedChange: setExpanded,
+    onSortingChange: setSorting,
     getSubRows: (row) => row.subRows,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
