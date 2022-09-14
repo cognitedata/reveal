@@ -809,7 +809,7 @@ __metadata:
     "@typescript-eslint/eslint-plugin": 5.36.2
     "@typescript-eslint/parser": 5.36.2
     assert: 2.0.0
-    async-mutex: ^0.4.0
+    async-mutex: 0.4.0
     comlink: 4.3.1
     concurrently: 7.4.0
     copy-pkg-json-webpack-plugin: 0.0.40
@@ -3025,7 +3025,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"async-mutex@npm:^0.4.0":
+"async-mutex@npm:0.4.0":
   version: 0.4.0
   resolution: "async-mutex@npm:0.4.0"
   dependencies:
