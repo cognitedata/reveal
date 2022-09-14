@@ -545,16 +545,12 @@ void main() {
 	#elif defined color_type_color
 		vColor = uColor;
 	#elif defined color_type_lod
-                float w = getLOD() / 10.0;
-                vColor = texture(gradient, vec2(w, 1.0 - w)).rgb;
+	float w = getLOD() / 10.0;
+	vColor = texture(gradient, vec2(w, 1.0 - w)).rgb;
 	#elif defined color_type_point_index
 		vColor = indices.rgb;
 	#elif defined color_type_classification
-                if (any(greaterThan(getRGB(), vec3(0.0)))) {
-                        vColor = 0.5 * (classification.rgb + getRGB());
-                } else {
-                        vColor = classification.rgb;
-                }
+		vColor = classification.rgb;
 	#elif defined color_type_return_number
 		vColor = getReturnNumber();
 	#elif defined color_type_source
@@ -576,7 +572,7 @@ void main() {
 		float originalDepth = gl_Position.w;
 		float adjustedDepth = originalDepth + 2.0 * vRadius;
 		float adjust = adjustedDepth / originalDepth;
-
+	
 		mvPosition.xyz = mvPosition.xyz * adjust;
 		gl_Position = projectionMatrix * mvPosition;
 	#endif
