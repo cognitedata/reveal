@@ -6,9 +6,8 @@ import { CogniteClient, CogniteEvent } from '@cognite/sdk';
 import { EVENT_TYPES, PROCESS_TYPES } from '@cognite/power-ops-api-types';
 import { EventStreamContext } from 'providers/eventStreamProvider';
 import { useFetchWorkflows } from 'queries/useFetchWorkflows';
-import { Workflow, WorkflowSchema } from 'types';
-import axios from 'axios';
-import sidecar from 'utils/sidecar';
+import { useFetchWorkflowSchemas } from 'queries/useFetchWorkflowSchemas';
+import { Workflow } from 'types';
 
 import { WorkflowSingle } from './WorkflowSingle';
 import { ReusableTable } from './ReusableTable';
@@ -40,18 +39,15 @@ const WorkflowsPage = ({
     token: authState?.token,
   });
 
+  const { data: workflowSchemas } = useFetchWorkflowSchemas({
+    project: client.project,
+    token: authState?.token,
+  });
+
   const isWorkflowEvent = async (needle: string): Promise<boolean> => {
-    const { powerOpsApiBaseUrl } = sidecar;
-    const { data: workflowSchemas }: { data: WorkflowSchema[] } =
-      await axios.get(
-        `${powerOpsApiBaseUrl}/${client.project}/workflow-schemas`,
-        {
-          headers: { Authorization: `Bearer ${authState?.token}` },
-        }
-      );
-    return (
-      workflowSchemas.some((schema) => schema.workflowType === needle) ||
-      workflowSchemas.some((schema) => needle.includes(schema.workflowType))
+    return !!(
+      workflowSchemas?.some((schema) => schema.workflowType === needle) ||
+      workflowSchemas?.some((schema) => needle.includes(schema.workflowType))
     );
   };
 
@@ -78,7 +74,7 @@ const WorkflowsPage = ({
     switch (event.type) {
       case PROCESS_TYPES.DAY_AHEAD_BID_MATRIX_CALCULATION:
         if (await isWorkflowEvent(event.externalId)) {
-          refetchWorkflows();
+          refetchWorkflows({ cancelRefetch: true });
         }
         break;
       case EVENT_TYPES.PROCESS_STARTED:
@@ -89,7 +85,7 @@ const WorkflowsPage = ({
           event.metadata?.event_external_id &&
           (await isWorkflowEvent(event.metadata.event_external_id))
         )
-          refetchWorkflows();
+          refetchWorkflows({ cancelRefetch: true });
         break;
     }
   };
@@ -100,7 +96,7 @@ const WorkflowsPage = ({
   }, [rawWorkflows]);
 
   useEffect(() => {
-    refetchWorkflows();
+    refetchWorkflows({ cancelRefetch: true });
     const subscription = eventStore?.subscribe(({ event }) => {
       processEvent(event);
     });

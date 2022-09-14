@@ -100,7 +100,7 @@ export const WorkflowSingle = ({
           case EVENT_TYPES.PROCESS_STARTED:
           case EVENT_TYPES.PROCESS_FAILED:
           case EVENT_TYPES.PROCESS_FINISHED:
-            refetchProcesses();
+            refetchProcesses({ cancelRefetch: true });
             break;
         }
       }
@@ -145,7 +145,7 @@ export const WorkflowSingle = ({
   }, [rawProcesses]);
 
   useEffect(() => {
-    refetchProcesses();
+    refetchProcesses({ cancelRefetch: true });
     const subscription = eventStore?.subscribe(
       ({ event, relationshipsAsSource, relationshipsAsTarget }) => {
         processEvent(event, relationshipsAsSource, relationshipsAsTarget);
