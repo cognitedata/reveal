@@ -178,15 +178,27 @@ function svgRepresentationToCommandsAndStyles(
   return { svgPathCommands, svgPathStyles };
 }
 
-const createExternalId = ({
+const getDmsExternalId = ({
   fileId,
   filePage,
   id,
+  prefix,
 }: {
   fileId: number;
   filePage: number;
   id: string;
-}): string => `${fileId}-${filePage}-${id}`;
+  prefix?: string;
+}): string => {
+  const prefixString = prefix ? `${prefix}-` : '';
+  const externalId = `${prefixString}${fileId}-${filePage}-${id}`;
+
+  if (externalId.length > 255) {
+    throw Error(
+      `External id too long: ${externalId}. Max length is 255 characters.`
+    );
+  }
+  return externalId;
+};
 
 // --- Symbol Template ---
 export interface SymbolTemplateNode extends Omit<DiagramNode, 'modelName'> {
@@ -299,6 +311,17 @@ export function graphDocumentToNodesAndEdges(options: {
 } {
   // Used to avoid creating the same node twice when multiple identical instances occur in the GraphDocument
   const instanceDeduplicator = new Set<string>();
+  const isInstanceDuplicated = (externalId: string): boolean => {
+    if (instanceDeduplicator.has(externalId)) {
+      // eslint-disable-next-line no-console
+      console.warn(
+        `Found duplicate diagramSymbolInstance with externalId: ${externalId}`
+      );
+      return true;
+    }
+    instanceDeduplicator.add(externalId);
+    return false;
+  };
 
   const filePageInfo = {
     fileId: options.fileId,
@@ -309,10 +332,11 @@ export function graphDocumentToNodesAndEdges(options: {
   const viewboxNode = ViewboxNodeAdapter.fromRect(
     options.graphDocument.viewBox,
     {
-      externalId: `viewbox_${createExternalId({
+      externalId: getDmsExternalId({
         ...filePageInfo,
         id: 'viewbox',
-      })}`,
+        prefix: 'Viewbox',
+      }),
       ...filePageInfo,
     }
   );
@@ -327,21 +351,6 @@ export function graphDocumentToNodesAndEdges(options: {
   const symbolNodes: SymbolNode[] = [];
   const fileConnectionNodes: FileConnectionNode[] = [];
   options.graphDocument.symbolInstances.forEach((diagramSymbolInstance) => {
-    // Construct externalId
-    const externalIdHash = `${createExternalId({
-      ...filePageInfo,
-      id: `symbolInstance_${diagramSymbolInstance.id}`,
-    })}`;
-    // Deal with potential duplicate instances
-    if (instanceDeduplicator.has(externalIdHash)) {
-      // eslint-disable-next-line no-console
-      console.warn(
-        `Ignoring duplicate diagramSymbolInstance with hash: ${externalIdHash}`
-      );
-      return;
-    }
-    instanceDeduplicator.add(externalIdHash);
-
     // object with all the common fields, except externalId and modelName
     const symbolNodePrecursor = {
       ...filePageInfo,
@@ -359,15 +368,23 @@ export function graphDocumentToNodesAndEdges(options: {
     };
 
     if (diagramSymbolInstance.type === 'File Connection') {
+      const modelName = 'FileConnection';
+      const externalId = getDmsExternalId({
+        ...filePageInfo,
+        id: diagramSymbolInstance.id,
+        prefix: modelName,
+      });
+      if (isInstanceDuplicated(externalId)) return;
+
       // Create a FileConnectionNode
       const fileConnectionNode: FileConnectionNode = {
         symbolType: 'File Connection',
-        modelName: 'FileConnection',
+        modelName,
         ...symbolNodePrecursor,
         direction: diagramSymbolInstance.direction!,
         fileDirection: (diagramSymbolInstance as PidFileConnectionInstance)
           .fileDirection!,
-        externalId: `fileConn_${externalIdHash}`,
+        externalId,
       };
       idToExternalIdMap.set(diagramSymbolInstance.id, [
         fileConnectionNode.modelName,
@@ -379,12 +396,20 @@ export function graphDocumentToNodesAndEdges(options: {
         diagramSymbolInstance.type as DmsSupportedSymbolTypes
       )
     ) {
+      const modelName = 'Symbol';
+      const externalId = getDmsExternalId({
+        ...filePageInfo,
+        id: diagramSymbolInstance.id,
+        prefix: modelName,
+      });
+      if (isInstanceDuplicated(externalId)) return;
+
       // Create a SymbolNode
       const symbolNode: SymbolNode = {
         symbolType: diagramSymbolInstance.type as DmsSupportedSymbolTypes,
-        modelName: 'Symbol',
+        modelName,
         ...symbolNodePrecursor,
-        externalId: `symbol_${externalIdHash}`,
+        externalId,
       };
       idToExternalIdMap.set(diagramSymbolInstance.id, [
         symbolNode.modelName,
@@ -402,26 +427,18 @@ export function graphDocumentToNodesAndEdges(options: {
   // Create line nodes from DiagramLineInstances and add them to the id to externalId map as well
   const lineNodes: LineNode[] = [];
   options.graphDocument.lines.forEach((diagramLineInstance) => {
-    // Construct externalId
-    const externalIdHash = `${createExternalId({
+    const externalId = getDmsExternalId({
       ...filePageInfo,
-      id: `line_${diagramLineInstance.id}`,
-    })}`;
-    // Deal with potential duplicate instances
-    if (instanceDeduplicator.has(externalIdHash)) {
-      // eslint-disable-next-line no-console
-      console.warn(
-        `Ignoring duplicate diagramLineInstance with hash: ${externalIdHash}`
-      );
-      return;
-    }
-    instanceDeduplicator.add(externalIdHash);
+      id: diagramLineInstance.id,
+      prefix: 'Line',
+    });
+    isInstanceDuplicated(externalId);
 
     // Construct lineNodes with unique externalId
     const lineNode = LineNodeAdapter.fromDiagramLineInstance(
       diagramLineInstance,
       {
-        externalId: `line_${externalIdHash}`,
+        externalId,
         ...filePageInfo,
       }
     );
@@ -445,10 +462,11 @@ export function graphDocumentToNodesAndEdges(options: {
     }
     const [startModel, startNode] = startInfo;
     const [endModel, endNode] = endInfo;
-    const externalIdHash = `${createExternalId({
+    const externalId = getDmsExternalId({
       ...filePageInfo,
-      id: `connection_${diagramConnection.start}_${diagramConnection.end}`,
-    })}`;
+      id: `${diagramConnection.start}_${diagramConnection.end}`,
+      prefix: 'InstanceEdge',
+    });
 
     instanceEdges.push({
       modelName: 'InstanceEdge',
@@ -457,7 +475,7 @@ export function graphDocumentToNodesAndEdges(options: {
       type: `${startModel}-${endModel}`,
       startNode,
       endNode,
-      externalId: `instanceEdge_${externalIdHash}`,
+      externalId,
     });
   });
 
