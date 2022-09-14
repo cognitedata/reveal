@@ -550,8 +550,10 @@ void main() {
 	#elif defined color_type_point_index
 		vColor = indices.rgb;
 	#elif defined color_type_classification
-                if (any(greaterThan(styleColor, vec3(0.0)))) {
-                    vColor = 0.5 * (classification.rgb + getRGB());
+                if (any(greaterThan(getRGB(), vec3(0.0)))) {
+                        vColor = 0.5 * (classification.rgb + getRGB());
+                } else {
+                        vColor = classification.rgb;
                 }
 	#elif defined color_type_return_number
 		vColor = getReturnNumber();
