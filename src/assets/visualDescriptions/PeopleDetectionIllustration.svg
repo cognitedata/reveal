@@ -56,14 +56,6 @@
     <path d="M34.9102 26.5H143.91V199.5H34.9102V26.5Z" fill="#1AA3C1" fill-opacity="0.2" stroke="#1AA3C1"
           stroke-width="5"/>
     <rect width="100" height="24" transform="translate(32.4102)" fill="#1AA3C1"/>
-    <rect x="32.4102" y="24" width="10" height="10" fill="#1AA3C1"/>
-    <rect x="32.4102" y="192" width="10" height="10" fill="#1AA3C1"/>
-    <rect x="136.41" y="24" width="10" height="10" fill="#1AA3C1"/>
-    <rect x="136.41" y="192" width="10" height="10" fill="#1AA3C1"/>
-    <rect x="32.4102" y="24" width="10" height="10" fill="#1AA3C1"/>
-    <rect x="32.4102" y="192" width="10" height="10" fill="#1AA3C1"/>
-    <rect x="136.41" y="24" width="10" height="10" fill="#1AA3C1"/>
-    <rect x="136.41" y="192" width="10" height="10" fill="#1AA3C1"/>
     <path fill-rule="evenodd" clip-rule="evenodd"
           d="M52.4102 9V7.5V6H50.9102H49.4102V7.5H50.9102V9H52.4102ZM41.9102 6L43.4102 6V7.5H41.9102V9H40.4102V7.5V6H41.9102ZM43.4102 9L49.4102 9V15L43.4102 15V9ZM50.9102 18H49.4102V16.5H50.9102V15H52.4102V16.5V18H50.9102ZM40.4102 15V16.5V18H41.9102H43.4102L43.4102 16.5L41.9102 16.5L41.9102 15H40.4102Z"
           fill="#D3F7FB"/>
