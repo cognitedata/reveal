@@ -1,6 +1,6 @@
 /* eslint-disable @cognite/no-number-z-index */
-import { Divider } from '@cognite/data-exploration';
 import React, { useEffect, useState } from 'react';
+import { Divider } from '@cognite/data-exploration';
 import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { StatusToolBar } from 'src/modules/Process/Containers/StatusToolBar';
