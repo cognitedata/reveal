@@ -109,6 +109,8 @@ const Explorer = () => {
         y: event.pageY,
       });
       setShowContextMenu(true);
+      dispatch(cancelFileDetailsEdit());
+      dispatch(FetchFilesById([item.id]));
       dispatch(setFocusedFileId(item.id));
     },
     []
