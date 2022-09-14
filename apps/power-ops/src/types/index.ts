@@ -52,6 +52,7 @@ export type Process = {
   eventStartTime: string;
   eventEndTime: string;
   eventExternalId: string;
+  eventId?: number;
   eventType: string;
   status: string;
 };
@@ -66,4 +67,11 @@ export type Workflow = {
   eventExternalId: string;
   eventType: string;
   status: string;
+};
+
+export type WorkflowSchema = {
+  id: number;
+  workflowType: string;
+  cdfProject: string;
+  triggeredBy: string[];
 };

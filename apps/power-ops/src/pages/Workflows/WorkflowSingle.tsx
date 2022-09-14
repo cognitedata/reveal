@@ -10,12 +10,13 @@ import {
   Input,
   TableData,
 } from '@cognite/cogs.js';
-import { PROCESS_TYPES, EVENT_TYPES } from '@cognite/power-ops-api-types';
+import { EVENT_TYPES } from '@cognite/power-ops-api-types';
 import { calculateDuration } from 'utils/utils';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { EventStreamContext } from 'providers/eventStreamProvider';
 import { CopyButton } from 'components/CopyButton/CopyButton';
 import { useFetchProcesses } from 'queries/useFetchProcesses';
+import { Process } from 'types';
 
 import { ReusableTable } from './ReusableTable';
 import { handleCopyButtonClick, processColumns } from './utils';
@@ -50,8 +51,8 @@ export const WorkflowSingle = ({
 
   const [showMetadata, setShowMetadata] = useState<boolean>(false);
 
-  // Get all FUNCTION_CALL and SHOP_RUN workflow events
-  const { data: processes, refetch: refetchProcesses } = useFetchProcesses({
+  const [processes, setProcesses] = useState<Process[]>([]);
+  const { data: rawProcesses, refetch: refetchProcesses } = useFetchProcesses({
     project: client.project,
     workflowExternalId,
     token: authState?.token,
@@ -95,8 +96,7 @@ export const WorkflowSingle = ({
 
       if (partOfWorkflowEvent) {
         switch (event.type) {
-          case PROCESS_TYPES.SHOP_RUN:
-          case PROCESS_TYPES.FUNCTION_CALL:
+          case EVENT_TYPES.PROCESS_REQUESTED:
           case EVENT_TYPES.PROCESS_STARTED:
           case EVENT_TYPES.PROCESS_FAILED:
           case EVENT_TYPES.PROCESS_FINISHED:
@@ -107,11 +107,22 @@ export const WorkflowSingle = ({
     }
   };
 
-  const subscription = eventStore?.subscribe(
-    ({ event, relationshipsAsSource, relationshipsAsTarget }) => {
-      processEvent(event, relationshipsAsSource, relationshipsAsTarget);
-    }
-  );
+  const fetchProcessEventIds = async (processes: Process[]) => {
+    const events = await client?.events.retrieve(
+      processes?.map((p) => ({ externalId: p.eventExternalId }))
+    );
+
+    if (!events) return;
+
+    setProcesses(
+      processes.map((process, index) => {
+        if (events[index]) {
+          return { ...process, eventId: events[index].id } as Process;
+        }
+        return process;
+      })
+    );
+  };
 
   useEffect(() => {
     getWorkflowEvent();
@@ -129,6 +140,17 @@ export const WorkflowSingle = ({
   }, [workflowEvent]);
 
   useEffect(() => {
+    if (!rawProcesses?.length) return;
+    fetchProcessEventIds(rawProcesses);
+  }, [rawProcesses]);
+
+  useEffect(() => {
+    refetchProcesses();
+    const subscription = eventStore?.subscribe(
+      ({ event, relationshipsAsSource, relationshipsAsTarget }) => {
+        processEvent(event, relationshipsAsSource, relationshipsAsTarget);
+      }
+    );
     return () => {
       subscription?.unsubscribe();
     };

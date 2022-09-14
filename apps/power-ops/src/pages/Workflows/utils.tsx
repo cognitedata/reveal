@@ -82,7 +82,7 @@ export const processColumns: Column[] = [
     disableSortBy: true,
     Cell: ({ row }: CellProps<any>) => (
       <CellWrapper>
-        <OpenInFusion eventExternalId={row.original.eventExternalId} />
+        <OpenInFusion eventId={row.original.eventId} />
       </CellWrapper>
     ),
   },
@@ -96,7 +96,7 @@ export const workflowsColumns: Column[] = [
     Cell: ({ row }: CellProps<any>) => (
       <CellWrapper>
         <ViewMoreButton eventExternalId={row.original.eventExternalId} />
-        <OpenInFusion eventExternalId={row.original.eventExternalId} />
+        <OpenInFusion eventId={row.original.eventId} />
       </CellWrapper>
     ),
   },

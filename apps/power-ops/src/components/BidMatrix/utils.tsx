@@ -163,6 +163,8 @@ export const isNewBidMatrixAvailable = (
   return !!(
     parentProcessEventExternalId &&
     parentProcessEventExternalId !== currentBidProcessExternalId &&
-    parentProcessEventExternalId.includes(PROCESS_TYPES.BID_PROCESS)
+    parentProcessEventExternalId.includes(
+      PROCESS_TYPES.DAY_AHEAD_BID_MATRIX_CALCULATION
+    )
   );
 };
