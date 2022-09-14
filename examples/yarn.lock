@@ -1053,11 +1053,6 @@ camelize@^1.0.0:
   resolved "https://registry.yarnpkg.com/camelize/-/camelize-1.0.0.tgz#164a5483e630fa4321e5af07020e531831b2609b"
   integrity sha1-FkpUg+Yw+kMh5a8HAg5TGDGyYJs=
 
-camera-controls@^1.25.1:
-  version "1.30.0"
-  resolved "https://registry.yarnpkg.com/camera-controls/-/camera-controls-1.30.0.tgz#ac7fe7c872339cb446313286ded1889867d63ebf"
-  integrity sha512-ZtYT/1YdjXjk+51xKF71J4NOJxDnRn7oVbO2LEjJsp3ffKN46QaMzfTLG1fjpp2VaZ4e2R1Gx9J9EWmzUKDftw==
-
 caniuse-lite@^1.0.30001349:
   version "1.0.30001358"
   resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001358.tgz#473d35dabf5e448b463095cab7924e96ccfb8c00"
