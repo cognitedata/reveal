@@ -4306,19 +4306,6 @@
     "@typescript-eslint/types" "5.33.1"
     eslint-visitor-keys "^3.3.0"
 
-"@uiw/codemirror-extensions-basic-setup@4.11.6", "@uiw/codemirror-extensions-basic-setup@^4.11.6":
-  version "4.11.6"
-  resolved "https://registry.yarnpkg.com/@uiw/codemirror-extensions-basic-setup/-/codemirror-extensions-basic-setup-4.11.6.tgz#a1fd89ac39a16ba750fff5e73e219ff32624aed7"
-  integrity sha512-VW9tmkHvdD5u3osksBrDU/DQYNGcifK3qJPmmMKmje106pZTgIhvxABVhNCEJlDIrG5zYV5cqLtwb9TPbkd5qQ==
-  dependencies:
-    "@codemirror/autocomplete" "^6.0.0"
-    "@codemirror/commands" "^6.0.0"
-    "@codemirror/language" "^6.0.0"
-    "@codemirror/lint" "^6.0.0"
-    "@codemirror/search" "^6.0.0"
-    "@codemirror/state" "^6.0.0"
-    "@codemirror/view" "^6.0.0"
-
 "@uiw/codemirror-extensions-basic-setup@4.12.2":
   version "4.12.2"
   resolved "https://registry.yarnpkg.com/@uiw/codemirror-extensions-basic-setup/-/codemirror-extensions-basic-setup-4.12.2.tgz#0d8dbc389122acb53cbc87e212eb9ee2f2c4a716"
@@ -4341,15 +4328,6 @@
     "@codemirror/state" "^6.0.0"
     "@codemirror/view" "^6.0.0"
 
-"@uiw/codemirror-themes@^4.11.6":
-  version "4.11.6"
-  resolved "https://registry.yarnpkg.com/@uiw/codemirror-themes/-/codemirror-themes-4.11.6.tgz#bc5a1a4ef9b49a99edac20f989df4202357a4e2a"
-  integrity sha512-KAYqw/7UYZaFYKhv9xft5vA4L6YXSvOlga/2sN1YK+P6IfbpySegnxlxM2+CkPNDSFywiPUIKyOT2mf5KTDP+w==
-  dependencies:
-    "@codemirror/language" "^6.0.0"
-    "@codemirror/state" "^6.0.0"
-    "@codemirror/view" "^6.0.0"
-
 "@uiw/react-codemirror@^4.11.4":
   version "4.12.2"
   resolved "https://registry.yarnpkg.com/@uiw/react-codemirror/-/react-codemirror-4.12.2.tgz#64462dc31b02ea953e992c2d95cde08ca67e01bb"
@@ -4360,16 +4338,6 @@
     "@codemirror/state" "^6.1.1"
     "@codemirror/theme-one-dark" "^6.0.0"
     "@uiw/codemirror-extensions-basic-setup" "4.12.2"
-    codemirror "^6.0.0"
-
-"@uiw/react-codemirror@^4.11.6":
-  version "4.11.6"
-  resolved "https://registry.yarnpkg.com/@uiw/react-codemirror/-/react-codemirror-4.11.6.tgz#99267c5128912e7daf01c3bdcda70c1a7a7a9c68"
-  integrity sha512-xPBOHtWE1MqHp8H/hTnOTxnz1ZQiQ2CHi1neiTpnjUxQUNv5mm5vTSgw2POxPh1AJqAVFuS6L1p3EZZPiVyehQ==
-  dependencies:
-    "@babel/runtime" "^7.18.6"
-    "@codemirror/theme-one-dark" "^6.0.0"
-    "@uiw/codemirror-extensions-basic-setup" "4.11.6"
     codemirror "^6.0.0"
 
 "@webassemblyjs/ast@1.11.1":
