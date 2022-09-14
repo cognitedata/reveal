@@ -95,6 +95,7 @@ export class PotreeNodeWrapper {
 
     this._classification[key].w = visible ? 1.0 : 0.0;
     this.octree.material.classification = this._classification;
+    this._needsRedraw = true;
   }
 
   resetRedraw(): void {
