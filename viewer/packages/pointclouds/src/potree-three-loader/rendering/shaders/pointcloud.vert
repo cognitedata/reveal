@@ -552,7 +552,6 @@ void main() {
 		vColor = rgb == vec3(0.0, 0.0, 0.0) 
 			? classification.rgb 
 			: mix(classification.rgb, rgb, 0.6);
-			// : 
 	#elif defined color_type_return_number
 		vColor = getReturnNumber();
 	#elif defined color_type_source
