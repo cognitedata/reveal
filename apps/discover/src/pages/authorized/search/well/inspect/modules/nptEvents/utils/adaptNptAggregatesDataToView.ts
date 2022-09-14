@@ -19,8 +19,8 @@ export const adaptNptAggregatesDataToView = <T extends WellboreType>(
 
     return {
       ...event,
-      wellName: wellbore.wellName || 'Unknown',
-      wellboreName: wellbore.name,
+      wellName: wellbore?.wellName || 'Unknown',
+      wellboreName: wellbore?.name || 'Unknown',
     };
   });
 };

@@ -9,7 +9,7 @@ export const mockWellboreOptions = {
 };
 export const getMockWellbore = (extras?: Partial<Wellbore>): Wellbore => ({
   name: 'wellbore B',
-  matchingId: 'test-well-1',
+  matchingId: 'test-wellbore-1',
   wellMatchingId: 'test-well-1',
   // id: 'test-well-1',
   // wellId: 1234,

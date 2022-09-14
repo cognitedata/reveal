@@ -1,4 +1,7 @@
-import { NptInternal } from 'domain/wells/npt/internal/types';
+import {
+  NptAggregateRowInternal,
+  NptInternal,
+} from 'domain/wells/npt/internal/types';
 
 export const getMockNPTEvent = (
   extras?: Partial<NptInternal>
@@ -40,3 +43,14 @@ export const mockNptEvents: NptInternal[] = [
     wellboreMatchingId: '2',
   }),
 ];
+
+export const getMockNptAggregateRowInternal = (
+  extras?: Partial<NptAggregateRowInternal>
+): NptAggregateRowInternal => ({
+  wellboreMatchingId: 'test-wellbore-1',
+  nptCode: 'test-npt-code',
+  nptCodeDetail: 'test-npt-code-detail',
+  nptCodeColor: 'test-color',
+  count: 10,
+  ...extras,
+});

@@ -32,7 +32,7 @@ describe('CurveCentricView Tests api return empty sequence list', () => {
     const store = getMockedStore({
       wellInspect: {
         selectedWellIds: { 'test-well-1': true },
-        selectedWellboreIds: { 'test-well-1': true },
+        selectedWellboreIds: { 'test-wellbore-1': true },
       },
     });
 
@@ -81,7 +81,7 @@ describe('CurveCentricView Tests api return data sequence list', () => {
   const store = getMockedStore({
     wellInspect: {
       selectedWellIds: { 'test-well-1': true },
-      selectedWellboreIds: { 'test-well-1': true },
+      selectedWellboreIds: { 'test-wellbore-1': true },
     },
   });
   const testInit = async (props: Props) =>

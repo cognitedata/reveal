@@ -17,8 +17,8 @@ export const adaptMeasurementDataToView = (
 
     return {
       ...data,
-      wellName: wellbore.wellName || 'Unknown',
-      wellboreName: wellbore.name,
+      wellName: wellbore?.wellName || 'Unknown',
+      wellboreName: wellbore?.name || 'Unknown',
       wellboreColor: wellbore.color,
     };
   });

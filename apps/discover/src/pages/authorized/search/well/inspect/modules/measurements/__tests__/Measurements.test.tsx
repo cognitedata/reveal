@@ -36,7 +36,7 @@ describe('Measurement with delayed loading and no data', () => {
     const store = getMockedStore({
       wellInspect: {
         selectedWellIds: { 'test-well-1': true },
-        selectedWellboreIds: { 'test-well-1': true },
+        selectedWellboreIds: { 'test-wellbore-1': true },
       },
     });
 
@@ -80,7 +80,7 @@ describe('Measurement with delayed loading and data available', () => {
     const store = getMockedStore({
       wellInspect: {
         selectedWellIds: { 'test-well-1': true },
-        selectedWellboreIds: { 'test-well-1': true },
+        selectedWellboreIds: { 'test-wellbore-1': true },
       },
     });
 
@@ -120,7 +120,7 @@ describe('Measurement with loading errors', () => {
           getMockWellbore(),
           getMockWellbore({
             name: 'wellbore C',
-            matchingId: 'test-well-2',
+            matchingId: 'test-wellbore-2',
             wellMatchingId: 'test-well-2',
             description: 'wellbore C desc',
           }),
@@ -136,7 +136,10 @@ describe('Measurement with loading errors', () => {
     const store = getMockedStore({
       wellInspect: {
         selectedWellIds: { 'test-well-1': true },
-        selectedWellboreIds: { 'test-well-1': true, 'test-well-2': true },
+        selectedWellboreIds: {
+          'test-wellbore-1': true,
+          'test-wellbore-2': true,
+        },
       },
     });
     testRenderer(Measurements, store);

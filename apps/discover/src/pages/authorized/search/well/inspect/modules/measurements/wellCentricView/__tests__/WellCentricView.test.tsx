@@ -39,7 +39,7 @@ describe('WellCentricView Tests api return empty sequence list', () => {
     const store = getMockedStore({
       wellInspect: {
         selectedWellIds: { 'test-well-1': true },
-        selectedWellboreIds: { 'test-well-1': true },
+        selectedWellboreIds: { 'test-wellbore-1': true },
       },
     });
 
@@ -97,7 +97,7 @@ describe('WellCentricView Tests api return data sequence list', () => {
   const store = getMockedStore({
     wellInspect: {
       selectedWellIds: { 'test-well-1': true },
-      selectedWellboreIds: { 'test-well-1': true },
+      selectedWellboreIds: { 'test-wellbore-1': true },
     },
   });
   const wellbore = getMockWellbore();
@@ -186,7 +186,10 @@ describe('Measuremnts with loading errors ( unit )', () => {
     const store = getMockedStore({
       wellInspect: {
         selectedWellIds: { 'test-well-1': true },
-        selectedWellboreIds: { 'test-well-1': true, 'test-well-2': true },
+        selectedWellboreIds: {
+          'test-wellbore-1': true,
+          'test-wellbore-2': true,
+        },
       },
     });
     testRenderer(WellCentricView, store, props);

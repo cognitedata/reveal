@@ -16,8 +16,8 @@ export const adaptNptDataToView = <T extends WellboreType>(
     const wellbore = keyedWellbores[event.wellboreMatchingId];
     return {
       ...event,
-      wellName: wellbore.wellName || 'Unknown',
-      wellboreName: wellbore.name,
+      wellName: wellbore?.wellName || 'Unknown',
+      wellboreName: wellbore?.name || 'Unknown',
       measuredDepth: event.measuredDepth
         ? {
             ...event.measuredDepth,
