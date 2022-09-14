@@ -45,7 +45,7 @@ export const DepthColumn: React.FC<WithDragHandleProps<DepthColumnProps>> =
           <BodyColumn width={90} data-testid="depth-column">
             <ColumnDragger {...dragHandleProps} />
 
-            <ColumnHeaderWrapper>
+            <ColumnHeaderWrapper data-testid="column-header">
               <ColumnOptionsSelector
                 options={DEPTH_MEASUREMENT_TYPES}
                 selectedOption={depthMeasurementType}
