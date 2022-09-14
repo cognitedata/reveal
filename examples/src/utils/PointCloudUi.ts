@@ -7,7 +7,7 @@ export class PointCloudUi {
     {
       pointSize: 1.0,
       pointSizeType: PotreePointSizeType.Adaptive,
-      budget: 2_000_000,
+      budget: 3_000_000,
       pointColorType: PotreePointColorType.Rgb,
       pointShape: PotreePointShape.Circle,
       pointBlending: true

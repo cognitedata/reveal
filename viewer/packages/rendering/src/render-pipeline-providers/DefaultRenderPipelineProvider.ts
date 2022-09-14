@@ -86,7 +86,7 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider {
 
     const ssaoParameters = renderOptions.ssaoRenderParameters ?? defaultRenderOptions.ssaoRenderParameters;
     const edges = renderOptions.edgeDetectionParameters ?? defaultRenderOptions.edgeDetectionParameters;
-    const pointCloudParameters = renderOptions?.pointCloudParameters ?? defaultRenderOptions.pointCloudParameters;
+    renderOptions.pointCloudParameters = renderOptions.pointCloudParameters ?? defaultRenderOptions.pointCloudParameters;
 
     this._cadGeometryRenderPipeline = new CadGeometryRenderPipelineProvider(
       sceneHandler,
@@ -98,12 +98,12 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider {
       ssaoParameters
     );
 
-    this._pointCloudRenderPipeline = new PointCloudRenderPipelineProvider(sceneHandler, pointCloudParameters);
+    this._pointCloudRenderPipeline = new PointCloudRenderPipelineProvider(sceneHandler, renderOptions);
 
     this._postProcessingPass = new PostProcessingPass(sceneHandler.scene, {
       ssaoTexture: this._renderTargetData.ssaoRenderTarget.texture,
       edges: edges.enabled,
-      pointBlending: pointCloudParameters.pointBlending,
+      pointBlending: renderOptions.pointCloudParameters.pointBlending,
       ...this._pointCloudRenderPipeline.pointCloudRenderTargets,
       ...this._cadGeometryRenderPipeline.cadGeometryRenderTargets
     });

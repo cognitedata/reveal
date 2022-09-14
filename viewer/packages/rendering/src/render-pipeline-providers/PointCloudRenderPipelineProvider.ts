@@ -9,7 +9,7 @@ import { SceneHandler } from '@reveal/utilities';
 import { PointCloudEffectsPass } from '../render-passes/PointCloudEffectsPass';
 import { PointCloudRenderTargets } from './types';
 import { PointCloudPassParameters } from '../render-passes/types';
-import { PointCloudParameters } from '../rendering/types';
+import { RenderOptions } from '../rendering/types';
 import { PotreePointShape } from '@reveal/pointclouds';
 
 export class PointCloudRenderPipelineProvider implements RenderPipelineProvider {
@@ -17,7 +17,7 @@ export class PointCloudRenderPipelineProvider implements RenderPipelineProvider 
     currentRenderSize: THREE.Vector2;
     output: THREE.WebGLRenderTarget;
   };
-  private readonly _renderParameters: PointCloudParameters;
+  private readonly _renderParameters: RenderOptions;
   private readonly _depthPass: PointCloudEffectsPass;
   private readonly _attributePass: PointCloudEffectsPass;
   private readonly _standardPass: PointCloudEffectsPass;
@@ -49,7 +49,7 @@ export class PointCloudRenderPipelineProvider implements RenderPipelineProvider 
     }
   };
 
-  constructor(sceneHandler: SceneHandler, renderParameters: PointCloudParameters) {
+  constructor(sceneHandler: SceneHandler, renderParameters: RenderOptions) {
     this._renderTargetData = {
       currentRenderSize: new THREE.Vector2(1, 1),
       output: new THREE.WebGLRenderTarget(1, 1, {
@@ -57,9 +57,12 @@ export class PointCloudRenderPipelineProvider implements RenderPipelineProvider 
         magFilter: THREE.NearestFilter,
         format: THREE.RGBAFormat,
         type: THREE.FloatType,
-        depthTexture: new THREE.DepthTexture(1, 1, THREE.UnsignedIntType)
+        depthTexture: new THREE.DepthTexture(1, 1, THREE.UnsignedIntType),
+        samples: renderParameters.multiSampleCountHint ?? 0
       })
     };
+
+    this._renderTargetData.output.texture.type
 
     this._sceneHandler = sceneHandler;
     this._renderParameters = renderParameters;
@@ -87,7 +90,7 @@ export class PointCloudRenderPipelineProvider implements RenderPipelineProvider 
     try {
       renderer.setRenderTarget(this._renderTargetData.output);
 
-      if (this._renderParameters.pointBlending) {
+      if (this._renderParameters?.pointCloudParameters?.pointBlending) {
         yield this._depthPass;
 
         renderer.setClearColor('#000000', 0.0);
