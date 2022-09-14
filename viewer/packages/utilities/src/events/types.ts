@@ -6,8 +6,13 @@
  * Delegate for pointer events.
  * @module @cognite/reveal
  */
-export type PointerEventDelegate = (event: { offsetX: number; offsetY: number; button?: number }) => void;
+export type PointerEventDelegate = (event: PointerEventData) => void;
 
+/**
+ * Data typr for PointerEventDelegate.
+ * @module @cognite/reveal
+ */
+export type PointerEventData = { offsetX: number; offsetY: number; button?: number };
 /**
  * Delegate for disposal events.
  * @module @cognite/reveal
