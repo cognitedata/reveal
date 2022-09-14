@@ -548,7 +548,11 @@ void main() {
 	#elif defined color_type_point_index
 		vColor = indices.rgb;
 	#elif defined color_type_classification
-		vColor = classification.rgb;
+		vec3 rgb = getRGB();
+		vColor = rgb == vec3(0.0, 0.0, 0.0) 
+			? classification.rgb 
+			: mix(classification.rgb, rgb, 0.6);
+			// : 
 	#elif defined color_type_return_number
 		vColor = getReturnNumber();
 	#elif defined color_type_source
