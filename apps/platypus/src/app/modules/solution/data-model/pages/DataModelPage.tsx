@@ -269,10 +269,10 @@ export const DataModelPage = ({ dataModelExternalId }: DataModelPageProps) => {
 
   // TODO need this?
   useEffect(() => {
-    if (editorMode === SchemaEditorMode.Edit) {
+    if (!saving && !updating && editorMode === SchemaEditorMode.Edit) {
       onSchemaChanged(graphQlSchema);
     }
-  }, [graphQlSchema, editorMode, onSchemaChanged]);
+  }, [graphQlSchema, editorMode, onSchemaChanged, saving, updating]);
 
   return (
     <>

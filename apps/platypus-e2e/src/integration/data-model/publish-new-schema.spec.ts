@@ -104,4 +104,31 @@ describe('Data Model Page - Publish new schema', () => {
     };
     checkQueryExplorer(query, expectedResult);
   });
+
+  it('should only show the published data model version after the localDraft is published', () => {
+    cy.visit('/');
+
+    cy.getBySel('create-data-model-btn').click();
+    cy.getBySel('input-data-model-name').type('cypress-test');
+    cy.getBySel('modal-ok-button').click();
+    // we should be redirected to /dashboard
+    cy.url().should('include', '/data-models/cypress-test/latest');
+    cy.getCogsToast('success').contains('Data Model successfully created');
+
+    // we should see version select dropdown with draft
+    cy.getBySel('schema-version-select').contains('Local draft');
+
+    cy.getBySel('no-types-add-type-btn').click();
+    cy.getBySel('type-name-input').type('Person');
+    cy.getBySel('modal-ok-button').click();
+
+    cy.get('.field-input input').type('name');
+    cy.getBySel('publish-schema-btn').click();
+
+    // we should see version select dropdown with latest
+    cy.getBySel('schema-version-select').contains('Latest');
+    cy.getBySel('schema-version-select').click();
+
+    cy.get('.cogs-menu').children().should('have.length', 1);
+  });
 });
