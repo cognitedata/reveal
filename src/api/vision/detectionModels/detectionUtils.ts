@@ -18,7 +18,7 @@ export function getDetectionModelEndpoint(modelType: VisionDetectionModelType) {
     }/context/vision/${DetectionModelTypeFeatureMapping[modelType]}`;
   }
 
-  return `${sdk.getBaseUrl()}/api/playground/projects/${
+  return `${sdk.getBaseUrl()}/api/v1/projects/${
     sdk.project
   }/context/vision/extract`;
 }

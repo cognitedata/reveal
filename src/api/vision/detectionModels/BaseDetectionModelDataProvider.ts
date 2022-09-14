@@ -15,10 +15,12 @@ export abstract class BaseDetectionModelDataProvider
   protected abstract url: string;
   protected abstract features: string[];
   protected abstract getParams: (params?: {}) => {};
+  protected customHeaders = {};
 
   postJob(fileIds: number[], parameters?: DetectionModelParams) {
     return sdk
       .post<VisionJobResponse>(this.url, {
+        headers: this.customHeaders,
         data: {
           items: fileIds.map((id) => {
             return {

@@ -18,9 +18,9 @@ export const RunDetectionModels = createAsyncThunk<
       );
     }
 
-    // API can handle 1000 files in one request
+    // API can handle 100 files in one request
     // Adding batching for future proofing
-    const batchSize = 1000;
+    const batchSize = 100;
     const { files, jobs } = getState().processSlice;
     const batchFileIdsList: number[][] = splitListIntoChunks(
       fileIds,
