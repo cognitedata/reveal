@@ -137,7 +137,10 @@ describe('Wells: nds-events', () => {
     );
 
     cy.log('click on view button');
-    cy.contains('View').click({ force: true });
+    cy.findAllByTestId('nds-wellbores-table')
+      .last()
+      .contains('View')
+      .click({ force: true });
 
     cy.log('Risk type should be visible');
     cy.findAllByTestId('treemap-tile-title').should(
