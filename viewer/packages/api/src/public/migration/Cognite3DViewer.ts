@@ -725,7 +725,7 @@ export class Cognite3DViewer {
    * @example
    * ```js
    * const sphere = new THREE.Mesh(
-   * new THREE.SphereBufferGeometry(),
+   * new THREE.SphereGeometry(),
    * new THREE.MeshBasicMaterial()
    * );
    * viewer.addObject3D(sphere);
@@ -747,7 +747,7 @@ export class Cognite3DViewer {
    * @param object
    * @example
    * ```js
-   * const sphere = new THREE.Mesh(new THREE.SphereBufferGeometry(), new THREE.MeshBasicMaterial());
+   * const sphere = new THREE.Mesh(new THREE.SphereGeometry(), new THREE.MeshBasicMaterial());
    * viewer.addObject3D(sphere);
    * viewer.removeObject3D(sphere);
    * ```
