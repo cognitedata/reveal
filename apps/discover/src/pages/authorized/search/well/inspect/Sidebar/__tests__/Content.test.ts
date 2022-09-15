@@ -1,3 +1,5 @@
+import '__mocks/mockCogniteSDK';
+
 import { screen } from '@testing-library/react';
 import { Store } from 'redux';
 

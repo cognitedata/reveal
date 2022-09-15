@@ -9,45 +9,47 @@ import {
   Flex,
 } from '@cognite/cogs.js';
 
-type ReportFormValues = {
-  dataSet?: OptionType<string>;
-  issue?: OptionType<string>;
-  description?: string;
+export type ReportFormValues = {
+  dataSet: OptionType<string>;
+  feedbackType: OptionType<string>;
+  description: string;
 };
 
 type CreateReportModalProps = {
-  source: string;
+  visible: boolean;
+  sourceValue: string;
   sourceTitle: string;
   dataSetOptions: OptionType<string>[];
-  issueOptions: OptionType<string>[];
+  feedbackTypeOptions: OptionType<string>[];
   onCreateReport: (reportFormValues: ReportFormValues) => void;
   onCancel: () => void;
 };
 
 export const CreateReportModal = ({
-  source,
+  visible,
+  sourceValue,
   sourceTitle,
   dataSetOptions,
-  issueOptions,
+  feedbackTypeOptions,
   onCreateReport,
   onCancel,
 }: CreateReportModalProps) => {
-  const [formValues, setFormValues] = useState<ReportFormValues>({});
+  const [formValues, setFormValues] = useState<Partial<ReportFormValues>>({});
 
-  const handleOk = () => onCreateReport?.(formValues);
-  const handleClose = () => onCancel?.();
+  const handleOk = () => onCreateReport(formValues);
+
   return (
     <Modal
-      visible
+      visible={visible}
       title="Report new issue"
       appElement={document.getElementById('root')!}
       okText="Report"
       onOk={handleOk}
-      onCancel={handleClose}
+      onCancel={onCancel}
       closable={false}
     >
       <Flex direction="column" gap={16}>
-        <Input disabled value={source} title={sourceTitle} />
+        <Input disabled value={sourceValue} title={sourceTitle} htmlSize={50} />
         <Select
           label="Data set"
           options={dataSetOptions}
@@ -59,11 +61,11 @@ export const CreateReportModal = ({
         />
         <Select
           label="Issue"
-          options={issueOptions}
-          inputId="issue"
-          value={formValues.issue}
+          options={feedbackTypeOptions}
+          inputId="feedbackType"
+          value={formValues.feedbackType}
           onChange={(value: OptionType<string>) => {
-            setFormValues((state) => ({ ...state, issue: value }));
+            setFormValues((state) => ({ ...state, feedbackType: value }));
           }}
         />
         <Textarea

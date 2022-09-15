@@ -1,12 +1,20 @@
-import React from 'react';
-
 import { Button, Dropdown } from '@cognite/cogs.js';
 
-import { CreateReportMenu } from './CreateReportMenu';
+import { WellReportMenu, WellReportMenuProps } from './WellReportMenu';
 
-export const ReportMenuDropdown = () => {
+export const ReportMenuDropdown = ({
+  wellboreMatchingId,
+  dataSet,
+}: WellReportMenuProps) => {
   return (
-    <Dropdown content={<CreateReportMenu />}>
+    <Dropdown
+      content={
+        <WellReportMenu
+          wellboreMatchingId={wellboreMatchingId}
+          dataSet={dataSet}
+        />
+      }
+    >
       <Button
         key="CreateReportButton"
         type="ghost"

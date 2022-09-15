@@ -28,7 +28,9 @@ export type MapPoints = {
 
 const enterPolygonEditMode = () => {
   cy.log('Enter edit mode by pressing "Polygon tool" button');
-  cy.findByRole('button', { name: /freedraw button/i }).click();
+  cy.findByRole('button', { name: /freedraw button/i })
+    .should('be.visible')
+    .click();
 };
 
 const checkPolygonIsClosed = () => {
@@ -263,7 +265,7 @@ Cypress.Commands.add(
 
 Cypress.Commands.add('expandMap', () => {
   cy.log('Expand map');
-  cy.findByText(EXPAND_MAP_TEXT).click();
+  cy.findByText(EXPAND_MAP_TEXT).should('be.visible').click();
 });
 
 export interface MapCommands {

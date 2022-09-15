@@ -23,6 +23,7 @@ export const initialState: WellInspectState = {
   goBackNavigationPath: navigation.SEARCH_WELLS,
   coloredWellbores: false,
   selectedRelatedDocumentsColumns: getInitialSelectedRelatedDocumentsColumns(),
+  wellFeedback: { visible: false },
 };
 
 const {
@@ -32,6 +33,7 @@ const {
   toggleSelectedWellboreOfWell,
   setColoredWellbores,
   setSelectedRelatedDocumentColumns,
+  setWellFeedback,
 } = wellInspectActions;
 
 const wellInspectReducerCreator = createReducer(initialState, (builder) => {
@@ -86,6 +88,17 @@ const wellInspectReducerCreator = createReducer(initialState, (builder) => {
         WELL_SELECTED_RELATED_DOCUMENTS_COLUMNS,
         selectedRelatedDocumentsColumns
       );
+    })
+    .addCase(setWellFeedback, (state, action) => {
+      if (action.payload.visible) {
+        state.wellFeedback = action.payload;
+      } else {
+        state.wellFeedback = {
+          visible: action.payload.visible,
+          wellboreMatchingId: undefined,
+          dataSet: undefined,
+        };
+      }
     });
 });
 

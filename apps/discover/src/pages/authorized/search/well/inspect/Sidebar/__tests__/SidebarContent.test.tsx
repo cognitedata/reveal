@@ -1,4 +1,5 @@
 import '__mocks/mockContainerAuth'; // should be first
+import '__mocks/mockCogniteSDK';
 import 'domain/wells/__mocks/setupWellsMockSDK';
 import 'modules/map/__mocks/mockMapbox';
 import { getMockConfigGet } from 'domain/projectConfig/service/__mocks/getMockConfigGet';

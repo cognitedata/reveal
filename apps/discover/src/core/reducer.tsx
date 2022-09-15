@@ -3,6 +3,7 @@ import { combineReducers } from 'redux';
 import { search as documentSearch } from 'modules/documentSearch/reducer';
 import favorites from 'modules/favorite/reducer';
 import { feedback } from 'modules/feedback/reducer';
+import { global } from 'modules/global/reducer';
 import { inspectTabs } from 'modules/inspectTabs/reducer';
 import { map } from 'modules/map/reducer';
 import { resultPanel } from 'modules/resultPanel/reducer';
@@ -21,6 +22,7 @@ const rootReducer = combineReducers<StoreState>({
   },
   favorites,
   feedback,
+  global,
   inspectTabs,
   map,
   search,

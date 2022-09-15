@@ -1,6 +1,6 @@
 export const DISCOVER_WELL_REPORT = 'discover-well-report';
 
-export const DATA_SETS_MAP = {
+export const DATA_SETS_MAP: Record<string, string> = {
   CASINGS: 'Casings',
   TRAJECTORY: 'Trajectory',
   NPT: 'NPT events',
@@ -13,7 +13,7 @@ export const DATA_SETS_MAP = {
   OTHERS: 'Others',
 };
 
-export const DATA_SET_ISSUES = {
+export const DATA_SET_FEEDBACK_TYPES: Record<string, string> = {
   INCOMPLETE: 'Incomplete data',
   DUPLICATE: 'Duplicate data',
   SENSITIVE: 'Sensitive data',

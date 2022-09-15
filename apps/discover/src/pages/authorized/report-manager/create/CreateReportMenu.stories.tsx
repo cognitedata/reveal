@@ -1,6 +1,4 @@
-import * as React from 'react';
-
-import { Report } from '../../../../domain/reportManager/internal/types';
+import { Report } from 'domain/reportManager/internal/types';
 
 import { ReportMenu } from './ReportMenu';
 

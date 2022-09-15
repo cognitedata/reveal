@@ -1,3 +1,5 @@
+import '__mocks/mockCogniteSDK';
+
 import { useWellInspectWells } from 'domain/wells/well/internal/hooks/useWellInspectWells';
 
 import { screen } from '@testing-library/react';

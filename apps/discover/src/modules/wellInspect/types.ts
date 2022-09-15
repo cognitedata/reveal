@@ -1,3 +1,4 @@
+import { DATA_SETS_MAP } from 'domain/reportManager/internal/constants';
 import { WellInternal } from 'domain/wells/well/internal/types';
 
 import { TableResults } from 'components/Tablev3';
@@ -12,9 +13,16 @@ export const SET_GO_BACK_NAVIGATION_PATH = 'SET_GO_BACK_NAVIGATION_PATH';
 export const SET_COLORED_WELLBORES = 'SET_COLORED_WELLBORES';
 export const SET_SELECTED_RELATED_DOCUMENT_COLUMNS =
   'SET_SELECTED_RELATED_DOCUMENT_COLUMNS';
+export const SET_WELL_FEEDBACK = 'SET_WELL_FEEDBACK';
 
 export type BooleanSelection = {
   [key: string]: boolean;
+};
+
+export type WellFeedback = {
+  visible: boolean;
+  wellboreMatchingId?: string;
+  dataSet?: keyof typeof DATA_SETS_MAP;
 };
 
 export type WellSequenceData = Record<WellboreId, SequenceData[]>;
@@ -25,6 +33,7 @@ export interface WellInspectState {
   goBackNavigationPath: string;
   coloredWellbores: boolean;
   selectedRelatedDocumentsColumns: BooleanSelection;
+  wellFeedback: WellFeedback;
 }
 
 export interface SetPrerequisiteData {
@@ -66,10 +75,16 @@ interface SetSelectedRelatedDoucmentColumns {
   payload: TableResults;
 }
 
+export interface SetWellFeedback {
+  type: typeof SET_WELL_FEEDBACK;
+  payload: WellFeedback;
+}
+
 export type WellInspectAction =
   | SetPrerequisiteData
   | ToggleSelectedWell
   | ToggleSelectedWellboreOfWell
   | SetGoBackNavigationPath
   | SetColoredWellbores
-  | SetSelectedRelatedDoucmentColumns;
+  | SetSelectedRelatedDoucmentColumns
+  | SetWellFeedback;

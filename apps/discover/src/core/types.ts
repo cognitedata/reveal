@@ -10,6 +10,7 @@ import { DocumentState } from 'modules/documentSearch/types';
 import { DocumentAction } from 'modules/documentSearch/types.actions';
 import { FavoriteState } from 'modules/favorite/types';
 import { FeedbackState, FeedbackAction } from 'modules/feedback/types';
+import { GlobalState } from 'modules/global/types';
 import { InspectTabsAction, InspectTabsState } from 'modules/inspectTabs/types';
 import { MapState } from 'modules/map/types';
 import { MapAction } from 'modules/map/types.actions';
@@ -44,6 +45,7 @@ export type StoreState = {
     tenant: string;
     appName: string;
   };
+  global: GlobalState;
   favorites: FavoriteState;
   feedback: FeedbackState;
   inspectTabs: InspectTabsState;

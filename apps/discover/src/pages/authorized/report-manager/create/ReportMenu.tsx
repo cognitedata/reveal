@@ -9,9 +9,18 @@ import {
   ReportDetailColumn,
 } from './elements';
 
+export type ReportMenuNavTypes =
+  | 'ALL'
+  | 'RESOLVED'
+  | 'CREATE_NEW'
+  | 'OPEN_REPORT';
+
 export type ReportMenuProps = {
   activeReports?: Report[];
-  handleNavigation: () => void;
+  handleNavigation: (
+    navigationType: ReportMenuNavTypes,
+    report?: Report
+  ) => void;
 };
 
 type ReportMenuItemProps = {
@@ -65,9 +74,7 @@ const ActiveReportsSection = ({
       {activeReports.map((report) => (
         <Menu.Item
           key={report.id}
-          onClick={() => {
-            handleNavigation();
-          }}
+          onClick={() => handleNavigation('OPEN_REPORT', report)}
         >
           <ReportMenuItem
             title={`${report.reportType} / ${report.reason}`}
@@ -90,15 +97,21 @@ export const ReportMenu = ({
         activeReports={activeReports}
         handleNavigation={handleNavigation}
       />
-      <Menu.Item appendIcon="ArrowRight" onClick={() => handleNavigation()}>
+      <Menu.Item
+        appendIcon="ArrowRight"
+        onClick={() => handleNavigation('ALL')}
+      >
         See all reports
       </Menu.Item>
       <Menu.Divider />
-      <Menu.Item>
+      <Menu.Item onClick={() => handleNavigation('CREATE_NEW')}>
         <Icon type="Feedback" />
         Report new issues
       </Menu.Item>
-      <Menu.Item appendIcon="ArrowRight">
+      <Menu.Item
+        appendIcon="ArrowRight"
+        onClick={() => handleNavigation('RESOLVED')}
+      >
         <Icon type="Checklist" />
         Resolved Issues
       </Menu.Item>

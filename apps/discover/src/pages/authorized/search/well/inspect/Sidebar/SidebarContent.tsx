@@ -18,6 +18,7 @@ import {
   useWellInspectSelection,
 } from 'modules/wellInspect/selectors';
 import { WellboreId } from 'modules/wellSearch/types';
+import { ReportMenuDropdown } from 'pages/authorized/report-manager/create';
 
 import {
   BlockContent,
@@ -106,6 +107,9 @@ export const SidebarContent: React.FC = () => {
                   {wellboreHasErrors && (
                     <WellboreErrorWarning errors={errors[id]} />
                   )}
+                  <ReportMenuDropdown
+                    wellboreMatchingId={wellbore.matchingId}
+                  />
                 </BlockContentItem>
               );
             })}

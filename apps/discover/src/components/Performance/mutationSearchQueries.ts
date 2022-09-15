@@ -16,7 +16,7 @@ export const nptGraphPageLoadQuery = {
 
 export const searchVisibleQuery = {
   type: 'childList',
-  searchIn: ['addedNodes', 'removedNodes'],
+  searchIn: ['addedNodes' as const, 'removedNodes' as const],
   searchFor: 'attribute',
   searchBy: 'data-testid',
   searchValue: 'main-search-input',

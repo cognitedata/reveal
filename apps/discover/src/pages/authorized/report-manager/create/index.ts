@@ -1,2 +1,2 @@
-export * from './CreateReportMenu';
+export * from './WellReportMenu';
 export * from './ReportMenuDropdown';
