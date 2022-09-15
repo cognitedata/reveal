@@ -1,9 +1,8 @@
 import React, { useMemo } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { FileInfo } from '@cognite/sdk';
 import { ContextMenuPosition } from 'src/modules/Common/Components/ContextMenu/types';
 import { TableDataItem } from 'src/modules/Common/types/index';
-import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
 import { isProcessingFile } from 'src/modules/Process/store/utils';
 import { RootState } from 'src/store/rootReducer';
 import { selectUpdatedFileDetails } from 'src/modules/FileDetails/selectors';
@@ -18,10 +17,9 @@ export const ContextMenuContainer = ({
   rowData: TableDataItem;
   position: ContextMenuPosition;
 }) => {
-  const dispatch = useDispatch();
-
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { menuActions, rowKey, ...fileInfo } = rowData;
+  const { id } = rowData;
 
   const handleFileDetails = () => {
     if (menuActions?.onFileDetailsClicked) {
@@ -30,8 +28,7 @@ export const ContextMenuContainer = ({
   };
 
   const handleFileDelete = () => {
-    const { id } = rowData;
-    dispatch(DeleteFilesById({ fileIds: [id] }));
+    menuActions.onFileDelete(id);
   };
 
   const handleReview = () => {
@@ -41,12 +38,12 @@ export const ContextMenuContainer = ({
   };
 
   const fileDetails = useSelector((state: RootState) =>
-    selectUpdatedFileDetails(state, rowData.id)
+    selectUpdatedFileDetails(state, id)
   );
 
   const getAnnotationStatuses = useMemo(makeSelectJobStatusForFile, []);
   const annotationStatuses = useSelector(({ processSlice }: RootState) =>
-    getAnnotationStatuses(processSlice, rowData.id)
+    getAnnotationStatuses(processSlice, id)
   );
 
   const reviewDisabled = isProcessingFile(annotationStatuses);

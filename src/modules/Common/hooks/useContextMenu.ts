@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import { SKIP_MENU_CLOSE_ID } from 'src/constants/ContextMenuConstants';
 import { ContextMenuPosition } from 'src/modules/Common/Components/ContextMenu/types';
 import { TableDataItem } from 'src/modules/Common/types';
 
@@ -14,7 +15,10 @@ export const useContextMenu = () => {
 
   // To hide context menu for all the click events
   const handleClick = useCallback(
-    () => (showContextMenu ? setShowContextMenu(false) : null),
+    (ev: any) =>
+      showContextMenu && ev.target.id !== SKIP_MENU_CLOSE_ID
+        ? setShowContextMenu(false)
+        : null,
     [showContextMenu]
   );
 

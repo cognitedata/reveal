@@ -176,7 +176,6 @@ export const ProcessResults = ({ currentView }: { currentView: ViewMode }) => {
       });
       setShowContextMenu(true);
       dispatch(cancelFileDetailsEdit());
-      dispatch(FetchFilesById([item.id]));
       dispatch(setFocusedFileId(item.id));
     },
     []
