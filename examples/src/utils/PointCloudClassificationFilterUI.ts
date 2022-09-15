@@ -1,4 +1,4 @@
-import { CognitePointCloudModel, WellKnownAsprsPointClassCodes } from '@cognite/reveal';
+import { CognitePointCloudModel } from '@cognite/reveal';
 import dat from 'dat.gui';
 
 export class PointCloudClassificationFilterUI {
