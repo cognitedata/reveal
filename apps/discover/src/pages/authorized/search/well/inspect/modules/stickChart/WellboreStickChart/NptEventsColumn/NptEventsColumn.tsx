@@ -6,7 +6,7 @@ import {
 } from 'domain/wells/npt/internal/types';
 import { isAnyNptMissingTvd } from 'domain/wells/npt/internal/utils/isAnyNptMissingTvd';
 
-import React, { useCallback, useState } from 'react';
+import React, { useState } from 'react';
 
 import isEmpty from 'lodash/isEmpty';
 
@@ -27,7 +27,6 @@ import {
   NptEventsByDepth,
   EMPTY_STATE_TEXT,
 } from '../../../common/Events/NptEventsByDepth';
-import { NptEventsScatterView } from '../../../common/Events/NptEventsScatterView';
 import { EventsColumnView } from '../../../common/Events/types';
 import { ColumnNotification } from '../../components/ColumnNotification';
 import { ColumnOptionsSelector } from '../../components/ColumnOptionsSelector';
@@ -41,7 +40,7 @@ import {
 } from '../constants';
 import { EventsColumnBody } from '../elements';
 
-import { NptScatterTooltip } from './components/NptScatterTooltip';
+import { NptEventsScatterView } from './components/NptEventsScatterView';
 
 export interface NptEventsColumnProps extends ColumnVisibilityProps {
   scaleBlocks: number[];
@@ -66,6 +65,8 @@ export const NptEventsColumn: React.FC<
     const { nptCodeDefinitions } = useNptDefinitions();
 
     const [view, setView] = useState(DEFAULT_EVENTS_COLUMN_VIEW);
+    const [expandedScaleBlock, setExpandedScaleBlock] =
+      useState<[number, number]>();
 
     const filteredData = useDeepMemo(() => {
       if (!nptCodesSelecton) {
@@ -84,31 +85,29 @@ export const NptEventsColumn: React.FC<
       return EMPTY_STATE_TEXT;
     }, [data, filteredData]);
 
-    const renderBlockEvents = useCallback(
-      (data: NptInternalWithTvd[]) => {
-        if (isEmpty(data)) {
-          return null;
-        }
+    const renderBlockEvents = (
+      data: NptInternalWithTvd[],
+      scaleBlockRange: [number, number]
+    ) => {
+      if (isEmpty(data)) {
+        return null;
+      }
 
-        if (view === EventsColumnView.Scatter) {
-          return (
-            <NptEventsScatterView
-              events={data}
-              renderTooltipContent={({ original }) => (
-                <NptScatterTooltip
-                  event={original}
-                  nptCodeDefinitions={nptCodeDefinitions}
-                  depthMeasurementType={depthMeasurementType}
-                />
-              )}
-            />
-          );
-        }
+      if (view === EventsColumnView.Scatter) {
+        return (
+          <NptEventsScatterView
+            events={data}
+            nptCodeDefinitions={nptCodeDefinitions}
+            depthMeasurementType={depthMeasurementType}
+            scaleBlockRange={scaleBlockRange}
+            expandedScaleBlock={expandedScaleBlock}
+            onExpandOverflowEvents={setExpandedScaleBlock}
+          />
+        );
+      }
 
-        return <NptEventsBadge events={data} />;
-      },
-      [view, depthMeasurementType]
-    );
+      return <NptEventsBadge events={data} />;
+    };
 
     return (
       <NoUnmountShowHide show={isVisible}>

@@ -11,23 +11,19 @@ import { getDateOrDefaultText } from 'utils/date';
 import { DepthMeasurementUnit } from 'constants/units';
 import { FlexRowFullWidth } from 'styles/layout';
 
-import { DEFAULT_DEPTH_MEASUREMENT_TYPE } from '../../constants';
-import { DetailCardWrapper } from '../elements';
+import { DetailCardBlock } from '../../../components/DetailCard';
 
-import { DetailCardBlock } from './DetailCardBlock';
 import { NptCodeDataBlock } from './NptCodeDataBlock';
 
-export interface NptScatterTooltipProps {
+export interface NptEventDetailCardContentProps {
   event: NptInternalWithTvd;
   nptCodeDefinitions: NptCodeDefinitionType;
   depthMeasurementType?: DepthMeasurementUnit;
 }
 
-export const NptScatterTooltip: React.FC<NptScatterTooltipProps> = ({
-  event,
-  nptCodeDefinitions,
-  depthMeasurementType = DEFAULT_DEPTH_MEASUREMENT_TYPE,
-}) => {
+export const NptEventDetailCardContent: React.FC<
+  NptEventDetailCardContentProps
+> = ({ event, nptCodeDefinitions, depthMeasurementType }) => {
   const {
     nptCode,
     nptCodeDetail,
@@ -55,7 +51,7 @@ export const NptScatterTooltip: React.FC<NptScatterTooltipProps> = ({
   }, [measuredDepth?.value, trueVerticalDepth?.value]);
 
   return (
-    <DetailCardWrapper>
+    <>
       <FlexRowFullWidth>
         <NptCodeDataBlock
           nptCode={nptCode}
@@ -80,6 +76,6 @@ export const NptScatterTooltip: React.FC<NptScatterTooltipProps> = ({
         />
         <DetailCardBlock title="Duration (hrs)" value={duration} />
       </FlexRowFullWidth>
-    </DetailCardWrapper>
+    </>
   );
 };

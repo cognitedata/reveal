@@ -31,3 +31,4 @@ export * from './ViewButton';
  */
 export * from './IconButton';
 export * from './ExpandCollapseIconButton';
+export * from './CollapseIconButton';

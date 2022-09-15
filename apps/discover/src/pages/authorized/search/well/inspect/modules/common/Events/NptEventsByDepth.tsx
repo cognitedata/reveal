@@ -20,7 +20,10 @@ export type Props = {
   isLoading?: boolean;
   emptySubtitle?: string;
   depthMeasurementType?: DepthMeasurementUnit;
-  renderBlockEvents: (blockEvents: NptInternalWithTvd[]) => JSX.Element | null;
+  renderBlockEvents: (
+    blockEvents: NptInternalWithTvd[],
+    c: [number, number]
+  ) => JSX.Element | null;
 };
 
 export const EMPTY_STATE_TEXT = 'This wellbore has no NPT events data';
@@ -55,9 +58,18 @@ export const NptEventsByDepth: React.FC<Props> = React.memo(
               }
             );
 
+            const scaleBlockRangeMin = index
+              ? scaleBlocks[index - 1]
+              : scaleBlocks[index];
+
+            const scaleBlockRangeMax = scaleBlocks[index];
+
             return (
               <ScaleLine key={depth}>
-                {renderBlockEvents(blockEvents)}
+                {renderBlockEvents(blockEvents, [
+                  scaleBlockRangeMin,
+                  scaleBlockRangeMax,
+                ])}
               </ScaleLine>
             );
           })}

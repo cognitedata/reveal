@@ -12,16 +12,13 @@ import { WithDragHandleProps } from 'components/DragDropContainer';
 import { FlexGrow } from 'styles/layout';
 
 import { ColumnDragger } from '../../../common/Events/ColumnDragger';
-import {
-  BodyColumnMainHeader,
-  ColumnHeaderWrapper,
-} from '../../../common/Events/elements';
+import { BodyColumnMainHeader } from '../../../common/Events/elements';
 
 import {
   DEFAULT_COLUMN_WIDTH_COLLAPSED,
   DEFAULT_COLUMN_WIDTH_EXPANDED,
 } from './constants';
-import { BodyColumnWrapper } from './elements';
+import { BodyColumnWrapper, ExpandableColumnHeaderWrapper } from './elements';
 
 export interface ExpandableColumnProps {
   header: string | JSX.Element;
@@ -70,7 +67,7 @@ export const ExpandableColumn: React.FC<
       <BodyColumnWrapper width={expanded ? widthExpanded : widthCollapsed}>
         <ColumnDragger {...dragHandleProps} />
 
-        <ColumnHeaderWrapper>
+        <ExpandableColumnHeaderWrapper>
           {renderHeader()}
           <FlexGrow />
           <ExpandCollapseIconButton
@@ -78,7 +75,7 @@ export const ExpandableColumn: React.FC<
             disabled={disableExpandButton}
             onChange={handleExpandCollapse}
           />
-        </ColumnHeaderWrapper>
+        </ExpandableColumnHeaderWrapper>
 
         {children}
       </BodyColumnWrapper>

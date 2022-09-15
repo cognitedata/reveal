@@ -1,6 +1,10 @@
 import * as React from 'react';
 
-import { DetailCardBlockWrapper, Title, Value } from '../elements';
+import {
+  DetailCardBlockWrapper,
+  DetailCardBlockTitle,
+  DetailCardBlockValue,
+} from './elements';
 
 export interface DetailBlockProps {
   title: string;
@@ -13,8 +17,8 @@ export const DetailCardBlock: React.FC<DetailBlockProps> = ({
 }) => {
   return (
     <DetailCardBlockWrapper>
-      <Title>{title}</Title>
-      <Value>{value}</Value>
+      <DetailCardBlockTitle>{title}</DetailCardBlockTitle>
+      <DetailCardBlockValue>{value}</DetailCardBlockValue>
     </DetailCardBlockWrapper>
   );
 };

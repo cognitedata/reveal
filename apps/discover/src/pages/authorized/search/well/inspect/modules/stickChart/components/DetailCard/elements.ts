@@ -3,7 +3,7 @@ import layers from 'utils/zindex';
 
 import { Flex, FlexColumn, sizes } from 'styles/layout';
 
-export const DetailCardWrapper = styled(FlexColumn)`
+export const BaseDetailCardWrapper = styled(FlexColumn)`
   height: auto;
   width: fit-content;
   flex-wrap: wrap;
@@ -17,6 +17,19 @@ export const DetailCardWrapper = styled(FlexColumn)`
   z-index: ${layers.MAXIMUM};
   align-items: center;
   color: rgba(0, 0, 0, 0.9);
+`;
+
+export const DetailCardWrapper = styled(BaseDetailCardWrapper)`
+  &:after {
+    content: ' ';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -${sizes.small};
+    border-width: ${sizes.small};
+    border-style: solid;
+    border-color: var(--cogs-white) transparent transparent transparent;
+  }
 `;
 
 export const DetailCardBlockWrapper = styled(FlexColumn)`
@@ -35,7 +48,7 @@ export const DetailCardBlockWrapper = styled(FlexColumn)`
     `}
 `;
 
-export const Title = styled(Flex)`
+export const DetailCardBlockTitle = styled(Flex)`
   font-weight: 500;
   font-size: 14px;
   line-height: 20px;
@@ -44,35 +57,9 @@ export const Title = styled(Flex)`
   margin-bottom: ${sizes.extraSmall};
 `;
 
-export const Value = styled(Flex)`
+export const DetailCardBlockValue = styled(Flex)`
   font-size: 13px;
   line-height: 18px;
   letter-spacing: -0.003em;
   color: var(--cogs-greyscale-grey9);
-`;
-
-export const NptCodesDataWrapper = styled.div`
-  margin-left: ${sizes.small};
-  margin-right: ${sizes.small};
-`;
-
-export const NptCodeDefinitionWrapper = styled.div`
-  opacity: 55%;
-  margin-top: 2px;
-  margin-right: ${sizes.small};
-  cursor: pointer;
-`;
-
-export const HighlightEventButton = styled.div`
-  cursor: pointer;
-  font-size: 12px;
-  background: rgba(64, 120, 240, 0.2);
-  padding: ${sizes.extraSmall} ${sizes.small};
-  border-radius: ${sizes.extraSmall};
-  height: fit-content;
-`;
-
-export const RemoveHighlightedEventButton = styled(HighlightEventButton)`
-  background: #ffffff;
-  border: 1px solid #d9d9d9;
 `;

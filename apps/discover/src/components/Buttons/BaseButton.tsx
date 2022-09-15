@@ -11,17 +11,22 @@ export const BaseButton: React.FC<BaseButtonProps> = ({
   text,
   tooltip,
   tooltipPlacement = DEFAULT_TOOLTIP_PLACEMENT,
+  disabled,
   ...props
 }) => {
   const button = () => (
-    <Button block type={DEFAULT_BUTTON_TYPE} {...props}>
+    <Button block type={DEFAULT_BUTTON_TYPE} disabled={disabled} {...props}>
       {text}
     </Button>
   );
 
   const wrapInTooltip = (tooltip: string, children: JSX.Element) => (
     <span data-testid="base-button-tooltip-wrapper">
-      <Tooltip title={tooltip} placement={tooltipPlacement} enabled={!!tooltip}>
+      <Tooltip
+        title={tooltip}
+        placement={tooltipPlacement}
+        enabled={!!tooltip && !disabled}
+      >
         {children}
       </Tooltip>
     </span>

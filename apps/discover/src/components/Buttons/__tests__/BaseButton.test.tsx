@@ -41,6 +41,16 @@ describe('BaseButton', () => {
     expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
   });
 
+  it('should not render tooltip when button is disabled', async () => {
+    await testInit({
+      text: BUTTON_TEXT,
+      disabled: true,
+    });
+
+    fireEvent.mouseOver(screen.getByText(BUTTON_TEXT), { bubbles: true });
+    expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
+  });
+
   it('should render tooltip when it is passed into props', async () => {
     const BUTTON__TOOLTIP_TEXT = 'TestButtonTooltip';
     await testInit({

@@ -4,18 +4,15 @@ import * as React from 'react';
 
 import { FlexRow } from 'styles/layout';
 
-import { NptCodeDefinition } from '../../../../nptEvents/components/NptCodeDefinition';
-import { NptEventAvatar } from '../../elements';
+import { NptCodeDefinition } from '../../../../../nptEvents/components/NptCodeDefinition';
 import {
+  DetailCardBlockTitle,
+  DetailCardBlockValue,
   DetailCardBlockWrapper,
-  NptCodeDefinitionWrapper,
-  NptCodesDataWrapper,
-  Title,
-  Value,
-} from '../elements';
+} from '../../../../components/DetailCard/elements';
+import { NptEventAvatar } from '../../../elements';
 
-import { ButtonHighlightEvent } from './ButtonHighlightEvent';
-import { ButtonRemoveHighlightedEvent } from './ButtonRemoveHighlightedEvent';
+import { NptCodeDefinitionWrapper, NptCodesDataWrapper } from './elements';
 
 export interface NptCodeDataBlockProps
   extends Pick<
@@ -23,7 +20,6 @@ export interface NptCodeDataBlockProps
     'nptCode' | 'nptCodeDetail' | 'nptCodeColor'
   > {
   nptCodeDefinition?: string;
-  isHighlighted?: boolean;
 }
 
 export const NptCodeDataBlock: React.FC<NptCodeDataBlockProps> = ({
@@ -31,31 +27,20 @@ export const NptCodeDataBlock: React.FC<NptCodeDataBlockProps> = ({
   nptCodeDetail,
   nptCodeColor,
   nptCodeDefinition,
-  isHighlighted,
 }) => {
-  const renderActionButton = () => {
-    if (isHighlighted) {
-      return <ButtonRemoveHighlightedEvent />;
-    }
-
-    return <ButtonHighlightEvent />;
-  };
-
   return (
     <DetailCardBlockWrapper flex>
       <FlexRow>
         <NptEventAvatar color={nptCodeColor} />
 
         <NptCodesDataWrapper>
-          <Title>{nptCode}</Title>
-          <Value>{nptCodeDetail}</Value>
+          <DetailCardBlockTitle>{nptCode}</DetailCardBlockTitle>
+          <DetailCardBlockValue>{nptCodeDetail}</DetailCardBlockValue>
         </NptCodesDataWrapper>
 
         <NptCodeDefinitionWrapper>
           <NptCodeDefinition nptCodeDefinition={nptCodeDefinition} />
         </NptCodeDefinitionWrapper>
-
-        {renderActionButton()}
       </FlexRow>
     </DetailCardBlockWrapper>
   );

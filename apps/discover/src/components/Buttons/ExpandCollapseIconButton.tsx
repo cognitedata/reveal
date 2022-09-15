@@ -1,22 +1,28 @@
 import * as React from 'react';
 
-import { IconButton } from './IconButton';
+import { BaseButton } from './BaseButton';
+import { ExtendedButtonProps } from './types';
 
-export interface ExpandCollapseIconButtonProps {
+export interface ExpandCollapseIconButtonProps
+  extends Omit<ExtendedButtonProps, 'expanded' | 'onChange'> {
   expanded: boolean;
-  disabled?: boolean;
   onChange: (expanded: boolean) => void;
 }
 
 export const ExpandCollapseIconButton: React.FC<
   ExpandCollapseIconButtonProps
-> = ({ expanded, disabled, onChange }) => {
+> = ({ expanded, onChange, ...props }) => {
+  const icon = expanded ? 'Collapse' : 'Expand';
+
   return (
-    <IconButton
-      icon={expanded ? 'Collapse' : 'Expand'}
-      disabled={disabled}
-      tooltip={expanded ? 'Collapse' : 'Expand'}
-      onClick={() => !disabled && onChange(!expanded)}
+    <BaseButton
+      icon={icon}
+      tooltip={icon}
+      aria-label={icon}
+      type="secondary"
+      size="small"
+      onClick={() => onChange(!expanded)}
+      {...props}
     />
   );
 };
