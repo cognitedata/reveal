@@ -58,7 +58,9 @@ export const ExtpipeRawTables: FunctionComponent<ExtpipeRawTablesProps> = ({
 
   return (
     <Timeline.Item dot={<LineageDot />}>
-      <LineageTitle>{t('raw-table_other')}</LineageTitle>
+      <LineageTitle>
+        {t('raw-table_other', { postProcess: 'uppercase' })}
+      </LineageTitle>
       <LineageSubTitle>{t('extpipe-raw-tables-title')}</LineageSubTitle>
       {isExtpipesFetched ? (
         <Table

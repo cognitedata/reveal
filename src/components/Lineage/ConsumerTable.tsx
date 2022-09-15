@@ -46,7 +46,9 @@ const ConsumerTable: FunctionComponent<ConsumerTableProps> = ({
         )
       }
     >
-      <LineageTitle>{t('data-consumer_other')}</LineageTitle>
+      <LineageTitle>
+        {t('data-consumer_other', { postProcess: 'uppercase' })}
+      </LineageTitle>
       <LineageSubTitle>{t('lineage-data-consumers-subtitle')}</LineageSubTitle>
       <Table
         columns={ConsumerTableColumns}
