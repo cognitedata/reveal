@@ -94,17 +94,5 @@ export default function ConfigurationSection({ externalId }: Props) {
 }
 
 const StyledConfigurationEditorWrapper = styled.div<{ $editable?: boolean }>`
-  ${({ $editable }) =>
-    !$editable &&
-    `
-  .cm-editor {
-    border-radius: 6px;
-  }
-
-  .cm-gutters {
-    border-radius: 6px 0 0 6px;
-  }
-  `};
-
-  margin: ${({ $editable }) => ($editable ? '-1rem 0' : '0 1rem')};
+  margin: -1rem 0;
 `;
