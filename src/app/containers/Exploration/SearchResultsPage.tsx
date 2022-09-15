@@ -169,88 +169,15 @@ function SearchPage() {
 
   const [dateRange, setDateRange] = useDateRange();
 
-  const SearchResults = () => {
-    const commonProps = {
-      query: debouncedQuery,
-      onSelect,
-      selectionMode: mode,
-      isSelected,
-      activeIds: activeId ? [activeId] : [],
-      disableScroll: !!activeId,
-      dateRange,
-      onDateRangeChange: setDateRange,
-    };
-
-    switch (currentResourceType) {
-      case 'asset':
-        return (
-          <AssetSearchResults
-            showCount
-            onClick={(item: ResourceItem) =>
-              openPreview(item.id !== activeId ? item.id : undefined)
-            }
-            filter={assetFilter}
-            {...commonProps}
-          />
-        );
-      case 'file':
-        return (
-          <FileSearchResults
-            showCount
-            filter={fileFilter}
-            allowEdit={editable}
-            onClick={(item: ResourceItem) =>
-              openPreview(item.id !== activeId ? item.id : undefined)
-            }
-            {...commonProps}
-          />
-        );
-      case 'sequence':
-        return (
-          <SequenceSearchResults
-            showCount
-            onClick={(item: ResourceItem) =>
-              openPreview(item.id !== activeId ? item.id : undefined)
-            }
-            filter={sequenceFilter}
-            {...commonProps}
-          />
-        );
-      case 'timeSeries':
-        return (
-          <TimeseriesSearchResults
-            showCount
-            onClick={(item: ResourceItem) =>
-              openPreview(item.id !== activeId ? item.id : undefined)
-            }
-            filter={timeseriesFilter}
-            showDatePicker={!activeId}
-            {...commonProps}
-          />
-        );
-      case 'event':
-        return (
-          <EventSearchResults
-            showCount
-            onClick={(item: ResourceItem) =>
-              openPreview(item.id !== activeId ? item.id : undefined)
-            }
-            filter={eventFilter}
-            {...commonProps}
-          />
-        );
-      case 'threeD':
-        return (
-          <ThreeDSearchResults
-            onClick={(item: ResourceItem) => {
-              openPreview(item.id !== activeId ? item.id : undefined);
-            }}
-            query={query}
-          />
-        );
-      default:
-        return null;
-    }
+  const commonProps = {
+    query: debouncedQuery,
+    onSelect,
+    selectionMode: mode,
+    isSelected,
+    activeIds: activeId ? [activeId] : [],
+    disableScroll: !!activeId,
+    dateRange,
+    onDateRangeChange: setDateRange,
   };
 
   return (
@@ -302,7 +229,66 @@ function SearchPage() {
               }}
             >
               <SearchResultWrapper>
-                <SearchResults />
+                {currentResourceType === 'asset' && (
+                  <AssetSearchResults
+                    showCount
+                    onClick={(item: ResourceItem) =>
+                      openPreview(item.id !== activeId ? item.id : undefined)
+                    }
+                    filter={assetFilter}
+                    {...commonProps}
+                  />
+                )}
+                {currentResourceType === 'file' && (
+                  <FileSearchResults
+                    showCount
+                    filter={fileFilter}
+                    allowEdit={editable}
+                    onClick={(item: ResourceItem) =>
+                      openPreview(item.id !== activeId ? item.id : undefined)
+                    }
+                    {...commonProps}
+                  />
+                )}
+                {currentResourceType === 'sequence' && (
+                  <SequenceSearchResults
+                    showCount
+                    onClick={(item: ResourceItem) =>
+                      openPreview(item.id !== activeId ? item.id : undefined)
+                    }
+                    filter={sequenceFilter}
+                    {...commonProps}
+                  />
+                )}
+                {currentResourceType === 'timeSeries' && (
+                  <TimeseriesSearchResults
+                    showCount
+                    onClick={(item: ResourceItem) =>
+                      openPreview(item.id !== activeId ? item.id : undefined)
+                    }
+                    filter={timeseriesFilter}
+                    showDatePicker={!activeId}
+                    {...commonProps}
+                  />
+                )}
+                {currentResourceType === 'event' && (
+                  <EventSearchResults
+                    showCount
+                    onClick={(item: ResourceItem) =>
+                      openPreview(item.id !== activeId ? item.id : undefined)
+                    }
+                    filter={eventFilter}
+                    {...commonProps}
+                  />
+                )}
+                {currentResourceType === 'threeD' && (
+                  <ThreeDSearchResults
+                    onClick={(item: ResourceItem) => {
+                      openPreview(item.id !== activeId ? item.id : undefined);
+                    }}
+                    query={query}
+                  />
+                )}
               </SearchResultWrapper>
             </Flex>
 
