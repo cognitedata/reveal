@@ -89,6 +89,10 @@ const UnmatchingWellboreResultTable: React.FC<
     [allWellbores]
   );
 
+  if (isEmpty(unmatchingWellbores)) {
+    return null;
+  }
+
   return (
     <>
       <OtherWellboresRow>
