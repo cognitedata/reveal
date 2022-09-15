@@ -17,7 +17,7 @@ import { PlotlyChartColumn } from '../../components/PlotlyChartColumn';
 import { ChartColumn, ColumnVisibilityProps } from '../../types';
 import { adaptMeasurementsDataToChart } from '../../utils/adaptMeasurementsDataToChart';
 import {
-  DATA_NOT_AVAILABLE_IN_TVD_MODE_TEXT,
+  DATA_NOT_AVAILABLE_IN_MD_MODE_TEXT,
   NO_DATA_AMONG_SELECTED_OPTIONS_TEXT,
   NO_OPTIONS_SELECTED_TEXT,
   SWITCH_BUTTON_TEXT,
@@ -92,7 +92,7 @@ export const MeasurementsColumn: React.FC<
         return EMPTY_OBJECT;
       }
       return {
-        actionMessage: DATA_NOT_AVAILABLE_IN_TVD_MODE_TEXT,
+        actionMessage: DATA_NOT_AVAILABLE_IN_MD_MODE_TEXT,
         actionButtonText: SWITCH_BUTTON_TEXT,
         onClickActionButton: () =>
           onChangeDepthMeasurementType?.(DepthMeasurementUnit.TVD),
