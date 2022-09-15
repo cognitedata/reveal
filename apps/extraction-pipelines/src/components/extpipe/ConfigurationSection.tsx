@@ -6,7 +6,6 @@ import ConfigurationEditor from './ConfigurationEditor';
 import CreatedTime from './CreatedTime';
 import { useQueryClient } from 'react-query';
 import { Button, Flex, Icon, toast } from '@cognite/cogs.js';
-import styled from 'styled-components';
 
 type Props = {
   externalId: string;
@@ -80,19 +79,14 @@ export default function ConfigurationSection({ externalId }: Props) {
             )}
           </Flex>
         }
+        hasPadding={false}
       >
-        <StyledConfigurationEditorWrapper $editable={editMode}>
-          <ConfigurationEditor
-            externalId={externalId}
-            editable={editMode}
-            onChange={setNewConfig}
-          />
-        </StyledConfigurationEditorWrapper>
+        <ConfigurationEditor
+          externalId={externalId}
+          editable={editMode}
+          onChange={setNewConfig}
+        />
       </Section>
     </div>
   );
 }
-
-const StyledConfigurationEditorWrapper = styled.div<{ $editable?: boolean }>`
-  margin: -1rem 0;
-`;
