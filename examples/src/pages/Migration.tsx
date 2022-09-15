@@ -116,7 +116,7 @@ export function Migration() {
       (window as any).viewer = viewer;
 
       const controlsOptions: CameraControlsOptions = {
-        changeCameraTargetOnClick: false,
+        changeCameraTargetOnClick: true,
         mouseWheelAction: 'zoomToCursor',
       };
       cameraManager = viewer.cameraManager as DefaultCameraManager;
