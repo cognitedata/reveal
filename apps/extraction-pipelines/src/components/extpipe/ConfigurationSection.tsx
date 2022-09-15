@@ -55,6 +55,10 @@ export default function ConfigurationSection({ externalId }: Props) {
               <>
                 {isSaving && <Icon type="Loader" />}
                 <CreatedTime prefix={t('last-updated-at')} date={created} />
+              </>
+            )}
+            {created || editMode ? (
+              <>
                 {editMode ? (
                   <>
                     <Button onClick={() => setEditMode(!editMode)}>
@@ -76,6 +80,8 @@ export default function ConfigurationSection({ externalId }: Props) {
                   </Button>
                 )}
               </>
+            ) : (
+              <></>
             )}
           </Flex>
         }
