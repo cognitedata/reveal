@@ -17,7 +17,8 @@ describe('createDistinctColors', () => {
 
     colors.forEach((c0, i0) => {
       colors.forEach((c1, i1) => {
-        if (i1 <= i0) { // Ensure each pair is only considered once
+        if (i1 <= i0) {
+          // Ensure each pair is only considered once
           return;
         }
 
