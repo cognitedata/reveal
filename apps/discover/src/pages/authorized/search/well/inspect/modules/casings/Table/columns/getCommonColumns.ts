@@ -31,11 +31,6 @@ export const getCommonColumns = (
       width: '140px',
     },
     {
-      Header: `OD Max (${CASING_ASSEMBLY_DIAMETER_UNIT})`,
-      accessor: 'maxOutsideDiameter.value',
-      width: '140px',
-    },
-    {
       Header: `ID Min (${CASING_ASSEMBLY_DIAMETER_UNIT})`,
       accessor: 'minInsideDiameter.value',
       width: '140px',
