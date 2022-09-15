@@ -135,16 +135,25 @@ export class PotreeNodeWrapper {
     return this._classification;
   }
 
-  get classNames(): Array<string> | Array<number> {
+  private getClassNameFromCode(code: number): string {
+    return WellKnownAsprsPointClassCodes[code] ?? `Class ${code}`;
+  }
+
+  get classNames(): Array<{ name: string; code: number }> {
+    let codesAndNames: Array<{ name: string; code: number }>;
     if (this._classNameToCodeMap) {
-      return Object.keys(this._classNameToCodeMap);
+      codesAndNames = Object.entries(this._classNameToCodeMap).map(nameAndCode => ({
+        name: nameAndCode[0],
+        code: nameAndCode[1].code
+      }));
+    } else {
+      codesAndNames = Object.keys(this.classification).map(x => {
+        const code = x === PotreeDefaultPointClass ? -1 : parseInt(x, 10);
+        return { name: this.getClassNameFromCode(code), code };
+      });
     }
 
-    return Object.keys(this.classification)
-      .map(x => {
-        return x === PotreeDefaultPointClass ? -1 : parseInt(x, 10);
-      })
-      .sort((a, b) => a - b);
+    return codesAndNames.sort((a, b) => a.code - b.code);
   }
 
   get stylableObjectAnnotationIds(): Iterable<PointCloudObjectMetadata> {

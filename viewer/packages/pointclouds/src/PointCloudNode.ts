@@ -145,7 +145,7 @@ export class PointCloudNode extends THREE.Group {
    * Returns a list of sorted classification codes present in the model.
    * @returns A sorted list of classification codes from the model.
    */
-  getClasses(): Array<number | WellKnownAsprsPointClassCodes | string> {
+  getClasses(): Array<{ name: string; code: number | WellKnownAsprsPointClassCodes }> {
     return this._potreeNode.classNames;
   }
 
