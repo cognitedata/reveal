@@ -11,6 +11,7 @@ type Props = {
   editable?: boolean;
   onChange?: (s: string) => void;
   isSnippet?: boolean;
+  onCreate?: () => void;
 };
 export default function ConfigurationEditor({
   externalId,
@@ -18,6 +19,7 @@ export default function ConfigurationEditor({
   editable = false,
   onChange,
   isSnippet,
+  onCreate,
 }: Props) {
   const {
     data: configuration,
@@ -30,7 +32,9 @@ export default function ConfigurationEditor({
 
   return (
     <>
-      {!editable && <ConfigurationErrorFeedback error={error} />}
+      {!editable && (
+        <ConfigurationErrorFeedback error={error} onCreate={onCreate} />
+      )}
       {(isSuccess || editable) &&
         (isSnippet ? (
           <CodeSnippet

@@ -2,12 +2,14 @@ import React from 'react';
 import { ErrorVariations } from 'model/SDKErrors';
 import { useTranslation } from 'common';
 import styled from 'styled-components';
+import { Button } from '@cognite/cogs.js';
 
 type Props = {
   error?: ErrorVariations | null;
+  onCreate?: () => void;
 };
 
-export default function ConfigurationErrorFeedback({ error }: Props) {
+export default function ConfigurationErrorFeedback({ error, onCreate }: Props) {
   const { t } = useTranslation();
 
   if (!error) {
@@ -16,7 +18,16 @@ export default function ConfigurationErrorFeedback({ error }: Props) {
 
   switch (error.status) {
     case 404: {
-      return <ErrorFeedback>{t('configuration-404')}</ErrorFeedback>;
+      return (
+        <ErrorFeedback>
+          {t('configuration-404')}
+          {onCreate && (
+            <Button icon="AddLarge" onClick={onCreate} type="link">
+              {t('create-configuration')}
+            </Button>
+          )}
+        </ErrorFeedback>
+      );
     }
     case 403: {
       return <ErrorFeedback>{t('configuration-403')}</ErrorFeedback>;
@@ -33,5 +44,9 @@ export default function ConfigurationErrorFeedback({ error }: Props) {
 }
 
 const ErrorFeedback = styled.div`
-  margin-left: 1rem;
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 2rem 1rem;
 `;

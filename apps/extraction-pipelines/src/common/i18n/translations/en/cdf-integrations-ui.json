@@ -28,6 +28,7 @@
   "copy": "Copy",
   "could-not-store-raw-table": "Could not store raw table",
   "create": "Create",
+  "create-configuration": "Create configuration",
   "create-ext-pipeline": "Create extraction pipeline",
   "created-by": "Created by",
   "created-time": "Created time",

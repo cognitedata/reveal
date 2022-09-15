@@ -85,6 +85,7 @@ export default function ConfigurationSection({ externalId }: Props) {
           externalId={externalId}
           editable={editMode}
           onChange={setNewConfig}
+          onCreate={() => setEditMode(true)}
         />
       </Section>
     </div>
