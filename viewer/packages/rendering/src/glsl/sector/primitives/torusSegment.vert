@@ -18,12 +18,16 @@ in float a_arcAngle;
 in float a_radius;
 in float a_tubeRadius;
 
-out float v_treeIndex;
 out vec3 v_color;
 out vec3 v_normal;
 out vec3 vViewPosition;
 
+out highp float v_treeIndexHundreds;
+out mediump float v_treeIndexSubHundreds;
+
 void main() {
+    v_treeIndexHundreds = floor(a_treeIndex / 100.0);
+    v_treeIndexSubHundreds = round(mod(a_treeIndex, 100.0));
     // normalized theta and phi are packed into positions
     float theta = position.x * a_arcAngle;
     float phi = position.y;
@@ -36,20 +40,19 @@ void main() {
     pos3.z = a_tubeRadius * sin(phi);
 
     mat4 treeIndexWorldTransform = determineMatrixOverride(
-      a_treeIndex, 
-      treeIndexTextureSize, 
-      transformOverrideIndexTexture, 
-      transformOverrideTextureSize, 
+      a_treeIndex,
+      treeIndexTextureSize,
+      transformOverrideIndexTexture,
+      transformOverrideTextureSize,
       transformOverrideTexture
     );
-    
+
     vec3 transformed = (a_instanceMatrix * vec4(pos3, 1.0)).xyz;
 
     // Calculate normal vectors if we're not picking
     vec3 center = (a_instanceMatrix * vec4(a_radius * cosTheta, a_radius * sinTheta, 0.0, 1.0)).xyz;
     vec3 objectNormal = normalize(transformed.xyz - center);
 
-    v_treeIndex = a_treeIndex;
     v_color = a_color;
     v_normal = normalMatrix * normalize(inverseModelMatrix * treeIndexWorldTransform * modelMatrix * vec4(objectNormal, 0.0)).xyz;
 

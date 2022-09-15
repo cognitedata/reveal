@@ -19,7 +19,6 @@ in float a_arcAngle;
 in float a_thickness;
 in vec3 a_normal;
 
-out float v_treeIndex;
 out float v_oneMinusThicknessSqr;
 out vec2 v_xy;
 out float v_angle;
@@ -28,18 +27,22 @@ out vec3 v_color;
 out vec3 v_normal;
 out vec3 vViewPosition;
 
+out highp float v_treeIndexHundreds;
+out mediump float v_treeIndexSubHundreds;
+
 void main() {
-    v_treeIndex = a_treeIndex;
+    v_treeIndexHundreds = floor(a_treeIndex / 100.0);
+    v_treeIndexSubHundreds = round(mod(a_treeIndex, 100.0));
     v_oneMinusThicknessSqr = (1.0 - a_thickness) * (1.0 - a_thickness);
     v_xy = vec2(position.x, position.y);
     v_angle = a_angle;
     v_arcAngle = a_arcAngle;
 
     mat4 treeIndexWorldTransform = determineMatrixOverride(
-      a_treeIndex, 
-      treeIndexTextureSize, 
-      transformOverrideIndexTexture, 
-      transformOverrideTextureSize, 
+      a_treeIndex,
+      treeIndexTextureSize,
+      transformOverrideIndexTexture,
+      transformOverrideTextureSize,
       transformOverrideTexture
     );
 

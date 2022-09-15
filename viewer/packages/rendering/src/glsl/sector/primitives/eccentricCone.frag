@@ -23,11 +23,13 @@ in vec4 axis;
 in vec4 v_centerA;
 in vec4 v_centerB;
 in float height;
-in float v_treeIndex;
 in vec3 v_color;
 in vec3 v_normal;
-
-void main() {
+in highp float v_treeIndexHundreds;
+in mediump float v_treeIndexSubHundreds;
+void main()
+{
+    highp float v_treeIndex = round(v_treeIndexHundreds) * 100.0 + round(v_treeIndexSubHundreds);
     NodeAppearance appearance = determineNodeAppearance(colorDataTexture, treeIndexTextureSize, v_treeIndex);
     if (!determineVisibility(appearance, renderMode)) {
         discard;

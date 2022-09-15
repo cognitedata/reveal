@@ -29,17 +29,19 @@ in float v_arcAngle;
 in float v_surfacePointY;
 in vec4 v_planeA;
 in vec4 v_planeB;
-in float v_treeIndex;
 in vec3 v_color;
 in vec3 v_normal;
-
-void main() {
+in highp float v_treeIndexHundreds;
+in mediump float v_treeIndexSubHundreds;
+void main()
+{
+    highp float v_treeIndex = round(v_treeIndexHundreds) * 100.0 + round(v_treeIndexSubHundreds);
     NodeAppearance appearance = determineNodeAppearance(colorDataTexture, treeIndexTextureSize, v_treeIndex);
     if (!determineVisibility(appearance, renderMode)) {
         discard;
     }
 
-    vec4 color = determineColor(v_color, appearance);    
+    vec4 color = determineColor(v_color, appearance);
     vec3 normal = normalize( v_normal );
 
     float R1 = v_centerB.w;

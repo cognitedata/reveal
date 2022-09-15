@@ -10,21 +10,23 @@ uniform sampler2D transformOverrideTexture;
 
 in vec3 position;
 in vec3 color;
-in float treeIndex; 
+in float treeIndex;
 
 out vec3 v_color;
-out float v_treeIndex;
 out vec3 v_viewPosition;
+out highp float v_treeIndexHundreds;
+out mediump float v_treeIndexSubHundreds;
 
 void main() {
+    v_treeIndexHundreds = floor(treeIndex / 100.0);
+    v_treeIndexSubHundreds = round(mod(treeIndex, 100.0));
     v_color = color;
-    v_treeIndex = treeIndex;
 
     mat4 treeIndexWorldTransform = determineMatrixOverride(
-      treeIndex, 
-      treeIndexTextureSize, 
-      transformOverrideIndexTexture, 
-      transformOverrideTextureSize, 
+      treeIndex,
+      treeIndexTextureSize,
+      transformOverrideIndexTexture,
+      transformOverrideTextureSize,
       transformOverrideTexture
     );
 

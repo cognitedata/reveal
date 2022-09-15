@@ -17,7 +17,6 @@ in float a_horizontalRadius;
 in float a_verticalRadius;
 in float a_height;
 
-out float v_treeIndex;
 // We pack vRadius as w-component of center
 out vec4 center;
 out float hRadius;
@@ -32,8 +31,12 @@ out vec4 sphereNormal;
 out vec3 v_color;
 out vec3 v_normal;
 
+out highp float v_treeIndexHundreds;
+out mediump float v_treeIndexSubHundreds;
+
 void main() {
-    v_treeIndex = a_treeIndex;
+    v_treeIndexHundreds = floor(a_treeIndex / 100.0);
+    v_treeIndexSubHundreds = round(mod(a_treeIndex, 100.0));
     v_color = a_color;
 
     mat4 modelViewMatrix = viewMatrix * modelMatrix;

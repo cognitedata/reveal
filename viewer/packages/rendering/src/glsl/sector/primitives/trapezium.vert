@@ -18,12 +18,16 @@ in vec3 a_vertex2;
 in vec3 a_vertex3;
 in vec3 a_vertex4;
 
-out float v_treeIndex;
 out vec3 v_color;
 out vec3 v_normal;
 out vec3 vViewPosition;
 
+out highp float v_treeIndexHundreds;
+out mediump float v_treeIndexSubHundreds;
+
 void main() {
+    v_treeIndexHundreds = floor(a_treeIndex / 100.0);
+    v_treeIndexSubHundreds = round(mod(a_treeIndex, 100.0));
     vec3 transformed;
     // reduce the avarage branchings
     if (position.x < 1.5) {
@@ -33,16 +37,15 @@ void main() {
     }
 
     mat4 treeIndexWorldTransform = determineMatrixOverride(
-      a_treeIndex, 
-      treeIndexTextureSize, 
-      transformOverrideIndexTexture, 
-      transformOverrideTextureSize, 
+      a_treeIndex,
+      treeIndexTextureSize,
+      transformOverrideIndexTexture,
+      transformOverrideTextureSize,
       transformOverrideTexture
     );
 
     vec3 objectNormal = cross(a_vertex1 - a_vertex2, a_vertex1 - a_vertex3);
 
-    v_treeIndex = a_treeIndex;
     v_color = a_color;
     v_normal = normalMatrix * normalize(inverseModelMatrix * treeIndexWorldTransform * modelMatrix * vec4(objectNormal, 0.0)).xyz;
 

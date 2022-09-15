@@ -25,7 +25,6 @@ in vec3 a_localXAxis;
 in float a_angle;
 in float a_arcAngle;
 
-out float v_treeIndex;
 // We pack the radii into w-components
 out vec4 v_centerB;
 // U, V, axis represent the 3x3 cone basis.
@@ -40,12 +39,17 @@ out float v_arcAngle;
 out vec3 v_color;
 out vec3 v_normal;
 
+out highp float v_treeIndexHundreds;
+out mediump float v_treeIndexSubHundreds;
+
 void main() {
+    v_treeIndexHundreds = floor(a_treeIndex / 100.0);
+    v_treeIndexSubHundreds = round(mod(a_treeIndex, 100.0));
     mat4 treeIndexWorldTransform = determineMatrixOverride(
-      a_treeIndex, 
-      treeIndexTextureSize, 
-      transformOverrideIndexTexture, 
-      transformOverrideTextureSize, 
+      a_treeIndex,
+      treeIndexTextureSize,
+      transformOverrideIndexTexture,
+      transformOverrideTextureSize,
       transformOverrideTexture
     );
 
@@ -83,7 +87,6 @@ void main() {
     surfacePoint = mul3(modelViewMatrix, surfacePoint);
 
     // out data
-    v_treeIndex = a_treeIndex;
     v_angle = a_angle;
     v_arcAngle = a_arcAngle;
 

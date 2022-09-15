@@ -22,7 +22,6 @@ in float a_horizontalRadius;
 in float a_verticalRadius;
 in float a_height;
 
-out float v_treeIndex;
 // We pack vRadius as w-component of center
 out vec4 center;
 out float hRadius;
@@ -36,13 +35,18 @@ out vec4 sphereNormal;
 out vec3 v_color;
 out vec3 v_normal;
 
+out highp float v_treeIndexHundreds;
+out mediump float v_treeIndexSubHundreds;
+
 void main() {
+    v_treeIndexHundreds = floor(a_treeIndex / 100.0);
+    v_treeIndexSubHundreds = round(mod(a_treeIndex, 100.0));
 
     mat4 treeIndexWorldTransform = determineMatrixOverride(
-      a_treeIndex, 
-      treeIndexTextureSize, 
-      transformOverrideIndexTexture, 
-      transformOverrideTextureSize, 
+      a_treeIndex,
+      treeIndexTextureSize,
+      transformOverrideIndexTexture,
+      transformOverrideTextureSize,
       transformOverrideTexture
     );
 
@@ -90,7 +94,6 @@ void main() {
     vec3 surfacePoint = centerOfSegment + mat3(lDir, left, up) * displacement;
     vec3 transformed = surfacePoint;
 
-    v_treeIndex = a_treeIndex;
     surfacePoint = mul3(modelViewMatrix, surfacePoint);
     center.xyz = mul3(modelViewMatrix, centerWithOffset);
     center.w = a_verticalRadius; // Pack radius into w-component
