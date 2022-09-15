@@ -56,11 +56,17 @@ module.exports = {
     [
       '@docusaurus/preset-classic',
       {
+        sitemap: {
+          changefreq: 'weekly',
+          priority: 0.5,
+          ignorePatterns: ['/tags/**'],
+          filename: 'sitemap.xml',
+        },
         docs: {
           sidebarPath: require.resolve('./sidebars.js'),
           // Please change this to your repo.
           editUrl:
-            'https://github.com/cognitedata/reveal/blob/master/documentation',
+          'https://github.com/cognitedata/reveal/blob/master/documentation',
           remarkPlugins: [
             require('./src/plugins/remark-npm2yarn'),
             require('./src/plugins/remark-runnable-reveal-demo'),
