@@ -25,6 +25,7 @@ import {
   ColumnDef,
   flexRender,
   SortingState,
+  // Row,
 } from '@tanstack/react-table';
 import { getSearchParamsFromCurrentUrl } from 'utils/url';
 import { useSetUrlParams } from 'utils/url/setUrlParams';
@@ -133,6 +134,7 @@ export const ReportManagerList: React.FC<Props> = ({
         header: () => 'Status',
         accessorKey: 'status',
         filterFn: 'fuzzy',
+        // sortingFn: 'myCustomSorting',
         minSize: 100,
         footer: (props) => props.column.id,
         cell: ({ getValue, row }) => {
@@ -160,9 +162,9 @@ export const ReportManagerList: React.FC<Props> = ({
         footer: (props) => props.column.id,
       },
       {
-        id: 'Last updated',
-        header: () => 'Last updated',
-        accessorKey: 'lastUpdatedTime',
+        id: 'Created at',
+        header: () => 'Created date',
+        accessorKey: 'displayCreatedTime',
         footer: (props) => props.column.id,
         enableColumnFilter: false,
       },
@@ -188,6 +190,32 @@ export const ReportManagerList: React.FC<Props> = ({
     filterFns: {
       fuzzy: fuzzyFilter,
     },
+    // sortingFns: {
+    //   myCustomSorting: (
+    //     rowA: Row<TableReport>,
+    //     rowB: Row<TableReport>,
+    //     columnId: keyof TableReport
+    //   ): number => {
+    //     console.log('rowA', columnId, rowA);
+    //     console.log('rowB', rowB);
+    //     if (rowA.depth === 0) {
+    //       return rowA.original.id || 1;
+    //     }
+    //     if (rowB.depth === 0) {
+    //       return rowB.original.id || 1;
+    //     }
+    //     if (!rowA.getValue(columnId)) {
+    //       return rowA.original.id || 1;
+    //     }
+    //     if (!rowB.getValue(columnId)) {
+    //       return rowB.original.id || 1;
+    //     }
+
+    //     return rowA.getValue(columnId).value < rowB.getValue(columnId).value
+    //       ? 1
+    //       : -1;
+    //   },
+    // },
     state: {
       sorting,
       expanded,

@@ -1,7 +1,5 @@
 import { Report } from 'domain/reportManager/internal/types';
 
-import * as React from 'react';
-
 import capitalize from 'lodash/capitalize';
 import styled from 'styled-components/macro';
 

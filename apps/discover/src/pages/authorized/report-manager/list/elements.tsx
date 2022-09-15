@@ -33,10 +33,6 @@ export const HeaderContainer = styled.div`
   display: flex;
   min-width: ${(props: { size: number }) => `${props.size}px`};
 `;
-export const FloatingBox = styled.div`
-  position: absolute;
-  top: 150px;
-`;
 export const CellText = styled.div``;
 export const CellIcon = styled.div`
   align-items: center;
@@ -80,6 +76,7 @@ export const SubRowContainer = styled.tr`
   }
 `;
 export const StyledIcon = styled(Icon)`
+  margin-top: 4px;
   svg {
     height: 13px;
   }

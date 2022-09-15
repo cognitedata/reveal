@@ -6,19 +6,59 @@ import { useUserList } from 'domain/userManagementService/internal/queries/useUs
 
 import * as React from 'react';
 
+import uniq from 'lodash/uniq';
+import styled from 'styled-components/macro';
+
 import { showErrorMessage, showSuccessMessage } from 'components/Toast';
 
-import { ReportManagerList } from './ReportManagerList';
-import { adaptReportsForList } from './ReportManagerList/adaptReportsForList';
-import { TableReport } from './ReportManagerList/types';
+import { ReportManagerList } from './list';
+import { adaptReportsForList } from './list/adaptReportsForList';
+import { DebouncedInput } from './list/DebouncedInput';
+import { TableReport } from './list/types';
+
+export const FilterContainer = styled.div`
+  padding: 20px;
+  padding-bottom: 0px;
+  svg {
+    color: var(--cogs-text-icon--interactive--disabled);
+  }
+`;
+
+const getUserIdsFromReports = (reports: Report[]) =>
+  uniq(reports?.map((report) => report.ownerUserId));
+
+const useDataForReportManager = ({
+  wellboreFilter,
+}: {
+  wellboreFilter: string;
+}) => {
+  const { data: roles } = useUserRoles();
+  const { data: reports, isLoading } = useAllReportsQuery();
+  const { data: users } = useUserList({
+    ids: getUserIdsFromReports(reports || []),
+  });
+  const [processedData, setProcessedData] = React.useState<TableReport[]>([]);
+
+  React.useEffect(() => {
+    adaptReportsForList({ reports, users }).then((data) => {
+      const filteredData = wellboreFilter
+        ? data.filter((item) => {
+            return item.externalId?.includes(wellboreFilter);
+          })
+        : data;
+
+      setProcessedData(filteredData);
+    });
+  }, [reports, users, wellboreFilter]);
+
+  return { data: processedData, isLoading, isAdmin: roles?.isAdmin };
+};
 
 export const ReportManager: React.FC = () => {
-  const { data: roles } = useUserRoles();
+  const [searchFilter, setSearchFilter] = React.useState('');
   const { mutate: updateReport } = useReportUpdateMutate();
-  const { data, isLoading } = useAllReportsQuery();
-  const [processedData, setProcessedData] = React.useState<TableReport[]>([]);
-  const { data: users } = useUserList({
-    ids: (data || [])?.map((report) => report.ownerUserId),
+  const { data, isLoading, isAdmin } = useDataForReportManager({
+    wellboreFilter: searchFilter,
   });
 
   const handleReportUpdate = async (
@@ -33,21 +73,23 @@ export const ReportManager: React.FC = () => {
     }
   };
 
-  React.useEffect(() => {
-    adaptReportsForList({ reports: data, users }).then((data) =>
-      setProcessedData(data)
-    );
-  }, [data, users]);
-
   if (isLoading) {
     return <div>Loading...</div>;
   }
 
   return (
     <>
+      <FilterContainer>
+        <DebouncedInput
+          value={searchFilter}
+          onChange={(value) => setSearchFilter(value as string)}
+          placeholder="Search wellbores"
+          icon="Search"
+        />
+      </FilterContainer>
       <ReportManagerList
-        data={processedData}
-        isAdmin={roles?.isAdmin}
+        data={data}
+        isAdmin={isAdmin}
         onReportUpdate={handleReportUpdate}
       />
     </>

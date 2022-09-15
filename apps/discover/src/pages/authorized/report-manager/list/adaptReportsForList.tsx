@@ -9,7 +9,7 @@ const transformReportForDisplay = (report: Report, user?: UMSUser) => {
   return {
     ...report,
     externalId: report.reportType,
-    ownerUserId: user && user.displayName ? user.displayName : 'Loading...',
+    ownerUserId: user && user.displayName ? user.displayName : '',
   };
 };
 
