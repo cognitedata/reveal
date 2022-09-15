@@ -47,7 +47,7 @@ export default function ConfigurationSection({ externalId }: Props) {
   return (
     <div>
       <Section
-        title={t('configuration')}
+        title={t('configuration-file-for-extractor')}
         icon={isLoading ? 'Loader' : 'Document'}
         dataTestId="configuration"
         rightTitle={
@@ -56,27 +56,27 @@ export default function ConfigurationSection({ externalId }: Props) {
               <>
                 {isSaving && <Icon type="Loader" />}
                 <CreatedTime prefix={t('last-updated-at')} date={created} />
+                {editMode ? (
+                  <>
+                    <Button onClick={() => setEditMode(!editMode)}>
+                      {t('discard-changes')}
+                    </Button>
+                    <Button
+                      type="primary"
+                      disabled={isSaving || configuration?.config === newConfig}
+                      onClick={() => {
+                        mutate({ config: newConfig, externalId });
+                      }}
+                    >
+                      {t('publish')}
+                    </Button>
+                  </>
+                ) : (
+                  <Button type="ghost" onClick={() => setEditMode(!editMode)}>
+                    {t('edit')}
+                  </Button>
+                )}
               </>
-            )}
-            {editMode ? (
-              <>
-                <Button onClick={() => setEditMode(!editMode)}>
-                  {t('discard-changes')}
-                </Button>
-                <Button
-                  type="primary"
-                  disabled={isSaving || configuration?.config === newConfig}
-                  onClick={() => {
-                    mutate({ config: newConfig, externalId });
-                  }}
-                >
-                  {t('publish')}
-                </Button>
-              </>
-            ) : (
-              <Button type="ghost" onClick={() => setEditMode(!editMode)}>
-                {t('edit')}
-              </Button>
             )}
           </Flex>
         }

@@ -17,6 +17,7 @@
   "configuration-generic-error": "An error occurred while retrieving the configuration.",
   "configuration-last-updated": "Last updated at {{date}}",
   "configuration-created": "Created",
+  "configuration-file-for-extractor": "Configuration file for extractor",
   "confirm": "Confirm",
   "contact": "Contact",
   "contact-hint": "List other extraction pipeline stakeholders, for instance, a support team or the source system owner. Enable notification subscription to send e-mail alerts for pipeline issues.",
