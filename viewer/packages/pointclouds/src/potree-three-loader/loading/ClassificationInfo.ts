@@ -5,7 +5,7 @@
 export type Class = {
   name: string;
   code: number;
-  rgb: string;
+  rgb?: string;
 };
 
 export type ClassificationSet = {

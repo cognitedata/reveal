@@ -7,7 +7,7 @@ import * as THREE from 'three';
 export type PotreeClassification = { [pointClass: number]: { x: number; y: number; z: number; w: number } };
 const PotreeDefaultPointClass = 'DEFAULT';
 
-type ClassificationMap = { [key: string]: { rgb: string; code: number } };
+type ClassificationMap = { [key: string]: { rgb: THREE.Color; code: number } };
 
 import {
   PointCloudOctree,
@@ -23,6 +23,7 @@ import { PointCloudObjectMetadata, PointCloudObjectAnnotation } from './annotati
 import { CompletePointCloudAppearance } from './styling/PointCloudAppearance';
 import { ClassificationInfo } from './potree-three-loader/loading/ClassificationInfo';
 import assert from 'assert';
+import { createDistinctColors } from '@reveal/utilities';
 
 /**
  * Wrapper around `Potree.PointCloudOctree` with some convenience functions.
@@ -66,9 +67,16 @@ export class PotreeNodeWrapper {
 
   private createClassNameToCodeMap(classificationInfo: ClassificationInfo): ClassificationMap {
     assert(classificationInfo.classificationSets.length > 0);
-    const classMap: { [key: string]: { rgb: string; code: number } } = {};
-    classificationInfo.classificationSets[0].classificationSet.forEach(c => {
-      classMap[c.name] = { ...c };
+    const classMap: { [key: string]: { rgb: THREE.Color; code: number } } = {};
+
+    const inputClassifications = classificationInfo.classificationSets[0].classificationSet;
+
+    const fallbackColors = createDistinctColors(inputClassifications.length);
+
+    inputClassifications.forEach((clazz, index) => {
+      const rgb = clazz.rgb ? new THREE.Color(clazz.rgb) : fallbackColors[index];
+
+      classMap[clazz.name] = { rgb, code: clazz.code };
     });
 
     return classMap;
@@ -76,8 +84,8 @@ export class PotreeNodeWrapper {
 
   private updateMaterialClassMap(classificationMap: ClassificationMap) {
     Object.keys(classificationMap).forEach(name => {
-      const color = new THREE.Color(classificationMap[name].rgb);
-      this._classification[classificationMap[name].code] = new THREE.Vector4(color.r, color.g, color.b, 1.0);
+      const color = classificationMap[name].rgb;
+      this._classification[classificationMap[name].code] = new THREE.Vector4(...color.toArray(), 1.0);
     });
     this.octree.material.classification = this._classification;
   }
