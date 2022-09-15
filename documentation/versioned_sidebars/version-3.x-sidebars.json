@@ -98,10 +98,6 @@
         },
         {
           "type": "doc",
-          "id": "version-3.x/examples/geomaptool"
-        },
-        {
-          "type": "doc",
           "id": "version-3.x/examples/timelinetool"
         },
         {
@@ -111,6 +107,10 @@
         {
           "type": "doc",
           "id": "version-3.x/examples/controlsmodes"
+        },
+        {
+          "type": "doc",
+          "id": "version-3.x/examples/point-to-point-measurement"
         }
       ]
     },
