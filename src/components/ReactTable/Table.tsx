@@ -14,8 +14,10 @@ import { ColumnToggle } from './ColumnToggle';
 import { useCellSelection } from './hooks';
 import { SortIcon } from './SortIcon';
 import { ResourceTableColumns } from './columns';
+import { LoadMore, LoadMoreProps } from './LoadMore';
 
-export interface TableProps<T extends Record<string, any>> {
+export interface TableProps<T extends Record<string, any>>
+  extends LoadMoreProps {
   data: T[];
   columns: Column<T>[];
   isSortingEnabled?: boolean;
@@ -28,6 +30,7 @@ export interface TableProps<T extends Record<string, any>> {
     row?: T,
     evt?: React.MouseEvent<HTMLDivElement, MouseEvent>
   ) => void;
+  showLoadButton?: boolean;
 }
 export interface OnSortProps<T> {
   sortBy?: SortingRule<T>[];
@@ -54,6 +57,10 @@ export function NewTable<T extends TableData>({
   isSortingEnabled = false,
   isStickyHeader = false,
   isKeyboardNavigationEnabled = true,
+  showLoadButton = false,
+  hasNextPage,
+  isLoadingMore,
+  fetchMore,
 }: TableProps<T>) {
   const plugins = [
     isSortingEnabled && useSortBy,
@@ -90,6 +97,8 @@ export function NewTable<T extends TableData>({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [JSON.stringify(sortBy)]);
+
+  const loadMoreProps = { isLoadingMore, hasNextPage, fetchMore };
 
   return (
     <TableContainer>
@@ -149,12 +158,19 @@ export function NewTable<T extends TableData>({
           })}
         </div>
       </StyledTable>
+      {showLoadButton && (
+        <LoadMoreButtonWrapper justifyContent="center" alignItems="center">
+          <LoadMore {...loadMoreProps} />
+        </LoadMoreButtonWrapper>
+      )}
     </TableContainer>
   );
 }
 
 const TableContainer = styled.div`
   width: 100%;
+  display: flex;
+  flex-direction: column;
 `;
 
 const ColumnSelectorWrapper = styled.div`
@@ -215,4 +231,8 @@ const Tr = styled.div`
 const ThWrapper = styled.div`
   display: flex;
   align-items: center;
+`;
+
+const LoadMoreButtonWrapper = styled(Flex)`
+  margin-top: 20px;
 `;

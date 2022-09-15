@@ -2,9 +2,10 @@ import React, { useMemo, useState } from 'react';
 import { ComponentStory } from '@storybook/react';
 import styled from 'styled-components';
 import { Column, SortingRule } from 'react-table';
-import { userEvent, within } from '@storybook/testing-library';
+import { userEvent, within, waitFor } from '@storybook/testing-library';
 import { expect } from '@storybook/jest';
 import { NewTable as Table } from './Table';
+import { Flex } from '@cognite/cogs.js';
 
 export default {
   title: 'Component/NewTable',
@@ -200,12 +201,14 @@ export const ExampleWithNavigation: ComponentStory<typeof Table> = args => {
   const data = useMemo(() => exampleDatas, []);
   const columns = useMemo(() => exampleColumns, []);
   return (
-    <Table<DataType>
-      {...args}
-      data={data}
-      columns={columns}
-      isKeyboardNavigationEnabled
-    />
+    <Flex gap={20} direction="column">
+      <Table<DataType>
+        {...args}
+        data={data}
+        columns={columns}
+        isKeyboardNavigationEnabled
+      />
+    </Flex>
   );
 };
 
@@ -249,4 +252,51 @@ ExampleWithOnClickRow.play = async ({ canvasElement }) => {
   expect(preElement?.innerHTML).toBe(
     'Current Value:{"col1":"Hello","col2":"World"}'
   );
+};
+
+export const ExampleWithLoadMoreButton: ComponentStory<typeof Table> = () => {
+  const [state, setState] = useState(exampleDatas);
+  const [hasNextPage, setHasNextPage] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+  const mockPromise = new Promise(resolve =>
+    setTimeout(() => resolve(exampleDatas), 1000)
+  );
+
+  const fetchMore = () => {
+    setIsLoading(true);
+    mockPromise.then((res: any) => {
+      setState(prev => [...prev, ...res]);
+      setIsLoading(false);
+    });
+    setHasNextPage(false);
+  };
+
+  const data = useMemo(() => state, [state]);
+  const columns = useMemo(() => exampleColumns, []);
+
+  return (
+    <Table
+      data={data}
+      columns={columns}
+      showLoadButton
+      fetchMore={fetchMore}
+      hasNextPage={hasNextPage}
+      isLoadingMore={isLoading}
+    />
+  );
+};
+
+ExampleWithLoadMoreButton.play = async ({ canvasElement }) => {
+  const canvas = within(canvasElement);
+  let tbody = canvas.getByRole('rowgroup');
+
+  let TbodyElement = within(tbody);
+  let rows = TbodyElement.getAllByRole('row');
+  expect(rows.length).toBe(3);
+
+  const loadMoreButton = canvas.getByRole('button', { name: 'Load More' });
+  userEvent.click(loadMoreButton);
+  tbody = canvas.getByRole('rowgroup');
+
+  await waitFor(() => expect(canvas.getAllByRole('row').length).toBe(7));
 };
