@@ -96,7 +96,7 @@ export class ComboControls extends EventDispatcher {
   private _sphericalEnd: Spherical = new Spherical();
   private readonly _deltaTarget: Vector3 = new Vector3();
   private readonly _rawCameraRotation = new Quaternion();
-  private readonly _keyboard: Keyboard = new Keyboard();
+  private readonly _keyboard: Keyboard;
 
   private readonly _offsetVector: Vector3 = new Vector3();
   private readonly _panVector: Vector3 = new Vector3();
@@ -110,6 +110,7 @@ export class ComboControls extends EventDispatcher {
     this._camera = camera;
     this._reusableCamera = camera.clone() as typeof camera;
     this._domElement = domElement;
+    this._keyboard = new Keyboard(this._domElement);
 
     // rotation
 
@@ -304,7 +305,7 @@ export class ComboControls extends EventDispatcher {
   };
 
   private readonly onMouseDown = (event: MouseEvent) => {
-    if (!this.enabled) {
+    if (!this.enabled || event.target !== this._domElement.querySelector('canvas')) {
       return;
     }
 

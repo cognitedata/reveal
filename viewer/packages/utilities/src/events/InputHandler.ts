@@ -88,6 +88,9 @@ export class InputHandler {
     };
 
     const onDown = (e: MouseEvent | TouchEvent) => {
+      if (e.target !== domElement.querySelector('canvas')) {
+        return;
+      }
       pointerDown = true;
       validClick = true;
       pointerDownTimestamp = e.timeStamp;
