@@ -22,6 +22,7 @@ const GlobalStyle = createGlobalStyle<{ theme: typeof theme }>`
 
   a {
     color: ${(props) => props.theme.actionText};
+    text-decoration: none !important; /* cogs overrides default for every anchor */
     :hover {
       color: ${(props) => props.theme.actionText};
     }
