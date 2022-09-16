@@ -32,9 +32,20 @@ import { FilterSidePanel } from 'src/modules/FilterSidePanel/Containers/FilterSi
 import FilterToggleButton from 'src/modules/FilterSidePanel/Components/FilterToggleButton';
 import { ExplorerToolbarContainer } from 'src/modules/Explorer/Containers/ExplorerToolbarContainer';
 import { cancelFileDetailsEdit } from 'src/modules/FileDetails/slice';
+import { ContextMenuContainer } from 'src/modules/Explorer/Containers/ContextMenuContainer';
+import { useContextMenu } from 'src/modules/Common/hooks/useContextMenu';
 import { ExplorerModelTrainingModalContainer } from './ExplorerModelTrainingModalContainer';
 
 const Explorer = () => {
+  const {
+    contextMenuDataItem,
+    contextMenuAnchorPoint,
+    showContextMenu,
+    setContextMenuDataItem,
+    setContextMenuAnchorPoint,
+    setShowContextMenu,
+  } = useContextMenu();
+
   const history = useHistory();
   const dispatch = useDispatch();
 
@@ -85,6 +96,22 @@ const Explorer = () => {
       if (showFileDetailsOnClick) {
         dispatch(showFileMetadata());
       }
+    },
+    []
+  );
+
+  const handleContextMenuOpen = useCallback(
+    (event: MouseEvent, item: TableDataItem) => {
+      event.preventDefault();
+      setContextMenuDataItem(item);
+      setContextMenuAnchorPoint({
+        x: event.pageX,
+        y: event.pageY,
+      });
+      setShowContextMenu(true);
+      dispatch(cancelFileDetailsEdit());
+      dispatch(FetchFilesById([item.id]));
+      dispatch(setFocusedFileId(item.id));
     },
     []
   );
@@ -156,6 +183,7 @@ const Explorer = () => {
                 selectedIds={selectedFileIds}
                 isLoading={isLoading}
                 onItemClick={handleItemClick}
+                onItemRightClick={handleContextMenuOpen}
                 onItemSelect={handleRowSelect}
               />
             </ViewContainer>
@@ -171,6 +199,12 @@ const Explorer = () => {
                 />
               </QueryClientProvider>
             </DrawerContainer>
+          )}
+          {showContextMenu && contextMenuDataItem && (
+            <ContextMenuContainer
+              rowData={contextMenuDataItem}
+              position={contextMenuAnchorPoint}
+            />
           )}
           <ExplorerBulkEditModalContainer />
           <ExplorerModelTrainingModalContainer />

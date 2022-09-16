@@ -58,6 +58,7 @@ export const ExplorerSearchResults = ({
   selectedIds: number[];
   isLoading: boolean;
   onItemClick: (item: TableDataItem) => void;
+  onItemRightClick?: (event: MouseEvent, item: TableDataItem) => void;
   onItemSelect: (item: TableDataItem, selected: boolean) => void;
 }) => {
   const dispatch = useDispatch();
@@ -153,6 +154,7 @@ export const ExplorerSearchResults = ({
         onItemSelect={otherProps.onItemSelect}
         isSelected={useIsSelectedInExplorer}
         isActionDisabled={useExplorerFilesSelected}
+        onItemRightClick={otherProps.onItemRightClick}
       />
     ),
     [otherProps.onItemSelect]
