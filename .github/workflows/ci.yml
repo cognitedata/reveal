@@ -21,7 +21,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - uses: actions/cache@v2
+    - uses: actions/cache@v3
       id: npm_cache
       with:
         path: '**/node_modules'
@@ -56,9 +56,9 @@ jobs:
     name: Run unit tests
     runs-on: ubuntu-latest 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
 
-    - uses: actions/cache@v2
+    - uses: actions/cache@v3
       id: npm_cache
       with:
         path: '**/node_modules'
@@ -90,7 +90,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - uses: actions/cache@v2
+    - uses: actions/cache@v3
       id: npm_cache
       with:
         path: '**/node_modules'
@@ -143,7 +143,7 @@ jobs:
         name: viewer
         path: viewer/dist/
 
-    - uses: actions/cache@v2
+    - uses: actions/cache@v3
       id: npm_cache
       with:
         path: '**/node_modules'
@@ -244,15 +244,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout 🛎️
-        uses: actions/checkout@v2 # If you're using actions/checkout@v2 you must set persist-credentials to false in most cases for the deployment to work correctly.
+        uses: actions/checkout@v3 # If you're using actions/checkout@v2 you must set persist-credentials to false in most cases for the deployment to work correctly.
 
       - name: Initialize variables
         run: |
           pwd
-          echo "PR_NUMBER=$(jq --raw-output .pull_request.number $GITHUB_EVENT_PATH)" >> $GITHUB_ENV
+          export "PR_NUMBER=$(jq --raw-output .pull_request.number $GITHUB_EVENT_PATH)"
+          export "PR_TIMESTAMP=$(date)"
+          echo "PR_NUMBER=$PR_NUMBER" >> $GITHUB_ENV
+          echo "PR_TIMESTAMP=$PR_TIMESTAMP" >> $GITHUB_ENV
           echo "name=PR_NUMBER::$PR_NUMBER" >> $GITHUB_ENV
 
-      - uses: actions/cache@v2
+      - uses: actions/cache@v3
         id: npm_cache
         with:
           path: '**/node_modules'
@@ -268,7 +271,7 @@ jobs:
         run: yarn run build:prod
 
       - name: Install NPM documentation dependencies
-        if: steps.npm_cache.outputs.cache-hit != 'true'
+        # if: steps.npm_cache.outputs.cache-hit != 'true' # Broken
         working-directory: documentation
         run: yarn install --immutable
 
@@ -284,14 +287,13 @@ jobs:
         uses: jacobtomlinson/gha-find-replace@v1
         with:
           find: "title: .*"
-          replace: "title: 'Reveal documentation (preview #${{ env.PR_NUMBER }})',"
+          replace: "title: 'Reveal documentation (preview #${{ env.PR_NUMBER }}, built ${{ env.PR_TIMESTAMP }})',"
           include: "docusaurus.config.js"
           exclude: ".git"
 
       - name: Build documentation 🔧
         working-directory: documentation
         run: |
-          yarn install --immutable
           yarn build:fast
 
       - name: Upload documentation artifact 
