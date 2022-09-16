@@ -12,7 +12,7 @@ type Props = {
 export const DataSet = ({ dataSetId }: Props) => {
   const { t } = useTranslation();
 
-  const { data = [] } = useDataSet(dataSetId);
+  const { data: dataSet } = useDataSet(dataSetId);
 
   if (!dataSetId) {
     return (
@@ -25,7 +25,7 @@ export const DataSet = ({ dataSetId }: Props) => {
     <DatasetTooltip>
       <LinkWithCopy
         href={getDataSetsLink(dataSetId)}
-        linkText={data[0]?.name || `${dataSetId}`}
+        linkText={dataSet?.name || `${dataSetId}`}
         copyText={`${dataSetId}`}
         copyType="dataSetId"
       />
