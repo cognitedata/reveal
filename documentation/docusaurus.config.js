@@ -12,7 +12,7 @@ module.exports = {
       apiKey: '9ba8640575bd74e729c9e6a29dfb8a78',
       indexName: 'reveal-docs',
 
-      contextualSearch: false,
+      contextualSearch: true,
 
       // Optional: Algolia search parameters
       searchParameters: {
