@@ -17,9 +17,9 @@ const SectionHeader = styled(Flex)`
   font-weight: 500;
   font-size: 1.1rem;
 `;
-const SectionBody = styled.div`
-  padding: 1rem 0;
-  overflow-x: scroll;
+const SectionBody = styled.div<{ $hasPadding?: boolean }>`
+  padding: ${({ $hasPadding }) => ($hasPadding ? '1rem 0' : 0)};
+  overflow-x: auto;
 `;
 export const SectionWithoutHeader = (props: PropsWithChildren<{}>) => (
   <SectionDiv className="z-2">{props.children}</SectionDiv>
@@ -30,6 +30,7 @@ type Props = {
   icon: IconType;
   titleButton?: { onClick: () => void; enabled: boolean };
   dataTestId?: string;
+  hasPadding?: boolean;
 };
 export const Section = ({
   icon,
@@ -38,6 +39,7 @@ export const Section = ({
   rightTitle,
   children,
   dataTestId,
+  hasPadding = true,
 }: PropsWithChildren<Props>) => {
   const { t } = useTranslation();
 
@@ -60,7 +62,7 @@ export const Section = ({
           {rightTitle && <Body level={2}>{rightTitle}</Body>}
         </div>
       </SectionHeaderRow>
-      <SectionBody>{children}</SectionBody>
+      <SectionBody $hasPadding={hasPadding}>{children}</SectionBody>
     </SectionDiv>
   );
 };

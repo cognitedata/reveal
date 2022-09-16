@@ -32,6 +32,7 @@ export default function ConfigurationRevision() {
         <ConfigurationEditor
           externalId={extpipe.externalId}
           revision={revision}
+          isSnippet
         />
       </PageWrapperColumn>
     </>
