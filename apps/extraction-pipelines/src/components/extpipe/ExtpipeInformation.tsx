@@ -4,12 +4,12 @@ import * as yup from 'yup';
 import { useSelectedExtpipe } from 'hooks/useExtpipe';
 import { Schedule } from 'components/extpipe/edit/Schedule';
 import { rootUpdate } from 'hooks/details/useDetailsUpdate';
-import { FieldVerticalDisplay } from 'components/extpipe/fields/FieldVerticalDisplay';
 import RawTablesSection from 'components/inputs/rawSelector/RawTablesSection';
-import { Column, ContactsSection } from 'components/extpipe/ContactsSection';
+import { ContactsSection } from 'components/extpipe/ContactsSection';
 import { MetaDataSection } from 'components/extpipe/MetaDataSection';
 import { EditDataSetId } from 'components/extpipe/edit/EditDataSetId';
 import { Section } from 'components/extpipe/Section';
+import NewSection from 'components/section';
 import { NotificationSection } from 'components/extpipe/NotificationSection';
 import {
   externalIdRule,
@@ -17,7 +17,7 @@ import {
   sourceSchema,
 } from 'utils/validation/extpipeSchemas';
 import { useTranslation } from 'common';
-import { DetailFieldNames } from 'model/Extpipe';
+import RelativeTimeWithTooltip from 'components/extpipes/cols/RelativeTimeWithTooltip';
 
 interface Props {
   canEdit: boolean;
@@ -87,30 +87,42 @@ export const ExtpipeInformation = ({ canEdit }: Props) => {
       <ContactsSection canEdit={canEdit} />
       <RawTablesSection canEdit={canEdit} />
       <MetaDataSection canEdit={canEdit} />
-      <Section title={t('about-ext-pipeline')} icon="Info">
-        <Column>
-          <FieldVerticalDisplay
-            label={t('ext-pipeline-id') as DetailFieldNames}
-            fieldName="id"
-            fieldValue={extpipe?.id}
-          />
-          <FieldVerticalDisplay
-            label={t('created-by') as DetailFieldNames}
-            fieldName="createdBy"
-            fieldValue={extpipe?.createdBy}
-          />
-          <FieldVerticalDisplay
-            label={t('created-time') as DetailFieldNames}
-            fieldName="createdTime"
-            fieldValue={extpipe?.createdTime}
-          />
-          <FieldVerticalDisplay
-            label={t('last-updated-time') as DetailFieldNames}
-            fieldName="lastUpdatedTime"
-            fieldValue={extpipe?.lastUpdatedTime}
-          />
-        </Column>
-      </Section>
+      <NewSection
+        icon="Info"
+        title={t('about-ext-pipeline')}
+        items={[
+          {
+            key: 'id',
+            title: t('ext-pipeline-id'),
+            value: extpipe?.id,
+          },
+          {
+            key: 'created-by',
+            title: t('created-by'),
+            value: extpipe?.createdBy,
+          },
+          {
+            key: 'created-time',
+            title: t('created-time'),
+            value: (
+              <RelativeTimeWithTooltip
+                id="created-time"
+                time={extpipe?.createdTime}
+              />
+            ),
+          },
+          {
+            key: 'last-updated-time',
+            title: t('last-updated-time'),
+            value: (
+              <RelativeTimeWithTooltip
+                id="last-updated-time"
+                time={extpipe?.lastUpdatedTime}
+              />
+            ),
+          },
+        ]}
+      />
     </>
   );
 };
