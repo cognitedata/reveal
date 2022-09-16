@@ -1,16 +1,11 @@
 import React, { PropsWithChildren, useState } from 'react';
 import { useSelectedExtpipe } from 'hooks/useExtpipe';
 import { DetailFieldNames } from 'model/Extpipe';
-import styled from 'styled-components';
-import { AddFieldValueBtn } from 'components/buttons/AddFieldValueBtn';
-import { MetaData as MetaDataModel } from 'model/MetaData';
-import { MetaField } from 'components/extpipe/MetaDataField';
 import { EditModal } from 'components/modals/EditModal';
 import { EditMetaData } from 'components/inputs/metadata/EditMetaData';
 import { Hint } from 'components/styled';
 import { StyledTitle3 } from 'components/styled';
-import { Section } from 'components/extpipe/Section';
-import { Column } from 'components/extpipe/ContactsSection';
+import Section from 'components/section';
 import { useTranslation } from 'common';
 
 interface MetaProps {
@@ -18,66 +13,52 @@ interface MetaProps {
   canEdit: boolean;
 }
 
-export const MetaDataSection = ({
-  testId = 'meta-',
-  canEdit,
-}: PropsWithChildren<MetaProps>) => {
+export const MetaDataSection = ({ canEdit }: PropsWithChildren<MetaProps>) => {
   const { t } = useTranslation();
   const [showMetaModal, setShowMetaModal] = useState(false);
   const { data: storedExtpipe } = useSelectedExtpipe();
-
-  const renderMeta = (meta: MetaDataModel) => {
-    return (
-      <Column>
-        {Object.entries(meta).map(([k, v], index) => {
-          return (
-            <MetaField
-              key={`${testId}-${k}-${v}`}
-              fieldKey={k}
-              fieldValue={v}
-              testId={`${testId}-${index}`}
-            />
-          );
-        })}
-      </Column>
-    );
-  };
 
   const meta = storedExtpipe?.metadata;
   const closeDialog = () => setShowMetaModal(false);
   const openDialog = () => setShowMetaModal(true);
   return (
-    <Section
-      title={t('meta-data')}
-      icon="DataTable"
-      titleButton={{ onClick: openDialog, enabled: canEdit }}
-    >
-      <MetaWrapper>
-        {meta == null ? (
-          <AddFieldValueBtn canEdit={canEdit} onClick={openDialog}>
-            {DetailFieldNames.META_DATA.toLowerCase()}
-          </AddFieldValueBtn>
-        ) : (
-          <div css="padding: 0 1rem">{renderMeta(meta)}</div>
-        )}
-        <EditModal
-          title={DetailFieldNames.META_DATA}
-          visible={showMetaModal}
-          close={closeDialog}
-        >
-          <StyledTitle3>{t('meta-data-title')}</StyledTitle3>
-          <p>
-            <Hint>{t('meta-data-hint')}</Hint>
-          </p>
-          <EditMetaData close={closeDialog} />
-        </EditModal>
-      </MetaWrapper>
-    </Section>
+    <>
+      <EditModal
+        title={DetailFieldNames.META_DATA}
+        visible={showMetaModal}
+        close={closeDialog}
+      >
+        <StyledTitle3>{t('meta-data-title')}</StyledTitle3>
+        <p>
+          <Hint>{t('meta-data-hint')}</Hint>
+        </p>
+        <EditMetaData close={closeDialog} />
+      </EditModal>
+      <Section
+        extraButton={{
+          children: 'Edit',
+          disabled: !canEdit,
+          onClick: openDialog,
+          size: 'small',
+          type: 'ghost',
+        }}
+        title={t('meta-data')}
+        icon="DataTable"
+        items={
+          meta && Object.keys(meta)?.length !== 0
+            ? Object.entries(meta).map(([key, value]) => ({
+                key,
+                title: key,
+                value,
+              }))
+            : [
+                {
+                  key: 'metadata',
+                  value: t('no-metadata-added'),
+                },
+              ]
+        }
+      />
+    </>
   );
 };
-
-const MetaWrapper = styled.section`
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-`;

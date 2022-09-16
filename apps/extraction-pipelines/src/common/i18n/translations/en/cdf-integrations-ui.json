@@ -123,6 +123,7 @@
   "no-ext-pipeline-desc": "Use this section to create and monitor data flows. Learn more about extraction pipelines in",
   "no-external-id": "No external id",
   "no-field-added": "No {{field}} added.",
+  "no-metadata-added": "No metadata added",
   "no-name": "No name",
   "no-raw-tables": "No raw tables registered",
   "no-run-history": "No runs yest",
