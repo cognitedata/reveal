@@ -8,25 +8,52 @@ import { useDeepMemo } from 'hooks/useDeep';
 import { ChartV2 } from '../../../common/ChartV2';
 import { ChartProps as CommonChartProps } from '../../../common/ChartV2/ChartV2';
 import { SCALE_BLOCK_HEIGHT } from '../../../common/Events/constants';
+import { getNativeScaleBlocks } from '../../utils/scale/getNativeScaleBlocks';
 import { DepthScaleLines } from '../DepthScaleLines';
 
-import { ChartContentWrapper, ChartHeader, ChartWrapper } from './elements';
+import {
+  ChartColumnContent,
+  ChartContentWrapper,
+  ChartHeader,
+  ChartNativeScaleContainer,
+  ChartWrapper,
+  ChartYTitle,
+} from './elements';
+import { NativeScale } from './NativeScale';
 
 export interface ChartProps
   extends Pick<CommonChartProps, 'data' | 'axisNames'> {
   scaleBlocks: number[];
   header?: string | JSX.Element;
+  reverseYAxis?: boolean;
+  nativeScale?: boolean;
 }
 
 export const Chart: React.FC<ChartProps> = React.memo(
-  ({ data, axisNames, scaleBlocks, header }) => {
+  ({
+    data,
+    axisNames,
+    scaleBlocks: scaleBlocksOriginal,
+    header,
+    reverseYAxis = false,
+    nativeScale = false,
+  }) => {
+    const scaleBlocks = useDeepMemo(() => {
+      const chartScaleBlocks = nativeScale
+        ? getNativeScaleBlocks(scaleBlocksOriginal, head(data)?.y)
+        : scaleBlocksOriginal;
+      if (reverseYAxis) {
+        return chartScaleBlocks.reverse();
+      }
+      return chartScaleBlocks;
+    }, [scaleBlocksOriginal, nativeScale, reverseYAxis]);
+
     const axisConfig = useDeepMemo(() => {
       return {
         x: {
           fixedrange: true,
         },
         y: {
-          dtick: scaleBlocks[1] - scaleBlocks[0],
           nticks: scaleBlocks.length,
           range: [last(scaleBlocks), head(scaleBlocks)],
           autorange: false,
@@ -45,21 +72,29 @@ export const Chart: React.FC<ChartProps> = React.memo(
 
     return (
       <ChartWrapper>
+        <ChartHeader>{header}</ChartHeader>
         <DepthScaleLines scaleBlocks={scaleBlocks} />
 
-        <ChartHeader>{header}</ChartHeader>
+        <ChartColumnContent>
+          {nativeScale && (
+            <ChartNativeScaleContainer>
+              <ChartYTitle>{axisNames?.y}</ChartYTitle>
+              <NativeScale scaleBlocks={scaleBlocks} />
+            </ChartNativeScaleContainer>
+          )}
 
-        <ChartContentWrapper>
-          <ChartV2
-            autosize
-            hideHeader
-            axisNames={axisNames}
-            axisConfig={axisConfig}
-            data={data}
-            title=""
-            height={height}
-          />
-        </ChartContentWrapper>
+          <ChartContentWrapper>
+            <ChartV2
+              autosize
+              hideHeader
+              axisNames={axisNames}
+              axisConfig={axisConfig}
+              data={data}
+              title=""
+              height={height}
+            />
+          </ChartContentWrapper>
+        </ChartColumnContent>
       </ChartWrapper>
     );
   }

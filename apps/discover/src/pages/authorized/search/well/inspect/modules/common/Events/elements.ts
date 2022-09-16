@@ -102,7 +102,6 @@ export const ScaleLineDepth = styled.div`
   align-items: center;
   text-align: center;
   letter-spacing: -0.008em;
-  color: var(--cogs-greyscale-grey7);
   height: ${SCALE_PADDING}px;
   padding: 0 ${sizes.small};
   top: ${SCALE_BLOCK_HEIGHT / 2 + 1}px;

@@ -10,3 +10,9 @@ export interface TrajectoryColumnConfig {
     y: string;
   };
 }
+
+export enum TrajectoryCurve {
+  MD_ED = 'MD vs ED',
+  TVD_ED = 'TVD vs ED',
+  NS_EW = 'NS vs EW',
+}

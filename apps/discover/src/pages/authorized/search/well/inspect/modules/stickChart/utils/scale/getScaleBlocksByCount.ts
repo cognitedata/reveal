@@ -1,5 +1,5 @@
 import times from 'lodash/times';
-import { toNextHundred } from 'utils/number/toNextHundred';
+import { roundToNextNumber } from 'utils/number/roundToNextNumber';
 
 import { EMPTY_ARRAY } from 'constants/empty';
 
@@ -12,7 +12,9 @@ import { EMPTY_ARRAY } from 'constants/empty';
  */
 export const getScaleBlocksByCount = (
   maxDepth: number,
-  blocksCount: number
+  blocksCount: number,
+  minDepth = 0,
+  roundTo = 100
 ) => {
   /**
    * If scaleHeight or maxDepth value is 0,
@@ -23,26 +25,29 @@ export const getScaleBlocksByCount = (
     return EMPTY_ARRAY;
   }
 
+  const roundedMin = roundToNextNumber(minDepth, roundTo);
+  const roundedMax = roundToNextNumber(maxDepth, roundTo);
+
   /**
    * If the blocks count is less than or equal to 2,
    * No point of calculating the scale blocks.
    * Just return the min and max values of the scale.
    */
   if (blocksCount <= 2) {
-    return [0, toNextHundred(maxDepth)];
+    return [roundedMin, roundedMax];
   }
 
   const blocksCountWithoutBounds = blocksCount - 2; // Reduce 2 for scale min and max depths.
 
-  const interval = toNextHundred(
-    Math.round(maxDepth / blocksCountWithoutBounds)
-  );
+  const interval = Math.round((maxDepth - minDepth) / blocksCountWithoutBounds);
+
+  const roundedInterval = roundToNextNumber(interval, roundTo);
 
   return [
-    0, // Scale min depth
+    roundedMin, // Scale min depth
     ...times(blocksCountWithoutBounds).map(
-      (blockIndex) => interval * (blockIndex + 1)
+      (blockIndex) => roundedMin + roundedInterval * (blockIndex + 1)
     ),
-    interval * (blocksCountWithoutBounds + 1), // Scale max depth
+    roundedMin + roundedInterval * (blocksCountWithoutBounds + 1), // Scale max depth
   ];
 };

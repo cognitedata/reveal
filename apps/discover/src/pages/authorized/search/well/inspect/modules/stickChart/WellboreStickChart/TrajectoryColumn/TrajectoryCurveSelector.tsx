@@ -3,11 +3,12 @@ import * as React from 'react';
 import { ViewModeControl } from '../../../common/ViewModeControl';
 
 import { TrajectoryCurveSelectorWrapper } from './elements';
+import { TrajectoryCurve } from './types';
 
 export interface TrajectoryCurveSelectorProps {
-  curves: string[];
-  selectedCurve: string;
-  onChangeCurve: (curve: string) => void;
+  curves: TrajectoryCurve[];
+  selectedCurve: TrajectoryCurve;
+  onChangeCurve: (curve: TrajectoryCurve) => void;
 }
 
 export const TrajectoryCurveSelector: React.FC<
@@ -15,7 +16,7 @@ export const TrajectoryCurveSelector: React.FC<
 > = ({ curves, selectedCurve, onChangeCurve }) => {
   return (
     <TrajectoryCurveSelectorWrapper>
-      <ViewModeControl
+      <ViewModeControl<TrajectoryCurve>
         size="small"
         views={curves}
         selectedView={selectedCurve}

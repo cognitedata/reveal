@@ -21,6 +21,8 @@ export interface PlotlyChartColumnProps extends Pick<ChartProps, 'axisNames'> {
   emptySubtitle?: string;
   actionMessage?: string;
   actionButtonText?: string;
+  reverseYAxis?: boolean;
+  nativeScale?: boolean;
   onClickActionButton?: () => void;
 }
 
@@ -37,6 +39,8 @@ export const PlotlyChartColumn: React.FC<
     emptySubtitle,
     actionMessage,
     actionButtonText,
+    reverseYAxis,
+    nativeScale,
     onClickActionButton,
     ...dragHandleProps
   }) => {
@@ -98,6 +102,8 @@ export const PlotlyChartColumn: React.FC<
             axisNames={axisNames}
             scaleBlocks={scaleBlocks}
             header={chartHeader}
+            reverseYAxis={reverseYAxis}
+            nativeScale={nativeScale}
           />
         );
       }

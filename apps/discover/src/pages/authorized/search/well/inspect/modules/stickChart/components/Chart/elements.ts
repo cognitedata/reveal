@@ -1,6 +1,13 @@
 import styled from 'styled-components/macro';
+import layers from 'utils/zindex';
 
-import { sizes } from 'styles/layout';
+import {
+  Center,
+  FlexColumn,
+  FlexRow,
+  FlexRowFullWidth,
+  sizes,
+} from 'styles/layout';
 
 import {
   Container,
@@ -25,12 +32,16 @@ export const ChartHeader = styled(BodyColumnMainHeader)`
   margin-bottom: -28px;
 `;
 
+export const ChartColumnContent = styled(FlexRowFullWidth)`
+  height: 100%;
+  font-weight: 500;
+  font-size: 12px;
+  color: var(--cogs-greyscale-grey6);
+`;
+
 export const ChartContentWrapper = styled.div`
   > ${Container} {
     border: none;
-    position: absolute;
-    top: 0;
-    left: 0;
 
     > ${CommonChartWrapper} {
       background-color: transparent;
@@ -45,4 +56,22 @@ export const ChartContentWrapper = styled.div`
   & > div {
     width: calc(${CHART_COLUMN_WIDTH}px - ${sizes.normal});
   }
+`;
+
+export const ChartNativeScaleContainer = styled(FlexRow)`
+  background: var(--cogs-bg-accent);
+  z-index: ${layers.MAIN_LAYER};
+  margin-bottom: ${sizes.small};
+`;
+
+export const ChartYTitle = styled(Center)`
+  transform: rotate(-90deg);
+  align-self: center;
+  width: ${sizes.small};
+  margin-left: ${sizes.small};
+`;
+
+export const NativeScaleWrapper = styled(FlexColumn)`
+  width: fit-content;
+  align-items: flex-end;
 `;

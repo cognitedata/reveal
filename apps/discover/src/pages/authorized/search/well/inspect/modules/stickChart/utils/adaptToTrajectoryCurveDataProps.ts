@@ -16,16 +16,19 @@ export const adaptToTrajectoryCurveDataProps = (
         return chartsProps;
       }
 
-      const props = {
-        data: adapTrajectoryDataToChart(data, curveColor, chartConfig),
-        axisNames,
-      };
-
       return {
         ...chartsProps,
-        [title]: props,
+        [title]: {
+          data: adapTrajectoryDataToChart(data, curveColor, chartConfig),
+          axisNames,
+          /**
+           * In stick charts, default scale is increasing from top to bottom.
+           * So, we need the invert of this config value.
+           */
+          reverseYAxis: !chartConfig.reverseYAxis,
+        },
       };
     },
-    {} as Record<string, Pick<PlotlyChartColumnProps, 'data' | 'axisNames'>>
+    {} as Record<string, Partial<PlotlyChartColumnProps>>
   );
 };

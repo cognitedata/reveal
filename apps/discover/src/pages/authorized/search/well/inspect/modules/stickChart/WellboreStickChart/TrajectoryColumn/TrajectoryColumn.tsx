@@ -19,9 +19,14 @@ import {
 } from '../../types';
 import { adaptToTrajectoryCurveDataProps } from '../../utils/adaptToTrajectoryCurveDataProps';
 
-import { TRAJECTORY_CURVES_MD, TRAJECTORY_CURVES_TVD } from './constants';
+import {
+  NATIVE_SCALE_CURVES,
+  TRAJECTORY_CURVES_MD,
+  TRAJECTORY_CURVES_TVD,
+} from './constants';
 import { TrajectoryChartWrapper } from './elements';
 import { TrajectoryCurveSelector } from './TrajectoryCurveSelector';
+import { TrajectoryCurve } from './types';
 
 export interface TrajectoryColumnProps extends ColumnVisibilityProps {
   data?: TrajectoryWithData;
@@ -45,7 +50,7 @@ export const TrajectoryColumn: React.FC<
     isVisible = true,
     ...dragHandleProps
   }) => {
-    const [selectedCurve, setSelectedCurve] = useState<string>('');
+    const [selectedCurve, setSelectedCurve] = useState<TrajectoryCurve>();
 
     const trajectoryCurveDataProps = useDeepMemo(() => {
       if (!data) {
@@ -66,8 +71,12 @@ export const TrajectoryColumn: React.FC<
     }, [depthMeasurementType]);
 
     useDeepEffect(() => {
-      setSelectedCurve(head(trajectoryCurves) || '');
+      setSelectedCurve(head(trajectoryCurves));
     }, [trajectoryCurves]);
+
+    if (!selectedCurve) {
+      return null;
+    }
 
     return (
       <NoUnmountShowHide show={isVisible}>
@@ -83,6 +92,7 @@ export const TrajectoryColumn: React.FC<
                 onChangeCurve={setSelectedCurve}
               />
             }
+            nativeScale={NATIVE_SCALE_CURVES.includes(selectedCurve)}
             {...trajectoryCurveDataProps[selectedCurve]}
             {...dragHandleProps}
           />
