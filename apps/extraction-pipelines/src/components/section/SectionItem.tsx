@@ -17,14 +17,14 @@ const SectionItem = ({
 }: SectionItemProps): JSX.Element => {
   return (
     <StyledItemContainer>
-      <div>
+      <StyledItemContent>
         {title && (
           <Body level={3} strong>
             {title}
           </Body>
         )}
         <StyledItemValue>{value ?? '-'}</StyledItemValue>
-      </div>
+      </StyledItemContent>
       {extraContent && <div>{extraContent}</div>}
     </StyledItemContainer>
   );
@@ -38,6 +38,10 @@ const StyledItemContainer = styled.div`
   :not(:last-child) {
     margin-bottom: 12px;
   }
+`;
+
+const StyledItemContent = styled.div`
+  flex: 1;
 `;
 
 const StyledItemValue = styled(Body).attrs({

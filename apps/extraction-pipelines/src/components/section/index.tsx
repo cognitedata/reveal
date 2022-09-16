@@ -17,19 +17,28 @@ import SectionItem, { SectionItemProps } from './SectionItem';
 type SectionProps = {
   extraButton?: ButtonProps;
   icon: IconType;
-  items: SectionItemProps[];
   title: string;
-};
+} & (
+  | {
+      children?: React.ReactNode;
+      items?: never;
+    }
+  | {
+      children?: never;
+      items?: SectionItemProps[];
+    }
+);
 
 const Section = ({
+  children,
   extraButton,
   icon,
-  items,
+  items = [],
   title,
 }: SectionProps): JSX.Element => {
   return (
     <StyledSectionContainer>
-      <StyledSectionHeader>
+      <StyledSectionHeader $hasBorder={!!children || items.length > 0}>
         <Flex alignItems="center" gap={8}>
           <Icon type={icon} />
           <Title level={6}>{title}</Title>
@@ -44,6 +53,7 @@ const Section = ({
           />
         )}
       </StyledSectionHeader>
+      {children}
       {items.length > 0 && (
         <StyledSectionContent>
           {items.map((itemProps) => (
@@ -63,14 +73,18 @@ const StyledSectionContainer = styled.div`
   margin-bottom: 12px;
 `;
 
-const StyledSectionHeader = styled.div`
+const StyledSectionHeader = styled.div<{ $hasBorder?: boolean }>`
+  ${({ $hasBorder }) =>
+    $hasBorder &&
+    `border-bottom: 1px solid ${Colors['border--interactive--default']}`};
+
   display: flex;
   justify-content: space-between;
-  padding: 16px;
+  height: 52px;
+  padding: 12px 16px;
 `;
 
 const StyledSectionContent = styled.div`
-  border-top: 1px solid ${Colors['border--interactive--default']};
   padding: 16px;
 `;
 
