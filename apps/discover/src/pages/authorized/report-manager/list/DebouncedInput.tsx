@@ -13,7 +13,7 @@ export function DebouncedInput({
   value: string | number;
   onChange: (value: string | number) => void;
   debounce?: number;
-} & Props) {
+} & Omit<Props, 'onChange'>) {
   const [value, setValue] = React.useState(initialValue);
 
   React.useEffect(() => {

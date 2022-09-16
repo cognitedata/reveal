@@ -25,8 +25,6 @@ export const HoverContentWrapper = styled.span`
 
 export const TableContainer = styled.div`
   height: 100%;
-  display: flex;
-  flex-direction: column;
   margin: 20px;
 `;
 export const HeaderContainer = styled.div`
@@ -59,6 +57,13 @@ export const MainRowContainer = styled.tr`
   font-weight: 500;
   font-size: 14px;
   line-height: 20px;
+
+  &:hover {
+    & td > ${HoverContentWrapper} {
+      opacity: 1;
+      pointer-events: initial;
+    }
+  }
 `;
 
 export const SubRowContainer = styled.tr`
@@ -71,7 +76,6 @@ export const SubRowContainer = styled.tr`
     & td > ${HoverContentWrapper} {
       opacity: 1;
       pointer-events: initial;
-      transform: translateX(0);
     }
   }
 `;

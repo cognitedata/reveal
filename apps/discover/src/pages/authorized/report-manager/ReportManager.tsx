@@ -8,13 +8,17 @@ import * as React from 'react';
 
 import uniq from 'lodash/uniq';
 import styled from 'styled-components/macro';
+import { getSearchParamsFromCurrentUrl } from 'utils/url';
+import { useSetUrlParams } from 'utils/url/setUrlParams';
 
 import { showErrorMessage, showSuccessMessage } from 'components/Toast';
 
 import { ReportManagerList } from './list';
 import { adaptReportsForList } from './list/adaptReportsForList';
+import { URL_PARAM_WELLBORE_FILTER } from './list/constants';
 import { DebouncedInput } from './list/DebouncedInput';
 import { TableReport } from './list/types';
+import { FILTER_KEY, SORT_KEY } from './list/urlState';
 
 export const FilterContainer = styled.div`
   padding: 20px;
@@ -32,8 +36,8 @@ const useDataForReportManager = ({
 }: {
   wellboreFilter: string;
 }) => {
-  const { data: roles } = useUserRoles();
-  const { data: reports, isLoading } = useAllReportsQuery();
+  const { data: roles, isLoading: isLoadingRoles } = useUserRoles();
+  const { data: reports, isLoading: isLoadingReports } = useAllReportsQuery();
   const { data: users } = useUserList({
     ids: getUserIdsFromReports(reports || []),
   });
@@ -43,7 +47,9 @@ const useDataForReportManager = ({
     adaptReportsForList({ reports, users }).then((data) => {
       const filteredData = wellboreFilter
         ? data.filter((item) => {
-            return item.externalId?.includes(wellboreFilter);
+            return item.externalId
+              ?.toLowerCase()
+              ?.includes(wellboreFilter.toLowerCase());
           })
         : data;
 
@@ -51,7 +57,11 @@ const useDataForReportManager = ({
     });
   }, [reports, users, wellboreFilter]);
 
-  return { data: processedData, isLoading, isAdmin: roles?.isAdmin };
+  return {
+    data: processedData,
+    isLoading: isLoadingReports || isLoadingRoles,
+    isAdmin: roles?.isAdmin,
+  };
 };
 
 export const ReportManager: React.FC = () => {
@@ -60,6 +70,7 @@ export const ReportManager: React.FC = () => {
   const { data, isLoading, isAdmin } = useDataForReportManager({
     wellboreFilter: searchFilter,
   });
+  const urlSetter = useSetUrlParams();
 
   const handleReportUpdate = async (
     report: Partial<Report>,
@@ -73,8 +84,24 @@ export const ReportManager: React.FC = () => {
     }
   };
 
+  const handleSearchInputChange = (value: string | number) => {
+    setSearchFilter(String(value));
+    urlSetter(`${URL_PARAM_WELLBORE_FILTER}=${value}`, {
+      preserveKeyFilters: [SORT_KEY, FILTER_KEY],
+    });
+  };
+
+  // apply initial filter
+  React.useLayoutEffect(() => {
+    const params = getSearchParamsFromCurrentUrl();
+    if (params[URL_PARAM_WELLBORE_FILTER]) {
+      setSearchFilter(params[URL_PARAM_WELLBORE_FILTER]);
+    }
+  }, []);
+
+  // loading is so fast we don't want to show anything
   if (isLoading) {
-    return <div>Loading...</div>;
+    return null;
   }
 
   return (
@@ -82,7 +109,7 @@ export const ReportManager: React.FC = () => {
       <FilterContainer>
         <DebouncedInput
           value={searchFilter}
-          onChange={(value) => setSearchFilter(value as string)}
+          onChange={handleSearchInputChange}
           placeholder="Search wellbores"
           icon="Search"
         />

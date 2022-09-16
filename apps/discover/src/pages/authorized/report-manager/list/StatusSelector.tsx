@@ -75,6 +75,9 @@ export const StatusSelector = ({
   };
 
   const StyledContainer = containers[value];
+  if (!StyledContainer) {
+    return <>Error: {value}</>;
+  }
 
   if (isAdmin) {
     return (

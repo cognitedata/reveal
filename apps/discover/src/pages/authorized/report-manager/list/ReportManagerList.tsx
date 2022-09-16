@@ -9,7 +9,6 @@ import * as React from 'react';
 
 import { RankingInfo, rankItem } from '@tanstack/match-sorter-utils';
 import {
-  // Column,
   useReactTable,
   ExpandedState,
   ColumnFiltersState,
@@ -19,18 +18,17 @@ import {
   getFacetedUniqueValues,
   getFacetedMinMaxValues,
   getExpandedRowModel,
-  getPaginationRowModel,
   getSortedRowModel,
   FilterFn,
   ColumnDef,
   flexRender,
   SortingState,
-  // Row,
 } from '@tanstack/react-table';
 import { getSearchParamsFromCurrentUrl } from 'utils/url';
 import { useSetUrlParams } from 'utils/url/setUrlParams';
 
 import { ColumnFilter } from './ColumnFilter';
+import { URL_PARAM_WELLBORE_FILTER } from './constants';
 import {
   HeaderPadded,
   ExpandableRow,
@@ -44,7 +42,8 @@ import {
   SubRowContainer,
   MainRowContainer,
 } from './elements';
-import { RowHoverComponent } from './RowHoverComponent';
+import { RowHoverComponentReport } from './RowHoverComponentReport';
+import { RowHoverComponentWellbore } from './RowHoverComponentWellbore';
 import { StatusSelector } from './StatusSelector';
 import { TableColumnSortIcons } from './TableColumnSortIcons';
 import { TableReport, UpdateReport } from './types';
@@ -91,7 +90,9 @@ export const ReportManagerList: React.FC<Props> = ({
 
   const existingParams = getParamsForUrl({ sorting, filters: columnFilters });
   React.useEffect(() => {
-    urlSetter(existingParams);
+    urlSetter(existingParams, {
+      preserveKeys: [URL_PARAM_WELLBORE_FILTER],
+    });
   }, [existingParams]);
 
   // apply initial filters/sorting
@@ -107,7 +108,7 @@ export const ReportManagerList: React.FC<Props> = ({
       {
         header: () => <HeaderPadded>Wellbore / Data sets</HeaderPadded>,
         accessorKey: 'externalId',
-        filterFn: 'fuzzy',
+        enableColumnFilter: false,
         minSize: 300,
         cell: ({ row, getValue }) => {
           if (row.getCanExpand()) {
@@ -134,7 +135,6 @@ export const ReportManagerList: React.FC<Props> = ({
         header: () => 'Status',
         accessorKey: 'status',
         filterFn: 'fuzzy',
-        // sortingFn: 'myCustomSorting',
         minSize: 100,
         footer: (props) => props.column.id,
         cell: ({ getValue, row }) => {
@@ -190,32 +190,6 @@ export const ReportManagerList: React.FC<Props> = ({
     filterFns: {
       fuzzy: fuzzyFilter,
     },
-    // sortingFns: {
-    //   myCustomSorting: (
-    //     rowA: Row<TableReport>,
-    //     rowB: Row<TableReport>,
-    //     columnId: keyof TableReport
-    //   ): number => {
-    //     console.log('rowA', columnId, rowA);
-    //     console.log('rowB', rowB);
-    //     if (rowA.depth === 0) {
-    //       return rowA.original.id || 1;
-    //     }
-    //     if (rowB.depth === 0) {
-    //       return rowB.original.id || 1;
-    //     }
-    //     if (!rowA.getValue(columnId)) {
-    //       return rowA.original.id || 1;
-    //     }
-    //     if (!rowB.getValue(columnId)) {
-    //       return rowB.original.id || 1;
-    //     }
-
-    //     return rowA.getValue(columnId).value < rowB.getValue(columnId).value
-    //       ? 1
-    //       : -1;
-    //   },
-    // },
     state: {
       sorting,
       expanded,
@@ -227,7 +201,6 @@ export const ReportManagerList: React.FC<Props> = ({
     onSortingChange: setSorting,
     getSubRows: (row) => row.subRows,
     getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getExpandedRowModel: getExpandedRowModel(),
     getSortedRowModel: getSortedRowModel(),
@@ -247,8 +220,10 @@ export const ReportManagerList: React.FC<Props> = ({
     }
   }, []);
 
+  const tableContainerRef = React.useRef<HTMLDivElement>(null);
+
   return (
-    <TableContainer>
+    <TableContainer ref={tableContainerRef}>
       <table>
         <HeadContainer>
           {table.getHeaderGroups().map((headerGroup) => (
@@ -297,6 +272,10 @@ export const ReportManagerList: React.FC<Props> = ({
           {table.getRowModel().rows.map((row) => {
             const RowContainer =
               row.depth > 0 ? SubRowContainer : MainRowContainer;
+            const RowHoverComponent =
+              row.depth > 0
+                ? RowHoverComponentReport
+                : RowHoverComponentWellbore;
             return (
               <RowContainer key={row.id}>
                 {row.getVisibleCells().map((cell) => {

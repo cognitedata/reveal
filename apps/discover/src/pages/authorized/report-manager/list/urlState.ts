@@ -5,8 +5,8 @@ import {
   ColumnFilter,
 } from '@tanstack/react-table';
 
-const SORT_KEY = 'sort_';
-const FILTER_KEY = 'filter_';
+export const SORT_KEY = 'sort_';
+export const FILTER_KEY = 'filter_';
 
 const sortingToUrlParams = (items: SortingState) => {
   return items.reduce((results, item) => {

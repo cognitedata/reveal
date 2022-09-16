@@ -5,36 +5,23 @@ import { Row } from '@tanstack/react-table';
 
 import { Button, Tooltip } from '@cognite/cogs.js';
 
-import { ViewButton } from 'components/Buttons';
-// import { Tooltip } from 'components/Tooltip';
-
+import { URL_PARAM_WELLBORE_FILTER } from './constants';
 import { HoverContentWrapper } from './elements';
 import { TableReport } from './types';
 
-// export const renderRowHoverComponent = React.useCallback(({ row }: any) => {
-export const RowHoverComponent: React.FC<{ row: Row<TableReport> }> = ({
+export const RowHoverComponentWellbore: React.FC<{ row: Row<TableReport> }> = ({
   row,
 }) => {
-  const pathToCopy = `test-path-${row.original.id}`;
-
-  const handleView = (row: Row<TableReport>) => {
-    console.log('Open report:', row.original);
-  };
+  const pathToCopy = `${window.location.origin}${window.location.pathname}?${URL_PARAM_WELLBORE_FILTER}=${row.original.externalId}`;
 
   return (
     <HoverContentWrapper>
-      <ViewButton
-        hideIcon
-        data-testid={`view-report-${row.original.id}`}
-        onClick={() => handleView(row)}
-      />
       <Tooltip content="Copy to clipboard">
         <CopyToClipboard text={pathToCopy}>
           <Button
             aria-label="Copy path"
             icon="Copy"
             size="small"
-            type="ghost"
             data-testid="report-url-copy-icon"
           />
         </CopyToClipboard>
