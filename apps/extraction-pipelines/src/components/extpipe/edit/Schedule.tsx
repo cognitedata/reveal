@@ -24,7 +24,7 @@ import {
   createUpdateSpec,
   useDetailsUpdate,
 } from 'hooks/details/useDetailsUpdate';
-import { ColumnForm, Hint, StyledLabel } from 'components/styled';
+import { ColumnForm, Hint } from 'components/styled';
 import { scheduleSchema } from 'utils/validation/extpipeSchemas';
 import { ScheduleSelector } from 'components/inputs/ScheduleSelector';
 import { OptionTypeBase } from 'react-select';
@@ -50,7 +50,6 @@ interface ScheduleProps {
 export const Schedule: FunctionComponent<ScheduleProps> = ({
   extpipe,
   name,
-  label,
   canEdit,
 }: PropsWithChildren<ScheduleProps>) => {
   const { t } = useTranslation();
@@ -155,7 +154,7 @@ export const Schedule: FunctionComponent<ScheduleProps> = ({
 
   const whenEditing = (
     <>
-      <HintStyled>{t('schedule-hint')}</HintStyled>
+      <Hint>{t('schedule-hint')}</Hint>
       <ScheduleWrapper>
         <ScheduleSelector
           inputId="schedule-selector"
@@ -197,16 +196,11 @@ export const Schedule: FunctionComponent<ScheduleProps> = ({
   return (
     <FormProvider {...methods}>
       <ColumnForm onSubmit={handleSubmit(onSave)}>
-        <StyledLabel htmlFor="schedule-selector">{label}</StyledLabel>
         {isEdit ? whenEditing : whenNotEditing()}
       </ColumnForm>
     </FormProvider>
   );
 };
-
-const HintStyled = styled(Hint)`
-  margin-left: 1rem;
-`;
 
 export const CronWrapper = styled(DivFlex)`
   margin: 1rem 0 1rem 2rem;
@@ -222,7 +216,6 @@ const ScheduleWrapper = styled(DivFlex)`
   display: grid;
   grid-template-areas: 'select btns' 'cron cron';
   grid-template-columns: 1fr auto;
-  padding: 0 1rem;
   grid-gap: 0.5rem;
   .cogs-select {
     grid-area: select;

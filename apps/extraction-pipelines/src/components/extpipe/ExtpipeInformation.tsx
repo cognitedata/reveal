@@ -32,58 +32,82 @@ export const ExtpipeInformation = ({ canEdit }: Props) => {
 
   return (
     <>
-      <Section title="Basic information" icon="World">
-        <div style={{ padding: '1rem 0' }}>
-          <InlineEdit
-            name="description"
-            hintText={'description-hint'}
-            placeholder={t('description-placeholder')}
-            label={t('description')}
-            canEdit={canEdit}
-            schema={metaDescriptionSchema}
-            defaultValues={{ description: extpipe?.description }}
-            fullWidth
-            updateFn={rootUpdate({ extpipe, name: 'description' })}
-            marginBottom
-            showLabel
-          />
-          <EditDataSetId canEdit={canEdit} />
-          <InlineEdit
-            name="source"
-            hintText={t('source-hint')}
-            placeholder={t('source-placeholder')}
-            label={t('source')}
-            canEdit={canEdit}
-            schema={sourceSchema}
-            updateFn={rootUpdate({ extpipe, name: 'source' })}
-            defaultValues={{
-              source: extpipe?.source,
-            }}
-            fullWidth
-            showLabel
-            marginBottom
-          />
-          <InlineEdit
-            name="externalId"
-            hintText={t('external-id-hint')}
-            placeholder={t('external-id-placeholder')}
-            label={t('external-id')}
-            canEdit={canEdit}
-            schema={yup.object().shape(externalIdRule)}
-            defaultValues={{ externalId: extpipe?.externalId }}
-            fullWidth
-            updateFn={rootUpdate({ extpipe, name: 'externalId' })}
-            marginBottom
-            showLabel
-          />
-          <Schedule
-            name="schedule"
-            extpipe={extpipe}
-            label={t('schedule')}
-            canEdit={canEdit}
-          />
-        </div>
-      </Section>
+      <Section
+        title="Basic information"
+        icon="World"
+        items={[
+          {
+            key: 'description',
+            title: t('description'),
+            value: (
+              <InlineEdit
+                name="description"
+                hintText={t('description-hint')}
+                placeholder={t('description-placeholder')}
+                label={t('description')}
+                canEdit={canEdit}
+                schema={metaDescriptionSchema}
+                defaultValues={{ description: extpipe?.description }}
+                fullWidth
+                updateFn={rootUpdate({ extpipe, name: 'description' })}
+              />
+            ),
+          },
+          {
+            key: 'data-set-id',
+            title: t('data-set'),
+            value: <EditDataSetId canEdit={canEdit} />,
+          },
+          {
+            key: 'source',
+            title: t('source'),
+            value: (
+              <InlineEdit
+                name="source"
+                hintText={t('source-hint')}
+                placeholder={t('source-placeholder')}
+                label={t('source')}
+                canEdit={canEdit}
+                schema={sourceSchema}
+                updateFn={rootUpdate({ extpipe, name: 'source' })}
+                defaultValues={{
+                  source: extpipe?.source,
+                }}
+                fullWidth
+              />
+            ),
+          },
+          {
+            key: 'external-id',
+            title: t('external-id'),
+            value: (
+              <InlineEdit
+                name="externalId"
+                hintText={t('external-id-hint')}
+                placeholder={t('external-id-placeholder')}
+                label={t('external-id')}
+                canEdit={canEdit}
+                schema={yup.object().shape(externalIdRule)}
+                defaultValues={{ externalId: extpipe?.externalId }}
+                fullWidth
+                updateFn={rootUpdate({ extpipe, name: 'externalId' })}
+              />
+            ),
+          },
+          {
+            key: 'schedule',
+            title: t('schedule'),
+            value: (
+              <Schedule
+                name="schedule"
+                extpipe={extpipe}
+                label={t('schedule')}
+                canEdit={canEdit}
+              />
+            ),
+          },
+        ]}
+      />
       <NotificationSection extpipe={extpipe} canEdit={canEdit} />
       <ContactsSection canEdit={canEdit} />
       <RawTablesSection canEdit={canEdit} />
