@@ -6,7 +6,6 @@ import React, { useEffect, useRef } from 'react';
 import {
   AddModelOptions,
   Cognite3DViewer,
-  CognitePointCloudModel,
   SupportedModelTypes
 } from '@cognite/reveal-3.x';
 
@@ -17,7 +16,7 @@ type OwnProps = {
   modelType?: SupportedModelTypes;
 };
 
-export default function Cognite3DViewerDemo({
+export function Cognite3DViewerDemo({
   client,
   modelId,
   revisionId,

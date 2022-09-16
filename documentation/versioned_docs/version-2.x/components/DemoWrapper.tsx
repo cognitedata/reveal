@@ -2,30 +2,19 @@
  * Copyright 2021 Cognite AS
  */
 
-import React, { ComponentType, Suspense } from 'react';
+import React, { Suspense } from 'react';
 import styled from 'styled-components';
-import { DemoProps } from './DemoProps';
+import { DemoLoginCover } from './DemoLoginCover';
 import { CogniteClient } from '@cognite/sdk-2.x';
+import { Cognite3DViewerDemo } from './Cognite3DViewerDemo';
 import { env } from '@site/versioned_docs/version-2.x/utils/env';
 
 const DemoContainer = styled.div`
-  height: calc(min(85vh, 600px));
-  display: flex;
-  flex-direction: column;
-  margin-bottom: var(--ifm-leading);
+    height: calc(min(85vh, 600px));
+    display: flex;
+    flex-direction: column;
+    margin-bottom: var(--ifm-leading);
 `;
-
-// any component that has client-side only code couldn't be imported directly (it fails SSR)
-const DemoLoginCover = React.lazy(() => import('./DemoLoginCover'));
-
-const components: Record<string, ComponentType<DemoProps>> = {
-  Cognite3DViewerDemo: React.lazy(() =>
-    import('@site/versioned_docs/version-2.x/demos/Cognite3DViewerDemo')
-  ),
-  ModelPreviewDemo: React.lazy(() =>
-    import('@site/versioned_docs/version-2.x/demos/ModelPreviewDemo')
-  ),
-};
 
 // demo wrapper just wraps the demo. don't pass modelId/revisionId to it, they defined in demos
 // different demos might have different ids, e.g. pointcloud/cad
@@ -44,10 +33,6 @@ export function DemoWrapper({
   if (typeof window === 'undefined') {
     return <div />;
   }
-  let LazyComponent = components[name];
-  if (!LazyComponent) {
-    throw new Error(`Demo component with the name "${name}" is not found.`);
-  }
 
   let modelAndRevisionIds =
     ids || (modelType === 'pointcloud' ? env.pointCloud : env.cad);
@@ -58,7 +43,7 @@ export function DemoWrapper({
         <Suspense fallback={<div>Loading demo...</div>}>
           <DemoLoginCover>
             {(client: CogniteClient) => (
-              <LazyComponent
+              <Cognite3DViewerDemo
                 client={client}
                 {...rest}
                 modelId={modelAndRevisionIds.modelId}
