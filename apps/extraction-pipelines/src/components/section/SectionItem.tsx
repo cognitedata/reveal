@@ -23,7 +23,7 @@ const SectionItem = ({
             {title}
           </Body>
         )}
-        <StyledItemValue>{value}</StyledItemValue>
+        <StyledItemValue>{value ?? '-'}</StyledItemValue>
       </div>
       {extraContent && <div>{extraContent}</div>}
     </StyledItemContainer>

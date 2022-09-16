@@ -59,9 +59,13 @@ const StyledSectionContainer = styled.div`
   background: ${Colors['surface--muted']};
   box-shadow: ${Elevations['elevation--surface--interactive']};
   border-radius: 8px;
+
+  margin-bottom: 12px;
 `;
 
 const StyledSectionHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
   padding: 16px;
 `;
 
