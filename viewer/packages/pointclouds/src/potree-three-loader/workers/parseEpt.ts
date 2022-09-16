@@ -1,6 +1,6 @@
 import { StylableObject } from '../../styling/StylableObject';
 import { AABB, Vec3 } from '../../styling/shapes/linalg';
-import { assignPointsToObjectsWithWasm } from './assignPointsWithWasm';
+import { assignPointsToObjectsWithWasm } from './assignPointsToObjectsWithWasm';
 
 import * as THREE from 'three';
 

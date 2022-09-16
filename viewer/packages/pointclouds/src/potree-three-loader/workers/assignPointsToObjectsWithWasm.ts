@@ -34,7 +34,7 @@ function createSerializedObject(obj: StylableObject): SerializedPointCloudObject
       };
     }
     case ShapeType.Composite: {
-      throw Error('Composite types should not be sent to the parser worker, they should be decomposed first');
+      throw Error('Cannot assign points to objects - encountered unexpected composite object');
     }
     default:
       assertNever(obj.shape.shapeType);
