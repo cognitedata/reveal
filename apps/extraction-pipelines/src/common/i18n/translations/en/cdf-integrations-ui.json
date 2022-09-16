@@ -40,6 +40,8 @@
   "data-set-not-exist": "Data set with name/id: {{dataset}} does not exist",
   "data-sets": "Data sets",
   "database-name": "Database name",
+  "data-set-403": "You do not have access to read data set details",
+  "data-set-generic-error": "An error occurred when fetching data set details",
   "date-range-end-label": "Date range end time",
   "date-range-start-label": "Date range start time",
   "delete": "Delete",
