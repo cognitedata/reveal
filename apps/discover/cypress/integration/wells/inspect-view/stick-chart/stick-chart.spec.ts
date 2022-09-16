@@ -116,23 +116,23 @@ describe('Wells: stick chart', () => {
 
   it('Should be able to expand & collapse charts', () => {
     cy.log('expand trajectory graph');
-    cy.findAllByTestId('Expand').first().click();
+    cy.get('[aria-label="Expand"]').first().click();
 
     cy.log('trajectory graph should visible');
     cy.findAllByText(DEFAULT_TRAJECTORY_CHART_TITLE).should('be.visible');
 
     cy.log('collapse trajectory graph');
-    cy.findAllByTestId('Collapse').first().click();
+    cy.get('[aria-label="Collapse"]').first().click();
     cy.findAllByText(DEFAULT_TRAJECTORY_CHART_TITLE).should('not.exist');
 
     cy.log('expand FIT LOT graph');
-    cy.findAllByTestId('Expand').eq(1).click();
+    cy.get('[aria-label="Expand"]').eq(1).click();
 
     cy.log('FIT LOT graph should visible');
     cy.findAllByText(FIT_LOT_CHART_TITLE).should('be.visible');
 
     cy.log('collapse FIT LOT graph');
-    cy.findAllByTestId('Collapse').first().click();
+    cy.get('[aria-label="Collapse"]').first().click();
     cy.findAllByText(FIT_LOT_CHART_TITLE).should('not.exist');
   });
 
