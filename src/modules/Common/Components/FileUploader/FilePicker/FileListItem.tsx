@@ -66,6 +66,9 @@ function FileStatusColumn({ file }: FileStatusColumnProps) {
       </>
     );
   }
+  if (file.status === 'metadata created') {
+    return <DetailStyled strong>metadata created</DetailStyled>;
+  }
   if (file.status === 'uploading') {
     return (
       <Progress
@@ -104,6 +107,7 @@ const FileListItemContainer = styled.div`
   .sizeAndStatus {
     display: flex;
     justify-content: flex-end;
+    align-items: center;
     color: inherit !important;
     width: 200px;
   }

@@ -8,6 +8,7 @@ import React, { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'src/store/rootReducer';
 import { useHistory } from 'react-router-dom';
+import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
 import { PopulateProcessFiles } from 'src/store/thunks/Process/PopulateProcessFiles';
 import { getLink, workflowRoutes } from 'src/utils/workflowRoutes';
 
@@ -36,6 +37,12 @@ export const ExplorerFileUploadModalContainer = ({
     dispatch(setExplorerFileUploadModalVisibility(false));
   }, []);
 
+  const onCancelFileUpload = useCallback((fileId: number) => {
+    if (fileId) {
+      dispatch(DeleteFilesById({ fileIds: [fileId] }));
+    }
+  }, []);
+
   const onFinishUpload = useCallback(
     (processAfter: boolean) => {
       if (processAfter) {
@@ -55,6 +62,7 @@ export const ExplorerFileUploadModalContainer = ({
       onFinishUpload={onFinishUpload}
       showModal={showFileUploadModal}
       onCancel={onCancel}
+      onCancelUpload={onCancelFileUpload}
     />
   );
 };
