@@ -22,10 +22,9 @@ import {
   StyledTextArea,
 } from 'components/styled';
 import { MarkdownView } from 'components/markDown/MarkdownView';
-import { Button, Graphic } from '@cognite/cogs.js';
+import { A, Button, Graphic } from '@cognite/cogs.js';
 import Section from 'components/section';
 import { trackUsage } from 'utils/Metrics';
-import { ExternalLink } from 'components/links/ExternalLink';
 import { useTranslation } from 'common';
 import { MASTERING_MARKDOWN_LINK } from 'utils/utils';
 
@@ -109,9 +108,10 @@ export const DocumentationSection: FunctionComponent<
     <>
       <p style={{ margin: '3rem 0', textAlign: 'center' }}>
         {t('ext-pipeline-how-to-edit-info-1')}{' '}
-        <ExternalLink href={MASTERING_MARKDOWN_LINK}>
+        <A href={MASTERING_MARKDOWN_LINK}>
           {t('ext-pipeline-how-to-edit-info-2')}
-        </ExternalLink>{' '}
+        </A>
+        &nbsp;
         {t('ext-pipeline-how-to-edit-info-3')}
       </p>
       <Button onClick={onEditClick} disabled={!canEdit} icon="Add" type="link">
@@ -137,9 +137,7 @@ export const DocumentationSection: FunctionComponent<
     <>
       <Hint className="hint">
         {t('ext-pipeline-edit-info-1')}{' '}
-        <ExternalLink href={MASTERING_MARKDOWN_LINK}>
-          {t('ext-pipeline-edit-info-2')}
-        </ExternalLink>
+        <A href={MASTERING_MARKDOWN_LINK}>{t('ext-pipeline-edit-info-2')}</A>
       </Hint>
       <ValidationError errors={errors as FieldErrors} name="documentation" />
       <StyledTextArea
