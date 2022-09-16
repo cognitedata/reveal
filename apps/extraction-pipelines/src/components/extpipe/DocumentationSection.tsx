@@ -18,12 +18,10 @@ import {
   bottomSpacing,
   CountSpan,
   DivFlex,
-  EditButton,
   Hint,
   StyledTextArea,
 } from 'components/styled';
 import { MarkdownView } from 'components/markDown/MarkdownView';
-import { AddFieldInfoText } from 'components/message/AddFieldInfoText';
 import { Button, Graphic } from '@cognite/cogs.js';
 import Section from 'components/section';
 import { trackUsage } from 'utils/Metrics';
@@ -116,16 +114,9 @@ export const DocumentationSection: FunctionComponent<
         </ExternalLink>{' '}
         {t('ext-pipeline-how-to-edit-info-3')}
       </p>
-      <EditButton
-        showPencilIcon={false}
-        type="ghost"
-        onClick={onEditClick}
-        disabled={!canEdit}
-      >
-        <AddFieldInfoText dataTestId="add-documentation">
-          {t('documentation', { postProcess: 'lowercase' })}
-        </AddFieldInfoText>
-      </EditButton>
+      <Button onClick={onEditClick} disabled={!canEdit} icon="Add" type="link">
+        {t('add-documentation')}
+      </Button>
     </>
   );
   const infoNoDocumentation = (
