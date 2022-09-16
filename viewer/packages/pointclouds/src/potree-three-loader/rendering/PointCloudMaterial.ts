@@ -48,7 +48,7 @@ import { generateClassificationTexture, generateDataTexture, generateGradientTex
 import { IClassification, IUniform } from './types';
 import { SpectralGradient } from './gradients/SpectralGradient';
 import { PointCloudObjectAppearanceTexture } from './PointCloudObjectAppearanceTexture';
-import { ObjectsMaps } from '../../styling/PointCloudObjectProvider';
+import { ObjectsMaps } from '../../styling/PointCloudObjectAnnotationData';
 
 export interface IPointCloudMaterialParameters {
   size: number;

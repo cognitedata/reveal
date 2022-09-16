@@ -1,25 +1,20 @@
 /*!
- * Copyright 2022 Cognite AS
- */
-
-/*!
  * Copyright 2021 Cognite AS
  */
 
-import { PotreeNodeWrapper } from '../PotreeNodeWrapper';
-import { PointCloudMetadata } from '../PointCloudMetadata';
+import { PotreeNodeWrapper } from './PotreeNodeWrapper';
+import { PointCloudMetadata } from './PointCloudMetadata';
+import { Potree } from './potree-three-loader';
+import { DEFAULT_POINT_CLOUD_METADATA_FILE } from './constants';
+import { IAnnotationProvider } from './styling/IAnnotationProvider';
 
-import { Potree } from '../potree-three-loader';
-import { DEFAULT_POINT_CLOUD_METADATA_FILE } from '../constants';
-
-import { PointCloudObjectProvider } from '../styling/PointCloudObjectProvider';
-import { PointCloudFactory } from '../IPointCloudFactory';
-
-export class LocalPointCloudFactory implements PointCloudFactory {
+export class PointCloudFactory {
   private readonly _potreeInstance: Potree;
+  private readonly _annotationProvider: IAnnotationProvider;
 
-  constructor(potreeInstance: Potree) {
+  constructor(potreeInstance: Potree, annotationProvider: IAnnotationProvider) {
     this._potreeInstance = potreeInstance;
+    this._annotationProvider = annotationProvider;
   }
 
   get potreeInstance(): Potree {
@@ -29,7 +24,7 @@ export class LocalPointCloudFactory implements PointCloudFactory {
   async createModel(modelMetadata: PointCloudMetadata): Promise<PotreeNodeWrapper> {
     const { modelBaseUrl, modelIdentifier } = modelMetadata;
 
-    const annotationInfo = new PointCloudObjectProvider([]);
+    const annotationInfo = await this._annotationProvider.getAnnotations(modelIdentifier);
 
     const pointCloudOctree = await this._potreeInstance.loadPointCloud(
       modelBaseUrl,

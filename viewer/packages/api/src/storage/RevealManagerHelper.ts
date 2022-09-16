@@ -14,7 +14,7 @@ import { assertNever, SceneHandler } from '@reveal/utilities';
 
 import { CadNode } from '@reveal/cad-model';
 import { CogniteClient } from '@cognite/sdk';
-import { PointCloudNode } from '@reveal/pointclouds';
+import { LocalAnnotationProvider, PointCloudNode } from '@reveal/pointclouds';
 
 /**
  * Helper for {@link RevealManager} for creating a uniform interface for
@@ -86,18 +86,17 @@ export class RevealManagerHelper {
     renderer: THREE.WebGLRenderer,
     sceneHandler: SceneHandler,
     revealOptions: RevealOptions,
-    dataSource: DataSource,
-    sdkClient?: CogniteClient | undefined
+    dataSource: DataSource
   ): RevealManagerHelper {
     const revealManager = createRevealManager(
       'custom-datasource',
       'custom-datasource-app',
       dataSource.getModelMetadataProvider(),
       dataSource.getModelDataProvider(),
+      new LocalAnnotationProvider(),
       renderer,
       sceneHandler,
-      revealOptions,
-      sdkClient
+      revealOptions
     );
     // Note! We consider custom data sources 'CDF-type' as we use CDF model identifiers
     // for custom data sources too.

@@ -8,7 +8,7 @@ import * as THREE from 'three';
 import { StyledPointCloudObjectCollection } from '../../styling/StyledPointCloudObjectCollection';
 import { PointCloudObjectCollection } from '../../styling/PointCloudObjectCollection';
 import { DefaultPointCloudAppearance, CompletePointCloudAppearance } from '../../styling/PointCloudAppearance';
-import { ObjectsMaps } from '../../styling/PointCloudObjectProvider';
+import { ObjectsMaps } from '../../styling/PointCloudObjectAnnotationData';
 
 export class PointCloudObjectAppearanceTexture {
   private _objectStyleTexture: THREE.DataTexture;

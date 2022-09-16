@@ -2,14 +2,14 @@
  * Copyright 2022 Cognite AS
  */
 
-import { CdfPointCloudFactory } from './CdfPointCloudFactory';
-
 import { CogniteClient } from '@cognite/sdk';
 
 import { Mock } from 'moq.ts';
-import { PointCloudMetadata } from '../PointCloudMetadata';
 import { Potree, PointCloudOctree, PointCloudMaterial } from '../potree-three-loader';
-import { PotreeNodeWrapper } from '../PotreeNodeWrapper';
+import { ShapeType } from './shapes/IShape';
+import { CompositeShape } from './shapes/CompositeShape';
+import { CdfAnnotationProvider } from './CdfAnnotationProvider';
+import { CdfModelIdentifier } from '@reveal/modeldata-api';
 
 const dummyAnnotationsResponse = {
   items: [
@@ -53,53 +53,30 @@ const potreeMock = new Mock<Potree>()
     )
   );
 
-describe(CdfPointCloudFactory.name, () => {
-  let factory: CdfPointCloudFactory;
-  let model: PotreeNodeWrapper;
+describe(CdfAnnotationProvider.name, () => {
+  let annotationProvider: CdfAnnotationProvider;
 
   beforeEach(async () => {
-    factory = new CdfPointCloudFactory(potreeMock.object(), sdkMock.object());
-    model = await factory.createModel({
-      modelBaseUrl: 'dummy-url',
-      modelIdentifier: { revealInternalId: Symbol() }
-    } as PointCloudMetadata);
+    annotationProvider = new CdfAnnotationProvider(sdkMock.object());
   });
 
   test('contains right annotation IDs for annotations provided by SDK', async () => {
     const expectedIds = [123, 124];
 
-    const gottenIds = model.stylableObjects.map(obj => obj.annotationId);
+    const gottenIds = (await annotationProvider.getAnnotations(new CdfModelIdentifier(123, 456))).annotations.map(
+      obj => obj.annotationId
+    );
 
     expect(gottenIds.length).toEqual(expectedIds.length);
     expect(gottenIds).toContainAllValues(expectedIds);
   });
 
-  test('contains right geometries for annotations provided by SDK', async () => {
-    const expectedContainedPoints: [number, number, number][] = [
-      [-0.03, 0.1, -500],
-      [0.4, -0.4, 0]
-    ];
-    const expectedUncontainedPoints: [number, number, number][] = [
-      [1, 1, 1],
-      [300, 300, 300]
-    ];
+  test('contains right geometry types for annotations provided by SDK', async () => {
+    const shapes = (await annotationProvider.getAnnotations(new CdfModelIdentifier(123, 456))).annotations.map(
+      obj => obj.stylableObject.shape
+    );
 
-    const shapes = model.stylableObjects.map(obj => obj.stylableObject.shape);
-
-    function containedInAnyShape(p: [number, number, number]): boolean {
-      let contained = false;
-      for (const shape of shapes) {
-        contained ||= shape.containsPoint(p);
-      }
-      return contained;
-    }
-
-    for (const expectedContainedPoint of expectedContainedPoints) {
-      expect(containedInAnyShape(expectedContainedPoint)).toBeTrue();
-    }
-
-    for (const expectedUncontainedPoint of expectedUncontainedPoints) {
-      expect(containedInAnyShape(expectedUncontainedPoint)).toBeFalse();
-    }
+    expect((shapes[0] as CompositeShape).innerShapes[0].shapeType).toEqual(ShapeType.Cylinder);
+    expect((shapes[1] as CompositeShape).innerShapes[0].shapeType).toEqual(ShapeType.Box);
   });
 });

@@ -5,7 +5,20 @@
 use wasm_bindgen::prelude::*;
 extern crate console_error_panic_hook;
 
-mod add_three;
+#[cfg(test)]
+mod test_setup {
+    use wasm_bindgen_test::wasm_bindgen_test_configure;
+
+    wasm_bindgen_test_configure!(run_in_browser);
+}
+
+mod linalg;
+mod parse_inputs;
+mod point_octree;
+mod shapes;
+
+use linalg::BoundingBox;
+use parse_inputs::InputBoundingBox;
 
 fn init() -> () {
     // This provides better error messages in debug mode.
@@ -15,14 +28,38 @@ fn init() -> () {
 }
 
 #[wasm_bindgen]
-pub fn add_three(input: u32) -> u32 {
+pub fn assign_points(
+    input_objects: Vec<JsValue>,
+    input_points: js_sys::Float32Array,
+    input_bounding_box: js_sys::Object,
+    input_point_offset: Vec<f64>,
+) -> Result<js_sys::Uint16Array, String> {
     init();
 
-    use web_sys::console;
-    console::log_1(&JsValue::from_str(&format!(
-        "[add_three.rs] Retrieved the input number {}",
-        input
-    )));
+    let mut point_vec = parse_inputs::parse_points(&input_points, input_point_offset);
+    let bounding_box: BoundingBox = input_bounding_box
+        .into_serde::<InputBoundingBox>()
+        .map_err(|serde_error| {
+            format!(
+                "Got error while deserializing bounding box: {}",
+                serde_error
+            )
+        })?
+        .into();
 
-    add_three::add_three(input)
+    let shape_vec = parse_inputs::try_parse_objects(input_objects)?;
+
+    let object_ids = js_sys::Uint16Array::new_with_length(input_points.length() / 3).fill(
+        0,
+        0,
+        input_points.length() / 3,
+    );
+
+    let octree = point_octree::PointOctree::new(bounding_box, &mut point_vec);
+
+    shape_vec.iter().for_each(|shape| {
+        octree.assign_object_ids(&shape.create_bounding_box(), shape, &object_ids);
+    });
+
+    Ok(object_ids)
 }

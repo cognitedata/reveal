@@ -2,7 +2,7 @@
  * Copyright 2022 Cognite AS
  */
 
-import { CognitePointCloudModel, PointCloudMaterial } from '@reveal/pointclouds/';
+import { PointCloudMaterial, PointCloudNode } from '@reveal/pointclouds';
 import { SceneHandler, WebGLRendererStateHelper } from '@reveal/utilities';
 import * as THREE from 'three';
 import { RenderPass } from '../RenderPass';
@@ -26,9 +26,11 @@ export class PointCloudEffectsPass implements RenderPass {
     try {
       camera.layers.mask = getLayerMask(RenderLayer.PointCloud);
 
-      this._sceneHandler.pointCloudModels.forEach(model =>
-        this.setMaterialParameters((model.object as CognitePointCloudModel).pointCloudNode.potreeNode.octree.material)
-      );
+      this._sceneHandler.pointCloudModels.forEach(model => {
+        // TODO, Håkon Flatval Sep. 12 2022: Make SceneHandler operate on PointCloudNode directly
+        const pointCloudNode = (model.object as any).pointCloudNode as PointCloudNode;
+        return this.setMaterialParameters(pointCloudNode.potreeNode.octree.material);
+      });
 
       this.setRendererParameters(rendererStateHelper);
 

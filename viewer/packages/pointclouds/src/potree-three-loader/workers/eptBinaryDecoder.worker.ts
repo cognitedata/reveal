@@ -2,11 +2,10 @@
  * Copyright 2022 Cognite AS
  */
 
-import { RawStylableObject, rawToStylableObject } from '../../styling/StylableObject';
-
 import { parseEpt, EptInputData, ParsedEptData } from './parseEpt';
-import { Vec3 } from '../../styling/shapes/linalg';
+import { AABB, Vec3 } from '../../styling/shapes/linalg';
 import { setupTransferableMethodsOnWorker } from '@reveal/utilities';
+import { StylableObject } from '../../styling/StylableObject';
 
 setupTransferableMethodsOnWorker({
   parse: {
@@ -29,11 +28,11 @@ setupTransferableMethodsOnWorker({
 
 export async function parse(
   data: EptInputData,
-  objects: RawStylableObject[],
-  pointOffset: Vec3
-): Promise<ParsedEptData> {
-  const objectList = objects.map(rawToStylableObject);
-  return parseEpt(data, objectList, pointOffset);
+  objects: StylableObject[],
+  pointOffset: Vec3,
+  boundingBox: AABB
+): Promise<ParsedEptData | Error> {
+  return parseEpt(data, objects, pointOffset, boundingBox).catch(e => e as Error);
 }
 
 function assertDefined(buffer: ArrayBuffer | undefined): buffer is ArrayBuffer {
