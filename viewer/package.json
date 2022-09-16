@@ -68,7 +68,7 @@
     "three-stdlib": "2.15.0"
   },
   "devDependencies": {
-    "@azure/msal-browser": "2.28.2",
+    "@azure/msal-browser": "2.28.3",
     "@cognite/sdk": "7.8.4",
     "@cognite/sdk-core": "4.4.0",
     "@types/dat.gui": "0.7.7",
