@@ -49,7 +49,7 @@ export interface AssetTableProps
 export const AssetTable = (props: AssetTableProps) => {
   const { onRowClick = () => {}, data } = props;
 
-  const columns: Column<AssetWithRelationshipLabels>[] = useMemo(
+  const columns = useMemo(
     () => [
       Table.Columns.name,
       Table.Columns.description,
@@ -59,30 +59,24 @@ export const AssetTable = (props: AssetTableProps) => {
         Header: 'Root Asset',
         accessor: 'rootId',
         Cell: ({ value }) => (
-          <ParentCell rootId={value} onRowClick={onRowClick} />
+          <ParentCell rootId={value!} onRowClick={onRowClick} />
         ),
       },
-      Table.Columns.createdTime,
+      Table.Columns.created,
       Table.Columns.labels,
     ],
     [onRowClick]
-  );
+  ) as Column<AssetWithRelationshipLabels>[];
 
   const isRelationshipTable = props?.relatedResourceType === 'relationship';
 
   return (
     <Table<AssetWithRelationshipLabels>
-      columns={getNewColumnsWithRelationshipLabels(
+      columns={getNewColumnsWithRelationshipLabels<AssetWithRelationshipLabels>(
         columns,
         isRelationshipTable
       )}
-      isColumnSelectEnabled
-      hiddenColumns={[
-        'parentExternalId',
-        'createdTime',
-        'description',
-        'labels',
-      ]}
+      visibleColumns={['name', 'rootId']}
       data={data || []}
       onRowClick={onRowClick}
     />

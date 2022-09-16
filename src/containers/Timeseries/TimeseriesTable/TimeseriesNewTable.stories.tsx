@@ -3,10 +3,10 @@ import styled from 'styled-components';
 import { action } from '@storybook/addon-actions';
 import { timeseries } from 'stubs/timeseries';
 import { ComponentStory } from '@storybook/react';
-import { TimeseriesTable } from './TimeseriesTable';
+import { TimeseriesTable } from './TimeseriesNewTable';
 
 export default {
-  title: 'Time Series/TimeseriesTable',
+  title: 'Time Series/TimeseriesNewTable',
   component: TimeseriesTable,
   decorators: [(storyFn: any) => <Container>{storyFn()}</Container>],
   argTypes: { query: { control: 'text' } },
@@ -17,16 +17,7 @@ export const Example: ComponentStory<typeof TimeseriesTable> = args => (
 );
 Example.args = {
   data: timeseries,
-  onItemClicked: action('onItemClicked'),
-};
-
-export const ExampleSingleSelect: ComponentStory<
-  typeof TimeseriesTable
-> = args => <TimeseriesTable {...args} />;
-ExampleSingleSelect.args = {
-  selectionMode: 'single',
-  items: timeseries,
-  onItemClicked: action('onItemClicked'),
+  onRowClick: action('onItemClicked'),
 };
 
 const Container = styled.div`

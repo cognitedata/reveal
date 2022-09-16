@@ -22,9 +22,9 @@ export interface TableProps<T extends Record<string, any>>
   columns: Column<T>[];
   isSortingEnabled?: boolean;
   isStickyHeader?: boolean;
-  isColumnSelectEnabled?: boolean;
+
   onSort?: (props: OnSortProps<T>) => void;
-  hiddenColumns?: IdType<T>[];
+  visibleColumns?: IdType<T>[];
   isKeyboardNavigationEnabled?: boolean;
   onRowClick?: (
     row?: T,
@@ -52,8 +52,8 @@ export function NewTable<T extends TableData>({
   columns,
   onRowClick = () => {},
   onSort,
-  hiddenColumns = [],
-  isColumnSelectEnabled = false,
+  visibleColumns = [],
+
   isSortingEnabled = false,
   isStickyHeader = false,
   isKeyboardNavigationEnabled = true,
@@ -67,6 +67,15 @@ export function NewTable<T extends TableData>({
     isKeyboardNavigationEnabled && useCellSelection,
     useFlexLayout,
   ].filter(Boolean) as PluginHook<T>[];
+
+  const allFields = columns.map(col => col.accessor);
+
+  const hiddenColumns =
+    visibleColumns.length === 0
+      ? []
+      : (allFields.filter(
+          col => !visibleColumns.some(visibleColumn => visibleColumn === col)
+        ) as IdType<T>[]);
 
   const {
     getTableProps,
@@ -102,7 +111,7 @@ export function NewTable<T extends TableData>({
 
   return (
     <TableContainer>
-      {isColumnSelectEnabled && (
+      {hiddenColumns.length > 0 && (
         <ColumnSelectorWrapper>
           <Flex justifyContent="flex-end">
             <ColumnToggle<T>

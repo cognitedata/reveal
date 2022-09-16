@@ -127,4 +127,5 @@ export const LocalStorageFileContextKey = 'LocalStorageFileContextKey';
 export interface RelationshipLabels {
   relationshipLabels?: string[];
   relation?: string;
+  relatedResourceType?: string;
 }

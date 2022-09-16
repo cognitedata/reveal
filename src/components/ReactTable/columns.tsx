@@ -1,13 +1,19 @@
 import { Body, Flex, Tag, Tooltip } from '@cognite/cogs.js';
+import { useCdfItem } from '@cognite/sdk-react-query-hooks';
+import { DataSet } from '@cognite/sdk/dist/src';
 import { HighlightCell, TimeDisplay } from 'components';
+import { TimeseriesWithRelationshipLabels } from 'containers';
 import { AssetWithRelationshipLabels } from 'containers/Assets/AssetTable/AssetNewTable';
-import { uniqueId } from 'lodash';
+import capitalize from 'lodash/capitalize';
+import uniqueId from 'lodash/uniqueId';
 import React from 'react';
 import { Column } from 'react-table';
 import styled from 'styled-components';
 
 export interface ResourceTableHashMap {
-  [key: string]: Column<AssetWithRelationshipLabels>;
+  [key: string]: Column<
+    TimeseriesWithRelationshipLabels & AssetWithRelationshipLabels
+  >;
 }
 
 export const ResourceTableColumns: ResourceTableHashMap = {
@@ -26,28 +32,14 @@ export const ResourceTableColumns: ResourceTableHashMap = {
     accessor: 'externalId',
     Cell: ({ value }) => <HighlightCell text={value} />,
   },
-  createdTime: {
-    Header: 'Created Time',
+  created: {
+    Header: 'Created',
     accessor: 'createdTime',
     Cell: ({ value }) => (
       <Body level={2}>
         <TimeDisplay value={value} />
       </Body>
     ),
-  },
-  relationshipLabels: {
-    Header: 'Relationship Labels',
-    accessor: 'relationshipLabels',
-    Cell: ({ value }: { value: string[] }) => (
-      <Flex gap={2} wrap="wrap">
-        {value?.map((label: string) => (
-          <Tooltip content={label} key={uniqueId()}>
-            <StyledTag style={{ display: 'block' }}>{label}</StyledTag>
-          </Tooltip>
-        ))}
-      </Flex>
-    ),
-    maxWidth: 250,
   },
   relation: {
     Header: 'Relationship Description(Source/Target)',
@@ -81,6 +73,55 @@ export const ResourceTableColumns: ResourceTableHashMap = {
   parentExternalId: {
     Header: 'Parent External ID',
     accessor: 'parentExternalId',
+  },
+  unit: {
+    Header: 'Unit',
+    accessor: 'unit',
+  },
+
+  id: {
+    Header: 'ID',
+    accessor: 'id',
+  },
+  isString: {
+    Header: 'Is String',
+    accessor: 'isString',
+    Cell: ({ value }) => <Body level={3}>{capitalize(value.toString())}</Body>,
+  },
+  isStep: {
+    Header: 'Is Step',
+    accessor: 'isStep',
+    Cell: ({ value }) => <Body level={3}>{capitalize(value.toString())}</Body>,
+  },
+  dataSet: {
+    Header: 'Dataset',
+    accessor: 'dataSetId',
+    Cell: ({ value }) => {
+      const { data: ds } = useCdfItem<DataSet>(
+        'datasets',
+        { id: value! },
+        {
+          enabled: Number.isFinite(value),
+        }
+      );
+      return <Body level={3}>{(ds && ds?.name) || 'Not set'}</Body>;
+    },
+  },
+  assets: {
+    Header: 'Asset(s)',
+    accessor: 'assetId',
+    Cell: ({ value }) => {
+      const { data: item, isFetched } = useCdfItem<{ name?: string }>(
+        'assets',
+        {
+          id: value!,
+        },
+        {
+          enabled: Boolean(value),
+        }
+      );
+      return value && isFetched ? <Body level={3}>{item?.name}</Body> : null;
+    },
   },
 };
 

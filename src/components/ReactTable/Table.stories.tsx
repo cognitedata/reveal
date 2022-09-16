@@ -168,13 +168,9 @@ export const ExampleWithColumnToggle: ComponentStory<typeof Table> = args => {
       {...args}
       data={data}
       columns={columns}
-      hiddenColumns={['col3']}
+      visibleColumns={['col1', 'col2']}
     />
   );
-};
-
-ExampleWithColumnToggle.args = {
-  isColumnSelectEnabled: true,
 };
 
 ExampleWithColumnToggle.play = async ({ canvasElement }) => {
