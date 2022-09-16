@@ -12,13 +12,12 @@ module.exports = {
       apiKey: '9ba8640575bd74e729c9e6a29dfb8a78',
       indexName: 'reveal-docs',
 
-      // doesn't look like it works for 1.x and next. Looks like 'next' considered unversioned
-      // so next is excluded from the search below by using facetFilters
-      contextualSearch: true,
+      contextualSearch: false,
 
       // Optional: Algolia search parameters
       searchParameters: {
         // https://www.algolia.com/doc/api-reference/api-parameters/facetFilters/?client=javascript
+        // Excludes 'next'
         facetFilters: [['version:1.x', 'version:2.x', 'version:3.x']],
       },
 
