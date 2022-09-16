@@ -7,7 +7,7 @@ import {
   POST_FAVORITES_ALIAS,
 } from '../../support/interceptions';
 
-describe('Creating Favorites', () => {
+describe.skip('Creating Favorites', () => {
   before(() => {
     cy.deleteAllFavorites();
   });
