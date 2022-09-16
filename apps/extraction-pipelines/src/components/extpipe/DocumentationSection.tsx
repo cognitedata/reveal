@@ -25,7 +25,7 @@ import {
 import { MarkdownView } from 'components/markDown/MarkdownView';
 import { AddFieldInfoText } from 'components/message/AddFieldInfoText';
 import { Button, Graphic } from '@cognite/cogs.js';
-import { Section } from 'components/extpipe/Section';
+import Section from 'components/section';
 import { trackUsage } from 'utils/Metrics';
 import { ExternalLink } from 'components/links/ExternalLink';
 import { useTranslation } from 'common';
@@ -199,19 +199,30 @@ export const DocumentationSection: FunctionComponent<
   return (
     <Section
       title={t('documentation')}
+      extraButton={{
+        children: 'Edit',
+        disabled: !canEdit,
+        onClick: onEditClick,
+        size: 'small',
+        type: 'ghost',
+      }}
       icon="Documentation"
-      titleButton={{ onClick: onEditClick, enabled: canEdit }}
-      dataTestId="documentation"
-    >
-      <DocumentationForm onSubmit={handleSubmit(onValid)}>
-        {isEdit ? whenEditing : whenNotEditing}
-      </DocumentationForm>
-    </Section>
+      data-testid="documentation"
+      items={[
+        {
+          key: 'documentation',
+          value: (
+            <DocumentationForm onSubmit={handleSubmit(onValid)}>
+              {isEdit ? whenEditing : whenNotEditing}
+            </DocumentationForm>
+          ),
+        },
+      ]}
+    />
   );
 };
 
 const DocumentationForm = styled.form`
-  padding: 0 1rem;
   .hint {
     grid-area: hint;
   }
