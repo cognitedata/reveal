@@ -8,8 +8,7 @@ import RawTablesSection from 'components/inputs/rawSelector/RawTablesSection';
 import { ContactsSection } from 'components/extpipe/ContactsSection';
 import { MetaDataSection } from 'components/extpipe/MetaDataSection';
 import { EditDataSetId } from 'components/extpipe/edit/EditDataSetId';
-import { Section } from 'components/extpipe/Section';
-import NewSection from 'components/section';
+import Section from 'components/section';
 import { NotificationSection } from 'components/extpipe/NotificationSection';
 import {
   externalIdRule,
@@ -34,60 +33,62 @@ export const ExtpipeInformation = ({ canEdit }: Props) => {
   return (
     <>
       <Section title="Basic information" icon="World">
-        <InlineEdit
-          name="description"
-          hintText={'description-hint'}
-          placeholder={t('description-placeholder')}
-          label={t('description')}
-          canEdit={canEdit}
-          schema={metaDescriptionSchema}
-          defaultValues={{ description: extpipe?.description }}
-          fullWidth
-          updateFn={rootUpdate({ extpipe, name: 'description' })}
-          marginBottom
-          showLabel
-        />
-        <EditDataSetId canEdit={canEdit} />
-        <InlineEdit
-          name="source"
-          hintText={t('source-hint')}
-          placeholder={t('source-placeholder')}
-          label={t('source')}
-          canEdit={canEdit}
-          schema={sourceSchema}
-          updateFn={rootUpdate({ extpipe, name: 'source' })}
-          defaultValues={{
-            source: extpipe?.source,
-          }}
-          fullWidth
-          showLabel
-          marginBottom
-        />
-        <InlineEdit
-          name="externalId"
-          hintText={t('external-id-hint')}
-          placeholder={t('external-id-placeholder')}
-          label={t('external-id')}
-          canEdit={canEdit}
-          schema={yup.object().shape(externalIdRule)}
-          defaultValues={{ externalId: extpipe?.externalId }}
-          fullWidth
-          updateFn={rootUpdate({ extpipe, name: 'externalId' })}
-          marginBottom
-          showLabel
-        />
-        <Schedule
-          name="schedule"
-          extpipe={extpipe}
-          label={t('schedule')}
-          canEdit={canEdit}
-        />
+        <div style={{ padding: '1rem 0' }}>
+          <InlineEdit
+            name="description"
+            hintText={'description-hint'}
+            placeholder={t('description-placeholder')}
+            label={t('description')}
+            canEdit={canEdit}
+            schema={metaDescriptionSchema}
+            defaultValues={{ description: extpipe?.description }}
+            fullWidth
+            updateFn={rootUpdate({ extpipe, name: 'description' })}
+            marginBottom
+            showLabel
+          />
+          <EditDataSetId canEdit={canEdit} />
+          <InlineEdit
+            name="source"
+            hintText={t('source-hint')}
+            placeholder={t('source-placeholder')}
+            label={t('source')}
+            canEdit={canEdit}
+            schema={sourceSchema}
+            updateFn={rootUpdate({ extpipe, name: 'source' })}
+            defaultValues={{
+              source: extpipe?.source,
+            }}
+            fullWidth
+            showLabel
+            marginBottom
+          />
+          <InlineEdit
+            name="externalId"
+            hintText={t('external-id-hint')}
+            placeholder={t('external-id-placeholder')}
+            label={t('external-id')}
+            canEdit={canEdit}
+            schema={yup.object().shape(externalIdRule)}
+            defaultValues={{ externalId: extpipe?.externalId }}
+            fullWidth
+            updateFn={rootUpdate({ extpipe, name: 'externalId' })}
+            marginBottom
+            showLabel
+          />
+          <Schedule
+            name="schedule"
+            extpipe={extpipe}
+            label={t('schedule')}
+            canEdit={canEdit}
+          />
+        </div>
       </Section>
       <NotificationSection extpipe={extpipe} canEdit={canEdit} />
       <ContactsSection canEdit={canEdit} />
       <RawTablesSection canEdit={canEdit} />
       <MetaDataSection canEdit={canEdit} />
-      <NewSection
+      <Section
         icon="Info"
         title={t('about-ext-pipeline')}
         items={[
