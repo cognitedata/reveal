@@ -24,6 +24,10 @@ import {
   setExplorerSelectedFiles,
   setSelectedAllExplorerFiles,
   setDefaultTimestampKey,
+  setExploreModalCurrentPage,
+  setExploreModalPageSize,
+  setExploreModalReverse,
+  setExploreModalSortKey,
 } from 'src/modules/Explorer/store/slice';
 import { selectExplorerAllFilesSelected } from 'src/modules/Explorer/store/selectors';
 import {
@@ -67,9 +71,42 @@ export const ExplorerSearchResults = ({
     ({ explorerReducer }: RootState) => explorerReducer.mapTableTabKey
   );
 
-  const sortPaginateState = useSelector(
-    ({ explorerReducer }: RootState) => explorerReducer.sortMeta
+  const sortPaginateState = useSelector(({ explorerReducer }: RootState) =>
+    currentView === 'modal'
+      ? explorerReducer.exploreModal.sortMeta
+      : explorerReducer.sortMeta
   );
+
+  const sortPaginateStateControls =
+    currentView === 'modal'
+      ? {
+          setSortKey: (sortKey: string) => {
+            dispatch(setExploreModalSortKey(sortKey));
+          },
+          setReverse: (reverse: boolean) => {
+            dispatch(setExploreModalReverse(reverse));
+          },
+          setCurrentPage: (currentPage: number) => {
+            dispatch(setExploreModalCurrentPage(currentPage));
+          },
+          setPageSize: (pageSize: PageSize) => {
+            dispatch(setExploreModalPageSize(pageSize));
+          },
+        }
+      : {
+          setSortKey: (sortKey: string) => {
+            dispatch(setSortKey(sortKey));
+          },
+          setReverse: (reverse: boolean) => {
+            dispatch(setReverse(reverse));
+          },
+          setCurrentPage: (currentPage: number) => {
+            dispatch(setCurrentPage(currentPage));
+          },
+          setPageSize: (pageSize: PageSize) => {
+            dispatch(setPageSize(pageSize));
+          },
+        };
 
   const defaultTimestampKey = useSelector(
     ({ explorerReducer }: RootState) =>
@@ -101,18 +138,10 @@ export const ExplorerSearchResults = ({
       reverse: sortPaginateState.reverse,
       currentPage: sortPaginateState.currentPage,
       pageSize: sortPaginateState.pageSize,
-      setSortKey: (sortKey: string) => {
-        dispatch(setSortKey(sortKey));
-      },
-      setReverse: (reverse: boolean) => {
-        dispatch(setReverse(reverse));
-      },
-      setCurrentPage: (currentPage: number) => {
-        dispatch(setCurrentPage(currentPage));
-      },
-      setPageSize: (pageSize: PageSize) => {
-        dispatch(setPageSize(pageSize));
-      },
+      setSortKey: sortPaginateStateControls.setSortKey,
+      setReverse: sortPaginateStateControls.setReverse,
+      setCurrentPage: sortPaginateStateControls.setCurrentPage,
+      setPageSize: sortPaginateStateControls.setPageSize,
     }),
     [sortPaginateState]
   );
