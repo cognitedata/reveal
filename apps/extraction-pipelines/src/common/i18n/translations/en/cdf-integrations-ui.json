@@ -113,6 +113,7 @@
   "no-access": "You have insufficient access rights to access this feature",
   "no-access-desc": "To access this page you must have one of the following capabilities:",
   "no-activity-alert": "Send an alert if there has been no activity for",
+  "no-contact-added": "No contact added",
   "no-contact-added-desc": "There are currently no contacts that will receive notifications. You can manage this in the contact section.",
   "no-create-access": "You have insufficient access rights to create an extraction pipeline.",
   "no-data-available": "No data is available for this criteria.",

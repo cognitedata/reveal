@@ -31,7 +31,6 @@ const SectionItem = ({
 };
 
 const StyledItemContainer = styled.div`
-  align-items: center;
   display: flex;
   gap: 12px;
   justify-content: space-between;

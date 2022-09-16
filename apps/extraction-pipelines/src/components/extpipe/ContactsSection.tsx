@@ -1,12 +1,10 @@
 import React, { FunctionComponent, useState } from 'react';
 import { useSelectedExtpipe } from 'hooks/useExtpipe';
-import { User } from 'model/User';
-import { AddFieldValueBtn } from 'components/buttons/AddFieldValueBtn';
 import { EditModal } from 'components/modals/EditModal';
 import { ContactsDialog, isOwnerRole } from 'components/extpipe/ContactsDialog';
 import styled from 'styled-components';
-import { Section } from 'components/extpipe/Section';
-import { Icon } from '@cognite/cogs.js';
+import Section from 'components/section';
+import { Flex, Icon, Label } from '@cognite/cogs.js';
 import { useTranslation } from 'common';
 interface ContactsViewProps {
   canEdit: boolean;
@@ -38,56 +36,7 @@ export const ContactsSection: FunctionComponent<ContactsViewProps> = ({
   };
 
   return (
-    <Section
-      title={t('contacts')}
-      icon="Users"
-      titleButton={{ onClick: openEdit, enabled: canEdit }}
-    >
-      {contacts && contacts.length > 0 ? (
-        <div css="padding: 0 1rem;">
-          <Column>
-            {contactsSorted.map((contact: User) => {
-              return (
-                <div
-                  css="display: flex; align-items: center; justify-content: space-between; gap: 1rem"
-                  key={contact.email}
-                >
-                  <div>
-                    <div>
-                      <span>{contact.name}</span>
-                    </div>
-                    <div css="line-height: 1.5rem">
-                      <a href={`mailto:${contact.email}`}>{contact.email}</a>
-                      {contact.sendNotification && (
-                        <Icon
-                          type="BellFilled"
-                          size={12}
-                          css="margin-left: 6px; vertical-align: middle;"
-                        />
-                      )}
-                    </div>
-                  </div>
-                  <div
-                    css={`
-                      color: #777;
-                      text-align: right;
-                      font-weight: ${contact.role === 'Owner'
-                        ? 'bold'
-                        : 'normal'};
-                    `}
-                  >
-                    {contact.role}
-                  </div>
-                </div>
-              );
-            })}
-          </Column>
-        </div>
-      ) : (
-        <AddFieldValueBtn canEdit={canEdit} onClick={openEdit}>
-          {t('contacts', { postProcess: 'lowercase' })}
-        </AddFieldValueBtn>
-      )}
+    <>
       <EditModal
         title={t('contacts')}
         visible={showModal}
@@ -96,7 +45,44 @@ export const ContactsSection: FunctionComponent<ContactsViewProps> = ({
       >
         <ContactsDialog close={closeModal} />
       </EditModal>
-    </Section>
+      <Section
+        extraButton={{
+          children: 'Edit',
+          disabled: !canEdit,
+          onClick: openEdit,
+          size: 'small',
+          type: 'ghost',
+        }}
+        title={t('contacts')}
+        icon="Users"
+        items={
+          contacts && contacts.length > 0
+            ? contactsSorted.map((contact) => ({
+                key: contact.email,
+                extraContent: (
+                  <Label size="small" variant="unknown">
+                    {contact.role}
+                  </Label>
+                ),
+                title: contact.name,
+                value: (
+                  <Flex alignItems="center" gap={4}>
+                    <a href={`mailto:${contact.email}`}>{contact.email}</a>
+                    {contact.sendNotification && (
+                      <Icon type="BellFilled" size={12} />
+                    )}
+                  </Flex>
+                ),
+              }))
+            : [
+                {
+                  key: 'contacts',
+                  value: t('no-contact-added'),
+                },
+              ]
+        }
+      />
+    </>
   );
 };
 
