@@ -8,7 +8,7 @@ import {
 import { interceptCoreNetworkRequests } from '../../../support/commands/helpers';
 import { WELL_SOURCE_WITH_ALL } from '../../../support/constants';
 
-describe('Three-dee component', () => {
+describe.skip('Three-dee component', () => {
   beforeEach(() => {
     const coreRequests = interceptCoreNetworkRequests();
     cy.addWaitForWdlResources('sources', 'GET', 'getSources');
