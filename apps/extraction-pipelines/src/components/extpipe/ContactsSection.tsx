@@ -4,7 +4,7 @@ import { EditModal } from 'components/modals/EditModal';
 import { ContactsDialog, isOwnerRole } from 'components/extpipe/ContactsDialog';
 import styled from 'styled-components';
 import Section from 'components/section';
-import { Flex, Icon, Label } from '@cognite/cogs.js';
+import { Button, Flex, Icon, Label } from '@cognite/cogs.js';
 import { useTranslation } from 'common';
 interface ContactsViewProps {
   canEdit: boolean;
@@ -46,13 +46,16 @@ export const ContactsSection: FunctionComponent<ContactsViewProps> = ({
         <ContactsDialog close={closeModal} />
       </EditModal>
       <Section
-        extraButton={{
-          children: 'Edit',
-          disabled: !canEdit,
-          onClick: openEdit,
-          size: 'small',
-          type: 'ghost',
-        }}
+        extra={
+          <Button
+            disabled={!canEdit}
+            onClick={openEdit}
+            size="small"
+            type="ghost"
+          >
+            Edit
+          </Button>
+        }
         title={t('contacts')}
         icon="Users"
         items={

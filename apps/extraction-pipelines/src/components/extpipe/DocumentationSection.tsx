@@ -199,13 +199,16 @@ export const DocumentationSection: FunctionComponent<
   return (
     <Section
       title={t('documentation')}
-      extraButton={{
-        children: 'Edit',
-        disabled: !canEdit,
-        onClick: onEditClick,
-        size: 'small',
-        type: 'ghost',
-      }}
+      extra={
+        <Button
+          disabled={!canEdit}
+          onClick={onEditClick}
+          size="small"
+          type="ghost"
+        >
+          Edit
+        </Button>
+      }
       icon="Documentation"
       data-testid="documentation"
       items={[

@@ -7,6 +7,7 @@ import { Hint } from 'components/styled';
 import { StyledTitle3 } from 'components/styled';
 import Section from 'components/section';
 import { useTranslation } from 'common';
+import { Button } from '@cognite/cogs.js';
 
 interface MetaProps {
   testId?: string;
@@ -35,13 +36,16 @@ export const MetaDataSection = ({ canEdit }: PropsWithChildren<MetaProps>) => {
         <EditMetaData close={closeDialog} />
       </EditModal>
       <Section
-        extraButton={{
-          children: 'Edit',
-          disabled: !canEdit,
-          onClick: openDialog,
-          size: 'small',
-          type: 'ghost',
-        }}
+        extra={
+          <Button
+            disabled={!canEdit}
+            onClick={openDialog}
+            size="small"
+            type="ghost"
+          >
+            Edit
+          </Button>
+        }
         title={t('meta-data')}
         icon="DataTable"
         items={

@@ -3,7 +3,7 @@ import { Extpipe } from 'model/Extpipe';
 import { RawEditModal } from 'components/modals/RawEditModal';
 import { TEST_ID_BTN_SAVE } from 'components/extpipe/DocumentationSection';
 import { useSelectedExtpipe } from 'hooks/useExtpipe';
-import { Body, Colors, Flex, Icon } from '@cognite/cogs.js';
+import { Body, Button, Colors, Flex, Icon } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import Section from 'components/section';
 import { createLink } from '@cognite/cdf-utilities';
@@ -56,13 +56,16 @@ const EditRawTable: FunctionComponent<{ canEdit: boolean }> = ({ canEdit }) => {
     <>
       <RawEditModal visible={showRawModal} close={closeDialog} />
       <Section
-        extraButton={{
-          children: 'Edit',
-          disabled: !canEdit,
-          onClick: openDialog,
-          size: 'small',
-          type: 'ghost',
-        }}
+        extra={
+          <Button
+            disabled={!canEdit}
+            onClick={openDialog}
+            size="small"
+            type="ghost"
+          >
+            Edit
+          </Button>
+        }
         title="RAW tables"
         icon="TableViewSmall"
         data-testid={`${TEST_ID_BTN_SAVE}rawTable`}

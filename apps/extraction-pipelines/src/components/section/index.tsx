@@ -1,8 +1,6 @@
 import React from 'react';
 
 import {
-  Button,
-  ButtonProps,
   Colors,
   Elevations,
   Flex,
@@ -15,7 +13,7 @@ import styled from 'styled-components';
 import SectionItem, { SectionItemProps } from './SectionItem';
 
 type SectionProps = {
-  extraButton?: ButtonProps;
+  extra?: React.ReactNode;
   icon: IconType;
   title: string;
 } & (
@@ -31,7 +29,7 @@ type SectionProps = {
 
 const Section = ({
   children,
-  extraButton,
+  extra,
   icon,
   items = [],
   title,
@@ -43,15 +41,7 @@ const Section = ({
           <Icon type={icon} />
           <Title level={6}>{title}</Title>
         </Flex>
-        {extraButton && (
-          <Button
-            {...extraButton}
-            onClick={(e) => {
-              e.stopPropagation();
-              extraButton.onClick?.(e);
-            }}
-          />
-        )}
+        {extra}
       </StyledSectionHeader>
       {children}
       {items.length > 0 && (

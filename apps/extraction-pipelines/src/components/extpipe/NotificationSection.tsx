@@ -4,7 +4,7 @@ import { Extpipe } from 'model/Extpipe';
 import Section from 'components/section';
 import { useTranslation } from 'common';
 import { minutesToUnit } from 'utils/utils';
-import { Flex, Icon } from '@cognite/cogs.js';
+import { Button, Flex, Icon } from '@cognite/cogs.js';
 
 type NotificationSectionProps = {
   canEdit: boolean;
@@ -35,13 +35,16 @@ export const NotificationSection: FunctionComponent<
       <Section
         icon="Bell"
         title={t('notification', { count: 0 })}
-        extraButton={{
-          children: 'Edit',
-          disabled: !canEdit,
-          onClick: openDialog,
-          size: 'small',
-          type: 'ghost',
-        }}
+        extra={
+          <Button
+            disabled={!canEdit}
+            onClick={openDialog}
+            size="small"
+            type="ghost"
+          >
+            Edit
+          </Button>
+        }
         items={[
           {
             key: 'run-alerts',
