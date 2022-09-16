@@ -1,12 +1,10 @@
 import React, { FunctionComponent, PropsWithChildren, useState } from 'react';
-import { FieldWrapper } from 'components/extpipe/fields/FieldVerticalDisplay';
-import { StyledLabel } from 'components/styled';
-import { AddFieldValueBtn } from 'components/buttons/AddFieldValueBtn';
 import { NotificationDialog } from 'components/extpipe/NotificationDialog';
 import { Extpipe } from 'model/Extpipe';
-import { Section } from 'components/extpipe/Section';
+import Section from 'components/section';
 import { useTranslation } from 'common';
 import { minutesToUnit } from 'utils/utils';
+import { Flex, Icon } from '@cognite/cogs.js';
 
 type NotificationSectionProps = {
   canEdit: boolean;
@@ -26,32 +24,7 @@ export const NotificationSection: FunctionComponent<
   const [open, setOpen] = useState(false);
   const openDialog = () => setOpen(true);
   return (
-    <Section
-      icon="Bell"
-      title={t('notification', { count: 0 })}
-      titleButton={{ enabled: canEdit, onClick: openDialog }}
-    >
-      <FieldWrapper>
-        <StyledLabel htmlFor="nothing">{t('notification-setting')}</StyledLabel>
-      </FieldWrapper>
-
-      {extpipe.notificationConfig == null ||
-      extpipe.notificationConfig.allowedNotSeenRangeInMinutes == null ? (
-        <AddFieldValueBtn canEdit={canEdit} onClick={openDialog}>
-          {t('notification', { count: 1 })}
-        </AddFieldValueBtn>
-      ) : (
-        <FieldWrapper>
-          <div>
-            {t('notification-alert-info', {
-              duration: renderTime(
-                extpipe.notificationConfig.allowedNotSeenRangeInMinutes
-              ),
-            })}
-          </div>
-        </FieldWrapper>
-      )}
-
+    <>
       {open && (
         <NotificationDialog
           extpipe={extpipe}
@@ -59,6 +32,45 @@ export const NotificationSection: FunctionComponent<
           close={() => setOpen(false)}
         />
       )}
-    </Section>
+      <Section
+        icon="Bell"
+        title={t('notification', { count: 0 })}
+        extraButton={{
+          children: 'Edit',
+          disabled: !canEdit,
+          onClick: openDialog,
+          size: 'small',
+          type: 'ghost',
+        }}
+        items={[
+          {
+            key: 'run-alerts',
+            title: t('run-alerts'),
+            value: (
+              <Flex alignItems="center" gap={4}>
+                {t('notification-run-alert')}
+                <Icon type="BellFilled" size={12} />
+              </Flex>
+            ),
+          },
+          {
+            key: 'last-seen-status',
+            title: t('last-seen-status'),
+            value: extpipe.notificationConfig?.allowedNotSeenRangeInMinutes ? (
+              <Flex alignItems="center" gap={4}>
+                {t('notification-alert-info', {
+                  duration: renderTime(
+                    extpipe.notificationConfig.allowedNotSeenRangeInMinutes
+                  ),
+                })}
+                <Icon type="BellFilled" size={12} />
+              </Flex>
+            ) : (
+              t('not-configured-yet')
+            ),
+          },
+        ]}
+      />
+    </>
   );
 };
