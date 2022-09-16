@@ -8,6 +8,7 @@ import { StyledTitle3 } from 'components/styled';
 import Section from 'components/section';
 import { useTranslation } from 'common';
 import { Button } from '@cognite/cogs.js';
+import { uppercaseFirstWord } from 'utils/primitivesUtils';
 
 interface MetaProps {
   testId?: string;
@@ -52,7 +53,7 @@ export const MetaDataSection = ({ canEdit }: PropsWithChildren<MetaProps>) => {
           meta && Object.keys(meta)?.length !== 0
             ? Object.entries(meta).map(([key, value]) => ({
                 key,
-                title: key,
+                title: uppercaseFirstWord(key),
                 value,
               }))
             : [
