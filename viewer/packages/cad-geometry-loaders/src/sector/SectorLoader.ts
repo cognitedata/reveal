@@ -32,7 +32,6 @@ const SectorLoadingBatchSize = 20;
  */
 export class SectorLoader {
   private readonly _modelStateHandler: ModelStateHandler;
-  private readonly _v8SectorCuller: SectorCuller;
   private readonly _progressCallback: (sectorsLoaded: number, sectorsScheduled: number, sectorsCulled: number) => void;
   private readonly _collectStatisticsCallback: (spent: SectorLoadingSpent) => void;
   private readonly _gltfSectorCuller: SectorCuller;
@@ -50,7 +49,6 @@ export class SectorLoader {
   ) {
     // TODO: add runtime initialization of culler and inject
     // the proper sector culler (create factory)
-    this._v8SectorCuller = sectorCuller;
     this._gltfSectorCuller = new ByScreenSizeSectorCuller();
 
     this._sectorDownloadScheduler = new SectorDownloadScheduler(SectorLoadingBatchSize);
@@ -117,16 +115,11 @@ export class SectorLoader {
     if (input.models.length == 0) {
       return false;
     }
-    if (isLegacyModelFormat(input.models[0].cadModelMetadata)) {
-      return !input.cameraInMotion;
-    }
     return this._continuousModelStreaming || !input.cameraInMotion;
   }
 
   private getSectorCuller(sectorCullerInput: DetermineSectorsInput): SectorCuller {
-    if (isLegacyModelFormat(sectorCullerInput.cadModelsMetadata[0])) {
-      return this._v8SectorCuller;
-    } else if (isGltfModelFormat(sectorCullerInput.cadModelsMetadata[0])) {
+    if (isGltfModelFormat(sectorCullerInput.cadModelsMetadata[0])) {
       return this._gltfSectorCuller;
     }
     throw new Error(`No supported sector culler for format ${sectorCullerInput.cadModelsMetadata[0].format}`);
@@ -185,10 +178,6 @@ class ProgressReportHelper {
   private triggerCallback() {
     this._progressCallback(this._sectorsLoaded, this._sectorsScheduled, this._sectorsCulled);
   }
-}
-
-function isLegacyModelFormat(model: CadModelMetadata): boolean {
-  return model.format === File3dFormat.RevealCadModel && model.formatVersion === 8;
 }
 
 function isGltfModelFormat(model: CadModelMetadata): boolean {

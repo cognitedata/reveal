@@ -7,7 +7,7 @@ import { BoundingBoxClipper } from './utilities/BoundingBoxClipper';
 import { GeometryFilter } from './types';
 
 import { SupportedModelTypes } from '@reveal/model-base';
-import { GltfSectorRepository, SectorRepository, V8SectorRepository } from '@reveal/sector-loader';
+import { GltfSectorRepository, SectorRepository } from '@reveal/sector-loader';
 import { CadMaterialManager } from '@reveal/rendering';
 import { CadModelMetadata, CadModelMetadataRepository, CadModelClipper } from '@reveal/cad-parsers';
 import { ModelDataProvider, ModelMetadataProvider, ModelIdentifier, File3dFormat } from '@reveal/modeldata-api';
@@ -18,7 +18,6 @@ export class CadModelFactory {
   private readonly _materialManager: CadMaterialManager;
   private readonly _modelDataProvider: ModelDataProvider;
   private readonly _cadModelMetadataRepository: CadModelMetadataRepository;
-  private _v8SectorRepository: V8SectorRepository | undefined;
   private _gltfSectorRepository: GltfSectorRepository | undefined;
 
   constructor(
@@ -63,12 +62,7 @@ export class CadModelFactory {
   }
 
   private getSectorRepository(format: File3dFormat, formatVersion: number): SectorRepository {
-    if (format === File3dFormat.RevealCadModel && formatVersion === 8) {
-      this._v8SectorRepository =
-        this._v8SectorRepository ?? new V8SectorRepository(this._modelDataProvider, this._materialManager);
-
-      return this._v8SectorRepository;
-    } else if (format === File3dFormat.GltfCadModel && formatVersion === 9) {
+    if (format === File3dFormat.GltfCadModel && formatVersion === 9) {
       this._gltfSectorRepository =
         this._gltfSectorRepository ?? new GltfSectorRepository(this._modelDataProvider, this._materialManager);
 
@@ -81,7 +75,6 @@ export class CadModelFactory {
   }
 
   dispose(): void {
-    this._v8SectorRepository?.clearCache();
     this._gltfSectorRepository?.clearCache();
   }
 }

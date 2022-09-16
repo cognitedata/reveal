@@ -9,7 +9,6 @@ import {
   SectorScene,
   CadModelMetadata,
   SectorGeometry,
-  InstancedMeshFile,
   RootSectorNode,
   WantedSector,
   ConsumedSector
@@ -17,7 +16,6 @@ import {
 import { SectorRepository } from '@reveal/sector-loader';
 import { ParsedGeometry } from '@reveal/sector-parser';
 import { CadMaterialManager, NodeTransformProvider, RenderMode, SectorQuads } from '@reveal/rendering';
-import { InstancedMeshManager } from '../batching/InstancedMeshManager';
 import { GeometryBatchingManager } from '../batching/GeometryBatchingManager';
 
 export type ParseCallbackDelegate = (parsed: { lod: string; data: SectorGeometry | SectorQuads }) => void;
@@ -25,7 +23,6 @@ export type ParseCallbackDelegate = (parsed: { lod: string; data: SectorGeometry
 export class CadNode extends THREE.Object3D {
   private readonly _cadModelMetadata: CadModelMetadata;
   private readonly _materialManager: CadMaterialManager;
-  private readonly _instancedMeshManager: InstancedMeshManager;
   private readonly _sectorRepository: SectorRepository;
 
   // savokr 01-04-22: These are made non-readonly because they need to be manually deleted when model is removed.
@@ -42,20 +39,14 @@ export class CadNode extends THREE.Object3D {
     this._materialManager = materialManager;
     this._sectorRepository = sectorRepository;
 
-    const instancedMeshGroup = new THREE.Group();
-    instancedMeshGroup.name = 'InstancedMeshes';
-
     const batchedGeometryMeshGroup = new THREE.Group();
     batchedGeometryMeshGroup.name = 'Batched Geometry';
-
-    this._instancedMeshManager = new InstancedMeshManager(instancedMeshGroup, materialManager);
 
     const materials = materialManager.getModelMaterials(model.modelIdentifier);
     this._geometryBatchingManager = new GeometryBatchingManager(batchedGeometryMeshGroup, materials);
 
     this._rootSector = new RootSectorNode(model);
 
-    this._rootSector.add(instancedMeshGroup);
     this._rootSector.add(batchedGeometryMeshGroup);
 
     this._cadModelMetadata = model;
@@ -146,20 +137,6 @@ export class CadNode extends THREE.Object3D {
 
   get prioritizedAreas(): PrioritizedArea[] {
     return this.nodeAppearanceProvider.getPrioritizedAreas();
-  }
-
-  public updateInstancedMeshes(
-    instanceMeshFiles: InstancedMeshFile[],
-    modelIdentifier: string,
-    sectorId: number
-  ): void {
-    for (const instanceMeshFile of instanceMeshFiles) {
-      this._instancedMeshManager.addInstanceMeshes(instanceMeshFile, modelIdentifier, sectorId);
-    }
-  }
-
-  public discardInstancedMeshes(sectorId: number): void {
-    this._instancedMeshManager.removeSectorInstancedMeshes(sectorId);
   }
 
   public batchGeometry(geometryBatchingQueue: ParsedGeometry[], sectorId: number): void {
