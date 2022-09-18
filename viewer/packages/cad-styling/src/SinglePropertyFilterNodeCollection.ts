@@ -10,6 +10,7 @@ import { CdfModelNodeCollectionDataProvider } from './CdfModelNodeCollectionData
 import { CogniteClient, HttpRequestOptions, ListResponse, Node3D } from '@cognite/sdk';
 
 import range from 'lodash/range';
+import chunk from 'lodash/chunk';
 import cloneDeep from 'lodash/cloneDeep';
 import { CdfNodeCollectionBase } from './CdfNodeCollectionBase';
 
@@ -98,11 +99,7 @@ export class SinglePropertyFilterNodeCollection extends CdfNodeCollectionBase {
 }
 
 function* splitQueryToBatches(propertyValues: string[]): Generator<string[]> {
-  const batchSize = 1000;
-  for (let i = 0; i < propertyValues.length; i += batchSize) {
-    const batch = propertyValues.slice(i, Math.min(propertyValues.length, i + batchSize));
-    yield batch;
-  }
+  return chunk(propertyValues, 1000);
 }
 
 type RawListResponse<T> = {

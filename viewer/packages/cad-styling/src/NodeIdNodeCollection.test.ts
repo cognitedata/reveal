@@ -32,10 +32,11 @@ describe(NodeIdNodeCollection.name, () => {
     mockModel.setup(x => x.mapBoxFromCdfToModelCoordinates(It.IsAny(), It.IsAny())).returns(new THREE.Box3());
   });
 
-  test('executeFilter with 1001 nodeIds throws', async () => {
+  test('executeFilter with 1001 nodeIds, splits into two chunks', async () => {
     const collection = new NodeIdNodeCollection(mockClient.object(), mockModel.object());
     const ids = range(0, 1001);
-    expect(() => collection.executeFilter(ids)).rejects.toThrowError();
+    expect(() => collection.executeFilter(ids)).resolves.not.toThrow();
+    mockRevisions3DAPI.verify(x => x.retrieve3DNodes(It.IsAny(), It.IsAny(), It.IsAny()), Times.Exactly(2));
   });
 
   test('executeFilter with 0 nodes, does not trigger any requests', async () => {
