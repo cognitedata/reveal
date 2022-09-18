@@ -53,19 +53,21 @@ export function DemoWrapper({
     ids || (modelType === 'pointcloud' ? env.pointCloud : env.cad);
 
   return (
-    <DemoContainer id="demo-wrapper">
-      <Suspense fallback={<div>Loading demo...</div>}>
-        <DemoLoginCover>
-          {(client: CogniteClient) => (
-            <LazyComponent
-              client={client}
-              {...rest}
-              modelId={modelAndRevisionIds.modelId}
-              revisionId={modelAndRevisionIds.revisionId}
-            />
-          )}
-        </DemoLoginCover>
-      </Suspense>
-    </DemoContainer>
+    <div>
+      <DemoContainer id="demo-wrapper">
+        <Suspense fallback={<div>Loading demo...</div>}>
+          <DemoLoginCover>
+            {(client: CogniteClient) => (
+              <LazyComponent
+                client={client}
+                {...rest}
+                modelId={modelAndRevisionIds.modelId}
+                revisionId={modelAndRevisionIds.revisionId}
+              />
+            )}
+          </DemoLoginCover>
+        </Suspense>
+      </DemoContainer>
+    </div>
   );
 }

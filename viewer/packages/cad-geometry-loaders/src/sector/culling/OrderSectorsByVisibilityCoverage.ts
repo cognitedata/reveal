@@ -467,7 +467,7 @@ export class GpuOrderSectorsByVisibilityCoverage implements OrderSectorsByVisibi
 
     const sectorCount = sectors.length;
     const instanceValues = new Float32Array(5 * sectorCount); // sectorId, coverageFactor[3], visibility
-    const boxGeometry = new THREE.BoxBufferGeometry();
+    const boxGeometry = new THREE.BoxGeometry();
     const mesh = new THREE.InstancedMesh(boxGeometry, this.coverageMaterial, sectorCount);
 
     const addSector = (sectorBounds: THREE.Box3, sectorIndex: number, sectorId: number, coverage: THREE.Vector3) => {

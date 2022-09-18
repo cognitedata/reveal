@@ -121,10 +121,16 @@ for (let q = 200; q < 300; q++) {
     names.push(name);
   }
 }
-nodeSet.executeFilter('Item', 'Name', names);
-
 model.setDefaultNodeAppearance(DefaultNodeAppearance.Ghosted);
 model.assignStyledNodeCollection(nodeSet, { renderGhosted: false, outlineColor: NodeOutlineColor.Orange } );
+
+nodeSet.executeFilter('Item', 'Name', names).then(() => {
+  // Create boxes around the areas to make it easier for users to find areas in the 3D model to explore
+  const areas = Array.from(nodeSet.getAreas().areas());
+  for (const area of areas) {
+    viewer.addObject3D(new THREE.Box3Helper(area));
+  }
+});
 ```
 
 ## Inverting filters

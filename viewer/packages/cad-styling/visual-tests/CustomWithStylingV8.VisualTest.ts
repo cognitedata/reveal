@@ -32,7 +32,7 @@ export default class CustomWithStylingV8VisualTest extends StreamingVisualTestFi
       .getModelNodeAppearanceProvider(modelIdentifier)
       .assignStyledNodeCollection(ghostedNodes, DefaultNodeAppearance.Ghosted);
 
-    const sphere = new THREE.SphereBufferGeometry(5, 32, 16);
+    const sphere = new THREE.SphereGeometry(5, 32, 16);
     const sphereMesh = new THREE.Mesh(sphere, new THREE.MeshBasicMaterial({ color: 'red' }));
     sphereMesh.position.set(12, 9, -2);
     sceneHandler.addCustomObject(sphereMesh);
