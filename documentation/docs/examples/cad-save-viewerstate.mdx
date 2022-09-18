@@ -100,7 +100,7 @@ containing any metadata for loading data (e.g. the number of API calls to fetch 
 The contents returned from `serialize` is contained in the result of `getViewState`.
 
 In addition to serialization, Reveal also needs to know how to recreate the custom `NodeCollection` during
-deserialization. This is done by calling the free-function `registerCustomNodeCollectionType` with the same `token`
+deserialization. This is done by calling the free-function `registerNodeCollectionType` with the same `token`
 defined by the custom `NodeCollection` and a lambda function which instantiates and restore the state of
 the `NodeCollection`. The lambda function has two parameters: the `descriptor` containing the state and
 options which should be applied to the `NodeCollection` and the context containing an instance of
@@ -112,7 +112,7 @@ An example of a simple custom `NodeCollection` can be seen below.
 For more information on creating a custom `NodeCollection`, see [create custom node collections](cad-styling-custom).
 
 ```js
-// import { IndexSet, NodeCollection, registerCustomNodeCollectionType } from '@cognite/reveal';
+// import { IndexSet, NodeCollection, registerNodeCollectionType } from '@cognite/reveal';
 
 class MyNodeCollection extends NodeCollection {
 
@@ -146,7 +146,7 @@ class MyNodeCollection extends NodeCollection {
 }
 
 // Register deserializer for type
-registerCustomNodeCollectionType(
+registerNodeCollectionType(
   'MyNodeCollection',
   (descriptor, context) => {
     return Promise.resolve(new MyNodeCollection(context.model));

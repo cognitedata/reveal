@@ -36,7 +36,7 @@ export {
   SinglePropertyFilterNodeCollection,
   AssetNodeCollection,
   InvertedNodeCollection,
-  registerCustomNodeCollectionType,
+  registerNodeCollectionType,
   TypeName,
   NodeCollectionSerializationContext,
   CdfModelNodeCollectionDataProvider

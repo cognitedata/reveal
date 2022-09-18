@@ -12,7 +12,7 @@ export { SinglePropertyFilterNodeCollection } from './src/SinglePropertyFilterNo
 export { AssetNodeCollection } from './src/AssetNodeCollection';
 export { InvertedNodeCollection } from './src/InvertedNodeCollection';
 export {
-  registerCustomNodeCollectionType,
+  registerNodeCollectionType,
   TypeName,
   NodeCollectionSerializationContext,
   NodeCollectionDeserializer

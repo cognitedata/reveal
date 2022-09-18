@@ -144,7 +144,7 @@ export class NodeCollectionDeserializer {
   }
 }
 
-export function registerCustomNodeCollectionType<T extends NodeCollection>(
+export function registerNodeCollectionType<T extends NodeCollection>(
   nodeCollectionType: TypeName,
   deserializer: (descriptor: SerializedNodeCollection, context: NodeCollectionSerializationContext) => Promise<T>
 ): void {

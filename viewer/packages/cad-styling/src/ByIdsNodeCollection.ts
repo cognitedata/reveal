@@ -4,7 +4,7 @@
 import { CogniteClient, ListResponse, Node3D } from '@cognite/sdk';
 import { CdfModelNodeCollectionDataProvider } from './CdfModelNodeCollectionDataProvider';
 import { CdfNodeCollectionBase } from './CdfNodeCollectionBase';
-import { NodeCollectionSerializationContext, registerCustomNodeCollectionType } from './NodeCollectionDeserializer';
+import { NodeCollectionSerializationContext, registerNodeCollectionType } from './NodeCollectionDeserializer';
 import { SerializedNodeCollection } from './SerializedNodeCollection';
 
 /**
@@ -83,6 +83,6 @@ class SingleRequestListResponse<T> implements ListResponse<T> {
 }
 
 // Register type for deserialization
-registerCustomNodeCollectionType<ByIdsNodeCollection>(ByIdsNodeCollection.classToken, (descriptor, context) =>
+registerNodeCollectionType<ByIdsNodeCollection>(ByIdsNodeCollection.classToken, (descriptor, context) =>
   ByIdsNodeCollection.deserialize(descriptor, context)
 );
