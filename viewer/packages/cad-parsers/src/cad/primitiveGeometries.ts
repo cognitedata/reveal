@@ -122,7 +122,7 @@ export const { boxGeometry, boxGeometryBoundingBox } = (() => {
 })();
 
 export const { quadGeometry, quadGeometryBoundingBox } = (() => {
-  const geometry = new THREE.PlaneBufferGeometry(1, 1, 1, 1);
+  const geometry = new THREE.PlaneGeometry(1, 1, 1, 1);
   try {
     const result = {
       index: geometry.getIndex(),
@@ -192,7 +192,7 @@ export const {
 })();
 
 export const { nutGeometry, nutGeometryBoundingBox } = (() => {
-  const geometry = new THREE.CylinderBufferGeometry(0.5, 0.5, 1, 6);
+  const geometry = new THREE.CylinderGeometry(0.5, 0.5, 1, 6);
   try {
     geometry.applyMatrix4(new THREE.Matrix4().makeRotationX(-Math.PI / 2));
     const result = {
