@@ -4,7 +4,7 @@
 import * as THREE from 'three';
 
 import { BoundingBox3D, CogniteClient, InternalId, Node3D, Revisions3DAPI } from '@cognite/sdk';
-import { ByIdsNodeCollection } from './ByIdsNodeCollection';
+import { NodeIdNodeCollection } from './NodeIdNodeCollection';
 import { CdfModelNodeCollectionDataProvider } from './CdfModelNodeCollectionDataProvider';
 import { NodeCollectionDeserializer } from './NodeCollectionDeserializer';
 
@@ -12,7 +12,7 @@ import range from 'lodash/range';
 
 import { It, Mock, Times } from 'moq.ts';
 
-describe(ByIdsNodeCollection.name, () => {
+describe(NodeIdNodeCollection.name, () => {
   let mockClient: Mock<CogniteClient>;
   let mockRevisions3DAPI: Mock<Revisions3DAPI>;
   let mockModel: Mock<CdfModelNodeCollectionDataProvider>;
@@ -33,32 +33,32 @@ describe(ByIdsNodeCollection.name, () => {
   });
 
   test('executeFilter with 1001 nodeIds throws', async () => {
-    const collection = new ByIdsNodeCollection(mockClient.object(), mockModel.object());
+    const collection = new NodeIdNodeCollection(mockClient.object(), mockModel.object());
     const ids = range(0, 1001);
     expect(() => collection.executeFilter(ids)).rejects.toThrowError();
   });
 
   test('executeFilter with 0 nodes, does not trigger any requests', async () => {
-    const collection = new ByIdsNodeCollection(mockClient.object(), mockModel.object());
+    const collection = new NodeIdNodeCollection(mockClient.object(), mockModel.object());
     await collection.executeFilter([]);
     mockRevisions3DAPI.verify(x => x.retrieve3DNodes(It.IsAny(), It.IsAny(), It.IsAny()), Times.Never());
   });
 
   test('executeFilter maps node bounds to ThreeJS coordinates', async () => {
-    const collection = new ByIdsNodeCollection(mockClient.object(), mockModel.object());
+    const collection = new NodeIdNodeCollection(mockClient.object(), mockModel.object());
     await collection.executeFilter([1, 2, 3]);
     expect(collection.getIndexSet().toIndexArray()).not.toBeEmpty();
     expect(collection.getAreas().isEmpty).toBeFalse();
   });
 
   test('executeFilter maps node bounds to ThreeJS coordinates', async () => {
-    const collection = new ByIdsNodeCollection(mockClient.object(), mockModel.object());
+    const collection = new NodeIdNodeCollection(mockClient.object(), mockModel.object());
     await collection.executeFilter([1, 2, 3]);
     mockModel.verify(x => x.mapBoxFromCdfToModelCoordinates(It.IsAny(), It.IsAny()), Times.Exactly(3));
   });
 
   test('deserialize serialized collection works', async () => {
-    const collection = new ByIdsNodeCollection(mockClient.object(), mockModel.object());
+    const collection = new NodeIdNodeCollection(mockClient.object(), mockModel.object());
     await collection.executeFilter([1, 2, 3]);
     const serialized = collection.serialize();
 

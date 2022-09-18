@@ -7,7 +7,7 @@ export { NodeCollection } from './src/NodeCollection';
 export { SerializedNodeCollection } from './src/SerializedNodeCollection';
 export { TreeIndexNodeCollection } from './src/TreeIndexNodeCollection';
 export { UnionNodeCollection } from './src/UnionNodeCollection';
-export { ByIdsNodeCollection } from './src/ByIdsNodeCollection';
+export { NodeIdNodeCollection } from './src/NodeIdNodeCollection';
 export { PropertyFilterNodeCollection } from './src/PropertyFilterNodeCollection';
 export { SinglePropertyFilterNodeCollection } from './src/SinglePropertyFilterNodeCollection';
 export { AssetNodeCollection } from './src/AssetNodeCollection';

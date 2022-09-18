@@ -10,8 +10,8 @@ import { SerializedNodeCollection } from './SerializedNodeCollection';
 /**
  * Collection that holds a set of nodes including children identified by nodeIds.
  */
-export class ByIdsNodeCollection extends CdfNodeCollectionBase {
-  public static readonly classToken = 'ByIdsNodeCollection';
+export class NodeIdNodeCollection extends CdfNodeCollectionBase {
+  public static readonly classToken = 'NodeIdNodeCollection';
 
   private readonly _client: CogniteClient;
   private readonly _model: CdfModelNodeCollectionDataProvider;
@@ -19,7 +19,7 @@ export class ByIdsNodeCollection extends CdfNodeCollectionBase {
   private _nodeIds: number[] = [];
 
   constructor(client: CogniteClient, model: CdfModelNodeCollectionDataProvider) {
-    super(ByIdsNodeCollection.classToken, model);
+    super(NodeIdNodeCollection.classToken, model);
     this._client = client;
     this._model = model;
   }
@@ -32,7 +32,7 @@ export class ByIdsNodeCollection extends CdfNodeCollectionBase {
    */
   async executeFilter(nodeIds: number[]): Promise<void> {
     if (nodeIds.length > 1000) {
-      throw new Error(`${ByIdsNodeCollection.name} supports maximum 1000 nodeIds, but got ${nodeIds.length}`);
+      throw new Error(`${NodeIdNodeCollection.name} supports maximum 1000 nodeIds, but got ${nodeIds.length}`);
     }
     this._nodeIds = [...nodeIds];
 
@@ -64,9 +64,9 @@ export class ByIdsNodeCollection extends CdfNodeCollectionBase {
   static async deserialize(
     descriptor: SerializedNodeCollection,
     context: NodeCollectionSerializationContext
-  ): Promise<ByIdsNodeCollection> {
+  ): Promise<NodeIdNodeCollection> {
     const { nodeIds }: { nodeIds: number[] } = descriptor.state;
-    const collection = new ByIdsNodeCollection(context.client, context.model);
+    const collection = new NodeIdNodeCollection(context.client, context.model);
     await collection.executeFilter(nodeIds);
     return collection;
   }
@@ -83,6 +83,6 @@ class SingleRequestListResponse<T> implements ListResponse<T> {
 }
 
 // Register type for deserialization
-registerNodeCollectionType<ByIdsNodeCollection>(ByIdsNodeCollection.classToken, (descriptor, context) =>
-  ByIdsNodeCollection.deserialize(descriptor, context)
+registerNodeCollectionType<NodeIdNodeCollection>(NodeIdNodeCollection.classToken, (descriptor, context) =>
+  NodeIdNodeCollection.deserialize(descriptor, context)
 );
