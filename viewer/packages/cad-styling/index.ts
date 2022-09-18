@@ -14,7 +14,6 @@ export { InvertedNodeCollection } from './src/InvertedNodeCollection';
 export {
   registerCustomNodeCollectionType,
   TypeName,
-  NodeCollectionDescriptor,
   NodeCollectionSerializationContext,
   NodeCollectionDeserializer
 } from './src/NodeCollectionDeserializer';

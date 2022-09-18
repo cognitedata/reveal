@@ -38,7 +38,6 @@ export {
   InvertedNodeCollection,
   registerCustomNodeCollectionType,
   TypeName,
-  NodeCollectionDescriptor,
   NodeCollectionSerializationContext,
   CdfModelNodeCollectionDataProvider
 } from './packages/cad-styling';
