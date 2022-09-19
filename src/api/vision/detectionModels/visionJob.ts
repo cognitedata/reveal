@@ -1,18 +1,18 @@
+import { CustomModelDataProvider } from 'src/api/vision/detectionModels/customModel/CustomModelDataProvider';
 import { GaugeReaderDataProvider } from 'src/api/vision/detectionModels/gaugeReader/GaugeReaderDetectionDataProvider';
 import { MockDataProvider } from 'src/api/vision/detectionModels/MockDataProvider';
 import { ObjectDetectionDataProvider } from 'src/api/vision/detectionModels/objectDetection/ObjectDetectionDataProvider';
+import { OCRDetectionDataProvider } from 'src/api/vision/detectionModels/ocr/OCRDetectionDataProvider';
+import { PeopleDetectionDataProvider } from 'src/api/vision/detectionModels/peopleDetection/PeopleDetectionDataProvider';
 import { TagDetectionDataProvider } from 'src/api/vision/detectionModels/tagDetection/TagDetectionDataProvider';
 import {
-  VisionJob,
   DetectionModelDataProvider,
   DetectionModelParams,
   VisionDetectionModelType,
+  VisionJob,
 } from 'src/api/vision/detectionModels/types';
 
-import { CustomModelDataProvider } from 'src/api/vision/detectionModels/customModel/CustomModelDataProvider';
-import { OCRDetectionDataProvider } from './ocr/OCRDetectionDataProvider';
-
-function getDetectionModelDataProvider(
+export function getDetectionModelDataProvider(
   modelType: VisionDetectionModelType
 ): DetectionModelDataProvider {
   switch (modelType) {
@@ -27,6 +27,9 @@ function getDetectionModelDataProvider(
     }
     case VisionDetectionModelType.GaugeReader: {
       return new GaugeReaderDataProvider();
+    }
+    case VisionDetectionModelType.PeopleDetection: {
+      return new PeopleDetectionDataProvider();
     }
     case VisionDetectionModelType.CustomModel: {
       return new CustomModelDataProvider();

@@ -8,6 +8,10 @@ import { DetectionModelTypeFeatureMapping } from 'src/constants/DetectionModelTy
 export class ObjectDetectionDataProvider extends BaseDetectionModelDataProvider {
   url = getDetectionModelEndpoint(VisionDetectionModelType.ObjectDetection);
 
+  customHeaders = {
+    'cdf-version': 'beta',
+  };
+
   features = [
     DetectionModelTypeFeatureMapping[VisionDetectionModelType.ObjectDetection],
   ];
