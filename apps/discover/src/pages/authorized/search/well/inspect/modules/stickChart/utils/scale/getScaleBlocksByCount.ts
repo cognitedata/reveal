@@ -1,53 +1,99 @@
+import last from 'lodash/last';
 import times from 'lodash/times';
 import { roundToNextNumber } from 'utils/number/roundToNextNumber';
 
 import { EMPTY_ARRAY } from 'constants/empty';
 
+type ScaleConfig = {
+  min?: number;
+  max: number;
+  /**
+   * Number of ticks to be included in the scale.
+   */
+  nticks: number;
+  /**
+   * Round the scale block values. The value is going to the ceiling value.
+   * @example
+   * If round to 10, the value of 8 becomes 10.
+   */
+  roundTo?: number;
+  /**
+   * Include extra scale block as padding for min bound.
+   */
+  padMin?: boolean;
+  /**
+   * Include extra scale block as padding for max bound.
+   */
+  padMax?: boolean;
+  /**
+   * Adjust the scale to align the curve to the middle of the scale.
+   */
+  normalize?: boolean;
+};
+
 /**
- * @maxDepth Maximum depth.
- * @blocksCount The number of blocks to be included in the scale.
- *
  * This function returns the scale blocks by
  * evenly spreading the max depth to the number of required blocks count.
  */
-export const getScaleBlocksByCount = (
-  maxDepth: number,
-  blocksCount: number,
-  minDepth = 0,
-  roundTo = 100
-) => {
+export const getScaleBlocksByCount = ({
+  min = 0,
+  max,
+  nticks,
+  roundTo = 100,
+  padMin = false,
+  padMax = true,
+  normalize = false,
+}: ScaleConfig) => {
   /**
-   * If scaleHeight or maxDepth value is 0,
+   * If max value is 0,
    * no point of calculating scale blocks.
    * Hence, return an empty array.
    */
-  if (!maxDepth) {
+  if (max) {
     return EMPTY_ARRAY;
   }
 
-  const roundedMin = roundToNextNumber(minDepth, roundTo);
-  const roundedMax = roundToNextNumber(maxDepth, roundTo);
+  const blocksCount = nticks - 1;
+
+  const padding = roundToNextNumber(
+    Math.round((max - min) / blocksCount),
+    roundTo
+  );
+
+  const scaleMin = padMin ? min - padding : min;
+  const scaleMax = padMax ? max + padding : max;
+
+  const roundedScaleMin = roundToNextNumber(scaleMin, roundTo);
+  const roundedScaleMax = roundToNextNumber(scaleMax, roundTo);
 
   /**
-   * If the blocks count is less than or equal to 2,
+   * If the ticks count is less than or equal to 2,
    * No point of calculating the scale blocks.
    * Just return the min and max values of the scale.
    */
-  if (blocksCount <= 2) {
-    return [roundedMin, roundedMax];
+  if (nticks <= 2) {
+    return [roundedScaleMin, roundedScaleMax];
   }
 
-  const blocksCountWithoutBounds = blocksCount - 2; // Reduce 2 for scale min and max depths.
+  const interval = roundToNextNumber(
+    Math.ceil((roundedScaleMax - roundedScaleMin) / blocksCount),
+    roundTo
+  );
 
-  const interval = Math.round((maxDepth - minDepth) / blocksCountWithoutBounds);
+  const scaleBlocksOriginal = times(nticks).map(
+    (blockIndex) => roundedScaleMin + interval * blockIndex
+  );
 
-  const roundedInterval = roundToNextNumber(interval, roundTo);
+  if (!normalize) {
+    return scaleBlocksOriginal;
+  }
 
-  return [
-    roundedMin, // Scale min depth
-    ...times(blocksCountWithoutBounds).map(
-      (blockIndex) => roundedMin + roundedInterval * (blockIndex + 1)
-    ),
-    roundedMin + roundedInterval * (blocksCountWithoutBounds + 1), // Scale max depth
-  ];
+  const scaleMaxDeviation = last(scaleBlocksOriginal)! - roundedScaleMax;
+  const scaleValueAdjustment = Math.round(scaleMaxDeviation / 2);
+
+  const scaleBlocksNormalized = scaleBlocksOriginal.map(
+    (value) => value - scaleValueAdjustment
+  );
+
+  return scaleBlocksNormalized;
 };

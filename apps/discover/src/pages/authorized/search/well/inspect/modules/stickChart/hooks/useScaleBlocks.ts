@@ -29,10 +29,10 @@ export const useScaleBlocks = ({
     if (!maxDepth) {
       return EMPTY_ARRAY;
     }
-    return getScaleBlocksByCount(
-      maxDepth.maxTrueVerticalDepth,
-      scaleBlocksMD.length
-    );
+    return getScaleBlocksByCount({
+      max: maxDepth.maxTrueVerticalDepth,
+      nticks: scaleBlocksMD.length,
+    });
   }, [maxDepth?.maxTrueVerticalDepth, scaleBlocksMD]);
 
   const scaleBlocks = useMemo(() => {
