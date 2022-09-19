@@ -13,9 +13,6 @@ module.exports = {
       indexName: 'reveal-docs',
 
       contextualSearch: true,
-
-      // Optional: Algolia search parameters
-      //... other Algolia params https://autocomplete-experimental.netlify.app/docs/docsearchmodal/#reference
     },
     prism: {
       // changes syntax highlighting theme
