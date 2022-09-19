@@ -17,7 +17,7 @@ on:
 jobs:
   build-viewer:
     name: Build Reveal
-    runs-on: ubuntu-latest 
+    runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
 
@@ -37,6 +37,13 @@ jobs:
       continue-on-error: false
       run: yarn run lint
 
+    - name: Rust fmt
+      working-directory: viewer
+      continue-on-error: false
+      run: |
+           rustup component add rustfmt
+           cargo fmt --check
+
     # Skip to save time - development version is enough
     # - name: Build prod version
     #   working-directory: viewer
@@ -46,7 +53,7 @@ jobs:
       working-directory: viewer
       run: yarn run build
 
-    - name: Upload dist/ artifact 
+    - name: Upload dist/ artifact
       uses: actions/upload-artifact@v3
       with:
         name: viewer
@@ -54,16 +61,9 @@ jobs:
 
   run-coverage-tests:
     name: Run unit tests
-    runs-on: ubuntu-latest 
-    needs: build-viewer
+    runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-
-    - name: Download viewer build artifact 
-      uses: actions/download-artifact@v3
-      with:
-        name: viewer
-        path: viewer/dist/
 
     - uses: actions/cache@v2
       id: npm_cache
@@ -91,14 +91,60 @@ jobs:
     - name: Publish to codecov
       uses: codecov/codecov-action@v3
 
+  run-visual-tests:
+    name: Visual Tests
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - uses: actions/cache@v2
+      id: npm_cache
+      with:
+        path: '**/node_modules'
+        key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
+
+    - name: Install NPM viewer dependencies
+      if: steps.npm_cache.outputs.cache-hit != 'true'
+      working-directory: viewer
+      run: yarn install --immutable
+
+    - name: Execute visual tests
+      id: viewerVisualTests
+      working-directory: viewer
+      run: 'yarn test:visual'
+      continue-on-error: true
+
+    - name: Check for failed visual test diffs
+      if: (steps.viewerVisualTests.outcome == 'failure')
+      uses: savokr/comment-on-pr@v1.3.2
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        msg: |
+          There were failures in the visual tests workflow.
+          Image diffs for visual tests can be downloaded as an artifact [here](https://github.com/cognitedata/reveal/actions/runs/${{ github.run_id }}).
+
+    - name: Upload image diffs for failed visual tests
+      if: (steps.viewerVisualTests.outcome == 'failure')
+      uses: actions/upload-artifact@v3
+      with:
+        name: image-diffs-${{ github.sha }}
+        path: viewer/visual-tests/__diff_output__/*
+
+    - name: Report failed visual tests
+      if: (steps.viewerVisualTests.outcome == 'failure')
+      run: |
+        echo There are failed visual tests, please inspect test results.
+        exit 1
+
   ci-examples:
     name: Examples
-    runs-on: ubuntu-latest 
+    runs-on: ubuntu-latest
     needs: build-viewer
     steps:
     - uses: actions/checkout@v3
 
-    - name: Download viewer build artifact 
+    - name: Download viewer build artifact
       uses: actions/download-artifact@v3
       with:
         name: viewer
@@ -121,44 +167,10 @@ jobs:
       # if: steps.npm_cache.outputs.cache-hit != 'true'
       working-directory: examples
       run: yarn install --immutable
-      
-    - name: Increase number of inotify watches
-      run: 'echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p'
 
-    # Disabled because visual tests also builds examples
-    # - name: Build examples
-    #   working-directory: examples
-    #   run: |
-    #     echo "NODE_OPTIONS=--max-old-space-size=8192" >> $GITHUB_ENV
-    #     yarn build
-
-    - name: Visual regression tests
-      id: visualtests
+    - name: Build examples
       working-directory: examples
-      run: 'yarn ci:e2e'
-      continue-on-error: true
-
-    - name: Check for failed visual test diffs
-      if: (always() && steps.visualtests.outcome == 'failure')
-      working-directory: examples
-      run: |
-        yarn
-        yarn test:ghprcomment
-      env:
-        ACTIONS_RUNTIME_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-    - name: Upload image diffs for failed visual tests
-      if: (always() && steps.visualtests.outcome == 'failure')
-      uses: actions/upload-artifact@v3
-      with:
-        name: image-diffs-${{ github.sha }}
-        path: examples/src/visual_tests/__image_snapshots__/__diff_output__/*
-
-    - name: Report failed visual tests
-      if: (always() && steps.visualtests.outcome == 'failure')
-      run: |
-        echo There are failed visual tests, please inspect test results.
-        exit 1
+      run: yarn build
 
   # runs only when there are changes in parser-worker/
   # we use it here because github haven't figured out conditionally required checks
@@ -166,11 +178,14 @@ jobs:
   ci-parser-worker:
     name: Parser worker
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: legacy-parser-worker
     steps:
       - uses: actions/checkout@v3
       - uses: technote-space/get-diff-action@v6
         with:
-          PREFIX_FILTER: parser-worker
+          PREFIX_FILTER: legacy-parser-worker/parser-worker
 
       - name: Setup Rust
         if: env.GIT_DIFF
@@ -226,18 +241,17 @@ jobs:
 
       - name: Install NPM dependencies
         if: env.GIT_DIFF
-        working-directory: parser-worker
+        working-directory: legacy-parser-worker/parser-worker
         run: yarn
 
       - name: Build parser-worker
         if: env.GIT_DIFF
-        working-directory: parser-worker
+        working-directory: legacy-parser-worker/parser-worker
         run: yarn build:prod
 
   build-preview-documentation:
     name: Build preview documentation
     runs-on: ubuntu-latest
-    needs: build-viewer
     steps:
       - name: Checkout 🛎️
         uses: actions/checkout@v2 # If you're using actions/checkout@v2 you must set persist-credentials to false in most cases for the deployment to work correctly.
@@ -247,12 +261,6 @@ jobs:
           pwd
           echo "PR_NUMBER=$(jq --raw-output .pull_request.number $GITHUB_EVENT_PATH)" >> $GITHUB_ENV
           echo "name=PR_NUMBER::$PR_NUMBER" >> $GITHUB_ENV
-
-      - name: Download viewer build artifact 
-        uses: actions/download-artifact@v3
-        with:
-          name: viewer
-          path: viewer/dist/
 
       - uses: actions/cache@v2
         id: npm_cache
@@ -264,6 +272,10 @@ jobs:
         if: steps.npm_cache.outputs.cache-hit != 'true'
         working-directory: viewer
         run: yarn install --immutable
+
+      - name: Build production version
+        working-directory: viewer
+        run: yarn run build:prod
 
       - name: Install NPM documentation dependencies
         if: steps.npm_cache.outputs.cache-hit != 'true'
@@ -292,7 +304,7 @@ jobs:
           yarn install --immutable
           yarn build:fast
 
-      - name: Upload documentation artifact 
+      - name: Upload documentation artifact
         uses: actions/upload-artifact@v3
         with:
           name: preview-docs
@@ -311,7 +323,7 @@ jobs:
         run: |
           echo "PR_NUMBER=$(jq --raw-output .pull_request.number $GITHUB_EVENT_PATH)" >> $GITHUB_ENV
 
-      - name: Download documentation artifact 
+      - name: Download documentation artifact
         uses: actions/download-artifact@v3
         if:
         with:
@@ -329,7 +341,7 @@ jobs:
           keep_files: false
 
       - name: Add comment about preview URL
-        uses: unsplash/comment-on-pr@v1.2.0
+        uses: savokr/comment-on-pr@v1.3.2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -337,6 +349,9 @@ jobs:
             :orange_book: Documentation preview is available from
             https://cognitedata.github.io/reveal-docs-preview/${{ env.PR_NUMBER }}/docs/next/.
           check_for_duplicate_msg: true
+          duplicate_msg_pattern: |
+            :orange_book: Documentation preview is available from
+            https://cognitedata.github.io/reveal-docs-preview/${{ env.PR_NUMBER }}/docs/next/.
 
 
   cleanup:

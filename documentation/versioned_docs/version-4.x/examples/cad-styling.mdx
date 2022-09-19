@@ -1,0 +1,137 @@
+---
+id: cad-styling
+title: Introduction
+describe: Reveal supports styling individual nodes by assigning appearance profiles.
+---
+
+import { DemoWrapper } from '@site/versioned_docs/version-4.x/components/DemoWrapper';
+
+Reveal supports flexible styling of individual nodes (objects) in the 3D model. Styles can
+be compromised of several attributes to customize the visualization through the `NodeAppearance`-type:
+
+| Field                       | Field type                  | Description                                           |
+| --------------------------- | --------------------------- | ----------------------------------------------------- |
+| `color`                     | `[number, number, number]?` | Override color by setting RGB values in range [0,255], e.g `[255, 0, 0]` (red). `[0, 0, 0]` means no override.  |
+| `visible`                   | `boolean?`                  | When false, the node(s) will be invisible             |
+| `renderInFront`             | `boolean?`                  | When true, the node(s) are rendered in front of other geometry |
+| `renderGhosted`             | `boolean?`                  | When true, the node(s) are rendered in transparent gray |
+| `outlineColor`              | `NodeOutlineColor?`         | Adds an outline to the objects from a set of predefined colors |
+| `prioritizedForLoadingHint` | `number?`                   | Assigns a prioritization weight to this node collection, influencing load priority. See [Prioritize nodes for loading](cad-prioritized-nodes).
+
+These attributes can be combined to customize the look of nodes. For convinience, a set of default appearances are
+provided in the `DefaultNodeAppearance`-constant:
+
+| Appearance           | Description                                                                      |
+| ------------------- | -------------------------------------------------------------------------------- |
+| `Default`           | No overrides, use colors from the CAD model                                      |
+| `Ghosted`           | Render node(s) 'ghosted', i.e. make them translucent gray                        |
+| `Outlined`          | Outline node(s) with a white outline                                             |
+| `Hidden`            | Hide node(s)                                                                     |
+| `InFront`           | Render node(s) in front of all other nodes                                       |
+| `Highlighted`       | Highlight the node(s). Combination of `InFront`, `Outlined` and a custom color   |
+
+These "appearance profiles"/styles are assigned to one or more nodes defined by a `NodeCollection`-instance. A `NodeCollection`
+identifies 3D nodes by `treeIndex`. There are several implementations of `NodeCollection`:
+
+| Class                          |                                                                                  |
+| ------------------------------ | -------------------------------------------------------------------------------- |
+| `TreeIndexNodeCollection`      | A set of nodes defined by a list of tree indices. Can be updated with a new set of indices. |
+| `PropertyFilterNodeCollection` | A set of nodes defined by a query to the 3D backend to find nodes that matches one or more properties/attributes. |
+| `SinglePropertyFilterNodeCollection` | Similar to `PropertyFilterNodeCollection`, but only matches one node property to many values (e.g. for looking up nodes with a list of IDs). |
+| `AssetNodeCollection`          | A set of nodes defined by [asset mappings](https://docs.cognite.com/api/v1/#tag/3D-Asset-Mapping) linking 3D nodes to [assets](https://docs.cognite.com/dev/concepts/resource_types/assets.html). |
+| `InvertedNodeCollection`       | Inverts the result of a node collection to match the opposite nodes (i.e. a NOT-operator). |
+| `UnionNodeCollection`          | Combines nodes from several node colletions by finding the [set union](https://en.wikipedia.org/wiki/Union_(set_theory)"). |
+| `InersectionNodeCollection`    | Combines nodes from several node colletions by finding the [set intersection](https://en.wikipedia.org/wiki/Intersection_(set_theory)). |
+| `NodeCollection`               | Abstract base class for node collections. Extend to [implement custom node collections](cad-styling-custom). |
+
+It's also possible [implement custom node collections](cad-styling-custom). This can be useful for specialized queries or to load
+sets from custom data sources.
+
+`Cognite3DModel.assignStyledNodeCollection` and `unassignStyledNodeCollection` is used to manage styled set associated with a model:
+
+```js
+// import { TreeIndexNodeCollection, DefaultNodeAppearance, NumericRange } from '@cognite/reveal'
+
+// you can start from binding styles to an empty set and populate it later
+const myNodes = new TreeIndexNodeCollection();
+model.assignStyledNodeCollection(myNodes, DefaultNodeAppearance.Highlighted);
+
+// later you might want to update the set as user does something, for example, selects an asset
+// note that other styling sets might have different API for updates, for example `executeFilter`
+const nodeTreeIndex = 0;
+const nodeSubtreeSize = 100000;
+myNodes.updateSet(new IndexSet(new NumericRange(nodeTreeIndex, nodeSubtreeSize)));
+
+// if you want to change appearance of your existing set you can assign a new style
+model.assignStyledNodeCollection(myNodes, DefaultNodeAppearance.Ghosted);
+
+// and when you don't need to style this set anymore, just remove it completely
+model.unassignStyledNodeCollection(myNodes);
+```
+
+Styling is "additive", meaning that styles from multiple styled sets are accumulated per node, much 
+like how multiple classes are combined when working with CSS. Styled sets are applied first-in first-out (FIFO)
+in the order the are added.
+
+```js
+// import { TreeIndexNodeCollection, DefaultNodeAppearance, NumericRange } from '@cognite/reveal'
+
+// you can start from binding styles to an empty set and populate it later
+const set1 = new TreeIndexNodeCollection(NumericRange.createFromInterval(0, 100));
+model.assignStyledNodeCollection(set1, { color: [ 255, 0, 0 ] });
+const set2 = new TreeIndexNodeCollection(NumericRange.createFromInterval(50, 150));
+model.assignStyledNodeCollection(set2, { outlineColor: NodeOutlineColor.White });
+
+// [0..49] will be colored red
+// [50..100] will be colored red and have a white outline
+// [101..150] will have the default color and a white outline
+```
+
+:::note
+The API for styling nodes has changed substantially since Reveal 1.x and upgrading Reveal
+will require manual steps to implement styling.
+:::
+
+## Examples
+
+<DemoWrapper name="Cognite3DViewerDemo" />
+
+To play around with the different styling options, we can use `Cognite3DModel.setDefaultNodeAppearance`.
+A few example styles are shown below.
+
+### Ghosted style
+
+```js runnable-4x
+model.setDefaultNodeAppearance(DefaultNodeAppearance.Ghosted);
+```
+
+### Highlighted
+
+```js runnable-4x
+model.setDefaultNodeAppearance(DefaultNodeAppearance.Highlighted);
+```
+
+### Outline and custom color
+
+By creating custom styles you have a powerful tool to customize how the model looks.
+
+```js runnable-4x
+model.setDefaultNodeAppearance({ color: [0, 200, 0], outlineColor: NodeOutlineColor.Orange });
+```
+
+Note that `outlineColor` restricts the choice of color to a predefined set. This is
+a restriction imposed to reduce storage space for outlines to only 3 bits. The choice
+of colors is:
+
+```ts
+enum NodeOutlineColor {
+  NoOutline = 0,
+  White = 1,
+  Black = 2,
+  Cyan = 3,
+  Blue = 4,
+  Green = 5,
+  Red = 6,
+  Orange = 7
+}
+```

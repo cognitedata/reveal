@@ -2,13 +2,14 @@
  * Copyright 2021 Cognite AS
  */
 const path = require('path');
+const RemovePlugin = require('remove-files-webpack-plugin');
 const nodeExternals = require('webpack-node-externals');
 const copyPkgJsonPlugin = require('copy-pkg-json-webpack-plugin');
 const logger = require('webpack-log')('reveal');
 const packageJSON = require('./package.json');
 const workerPackageJSON = require('./node_modules/@cognite/reveal-parser-worker/package.json');
 const webpack = require('webpack');
-const { publicPath, getWorkerCdnUrl, getEnvArg } = require('../parser-worker/buildUtils');
+const { publicPath, getWorkerCdnUrl, getEnvArg } = require('../legacy-parser-worker/parser-worker/buildUtils');
 const exec = require('child_process').exec;
 
 const MIXPANEL_TOKEN_DEV = '00193ed55feefdfcf8a70a76bc97ec6f';
@@ -31,21 +32,17 @@ module.exports = env => {
 
   return {
     mode: development ? 'development' : 'production',
-    // Internals is not part of prod builds
-    entry: development
-      ? {
-          index: './index.ts',
-          tools: './tools.ts',
-          'extensions/datasource': './extensions/datasource.ts',
-          internals: './internals.ts'
-        }
-      : {
-          index: './index.ts',
-          'extensions/datasource': './extensions/datasource.ts',
-          tools: './tools.ts'
-        },
+    entry: {
+      index: './index.ts',
+      tools: './tools.ts',
+      'extensions/datasource': './extensions/datasource.ts'
+    },
     target: 'web',
     resolve: {
+      fallback: {
+        fs: false,
+        path: require.resolve('path-browserify')
+      },
       extensions: ['.tsx', '.ts', '.js'],
       symlinks: true
     },
@@ -53,9 +50,9 @@ module.exports = env => {
       rules: [
         {
           test: /\.worker\.ts$/,
-          loader: 'worker-loader',
+          loader: 'workerize-loader',
           options: {
-            inline: 'no-fallback'
+            inline: true
           }
         },
         {
@@ -90,6 +87,10 @@ module.exports = env => {
         {
           test: /\.css$/,
           use: ['raw-loader']
+        },
+        {
+          test: /\.wasm$/,
+          type: 'asset/inline'
         }
       ]
     },
@@ -104,18 +105,15 @@ module.exports = env => {
       path: path.resolve(__dirname, 'dist'),
       sourceMapFilename: '[name].map',
       globalObject: `(typeof self !== 'undefined' ? self : this)`,
-      libraryTarget: 'umd'
+      library: {
+        name: '@cognite/reveal',
+        type: 'umd'
+      }
     },
-    devtool: development ? 'inline-source-map' : 'source-map',
+    devtool: development ? 'eval-source-map' : 'source-map',
     watchOptions: {
       aggregateTimeout: 1500,
-      ignored: [/node_modules/]
-    },
-    optimization: {
-      usedExports: true
-    },
-    node: {
-      fs: 'empty'
+      ignored: /node_modules/
     },
     plugins: [
       new copyPkgJsonPlugin({
@@ -130,6 +128,18 @@ module.exports = env => {
           MIXPANEL_TOKEN: development ? MIXPANEL_TOKEN_DEV : MIXPANEL_TOKEN_PROD,
           IS_DEVELOPMENT_MODE: development
         })
+      }),
+      new RemovePlugin({
+        after: {
+          test: [
+            {
+              folder: 'dist',
+              method: absoluteItemPath => {
+                return new RegExp(/\.worker.js$/, 'm').test(absoluteItemPath);
+              }
+            }
+          ]
+        }
       }),
       {
         apply: compiler => {

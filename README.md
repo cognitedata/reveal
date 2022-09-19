@@ -136,7 +136,7 @@ npm unlink
 ```
 
 In case when you need to change and test the latest changes in parser-worker
-consult [parser-worker/README.md](parser-worker/README.md)
+consult [legacy-parser-worker/parser-worker/README.md](legacy-parser-worker/parser-worker/README.md)
 
 ## Releasing Reveal
 

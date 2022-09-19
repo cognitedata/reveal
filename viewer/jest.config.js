@@ -17,9 +17,10 @@ module.exports = () => {
     testRegex: '(.*\\.test\\..*|\\.(test|spec|Test))\\.tsx?$',
     moduleFileExtensions: ['ts', 'js', 'json', 'node'],
     moduleNameMapper: {
-      '\\.(frag|vert)$': path.resolve(__dirname, './core/src/__mocks__/glslMocks.js'),
-      '\\.css$': path.resolve(__dirname, './core/src/__mocks__/cssMock.js'),
-      '\\.svg$': path.resolve(__dirname, './core/src/__mocks__/svgMock.js')
+      '\\.(frag|vert)$': path.resolve(__dirname, './test-utilities/src/filetype-mocks/glslMocks.js'),
+      '\\.css$': path.resolve(__dirname, './test-utilities/src/filetype-mocks/cssMock.js'),
+      '\\.svg$': path.resolve(__dirname, './test-utilities/src/filetype-mocks/svgMock.js'),
+      '\\.wasm$': path.resolve(__dirname, './test-utilities/src/filetype-mocks/wasmMock.js')
     },
     globals: {
       __webpack_public_path__: '',
@@ -29,10 +30,19 @@ module.exports = () => {
       }
     },
     coverageDirectory: './coverage',
-    collectCoverageFrom: ['!**/.*.test.ts', '!**/*.d.ts', '!**/*.json', '!**/dist/**/*.*', '!**/app/**'],
+    collectCoverageFrom: [
+      '!**/.*.test.ts',
+      '!**/*.VisualTest.ts',
+      '!./visual-tests/**',
+      '!./test-utilities/**',
+      '!**/*.d.ts',
+      '!**/*.json',
+      '!**/dist/**/*.*',
+      '!**/app/**'
+    ],
     automock: false,
     setupFiles: [path.resolve(__dirname, './test-utilities/src/setupJest.ts'), 'jest-canvas-mock', 'core-js'],
-    setupFilesAfterEnv: ['jest-extended'],
+    setupFilesAfterEnv: ['jest-extended/all'],
     testEnvironment: 'jsdom'
   };
 };

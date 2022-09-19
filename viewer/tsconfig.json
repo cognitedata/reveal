@@ -5,30 +5,30 @@
     "module": "esnext",
     "lib": [
       "dom",
-      "esnext"
+      "esnext",
+      "webworker"
     ],
     "stripInternal": true,
     "noUnusedLocals": true,
+    "sourceMap": true,
     "noUnusedParameters": true,
     // Strict Type-Checking Options
     "strict": true,
     // Module Resolution Options
     "allowJs": true,
+    "resolveJsonModule": true,
     "moduleResolution": "node",
     "experimentalDecorators": true,
     "esModuleInterop": true,
     "declaration": true,
     "baseUrl": ".",
     "paths": {
-      "@reveal/core": [
-        "core/*"
-      ],
       "@reveal/*": [
         "packages/*"
       ],
       "*": [
         "*",
-        "core/src/@types/*"
+        "packages/api/src/@types/*"
       ]
     },
   }

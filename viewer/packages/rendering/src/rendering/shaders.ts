@@ -81,6 +81,16 @@ export const sectorShaders = {
 };
 
 /**
+ * Point cloud shaders.
+ */
+export const pointCloudShaders = {
+  normalize: {
+    fragment: glsl(require('../glsl/pointcloud/normalize.frag').default),
+    vertex: glsl(require('../glsl/pointcloud/normalize.vert').default)
+  }
+};
+
+/**
  * Screen space ambient occlusion shader
  */
 export const ssaoShaders = {
@@ -90,6 +100,11 @@ export const ssaoShaders = {
 
 export const blitShaders = {
   fragment: glsl(require('../glsl/post-processing/blit.frag').default),
+  vertex: glsl(require('../glsl/post-processing/unit-orthographic-passthrough.vert').default)
+};
+
+export const depthBlendBlitShaders = {
+  fragment: glsl(require('../glsl/post-processing/depthBlendBlit.frag').default),
   vertex: glsl(require('../glsl/post-processing/unit-orthographic-passthrough.vert').default)
 };
 

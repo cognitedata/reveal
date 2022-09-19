@@ -1,0 +1,155 @@
+---
+id: cad-save-viewerstate
+title: Saving viewer state
+description: Demo shows how to save viewerstate of 3d models from CDF with Cognite3DViewer.
+---
+import { DemoWrapper } from '@site/versioned_docs/version-4.x/components/DemoWrapper';
+
+Reveal supports saving the camera state and styled filters that have been applied to the loaded model(s).
+This functionality can help support sharing links and local storage of a given view.
+Internally the input to a given filter is stored and is replayed when restoring the view.
+This usually means that substantially less data needs to be serialized in order to share the given state of the viewer.
+The serialized JSON blob also keeps information about styling/filtering of the model by storing all [styled sets](./cad-styling.mdx).
+
+<DemoWrapper name="Cognite3DViewerDemo" />
+
+## Getting the viewer state
+In the example below we apply some filter to our loaded model using the `NodeCollection` type from [Styling CAD models](./cad-styling.mdx).
+Then we can call the ```viewer.getViewState()``` function which return a serialized JSON blob containing the view state.
+Depending on the application, the view state can be additionally transformed into e.g. a URL parameter and transferred through a link.
+
+In the example below, we keep simply print it to the developer console.
+
+```js runnable-4x
+const allPipes = new PropertyFilterNodeCollection(sdk, model);
+allPipes.executeFilter({'PDMS': {'Type': 'PIPE'}});
+model.setDefaultNodeAppearance(DefaultNodeAppearance.Ghosted);
+model.assignStyledNodeCollection(allPipes, { renderGhosted: false, color: [40, 200, 20] } );
+
+console.log(JSON.stringify(viewer.getViewState(), null, 2));
+```
+
+## Setting the viewer state
+Restoring the viewer state is simply a matter of feeding back the JSON blob retrieved from ```const myState = viewer.getViewState()``` into ```viewer.setViewState(myState)```.
+In the example below, a previously stored state is applied which applies a red color to nodes that have an attribute `'PDMS.Type'`.
+
+:::note
+Setting the viewer state assumes that model has already been loaded.
+An error will be thrown if a given state is loaded for a model which does not exist.
+:::
+
+```js runnable-4x
+
+const myState = {
+  "camera": {
+    "position": {
+      "x": 165.603,
+      "y": 41.649,
+      "z": -10.940
+    },
+    "target": {
+      "x": 130.537,
+      "y": 49.138,
+      "z": -119.095
+    }
+  },
+  "models": [
+    {
+      "defaultNodeAppearance": {
+        "renderGhosted": true
+      },
+      "modelId": 3356984403684032,
+      "revisionId": 6664823881595566,
+      "styledSets": [
+        {
+          "token": "PropertyFilterNodeCollection",
+          "state": {
+            "PDMS": {
+              "Type": "PIPE"
+            }
+          },
+          "options": {
+            "requestPartitions": 1
+          },
+          "appearance": {
+            "renderGhosted": false,
+            "color": [
+              200,
+              40,
+              20
+            ]
+          }
+        }
+      ]
+    }
+  ]
+};
+
+viewer.setViewState(myState);
+```
+
+## Serializing and deserializing custom node collections
+
+When working with styled custom node collections, the Reveal viewer needs to know how to serialize and deserialize the set.
+Serialization is handled through the abstract method `serialize` which needs to be implemented when extending `NodeCollection`.
+The output of `serialize` is of type `SerializedNodeCollection` and contains a `token` which is used to recreate
+the `NodeCollection` during deserialization, and a `state` object which contains the data needed to restore
+the `NodeCollection`. It is up to the application developer to fill this state object with any nessesary
+data needed to recreate the state of the `NodeCollection`. An optional `options` object can also be supplied
+containing any metadata for loading data (e.g. the number of API calls to fetch the needed data in parallel).
+The contents returned from `serialize` is contained in the result of `getViewState`.
+
+In addition to serialization, Reveal also needs to know how to recreate the custom `NodeCollection` during
+deserialization. This is done by calling the free-function `registerCustomNodeCollectionType` with the same `token`
+defined by the custom `NodeCollection` and a lambda function which instantiates and restore the state of
+the `NodeCollection`. The lambda function has two parameters: the `descriptor` containing the state and
+options which should be applied to the `NodeCollection` and the context containing an instance of
+the [CogniteClient from the Cognite SDK](https://docs.cognite.com/dev/guides/sdk/js/) and the `Cognite3DModel`
+which the `NodeCollection` was originally applied to. It is up to the application developer how and if they
+want to use the context and/or descriptor, but it is provided as a convinience.
+
+An example of a simple custom `NodeCollection` can be seen below.
+For more information on creating a custom `NodeCollection`, see [create custom node collections](cad-styling-custom).
+
+```js
+// import { IndexSet, NodeCollection, registerCustomNodeCollectionType } from '@cognite/reveal';
+
+class MyNodeCollection extends NodeCollection {
+
+  isLoading = false;
+  _indexSet = new IndexSet();
+
+  constructor(model) {
+    // token used for serialization / deserialization
+    super('MyNodeCollection');
+
+    for (let i = 0; i < model.nodeCount / 2; i++) {
+      this._indexSet.add(i);
+    }
+  }
+
+  getIndexSet() {
+    return this._indexSet;
+  }
+
+  serialize() {
+    return {
+      token: this.classToken,
+      state: this._indexSet.toRangeArray()
+    }
+  }
+
+  clear() {
+    this._indexSet.clear();
+    this.notifyChanged();
+  }
+}
+
+// Register deserializer for type
+registerCustomNodeCollectionType(
+  'MyNodeCollection',
+  (descriptor, context) => {
+    return Promise.resolve(new MyNodeCollection(context.model));
+  }
+);
+```

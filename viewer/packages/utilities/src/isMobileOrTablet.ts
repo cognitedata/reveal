@@ -32,5 +32,13 @@ export function isMobileOrTablet(): boolean {
       check = true;
     }
   })(navigator.userAgent || navigator.vendor || (window as any).opera);
-  return check;
+  return check || isIPad();
+}
+
+function isIPad(): boolean {
+  return (
+    ['iPad Simulator', 'iPod Simulator', 'iPad', 'iPod'].includes(navigator.platform) ||
+    // iPad on iOS 13+ detection ('Request Desktop Website' workaround)
+    (navigator.userAgent.includes('Mac') && 'ontouchend' in document)
+  ); // Super hacky and will fail when Macs get touch...
 }

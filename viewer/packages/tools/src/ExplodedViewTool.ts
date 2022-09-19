@@ -2,9 +2,9 @@
  * Copyright 2021 Cognite AS
  */
 import * as THREE from 'three';
-import { Cognite3DModel } from '@reveal/core';
 import { Cognite3DViewerToolBase } from './Cognite3DViewerToolBase';
 import { MetricsLogger } from '@reveal/metrics';
+import { Cognite3DModel } from '@reveal/api';
 
 export class ExplodedViewTool extends Cognite3DViewerToolBase {
   private readonly _cadModel: Cognite3DModel;

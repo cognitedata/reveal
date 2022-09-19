@@ -8,8 +8,8 @@
     "lint": "yarn ws:lint"
   },
   "dependencies": {
+    "@reveal/api": "workspace:*",
     "@reveal/cad-styling": "workspace:*",
-    "@reveal/core": "workspace:*",
     "@reveal/metrics": "workspace:*",
     "@reveal/utilities": "workspace:*"
   }

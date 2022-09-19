@@ -3,14 +3,13 @@
  */
 import TWEEN from '@tweenjs/tween.js';
 
-import { Cognite3DModel } from '@reveal/core';
-
 import { createCadModel } from '../../../../test-utilities';
 import { TimelineTool } from './TimelineTool';
 
 import { MetricsLogger } from '@reveal/metrics';
 import { IndexSet } from '@reveal/utilities';
 import { NodeAppearance, TreeIndexNodeCollection } from '@reveal/cad-styling';
+import { Cognite3DModel } from '@reveal/api';
 
 describe('TimelineTool', () => {
   let model: Cognite3DModel;

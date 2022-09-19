@@ -107,4 +107,45 @@ describe('WebGLRendererStateHelper', () => {
     helper.resetState();
     expect(setAutoClearSpy).toBeCalledWith(true);
   });
+
+  test('setScissorTest()', () => {
+    renderer.setScissorTest(true);
+    const helper = new WebGLRendererStateHelper(renderer);
+    const setScissorTestSpy = jest.spyOn(renderer, 'setScissorTest');
+
+    helper.setScissorTest(false);
+    expect(setScissorTestSpy).toBeCalledWith(false);
+
+    helper.resetState();
+    expect(setScissorTestSpy).toBeCalledWith(true);
+  });
+
+  test('setScissor()', () => {
+    renderer.setScissor(0, 0, 64, 64);
+    const helper = new WebGLRendererStateHelper(renderer);
+    const setScissorSpy = jest.spyOn(renderer, 'setScissor');
+
+    helper.setScissor(0, 0, 128, 128);
+    expect(setScissorSpy).toBeCalledWith(0, 0, 128, 128);
+
+    helper.resetState();
+    expect(setScissorSpy).toBeCalledWith(new THREE.Vector4(0, 0, 64, 64));
+  });
+
+  test('setWebGLState', () => {
+    const helper = new WebGLRendererStateHelper(renderer);
+    const depthSetTestSpy = jest.spyOn(renderer.state.buffers.depth, 'setTest');
+    const depthSetMaskSpy = jest.spyOn(renderer.state.buffers.depth, 'setMask');
+
+    helper.setWebGLState(
+      { buffers: { depth: { test: false, mask: false } } },
+      { buffers: { depth: { test: true, mask: true } } }
+    );
+    expect(depthSetTestSpy).toBeCalledWith(false);
+    expect(depthSetMaskSpy).toBeCalledWith(false);
+
+    helper.resetState();
+    expect(depthSetTestSpy).toBeCalledWith(true);
+    expect(depthSetMaskSpy).toBeCalledWith(true);
+  });
 });

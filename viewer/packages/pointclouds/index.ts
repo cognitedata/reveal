@@ -2,11 +2,16 @@
  * Copyright 2022 Cognite AS
  */
 
-export { intersectPointClouds } from './src/picking';
+export { PointCloudPickingHandler } from './src/PointCloudPickingHandler';
 
 export { WellKnownAsprsPointClassCodes } from './src/types';
 
-export { PotreePointShape, PotreePointColorType, PotreePointSizeType } from './src/potree-three-loader';
+export {
+  PotreePointShape,
+  PotreePointColorType,
+  PotreePointSizeType,
+  PointCloudMaterial
+} from './src/potree-three-loader';
 
 export { PointCloudNode } from './src/PointCloudNode';
 export { PointCloudManager } from './src/PointCloudManager';
@@ -21,4 +26,14 @@ export { PotreeGroupWrapper } from './src/PotreeGroupWrapper';
 
 export { Potree, PointCloudOctree } from './src/PotreePnextLoader';
 
-export { PointCloudAppearance } from './src/styling/PointCloudAppearance';
+export { CompletePointCloudAppearance, PointCloudAppearance } from './src/styling/PointCloudAppearance';
+export { PointCloudObjectCollection } from './src/styling/PointCloudObjectCollection';
+export { AnnotationIdPointCloudObjectCollection } from './src/styling/AnnotationListPointCloudObjectCollection';
+export { DefaultPointCloudAppearance } from './src/styling/PointCloudAppearance';
+
+export { PointCloudFactory } from './src/PointCloudFactory';
+
+export { IAnnotationProvider } from './src/styling/IAnnotationProvider';
+export { CdfAnnotationProvider } from './src/styling/CdfAnnotationProvider';
+export { LocalAnnotationProvider } from './src/styling/LocalAnnotationProvider';
+export { PointCloudObjectAnnotationData } from './src/styling/PointCloudObjectAnnotationData';

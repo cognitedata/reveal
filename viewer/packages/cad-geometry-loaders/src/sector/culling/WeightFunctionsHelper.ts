@@ -49,6 +49,11 @@ export class WeightFunctionsHelper {
     });
   }
 
+  reset(): void {
+    this._minSectorDistance = Infinity;
+    this._maxSectorDistance = -Infinity;
+  }
+
   addCandidateSectors(sectors: SectorMetadata[], modelMatrix: THREE.Matrix4): void {
     // Note! We compute distance to camera, not screen (which would probably be better)
     const { minDistance, maxDistance } = sectors.reduce(
@@ -58,7 +63,7 @@ export class WeightFunctionsHelper {
         minMax.minDistance = Math.min(minMax.minDistance, distanceToCamera);
         return minMax;
       },
-      { minDistance: Infinity, maxDistance: -Infinity }
+      { minDistance: this._minSectorDistance, maxDistance: this._maxSectorDistance }
     );
     this._minSectorDistance = minDistance;
     this._maxSectorDistance = maxDistance;
@@ -78,7 +83,10 @@ export class WeightFunctionsHelper {
 
     // Weight sectors that are close to the camera higher
     const distanceToCamera = transformedSectorBounds.distanceToPoint(this._camera.position);
-    const normalizedDistanceToCamera = (distanceToCamera - minSectorDistance) / (maxSectorDistance - minSectorDistance);
+
+    // We add an epsilon to the denominator to make it non-zero in the case we have only one sector in the scene
+    const normalizedDistanceToCamera =
+      (distanceToCamera - minSectorDistance) / (maxSectorDistance - minSectorDistance + 1e-3);
     return 1.0 - normalizedDistanceToCamera;
   }
 

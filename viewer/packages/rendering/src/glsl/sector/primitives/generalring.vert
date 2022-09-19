@@ -19,7 +19,7 @@ in float a_arcAngle;
 in float a_thickness;
 in vec3 a_normal;
 
-out float v_treeIndex;
+flat out float v_treeIndex;
 out float v_oneMinusThicknessSqr;
 out vec2 v_xy;
 out float v_angle;
@@ -36,10 +36,10 @@ void main() {
     v_arcAngle = a_arcAngle;
 
     mat4 treeIndexWorldTransform = determineMatrixOverride(
-      a_treeIndex, 
-      treeIndexTextureSize, 
-      transformOverrideIndexTexture, 
-      transformOverrideTextureSize, 
+      a_treeIndex,
+      treeIndexTextureSize,
+      transformOverrideIndexTexture,
+      transformOverrideTextureSize,
       transformOverrideTexture
     );
 

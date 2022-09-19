@@ -3,10 +3,10 @@
  */
 
 import * as THREE from 'three';
-import { Cognite3DViewer } from '@reveal/core';
 import { DisposedDelegate } from './types';
 
 import { Cognite3DViewerToolBase } from './Cognite3DViewerToolBase';
+import { Cognite3DViewer } from '@reveal/api';
 
 export class DebugCameraTool extends Cognite3DViewerToolBase {
   private readonly _viewer: Cognite3DViewer;

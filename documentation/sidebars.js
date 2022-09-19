@@ -18,6 +18,7 @@ module.exports = {
       collapsed: false,
       items: [
         'examples/cad-basic',
+        'examples/pointcloud',
         {
           "Styling CAD models": [
             'examples/cad-styling',
@@ -26,15 +27,14 @@ module.exports = {
             'examples/cad-styling-custom',
           ]
         },
+        'examples/pointcloud-styling',
         'examples/cad-prioritized-nodes',
         'examples/cad-transform-override',
         'examples/cad-2doverlay',
         'examples/cad-3dobjects',
         'examples/node-visiting',
-        'examples/cad-preview',
         'examples/clipping',
         'examples/cad-save-viewerstate',
-        'examples/pointcloud',
         'examples/click-reactions-cad',
         'examples/click-reactions-pointcloud',
         'examples/antialiasing',
@@ -44,6 +44,7 @@ module.exports = {
         'examples/timelinetool',
         'examples/combine-models',
         'examples/controlsmodes',
+        'examples/point-to-point-measurement',
       ],
     },
     {

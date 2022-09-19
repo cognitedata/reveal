@@ -18,7 +18,6 @@ import {
   WebGLRenderer
 } from 'three';
 import {
-  COLOR_BLACK,
   COLOR_WHITE,
   DEFAULT_HIGHLIGHT_COLOR,
   DEFAULT_MAX_POINT_SIZE,
@@ -48,13 +47,15 @@ import {
 import { generateClassificationTexture, generateDataTexture, generateGradientTexture } from './texture-generation';
 import { IClassification, IUniform } from './types';
 import { SpectralGradient } from './gradients/SpectralGradient';
-import { PointCloudAppearance } from '../../styling/PointCloudAppearance';
+import { PointCloudObjectAppearanceTexture } from './PointCloudObjectAppearanceTexture';
+import { ObjectsMaps } from '../../styling/PointCloudObjectAnnotationData';
 
 export interface IPointCloudMaterialParameters {
   size: number;
   minSize: number;
   maxSize: number;
   treeType: TreeType;
+  objectsMaps: ObjectsMaps;
 }
 
 export interface IPointCloudMaterialUniforms {
@@ -182,10 +183,9 @@ export class PointCloudMaterial extends RawShaderMaterial {
   private readonly _gradient = SpectralGradient;
   private gradientTexture: Texture | undefined = generateGradientTexture(this._gradient);
 
-  private readonly _objectTexture: THREE.DataTexture = generateDataTexture(
+  private readonly _objectAppearanceTexture = new PointCloudObjectAppearanceTexture(
     OBJECT_STYLING_TEXTURE_WIDTH,
-    OBJECT_STYLING_TEXTURE_HEIGHT,
-    COLOR_BLACK
+    OBJECT_STYLING_TEXTURE_HEIGHT
   );
 
   private _classification: IClassification = DEFAULT_CLASSIFICATION;
@@ -212,7 +212,7 @@ export class PointCloudMaterial extends RawShaderMaterial {
     level: makeUniform('f', 0.0),
     maxSize: makeUniform('f', DEFAULT_MAX_POINT_SIZE),
     minSize: makeUniform('f', DEFAULT_MIN_POINT_SIZE),
-    objectIdLUT: makeUniform('t', this._objectTexture),
+    objectIdLUT: makeUniform('t', this._objectAppearanceTexture.objectStyleTexture),
     octreeSize: makeUniform('f', 0),
     opacity: makeUniform('f', 1.0),
     pcIndex: makeUniform('f', 0),
@@ -298,6 +298,7 @@ export class PointCloudMaterial extends RawShaderMaterial {
 
   @requiresShaderUpdate() useClipBox: boolean = false;
   @requiresShaderUpdate() weighted: boolean = false;
+  @requiresShaderUpdate() hqDepthPass: boolean = false;
   @requiresShaderUpdate() pointColorType: PotreePointColorType = PotreePointColorType.Rgb;
   @requiresShaderUpdate() pointSizeType: PotreePointSizeType = PotreePointSizeType.Adaptive;
   @requiresShaderUpdate() clipMode: ClipMode = ClipMode.DISABLED;
@@ -345,6 +346,10 @@ export class PointCloudMaterial extends RawShaderMaterial {
     this.defaultAttributeValues.indices = [0, 0, 0, 0];
 
     this.vertexColors = true;
+
+    if (parameters.objectsMaps) {
+      this._objectAppearanceTexture.setObjectsMaps(parameters.objectsMaps);
+    }
 
     this.updateShaderSource();
   }
@@ -448,6 +453,10 @@ export class PointCloudMaterial extends RawShaderMaterial {
       define('weighted_splats');
     }
 
+    if (this.hqDepthPass) {
+      define('hq_depth_pass');
+    }
+
     if (this.numClipBoxes > 0) {
       define('use_clip_box');
     }
@@ -517,13 +526,8 @@ export class PointCloudMaterial extends RawShaderMaterial {
     this.setUniform('clipBoxes', clipBoxesArray);
   }
 
-  setObjectAppearance(objectId: number, appearance: PointCloudAppearance): void {
-    const data = this._objectTexture.image.data;
-
-    const colorData = [appearance.color[0], appearance.color[1], appearance.color[2]];
-    data.set(colorData, 4 * objectId);
-
-    this._objectTexture.needsUpdate = true;
+  get objectAppearanceTexture(): PointCloudObjectAppearanceTexture {
+    return this._objectAppearanceTexture;
   }
 
   get classification(): IClassification {
@@ -573,6 +577,10 @@ export class PointCloudMaterial extends RawShaderMaterial {
     } else if (value !== uObj.value) {
       uObj.value = value;
     }
+  }
+
+  onBeforeRender(): void {
+    this._objectAppearanceTexture.onBeforeRender();
   }
 
   updateMaterial(

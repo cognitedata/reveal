@@ -1,0 +1,81 @@
+---
+id: cad-styling-custom
+title: Custom node collections
+describe: Create custom node collections to filter based on custom data sources and mechanisms
+---
+
+import { DemoWrapper } from '@site/versioned_docs/version-4.x/components/DemoWrapper';
+
+In many cases applications will need to filter 3D nodes by some custom data source or mechanism. This
+is done by extending the `NodeCollection`-class. This class generates an `IndexSet` and
+provides notification when the set has changed. Implementations should
+be non-blocking - slow operations should be executed async and the set should
+be incrementally updated to avoid blocking the viewer.
+
+<DemoWrapper name="Cognite3DViewerDemo" />
+
+# Simple, static node collection
+
+```js runnable-4x
+// import { NodeCollection, DefaultNodeAppearance, ClusteredAreaCollection } from '@cognite/reveal';
+
+class MyNodeCollection extends NodeCollection {
+  isLoading = false;
+
+  constructor(model) {
+    super('MyNodeCollection'); // Token for (de)serialization
+    this._nodeCount = model.nodeCount;
+    this._indexSet = new IndexSet();
+
+    for (let i = 0; i < model.nodeCount; i += 100) {
+      this._indexSet.add(i);
+    }
+  }
+
+  getIndexSet() {
+    return this._indexSet;
+  }
+
+  getAreas() {
+    if (this._areas) {
+      return this._areas;
+    }
+
+    const indices = this._indexSet.toIndexArray();
+
+    // getBoundingBoxesForIndices() may use the SDK or a NodesApiClient to fetch
+    // the bounding boxes of the relevant nodes
+    const boxes = getBoundingBoxesForIndices(indices);
+
+    this._areas = new ClusteredAreaCollection();
+    this._areas.addAreas(boxes);
+
+    return this._areas;
+  }
+
+  clear() {
+    this._indexSet.clear();
+    this.notifyChanged();
+  }
+}
+
+const myNodes = new MyNodeCollection(model);
+model.setDefaultNodeAppearance(DefaultNodeAppearance.Ghosted);
+model.assignStyledNodeCollection(myNodes, { renderGhosted: false, color: [40, 200, 20] } );
+```
+
+See also [guide on (de)serializing node collections](cad-save-viewerstate#serializing-and-deserializing-custom-node-colletions).
+
+# Details about IndexSet
+
+`IndexSet` is a specialized implementation of [`Set<number>`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set)
+that is optimized for storing ranges of numbers. This is a common case for nodes as typically a
+subtree will have the same styling applied.
+
+Although `IndexSet` supports adding and removing individual elements using `add()` and `remove()`, the best
+performance is achieved by using `addRange()` and `removeRange()` whenever possible.
+
+Also note that changes to the underlying `IndexSet` held by a `NodeCollection` isn't automatically propagated
+to be visible in the rendered result. In order to trigger an update after changing the underlying `IndexSet`,
+use `NodeCollection.notifyChanged()` (protected function). Note that this function should not be triggered too often
+as it might take some time to apply the changes.

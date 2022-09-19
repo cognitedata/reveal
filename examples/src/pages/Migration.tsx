@@ -6,7 +6,6 @@ import { useEffect, useRef } from 'react';
 import { CanvasWrapper } from '../components/styled';
 import { THREE } from '@cognite/reveal';
 import { CogniteClient } from '@cognite/sdk';
-import { CogniteClientPlayground } from '@cognite/sdk-playground';
 import dat from 'dat.gui';
 import {
   Cognite3DViewer,
@@ -28,9 +27,11 @@ import { InspectNodeUI } from '../utils/InspectNodeUi';
 import { CameraUI } from '../utils/CameraUI';
 import { PointCloudUi } from '../utils/PointCloudUi';
 import { ModelUi } from '../utils/ModelUi';
-import { createPlaygroundSDKFromEnvironment, createSDKFromEnvironment } from '../utils/example-helpers';
+import { createSDKFromEnvironment } from '../utils/example-helpers';
 import { PointCloudClassificationFilterUI } from '../utils/PointCloudClassificationFilterUI';
 import { PointCloudObjectStylingUI } from '../utils/PointCloudObjectStylingUI';
+import { CustomCameraManager } from '../utils/CustomCameraManager';
+import { MeasurementUi } from '../utils/MeasurementUi';
 
 
 window.THREE = THREE;
@@ -41,20 +42,31 @@ export function Migration() {
   const url = new URL(window.location.href);
   const urlParams = url.searchParams;
   const environmentParam = urlParams.get('env');
-
   const canvasWrapperRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    // Check in order to avoid double initialization of everything, especially dat.gui.
+    // See https://reactjs.org/docs/strict-mode.html#detecting-unexpected-side-effects for why its called twice.
+    if (!canvasWrapperRef.current) {
+      return () => {};
+    }
+
     const gui = new dat.GUI({ width: Math.min(500, 0.8 * window.innerWidth) });
     let viewer: Cognite3DViewer;
     let cameraManager: DefaultCameraManager;
+    let cameraManagers: {
+      Default: DefaultCameraManager;
+      Custom: CustomCameraManager;
+    }
 
     async function main() {
       const project = urlParams.get('project');
-      const modelUrl = urlParams.get('modelUrl');
+      let modelUrl = urlParams.get('modelUrl');
 
       if (!modelUrl && !(environmentParam && project)) {
-        throw Error('Must specify URL parameters "project" and "env", or "modelUrl"');
+        modelUrl = 'primitives';
+        url.searchParams.set('modelUrl', 'primitives');
+        window.history.pushState({}, '', url.toString());
       }
 
       const progress = (itemsLoaded: number, itemsRequested: number, itemsCulled: number) => {
@@ -65,28 +77,27 @@ export function Migration() {
       };
 
       let client: CogniteClient;
-      let clientPlayground: CogniteClientPlayground;
       if (project && environmentParam) {
         client = await createSDKFromEnvironment('reveal.example.example', project, environmentParam);
-        clientPlayground = await createPlaygroundSDKFromEnvironment('reveal.example.example', project, environmentParam);
       } else {
-        client = new CogniteClient({ appId: 'reveal.example.example',
-                                     project: 'dummy',
-                                     getToken: async () => 'dummy' });
-        clientPlayground = new CogniteClientPlayground({ appId: 'reveal.example.example',
-                                                         project: 'dummy',
-                                                         getToken: async () => 'dummy' });
+        client = new CogniteClient({
+          appId: 'reveal.example.example',
+          project: 'dummy',
+          getToken: async () => 'dummy'
+        });
       }
 
       let viewerOptions: Cognite3DViewerOptions = {
         sdk: client,
-        sdkPlayground: clientPlayground,
         domElement: canvasWrapperRef.current!,
         onLoading: progress,
         logMetrics: false,
-        antiAliasingHint: (urlParams.get('antialias') || undefined) as any,
-        ssaoQualityHint: (urlParams.get('ssao') || undefined) as any,
-        continuousModelStreaming: true
+        antiAliasingHint: (urlParams.get('antialias') ?? undefined) as any,
+        ssaoQualityHint: (urlParams.get('ssao') ?? undefined) as any,
+        continuousModelStreaming: true,
+        pointCloudEffects: {
+          pointBlending: (urlParams.get('pointBlending') === 'true' ?? undefined)
+        }
       };
 
       if (modelUrl !== null) {
@@ -97,8 +108,8 @@ export function Migration() {
         };
       } else if (!(project && environmentParam)) {
         throw new Error('Must either provide URL parameters "env", "project", ' +
-                        '"modelId" and "revisionId" to load model from CDF ' +
-                        '"or "modelUrl" to load model from URL.');
+          '"modelId" and "revisionId" to load model from CDF ' +
+          '"or "modelUrl" to load model from URL.');
       }
 
       // Prepare viewer
@@ -106,12 +117,18 @@ export function Migration() {
       (window as any).viewer = viewer;
 
       const controlsOptions: CameraControlsOptions = {
-        changeCameraTargetOnClick: true,
+        changeCameraTargetOnClick: false,
         mouseWheelAction: 'zoomToCursor',
       };
       cameraManager = viewer.cameraManager as DefaultCameraManager;
 
       cameraManager.setCameraControlsOptions(controlsOptions);
+
+      cameraManagers = {
+        Default: viewer.cameraManager as DefaultCameraManager,
+        Custom: new CustomCameraManager(canvasWrapperRef.current!, new THREE.PerspectiveCamera(5, 1., 0.01, 1000))
+      };
+      cameraManagers.Custom.enabled = false;
 
       // Add GUI for loading models and such
       const guiState = {
@@ -155,7 +172,8 @@ export function Migration() {
         renderMode: 'Color',
         controls: {
           mouseWheelAction: 'zoomToCursor',
-          changeCameraTargetOnClick: true
+          changeCameraTargetOnClick: true,
+          cameraManager: 'Default'
         }
       };
       const guiActions = {
@@ -190,7 +208,7 @@ export function Migration() {
         } else if (model instanceof CognitePointCloudModel) {
           new PointCloudClassificationFilterUI(gui.addFolder(`Class filter #${modelUi.pointCloudModels.length}`), model);
           pointCloudUi.applyToAllModels();
-          new PointCloudObjectStylingUI(gui.addFolder(`Object styling (${PointCloudObjectStylingUI.MAX_OBJECTS} first objects) #${modelUi.pointCloudModels.length}`), model);
+          new PointCloudObjectStylingUI(gui.addFolder('Point cloud object styling'), model);
         }
       }
       const modelUi = new ModelUi(gui.addFolder('Models'), viewer, handleModelAdded);
@@ -360,36 +378,40 @@ export function Migration() {
 
       const controlsGui = gui.addFolder('Camera controls');
       const mouseWheelActionTypes = ['zoomToCursor', 'zoomPastCursor', 'zoomToTarget'];
+      const cameraManagerTypes = ['Default', 'Custom'];
       controlsGui.add(guiState.controls, 'mouseWheelAction', mouseWheelActionTypes).name('Mouse wheel action type').onFinishChange(value => {
         cameraManager.setCameraControlsOptions({ ...cameraManager.getCameraControlsOptions(), mouseWheelAction: value });
       });
       controlsGui.add(guiState.controls, 'changeCameraTargetOnClick').name('Change camera target on click').onFinishChange(value => {
         cameraManager.setCameraControlsOptions({ ...cameraManager.getCameraControlsOptions(), changeCameraTargetOnClick: value });
       });
+      controlsGui.add(guiState.controls, 'cameraManager', cameraManagerTypes).name('Camera manager type').onFinishChange( (value: ('Default' | 'Custom')) => {
+        viewer.setCameraManager(cameraManagers[value]);
+      });
 
       const inspectNodeUi = new InspectNodeUI(gui.addFolder('Last clicked node'), client, viewer);
 
-      viewer.renderer.setPixelRatio(window.devicePixelRatio);
+      new MeasurementUi(viewer, gui.addFolder('Measurement'));
 
       viewer.on('click', async (event) => {
         const { offsetX, offsetY } = event;
         console.log('2D coordinates', event);
+        const start = performance.now();
         const intersection = await viewer.getIntersectionFromPixel(offsetX, offsetY);
         if (intersection !== null) {
-          console.log(intersection);
           switch (intersection.type) {
             case 'cad':
               {
                 const { treeIndex, point } = intersection;
-                console.log(`Clicked node with treeIndex ${treeIndex} at`, point);
+                console.log(`Clicked node with treeIndex ${treeIndex} at`, point, `took ${(performance.now() - start).toFixed(1)} ms`);
 
                 inspectNodeUi.inspectNode(intersection.model, treeIndex);
               }
               break;
             case 'pointcloud':
               {
-                const { pointIndex, point } = intersection;
-                console.log(`Clicked point with pointIndex ${pointIndex} at`, point);
+                const { point } = intersection;
+                console.log(`Clicked point assigned to the object with annotationId: ${intersection.annotationId} at`, point);
                 const sphere = new THREE.Mesh(new THREE.SphereBufferGeometry(0.1), new THREE.MeshBasicMaterial({ color: 'red' }));
                 sphere.position.copy(point);
                 viewer.addObject3D(sphere);
@@ -430,6 +452,6 @@ export function Migration() {
       gui.destroy();
       viewer?.dispose();
     };
-  });
+  }, []);
   return <CanvasWrapper ref={canvasWrapperRef} />;
 }

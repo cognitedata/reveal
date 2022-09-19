@@ -138,7 +138,7 @@ out vec3 vColor;
 	out vec3 vViewPosition;
 #endif
 
-#if defined(weighted_splats) || defined(paraboloid_point_shape)
+#if defined(weighted_splats) || defined(paraboloid_point_shape) || defined(hq_depth_pass)
 	out float vRadius;
 #endif
 
@@ -421,8 +421,8 @@ vec3 getCompositeColor() {
 void main() {
 	vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
 
-        vec4 classification = getClassification();
-        float outColorAlpha = classification.a;
+    vec4 classification = getClassification();
+    float outColorAlpha = classification.a;
 
 	gl_Position = projectionMatrix * mvPosition;
 
@@ -462,7 +462,7 @@ void main() {
 	pointSize = max(minSize, pointSize);
 	pointSize = min(maxSize, pointSize);
 
-	#if defined(weighted_splats) || defined(paraboloid_point_shape)
+	#if defined(weighted_splats) || defined(paraboloid_point_shape) || defined(hq_depth_pass)
 		vRadius = pointSize / projFactor;
 	#endif
 
@@ -568,6 +568,15 @@ void main() {
                 return;
 	}
 
+	#if defined hq_depth_pass
+		float originalDepth = gl_Position.w;
+		float adjustedDepth = originalDepth + 2.0 * vRadius;
+		float adjust = adjustedDepth / originalDepth;
+	
+		mvPosition.xyz = mvPosition.xyz * adjust;
+		gl_Position = projectionMatrix * mvPosition;
+	#endif
+
 	// ---------------------
 	// CLIPPING
 	// ---------------------
@@ -600,16 +609,24 @@ void main() {
 	#endif
 
         if (isClipped((modelViewMatrix * vec4(position, 1.0)).xyz)) {
-                 gl_Position = vec4(1000.0, 1000.0, 1000.0, 1.0);
+                gl_Position = vec4(1000.0, 1000.0, 1000.0, 1.0);
         }
 
-        if (objectId > 0.0) {
-            int lutX = int(objectId) % OBJECT_STYLING_TEXTURE_WIDTH;
-            int lutY = int(objectId) / OBJECT_STYLING_TEXTURE_WIDTH;
-            vec3 colorTexel = texelFetch(objectIdLUT, ivec2(lutX, lutY), 0).rgb;
+        int lutX = int(objectId) % OBJECT_STYLING_TEXTURE_WIDTH;
+        int lutY = int(objectId) / OBJECT_STYLING_TEXTURE_WIDTH;
 
-            if (any(greaterThan(colorTexel, vec3(0.0)))) {
-                vColor = 0.5 * (colorTexel + vColor);
-            }
+        vec4 styleTexel = texelFetch(objectIdLUT, ivec2(lutX, lutY), 0);
+        vec3 styleColor = styleTexel.rgb;
+
+        float alphaUnwrapped = floor((styleTexel.a * 255.0) + 0.5);
+
+        // Visibility
+        if (mod(alphaUnwrapped, 2.0) == 0.0) {
+                gl_Position = vec4(100.0, 100.0, 100.0, 0.0);
+                return;
+        }
+
+        if (any(greaterThan(styleColor, vec3(0.0)))) {
+                vColor = 0.5 * (styleColor + vColor);
         }
 }

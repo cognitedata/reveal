@@ -3,7 +3,6 @@
  */
 
 import { CogniteClient } from '@cognite/sdk';
-import { CogniteClientPlayground } from '@cognite/sdk-playground';
 
 import { EventType, PublicClientApplication } from '@azure/msal-browser';
 
@@ -186,27 +185,6 @@ export async function createSDKFromEnvironment(
                                      project,
                                      getToken,
                                      baseUrl });
-  await client.authenticate();
-  return client;
-}
-
-export async function createPlaygroundSDKFromEnvironment(
-  appId: string,
-  project: string,
-  environmentParam: string): Promise<CogniteClientPlayground> {
-
-
-  const credentialEnvironmentList = JSON.parse(process.env.REACT_APP_CREDENTIAL_ENVIRONMENTS!) as CredentialEnvironmentList;
-  const credentialEnvironment = credentialEnvironmentList.environments[environmentParam];
-
-  const baseUrl = `https://${credentialEnvironment.cluster}.cognitedata.com`;
-
-  const getToken = await getTokenSupplier(credentialEnvironment, baseUrl);
-
-  const client = new CogniteClientPlayground({ appId,
-                                               project,
-                                               getToken,
-                                               baseUrl });
   await client.authenticate();
   return client;
 }

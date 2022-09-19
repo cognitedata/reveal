@@ -44,7 +44,7 @@ export class WorkerPool {
       this.workerList.push(newWorker);
     }
 
-    if (process.env.NODE_ENV !== 'test') {
+    if (process.env.NODE_ENV! !== 'test') {
       checkWorkerVersion(this.workerList[0].worker).catch(x => log.error(x));
     }
 
@@ -113,7 +113,7 @@ export async function checkWorkerVersion(worker: RevealParserWorker): Promise<vo
     // so `'getVersion' in worker` - will be always false
     actualWorkerVersion = '1.1.0';
   }
-  const minWorkerVersion = process.env.WORKER_VERSION;
+  const minWorkerVersion = process.env.WORKER_VERSION!;
 
   const [majorMin, minorMin, patchMin] = minWorkerVersion.split('.').map(i => parseInt(i, 10));
   const [majorWorker, minorWorker, patchWorker] = actualWorkerVersion.split('.').map(i => parseInt(i, 10));

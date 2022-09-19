@@ -11,12 +11,12 @@ export const customScope: Record<string, any> = {
   ...viewerUtils,
   ...reveal,
   ...revealTools,
-  THREE,
   Water,
+  THREE,
   DragControls,
   // you can't simply call useBaseUrl here because it's a react hook...
   urls: {
-    skyUrl: '/img/sky007.jpg',
+    skyUrl: '/img/sky007.jpg'
   },
   APIKeys: {
     BingMapAPI: 'AuViYD_FXGfc3dxc0pNa8ZEJxyZyPq1lwOLPCOydV3f0tlEVH-HKMgxZ9ilcRj-T',

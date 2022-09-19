@@ -11,6 +11,8 @@ import { IPotree } from '../types/IPotree';
 import { IPointCloudTreeNodeBase } from './IPointCloudTreeNodeBase';
 import { IPointCloudTreeNode } from './IPointCloudTreeNode';
 import { computeTransformedBoundingBox } from '../utils/bounds';
+import { RenderLayer } from '@reveal/rendering';
+import { PointCloudObjectAnnotationData } from '../../styling/PointCloudObjectAnnotationData';
 
 export class PointCloudOctree extends PointCloudTree {
   potree: IPotree;
@@ -34,7 +36,7 @@ export class PointCloudOctree extends PointCloudTree {
   private readonly visibleBounds: Box3 = new Box3();
   private picker: PointCloudOctreePicker | undefined;
 
-  constructor(potree: IPotree, pcoGeometry: IPointCloudTreeGeometry, material?: PointCloudMaterial) {
+  constructor(potree: IPotree, pcoGeometry: IPointCloudTreeGeometry, annotationInfo: PointCloudObjectAnnotationData) {
     super();
 
     this.name = '';
@@ -46,7 +48,9 @@ export class PointCloudOctree extends PointCloudTree {
 
     this.position.copy(pcoGeometry.offset);
 
-    this.material = material || new PointCloudMaterial();
+    const objectsMaps = annotationInfo.createObjectsMaps();
+
+    this.material = new PointCloudMaterial({ objectsMaps });
     this.updateMaterial();
   }
 
@@ -90,6 +94,7 @@ export class PointCloudOctree extends PointCloudTree {
     points.position.copy(geometryNode.boundingBox.min);
     points.frustumCulled = false;
     points.onBeforeRender = PointCloudMaterial.makeOnBeforeRender(this, node);
+    points.layers.set(RenderLayer.PointCloud);
 
     if (parent) {
       parent.sceneNode.add(points);
@@ -200,8 +205,8 @@ export class PointCloudOctree extends PointCloudTree {
   }
 
   pick(renderer: WebGLRenderer, camera: Camera, ray: Ray, params: Partial<PickParams> = {}): PickPoint | null {
-    this.picker = this.picker || new PointCloudOctreePicker();
-    return this.picker.pick(renderer, camera, ray, [this], params);
+    this.picker = this.picker || new PointCloudOctreePicker(renderer);
+    return this.picker.pick(camera, ray, [this], params);
   }
 
   get progress(): number {

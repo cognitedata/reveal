@@ -3,11 +3,12 @@
  */
 import * as THREE from 'three';
 
-import { Cognite3DViewer, Cognite3DModel } from '@reveal/core';
-import { LevelOfDetail, SectorNode } from '@reveal/core/cad';
-import { assertNever } from '@reveal/core/utilities';
+//TODO: Refactor such that these are properly imported (tools should not be dependent on cad-parser)
+import { LevelOfDetail, SectorNode } from '../../cad-parsers/';
 
 import { Cognite3DViewerToolBase } from './Cognite3DViewerToolBase';
+import { assertNever } from '@reveal/utilities';
+import { Cognite3DModel, Cognite3DViewer } from '@reveal/api';
 
 export type DebugLoadedSectorsToolOptions = {
   showSimpleSectors?: boolean;

@@ -198,7 +198,24 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase, 
    * @param transformMatrix   Transformation to apply.
    */
   setNodeTransform(treeIndices: NumericRange, transformMatrix: THREE.Matrix4): void {
+    MetricsLogger.trackCadNodeTransformOverridden(treeIndices.count, transformMatrix);
     this.nodeTransformProvider.setNodeTransform(treeIndices, transformMatrix);
+  }
+
+  /**
+   * Set override transform of the node by tree index.
+   * @param treeIndex
+   * @param transform
+   * @param applyToChildren
+   */
+  async setNodeTransformByTreeIndex(
+    treeIndex: number,
+    transform: THREE.Matrix4,
+    applyToChildren = true
+  ): Promise<number> {
+    const treeIndices = await this.determineTreeIndices(treeIndex, applyToChildren);
+    this.setNodeTransform(treeIndices, transform);
+    return treeIndices.count;
   }
 
   /**
@@ -207,6 +224,17 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase, 
    */
   resetNodeTransform(treeIndices: NumericRange): void {
     this.nodeTransformProvider.resetNodeTransform(treeIndices);
+  }
+
+  /**
+   * Remove override transform of the node by tree index.
+   * @param treeIndex
+   * @param applyToChildren
+   */
+  async resetNodeTransformByTreeIndex(treeIndex: number, applyToChildren = true): Promise<number> {
+    const treeIndices = await this.determineTreeIndices(treeIndex, applyToChildren);
+    this.resetNodeTransform(treeIndices);
+    return treeIndices.count;
   }
 
   /**
@@ -472,33 +500,6 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase, 
   async iterateSubtreeByTreeIndex(treeIndex: number, action: (treeIndex: number) => void): Promise<void> {
     const treeIndices = await this.determineTreeIndices(treeIndex, true);
     return callActionWithIndicesAsync(treeIndices.from, treeIndices.toInclusive, action);
-  }
-
-  /**
-   * Set override transform of the node by tree index.
-   * @param treeIndex
-   * @param transform
-   * @param applyToChildren
-   */
-  async setNodeTransformByTreeIndex(
-    treeIndex: number,
-    transform: THREE.Matrix4,
-    applyToChildren = true
-  ): Promise<number> {
-    const treeIndices = await this.determineTreeIndices(treeIndex, applyToChildren);
-    this.nodeTransformProvider.setNodeTransform(treeIndices, transform);
-    return treeIndices.count;
-  }
-
-  /**
-   * Remove override transform of the node by tree index.
-   * @param treeIndex
-   * @param applyToChildren
-   */
-  async resetNodeTransformByTreeIndex(treeIndex: number, applyToChildren = true): Promise<number> {
-    const treeIndices = await this.determineTreeIndices(treeIndex, applyToChildren);
-    this.nodeTransformProvider.resetNodeTransform(treeIndices);
-    return treeIndices.count;
   }
 
   /**

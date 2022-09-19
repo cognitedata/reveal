@@ -4,11 +4,13 @@
     "experimentalDecorators": true,
     "lib": [
       "ES2019",
-      "dom"
+      "dom",
+      "WebWorker"
     ],
     "target": "ES2019",
     "esModuleInterop": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "resolveJsonModule": true
   },
   "exclude": [
     "./**/*.test.ts",

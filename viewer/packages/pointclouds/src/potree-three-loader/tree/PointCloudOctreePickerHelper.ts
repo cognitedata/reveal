@@ -67,7 +67,6 @@ export class PointCloudOctreePickerHelper {
   }
 
   resetState(): void {
-    this._renderer.state.reset();
     this._rendererStateHelper.resetState();
   }
 

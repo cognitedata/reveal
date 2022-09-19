@@ -7,8 +7,15 @@ import { createRenderTriangle } from '@reveal/utilities';
 import { CadMaterialManager } from '../CadMaterialManager';
 import { RenderMode } from '../rendering/RenderMode';
 import { CogniteColors, RevealColors } from './types';
-import { BlendOptions, BlitEffect, BlitOptions, ThreeUniforms } from '../render-passes/types';
-import { blitShaders } from '../rendering/shaders';
+import {
+  BlendOptions,
+  BlitEffect,
+  BlitOptions,
+  DepthBlendBlitOptions,
+  PointCloudPostProcessingOptions,
+  ThreeUniforms
+} from '../render-passes/types';
+import { blitShaders, depthBlendBlitShaders, pointCloudShaders } from '../rendering/shaders';
 import { NodeOutlineColor } from '@reveal/cad-styling';
 
 export const unitOrthographicCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, -1, 1);
@@ -31,11 +38,39 @@ export function createRenderTarget(width = 1, height = 1, multiSampleCount = 1):
   return renderTarget;
 }
 
-export function getBlitMaterial(options: BlitOptions): THREE.RawShaderMaterial {
-  const { texture, effect, depthTexture, blendOptions, overrideAlpha, ssaoTexture, writeColor, edges, outline } =
-    options;
+export function getDepthBlendBlitMaterial(options: DepthBlendBlitOptions): THREE.RawShaderMaterial {
+  const { texture, depthTexture, blendTexture, blendDepthTexture, blendFactor, outline, overrideAlpha } = options;
 
-  const uniforms: Record<string, { value: THREE.Texture }> = {
+  const uniforms: ThreeUniforms = {
+    tDiffuse: { value: texture },
+    tDepth: { value: depthTexture },
+    tBlendDiffuse: { value: blendTexture },
+    tBlendDepth: { value: blendDepthTexture },
+    blendFactor: { value: blendFactor }
+  };
+
+  const defines: Record<string, boolean> = {};
+  setAlphaOverride(overrideAlpha, uniforms, defines);
+
+  if (outline ?? false) {
+    defines['OUTLINE'] = true;
+    uniforms['tOutlineColors'] = { value: createOutlineColorTexture() };
+  }
+
+  return new THREE.RawShaderMaterial({
+    vertexShader: depthBlendBlitShaders.vertex,
+    fragmentShader: depthBlendBlitShaders.fragment,
+    uniforms,
+    glslVersion: THREE.GLSL3,
+    defines,
+    depthTest: false
+  });
+}
+
+export function getBlitMaterial(options: BlitOptions): THREE.RawShaderMaterial {
+  const { texture, effect, depthTexture, blendOptions, overrideAlpha, ssaoTexture, edges, outline } = options;
+
+  const uniforms: ThreeUniforms = {
     tDiffuse: { value: texture }
   };
 
@@ -67,8 +102,30 @@ export function getBlitMaterial(options: BlitOptions): THREE.RawShaderMaterial {
     glslVersion: THREE.GLSL3,
     defines,
     depthTest,
-    colorWrite: writeColor ?? true,
     ...initializedBlendOptions
+  });
+}
+
+export function getPointCloudPostProcessingMaterial(options: PointCloudPostProcessingOptions): THREE.RawShaderMaterial {
+  const { texture, depthTexture, pointBlending } = options;
+
+  const uniforms: ThreeUniforms = {
+    tDiffuse: { value: texture },
+    tDepth: { value: depthTexture }
+  };
+
+  const defines: Record<string, boolean> = {};
+
+  if (pointBlending) {
+    defines['points_blend'] = true;
+  }
+
+  return new THREE.RawShaderMaterial({
+    vertexShader: pointCloudShaders.normalize.vertex,
+    fragmentShader: pointCloudShaders.normalize.fragment,
+    uniforms,
+    defines,
+    glslVersion: THREE.GLSL3
   });
 }
 
@@ -142,6 +199,7 @@ export enum RenderLayer {
   Back = RenderMode.Color,
   InFront = RenderMode.Effects,
   Ghost = RenderMode.Ghost,
+  PointCloud,
   Default = 0
 }
 

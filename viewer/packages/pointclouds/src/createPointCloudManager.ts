@@ -4,21 +4,24 @@
 
 import { PointCloudManager } from './PointCloudManager';
 import { PointCloudMetadataRepository } from './PointCloudMetadataRepository';
-import { PointCloudFactory } from './PointCloudFactory';
 
 import * as THREE from 'three';
 
 import { ModelDataProvider, ModelMetadataProvider } from '@reveal/modeldata-api';
-import { CogniteClientPlayground } from '@cognite/sdk-playground';
+import { Potree } from './potree-three-loader';
+import { PointCloudFactory } from './PointCloudFactory';
+import { IAnnotationProvider } from './styling/IAnnotationProvider';
 
 export function createPointCloudManager(
   modelMetadataProvider: ModelMetadataProvider,
   modelDataProvider: ModelDataProvider,
+  annotationProvider: IAnnotationProvider,
   scene: THREE.Scene,
-  renderer: THREE.WebGLRenderer,
-  sdkPlayground?: CogniteClientPlayground | undefined
+  renderer: THREE.WebGLRenderer
 ): PointCloudManager {
   const metadataRepository = new PointCloudMetadataRepository(modelMetadataProvider, modelDataProvider);
-  const modelFactory = new PointCloudFactory(modelDataProvider, sdkPlayground);
-  return new PointCloudManager(metadataRepository, modelFactory, scene, renderer);
+  const potreeInstance = new Potree(modelDataProvider);
+  const pointCloudFactory = new PointCloudFactory(potreeInstance, annotationProvider);
+
+  return new PointCloudManager(metadataRepository, pointCloudFactory, potreeInstance, scene, renderer);
 }

@@ -95,7 +95,7 @@ module.exports = {
 
     // more strict jsdoc rules for public API
     {
-      files: ['./core/src/public/**/*.ts'],
+      files: ['./packages/api/src/public/**/*.ts'],
       rules: {
         'jsdoc/require-jsdoc': [
           'warn',

@@ -17,8 +17,8 @@ import {
   AbsolutePosition,
   RelativePosition
 } from './types';
-import { Cognite3DViewer } from '@reveal/core';
 import { MetricsLogger } from '@reveal/metrics';
+import { Cognite3DViewer } from '@reveal/api';
 
 export class AxisViewTool extends Cognite3DViewerToolBase {
   private readonly _layoutConfig: Required<AxisBoxConfig>;

@@ -32,7 +32,9 @@ viewer.on('click', async event => {
 ```
 
 ## Controlling the intersection threshold
-
+:::note
+Since v3.1.0 setting threshold doesn't have any effect because of new GPU-based picking method. Will be fully removed in v4.0.0.
+:::
 By default, points within 5 cm of an intersection ray is considered to be intersecting. For point clouds of large
 physical assets this is usually a good value, but for point clouds with large extends (e.g. geographical point clouds)
 this threshold might be too small.

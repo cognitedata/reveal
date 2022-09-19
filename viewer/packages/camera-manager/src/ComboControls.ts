@@ -138,6 +138,9 @@ export class ComboControls extends EventDispatcher {
 
       window.removeEventListener('pointerup', this.onMouseUp);
       window.removeEventListener('pointerdown', this.onFocusChanged);
+
+      // dipose all keyboard events registered. REV-461!
+      this._keyboard.dispose();
     };
   }
 
