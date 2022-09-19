@@ -11,7 +11,11 @@ const FunctionParameterFormLabel = ({
 }) => {
   return (
     <Label>
-      <Tooltip maxWidth={350} content={description} disabled={!description}>
+      <Tooltip
+        maxWidth={350}
+        content={<StyledMarkdown>{description || ''}</StyledMarkdown>}
+        disabled={!description}
+      >
         <StyledMarkdown>{label || ''}</StyledMarkdown>
       </Tooltip>
     </Label>
