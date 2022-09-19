@@ -7,6 +7,7 @@ import { REPORTS_QUERY_KEY } from 'constants/react-query';
 import { Report } from '../types';
 
 type UpdateReport = { id: NonNullable<Report['id']>; report: Partial<Report> };
+
 export const useReportUpdateMutate = () => {
   const queryClient = useQueryClient();
 

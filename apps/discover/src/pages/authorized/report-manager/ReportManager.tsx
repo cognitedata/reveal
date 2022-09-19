@@ -1,5 +1,5 @@
-import { useReportUpdateMutate } from 'domain/reportManager/internal/actions/useReportUpdateMutate';
-import { useAllReportsQuery } from 'domain/reportManager/internal/queries/useReportsQuery';
+import { useUpdateReport } from 'domain/reportManager/internal/actions/useUpdateReport';
+import { useReportsQuery } from 'domain/reportManager/internal/queries/useReportsQuery';
 import { Report } from 'domain/reportManager/internal/types';
 import { useUserRoles } from 'domain/user/internal/hooks/useUserRoles';
 import { useUserList } from 'domain/userManagementService/internal/queries/useUserList';
@@ -10,8 +10,6 @@ import uniq from 'lodash/uniq';
 import styled from 'styled-components/macro';
 import { getSearchParamsFromCurrentUrl } from 'utils/url';
 import { useSetUrlParams } from 'utils/url/setUrlParams';
-
-import { showErrorMessage, showSuccessMessage } from 'components/Toast';
 
 import { ReportManagerList } from './list';
 import { adaptReportsForList } from './list/adaptReportsForList';
@@ -37,7 +35,7 @@ const useDataForReportManager = ({
   wellboreFilter: string;
 }) => {
   const { data: roles, isLoading: isLoadingRoles } = useUserRoles();
-  const { data: reports, isLoading: isLoadingReports } = useAllReportsQuery();
+  const { data: reports, isLoading: isLoadingReports } = useReportsQuery();
   const { data: users } = useUserList({
     ids: getUserIdsFromReports(reports || []),
   });
@@ -66,27 +64,18 @@ const useDataForReportManager = ({
 
 export const ReportManager: React.FC = () => {
   const [searchFilter, setSearchFilter] = React.useState('');
-  const { mutate: updateReport } = useReportUpdateMutate();
+
+  const handleReportUpdate = useUpdateReport();
+
   const { data, isLoading, isAdmin } = useDataForReportManager({
     wellboreFilter: searchFilter,
   });
-  const urlSetter = useSetUrlParams();
 
-  const handleReportUpdate = async (
-    report: Partial<Report>,
-    id: Report['id']
-  ) => {
-    if (id) {
-      updateReport({ id, report });
-      showSuccessMessage('Report Updated');
-    } else {
-      showErrorMessage(`Error changing status for ${report.id}`);
-    }
-  };
+  const urlSetter = useSetUrlParams();
 
   const handleSearchInputChange = (value: string | number) => {
     setSearchFilter(String(value));
-    urlSetter(`${URL_PARAM_WELLBORE_FILTER}=${value}`, {
+    urlSetter(`${URL_PARAM_WELLBORE_FILTER}=${encodeURIComponent(value)}`, {
       preserveKeyFilters: [SORT_KEY, FILTER_KEY],
     });
   };
@@ -95,7 +84,7 @@ export const ReportManager: React.FC = () => {
   React.useLayoutEffect(() => {
     const params = getSearchParamsFromCurrentUrl();
     if (params[URL_PARAM_WELLBORE_FILTER]) {
-      setSearchFilter(params[URL_PARAM_WELLBORE_FILTER]);
+      setSearchFilter(decodeURIComponent(params[URL_PARAM_WELLBORE_FILTER]));
     }
   }, []);
 
@@ -108,6 +97,7 @@ export const ReportManager: React.FC = () => {
     <>
       <FilterContainer>
         <DebouncedInput
+          clearable={{ callback: () => handleSearchInputChange('') }}
           value={searchFilter}
           onChange={handleSearchInputChange}
           placeholder="Search wellbores"

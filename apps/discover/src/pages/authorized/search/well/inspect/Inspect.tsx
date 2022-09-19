@@ -18,7 +18,7 @@ import { useTranslation } from 'hooks/useTranslation';
 import { inspectTabsActions } from 'modules/inspectTabs/actions';
 import { useInspectStateFromUrl } from 'modules/wellInspect/hooks/useInspectStateFromUrl';
 import { useWellInspectSelectedWellboreIds } from 'modules/wellInspect/selectors';
-import { WellReportModal } from 'pages/authorized/report-manager/reportModal/WellReportModal';
+import { WellReportModal } from 'pages/authorized/wellReportManager/WellReportModal';
 
 import {
   InspectContainer,

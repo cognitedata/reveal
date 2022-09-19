@@ -13,7 +13,7 @@ const CommentsContainer = styled.div`
   padding-bottom: 16px;
 `;
 
-export const ReportComments = ({ report }: ReportDetailProps) => {
+export const ReportComments = ({ reportId }: ReportDetailProps) => {
   return (
     <CommentsContainer>
       <ListComments
@@ -21,7 +21,7 @@ export const ReportComments = ({ report }: ReportDetailProps) => {
         userManagementServiceBaseUrl={SIDECAR.userManagementServiceBaseUrl}
         fasAppId={SIDECAR.aadApplicationId}
         target={{
-          id: `${DISCOVER_WELL_REPORT}-${report.id}`,
+          id: `${DISCOVER_WELL_REPORT}-${reportId}`,
           targetType: DISCOVER_WELL_REPORT,
         }}
       />

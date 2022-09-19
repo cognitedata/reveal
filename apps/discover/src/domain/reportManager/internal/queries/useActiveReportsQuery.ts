@@ -10,7 +10,7 @@ export const useActiveReportsQuery = (
 ): UseQueryResult<Report[]> => {
   return useQuery([REPORTS_QUERY_KEY.ACTIVE_REPORTS, externalIds], () =>
     reportManagerAPI.search({
-      status: ['ACTIVE', 'IN_PROGRESS'],
+      status: ['BACKLOG', 'IN_PROGRESS'],
       externalIds,
     })
   );

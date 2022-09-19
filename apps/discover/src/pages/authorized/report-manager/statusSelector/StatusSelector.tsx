@@ -1,14 +1,16 @@
-import { Report } from 'domain/reportManager/internal/types';
+import { REPORT_STATUS } from 'domain/reportManager/internal/constants';
+import { Report, DisplayReport } from 'domain/reportManager/internal/types';
 
-import capitalize from 'lodash/capitalize';
+import map from 'lodash/map';
 import styled from 'styled-components/macro';
 
 import { Button } from '@cognite/cogs.js';
 
 import { Dropdown } from 'components/Dropdown';
 
+import { UpdateReport } from '../types';
+
 import { StatusLabel } from './StatusLabel';
-import { UpdateReport } from './types';
 
 const DropdownContainer = styled.div`
   button.dropdown-value {
@@ -17,7 +19,7 @@ const DropdownContainer = styled.div`
   }
   cursor: pointer;
 `;
-const DropdownContainerActive = styled(DropdownContainer)`
+const DropdownContainerBacklog = styled(DropdownContainer)`
   button.dropdown-value {
     color: var(--cogs-text-icon--status-neutral);
     background: var(--cogs-border--status-neutral--muted);
@@ -42,36 +44,48 @@ const DropdownContainerDismissed = styled(DropdownContainer)`
   }
 `;
 
+const containers: Record<DisplayReport['status'], any> = {
+  Backlog: DropdownContainerBacklog,
+  Resolved: DropdownContainerResolved,
+  'In progress': DropdownContainerInProgress,
+  Dismissed: DropdownContainerDismissed,
+};
+
+const StatusDropdownMenu = ({
+  handleDropdownSelect,
+}: {
+  handleDropdownSelect: (status: Report['status']) => void;
+}) => {
+  return (
+    <Dropdown.Menu>
+      {map<typeof REPORT_STATUS>(
+        REPORT_STATUS,
+        (statusLabel: string, statusValue: Report['status']) => (
+          <Dropdown.Item
+            key={`report-status-${statusValue}`}
+            onClick={() => handleDropdownSelect(statusValue)}
+          >
+            {statusLabel}
+          </Dropdown.Item>
+        )
+      )}
+    </Dropdown.Menu>
+  );
+};
+
 export const StatusSelector = ({
   id,
   value,
   onReportUpdate,
   isAdmin,
 }: {
-  id: Report['id'];
-  value: Report['status'];
+  id: DisplayReport['id'];
+  value: DisplayReport['status'];
   onReportUpdate: UpdateReport;
   isAdmin?: boolean;
 }) => {
   const handleDropdownSelect = (newState: Report['status']) => {
-    onReportUpdate({ status: newState }, id);
-  };
-
-  const availableStates: Report['status'][] = [
-    'ACTIVE',
-    'RESOLVED',
-    'IN_PROGRESS',
-    'DISMISSED',
-  ];
-
-  const getDisplayValue = (value: Report['status']) =>
-    capitalize(value).replace('_', ' ');
-
-  const containers: Record<Report['status'], any> = {
-    ACTIVE: DropdownContainerActive,
-    RESOLVED: DropdownContainerResolved,
-    IN_PROGRESS: DropdownContainerInProgress,
-    DISMISSED: DropdownContainerDismissed,
+    onReportUpdate({ report: { status: newState }, id });
   };
 
   const StyledContainer = containers[value];
@@ -84,16 +98,7 @@ export const StatusSelector = ({
       <StyledContainer>
         <Dropdown
           content={
-            <Dropdown.Menu>
-              {availableStates.map((state) => (
-                <Dropdown.Item
-                  key={`report-state-${state}`}
-                  onClick={() => handleDropdownSelect(state)}
-                >
-                  {getDisplayValue(state)}
-                </Dropdown.Item>
-              ))}
-            </Dropdown.Menu>
+            <StatusDropdownMenu handleDropdownSelect={handleDropdownSelect} />
           }
         >
           <Button
@@ -101,12 +106,12 @@ export const StatusSelector = ({
             iconPlacement="right"
             className="dropdown-value"
           >
-            <>{getDisplayValue(value)}</>
+            <>{value}</>
           </Button>
         </Dropdown>
       </StyledContainer>
     );
   }
 
-  return <StatusLabel value={getDisplayValue(value)} />;
+  return <StatusLabel value={value} />;
 };

@@ -1,5 +1,3 @@
-import * as React from 'react';
-
 import { Label } from '@cognite/cogs.js';
 
 export const StatusLabel = ({

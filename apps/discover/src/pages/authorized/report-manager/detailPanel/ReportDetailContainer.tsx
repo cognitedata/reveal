@@ -18,7 +18,7 @@ const StyledTabs = styled(Tabs)`
   }
 `;
 
-export const ReportDetailContainer = ({ report }: ReportDetailProps) => {
+export const ReportDetailContainer = ({ reportId }: ReportDetailProps) => {
   const [activeKey, setActiveKey] = React.useState<ReportTabs>('DETAILS');
 
   const handleChange = (newActiveKey: string) => {
@@ -32,10 +32,10 @@ export const ReportDetailContainer = ({ report }: ReportDetailProps) => {
       defaultActiveKey={activeKey}
     >
       <Tabs.TabPane key="DETAILS" tab="Report Detail">
-        <ReportDetail report={report} />
+        <ReportDetail reportId={reportId} />
       </Tabs.TabPane>
       <Tabs.TabPane key="COMMENTS" tab="Comments">
-        <ReportComments report={report} />
+        <ReportComments reportId={reportId} />
       </Tabs.TabPane>
     </StyledTabs>
   );

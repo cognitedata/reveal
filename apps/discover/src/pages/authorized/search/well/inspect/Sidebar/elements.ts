@@ -2,6 +2,7 @@ import styled from 'styled-components/macro';
 
 import { WarningButton } from 'components/Buttons/WarningButton';
 import { MS_TRANSITION_TIME } from 'pages/authorized/search/search/SideBar/constants';
+import { HoverContentWrapper } from 'pages/authorized/wellReportManager/elements';
 import { Flex, FlexColumn, FlexRow, sizes } from 'styles/layout';
 
 import { TOP_BAR_HEIGHT } from '../constants';
@@ -127,6 +128,12 @@ export const BlockContentItem = styled(FlexRow)`
   }
   > * .checkbox-ui {
     margin-right: 12px;
+  }
+  &:hover {
+    > ${HoverContentWrapper} {
+      opacity: 1;
+      pointer-events: initial;
+    }
   }
 `;
 

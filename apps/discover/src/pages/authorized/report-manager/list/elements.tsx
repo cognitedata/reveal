@@ -50,6 +50,7 @@ export const PaddedRow = styled.div`
   padding-left: ${(props: { depth: number }) => `${props.depth * 1.5}rem`};
 `;
 export const ExpandableRow = styled(PaddedRow)`
+  display: flex;
   cursor: pointer;
 `;
 export const MainRowContainer = styled.tr`

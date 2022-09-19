@@ -1,3 +1,4 @@
+import { adaptReportToDisplayReport } from 'domain/reportManager/internal/adapters/adaptReportToDisplayReport';
 import { Report } from 'domain/reportManager/internal/types';
 
 import { Icon, Menu, Flex, Label } from '@cognite/cogs.js';
@@ -19,7 +20,7 @@ export type ReportMenuProps = {
   activeReports?: Report[];
   handleNavigation: (
     navigationType: ReportMenuNavTypes,
-    report?: Report
+    reportId?: Report['id']
   ) => void;
 };
 
@@ -70,19 +71,36 @@ const ActiveReportsSection = ({
   }
   return (
     <>
+      <Menu.Divider />
       <Menu.Header>Reported Issues</Menu.Header>
-      {activeReports.map((report) => (
-        <Menu.Item
-          key={report.id}
-          onClick={() => handleNavigation('OPEN_REPORT', report)}
-        >
-          <ReportMenuItem
-            title={`${report.reportType} / ${report.reason}`}
-            status={report.status}
-            createdTime={report.displayCreatedTime!}
-          />
-        </Menu.Item>
-      ))}
+      {activeReports
+        .slice(0, 2)
+        .map(adaptReportToDisplayReport)
+        .map((report) => (
+          <Menu.Item
+            key={report.id}
+            onClick={() => handleNavigation('OPEN_REPORT', report.id)}
+          >
+            <ReportMenuItem
+              title={`${report.reportType} / ${report.reason}`}
+              status={report.status}
+              createdTime={report.displayCreatedTime!}
+            />
+          </Menu.Item>
+        ))}
+      <Menu.Item
+        appendIcon="ArrowRight"
+        onClick={() => handleNavigation('ALL')}
+      >
+        See all reports
+      </Menu.Item>
+      <Menu.Item
+        appendIcon="ArrowRight"
+        onClick={() => handleNavigation('RESOLVED')}
+      >
+        <Icon type="Checklist" />
+        Resolved Issues
+      </Menu.Item>
     </>
   );
 };
@@ -93,28 +111,14 @@ export const ReportMenu = ({
 }: ReportMenuProps) => {
   return (
     <Menu>
-      <ActiveReportsSection
-        activeReports={activeReports}
-        handleNavigation={handleNavigation}
-      />
-      <Menu.Item
-        appendIcon="ArrowRight"
-        onClick={() => handleNavigation('ALL')}
-      >
-        See all reports
-      </Menu.Item>
-      <Menu.Divider />
       <Menu.Item onClick={() => handleNavigation('CREATE_NEW')}>
         <Icon type="Feedback" />
         Report new issues
       </Menu.Item>
-      <Menu.Item
-        appendIcon="ArrowRight"
-        onClick={() => handleNavigation('RESOLVED')}
-      >
-        <Icon type="Checklist" />
-        Resolved Issues
-      </Menu.Item>
+      <ActiveReportsSection
+        activeReports={activeReports}
+        handleNavigation={handleNavigation}
+      />
     </Menu>
   );
 };

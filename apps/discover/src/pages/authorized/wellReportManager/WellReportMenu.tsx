@@ -8,7 +8,7 @@ import navigation from 'constants/navigation';
 import { showGlobalSidePanel } from 'modules/global/reducer';
 import { wellInspectActions } from 'modules/wellInspect/actions';
 
-import { ReportMenu, ReportMenuProps } from './ReportMenu';
+import { ReportMenu, ReportMenuProps } from '../report-manager';
 
 export type WellReportMenuProps = {
   wellboreMatchingId: string;
@@ -24,11 +24,14 @@ export const WellReportMenu = ({
 
   const handleNavigation: ReportMenuProps['handleNavigation'] = (
     navigationType,
-    report
+    reportId
   ) => {
     switch (navigationType) {
       case 'ALL':
-        history.push(navigation.REPORT_PANEL);
+        history.push({
+          pathname: navigation.REPORT_PANEL,
+          search: `?wellbores=${encodeURIComponent(wellboreMatchingId)}`,
+        });
         break;
       case 'CREATE_NEW':
         dispatch(
@@ -40,10 +43,15 @@ export const WellReportMenu = ({
         );
         break;
       case 'OPEN_REPORT':
-        dispatch(showGlobalSidePanel({ data: report!, type: 'WELL_REPORT' }));
+        dispatch(showGlobalSidePanel({ data: reportId, type: 'WELL_REPORT' }));
         break;
       case 'RESOLVED':
-        history.push(navigation.REPORT_PANEL);
+        history.push({
+          pathname: navigation.REPORT_PANEL,
+          search: `?filter_status=Resolved&wellbores=${encodeURIComponent(
+            wellboreMatchingId
+          )}`,
+        });
         break;
     }
   };

@@ -1,4 +1,8 @@
+import { Report } from 'domain/reportManager/internal/types';
+
 import { useState } from 'react';
+
+import styled from 'styled-components/macro';
 
 import {
   Modal,
@@ -11,7 +15,7 @@ import {
 
 export type ReportFormValues = {
   dataSet: OptionType<string>;
-  feedbackType: OptionType<string>;
+  feedbackType: OptionType<Report['reason']>;
   description: string;
 };
 
@@ -25,6 +29,14 @@ type CreateReportModalProps = {
   onCancel: () => void;
 };
 
+export const StyledTextarea = styled(Textarea)`
+  display: flex;
+  flex-direction: column;
+  & textarea {
+    min-height: 150px;
+  }
+`;
+
 export const CreateReportModal = ({
   visible,
   sourceValue,
@@ -36,6 +48,8 @@ export const CreateReportModal = ({
 }: CreateReportModalProps) => {
   const [formValues, setFormValues] = useState<Partial<ReportFormValues>>({});
 
+  // eslint-disable-next-line
+  // @ts-ignore state starts with unfilled values values
   const handleOk = () => onCreateReport(formValues);
 
   return (
@@ -49,30 +63,37 @@ export const CreateReportModal = ({
       closable={false}
     >
       <Flex direction="column" gap={16}>
-        <Input disabled value={sourceValue} title={sourceTitle} htmlSize={50} />
+        <Input
+          disabled
+          value={sourceValue}
+          title={sourceTitle}
+          htmlSize={50}
+          required
+        />
         <Select
+          required
           label="Data set"
           options={dataSetOptions}
           inputId="dataSet"
           value={formValues.dataSet}
-          onChange={(value: OptionType<string>) => {
+          onChange={(value: ReportFormValues['dataSet']) => {
             setFormValues((state) => ({ ...state, dataSet: value }));
           }}
         />
         <Select
+          required
           label="Issue"
           options={feedbackTypeOptions}
           inputId="feedbackType"
           value={formValues.feedbackType}
-          onChange={(value: OptionType<string>) => {
+          onChange={(value: ReportFormValues['feedbackType']) => {
             setFormValues((state) => ({ ...state, feedbackType: value }));
           }}
         />
-        <Textarea
+        <StyledTextarea
           title="Description"
           value={formValues.description}
-          onChange={(event) => {
-            console.log(event.target.value);
+          onChange={(event: React.ChangeEvent<HTMLTextAreaElement>) => {
             setFormValues((state) => ({
               ...state,
               description: event.target.value,

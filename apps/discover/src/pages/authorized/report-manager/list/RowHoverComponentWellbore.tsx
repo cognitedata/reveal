@@ -12,7 +12,11 @@ import { TableReport } from './types';
 export const RowHoverComponentWellbore: React.FC<{ row: Row<TableReport> }> = ({
   row,
 }) => {
-  const pathToCopy = `${window.location.origin}${window.location.pathname}?${URL_PARAM_WELLBORE_FILTER}=${row.original.externalId}`;
+  const pathToCopy = `${window.location.origin}${
+    window.location.pathname
+  }?${URL_PARAM_WELLBORE_FILTER}=${encodeURIComponent(
+    row.original.externalId!
+  )}`;
 
   return (
     <HoverContentWrapper>

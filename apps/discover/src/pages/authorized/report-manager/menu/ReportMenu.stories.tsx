@@ -3,15 +3,15 @@ import { Report } from 'domain/reportManager/internal/types';
 import { ReportMenu } from './ReportMenu';
 
 const story = {
-  title: 'Report Manager/ Menu',
+  title: 'Report Manager / Menu',
   component: ReportMenu,
 };
 
 const ACTIVE_REPORTS: Report[] = [
   {
-    status: 'ACTIVE',
+    status: 'BACKLOG',
     description: 'The NDS data was not sufficient for this wellbore',
-    reason: 'Insufficient',
+    reason: 'INCOMPLETE',
     reportType: 'NDS',
     startTime: Date.now(),
     externalId: 'wells/andromeda/well-AND15661828/wellbores/wb-01',
@@ -21,7 +21,7 @@ const ACTIVE_REPORTS: Report[] = [
     id: 123,
     status: 'IN_PROGRESS',
     description: 'The NDS data was not sufficient for this wellbore',
-    reason: 'Faulty',
+    reason: 'INCOMPLETE',
     reportType: 'NDS',
     startTime: Date.now(),
     externalId: 'wells/andromeda/well-AND15661828/wellbores/wb-01',

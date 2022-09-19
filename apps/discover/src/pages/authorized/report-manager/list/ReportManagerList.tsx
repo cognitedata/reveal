@@ -27,6 +27,11 @@ import {
 import { getSearchParamsFromCurrentUrl } from 'utils/url';
 import { useSetUrlParams } from 'utils/url/setUrlParams';
 
+import { MiddleEllipsis } from 'components/MiddleEllipsis';
+
+import { StatusSelector } from '../statusSelector/StatusSelector';
+import { UpdateReport } from '../types';
+
 import { ColumnFilter } from './ColumnFilter';
 import { URL_PARAM_WELLBORE_FILTER } from './constants';
 import {
@@ -44,9 +49,8 @@ import {
 } from './elements';
 import { RowHoverComponentReport } from './RowHoverComponentReport';
 import { RowHoverComponentWellbore } from './RowHoverComponentWellbore';
-import { StatusSelector } from './StatusSelector';
 import { TableColumnSortIcons } from './TableColumnSortIcons';
-import { TableReport, UpdateReport } from './types';
+import { TableReport } from './types';
 import { getParamsForUrl, getStateFromUrlParams } from './urlState';
 
 declare module '@tanstack/table-core' {
@@ -122,7 +126,8 @@ export const ReportManagerList: React.FC<Props> = ({
                 ) : (
                   <StyledIcon type="ChevronUp" />
                 )}
-                {` ${getValue()}`}
+
+                <MiddleEllipsis value={getValue() as string} />
               </ExpandableRow>
             );
           }

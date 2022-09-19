@@ -18,7 +18,7 @@ import {
   useWellInspectSelection,
 } from 'modules/wellInspect/selectors';
 import { WellboreId } from 'modules/wellSearch/types';
-import { ReportMenuDropdown } from 'pages/authorized/report-manager/create';
+import { WellReportThreeDotsMenu } from 'pages/authorized/wellReportManager';
 
 import {
   BlockContent,
@@ -107,7 +107,7 @@ export const SidebarContent: React.FC = () => {
                   {wellboreHasErrors && (
                     <WellboreErrorWarning errors={errors[id]} />
                   )}
-                  <ReportMenuDropdown
+                  <WellReportThreeDotsMenu
                     wellboreMatchingId={wellbore.matchingId}
                   />
                 </BlockContentItem>

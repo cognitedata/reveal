@@ -1,8 +1,8 @@
+import { useCreateReport } from 'domain/reportManager/internal/actions/useCreateReport';
 import {
   DATA_SETS_MAP,
-  DATA_SET_FEEDBACK_TYPES,
+  REPORT_FEEDBACK_REASONS,
 } from 'domain/reportManager/internal/constants';
-import { reportManagerAPI } from 'domain/reportManager/service/network/reportManagerAPI';
 import { useUserInfoQuery } from 'domain/userManagementService/internal/queries/useUserInfoQuery';
 
 import { useDispatch } from 'react-redux';
@@ -12,9 +12,9 @@ import map from 'lodash/map';
 import { wellInspectActions } from 'modules/wellInspect/actions';
 import { useWellFeedback } from 'modules/wellInspect/selectors';
 
-import { CreateReportModal, ReportFormValues } from './CreateReportModal';
+import { CreateReportModal, ReportFormValues } from '../report-manager';
 
-const dataSetFeedabckTypes = map(DATA_SET_FEEDBACK_TYPES, (label, value) => ({
+const dataSetFeedabckTypes = map(REPORT_FEEDBACK_REASONS, (label, value) => ({
   value,
   label,
 }));
@@ -28,6 +28,7 @@ export const WellReportModal = () => {
   const wellFeedback = useWellFeedback();
   const dispatch = useDispatch();
   const { data: user } = useUserInfoQuery();
+  const createReport = useCreateReport();
 
   const onCancel = () => {
     dispatch(
@@ -37,30 +38,27 @@ export const WellReportModal = () => {
     );
   };
 
-  const onCreateReport = async ({
+  const handleCreateReport = async ({
     description,
     dataSet,
     feedbackType,
   }: ReportFormValues) => {
-    reportManagerAPI
-      .create([
-        {
-          description,
-          reason: feedbackType.value!,
-          externalId: wellFeedback.wellboreMatchingId!,
-          status: 'ACTIVE',
-          reportType: dataSet.value!,
-          startTime: Date.now(),
-          ownerUserId: user!.id,
-        },
-      ])
-      .then(() => {
-        dispatch(
-          wellInspectActions.setWellFeedback({
-            visible: false,
-          })
-        );
-      });
+    await createReport([
+      {
+        description,
+        reason: feedbackType.value!,
+        externalId: wellFeedback.wellboreMatchingId!,
+        status: 'BACKLOG',
+        reportType: dataSet.value!,
+        startTime: Date.now(),
+        ownerUserId: user!.id,
+      },
+    ]);
+    dispatch(
+      wellInspectActions.setWellFeedback({
+        visible: false,
+      })
+    );
   };
 
   return (
@@ -71,7 +69,7 @@ export const WellReportModal = () => {
       dataSetOptions={dataSets}
       visible={wellFeedback.visible}
       onCancel={onCancel}
-      onCreateReport={onCreateReport}
+      onCreateReport={handleCreateReport}
     />
   );
 };

@@ -1,11 +1,15 @@
-import { Report } from 'domain/reportManager/internal/types';
+import { adaptReportToDisplayReport } from 'domain/reportManager/internal/adapters/adaptReportToDisplayReport';
+import { Report, DisplayReport } from 'domain/reportManager/internal/types';
 
 import { UMSUser } from '@cognite/user-management-service-types';
 
-import { getLookupTableOfWells } from './getLookupTableOfWells';
+// import { getLookupTableOfWells } from './getLookupTableOfWells';
 import { TableReport } from './types';
 
-const transformReportForDisplay = (report: Report, user?: UMSUser) => {
+const transformReportForDisplay = (
+  report: DisplayReport,
+  user?: UMSUser
+): DisplayReport => {
   return {
     ...report,
     externalId: report.reportType,
@@ -24,22 +28,24 @@ export const adaptReportsForList = async ({
     return [];
   }
 
-  const wellDataById = await getLookupTableOfWells(reports);
+  const displayReport = reports.map(adaptReportToDisplayReport);
 
-  const processedData = reports.reduce((results, row) => {
-    const well = wellDataById[row.externalId];
+  // const wellDataById = await getLookupTableOfWells(displayReport);
 
-    if (!well) {
-      console.error('Cannot find well for this report:', row);
-      return results;
-    }
+  const processedData = displayReport.reduce((results, report) => {
+    // const well = wellDataById[report.externalId];
+
+    // if (!well) {
+    //   console.error('Cannot find well for this report:', report);
+    //   return results;
+    // }
 
     const user = users?.find((user) => {
-      return user.id === row.ownerUserId;
+      return user.id === report.ownerUserId;
     });
 
     const existingWellboreResult = results.find(
-      (item) => item.externalId === well.name
+      (item) => item.externalId === report.externalId
     );
 
     // add onto existing well group
@@ -47,7 +53,9 @@ export const adaptReportsForList = async ({
       if (!existingWellboreResult.subRows) {
         existingWellboreResult.subRows = [];
       }
-      existingWellboreResult.subRows.push(transformReportForDisplay(row, user));
+      existingWellboreResult.subRows.push(
+        transformReportForDisplay(report, user)
+      );
       return results;
     }
 
@@ -55,8 +63,8 @@ export const adaptReportsForList = async ({
     return [
       ...results,
       {
-        externalId: well.name,
-        subRows: [transformReportForDisplay(row, user)],
+        externalId: report.externalId,
+        subRows: [transformReportForDisplay(report, user)],
       },
     ];
   }, [] as TableReport[]);

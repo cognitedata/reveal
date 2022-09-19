@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux';
 import { hideGlobalSidePanel } from 'modules/global/reducer';
 import { useGlobalSidePanel } from 'modules/global/selectors';
 
-import { WellReportDetailPanelContent } from './report-manager/reportDetailPanel/WellReportDetailPanelContent';
+import { WellReportDetailPanelContent } from './wellReportManager/WellReportDetailPanelContent';
 
 export const GlobalPanels = () => {
   const sidePanel = useGlobalSidePanel();
@@ -17,7 +17,7 @@ export const GlobalPanels = () => {
       case 'WELL_REPORT':
         return (
           <WellReportDetailPanelContent
-            report={sidePanel.data}
+            reportId={sidePanel.data}
             onClose={onClose}
           />
         );

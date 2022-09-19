@@ -4,15 +4,20 @@ export interface Report
   extends Partial<CreatedAndLastUpdatedTime>,
     Partial<InternalId> {
   description: string;
-  reason: string;
+  reason: 'INCOMPLETE' | 'DUPLICATE' | 'SENSITIVE' | 'OTHER';
   externalId: string;
   reportType: string;
   ownerUserId: string;
-  status: 'ACTIVE' | 'IN_PROGRESS' | 'RESOLVED' | 'DISMISSED';
+  status: 'BACKLOG' | 'IN_PROGRESS' | 'RESOLVED' | 'DISMISSED';
   startTime: Timestamp;
   endTime?: Timestamp;
   displayCreatedTime?: string;
 }
+
+export type DisplayReport = Omit<Report, 'status' | 'reason'> & {
+  reason: string;
+  status: string;
+};
 
 export type ReportFilter = {
   keyword?: string;
