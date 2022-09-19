@@ -6,10 +6,10 @@ import { NodesLocalClient } from '../../packages/nodes-api';
 import { CadMaterialManager } from '../../packages/rendering';
 
 import { createCadModelMetadata } from './createCadModelMetadata';
-import { generateV8SectorTree } from './createSectorMetadata';
 
 import { Mock } from 'moq.ts';
 import { SectorRepository } from '@reveal/sector-loader';
+import { generateV9SectorTree } from './createSectorMetadata';
 
 export function createCadModel(
   modelId: number,
@@ -18,8 +18,8 @@ export function createCadModel(
   children: number = 3
 ): Cognite3DModel {
   const materialManager = new CadMaterialManager();
-  const cadRoot = generateV8SectorTree(depth, children);
-  const cadMetadata = createCadModelMetadata(8, cadRoot);
+  const cadRoot = generateV9SectorTree(depth, children);
+  const cadMetadata = createCadModelMetadata(9, cadRoot);
   materialManager.addModelMaterials(cadMetadata.modelIdentifier, cadMetadata.scene.maxTreeIndex);
 
   const mockV8SectorRepository = new Mock<SectorRepository>();
