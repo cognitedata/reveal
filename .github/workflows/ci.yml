@@ -275,7 +275,7 @@ jobs:
   cleanup:
     name: Cleanup
     runs-on: ubuntu-latest
-    needs: [ci-examples, build-viewer, ci-parser-worker, deploy-preview-documentation]
+    needs: [ci-examples, build-viewer, deploy-preview-documentation]
     if: always()
     steps:
     - uses: geekyeggo/delete-artifact@v1
