@@ -45,7 +45,7 @@ export const ProcessFileUploadModalContainer = () => {
     dispatch(clearUploadedFiles());
   }, [onCancel, processFiles, uploadedFileIds]);
 
-  const onCancelFileUpload = useCallback((fileId: number) => {
+  const deleteFileOnCDF = useCallback((fileId: number) => {
     if (fileId) {
       dispatch(DeleteFilesById({ fileIds: [fileId] }));
     }
@@ -58,7 +58,7 @@ export const ProcessFileUploadModalContainer = () => {
       showModal={showFileUploadModal}
       processFileCount={processFiles.length}
       onCancel={onCancel}
-      onCancelUpload={onCancelFileUpload}
+      deleteFileOnCDF={deleteFileOnCDF}
     />
   );
 };

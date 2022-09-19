@@ -77,7 +77,7 @@ export type ModalFileUploaderProps = {
   onCancel?: () => void;
   beforeUploadStart?: (fileList: CogsFileInfo[]) => void;
   onFinishUpload: (processAfter: boolean) => void;
-  onCancelUpload: (id: number) => void;
+  deleteFileOnCDF: (id: number) => void;
 };
 
 // vaguely described from console output
@@ -172,7 +172,7 @@ export const ModalFileUploader = ({
   beforeUploadStart = () => {},
   onFileListChange = () => {},
   onFinishUpload,
-  onCancelUpload,
+  deleteFileOnCDF,
   ...props
 }: ModalFileUploaderProps) => {
   const sdk = useSDK();
@@ -243,8 +243,13 @@ export const ModalFileUploader = ({
   };
 
   const clearCDFUploadMetadata = (file: CogsFile | CogsFileInfo) => {
-    if (file.cdfId) {
-      onCancelUpload(file.cdfId);
+    if (
+      file.cdfId &&
+      (file.status === 'uploading' ||
+        file.status === 'paused' ||
+        file.status === 'metadata created')
+    ) {
+      deleteFileOnCDF(file.cdfId);
     }
   };
 
@@ -442,7 +447,11 @@ export const ModalFileUploader = ({
         setCursor(-1);
         setFileList((list) =>
           list.map((file) => {
-            if (file.status === 'uploading' || file.status === 'paused') {
+            if (
+              file.status === 'uploading' ||
+              file.status === 'paused' ||
+              file.status === 'metadata created'
+            ) {
               clearLocalUploadMetadata(file);
               clearCDFUploadMetadata(file);
               // eslint-disable-next-line no-param-reassign
@@ -478,7 +487,7 @@ export const ModalFileUploader = ({
   };
 
   const onFinish = () => {
-    setFileList([]);
+    removeFiles();
     onFinishUpload(processAfter);
   };
 
@@ -488,7 +497,8 @@ export const ModalFileUploader = ({
     stopUpload,
     removeFiles,
     onCancelModal,
-    onFinish
+    onFinish,
+    fileList
   );
   return (
     <div>

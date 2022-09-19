@@ -37,7 +37,7 @@ export const ExplorerFileUploadModalContainer = ({
     dispatch(setExplorerFileUploadModalVisibility(false));
   }, []);
 
-  const onCancelFileUpload = useCallback((fileId: number) => {
+  const deleteFileOnCDF = useCallback((fileId: number) => {
     if (fileId) {
       dispatch(DeleteFilesById({ fileIds: [fileId] }));
     }
@@ -62,7 +62,7 @@ export const ExplorerFileUploadModalContainer = ({
       onFinishUpload={onFinishUpload}
       showModal={showFileUploadModal}
       onCancel={onCancel}
-      onCancelUpload={onCancelFileUpload}
+      deleteFileOnCDF={deleteFileOnCDF}
     />
   );
 };
