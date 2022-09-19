@@ -14,6 +14,17 @@
 - Override using `https://localhost:3010/index.js` (port might differ depending on your local settings)
 - Click `Apply override` and refresh ✨
 
+## Troubleshooting
+
+### I get "Refused to load the script `https://localhost:3010/index.js"` error when I apply a subapp override
+
+1.  Open `https://localhost:3010/index.js` in a new tab.
+2.  Ignore the security warning and click “Proceed to site”.
+3.  Go back to dev.fusion.cogniteapp.com and refresh 🔄
+
+To avoid doing this multiple times, enable this flag on Chrome:
+[chrome://flags/#allow-insecure-localhost](chrome://flags/#allow-insecure-localhost)
+
 ## Testing
 
 ```js
