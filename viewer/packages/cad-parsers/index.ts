@@ -14,31 +14,7 @@ export { SectorMetadata, V8SectorMetadata, V9SectorMetadata } from './src/metada
 export { SectorNode } from './src/sector/SectorNode';
 export { RootSectorNode } from './src/sector/RootSectorNode';
 
-export { CadSectorParser } from './src/cad/CadSectorParser';
-
 export { LevelOfDetail } from './src/cad/LevelOfDetail';
-
-export {
-  filterPrimitivesOutsideClipBoxByBaseBoundsAndInstanceMatrix,
-  filterPrimitivesOutsideClipBoxByCenterAndRadius,
-  filterPrimitivesOutsideClipBoxByEllipse,
-  filterPrimitivesOutsideClipBoxByVertices
-} from './src/cad/filterPrimitivesV8';
-
-export { filterInstanceMesh } from './src/cad/filterInstanceMesh';
-
-export {
-  boxGeometry,
-  quadGeometry,
-  coneGeometry,
-  trapeziumGeometry,
-  nutGeometry,
-  torusLodGeometries,
-  boxGeometryBoundingBox,
-  quadGeometryBoundingBox,
-  // torusGeometryBoundingBox, // disabled due to error in torus bounding box
-  nutGeometryBoundingBox
-} from './src/cad/primitiveGeometries';
 
 export { filterGeometryOutsideClipBox } from './src/cad/filterPrimitivesV9';
 

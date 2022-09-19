@@ -4,7 +4,7 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three-stdlib';
 
-import { CadManager, CadModelUpdateHandler, createV8SectorCuller } from '../../packages/cad-geometry-loaders';
+import { CadManager, CadModelUpdateHandler } from '../../packages/cad-geometry-loaders';
 import { CadModelFactory, CadNode } from '../../packages/cad-model';
 import {
   BasicPipelineExecutor,
@@ -25,6 +25,7 @@ import { PointCloudManager, PointCloudNode, PotreePointColorType } from '../../p
 import { PointCloudMetadataRepository } from '../../packages/pointclouds/src/PointCloudMetadataRepository';
 import { PointCloudFactory } from '../../packages/pointclouds/src/PointCloudFactory';
 import dat from 'dat.gui';
+import { ByScreenSizeSectorCuller } from '@reveal/cad-geometry-loaders/src/sector/culling/ByScreenSizeSectorCuller';
 
 export type StreamingTestFixtureComponents = {
   renderer: THREE.WebGLRenderer;
@@ -125,11 +126,9 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
       this._localModelUrl
     );
 
+    const sectorCuller = new ByScreenSizeSectorCuller();
     const cadModelFactory = new CadModelFactory(this._materialManager, modelMetadataProvider, modelDataProvider);
-    const cadModelUpdateHandler = new CadModelUpdateHandler(
-      createV8SectorCuller(this._renderer, this._depthRenderPipeline),
-      false
-    );
+    const cadModelUpdateHandler = new CadModelUpdateHandler(sectorCuller, false);
     this._cadManager = new CadManager(this._materialManager, cadModelFactory, cadModelUpdateHandler);
 
     const pointCloudMetadataRepository = new PointCloudMetadataRepository(modelMetadataProvider, modelDataProvider);
