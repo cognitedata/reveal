@@ -40,7 +40,7 @@ If Node IDs are known, `NodeIdNodeCollection` can be used to style the nodes (an
 // import { NodeIdNodeCollection, DefaultNodeAppearance } from '@cognite/reveal';
 
 const nodes = new NodeIdNodeCollection(sdk, model);
-const nodeIds = [...new Array(100).keys()].map(x => 100*x);
+const nodeIds = [4396401896076315, 4919353932832466, 8504202619027920, 922623766135003]; // Life boats
 nodes.executeFilter(nodeIds);
 model.assignStyledNodeCollection(nodes, DefaultNodeAppearance.Highlighted);
 ```
