@@ -14,7 +14,6 @@ export { AssetNodeCollection } from './src/AssetNodeCollection';
 export { InvertedNodeCollection } from './src/InvertedNodeCollection';
 export {
   registerNodeCollectionType,
-  TypeName,
   NodeCollectionSerializationContext,
   NodeCollectionDeserializer
 } from './src/NodeCollectionDeserializer';

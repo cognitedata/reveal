@@ -18,13 +18,12 @@ import { UnionNodeCollection } from './UnionNodeCollection';
 import { NodeCollection } from './NodeCollection';
 import { SerializedNodeCollection } from './SerializedNodeCollection';
 
-export type TypeName = string;
 export type NodeCollectionSerializationContext = { client: CogniteClient; model: CdfModelNodeCollectionDataProvider };
 
 export class NodeCollectionDeserializer {
   public static readonly Instance = new NodeCollectionDeserializer();
   private readonly _types = new Map<
-    TypeName,
+    string,
     {
       deserializer: (
         state: SerializedNodeCollection,
@@ -39,10 +38,10 @@ export class NodeCollectionDeserializer {
   }
 
   registerNodeCollectionType<T extends NodeCollection>(
-    nodeCollectionType: TypeName,
+    nodeCollectionTypeName: string,
     deserializer: (descriptor: SerializedNodeCollection, context: NodeCollectionSerializationContext) => Promise<T>
   ): void {
-    this._types.set(nodeCollectionType, {
+    this._types.set(nodeCollectionTypeName, {
       deserializer: (descriptor: SerializedNodeCollection, context: NodeCollectionSerializationContext) =>
         deserializer(descriptor, context) as Promise<T>
     });
@@ -60,7 +59,7 @@ export class NodeCollectionDeserializer {
     return deserializer(descriptor, context);
   }
 
-  private getDeserializer(typeName: TypeName) {
+  private getDeserializer(typeName: string) {
     const entry = this._types.get(typeName);
     assert(entry !== undefined);
     return entry!.deserializer;
@@ -145,8 +144,8 @@ export class NodeCollectionDeserializer {
 }
 
 export function registerNodeCollectionType<T extends NodeCollection>(
-  nodeCollectionType: TypeName,
+  nodeCollectionTypeName: string,
   deserializer: (descriptor: SerializedNodeCollection, context: NodeCollectionSerializationContext) => Promise<T>
 ): void {
-  NodeCollectionDeserializer.Instance.registerNodeCollectionType(nodeCollectionType, deserializer);
+  NodeCollectionDeserializer.Instance.registerNodeCollectionType(nodeCollectionTypeName, deserializer);
 }
