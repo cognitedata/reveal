@@ -70,5 +70,8 @@ module.exports = {
     ],
   ],
   themes: ['@docusaurus/theme-live-codeblock'],
-  plugins: [require.resolve('./docusaurus_plugins/docusaurusWebpack5Plugin')],
+  plugins: [
+    require.resolve('./docusaurus_plugins/docusaurusWebpack5Plugin'),
+    'docusaurus-plugin-typedoc'
+  ],
 };
