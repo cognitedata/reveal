@@ -3,10 +3,10 @@ import styled from 'styled-components';
 import { action } from '@storybook/addon-actions';
 import { sequences } from 'stubs/sequences';
 import { ComponentStory } from '@storybook/react';
-import { SequenceTable } from './SequenceTable';
+import { SequenceTable } from './SequenceNewTable';
 
 export default {
-  title: 'Sequences/SequenceTable',
+  title: 'Sequences/SequenceNewTable',
   component: SequenceTable,
   decorators: [(storyFn: any) => <Container>{storyFn()}</Container>],
   argTypes: { query: { control: 'text' } },
@@ -17,16 +17,7 @@ export const Example: ComponentStory<typeof SequenceTable> = args => (
 );
 Example.args = {
   data: sequences,
-  onItemClicked: action('onItemClicked'),
-};
-
-export const ExampleSingleSelect: ComponentStory<
-  typeof SequenceTable
-> = args => <SequenceTable {...args} />;
-ExampleSingleSelect.args = {
-  selectionMode: 'single',
-  data: sequences,
-  onItemClicked: action('onItemClicked'),
+  onRowClick: action('onItemClicked'),
 };
 
 const Container = styled.div`

@@ -1,4 +1,4 @@
-import { DataSet, Timeseries } from '@cognite/sdk';
+import { Timeseries } from '@cognite/sdk';
 import React from 'react';
 import { DateRangeProps, RelationshipLabels } from 'types';
 import { NewTable as Table, TableProps } from 'components/ReactTable/Table';
@@ -7,7 +7,6 @@ import { TimeseriesChart } from '..';
 import { Body } from '@cognite/cogs.js';
 import { Column } from 'react-table';
 import { getNewColumnsWithRelationshipLabels } from 'utils';
-import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 
 export type TimeseriesWithRelationshipLabels = Timeseries & RelationshipLabels;
 

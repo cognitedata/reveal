@@ -4,9 +4,9 @@ import { Table, TableProps } from 'components';
 import { RelationshipLabels } from 'types';
 import { getColumnsWithRelationshipLabels } from 'utils';
 
-type SequeceWithRelationshipLabels = Sequence & RelationshipLabels;
+export type SequenceWithRelationshipLabels = Sequence & RelationshipLabels;
 export const SequenceTable = (
-  props: TableProps<SequeceWithRelationshipLabels>
+  props: TableProps<SequenceWithRelationshipLabels>
 ) => {
   const { relatedResourceType } = props;
 

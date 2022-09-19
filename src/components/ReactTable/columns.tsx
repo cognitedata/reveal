@@ -2,7 +2,10 @@ import { Body, Flex, Tag, Tooltip } from '@cognite/cogs.js';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 import { DataSet } from '@cognite/sdk/dist/src';
 import { HighlightCell, TimeDisplay } from 'components';
-import { TimeseriesWithRelationshipLabels } from 'containers';
+import {
+  SequenceWithRelationshipLabels,
+  TimeseriesWithRelationshipLabels,
+} from 'containers';
 import { AssetWithRelationshipLabels } from 'containers/Assets/AssetTable/AssetNewTable';
 import capitalize from 'lodash/capitalize';
 import uniqueId from 'lodash/uniqueId';
@@ -12,7 +15,9 @@ import styled from 'styled-components';
 
 export interface ResourceTableHashMap {
   [key: string]: Column<
-    TimeseriesWithRelationshipLabels & AssetWithRelationshipLabels
+    TimeseriesWithRelationshipLabels &
+      AssetWithRelationshipLabels &
+      SequenceWithRelationshipLabels
   >;
 }
 
@@ -122,6 +127,11 @@ export const ResourceTableColumns: ResourceTableHashMap = {
       );
       return value && isFetched ? <Body level={3}>{item?.name}</Body> : null;
     },
+  },
+  columns: {
+    accessor: 'columns',
+    Header: '# of Columns',
+    Cell: ({ value }) => <Body level={2}>{value ? value.length : 0}</Body>,
   },
 };
 
