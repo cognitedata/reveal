@@ -1,0 +1,9 @@
+Link to JIRA: _insert link here_
+
+# What has changed?
+
+> DO NOT APPROVE THIS PR IF THIS TEXT IS NOT REPLACED
+
+# Any other notes?
+
+> REMOVE THIS SECTION IF THERE IS NOTHING RELEVANT TO WRITE
