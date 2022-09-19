@@ -1,7 +1,6 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-import { V8SectorRepository } from '../../packages/sector-loader';
 import { CadNode, Cognite3DModel } from '../../packages/cad-model';
 import { NodesLocalClient } from '../../packages/nodes-api';
 import { CadMaterialManager } from '../../packages/rendering';
@@ -10,6 +9,7 @@ import { createCadModelMetadata } from './createCadModelMetadata';
 import { generateV8SectorTree } from './createSectorMetadata';
 
 import { Mock } from 'moq.ts';
+import { SectorRepository } from '@reveal/sector-loader';
 
 export function createCadModel(
   modelId: number,
@@ -22,7 +22,7 @@ export function createCadModel(
   const cadMetadata = createCadModelMetadata(8, cadRoot);
   materialManager.addModelMaterials(cadMetadata.modelIdentifier, cadMetadata.scene.maxTreeIndex);
 
-  const mockV8SectorRepository = new Mock<V8SectorRepository>();
+  const mockV8SectorRepository = new Mock<SectorRepository>();
 
   const cadNode = new CadNode(cadMetadata, materialManager, mockV8SectorRepository.object());
   const apiClient = new NodesLocalClient();

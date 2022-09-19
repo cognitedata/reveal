@@ -2,8 +2,6 @@
  * Copyright 2021 Cognite AS
  */
 
-export { SectorQuads } from './src/rendering/types';
-
 export { CadMaterialManager } from './src/CadMaterialManager';
 
 export { NodeTransformProvider } from './src/transform/NodeTransformProvider';

@@ -5,20 +5,11 @@
 import * as THREE from 'three';
 
 import { NodeAppearanceProvider, NodeAppearance, PrioritizedArea } from '@reveal/cad-styling';
-import {
-  SectorScene,
-  CadModelMetadata,
-  SectorGeometry,
-  RootSectorNode,
-  WantedSector,
-  ConsumedSector
-} from '@reveal/cad-parsers';
+import { SectorScene, CadModelMetadata, RootSectorNode, WantedSector, ConsumedSector } from '@reveal/cad-parsers';
 import { SectorRepository } from '@reveal/sector-loader';
 import { ParsedGeometry } from '@reveal/sector-parser';
-import { CadMaterialManager, NodeTransformProvider, RenderMode, SectorQuads } from '@reveal/rendering';
+import { CadMaterialManager, NodeTransformProvider, RenderMode } from '@reveal/rendering';
 import { GeometryBatchingManager } from '../batching/GeometryBatchingManager';
-
-export type ParseCallbackDelegate = (parsed: { lod: string; data: SectorGeometry | SectorQuads }) => void;
 
 export class CadNode extends THREE.Object3D {
   private readonly _cadModelMetadata: CadModelMetadata;
