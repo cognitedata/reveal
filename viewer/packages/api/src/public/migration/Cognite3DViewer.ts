@@ -218,7 +218,7 @@ export class Cognite3DViewer {
 
     this._sceneHandler = new SceneHandler();
 
-    this._mouseHandler = new InputHandler(this.canvas);
+    this._mouseHandler = new InputHandler(this.domElement);
 
     this._cameraManager =
       options.cameraManager ??
