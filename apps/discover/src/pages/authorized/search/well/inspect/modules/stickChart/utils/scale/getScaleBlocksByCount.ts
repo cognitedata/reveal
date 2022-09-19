@@ -49,7 +49,7 @@ export const getScaleBlocksByCount = ({
    * no point of calculating scale blocks.
    * Hence, return an empty array.
    */
-  if (max) {
+  if (!max) {
     return EMPTY_ARRAY;
   }
 
