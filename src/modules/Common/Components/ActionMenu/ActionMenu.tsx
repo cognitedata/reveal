@@ -1,15 +1,6 @@
-import {
-  Button,
-  ButtonType,
-  Dropdown,
-  Icon,
-  Menu,
-  Popconfirm,
-  Tooltip,
-} from '@cognite/cogs.js';
 import React from 'react';
-import exifIcon from 'src/assets/exifIcon.svg';
-import { ExifIcon } from 'src/modules/Common/Containers/FileTableRenderers/NameRenderer';
+import { Button, ButtonType, Dropdown } from '@cognite/cogs.js';
+import { MenuContent } from 'src/modules/Common/Components/ActionMenu/MenuContent';
 
 interface ActionMenuProps {
   buttonType?: string;
@@ -34,45 +25,17 @@ export const ActionMenu = ({
   handleFileDelete,
   handleFileDetails,
 }: ActionMenuProps) => {
-  const MenuContent = (
-    <Menu
-      style={{
-        color: 'black' /* typpy styles make color to be white here ... */,
-      }}
-      onClick={handleClick}
-    >
-      <Menu.Item onClick={handleFileDetails}>
-        <Icon type="Document" style={{ marginRight: '17px' }} />
-        File details
-        {showExifIcon && (
-          <Tooltip content="Geolocated">
-            <ExifIcon>
-              <img src={exifIcon} alt="exifIcon" />
-            </ExifIcon>
-          </Tooltip>
-        )}
-      </Menu.Item>
-      {handleReview && (
-        <Menu.Item onClick={handleReview} disabled={reviewDisabled}>
-          <Icon type="Edit" style={{ marginRight: '17px' }} />
-          Review file
-        </Menu.Item>
-      )}
-      <Popconfirm
-        icon="WarningFilled"
-        placement="left"
-        onConfirm={handleFileDelete}
-        content="Are you sure you want to permanently delete this file?"
-      >
-        <Menu.Item disabled={reviewDisabled}>
-          <Icon type="Delete" style={{ marginRight: '17px' }} />
-          Delete
-        </Menu.Item>
-      </Popconfirm>
-    </Menu>
+  const menuContent = (
+    <MenuContent
+      showExifIcon={showExifIcon}
+      reviewDisabled={reviewDisabled}
+      handleReview={handleReview}
+      handleFileDelete={handleFileDelete}
+      handleFileDetails={handleFileDetails}
+    />
   );
   return (
-    <Dropdown content={MenuContent} disabled={actionDisabled}>
+    <Dropdown content={menuContent} disabled={actionDisabled}>
       <Button
         type={(buttonType as ButtonType) || 'ghost'}
         variant={buttonType ? 'inverted' : 'default'}
