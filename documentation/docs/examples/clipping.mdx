@@ -90,7 +90,7 @@ const bounds = model.getModelBoundingBox();
 
 // Create draggable sphere at the center of bounds
 const initialDragPosition = new THREE.Vector3(bounds.min.x, 0.5*(bounds.max.y + bounds.min.y), bounds.min.z);
-const draggerGeometry = new THREE.SphereBufferGeometry(5);
+const draggerGeometry = new THREE.SphereGeometry(5);
 const draggerMaterial = new THREE.MeshBasicMaterial({ color: 'white' });
 const draggerMesh = new THREE.Mesh(draggerGeometry, draggerMaterial);
 draggerMesh.position.copy(initialDragPosition);

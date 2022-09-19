@@ -100,7 +100,7 @@ module.exports = env => {
       ]
     },
 
-    devtool: 'inline-source-map',
+    devtool: 'eval-source-map',
 
     plugins: [
       new HtmlWebpackPlugin({ title: require(path.resolve('./packages/sector-parser', './package.json')).name }),
