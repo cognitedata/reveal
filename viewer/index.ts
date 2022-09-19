@@ -29,6 +29,7 @@ export {
   DefaultNodeAppearance,
   NodeCollection,
   TreeIndexNodeCollection,
+  NodeIdNodeCollection,
   IntersectionNodeCollection,
   UnionNodeCollection,
   SerializedNodeCollection,
