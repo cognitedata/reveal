@@ -72,7 +72,10 @@ const NdsEventsBadge: React.FC<Props> = ({ events }: Props) => {
       <EventsCountBadgeWrapper
         onClick={() => setVisible((previousState) => !previousState)}
       >
-        <NdsEventsCountBadge size={badgeSize}>
+        <NdsEventsCountBadge
+          size={badgeSize}
+          data-testid="nds-event-count-badge"
+        >
           <span>{events.length}</span>
         </NdsEventsCountBadge>
       </EventsCountBadgeWrapper>

@@ -1,11 +1,13 @@
 import { DepthMeasurementUnit } from '../../../../../src/constants/units';
 import { DATA_AVAILABILITY } from '../../../../../src/modules/wellSearch/constantsSidebarFilters';
 import { TAB_NAMES } from '../../../../../src/pages/authorized/search/well/inspect/constants';
+import { EventsColumnView } from '../../../../../src/pages/authorized/search/well/inspect/modules/common/Events/types';
 import { interceptCoreNetworkRequests } from '../../../../support/commands/helpers';
 import { WELLS_SEARCH_ALIAS } from '../../../../support/interceptions';
 
 const DATA_AVAILABILITY_CASINGS = 'Casings';
 const NO_COLUMNS_SELECTED_TEXT = 'No columns selected';
+const NO_OPTIONS_SELECTED_TEXT = 'No options selected';
 const FIT_LOT_CHART_TITLE = 'Depth vs Pressure';
 const SEE_GRAPH_BUTTON_TEXT = 'See graph';
 const DEFAULT_TRAJECTORY_CHART_TITLE = 'TVD vs ED';
@@ -134,6 +136,97 @@ describe('Wells: stick chart', () => {
     cy.log('collapse FIT LOT graph');
     cy.get('[aria-label="Collapse"]').first().click();
     cy.findAllByText(FIT_LOT_CHART_TITLE).should('not.exist');
+  });
+
+  it('Should be able to change npt events column view', () => {
+    cy.log(
+      `default selected npt events view should be ${EventsColumnView.Cluster} view`
+    );
+    cy.findAllByTestId('nptEvents-column')
+      .first()
+      .findAllByTestId('npt-event-count-badge')
+      .should('be.visible');
+
+    cy.log('select scatter view');
+    cy.findAllByTestId('nptEvents-column')
+      .findAllByTestId('chevron-down-icon')
+      .first()
+      .should('be.visible')
+      .click();
+
+    cy.contains(EventsColumnView.Scatter).click();
+
+    cy.log('npt count badge should be disappeared');
+    cy.findAllByTestId('nptEvents-column')
+      .first()
+      .findAllByTestId('npt-event-count-badge')
+      .should('not.exist');
+  });
+
+  it('Should be able to change nds events column view', () => {
+    cy.log(
+      `default selected nds events view should be ${EventsColumnView.Cluster} view`
+    );
+    cy.findAllByTestId('ndsEvents-column')
+      .first()
+      .findAllByTestId('nds-event-count-badge')
+      .should('be.visible');
+
+    cy.log('select scatter view');
+    cy.findAllByTestId('ndsEvents-column')
+      .findAllByTestId('chevron-down-icon')
+      .first()
+      .should('be.visible')
+      .click();
+
+    cy.contains(EventsColumnView.Scatter).click();
+
+    cy.log('npt count badge should be disappeared');
+    cy.findAllByTestId('ndsEvents-column')
+      .first()
+      .findAllByTestId('nds-event-count-badge')
+      .should('not.exist');
+  });
+  it('verify filter by npt events', () => {
+    cy.log(`click on NPT events filter icon`);
+    cy.findAllByTestId('drpdown-icon').first().should('be.visible').click();
+
+    cy.log('uncheck all options from the dropdown');
+    cy.get('[id="All"]').click();
+
+    cy.log('no option selected message should display on npt events column');
+    cy.findAllByTestId('nptEvents-column')
+      .findByText(NO_OPTIONS_SELECTED_TEXT)
+      .should('be.visible');
+
+    cy.log('select first option from the dropdown');
+    cy.findAllByTestId('option').first().should('be.visible').click();
+
+    cy.log('no option selected message should disappeared');
+    cy.findAllByTestId('nptEvents-column')
+      .findByText(NO_OPTIONS_SELECTED_TEXT)
+      .should('not.exist');
+  });
+
+  it('verify filter by nds events', () => {
+    cy.log(`click on nds events filter icon`);
+    cy.findAllByTestId('drpdown-icon').eq(1).should('be.visible').click();
+
+    cy.log('uncheck all options from the dropdown');
+    cy.get('[id="All"]').eq(1).click();
+
+    cy.log('no option selected message should display on nds events column');
+    cy.findAllByTestId('ndsEvents-column')
+      .findByText(NO_OPTIONS_SELECTED_TEXT)
+      .should('be.visible');
+
+    cy.log('select options from the dropdown');
+    cy.findAllByTestId('option').first().siblings().click({ multiple: true });
+
+    cy.log('no option selected message should disappeared');
+    cy.findAllByTestId('ndsEvents-column')
+      .findByText(NO_OPTIONS_SELECTED_TEXT)
+      .should('not.exist');
   });
 
   it('Should be able to hide columns', () => {

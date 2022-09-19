@@ -31,7 +31,7 @@ export const DropdownMenuOptions: React.FC<DropdownViewOption> = ({
     (selectedOptions && selectedOptions.length) === options?.length;
 
   return (
-    <OptionsCategoryWrapper>
+    <OptionsCategoryWrapper data-testid="option">
       <Menu.Submenu
         disabled={options?.every(
           (item) => item.label === EMPTY_SUBMENU_OPTIONS

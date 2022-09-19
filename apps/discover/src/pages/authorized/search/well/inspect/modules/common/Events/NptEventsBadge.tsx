@@ -67,7 +67,7 @@ const NptEventsBadge: React.FC<Props> = ({ events }: Props) => {
       <EventsCountBadgeWrapper
         onClick={() => setVisible((prevState) => !prevState)}
       >
-        <EventsCountBadge size={badgeSize}>
+        <EventsCountBadge size={badgeSize} data-testid="npt-event-count-badge">
           <span>{events.length}</span>
         </EventsCountBadge>
       </EventsCountBadgeWrapper>
