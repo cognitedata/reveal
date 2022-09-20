@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import styled from 'styled-components';
 import { Body, Button } from '@cognite/cogs.js';
 import { FilterForm } from 'components';
+import { mergeUniqueMetadataKeys } from './utils';
 
 const FilterHeader = styled.div`
   display: flex;
@@ -25,27 +26,12 @@ export const MetadataFilter = <
   setValue: (newValue: { [key in string]: string } | undefined) => void;
   useAggregates?: boolean;
 }) => {
-  let metadata = {};
-
-  // No need to extract metadata if keys are already supplied by the API
-  if (!useAggregates) {
-    const tmpMetadata = items.reduce((prev, el) => {
-      Object.keys(el.metadata || {}).forEach(key => {
-        if (el.metadata![key].length !== 0) {
-          if (!prev[key]) {
-            prev[key] = new Set<string>();
-          }
-          prev[key].add(el.metadata![key]);
-        }
-      });
-      return prev;
-    }, {} as { [key: string]: Set<string> });
-
-    metadata = Object.keys(tmpMetadata).reduce((prev, key) => {
-      prev[key] = [...tmpMetadata[key]];
-      return prev;
-    }, {} as { [key: string]: string[] });
-  }
+  const metadata = useMemo(() => {
+    if (!useAggregates) {
+      return mergeUniqueMetadataKeys(items);
+    }
+    return {};
+  }, [useAggregates, items]);
 
   const setFilter = (newFilters: { [key: string]: string }) => {
     setValue(newFilters);
@@ -69,6 +55,7 @@ export const MetadataFilter = <
           </Button>
         )}
       </FilterHeader>
+
       <FilterForm
         metadata={metadata}
         keys={keys}

@@ -84,8 +84,6 @@ export const AdvancedFiltersCollapse = ({
   useEffect(() => {
     if (count > 0) {
       setActiveCollapseKey(COLLAPSE_KEY);
-    } else {
-      setActiveCollapseKey(undefined);
     }
   }, [count]);
 
