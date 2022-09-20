@@ -1,10 +1,6 @@
 #!/bin/bash
 
-FILE="ASDAA-04-00003-0002.json"
-# FILE="ASDAA-04-00003-0029.json"
-# FILE="ASDAA-04-00004-0002.json"
-# FILE="ASDAA-04-00006-0001.json"
-# FILE="ASDAA-04-00013-0001.json"
+FILE="ASDAA-04-00003-0009.json"
 
 BASE_URL="https://greenfield.cognitedata.com"
 PROJECT="atlas-greenfield"

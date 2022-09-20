@@ -10,14 +10,18 @@ const NUM_CONCURRENT_WORKERS = 10;
 const INTERNAL_UPSERT_LIMIT = 1000;
 const INTERNAL_DELETE_LIMIT = 1000;
 
+interface UpsertOptions<T extends keyof ModelMap> {
+  /** DMS model name */
+  model: T;
+  /** DMS space to adress */
+  spaceExternalId: string;
+  /** Model instances to upsert */
+  items: ModelMap[T][];
+}
 async function upsertCommon<T extends keyof ModelMap>(
   dmsEndpoint: 'nodes' | 'edges',
   client: CogniteClient,
-  options: {
-    model: T;
-    spaceExternalId: string;
-    items: ModelMap[T][];
-  }
+  options: UpsertOptions<T>
 ): Promise<ModelMap[T][]> {
   type Model = ModelMap[T];
 
@@ -80,36 +84,22 @@ async function upsertCommon<T extends keyof ModelMap>(
 
 export async function upsertNodes<T extends keyof ModelNodeMap>(
   client: CogniteClient,
-  options: {
-    /** Model name for the node */
-    model: T;
-    /** DMS space to adress */
-    spaceExternalId: string;
-    /** Nodes to upsert */
-    items: ModelMap[T][];
-  }
+  options: UpsertOptions<T>
 ): Promise<ModelMap[T][]> {
   return upsertCommon('nodes', client, options);
 }
 
 export async function upsertEdges<T extends keyof ModelEdgeMap>(
   client: CogniteClient,
-  options: {
-    /** Model name for the node */
-    model: T;
-    /** DMS space to adress */
-    spaceExternalId: string;
-    /** Nodes to upsert */
-    items: ModelMap[T][];
-  }
+  options: UpsertOptions<T>
 ): Promise<ModelMap[T][]> {
   // DMS currently runs into 409 errors when multiple process try to create
   // the direct relation in the 'type' field concurrently.
   // So we filter for edges with unique values for the "type" field and bootstrap them
   const uniqueTypes = new Set<string>();
   const itemsWithUniqueType = options.items.filter((item) => {
-    if (!uniqueTypes.has(item.type)) {
-      uniqueTypes.add(item.type);
+    if (!uniqueTypes.has(item.type[1])) {
+      uniqueTypes.add(item.type[1]);
       return true;
     }
     return false;
@@ -125,12 +115,16 @@ export async function upsertEdges<T extends keyof ModelEdgeMap>(
   return upsertCommon('edges', client, options);
 }
 
+interface DeleteOptions<T extends { externalId: string }> {
+  /** DMS space to adress */
+  spaceExternalId: string;
+  /** model instances to delete, referenced by externalId */
+  items: T[];
+}
 export async function deleteCommon<T extends { externalId: string }>(
   nodesOrEdges: 'nodes' | 'edges',
   client: CogniteClient,
-  options: {
-    items: T[];
-  }
+  options: DeleteOptions<T>
 ): Promise<void> {
   const reducedItems = options.items.map((item) => {
     return { externalId: item.externalId };
@@ -148,6 +142,7 @@ export async function deleteCommon<T extends { externalId: string }>(
       `/api/v1/projects/${client.project}/datamodelstorage/${nodesOrEdges}/delete`,
       {
         data: {
+          spaceExternalId: options.spaceExternalId,
           items: slice,
         },
         headers: CDF_ALPHA_VERSION_HEADERS,
@@ -173,39 +168,35 @@ export async function deleteCommon<T extends { externalId: string }>(
 
 export async function deleteNodes<T extends { externalId: string }>(
   client: CogniteClient,
-  options: {
-    items: T[];
-  }
+  options: DeleteOptions<T>
 ): Promise<void> {
   return deleteCommon<T>('nodes', client, options);
 }
 
 export async function deleteEdges<T extends { externalId: string }>(
   client: CogniteClient,
-  options: {
-    items: T[];
-  }
+  options: DeleteOptions<T>
 ): Promise<void> {
   return deleteCommon<T>('edges', client, options);
 }
 
-interface ModelFilter {
-  property: string;
-  values: any[];
+interface ListOptions<T extends keyof ModelMap> {
+  /** DMS model name */
+  model: T;
+  /** DMS space to adress */
+  spaceExternalId: string;
+  /** Filters for model properties */
+  filters: {
+    property: string;
+    values: any[];
+  }[];
+  /** Limit to the number of model instances to retrieve. Can be set to Infinity to retrieve all instances that match the query */
+  limit: number;
 }
 async function listCommon<T extends keyof ModelMap>(
   nodesOrEdges: 'nodes' | 'edges',
   client: CogniteClient,
-  options: {
-    /** Model name for the node */
-    model: T;
-    /** DMS space to adress */
-    spaceExternalId: string;
-    /** Filters for node properties */
-    filters: ModelFilter[];
-    /** Limit to the number of nodes to retrieve. Can be set to Infinity to retrieve all Nodes */
-    limit: number;
-  }
+  options: ListOptions<T>
 ): Promise<ModelMap[T][]> {
   type Model = ModelMap[T];
 
@@ -278,32 +269,14 @@ async function listCommon<T extends keyof ModelMap>(
 
 export async function listNodes<T extends keyof ModelNodeMap>(
   client: CogniteClient,
-  options: {
-    /** Model name for the node */
-    model: T;
-    /** DMS space to adress */
-    spaceExternalId: string;
-    /** Filters for node properties */
-    filters: ModelFilter[];
-    /** Limit to the number of nodes to retrieve. Can be set to Infinity to retrieve all Nodes */
-    limit: number;
-  }
+  options: ListOptions<T>
 ): Promise<ModelMap[T][]> {
   return listCommon('nodes', client, options);
 }
 
 export async function listEdges<T extends keyof ModelEdgeMap>(
   client: CogniteClient,
-  options: {
-    /** Model name for the edge */
-    model: T;
-    /** DMS space to adress */
-    spaceExternalId: string;
-    /** Filters for edge properties */
-    filters: ModelFilter[];
-    /** Limit to the number of edges to retrieve. Can be set to Infinity to retrieve all Edges */
-    limit: number;
-  }
+  options: ListOptions<T>
 ): Promise<ModelMap[T][]> {
   return listCommon('edges', client, options);
 }

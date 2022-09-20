@@ -262,9 +262,12 @@ export type ModelEdgeMap = {
 
 export interface DmsEdge extends DmsModel {
   modelName: 'edge';
-  type: string;
-  startNode: string;
-  endNode: string;
+  /** spaceExternalId and externalId of the node defining the edge type */
+  type: [string, string];
+  /** spaceExternalId and externalId of the starting node */
+  startNode: [string, string];
+  /** spaceExternalId and externalId of the ending node */
+  endNode: [string, string];
 }
 
 export interface BaseEdge extends Omit<DmsEdge, 'modelName'> {
@@ -290,12 +293,14 @@ export interface FileLinkEdge extends Omit<BaseEdge, 'modelName'> {
  * lines, and the edges connecting them. Takes the corresponding objects
  * from the GraphDocument as an input
  * @param options Object containing the GraphDocument to convert as well as the fileId and filePage
+ * @param spaceExternalId: externalId of the space. Used to fill the startNode and endNode of created edges.
  * @param fileId CDF id for the file
  * @param filePage page number on the file
  * @returns Object containing lists of all created nodes and edges, keyed by model name
  */
 export function graphDocumentToNodesAndEdges(options: {
   graphDocument: GraphDocument;
+  spaceExternalId: string;
   fileId: number;
   filePage: number;
 }): {
@@ -460,8 +465,8 @@ export function graphDocumentToNodesAndEdges(options: {
         `No corresponding start node or end node for connection ${diagramConnection}`
       );
     }
-    const [startModel, startNode] = startInfo;
-    const [endModel, endNode] = endInfo;
+    const [startModel, startNodeExternalId] = startInfo;
+    const [endModel, endNodeExternalId] = endInfo;
     const externalId = getDmsExternalId({
       ...filePageInfo,
       id: `${diagramConnection.start}_${diagramConnection.end}`,
@@ -472,9 +477,9 @@ export function graphDocumentToNodesAndEdges(options: {
       modelName: 'InstanceEdge',
       fileId: options.fileId,
       filePage: options.filePage,
-      type: `${startModel}-${endModel}`,
-      startNode,
-      endNode,
+      type: [options.spaceExternalId, `${startModel}-${endModel}`],
+      startNode: [options.spaceExternalId, startNodeExternalId],
+      endNode: [options.spaceExternalId, endNodeExternalId],
       externalId,
     });
   });

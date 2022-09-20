@@ -1,10 +1,6 @@
 #!/bin/bash
 
-FILE="ASDAA-04-00003-0002.svg"
-# FILE="ASDAA-04-00003-0029.svg"
-# FILE="ASDAA-04-00004-0002.svg"
-# FILE="ASDAA-04-00006-0001.svg"
-# FILE="ASDAA-04-00013-0001.svg"
+FILE="ASDAA-04-00003-0009.svg"
 
 BASE_URL="https://greenfield.cognitedata.com"
 PROJECT="atlas-greenfield"
