@@ -2,8 +2,9 @@ import dayjs from 'dayjs';
 import { useMemo } from 'react';
 import { CellProps, Column } from 'react-table';
 import { Detail } from '@cognite/cogs.js';
-import { OpenInFusion } from 'components/OpenInFusion/OpenInFusion';
 import { StatusLabel } from 'components/StatusLabel/StatusLabel';
+import { ViewMoreButton } from 'components/ViewMoreButton/ViewMoreButton';
+import { OpenInFusion } from 'components/OpenInFusion/OpenInFusion';
 import { calculateDuration } from 'utils/utils';
 
 import { CellWrapper } from './elements';
@@ -100,6 +101,7 @@ export const workflowsColumns: Column[] = [
       useMemo(
         () => (
           <CellWrapper>
+            <ViewMoreButton eventExternalId={row.original.eventExternalId} />
             <OpenInFusion eventExternalId={row.original.eventExternalId} />
           </CellWrapper>
         ),

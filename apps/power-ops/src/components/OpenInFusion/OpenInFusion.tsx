@@ -33,20 +33,18 @@ export const OpenInFusion = ({
     fetchCDFEvent(eventExternalId);
   }, [eventExternalId]);
 
-  return (
-    configuration?.organization_subdomain &&
+  return configuration?.organization_subdomain &&
     client?.project &&
-    CDFEvent?.id && (
-      <Tooltip content="Open in CDF" placement="left">
-        <Button
-          size="small"
-          icon="ExternalLink"
-          aria-label="open-in-fusion"
-          type="ghost"
-          href={`https://${configuration?.organization_subdomain}.fusion.cognite.com/${client?.project}/explore/event/${CDFEvent.id}?cluster=${cdfApiBaseUrl}`}
-          target="_blank"
-        />
-      </Tooltip>
-    )
-  );
+    CDFEvent?.id ? (
+    <Tooltip content="Open in CDF" placement="left">
+      <Button
+        size="small"
+        icon="ExternalLink"
+        aria-label="open-in-fusion"
+        type="ghost"
+        href={`https://${configuration?.organization_subdomain}.fusion.cognite.com/${client?.project}/explore/event/${CDFEvent.id}?cluster=${cdfApiBaseUrl}`}
+        target="_blank"
+      />
+    </Tooltip>
+  ) : null;
 };
