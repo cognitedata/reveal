@@ -7,6 +7,7 @@ import * as THREE from 'three';
 /**
  * Expects h,s,v to be between 0 and 1.
  * Returns r,g,b between 0 and 1
+ * Adapted from https://stackoverflow.com/questions/17242144/javascript-convert-hsb-hsv-color-to-rgb-accurately
  */
 function hsvToRgb(h: number, s: number, v: number): [number, number, number] {
   const i = Math.floor(h * 6);
