@@ -1600,7 +1600,7 @@
     query-string "^5.1.1"
     url "^0.11.0"
 
-"@cognite/sdk-core@^4.6.2":
+"@cognite/sdk-core@^4.6.6":
   version "4.6.6"
   resolved "https://registry.yarnpkg.com/@cognite/sdk-core/-/sdk-core-4.6.6.tgz#995ba75d3aa167ec01e5ec934528b82d00d0d710"
   integrity sha512-3SshQfVCUSOb30edQT4THvXIGU2AKeZeGGFoZezfVp+2hkuFBV+/J5EUo1EwHND8ILcJZyFvHFdcTVDafYlKxA==
@@ -2090,11 +2090,6 @@
   dependencies:
     "@gltf-transform/core" "^0.12.16"
     ktx-parse "^0.2.1"
-
-"@google/model-viewer@1.10.1":
-  version "1.10.1"
-  resolved "https://registry.yarnpkg.com/@google/model-viewer/-/model-viewer-1.10.1.tgz#521d6112685f629514a7fbd1be1dcc476f58c9b1"
-  integrity sha512-mQ7FhALWLj1rc4P7NXUNVG4glfgIeKK18X5UlQ0C+InkTsaLvfdTkOz5ixTwDWaw3ba8j6DMyGcN0mzMqc/OyA==
 
 "@hapi/hoek@^9.0.0":
   version "9.3.0"
