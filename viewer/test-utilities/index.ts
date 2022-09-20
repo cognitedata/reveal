@@ -4,7 +4,7 @@
 
 export { generateV9SectorTree, createV9SectorMetadata, SectorTree } from './src/createSectorMetadata';
 
-export { createV8SceneSectorMetadata, createV9SceneSectorMetadata } from './src/createSceneSectorMetadata';
+export { createV9SceneSectorMetadata } from './src/createSceneSectorMetadata';
 
 export { createCadModelMetadata } from './src/createCadModelMetadata';
 export { createCadModel } from './src/createCadModel';

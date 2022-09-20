@@ -68,9 +68,7 @@ export class CadModelFactory {
 
       return this._gltfSectorRepository;
     } else {
-      throw new Error(
-        `Model format [${format} v${formatVersion}] is not supported (only version 8 and 9 is supported)`
-      );
+      throw new Error(`Model format [${format} v${formatVersion}] is not supported (only version 9 is supported)`);
     }
   }
 

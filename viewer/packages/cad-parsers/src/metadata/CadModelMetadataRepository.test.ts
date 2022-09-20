@@ -7,7 +7,7 @@ import { CadModelMetadataRepository } from './CadModelMetadataRepository';
 import { File3dFormat, ModelDataProvider, ModelMetadataProvider } from '@reveal/modeldata-api';
 
 import * as THREE from 'three';
-import { createV8SceneSectorMetadata, createV9SceneSectorMetadata } from '../../../../test-utilities';
+import { createV9SceneSectorMetadata } from '../../../../test-utilities';
 import { CadSceneRootMetadata } from './parsers/types';
 
 export interface ModelId {
@@ -37,13 +37,6 @@ const v9BlobOutputMetadata: BlobOutputMetadata = {
   blobId: 1,
   format: File3dFormat.GltfCadModel,
   version: 9
-};
-
-const v8SceneSectorMetadata: CadSceneRootMetadata = {
-  version: 8,
-  maxTreeIndex: 800,
-  unit: 'Meters',
-  sectors: [createV8SceneSectorMetadata(0)]
 };
 
 const v9SceneSectorMetadata: CadSceneRootMetadata = {
@@ -76,8 +69,6 @@ function createMockedModelDataProvider(): ModelDataProvider {
       const isGltf = url === urlFromBlobId(v9BlobOutputMetadata.blobId);
       if (isGltf) {
         return v9SceneSectorMetadata;
-      } else {
-        return v8SceneSectorMetadata;
       }
     },
     getBinaryFile: async () => {

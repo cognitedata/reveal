@@ -43,7 +43,6 @@ export type BaseSectorMetadata = {
 };
 
 export type SectorMetadata = BaseSectorMetadata & (I3dF3dSectorMetadata | GltfSectorMetadata);
-export type V8SectorMetadata = BaseSectorMetadata & I3dF3dSectorMetadata;
 export type V9SectorMetadata = BaseSectorMetadata & GltfSectorMetadata;
 
 export type I3dF3dSectorMetadata = {
