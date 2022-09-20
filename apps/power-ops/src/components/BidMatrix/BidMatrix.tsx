@@ -112,7 +112,16 @@ export const BidMatrix = ({
   };
 
   const processEvent = async (event: CogniteEvent): Promise<void> => {
-    if (event.type === EVENT_TYPES.PROCESS_FINISHED) {
+    const currentPriceArea = await client?.events
+      .retrieve([{ externalId: event.metadata?.event_external_id || '' }])
+      .then((response) => {
+        return response[0].metadata?.['bid:price_area'];
+      });
+
+    if (
+      event.type === EVENT_TYPES.PROCESS_FINISHED &&
+      bidProcessResult.priceAreaExternalId === currentPriceArea
+    ) {
       const status = isNewBidMatrixAvailable(
         event,
         bidProcessResult.bidProcessExternalId || ''

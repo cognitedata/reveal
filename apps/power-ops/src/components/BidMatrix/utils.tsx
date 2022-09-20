@@ -80,7 +80,12 @@ export const copyMatrixToClipboard = async (
     });
 
     // Insert hour at start of row
-    orderedRow[0] = newrow.hour;
+    if (
+      sequenceCols[0]?.accessor &&
+      typeof sequenceCols[0]?.accessor === 'string'
+    ) {
+      orderedRow[0] = newrow[sequenceCols[0].accessor];
+    }
 
     // Return row in copiable format
     return Object.values(orderedRow).join('\t');

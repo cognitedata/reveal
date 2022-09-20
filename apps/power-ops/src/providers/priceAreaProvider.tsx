@@ -105,7 +105,7 @@ export const PriceAreaProvider: React.FC<
       priceAreaChanged: updateSelectedPriceArea,
       bidProcessConfigurationChanged: updateSelectedBidProcessConfiguration,
     });
-  }, [allPriceAreas, selectedBidProcessResult, allProcessConfigurations]);
+  }, [allPriceAreas, selectedBidProcessResult]);
 
   useEffect(() => {
     if (priceAreaExternalId) {
@@ -120,7 +120,7 @@ export const PriceAreaProvider: React.FC<
   }, [bidProcessEventExternalId]);
 
   useEffect(() => {
-    if (!bidProcessEventExternalId && allProcessConfigurations?.length) {
+    if (allProcessConfigurations?.length) {
       setBidProcessEventExternalId(
         allProcessConfigurations[0].bidProcessEventExternalId
       );

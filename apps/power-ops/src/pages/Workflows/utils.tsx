@@ -2,7 +2,6 @@ import dayjs from 'dayjs';
 import { useMemo } from 'react';
 import { CellProps, Column } from 'react-table';
 import { Detail } from '@cognite/cogs.js';
-import { ViewMoreButton } from 'components/ViewMoreButton/ViewMoreButton';
 import { OpenInFusion } from 'components/OpenInFusion/OpenInFusion';
 import { StatusLabel } from 'components/StatusLabel/StatusLabel';
 import { calculateDuration } from 'utils/utils';
@@ -80,11 +79,15 @@ export const processColumns: Column[] = [
   {
     accessor: 'actions',
     disableSortBy: true,
-    Cell: ({ row }: CellProps<any>) => (
-      <CellWrapper>
-        <OpenInFusion eventId={row.original.eventId} />
-      </CellWrapper>
-    ),
+    Cell: ({ row }: CellProps<any>) =>
+      useMemo(
+        () => (
+          <CellWrapper>
+            <OpenInFusion eventExternalId={row.original.eventExternalId} />
+          </CellWrapper>
+        ),
+        [row.original.eventExternalId]
+      ),
   },
 ];
 
@@ -93,11 +96,14 @@ export const workflowsColumns: Column[] = [
   {
     accessor: 'actions',
     disableSortBy: true,
-    Cell: ({ row }: CellProps<any>) => (
-      <CellWrapper>
-        <ViewMoreButton eventExternalId={row.original.eventExternalId} />
-        <OpenInFusion eventId={row.original.eventId} />
-      </CellWrapper>
-    ),
+    Cell: ({ row }: CellProps<any>) =>
+      useMemo(
+        () => (
+          <CellWrapper>
+            <OpenInFusion eventExternalId={row.original.eventExternalId} />
+          </CellWrapper>
+        ),
+        [row.original.eventExternalId]
+      ),
   },
 ];

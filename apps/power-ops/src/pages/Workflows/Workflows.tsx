@@ -1,4 +1,4 @@
-import { memo, useContext, useEffect, useState } from 'react';
+import { memo, useContext, useEffect } from 'react';
 import { Route, Switch, useRouteMatch } from 'react-router-dom';
 import { AuthConsumer, AuthContext } from '@cognite/react-container';
 import { AuthenticatedUser } from '@cognite/auth-utils';
@@ -7,7 +7,6 @@ import { EVENT_TYPES, PROCESS_TYPES } from '@cognite/power-ops-api-types';
 import { EventStreamContext } from 'providers/eventStreamProvider';
 import { useFetchWorkflows } from 'queries/useFetchWorkflows';
 import { useFetchWorkflowSchemas } from 'queries/useFetchWorkflowSchemas';
-import { Workflow } from 'types';
 
 import { WorkflowSingle } from './WorkflowSingle';
 import { ReusableTable } from './ReusableTable';
@@ -33,8 +32,7 @@ const WorkflowsPage = ({
 
   const match = useRouteMatch();
 
-  const [workflows, setWorkflows] = useState<Workflow[]>([]);
-  const { data: rawWorkflows, refetch: refetchWorkflows } = useFetchWorkflows({
+  const { data: workflows, refetch: refetchWorkflows } = useFetchWorkflows({
     project: client.project,
     token: authState?.token,
   });
@@ -48,23 +46,6 @@ const WorkflowsPage = ({
     return !!(
       workflowSchemas?.some((schema) => schema.workflowType === needle) ||
       workflowSchemas?.some((schema) => needle.includes(schema.workflowType))
-    );
-  };
-
-  const fetchWorkflowEventIds = async (workflows: Workflow[]) => {
-    const events = await client?.events.retrieve(
-      workflows?.map((p) => ({ externalId: p.eventExternalId }))
-    );
-
-    if (!events) return;
-
-    setWorkflows(
-      workflows.map((process, index) => {
-        if (events[index]) {
-          return { ...process, eventId: events[index].id } as Workflow;
-        }
-        return process;
-      })
     );
   };
 
@@ -89,11 +70,6 @@ const WorkflowsPage = ({
         break;
     }
   };
-
-  useEffect(() => {
-    if (!rawWorkflows?.length) return;
-    fetchWorkflowEventIds(rawWorkflows);
-  }, [rawWorkflows]);
 
   useEffect(() => {
     refetchWorkflows({ cancelRefetch: true });
