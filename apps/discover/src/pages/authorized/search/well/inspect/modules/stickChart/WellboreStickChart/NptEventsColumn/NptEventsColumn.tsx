@@ -9,6 +9,7 @@ import { isAnyNptMissingTvd } from 'domain/wells/npt/internal/utils/isAnyNptMiss
 import React, { useState } from 'react';
 
 import isEmpty from 'lodash/isEmpty';
+import noop from 'lodash/noop';
 
 import { WithDragHandleProps } from 'components/DragDropContainer';
 import { NoUnmountShowHide } from 'components/NoUnmountShowHide';
@@ -30,6 +31,7 @@ import {
 import { EventsColumnView } from '../../../common/Events/types';
 import { ColumnNotification } from '../../components/ColumnNotification';
 import { ColumnOptionsSelector } from '../../components/ColumnOptionsSelector';
+import { DetailPageOption } from '../../components/DetailPageOption';
 import { ColumnVisibilityProps } from '../../types';
 import {
   DEFAULT_EVENTS_COLUMN_VIEW,
@@ -48,6 +50,7 @@ export interface NptEventsColumnProps extends ColumnVisibilityProps {
   isLoading?: boolean;
   nptCodesSelecton?: NptCodesSelection;
   depthMeasurementType?: DepthMeasurementUnit;
+  onClickDetailsButton?: () => void;
 }
 
 export const NptEventsColumn: React.FC<
@@ -60,6 +63,7 @@ export const NptEventsColumn: React.FC<
     nptCodesSelecton,
     depthMeasurementType,
     isVisible = true,
+    onClickDetailsButton = noop,
     ...dragHandleProps
   }) => {
     const { nptCodeDefinitions } = useNptDefinitions();
@@ -120,6 +124,7 @@ export const NptEventsColumn: React.FC<
               selectedOption={view}
               displayValue={NPT_COLUMN_TITLE}
               onChange={setView}
+              Footer={<DetailPageOption onClick={onClickDetailsButton} />}
             />
           </ColumnHeaderWrapper>
 

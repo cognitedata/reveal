@@ -8,6 +8,7 @@ import { isAnyNdsMissingTvd } from 'domain/wells/nds/internal/utils/isAnyNdsMiss
 import React, { useCallback, useState } from 'react';
 
 import isEmpty from 'lodash/isEmpty';
+import noop from 'lodash/noop';
 
 import { WithDragHandleProps } from 'components/DragDropContainer';
 import { NoUnmountShowHide } from 'components/NoUnmountShowHide';
@@ -30,6 +31,7 @@ import { NdsEventsScatterView } from '../../../common/Events/NdsEventsScatterVie
 import { EventsColumnView } from '../../../common/Events/types';
 import { ColumnNotification } from '../../components/ColumnNotification';
 import { ColumnOptionsSelector } from '../../components/ColumnOptionsSelector';
+import { DetailPageOption } from '../../components/DetailPageOption';
 import { ColumnVisibilityProps } from '../../types';
 import {
   DEFAULT_EVENTS_COLUMN_VIEW,
@@ -46,6 +48,7 @@ export interface NdsEventsColumnProps extends ColumnVisibilityProps {
   isLoading?: boolean;
   ndsRiskTypesSelection?: NdsRiskTypesSelection;
   depthMeasurementType?: DepthMeasurementUnit;
+  onClickDetailsButton?: () => void;
 }
 
 export const NdsEventsColumn: React.FC<
@@ -58,6 +61,7 @@ export const NdsEventsColumn: React.FC<
     isVisible = true,
     ndsRiskTypesSelection,
     depthMeasurementType,
+    onClickDetailsButton = noop,
     ...dragHandleProps
   }) => {
     const [view, setView] = useState(DEFAULT_EVENTS_COLUMN_VIEW);
@@ -105,6 +109,7 @@ export const NdsEventsColumn: React.FC<
               selectedOption={view}
               displayValue={NDS_COLUMN_TITLE}
               onChange={setView}
+              Footer={<DetailPageOption onClick={onClickDetailsButton} />}
             />
           </ColumnHeaderWrapper>
 

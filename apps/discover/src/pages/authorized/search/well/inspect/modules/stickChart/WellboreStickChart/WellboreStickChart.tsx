@@ -3,7 +3,7 @@ import { NptCodesSelection } from 'domain/wells/npt/internal/types';
 import { MaxDepthData } from 'domain/wells/trajectory/internal/types';
 
 import * as React from 'react';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { BooleanMap } from 'utils/booleanMap';
 
@@ -108,25 +108,11 @@ export const WellboreStickChart: React.FC<WellboreStickChartProps> = ({
     return Object.values(columnVisibility).some(Boolean);
   }, [columnVisibility]);
 
-  const handleChangeDropdown = useCallback((eventType: 'npt' | 'nds') => {
-    if (eventType === 'npt') {
-      return setShowNptDetailView(true);
-    }
-    return setShowNdsDetailView(true);
-  }, []);
-
   return (
     <>
       <NoUnmountShowHide show={isWellboreSelected}>
         <WellboreStickChartWrapper>
-          <Header
-            wellName={wellName}
-            wellboreName={wellboreName}
-            wellboreMatchingId={wellboreMatchingId}
-            onChangeDropdown={({ eventType }) => {
-              handleChangeDropdown(eventType);
-            }}
-          />
+          <Header wellName={wellName} wellboreName={wellboreName} />
 
           <WellboreStickChartEmptyState
             isAnyColumnVisible={isAnyColumnVisible}
@@ -161,7 +147,6 @@ export const WellboreStickChart: React.FC<WellboreStickChartProps> = ({
                 rkbLevel={rkbLevel}
                 wellWaterDepth={wellWaterDepth}
                 depthMeasurementType={depthMeasurementType}
-                onChangeDepthMeasurementType={setDepthMeasurementType}
                 isVisible={columnVisibility[ChartColumn.CASINGS]}
               />
 
@@ -171,6 +156,7 @@ export const WellboreStickChart: React.FC<WellboreStickChartProps> = ({
                 scaleBlocks={scaleBlocks}
                 nptCodesSelecton={nptCodesSelecton}
                 depthMeasurementType={depthMeasurementType}
+                onClickDetailsButton={() => setShowNptDetailView(true)}
                 isVisible={columnVisibility[ChartColumn.NPT]}
               />
 
@@ -180,6 +166,7 @@ export const WellboreStickChart: React.FC<WellboreStickChartProps> = ({
                 scaleBlocks={scaleBlocks}
                 ndsRiskTypesSelection={ndsRiskTypesSelection}
                 depthMeasurementType={depthMeasurementType}
+                onClickDetailsButton={() => setShowNdsDetailView(true)}
                 isVisible={columnVisibility[ChartColumn.NDS]}
               />
 

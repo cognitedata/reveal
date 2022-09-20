@@ -1,6 +1,7 @@
 import * as React from 'react';
 
 import isEmpty from 'lodash/isEmpty';
+import noop from 'lodash/noop';
 
 import { Icon } from '@cognite/cogs.js';
 
@@ -13,6 +14,7 @@ import { Option } from '../Option';
 import {
   ColumnOptionsSelectorContainer,
   ColumnOptionsSelectorIconWrapper,
+  Separator,
 } from './elements';
 
 export interface ColumnOptionsSelectorProps<T> {
@@ -20,7 +22,8 @@ export interface ColumnOptionsSelectorProps<T> {
   selectedOption?: T;
   displayValue?: T | string;
   width?: number;
-  onChange: (selectedOption: T) => void;
+  onChange?: (selectedOption: T) => void;
+  Footer?: JSX.Element;
 }
 
 export const ColumnOptionsSelector = <T extends string>({
@@ -28,13 +31,10 @@ export const ColumnOptionsSelector = <T extends string>({
   selectedOption,
   displayValue,
   width,
-  onChange,
+  onChange = noop,
+  Footer,
 }: ColumnOptionsSelectorProps<T>) => {
   const renderDropdownContent = () => {
-    if (isEmpty(options)) {
-      return null;
-    }
-
     return (
       <Dropdown.Menu>
         {options.map((option) => (
@@ -45,6 +45,8 @@ export const ColumnOptionsSelector = <T extends string>({
             onChange={onChange}
           />
         ))}
+        {!isEmpty(options) && Footer && <Separator />}
+        {Footer}
       </Dropdown.Menu>
     );
   };
@@ -58,7 +60,7 @@ export const ColumnOptionsSelector = <T extends string>({
           </BodyColumnMainHeader>
         </div>
 
-        {!isEmpty(options) && (
+        {(!isEmpty(options) || Footer) && (
           <ColumnOptionsSelectorIconWrapper>
             <Icon type="ChevronDownSmall" data-testid="chevron-down-icon" />
           </ColumnOptionsSelectorIconWrapper>

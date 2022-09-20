@@ -3,6 +3,7 @@ import { WellboreInternal } from 'domain/wells/wellbore/internal/types';
 import React from 'react';
 
 import isEmpty from 'lodash/isEmpty';
+import noop from 'lodash/noop';
 
 import { WithDragHandleProps } from 'components/DragDropContainer';
 import EmptyState from 'components/EmptyState';
@@ -20,6 +21,7 @@ import {
 } from '../../../common/Events/elements';
 import { ColumnOptionsSelector } from '../../components/ColumnOptionsSelector';
 import { DepthScaleLines } from '../../components/DepthScaleLines';
+import { DetailPageOption } from '../../components/DetailPageOption';
 import {
   ColumnVisibilityProps,
   CasingAssemblyView,
@@ -41,10 +43,8 @@ export interface CasingsColumnProps extends ColumnVisibilityProps {
   rkbLevel: WellboreInternal['datum'];
   wellWaterDepth: WellboreInternal['wellWaterDepth'];
   depthMeasurementType: DepthMeasurementUnit;
-  onChangeDepthMeasurementType: (
-    depthMeasurementType: DepthMeasurementUnit
-  ) => void;
   showBothSides?: boolean;
+  onClickDetailsButton?: () => void;
 }
 
 export const CasingsColumn: React.FC<WithDragHandleProps<CasingsColumnProps>> =
@@ -57,7 +57,7 @@ export const CasingsColumn: React.FC<WithDragHandleProps<CasingsColumnProps>> =
       scaleBlocks,
       showBothSides = false,
       depthMeasurementType,
-      onChangeDepthMeasurementType,
+      onClickDetailsButton = noop,
       isVisible = true,
       ...dragHandleProps
     }) => {
@@ -109,7 +109,7 @@ export const CasingsColumn: React.FC<WithDragHandleProps<CasingsColumnProps>> =
             <ColumnHeaderWrapper>
               <ColumnOptionsSelector
                 displayValue={ChartColumn.CASINGS}
-                onChange={onChangeDepthMeasurementType}
+                Footer={<DetailPageOption onClick={onClickDetailsButton} />}
               />
               <BodyColumnMainHeader>Schema</BodyColumnMainHeader>
               <Legend />
