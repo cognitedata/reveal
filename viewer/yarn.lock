@@ -841,7 +841,7 @@ __metadata:
     prettier: 2.7.1
     process: 0.11.10
     proj4: 2.8.0
-    puppeteer: 17.1.3
+    puppeteer: 18.0.2
     random-seed: 0.3.0
     raw-loader: 4.0.2
     resize-observer-polyfill: 1.5.1
@@ -10384,9 +10384,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"puppeteer@npm:17.1.3":
-  version: 17.1.3
-  resolution: "puppeteer@npm:17.1.3"
+"puppeteer@npm:18.0.2":
+  version: 18.0.2
+  resolution: "puppeteer@npm:18.0.2"
   dependencies:
     cross-fetch: 3.1.5
     debug: 4.3.4
@@ -10399,7 +10399,7 @@ __metadata:
     tar-fs: 2.1.1
     unbzip2-stream: 1.4.3
     ws: 8.8.1
-  checksum: b4518956c661df4c37690d46b9c6744d42d59d01fe3764938b4b3af8de4c94ef11a9dfa6bc261798f5e5490c6dce4d4f555f05d42c735249683da3017faf4585
+  checksum: 0bddc9c6548ad23091623fb30e2d5ab3fdc02443617a7f3e70fd323f7eb77398061ce7026183cafc569e5557b8bff794c0a8470a9af66a98902a3525adb157e5
   languageName: node
   linkType: hard
 
