@@ -31,10 +31,6 @@ export interface ModelDataProvider extends JsonFileProvider, BinaryFileProvider 
 export enum File3dFormat {
   EptPointCloud = 'ept-pointcloud',
   /**
-   * V8 models only due to bug for version checks in Reveal <3.0
-   */
-  RevealCadModel = 'reveal-directory',
-  /**
    * Reveal v9 and above (GLTF based output)
    */
   GltfCadModel = 'gltf-directory',
