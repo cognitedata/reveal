@@ -4,7 +4,7 @@
 
 import * as THREE from 'three';
 import { CadModelClipper } from './CadModelClipper';
-import { Mutable, generateV8SectorTree, createCadModelMetadata } from '../../../../test-utilities';
+import { Mutable, generateV9SectorTree, createCadModelMetadata } from '../../../../test-utilities';
 
 import { SectorMetadata } from './types';
 import { CadModelMetadata } from './CadModelMetadata';
@@ -15,7 +15,7 @@ describe('CadModelClipper', () => {
   let modelDepth2: CadModelMetadata;
 
   beforeEach(() => {
-    const root = generateV8SectorTree(2, 8);
+    const root = generateV9SectorTree(2, 8);
     setBounds(root, [0, 0, 0], [2, 2, 2]);
     for (let x = 0; x < 2; x++) {
       for (let y = 0; y < 2; y++) {
@@ -25,7 +25,7 @@ describe('CadModelClipper', () => {
         }
       }
     }
-    modelDepth2 = createCadModelMetadata(8, root);
+    modelDepth2 = createCadModelMetadata(9, root);
   });
 
   test('createClippedModel() throws when there are no sectors inside clip box', () => {
