@@ -59,14 +59,20 @@ export class SinglePropertyFilterNodeCollection extends CdfNodeCollectionBase {
    * @param propertyKey Node property key, e.g. `':FU'`.
    * @param propertyValues Lookup values, e.g. `["AR100APG539","AP500INF534","AP400INF553", ...]`
    */
-  async executeFilter(propertyCategory: string, propertyKey: string, propertyValues: string[]): Promise<void> {
+  executeFilter(propertyCategory: string, propertyKey: string, propertyValues: string[]): Promise<void> {
     const { requestPartitions } = this._options;
 
     const outputsUrl = this.buildUrl();
-    const batches = Array.from(splitQueryToBatches(propertyValues));
+    const batches = splitQueryToBatches(propertyValues);
 
     const requests = batches.flatMap(batch => {
-      const filter = { properties: { [`${propertyCategory}`]: { [`${propertyKey}`]: batch } } };
+      const filter = {
+        properties: {
+          [`${propertyCategory}`]: {
+            [`${propertyKey}`]: batch
+          }
+        }
+      };
       const batchRequests = range(1, requestPartitions + 1).map(async p => {
         const response = postAsListResponse<Node3D[]>(this._client, outputsUrl, {
           data: {
@@ -79,7 +85,6 @@ export class SinglePropertyFilterNodeCollection extends CdfNodeCollectionBase {
       });
       return batchRequests;
     });
-
     return this.updateCollectionFromResults(requests);
   }
 
@@ -98,7 +103,7 @@ export class SinglePropertyFilterNodeCollection extends CdfNodeCollectionBase {
   }
 }
 
-function* splitQueryToBatches(propertyValues: string[]): Generator<string[]> {
+function splitQueryToBatches(propertyValues: string[]): string[][] {
   return chunk(propertyValues, 1000);
 }
 
