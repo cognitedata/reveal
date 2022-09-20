@@ -77,13 +77,6 @@ export class CadManager {
         return;
       }
 
-      if (sector.instancedMeshes && sector.levelOfDetail === LevelOfDetail.Detailed) {
-        cadModel.updateInstancedMeshes(sector.instancedMeshes, sector.modelIdentifier, sector.metadata.id);
-      } else if (sector.levelOfDetail === LevelOfDetail.Simple || sector.levelOfDetail === LevelOfDetail.Discarded) {
-        cadModel.discardInstancedMeshes(sector.metadata.id);
-        cadModel.removeBatchedSectorGeometries(sector.metadata.id);
-      }
-
       if (
         sector.geometryBatchingQueue &&
         sector.geometryBatchingQueue.length > 0 &&
