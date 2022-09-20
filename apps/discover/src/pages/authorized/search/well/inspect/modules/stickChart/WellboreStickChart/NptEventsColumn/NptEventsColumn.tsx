@@ -125,6 +125,7 @@ export const NptEventsColumn: React.FC<
               displayValue={NPT_COLUMN_TITLE}
               onChange={setView}
               Footer={<DetailPageOption onClick={onClickDetailsButton} />}
+              disabled={isEmpty(data)}
             />
           </ColumnHeaderWrapper>
 

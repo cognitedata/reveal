@@ -110,6 +110,7 @@ export const NdsEventsColumn: React.FC<
               displayValue={NDS_COLUMN_TITLE}
               onChange={setView}
               Footer={<DetailPageOption onClick={onClickDetailsButton} />}
+              disabled={isEmpty(data)}
             />
           </ColumnHeaderWrapper>
 

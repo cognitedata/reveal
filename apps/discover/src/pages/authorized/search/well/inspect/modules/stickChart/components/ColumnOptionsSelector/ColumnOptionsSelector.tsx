@@ -24,6 +24,7 @@ export interface ColumnOptionsSelectorProps<T> {
   width?: number;
   onChange?: (selectedOption: T) => void;
   Footer?: JSX.Element;
+  disabled?: boolean;
 }
 
 export const ColumnOptionsSelector = <T extends string>({
@@ -33,6 +34,7 @@ export const ColumnOptionsSelector = <T extends string>({
   width,
   onChange = noop,
   Footer,
+  disabled = false,
 }: ColumnOptionsSelectorProps<T>) => {
   const renderDropdownContent = () => {
     return (
@@ -51,8 +53,22 @@ export const ColumnOptionsSelector = <T extends string>({
     );
   };
 
+  const isChevronVisible = () => {
+    if (disabled) {
+      return false;
+    }
+    if (isEmpty(options) && !Footer) {
+      return false;
+    }
+    return true;
+  };
+
   return (
-    <Dropdown placement="bottom-end" content={renderDropdownContent()}>
+    <Dropdown
+      placement="bottom-end"
+      content={renderDropdownContent()}
+      disabled={disabled}
+    >
       <ColumnOptionsSelectorContainer>
         <div style={{ width }}>
           <BodyColumnMainHeader>
@@ -60,7 +76,7 @@ export const ColumnOptionsSelector = <T extends string>({
           </BodyColumnMainHeader>
         </div>
 
-        {(!isEmpty(options) || Footer) && (
+        {isChevronVisible() && (
           <ColumnOptionsSelectorIconWrapper>
             <Icon type="ChevronDownSmall" data-testid="chevron-down-icon" />
           </ColumnOptionsSelectorIconWrapper>

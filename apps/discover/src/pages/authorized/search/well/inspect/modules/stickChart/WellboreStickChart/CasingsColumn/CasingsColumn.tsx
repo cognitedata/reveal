@@ -110,6 +110,7 @@ export const CasingsColumn: React.FC<WithDragHandleProps<CasingsColumnProps>> =
               <ColumnOptionsSelector
                 displayValue={ChartColumn.CASINGS}
                 Footer={<DetailPageOption onClick={onClickDetailsButton} />}
+                disabled={isEmpty(data)}
               />
               <BodyColumnMainHeader>Schema</BodyColumnMainHeader>
               <Legend />

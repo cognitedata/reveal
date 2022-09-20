@@ -19,6 +19,7 @@ import { useTrajectoryCurveConfigs } from '../hooks/useTrajectoryCurveConfigs';
 import { ChartColumn, ColumnsData, WellboreData } from '../types';
 
 import { CasingsColumn } from './CasingsColumn';
+import { CasingsDetailView } from './CasingsDetailView';
 import { DepthColumn } from './DepthColumn';
 import { ContentWrapper, WellboreStickChartWrapper } from './elements';
 import { FormationColumn } from './FormationColumn';
@@ -83,6 +84,7 @@ export const WellboreStickChart: React.FC<WellboreStickChartProps> = ({
   const [depthMeasurementType, setDepthMeasurementType] = useState(
     depthMeasurementTypeProp
   );
+  const [showCasingsDetailView, setShowCasingsDetailView] = useState(false);
   const [showNptDetailView, setShowNptDetailView] = useState(false);
   const [showNdsDetailView, setShowNdsDetailView] = useState(false);
 
@@ -147,6 +149,7 @@ export const WellboreStickChart: React.FC<WellboreStickChartProps> = ({
                 rkbLevel={rkbLevel}
                 wellWaterDepth={wellWaterDepth}
                 depthMeasurementType={depthMeasurementType}
+                onClickDetailsButton={() => setShowCasingsDetailView(true)}
                 isVisible={columnVisibility[ChartColumn.CASINGS]}
               />
 
@@ -200,6 +203,15 @@ export const WellboreStickChart: React.FC<WellboreStickChartProps> = ({
           </ContentWrapper>
         </WellboreStickChartWrapper>
       </NoUnmountShowHide>
+
+      {showCasingsDetailView && (
+        <CasingsDetailView
+          wellName={wellName}
+          wellboreName={wellboreName}
+          data={casingsColumn?.data}
+          onBackClick={() => setShowCasingsDetailView(false)}
+        />
+      )}
 
       {showNptDetailView && (
         <SelectedWellboreNptView
