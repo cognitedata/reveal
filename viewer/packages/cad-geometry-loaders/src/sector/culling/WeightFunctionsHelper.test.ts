@@ -9,9 +9,8 @@ import { PrioritizedArea } from '@reveal/cad-styling';
 import { traverseDepthFirst } from '@reveal/utilities';
 import { SectorMetadata } from '@reveal/cad-parsers';
 
-import { createV8SectorMetadata } from '../../../../../test-utilities';
-
 import { Mock } from 'moq.ts';
+import { createV9SectorMetadata } from '../../../../../test-utilities';
 
 function mockSectorMetadataFromBounds(box: THREE.Box3): SectorMetadata {
   return new Mock<SectorMetadata>()
@@ -33,7 +32,7 @@ describe('WeightFunctionsHelper', () => {
     camera.updateProjectionMatrix();
     camera.updateMatrixWorld();
 
-    const rootSector = createV8SectorMetadata([
+    const rootSector = createV9SectorMetadata([
       0,
       [
         [1, [], new THREE.Box3(new THREE.Vector3(0, 0, 0), new THREE.Vector3(0.5, 1, 1))],
