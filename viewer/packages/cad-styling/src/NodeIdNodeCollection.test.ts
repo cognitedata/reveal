@@ -35,7 +35,7 @@ describe(NodeIdNodeCollection.name, () => {
   test('executeFilter with 1001 nodeIds, splits into two chunks', async () => {
     const collection = new NodeIdNodeCollection(mockClient.object(), mockModel.object());
     const ids = range(0, 1001);
-    expect(() => collection.executeFilter(ids)).resolves.not.toThrow();
+    await expect(collection.executeFilter(ids)).resolves.not.toThrow();
     mockRevisions3DAPI.verify(x => x.retrieve3DNodes(It.IsAny(), It.IsAny(), It.IsAny()), Times.Exactly(2));
   });
 
