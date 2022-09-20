@@ -3,13 +3,17 @@
  */
 
 import * as THREE from 'three';
-import { ParsePrimitiveAttribute } from '@cognite/reveal-parser-worker';
 import {
   computeBoundingBoxFromCenterAndRadiusAttributes,
   computeBoundingBoxFromEllipseAttributes,
   computeBoundingBoxFromInstanceMatrixAttributes,
   computeBoundingBoxFromVertexAttributes
 } from './computeBoundingBoxFromAttributes';
+
+type ParsePrimitiveAttribute = {
+  offset: number;
+  size: number;
+};
 
 describe('computeBoundingBoxFromCenterAndRadiusAttributes', () => {
   let centerA_attribute: ParsePrimitiveAttribute;

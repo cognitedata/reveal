@@ -8,10 +8,12 @@ import { ByScreenSizeSectorCuller } from './ByScreenSizeSectorCuller';
 
 import { CadModelMetadata, LevelOfDetail, WantedSector } from '@reveal/cad-parsers';
 
-import { createCadModelMetadata, createV8SectorMetadata, createV9SectorMetadata } from '../../../../../test-utilities';
+import { createCadModelMetadata, createV9SectorMetadata } from '../../../../../test-utilities';
 import { CadModelBudget } from '../../CadModelBudget';
 
 import { createDetermineSectorInput } from './createDetermineSectorInput';
+import { Mock } from 'moq.ts';
+import { DetermineSectorsInput } from './types';
 
 describe(ByScreenSizeSectorCuller.name, () => {
   let camera: THREE.PerspectiveCamera;
@@ -65,8 +67,8 @@ describe(ByScreenSizeSectorCuller.name, () => {
   });
 
   test('determineSectors throws if model is not v9', () => {
-    const v8input = createDetermineSectorInput(camera, createCadModelMetadata(8, createV8SectorMetadata([0, []])));
-    expect(() => culler.determineSectors(v8input)).toThrowError();
+    const mockDetermineSectorInput = new Mock<DetermineSectorsInput>();
+    expect(() => culler.determineSectors(mockDetermineSectorInput.object())).toThrowError();
   });
 
   test('determineSectors doesnt return fully culled sectors', () => {
