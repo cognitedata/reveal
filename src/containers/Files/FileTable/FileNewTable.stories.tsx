@@ -3,10 +3,10 @@ import styled from 'styled-components';
 import { action } from '@storybook/addon-actions';
 import { files } from 'stubs/files';
 import { ComponentStory } from '@storybook/react';
-import { FileTable } from './FileTable';
+import { FileTable } from './FileNewTable';
 
 export default {
-  title: 'Files/FileTable',
+  title: 'Files/FileNewTable',
   component: FileTable,
   decorators: [(storyFn: any) => <Container>{storyFn()}</Container>],
   argTypes: { query: { control: 'text' } },
@@ -17,16 +17,7 @@ export const Example: ComponentStory<typeof FileTable> = args => (
 );
 Example.args = {
   data: files,
-  onItemClicked: action('onItemClicked'),
-};
-
-export const ExampleSingleSelect: ComponentStory<typeof FileTable> = args => (
-  <FileTable {...args} />
-);
-ExampleSingleSelect.args = {
-  selectionMode: 'single',
-  data: files,
-  onItemClicked: action('onItemClicked'),
+  onRowClick: action('onRowClicked'),
 };
 
 const Container = styled.div`

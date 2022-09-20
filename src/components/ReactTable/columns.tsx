@@ -1,5 +1,5 @@
 import { Body, Flex, Tag, Tooltip } from '@cognite/cogs.js';
-import { useCdfItem } from '@cognite/sdk-react-query-hooks';
+import { useCdfItem, useCdfItems } from '@cognite/sdk-react-query-hooks';
 import { DataSet } from '@cognite/sdk/dist/src';
 import { HighlightCell, TimeDisplay } from 'components';
 import {
@@ -7,16 +7,19 @@ import {
   TimeseriesWithRelationshipLabels,
 } from 'containers';
 import { AssetWithRelationshipLabels } from 'containers/Assets/AssetTable/AssetNewTable';
+import { FileWithRelationshipLabels } from 'containers/Files/FileTable/FileNewTable';
 import capitalize from 'lodash/capitalize';
 import uniqueId from 'lodash/uniqueId';
 import React from 'react';
 import { Column } from 'react-table';
 import styled from 'styled-components';
+import { mapFileType } from 'utils';
 
 export interface ResourceTableHashMap {
   [key: string]: Column<
     TimeseriesWithRelationshipLabels &
       AssetWithRelationshipLabels &
+      FileWithRelationshipLabels &
       SequenceWithRelationshipLabels
   >;
 }
@@ -115,18 +118,48 @@ export const ResourceTableColumns: ResourceTableHashMap = {
   assets: {
     Header: 'Asset(s)',
     accessor: 'assetId',
-    Cell: ({ value }) => {
-      const { data: item, isFetched } = useCdfItem<{ name?: string }>(
+    Cell: ({ value, row }) => {
+      const data = row.original;
+      const ids = value
+        ? [{ id: value }]
+        : data.assetIds?.map(val => ({ id: val }));
+      const { data: items, isFetched } = useCdfItems<{ name?: string }>(
         'assets',
-        {
-          id: value!,
-        },
-        {
-          enabled: Boolean(value),
-        }
+        ids || [],
+        true,
+        { enabled: Boolean(data.assetIds) || Boolean(data.assetId) }
       );
-      return value && isFetched ? <Body level={3}>{item?.name}</Body> : null;
+      const assetsName = items?.map(item => item.name).join(', ');
+      return assetsName && isFetched ? (
+        <Body level={3}>{assetsName}</Body>
+      ) : null;
     },
+  },
+  mimeType: {
+    accessor: 'mimeType',
+    Header: 'Type',
+    Cell: ({ value }) => (
+      <Body level={2}>
+        <Tooltip interactive content={value}>
+          <>{mapFileType(value || '')}</>
+        </Tooltip>
+      </Body>
+    ),
+  },
+  uploadedTime: {
+    accessor: 'uploadedTime',
+    Header: 'Uploaded',
+    Cell: ({ row: { original: file } }) => (
+      <Body level={2}>
+        {file && file.uploaded && (
+          <TimeDisplay value={file.uploadedTime} relative withTooltip />
+        )}
+      </Body>
+    ),
+  },
+  source: {
+    accessor: 'source',
+    Header: 'Source',
   },
   columns: {
     accessor: 'columns',

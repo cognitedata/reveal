@@ -68,7 +68,7 @@ export function NewTable<T extends TableData>({
     useFlexLayout,
   ].filter(Boolean) as PluginHook<T>[];
 
-  const allFields = columns.map(col => col.accessor);
+  const allFields = columns.map(col => col.accessor || col.id || '');
 
   const hiddenColumns =
     visibleColumns.length === 0
