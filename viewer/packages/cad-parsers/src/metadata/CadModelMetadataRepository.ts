@@ -67,29 +67,21 @@ export class CadModelMetadataRepository implements MetadataRepository<Promise<Ca
   private async getSupportedOutput(modelIdentifier: ModelIdentifier): Promise<BlobOutputMetadata> {
     const outputs = await this._modelMetadataProvider.getModelOutputs(modelIdentifier);
     // Supported output formats in order of preference (first format is most preferred)
-    const preferredOutputs = [
-      { format: File3dFormat.GltfCadModel, version: 9 },
-      { format: File3dFormat.RevealCadModel, version: 8 }
-    ];
+    const gltfOutput = { format: File3dFormat.GltfCadModel, version: 9 };
 
-    const supportedOutputs = preferredOutputs
-      .map(preferredOutput =>
-        outputs.find(
-          supportedOutput =>
-            supportedOutput.format === preferredOutput.format && supportedOutput.version === preferredOutput.version
-        )
-      )
-      .filter(supportedOutput => supportedOutput !== undefined);
+    const supportedOutput = outputs.find(
+      supportedOutput => supportedOutput.format === gltfOutput.format && supportedOutput.version === gltfOutput.version
+    );
 
-    if (supportedOutputs.length === 0) {
+    if (supportedOutput === undefined) {
       const cadModelOutputsString = outputs.map(output => `${output.format} v${output.version}`).join(', ');
-      const supportedOutputsString = preferredOutputs.map(output => `${output.format} v${output.version}`).join(', ');
+      const supportedOutputsString = `${gltfOutput.format} v${gltfOutput.version}`;
       throw new Error(
         `Model does not contain any supported CAD model outputs, got [${cadModelOutputsString}], but only supports [${supportedOutputsString}]`
       );
     }
 
-    return supportedOutputs[0]!;
+    return supportedOutput;
   }
 }
 

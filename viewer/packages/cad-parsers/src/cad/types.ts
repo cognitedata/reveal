@@ -6,8 +6,6 @@ import * as THREE from 'three';
 
 import { AutoDisposeGroup } from '@reveal/utilities';
 
-import { ParsedPrimitives, ParseSectorResult, ParseCtmResult, SectorQuads } from '@cognite/reveal-parser-worker';
-
 import { SectorMetadata } from '../metadata/types';
 import { LevelOfDetail } from './LevelOfDetail';
 import { ParsedGeometry } from '@reveal/sector-parser';
@@ -36,13 +34,6 @@ export type InstancedMesh = {
   readonly treeIndices: Float32Array;
 };
 
-export interface SectorGeometry {
-  readonly primitives: ParsedPrimitives;
-
-  readonly instanceMeshes: InstancedMeshFile[];
-  readonly triangleMeshes: TriangleMesh[];
-}
-
 export interface ConsumedSector {
   modelIdentifier: string;
   metadata: SectorMetadata;
@@ -50,13 +41,6 @@ export interface ConsumedSector {
   group: AutoDisposeGroup | undefined;
   instancedMeshes: InstancedMeshFile[] | undefined;
   geometryBatchingQueue?: ParsedGeometry[];
-}
-
-export interface ParsedSector {
-  modelIdentifier: string;
-  metadata: SectorMetadata;
-  data: null | ParseSectorResult | ParseCtmResult | SectorGeometry | SectorQuads;
-  levelOfDetail: LevelOfDetail;
 }
 
 export interface WantedSector {
