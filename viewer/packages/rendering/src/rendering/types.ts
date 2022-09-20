@@ -2,8 +2,6 @@
  * Copyright 2021 Cognite AS
  */
 
-export { SectorQuads } from '@cognite/reveal-parser-worker';
-
 /**
  * Anti-aliasing modes supported by Reveal.
  */

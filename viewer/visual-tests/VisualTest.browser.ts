@@ -6,9 +6,7 @@
 import visualTestsFixtures from '**/*.VisualTest.ts';
 
 //TODO: remove for Reveal 4.0
-import { revealEnv } from '../packages/utilities';
 import { VisualTestFixture } from './test-fixtures/VisualTestFixture';
-revealEnv.publicPath = 'https://apps-cdn.cogniteapp.com/@cognite/reveal-parser-worker/1.3.0/';
 
 async function testGenerator(): Promise<Map<string, VisualTestFixture>> {
   const testMap = new Map<string, VisualTestFixture>();

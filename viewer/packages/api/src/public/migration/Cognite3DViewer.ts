@@ -707,7 +707,7 @@ export class Cognite3DViewer {
     const outputs = await this._dataSource.getModelMetadataProvider().getModelOutputs(modelIdentifier);
     const outputFormats = outputs.map(output => output.format);
 
-    if (hasOutput(File3dFormat.GltfCadModel) || hasOutput(File3dFormat.RevealCadModel)) {
+    if (hasOutput(File3dFormat.GltfCadModel)) {
       return 'cad';
     } else if (hasOutput(File3dFormat.EptPointCloud)) {
       return 'pointcloud';
