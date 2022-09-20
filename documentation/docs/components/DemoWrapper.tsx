@@ -26,12 +26,10 @@ const ViewerComponent: ComponentType<DemoProps> = React.lazy(() =>
 // different demos might have different ids, e.g. pointcloud/cad
 // also we can use 3ddemo instead of publicdata so here is .env file to help with it
 export function DemoWrapper({
-  name,
   ids,
   modelType,
   ...rest
 }: {
-  name: string;
   ids?: { modelId: number; revisionId: number };
   modelType?: string;
   [key: string]: any; // any other props that might be bypassed to specific Demo
