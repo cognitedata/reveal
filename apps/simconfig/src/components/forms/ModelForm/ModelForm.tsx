@@ -330,7 +330,7 @@ export function ModelForm({
           <InputRow>
             {file ? (
               <Field
-                as={Input}
+                as={RegularInput}
                 error={
                   errors.metadata?.fileName
                     ? errors.metadata.fileName
@@ -393,7 +393,7 @@ export function ModelForm({
           </InputRow>
           <InputRow>
             <Field
-              as={Input}
+              as={RegularInput}
               disabled={!isNewModel}
               helpText="Only alphanumeric characters, spaces ( ), underscores (_) and dashes (-) are allowed."
               maxLength={256}
@@ -417,7 +417,7 @@ export function ModelForm({
           {!isNewModel ? (
             <>
               <InputRow>
-                <Input
+                <RegularInput
                   title="Unit system"
                   value={UnitSystem[metadata.unitSystem]}
                   disabled
@@ -448,7 +448,7 @@ export function ModelForm({
                   as={Select}
                   name="metadata.modelType"
                   options={getSelectEntriesFromMap(definitions?.type.model)}
-                  title="Model Type"
+                  title="Model type"
                   value={{
                     value: metadata.modelType,
                     label: definitions?.type.model[metadata.modelType],
@@ -544,6 +544,12 @@ export function ModelForm({
     </Formik>
   );
 }
+
+const RegularInput = styled(Input)`
+  .title {
+    text-transform: none;
+  }
+`;
 
 const HiddenInputFile = styled.input`
   width: 0.1px;

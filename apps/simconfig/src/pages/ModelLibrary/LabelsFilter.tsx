@@ -37,7 +37,7 @@ export function LabelsFilter({
             }))
           : []
       }
-      placeholder="Filter by labels."
+      placeholder="Filter by labels"
       value={selectedLabels}
       isMulti
       onChange={onLabelsChange}

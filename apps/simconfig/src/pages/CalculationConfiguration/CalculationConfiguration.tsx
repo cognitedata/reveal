@@ -329,9 +329,9 @@ export function CalculationConfiguration() {
           )}
         </Formik>
       ) : (
-        <Infobox title="Missing Model Type" type="warning">
-          Cannot determine the model type. Check that the PROSPER integration is
-          available, then refresh the page and try again.
+        <Infobox title="Model type cannot be determined" type="warning">
+          Check that the PROSPER integration is available, then refresh the page
+          and try again.
         </Infobox>
       )}
     </CalculationConfigurationContainer>

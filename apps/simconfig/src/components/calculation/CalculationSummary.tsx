@@ -43,7 +43,7 @@ export function CalculationSummary({ configuration }: CalculationSummaryProps) {
         />
       </ConfigurationSection>
       <ConfigurationSection>
-        <h3>Data Sampling</h3>
+        <h3>Data sampling</h3>
         <div className="properties">
           <div className="entry">
             <div>Validation window</div>
@@ -86,7 +86,7 @@ export function CalculationSummary({ configuration }: CalculationSummaryProps) {
         </h3>
         <div className="properties">
           <div className="entry">
-            <div>Timeseries</div>
+            <div>Time series</div>
             <div>
               <NullableValue value={configuration.logicalCheck.externalId} />
             </div>
@@ -130,7 +130,7 @@ export function CalculationSummary({ configuration }: CalculationSummaryProps) {
         })}
       >
         <h3>
-          Steady State Detection{' '}
+          Steady state detection{' '}
           {configuration.steadyStateDetection.enabled || (
             <Label size="small" variant="danger">
               disabled
@@ -139,7 +139,7 @@ export function CalculationSummary({ configuration }: CalculationSummaryProps) {
         </h3>
         <div className="properties">
           <div className="entry">
-            <div>Timeseries</div>
+            <div>Time series</div>
             <div>
               <NullableValue
                 value={configuration.steadyStateDetection.externalId}
@@ -251,7 +251,7 @@ export function CalculationSummary({ configuration }: CalculationSummaryProps) {
             disabled: !configuration.gaugeDepth,
           })}
         >
-          <h3>Gauge Depth </h3>
+          <h3>Gauge depth </h3>
           <div className="properties">
             <div className="entry">
               <div>{/* no label  */}</div>
@@ -349,7 +349,7 @@ export function CalculationSummary({ configuration }: CalculationSummaryProps) {
         <InputTimeseriesList>
           <div className="heading">Input</div>
           <div className="heading">Unit</div>
-          <div className="heading">Sensor timeseries</div>
+          <div className="heading">Sensor time series</div>
           <div className="heading">Sampling method</div>
           {configuration.inputTimeSeries.map(
             ({
@@ -401,17 +401,19 @@ export function CalculationSummary({ configuration }: CalculationSummaryProps) {
         <OutputTimeseriesList>
           <div className="heading">Name</div>
           <div className="heading">Unit</div>
-          <div className="heading">Timeseries</div>
+          <div className="heading">Time series</div>
           {configuration.outputTimeSeries.map(
-            ({ name, unit, unitType, externalId }) => (
+            ({ name, unit, unitType, externalId, type }) => (
               <React.Fragment key={name}>
                 <div>
-                  <NullableValue value={name} />
+                  <NullableValue value={name} /> (<NullableValue value={type} />
+                  )
                 </div>
                 <div>
                   <NullableValue
                     value={definitions?.map.unitType[unitType][unit ?? '']}
-                  />
+                  />{' '}
+                  (<NullableValue value={unitType} />)
                 </div>
                 <div>{externalId}</div>
               </React.Fragment>
@@ -445,7 +447,7 @@ const ConfigurationSection = styled.div`
   }
   h3 {
     margin-top: 24px;
-    text-transform: capitalize;
+    text-transform: none;
   }
   &.disabled .properties {
     opacity: 0.5;
@@ -501,7 +503,7 @@ const InputTimeseriesList = styled.div`
   }
   .heading {
     font-weight: bold;
-    text-transform: capitalize;
+    text-transform: none;
   }
 `;
 
@@ -515,7 +517,7 @@ const OutputTimeseriesList = styled.div`
   }
   .heading {
     font-weight: bold;
-    text-transform: capitalize;
+    text-transform: none;
   }
 `;
 
@@ -530,7 +532,7 @@ const CalculationRoutineList = styled.div`
   .heading {
     margin-top: 8px;
     font-weight: bold;
-    text-transform: capitalize;
+    text-transform: none;
   }
   .step {
     margin-left: 12px;

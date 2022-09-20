@@ -171,7 +171,7 @@ function TimeseriesSelector({
         isLoading={!isReady()}
         name={name}
         options={queryResult?.slice(0, pagination)}
-        placeholder="Type to search..."
+        placeholder="Type to search"
         renderOption={renderOption}
         title={title}
         value={selectedValue}
@@ -194,6 +194,9 @@ export const TimeseriesSelectorContainer = styled.div<{ width?: number }>`
   .cogs-select {
     min-width: 220px;
     width: ${(props) => props.width ?? 220}px;
+  }
+  .title {
+    text-transform: none;
   }
 `;
 

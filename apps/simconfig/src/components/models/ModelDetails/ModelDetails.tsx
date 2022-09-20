@@ -174,7 +174,7 @@ export function ModelDetails({
                             setShouldShowDeleteConfirmModal(true);
                           }}
                         >
-                          <Icon type="Delete" /> Delete Model
+                          <Icon type="Delete" /> Delete model
                         </Menu.Item>
                       </Menu>
                     }

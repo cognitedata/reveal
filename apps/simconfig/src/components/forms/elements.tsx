@@ -32,6 +32,9 @@ export const NumberInput = styled(TextInput)`
   input[type='number'] {
     appearance: auto !important;
   }
+  .title {
+    text-transform: none;
+  }
   & + .arrows {
     display: none !important;
   }
@@ -47,6 +50,12 @@ export const NumberInput = styled(TextInput)`
       width: auto;
       margin: 0 24px 0 0;
     }
+  }
+`;
+
+const SamplingMethodComponent = styled.div`
+  .title {
+    text-transform: none;
   }
 `;
 
@@ -105,9 +114,12 @@ export function TextField({
   );
 }
 
-export const StyledInput = styled(Input)((props) => ({
-  width: props.width,
-}));
+export const StyledInput = styled(Input)`
+  width: ${(props) => props.width ?? 100}px;
+  .title {
+    text-transform: none;
+  }
+`;
 
 export function NumberField({
   name,
@@ -286,7 +298,7 @@ export function TimeSeriesField({
         }}
       />
 
-      <div className="cogs-input-container">
+      <SamplingMethodComponent className="cogs-input-container">
         <div className="title">Sampling method</div>
         <SegmentedControl
           currentKey={aggregateTypeValue}
@@ -307,7 +319,7 @@ export function TimeSeriesField({
             Interpolated
           </SegmentedControl.Button>
         </SegmentedControl>
-      </div>
+      </SamplingMethodComponent>
     </>
   );
 }

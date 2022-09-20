@@ -156,8 +156,8 @@ export function AdvancedStep({ isDisabled }: StepProps) {
               <ClipboardContainer>
                 <Alert color="primary" icon="Info">
                   <p>
-                    Tabular choke curve data may be copied and pasted from
-                    Excel, Google Sheets, etc. below.
+                    You can copy and paste Tabular choke curve data from Excel,
+                    Google Sheets, etc. below.
                   </p>
                   <ul>
                     <li>
@@ -168,6 +168,22 @@ export function AdvancedStep({ isDisabled }: StepProps) {
                   </ul>
                 </Alert>
                 <div className="actions">
+                  <Button
+                    icon="Copy"
+                    onClick={async () => {
+                      const curveTabSeparated = values.chokeCurve.opening
+                        .map((opening, index) =>
+                          [opening, values.chokeCurve.setting[index]].join('\t')
+                        )
+                        .join('\n');
+
+                      await navigator.clipboard.writeText(curveTabSeparated);
+
+                      toast.info('Choke curve copied to clipboard');
+                    }}
+                  >
+                    Copy to clipboard
+                  </Button>
                   <PasteButton
                     block
                     onPasteSuccess={(text) => {
@@ -216,22 +232,6 @@ export function AdvancedStep({ isDisabled }: StepProps) {
                       }
                     }}
                   />
-                  <Button
-                    icon="Copy"
-                    onClick={async () => {
-                      const curveTabSeparated = values.chokeCurve.opening
-                        .map((opening, index) =>
-                          [opening, values.chokeCurve.setting[index]].join('\t')
-                        )
-                        .join('\n');
-
-                      await navigator.clipboard.writeText(curveTabSeparated);
-
-                      toast.info('Choke curve copied to clipboard');
-                    }}
-                  >
-                    Copy to clipboard
-                  </Button>
                 </div>
               </ClipboardContainer>
             </ChokeCurveSidebar>

@@ -33,20 +33,18 @@ export function DeleteConfirmModal({
         </div>
       }
       style={{ top: '15%' }}
-      title="Are you sure?"
+      title={`Delete model ${decodeURIComponent(modalName)}?`}
       visible={isModelOpen}
       onCancel={() => {
         handleModalConfirm(false);
       }}
     >
       <h3>
-        Do you want to delete model{' '}
-        <strong>{decodeURIComponent(modalName)}</strong>{' '}
+        <strong>This action cannot be undone</strong>{' '}
       </h3>
-      <br />
       <h3>
-        This is an irreversible action, it will delete all versions of the
-        model, any configured calculations and all simulation results
+        All versions of the model, any configured calculations, and all
+        simulation results will be deleted forever
       </h3>
     </Modal>
   );

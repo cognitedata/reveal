@@ -58,7 +58,7 @@ export function MenuBar() {
               {project}
             </div>
           }
-          title="Cognite Simulator Configuration"
+          title="Cognite Simulator Configurator"
           onClick={() => {
             navigate({ to: '/model-library' });
           }}

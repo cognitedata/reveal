@@ -77,7 +77,7 @@ export function OutputStep({ isDisabled }: StepProps) {
                 setValue={(value: string) => {
                   setFieldValue(`outputTimeSeries.${index}.externalId`, value);
                 }}
-                title="Timeseries"
+                title="Time series"
                 type="text"
                 value={externalId}
                 width={400}

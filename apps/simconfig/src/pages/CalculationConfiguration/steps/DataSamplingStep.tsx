@@ -219,7 +219,7 @@ export function DataSamplingStep() {
         />
         <SelectContainer>
           <label className="title" htmlFor="validation-offset">
-            Validation Offset
+            Validation offset
           </label>
           <FormRow>
             <NumberField

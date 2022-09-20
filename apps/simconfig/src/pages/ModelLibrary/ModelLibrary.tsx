@@ -114,7 +114,7 @@ export function ModelLibrary() {
               icon="Search"
               maxLength={64}
               name="modelName"
-              placeholder="Filter by model name..."
+              placeholder="Filter by model name"
               size="small"
               title=""
               fullWidth

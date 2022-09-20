@@ -172,7 +172,7 @@ export function CalculationRuns() {
         <Filter
           currentValue={searchFilters.modelName}
           filterKey="modelName"
-          label="Model Name"
+          label="Model name"
           options={[
             {
               label: 'Model name',
@@ -188,7 +188,7 @@ export function CalculationRuns() {
         <Filter
           currentValue={searchFilters.calculationType}
           filterKey="calculationType"
-          label="Calculation Type"
+          label="Calculation type"
           options={generateOptions(
             'calculationType',
             'Calculations',
@@ -199,10 +199,10 @@ export function CalculationRuns() {
         <Filter
           currentValue={searchFilters.calculationRunType}
           filterKey="calculationRunType"
-          label="Run Type"
+          label="Run type"
           options={generateOptions(
             'calculationRunType',
-            'Run Type',
+            'Run type',
             definitions?.calculation.runType
           )}
           setSearchParams={setSearchParams}
@@ -210,7 +210,7 @@ export function CalculationRuns() {
         <Filter
           currentValue={searchFilters.calculationRunStatus}
           filterKey="calculationRunStatus"
-          label="Run Status"
+          label="Run status"
           options={generateOptions(
             'calculationRunStatus',
             'Status',
@@ -273,6 +273,9 @@ const CalculationsFilterContainer = styled.form`
   .cogs-date-range--input {
     border: 2px solid var(--cogs-border-default);
     height: 36px;
+  }
+  & .cogs-input-container .title {
+    text-transform: none;
   }
 `;
 
