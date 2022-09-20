@@ -21,9 +21,15 @@ import { VisualTestFixture } from './VisualTestFixture';
 import { DeferredPromise, fitCameraToBoundingBox, SceneHandler } from '../../packages/utilities';
 import { ModelIdentifier, ModelMetadataProvider } from '../../packages/modeldata-api';
 import { LoadingState } from '../../packages/model-base';
-import { PointCloudManager, PointCloudNode, Potree, PotreePointColorType } from '../../packages/pointclouds';
+import {
+  LocalAnnotationProvider,
+  PointCloudManager,
+  PointCloudNode,
+  Potree,
+  PotreePointColorType
+} from '../../packages/pointclouds';
 import { PointCloudMetadataRepository } from '../../packages/pointclouds/src/PointCloudMetadataRepository';
-import { LocalPointCloudFactory } from '../../packages/pointclouds/src/factory/LocalPointCloudFactory';
+import { PointCloudFactory } from '../../packages/pointclouds/src/PointCloudFactory';
 import dat from 'dat.gui';
 
 export type StreamingTestFixtureComponents = {
@@ -59,6 +65,7 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
   private _renderPipelineProvider: RenderPipelineProvider;
   private _pipelineExecutor: RenderPipelineExecutor;
   private _cadManager!: CadManager;
+  private _potreeInstance!: Potree;
   private readonly _depthRenderPipeline: CadGeometryRenderModePipelineProvider;
   private readonly _resizeObserver: ResizeObserver;
 
@@ -86,10 +93,26 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
     return this._renderPipelineProvider;
   }
 
+  get potreeInstance(): Potree {
+    return this._potreeInstance;
+  }
+
+  /*
+   * Overridable field creation methods
+   */
+
+  createPointCloudFactory(): PointCloudFactory {
+    return new PointCloudFactory(this.potreeInstance, new LocalAnnotationProvider());
+  }
+
+  createCamera(): THREE.PerspectiveCamera {
+    return new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 1000);
+  }
+
   constructor(localModelUrl = 'primitives') {
     this._localModelUrl = localModelUrl;
 
-    this._perspectiveCamera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 1000);
+    this._perspectiveCamera = this.createCamera();
 
     this._sceneHandler = new SceneHandler();
 
@@ -133,12 +156,12 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
     this._cadManager = new CadManager(this._materialManager, cadModelFactory, cadModelUpdateHandler);
 
     const pointCloudMetadataRepository = new PointCloudMetadataRepository(modelMetadataProvider, modelDataProvider);
-    const potreeInstance = new Potree(modelDataProvider);
-    const pointCloudFactory = new LocalPointCloudFactory(potreeInstance);
+    this._potreeInstance = new Potree(modelDataProvider);
+    const pointCloudFactory = this.createPointCloudFactory();
     const pointCloudManager = new PointCloudManager(
       pointCloudMetadataRepository,
       pointCloudFactory,
-      potreeInstance,
+      this._potreeInstance,
       this._sceneHandler.scene,
       this._renderer
     );
@@ -285,7 +308,12 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
     } else if (modelOutputs.includes('ept-pointcloud')) {
       const pointCloudNode = await pointCloudManager.addModel(modelIdentifier);
       pointCloudNode.pointColorType = PotreePointColorType.Height;
-      this._sceneHandler.addCustomObject(pointCloudNode);
+
+      // TODO, Håkon Flatval Sep. 12 2022: Make SceneHandler operate on PointCloudNode directly
+      const mockObject = new THREE.Group();
+      (mockObject as any).pointCloudNode = pointCloudNode;
+      mockObject.add(pointCloudNode);
+      this._sceneHandler.addPointCloudModel(mockObject, modelIdentifier.revealInternalId);
       return pointCloudNode;
     } else {
       throw Error(`Unknown output format ${modelOutputs}`);

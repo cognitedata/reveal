@@ -298,6 +298,10 @@ export class PointCloudEptGeometryNode implements IPointCloudTreeGeometryNode {
     this._geometry = bufferGeometry;
     this._numPoints = np;
     this._loaded = true;
+    this.markAsNotLoading();
+  }
+
+  markAsNotLoading(): void {
     this._loading = false;
     decrementGlobalNumNodesLoading();
   }

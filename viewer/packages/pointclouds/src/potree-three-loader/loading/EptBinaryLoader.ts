@@ -8,18 +8,22 @@ import * as THREE from 'three';
 
 import { WorkerPool } from '../utils/WorkerPool';
 import { ILoader } from './ILoader';
-import { ModelDataProvider } from '@reveal/modeldata-api';
 import { PointCloudEptGeometryNode } from '../geometry/PointCloudEptGeometryNode';
 import * as EptDecoderWorker from '../workers/eptBinaryDecoder.worker';
 
 import { ParsedEptData, EptInputData } from '../workers/parseEpt';
 
+import { StylableObject } from '../../styling/StylableObject';
+import { createShapeBoundingBox } from '../../styling/shapes/createShapeBoundingBox';
+import { decomposeStylableObjects } from '../../styling/decomposeStylableObjects';
+
 import { fromThreeVector3, setupTransferableMethodsOnMain } from '@reveal/utilities';
-import { RawStylableObject } from '../../styling/StylableObject';
+import { MetricsLogger } from '@reveal/metrics';
+import { ModelDataProvider } from '@reveal/modeldata-api';
 
 export class EptBinaryLoader implements ILoader {
   private readonly _dataLoader: ModelDataProvider;
-  private readonly _stylableObjects: RawStylableObject[];
+  private readonly _stylableObjectsWithBox: [StylableObject, THREE.Box3][];
 
   static readonly WORKER_POOL = new WorkerPool(32, EptDecoderWorker as unknown as new () => Worker);
 
@@ -27,9 +31,12 @@ export class EptBinaryLoader implements ILoader {
     return '.bin';
   }
 
-  constructor(dataLoader: ModelDataProvider, stylableObjects: RawStylableObject[]) {
+  constructor(dataLoader: ModelDataProvider, stylableObjects: StylableObject[]) {
     this._dataLoader = dataLoader;
-    this._stylableObjects = stylableObjects;
+    this._stylableObjectsWithBox = decomposeStylableObjects(stylableObjects).map(obj => [
+      obj,
+      createShapeBoundingBox(obj.shape)
+    ]);
   }
 
   async load(node: PointCloudEptGeometryNode): Promise<void> {
@@ -38,8 +45,19 @@ export class EptBinaryLoader implements ILoader {
     const fullFileName = node.fileName() + this.extension();
     const data = await this._dataLoader.getBinaryFile(node.baseUrl(), fullFileName);
 
-    const parsedData = await this.parse(node, data);
-    this.finalizeLoading(parsedData, node);
+    const parsedResultOrError = await this.parse(node, data);
+
+    if (!(parsedResultOrError as any).position) {
+      // Is an error
+      const error = parsedResultOrError as Error;
+      MetricsLogger.trackError(error, { moduleName: 'EptBinaryLoader', methodName: 'load' });
+
+      node.markAsNotLoading();
+
+      return;
+    }
+
+    this.finalizeLoading(parsedResultOrError as ParsedEptData, node);
   }
 
   private finalizeLoading(parsedData: ParsedEptData, node: PointCloudEptGeometryNode) {
@@ -51,7 +69,7 @@ export class EptBinaryLoader implements ILoader {
     node.doneLoading(geometry, tightBoundingBox, numPoints, new THREE.Vector3(...parsedData.mean));
   }
 
-  async parse(node: PointCloudEptGeometryNode, data: ArrayBuffer): Promise<ParsedEptData> {
+  async parse(node: PointCloudEptGeometryNode, data: ArrayBuffer): Promise<ParsedEptData | Error> {
     const autoTerminatingWorker = await EptBinaryLoader.WORKER_POOL.getWorker();
     const eptDecoderWorker = autoTerminatingWorker.worker as unknown as typeof EptDecoderWorker;
     const eptData: EptInputData = {
@@ -70,7 +88,15 @@ export class EptBinaryLoader implements ILoader {
       }
     });
 
-    const result = await eptDecoderWorker.parse(eptData, this._stylableObjects, node.boundingBox.min.toArray());
+    const relevantObjects = this._stylableObjectsWithBox
+      .filter(objAndBox => objAndBox[1].intersectsBox(node.boundingBox))
+      .map(objAndBox => objAndBox[0]);
+
+    const result = await eptDecoderWorker.parse(eptData, relevantObjects, node.boundingBox.min.toArray(), {
+      min: node.boundingBox.min.toArray(),
+      max: node.boundingBox.max.toArray()
+    });
+
     EptBinaryLoader.WORKER_POOL.releaseWorker(autoTerminatingWorker);
     return result;
   }
