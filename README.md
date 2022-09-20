@@ -40,5 +40,5 @@ If you have any questions related to fusion development, please join us in [#cdf
 ## Run the preview
 
 ```bash
-cdf-ui-cli -pr -b cdf-hub-dev -p @cognite/cdf-demo-app -o index.js -d ./build
+cdf-ui-cli -pr -b cdf-hub-dev -p @cognite/cdf-hub-flows -o index.js -d ./build
 ```

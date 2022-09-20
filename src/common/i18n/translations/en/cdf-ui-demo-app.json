@@ -7,6 +7,6 @@
   "japanese_language": "Japanese",
   "test1": "test1",
   "test2": "test2",
-  "welcome": "Welcome to {{appName}} {{userName}}",
-  "welcome_text": "Welcome to {{appName}} {{userName}} (locize)"
+  "welcome": "Hello to {{appName}} {{userName}}",
+  "welcome_text": "Hello to {{appName}} {{userName}} (locize)"
 }
