@@ -18,9 +18,9 @@ export const RunDetectionModels = createAsyncThunk<
       );
     }
 
-    // API can handle 1000 files in one request
+    // API can handle 100 files in one request
     // Adding batching for future proofing
-    const batchSize = 1000;
+    const batchSize = 100;
     const { files, jobs } = getState().processSlice;
     const batchFileIdsList: number[][] = splitListIntoChunks(
       fileIds,
@@ -39,12 +39,15 @@ export const RunDetectionModels = createAsyncThunk<
           );
         });
 
-        dispatch(
-          CreateVisionJob({
-            modelType,
-            fileIds: filteredBatchFileIds,
-          })
-        );
+        if (filteredBatchFileIds.length) {
+          // post jobs only if number of unprocess files in that model type isn't 0
+          dispatch(
+            CreateVisionJob({
+              modelType,
+              fileIds: filteredBatchFileIds,
+            })
+          );
+        }
       });
     });
   }

@@ -15,6 +15,7 @@ import { AutoMLModelCore } from 'src/api/vision/autoML/types';
 import { BUILT_IN_MODEL_COUNT } from 'src/modules/Process/store/slice';
 import * as tagDetectionModelDetails from './ModelDetails/TagDetectionModelDetails';
 import * as objectDetectionModelDetails from './ModelDetails/ObjectDetectionModelDetails';
+import * as peopleDetectionModelDetails from './ModelDetails/PeopleDetectionModelDetails';
 import * as ocrModelDetails from './ModelDetails/OcrModelDetails';
 import * as customModelDetails from './ModelDetails/customModelDetails';
 import * as gaugeReaderDetails from './ModelDetails/gaugeReaderDetails';
@@ -105,6 +106,16 @@ export const ModelConfiguration = (props: {
           };
           break;
 
+        case VisionDetectionModelType.PeopleDetection:
+          labelAndContent = {
+            label: BadgeWrapper(
+              item.modelName,
+              peopleDetectionModelDetails.badge(item.modelName, hideText)
+            ),
+            content: peopleDetectionModelDetails.content(index),
+          };
+          break;
+
         case VisionDetectionModelType.GaugeReader:
           labelAndContent = {
             label: BadgeWrapper(
@@ -190,8 +201,6 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
-  border-radius: 6px;
-  border: 0;
   border: 1px solid #d9d9d9;
   background: white;
   border-radius: 10px;

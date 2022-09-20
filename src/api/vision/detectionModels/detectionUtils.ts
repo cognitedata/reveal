@@ -1,21 +1,26 @@
 // it's not strictly necessary to have that mapping, but it's just handy to have an overview in one place
-import {
-  VisionJobQueued,
-  VisionDetectionModelType,
-} from 'src/api/vision/detectionModels/types';
 import sdk from '@cognite/cdf-sdk-singleton';
+import {
+  LegacyVisionJobResultItem,
+  VisionDetectionModelType,
+  VisionExtractResultItem,
+  VisionJobQueued,
+} from 'src/api/vision/detectionModels/types';
+import { DetectionModelTypeFeatureMapping } from 'src/constants/DetectionModelTypeApiFieldMapping';
 
 export function getDetectionModelEndpoint(modelType: VisionDetectionModelType) {
-  const mapping: Record<VisionDetectionModelType, string> = {
-    [VisionDetectionModelType.OCR]: 'ocr',
-    [VisionDetectionModelType.TagDetection]: 'tagdetection',
-    [VisionDetectionModelType.ObjectDetection]: 'objectdetection',
-    [VisionDetectionModelType.GaugeReader]: 'gaugereader',
-    [VisionDetectionModelType.CustomModel]: 'automl/prediction',
-  };
-  return `${sdk.getBaseUrl()}/api/playground/projects/${
+  if (
+    modelType === VisionDetectionModelType.CustomModel ||
+    modelType === VisionDetectionModelType.GaugeReader
+  ) {
+    return `${sdk.getBaseUrl()}/api/playground/projects/${
+      sdk.project
+    }/context/vision/${DetectionModelTypeFeatureMapping[modelType]}`;
+  }
+
+  return `${sdk.getBaseUrl()}/api/v1/projects/${
     sdk.project
-  }/context/vision/${mapping[modelType]}`;
+  }/context/vision/extract`;
 }
 
 export function getFakeQueuedJob(
@@ -30,3 +35,9 @@ export function getFakeQueuedJob(
     statusTime: now,
   };
 }
+
+export const isLegacyJobResultItem = (
+  jobResult: VisionExtractResultItem | LegacyVisionJobResultItem
+): jobResult is LegacyVisionJobResultItem => {
+  return !(jobResult as VisionExtractResultItem).predictions;
+};
