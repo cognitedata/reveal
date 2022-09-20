@@ -1,23 +1,23 @@
 /* eslint-disable no-nested-ternary */
-import { Body, Title, Row, Col, Button, Icon, Micro } from '@cognite/cogs.js';
+import { Body, Button, Col, Icon, Micro, Row, Title } from '@cognite/cogs.js';
 import { Progress } from 'antd';
 import React, { useMemo } from 'react';
-import styled from 'styled-components';
+import { useDispatch, useSelector } from 'react-redux';
+import { VisionDetectionModelType } from 'src/api/vision/detectionModels/types';
 
 import { AnnotationsBadge } from 'src/modules/Common/Components/AnnotationsBadge/AnnotationsBadge';
-import { useDispatch, useSelector } from 'react-redux';
 import { makeSelectTotalAnnotationCountForFileIds } from 'src/modules/Common/store/annotation/selectors';
-import { RootState } from 'src/store/rootReducer';
+import { AnnotationsBadgeStatuses } from 'src/modules/Common/types';
 import {
-  selectPageCount,
-  selectIsPollingComplete,
-  selectIsProcessingStarted,
   selectAllJobs,
   selectAllJobsForAllFilesDict,
+  selectIsPollingComplete,
+  selectIsProcessingStarted,
+  selectPageCount,
 } from 'src/modules/Process/store/selectors';
 import { setSummaryModalVisibility } from 'src/modules/Process/store/slice';
-import { VisionDetectionModelType } from 'src/api/vision/detectionModels/types';
-import { AnnotationsBadgeStatuses } from 'src/modules/Common/types';
+import { RootState } from 'src/store/rootReducer';
+import styled from 'styled-components';
 
 export default function ProgressStatus() {
   const dispatch = useDispatch();
@@ -84,6 +84,9 @@ export default function ProgressStatus() {
         if (job.type === VisionDetectionModelType.TagDetection) {
           tag.push(job.status);
         }
+        if (job.type === VisionDetectionModelType.PeopleDetection) {
+          gdpr.push(job.status);
+        }
         if (
           [
             VisionDetectionModelType.ObjectDetection,
@@ -92,7 +95,6 @@ export default function ProgressStatus() {
           ].includes(job.type)
         ) {
           objects.push(job.status);
-          gdpr.push(job.status);
         }
       }
     });

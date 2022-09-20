@@ -18,6 +18,7 @@ export const ColorsTextAndIconsSecondary = {
 };
 
 export const ColorsPersonDetection = {
+  backgroundColor: '#D3F7FB',
   color: '#1AA3C1',
 };
 

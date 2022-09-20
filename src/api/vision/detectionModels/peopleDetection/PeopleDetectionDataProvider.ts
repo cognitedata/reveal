@@ -5,12 +5,14 @@ import { getDetectionModelEndpoint } from 'src/api/vision/detectionModels/detect
 import { DetectionModelTypeFeatureMapping } from 'src/constants/DetectionModelTypeApiFieldMapping';
 
 @singleton
-export class OCRDetectionDataProvider extends BaseDetectionModelDataProvider {
-  url = getDetectionModelEndpoint(VisionDetectionModelType.OCR);
+export class PeopleDetectionDataProvider extends BaseDetectionModelDataProvider {
+  url = getDetectionModelEndpoint(VisionDetectionModelType.PeopleDetection);
 
-  features = [DetectionModelTypeFeatureMapping[VisionDetectionModelType.OCR]];
+  features = [
+    DetectionModelTypeFeatureMapping[VisionDetectionModelType.PeopleDetection],
+  ];
 
   getParams = (params?: {}) => {
-    return { textDetectionParameters: { ...params } };
+    return { peopleDetectionParameters: { ...params } };
   };
 }

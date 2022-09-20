@@ -1,22 +1,27 @@
 import {
+  CDFAnnotationTypeEnum,
+  RegionShape,
+  Status,
+} from 'src/api/annotation/types';
+import {
   convertVisionJobAnnotationToImageAssetLinkList,
   convertVisionJobAnnotationToImageClassification,
   convertVisionJobAnnotationToImageExtractedText,
   convertVisionJobAnnotationToImageKeypointCollection,
   convertVisionJobAnnotationToImageObjectDetectionBoundingBox,
   convertVisionJobResultItemToUnsavedVisionAnnotation,
+  convertVisionJobResultsToUnsavedVisionAnnotations,
 } from 'src/api/vision/detectionModels/converters';
 import {
-  CDFAnnotationTypeEnum,
-  RegionShape,
-  Status,
-} from 'src/api/annotation/types';
-import {
   GaugeReaderJobAnnotation,
+  LegacyVisionJobResultItem,
   VisionDetectionModelType,
   VisionJobAnnotation,
-  VisionJobResultItem,
 } from 'src/api/vision/detectionModels/types';
+import {
+  UnsavedVisionAnnotation,
+  VisionAnnotationDataType,
+} from 'src/modules/Common/types';
 
 describe('convertVisionJobAnnotationToImageClassification', () => {
   test('Missing confidence and label', () => {
@@ -271,7 +276,7 @@ describe('convertVisionJobResultItemToUnsavedVisionAnnotation', () => {
     },
   };
   test('Non existing model type', () => {
-    const visionJobResultItem = {} as VisionJobResultItem;
+    const visionJobResultItem = {} as LegacyVisionJobResultItem;
     const visionDetectionModelType = 10 as VisionDetectionModelType;
 
     expect(
@@ -293,7 +298,7 @@ describe('convertVisionJobResultItemToUnsavedVisionAnnotation', () => {
           confidence: 0.1,
         },
       ],
-    } as VisionJobResultItem;
+    } as LegacyVisionJobResultItem;
 
     [
       VisionDetectionModelType.OCR,
@@ -320,7 +325,7 @@ describe('convertVisionJobResultItemToUnsavedVisionAnnotation', () => {
     const visionJobResultItem = {
       fileId: 1,
       annotations: [visionJobAnnotation],
-    } as VisionJobResultItem;
+    } as LegacyVisionJobResultItem;
 
     [
       VisionDetectionModelType.ObjectDetection,
@@ -362,7 +367,7 @@ describe('convertVisionJobResultItemToUnsavedVisionAnnotation', () => {
     const visionJobResultItem = {
       fileId: 1,
       annotations: [visionJobAnnotation],
-    } as VisionJobResultItem;
+    } as LegacyVisionJobResultItem;
 
     expect(
       convertVisionJobResultItemToUnsavedVisionAnnotation(
@@ -399,7 +404,7 @@ describe('convertVisionJobResultItemToUnsavedVisionAnnotation', () => {
     const visionJobResultItem = {
       fileId: 1,
       annotations: [visionJobAnnotation],
-    } as VisionJobResultItem;
+    } as LegacyVisionJobResultItem;
 
     expect(
       convertVisionJobResultItemToUnsavedVisionAnnotation(
@@ -437,7 +442,7 @@ describe('convertVisionJobResultItemToUnsavedVisionAnnotation', () => {
     const visionJobResultItem = {
       fileId: 1,
       annotations: [visionJobAnnotation],
-    } as VisionJobResultItem;
+    } as LegacyVisionJobResultItem;
 
     expect(
       convertVisionJobResultItemToUnsavedVisionAnnotation(
@@ -455,5 +460,288 @@ describe('convertVisionJobResultItemToUnsavedVisionAnnotation', () => {
         },
       },
     ]);
+  });
+});
+
+const getDummyUnsavedAnnotation = (
+  data: VisionAnnotationDataType,
+  fileId: number,
+  type: CDFAnnotationTypeEnum,
+  status = Status.Suggested
+): UnsavedVisionAnnotation<VisionAnnotationDataType> => {
+  return {
+    data,
+    status,
+    annotatedResourceId: fileId,
+    annotationType: type,
+  };
+};
+
+describe('convertVisionJobResultsToUnsavedVisionAnnotations', () => {
+  test('empty job results', () => {
+    Object.keys(VisionDetectionModelType).forEach((key) => {
+      expect(
+        convertVisionJobResultsToUnsavedVisionAnnotations(
+          [],
+          key as unknown as VisionDetectionModelType
+        )
+      ).toStrictEqual([]);
+    });
+  });
+
+  describe('Test UnifiedVisionJobResultItems', () => {
+    test('should return correct annotations for annotate service text predictions', () => {
+      const textPredictions = [
+        {
+          fileId: 1,
+          predictions: {
+            textPredictions: [
+              {
+                confidence: 0.885,
+                text: 'D',
+                textRegion: {
+                  xMax: 0.7076023391812866,
+                  xMin: 0.7022860180754918,
+                  yMax: 0.32196969696969696,
+                  yMin: 0.3162878787878788,
+                },
+              },
+            ],
+          },
+        },
+      ];
+      expect(
+        convertVisionJobResultsToUnsavedVisionAnnotations(
+          textPredictions,
+          VisionDetectionModelType.OCR
+        )
+      ).toStrictEqual(
+        expect.arrayContaining([
+          expect.objectContaining(
+            getDummyUnsavedAnnotation(
+              textPredictions[0].predictions.textPredictions[0],
+              textPredictions[0].fileId,
+              CDFAnnotationTypeEnum.ImagesTextRegion
+            )
+          ),
+        ])
+      );
+      expect(
+        convertVisionJobResultsToUnsavedVisionAnnotations(
+          textPredictions,
+          VisionDetectionModelType.OCR
+        ).length
+      ).toEqual(1);
+    });
+    test('should return correct annotations for annotate service asset tag predictions', () => {
+      const assetTagPredictions = [
+        {
+          fileId: 1,
+          predictions: {
+            assetTagPredictions: [],
+          },
+        },
+        {
+          fileId: 2,
+          predictions: {
+            assetTagPredictions: [
+              {
+                assetRef: {
+                  id: 737663757708986,
+                },
+                confidence: 1.0,
+                text: '43-PT-0054',
+                textRegion: {
+                  xMax: 0.5113357843137255,
+                  xMin: 0.49417892156862747,
+                  yMax: 0.6066176470588236,
+                  yMin: 0.6013071895424836,
+                },
+              },
+            ],
+          },
+        },
+      ];
+      expect(
+        convertVisionJobResultsToUnsavedVisionAnnotations(
+          assetTagPredictions,
+          VisionDetectionModelType.TagDetection
+        )
+      ).toStrictEqual(
+        expect.arrayContaining([
+          expect.objectContaining(
+            getDummyUnsavedAnnotation(
+              assetTagPredictions[1].predictions.assetTagPredictions[0],
+              assetTagPredictions[1].fileId,
+              CDFAnnotationTypeEnum.ImagesAssetLink
+            )
+          ),
+        ])
+      );
+      expect(
+        convertVisionJobResultsToUnsavedVisionAnnotations(
+          assetTagPredictions,
+          VisionDetectionModelType.TagDetection
+        ).length
+      ).toEqual(1);
+    });
+    test('should return correct annotations for annotate service object predictions', () => {
+      const objectPredictions = [
+        {
+          fileId: 1,
+          predictions: {
+            industrialObjectPredictions: [],
+          },
+        },
+        {
+          fileId: 2,
+          predictions: {
+            industrialObjectPredictions: [
+              {
+                boundingBox: {
+                  xMax: 0.47071415185928345,
+                  xMin: 0.36518990993499756,
+                  yMax: 0.8173280954360962,
+                  yMin: 0.6837586164474487,
+                },
+                confidence: 0.70703125,
+                label: 'valve',
+              },
+            ],
+          },
+        },
+      ];
+      expect(
+        convertVisionJobResultsToUnsavedVisionAnnotations(
+          objectPredictions,
+          VisionDetectionModelType.ObjectDetection
+        )
+      ).toStrictEqual(
+        expect.arrayContaining([
+          expect.objectContaining(
+            getDummyUnsavedAnnotation(
+              objectPredictions[1].predictions.industrialObjectPredictions[0],
+              objectPredictions[1].fileId,
+              CDFAnnotationTypeEnum.ImagesObjectDetection
+            )
+          ),
+        ])
+      );
+      expect(
+        convertVisionJobResultsToUnsavedVisionAnnotations(
+          objectPredictions,
+          VisionDetectionModelType.ObjectDetection
+        ).length
+      ).toEqual(1);
+    });
+    test('should return correct annotations for annotate service people predictions', () => {
+      const peoplePredictions = [
+        {
+          fileId: 1,
+          predictions: {
+            peoplePredictions: [
+              {
+                boundingBox: {
+                  xMax: 0.5155458450317383,
+                  xMin: 0.3443277180194855,
+                  yMax: 0.6282840967178345,
+                  yMin: 0.07562699913978577,
+                },
+                confidence: 0.8164102435112,
+                label: 'person',
+              },
+            ],
+          },
+        },
+      ];
+      expect(
+        convertVisionJobResultsToUnsavedVisionAnnotations(
+          peoplePredictions,
+          VisionDetectionModelType.PeopleDetection
+        )
+      ).toStrictEqual(
+        expect.arrayContaining([
+          expect.objectContaining(
+            getDummyUnsavedAnnotation(
+              peoplePredictions[0].predictions.peoplePredictions[0],
+              peoplePredictions[0].fileId,
+              CDFAnnotationTypeEnum.ImagesObjectDetection
+            )
+          ),
+        ])
+      );
+      expect(
+        convertVisionJobResultsToUnsavedVisionAnnotations(
+          peoplePredictions,
+          VisionDetectionModelType.PeopleDetection
+        ).length
+      ).toEqual(1);
+    });
+  });
+  describe('test LegacyVisionJobResultItems', () => {
+    test('should return correct annotations for gauge detection endpoint', () => {
+      const gaugeDetectionAnnotations: LegacyVisionJobResultItem[] = [
+        {
+          annotations: [
+            {
+              confidence: 0.9375,
+              region: {
+                shape: 'rectangle',
+                vertices: [
+                  {
+                    x: 0.30392156862745096,
+                    y: 0.4169730392156863,
+                  },
+                  {
+                    x: 0.4963235294117647,
+                    y: 0.5637254901960784,
+                  },
+                ],
+              },
+              text: 'digital-gauge',
+            },
+          ],
+          fileId: 1,
+          height: 3264,
+          width: 2448,
+        },
+      ];
+      expect(
+        convertVisionJobResultsToUnsavedVisionAnnotations(
+          gaugeDetectionAnnotations,
+          VisionDetectionModelType.GaugeReader
+        )
+      ).toStrictEqual(
+        expect.arrayContaining([
+          expect.objectContaining(
+            getDummyUnsavedAnnotation(
+              {
+                confidence:
+                  gaugeDetectionAnnotations[0].annotations[0].confidence,
+                label: gaugeDetectionAnnotations[0].annotations[0].text,
+                boundingBox: {
+                  xMin: gaugeDetectionAnnotations[0].annotations[0].region!
+                    .vertices[0].x,
+                  xMax: gaugeDetectionAnnotations[0].annotations[0].region!
+                    .vertices[1].x,
+                  yMin: gaugeDetectionAnnotations[0].annotations[0].region!
+                    .vertices[0].y,
+                  yMax: gaugeDetectionAnnotations[0].annotations[0].region!
+                    .vertices[1].y,
+                },
+              },
+              gaugeDetectionAnnotations[0].fileId,
+              CDFAnnotationTypeEnum.ImagesObjectDetection
+            )
+          ),
+        ])
+      );
+      expect(
+        convertVisionJobResultsToUnsavedVisionAnnotations(
+          gaugeDetectionAnnotations,
+          VisionDetectionModelType.GaugeReader
+        ).length
+      ).toEqual(1);
+    });
   });
 });

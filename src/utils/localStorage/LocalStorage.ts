@@ -17,7 +17,7 @@ const OLD_VISION_STATE_NAME = 'state';
 
 // To invalidate stored state when braking changes are added to the state
 // bump up the version
-export const APP_STATE_VERSION = 4;
+export const APP_STATE_VERSION = 5;
 
 const recoverOldState = () => {
   try {

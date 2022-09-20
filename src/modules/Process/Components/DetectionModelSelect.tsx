@@ -9,6 +9,7 @@ import {
 
 import * as tagDetectionModelDetails from 'src/modules/Process/Containers/ModelDetails/TagDetectionModelDetails';
 import * as objectDetectionModelDetails from 'src/modules/Process/Containers/ModelDetails/ObjectDetectionModelDetails';
+import * as peopleDetectionModelDetails from 'src/modules/Process/Containers/ModelDetails/PeopleDetectionModelDetails';
 import * as ocrModelDetails from 'src/modules/Process/Containers/ModelDetails/OcrModelDetails';
 import * as customModelDetails from 'src/modules/Process/Containers/ModelDetails/customModelDetails';
 import * as gaugeReaderDetails from 'src/modules/Process/Containers/ModelDetails/gaugeReaderDetails';
@@ -17,6 +18,7 @@ import {
   ColorsOCR,
   ColorsObjectDetection,
   ColorsTagDetection,
+  ColorsPersonDetection,
 } from 'src/constants/Colors';
 import styled from 'styled-components';
 import { useSelector } from 'react-redux';
@@ -106,6 +108,13 @@ export function DetectionModelSelect({
             label: objectDetectionModelDetails.badge(item.modelName),
             value: VisionDetectionModelType.ObjectDetection,
             backgroundColor: ColorsObjectDetection.backgroundColor,
+            isSelectable: true,
+          };
+        case VisionDetectionModelType.PeopleDetection:
+          return {
+            label: peopleDetectionModelDetails.badge(item.modelName),
+            value: VisionDetectionModelType.PeopleDetection,
+            backgroundColor: ColorsPersonDetection.backgroundColor,
             isSelectable: true,
           };
         case VisionDetectionModelType.GaugeReader:

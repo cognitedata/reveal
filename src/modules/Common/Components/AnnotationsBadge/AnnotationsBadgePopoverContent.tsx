@@ -6,10 +6,7 @@ import {
 import styled from 'styled-components';
 import { Button, Body, Detail, Micro } from '@cognite/cogs.js';
 import { Divider } from '@cognite/data-exploration';
-import {
-  showBadge,
-  showGDPRBadge,
-} from 'src/modules/Common/Components/AnnotationsBadge/utils';
+import { showBadge } from 'src/modules/Common/Components/AnnotationsBadge/utils';
 
 export function AnnotationsBadgePopoverContent(
   badgeCounts: AnnotationsBadgeCounts,
@@ -50,7 +47,7 @@ export function AnnotationsBadgePopoverContent(
   const showTag = showBadge(badgeCounts.assets, badgeStatuses.tag);
   const showText = showBadge(badgeCounts.text, badgeStatuses.text);
   const showObjects = showBadge(badgeCounts.objects, badgeStatuses.objects);
-  const showGdpr = showGDPRBadge(badgeCounts.gdpr);
+  const showGdpr = showBadge(badgeCounts.gdpr, badgeStatuses.gdpr);
 
   const mostFrequentObjectCount = badgeCounts.mostFrequentObject
     ? badgeCounts.mostFrequentObject[1]
