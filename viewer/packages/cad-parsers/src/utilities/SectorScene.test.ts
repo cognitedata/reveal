@@ -8,10 +8,10 @@ import { SectorMetadata } from '../metadata/types';
 import { SectorSceneImpl } from './SectorScene';
 import { traverseDepthFirst } from '@reveal/utilities';
 
-import { createV8SectorMetadata } from '../../../../test-utilities';
+import { createV9SectorMetadata } from '../../../../test-utilities';
 
 describe('SectorSceneImpl', () => {
-  const root = createV8SectorMetadata([
+  const root = createV9SectorMetadata([
     0,
     [
       [1, [], new THREE.Box3(new THREE.Vector3(0, 0, 0), new THREE.Vector3(0.5, 1, 1))],
@@ -90,7 +90,7 @@ describe('SectorSceneImpl', () => {
 
   test('getBoundsOfMostGeometry of scene with junk geometry, returns filtered bounds', () => {
     // Arrange
-    const root = createV8SectorMetadata([
+    const root = createV9SectorMetadata([
       0,
       [
         [1, [], new THREE.Box3(new THREE.Vector3(0, 0, 0), new THREE.Vector3(0.5, 1, 1))],
@@ -118,7 +118,7 @@ describe('SectorSceneImpl', () => {
   test('getBoundsOfMostGeometry with root with only one child, result is child bounds', () => {
     // Arrange
     const leafBounds = new THREE.Box3(new THREE.Vector3(0, 0, 0), new THREE.Vector3(1, 1, 1));
-    const root = createV8SectorMetadata([
+    const root = createV9SectorMetadata([
       0,
       [[1, [], leafBounds]],
       new THREE.Box3(new THREE.Vector3(0, 0, 0), new THREE.Vector3(10, 10, 10))
