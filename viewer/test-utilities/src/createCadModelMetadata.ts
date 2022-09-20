@@ -15,7 +15,7 @@ export function createCadModelMetadata(sceneVersion: number, root: SectorMetadat
   const modelId = `testModel_${modelIdRunningNumber++}`;
   const model: CadModelMetadata = {
     modelIdentifier: modelId,
-    format: File3dFormat.RevealCadModel,
+    format: File3dFormat.GltfCadModel,
     formatVersion: sceneVersion,
     modelBaseUrl: `https://localhost/${modelId}`,
     modelMatrix: new THREE.Matrix4().identity(),
