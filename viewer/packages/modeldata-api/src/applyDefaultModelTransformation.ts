@@ -11,7 +11,6 @@ const cadFromCdfToThreeMatrix = new THREE.Matrix4().set(1, 0, 0, 0, 0, 0, 1, 0, 
 
 export function applyDefaultModelTransformation(matrix: THREE.Matrix4, format: File3dFormat | string): void {
   switch (format) {
-    case File3dFormat.RevealCadModel:
     case File3dFormat.GltfCadModel:
     case File3dFormat.EptPointCloud:
       matrix.premultiply(cadFromCdfToThreeMatrix);

@@ -81,8 +81,8 @@ describe('Cognite3DViewer', () => {
     const outputs = {
       items: [
         {
-          format: 'reveal-directory',
-          version: 8,
+          format: 'gltf-directory',
+          version: 9,
           blobId: 1
         }
       ]
@@ -126,8 +126,8 @@ describe('Cognite3DViewer', () => {
     const outputs = {
       items: [
         {
-          format: 'reveal-directory',
-          version: 8,
+          format: 'gltf-directory',
+          version: 9,
           blobId: 1
         }
       ]
