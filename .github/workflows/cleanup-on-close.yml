@@ -1,0 +1,30 @@
+name: Cleanup on PR close
+
+on:
+  pull_request:
+    types:
+      - closed
+
+jobs:
+  delete-preview-docs:
+    name: Delete preview docs
+    if: "contains(github.event.pull_request.labels.*.name, 'preview-docs')"
+    runs-on: ubuntu-latest
+    steps: 
+      - name: Initialize variables
+        run: |
+          echo "PR_NUMBER=$(jq --raw-output .pull_request.number $GITHUB_EVENT_PATH)" >> $GITHUB_ENV
+
+      - name: Create empty directory
+        run: |
+          mkdir empty_dir
+        
+      - name: Clean preview docs
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          deploy_key: ${{ secrets.REVEAL_DOCS_PREVIEW_DEPLOY_KEY }}
+          external_repository: cognitedata/reveal-docs-preview
+          publish_branch: master
+          publish_dir: empty_dir/
+          destination_dir: ${{ env.PR_NUMBER }}
+          keep_files: false 
