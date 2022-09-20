@@ -51,7 +51,7 @@ type Props = {
   children: (client: CogniteClient) => ReactElement;
 };
 
-export function DemoLoginCover(props: Props): ReactElement {
+export default function DemoLoginCover(props: Props): ReactElement {
   const isDarkTheme = useColorMode().colorMode === 'dark';
 
   const client = new CogniteClient({

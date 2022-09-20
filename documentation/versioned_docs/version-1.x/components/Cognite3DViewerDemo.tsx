@@ -18,7 +18,7 @@ type OwnProps = {
   modelType?: SupportedModelTypes;
 };
 
-export function Cognite3DViewerDemo({
+export default function Cognite3DViewerDemo({
   client,
   modelId,
   revisionId,
