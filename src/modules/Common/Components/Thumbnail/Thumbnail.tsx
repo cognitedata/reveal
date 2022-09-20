@@ -17,7 +17,7 @@ export const Thumbnail = ({
   onViewClicked?: (evt: any) => void;
 }) => {
   const [imageUrl, setImage] = useState<string | undefined>(undefined);
-  const { data, isError, isLoading } = useFileIcon(fileInfo);
+  const { data, isError, isLoading, error } = useFileIcon(fileInfo);
   const [imageLoadError, setImageLoadError] = useState<boolean>(false);
 
   // reset previous image loading error if the icon is loading again - otherwise if error occurred image won't be shown again
@@ -63,6 +63,16 @@ export const Thumbnail = ({
     setImageLoadError(true);
   }, []);
 
+  const thumbnailErrorMsg = useMemo(() => {
+    if (!fileInfo.uploaded) {
+      return 'File not Uploaded';
+    }
+    if ((error as { message?: string })?.message) {
+      return (error as { message?: string }).message;
+    }
+    return 'Unable to preview file';
+  }, [error, fileInfo.uploaded]);
+
   const image = useMemo(() => {
     const isPreviewable = isFilePreviewable(fileInfo);
     if (isPreviewable && !imageLoadError) {
@@ -87,7 +97,7 @@ export const Thumbnail = ({
       <>
         <DocumentIcon file={fileInfo.name} style={{ height: 36, width: 36 }} />
         {(isError || imageLoadError) && (
-          <Body level={3}>Unable to preview file.</Body>
+          <Body level={3}>{thumbnailErrorMsg}</Body>
         )}
         {onViewClicked && iconOverlay()}
       </>

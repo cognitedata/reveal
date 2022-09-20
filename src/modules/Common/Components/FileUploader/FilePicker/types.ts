@@ -6,6 +6,7 @@ export type CogsUploadFileStatus =
   | 'uploading'
   | 'paused'
   | 'done'
+  | 'metadata created'
   | 'error';
 
 export interface WebkitFile extends File {
@@ -22,4 +23,5 @@ export type CogsFileInfo = Pick<
   relativePath: string;
   percent: number;
   status: CogsUploadFileStatus;
+  cdfId?: number;
 };

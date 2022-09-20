@@ -9,6 +9,7 @@ import {
   setProcessViewFileUploadModalVisibility,
 } from 'src/modules/Process/store/slice';
 import { selectAllProcessFiles } from 'src/modules/Process/store/selectors';
+import { DeleteFilesById } from 'src/store/thunks/Files/DeleteFilesById';
 
 export const ProcessFileUploadModalContainer = () => {
   const dispatch = useDispatch();
@@ -44,6 +45,12 @@ export const ProcessFileUploadModalContainer = () => {
     dispatch(clearUploadedFiles());
   }, [onCancel, processFiles, uploadedFileIds]);
 
+  const deleteFileOnCDF = useCallback((fileId: number) => {
+    if (fileId) {
+      dispatch(DeleteFilesById({ fileIds: [fileId] }));
+    }
+  }, []);
+
   return (
     <FileUploadModal
       onUploadSuccess={onUploadSuccess}
@@ -51,6 +58,7 @@ export const ProcessFileUploadModalContainer = () => {
       showModal={showFileUploadModal}
       processFileCount={processFiles.length}
       onCancel={onCancel}
+      deleteFileOnCDF={deleteFileOnCDF}
     />
   );
 };
