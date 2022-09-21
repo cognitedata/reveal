@@ -75,22 +75,9 @@ http_file(
     urls = ["https://dl.cloudsmith.io/public/caddy/stable/gpg.key"],
 )
 
-# Blazier
+# Cognite Bazel tools
 
 load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
-
-git_repository(
-    name = "com_github_cognitedata_blazier",
-    commit = "20ed312e9abeacd840a2244f9ca542a6ecd43e74",
-    remote = "git@github.com:cognitedata/blazier.git",
-    shallow_since = "1605894681 +0100",
-)
-
-load("@com_github_cognitedata_blazier//:deps.bzl", "blazier_dependencies")
-
-blazier_dependencies()
-
-# Cognite Bazel tools
 
 git_repository(
     name = "com_github_cognitedata_bazel_tools",
@@ -102,6 +89,20 @@ git_repository(
 load("@com_github_cognitedata_bazel_tools//:deps.bzl", "cognitedata_bazel_tools_deps")
 
 cognitedata_bazel_tools_deps()
+
+http_archive(
+    name = "com_cognitedata_bazel_snapshots",
+    sha256 = "f2f8aea4ce183a2b5cd48962c272575be28859cedbf2f987bfe456ed2c251e7f",
+    urls = [
+        "https://github.com/cognitedata/bazel-snapshots/releases/download/0.2.0/snapshots-0.2.0.tar",
+    ],
+)
+
+# Put this after rules_docker to avoid overriding the reference to rules_docker
+
+load("@com_cognitedata_bazel_snapshots//:repo.bzl", "snapshots_repos")
+
+snapshots_repos()
 
 # Cypress
 

@@ -2,6 +2,8 @@
 Simple rule which is responsible for tracking :build dependencies.s
 """
 
+load("@com_cognitedata_bazel_snapshots//snapshots:snapshots.bzl", "create_tracker_file")
+
 def _publish_fas(ctx):
     out_file = ctx.actions.declare_file(ctx.label.name + ".bash")
 
@@ -24,11 +26,18 @@ def _publish_fas(ctx):
     runfiles = ctx.runfiles(
         files = [ctx.file.package_json],
     )
+    tracked_files = [ctx.file.package_json]
+    tracker_file = create_tracker_file(
+        ctx,
+        tracked_files,
+        run = [ctx.label],
+        tags = ["publish_fas"],
+    )
     return [DefaultInfo(
         files = depset([out_file]),
         runfiles = runfiles,
         executable = out_file,
-    )]
+    ), tracker_file]
 
 publish_fas = rule(
     implementation = _publish_fas,
@@ -70,6 +79,12 @@ publish_fas = rule(
         ),
         "_runner": attr.label(
             default = "//rules/publish:publish_fas.template.bash",
+            allow_single_file = True,
+        ),
+        "_snapshots": attr.label(
+            default = "@snapshots-bin//:snapshots",
+            cfg = "exec",
+            executable = True,
             allow_single_file = True,
         ),
     },

@@ -210,6 +210,64 @@ pods {
       }
     }
 
+    def changedPackageInfos = [];
+    def changedPublishFas = [];
+    def changedPublishStorybook = [];
+
+    stage('Snapshots') {
+      container('bazel') {
+        sh(
+          label: "collect snapshot",
+          script: "bazel run snapshots -- collect --out snapshot.json",
+        )
+
+
+        def diffStr = sh(
+            label: "diff against deployed",
+            script: "GOOGLE_APPLICATION_CREDENTIALS=/jenkins-bazel-build-cache-member/credentials.json bazel run snapshots -- diff --format=json --stderr-pretty deployed \"\$(pwd)/snapshot.json\"",
+            returnStdout: true,
+        ).trim()
+
+        def diff = readJSON text: diffStr
+        diff.sort { a, b -> a.label < b.label ? -1 : 1 }
+
+        def changedOrAdded = diff.findAll { change -> ['added', 'changed'].contains(change.change) }
+        def changeHasTag = { tag -> { change -> change.tags.any { t -> t == tag } } }
+
+        changedPackageInfos = changedOrAdded.findAll(changeHasTag('package_info'))
+        changedPublishFas = changedOrAdded.findAll(changeHasTag('publish_fas'))
+        changedPublishStorybook = changedOrAdded.findAll(changeHasTag('publish_storybook'))
+
+        def targetComment = { changes, name, emoji ->
+          changes.size() > 0 ?
+            "${emoji}&nbsp; Changed `${name}` targets since last deployment:\n```\n" +
+              changes.collect { change -> "${change.label} (${change.change})" }.join('\n') +
+              '\n```\n\n'
+            :
+              "No changed `${name}` targets since last deployment.\n\n"
+        }
+
+        if (isPullRequest) {
+          deleteComments('[pending-changes]')
+          def comment = "[pending-changes]\n\n"
+          comment += targetComment(changedPackageInfos, 'package_info', ':gift:')
+          comment += targetComment(changedPublishFas, 'publish_fas', ':bus:')
+          comment += targetComment(changedPublishStorybook, 'publish_storybook', ':bike:')
+
+          def removed = diff.findAll { change -> change.change == 'removed' }
+          if (removed.size() > 0) {
+              comment += ":boom:&nbsp; The following targets are removed:\n```\n" +
+                  removed.collect { change -> "${change.label}" }.join('\n') + "\n```\n" +
+                  "_No action will be taken in CD to remove Spinnaker pipelines, apps or Kubernetes objects._"
+          }
+
+          pullRequest.comment(comment)
+        }
+
+        archiveArtifacts artifacts: 'snapshot.json'
+      }
+    }
+
     stageWithNotify('Bazel test', CONTEXTS.bazelTests) {
       container('bazel') {
         sh(label: 'lint bazel files', script: 'bazel run //:buildifier_check')
@@ -238,17 +296,11 @@ pods {
     if (isPullRequest) {
       stageWithNotify('Publish storybook', CONTEXTS.publishStorybook) {
         container('bazel') {
-          def changedStorybooks = sh(
-            label: 'Which storybooks were changed?',
-            script: "bazel run //:has-changed -- -ref=${hasChangedRef} 'kind(publish_storybook, //...)'",
-            returnStdout: true
-          )
-          print(changedStorybooks)
-          if (changedStorybooks) {
-            changedStorybooks.split('\n').each {
-              def storybookJsonString = sh(script: "bazel run ${it}", returnStdout: true)
+          changedPublishStorybook.each { change ->
+            change.run.each { cmd ->
+              def storybookJsonString = sh(script: "bazel run --stamp ${cmd}", returnStdout: true)
               def params = readJSON text: storybookJsonString
-              def target = it.split(':')[0].split('//')[1]
+              def target = cmd.split(':')[0].split('//')[1]
               sh("rm -rf storybook-static && cp -r `readlink dist/bin`/${target}/storybook-static storybook-static")
               previewServer(
                 buildFolder: 'storybook-static',
@@ -266,18 +318,12 @@ pods {
 
     stageWithNotify('Publish FAS', CONTEXTS.publishFAS) {
       container('bazel') {
-        def changedApps = sh(
-          label: 'Which apps were changed?',
-          script: "bazel run //:has-changed -- -ref=${hasChangedRef} 'kind(publish_fas, //...)'",
-          returnStdout: true
-        )
-        print(changedApps)
-        if (changedApps) {
-          changedApps.split('\n').each {
-            def fasJsonString = sh(script: "bazel run ${it}", returnStdout: true)
+        changedPublishFas.each { change ->
+          change.run.each { cmd ->
+            def fasJsonString = sh(script: "bazel run --stamp ${cmd}", returnStdout: true)
             def params = readJSON text: fasJsonString
             print(params)
-            def target = it.split(':')[0].split('//')[1]
+            def target = cmd.split(':')[0].split('//')[1]
 
             def publish = { args ->
               def performBuild = { p ->
@@ -372,47 +418,36 @@ pods {
 
     stageWithNotify('Publish to NPM', CONTEXTS.publishPackages) {
       container('bazel') {
-        def publishPackages = sh(
-          label: 'Which packages were changed?',
-          script: "bazel run //:has-changed -- -ref=${hasChangedRef} 'kind(package_info, //...)'",
-          returnStdout: true
-        )
-        print(publishPackages)
-
-        catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-          if (publishPackages) {
-            publishPackages.split('\n').each {
-              container('bazel') {
-                def jsonString = sh(
-                  label: "Executes ${it} to retrieve package info",
-                  script: "bazel run ${it}",
+        changedPackageInfos.each { change ->
+          change.run.each { cmd ->
+            def jsonString = sh(
+              label: "Executes ${cmd} to retrieve package info",
+              script: "bazel run ${cmd}",
+              returnStdout: true
+            )
+            def packageInfo = readJSON text: jsonString
+            int statusCode = sh(
+              label: "Check if ${packageInfo.target} is already pushed",
+              script: "bazel run ${packageInfo.target}:is_published",
+              returnStatus: true
+            )
+            if (statusCode != 0) {
+              if (isPullRequest) {
+                packageNameTag = sh(
+                  label: "Publish ${packageInfo.name} package",
+                  script: "bazel run --stamp ${packageInfo.target}:npm-package.pack",
                   returnStdout: true
-                )
-                def packageInfo = readJSON text: jsonString
-                int statusCode = sh(
-                  label: "Check if ${packageInfo.target} is already pushed",
-                  script: "bazel run ${packageInfo.target}:is_published",
-                  returnStatus: true
-                )
-                if (statusCode != 0) {
-                  if (isPullRequest) {
-                    packageNameTag = sh(
-                      label: "Publish ${packageInfo.name} package",
-                      script: "bazel run ${packageInfo.target}:npm-package.pack",
-                      returnStdout: true
-                    ).trim()
-                    print("Dry run package $packageNameTag")
-                  } else {
-                    packageNameTag = sh(
-                      label: "Publish ${packageInfo.name} package",
-                      script: "bazel run ${packageInfo.target}:npm-package.publish",
-                      returnStdout: true
-                    ).trim()
-                    print("Pushed package $packageNameTag")
+                ).trim()
+                print("Dry run package $packageNameTag")
+              } else {
+                packageNameTag = sh(
+                  label: "Publish ${packageInfo.name} package",
+                  script: "bazel run --stamp ${packageInfo.target}:npm-package.publish",
+                  returnStdout: true
+                ).trim()
+                print("Pushed package $packageNameTag")
 
-                    slackMessages.add("- `${packageNameTag}`")
-                  }
-                }
+                slackMessages.add("- `${packageNameTag}`")
               }
             }
           }
@@ -425,6 +460,22 @@ pods {
         channel: '#frontend-firehose',
         message: """:tada: New application deployments :tada:${slackMessages.join('\n')}"""
       )
+    }
+
+    if (!isPullRequest) {
+      stage('Push and tag snapshot') {
+        container('bazel') {
+          sh(
+            label: "Push snapshot",
+            script: "GOOGLE_APPLICATION_CREDENTIALS=/jenkins-bazel-build-cache-member/credentials.json bazel run snapshots -- push --snapshot-path=snapshot.json",
+          )
+
+          sh(
+            label: "Tag snapshot",
+            script: "GOOGLE_APPLICATION_CREDENTIALS=/jenkins-bazel-build-cache-member/credentials.json bazel run snapshots -- tag deployed",
+          )
+        }
+      }
     }
   }
 }

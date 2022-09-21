@@ -1,6 +1,7 @@
 load("@com_github_cognitedata_bazel_tools//bazel/buildifier:buildifier.bzl", "buildifier")
 load("//rules/lint:index.bzl", "eslint_config", "prettier_config")
 load("@build_bazel_rules_nodejs//:index.bzl", "copy_to_bin")
+load("@com_cognitedata_bazel_snapshots//snapshots:snapshots.bzl", "snapshots")
 
 exports_files(
     [
@@ -63,22 +64,12 @@ buildifier(
     ],
 )
 
-# Find out which Bazel targets changed since some git ref
+# Output based change detection.
 #
-# Examples:
-#
-#   # Which node binaries have changed since last commit?
-#   $ bazel run //:what-changed -- -kind=nodejs_binary
-#
-#   # Which Docker images have changed since master?
-#   $ bazel run //:what-changed -- -kind=_container_push master
-#
-sh_binary(
-    name = "has-changed",
-    srcs = [
-        "@com_github_cognitedata_blazier//cmd/blazier",
-    ],
-    args = [
-        "has-changed",
-    ],
+# Usage:
+#   # generate manifest
+#   bazel run snapshots -- collect
+snapshots(
+    name = "snapshots",
+    storage = "gcs://cognite-jenkins-cd-bazel-snapshots/fas_applications",
 )
