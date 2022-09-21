@@ -46,7 +46,7 @@ export const ContentWrapper = styled(Flex)`
   height: 100%;
   padding: ${sizes.extraSmall};
   justify-content: center;
-  overflow: hidden;
+  // overflow: hidden;
 `;
 
 export const ColumnHeaderWrapper = styled(DefaultColumnHeaderWrapper)`

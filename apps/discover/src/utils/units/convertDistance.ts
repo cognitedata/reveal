@@ -16,7 +16,7 @@ export type DistanceType = {
 export const convertDistance = (
   distance: DistanceType,
   toUnit: Distance,
-  toFixed = Fixed.ThreeDecimals
+  toFixed = Fixed.TwoDecimals
 ): ConvertedDistance => {
   const { value, unit: fromUnit } = distance;
 

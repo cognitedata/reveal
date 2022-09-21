@@ -30,7 +30,6 @@ export const CollapseIconButtonWrapper = styled.div`
 
 export const ScattersWrapper = styled(DetailCardBlockWrapper)`
   padding: ${sizes.small};
-  min-width: 360px;
   width: 100%;
   height: ${(props: { height: number }) => props.height}px;
 `;

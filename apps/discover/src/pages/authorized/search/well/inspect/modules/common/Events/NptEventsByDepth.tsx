@@ -22,7 +22,7 @@ export type Props = {
   depthMeasurementType?: DepthMeasurementUnit;
   renderBlockEvents: (
     blockEvents: NptInternalWithTvd[],
-    c: [number, number]
+    scaleBlockRange: [number, number]
   ) => JSX.Element | null;
 };
 

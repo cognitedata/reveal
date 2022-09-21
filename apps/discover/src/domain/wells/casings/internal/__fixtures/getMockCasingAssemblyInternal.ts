@@ -17,11 +17,11 @@ export const getMockCasingAssemblyInternal = (
       unit: 'in',
     },
     measuredDepthTop: {
-      value: 5380.011,
+      value: 5380.01,
       unit: 'ft',
     },
     measuredDepthBase: {
-      value: 8576.811,
+      value: 8576.81,
       unit: 'ft',
     },
     type: 'INTERMEDIATE CASING 1',

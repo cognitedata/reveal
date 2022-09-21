@@ -5,7 +5,7 @@ import {
 } from 'domain/wells/nds/internal/types';
 import { isAnyNdsMissingTvd } from 'domain/wells/nds/internal/utils/isAnyNdsMissingTvd';
 
-import React, { useCallback, useState } from 'react';
+import React, { useState } from 'react';
 
 import isEmpty from 'lodash/isEmpty';
 import noop from 'lodash/noop';
@@ -27,7 +27,6 @@ import {
   NdsEventsByDepth,
   EMPTY_STATE_TEXT,
 } from '../../../common/Events/NdsEventsByDepth';
-import { NdsEventsScatterView } from '../../../common/Events/NdsEventsScatterView';
 import { EventsColumnView } from '../../../common/Events/types';
 import { ColumnNotification } from '../../components/ColumnNotification';
 import { ColumnOptionsSelector } from '../../components/ColumnOptionsSelector';
@@ -41,6 +40,8 @@ import {
   SOME_EVENT_MISSING_TVD_TEXT,
 } from '../constants';
 import { EventsColumnBody } from '../elements';
+
+import { NdsEventsScatterView } from './components/NdsEventsScatterView';
 
 export interface NdsEventsColumnProps extends ColumnVisibilityProps {
   scaleBlocks: number[];
@@ -65,6 +66,8 @@ export const NdsEventsColumn: React.FC<
     ...dragHandleProps
   }) => {
     const [view, setView] = useState(DEFAULT_EVENTS_COLUMN_VIEW);
+    const [expandedScaleBlock, setExpandedScaleBlock] =
+      useState<[number, number]>();
 
     const filteredData = useDeepMemo(() => {
       if (!ndsRiskTypesSelection) {
@@ -83,20 +86,28 @@ export const NdsEventsColumn: React.FC<
       return EMPTY_STATE_TEXT;
     }, [data, filteredData, ndsRiskTypesSelection]);
 
-    const renderBlockEvents = useCallback(
-      (data: NdsInternalWithTvd[]) => {
-        if (isEmpty(data)) {
-          return null;
-        }
+    const renderBlockEvents = (
+      data: NdsInternalWithTvd[],
+      scaleBlockRange: [number, number]
+    ) => {
+      if (isEmpty(data)) {
+        return null;
+      }
 
-        if (view === EventsColumnView.Scatter) {
-          return <NdsEventsScatterView events={data} />;
-        }
+      if (view === EventsColumnView.Scatter) {
+        return (
+          <NdsEventsScatterView
+            events={data}
+            depthMeasurementType={depthMeasurementType}
+            scaleBlockRange={scaleBlockRange}
+            expandedScaleBlock={expandedScaleBlock}
+            onExpandOverflowEvents={setExpandedScaleBlock}
+          />
+        );
+      }
 
-        return <NdsEventsBadge events={data} />;
-      },
-      [view]
-    );
+      return <NdsEventsBadge events={data} />;
+    };
 
     return (
       <NoUnmountShowHide show={isVisible}>

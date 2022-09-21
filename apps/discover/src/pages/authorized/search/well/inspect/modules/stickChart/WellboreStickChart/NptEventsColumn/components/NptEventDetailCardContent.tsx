@@ -11,9 +11,8 @@ import { getDateOrDefaultText } from 'utils/date';
 import { DepthMeasurementUnit } from 'constants/units';
 import { FlexRowFullWidth } from 'styles/layout';
 
+import { NptCodeDefinition } from '../../../../nptEvents/components/NptCodeDefinition';
 import { DetailCardBlock } from '../../../components/DetailCard';
-
-import { NptCodeDataBlock } from './NptCodeDataBlock';
 
 export interface NptEventDetailCardContentProps {
   event: NptInternalWithTvd;
@@ -53,11 +52,12 @@ export const NptEventDetailCardContent: React.FC<
   return (
     <>
       <FlexRowFullWidth>
-        <NptCodeDataBlock
-          nptCode={nptCode}
-          nptCodeDetail={nptCodeDetail}
-          nptCodeColor={nptCodeColor}
-          nptCodeDefinition={nptCodeDefinition}
+        <DetailCardBlock
+          extended
+          title={nptCode}
+          value={nptCodeDetail}
+          avatarColor={nptCodeColor}
+          info={<NptCodeDefinition nptCodeDefinition={nptCodeDefinition} />}
         />
         <DetailCardBlock
           title={`Depth ${depth && `(${depth.unit})`}`}

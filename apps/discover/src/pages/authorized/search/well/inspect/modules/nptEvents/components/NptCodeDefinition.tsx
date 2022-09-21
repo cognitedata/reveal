@@ -21,7 +21,6 @@ export const NptCodeDefinition: React.FC<{
           )}
         </>
       }
-      wrapped
     >
       <Icon style={iconStyle} type="Info" data-testid="info-icon" />
     </Tooltip>

@@ -1,10 +1,11 @@
 import styled, { css } from 'styled-components/macro';
 import layers from 'utils/zindex';
 
-import { Flex, FlexColumn, sizes } from 'styles/layout';
+import { Flex, FlexColumn, FlexRow, sizes } from 'styles/layout';
 
 export const BaseDetailCardWrapper = styled(FlexColumn)`
   height: auto;
+  min-width: 360px;
   width: fit-content;
   flex-wrap: wrap;
   padding: ${sizes.extraSmall};
@@ -32,7 +33,8 @@ export const DetailCardWrapper = styled(BaseDetailCardWrapper)`
   }
 `;
 
-export const DetailCardBlockWrapper = styled(FlexColumn)`
+export const DetailCardBlockWrapper = styled(FlexRow)`
+  gap: ${sizes.small};
   padding: ${sizes.small} 12px;
   background: var(--cogs-greyscale-grey1);
   border-radius: ${sizes.small};
@@ -40,12 +42,21 @@ export const DetailCardBlockWrapper = styled(FlexColumn)`
   height: fit-content;
   flex: 1;
   margin: ${sizes.extraSmall};
-  ${(props: { flex: boolean }) =>
-    props.flex &&
+  ${(props: { $extended: boolean }) =>
+    props.$extended &&
     css`
       flex: 2;
       width: 100%;
     `}
+`;
+
+export const Avatar = styled.div`
+  height: 12px;
+  width: 12px;
+  border-radius: ${sizes.extraSmall};
+  border: 2px var(--cogs-greyscale-grey2) solid;
+  background: ${(props: { color: string }) => props.color};
+  margin-top: ${sizes.extraSmall};
 `;
 
 export const DetailCardBlockTitle = styled(Flex)`
@@ -62,4 +73,15 @@ export const DetailCardBlockValue = styled(Flex)`
   line-height: 18px;
   letter-spacing: -0.003em;
   color: var(--cogs-greyscale-grey9);
+`;
+
+export const DetailsWrapper = styled(FlexColumn)`
+  width: fit-content;
+`;
+
+export const InfoContentWrapper = styled.div`
+  opacity: 55%;
+  margin-top: 2px;
+  margin-right: ${sizes.small};
+  cursor: pointer;
 `;
