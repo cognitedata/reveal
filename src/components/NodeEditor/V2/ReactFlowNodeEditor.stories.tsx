@@ -1,6 +1,7 @@
 import { ComponentProps } from 'react';
 import { Meta, Story } from '@storybook/react';
 import { fullListOfOperations } from 'models/operations/mocks';
+import { ReactFlowProvider } from 'react-flow-renderer';
 import { SourceNodeData } from './Nodes/SourceNode';
 import ReactFlowNodeEditor from './ReactFlowNodeEditor';
 import { defaultTranslations } from '../translations';
@@ -12,7 +13,9 @@ export default {
 
 const Template: Story<ComponentProps<typeof ReactFlowNodeEditor>> = (args) => (
   <div style={{ width: 'calc(100vw - 30px)', height: 'calc(100vh - 30px)' }}>
-    <ReactFlowNodeEditor {...args} />
+    <ReactFlowProvider>
+      <ReactFlowNodeEditor {...args} />
+    </ReactFlowProvider>
   </div>
 );
 

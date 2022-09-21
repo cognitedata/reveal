@@ -27,6 +27,7 @@ import OutputNode from './Nodes/OutputNode';
 import SourceNode from './Nodes/SourceNode';
 import { defaultTranslations } from '../translations';
 import { CanvasContext } from './CanvasContext';
+import EditorToolbar from './EditorToolbar/EditorToolbar';
 
 type Props = {
   id?: string;
@@ -221,26 +222,31 @@ const ReactFlowNodeEditor = ({
             }}
             onMoveEnd={handleMove}
           >
+            <Background variant={BackgroundVariant.Dots} />
+          </ReactFlow>
+        )}
+        {isRenderable && (
+          <EditorToolbar>
+            {!readOnly && (
+              <AddButton
+                elements={flowElements}
+                sources={sources}
+                operations={operations}
+                addSourceNode={addSourceNode}
+                addFunctionNode={addFunctionNode}
+                addConstantNode={addConstantNode}
+                addOutputNode={addOutputNode}
+                translations={t}
+              />
+            )}
             <EditorControls
               settings={settings}
               onSaveSettings={onSaveSettings}
               readOnly={readOnly}
               translations={t}
+              horizontal
             />
-            <Background variant={BackgroundVariant.Dots} />
-          </ReactFlow>
-        )}
-        {!readOnly && (
-          <AddButton
-            elements={flowElements}
-            sources={sources}
-            operations={operations}
-            addSourceNode={addSourceNode}
-            addFunctionNode={addFunctionNode}
-            addConstantNode={addConstantNode}
-            addOutputNode={addOutputNode}
-            translations={t}
-          />
+          </EditorToolbar>
         )}
         {contextMenuPosition && (
           <ContextMenu

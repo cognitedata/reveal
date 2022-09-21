@@ -159,7 +159,7 @@
     ]
   },
   "jira-prepare-commit-msg": {
-    "jiraTicketPattern": "(CHART-\\d+)"
+    "jiraTicketPattern": "(DEGDEV-\\d+)"
   },
   "jest": {
     "transformIgnorePatterns": [

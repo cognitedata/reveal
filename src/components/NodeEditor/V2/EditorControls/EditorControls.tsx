@@ -12,6 +12,7 @@ type Props = {
   readOnly: boolean;
   onSaveSettings: (settings: Props['settings']) => void;
   translations: typeof defaultTranslations;
+  horizontal?: boolean;
 };
 
 const EditorControls = ({
@@ -19,15 +20,18 @@ const EditorControls = ({
   readOnly,
   onSaveSettings = () => {},
   translations: t,
+  horizontal,
 }: Props) => {
   const { fitView, zoomIn, zoomOut } = useZoomPanHelper();
   const [isAutoAlignDropdownVisible, setIsAutoAlignDropdownVisible] =
     useState<boolean>(false);
+
   return (
     <CustomControlButtonGroup
       showZoom={false}
       showFitView={false}
       showInteractive={false}
+      className={`${horizontal ? 'react-flow__controls--horizontal' : ''}`}
     >
       <CustomControlButton onClick={() => zoomIn()}>
         <Icon type="ZoomIn" />
@@ -50,7 +54,7 @@ const EditorControls = ({
         }
         visible={isAutoAlignDropdownVisible}
         onClickOutside={() => setIsAutoAlignDropdownVisible(false)}
-        placement="right"
+        placement={horizontal ? 'bottom' : 'right'}
         arrow
       >
         <CustomControlButton

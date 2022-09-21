@@ -3,7 +3,6 @@ import ToolboxFunctionDropdown from 'components/ToolboxFunctionDropdown/ToolboxF
 import { SourceCircle, SourceSquare } from 'pages/ChartViewPage/elements';
 import { useState } from 'react';
 import styled from 'styled-components/macro';
-import Layers from 'utils/z-index';
 import { Operation } from '@cognite/calculation-backend';
 import { Elements } from 'react-flow-renderer';
 import { NodeTypes, SourceOption, NodeDataVariants } from './types';
@@ -142,47 +141,37 @@ const AddButton = ({
     ...defaultTranslations,
     ...translations,
   };
-
   return (
-    <AddDropdownContainer>
-      <Dropdown
-        visible={isMenuVisible}
-        onClickOutside={() => setIsMenuVisible(false)}
-        content={
-          <AddMenu
-            elements={elements}
-            sources={sources}
-            operations={operations}
-            addSourceNode={addSourceNode}
-            addFunctionNode={addFunctionNode}
-            addConstantNode={addConstantNode}
-            addOutputNode={addOutputNode}
-            onFunctionSelected={() => setIsMenuVisible(false)}
-            translations={translations}
-          />
-        }
+    <Dropdown
+      visible={isMenuVisible}
+      onClickOutside={() => setIsMenuVisible(false)}
+      content={
+        <AddMenu
+          elements={elements}
+          sources={sources}
+          operations={operations}
+          addSourceNode={addSourceNode}
+          addFunctionNode={addFunctionNode}
+          addConstantNode={addConstantNode}
+          addOutputNode={addOutputNode}
+          onFunctionSelected={() => setIsMenuVisible(false)}
+          translations={translations}
+        />
+      }
+    >
+      <Button
+        type="primary"
+        size="small"
+        onClick={() => setIsMenuVisible(!isMenuVisible)}
+        icon="Add"
       >
-        <Button
-          type="primary"
-          size="small"
-          onClick={() => setIsMenuVisible(!isMenuVisible)}
-        >
-          {t['Add Node']}
-        </Button>
-      </Dropdown>
-    </AddDropdownContainer>
+        {t['Add Node']}
+      </Button>
+    </Dropdown>
   );
 };
 
 const MenuItemWrapper = styled.div``;
-
-const AddDropdownContainer = styled.div`
-  position: absolute;
-  min-width: 200px;
-  top: 5px;
-  left: 5px;
-  z-index: ${Layers.MINIMUM};
-`;
 
 const SourceItemTextWrapper = styled.div`
   height: 100%;
