@@ -11,6 +11,7 @@ const NO_OPTIONS_SELECTED_TEXT = 'No options selected';
 const FIT_LOT_CHART_TITLE = 'Depth vs Pressure';
 const SEE_GRAPH_BUTTON_TEXT = 'See graph';
 const DEFAULT_TRAJECTORY_CHART_TITLE = 'TVD vs ED';
+const DETAIL_PAGE_BUTTON_TEXT = 'Detail page';
 
 describe('Wells: stick chart', () => {
   before(() => {
@@ -58,10 +59,15 @@ describe('Wells: stick chart', () => {
   });
 
   it('Should be able to navigate NDS events page', () => {
-    cy.contains('Details').first().click();
+    cy.findAllByTestId('ndsEvents-column')
+      .first()
+      .contains('NDS Events')
+      .click();
 
-    cy.log('click on NDS events');
-    cy.findByRole('button', { name: 'NDS events' }).click({ force: true });
+    cy.log('navigate to NDS events detail page');
+    cy.findByRole('button', { name: DETAIL_PAGE_BUTTON_TEXT }).click({
+      force: true,
+    });
 
     cy.log('treemap wrapper should display');
     cy.findByTestId('treemap-wrapper').should('be.visible');
@@ -76,10 +82,15 @@ describe('Wells: stick chart', () => {
   });
 
   it('Should be able to navigate NPT events page', () => {
-    cy.contains('Details').first().click();
+    cy.findAllByTestId('nptEvents-column')
+      .first()
+      .contains('NPT Events')
+      .click();
 
-    cy.log('click on NDS events');
-    cy.findByRole('button', { name: 'NPT events' }).click({ force: true });
+    cy.log('navigate to NPT events detail page');
+    cy.findByRole('button', { name: DETAIL_PAGE_BUTTON_TEXT }).click({
+      force: true,
+    });
 
     cy.log('NPT days & NPT events charts titles should visible ');
     cy.findAllByText('NPT days').should('be.visible');
