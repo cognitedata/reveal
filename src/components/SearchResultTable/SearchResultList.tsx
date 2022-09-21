@@ -1,11 +1,4 @@
-import { useMemo } from 'react';
 import { Icon, Button } from '@cognite/cogs.js';
-import { Asset } from '@cognite/sdk';
-import {
-  useAggregate,
-  useCdfItems,
-  useInfiniteSearch,
-} from '@cognite/sdk-react-query-hooks';
 import styled from 'styled-components/macro';
 import EmptyResult, {
   defaultTranslations as emptyResultDefaultTranslations,
@@ -15,10 +8,12 @@ import { useTranslations } from 'hooks/translations';
 import { SearchFilter } from 'components/Search/Search';
 import AssetSearchHit from './AssetSearchHit';
 import RecentViewSources from './RecentViewSources';
+import { useAssetSearchResults } from './hooks';
 
 type Props = {
   query: string;
   filter: SearchFilter;
+  searchResults: ReturnType<typeof useAssetSearchResults>;
 };
 
 const defaultTranslations = makeDefaultTranslations(
@@ -27,61 +22,20 @@ const defaultTranslations = makeDefaultTranslations(
   'Exact match on external id'
 );
 
-export default function SearchResultList({ query, filter }: Props) {
-  const rootAssetFilter = filter.rootAsset
-    ? { assetSubtreeIds: [{ externalId: filter.rootAsset }] }
-    : {};
-
+export default function SearchResultList({
+  query,
+  filter,
+  searchResults,
+}: Props) {
   const {
-    data: resourcesBySearch,
+    resultExactMatch: assetExactMatch,
+    results: assets,
     isLoading,
     isError,
     fetchNextPage,
     hasNextPage,
-  } = useInfiniteSearch<Asset>(
-    'assets',
-    query,
-    20,
-    { ...rootAssetFilter },
-    {
-      enabled: !!query,
-    }
-  );
-
-  const { data: resourcesByExternalId } = useCdfItems<Asset>('assets', [
-    { externalId: query },
-  ]);
-
-  const assetExactMatch = useMemo(
-    () =>
-      resourcesByExternalId?.filter(
-        ({ externalId }) => externalId === query
-      )[0],
-    [resourcesByExternalId, query]
-  );
-
-  const assets = useMemo(
-    () =>
-      resourcesBySearch?.pages
-        ?.reduce((accl, page) => accl.concat(page), [])
-        .filter(({ externalId }) => externalId !== query),
-    [resourcesBySearch, query]
-  );
-
-  const shouldFetchCount = useMemo(
-    () => Boolean(query) && !filter?.showEmpty,
-    [query, filter]
-  );
-
-  const { data: dataAmount } = useAggregate(
-    'timeseries',
-    {
-      assetIds: assets?.map(({ id }) => id),
-      isStep: filter?.isStep,
-      isString: filter?.isString,
-    },
-    { enabled: shouldFetchCount && assets && assets.length > 0 }
-  );
+    hasResults,
+  } = searchResults;
 
   /**
    * Translations
@@ -107,8 +61,10 @@ export default function SearchResultList({ query, filter }: Props) {
     return <Icon type="Loader" />;
   }
 
-  if (assets?.length === 0 || (shouldFetchCount && dataAmount?.count === 0)) {
-    return <EmptyResult translations={emptyResultTranslations} />;
+  if (!hasResults) {
+    return (
+      <EmptyResult itemType="assets" translations={emptyResultTranslations} />
+    );
   }
 
   const exactMatchElement = assetExactMatch && (

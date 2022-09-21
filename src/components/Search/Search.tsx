@@ -5,6 +5,7 @@ import {
   SegmentedControl,
   Flex,
   Dropdown,
+  Icon,
 } from '@cognite/cogs.js';
 import SearchResultList from 'components/SearchResultTable/SearchResultList';
 import SearchTimeseries from 'components/SearchResultTable/SearchTimeseries';
@@ -26,6 +27,10 @@ import EmptyResult, {
 import { useRootAssets } from 'hooks/cdf-assets';
 import { useRecoilState } from 'recoil';
 import { facilityAtom } from 'models/facility/atom';
+import {
+  useAssetSearchResults,
+  useTimeseriesSearchResult,
+} from 'components/SearchResultTable/hooks';
 import FilterDropdown from './FilterDropdown';
 import SearchTooltip from './SearchTooltip';
 
@@ -53,7 +58,6 @@ type SearchProps = {
 const Search = ({ query, setQuery, onClose }: SearchProps) => {
   const [urlQuery = ''] = useSearchParam(SEARCH_KEY, false);
   const [debouncedUrlQuery] = useDebounce(urlQuery, 200);
-
   const [searchType, setSearchType] = useState<'assets' | 'timeseries'>(
     'assets'
   );
@@ -134,6 +138,15 @@ const Search = ({ query, setQuery, onClose }: SearchProps) => {
     ).t,
   };
 
+  const assetSearchResults = useAssetSearchResults({ query, filter });
+  const timeseriesSearchResults = useTimeseriesSearchResult({
+    query,
+    filter,
+  });
+
+  const { tsCountLoading, totalCount: tsTotalCount } = timeseriesSearchResults;
+  const { assetCountLoading, totalCount: assetTotalCount } = assetSearchResults;
+
   return (
     <>
       <SearchTooltip>
@@ -175,9 +188,24 @@ const Search = ({ query, setQuery, onClose }: SearchProps) => {
         >
           <SegmentedControl.Button key="assets">
             {t['Equipment tag']}
+            <SearchCount>
+              {filterSettings.isShowEmptyChecked &&
+                (assetCountLoading === false ? (
+                  `${assetTotalCount}`
+                ) : (
+                  <Icon type="Loader" />
+                ))}
+            </SearchCount>
           </SegmentedControl.Button>
           <SegmentedControl.Button key="timeseries">
             {t['Time series']}
+            <SearchCount>
+              {tsCountLoading === false ? (
+                `${tsTotalCount}`
+              ) : (
+                <Icon type="Loader" />
+              )}
+            </SearchCount>
           </SegmentedControl.Button>
         </SegmentedControl>
         <Dropdown
@@ -197,24 +225,21 @@ const Search = ({ query, setQuery, onClose }: SearchProps) => {
         </Dropdown>
       </Flex>
       {isEmpty ? (
-        <EmptyResult translations={emptyResultTranslations} />
+        <EmptyResult itemType="assets" translations={emptyResultTranslations} />
       ) : (
         <SearchResultsContainer>
           {searchType === 'assets' && (
-            <>
-              <SearchResultList
-                query={debouncedUrlQuery.trim()}
-                filter={filter}
-              />
-            </>
+            <SearchResultList
+              query={debouncedUrlQuery.trim()}
+              filter={filter}
+              searchResults={assetSearchResults}
+            />
           )}
           {searchType === 'timeseries' && (
-            <>
-              <SearchTimeseries
-                query={debouncedUrlQuery.trim()}
-                filter={filter}
-              />
-            </>
+            <SearchTimeseries
+              query={debouncedUrlQuery.trim()}
+              searchResults={timeseriesSearchResults}
+            />
           )}
         </SearchResultsContainer>
       )}
@@ -234,6 +259,10 @@ const SearchResultsContainer = styled.div`
   height: calc(100% - 70px);
   overflow: auto;
   width: 100%;
+`;
+
+const SearchCount = styled.span`
+  margin-left: 3pt;
 `;
 
 export default Search;

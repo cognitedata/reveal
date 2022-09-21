@@ -1,7 +1,4 @@
-import { useMemo } from 'react';
 import { Icon, Button, Checkbox } from '@cognite/cogs.js';
-import { Timeseries } from '@cognite/sdk';
-import { useCdfItems, useInfiniteSearch } from '@cognite/sdk-react-query-hooks';
 import styled from 'styled-components/macro';
 import { trackUsage } from 'services/metrics';
 import { useRecoilState } from 'recoil';
@@ -12,20 +9,30 @@ import EmptyResult, {
 import chartAtom from 'models/chart/atom';
 import { makeDefaultTranslations } from 'utils/translations';
 import { useTranslations } from 'hooks/translations';
-import { SearchFilter } from 'components/Search/Search';
 import RecentViewSources from './RecentViewSources';
 import TimeseriesSearchResultItem from './TimeseriesSearchResultItem';
+import { useTimeseriesSearchResult } from './hooks';
 
 type Props = {
   query: string;
-  filter: SearchFilter;
+  searchResults: ReturnType<typeof useTimeseriesSearchResult>;
 };
 
 const defaultTranslations = makeDefaultTranslations('Additional time series');
 
-export default function SearchTimeseries({ query, filter }: Props) {
+export default function SearchTimeseries({ query, searchResults }: Props) {
   const [chart] = useRecoilState(chartAtom);
   const handleTimeSeriesClick = useAddRemoveTimeseries();
+
+  const {
+    resultExactMatch: timeseriesExactMatch,
+    results: timeseries,
+    isLoading,
+    isError,
+    fetchNextPage,
+    hasNextPage,
+    hasResults,
+  } = searchResults;
 
   /**
    * Translations
@@ -43,49 +50,6 @@ export default function SearchTimeseries({ query, filter }: Props) {
     ).t,
   };
 
-  const rootAssetFilter = filter.rootAsset
-    ? { assetSubtreeIds: [{ externalId: filter.rootAsset }] }
-    : {};
-
-  const {
-    data: resourcesBySearch,
-    isLoading,
-    isError,
-    fetchNextPage,
-    hasNextPage,
-  } = useInfiniteSearch<Timeseries>(
-    'timeseries',
-    query,
-    20,
-    { isStep: filter.isStep, isString: filter.isString, ...rootAssetFilter },
-    {
-      enabled: !!query,
-    }
-  );
-
-  const { data: resourcesByExternalId } = useCdfItems<Timeseries>(
-    'timeseries',
-    [{ externalId: query }]
-  );
-
-  const timeseriesExactMatch = useMemo(
-    () =>
-      resourcesByExternalId?.filter(
-        ({ externalId }) => externalId === query
-      )[0],
-    [resourcesByExternalId, query]
-  );
-
-  const timeseries = useMemo(
-    () =>
-      resourcesBySearch?.pages
-        ?.reduce((accl, page) => accl.concat(page), [])
-        .filter(
-          ({ externalId }) => externalId !== timeseriesExactMatch?.externalId
-        ),
-    [resourcesBySearch, timeseriesExactMatch]
-  );
-
   if (isError) {
     return <Icon type="CloseLarge" />;
   }
@@ -94,8 +58,13 @@ export default function SearchTimeseries({ query, filter }: Props) {
     return <Icon type="Loader" />;
   }
 
-  if (timeseries?.length === 0) {
-    return <EmptyResult translations={emptyResultTranslations} />;
+  if (!hasResults && query !== '') {
+    return (
+      <EmptyResult
+        itemType="timeseries"
+        translations={emptyResultTranslations}
+      />
+    );
   }
 
   const selectedExternalIds: undefined | string[] = chart?.timeSeriesCollection
