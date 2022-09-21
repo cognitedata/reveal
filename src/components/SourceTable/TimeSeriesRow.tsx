@@ -1,6 +1,6 @@
 import { ComponentProps, useState } from 'react';
 import { ChartTimeSeries } from 'models/chart/types';
-import { Button, Tooltip, Popconfirm } from '@cognite/cogs.js';
+import { Button, Popconfirm } from '@cognite/cogs.js';
 import { useLinkedAsset } from 'hooks/cdf-assets';
 import AppearanceDropdown from 'components/AppearanceDropdown/AppearanceDropdown';
 import { PnidButton } from 'components/SearchResultTable/PnidButton';
@@ -19,12 +19,12 @@ import {
   SourceItem,
   SourceName,
   SourceRow,
-  SourceDescription,
   SourceTag,
   SourceStatus,
   DropdownWithoutMaxWidth,
   StyledVisibilityIcon,
 } from './elements';
+import TimeSeriesSourceItemDescription from './TimeSeriesSourceItemDescription';
 
 type Props = {
   timeseries: ChartTimeSeries;
@@ -90,7 +90,6 @@ function TimeSeriesRow({
 }: Props) {
   const {
     id,
-    description,
     name,
     unit,
     color = '',
@@ -102,6 +101,7 @@ function TimeSeriesRow({
     customUnitLabel,
     enabled,
     tsExternalId,
+    tsId,
   } = timeseries;
   const [isEditingName, setIsEditingName] = useState<boolean>(false);
 
@@ -124,7 +124,6 @@ function TimeSeriesRow({
   const { data: linkedAsset } = useLinkedAsset(tsExternalId, true);
 
   const isVisible = enabled || isFileViewerMode;
-
   return (
     <SourceRow
       aria-hidden={!isVisible}
@@ -202,11 +201,7 @@ function TimeSeriesRow({
           </td>
           <td className="bordered">
             <SourceItem disabled={!isVisible}>
-              <SourceDescription>
-                <Tooltip content={description} maxWidth={350}>
-                  <>{description}</>
-                </Tooltip>
-              </SourceDescription>
+              <TimeSeriesSourceItemDescription id={tsId} />
             </SourceItem>
           </td>
         </>
