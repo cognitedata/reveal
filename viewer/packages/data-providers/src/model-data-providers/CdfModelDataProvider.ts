@@ -2,8 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 import { CogniteClient } from '@cognite/sdk';
-
-import { ModelDataProvider } from './types';
+import { ModelDataProvider } from '../ModelDataProvider';
 
 /**
  * Provides 3D V2 specific extensions for the standard CogniteClient used by Reveal.

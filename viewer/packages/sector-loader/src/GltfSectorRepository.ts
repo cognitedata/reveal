@@ -4,7 +4,7 @@
 
 import { MemoryRequestCache } from '@reveal/utilities';
 import { ConsumedSector, V9SectorMetadata, WantedSector, LevelOfDetail } from '@reveal/cad-parsers';
-import { BinaryFileProvider } from '@reveal/modeldata-api';
+import { BinaryFileProvider } from '@reveal/data-providers';
 import { CadMaterialManager } from '@reveal/rendering';
 import { SectorRepository } from './SectorRepository';
 import { GltfSectorLoader } from './GltfSectorLoader';

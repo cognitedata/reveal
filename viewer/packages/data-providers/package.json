@@ -1,5 +1,5 @@
 {
-  "name": "@reveal/modeldata-api",
+  "name": "@reveal/data-providers",
   "private": true,
   "main": "index.ts",
   "scripts": {

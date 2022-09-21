@@ -5,7 +5,7 @@
 import nock from 'nock';
 
 import { CogniteClient } from '@cognite/sdk';
-import { CdfModelIdentifier } from './CdfModelIdentifier';
+import { CdfModelIdentifier } from '../model-identifiers/CdfModelIdentifier';
 import { CdfModelMetadataProvider } from './CdfModelMetadataProvider';
 import { Mock } from 'moq.ts';
 

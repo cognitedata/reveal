@@ -3,12 +3,12 @@
  */
 import * as THREE from 'three';
 
-import { applyDefaultModelTransformation } from './applyDefaultModelTransformation';
-import { LocalModelIdentifier } from './LocalModelIdentifier';
-import { ModelIdentifier } from './ModelIdentifier';
-import { ModelMetadataProvider } from './ModelMetadataProvider';
-import { BlobOutputMetadata, File3dFormat } from './types';
-import { fetchWithStatusCheck } from './utilities';
+import { applyDefaultModelTransformation } from '../utilities/applyDefaultModelTransformation';
+import { ModelIdentifier } from '../ModelIdentifier';
+import { ModelMetadataProvider } from '../ModelMetadataProvider';
+import { BlobOutputMetadata, File3dFormat } from '../types';
+import { LocalModelIdentifier } from '../model-identifiers/LocalModelIdentifier';
+import { fetchWithStatusCheck } from '../utilities/fetchWithStatusCheck';
 
 export class LocalModelMetadataProvider implements ModelMetadataProvider {
   getModelUri(modelIdentifier: ModelIdentifier): Promise<string> {
