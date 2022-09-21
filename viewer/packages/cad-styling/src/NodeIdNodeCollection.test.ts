@@ -45,7 +45,7 @@ describe(NodeIdNodeCollection.name, () => {
     mockRevisions3DAPI.verify(x => x.retrieve3DNodes(It.IsAny(), It.IsAny(), It.IsAny()), Times.Never());
   });
 
-  test('executeFilter maps node bounds to ThreeJS coordinates', async () => {
+  test('executeFilter populates IndexSet and areas', async () => {
     const collection = new NodeIdNodeCollection(mockClient.object(), mockModel.object());
     await collection.executeFilter([1, 2, 3]);
     expect(collection.getIndexSet().toIndexArray()).not.toBeEmpty();
