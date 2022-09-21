@@ -31,7 +31,7 @@ def _publish_storybook(ctx):
         files = depset([out_file]),
         runfiles = runfiles,
         executable = out_file,
-    )]
+    ), tracker_file]
 
 publish_storybook = rule(
     implementation = _publish_storybook,
