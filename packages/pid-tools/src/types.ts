@@ -77,6 +77,8 @@ export interface PidFileConnectionInstance extends DiagramSymbolInstance {
   fileDirection?: FileDirection;
   linkedCdfFileName?: string;
   linkedCdfFileId?: number;
+  linkedDmsFileConnection?: string;
+  linkedDmsFileConnectionCandidates?: string[];
 }
 
 interface LineConnectionInfo {

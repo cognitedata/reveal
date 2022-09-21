@@ -55,7 +55,11 @@ export const upsertGraphDocumentToDms = async (
   // 409 errors. We circumvent it by proactively deleting the edges first
 
   console.log('Deleting old edges ...');
+
   for (const model of Object.keys(edges)) {
+    // eslint-disable-next-line no-continue
+    if (model === 'FileLink') continue; // Fix: We should maybe delete orphan file link edges as well
+
     const oldItems = await listEdges(client, {
       model: model as keyof ModelEdgeMap,
       spaceExternalId,

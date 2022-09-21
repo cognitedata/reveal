@@ -1,7 +1,7 @@
 import { FileInfo } from '@cognite/sdk';
 
 // DMS
-export const DMS_SPACE_EXTERNAL_ID = 'matchmakers-test-15-engineering-diagrams';
+export const DMS_SPACE_EXTERNAL_ID = 'matchmakers-test-16-engineering-diagrams';
 
 // SVG
 export const SVG_ID = 'svg-id';

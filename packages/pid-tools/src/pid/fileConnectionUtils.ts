@@ -33,9 +33,10 @@ const normalizeLabels = (
 };
 
 const DirectionAngle = {
+  Right: 0,
+  Down: 90,
   Left: 180,
   Up: 270, // note that positive Y direction is downwards
-  Right: 0,
 };
 
 const getBestFitLabel = (
@@ -82,21 +83,24 @@ export const isVertical = (direction: number): boolean =>
   approxeq(angleDifference(direction, DirectionAngle.Up, 'uniDirected'), 0, 10);
 
 export const isUp = (direction: number): boolean =>
-  approxeq(direction, DirectionAngle.Up, 10);
+  approxeq(angleDifference(direction, DirectionAngle.Up, 'directed'), 0, 10);
+
+export const isDown = (direction: number): boolean =>
+  approxeq(angleDifference(direction, DirectionAngle.Down, 'directed'), 0, 10);
 
 export const isLeft = (direction: number): boolean =>
-  approxeq(direction, DirectionAngle.Left, 10);
+  approxeq(angleDifference(direction, DirectionAngle.Left, 'directed'), 0, 10);
+
+export const isRight = (direction: number): boolean =>
+  approxeq(angleDifference(direction, DirectionAngle.Right, 'directed'), 0, 10);
 
 export const getFileConnectionsWithPosition = (
   pidDocument: PidDocument,
   fileConnections: PidFileConnectionInstance[]
 ): PidFileConnectionInstance[] => {
   const leftColumnThreshold = 0.1;
-  const leftFileConnectionThreshold = 0.2;
   const rightColumnThreshold = 0.9;
-  const rightFileConnectionThreshold = 0.8;
   const topColumnThreshold = 0.1;
-  const topFileConnectionThreshold = 0.2;
 
   const oneOrTwoDigitNumberRegex = /^[0-9]{1,2}$/;
 
@@ -128,28 +132,25 @@ export const getFileConnectionsWithPosition = (
       fileConnection.pathIds.map((id) => pidDocument.getPidPathById(id)!)
     ).normalize(pidDocument.viewBox);
 
-    const isOnLeftSide = normalizedBoundingBox.x < leftFileConnectionThreshold;
-    if (
-      isOnLeftSide &&
-      leftColumnLabels.length > 0 &&
-      isHorizontal(fileConnection.direction)
-    ) {
+    const isOnLeftSide = normalizedBoundingBox.x < 0.5;
+    if (isOnLeftSide && isHorizontal(fileConnection.direction)) {
+      let fileDirection: FileDirection | undefined;
+      if (fileConnection.type === 'Bypass Connection') {
+        fileDirection = 'Unidirectional';
+      } else if (isLeft(fileConnection.direction)) {
+        fileDirection = 'Out';
+      } else if (isRight(fileConnection.direction)) {
+        fileDirection = 'In';
+      }
+
       const closestLeftLabel = getBestFitLabel(
         normalizedBoundingBox,
         leftColumnLabels,
         'Left'
       );
       if (closestLeftLabel === null)
-        return { ...fileConnection, fileDirection: 'Unknown' };
+        return { ...fileConnection, fileDirection };
 
-      let fileDirection: FileDirection;
-      if (fileConnection.type === 'Bypass Connection') {
-        fileDirection = 'Unidirectional';
-      } else if (isLeft(fileConnection.direction)) {
-        fileDirection = 'Out';
-      } else {
-        fileDirection = 'In';
-      }
       return {
         ...fileConnection,
         position: `A${closestLeftLabel.text}`,
@@ -158,29 +159,24 @@ export const getFileConnectionsWithPosition = (
       };
     }
 
-    const isOnRightSide =
-      normalizedBoundingBox.x > rightFileConnectionThreshold;
-    if (
-      isOnRightSide &&
-      rightColumnLabels.length > 0 &&
-      isHorizontal(fileConnection.direction)
-    ) {
+    const isOnRightSide = normalizedBoundingBox.x > 0.5;
+    if (isOnRightSide && isHorizontal(fileConnection.direction)) {
+      let fileDirection: FileDirection | undefined;
+      if (fileConnection.type === 'Bypass Connection') {
+        fileDirection = 'Unidirectional';
+      } else if (isLeft(fileConnection.direction)) {
+        fileDirection = 'In';
+      } else if (isRight(fileConnection.direction)) {
+        fileDirection = 'Out';
+      }
+
       const closestRightLabel = getBestFitLabel(
         normalizedBoundingBox,
         rightColumnLabels,
         'Right'
       );
       if (closestRightLabel === null)
-        return { ...fileConnection, fileDirection: 'Unknown' };
-
-      let fileDirection: FileDirection;
-      if (fileConnection.type === 'Bypass Connection') {
-        fileDirection = 'Unidirectional';
-      } else if (isLeft(fileConnection.direction)) {
-        fileDirection = 'In';
-      } else {
-        fileDirection = 'Out';
-      }
+        return { ...fileConnection, fileDirection };
 
       return {
         ...fileConnection,
@@ -190,12 +186,17 @@ export const getFileConnectionsWithPosition = (
       };
     }
 
-    const isAtTop = normalizedBoundingBox.y < topFileConnectionThreshold;
-    if (
-      isAtTop &&
-      topColumnLabels.length > 0 &&
-      isVertical(fileConnection.direction)
-    ) {
+    const isAtTop = normalizedBoundingBox.y < 0.5;
+    if (isAtTop && isVertical(fileConnection.direction)) {
+      let fileDirection: FileDirection | undefined;
+      if (fileConnection.type === 'Bypass Connection') {
+        fileDirection = 'Unidirectional';
+      } else if (isUp(fileConnection.direction)) {
+        fileDirection = 'Out';
+      } else if (isDown(fileConnection.direction)) {
+        fileDirection = 'In';
+      }
+
       const closestTopLabel = getBestFitLabel(
         normalizedBoundingBox,
         topColumnLabels,
@@ -203,15 +204,6 @@ export const getFileConnectionsWithPosition = (
       );
       if (closestTopLabel === null)
         return { ...fileConnection, fileDirection: 'Unknown' };
-
-      let fileDirection: FileDirection;
-      if (fileConnection.type === 'Bypass Connection') {
-        fileDirection = 'Unidirectional';
-      } else if (isUp(fileConnection.direction)) {
-        fileDirection = 'Out';
-      } else {
-        fileDirection = 'In';
-      }
 
       return {
         ...fileConnection,

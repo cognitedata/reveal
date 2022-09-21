@@ -16,3 +16,4 @@ export { default as setSelectablilityOfAllText } from './setSelectablilityOfAllT
 export { default as assertNever } from './assertNever';
 export { default as mapAsyncEveryMs } from './mapAsyncEveryMs';
 export { default as findUniqueFileByName } from './findUniqueFileByName';
+export { default as getOppositeFileDirection } from './getOppositeFileDirection';

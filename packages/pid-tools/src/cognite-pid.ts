@@ -20,6 +20,8 @@ import {
   isValidGraphDocumentJson,
   isValidLegendJson,
   mapAsyncEveryMs,
+  findUniqueFileByName,
+  getOppositeFileDirection,
 } from './utils';
 import {
   applyPathReplacementInSvg,
@@ -81,10 +83,12 @@ import {
   BACKGROUND_OVERLAY_GROUP,
   COLORS,
   DIAGRAM_PARSER_SOURCE,
+  DMS_SPACE_EXTERNAL_ID,
   EQUIPMENT_TAG_REGEX,
 } from './constants';
 import { getMetadataFromFileName } from './utils/fileNameUtils';
 import { BoundingBox, Point } from './geometry';
+import { listNodes } from './dms';
 
 const hoverBoldStrokeScale = 1.5;
 
@@ -1513,9 +1517,12 @@ export class CognitePid {
       );
     }
 
-    this.inferLineNumbers();
+    if (client === undefined) {
+      console.warn('No client provided, skipping last part of auto analysis');
+      return;
+    }
 
-    const fireSearchEveryMs = 35;
+    const fireSearchEveryMs = 100;
 
     // Assign instrument to CDF assets
     const toUpdateInstruments = this.symbolInstances.filter(
@@ -1559,12 +1566,22 @@ export class CognitePid {
       fireSearchEveryMs
     );
 
+    const currentFileId = (
+      await findUniqueFileByName(client, documentMetadata.name)
+    )?.id;
+    if (currentFileId === undefined) {
+      console.warn(
+        `File with name "${documentMetadata.name}" not found in CDF. Skipping auto analysis.`
+      );
+      return;
+    }
+
     // Assign file connection to CDF files
     const toUpdateFileConnections = this.symbolInstances.filter(
       (symbolInstance): symbolInstance is PidFileConnectionInstance =>
         isFileConnection(symbolInstance) &&
-        symbolInstance.linkedCdfFileId === undefined &&
-        symbolInstance.labelIds.length > 0
+        symbolInstance.labelIds.length > 0 &&
+        symbolInstance.linkedDmsFileConnection === undefined
     );
 
     // We don't wan to overload CDF with requests, so we will fire them with a delay — each request every `fireSearchEveryMs` ms.
@@ -1591,15 +1608,71 @@ export class CognitePid {
         const fileInfo = fileInfos?.[0];
         if (fileInfo === undefined) return;
 
-        if (labels.every((label) => fileInfo.name.includes(label))) {
-          fileConnection.linkedCdfFileId = fileInfo.id;
-          fileConnection.linkedCdfFileName = fileInfo.name;
+        if (!labels.every((label) => fileInfo.name.includes(label))) {
+          console.log(
+            `"${query}" not found for file connection:`,
+            fileConnection
+          );
           return;
         }
-        console.log(
-          `"${query}" not found for file connection:`,
-          fileConnection
+
+        fileConnection.linkedCdfFileId = fileInfo.id;
+        fileConnection.linkedCdfFileName = fileInfo.name;
+
+        const modelName = 'FileConnection';
+        // Find linked DMS File Connections
+
+        const filters = [
+          {
+            property: 'filePage',
+            values: [1],
+          },
+          {
+            property: 'fileId',
+            values: [fileInfo.id],
+          },
+          {
+            property: 'modelName',
+            values: [modelName],
+          },
+          {
+            property: 'linkedFileId',
+            values: [currentFileId],
+          },
+        ];
+
+        const oppositeFileDirection = getOppositeFileDirection(
+          fileConnection.fileDirection
         );
+        if (oppositeFileDirection !== undefined) {
+          filters.push({
+            property: 'fileDirection',
+            values: [oppositeFileDirection],
+          });
+        }
+
+        const items = await listNodes(client, {
+          model: modelName,
+          spaceExternalId: DMS_SPACE_EXTERNAL_ID,
+          filters,
+          limit: Infinity,
+        });
+
+        console.log({ items });
+
+        if (items.length === 0) return;
+
+        fileConnection.linkedDmsFileConnectionCandidates = items.map(
+          (item) => item.externalId
+        );
+        if (items.length === 1) {
+          fileConnection.linkedDmsFileConnection = items[0].externalId;
+        } else if (items.length > 1) {
+          console.log(
+            'Found more than one potential DMS File Connection for file connection:',
+            fileConnection
+          );
+        }
       },
       fireSearchEveryMs
     );

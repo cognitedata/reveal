@@ -3,6 +3,7 @@ import {
   DiagramLineInstanceOutputFormat,
   DiagramSymbol,
   GraphDocument,
+  isFileConnection,
   PidFileConnectionInstance,
   Rect,
   SvgRepresentation,
@@ -160,6 +161,9 @@ export interface FileConnectionNode extends Omit<SymbolNode, 'modelName'> {
   direction: number;
   /** string describing whether or not the file connection is pointing outwards of the current file */
   fileDirection: string;
+
+  linkedFileId?: number;
+  linkedFileName?: string;
 }
 
 function svgRepresentationToCommandsAndStyles(
@@ -191,12 +195,6 @@ const getDmsExternalId = ({
 }): string => {
   const prefixString = prefix ? `${prefix}-` : '';
   const externalId = `${prefixString}${fileId}-${filePage}-${id}`;
-
-  if (externalId.length > 255) {
-    throw Error(
-      `External id too long: ${externalId}. Max length is 255 characters.`
-    );
-  }
   return externalId;
 };
 
@@ -312,6 +310,7 @@ export function graphDocumentToNodesAndEdges(options: {
   };
   edges: {
     InstanceEdge: InstanceEdge[];
+    FileLink: FileLinkEdge[];
   };
 } {
   // Used to avoid creating the same node twice when multiple identical instances occur in the GraphDocument
@@ -372,7 +371,7 @@ export function graphDocumentToNodesAndEdges(options: {
       assetName: diagramSymbolInstance.assetName,
     };
 
-    if (diagramSymbolInstance.type === 'File Connection') {
+    if (isFileConnection(diagramSymbolInstance)) {
       const modelName = 'FileConnection';
       const externalId = getDmsExternalId({
         ...filePageInfo,
@@ -390,6 +389,7 @@ export function graphDocumentToNodesAndEdges(options: {
         fileDirection: (diagramSymbolInstance as PidFileConnectionInstance)
           .fileDirection!,
         externalId,
+        linkedFileId: diagramSymbolInstance.linkedCdfFileId,
       };
       idToExternalIdMap.set(diagramSymbolInstance.id, [
         fileConnectionNode.modelName,
@@ -484,6 +484,37 @@ export function graphDocumentToNodesAndEdges(options: {
     });
   });
 
+  const fileLinkEdges: FileLinkEdge[] = [];
+  options.graphDocument.symbolInstances.forEach((fileConnection) => {
+    if (!isFileConnection(fileConnection)) return;
+
+    if (fileConnection.linkedDmsFileConnection === undefined) return;
+    const endNodeExternalId = fileConnection.linkedDmsFileConnection;
+
+    const startInfo = idToExternalIdMap.get(fileConnection.id);
+    if (startInfo === undefined) {
+      throw Error(
+        `No corresponding start node for file connection ${fileConnection}`
+      );
+    }
+    const [_, startNodeExternalId] = startInfo;
+
+    // Sorting the startNode and endNode in case we upsert from the linked document as well later (we would get duplicated fileLinkEdges).
+    // Then we make sure it will have the same externalId.
+    const [startModelSorted, endModelSorted] = [
+      startNodeExternalId,
+      endNodeExternalId,
+    ].sort();
+
+    fileLinkEdges.push({
+      modelName: 'FileLink',
+      type: [options.spaceExternalId, 'FileLink'],
+      startNode: [options.spaceExternalId, startNodeExternalId],
+      endNode: [options.spaceExternalId, endNodeExternalId],
+      externalId: `${startModelSorted}-${endModelSorted}`,
+    });
+  });
+
   return {
     nodes: {
       Viewbox: [viewboxNode],
@@ -493,6 +524,7 @@ export function graphDocumentToNodesAndEdges(options: {
     },
     edges: {
       InstanceEdge: instanceEdges,
+      FileLink: fileLinkEdges,
     },
   };
 }

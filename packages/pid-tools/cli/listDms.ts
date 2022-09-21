@@ -1,8 +1,7 @@
 /* eslint-disable no-console */
 import getMsalClient, { MsalClientOptions } from '../src/utils/msalClient';
 import { listNodes, ModelNodeMap, ModelEdgeMap, listEdges } from '../src/dms';
-
-import findUniqueFileByName from './utils/findUniqueFileByName';
+import findUniqueFileByName from '../src/utils/findUniqueFileByName';
 
 export const listDms = async (argv: any) => {
   const typedArgv = argv as MsalClientOptions & {

@@ -25,6 +25,16 @@ async function upsertCommon<T extends keyof ModelMap>(
 ): Promise<ModelMap[T][]> {
   type Model = ModelMap[T];
 
+  // Enforce the 255 character limit for externalIds here as DMS does not
+  // handle this constraint during upserting properly right now.
+  options.items.forEach((item) => {
+    if (item.externalId.length > 255) {
+      throw Error(
+        `External id too long (max length is 255 characters): ${item.externalId}`
+      );
+    }
+  });
+
   const resultChunks: { worker: number; items: Model[] }[] = [];
   const postModelsWorker = async (worker: number) => {
     // Get the slice from the items corresponding to the index of this worker

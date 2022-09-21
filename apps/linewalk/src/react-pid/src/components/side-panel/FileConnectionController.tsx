@@ -188,6 +188,50 @@ export const FileConnectionController: React.FC<
             'undefined'
           )}
         </Row>
+        <Row cols={1}>
+          <Title level={6}>Linked File Connection</Title>
+          {fileConnection.linkedDmsFileConnection ? (
+            <RemovableRow>
+              {fileConnection.linkedDmsFileConnection}
+            </RemovableRow>
+          ) : (
+            'undefined'
+          )}
+        </Row>
+        <Row cols={1}>
+          <Title level={6}>File connection candidates</Title>
+          {fileConnection.linkedDmsFileConnectionCandidates?.map(
+            (dmsExternalId) => (
+              <RemovableRow key={dmsExternalId}>
+                {dmsExternalId}{' '}
+                <Icon
+                  onClick={() => {
+                    if (
+                      fileConnection.linkedDmsFileConnection === dmsExternalId
+                    ) {
+                      updateFileConnection({
+                        ...fileConnection,
+                        linkedDmsFileConnection: undefined,
+                      });
+                      return;
+                    }
+                    updateFileConnection({
+                      ...fileConnection,
+                      linkedDmsFileConnection: dmsExternalId,
+                    });
+                  }}
+                  type={
+                    dmsExternalId === fileConnection.linkedDmsFileConnection
+                      ? 'FavoriteFilled'
+                      : 'Favorite'
+                  }
+                  size={12}
+                  style={{ cursor: 'pointer' }}
+                />
+              </RemovableRow>
+            )
+          )}
+        </Row>
       </SelectedInstanceInfo>
       <AutoCompleteButtonContainer>
         <AutoComplete

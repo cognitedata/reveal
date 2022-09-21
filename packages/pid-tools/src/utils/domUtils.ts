@@ -232,18 +232,28 @@ export const applyStyleToNode = ({
     case 'connectLabels': {
       if (diagramInstance === undefined) break;
 
+      if (diagramInstance.id === labelSelection) {
+        scaleNodeStrokeWidth(node, HIGHLIGHT_SCALE_FACTOR);
+      }
+
       if (diagramInstance.assetId) {
         ({ color, opacity } = COLORS.symbolWithAsset);
       }
 
       if (isFileConnection(diagramInstance)) {
+        if (diagramInstance.linkedDmsFileConnection !== undefined) {
+          ({ color, opacity } = COLORS.symbolWithAsset);
+          break;
+        }
+
+        if (diagramInstance.linkedDmsFileConnectionCandidates !== undefined) {
+          color = 'purple';
+          break;
+        }
+
         if (diagramInstance.linkedCdfFileId !== undefined) {
           color = 'DarkOrange';
         }
-      }
-
-      if (diagramInstance.id === labelSelection) {
-        scaleNodeStrokeWidth(node, HIGHLIGHT_SCALE_FACTOR);
       }
     }
   }
