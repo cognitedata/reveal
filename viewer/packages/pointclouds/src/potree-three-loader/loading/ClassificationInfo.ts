@@ -2,7 +2,7 @@
  * Copyright 2022 Cognite AS
  */
 
-export type Class = {
+export type PointClass = {
   name: string;
   code: number;
   rgb?: string;
@@ -10,7 +10,7 @@ export type Class = {
 
 export type ClassificationSet = {
   name: string;
-  classificationSet: Class[];
+  classificationSet: PointClass[];
 };
 
 export type ClassificationInfo = {

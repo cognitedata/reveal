@@ -73,10 +73,10 @@ export class PotreeNodeWrapper {
 
     const fallbackColors = createDistinctColors(inputClassifications.length);
 
-    inputClassifications.forEach((clazz, index) => {
-      const rgb = clazz.rgb ? new THREE.Color(clazz.rgb) : fallbackColors[index];
+    inputClassifications.forEach((pointClass, index) => {
+      const rgb = pointClass.rgb ? new THREE.Color(pointClass.rgb) : fallbackColors[index];
 
-      classMap[clazz.name] = { rgb, code: clazz.code };
+      classMap[pointClass.name] = { rgb, code: pointClass.code };
     });
 
     return classMap;
