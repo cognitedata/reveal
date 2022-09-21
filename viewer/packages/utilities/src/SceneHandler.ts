@@ -33,7 +33,10 @@ export class SceneHandler {
     this._customObjects = [];
     this._scene = new THREE.Scene();
 
-    this._scene.autoUpdate = false;
+    // @ts-expect-error
+    // Missing type definition for ThreeJS r144. When this fails,
+    // its most likely because the type definitions have been updated
+    this._scene.matrixWorldAutoUpdate = false;
   }
 
   public addCadModel(object: THREE.Object3D, modelIdentifier: string): void {
