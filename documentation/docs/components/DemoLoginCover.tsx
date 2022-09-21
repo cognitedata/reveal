@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-import React, { ReactElement, useEffect } from 'react';
+import React, { ReactElement } from 'react';
 import { CogniteClient } from '@cognite/sdk';
 import { loginManager } from '../utils/LoginManager';
 import useBaseUrl from '@docusaurus/useBaseUrl';
