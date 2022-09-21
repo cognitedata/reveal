@@ -85,7 +85,7 @@
     "@types/random-seed": "0.3.3",
     "@types/skmeans": "0.11.3",
     "@types/tween.js": "18.5.1",
-    "@typescript-eslint/eslint-plugin": "5.37.0",
+    "@typescript-eslint/eslint-plugin": "5.38.0",
     "@typescript-eslint/parser": "5.38.0",
     "concurrently": "7.4.0",
     "copy-pkg-json-webpack-plugin": "0.0.40",
