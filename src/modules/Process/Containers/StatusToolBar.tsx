@@ -45,7 +45,9 @@ const CustomBreadCrumb = (props: any) => {
             </span>
           )}
           {previous === 'explorer' && current === 'Review' && (
-            <span style={{ cursor: 'pointer' }}> Vision Explore /</span>
+            <span style={{ cursor: 'pointer' }}>
+              Image and video management /
+            </span>
           )}
         </Breadcrumb.Item>
 

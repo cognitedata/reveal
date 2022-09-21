@@ -139,7 +139,7 @@ const Explorer = () => {
 
   return (
     <VerticalContainer>
-      <StatusToolBar current="Vision Explore" />
+      <StatusToolBar current="Image and video management" />
       <Deselect />
       <ExplorerFileUploadModalContainer refetch={reFetch} />
       <ExplorerFileDownloadModalContainer />
