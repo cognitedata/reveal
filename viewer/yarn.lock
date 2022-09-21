@@ -853,7 +853,7 @@ __metadata:
     three: 0.144.0
     three-stdlib: 2.16.1
     ts-jest: 29.0.1
-    ts-loader: 9.4.0
+    ts-loader: 9.4.1
     tsc-alias: 1.7.0
     typescript: 4.8.3
     webpack: 5.74.0
@@ -12162,9 +12162,9 @@ resolve@^1.9.0:
   languageName: node
   linkType: hard
 
-"ts-loader@npm:9.4.0":
-  version: 9.4.0
-  resolution: "ts-loader@npm:9.4.0"
+"ts-loader@npm:9.4.1":
+  version: 9.4.1
+  resolution: "ts-loader@npm:9.4.1"
   dependencies:
     chalk: ^4.1.0
     enhanced-resolve: ^5.0.0
@@ -12173,7 +12173,7 @@ resolve@^1.9.0:
   peerDependencies:
     typescript: "*"
     webpack: ^5.0.0
-  checksum: 354319c7c04dc8603d15f9dff53374f3f94f1bf5998ea2cf766515c2915553c052e410e842b078ae955253fc1bffbfed2adc1678d7ee0cfbbedf76101a142e25
+  checksum: b8947f6d396621cc3f6ba8d4c14fa09eba03c4b7eeabbc429481e923a973c244fb80feb44e900f03fc1010755a6bf14fc561c574fb79e324f39b5b6ef1dcca6c
   languageName: node
   linkType: hard
 
