@@ -24,7 +24,7 @@ export class MixerQueryBuilder {
               field,
               dataModelTypeDefs.types.find(
                 (typeDef) => typeDef.name === field.type.name
-              )!
+              )
             )
           )
           .join('\n')}
@@ -41,28 +41,29 @@ export class MixerQueryBuilder {
 
   private buildQueryItem(
     field: DataModelTypeDefsField,
-    fieldTypeDef: DataModelTypeDefsType
+    fieldTypeDef?: DataModelTypeDefsType
   ): string {
+    const isTimeSeries = field.type.name === 'TimeSeries';
+
     const isPrimitive = mixerApiBuiltInTypes
       .filter((t) => t.type === 'SCALAR')
       .map((t) => t.name)
       .includes(field.type.name);
-    let queryItem = `${field.name}`;
 
-    if (!isPrimitive) {
-      if (isInlineType(fieldTypeDef)) {
-        queryItem = `${queryItem} { ${fieldTypeDef.fields
-          .map((typeDefField) => typeDefField.name)
-          .join('\n')} }`;
-      } else {
-        if (field.type.list) {
-          queryItem = `${queryItem} { items { externalId } }`;
-        } else {
-          queryItem = `${queryItem} { externalId }`;
-        }
-      }
+    if (isPrimitive && !isTimeSeries) {
+      return field.name;
     }
 
-    return queryItem;
+    if (fieldTypeDef && isInlineType(fieldTypeDef)) {
+      return `${field.name} { ${fieldTypeDef.fields
+        .map((typeDefField) => typeDefField.name)
+        .join('\n')} }`;
+    }
+
+    if (field.type.list) {
+      return `${field.name} { items { externalId } }`;
+    }
+
+    return `${field.name} { externalId }`;
   }
 }

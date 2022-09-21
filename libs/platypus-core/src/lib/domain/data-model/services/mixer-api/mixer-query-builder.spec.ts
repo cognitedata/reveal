@@ -94,29 +94,6 @@ describe('MixerApiQueryBuilderServiceTest', () => {
 
     const limit = 100;
     const cursor = 'abcd=';
-    const mockType = {
-      name: 'Person',
-      fields: [
-        {
-          name: 'name',
-          type: {
-            name: 'String',
-            list: false,
-            nonNull: true,
-          },
-          nonNull: true,
-        },
-        {
-          name: 'posts',
-          type: {
-            name: 'Post',
-            list: true,
-            nonNull: true,
-          },
-          nonNull: true,
-        },
-      ],
-    };
 
     const expected = `query {
       listPerson(first: ${limit}, after: "${cursor}") {
@@ -125,6 +102,57 @@ describe('MixerApiQueryBuilderServiceTest', () => {
           name
 posts { items { externalId } }
 user { name }
+        }
+        pageInfo {
+          startCursor
+          hasPreviousPage
+          hasNextPage
+          endCursor
+        }
+      }
+    }`;
+
+    const query = service.buildQuery({
+      cursor,
+      hasNextPage: true,
+      limit,
+      dataModelType: mockTypeDefs.types[0],
+      dataModelTypeDefs: mockTypeDefs,
+    });
+
+    expect(normalizeString(query)).toEqual(normalizeString(expected));
+  });
+
+  it('should select externalId on TimeSeries fields', () => {
+    const service = createInstance();
+
+    const mockTypeDefs = {
+      types: [
+        {
+          name: 'Person',
+          fields: [
+            {
+              name: 'myTimeSeries',
+              type: {
+                name: 'TimeSeries',
+                list: false,
+                nonNull: false,
+              },
+              nonNull: false,
+            },
+          ],
+        },
+      ],
+    };
+
+    const limit = 100;
+    const cursor = 'abcd=';
+
+    const expected = `query {
+      listPerson(first: ${limit}, after: "${cursor}") {
+        items {
+          externalId
+          myTimeSeries { externalId }
         }
         pageInfo {
           startCursor
