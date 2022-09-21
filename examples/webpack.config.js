@@ -49,7 +49,7 @@ module.exports = {
   ],
   resolve: {
     extensions: ['.tsx', '.ts', '.js', '.css'],
-    symlinks: false
+    symlinks: true
   },
   devtool: 'eval-source-map',
   output: {
