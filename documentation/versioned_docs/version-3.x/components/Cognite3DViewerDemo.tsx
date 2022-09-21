@@ -6,7 +6,6 @@ import React, { useEffect, useRef } from 'react';
 import {
   AddModelOptions,
   Cognite3DViewer,
-  CognitePointCloudModel,
   SupportedModelTypes
 } from '@cognite/reveal-3.x';
 
