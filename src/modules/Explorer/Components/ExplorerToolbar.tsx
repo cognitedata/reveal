@@ -53,7 +53,7 @@ export const ExplorerToolbar = ({
     <>
       <TitleBar>
         <Left>
-          <Title level={2}>Vision Explore</Title>
+          <Title level={2}>Image and video management</Title>
         </Left>
 
         <Right>
