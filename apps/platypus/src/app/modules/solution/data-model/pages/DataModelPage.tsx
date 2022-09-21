@@ -38,6 +38,10 @@ import {
 } from '@platypus-app/hooks/useDataModelActions';
 import { useQueryClient } from 'react-query';
 import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
+import { ToggleVisualizer } from '../components/ToggleVisualizer/ToggleVisualizer';
+import { usePersistedState } from '@platypus-app/hooks/usePersistedState';
+
+const MAX_TYPES_VISUALIZABLE = 30;
 
 export interface DataModelPageProps {
   dataModelExternalId: string;
@@ -53,8 +57,13 @@ export const DataModelPage = ({ dataModelExternalId }: DataModelPageProps) => {
   const { data: dataModelVersions, refetch: refetchDataModelVersions } =
     useDataModelVersions(dataModelExternalId);
   const queryClient = useQueryClient();
-  const { currentTypeName, editorMode, graphQlSchema, selectedVersionNumber } =
-    useSelector<DataModelState>((state) => state.dataModel);
+  const {
+    currentTypeName,
+    editorMode,
+    graphQlSchema,
+    selectedVersionNumber,
+    typeDefs,
+  } = useSelector<DataModelState>((state) => state.dataModel);
   const { setEditorMode, setGraphQlSchema, setIsDirty, setBuiltInTypes } =
     useDataModelState();
   const { setLocalDraft, removeLocalDraft, getLocalDraft } =
@@ -97,6 +106,11 @@ export const DataModelPage = ({ dataModelExternalId }: DataModelPageProps) => {
       `/data-models/${dataModelExternalId}/${dataModelVersion.version}/data`
     );
   };
+
+  const [isVisualizerOn, setIsVisualizerOn] = usePersistedState(
+    true,
+    `${dataModelExternalId}::isVisualizerOn`
+  );
 
   // Use this hook as init livecycle
   useEffect(() => {
@@ -315,11 +329,22 @@ export const DataModelPage = ({ dataModelExternalId }: DataModelPageProps) => {
                   <PageToolbar
                     title={t('preview_title', 'Preview')}
                     size={Size.SMALL}
-                  />
+                  >
+                    {typeDefs.types.length > MAX_TYPES_VISUALIZABLE && (
+                      <ToggleVisualizer
+                        isVisualizerOn={isVisualizerOn}
+                        setIsVisualizerOn={setIsVisualizerOn}
+                      />
+                    )}
+                  </PageToolbar>
                   <ErrorBoundary errorComponent={<ErrorPlaceholder />}>
                     <SchemaVisualizer
                       active={currentTypeName || undefined}
                       graphQLSchemaString={graphQlSchema}
+                      isVisualizerOn={
+                        typeDefs.types.length <= MAX_TYPES_VISUALIZABLE ||
+                        isVisualizerOn
+                      }
                     />
                   </ErrorBoundary>
                 </Flex>

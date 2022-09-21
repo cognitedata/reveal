@@ -14,12 +14,12 @@ export const usePersistedState = <T>(defaultValue: T, key: string) => {
 
   const [value, setValue] = useState(() => {
     const localStorageValue = localStorageProvider.getItem(key);
-    return localStorageValue || defaultValue;
+    return localStorageValue !== null ? localStorageValue : defaultValue;
   });
 
   useEffect(() => {
     localStorageProvider.setItem(key, value);
-  });
+  }, [key, localStorageProvider, value]);
 
   return [value, setValue];
 };

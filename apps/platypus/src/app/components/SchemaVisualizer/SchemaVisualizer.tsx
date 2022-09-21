@@ -35,9 +35,11 @@ export const SchemaVisualizer = React.memo(
   ({
     graphQLSchemaString,
     active,
+    isVisualizerOn,
   }: {
     graphQLSchemaString?: string;
     active?: string;
+    isVisualizerOn: boolean;
     /* Customize the Visualizer rendering */
   }) => {
     const { t } = useTranslation('Schema Visualizer');
@@ -64,14 +66,14 @@ export const SchemaVisualizer = React.memo(
         return [];
       }
 
+      if (!isVisualizerOn) {
+        setErrorMessage('Data model preview is currently turned off');
+        setIsLoaded(true);
+        return [];
+      }
+
       try {
         const { definitions } = parse(graphQLSchemaString || '');
-        if (definitions.length > 30) {
-          setErrorMessage(
-            'The visualizer currently only support up to 30 types.'
-          );
-          return [];
-        }
         return definitions;
       } catch {
         // TODO: Add sentry
@@ -79,7 +81,7 @@ export const SchemaVisualizer = React.memo(
         setIsLoaded(true);
         return [];
       }
-    }, [graphQLSchemaString, setErrorMessage]);
+    }, [graphQLSchemaString, setErrorMessage, isVisualizerOn]);
 
     const [popover, setPopover] = useState<React.ReactNode | undefined>(
       undefined
@@ -180,6 +182,7 @@ export const SchemaVisualizer = React.memo(
             justifyContent="center"
             style={{ flex: 1 }}
             direction="column"
+            data-cy="schema-visualizer-err-ctr"
           >
             <Title level={5} style={{ textAlign: 'center', marginBottom: 16 }}>
               {t('failed_to_load', 'Unable to visualize the Data Model.')}

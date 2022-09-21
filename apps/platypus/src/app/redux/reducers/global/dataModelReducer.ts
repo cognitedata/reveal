@@ -219,6 +219,7 @@ const dataModelSlice = createSlice({
       state.typeDefs = typeDefsBuilder.removeType(state.typeDefs, typeName);
       updateDataModelState(state);
     },
+
     clearState,
   },
 });
