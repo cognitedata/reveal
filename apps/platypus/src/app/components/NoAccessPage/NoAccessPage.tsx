@@ -64,23 +64,23 @@ const NoAccessPage = (): JSX.Element => {
             "sourceId": "<my AD group UUID>",
             "capabilities": [
               {
-                dataModelsAcl: {
-                  actions: ['READ', 'WRITE'],
-                  scope: {
-                    all: {},
-                  },
-                },
+                "dataModelsAcl": {
+                  "actions": ["READ", "WRITE"],
+                  "scope": {
+                    "all": {}
+                  }
+                }
               },
               {
-                dataModelInstancesAcl: {
-                  actions: ['READ', 'WRITE'],
-                  scope: {
-                    all: {},
-                  },
-                },
-              },
+                "dataModelInstancesAcl": {
+                  "actions": ["READ", "WRITE"],
+                  "scope": {
+                    "all": {}
+                  }
+                }
+              }
             ]
-      },
+      }
     ]
 }'`}</pre>
         </Tabs.TabPane>
