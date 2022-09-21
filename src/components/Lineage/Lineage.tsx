@@ -149,14 +149,18 @@ const Lineage = ({ dataSetWithExtpipes, isExtpipesFetched }: LineageProps) => {
         <Timeline>
           {hasSources ? (
             <Timeline.Item dot={<LineageDot />}>
-              <LineageTitle>{t('source_one')}</LineageTitle>
+              <LineageTitle>
+                {t('source_one', { postProcess: 'uppercase' })}
+              </LineageTitle>
               <LineageSubTitle>{t('lineage-source-text')}</LineageSubTitle>
               <Source sourceNames={sourceNames} />
             </Timeline.Item>
           ) : null}
           {hasExtractorAccounts ? (
             <Timeline.Item dot={<LineageDot />}>
-              <LineageTitle>{t('extractor_one')}</LineageTitle>
+              <LineageTitle>
+                {t('extractor_one', { postProcess: 'uppercase' })}
+              </LineageTitle>
               <LineageSubTitle>{t('lineage-extractor-text')}</LineageSubTitle>
               <Extractor extractorAccounts={extractorAccounts} />
             </Timeline.Item>
@@ -173,7 +177,9 @@ const Lineage = ({ dataSetWithExtpipes, isExtpipesFetched }: LineageProps) => {
           />
           {usedTransformations && (
             <Timeline.Item dot={<LineageDot />}>
-              <LineageTitle>{t('transformation_one')}</LineageTitle>
+              <LineageTitle>
+                {t('transformation_one', { postProcess: 'uppercase' })}
+              </LineageTitle>
               <LineageSubTitle>
                 {t('lineage-transformations-subtitle')}
               </LineageSubTitle>

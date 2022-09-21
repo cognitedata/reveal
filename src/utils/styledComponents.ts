@@ -197,7 +197,6 @@ export const EmptyLineageDot = styled.div`
 
 export const LineageTitle = styled.h5`
   font-size: 16px;
-  text-transform: uppercase;
 `;
 
 export const LineageSubTitle = styled.p`

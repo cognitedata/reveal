@@ -17,6 +17,7 @@ import { DataSetsContextProvider } from 'context';
 import AccessCheck from 'AccessCheck';
 import { translations } from 'common/i18n';
 import styled from 'styled-components';
+import { FlagProvider } from '@cognite/react-feature-flags';
 
 const DataSetsList = lazy(() => import('pages/DataSetsList/DataSetsList'));
 const DataSetDetails = lazy(
@@ -38,49 +39,47 @@ const App = () => {
   const env = getEnv();
 
   return (
-    <I18nWrapper
-      flagProviderProps={{
-        apiToken: 'v2Qyg7YqvhyAMCRMbDmy1qA6SuG8YCBE',
-        appName,
-        projectName,
-      }}
-      translations={translations}
-      defaultNamespace="data-sets"
-    >
-      <QueryClientProvider client={queryClient}>
-        <GlobalStyles>
-          <SubAppWrapper title="Data Sets">
-            <AuthWrapper
-              loadingScreen={<Loader />}
-              login={() => loginAndAuthIfNeeded(projectName, env)}
-            >
-              <SDKProvider sdk={sdk}>
-                <DataSetsContextProvider>
-                  <PageWrapper>
-                    <BrowserRouter>
-                      <Suspense fallback={<Loader />}>
-                        <AccessCheck>
-                          <Routes>
-                            <Route
-                              path="/:tenant/:appPath"
-                              element={<DataSetsList />}
-                            />
-                            <Route
-                              path="/:tenant/:appPath/data-set/:dataSetId"
-                              element={<DataSetDetails />}
-                            />
-                          </Routes>
-                        </AccessCheck>
-                      </Suspense>
-                    </BrowserRouter>
-                  </PageWrapper>
-                </DataSetsContextProvider>
-              </SDKProvider>
-            </AuthWrapper>
-          </SubAppWrapper>
-        </GlobalStyles>
-        <ReactQueryDevtools initialIsOpen={false} />
-      </QueryClientProvider>
+    <I18nWrapper translations={translations} defaultNamespace="data-sets">
+      <FlagProvider
+        apiToken="v2Qyg7YqvhyAMCRMbDmy1qA6SuG8YCBE"
+        appName={appName}
+        projectName={projectName}
+      >
+        <QueryClientProvider client={queryClient}>
+          <GlobalStyles>
+            <SubAppWrapper title="Data Sets">
+              <AuthWrapper
+                loadingScreen={<Loader />}
+                login={() => loginAndAuthIfNeeded(projectName, env)}
+              >
+                <SDKProvider sdk={sdk}>
+                  <DataSetsContextProvider>
+                    <PageWrapper>
+                      <BrowserRouter>
+                        <Suspense fallback={<Loader />}>
+                          <AccessCheck>
+                            <Routes>
+                              <Route
+                                path="/:tenant/:appPath"
+                                element={<DataSetsList />}
+                              />
+                              <Route
+                                path="/:tenant/:appPath/data-set/:dataSetId"
+                                element={<DataSetDetails />}
+                              />
+                            </Routes>
+                          </AccessCheck>
+                        </Suspense>
+                      </BrowserRouter>
+                    </PageWrapper>
+                  </DataSetsContextProvider>
+                </SDKProvider>
+              </AuthWrapper>
+            </SubAppWrapper>
+          </GlobalStyles>
+          <ReactQueryDevtools initialIsOpen={false} />
+        </QueryClientProvider>
+      </FlagProvider>
     </I18nWrapper>
   );
 };
