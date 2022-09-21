@@ -841,7 +841,7 @@ __metadata:
     prettier: 2.7.1
     process: 0.11.10
     proj4: 2.8.0
-    puppeteer: 17.1.3
+    puppeteer: 18.0.3
     random-seed: 0.3.0
     raw-loader: 4.0.2
     resize-observer-polyfill: 1.5.1
@@ -851,7 +851,7 @@ __metadata:
     shx: 0.3.4
     skmeans: 0.11.3
     three: 0.144.0
-    three-stdlib: 2.15.0
+    three-stdlib: 2.16.1
     ts-jest: 29.0.1
     ts-loader: 9.3.1
     tsc-alias: 1.7.0
@@ -859,7 +859,7 @@ __metadata:
     webpack: 5.74.0
     webpack-bundle-analyzer: 4.6.1
     webpack-cli: 4.10.0
-    webpack-dev-server: 4.11.0
+    webpack-dev-server: 4.11.1
     webpack-log: 3.0.2
     webpack-node-externals: 3.0.0
     whatwg-fetch: 3.6.2
@@ -10384,9 +10384,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"puppeteer@npm:17.1.3":
-  version: 17.1.3
-  resolution: "puppeteer@npm:17.1.3"
+"puppeteer@npm:18.0.3":
+  version: 18.0.3
+  resolution: "puppeteer@npm:18.0.3"
   dependencies:
     cross-fetch: 3.1.5
     debug: 4.3.4
@@ -10399,7 +10399,7 @@ __metadata:
     tar-fs: 2.1.1
     unbzip2-stream: 1.4.3
     ws: 8.8.1
-  checksum: b4518956c661df4c37690d46b9c6744d42d59d01fe3764938b4b3af8de4c94ef11a9dfa6bc261798f5e5490c6dce4d4f555f05d42c735249683da3017faf4585
+  checksum: 1c616703cad7da70944b2729450941144273c78d3b5554aac536a1471f3f635477a89f537ef8d51b81f3dbe7ce0fc135ffdc7f5ddc813bc4ac43ca2850e4c611
   languageName: node
   linkType: hard
 
@@ -11001,12 +11001,12 @@ resolve@^1.9.0:
   languageName: node
   linkType: hard
 
-"selfsigned@npm:^2.0.1":
-  version: 2.0.1
-  resolution: "selfsigned@npm:2.0.1"
+"selfsigned@npm:^2.1.1":
+  version: 2.1.1
+  resolution: "selfsigned@npm:2.1.1"
   dependencies:
     node-forge: ^1
-  checksum: 864e65c2f31ca877bce3ccdaa3bdef5e1e992b63b2a03641e00c24cd305bf2acce093431d1fed2e5ae9f526558db4be5e90baa2b3474c0428fcf7e25cc86ac93
+  checksum: aa9ce2150a54838978d5c0aee54d7ebe77649a32e4e690eb91775f71fdff773874a4fbafd0ac73d8ec3b702ff8a395c604df4f8e8868528f36fd6c15076fb43a
   languageName: node
   linkType: hard
 
@@ -11981,9 +11981,9 @@ resolve@^1.9.0:
   languageName: node
   linkType: hard
 
-"three-stdlib@npm:2.15.0":
-  version: 2.15.0
-  resolution: "three-stdlib@npm:2.15.0"
+"three-stdlib@npm:2.16.1":
+  version: 2.16.1
+  resolution: "three-stdlib@npm:2.16.1"
   dependencies:
     "@babel/runtime": ^7.16.7
     "@types/offscreencanvas": ^2019.6.4
@@ -11998,7 +11998,7 @@ resolve@^1.9.0:
     zstddec: ^0.0.2
   peerDependencies:
     three: ">=0.122.0"
-  checksum: 3161d5ab633b0e1a63ae6b8792d24f28b99766a5a70b37e84e905336a08ecf6db6111401674360f5cb772ad012c4d68c12891b0aa50fca174635960f370c474e
+  checksum: 7f27a69d9eeceb9ecd0ddc91f472ccefbdbb39f41b87cd457ff00b34a2f560a7a3bb9b42e639f5917d04c6e803cba0f2ac928934972c428336cbc54e72c147fd
   languageName: node
   linkType: hard
 
@@ -12616,9 +12616,9 @@ typescript@4.8.3:
   languageName: node
   linkType: hard
 
-"webpack-dev-server@npm:4.11.0":
-  version: 4.11.0
-  resolution: "webpack-dev-server@npm:4.11.0"
+"webpack-dev-server@npm:4.11.1":
+  version: 4.11.1
+  resolution: "webpack-dev-server@npm:4.11.1"
   dependencies:
     "@types/bonjour": ^3.5.9
     "@types/connect-history-api-fallback": ^1.3.5
@@ -12643,7 +12643,7 @@ typescript@4.8.3:
     p-retry: ^4.5.0
     rimraf: ^3.0.2
     schema-utils: ^4.0.0
-    selfsigned: ^2.0.1
+    selfsigned: ^2.1.1
     serve-index: ^1.9.1
     sockjs: ^0.3.24
     spdy: ^4.0.2
@@ -12656,7 +12656,7 @@ typescript@4.8.3:
       optional: true
   bin:
     webpack-dev-server: bin/webpack-dev-server.js
-  checksum: b2c7e9810138d0c6fa670a890410a74b29d4dd23d428e92e61e0233c542689f57caf9b31c031fbcc772170b6710b0752e81fa9cbc41ac0deefdc32d5749ce08d
+  checksum: b7601a39ee0f413988259e29a36835b0a68522cfaa161de5b7ec99b3399acdd99d44189add4aaf4a5191258bb130f9cf3e68919324a1955c7557f5fe6ab0d96c
   languageName: node
   linkType: hard
 
