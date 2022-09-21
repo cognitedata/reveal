@@ -8,6 +8,7 @@ on:
 jobs:
   delete-preview-docs:
     name: Delete preview docs
+    concurrency: deploy-preview-documentation
     runs-on: ubuntu-latest
     steps: 
       - name: Initialize variables
