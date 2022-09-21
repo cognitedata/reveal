@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { log, getTenantInfo } from '@cognite/react-container';
+import { log, getProjectInfo } from '@cognite/react-container';
 import { Collapse } from '@cognite/cogs.js';
 
 import {
@@ -21,10 +21,10 @@ export const prepareData = ({
 }: {
   baseUrl: string;
   requirements: AccessRequirements;
-}) => {
+}): AccessCheckResult => {
   const [access, setAccess] = React.useState<AccessCheckResult>([]);
   const [currentAccess, setCurrentAccess] = React.useState<InspectResult>();
-  const [project] = getTenantInfo();
+  const [project] = getProjectInfo();
   const userAccess = checkUserAccess(requirements, currentAccess, project);
   const inspectingToken = getInspectedToken(baseUrl);
 

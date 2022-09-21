@@ -67,7 +67,7 @@ export const WellReportModal = () => {
       sourceValue={wellFeedback.wellboreMatchingId!}
       feedbackTypeOptions={dataSetFeedabckTypes}
       dataSetOptions={dataSets}
-      visible={wellFeedback.visible}
+      visible
       onCancel={onCancel}
       onCreateReport={handleCreateReport}
     />

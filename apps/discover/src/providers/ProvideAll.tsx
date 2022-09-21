@@ -6,6 +6,7 @@ import { SIDECAR } from 'constants/app';
 
 import { ProvideAuthSetup } from './ProvideAuthSetup';
 import { ProvideAzureTelemetry } from './ProvideAzureTelemetry';
+import { ProvidePermissions } from './ProvidePermissions';
 import { ProvideProjectConfig } from './ProvideProjectConfig';
 import { ProvideUnleash } from './ProvideUnleash';
 
@@ -23,7 +24,9 @@ export const Providers: React.FC<React.PropsWithChildren<unknown>> = ({
           return (
             <ProvideProjectConfig>
               <ProvideAuthSetup authState={authState}>
-                <ProvideAzureTelemetry>{children}</ProvideAzureTelemetry>
+                <ProvideAzureTelemetry>
+                  <ProvidePermissions>{children}</ProvidePermissions>
+                </ProvideAzureTelemetry>
               </ProvideAuthSetup>
             </ProvideProjectConfig>
           );

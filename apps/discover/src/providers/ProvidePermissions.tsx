@@ -1,6 +1,9 @@
+import { createContext, useContext, FC, PropsWithChildren } from 'react';
+
 import {
   AccessRequirements,
-  UserAccessList as CogniteUserAccessList,
+  AccessCheckResult,
+  prepareData,
 } from '@cognite/react-acl';
 
 import { SIDECAR } from 'constants/app';
@@ -18,11 +21,18 @@ const requirements: AccessRequirements = [
   { context: 'wells', aclName: 'wellsAcl', acl: ['READ'] },
 ];
 
-export const UserAccessList: React.FC = () => {
+export const PermissionsContext = createContext<AccessCheckResult>([]);
+
+export const usePermissionsContext = () => useContext(PermissionsContext);
+
+export const ProvidePermissions: FC<PropsWithChildren<object>> = ({
+  children,
+}) => {
+  const data = prepareData({ baseUrl: SIDECAR.cdfApiBaseUrl, requirements });
+
   return (
-    <CogniteUserAccessList
-      requirements={requirements}
-      baseUrl={SIDECAR.cdfApiBaseUrl}
-    />
+    <PermissionsContext.Provider value={data}>
+      {children}
+    </PermissionsContext.Provider>
   );
 };

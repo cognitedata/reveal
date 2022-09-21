@@ -3,11 +3,11 @@ import layers from 'utils/zindex';
 
 import { Body } from '@cognite/cogs.js';
 
-import { FlexColumn, FlexRow, sizes } from 'styles/layout';
+import { Flex, FlexRow, sizes } from 'styles/layout';
 
-export const DetailsContainer = styled(FlexColumn)`
+export const DetailsContainer = styled(Flex)`
   margin-left: ${sizes.small};
-  width: 100%;
+  flex-direction: column;
 `;
 
 export const NavigationPanelContainer = styled(FlexRow)`
@@ -16,6 +16,7 @@ export const NavigationPanelContainer = styled(FlexRow)`
   z-index: ${layers.TOP_BAR};
   border-bottom: 1px solid var(--cogs-border-default);
   background: var(--cogs-bg-accent);
+  justify-content: space-between;
 `;
 
 export const Title = styled(Body)`

@@ -1,3 +1,4 @@
+import { useReportPermissions } from 'domain/reportManager/internal/queries/useReportPermissions';
 import { useClearAllFilters } from 'domain/savedSearches/internal/hooks/useClearAllFilters';
 
 import { useMemo } from 'react';
@@ -40,6 +41,7 @@ export const Topbar: React.FC = () => {
   const activePanel = useActivePanel();
   const { pathname } = useLocation();
   const { data: externalLinks } = useProjectConfigByKey('externalLinks');
+  const { canReadReports } = useReportPermissions();
 
   const getNavigationHandler =
     (page: string, id = -1) =>
@@ -117,6 +119,12 @@ export const Topbar: React.FC = () => {
                 navigation.REPORT_PANEL,
                 PATHNAMES.REPORTS
               ),
+              disabled: !canReadReports,
+              tooltipProps: {
+                content: !canReadReports
+                  ? 'You do not have permission to read reports'
+                  : '',
+              },
             },
           ].concat(
             ((externalLinks as Array<any>) || []).map((externalLink) => {
@@ -130,7 +138,7 @@ export const Topbar: React.FC = () => {
         />
       </TopBar.Left>
     ),
-    [activeTab, activePanel, externalLinks]
+    [activeTab, activePanel, externalLinks, canReadReports]
   );
 
   const renderTopBarRight = React.useMemo(

@@ -5,13 +5,22 @@ import { REPORTS_QUERY_KEY } from 'constants/react-query';
 import { reportManagerAPI } from '../../service/network/reportManagerAPI';
 import { Report } from '../types';
 
+import { useReportPermissions } from './useReportPermissions';
+
 export const useActiveReportsQuery = (
   externalIds: string[]
 ): UseQueryResult<Report[]> => {
-  return useQuery([REPORTS_QUERY_KEY.ACTIVE_REPORTS, externalIds], () =>
-    reportManagerAPI.search({
-      status: ['BACKLOG', 'IN_PROGRESS'],
-      externalIds,
-    })
+  const { canReadReports } = useReportPermissions();
+
+  return useQuery(
+    [REPORTS_QUERY_KEY.ACTIVE_REPORTS, externalIds, canReadReports],
+    () =>
+      reportManagerAPI.search({
+        status: ['BACKLOG', 'IN_PROGRESS'],
+        externalIds,
+      }),
+    {
+      enabled: canReadReports,
+    }
   );
 };

@@ -1,4 +1,5 @@
 import { NavigationPanel } from 'components/NavigationPanel';
+import { WellReportButtonMenu } from 'pages/authorized/wellReportManager/WellReportButtonMenu';
 
 import { WellboreNavigationPanelProps } from './types';
 
@@ -37,13 +38,18 @@ export const WellboreNavigationPanel = ({
       };
 
   return (
-    <NavigationPanel
-      title={wellboreName}
-      subtitle={wellName}
-      {...navigationProps}
-      onBackClick={onBackClick}
-      isPreviousButtonDisabled={isFirstWellbore}
-      isNextButtonDisabled={isLastWellbore}
-    />
+    <>
+      <NavigationPanel
+        title={wellboreName}
+        subtitle={wellName}
+        {...navigationProps}
+        onBackClick={onBackClick}
+        isPreviousButtonDisabled={isFirstWellbore}
+        isNextButtonDisabled={isLastWellbore}
+        additionalActionComponent={
+          <WellReportButtonMenu wellboreMatchingId={wellboreMatchingId} />
+        }
+      />
+    </>
   );
 };

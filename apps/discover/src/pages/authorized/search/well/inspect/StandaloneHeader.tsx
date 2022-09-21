@@ -10,11 +10,13 @@ import { StandaloneHeaderWrapper, StandaloneHeaderTitle } from './elements';
 export interface Props {
   title: string;
   hidden?: boolean;
+  additionalActionComponent?: React.ReactElement;
 }
 
 export const StandaloneHeader: React.FC<Props> = ({
   title,
   hidden = false,
+  additionalActionComponent,
 }) => {
   const { t } = useTranslation();
   const history = useHistory();
@@ -27,6 +29,7 @@ export const StandaloneHeader: React.FC<Props> = ({
     <StandaloneHeaderWrapper>
       <StandaloneHeaderTitle>{t(title)}</StandaloneHeaderTitle>
       <FlexGrow />
+      {additionalActionComponent}
       <CloseButton
         onClick={() => history.goBack()}
         data-testid="standalone-header-close-btn"

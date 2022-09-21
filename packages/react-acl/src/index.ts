@@ -1,2 +1,2 @@
 export * from './components/UserAccessList';
-export type { AccessRequirements } from './types';
+export type { AccessRequirements, AccessCheckResult } from './types';

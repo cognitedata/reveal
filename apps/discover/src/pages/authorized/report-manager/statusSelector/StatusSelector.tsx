@@ -4,7 +4,7 @@ import { Report, DisplayReport } from 'domain/reportManager/internal/types';
 import map from 'lodash/map';
 import styled from 'styled-components/macro';
 
-import { Button } from '@cognite/cogs.js';
+import { Button, LabelProps } from '@cognite/cogs.js';
 
 import { Dropdown } from 'components/Dropdown';
 
@@ -49,6 +49,13 @@ const containers: Record<DisplayReport['status'], any> = {
   Resolved: DropdownContainerResolved,
   'In progress': DropdownContainerInProgress,
   Dismissed: DropdownContainerDismissed,
+};
+
+const LABEL_VARIANTS: Record<DisplayReport['status'], LabelProps['variant']> = {
+  Backlog: 'normal',
+  Resolved: 'success',
+  'In progress': 'warning',
+  Dismissed: 'unknown',
 };
 
 const StatusDropdownMenu = ({
@@ -113,5 +120,5 @@ export const StatusSelector = ({
     );
   }
 
-  return <StatusLabel value={value} />;
+  return <StatusLabel value={value} variant={LABEL_VARIANTS[value]} />;
 };

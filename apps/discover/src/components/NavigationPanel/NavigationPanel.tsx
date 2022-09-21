@@ -1,5 +1,7 @@
 import * as React from 'react';
 
+import { Flex } from '@cognite/cogs.js';
+
 import { BackButton, BaseButton } from '../Buttons';
 
 import {
@@ -17,6 +19,7 @@ interface Props {
   onPreviousClick?: () => void;
   onNextClick?: () => void;
   onBackClick: () => void;
+  additionalActionComponent?: React.ReactElement;
 }
 
 export const NavigationPanel: React.FC<Props> = ({
@@ -27,17 +30,21 @@ export const NavigationPanel: React.FC<Props> = ({
   onBackClick,
   onNextClick,
   onPreviousClick,
+  additionalActionComponent,
 }) => {
   return (
     <NavigationPanelContainer>
-      <BackButton type="secondary" onClick={onBackClick} />
+      <Flex alignItems="center">
+        <BackButton type="secondary" onClick={onBackClick} />
 
-      <DetailsContainer>
-        <Title data-testid="title">{title}</Title>
-        <Subtitle>{subtitle}</Subtitle>
-      </DetailsContainer>
+        <DetailsContainer>
+          <Title data-testid="title">{title}</Title>
+          <Subtitle>{subtitle}</Subtitle>
+        </DetailsContainer>
+      </Flex>
+      <Flex>
+        {additionalActionComponent}
 
-      <>
         {onPreviousClick && (
           <BaseButton
             icon="ChevronLeft"
@@ -57,7 +64,7 @@ export const NavigationPanel: React.FC<Props> = ({
             aria-label="next-wellbore"
           />
         )}
-      </>
+      </Flex>
     </NavigationPanelContainer>
   );
 };

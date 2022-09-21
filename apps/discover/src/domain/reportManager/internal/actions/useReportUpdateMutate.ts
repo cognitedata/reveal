@@ -55,7 +55,7 @@ export const useReportUpdateMutate = () => {
       // but delay 2000ms for events api to catch up
       onSettled: () => {
         setTimeout(() => {
-          queryClient.invalidateQueries(REPORTS_QUERY_KEY.ALL);
+          queryClient.invalidateQueries([REPORTS_QUERY_KEY.ALL]);
         }, 2000);
       },
     }

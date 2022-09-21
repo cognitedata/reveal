@@ -29,5 +29,5 @@ export const useReportsQuery = (
 
 export const useAllReportsInvalidate = () => {
   const queryClient = useQueryClient();
-  return () => queryClient.invalidateQueries(REPORTS_QUERY_KEY.ALL);
+  return () => queryClient.invalidateQueries([REPORTS_QUERY_KEY.ALL]);
 };
