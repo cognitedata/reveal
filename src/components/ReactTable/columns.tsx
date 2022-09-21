@@ -1,6 +1,12 @@
 import { Body, Flex, Tag, Tooltip } from '@cognite/cogs.js';
+import { DataSet, CogniteEvent } from '@cognite/sdk';
 import { useCdfItem, useCdfItems } from '@cognite/sdk-react-query-hooks';
-import { DataSet } from '@cognite/sdk/dist/src';
+import capitalize from 'lodash/capitalize';
+import uniqueId from 'lodash/uniqueId';
+import React from 'react';
+import { Column } from 'react-table';
+import styled from 'styled-components';
+
 import { HighlightCell, TimeDisplay } from 'components';
 import {
   SequenceWithRelationshipLabels,
@@ -8,17 +14,13 @@ import {
 } from 'containers';
 import { AssetWithRelationshipLabels } from 'containers/Assets/AssetTable/AssetNewTable';
 import { FileWithRelationshipLabels } from 'containers/Files/FileTable/FileNewTable';
-import capitalize from 'lodash/capitalize';
-import uniqueId from 'lodash/uniqueId';
-import React from 'react';
-import { Column } from 'react-table';
-import styled from 'styled-components';
 import { mapFileType } from 'utils';
 
 export interface ResourceTableHashMap {
   [key: string]: Column<
     TimeseriesWithRelationshipLabels &
       AssetWithRelationshipLabels &
+      CogniteEvent &
       FileWithRelationshipLabels &
       SequenceWithRelationshipLabels
   >;
@@ -134,6 +136,30 @@ export const ResourceTableColumns: ResourceTableHashMap = {
         <Body level={3}>{assetsName}</Body>
       ) : null;
     },
+  },
+  type: {
+    accessor: 'type',
+    Header: 'Type',
+    Cell: ({ value, row }) => {
+      const finalString = row.original.subtype
+        ? `${value} - ${row.original.subtype}`
+        : row.original.type;
+      return <Body level={3}>{finalString}</Body>;
+    },
+  },
+  startTime: {
+    accessor: 'startTime',
+    Header: 'Start Time',
+    Cell: ({ value }) => (
+      <Body level={2}>{value ? <TimeDisplay value={value} /> : 'Not Set'}</Body>
+    ),
+  },
+  endTime: {
+    accessor: 'endTime',
+    Header: 'End Time',
+    Cell: ({ value }) => (
+      <Body level={2}>{value ? <TimeDisplay value={value} /> : 'Not Set'}</Body>
+    ),
   },
   mimeType: {
     accessor: 'mimeType',
