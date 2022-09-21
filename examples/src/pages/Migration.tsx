@@ -42,12 +42,12 @@ export function Migration() {
   const urlParams = url.searchParams;
   const environmentParam = urlParams.get('env');
   const canvasWrapperRef = useRef<HTMLDivElement>(null);
-  
+
   useEffect(() => {
     // Check in order to avoid double initialization of everything, especially dat.gui.
     // See https://reactjs.org/docs/strict-mode.html#detecting-unexpected-side-effects for why its called twice.
     if (!canvasWrapperRef.current) {
-      return () => {};
+      return () => { };
     }
 
     const gui = new dat.GUI({ width: Math.min(500, 0.8 * window.innerWidth) });
@@ -383,13 +383,46 @@ export function Migration() {
       controlsGui.add(guiState.controls, 'changeCameraTargetOnClick').name('Change camera target on click').onFinishChange(value => {
         cameraManager.setCameraControlsOptions({ ...cameraManager.getCameraControlsOptions(), changeCameraTargetOnClick: value });
       });
-      controlsGui.add(guiState.controls, 'cameraManager', cameraManagerTypes).name('Camera manager type').onFinishChange( (value: ('Default' | 'Custom')) => {
+      controlsGui.add(guiState.controls, 'cameraManager', cameraManagerTypes).name('Camera manager type').onFinishChange((value: ('Default' | 'Custom')) => {
         viewer.setCameraManager(cameraManagers[value]);
       });
 
       const inspectNodeUi = new InspectNodeUI(gui.addFolder('Last clicked node'), client, viewer);
 
       new MeasurementUi(viewer, gui.addFolder('Measurement'));
+
+      const files = await client.files.list({
+        filter: {
+          mimeType: "image/png",
+          metadata: {
+            site_id: "test-site-id",
+            site_name: "test-site",
+            station_id: "test-station-id",
+            station_name: "test-station"
+          },
+          uploaded: true
+        }
+      });
+
+      console.log(files);
+
+      const downloadUrls = await client.files.getDownloadUrls(files.items.map(item => { return { id: item.id } }));
+      console.log(downloadUrls);
+
+      const textureLoader = new THREE.TextureLoader();
+      const texturesLoad = await Promise.all(downloadUrls.map(download => textureLoader.loadAsync(download.downloadUrl)));
+      const textures = [texturesLoad[1], texturesLoad[4], texturesLoad[2], texturesLoad[5], texturesLoad[0], texturesLoad[3]];
+
+      const materials = textures.map(texture => new THREE.MeshBasicMaterial({ map: texture, side: THREE.BackSide }));
+      const boxGeometry = new THREE.BoxGeometry(1, 1, 1);
+
+      const mesh = new THREE.Mesh(boxGeometry, materials);
+      mesh.position.set(0, 2, 0);
+
+      viewer.addObject3D(mesh);
+
+      viewer.cameraManager.setCameraState({ position: new THREE.Vector3(0, 2, 0), target: new THREE.Vector3(0, 2, 0.001) });
+
 
       viewer.on('click', async (event) => {
         const { offsetX, offsetY } = event;
