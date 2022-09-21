@@ -48,7 +48,7 @@
     "@docusaurus/core": "2.1.0",
     "@docusaurus/preset-classic": "2.1.0",
     "@docusaurus/theme-live-codeblock": "2.1.0",
-    "@google/model-viewer": "1.10.1",
+    "@google/model-viewer": "1.12.1",
     "clsx": "1.2.1",
     "cross-env": "7.0.3",
     "geo-three": "0.0.17",
