@@ -2,7 +2,7 @@
  * Copyright 2022 Cognite AS
  */
 
-import { createApplicationSDK } from '../../../test-utilities/src/appUtils';
+import { getApplicationSDK } from '../../../test-utilities/src/appUtils';
 import {
   ModelMetadataProvider,
   ModelDataProvider,
@@ -14,7 +14,6 @@ import {
   LocalModelIdentifier,
   CdfModelIdentifier
 } from '../../../packages/data-providers';
-import cdfEnvironments from '../../.cdf-environments.json';
 
 export function createDataProviders(defaultModelLocalUrl = 'primitives'): Promise<{
   modelMetadataProvider: ModelMetadataProvider;
@@ -44,19 +43,7 @@ async function createCdfDataProviders(urlParams: URLSearchParams): Promise<{
   modelDataProvider: ModelDataProvider;
   modelIdentifier: ModelIdentifier;
 }> {
-  const tenant = urlParams.get('env') as keyof typeof cdfEnvironments.environments;
-
-  const tenantInfo = cdfEnvironments.environments[tenant ?? 'cog-3d'];
-
-  const project = urlParams.get('project') ?? '3d-test';
-  const cluster = urlParams.get('cluster') ?? 'greenfield';
-
-  const client = await createApplicationSDK('reveal.example.simple', {
-    project,
-    cluster,
-    clientId: tenantInfo.clientId,
-    tenantId: tenantInfo.tenantId
-  });
+  const client = await getApplicationSDK(urlParams);
 
   const modelId = parseInt(urlParams.get('modelId')!);
   const revisionId = parseInt(urlParams.get('revisionId')!);
