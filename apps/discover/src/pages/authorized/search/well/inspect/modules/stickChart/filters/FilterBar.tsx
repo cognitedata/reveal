@@ -80,17 +80,17 @@ export const FilterBar: React.FC<FilterBarProps> = React.memo(
             onFiterVisiblityChange={onColumnVisibilityChange}
           />
 
-          <NptFilterItem
-            key={ChartColumn.NPT}
-            options={nptFilterOptions}
-            onChange={onNptCodesChange}
-            onFiterVisiblityChange={onColumnVisibilityChange}
-          />
-
           <NdsFilterItem
             key={ChartColumn.NDS}
             options={ndsFilterOptions}
             onChange={onNdsCodesChange}
+            onFiterVisiblityChange={onColumnVisibilityChange}
+          />
+
+          <NptFilterItem
+            key={ChartColumn.NPT}
+            options={nptFilterOptions}
+            onChange={onNptCodesChange}
             onFiterVisiblityChange={onColumnVisibilityChange}
           />
 
@@ -100,15 +100,15 @@ export const FilterBar: React.FC<FilterBarProps> = React.memo(
             onFiterVisiblityChange={onColumnVisibilityChange}
           /> */}
 
-          <FilterItem
-            key={ChartColumn.TRAJECTORY}
-            column={ChartColumn.TRAJECTORY}
-            onFiterVisiblityChange={onColumnVisibilityChange}
-          />
-
           <MeasurementsFilterItem
             key={ChartColumn.MEASUREMENTS}
             onChange={onMeasurementTypesChange}
+            onFiterVisiblityChange={onColumnVisibilityChange}
+          />
+
+          <FilterItem
+            key={ChartColumn.TRAJECTORY}
+            column={ChartColumn.TRAJECTORY}
             onFiterVisiblityChange={onColumnVisibilityChange}
           />
         </DragDropContainer>

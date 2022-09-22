@@ -51,11 +51,11 @@ export const DEFAULT_COLUMN_ORDER = [
   ChartColumn.FORMATION,
   ChartColumn.DEPTH,
   ChartColumn.CASINGS,
-  ChartColumn.NPT,
   ChartColumn.NDS,
+  ChartColumn.NPT,
   // ChartColumn.SUMMARY,
-  ChartColumn.TRAJECTORY,
   ChartColumn.MEASUREMENTS,
+  ChartColumn.TRAJECTORY,
 ];
 
 export const DEFAULT_VISIBLE_COLUMNS = DEFAULT_COLUMN_ORDER.filter(
