@@ -40,31 +40,20 @@ export const StyledTable = styled.table`
   }
 `;
 
-export const TableContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  min-height: calc(100vh - 56px);
-  height: calc(100vh - 56px);
-  padding: 24px 16px;
-  width: 100vw;
-
-  .tableContainer {
-    height: 100%;
-    width: 100%;
-  }
-`;
-
 export const Container = styled.div`
   padding: 16px;
+`;
 
-  .eventsTable {
-    display: flex;
-    justify-content: center;
-    width: 100%;
+export const SearchAndFilter = styled.div`
+  display: flex;
+  padding-bottom: 24px;
 
-    .tableContainer {
-      width: 100%;
+  .cogs-select {
+    min-width: 300px;
+    padding-right: 8px;
+
+    .cogs-select__menu {
+      min-width: fit-content;
     }
   }
 `;

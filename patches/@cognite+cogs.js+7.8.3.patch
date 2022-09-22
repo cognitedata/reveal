@@ -1,5 +1,5 @@
 diff --git a/node_modules/@cognite/cogs.js/dist/cogs.css b/node_modules/@cognite/cogs.js/dist/cogs.css
-index 580243c..08fbfc3 100644
+index 580243c..0dbf49e 100644
 --- a/node_modules/@cognite/cogs.js/dist/cogs.css
 +++ b/node_modules/@cognite/cogs.js/dist/cogs.css
 @@ -3525,10 +3525,13 @@ button.cogs-badge:active:before {
@@ -17,3 +17,69 @@ index 580243c..08fbfc3 100644
    border: 2px solid var(--Checkbox-border);
  }
  .cogs.cogs-checkbox:hover .cogs-checkbox__checkbox {
+diff --git a/node_modules/@cognite/cogs.js/dist/esm/Assets/SystemIcons/Icons/ReorderAscending.js b/node_modules/@cognite/cogs.js/dist/esm/Assets/SystemIcons/Icons/ReorderAscending.js
+index 740ed04..5cec4e3 100644
+--- a/node_modules/@cognite/cogs.js/dist/esm/Assets/SystemIcons/Icons/ReorderAscending.js
++++ b/node_modules/@cognite/cogs.js/dist/esm/Assets/SystemIcons/Icons/ReorderAscending.js
+@@ -12,11 +12,7 @@ var ReorderAscending = function ReorderAscending() {
+   }, React.createElement("path", {
+     fillRule: "evenodd",
+     clipRule: "evenodd",
+-    d: "M7.853 3.027c-.108.04-.2.15-.383.369l-1.965 2.35c-.332.398-.499.597-.505.766a.484.484 0 0 0 .161.38C5.284 7 5.534 7 6.035 7h3.93c.5 0 .751 0 .874-.107a.484.484 0 0 0 .16-.381c-.005-.17-.172-.368-.504-.766L8.53 3.396c-.184-.22-.275-.329-.383-.37a.418.418 0 0 0-.294 0Z",
+-    fill: "currentColor"
+-  }), React.createElement("path", {
+-    opacity: ".4",
+-    d: "m8.53 12.604 1.965-2.35c.333-.398.499-.597.505-.766a.484.484 0 0 0-.161-.38C10.716 9 10.466 9 9.965 9h-3.93c-.5 0-.751 0-.874.107a.484.484 0 0 0-.16.381c.005.17.172.368.504.766l1.965 2.35c.184.22.275.329.383.37a.418.418 0 0 0 .294 0c.108-.041.2-.15.383-.37Z",
++    d:"M8 13a.928.928 0 0 1-.918-.938V5.987L4.568 8.555a.905.905 0 0 1-1.299 0 .953.953 0 0 1 0-1.326l3.504-3.58.016-.017a5 5 0 0 1 .281-.272 1.43 1.43 0 0 1 .489-.289 1.4 1.4 0 0 1 .882 0c.22.073.38.195.489.289.094.082.194.184.28.272l.017.017 3.504 3.58a.952.952 0 0 1 0 1.326.905.905 0 0 1-1.299 0L8.918 5.987v6.075A.928.928 0 0 1 8 13Z",
+     fill: "currentColor"
+   }));
+ };
+diff --git a/node_modules/@cognite/cogs.js/dist/esm/Assets/SystemIcons/Icons/ReorderDefault.js b/node_modules/@cognite/cogs.js/dist/esm/Assets/SystemIcons/Icons/ReorderDefault.js
+index 65e0a7e..18021f5 100644
+--- a/node_modules/@cognite/cogs.js/dist/esm/Assets/SystemIcons/Icons/ReorderDefault.js
++++ b/node_modules/@cognite/cogs.js/dist/esm/Assets/SystemIcons/Icons/ReorderDefault.js
+@@ -10,10 +10,8 @@ var ReorderDefault = function ReorderDefault() {
+     fill: "none",
+     xmlns: "http://www.w3.org/2000/svg"
+   }, React.createElement("path", {
+-    fillRule: "evenodd",
+-    clipRule: "evenodd",
+-    d: "M7.853 3.027c-.108.04-.2.152-.383.373L5.505 5.778c-.332.403-.499.604-.505.775a.493.493 0 0 0 .161.385c.123.11.373.11.874.11h3.93c.5 0 .751 0 .874-.11a.492.492 0 0 0 .16-.385c-.005-.171-.172-.372-.504-.775L8.53 3.4c-.184-.221-.275-.332-.383-.373a.414.414 0 0 0-.294 0ZM8.53 12.6l1.965-2.378c.333-.403.499-.604.505-.775a.493.493 0 0 0-.161-.385c-.123-.11-.373-.11-.874-.11h-3.93c-.5 0-.751 0-.874.11a.493.493 0 0 0-.16.385c.005.171.172.372.504.775L7.47 12.6c.184.221.275.332.383.373a.413.413 0 0 0 .294 0c.108-.04.2-.152.383-.373Z",
+-    fill: "currentColor"
++    d:"M8.258 11.836a.826.826 0 1 0-1.17-1.169l-1.511 1.511V7.326a.827.827 0 0 0-1.654 0v4.852l-1.512-1.51a.827.827 0 0 0-1.169 1.168l2.923 2.922a.827.827 0 0 0 1.17 0l2.923-2.922ZM7.742 4.164a.826.826 0 1 0 1.17 1.169l1.511-1.511v4.852a.827.827 0 0 0 1.654 0V3.822l1.512 1.51a.827.827 0 0 0 1.169-1.168l-2.923-2.922a.827.827 0 0 0-1.17 0L7.742 4.164Z",
++    fill:"currentColor"
+   }));
+ };
+ 
+diff --git a/node_modules/@cognite/cogs.js/dist/esm/Assets/SystemIcons/Icons/ReorderDescending.js b/node_modules/@cognite/cogs.js/dist/esm/Assets/SystemIcons/Icons/ReorderDescending.js
+index 5abe138..6c13c53 100644
+--- a/node_modules/@cognite/cogs.js/dist/esm/Assets/SystemIcons/Icons/ReorderDescending.js
++++ b/node_modules/@cognite/cogs.js/dist/esm/Assets/SystemIcons/Icons/ReorderDescending.js
+@@ -10,13 +10,9 @@ var ReorderDescending = function ReorderDescending() {
+     fill: "none",
+     xmlns: "http://www.w3.org/2000/svg"
+   }, React.createElement("path", {
+-    opacity: ".4",
+     fillRule: "evenodd",
+     clipRule: "evenodd",
+-    d: "M7.853 3.027c-.108.04-.2.15-.383.369l-1.965 2.35c-.332.398-.499.597-.505.766a.484.484 0 0 0 .161.38C5.284 7 5.534 7 6.035 7h3.93c.5 0 .751 0 .874-.107a.484.484 0 0 0 .16-.381c-.005-.17-.172-.368-.504-.766L8.53 3.396c-.184-.22-.275-.329-.383-.37a.418.418 0 0 0-.294 0Z",
+-    fill: "currentColor"
+-  }), React.createElement("path", {
+-    d: "m8.53 12.604 1.965-2.35c.333-.398.499-.597.505-.766a.484.484 0 0 0-.161-.38C10.716 9 10.466 9 9.965 9h-3.93c-.5 0-.751 0-.874.107a.484.484 0 0 0-.16.381c.005.17.172.368.504.766l1.965 2.35c.184.22.275.329.383.37a.418.418 0 0 0 .294 0c.108-.041.2-.15.383-.37Z",
++    d:"M8 3c.507 0 .918.42.918.938v6.075l2.514-2.568a.905.905 0 0 1 1.299 0 .952.952 0 0 1 0 1.326l-3.504 3.58-.016.017c-.087.088-.187.19-.281.272a1.432 1.432 0 0 1-.489.289 1.4 1.4 0 0 1-.882 0 1.432 1.432 0 0 1-.489-.289 5.01 5.01 0 0 1-.28-.272l-.017-.017-3.504-3.58a.953.953 0 0 1 0-1.326.905.905 0 0 1 1.299 0l2.514 2.568V3.938C7.082 3.42 7.492 3 8 3Z",
+     fill: "currentColor"
+   }));
+ };
+diff --git a/node_modules/@cognite/cogs.js/dist/esm/Components/Select/SelectComponents.js b/node_modules/@cognite/cogs.js/dist/esm/Components/Select/SelectComponents.js
+index c393fb1..3de52dd 100644
+--- a/node_modules/@cognite/cogs.js/dist/esm/Components/Select/SelectComponents.js
++++ b/node_modules/@cognite/cogs.js/dist/esm/Components/Select/SelectComponents.js
+@@ -16,7 +16,7 @@ var IndicatorSeparator = function IndicatorSeparator(_props) {
+ };
+ var ClearIndicator = function ClearIndicator(props) {
+   return components.CrossIcon && React.createElement(components.ClearIndicator, __assign({}, props), React.createElement(Icon, {
+-    type: "ErrorFilled",
++    type: "ClearAll",
+     "aria-label": "Clear"
+   }));
+ };

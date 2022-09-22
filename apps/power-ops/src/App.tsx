@@ -15,7 +15,7 @@ import { PriceAreaProvider } from 'providers/priceAreaProvider';
 import { Portfolio } from 'pages/Portfolio';
 import { MenuBar } from 'components/Menubar/Menubar';
 import { NotFoundPage } from 'pages/NotFound/NotFound';
-import { Workflows } from 'pages/Workflows';
+import { Workflows, WorkflowSingle } from 'pages/Workflows';
 import { Monitoring } from 'pages/Monitoring';
 
 export enum PAGES {
@@ -42,7 +42,17 @@ const App = () => (
                     path={PAGES.MONITORING}
                     render={() => <Monitoring />}
                   />
-                  <Route path={PAGES.WORKFLOWS} render={() => <Workflows />} />
+                  <Route
+                    exact
+                    path={PAGES.WORKFLOWS}
+                    render={() => <Workflows />}
+                  />
+                  <Route
+                    path={`${PAGES.WORKFLOWS}/:workflowExternalId`}
+                    render={() => (
+                      <WorkflowSingle client={client} authState={authState} />
+                    )}
+                  />
                   <Route
                     path={[
                       `${PAGES.PORTFOLIO}/:priceAreaExternalId`,

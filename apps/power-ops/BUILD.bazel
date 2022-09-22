@@ -79,6 +79,7 @@ DEPENDENCIES = [
     "@npm//dayjs",
     "@npm//lodash",
     "@npm//plotly.js",
+    "@npm//query-string",
     "@npm//react",
     "@npm//react-dom",
     "@npm//react-plotly.js",

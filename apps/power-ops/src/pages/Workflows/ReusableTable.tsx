@@ -49,7 +49,7 @@ export const ReusableTable = ({
 
   // Render the UI for your table
   return (
-    <div className="tableContainer">
+    <>
       <StyledTable {...tableInstance.getTableProps()}>
         <thead>
           {headerGroups.map((headerGroup) => (
@@ -96,6 +96,6 @@ export const ReusableTable = ({
           hideItemsPerPage
         />
       </Flex>
-    </div>
+    </>
   );
 };

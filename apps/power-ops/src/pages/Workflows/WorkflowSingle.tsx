@@ -12,7 +12,7 @@ import {
 } from '@cognite/cogs.js';
 import { EVENT_TYPES } from '@cognite/power-ops-api-types';
 import { calculateDuration } from 'utils/utils';
-import { useHistory, useRouteMatch } from 'react-router-dom';
+import { useHistory, useParams, useRouteMatch } from 'react-router-dom';
 import { EventStreamContext } from 'providers/eventStreamProvider';
 import { CopyButton } from 'components/CopyButton/CopyButton';
 import { useFetchProcesses } from 'queries/useFetchProcesses';
@@ -29,17 +29,16 @@ import {
 
 export const WorkflowSingle = ({
   client,
-  workflowExternalId,
   authState,
 }: {
   client: CogniteClient;
-  workflowExternalId: string;
   authState: AuthenticatedUser | undefined;
 }) => {
   const { eventStore } = useContext(EventStreamContext);
 
   const match = useRouteMatch();
   const history = useHistory();
+  const { workflowExternalId } = useParams<{ workflowExternalId: string }>();
 
   const [workflowEvent, setWorkflowEvent] = useState<
     CogniteEvent | undefined
@@ -232,11 +231,9 @@ export const WorkflowSingle = ({
             </MetadataContainer>
           </Collapse.Panel>
         </CollapseContainer>
-        <div className="eventsTable">
-          {processes && (
-            <ReusableTable data={processes} columns={processColumns} />
-          )}
-        </div>
+        {processes && (
+          <ReusableTable data={processes} columns={processColumns} />
+        )}
       </Container>
     </div>
   );

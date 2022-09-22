@@ -16,6 +16,8 @@ dayjs.extend(timezone);
 dayjs.extend(isToday);
 dayjs.extend(isYesterday);
 
+export const EVENT_STATUSES = ['Failed', 'Finished', 'Running', 'Triggered'];
+
 export const CHART_COLORS: string[] = [
   '#008b8b',
   '#ffa500',
