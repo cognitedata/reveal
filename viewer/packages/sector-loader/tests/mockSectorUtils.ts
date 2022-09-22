@@ -2,7 +2,7 @@
  * Copyright 2022 Cognite AS
  */
 import { WantedSector, V9SectorMetadata } from '@reveal/cad-parsers';
-import { BinaryFileProvider } from '@reveal/modeldata-api';
+import { BinaryFileProvider } from '@reveal/data-providers';
 import { IMock, Mock, It } from 'moq.ts';
 
 import * as fs from 'fs';

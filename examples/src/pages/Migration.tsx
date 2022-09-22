@@ -115,7 +115,7 @@ export function Migration() {
       (window as any).viewer = viewer;
 
       const controlsOptions: CameraControlsOptions = {
-        changeCameraTargetOnClick: false,
+        changeCameraTargetOnClick: true,
         mouseWheelAction: 'zoomToCursor',
       };
       cameraManager = viewer.cameraManager as DefaultCameraManager;
@@ -170,7 +170,7 @@ export function Migration() {
 
         viewer.loadCameraFromModel(model);
         if (model instanceof Cognite3DModel) {
-          new NodeStylingUI(gui.addFolder(`Node styling #${modelUi.cadModels.length}`), client, model);
+          new NodeStylingUI(gui.addFolder(`Node styling #${modelUi.cadModels.length}`), client, viewer, model);
           new BulkHtmlOverlayUI(gui.addFolder(`Node tagging #${modelUi.cadModels.length}`), viewer, model, client);
         } else if (model instanceof CognitePointCloudModel) {
           new PointCloudClassificationFilterUI(gui.addFolder(`Class filter #${modelUi.pointCloudModels.length}`), model);

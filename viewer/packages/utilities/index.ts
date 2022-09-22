@@ -8,7 +8,7 @@ export { transformCameraConfiguration } from './src/transformCameraConfiguration
 export { RandomColors } from './src/RandomColors';
 export { CameraConfiguration } from './src/CameraConfiguration';
 export { EventTrigger, clickOrTouchEventOffset, InputHandler, disposeOfAllEventListeners } from './src/events';
-export { DisposedDelegate, SceneRenderedDelegate, PointerEventDelegate } from './src/events/types';
+export { DisposedDelegate, SceneRenderedDelegate, PointerEventDelegate, PointerEventData } from './src/events/types';
 export { assertNever } from './src/assertNever';
 export { NumericRange } from './src/NumericRange';
 export { determinePowerOfTwoDimensions } from './src/determinePowerOfTwoDimensions';
@@ -26,7 +26,6 @@ export { isBox3OnPositiveSideOfPlane } from './src/three/isBox3OnPositiveSideOfP
 export { visitBox3CornerPoints } from './src/three/visitBox3CornerPoints';
 export { isMobileOrTablet } from './src/isMobileOrTablet';
 export { WebGLRendererStateHelper } from './src/WebGLRendererStateHelper';
-export { WorkerPool } from './src/workers/WorkerPool';
 
 export { TypedArray, TypedArrayConstructor } from './src/types';
 
@@ -34,8 +33,6 @@ export { MemoryRequestCache } from './src/cache/MemoryRequestCache';
 export { MostFrequentlyUsedCache } from './src/cache/MostFrequentlyUsedCache';
 
 export { disposeAttributeArrayOnUpload } from './src/disposeAttributeArrayOnUpload';
-
-export { revealEnv } from './src/revealEnv';
 
 export { incrementOrInsertIndex, decrementOrDeleteIndex } from './src/counterMap';
 export { calculateVolumeOfMesh } from './src/calculateVolumeOfMesh';

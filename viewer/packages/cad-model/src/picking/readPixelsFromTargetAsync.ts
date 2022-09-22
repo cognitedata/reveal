@@ -96,9 +96,10 @@ export async function readPixelsFromTargetAsync(
   y: number,
   w: number,
   h: number,
-  dest: ArrayBufferView
+  dest: ArrayBufferView,
+  forceSync = false
 ): Promise<void> {
-  if (renderer.capabilities.isWebGL2) {
+  if (renderer.capabilities.isWebGL2 && !forceSync) {
     const gl = renderer.getContext() as WebGL2RenderingContext;
     const utils = new THREE.WebGLUtils(gl, renderer.extensions, renderer.capabilities);
 

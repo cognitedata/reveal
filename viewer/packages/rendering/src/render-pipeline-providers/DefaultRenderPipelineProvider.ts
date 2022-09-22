@@ -190,7 +190,10 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider {
     this._cadModels.forEach(cadModel => {
       cadModel.cadNode.matrixAutoUpdate = false;
     });
-    this._viewerScene.autoUpdate = false;
+    // @ts-expect-error
+    // Missing type definition for ThreeJS r144. When this fails,
+    // its most likely because the type definitions have been updated
+    this._viewerScene.matrixWorldAutoUpdate = false;
 
     this._customObjects?.forEach(customObject => customObject.updateMatrixWorld(true));
 

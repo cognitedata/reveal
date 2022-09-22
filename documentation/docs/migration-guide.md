@@ -49,12 +49,12 @@ convenience, the new API comes with a set of default styles available through [`
 
 A commonly used functionality is to apply a default style to all nodes and to style a few selected nodes with a different
 style to make them stand out. Before, this could be achieved using a `ghostAllNodes`, `hideAllNodes` and `setAllNodeColors` to
-apply the default styling, and a combination of the different per-node styling functions mentioned above to style the 
+apply the default styling, and a combination of the different per-node styling functions mentioned above to style the
 nodes that should stand out. In Reveal 2, this is replaced by `Cognite3DModel.setDefaultNodeAppearance` which is a style that will be applied to any node that is not styled by another styled set.
 
 ### Using TreeIndexNodeCollection to migrate existing filtering logic
 
-<DemoWrapper name="Cognite3DViewerDemo" />
+<DemoWrapper />
 
 In general, it is recommended to use the [specialized `NodeCollection`-implementations](examples/cad-styling) for best performance. However,
 it is possible to use `TreeIndexNodeCollection` as a migration step and simple use cases. This allows the use of previously implemented logic for

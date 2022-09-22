@@ -36,6 +36,11 @@ export abstract class NodeCollection {
 
   abstract get isLoading(): boolean;
   abstract getIndexSet(): IndexSet;
+  /**
+   * Returns areas surrounding the nodes in the collection. The areas
+   * are boxes in "ThreeJS coordinates". Note that not all
+   * implementations supports this.
+   */
   abstract getAreas(): AreaCollection;
   abstract clear(): void;
   abstract serialize(): SerializedNodeCollection;

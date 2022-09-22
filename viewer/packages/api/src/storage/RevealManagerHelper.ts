@@ -8,7 +8,7 @@ import { createCdfRevealManager, createLocalRevealManager, createRevealManager }
 import { RevealManager } from '../public/RevealManager';
 import { RevealOptions } from '../public/types';
 
-import { CdfModelIdentifier, LocalModelIdentifier } from '@reveal/modeldata-api';
+import { CdfModelIdentifier, LocalModelIdentifier } from '@reveal/data-providers';
 import { DataSource } from '@reveal/data-source';
 import { assertNever, SceneHandler } from '@reveal/utilities';
 

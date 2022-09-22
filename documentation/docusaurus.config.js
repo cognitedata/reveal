@@ -8,20 +8,11 @@ module.exports = {
   projectName: 'reveal',
   themeConfig: {
     algolia: {
-      apiKey: 'd2f00b2aa78a3b4ca8877d9b764916d4',
+      appId: 'WK4NHSAX9S',
+      apiKey: '9ba8640575bd74e729c9e6a29dfb8a78',
       indexName: 'reveal-docs',
 
-      // doesn't look like it works for 1.x and next. Looks like 'next' considered unversioned
-      // so next is excluded from the search below by using facetFilters
       contextualSearch: true,
-
-      // Optional: Algolia search parameters
-      searchParameters: {
-        // https://www.algolia.com/doc/api-reference/api-parameters/facetFilters/?client=javascript
-        facetFilters: [['version:1.x', 'version:2.x', 'version:3.x']],
-      },
-
-      //... other Algolia params https://autocomplete-experimental.netlify.app/docs/docsearchmodal/#reference
     },
     prism: {
       // changes syntax highlighting theme
@@ -55,11 +46,17 @@ module.exports = {
     [
       '@docusaurus/preset-classic',
       {
+        sitemap: {
+          changefreq: 'weekly',
+          priority: 0.5,
+          ignorePatterns: ['/tags/**'],
+          filename: 'sitemap.xml',
+        },
         docs: {
           sidebarPath: require.resolve('./sidebars.js'),
           // Please change this to your repo.
           editUrl:
-            'https://github.com/cognitedata/reveal/blob/master/documentation',
+          'https://github.com/cognitedata/reveal/blob/master/documentation',
           remarkPlugins: [
             require('./src/plugins/remark-npm2yarn'),
             require('./src/plugins/remark-runnable-reveal-demo'),
@@ -73,5 +70,8 @@ module.exports = {
     ],
   ],
   themes: ['@docusaurus/theme-live-codeblock'],
-  plugins: ['docusaurus2-dotenv'],
+  plugins: [
+    require.resolve('./docusaurus_plugins/docusaurusWebpack5Plugin'),
+    'docusaurus-plugin-typedoc'
+  ],
 };
