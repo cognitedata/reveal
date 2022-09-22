@@ -6,29 +6,28 @@ import * as THREE from 'three';
 //TODO: Refactor such that these are properly imported (tools should not be dependent on cad-parser)
 import { LevelOfDetail, SectorNode } from '../../cad-parsers/';
 
-import { Cognite3DViewerToolBase } from './Cognite3DViewerToolBase';
+// import { Cognite3DViewerToolBase } from './Cognite3DViewerToolBase';
 import { assertNever } from '@reveal/utilities';
-import { Cognite3DModel, Cognite3DViewer } from '@reveal/api';
+// import { Cognite3DModel } from '@reveal/api';
 
 export type DebugLoadedSectorsToolOptions = {
   showSimpleSectors?: boolean;
   showDetailedSectors?: boolean;
   showDiscardedSectors?: boolean;
-  colorBy?: 'depth' | 'lod' | 'loadedTimestamp' | 'drawcalls' | 'random';
+  colorBy?: 'depth' | 'lod' | 'loadedTimestamp' | 'random';
   leafsOnly?: boolean;
   sectorPathFilterRegex?: string;
 };
 
-export class DebugLoadedSectorsTool extends Cognite3DViewerToolBase {
+export class DebugLoadedSectorsTool {
   private readonly _boundingBoxes = new THREE.Group();
-  private readonly _viewer: Cognite3DViewer;
+  private readonly _scene: THREE.Scene;
   private _options: Required<DebugLoadedSectorsToolOptions>;
-  private _model?: Cognite3DModel;
+  private _model?: THREE.Object3D;
 
-  constructor(viewer: Cognite3DViewer, options: DebugLoadedSectorsToolOptions = {}) {
-    super();
-    this._viewer = viewer;
-    this._viewer.addObject3D(this._boundingBoxes);
+  constructor(scene: THREE.Scene, options: DebugLoadedSectorsToolOptions = {}) {
+    this._scene = scene;
+    this._scene.add(this._boundingBoxes);
     this._options = {} as any; // Force - it's set in setOptions
     this.setOptions(options);
   }
@@ -46,10 +45,10 @@ export class DebugLoadedSectorsTool extends Cognite3DViewerToolBase {
   }
 
   dispose(): void {
-    this._viewer.removeObject3D(this._boundingBoxes);
+    this._scene.remove(this._boundingBoxes);
   }
 
-  showSectorBoundingBoxes(model: Cognite3DModel): void {
+  showSectorBoundingBoxes(model: THREE.Object3D): void {
     this._model = model;
     this.updateBoundingBoxes();
   }
@@ -59,14 +58,14 @@ export class DebugLoadedSectorsTool extends Cognite3DViewerToolBase {
     if (this._model === undefined) {
       return;
     }
-    this._model.getModelTransformation(this._boundingBoxes.matrix);
+    this._boundingBoxes.matrix = this._model.matrix;
     const shouldShowLod: boolean[] = [];
     shouldShowLod[LevelOfDetail.Discarded] = this._options.showDiscardedSectors;
     shouldShowLod[LevelOfDetail.Simple] = this._options.showSimpleSectors;
     shouldShowLod[LevelOfDetail.Detailed] = this._options.showDetailedSectors;
 
     const selectedSectorNodes: SectorNode[] = [];
-    this._model.cadNode.traverse(node => {
+    this._model.traverse(node => {
       if (isSectorNode(node)) {
         const sectorNode = node as SectorNode;
 
@@ -85,8 +84,6 @@ export class DebugLoadedSectorsTool extends Cognite3DViewerToolBase {
       this._boundingBoxes.add(bboxNode);
     });
     this._boundingBoxes.updateMatrixWorld(true);
-
-    this._viewer.requestRedraw();
   }
 
   private isSectorAcceptedByCurrentFilter(node: SectorNode): boolean {
@@ -96,7 +93,6 @@ export class DebugLoadedSectorsTool extends Cognite3DViewerToolBase {
 
   private createBboxNodeFor(node: SectorNode, allSelectedNodes: SectorNode[]) {
     const options = this._options;
-    const sectorScene = this._model!.cadNode.sectorScene;
 
     function determineColor() {
       switch (options.colorBy) {
@@ -127,19 +123,6 @@ export class DebugLoadedSectorsTool extends Cognite3DViewerToolBase {
           const s = (nodesByTimestamp.length - 1 - indexOfNode) / Math.max(nodesByTimestamp.length - 1, 1);
           return new THREE.Color(Colors.green).lerpHSL(Colors.red, s);
         }
-        case 'drawcalls': {
-          const [minDrawCalls, maxDrawCalls] = allSelectedNodes.reduce(
-            ([min, max], x) => {
-              const sector = sectorScene.getSectorById(x.sectorId)!;
-              return [Math.min(min, sector.estimatedDrawCallCount), Math.max(max, sector.estimatedDrawCallCount)];
-            },
-            [Infinity, -Infinity]
-          );
-          const sector = sectorScene.getSectorById(node.sectorId)!;
-          const s = (sector.estimatedDrawCallCount - minDrawCalls) / (maxDrawCalls - minDrawCalls);
-          return new THREE.Color(Colors.green).lerpHSL(Colors.red, s);
-        }
-
         default:
           assertNever(options.colorBy);
       }
@@ -155,8 +138,8 @@ const Colors = {
   red: new THREE.Color('red')
 };
 
-function isSectorNode(node: THREE.Object3D) {
-  return node.name.match(/^Sector \d+$/);
+function isSectorNode(node: THREE.Object3D): node is SectorNode {
+  return node.name.match(/^Sector \d+$/) ? true : false;
 }
 
 function isLeaf(node: SectorNode) {
