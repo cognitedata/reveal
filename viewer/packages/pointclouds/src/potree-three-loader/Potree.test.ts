@@ -3,7 +3,7 @@
  */
 
 import { Potree } from './Potree';
-import { ModelDataProvider } from '@reveal/modeldata-api';
+import { ModelDataProvider } from '@reveal/data-providers';
 
 import { Mock } from 'moq.ts';
 

@@ -10,7 +10,7 @@ import { ModelStateHandler } from './ModelStateHandler';
 import chunk from 'lodash/chunk';
 import { PromiseUtils } from '../utilities/PromiseUtils';
 
-import { File3dFormat } from '@reveal/modeldata-api';
+import { File3dFormat } from '@reveal/data-providers';
 import { SectorDownloadScheduler } from './SectorDownloadScheduler';
 import { CadNode } from '@reveal/cad-model';
 

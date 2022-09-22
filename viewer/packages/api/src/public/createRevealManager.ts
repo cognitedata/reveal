@@ -21,7 +21,7 @@ import {
   LocalModelDataProvider,
   ModelDataProvider,
   CdfModelDataProvider
-} from '@reveal/modeldata-api';
+} from '@reveal/data-providers';
 
 import { CogniteClient } from '@cognite/sdk';
 import { SceneHandler } from '@reveal/utilities';
