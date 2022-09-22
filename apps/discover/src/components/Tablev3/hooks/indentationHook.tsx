@@ -13,6 +13,7 @@ export const indentationHook =
         // Return a space to prevent the empty state from showing
         Header: ' ',
         Cell: ' ',
+        disableSorting: true,
       },
       ...restOfColumns,
     ]);
