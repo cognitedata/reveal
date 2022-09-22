@@ -22,7 +22,8 @@ export const listDms = async (argv: any) => {
     'FileConnection',
     'Line',
   ];
-  console.log('Upserted nodes:');
+  console.log('Listing upserted nodes:');
+  let startTime = new Date().getTime();
   await Promise.all(
     nodeModelNames.map(async (model) => {
       const items = await listNodes(client, {
@@ -47,9 +48,12 @@ export const listDms = async (argv: any) => {
       console.log(`  ${model}: ${items.length}`);
     })
   );
+  let elapsedMilliseconds = new Date().getTime() - startTime;
+  console.log(`    Elapsed time: ${elapsedMilliseconds / 1000}s`);
 
   const edgeModelNames: (keyof ModelEdgeMap)[] = ['InstanceEdge'];
-  console.log('Upserted edges:');
+  console.log('Listing upserted edges:');
+  startTime = new Date().getTime();
   await Promise.all(
     edgeModelNames.map(async (model) => {
       const items = await listEdges(client, {
@@ -74,6 +78,8 @@ export const listDms = async (argv: any) => {
       console.log(`  ${model}: ${items.length}`);
     })
   );
+  elapsedMilliseconds = new Date().getTime() - startTime;
+  console.log(`    Elapsed time: ${elapsedMilliseconds / 1000}s`);
 };
 
 export default listDms;

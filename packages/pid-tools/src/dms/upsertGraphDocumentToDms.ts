@@ -55,7 +55,7 @@ export const upsertGraphDocumentToDms = async (
   // 409 errors. We circumvent it by proactively deleting the edges first
 
   console.log('Deleting old edges ...');
-
+  let startTime = new Date().getTime();
   for (const model of Object.keys(edges)) {
     // eslint-disable-next-line no-continue
     if (model === 'FileLink') continue; // Fix: We should maybe delete orphan file link edges as well
@@ -81,7 +81,7 @@ export const upsertGraphDocumentToDms = async (
     });
     if (oldItems.length > 0) {
       console.log(
-        `Deleting ${oldItems.length} old '${model}' edges on page ${filePage} of file ${fileId}`
+        `    Deleting ${oldItems.length} old '${model}' edges on page ${filePage} of file ${fileId}`
       );
       await deleteEdges(client, {
         items: oldItems,
@@ -89,61 +89,78 @@ export const upsertGraphDocumentToDms = async (
       });
     }
   }
+  let elapsedMilliseconds = new Date().getTime() - startTime;
+  console.log(`    Elapsed time: ${elapsedMilliseconds / 1000}s`);
 
   console.log('Deleting old nodes ...');
-  for (const model of Object.keys(nodes)) {
-    const oldItems = await listNodes(client, {
-      model: model as keyof ModelNodeMap,
-      spaceExternalId,
-      filters: [
-        {
-          property: 'filePage',
-          values: [filePage],
-        },
-        {
-          property: 'fileId',
-          values: [fileId],
-        },
-        {
-          property: 'modelName',
-          values: [model],
-        },
-      ],
-      limit: Infinity,
-    });
-    if (oldItems.length > 0) {
-      console.log(
-        `Deleting ${oldItems.length} old '${model}' nodes on page ${filePage} of file ${fileId}`
-      );
-      await deleteNodes(client, { items: oldItems, spaceExternalId });
-    }
-  }
+  startTime = new Date().getTime();
+  await Promise.all(
+    Object.keys(nodes).map(async (model) => {
+      const oldItems = await listNodes(client, {
+        model: model as keyof ModelNodeMap,
+        spaceExternalId,
+        filters: [
+          {
+            property: 'filePage',
+            values: [filePage],
+          },
+          {
+            property: 'fileId',
+            values: [fileId],
+          },
+          {
+            property: 'modelName',
+            values: [model],
+          },
+        ],
+        limit: Infinity,
+      });
+      if (oldItems.length > 0) {
+        console.log(
+          `    Deleting ${oldItems.length} old '${model}' nodes on page ${filePage} of file ${fileId}`
+        );
+        await deleteNodes(client, { items: oldItems, spaceExternalId });
+      }
+    })
+  );
+  elapsedMilliseconds = new Date().getTime() - startTime;
+  console.log(`    Elapsed time: ${elapsedMilliseconds / 1000}s`);
 
   console.log('Upserting new nodes ...');
-  for (const [model, items] of Object.entries(nodes)) {
-    if (items.length > 0) {
-      console.log(
-        `Upserting ${items.length} new '${model}' nodes for page ${filePage} of file ${fileId}`
-      );
-      await upsertNodes(client, {
-        model: model as keyof ModelNodeMap,
-        items,
-        spaceExternalId,
-      });
-    }
-  }
+  startTime = new Date().getTime();
+  await Promise.all(
+    Object.entries(nodes).map(async ([model, items]) => {
+      if (items.length > 0) {
+        console.log(
+          `    Upserting ${items.length} new '${model}' nodes for page ${filePage} of file ${fileId}`
+        );
+        await upsertNodes(client, {
+          model: model as keyof ModelNodeMap,
+          items,
+          spaceExternalId,
+        });
+      }
+    })
+  );
+  elapsedMilliseconds = new Date().getTime() - startTime;
+  console.log(`    Elapsed time: ${elapsedMilliseconds / 1000}s`);
 
   console.log('Upserting new edges ...');
-  for (const [model, items] of Object.entries(edges)) {
-    if (items.length > 0) {
-      console.log(
-        `Upserting ${items.length} new '${model}' edges for page ${filePage} of file ${fileId}`
-      );
-      await upsertEdges(client, {
-        model: model as keyof ModelEdgeMap,
-        items,
-        spaceExternalId,
-      });
-    }
-  }
+  startTime = new Date().getTime();
+  await Promise.all(
+    Object.entries(edges).map(async ([model, items]) => {
+      if (items.length > 0) {
+        console.log(
+          `    Upserting ${items.length} new '${model}' edges for page ${filePage} of file ${fileId}`
+        );
+        await upsertEdges(client, {
+          model: model as keyof ModelEdgeMap,
+          items,
+          spaceExternalId,
+        });
+      }
+    })
+  );
+  elapsedMilliseconds = new Date().getTime() - startTime;
+  console.log(`    Elapsed time: ${elapsedMilliseconds / 1000}s`);
 };
