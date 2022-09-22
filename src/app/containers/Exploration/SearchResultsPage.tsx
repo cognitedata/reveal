@@ -35,12 +35,16 @@ import { useDateRange } from 'app/context/DateRangeContext';
 import { PageTitle } from '@cognite/cdf-utilities';
 import { ThreeDSearchResults } from 'app/containers/ThreeD/ThreeDSearchResults';
 import FilterToggleButton from './FilterToggleButton';
+import { ExplorationFilterToggle } from 'app/containers/Exploration/ExplorationFilterToggle';
+import { useFlagFilter } from 'app/hooks/flags/useFlagFilters';
 
 const getPageTitle = (query: string, resourceType: ResourceType): string => {
   return `${query}${query ? ' in' : ''} ${getTitle(resourceType, true)}`;
 };
 
 function SearchPage() {
+  const showNewFilter = useFlagFilter();
+
   const [currentResourceType, setCurrentResourceType] =
     useCurrentResourceType();
 
@@ -180,9 +184,22 @@ function SearchPage() {
     onDateRangeChange: setDateRange,
   };
 
+  const handleFilterToggleClick = () => {
+    setShowFilter(prevState => !prevState);
+  };
+
   return (
     <RootHeightWrapper>
       <SearchInputContainer alignItems="center">
+        {showNewFilter && (
+          <>
+            <ExplorationFilterToggle
+              filterState={showFilter}
+              onClick={handleFilterToggleClick}
+            />
+            <VerticalDivider />
+          </>
+        )}
         <ExplorationSearchBar />
       </SearchInputContainer>
       <TabsContainer>
@@ -196,7 +213,7 @@ function SearchPage() {
       <MainContainer>
         {currentResourceType !== 'threeD' && !showFilter && (
           <FilterWrapper>
-            <FilterToggleButton toggleOpen={() => setShowFilter(!showFilter)} />
+            <FilterToggleButton toggleOpen={handleFilterToggleClick} />
           </FilterWrapper>
         )}
 
@@ -390,4 +407,11 @@ const RootHeightWrapper = styled.div`
   height: 100%;
   display: flex;
   flex-direction: column;
+`;
+
+const VerticalDivider = styled.div`
+  width: 1px;
+  height: 16px;
+  background-color: var(--cogs-border--muted);
+  margin: 0px 8px;
 `;
