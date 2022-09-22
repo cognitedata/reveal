@@ -1,26 +1,7 @@
-import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { Icon, Tabs } from '@cognite/cogs.js';
+import { Icon } from '@cognite/cogs.js';
 import config from '@platypus-app/config/config';
-import { getCogniteSDKClient } from '../../../environments/cogniteSdk';
-import { getProject } from '@cognite/cdf-utilities';
-
-const DEFAULT_TOKEN_STR = 'Bearer <xxx>';
 const NoAccessPage = (): JSX.Element => {
-  const [token, setToken] = useState(DEFAULT_TOKEN_STR);
-
-  useEffect(() => {
-    (async () => {
-      try {
-        setToken(
-          (await getCogniteSDKClient().getDefaultRequestHeaders()
-            .Authorization) || DEFAULT_TOKEN_STR
-        );
-      } catch (e) {
-        // noop
-      }
-    })();
-  }, []);
   return (
     <NoAccessContent>
       <Warning>
@@ -52,65 +33,6 @@ const NoAccessPage = (): JSX.Element => {
         "manage" tab, or you can run the sample code belowto create a CDF group
         with these ACLs and link it to your IdP group.
       </p>
-      <Tabs defaultActiveKey="Postman">
-        <Tabs.TabPane key="Postman" tab="Postman (CURL)">
-          <pre>{`curl --location --request POST '${getCogniteSDKClient().getBaseUrl()}/api/v1/projects/${getProject()}/groups' \\
---header 'Authorization: ${token}' \\
---header 'Content-Type: application/json' \\
---data-raw '{
-    "items": [
-        {
-            "name": "FDM",
-            "sourceId": "<my AD group UUID>",
-            "capabilities": [
-              {
-                "dataModelsAcl": {
-                  "actions": ["READ", "WRITE"],
-                  "scope": {
-                    "all": {}
-                  }
-                }
-              },
-              {
-                "dataModelInstancesAcl": {
-                  "actions": ["READ", "WRITE"],
-                  "scope": {
-                    "all": {}
-                  }
-                }
-              }
-            ]
-      }
-    ]
-}'`}</pre>
-        </Tabs.TabPane>
-        <Tabs.TabPane key="Python" tab="Python">
-          <pre>{`my_capabilities = [
-    {
-      "dataModelsAcl": {
-        "actions": ['READ', 'WRITE'],
-        "scope": {
-          "all": {},
-        },
-      },
-    },
-    {
-      "dataModelInstancesAcl": {
-        "actions": ['READ', 'WRITE'],
-        "scope": {
-          "all": {},
-        },
-      },
-    },
-]
-my_group = Group(
-  name="FDM",
-  capabilities=my_capabilities,
-  source_id="<my AD group UUID>"
-)
-client.iam.groups.create(my_group)`}</pre>
-        </Tabs.TabPane>
-      </Tabs>
     </NoAccessContent>
   );
 };
