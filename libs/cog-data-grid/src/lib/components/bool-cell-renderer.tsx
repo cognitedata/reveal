@@ -61,7 +61,7 @@ export const BoolCellRenderer = React.memo((props: BoolCellRendererProps) => {
 });
 
 const StyledCheckbox = styled(Checkbox)`
-  .checkbox-ui {
+  .checkbox-ui.checkbox-ui {
     margin: 0;
   }
 `;

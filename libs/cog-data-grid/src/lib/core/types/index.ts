@@ -1,4 +1,5 @@
 import { ColDef } from 'ag-grid-community';
+import React from 'react';
 
 export interface KeyValueMap {
   [key: string]: string | number | unknown;
@@ -44,7 +45,7 @@ export enum DataSourceType {
 
 export interface ColumnConfig {
   property: string;
-  label: string;
+  label: React.ReactNode;
   optional?: boolean;
   dataType: ColumnDataType | string;
   defaultValue?: unknown;

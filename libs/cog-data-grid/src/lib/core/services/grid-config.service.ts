@@ -13,6 +13,7 @@ import {
   ColumnConfig,
   ColumnTypes,
 } from '../types';
+import { ReactNode } from 'react';
 
 const cellClassRules = {
   'cog-table-cell-cell-empty': (params: any) =>
@@ -153,7 +154,9 @@ export class GridConfigService {
         const colDef = Object.assign(
           {
             field: `${columnConfig.property}`,
-            headerName: `${columnConfig.label}`,
+            headerName: columnConfig.label,
+            headerComponent: ({ displayName }: { displayName: ReactNode }) =>
+              displayName,
             type: columnConfig.columnType
               ? columnConfig.columnType
               : this.getColumnType(columnConfig),

@@ -1,4 +1,5 @@
 import { GridConfig } from '@cognite/cog-data-grid';
+import { Tooltip } from '@cognite/cogs.js';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import { BuiltInType, DataModelTypeDefsField } from '@platypus/platypus-core';
 import { FieldNameCellEditor } from '../components/TypeDefFields/cellEditors/FieldNameCellEditor';
@@ -80,7 +81,18 @@ export const useTypeDefFieldsGrid = () => {
         },
         {
           property: 'nonNull',
-          label: t('field_label_req', 'Rqd(!)'),
+          label: (
+            <Tooltip content={t('field_label_req_tooltip', 'Required')}>
+              <span
+                style={{
+                  display: 'flex',
+                  justifyContent: 'center',
+                }}
+              >
+                {t('field_label_req', '!')}
+              </span>
+            </Tooltip>
+          ),
           optional: false,
           dataType: 'BOOLEAN',
           defaultValue: '',
