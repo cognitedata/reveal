@@ -4,7 +4,7 @@
 
 import * as THREE from 'three';
 
-import { File3dFormat } from '../../packages/modeldata-api';
+import { File3dFormat } from '../../packages/data-providers';
 import { SectorMetadata, CadModelMetadata, SectorSceneFactory } from '../../packages/cad-parsers';
 
 let modelIdRunningNumber = 0;

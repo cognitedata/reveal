@@ -10,7 +10,7 @@ import { SupportedModelTypes } from '@reveal/model-base';
 import { GltfSectorRepository, SectorRepository } from '@reveal/sector-loader';
 import { CadMaterialManager } from '@reveal/rendering';
 import { CadModelMetadata, CadModelMetadataRepository, CadModelClipper } from '@reveal/cad-parsers';
-import { ModelDataProvider, ModelMetadataProvider, ModelIdentifier, File3dFormat } from '@reveal/modeldata-api';
+import { ModelDataProvider, ModelMetadataProvider, ModelIdentifier, File3dFormat } from '@reveal/data-providers';
 import { MetricsLogger } from '@reveal/metrics';
 import { CadNode } from './wrappers/CadNode';
 

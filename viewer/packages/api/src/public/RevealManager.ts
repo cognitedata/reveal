@@ -17,7 +17,7 @@ import { RenderMode, RenderPipelineExecutor, CadMaterialManager, RenderPipelineP
 import { MetricsLogger } from '@reveal/metrics';
 import { assertNever, EventTrigger } from '@reveal/utilities';
 
-import { ModelIdentifier } from '@reveal/modeldata-api';
+import { ModelIdentifier } from '@reveal/data-providers';
 
 /* eslint-disable jsdoc/require-jsdoc */
 
