@@ -1,10 +1,12 @@
 {
-  "name": "@reveal/data-providers",
+  "name": "@reveal/360-images",
   "private": true,
   "main": "index.ts",
   "scripts": {
-    "start": "yarn ws:serve --env testFixture=DataProviders.VisualTest.ts",
     "test": "yarn ws:test --config ./../../jest.config.js",
     "lint": "yarn ws:lint"
+  },
+  "dependencies": {
+    "@reveal/utilities": "workspace:*"
   }
 }
