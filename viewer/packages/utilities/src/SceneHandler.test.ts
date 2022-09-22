@@ -1,11 +1,10 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-import { CadNode } from '@reveal/cad-model';
 import * as THREE from 'three';
 import { SceneHandler } from '..';
 
-import { Mock } from 'moq.ts';
+import { createCadModel } from '../../../test-utilities';
 
 describe(SceneHandler.name, () => {
   test('Calling dispose correctly disposes all objects within the scene', () => {
@@ -16,7 +15,8 @@ describe(SceneHandler.name, () => {
     const disposeCustomObjectMeshGeometry = jest.spyOn(customObjectMesh.geometry, 'dispose');
     const disposeCustomObjectMeshMaterial = jest.spyOn(customObjectMesh.material, 'dispose');
 
-    const cadNodeMock = new Mock<CadNode>().object();
+    const cadModel = createCadModel(1, 1);
+    const cadNodeMock = cadModel.cadNode;
 
     const disposeCadNode = jest.spyOn(cadNodeMock, 'dispose');
 

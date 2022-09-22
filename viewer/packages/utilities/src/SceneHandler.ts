@@ -69,6 +69,8 @@ export class SceneHandler {
   }
 
   public dispose(): void {
+    this._cadModels.forEach(c => c.cadNode.dispose());
+
     this._cadModels.splice(0);
     this._pointCloudModels.splice(0);
     this._customObjects.splice(0);
