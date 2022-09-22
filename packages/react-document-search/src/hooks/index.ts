@@ -1,5 +1,6 @@
-export * from './useDocumentSearchAppliedFacetFilters';
-export * from './useDocumentSearchQuery';
-export * from './useDocumentSearchQueryFull';
-// export * from './useDocumentQueryFacets';
-export * from './useDocumentAggregateResponse';
+export * from './useDocumentSearch';
+export * from './useDocumentFilters';
+export * from './useDocumentTotalAggregates';
+export * from './useDocumentFilteredAggregates';
+export * from './useDocumentAggregateCount';
+export * from './useDocumentFilteredAggregateCount';

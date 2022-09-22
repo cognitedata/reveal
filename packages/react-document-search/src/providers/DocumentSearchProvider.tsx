@@ -1,128 +1,45 @@
-import { GeoJson } from '@cognite/seismic-sdk-js';
-import {
-  Reducer,
-  useContext,
-  useEffect,
-  useReducer,
-  createContext,
-  useMemo,
-} from 'react';
+import React, { createContext, useMemo, useState } from 'react';
+import { CogniteClient, DocumentSearchRequest } from '@cognite/sdk';
+import noop from 'lodash/noop';
 
-import { DocumentsFacets } from '../utils/types';
-
-import { documentFacetsStructure } from './fixture';
-import {
-  DocumentSearchAction,
-  DocumentSearchState,
-  DocumentSearchActionType,
-  DocumentSearchConfig,
-  DocumentSearchDispatch,
-} from './types';
-
-const initialState: DocumentSearchState = {
-  phrase: '',
-  facets: documentFacetsStructure,
-  geoFilter: [],
-};
-
-// Context
-
-const DocumentSearchConfigContext = createContext<DocumentSearchConfig>({});
-export const useDocumentSearchConfig = () =>
-  useContext(DocumentSearchConfigContext);
-
-const DocumentSearchContext = createContext<DocumentSearchState>(initialState);
-export const useDocumentSearchState = () => useContext(DocumentSearchContext);
-
-const DocumentSearchDispatchContext = createContext<DocumentSearchDispatch>({
-  setSearchPhrase: () => null,
-  setSearchFilters: () => null,
-  setGeoLocation: () => null,
+interface DocumentSearchContextData {
+  appliedFilters: DocumentSearchRequest;
+  setAppliedFilters: (filters: DocumentSearchRequest) => void;
+}
+export const DocumentSearchContext = createContext<
+  Props & DocumentSearchContextData
+>({
+  appliedFilters: {},
+  setAppliedFilters: () => noop,
 });
-export const useDocumentSearchDispatch = () =>
-  useContext(DocumentSearchDispatchContext);
 
-// Document state reducer
-
-function reducer(state: DocumentSearchState, action: DocumentSearchAction) {
-  switch (action.type) {
-    case DocumentSearchActionType.SET_SEARCH_PHRASE:
-      return {
-        ...state,
-        phrase: action.phrase,
-      };
-    case DocumentSearchActionType.SET_SEARCH_FILTER:
-      return {
-        ...state,
-        facets: action.facets,
-      };
-    case DocumentSearchActionType.SET_GEO_LOCATION:
-      return {
-        ...state,
-        geoFilter: action.geoLocation,
-      };
-    default: {
-      return state;
-    }
-  }
+export interface Props {
+  sdkClient?: CogniteClient;
+  options?: {
+    limit?: number;
+  };
 }
 
-// Provider
-
 export const DocumentSearchProvider: React.FC<
-  React.PropsWithChildren<DocumentSearchConfig>
-> = ({ children, cogniteClient, config, onFilterChange }) => {
-  const [state, dispatch] = useReducer<
-    Reducer<DocumentSearchState, DocumentSearchAction>
-  >(reducer, initialState);
+  React.PropsWithChildren<Props>
+> = ({ children, sdkClient, options }) => {
+  const [appliedFilters, setAppliedFilters] = useState<DocumentSearchRequest>({
+    search: {
+      query: '',
+    },
+  });
 
-  useEffect(() => {
-    if (onFilterChange) {
-      onFilterChange(state.facets);
-    }
-  }, [state.facets]);
-
-  const documentSearchDispatch = useMemo(() => {
+  const value = useMemo(() => {
     return {
-      setSearchPhrase: dispatchSearchPhrase(dispatch),
-      setSearchFilters: dispatchSearchFacets(dispatch),
-      setGeoLocation: dispatchGeoFilters(dispatch),
+      sdkClient,
+      options,
+      appliedFilters,
+      setAppliedFilters,
     };
-  }, [dispatch]);
-
-  const documentSearchConfig = useMemo(() => {
-    return {
-      cogniteClient,
-      config,
-    };
-  }, [config, cogniteClient]);
-
+  }, [sdkClient, options, appliedFilters, setAppliedFilters]);
   return (
-    <DocumentSearchConfigContext.Provider value={documentSearchConfig}>
-      <DocumentSearchContext.Provider value={state}>
-        <DocumentSearchDispatchContext.Provider value={documentSearchDispatch}>
-          {children}
-        </DocumentSearchDispatchContext.Provider>
-      </DocumentSearchContext.Provider>
-    </DocumentSearchConfigContext.Provider>
+    <DocumentSearchContext.Provider value={value}>
+      {children}
+    </DocumentSearchContext.Provider>
   );
 };
-
-// Dispatch actions
-
-const dispatchSearchPhrase =
-  (dispatch: React.Dispatch<DocumentSearchAction>) => (phrase: string) => {
-    dispatch({ type: DocumentSearchActionType.SET_SEARCH_PHRASE, phrase });
-  };
-
-const dispatchSearchFacets =
-  (dispatch: React.Dispatch<DocumentSearchAction>) =>
-  (facets: DocumentsFacets) => {
-    dispatch({ type: DocumentSearchActionType.SET_SEARCH_FILTER, facets });
-  };
-
-const dispatchGeoFilters =
-  (dispatch: React.Dispatch<DocumentSearchAction>) =>
-  (geoLocation: GeoJson[]) => {
-    dispatch({ type: DocumentSearchActionType.SET_GEO_LOCATION, geoLocation });
-  };

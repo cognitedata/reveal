@@ -1,6 +1,6 @@
 # @cognite/react-document-search
 
-Headless UI for the document search api
+A collection of hooks to perform document search and aggregation using `react-query`
 
 ## Installation
 
@@ -8,30 +8,12 @@ Headless UI for the document search api
 yarn add @cognite/react-document-search
 ```
 
-## Background
-
-### Search phrase
-
-The phrase to search for specific documents.
-
-### Facets
-
-Available filters to apply:
-
-- File Category
-- Labels
-- Last Modified
-- Last Created
-- Location
-- Page Count
-- Authors
-
 ## Setup
 
 Setup the provider with your applications instantiated Cognite client. Wrap the provider at the desired component level.
 
 ```javascript
-<DocumentSearchProvider cogniteClient={client}>...app</DocumentSearchProvider>
+<DocumentSearchProvider sdkClient={client}>...app</DocumentSearchProvider>
 ```
 
 ## Usage
@@ -39,8 +21,7 @@ Setup the provider with your applications instantiated Cognite client. Wrap the 
 #### Read the document results data
 
 ```javascript
-const { results, isFetching, hasNextPage, fetchNextPage } =
-  useDocumentSearchQuery();
+const { results } = useDocumentSearch();
 ```
 
 _see [react query docs](https://tanstack.com/query/v4/docs/reference/useInfiniteQuery) for more information_
@@ -48,57 +29,34 @@ _see [react query docs](https://tanstack.com/query/v4/docs/reference/useInfinite
 #### Read filters and search phrase applied
 
 ```javascript
-const { phrase, facets } = useDocumentSearchQuery();
+const { appliedFilters } = useDocumentFilters();
 ```
 
 #### Update filters and search phrase applied
 
 ```javascript
-const { setSearchPhrase, setSearchFilters } = useDocumentSearchDispatch();
+const { setAppliedFilters } = useDocumentFilters();
 
-setSearchPhrase('test');
-```
-
-Triggering a search event will automatically fetch and update the
-documents results in the `useDocumentSearchQuery` hook.
-
-##### Read applied filters facets
-
-```javascript
-const appliedFacet = useDocumentSearchAppliedFacetFilters('authors');
-```
-
-With that hook you can easily append the state of a facets, e.g.,
-
-```javascript
-const facet = 'labels';
-const appliedFacet = useDocumentSearchAppliedFacetFilters(facets);
-const { setSearchFilters } = useDocumentSearchDispatch();
-
-setSearchFilters({
-  [facet]: {
-    ...appliedFacets,
-    newLabel,
+setAppliedFilters({
+  search: {
+    query: 'test',
   },
 });
 ```
 
-###Optional
-To get a more safe and readable document type, use the `normalize` function:
+Triggering a search event will automatically fetch and update the
+documents results in the `useDocumentSearch` hook.
+
+##### Get aggregates (total and filtered)
 
 ```javascript
-import {
-  normalize,
-  useDocumentSearchQuery,
-} from '@cognite/react-document-search';
+const { data: count } = useDocumentAggregateCount();
+const { data: filtereCdount } = useDocumentFilteredAggregateCount();
 
-const { results } = useDocumentSearchQuery();
-
-const normalizedDocuments = results.hits.map((document) => normalize(document));
+const { data: totalAggregates } = useDocumentTotalAggregates([
+  { property: 'author' },
+]);
+const { data: filteredAggregates } = useDocumentFilteredAggregates([
+  { property: 'author' },
+]);
 ```
-
-### Todo
-
-- Rename 'lastcreated' to something else
-- Create a hook to fetch which filters are available for each category
-- Extract 'document category' logic from Discover Api

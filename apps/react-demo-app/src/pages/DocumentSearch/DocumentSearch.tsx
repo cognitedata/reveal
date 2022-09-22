@@ -1,25 +1,24 @@
 import * as React from 'react';
-import { Table } from '@cognite/cogs.js';
+import { Input, Table } from '@cognite/cogs.js';
 import { AuthConsumer, AuthContext } from '@cognite/react-container';
 import {
   DocumentSearchProvider,
-  useDocumentSearchDispatch,
-  useDocumentSearchQuery,
-  useDocumentSearchState,
-  SearchInput,
-  DocumentResult,
+  useDocumentSearch,
+  useDocumentFilters,
+  useDocumentAggregateCount,
 } from '@cognite/react-document-search';
+import { DocumentSearchItem } from '@cognite/sdk';
+import debounce from 'lodash/debounce';
 
 import { Container } from '../elements';
 
 import { FileTypeFilter } from './components/Filters/actions/FileType';
-import { LabelFilter } from './components/Filters/actions/Label';
 
 const DocumentSearchWithProviders: React.FC = () => (
   <AuthConsumer>
     {({ client }: AuthContext) =>
       client ? (
-        <DocumentSearchProvider cogniteClient={client}>
+        <DocumentSearchProvider sdkClient={client}>
           <DocumentSearch />
         </DocumentSearchProvider>
       ) : null
@@ -28,35 +27,56 @@ const DocumentSearchWithProviders: React.FC = () => (
 );
 
 export const DocumentSearch: React.FC = () => {
-  const { facets } = useDocumentSearchState();
-  const { setSearchFilters } = useDocumentSearchDispatch();
-
-  const { results } = useDocumentSearchQuery();
+  const { results } = useDocumentSearch();
+  const { setAppliedFilters } = useDocumentFilters();
+  const {
+    isLoadingTotalCount,
+    totalCount,
+    isLoadingFilteredCount,
+    filteredCount,
+  } = useDocumentAggregateCount();
+  const debouncedSearch = debounce((searchKey) => {
+    setAppliedFilters({
+      search: {
+        query: searchKey,
+      },
+    });
+  }, 300);
 
   return (
     <Container>
       {/* <Input value={phrase} onChange={(e) => setSearchPhrase(e.target.value)} /> */}
-      <SearchInput />
-      <FileTypeFilter onChange={() => null} />
-      <LabelFilter
-        onChange={(value) => {
-          setSearchFilters({
-            ...facets,
-            labels: value.map((item) => ({ externalId: item })),
-          });
+      <Input
+        onChange={(event) => {
+          debouncedSearch(event.target.value);
         }}
       />
-      <Table<DocumentResult['hits']>
-        dataSource={results.hits}
+      <FileTypeFilter onChange={() => null} />
+      {/* <LabelFilter */}
+      {/*  onChange={(value) => { */}
+      {/*    setSearchFilters({ */}
+      {/*      ...facets, */}
+      {/*      labels: value.map((item) => ({ externalId: item })), */}
+      {/*    }); */}
+      {/*  }} */}
+      {/* /> */}
+      <p>Total documents: {isLoadingTotalCount ? 'Loading...' : totalCount}</p>
+      <p>
+        Total documents based on filter:{' '}
+        {isLoadingFilteredCount ? 'Loading...' : filteredCount}
+      </p>
+
+      <Table<DocumentSearchItem>
+        dataSource={results}
         columns={[
           {
             Header: 'Title',
-            accessor: 'sourceFile.name',
+            accessor: 'item.sourceFile.name',
             disableSortBy: true,
           },
           {
             Header: 'Path',
-            accessor: 'sourceFile.directory',
+            accessor: 'item.sourceFile.directory',
           },
         ]}
         pagination={false}
