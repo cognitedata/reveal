@@ -3,7 +3,6 @@ import { useWellConfig } from 'modules/wellSearch/hooks/useWellConfig';
 
 import { TAB_NAMES } from './constants';
 import ThreeDee from './modules/3d';
-import Casing from './modules/casings';
 import DigitalRocks from './modules/digitalRocks';
 import GeomechanicsAndPPFG from './modules/geomechanicsAndPPFG';
 import NdsEvents from './modules/ndsEvents';
@@ -31,7 +30,7 @@ export const useTabs = () => {
       name: TAB_NAMES.STICK_CHART,
       path: navigation.SEARCH_WELLS_INSPECT_STICK_CHART,
       componentToRender: StickChart,
-      enabled: true,
+      enabled: !!wellsConfig?.stickChart?.enabled,
     },
     {
       key: 'trajectory',
@@ -53,13 +52,6 @@ export const useTabs = () => {
       path: navigation.SEARCH_WELLS_INSPECT_EVENTSNPT,
       componentToRender: NptEvents,
       enabled: !!wellsConfig?.npt?.enabled,
-    },
-    {
-      key: 'casing',
-      name: TAB_NAMES.CASINGS,
-      path: navigation.SEARCH_WELLS_INSPECT_CASINGSCOMPLETIONS,
-      componentToRender: Casing,
-      enabled: !!wellsConfig?.casing?.enabled,
     },
     {
       key: 'logs',

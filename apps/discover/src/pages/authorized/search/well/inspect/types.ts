@@ -7,10 +7,7 @@ type KeyOfType<T, U> = {
 }[keyof T];
 
 export type Tab = {
-  key: KeyOfType<
-    Required<ProjectConfigWells & { stickChart: { enabled: boolean } }>,
-    { enabled?: boolean }
-  >;
+  key: KeyOfType<Required<ProjectConfigWells>, { enabled?: boolean }>;
   name: WellInspectTabs;
   path: string;
   enabled: boolean;
