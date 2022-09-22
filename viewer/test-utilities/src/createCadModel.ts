@@ -22,7 +22,8 @@ export function createCadModel(
   const cadMetadata = createCadModelMetadata(8, cadRoot);
   materialManager.addModelMaterials(cadMetadata.modelIdentifier, cadMetadata.scene.maxTreeIndex);
 
-  const mockV8SectorRepository = new Mock<V8SectorRepository>().setup(p => p.clearCache).returns(() => {});
+  function noop(this: void) {}
+  const mockV8SectorRepository = new Mock<V8SectorRepository>().setup(p => p.clearCache).returns(noop);
 
   const cadNode = new CadNode(cadMetadata, materialManager, mockV8SectorRepository.object());
   const apiClient = new NodesLocalClient();
