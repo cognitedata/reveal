@@ -6,16 +6,10 @@ import { Body } from '@cognite/cogs.js';
 import { DateRangeProps, RelationshipLabels } from 'types';
 import { TIME_SELECT } from 'containers';
 import { getColumnsWithRelationshipLabels } from 'utils';
+import { TimeseriesLastReading } from '../TimeseriesLastReading/TimeseriesLastReading';
 
-export type TimeseriesWithRelationshipLabels = Timeseries & RelationshipLabels;
-export const TimeseriesTable = ({
-  dateRange = TIME_SELECT['1Y'].getTime(),
-  ...props
-}: TableProps<TimeseriesWithRelationshipLabels> & DateRangeProps) => {
-  const startTime = dateRange[0];
-  const endTime = dateRange[1];
-
-  const sparkLineColumn = {
+const sparkLineColumn = ([startTime, endTime]: [Date, Date]) => {
+  return {
     title: 'Data',
     key: 'data',
     width: 400,
@@ -54,22 +48,48 @@ export const TimeseriesTable = ({
       );
     },
   };
+};
 
+const lastReadingColumn = () => {
+  return {
+    title: 'Last reading',
+    key: 'last-reading',
+    width: 200,
+    cellRenderer: ({ rowData: timeseries }: { rowData: Timeseries }) => {
+      return <TimeseriesLastReading timeseriesId={timeseries.id} />;
+    },
+  };
+};
+
+export type TimeseriesWithRelationshipLabels = Timeseries & RelationshipLabels;
+export const TimeseriesTable = ({
+  dateRange = TIME_SELECT['1Y'].getTime(),
+  ...props
+}: TableProps<TimeseriesWithRelationshipLabels> & DateRangeProps) => {
   const { relatedResourceType } = props;
 
-  const columns = [
-    { ...Table.Columns.name, lines: 3 },
-    { ...Table.Columns.description, lines: 3 },
-    Table.Columns.externalId,
-    Table.Columns.unit,
-    sparkLineColumn,
-    Table.Columns.relationships,
-    Table.Columns.lastUpdatedTime,
-    Table.Columns.createdTime,
-  ];
-  const updatedColumns = getColumnsWithRelationshipLabels(
-    columns,
-    relatedResourceType === 'relationship'
+  const columns = React.useMemo(
+    () => [
+      { ...Table.Columns.name, lines: 3 },
+      { ...Table.Columns.description, lines: 3 },
+      Table.Columns.externalId,
+      Table.Columns.unit,
+      sparkLineColumn(dateRange),
+      Table.Columns.relationships,
+      lastReadingColumn(),
+      Table.Columns.lastUpdatedTime,
+      Table.Columns.createdTime,
+    ],
+    [dateRange]
+  );
+
+  const updatedColumns = React.useMemo(
+    () =>
+      getColumnsWithRelationshipLabels(
+        columns,
+        relatedResourceType === 'relationship'
+      ),
+    [columns, relatedResourceType]
   );
 
   return (

@@ -7,6 +7,7 @@ import {
   DataSetItem,
   AssetsItem,
 } from 'components';
+import { TimeseriesLastReading } from '../TimeseriesLastReading/TimeseriesLastReading';
 
 export function TimeseriesDetails({ timeseries }: { timeseries: Timeseries }) {
   return (
@@ -49,6 +50,16 @@ export function TimeseriesDetails({ timeseries }: { timeseries: Timeseries }) {
         value={
           timeseries ? (
             <TimeDisplay value={timeseries.lastUpdatedTime} />
+          ) : (
+            'Loading...'
+          )
+        }
+      />
+      <DetailsTabItem
+        name="Last reading"
+        value={
+          timeseries ? (
+            <TimeseriesLastReading timeseriesId={timeseries.id} />
           ) : (
             'Loading...'
           )
