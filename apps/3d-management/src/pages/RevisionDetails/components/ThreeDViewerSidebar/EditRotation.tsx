@@ -12,10 +12,6 @@ import {
 } from '@cognite/reveal';
 
 import * as Sentry from '@sentry/browser';
-import {
-  Legacy3DModel,
-  Legacy3DViewer,
-} from 'pages/RevisionDetails/components/ThreeDViewer/legacyViewerTypes';
 import { RedoOutlined, UndoOutlined } from '@ant-design/icons';
 import antdRadioStyles from 'antd/es/radio/style/index.less';
 import { useGlobalStyles } from '@cognite/cdf-utilities';
@@ -26,8 +22,8 @@ type RotationAxis = 'x' | 'y' | 'z';
 
 type Props = {
   saveModelRotation: (rotation: Tuple3<number>) => Promise<void>;
-  viewer: Cognite3DViewer | Legacy3DViewer;
-  model: Cognite3DModel | CognitePointCloudModel | Legacy3DModel;
+  viewer: Cognite3DViewer;
+  model: Cognite3DModel | CognitePointCloudModel;
 };
 
 export function EditRotation(props: Props) {
@@ -63,19 +59,11 @@ function EditRotationOpened(props: Props & { onClose: () => void }) {
   >([0, 0, 0]);
 
   const getModelTransformation = React.useCallback(() => {
-    return 'getModelTransformation' in props.model
-      ? props.model.getModelTransformation()
-      : ((props.model.matrix.clone() as unknown) as THREE.Matrix4);
+    return props.model.getModelTransformation();
   }, [props.model]);
 
   const setModelTransformation = (matrix: THREE.Matrix4) => {
-    if ('setModelTransformation' in props.model) {
-      props.model.setModelTransformation(matrix);
-    } else {
-      // @ts-ignore old three
-      props.model.matrix.copy(matrix);
-      props.model.updateMatrixWorld(false);
-    }
+    props.model.setModelTransformation(matrix);
   };
 
   useEffect(() => {
@@ -122,50 +110,18 @@ function EditRotationOpened(props: Props & { onClose: () => void }) {
   };
 
   const redrawModelWithRotation = (rotationMatrix: THREE.Matrix4) => {
-    if ('setModelTransformation' in props.model) {
-      const matrix = props.model.getModelTransformation();
-      const newMatrix = new THREE.Matrix4().multiplyMatrices(
-        matrix,
-        rotationMatrix
-      );
-      props.model.setModelTransformation(newMatrix);
-    } else {
-      const tmpMatrix = rotationMatrix.clone();
-
-      // @ts-ignore old viewer uses old THREE with applyMatrix instead of applyMatrix4
-      props.model.applyMatrix(tmpMatrix);
-      props.model.updateMatrixWorld(false);
-    }
-    requestRedraw();
-  };
-
-  const requestRedraw = () => {
-    props.viewer.fitCameraToModel(props.model as any, 0);
-
-    if (!(props.viewer instanceof Cognite3DViewer)) {
-      // This is for the _old_ 3D viewer (@cognite/3d-viewer)
-
-      // force render hacks are required to render model correctly, otherwise some parts might not be rendered after rotation
-      // @ts-ignore
-      // eslint-disable-next-line
-      props.viewer._forceRendering = true;
-      // @ts-ignore
-      // eslint-disable-next-line
-      props.viewer._animate();
-      requestAnimationFrame(() => {
-        if (props && props.viewer) {
-          // @ts-ignore
-          // eslint-disable-next-line
-          props.viewer._forceRendering = false;
-        }
-      });
-    }
+    const matrix = props.model.getModelTransformation();
+    const newMatrix = new THREE.Matrix4().multiplyMatrices(
+      matrix,
+      rotationMatrix
+    );
+    props.model.setModelTransformation(newMatrix);
   };
 
   const onCancelClicked = () => {
     setModelTransformation(initialRotation!);
 
-    requestRedraw();
+    props.viewer.fitCameraToModel(props.model, 0);
 
     setRotationAnglePiMultiplier([0, 0, 0]);
     props.onClose();

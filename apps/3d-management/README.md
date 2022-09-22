@@ -8,8 +8,9 @@ Previously known as [console/glados](https://github.com/cognitedata/console) sub
 
 1. Clone repo.
 1. Install dependencies with `yarn`.
-1. Run dev server with `yarn start`.
-1. Navigate to [dev.fusion.cogniteapp.com](https://dev.fusion.cogniteapp.com/3ddemo/3d-models) and apply the override as described [here](https://cognitedata.atlassian.net/wiki/spaces/ManagementConsole/pages/1561985275/CDF+frontend+development+WIKI+https+cog.link+cdf-frontend-wiki#I-am-developing-my-micro-frontend-locally.-What-do-I-do?).
+1. Run dev server with `yarn start`. Take a note of the local address.
+1. Open the local address from above in a browser and accept the unsafe certificate.
+2. Navigate to [dev.fusion.cogniteapp.com](https://dev.fusion.cogniteapp.com/) and apply the override as described [here](https://cognitedata.atlassian.net/l/cp/4aVs8u9B).
 
 ## Deploying to production, staging and development
 

@@ -1,12 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import zIndex from 'utils/zIndex';
 import { Revision3DStatus, Revision3D } from '@cognite/sdk';
 import { LazyWrapper } from 'components/LazyWrapper';
 import Thumbnail from 'components/Thumbnail';
 
-import { isModelFormatDeprecated } from 'pages/RevisionDetails/components/ThreeDViewerWrapper/isModelFormatDeprecated';
-import { DeprecatedModelMessage } from 'pages/RevisionDetails/components/ThreeDViewerWrapper/DeprecatedModelMessage';
 import { CloseCircleFilled, PlayCircleFilled } from '@ant-design/icons';
 import { ThreeDViewerProps } from '../ThreeDViewer/ThreeDViewer.d';
 
@@ -67,7 +65,6 @@ type Props = {
   modelId: number;
   revision: Revision3D;
   canBeViewed: boolean;
-  useOldViewer: boolean;
 };
 
 const ThreeDViewer = (props: ThreeDViewerProps) =>
@@ -87,53 +84,12 @@ const MemoizedThreeDViewer = React.memo(
   }
 );
 
-function getViewerModule(
-  useOld?: boolean
-): Promise<
-  typeof import('@cognite/3d-viewer') | typeof import('@cognite/reveal')
-> {
-  if (useOld) {
-    return import('@cognite/3d-viewer');
-  }
-  return import('@cognite/reveal');
-}
-
 export default function ThreeDViewerWrapper(props: Props) {
   const [isViewerOpened, setIsViewerOpened] = useState<boolean>(false);
-  const [ViewerConstructor, setViewerConstructor] = useState<
-    | typeof import('@cognite/3d-viewer').Cognite3DViewer
-    | typeof import('@cognite/reveal').Cognite3DViewer
-  >();
-  const [isDeprecated, setIsDeprecated] = useState(false);
 
-  useEffect(() => {
-    let isMounted = true;
-    (async () => {
-      const [module, isDeprecatedFormat] = await Promise.all([
-        getViewerModule(props.useOldViewer),
-        isModelFormatDeprecated(props.modelId, props.revision.id),
-      ]);
-
-      if (isMounted) {
-        setViewerConstructor(() => module.Cognite3DViewer);
-        setIsDeprecated(isDeprecatedFormat);
-      }
-    })();
-    return () => {
-      isMounted = false;
-    };
-  }, [props.useOldViewer, props.modelId, props.revision.id]);
-
-  if (isViewerOpened && ViewerConstructor) {
-    if (isDeprecated) {
-      return <DeprecatedModelMessage />;
-    }
+  if (isViewerOpened) {
     return (
-      <MemoizedThreeDViewer
-        modelId={props.modelId}
-        revision={props.revision}
-        ViewerConstructor={ViewerConstructor}
-      />
+      <MemoizedThreeDViewer modelId={props.modelId} revision={props.revision} />
     );
   }
 

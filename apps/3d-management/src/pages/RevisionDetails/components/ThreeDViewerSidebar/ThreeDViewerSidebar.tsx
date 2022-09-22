@@ -8,12 +8,8 @@ import {
 import React from 'react';
 import { Tuple3, RevisionCameraProperties } from '@cognite/sdk';
 import styled from 'styled-components';
-import {
-  Legacy3DModel,
-  Legacy3DViewer,
-} from 'pages/RevisionDetails/components/ThreeDViewer/legacyViewerTypes';
 import { ToolbarTreeView } from 'pages/RevisionDetails/components/ToolbarTreeView/ToolbarTreeView';
-import { DEFAULT_MARGIN_H, DEFAULT_MARGIN_V, isOldViewer } from 'utils';
+import { DEFAULT_MARGIN_H, DEFAULT_MARGIN_V } from 'utils';
 import { useFlag } from '@cognite/react-feature-flags';
 import { isProduction } from '@cognite/cdf-utilities';
 import { Switch } from '@cognite/cogs.js';
@@ -39,8 +35,8 @@ type RevisionUpdatePayload = {
 
 type Props = {
   // consider context for viewer/model
-  viewer: Cognite3DViewer | Legacy3DViewer;
-  model: Cognite3DModel | CognitePointCloudModel | Legacy3DModel;
+  viewer: Cognite3DViewer;
+  model: Cognite3DModel | CognitePointCloudModel;
 };
 
 // base size is thumbnail and edit rotation btns minimum width
@@ -66,41 +62,23 @@ export default function ThreeDViewerSidebar(props: Props) {
     otherUpdates?: Partial<RevisionUpdatePayload>
   ) => {
     const { viewer } = props;
-
-    let position: THREE.Vector3;
-    let target: THREE.Vector3;
-
-    if (viewer instanceof Cognite3DViewer) {
-      const state = viewer.cameraManager.getCameraState();
-      position = state.position;
-      target = state.target;
-    } else {
-      const legacyPosition = viewer.getCameraPosition();
-      position = new THREE.Vector3(
-        legacyPosition.x,
-        legacyPosition.y,
-        legacyPosition.z
-      );
-      const legacyTarget = viewer.getCameraTarget();
-      target = new THREE.Vector3(
-        legacyTarget.x,
-        legacyTarget.y,
-        legacyTarget.z
-      );
-    }
+    const { position, target } = viewer.cameraManager.getCameraState();
 
     // Get camera position and target for upload
 
     // Convert camera position and target to model space
     const inverseModelMatrix = new THREE.Matrix4();
+
     if (props.model instanceof Cognite3DModel) {
       props.model.mapPositionFromModelToCdfCoordinates(position, position);
       props.model.mapPositionFromModelToCdfCoordinates(target, target);
     } else {
+      // TODO 2022-09-21 larsmoa: Replace with map-functions in Reveal 4.0
+
       // Get inverse transformation matrix to compute camera position and target in model space
-      inverseModelMatrix.copy(props.model.matrix as any).invert();
-      position.applyMatrix4(inverseModelMatrix as any);
-      target.applyMatrix4(inverseModelMatrix as any);
+      inverseModelMatrix.copy(props.model.matrix).invert();
+      position.applyMatrix4(inverseModelMatrix);
+      target.applyMatrix4(inverseModelMatrix);
     }
 
     await updateRevisionMutation({
@@ -115,9 +93,7 @@ export default function ThreeDViewerSidebar(props: Props) {
   };
 
   const showTreeView =
-    treeViewFeatureFlagIsEnabled &&
-    !(props.model instanceof CognitePointCloudModel) &&
-    !isOldViewer(props.viewer);
+    treeViewFeatureFlagIsEnabled && props.model instanceof Cognite3DModel;
 
   return (
     <SidebarContainer

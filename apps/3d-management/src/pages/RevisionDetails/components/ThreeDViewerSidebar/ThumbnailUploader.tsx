@@ -3,21 +3,17 @@ import { Button } from '@cognite/cogs.js';
 import { Modal, message } from 'antd';
 
 import sdk from '@cognite/cdf-sdk-singleton';
-import { FileUploadResponse } from '@cognite/sdk';
+import { FileUploadResponse, HttpError } from '@cognite/sdk';
 import { fireErrorNotification } from 'utils/notifications';
 import {
   Cognite3DModel,
   Cognite3DViewer,
   CognitePointCloudModel,
 } from '@cognite/reveal';
-import {
-  Legacy3DModel,
-  Legacy3DViewer,
-} from 'pages/RevisionDetails/components/ThreeDViewer/legacyViewerTypes';
 
 type Props = {
-  viewer: Cognite3DViewer | Legacy3DViewer;
-  model: Cognite3DModel | CognitePointCloudModel | Legacy3DModel;
+  viewer: Cognite3DViewer;
+  model: Cognite3DModel | CognitePointCloudModel;
   onUploadDone: () => void;
   style?: CSSProperties;
 };
@@ -33,32 +29,28 @@ export function ThumbnailUploader({ style, viewer, model, ...props }: Props) {
 
   const takeScreenshot = async () => {
     try {
-      let blob: Blob;
-      if (viewer instanceof Cognite3DViewer) {
-        const base64 = await viewer.getScreenshot(
-          screenshotWidth,
-          screenshotHeight
-        );
-        setThumbnailUri(base64);
-        blob = base64ToBlob(base64);
+      const base64 = await viewer.getScreenshot(
+        screenshotWidth,
+        screenshotHeight
+      );
+      setThumbnailUri(base64);
+      const blob = base64ToBlob(base64);
 
-        viewer.requestRedraw();
-      } else {
-        const blobURL = await viewer.getScreenshot(
-          screenshotWidth,
-          screenshotHeight
-        );
-        setThumbnailUri(blobURL);
-        blob = await getBlobFromBlobURL(blobURL);
-      }
+      viewer.requestRedraw();
 
       setIsOpenModal(true);
       setThumbnailBlob(blob);
     } catch (error) {
-      fireErrorNotification({
-        message: 'Screenshot could not be loaded',
-        error,
-      });
+      if (error instanceof HttpError) {
+        fireErrorNotification({
+          message: 'Screenshot could not be loaded',
+          error,
+        });
+      } else {
+        fireErrorNotification({
+          message: 'Screenshot could not be loaded - unknown error occured',
+        });
+      }
     }
   };
 
@@ -93,7 +85,11 @@ export function ThumbnailUploader({ style, viewer, model, ...props }: Props) {
 
       props.onUploadDone();
     } catch (e) {
-      fireErrorNotification(e.message || 'Upload failed.');
+      if (e instanceof HttpError) {
+        fireErrorNotification(e.message || 'Upload failed.');
+      } else {
+        fireErrorNotification('Upload failed - unknown error occurred');
+      }
     } finally {
       setIsUploading(false);
       setIsOpenModal(false);
@@ -144,8 +140,4 @@ function base64ToBlob(dataURI: string): Blob {
     uint8Array[i] = byteString.charCodeAt(i);
   }
   return new Blob([arrayBuffer], { type: 'image/jpeg' });
-}
-
-async function getBlobFromBlobURL(blobURL): Promise<Blob> {
-  return fetch(blobURL).then((res) => res.blob()); // Gets the response and returns it as a blob
 }

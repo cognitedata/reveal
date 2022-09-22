@@ -10,12 +10,10 @@ import {
 
 import styled from 'styled-components';
 import sdk from '@cognite/cdf-sdk-singleton';
-import * as THREE from 'three';
 import { AxisViewTool } from '@cognite/reveal/tools';
 import { OverlayToolbar } from '../OverlayToolbar/OverlayToolbar';
 import ThreeDViewerSidebar from '../ThreeDViewerSidebar';
 import { ThreeDViewerProps } from './ThreeDViewer.d';
-import { Legacy3DModel, Legacy3DViewer } from './legacyViewerTypes';
 
 const ThreeDViewerStyled = styled.div`
   position: relative;
@@ -36,10 +34,8 @@ const CanvasContainer = styled.div`
 export default function ThreeDViewer(props: ThreeDViewerProps) {
   const canvasWrapperRef = useRef<HTMLDivElement>(null);
   const [error, setError] = useState<Error>();
-  const [model, setModel] = useState<
-    Cognite3DModel | CognitePointCloudModel | Legacy3DModel
-  >();
-  const [viewer, setViewer] = useState<Cognite3DViewer | Legacy3DViewer>();
+  const [model, setModel] = useState<Cognite3DModel | CognitePointCloudModel>();
+  const [viewer, setViewer] = useState<Cognite3DViewer>();
 
   const modelId = +props.modelId;
   const { id: revisionId } = props.revision;
@@ -55,22 +51,22 @@ export default function ThreeDViewer(props: ThreeDViewerProps) {
 
   // set viewer
   useEffect(() => {
-    let viewerLocal: Cognite3DViewer | Legacy3DViewer;
+    let viewerLocal: Cognite3DViewer;
     (async () => {
       if (!canvasWrapperRef.current) {
         return;
       }
 
-      viewerLocal = new props.ViewerConstructor({
+      viewerLocal = new Cognite3DViewer({
         sdk,
         domElement: canvasWrapperRef.current,
         continuousModelStreaming: true,
-      } as any);
+      });
       setViewer(viewerLocal);
     })();
 
     return () => viewerLocal?.dispose();
-  }, [revisionId, props.ViewerConstructor]);
+  }, [revisionId]);
 
   // setup axis tool
   useEffect(() => {
@@ -91,67 +87,42 @@ export default function ThreeDViewer(props: ThreeDViewerProps) {
       if (!viewer) {
         return;
       }
-      let modelLocal: CognitePointCloudModel | Cognite3DModel | Legacy3DModel;
+      let modelLocal: CognitePointCloudModel | Cognite3DModel;
 
       try {
-        if (viewer instanceof Cognite3DViewer) {
-          (viewer.cameraManager as DefaultCameraManager).setCameraControlsOptions(
-            {
-              changeCameraTargetOnClick: true,
-              mouseWheelAction: 'zoomToCursor',
-            }
-          );
-          const modelType = await viewer.determineModelType(
-            modelId,
-            revisionId
-          );
-          switch (modelType) {
-            case 'cad': {
-              modelLocal = await viewer.addModel({ modelId, revisionId });
-              break;
-            }
-            case 'pointcloud': {
-              modelLocal = await viewer.addPointCloudModel({
-                modelId,
-                revisionId,
-              });
-              modelLocal.pointSizeType = PotreePointSizeType.Attenuated;
-              modelLocal.pointSize = 0.25;
-              break;
-            }
-            default: {
-              throw new Error(`Unsupported model type ${modelType}`);
-            }
+        (viewer.cameraManager as DefaultCameraManager).setCameraControlsOptions(
+          {
+            changeCameraTargetOnClick: true,
+            mouseWheelAction: 'zoomToCursor',
           }
-        } else {
-          modelLocal = await viewer.addModel({ modelId, revisionId });
+        );
+        const modelType = await viewer.determineModelType(modelId, revisionId);
+        switch (modelType) {
+          case 'cad': {
+            modelLocal = await viewer.addModel({ modelId, revisionId });
+            break;
+          }
+          case 'pointcloud': {
+            modelLocal = await viewer.addPointCloudModel({
+              modelId,
+              revisionId,
+            });
+            modelLocal.pointSizeType = PotreePointSizeType.Attenuated;
+            modelLocal.pointSize = 0.25;
+            break;
+          }
+          default: {
+            throw new Error(`Unsupported model type ${modelType}`);
+          }
         }
       } catch (e) {
-        if (canvasWrapperRef.current) {
+        if (e instanceof Error && canvasWrapperRef.current) {
           setError(e);
         }
         return;
       }
 
-      if ('loadCameraFromModel' in viewer) {
-        viewer.loadCameraFromModel(modelLocal as CogniteModelBase);
-      } else {
-        // legacy way of loading camera position from the revision
-        const { target, position } = props.revision.camera!;
-        if (Array.isArray(target) && Array.isArray(position)) {
-          // Create three.js objects
-          const positionVector = new THREE.Vector3(...position);
-          const targetVector = new THREE.Vector3(...target);
-          // Apply transformation matrix
-          positionVector.applyMatrix4((modelLocal as Legacy3DModel).matrix);
-          targetVector.applyMatrix4((modelLocal as Legacy3DModel).matrix);
-          // Set on viewer
-          viewer.setCameraPosition(positionVector);
-          viewer.setCameraTarget(targetVector);
-        } else {
-          viewer.fitCameraToModel(modelLocal as Legacy3DModel, 0);
-        }
-      }
+      viewer.loadCameraFromModel(modelLocal as CogniteModelBase);
 
       if (canvasWrapperRef.current) {
         setModel(modelLocal);

@@ -6,10 +6,6 @@ import {
   CognitePointCloudModel,
   THREE,
 } from '@cognite/reveal';
-import {
-  Legacy3DModel,
-  Legacy3DViewer,
-} from 'pages/RevisionDetails/components/ThreeDViewer/legacyViewerTypes';
 
 import styled from 'styled-components';
 
@@ -45,8 +41,8 @@ const CenteredIcon = styled(Icon)`
 `;
 
 type Props = {
-  viewer: Cognite3DViewer | Legacy3DViewer;
-  model: Cognite3DModel | CognitePointCloudModel | Legacy3DModel;
+  viewer: Cognite3DViewer;
+  model: Cognite3DModel | CognitePointCloudModel;
 };
 export function OverlayToolbar({ viewer, model }: Props) {
   const buttonGroups: ToolBarButton[][] = [
@@ -54,12 +50,12 @@ export function OverlayToolbar({ viewer, model }: Props) {
       {
         icon: 'Scan',
         description: 'Fit camera to the model',
-        onClick: () => viewer.fitCameraToModel(model as any, 400),
+        onClick: () => viewer.fitCameraToModel(model, 400),
       },
     ],
   ];
 
-  addClippingSliderIfApplicable();
+  addClippingSlider();
   addPointSizeSliderIfApplicable();
 
   return (
@@ -95,36 +91,30 @@ export function OverlayToolbar({ viewer, model }: Props) {
     }
   }
 
-  function addClippingSliderIfApplicable() {
-    if (
-      viewer instanceof Cognite3DViewer &&
-      (model instanceof Cognite3DModel ||
-        model instanceof CognitePointCloudModel)
-    ) {
-      const bounds = model.getModelBoundingBox();
-      const clippingPlaneSlider = (
-        <SliderContainer>
-          <CenteredIcon type="CubeBottom" />
-          <ClippingPlaneSlider
-            min={bounds.min.y}
-            max={bounds.max.y}
-            step={(bounds.max.y - bounds.min.y) / 250.0}
-            defaultValue={bounds.max.y}
-            onChange={(clippingYPosition) => {
-              viewer.setClippingPlanes([
-                new THREE.Plane(new THREE.Vector3(0, -1, 0), clippingYPosition),
-              ]);
-            }}
-          />
-          <CenteredIcon type="CubeTop" />
-        </SliderContainer>
-      );
-      const pointSizeTool: ToolBarButton = {
-        icon: 'ResizeHeight',
-        description: 'Slice',
-        dropdownContent: clippingPlaneSlider,
-      };
-      buttonGroups[0].push(pointSizeTool);
-    }
+  function addClippingSlider() {
+    const bounds = model.getModelBoundingBox();
+    const clippingPlaneSlider = (
+      <SliderContainer>
+        <CenteredIcon type="CubeBottom" />
+        <ClippingPlaneSlider
+          min={bounds.min.y}
+          max={bounds.max.y}
+          step={(bounds.max.y - bounds.min.y) / 250.0}
+          defaultValue={bounds.max.y}
+          onChange={(clippingYPosition) => {
+            viewer.setClippingPlanes([
+              new THREE.Plane(new THREE.Vector3(0, -1, 0), clippingYPosition),
+            ]);
+          }}
+        />
+        <CenteredIcon type="CubeTop" />
+      </SliderContainer>
+    );
+    const pointSizeTool: ToolBarButton = {
+      icon: 'ResizeHeight',
+      description: 'Slice',
+      dropdownContent: clippingPlaneSlider,
+    };
+    buttonGroups[0].push(pointSizeTool);
   }
 }
