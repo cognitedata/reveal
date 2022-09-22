@@ -20,9 +20,8 @@ export default class OutlineVisualTest extends ViewerVisualTestFixture {
     const model = models[0];
 
     if (model instanceof Cognite3DModel) {
-      model.setRotationFromEuler(new THREE.Euler(Math.PI / 4, 0, 0));
-      model.updateMatrix();
-      model.updateMatrixWorld();
+      const matrix = new THREE.Matrix4().makeRotationFromEuler(new THREE.Euler(Math.PI / 4, 0, 0));
+      model.setModelTransformation(matrix);
 
       const nodesPerColor = 10;
       for (let color = 0; color < 8; ++color) {
