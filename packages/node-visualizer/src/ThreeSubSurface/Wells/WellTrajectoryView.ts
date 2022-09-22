@@ -143,7 +143,6 @@ export class WellTrajectoryView extends BaseGroupThreeView {
 
     const allViewTrajectories = this.getAllViewShowTrajectoryList();
     if (allViewTrajectories) {
-      this.setCommonName(allViewTrajectories);
       this.setMaxCoordinate(allViewTrajectories);
     }
 
@@ -531,14 +530,31 @@ export class WellTrajectoryView extends BaseGroupThreeView {
   private setMaxCoordinate = (wellTrajectoryViews: WellTrajectoryView[]) => {
     let maxCoordinate = new Vector3(0, 0, 0);
 
-    wellTrajectoryViews.forEach((wellTrajectory) => {
+    /*
+     * Filtering consecutive well trajectories,
+     * Then assign common name and max coordinate
+     */
+
+    const consecutiveWellTrajectories = wellTrajectoryViews.filter((view) => {
+      const vectorDistance = (
+        view.node.trajectory?.getTopPosition() || maxCoordinate
+      ).distance(this.node.trajectory?.getTopPosition() || maxCoordinate);
+
+      return Math.abs(vectorDistance) < 100;
+    });
+
+    this.setCommonName(consecutiveWellTrajectories);
+
+    consecutiveWellTrajectories.forEach((wellTrajectory) => {
       const trajectoryTop =
         wellTrajectory.node.trajectory?.getTopPosition() ||
         new Vector3(0, 0, 0);
+
       maxCoordinate = new Vector3(
         Math.max(maxCoordinate.x, trajectoryTop.x),
         Math.max(maxCoordinate.y, trajectoryTop.y),
-        Math.max(maxCoordinate.z, trajectoryTop.z)
+        // trajectoryTop.z coordinate has minus values
+        Math.min(maxCoordinate.z, trajectoryTop.z)
       );
     });
     this.maxCoordinate = maxCoordinate;
