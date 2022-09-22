@@ -10,7 +10,7 @@ import { LevelOfDetail, ConsumedSector, CadModelMetadata } from '@reveal/cad-par
 import { CadModelUpdateHandler, CadModelBudget } from '@reveal/cad-geometry-loaders';
 import { LoadingState } from '@reveal/model-base';
 import { CadMaterialManager, RenderMode } from '@reveal/rendering';
-import { File3dFormat, ModelIdentifier } from '@reveal/modeldata-api';
+import { File3dFormat, ModelIdentifier } from '@reveal/data-providers';
 import { MetricsLogger } from '@reveal/metrics';
 import { defaultDesktopCadModelBudget } from '@reveal/cad-geometry-loaders';
 import { CadModelFactory, CadModelSectorLoadStatistics, CadNode, GeometryFilter } from '@reveal/cad-model';

@@ -4,7 +4,7 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three-stdlib';
 
-import { ModelMetadataProvider, ModelDataProvider, ModelIdentifier } from '../../packages/modeldata-api';
+import { ModelMetadataProvider, ModelDataProvider, ModelIdentifier } from '../../packages/data-providers';
 import { createDataProviders } from './utilities/createDataProviders';
 import { VisualTestFixture } from './VisualTestFixture';
 

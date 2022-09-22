@@ -3,7 +3,7 @@
  */
 
 import { NodesApiClient } from '@reveal/nodes-api';
-import { ModelDataProvider, ModelMetadataProvider } from '@reveal/modeldata-api';
+import { ModelDataProvider, ModelMetadataProvider } from '@reveal/data-providers';
 
 /**
  * Describes how Reveal data is stored, and provides means to create custom storage providers

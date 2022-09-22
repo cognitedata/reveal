@@ -17,7 +17,7 @@ import {
   ModelIdentifier,
   File3dFormat,
   BlobOutputMetadata
-} from '@reveal/modeldata-api';
+} from '@reveal/data-providers';
 
 export class CadModelMetadataRepository implements MetadataRepository<Promise<CadModelMetadata>> {
   private readonly _modelMetadataProvider: ModelMetadataProvider;

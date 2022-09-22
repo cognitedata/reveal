@@ -5,7 +5,7 @@
 import { PotreeNodeWrapper } from './PotreeNodeWrapper';
 import { PointCloudMetadata } from './PointCloudMetadata';
 
-import { ModelDataProvider } from '@reveal/modeldata-api';
+import { ModelDataProvider } from '@reveal/data-providers';
 
 import { PointCloudOctree, Potree } from './potree-three-loader';
 
