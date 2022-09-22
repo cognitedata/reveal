@@ -7,7 +7,7 @@ import {
   ModelMetadataProvider,
   LocalModelDataProvider,
   LocalModelMetadataProvider
-} from '@reveal/modeldata-api';
+} from '@reveal/data-providers';
 import { DataSource } from './DataSource';
 
 /**

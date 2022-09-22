@@ -4,7 +4,7 @@
 
 import * as THREE from 'three';
 
-import { ModelIdentifier } from '@reveal/modeldata-api';
+import { ModelIdentifier } from '@reveal/data-providers';
 import { CadMaterialManager, Materials } from '@reveal/rendering';
 import { GltfSectorRepository, SectorRepository } from '..';
 import { assertNever } from '../../utilities';

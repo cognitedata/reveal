@@ -15,4 +15,4 @@ export {
   ModelDataProvider,
   BlobOutputMetadata,
   File3dFormat
-} from '../packages/modeldata-api';
+} from '../packages/data-providers';

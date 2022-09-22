@@ -1,4 +1,4 @@
-import { ModelDataProvider } from '@reveal/modeldata-api';
+import { ModelDataProvider } from '@reveal/data-providers';
 import { PointCloudEptGeometry } from '../geometry/PointCloudEptGeometry';
 import { PointCloudEptGeometryNode } from '../geometry/PointCloudEptGeometryNode';
 

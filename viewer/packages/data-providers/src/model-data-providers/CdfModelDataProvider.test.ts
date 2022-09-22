@@ -7,7 +7,7 @@ import { CdfModelDataProvider } from './CdfModelDataProvider';
 
 import { CogniteClient } from '@cognite/sdk';
 
-import { mockClientAuthentication } from '../../../test-utilities/src/cogniteClientAuth';
+import { mockClientAuthentication } from '../../../../test-utilities/src/cogniteClientAuth';
 
 describe(CdfModelDataProvider.name, () => {
   const appId = 'reveal-CdfModelDataClient-test';
