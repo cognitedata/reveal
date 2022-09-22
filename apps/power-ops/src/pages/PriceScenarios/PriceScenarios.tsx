@@ -6,11 +6,16 @@ import { BidProcessResultWithData, TableData, TableColumn } from 'types';
 import { Column } from 'react-table';
 import { HeadlessTable } from 'components/HeadlessTable';
 import { useAuthContext } from '@cognite/react-container';
-import { DoubleDatapoint, SyntheticDataValue } from '@cognite/sdk';
+import {
+  DoubleDatapoint,
+  SyntheticDatapoint,
+  SyntheticDataValue,
+} from '@cognite/sdk';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
 import zip from 'lodash/zip';
+import chunk from 'lodash/chunk';
 import { useMetrics } from '@cognite/metrics';
 import { DEFAULT_CONFIG } from '@cognite/power-ops-api-types';
 
@@ -62,133 +67,164 @@ export const PriceScenarios = ({
   const [tableColumns, setTableColumns] = useState<TableColumn[]>([]);
   const [tableData, setTableData] = useState<TableData[]>([]);
 
+  const getTotalProductionData = async (): Promise<
+    Record<string, string>[][]
+  > => {
+    // When "Total" tab is selected, table looks like:
+    // [Hour, Scenario 1, Scenario 2, ..., Scenario n]
+    if (!client) return [];
+
+    // We need to split the scenario in max 10 element arrays due to a bug in the SDK
+    // Ref: https://cognitedata.slack.com/archives/C6KNJCEEA/p1663773050949699
+    const scenarioChunks = chunk(bidProcessResult.priceScenarios, 10);
+
+    const shopTotalProductionDatapoints = (
+      await Promise.all(
+        scenarioChunks.map((scenarios) => {
+          // Aggregate synthetically all total SHOP timeseries per Scenario for a given day (24h)
+          return client.timeseries.syntheticQuery(
+            scenarios.map((scenario) => ({
+              expression: scenario.totalProduction.shopProductionExternalIds
+                .map((externalId) => `TS{externalId='${externalId}'}`)
+                .join(' + '),
+              start: bidDate.startOf('day').valueOf(),
+              end: bidDate.endOf('day').valueOf(),
+            }))
+          );
+        })
+      )
+    ).flat();
+
+    if (!shopTotalProductionDatapoints) {
+      Sentry.captureException(
+        new Error(`No shopTotalProductionDatapoints found.`)
+      );
+      return [];
+    }
+
+    return bidProcessResult.priceScenarios
+      .map((_, index) => {
+        const accessor = `shop-${index}`;
+        const datapoints = (
+          shopTotalProductionDatapoints[index]
+            ?.datapoints as SyntheticDatapoint[]
+        )?.map((point) => ({
+          ...point,
+          // Multiply by (-1) all Total SHOP production for presentation
+          value: (point as SyntheticDataValue).value * -1,
+        }));
+
+        return { datapoints, accessor };
+      })
+      .map(({ datapoints, accessor }) =>
+        getFormattedProductionColumn(datapoints, accessor)
+      );
+  };
+
+  const getScenarioProductionData = async (
+    activeScenarioIndex: number
+  ): Promise<Record<string, string>[][]> => {
+    // When a "Scenario" tab is selected, table looks like:
+    // [Hour, Total (for this scenario), Plant 1, Plant 2, ..., Plant n]
+    if (!client) return [];
+
+    // Get current scenario from activeScenarioIndex
+    const currentScenario =
+      bidProcessResult.priceScenarios[activeScenarioIndex];
+
+    if (!currentScenario) {
+      Sentry.captureException(
+        new Error(
+          `No currentScenario found in bidProcessResult object for activeScenarioIndex = ${activeScenarioIndex}.`
+        )
+      );
+      return [];
+    }
+
+    // Create array of ProductionsTS externalIds for each plant column
+    const plantProductionTsExternalIds: string[] = [];
+    bidProcessResult.plants.forEach(async (column, index) => {
+      // Get Plant from current scenario
+      const plant = currentScenario.plantProduction?.[index];
+
+      if (plant?.production?.shopProductionExternalIds) {
+        plantProductionTsExternalIds.push(
+          ...plant.production.shopProductionExternalIds
+        );
+      }
+    });
+
+    // Fetch data points of each plant's SHOP result for a given day (24h)
+    const shopPlantProductionDatapoints = plantProductionTsExternalIds.length
+      ? await client.datapoints.retrieve({
+          items: plantProductionTsExternalIds.map((externalId) => {
+            return { externalId };
+          }),
+          start: bidDate.startOf('day').valueOf(),
+          end: bidDate.endOf('day').valueOf(),
+        })
+      : [];
+    if (!shopPlantProductionDatapoints?.length) {
+      Sentry.captureException(
+        new Error(`No shopPlantProductionDatapoints found`)
+      );
+      return [];
+    }
+
+    // Aggregate synthetically all total SHOP timeseries of current Scenario for a give day (24h)
+    const shopTotalProductionDatapoints =
+      await client.timeseries.syntheticQuery([
+        {
+          expression: currentScenario.totalProduction.shopProductionExternalIds
+            .map((externalId) => `TS{externalId='${externalId}'}`)
+            .join(' + '),
+          start: bidDate.startOf('day').valueOf(),
+          end: bidDate.endOf('day').valueOf(),
+        },
+      ]);
+    if (!shopTotalProductionDatapoints) {
+      Sentry.captureException(
+        new Error(`No shopPlantProductionDatapoints found`)
+      );
+      return [];
+    }
+
+    return [
+      ...shopTotalProductionDatapoints,
+      ...shopPlantProductionDatapoints,
+    ]?.map(({ datapoints }, index) => {
+      // Tabs look like: [Hour, Total, Scenario 1, Scenario 2, ..., Scenario n]
+      // thus the use of "activeScenarioIndex" for the total column
+      const accessor =
+        index === 0 ? `shop-${activeScenarioIndex}` : `shop-plant-${index - 1}`;
+
+      const convertedDatapoints = (datapoints as DoubleDatapoint[]).map(
+        (point) => ({
+          ...point,
+          // Multiply by (-1) all Total SHOP production for presentation (leave Plants unchanged)
+          value: accessor.includes('plant') ? point.value : point.value * -1,
+        })
+      );
+
+      return getFormattedProductionColumn(convertedDatapoints, accessor);
+    });
+  };
+
   const getTableData = async () => {
-    if (!bidProcessResult) {
-      Sentry.captureException(`No bidProcessResult found`);
+    if (!bidProcessResult.priceScenarios.length) {
+      Sentry.captureException(new Error(`No Price Scenarios found`));
       return;
     }
 
     const activeScenarioIndex = bidProcessResult.priceScenarios.findIndex(
       (scenario) => scenario.priceTsExternalId === activeTab
     );
+    let shopProductionData: Record<string, string>[][] = [];
 
-    let shopProductionData: { [accesor: string]: string }[][] = [];
-
-    if (activeTab === 'total' && bidProcessResult.priceScenarios?.length) {
-      // When "Total" tab is selected, table looks like:
-      // [Hour, Scenario 1, Scenario 2, ..., Scenario n]
-
-      // Aggregate synthetically all total SHOP timeseries per Scenario for a give day (24h)
-      const shopTotalProductionDatapoints =
-        await client?.timeseries.syntheticQuery(
-          bidProcessResult.priceScenarios.map((scenario) => {
-            return {
-              expression: scenario.totalProduction.shopProductionExternalIds
-                .map((externalId) => `TS{externalId='${externalId}'}`)
-                .join(' + '),
-              start: bidDate.startOf('day').valueOf(),
-              end: bidDate.endOf('day').valueOf(),
-            };
-          })
-        );
-      if (!shopTotalProductionDatapoints) {
-        Sentry.captureException(`No shopTotalProductionDatapoints found.`);
-        return;
-      }
-
-      shopProductionData = shopTotalProductionDatapoints?.map((data, index) => {
-        const accessor = `shop-${index}`;
-
-        const convertedDatapoints = data?.datapoints?.map((point) => ({
-          ...point,
-          // Multiply by (-1) all Total SHOP production for presentation
-          value: (point as SyntheticDataValue).value * -1,
-        }));
-
-        return getFormattedProductionColumn(convertedDatapoints, accessor);
-      });
+    if (activeTab === 'total') {
+      shopProductionData = await getTotalProductionData();
     } else {
-      // When a "Scenario" tab is selected, table looks like:
-      // [Hour, Total (for this scenario), Plant 1, Plant 2, ..., Plant n]
-
-      // Get current scenario from activeScenarioIndex
-      const currentScenario =
-        bidProcessResult.priceScenarios[activeScenarioIndex];
-      if (!currentScenario) {
-        Sentry.captureException(
-          `No currentScenario found in bidProcessResult object for activeScenarioIndex = ${activeScenarioIndex}.`
-        );
-        return;
-      }
-
-      // Create array of ProductionsTS externalIds for each plant column
-      const plantProductionTsExternalIds: string[] = [];
-      tableColumns.forEach(async (column, index) => {
-        if (column.accessor?.includes('plant')) {
-          // Get Plant from current scenario (Plants start on the third column of table)
-          const plant = currentScenario.plantProduction?.[index - 2];
-
-          if (plant?.production?.shopProductionExternalIds) {
-            plantProductionTsExternalIds.push(
-              ...plant.production.shopProductionExternalIds
-            );
-          }
-        }
-      });
-
-      // Fetch data points of each plant's SHOP result for a given day (24h)
-      const shopPlantProductionDatapoints = plantProductionTsExternalIds.length
-        ? await client?.datapoints.retrieve({
-            items: plantProductionTsExternalIds.map((externalId) => {
-              return { externalId };
-            }),
-            start: bidDate.startOf('day').valueOf(),
-            end: bidDate.endOf('day').valueOf(),
-          })
-        : [];
-      if (!shopPlantProductionDatapoints?.length) {
-        Sentry.captureException(`No shopPlantProductionDatapoints found`);
-        return;
-      }
-
-      // Aggregate synthetically all total SHOP timeseries of current Scenario for a give day (24h)
-      const shopTotalProductionDatapoints =
-        await client?.timeseries.syntheticQuery([
-          {
-            expression:
-              currentScenario.totalProduction.shopProductionExternalIds
-                .map((externalId) => `TS{externalId='${externalId}'}`)
-                .join(' + '),
-            start: bidDate.startOf('day').valueOf(),
-            end: bidDate.endOf('day').valueOf(),
-          },
-        ]);
-      if (!shopTotalProductionDatapoints) {
-        Sentry.captureException(`No shopPlantProductionDatapoints found`);
-        return;
-      }
-
-      shopProductionData = [
-        ...shopTotalProductionDatapoints,
-        ...shopPlantProductionDatapoints,
-      ]?.map(({ datapoints }, index) => {
-        // Tabs look like: [Hour, Total, Scenario 1, Scenario 2, ..., Scenario n]
-        // thus the use of "activeScenarioIndex" for the total column
-        const accessor =
-          index === 0
-            ? `shop-${activeScenarioIndex}`
-            : `shop-plant-${index - 1}`;
-
-        const convertedDatapoints = (datapoints as DoubleDatapoint[]).map(
-          (point) => ({
-            ...point,
-            // Multiply by (-1) all Total SHOP production for presentation (leave Plants unchanged)
-            value: accessor.includes('plant') ? point.value : point.value * -1,
-          })
-        );
-
-        return getFormattedProductionColumn(convertedDatapoints, accessor);
-      });
+      shopProductionData = await getScenarioProductionData(activeScenarioIndex);
     }
 
     const priceTimeseries =
@@ -240,7 +276,7 @@ export const PriceScenarios = ({
   };
 
   useEffect(() => {
-    if (bidProcessResult) {
+    if (bidProcessResult?.priceScenarios) {
       const priceExternalIds = bidProcessResult.priceScenarios.map(
         (scenario) => {
           return { externalId: scenario.priceTsExternalId };
@@ -253,11 +289,8 @@ export const PriceScenarios = ({
   useEffect(() => {
     const activeColumns = getActiveColumns(activeTab, bidProcessResult);
     setTableColumns(activeColumns as TableColumn[]);
-  }, [priceExternalIds, bidProcessResult]);
-
-  useEffect(() => {
     getTableData();
-  }, [tableColumns]);
+  }, [priceExternalIds]);
 
   return (
     <Main>

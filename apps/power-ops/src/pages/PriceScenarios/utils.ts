@@ -14,7 +14,7 @@ export function getActiveColumns(
 
   // If on total tab, one column for each Scenario
   if (activeTab === 'total') {
-    columns = bidProcessResult?.priceScenarios.map((scenario, index) => {
+    columns = bidProcessResult.priceScenarios.map((scenario, index) => {
       const header: TableColumn = {
         Header: scenario.name,
         id: scenario.priceTsExternalId,
@@ -35,10 +35,10 @@ export function getActiveColumns(
     });
   } else {
     // If on Scenario tab, filter by specific scenario
-    const index = bidProcessResult?.priceScenarios.findIndex(
+    const index = bidProcessResult.priceScenarios.findIndex(
       (scenario) => scenario.priceTsExternalId === activeTab
     );
-    columns = bidProcessResult?.priceScenarios
+    columns = bidProcessResult.priceScenarios
       .filter((scenario) => scenario.priceTsExternalId === activeTab)
       .flatMap((scenario) => {
         // First column is Total Volume
@@ -65,7 +65,7 @@ export function getActiveColumns(
           )
           .map((plant, plantIndex) => {
             return {
-              Header: bidProcessResult?.plants.find(
+              Header: bidProcessResult.plants.find(
                 (specificPlant) => specificPlant.name === plant.plantName
               )?.name,
               id: `plant-${plantIndex}`,
@@ -109,8 +109,8 @@ export function getActiveColumns(
 export const getFormattedProductionColumn = (
   datapoints: DoubleDatapoint[] | CalculatedProduction[],
   accessor: string
-): { [accesor: string]: string }[] => {
-  const formatedData: { [accesor: string]: string }[] = Array(24).fill({
+): Record<string, string>[] => {
+  const formatedData = Array(24).fill({
     [accessor]: undefined,
   });
   datapoints.forEach((point) => {
@@ -127,8 +127,8 @@ export const calculateProduction = async (
   activeScenarioIndex: number,
   priceTimeseries: DatapointAggregates[] | Datapoints[],
   bidProcessResult: BidProcessResultWithData
-): Promise<{ [accessor: string]: string }[][]> => {
-  let calcProductionData: { [accessor: string]: string }[][];
+): Promise<Record<string, string>[][]> => {
+  let calcProductionData: Record<string, string>[][];
   if (activeTab === 'total') {
     calcProductionData = priceTimeseries.map((scenarioPricePerHour, index) => {
       const accessor = `calc-${index}`;
