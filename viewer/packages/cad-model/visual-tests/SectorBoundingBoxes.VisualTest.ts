@@ -45,6 +45,8 @@ export default class CadDebugger extends StreamingVisualTestFixture {
 
     this.setupGui(model.geometryNode, sceneHandler.scene);
 
+    this.guiActions.showSectorBoundingBoxes();
+
     return Promise.resolve();
   }
 
