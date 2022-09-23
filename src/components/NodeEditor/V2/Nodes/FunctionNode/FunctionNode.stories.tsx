@@ -35,6 +35,7 @@ const Template: Story<ComponentProps<typeof FunctionNode>> = (args) => (
         onAddConstantNode={() => {}}
         onAddFunctionNode={() => {}}
         onAddOutputNode={() => {}}
+        onErrorIconClick={() => {}}
         onMove={() => {}}
         flowElements={[
           {

@@ -8,7 +8,13 @@ import {
   FlowTransform,
 } from 'react-flow-renderer';
 import { ChartWorkflowV2 } from 'models/chart/types';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import {
+  ComponentProps,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { ComputationStep, Operation } from '@cognite/calculation-backend';
 import { Button } from '@cognite/cogs.js';
@@ -58,6 +64,10 @@ type Props = {
   ) => void;
   readOnly?: boolean;
   translations: typeof defaultTranslations;
+  onErrorIconClick: (id: string) => void;
+  calculationResult: ComponentProps<
+    typeof ReactFlowNodeEditor
+  >['calculationResult'];
 };
 
 const ReactFlowNodeEditorContainer = ({
@@ -69,6 +79,8 @@ const ReactFlowNodeEditorContainer = ({
   onUpdateWorkflow = () => {},
   readOnly = false,
   translations: t,
+  onErrorIconClick,
+  calculationResult,
 }: Props) => {
   /**
    * Hook onto the internal react-flow state
@@ -404,6 +416,7 @@ const ReactFlowNodeEditorContainer = ({
         sources={sources}
         operations={operations}
         settings={localWorkflow.settings || { autoAlign: true }}
+        calculationResult={calculationResult}
         isValid={isValid}
         onSaveSettings={handleSaveSettings}
         onElementsRemove={handleRemoveElements}
@@ -416,6 +429,7 @@ const ReactFlowNodeEditorContainer = ({
         onAddOutputNode={handleAddOutputNode}
         onMove={handleUpdatePositionAndZoom}
         translations={t}
+        onErrorIconClick={onErrorIconClick}
       />
       <CloseButton
         icon="Close"

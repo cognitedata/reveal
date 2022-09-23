@@ -103,29 +103,21 @@ const EditableText = ({
       </ClickBoundary>
     );
   }
+
   return (
     <Wrapper>
-      <div
-        style={{
-          color: isError ? 'var(--cogs-red)' : 'var(--cogs-text-color)',
-          whiteSpace: 'nowrap',
-          width: '100%',
-          overflow: 'hidden',
-          textOverflow: 'ellipsis',
-        }}
-      >
-        {value}
-      </div>
+      <TextValue isError={isError}>{value}</TextValue>
       {!hideEdit && (
-        <div className="edit-button" style={{ marginLeft: 4 }}>
+        <div className="edit-button">
           <ClickBoundary>
             <Tooltip content={t.Rename}>
               <Button
                 type="ghost"
                 onClick={startEditing}
-                style={{ minWidth: '2.625rem' }}
+                style={{ minWidth: '28px' }}
+                size="small"
               >
-                <Icon type="Edit" />
+                <Icon size={14} type="Edit" />
               </Button>
             </Tooltip>
           </ClickBoundary>
@@ -135,14 +127,29 @@ const EditableText = ({
   );
 };
 
+const TextValue = styled.div<{ isError?: boolean }>`
+  color: ${(props) =>
+    props.isError ? 'var(--cogs-red)' : 'var(--cogs-text-color)'};
+  white-space: nowrap;
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-right: 8px;
+`;
+
 const Wrapper = styled.div`
   display: flex;
   align-items: center;
+
   & > .edit-button {
-    visibility: hidden;
+    margin-right: 8px;
+    opacity: 0;
+    transition: opacity 0.5s;
+    transition-timing-function: cubic-bezier(0.19, 1, 0.22, 1);
   }
+
   &:hover > .edit-button {
-    visibility: visible;
+    opacity: 1;
   }
 `;
 

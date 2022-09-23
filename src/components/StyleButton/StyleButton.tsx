@@ -39,6 +39,7 @@ export const StyleButton = ({
         backgroundColor: styleColor,
         color: 'white',
         opacity: disabled ? `0.4` : `1`,
+        ...rest.style,
       }}
       aria-label={label}
     />

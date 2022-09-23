@@ -14,6 +14,7 @@ import { trackUsage } from 'services/metrics';
 import { formatValueForDisplay } from 'utils/numbers';
 import { WorkflowState } from 'models/calculation-results/types';
 import { getIconTypeFromStatus } from 'components/StatusIcon/StatusIcon';
+import AlertIcon from 'components/AlertIcon/AlertIcon';
 import {
   DropdownWithoutMaxWidth,
   SourceDescription,
@@ -21,7 +22,6 @@ import {
   SourceName,
   SourceRow,
   SourceStatus,
-  StyledErrorIcon,
   StyledStatusIcon,
   StyledVisibilityIcon,
 } from './elements';
@@ -33,6 +33,7 @@ type Props = {
   onRowClick?: (id?: string) => void;
   onInfoClick?: (id?: string) => void;
   onThresholdClick?: (id?: string) => void;
+  onErrorIconClick?: (id: string) => void;
   openNodeEditor?: () => void;
   mode: string;
   draggable?: boolean;
@@ -74,6 +75,7 @@ function WorkflowRow({
   onRowClick = () => {},
   onInfoClick = () => {},
   onThresholdClick = () => {},
+  onErrorIconClick = () => {},
   mode,
   openNodeEditor = () => {},
   isSelected = false,
@@ -115,10 +117,11 @@ function WorkflowRow({
   const unitDropdownTranslations = useComponentTranslations(UnitDropdown);
 
   const resultError = calculationResult?.error;
-  const hasFailed = !!resultError;
+  const hasError = !!resultError;
+  const resultWarning = calculationResult?.warnings;
+  const hasWarning = resultWarning && resultWarning.length > 0;
   const isVisible = enabled;
   const status = calculationResult?.status;
-  const isDownsampled = calculationResult?.isDownsampled;
 
   return (
     <SourceRow
@@ -171,34 +174,9 @@ function WorkflowRow({
           >
             <StyledVisibilityIcon type={enabled ? 'EyeShow' : 'EyeHide'} />
           </SourceStatus>
-          <SourceStatus>
-            {call && status && (
-              <Tooltip
-                disabled={!isDownsampled}
-                content="The time span for this calculation is too long. The result is based on fewer data-points and may not be accurate. Use a shorter date range for an accurate result."
-                maxWidth={350}
-              >
-                <StyledStatusIcon
-                  type={
-                    isDownsampled
-                      ? 'WarningFilled'
-                      : getIconTypeFromStatus(status)
-                  }
-                  style={{
-                    color: isDownsampled ? 'var(--cogs-yellow-1)' : '#000',
-                  }}
-                />
-              </Tooltip>
-            )}
-          </SourceStatus>
-          {hasFailed && (
-            <Tooltip content={resultError} maxWidth={300}>
-              <StyledErrorIcon type="Error" />
-            </Tooltip>
-          )}
           <SourceName>
             <TranslatedEditableText
-              isError={hasFailed}
+              isError={hasError}
               value={name || 'noname'}
               onChange={(value) => {
                 onUpdateName(value);
@@ -209,10 +187,31 @@ function WorkflowRow({
               hideButtons
             />
           </SourceName>
+          {call && status === 'Running' && (
+            <StyledStatusIcon type={getIconTypeFromStatus(status)} />
+          )}
         </SourceItem>
       </td>
       {isWorkspaceMode && (
         <>
+          <td className="bordered col-status">
+            {hasError && status === 'Success' && (
+              <AlertIcon
+                icon="ErrorFilled"
+                variant="danger"
+                onClick={() => onErrorIconClick(id)}
+                onDoubleClick={(event) => event.stopPropagation()}
+              />
+            )}
+            {!hasError && hasWarning && status === 'Success' && (
+              <AlertIcon
+                icon="WarningFilled"
+                variant="warning"
+                onClick={() => onErrorIconClick(id)}
+                onDoubleClick={(event) => event.stopPropagation()}
+              />
+            )}
+          </td>
           <td className="bordered" />
           <td className="bordered">
             <SourceItem disabled={!enabled}>

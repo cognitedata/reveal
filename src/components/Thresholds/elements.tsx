@@ -1,6 +1,10 @@
 import { Collapse, Icon, Select } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
+export const Container = styled.div`
+  padding: 20px;
+`;
+
 export const ExpandIcon = styled(Icon)<{ isActive: boolean }>`
   margin-right: 8px;
   transition: transform 0.2s;

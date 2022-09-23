@@ -18,6 +18,7 @@ interface Props {
 const defaultTranslation = makeDefaultTranslations(
   'Style',
   'Name',
+  'Status',
   'Tag',
   'Description',
   'Min',
@@ -64,6 +65,11 @@ const SourceTableHeader = ({
         </th>
         {mode !== 'editor' && (
           <>
+            <th style={{ width: 64 }} className="bordered col-status">
+              <SourceItem center>
+                <SourceName>{t.Status}</SourceName>
+              </SourceItem>
+            </th>
             <th style={{ width: 210 }} className="bordered">
               <SourceItem>
                 <SourceName>{t.Tag}</SourceName>

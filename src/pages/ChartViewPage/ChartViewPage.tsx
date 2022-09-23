@@ -69,6 +69,8 @@ import { currentDateRangeLocale } from 'config/locale';
 import { chartSources } from 'models/chart/selectors';
 import ChartViewPageAppBar from 'pages/ChartViewPage/ChartViewPageAppBar';
 import PageTitle from 'components/PageTitle/PageTitle';
+import ErrorSidebar from 'components/ErrorSidebar/ErrorSidebar';
+import { WorkflowState } from 'models/calculation-results/types';
 import {
   BottomPaneWrapper,
   ChartContainer,
@@ -100,6 +102,7 @@ const keys = translationKeys(defaultTranslations);
 const ChartViewPage = ({ chartId: chartIdProp }: ChartViewProps) => {
   const [showContextMenu, setShowContextMenu] = useState(false);
   const [showThresholdMenu, setShowThresholdMenu] = useState(false);
+  const [showErrorSidebar, setShowErrorSidebar] = useState(false);
   const [query = '', setQuery] = useSearchParam(SEARCH_KEY, false);
   const { chartId = chartIdProp } = useParams<{ chartId: string }>();
   const { data: login } = useUserInfo();
@@ -260,9 +263,19 @@ const ChartViewPage = ({ chartId: chartIdProp }: ChartViewProps) => {
     stopTimer('NodeEditor.ViewTime');
   }, []);
 
-  const handleSourceClick = useCallback((sourceId?: string) => {
-    setSelectedSourceId(sourceId);
-  }, []);
+  const handleSourceClick = useCallback(
+    (sourceId?: string) => {
+      setSelectedSourceId(sourceId);
+      const isCalcRow = calculationData.find(
+        (calc: WorkflowState) => calc.id === sourceId
+      );
+      if (!isCalcRow) {
+        setShowErrorSidebar(false);
+        setTimeout(() => window.dispatchEvent(new Event('resize')), 200);
+      }
+    },
+    [calculationData]
+  );
 
   const handleInfoClick = useCallback(
     (sourceId?: string) => {
@@ -270,6 +283,7 @@ const ChartViewPage = ({ chartId: chartIdProp }: ChartViewProps) => {
       const showMenu = isSameSource ? !showContextMenu : true;
       setShowContextMenu(showMenu);
       setShowThresholdMenu(false);
+      setShowErrorSidebar(false);
       setTimeout(() => window.dispatchEvent(new Event('resize')), 200);
     },
     [selectedSourceId, showContextMenu]
@@ -279,11 +293,25 @@ const ChartViewPage = ({ chartId: chartIdProp }: ChartViewProps) => {
     (sourceId?: string) => {
       const isSameSource = sourceId === selectedSourceId;
       const showMenu = isSameSource ? !showThresholdMenu : true;
-      setShowThresholdMenu(showMenu);
       setShowContextMenu(false);
+      setShowErrorSidebar(false);
+      setShowThresholdMenu(showMenu);
       setTimeout(() => window.dispatchEvent(new Event('resize')), 200);
     },
     [selectedSourceId, showThresholdMenu]
+  );
+
+  const handleErrorIconClick = useCallback(
+    (sourceId: string) => {
+      const isSameSource = sourceId === selectedSourceId;
+      const showMenu = isSameSource ? !showErrorSidebar : true;
+      setShowErrorSidebar(showMenu);
+      setShowContextMenu(false);
+      setShowThresholdMenu(false);
+
+      setTimeout(() => window.dispatchEvent(new Event('resize')), 200);
+    },
+    [selectedSourceId, showErrorSidebar, setShowThresholdMenu]
   );
 
   const handleCloseContextMenu = useCallback(() => {
@@ -293,6 +321,11 @@ const ChartViewPage = ({ chartId: chartIdProp }: ChartViewProps) => {
 
   const handleCloseThresholdMenu = useCallback(() => {
     setShowThresholdMenu(false);
+    setTimeout(() => window.dispatchEvent(new Event('resize')), 200);
+  }, []);
+
+  const handleCloseErrorSidebar = useCallback(() => {
+    setShowErrorSidebar(false);
     setTimeout(() => window.dispatchEvent(new Event('resize')), 200);
   }, []);
 
@@ -675,6 +708,7 @@ const ChartViewPage = ({ chartId: chartIdProp }: ChartViewProps) => {
                     onRowClick={handleSourceClick}
                     onInfoClick={handleInfoClick}
                     onThresholdClick={handleThresholdClick}
+                    onErrorIconClick={handleErrorIconClick}
                     onShowHideButtonClick={handleShowHideButtonClick}
                     timeseriesData={timeseriesData}
                     calculationData={calculationData}
@@ -694,6 +728,7 @@ const ChartViewPage = ({ chartId: chartIdProp }: ChartViewProps) => {
                       setChart={setChart}
                       workflowId={selectedSourceId}
                       onClose={handleCloseEditor}
+                      onErrorIconClick={handleErrorIconClick}
                       chart={chart}
                       translations={nodeEditorTranslations}
                     />
@@ -718,6 +753,17 @@ const ChartViewPage = ({ chartId: chartIdProp }: ChartViewProps) => {
             onClose={handleCloseThresholdMenu}
             updateChart={setChart}
             chart={chart}
+          />
+        )}
+
+        {showErrorSidebar && (
+          <ErrorSidebar
+            visible={showErrorSidebar}
+            onClose={handleCloseErrorSidebar}
+            workflowColor={selectedSourceItem?.color || 'grey'}
+            calculationResult={calculationData.find(
+              ({ id }) => id === selectedSourceId
+            )}
           />
         )}
       </ChartViewContainer>

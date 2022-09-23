@@ -17,6 +17,8 @@ import { useRef, useState, useCallback, useEffect } from 'react';
 import { Operation } from '@cognite/calculation-backend';
 import { usePrevious } from 'react-use';
 import compareVersions from 'compare-versions';
+import AlertIcon from 'components/AlertIcon/AlertIcon';
+import { WorkflowState } from 'models/calculation-results/types';
 import { NodeTypes, SourceOption, NodeDataVariants } from './types';
 import AddButton, { AddMenu } from './AddButton';
 import EditorControls from './EditorControls/EditorControls';
@@ -39,6 +41,7 @@ type Props = {
   settings: {
     autoAlign: boolean;
   };
+  calculationResult?: WorkflowState | undefined;
   readOnly?: boolean;
   // eslint-disable-next-line react/no-unused-prop-types
   isValid: boolean;
@@ -57,6 +60,7 @@ type Props = {
   onAddOutputNode: (position: XYPosition) => void;
   onMove: (transform: FlowTransform) => void;
   translations: typeof defaultTranslations;
+  onErrorIconClick: (id: string) => void;
 };
 
 const ReactFlowNodeEditor = ({
@@ -67,6 +71,7 @@ const ReactFlowNodeEditor = ({
   sources,
   operations,
   settings,
+  calculationResult,
   readOnly = false,
   onSaveSettings,
   onElementsRemove,
@@ -79,6 +84,7 @@ const ReactFlowNodeEditor = ({
   onAddOutputNode,
   onMove,
   translations: t,
+  onErrorIconClick,
 }: Props) => {
   const reactFlowWrapper = useRef<HTMLDivElement>(null);
 
@@ -246,6 +252,48 @@ const ReactFlowNodeEditor = ({
               translations={t}
               horizontal
             />
+            {calculationResult ? (
+              <>
+                {calculationResult.loading && (
+                  <div style={{ display: 'flex' }}>
+                    <AlertIcon
+                      variant="unknown"
+                      icon="Loader"
+                      value="Loading"
+                    />
+                  </div>
+                )}
+                {calculationResult.error &&
+                  calculationResult.status === 'Success' && (
+                    <div style={{ display: 'flex' }}>
+                      <AlertIcon
+                        icon="ErrorFilled"
+                        variant="danger"
+                        value="Error"
+                        onClick={() => onErrorIconClick(id)}
+                      />
+                    </div>
+                  )}
+                {!calculationResult.error &&
+                  !!calculationResult.warnings?.length &&
+                  calculationResult.status === 'Success' && (
+                    <div style={{ display: 'flex' }}>
+                      <AlertIcon
+                        icon="WarningFilled"
+                        variant="warning"
+                        value={`Warning${
+                          calculationResult.warnings.length > 1
+                            ? `s (${calculationResult.warnings.length})`
+                            : ''
+                        }`}
+                        onClick={() => onErrorIconClick(id)}
+                      />
+                    </div>
+                  )}
+              </>
+            ) : (
+              ''
+            )}
           </EditorToolbar>
         )}
         {contextMenuPosition && (

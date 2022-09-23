@@ -265,7 +265,7 @@ function CalculationEffects({ calculation }: { calculation: ChartWorkflowV2 }) {
       ...workflows,
       [id]: {
         id,
-        loading: currentCallStatus.data?.status !== 'Success',
+        loading: isStepsValid && currentCallStatus.data?.status !== 'Success',
         status: currentCallStatus.data?.status,
         datapoints: calculationResult
           ? calculationResult.datapoints
@@ -276,7 +276,13 @@ function CalculationEffects({ calculation }: { calculation: ChartWorkflowV2 }) {
           calculationResult?.isDownsampled ?? workflows[id]?.isDownsampled,
       },
     }));
-  }, [id, calculationResult, setWorkflowState, currentCallStatus.data?.status]);
+  }, [
+    id,
+    calculationResult,
+    setWorkflowState,
+    currentCallStatus.data?.status,
+    isStepsValid,
+  ]);
 
   return null;
 }

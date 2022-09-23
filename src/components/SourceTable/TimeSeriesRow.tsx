@@ -194,6 +194,7 @@ function TimeSeriesRow({
       </td>
       {(isWorkspaceMode || isFileViewerMode) && (
         <>
+          <td className="bordered" />
           <td className="bordered">
             <SourceItem disabled={!isVisible}>
               <SourceTag>{linkedAsset?.name}</SourceTag>

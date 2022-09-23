@@ -20,6 +20,7 @@ type Props = {
   onRowClick: (id?: string) => void;
   onInfoClick: (id?: string) => void;
   onThresholdClick: (id?: string) => void;
+  onErrorIconClick?: (id: string) => void;
   draggable?: boolean;
   timeseriesData?: TimeseriesEntry[];
   calculationData?: WorkflowState[];
@@ -80,6 +81,7 @@ const SourceRows = memo(
     onRowClick = () => {},
     onInfoClick = () => {},
     onThresholdClick = () => {},
+    onErrorIconClick = () => {},
     onOverrideUnitClick = () => () => {},
     onConversionUnitClick = () => () => {},
     onResetUnitClick = () => () => {},
@@ -146,6 +148,7 @@ const SourceRows = memo(
                   onRowClick={onRowClick}
                   onInfoClick={onInfoClick}
                   onThresholdClick={onThresholdClick}
+                  onErrorIconClick={onErrorIconClick}
                   mode={mode}
                   openNodeEditor={openNodeEditor}
                   translations={translations}

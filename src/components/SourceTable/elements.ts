@@ -32,6 +32,10 @@ export const Table = styled.table`
       border-right: 1px solid var(--cogs-greyscale-grey4);
     }
 
+    &.col-status {
+      text-align: center;
+    }
+
     &.col-unit {
       padding-right: 8px;
       .unit-btn {
@@ -63,21 +67,20 @@ export const SourceRow = styled.tr`
   background: ${(props) =>
     props['aria-selected'] ? 'var(--cogs-midblue-7)' : '#ffffff'};
   &&:hover {
-    background: var(--cogs-greyscale-grey3);
+    background: var(--cogs-greyscale-grey1);
   }
 `;
 
-export const SourceItem = styled.div`
+export const SourceItem = styled.div<{ center?: boolean; disabled?: boolean }>`
   position: relative;
   display: flex;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: ${(props) => (props.center ? 'center' : 'flex-start;')};
   height: 42px;
   text-overflow: ellipsis;
   cursor: pointer;
 
-  opacity: ${(props: { isActive?: boolean; disabled?: boolean }) =>
-    props.disabled ? 0.4 : 1};
+  opacity: ${(props) => (props.disabled ? 0.4 : 1)};
 
   &:hover {
     & > :last-child {
@@ -135,16 +138,6 @@ export const StyledStatusIcon = styled(Icon)`
   margin-right: 10px;
   display: flex;
   align-items: center;
-`;
-
-export const StyledErrorIcon = styled(Icon)`
-  margin-right: 5px;
-  padding: 6px;
-  height: 34px;
-  width: 34px;
-  border-radius: 50%;
-  background-color: var(--cogs-red-5);
-  color: var(--cogs-red-2);
 `;
 
 export const DropdownWithoutMaxWidth = styled(Dropdown)`

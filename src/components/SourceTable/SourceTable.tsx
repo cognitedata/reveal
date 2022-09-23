@@ -28,6 +28,7 @@ type Props = {
   onRowClick?: ComponentProps<typeof SourceRows>['onRowClick'];
   onInfoClick?: ComponentProps<typeof SourceRows>['onInfoClick'];
   onThresholdClick?: ComponentProps<typeof SourceRows>['onThresholdClick'];
+  onErrorIconClick?: ComponentProps<typeof SourceRows>['onErrorIconClick'];
   onOverrideUnitClick?: ComponentProps<
     typeof SourceRows
   >['onOverrideUnitClick'];
@@ -63,6 +64,7 @@ const SourceTable = ({
   onRowClick = () => {},
   onInfoClick = () => {},
   onThresholdClick = () => {},
+  onErrorIconClick = () => {},
   onShowHideButtonClick = () => {},
   onOverrideUnitClick = () => () => {},
   onConversionUnitClick = () => () => {},
@@ -121,6 +123,7 @@ const SourceTable = ({
                       onRowClick={onRowClick}
                       onInfoClick={onInfoClick}
                       onThresholdClick={onThresholdClick}
+                      onErrorIconClick={onErrorIconClick}
                       timeseriesData={timeseriesData}
                       calculationData={calculationData}
                       onOverrideUnitClick={onOverrideUnitClick}
