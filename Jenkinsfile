@@ -1,8 +1,8 @@
 @Library('jenkins-helpers') _
 
-static final String APP_ID = 'cdf-demo-app'
-static final String APPLICATION_REPO_ID = 'cdf-ui-demo-app'
-static final String NODE_VERSION = 'node:14'
+static final String APP_ID = 'cdf-ui-flows'
+static final String APPLICATION_REPO_ID = 'cdf-ui-flows'
+static final String NODE_VERSION = 'node:16'
 static final String VERSIONING_STRATEGY = 'single-branch'
 
 def pods = { body ->
@@ -56,7 +56,7 @@ def pods = { body ->
               hostPathVolume(hostPath: '/var/run/docker.sock', mountPath: '/var/run/docker.sock')
             ]) {
             properties([
-              
+
             ])
             node(POD_LABEL) {
               body()
@@ -74,20 +74,9 @@ pods {
   def getTitle
   def isPullRequest = !!env.CHANGE_ID
   def isRelease = env.BRANCH_NAME == 'master'
-  def bucketBundles = "cdf-hub-bundles"
-  def projectProduction = "cognitedata-production"
 
-  def context_checkout = "continuous-integration/jenkins/checkout"
+
   def context_install = "continuous-integration/jenkins/install"
-  def context_setup = "continuous-integration/jenkins/setup"
-  def context_lint = "continuous-integration/jenkins/lint"
-  def context_test = "continuous-integration/jenkins/test"
-  def context_unitTests = "continuous-integration/jenkins/unit-tests"
-  def context_buildPrPreview = "continuous-integration/jenkins/build-pr-preview"
-  def context_build_fas = "continuous-integration/jenkins/build-fas"
-  def context_build = "continuous-integration/jenkins/build"
-  def context_deploy_app = "continuous-integration/jenkins/deploy-app"
-  def context_publishRelease = "continuous-integration/jenkins/publish-release"
   static final Map<String, Boolean> version = versioning.getEnv(
     versioningStrategy: VERSIONING_STRATEGY
   )
@@ -99,7 +88,7 @@ pods {
       gitTitle = sh(returnStdout: true, script: "git show -s --format='%s' HEAD").trim()
       gitAuthor = sh(returnStdout: true, script: "git show -s --format='%ae' HEAD").trim()
     }
-  
+
     githubNotifyWrapper(context_install) {
         stage('Install dependencies') {
             yarn.setup()
@@ -128,7 +117,7 @@ pods {
         }
         container('fas') {
           stageWithNotify('Build and deploy PR') {
-            def package_name = "@cognite/cdf-demo-app";
+            def package_name = "@cognite/cdf-ui-flows";
             def prefix = jenkinsHelpersUtil.determineRepoName();
             def domain = "fusion-preview";
             previewServer(
@@ -155,7 +144,7 @@ pods {
             buildCommand: 'yarn build',
             shouldPublishSourceMap: false
           )
-        }   
+        }
       }
     )
 
@@ -169,7 +158,7 @@ pods {
         }
       }
     }
-    
+
     if (isRelease) {
       stageWithNotify('Deploy to FAS') {
         fas.publish(
