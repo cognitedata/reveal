@@ -111,7 +111,7 @@ export class PointCloudNode extends THREE.Group {
    * @param visible Boolean flag that determines if the point class type should be visible or not.
    * @throws Error if the model doesn't have the class given.
    */
-  setClassVisible(pointClass: number | WellKnownAsprsPointClassCodes | string, visible: boolean): void {
+  setClassVisible(pointClass: number | WellKnownAsprsPointClassCodes, visible: boolean): void {
     this._potreeNode.setClassificationAndRecompute(pointClass, visible);
   }
 
@@ -122,7 +122,7 @@ export class PointCloudNode extends THREE.Group {
    * @returns true if points from the given class will be visible.
    * @throws Error if the model doesn't have the class given.
    */
-  isClassVisible(pointClass: number | WellKnownAsprsPointClassCodes | string): boolean {
+  isClassVisible(pointClass: number | WellKnownAsprsPointClassCodes): boolean {
     if (!this.hasClass(pointClass)) {
       throw new Error(`Point cloud model doesn't have class ${pointClass}`);
     }
@@ -136,7 +136,7 @@ export class PointCloudNode extends THREE.Group {
    * classes from {@link WellKnownAsprsPointClassCodes} or a number for user defined classes.
    * @returns true if model has values in the class given.
    */
-  hasClass(pointClass: number | WellKnownAsprsPointClassCodes | string): boolean {
+  hasClass(pointClass: number | WellKnownAsprsPointClassCodes): boolean {
     const key = this._potreeNode.createPointClassKey(pointClass);
     return this._potreeNode.classification[key] !== undefined;
   }

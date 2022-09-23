@@ -184,7 +184,7 @@ export class PotreeNodeWrapper {
     this._needsRedraw = true;
   }
 
-  createPointClassKey(pointClass: number | WellKnownAsprsPointClassCodes | string): number {
+  createPointClassKey(pointClass: number | WellKnownAsprsPointClassCodes): number {
     if (this._classNameToCodeMap && this._classNameToCodeMap[pointClass] !== undefined) {
       return this._classNameToCodeMap[pointClass].code;
     }
@@ -202,7 +202,7 @@ export class PotreeNodeWrapper {
     return pointClass;
   }
 
-  setClassificationAndRecompute(pointClass: number | WellKnownAsprsPointClassCodes | string, visible: boolean): void {
+  setClassificationAndRecompute(pointClass: number | WellKnownAsprsPointClassCodes, visible: boolean): void {
     const key = this.createPointClassKey(pointClass);
 
     this._classification[key].w = visible ? 1.0 : 0.0;
