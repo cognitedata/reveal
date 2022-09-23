@@ -107,6 +107,7 @@ export function createCdfRevealManager(
  * @param modelMetadataProvider
  * @param modelDataProvider
  * @param annotationProvider
+ * @param pointClassificationsProvider
  * @param renderer
  * @param sceneHandler
  * @param revealOptions

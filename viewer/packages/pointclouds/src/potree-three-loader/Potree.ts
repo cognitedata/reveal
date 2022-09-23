@@ -33,7 +33,6 @@ import { LRU } from './utils/lru';
 import { ModelDataProvider } from '@reveal/modeldata-api';
 import { PointCloudObjectAnnotationData } from '../styling/PointCloudObjectAnnotationData';
 import throttle from 'lodash/throttle';
-import { ClassificationInfo } from './loading/ClassificationInfo';
 
 export class QueueItem {
   constructor(

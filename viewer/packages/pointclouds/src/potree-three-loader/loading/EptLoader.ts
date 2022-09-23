@@ -1,5 +1,4 @@
 import { ModelDataProvider } from '@reveal/modeldata-api';
-import { DEFAULT_POINT_CLOUD_CLASS_DEFINITION_FILE } from '../../constants';
 import { PointCloudObjectAnnotationData } from '../../styling/PointCloudObjectAnnotationData';
 import { PointCloudEptGeometry } from '../geometry/PointCloudEptGeometry';
 import { PointCloudEptGeometryNode } from '../geometry/PointCloudEptGeometryNode';

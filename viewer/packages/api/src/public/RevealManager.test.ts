@@ -16,7 +16,6 @@ import {
 } from '@reveal/pointclouds';
 import { LoadingStateChangeListener } from './types';
 import { It, Mock, SetPropertyExpression } from 'moq.ts';
-import {  } from '@reveal/pointclouds';
 
 describe('RevealManager', () => {
   const stubMetadataProvider: ModelMetadataProvider = {} as any;

@@ -17,7 +17,8 @@ export class PointCloudFactory {
   constructor(
     potreeInstance: Potree,
     annotationProvider: IAnnotationProvider,
-    classificationsProvider: IPointClassificationsProvider) {
+    classificationsProvider: IPointClassificationsProvider
+  ) {
     this._potreeInstance = potreeInstance;
     this._annotationProvider = annotationProvider;
     this._classificationsProvider = classificationsProvider;

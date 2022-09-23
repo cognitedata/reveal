@@ -14,11 +14,7 @@ import { assertNever, SceneHandler } from '@reveal/utilities';
 
 import { CadNode } from '@reveal/cad-model';
 import { CogniteClient } from '@cognite/sdk';
-import {
-  LocalAnnotationProvider,
-  PointCloudNode,
-  LocalPointClassificationsProvider
-} from '@reveal/pointclouds';
+import { LocalAnnotationProvider, PointCloudNode, LocalPointClassificationsProvider } from '@reveal/pointclouds';
 
 /**
  * Helper for {@link RevealManager} for creating a uniform interface for

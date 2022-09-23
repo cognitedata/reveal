@@ -44,7 +44,11 @@ export default class PointCloudColorStylingVisualTest extends StreamingVisualTes
   }
 
   override createPointCloudFactory(): PointCloudFactory {
-    return new PointCloudFactory(this.potreeInstance, new CustomAnnotationProvider(), new LocalPointClassificationsProvider());
+    return new PointCloudFactory(
+      this.potreeInstance,
+      new CustomAnnotationProvider(),
+      new LocalPointClassificationsProvider()
+    );
   }
 
   override createCamera(): THREE.PerspectiveCamera {

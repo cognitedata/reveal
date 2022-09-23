@@ -9,7 +9,6 @@ import { PointCloudMetadata } from '../PointCloudMetadata';
 import { ClassificationInfo } from '../potree-three-loader/loading/ClassificationInfo';
 
 export class UrlPointClassificationsProvider implements IPointClassificationsProvider {
-
   _dataProvider: ModelDataProvider;
 
   constructor(dataProvider: ModelDataProvider) {
@@ -21,6 +20,5 @@ export class UrlPointClassificationsProvider implements IPointClassificationsPro
       .getJsonFile(modelMetadata.modelBaseUrl, DEFAULT_POINT_CLOUD_CLASS_DEFINITION_FILE)
       .then(json => json as ClassificationInfo)
       .catch(_ => ({ classificationSets: [] }));
-    ;
   }
 }
