@@ -88,8 +88,18 @@ export const useTableData = (pageSize = PAGE_SIZE) => {
     return [];
   }, [rows.data]);
 
-  const tableLastUpdatedTime =
-    rawRows.length > 0 ? new Date(rawRows[0][LAST_UPDATED_DATAKEY]) : undefined;
+  const tableLastUpdatedTime = useMemo(() => {
+    return rawRows.length > 0
+      ? new Date(
+          rawRows.reduce((acc, cur) => {
+            if (cur[LAST_UPDATED_DATAKEY] > acc) {
+              return cur[LAST_UPDATED_DATAKEY];
+            }
+            return acc;
+          }, 0)
+        )
+      : undefined;
+  }, [rawRows]);
 
   const getColumns = (): ColumnType[] => {
     const columnNames = union(
