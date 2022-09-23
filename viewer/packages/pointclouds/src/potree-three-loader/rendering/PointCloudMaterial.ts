@@ -537,7 +537,7 @@ export class PointCloudMaterial extends RawShaderMaterial {
   set classification(value: IClassification) {
     const copy = {} as IClassification;
     for (const key of Object.keys(value)) {
-      copy[key] = value[key].clone();
+      copy[key] = value[key as (number | 'DEFAULT')].clone();
     }
 
     this._classification = copy;

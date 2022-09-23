@@ -22,7 +22,6 @@ import { StyledPointCloudObjectCollection } from './styling/StyledPointCloudObje
 import { PointCloudObjectMetadata, PointCloudObjectAnnotation } from './annotationTypes';
 import { CompletePointCloudAppearance } from './styling/PointCloudAppearance';
 import { ClassificationInfo } from './potree-three-loader/loading/ClassificationInfo';
-import assert from 'assert';
 import { createDistinctColors } from '@reveal/utilities';
 
 /**
@@ -37,7 +36,7 @@ export class PotreeNodeWrapper {
 
   private static readonly pickingWindowSize = 20;
 
-  private readonly _classNameToCodeMap: ClassificationMap | undefined;
+  private readonly _classNameToCodeMap: ClassificationMap;
 
   private readonly _annotations: PointCloudObjectAnnotation[];
 
@@ -49,7 +48,7 @@ export class PotreeNodeWrapper {
     octree: PointCloudOctree,
     annotations: PointCloudObjectAnnotation[],
     modelIdentifier: symbol,
-    classificationInfo: ClassificationInfo | undefined
+    classificationInfo: ClassificationInfo
   ) {
     this.octree = octree;
     this.pointSize = 2;
@@ -58,15 +57,16 @@ export class PotreeNodeWrapper {
     this._classification = octree.material.classification;
     this._annotations = annotations;
     this._modelIdentifier = modelIdentifier;
-    this._classNameToCodeMap = classificationInfo ? this.createClassNameToCodeMap(classificationInfo) : undefined;
+    this._classNameToCodeMap = this.createClassNameToCodeMap(classificationInfo);
 
-    if (this._classNameToCodeMap) {
-      this.updateMaterialClassMap(this._classNameToCodeMap);
-    }
+    this.updateMaterialClassMap(this._classNameToCodeMap);
   }
 
   private createClassNameToCodeMap(classificationInfo: ClassificationInfo): ClassificationMap {
-    assert(classificationInfo.classificationSets.length > 0);
+    if (classificationInfo.classificationSets.length === 0) {
+      return this.createDefaultClassNameToCodeMap();
+    }
+
     const classMap: { [key: string]: { rgb: THREE.Color; code: number } } = {};
 
     const inputClassifications = classificationInfo.classificationSets[0].classificationSet;
@@ -77,6 +77,20 @@ export class PotreeNodeWrapper {
       const rgb = pointClass.rgb ? new THREE.Color(pointClass.rgb) : fallbackColors[index];
 
       classMap[pointClass.name] = { rgb, code: pointClass.code };
+    });
+
+    return classMap;
+  }
+
+  private createDefaultClassNameToCodeMap(): ClassificationMap {
+    const classNames = Object.keys(this._classification);
+
+    const classMap: { [key: string]: { rgb: THREE.Color; code: number } } = {};
+    const defaultColors = createDistinctColors(classNames.length);
+
+    classNames.forEach((x, index) => {
+      const code = x === PotreeDefaultPointClass ? -1 : parseInt(x, 10);
+      classMap[this.getClassNameFromCode(code)] = { code, rgb: defaultColors[index] };
     });
 
     return classMap;
@@ -140,18 +154,10 @@ export class PotreeNodeWrapper {
   }
 
   get classNames(): Array<{ name: string; code: number }> {
-    let codesAndNames: Array<{ name: string; code: number }>;
-    if (this._classNameToCodeMap) {
-      codesAndNames = Object.entries(this._classNameToCodeMap).map(nameAndCode => ({
+    let codesAndNames = Object.entries(this._classNameToCodeMap).map(nameAndCode => ({
         name: nameAndCode[0],
         code: nameAndCode[1].code
       }));
-    } else {
-      codesAndNames = Object.keys(this.classification).map(x => {
-        const code = x === PotreeDefaultPointClass ? -1 : parseInt(x, 10);
-        return { name: this.getClassNameFromCode(code), code };
-      });
-    }
 
     return codesAndNames.sort((a, b) => a.code - b.code);
   }
@@ -185,8 +191,8 @@ export class PotreeNodeWrapper {
   }
 
   createPointClassKey(pointClass: number | WellKnownAsprsPointClassCodes): number {
-    if (this._classNameToCodeMap && this._classNameToCodeMap[pointClass] !== undefined) {
-      return this._classNameToCodeMap[pointClass].code;
+    if (this._classNameToCodeMap[this.getClassNameFromCode(pointClass)] !== undefined) {
+      return this._classNameToCodeMap[this.getClassNameFromCode(pointClass)].code;
     }
 
     if (typeof pointClass === 'string') {
