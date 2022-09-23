@@ -154,10 +154,10 @@ export class PotreeNodeWrapper {
   }
 
   get classNames(): Array<{ name: string; code: number }> {
-    let codesAndNames = Object.entries(this._classNameToCodeMap).map(nameAndCode => ({
-        name: nameAndCode[0],
-        code: nameAndCode[1].code
-      }));
+    const codesAndNames = Object.entries(this._classNameToCodeMap).map(nameAndCode => ({
+      name: nameAndCode[0],
+      code: nameAndCode[1].code
+    }));
 
     return codesAndNames.sort((a, b) => a.code - b.code);
   }
