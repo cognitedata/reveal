@@ -13,5 +13,6 @@ export const NoUnmountShowHideContainer = styled.span`
     visibility: hidden;
     height: 0;
     width: 0;
+    overflow: hidden;
   `};
 `;

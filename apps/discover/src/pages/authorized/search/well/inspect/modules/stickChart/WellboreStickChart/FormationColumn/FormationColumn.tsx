@@ -4,12 +4,11 @@ import isEmpty from 'lodash/isEmpty';
 import isUndefined from 'lodash/isUndefined';
 
 import { WithDragHandleProps } from 'components/DragDropContainer';
-import { NoUnmountShowHide } from 'components/NoUnmountShowHide';
 import { DepthMeasurementUnit } from 'constants/units';
 import { useDeepCallback } from 'hooks/useDeep';
 
-import { ColumnDragger } from '../../../common/Events/ColumnDragger';
-import { BodyColumn, BodyColumnBody } from '../../../common/Events/elements';
+import { BodyColumnBody } from '../../../common/Events/elements';
+import { Column } from '../../components/Column';
 import { useScaledDepth } from '../../hooks/useScaledDepth';
 import { ColumnVisibilityProps, WellTopSurfaceView } from '../../types';
 
@@ -66,12 +65,14 @@ export const FormationColumn: React.FC<
     }, [data, isLoading, depthMeasurementType, getScaledDepth]);
 
     return (
-      <NoUnmountShowHide show={isVisible}>
-        <BodyColumn width={30} data-testid="formation-column">
-          <ColumnDragger {...dragHandleProps} />
-          <BodyColumnBody>{renderFormationLayers()}</BodyColumnBody>
-        </BodyColumn>
-      </NoUnmountShowHide>
+      <Column
+        data-testid="formation-column"
+        isVisible={isVisible}
+        width={30}
+        {...dragHandleProps}
+      >
+        <BodyColumnBody>{renderFormationLayers()}</BodyColumnBody>
+      </Column>
     );
   }
 );

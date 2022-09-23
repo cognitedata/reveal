@@ -7,18 +7,16 @@ import noop from 'lodash/noop';
 
 import { WithDragHandleProps } from 'components/DragDropContainer';
 import EmptyState from 'components/EmptyState';
-import { NoUnmountShowHide } from 'components/NoUnmountShowHide';
 import { DepthMeasurementUnit } from 'constants/units';
 import { useDeepCallback } from 'hooks/useDeep';
 import { FullWidth } from 'styles/layout';
 
-import { ColumnDragger } from '../../../common/Events/ColumnDragger';
 import {
-  BodyColumn,
   BodyColumnBody,
   BodyColumnMainHeader,
   EmptyStateWrapper,
 } from '../../../common/Events/elements';
+import { Column } from '../../components/Column';
 import { ColumnOptionsSelector } from '../../components/ColumnOptionsSelector';
 import { DepthScaleLines } from '../../components/DepthScaleLines';
 import { DetailPageOption } from '../../components/DetailPageOption';
@@ -102,25 +100,25 @@ export const CasingsColumn: React.FC<WithDragHandleProps<CasingsColumnProps>> =
       }, [data, isLoading, scaleBlocks, depthMeasurementType]);
 
       return (
-        <NoUnmountShowHide show={isVisible}>
-          <BodyColumn data-testid="casings-column">
-            <ColumnDragger {...dragHandleProps} />
+        <Column
+          data-testid="casings-column"
+          isVisible={isVisible}
+          {...dragHandleProps}
+        >
+          <ColumnHeaderWrapper>
+            <ColumnOptionsSelector
+              displayValue={ChartColumn.CASINGS}
+              Footer={<DetailPageOption onClick={onClickDetailsButton} />}
+              disabled={isEmpty(data)}
+            />
+            <BodyColumnMainHeader>Schema</BodyColumnMainHeader>
+            <Legend />
+          </ColumnHeaderWrapper>
 
-            <ColumnHeaderWrapper>
-              <ColumnOptionsSelector
-                displayValue={ChartColumn.CASINGS}
-                Footer={<DetailPageOption onClick={onClickDetailsButton} />}
-                disabled={isEmpty(data)}
-              />
-              <BodyColumnMainHeader>Schema</BodyColumnMainHeader>
-              <Legend />
-            </ColumnHeaderWrapper>
-
-            <CasingsColumnContentWrapper>
-              {renderCasingsColumnContent()}
-            </CasingsColumnContentWrapper>
-          </BodyColumn>
-        </NoUnmountShowHide>
+          <CasingsColumnContentWrapper>
+            {renderCasingsColumnContent()}
+          </CasingsColumnContentWrapper>
+        </Column>
       );
     }
   );

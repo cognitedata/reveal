@@ -9,10 +9,12 @@ import isString from 'lodash/isString';
 
 import { ExpandCollapseIconButton } from 'components/Buttons';
 import { WithDragHandleProps } from 'components/DragDropContainer';
+import { NoUnmountShowHide } from 'components/NoUnmountShowHide';
 import { FlexGrow } from 'styles/layout';
 
 import { ColumnDragger } from '../../../common/Events/ColumnDragger';
 import { BodyColumnMainHeader } from '../../../common/Events/elements';
+import { ColumnVisibilityProps } from '../../types';
 
 import {
   DEFAULT_COLUMN_WIDTH_COLLAPSED,
@@ -20,7 +22,7 @@ import {
 } from './constants';
 import { BodyColumnWrapper, ExpandableColumnHeaderWrapper } from './elements';
 
-export interface ExpandableColumnProps {
+export interface ExpandableColumnProps extends ColumnVisibilityProps {
   header: string | JSX.Element;
   expanded?: boolean;
   widthCollapsed?: number;
@@ -33,6 +35,7 @@ export const ExpandableColumn: React.FC<
   PropsWithChildren<WithDragHandleProps<ExpandableColumnProps>>
 > = React.memo(
   ({
+    isVisible = true,
     header,
     expanded: expandedProp = false,
     widthCollapsed = DEFAULT_COLUMN_WIDTH_COLLAPSED,
@@ -64,21 +67,23 @@ export const ExpandableColumn: React.FC<
     };
 
     return (
-      <BodyColumnWrapper width={expanded ? widthExpanded : widthCollapsed}>
-        <ColumnDragger {...dragHandleProps} />
+      <NoUnmountShowHide show={isVisible}>
+        <BodyColumnWrapper width={expanded ? widthExpanded : widthCollapsed}>
+          <ColumnDragger {...dragHandleProps} />
 
-        <ExpandableColumnHeaderWrapper>
-          {renderHeader()}
-          <FlexGrow />
-          <ExpandCollapseIconButton
-            expanded={expanded}
-            disabled={disableExpandButton}
-            onChange={handleExpandCollapse}
-          />
-        </ExpandableColumnHeaderWrapper>
+          <ExpandableColumnHeaderWrapper>
+            {renderHeader()}
+            <FlexGrow />
+            <ExpandCollapseIconButton
+              expanded={expanded}
+              disabled={disableExpandButton}
+              onChange={handleExpandCollapse}
+            />
+          </ExpandableColumnHeaderWrapper>
 
-        {children}
-      </BodyColumnWrapper>
+          {children}
+        </BodyColumnWrapper>
+      </NoUnmountShowHide>
     );
   }
 );

@@ -12,23 +12,19 @@ import isEmpty from 'lodash/isEmpty';
 import noop from 'lodash/noop';
 
 import { WithDragHandleProps } from 'components/DragDropContainer';
-import { NoUnmountShowHide } from 'components/NoUnmountShowHide';
 import { EMPTY_ARRAY } from 'constants/empty';
 import { DepthMeasurementUnit } from 'constants/units';
 import { useDeepMemo } from 'hooks/useDeep';
 
-import { ColumnDragger } from '../../../common/Events/ColumnDragger';
 import { NPT_COLUMN_TITLE } from '../../../common/Events/constants';
-import {
-  BodyColumn,
-  ColumnHeaderWrapper,
-} from '../../../common/Events/elements';
+import { ColumnHeaderWrapper } from '../../../common/Events/elements';
 import NptEventsBadge from '../../../common/Events/NptEventsBadge';
 import {
   NptEventsByDepth,
   EMPTY_STATE_TEXT,
 } from '../../../common/Events/NptEventsByDepth';
 import { EventsColumnView } from '../../../common/Events/types';
+import { Column } from '../../components/Column';
 import { ColumnNotification } from '../../components/ColumnNotification';
 import { ColumnOptionsSelector } from '../../components/ColumnOptionsSelector';
 import { DetailPageOption } from '../../components/DetailPageOption';
@@ -114,41 +110,42 @@ export const NptEventsColumn: React.FC<
     };
 
     return (
-      <NoUnmountShowHide show={isVisible}>
-        <BodyColumn width={EVENTS_COLUMN_WIDTH} data-testid="nptEvents-column">
-          <ColumnDragger {...dragHandleProps} />
+      <Column
+        data-testid="nptEvents-column"
+        isVisible={isVisible}
+        width={EVENTS_COLUMN_WIDTH}
+        {...dragHandleProps}
+      >
+        <ColumnHeaderWrapper>
+          <ColumnOptionsSelector
+            options={Object.values(EventsColumnView)}
+            selectedOption={view}
+            displayValue={NPT_COLUMN_TITLE}
+            onChange={setView}
+            Footer={<DetailPageOption onClick={onClickDetailsButton} />}
+            disabled={isEmpty(data)}
+          />
+        </ColumnHeaderWrapper>
 
-          <ColumnHeaderWrapper>
-            <ColumnOptionsSelector
-              options={Object.values(EventsColumnView)}
-              selectedOption={view}
-              displayValue={NPT_COLUMN_TITLE}
-              onChange={setView}
-              Footer={<DetailPageOption onClick={onClickDetailsButton} />}
-              disabled={isEmpty(data)}
-            />
-          </ColumnHeaderWrapper>
+        <EventsColumnBody>
+          <ColumnNotification
+            content={SOME_EVENT_MISSING_TVD_TEXT}
+            visible={
+              depthMeasurementType === DepthMeasurementUnit.TVD &&
+              isAnyNptMissingTvd(filteredData)
+            }
+          />
 
-          <EventsColumnBody>
-            <ColumnNotification
-              content={SOME_EVENT_MISSING_TVD_TEXT}
-              visible={
-                depthMeasurementType === DepthMeasurementUnit.TVD &&
-                isAnyNptMissingTvd(filteredData)
-              }
-            />
-
-            <NptEventsByDepth
-              scaleBlocks={scaleBlocks}
-              events={filteredData}
-              isLoading={isLoading}
-              emptySubtitle={emptySubtitle}
-              depthMeasurementType={depthMeasurementType}
-              renderBlockEvents={renderBlockEvents}
-            />
-          </EventsColumnBody>
-        </BodyColumn>
-      </NoUnmountShowHide>
+          <NptEventsByDepth
+            scaleBlocks={scaleBlocks}
+            events={filteredData}
+            isLoading={isLoading}
+            emptySubtitle={emptySubtitle}
+            depthMeasurementType={depthMeasurementType}
+            renderBlockEvents={renderBlockEvents}
+          />
+        </EventsColumnBody>
+      </Column>
     );
   }
 );

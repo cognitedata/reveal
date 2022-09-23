@@ -6,7 +6,6 @@ import head from 'lodash/head';
 import isEmpty from 'lodash/isEmpty';
 
 import { WithDragHandleProps } from 'components/DragDropContainer';
-import { NoUnmountShowHide } from 'components/NoUnmountShowHide';
 import { EMPTY_OBJECT } from 'constants/empty';
 import { DepthMeasurementUnit } from 'constants/units';
 import { useDeepEffect, useDeepMemo } from 'hooks/useDeep';
@@ -79,25 +78,24 @@ export const TrajectoryColumn: React.FC<
     }
 
     return (
-      <NoUnmountShowHide show={isVisible}>
-        <TrajectoryChartWrapper data-testid="trajectory-column">
-          <PlotlyChartColumn
-            isLoading={isLoading || (!isEmpty(data) && !selectedCurve)}
-            header={ChartColumn.TRAJECTORY}
-            scaleBlocks={scaleBlocks}
-            chartHeader={
-              <TrajectoryCurveSelector
-                curves={trajectoryCurves}
-                selectedCurve={selectedCurve}
-                onChangeCurve={setSelectedCurve}
-              />
-            }
-            nativeScale={NATIVE_SCALE_CURVES.includes(selectedCurve)}
-            {...trajectoryCurveDataProps[selectedCurve]}
-            {...dragHandleProps}
-          />
-        </TrajectoryChartWrapper>
-      </NoUnmountShowHide>
+      <TrajectoryChartWrapper data-testid="trajectory-column">
+        <PlotlyChartColumn
+          isVisible={isVisible}
+          isLoading={isLoading || (!isEmpty(data) && !selectedCurve)}
+          header={ChartColumn.TRAJECTORY}
+          scaleBlocks={scaleBlocks}
+          chartHeader={
+            <TrajectoryCurveSelector
+              curves={trajectoryCurves}
+              selectedCurve={selectedCurve}
+              onChangeCurve={setSelectedCurve}
+            />
+          }
+          nativeScale={NATIVE_SCALE_CURVES.includes(selectedCurve)}
+          {...trajectoryCurveDataProps[selectedCurve]}
+          {...dragHandleProps}
+        />
+      </TrajectoryChartWrapper>
     );
   }
 );

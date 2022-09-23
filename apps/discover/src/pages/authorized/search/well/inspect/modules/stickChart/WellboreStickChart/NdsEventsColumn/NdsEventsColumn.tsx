@@ -11,23 +11,19 @@ import isEmpty from 'lodash/isEmpty';
 import noop from 'lodash/noop';
 
 import { WithDragHandleProps } from 'components/DragDropContainer';
-import { NoUnmountShowHide } from 'components/NoUnmountShowHide';
 import { EMPTY_ARRAY } from 'constants/empty';
 import { DepthMeasurementUnit } from 'constants/units';
 import { useDeepMemo } from 'hooks/useDeep';
 
-import { ColumnDragger } from '../../../common/Events/ColumnDragger';
 import { NDS_COLUMN_TITLE } from '../../../common/Events/constants';
-import {
-  BodyColumn,
-  ColumnHeaderWrapper,
-} from '../../../common/Events/elements';
+import { ColumnHeaderWrapper } from '../../../common/Events/elements';
 import NdsEventsBadge from '../../../common/Events/NdsEventsBadge';
 import {
   NdsEventsByDepth,
   EMPTY_STATE_TEXT,
 } from '../../../common/Events/NdsEventsByDepth';
 import { EventsColumnView } from '../../../common/Events/types';
+import { Column } from '../../components/Column';
 import { ColumnNotification } from '../../components/ColumnNotification';
 import { ColumnOptionsSelector } from '../../components/ColumnOptionsSelector';
 import { DetailPageOption } from '../../components/DetailPageOption';
@@ -110,41 +106,42 @@ export const NdsEventsColumn: React.FC<
     };
 
     return (
-      <NoUnmountShowHide show={isVisible}>
-        <BodyColumn width={EVENTS_COLUMN_WIDTH} data-testid="ndsEvents-column">
-          <ColumnDragger {...dragHandleProps} />
+      <Column
+        data-testid="ndsEvents-column"
+        isVisible={isVisible}
+        width={EVENTS_COLUMN_WIDTH}
+        {...dragHandleProps}
+      >
+        <ColumnHeaderWrapper>
+          <ColumnOptionsSelector
+            options={Object.values(EventsColumnView)}
+            selectedOption={view}
+            displayValue={NDS_COLUMN_TITLE}
+            onChange={setView}
+            Footer={<DetailPageOption onClick={onClickDetailsButton} />}
+            disabled={isEmpty(data)}
+          />
+        </ColumnHeaderWrapper>
 
-          <ColumnHeaderWrapper>
-            <ColumnOptionsSelector
-              options={Object.values(EventsColumnView)}
-              selectedOption={view}
-              displayValue={NDS_COLUMN_TITLE}
-              onChange={setView}
-              Footer={<DetailPageOption onClick={onClickDetailsButton} />}
-              disabled={isEmpty(data)}
-            />
-          </ColumnHeaderWrapper>
+        <EventsColumnBody>
+          <ColumnNotification
+            content={SOME_EVENT_MISSING_TVD_TEXT}
+            visible={
+              depthMeasurementType === DepthMeasurementUnit.TVD &&
+              isAnyNdsMissingTvd(filteredData)
+            }
+          />
 
-          <EventsColumnBody>
-            <ColumnNotification
-              content={SOME_EVENT_MISSING_TVD_TEXT}
-              visible={
-                depthMeasurementType === DepthMeasurementUnit.TVD &&
-                isAnyNdsMissingTvd(filteredData)
-              }
-            />
-
-            <NdsEventsByDepth
-              scaleBlocks={scaleBlocks}
-              events={filteredData}
-              isLoading={isLoading}
-              emptySubtitle={emptySubtitle}
-              depthMeasurementType={depthMeasurementType}
-              renderBlockEvents={renderBlockEvents}
-            />
-          </EventsColumnBody>
-        </BodyColumn>
-      </NoUnmountShowHide>
+          <NdsEventsByDepth
+            scaleBlocks={scaleBlocks}
+            events={filteredData}
+            isLoading={isLoading}
+            emptySubtitle={emptySubtitle}
+            depthMeasurementType={depthMeasurementType}
+            renderBlockEvents={renderBlockEvents}
+          />
+        </EventsColumnBody>
+      </Column>
     );
   }
 );

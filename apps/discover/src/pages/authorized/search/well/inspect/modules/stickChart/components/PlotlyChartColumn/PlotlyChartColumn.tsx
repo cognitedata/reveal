@@ -7,12 +7,15 @@ import { WithDragHandleProps } from 'components/DragDropContainer';
 import { EMPTY_ARRAY } from 'constants/empty';
 
 import { ChartProps } from '../../../common/ChartV2/ChartV2';
+import { ColumnVisibilityProps } from '../../types';
 import { Chart } from '../Chart';
 import { ColumnAction } from '../ColumnAction';
 import { ColumnEmptyState } from '../ColumnEmptyState';
 import { ExpandableColumn } from '../ExpandableColumn';
 
-export interface PlotlyChartColumnProps extends Pick<ChartProps, 'axisNames'> {
+export interface PlotlyChartColumnProps
+  extends ColumnVisibilityProps,
+    Pick<ChartProps, 'axisNames'> {
   data?: Partial<PlotData>[];
   scaleBlocks: number[];
   header: string | JSX.Element;
@@ -30,6 +33,7 @@ export const PlotlyChartColumn: React.FC<
   WithDragHandleProps<PlotlyChartColumnProps>
 > = React.memo(
   ({
+    isVisible = true,
     data = EMPTY_ARRAY,
     axisNames,
     scaleBlocks,
@@ -113,6 +117,7 @@ export const PlotlyChartColumn: React.FC<
 
     return (
       <ExpandableColumn
+        isVisible={isVisible}
         expanded={expanded}
         header={header}
         disableExpandButton={isEmpty(data) || Boolean(actionMessage)}

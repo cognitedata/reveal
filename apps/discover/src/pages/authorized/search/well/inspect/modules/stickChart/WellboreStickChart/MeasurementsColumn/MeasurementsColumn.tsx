@@ -7,7 +7,6 @@ import isEmpty from 'lodash/isEmpty';
 import { BooleanMap } from 'utils/booleanMap';
 
 import { WithDragHandleProps } from 'components/DragDropContainer';
-import { NoUnmountShowHide } from 'components/NoUnmountShowHide';
 import { EMPTY_OBJECT } from 'constants/empty';
 import { DepthMeasurementUnit } from 'constants/units';
 import { useDeepMemo } from 'hooks/useDeep';
@@ -100,19 +99,18 @@ export const MeasurementsColumn: React.FC<
     }, [depthMeasurementType, onChangeDepthMeasurementType]);
 
     return (
-      <NoUnmountShowHide show={isVisible}>
-        <PlotlyChartColumn
-          data={filteredChartData}
-          isLoading={isLoading}
-          header={ChartColumn.MEASUREMENTS}
-          chartHeader={CHART_TITLE}
-          axisNames={axisNames}
-          scaleBlocks={scaleBlocks}
-          emptySubtitle={emptySubtitle}
-          {...swichToTvdActionProps}
-          {...dragHandleProps}
-        />
-      </NoUnmountShowHide>
+      <PlotlyChartColumn
+        isVisible={isVisible}
+        data={filteredChartData}
+        isLoading={isLoading}
+        header={ChartColumn.MEASUREMENTS}
+        chartHeader={CHART_TITLE}
+        axisNames={axisNames}
+        scaleBlocks={scaleBlocks}
+        emptySubtitle={emptySubtitle}
+        {...swichToTvdActionProps}
+        {...dragHandleProps}
+      />
     );
   }
 );
