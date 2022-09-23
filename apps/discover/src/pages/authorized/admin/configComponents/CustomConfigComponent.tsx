@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import findIndex from 'lodash/findIndex';
 
-import { CustomComponentProps } from '../projectConfig';
+import { ConfigValues, CustomComponentProps } from '../projectConfig';
 
 import { LayersFormModal } from './LayersFormModal';
 import { MetadataFormModal } from './MetadataFormModal';
@@ -20,7 +20,7 @@ export const CustomConfigComponent = ({
   const onOk = (datum: Record<string, unknown>) => {
     if (values) {
       if (mode === 'EDIT') {
-        const index = findIndex(values as any[], ['id', datum.id]);
+        const index = findIndex(values as ConfigValues[], ['id', datum.id]);
         onChangeAndUpdate(
           valuePath,
           Object.assign([], values, { [index]: datum })

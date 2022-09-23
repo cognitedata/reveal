@@ -149,7 +149,7 @@ export const average = (data: number[]) => {
   return avg;
 };
 
-export const getStandardDeviation = (values: any[], avg: number) => {
+export const getStandardDeviation = (values: Trace[], avg: number) => {
   const squareDiffs: number[] = [];
   values.forEach((v) => {
     const inner = v.traceList.map((value: number) => {

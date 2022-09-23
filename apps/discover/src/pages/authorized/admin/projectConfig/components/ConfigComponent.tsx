@@ -7,7 +7,7 @@ import map from 'lodash/map';
 import { Button, Flex, Tooltip } from '@cognite/cogs.js';
 
 import { ItemWrapper } from '../layout/elements';
-import { ConfigFormProps } from '../types';
+import { ConfigFormProps, ConfigValues } from '../types';
 import { getLabelFromIdentifier } from '../utils/getLabelFromIdentifier';
 
 import { CreateNewOrUpdateComponent } from './CreateNewOrUpdateComponent';
@@ -54,7 +54,7 @@ export const ConfigComponent: React.FC<ConfigFormProps> = ({
   const handleDelete = () => {
     onChangeAndUpdate(
       valuePath,
-      filter(values as any[], (val, filterIndex) => {
+      filter(values as ConfigValues[], (val, filterIndex) => {
         return filterIndex !== entityModal.index;
       })
     );

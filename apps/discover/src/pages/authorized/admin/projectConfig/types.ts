@@ -14,7 +14,7 @@ export type Config = {
 };
 
 // todo(PP-2934): remove this and use Config
-type ConfigValues = { [index: string | number]: unknown } | [];
+export type ConfigValues = { [index: string | number]: unknown } | [];
 
 export type MetadataKey = keyof Metadata;
 
