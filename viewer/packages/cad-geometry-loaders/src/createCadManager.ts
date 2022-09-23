@@ -7,7 +7,7 @@ import { InternalRevealCadOptions } from './InternalRevealCadOptions';
 
 import { CadModelUpdateHandler } from '@reveal/cad-geometry-loaders';
 import { CadMaterialManager } from '@reveal/rendering';
-import { ModelDataProvider, ModelMetadataProvider } from '@reveal/modeldata-api';
+import { ModelDataProvider, ModelMetadataProvider } from '@reveal/data-providers';
 import { CadModelFactory } from '@reveal/cad-model';
 import { ByScreenSizeSectorCuller } from './sector/culling/ByScreenSizeSectorCuller';
 

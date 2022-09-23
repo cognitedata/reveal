@@ -7,7 +7,7 @@ import { createBinaryFileProviderMock, createWantedSectorMock } from './mockSect
 
 import { IMock, Mock } from 'moq.ts';
 
-import { BinaryFileProvider } from '@reveal/modeldata-api';
+import { BinaryFileProvider } from '@reveal/data-providers';
 import { CadMaterialManager } from '@reveal/rendering';
 import { WantedSector } from '@reveal/cad-parsers';
 import Log from '@reveal/logger';

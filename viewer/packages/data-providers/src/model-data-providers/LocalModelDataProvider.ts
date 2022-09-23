@@ -2,8 +2,8 @@
  * Copyright 2021 Cognite AS
  */
 
-import { ModelDataProvider } from './types';
-import { fetchWithStatusCheck } from './utilities';
+import { ModelDataProvider } from '../ModelDataProvider';
+import { fetchWithStatusCheck } from '../utilities/fetchWithStatusCheck';
 
 export class LocalModelDataProvider implements ModelDataProvider {
   async getBinaryFile(baseUrl: string, fileName: string): Promise<ArrayBuffer> {

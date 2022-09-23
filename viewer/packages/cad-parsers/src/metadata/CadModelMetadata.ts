@@ -5,7 +5,7 @@
 import * as THREE from 'three';
 import { SectorScene } from '../utilities/types';
 import { CameraConfiguration } from '@reveal/utilities';
-import { File3dFormat } from '@reveal/modeldata-api';
+import { File3dFormat } from '@reveal/data-providers';
 
 export interface CadModelMetadata {
   /**

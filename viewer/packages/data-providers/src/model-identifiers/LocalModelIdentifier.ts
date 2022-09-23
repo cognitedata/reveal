@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-import { ModelIdentifier } from './ModelIdentifier';
+import { ModelIdentifier } from '../ModelIdentifier';
 
 /**
  * Identifies a 3D model by a URL. This implementation is used for testing
