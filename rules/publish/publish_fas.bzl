@@ -26,7 +26,7 @@ def _publish_fas(ctx):
     runfiles = ctx.runfiles(
         files = [ctx.file.package_json],
     )
-    tracked_files = [ctx.file.package_json]
+    tracked_files = [ctx.file.package_json] + ctx.files.build
     tracker_file = create_tracker_file(
         ctx,
         tracked_files,
