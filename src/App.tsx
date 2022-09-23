@@ -30,7 +30,7 @@ const project = getProject();
 const App = () => {
   return (
     <FlagProvider
-      appName="cdf-hub-flows"
+      appName="cdf-ui-flows"
       apiToken="v2Qyg7YqvhyAMCRMbDmy1qA6SuG8YCBE"
       projectName={project}
     >

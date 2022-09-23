@@ -1,3 +1,3 @@
 module.exports = {
-  styleScope: 'cdf-hub-flows-style-scope',
+  styleScope: 'cdf-ui-flows-style-scope',
 };
