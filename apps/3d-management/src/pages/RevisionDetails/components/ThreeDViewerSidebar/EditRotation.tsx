@@ -64,6 +64,8 @@ function EditRotationOpened(props: Props & { onClose: () => void }) {
 
   const setModelTransformation = (matrix: THREE.Matrix4) => {
     props.model.setModelTransformation(matrix);
+    // TODO 2022-09-23 larsmoa: Necessary because of https://cognitedata.atlassian.net/browse/REV-521
+    props.viewer.requestRedraw();
   };
 
   useEffect(() => {
@@ -116,6 +118,8 @@ function EditRotationOpened(props: Props & { onClose: () => void }) {
       rotationMatrix
     );
     props.model.setModelTransformation(newMatrix);
+    // TODO 2022-09-23 larsmoa: Necessary because of https://cognitedata.atlassian.net/browse/REV-521
+    props.viewer.requestRedraw();
   };
 
   const onCancelClicked = () => {
