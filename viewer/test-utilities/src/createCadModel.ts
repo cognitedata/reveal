@@ -8,7 +8,7 @@ import { CadMaterialManager } from '../../packages/rendering';
 import { createCadModelMetadata } from './createCadModelMetadata';
 
 import { Mock } from 'moq.ts';
-import { SectorRepository } from '@reveal/sector-loader';
+import { SectorRepository } from '../../packages/sector-loader';
 import { generateV9SectorTree } from './createSectorMetadata';
 
 export function createCadModel(
