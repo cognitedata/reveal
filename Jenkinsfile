@@ -316,105 +316,105 @@ pods {
 
     def slackMessages = []
 
-    stageWithNotify('Publish FAS', CONTEXTS.publishFAS) {
-      container('bazel') {
-        changedPublishFas.each { change ->
-          change.run.each { cmd ->
-            def fasJsonString = sh(script: "bazel run --stamp ${cmd}", returnStdout: true)
-            def params = readJSON text: fasJsonString
-            print(params)
-            def target = cmd.split(':')[0].split('//')[1]
+    // stageWithNotify('Publish FAS', CONTEXTS.publishFAS) {
+    //   container('bazel') {
+    //     changedPublishFas.each { change ->
+    //       change.run.each { cmd ->
+    //         def fasJsonString = sh(script: "bazel run --stamp ${cmd}", returnStdout: true)
+    //         def params = readJSON text: fasJsonString
+    //         print(params)
+    //         def target = cmd.split(':')[0].split('//')[1]
 
-            def publish = { args ->
-              def performBuild = { p ->
-                container('bazel') {
-                  // clean up after the previous run
-                  sh("rm -rf build && cp -r `readlink dist/bin`/${args.src}/build build")
-                  def fasBuildJsonString = sh(
-                    script: 'cat .fas-build.json',
-                    returnStdout: true
-                  )
-                  def fasBuildJson = readJSON text: fasBuildJsonString
-                  def fasBuildEnv = fasBuildJson.build.env
-                  // Iterate over generated env vars and replace placeholder values defined in BUILD.bazel
-                  for (key in fasBuildEnv.keySet()) {
-                    def value = fasBuildEnv.get(key)
-                    sh("find build -type f | xargs sed -i 's,${key}_VALUE,${value},g'")
-                  }
-                  // We are setting REACT_APP_ENV/NODE_ENV based on the build target, similarly to scripts/build.sh
-                  def variant = args.variant ?: 'development'
-                  sh("find build -type f | xargs sed -i 's,REACT_APP_ENV_VALUE,${variant},g'")
-                  sh("find build -type f | xargs sed -i 's,NODE_ENV_VALUE,${variant},g'")
-                }
-              }
-              fas.build(
-                appId: args.appId,
-                repo: args.repo,
-                sentryProjectName: args.sentryProjectName,
-                performBuild: performBuild,
-                baseVersion: args.baseVersion,
-                shouldPublishSourceMap: args.shouldPublishSourceMap,
-                shouldInstallPackages: false,
-              )
-              fas.publish(
-                previewSubdomain: args.previewSubdomain,
-                previewClusters: PREVIEW_CLUSTERS[args.previewSubdomain] ?: false,
-                shouldPublishSourceMap: args.shouldPublishSourceMap,
-              )
-            }
+    //         def publish = { args ->
+    //           def performBuild = { p ->
+    //             container('bazel') {
+    //               // clean up after the previous run
+    //               sh("rm -rf build && cp -r `readlink dist/bin`/${args.src}/build build")
+    //               def fasBuildJsonString = sh(
+    //                 script: 'cat .fas-build.json',
+    //                 returnStdout: true
+    //               )
+    //               def fasBuildJson = readJSON text: fasBuildJsonString
+    //               def fasBuildEnv = fasBuildJson.build.env
+    //               // Iterate over generated env vars and replace placeholder values defined in BUILD.bazel
+    //               for (key in fasBuildEnv.keySet()) {
+    //                 def value = fasBuildEnv.get(key)
+    //                 sh("find build -type f | xargs sed -i 's,${key}_VALUE,${value},g'")
+    //               }
+    //               // We are setting REACT_APP_ENV/NODE_ENV based on the build target, similarly to scripts/build.sh
+    //               def variant = args.variant ?: 'development'
+    //               sh("find build -type f | xargs sed -i 's,REACT_APP_ENV_VALUE,${variant},g'")
+    //               sh("find build -type f | xargs sed -i 's,NODE_ENV_VALUE,${variant},g'")
+    //             }
+    //           }
+    //           fas.build(
+    //             appId: args.appId,
+    //             repo: args.repo,
+    //             sentryProjectName: args.sentryProjectName,
+    //             performBuild: performBuild,
+    //             baseVersion: args.baseVersion,
+    //             shouldPublishSourceMap: args.shouldPublishSourceMap,
+    //             shouldInstallPackages: false,
+    //           )
+    //           fas.publish(
+    //             previewSubdomain: args.previewSubdomain,
+    //             previewClusters: PREVIEW_CLUSTERS[args.previewSubdomain] ?: false,
+    //             shouldPublishSourceMap: args.shouldPublishSourceMap,
+    //           )
+    //         }
 
-            static final Map<String, Boolean> version = versioning.getEnv(
-              versioningStrategy: params.versioning_strategy
-            )
+    //         static final Map<String, Boolean> version = versioning.getEnv(
+    //           versioningStrategy: params.versioning_strategy
+    //         )
 
-            if (isPullRequest) {
-              publish(
-                src: target,
-                appId: "${params.staging_app_id}-pr-${env.CHANGE_ID}",
-                repo: params.repo_id,
-                sentryProjectName: params.sentry_project_name,
-                variant: 'preview',
-                previewSubdomain: params.preview_subdomain != '' ? params.preview_subdomain : null,
-                baseVersion: params.base_version,
-                shouldPublishSourceMap: params.should_publish_source_map == 'true',
-              // sourceMapPath: 'assets',
-              )
-              print('FAS preview published')
-            }
+    //         if (isPullRequest) {
+    //           publish(
+    //             src: target,
+    //             appId: "${params.staging_app_id}-pr-${env.CHANGE_ID}",
+    //             repo: params.repo_id,
+    //             sentryProjectName: params.sentry_project_name,
+    //             variant: 'preview',
+    //             previewSubdomain: params.preview_subdomain != '' ? params.preview_subdomain : null,
+    //             baseVersion: params.base_version,
+    //             shouldPublishSourceMap: params.should_publish_source_map == 'true',
+    //           // sourceMapPath: 'assets',
+    //           )
+    //           print('FAS preview published')
+    //         }
 
-            if (version.isStaging) {
-              publish(
-                src: target,
-                appId: params.staging_app_id,
-                repo: params.repo_id,
-                sentryProjectName: params.sentry_project_name,
-                variant: 'staging',
-                baseVersion: params.base_version,
-                shouldPublishSourceMap: params.should_publish_source_map == 'true',
-              // sourceMapPath: 'assets',
-              )
-              print('FAS staging published')
-              slackMessages.add("- `${params.staging_app_id}`")
-            }
+    //         if (version.isStaging) {
+    //           publish(
+    //             src: target,
+    //             appId: params.staging_app_id,
+    //             repo: params.repo_id,
+    //             sentryProjectName: params.sentry_project_name,
+    //             variant: 'staging',
+    //             baseVersion: params.base_version,
+    //             shouldPublishSourceMap: params.should_publish_source_map == 'true',
+    //           // sourceMapPath: 'assets',
+    //           )
+    //           print('FAS staging published')
+    //           slackMessages.add("- `${params.staging_app_id}`")
+    //         }
 
-            if (version.isProduction) {
-              publish(
-                src: target,
-                appId: params.production_app_id,
-                repo: params.repo_id,
-                sentryProjectName: params.sentry_project_name,
-                variant: 'production',
-                baseVersion: params.base_version,
-                shouldPublishSourceMap: params.should_publish_source_map == 'true',
-              // sourceMapPath: 'assets',
-              )
-              print('FAS production published')
-              slackMessages.add("- `${params.production_app_id}`")
-            }
-          }
-        }
-      }
-    }
+    //         if (version.isProduction) {
+    //           publish(
+    //             src: target,
+    //             appId: params.production_app_id,
+    //             repo: params.repo_id,
+    //             sentryProjectName: params.sentry_project_name,
+    //             variant: 'production',
+    //             baseVersion: params.base_version,
+    //             shouldPublishSourceMap: params.should_publish_source_map == 'true',
+    //           // sourceMapPath: 'assets',
+    //           )
+    //           print('FAS production published')
+    //           slackMessages.add("- `${params.production_app_id}`")
+    //         }
+    //       }
+    //     }
+    //   }
+    // }
 
     stageWithNotify('Publish to NPM', CONTEXTS.publishPackages) {
       container('bazel') {
