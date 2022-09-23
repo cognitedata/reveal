@@ -26,7 +26,7 @@ def _publish_fas(ctx):
     runfiles = ctx.runfiles(
         files = [ctx.file.package_json],
     )
-    tracked_files = [ctx.file.package_json] + ctx.files.build
+    tracked_files = [ctx.file.package_json] + ctx.files.deps
     tracker_file = create_tracker_file(
         ctx,
         tracked_files,
@@ -75,6 +75,11 @@ publish_fas = rule(
         "build": attr.label(
             allow_files = True,
             doc = "Build",
+            mandatory = True,
+        ),
+        "deps": attr.label_list(
+            allow_files = True,
+            doc = "Dependencies for tracker",
             mandatory = True,
         ),
         "_runner": attr.label(

@@ -347,4 +347,8 @@ publish_fas(
     # FAS staging app id
     staging_app_id = "linewalk-staging",
     versioning_strategy = "multi-branch",
+    deps = _RUNTIME_DEPS + DEPENDENCIES + TYPE_DEPENDENCIES + [
+        "@npm//vite",
+        ":vite_config",
+    ],
 )

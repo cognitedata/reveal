@@ -420,6 +420,9 @@ publish_storybook(
     build = ":storybook-static",
     # Storybook sub domain to be used
     sub_domain = "react-demo-app",
+    deps = _RUNTIME_DEPS + DEPENDENCIES + DEV_DEPENDENCIES + TYPE_DEPENDENCIES + [
+        "copy_storybook_files",
+    ],
 )
 
 ### FAS ###
@@ -439,4 +442,8 @@ publish_fas(
     # FAS staging app id
     staging_app_id = "fas-demo",
     versioning_strategy = "single-branch",
+    deps = _RUNTIME_DEPS + DEPENDENCIES + TYPE_DEPENDENCIES + [
+        "@npm//vite",
+        ":vite_config",
+    ],
 )

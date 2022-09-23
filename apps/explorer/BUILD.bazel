@@ -411,4 +411,8 @@ publish_fas(
     # FAS staging app id
     staging_app_id = "explorer-staging",
     versioning_strategy = "single-branch",
+    deps = _RUNTIME_DEPS + DEPENDENCIES + TYPE_DEPENDENCIES + [
+        "@npm//vite",
+        ":vite_config",
+    ],
 )

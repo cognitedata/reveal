@@ -374,4 +374,8 @@ publish_fas(
     # FAS staging app id
     staging_app_id = "digital-cockpit-staging",
     versioning_strategy = "multi-branch",
+    deps = _RUNTIME_DEPS + DEPENDENCIES + BROWSER_DEPS + TYPE_DEPENDENCIES + [
+        "@npm//vite",
+        ":vite_config",
+    ],
 )

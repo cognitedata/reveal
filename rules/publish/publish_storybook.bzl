@@ -20,7 +20,7 @@ def _publish_storybook(ctx):
     runfiles = ctx.runfiles(
         files = ctx.files.build,
     )
-    tracked_files = ctx.files.build
+    tracked_files = ctx.files.deps
     tracker_file = create_tracker_file(
         ctx,
         tracked_files,
@@ -43,6 +43,11 @@ publish_storybook = rule(
         "build": attr.label(
             allow_files = True,
             doc = "Build",
+            mandatory = True,
+        ),
+        "deps": attr.label_list(
+            allow_files = True,
+            doc = "Dependencies for tracker",
             mandatory = True,
         ),
         "_runner": attr.label(
