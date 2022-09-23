@@ -23,6 +23,7 @@ import { ModelIdentifier, ModelMetadataProvider } from '../../packages/modeldata
 import { LoadingState } from '../../packages/model-base';
 import {
   LocalAnnotationProvider,
+  LocalPointClassificationsProvider,
   PointCloudManager,
   PointCloudNode,
   Potree,
@@ -102,7 +103,7 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
    */
 
   createPointCloudFactory(): PointCloudFactory {
-    return new PointCloudFactory(this.potreeInstance, new LocalAnnotationProvider());
+    return new PointCloudFactory(this.potreeInstance, new LocalAnnotationProvider(), new LocalPointClassificationsProvider());
   }
 
   createCamera(): THREE.PerspectiveCamera {
