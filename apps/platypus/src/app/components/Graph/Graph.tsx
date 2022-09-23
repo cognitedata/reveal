@@ -517,7 +517,8 @@ const Wrapper = styled.div`
   height: 100%;
 
   svg,
-  .node-container {
+  .node-container,
+  .chart {
     cursor: grab;
     width: 100%;
     height: 100%;
