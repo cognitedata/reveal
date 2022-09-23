@@ -33,6 +33,11 @@ import {
 import { CogniteClient } from '@cognite/sdk';
 import { SceneHandler } from '@reveal/utilities';
 import { createCadManager } from '@reveal/cad-geometry-loaders';
+import {
+  IPointClassificationsProvider,
+  LocalPointClassificationsProvider,
+  UrlPointClassificationsProvider
+} from '@reveal/pointclouds';
 
 /**
  * Used to create an instance of reveal manager that works with localhost.
@@ -49,12 +54,14 @@ export function createLocalRevealManager(
   const modelMetadataProvider = new LocalModelMetadataProvider();
   const modelDataProvider = new LocalModelDataProvider();
   const annotationProvider = new LocalAnnotationProvider();
+  const pointClassificationsProvider = new LocalPointClassificationsProvider();
   return createRevealManager(
     'local',
     'local-dataSource-appId',
     modelMetadataProvider,
     modelDataProvider,
     annotationProvider,
+    pointClassificationsProvider,
     renderer,
     sceneHandler,
     revealOptions
@@ -78,12 +85,14 @@ export function createCdfRevealManager(
   const modelMetadataProvider = new CdfModelMetadataProvider(client);
   const modelDataProvider = new CdfModelDataProvider(client);
   const annotationProvider = new CdfAnnotationProvider(client);
+  const pointClassificationsProvider = new UrlPointClassificationsProvider(modelDataProvider);
   return createRevealManager(
     client.project,
     applicationId,
     modelMetadataProvider,
     modelDataProvider,
     annotationProvider,
+    pointClassificationsProvider,
     renderer,
     sceneHandler,
     revealOptions
@@ -108,6 +117,7 @@ export function createRevealManager(
   modelMetadataProvider: ModelMetadataProvider,
   modelDataProvider: ModelDataProvider,
   annotationProvider: IAnnotationProvider,
+  pointClassificationsProvider: IPointClassificationsProvider,
   renderer: THREE.WebGLRenderer,
   sceneHandler: SceneHandler,
   revealOptions: RevealOptions = {}
@@ -137,6 +147,7 @@ export function createRevealManager(
     modelMetadataProvider,
     modelDataProvider,
     annotationProvider,
+    pointClassificationsProvider,
     sceneHandler.scene,
     renderer
   );

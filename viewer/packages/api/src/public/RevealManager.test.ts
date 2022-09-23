@@ -9,9 +9,14 @@ import { RevealManager } from './RevealManager';
 import { ModelDataProvider, ModelMetadataProvider } from '@reveal/modeldata-api';
 import { SectorCuller } from '@reveal/cad-geometry-loaders';
 import { SceneHandler } from '@reveal/utilities';
-import { IAnnotationProvider, PointCloudObjectAnnotationData } from '@reveal/pointclouds';
+import {
+  IAnnotationProvider,
+  PointCloudObjectAnnotationData,
+  LocalPointClassificationsProvider
+} from '@reveal/pointclouds';
 import { LoadingStateChangeListener } from './types';
 import { It, Mock, SetPropertyExpression } from 'moq.ts';
+import {  } from '@reveal/pointclouds';
 
 describe('RevealManager', () => {
   const stubMetadataProvider: ModelMetadataProvider = {} as any;
@@ -25,6 +30,7 @@ describe('RevealManager', () => {
     .setup(p => p.getAnnotations(It.IsAny()))
     .returns(Promise.resolve(new PointCloudObjectAnnotationData([])))
     .object();
+  const pointClassificationsProvider = new LocalPointClassificationsProvider();
   let manager: RevealManager;
 
   beforeEach(() => {
@@ -47,6 +53,7 @@ describe('RevealManager', () => {
       stubMetadataProvider,
       stubDataProvider,
       annotationProvider,
+      pointClassificationsProvider,
       rendererMock.object(),
       new SceneHandler(),
       {

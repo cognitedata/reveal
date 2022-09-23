@@ -1,7 +1,6 @@
 import { Camera, WebGLRenderer } from 'three';
 import { LRU } from '../utils/lru';
 import { PointCloudOctree } from '../tree/PointCloudOctree';
-import { ClassificationInfo } from '../loading/ClassificationInfo';
 import { PointCloudObjectAnnotationData } from '../../styling/PointCloudObjectAnnotationData';
 
 export interface IPotree {
@@ -13,7 +12,7 @@ export interface IPotree {
     baseUrl: string,
     fileName: string,
     stylableObjectInfo: PointCloudObjectAnnotationData
-  ): Promise<[PointCloudOctree, ClassificationInfo | undefined]>;
+  ): Promise<PointCloudOctree>;
 
   updatePointClouds(pointClouds: PointCloudOctree[], camera: Camera, renderer: WebGLRenderer): void;
 }

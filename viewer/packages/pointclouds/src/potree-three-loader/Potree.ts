@@ -85,9 +85,9 @@ export class Potree implements IPotree {
     baseUrl: string,
     fileName: string,
     annotationObjectInfo: PointCloudObjectAnnotationData
-  ): Promise<[PointCloudOctree, ClassificationInfo | undefined]> {
-    const [geometry, classMap] = await EptLoader.load(baseUrl, fileName, this._modelDataProvider, annotationObjectInfo);
-    return [new PointCloudOctree(this, geometry, annotationObjectInfo), classMap];
+  ): Promise<PointCloudOctree> {
+    const geometry = await EptLoader.load(baseUrl, fileName, this._modelDataProvider, annotationObjectInfo);
+    return new PointCloudOctree(this, geometry, annotationObjectInfo);
   }
 
   updatePointClouds(pointClouds: PointCloudOctree[], camera: Camera, renderer: WebGLRenderer): void {

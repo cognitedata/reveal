@@ -14,7 +14,11 @@ import { assertNever, SceneHandler } from '@reveal/utilities';
 
 import { CadNode } from '@reveal/cad-model';
 import { CogniteClient } from '@cognite/sdk';
-import { LocalAnnotationProvider, PointCloudNode } from '@reveal/pointclouds';
+import {
+  LocalAnnotationProvider,
+  PointCloudNode,
+  LocalPointClassificationsProvider
+} from '@reveal/pointclouds';
 
 /**
  * Helper for {@link RevealManager} for creating a uniform interface for
@@ -94,6 +98,7 @@ export class RevealManagerHelper {
       dataSource.getModelMetadataProvider(),
       dataSource.getModelDataProvider(),
       new LocalAnnotationProvider(),
+      new LocalPointClassificationsProvider(),
       renderer,
       sceneHandler,
       revealOptions

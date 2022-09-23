@@ -3,7 +3,6 @@ import { DEFAULT_POINT_CLOUD_CLASS_DEFINITION_FILE } from '../../constants';
 import { PointCloudObjectAnnotationData } from '../../styling/PointCloudObjectAnnotationData';
 import { PointCloudEptGeometry } from '../geometry/PointCloudEptGeometry';
 import { PointCloudEptGeometryNode } from '../geometry/PointCloudEptGeometryNode';
-import { ClassificationInfo } from './ClassificationInfo';
 import { EptJson } from './EptJson';
 
 export class EptLoader {
@@ -12,16 +11,8 @@ export class EptLoader {
     fileName: string,
     modelDataProvider: ModelDataProvider,
     objectProvider: PointCloudObjectAnnotationData
-  ): Promise<[PointCloudEptGeometry, ClassificationInfo | undefined]> {
+  ): Promise<PointCloudEptGeometry> {
     const eptJsonPromise = modelDataProvider.getJsonFile(baseUrl, fileName);
-
-    const classesJsonPromise: Promise<ClassificationInfo | undefined> = modelDataProvider
-      .getJsonFile(baseUrl, DEFAULT_POINT_CLOUD_CLASS_DEFINITION_FILE)
-      .then(json => json as ClassificationInfo)
-      .catch(_ => {
-        // Classes file not found, ignoring
-        return undefined;
-      });
 
     return eptJsonPromise.then(async (json: EptJson) => {
       const url = baseUrl + '/';
@@ -31,7 +22,7 @@ export class EptLoader {
 
       geometry.root = root;
       await geometry.root.load();
-      return [geometry, await classesJsonPromise];
+      return geometry;
     });
   }
 }

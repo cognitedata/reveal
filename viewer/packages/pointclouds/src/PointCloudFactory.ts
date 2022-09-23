@@ -7,14 +7,20 @@ import { PointCloudMetadata } from './PointCloudMetadata';
 import { Potree } from './potree-three-loader';
 import { DEFAULT_POINT_CLOUD_METADATA_FILE } from './constants';
 import { IAnnotationProvider } from './styling/IAnnotationProvider';
+import { IPointClassificationsProvider } from './classificationsProviders/IPointClassificationsProvider';
 
 export class PointCloudFactory {
   private readonly _potreeInstance: Potree;
   private readonly _annotationProvider: IAnnotationProvider;
+  private readonly _classificationsProvider: IPointClassificationsProvider;
 
-  constructor(potreeInstance: Potree, annotationProvider: IAnnotationProvider) {
+  constructor(
+    potreeInstance: Potree,
+    annotationProvider: IAnnotationProvider,
+    classificationsProvider: IPointClassificationsProvider) {
     this._potreeInstance = potreeInstance;
     this._annotationProvider = annotationProvider;
+    this._classificationsProvider = classificationsProvider;
   }
 
   get potreeInstance(): Potree {
@@ -24,9 +30,13 @@ export class PointCloudFactory {
   async createModel(modelMetadata: PointCloudMetadata): Promise<PotreeNodeWrapper> {
     const { modelBaseUrl, modelIdentifier } = modelMetadata;
 
-    const annotationInfo = await this._annotationProvider.getAnnotations(modelIdentifier);
+    const annotationInfoPromise = this._annotationProvider.getAnnotations(modelIdentifier);
+    const classSchemaPromise = this._classificationsProvider.getClassifications(modelMetadata);
 
-    const [pointCloudOctree, classSchema] = await this._potreeInstance.loadPointCloud(
+    const annotationInfo = await annotationInfoPromise;
+    const classSchema = await classSchemaPromise;
+
+    const pointCloudOctree = await this._potreeInstance.loadPointCloud(
       modelBaseUrl,
       DEFAULT_POINT_CLOUD_METADATA_FILE,
       annotationInfo
