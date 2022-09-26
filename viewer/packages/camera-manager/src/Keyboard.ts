@@ -66,15 +66,15 @@ export default class Keyboard {
   private readonly addEventListeners = () => {
     this.clearPressedKeys();
 
-    this._domElement.addEventListener('keydown', this.onKeydown);
-    this._domElement.addEventListener('keyup', this.onKeyup);
-    this._domElement.addEventListener('blur', this.clearPressedKeys);
+    window.addEventListener('keydown', this.onKeydown);
+    window.addEventListener('keyup', this.onKeyup);
+    window.addEventListener('blur', this.clearPressedKeys);
   };
 
   private readonly removeEventListeners = () => {
-    this._domElement.removeEventListener('keydown', this.onKeydown);
-    this._domElement.removeEventListener('keyup', this.onKeyup);
-    this._domElement.removeEventListener('blur', this.clearPressedKeys);
+    window.removeEventListener('keydown', this.onKeydown);
+    window.removeEventListener('keyup', this.onKeyup);
+    window.removeEventListener('blur', this.clearPressedKeys);
   };
 
   private readonly onKeydown = (event: KeyboardEvent) => {
