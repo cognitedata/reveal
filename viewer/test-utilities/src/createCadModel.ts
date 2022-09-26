@@ -23,9 +23,9 @@ export function createCadModel(
   const cadMetadata = createCadModelMetadata(9, cadRoot);
   materialManager.addModelMaterials(cadMetadata.modelIdentifier, cadMetadata.scene.maxTreeIndex);
 
-  const mockV8SectorRepository = new Mock<SectorRepository>().setup(p => p.clearCache).returns(() => {});
+  const mockSectorRepository = new Mock<SectorRepository>().setup(p => p.clearCache).returns(() => {});
 
-  const cadNode = new CadNode(cadMetadata, materialManager, mockV8SectorRepository.object());
+  const cadNode = new CadNode(cadMetadata, materialManager, mockSectorRepository.object());
   nodesApiClient = nodesApiClient ?? new NodesLocalClient();
   const model = new Cognite3DModel(modelId, revisionId, cadNode, nodesApiClient);
 
