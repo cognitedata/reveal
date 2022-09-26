@@ -852,7 +852,7 @@ __metadata:
     skmeans: 0.11.3
     three: 0.144.0
     three-stdlib: 2.16.2
-    ts-jest: 29.0.1
+    ts-jest: 29.0.2
     ts-loader: 9.4.1
     tsc-alias: 1.7.0
     typescript: 4.8.3
@@ -12138,9 +12138,9 @@ resolve@^1.9.0:
   languageName: node
   linkType: hard
 
-"ts-jest@npm:29.0.1":
-  version: 29.0.1
-  resolution: "ts-jest@npm:29.0.1"
+"ts-jest@npm:29.0.2":
+  version: 29.0.2
+  resolution: "ts-jest@npm:29.0.2"
   dependencies:
     bs-logger: 0.x
     fast-json-stable-stringify: 2.x
@@ -12167,7 +12167,7 @@ resolve@^1.9.0:
       optional: true
   bin:
     ts-jest: cli.js
-  checksum: f126675beb0d103d440b0297dc331ce37ba0f1e1a8002f4e97bfeb9043cf21b4de03deebf11ac1f08b7e4978d87f6a1c71e398b1c2f8535df3b684338786408e
+  checksum: 66ece9c36e0b3b00ed617c1aad254578c77bca60409cf0d316c353ae94c9f05bc5be541366be94df6b1bc33c974701f0cd5304aa9f86c1b94917709575a13ba9
   languageName: node
   linkType: hard
 
