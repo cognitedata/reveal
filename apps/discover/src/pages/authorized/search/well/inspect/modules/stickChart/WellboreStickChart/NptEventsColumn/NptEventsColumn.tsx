@@ -111,7 +111,7 @@ export const NptEventsColumn: React.FC<
 
     return (
       <Column
-        data-testid="nptEvents-column"
+        id="nptEvents-column"
         isVisible={isVisible}
         width={EVENTS_COLUMN_WIDTH}
         {...dragHandleProps}

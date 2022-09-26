@@ -64,6 +64,11 @@ const hoverOnNthWellbore = (nth: number, tableType: string) => {
     .invoke('attr', 'style', 'opacity: 1');
 };
 
+const verifyColumnHeader = (header: string) => {
+  cy.log(`verify column header: ${header}`);
+  cy.findByTestId('table-header-row').findByText(header).should('be.visible');
+};
+
 Cypress.Commands.add('getResultsTable', getResultsTable);
 Cypress.Commands.add('toggleSelectAllRows', toggleSelectAllRows);
 Cypress.Commands.add('checkIfAllRowsSelected', checkIfAllRowsSelected);
@@ -73,6 +78,7 @@ Cypress.Commands.add('hoverOnNthWell', hoverOnNthWell);
 Cypress.Commands.add('hoverOnNthWellbore', hoverOnNthWellbore);
 Cypress.Commands.add('clickNthWellViewButton', clickNthWellViewButton);
 Cypress.Commands.add('clickNthWellboreViewButton', clickNthWellboreViewButton);
+Cypress.Commands.add('verifyColumnHeader', verifyColumnHeader);
 
 export interface TableCommands {
   getResultsTable(
@@ -93,4 +99,5 @@ export interface TableCommands {
   hoverOnNthWellbore(nth: number, tableType: string): void;
   clickNthWellViewButton(nth: number): void;
   clickNthWellboreViewButton(nth: number): void;
+  verifyColumnHeader(header: string): void;
 }

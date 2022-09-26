@@ -14,6 +14,7 @@ import {
 } from './elements';
 
 export interface FilterItemProps {
+  id?: string;
   column: ChartColumn;
   onFiterVisiblityChange?: (column: ChartColumn, visibility: boolean) => void;
   children?: React.ReactNode;
@@ -21,7 +22,7 @@ export interface FilterItemProps {
 
 export const FilterItem: React.FC<WithDragHandleProps<FilterItemProps>> =
   React.memo(
-    ({ column, onFiterVisiblityChange, children, ...dragHandleProps }) => {
+    ({ id, column, onFiterVisiblityChange, children, ...dragHandleProps }) => {
       const [checked, setChecked] = useState<boolean>(true);
 
       const handleChange = (selected: boolean) => {
@@ -30,7 +31,7 @@ export const FilterItem: React.FC<WithDragHandleProps<FilterItemProps>> =
       };
 
       return (
-        <FilterItemWrapper>
+        <FilterItemWrapper data-testid={id}>
           <DragHandler type="DragHandleHorizontal" {...dragHandleProps} />
 
           {onFiterVisiblityChange ? (

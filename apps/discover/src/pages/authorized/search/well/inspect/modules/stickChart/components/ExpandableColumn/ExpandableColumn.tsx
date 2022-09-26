@@ -23,6 +23,7 @@ import {
 import { BodyColumnWrapper, ExpandableColumnHeaderWrapper } from './elements';
 
 export interface ExpandableColumnProps extends ColumnVisibilityProps {
+  id: string;
   header: string | JSX.Element;
   expanded?: boolean;
   widthCollapsed?: number;
@@ -36,6 +37,7 @@ export const ExpandableColumn: React.FC<
 > = React.memo(
   ({
     isVisible = true,
+    id,
     header,
     expanded: expandedProp = false,
     widthCollapsed = DEFAULT_COLUMN_WIDTH_COLLAPSED,
@@ -68,7 +70,10 @@ export const ExpandableColumn: React.FC<
 
     return (
       <NoUnmountShowHide show={isVisible}>
-        <BodyColumnWrapper width={expanded ? widthExpanded : widthCollapsed}>
+        <BodyColumnWrapper
+          width={expanded ? widthExpanded : widthCollapsed}
+          data-testid={id}
+        >
           <ColumnDragger {...dragHandleProps} />
 
           <ExpandableColumnHeaderWrapper>

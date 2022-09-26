@@ -13,9 +13,12 @@ const SEE_GRAPH_BUTTON_TEXT = 'See graph';
 const DEFAULT_TRAJECTORY_CHART_TITLE = 'TVD vs ED';
 const DETAIL_PAGE_BUTTON_TEXT = 'Detail page';
 
+const CASING_ASSEMBLY_DIAMETER_UNIT = 'in';
+
 describe('Wells: stick chart', () => {
   before(() => {
     const coreRequests = interceptCoreNetworkRequests();
+    cy.addWaitForWdlResources('casings/list', 'POST', 'casingsList');
     cy.addWaitForWdlResources('nds/list', 'POST', 'ndsList');
     cy.addWaitForWdlResources('npt/list', 'POST', 'nptList');
 
@@ -54,11 +57,34 @@ describe('Wells: stick chart', () => {
     cy.log('navigate to stick chart tab');
     cy.goToWellsInspectTab(TAB_NAMES.STICK_CHART);
 
+    cy.wait('@casingsList');
     cy.wait('@nptList');
     cy.wait('@ndsList');
   });
 
-  it('Should be able to navigate NDS events page', () => {
+  it('Should be able to navigate to Casings details page', () => {
+    cy.findAllByTestId('casings-column').first().contains('Casings').click();
+
+    cy.log('navigate to Casings detail page');
+    cy.findByRole('button', { name: DETAIL_PAGE_BUTTON_TEXT }).click({
+      force: true,
+    });
+
+    cy.log('detail table should contain at least 1 casing assembly');
+    cy.findByTestId('wellbore-casings-detail-view-table')
+      .findAllByTestId('table-row')
+      .its('length')
+      .should('be.gte', 1);
+
+    cy.log(`diameter should be displayed in: ${CASING_ASSEMBLY_DIAMETER_UNIT}`);
+    cy.verifyColumnHeader(`OD Min (${CASING_ASSEMBLY_DIAMETER_UNIT})`);
+    cy.verifyColumnHeader(`ID Min (${CASING_ASSEMBLY_DIAMETER_UNIT})`);
+
+    cy.log('go back to stick chart page');
+    cy.findAllByTestId('go-back-button').click({ force: true });
+  });
+
+  it('Should be able to navigate to NDS events page', () => {
     cy.findAllByTestId('ndsEvents-column')
       .first()
       .contains('NDS Events')
@@ -81,7 +107,7 @@ describe('Wells: stick chart', () => {
       .should('have.attr', 'aria-selected', 'true');
   });
 
-  it('Should be able to navigate NPT events page', () => {
+  it('Should be able to navigate to NPT events page', () => {
     cy.findAllByTestId('nptEvents-column')
       .first()
       .contains('NPT Events')
@@ -105,7 +131,7 @@ describe('Wells: stick chart', () => {
       .should('have.attr', 'aria-selected', 'true');
   });
 
-  it(`Should be able to change ${DepthMeasurementUnit.MD} to${DepthMeasurementUnit.TVD}`, () => {
+  it(`Should be able to change ${DepthMeasurementUnit.MD} to ${DepthMeasurementUnit.TVD}`, () => {
     cy.log(`by default ${DepthMeasurementUnit.MD} should be selected`);
     cy.findAllByTestId('depth-column')
       .first()
@@ -127,26 +153,32 @@ describe('Wells: stick chart', () => {
     cy.findAllByText(SEE_GRAPH_BUTTON_TEXT).should('be.visible');
   });
 
-  it('Should be able to expand & collapse charts', () => {
-    cy.log('expand trajectory graph');
-    cy.get('[aria-label="Expand"]').first().click();
-
-    cy.log('trajectory graph should visible');
-    cy.findAllByText(DEFAULT_TRAJECTORY_CHART_TITLE).should('be.visible');
-
-    cy.log('collapse trajectory graph');
-    cy.get('[aria-label="Collapse"]').first().click();
-    cy.findAllByText(DEFAULT_TRAJECTORY_CHART_TITLE).should('not.exist');
+  it('Should be able to expand & collapse measurements chart', () => {
+    cy.findAllByTestId('measurements-column').first().as('measurementsColumn');
 
     cy.log('expand FIT LOT graph');
-    cy.get('[aria-label="Expand"]').eq(1).click();
+    cy.get('@measurementsColumn').findByTestId('Expand').click();
 
     cy.log('FIT LOT graph should visible');
     cy.findAllByText(FIT_LOT_CHART_TITLE).should('be.visible');
 
     cy.log('collapse FIT LOT graph');
-    cy.get('[aria-label="Collapse"]').first().click();
+    cy.get('@measurementsColumn').findByTestId('Collapse').click();
     cy.findAllByText(FIT_LOT_CHART_TITLE).should('not.exist');
+  });
+
+  it('Should be able to expand & collapse trajectory chart', () => {
+    cy.findAllByTestId('trajectory-column').first().as('trajectoryColumn');
+
+    cy.log('expand trajectory graph');
+    cy.get('@trajectoryColumn').findByTestId('Expand').click();
+
+    cy.log('trajectory graph should visible');
+    cy.findAllByText(DEFAULT_TRAJECTORY_CHART_TITLE).should('be.visible');
+
+    cy.log('collapse trajectory graph');
+    cy.get('@trajectoryColumn').findByTestId('Collapse').click();
+    cy.findAllByText(DEFAULT_TRAJECTORY_CHART_TITLE).should('not.exist');
   });
 
   it('Should be able to change npt events column view', () => {
@@ -198,9 +230,13 @@ describe('Wells: stick chart', () => {
       .findAllByTestId('nds-event-count-badge')
       .should('not.exist');
   });
+
   it('verify filter by npt events', () => {
     cy.log(`click on NPT events filter icon`);
-    cy.findAllByTestId('drpdown-icon').first().should('be.visible').click();
+    cy.findByTestId('npt-filter')
+      .findByTestId('drpdown-icon')
+      .should('be.visible')
+      .click();
 
     cy.log('uncheck all options from the dropdown');
     cy.get('[id="All"]').click();
@@ -221,7 +257,10 @@ describe('Wells: stick chart', () => {
 
   it('verify filter by nds events', () => {
     cy.log(`click on nds events filter icon`);
-    cy.findAllByTestId('drpdown-icon').eq(1).should('be.visible').click();
+    cy.findByTestId('nds-filter')
+      .findByTestId('drpdown-icon')
+      .should('be.visible')
+      .click();
 
     cy.log('uncheck all options from the dropdown');
     cy.get('[id="All"]').eq(1).click();

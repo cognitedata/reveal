@@ -66,7 +66,7 @@ export const FormationColumn: React.FC<
 
     return (
       <Column
-        data-testid="formation-column"
+        id="formation-column"
         isVisible={isVisible}
         width={30}
         {...dragHandleProps}

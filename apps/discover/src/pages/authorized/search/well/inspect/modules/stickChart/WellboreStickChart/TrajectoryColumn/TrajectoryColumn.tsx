@@ -80,6 +80,7 @@ export const TrajectoryColumn: React.FC<
     return (
       <TrajectoryChartWrapper data-testid="trajectory-column">
         <PlotlyChartColumn
+          id="trajectory-column"
           isVisible={isVisible}
           isLoading={isLoading || (!isEmpty(data) && !selectedCurve)}
           header={ChartColumn.TRAJECTORY}

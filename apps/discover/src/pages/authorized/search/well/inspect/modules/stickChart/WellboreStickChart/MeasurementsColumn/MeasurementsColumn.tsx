@@ -100,6 +100,7 @@ export const MeasurementsColumn: React.FC<
 
     return (
       <PlotlyChartColumn
+        id="measurements-column"
         isVisible={isVisible}
         data={filteredChartData}
         isLoading={isLoading}

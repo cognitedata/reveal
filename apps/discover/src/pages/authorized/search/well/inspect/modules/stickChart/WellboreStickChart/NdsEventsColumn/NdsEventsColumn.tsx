@@ -107,7 +107,7 @@ export const NdsEventsColumn: React.FC<
 
     return (
       <Column
-        data-testid="ndsEvents-column"
+        id="ndsEvents-column"
         isVisible={isVisible}
         width={EVENTS_COLUMN_WIDTH}
         {...dragHandleProps}

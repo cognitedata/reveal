@@ -22,6 +22,7 @@ export const NdsFilterItem: React.FC<WithDragHandleProps<NdsFilterProps>> =
     ({ options, onChange, onFiterVisiblityChange, ...dragHandleProps }) => {
       return (
         <FilterItem
+          id="nds-filter"
           column={ChartColumn.NDS}
           onFiterVisiblityChange={onFiterVisiblityChange}
           {...dragHandleProps}

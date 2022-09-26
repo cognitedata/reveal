@@ -19,6 +19,7 @@ export const ExpandCollapseIconButton: React.FC<
       icon={icon}
       tooltip={icon}
       aria-label={icon}
+      data-testid={icon}
       type="secondary"
       size="small"
       onClick={() => onChange(!expanded)}

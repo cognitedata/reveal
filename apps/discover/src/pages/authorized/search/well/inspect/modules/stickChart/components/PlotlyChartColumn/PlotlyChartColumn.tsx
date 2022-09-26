@@ -16,6 +16,7 @@ import { ExpandableColumn } from '../ExpandableColumn';
 export interface PlotlyChartColumnProps
   extends ColumnVisibilityProps,
     Pick<ChartProps, 'axisNames'> {
+  id: string;
   data?: Partial<PlotData>[];
   scaleBlocks: number[];
   header: string | JSX.Element;
@@ -34,6 +35,7 @@ export const PlotlyChartColumn: React.FC<
 > = React.memo(
   ({
     isVisible = true,
+    id,
     data = EMPTY_ARRAY,
     axisNames,
     scaleBlocks,
@@ -118,6 +120,7 @@ export const PlotlyChartColumn: React.FC<
     return (
       <ExpandableColumn
         isVisible={isVisible}
+        id={id}
         expanded={expanded}
         header={header}
         disableExpandButton={isEmpty(data) || Boolean(actionMessage)}

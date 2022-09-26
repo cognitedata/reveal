@@ -22,6 +22,7 @@ export const NptFilterItem: React.FC<WithDragHandleProps<NptFilterProps>> =
     ({ options, onChange, onFiterVisiblityChange, ...dragHandleProps }) => {
       return (
         <FilterItem
+          id="npt-filter"
           column={ChartColumn.NPT}
           onFiterVisiblityChange={onFiterVisiblityChange}
           {...dragHandleProps}

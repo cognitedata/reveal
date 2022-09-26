@@ -100,11 +100,7 @@ export const CasingsColumn: React.FC<WithDragHandleProps<CasingsColumnProps>> =
       }, [data, isLoading, scaleBlocks, depthMeasurementType]);
 
       return (
-        <Column
-          data-testid="casings-column"
-          isVisible={isVisible}
-          {...dragHandleProps}
-        >
+        <Column id="casings-column" isVisible={isVisible} {...dragHandleProps}>
           <ColumnHeaderWrapper>
             <ColumnOptionsSelector
               displayValue={ChartColumn.CASINGS}
