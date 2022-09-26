@@ -32,6 +32,8 @@ import {
   ThresholdMetadataValue,
 } from './elements';
 
+import { useFilterValue } from './useFilterValue';
+
 const defaultTranslations = makeDefaultTranslations(
   'Thresholds',
   'Source',
@@ -257,9 +259,6 @@ const ThresholdItem = ({
     [handleUpperLimitUpdateValue]
   );
 
-  /**
-   * Filter min value handling
-   */
   const handleEventFilterChange = useCallback(
     (diff: Partial<ChartThresholdEventFilter>) => {
       onEventFilterChange(threshold.id, {
@@ -270,62 +269,33 @@ const ThresholdItem = ({
     [onEventFilterChange, threshold.filter, threshold.id]
   );
 
-  const [filterMinValue, setFilterMinValue] = useState(
-    String(threshold.filter.minValue)
-  );
-
-  const handleFilterMinValueChange = useCallback((event) => {
-    setFilterMinValue(event.target.value);
-  }, []);
-
-  const handleFilterMinValueUpdateValue = useCallback(() => {
-    handleEventFilterChange({
-      minValue: parseInt(filterMinValue, 10),
-    });
-  }, [filterMinValue, handleEventFilterChange]);
-
-  useEffect(() => {
-    setFilterMinValue(String(threshold.filter.minValue));
-  }, [threshold.filter.minValue]);
-
-  const handleFilterMinValueKeyPress = useCallback(
-    (event) => {
-      if (event.key === 'Enter') {
-        handleFilterMinValueUpdateValue();
-      }
-    },
-    [handleFilterMinValueUpdateValue]
-  );
+  /**
+   * Filter min value handling
+   */
+  const [
+    filterMinValue,
+    handleMinValueChange,
+    handleMinValueKeyPress,
+    handleMinValueUpdate,
+  ] = useFilterValue({
+    defaultValue: threshold.filter.minValue,
+    filterKey: 'minValue',
+    onEventFilterUpdate: handleEventFilterChange,
+  });
 
   /**
    * Filter max length handling
    */
-  const [filterMaxValue, setFilterMaxValue] = useState(
-    String(threshold.filter.maxValue)
-  );
-
-  const handleFilterMaxValueChange = useCallback((event) => {
-    setFilterMaxValue(event.target.value);
-  }, []);
-
-  const handleFilterMaxValueUpdateValue = useCallback(() => {
-    handleEventFilterChange({
-      maxValue: parseInt(filterMaxValue, 10),
-    });
-  }, [filterMaxValue, handleEventFilterChange]);
-
-  useEffect(() => {
-    setFilterMaxValue(String(threshold.filter.maxValue));
-  }, [threshold.filter.maxValue]);
-
-  const handleFilterMaxValueKeyPress = useCallback(
-    (event) => {
-      if (event.key === 'Enter') {
-        handleFilterMaxValueUpdateValue();
-      }
-    },
-    [handleFilterMaxValueUpdateValue]
-  );
+  const [
+    filterMaxValue,
+    handleMaxValueChange,
+    handleMaxValueKeyPress,
+    handleMaxValueUpdate,
+  ] = useFilterValue({
+    defaultValue: threshold.filter.maxValue,
+    filterKey: 'maxValue',
+    onEventFilterUpdate: handleEventFilterChange,
+  });
 
   return (
     <>
@@ -392,9 +362,9 @@ const ThresholdItem = ({
                 type="number"
                 name="filterMin"
                 placeholder={t.Min}
-                onChange={handleFilterMinValueChange}
-                onBlur={handleFilterMinValueUpdateValue}
-                onKeyPress={handleFilterMinValueKeyPress}
+                onChange={handleMinValueChange}
+                onKeyPress={handleMinValueKeyPress}
+                onBlur={handleMinValueUpdate}
                 value={filterMinValue}
                 fullWidth
               />
@@ -414,9 +384,9 @@ const ThresholdItem = ({
                 type="number"
                 name="filterMax"
                 placeholder={t.Max}
-                onChange={handleFilterMaxValueChange}
-                onBlur={handleFilterMaxValueUpdateValue}
-                onKeyPress={handleFilterMaxValueKeyPress}
+                onChange={handleMaxValueChange}
+                onKeyPress={handleMaxValueKeyPress}
+                onBlur={handleMaxValueUpdate}
                 value={filterMaxValue}
                 fullWidth
               />
