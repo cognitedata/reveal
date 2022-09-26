@@ -17,6 +17,7 @@ import {
 } from '../render-passes/types';
 import { blitShaders, depthBlendBlitShaders, pointCloudShaders } from '../rendering/shaders';
 import { NodeOutlineColor } from '@reveal/cad-styling';
+import { CadNode } from '@reveal/cad-model';
 
 export const unitOrthographicCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, -1, 1);
 
@@ -206,7 +207,7 @@ export enum RenderLayer {
 export function setupCadModelsGeometryLayers(
   materialManager: CadMaterialManager,
   cadModels?: {
-    object: THREE.Object3D<THREE.Event>;
+    cadNode: CadNode;
     modelIdentifier: string;
   }[]
 ): void {
@@ -241,12 +242,12 @@ export function hasStyledNodes(
 
 function setModelRenderLayers(
   cadModels: {
-    object: THREE.Object3D<THREE.Event>;
+    cadNode: CadNode;
     modelIdentifier: string;
   },
   materialManager: CadMaterialManager
 ) {
-  const { object: model, modelIdentifier } = cadModels;
+  const { cadNode: model, modelIdentifier } = cadModels;
 
   const backSet = materialManager.getModelBackTreeIndices(modelIdentifier);
   const ghostSet = materialManager.getModelGhostedTreeIndices(modelIdentifier);
