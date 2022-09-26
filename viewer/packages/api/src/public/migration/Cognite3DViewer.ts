@@ -599,7 +599,7 @@ export class Cognite3DViewer {
 
     const model3d = new Cognite3DModel(modelId, revisionId, cadNode, nodesApiClient);
     this._models.push(model3d);
-    this._sceneHandler.addCadModel(model3d, cadNode.cadModelIdentifier);
+    this._sceneHandler.addCadModel(cadNode, cadNode.cadModelIdentifier);
 
     return model3d;
   }
@@ -629,7 +629,7 @@ export class Cognite3DViewer {
     const model = new CognitePointCloudModel(modelId, revisionId, pointCloudNode);
     this._models.push(model);
 
-    this._sceneHandler.addPointCloudModel(model, pointCloudNode.potreeNode.modelIdentifier);
+    this._sceneHandler.addPointCloudModel(pointCloudNode, pointCloudNode.potreeNode.modelIdentifier);
 
     return model;
   }
@@ -650,7 +650,7 @@ export class Cognite3DViewer {
     switch (model.type) {
       case 'cad':
         const cadModel = model as Cognite3DModel;
-        this._sceneHandler.removeCadModel(cadModel);
+        this._sceneHandler.removeCadModel(cadModel.cadNode);
         model.dispose();
         this.revealManager.removeModel(model.type, cadModel.cadNode);
 
@@ -662,7 +662,7 @@ export class Cognite3DViewer {
 
       case 'pointcloud':
         const pcModel = model as CognitePointCloudModel;
-        this._sceneHandler.removePointCloudModel(pcModel);
+        this._sceneHandler.removePointCloudModel(pcModel.pointCloudNode);
         this.revealManager.removeModel(model.type, pcModel.pointCloudNode);
         break;
 
