@@ -19,7 +19,10 @@ export type OrnateFileURLConfig = OrnateShapeConfig & {
     config: OrnateFileURLConfig
   ) => Promise<OrnateFileAnnotation[]>;
   onAnnotationsLoad?: (annotations: OrnateFileAnnotation[]) => void;
-  onAnnotationClick?: (annotation: OrnateFileAnnotation) => void;
+  onAnnotationClick?: (
+    annotation: OrnateFileAnnotation,
+    shape: Konva.Rect
+  ) => void;
   mimeType?: string;
 };
 
@@ -162,7 +165,7 @@ export class FileURL extends Shape<OrnateFileURLConfig> {
         });
         if (onAnnotationClick) {
           newShape.on('click', () => {
-            if (onAnnotationClick) onAnnotationClick(a);
+            if (onAnnotationClick) onAnnotationClick(a, newShape);
           });
         }
         return newShape;

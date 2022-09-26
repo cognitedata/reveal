@@ -14,6 +14,7 @@ import { ShapeAttribute } from 'typings';
 import { v4 as uuid } from 'uuid';
 import { Timeseries, Asset } from '@cognite/sdk';
 import { useAuthContext } from '@cognite/react-container';
+import { ResourceAutoComplete } from 'components/ResourceAutoComplete';
 
 import { AttributeFormWrapper } from './elements';
 
@@ -199,6 +200,33 @@ export const AttributeForm = ({
           placeholder="Attribute name"
         />
       </Flex>
+      <ResourceAutoComplete
+        value={{
+          label: selectedResource?.name,
+          value: selectedResource?.externalId,
+        }}
+        resourceType={attribute.type}
+        placeholder={`Search ${startCase(attribute.type.toLowerCase())}`}
+        defaultValue={attribute.externalId}
+        setSelectedResource={(next) => {
+          setSelectedResource(next);
+          const nextChange: Partial<ShapeAttribute> = {
+            externalId: next.externalId,
+            subExtractor: undefined,
+          };
+          if (
+            attribute.type === 'ASSET' &&
+            Object.keys(next?.metadata || {}).length > 0
+          ) {
+            nextChange.extractor = 'METADATA';
+          } else if (attribute.type === 'TIMESERIES') {
+            nextChange.extractor = 'CURRENT_VALUE';
+          } else {
+            nextChange.extractor = undefined;
+          }
+          handleChange(nextChange);
+        }}
+      />
       <AutoComplete
         key={attribute.type}
         mode="async"

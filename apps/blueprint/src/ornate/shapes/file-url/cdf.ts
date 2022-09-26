@@ -63,7 +63,8 @@ export const getAnnotationsFromCDF =
               event.metadata?.CDF_ANNOTATION_resource_type || 'unknown',
             metadata: {
               assetId: event.metadata?.CDF_ANNOTATION_resource_id,
-              assetExternalId: event.metadata?.CDF_ANNOTATION_resource_type,
+              assetExternalId:
+                event.metadata?.CDF_ANNOTATION_resource_external_id,
             },
           };
         })

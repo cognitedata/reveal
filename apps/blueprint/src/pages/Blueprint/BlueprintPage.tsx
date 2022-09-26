@@ -7,7 +7,7 @@ import React, {
   useState,
 } from 'react';
 import { FileInfo, Timeseries } from '@cognite/sdk';
-import { Button, Dropdown, Menu } from '@cognite/cogs.js';
+import { Button, Dropdown, Menu, Select } from '@cognite/cogs.js';
 import Blueprint from 'components/Blueprint';
 import FileSidebar from 'components/FileSidebar';
 import TimeSeriesSidebar from 'components/TimeSeriesSearchSidebar';
@@ -30,6 +30,7 @@ import {
 } from 'ornate';
 import { NavigationPanel } from 'components/NavigationPanel/NavigationPanel';
 import { Legend } from 'components/Legend';
+import { useAssetsQuery } from 'hooks/useQuery/useAssetsQuery';
 
 import useBlueprint from './useBlueprint';
 import { FullScreenOverlay, PageWrapper, TopLeft, TopRight } from './elements';
@@ -43,14 +44,22 @@ const BlueprintPage: React.FC = () => {
   const [isCDFSidebarOpen, toggleCDFSidebar] = useState(false);
   const [isTimeSeriesSidebarOpen, toggleTimseriesSidebar] = useState(false);
   const [selectedTagId, setSelectedTagId] = useState<string>();
-
   const [disabledRuleSets, setDisabledRuleSets] = useState<
     Record<string, boolean>
   >({});
   const [isCreatingNewRuleSet, setIsCreatingNewRuleSet] = useState(false);
   const history = useHistory();
   const { externalId } = useParams<{ externalId: string }>();
-  const { addFile } = useBlueprint(ornateViewer);
+  const {
+    addFile,
+    annotationLabels,
+    setAnnotationLabels,
+    handleAnnotationClick,
+  } = useBlueprint(ornateViewer);
+  const { data: allAssets } = useAssetsQuery(
+    annotationLabels.map((x) => x.metadata?.assetId)
+  );
+  console.log(annotationLabels, allAssets);
   const saveBlueprintMutation = useSaveBlueprintMutation();
   const { data, isLoading } = useFetchBlueprintDefinition(externalId);
   const { definition: blueprintDefinition, reference: blueprintReference } =
@@ -71,6 +80,16 @@ const BlueprintPage: React.FC = () => {
         fileUrl: {
           getURLFunc: getFileFromCDF(client),
           getAnnotationsFunc: getAnnotationsFromCDF(client),
+          onAnnotationsLoad: (nextAnnotations) => {
+            setAnnotationLabels((current) => [
+              ...(current || []),
+              ...nextAnnotations,
+            ]);
+          },
+          onAnnotationClick: (nextAnnotation, shape) => {
+            handleAnnotationClick(nextAnnotation, shape);
+            console.log('do something', nextAnnotation);
+          },
         },
       });
     }
@@ -225,6 +244,26 @@ const BlueprintPage: React.FC = () => {
 
       {/* Edit & Add */}
       <TopRight>
+        <div style={{ background: 'white' }}>
+          <Select
+            icon="Search"
+            placeholder="Search.."
+            width={200}
+            options={(allAssets || []).map((a) => ({
+              label: a.name,
+              value: a.id,
+            }))}
+            onChange={(next: { value: number }) => {
+              const annotation = annotationLabels.find(
+                (x) => x.metadata?.assetId === String(next.value)
+              );
+
+              if (annotation?.id) {
+                ornateViewer.current?.zoomToID(annotation?.id);
+              }
+            }}
+          />
+        </div>
         <Button
           icon={isMinimized ? 'Expand' : 'Collapse'}
           aria-label="Toggle minimized"

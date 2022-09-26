@@ -177,6 +177,12 @@ const Blueprint = ({
     ({ nodes }) => {
       return (
         <BaseAttributesControl
+          coreAssetExternalId={nodes[0].attrs.coreAssetExternalId}
+          onChangeCoreAsset={(next) => {
+            nodes.forEach((node) => {
+              node.setAttr('coreAssetExternalId', next.externalId);
+            });
+          }}
           attributes={blueprint?.shapeAttributes?.[nodes[0].id()] || []}
           onChange={(nextAttributes) => {
             if (onUpdate && blueprint) {

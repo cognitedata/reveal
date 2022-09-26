@@ -25,6 +25,17 @@ export const LegendWrapper = styled.div`
     }
   }
 
+  .rule-set {
+    h3 {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      input {
+        font-weight: bold;
+      }
+    }
+  }
+
   .rule-set--details {
     display: flex;
     align-items: center;

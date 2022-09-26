@@ -20,6 +20,7 @@ export const InfoToolbarList = styled.div<{ $visible: boolean }>`
   display: ${(props) => (props.$visible ? 'flex' : 'none')};
   flex-direction: column;
   border-radius: 4px;
+  overflow: auto;
 
   header {
     padding: 8px;

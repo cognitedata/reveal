@@ -31,15 +31,17 @@ export const Legend = ({
                   [r.id]: !disabledRuleSets[r.id],
                 });
               }}
-            />
-            {r.name}
+            >
+              {r.name}
+            </Checkbox>
           </h3>
-          {r.rules.map((r) => (
-            <div key={r.id} className="rule-set--details">
-              <RuleStylePreview rule={r} />
-              {r.expression}
-            </div>
-          ))}
+          {!disabledRuleSets[r.id] &&
+            r.rules.map((r) => (
+              <div key={r.id} className="rule-set--details">
+                <RuleStylePreview rule={r} />
+                {r.expression}
+              </div>
+            ))}
         </div>
       </div>
     ));
