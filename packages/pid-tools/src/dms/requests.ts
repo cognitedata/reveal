@@ -235,11 +235,13 @@ async function listCommon<T extends keyof ModelMap>(
   // or there are no more pages to fetch
 
   const data: {
+    spaceExternalId: string;
     model: [string, string];
     filter: any;
     limit: number;
     cursor: string | undefined;
   } = {
+    spaceExternalId: options.spaceExternalId,
     model: [options.spaceExternalId, options.model],
     filter,
     limit: internalPaginationLimit,
