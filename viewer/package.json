@@ -90,7 +90,7 @@
     "concurrently": "7.4.0",
     "copy-pkg-json-webpack-plugin": "0.0.40",
     "copy-webpack-plugin": "11.0.0",
-    "core-js": "3.25.2",
+    "core-js": "3.25.3",
     "cross-env": "7.0.3",
     "cross-var": "1.1.0",
     "dat.gui": "0.7.9",
