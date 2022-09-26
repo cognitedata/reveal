@@ -80,6 +80,8 @@ const SourceNode = memo(({ id, data, selected }: NodeProps<SourceNodeData>) => {
             <ColorBlock color={sourceItem.color} />
             <SelectWrapper>
               <Select
+                // https://github.com/wbkd/react-flow/issues/2229#issuecomment-1159433243
+                className="nowheel"
                 value={sourceItem}
                 options={sourceOptions}
                 onChange={(option: SourceOption) =>
