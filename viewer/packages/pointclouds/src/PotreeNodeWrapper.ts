@@ -23,6 +23,7 @@ import { PointCloudObjectMetadata, PointCloudObjectAnnotation } from './annotati
 import { CompletePointCloudAppearance } from './styling/PointCloudAppearance';
 import { ClassificationInfo } from './potree-three-loader/loading/ClassificationInfo';
 import { createDistinctColors } from '@reveal/utilities';
+import { DEFAULT_CLASSIFICATION } from './potree-three-loader/rendering/classification';
 
 /**
  * Wrapper around `Potree.PointCloudOctree` with some convenience functions.
@@ -82,15 +83,25 @@ export class PotreeNodeWrapper {
     return classMap;
   }
 
+  private getDefaultClassColor(name: string): THREE.Color | undefined {
+    if (!DEFAULT_CLASSIFICATION[name]) {
+      return undefined;
+    }
+
+    const v = DEFAULT_CLASSIFICATION[name];
+    return new THREE.Color(v.x, v.y, v.z);
+  }
+
   private createDefaultClassNameToCodeMap(): ClassificationMap {
     const classNames = Object.keys(this._classification);
 
     const classMap: { [key: string]: { rgb: THREE.Color; code: number } } = {};
-    const defaultColors = createDistinctColors(classNames.length);
+    const fallbackColors = createDistinctColors(classNames.length);
 
     classNames.forEach((x, index) => {
       const code = x === PotreeDefaultPointClass ? -1 : parseInt(x, 10);
-      classMap[this.getClassNameFromCode(code)] = { code, rgb: defaultColors[index] };
+      const rgb = this.getDefaultClassColor(x) ?? fallbackColors[index];
+      classMap[this.getClassNameFromCode(code)] = { code, rgb };
     });
 
     return classMap;
