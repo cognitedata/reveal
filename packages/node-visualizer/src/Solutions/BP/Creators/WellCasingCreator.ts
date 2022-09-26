@@ -33,8 +33,8 @@ export class WellCasingCreator {
 
     const log = new CasingLog();
     for (const casing of sortedCasings) {
-      const casingDiameter =
-        Util.getNumber(casing.metadata.assy_hole_size) || 1;
+      const casingDiameter = Util.getNumber(casing.metadata.assy_size) || 1;
+
       const radius = casingDiameter / 2;
       if (Number.isNaN(radius)) continue;
 
