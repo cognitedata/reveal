@@ -775,7 +775,7 @@ __metadata:
   resolution: "@cognite/reveal@workspace:."
   dependencies:
     "@azure/msal-browser": 2.28.3
-    "@cognite/sdk": 7.9.1
+    "@cognite/sdk": 7.9.4
     "@cognite/sdk-core": 4.4.0
     "@tweenjs/tween.js": 18.6.4
     "@types/dat.gui": 0.7.7
@@ -841,7 +841,7 @@ __metadata:
     prettier: 2.7.1
     process: 0.11.10
     proj4: 2.8.0
-    puppeteer: 18.0.4
+    puppeteer: 18.0.5
     random-seed: 0.3.0
     raw-loader: 4.0.2
     resize-observer-polyfill: 1.5.1
@@ -851,7 +851,7 @@ __metadata:
     shx: 0.3.4
     skmeans: 0.11.3
     three: 0.144.0
-    three-stdlib: 2.16.1
+    three-stdlib: 2.16.2
     ts-jest: 29.0.1
     ts-loader: 9.4.1
     tsc-alias: 1.7.0
@@ -883,27 +883,27 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@cognite/sdk-core@npm:^4.6.6":
-  version: 4.6.6
-  resolution: "@cognite/sdk-core@npm:4.6.6"
+"@cognite/sdk-core@npm:^4.8.0":
+  version: 4.8.0
+  resolution: "@cognite/sdk-core@npm:4.8.0"
   dependencies:
     cross-fetch: ^3.0.4
     is-buffer: ^2.0.5
     lodash: ^4.17.11
     query-string: ^5.1.1
     url: ^0.11.0
-  checksum: 57e9322d8e5dc01b5e9813e1047f14f6bac8eaf4897767e165191217401118019b2039011ef17cc96e6f39f69aba70fc815c866a486ae17c4e00fb3fd9f8260f
+  checksum: 111f0d4e7aa0c9a060f834ce0b0cb998ef5dfcc4fa57d40b1287bbc4a52148b61d0677ca05fa4150b7fcd3cb7eba22d0289b2d3e762b024622e063c811f4fcac
   languageName: node
   linkType: hard
 
-"@cognite/sdk@npm:7.9.1":
-  version: 7.9.1
-  resolution: "@cognite/sdk@npm:7.9.1"
+"@cognite/sdk@npm:7.9.4":
+  version: 7.9.4
+  resolution: "@cognite/sdk@npm:7.9.4"
   dependencies:
-    "@cognite/sdk-core": ^4.6.6
+    "@cognite/sdk-core": ^4.8.0
     geojson: ^0.5.0
     lodash: ^4.17.11
-  checksum: 66ea2d511ef532905c442e1e446fbe1c24a28d5844d188bfddce1974bc8783bca6916c3fc23ffcf11feaab7c43cf6af5e3af07b963d0296a2bf6bac55a0458d9
+  checksum: b3e2ef22bb377bd1c80e6a666480bcea02582a578ade963d682492c2722a70c7932713a1c80733535fd916b60b2fc6b3948ed6dc6258ba53b37d34a450c8779f
   languageName: node
   linkType: hard
 
@@ -10376,9 +10376,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"puppeteer@npm:18.0.4":
-  version: 18.0.4
-  resolution: "puppeteer@npm:18.0.4"
+"puppeteer@npm:18.0.5":
+  version: 18.0.5
+  resolution: "puppeteer@npm:18.0.5"
   dependencies:
     cross-fetch: 3.1.5
     debug: 4.3.4
@@ -10391,7 +10391,7 @@ __metadata:
     tar-fs: 2.1.1
     unbzip2-stream: 1.4.3
     ws: 8.8.1
-  checksum: 6ff5bc360b4c8f84b96b2eb922ed21261bff057f374f50b32e86f43a3420e2f8897f0d3cfe57a2f51d5cb935bc4ea791fa107258b42198a60dbae788e6cc423d
+  checksum: 6a6e4225d0da440c1dfa6a00af3f6fa7cadf98b41c7b38e2ad8ea7ef7e978359115ab9699846feb5401fc6b2fa078be4d93a9a46d03d0e007de7d9605a41ec9c
   languageName: node
   linkType: hard
 
@@ -11973,9 +11973,9 @@ resolve@^1.9.0:
   languageName: node
   linkType: hard
 
-"three-stdlib@npm:2.16.1":
-  version: 2.16.1
-  resolution: "three-stdlib@npm:2.16.1"
+"three-stdlib@npm:2.16.2":
+  version: 2.16.2
+  resolution: "three-stdlib@npm:2.16.2"
   dependencies:
     "@babel/runtime": ^7.16.7
     "@types/offscreencanvas": ^2019.6.4
@@ -11990,7 +11990,7 @@ resolve@^1.9.0:
     zstddec: ^0.0.2
   peerDependencies:
     three: ">=0.122.0"
-  checksum: 7f27a69d9eeceb9ecd0ddc91f472ccefbdbb39f41b87cd457ff00b34a2f560a7a3bb9b42e639f5917d04c6e803cba0f2ac928934972c428336cbc54e72c147fd
+  checksum: acf5a962c5a795c89171fd7f04fdb9895bca67ad1b59d17e51a5218881dcbf919074a0da30e5ffd99a16d89f2bc819c8ffb42512fa318a6c6dbe1b387bf059c4
   languageName: node
   linkType: hard
 
