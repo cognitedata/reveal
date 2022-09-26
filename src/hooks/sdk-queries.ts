@@ -1,5 +1,5 @@
 import { useSDK } from '@cognite/sdk-provider';
-import { RawDB, RawDBRow, RawDBRowInsert, RawDBTable } from '@cognite/sdk';
+import { RawDB, RawDBRowInsert } from '@cognite/sdk';
 import { useInfiniteQuery, useMutation, useQueryClient } from 'react-query';
 import { RAW_PAGE_SIZE_LIMIT } from 'utils/constants';
 export const baseKey = 'raw-explorer';
@@ -49,18 +49,9 @@ export const useTables = (
   return useInfiniteQuery(
     tableListKey(database),
     ({ pageParam = undefined }) =>
-      sdk
-        .get<{
-          items: RawDBTable[];
-          nextCursor: string | undefined;
-        }>(
-          `/api/v1/projects/${
-            sdk.project
-          }/raw/dbs/${database}/tables?limit=100${
-            pageParam ? `&cursor=${pageParam}` : ''
-          }`
-        )
-        .then((response) => response.data),
+      sdk.raw
+        .listTables(database, { cursor: pageParam, limit: 100 })
+        .then((response) => response),
     {
       ...options,
       getNextPageParam: (lastPage) => lastPage.nextCursor,
@@ -88,20 +79,14 @@ export const useTableRows = (
   return useInfiniteQuery(
     rowKey(database, table, validatedPageSize),
     ({ pageParam = undefined }) =>
-      sdk
-        .get<{
-          items: RawDBRow[];
-          nextCursor: string | undefined;
-        }>(
-          `/api/v1/projects/${
-            sdk.project
-          }/raw/dbs/${database}/tables/${table}/rows?limit=${validatedPageSize}${
-            pageParam ? `&cursor=${pageParam}` : ''
-          }`
-        )
+      sdk.raw
+        .listRows(database, table, {
+          cursor: pageParam,
+          limit: validatedPageSize,
+        })
         .then((response) => ({
-          ...response.data,
-          items: response.data.items.map((r) => ({
+          ...response,
+          items: response.items.map((r) => ({
             ...r,
             lastUpdatedTime: new Date(r.lastUpdatedTime),
           })),
