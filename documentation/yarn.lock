@@ -1522,6 +1522,10 @@
     three "0.141.0"
     three-stdlib "2.15.0"
 
+"@cognite/reveal-4.x@link:../viewer/dist":
+  version "0.0.0"
+  uid ""
+
 "@cognite/reveal-parser-worker@1.1.1":
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/@cognite/reveal-parser-worker/-/reveal-parser-worker-1.1.1.tgz#49eabb2cafc8ebe53ac757b4be338e1745b1cb2d"
@@ -1564,6 +1568,15 @@
     "@cognite/sdk-core" "^4.1.0"
     lodash "^4.17.11"
 
+"@cognite/sdk-4.x@npm:@cognite/sdk@^7.9.4":
+  version "7.9.4"
+  resolved "https://registry.yarnpkg.com/@cognite/sdk/-/sdk-7.9.4.tgz#c59af1694fcfed0be1034c24676701a1749bdfe1"
+  integrity sha512-+2F4sMsiralzwdFTZYS7pFX0nu4eke6nXauc+dDjXgWKMmdztredB5b2Td2B/zUoAtbWrffzIcFLBy903lv8cQ==
+  dependencies:
+    "@cognite/sdk-core" "^4.8.0"
+    geojson "^0.5.0"
+    lodash "^4.17.11"
+
 "@cognite/sdk-core@^1.0.0", "@cognite/sdk-core@^1.2.2":
   version "1.2.2"
   resolved "https://registry.yarnpkg.com/@cognite/sdk-core/-/sdk-core-1.2.2.tgz#be6378ffee45c5da6d0186ce97246eb19a9d9dd4"
@@ -1600,10 +1613,10 @@
     query-string "^5.1.1"
     url "^0.11.0"
 
-"@cognite/sdk-core@^4.6.6":
-  version "4.6.7"
-  resolved "https://registry.yarnpkg.com/@cognite/sdk-core/-/sdk-core-4.6.7.tgz#8838d594b16713e5071732add7be0551bba6b086"
-  integrity sha512-ujaSUuzUNb6/NIiXHxbi4jdAH5eGdoSBMESY+lgDqY6uJtQ12OBrRQDtrVkanje86NXxJeElSmJp9s0YFS209A==
+"@cognite/sdk-core@^4.8.0":
+  version "4.8.0"
+  resolved "https://registry.yarnpkg.com/@cognite/sdk-core/-/sdk-core-4.8.0.tgz#d82b2c92b203ceafabe35a605fe2dbbccae57beb"
+  integrity sha512-XpWDx2+Mys+cGNGcPKMY8Vroju/j1eCe8+AcPCaH5ueu2aRoS4JUSZ/CcvTP+iGzxl3G/3OMv2IwV2E7p0rD/w==
   dependencies:
     cross-fetch "^3.0.4"
     is-buffer "^2.0.5"
@@ -8703,10 +8716,10 @@ three-stdlib@2.15.0:
     potpack "^1.0.1"
     zstddec "^0.0.2"
 
-three-stdlib@2.16.1:
-  version "2.16.1"
-  resolved "https://registry.yarnpkg.com/three-stdlib/-/three-stdlib-2.16.1.tgz#3548eca5350a06e79b8e24bd7ee7877cfeab11f6"
-  integrity sha512-AuWs5OFOQfrSYYg49DF2driU9OI9AG8vS1/KBrKjQnJqW5vyn8WvhePexcSmDKgsBfAsxcXk8W/tR9uOESnr3w==
+three-stdlib@2.16.2:
+  version "2.16.2"
+  resolved "https://registry.yarnpkg.com/three-stdlib/-/three-stdlib-2.16.2.tgz#7c4adfa9768aa205f111e6a3a6c176748e117b9e"
+  integrity sha512-YTOO76/xjJnjmgM5o7tOj/YCpdWgG6TMo2arNwBb6jO7xpIgr+aw4tDohvgg1EZgo2tmKrOqEOmpjgy+ca9Wog==
   dependencies:
     "@babel/runtime" "^7.16.7"
     "@types/offscreencanvas" "^2019.6.4"
