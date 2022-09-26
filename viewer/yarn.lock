@@ -847,7 +847,7 @@ __metadata:
     resize-observer-polyfill: 1.5.1
     rimraf: 3.0.2
     run-script-os: 1.1.6
-    rxjs: 7.5.6
+    rxjs: 7.5.7
     shx: 0.3.4
     skmeans: 0.11.3
     three: 0.144.0
@@ -10915,7 +10915,16 @@ resolve@^1.9.0:
   languageName: node
   linkType: hard
 
-"rxjs@npm:7.5.6, rxjs@npm:^7.0.0":
+"rxjs@npm:7.5.7":
+  version: 7.5.7
+  resolution: "rxjs@npm:7.5.7"
+  dependencies:
+    tslib: ^2.1.0
+  checksum: edabcdb73b0f7e0f5f6e05c2077aff8c52222ac939069729704357d6406438acca831c24210db320aba269e86dbe1a400f3769c89101791885121a342fb15d9c
+  languageName: node
+  linkType: hard
+
+"rxjs@npm:^7.0.0":
   version: 7.5.6
   resolution: "rxjs@npm:7.5.6"
   dependencies:
