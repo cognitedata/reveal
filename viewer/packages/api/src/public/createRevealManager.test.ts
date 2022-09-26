@@ -4,7 +4,7 @@
 
 import { createRevealManager } from './createRevealManager';
 
-import { ModelDataProvider, ModelMetadataProvider } from '@reveal/modeldata-api';
+import { ModelDataProvider, ModelMetadataProvider } from '@reveal/data-providers';
 
 import { It, Mock, SetPropertyExpression } from 'moq.ts';
 

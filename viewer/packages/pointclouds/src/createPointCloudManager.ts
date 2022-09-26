@@ -8,7 +8,7 @@ import { PointCloudFactory } from './PointCloudFactory';
 
 import * as THREE from 'three';
 
-import { ModelDataProvider, ModelMetadataProvider } from '@reveal/modeldata-api';
+import { ModelDataProvider, ModelMetadataProvider } from '@reveal/data-providers';
 
 export function createPointCloudManager(
   modelMetadataProvider: ModelMetadataProvider,

@@ -15,7 +15,7 @@ export default class CustomWithStylingVisualTest extends StreamingVisualTestFixt
     const { sceneHandler, cadMaterialManager, model } = testFixtureComponents;
 
     const { modelIdentifier } = sceneHandler.cadModels.find(
-      identifiedObject => identifiedObject.object === model.geometryNode
+      identifiedObject => identifiedObject.cadNode === model.geometryNode
     )!;
 
     const highlightedNodes = new TreeIndexNodeCollection([0, 2, 4, 6, 8, 10]);
@@ -28,7 +28,7 @@ export default class CustomWithStylingVisualTest extends StreamingVisualTestFixt
       .getModelNodeAppearanceProvider(modelIdentifier)
       .assignStyledNodeCollection(ghostedNodes, DefaultNodeAppearance.Ghosted);
 
-    const sphere = new THREE.SphereBufferGeometry(5, 32, 16);
+    const sphere = new THREE.SphereGeometry(5, 32, 16);
     const sphereMesh = new THREE.Mesh(sphere, new THREE.MeshBasicMaterial({ color: 'red' }));
     sphereMesh.position.set(12, -3, -2);
     sceneHandler.addCustomObject(sphereMesh);

@@ -22,7 +22,7 @@ import { WellKnownUnit } from '../types';
  * @noInheritDoc
  * @module @cognite/reveal
  */
-export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase, CdfModelNodeCollectionDataProvider {
+export class Cognite3DModel implements CogniteModelBase, CdfModelNodeCollectionDataProvider {
   public readonly type: SupportedModelTypes = 'cad';
 
   /**
@@ -75,7 +75,6 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase, 
    * @internal
    */
   constructor(modelId: number, revisionId: number, cadNode: CadNode, client: NodesApiClient) {
-    super();
     this.modelId = modelId;
     this.revisionId = revisionId;
     this.cadModel = cadNode.cadModelMetadata;
@@ -83,8 +82,6 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase, 
     this.nodeIdAndTreeIndexMaps = new NodeIdAndTreeIndexMaps(modelId, revisionId, this.nodesApiClient);
 
     this.cadNode = cadNode;
-
-    this.add(this.cadNode);
 
     // Note! As this is defined in ThreeJS we cannot override this using
     // regular TypeScript getters and setters.
@@ -313,7 +310,6 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase, 
    */
   dispose(): void {
     this.cadNode.dispose();
-    this.clear();
   }
 
   /**
@@ -421,10 +417,11 @@ export class Cognite3DModel extends THREE.Object3D implements CogniteModelBase, 
    */
   async getBoundingBoxByNodeId(nodeId: number, box?: THREE.Box3): Promise<THREE.Box3> {
     try {
+      box = box ?? new THREE.Box3();
       const boxesResponse = await this.nodesApiClient.getBoundingBoxesByNodeIds(this.modelId, this.revisionId, [
         nodeId
       ]);
-      box = boxesResponse[0];
+      box.copy(boxesResponse[0]);
       box.applyMatrix4(this.cadModel.modelMatrix);
       return box;
     } catch (error) {

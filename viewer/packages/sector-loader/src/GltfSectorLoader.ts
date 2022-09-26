@@ -4,7 +4,7 @@
 import * as THREE from 'three';
 
 import { ConsumedSector, V9SectorMetadata, WantedSector, filterGeometryOutsideClipBox } from '@reveal/cad-parsers';
-import { BinaryFileProvider } from '@reveal/modeldata-api';
+import { BinaryFileProvider } from '@reveal/data-providers';
 import { CadMaterialManager } from '@reveal/rendering';
 import { GltfSectorParser, ParsedGeometry, RevealGeometryCollectionType } from '@reveal/sector-parser';
 import { MetricsLogger } from '@reveal/metrics';

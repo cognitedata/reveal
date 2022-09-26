@@ -17,7 +17,7 @@ import {
   CogniteModelBase,
   DefaultCameraManager
 } from '@cognite/reveal';
-import { DebugCameraTool, DebugLoadedSectorsTool, DebugLoadedSectorsToolOptions, ExplodedViewTool, AxisViewTool } from '@cognite/reveal/tools';
+import { DebugCameraTool, ExplodedViewTool, AxisViewTool } from '@cognite/reveal/tools';
 import * as reveal from '@cognite/reveal';
 import { ClippingUI } from '../utils/ClippingUI';
 import { NodeStylingUI } from '../utils/NodeStylingUI';
@@ -42,7 +42,7 @@ export function Migration() {
   const urlParams = url.searchParams;
   const environmentParam = urlParams.get('env');
   const canvasWrapperRef = useRef<HTMLDivElement>(null);
-  
+
   useEffect(() => {
     // Check in order to avoid double initialization of everything, especially dat.gui.
     // See https://reactjs.org/docs/strict-mode.html#detecting-unexpected-side-effects for why its called twice.
@@ -69,7 +69,6 @@ export function Migration() {
       }
 
       const progress = (itemsLoaded: number, itemsRequested: number, itemsCulled: number) => {
-        guiState.debug.loadedSectors.statistics.culledCount = itemsCulled;
         if (itemsLoaded === 0 || itemsLoaded === itemsRequested) {
           console.log(`loaded ${itemsLoaded}/${itemsRequested} (culled: ${itemsCulled})`);
         }
@@ -142,27 +141,6 @@ export function Migration() {
             textures: 0,
             renderTime: 0
           },
-          loadedSectors: {
-            options: {
-              showSimpleSectors: true,
-              showDetailedSectors: true,
-              showDiscardedSectors: false,
-              colorBy: 'lod',
-              leafsOnly: false,
-              sectorPathFilterRegex: '^.*/$'
-            } as DebugLoadedSectorsToolOptions,
-            tool: new DebugLoadedSectorsTool(viewer),
-            statistics: {
-              insideSectors: 0,
-              maxSectorDepth: 0,
-              maxSectorDepthOfInsideSectors: 0,
-              simpleSectorCount: 0,
-              detailedSectorCount: 0,
-              culledCount: 0,
-              forceDetailedSectorCount: 0,
-              downloadSizeMb: 0
-            }
-          },
           suspendLoading: false,
           ghostAllNodes: false,
           hideAllNodes: false
@@ -176,18 +154,8 @@ export function Migration() {
         }
       };
       const guiActions = {
-        showSectorBoundingBoxes: () => {
-          const { tool, options } = guiState.debug.loadedSectors;
-          tool.setOptions(options);
-          if (modelUi.cadModels.length > 0) {
-            tool.showSectorBoundingBoxes(modelUi.cadModels[0]);
-          }
-        },
         showCameraHelper: () => {
           guiState.showCameraTool.showCameraHelper();
-        },
-        showBoundsForAllGeometries: () => {
-          modelUi.cadModels.forEach(m => showBoundsForAllGeometries(m));
         }
       };
       initialCadBudgetUi(viewer, gui.addFolder('CAD budget'));
@@ -253,55 +221,7 @@ export function Migration() {
         debugStatsGui.updateDisplay();
       });
 
-      const debugSectorsGui = debugGui.addFolder('Loaded sectors');
-
-      debugSectorsGui.add(guiState.debug.loadedSectors.options, 'colorBy', ['lod', 'depth', 'loadedTimestamp', 'drawcalls', 'random']).name('Color by');
-      debugSectorsGui.add(guiState.debug.loadedSectors.options, 'leafsOnly').name('Leaf nodes only');
-      debugSectorsGui.add(guiState.debug.loadedSectors.options, 'showSimpleSectors').name('Show simple sectors');
-      debugSectorsGui.add(guiState.debug.loadedSectors.options, 'showDetailedSectors').name('Show detailed sectors');
-      debugSectorsGui.add(guiState.debug.loadedSectors.options, 'showDiscardedSectors').name('Show discarded sectors');
-      debugSectorsGui.add(guiState.debug.loadedSectors.options, 'sectorPathFilterRegex').name('Sectors path filter');
-      debugSectorsGui.add(guiActions, 'showSectorBoundingBoxes').name('Show sectors');
-      debugSectorsGui.add(guiState.debug.loadedSectors.statistics, 'insideSectors').name('# sectors@camera');
-      debugSectorsGui.add(guiState.debug.loadedSectors.statistics, 'maxSectorDepthOfInsideSectors').name('Max sector depth@camera');
-      debugSectorsGui.add(guiState.debug.loadedSectors.statistics, 'maxSectorDepth').name('Max sector tree depth');
-      debugSectorsGui.add(guiState.debug.loadedSectors.statistics, 'simpleSectorCount').name('# simple sectors');
-      debugSectorsGui.add(guiState.debug.loadedSectors.statistics, 'detailedSectorCount').name('# detailed sectors');
-      debugSectorsGui.add(guiState.debug.loadedSectors.statistics, 'forceDetailedSectorCount').name('# force detailed sectors');
-      debugSectorsGui.add(guiState.debug.loadedSectors.statistics, 'culledCount').name('# culled sectors');
-      debugSectorsGui.add(guiState.debug.loadedSectors.statistics, 'downloadSizeMb').name('Download size (Mb)');
-
-      setInterval(() => {
-        let insideSectors = 0;
-        let maxInsideDepth = -1;
-        let maxDepth = -1;
-        const cameraPosition = cameraManager.getCameraState().position;
-        modelUi.cadModels.forEach(m => {
-          m.traverse(x => {
-            // Hacky way to access internals of SectorNode
-            const depth = (x.hasOwnProperty('depth') && typeof (x as any).depth === 'number') ? (x as any).depth as number : 0;
-            if (x.hasOwnProperty('bounds') && (x as any).bounds instanceof THREE.Box3 && (x as any).bounds.containsPoint(cameraPosition)) {
-              insideSectors++;
-              maxInsideDepth = Math.max(maxInsideDepth, depth);
-            }
-            maxDepth = Math.max(maxDepth, depth);
-          })
-        });
-        guiState.debug.loadedSectors.statistics.insideSectors = insideSectors;
-        guiState.debug.loadedSectors.statistics.maxSectorDepth = maxDepth;
-        guiState.debug.loadedSectors.statistics.maxSectorDepthOfInsideSectors = maxInsideDepth;
-        // @ts-expect-error
-        const loadedStats = viewer.revealManager.cadLoadedStatistics;
-        guiState.debug.loadedSectors.statistics.simpleSectorCount = loadedStats.simpleSectorCount;
-        guiState.debug.loadedSectors.statistics.detailedSectorCount = loadedStats.detailedSectorCount;
-        guiState.debug.loadedSectors.statistics.forceDetailedSectorCount = loadedStats.forcedDetailedSectorCount;
-        guiState.debug.loadedSectors.statistics.downloadSizeMb = loadedStats.downloadSize / 1024 / 1024;
-
-        debugSectorsGui.updateDisplay();
-      }, 500);
-
       debugGui.add(guiActions, 'showCameraHelper').name('Show camera');
-      debugGui.add(guiActions, 'showBoundsForAllGeometries').name('Show geometry bounds');
       debugGui.add(guiState.debug, 'suspendLoading').name('Suspend loading').onFinishChange(suspend => {
         try {
           // @ts-expect-error
@@ -422,28 +342,6 @@ export function Migration() {
         event.stopPropagation();
       });
       viewer.domElement.appendChild(textInput);
-    }
-
-    function showBoundsForAllGeometries(model: Cognite3DModel) {
-      const boxes = new THREE.Group();
-      model.getModelTransformation(boxes.matrix);
-      boxes.matrixWorldNeedsUpdate = true;
-
-      model.traverse(x => {
-        if (x instanceof THREE.Mesh) {
-          const mesh = x;
-          const geometry: THREE.BufferGeometry = mesh.geometry;
-
-          if (geometry.boundingBox !== null) {
-            const box = geometry.boundingBox.clone();
-            box.applyMatrix4(mesh.matrixWorld);
-
-            const boxHelper = new THREE.Box3Helper(box);
-            boxes.add(boxHelper);
-          }
-        }
-      });
-      viewer.addObject3D(boxes);
     }
 
     main();
