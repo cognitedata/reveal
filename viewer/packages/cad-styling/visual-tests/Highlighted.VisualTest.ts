@@ -14,7 +14,7 @@ export default class HighlightedVisualTest extends StreamingVisualTestFixture {
     const { sceneHandler, cadMaterialManager, model } = testFixtureComponents;
 
     const { modelIdentifier } = sceneHandler.cadModels.find(
-      identifiedObject => identifiedObject.object === model.geometryNode
+      identifiedObject => identifiedObject.cadNode === model.geometryNode
     )!;
 
     const nodes = new TreeIndexNodeCollection([...Array(15).keys()]);

@@ -82,7 +82,7 @@ export class PointCloudRenderPipelineProvider implements RenderPipelineProvider 
     this.updateRenderTargetSizes(renderer);
 
     // Needs to be updated manually since automatic update is disabled because of CAD pipeline.
-    this._sceneHandler.pointCloudModels.forEach(model => model.object.updateMatrixWorld(true));
+    this._sceneHandler.pointCloudModels.forEach(model => model.pointCloudNode.updateMatrixWorld(true));
 
     try {
       renderer.setRenderTarget(this._renderTargetData.output);
