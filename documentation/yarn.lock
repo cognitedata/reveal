@@ -1524,6 +1524,7 @@
 
 "@cognite/reveal-4.x@link:../viewer/dist":
   version "0.0.0"
+  uid ""
 
 "@cognite/reveal-parser-worker@1.1.1":
   version "1.1.1"
@@ -1541,6 +1542,7 @@
 
 "@cognite/reveal@link:../viewer/dist":
   version "0.0.0"
+  uid ""
 
 "@cognite/sdk-1.x@npm:@cognite/sdk@^3.4.0":
   version "3.5.2"
@@ -1624,6 +1626,7 @@
 
 "@cognite/sdk@link:../viewer/node_modules/@cognite/sdk":
   version "0.0.0"
+  uid ""
 
 "@cognite/three-combo-controls@^1.4.3":
   version "1.4.3"
@@ -4880,6 +4883,11 @@ geo-three@0.0.17:
   version "0.0.17"
   resolved "https://registry.yarnpkg.com/geo-three/-/geo-three-0.0.17.tgz#869694f81df09b5a2724340ad212f47e48459162"
   integrity sha512-yPujgRnkRNdYVllLt32JOFB/mSJtUKkTKrT7YYbuEyDmCa9CotxzJkI7Wlhqd8ky1STMccSluYDi4JDV30InLw==
+
+geo-three@0.1.1:
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/geo-three/-/geo-three-0.1.1.tgz#e7ea8e1778d753432cdc99adf2a05271fae61dd4"
+  integrity sha512-fqi67VYCq6CnkWo7/XdQvyHZaXv02F4ebD7BMAQknIRrZ3Ajewvgd5Zf7peQXBuDtj+oC1IM7cwndPf3pwV0kQ==
 
 geo-three@^0.0.15:
   version "0.0.15"
