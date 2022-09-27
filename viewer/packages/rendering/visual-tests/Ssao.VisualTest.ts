@@ -16,7 +16,7 @@ export default class SsaoVisualTest extends StreamingVisualTestFixture {
     const { model, sceneHandler, cadMaterialManager } = testFixtureComponents;
 
     const { modelIdentifier } = sceneHandler.cadModels.find(
-      identifiedObject => identifiedObject.object === model.geometryNode
+      identifiedObject => identifiedObject.cadNode === model.geometryNode
     )!;
 
     const transformProvider = cadMaterialManager.getModelNodeTransformProvider(modelIdentifier);
