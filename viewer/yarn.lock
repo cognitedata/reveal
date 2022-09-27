@@ -1504,6 +1504,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@reveal/360-images@workspace:packages/360-images":
+  version: 0.0.0-use.local
+  resolution: "@reveal/360-images@workspace:packages/360-images"
+  dependencies:
+    "@reveal/data-providers": "workspace:*"
+    "@reveal/utilities": "workspace:*"
+  languageName: unknown
+  linkType: soft
+
 "@reveal/api@workspace:*, @reveal/api@workspace:packages/api":
   version: 0.0.0-use.local
   resolution: "@reveal/api@workspace:packages/api"

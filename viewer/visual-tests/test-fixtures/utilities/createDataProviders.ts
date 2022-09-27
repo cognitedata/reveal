@@ -14,11 +14,13 @@ import {
   LocalModelIdentifier,
   CdfModelIdentifier
 } from '../../../packages/data-providers';
+import { CogniteClient } from '@cognite/sdk/dist/src';
 
 export function createDataProviders(defaultModelLocalUrl = 'primitives'): Promise<{
   modelMetadataProvider: ModelMetadataProvider;
   modelDataProvider: ModelDataProvider;
   modelIdentifier: ModelIdentifier;
+  cogniteClient?: CogniteClient;
 }> {
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);
@@ -42,14 +44,15 @@ async function createCdfDataProviders(urlParams: URLSearchParams): Promise<{
   modelMetadataProvider: ModelMetadataProvider;
   modelDataProvider: ModelDataProvider;
   modelIdentifier: ModelIdentifier;
+  cogniteClient: CogniteClient;
 }> {
-  const client = await getApplicationSDK(urlParams);
+  const cogniteClient = await getApplicationSDK(urlParams);
 
   const modelId = parseInt(urlParams.get('modelId')!);
   const revisionId = parseInt(urlParams.get('revisionId')!);
 
   const modelIdentifier = new CdfModelIdentifier(modelId, revisionId);
-  const modelMetadataProvider = new CdfModelMetadataProvider(client);
-  const modelDataProvider = new CdfModelDataProvider(client);
-  return { modelMetadataProvider, modelDataProvider, modelIdentifier };
+  const modelMetadataProvider = new CdfModelMetadataProvider(cogniteClient);
+  const modelDataProvider = new CdfModelDataProvider(cogniteClient);
+  return { modelMetadataProvider, modelDataProvider, modelIdentifier, cogniteClient };
 }
