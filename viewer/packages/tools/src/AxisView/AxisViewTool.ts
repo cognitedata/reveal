@@ -80,12 +80,7 @@ export class AxisViewTool extends Cognite3DViewerToolBase {
     divElement.style.width = `${this._layoutConfig.size}px`;
     divElement.style.zIndex = '1';
 
-    let xMouse = 0;
-    let yMouse = 0;
-
     divElement.addEventListener('mousedown', event => {
-      xMouse = event.clientX;
-      yMouse = event.clientY;
       event.stopPropagation();
     });
 
