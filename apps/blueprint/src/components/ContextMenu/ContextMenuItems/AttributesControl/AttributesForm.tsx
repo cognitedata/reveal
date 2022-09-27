@@ -1,13 +1,4 @@
-import {
-  AutoComplete,
-  Button,
-  Flex,
-  Input,
-  OptionsType,
-  OptionTypeBase,
-  Select,
-  toast,
-} from '@cognite/cogs.js';
+import { Button, Flex, Input, Select, toast } from '@cognite/cogs.js';
 import startCase from 'lodash/startCase';
 import { useState, useEffect } from 'react';
 import { ShapeAttribute } from 'typings';
@@ -20,11 +11,13 @@ import { AttributeFormWrapper } from './elements';
 
 type AttributeFormProps = {
   existingAttribute?: ShapeAttribute;
+  defaultAssetExternalId: string;
   onDone: (nextAttribute: ShapeAttribute) => void;
 };
 
 export const AttributeForm = ({
   existingAttribute,
+  defaultAssetExternalId,
   onDone,
 }: AttributeFormProps) => {
   const { client } = useAuthContext();
@@ -33,13 +26,12 @@ export const AttributeForm = ({
       ({
         id: uuid(),
         name: '',
-        type: 'TIMESERIES',
-        externalId: '',
-        extractor: 'CURRENT_VALUE',
+        type: 'ASSET',
+        externalId: defaultAssetExternalId || '',
+        extractor: 'METADATA',
       } as ShapeAttribute)
   );
 
-  const [inputValue, setInputValue] = useState<string>(attribute.externalId);
   const [selectedResource, setSelectedResource] = useState<
     Asset | Timeseries
   >();
@@ -58,32 +50,6 @@ export const AttributeForm = ({
       }
     }
   }, []);
-
-  const handleInputChange = (newValue: string) => {
-    const newInputValue = newValue.replace(/\W/g, '');
-    setInputValue(newInputValue);
-    return newInputValue;
-  };
-
-  const loadOptions = (
-    input: string,
-    callback: (options: OptionsType<OptionTypeBase>) => void
-  ) => {
-    if (!input) {
-      callback([]);
-      return;
-    }
-    if (attribute.type === 'TIMESERIES') {
-      client?.timeseries
-        .search({ search: { query: input } })
-        .then((res) => callback(res.map((r) => ({ label: r.name, value: r }))));
-    }
-    if (attribute.type === 'ASSET') {
-      client?.assets
-        .search({ search: { query: input } })
-        .then((res) => callback(res.map((r) => ({ label: r.name, value: r }))));
-    }
-  };
 
   const handleChange = (partial: Partial<ShapeAttribute>) =>
     setAttribute((prev) => ({ ...prev, ...partial }));
@@ -184,7 +150,6 @@ export const AttributeForm = ({
           ]}
           onChange={(type: { value: typeof attribute.type }) => {
             setSelectedResource(undefined);
-            setInputValue('');
             handleChange({
               type: type.value,
               externalId: '',
@@ -217,39 +182,6 @@ export const AttributeForm = ({
           if (
             attribute.type === 'ASSET' &&
             Object.keys(next?.metadata || {}).length > 0
-          ) {
-            nextChange.extractor = 'METADATA';
-          } else if (attribute.type === 'TIMESERIES') {
-            nextChange.extractor = 'CURRENT_VALUE';
-          } else {
-            nextChange.extractor = undefined;
-          }
-          handleChange(nextChange);
-        }}
-      />
-      <AutoComplete
-        key={attribute.type}
-        mode="async"
-        placeholder={`Search ${startCase(attribute.type)}s`}
-        value={{
-          value: selectedResource,
-          label:
-            inputValue ||
-            selectedResource?.name ||
-            `Search ${startCase(attribute.type.toLowerCase())}s`,
-        }}
-        loadOptions={loadOptions}
-        handleInputChange={handleInputChange}
-        onChange={(next: { value: Timeseries | Asset; label: string }) => {
-          setSelectedResource(next.value);
-          handleInputChange(next.label);
-          const nextChange: Partial<ShapeAttribute> = {
-            externalId: next.value.externalId,
-            subExtractor: undefined,
-          };
-          if (
-            attribute.type === 'ASSET' &&
-            Object.keys(next.value?.metadata || {}).length > 0
           ) {
             nextChange.extractor = 'METADATA';
           } else if (attribute.type === 'TIMESERIES') {

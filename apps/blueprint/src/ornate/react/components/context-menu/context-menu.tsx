@@ -67,7 +67,9 @@ export const ContextMenu: React.FC<OrnateContextMenuProps> = ({
 
   const updatePosition = useCallback(() => {
     if (!instance) return;
-    const box = instance.transformer.getClientRect();
+    // eslint-disable-next-line no-underscore-dangle
+    const box = instance.transformer._getNodeRect();
+
     setXY([box.x, box.y]);
   }, [instance]);
 

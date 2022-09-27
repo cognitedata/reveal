@@ -78,6 +78,7 @@ const AttributesControl = ({
       ))}
       {isAdding && (
         <AttributeForm
+          defaultAssetExternalId={coreAssetExternalId}
           onDone={(next) => {
             onChange([...attributes, next]);
             setIsAdding(false);

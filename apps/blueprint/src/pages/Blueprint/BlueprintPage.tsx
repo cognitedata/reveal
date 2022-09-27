@@ -59,7 +59,7 @@ const BlueprintPage: React.FC = () => {
   const { data: allAssets } = useAssetsQuery(
     annotationLabels.map((x) => x.metadata?.assetId)
   );
-  console.log(annotationLabels, allAssets);
+
   const saveBlueprintMutation = useSaveBlueprintMutation();
   const { data, isLoading } = useFetchBlueprintDefinition(externalId);
   const { definition: blueprintDefinition, reference: blueprintReference } =
@@ -70,6 +70,11 @@ const BlueprintPage: React.FC = () => {
     if (!blueprintDefinition) return;
 
     setBlueprint(blueprintDefinition);
+    setDisabledRuleSets(
+      (blueprintDefinition?.ruleSets || [])
+        .slice(1)
+        .reduce((acc, x) => ({ ...acc, [x.id]: true }), {})
+    );
     setShapes(blueprintDefinition.ornateShapes);
     if (
       ornateViewer.current &&
@@ -88,7 +93,6 @@ const BlueprintPage: React.FC = () => {
           },
           onAnnotationClick: (nextAnnotation, shape) => {
             handleAnnotationClick(nextAnnotation, shape);
-            console.log('do something', nextAnnotation);
           },
         },
       });
