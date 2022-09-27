@@ -1,12 +1,8 @@
 {
   "environments": {
     "cog-3d": {
-      "tenantId": "20a88741-8181-4275-99d9-bd4451666d6e",
-      "clientId": "a03a8caf-7611-43ac-87f3-1d493c085579"
-    },
-    "dmvp": {
-      "tenantId": "6180ac5c-7b7f-4f44-9c00-fb5d5fce1c69",
-      "clientId": "2e50a229-9a7b-4bd1-9c59-c90bd207bafc"
+      "tenantId": "...",
+      "clientId": "..."
     }
   }
 }
