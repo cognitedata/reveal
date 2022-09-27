@@ -187,10 +187,10 @@
   version "0.0.0"
   uid ""
 
-"@cognite/sdk-core@^4.6.6":
-  version "4.6.6"
-  resolved "https://registry.yarnpkg.com/@cognite/sdk-core/-/sdk-core-4.6.6.tgz#995ba75d3aa167ec01e5ec934528b82d00d0d710"
-  integrity sha512-3SshQfVCUSOb30edQT4THvXIGU2AKeZeGGFoZezfVp+2hkuFBV+/J5EUo1EwHND8ILcJZyFvHFdcTVDafYlKxA==
+"@cognite/sdk-core@^4.8.1":
+  version "4.8.1"
+  resolved "https://registry.yarnpkg.com/@cognite/sdk-core/-/sdk-core-4.8.1.tgz#008c6d7e15393f3a840baf809a0037efa8266849"
+  integrity sha512-FEICothNg/aAHdAY84J/udt5NcPcoe8GlT+piFgpvV8zIFpFbUxU4oLVf20xl0AJX1xCO13iWrL/szf6BWqEcA==
   dependencies:
     cross-fetch "^3.0.4"
     is-buffer "^2.0.5"
@@ -1851,11 +1851,6 @@ functions-have-names@^1.2.2:
   resolved "https://registry.yarnpkg.com/functions-have-names/-/functions-have-names-1.2.3.tgz#0404fe4ee2ba2f607f0e0ec3c80bae994133b834"
   integrity sha512-xckBUXyTIqT97tq2x2AMb+g163b5JFysYk0x4qxNFwbfQkmNZoiRHb6sPzI9/QV33WeuvVYBUIiD4NzNIyqaRQ==
 
-geo-three@0.0.17:
-  version "0.0.17"
-  resolved "https://registry.yarnpkg.com/geo-three/-/geo-three-0.0.17.tgz#869694f81df09b5a2724340ad212f47e48459162"
-  integrity sha512-yPujgRnkRNdYVllLt32JOFB/mSJtUKkTKrT7YYbuEyDmCa9CotxzJkI7Wlhqd8ky1STMccSluYDi4JDV30InLw==
-
 geojson@^0.5.0:
   version "0.5.0"
   resolved "https://registry.yarnpkg.com/geojson/-/geojson-0.5.0.tgz#3cd6c96399be65b56ee55596116fe9191ce701c0"
@@ -3417,10 +3412,10 @@ rimraf@^3.0.2:
   dependencies:
     glob "^7.1.3"
 
-rxjs@7.5.6:
-  version "7.5.6"
-  resolved "https://registry.yarnpkg.com/rxjs/-/rxjs-7.5.6.tgz#0446577557862afd6903517ce7cae79ecb9662bc"
-  integrity sha512-dnyv2/YsXhnm461G+R/Pe5bWP41Nm6LBXEYWI6eiFP4fiwx6WRI/CD0zbdVAudd9xwLEF2IDcKXLHit0FYjUzw==
+rxjs@7.5.7:
+  version "7.5.7"
+  resolved "https://registry.yarnpkg.com/rxjs/-/rxjs-7.5.7.tgz#2ec0d57fdc89ece220d2e702730ae8f1e49def39"
+  integrity sha512-z9MzKh/UcOqB3i20H6rtrlaE/CgjLOvheWK/9ILrbhROGTweAi1BaFsTT9FbwZi5Trr1qNRs+MXkhmR06awzQA==
   dependencies:
     tslib "^2.1.0"
 
@@ -3816,10 +3811,10 @@ terser@^5.10.0, terser@^5.7.2:
     commander "^2.20.0"
     source-map-support "~0.5.20"
 
-three-stdlib@2.16.1:
-  version "2.16.1"
-  resolved "https://registry.yarnpkg.com/three-stdlib/-/three-stdlib-2.16.1.tgz#3548eca5350a06e79b8e24bd7ee7877cfeab11f6"
-  integrity sha512-AuWs5OFOQfrSYYg49DF2driU9OI9AG8vS1/KBrKjQnJqW5vyn8WvhePexcSmDKgsBfAsxcXk8W/tR9uOESnr3w==
+three-stdlib@2.17.0:
+  version "2.17.0"
+  resolved "https://registry.yarnpkg.com/three-stdlib/-/three-stdlib-2.17.0.tgz#5915b110ec6dbf07e0e653bd59889293c7b93407"
+  integrity sha512-m19X4+ajh+2EJIVcjB288LgbqTli5b8kFahJlg9oNCBfaL8geCgEoM4OUirgV0Ez6Lr58N1MPBR6LjJt7ALfKQ==
   dependencies:
     "@babel/runtime" "^7.16.7"
     "@types/offscreencanvas" "^2019.6.4"
