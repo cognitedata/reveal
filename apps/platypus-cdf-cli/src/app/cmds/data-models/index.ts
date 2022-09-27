@@ -16,7 +16,7 @@ export const builder = (yargs: Argv) => {
   const cmds = yargs;
 
   if (process.env.ENABLE_EXPERIMENTAL_CMDS) {
-    cmds.command(storageCmds).command(apiCmds);
+    cmds.command(storageCmds).command(apiCmds).command(deleteCmd);
   }
 
   cmds
@@ -24,7 +24,6 @@ export const builder = (yargs: Argv) => {
     .command(publishCmd)
     .command(listCmd)
     .command(generateCmd)
-    .command(deleteCmd)
     .demandCommand(1)
     .version(false);
 
