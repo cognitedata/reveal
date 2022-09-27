@@ -3,7 +3,7 @@
  */
 // To overcome "implicitly has an 'any' type" and "unused variable reference" error in the geo-three library
 // @ts-ignore
-import { GEOTHREE } from 'geo-three';
+import * as GEOTHREE from 'geo-three';
 import { Cognite3DViewer } from '@reveal/api';
 import { LatLongPosition, MapConfig, MapProviders } from './MapConfig';
 
