@@ -122,7 +122,7 @@ export const sdkMock = {
   },
   assets: {
     retrieve: async () => {
-      return { items: rootAssets };
+      return rootAssets;
     },
     list: async (params?: AssetListScope) => {
       const { filter: { parentIds, root } = {} } = params as AssetListScope;
@@ -172,6 +172,16 @@ export const sdkMock = {
       return datapoints.filter(
         datapoint => datapoint.externalId === result?.externalId
       );
+    },
+  },
+  documents: {
+    preview: {
+      documentAsImage: (
+        documentId: number,
+        page: number
+      ): Promise<ArrayBuffer> => {
+        return Promise.resolve(new ArrayBuffer(documentId + page));
+      },
     },
   },
 };

@@ -1,6 +1,7 @@
 import mime from 'mime-types';
 import { CogniteClient, FileInfo } from '@cognite/sdk';
 import lowerCase from 'lodash/lowerCase';
+import { Document } from 'types';
 
 export const getMIMEType = (fileURI: string) => mime.lookup(fileURI);
 
@@ -19,13 +20,13 @@ export const readablePreviewableFileTypes = () =>
     return `${acc} or ${fileType}`;
   }, '');
 
-export const isFilePreviewable = (file?: FileInfo) =>
+export const isFilePreviewable = (file?: FileInfo | Document) =>
   isFileOfType(file, PREVIEWABLE_FILE_TYPES);
 
-export const isPreviewableImage = (file?: FileInfo) =>
+export const isPreviewableImage = (file?: FileInfo | Document) =>
   isFileOfType(file, PREVIEWABLE_IMAGE_TYPES);
 
-export const isFileOfType = (file?: FileInfo, type?: string[]) => {
+export const isFileOfType = (file?: FileInfo | Document, type?: string[]) => {
   const { mimeType = '', name = '' } = file || {};
   const fileExt = name.includes('.')
     ? lowerCase(name.substring(name.lastIndexOf('.') + 1))
@@ -35,7 +36,10 @@ export const isFileOfType = (file?: FileInfo, type?: string[]) => {
   );
 };
 
-export async function fetchFilePreviewURL(sdk: CogniteClient, file: FileInfo) {
+export async function fetchFilePreviewURL(
+  sdk: CogniteClient,
+  file: FileInfo | Document
+) {
   if (!isFilePreviewable(file)) return undefined;
 
   // Handle image url
@@ -45,17 +49,13 @@ export async function fetchFilePreviewURL(sdk: CogniteClient, file: FileInfo) {
     return imageUrl;
   }
 
-  // Handle PDF first page as image url
-  // TODO: Might need to update this when the new SDK is in place
-  const request = await sdk.get(
-    `/api/v1/projects/${sdk.project}/documents/${file.id}/preview/image/pages/1`,
-    { headers: { Accept: 'image/png' }, responseType: 'arraybuffer' }
-  );
-  const icon = request.data;
-  const arrayBufferView = new Uint8Array(icon);
-  const blob = new Blob([arrayBufferView]);
-  const objectURL = URL.createObjectURL(blob);
-  return objectURL;
+  return sdk.documents.preview.documentAsImage(file.id, 1).then(response => {
+    const icon = response;
+    const arrayBufferView = new Uint8Array(icon);
+    const blob = new Blob([arrayBufferView]);
+    const objectURL = URL.createObjectURL(blob);
+    return objectURL;
+  });
 }
 
 const APPLICATION = 'application';

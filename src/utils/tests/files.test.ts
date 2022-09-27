@@ -52,6 +52,16 @@ describe('FileUtils', () => {
           return [{ downloadUrl: 'https://download.file.com/fileId' }];
         },
       },
+      documents: {
+        preview: {
+          documentAsImage: (
+            documentId: number,
+            page: number
+          ): Promise<ArrayBuffer> => {
+            return Promise.resolve(new ArrayBuffer(documentId + page));
+          },
+        },
+      },
     } as unknown as CogniteClient;
     global.URL.createObjectURL = jest.fn(() => 'http://link.to.pdf');
 
@@ -69,7 +79,7 @@ describe('FileUtils', () => {
       expect(result).toBe('https://download.file.com/fileId');
     });
 
-    it('should return a url for a PDF', async () => {
+    it.only('should return a url for a PDF', async () => {
       const file: FileInfo = {
         id: 1,
         mimeType: 'application/pdf',

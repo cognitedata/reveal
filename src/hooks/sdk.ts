@@ -13,6 +13,7 @@ import {
   aggregate,
 } from '@cognite/sdk-react-query-hooks';
 import { isFileOfType, fetchFilePreviewURL } from 'utils';
+import { Document } from 'types';
 
 const post = (sdk: CogniteClient, path: string, data: any) =>
   sdk
@@ -90,7 +91,7 @@ export const useFileIcon = (file: FileInfo) => {
   );
 };
 
-export const useFilePreviewURL = (file: FileInfo) => {
+export const useFilePreviewURL = (file: FileInfo | Document) => {
   const sdk = useSDK();
 
   return useQuery(

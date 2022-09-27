@@ -3,8 +3,9 @@ import { useFilePreviewURL } from 'hooks/sdk';
 import { Body, DocumentIcon } from '@cognite/cogs.js';
 import { Loader } from 'components';
 import { FileInfo } from '@cognite/sdk';
+import { Document } from 'types';
 
-export const FileThumbnail = ({ file }: { file: FileInfo }) => {
+export const FileThumbnail = ({ file }: { file: FileInfo | Document }) => {
   const { data: filePreviewUrl, isError, isFetching } = useFilePreviewURL(file);
 
   if (filePreviewUrl) {
