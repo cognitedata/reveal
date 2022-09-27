@@ -8,7 +8,7 @@ import { CadMaterialManager } from '../../packages/rendering';
 import { createCadModelMetadata } from './createCadModelMetadata';
 
 import { Mock } from 'moq.ts';
-import { SectorRepository } from '@reveal/sector-loader';
+import { SectorRepository } from '../../packages/sector-loader';
 import { generateV9SectorTree } from './createSectorMetadata';
 
 export function createCadModel(
@@ -23,9 +23,9 @@ export function createCadModel(
   const cadMetadata = createCadModelMetadata(9, cadRoot);
   materialManager.addModelMaterials(cadMetadata.modelIdentifier, cadMetadata.scene.maxTreeIndex);
 
-  const mockV8SectorRepository = new Mock<SectorRepository>();
+  const mockSectorRepository = new Mock<SectorRepository>().setup(p => p.clearCache).returns(() => {});
 
-  const cadNode = new CadNode(cadMetadata, materialManager, mockV8SectorRepository.object());
+  const cadNode = new CadNode(cadMetadata, materialManager, mockSectorRepository.object());
   nodesApiClient = nodesApiClient ?? new NodesLocalClient();
   const model = new Cognite3DModel(modelId, revisionId, cadNode, nodesApiClient);
 
