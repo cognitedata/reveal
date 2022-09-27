@@ -11,6 +11,8 @@ export function getApplicationSDK(urlParams: URLSearchParams): Promise<CogniteCl
 
   const tenantInfo = cdfEnvironments.environments[tenant ?? 'cog-3d'];
 
+  console.log(tenantInfo);
+
   const project = urlParams.get('project') ?? '3d-test';
   const cluster = urlParams.get('cluster') ?? 'greenfield';
 
