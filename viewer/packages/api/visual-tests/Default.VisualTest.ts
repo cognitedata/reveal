@@ -9,7 +9,7 @@ import {
 
 // Sanity test for loading model
 export default class DefaultVisualTest extends ViewerVisualTestFixture {
-  public async setup(_: ViewerTestFixtureComponents): Promise<void> {
+  public setup(_: ViewerTestFixtureComponents): Promise<void> {
     return Promise.resolve();
   }
 }
