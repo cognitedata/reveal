@@ -9,7 +9,6 @@ import zipWith from 'lodash/zipWith';
 
 import { CogniteClient, FileInfo } from '@cognite/sdk';
 import { Image360Descriptor, Image360Face } from '../types';
-import { Matrix4 } from 'three';
 import { Image360Provider } from '../Image360Provider';
 import assert from 'assert';
 
@@ -52,6 +51,7 @@ export class Cdf360ImageEventProvider implements Image360Provider<{ [key: string
     const faces = zipWith(fileInfos, fileBuffers, (fileInfo, fileBuffer) => {
       return {
         face: fileInfo.metadata!.face,
+        mimeType: fileInfo.mimeType,
         data: fileBuffer
       } as Image360Face;
     });
@@ -119,7 +119,18 @@ export class Cdf360ImageEventProvider implements Image360Provider<{ [key: string
         translationComponents[2],
         -translationComponents[1]
       ).divideScalar(milimetersInMeters);
-      return new Matrix4().makeTranslation(translation.x, translation.y, translation.z);
+      const rotationAxisComponents = transformationData.rotation_axis.split(' ').map(parseFloat);
+      const rotationAxis = new THREE.Vector3(
+        rotationAxisComponents[0],
+        rotationAxisComponents[2],
+        -rotationAxisComponents[1]
+      );
+      const rotationAngle = THREE.MathUtils.DEG2RAD * parseFloat(transformationData.rotation_angle);
+      const translationMatrix = new THREE.Matrix4().makeTranslation(translation.x, translation.y, translation.z);
+      const rotationMatrix = new THREE.Matrix4().makeRotationAxis(rotationAxis, rotationAngle);
+      const offsetRot = new THREE.Matrix4().makeRotationY(Math.PI / 2);
+
+      return translationMatrix.multiply(offsetRot.multiply(rotationMatrix));
     }
   }
 

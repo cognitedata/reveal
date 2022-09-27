@@ -11,7 +11,7 @@ import { It, Mock } from 'moq.ts';
 
 export default class Image360VisualTestFixture extends StreamingVisualTestFixture {
   public async setup(testFixtureComponents: StreamingTestFixtureComponents): Promise<void> {
-    const { cogniteClient, sceneHandler } = testFixtureComponents;
+    const { cogniteClient, sceneHandler, cameraControls } = testFixtureComponents;
 
     if (cogniteClient === undefined) {
       const image360Factory = new Image360EntityFactory(this.getMockImage360Provider().object(), sceneHandler);
@@ -30,9 +30,14 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
 
     const rotation = new THREE.Matrix4().makeRotationAxis(new THREE.Vector3(0, 1, 0), 0.1);
     const translation = new THREE.Matrix4().makeTranslation(-18, 1, -13);
-    const transform = translation.multiply(rotation);
-    const image360Entities = await image360Factory.create({ site_id: '6th floor v3 - enterprise' }, transform);
-    image360Entities[0].activate360Image();
+    const collectionTransform = translation.multiply(rotation);
+    const image360Entities = await image360Factory.create(
+      { site_id: '6th floor v3 - enterprise' },
+      collectionTransform
+    );
+    image360Entities[40].activate360Image();
+    const transform = image360Entities[40].transform.toArray();
+    cameraControls.target.copy(new THREE.Vector3(transform[12], transform[13], transform[14]));
   }
 
   private getMockImage360Provider() {
