@@ -304,7 +304,7 @@ export class ComboControls extends EventDispatcher {
   };
 
   private readonly onMouseDown = (event: MouseEvent) => {
-    if (!this.enabled || event.target !== this._domElement.querySelector('canvas')) {
+    if (!this.enabled) {
       return;
     }
 
