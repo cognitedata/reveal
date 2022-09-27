@@ -187,10 +187,10 @@
   version "0.0.0"
   uid ""
 
-"@cognite/sdk-core@^4.8.0":
-  version "4.8.0"
-  resolved "https://registry.yarnpkg.com/@cognite/sdk-core/-/sdk-core-4.8.0.tgz#d82b2c92b203ceafabe35a605fe2dbbccae57beb"
-  integrity sha512-XpWDx2+Mys+cGNGcPKMY8Vroju/j1eCe8+AcPCaH5ueu2aRoS4JUSZ/CcvTP+iGzxl3G/3OMv2IwV2E7p0rD/w==
+"@cognite/sdk-core@^4.8.1":
+  version "4.8.1"
+  resolved "https://registry.yarnpkg.com/@cognite/sdk-core/-/sdk-core-4.8.1.tgz#008c6d7e15393f3a840baf809a0037efa8266849"
+  integrity sha512-FEICothNg/aAHdAY84J/udt5NcPcoe8GlT+piFgpvV8zIFpFbUxU4oLVf20xl0AJX1xCO13iWrL/szf6BWqEcA==
   dependencies:
     cross-fetch "^3.0.4"
     is-buffer "^2.0.5"
@@ -1851,10 +1851,10 @@ functions-have-names@^1.2.2:
   resolved "https://registry.yarnpkg.com/functions-have-names/-/functions-have-names-1.2.3.tgz#0404fe4ee2ba2f607f0e0ec3c80bae994133b834"
   integrity sha512-xckBUXyTIqT97tq2x2AMb+g163b5JFysYk0x4qxNFwbfQkmNZoiRHb6sPzI9/QV33WeuvVYBUIiD4NzNIyqaRQ==
 
-geo-three@0.0.17:
-  version "0.0.17"
-  resolved "https://registry.yarnpkg.com/geo-three/-/geo-three-0.0.17.tgz#869694f81df09b5a2724340ad212f47e48459162"
-  integrity sha512-yPujgRnkRNdYVllLt32JOFB/mSJtUKkTKrT7YYbuEyDmCa9CotxzJkI7Wlhqd8ky1STMccSluYDi4JDV30InLw==
+geo-three@0.1.1:
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/geo-three/-/geo-three-0.1.1.tgz#e7ea8e1778d753432cdc99adf2a05271fae61dd4"
+  integrity sha512-fqi67VYCq6CnkWo7/XdQvyHZaXv02F4ebD7BMAQknIRrZ3Ajewvgd5Zf7peQXBuDtj+oC1IM7cwndPf3pwV0kQ==
 
 geojson@^0.5.0:
   version "0.5.0"
@@ -3816,10 +3816,10 @@ terser@^5.10.0, terser@^5.7.2:
     commander "^2.20.0"
     source-map-support "~0.5.20"
 
-three-stdlib@2.16.2:
-  version "2.16.2"
-  resolved "https://registry.yarnpkg.com/three-stdlib/-/three-stdlib-2.16.2.tgz#7c4adfa9768aa205f111e6a3a6c176748e117b9e"
-  integrity sha512-YTOO76/xjJnjmgM5o7tOj/YCpdWgG6TMo2arNwBb6jO7xpIgr+aw4tDohvgg1EZgo2tmKrOqEOmpjgy+ca9Wog==
+three-stdlib@2.17.0:
+  version "2.17.0"
+  resolved "https://registry.yarnpkg.com/three-stdlib/-/three-stdlib-2.17.0.tgz#5915b110ec6dbf07e0e653bd59889293c7b93407"
+  integrity sha512-m19X4+ajh+2EJIVcjB288LgbqTli5b8kFahJlg9oNCBfaL8geCgEoM4OUirgV0Ez6Lr58N1MPBR6LjJt7ALfKQ==
   dependencies:
     "@babel/runtime" "^7.16.7"
     "@types/offscreencanvas" "^2019.6.4"
