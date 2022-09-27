@@ -1232,16 +1232,16 @@
     tippy.js "6.2.0"
     ts-dedent "^2.2.0"
 
-"@cognite/data-exploration@4.16.0":
-  version "4.16.0"
-  resolved "https://registry.yarnpkg.com/@cognite/data-exploration/-/data-exploration-4.16.0.tgz#befac353307991e0c6e70626c5570f14c645112f"
-  integrity sha512-X386+HWp6IY5BocdgJ69ZbvsQB6af2Hc4lKNOhNVr0Qie0wdS7l9+8KBK3QlwVNgJc6kyvzQSJVcE8JonpW2bQ==
+"@cognite/data-exploration@4.23.0":
+  version "4.23.0"
+  resolved "https://registry.yarnpkg.com/@cognite/data-exploration/-/data-exploration-4.23.0.tgz#175768b326fe3f9b66a37b05ca5e86575b34648c"
+  integrity sha512-96eLAsf+h7+7WyTbwZFRx0LbX9hAPCr+cNIXYHc2WIeuwHXs04mxbv1ObX82QQz/jCXlIgzoZJkSU1O4WqznVw==
   dependencies:
     "@babel/runtime" "^7.12.5"
     "@cognite/annotations" "^1.1.0"
     "@cognite/cdf-utilities" "^0.14.4"
     "@cognite/cogs.js" "^7.13.2"
-    "@cognite/gcs-browser-upload" "github:cognitedata/gcs-browser-upload#mn/temporary-azure-fix"
+    "@cognite/gcs-browser-upload" cognitedata/gcs-browser-upload#mn/temporary-azure-fix
     "@cognite/react-document-table" "^1.22.2"
     "@cognite/react-feature-flags" "^1.0.1"
     "@cognite/react-picture-annotation" "3.0.1"
