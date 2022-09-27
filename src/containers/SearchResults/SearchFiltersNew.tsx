@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Icon, Button, Tooltip, SegmentedControl } from '@cognite/cogs.js';
-import { Row, Col, Badge } from 'antd';
+import { SegmentedControl } from '@cognite/cogs.js';
+import { Badge } from 'antd';
 import {
   ResourceType,
   ResourceFilterProps,
@@ -17,7 +17,6 @@ import {
 } from 'utils';
 import styled from 'styled-components';
 import { Filters } from 'components/SearchNew/Filters';
-import { BaseFilterCollapse } from 'components/SearchNew/Filters/BaseFilterCollapse/BaseFilterCollapse';
 
 const TRANSITION_TIME = 200;
 interface IFilterIcon {
@@ -40,8 +39,7 @@ export enum FilterSection {
 
 export const SearchFiltersNew = ({
   visible = true,
-  allowHide = true,
-  closeFilters = () => {},
+  // allowHide = true,
   resourceType,
   assetFilter,
   setAssetFilter,
@@ -53,13 +51,10 @@ export const SearchFiltersNew = ({
   setEventFilter,
   fileFilter,
   setFileFilter,
-  enableFilterFeature,
 }: {
   resourceType: ResourceType;
   visible?: boolean;
   allowHide?: boolean;
-  closeFilters?: () => void;
-  enableFilterFeature?: boolean;
 } & Required<ResourceFilterProps> &
   SetResourceFilterProps) => {
   const selectedFilter = getSelectedFilter({
@@ -139,24 +134,6 @@ export const SearchFiltersNew = ({
     </div>
   );
 };
-
-const IconCol = styled(Col)`
-  margin-right: 16px;
-  padding-right: 16px;
-  border-right: 1px solid ${lightGrey};
-`;
-
-const HeaderRow = styled(Row)`
-  padding-right: 16px;
-  padding-bottom: 20px;
-  margin-top: 24px;
-  margin-bottom: 16px;
-  border-bottom: 1px solid ${lightGrey};
-`;
-
-const HideFiltersTooltip = styled(Tooltip)`
-  margin-bottom: 8px;
-`;
 
 const StyledFilters = styled.div`
   padding-left: 1px;
