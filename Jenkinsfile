@@ -69,13 +69,13 @@ pods {
     }
 
     container('node') {
-      stageWithNotify('Lint', context_build) {
+      stageWithNotify('Lint', context_linting) {
         sh('yarn lint');
       }
     }
 
     container('node') {
-      stageWithNotify('Test', context_build) {
+      stageWithNotify('Test', context_unit_tests) {
         sh('yarn test');
       }
     }
