@@ -352,6 +352,12 @@ float getIntensity() {
 	return w;
 }
 
+vec3 getRgbWithIntensityFallback() {
+	vec3 rgb = getRGB();
+	float intensity = getIntensity();
+	return rgb != vec3(0.0) ? rgb : vec3(intensity);
+}
+
 vec3 getElevation() {
 	vec4 world = modelMatrix * vec4( position, 1.0 );
 	float w = (world.y - heightMin) / (heightMax-heightMin);
@@ -528,7 +534,10 @@ void main() {
 	#ifdef color_type_rgb
 		vColor = getRGB();
 	#elif defined color_type_height
-		vColor = getElevation();
+		vec3 rgb = getRgbWithIntensityFallback();
+		vColor = rgb == vec3(0.0, 0.0, 0.0) 
+			? getElevation() 
+			: mix(getElevation(), rgb, 0.4);
 	#elif defined color_type_rgb_height
 		vec3 cHeight = getElevation();
 		vColor = (1.0 - transition) * getRGB() + transition * cHeight;
@@ -550,7 +559,10 @@ void main() {
 	#elif defined color_type_point_index
 		vColor = indices.rgb;
 	#elif defined color_type_classification
-		vColor = classification.rgb;
+		vec3 rgb = getRgbWithIntensityFallback();
+		vColor = rgb == vec3(0.0, 0.0, 0.0) 
+			? classification.rgb 
+			: mix(classification.rgb, rgb, 0.4);
 	#elif defined color_type_return_number
 		vColor = getReturnNumber();
 	#elif defined color_type_source

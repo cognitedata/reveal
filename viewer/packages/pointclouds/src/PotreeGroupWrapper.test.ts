@@ -11,7 +11,7 @@ import { yieldProcessing } from '../../../test-utilities';
 
 import { Potree, PointCloudOctree, PointCloudMaterial } from './potree-three-loader';
 import { Mock } from 'moq.ts';
-import { ModelDataProvider } from '@reveal/modeldata-api';
+import { ModelDataProvider } from '@reveal/data-providers';
 
 const mockModelDataProvider = new Mock<ModelDataProvider>().object();
 

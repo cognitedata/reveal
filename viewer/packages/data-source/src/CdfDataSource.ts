@@ -11,7 +11,7 @@ import {
   ModelDataProvider,
   ModelMetadataProvider,
   CdfModelDataProvider
-} from '@reveal/modeldata-api';
+} from '@reveal/data-providers';
 
 /**
  * Data source for Cognite Data Fusion.

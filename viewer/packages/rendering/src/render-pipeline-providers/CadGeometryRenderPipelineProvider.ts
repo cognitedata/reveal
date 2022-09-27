@@ -2,6 +2,7 @@
  * Copyright 2022 Cognite AS
  */
 
+import { CadNode } from '@reveal/cad-model';
 import { SceneHandler, WebGLRendererStateHelper } from '@reveal/utilities';
 import * as THREE from 'three';
 import { CadMaterialManager } from '../CadMaterialManager';
@@ -23,7 +24,7 @@ export class CadGeometryRenderPipelineProvider implements RenderPipelineProvider
   private readonly _cadGeometryRenderTargets: CadGeometryRenderTargets;
   private readonly _cadGeometryRenderPasses: CadGeometryRenderPasses;
   private readonly _cadModels: {
-    object: THREE.Object3D<THREE.Event>;
+    cadNode: CadNode;
     modelIdentifier: string;
   }[];
   private readonly _materialManager: CadMaterialManager;
@@ -49,19 +50,25 @@ export class CadGeometryRenderPipelineProvider implements RenderPipelineProvider
       const modelIdentifiers = this._cadModels.map(cadModel => cadModel.modelIdentifier);
       const shouldRenderPasses = hasStyledNodes(modelIdentifiers, this._materialManager);
 
+      renderer.setRenderTarget(this._cadGeometryRenderTargets.back);
       if (shouldRenderPasses.back) {
-        renderer.setRenderTarget(this._cadGeometryRenderTargets.back);
         yield this._cadGeometryRenderPasses.back;
+      } else {
+        renderer.clear();
       }
 
+      renderer.setRenderTarget(this._cadGeometryRenderTargets.ghost);
       if (shouldRenderPasses.ghost) {
-        renderer.setRenderTarget(this._cadGeometryRenderTargets.ghost);
         yield this._cadGeometryRenderPasses.ghost;
+      } else {
+        renderer.clear();
       }
 
+      renderer.setRenderTarget(this._cadGeometryRenderTargets.inFront);
       if (shouldRenderPasses.inFront) {
-        renderer.setRenderTarget(this._cadGeometryRenderTargets.inFront);
         yield this._cadGeometryRenderPasses.inFront;
+      } else {
+        renderer.clear();
       }
     } finally {
       this._rendererStateHelper!.resetState();

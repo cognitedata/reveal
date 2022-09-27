@@ -86,7 +86,7 @@ module.exports = {
   },
   overrides: [
     {
-      files: ['*.test.ts'],
+      files: ['*.test.ts', 'test-utilities/**/*.ts'],
       rules: {
         // complains when you do expect(mockObj.mockFn).toBeCalled() in tests
         '@typescript-eslint/unbound-method': 'off'

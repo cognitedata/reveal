@@ -15,7 +15,7 @@ import { PointCloudNode } from '../src/PointCloudNode';
 import { AnnotationIdPointCloudObjectCollection } from '../src/styling/AnnotationListPointCloudObjectCollection';
 import { StyledPointCloudObjectCollection } from '../src/styling/StyledPointCloudObjectCollection';
 
-import { ModelIdentifier } from '@reveal/modeldata-api';
+import { ModelIdentifier } from '@reveal/data-providers';
 
 import assert from 'assert';
 import * as THREE from 'three';
