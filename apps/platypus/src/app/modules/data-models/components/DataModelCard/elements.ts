@@ -1,9 +1,5 @@
 import styled from 'styled-components/macro';
 
-export const StyledDeleteMenuItem = styled.span`
-  color: var(--cogs-text-icon--status-critical);
-`;
-
 export const StyledDataModelCard = styled.div`
   display: flex;
   flex-direction: column;

@@ -10,8 +10,6 @@ import {
 describe('DataModelCard', () => {
   it('Should render default data model card', async () => {
     render(<DefaultDataModelCard />);
-    const menu = screen.getAllByRole('menu');
-    expect(menu.length).toBe(1);
     const headers = screen.getAllByRole('heading', { level: 5 });
     expect(headers.length).toBe(1);
     expect(screen.getByRole('heading')).toHaveTextContent('BestDay');
@@ -23,8 +21,6 @@ describe('DataModelCard', () => {
 
   it('Should render a data model card without owners and default version', async () => {
     render(<DataModelCardWithoutOwners />);
-    const menu = screen.getAllByRole('menu');
-    expect(menu.length).toBe(1);
     const headers = screen.getAllByRole('heading', { level: 5 });
     expect(headers.length).toBe(1);
     expect(screen.getByRole('heading')).toHaveTextContent('Equipments');
