@@ -7,7 +7,7 @@ import { CogniteClient } from '@cognite/sdk-2.x';
 import { loginManager } from '../utils/LoginManager';
 import useBaseUrl from '@docusaurus/useBaseUrl';
 import styled from 'styled-components';
-import useThemeContext from '@theme/hooks/useThemeContext';
+import { useColorMode } from '@docusaurus/theme-common';
 
 const Root = styled.div`
   padding: 16px;
@@ -51,7 +51,7 @@ type Props = {
 };
 
 export default function DemoLoginCover(props: Props): ReactElement {
-  const { isDarkTheme } = useThemeContext();
+  const isDarkTheme = useColorMode().colorMode === 'dark';
   const [isLoggedIn, setIsLoggedIn] = React.useState(loginManager.isLoggedIn);
   useEffect(() => {
     return loginManager.onIsLoggedInChanged(setIsLoggedIn);

@@ -6,7 +6,7 @@ import * as THREE from 'three';
 import { createRevealManager } from './createRevealManager';
 import { RevealManager } from './RevealManager';
 
-import { ModelDataProvider, ModelMetadataProvider } from '@reveal/modeldata-api';
+import { ModelDataProvider, ModelMetadataProvider } from '@reveal/data-providers';
 import { SectorCuller } from '@reveal/cad-geometry-loaders';
 import { SceneHandler } from '@reveal/utilities';
 import { IAnnotationProvider, PointCloudObjectAnnotationData } from '@reveal/pointclouds';

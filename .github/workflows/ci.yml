@@ -21,7 +21,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - uses: actions/cache@v2
+    - uses: actions/cache@v3
       id: npm_cache
       with:
         path: '**/node_modules'
@@ -63,9 +63,10 @@ jobs:
     name: Run unit tests
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
 
-    - uses: actions/cache@v2
+    - uses: actions/cache@v3
+>>>>>>> master
       id: npm_cache
       with:
         path: '**/node_modules'
@@ -97,7 +98,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - uses: actions/cache@v2
+    - uses: actions/cache@v3
       id: npm_cache
       with:
         path: '**/node_modules'
@@ -150,7 +151,7 @@ jobs:
         name: viewer
         path: viewer/dist/
 
-    - uses: actions/cache@v2
+    - uses: actions/cache@v3
       id: npm_cache
       with:
         path: '**/node_modules'
@@ -172,97 +173,23 @@ jobs:
       working-directory: examples
       run: yarn build
 
-  # runs only when there are changes in parser-worker/
-  # we use it here because github haven't figured out conditionally required checks
-  # see https://github.community/t/feature-request-conditional-required-checks/16761/13
-  ci-parser-worker:
-    name: Parser worker
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: legacy-parser-worker
-    steps:
-      - uses: actions/checkout@v3
-      - uses: technote-space/get-diff-action@v6
-        with:
-          PREFIX_FILTER: legacy-parser-worker/parser-worker
-
-      - name: Setup Rust
-        if: env.GIT_DIFF
-        run: |
-          rustup component add clippy
-          rustup component add rustfmt
-
-      - name: Cache cargo registry
-        if: env.GIT_DIFF
-        uses: actions/cache@v3
-        with:
-          path: ~/.cargo/registry
-          key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock') }}
-
-      - name: Cache cargo index
-        if: env.GIT_DIFF
-        uses: actions/cache@v3
-        with:
-          path: ~/.cargo/git
-          key: ${{ runner.os }}-cargo-index-${{ hashFiles('**/Cargo.lock') }}
-
-      - name: Cache cargo build
-        if: env.GIT_DIFF
-        uses: actions/cache@v3
-        with:
-          path: target
-          key: ${{ runner.os }}-cargo-build-target-${{ hashFiles('**/Cargo.lock') }}
-
-      - name: cargo fmt
-        if: env.GIT_DIFF
-        run: |
-          cargo version
-          # fail on warnings, test all features
-          cargo fmt -- --check
-
-      - name: cargo clippy
-        if: env.GIT_DIFF
-        run: |
-          cargo version
-          # NOTE: as of 2020-03-17, Rust 1.42, mem_replace_with_default is triggered by a macro in wasm_bindgen
-          # and needs to be disabled
-          cargo clippy --all-targets --all-features -- -D warnings -A clippy::mem_replace_with_default
-
-      - name: Run tests
-        if: env.GIT_DIFF
-        run: |
-          cargo version
-          cargo test --all --verbose
-
-      - name: Install wasm-pack
-        if: env.GIT_DIFF
-        uses: jetli/wasm-pack-action@v0.3.0
-
-      - name: Install NPM dependencies
-        if: env.GIT_DIFF
-        working-directory: legacy-parser-worker/parser-worker
-        run: yarn
-
-      - name: Build parser-worker
-        if: env.GIT_DIFF
-        working-directory: legacy-parser-worker/parser-worker
-        run: yarn build:prod
-
   build-preview-documentation:
     name: Build preview documentation
     runs-on: ubuntu-latest
     steps:
       - name: Checkout 🛎️
-        uses: actions/checkout@v2 # If you're using actions/checkout@v2 you must set persist-credentials to false in most cases for the deployment to work correctly.
+        uses: actions/checkout@v3 # If you're using actions/checkout@v2 you must set persist-credentials to false in most cases for the deployment to work correctly.
 
       - name: Initialize variables
         run: |
           pwd
-          echo "PR_NUMBER=$(jq --raw-output .pull_request.number $GITHUB_EVENT_PATH)" >> $GITHUB_ENV
+          export "PR_NUMBER=$(jq --raw-output .pull_request.number $GITHUB_EVENT_PATH)"
+          export "PR_TIMESTAMP=$(date)"
+          echo "PR_NUMBER=$PR_NUMBER" >> $GITHUB_ENV
+          echo "PR_TIMESTAMP=$PR_TIMESTAMP" >> $GITHUB_ENV
           echo "name=PR_NUMBER::$PR_NUMBER" >> $GITHUB_ENV
 
-      - uses: actions/cache@v2
+      - uses: actions/cache@v3
         id: npm_cache
         with:
           path: '**/node_modules'
@@ -278,7 +205,7 @@ jobs:
         run: yarn run build:prod
 
       - name: Install NPM documentation dependencies
-        if: steps.npm_cache.outputs.cache-hit != 'true'
+        # if: steps.npm_cache.outputs.cache-hit != 'true' # Broken
         working-directory: documentation
         run: yarn install --immutable
 
@@ -294,14 +221,13 @@ jobs:
         uses: jacobtomlinson/gha-find-replace@v1
         with:
           find: "title: .*"
-          replace: "title: 'Reveal documentation (preview #${{ env.PR_NUMBER }})',"
+          replace: "title: 'Reveal documentation (preview #${{ env.PR_NUMBER }}, built ${{ env.PR_TIMESTAMP }})',"
           include: "docusaurus.config.js"
           exclude: ".git"
 
       - name: Build documentation 🔧
         working-directory: documentation
         run: |
-          yarn install --immutable
           yarn build:fast
 
       - name: Upload documentation artifact
@@ -357,7 +283,7 @@ jobs:
   cleanup:
     name: Cleanup
     runs-on: ubuntu-latest
-    needs: [ci-examples, build-viewer, ci-parser-worker, deploy-preview-documentation]
+    needs: [ci-examples, build-viewer, deploy-preview-documentation]
     if: always()
     steps:
     - uses: geekyeggo/delete-artifact@v1

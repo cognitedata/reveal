@@ -4,7 +4,7 @@
 
 import * as THREE from 'three';
 
-import { File3dFormat } from '../../packages/modeldata-api';
+import { File3dFormat } from '../../packages/data-providers';
 import { SectorMetadata, CadModelMetadata, SectorSceneFactory } from '../../packages/cad-parsers';
 
 let modelIdRunningNumber = 0;
@@ -15,7 +15,7 @@ export function createCadModelMetadata(sceneVersion: number, root: SectorMetadat
   const modelId = `testModel_${modelIdRunningNumber++}`;
   const model: CadModelMetadata = {
     modelIdentifier: modelId,
-    format: File3dFormat.RevealCadModel,
+    format: File3dFormat.GltfCadModel,
     formatVersion: sceneVersion,
     modelBaseUrl: `https://localhost/${modelId}`,
     modelMatrix: new THREE.Matrix4().identity(),

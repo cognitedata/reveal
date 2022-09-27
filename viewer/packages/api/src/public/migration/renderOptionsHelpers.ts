@@ -90,6 +90,32 @@ export function determineSsaoRenderParameters(
   return ssaoParameters;
 }
 
+/**
+ * Determines the default resolution threshold based on device .
+ * @param rendererResolutionThreshold User provided resolution cap.
+ * @param device Device type (mobile, tablet, desktop, etc.).
+ * @param devicePixelRatio Device pixel ratio set on the renderer.
+ */
+export function determineResolutionCap(
+  rendererResolutionThreshold: number | undefined,
+  device: DeviceDescriptor,
+  devicePixelRatio: number
+): number {
+  if (rendererResolutionThreshold) {
+    return rendererResolutionThreshold;
+  }
+
+  const resolutionThreshold = 1.4e6;
+
+  // This is an attempt at increasing performance for high-resolution mobile devices
+  // by mapping resolution to physical pixel size
+  if (device.deviceType === 'mobile' || device.deviceType === 'tablet') {
+    return Math.floor(resolutionThreshold / devicePixelRatio);
+  }
+
+  return resolutionThreshold;
+}
+
 function restrictAntiAliasingModeBasedOnDevice(
   antiAliasingHint: AntiAliasingHintOption,
   device: DeviceDescriptor

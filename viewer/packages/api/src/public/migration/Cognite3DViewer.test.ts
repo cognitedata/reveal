@@ -81,8 +81,8 @@ describe('Cognite3DViewer', () => {
     const outputs = {
       items: [
         {
-          format: 'reveal-directory',
-          version: 8,
+          format: 'gltf-directory',
+          version: 9,
           blobId: 1
         }
       ]
@@ -126,8 +126,8 @@ describe('Cognite3DViewer', () => {
     const outputs = {
       items: [
         {
-          format: 'reveal-directory',
-          version: 8,
+          format: 'gltf-directory',
+          version: 9,
           blobId: 1
         }
       ]
@@ -199,7 +199,7 @@ describe('Cognite3DViewer', () => {
   test('viewer can add/remove Object3d on scene', () => {
     const viewer = new Cognite3DViewer({ sdk, renderer, _sectorCuller });
     const scene = viewer.getScene();
-    const obj = new THREE.Mesh(new THREE.SphereBufferGeometry(), new THREE.MeshBasicMaterial());
+    const obj = new THREE.Mesh(new THREE.SphereGeometry(), new THREE.MeshBasicMaterial());
 
     viewer.addObject3D(obj);
     expect(scene.getObjectById(obj.id)).toEqual(obj);

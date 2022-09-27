@@ -8,6 +8,7 @@ import * as THREE from 'three';
 
 import { WorkerPool } from '../utils/WorkerPool';
 import { ILoader } from './ILoader';
+import { ModelDataProvider } from '@reveal/data-providers';
 import { PointCloudEptGeometryNode } from '../geometry/PointCloudEptGeometryNode';
 import * as EptDecoderWorker from '../workers/eptBinaryDecoder.worker';
 
@@ -19,7 +20,6 @@ import { decomposeStylableObjects } from '../../styling/decomposeStylableObjects
 
 import { fromThreeVector3, setupTransferableMethodsOnMain } from '@reveal/utilities';
 import { MetricsLogger } from '@reveal/metrics';
-import { ModelDataProvider } from '@reveal/modeldata-api';
 
 export class EptBinaryLoader implements ILoader {
   private readonly _dataLoader: ModelDataProvider;

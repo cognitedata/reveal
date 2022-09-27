@@ -49,13 +49,17 @@ import { ViewerState, ViewStateHelper } from '../../utilities/ViewStateHelper';
 import { RevealManagerHelper } from '../../storage/RevealManagerHelper';
 
 import { DefaultCameraManager, CameraManager, CameraChangeDelegate } from '@reveal/camera-manager';
-import { CdfModelIdentifier, File3dFormat } from '@reveal/modeldata-api';
+import { CdfModelIdentifier, File3dFormat } from '@reveal/data-providers';
 import { DataSource, CdfDataSource, LocalDataSource } from '@reveal/data-source';
 import { IntersectInput, SupportedModelTypes, CogniteModelBase, LoadingState } from '@reveal/model-base';
 
 import { CogniteClient } from '@cognite/sdk';
 import log from '@reveal/logger';
-import { determineAntiAliasingMode, determineSsaoRenderParameters } from './renderOptionsHelpers';
+import {
+  determineAntiAliasingMode,
+  determineResolutionCap,
+  determineSsaoRenderParameters
+} from './renderOptionsHelpers';
 
 type Cognite3DViewerEvents = 'click' | 'hover' | 'cameraChange' | 'sceneRendered' | 'disposed';
 
@@ -228,7 +232,7 @@ export class Cognite3DViewer {
       this._events.cameraChange.fire(position.clone(), target.clone());
     });
 
-    const revealOptions = createRevealManagerOptions(options);
+    const revealOptions = createRevealManagerOptions(options, this._renderer.getPixelRatio());
     if (options._localModels === true) {
       this._dataSource = new LocalDataSource();
       this._cdfSdkClient = undefined;
@@ -595,7 +599,7 @@ export class Cognite3DViewer {
 
     const model3d = new Cognite3DModel(modelId, revisionId, cadNode, nodesApiClient);
     this._models.push(model3d);
-    this._sceneHandler.addCadModel(model3d, cadNode.cadModelIdentifier);
+    this._sceneHandler.addCadModel(cadNode, cadNode.cadModelIdentifier);
 
     return model3d;
   }
@@ -625,7 +629,7 @@ export class Cognite3DViewer {
     const model = new CognitePointCloudModel(modelId, revisionId, pointCloudNode);
     this._models.push(model);
 
-    this._sceneHandler.addPointCloudModel(model, pointCloudNode.potreeNode.modelIdentifier);
+    this._sceneHandler.addPointCloudModel(pointCloudNode, pointCloudNode.potreeNode.modelIdentifier);
 
     return model;
   }
@@ -646,7 +650,7 @@ export class Cognite3DViewer {
     switch (model.type) {
       case 'cad':
         const cadModel = model as Cognite3DModel;
-        this._sceneHandler.removeCadModel(cadModel);
+        this._sceneHandler.removeCadModel(cadModel.cadNode);
         model.dispose();
         this.revealManager.removeModel(model.type, cadModel.cadNode);
 
@@ -658,7 +662,7 @@ export class Cognite3DViewer {
 
       case 'pointcloud':
         const pcModel = model as CognitePointCloudModel;
-        this._sceneHandler.removePointCloudModel(pcModel);
+        this._sceneHandler.removePointCloudModel(pcModel.pointCloudNode);
         this.revealManager.removeModel(model.type, pcModel.pointCloudNode);
         break;
 
@@ -703,7 +707,7 @@ export class Cognite3DViewer {
     const outputs = await this._dataSource.getModelMetadataProvider().getModelOutputs(modelIdentifier);
     const outputFormats = outputs.map(output => output.format);
 
-    if (hasOutput(File3dFormat.GltfCadModel) || hasOutput(File3dFormat.RevealCadModel)) {
+    if (hasOutput(File3dFormat.GltfCadModel)) {
       return 'cad';
     } else if (hasOutput(File3dFormat.EptPointCloud)) {
       return 'pointcloud';
@@ -721,7 +725,7 @@ export class Cognite3DViewer {
    * @example
    * ```js
    * const sphere = new THREE.Mesh(
-   * new THREE.SphereBufferGeometry(),
+   * new THREE.SphereGeometry(),
    * new THREE.MeshBasicMaterial()
    * );
    * viewer.addObject3D(sphere);
@@ -743,7 +747,7 @@ export class Cognite3DViewer {
    * @param object
    * @example
    * ```js
-   * const sphere = new THREE.Mesh(new THREE.SphereBufferGeometry(), new THREE.MeshBasicMaterial());
+   * const sphere = new THREE.Mesh(new THREE.SphereGeometry(), new THREE.MeshBasicMaterial());
    * viewer.addObject3D(sphere);
    * viewer.removeObject3D(sphere);
    * ```
@@ -1043,7 +1047,7 @@ export class Cognite3DViewer {
   async getIntersectionFromPixel(offsetX: number, offsetY: number): Promise<null | Intersection>;
   /**
    * @deprecated Since 3.1 options argument have no effect.
-   * */
+   */
   async getIntersectionFromPixel(
     offsetX: number,
     offsetY: number,
@@ -1055,63 +1059,7 @@ export class Cognite3DViewer {
    * @param offsetY
    */
   async getIntersectionFromPixel(offsetX: number, offsetY: number): Promise<null | Intersection> {
-    const cadModels = this.getModels('cad');
-    const pointCloudModels = this.getModels('pointcloud');
-    const cadNodes = cadModels.map(x => x.cadNode);
-    const pointCloudNodes = pointCloudModels.map(x => x.pointCloudNode);
-
-    const normalizedCoords = {
-      x: (offsetX / this.renderer.domElement.clientWidth) * 2 - 1,
-      y: (offsetY / this.renderer.domElement.clientHeight) * -2 + 1
-    };
-
-    const input: IntersectInput = {
-      normalizedCoords,
-      camera: this.getCamera(),
-      renderer: this.renderer,
-      clippingPlanes: this.getClippingPlanes(),
-      domElement: this.renderer.domElement
-    };
-    const cadResults = await this._pickingHandler.intersectCadNodes(cadNodes, input);
-    const pointCloudResults = this._pointCloudPickingHandler.intersectPointClouds(pointCloudNodes, input);
-
-    const intersections: Intersection[] = [];
-    if (pointCloudResults.length > 0) {
-      const result = pointCloudResults[0]; // Nearest intersection
-      for (const model of pointCloudModels) {
-        if (model.pointCloudNode === result.pointCloudNode) {
-          const intersection: PointCloudIntersection = {
-            type: 'pointcloud',
-            model,
-            point: result.point,
-            pointIndex: result.pointIndex,
-            distanceToCamera: result.distance,
-            annotationId: result.annotationId
-          };
-          intersections.push(intersection);
-          break;
-        }
-      }
-    }
-
-    if (cadResults.length > 0) {
-      const result = cadResults[0]; // Nearest intersection
-      for (const model of cadModels) {
-        if (model.cadNode === result.cadNode) {
-          const intersection: CadIntersection = {
-            type: 'cad',
-            model,
-            treeIndex: result.treeIndex,
-            point: result.point,
-            distanceToCamera: result.distance
-          };
-          intersections.push(intersection);
-        }
-      }
-    }
-
-    intersections.sort((a, b) => a.distanceToCamera - b.distanceToCamera);
-    return intersections.length > 0 ? intersections[0] : null;
+    return this.intersectModels(offsetX, offsetY);
   }
 
   /** @private */
@@ -1163,8 +1111,82 @@ export class Cognite3DViewer {
   }
 
   /** @private */
+  private async intersectModels(
+    offsetX: number,
+    offsetY: number,
+    options?: { asyncCADIntersection?: boolean }
+  ): Promise<null | Intersection> {
+    const cadModels = this.getModels('cad');
+    const pointCloudModels = this.getModels('pointcloud');
+    const cadNodes = cadModels.map(x => x.cadNode);
+    const pointCloudNodes = pointCloudModels.map(x => x.pointCloudNode);
+
+    const normalizedCoords = {
+      x: (offsetX / this.renderer.domElement.clientWidth) * 2 - 1,
+      y: (offsetY / this.renderer.domElement.clientHeight) * -2 + 1
+    };
+
+    const input: IntersectInput = {
+      normalizedCoords,
+      camera: this.getCamera(),
+      renderer: this.renderer,
+      clippingPlanes: this.getClippingPlanes(),
+      domElement: this.renderer.domElement
+    };
+    const cadResults = await this._pickingHandler.intersectCadNodes(
+      cadNodes,
+      input,
+      options?.asyncCADIntersection ?? true
+    );
+    const pointCloudResults = this._pointCloudPickingHandler.intersectPointClouds(pointCloudNodes, input);
+
+    const intersections: Intersection[] = [];
+    if (pointCloudResults.length > 0) {
+      const result = pointCloudResults[0]; // Nearest intersection
+      for (const model of pointCloudModels) {
+        if (model.pointCloudNode === result.pointCloudNode) {
+          const intersection: PointCloudIntersection = {
+            type: 'pointcloud',
+            model,
+            point: result.point,
+            pointIndex: result.pointIndex,
+            distanceToCamera: result.distance,
+            annotationId: result.annotationId
+          };
+          intersections.push(intersection);
+          break;
+        }
+      }
+    }
+
+    if (cadResults.length > 0) {
+      const result = cadResults[0]; // Nearest intersection
+      for (const model of cadModels) {
+        if (model.cadNode === result.cadNode) {
+          const intersection: CadIntersection = {
+            type: 'cad',
+            model,
+            treeIndex: result.treeIndex,
+            point: result.point,
+            distanceToCamera: result.distance
+          };
+          intersections.push(intersection);
+        }
+      }
+    }
+
+    intersections.sort((a, b) => a.distanceToCamera - b.distanceToCamera);
+
+    return intersections.length > 0 ? intersections[0] : null;
+  }
+
+  /**
+   * Callback used by DefaultCameraManager to do model intersection. Made synchronous to avoid
+   * input lag when zooming in and out. Default implementation is async. See PR #2405 for more info.
+   * @private
+   */
   private async modelIntersectionCallback(offsetX: number, offsetY: number) {
-    const intersection = await this.getIntersectionFromPixel(offsetX, offsetY);
+    const intersection = await this.intersectModels(offsetX, offsetY, { asyncCADIntersection: false });
 
     return { intersection, modelsBoundingBox: this._updateNearAndFarPlaneBuffers.combinedBbox };
   }
@@ -1233,7 +1255,7 @@ function createRenderer(): THREE.WebGLRenderer {
   return renderer;
 }
 
-function createRevealManagerOptions(viewerOptions: Cognite3DViewerOptions): RevealOptions {
+function createRevealManagerOptions(viewerOptions: Cognite3DViewerOptions, devicePixelRatio: number): RevealOptions {
   const customTarget = viewerOptions.renderTargetOptions?.target;
   const outputRenderTarget = customTarget
     ? {
@@ -1242,15 +1264,17 @@ function createRevealManagerOptions(viewerOptions: Cognite3DViewerOptions): Reve
       }
     : undefined;
 
+  const device = determineCurrentDevice();
+  const resolutionCap = determineResolutionCap(viewerOptions.rendererResolutionThreshold, device, devicePixelRatio);
+
   const revealOptions: RevealOptions = {
     continuousModelStreaming: viewerOptions.continuousModelStreaming,
     outputRenderTarget,
-    rendererResolutionThreshold: viewerOptions.rendererResolutionThreshold,
+    rendererResolutionThreshold: resolutionCap,
     internal: {}
   };
 
   revealOptions.internal!.cad = { sectorCuller: viewerOptions._sectorCuller };
-  const device = determineCurrentDevice();
   const { antiAliasing, multiSampleCount } = determineAntiAliasingMode(viewerOptions.antiAliasingHint, device);
   const ssaoRenderParameters = determineSsaoRenderParameters(viewerOptions.ssaoQualityHint, device);
   const edgeDetectionParameters = {

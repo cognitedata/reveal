@@ -3,7 +3,7 @@
  */
 
 import { CogniteClient } from '@cognite/sdk/dist/src';
-import { CdfModelIdentifier, ModelIdentifier } from '@reveal/modeldata-api';
+import { CdfModelIdentifier, ModelIdentifier } from '@reveal/data-providers';
 import assert from 'assert';
 import { CdfPointCloudObjectAnnotation } from '../annotationTypes';
 import { IAnnotationProvider } from './IAnnotationProvider';

@@ -107,7 +107,7 @@ module.exports = env => {
       poll: 1000
     },
 
-    devtool: 'inline-source-map',
+    devtool: 'eval-source-map',
 
     plugins: [
       new HtmlWebpackPlugin({ title: require(path.resolve('./packages/sector-parser', './package.json')).name }),

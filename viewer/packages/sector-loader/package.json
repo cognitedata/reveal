@@ -9,8 +9,8 @@
   },
   "dependencies": {
     "@reveal/cad-parsers": "workspace:*",
+    "@reveal/data-providers": "workspace:*",
     "@reveal/metrics": "workspace:*",
-    "@reveal/modeldata-api": "workspace:*",
     "@reveal/rendering": "workspace:*",
     "@reveal/sector-parser": "workspace:*",
     "@reveal/utilities": "workspace:*"
