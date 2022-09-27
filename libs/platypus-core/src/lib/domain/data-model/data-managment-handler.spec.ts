@@ -35,7 +35,7 @@ describe('DataManagementHandlerTest', () => {
     name: 't_Test_Type_1',
     externalId: 'Test',
     destination: {
-      type: 'alpha_data_model_instances',
+      type: 'data_model_instances',
       modelExternalId: 'Type_1',
       spaceExternalId: 'Test',
       instanceSpaceExternalId: 'Test',
@@ -90,7 +90,7 @@ describe('DataManagementHandlerTest', () => {
       name: 't_Test_Type_1',
       externalId: 'Test',
       destination: {
-        type: 'alpha_data_model_instances',
+        type: 'data_model_instances',
         modelExternalId: 'Type_1',
         spaceExternalId: 'Test',
         instanceSpaceExternalId: 'Test',

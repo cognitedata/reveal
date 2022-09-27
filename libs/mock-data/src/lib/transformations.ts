@@ -4,7 +4,7 @@ export const transformationsMockData = [
     externalId: 't_blog_Post_1',
     name: 'Post_1',
     destination: {
-      type: 'alpha_data_model_instances',
+      type: 'data_model_instances',
       instanceSpaceExternalId: 'blog',
       spaceExternalId: 'blog',
       modelExternalId: 'Post_1',

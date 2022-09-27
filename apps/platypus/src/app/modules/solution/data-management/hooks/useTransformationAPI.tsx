@@ -45,7 +45,7 @@ export function useTransformationMutate() {
         externalId: `t_${externalId}_${typeKey}`,
         name: typeKey,
         destination: {
-          type: 'alpha_data_model_instances',
+          type: 'data_model_instances',
           instanceSpaceExternalId: externalId,
           spaceExternalId: externalId,
           modelExternalId: typeKey,

@@ -16,7 +16,7 @@ export class TransformationApiService {
         .post(`${this.transformationsBaseUrl}/filter`, {
           data: {
             filter: {
-              destinationType: 'alphadatamodelinstances',
+              destinationType: 'datamodelinstances',
             },
             limit: 1000,
           },
@@ -29,7 +29,7 @@ export class TransformationApiService {
               response.data.items as DataModelTransformation[]
             ).filter(
               (el) =>
-                el.destination.type === 'alpha_data_model_instances' &&
+                el.destination.type === 'data_model_instances' &&
                 el.destination?.modelExternalId === type &&
                 el.destination.spaceExternalId === externalId
             );
