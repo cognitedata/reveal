@@ -84,7 +84,6 @@ export class AxisViewTool extends Cognite3DViewerToolBase {
     let yMouse = 0;
 
     divElement.addEventListener('mousedown', event => {
-      debugger;
       const mouseDownEvent = new MouseEvent('mousedown', {
         clientX: event.clientX,
         clientY: event.clientY,

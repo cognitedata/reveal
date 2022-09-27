@@ -26,7 +26,6 @@ const keyMap: { [s: string]: string } = {
 export default class Keyboard {
   private keys: { [s: string]: number } = {};
   private _disabled = false;
-  private readonly _domElement: HTMLElement;
 
   get disabled(): boolean {
     return this._disabled;
@@ -41,8 +40,7 @@ export default class Keyboard {
     }
   }
 
-  constructor(domElement: HTMLElement) {
-    this._domElement = domElement;
+  constructor() {
     this.addEventListeners();
   }
 
