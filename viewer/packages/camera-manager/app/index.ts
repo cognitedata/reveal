@@ -23,8 +23,6 @@ function init() {
 
   scene = new THREE.Scene();
 
-  keyboard = new Keyboard();
-
   const grid = new THREE.GridHelper(40, 40);
   scene.add(grid);
 
@@ -43,6 +41,8 @@ function init() {
   renderer = new THREE.WebGLRenderer({ antialias: true });
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.setAnimationLoop(render);
+
+  keyboard = new Keyboard(renderer.domElement);
 
   controls = new ComboControls(camera, renderer.domElement);
 
