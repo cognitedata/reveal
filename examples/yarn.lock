@@ -1851,11 +1851,6 @@ functions-have-names@^1.2.2:
   resolved "https://registry.yarnpkg.com/functions-have-names/-/functions-have-names-1.2.3.tgz#0404fe4ee2ba2f607f0e0ec3c80bae994133b834"
   integrity sha512-xckBUXyTIqT97tq2x2AMb+g163b5JFysYk0x4qxNFwbfQkmNZoiRHb6sPzI9/QV33WeuvVYBUIiD4NzNIyqaRQ==
 
-geo-three@0.1.1:
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/geo-three/-/geo-three-0.1.1.tgz#e7ea8e1778d753432cdc99adf2a05271fae61dd4"
-  integrity sha512-fqi67VYCq6CnkWo7/XdQvyHZaXv02F4ebD7BMAQknIRrZ3Ajewvgd5Zf7peQXBuDtj+oC1IM7cwndPf3pwV0kQ==
-
 geojson@^0.5.0:
   version "0.5.0"
   resolved "https://registry.yarnpkg.com/geojson/-/geojson-0.5.0.tgz#3cd6c96399be65b56ee55596116fe9191ce701c0"
