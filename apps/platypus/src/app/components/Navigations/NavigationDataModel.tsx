@@ -8,6 +8,7 @@ import {
   StyledTopBarRight,
   StyledTitle,
   StyledFlex,
+  StyledExternalId,
 } from './elements';
 import { useDataModel } from '@platypus-app/hooks/useDataModelActions';
 
@@ -43,7 +44,10 @@ export const NavigationDataModel = () => {
               data-cy="back-to-all-models-btn"
             />
           </Tooltip>
-          <StyledTitle level="2">{dataModel?.name}</StyledTitle>
+          <StyledTitle level="2" strong>
+            {dataModel?.name}
+          </StyledTitle>
+          <StyledExternalId level="2">{`[${dataModel?.id}]`}</StyledExternalId>
         </StyledFlex>
       </StyledTopBarLeft>
     );

@@ -36,8 +36,17 @@ export const StyledTitleButton = styled(Button)`
 
 export const StyledTitle = styled(Body)`
   && {
-    padding-left: 10px;
-    color: rgba(0, 0, 0, 0.7);
+    color: var(--cogs-text-icon--medium);
+    margin-left: 10px;
+    user-select: text;
+  }
+`;
+
+export const StyledExternalId = styled(Body)`
+  && {
+    color: var(--cogs-text-icon--muted);
+    margin-left: 4px;
+    user-select: text;
   }
 `;
 
