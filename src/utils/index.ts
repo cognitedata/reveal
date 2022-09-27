@@ -1,6 +1,7 @@
 export * from './annotations';
 export * from './colors';
 export * from './common';
+export * from './compare';
 export * from './dateTime';
 export * from './events';
 export * from './files';
