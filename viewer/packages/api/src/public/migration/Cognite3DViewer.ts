@@ -211,7 +211,6 @@ export class Cognite3DViewer {
     this.canvas.style.minHeight = '100%';
     this.canvas.style.maxWidth = '100%';
     this.canvas.style.maxHeight = '100%';
-    this.canvas.tabIndex = 0;
 
     this._domElement = options.domElement ?? createCanvasWrapper();
     this._domElement.appendChild(this.canvas);
