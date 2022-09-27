@@ -63,7 +63,7 @@
     "rxjs": "7.5.7",
     "skmeans": "0.11.3",
     "three": "0.144.0",
-    "three-stdlib": "2.16.2"
+    "three-stdlib": "2.17.0"
   },
   "devDependencies": {
     "@azure/msal-browser": "2.28.3",
@@ -78,7 +78,7 @@
     "@types/jsdom": "20.0.0",
     "@types/lodash": "4.14.185",
     "@types/mixpanel-browser": "2.38.0",
-    "@types/node": "16.11.60",
+    "@types/node": "16.11.62",
     "@types/offscreencanvas": "2019.7.0",
     "@types/proj4": "2.5.2",
     "@types/random-seed": "0.3.3",
@@ -93,7 +93,7 @@
     "cross-env": "7.0.3",
     "cross-var": "1.1.0",
     "dat.gui": "0.7.9",
-    "eslint": "8.23.1",
+    "eslint": "8.24.0",
     "eslint-config-prettier": "8.5.0",
     "eslint-plugin-header": "3.1.1",
     "eslint-plugin-jsdoc": "39.3.6",
