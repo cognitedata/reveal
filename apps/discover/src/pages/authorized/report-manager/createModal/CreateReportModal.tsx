@@ -67,7 +67,7 @@ export const CreateReportModal = ({
           disabled
           value={sourceValue}
           title={sourceTitle}
-          htmlSize={50}
+          fullWidth
           required
         />
         <Select
