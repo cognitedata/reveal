@@ -59,7 +59,6 @@
     "@docusaurus/theme-live-codeblock": "2.1.0",
     "clsx": "1.2.1",
     "cross-env": "7.0.3",
-    "geo-three": "0.1.1",
     "ieee754": "1.2.1",
     "npm-to-yarn": "1.0.1",
     "query-string": "7.1.1",
