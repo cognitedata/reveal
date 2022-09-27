@@ -26,6 +26,7 @@ const keyMap: { [s: string]: string } = {
 export default class Keyboard {
   private keys: { [s: string]: number } = {};
   private _disabled = false;
+  private readonly _domElement: HTMLElement;
 
   get disabled(): boolean {
     return this._disabled;
@@ -40,7 +41,8 @@ export default class Keyboard {
     }
   }
 
-  constructor() {
+  constructor(domElement: HTMLElement) {
+    this._domElement = domElement;
     this.addEventListeners();
   }
 
@@ -64,15 +66,15 @@ export default class Keyboard {
   private readonly addEventListeners = () => {
     this.clearPressedKeys();
 
-    window.addEventListener('keydown', this.onKeydown);
-    window.addEventListener('keyup', this.onKeyup);
-    window.addEventListener('blur', this.clearPressedKeys);
+    this._domElement.addEventListener('keydown', this.onKeydown);
+    this._domElement.addEventListener('keyup', this.onKeyup);
+    this._domElement.addEventListener('blur', this.clearPressedKeys);
   };
 
   private readonly removeEventListeners = () => {
-    window.removeEventListener('keydown', this.onKeydown);
-    window.removeEventListener('keyup', this.onKeyup);
-    window.removeEventListener('blur', this.clearPressedKeys);
+    this._domElement.removeEventListener('keydown', this.onKeydown);
+    this._domElement.removeEventListener('keyup', this.onKeyup);
+    this._domElement.removeEventListener('blur', this.clearPressedKeys);
   };
 
   private readonly onKeydown = (event: KeyboardEvent) => {
