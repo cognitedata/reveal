@@ -55,3 +55,4 @@ export {
 
 export { Cognite3DModel, BoundingBoxClipper, GeometryFilter, WellKnownUnit } from './packages/cad-model';
 export { CognitePointCloudModel } from './packages/pointclouds';
+export { Image360Entity } from './packages/360-images';
