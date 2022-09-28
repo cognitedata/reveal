@@ -34,8 +34,18 @@ export class TreeIndexNodeCollection extends NodeCollection {
     }
   }
 
-  updateSet(treeIndices: IndexSet): void {
-    this._treeIndices = treeIndices;
+  updateSet(treeIndices: IndexSet): void;
+  updateSet(treeIndices: NumericRange): void;
+  updateSet(treeIndices: Iterable<number>): void;
+  updateSet(treeIndices: IndexSet | NumericRange | Iterable<number>): void {
+    this._treeIndices.clear();
+    if (treeIndices instanceof IndexSet) {
+      this._treeIndices = treeIndices;
+    } else if (NumericRange.isNumericRange(treeIndices)) {
+      this._treeIndices.addRange(treeIndices);
+    } else {
+      this._treeIndices.unionWith(new IndexSet(treeIndices));
+    }
     this.notifyChanged();
   }
 
