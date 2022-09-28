@@ -7,7 +7,7 @@ import { PointCloudMetadataRepository } from './PointCloudMetadataRepository';
 
 import * as THREE from 'three';
 
-import { ModelDataProvider, ModelMetadataProvider } from '@reveal/modeldata-api';
+import { ModelDataProvider, ModelMetadataProvider } from '@reveal/data-providers';
 import { Potree } from './potree-three-loader';
 import { PointCloudFactory } from './PointCloudFactory';
 import { IAnnotationProvider } from './styling/IAnnotationProvider';

@@ -10,7 +10,7 @@ import { LevelOfDetail, ConsumedSector, CadModelMetadata } from '@reveal/cad-par
 import { CadModelUpdateHandler, CadModelBudget } from '@reveal/cad-geometry-loaders';
 import { LoadingState } from '@reveal/model-base';
 import { CadMaterialManager, RenderMode } from '@reveal/rendering';
-import { File3dFormat, ModelIdentifier } from '@reveal/modeldata-api';
+import { File3dFormat, ModelIdentifier } from '@reveal/data-providers';
 import { MetricsLogger } from '@reveal/metrics';
 import { defaultDesktopCadModelBudget } from '@reveal/cad-geometry-loaders';
 import { CadModelFactory, CadModelSectorLoadStatistics, CadNode, GeometryFilter } from '@reveal/cad-model';
@@ -75,13 +75,6 @@ export class CadManager {
       if (!cadModel) {
         // Model has been removed - results can come in for a period just after removal
         return;
-      }
-
-      if (sector.instancedMeshes && sector.levelOfDetail === LevelOfDetail.Detailed) {
-        cadModel.updateInstancedMeshes(sector.instancedMeshes, sector.modelIdentifier, sector.metadata.id);
-      } else if (sector.levelOfDetail === LevelOfDetail.Simple || sector.levelOfDetail === LevelOfDetail.Discarded) {
-        cadModel.discardInstancedMeshes(sector.metadata.id);
-        cadModel.removeBatchedSectorGeometries(sector.metadata.id);
       }
 
       if (

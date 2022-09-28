@@ -9,7 +9,7 @@ import { Potree, PointCloudOctree, PointCloudMaterial } from '../potree-three-lo
 import { ShapeType } from './shapes/IShape';
 import { CompositeShape } from './shapes/CompositeShape';
 import { CdfAnnotationProvider } from './CdfAnnotationProvider';
-import { CdfModelIdentifier } from '@reveal/modeldata-api';
+import { CdfModelIdentifier } from '@reveal/data-providers';
 
 const dummyAnnotationsResponse = {
   items: [

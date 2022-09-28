@@ -1,6 +1,5 @@
 name: "CodeQL config"
 paths:
-  - parser-worker
   - viewer
   - examples
   - documentation

@@ -40,9 +40,8 @@ export default class ReassignNodeStyleVisualTest extends ViewerVisualTestFixture
       return Promise.resolve();
     }
 
-    model.setRotationFromEuler(new THREE.Euler(Math.PI / 4, 0, 0));
-    model.updateMatrix();
-    model.updateMatrixWorld();
+    const matrix = new THREE.Matrix4().makeRotationFromEuler(new THREE.Euler(-Math.PI / 4, 0, 0));
+    model.setModelTransformation(matrix);
 
     const alternatingIndexSet = createAlternatingIndexSet(model.nodeCount);
     const invertedRanges = alternatingIndexSet.invertedRanges();

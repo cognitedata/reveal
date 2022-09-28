@@ -25,7 +25,7 @@ import { PointCloudObjectMetadata } from './annotationTypes';
  * @noInheritDoc
  * @module @cognite/reveal
  */
-export class CognitePointCloudModel extends THREE.Object3D implements CogniteModelBase {
+export class CognitePointCloudModel implements CogniteModelBase {
   public readonly type: SupportedModelTypes = 'pointcloud';
   public readonly modelId: number;
   /**
@@ -47,19 +47,15 @@ export class CognitePointCloudModel extends THREE.Object3D implements CogniteMod
    * @internal
    */
   constructor(modelId: number, revisionId: number, pointCloudNode: PointCloudNode) {
-    super();
     this.modelId = modelId;
     this.revisionId = revisionId;
     this.pointCloudNode = pointCloudNode;
-    this.add(pointCloudNode);
   }
 
   /**
    * Used to clean up memory.
    */
-  dispose(): void {
-    this.children = [];
-  }
+  dispose(): void {}
 
   // eslint-disable-next-line jsdoc/require-description
   /**

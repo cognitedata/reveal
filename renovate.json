@@ -4,25 +4,35 @@
   ],
   "packageRules": [
     {
-      "matchPaths": ["legacy-parser-worker"],
-      "groupName": "legacy-parser-worker",
+      "matchPackagePrefixes": [
+        "@cognite/sdk-",
+        "@cognite/reveal-"
+      ],
       "enabled": false
     },
     {
-      "matchPackagePrefixes": ["@cognite/sdk-", "@cognite/reveal-"],
-      "enabled": false
-    },
-    {
-      "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
+      "matchUpdateTypes": [
+        "minor",
+        "patch",
+        "pin",
+        "digest"
+      ],
       "automerge": true
     },
     {
-      "matchUpdateTypes": ["major"],
+      "matchUpdateTypes": [
+        "major"
+      ],
       "automerge": false
     },
     {
-      "matchPackagePrefixes": [""],
-      "addLabels": ["dependencies", "auto-update"],
+      "matchPackagePrefixes": [
+        ""
+      ],
+      "addLabels": [
+        "dependencies",
+        "auto-update"
+      ],
       "prConcurrentLimit": 5
     },
     {
@@ -30,11 +40,18 @@
       "extends": ["github>Turbo87/renovate-config//rust/updateToolchain"]
     },
     {
-      "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
+      "matchUpdateTypes": [
+        "minor",
+        "patch",
+        "pin",
+        "digest"
+      ],
       "stabilityDays": 4
     },
     {
-      "matchUpdateTypes": ["major"],
+      "matchUpdateTypes": [
+        "major"
+      ],
       "stabilityDays": 10
     }
   ]
