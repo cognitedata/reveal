@@ -27,7 +27,6 @@ enum RenderMode {
   GeometryType
 }
 
-
 enum RenderLayer {
   Back = RenderMode.Color,
   InFront = RenderMode.Effects,

@@ -19,7 +19,6 @@ import { LocalModelDataProvider } from '../../packages/data-providers';
 import { IPointCloudTreeGeometry } from '../../packages/pointclouds/src/potree-three-loader/geometry/IPointCloudTreeGeometry';
 
 export function createPointCloudModel(modelId: number, revisionId: number): CognitePointCloudModel {
-
   const modelDataProvider = new LocalModelDataProvider();
   const potreeInstance = new Potree(modelDataProvider);
 
