@@ -1,3 +1,4 @@
+import { Checkbox } from '@cognite/cogs.js';
 import React from 'react';
 import { TableToggleHideAllColumnProps } from 'react-table';
 import { mergeRefs } from 'utils';
@@ -5,7 +6,7 @@ import { mergeRefs } from 'utils';
 export const IndeterminateCheckbox = React.forwardRef<
   HTMLInputElement,
   TableToggleHideAllColumnProps
->(({ indeterminate, ...rest }, ref) => {
+>(({ indeterminate, onChange = () => {}, ...rest }, ref) => {
   const defaultRef = React.useRef<HTMLInputElement>();
 
   React.useEffect(() => {
@@ -14,5 +15,12 @@ export const IndeterminateCheckbox = React.forwardRef<
     }
   }, [defaultRef, indeterminate]);
   // TODO: Replace with cogs.js checkbox when bug is fixed
-  return <input type="checkbox" ref={mergeRefs([defaultRef, ref])} {...rest} />;
+  return (
+    <Checkbox
+      name="Select All"
+      checkboxRef={mergeRefs([defaultRef, ref]) as any}
+      {...rest}
+      onChange={(_, evt) => onChange(evt)}
+    />
+  );
 });

@@ -1,9 +1,12 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
+import update from 'immutability-helper';
+
 import {
   Column,
   IdType,
   PluginHook,
   SortingRule,
+  useColumnOrder,
   useBlockLayout,
   useFlexLayout,
   useResizeColumns,
@@ -11,7 +14,10 @@ import {
   useTable,
 } from 'react-table';
 import styled from 'styled-components';
+import { HTML5Backend } from 'react-dnd-html5-backend';
 import { Flex } from '@cognite/cogs.js';
+import { DndProvider } from 'react-dnd';
+
 import { ColumnToggle } from './ColumnToggle';
 import { useCellSelection } from './hooks';
 import { SortIcon } from './SortIcon';
@@ -70,6 +76,7 @@ export function NewTable<T extends TableData>({
   const plugins = [
     isSortingEnabled && useSortBy,
     isKeyboardNavigationEnabled && useCellSelection,
+    useColumnOrder,
     !isResizingColumns && useFlexLayout,
     isResizingColumns && useResizeColumns,
     isResizingColumns && useBlockLayout,
@@ -92,14 +99,17 @@ export function NewTable<T extends TableData>({
     allColumns,
 
     getToggleHideAllColumnsProps,
+    setColumnOrder,
+
     state: { sortBy },
     prepareRow,
   } = useTable<T>(
     {
       data,
-      columns,
+      columns: columns,
       manualSortBy: Boolean(onSort),
       defaultColumn,
+
       initialState: {
         hiddenColumns,
       },
@@ -114,18 +124,37 @@ export function NewTable<T extends TableData>({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [JSON.stringify(sortBy)]);
 
+  const moveCard = useCallback(
+    (dragIndex: number, hoverIndex: number) => {
+      const allCards = [...allColumns];
+
+      const newCards = update(allCards, {
+        $splice: [
+          [dragIndex, 1],
+          [hoverIndex, 0, allCards[dragIndex]],
+        ],
+      });
+
+      setColumnOrder(newCards.map(bla => bla.id));
+    },
+    [allColumns, setColumnOrder]
+  );
+
   const loadMoreProps = { isLoadingMore, hasNextPage, fetchMore };
 
   return (
     <TableContainer>
       {hiddenColumns.length > 0 && (
         <ColumnSelectorWrapper>
-          <Flex justifyContent="flex-end">
-            <ColumnToggle<T>
-              allColumns={allColumns}
-              getToggleHideAllColumnsProps={getToggleHideAllColumnsProps}
-            />
-          </Flex>
+          <DndProvider backend={HTML5Backend}>
+            <Flex justifyContent="flex-end">
+              <ColumnToggle<T>
+                moveCard={moveCard}
+                allColumns={allColumns}
+                getToggleHideAllColumnsProps={getToggleHideAllColumnsProps}
+              />
+            </Flex>
+          </DndProvider>
         </ColumnSelectorWrapper>
       )}
       <StyledTable {...getTableProps()}>
