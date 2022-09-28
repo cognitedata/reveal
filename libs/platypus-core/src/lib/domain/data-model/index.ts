@@ -6,3 +6,4 @@ export * from './dto';
 export * from './validators';
 export * from './services';
 export * from './constants';
+export * from './utils';

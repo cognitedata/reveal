@@ -13,6 +13,7 @@ import {
   DataModelStorageBindingsDTO,
   ValidateDataModelDTO,
 } from '../../dto';
+import { getDataModelEndpointUrl } from '../../utils';
 
 export class MixerApiService {
   private schemaServiceBaseUrl: string;
@@ -245,7 +246,12 @@ export class MixerApiService {
   }
 
   async runQuery(dto: RunQueryDTO): Promise<GraphQLQueryResponse> {
-    const url = `/api/v1/projects/${this.cdfClient.project}/schema/api/${dto.dataModelId}/${dto.schemaVersion}/graphql`;
+    const url = getDataModelEndpointUrl(
+      this.cdfClient.project,
+      dto.dataModelId,
+      dto.schemaVersion,
+      this.cdfClient.getBaseUrl()
+    );
     return (await this.runGraphQlQuery(url, dto.graphQlParams)).data;
   }
 

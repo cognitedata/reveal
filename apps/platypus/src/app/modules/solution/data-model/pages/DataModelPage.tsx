@@ -14,6 +14,7 @@ import {
   DataModelVersionStatus,
   DataModelVersion,
   Result,
+  getDataModelEndpointUrl,
 } from '@platypus/platypus-core';
 
 import { DEFAULT_VERSION_PATH } from '@platypus-app/utils/config';
@@ -38,6 +39,9 @@ import {
 } from '@platypus-app/hooks/useDataModelActions';
 import { useQueryClient } from 'react-query';
 import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
+import { EndpointModal } from '../components/EndpointModal';
+import { getProject } from '@cognite/cdf-utilities';
+import { getCogniteSDKClient } from '../../../../../environments/cogniteSdk';
 import { ToggleVisualizer } from '../components/ToggleVisualizer/ToggleVisualizer';
 import { usePersistedState } from '@platypus-app/hooks/usePersistedState';
 
@@ -85,6 +89,7 @@ export const DataModelPage = ({ dataModelExternalId }: DataModelPageProps) => {
   const [updating, setUpdating] = useState(false);
   const [isInit, setInit] = useState(false);
   const [breakingChanges, setBreakingChanges] = useState('');
+  const [showEndpointModal, setShowEndpointModal] = useState(false);
 
   const dataModelTypeDefsBuilder = useInjection(
     TOKENS.dataModelTypeDefsBuilderService
@@ -301,6 +306,7 @@ export const DataModelPage = ({ dataModelExternalId }: DataModelPageProps) => {
             localDraft={localDraft}
             onDiscardClick={handleDiscardClick}
             onPublishClick={handleSaveOrPublish}
+            onEndpointClick={() => setShowEndpointModal(true)}
             title={t('data_model_title', 'Data model')}
             onDataModelVersionSelect={handleDataModelVersionSelect}
             selectedDataModelVersion={selectedDataModelVersion}
@@ -355,6 +361,18 @@ export const DataModelPage = ({ dataModelExternalId }: DataModelPageProps) => {
           )}
         </PageContentLayout.Body>
       </PageContentLayout>
+
+      {showEndpointModal && (
+        <EndpointModal
+          endpoint={getDataModelEndpointUrl(
+            getProject(),
+            selectedDataModelVersion.externalId,
+            selectedDataModelVersion.version,
+            getCogniteSDKClient().getBaseUrl()
+          )}
+          onRequestClose={() => setShowEndpointModal(false)}
+        />
+      )}
 
       {breakingChanges && (
         <BreakingChangesModal
