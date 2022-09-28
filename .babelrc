@@ -11,7 +11,7 @@
       [
         "@cognite/babel-plugin-styled-components",
         {
-          "namespace": "cdf-ui-flows",
+          "namespace": "cdf-flows",
           "fileName": false
         }
       ]
