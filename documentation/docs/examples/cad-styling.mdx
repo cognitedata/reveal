@@ -36,6 +36,7 @@ identifies 3D nodes by `treeIndex`. There are several implementations of `NodeCo
 | Class                          |                                                                                  |
 | ------------------------------ | -------------------------------------------------------------------------------- |
 | `TreeIndexNodeCollection`      | A set of nodes defined by a list of tree indices. Can be updated with a new set of indices. |
+| `NodeIdNodeCollection`         | Similar to `TreeIndexNodeCollection`, but useful when you have 'node IDs', not tree indices. |
 | `PropertyFilterNodeCollection` | A set of nodes defined by a query to the 3D backend to find nodes that matches one or more properties/attributes. |
 | `SinglePropertyFilterNodeCollection` | Similar to `PropertyFilterNodeCollection`, but only matches one node property to many values (e.g. for looking up nodes with a list of IDs). |
 | `AssetNodeCollection`          | A set of nodes defined by [asset mappings](https://docs.cognite.com/api/v1/#tag/3D-Asset-Mapping) linking 3D nodes to [assets](https://docs.cognite.com/dev/concepts/resource_types/assets.html). |

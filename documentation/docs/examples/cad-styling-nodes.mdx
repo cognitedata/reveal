@@ -1,7 +1,7 @@
 ---
 id: cad-styling-nodes
-title: Filtering nodes by node properties
-describe: Applying styles to nodes based on node properties/attributes
+title: Filtering nodes by node ID or properties
+describe: Applying styles to nodes based on node IDs or properties/attributes
 ---
 
 import { DemoWrapper } from '@site/docs/components/DemoWrapper';
@@ -10,12 +10,18 @@ import { DemoWrapper } from '@site/docs/components/DemoWrapper';
 these properties, allowing queries such as "all pipes", "nodes within module P600" or "nodes
 with status S5". Combinations are also possible by using `UnionNodeCollection` and `IntersectionNodeCollection`.
 
+`NodeIdNodeCollection` contains a list of nodes identified by their CDF IDs.
+
 `PropertyFilterNodeCollection` is used to query nodes based on node properties. It's possible to specify
 multiple criterias which will be combined using `AND` - i.e. all criterias must be met for a node
-to match. To emulate `OR`, use `UnionNodeCollection`.
+to match. To emulate `OR`, use `UnionNodeCollection`. 
 
-Note that if a node is in a `PropertyFilterNodeCollection` all of its children will also be
-in the set.
+`SinglePropertyFilterNodeCollection` is similar to `PropertyFilterNodeCollection`, but differs in that
+it only matches on a single node property and is able to match on a list of values. This is useful
+to e.g. provide a list of node names or source system IDs.
+
+Note that if a node is in one of the collections discussed in this page, all of its children will also
+be in the set.
 
 :::note
 The test model used in the documentation site is lacking good node properties and the quality of
@@ -25,6 +31,19 @@ the nodes.
 :::
 
 <DemoWrapper />
+
+## Highlight nodes identified by IDs
+
+If Node IDs are known, `NodeIdNodeCollection` can be used to style the nodes (and the children):
+
+```js runnable
+// import { NodeIdNodeCollection, DefaultNodeAppearance } from '@cognite/reveal';
+
+const nodes = new NodeIdNodeCollection(sdk, model);
+const nodeIds = [4396401896076315, 4919353932832466, 8504202619027920, 922623766135003]; // Life boats
+nodes.executeFilter(nodeIds);
+model.assignStyledNodeCollection(nodes, DefaultNodeAppearance.Highlighted);
+```
 
 ## Show all pipes
 
