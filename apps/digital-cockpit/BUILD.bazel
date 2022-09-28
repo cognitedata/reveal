@@ -43,6 +43,7 @@ SOURCES = glob(
 
 PUBLIC = glob([
     "public/*",
+    "public/.well-known/*",
 ])
 
 # Generates the below helpers.
