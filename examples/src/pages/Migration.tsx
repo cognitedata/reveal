@@ -332,7 +332,7 @@ export function Migration() {
               {
                 const { point } = intersection;
                 console.log(`Clicked point assigned to the object with annotationId: ${intersection.annotationId} at`, point);
-                const sphere = new THREE.Mesh(new THREE.SphereBufferGeometry(0.1), new THREE.MeshBasicMaterial({ color: 'red' }));
+                const sphere = new THREE.Mesh(new THREE.SphereGeometry(0.1), new THREE.MeshBasicMaterial({ color: 'red' }));
                 sphere.position.copy(point);
                 viewer.addObject3D(sphere);
               }
