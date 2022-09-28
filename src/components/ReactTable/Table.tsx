@@ -1,10 +1,12 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import {
   Column,
   IdType,
   PluginHook,
   SortingRule,
+  useBlockLayout,
   useFlexLayout,
+  useResizeColumns,
   useSortBy,
   useTable,
 } from 'react-table';
@@ -31,6 +33,7 @@ export interface TableProps<T extends Record<string, any>>
     evt?: React.MouseEvent<HTMLDivElement, MouseEvent>
   ) => void;
   showLoadButton?: boolean;
+  isResizingColumns?: boolean;
 }
 export interface OnSortProps<T> {
   sortBy?: SortingRule<T>[];
@@ -39,13 +42,6 @@ export interface OnSortProps<T> {
 export type TableData = Record<string, any>;
 
 NewTable.Columns = ResourceTableColumns;
-
-const defaultColumn = {
-  // When using the useFlexLayout:
-  minWidth: 30, // minWidth is only used as a limit for resizing
-  width: 150, // width is used for both the flex-basis and flex-grow
-  maxWidth: 200, // maxWidth is only used as a limit for resizing
-};
 
 export function NewTable<T extends TableData>({
   data,
@@ -57,15 +53,26 @@ export function NewTable<T extends TableData>({
   isSortingEnabled = false,
   isStickyHeader = false,
   isKeyboardNavigationEnabled = true,
+  isResizingColumns = false,
   showLoadButton = false,
   hasNextPage,
   isLoadingMore,
   fetchMore,
 }: TableProps<T>) {
+  const defaultColumn = useMemo(
+    () => ({
+      minWidth: 100,
+      width: 200,
+      maxWidth: 400,
+    }),
+    []
+  );
   const plugins = [
     isSortingEnabled && useSortBy,
     isKeyboardNavigationEnabled && useCellSelection,
-    useFlexLayout,
+    !isResizingColumns && useFlexLayout,
+    isResizingColumns && useResizeColumns,
+    isResizingColumns && useBlockLayout,
   ].filter(Boolean) as PluginHook<T>[];
 
   const allFields = columns.map(col => col.accessor || col.id || '');
@@ -138,6 +145,14 @@ export function NewTable<T extends TableData>({
                       isSorted={column.isSorted}
                       isSortedDesc={column.isSortedDesc}
                     />
+                    {isResizingColumns ? (
+                      <ResizerWrapper
+                        {...column.getResizerProps()}
+                        className={`resizer ${
+                          column.isResizing ? 'isResizing' : ''
+                        }`}
+                      />
+                    ) : null}
                   </ThWrapper>
                 </Th>
               ))}
@@ -195,6 +210,22 @@ const StyledTable = styled.div`
   & > div {
     min-width: 100%;
     width: fit-content;
+  }
+`;
+
+const ResizerWrapper = styled.div`
+  position: absolute;
+  z-index: 1;
+  top: 0;
+  right: 0;
+  display: inline-block;
+  width: 10px;
+  height: 100%;
+  border-right: 2px solid rgba(0, 0, 0, 0.1);
+  touch-action: none;
+
+  &.isResizing {
+    border-right: 2px solid rgba(0, 0, 0, 0.3);
   }
 `;
 

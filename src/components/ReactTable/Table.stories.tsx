@@ -296,3 +296,13 @@ ExampleWithLoadMoreButton.play = async ({ canvasElement }) => {
 
   await waitFor(() => expect(canvas.getAllByRole('row').length).toBe(7));
 };
+
+export const ExampleWithResizing: ComponentStory<typeof Table> = args => {
+  const data = useMemo(() => exampleDatas, []);
+  const columns = useMemo(() => exampleColumns, []);
+  return <Table {...args} data={data} columns={columns} />;
+};
+
+ExampleWithResizing.args = {
+  isResizingColumns: true,
+};
