@@ -19,6 +19,11 @@ describe('Platypus Data Preview Page - Preview', () => {
     cy.get('[data-testid="Comment"]').should('be.visible');
   });
 
+  it('should redirect to first type', () => {
+    cy.get('[data-testid="Post"]').should('have.class', 'active');
+    cy.getBySel('data-preview-table').should('be.visible');
+  });
+
   it('should filter types', () => {
     cy.getBySel('types-list-filter').should('be.visible');
     cy.getBySel('types-list-filter').type('Comment');
@@ -57,7 +62,7 @@ describe('Platypus Data Preview Page - Preview', () => {
     // check custom col types
     cy.get(
       '.ag-body-viewport .ag-row[row-index="0"] .ag-cell[col-id="user"] .cogs-tag'
-    ).should('have.text', '{"externalId":""}');
+    ).should('have.text', '123');
   });
   it('should show edit transformation button when its already created', () => {
     cy.get('[data-testid="Post"]').click();
@@ -69,6 +74,15 @@ describe('Platypus Data Preview Page - Preview', () => {
       data: {
         listUser: {
           items: [],
+        },
+        aggregateUser: {
+          items: [
+            {
+              count: {
+                externalId: 0,
+              },
+            },
+          ],
         },
       },
     };

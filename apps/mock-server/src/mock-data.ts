@@ -223,8 +223,8 @@ export const mockDataSample = {
           },
         ],
         User_1: [
-          { id: 123, name: 'John Doe' },
-          { id: 456, name: 'Jane Doe' },
+          { id: 123, externalId: 123, name: 'John Doe' },
+          { id: 456, externalId: 456, name: 'Jane Doe' },
         ],
         Comment_1: [
           {

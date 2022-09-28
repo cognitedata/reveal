@@ -13,6 +13,7 @@ import {
   ColumnConfig,
   ColumnTypes,
 } from '../types';
+import { decimalValueFormatter } from '../utils';
 import { ReactNode } from 'react';
 
 const cellClassRules = {
@@ -21,6 +22,30 @@ const cellClassRules = {
 };
 export class GridConfigService {
   private customColTypes = [] as string[];
+
+  getDefaultColDefConfig(theme: string): ColDef {
+    return {
+      ...this.getColTypeProps('String', theme),
+
+      // make every column editable
+      editable: false,
+
+      resizable: true,
+
+      sortable: true,
+      filter: true,
+      menuTabs: ['filterMenuTab'],
+      cellEditor: 'textCellEditor',
+      comparator(a, b) {
+        // eslint-disable-next-line lodash/prefer-lodash-typecheck
+        if (typeof a === 'string') {
+          return a.localeCompare(b);
+        } else {
+          return a > b ? 1 : a < b ? -1 : 0;
+        }
+      },
+    } as ColDef;
+  }
 
   /**
    * Loads default ag-grid gridOptions needed for grid to work
@@ -40,15 +65,16 @@ export class GridConfigService {
     return <GridOptions>{
       enableRangeSelection: false,
       floatingFilter: false,
-      stopEditingWhenCellsLoseFocus: false,
+      stopEditingWhenCellsLoseFocus: true,
       autoSizePadding: 0,
       singleClickEdit: false,
-      editType: 'fullRow',
+      editType: '', // removed 'fullRow' for now, since there seems to be a bug in ag grid in full row edit
       multiSortKey: 'ctrl',
       domLayout: virtualizationDisabled ? 'autoHeight' : 'normal',
       suppressColumnVirtualisation: virtualizationDisabled ? true : false,
       enableCellChangeFlash: true,
       // groupUseEntireRow: true,
+      // readOnlyEdit: true,
       suppressCellSelection: false,
       suppressMenuHide: false,
       enableCellExpressions: true,
@@ -57,24 +83,7 @@ export class GridConfigService {
       headerHeight: 44,
       // a default column definition with properties that get applied to every column
       defaultColDef: {
-        ...this.getColTypeProps('String', theme),
-        // make every column editable
-        editable: false,
-
-        resizable: true,
-
-        sortable: true,
-        filter: true,
-        menuTabs: ['filterMenuTab'],
-        cellEditor: 'textCellEditor',
-        comparator(a, b) {
-          // eslint-disable-next-line lodash/prefer-lodash-typecheck
-          if (typeof a === 'string') {
-            return a.localeCompare(b);
-          } else {
-            return a > b ? 1 : a < b ? -1 : 0;
-          }
-        },
+        ...this.getDefaultColDefConfig(theme),
       },
       components: {
         checkboxRendererComponent: BoolCellRenderer,
@@ -114,11 +123,11 @@ export class GridConfigService {
               allowDecimals: true,
             },
             valueFormatter: (params: ValueFormatterParams) =>
-              params.value && params.value !== 0
-                ? params.value.toLocaleString(undefined, {
-                    minimumFractionDigits: 2,
-                  })
-                : '',
+              decimalValueFormatter({
+                value: params.value,
+                maximumFractionDigits: 2,
+                isFloat: true,
+              }),
           },
         },
         columnTypes || {}

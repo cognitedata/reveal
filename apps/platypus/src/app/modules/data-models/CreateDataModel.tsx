@@ -14,12 +14,11 @@ import { DEFAULT_VERSION_PATH } from '@platypus-app/utils/config';
 import { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useTranslation } from '../../hooks/useTranslation';
-import { TOKENS } from '@platypus-app/di';
 import { CreateDataModelModalContent } from './elements';
-import { useInjection } from '@platypus-app/hooks/useInjection';
 import { useDataSets } from '@platypus-app/hooks/useDataSets';
 import { DataSet } from '@cognite/sdk/dist/src/types';
 import { Spinner } from '@platypus-app/components/Spinner/Spinner';
+import { useDataModelCreateMutation } from './hooks/useDataModelCreateMutation';
 
 export const CreateDataModel = ({
   createDataModel,
@@ -28,12 +27,12 @@ export const CreateDataModel = ({
   createDataModel: boolean;
   onCancel: VoidFunction;
 }) => {
-  const [creating, setCreating] = useState<boolean>(false);
   const [dataModelName, setDataModelName] = useState('');
   const [dataModelDescription, setDataModelDescription] = useState('');
   const [inputError, setInputError] = useState(false);
   const history = useHistory();
   const { t } = useTranslation('CreateDataModelDialog');
+  const dataModelCreateMutation = useDataModelCreateMutation();
 
   const {
     data: dataSets,
@@ -53,27 +52,14 @@ export const CreateDataModel = ({
     OptionType<unknown> | undefined
   >(undefined);
 
-  const dataModelsHandler = useInjection(TOKENS.dataModelsHandler);
-
   const onCreateDataModel = () => {
-    setCreating(true);
-    dataModelsHandler
-      .create({
+    dataModelCreateMutation.mutate(
+      {
         name: dataModelName.trim(),
         description: dataModelDescription,
-      })
-      .then((result: any) => {
-        setCreating(false);
-        if (result.isFailure) {
-          if (result.error.name) {
-            setInputError(true);
-          } else {
-            Notification({
-              type: 'error',
-              message: result.error.message,
-            });
-          }
-        } else {
+      },
+      {
+        onSuccess: (result) => {
           Notification({
             type: 'success',
             message: t(
@@ -84,8 +70,16 @@ export const CreateDataModel = ({
           history.push(
             `data-models/${result.getValue().id}/${DEFAULT_VERSION_PATH}`
           );
-        }
-      });
+        },
+        onError: (error) => {
+          setInputError(true);
+          Notification({
+            type: 'error',
+            message: error.message,
+          });
+        },
+      }
+    );
   };
 
   return (
@@ -101,7 +95,7 @@ export const CreateDataModel = ({
       onOk={() => onCreateDataModel()}
       okDisabled={!dataModelName || !dataModelName.trim()}
       okButtonName={t('confirm', 'Confirm')}
-      okProgress={creating}
+      okProgress={dataModelCreateMutation.isLoading}
       okType="primary"
     >
       <CreateDataModelModalContent data-cy="create-data-model-modal">

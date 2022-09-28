@@ -1,13 +1,15 @@
 /* eslint-disable no-prototype-builtins */
 import { ColumnConfig, GridConfig } from '@cognite/cog-data-grid';
 import { KeyValueMap, DataModelTypeDefsType } from '@platypus/platypus-core';
+import { CheckboxCellRenderer } from '../components/DataPreviewTable/cell-renderers/CheckboxCellRenderer';
+import { IdCellRenderer } from '../components/DataPreviewTable/cell-renderers/IdCellRenderer';
 
-const colTypesMap = {
+const colTypesMap: KeyValueMap = {
   Boolean: 'BOOLEAN',
   String: 'TEXT',
   Int: 'NUMBER',
   Float: 'DECIMAL',
-} as KeyValueMap;
+};
 
 export const getInitialGridConfig = () => {
   return {
@@ -19,11 +21,26 @@ export const getInitialGridConfig = () => {
 
 export const buildGridConfig = (
   instanceIdCol: string,
-  dataModelType: DataModelTypeDefsType
+  dataModelType: DataModelTypeDefsType,
+  onRowAdd: (row: KeyValueMap) => void
 ): GridConfig => {
   return {
     ...getInitialGridConfig(),
     columns: [
+      {
+        label: '',
+        property: '_isDraftSelected',
+        defaultValue: '',
+        dataType: 'TEXT',
+        colDef: {
+          editable: false,
+          sortable: false,
+          suppressMovable: true,
+          cellRenderer: CheckboxCellRenderer,
+          headerComponent: () => '',
+          width: 44,
+        },
+      },
       {
         label: 'Instances',
         property: instanceIdCol,
@@ -32,6 +49,14 @@ export const buildGridConfig = (
         colDef: {
           editable: false,
           sortable: false,
+          suppressMovable: true,
+          cellRenderer: IdCellRenderer,
+          cellRendererParams: {
+            onRowAdd,
+          },
+          cellStyle: {
+            padding: '0 var(--ag-cell-horizontal-padding)',
+          },
         },
       },
       ...dataModelType.fields.map((field) => {
@@ -46,8 +71,10 @@ export const buildGridConfig = (
           rules: [],
           metadata: {},
           colDef: {
-            editable: false,
             sortable: false,
+            cellEditorParams: {
+              isRequired: field.nonNull,
+            },
           },
         } as ColumnConfig;
 

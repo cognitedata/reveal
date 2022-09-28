@@ -1,9 +1,12 @@
 import { ICellEditor, ICellEditorParams } from 'ag-grid-community';
 import { ChangeEvent, Component, createRef } from 'react';
+import { decimalValueFormatter } from '../core/utils';
+import { CellEditorWrapper } from './ui';
 
 interface NumberColTypeCellEditorState {
   value: string;
   hasError: boolean;
+  errorMessage: string;
 }
 
 interface NumberCellEditorProps extends ICellEditorParams {
@@ -15,8 +18,8 @@ export class NumberCellEditor
 {
   private inputRef: any;
   private allowDecimals = false;
-  private isDecimalPtn = /^\d+(\.\d{1,})?$/;
-  private isNumberPtn = /^\d+$/;
+  private isDecimalRegExp = /^\d+(\.\d{1,})?$/;
+  private isNumberRegExp = /^\d+$/;
 
   constructor(props: NumberCellEditorProps) {
     super(props);
@@ -24,10 +27,13 @@ export class NumberCellEditor
     this.inputRef = createRef();
 
     this.state = {
-      value: props.value.toString(),
+      value: decimalValueFormatter({
+        value: props.value,
+        isFloat: props.allowDecimals,
+      }),
       hasError: false,
+      errorMessage: '',
     };
-
     this.allowDecimals = props.allowDecimals === true;
     this.onValueChanged = this.onValueChanged.bind(this);
     this.preventInvalidInput = this.preventInvalidInput.bind(this);
@@ -46,12 +52,15 @@ export class NumberCellEditor
 
   focusIn() {
     this.inputRef.current.focus();
-    setTimeout(() => this.inputRef.current.select());
+    this.inputRef.current.select();
   }
 
   /* Component Editor Lifecycle methods */
   // the final value to send to the grid, on completion of editing
   getValue() {
+    if (!this.props.colDef.cellEditorParams.isRequired && !this.state.value)
+      return this.state.value;
+
     return +this.state.value;
   }
 
@@ -64,16 +73,17 @@ export class NumberCellEditor
   // Gets called once when editing is finished (eg if Enter is pressed).
   // If you return true, then the result of the edit will be ignored.
   isCancelAfterEnd() {
-    const isValid = this.isValueValid(this.state.value);
-    return isValid ? true : false;
+    const { hasError } = this.isValueValid(this.state.value);
+    return hasError;
   }
 
   onValueChanged(event: ChangeEvent<HTMLTextAreaElement>) {
-    const hasErrors = this.isValueValid(event.target.value);
+    const { hasError, errorMessage } = this.isValueValid(event.target.value);
 
     this.setState({
       value: !event.target.value ? '' : event.target.value,
-      hasError: hasErrors,
+      hasError,
+      errorMessage,
     });
   }
 
@@ -89,7 +99,7 @@ export class NumberCellEditor
       'Backspace',
       'Tab',
     ];
-    if (whitelistedKeyCodes.includes(event.code)) {
+    if (whitelistedKeyCodes.includes(event.code || event.key)) {
       return;
     }
 
@@ -105,22 +115,51 @@ export class NumberCellEditor
     }
   }
 
-  private isValueValid(value: string): boolean {
-    const ptn = this.allowDecimals ? this.isDecimalPtn : this.isNumberPtn;
-    return !ptn.test(value);
+  private isValueValid(value: string): {
+    hasError: boolean;
+    errorMessage: string;
+  } {
+    const checkNumericValueRegExp = this.allowDecimals
+      ? this.isDecimalRegExp
+      : this.isNumberRegExp;
+
+    if (this.props.colDef.cellEditorParams.isRequired) {
+      return {
+        hasError: !checkNumericValueRegExp.test(value),
+        errorMessage: `Field ${this.props.colDef.headerName} is required`,
+      };
+    }
+
+    if (!this.props.colDef.cellEditorParams.isRequired && !value) {
+      return {
+        hasError: false,
+        errorMessage: '',
+      };
+    }
+
+    return {
+      hasError: !checkNumericValueRegExp.test(value),
+      errorMessage: !checkNumericValueRegExp.test(value) ? 'Invalid value' : '',
+    };
   }
 
   render() {
     return (
-      <textarea
-        ref={this.inputRef}
-        value={this.state.value}
-        onChange={this.onValueChanged}
-        onKeyDown={this.preventInvalidInput}
-        className={`ag-cell-editor ${
-          this.state.hasError ? 'ag-has-error' : ''
-        }`}
-      ></textarea>
+      <CellEditorWrapper
+        key={`${this.props.data.externalId}-${this.props.colDef.headerName}`}
+        visible={this.state.hasError}
+        errorMessage={this.state.errorMessage}
+      >
+        <textarea
+          ref={this.inputRef}
+          value={this.state.value}
+          onChange={this.onValueChanged}
+          onKeyDown={this.preventInvalidInput}
+          className={`ag-cell-editor ${
+            this.state.hasError ? 'ag-has-error' : ''
+          }`}
+        />
+      </CellEditorWrapper>
     );
   }
 }

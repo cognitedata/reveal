@@ -3,19 +3,31 @@ import styled from 'styled-components';
 import { BasicPlaceholder } from '@platypus-app/components/BasicPlaceholder/BasicPlaceholder';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import { useState } from 'react';
+import { DataModelTypeDefsType } from '@platypus/platypus-core';
+import { usePublishedRowsCount } from '../../hooks/usePublishedRowsCount';
 
 type Props = {
   onLoadClick: () => void;
   doesSupportAcl: boolean;
+  externalId: string;
+  dataModelType: DataModelTypeDefsType;
 };
 
 export function TransformationPlaceholder({
   onLoadClick,
   doesSupportAcl,
+  externalId,
+  dataModelType,
 }: Props) {
+  const aggregationCount = usePublishedRowsCount({
+    dataModelExternalId: externalId,
+    dataModelType,
+  });
+  const isDataIngested =
+    aggregationCount.isFetched && aggregationCount.data === 0;
   const { t } = useTranslation('Transformation');
   const [isShown, toggleShown] = useState(true);
-  return isShown ? (
+  return isShown && isDataIngested ? (
     <Wrapper data-cy="transformation-placeholder">
       <BasicPlaceholder type="Search" onClose={() => toggleShown(false)}>
         <Flex direction="column" justifyContent="center" alignItems="center">

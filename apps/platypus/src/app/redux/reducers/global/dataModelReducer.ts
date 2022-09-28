@@ -111,18 +111,15 @@ const dataModelSlice = createSlice({
 
       const hasError = validationErrors.length > 0;
       state.hasError = hasError;
-
       if (graphQlSchemaString !== '') {
-        if (!hasError) {
-          try {
-            const parsedTypeDefs =
-              typeDefsBuilder.parseSchema(graphQlSchemaString);
-            state.typeDefs = parsedTypeDefs;
-            state.customTypesNames =
-              typeDefsBuilder.getCustomTypesNames(parsedTypeDefs);
-          } catch (err) {
-            clearState(state);
-          }
+        try {
+          const parsedTypeDefs =
+            typeDefsBuilder.parseSchema(graphQlSchemaString);
+          state.typeDefs = parsedTypeDefs;
+          state.customTypesNames =
+            typeDefsBuilder.getCustomTypesNames(parsedTypeDefs);
+        } catch (err) {
+          state.hasError = !!err;
         }
       } else {
         clearState(state);

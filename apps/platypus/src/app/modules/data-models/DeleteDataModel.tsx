@@ -11,6 +11,7 @@ import { StyledModalDialog } from './elements';
 import { getLocalDraftKey } from '@platypus-app/utils/local-storage-utils';
 import { useInjection } from '@platypus-app/hooks/useInjection';
 import { useQueryClient } from 'react-query';
+import { QueryKeys } from '@platypus-app/utils/queryKeys';
 
 export const DeleteDataModel = ({
   dataModel,
@@ -48,8 +49,10 @@ export const DeleteDataModel = ({
         });
 
         localStorageProvider.removeItem(getLocalDraftKey(dataModel.id));
-        queryClient.removeQueries(['dataModel', dataModel.id]);
-        queryClient.removeQueries(['dataModelVersions', dataModel.id]);
+        queryClient.removeQueries(QueryKeys.DATA_MODEL(dataModel.id));
+        queryClient.removeQueries(
+          QueryKeys.DATA_MODEL_VERSION_LIST(dataModel.id)
+        );
         onCancel();
         onAfterDeleting();
       }

@@ -49,12 +49,15 @@ describe('DataManagementHandlerTest', () => {
       .fn()
       .mockImplementation(() => Promise.resolve(mockTransformation)),
   } as any;
-
+  const dmsApiMock = {
+    ingestNodes: jest.fn().mockImplementation(() => Promise.resolve()),
+  } as any;
   const createInstance = () => {
     return new DataManagementHandler(
       queryBuilderMock,
       solutionSchemaServiceMock,
-      transformationApiMock
+      transformationApiMock,
+      dmsApiMock
     );
   };
 

@@ -46,7 +46,7 @@ describe('Data Model Page - Existing Solution Preview', () => {
     cy.get('h5').contains('Post').should('be.visible');
     cy.getBySel('edit-schema-btn').should('be.visible').click();
 
-    cy.addDataModelTypeField('Post', 'phone', true);
+    cy.addDataModelTypeField('Post', 'phone', 'String', true);
 
     // checks if visualizer updated with edited value
     cy.get('div#Post')
@@ -60,9 +60,9 @@ describe('Data Model Page - Existing Solution Preview', () => {
   it('should create type and fields & see changes in visualizer', () => {
     cy.get('[aria-label="UI editor"]').click();
     cy.addDataModelType('Person');
-    cy.addDataModelTypeField('Person', 'firstName');
-    cy.addDataModelTypeField('Person', 'last_name');
-    cy.addDataModelTypeField('Person', 'age');
+    cy.addDataModelTypeField('Person', 'firstName', 'String');
+    cy.addDataModelTypeField('Person', 'last_name', 'String');
+    cy.addDataModelTypeField('Person', 'age', 'String');
     cy.editDataModelTypeFieldName('Person', 'last_name', 'lastName', false);
 
     cy.getDataModelFieldRow('age').should('be.visible');
@@ -127,7 +127,7 @@ describe('Data Model Page - Existing Solution Preview', () => {
     cy.addDataModelType('Author');
     cy.get('h5').contains('Author').should('be.visible');
 
-    cy.addDataModelTypeField('Author', 'user', true);
+    cy.addDataModelTypeField('Author', 'user', 'String', true);
     cy.getDataModelFieldRow('user').find('[col-id="type"]').click();
 
     // for type, we are using popup cell editor and we should handle it differently

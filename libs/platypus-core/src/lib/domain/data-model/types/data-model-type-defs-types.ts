@@ -9,8 +9,20 @@ export interface DirectiveProps {
   arguments?: ArgumentNodeProps[];
 }
 
+type BultinFieldTypeNames =
+  | 'Boolean'
+  | 'DataPoint'
+  | 'DataPointValue'
+  | 'Float'
+  | 'Int'
+  | 'Int64'
+  | 'JSONObject'
+  | 'String'
+  | 'TimeSeries'
+  | 'Timestamp';
+
 export interface DataModelTypeDefsFieldType {
-  name: string;
+  name: BultinFieldTypeNames | string;
   list?: boolean;
   nonNull?: boolean;
 }

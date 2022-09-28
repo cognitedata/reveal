@@ -27,6 +27,22 @@ export default function (db: CdfMockDatabase, config: CdfApiConfig) {
   };
   schemaServiceRouter.init();
 
+  schemaServiceRouter.delete('/datamodelstorage/nodes', (req, res) => {
+    if (!req.body.items || !req.body.items.length) {
+      return res.status(400).jsonp({ errorMessage: 'items can not be empty' });
+    }
+
+    req.body.items.forEach((item) => {
+      if (item.externalId === undefined) {
+        return res.status(400).jsonp({
+          errorMessage: 'one or more items is missing externalId property',
+        });
+      }
+    });
+
+    return res.status(200).jsonp({});
+  });
+
   schemaServiceRouter.post('/datamodelstorage/nodes', (req, res) => {
     if (!req.body.spaceExternalId) {
       return res
@@ -66,7 +82,11 @@ export default function (db: CdfMockDatabase, config: CdfApiConfig) {
       CdfDatabaseService.from(schemaServiceDb, 'nodes').deleteByKey({
         externalId: item.externalId,
       });
-      CdfDatabaseService.from(schemaServiceDb, 'nodes').insert(item);
+      // Temporary fix!
+      CdfDatabaseService.from(schemaServiceDb, 'nodes').insert({
+        ...item,
+        id: item.externalId,
+      });
     });
 
     // console.log(JSON.stringify(dataModelDb, null, 2));

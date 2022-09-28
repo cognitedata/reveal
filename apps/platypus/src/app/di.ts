@@ -117,7 +117,8 @@ rootInjector
       new DataManagementHandler(
         new MixerQueryBuilder(),
         rootInjector.get(TOKENS.mixerApiService),
-        new TransformationApiService(getCogniteSDKClient())
+        new TransformationApiService(getCogniteSDKClient()),
+        new DmsApiService(getCogniteSDKClient())
       )
   )
   .inSingletonScope();

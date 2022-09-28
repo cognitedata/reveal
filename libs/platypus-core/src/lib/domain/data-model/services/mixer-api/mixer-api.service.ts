@@ -94,6 +94,9 @@ export class MixerApiService {
         mutation createUpdateApi($apiCreate: ApiCreate!) {
           upsertApis(apis: [$apiCreate]) {
             externalId
+            name
+            description
+            createdTime
             versions {
               version
               dataModel {

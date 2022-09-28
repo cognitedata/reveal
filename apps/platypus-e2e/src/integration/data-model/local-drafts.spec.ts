@@ -103,6 +103,25 @@ describe('Data Model Page - Local Drafts', () => {
     cy.getBySel('type-list-item-Currency').should('be.visible');
   });
 
+  it('persists unpublished changes after refreshing the page with only types without fields', () => {
+    const oldTypeNames = ['Post', 'User', 'Comment'];
+
+    cy.getBySel('edit-schema-btn').should('be.visible').click();
+    oldTypeNames.forEach((typeName) => {
+      cy.deleteDataModelType(typeName);
+    });
+
+    cy.getBySel('no-types-add-type-btn').should('be.visible').click();
+    cy.getBySel('type-name-input').should('be.visible').type('Person');
+    cy.getBySel('modal-ok-button').should('be.visible').click();
+    cy.getBySel('type-view-back-button').should('be.visible').click();
+
+    cy.reload();
+
+    typeShouldExist('Person');
+    cy.get('.cogs-body-3').should('contain', '0 properties');
+  });
+
   it('clears local draft when user clicks to discard', () => {
     cy.addDataModelType('Currency');
 
@@ -137,7 +156,7 @@ describe('Data Model Page - Local Drafts', () => {
     // Publish button should be disabled until we make a change
     cy.getBySel('publish-schema-btn').should('have.attr', 'disabled');
     cy.getBySel(`type-list-item-Currency`).click();
-    cy.addDataModelTypeField('Currency', 'foo');
+    cy.addDataModelTypeField('Currency', 'foo', 'String');
     cy.getBySel('publish-schema-btn').should('not.have.attr', 'disabled');
   });
 

@@ -73,6 +73,9 @@
         "lodash/prefer-lodash-method": [
           "off"
         ],
+        "lodash/prefer-lodash-typecheck": [
+          "off"
+        ],
         "lodash/prop-shorthand": [
           "off"
         ],

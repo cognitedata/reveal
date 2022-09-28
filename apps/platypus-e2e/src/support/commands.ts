@@ -30,6 +30,7 @@ declare namespace Cypress {
     addDataModelTypeField(
       typeName: string,
       fieldName: string,
+      fieldType: string,
       isRequired?: boolean
     ): void;
     editDataModelTypeFieldName(
@@ -86,7 +87,12 @@ Cypress.Commands.add('assertQueryExplorerResult', (mockSuccess) => {
 
 Cypress.Commands.add(
   'addDataModelTypeField',
-  (typeName: string, fieldName: string, isRequired?: boolean) => {
+  (
+    typeName: string,
+    fieldName: string,
+    fieldType: string,
+    isRequired?: boolean
+  ) => {
     // Add new type
     cy.get('[aria-label="Add field"]').click();
     cy.get('.ag-row-last [col-id="name"]').click();
@@ -94,6 +100,14 @@ Cypress.Commands.add(
       .click()
       .type(fieldName)
       .type('{enter}');
+
+    cy.get(
+      '.ag-row-last [col-id="type"] [data-cy="schema-type-field"]'
+    ).click();
+    cy.get('[data-cy="select-String"]')
+      .contains(fieldType)
+      .should('exist')
+      .click();
 
     if (isRequired) {
       cy.get(`[data-cy="schema-type-field"][data-cy-value="${fieldName}"]`)

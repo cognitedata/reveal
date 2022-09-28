@@ -252,6 +252,7 @@ export const TypeListPreview = () => {
         <div style={{ height: '600px' }}>
           <TypeList
             placeholder="Filter"
+            dataModelExternalId="modelExternalId"
             items={[
               { name: 'System', description: '7 properties', fields: [] },
               { name: 'Well', description: '5 properties', fields: [] },

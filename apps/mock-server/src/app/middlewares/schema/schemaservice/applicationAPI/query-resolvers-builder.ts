@@ -53,7 +53,33 @@ export const buildQueryResolvers = (params: BuildQueryResolversParams) => {
         ? getDataModelStorageExternalId(tableBinding)
         : table;
     }
-
+    resolvers.Query[`aggregate${capitalize(table)}`] = (prm, filterParams) => {
+      const items = fetchAndQueryData({
+        globalDb: params.db,
+        templateDb,
+        isBuiltInType: false,
+        schemaType: storageTableName,
+        isFetchingObject: false,
+        filterParams: filterParams,
+        parsedSchema: params.parsedSchema,
+      });
+      return {
+        edges: items.map((item) => ({ node: item })),
+        pageInfo: {
+          endCursor: undefined,
+          startCursor: undefined,
+          hasNextPage: false,
+          hasPreviousPage: false,
+        },
+        items: [
+          {
+            count: {
+              externalId: items.length,
+            },
+          },
+        ],
+      };
+    };
     resolvers.Query[`list${capitalize(table)}`] = (prm, filterParams) => {
       let items = fetchAndQueryData({
         globalDb: params.db,

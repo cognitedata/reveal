@@ -1,7 +1,5 @@
 import { IntrospectionObjectType, IntrospectionQuery } from 'graphql';
 import { getType } from '../../../../utils';
-import { camelize } from '../../../../utils/text-utils';
-import { schemaServiceGraphqlApi } from '../../config/schema-service-api';
 
 export class SchemaServiceGraphqlApiBuilder {
   private typeSearchFieldsMap = {};
@@ -256,7 +254,9 @@ export class SchemaServiceGraphqlApiBuilder {
           externalId: SortDirection
           ${sortFields.join('\n')}
         }
-
+        type _${this.capitalize(table)}AggregateCountResult {
+          externalId: Int!
+        }
         type _${this.capitalize(table)}AggregateFieldResult {
           ${
             !aggregateNumericFields.length
@@ -304,7 +304,7 @@ export class SchemaServiceGraphqlApiBuilder {
       avg: [_${this.capitalize(table)}AggregateFieldResult]!
       min: [_${this.capitalize(table)}AggregateFieldResult]!
       max: [_${this.capitalize(table)}AggregateFieldResult]!
-      count: [_${this.capitalize(table)}AggregateFieldResult]!
+      count: _${this.capitalize(table)}AggregateCountResult!
       sum: [_${this.capitalize(table)}AggregateFieldResult]!
     }
     `

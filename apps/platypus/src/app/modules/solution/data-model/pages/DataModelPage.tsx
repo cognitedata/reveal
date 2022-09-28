@@ -39,6 +39,7 @@ import {
 } from '@platypus-app/hooks/useDataModelActions';
 import { useQueryClient } from 'react-query';
 import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
+import { QueryKeys } from '@platypus-app/utils/queryKeys';
 import { EndpointModal } from '../components/EndpointModal';
 import { getProject } from '@cognite/cdf-utilities';
 import { getCogniteSDKClient } from '../../../../../environments/cogniteSdk';
@@ -201,20 +202,20 @@ export const DataModelPage = ({ dataModelExternalId }: DataModelPageProps) => {
         if (publishNewVersion) {
           // add new version to react-query cache and then refetch
           queryClient.setQueryData<DataModelVersion[]>(
-            ['dataModelVersions', dataModelExternalId],
+            QueryKeys.DATA_MODEL_VERSION_LIST(dataModelExternalId),
             (oldDataModelVersions = []) => {
               return [...oldDataModelVersions, result.getValue()];
             }
           );
-          refetchDataModelVersions();
 
+          refetchDataModelVersions();
           history.replace(
             `/data-models/${dataModelExternalId}/${DEFAULT_VERSION_PATH}/data`
           );
         } else {
           // update version in react-query cache and then refetch
           queryClient.setQueryData<DataModelVersion[]>(
-            ['dataModelVersions', dataModelExternalId],
+            QueryKeys.DATA_MODEL_VERSION_LIST(dataModelExternalId),
             (oldDataModelVersions = []) => {
               return oldDataModelVersions.map((dataModelVersion) => {
                 return dataModelVersion.version === version

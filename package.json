@@ -57,6 +57,7 @@
     "jest-junit": "^13.0.0",
     "json-server": "^0.17.0",
     "jwt-decode": "^3.1.2",
+    "lodash": "^4.17.21",
     "lru-cache": "^6.0.0",
     "mixpanel": "^0.14.0",
     "mixpanel-browser": "^2.45.0",

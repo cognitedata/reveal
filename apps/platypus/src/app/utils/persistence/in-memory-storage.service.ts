@@ -1,8 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { KeyValueMap } from '@platypus/platypus-core';
+import { KeyValueMap, StorageProvider } from '@platypus/platypus-core';
 
-export class MemoryStorageService {
+export class MemoryStorageService implements StorageProvider {
   private dataStorage = {} as KeyValueMap;
+
+  getKeys(): any {
+    return Object.keys(this.dataStorage);
+  }
 
   getItem(key: any): any {
     this.getAllItems();

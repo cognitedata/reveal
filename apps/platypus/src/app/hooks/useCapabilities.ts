@@ -9,6 +9,7 @@ import {
   Combine,
   CombinedSCC,
 } from '@platypus-app/utils/capabilities';
+import { QueryKeys } from '@platypus-app/utils/queryKeys';
 
 export function useCapabilities<T extends KeysOfSCC>(
   aclName?: T,
@@ -22,13 +23,13 @@ export function useCapabilities<T extends KeysOfSCC>(
     data: token,
     isFetched: isTokenFetched,
     isError: isTokenError,
-  } = useQuery('token', () => cdfClient.get('/api/v1/token/inspect'));
+  } = useQuery(QueryKeys.TOKEN, () => cdfClient.get('/api/v1/token/inspect'));
 
   const {
     data: groups,
     isFetched: isGroupsFetched,
     isError: isGroupError,
-  } = useQuery('groups', () => cdfClient.groups.list(), {
+  } = useQuery(QueryKeys.GROUPS, () => cdfClient.groups.list(), {
     enabled: !isTokenError,
   });
 

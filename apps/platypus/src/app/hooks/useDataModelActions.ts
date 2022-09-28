@@ -11,6 +11,7 @@ import {
 import { DEFAULT_VERSION_PATH } from '@platypus-app/utils/config';
 import { useErrorLogger } from './useErrorLogger';
 import { useMemo } from 'react';
+import { QueryKeys } from '@platypus-app/utils/queryKeys';
 
 async function dataModelHandlerFuncWrapper<T>(
   callableFn: () => Promise<Result<T>>
@@ -26,7 +27,7 @@ async function dataModelHandlerFuncWrapper<T>(
 export const useDataModels = () => {
   const dataModelsHandler = useInjection(TOKENS.dataModelsHandler);
 
-  return useQuery('dataModelsList', async () =>
+  return useQuery(QueryKeys.DATA_MODEL_LIST, async () =>
     dataModelHandlerFuncWrapper<DataModel[]>(() => dataModelsHandler.list())
   );
 };
@@ -35,7 +36,7 @@ export const useDataModel = (dataModelExternalId: string) => {
   const dataModelsHandler = useInjection(TOKENS.dataModelsHandler);
 
   return useQuery(
-    ['dataModel', dataModelExternalId],
+    QueryKeys.DATA_MODEL(dataModelExternalId),
     async () =>
       await dataModelHandlerFuncWrapper<DataModel>(() =>
         dataModelsHandler.fetch({
@@ -49,7 +50,7 @@ export const useDataModelVersions = (dataModelExternalId: string) => {
   const dataModelVersionHandler = useInjection(TOKENS.dataModelVersionHandler);
 
   return useQuery(
-    ['dataModelVersions', dataModelExternalId],
+    QueryKeys.DATA_MODEL_VERSION_LIST(dataModelExternalId),
     async () =>
       await dataModelHandlerFuncWrapper<DataModelVersion[]>(() =>
         dataModelVersionHandler.versions({

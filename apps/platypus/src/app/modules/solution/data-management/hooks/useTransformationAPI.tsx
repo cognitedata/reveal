@@ -3,11 +3,7 @@ import { useInjection } from '@platypus-app/hooks/useInjection';
 import { TOKENS } from '@platypus-app/di';
 import { Notification } from '@platypus-app/components/Notification/Notification';
 import { useErrorLogger } from '@platypus-app/hooks/useErrorLogger';
-
-const GET_KEY = (type: string, externalId: string) => [
-  'getTransformation',
-  `${type}_${externalId}`,
-];
+import { QueryKeys } from '@platypus-app/utils/queryKeys';
 
 export function useTransformation(
   type: string,
@@ -16,7 +12,7 @@ export function useTransformation(
 ) {
   const dataManagementHandler = useInjection(TOKENS.DataManagementHandler);
   const query = useQuery(
-    GET_KEY(type, externalId),
+    QueryKeys.TRANSFORMATION(type, externalId),
     async () => {
       return dataManagementHandler.getTransformations(type, externalId);
     },
@@ -57,7 +53,7 @@ export function useTransformationMutate() {
     {
       onSuccess: (transformation) => {
         queryClient.invalidateQueries(
-          GET_KEY(
+          QueryKeys.TRANSFORMATION(
             transformation.destination.modelExternalId,
             transformation.destination.spaceExternalId
           )

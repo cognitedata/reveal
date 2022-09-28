@@ -1,12 +1,17 @@
-import './cog-data-grid.module.css';
-import { ColumnTypes, GridConfig, KeyValueMap } from './core/types';
-import { AgGridReact, AgGridReactProps } from 'ag-grid-react';
-import { useEffect, useState, forwardRef, ForwardedRef } from 'react';
-import { ColDef, ColGroupDef, GridOptions } from 'ag-grid-community';
-import { gridConfigService } from './core/services/grid-config.service';
 import { Icon } from '@cognite/cogs.js';
-import { CogDataGridStyled } from './cog-data-grid-styled';
+import {
+  ColDef,
+  ColGroupDef,
+  GetRowIdParams,
+  GridOptions,
+} from 'ag-grid-community';
+import { AgGridReact, AgGridReactProps } from 'ag-grid-react';
+import { ForwardedRef, forwardRef, useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
+import { CogDataGridStyled } from './cog-data-grid-styled';
+import './cog-data-grid.module.css';
+import { gridConfigService } from './core/services/grid-config.service';
+import { ColumnTypes, GridConfig, KeyValueMap } from './core/types';
 
 export interface CogDataGridProps extends AgGridReactProps {
   theme?: 'default' | 'compact';
@@ -17,39 +22,26 @@ export interface CogDataGridProps extends AgGridReactProps {
   gridOptions?: GridOptions;
   rowNodeId?: string;
   children?: any;
+  agGridReactProps?: AgGridReactProps;
+  getRowId?: (params: GetRowIdParams<KeyValueMap>) => string;
+  shouldShowDraftRows?: boolean;
+  shouldShowPublishedRows?: boolean;
 }
 
 export const CogDataGrid = forwardRef<AgGridReact, CogDataGridProps>(
   (props: CogDataGridProps, ref: ForwardedRef<AgGridReact>) => {
     const [isGridInit, setIsGridInit] = useState(false);
     const [colDefs, setColDefs] = useState<(ColDef | ColGroupDef)[]>([]);
-    const [gridOptions, setGridOptions] = useState<GridOptions>({});
 
     const theme = props.theme || 'default';
+    const defaultGridOptions = gridConfigService.getGridConfig(
+      theme,
+      props.columnTypes,
+      props.rowNodeId
+    ) as GridOptions;
 
     useEffect(() => {
-      const agGridOptions = Object.assign(
-        gridConfigService.getGridConfig(
-          theme,
-          props.columnTypes,
-          props.rowNodeId
-        ),
-        props.gridOptions || {}
-      ) as GridOptions;
-
-      if (props.rowNodeId && !props.getRowId) {
-        agGridOptions.getRowNodeId = (data) =>
-          props.rowNodeId ? data[props.rowNodeId] : data.id;
-      }
-
-      Object.keys(props).forEach((key: string) => {
-        if (!['config', 'data', 'columnTypes', 'theme'].includes(key)) {
-          (agGridOptions as any)[key] = (props as any)[key];
-        }
-      });
-
       const generatedColDefs = gridConfigService.buildColDefs(props.config);
-      setGridOptions(agGridOptions);
       setColDefs(generatedColDefs as any);
       setIsGridInit(true);
 
@@ -61,10 +53,44 @@ export const CogDataGrid = forwardRef<AgGridReact, CogDataGridProps>(
       return <div>Loading...</div>;
     }
 
-    const gridProps = props.rowData || { rowData: props.data || [] };
+    const gridData = props.rowData || { rowData: props.data || [] };
+
+    // we have some logic arround this props, so don't add them automatically
+    const ignoredProps = [
+      'config',
+      'data',
+      'columnTypes',
+      'theme',
+      'gridOptions',
+    ];
+
+    const filteredProps = {} as GridOptions;
+    Object.keys(props).forEach((key: string) => {
+      if (!ignoredProps.includes(key)) {
+        (filteredProps as any)[key] = (props as any)[key];
+      }
+    });
+
+    if (filteredProps.defaultColDef) {
+      filteredProps.defaultColDef = {
+        ...gridConfigService.getDefaultColDefConfig(theme),
+        ...filteredProps.defaultColDef,
+      };
+    }
+
+    if (props.rowNodeId && !props.getRowId) {
+      defaultGridOptions.getRowNodeId = (data: KeyValueMap) =>
+        props.rowNodeId ? data[props.rowNodeId] : (data as any).id;
+    }
+
+    const updatedProps = Object.assign(defaultGridOptions, props.gridOptions);
 
     return (
-      <CogDataGridStyled theme={theme}>
+      <CogDataGridStyled
+        theme={theme}
+        shouldShowDraftRows={props.shouldShowDraftRows}
+        shouldShowPublishedRows={props.shouldShowPublishedRows}
+      >
         <AgGridReact
           ref={ref}
           columnDefs={colDefs}
@@ -80,8 +106,9 @@ export const CogDataGrid = forwardRef<AgGridReact, CogDataGridProps>(
               return domNode;
             },
           }}
-          {...gridOptions}
-          {...gridProps}
+          {...updatedProps}
+          {...filteredProps}
+          {...gridData}
         >
           {props.children}
         </AgGridReact>

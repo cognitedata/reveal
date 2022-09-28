@@ -10,6 +10,8 @@ import { useDispatch } from 'react-redux';
 
 import globalReducer from './reducers/global/globalReducer';
 import dataModelSlice from './reducers/global/dataModelReducer';
+import dataManagementSlice from './reducers/global/dataManagementReducer';
+import { draftRowsLocalStorageMiddleware } from './reducers/global/dataManagementMiddleware';
 import { environment } from '../../environments/environment';
 
 const createReducer = (asyncReducers: any) => {
@@ -21,6 +23,7 @@ const createReducer = (asyncReducers: any) => {
 const reducersRegistry = {
   global: globalReducer.reducer,
   dataModel: dataModelSlice.reducer,
+  dataManagement: dataManagementSlice.reducer,
 };
 
 export const rootReducer = combineReducers(reducersRegistry);
@@ -31,6 +34,7 @@ function createStore() {
     devTools: !environment.production,
     middleware: (getDefaultMiddleware) => [
       ...getDefaultMiddleware({ serializableCheck: false }),
+      draftRowsLocalStorageMiddleware,
     ],
   });
 }

@@ -1,9 +1,11 @@
 import { ICellEditor, ICellEditorParams } from 'ag-grid-community';
 import { ChangeEvent, Component, createRef } from 'react';
+import { CellEditorWrapper } from './ui';
 
 interface TextCellEditorState {
   value: string;
   hasError: boolean;
+  errorMessage: string;
 }
 
 export class TextCellEditor
@@ -18,12 +20,14 @@ export class TextCellEditor
     this.inputRef = createRef();
 
     this.state = {
-      value: props.value.toString(),
+      value: String(props.value || ''),
       hasError: false,
+      errorMessage: '',
     };
 
     this.onValueChanged = this.onValueChanged.bind(this);
     this.isValueValid = this.isValueValid.bind(this);
+    this.focusIn = this.focusIn.bind(this);
   }
 
   componentDidMount() {
@@ -38,7 +42,7 @@ export class TextCellEditor
 
   focusIn() {
     this.inputRef.current.focus();
-    setTimeout(() => this.inputRef.current.select());
+    this.inputRef.current.select();
   }
 
   /* Component Editor Lifecycle methods */
@@ -56,33 +60,52 @@ export class TextCellEditor
   // Gets called once when editing is finished (eg if Enter is pressed).
   // If you return true, then the result of the edit will be ignored.
   isCancelAfterEnd() {
-    const isValid = this.isValueValid(this.state.value);
-    return isValid ? true : false;
+    const { hasError } = this.isValueValid(this.state.value);
+    return hasError;
   }
 
   onValueChanged(event: ChangeEvent<HTMLTextAreaElement>) {
-    const hasErrors = this.isValueValid(event.target.value);
+    const { hasError, errorMessage } = this.isValueValid(event.target.value);
 
     this.setState({
-      value: !event.target.value ? '' : event.target.value,
-      hasError: hasErrors,
+      value: event.target.value,
+      hasError,
+      errorMessage,
     });
   }
 
-  private isValueValid(value: string): boolean {
-    return !value;
+  private isValueValid(value: string): {
+    hasError: boolean;
+    errorMessage: string;
+  } {
+    if (this.props.colDef.cellEditorParams.isRequired) {
+      return {
+        hasError: !value,
+        errorMessage: `Field ${this.props.colDef.headerName} is required`,
+      };
+    }
+    return {
+      hasError: false,
+      errorMessage: '',
+    };
   }
 
   render() {
     return (
-      <textarea
-        ref={this.inputRef}
-        value={this.state.value}
-        onChange={this.onValueChanged}
-        className={`ag-cell-editor ${
-          this.state.hasError ? 'ag-has-error' : ''
-        }`}
-      ></textarea>
+      <CellEditorWrapper
+        key={`${this.props.data.externalId}-${this.props.colDef.headerName}`}
+        visible={this.state.hasError}
+        errorMessage={this.state.errorMessage}
+      >
+        <textarea
+          ref={this.inputRef}
+          value={this.state.value}
+          onChange={this.onValueChanged}
+          className={`ag-cell-editor ${
+            this.state.hasError ? 'ag-has-error' : ''
+          }`}
+        />
+      </CellEditorWrapper>
     );
   }
 }

@@ -11,6 +11,11 @@ export class LocalStorageProvider implements StorageProvider {
     localStorage.clear();
   }
 
+  getKeys(): any {
+    const keys = Object.keys(localStorage) || [];
+    return keys.map((key) => this.getActualKeyName(key));
+  }
+
   getItem(key: string): any {
     const item = localStorage.getItem(this.getQualifiedKeyName(key));
     if (!item || item === 'null') {
@@ -49,5 +54,12 @@ export class LocalStorageProvider implements StorageProvider {
 
   private getQualifiedKeyName(key: string): string {
     return `${this.prefix}.${key}`;
+  }
+
+  private getActualKeyName(key: string): string {
+    const effectivePrefix = this.prefix + '.';
+    if (key.startsWith(effectivePrefix))
+      return key.substring(effectivePrefix.length);
+    return key;
   }
 }

@@ -1,6 +1,7 @@
 import { getUserInformation } from '@cognite/cdf-sdk-singleton';
 import { getCluster, getProject } from '@cognite/cdf-utilities';
 import config from '@platypus-app/config/config';
+import { QueryKeys } from '@platypus-app/utils/queryKeys';
 import mixpanel, { Dict } from 'mixpanel-browser';
 import { useEffect, useMemo } from 'react';
 import { useQuery } from 'react-query';
@@ -31,20 +32,24 @@ const TRACKING_TOKENS_MAP: { [key in TRACKING_TOKENS]: string } = {
 mixpanel.init(config.MIXPANEL_TOKEN);
 
 export const useMixpanel = () => {
-  const { data: user } = useQuery('authenticatedUser', getUserInformation, {
-    staleTime: Infinity,
-    onSuccess: (user) => {
-      if (process.env.NODE_ENV !== 'production') {
-        return;
-      }
-      mixpanel.identify(user?.id);
-      mixpanel.people.set({
-        email: user?.mail || user?.userPrincipalName || user?.displayName,
-        cluster: getCluster(),
-        project: getProject(),
-      });
-    },
-  });
+  const { data: user } = useQuery(
+    QueryKeys.AUTHENTICATED_USER,
+    getUserInformation,
+    {
+      staleTime: Infinity,
+      onSuccess: (user) => {
+        if (process.env.NODE_ENV !== 'production') {
+          return;
+        }
+        mixpanel.identify(user?.id);
+        mixpanel.people.set({
+          email: user?.mail || user?.userPrincipalName || user?.displayName,
+          cluster: getCluster(),
+          project: getProject(),
+        });
+      },
+    }
+  );
   return useMemo(
     () => ({
       track: async (eventName: TRACKING_TOKENS, properties?: Dict) => {
