@@ -16,6 +16,7 @@ import { useHistory } from 'react-router-dom';
 import { VersionSelectorToolbar } from '@platypus-app/components/VersionSelectorToolbar';
 import { Flex } from '@cognite/cogs.js';
 import { DocLinkButtonGroup } from '@platypus-app/components/DocLinkButtonGroup/DocLinkButtonGroup';
+import { DOCS_LINKS } from '@platypus-app/constants';
 
 export interface QueryExplorerPageProps {
   dataModelExternalId: string;
@@ -53,7 +54,7 @@ export const QueryExplorerPage = ({
           selectedDataModelVersion={selectedDataModelVersion}
         >
           <Flex justifyContent="space-between">
-            <DocLinkButtonGroup />
+            <DocLinkButtonGroup docsLinkUrl={DOCS_LINKS.QUERYING} />
           </Flex>
         </VersionSelectorToolbar>
       </PageContentLayout.Header>

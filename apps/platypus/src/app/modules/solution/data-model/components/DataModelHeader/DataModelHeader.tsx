@@ -16,6 +16,7 @@ import { DocLinkButtonGroup } from '@platypus-app/components/DocLinkButtonGroup/
 import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
 import { useCapabilities } from '@platypus-app/hooks/useCapabilities';
 import config from '@platypus-app/config/config';
+import { DOCS_LINKS } from '@platypus-app/constants';
 
 export interface DataModelHeaderProps {
   dataModelExternalId: string;
@@ -142,6 +143,12 @@ export const DataModelHeader = ({
     onDataModelVersionSelect(dataModelVersion);
   };
 
+  const docLink = (
+    <DocLinkWrapper>
+      <DocLinkButtonGroup docsLinkUrl={DOCS_LINKS.CREATION} />
+    </DocLinkWrapper>
+  );
+
   const renderTools = () => {
     if (editorMode === SchemaEditorMode.Edit) {
       return (
@@ -187,9 +194,7 @@ export const DataModelHeader = ({
           >
             {t('publish', 'Publish')}
           </Button>
-          <DocLinkWrapper>
-            <DocLinkButtonGroup />
-          </DocLinkWrapper>
+          {docLink}
         </div>
       );
     }
@@ -225,9 +230,7 @@ export const DataModelHeader = ({
               </ReturnButton>
             </Flex>
           </Flex>
-          <DocLinkWrapper>
-            <DocLinkButtonGroup />
-          </DocLinkWrapper>
+          {docLink}
         </Flex>
       );
     }
@@ -260,9 +263,7 @@ export const DataModelHeader = ({
         >
           URL
         </Button>
-        <DocLinkWrapper>
-          <DocLinkButtonGroup />
-        </DocLinkWrapper>
+        {docLink}
       </Flex>
     );
   };

@@ -14,6 +14,7 @@ import { DataModelVersion } from '@platypus/platypus-core';
 import { VersionSelectorToolbar } from '@platypus-app/components/VersionSelectorToolbar';
 import { DocLinkButtonGroup } from '@platypus-app/components/DocLinkButtonGroup/DocLinkButtonGroup';
 import { Flex } from '@cognite/cogs.js';
+import { DOCS_LINKS } from '@platypus-app/constants';
 
 type TabType = 'preview' | 'pipelines' | 'data-quality';
 
@@ -106,7 +107,7 @@ export const DataManagementPage = ({
           selectedDataModelVersion={selectedDataModelVersion}
         >
           <Flex justifyContent="space-between">
-            <DocLinkButtonGroup />
+            <DocLinkButtonGroup docsLinkUrl={DOCS_LINKS.POPULATION} />
           </Flex>
         </VersionSelectorToolbar>
       </PageContentLayout.Header>
