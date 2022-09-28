@@ -36,7 +36,6 @@ export const builder = (yargs: Argv<LoginArgs>) =>
     .coerce('api-key', (apiKey) => apiKey || process.env.API_KEY)
     .option('tenant', {
       type: 'string',
-      default: 'cogniteappdev.onmicrosoft.com',
       description: 'Azure Active Directory Tenant URI or ID',
     })
     .option('cluster', {
