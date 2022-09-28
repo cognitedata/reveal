@@ -33,7 +33,7 @@ NodeCollection.constructor
 
 #### Defined in
 
-[packages/cad-styling/src/TreeIndexNodeCollection.ts:23](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-styling/src/TreeIndexNodeCollection.ts#L23)
+[packages/cad-styling/src/TreeIndexNodeCollection.ts:23](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-styling/src/TreeIndexNodeCollection.ts#L23)
 
 • **new TreeIndexNodeCollection**(`treeIndices?`)
 
@@ -49,7 +49,7 @@ NodeCollection.constructor
 
 #### Defined in
 
-[packages/cad-styling/src/TreeIndexNodeCollection.ts:24](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-styling/src/TreeIndexNodeCollection.ts#L24)
+[packages/cad-styling/src/TreeIndexNodeCollection.ts:24](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-styling/src/TreeIndexNodeCollection.ts#L24)
 
 • **new TreeIndexNodeCollection**(`treeIndexRange?`)
 
@@ -65,7 +65,7 @@ NodeCollection.constructor
 
 #### Defined in
 
-[packages/cad-styling/src/TreeIndexNodeCollection.ts:25](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-styling/src/TreeIndexNodeCollection.ts#L25)
+[packages/cad-styling/src/TreeIndexNodeCollection.ts:25](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-styling/src/TreeIndexNodeCollection.ts#L25)
 
 ## Properties
 
@@ -75,7 +75,7 @@ NodeCollection.constructor
 
 #### Defined in
 
-[packages/cad-styling/src/TreeIndexNodeCollection.ts:18](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-styling/src/TreeIndexNodeCollection.ts#L18)
+[packages/cad-styling/src/TreeIndexNodeCollection.ts:18](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-styling/src/TreeIndexNodeCollection.ts#L18)
 
 ## Accessors
 
@@ -93,7 +93,7 @@ NodeCollection.classToken
 
 #### Defined in
 
-[packages/cad-styling/src/NodeCollection.ts:23](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-styling/src/NodeCollection.ts#L23)
+[packages/cad-styling/src/NodeCollection.ts:23](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-styling/src/NodeCollection.ts#L23)
 
 ___
 
@@ -111,7 +111,7 @@ NodeCollection.isLoading
 
 #### Defined in
 
-[packages/cad-styling/src/TreeIndexNodeCollection.ts:99](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-styling/src/TreeIndexNodeCollection.ts#L99)
+[packages/cad-styling/src/TreeIndexNodeCollection.ts:99](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-styling/src/TreeIndexNodeCollection.ts#L99)
 
 ## Methods
 
@@ -134,7 +134,7 @@ This effectively adds boxes of size 1x1x1 meter with the points as their centers
 
 #### Defined in
 
-[packages/cad-styling/src/TreeIndexNodeCollection.ts:85](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-styling/src/TreeIndexNodeCollection.ts#L85)
+[packages/cad-styling/src/TreeIndexNodeCollection.ts:85](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-styling/src/TreeIndexNodeCollection.ts#L85)
 
 ___
 
@@ -158,7 +158,7 @@ the number of areas in the set small.
 
 #### Defined in
 
-[packages/cad-styling/src/TreeIndexNodeCollection.ts:73](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-styling/src/TreeIndexNodeCollection.ts#L73)
+[packages/cad-styling/src/TreeIndexNodeCollection.ts:73](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-styling/src/TreeIndexNodeCollection.ts#L73)
 
 ___
 
@@ -178,7 +178,7 @@ Sets this set to hold an empty set.
 
 #### Defined in
 
-[packages/cad-styling/src/TreeIndexNodeCollection.ts:45](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-styling/src/TreeIndexNodeCollection.ts#L45)
+[packages/cad-styling/src/TreeIndexNodeCollection.ts:45](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-styling/src/TreeIndexNodeCollection.ts#L45)
 
 ___
 
@@ -192,7 +192,7 @@ ___
 
 #### Defined in
 
-[packages/cad-styling/src/TreeIndexNodeCollection.ts:95](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-styling/src/TreeIndexNodeCollection.ts#L95)
+[packages/cad-styling/src/TreeIndexNodeCollection.ts:95](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-styling/src/TreeIndexNodeCollection.ts#L95)
 
 ___
 
@@ -214,7 +214,7 @@ implementations supports this.
 
 #### Defined in
 
-[packages/cad-styling/src/TreeIndexNodeCollection.ts:54](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-styling/src/TreeIndexNodeCollection.ts#L54)
+[packages/cad-styling/src/TreeIndexNodeCollection.ts:54](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-styling/src/TreeIndexNodeCollection.ts#L54)
 
 ___
 
@@ -232,7 +232,7 @@ ___
 
 #### Defined in
 
-[packages/cad-styling/src/TreeIndexNodeCollection.ts:50](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-styling/src/TreeIndexNodeCollection.ts#L50)
+[packages/cad-styling/src/TreeIndexNodeCollection.ts:50](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-styling/src/TreeIndexNodeCollection.ts#L50)
 
 ___
 
@@ -257,7 +257,7 @@ ___
 
 #### Defined in
 
-[packages/cad-styling/src/NodeCollection.ts:32](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-styling/src/NodeCollection.ts#L32)
+[packages/cad-styling/src/NodeCollection.ts:32](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-styling/src/NodeCollection.ts#L32)
 
 ___
 
@@ -282,7 +282,7 @@ ___
 
 #### Defined in
 
-[packages/cad-styling/src/NodeCollection.ts:27](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-styling/src/NodeCollection.ts#L27)
+[packages/cad-styling/src/NodeCollection.ts:27](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-styling/src/NodeCollection.ts#L27)
 
 ___
 
@@ -300,7 +300,7 @@ ___
 
 #### Defined in
 
-[packages/cad-styling/src/TreeIndexNodeCollection.ts:103](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-styling/src/TreeIndexNodeCollection.ts#L103)
+[packages/cad-styling/src/TreeIndexNodeCollection.ts:103](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-styling/src/TreeIndexNodeCollection.ts#L103)
 
 ___
 
@@ -320,4 +320,4 @@ ___
 
 #### Defined in
 
-[packages/cad-styling/src/TreeIndexNodeCollection.ts:37](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-styling/src/TreeIndexNodeCollection.ts#L37)
+[packages/cad-styling/src/TreeIndexNodeCollection.ts:37](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-styling/src/TreeIndexNodeCollection.ts#L37)

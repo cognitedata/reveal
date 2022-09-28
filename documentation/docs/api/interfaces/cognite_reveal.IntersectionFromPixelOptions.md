@@ -7,9 +7,11 @@ custom_edit_url: null
 
 [@cognite/reveal](../modules/cognite_reveal.md).IntersectionFromPixelOptions
 
-Options to control how [Cognite3DViewer.getIntersectionFromPixel](../classes/cognite_reveal.Cognite3DViewer.md#getintersectionfrompixel) behaves.
+Options to control how [getIntersectionFromPixel](../classes/cognite_reveal.Cognite3DViewer.md#getintersectionfrompixel) behaves.
 
-**`deprecated`** Since 3.1 these options have no effect.
+**`Deprecated`**
+
+Since 3.1 these options have no effect.
 
 ## Properties
 
@@ -21,8 +23,10 @@ Threshold (in meters) for how close a point must be an intersection
 ray for it to be considered an intersection for point clouds. Defaults
 to 0.05.
 
-**`deprecated`** Since 3.1, threshold doesn't affect picking because of new, GPU based method.
+**`Deprecated`**
+
+Since 3.1, threshold doesn't affect picking because of new, GPU based method.
 
 #### Defined in
 
-[packages/api/src/public/migration/types.ts:226](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/api/src/public/migration/types.ts#L226)
+[packages/api/src/public/migration/types.ts:226](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/api/src/public/migration/types.ts#L226)

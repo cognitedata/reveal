@@ -7,6 +7,8 @@ custom_edit_url: null
 
 [@cognite/reveal/tools](../modules/cognite_reveal_tools.md).ExplodedViewTool
 
+Base class for tools attaching to a {@see Cognite3DViewer}.
+
 ## Hierarchy
 
 - [`Cognite3DViewerToolBase`](cognite_reveal_tools.Cognite3DViewerToolBase.md)
@@ -32,7 +34,7 @@ custom_edit_url: null
 
 #### Defined in
 
-[packages/tools/src/ExplodedViewTool.ts:18](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/tools/src/ExplodedViewTool.ts#L18)
+[packages/tools/src/ExplodedViewTool.ts:18](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/tools/src/ExplodedViewTool.ts#L18)
 
 ## Accessors
 
@@ -46,7 +48,7 @@ custom_edit_url: null
 
 #### Defined in
 
-[packages/tools/src/ExplodedViewTool.ts:14](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/tools/src/ExplodedViewTool.ts#L14)
+[packages/tools/src/ExplodedViewTool.ts:14](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/tools/src/ExplodedViewTool.ts#L14)
 
 ## Methods
 
@@ -67,7 +69,7 @@ of dipose-listeners.
 
 #### Defined in
 
-[packages/tools/src/Cognite3DViewerToolBase.ts:52](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/tools/src/Cognite3DViewerToolBase.ts#L52)
+[packages/tools/src/Cognite3DViewerToolBase.ts:52](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/tools/src/Cognite3DViewerToolBase.ts#L52)
 
 ___
 
@@ -87,7 +89,7 @@ ___
 
 #### Defined in
 
-[packages/tools/src/ExplodedViewTool.ts:29](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/tools/src/ExplodedViewTool.ts#L29)
+[packages/tools/src/ExplodedViewTool.ts:29](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/tools/src/ExplodedViewTool.ts#L29)
 
 ___
 
@@ -114,7 +116,7 @@ Unregisters an event handler for the 'disposed'-event.
 
 #### Defined in
 
-[packages/tools/src/Cognite3DViewerToolBase.ts:37](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/tools/src/Cognite3DViewerToolBase.ts#L37)
+[packages/tools/src/Cognite3DViewerToolBase.ts:37](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/tools/src/Cognite3DViewerToolBase.ts#L37)
 
 ___
 
@@ -128,4 +130,4 @@ ___
 
 #### Defined in
 
-[packages/tools/src/ExplodedViewTool.ts:46](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/tools/src/ExplodedViewTool.ts#L46)
+[packages/tools/src/ExplodedViewTool.ts:46](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/tools/src/ExplodedViewTool.ts#L46)

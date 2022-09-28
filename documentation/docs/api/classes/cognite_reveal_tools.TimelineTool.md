@@ -33,7 +33,7 @@ Tool to applying styles to nodes based on date to play them over in Timeline
 
 #### Defined in
 
-[packages/tools/src/Timeline/TimelineTool.ts:22](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/tools/src/Timeline/TimelineTool.ts#L22)
+[packages/tools/src/Timeline/TimelineTool.ts:22](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/tools/src/Timeline/TimelineTool.ts#L22)
 
 ## Methods
 
@@ -55,7 +55,7 @@ Create Key frame for the Timeline
 
 #### Defined in
 
-[packages/tools/src/Timeline/TimelineTool.ts:63](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/tools/src/Timeline/TimelineTool.ts#L63)
+[packages/tools/src/Timeline/TimelineTool.ts:63](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/tools/src/Timeline/TimelineTool.ts#L63)
 
 ___
 
@@ -76,7 +76,7 @@ of dipose-listeners.
 
 #### Defined in
 
-[packages/tools/src/Timeline/TimelineTool.ts:184](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/tools/src/Timeline/TimelineTool.ts#L184)
+[packages/tools/src/Timeline/TimelineTool.ts:184](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/tools/src/Timeline/TimelineTool.ts#L184)
 
 ___
 
@@ -94,7 +94,7 @@ All Keyframes in Timeline
 
 #### Defined in
 
-[packages/tools/src/Timeline/TimelineTool.ts:180](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/tools/src/Timeline/TimelineTool.ts#L180)
+[packages/tools/src/Timeline/TimelineTool.ts:180](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/tools/src/Timeline/TimelineTool.ts#L180)
 
 ___
 
@@ -116,7 +116,7 @@ Returns the keyframe at the date given, or undefined if not found.
 
 #### Defined in
 
-[packages/tools/src/Timeline/TimelineTool.ts:76](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/tools/src/Timeline/TimelineTool.ts#L76)
+[packages/tools/src/Timeline/TimelineTool.ts:76](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/tools/src/Timeline/TimelineTool.ts#L76)
 
 ___
 
@@ -143,7 +143,7 @@ Unregisters an event handler for the 'disposed'-event.
 
 #### Defined in
 
-[packages/tools/src/Cognite3DViewerToolBase.ts:37](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/tools/src/Cognite3DViewerToolBase.ts#L37)
+[packages/tools/src/Cognite3DViewerToolBase.ts:37](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/tools/src/Cognite3DViewerToolBase.ts#L37)
 
 ___
 
@@ -159,7 +159,7 @@ Pause any ongoing playback
 
 #### Defined in
 
-[packages/tools/src/Timeline/TimelineTool.ts:161](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/tools/src/Timeline/TimelineTool.ts#L161)
+[packages/tools/src/Timeline/TimelineTool.ts:161](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/tools/src/Timeline/TimelineTool.ts#L161)
 
 ___
 
@@ -183,7 +183,7 @@ Starts playback of Timeline
 
 #### Defined in
 
-[packages/tools/src/Timeline/TimelineTool.ts:110](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/tools/src/Timeline/TimelineTool.ts#L110)
+[packages/tools/src/Timeline/TimelineTool.ts:110](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/tools/src/Timeline/TimelineTool.ts#L110)
 
 ___
 
@@ -205,7 +205,7 @@ Removes the Keyframe from the timeline. Does nothing if the keyframe isn't part 
 
 #### Defined in
 
-[packages/tools/src/Timeline/TimelineTool.ts:84](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/tools/src/Timeline/TimelineTool.ts#L84)
+[packages/tools/src/Timeline/TimelineTool.ts:84](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/tools/src/Timeline/TimelineTool.ts#L84)
 
 ___
 
@@ -227,7 +227,7 @@ Removes the Keyframe from the Timeline
 
 #### Defined in
 
-[packages/tools/src/Timeline/TimelineTool.ts:96](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/tools/src/Timeline/TimelineTool.ts#L96)
+[packages/tools/src/Timeline/TimelineTool.ts:96](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/tools/src/Timeline/TimelineTool.ts#L96)
 
 ___
 
@@ -243,7 +243,7 @@ Resume any paused playback
 
 #### Defined in
 
-[packages/tools/src/Timeline/TimelineTool.ts:170](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/tools/src/Timeline/TimelineTool.ts#L170)
+[packages/tools/src/Timeline/TimelineTool.ts:170](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/tools/src/Timeline/TimelineTool.ts#L170)
 
 ___
 
@@ -259,7 +259,7 @@ Stops any ongoing playback
 
 #### Defined in
 
-[packages/tools/src/Timeline/TimelineTool.ts:151](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/tools/src/Timeline/TimelineTool.ts#L151)
+[packages/tools/src/Timeline/TimelineTool.ts:151](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/tools/src/Timeline/TimelineTool.ts#L151)
 
 ___
 
@@ -282,7 +282,7 @@ Subscribe to the Date changed event
 
 #### Defined in
 
-[packages/tools/src/Timeline/TimelineTool.ts:34](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/tools/src/Timeline/TimelineTool.ts#L34)
+[packages/tools/src/Timeline/TimelineTool.ts:34](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/tools/src/Timeline/TimelineTool.ts#L34)
 
 ___
 
@@ -305,4 +305,4 @@ Unsubscribe to the Date changed event
 
 #### Defined in
 
-[packages/tools/src/Timeline/TimelineTool.ts:49](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/tools/src/Timeline/TimelineTool.ts#L49)
+[packages/tools/src/Timeline/TimelineTool.ts:49](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/tools/src/Timeline/TimelineTool.ts#L49)

@@ -24,7 +24,7 @@ Timeline Key Frames contains parameters to access Nodes, Styles for the Timeline
 
 #### Defined in
 
-[packages/tools/src/Timeline/Keyframe.ts:17](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/tools/src/Timeline/Keyframe.ts#L17)
+[packages/tools/src/Timeline/Keyframe.ts:17](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/tools/src/Timeline/Keyframe.ts#L17)
 
 ## Methods
 
@@ -40,7 +40,7 @@ Assigns the styles for the node set for the model for this Keyframe
 
 #### Defined in
 
-[packages/tools/src/Timeline/Keyframe.ts:33](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/tools/src/Timeline/Keyframe.ts#L33)
+[packages/tools/src/Timeline/Keyframe.ts:33](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/tools/src/Timeline/Keyframe.ts#L33)
 
 ___
 
@@ -64,7 +64,7 @@ appearance provided.
 
 #### Defined in
 
-[packages/tools/src/Timeline/Keyframe.ts:54](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/tools/src/Timeline/Keyframe.ts#L54)
+[packages/tools/src/Timeline/Keyframe.ts:54](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/tools/src/Timeline/Keyframe.ts#L54)
 
 ___
 
@@ -80,7 +80,7 @@ Removes the style for the model
 
 #### Defined in
 
-[packages/tools/src/Timeline/Keyframe.ts:42](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/tools/src/Timeline/Keyframe.ts#L42)
+[packages/tools/src/Timeline/Keyframe.ts:42](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/tools/src/Timeline/Keyframe.ts#L42)
 
 ___
 
@@ -98,7 +98,7 @@ date
 
 #### Defined in
 
-[packages/tools/src/Timeline/Keyframe.ts:26](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/tools/src/Timeline/Keyframe.ts#L26)
+[packages/tools/src/Timeline/Keyframe.ts:26](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/tools/src/Timeline/Keyframe.ts#L26)
 
 ___
 
@@ -120,4 +120,4 @@ Remove Node & Style for this keyframe's nodeCollection and nodeAppearance
 
 #### Defined in
 
-[packages/tools/src/Timeline/Keyframe.ts:69](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/tools/src/Timeline/Keyframe.ts#L69)
+[packages/tools/src/Timeline/Keyframe.ts:69](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/tools/src/Timeline/Keyframe.ts#L69)

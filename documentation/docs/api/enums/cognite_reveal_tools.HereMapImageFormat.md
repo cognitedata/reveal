@@ -13,28 +13,28 @@ Here Map Tiles Image Format
 
 ### JPG
 
-• **JPG**
+• **JPG** = ``"jpg"``
 
 #### Defined in
 
-[packages/tools/src/Geomap/MapConfig.ts:118](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/tools/src/Geomap/MapConfig.ts#L118)
+[packages/tools/src/Geomap/MapConfig.ts:118](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/tools/src/Geomap/MapConfig.ts#L118)
 
 ___
 
 ### PNG
 
-• **PNG**
+• **PNG** = ``"png"``
 
 #### Defined in
 
-[packages/tools/src/Geomap/MapConfig.ts:116](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/tools/src/Geomap/MapConfig.ts#L116)
+[packages/tools/src/Geomap/MapConfig.ts:116](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/tools/src/Geomap/MapConfig.ts#L116)
 
 ___
 
 ### PNG8
 
-• **PNG8**
+• **PNG8** = ``"png8"``
 
 #### Defined in
 
-[packages/tools/src/Geomap/MapConfig.ts:117](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/tools/src/Geomap/MapConfig.ts#L117)
+[packages/tools/src/Geomap/MapConfig.ts:117](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/tools/src/Geomap/MapConfig.ts#L117)

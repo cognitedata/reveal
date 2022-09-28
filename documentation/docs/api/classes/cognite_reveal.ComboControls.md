@@ -32,7 +32,7 @@ EventDispatcher.constructor
 
 #### Defined in
 
-[packages/camera-manager/src/ComboControls.ts:108](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/camera-manager/src/ComboControls.ts#L108)
+[packages/camera-manager/src/ComboControls.ts:108](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/camera-manager/src/ComboControls.ts#L108)
 
 ## Properties
 
@@ -42,7 +42,7 @@ EventDispatcher.constructor
 
 #### Defined in
 
-[packages/camera-manager/src/ComboControls.ts:70](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/camera-manager/src/ComboControls.ts#L70)
+[packages/camera-manager/src/ComboControls.ts:70](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/camera-manager/src/ComboControls.ts#L70)
 
 ___
 
@@ -52,7 +52,7 @@ ___
 
 #### Defined in
 
-[packages/camera-manager/src/ComboControls.ts:48](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/camera-manager/src/ComboControls.ts#L48)
+[packages/camera-manager/src/ComboControls.ts:48](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/camera-manager/src/ComboControls.ts#L48)
 
 ___
 
@@ -70,7 +70,7 @@ ___
 
 #### Defined in
 
-[packages/camera-manager/src/ComboControls.ts:71](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/camera-manager/src/ComboControls.ts#L71)
+[packages/camera-manager/src/ComboControls.ts:71](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/camera-manager/src/ComboControls.ts#L71)
 
 ___
 
@@ -80,7 +80,7 @@ ___
 
 #### Defined in
 
-[packages/camera-manager/src/ComboControls.ts:52](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/camera-manager/src/ComboControls.ts#L52)
+[packages/camera-manager/src/ComboControls.ts:52](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/camera-manager/src/ComboControls.ts#L52)
 
 ___
 
@@ -90,7 +90,7 @@ ___
 
 #### Defined in
 
-[packages/camera-manager/src/ComboControls.ts:49](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/camera-manager/src/ComboControls.ts#L49)
+[packages/camera-manager/src/ComboControls.ts:49](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/camera-manager/src/ComboControls.ts#L49)
 
 ___
 
@@ -100,7 +100,7 @@ ___
 
 #### Defined in
 
-[packages/camera-manager/src/ComboControls.ts:47](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/camera-manager/src/ComboControls.ts#L47)
+[packages/camera-manager/src/ComboControls.ts:47](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/camera-manager/src/ComboControls.ts#L47)
 
 ___
 
@@ -110,7 +110,7 @@ ___
 
 #### Defined in
 
-[packages/camera-manager/src/ComboControls.ts:61](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/camera-manager/src/ComboControls.ts#L61)
+[packages/camera-manager/src/ComboControls.ts:61](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/camera-manager/src/ComboControls.ts#L61)
 
 ___
 
@@ -120,7 +120,7 @@ ___
 
 #### Defined in
 
-[packages/camera-manager/src/ComboControls.ts:46](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/camera-manager/src/ComboControls.ts#L46)
+[packages/camera-manager/src/ComboControls.ts:46](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/camera-manager/src/ComboControls.ts#L46)
 
 ___
 
@@ -130,7 +130,7 @@ ___
 
 #### Defined in
 
-[packages/camera-manager/src/ComboControls.ts:58](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/camera-manager/src/ComboControls.ts#L58)
+[packages/camera-manager/src/ComboControls.ts:58](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/camera-manager/src/ComboControls.ts#L58)
 
 ___
 
@@ -140,7 +140,7 @@ ___
 
 #### Defined in
 
-[packages/camera-manager/src/ComboControls.ts:65](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/camera-manager/src/ComboControls.ts#L65)
+[packages/camera-manager/src/ComboControls.ts:65](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/camera-manager/src/ComboControls.ts#L65)
 
 ___
 
@@ -150,7 +150,7 @@ ___
 
 #### Defined in
 
-[packages/camera-manager/src/ComboControls.ts:66](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/camera-manager/src/ComboControls.ts#L66)
+[packages/camera-manager/src/ComboControls.ts:66](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/camera-manager/src/ComboControls.ts#L66)
 
 ___
 
@@ -160,7 +160,7 @@ ___
 
 #### Defined in
 
-[packages/camera-manager/src/ComboControls.ts:62](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/camera-manager/src/ComboControls.ts#L62)
+[packages/camera-manager/src/ComboControls.ts:62](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/camera-manager/src/ComboControls.ts#L62)
 
 ___
 
@@ -170,7 +170,7 @@ ___
 
 #### Defined in
 
-[packages/camera-manager/src/ComboControls.ts:63](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/camera-manager/src/ComboControls.ts#L63)
+[packages/camera-manager/src/ComboControls.ts:63](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/camera-manager/src/ComboControls.ts#L63)
 
 ___
 
@@ -180,7 +180,7 @@ ___
 
 #### Defined in
 
-[packages/camera-manager/src/ComboControls.ts:67](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/camera-manager/src/ComboControls.ts#L67)
+[packages/camera-manager/src/ComboControls.ts:67](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/camera-manager/src/ComboControls.ts#L67)
 
 ___
 
@@ -190,7 +190,7 @@ ___
 
 #### Defined in
 
-[packages/camera-manager/src/ComboControls.ts:76](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/camera-manager/src/ComboControls.ts#L76)
+[packages/camera-manager/src/ComboControls.ts:76](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/camera-manager/src/ComboControls.ts#L76)
 
 ___
 
@@ -200,7 +200,7 @@ ___
 
 #### Defined in
 
-[packages/camera-manager/src/ComboControls.ts:56](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/camera-manager/src/ComboControls.ts#L56)
+[packages/camera-manager/src/ComboControls.ts:56](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/camera-manager/src/ComboControls.ts#L56)
 
 ___
 
@@ -210,7 +210,7 @@ ___
 
 #### Defined in
 
-[packages/camera-manager/src/ComboControls.ts:82](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/camera-manager/src/ComboControls.ts#L82)
+[packages/camera-manager/src/ComboControls.ts:82](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/camera-manager/src/ComboControls.ts#L82)
 
 ___
 
@@ -220,7 +220,7 @@ ___
 
 #### Defined in
 
-[packages/camera-manager/src/ComboControls.ts:80](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/camera-manager/src/ComboControls.ts#L80)
+[packages/camera-manager/src/ComboControls.ts:80](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/camera-manager/src/ComboControls.ts#L80)
 
 ___
 
@@ -230,7 +230,7 @@ ___
 
 #### Defined in
 
-[packages/camera-manager/src/ComboControls.ts:54](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/camera-manager/src/ComboControls.ts#L54)
+[packages/camera-manager/src/ComboControls.ts:54](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/camera-manager/src/ComboControls.ts#L54)
 
 ___
 
@@ -240,7 +240,7 @@ ___
 
 #### Defined in
 
-[packages/camera-manager/src/ComboControls.ts:73](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/camera-manager/src/ComboControls.ts#L73)
+[packages/camera-manager/src/ComboControls.ts:73](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/camera-manager/src/ComboControls.ts#L73)
 
 ___
 
@@ -250,7 +250,7 @@ ___
 
 #### Defined in
 
-[packages/camera-manager/src/ComboControls.ts:55](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/camera-manager/src/ComboControls.ts#L55)
+[packages/camera-manager/src/ComboControls.ts:55](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/camera-manager/src/ComboControls.ts#L55)
 
 ___
 
@@ -260,7 +260,7 @@ ___
 
 #### Defined in
 
-[packages/camera-manager/src/ComboControls.ts:81](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/camera-manager/src/ComboControls.ts#L81)
+[packages/camera-manager/src/ComboControls.ts:81](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/camera-manager/src/ComboControls.ts#L81)
 
 ___
 
@@ -270,7 +270,7 @@ ___
 
 #### Defined in
 
-[packages/camera-manager/src/ComboControls.ts:79](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/camera-manager/src/ComboControls.ts#L79)
+[packages/camera-manager/src/ComboControls.ts:79](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/camera-manager/src/ComboControls.ts#L79)
 
 ___
 
@@ -280,7 +280,7 @@ ___
 
 #### Defined in
 
-[packages/camera-manager/src/ComboControls.ts:50](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/camera-manager/src/ComboControls.ts#L50)
+[packages/camera-manager/src/ComboControls.ts:50](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/camera-manager/src/ComboControls.ts#L50)
 
 ___
 
@@ -290,7 +290,7 @@ ___
 
 #### Defined in
 
-[packages/camera-manager/src/ComboControls.ts:53](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/camera-manager/src/ComboControls.ts#L53)
+[packages/camera-manager/src/ComboControls.ts:53](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/camera-manager/src/ComboControls.ts#L53)
 
 ___
 
@@ -300,7 +300,7 @@ ___
 
 #### Defined in
 
-[packages/camera-manager/src/ComboControls.ts:72](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/camera-manager/src/ComboControls.ts#L72)
+[packages/camera-manager/src/ComboControls.ts:72](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/camera-manager/src/ComboControls.ts#L72)
 
 ___
 
@@ -310,7 +310,7 @@ ___
 
 #### Defined in
 
-[packages/camera-manager/src/ComboControls.ts:51](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/camera-manager/src/ComboControls.ts#L51)
+[packages/camera-manager/src/ComboControls.ts:51](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/camera-manager/src/ComboControls.ts#L51)
 
 ___
 
@@ -320,7 +320,7 @@ ___
 
 #### Defined in
 
-[packages/camera-manager/src/ComboControls.ts:64](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/camera-manager/src/ComboControls.ts#L64)
+[packages/camera-manager/src/ComboControls.ts:64](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/camera-manager/src/ComboControls.ts#L64)
 
 ___
 
@@ -330,7 +330,7 @@ ___
 
 #### Defined in
 
-[packages/camera-manager/src/ComboControls.ts:74](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/camera-manager/src/ComboControls.ts#L74)
+[packages/camera-manager/src/ComboControls.ts:74](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/camera-manager/src/ComboControls.ts#L74)
 
 ___
 
@@ -340,7 +340,7 @@ ___
 
 #### Defined in
 
-[packages/camera-manager/src/ComboControls.ts:57](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/camera-manager/src/ComboControls.ts#L57)
+[packages/camera-manager/src/ComboControls.ts:57](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/camera-manager/src/ComboControls.ts#L57)
 
 ___
 
@@ -350,7 +350,7 @@ ___
 
 #### Defined in
 
-[packages/camera-manager/src/ComboControls.ts:68](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/camera-manager/src/ComboControls.ts#L68)
+[packages/camera-manager/src/ComboControls.ts:68](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/camera-manager/src/ComboControls.ts#L68)
 
 ___
 
@@ -360,7 +360,7 @@ ___
 
 #### Defined in
 
-[packages/camera-manager/src/ComboControls.ts:69](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/camera-manager/src/ComboControls.ts#L69)
+[packages/camera-manager/src/ComboControls.ts:69](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/camera-manager/src/ComboControls.ts#L69)
 
 ___
 
@@ -370,7 +370,7 @@ ___
 
 #### Defined in
 
-[packages/camera-manager/src/ComboControls.ts:59](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/camera-manager/src/ComboControls.ts#L59)
+[packages/camera-manager/src/ComboControls.ts:59](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/camera-manager/src/ComboControls.ts#L59)
 
 ___
 
@@ -380,7 +380,7 @@ ___
 
 #### Defined in
 
-[packages/camera-manager/src/ComboControls.ts:60](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/camera-manager/src/ComboControls.ts#L60)
+[packages/camera-manager/src/ComboControls.ts:60](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/camera-manager/src/ComboControls.ts#L60)
 
 ___
 
@@ -390,7 +390,7 @@ ___
 
 #### Defined in
 
-[packages/camera-manager/src/ComboControls.ts:77](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/camera-manager/src/ComboControls.ts#L77)
+[packages/camera-manager/src/ComboControls.ts:77](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/camera-manager/src/ComboControls.ts#L77)
 
 ___
 
@@ -400,7 +400,7 @@ ___
 
 #### Defined in
 
-[packages/camera-manager/src/ComboControls.ts:78](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/camera-manager/src/ComboControls.ts#L78)
+[packages/camera-manager/src/ComboControls.ts:78](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/camera-manager/src/ComboControls.ts#L78)
 
 ## Accessors
 
@@ -419,7 +419,7 @@ resets to default value when `setState` method is called with no rotation value.
 
 #### Defined in
 
-[packages/camera-manager/src/ComboControls.ts:258](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/camera-manager/src/ComboControls.ts#L258)
+[packages/camera-manager/src/ComboControls.ts:258](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/camera-manager/src/ComboControls.ts#L258)
 
 ## Methods
 
@@ -433,7 +433,7 @@ resets to default value when `setState` method is called with no rotation value.
 
 #### Defined in
 
-[packages/camera-manager/src/ComboControls.ts:270](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/camera-manager/src/ComboControls.ts#L270)
+[packages/camera-manager/src/ComboControls.ts:270](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/camera-manager/src/ComboControls.ts#L270)
 
 ___
 
@@ -452,7 +452,7 @@ ___
 
 #### Defined in
 
-[packages/camera-manager/src/ComboControls.ts:233](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/camera-manager/src/ComboControls.ts#L233)
+[packages/camera-manager/src/ComboControls.ts:233](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/camera-manager/src/ComboControls.ts#L233)
 
 ___
 
@@ -472,7 +472,7 @@ ___
 
 #### Defined in
 
-[packages/camera-manager/src/ComboControls.ts:266](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/camera-manager/src/ComboControls.ts#L266)
+[packages/camera-manager/src/ComboControls.ts:266](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/camera-manager/src/ComboControls.ts#L266)
 
 ___
 
@@ -493,7 +493,7 @@ ___
 
 #### Defined in
 
-[packages/camera-manager/src/ComboControls.ts:241](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/camera-manager/src/ComboControls.ts#L241)
+[packages/camera-manager/src/ComboControls.ts:241](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/camera-manager/src/ComboControls.ts#L241)
 
 ___
 
@@ -513,7 +513,7 @@ ___
 
 #### Defined in
 
-[packages/camera-manager/src/ComboControls.ts:262](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/camera-manager/src/ComboControls.ts#L262)
+[packages/camera-manager/src/ComboControls.ts:262](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/camera-manager/src/ComboControls.ts#L262)
 
 ___
 
@@ -527,7 +527,7 @@ ___
 
 #### Defined in
 
-[packages/camera-manager/src/ComboControls.ts:274](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/camera-manager/src/ComboControls.ts#L274)
+[packages/camera-manager/src/ComboControls.ts:274](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/camera-manager/src/ComboControls.ts#L274)
 
 ___
 
@@ -548,4 +548,4 @@ ___
 
 #### Defined in
 
-[packages/camera-manager/src/ComboControls.ts:147](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/camera-manager/src/ComboControls.ts#L147)
+[packages/camera-manager/src/ComboControls.ts:147](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/camera-manager/src/ComboControls.ts#L147)

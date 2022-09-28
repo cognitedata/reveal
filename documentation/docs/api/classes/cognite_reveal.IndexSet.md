@@ -21,7 +21,7 @@ custom_edit_url: null
 
 #### Defined in
 
-[packages/utilities/src/indexset/IndexSet.ts:13](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/utilities/src/indexset/IndexSet.ts#L13)
+[packages/utilities/src/indexset/IndexSet.ts:13](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/utilities/src/indexset/IndexSet.ts#L13)
 
 • **new IndexSet**(`values?`)
 
@@ -33,7 +33,7 @@ custom_edit_url: null
 
 #### Defined in
 
-[packages/utilities/src/indexset/IndexSet.ts:14](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/utilities/src/indexset/IndexSet.ts#L14)
+[packages/utilities/src/indexset/IndexSet.ts:14](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/utilities/src/indexset/IndexSet.ts#L14)
 
 ## Properties
 
@@ -43,7 +43,7 @@ custom_edit_url: null
 
 #### Defined in
 
-[packages/utilities/src/indexset/IndexSet.ts:11](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/utilities/src/indexset/IndexSet.ts#L11)
+[packages/utilities/src/indexset/IndexSet.ts:11](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/utilities/src/indexset/IndexSet.ts#L11)
 
 ## Accessors
 
@@ -57,7 +57,7 @@ custom_edit_url: null
 
 #### Defined in
 
-[packages/utilities/src/indexset/IndexSet.ts:68](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/utilities/src/indexset/IndexSet.ts#L68)
+[packages/utilities/src/indexset/IndexSet.ts:68](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/utilities/src/indexset/IndexSet.ts#L68)
 
 ## Methods
 
@@ -77,7 +77,7 @@ custom_edit_url: null
 
 #### Defined in
 
-[packages/utilities/src/indexset/IndexSet.ts:33](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/utilities/src/indexset/IndexSet.ts#L33)
+[packages/utilities/src/indexset/IndexSet.ts:33](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/utilities/src/indexset/IndexSet.ts#L33)
 
 ___
 
@@ -97,7 +97,7 @@ ___
 
 #### Defined in
 
-[packages/utilities/src/indexset/IndexSet.ts:39](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/utilities/src/indexset/IndexSet.ts#L39)
+[packages/utilities/src/indexset/IndexSet.ts:39](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/utilities/src/indexset/IndexSet.ts#L39)
 
 ___
 
@@ -111,7 +111,7 @@ ___
 
 #### Defined in
 
-[packages/utilities/src/indexset/IndexSet.ts:211](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/utilities/src/indexset/IndexSet.ts#L211)
+[packages/utilities/src/indexset/IndexSet.ts:211](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/utilities/src/indexset/IndexSet.ts#L211)
 
 ___
 
@@ -125,7 +125,7 @@ ___
 
 #### Defined in
 
-[packages/utilities/src/indexset/IndexSet.ts:215](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/utilities/src/indexset/IndexSet.ts#L215)
+[packages/utilities/src/indexset/IndexSet.ts:215](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/utilities/src/indexset/IndexSet.ts#L215)
 
 ___
 
@@ -145,7 +145,7 @@ ___
 
 #### Defined in
 
-[packages/utilities/src/indexset/IndexSet.ts:60](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/utilities/src/indexset/IndexSet.ts#L60)
+[packages/utilities/src/indexset/IndexSet.ts:60](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/utilities/src/indexset/IndexSet.ts#L60)
 
 ___
 
@@ -165,7 +165,7 @@ ___
 
 #### Defined in
 
-[packages/utilities/src/indexset/IndexSet.ts:135](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/utilities/src/indexset/IndexSet.ts#L135)
+[packages/utilities/src/indexset/IndexSet.ts:135](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/utilities/src/indexset/IndexSet.ts#L135)
 
 ___
 
@@ -185,7 +185,7 @@ ___
 
 #### Defined in
 
-[packages/utilities/src/indexset/IndexSet.ts:27](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/utilities/src/indexset/IndexSet.ts#L27)
+[packages/utilities/src/indexset/IndexSet.ts:27](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/utilities/src/indexset/IndexSet.ts#L27)
 
 ___
 
@@ -205,7 +205,7 @@ ___
 
 #### Defined in
 
-[packages/utilities/src/indexset/IndexSet.ts:145](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/utilities/src/indexset/IndexSet.ts#L145)
+[packages/utilities/src/indexset/IndexSet.ts:145](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/utilities/src/indexset/IndexSet.ts#L145)
 
 ___
 
@@ -225,7 +225,7 @@ ___
 
 #### Defined in
 
-[packages/utilities/src/indexset/IndexSet.ts:171](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/utilities/src/indexset/IndexSet.ts#L171)
+[packages/utilities/src/indexset/IndexSet.ts:171](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/utilities/src/indexset/IndexSet.ts#L171)
 
 ___
 
@@ -239,7 +239,7 @@ ___
 
 #### Defined in
 
-[packages/utilities/src/indexset/IndexSet.ts:105](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/utilities/src/indexset/IndexSet.ts#L105)
+[packages/utilities/src/indexset/IndexSet.ts:105](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/utilities/src/indexset/IndexSet.ts#L105)
 
 ___
 
@@ -259,7 +259,7 @@ ___
 
 #### Defined in
 
-[packages/utilities/src/indexset/IndexSet.ts:47](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/utilities/src/indexset/IndexSet.ts#L47)
+[packages/utilities/src/indexset/IndexSet.ts:47](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/utilities/src/indexset/IndexSet.ts#L47)
 
 ___
 
@@ -279,7 +279,7 @@ ___
 
 #### Defined in
 
-[packages/utilities/src/indexset/IndexSet.ts:52](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/utilities/src/indexset/IndexSet.ts#L52)
+[packages/utilities/src/indexset/IndexSet.ts:52](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/utilities/src/indexset/IndexSet.ts#L52)
 
 ___
 
@@ -293,7 +293,7 @@ ___
 
 #### Defined in
 
-[packages/utilities/src/indexset/IndexSet.ts:84](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/utilities/src/indexset/IndexSet.ts#L84)
+[packages/utilities/src/indexset/IndexSet.ts:84](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/utilities/src/indexset/IndexSet.ts#L84)
 
 ___
 
@@ -307,7 +307,7 @@ ___
 
 #### Defined in
 
-[packages/utilities/src/indexset/IndexSet.ts:98](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/utilities/src/indexset/IndexSet.ts#L98)
+[packages/utilities/src/indexset/IndexSet.ts:98](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/utilities/src/indexset/IndexSet.ts#L98)
 
 ___
 
@@ -321,7 +321,7 @@ ___
 
 #### Defined in
 
-[packages/utilities/src/indexset/IndexSet.ts:76](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/utilities/src/indexset/IndexSet.ts#L76)
+[packages/utilities/src/indexset/IndexSet.ts:76](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/utilities/src/indexset/IndexSet.ts#L76)
 
 ___
 
@@ -341,4 +341,4 @@ ___
 
 #### Defined in
 
-[packages/utilities/src/indexset/IndexSet.ts:123](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/utilities/src/indexset/IndexSet.ts#L123)
+[packages/utilities/src/indexset/IndexSet.ts:123](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/utilities/src/indexset/IndexSet.ts#L123)

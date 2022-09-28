@@ -11,28 +11,28 @@ custom_edit_url: null
 
 ### Circle
 
-• **Circle**
+• **Circle** = ``1``
 
 #### Defined in
 
-[packages/pointclouds/src/potree-three-loader/rendering/enums.ts:9](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/pointclouds/src/potree-three-loader/rendering/enums.ts#L9)
+[packages/pointclouds/src/potree-three-loader/rendering/enums.ts:9](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/pointclouds/src/potree-three-loader/rendering/enums.ts#L9)
 
 ___
 
 ### Paraboloid
 
-• **Paraboloid**
+• **Paraboloid** = ``2``
 
 #### Defined in
 
-[packages/pointclouds/src/potree-three-loader/rendering/enums.ts:10](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/pointclouds/src/potree-three-loader/rendering/enums.ts#L10)
+[packages/pointclouds/src/potree-three-loader/rendering/enums.ts:10](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/pointclouds/src/potree-three-loader/rendering/enums.ts#L10)
 
 ___
 
 ### Square
 
-• **Square**
+• **Square** = ``0``
 
 #### Defined in
 
-[packages/pointclouds/src/potree-three-loader/rendering/enums.ts:8](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/pointclouds/src/potree-three-loader/rendering/enums.ts#L8)
+[packages/pointclouds/src/potree-three-loader/rendering/enums.ts:8](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/pointclouds/src/potree-three-loader/rendering/enums.ts#L8)

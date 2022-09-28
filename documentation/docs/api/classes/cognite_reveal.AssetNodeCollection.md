@@ -7,8 +7,8 @@ custom_edit_url: null
 
 [@cognite/reveal](../modules/cognite_reveal.md).AssetNodeCollection
 
-Represents a set of nodes associated with an [asset in Cognite Fusion](https://docs.cognite.com/api/v1/#tag/Assets)
-linked to the 3D model using [asset mappings](https://docs.cognite.com/api/v1/#tag/3D-Asset-Mapping). A node
+Represents a set of nodes associated with an [asset in Cognite Fusion][https://docs.cognite.com/api/v1/#tag/Assets](https://docs.cognite.com/api/v1/#tag/Assets)
+linked to the 3D model using [asset mappings][https://docs.cognite.com/api/v1/#tag/3D-Asset-Mapping](https://docs.cognite.com/api/v1/#tag/3D-Asset-Mapping). A node
 is considered to be part of an asset if it has a direct asset mapping or if one of its ancestors has an asset mapping
 to the asset.
 
@@ -37,7 +37,7 @@ NodeCollection.constructor
 
 #### Defined in
 
-[packages/cad-styling/src/AssetNodeCollection.ts:36](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-styling/src/AssetNodeCollection.ts#L36)
+[packages/cad-styling/src/AssetNodeCollection.ts:36](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-styling/src/AssetNodeCollection.ts#L36)
 
 ## Properties
 
@@ -47,7 +47,7 @@ NodeCollection.constructor
 
 #### Defined in
 
-[packages/cad-styling/src/AssetNodeCollection.ts:27](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-styling/src/AssetNodeCollection.ts#L27)
+[packages/cad-styling/src/AssetNodeCollection.ts:27](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-styling/src/AssetNodeCollection.ts#L27)
 
 ## Accessors
 
@@ -65,7 +65,7 @@ NodeCollection.classToken
 
 #### Defined in
 
-[packages/cad-styling/src/NodeCollection.ts:23](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-styling/src/NodeCollection.ts#L23)
+[packages/cad-styling/src/NodeCollection.ts:23](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-styling/src/NodeCollection.ts#L23)
 
 ___
 
@@ -83,7 +83,7 @@ NodeCollection.isLoading
 
 #### Defined in
 
-[packages/cad-styling/src/AssetNodeCollection.ts:43](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-styling/src/AssetNodeCollection.ts#L43)
+[packages/cad-styling/src/AssetNodeCollection.ts:43](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-styling/src/AssetNodeCollection.ts#L43)
 
 ## Methods
 
@@ -101,7 +101,7 @@ NodeCollection.isLoading
 
 #### Defined in
 
-[packages/cad-styling/src/AssetNodeCollection.ts:124](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-styling/src/AssetNodeCollection.ts#L124)
+[packages/cad-styling/src/AssetNodeCollection.ts:124](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-styling/src/AssetNodeCollection.ts#L124)
 
 ___
 
@@ -117,7 +117,7 @@ assets within the bounding box or all assets associated with the 3D model.
 | Name | Type | Description |
 | :------ | :------ | :------ |
 | `filter` | `Object` |  |
-| `filter.assetId?` | `number` | ID of a single [asset](https://docs.cognite.com/dev/concepts/resource_types/assets.html) (optional) |
+| `filter.assetId?` | `number` | ID of a single [asset][https://docs.cognite.com/dev/concepts/resource_types/assets.html](https://docs.cognite.com/dev/concepts/resource_types/assets.html) (optional) |
 | `filter.boundingBox?` | `Box3` | When provided, only assets within the provided bounds will be included in the filter. |
 
 #### Returns
@@ -126,7 +126,7 @@ assets within the bounding box or all assets associated with the 3D model.
 
 #### Defined in
 
-[packages/cad-styling/src/AssetNodeCollection.ts:54](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-styling/src/AssetNodeCollection.ts#L54)
+[packages/cad-styling/src/AssetNodeCollection.ts:54](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-styling/src/AssetNodeCollection.ts#L54)
 
 ___
 
@@ -148,7 +148,7 @@ implementations supports this.
 
 #### Defined in
 
-[packages/cad-styling/src/AssetNodeCollection.ts:135](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-styling/src/AssetNodeCollection.ts#L135)
+[packages/cad-styling/src/AssetNodeCollection.ts:135](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-styling/src/AssetNodeCollection.ts#L135)
 
 ___
 
@@ -167,7 +167,7 @@ ___
 
 #### Defined in
 
-[packages/cad-styling/src/AssetNodeCollection.ts:120](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-styling/src/AssetNodeCollection.ts#L120)
+[packages/cad-styling/src/AssetNodeCollection.ts:120](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-styling/src/AssetNodeCollection.ts#L120)
 
 ___
 
@@ -185,7 +185,7 @@ ___
 
 #### Defined in
 
-[packages/cad-styling/src/AssetNodeCollection.ts:131](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-styling/src/AssetNodeCollection.ts#L131)
+[packages/cad-styling/src/AssetNodeCollection.ts:131](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-styling/src/AssetNodeCollection.ts#L131)
 
 ___
 
@@ -210,7 +210,7 @@ ___
 
 #### Defined in
 
-[packages/cad-styling/src/NodeCollection.ts:32](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-styling/src/NodeCollection.ts#L32)
+[packages/cad-styling/src/NodeCollection.ts:32](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-styling/src/NodeCollection.ts#L32)
 
 ___
 
@@ -235,7 +235,7 @@ ___
 
 #### Defined in
 
-[packages/cad-styling/src/NodeCollection.ts:27](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-styling/src/NodeCollection.ts#L27)
+[packages/cad-styling/src/NodeCollection.ts:27](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-styling/src/NodeCollection.ts#L27)
 
 ___
 
@@ -253,4 +253,4 @@ ___
 
 #### Defined in
 
-[packages/cad-styling/src/AssetNodeCollection.ts:139](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-styling/src/AssetNodeCollection.ts#L139)
+[packages/cad-styling/src/AssetNodeCollection.ts:139](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-styling/src/AssetNodeCollection.ts#L139)

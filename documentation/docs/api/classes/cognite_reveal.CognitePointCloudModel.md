@@ -7,12 +7,6 @@ custom_edit_url: null
 
 [@cognite/reveal](../modules/cognite_reveal.md).CognitePointCloudModel
 
-## Hierarchy
-
-- `Object3D`
-
-  ↳ **`CognitePointCloudModel`**
-
 ## Implements
 
 - [`CogniteModelBase`](../interfaces/cognite_reveal.CogniteModelBase.md)
@@ -25,7 +19,7 @@ custom_edit_url: null
 
 #### Defined in
 
-[packages/pointclouds/src/CognitePointCloudModel.ts:21](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/pointclouds/src/CognitePointCloudModel.ts#L21)
+[packages/pointclouds/src/CognitePointCloudModel.ts:30](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/pointclouds/src/CognitePointCloudModel.ts#L30)
 
 ___
 
@@ -37,7 +31,7 @@ The modelId of the point cloud model in Cognite Data Fusion.
 
 #### Defined in
 
-[packages/pointclouds/src/CognitePointCloudModel.ts:25](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/pointclouds/src/CognitePointCloudModel.ts#L25)
+[packages/pointclouds/src/CognitePointCloudModel.ts:34](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/pointclouds/src/CognitePointCloudModel.ts#L34)
 
 ___
 
@@ -49,13 +43,9 @@ ___
 
 [CogniteModelBase](../interfaces/cognite_reveal.CogniteModelBase.md).[type](../interfaces/cognite_reveal.CogniteModelBase.md#type)
 
-#### Overrides
-
-THREE.Object3D.type
-
 #### Defined in
 
-[packages/pointclouds/src/CognitePointCloudModel.ts:20](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/pointclouds/src/CognitePointCloudModel.ts#L20)
+[packages/pointclouds/src/CognitePointCloudModel.ts:29](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/pointclouds/src/CognitePointCloudModel.ts#L29)
 
 ## Accessors
 
@@ -71,15 +61,18 @@ Determines how points currently are colored.
 
 #### Defined in
 
-[packages/pointclouds/src/CognitePointCloudModel.ts:147](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/pointclouds/src/CognitePointCloudModel.ts#L147)
+[packages/pointclouds/src/CognitePointCloudModel.ts:154](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/pointclouds/src/CognitePointCloudModel.ts#L154)
 
 • `set` **pointColorType**(`type`): `void`
 
 Specifies how points are colored.
 
-**`default`** PotreePointColorType.Rgb
+**`Default`**
 
-**`example`**
+PotreePointColorType.Rgb
+
+**`Example`**
+
 ```js
 model.pointColorType = PotreePointColorType.Rgb
 ```
@@ -96,7 +89,7 @@ model.pointColorType = PotreePointColorType.Rgb
 
 #### Defined in
 
-[packages/pointclouds/src/CognitePointCloudModel.ts:159](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/pointclouds/src/CognitePointCloudModel.ts#L159)
+[packages/pointclouds/src/CognitePointCloudModel.ts:166](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/pointclouds/src/CognitePointCloudModel.ts#L166)
 
 ___
 
@@ -106,9 +99,13 @@ ___
 
 Sets the point shape of each rendered point in the point cloud.
 
-**`default`** `PotreePointShape.Circle`
+**`Default`**
 
-**`see`** [PotreePointShape](../enums/cognite_reveal.PotreePointShape.md).
+`PotreePointShape.Circle`
+
+**`See`**
+
+[PotreePointShape](../enums/cognite_reveal.PotreePointShape.md).
 
 #### Returns
 
@@ -116,13 +113,15 @@ Sets the point shape of each rendered point in the point cloud.
 
 #### Defined in
 
-[packages/pointclouds/src/CognitePointCloudModel.ts:199](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/pointclouds/src/CognitePointCloudModel.ts#L199)
+[packages/pointclouds/src/CognitePointCloudModel.ts:206](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/pointclouds/src/CognitePointCloudModel.ts#L206)
 
 • `set` **pointShape**(`shape`): `void`
 
 Gets the point shape of each rendered point in the point cloud.
 
-**`see`** [PotreePointShape](../enums/cognite_reveal.PotreePointShape.md).
+**`See`**
+
+[PotreePointShape](../enums/cognite_reveal.PotreePointShape.md).
 
 #### Parameters
 
@@ -136,7 +135,7 @@ Gets the point shape of each rendered point in the point cloud.
 
 #### Defined in
 
-[packages/pointclouds/src/CognitePointCloudModel.ts:207](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/pointclouds/src/CognitePointCloudModel.ts#L207)
+[packages/pointclouds/src/CognitePointCloudModel.ts:214](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/pointclouds/src/CognitePointCloudModel.ts#L214)
 
 ___
 
@@ -152,13 +151,15 @@ Returns the size of each rendered point in the point cloud.
 
 #### Defined in
 
-[packages/pointclouds/src/CognitePointCloudModel.ts:166](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/pointclouds/src/CognitePointCloudModel.ts#L166)
+[packages/pointclouds/src/CognitePointCloudModel.ts:173](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/pointclouds/src/CognitePointCloudModel.ts#L173)
 
 • `set` **pointSize**(`size`): `void`
 
 Sets the size of each rendered point in the point cloud.
 
-**`default`** `1`
+**`Default`**
+
+`1`
 
 #### Parameters
 
@@ -172,7 +173,7 @@ Sets the size of each rendered point in the point cloud.
 
 #### Defined in
 
-[packages/pointclouds/src/CognitePointCloudModel.ts:174](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/pointclouds/src/CognitePointCloudModel.ts#L174)
+[packages/pointclouds/src/CognitePointCloudModel.ts:181](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/pointclouds/src/CognitePointCloudModel.ts#L181)
 
 ___
 
@@ -188,14 +189,16 @@ Get the point size type.
 
 #### Defined in
 
-[packages/pointclouds/src/CognitePointCloudModel.ts:181](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/pointclouds/src/CognitePointCloudModel.ts#L181)
+[packages/pointclouds/src/CognitePointCloudModel.ts:188](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/pointclouds/src/CognitePointCloudModel.ts#L188)
 
 • `set` **pointSizeType**(`type`): `void`
 
 Set the point size type for the point cloud.
 The point size type can be either Fixed or Adaptive.
 
-**`default`** `PotreePointSizeType.Adaptive`
+**`Default`**
+
+`PotreePointSizeType.Adaptive`
 
 #### Parameters
 
@@ -209,7 +212,41 @@ The point size type can be either Fixed or Adaptive.
 
 #### Defined in
 
-[packages/pointclouds/src/CognitePointCloudModel.ts:190](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/pointclouds/src/CognitePointCloudModel.ts#L190)
+[packages/pointclouds/src/CognitePointCloudModel.ts:197](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/pointclouds/src/CognitePointCloudModel.ts#L197)
+
+___
+
+### stylableObjectCount
+
+• `get` **stylableObjectCount**(): `number`
+
+#### Returns
+
+`number`
+
+The number of stylable objects
+
+#### Defined in
+
+[packages/pointclouds/src/CognitePointCloudModel.ts:291](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/pointclouds/src/CognitePointCloudModel.ts#L291)
+
+___
+
+### styledCollections
+
+• `get` **styledCollections**(): `StyledPointCloudObjectCollection`[]
+
+Gets the object collections that have been assigned a style
+
+#### Returns
+
+`StyledPointCloudObjectCollection`[]
+
+All object collections and their associated style
+
+#### Defined in
+
+[packages/pointclouds/src/CognitePointCloudModel.ts:238](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/pointclouds/src/CognitePointCloudModel.ts#L238)
 
 ___
 
@@ -225,9 +262,33 @@ Returns the current number of visible/loaded points.
 
 #### Defined in
 
-[packages/pointclouds/src/CognitePointCloudModel.ts:140](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/pointclouds/src/CognitePointCloudModel.ts#L140)
+[packages/pointclouds/src/CognitePointCloudModel.ts:147](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/pointclouds/src/CognitePointCloudModel.ts#L147)
 
 ## Methods
+
+### assignStyledObjectCollection
+
+▸ **assignStyledObjectCollection**(`objectCollection`, `appearance`): `void`
+
+Assign a style to a collection of objects. If the object collection has been assigned
+a style previously, the previous style will be replaced by the new one.
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `objectCollection` | [`PointCloudObjectCollection`](cognite_reveal.PointCloudObjectCollection.md) | The object collection to assign a style to |
+| `appearance` | [`PointCloudAppearance`](../modules/cognite_reveal.md#pointcloudappearance) | The style to assign to the object collection |
+
+#### Returns
+
+`void`
+
+#### Defined in
+
+[packages/pointclouds/src/CognitePointCloudModel.ts:248](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/pointclouds/src/CognitePointCloudModel.ts#L248)
+
+___
 
 ### dispose
 
@@ -245,7 +306,7 @@ Used to clean up memory.
 
 #### Defined in
 
-[packages/pointclouds/src/CognitePointCloudModel.ts:49](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/pointclouds/src/CognitePointCloudModel.ts#L49)
+[packages/pointclouds/src/CognitePointCloudModel.ts:58](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/pointclouds/src/CognitePointCloudModel.ts#L58)
 
 ___
 
@@ -267,7 +328,7 @@ isn't any stored camera configuration for the model.
 
 #### Defined in
 
-[packages/pointclouds/src/CognitePointCloudModel.ts:77](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/pointclouds/src/CognitePointCloudModel.ts#L77)
+[packages/pointclouds/src/CognitePointCloudModel.ts:84](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/pointclouds/src/CognitePointCloudModel.ts#L84)
 
 ___
 
@@ -285,7 +346,23 @@ A sorted list of classification codes from the model.
 
 #### Defined in
 
-[packages/pointclouds/src/CognitePointCloudModel.ts:133](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/pointclouds/src/CognitePointCloudModel.ts#L133)
+[packages/pointclouds/src/CognitePointCloudModel.ts:140](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/pointclouds/src/CognitePointCloudModel.ts#L140)
+
+___
+
+### getDefaultPointCloudAppearance
+
+▸ **getDefaultPointCloudAppearance**(): [`PointCloudAppearance`](../modules/cognite_reveal.md#pointcloudappearance)
+
+Gets default point appearance
+
+#### Returns
+
+[`PointCloudAppearance`](../modules/cognite_reveal.md#pointcloudappearance)
+
+#### Defined in
+
+[packages/pointclouds/src/CognitePointCloudModel.ts:221](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/pointclouds/src/CognitePointCloudModel.ts#L221)
 
 ___
 
@@ -293,7 +370,8 @@ ___
 
 ▸ **getModelBoundingBox**(`outBbox?`): `Box3`
 
-**`example`**
+**`Example`**
+
 ```js
 const box = new THREE.Box3()
 model.getModelBoundingBox(box);
@@ -322,7 +400,7 @@ Model's bounding box.
 
 #### Defined in
 
-[packages/pointclouds/src/CognitePointCloudModel.ts:68](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/pointclouds/src/CognitePointCloudModel.ts#L68)
+[packages/pointclouds/src/CognitePointCloudModel.ts:75](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/pointclouds/src/CognitePointCloudModel.ts#L75)
 
 ___
 
@@ -348,7 +426,7 @@ Gets transformation matrix of the model.
 
 #### Defined in
 
-[packages/pointclouds/src/CognitePointCloudModel.ts:93](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/pointclouds/src/CognitePointCloudModel.ts#L93)
+[packages/pointclouds/src/CognitePointCloudModel.ts:100](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/pointclouds/src/CognitePointCloudModel.ts#L100)
 
 ___
 
@@ -372,7 +450,7 @@ True if model has values in the class given.
 
 #### Defined in
 
-[packages/pointclouds/src/CognitePointCloudModel.ts:125](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/pointclouds/src/CognitePointCloudModel.ts#L125)
+[packages/pointclouds/src/CognitePointCloudModel.ts:132](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/pointclouds/src/CognitePointCloudModel.ts#L132)
 
 ___
 
@@ -382,7 +460,9 @@ ___
 
 Determines if points from a given class are visible.
 
-**`throws`** Error if the model doesn't have the class given.
+**`Throws`**
+
+Error if the model doesn't have the class given.
 
 #### Parameters
 
@@ -398,7 +478,23 @@ True if points from the given class will be visible.
 
 #### Defined in
 
-[packages/pointclouds/src/CognitePointCloudModel.ts:115](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/pointclouds/src/CognitePointCloudModel.ts#L115)
+[packages/pointclouds/src/CognitePointCloudModel.ts:122](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/pointclouds/src/CognitePointCloudModel.ts#L122)
+
+___
+
+### removeAllStyledObjectCollections
+
+▸ **removeAllStyledObjectCollections**(): `void`
+
+Removes styling on all object collections in this model
+
+#### Returns
+
+`void`
+
+#### Defined in
+
+[packages/pointclouds/src/CognitePointCloudModel.ts:283](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/pointclouds/src/CognitePointCloudModel.ts#L283)
 
 ___
 
@@ -408,7 +504,9 @@ ___
 
 Sets a visible filter on points of a given class.
 
-**`throws`** Error if the model doesn't have the class given.
+**`Throws`**
+
+Error if the model doesn't have the class given.
 
 #### Parameters
 
@@ -423,7 +521,29 @@ Sets a visible filter on points of a given class.
 
 #### Defined in
 
-[packages/pointclouds/src/CognitePointCloudModel.ts:104](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/pointclouds/src/CognitePointCloudModel.ts#L104)
+[packages/pointclouds/src/CognitePointCloudModel.ts:111](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/pointclouds/src/CognitePointCloudModel.ts#L111)
+
+___
+
+### setDefaultPointCloudAppearance
+
+▸ **setDefaultPointCloudAppearance**(`appearance`): `void`
+
+Sets default apparance for points that are not styled otherwise
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `appearance` | [`PointCloudAppearance`](../modules/cognite_reveal.md#pointcloudappearance) | Appearance to assign as default |
+
+#### Returns
+
+`void`
+
+#### Defined in
+
+[packages/pointclouds/src/CognitePointCloudModel.ts:229](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/pointclouds/src/CognitePointCloudModel.ts#L229)
 
 ___
 
@@ -449,4 +569,56 @@ Sets transformation matrix of the model. This overrides the current transformati
 
 #### Defined in
 
-[packages/pointclouds/src/CognitePointCloudModel.ts:85](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/pointclouds/src/CognitePointCloudModel.ts#L85)
+[packages/pointclouds/src/CognitePointCloudModel.ts:92](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/pointclouds/src/CognitePointCloudModel.ts#L92)
+
+___
+
+### traverseStylableObjects
+
+▸ **traverseStylableObjects**(`callback`): `void`
+
+Iterates through all stylable objects for this model
+
+**`Example`**
+
+```js
+model.traverseStylableObjects(
+    annotationMetadata => console.log(annotationMetadata.annotationId)
+);
+```
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `callback` | (`annotationMetadata`: `PointCloudObjectMetadata`) => `void` |
+
+#### Returns
+
+`void`
+
+#### Defined in
+
+[packages/pointclouds/src/CognitePointCloudModel.ts:304](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/pointclouds/src/CognitePointCloudModel.ts#L304)
+
+___
+
+### unassignStyledObjectCollection
+
+▸ **unassignStyledObjectCollection**(`objectCollection`): `void`
+
+Unassign style from an already styled object collection.
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `objectCollection` | [`PointCloudObjectCollection`](cognite_reveal.PointCloudObjectCollection.md) | The object collection from which to remove the style |
+
+#### Returns
+
+`void`
+
+#### Defined in
+
+[packages/pointclouds/src/CognitePointCloudModel.ts:266](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/pointclouds/src/CognitePointCloudModel.ts#L266)

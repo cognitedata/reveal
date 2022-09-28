@@ -25,7 +25,7 @@ custom_edit_url: null
 
 #### Defined in
 
-[packages/cad-styling/src/NodeAppearanceProvider.ts:155](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-styling/src/NodeAppearanceProvider.ts#L155)
+[packages/cad-styling/src/NodeAppearanceProvider.ts:155](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-styling/src/NodeAppearanceProvider.ts#L155)
 
 ## Methods
 
@@ -45,7 +45,7 @@ custom_edit_url: null
 
 #### Defined in
 
-[packages/cad-styling/src/NodeAppearanceProvider.ts:118](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-styling/src/NodeAppearanceProvider.ts#L118)
+[packages/cad-styling/src/NodeAppearanceProvider.ts:118](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-styling/src/NodeAppearanceProvider.ts#L118)
 
 ___
 
@@ -66,7 +66,7 @@ ___
 
 #### Defined in
 
-[packages/cad-styling/src/NodeAppearanceProvider.ts:82](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-styling/src/NodeAppearanceProvider.ts#L82)
+[packages/cad-styling/src/NodeAppearanceProvider.ts:82](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-styling/src/NodeAppearanceProvider.ts#L82)
 
 ___
 
@@ -80,7 +80,7 @@ ___
 
 #### Defined in
 
-[packages/cad-styling/src/NodeAppearanceProvider.ts:146](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-styling/src/NodeAppearanceProvider.ts#L146)
+[packages/cad-styling/src/NodeAppearanceProvider.ts:146](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-styling/src/NodeAppearanceProvider.ts#L146)
 
 ___
 
@@ -94,7 +94,7 @@ ___
 
 #### Defined in
 
-[packages/cad-styling/src/NodeAppearanceProvider.ts:125](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-styling/src/NodeAppearanceProvider.ts#L125)
+[packages/cad-styling/src/NodeAppearanceProvider.ts:125](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-styling/src/NodeAppearanceProvider.ts#L125)
 
 ___
 
@@ -115,7 +115,7 @@ ___
 
 #### Defined in
 
-[packages/cad-styling/src/NodeAppearanceProvider.ts:60](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-styling/src/NodeAppearanceProvider.ts#L60)
+[packages/cad-styling/src/NodeAppearanceProvider.ts:60](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-styling/src/NodeAppearanceProvider.ts#L60)
 
 ▸ **off**(`event`, `listener`): `void`
 
@@ -132,7 +132,7 @@ ___
 
 #### Defined in
 
-[packages/cad-styling/src/NodeAppearanceProvider.ts:61](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-styling/src/NodeAppearanceProvider.ts#L61)
+[packages/cad-styling/src/NodeAppearanceProvider.ts:61](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-styling/src/NodeAppearanceProvider.ts#L61)
 
 ___
 
@@ -153,7 +153,7 @@ ___
 
 #### Defined in
 
-[packages/cad-styling/src/NodeAppearanceProvider.ts:37](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-styling/src/NodeAppearanceProvider.ts#L37)
+[packages/cad-styling/src/NodeAppearanceProvider.ts:37](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-styling/src/NodeAppearanceProvider.ts#L37)
 
 ▸ **on**(`event`, `listener`): `void`
 
@@ -170,7 +170,7 @@ ___
 
 #### Defined in
 
-[packages/cad-styling/src/NodeAppearanceProvider.ts:38](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-styling/src/NodeAppearanceProvider.ts#L38)
+[packages/cad-styling/src/NodeAppearanceProvider.ts:38](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-styling/src/NodeAppearanceProvider.ts#L38)
 
 ▸ **on**(`event`, `listener`): `void`
 
@@ -187,7 +187,7 @@ ___
 
 #### Defined in
 
-[packages/cad-styling/src/NodeAppearanceProvider.ts:39](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-styling/src/NodeAppearanceProvider.ts#L39)
+[packages/cad-styling/src/NodeAppearanceProvider.ts:39](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-styling/src/NodeAppearanceProvider.ts#L39)
 
 ___
 
@@ -207,4 +207,4 @@ ___
 
 #### Defined in
 
-[packages/cad-styling/src/NodeAppearanceProvider.ts:106](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-styling/src/NodeAppearanceProvider.ts#L106)
+[packages/cad-styling/src/NodeAppearanceProvider.ts:106](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-styling/src/NodeAppearanceProvider.ts#L106)

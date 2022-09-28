@@ -35,7 +35,7 @@ Abstract class for implementing a set of nodes to be styled.
 
 #### Defined in
 
-[packages/cad-styling/src/NodeCollection.ts:23](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-styling/src/NodeCollection.ts#L23)
+[packages/cad-styling/src/NodeCollection.ts:23](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-styling/src/NodeCollection.ts#L23)
 
 ___
 
@@ -49,7 +49,7 @@ ___
 
 #### Defined in
 
-[packages/cad-styling/src/NodeCollection.ts:37](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-styling/src/NodeCollection.ts#L37)
+[packages/cad-styling/src/NodeCollection.ts:37](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-styling/src/NodeCollection.ts#L37)
 
 ## Methods
 
@@ -63,7 +63,7 @@ ___
 
 #### Defined in
 
-[packages/cad-styling/src/NodeCollection.ts:45](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-styling/src/NodeCollection.ts#L45)
+[packages/cad-styling/src/NodeCollection.ts:45](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-styling/src/NodeCollection.ts#L45)
 
 ___
 
@@ -81,7 +81,7 @@ implementations supports this.
 
 #### Defined in
 
-[packages/cad-styling/src/NodeCollection.ts:44](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-styling/src/NodeCollection.ts#L44)
+[packages/cad-styling/src/NodeCollection.ts:44](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-styling/src/NodeCollection.ts#L44)
 
 ___
 
@@ -95,7 +95,7 @@ ___
 
 #### Defined in
 
-[packages/cad-styling/src/NodeCollection.ts:38](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-styling/src/NodeCollection.ts#L38)
+[packages/cad-styling/src/NodeCollection.ts:38](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-styling/src/NodeCollection.ts#L38)
 
 ___
 
@@ -116,7 +116,7 @@ ___
 
 #### Defined in
 
-[packages/cad-styling/src/NodeCollection.ts:32](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-styling/src/NodeCollection.ts#L32)
+[packages/cad-styling/src/NodeCollection.ts:32](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-styling/src/NodeCollection.ts#L32)
 
 ___
 
@@ -137,7 +137,7 @@ ___
 
 #### Defined in
 
-[packages/cad-styling/src/NodeCollection.ts:27](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-styling/src/NodeCollection.ts#L27)
+[packages/cad-styling/src/NodeCollection.ts:27](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-styling/src/NodeCollection.ts#L27)
 
 ___
 
@@ -151,4 +151,4 @@ ___
 
 #### Defined in
 
-[packages/cad-styling/src/NodeCollection.ts:46](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-styling/src/NodeCollection.ts#L46)
+[packages/cad-styling/src/NodeCollection.ts:46](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-styling/src/NodeCollection.ts#L46)

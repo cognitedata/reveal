@@ -27,7 +27,7 @@ Enables or disables camera manager. When disabled, camera manager shouldn't cons
 
 #### Defined in
 
-[packages/camera-manager/src/CameraManager.ts:81](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/camera-manager/src/CameraManager.ts#L81)
+[packages/camera-manager/src/CameraManager.ts:81](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/camera-manager/src/CameraManager.ts#L81)
 
 ## Methods
 
@@ -35,7 +35,7 @@ Enables or disables camera manager. When disabled, camera manager shouldn't cons
 
 ▸ **dispose**(): `void`
 
-**`obvious`**
+**`Obvious`**
 
 #### Returns
 
@@ -43,7 +43,7 @@ Enables or disables camera manager. When disabled, camera manager shouldn't cons
 
 #### Defined in
 
-[packages/camera-manager/src/CameraManager.ts:77](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/camera-manager/src/CameraManager.ts#L77)
+[packages/camera-manager/src/CameraManager.ts:77](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/camera-manager/src/CameraManager.ts#L77)
 
 ___
 
@@ -67,7 +67,7 @@ Moves camera to a place where the content of a bounding box is visible to the ca
 
 #### Defined in
 
-[packages/camera-manager/src/CameraManager.ts:65](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/camera-manager/src/CameraManager.ts#L65)
+[packages/camera-manager/src/CameraManager.ts:65](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/camera-manager/src/CameraManager.ts#L65)
 
 ___
 
@@ -86,7 +86,7 @@ camera changes.
 
 #### Defined in
 
-[packages/camera-manager/src/CameraManager.ts:21](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/camera-manager/src/CameraManager.ts#L21)
+[packages/camera-manager/src/CameraManager.ts:21](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/camera-manager/src/CameraManager.ts#L21)
 
 ___
 
@@ -104,7 +104,7 @@ Camera state: position, target and rotation.
 
 #### Defined in
 
-[packages/camera-manager/src/CameraManager.ts:44](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/camera-manager/src/CameraManager.ts#L44)
+[packages/camera-manager/src/CameraManager.ts:44](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/camera-manager/src/CameraManager.ts#L44)
 
 ___
 
@@ -127,7 +127,7 @@ Unsubscribes from changes of the camera event.
 
 #### Defined in
 
-[packages/camera-manager/src/CameraManager.ts:57](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/camera-manager/src/CameraManager.ts#L57)
+[packages/camera-manager/src/CameraManager.ts:57](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/camera-manager/src/CameraManager.ts#L57)
 
 ___
 
@@ -150,7 +150,7 @@ Subscribes to changes of the camera event. This is used by Reveal to react on ch
 
 #### Defined in
 
-[packages/camera-manager/src/CameraManager.ts:51](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/camera-manager/src/CameraManager.ts#L51)
+[packages/camera-manager/src/CameraManager.ts:51](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/camera-manager/src/CameraManager.ts#L51)
 
 ___
 
@@ -161,7 +161,8 @@ ___
 Set camera's state. Rotation and target can't be set at the same time as they could conflict,
 should throw an error if both are passed with non-zero value inside state.
 
-**`example`**
+**`Example`**
+
 ```js
 // store position, target
 const { position, target } = cameraManager.getCameraState();
@@ -181,7 +182,7 @@ cameraManager.setCameraState({ position, target });
 
 #### Defined in
 
-[packages/camera-manager/src/CameraManager.ts:38](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/camera-manager/src/CameraManager.ts#L38)
+[packages/camera-manager/src/CameraManager.ts:38](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/camera-manager/src/CameraManager.ts#L38)
 
 ___
 
@@ -206,4 +207,4 @@ Reveal performance affects frequency with which this method is called.
 
 #### Defined in
 
-[packages/camera-manager/src/CameraManager.ts:73](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/camera-manager/src/CameraManager.ts#L73)
+[packages/camera-manager/src/CameraManager.ts:73](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/camera-manager/src/CameraManager.ts#L73)

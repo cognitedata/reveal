@@ -16,6 +16,7 @@ custom_edit_url: null
 
 ## Classes
 
+- [AnnotationIdPointCloudObjectCollection](../classes/cognite_reveal.AnnotationIdPointCloudObjectCollection.md)
 - [AssetNodeCollection](../classes/cognite_reveal.AssetNodeCollection.md)
 - [BoundingBoxClipper](../classes/cognite_reveal.BoundingBoxClipper.md)
 - [CameraManagerHelper](../classes/cognite_reveal.CameraManagerHelper.md)
@@ -31,6 +32,7 @@ custom_edit_url: null
 - [NodeAppearanceProvider](../classes/cognite_reveal.NodeAppearanceProvider.md)
 - [NodeCollection](../classes/cognite_reveal.NodeCollection.md)
 - [NumericRange](../classes/cognite_reveal.NumericRange.md)
+- [PointCloudObjectCollection](../classes/cognite_reveal.PointCloudObjectCollection.md)
 - [PropertyFilterNodeCollection](../classes/cognite_reveal.PropertyFilterNodeCollection.md)
 - [SinglePropertyFilterNodeCollection](../classes/cognite_reveal.SinglePropertyFilterNodeCollection.md)
 - [TreeIndexNodeCollection](../classes/cognite_reveal.TreeIndexNodeCollection.md)
@@ -64,7 +66,7 @@ custom_edit_url: null
 
 #### Defined in
 
-[packages/api/src/public/migration/types.ts:179](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/api/src/public/migration/types.ts#L179)
+[packages/api/src/public/migration/types.ts:179](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/api/src/public/migration/types.ts#L179)
 
 ___
 
@@ -78,12 +80,12 @@ Represents a measurement of how much geometry can be loaded.
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `highDetailProximityThreshold` | `number` | Sectors within this distance from the camera will always be loaded in high details.  **`deprecated`** This is only used for 3D models processed prior to the Reveal 3.0 release (Q1 2022). |
+| `highDetailProximityThreshold` | `number` | Sectors within this distance from the camera will always be loaded in high details.  **`Deprecated`**  This is only used for 3D models processed prior to the Reveal 3.0 release (Q1 2022). |
 | `maximumRenderCost` | `number` | Maximum render cost. This number can be thought of as triangle count, although the number doesn't match this directly. |
 
 #### Defined in
 
-[packages/cad-geometry-loaders/src/CadModelBudget.ts:10](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-geometry-loaders/src/CadModelBudget.ts#L10)
+[packages/cad-geometry-loaders/src/CadModelBudget.ts:10](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-geometry-loaders/src/CadModelBudget.ts#L10)
 
 ___
 
@@ -108,7 +110,7 @@ ___
 
 #### Defined in
 
-[packages/camera-manager/src/types.ts:85](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/camera-manager/src/types.ts#L85)
+[packages/camera-manager/src/types.ts:85](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/camera-manager/src/types.ts#L85)
 
 ___
 
@@ -127,7 +129,7 @@ Represents a camera configuration, consisting of a camera position and target.
 
 #### Defined in
 
-[packages/utilities/src/CameraConfiguration.ts:8](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/utilities/src/CameraConfiguration.ts#L8)
+[packages/utilities/src/CameraConfiguration.ts:8](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/utilities/src/CameraConfiguration.ts#L8)
 
 ___
 
@@ -144,7 +146,7 @@ ___
 
 #### Defined in
 
-[packages/camera-manager/src/types.ts:5](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/camera-manager/src/types.ts#L5)
+[packages/camera-manager/src/types.ts:5](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/camera-manager/src/types.ts#L5)
 
 ___
 
@@ -158,11 +160,21 @@ ___
 | :------ | :------ | :------ |
 | `position?` | `THREE.Vector3` | Camera position in world space. |
 | `rotation?` | `THREE.Quaternion` | Camera local rotation in quaternion form. |
-| `target?` | `THREE.Vector3` | Camera target in world space. |
+| `target?` | `THREE.Vector3` | Camera target in world space. * |
 
 #### Defined in
 
-[packages/camera-manager/src/types.ts:66](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/camera-manager/src/types.ts#L66)
+[packages/camera-manager/src/types.ts:66](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/camera-manager/src/types.ts#L66)
+
+___
+
+### CompletePointCloudAppearance
+
+Ƭ **CompletePointCloudAppearance**: `Required`<[`PointCloudAppearance`](cognite_reveal.md#pointcloudappearance)\>
+
+#### Defined in
+
+[packages/pointclouds/src/styling/PointCloudAppearance.ts:10](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/pointclouds/src/styling/PointCloudAppearance.ts#L10)
 
 ___
 
@@ -180,7 +192,7 @@ ___
 
 #### Defined in
 
-[packages/utilities/src/events/types.ts:20](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/utilities/src/events/types.ts#L20)
+[packages/utilities/src/events/types.ts:20](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/utilities/src/events/types.ts#L20)
 
 ___
 
@@ -192,12 +204,12 @@ ___
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `boundingBox?` | `THREE.Box3` | The bounds to load geometry within. By default this box is in CDF coordinate space which will be transformed into coordinates relative to the model using the the model transformation which can be specified using [the CDF API](https://docs.cognite.com/api/v1/#operation/update3DRevisions), or set in [Cognite Fusion](https://fusion.cognite.com/).  **`see`** [isBoundingBoxInModelCoordinates](cognite_reveal.md#isboundingboxinmodelcoordinates). |
-| `isBoundingBoxInModelCoordinates?` | `boolean` | When set, the geometry filter {@link boundingBox} will be considered to be in "Reveal/ThreeJS space". Rather than CDF space which is the default. When using Reveal space, the model transformation which can be specified using [the CDF API](https://docs.cognite.com/api/v1/#operation/update3DRevisions), or set in [Cognite Fusion](https://fusion.cognite.com/). |
+| `boundingBox?` | `THREE.Box3` | The bounds to load geometry within. By default this box is in CDF coordinate space which will be transformed into coordinates relative to the model using the the model transformation which can be specified using [the CDF API](https://docs.cognite.com/api/v1/#operation/update3DRevisions), or set in [Cognite Fusion](https://fusion.cognite.com/).  **`See`**  [isBoundingBoxInModelCoordinates](cognite_reveal.md#isboundingboxinmodelcoordinates). |
+| `isBoundingBoxInModelCoordinates?` | `boolean` | When set, the geometry filter [boundingBox](cognite_reveal.md#boundingbox) will be considered to be in "Reveal/ThreeJS space". Rather than CDF space which is the default. When using Reveal space, the model transformation which can be specified using [the CDF API](https://docs.cognite.com/api/v1/#operation/update3DRevisions), or set in [Cognite Fusion](https://fusion.cognite.com/). |
 
 #### Defined in
 
-[packages/cad-model/src/types.ts:21](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-model/src/types.ts#L21)
+[packages/cad-model/src/types.ts:21](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-model/src/types.ts#L21)
 
 ___
 
@@ -207,7 +219,7 @@ ___
 
 #### Defined in
 
-[packages/api/src/public/migration/types.ts:206](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/api/src/public/migration/types.ts#L206)
+[packages/api/src/public/migration/types.ts:206](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/api/src/public/migration/types.ts#L206)
 
 ___
 
@@ -233,7 +245,7 @@ Handler for events about data being loaded.
 
 #### Defined in
 
-[packages/api/src/public/types.ts:30](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/api/src/public/types.ts#L30)
+[packages/api/src/public/types.ts:30](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/api/src/public/types.ts#L30)
 
 ___
 
@@ -252,7 +264,7 @@ ___
 
 #### Defined in
 
-[packages/api/src/utilities/ViewStateHelper.ts:31](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/api/src/utilities/ViewStateHelper.ts#L31)
+[packages/api/src/utilities/ViewStateHelper.ts:31](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/api/src/utilities/ViewStateHelper.ts#L31)
 
 ___
 
@@ -262,7 +274,9 @@ ___
 
 Type for defining node appearance profiles to style a 3D CAD model.
 
-**`see`** [DefaultNodeAppearance](cognite_reveal.md#defaultnodeappearance)
+**`See`**
+
+[DefaultNodeAppearance](cognite_reveal.md#defaultnodeappearance)
 
 #### Type declaration
 
@@ -270,14 +284,14 @@ Type for defining node appearance profiles to style a 3D CAD model.
 | :------ | :------ | :------ |
 | `color?` | [`number`, `number`, `number`] | Overrides the default color of the node in RGB. Each component is in range [0, 255]. `[0, 0, 0]` means no override. |
 | `outlineColor?` | [`NodeOutlineColor`](../enums/cognite_reveal.NodeOutlineColor.md) | When set, an outline is drawn around the node to make it stand out. |
-| `prioritizedForLoadingHint?` | `number` | When provided, this value can be used to prioritize certain areas of the 3D model to be loaded. This can be useful to prioritize key objects in the 3D model to always be loaded.  When non-zero, sectors containing geometry in the vicinity of the prioritized sectors are given an *extra* priority. Recommended values are in range 1 (somewhat higher priority to be loaded) to 10 (very likely to be loaded). Usually values around 4-5 is recommended.  Prioritized nodes are loaded at the expense of non-prioritized areas. There are no guarantees that the nodes are actually loaded, and the more prioritized areas/nodes provided, the less likely it is that the hint is obeyed.  Extra priority doesn't accumulate when sectors are prioritized because they intersect/contain several nodes.  **This is an advanced feature and not recommended for most users**   **`version`** Only works with 3D models converted later than Q4 2021. |
+| `prioritizedForLoadingHint?` | `number` | When provided, this value can be used to prioritize certain areas of the 3D model to be loaded. This can be useful to prioritize key objects in the 3D model to always be loaded.  When non-zero, sectors containing geometry in the vicinity of the prioritized sectors are given an *extra* priority. Recommended values are in range 1 (somewhat higher priority to be loaded) to 10 (very likely to be loaded). Usually values around 4-5 is recommended.  Prioritized nodes are loaded at the expense of non-prioritized areas. There are no guarantees that the nodes are actually loaded, and the more prioritized areas/nodes provided, the less likely it is that the hint is obeyed.  Extra priority doesn't accumulate when sectors are prioritized because they intersect/contain several nodes.  **This is an advanced feature and not recommended for most users**  **`Version`**  Only works with 3D models converted later than Q4 2021. |
 | `renderGhosted?` | `boolean` | When set to true, the node is rendered ghosted, i.e. transparent with a fixed color. This has no effect if [renderInFront](cognite_reveal.md#renderinfront) is `true`. |
 | `renderInFront?` | `boolean` | When set to true, the node is rendered in front of all other nodes even if it's occluded. Note that this take precedence over [renderGhosted](cognite_reveal.md#renderghosted). |
 | `visible?` | `boolean` | Overrides the visibility of the node. |
 
 #### Defined in
 
-[packages/cad-styling/src/NodeAppearance.ts:20](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-styling/src/NodeAppearance.ts#L20)
+[packages/cad-styling/src/NodeAppearance.ts:20](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-styling/src/NodeAppearance.ts#L20)
 
 ___
 
@@ -295,7 +309,7 @@ ___
 
 #### Defined in
 
-[packages/cad-styling/src/NodeCollectionDeserializer.ts:22](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-styling/src/NodeCollectionDeserializer.ts#L22)
+[packages/cad-styling/src/NodeCollectionDeserializer.ts:22](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-styling/src/NodeCollectionDeserializer.ts#L22)
 
 ___
 
@@ -312,7 +326,7 @@ ___
 
 #### Defined in
 
-[packages/cad-styling/src/NodeCollectionDeserializer.ts:21](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-styling/src/NodeCollectionDeserializer.ts#L21)
+[packages/cad-styling/src/NodeCollectionDeserializer.ts:21](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-styling/src/NodeCollectionDeserializer.ts#L21)
 
 ___
 
@@ -338,7 +352,24 @@ ___
 
 #### Defined in
 
-[packages/api/src/public/migration/types.ts:23](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/api/src/public/migration/types.ts#L23)
+[packages/api/src/public/migration/types.ts:23](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/api/src/public/migration/types.ts#L23)
+
+___
+
+### PointCloudAppearance
+
+Ƭ **PointCloudAppearance**: `Object`
+
+#### Type declaration
+
+| Name | Type |
+| :------ | :------ |
+| `color?` | [`number`, `number`, `number`] |
+| `visible?` | `boolean` |
+
+#### Defined in
+
+[packages/pointclouds/src/styling/PointCloudAppearance.ts:5](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/pointclouds/src/styling/PointCloudAppearance.ts#L5)
 
 ___
 
@@ -357,7 +388,7 @@ loaded at the same time.
 
 #### Defined in
 
-[packages/pointclouds/src/PointCloudBudget.ts:10](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/pointclouds/src/PointCloudBudget.ts#L10)
+[packages/pointclouds/src/PointCloudBudget.ts:10](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/pointclouds/src/PointCloudBudget.ts#L10)
 
 ___
 
@@ -381,7 +412,7 @@ ___
 
 #### Defined in
 
-[packages/utilities/src/events/types.ts:9](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/utilities/src/events/types.ts#L9)
+[packages/utilities/src/events/types.ts:9](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/utilities/src/events/types.ts#L9)
 
 ___
 
@@ -389,11 +420,17 @@ ___
 
 Ƭ **RevealOptions**: `Object`
 
-**`property`** logMetrics Might be used to disable usage statistics.
+**`Property`**
 
-**`property`** nodeAppearanceProvider Style node by tree-index.
+Might be used to disable usage statistics.
 
-**`property`** internal Internals are for internal usage only (like unit-testing).
+**`Property`**
+
+Style node by tree-index.
+
+**`Property`**
+
+Internals are for internal usage only (like unit-testing).
 
 #### Type declaration
 
@@ -411,7 +448,7 @@ ___
 
 #### Defined in
 
-[packages/api/src/public/types.ts:16](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/api/src/public/types.ts#L16)
+[packages/api/src/public/types.ts:16](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/api/src/public/types.ts#L16)
 
 ___
 
@@ -439,7 +476,7 @@ ___
 
 #### Defined in
 
-[packages/utilities/src/events/types.ts:26](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/utilities/src/events/types.ts#L26)
+[packages/utilities/src/events/types.ts:26](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/utilities/src/events/types.ts#L26)
 
 ___
 
@@ -457,7 +494,7 @@ ___
 
 #### Defined in
 
-[packages/cad-styling/src/SerializedNodeCollection.ts:4](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-styling/src/SerializedNodeCollection.ts#L4)
+[packages/cad-styling/src/SerializedNodeCollection.ts:4](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-styling/src/SerializedNodeCollection.ts#L4)
 
 ___
 
@@ -467,7 +504,7 @@ ___
 
 #### Defined in
 
-[packages/model-base/src/SupportedModelTypes.ts:4](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/model-base/src/SupportedModelTypes.ts#L4)
+[packages/model-base/src/SupportedModelTypes.ts:4](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/model-base/src/SupportedModelTypes.ts#L4)
 
 ___
 
@@ -477,7 +514,7 @@ ___
 
 #### Defined in
 
-[packages/cad-styling/src/NodeCollectionDeserializer.ts:20](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-styling/src/NodeCollectionDeserializer.ts#L20)
+[packages/cad-styling/src/NodeCollectionDeserializer.ts:20](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-styling/src/NodeCollectionDeserializer.ts#L20)
 
 ___
 
@@ -503,7 +540,7 @@ ___
 
 #### Defined in
 
-[packages/api/src/utilities/ViewStateHelper.ts:15](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/api/src/utilities/ViewStateHelper.ts#L15)
+[packages/api/src/utilities/ViewStateHelper.ts:15](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/api/src/utilities/ViewStateHelper.ts#L15)
 
 ___
 
@@ -515,7 +552,7 @@ Units supported by [Cognite3DModel](../classes/cognite_reveal.Cognite3DModel.md)
 
 #### Defined in
 
-[packages/cad-model/src/types.ts:8](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-model/src/types.ts#L8)
+[packages/cad-model/src/types.ts:8](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-model/src/types.ts#L8)
 
 ## Variables
 
@@ -544,7 +581,17 @@ A set of default node appearances used in Reveal.
 
 #### Defined in
 
-[packages/cad-styling/src/NodeAppearance.ts:109](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-styling/src/NodeAppearance.ts#L109)
+[packages/cad-styling/src/NodeAppearance.ts:109](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-styling/src/NodeAppearance.ts#L109)
+
+___
+
+### DefaultPointCloudAppearance
+
+• `Const` **DefaultPointCloudAppearance**: [`CompletePointCloudAppearance`](cognite_reveal.md#completepointcloudappearance)
+
+#### Defined in
+
+[packages/pointclouds/src/styling/PointCloudAppearance.ts:12](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/pointclouds/src/styling/PointCloudAppearance.ts#L12)
 
 ___
 
@@ -554,26 +601,7 @@ ___
 
 #### Defined in
 
-[packages/api/index.ts:15](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/api/index.ts#L15)
-
-___
-
-### revealEnv
-
-• `Const` **revealEnv**: `Object`
-
-Used to specify custom url for worker/wasm files
-in cases when you need the latest local files or CDN is blocked by CSP.
-
-#### Type declaration
-
-| Name | Type |
-| :------ | :------ |
-| `publicPath` | `string` |
-
-#### Defined in
-
-[packages/utilities/src/revealEnv.ts:9](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/utilities/src/revealEnv.ts#L9)
+[packages/api/index.ts:15](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/api/index.ts#L15)
 
 ## Functions
 
@@ -600,4 +628,4 @@ in cases when you need the latest local files or CDN is blocked by CSP.
 
 #### Defined in
 
-[packages/cad-styling/src/NodeCollectionDeserializer.ts:147](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-styling/src/NodeCollectionDeserializer.ts#L147)
+[packages/cad-styling/src/NodeCollectionDeserializer.ts:147](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-styling/src/NodeCollectionDeserializer.ts#L147)

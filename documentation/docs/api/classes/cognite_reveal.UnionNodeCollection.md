@@ -33,7 +33,7 @@ CombineNodeCollectionBase.constructor
 
 #### Defined in
 
-[packages/cad-styling/src/UnionNodeCollection.ts:21](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-styling/src/UnionNodeCollection.ts#L21)
+[packages/cad-styling/src/UnionNodeCollection.ts:21](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-styling/src/UnionNodeCollection.ts#L21)
 
 ## Properties
 
@@ -43,7 +43,7 @@ CombineNodeCollectionBase.constructor
 
 #### Defined in
 
-[packages/cad-styling/src/UnionNodeCollection.ts:19](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-styling/src/UnionNodeCollection.ts#L19)
+[packages/cad-styling/src/UnionNodeCollection.ts:19](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-styling/src/UnionNodeCollection.ts#L19)
 
 ## Accessors
 
@@ -61,15 +61,13 @@ CombineNodeCollectionBase.classToken
 
 #### Defined in
 
-[packages/cad-styling/src/NodeCollection.ts:23](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-styling/src/NodeCollection.ts#L23)
+[packages/cad-styling/src/NodeCollection.ts:23](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-styling/src/NodeCollection.ts#L23)
 
 ___
 
 ### isLoading
 
 • `get` **isLoading**(): `boolean`
-
-**`override`**
 
 #### Returns
 
@@ -81,7 +79,7 @@ CombineNodeCollectionBase.isLoading
 
 #### Defined in
 
-[packages/cad-styling/src/CombineNodeCollectionBase.ts:67](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-styling/src/CombineNodeCollectionBase.ts#L67)
+[packages/cad-styling/src/CombineNodeCollectionBase.ts:67](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-styling/src/CombineNodeCollectionBase.ts#L67)
 
 ## Methods
 
@@ -105,7 +103,7 @@ CombineNodeCollectionBase.add
 
 #### Defined in
 
-[packages/cad-styling/src/CombineNodeCollectionBase.ts:26](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-styling/src/CombineNodeCollectionBase.ts#L26)
+[packages/cad-styling/src/CombineNodeCollectionBase.ts:26](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-styling/src/CombineNodeCollectionBase.ts#L26)
 
 ___
 
@@ -125,7 +123,7 @@ CombineNodeCollectionBase.clear
 
 #### Defined in
 
-[packages/cad-styling/src/CombineNodeCollectionBase.ts:46](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-styling/src/CombineNodeCollectionBase.ts#L46)
+[packages/cad-styling/src/CombineNodeCollectionBase.ts:46](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-styling/src/CombineNodeCollectionBase.ts#L46)
 
 ___
 
@@ -143,15 +141,13 @@ CombineNodeCollectionBase.getAreas
 
 #### Defined in
 
-[packages/cad-styling/src/UnionNodeCollection.ts:45](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-styling/src/UnionNodeCollection.ts#L45)
+[packages/cad-styling/src/UnionNodeCollection.ts:45](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-styling/src/UnionNodeCollection.ts#L45)
 
 ___
 
 ### getIndexSet
 
 ▸ **getIndexSet**(): [`IndexSet`](cognite_reveal.IndexSet.md)
-
-**`override`**
 
 #### Returns
 
@@ -163,7 +159,7 @@ CombineNodeCollectionBase.getIndexSet
 
 #### Defined in
 
-[packages/cad-styling/src/CombineNodeCollectionBase.ts:59](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-styling/src/CombineNodeCollectionBase.ts#L59)
+[packages/cad-styling/src/CombineNodeCollectionBase.ts:59](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-styling/src/CombineNodeCollectionBase.ts#L59)
 
 ___
 
@@ -188,7 +184,7 @@ CombineNodeCollectionBase.off
 
 #### Defined in
 
-[packages/cad-styling/src/NodeCollection.ts:32](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-styling/src/NodeCollection.ts#L32)
+[packages/cad-styling/src/NodeCollection.ts:32](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-styling/src/NodeCollection.ts#L32)
 
 ___
 
@@ -213,7 +209,7 @@ CombineNodeCollectionBase.on
 
 #### Defined in
 
-[packages/cad-styling/src/NodeCollection.ts:27](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-styling/src/NodeCollection.ts#L27)
+[packages/cad-styling/src/NodeCollection.ts:27](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-styling/src/NodeCollection.ts#L27)
 
 ___
 
@@ -237,7 +233,7 @@ CombineNodeCollectionBase.remove
 
 #### Defined in
 
-[packages/cad-styling/src/CombineNodeCollectionBase.ts:32](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-styling/src/CombineNodeCollectionBase.ts#L32)
+[packages/cad-styling/src/CombineNodeCollectionBase.ts:32](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-styling/src/CombineNodeCollectionBase.ts#L32)
 
 ___
 
@@ -255,4 +251,4 @@ CombineNodeCollectionBase.serialize
 
 #### Defined in
 
-[packages/cad-styling/src/UnionNodeCollection.ts:25](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-styling/src/UnionNodeCollection.ts#L25)
+[packages/cad-styling/src/UnionNodeCollection.ts:25](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-styling/src/UnionNodeCollection.ts#L25)

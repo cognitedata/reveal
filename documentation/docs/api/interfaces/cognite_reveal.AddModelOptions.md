@@ -15,7 +15,7 @@ custom_edit_url: null
 
 #### Defined in
 
-[packages/api/src/public/migration/types.ts:176](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/api/src/public/migration/types.ts#L176)
+[packages/api/src/public/migration/types.ts:176](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/api/src/public/migration/types.ts#L176)
 
 ___
 
@@ -25,7 +25,7 @@ ___
 
 #### Defined in
 
-[packages/api/src/public/migration/types.ts:175](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/api/src/public/migration/types.ts#L175)
+[packages/api/src/public/migration/types.ts:175](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/api/src/public/migration/types.ts#L175)
 
 ___
 
@@ -35,7 +35,7 @@ ___
 
 #### Defined in
 
-[packages/api/src/public/migration/types.ts:172](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/api/src/public/migration/types.ts#L172)
+[packages/api/src/public/migration/types.ts:172](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/api/src/public/migration/types.ts#L172)
 
 ___
 
@@ -45,4 +45,4 @@ ___
 
 #### Defined in
 
-[packages/api/src/public/migration/types.ts:173](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/api/src/public/migration/types.ts#L173)
+[packages/api/src/public/migration/types.ts:173](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/api/src/public/migration/types.ts#L173)

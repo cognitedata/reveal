@@ -7,11 +7,7 @@ custom_edit_url: null
 
 [@cognite/reveal](../modules/cognite_reveal.md).Cognite3DModel
 
-## Hierarchy
-
-- `Object3D`
-
-  ↳ **`Cognite3DModel`**
+Provides metadata needed to get asset mappings for a CDF 3D model
 
 ## Implements
 
@@ -32,7 +28,7 @@ The CDF model ID of the model.
 
 #### Defined in
 
-[packages/cad-model/src/wrappers/Cognite3DModel.ts:57](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-model/src/wrappers/Cognite3DModel.ts#L57)
+[packages/cad-model/src/wrappers/Cognite3DModel.ts:57](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-model/src/wrappers/Cognite3DModel.ts#L57)
 
 ___
 
@@ -48,7 +44,7 @@ The CDF revision ID of the model.
 
 #### Defined in
 
-[packages/cad-model/src/wrappers/Cognite3DModel.ts:61](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-model/src/wrappers/Cognite3DModel.ts#L61)
+[packages/cad-model/src/wrappers/Cognite3DModel.ts:61](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-model/src/wrappers/Cognite3DModel.ts#L61)
 
 ___
 
@@ -60,13 +56,9 @@ ___
 
 [CogniteModelBase](../interfaces/cognite_reveal.CogniteModelBase.md).[type](../interfaces/cognite_reveal.CogniteModelBase.md#type)
 
-#### Overrides
-
-THREE.Object3D.type
-
 #### Defined in
 
-[packages/cad-model/src/wrappers/Cognite3DModel.ts:26](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-model/src/wrappers/Cognite3DModel.ts#L26)
+[packages/cad-model/src/wrappers/Cognite3DModel.ts:26](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-model/src/wrappers/Cognite3DModel.ts#L26)
 
 ## Accessors
 
@@ -84,7 +76,7 @@ Note that coordinates in Reveal always are converted to meters using {@see model
 
 #### Defined in
 
-[packages/cad-model/src/wrappers/Cognite3DModel.ts:40](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-model/src/wrappers/Cognite3DModel.ts#L40)
+[packages/cad-model/src/wrappers/Cognite3DModel.ts:40](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-model/src/wrappers/Cognite3DModel.ts#L40)
 
 ___
 
@@ -101,7 +93,7 @@ return undefined if the model has been stored in an unsupported unit.
 
 #### Defined in
 
-[packages/cad-model/src/wrappers/Cognite3DModel.ts:50](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-model/src/wrappers/Cognite3DModel.ts#L50)
+[packages/cad-model/src/wrappers/Cognite3DModel.ts:50](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-model/src/wrappers/Cognite3DModel.ts#L50)
 
 ___
 
@@ -121,7 +113,7 @@ Returns the number of nodes in the model.
 
 #### Defined in
 
-[packages/cad-model/src/wrappers/Cognite3DModel.ts:480](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-model/src/wrappers/Cognite3DModel.ts#L480)
+[packages/cad-model/src/wrappers/Cognite3DModel.ts:477](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-model/src/wrappers/Cognite3DModel.ts#L477)
 
 ___
 
@@ -137,7 +129,7 @@ Returns all currently registered node collections and associated appearance.
 
 #### Defined in
 
-[packages/cad-model/src/wrappers/Cognite3DModel.ts:123](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-model/src/wrappers/Cognite3DModel.ts#L123)
+[packages/cad-model/src/wrappers/Cognite3DModel.ts:120](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-model/src/wrappers/Cognite3DModel.ts#L120)
 
 ## Methods
 
@@ -162,7 +154,8 @@ early.
 If the `nodeCollection` provided already has an assigned style, this style will
 be replaced with style provided.
 
-**`example`**
+**`Example`**
+
 ```js
 model.setDefaultNodeAppearance({ rendererGhosted: true });
 const visibleNodes = new TreeIndexNodeCollection(someTreeIndices);
@@ -182,7 +175,7 @@ model.assignStyledNodeCollection(visibleSet, { rendererGhosted: false });
 
 #### Defined in
 
-[packages/cad-model/src/wrappers/Cognite3DModel.ts:154](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-model/src/wrappers/Cognite3DModel.ts#L154)
+[packages/cad-model/src/wrappers/Cognite3DModel.ts:151](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-model/src/wrappers/Cognite3DModel.ts#L151)
 
 ___
 
@@ -202,7 +195,7 @@ Cleans up used resources.
 
 #### Defined in
 
-[packages/cad-model/src/wrappers/Cognite3DModel.ts:314](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-model/src/wrappers/Cognite3DModel.ts#L314)
+[packages/cad-model/src/wrappers/Cognite3DModel.ts:311](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-model/src/wrappers/Cognite3DModel.ts#L311)
 
 ___
 
@@ -229,7 +222,7 @@ Tree index range of the subtree spanned by the ancestor at the
 
 #### Defined in
 
-[packages/cad-model/src/wrappers/Cognite3DModel.ts:339](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-model/src/wrappers/Cognite3DModel.ts#L339)
+[packages/cad-model/src/wrappers/Cognite3DModel.ts:335](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-model/src/wrappers/Cognite3DModel.ts#L335)
 
 ___
 
@@ -239,7 +232,8 @@ ___
 
 Fetches a bounding box from the CDF by the nodeId.
 
-**`example`**
+**`Example`**
+
 ```js
 const box = new THREE.Box3()
 const nodeId = 100500;
@@ -264,7 +258,7 @@ const box = await model.getBoundingBoxByNodeId(nodeId);
 
 #### Defined in
 
-[packages/cad-model/src/wrappers/Cognite3DModel.ts:422](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-model/src/wrappers/Cognite3DModel.ts#L422)
+[packages/cad-model/src/wrappers/Cognite3DModel.ts:418](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-model/src/wrappers/Cognite3DModel.ts#L418)
 
 ___
 
@@ -275,7 +269,8 @@ ___
 Determine the bounding box of the node identified by the tree index provided. Note that this
 function uses the CDF API to look up the bounding box.
 
-**`example`**
+**`Example`**
+
 ```js
 const box = new THREE.Box3()
 const treeIndex = 42;
@@ -300,7 +295,7 @@ const box = await model.getBoundingBoxByTreeIndex(treeIndex);
 
 #### Defined in
 
-[packages/cad-model/src/wrappers/Cognite3DModel.ts:456](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-model/src/wrappers/Cognite3DModel.ts#L456)
+[packages/cad-model/src/wrappers/Cognite3DModel.ts:453](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-model/src/wrappers/Cognite3DModel.ts#L453)
 
 ___
 
@@ -322,7 +317,7 @@ isn't any stored camera configuration for the model.
 
 #### Defined in
 
-[packages/cad-model/src/wrappers/Cognite3DModel.ts:386](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-model/src/wrappers/Cognite3DModel.ts#L386)
+[packages/cad-model/src/wrappers/Cognite3DModel.ts:382](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-model/src/wrappers/Cognite3DModel.ts#L382)
 
 ___
 
@@ -339,7 +334,7 @@ Gets the default appearance for nodes that are not styled using
 
 #### Defined in
 
-[packages/cad-model/src/wrappers/Cognite3DModel.ts:116](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-model/src/wrappers/Cognite3DModel.ts#L116)
+[packages/cad-model/src/wrappers/Cognite3DModel.ts:113](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-model/src/wrappers/Cognite3DModel.ts#L113)
 
 ___
 
@@ -349,7 +344,8 @@ ___
 
 Determines the full bounding box of the model.
 
-**`example`**
+**`Example`**
+
 ```js
 const box = new THREE.Box3()
 model.getModelBoundingBox(box);
@@ -379,7 +375,7 @@ Model bounding box.
 
 #### Defined in
 
-[packages/cad-model/src/wrappers/Cognite3DModel.ts:370](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-model/src/wrappers/Cognite3DModel.ts#L370)
+[packages/cad-model/src/wrappers/Cognite3DModel.ts:366](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-model/src/wrappers/Cognite3DModel.ts#L366)
 
 ___
 
@@ -405,7 +401,7 @@ Gets transformation matrix of the model.
 
 #### Defined in
 
-[packages/cad-model/src/wrappers/Cognite3DModel.ts:402](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-model/src/wrappers/Cognite3DModel.ts#L402)
+[packages/cad-model/src/wrappers/Cognite3DModel.ts:398](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-model/src/wrappers/Cognite3DModel.ts#L398)
 
 ___
 
@@ -427,7 +423,7 @@ Determines the range of tree indices for a given subtree.
 
 #### Defined in
 
-[packages/cad-model/src/wrappers/Cognite3DModel.ts:323](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-model/src/wrappers/Cognite3DModel.ts#L323)
+[packages/cad-model/src/wrappers/Cognite3DModel.ts:319](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-model/src/wrappers/Cognite3DModel.ts#L319)
 
 ___
 
@@ -439,7 +435,8 @@ Iterates over all nodes in the model and applies the provided action to each nod
 The passed action is applied incrementally to avoid main thread blocking, meaning that the changes can be partially
 applied until promise is resolved (iteration is done).
 
-**`example`**
+**`Example`**
+
 ```js
 const logIndex = (treeIndex) => console.log(treeIndex);
 await model.iterateNodesByTreeIndex(logIndex); // 0, 1, 2, ...
@@ -459,7 +456,7 @@ Promise that is resolved once the iteration is done.
 
 #### Defined in
 
-[packages/cad-model/src/wrappers/Cognite3DModel.ts:473](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-model/src/wrappers/Cognite3DModel.ts#L473)
+[packages/cad-model/src/wrappers/Cognite3DModel.ts:470](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-model/src/wrappers/Cognite3DModel.ts#L470)
 
 ___
 
@@ -472,7 +469,8 @@ Iterates over all nodes in a subtree of the model and applies the provided actio
 is applied incrementally to avoid main thread blocking, meaning that the changes can be partially
 applied until promise is resolved (iteration is done).
 
-**`example`**
+**`Example`**
+
 ```js
 // make a subtree to be gray
 await model.iterateNodesByTreeIndex(treeIndex => {
@@ -495,7 +493,7 @@ Promise that is resolved once the iteration is done.
 
 #### Defined in
 
-[packages/cad-model/src/wrappers/Cognite3DModel.ts:500](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-model/src/wrappers/Cognite3DModel.ts#L500)
+[packages/cad-model/src/wrappers/Cognite3DModel.ts:497](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-model/src/wrappers/Cognite3DModel.ts#L497)
 
 ___
 
@@ -523,11 +521,11 @@ Transformed box.
 
 #### Implementation of
 
-[CdfModelNodeCollectionDataProvider](../interfaces/cognite_reveal.CdfModelNodeCollectionDataProvider.md).[mapBoxFromCdfToModelCoordinates](../interfaces/cognite_reveal.CdfModelNodeCollectionDataProvider.md#mapboxfromcdftomodelcoordinates)
+CdfModelNodeCollectionDataProvider.mapBoxFromCdfToModelCoordinates
 
 #### Defined in
 
-[packages/cad-model/src/wrappers/Cognite3DModel.ts:302](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-model/src/wrappers/Cognite3DModel.ts#L302)
+[packages/cad-model/src/wrappers/Cognite3DModel.ts:299](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-model/src/wrappers/Cognite3DModel.ts#L299)
 
 ___
 
@@ -555,11 +553,11 @@ Transformed box.
 
 #### Implementation of
 
-[CdfModelNodeCollectionDataProvider](../interfaces/cognite_reveal.CdfModelNodeCollectionDataProvider.md).[mapBoxFromModelToCdfCoordinates](../interfaces/cognite_reveal.CdfModelNodeCollectionDataProvider.md#mapboxfrommodeltocdfcoordinates)
+CdfModelNodeCollectionDataProvider.mapBoxFromModelToCdfCoordinates
 
 #### Defined in
 
-[packages/cad-model/src/wrappers/Cognite3DModel.ts:284](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-model/src/wrappers/Cognite3DModel.ts#L284)
+[packages/cad-model/src/wrappers/Cognite3DModel.ts:281](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-model/src/wrappers/Cognite3DModel.ts#L281)
 
 ___
 
@@ -586,7 +584,7 @@ Transformed position.
 
 #### Defined in
 
-[packages/cad-model/src/wrappers/Cognite3DModel.ts:248](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-model/src/wrappers/Cognite3DModel.ts#L248)
+[packages/cad-model/src/wrappers/Cognite3DModel.ts:245](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-model/src/wrappers/Cognite3DModel.ts#L245)
 
 ___
 
@@ -599,7 +597,9 @@ node ID from an asset mapping and want to highlight the given asset using
 [mapNodeIdsToTreeIndices](cognite_reveal.Cognite3DModel.md#mapnodeidstotreeindices) is recommended for better performance when
 mapping multiple IDs.
 
-**`throws`** If an invalid/non-existant node ID is provided the function throws an error.
+**`Throws`**
+
+If an invalid/non-existant node ID is provided the function throws an error.
 
 #### Parameters
 
@@ -615,7 +615,7 @@ TreeIndex of the provided node.
 
 #### Defined in
 
-[packages/cad-model/src/wrappers/Cognite3DModel.ts:528](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-model/src/wrappers/Cognite3DModel.ts#L528)
+[packages/cad-model/src/wrappers/Cognite3DModel.ts:525](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-model/src/wrappers/Cognite3DModel.ts#L525)
 
 ___
 
@@ -627,7 +627,9 @@ Maps a list of Node IDs to tree indices. This function is useful when you have
 a list of nodes, e.g. from Asset Mappings, that you want to highlight, hide,
 color etc in the viewer.
 
-**`throws`** If an invalid/non-existant node ID is provided the function throws an error.
+**`Throws`**
+
+If an invalid/non-existant node ID is provided the function throws an error.
 
 #### Parameters
 
@@ -643,7 +645,7 @@ A list of tree indices corresponing to the elements in the input.
 
 #### Defined in
 
-[packages/cad-model/src/wrappers/Cognite3DModel.ts:514](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-model/src/wrappers/Cognite3DModel.ts#L514)
+[packages/cad-model/src/wrappers/Cognite3DModel.ts:511](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-model/src/wrappers/Cognite3DModel.ts#L511)
 
 ___
 
@@ -671,7 +673,7 @@ Transformed position.
 
 #### Defined in
 
-[packages/cad-model/src/wrappers/Cognite3DModel.ts:266](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-model/src/wrappers/Cognite3DModel.ts#L266)
+[packages/cad-model/src/wrappers/Cognite3DModel.ts:263](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-model/src/wrappers/Cognite3DModel.ts#L263)
 
 ___
 
@@ -683,7 +685,9 @@ Maps a single tree index to node ID for use with the API. If you have multiple
 tree indices to map, [mapNodeIdsToTreeIndices](cognite_reveal.Cognite3DModel.md#mapnodeidstotreeindices) is recommended for better
 performance.
 
-**`throws`** If an invalid/non-existent node ID is provided the function throws an error.
+**`Throws`**
+
+If an invalid/non-existent node ID is provided the function throws an error.
 
 #### Parameters
 
@@ -699,7 +703,7 @@ TreeIndex of the provided node.
 
 #### Defined in
 
-[packages/cad-model/src/wrappers/Cognite3DModel.ts:554](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-model/src/wrappers/Cognite3DModel.ts#L554)
+[packages/cad-model/src/wrappers/Cognite3DModel.ts:551](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-model/src/wrappers/Cognite3DModel.ts#L551)
 
 ___
 
@@ -709,10 +713,12 @@ ___
 
 Maps a list of tree indices to node IDs for use with the Cognite SDK.
 This function is useful if you have a list of tree indices, e.g. from
-[Cognite3DModel.iterateSubtreeByTreeIndex](cognite_reveal.Cognite3DModel.md#iteratesubtreebytreeindex), and want to perform
+[iterateSubtreeByTreeIndex](cognite_reveal.Cognite3DModel.md#iteratesubtreebytreeindex), and want to perform
 some operations on these nodes using the SDK.
 
-**`throws`** If an invalid tree index is provided the function throws an error.
+**`Throws`**
+
+If an invalid tree index is provided the function throws an error.
 
 #### Parameters
 
@@ -728,7 +734,7 @@ A list of node IDs corresponding to the elements of the input.
 
 #### Defined in
 
-[packages/cad-model/src/wrappers/Cognite3DModel.ts:542](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-model/src/wrappers/Cognite3DModel.ts#L542)
+[packages/cad-model/src/wrappers/Cognite3DModel.ts:539](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-model/src/wrappers/Cognite3DModel.ts#L539)
 
 ___
 
@@ -745,7 +751,7 @@ default appearance.
 
 #### Defined in
 
-[packages/cad-model/src/wrappers/Cognite3DModel.ts:186](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-model/src/wrappers/Cognite3DModel.ts#L186)
+[packages/cad-model/src/wrappers/Cognite3DModel.ts:183](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-model/src/wrappers/Cognite3DModel.ts#L183)
 
 ___
 
@@ -767,7 +773,7 @@ Resets the transformation for the nodes given.
 
 #### Defined in
 
-[packages/cad-model/src/wrappers/Cognite3DModel.ts:225](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-model/src/wrappers/Cognite3DModel.ts#L225)
+[packages/cad-model/src/wrappers/Cognite3DModel.ts:222](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-model/src/wrappers/Cognite3DModel.ts#L222)
 
 ___
 
@@ -790,7 +796,7 @@ Remove override transform of the node by tree index.
 
 #### Defined in
 
-[packages/cad-model/src/wrappers/Cognite3DModel.ts:234](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-model/src/wrappers/Cognite3DModel.ts#L234)
+[packages/cad-model/src/wrappers/Cognite3DModel.ts:231](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-model/src/wrappers/Cognite3DModel.ts#L231)
 
 ___
 
@@ -814,7 +820,7 @@ expensive operation, so use with care.
 
 #### Defined in
 
-[packages/cad-model/src/wrappers/Cognite3DModel.ts:108](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-model/src/wrappers/Cognite3DModel.ts#L108)
+[packages/cad-model/src/wrappers/Cognite3DModel.ts:105](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-model/src/wrappers/Cognite3DModel.ts#L105)
 
 ___
 
@@ -840,7 +846,7 @@ Sets transformation matrix of the model. This overrides the current transformati
 
 #### Defined in
 
-[packages/cad-model/src/wrappers/Cognite3DModel.ts:394](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-model/src/wrappers/Cognite3DModel.ts#L394)
+[packages/cad-model/src/wrappers/Cognite3DModel.ts:390](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-model/src/wrappers/Cognite3DModel.ts#L390)
 
 ___
 
@@ -867,7 +873,7 @@ node isn't supported and might lead to undefined results.
 
 #### Defined in
 
-[packages/cad-model/src/wrappers/Cognite3DModel.ts:200](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-model/src/wrappers/Cognite3DModel.ts#L200)
+[packages/cad-model/src/wrappers/Cognite3DModel.ts:197](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-model/src/wrappers/Cognite3DModel.ts#L197)
 
 ___
 
@@ -891,7 +897,7 @@ Set override transform of the node by tree index.
 
 #### Defined in
 
-[packages/cad-model/src/wrappers/Cognite3DModel.ts:211](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-model/src/wrappers/Cognite3DModel.ts#L211)
+[packages/cad-model/src/wrappers/Cognite3DModel.ts:208](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-model/src/wrappers/Cognite3DModel.ts#L208)
 
 ___
 
@@ -902,7 +908,9 @@ ___
 Removes styling for previously added styled collection, resetting the style to the default (or
 the style imposed by other styled collections).
 
-**`throws`** Error if node collection isn't assigned to the model.
+**`Throws`**
+
+Error if node collection isn't assigned to the model.
 
 #### Parameters
 
@@ -916,4 +924,4 @@ the style imposed by other styled collections).
 
 #### Defined in
 
-[packages/cad-model/src/wrappers/Cognite3DModel.ts:172](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-model/src/wrappers/Cognite3DModel.ts#L172)
+[packages/cad-model/src/wrappers/Cognite3DModel.ts:169](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-model/src/wrappers/Cognite3DModel.ts#L169)

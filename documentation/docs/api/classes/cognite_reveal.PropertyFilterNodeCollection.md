@@ -36,7 +36,7 @@ NodeCollection.constructor
 
 #### Defined in
 
-[packages/cad-styling/src/PropertyFilterNodeCollection.ts:53](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-styling/src/PropertyFilterNodeCollection.ts#L53)
+[packages/cad-styling/src/PropertyFilterNodeCollection.ts:53](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-styling/src/PropertyFilterNodeCollection.ts#L53)
 
 ## Properties
 
@@ -46,7 +46,7 @@ NodeCollection.constructor
 
 #### Defined in
 
-[packages/cad-styling/src/PropertyFilterNodeCollection.ts:38](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-styling/src/PropertyFilterNodeCollection.ts#L38)
+[packages/cad-styling/src/PropertyFilterNodeCollection.ts:38](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-styling/src/PropertyFilterNodeCollection.ts#L38)
 
 ## Accessors
 
@@ -64,7 +64,7 @@ NodeCollection.classToken
 
 #### Defined in
 
-[packages/cad-styling/src/NodeCollection.ts:23](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-styling/src/NodeCollection.ts#L23)
+[packages/cad-styling/src/NodeCollection.ts:23](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-styling/src/NodeCollection.ts#L23)
 
 ___
 
@@ -82,7 +82,7 @@ NodeCollection.isLoading
 
 #### Defined in
 
-[packages/cad-styling/src/PropertyFilterNodeCollection.ts:64](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-styling/src/PropertyFilterNodeCollection.ts#L64)
+[packages/cad-styling/src/PropertyFilterNodeCollection.ts:64](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-styling/src/PropertyFilterNodeCollection.ts#L64)
 
 ## Methods
 
@@ -102,7 +102,7 @@ Clears the node collection and interrupts any ongoing operations.
 
 #### Defined in
 
-[packages/cad-styling/src/PropertyFilterNodeCollection.ts:126](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-styling/src/PropertyFilterNodeCollection.ts#L126)
+[packages/cad-styling/src/PropertyFilterNodeCollection.ts:126](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-styling/src/PropertyFilterNodeCollection.ts#L126)
 
 ___
 
@@ -113,7 +113,8 @@ ___
 Populates the node collection with nodes matching the provided filter. This will replace
 the current nodes held by the filter.
 
-**`example`**
+**`Example`**
+
 ```
 set.executeFilter({ 'PDMS': { 'Module': 'AQ550' }});
 ```
@@ -130,7 +131,7 @@ set.executeFilter({ 'PDMS': { 'Module': 'AQ550' }});
 
 #### Defined in
 
-[packages/cad-styling/src/PropertyFilterNodeCollection.ts:77](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-styling/src/PropertyFilterNodeCollection.ts#L77)
+[packages/cad-styling/src/PropertyFilterNodeCollection.ts:77](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-styling/src/PropertyFilterNodeCollection.ts#L77)
 
 ___
 
@@ -152,7 +153,7 @@ implementations supports this.
 
 #### Defined in
 
-[packages/cad-styling/src/PropertyFilterNodeCollection.ts:138](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-styling/src/PropertyFilterNodeCollection.ts#L138)
+[packages/cad-styling/src/PropertyFilterNodeCollection.ts:138](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-styling/src/PropertyFilterNodeCollection.ts#L138)
 
 ___
 
@@ -170,7 +171,7 @@ ___
 
 #### Defined in
 
-[packages/cad-styling/src/PropertyFilterNodeCollection.ts:134](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-styling/src/PropertyFilterNodeCollection.ts#L134)
+[packages/cad-styling/src/PropertyFilterNodeCollection.ts:134](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-styling/src/PropertyFilterNodeCollection.ts#L134)
 
 ___
 
@@ -195,7 +196,7 @@ ___
 
 #### Defined in
 
-[packages/cad-styling/src/NodeCollection.ts:32](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-styling/src/NodeCollection.ts#L32)
+[packages/cad-styling/src/NodeCollection.ts:32](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-styling/src/NodeCollection.ts#L32)
 
 ___
 
@@ -220,7 +221,7 @@ ___
 
 #### Defined in
 
-[packages/cad-styling/src/NodeCollection.ts:27](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-styling/src/NodeCollection.ts#L27)
+[packages/cad-styling/src/NodeCollection.ts:27](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-styling/src/NodeCollection.ts#L27)
 
 ___
 
@@ -238,4 +239,4 @@ ___
 
 #### Defined in
 
-[packages/cad-styling/src/PropertyFilterNodeCollection.ts:142](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-styling/src/PropertyFilterNodeCollection.ts#L142)
+[packages/cad-styling/src/PropertyFilterNodeCollection.ts:142](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-styling/src/PropertyFilterNodeCollection.ts#L142)

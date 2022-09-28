@@ -13,22 +13,22 @@ Map data for Mapbox
 
 ### Map\_Id
 
-• **Map\_Id**
+• **Map\_Id** = ``101``
 
 Access the map data using a map id or Tileset id. For details see https://docs.mapbox.com/help/glossary/tileset-id/
 
 #### Defined in
 
-[packages/tools/src/Geomap/MapConfig.ts:26](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/tools/src/Geomap/MapConfig.ts#L26)
+[packages/tools/src/Geomap/MapConfig.ts:26](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/tools/src/Geomap/MapConfig.ts#L26)
 
 ___
 
 ### Style
 
-• **Style**
+• **Style** = ``100``
 
 Access the map data using a map style. For details see https://docs.mapbox.com/api/maps/styles/
 
 #### Defined in
 
-[packages/tools/src/Geomap/MapConfig.ts:22](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/tools/src/Geomap/MapConfig.ts#L22)
+[packages/tools/src/Geomap/MapConfig.ts:22](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/tools/src/Geomap/MapConfig.ts#L22)

@@ -11,78 +11,78 @@ custom_edit_url: null
 
 ### Black
 
-• **Black**
+• **Black** = ``2``
 
 #### Defined in
 
-[packages/cad-styling/src/NodeAppearance.ts:8](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-styling/src/NodeAppearance.ts#L8)
+[packages/cad-styling/src/NodeAppearance.ts:8](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-styling/src/NodeAppearance.ts#L8)
 
 ___
 
 ### Blue
 
-• **Blue**
+• **Blue** = ``4``
 
 #### Defined in
 
-[packages/cad-styling/src/NodeAppearance.ts:10](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-styling/src/NodeAppearance.ts#L10)
+[packages/cad-styling/src/NodeAppearance.ts:10](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-styling/src/NodeAppearance.ts#L10)
 
 ___
 
 ### Cyan
 
-• **Cyan**
+• **Cyan** = ``3``
 
 #### Defined in
 
-[packages/cad-styling/src/NodeAppearance.ts:9](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-styling/src/NodeAppearance.ts#L9)
+[packages/cad-styling/src/NodeAppearance.ts:9](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-styling/src/NodeAppearance.ts#L9)
 
 ___
 
 ### Green
 
-• **Green**
+• **Green** = ``5``
 
 #### Defined in
 
-[packages/cad-styling/src/NodeAppearance.ts:11](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-styling/src/NodeAppearance.ts#L11)
+[packages/cad-styling/src/NodeAppearance.ts:11](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-styling/src/NodeAppearance.ts#L11)
 
 ___
 
 ### NoOutline
 
-• **NoOutline**
+• **NoOutline** = ``0``
 
 #### Defined in
 
-[packages/cad-styling/src/NodeAppearance.ts:6](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-styling/src/NodeAppearance.ts#L6)
+[packages/cad-styling/src/NodeAppearance.ts:6](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-styling/src/NodeAppearance.ts#L6)
 
 ___
 
 ### Orange
 
-• **Orange**
+• **Orange** = ``7``
 
 #### Defined in
 
-[packages/cad-styling/src/NodeAppearance.ts:13](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-styling/src/NodeAppearance.ts#L13)
+[packages/cad-styling/src/NodeAppearance.ts:13](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-styling/src/NodeAppearance.ts#L13)
 
 ___
 
 ### Red
 
-• **Red**
+• **Red** = ``6``
 
 #### Defined in
 
-[packages/cad-styling/src/NodeAppearance.ts:12](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-styling/src/NodeAppearance.ts#L12)
+[packages/cad-styling/src/NodeAppearance.ts:12](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-styling/src/NodeAppearance.ts#L12)
 
 ___
 
 ### White
 
-• **White**
+• **White** = ``1``
 
 #### Defined in
 
-[packages/cad-styling/src/NodeAppearance.ts:7](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-styling/src/NodeAppearance.ts#L7)
+[packages/cad-styling/src/NodeAppearance.ts:7](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-styling/src/NodeAppearance.ts#L7)

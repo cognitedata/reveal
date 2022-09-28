@@ -34,7 +34,7 @@ The `GeomapTool` is a geolocation for the models and allow the user to place the
 
 #### Defined in
 
-[packages/tools/src/Geomap/GeomapTool.ts:19](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/tools/src/Geomap/GeomapTool.ts#L19)
+[packages/tools/src/Geomap/GeomapTool.ts:19](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/tools/src/Geomap/GeomapTool.ts#L19)
 
 ## Methods
 
@@ -55,7 +55,7 @@ of dipose-listeners.
 
 #### Defined in
 
-[packages/tools/src/Geomap/GeomapTool.ts:36](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/tools/src/Geomap/GeomapTool.ts#L36)
+[packages/tools/src/Geomap/GeomapTool.ts:36](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/tools/src/Geomap/GeomapTool.ts#L36)
 
 ___
 
@@ -82,7 +82,7 @@ Converts Latitude & Longitude into Vector2 World coordinates on the Map
 
 #### Defined in
 
-[packages/tools/src/Geomap/GeomapTool.ts:32](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/tools/src/Geomap/GeomapTool.ts#L32)
+[packages/tools/src/Geomap/GeomapTool.ts:32](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/tools/src/Geomap/GeomapTool.ts#L32)
 
 ___
 
@@ -109,4 +109,4 @@ Unregisters an event handler for the 'disposed'-event.
 
 #### Defined in
 
-[packages/tools/src/Cognite3DViewerToolBase.ts:37](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/tools/src/Cognite3DViewerToolBase.ts#L37)
+[packages/tools/src/Cognite3DViewerToolBase.ts:37](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/tools/src/Cognite3DViewerToolBase.ts#L37)

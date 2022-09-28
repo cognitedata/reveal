@@ -24,7 +24,6 @@ custom_edit_url: null
 - [AxisViewTool](../classes/cognite_reveal_tools.AxisViewTool.md)
 - [Cognite3DViewerToolBase](../classes/cognite_reveal_tools.Cognite3DViewerToolBase.md)
 - [DebugCameraTool](../classes/cognite_reveal_tools.DebugCameraTool.md)
-- [DebugLoadedSectorsTool](../classes/cognite_reveal_tools.DebugLoadedSectorsTool.md)
 - [ExplodedViewTool](../classes/cognite_reveal_tools.ExplodedViewTool.md)
 - [GeomapTool](../classes/cognite_reveal_tools.GeomapTool.md)
 - [HtmlOverlayTool](../classes/cognite_reveal_tools.HtmlOverlayTool.md)
@@ -49,7 +48,7 @@ Absolute position in pixels.
 
 #### Defined in
 
-[packages/tools/src/AxisView/types.ts:47](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/tools/src/AxisView/types.ts#L47)
+[packages/tools/src/AxisView/types.ts:47](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/tools/src/AxisView/types.ts#L47)
 
 ___
 
@@ -71,7 +70,7 @@ Configuration of the compass.
 
 #### Defined in
 
-[packages/tools/src/AxisView/types.ts:79](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/tools/src/AxisView/types.ts#L79)
+[packages/tools/src/AxisView/types.ts:79](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/tools/src/AxisView/types.ts#L79)
 
 ___
 
@@ -99,7 +98,7 @@ Configuration of [AxisViewTool](../classes/cognite_reveal_tools.AxisViewTool.md)
 
 #### Defined in
 
-[packages/tools/src/AxisView/types.ts:10](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/tools/src/AxisView/types.ts#L10)
+[packages/tools/src/AxisView/types.ts:10](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/tools/src/AxisView/types.ts#L10)
 
 ___
 
@@ -122,7 +121,7 @@ Configuration of each face of the orientation box.
 
 #### Defined in
 
-[packages/tools/src/AxisView/types.ts:64](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/tools/src/AxisView/types.ts#L64)
+[packages/tools/src/AxisView/types.ts:64](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/tools/src/AxisView/types.ts#L64)
 
 ___
 
@@ -140,28 +139,7 @@ ___
 
 #### Defined in
 
-[packages/tools/src/Geomap/MapConfig.ts:121](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/tools/src/Geomap/MapConfig.ts#L121)
-
-___
-
-### DebugLoadedSectorsToolOptions
-
-Ƭ **DebugLoadedSectorsToolOptions**: `Object`
-
-#### Type declaration
-
-| Name | Type |
-| :------ | :------ |
-| `colorBy?` | ``"depth"`` \| ``"lod"`` \| ``"loadedTimestamp"`` \| ``"drawcalls"`` \| ``"random"`` |
-| `leafsOnly?` | `boolean` |
-| `sectorPathFilterRegex?` | `string` |
-| `showDetailedSectors?` | `boolean` |
-| `showDiscardedSectors?` | `boolean` |
-| `showSimpleSectors?` | `boolean` |
-
-#### Defined in
-
-[packages/tools/src/DebugLoadedSectorsTool.ts:13](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/tools/src/DebugLoadedSectorsTool.ts#L13)
+[packages/tools/src/Geomap/MapConfig.ts:121](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/tools/src/Geomap/MapConfig.ts#L121)
 
 ___
 
@@ -178,12 +156,12 @@ ___
 | `imageFormat?` | [`HereMapImageFormat`](../enums/cognite_reveal_tools.HereMapImageFormat.md) | Map image tile format |
 | `provider` | [`HereMap`](../enums/cognite_reveal_tools.MapProviders.md#heremap) | - |
 | `scheme?` | `string` | Specifies the view scheme |
-| `size?` | `number` | Returned tile map image size. The following sizes are supported: - 256 - 512 - 128 (deprecated, although usage is still accepted) |
+| `size?` | `number` | Returned tile map image size. The following sizes are supported:  - 256  - 512  - 128 (deprecated, although usage is still accepted) |
 | `style?` | [`HereMapType`](../enums/cognite_reveal_tools.HereMapType.md) | The type of maps to be used. |
 
 #### Defined in
 
-[packages/tools/src/Geomap/MapConfig.ts:133](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/tools/src/Geomap/MapConfig.ts#L133)
+[packages/tools/src/Geomap/MapConfig.ts:133](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/tools/src/Geomap/MapConfig.ts#L133)
 
 ___
 
@@ -210,7 +188,7 @@ Callback that is triggered when a set of overlays are clustered together in
 
 #### Defined in
 
-[packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts:32](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts#L32)
+[packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts:32](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts#L32)
 
 ___
 
@@ -218,7 +196,7 @@ ___
 
 Ƭ **HtmlOverlayOptions**: `Object`
 
-Options for an overlay added using [HtmlOverlayTool.add](../classes/cognite_reveal_tools.HtmlOverlayTool.md#add).
+Options for an overlay added using [add](../classes/cognite_reveal_tools.HtmlOverlayTool.md#add).
 
 #### Type declaration
 
@@ -229,7 +207,7 @@ Options for an overlay added using [HtmlOverlayTool.add](../classes/cognite_reve
 
 #### Defined in
 
-[packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts:42](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts#L42)
+[packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts:42](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts#L42)
 
 ___
 
@@ -260,7 +238,7 @@ in [HtmlOverlayTool](../classes/cognite_reveal_tools.HtmlOverlayTool.md).
 
 #### Defined in
 
-[packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts:20](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts#L20)
+[packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts:20](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts#L20)
 
 ___
 
@@ -272,7 +250,7 @@ Maps Configuration of [GeomapTool](../classes/cognite_reveal_tools.GeomapTool.md
 
 #### Defined in
 
-[packages/tools/src/Geomap/MapConfig.ts:198](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/tools/src/Geomap/MapConfig.ts#L198)
+[packages/tools/src/Geomap/MapConfig.ts:198](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/tools/src/Geomap/MapConfig.ts#L198)
 
 ___
 
@@ -286,14 +264,14 @@ ___
 | :------ | :------ | :------ |
 | `APIKey` | `string` | Mapbox API Key |
 | `id` | `string` | Map style or map ID if the mode is set to MAP_ID |
-| `mode?` | [`MapboxMode`](../enums/cognite_reveal_tools.MapboxMode.md) | Map tile access mode - MapboxMode.STYLE - MapboxMode.MAP_ID |
+| `mode?` | [`MapboxMode`](../enums/cognite_reveal_tools.MapboxMode.md) | Map tile access mode  - MapboxMode.STYLE  - MapboxMode.MAP_ID |
 | `provider` | [`MapboxMap`](../enums/cognite_reveal_tools.MapProviders.md#mapboxmap) | - |
 | `tileFormat?` | [`MapboxImageFormat`](../enums/cognite_reveal_tools.MapboxImageFormat.md) | Map image tile format |
 | `useHDPI?` | `boolean` | Flag to indicate if should use high resolution tiles |
 
 #### Defined in
 
-[packages/tools/src/Geomap/MapConfig.ts:169](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/tools/src/Geomap/MapConfig.ts#L169)
+[packages/tools/src/Geomap/MapConfig.ts:169](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/tools/src/Geomap/MapConfig.ts#L169)
 
 ___
 
@@ -312,7 +290,7 @@ ___
 
 #### Defined in
 
-[packages/tools/src/Measurement/MeasurementManager.ts:11](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/tools/src/Measurement/MeasurementManager.ts#L11)
+[packages/tools/src/Measurement/MeasurementManager.ts:11](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/tools/src/Measurement/MeasurementManager.ts#L11)
 
 ___
 
@@ -342,7 +320,7 @@ Delegate for measurement added events.
 
 #### Defined in
 
-[packages/tools/src/Measurement/types.ts:13](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/tools/src/Measurement/types.ts#L13)
+[packages/tools/src/Measurement/types.ts:13](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/tools/src/Measurement/types.ts#L13)
 
 ___
 
@@ -362,7 +340,7 @@ Delegate for measurement ended events.
 
 #### Defined in
 
-[packages/tools/src/Measurement/types.ts:28](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/tools/src/Measurement/types.ts#L28)
+[packages/tools/src/Measurement/types.ts:28](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/tools/src/Measurement/types.ts#L28)
 
 ___
 
@@ -382,7 +360,7 @@ Measurement tool option with user custom callback, line width & color.
 
 #### Defined in
 
-[packages/tools/src/Measurement/types.ts:33](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/tools/src/Measurement/types.ts#L33)
+[packages/tools/src/Measurement/types.ts:33](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/tools/src/Measurement/types.ts#L33)
 
 ___
 
@@ -402,7 +380,7 @@ Delegate for measurement started events.
 
 #### Defined in
 
-[packages/tools/src/Measurement/types.ts:23](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/tools/src/Measurement/types.ts#L23)
+[packages/tools/src/Measurement/types.ts:23](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/tools/src/Measurement/types.ts#L23)
 
 ___
 
@@ -422,7 +400,7 @@ and a given padding.
 
 #### Defined in
 
-[packages/tools/src/AxisView/types.ts:56](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/tools/src/AxisView/types.ts#L56)
+[packages/tools/src/AxisView/types.ts:56](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/tools/src/AxisView/types.ts#L56)
 
 ___
 
@@ -452,4 +430,4 @@ Delegate for Timeline Date update
 
 #### Defined in
 
-[packages/tools/src/Timeline/types.ts:8](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/tools/src/Timeline/types.ts#L8)
+[packages/tools/src/Timeline/types.ts:8](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/tools/src/Timeline/types.ts#L8)

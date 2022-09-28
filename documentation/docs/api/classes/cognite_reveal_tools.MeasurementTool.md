@@ -13,7 +13,8 @@ required point to get measurement of the distance.
 The tools default measurement is in "Meters" as supported in Reveal, but it also provides
 user to customise the measuring units based on their convinience with the callback.
 
-**`example`**
+**`Example`**
+
 ```js
 const measurementTool = new MeasurementTool(viewer);
 measurementTool.enterMeasurementMode();
@@ -24,7 +25,8 @@ measurementTool.exitMeasurementMode();
 measurementTool.dispose();
 ```
 
-**`example`**
+**`Example`**
+
 ```jsx runnable
 const measurementTool = new MeasurementTool(viewer, {distanceToLabelCallback: (distanceInMeters) => {
    // 1 meters = 3.281 feet
@@ -59,7 +61,7 @@ const measurementTool = new MeasurementTool(viewer, {distanceToLabelCallback: (d
 
 #### Defined in
 
-[packages/tools/src/Measurement/MeasurementTool.ts:87](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/tools/src/Measurement/MeasurementTool.ts#L87)
+[packages/tools/src/Measurement/MeasurementTool.ts:87](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/tools/src/Measurement/MeasurementTool.ts#L87)
 
 ## Accessors
 
@@ -75,7 +77,7 @@ Returns measurement mode state, is measurement mode started or ended.
 
 #### Defined in
 
-[packages/tools/src/Measurement/MeasurementTool.ts:53](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/tools/src/Measurement/MeasurementTool.ts#L53)
+[packages/tools/src/Measurement/MeasurementTool.ts:53](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/tools/src/Measurement/MeasurementTool.ts#L53)
 
 ## Methods
 
@@ -95,7 +97,7 @@ Dispose Measurement Tool.
 
 #### Defined in
 
-[packages/tools/src/Measurement/MeasurementTool.ts:340](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/tools/src/Measurement/MeasurementTool.ts#L340)
+[packages/tools/src/Measurement/MeasurementTool.ts:340](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/tools/src/Measurement/MeasurementTool.ts#L340)
 
 ___
 
@@ -111,7 +113,7 @@ Enter into point to point measurement mode.
 
 #### Defined in
 
-[packages/tools/src/Measurement/MeasurementTool.ts:228](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/tools/src/Measurement/MeasurementTool.ts#L228)
+[packages/tools/src/Measurement/MeasurementTool.ts:228](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/tools/src/Measurement/MeasurementTool.ts#L228)
 
 ___
 
@@ -127,7 +129,7 @@ Exit measurement mode.
 
 #### Defined in
 
-[packages/tools/src/Measurement/MeasurementTool.ts:240](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/tools/src/Measurement/MeasurementTool.ts#L240)
+[packages/tools/src/Measurement/MeasurementTool.ts:240](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/tools/src/Measurement/MeasurementTool.ts#L240)
 
 ___
 
@@ -135,7 +137,7 @@ ___
 
 ▸ **getAllMeasurements**(): [`Measurement`](../modules/cognite_reveal_tools.md#measurement)[]
 
-Get all measurements from [Cognite3DViewer](cognite_reveal.Cognite3DViewer.md).
+Get all measurements from Cognite3DViewer.
 
 #### Returns
 
@@ -145,7 +147,7 @@ Array of Measurements containing Id, start point, end point & measured distance.
 
 #### Defined in
 
-[packages/tools/src/Measurement/MeasurementTool.ts:333](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/tools/src/Measurement/MeasurementTool.ts#L333)
+[packages/tools/src/Measurement/MeasurementTool.ts:333](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/tools/src/Measurement/MeasurementTool.ts#L333)
 
 ___
 
@@ -153,19 +155,18 @@ ___
 
 ▸ **off**(`event`, `callback`): `void`
 
-Unsubscribe to the Measurement event
+**`Example`**
 
-**`example`**
 ```js
 measurementTool.off('disposed', onMeasurementDispose);
 ```
 
 #### Parameters
 
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `event` | ``"disposed"`` | `MeasurementEvents` event |
-| `callback` | [`DisposedDelegate`](../modules/cognite_reveal.md#disposeddelegate) | Callback to measurements events |
+| Name | Type |
+| :------ | :------ |
+| `event` | ``"disposed"`` |
+| `callback` | [`DisposedDelegate`](../modules/cognite_reveal.md#disposeddelegate) |
 
 #### Returns
 
@@ -177,23 +178,22 @@ measurementTool.off('disposed', onMeasurementDispose);
 
 #### Defined in
 
-[packages/tools/src/Measurement/MeasurementTool.ts:172](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/tools/src/Measurement/MeasurementTool.ts#L172)
+[packages/tools/src/Measurement/MeasurementTool.ts:172](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/tools/src/Measurement/MeasurementTool.ts#L172)
 
 ▸ **off**(`event`, `callback`): `void`
 
-Unsubscribe to the Measurement event
+**`Example`**
 
-**`example`**
 ```js
 measurementTool.off('added', onMeasurementAdded);
 ```
 
 #### Parameters
 
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `event` | ``"added"`` | `MeasurementEvents` event |
-| `callback` | [`MeasurementAddedDelegate`](../modules/cognite_reveal_tools.md#measurementaddeddelegate) | Callback to measurements events |
+| Name | Type |
+| :------ | :------ |
+| `event` | ``"added"`` |
+| `callback` | [`MeasurementAddedDelegate`](../modules/cognite_reveal_tools.md#measurementaddeddelegate) |
 
 #### Returns
 
@@ -205,23 +205,22 @@ Cognite3DViewerToolBase.off
 
 #### Defined in
 
-[packages/tools/src/Measurement/MeasurementTool.ts:180](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/tools/src/Measurement/MeasurementTool.ts#L180)
+[packages/tools/src/Measurement/MeasurementTool.ts:180](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/tools/src/Measurement/MeasurementTool.ts#L180)
 
 ▸ **off**(`event`, `callback`): `void`
 
-Unsubscribe to the Measurement event
+**`Example`**
 
-**`example`**
 ```js
 measurementTool.off('started', onMeasurementStarted);
 ```
 
 #### Parameters
 
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `event` | ``"started"`` | `MeasurementEvents` event |
-| `callback` | [`MeasurementStartedDelegate`](../modules/cognite_reveal_tools.md#measurementstarteddelegate) | Callback to measurements events |
+| Name | Type |
+| :------ | :------ |
+| `event` | ``"started"`` |
+| `callback` | [`MeasurementStartedDelegate`](../modules/cognite_reveal_tools.md#measurementstarteddelegate) |
 
 #### Returns
 
@@ -233,23 +232,22 @@ Cognite3DViewerToolBase.off
 
 #### Defined in
 
-[packages/tools/src/Measurement/MeasurementTool.ts:188](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/tools/src/Measurement/MeasurementTool.ts#L188)
+[packages/tools/src/Measurement/MeasurementTool.ts:188](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/tools/src/Measurement/MeasurementTool.ts#L188)
 
 ▸ **off**(`event`, `callback`): `void`
 
-Unsubscribe to the Measurement event
+**`Example`**
 
-**`example`**
 ```js
 measurementTool.off('ended', onMeasurementEnded);
 ```
 
 #### Parameters
 
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `event` | ``"ended"`` | `MeasurementEvents` event |
-| `callback` | [`MeasurementEndedDelegate`](../modules/cognite_reveal_tools.md#measurementendeddelegate) | Callback to measurements events |
+| Name | Type |
+| :------ | :------ |
+| `event` | ``"ended"`` |
+| `callback` | [`MeasurementEndedDelegate`](../modules/cognite_reveal_tools.md#measurementendeddelegate) |
 
 #### Returns
 
@@ -261,7 +259,7 @@ Cognite3DViewerToolBase.off
 
 #### Defined in
 
-[packages/tools/src/Measurement/MeasurementTool.ts:196](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/tools/src/Measurement/MeasurementTool.ts#L196)
+[packages/tools/src/Measurement/MeasurementTool.ts:196](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/tools/src/Measurement/MeasurementTool.ts#L196)
 
 ___
 
@@ -272,17 +270,18 @@ ___
 Triggered when the tool is disposed. Listeners should clean up any
 resources held and remove the reference to the tool.
 
-**`example`**
+**`Example`**
+
 ```js
 measurementTool.on('disposed', onMeasurementDispose);
 ```
 
 #### Parameters
 
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `event` | ``"disposed"`` | `MeasurementEvents` event |
-| `callback` | [`DisposedDelegate`](../modules/cognite_reveal.md#disposeddelegate) | Callback to measurements events |
+| Name | Type |
+| :------ | :------ |
+| `event` | ``"disposed"`` |
+| `callback` | [`DisposedDelegate`](../modules/cognite_reveal.md#disposeddelegate) |
 
 #### Returns
 
@@ -294,23 +293,24 @@ Cognite3DViewerToolBase.on
 
 #### Defined in
 
-[packages/tools/src/Measurement/MeasurementTool.ts:110](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/tools/src/Measurement/MeasurementTool.ts#L110)
+[packages/tools/src/Measurement/MeasurementTool.ts:110](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/tools/src/Measurement/MeasurementTool.ts#L110)
 
 ▸ **on**(`event`, `callback`): `void`
 
 Triggered when a measurement is added into the Cognite3DViewer.
 
-**`example`**
+**`Example`**
+
 ```js
 measurementTool.on('added', onMeasurementAdded);
 ```
 
 #### Parameters
 
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `event` | ``"added"`` | `MeasurementEvents` event |
-| `callback` | [`MeasurementAddedDelegate`](../modules/cognite_reveal_tools.md#measurementaddeddelegate) | Callback to measurements events |
+| Name | Type |
+| :------ | :------ |
+| `event` | ``"added"`` |
+| `callback` | [`MeasurementAddedDelegate`](../modules/cognite_reveal_tools.md#measurementaddeddelegate) |
 
 #### Returns
 
@@ -322,23 +322,24 @@ Cognite3DViewerToolBase.on
 
 #### Defined in
 
-[packages/tools/src/Measurement/MeasurementTool.ts:119](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/tools/src/Measurement/MeasurementTool.ts#L119)
+[packages/tools/src/Measurement/MeasurementTool.ts:119](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/tools/src/Measurement/MeasurementTool.ts#L119)
 
 ▸ **on**(`event`, `callback`): `void`
 
 Triggered when a measurement mode is started.
 
-**`example`**
+**`Example`**
+
 ```js
 measurementTool.on('started', onMeasurementStarted);
 ```
 
 #### Parameters
 
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `event` | ``"started"`` | `MeasurementEvents` event |
-| `callback` | [`MeasurementStartedDelegate`](../modules/cognite_reveal_tools.md#measurementstarteddelegate) | Callback to measurements events |
+| Name | Type |
+| :------ | :------ |
+| `event` | ``"started"`` |
+| `callback` | [`MeasurementStartedDelegate`](../modules/cognite_reveal_tools.md#measurementstarteddelegate) |
 
 #### Returns
 
@@ -350,23 +351,24 @@ Cognite3DViewerToolBase.on
 
 #### Defined in
 
-[packages/tools/src/Measurement/MeasurementTool.ts:128](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/tools/src/Measurement/MeasurementTool.ts#L128)
+[packages/tools/src/Measurement/MeasurementTool.ts:128](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/tools/src/Measurement/MeasurementTool.ts#L128)
 
 ▸ **on**(`event`, `callback`): `void`
 
 Triggered when measurement mode is ended.
 
-**`example`**
+**`Example`**
+
 ```js
 measurementTool.on('ended', onMeasurementEnded);
 ```
 
 #### Parameters
 
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `event` | ``"ended"`` | `MeasurementEvents` event |
-| `callback` | [`MeasurementEndedDelegate`](../modules/cognite_reveal_tools.md#measurementendeddelegate) | Callback to measurements events |
+| Name | Type |
+| :------ | :------ |
+| `event` | ``"ended"`` |
+| `callback` | [`MeasurementEndedDelegate`](../modules/cognite_reveal_tools.md#measurementendeddelegate) |
 
 #### Returns
 
@@ -378,7 +380,7 @@ Cognite3DViewerToolBase.on
 
 #### Defined in
 
-[packages/tools/src/Measurement/MeasurementTool.ts:137](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/tools/src/Measurement/MeasurementTool.ts#L137)
+[packages/tools/src/Measurement/MeasurementTool.ts:137](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/tools/src/Measurement/MeasurementTool.ts#L137)
 
 ___
 
@@ -394,7 +396,7 @@ Removes all measurements from the Cognite3DViewer.
 
 #### Defined in
 
-[packages/tools/src/Measurement/MeasurementTool.ts:269](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/tools/src/Measurement/MeasurementTool.ts#L269)
+[packages/tools/src/Measurement/MeasurementTool.ts:269](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/tools/src/Measurement/MeasurementTool.ts#L269)
 
 ___
 
@@ -416,7 +418,7 @@ Removes a measurement from the Cognite3DViewer.
 
 #### Defined in
 
-[packages/tools/src/Measurement/MeasurementTool.ts:254](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/tools/src/Measurement/MeasurementTool.ts#L254)
+[packages/tools/src/Measurement/MeasurementTool.ts:254](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/tools/src/Measurement/MeasurementTool.ts#L254)
 
 ___
 
@@ -438,7 +440,7 @@ Sets Measurement line width, color and label units value for the next measurment
 
 #### Defined in
 
-[packages/tools/src/Measurement/MeasurementTool.ts:290](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/tools/src/Measurement/MeasurementTool.ts#L290)
+[packages/tools/src/Measurement/MeasurementTool.ts:290](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/tools/src/Measurement/MeasurementTool.ts#L290)
 
 ___
 
@@ -460,7 +462,7 @@ Sets the visiblity of labels in the Measurement.
 
 #### Defined in
 
-[packages/tools/src/Measurement/MeasurementTool.ts:282](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/tools/src/Measurement/MeasurementTool.ts#L282)
+[packages/tools/src/Measurement/MeasurementTool.ts:282](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/tools/src/Measurement/MeasurementTool.ts#L282)
 
 ___
 
@@ -483,7 +485,7 @@ Update selected line color.
 
 #### Defined in
 
-[packages/tools/src/Measurement/MeasurementTool.ts:318](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/tools/src/Measurement/MeasurementTool.ts#L318)
+[packages/tools/src/Measurement/MeasurementTool.ts:318](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/tools/src/Measurement/MeasurementTool.ts#L318)
 
 ___
 
@@ -506,4 +508,4 @@ Update selected line width.
 
 #### Defined in
 
-[packages/tools/src/Measurement/MeasurementTool.ts:302](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/tools/src/Measurement/MeasurementTool.ts#L302)
+[packages/tools/src/Measurement/MeasurementTool.ts:302](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/tools/src/Measurement/MeasurementTool.ts#L302)

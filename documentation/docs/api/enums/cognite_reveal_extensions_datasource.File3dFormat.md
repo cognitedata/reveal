@@ -11,42 +11,30 @@ custom_edit_url: null
 
 ### AnyFormat
 
-• **AnyFormat**
+• **AnyFormat** = ``"all-outputs"``
 
 #### Defined in
 
-[packages/modeldata-api/src/types.ts:41](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/modeldata-api/src/types.ts#L41)
+[packages/data-providers/src/types.ts:19](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/data-providers/src/types.ts#L19)
 
 ___
 
 ### EptPointCloud
 
-• **EptPointCloud**
+• **EptPointCloud** = ``"ept-pointcloud"``
 
 #### Defined in
 
-[packages/modeldata-api/src/types.ts:32](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/modeldata-api/src/types.ts#L32)
+[packages/data-providers/src/types.ts:14](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/data-providers/src/types.ts#L14)
 
 ___
 
 ### GltfCadModel
 
-• **GltfCadModel**
+• **GltfCadModel** = ``"gltf-directory"``
 
 Reveal v9 and above (GLTF based output)
 
 #### Defined in
 
-[packages/modeldata-api/src/types.ts:40](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/modeldata-api/src/types.ts#L40)
-
-___
-
-### RevealCadModel
-
-• **RevealCadModel**
-
-V8 models only due to bug for version checks in Reveal <3.0
-
-#### Defined in
-
-[packages/modeldata-api/src/types.ts:36](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/modeldata-api/src/types.ts#L36)
+[packages/data-providers/src/types.ts:18](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/data-providers/src/types.ts#L18)

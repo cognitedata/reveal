@@ -30,7 +30,7 @@ Construct a new node set.
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `client` | `default` | {@link CogniteClient} authenticated to the project the model is loaded from. |
+| `client` | `default` | CogniteClient authenticated to the project the model is loaded from. |
 | `model` | [`CdfModelNodeCollectionDataProvider`](../interfaces/cognite_reveal.CdfModelNodeCollectionDataProvider.md) | CAD model. |
 | `options` | `PropertyFilterNodeCollectionOptions` |  |
 
@@ -40,7 +40,7 @@ NodeCollection.constructor
 
 #### Defined in
 
-[packages/cad-styling/src/SinglePropertyFilterNodeCollection.ts:50](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-styling/src/SinglePropertyFilterNodeCollection.ts#L50)
+[packages/cad-styling/src/SinglePropertyFilterNodeCollection.ts:50](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-styling/src/SinglePropertyFilterNodeCollection.ts#L50)
 
 ## Properties
 
@@ -50,7 +50,7 @@ NodeCollection.constructor
 
 #### Defined in
 
-[packages/cad-styling/src/SinglePropertyFilterNodeCollection.ts:29](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-styling/src/SinglePropertyFilterNodeCollection.ts#L29)
+[packages/cad-styling/src/SinglePropertyFilterNodeCollection.ts:29](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-styling/src/SinglePropertyFilterNodeCollection.ts#L29)
 
 ## Accessors
 
@@ -68,7 +68,7 @@ NodeCollection.classToken
 
 #### Defined in
 
-[packages/cad-styling/src/NodeCollection.ts:23](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-styling/src/NodeCollection.ts#L23)
+[packages/cad-styling/src/NodeCollection.ts:23](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-styling/src/NodeCollection.ts#L23)
 
 ___
 
@@ -86,7 +86,7 @@ NodeCollection.isLoading
 
 #### Defined in
 
-[packages/cad-styling/src/SinglePropertyFilterNodeCollection.ts:61](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-styling/src/SinglePropertyFilterNodeCollection.ts#L61)
+[packages/cad-styling/src/SinglePropertyFilterNodeCollection.ts:61](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-styling/src/SinglePropertyFilterNodeCollection.ts#L61)
 
 ## Methods
 
@@ -106,7 +106,7 @@ Clears the node set and interrupts any ongoing operations.
 
 #### Defined in
 
-[packages/cad-styling/src/SinglePropertyFilterNodeCollection.ts:125](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-styling/src/SinglePropertyFilterNodeCollection.ts#L125)
+[packages/cad-styling/src/SinglePropertyFilterNodeCollection.ts:125](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-styling/src/SinglePropertyFilterNodeCollection.ts#L125)
 
 ___
 
@@ -114,9 +114,9 @@ ___
 
 ▸ **executeFilter**(`propertyCategory`, `propertyKey`, `propertyValues`): `Promise`<`void`\>
 
-Execute filter asynchronously, replacing any existing filter active. When {@link propertyValues}
+Execute filter asynchronously, replacing any existing filter active. When propertyValues
 contains more than 1000 elements, the operation will be split into multiple batches that
-are executed in parallel. Note that when providing a {@link PropertyFilterNodeCollectionOptions.requestPartitions}
+are executed in parallel. Note that when providing a PropertyFilterNodeCollectionOptions.requestPartitions
 during construction of the node set, the total number of batches will be requestPartitions*numberOfBatches.
 
 #### Parameters
@@ -133,7 +133,7 @@ during construction of the node set, the total number of batches will be request
 
 #### Defined in
 
-[packages/cad-styling/src/SinglePropertyFilterNodeCollection.ts:75](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-styling/src/SinglePropertyFilterNodeCollection.ts#L75)
+[packages/cad-styling/src/SinglePropertyFilterNodeCollection.ts:75](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-styling/src/SinglePropertyFilterNodeCollection.ts#L75)
 
 ___
 
@@ -155,7 +155,7 @@ implementations supports this.
 
 #### Defined in
 
-[packages/cad-styling/src/SinglePropertyFilterNodeCollection.ts:137](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-styling/src/SinglePropertyFilterNodeCollection.ts#L137)
+[packages/cad-styling/src/SinglePropertyFilterNodeCollection.ts:137](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-styling/src/SinglePropertyFilterNodeCollection.ts#L137)
 
 ___
 
@@ -173,7 +173,7 @@ ___
 
 #### Defined in
 
-[packages/cad-styling/src/SinglePropertyFilterNodeCollection.ts:133](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-styling/src/SinglePropertyFilterNodeCollection.ts#L133)
+[packages/cad-styling/src/SinglePropertyFilterNodeCollection.ts:133](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-styling/src/SinglePropertyFilterNodeCollection.ts#L133)
 
 ___
 
@@ -198,7 +198,7 @@ ___
 
 #### Defined in
 
-[packages/cad-styling/src/NodeCollection.ts:32](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-styling/src/NodeCollection.ts#L32)
+[packages/cad-styling/src/NodeCollection.ts:32](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-styling/src/NodeCollection.ts#L32)
 
 ___
 
@@ -223,7 +223,7 @@ ___
 
 #### Defined in
 
-[packages/cad-styling/src/NodeCollection.ts:27](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-styling/src/NodeCollection.ts#L27)
+[packages/cad-styling/src/NodeCollection.ts:27](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-styling/src/NodeCollection.ts#L27)
 
 ___
 
@@ -241,4 +241,4 @@ ___
 
 #### Defined in
 
-[packages/cad-styling/src/SinglePropertyFilterNodeCollection.ts:147](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/cad-styling/src/SinglePropertyFilterNodeCollection.ts#L147)
+[packages/cad-styling/src/SinglePropertyFilterNodeCollection.ts:147](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/cad-styling/src/SinglePropertyFilterNodeCollection.ts#L147)

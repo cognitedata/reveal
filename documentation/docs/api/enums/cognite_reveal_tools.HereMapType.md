@@ -13,38 +13,38 @@ Here Map types
 
 ### Aerial
 
-• **Aerial**
+• **Aerial** = ``"aerial"``
 
 #### Defined in
 
-[packages/tools/src/Geomap/MapConfig.ts:96](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/tools/src/Geomap/MapConfig.ts#L96)
+[packages/tools/src/Geomap/MapConfig.ts:96](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/tools/src/Geomap/MapConfig.ts#L96)
 
 ___
 
 ### Base
 
-• **Base**
+• **Base** = ``"base"``
 
 #### Defined in
 
-[packages/tools/src/Geomap/MapConfig.ts:97](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/tools/src/Geomap/MapConfig.ts#L97)
+[packages/tools/src/Geomap/MapConfig.ts:97](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/tools/src/Geomap/MapConfig.ts#L97)
 
 ___
 
 ### Pano
 
-• **Pano**
+• **Pano** = ``"pano"``
 
 #### Defined in
 
-[packages/tools/src/Geomap/MapConfig.ts:98](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/tools/src/Geomap/MapConfig.ts#L98)
+[packages/tools/src/Geomap/MapConfig.ts:98](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/tools/src/Geomap/MapConfig.ts#L98)
 
 ___
 
 ### Traffic
 
-• **Traffic**
+• **Traffic** = ``"traffic"``
 
 #### Defined in
 
-[packages/tools/src/Geomap/MapConfig.ts:99](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/tools/src/Geomap/MapConfig.ts#L99)
+[packages/tools/src/Geomap/MapConfig.ts:99](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/tools/src/Geomap/MapConfig.ts#L99)

@@ -42,7 +42,7 @@ BinaryFileProvider.getBinaryFile
 
 #### Defined in
 
-[packages/modeldata-api/src/types.ts:28](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/modeldata-api/src/types.ts#L28)
+[packages/data-providers/src/ModelDataProvider.ts:22](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/data-providers/src/ModelDataProvider.ts#L22)
 
 ___
 
@@ -69,4 +69,4 @@ JsonFileProvider.getJsonFile
 
 #### Defined in
 
-[packages/modeldata-api/src/types.ts:22](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/modeldata-api/src/types.ts#L22)
+[packages/data-providers/src/ModelDataProvider.ts:16](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/data-providers/src/ModelDataProvider.ts#L16)

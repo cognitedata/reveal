@@ -25,8 +25,6 @@ Base class for tools attaching to a {@see Cognite3DViewer}.
 
   ↳ [`TimelineTool`](cognite_reveal_tools.TimelineTool.md)
 
-  ↳ [`DebugLoadedSectorsTool`](cognite_reveal_tools.DebugLoadedSectorsTool.md)
-
   ↳ [`MeasurementTool`](cognite_reveal_tools.MeasurementTool.md)
 
 ## Constructors
@@ -50,7 +48,7 @@ of dipose-listeners.
 
 #### Defined in
 
-[packages/tools/src/Cognite3DViewerToolBase.ts:52](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/tools/src/Cognite3DViewerToolBase.ts#L52)
+[packages/tools/src/Cognite3DViewerToolBase.ts:52](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/tools/src/Cognite3DViewerToolBase.ts#L52)
 
 ___
 
@@ -73,4 +71,4 @@ Unregisters an event handler for the 'disposed'-event.
 
 #### Defined in
 
-[packages/tools/src/Cognite3DViewerToolBase.ts:37](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/tools/src/Cognite3DViewerToolBase.ts#L37)
+[packages/tools/src/Cognite3DViewerToolBase.ts:37](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/tools/src/Cognite3DViewerToolBase.ts#L37)

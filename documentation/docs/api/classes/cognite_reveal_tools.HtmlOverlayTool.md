@@ -17,7 +17,8 @@ interfering with 3D navigation. Consider also applying 'transform: translate(-50
 to anchor the center of the element rather than the top-left corner. In some cases the
 `zIndex`-attribute is necessary for the element to appear on top of the viewer.
 
-**`example`**
+**`Example`**
+
 ```js
 const el = document.createElement('div');
 el.style.position = 'absolute'; // Required!
@@ -68,7 +69,7 @@ overlayTool.dispose();
 
 #### Defined in
 
-[packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts:166](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts#L166)
+[packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts:166](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts#L166)
 
 ## Accessors
 
@@ -84,7 +85,7 @@ Returns all added HTML elements along with their 3D positions.
 
 #### Defined in
 
-[packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts:186](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts#L186)
+[packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts:186](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts#L186)
 
 ## Methods
 
@@ -108,7 +109,7 @@ Registers a HTML overlay that will be updated on rendering.
 
 #### Defined in
 
-[packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts:210](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts#L210)
+[packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts:210](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts#L210)
 
 ___
 
@@ -124,7 +125,7 @@ Removes all attached HTML overlay elements.
 
 #### Defined in
 
-[packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts:258](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts#L258)
+[packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts:258](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts#L258)
 
 ___
 
@@ -133,8 +134,6 @@ ___
 ▸ **dispose**(): `void`
 
 Removes all elements and detaches from the viewer.
-
-**`override`**
 
 #### Returns
 
@@ -146,7 +145,7 @@ Removes all elements and detaches from the viewer.
 
 #### Defined in
 
-[packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts:196](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts#L196)
+[packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts:196](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts#L196)
 
 ___
 
@@ -166,7 +165,7 @@ Calling this function often might cause degraded performance.
 
 #### Defined in
 
-[packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts:292](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts#L292)
+[packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts:292](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts#L292)
 
 ___
 
@@ -193,7 +192,7 @@ Unregisters an event handler for the 'disposed'-event.
 
 #### Defined in
 
-[packages/tools/src/Cognite3DViewerToolBase.ts:37](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/tools/src/Cognite3DViewerToolBase.ts#L37)
+[packages/tools/src/Cognite3DViewerToolBase.ts:37](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/tools/src/Cognite3DViewerToolBase.ts#L37)
 
 ___
 
@@ -215,7 +214,7 @@ Removes a overlay and removes it from the DOM.
 
 #### Defined in
 
-[packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts:246](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts#L246)
+[packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts:246](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts#L246)
 
 ___
 
@@ -237,4 +236,4 @@ Hide/unhide all HTML overlay elements.
 
 #### Defined in
 
-[packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts:270](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts#L270)
+[packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts:270](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts#L270)

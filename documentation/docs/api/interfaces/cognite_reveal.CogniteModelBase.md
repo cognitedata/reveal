@@ -20,7 +20,7 @@ custom_edit_url: null
 
 #### Defined in
 
-[packages/model-base/src/CogniteModelBase.ts:13](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/model-base/src/CogniteModelBase.ts#L13)
+[packages/model-base/src/CogniteModelBase.ts:13](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/model-base/src/CogniteModelBase.ts#L13)
 
 ## Methods
 
@@ -34,7 +34,7 @@ custom_edit_url: null
 
 #### Defined in
 
-[packages/model-base/src/CogniteModelBase.ts:14](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/model-base/src/CogniteModelBase.ts#L14)
+[packages/model-base/src/CogniteModelBase.ts:14](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/model-base/src/CogniteModelBase.ts#L14)
 
 ___
 
@@ -48,7 +48,7 @@ ___
 
 #### Defined in
 
-[packages/model-base/src/CogniteModelBase.ts:16](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/model-base/src/CogniteModelBase.ts#L16)
+[packages/model-base/src/CogniteModelBase.ts:16](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/model-base/src/CogniteModelBase.ts#L16)
 
 ___
 
@@ -69,7 +69,7 @@ ___
 
 #### Defined in
 
-[packages/model-base/src/CogniteModelBase.ts:15](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/model-base/src/CogniteModelBase.ts#L15)
+[packages/model-base/src/CogniteModelBase.ts:15](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/model-base/src/CogniteModelBase.ts#L15)
 
 ___
 
@@ -89,7 +89,7 @@ ___
 
 #### Defined in
 
-[packages/model-base/src/CogniteModelBase.ts:18](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/model-base/src/CogniteModelBase.ts#L18)
+[packages/model-base/src/CogniteModelBase.ts:18](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/model-base/src/CogniteModelBase.ts#L18)
 
 ___
 
@@ -109,4 +109,4 @@ ___
 
 #### Defined in
 
-[packages/model-base/src/CogniteModelBase.ts:17](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/model-base/src/CogniteModelBase.ts#L17)
+[packages/model-base/src/CogniteModelBase.ts:17](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/model-base/src/CogniteModelBase.ts#L17)

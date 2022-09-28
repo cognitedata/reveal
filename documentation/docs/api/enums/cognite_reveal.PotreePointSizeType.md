@@ -11,28 +11,28 @@ custom_edit_url: null
 
 ### Adaptive
 
-• **Adaptive**
+• **Adaptive** = ``2``
 
 #### Defined in
 
-[packages/pointclouds/src/potree-three-loader/rendering/enums.ts:4](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/pointclouds/src/potree-three-loader/rendering/enums.ts#L4)
+[packages/pointclouds/src/potree-three-loader/rendering/enums.ts:4](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/pointclouds/src/potree-three-loader/rendering/enums.ts#L4)
 
 ___
 
 ### Attenuated
 
-• **Attenuated**
+• **Attenuated** = ``1``
 
 #### Defined in
 
-[packages/pointclouds/src/potree-three-loader/rendering/enums.ts:3](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/pointclouds/src/potree-three-loader/rendering/enums.ts#L3)
+[packages/pointclouds/src/potree-three-loader/rendering/enums.ts:3](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/pointclouds/src/potree-three-loader/rendering/enums.ts#L3)
 
 ___
 
 ### Fixed
 
-• **Fixed**
+• **Fixed** = ``0``
 
 #### Defined in
 
-[packages/pointclouds/src/potree-three-loader/rendering/enums.ts:2](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/pointclouds/src/potree-three-loader/rendering/enums.ts#L2)
+[packages/pointclouds/src/potree-three-loader/rendering/enums.ts:2](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/pointclouds/src/potree-three-loader/rendering/enums.ts#L2)

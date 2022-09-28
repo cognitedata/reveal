@@ -15,7 +15,7 @@ custom_edit_url: null
 
 #### Defined in
 
-[packages/modeldata-api/src/types.ts:45](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/modeldata-api/src/types.ts#L45)
+[packages/data-providers/src/types.ts:23](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/data-providers/src/types.ts#L23)
 
 ___
 
@@ -25,7 +25,7 @@ ___
 
 #### Defined in
 
-[packages/modeldata-api/src/types.ts:46](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/modeldata-api/src/types.ts#L46)
+[packages/data-providers/src/types.ts:24](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/data-providers/src/types.ts#L24)
 
 ___
 
@@ -35,4 +35,4 @@ ___
 
 #### Defined in
 
-[packages/modeldata-api/src/types.ts:47](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/modeldata-api/src/types.ts#L47)
+[packages/data-providers/src/types.ts:25](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/data-providers/src/types.ts#L25)

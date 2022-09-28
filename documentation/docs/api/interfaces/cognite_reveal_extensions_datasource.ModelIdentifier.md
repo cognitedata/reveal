@@ -23,4 +23,4 @@ Unique ID of the model.
 
 #### Defined in
 
-[packages/modeldata-api/src/ModelIdentifier.ts:12](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/modeldata-api/src/ModelIdentifier.ts#L12)
+[packages/data-providers/src/ModelIdentifier.ts:12](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/data-providers/src/ModelIdentifier.ts#L12)

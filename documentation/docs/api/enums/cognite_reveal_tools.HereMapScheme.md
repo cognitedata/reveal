@@ -13,38 +13,38 @@ Here Map View Scheme like day, night, satellite, terrain
 
 ### Day
 
-• **Day**
+• **Day** = ``"normal.day"``
 
 #### Defined in
 
-[packages/tools/src/Geomap/MapConfig.ts:106](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/tools/src/Geomap/MapConfig.ts#L106)
+[packages/tools/src/Geomap/MapConfig.ts:106](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/tools/src/Geomap/MapConfig.ts#L106)
 
 ___
 
 ### Night
 
-• **Night**
+• **Night** = ``"normal.night"``
 
 #### Defined in
 
-[packages/tools/src/Geomap/MapConfig.ts:107](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/tools/src/Geomap/MapConfig.ts#L107)
+[packages/tools/src/Geomap/MapConfig.ts:107](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/tools/src/Geomap/MapConfig.ts#L107)
 
 ___
 
 ### Satellite
 
-• **Satellite**
+• **Satellite** = ``"satellite.day"``
 
 #### Defined in
 
-[packages/tools/src/Geomap/MapConfig.ts:109](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/tools/src/Geomap/MapConfig.ts#L109)
+[packages/tools/src/Geomap/MapConfig.ts:109](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/tools/src/Geomap/MapConfig.ts#L109)
 
 ___
 
 ### Terrain
 
-• **Terrain**
+• **Terrain** = ``"terrain.day"``
 
 #### Defined in
 
-[packages/tools/src/Geomap/MapConfig.ts:108](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/tools/src/Geomap/MapConfig.ts#L108)
+[packages/tools/src/Geomap/MapConfig.ts:108](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/tools/src/Geomap/MapConfig.ts#L108)

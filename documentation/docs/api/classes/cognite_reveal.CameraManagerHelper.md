@@ -42,7 +42,7 @@ Calculates camera position and target that allows to see the content of provided
 
 #### Defined in
 
-[packages/camera-manager/src/CameraManagerHelper.ts:97](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/camera-manager/src/CameraManagerHelper.ts#L97)
+[packages/camera-manager/src/CameraManagerHelper.ts:97](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/camera-manager/src/CameraManagerHelper.ts#L97)
 
 ___
 
@@ -66,7 +66,7 @@ Calculates camera target based on new camera rotation.
 
 #### Defined in
 
-[packages/camera-manager/src/CameraManagerHelper.ts:42](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/camera-manager/src/CameraManagerHelper.ts#L42)
+[packages/camera-manager/src/CameraManagerHelper.ts:42](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/camera-manager/src/CameraManagerHelper.ts#L42)
 
 ___
 
@@ -89,4 +89,4 @@ Updates near and far plane of the camera based on the bounding box.
 
 #### Defined in
 
-[packages/camera-manager/src/CameraManagerHelper.ts:66](https://github.com/cognitedata/reveal/blob/716e7443e/viewer/packages/camera-manager/src/CameraManagerHelper.ts#L66)
+[packages/camera-manager/src/CameraManagerHelper.ts:66](https://github.com/cognitedata/reveal/blob/e3cde2deb/viewer/packages/camera-manager/src/CameraManagerHelper.ts#L66)
