@@ -37,7 +37,7 @@ import {
   useDataModelVersions,
   useSelectedDataModelVersion,
 } from '@platypus-app/hooks/useDataModelActions';
-import { useQueryClient } from 'react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
 import { QueryKeys } from '@platypus-app/utils/queryKeys';
 import { EndpointModal } from '../components/EndpointModal';

@@ -7,7 +7,7 @@ import {
   DmsDeleteNodesRequestDTO,
   Result,
 } from '@platypus/platypus-core';
-import { useMutation, useQueryClient } from 'react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 export function useNodesDeleteMutation({
   dataModelExternalId,

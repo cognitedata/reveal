@@ -1,5 +1,5 @@
 import { QueryKeys } from '@platypus-app/utils/queryKeys';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import { getCogniteSDKClient } from '../../environments/cogniteSdk';
 
 export const useDataSets = () => {

@@ -1,6 +1,6 @@
 import { TOKENS } from '@platypus-app/di';
 import { DataModelTypeDefsType, FetchDataDTO } from '@platypus/platypus-core';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import { useInjection } from '../../../../hooks/useInjection';
 import { Notification } from '@platypus-app/components/Notification/Notification';
 import {

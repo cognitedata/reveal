@@ -10,7 +10,7 @@ export class TransformationApiService {
   getTransformationsForType(
     type: string, // e.g 'Room_1'
     externalId: string
-  ): Promise<DataModelTransformation> {
+  ): Promise<DataModelTransformation | null> {
     return new Promise((resolve, reject) => {
       this.cdfClient
         .post(`${this.transformationsBaseUrl}/filter`, {
@@ -33,7 +33,9 @@ export class TransformationApiService {
                 el.destination?.modelExternalId === type &&
                 el.destination.spaceExternalId === externalId
             );
-            resolve(items[0]);
+            // Our promise should resolve to singular value, but items[0] could === undefined
+            // since filter result could be empty array in that case we fallback to null
+            resolve(items[0] ?? null);
           }
         });
     });

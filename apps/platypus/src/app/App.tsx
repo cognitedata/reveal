@@ -6,7 +6,7 @@ import { rootInjector } from './di';
 
 import Routes from './Routes';
 import { getTenant } from './utils/tenant-utils';
-import { QueryClientProvider } from 'react-query';
+import { QueryClientProvider } from '@tanstack/react-query';
 import { queryClient } from './queryClient';
 import NoAccessWrapper from './components/NoAccessPage/NoAccessWrapper';
 

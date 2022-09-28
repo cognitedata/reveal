@@ -106,6 +106,6 @@ describe('DataManagementHandlerTest', () => {
     const response = await service.getTransformations('Type', 'Test');
     expect(transformationApiMock.getTransformationsForType).toBeCalled();
     expect(response).toEqual(mockTransformation);
-    expect(response.externalId).toEqual('Test');
+    expect(response?.externalId).toEqual('Test');
   });
 });

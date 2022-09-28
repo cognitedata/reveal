@@ -8,7 +8,7 @@ import { rootInjector } from '../src/app/di';
 import { CogniteClient } from '@cognite/sdk';
 import config from '@platypus-app/config/config';
 import { setCogniteSDKClient } from '../src/environments/cogniteSdk';
-import { QueryClientProvider } from 'react-query';
+import { QueryClientProvider } from '@tanstack/react-query';
 import { queryClient } from '../src/app/queryClient';
 
 export default makeDecorator({

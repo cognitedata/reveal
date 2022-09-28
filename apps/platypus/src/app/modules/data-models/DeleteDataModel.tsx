@@ -10,7 +10,7 @@ import { TOKENS } from '@platypus-app/di';
 import { StyledModalDialog } from './elements';
 import { getLocalDraftKey } from '@platypus-app/utils/local-storage-utils';
 import { useInjection } from '@platypus-app/hooks/useInjection';
-import { useQueryClient } from 'react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import { QueryKeys } from '@platypus-app/utils/queryKeys';
 
 export const DeleteDataModel = ({

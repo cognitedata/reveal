@@ -1,4 +1,4 @@
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import { getCogniteSDKClient } from '../../environments/cogniteSdk';
 
 import { getTenant } from '@platypus-app/utils/tenant-utils';

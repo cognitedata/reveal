@@ -1,5 +1,5 @@
 import { TOKENS } from '@platypus-app/di';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import { useInjection } from './useInjection';
 import { Notification } from '@platypus-app/components/Notification/Notification';
 import {

@@ -4,7 +4,7 @@ import config from '@platypus-app/config/config';
 import { QueryKeys } from '@platypus-app/utils/queryKeys';
 import mixpanel, { Dict } from 'mixpanel-browser';
 import { useEffect, useMemo } from 'react';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import { useRouteMatch } from 'react-router-dom';
 
 export type TRACKING_TOKENS =
