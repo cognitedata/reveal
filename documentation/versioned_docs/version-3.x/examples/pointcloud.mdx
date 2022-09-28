@@ -8,7 +8,6 @@ import useBaseUrl from '@docusaurus/useBaseUrl';
 
 `@cognite/reveal` supports point clouds through a third-party library, [`three-loader`](https://github.com/pnext/three-loader) that is
 included in the Reveal codebase and modified for our needs. Most of the internal point cloud logic is based on [`potree`](https://github.com/potree/potree/).
-
 The viewer supports loading both point clouds and CAD models at the same time. Point clouds can be generated from various sources including
 [laser scans](https://en.wikipedia.org/wiki/Laser_scanning) and [photogrammetry models](https://en.wikipedia.org/wiki/Photogrammetry).
 Loading point clouds is done with identical code to when [loading CAD models](./cad-basic) - Reveal will determine that the model
