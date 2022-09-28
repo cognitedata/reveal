@@ -10,6 +10,7 @@ import {
   AssetMappings3DListFilter,
   AssetsAPI,
   CogniteClient,
+  IdEither,
   InternalId,
   Node3D,
   Revisions3DAPI
@@ -129,20 +130,6 @@ describe(AssetNodeCollection.name, () => {
     );
   });
 
-  test('executeFilter with assets filter, invokes callback for each chunk', async () => {
-    mockAssetMappings3D
-      .setup(x => x.list(It.IsAny(), It.IsAny(), It.IsAny()))
-      .returnsAsync(createListResponse(createAssetMappings(8), 2));
-
-    const assetsFilter = jest.fn((candidates: Asset[]) => Promise.resolve(candidates.filter((_, i) => i % 2 === 0)));
-
-    const collection = new AssetNodeCollection(mockClient.object(), mockNodeCollectionDataProvider.object());
-    await collection.executeFilter({ assetsFilter });
-
-    expect(assetsFilter).toBeCalledTimes(4);
-    expect(collection.getIndexSet().toIndexArray()).toEqual([0, 2, 4, 6]);
-  });
-
   test('getAreas() returns areas in ThreeJS coordinates', async () => {
     mockAssetMappings3D
       .setup(x => x.list(It.IsAny(), It.IsAny(), It.IsAny()))
@@ -182,6 +169,59 @@ describe(AssetNodeCollection.name, () => {
     await collection.executeFilter({ assetId: [1, 2, 3, 4, 5] });
     mockAssetMappings3D.verify(x => x.filter(It.IsAny(), It.IsAny(), It.IsAny()), Times.Once());
   });
+
+  test('executeFilter with assets filter, invokes callback for each chunk', async () => {
+    mockAssetMappings3D
+      .setup(x => x.list(It.IsAny(), It.IsAny(), It.IsAny()))
+      .returnsAsync(createListResponse(createAssetMappings(8), 2));
+
+    const assetsFilter = jest.fn((candidates: Asset[]) => Promise.resolve(candidates.filter((_, i) => i % 2 === 0)));
+
+    const collection = new AssetNodeCollection(mockClient.object(), mockNodeCollectionDataProvider.object());
+    await collection.executeFilter({ assetsFilter });
+
+    expect(assetsFilter).toBeCalledTimes(4);
+    expect(collection.getIndexSet().toIndexArray()).toEqual([0, 2, 4, 6]);
+  });
+
+  test(
+    'executeFilter with multiple asset mappings to same asset and assetFilter, ' +
+      'filters always duplicate assets before querying API',
+    async () => {
+      // Two mappings to same asset, but different 3D node
+      const assetMappings: AssetMapping3D[] = [
+        {
+          assetId: 1,
+          nodeId: 1,
+          treeIndex: 1,
+          subtreeSize: 1
+        },
+        {
+          assetId: 1,
+          nodeId: 2,
+          treeIndex: 2,
+          subtreeSize: 1
+        }
+      ];
+      mockAssetMappings3D
+        .setup(x => x.list(It.IsAny(), It.IsAny(), It.IsAny()))
+        .returnsAsync(createListResponse(assetMappings, 10));
+
+      const collection = new AssetNodeCollection(mockClient.object(), mockNodeCollectionDataProvider.object());
+      await collection.executeFilter({ assetsFilter: candidates => Promise.resolve(candidates) });
+      // Make sure we remove duplicated assets
+      mockAssets.verify(
+        x =>
+          x.retrieve(
+            It.Is<IdEither[]>(assetIds => assetIds.length === 1),
+            It.IsAny()
+          ),
+        Times.Once()
+      );
+      // Make sure we still return both nodes, even if assets the same for both
+      expect(collection.getIndexSet().toIndexArray()).toEqual([1, 2]);
+    }
+  );
 });
 
 function createAssetMappings(count: number): AssetMapping3D[] {

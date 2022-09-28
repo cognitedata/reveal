@@ -167,7 +167,8 @@ export class AssetNodeCollection extends NodeCollection {
     }
 
     const filterCallback = async (items: AssetMapping3D[]) => {
-      const assetIds = items.map(x => ({ id: x.assetId }));
+      const uniqueAssetIds = new Set<number>(items.map(x => x.assetId));
+      const assetIds = [...uniqueAssetIds].map(x => ({ id: x }));
       const assets = await this._client.assets.retrieve(assetIds, { ignoreUnknownIds: true });
       const acceptedAssetIds = new Set<number>((await assetsFilter(assets)).map(x => x.id));
       return items.filter(assetMapping => acceptedAssetIds.has(assetMapping.assetId));
