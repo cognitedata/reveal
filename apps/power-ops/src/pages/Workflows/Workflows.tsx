@@ -57,9 +57,12 @@ const WorkflowsPage = ({
   const [statusFilterValue, setStatusFilterValue] = useState<
     OptionType<string>[]
   >([]);
-  const [statusFilterOptions, setStatusFilterOptions] = useState<
-    OptionType<string>[]
-  >([]);
+  const [statusFilterOptions] = useState<OptionType<string>[]>(
+    EVENT_STATUSES.map((status: string) => ({
+      label: status,
+      value: status,
+    }))
+  );
 
   const { data: workflowSchemas } = useFetchWorkflowSchemas({
     project: client.project,
@@ -111,12 +114,6 @@ const WorkflowsPage = ({
   }, []);
 
   useEffect(() => {
-    // Set status filter dropdown options
-    const statusOptions = EVENT_STATUSES.map((status: string) => ({
-      label: status,
-      value: status,
-    }));
-
     // Set workflow type filter dropdown options
     const workflowTypeOptions =
       workflowTypes?.map(({ workflowType }) => ({
@@ -124,9 +121,8 @@ const WorkflowsPage = ({
         value: workflowType,
       })) || [];
 
-    setStatusFilterOptions(statusOptions);
     setWorkflowTypeFilterOptions(workflowTypeOptions);
-  }, [workflows]);
+  }, [workflowTypes]);
 
   // Get filters from the URL
   useEffect(() => {
