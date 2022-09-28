@@ -15,7 +15,7 @@ export const trackUsage = (
   const pathWithoutProjectName = pathname.substring(pathname.indexOf('/', 1));
 
   if (!host.includes('localhost')) {
-    trackEvent(`cdf-ui-flows.${event}`, {
+    trackEvent(`Flows.${event}`, {
       ...metadata,
       project: getProject(),
       version: 1,

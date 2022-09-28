@@ -1,13 +1,13 @@
 import { useTypedTranslation } from '@cognite/cdf-i18n-utils';
 
-import en from 'common/i18n/translations/en/cdf-ui-demo-app.json';
-import ja from 'common/i18n/translations/ja/cdf-ui-demo-app.json';
+import en from 'common/i18n/translations/en/flows.json';
+import ja from 'common/i18n/translations/ja/flows.json';
 
 export type TranslationKeys = keyof typeof en;
 
 export const translations = {
-  en: { 'cdf-ui-demo-app': en },
-  ja: { 'cdf-ui-demo-app': ja },
+  en: { flows: en },
+  ja: { flows: ja },
 };
 export const languages = Object.keys(translations);
 

@@ -1,6 +1,6 @@
 @Library('jenkins-helpers') _
 
-static final String APP_ID = 'cdf-ui-flows'
+static final String APP_ID = 'cdf-flows'
 static final String APPLICATION_REPO_ID = 'cdf-ui-flows'
 static final String NODE_VERSION = 'node:16'
 static final String VERSIONING_STRATEGY = 'single-branch'
@@ -117,7 +117,7 @@ pods {
         }
         container('fas') {
           stageWithNotify('Build and deploy PR') {
-            def package_name = "@cognite/cdf-ui-flows";
+            def package_name = "@cognite/cdf-flows";
             def prefix = jenkinsHelpersUtil.determineRepoName();
             def domain = "fusion-preview";
             previewServer(

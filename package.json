@@ -1,6 +1,10 @@
 {
-  "name": "@cognite/cdf-ui-flows",
+  "name": "@cognite/cdf-flows",
   "version": "0.1.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cognitedata/cdf-ui-flows.git"
+  },
   "private": true,
   "scripts": {
     "start": "env GENERATE_SOURCEMAP=false BROWSER=none WDS_SOCKET_PORT=8000 WDS_SOCKET_HOST=localhost PORT=8000 react-app-rewired --max_old_space_size=2000 start",
@@ -10,9 +14,9 @@
     "eslint": "yarn eslint:changed 'src/**/*.{ts,tsx}'",
     "eslint:changed": "eslint --config .eslintrc.production.js",
     "prettier": "prettier --config .prettierrc -l 'src/**/*.{js,ts,tsx}' || (echo \nThese files are not formatted correctly && false)",
-    "pull-keys": "cdf-i18n-utils-cli pull-keys-from-remote --namespace cdf-ui-demo-app",
-    "remove-deleted": "cdf-i18n-utils-cli remove-deleted-keys-from-remote --namespace cdf-ui-demo-app",
-    "save-missing": "cdf-i18n-utils-cli save-missing-keys-to-remote --namespace cdf-ui-demo-app"
+    "pull-keys": "cdf-i18n-utils-cli pull-keys-from-remote --namespace flows",
+    "remove-deleted": "cdf-i18n-utils-cli remove-deleted-keys-from-remote --namespace flows",
+    "save-missing": "cdf-i18n-utils-cli save-missing-keys-to-remote --namespace flows"
   },
   "dependencies": {
     "@cognite/cdf-i18n-utils": "^0.6.0",
