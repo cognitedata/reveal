@@ -2,7 +2,7 @@
 
 static final String APP_ID = 'cdf-flows'
 static final String APPLICATION_REPO_ID = 'cdf-ui-flows'
-static final String NODE_VERSION = 'node:16'
+static final String NODE_VERSION = 'node:14'
 static final String VERSIONING_STRATEGY = 'single-branch'
 
 def pods = { body ->
