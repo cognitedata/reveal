@@ -113,9 +113,16 @@ export const Preview = ({ dataModelExternalId }: PreviewProps) => {
     !transformationMutate.isError;
 
   if (!selectedTypeNameFromQuery && dataModelTypeDefs.types.length > 0) {
+    // make sure we preserve any existing query params
+    const params = new URLSearchParams(location.search);
+    params.set('type', dataModelTypeDefs.types[0].name);
+
     return (
       <Redirect
-        to={{ ...location, search: `type=${dataModelTypeDefs.types[0].name}` }}
+        to={{
+          ...location,
+          search: params.toString(),
+        }}
       />
     );
   }
