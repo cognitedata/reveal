@@ -30,17 +30,17 @@ export const ResourceTableColumns: ResourceTableHashMap = {
   name: {
     Header: 'Name',
     accessor: 'name',
-    Cell: ({ value }) => <HighlightCell text={value} />,
+    Cell: ({ value }) => <HighlightCell text={value || '-'} />,
   },
   description: {
     Header: 'Description',
     accessor: 'description',
-    Cell: ({ value }) => <HighlightCell text={value} />,
+    Cell: ({ value }) => <HighlightCell text={value || '-'} />,
   },
   externalId: {
     Header: 'External ID',
     accessor: 'externalId',
-    Cell: ({ value }) => <HighlightCell text={value} />,
+    Cell: ({ value }) => <HighlightCell text={value || '-'} />,
   },
   created: {
     Header: 'Created',
@@ -114,7 +114,7 @@ export const ResourceTableColumns: ResourceTableHashMap = {
           enabled: Number.isFinite(value),
         }
       );
-      return <Body level={3}>{(ds && ds?.name) || 'Not set'}</Body>;
+      return <Body level={3}>{(ds && ds?.name) || '-'}</Body>;
     },
   },
   assets: {
@@ -151,14 +151,14 @@ export const ResourceTableColumns: ResourceTableHashMap = {
     accessor: 'startTime',
     Header: 'Start Time',
     Cell: ({ value }) => (
-      <Body level={2}>{value ? <TimeDisplay value={value} /> : 'Not Set'}</Body>
+      <Body level={2}>{value ? <TimeDisplay value={value} /> : '-'}</Body>
     ),
   },
   endTime: {
     accessor: 'endTime',
     Header: 'End Time',
     Cell: ({ value }) => (
-      <Body level={2}>{value ? <TimeDisplay value={value} /> : 'Not Set'}</Body>
+      <Body level={2}>{value ? <TimeDisplay value={value} /> : '-'}</Body>
     ),
   },
   mimeType: {
@@ -177,8 +177,10 @@ export const ResourceTableColumns: ResourceTableHashMap = {
     Header: 'Uploaded',
     Cell: ({ row: { original: file } }) => (
       <Body level={2}>
-        {file && file.uploaded && (
+        {file && file.uploaded ? (
           <TimeDisplay value={file.uploadedTime} relative withTooltip />
+        ) : (
+          '-'
         )}
       </Body>
     ),

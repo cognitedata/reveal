@@ -75,6 +75,7 @@ export const TimeseriesTable = ({
     <Table
       columns={updatedColumns}
       data={props.data}
+      isStickyHeader
       visibleColumns={['name', 'description', 'data', 'lastUpdatedTime']}
     />
   );

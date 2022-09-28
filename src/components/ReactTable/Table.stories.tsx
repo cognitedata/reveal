@@ -5,7 +5,7 @@ import { Column, SortingRule } from 'react-table';
 import { userEvent, within, waitFor } from '@storybook/testing-library';
 import { expect } from '@storybook/jest';
 import { NewTable as Table } from './Table';
-import { Flex } from '@cognite/cogs.js';
+import { Button, Flex } from '@cognite/cogs.js';
 
 export default {
   title: 'Component/NewTable',
@@ -297,6 +297,27 @@ ExampleWithLoadMoreButton.play = async ({ canvasElement }) => {
   await waitFor(() => expect(canvas.getAllByRole('row').length).toBe(7));
 };
 
+export const ExampleWithButton: ComponentStory<typeof Table> = args => {
+  const data = useMemo(() => exampleDatas, []);
+  const columns = useMemo(() => exampleColumns, []);
+  return (
+    <Table<DataType>
+      {...args}
+      data={data}
+      columns={columns}
+      visibleColumns={['col1', 'col2']}
+      tableHeaders={
+        <StyledFlex justifyContent="flex-end" gap={10}>
+          <Button>Upload</Button>
+          <Button>Tab</Button>
+        </StyledFlex>
+      }
+    />
+  );
+};
+const StyledFlex = styled(Flex)`
+  flex: 1;
+`;
 export const ExampleWithResizing: ComponentStory<typeof Table> = args => {
   const data = useMemo(() => exampleDatas, []);
   const columns = useMemo(() => exampleColumns, []);

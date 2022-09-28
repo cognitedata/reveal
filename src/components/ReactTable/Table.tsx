@@ -39,6 +39,7 @@ export interface TableProps<T extends Record<string, any>>
     evt?: React.MouseEvent<HTMLDivElement, MouseEvent>
   ) => void;
   showLoadButton?: boolean;
+  tableHeaders?: React.ReactElement;
   isResizingColumns?: boolean;
 }
 export interface OnSortProps<T> {
@@ -63,6 +64,7 @@ export function NewTable<T extends TableData>({
   showLoadButton = false,
   hasNextPage,
   isLoadingMore,
+  tableHeaders,
   fetchMore,
 }: TableProps<T>) {
   const defaultColumn = useMemo(
@@ -144,19 +146,23 @@ export function NewTable<T extends TableData>({
 
   return (
     <TableContainer>
-      {hiddenColumns.length > 0 && (
+      {tableHeaders || hiddenColumns.length > 0 ? (
         <ColumnSelectorWrapper>
-          <DndProvider backend={HTML5Backend}>
-            <Flex justifyContent="flex-end">
-              <ColumnToggle<T>
-                moveCard={moveCard}
-                allColumns={allColumns}
-                getToggleHideAllColumnsProps={getToggleHideAllColumnsProps}
-              />
-            </Flex>
-          </DndProvider>
+          {tableHeaders}
+          {hiddenColumns.length > 0 && (
+            <DndProvider backend={HTML5Backend}>
+              <StyledFlex>
+                <ColumnToggle<T>
+                  moveCard={moveCard}
+                  allColumns={allColumns}
+                  getToggleHideAllColumnsProps={getToggleHideAllColumnsProps}
+                />
+              </StyledFlex>
+            </DndProvider>
+          )}
         </ColumnSelectorWrapper>
-      )}
+      ) : null}
+
       <StyledTable {...getTableProps()}>
         <Thead isStickyHeader={isStickyHeader}>
           {headerGroups.map(headerGroup => (
@@ -203,7 +209,9 @@ export function NewTable<T extends TableData>({
               >
                 {row.cells.map(cell => {
                   return (
-                    <Td {...cell.getCellProps()}>{cell.render('Cell')}</Td>
+                    <Td {...cell.getCellProps()}>
+                      {cell.render('Cell') || '-'}
+                    </Td>
                   );
                 })}
               </Tr>
@@ -223,11 +231,15 @@ export function NewTable<T extends TableData>({
 const TableContainer = styled.div`
   width: 100%;
   display: flex;
+  height: 100%;
   flex-direction: column;
 `;
 
 const ColumnSelectorWrapper = styled.div`
   width: 100%;
+  margin-bottom: 20px;
+  display: flex;
+  gap: 10px;
 `;
 
 const StyledTable = styled.div`
@@ -235,6 +247,7 @@ const StyledTable = styled.div`
   position: relative;
   width: 100%;
   overflow: auto;
+  height: 100%;
 
   & > div {
     min-width: 100%;
@@ -277,6 +290,10 @@ const Td = styled.div`
   }
 `;
 
+const StyledFlex = styled.div`
+  margin-left: auto;
+`;
+
 const Thead = styled.div<{ isStickyHeader?: boolean }>`
   position: ${({ isStickyHeader }) => (isStickyHeader ? 'sticky' : 'relative')};
   top: 0;
@@ -300,6 +317,9 @@ const Tr = styled.div`
 const ThWrapper = styled.div`
   display: flex;
   align-items: center;
+  font-weight: 500;
+  color: var(--cogs-text-icon--strong);
+  gap: 10px;
 `;
 
 const LoadMoreButtonWrapper = styled(Flex)`
