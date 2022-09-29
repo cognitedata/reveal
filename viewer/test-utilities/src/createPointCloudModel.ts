@@ -24,18 +24,20 @@ export function createPointCloudModel(modelId: number, revisionId: number): Cogn
 
   const potreeGroup = new PotreeGroupWrapper(potreeInstance);
 
-  const dummyNode: PointCloudOctree = new Mock<PointCloudOctree>()
-    .setup(p => p.isObject3D)
-    .returns(true)
-    .setup(p => p.parent)
-    .returns(null)
-    .setup(p => p.dispatchEvent.bind(p))
-    .returns((_: any) => {})
-    .setup(p => p.material)
-    .returns(new PointCloudMaterial())
-    .object();
+  const pointCloudOctree = new PointCloudOctree(
+    new Mock<Potree>().object(),
+    new Mock<IPointCloudTreeGeometry>()
+      .setup(p => p.boundingBox)
+      .returns(new THREE.Box3())
+      .setup(p => p.offset)
+      .returns(new THREE.Vector3())
+      .setup(p => p.tightBoundingBox)
+      .returns(new THREE.Box3())
+      .object(),
+    new PointCloudObjectAnnotationData([])
+  );
 
-  const nodeWrapper = new PotreeNodeWrapper(dummyNode, [], Symbol('dummy'), { classificationSets: [] });
+  const nodeWrapper = new PotreeNodeWrapper(pointCloudOctree, [], Symbol('dummy'), { classificationSets: [] });
 
   const pointCloudNode = new PointCloudNode(potreeGroup, nodeWrapper);
 
