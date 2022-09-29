@@ -100,7 +100,9 @@ export interface DmsIngestNodesResponseDTO
   extends BaseDTOWithKeyValuePairsItems,
     BaseDTOWithModelProps {}
 
-export interface DmsDeleteNodesRequestDTO extends BaseDTOWithExternalIdItems {}
+export interface DmsDeleteNodesRequestDTO extends BaseDTOWithExternalIdItems {
+  spaceExternalId: string;
+}
 /************* Nodes APIs DTOs **************/
 
 /************* Edges APIs DTOs **************/

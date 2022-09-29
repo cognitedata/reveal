@@ -335,11 +335,34 @@ export const DataPreviewTable = ({
   const handleDeleteRows = useCallback(() => {
     const selectedRows = gridRef.current?.api.getSelectedRows() || [];
     const dto = {
+      spaceExternalId: dataModelExternalId,
       items: selectedRows.map((row) => ({ externalId: row.externalId })),
     };
 
     deleteRowsMutation.mutate(dto, {
-      onSuccess: () => {
+      onSettled: (result, error) => {
+        let isError = false;
+        let errorMessage = '';
+
+        if (error) {
+          isError = true;
+          errorMessage = error.message;
+        }
+
+        if (result?.isFailure) {
+          isError = true;
+          errorMessage = result.error.message;
+        }
+
+        if (isError) {
+          Notification({
+            type: 'error',
+            message: errorMessage,
+          });
+          setIsDeleteRowsModalVisible(false);
+          return;
+        }
+
         gridRef.current?.api.refreshInfiniteCache();
         // We have to manually deselect rows
         // https://github.com/ag-grid/ag-grid/issues/4161
@@ -365,14 +388,14 @@ export const DataPreviewTable = ({
         Notification({ type: 'success', message: successNotificationMessage });
         setIsDeleteRowsModalVisible(false);
       },
-      onError: (error) => {
-        Notification({
-          type: 'error',
-          message: error.message,
-        });
-      },
     });
-  }, [deleteRowsMutation, deleteSelectedRows, singleSelectedRowExternalId, t]);
+  }, [
+    dataModelExternalId,
+    deleteRowsMutation,
+    deleteSelectedRows,
+    singleSelectedRowExternalId,
+    t,
+  ]);
 
   if (!isGridInit || !publishedRows.isFetched) {
     return <Spinner />;
