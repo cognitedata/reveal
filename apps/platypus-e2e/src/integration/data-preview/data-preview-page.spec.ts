@@ -64,12 +64,26 @@ describe('Platypus Data Preview Page - Preview', () => {
       '.ag-body-viewport .ag-row[row-index="0"] .ag-cell[col-id="user"] .cogs-tag'
     ).should('have.text', '123');
   });
-  it('should show edit transformation button when its already created', () => {
-    cy.get('[data-testid="Post"]').click();
-    cy.getBySel('edit-transformation').should('be.visible').click();
-    cy.getBySel('modal-title').should('be.visible').contains('Transformations');
-  });
-  it('should show placeholder when no data is available', () => {
+
+  it('should show the no rows overlay when the table is empty', () => {
+    cy.get('[data-testid="User"]').click();
+    cy.get('[data-testid="User"]').should('have.class', 'active');
+    cy.getBySel('data-preview-table').should('be.visible');
+
+    cy.intercept(
+      'POST',
+      'api/v1/projects/mock/datamodelstorage/nodes/delete'
+    ).as('deleteNodes');
+
+    // Wait for row to be rendered
+    cy.get('div[role="gridcell"][col-id="name"]')
+      .should('be.visible')
+      .should('contain', 'John Doe');
+
+    cy.get('div[role="gridcell"][col-id="_isDraftSelected"]').each(($el) => {
+      cy.wrap($el).should('be.visible').click();
+    });
+
     const response = {
       data: {
         listUser: {
@@ -92,8 +106,16 @@ describe('Platypus Data Preview Page - Preview', () => {
       '/api/v1/projects/mock/schema/api/blog/1/graphql',
       response
     );
-    cy.get('[data-testid="User"]').click();
-    cy.getBySel('transformation-placeholder').should('be.visible');
-    cy.getBySel('load-transformation').click();
+    cy.on('window:confirm', () => true);
+    cy.getBySel('btn-pagetoolbar-delete').click();
+    cy.getBySel('data-row-confirm-deletion-checkbox').click();
+    cy.getBySel('modal-ok-button').click();
+
+    cy.wait('@deleteNodes').then((interception) => {
+      expect(interception.response.statusCode).to.equal(200);
+    });
+    cy.getBySel('no-rows-overlay').contains(
+      'This data model type has currently no data'
+    );
   });
 });

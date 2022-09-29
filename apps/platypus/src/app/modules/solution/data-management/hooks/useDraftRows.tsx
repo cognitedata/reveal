@@ -47,12 +47,6 @@ export const useDraftRows = () => {
   const deleteSelectedRows = () =>
     dispatch(dataManagementActions.deleteSelectedDraftRows());
 
-  const toggleShouldShowDraftRows = () =>
-    dispatch(dataManagementActions.toggleShouldShowDraftRows());
-
-  const toggleShouldShowPublishedRows = () =>
-    dispatch(dataManagementActions.toggleShouldShowPublishedRows());
-
   return {
     setDraftRows,
     createNewDraftRow,
@@ -61,7 +55,5 @@ export const useDraftRows = () => {
     setSelectedType,
     deleteSelectedRows,
     clearState,
-    toggleShouldShowDraftRows,
-    toggleShouldShowPublishedRows,
   };
 };

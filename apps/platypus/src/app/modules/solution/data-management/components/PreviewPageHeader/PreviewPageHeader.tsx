@@ -1,12 +1,12 @@
 import { PageToolbar } from '@platypus-app/components/PageToolbar/PageToolbar';
 import { Tooltip, Button, Flex, Label } from '@cognite/cogs.js';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
+import { BulkPopulationButton } from '../DataPreviewTable/BulkPopulationButton';
+import { PageHeaderDivider } from '../DataPreviewTable/elements';
 
 type Props = {
   title: string;
-  transformationId?: number | null;
   isDeleteButtonDisabled: boolean;
-  onTransformationClick: (value: boolean) => void;
   onCreateClick: () => void;
   onDeleteClick: () => void;
   draftRowsCount: number;
@@ -19,9 +19,7 @@ type Props = {
 
 export function PreviewPageHeader({
   title,
-  transformationId,
   isDeleteButtonDisabled,
-  onTransformationClick,
   onCreateClick,
   onDeleteClick,
   draftRowsCount,
@@ -32,6 +30,8 @@ export function PreviewPageHeader({
   onDraftRowsCountClick,
 }: Props) {
   const { t } = useTranslation('DataPreview');
+
+  const isTableEmpty = draftRowsCount === 0 && publishedRowsCount === 0;
   return (
     <PageToolbar
       title={title}
@@ -90,57 +90,29 @@ export function PreviewPageHeader({
         </>
       }
     >
-      <Flex justifyContent={'flex-end'}>
-        <Button
-          type="ghost"
-          icon="Delete"
-          disabled={isDeleteButtonDisabled}
-          style={{ marginRight: '8px' }}
-          aria-label="Delete"
-          data-cy="btn-pagetoolbar-delete"
-          onClick={onDeleteClick}
-        />
-
-        <Button
-          data-cy="create-new-row-btn"
-          type="primary"
-          icon="Add"
-          iconPlacement="left"
-          style={{ marginRight: '8px' }}
-          onClick={onCreateClick}
-        >
-          {t('create-new-row', 'Create')}
-        </Button>
-        {!transformationId && publishedRowsCount !== 0 && (
-          <Tooltip
-            content={t(
-              'transformation_tooltip',
-              'No transformation defined for data in this table'
-            )}
-          >
-            <Button
-              type="primary"
-              icon="ExternalLink"
-              iconPlacement="right"
-              disabled={true}
-              onClick={() => onTransformationClick(true)}
-            >
-              {t('transformation-edit', 'Edit transformations')}
-            </Button>
-          </Tooltip>
-        )}
-        {transformationId && (
+      {!isTableEmpty && (
+        <Flex justifyContent={'flex-end'} gap={8}>
           <Button
-            data-cy="edit-transformation"
+            type="ghost"
+            icon="Delete"
+            disabled={isDeleteButtonDisabled}
+            aria-label="Delete"
+            data-cy="btn-pagetoolbar-delete"
+            onClick={onDeleteClick}
+          />
+          <Button
+            data-cy="create-new-row-btn"
             type="primary"
-            icon="ExternalLink"
+            icon="Add"
             iconPlacement="left"
-            onClick={() => onTransformationClick(true)}
+            onClick={onCreateClick}
           >
-            {t('transformation-edit', 'Edit transformations')}
+            {t('create-new-row', 'Add instance')}
           </Button>
-        )}
-      </Flex>
+          <PageHeaderDivider />
+          <BulkPopulationButton />
+        </Flex>
+      )}
     </PageToolbar>
   );
 }

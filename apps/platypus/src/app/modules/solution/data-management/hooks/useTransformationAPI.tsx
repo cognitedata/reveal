@@ -4,6 +4,7 @@ import { TOKENS } from '@platypus-app/di';
 import { Notification } from '@platypus-app/components/Notification/Notification';
 import { useErrorLogger } from '@platypus-app/hooks/useErrorLogger';
 import { QueryKeys } from '@platypus-app/utils/queryKeys';
+import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
 
 export function useTransformation(
   type: string,
@@ -24,19 +25,17 @@ export function useTransformation(
   return query;
 }
 
-export function useTransformationMutate() {
+export const useTransformationMutate = (
+  typeKey: string,
+  externalId: string
+) => {
+  const { track } = useMixpanel();
   const queryClient = useQueryClient();
   const dataManagementHandler = useInjection(TOKENS.DataManagementHandler);
   const errorLogger = useErrorLogger();
 
   return useMutation(
-    async ({
-      typeKey,
-      externalId,
-    }: {
-      typeKey: string;
-      externalId: string;
-    }) => {
+    async () => {
       const data = {
         externalId: `t_${externalId}_${typeKey}`,
         name: typeKey,
@@ -58,6 +57,9 @@ export function useTransformationMutate() {
             transformation.destination.spaceExternalId
           )
         );
+        track('Transformations', {
+          dataModel: externalId,
+        });
       },
       onError: (error: any) => {
         errorLogger.log(error);
@@ -65,4 +67,4 @@ export function useTransformationMutate() {
       },
     }
   );
-}
+};

@@ -23,7 +23,8 @@ import {
   ValueSetterParams,
 } from 'ag-grid-community';
 import { AgGridReact } from 'ag-grid-react';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useDataManagementPageUI } from '../../hooks/useDataManagemenPageUI';
 import { useDraftRows } from '../../hooks/useDraftRows';
 import { useNodesDeleteMutation } from '../../hooks/useNodesDeleteMutation';
 import { usePublishedRowsCount } from '../../hooks/usePublishedRowsCount';
@@ -35,7 +36,7 @@ import { DeleteRowsModal } from '../DeleteRowsModal/DeleteRowsModal';
 import { PreviewPageHeader } from '../PreviewPageHeader/PreviewPageHeader';
 import { StyledDataPreviewTable } from './elements';
 import { ErrorPlaceholder } from './ErrorPlaceholder';
-import noRowsOverlay from './NoRowsOverlay';
+import { NoRowsOverlay } from './NoRowsOverlay';
 import { sanitizeRow } from './utils';
 
 const pageSizeLimit = 100;
@@ -45,18 +46,12 @@ export interface DataPreviewTableProps {
   dataModelTypeDefs: DataModelTypeDefs;
   dataModelExternalId: string;
   version: string;
-  // everything from here bellow, needs to be refactored
-  transformationId?: number | null;
-  onTransformationClick: (value: boolean) => void;
 }
 export const DataPreviewTable = ({
   dataModelType,
   dataModelTypeDefs,
   dataModelExternalId,
   version,
-  // everything from here bellow, needs to be refactored
-  transformationId,
-  onTransformationClick,
 }: DataPreviewTableProps) => {
   const instanceIdCol = 'externalId';
 
@@ -82,15 +77,15 @@ export const DataPreviewTable = ({
     })
   );
 
+  const { updateRowData, removeDrafts, createNewDraftRow, deleteSelectedRows } =
+    useDraftRows();
+
   const {
-    updateRowData,
-    removeDrafts,
-    createNewDraftRow,
-    deleteSelectedRows,
     toggleShouldShowDraftRows,
     toggleShouldShowPublishedRows,
-  } = useDraftRows();
-
+    onShowNoRowsOverlay,
+    onHideOverlay,
+  } = useDataManagementPageUI();
   const selectedDraftRows = draftRowsData.filter((row) => row._isDraftSelected);
   const selectedPublishedRowsCount = gridRef.current?.api
     ? gridRef.current?.api?.getSelectedRows().length
@@ -135,6 +130,11 @@ export const DataPreviewTable = ({
       });
   };
 
+  const isNoRowsOverlayVisible = useMemo(
+    () => draftRowsData.length === 0 && (publishedRows.data || 0) === 0,
+    [draftRowsData.length, publishedRows.data]
+  );
+
   useEffect(() => {
     setGridConfig(
       buildGridConfig(instanceIdCol, dataModelType, handleRowPublish)
@@ -152,10 +152,22 @@ export const DataPreviewTable = ({
     }
   }, [isGridInit]);
 
+  useEffect(() => {
+    if (isNoRowsOverlayVisible && onShowNoRowsOverlay.current) {
+      onShowNoRowsOverlay.current();
+    } else if (onHideOverlay.current) {
+      onHideOverlay.current();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isNoRowsOverlayVisible]);
+
   const onGridReady = useCallback(
     (grid: GridReadyEvent) => {
       let cursor: string;
       let hasNextPage: boolean;
+
+      onShowNoRowsOverlay.current = () => grid.api.showNoRowsOverlay();
+      onHideOverlay.current = () => grid.api.hideOverlay();
 
       const dataSource = {
         getRows: async (params: IGetRowsParams) => {
@@ -189,6 +201,15 @@ export const DataPreviewTable = ({
                 ? params.startRow + result.items.length
                 : -1;
 
+              /*
+              This conditional is for the case where the aggregation 
+              is only returning 0s due to the syncer issue. Remove below code 
+              when the syncer issue is resolved.
+              */
+              if (result.items.length > 0 && onHideOverlay.current) {
+                onHideOverlay.current();
+              }
+
               params.successCallback(result.items, lastRow);
             })
             .catch((err) => {
@@ -198,12 +219,21 @@ export const DataPreviewTable = ({
       } as IDatasource;
 
       grid.api.setDatasource(dataSource);
+
+      if (isNoRowsOverlayVisible) {
+        onShowNoRowsOverlay.current();
+      } else {
+        onHideOverlay.current();
+      }
     },
     [
       dataManagementHandler,
       dataModelExternalId,
       dataModelType,
       dataModelTypeDefs,
+      isNoRowsOverlayVisible,
+      onHideOverlay,
+      onShowNoRowsOverlay,
       version,
     ]
   );
@@ -374,12 +404,10 @@ export const DataPreviewTable = ({
       )}
 
       <PreviewPageHeader
-        transformationId={transformationId}
         title={dataModelType.name}
         isDeleteButtonDisabled={
           totalSelectedRowCount === 0 || deleteRowsMutation.isLoading
         }
-        onTransformationClick={onTransformationClick}
         onCreateClick={createNewDraftRow}
         onDeleteClick={() => {
           setIsDeleteRowsModalVisible(true);
@@ -402,7 +430,7 @@ export const DataPreviewTable = ({
             cacheBlockSize: pageSizeLimit,
             // this needs to be 1 since we use cursor-based pagination
             maxConcurrentDatasourceRequests: 1,
-            noRowsOverlayComponentFramework: noRowsOverlay,
+            noRowsOverlayComponent: NoRowsOverlay,
           }}
           defaultColDef={{
             valueSetter: handleCellValueChanged,

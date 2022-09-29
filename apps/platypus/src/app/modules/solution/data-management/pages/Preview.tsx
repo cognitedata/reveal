@@ -13,18 +13,15 @@ import useSelector from '@platypus-app/hooks/useSelector';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import { DataManagementState } from '@platypus-app/redux/reducers/global/dataManagementReducer';
 import { DataModelState } from '@platypus-app/redux/reducers/global/dataModelReducer';
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { Redirect, useHistory, useLocation } from 'react-router-dom';
 import { DataPreviewTable } from '../components/DataPreviewTable/DataPreviewTable';
 import { TransformationIframe } from '../components/TransformationPlaceholder/TransformationIframe';
-import { TransformationPlaceholder } from '../components/TransformationPlaceholder/TransformationPlaceholder';
 import { TypeList } from '../components/TypeList/TypeList';
 import { useDraftRows } from '../hooks/useDraftRows';
-import {
-  useTransformation,
-  useTransformationMutate,
-} from '../hooks/useTransformationAPI';
-import { useMixpanel } from '@platypus-app/hooks/useMixpanel';
+import { useTransformation } from '../hooks/useTransformationAPI';
+import { useDataManagementPageUI } from '../hooks/useDataManagemenPageUI';
+
 export interface PreviewProps {
   dataModelExternalId: string;
 }
@@ -47,10 +44,11 @@ export const Preview = ({ dataModelExternalId }: PreviewProps) => {
     selectedVersionNumber
   );
   const selectedTypeNameFromQuery = getQueryParameter('type');
-  const { selectedType } = useSelector<DataManagementState>(
-    (state) => state.dataManagement
-  );
+  const { selectedType, isTransformationModalOpen } =
+    useSelector<DataManagementState>((state) => state.dataManagement);
   const { setSelectedType, clearState } = useDraftRows();
+
+  const { setIsTransformationModalOpen } = useDataManagementPageUI();
 
   useEffect(() => {
     return () => {
@@ -58,13 +56,9 @@ export const Preview = ({ dataModelExternalId }: PreviewProps) => {
     };
   }, []);
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const { t } = useTranslation('DataPreview');
   const doesSupportRead = useCapabilities('transformationsAcl', [
     'READ',
-  ]).isAclSupported;
-  const doesSupportWrite = useCapabilities('transformationsAcl', [
-    'WRITE',
   ]).isAclSupported;
 
   const typeKey = `${selectedType?.name}_${selectedDataModelVersion.version}`;
@@ -87,31 +81,6 @@ export const Preview = ({ dataModelExternalId }: PreviewProps) => {
     }
   }
 
-  const transformationMutate = useTransformationMutate();
-
-  const { track } = useMixpanel();
-
-  const onLoadDataFromTransformation = async () => {
-    transformationMutate.mutate(
-      {
-        externalId: dataModelExternalId,
-        typeKey,
-      },
-      {
-        onSuccess: () => {
-          track('Transformations', {
-            dataModel: dataModelExternalId,
-          });
-          setIsModalOpen(true);
-        },
-      }
-    );
-  };
-  const shouldShowTransformation =
-    transformation.data?.id == null &&
-    transformation.status === 'success' &&
-    !transformationMutate.isError;
-
   if (!selectedTypeNameFromQuery && dataModelTypeDefs.types.length > 0) {
     // make sure we preserve any existing query params
     const params = new URLSearchParams(location.search);
@@ -131,13 +100,13 @@ export const Preview = ({ dataModelExternalId }: PreviewProps) => {
     <div>
       {selectedType && (
         <ModalDialog
-          visible={isModalOpen}
+          visible={isTransformationModalOpen}
           title="Transformations"
           onOk={() => {
-            setIsModalOpen(false);
+            setIsTransformationModalOpen(false);
           }}
           onCancel={() => {
-            setIsModalOpen(false);
+            setIsTransformationModalOpen(false);
           }}
           okType="primary"
           width="90%"
@@ -174,24 +143,12 @@ export const Preview = ({ dataModelExternalId }: PreviewProps) => {
         content={
           selectedType ? (
             <Flex direction="column" style={{ flex: 1 }}>
-              {shouldShowTransformation && (
-                <TransformationPlaceholder
-                  dataModelType={selectedType}
-                  externalId={dataModelExternalId}
-                  doesSupportAcl={!!doesSupportWrite}
-                  onLoadClick={onLoadDataFromTransformation}
-                />
-              )}
-
               <DataPreviewTable
-                key={`${isModalOpen}_key`}
+                key={`data-preview-table-key`}
                 dataModelType={selectedType}
                 dataModelTypeDefs={dataModelTypeDefs}
                 dataModelExternalId={dataModelExternalId}
                 version={selectedDataModelVersion.version}
-                // everything from here bellow needs to be refactored
-                transformationId={transformation.data?.id}
-                onTransformationClick={setIsModalOpen}
               />
             </Flex>
           ) : (
