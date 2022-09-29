@@ -43,7 +43,7 @@ const defaultTranslations = makeDefaultTranslations(
   'Select all/none',
   'Chart',
   'New chart',
-  'Add to chart'
+  'Add to existing chart'
 );
 
 export const OpenInCharts: FC = () => {
@@ -376,7 +376,7 @@ export const OpenInCharts: FC = () => {
                   onChange={handleOnChange}
                 />
                 <div className="radio-ui" />
-                {t['Add to chart']}
+                {t['Add to existing chart']}
               </label>
             </div>
             <Select
@@ -390,7 +390,6 @@ export const OpenInCharts: FC = () => {
                 setCurrentValue(options[1]);
               }}
               closeMenuOnSelect
-              disabled
             />
           </div>
         </>
