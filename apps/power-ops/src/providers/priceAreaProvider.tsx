@@ -5,18 +5,13 @@ import {
   fetchProcessConfigurations,
 } from 'queries/useFetchPriceArea';
 import { BidProcessResultWithData } from 'types';
-import { AuthenticatedUser } from '@cognite/auth-utils';
-import { CogniteClient } from '@cognite/sdk';
 import {
   PriceArea,
   BidProcessConfiguration,
 } from '@cognite/power-ops-api-types';
 import { useQuery, useQueryClient } from 'react-query';
+import { useAuthenticatedAuthContext } from '@cognite/react-container';
 
-interface PriceAreaProviderProps {
-  client: CogniteClient;
-  authState: AuthenticatedUser;
-}
 export interface PriceAreasContextType {
   allPriceAreas?: PriceArea[];
   bidProcessResult?: BidProcessResultWithData;
@@ -31,9 +26,8 @@ export const PriceAreasContext = createContext<PriceAreasContextType>({
   bidProcessConfigurationChanged: () => false,
 });
 
-export const PriceAreaProvider: React.FC<
-  PropsWithChildren<PriceAreaProviderProps>
-> = ({ children, client, authState }) => {
+export const PriceAreaProvider = ({ children }: PropsWithChildren) => {
+  const { client, authState } = useAuthenticatedAuthContext();
   const queryClient = useQueryClient();
 
   const [priceAreaExternalId, setPriceAreaExternalId] = useState<string>('');

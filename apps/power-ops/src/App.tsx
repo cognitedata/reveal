@@ -1,11 +1,6 @@
 import GlobalStyles from 'global-styles';
 import { Route, Switch, Redirect } from 'react-router-dom';
-import {
-  AuthConsumer,
-  AuthContext,
-  Container,
-  Logout,
-} from '@cognite/react-container';
+import { Container, Logout } from '@cognite/react-container';
 // UTILS
 import sidecar from 'utils/sidecar';
 // PROVIDERS
@@ -21,6 +16,7 @@ import { Monitoring } from 'pages/Monitoring';
 export enum PAGES {
   HOME = '/home',
   WORKFLOWS = '/workflows',
+  WORKFLOWS_SINGLE = '/workflows/:workflowExternalId',
   MONITORING = '/monitoring',
   PORTFOLIO = '/portfolio',
   LOGOUT = '/logout',
@@ -30,45 +26,27 @@ const App = () => (
   <Container sidecar={sidecar}>
     <>
       <GlobalStyles />
-      <AuthConsumer>
-        {({ client, authState }: AuthContext) =>
-          client && authState ? (
-            <EventStreamProvider>
-              <PriceAreaProvider client={client} authState={authState}>
-                <MenuBar />
-                <Switch>
-                  <Route path={PAGES.LOGOUT} render={() => <Logout />} />
-                  <Route
-                    path={PAGES.MONITORING}
-                    render={() => <Monitoring />}
-                  />
-                  <Route
-                    exact
-                    path={PAGES.WORKFLOWS}
-                    render={() => <Workflows />}
-                  />
-                  <Route
-                    path={`${PAGES.WORKFLOWS}/:workflowExternalId`}
-                    render={() => (
-                      <WorkflowSingle client={client} authState={authState} />
-                    )}
-                  />
-                  <Route
-                    path={[
-                      `${PAGES.PORTFOLIO}/:priceAreaExternalId`,
-                      `${PAGES.PORTFOLIO}`,
-                    ]}
-                    render={() => <Portfolio />}
-                  />
-                  <Redirect from="" to={PAGES.PORTFOLIO} />
-                  <Redirect from="/" to={PAGES.PORTFOLIO} />
-                  <Route render={() => <NotFoundPage />} />
-                </Switch>
-              </PriceAreaProvider>
-            </EventStreamProvider>
-          ) : null
-        }
-      </AuthConsumer>
+      <EventStreamProvider>
+        <PriceAreaProvider>
+          <MenuBar />
+          <Switch>
+            <Route path={PAGES.LOGOUT} component={Logout} />
+            <Route path={PAGES.MONITORING} component={Monitoring} />
+            <Route exact path={PAGES.WORKFLOWS} component={Workflows} />
+            <Route path={PAGES.WORKFLOWS_SINGLE} component={WorkflowSingle} />
+            <Route
+              path={[
+                `${PAGES.PORTFOLIO}/:priceAreaExternalId`,
+                `${PAGES.PORTFOLIO}`,
+              ]}
+              component={Portfolio}
+            />
+            <Redirect from="" to={PAGES.PORTFOLIO} />
+            <Redirect from="/" to={PAGES.PORTFOLIO} />
+            <Route component={NotFoundPage} />
+          </Switch>
+        </PriceAreaProvider>
+      </EventStreamProvider>
     </>
   </Container>
 );

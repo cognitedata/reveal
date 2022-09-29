@@ -1,7 +1,6 @@
 import dayjs from 'dayjs';
 import { useContext, useEffect, useState } from 'react';
-import { CogniteClient, CogniteEvent, Relationship } from '@cognite/sdk';
-import { AuthenticatedUser } from '@cognite/auth-utils';
+import { CogniteEvent, Relationship } from '@cognite/sdk';
 import {
   Button,
   Collapse,
@@ -16,6 +15,7 @@ import { useHistory, useParams, useRouteMatch } from 'react-router-dom';
 import { EventStreamContext } from 'providers/eventStreamProvider';
 import { CopyButton } from 'components/CopyButton/CopyButton';
 import { useFetchProcesses } from 'queries/useFetchProcesses';
+import { useAuthenticatedAuthContext } from '@cognite/react-container';
 
 import { ReusableTable } from './ReusableTable';
 import { handleCopyButtonClick, processColumns } from './utils';
@@ -27,13 +27,8 @@ import {
   CollapseContainer,
 } from './elements';
 
-export const WorkflowSingle = ({
-  client,
-  authState,
-}: {
-  client: CogniteClient;
-  authState: AuthenticatedUser | undefined;
-}) => {
+export const WorkflowSingle = () => {
+  const { client, authState } = useAuthenticatedAuthContext();
   const { eventStore } = useContext(EventStreamContext);
 
   const match = useRouteMatch();
