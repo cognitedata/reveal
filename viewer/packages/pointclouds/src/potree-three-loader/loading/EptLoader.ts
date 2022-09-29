@@ -11,7 +11,9 @@ export class EptLoader {
     modelDataProvider: ModelDataProvider,
     objectProvider: PointCloudObjectAnnotationData
   ): Promise<PointCloudEptGeometry> {
-    return modelDataProvider.getJsonFile(baseUrl, fileName).then(async (json: EptJson) => {
+    const eptJsonPromise = modelDataProvider.getJsonFile(baseUrl, fileName);
+
+    return eptJsonPromise.then(async (json: EptJson) => {
       const url = baseUrl + '/';
       const stylableObjects = objectProvider.annotations.map(a => a.stylableObject);
       const geometry = new PointCloudEptGeometry(url, json, modelDataProvider, stylableObjects);

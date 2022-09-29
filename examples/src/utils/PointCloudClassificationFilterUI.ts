@@ -1,27 +1,17 @@
-import { CognitePointCloudModel, WellKnownAsprsPointClassCodes } from '@cognite/reveal';
+import { CognitePointCloudModel } from '@cognite/reveal';
 import dat from 'dat.gui';
 
 export class PointCloudClassificationFilterUI {
   constructor(ui: dat.GUI, model: CognitePointCloudModel) {
     const classes = model.getClasses();
-    const visibility = classes.reduce((visibility, clazz) => {
-      return {...visibility, [`${clazz}`]: model.isClassVisible(clazz) };
+    const visibility = classes.reduce((visibility, pointClass) => {
+      return {...visibility, [`${pointClass}`]: model.isClassVisible(pointClass.code) };
     }, {});
 
-    classes.forEach(clazz => {
-      ui.add(visibility, `${clazz}`).name(getClassName(clazz)).onChange((visible: boolean) => {
-        model.setClassVisible(clazz, visible);
+    classes.forEach(pointClass => {
+      ui.add(visibility, `${pointClass}`).name(pointClass.name).onChange((visible: boolean) => {
+        model.setClassVisible(pointClass.code, visible);
       });
     });
   }
-}
-
-function getClassName(clazz: number): string {
-  const entry = Object.entries(WellKnownAsprsPointClassCodes).find(entry => {
-    if (entry[1] === clazz) {
-      return true;
-    }
-    return false;
-  })
-  return (entry !== undefined) ? entry[0] : `Class ${clazz}`;
 }
