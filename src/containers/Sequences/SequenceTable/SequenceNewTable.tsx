@@ -33,6 +33,7 @@ export const SequenceTable = (
       columns={updatedColumns}
       data={props.data}
       visibleColumns={[
+        'name',
         'externalId',
         'relation',
         'lastUpdatedTime',

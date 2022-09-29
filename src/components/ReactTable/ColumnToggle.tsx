@@ -1,6 +1,11 @@
+import {
+  ColumnInstance,
+  IdType,
+  TableToggleHideAllColumnProps,
+} from 'react-table';
 import React, { FC, useRef } from 'react';
 import { Button, Checkbox, Dropdown, Icon, Menu } from '@cognite/cogs.js';
-import { ColumnInstance, TableToggleHideAllColumnProps } from 'react-table';
+
 import styled from 'styled-components';
 import { TableData } from './Table';
 import { IndeterminateCheckbox } from './IndeterminateCheckbox';
@@ -11,8 +16,10 @@ interface ColumnToggleProps<T extends TableData = any> {
   allColumns: ColumnInstance<T>[];
   getToggleHideAllColumnsProps?: (
     props?: Partial<TableToggleHideAllColumnProps>
-  ) => TableToggleHideAllColumnProps;
+  ) => TableToggleHideAllColumnProps | void;
   moveCard: (dragIndex: number, hoverIndex: number) => void;
+  setHiddenColumns: (param: IdType<T>[]) => void;
+  alwaysColumnVisible?: string;
 }
 
 export interface CardProps {
@@ -131,13 +138,13 @@ export const MenutItemDrag: FC<CardProps> = ({
     </FlexWrapper>
   );
 };
-export function ColumnToggle<T>(props: ColumnToggleProps<T>) {
-  const {
-    allColumns,
-    getToggleHideAllColumnsProps = () => {},
-    moveCard,
-  } = props;
-
+export function ColumnToggle<T>({
+  allColumns,
+  moveCard,
+  getToggleHideAllColumnsProps = () => {},
+  alwaysColumnVisible = 'name',
+  setHiddenColumns,
+}: ColumnToggleProps<T>) {
   const [, drop] = useDrop(() => ({ accept: ItemTypes.CARD }));
 
   return (
@@ -147,7 +154,12 @@ export function ColumnToggle<T>(props: ColumnToggleProps<T>) {
           <Menu.Header>Columns rearrangement</Menu.Header>
           <FlexWrapper className="cogs-menu-item">
             <Label>
-              <IndeterminateCheckbox {...getToggleHideAllColumnsProps()} />
+              <IndeterminateCheckbox
+                setHiddenColumns={setHiddenColumns}
+                allColumns={allColumns as any}
+                alwaysColumnVisible={alwaysColumnVisible}
+                {...getToggleHideAllColumnsProps()}
+              />
               Select All
             </Label>
           </FlexWrapper>
@@ -166,6 +178,8 @@ export function ColumnToggle<T>(props: ColumnToggleProps<T>) {
                     column.getToggleHiddenProps().onChange(evt)
                   }
                   className="cogs-checkbox__checkbox"
+                  disabled={alwaysColumnVisible === column.id}
+                  defaultChecked={alwaysColumnVisible === column.id}
                 />
                 {column.Header}
               </Label>

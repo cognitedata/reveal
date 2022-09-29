@@ -34,6 +34,7 @@ export const EventTable = (
         isRelationshipTable
       )}
       data={props.data}
+      alwaysColumnVisible="type"
       visibleColumns={['type', 'description']}
     />
   );

@@ -39,6 +39,7 @@ export interface TableProps<T extends Record<string, any>>
     evt?: React.MouseEvent<HTMLDivElement, MouseEvent>
   ) => void;
   showLoadButton?: boolean;
+  alwaysColumnVisible?: string;
   tableHeaders?: React.ReactElement;
   isResizingColumns?: boolean;
 }
@@ -56,7 +57,6 @@ export function NewTable<T extends TableData>({
   onRowClick = () => {},
   onSort,
   visibleColumns = [],
-
   isSortingEnabled = false,
   isStickyHeader = false,
   isKeyboardNavigationEnabled = true,
@@ -66,6 +66,7 @@ export function NewTable<T extends TableData>({
   isLoadingMore,
   tableHeaders,
   fetchMore,
+  alwaysColumnVisible,
 }: TableProps<T>) {
   const defaultColumn = useMemo(
     () => ({
@@ -99,10 +100,9 @@ export function NewTable<T extends TableData>({
     headerGroups,
     rows,
     allColumns,
-
     getToggleHideAllColumnsProps,
+    setHiddenColumns,
     setColumnOrder,
-
     state: { sortBy },
     prepareRow,
   } = useTable<T>(
@@ -153,6 +153,8 @@ export function NewTable<T extends TableData>({
             <DndProvider backend={HTML5Backend}>
               <StyledFlex>
                 <ColumnToggle<T>
+                  alwaysColumnVisible={alwaysColumnVisible}
+                  setHiddenColumns={setHiddenColumns}
                   moveCard={moveCard}
                   allColumns={allColumns}
                   getToggleHideAllColumnsProps={getToggleHideAllColumnsProps}

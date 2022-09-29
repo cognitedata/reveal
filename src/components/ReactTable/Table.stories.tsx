@@ -167,6 +167,7 @@ export const ExampleWithColumnToggle: ComponentStory<typeof Table> = args => {
     <Table<DataType>
       {...args}
       data={data}
+      alwaysColumnVisible="col1"
       columns={columns}
       visibleColumns={['col1', 'col2']}
     />
@@ -187,10 +188,10 @@ ExampleWithColumnToggle.play = async ({ canvasElement }) => {
   const columnSelectButton = canvas.getByLabelText('Column Selection');
   userEvent.click(columnSelectButton);
 
-  const column1 = canvas.getByLabelText('Column 1');
-  userEvent.click(column1);
+  const column2 = canvas.getByLabelText('Column 2');
+  userEvent.click(column2);
   let firstCell = rows[0].querySelector('[role="cell"]')?.innerHTML;
-  expect(firstCell).not.toBe('Hello');
+  expect(firstCell).not.toBe('World');
 };
 
 export const ExampleWithNavigation: ComponentStory<typeof Table> = args => {
