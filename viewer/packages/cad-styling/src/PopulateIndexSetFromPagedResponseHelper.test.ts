@@ -14,12 +14,21 @@ import { createListResponse } from './stubs/createListResponse';
 describe(PopulateIndexSetFromPagedResponseHelper.name, () => {
   let helper: PopulateIndexSetFromPagedResponseHelper<number>;
   let notifyChangedCallback: () => void;
+  let itemsToTreeIndexesCallback: jest.Mock<NumericRange[], [number[]]>;
+  let itemsToAreasCallback: jest.Mock<Promise<THREE.Box3[]>, [number[]]>;
 
   beforeEach(() => {
     notifyChangedCallback = jest.fn();
+    itemsToTreeIndexesCallback = jest.fn((xs: number[]) => {
+      return xs.map(x => new NumericRange(x, 1));
+    });
+    itemsToAreasCallback = jest.fn(async (xs: number[]) => {
+      return xs.map(x => new THREE.Box3().setFromArray([x, x, x, x + 1, x + 1, x + 1]));
+    });
+
     helper = new PopulateIndexSetFromPagedResponseHelper<number>(
-      xs => xs.map(x => new NumericRange(x, 1)),
-      async xs => xs.map(x => new THREE.Box3().setFromArray([x, x, x, x + 1, x + 1, x + 1])),
+      itemsToTreeIndexesCallback,
+      itemsToAreasCallback,
       notifyChangedCallback
     );
   });
@@ -104,13 +113,35 @@ describe(PopulateIndexSetFromPagedResponseHelper.name, () => {
     expect(helper.indexSet.toIndexArray()).toEqual([2, 4, 6, 8, 10]);
   });
 
-  test('with filter, no asset mappings, does not invoke filter callback', async () => {
+  test('with filter, no asset mappings, does not invoke callbacks', async () => {
     const response = createListResponse([], 5);
-    const filterCallback = jest.fn(async (items: number[]) => items.filter(x => x % 2 === 0));
+    const filterCallback = jest.fn();
     helper.setFilterItemsCallback(filterCallback);
 
     await helper.pageResults(Promise.resolve(response));
 
     expect(filterCallback).not.toBeCalled();
+    expect(itemsToTreeIndexesCallback).not.toBeCalled();
+    expect(itemsToAreasCallback).not.toBeCalled();
+  });
+
+  test('with filter, filter accepts nothing, does not trigger other callbacks', async () => {
+    const response = createListResponse([1, 2, 3], 5);
+    const filterCallback = jest.fn(async (_items: number[]) => []);
+    helper.setFilterItemsCallback(filterCallback);
+
+    await helper.pageResults(Promise.resolve(response));
+
+    expect(filterCallback).toBeCalled();
+    expect(itemsToTreeIndexesCallback).not.toBeCalled();
+    expect(itemsToAreasCallback).not.toBeCalled();
+  });
+
+  test('with filter, filter accepts nothing, does not do further processing', async () => {
+    const response = createListResponse([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 5);
+    const filterCallback = (_items: number[]) => Promise.resolve(new Array<number>());
+    helper.setFilterItemsCallback(filterCallback);
+
+    await helper.pageResults(Promise.resolve(response));
   });
 });

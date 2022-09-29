@@ -75,13 +75,15 @@ export class PopulateIndexSetFromPagedResponseHelper<T> {
         const nextRequest = response.next ? response.next() : undefined;
 
         const items = response.items.length > 0 ? await this._filterItemsCallback(response.items) : [];
-        const ranges = this._itemsToTreeIndexRangesCallback(items);
-        ranges.forEach(range => indexSet.addRange(range));
+        if (items.length > 0) {
+          const ranges = this._itemsToTreeIndexRangesCallback(items);
+          ranges.forEach(range => indexSet.addRange(range));
 
-        const areas = await this._itemsToAreasCallback(items);
-        this._areas.addAreas(areas);
+          const areas = await this._itemsToAreasCallback(items);
+          this._areas.addAreas(areas);
 
-        this._notifyChangedCallback();
+          this._notifyChangedCallback();
+        }
 
         if (nextRequest) {
           response = await nextRequest;
