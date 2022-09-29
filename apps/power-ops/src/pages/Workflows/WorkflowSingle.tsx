@@ -28,7 +28,7 @@ import {
 } from './elements';
 
 export const WorkflowSingle = () => {
-  const { client, authState } = useAuthenticatedAuthContext();
+  const { client } = useAuthenticatedAuthContext();
   const { eventStore } = useContext(EventStreamContext);
 
   const match = useRouteMatch();
@@ -44,11 +44,8 @@ export const WorkflowSingle = () => {
 
   const [showMetadata, setShowMetadata] = useState<boolean>(false);
 
-  const { data: processes, refetch: refetchProcesses } = useFetchProcesses({
-    project: client.project,
-    workflowExternalId,
-    token: authState?.token,
-  });
+  const { data: processes, refetch: refetchProcesses } =
+    useFetchProcesses(workflowExternalId);
 
   // Get bid workflow metadata and dataSetId
   const getWorkflowEvent = async () => {

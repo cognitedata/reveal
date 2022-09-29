@@ -2,16 +2,14 @@ import axios from 'axios';
 import { Workflow } from 'types';
 import { useQuery } from 'react-query';
 import sidecar from 'utils/sidecar';
+import { useAuthenticatedAuthContext } from '@cognite/react-container';
 
 const { powerOpsApiBaseUrl } = sidecar;
 
-const fetchWorkflows = async ({
-  project,
-  token,
-}: {
-  project: string;
-  token: string | undefined;
-}): Promise<Workflow[]> => {
+const fetchWorkflows = async (
+  project: string,
+  token: string
+): Promise<Workflow[]> => {
   const { data: workflows }: { data: Workflow[] } = await axios.get(
     `${powerOpsApiBaseUrl}/${project}/workflows`,
     {
@@ -21,15 +19,14 @@ const fetchWorkflows = async ({
   return workflows;
 };
 
-export const useFetchWorkflows = ({
-  project,
-  token,
-}: {
-  project: string;
-  token: string | undefined;
-}) => {
+export const useFetchWorkflows = () => {
+  const {
+    client: { project },
+    authState: { token },
+  } = useAuthenticatedAuthContext();
   return useQuery({
-    queryKey: `workflows_${project}`,
-    queryFn: () => fetchWorkflows({ project, token }),
+    queryKey: [project, 'workflows'],
+    queryFn: () => fetchWorkflows(project, token!),
+    enabled: !!token,
   });
 };

@@ -1,8 +1,6 @@
-import { memo, useContext, useEffect, useMemo, useState } from 'react';
+import { useContext, useEffect, useMemo, useState } from 'react';
 import { useHistory, useLocation, useRouteMatch } from 'react-router-dom';
-import { AuthConsumer, AuthContext } from '@cognite/react-container';
-import { AuthenticatedUser } from '@cognite/auth-utils';
-import { CogniteClient, CogniteEvent } from '@cognite/sdk';
+import { CogniteEvent } from '@cognite/sdk';
 import { EVENT_TYPES, PROCESS_TYPES } from '@cognite/power-ops-api-types';
 import { EventStreamContext } from 'providers/eventStreamProvider';
 import { useFetchWorkflows } from 'queries/useFetchWorkflows';
@@ -17,21 +15,7 @@ import { ReusableTable } from './ReusableTable';
 import { Container, SearchAndFilter } from './elements';
 import { workflowsColumns } from './utils';
 
-const WorkflowsWrapper: React.FC = () => (
-  <AuthConsumer>
-    {({ client, authState }: AuthContext) =>
-      client ? <WorkflowsPage client={client} authState={authState} /> : null
-    }
-  </AuthConsumer>
-);
-
-const WorkflowsPage = ({
-  client,
-  authState,
-}: {
-  client: CogniteClient;
-  authState: AuthenticatedUser | undefined;
-}) => {
+export const Workflows = () => {
   const { eventStore } = useContext(EventStreamContext);
 
   const match = useRouteMatch();
@@ -42,10 +26,7 @@ const WorkflowsPage = ({
   const [filteredWorkflows, setFilteredWorkflows] = useState<
     Workflow[] | undefined
   >([]);
-  const { data: workflows, refetch: refetchWorkflows } = useFetchWorkflows({
-    project: client.project,
-    token: authState?.token,
-  });
+  const { data: workflows, refetch: refetchWorkflows } = useFetchWorkflows();
 
   // Setup for table filters
   const [workflowTypeFilterValue, setWorkflowTypeFilterValue] = useState<
@@ -64,15 +45,9 @@ const WorkflowsPage = ({
     }))
   );
 
-  const { data: workflowSchemas } = useFetchWorkflowSchemas({
-    project: client.project,
-    token: authState?.token,
-  });
+  const { data: workflowSchemas } = useFetchWorkflowSchemas();
 
-  const { data: workflowTypes } = useFetchWorkflowTypes({
-    project: client.project,
-    token: authState?.token,
-  });
+  const { data: workflowTypes } = useFetchWorkflowTypes();
 
   const isWorkflowEvent = async (needle: string): Promise<boolean> => {
     return !!(
@@ -234,5 +209,3 @@ const WorkflowsPage = ({
     </Container>
   );
 };
-
-export const Workflows = memo(WorkflowsWrapper);

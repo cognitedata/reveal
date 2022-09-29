@@ -9,6 +9,9 @@ import sidecar from 'utils/sidecar';
 import { CogniteClient } from '@cognite/sdk';
 import { BidProcessResultWithData } from 'types';
 import { fetchBidMatricesData } from 'utils/utils';
+import { useAuthenticatedAuthContext } from '@cognite/react-container';
+
+const { powerOpsApiBaseUrl } = sidecar;
 
 export const fetchProcessConfigurations = async ({
   client,
@@ -133,38 +136,26 @@ export const fetchBidProcessResultWithData = async ({
   return bidProcessResultWithData;
 };
 
-const fetchAllPriceAreas = async ({
-  client,
-  token,
-}: {
-  client: CogniteClient;
-  token: string;
-}): Promise<PriceArea[] | undefined> => {
-  if (!(client.project && token)) return undefined;
-
-  const { powerOpsApiBaseUrl } = sidecar;
-
-  const { data: priceAreas }: { data: PriceArea[] } = await axios.get(
-    `${powerOpsApiBaseUrl}/${client.project}/price-areas`,
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }
+const fetchAllPriceAreas = async (
+  project: string,
+  token: string
+): Promise<PriceArea[]> => {
+  const { data: priceAreas } = await axios.get<PriceArea[]>(
+    `${powerOpsApiBaseUrl}/${project}/price-areas`,
+    { headers: { Authorization: `Bearer ${token}` } }
   );
 
   return priceAreas;
 };
 
-export const useFetchAllPriceAreas = ({
-  client,
-  token,
-}: {
-  client: CogniteClient;
-  token: string;
-}) => {
+export const useFetchAllPriceAreas = () => {
+  const {
+    client: { project },
+    authState: { token },
+  } = useAuthenticatedAuthContext();
   return useQuery({
-    queryKey: `${client.project}_priceAreas`,
-    queryFn: () => fetchAllPriceAreas({ client, token }),
+    queryKey: [project, 'price-areas'],
+    queryFn: () => fetchAllPriceAreas(project, token!),
+    enabled: !!token,
   });
 };

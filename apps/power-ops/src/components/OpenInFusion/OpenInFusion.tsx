@@ -13,7 +13,7 @@ export const OpenInFusion = ({
   const { cdfApiBaseUrl } = sidecar;
   const { client } = useAuthContext();
 
-  const { data: configuration } = usePowerOpsConfiguration(client);
+  const { data: configuration } = usePowerOpsConfiguration();
 
   const [CDFEvent, setCDFEvent] = useState<CogniteEvent | undefined>();
 

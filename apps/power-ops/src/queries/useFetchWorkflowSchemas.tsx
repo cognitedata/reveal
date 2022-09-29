@@ -2,16 +2,14 @@ import axios from 'axios';
 import { WorkflowSchema } from 'types';
 import { useQuery } from 'react-query';
 import sidecar from 'utils/sidecar';
+import { useAuthenticatedAuthContext } from '@cognite/react-container';
 
 const { powerOpsApiBaseUrl } = sidecar;
 
-const fetchWorkflowSchemas = async ({
-  project,
-  token,
-}: {
-  project: string;
-  token: string | undefined;
-}): Promise<WorkflowSchema[]> => {
+const fetchWorkflowSchemas = async (
+  project: string,
+  token: string
+): Promise<WorkflowSchema[]> => {
   const { data: workflowSchemas }: { data: WorkflowSchema[] } = await axios.get(
     `${powerOpsApiBaseUrl}/${project}/workflow-schemas`,
     {
@@ -21,15 +19,14 @@ const fetchWorkflowSchemas = async ({
   return workflowSchemas;
 };
 
-export const useFetchWorkflowSchemas = ({
-  project,
-  token,
-}: {
-  project: string;
-  token: string | undefined;
-}) => {
+export const useFetchWorkflowSchemas = () => {
+  const {
+    client: { project },
+    authState: { token },
+  } = useAuthenticatedAuthContext();
   return useQuery({
-    queryKey: `workflow_schemas_${project}`,
-    queryFn: () => fetchWorkflowSchemas({ project, token }),
+    queryKey: [project, 'workflow-schemas'],
+    queryFn: () => fetchWorkflowSchemas(project, token!),
+    enabled: !!token,
   });
 };

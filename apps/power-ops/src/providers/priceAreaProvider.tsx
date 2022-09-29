@@ -44,10 +44,7 @@ export const PriceAreaProvider = ({ children }: PropsWithChildren) => {
     }
   };
 
-  const { data: allPriceAreas } = useFetchAllPriceAreas({
-    client,
-    token: authState.token!,
-  });
+  const { data: allPriceAreas } = useFetchAllPriceAreas();
 
   const { data: selectedBidProcessResult, refetch: refetchBidProcessResult } =
     useQuery(

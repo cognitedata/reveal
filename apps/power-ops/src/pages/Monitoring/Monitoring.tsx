@@ -26,10 +26,7 @@ const MonitoringInner = ({ client }: { client: CogniteClient }) => {
   const { authState } = useAuthContext();
   const { snifferServiceBaseUrl } = sidecar;
 
-  const { data, refetch } = useFetchSnifferJobs({
-    client,
-    token: authState?.token || '',
-  });
+  const { data, refetch } = useFetchSnifferJobs();
 
   const startJobs = async () => {
     metrics.track('click-start-all-jobs-button');

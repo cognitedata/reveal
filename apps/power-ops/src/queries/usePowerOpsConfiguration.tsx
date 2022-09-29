@@ -1,15 +1,15 @@
-import { CogniteClient } from '@cognite/sdk';
+import { useAuthenticatedAuthContext } from '@cognite/react-container';
 import { useQuery } from 'react-query';
 
-export const usePowerOpsConfiguration = (client: CogniteClient | undefined) => {
+export const usePowerOpsConfiguration = () => {
+  const { client } = useAuthenticatedAuthContext();
   return useQuery(
-    [`${client?.project}_configurations`],
+    [client.project, 'configurations'],
     () =>
-      client?.assets
+      client.assets
         .retrieve([{ externalId: 'configurations' }])
         .then((assets) => assets[0]?.metadata ?? {}),
     {
-      enabled: !!client,
       staleTime: 1000 * 30, // every 30 seconds
     }
   );

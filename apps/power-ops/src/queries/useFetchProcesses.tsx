@@ -2,19 +2,16 @@ import axios from 'axios';
 import { Process } from 'types';
 import { useQuery } from 'react-query';
 import sidecar from 'utils/sidecar';
+import { useAuthenticatedAuthContext } from '@cognite/react-container';
 
 const { powerOpsApiBaseUrl } = sidecar;
 
-const fetchProcesses = async ({
-  project,
-  workflowExternalId,
-  token,
-}: {
-  project: string;
-  workflowExternalId: string;
-  token: string | undefined;
-}): Promise<Process[]> => {
-  const { data: processes }: { data: Process[] } = await axios.get(
+const fetchProcesses = async (
+  project: string,
+  workflowExternalId: string,
+  token: string
+): Promise<Process[]> => {
+  const { data: processes } = await axios.get<Process[]>(
     `${powerOpsApiBaseUrl}/${project}/processesByWorkflowExternalId`,
     {
       headers: { Authorization: `Bearer ${token}` },
@@ -26,17 +23,14 @@ const fetchProcesses = async ({
   return processes;
 };
 
-export const useFetchProcesses = ({
-  project,
-  workflowExternalId,
-  token,
-}: {
-  project: string;
-  workflowExternalId: string;
-  token: string | undefined;
-}) => {
+export const useFetchProcesses = (workflowExternalId: string) => {
+  const {
+    client: { project },
+    authState: { token },
+  } = useAuthenticatedAuthContext();
   return useQuery({
-    queryKey: `processes_${workflowExternalId}`,
-    queryFn: () => fetchProcesses({ project, workflowExternalId, token }),
+    queryKey: [project, 'processes', workflowExternalId],
+    queryFn: () => fetchProcesses(project, workflowExternalId, token!),
+    enabled: !!token,
   });
 };

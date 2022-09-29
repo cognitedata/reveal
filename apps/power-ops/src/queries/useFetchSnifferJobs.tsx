@@ -1,34 +1,27 @@
-import { CogniteClient } from '@cognite/sdk';
 import axios from 'axios';
 import { useQuery } from 'react-query';
 import sidecar from 'utils/sidecar';
+import { useAuthenticatedAuthContext } from '@cognite/react-container';
 
 const { snifferServiceBaseUrl } = sidecar;
 
-const fetchJobs = async ({
-  client,
-  token,
-}: {
-  client: CogniteClient;
-  token: string;
-}) => {
+const fetchJobs = async (project: string, token: string) => {
   return axios
-    .get(`${snifferServiceBaseUrl}/${client.project}/jobs/list-all`, {
+    .get(`${snifferServiceBaseUrl}/${project}/jobs/list-all`, {
       headers: { Authorization: `Bearer ${token}` },
     })
     .then((response) => response.data);
 };
 
-export const useFetchSnifferJobs = ({
-  client,
-  token,
-}: {
-  client: CogniteClient;
-  token: string;
-}) => {
+export const useFetchSnifferJobs = () => {
+  const {
+    client: { project },
+    authState: { token },
+  } = useAuthenticatedAuthContext();
   return useQuery({
-    queryKey: `sniffer-jobs-${client.project}`,
-    queryFn: () => fetchJobs({ client, token }),
+    queryKey: [project, 'sniffer-jobs'],
+    queryFn: () => fetchJobs(project, token!),
+    enabled: !!token,
     // refetchInterval: 5000,
   });
 };
