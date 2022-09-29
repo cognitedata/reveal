@@ -2,7 +2,7 @@
  * Copyright 2022 Cognite AS
  */
 
-import { ModelDataProvider } from '@reveal/modeldata-api';
+import { ModelDataProvider } from '@reveal/data-providers';
 import { DEFAULT_POINT_CLOUD_CLASS_DEFINITION_FILE } from '../constants';
 import { IPointClassificationsProvider } from './IPointClassificationsProvider';
 import { PointCloudMetadata } from '../PointCloudMetadata';
