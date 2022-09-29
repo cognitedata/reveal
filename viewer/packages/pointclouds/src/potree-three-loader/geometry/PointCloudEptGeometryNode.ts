@@ -16,7 +16,7 @@ import {
   incrementGlobalNumNodesLoading,
   decrementGlobalNumNodesLoading
 } from '../loading/globalLoadingCounter';
-import { ModelDataProvider } from '@reveal/modeldata-api';
+import { ModelDataProvider } from '@reveal/data-providers';
 
 export class PointCloudEptGeometryNode implements IPointCloudTreeGeometryNode {
   private readonly _id: number;

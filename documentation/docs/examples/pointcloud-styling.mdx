@@ -4,13 +4,13 @@ title: Pointcloud styling
 description: Usage of the styling API for pointcloud models
 ---
 
-Cognite Data Fusion has a concept of "objects" in point clouds, represented by one or more bounding volumes for 
-each object. The objects are backed by the [CDF Annotations API](https://docs.cognite.com/api/v1/#tag/Annotations). 
+Cognite Data Fusion has a concept of "objects" in point clouds, represented by one or more bounding volumes for
+each object. The objects are backed by the [CDF Annotations API](https://docs.cognite.com/api/v1/#tag/Annotations).
 `@cognite/reveal` supports styling individual objects within a point cloud.
 
 import { DemoWrapper } from '@site/versioned_docs/version-4.x/components/DemoWrapper';
 
-<DemoWrapper name="Cognite3DViewerDemo" modelType="pointcloud" />
+<DemoWrapper modelType="pointcloud" />
 
 In this context, a _stylable object_ represents some volume in space. Styling an object results in all points that lie within the corresponding volume to attain the assigned style.
 

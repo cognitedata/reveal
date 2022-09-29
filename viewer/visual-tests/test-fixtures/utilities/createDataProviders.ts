@@ -13,7 +13,7 @@ import {
   CdfModelDataProvider,
   LocalModelIdentifier,
   CdfModelIdentifier
-} from '../../../packages/modeldata-api';
+} from '../../../packages/data-providers';
 import cdfEnvironments from '../../.cdf-environments.json';
 
 export function createDataProviders(defaultModelLocalUrl = 'primitives'): Promise<{

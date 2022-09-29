@@ -18,13 +18,13 @@ Note that if a node is in a `PropertyFilterNodeCollection` all of its children w
 in the set.
 
 :::note
-The test model used in the documentation site is lacking good node properties and the quality of 
-the examples shown is therefor restricted as a result of this. To best utilize the filtering APIs 
-we recommend providing a rich 3D models with a good set of high-quality attributes associated with 
+The test model used in the documentation site is lacking good node properties and the quality of
+the examples shown is therefor restricted as a result of this. To best utilize the filtering APIs
+we recommend providing a rich 3D models with a good set of high-quality attributes associated with
 the nodes.
 :::
 
-<DemoWrapper name="Cognite3DViewerDemo" />
+<DemoWrapper />
 
 ## Show all pipes
 
@@ -121,30 +121,40 @@ for (let q = 200; q < 300; q++) {
     names.push(name);
   }
 }
-nodeSet.executeFilter('Item', 'Name', names);
-
 model.setDefaultNodeAppearance(DefaultNodeAppearance.Ghosted);
 model.assignStyledNodeCollection(nodeSet, { renderGhosted: false, outlineColor: NodeOutlineColor.Orange } );
+
+nodeSet.executeFilter('Item', 'Name', names).then(() => {
+  // Create boxes around the areas to make it easier for users to find areas in the 3D model to explore
+  const areas = Array.from(nodeSet.getAreas().areas());
+  for (const area of areas) {
+    viewer.addObject3D(new THREE.Box3Helper(area));
+  }
+});
 ```
 
-## Inverting filters
+## Inverting and combining filters
 
 Often it is interesting to invert results from filters to find elements that does not match the query. This
-can be done using `InvertedNodeCollection`.
+can be done using `InvertedNodeCollection`. In the following example, a single system is isolated
+and all pipe support for the system is hidden.
 
 ```js runnable-4x
-// import { PropertyFilterNodeCollection, InvertedNodeCollection, DefaultNodeAppearance } from '@cognite/reveal';
+// import {
+//   PropertyFilterNodeCollection,
+//   InvertedNodeCollection,
+//   IntersectionNodeCollection,
+//   DefaultNodeAppearance
+// } from '@cognite/reveal';
 
-const livingQuarters = new PropertyFilterNodeCollection(sdk, model);
-livingQuarters.executeFilter({'Item': {'Name': '/SLP/S/LQ'}});
-const notLivingQuarters = new InvertedNodeCollection(model, livingQuarters);
+const fullSystem = new PropertyFilterNodeCollection(sdk, model);
+fullSystem.executeFilter({'Item': {'Name': '/P/WM/A'}});
+const pipeSupport = new PropertyFilterNodeCollection(sdk, model);
+pipeSupport.executeFilter({'Item': {'Name': '/P/WM/A/PS'}});
+// This will contain all nodes that do not match the query above
+const notPipesupport = new InvertedNodeCollection(model, pipeSupport);
+const systemWithoutPipesupport = new IntersectionNodeCollection([fullSystem, notPipesupport]);
 
-model.setDefaultNodeAppearance({ 
-  outlineColor: NodeOutlineColor.Red, 
-  color: [120, 50, 0] 
-});
-model.assignStyledNodeCollection(notLivingQuarters, { 
-  outlineColor: NodeOutlineColor.NoOutline, 
-  color: [0,0,0] 
-});
+model.setDefaultNodeAppearance(DefaultNodeAppearance.Hidden);
+model.assignStyledNodeCollection(systemWithoutPipesupport, DefaultNodeAppearance.Default);
 ```

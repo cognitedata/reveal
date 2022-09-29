@@ -2,9 +2,9 @@
  * Copyright 2022 Cognite AS
  */
 import * as THREE from 'three';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import { OrbitControls } from 'three-stdlib';
 
-import { CadManager, CadModelUpdateHandler, createV8SectorCuller } from '../../packages/cad-geometry-loaders';
+import { CadManager, CadModelUpdateHandler } from '../../packages/cad-geometry-loaders';
 import { CadModelFactory, CadNode } from '../../packages/cad-model';
 import {
   BasicPipelineExecutor,
@@ -19,7 +19,8 @@ import {
 import { createDataProviders } from './utilities/createDataProviders';
 import { VisualTestFixture } from './VisualTestFixture';
 import { DeferredPromise, fitCameraToBoundingBox, SceneHandler } from '../../packages/utilities';
-import { ModelIdentifier, ModelMetadataProvider } from '../../packages/modeldata-api';
+
+import { ModelIdentifier, ModelMetadataProvider } from '../../packages/data-providers';
 import { LoadingState } from '../../packages/model-base';
 import {
   LocalAnnotationProvider,
@@ -32,6 +33,7 @@ import {
 import { PointCloudMetadataRepository } from '../../packages/pointclouds/src/PointCloudMetadataRepository';
 import { PointCloudFactory } from '../../packages/pointclouds/src/PointCloudFactory';
 import dat from 'dat.gui';
+import { ByScreenSizeSectorCuller } from '../../packages/cad-geometry-loaders/src/sector/culling/ByScreenSizeSectorCuller';
 
 export type StreamingTestFixtureComponents = {
   renderer: THREE.WebGLRenderer;
@@ -67,6 +69,7 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
   private _pipelineExecutor: RenderPipelineExecutor;
   private _cadManager!: CadManager;
   private _potreeInstance!: Potree;
+
   private readonly _depthRenderPipeline: CadGeometryRenderModePipelineProvider;
   private readonly _resizeObserver: ResizeObserver;
 
@@ -153,13 +156,6 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
       this._localModelUrl
     );
 
-    const cadModelFactory = new CadModelFactory(this._materialManager, modelMetadataProvider, modelDataProvider);
-    const cadModelUpdateHandler = new CadModelUpdateHandler(
-      createV8SectorCuller(this._renderer, this._depthRenderPipeline),
-      false
-    );
-    this._cadManager = new CadManager(this._materialManager, cadModelFactory, cadModelUpdateHandler);
-
     const pointCloudMetadataRepository = new PointCloudMetadataRepository(modelMetadataProvider, modelDataProvider);
     this._potreeInstance = new Potree(modelDataProvider);
     const pointCloudFactory = this.createPointCloudFactory();
@@ -170,6 +166,10 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
       this._sceneHandler.scene,
       this._renderer
     );
+    const sectorCuller = new ByScreenSizeSectorCuller();
+    const cadModelFactory = new CadModelFactory(this._materialManager, modelMetadataProvider, modelDataProvider);
+    const cadModelUpdateHandler = new CadModelUpdateHandler(sectorCuller, false);
+    this._cadManager = new CadManager(this._materialManager, cadModelFactory, cadModelUpdateHandler);
 
     const model = await this.addModel(modelIdentifier, modelMetadataProvider, this._cadManager, pointCloudManager);
 
@@ -314,11 +314,7 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
       const pointCloudNode = await pointCloudManager.addModel(modelIdentifier);
       pointCloudNode.pointColorType = PotreePointColorType.Height;
 
-      // TODO, Håkon Flatval Sep. 12 2022: Make SceneHandler operate on PointCloudNode directly
-      const mockObject = new THREE.Group();
-      (mockObject as any).pointCloudNode = pointCloudNode;
-      mockObject.add(pointCloudNode);
-      this._sceneHandler.addPointCloudModel(mockObject, modelIdentifier.revealInternalId);
+      this._sceneHandler.addPointCloudModel(pointCloudNode, modelIdentifier.revealInternalId);
       return pointCloudNode;
     } else {
       throw Error(`Unknown output format ${modelOutputs}`);

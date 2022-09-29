@@ -1,5 +1,5 @@
-import { ModelDataProvider } from '@reveal/modeldata-api';
 import { PointCloudObjectAnnotationData } from '../../styling/PointCloudObjectAnnotationData';
+import { ModelDataProvider } from '@reveal/data-providers';
 import { PointCloudEptGeometry } from '../geometry/PointCloudEptGeometry';
 import { PointCloudEptGeometryNode } from '../geometry/PointCloudEptGeometryNode';
 import { EptJson } from './EptJson';

@@ -6,9 +6,9 @@ import {
   CognitePointCloudModel,
   AnnotationIdPointCloudObjectCollection,
   PointCloudAppearance,
-  DefaultPointCloudAppearance
+  DefaultPointCloudAppearance,
+  THREE
 } from '@cognite/reveal';
-import * as THREE from 'three';
 
 export class PointCloudObjectStylingUI {
 

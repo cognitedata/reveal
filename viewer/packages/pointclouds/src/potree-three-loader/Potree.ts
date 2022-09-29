@@ -30,8 +30,8 @@ import { IPointCloudTreeGeometryNode } from './geometry/IPointCloudTreeGeometryN
 import { BinaryHeap } from './utils/BinaryHeap';
 import { Box3Helper } from './utils/box3-helper';
 import { LRU } from './utils/lru';
-import { ModelDataProvider } from '@reveal/modeldata-api';
 import { PointCloudObjectAnnotationData } from '../styling/PointCloudObjectAnnotationData';
+import { ModelDataProvider } from '@reveal/data-providers';
 import throttle from 'lodash/throttle';
 
 export class QueueItem {

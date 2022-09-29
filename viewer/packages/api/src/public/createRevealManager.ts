@@ -11,9 +11,7 @@ import {
   RenderOptions,
   CadMaterialManager,
   BasicPipelineExecutor,
-  DefaultRenderPipelineProvider,
-  CadGeometryRenderModePipelineProvider,
-  RenderMode
+  DefaultRenderPipelineProvider
 } from '@reveal/rendering';
 import {
   CdfAnnotationProvider,
@@ -28,7 +26,7 @@ import {
   LocalModelDataProvider,
   ModelDataProvider,
   CdfModelDataProvider
-} from '@reveal/modeldata-api';
+} from '@reveal/data-providers';
 
 import { CogniteClient } from '@cognite/sdk';
 import { SceneHandler } from '@reveal/utilities';
@@ -139,11 +137,6 @@ export function createRevealManager(
     renderOptions,
     revealOptions.outputRenderTarget
   );
-  const depthRenderPipeline = new CadGeometryRenderModePipelineProvider(
-    RenderMode.DepthBufferOnly,
-    materialManager,
-    sceneHandler
-  );
   const pointCloudManager = createPointCloudManager(
     modelMetadataProvider,
     modelDataProvider,
@@ -153,17 +146,10 @@ export function createRevealManager(
     renderer
   );
   sceneHandler.customObjects.push(pointCloudManager.pointCloudGroupWrapper);
-  const cadManager = createCadManager(
-    modelMetadataProvider,
-    modelDataProvider,
-    renderer,
-    materialManager,
-    depthRenderPipeline,
-    {
-      ...revealOptions.internal?.cad,
-      continuousModelStreaming: revealOptions.continuousModelStreaming
-    }
-  );
+  const cadManager = createCadManager(modelMetadataProvider, modelDataProvider, materialManager, {
+    ...revealOptions.internal?.cad,
+    continuousModelStreaming: revealOptions.continuousModelStreaming
+  });
   return new RevealManager(cadManager, pointCloudManager, pipelineExecutor, defaultRenderPipeline, materialManager);
 }
 

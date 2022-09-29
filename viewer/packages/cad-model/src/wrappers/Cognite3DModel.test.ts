@@ -2,22 +2,48 @@
  * Copyright 2021 Cognite AS
  */
 
+import * as THREE from 'three';
 import { Cognite3DModel } from './Cognite3DModel';
 
 import { DefaultNodeAppearance, NodeAppearance, TreeIndexNodeCollection } from '@reveal/cad-styling';
+import { NodesApiClient } from '@reveal/nodes-api';
 
 import { MetricsLogger } from '@reveal/metrics';
 import { createCadModel } from '../../../../test-utilities';
+import { It, Mock } from 'moq.ts';
 
 describe(Cognite3DModel.name, () => {
   let model: Cognite3DModel;
+  let mockApiClient: Mock<NodesApiClient>;
 
   beforeAll(() => {
     MetricsLogger.init(false, '', '', {});
   });
 
   beforeEach(() => {
-    model = createCadModel(1, 2, 3, 3);
+    mockApiClient = new Mock<NodesApiClient>();
+    mockApiClient
+      .setup(x => x.mapNodeIdsToTreeIndices(It.IsAny(), It.IsAny(), It.IsAny()))
+      .callback(expression => {
+        const nodeIds: number[] = expression.args[2];
+        return Promise.resolve(nodeIds);
+      });
+    mockApiClient
+      .setup(x => x.mapTreeIndicesToNodeIds(It.IsAny(), It.IsAny(), It.IsAny()))
+      .callback(expression => {
+        const treeIndices: number[] = expression.args[2];
+        return Promise.resolve(treeIndices);
+      });
+    mockApiClient
+      .setup(x => x.getBoundingBoxesByNodeIds(It.IsAny(), It.IsAny(), It.IsAny()))
+      .callback(expression => {
+        const nodeIds: number[] = expression.args[2];
+        const bboxes = nodeIds.map(
+          id => new THREE.Box3(new THREE.Vector3(id, id, id), new THREE.Vector3(id + 1, id + 1, id + 1))
+        );
+        return Promise.resolve(bboxes);
+      });
+    model = createCadModel(1, 2, 3, 3, mockApiClient.object());
   });
 
   test('(un)assignStyledNodeCollection maintains list of collections correctly', () => {
@@ -57,5 +83,19 @@ describe(Cognite3DModel.name, () => {
     model.removeAllStyledNodeCollections();
 
     expect(model.styledNodeCollections).toBeEmpty();
+  });
+
+  test('getBoundingBoxByTreeIndex() modifies out-parameter', async () => {
+    const bbox = new THREE.Box3();
+    const result = await model.getBoundingBoxByTreeIndex(1, bbox);
+    expect(result).toBe(bbox);
+    expect(result).not.toEqual(new THREE.Box3());
+  });
+
+  test('getBoundingBoxByNodeId() modifies out-parameter', async () => {
+    const bbox = new THREE.Box3();
+    const result = await model.getBoundingBoxByNodeId(1, bbox);
+    expect(result).toBe(bbox);
+    expect(result).not.toEqual(new THREE.Box3());
   });
 });

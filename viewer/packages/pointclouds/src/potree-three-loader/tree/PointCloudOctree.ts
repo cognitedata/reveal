@@ -11,8 +11,29 @@ import { IPotree } from '../types/IPotree';
 import { IPointCloudTreeNodeBase } from './IPointCloudTreeNodeBase';
 import { IPointCloudTreeNode } from './IPointCloudTreeNode';
 import { computeTransformedBoundingBox } from '../utils/bounds';
-import { RenderLayer } from '@reveal/rendering';
 import { PointCloudObjectAnnotationData } from '../../styling/PointCloudObjectAnnotationData';
+
+// TODO haakonflatval-cognite Sep. 27 2022: Remove when material manager is in order
+enum RenderMode {
+  Color = 1,
+  Normal,
+  TreeIndex,
+  PackColorAndNormal,
+  Depth,
+  Effects,
+  Ghost,
+  LOD,
+  DepthBufferOnly,
+  GeometryType
+}
+
+enum RenderLayer {
+  Back = RenderMode.Color,
+  InFront = RenderMode.Effects,
+  Ghost = RenderMode.Ghost,
+  PointCloud,
+  Default = 0
+}
 
 export class PointCloudOctree extends PointCloudTree {
   potree: IPotree;

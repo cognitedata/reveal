@@ -5,7 +5,7 @@
 import * as THREE from 'three';
 
 import { CadModelMetadata } from './CadModelMetadata';
-import { SectorMetadata, V8SectorMetadata } from './types';
+import { SectorMetadata } from './types';
 import { SectorSceneFactory } from '../utilities/SectorSceneFactory';
 
 import { traverseDepthFirst } from '@reveal/utilities';
@@ -56,7 +56,7 @@ function clipSector(sector: SectorMetadata, geometryClipBox: THREE.Box3): Sector
   if (!subtreeBoundingBox.isEmpty()) {
     const intersectingChildren: SectorMetadata[] = [];
     for (let i = 0; i < sector.children.length; i++) {
-      const child = clipSector(sector.children[i] as V8SectorMetadata, geometryClipBox);
+      const child = clipSector(sector.children[i] as SectorMetadata, geometryClipBox);
       if (child !== undefined) {
         intersectingChildren.push(child);
       }

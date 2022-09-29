@@ -2,13 +2,17 @@
  * Copyright 2021 Cognite AS
  */
 import * as THREE from 'three';
-import { ParsePrimitiveAttribute } from '@cognite/reveal-parser-worker';
 
 const computeBoundingBoxFromCenterAndRadiusAttributesVars = {
   centerA: new THREE.Vector3(),
   centerB: new THREE.Vector3(),
   sphere: new THREE.Sphere(),
   box: new THREE.Box3()
+};
+
+type ParsePrimitiveAttribute = {
+  offset: number;
+  size: number;
 };
 
 export function computeBoundingBoxFromCenterAndRadiusAttributes(

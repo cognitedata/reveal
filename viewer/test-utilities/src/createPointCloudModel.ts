@@ -2,20 +2,21 @@
  * Copyright 2022 Cognite AS
  */
 
-import { Potree } from '../../packages/pointclouds/src/potree-three-loader/Potree';
-import { PointCloudMaterial } from '../../packages//pointclouds/src/potree-three-loader/rendering/PointCloudMaterial';
-import { PointCloudOctree } from '../../packages/pointclouds/src/potree-three-loader/tree/PointCloudOctree';
-
+import { Mock } from 'moq.ts';
 import {
   CognitePointCloudModel,
   PointCloudNode,
-  PotreeNodeWrapper,
-  PotreeGroupWrapper
+  PointCloudObjectAnnotationData,
+  PointCloudOctree,
+  Potree,
+  PotreeGroupWrapper,
+  PotreeNodeWrapper
 } from '../../packages/pointclouds';
 
-import { LocalModelDataProvider } from '../../packages/modeldata-api/src/LocalModelDataProvider';
+import * as THREE from 'three';
 
-import { Mock } from 'moq.ts';
+import { LocalModelDataProvider } from '../../packages/data-providers';
+import { IPointCloudTreeGeometry } from '../../packages/pointclouds/src/potree-three-loader/geometry/IPointCloudTreeGeometry';
 
 export function createPointCloudModel(modelId: number, revisionId: number): CognitePointCloudModel {
   const modelDataProvider = new LocalModelDataProvider();
