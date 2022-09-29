@@ -25,6 +25,7 @@ export { createRenderTriangle } from './src/three/createFullScreenTriangleGeomet
 export { fitCameraToBoundingBox } from './src/three/fitCameraToBoundingBox';
 export { isBox3OnPositiveSideOfPlane } from './src/three/isBox3OnPositiveSideOfPlane';
 export { visitBox3CornerPoints } from './src/three/visitBox3CornerPoints';
+export { createDistinctColors } from './src/three/createDistinctColors';
 export { isMobileOrTablet } from './src/isMobileOrTablet';
 export { WebGLRendererStateHelper } from './src/WebGLRendererStateHelper';
 

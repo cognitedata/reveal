@@ -36,7 +36,7 @@ export function createPointCloudModel(modelId: number, revisionId: number): Cogn
     new PointCloudObjectAnnotationData([])
   );
 
-  const nodeWrapper = new PotreeNodeWrapper(pointCloudOctree, [], Symbol('dummy'));
+  const nodeWrapper = new PotreeNodeWrapper(pointCloudOctree, [], Symbol('dummy'), { classificationSets: [] });
 
   const pointCloudNode = new PointCloudNode(potreeGroup, nodeWrapper);
 
