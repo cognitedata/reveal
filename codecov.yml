@@ -1,3 +1,2 @@
 ignore:
     - "viewer/packages/pointclouds/src/potree-three-loader"
-    - "viewer/packages/*/visual-tests
