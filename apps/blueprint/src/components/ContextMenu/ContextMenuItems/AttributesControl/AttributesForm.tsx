@@ -203,11 +203,20 @@ export const AttributeForm = ({
       <Button
         type="primary"
         onClick={() => {
-          const error = validateAttribute(attribute);
+          const nextAttribute = { ...attribute };
+          if (
+            !attribute.name &&
+            attribute.extractor === 'METADATA' &&
+            attribute.subExtractor
+          ) {
+            nextAttribute.name = attribute.subExtractor.replaceAll(' ', '_');
+            setAttribute(nextAttribute);
+          }
+          const error = validateAttribute(nextAttribute);
           if (typeof error === 'string') {
             toast.error(error);
           } else {
-            onDone(attribute);
+            onDone(nextAttribute);
           }
         }}
       >
