@@ -29,7 +29,7 @@ type SectorsGuiState = {
   tool: DebugLoadedSectorsTool;
 };
 
-export default class CadDebugger extends StreamingVisualTestFixture {
+export default class SectorBoundingBoxes extends StreamingVisualTestFixture {
   guiState!: SectorsGuiState;
   guiActions!: {
     showSectorBoundingBoxes: () => void;
@@ -79,7 +79,7 @@ export default class CadDebugger extends StreamingVisualTestFixture {
       showSectorBoundingBoxes: () => {
         const { tool, options } = this.guiState;
         tool.setOptions(options);
-        tool.showSectorBoundingBoxes(scene);
+        tool.showSectorBoundingBoxes(cadNode);
       },
       showBoundsForAllGeometries: () => {
         this.showBoundsForAllGeometries(cadNode, scene);
