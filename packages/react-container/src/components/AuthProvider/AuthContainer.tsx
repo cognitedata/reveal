@@ -22,6 +22,12 @@ export interface AuthContext {
 export const AuthProvider = React.createContext<AuthContext>({});
 export const useAuthContext = () => React.useContext(AuthProvider);
 export const AuthConsumer = AuthProvider.Consumer;
+export const useAuthenticatedAuthContext = () => {
+  const { client, authState } = useAuthContext();
+  if (!client) throw new Error('Cognite Client not initialized');
+  if (!authState) throw new Error('Not Authenticated');
+  return { client, authState };
+};
 
 interface AuthContainerProps {
   authError: () => void;
