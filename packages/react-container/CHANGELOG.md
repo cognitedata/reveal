@@ -1,3 +1,7 @@
+## 6.2.0 September 29 2022
+
+- add useAuthenticatedAuthContext hook
+
 ## 6.1.0 August 26 2022
 
 - react-project-selector version bump
