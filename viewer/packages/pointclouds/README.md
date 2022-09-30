@@ -26,6 +26,10 @@ The `styling` folder contains code related to styling point cloud objects, inclu
 - **Annotation ID**: ID uniquely referring to one annotation in CDF.
 - **Object ID**: Reveal-internal ID referring to a stylable point cloud object. Created as a running number starting from 1. Used for looking up appearance in a texture.
 
+### Misc
+
+- **Classification**: Each point can have a "classification ID", provided in the input source file. It can be visualized directly by changing the `PointColorType` to `PointColorType.Classification`, each class will then be given its own predetermined color. Colors and names for the classes can be provided through by implementing the `IPointClassificationsProvider` interface provided to the `PointCloudFactory` instance.
+
 ## Inner Workings
 
 ### Loading

@@ -20,6 +20,7 @@ import { ModelIdentifier } from '@reveal/data-providers';
 import assert from 'assert';
 import * as THREE from 'three';
 import { applyDefaultsToPointCloudAppearance } from '../src/styling/PointCloudAppearance';
+import { LocalPointClassificationsProvider } from '../src/classificationsProviders/LocalPointClassificationsProvider';
 
 class CustomAnnotationProvider implements IAnnotationProvider {
   async getAnnotations(_modelIdentifier: ModelIdentifier): Promise<PointCloudObjectAnnotationData> {
@@ -43,7 +44,11 @@ export default class PointCloudColorStylingVisualTest extends StreamingVisualTes
   }
 
   override createPointCloudFactory(): PointCloudFactory {
-    return new PointCloudFactory(this.potreeInstance, new CustomAnnotationProvider());
+    return new PointCloudFactory(
+      this.potreeInstance,
+      new CustomAnnotationProvider(),
+      new LocalPointClassificationsProvider()
+    );
   }
 
   override createCamera(): THREE.PerspectiveCamera {

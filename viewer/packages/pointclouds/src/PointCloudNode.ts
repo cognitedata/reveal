@@ -8,14 +8,11 @@ import { CameraConfiguration } from '@reveal/utilities';
 import { PotreeGroupWrapper } from './PotreeGroupWrapper';
 import { PotreeNodeWrapper } from './PotreeNodeWrapper';
 import { WellKnownAsprsPointClassCodes } from './types';
-import { createPointClassKey } from './createPointClassKey';
 
 import { PickPoint, PotreePointColorType, PotreePointShape, PotreePointSizeType } from './potree-three-loader';
 
 import { CompletePointCloudAppearance } from './styling/PointCloudAppearance';
 import { StyledPointCloudObjectCollection } from './styling/StyledPointCloudObjectCollection';
-
-const PotreeDefaultPointClass = 'DEFAULT';
 
 export class PointCloudNode extends THREE.Group {
   private readonly _potreeGroup: PotreeGroupWrapper;
@@ -129,7 +126,7 @@ export class PointCloudNode extends THREE.Group {
     if (!this.hasClass(pointClass)) {
       throw new Error(`Point cloud model doesn't have class ${pointClass}`);
     }
-    const key = createPointClassKey(pointClass);
+    const key = this._potreeNode.createPointClassKey(pointClass);
     return this._potreeNode.classification[key].w !== 0.0;
   }
 
@@ -140,7 +137,7 @@ export class PointCloudNode extends THREE.Group {
    * @returns true if model has values in the class given.
    */
   hasClass(pointClass: number | WellKnownAsprsPointClassCodes): boolean {
-    const key = createPointClassKey(pointClass);
+    const key = this._potreeNode.createPointClassKey(pointClass);
     return this._potreeNode.classification[key] !== undefined;
   }
 
@@ -148,12 +145,8 @@ export class PointCloudNode extends THREE.Group {
    * Returns a list of sorted classification codes present in the model.
    * @returns A sorted list of classification codes from the model.
    */
-  getClasses(): Array<number | WellKnownAsprsPointClassCodes> {
-    return Object.keys(this._potreeNode.classification)
-      .map(x => {
-        return x === PotreeDefaultPointClass ? -1 : parseInt(x, 10);
-      })
-      .sort((a, b) => a - b);
+  getClasses(): Array<{ name: string; code: number | WellKnownAsprsPointClassCodes }> {
+    return this._potreeNode.classNames;
   }
 
   getBoundingBox(outBbox?: THREE.Box3): THREE.Box3 {
