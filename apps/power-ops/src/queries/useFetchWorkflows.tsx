@@ -1,23 +1,26 @@
-import axios from 'axios';
 import { Workflow } from 'types';
+import axios from 'axios';
 import { useQuery } from 'react-query';
 import sidecar from 'utils/sidecar';
 import { useAuthenticatedAuthContext } from '@cognite/react-container';
 
 const { powerOpsApiBaseUrl } = sidecar;
 
+type FetchWorkflowsResponse = {
+  workflows: Workflow[];
+  nextCursor?: Workflow['id'];
+  count: number;
+};
+
 const fetchWorkflows = async (
   project: string,
   token: string
-): Promise<Workflow[]> => {
-  const { data: workflows }: { data: Workflow[] } = await axios.get(
-    `${powerOpsApiBaseUrl}/${project}/workflows`,
-    {
+): Promise<Workflow[]> =>
+  axios
+    .get<FetchWorkflowsResponse>(`${powerOpsApiBaseUrl}/${project}/workflows`, {
       headers: { Authorization: `Bearer ${token}` },
-    }
-  );
-  return workflows;
-};
+    })
+    .then((response) => response.data.workflows);
 
 export const useFetchWorkflows = () => {
   const {
