@@ -6,12 +6,6 @@ export const getEquipmentStateExternalId = (
   unitId: string,
   equipmentId: string
 ) => {
-  const fileParts = [
-    config.env,
-    facility.sequenceNumber,
-    unitId,
-    equipmentId,
-    'state',
-  ];
+  const fileParts = [config.env, facility.id, unitId, equipmentId, 'state'];
   return fileParts.join('_');
 };

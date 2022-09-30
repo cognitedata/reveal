@@ -32,11 +32,12 @@ export const Support = () => {
     {},
     { skip: Boolean(unitId) }
   );
+
   const { state: equipmentsPerUnitQuery } = useApi(
     getEquipmentsPerUnit,
     {
-      unitIds: unitListByFacilityQuery.data?.[facility.sequenceNumber].map(
-        (item) => item.cdfId
+      externalIds: unitListByFacilityQuery.data?.[facility.id].map(
+        (item) => item.externalId
       ),
     },
     { skip: !unitId }
@@ -47,7 +48,7 @@ export const Support = () => {
     setUnitId(SELECT_ALL);
     setUnitOptions([
       { value: SELECT_ALL, label: 'All' },
-      ...unitListByFacilityQuery.data[facility.sequenceNumber]
+      ...unitListByFacilityQuery.data[facility.id]
         .sort((a, b) => a.number - b.number)
         .map((unit) => ({
           value: unit.id,
@@ -59,9 +60,9 @@ export const Support = () => {
   const preapproveEquipment = () => {
     if (!unitId) return;
 
-    const unitIds = unitListByFacilityQuery.data![
-      facility.sequenceNumber
-    ].filter((item) => unitId === SELECT_ALL || item.id === unitId);
+    const unitIds = unitListByFacilityQuery.data![facility.id].filter(
+      (item) => unitId === SELECT_ALL || item.id === unitId
+    );
     setLoading(true);
 
     preapproveEquipmentList(

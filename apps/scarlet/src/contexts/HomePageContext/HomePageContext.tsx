@@ -25,7 +25,7 @@ function reducer(state: HomePageState, action: HomePageAction) {
     case HomePageActionType.SET_FACILITY:
       localStorage?.setItem('scarlet_last_facility_path', action.facility.path);
 
-      if (action.facility.sequenceNumber === state.facility?.sequenceNumber) {
+      if (action.facility.id === state.facility?.id) {
         return state;
       }
 

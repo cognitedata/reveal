@@ -3,20 +3,20 @@ import { DataSetId } from 'types';
 
 export const getEquipmentsPerUnit = async (
   client: CogniteClient,
-  { unitIds }: { unitIds: number[] }
+  { externalIds }: { externalIds: string[] }
 ) => {
-  if (!unitIds?.length) throw Error('Unit ids are not set');
+  if (!externalIds?.length) throw Error('Unit ids are not set');
 
-  const equipmentsPerUnit: Record<number, string[]> = unitIds.reduce(
+  const equipmentsPerUnit: Record<string, string[]> = externalIds.reduce(
     (result, item) => ({ ...result, [item]: [] }),
     {}
   );
 
   let list = await client.assets.list({
     filter: {
-      externalIdPrefix: 'Equip',
-      dataSetIds: [{ id: DataSetId.PCMS }],
-      parentIds: unitIds,
+      dataSetIds: [{ id: DataSetId.P66_PCMS }],
+      parentExternalIds: externalIds.map((id) => `Equipments_${id}`),
+      labels: { containsAll: [{ externalId: 'Equipment' }] },
     },
     limit: 1000,
   });
@@ -28,9 +28,9 @@ export const getEquipmentsPerUnit = async (
     list.items
       .filter((item) => /^\d+-/.test(item.name))
       .forEach((item) => {
-        if (!equipmentsPerUnit[item.parentId!].includes(item.name)) {
-          equipmentsPerUnit[item.parentId!].push(item.name);
-        }
+        if (!item.parentExternalId) return;
+        const key = item.parentExternalId.replace('Equipments_', '');
+        equipmentsPerUnit[key].push(item.name);
       });
     next = list.next;
   } while (list.next);

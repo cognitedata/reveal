@@ -48,7 +48,7 @@ export const callEquipmentExportFunction = async (
     {
       data: {
         env: config.env,
-        facilitySeqNo: facility.sequenceNumber,
+        facilityId: facility.id,
         unitId,
         equipmentId: equipmentIds.map((id) =>
           getEquipmentStateExternalId(facility, unitId, id)

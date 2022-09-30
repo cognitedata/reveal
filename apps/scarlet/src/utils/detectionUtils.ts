@@ -72,7 +72,7 @@ export const getDetectionSourceAcronym = (detection: Detection) => {
   const type = detection.documentExternalId
     ?.toLocaleLowerCase()
     ?.split('.')[0]
-    ?.split('_')[2];
+    ?.split('_')[3];
 
   switch (type) {
     case 'nameplate':

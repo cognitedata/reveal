@@ -33,10 +33,10 @@ export const saveEquipment = async (
         externalId,
         name: `${externalId}.json`,
         mimeType: 'application/json',
-        dataSetId: DataSetId.P66_ScarletViewState,
+        dataSetId: DataSetId.P66_ScarletEquipmentState,
         metadata: {
           env: config.env,
-          facilitySeqNo: facility.sequenceNumber,
+          facilityId: facility.id,
           unitId,
           equipmentId,
           progress: getEquipmentProgress(equipment)?.toString() || '',

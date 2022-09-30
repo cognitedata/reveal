@@ -106,7 +106,6 @@ export const ComponentPanel = () => {
       <Styled.Header>
         <h4 className="cogs-title-4">Component Level</h4>
         <ComponentGroups group={currentGroup} onChange={setCurrentGroup} />
-
         {currentGroup && !isDeleteView && !isRenameView && (
           <Styled.TopBar>
             <Styled.TopBarContent className="cogs-body-2">
@@ -116,7 +115,6 @@ export const ComponentPanel = () => {
                   }`
                 : `No ${groupLabel}s`}
             </Styled.TopBarContent>
-
             <Styled.MenuWrapper>
               <Styled.MenuButton
                 icon="EllipsisHorizontal"
@@ -166,7 +164,6 @@ export const ComponentPanel = () => {
           onDelete={onDeleteComponents}
         />
       )}
-
       {isRenameView && (
         <ComponentsRenaming
           group={currentGroup!}
@@ -176,7 +173,6 @@ export const ComponentPanel = () => {
           onRename={onRenameComponents}
         />
       )}
-
       {!isDeleteView && !isRenameView && components.length > 0 && (
         <Styled.ContentWrapper>
           <ComponentList
@@ -199,7 +195,6 @@ export const ComponentPanel = () => {
           </Button>
         </Styled.AddButtonContainer>
       )}
-
       {(isAdding || isDeleting || isRenaming) && (
         <Styled.LoaderContainer>
           <Icon type="Loader" size={32} />

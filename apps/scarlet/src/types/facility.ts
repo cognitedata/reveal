@@ -1,8 +1,8 @@
 export type Facility = {
-  sequenceNumber: string;
+  id: string;
   path: string;
   name: string;
   shortName: string;
-  unitPattern: RegExp;
+  unitPattern?: RegExp;
   env: string[];
 };

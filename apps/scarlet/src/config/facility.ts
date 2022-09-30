@@ -3,20 +3,19 @@ import { Facility } from 'types';
 
 export const facilityList: Facility[] = [
   {
-    sequenceNumber: '1',
+    id: '2',
     path: 'borger',
-    name: 'Borger Refinery',
+    name: 'Borger',
     shortName: 'Borger',
-    unitPattern: /^G(\d+(\.\d+)?)$/,
+    unitPattern: /^G(\d+(\.\d+)?)(.*)$/,
     env: ['development', 'staging', 'production'],
   },
   {
-    sequenceNumber: '2',
-    path: 'bayway',
-    name: 'Bayway plan',
-    shortName: 'Bayway',
-    unitPattern: /^G(\d+(\.\d+)?)$/,
-    env: ['development'],
+    id: '11282',
+    path: 'sweeny',
+    name: 'Sweeny',
+    shortName: 'Sweeny',
+    env: ['development', 'staging', 'production'],
   },
 ].filter((item) => item.env.includes(config.env));
 

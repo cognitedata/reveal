@@ -9,8 +9,8 @@ import {
   getEquipmentAnnotations,
   getEquipmentConfig,
   getEquipmentDocuments,
-  getEquipmentMAL,
-  getEquipmentMS,
+  // getEquipmentMAL,
+  // getEquipmentMS,
   getEquipmentPCMS,
   getEquipmentState,
 } from 'api';
@@ -39,28 +39,33 @@ export const Equipment = () => {
     unitId,
     equipmentId,
   });
+
   const { state: documentsQuery, trigger: documentsQueryTrigger } = useApi(
     getEquipmentDocuments,
     {
+      facility,
       unitId,
       equipmentId,
     }
   );
+
   const { state: equipmentStateQuery } = useApi(getEquipmentState, {
     facility,
     unitId,
     equipmentId,
   });
-  const { state: malQuery } = useApi(getEquipmentMAL, {
-    facility,
-    unitId,
-    equipmentId,
-  });
-  const { state: msQuery } = useApi(getEquipmentMS, {
-    facility,
-    unitId,
-    equipmentId,
-  });
+
+  // const { state: malQuery } = useApi(getEquipmentMAL, {
+  //   facility,
+  //   unitId,
+  //   equipmentId,
+  // });
+
+  // const { state: msQuery } = useApi(getEquipmentMS, {
+  //   facility,
+  //   unitId,
+  //   equipmentId,
+  // });
 
   const { state: scannerDetectionsQuery } = useApi(
     getEquipmentAnnotations,
@@ -88,8 +93,8 @@ export const Equipment = () => {
       configQuery.loading ||
       scannerDetectionsQuery.loading ||
       pcmsQuery.loading ||
-      malQuery.loading ||
-      msQuery.loading ||
+      // malQuery.loading ||
+      // msQuery.loading ||
       equipmentStateQuery.loading;
 
     const error =
@@ -103,8 +108,8 @@ export const Equipment = () => {
             scannerDetections: scannerDetectionsQuery.data,
             equipmentState: equipmentStateQuery.data,
             pcms: pcmsQuery.data!,
-            mal: malQuery.data,
-            ms: msQuery.data,
+            // mal: malQuery.data,
+            // ms: msQuery.data,
             type: getEquipmentType(equipmentId),
           });
 
@@ -121,8 +126,8 @@ export const Equipment = () => {
     configQuery,
     scannerDetectionsQuery,
     pcmsQuery,
-    malQuery,
-    msQuery,
+    // malQuery,
+    // msQuery,
     documentsQuery,
     equipmentStateQuery,
   ]);

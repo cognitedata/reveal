@@ -5,19 +5,17 @@ import { facilityList } from 'config';
 export const getUnitListByFacility = async (
   client: CogniteClient
 ): Promise<UnitListByFacility> => {
-  const unitsByFacility = facilityList.reduce(
-    (result, facility) => ({
-      ...result,
-      [facility.sequenceNumber]: [],
-    }),
-    {} as UnitListByFacility
-  );
+  const unitsByFacilityId = facilityList.reduce((result, facility) => {
+    if (!facility.id) return result;
+    return { ...result, [facility.id]: [] };
+  }, {} as UnitListByFacility);
 
   let next;
   let list = await client.assets.list({
     filter: {
-      externalIdPrefix: 'Unit_',
-      dataSetIds: [{ id: DataSetId.PCMS }],
+      parentExternalIds: facilityList.map((f) => f.id),
+      dataSetIds: [{ id: DataSetId.P66_PCMS }],
+      labels: { containsAll: [{ externalId: 'Unit' }] },
     },
     limit: 1000,
   });
@@ -26,21 +24,24 @@ export const getUnitListByFacility = async (
     if (next) list = await next(); // eslint-disable-line no-await-in-loop
     list.items.forEach((item) => {
       const facility = facilityList.find(
-        (facility) => facility.sequenceNumber === item.metadata?.facility_seqno
+        (facility) => facility.id === item.parentExternalId
       );
-      if (!facility || !facility.unitPattern.test(item.name)) return;
 
-      unitsByFacility[facility.sequenceNumber].push({
+      if (!facility) return;
+      unitsByFacilityId[facility.id].push({
         id: item.name,
         cdfId: item.id,
-        number: getUnitNumber(item.name, facility.unitPattern),
+        externalId: item.externalId,
+        number: facility.unitPattern
+          ? getUnitNumber(item.name, facility.unitPattern)
+          : item.name,
       } as UnitListItem);
     });
 
     next = list.next;
   } while (list.next);
 
-  return unitsByFacility;
+  return unitsByFacilityId;
 };
 
 const getUnitNumber = (unitId: string, unitPattern: RegExp) => {

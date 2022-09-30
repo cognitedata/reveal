@@ -1,7 +1,7 @@
 export enum DataSetId {
-  P66_EquipmentScans = 2527096956319199,
-  P66_ScarletScannerConfiguration = 2486478255770807,
-  PCMS = 5719472077867126,
-  P66_ScarletScannerResults = 6047348858495410,
-  P66_ScarletViewState = 4812987332357623,
+  P66_ScarletScannerConfiguration = 5232416567932234,
+  P66_EquipmentScans = 1537546103063503,
+  P66_PCMS = 7318203532639506,
+  P66_ScarletScannerResults = 6047348858495410, // not used
+  P66_ScarletEquipmentState = 2966227008009845,
 }

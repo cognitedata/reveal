@@ -26,9 +26,8 @@ export const getEquipmentPCMS = async (
   const equipmentAssets = await client.assets.list({
     filter: {
       name: equipmentId,
-      externalIdPrefix: 'Equip',
-      parentIds: [unitAsset.id],
-      dataSetIds: [{ id: DataSetId.PCMS }],
+      parentExternalIds: [`Equipments_${unitAsset.externalId}`],
+      dataSetIds: [{ id: DataSetId.P66_PCMS }],
     },
   });
 
@@ -36,21 +35,20 @@ export const getEquipmentPCMS = async (
     throw Error('Equipment asset is not available');
   }
 
-  const equipmentAsset = equipmentAssets.items[0];
-  const equipment = equipmentAsset;
+  const equipment = equipmentAssets.items[0];
 
   const componentAssets = await client.assets.list({
     filter: {
-      parentIds: [equipmentAsset.id],
-      externalIdPrefix: 'Component',
-      dataSetIds: [{ id: DataSetId.PCMS }],
+      parentExternalIds: [`Circuits_${equipment.externalId}`],
+      dataSetIds: [{ id: DataSetId.P66_PCMS }],
+      labels: { containsAll: [{ externalId: 'Circuit' }] },
     },
   });
 
   const components = componentAssets.items;
 
   return {
-    equipmentAssetExternalId: equipmentAsset.externalId,
+    equipmentAssetExternalId: equipment.externalId,
     equipment,
     components,
   };

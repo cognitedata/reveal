@@ -1,19 +1,21 @@
 import { CogniteClient, FileLink, InternalId } from '@cognite/sdk';
-import { DataSetId, DocumentType, EquipmentDocument } from 'types';
+import { DataSetId, DocumentType, EquipmentDocument, Facility } from 'types';
 
 export const getEquipmentDocuments = async (
   client: CogniteClient,
   {
+    facility,
     unitId,
     equipmentId,
   }: {
+    facility: Facility;
     unitId: string;
     equipmentId: string;
   }
 ): Promise<EquipmentDocument[]> => {
   const filesResponse = await client.files.list({
     filter: {
-      externalIdPrefix: `${unitId}_${equipmentId}`,
+      externalIdPrefix: `${facility.name}_${unitId}_${equipmentId}`,
       uploaded: true,
       dataSetIds: [{ id: DataSetId.P66_EquipmentScans }],
     },

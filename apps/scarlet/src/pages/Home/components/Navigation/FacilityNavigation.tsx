@@ -20,7 +20,7 @@ export const FacilityNavigation = ({ onChange }: FacilityNavigationProps) => {
   const sortedFacilityList = useMemo(() => {
     const filter = search.trim().toLocaleLowerCase();
     const compareFn =
-      sortOrder === SortOrder.ASCENDING
+      sortOrder === SortOrder.DESCENDING
         ? (a: Facility, b: Facility) => (a.shortName < b.shortName ? 1 : -1)
         : (a: Facility, b: Facility) => (a.shortName < b.shortName ? -1 : 1);
 
@@ -65,10 +65,9 @@ export const FacilityNavigation = ({ onChange }: FacilityNavigationProps) => {
         <Styled.ScrollContainer>
           <Styled.List>
             {sortedFacilityList.map((facility) => {
-              const amount =
-                unitListByFacility.data?.[facility.sequenceNumber].length;
+              const amount = unitListByFacility.data?.[facility.id].length;
               return (
-                <Styled.ListItem key={facility.sequenceNumber}>
+                <Styled.ListItem key={facility.id}>
                   <Styled.ListItemContent onClick={() => onChange(facility)}>
                     <h4 className="cogs-title-4">{facility.shortName}</h4>
                     {unitListByFacility.loading && (

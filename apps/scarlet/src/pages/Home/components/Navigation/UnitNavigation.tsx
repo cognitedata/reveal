@@ -22,10 +22,13 @@ export const UnitNavigation = ({ showFacilities }: UnitNavigationProps) => {
   const [search, setSearch] = useState('');
   const [sortOrder, setSortOrder] = useState(SortOrder.ASCENDING);
   const { homePageState } = useHomePageContext();
+
   const { state: numberEquipmentsPerUnitQuery } = useApi<
     Record<number, number>
   >(getNumberEquipmentsPerUnit, {
-    unitIds: homePageState.unitListQuery.data?.map((item) => item.cdfId),
+    externalIds: homePageState.unitListQuery.data?.map(
+      (item) => item.externalId
+    ),
   });
 
   useEffect(() => {
@@ -134,7 +137,7 @@ export const UnitNavigation = ({ showFacilities }: UnitNavigationProps) => {
               {sortedUnitList.map((unit) => {
                 const isActive = unit.id === homePageState.unitId;
                 const numberEquipments =
-                  numberEquipmentsPerUnitQuery.data?.[unit.cdfId] || 0;
+                  numberEquipmentsPerUnitQuery.data?.[unit.externalId] || 0;
                 const disabled =
                   !numberEquipmentsPerUnitQuery.loading && !numberEquipments;
                 return (

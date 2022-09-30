@@ -54,7 +54,7 @@ export const PageBody = () => {
 
     const unitListQuery = {
       ...unitListByFacilityQuery,
-      data: unitListByFacilityQuery.data?.[facility.sequenceNumber].sort(
+      data: unitListByFacilityQuery.data?.[facility.id].sort(
         (a, b) => a.number - b.number
       ),
     };

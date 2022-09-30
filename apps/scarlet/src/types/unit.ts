@@ -1,9 +1,10 @@
 export type UnitListItem = {
   id: string;
   cdfId: number;
+  externalId: string;
   number: number;
 };
 
 export type UnitListByFacility = {
-  [facilitySequenceNumber: string]: UnitListItem[];
+  [facilityIdNumber: string]: UnitListItem[];
 };

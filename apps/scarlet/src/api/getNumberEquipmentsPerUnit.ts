@@ -4,9 +4,9 @@ import { getEquipmentsPerUnit } from '.';
 
 export const getNumberEquipmentsPerUnit = async (
   client: CogniteClient,
-  { unitIds }: { unitIds: number[] }
+  { externalIds }: { externalIds: string[] }
 ) => {
-  const equipmentsPerUnit = await getEquipmentsPerUnit(client, { unitIds });
+  const equipmentsPerUnit = await getEquipmentsPerUnit(client, { externalIds });
 
   return Object.keys(equipmentsPerUnit).reduce(
     (result, item: any) => ({

@@ -16,10 +16,10 @@ export const getEquipmentState = async (
     const file = await client.files
       .list({
         filter: {
-          dataSetIds: [{ id: DataSetId.P66_ScarletViewState }],
+          dataSetIds: [{ id: DataSetId.P66_ScarletEquipmentState }],
           metadata: {
             env: config.env,
-            facilitySeqNo: facility.sequenceNumber,
+            facilityId: facility.id,
             unitId,
             equipmentId,
           },

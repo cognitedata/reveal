@@ -103,7 +103,6 @@ export const WorkspaceTools = ({ ornateRef }: WorkspaceToolsProps) => {
         onNewDetection(annotation);
       }
     }
-    onToolChange('move');
     rect?.remove();
   }, [ornateRef, onNewDetection]);
 

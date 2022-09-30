@@ -14,7 +14,7 @@ export const Navigation = () => {
   const [isFacilityNavigation, setIsFacilityNavigation] = useState(false);
 
   const setFacility = (facility: Facility) => {
-    if (homePageState.facility?.sequenceNumber !== facility.sequenceNumber) {
+    if (homePageState.facility?.id !== facility.id) {
       history.replace(
         generatePath(PAGES.FACILITY, {
           facility: facility.path,

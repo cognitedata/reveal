@@ -64,6 +64,10 @@ export const TableContainer = styled.div<{ isLoading: boolean }>`
       line-height: 0;
     }
   }
+
+  .cogs-table-pagination {
+    margin: 2rem 0;
+  }
 `;
 
 export const StatusLabel = styled.div<{ status: EquipmentStatus }>`

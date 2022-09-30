@@ -54,10 +54,10 @@ const getEquipmentStates = async (
 
   let list = await client.files.list({
     filter: {
-      dataSetIds: [{ id: DataSetId.P66_ScarletViewState }],
+      dataSetIds: [{ id: DataSetId.P66_ScarletEquipmentState }],
       metadata: {
         env: config.env,
-        facilitySeqNo: facility.sequenceNumber,
+        facilityId: facility.id,
         unitId,
       },
     },
@@ -93,9 +93,9 @@ const getPCMSEquipmentIds = async (
 
     let list = await client.assets.list({
       filter: {
-        externalIdPrefix: 'Equip',
-        parentIds: [unitAsset.id],
-        dataSetIds: [{ id: DataSetId.PCMS }],
+        dataSetIds: [{ id: DataSetId.P66_PCMS }],
+        parentExternalIds: [`Equipments_${unitAsset.externalId}`],
+        labels: { containsAll: [{ externalId: 'Equipment' }] },
       },
       limit: 1000,
     });
