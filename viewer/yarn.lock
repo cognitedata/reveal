@@ -783,7 +783,7 @@ __metadata:
     "@types/expect-puppeteer": 5.0.1
     "@types/geojson": 7946.0.10
     "@types/glob": 8.0.0
-    "@types/jest": 29.1.0
+    "@types/jest": 29.1.1
     "@types/jest-environment-puppeteer": 5.0.2
     "@types/jest-image-snapshot": 5.1.0
     "@types/jsdom": 20.0.0
@@ -2046,13 +2046,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/jest@npm:29.1.0":
-  version: 29.1.0
-  resolution: "@types/jest@npm:29.1.0"
+"@types/jest@npm:29.1.1":
+  version: 29.1.1
+  resolution: "@types/jest@npm:29.1.1"
   dependencies:
     expect: ^29.0.0
     pretty-format: ^29.0.0
-  checksum: 36def399d8d2a2e8b855b02bd83bc983ed57079cc8c80bcf2dd6b3e543f7ffca8e28034e4bef63f46efbf7a8e2c73a921be6b80f89bfec84e9c1088d4a16384d
+  checksum: d9e6f7d6ab64cf45535369d0a3dc4640cbe6b37ab6f8927e874eacc199581338ebf6ff544f7c2cd188c5fc7cd0b3197aa72cb2b826f0a1352b93b89993711413
   languageName: node
   linkType: hard
 
