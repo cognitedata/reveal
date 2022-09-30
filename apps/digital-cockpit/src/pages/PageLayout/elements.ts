@@ -21,6 +21,6 @@ export const Content = styled.div`
 export const ContentWrapper = styled.div`
   display: flex;
   flex-direction: row;
-  overflow: auto;
+  overflow: hidden auto;
   width: -webkit-fill-available;
 `;

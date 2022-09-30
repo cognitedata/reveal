@@ -33,7 +33,12 @@ export const HomeWrapper = styled.div`
   }
 
   .glider {
-    overflow-y: visible !important;
+    padding: 10px 5px;
+  }
+  .glider-next,
+  .glider-prev {
+    top: 20%;
+    color: var(--cogs-black);
   }
 
   .browse-solutions {

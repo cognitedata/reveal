@@ -7,12 +7,6 @@ export const TilesContainer = styled.div`
     padding-bottom: 8px;
     margin-bottom: 24px;
   }
-
-  & .glider-next,
-  & .glider-prev {
-    top: 8%;
-    color: var(--cogs-black);
-  }
 `;
 
 export const CustomLink = styled.a`

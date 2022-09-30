@@ -22,6 +22,11 @@ export const CardContainer = styled.div`
       0px 2px 10px rgba(0, 0, 0, 0.06);
     top: -2px;
   }
+  &.small-shadow:hover {
+    box-shadow: 0px 4px 8px 2px rgba(0, 0, 0, 0.08),
+      0px 2px 6px rgba(0, 0, 0, 0.06);
+    top: -2px;
+  }
 
   > main {
     height: calc(100% - 56px);

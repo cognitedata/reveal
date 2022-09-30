@@ -113,6 +113,7 @@ const Home = () => {
         <div className="glider-track">
           {lastVisitedItems?.map((board: any) => (
             <Card
+              className="small-shadow"
               lastVistedKey={board.key}
               key={board.key}
               url={board.url}

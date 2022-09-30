@@ -87,7 +87,7 @@ const SuiteOverview: React.FC = () => {
   const gridComponentRef = useRef(null);
 
   const hasSuiteThumbnails = childSuites?.some(
-    (childKey) => !!byKey[childKey].imageFileId
+    (childKey) => !!byKey[childKey]?.imageFileId
   );
 
   useEffect(() => {
