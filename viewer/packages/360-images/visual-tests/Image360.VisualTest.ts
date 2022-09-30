@@ -49,9 +49,9 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
         return Promise.resolve([
           {
             id: '0',
-            name: 'test',
+            label: 'test',
             collectionId: '0',
-            collectionName: 'testCollection',
+            collectionLabel: 'testCollection',
             transform: new THREE.Matrix4().makeTranslation(translation.x, translation.y, translation.z)
           }
         ]);
