@@ -92,7 +92,7 @@ export class Image360Entity {
     drawOuterCircle();
     drawHoverSelector();
 
-    const spriteMaterial = new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(canvas), depthTest: true });
+    const spriteMaterial = new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(canvas) });
     const sprite = new THREE.Sprite(spriteMaterial);
     sprite.updateMatrixWorld();
     sprite.renderOrder = 4;
