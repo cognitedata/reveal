@@ -29,6 +29,7 @@ export {
   DefaultNodeAppearance,
   NodeCollection,
   TreeIndexNodeCollection,
+  NodeIdNodeCollection,
   IntersectionNodeCollection,
   UnionNodeCollection,
   SerializedNodeCollection,
@@ -36,9 +37,7 @@ export {
   SinglePropertyFilterNodeCollection,
   AssetNodeCollection,
   InvertedNodeCollection,
-  registerCustomNodeCollectionType,
-  TypeName,
-  NodeCollectionDescriptor,
+  registerNodeCollectionType,
   NodeCollectionSerializationContext,
   CdfModelNodeCollectionDataProvider
 } from './packages/cad-styling';
@@ -46,7 +45,6 @@ export {
 export { CogniteModelBase, SupportedModelTypes } from './packages/model-base';
 
 export {
-  revealEnv,
   IndexSet,
   NumericRange,
   SceneRenderedDelegate,

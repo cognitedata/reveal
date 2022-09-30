@@ -49,7 +49,7 @@ import { ViewerState, ViewStateHelper } from '../../utilities/ViewStateHelper';
 import { RevealManagerHelper } from '../../storage/RevealManagerHelper';
 
 import { DefaultCameraManager, CameraManager, CameraChangeDelegate } from '@reveal/camera-manager';
-import { CdfModelIdentifier, File3dFormat } from '@reveal/modeldata-api';
+import { CdfModelIdentifier, File3dFormat } from '@reveal/data-providers';
 import { DataSource, CdfDataSource, LocalDataSource } from '@reveal/data-source';
 import { IntersectInput, SupportedModelTypes, CogniteModelBase, LoadingState } from '@reveal/model-base';
 
@@ -213,6 +213,7 @@ export class Cognite3DViewer {
     this.canvas.style.maxHeight = '100%';
 
     this._domElement = options.domElement ?? createCanvasWrapper();
+    this._domElement.tabIndex = 0;
     this._domElement.appendChild(this.canvas);
     this._domElementResizeObserver = this.setupDomElementResizeListener(this._domElement);
 
@@ -222,11 +223,11 @@ export class Cognite3DViewer {
 
     this._sceneHandler = new SceneHandler();
 
-    this._mouseHandler = new InputHandler(this.canvas);
+    this._mouseHandler = new InputHandler(this.domElement);
 
     this._cameraManager =
       options.cameraManager ??
-      new DefaultCameraManager(this.canvas, this._mouseHandler, this.modelIntersectionCallback.bind(this));
+      new DefaultCameraManager(this._domElement, this._mouseHandler, this.modelIntersectionCallback.bind(this));
 
     this._cameraManager.on('cameraChange', (position: THREE.Vector3, target: THREE.Vector3) => {
       this._events.cameraChange.fire(position.clone(), target.clone());
@@ -599,7 +600,7 @@ export class Cognite3DViewer {
 
     const model3d = new Cognite3DModel(modelId, revisionId, cadNode, nodesApiClient);
     this._models.push(model3d);
-    this._sceneHandler.addCadModel(model3d, cadNode.cadModelIdentifier);
+    this._sceneHandler.addCadModel(cadNode, cadNode.cadModelIdentifier);
 
     return model3d;
   }
@@ -629,7 +630,7 @@ export class Cognite3DViewer {
     const model = new CognitePointCloudModel(modelId, revisionId, pointCloudNode);
     this._models.push(model);
 
-    this._sceneHandler.addPointCloudModel(model, pointCloudNode.potreeNode.modelIdentifier);
+    this._sceneHandler.addPointCloudModel(pointCloudNode, pointCloudNode.potreeNode.modelIdentifier);
 
     return model;
   }
@@ -650,7 +651,7 @@ export class Cognite3DViewer {
     switch (model.type) {
       case 'cad':
         const cadModel = model as Cognite3DModel;
-        this._sceneHandler.removeCadModel(cadModel);
+        this._sceneHandler.removeCadModel(cadModel.cadNode);
         model.dispose();
         this.revealManager.removeModel(model.type, cadModel.cadNode);
 
@@ -662,7 +663,7 @@ export class Cognite3DViewer {
 
       case 'pointcloud':
         const pcModel = model as CognitePointCloudModel;
-        this._sceneHandler.removePointCloudModel(pcModel);
+        this._sceneHandler.removePointCloudModel(pcModel.pointCloudNode);
         this.revealManager.removeModel(model.type, pcModel.pointCloudNode);
         break;
 
@@ -707,7 +708,7 @@ export class Cognite3DViewer {
     const outputs = await this._dataSource.getModelMetadataProvider().getModelOutputs(modelIdentifier);
     const outputFormats = outputs.map(output => output.format);
 
-    if (hasOutput(File3dFormat.GltfCadModel) || hasOutput(File3dFormat.RevealCadModel)) {
+    if (hasOutput(File3dFormat.GltfCadModel)) {
       return 'cad';
     } else if (hasOutput(File3dFormat.EptPointCloud)) {
       return 'pointcloud';
@@ -725,7 +726,7 @@ export class Cognite3DViewer {
    * @example
    * ```js
    * const sphere = new THREE.Mesh(
-   * new THREE.SphereBufferGeometry(),
+   * new THREE.SphereGeometry(),
    * new THREE.MeshBasicMaterial()
    * );
    * viewer.addObject3D(sphere);
@@ -747,7 +748,7 @@ export class Cognite3DViewer {
    * @param object
    * @example
    * ```js
-   * const sphere = new THREE.Mesh(new THREE.SphereBufferGeometry(), new THREE.MeshBasicMaterial());
+   * const sphere = new THREE.Mesh(new THREE.SphereGeometry(), new THREE.MeshBasicMaterial());
    * viewer.addObject3D(sphere);
    * viewer.removeObject3D(sphere);
    * ```

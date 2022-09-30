@@ -16,18 +16,17 @@ import { TreeIndexNodeCollection } from './TreeIndexNodeCollection';
 import { IntersectionNodeCollection } from './IntersectionNodeCollection';
 import { UnionNodeCollection } from './UnionNodeCollection';
 import { NodeCollection } from './NodeCollection';
+import { SerializedNodeCollection } from './SerializedNodeCollection';
 
-export type TypeName = string;
 export type NodeCollectionSerializationContext = { client: CogniteClient; model: CdfModelNodeCollectionDataProvider };
-export type NodeCollectionDescriptor = { token: TypeName; state: any; options?: any };
 
 export class NodeCollectionDeserializer {
   public static readonly Instance = new NodeCollectionDeserializer();
   private readonly _types = new Map<
-    TypeName,
+    string,
     {
       deserializer: (
-        state: NodeCollectionDescriptor,
+        state: SerializedNodeCollection,
         context: NodeCollectionSerializationContext
       ) => Promise<NodeCollection>;
     }
@@ -39,11 +38,11 @@ export class NodeCollectionDeserializer {
   }
 
   registerNodeCollectionType<T extends NodeCollection>(
-    nodeCollectionType: TypeName,
-    deserializer: (descriptor: NodeCollectionDescriptor, context: NodeCollectionSerializationContext) => Promise<T>
+    nodeCollectionTypeName: string,
+    deserializer: (descriptor: SerializedNodeCollection, context: NodeCollectionSerializationContext) => Promise<T>
   ): void {
-    this._types.set(nodeCollectionType, {
-      deserializer: (descriptor: NodeCollectionDescriptor, context: NodeCollectionSerializationContext) =>
+    this._types.set(nodeCollectionTypeName, {
+      deserializer: (descriptor: SerializedNodeCollection, context: NodeCollectionSerializationContext) =>
         deserializer(descriptor, context) as Promise<T>
     });
   }
@@ -53,14 +52,14 @@ export class NodeCollectionDeserializer {
     // to support more generic deployment scenarios.
     client: CogniteClient,
     model: CdfModelNodeCollectionDataProvider,
-    descriptor: NodeCollectionDescriptor
+    descriptor: SerializedNodeCollection
   ): Promise<NodeCollection> {
     const context: NodeCollectionSerializationContext = { client, model };
     const deserializer = this.getDeserializer(descriptor.token);
     return deserializer(descriptor, context);
   }
 
-  private getDeserializer(typeName: TypeName) {
+  private getDeserializer(typeName: string) {
     const entry = this._types.get(typeName);
     assert(entry !== undefined);
     return entry!.deserializer;
@@ -144,9 +143,9 @@ export class NodeCollectionDeserializer {
   }
 }
 
-export function registerCustomNodeCollectionType<T extends NodeCollection>(
-  nodeCollectionType: TypeName,
-  deserializer: (descriptor: NodeCollectionDescriptor, context: NodeCollectionSerializationContext) => Promise<T>
+export function registerNodeCollectionType<T extends NodeCollection>(
+  nodeCollectionTypeName: string,
+  deserializer: (descriptor: SerializedNodeCollection, context: NodeCollectionSerializationContext) => Promise<T>
 ): void {
-  NodeCollectionDeserializer.Instance.registerNodeCollectionType(nodeCollectionType, deserializer);
+  NodeCollectionDeserializer.Instance.registerNodeCollectionType(nodeCollectionTypeName, deserializer);
 }

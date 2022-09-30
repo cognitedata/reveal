@@ -13,7 +13,7 @@ import { PointCloudEptGeometryNode } from './PointCloudEptGeometryNode';
 import { IPointCloudTreeGeometry } from './IPointCloudTreeGeometry';
 
 import proj4 from 'proj4';
-import { ModelDataProvider } from '@reveal/modeldata-api';
+import { ModelDataProvider } from '@reveal/data-providers';
 import { toVector3, toBox3 } from './translationUtils';
 
 type SchemaEntry = {

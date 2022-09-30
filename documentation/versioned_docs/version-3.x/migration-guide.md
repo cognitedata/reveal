@@ -49,12 +49,12 @@ convenience, the new API comes with a set of default styles available through [`
 
 A commonly used functionality is to apply a default style to all nodes and to style a few selected nodes with a different
 style to make them stand out. Before, this could be achieved using a `ghostAllNodes`, `hideAllNodes` and `setAllNodeColors` to
-apply the default styling, and a combination of the different per-node styling functions mentioned above to style the 
+apply the default styling, and a combination of the different per-node styling functions mentioned above to style the
 nodes that should stand out. In Reveal 2, this is replaced by `Cognite3DModel.setDefaultNodeAppearance` which is a style that will be applied to any node that is not styled by another styled set.
 
 ### Using TreeIndexNodeCollection to migrate existing filtering logic
 
-<DemoWrapper name="Cognite3DViewerDemo" />
+<DemoWrapper />
 
 In general, it is recommended to use the [specialized `NodeCollection`-implementations](examples/cad-styling) for best performance. However,
 it is possible to use `TreeIndexNodeCollection` as a migration step and simple use cases. This allows the use of previously implemented logic for
@@ -120,7 +120,7 @@ In previous versions, all styling functions accepted an optional `applyToAllChil
 When this was `true`, Reveal would apply the styling to all descendants. When migrating
 to the new version, adding the root tree index of the subtree to `TreeIndexNodeCollection` will not have
 the same result. When you also have a `subtreeSize` available, use `TreeIndexNodeCollection.addRange` with
-`new NumericRange(treeIndex, subtreeSize)` to add the full subtree. If you don't know the 
+`new NumericRange(treeIndex, subtreeSize)` to add the full subtree. If you don't know the
 `subtreeSize`, `Cognite3DModel.getSubtreeIndices()` can be used to get the full range of tree indices.
 
 ```js
@@ -226,8 +226,8 @@ The API for accessing node information has not changed `@cognite/3d-viewer`, but
 
 ### Ray picking and intersection for handling click events
 
-In `@cognite/3d-viewer` `Cognite3dViewer.getIntersectionFromPixel` optionally accepts a `model`-argument to restrict the result to a single model. Support for this has been removed 
-in `@cognite/reveal`. Previously `getIntersectionFromPixel` would return a struct with both `nodeId` and `treeIndex`. Now this has been changed to only include `treeIndex` (to 
+In `@cognite/3d-viewer` `Cognite3dViewer.getIntersectionFromPixel` optionally accepts a `model`-argument to restrict the result to a single model. Support for this has been removed
+in `@cognite/reveal`. Previously `getIntersectionFromPixel` would return a struct with both `nodeId` and `treeIndex`. Now this has been changed to only include `treeIndex` (to
 determine `nodeId` use `async Cognite3DModel.mapTreeIndexToNodeId(treeIndex)`).
 
 ### Other differences
@@ -237,8 +237,8 @@ There are a few other noticeable changes from `@cognite/3d-viewer` and `@cognite
 - `@cognite/3d-viewer` supports local caching to reduce the time to load previously opened 3D models. Currently, this is not supported by `@cognite/reveal`, but the need for such functionality is reduced by adding streaming capabilities.
 - In `@cognite/3d-viewer` `Cognite3DViewer.addModel(...)` will always return a `Cognite3DModel`. In `@cognite/reveal` this function might also return a `CognitePointCloudModel`. To explicitly add a CAD model or point cloud model use `Cognite3DViewer.addCadModel(...)` or `Cognite3DViewer.addPointCloudModel(...)`
 - `Cognite3DViewer.loadCameraFromModel(...)`] has been added for loading camera settings from CDF when available.
-- Due to the way `@cognite/reveal` streams data, the `OnProgressData` is no longer exported, and the `addModel` function 
-  no longer accepts an `onProgress` parameter. Because of this the `onComplete` option in `Cognite3DViewer.addModel` has 
+- Due to the way `@cognite/reveal` streams data, the `OnProgressData` is no longer exported, and the `addModel` function
+  no longer accepts an `onProgress` parameter. Because of this the `onComplete` option in `Cognite3DViewer.addModel` has
   been deprecated. To monitor loading activity, use the `onLoading`-callback provided as an option when constructing `Cognite3DViewer`.
 - `Cognite3DViewer.getCamera()` can now be used to access the `THREE.Camera` of the viewer. Note that this camera shouldn't be
   modified.

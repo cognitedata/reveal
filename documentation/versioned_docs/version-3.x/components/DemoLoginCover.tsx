@@ -2,12 +2,12 @@
  * Copyright 2021 Cognite AS
  */
 
-import React, { ReactElement, useEffect } from 'react';
+import React, { ReactElement } from 'react';
 import { CogniteClient } from '@cognite/sdk-3.x';
 import { loginManager } from '../utils/LoginManager';
 import useBaseUrl from '@docusaurus/useBaseUrl';
+import { useColorMode } from '@docusaurus/theme-common';
 import styled from 'styled-components';
-import useThemeContext from '@theme/hooks/useThemeContext';
 import { REVEAL_VERSION } from '@cognite/reveal-3.x';
 
 const Root = styled.div`
@@ -52,7 +52,7 @@ type Props = {
 };
 
 export default function DemoLoginCover(props: Props): ReactElement {
-  const { isDarkTheme } = useThemeContext();
+  const isDarkTheme = useColorMode().colorMode === 'dark';
 
   const client = new CogniteClient({
     appId: 'reveal-docs-' + REVEAL_VERSION,

@@ -13,11 +13,11 @@
     "@reveal/cad-parsers": "workspace:*",
     "@reveal/cad-styling": "workspace:*",
     "@reveal/camera-manager": "workspace:*",
+    "@reveal/data-providers": "workspace:*",
     "@reveal/data-source": "workspace:*",
     "@reveal/logger": "workspace:*",
     "@reveal/metrics": "workspace:*",
     "@reveal/model-base": "workspace:*",
-    "@reveal/modeldata-api": "workspace:*",
     "@reveal/pointclouds": "workspace:*",
     "@reveal/rendering": "workspace:*",
     "@reveal/utilities": "workspace:*"

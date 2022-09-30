@@ -2,7 +2,6 @@
  * Copyright 2021 Cognite AS
  */
 
-import { parseCadMetadataV8 } from './parsers/CadMetadataParserV8';
 import { SectorScene } from '../utilities/types';
 import { parseCadMetadataGltf } from './parsers/CadMetadataParserGltf';
 
@@ -15,9 +14,6 @@ export class CadMetadataParser {
   public parse(parsedJson: any): SectorScene {
     const version = (parsedJson as VersionHeader).version;
     switch (version) {
-      case 8:
-        return parseCadMetadataV8(parsedJson);
-
       case 9:
         return parseCadMetadataGltf(parsedJson);
 

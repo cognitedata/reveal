@@ -19,7 +19,7 @@ To effectively edit measuring line properties, tool is configurable with `Measur
 `CameraControlsOptions.changeCameraTargetOnClick` should be set to `false` to avoid click event registering for camera when `MeasurementTool` is active. Also avoid any custom click-handler that might interfere with the measurement tool.
 :::
 
-<DemoWrapper name="Cognite3DViewerDemo" />
+<DemoWrapper />
 
 ## Point to point distance measurment
 To enter point-to-point measurement mode, use `MeasurementTool.enterMeasurementMode()`. This will register events for handling mouse clicks and touch events to allow placing the measurement end-points. Note that the tool is optimized for use with mouse.
@@ -41,11 +41,11 @@ The tool exposes events for subscribing to measurement start, end & added. In th
 const measurementTool = new MeasurementTool(viewer);
 
 // Subscribe to measurement events
-measurementTool.on('started', 
+measurementTool.on('started',
   () => viewer.domElement.style.cursor = 'crosshair');
-measurementTool.on('ended', 
+measurementTool.on('ended',
   () => viewer.domElement.attributeStyleMap.delete('cursor'));
-measurementTool.on('added', (measurement) => { 
+measurementTool.on('added', (measurement) => {
   alert(`Measurement added with ${JSON.stringify(measurement.distanceInMeters)} distance!`);
   measurementTool.exitMeasurementMode();
 });
@@ -86,7 +86,7 @@ measurementTool.setLineOptions(lineOptions);
 ```
 
 ### Get all measurement
-To get all measurements added the tool provides `MeasurementTool.getAllMeasurements()` which will 
+To get all measurements added the tool provides `MeasurementTool.getAllMeasurements()` which will
 return an array of measurements of type `Measurement`, having below details
   - `measurementId` : unique id of measurement.
   - `startPoint` : start point of the measurement.
@@ -157,4 +157,3 @@ Measurement labels can be hidden/visible using `MeasurementTool.showMeasurementL
 // Hide all measurement lables
 measurementTool.showMeasurementLabels(false);
 ```
-
