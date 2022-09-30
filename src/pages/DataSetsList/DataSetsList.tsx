@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import NewHeader from 'components/NewHeader';
 import { Button, Icon, Input } from '@cognite/cogs.js';
-import Table from 'antd/lib/table';
+import { Table } from '@cognite/cdf-utilities';
 import Tag from 'antd/lib/tag';
 import { notification } from 'antd';
 import Checkbox from 'antd/lib/checkbox';
@@ -344,6 +344,8 @@ const DataSetsList = (): JSX.Element => {
             setItemInStorage(sorter?.columnKey, sorter?.order);
         }}
         getPopupContainer={getContainer}
+        emptyContent={<>TODO</>}
+        appendTooltipTo={getContainer()}
       />
     </div>
   );
