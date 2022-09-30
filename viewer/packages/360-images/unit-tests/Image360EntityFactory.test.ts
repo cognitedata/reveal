@@ -29,7 +29,13 @@ describe(Image360EntityFactory.name, () => {
           collectionLabel: 'testCollection',
           transform: new THREE.Matrix4()
         },
-        { id: '2', label: 'test_2', collectionId: '0', collectionLabel: 'testCollection', transform: new THREE.Matrix4() }
+        {
+          id: '2',
+          label: 'test_2',
+          collectionId: '0',
+          collectionLabel: 'testCollection',
+          transform: new THREE.Matrix4()
+        }
       ]);
 
     const mockSceneHandler = new Mock<SceneHandler>().setup(p => p.addCustomObject(It.IsAny())).returns();
