@@ -28,13 +28,14 @@ export default function SearchResultList({
   searchResults,
 }: Props) {
   const {
+    isLoading,
     resultExactMatch: assetExactMatch,
     results: assets,
-    isLoading,
     isError,
     fetchNextPage,
     hasNextPage,
     hasResults,
+    isFetchingNextPage,
   } = searchResults;
 
   /**
@@ -90,13 +91,16 @@ export default function SearchResultList({
       {exactMatchElement}
       {searchResultElements}
       {hasNextPage && (
-        <Button
-          type="link"
-          onClick={() => fetchNextPage()}
-          style={{ marginBottom: '20px' }}
-        >
-          {t['Load more']}
-        </Button>
+        <>
+          {isFetchingNextPage && <Icon type="Loader" />}
+          <Button
+            type="link"
+            onClick={() => fetchNextPage()}
+            style={{ marginBottom: '20px' }}
+          >
+            {t['Load more']}
+          </Button>
+        </>
       )}
     </AssetList>
   );

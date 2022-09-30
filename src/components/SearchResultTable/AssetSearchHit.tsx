@@ -57,7 +57,10 @@ export default function AssetSearchHit({
     limit: TIMESERIES_COUNT,
   });
 
-  const { data: dataAmount } = useAggregate('timeseries', queryFilter);
+  const { data: dataAmount, isFetched: isDataAmountFetched } = useAggregate(
+    'timeseries',
+    queryFilter
+  );
 
   const selectedExternalIds: undefined | string[] = chart?.timeSeriesCollection
     ?.map((tsc) => tsc.tsExternalId || '')
@@ -86,7 +89,11 @@ export default function AssetSearchHit({
     />
   ));
 
-  if (!filter?.showEmpty && dataAmount?.count === 0) {
+  const shouldShowEmpty =
+    isDataAmountFetched === false ||
+    (!filter?.showEmpty && dataAmount?.count === 0);
+
+  if (shouldShowEmpty) {
     return <></>;
   }
 

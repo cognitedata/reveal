@@ -5,9 +5,13 @@ import {
 } from '@cognite/sdk-react-query-hooks';
 import { Asset, Timeseries, TimeseriesFilter } from '@cognite/sdk';
 import { SearchFilter } from 'components/Search/Search';
-import { useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSDK } from '@cognite/sdk-provider';
 import { useQuery } from 'react-query';
+import { last } from 'lodash';
+
+const MAX_SEARCH_OFFSET = 1000;
+const RESULTS_TO_FETCH = 20;
 
 type Props = {
   filter: TimeseriesFilter;
@@ -158,6 +162,9 @@ export const useAssetSearchResults = ({
   query: string;
   filter: SearchFilter;
 }) => {
+  const [isSearching, setIsSearching] = useState(false);
+  const [offsetExceededLimit, setOffsetExceededLimit] = useState(false);
+
   const rootAssetFilter = filter.rootAsset
     ? { assetSubtreeIds: [{ externalId: filter.rootAsset }] }
     : {};
@@ -171,12 +178,17 @@ export const useAssetSearchResults = ({
   } = useInfiniteSearch<Asset>(
     'assets',
     query,
-    20,
+    RESULTS_TO_FETCH,
     { ...rootAssetFilter },
     {
       enabled: !!query,
     }
   );
+
+  const fetchNextPageWrapper = useCallback(() => {
+    setIsSearching(true);
+    fetchNextPage();
+  }, [fetchNextPage]);
 
   const { data: resourcesByExternalId } = useCdfItems<Asset>('assets', [
     { externalId: query },
@@ -203,15 +215,52 @@ export const useAssetSearchResults = ({
     [query, filter]
   );
 
-  const { data: dataAmount } = useAggregate(
+  const currentPage = resourcesBySearch?.pages.length || 0;
+
+  const { data: dataAmount, isFetched: dataAmountFetched } = useAggregate(
     'timeseries',
     {
-      assetIds: assets?.map(({ id }) => id),
+      assetIds: resourcesBySearch?.pages[currentPage - 1].map(({ id }) => id),
       isStep: filter?.isStep,
       isString: filter?.isString,
     },
     { enabled: shouldFetchCount && assets && assets.length > 0 }
   );
+
+  useMemo(() => {
+    setOffsetExceededLimit(false);
+    setIsSearching(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [query, filter.isStep, filter.isString, filter.showEmpty]);
+
+  const pageParams = resourcesBySearch?.pageParams;
+  useEffect(() => {
+    if (dataAmountFetched && dataAmount) {
+      if (pageParams) {
+        const offset = last(pageParams) as number;
+        const limit = MAX_SEARCH_OFFSET - RESULTS_TO_FETCH;
+        if (offset >= limit) {
+          setIsSearching(false);
+          setOffsetExceededLimit(true);
+        } else {
+          if (dataAmount?.count <= 0) {
+            fetchNextPageWrapper();
+          } else {
+            setIsSearching(false);
+          }
+          if (hasNextPage === false) {
+            setIsSearching(false);
+          }
+        }
+      }
+    }
+  }, [
+    dataAmountFetched,
+    dataAmount,
+    fetchNextPageWrapper,
+    hasNextPage,
+    pageParams,
+  ]);
 
   const {
     data: assetCountData,
@@ -226,18 +275,16 @@ export const useAssetSearchResults = ({
     enabled: !!query,
   });
 
-  const hasResults = !(
-    assets?.length === 0 ||
-    (shouldFetchCount && dataAmount?.count === 0)
-  );
+  const hasResults = !(assets?.length === 0);
 
   return {
     resultExactMatch: assetExactMatch,
     results: assets,
     isLoading,
+    isFetchingNextPage: isSearching,
     isError,
-    fetchNextPage,
-    hasNextPage,
+    fetchNextPage: fetchNextPageWrapper,
+    hasNextPage: offsetExceededLimit ? false : hasNextPage,
     hasResults,
     totalCount: getCountString(
       assetCountData?.length,
@@ -245,5 +292,7 @@ export const useAssetSearchResults = ({
       assetCountSuccess
     ),
     assetCountLoading,
+    currentPage,
+    resultsToFetch: RESULTS_TO_FETCH,
   };
 };
