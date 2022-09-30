@@ -6,15 +6,21 @@ import * as THREE from 'three';
 import { SceneHandler } from '@reveal/utilities';
 import { Image360Descriptor, Image360FileProvider, Image360Face } from '@reveal/data-providers';
 import assert from 'assert';
+import { Image360Icon } from './Image360Icon';
 
 export class Image360Entity {
   private readonly _imageProvider: Image360FileProvider;
   private readonly _image360Metadata: Image360Descriptor;
   private readonly _sceneHandler: SceneHandler;
   private readonly _transform: THREE.Matrix4;
+  private readonly _image360Icon: Image360Icon;
 
   get transform(): THREE.Matrix4 {
     return this._transform;
+  }
+
+  get icon(): Image360Icon {
+    return this._image360Icon;
   }
 
   constructor(
@@ -26,15 +32,15 @@ export class Image360Entity {
     this._sceneHandler = sceneHandler;
     this._imageProvider = imageProvider;
     this._image360Metadata = image360Metadata;
+    this._image360Icon = new Image360Icon();
 
     this._transform =
       postTransform !== undefined
         ? postTransform.clone().multiply(image360Metadata.transform.clone())
         : image360Metadata.transform;
 
-    const image360Icon = this.createSprite();
-    image360Icon.applyMatrix4(this._transform);
-    sceneHandler.addCustomObject(image360Icon);
+    this._image360Icon.applyMatrix4(this._transform);
+    sceneHandler.addCustomObject(this._image360Icon);
   }
 
   public async activate360Image(): Promise<void> {
@@ -75,48 +81,6 @@ export class Image360Entity {
       const face = faceTextures.find(p => p.side === side);
       assert(face !== undefined);
       return face.faceTexture;
-    }
-  }
-
-  private createSprite(): THREE.Sprite {
-    const canvas = document.createElement('canvas');
-    const textureSize = 128;
-    canvas.width = textureSize;
-    canvas.height = textureSize;
-
-    const context = canvas.getContext('2d')!;
-    drawInnerCircle();
-    drawOuterCircle();
-    drawHoverSelector();
-
-    const spriteMaterial = new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(canvas) });
-    const sprite = new THREE.Sprite(spriteMaterial);
-    sprite.updateMatrixWorld();
-    sprite.renderOrder = 4;
-    return sprite;
-
-    function drawOuterCircle() {
-      context.beginPath();
-      context.lineWidth = 8;
-      context.strokeStyle = '#FFFFFF';
-      context.arc(textureSize / 2, textureSize / 2, textureSize / 2 - 4, 0, 2 * Math.PI);
-      context.stroke();
-    }
-
-    function drawInnerCircle() {
-      context.beginPath();
-      context.lineWidth = 16;
-      context.strokeStyle = 'rgba(255, 255, 255, 0.75)';
-      context.arc(textureSize / 2, textureSize / 2, textureSize / 2 - 16, 0, 2 * Math.PI);
-      context.shadowColor = 'red';
-      context.stroke();
-    }
-
-    function drawHoverSelector() {
-      context.beginPath();
-      context.fillStyle = '#FC2574';
-      context.arc(textureSize / 2, textureSize / 2, textureSize / 2 - 42, 0, 2 * Math.PI);
-      context.fill();
     }
   }
 }
