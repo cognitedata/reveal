@@ -1,6 +1,6 @@
 import { PropsWithChildren, useState, createContext, useEffect } from 'react';
 import {
-  useFetchAllPriceAreas,
+  useFetchPriceAreas,
   fetchBidProcessResultWithData,
   fetchProcessConfigurations,
 } from 'queries/useFetchPriceArea';
@@ -44,7 +44,7 @@ export const PriceAreaProvider = ({ children }: PropsWithChildren) => {
     }
   };
 
-  const { data: allPriceAreas } = useFetchAllPriceAreas();
+  const { data: allPriceAreas } = useFetchPriceAreas();
 
   const { data: selectedBidProcessResult, refetch: refetchBidProcessResult } =
     useQuery(

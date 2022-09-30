@@ -1,13 +1,9 @@
 import { fireEvent, screen } from '@testing-library/react';
-import {
-  PriceAreasContext,
-  PriceAreasContextType,
-} from 'providers/priceAreaProvider';
-import * as React from 'react';
 import * as utils from 'utils/utils';
 import { useLocation } from 'react-router-dom';
 import { mockBidProcessResult, mockPriceArea } from 'utils/test';
 import { testRenderer } from 'utils/test/render';
+import * as priceareahook from 'queries/useFetchPriceArea';
 
 import { MenuBar } from './Menubar';
 
@@ -19,11 +15,14 @@ jest.mock('react-router-dom', () => ({
 describe('Menubar tests', () => {
   const handleLogout = jest.spyOn(utils, 'handleLogout');
 
-  beforeAll(() =>
+  beforeAll(() => {
     (useLocation as jest.Mock).mockImplementation(() => ({
       pathname: '/test-path',
-    }))
-  );
+    }));
+    jest.spyOn(priceareahook, 'useFetchPriceAreas').mockImplementation(() => ({
+      data: [mockPriceArea],
+    }));
+  });
   afterAll(jest.clearAllMocks);
 
   it('Should render', async () => {
@@ -46,24 +45,7 @@ describe('Menubar tests', () => {
   });
 
   it('Should show price area in portfolio dropdown', async () => {
-    const MockMenubar: React.FC = () => {
-      const priceAreaContext: PriceAreasContextType = React.useMemo(
-        () => ({
-          allPriceAreas: [mockPriceArea],
-          priceAreaChanged: () => false,
-          bidProcessConfigurationChanged: () => false,
-        }),
-        []
-      );
-
-      return (
-        <PriceAreasContext.Provider value={priceAreaContext}>
-          <MenuBar />
-        </PriceAreasContext.Provider>
-      );
-    };
-
-    testRenderer(<MockMenubar />);
+    testRenderer(<MenuBar />);
 
     const portfolioTab = await screen.findByRole('tab', { name: /Portfolio/i });
     fireEvent.click(portfolioTab);
@@ -76,24 +58,7 @@ describe('Menubar tests', () => {
   });
 
   it('Should navigate to correct url when selecting price area', async () => {
-    const MockMenubar: React.FC = () => {
-      const priceAreaContext: PriceAreasContextType = React.useMemo(
-        () => ({
-          allPriceAreas: [mockPriceArea],
-          priceAreaChanged: () => false,
-          bidProcessConfigurationChanged: () => false,
-        }),
-        []
-      );
-
-      return (
-        <PriceAreasContext.Provider value={priceAreaContext}>
-          <MenuBar />
-        </PriceAreasContext.Provider>
-      );
-    };
-
-    testRenderer(<MockMenubar />);
+    testRenderer(<MenuBar />);
 
     const portfolioTab = await screen.findByRole('tab', { name: /Portfolio/i });
     fireEvent.click(portfolioTab);

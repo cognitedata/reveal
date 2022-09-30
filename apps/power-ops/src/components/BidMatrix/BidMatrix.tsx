@@ -54,7 +54,7 @@ export const BidMatrix = ({
   const { client } = useAuthContext();
   const { eventStore } = useContext(EventStreamContext);
 
-  const { plantExternalId } = useParams<{ plantExternalId?: string }>();
+  const { plantExternalId } = useParams<{ plantExternalId: string }>();
 
   const [currentMatrix, setCurrentMatrix] = useState<MatrixWithData | null>();
   const [matrixHeaderConfig, setMatrixHeaderConfig] =
@@ -133,10 +133,10 @@ export const BidMatrix = ({
 
   const getMatrixTitle = () => {
     if (plantExternalId !== 'total') {
-      const plant = bidProcessResult.plants?.find(
+      const found = bidProcessResult.plants.find(
         (p) => p.externalId === plantExternalId
       );
-      return plant?.displayName || plantExternalId;
+      return found?.displayName ?? plantExternalId;
     }
     return 'Total';
   };
@@ -177,8 +177,8 @@ export const BidMatrix = ({
           : bidProcessResult.plantMatrixesWithData?.find(
               (p) =>
                 p.plantName ===
-                bidProcessResult.plants?.find(
-                  (plant) => plant.externalId === plantExternalId
+                bidProcessResult.plants.find(
+                  (p) => p.externalId === plantExternalId
                 )?.name
             )?.matrixWithData;
 

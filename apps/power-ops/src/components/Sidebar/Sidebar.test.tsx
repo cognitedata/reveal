@@ -29,7 +29,7 @@ describe('Sidebar tests', () => {
         <Sidebar
           bidProcessResult={mockBidProcessResult}
           opened={openedSidePanel}
-          setOpened={setOpenedSidePanel}
+          setOpened={() => setOpenedSidePanel(!openedSidePanel)}
         />
       );
     };
@@ -53,7 +53,7 @@ describe('Sidebar tests', () => {
           <Sidebar
             bidProcessResult={mockBidProcessResult}
             opened={openedSidePanel}
-            setOpened={setOpenedSidePanel}
+            setOpened={() => setOpenedSidePanel(!openedSidePanel)}
           />
         );
       };
@@ -81,7 +81,7 @@ describe('Sidebar tests', () => {
           <Sidebar
             bidProcessResult={mockBidProcessResult}
             opened={openedSidePanel}
-            setOpened={setOpenedSidePanel}
+            setOpened={() => setOpenedSidePanel(!openedSidePanel)}
           />
         );
       };
@@ -111,7 +111,7 @@ describe('Sidebar tests', () => {
           <Sidebar
             bidProcessResult={mockBidProcessResult}
             opened={openedSidePanel}
-            setOpened={setOpenedSidePanel}
+            setOpened={() => setOpenedSidePanel(!openedSidePanel)}
           />
         );
       };
@@ -139,7 +139,7 @@ describe('Sidebar tests', () => {
           <Sidebar
             bidProcessResult={mockBidProcessResult}
             opened={openedSidePanel}
-            setOpened={setOpenedSidePanel}
+            setOpened={() => setOpenedSidePanel(!openedSidePanel)}
           />
         );
       };
@@ -164,7 +164,7 @@ describe('Sidebar tests', () => {
           <Sidebar
             bidProcessResult={mockBidProcessResult}
             opened={openedSidePanel}
-            setOpened={setOpenedSidePanel}
+            setOpened={() => setOpenedSidePanel(!openedSidePanel)}
           />
         );
       };
@@ -200,7 +200,7 @@ describe('Sidebar tests', () => {
           <Sidebar
             bidProcessResult={mockBidProcessResult}
             opened={openedSidePanel}
-            setOpened={setOpenedSidePanel}
+            setOpened={() => setOpenedSidePanel(!openedSidePanel)}
           />
         );
       };
@@ -245,7 +245,7 @@ describe('Sidebar tests', () => {
           <Sidebar
             bidProcessResult={mockBidProcessResult}
             opened={openedSidePanel}
-            setOpened={setOpenedSidePanel}
+            setOpened={() => setOpenedSidePanel(!openedSidePanel)}
           />
         );
       };

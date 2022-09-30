@@ -7,17 +7,19 @@ import sidecar from 'utils/sidecar';
 import { EventStreamProvider } from 'providers/eventStreamProvider';
 import { PriceAreaProvider } from 'providers/priceAreaProvider';
 // PAGES
-import { Portfolio } from 'pages/Portfolio';
+import { PriceArea } from 'pages/PriceArea';
 import { MenuBar } from 'components/Menubar/Menubar';
 import { NotFoundPage } from 'pages/NotFound/NotFound';
 import { Workflows, WorkflowSingle } from 'pages/Workflows';
 import { Monitoring } from 'pages/Monitoring';
+import { Portfolio } from 'pages/Portfolio';
 
 export enum PAGES {
   HOME = '/home',
-  WORKFLOWS = '/workflows',
-  WORKFLOWS_SINGLE = '/workflows/:workflowExternalId',
   MONITORING = '/monitoring',
+  WORKFLOWS_SINGLE = '/workflows/:workflowExternalId',
+  WORKFLOWS = '/workflows',
+  PRICE_AREA = '/portfolio/:priceAreaExternalId',
   PORTFOLIO = '/portfolio',
   LOGOUT = '/logout',
 }
@@ -32,15 +34,10 @@ const App = () => (
           <Switch>
             <Route path={PAGES.LOGOUT} component={Logout} />
             <Route path={PAGES.MONITORING} component={Monitoring} />
-            <Route exact path={PAGES.WORKFLOWS} component={Workflows} />
             <Route path={PAGES.WORKFLOWS_SINGLE} component={WorkflowSingle} />
-            <Route
-              path={[
-                `${PAGES.PORTFOLIO}/:priceAreaExternalId`,
-                `${PAGES.PORTFOLIO}`,
-              ]}
-              component={Portfolio}
-            />
+            <Route path={PAGES.WORKFLOWS} component={Workflows} />
+            <Route path={PAGES.PRICE_AREA} component={PriceArea} />
+            <Route path={PAGES.PORTFOLIO} component={Portfolio} />
             <Redirect from="" to={PAGES.PORTFOLIO} />
             <Redirect from="/" to={PAGES.PORTFOLIO} />
             <Route component={NotFoundPage} />

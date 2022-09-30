@@ -1,5 +1,5 @@
 import { Button, Detail } from '@cognite/cogs.js';
-import { SetStateAction, useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { NavLink, useLocation, useRouteMatch } from 'react-router-dom';
 import debounce from 'lodash/debounce';
 import { BidProcessResultWithData } from 'types';
@@ -15,15 +15,13 @@ import {
   Footer,
 } from './elements';
 
-export const Sidebar = ({
-  bidProcessResult,
-  opened,
-  setOpened,
-}: {
+type Props = {
   bidProcessResult: BidProcessResultWithData;
   opened: boolean;
-  setOpened: (opened: SetStateAction<boolean>) => void;
-}) => {
+  setOpened: () => void;
+};
+
+export const Sidebar = ({ bidProcessResult, opened, setOpened }: Props) => {
   const metrics = useMetrics('portfolio');
 
   const { pathname } = useLocation();
@@ -99,7 +97,7 @@ export const Sidebar = ({
             aria-label="Open search field"
             onClick={() => {
               metrics.track('click-open-search-button');
-              setOpened(true);
+              setOpened();
               setFocused(true);
             }}
           />
@@ -167,7 +165,7 @@ export const Sidebar = ({
           aria-label="Show or hide sidebar"
           icon={opened ? 'PanelLeft' : 'PanelRight'}
           onClick={() => {
-            setOpened(!opened);
+            setOpened();
             setFocused(false);
           }}
         >

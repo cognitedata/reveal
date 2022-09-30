@@ -1,11 +1,10 @@
-import { useContext, useEffect, useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useState } from 'react';
+import { generatePath, useHistory, useRouteMatch } from 'react-router-dom';
 import { Dropdown, Icon, Menu, TopBar } from '@cognite/cogs.js';
 import { LogoutButton } from '@cognite/react-container';
-import { PriceArea } from '@cognite/power-ops-api-types';
-import { PriceAreasContext } from 'providers/priceAreaProvider';
 import { handleLogout } from 'utils/utils';
 import { PAGES } from 'App';
+import { useFetchPriceAreas } from 'queries/useFetchPriceArea';
 
 import {
   StyledTopBar,
@@ -16,41 +15,15 @@ import {
 
 export const MenuBar = () => {
   const history = useHistory();
-
-  const [active, setActive] = useState<string>(PAGES.PORTFOLIO);
-
-  const [visible, setVisible] = useState<boolean>(false);
-  const [selected, setSelected] = useState<string>('');
-
-  const { allPriceAreas, priceAreaChanged } = useContext(PriceAreasContext);
-
-  const handleNavigate = (path: PAGES, priceArea?: PriceArea) => {
-    let page: string = path;
-    if (priceArea) {
-      page = `${path}/${priceArea.externalId}/total`;
-      priceAreaChanged(priceArea.externalId);
-    }
-
-    setVisible(false);
-    setSelected(priceArea?.externalId || '');
-    setActive(page);
-    history.push(page);
+  const { path } = useRouteMatch({ path: history.location.pathname }) ?? {
+    path: null,
   };
+  const [visible, setVisible] = useState<boolean>(false);
+  const { data: allPriceAreas } = useFetchPriceAreas();
 
   const toggleDropdown = () => {
     setVisible(!visible);
   };
-
-  useEffect(() => {
-    // setup initial selection on page load
-    // (this is a bit hack perhaps, please modify for your own routes)
-    setActive(`${window.location.pathname.split('/')[2]}`);
-    setSelected(`${window.location.pathname.split('/')[3]}`);
-    return history.listen((location) => {
-      setActive(`${location.pathname}`);
-      setSelected(`${location.pathname.split('/')[2]}`);
-    });
-  }, [history.location]);
 
   return (
     <StyledTopBar data-testid="top-bar">
@@ -77,11 +50,21 @@ export const MenuBar = () => {
               <Menu.Header>Price Area</Menu.Header>
               {allPriceAreas?.map((pricearea) => (
                 <Menu.Item
-                  selected={pricearea.externalId === selected}
+                  selected={path?.includes(
+                    `${PAGES.PORTFOLIO}/${pricearea.externalId}`
+                  )}
                   key={pricearea.externalId}
-                  onClick={() => handleNavigate(PAGES.PORTFOLIO, pricearea)}
+                  onClick={() => {
+                    history.push(
+                      generatePath(`${PAGES.PRICE_AREA}/total`, {
+                        priceAreaExternalId: pricearea.externalId,
+                      })
+                    );
+                  }}
                   appendIcon={
-                    pricearea.externalId === selected ? 'Checkmark' : undefined
+                    path?.includes(`${PAGES.PORTFOLIO}/${pricearea.externalId}`)
+                      ? 'Checkmark'
+                      : undefined
                   }
                 >
                   {pricearea.name}
@@ -94,18 +77,18 @@ export const MenuBar = () => {
             links={[
               {
                 name: 'Portfolio',
-                isActive: active.includes(PAGES.PORTFOLIO),
+                isActive: path?.includes(PAGES.PORTFOLIO),
                 onClick: () => toggleDropdown(),
               },
               {
                 name: 'Workflows',
-                isActive: active === PAGES.WORKFLOWS,
-                onClick: () => handleNavigate(PAGES.WORKFLOWS),
+                isActive: path === PAGES.WORKFLOWS,
+                onClick: () => history.push(PAGES.WORKFLOWS),
               },
               {
                 name: 'Monitoring',
-                isActive: active === PAGES.MONITORING,
-                onClick: () => handleNavigate(PAGES.MONITORING),
+                isActive: path === PAGES.MONITORING,
+                onClick: () => history.push(PAGES.MONITORING),
               },
             ]}
           />

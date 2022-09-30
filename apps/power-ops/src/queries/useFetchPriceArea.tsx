@@ -148,7 +148,7 @@ const fetchAllPriceAreas = async (
   return priceAreas;
 };
 
-export const useFetchAllPriceAreas = () => {
+export const useFetchPriceAreas = () => {
   const {
     client: { project },
     authState: { token },
@@ -157,5 +157,6 @@ export const useFetchAllPriceAreas = () => {
     queryKey: [project, 'price-areas'],
     queryFn: () => fetchAllPriceAreas(project, token!),
     enabled: !!token,
+    staleTime: Infinity, // Price Areas never update during usage of the application, unless requested
   });
 };
