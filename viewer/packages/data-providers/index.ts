@@ -17,5 +17,6 @@ export {
   File3dFormat,
   BlobOutputMetadata,
   Image360Descriptor,
-  Image360FileProvider
+  Image360FileProvider,
+  Image360Face
 } from './src/types';
