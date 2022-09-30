@@ -61,9 +61,7 @@
     "path-browserify": "1.0.1",
     "proj4": "2.8.0",
     "rxjs": "7.5.7",
-    "skmeans": "0.11.3",
-    "three": "0.144.0",
-    "three-stdlib": "2.17.0"
+    "skmeans": "0.11.3"
   },
   "devDependencies": {
     "@azure/msal-browser": "2.28.3",
@@ -125,6 +123,8 @@
     "rimraf": "3.0.2",
     "run-script-os": "1.1.6",
     "shx": "0.3.4",
+    "three": "0.144.0",
+    "three-stdlib": "2.17.0",
     "ts-jest": "29.0.3",
     "ts-loader": "9.4.1",
     "tsc-alias": "1.7.0",
@@ -140,7 +140,8 @@
   },
   "peerDependencies": {
     "@cognite/sdk": "^5.0.0 || ^6.0.0 || ^7.0.0",
-    "@cognite/sdk-core": "^4.1.0"
+    "@cognite/sdk-core": "^4.1.0",
+    "three": "^0.144.0"
   },
   "glslify": {
     "transform": [

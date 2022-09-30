@@ -866,6 +866,7 @@ __metadata:
   peerDependencies:
     "@cognite/sdk": ^5.0.0 || ^6.0.0 || ^7.0.0
     "@cognite/sdk-core": ^4.1.0
+    three: ^0.144.0
   languageName: unknown
   linkType: soft
 
