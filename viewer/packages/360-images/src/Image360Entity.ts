@@ -49,14 +49,11 @@ export class Image360Entity {
 
     const boxGeometry = new THREE.BoxGeometry(1, 1, 1);
 
-    const faceMaterials = [
-      new THREE.MeshBasicMaterial({ side: THREE.BackSide, map: getFaceTexture('left'), depthTest: false }),
-      new THREE.MeshBasicMaterial({ side: THREE.BackSide, map: getFaceTexture('right'), depthTest: false }),
-      new THREE.MeshBasicMaterial({ side: THREE.BackSide, map: getFaceTexture('top'), depthTest: false }),
-      new THREE.MeshBasicMaterial({ side: THREE.BackSide, map: getFaceTexture('bottom'), depthTest: false }),
-      new THREE.MeshBasicMaterial({ side: THREE.BackSide, map: getFaceTexture('front'), depthTest: false }),
-      new THREE.MeshBasicMaterial({ side: THREE.BackSide, map: getFaceTexture('back'), depthTest: false })
-    ];
+    const faceMaterialOrder: Image360Face['face'][] = ['left', 'right', 'top', 'bottom', 'front', 'back'];
+
+    const faceMaterials = faceMaterialOrder.map(
+      face => new THREE.MeshBasicMaterial({ side: THREE.BackSide, map: getFaceTexture(face), depthTest: false })
+    );
     const mesh = new THREE.Mesh(boxGeometry, faceMaterials);
     mesh.renderOrder = 3;
     return mesh;
