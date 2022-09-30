@@ -41,7 +41,7 @@ interface DragItem {
   accessor: string;
 }
 
-//Modified the example from here ,https://github.com/react-dnd/react-dnd/blob/main/packages/examples/src/04-sortable/simple/Card.tsx
+//Modified the example from here https://github.com/react-dnd/react-dnd/blob/main/packages/examples/src/04-sortable/simple/Card.tsx
 export const MenutItemDrag: FC<CardProps> = ({
   id,
   index,
