@@ -20,10 +20,10 @@ export interface Image360FileProvider {
 }
 
 export type Image360Descriptor = {
-  collectionId: string;
-  collectionName: string;
   id: string;
-  name: string;
+  label: string;
+  collectionId: string;
+  collectionLabel: string;
   transform: THREE.Matrix4;
 };
 

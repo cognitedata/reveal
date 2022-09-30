@@ -74,15 +74,19 @@ export class Cdf360ImageEventProvider implements Image360Provider<{ [key: string
     assert(fileInfos.items.length > 0);
 
     if (fileInfos.items[0].metadata?.timestamp !== undefined) {
-      const sets = groupBy(fileInfos.items, fileInfo => fileInfo.metadata!.timestamp);
-      const ordered = orderBy(Object.entries(sets), fileInfoEntry => parseInt(fileInfoEntry[0]), 'desc');
-      assert(ordered[0][1].length === 6);
-      return ordered[0][1];
+      return getNewestTimestamp();
     }
 
     assert(fileInfos.items.length === 6);
 
     return fileInfos.items;
+
+    function getNewestTimestamp() {
+      const sets = groupBy(fileInfos.items, fileInfo => fileInfo.metadata!.timestamp);
+      const ordered = orderBy(Object.entries(sets), fileInfoEntry => parseInt(fileInfoEntry[0]), 'desc');
+      assert(ordered[0][1].length === 6);
+      return ordered[0][1];
+    }
   }
 
   private async getFileBuffers(fileIds: { id: number }[]) {
@@ -97,19 +101,20 @@ export class Cdf360ImageEventProvider implements Image360Provider<{ [key: string
   private parseEventMetadata(eventMetadata: Event360Metadata): Image360Descriptor {
     return {
       collectionId: eventMetadata.site_id,
-      collectionName: eventMetadata.site_name,
+      collectionLabel: eventMetadata.site_name,
       id: eventMetadata.station_id,
-      name: eventMetadata.station_name,
+      label: eventMetadata.station_name,
       transform: parseTransform(eventMetadata)
     };
 
     function parseTransform(transformationData: Event360TransformationData): THREE.Matrix4 {
       const translationComponents = transformationData.translation.split(' ').map(parseFloat);
+      const milimetersInMeters = 1000;
       const translation = new THREE.Vector3(
-        translationComponents[0] / 1000,
-        translationComponents[2] / 1000,
-        -translationComponents[1] / 1000
-      );
+        translationComponents[0],
+        translationComponents[2],
+        -translationComponents[1]
+      ).divideScalar(milimetersInMeters);
       return new Matrix4().makeTranslation(translation.x, translation.y, translation.z);
     }
   }

@@ -17,19 +17,19 @@ describe(Image360EntityFactory.name, () => {
       .returnsAsync([
         {
           id: '0',
-          name: 'test_0',
+          label: 'test_0',
           collectionId: '0',
-          collectionName: 'testCollection',
+          collectionLabel: 'testCollection',
           transform: new THREE.Matrix4()
         },
         {
           id: '1',
-          name: 'test_1',
+          label: 'test_1',
           collectionId: '0',
-          collectionName: 'testCollection',
+          collectionLabel: 'testCollection',
           transform: new THREE.Matrix4()
         },
-        { id: '2', name: 'test_2', collectionId: '0', collectionName: 'testCollection', transform: new THREE.Matrix4() }
+        { id: '2', label: 'test_2', collectionId: '0', collectionLabel: 'testCollection', transform: new THREE.Matrix4() }
       ]);
 
     const mockSceneHandler = new Mock<SceneHandler>().setup(p => p.addCustomObject(It.IsAny())).returns();

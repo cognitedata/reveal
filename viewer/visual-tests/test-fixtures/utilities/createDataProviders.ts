@@ -14,7 +14,7 @@ import {
   LocalModelIdentifier,
   CdfModelIdentifier
 } from '../../../packages/data-providers';
-import { CogniteClient } from '@cognite/sdk/dist/src';
+import { CogniteClient } from '@cognite/sdk';
 
 export function createDataProviders(defaultModelLocalUrl = 'primitives'): Promise<{
   modelMetadataProvider: ModelMetadataProvider;

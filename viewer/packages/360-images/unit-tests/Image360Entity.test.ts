@@ -13,9 +13,9 @@ describe(Image360Entity.name, () => {
   test('Each newly created Image360Entity should add a sprite to the scene', () => {
     const image360Descriptor: Image360Descriptor = {
       id: '0',
-      name: 'testEntity',
+      label: 'testEntity',
       collectionId: '0',
-      collectionName: 'test_collection',
+      collectionLabel: 'test_collection',
       transform: new THREE.Matrix4()
     };
 
