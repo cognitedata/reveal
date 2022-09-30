@@ -26,6 +26,7 @@ import { PointCloudMetadataRepository } from '../../packages/pointclouds/src/Poi
 import { PointCloudFactory } from '../../packages/pointclouds/src/PointCloudFactory';
 import dat from 'dat.gui';
 import { ByScreenSizeSectorCuller } from '../../packages/cad-geometry-loaders/src/sector/culling/ByScreenSizeSectorCuller';
+import { CogniteClient } from '@cognite/sdk';
 
 export type StreamingTestFixtureComponents = {
   renderer: THREE.WebGLRenderer;
@@ -39,6 +40,7 @@ export type StreamingTestFixtureComponents = {
   cadMaterialManager: CadMaterialManager;
   cadModelUpdateHandler: CadModelUpdateHandler;
   cadManager: CadManager;
+  cogniteClient?: CogniteClient;
 };
 
 export abstract class StreamingVisualTestFixture implements VisualTestFixture {
@@ -122,7 +124,7 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
 
     this.updateRenderer();
 
-    const { modelDataProvider, modelIdentifier, modelMetadataProvider } = await createDataProviders(
+    const { modelDataProvider, modelIdentifier, modelMetadataProvider, cogniteClient } = await createDataProviders(
       this._localModelUrl
     );
 
@@ -174,7 +176,8 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
       cameraControls: this._controls,
       cadMaterialManager: this._materialManager,
       cadModelUpdateHandler,
-      cadManager: this._cadManager
+      cadManager: this._cadManager,
+      cogniteClient
     });
 
     this._gui.close();
