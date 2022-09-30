@@ -29,6 +29,7 @@ export type Image360Descriptor = {
 
 export type Image360Face = {
   face: 'front' | 'back' | 'left' | 'right' | 'top' | 'bottom';
+  mimeType: 'image/jpeg' | 'image/png';
   data: ArrayBuffer;
 };
 
