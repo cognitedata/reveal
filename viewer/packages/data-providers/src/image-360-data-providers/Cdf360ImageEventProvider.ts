@@ -73,13 +73,17 @@ export class Cdf360ImageEventProvider implements Image360Provider<{ [key: string
 
     assert(fileInfos.items.length > 0);
 
-    if (fileInfos.items[0].metadata?.timestamp !== undefined) {
+    if (hasTimestamp()) {
       return getNewestTimestamp();
     }
 
     assert(fileInfos.items.length === 6);
 
     return fileInfos.items;
+
+    function hasTimestamp() {
+      return fileInfos.items[0].metadata?.timestamp !== undefined;
+    }
 
     function getNewestTimestamp() {
       const sets = groupBy(fileInfos.items, fileInfo => fileInfo.metadata!.timestamp);
