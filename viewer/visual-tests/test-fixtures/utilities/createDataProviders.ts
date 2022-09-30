@@ -2,7 +2,7 @@
  * Copyright 2022 Cognite AS
  */
 
-import { createApplicationSDK } from '../../../test-utilities/src/appUtils';
+import { getApplicationSDK } from '../../../test-utilities/src/appUtils';
 import {
   ModelMetadataProvider,
   ModelDataProvider,
@@ -14,12 +14,13 @@ import {
   LocalModelIdentifier,
   CdfModelIdentifier
 } from '../../../packages/data-providers';
-import cdfEnvironments from '../../.cdf-environments.json';
+import { CogniteClient } from '@cognite/sdk';
 
 export function createDataProviders(defaultModelLocalUrl = 'primitives'): Promise<{
   modelMetadataProvider: ModelMetadataProvider;
   modelDataProvider: ModelDataProvider;
   modelIdentifier: ModelIdentifier;
+  cogniteClient?: CogniteClient;
 }> {
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);
@@ -43,26 +44,15 @@ async function createCdfDataProviders(urlParams: URLSearchParams): Promise<{
   modelMetadataProvider: ModelMetadataProvider;
   modelDataProvider: ModelDataProvider;
   modelIdentifier: ModelIdentifier;
+  cogniteClient: CogniteClient;
 }> {
-  const tenant = urlParams.get('env') as keyof typeof cdfEnvironments.environments;
-
-  const tenantInfo = cdfEnvironments.environments[tenant ?? 'cog-3d'];
-
-  const project = urlParams.get('project') ?? '3d-test';
-  const cluster = urlParams.get('cluster') ?? 'greenfield';
-
-  const client = await createApplicationSDK('reveal.example.simple', {
-    project,
-    cluster,
-    clientId: tenantInfo.clientId,
-    tenantId: tenantInfo.tenantId
-  });
+  const cogniteClient = await getApplicationSDK(urlParams);
 
   const modelId = parseInt(urlParams.get('modelId')!);
   const revisionId = parseInt(urlParams.get('revisionId')!);
 
   const modelIdentifier = new CdfModelIdentifier(modelId, revisionId);
-  const modelMetadataProvider = new CdfModelMetadataProvider(client);
-  const modelDataProvider = new CdfModelDataProvider(client);
-  return { modelMetadataProvider, modelDataProvider, modelIdentifier };
+  const modelMetadataProvider = new CdfModelMetadataProvider(cogniteClient);
+  const modelDataProvider = new CdfModelDataProvider(cogniteClient);
+  return { modelMetadataProvider, modelDataProvider, modelIdentifier, cogniteClient };
 }
