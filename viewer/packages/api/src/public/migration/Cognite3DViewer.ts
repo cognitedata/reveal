@@ -49,7 +49,7 @@ import { ViewerState, ViewStateHelper } from '../../utilities/ViewStateHelper';
 import { RevealManagerHelper } from '../../storage/RevealManagerHelper';
 
 import { DefaultCameraManager, CameraManager, CameraChangeDelegate } from '@reveal/camera-manager';
-import { CdfModelIdentifier, File3dFormat } from '@reveal/data-providers';
+import { Cdf360ImageEventProvider, CdfModelIdentifier, File3dFormat } from '@reveal/data-providers';
 import { DataSource, CdfDataSource, LocalDataSource } from '@reveal/data-source';
 import { IntersectInput, SupportedModelTypes, CogniteModelBase, LoadingState } from '@reveal/model-base';
 
@@ -60,6 +60,7 @@ import {
   determineResolutionCap,
   determineSsaoRenderParameters
 } from './renderOptionsHelpers';
+import { Image360Entity, Image360EntityFactory } from '@reveal/360-images';
 
 type Cognite3DViewerEvents = 'click' | 'hover' | 'cameraChange' | 'sceneRendered' | 'disposed';
 
@@ -75,6 +76,7 @@ type Cognite3DViewerEvents = 'click' | 'hover' | 'cameraChange' | 'sceneRendered
  */
 export class Cognite3DViewer {
   private readonly _domElementResizeObserver: ResizeObserver;
+  private readonly _image360EntityFactory: Image360EntityFactory<{ [key: string]: string }> | undefined;
   private get canvas(): HTMLCanvasElement {
     return this.renderer.domElement;
   }
@@ -254,6 +256,8 @@ export class Cognite3DViewer {
       // CDF - default mode
       this._dataSource = new CdfDataSource(options.sdk);
       this._cdfSdkClient = options.sdk;
+      const image360DataProvider = new Cdf360ImageEventProvider(this._cdfSdkClient);
+      this._image360EntityFactory = new Image360EntityFactory(image360DataProvider, this._sceneHandler);
       this._revealManagerHelper = RevealManagerHelper.createCdfHelper(
         this._renderer,
         this._sceneHandler,
@@ -633,6 +637,32 @@ export class Cognite3DViewer {
     this._sceneHandler.addPointCloudModel(pointCloudNode, pointCloudNode.potreeNode.modelIdentifier);
 
     return model;
+  }
+
+  /**
+   * Adds a set of 360 images to the scene from the /events API in Cognite Data Fusion.
+   * @param datasource The CDF data source which holds the references to the 360 image sets.
+   * @param eventFilter The metadata filter to apply when querying events that contains the 360 images.
+   * @param setTransform An optional addition transform which will be applied to all the 360 images in this set.
+   * @example
+   * ```js
+   * const eventFilter = { site_id: "12345" };
+   * await viewer.add360ImageSet(eventFilter);
+   * ```
+   */
+  add360ImageSet(
+    datasource: 'events',
+    eventFilter: { [key: string]: string },
+    setTransform?: THREE.Matrix4
+  ): Promise<Image360Entity[]> {
+    if (datasource !== 'events') {
+      throw new Error(`${datasource} is an unknown datasource from 360 images`);
+    }
+
+    if (this._cdfSdkClient === undefined || this._image360EntityFactory === undefined) {
+      throw new Error(`Adding 360 image sets is only supported when connecting to Cognite Data Fusion`);
+    }
+    return this._image360EntityFactory.create(eventFilter, setTransform);
   }
 
   /**
