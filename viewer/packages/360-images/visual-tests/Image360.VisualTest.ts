@@ -23,7 +23,10 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
       const size = renderer.getDrawingBufferSize(new THREE.Vector2());
 
       renderer.domElement.addEventListener('mousemove', event => {
-        image360Facade.intersect({ x: (event.x / size.x) * 2 - 1, y: ((event.y / size.y) * 2 - 1) * -1 }, camera);
+        image360Facade.facade.intersect(
+          { x: (event.x / size.x) * 2 - 1, y: ((event.y / size.y) * 2 - 1) * -1 },
+          camera
+        );
         this.render();
       });
 
@@ -49,8 +52,8 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
       if (entity !== undefined) {
         entity.activate360Image();
         entity.icon.visible = false;
-        // const transform = entity.transform.toArray();
-        // cameraControls.target.copy(new THREE.Vector3(transform[12], transform[13], transform[14]));
+        const transform = entity.transform.toArray();
+        cameraControls.target.copy(new THREE.Vector3(transform[12], transform[13], transform[14]));
       }
       this.render();
     });
@@ -75,20 +78,25 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
     return { facade: image360Facade, entities };
   }
 
-  private async setupLocal(sceneHandler: SceneHandler): Promise<Image360Facade<THREE.Vector3>> {
+  private async setupLocal(sceneHandler: SceneHandler): Promise<{
+    facade: Image360Facade<any>;
+    entities: Image360Entity[];
+  }> {
     const image360Factory = new Image360EntityFactory(this.getMockImage360Provider().object(), sceneHandler);
     const image360Facade = new Image360Facade(image360Factory);
 
-    const entities = await Promise.all([
-      image360Facade.create(new THREE.Vector3(5, 3, -10)),
-      image360Facade.create(new THREE.Vector3(10, 3, -5)),
-      image360Facade.create(new THREE.Vector3(10, 3, -10)),
-      image360Facade.create(new THREE.Vector3(5, 3, -5))
-    ]);
+    const entities = (
+      await Promise.all([
+        image360Facade.create(new THREE.Vector3(5, 3, -10)),
+        image360Facade.create(new THREE.Vector3(10, 3, -5)),
+        image360Facade.create(new THREE.Vector3(10, 3, -10)),
+        image360Facade.create(new THREE.Vector3(5, 3, -5))
+      ])
+    ).flatMap(p => p);
 
-    entities[0][0].icon.visible = false;
+    entities[0].icon.visible = false;
 
-    return image360Facade;
+    return { facade: image360Facade, entities };
   }
 
   private getMockImage360Provider() {
