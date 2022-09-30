@@ -25,8 +25,8 @@ export const AuthConsumer = AuthProvider.Consumer;
 export const useAuthenticatedAuthContext = () => {
   const { client, authState } = useAuthContext();
   if (!client) throw new Error('Cognite Client not initialized');
-  if (!authState) throw new Error('Not Authenticated');
-  return { client, authState };
+  if (!authState || !authState.token) throw new Error('Not Authenticated');
+  return { client, authState, token: authState.token, project: client.project };
 };
 
 interface AuthContainerProps {

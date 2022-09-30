@@ -1,3 +1,7 @@
+## 6.3.0 September 30 2022
+
+- add separated `token` and `project` to the useAuthenticatedAuthContext hook output to avoid more object destructuring
+
 ## 6.2.0 September 29 2022
 
 - add useAuthenticatedAuthContext hook
