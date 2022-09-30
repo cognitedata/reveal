@@ -1,3 +1,6 @@
+import { BufferGeometry, Camera, Material, Scene, WebGLRenderer } from 'three';
+import { PointCloudMaterial } from '../rendering';
+import { IPointCloudTreeNode } from '../tree/IPointCloudTreeNode';
 import { IPointCloudTreeNodeBase } from '../tree/IPointCloudTreeNodeBase';
 
 export function getIndexFromName(name: string): number {
@@ -33,4 +36,75 @@ export function handleEmptyBuffer(buffer: ArrayBuffer): ArrayBuffer {
     throw Error('Empty buffer');
   }
   return buffer;
+}
+
+export function createVisibilityTextureData(nodes: IPointCloudTreeNodeBase[]): Uint8Array {
+  nodes.sort(byLevelAndIndex);
+
+  const data = new Uint8Array(nodes.length * 4);
+  const offsetsToChild = new Array(nodes.length).fill(Infinity);
+
+  const visibleNodeTextureOffsets = new Map<string, number>();
+
+  for (let i = 0; i < nodes.length; i++) {
+    const node = nodes[i];
+  
+    visibleNodeTextureOffsets.set(node.name, i);
+
+    if (i > 0) {
+      const parentName = node.name.slice(0, -1);
+      const parentOffset = visibleNodeTextureOffsets.get(parentName)!;
+      const parentOffsetToChild = i - parentOffset;
+
+      offsetsToChild[parentOffset] = Math.min(offsetsToChild[parentOffset], parentOffsetToChild);
+
+      const offset = parentOffset * 4;
+      data[offset] = data[offset] | (1 << node.index);
+      data[offset + 1] = offsetsToChild[parentOffset] >> 8;
+      data[offset + 2] = offsetsToChild[parentOffset] % 256;
+    }
+
+    data[i * 4 + 3] = node.name.length;
+  }
+
+  return data;
+}
+
+export function makeOnBeforeRender(
+  node: IPointCloudTreeNode,
+  pcIndex: number
+): (
+  renderer: WebGLRenderer,
+  scene: Scene,
+  camera: Camera,
+  bufferGeometry: BufferGeometry,
+  material: Material
+) => void {
+  return (
+    _renderer: WebGLRenderer,
+    _scene: Scene,
+    _camera: Camera,
+    _geometry: BufferGeometry,
+    material: Material
+  ) => {
+    const pointCloudMaterial = material as PointCloudMaterial;
+    const materialUniforms = pointCloudMaterial.uniforms;
+
+    materialUniforms.level.value = node.level;
+    materialUniforms.isLeafNode.value = node.isLeafNode;
+
+    const vnStart = pointCloudMaterial.visibleNodeTextureOffsets.get(node.name);
+    if (vnStart !== undefined) {
+      materialUniforms.vnStart.value = vnStart;
+    }
+
+    materialUniforms.pcIndex.value = pcIndex;
+
+    // Note: when changing uniforms in onBeforeRender, the flag uniformsNeedUpdate has to be
+    // set to true to instruct ThreeJS to upload them. See also
+    // https://github.com/mrdoob/three.js/issues/9870#issuecomment-368750182.
+
+    // Remove the cast to any after updating to Three.JS >= r113
+    (material as RawShaderMaterial).uniformsNeedUpdate = true;
+  };
 }

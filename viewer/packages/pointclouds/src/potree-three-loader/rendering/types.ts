@@ -11,3 +11,9 @@ export interface IUniform<T> extends IThreeUniform {
   type: string;
   value: T;
 }
+
+export type OctreeMaterialParams = {
+  scale: THREE.Vector3;
+  spacing: number;
+  boundingBox: THREE.Box3;
+}

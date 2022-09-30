@@ -90,7 +90,7 @@ export class PointCloudOctree extends PointCloudTree {
     points.name = geometryNode.name;
     points.position.copy(geometryNode.boundingBox.min);
     points.frustumCulled = false;
-    points.onBeforeRender = PointCloudMaterial.makeOnBeforeRender(this, node);
+    points.onBeforeRender = PointCloudMaterial.makeOnBeforeRender(node, this.visibleNodes.indexOf(node));
     points.layers.set(RenderLayer.PointCloud);
 
     if (parent) {

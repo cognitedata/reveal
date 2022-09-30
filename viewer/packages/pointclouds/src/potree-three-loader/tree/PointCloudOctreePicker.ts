@@ -1,8 +1,7 @@
-import { Camera, Ray, Vector2, Vector3, WebGLRenderer } from 'three';
+import { Camera, Ray, Vector2, Vector3, WebGLRenderer, MathUtils } from 'three';
 import { DEFAULT_PICK_WINDOW_SIZE } from '../rendering/constants';
 import { PointCloudOctree } from './PointCloudOctree';
 import { PickPoint } from '../types/types';
-import { clamp } from '../utils/math';
 import { IPickState, PickParams, PointCloudOctreePickerHelper } from './PointCloudOctreePickerHelper';
 
 export { PickParams };
@@ -48,8 +47,8 @@ export class PointCloudOctreePicker {
 
       const pickWndSize = params.pickWindowSize ?? DEFAULT_PICK_WINDOW_SIZE;
       const halfPickWndSize = (pickWndSize - 1) / 2;
-      const x = Math.floor(clamp(pixelPosition.x - halfPickWndSize, 0, renderSize.x));
-      const y = Math.floor(clamp(pixelPosition.y - halfPickWndSize, 0, renderSize.y));
+      const x = Math.floor(MathUtils.clamp(pixelPosition.x - halfPickWndSize, 0, renderSize.x));
+      const y = Math.floor(MathUtils.clamp(pixelPosition.y - halfPickWndSize, 0, renderSize.y));
 
       this._pickerHelper.prepareRender(x, y, pickWndSize, pickMaterial, pickState);
       const renderedNodes = this._pickerHelper.render(camera, pickMaterial, octrees, ray, pickState, params);

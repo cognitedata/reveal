@@ -19,7 +19,7 @@ import {
 import { FEATURES } from './rendering/features';
 import { EptLoader } from './loading/EptLoader';
 import { EptBinaryLoader } from './loading/EptBinaryLoader';
-import { ClipMode } from './rendering';
+import { ClipMode, OctreeMaterialParams } from './rendering';
 import { PointCloudOctree } from './tree/PointCloudOctree';
 import { isGeometryNode, isTreeNode, isOptionalTreeNode } from './types/type-predicates';
 import { IPotree } from './types/IPotree';
@@ -32,6 +32,7 @@ import { Box3Helper } from './utils/box3-helper';
 import { LRU } from './utils/lru';
 import { ModelDataProvider } from '@reveal/modeldata-api';
 import throttle from 'lodash/throttle';
+import { createVisibilityTextureData } from './utils/utils';
 
 export class QueueItem {
   constructor(
@@ -106,7 +107,14 @@ export class Potree implements IPotree {
         continue;
       }
 
-      pointCloud.material.updateMaterial(pointCloud, pointCloud.visibleNodes, camera, renderer);
+      const visibilityTextureData = createVisibilityTextureData(pointCloud.visibleNodes);
+      const octreeMaterialParams: OctreeMaterialParams = {
+        scale: pointCloud.scale, 
+        boundingBox: pointCloud.pcoGeometry.boundingBox, 
+        spacing: pointCloud.pcoGeometry.spacing
+      };
+
+      pointCloud.material.updateMaterial(octreeMaterialParams, visibilityTextureData, camera, renderer);
       pointCloud.updateVisibleBounds();
       pointCloud.updateBoundingBoxes();
     }
