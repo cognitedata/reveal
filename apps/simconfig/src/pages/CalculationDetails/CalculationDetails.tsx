@@ -63,6 +63,15 @@ export function CalculationDetails() {
       <h2>
         <strong>{modelCalculation.configuration.calculationName}</strong>
         <span>{modelFile.metadata.modelName}</span>
+        <Switch
+          checked={isJsonModeEnabled}
+          name="json-preview"
+          onChange={() => {
+            setJsonModeEnabled(!isJsonModeEnabled);
+          }}
+        >
+          <span className="editor-text">JSON Preview</span>
+        </Switch>
         <Link to="configuration">
           <Button icon="Settings">Edit configuration</Button>
         </Link>
@@ -70,15 +79,6 @@ export function CalculationDetails() {
           <Button icon="ArrowLeft">Return to model library</Button>
         </Link>
       </h2>
-      <Switch
-        checked={isJsonModeEnabled}
-        name="json-preview"
-        onChange={() => {
-          setJsonModeEnabled(!isJsonModeEnabled);
-        }}
-      >
-        JSON Preview
-      </Switch>
       {!isJsonModeEnabled ? (
         <>
           <ConfigurationMetadata>
@@ -132,6 +132,9 @@ const CalculationDetailsContainer = styled.main`
     span:last-of-type {
       flex: 1 1 auto;
     }
+  }
+  span.editor-text {
+    font-size: 1rem;
   }
 `;
 

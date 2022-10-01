@@ -254,6 +254,7 @@ export function TimeSeriesField({
   aggregateTypeDisabled,
   window = 1440,
   endOffset = 0,
+  width = 400,
 }: {
   externalIdField: string;
   aggregateTypeField: string;
@@ -261,6 +262,7 @@ export function TimeSeriesField({
   aggregateTypeDisabled?: boolean;
   window?: number;
   endOffset?: number;
+  width?: number;
 }) {
   const { errors, values, setFieldValue } =
     useFormikContext<Record<string, unknown>>();
@@ -291,7 +293,7 @@ export function TimeSeriesField({
         title="Time series"
         type="text"
         value={externalIdValue}
-        width={400}
+        width={width}
         window={window}
         onChange={(option: TimeseriesOption) => {
           setFieldValue(externalIdField, option.value);

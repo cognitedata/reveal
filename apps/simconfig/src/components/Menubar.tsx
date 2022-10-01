@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useMatchRoute, useNavigate } from 'react-location';
 import { useSelector } from 'react-redux';
 
-import { Avatar, Button, Menu, TopBar } from '@cognite/cogs.js';
+import { Avatar, Icon, Menu, TopBar } from '@cognite/cogs.js';
 import { useAuthContext } from '@cognite/react-container';
 
 import { SimulatorStatus } from 'components/simulator/SimulatorStatus';
@@ -96,9 +96,8 @@ export function MenuBar() {
                   {
                     key: 'settings',
                     component: (
-                      <Button
-                        icon="Tag"
-                        type="ghost"
+                      <Icon
+                        type="Tag"
                         onClick={() => {
                           setOpen(true);
                         }}

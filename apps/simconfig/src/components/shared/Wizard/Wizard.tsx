@@ -49,8 +49,8 @@ export function Wizard({
 
   const renderTabBar = ({
     activeKey,
-    onTabClick,
     panes,
+    onTabClick,
   }: TabsProps & {
     panes: WizardStepElement[];
   }) => (
@@ -79,6 +79,7 @@ export function Wizard({
                     return;
                   }
                   onTabClick?.((key ?? 'unknown').toString(), event);
+                  setActiveKey((key ?? 'unknown').toString());
                 }}
               />
             );
@@ -142,6 +143,8 @@ export function Wizard({
           {previousKey !== undefined ? (
             <Button
               disabled={isSubmitting}
+              icon="ChevronLeft"
+              iconPlacement="left"
               type="ghost"
               onClick={() => {
                 setStep(stepKeys[previousKey]);
@@ -152,6 +155,8 @@ export function Wizard({
           ) : null}
           {nextKey !== undefined ? (
             <Button
+              icon="ChevronRight"
+              iconPlacement="right"
               type="primary"
               onClick={() => {
                 setStep(stepKeys[nextKey]);
@@ -162,11 +167,12 @@ export function Wizard({
           ) : (
             <Button
               disabled={!isValid}
+              icon="Checkmark"
               loading={isSubmitting}
               type="primary"
               onClick={onSubmit}
             >
-              Finish
+              Finish and save
             </Button>
           )}
         </div>
@@ -181,6 +187,7 @@ const WizardContainer = styled.div`
   margin: 12px 0;
   display: flex;
   flex-flow: column nowrap;
+  width: 98%;
 
   .rc-tabs {
     overflow: visible;
@@ -196,6 +203,7 @@ const WizardContainer = styled.div`
 
 const WizardProgressContainer = styled.div`
   background: rgba(255, 255, 255, 0.9);
+  width: 100%;
   backdrop-filter: blur(5px);
   transform: translate(0, 0); // resets position:fixed (x,y) origin
   width: calc(100% - 3rem);

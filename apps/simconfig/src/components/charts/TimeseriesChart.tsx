@@ -22,12 +22,13 @@ interface TimeseriesChartProps {
   height?: number;
   margin?: { top: number; right: number; bottom: number; left: number };
   yAxisLabel?: string;
+  tooltipEnabled?: boolean;
 }
 
 export function TimeseriesChart({
   data = [],
   aggregateType = 'average',
-
+  tooltipEnabled = true,
   fullSize = false,
   width = 100,
   height = 60,
@@ -164,8 +165,7 @@ export function TimeseriesChart({
       >
         {formatNumber('.1f')(latestDatapoint[aggregateType] ?? 0)}
       </Text>
-
-      <Aggregate.Tooltip />
+      {tooltipEnabled && <Aggregate.Tooltip />}
     </Chart>
   );
 }

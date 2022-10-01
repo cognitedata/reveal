@@ -100,6 +100,8 @@ function ExpansionMenu({
   const project = useSelector(selectProject);
   const externalId = run.metadata.calcConfig;
   const eventId = run.id?.toString();
+  const calculationType = run.metadata.calcTypeUserDefined ?? '';
+
   const { data: chartLinks, isFetching: isFetchingChartLinks } =
     useGetCalculationQuery({
       project,
@@ -152,7 +154,8 @@ function ExpansionMenu({
           run.metadata.simulator
         )}/${encodeURIComponent(
           run.metadata.modelName
-        )}/calculations/${encodeURIComponent(run.metadata.calcType)}`}
+        )}/calculations/${encodeURIComponent(run.metadata.calcType)}
+        /${run.metadata.calcType === 'UserDefined' ? calculationType : ''}`}
       >
         <Menu.Item>
           <Icon type="Settings" /> View configuration

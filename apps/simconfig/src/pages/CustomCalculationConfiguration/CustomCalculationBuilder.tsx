@@ -1,16 +1,13 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-location';
 
-import { Form, Formik } from 'formik';
-import cloneDeep from 'lodash/cloneDeep';
+import { Field, Form, Formik } from 'formik';
+import styled from 'styled-components/macro';
 
-import { Button, Collapse, Icon, Switch } from '@cognite/cogs.js';
+import { Switch, toast } from '@cognite/cogs.js';
 import { useAuthContext } from '@cognite/react-container';
-import type {
-  CalculationProcedure,
-  CalculationStep,
-  CalculationTemplate,
-  UserDefined,
-} from '@cognite/simconfig-api-sdk/rtk';
+import type { UserDefined } from '@cognite/simconfig-api-sdk/rtk';
+import { useUpsertCalculationMutation } from '@cognite/simconfig-api-sdk/rtk';
 
 import { Editor } from 'components/shared/Editor';
 import { Wizard } from 'components/shared/Wizard';
@@ -18,165 +15,130 @@ import { DataSamplingStep } from 'pages/CalculationConfiguration/steps/DataSampl
 import { ScheduleStep } from 'pages/CalculationConfiguration/steps/ScheduleStep';
 import { SummaryStep } from 'pages/CalculationConfiguration/steps/SummaryStep';
 
+import { CustomCalculationBuilderContainer } from './elements';
+import { Routine } from './Routine';
 import {
-  CollapseHeaderContainer,
-  CustomCalculationBuilderContainer,
-} from './elements';
-
-interface ProcedureCollapseHeaderProps {
-  procedure: CalculationProcedure;
-  handleDeleteGroup: (procedure: CalculationProcedure) => void;
-}
-
-function ProcedureCollapseHeader({
-  procedure,
-  handleDeleteGroup,
-}: ProcedureCollapseHeaderProps) {
-  return (
-    <CollapseHeaderContainer>
-      <div className="left-options">
-        <span>{procedure.order}</span>
-        <span>{procedure.description}</span>
-        <Icon type="Edit" />
-      </div>
-      <div className="right-options">
-        <Icon className="drag-element" type="DragHandleVertical" />
-        <Icon
-          type="Delete"
-          onClick={() => {
-            handleDeleteGroup(procedure);
-          }}
-        />
-      </div>
-    </CollapseHeaderContainer>
-  );
-}
-
-function StepCollapseHeader({ step }: { step: CalculationStep }) {
-  return (
-    <CollapseHeaderContainer>
-      <div className="left-options">
-        <span>
-          {step.type} ({step.arguments.address}, {step.arguments.value})
-        </span>
-      </div>
-      <div className="right-options">
-        <Icon className="drag-element" type="DragHandleVertical" />
-        <Icon type="Delete" />
-      </div>
-    </CollapseHeaderContainer>
-  );
-}
-
-function isJSON(str: string) {
-  try {
-    return JSON.parse(str) && !!str;
-  } catch (e) {
-    return false;
-  }
-}
+  getStepValidationErrors,
+  userDefinedCalculationSchema,
+} from './Routine/validation';
 
 interface CustomCalculationBuilderProps {
   calculation: UserDefined;
-  setCalculation: (calculation: CalculationTemplate) => void;
+  setCalculation: (calculation: UserDefined) => void;
+  project: string;
+  dataSetId: number;
+  modelName: string;
+  simulator: string;
 }
 
 export function CustomCalculationBuilder({
   calculation,
   setCalculation,
+  project,
+  dataSetId,
+  modelName,
+  simulator,
 }: CustomCalculationBuilderProps) {
   const [isJsonModeEnabled, setJsonModeEnabled] = useState<boolean>(false);
+  const navigate = useNavigate();
   const { authState } = useAuthContext();
+  const [upsertCalculation] = useUpsertCalculationMutation();
+
+  function isValidCalculation(str: string): UserDefined | boolean {
+    try {
+      return JSON.parse(str) as UserDefined;
+    } catch (e) {
+      return false;
+    }
+  }
 
   const handleCalculationEditorChange = (
-    calculationConfiguration: string | undefined
+    calculationConfiguration: string | undefined,
+    setValues: (values: UserDefined) => void
   ) => {
-    if (calculationConfiguration && isJSON(calculationConfiguration)) {
-      const configuration: CalculationTemplate = JSON.parse(
-        calculationConfiguration
-      ) as CalculationTemplate;
-      setCalculation({ ...configuration, userEmail: authState?.email ?? '' });
-    }
-  };
-
-  const handleNewGroup = () => {
-    if (calculation.routine) {
-      const groupsLength = calculation.routine.length;
-      const nextGroupOrderNumber =
-        groupsLength > 0 ? calculation.routine[groupsLength - 1].order + 1 : 0;
-      const newGroup: CalculationProcedure = {
-        order: nextGroupOrderNumber,
-        description: 'New group sample',
-        steps: [] as CalculationStep[],
+    if (
+      calculationConfiguration &&
+      isValidCalculation(calculationConfiguration)
+    ) {
+      const update = {
+        ...(JSON.parse(calculationConfiguration) as UserDefined),
+        userEmail: authState?.email ?? '',
       };
-      setCalculation({
-        ...calculation,
-        routine: [...calculation.routine, newGroup],
-      });
+      setCalculation(update);
+      setValues(update);
     }
   };
-
-  const handleDeleteGroup = (procedure: CalculationProcedure) => {
-    if (calculation.routine) {
-      const routine = calculation.routine
-        .filter((routine) => routine.order !== procedure.order)
-        .map((routine, index) => ({ ...routine, order: index + 1 }));
-      setCalculation({ ...calculation, routine });
-    }
-  };
-
-  const handleNewStep = (procedure: CalculationProcedure) => {
-    const stepsLength = procedure.steps.length;
-    const stepNumber =
-      stepsLength > 0 ? procedure.steps[stepsLength - 1].step + 1 : 0;
-    const newStep: CalculationStep = {
-      step: stepNumber,
-      type: 'DoSet',
-      arguments: {
-        address: '',
-      },
-    };
-    const routine = cloneDeep(calculation.routine ?? []);
-    routine[procedure.order - 1] = {
-      ...procedure,
-      steps: [...procedure.steps, newStep],
-    };
-    setCalculation({ ...calculation, routine });
-  };
-
-  if (!Object.keys(calculation).length) {
-    return null;
-  }
 
   return (
     <CustomCalculationBuilderContainer>
       <Formik
         initialValues={calculation}
         validateOnChange={false}
+        validationSchema={userDefinedCalculationSchema}
         validateOnBlur
         validateOnMount
-        onSubmit={() => {
-          console.log('ok');
+        onSubmit={async (_values) => {
+          await upsertCalculation({
+            project,
+            dataSetId,
+            calculationTemplateModel: calculation,
+          })
+            .unwrap()
+            .then((_payload) => {
+              toast.success('The calculation was successfully configured.', {
+                autoClose: 5000,
+              });
+
+              navigate({
+                to: `/model-library/models/${simulator}/${modelName}/calculations`,
+              });
+            })
+            .catch((error) =>
+              toast.error(
+                `An error occured while storing the calculation configuration. Error: ${error}`
+              )
+            );
         }}
       >
-        {({ submitForm, isSubmitting, isValid, values, setValues }) => (
+        {({
+          isSubmitting,
+          isValid,
+          values,
+          setValues,
+          submitForm,
+          setFieldValue,
+        }) => (
           <Form>
+            <CustomCalculationConfigurationHeader>
+              <Field
+                name="calculationName"
+                size={values.calculationName.length - 5}
+                value={values.calculationName}
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                  const { name, value } = event.target;
+                  setFieldValue(name, value);
+                  setCalculation({ ...calculation, calculationName: value });
+                }}
+              />
+              Configuration for {modelName}
+            </CustomCalculationConfigurationHeader>
             <Wizard
               isSubmitting={isSubmitting}
               isValid={isValid}
               animated
-              onChange={() => {
-                setCalculation(values);
-                setValues(values);
-                return true;
-              }}
               onChangeStep={() => {
                 setCalculation(values);
                 setValues(values);
                 return true;
               }}
+              onSubmit={submitForm}
             >
-              <Wizard.Step icon="Calendar" key="schedule" title="Schedule">
+              <Wizard.Step
+                icon="Calendar"
+                key="schedule"
+                title="Schedule"
+                validationErrors={getStepValidationErrors(values, 'schedule')}
+              >
                 <ScheduleStep />
               </Wizard.Step>
 
@@ -184,8 +146,21 @@ export function CustomCalculationBuilder({
                 icon="DataSource"
                 key="data-sampling"
                 title="Data sampling"
+                validationErrors={getStepValidationErrors(
+                  values,
+                  'dataSampling'
+                )}
               >
                 <DataSamplingStep />
+              </Wizard.Step>
+
+              <Wizard.Step
+                icon="Function"
+                key="routine"
+                title="Routine"
+                validationErrors={getStepValidationErrors(values, 'routine')}
+              >
+                <Routine setCalculation={setCalculation} />
               </Wizard.Step>
 
               <Wizard.Step icon="Checkmark" key="summary" title="Summary">
@@ -200,10 +175,11 @@ export function CustomCalculationBuilder({
                 </Switch>
                 {isJsonModeEnabled ? (
                   <Editor
-                    height="45vh"
-                    mode="json"
+                    height="55vh"
                     value={JSON.stringify(calculation, null, 2)}
-                    onChange={handleCalculationEditorChange}
+                    onChange={(value) => {
+                      handleCalculationEditorChange(value, setValues);
+                    }}
                   />
                 ) : (
                   <SummaryStep />
@@ -216,3 +192,28 @@ export function CustomCalculationBuilder({
     </CustomCalculationBuilderContainer>
   );
 }
+
+const CustomCalculationConfigurationHeader = styled.div`
+  font-size: 1.5rem;
+  z-index: 3;
+  position: fixed;
+  width: calc(100% - 3rem);
+  backdrop-filter: blur(5px);
+  padding: 2rem 0;
+  font-size: 1.5em;
+  background: rgba(255, 255, 255, 0.9);
+  top: 3.5rem;
+  input {
+    border: none;
+    background-color: inherit;
+    font-weight: 700;
+    min-width: 200px;
+    cursor: text;
+    &:focus,
+    &:hover {
+      outline: none;
+      background-color: rgba(217, 217, 217, 0.45);
+      border-bottom: 0.05px solid rgba(217, 217, 217, 1);
+    }
+  }
+`;

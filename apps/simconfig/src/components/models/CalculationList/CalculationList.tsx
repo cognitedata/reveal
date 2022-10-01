@@ -503,6 +503,19 @@ export function CalculationList({
     </GraphicContainer>
   ) : (
     <NonConfiguredCalculationList>
+      <>
+        <Link to="UserDefined/new-calculation/configuration">
+          <Button
+            className="configure-calculation"
+            icon="Settings"
+            size="small"
+            type="primary"
+          >
+            Configure
+          </Button>
+        </Link>
+        <span className="name">Create custom calculation</span>
+      </>
       {nonConfiguredCalculations
         .sort((a: CalculationType, b: CalculationType) => a.localeCompare(b))
         .map((calculationType) => (

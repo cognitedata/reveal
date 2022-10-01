@@ -174,7 +174,7 @@ async function loadTimeseries({
   return undefined;
 }
 
-interface TimeseriesState {
+export interface TimeseriesState {
   isLoading: boolean;
   timeseries: Record<string, TimeseriesStateEntry | undefined>;
 }

@@ -101,7 +101,7 @@ export function ModelVersionList({
                 </span>
               </div>
             }
-            key={modelFile.id}
+            key={`${modelFile.id}-model-version`}
           >
             <ModelVersionDetails modelFile={modelFile} />
           </Collapse.Panel>

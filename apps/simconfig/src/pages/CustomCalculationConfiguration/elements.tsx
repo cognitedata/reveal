@@ -2,6 +2,7 @@ import styled from 'styled-components/macro';
 
 export const CustomCalculationBuilderContainer = styled.div`
   color: rgba(0, 0, 0, 0.9);
+  margin-left: 20px;
 
   .rc-tabs-content-holder {
     margin-top: 2em;
@@ -65,3 +66,18 @@ export const CollapseHeaderContainer = styled.div`
     }
   }
 `;
+
+export const SelectBox = styled.div`
+  display: flex;
+  width: 620px;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  grid-gap: 0 12px;
+`;
+
+export const StepsContainer = styled.div`
+  padding: 0 1em;
+  margin-right: 2em;
+`;
+
+export const RoutineContainer = styled.div``;

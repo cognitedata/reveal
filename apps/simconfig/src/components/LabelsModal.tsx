@@ -43,6 +43,7 @@ export function LabelsModal({ isOpen, setOpen }: LabelsModalProps) {
 
   return (
     <Modal
+      appElement={document.getElementById('root') ?? undefined}
       closeIcon={false}
       footer={null}
       style={{

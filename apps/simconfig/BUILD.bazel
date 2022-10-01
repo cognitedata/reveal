@@ -78,6 +78,7 @@ DEPENDENCIES = [
     "@npm//@cognite/cogs.js",
     "@npm//@cognite/sdk",
     "@npm//@cognite/simconfig-api-sdk",
+    "@npm//framer-motion",
     "@npm//@reduxjs/toolkit",
     "@npm//@sentry/browser",
     "@npm//@visx/axis",
