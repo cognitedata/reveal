@@ -1250,7 +1250,7 @@ function createCanvasWrapper(): HTMLElement {
 }
 
 function createRenderer(): THREE.WebGLRenderer {
-  const renderer = new THREE.WebGLRenderer();
+  const renderer = new THREE.WebGLRenderer({ powerPreference: 'high-performance' });
   renderer.setPixelRatio(window.devicePixelRatio);
   return renderer;
 }
