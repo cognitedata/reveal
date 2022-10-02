@@ -62,7 +62,11 @@ export interface Cognite3DViewerOptions {
    * Default implementation is {@link DefaultCameraManager}.
    */
   cameraManager?: CameraManager;
-  /** Renderer used to visualize model (optional). */
+  /**
+   * Renderer used to visualize model (optional).
+   * Note that when providing a custom renderer, this should be configured with
+   * `'powerPreference': 'high-performance'` for best performance.
+   */
   renderer?: THREE.WebGLRenderer;
 
   /**
