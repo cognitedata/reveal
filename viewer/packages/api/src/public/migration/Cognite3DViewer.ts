@@ -20,7 +20,8 @@ import {
   SceneRenderedDelegate,
   DisposedDelegate,
   determineCurrentDevice,
-  SceneHandler
+  SceneHandler,
+  BeforeSceneRenderedDelegate
 } from '@reveal/utilities';
 
 import { MetricsLogger } from '@reveal/metrics';
@@ -62,7 +63,7 @@ import {
 } from './renderOptionsHelpers';
 import { Image360Entity, Image360EntityFactory } from '@reveal/360-images';
 
-type Cognite3DViewerEvents = 'click' | 'hover' | 'cameraChange' | 'sceneRendered' | 'disposed';
+type Cognite3DViewerEvents = 'click' | 'hover' | 'cameraChange' | 'beforeSceneRendered' | 'sceneRendered' | 'disposed';
 
 /**
  * @example
@@ -125,6 +126,7 @@ export class Cognite3DViewer {
     cameraChange: new EventTrigger<CameraChangeDelegate>(),
     click: new EventTrigger<PointerEventDelegate>(),
     hover: new EventTrigger<PointerEventDelegate>(),
+    beforeSceneRendered: new EventTrigger<BeforeSceneRenderedDelegate>(),
     sceneRendered: new EventTrigger<SceneRenderedDelegate>(),
     disposed: new EventTrigger<DisposedDelegate>()
   };
@@ -397,7 +399,13 @@ export class Cognite3DViewer {
    */
   on(event: 'cameraChange', callback: CameraChangeDelegate): void;
   /**
-   * Event that is triggered immediatly after the scene has been rendered.
+   * Event that is triggered immediately before the scene is rendered.
+   * @param event Metadata about the rendering frame.
+   * @param callback Callback to trigger when event occurs.
+   */
+  on(event: 'beforeSceneRendered', callback: BeforeSceneRenderedDelegate): void;
+  /**
+   * Event that is triggered immediately after the scene has been rendered.
    * @param event Metadata about the rendering frame.
    * @param callback Callback to trigger when the event occurs.
    */
@@ -410,7 +418,12 @@ export class Cognite3DViewer {
    */
   on(
     event: Cognite3DViewerEvents,
-    callback: PointerEventDelegate | CameraChangeDelegate | SceneRenderedDelegate | DisposedDelegate
+    callback:
+      | PointerEventDelegate
+      | CameraChangeDelegate
+      | BeforeSceneRenderedDelegate
+      | SceneRenderedDelegate
+      | DisposedDelegate
   ): void {
     switch (event) {
       case 'click':
@@ -423,6 +436,10 @@ export class Cognite3DViewer {
 
       case 'cameraChange':
         this._events.cameraChange.subscribe(callback as CameraChangeDelegate);
+        break;
+
+      case 'beforeSceneRendered':
+        this._events.beforeSceneRendered.subscribe(callback as BeforeSceneRenderedDelegate);
         break;
 
       case 'sceneRendered':
@@ -453,6 +470,10 @@ export class Cognite3DViewer {
    */
   off(event: 'cameraChange', callback: CameraChangeDelegate): void;
   /**
+   * Unsubscribe the 'beforeSceneRendered'-event previously subscribed with {@link on}.
+   */
+  off(event: 'beforeSceneRendered', callback: BeforeSceneRenderedDelegate): void;
+  /**
    * @example
    * ```js
    * viewer.off('sceneRendered', updateStats);
@@ -473,26 +494,38 @@ export class Cognite3DViewer {
    * @param event
    * @param callback
    */
-  off(event: Cognite3DViewerEvents, callback: any): void {
+  off(
+    event: Cognite3DViewerEvents,
+    callback:
+      | PointerEventDelegate
+      | CameraChangeDelegate
+      | BeforeSceneRenderedDelegate
+      | SceneRenderedDelegate
+      | DisposedDelegate
+  ): void {
     switch (event) {
       case 'click':
-        this._events.click.unsubscribe(callback);
+        this._events.click.unsubscribe(callback as PointerEventDelegate);
         break;
 
       case 'hover':
-        this._events.hover.unsubscribe(callback);
+        this._events.hover.unsubscribe(callback as PointerEventDelegate);
         break;
 
       case 'cameraChange':
-        this._events.cameraChange.unsubscribe(callback);
+        this._events.cameraChange.unsubscribe(callback as CameraChangeDelegate);
+        break;
+
+      case 'beforeSceneRendered':
+        this._events.beforeSceneRendered.unsubscribe(callback as BeforeSceneRenderedDelegate);
         break;
 
       case 'sceneRendered':
-        this._events.sceneRendered.unsubscribe(callback);
+        this._events.sceneRendered.unsubscribe(callback as SceneRenderedDelegate);
         break;
 
       case 'disposed':
-        this._events.disposed.unsubscribe(callback);
+        this._events.disposed.unsubscribe(callback as DisposedDelegate);
         break;
 
       default:
@@ -1131,12 +1164,16 @@ export class Cognite3DViewer {
       if (this.revealManager.needsRedraw || this._clippingNeedsUpdate) {
         const frameNumber = this.renderer.info.render.frame;
         const start = Date.now();
-        this.revealManager.render(this.getCamera());
+        const camera = this.getCamera();
+
+        this._events.beforeSceneRendered.fire({ frameNumber, renderer: this.renderer, camera });
+
+        this.revealManager.render(camera);
         this.revealManager.resetRedraw();
         this._clippingNeedsUpdate = false;
         const renderTime = Date.now() - start;
 
-        this._events.sceneRendered.fire({ frameNumber, renderTime, renderer: this.renderer, camera: this.getCamera() });
+        this._events.sceneRendered.fire({ frameNumber, renderTime, renderer: this.renderer, camera });
       }
     }
   }
