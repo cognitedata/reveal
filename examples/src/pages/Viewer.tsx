@@ -37,7 +37,7 @@ import { MeasurementUi } from '../utils/MeasurementUi';
 window.THREE = THREE;
 (window as any).reveal = reveal;
 
-export function Migration() {
+export function Viewer() {
 
   const url = new URL(window.location.href);
   const urlParams = url.searchParams;
