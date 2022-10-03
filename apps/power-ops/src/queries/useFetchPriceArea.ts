@@ -1,42 +1,13 @@
 import axios from 'axios';
-import {
-  PriceArea,
-  BidProcessResult,
-  BidProcessConfiguration,
-} from '@cognite/power-ops-api-types';
+import { PriceArea, BidProcessResult } from '@cognite/power-ops-api-types';
 import { QueryClient, useQuery } from 'react-query';
 import sidecar from 'utils/sidecar';
 import { CogniteClient } from '@cognite/sdk';
 import { BidProcessResultWithData } from 'types';
-import { fetchBidMatricesData } from 'utils/utils';
+import { axiosRequestConfig, fetchBidMatricesData } from 'utils/utils';
 import { useAuthenticatedAuthContext } from '@cognite/react-container';
 
 const { powerOpsApiBaseUrl } = sidecar;
-
-export const fetchProcessConfigurations = async ({
-  client,
-  token,
-  priceAreaExternalId,
-}: {
-  client: CogniteClient;
-  token: string;
-  priceAreaExternalId: string;
-}) => {
-  if (!(client.project && token)) return undefined;
-
-  const { powerOpsApiBaseUrl } = sidecar;
-
-  const { data: processConfigurations }: { data: BidProcessConfiguration[] } =
-    await axios.get(
-      `${powerOpsApiBaseUrl}/${client.project}/price-area/${priceAreaExternalId}/process-configurations`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-  return processConfigurations;
-};
 
 const getMatrixDataFromCache = async (
   matrixExternalId: string,
@@ -136,27 +107,20 @@ export const fetchBidProcessResultWithData = async ({
   return bidProcessResultWithData;
 };
 
-const fetchAllPriceAreas = async (
-  project: string,
-  token: string
-): Promise<PriceArea[]> => {
-  const { data: priceAreas } = await axios.get<PriceArea[]>(
-    `${powerOpsApiBaseUrl}/${project}/price-areas`,
-    { headers: { Authorization: `Bearer ${token}` } }
-  );
-
-  return priceAreas;
-};
+const fetchPriceAreas = (project: string, token: string) =>
+  axios
+    .get<PriceArea[]>(
+      `${powerOpsApiBaseUrl}/${project}/price-areas`,
+      axiosRequestConfig(token)
+    )
+    .then(({ data }) => data);
 
 export const useFetchPriceAreas = () => {
-  const {
-    client: { project },
-    authState: { token },
-  } = useAuthenticatedAuthContext();
+  const { project, token } = useAuthenticatedAuthContext();
   return useQuery({
     queryKey: [project, 'price-areas'],
-    queryFn: () => fetchAllPriceAreas(project, token!),
-    enabled: !!token,
-    staleTime: Infinity, // Price Areas never update during usage of the application, unless requested
+    queryFn: () => fetchPriceAreas(project, token),
+    enabled: Boolean(project && token),
+    staleTime: Infinity,
   });
 };

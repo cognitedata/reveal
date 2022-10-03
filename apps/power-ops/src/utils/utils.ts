@@ -2,7 +2,7 @@ import { CalculatedProduction } from '@cognite/power-ops-api-types';
 import { DoubleDatapoint } from '@cognite/sdk';
 import { MatrixWithData, BidProcessResultWithData } from 'types';
 import sidecar from 'utils/sidecar';
-import axios from 'axios';
+import axios, { AxiosRequestConfig } from 'axios';
 import dayjs from 'dayjs';
 import isToday from 'dayjs/plugin/isToday';
 import isYesterday from 'dayjs/plugin/isYesterday';
@@ -226,3 +226,12 @@ export const calculateDuration = (
   }
   return '';
 };
+
+export const axiosRequestConfig = (
+  token: string,
+  moreConfig: Omit<AxiosRequestConfig, 'headers'> = {},
+  moreHeaders: AxiosRequestConfig['headers'] = {}
+): AxiosRequestConfig => ({
+  headers: { Authorization: `Bearer ${token}`, ...moreHeaders },
+  ...moreConfig,
+});

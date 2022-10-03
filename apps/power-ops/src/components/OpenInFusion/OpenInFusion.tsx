@@ -1,7 +1,7 @@
 import { Button, Tooltip } from '@cognite/cogs.js';
 import { useAuthContext } from '@cognite/react-container';
 import { CogniteEvent } from '@cognite/sdk';
-import { usePowerOpsConfiguration } from 'queries/usePowerOpsConfiguration';
+import { useFetchPowerOpsConfiguration } from 'queries/useFetchPowerOpsConfiguration';
 import { useEffect, useState } from 'react';
 import sidecar from 'utils/sidecar';
 
@@ -13,7 +13,7 @@ export const OpenInFusion = ({
   const { cdfApiBaseUrl } = sidecar;
   const { client } = useAuthContext();
 
-  const { data: configuration } = usePowerOpsConfiguration();
+  const { data: configuration } = useFetchPowerOpsConfiguration();
 
   const [CDFEvent, setCDFEvent] = useState<CogniteEvent | undefined>();
 

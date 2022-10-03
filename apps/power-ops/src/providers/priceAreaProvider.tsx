@@ -1,19 +1,12 @@
 import { PropsWithChildren, useState, createContext, useEffect } from 'react';
-import {
-  useFetchPriceAreas,
-  fetchBidProcessResultWithData,
-  fetchProcessConfigurations,
-} from 'queries/useFetchPriceArea';
+import { fetchBidProcessResultWithData } from 'queries/useFetchPriceArea';
 import { BidProcessResultWithData } from 'types';
-import {
-  PriceArea,
-  BidProcessConfiguration,
-} from '@cognite/power-ops-api-types';
+import { BidProcessConfiguration } from '@cognite/power-ops-api-types';
 import { useQuery, useQueryClient } from 'react-query';
 import { useAuthenticatedAuthContext } from '@cognite/react-container';
+import { useFetchProcessConfigurations } from 'queries/useFetchProcessConfigurations';
 
 export interface PriceAreasContextType {
-  allPriceAreas?: PriceArea[];
   bidProcessResult?: BidProcessResultWithData;
   allProcessConfigurations?: BidProcessConfiguration[];
   bidProcessEventExternalId?: string;
@@ -44,8 +37,6 @@ export const PriceAreaProvider = ({ children }: PropsWithChildren) => {
     }
   };
 
-  const { data: allPriceAreas } = useFetchPriceAreas();
-
   const { data: selectedBidProcessResult, refetch: refetchBidProcessResult } =
     useQuery(
       [
@@ -68,19 +59,8 @@ export const PriceAreaProvider = ({ children }: PropsWithChildren) => {
       }
     );
 
-  const {
-    data: allProcessConfigurations,
-    refetch: refetchProcessConfigurations,
-  } = useQuery(
-    [`${client.project}_processConfigurations_${priceAreaExternalId}`],
-    () =>
-      fetchProcessConfigurations({
-        priceAreaExternalId,
-        client,
-        token: authState.token!,
-      }),
-    { enabled: !!priceAreaExternalId }
-  );
+  const { data: allProcessConfigurations } =
+    useFetchProcessConfigurations(priceAreaExternalId);
 
   const [contextValue, setContextValue] = useState<PriceAreasContextType>({
     priceAreaChanged: updateSelectedPriceArea,
@@ -89,20 +69,13 @@ export const PriceAreaProvider = ({ children }: PropsWithChildren) => {
 
   useEffect(() => {
     setContextValue({
-      allPriceAreas,
       bidProcessResult: selectedBidProcessResult,
       allProcessConfigurations,
       bidProcessEventExternalId,
       priceAreaChanged: updateSelectedPriceArea,
       bidProcessConfigurationChanged: updateSelectedBidProcessConfiguration,
     });
-  }, [allPriceAreas, selectedBidProcessResult]);
-
-  useEffect(() => {
-    if (priceAreaExternalId) {
-      refetchProcessConfigurations();
-    }
-  }, [priceAreaExternalId]);
+  }, [selectedBidProcessResult]);
 
   useEffect(() => {
     if (bidProcessEventExternalId) {

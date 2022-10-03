@@ -19,7 +19,7 @@ export const MenuBar = () => {
     path: null,
   };
   const [visible, setVisible] = useState<boolean>(false);
-  const { data: allPriceAreas } = useFetchPriceAreas();
+  const { data: allPriceAreas = [] } = useFetchPriceAreas();
 
   const toggleDropdown = () => {
     setVisible(!visible);
@@ -48,7 +48,7 @@ export const MenuBar = () => {
           content={
             <StyledMenu>
               <Menu.Header>Price Area</Menu.Header>
-              {allPriceAreas?.map((pricearea) => (
+              {allPriceAreas.map((pricearea) => (
                 <Menu.Item
                   selected={path?.includes(
                     `${PAGES.PORTFOLIO}/${pricearea.externalId}`

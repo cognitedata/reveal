@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useQuery } from 'react-query';
 import sidecar from 'utils/sidecar';
 import { useAuthenticatedAuthContext } from '@cognite/react-container';
+import { axiosRequestConfig } from 'utils/utils';
 
 const { powerOpsApiBaseUrl } = sidecar;
 
@@ -12,24 +13,19 @@ type FetchWorkflowsResponse = {
   count: number;
 };
 
-const fetchWorkflows = async (
-  project: string,
-  token: string
-): Promise<Workflow[]> =>
+const fetchWorkflows = (project: string, token: string) =>
   axios
-    .get<FetchWorkflowsResponse>(`${powerOpsApiBaseUrl}/${project}/workflows`, {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-    .then((response) => response.data.workflows);
+    .get<FetchWorkflowsResponse>(
+      `${powerOpsApiBaseUrl}/${project}/workflows`,
+      axiosRequestConfig(token)
+    )
+    .then(({ data }) => data.workflows);
 
 export const useFetchWorkflows = () => {
-  const {
-    client: { project },
-    authState: { token },
-  } = useAuthenticatedAuthContext();
+  const { project, token } = useAuthenticatedAuthContext();
   return useQuery({
     queryKey: [project, 'workflows'],
-    queryFn: () => fetchWorkflows(project, token!),
-    enabled: !!token,
+    queryFn: () => fetchWorkflows(project, token),
+    enabled: Boolean(project && token),
   });
 };

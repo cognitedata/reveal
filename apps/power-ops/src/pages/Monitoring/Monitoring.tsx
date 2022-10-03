@@ -1,29 +1,16 @@
-import {
-  AuthConsumer,
-  AuthContext,
-  useAuthContext,
-} from '@cognite/react-container';
-import { CogniteClient } from '@cognite/sdk';
+import { useAuthenticatedAuthContext } from '@cognite/react-container';
 import { useMetrics } from '@cognite/metrics';
 import { useFetchSnifferJobs } from 'queries/useFetchSnifferJobs';
 import { Flex, Label, Button } from '@cognite/cogs.js';
 import axios from 'axios';
 import sidecar from 'utils/sidecar';
+import { axiosRequestConfig } from 'utils/utils';
 
 import { Container, StyledTable } from './elements';
 
-export const Monitoring: React.FC = () => (
-  <AuthConsumer>
-    {({ client }: AuthContext) =>
-      client ? <MonitoringInner client={client} /> : null
-    }
-  </AuthConsumer>
-);
-
-const MonitoringInner = ({ client }: { client: CogniteClient }) => {
+export const Monitoring = () => {
   const metrics = useMetrics('monitoring');
-
-  const { authState } = useAuthContext();
+  const { client, token } = useAuthenticatedAuthContext();
   const { snifferServiceBaseUrl } = sidecar;
 
   const { data, refetch } = useFetchSnifferJobs();
@@ -31,9 +18,10 @@ const MonitoringInner = ({ client }: { client: CogniteClient }) => {
   const startJobs = async () => {
     metrics.track('click-start-all-jobs-button');
     axios
-      .get(`${snifferServiceBaseUrl}/${client.project}/jobs/start-all`, {
-        headers: { Authorization: `Bearer ${authState?.token}` },
-      })
+      .get(
+        `${snifferServiceBaseUrl}/${client.project}/jobs/start-all`,
+        axiosRequestConfig(token)
+      )
       .then((_response) => {
         setTimeout(() => {
           refetch();
@@ -44,9 +32,10 @@ const MonitoringInner = ({ client }: { client: CogniteClient }) => {
   const stopJobs = async () => {
     metrics.track('click-stop-all-jobs-button');
     axios
-      .get(`${snifferServiceBaseUrl}/${client.project}/jobs/stop-all`, {
-        headers: { Authorization: `Bearer ${authState?.token}` },
-      })
+      .get(
+        `${snifferServiceBaseUrl}/${client.project}/jobs/stop-all`,
+        axiosRequestConfig(token)
+      )
       .then((_response) => {
         setTimeout(() => {
           refetch();
@@ -83,39 +72,36 @@ const MonitoringInner = ({ client }: { client: CogniteClient }) => {
           </tr>
         </thead>
         <tbody>
-          {Array.isArray(data) &&
-            data.map((job: any) => {
-              return (
-                <tr key={job.name}>
-                  <td>{job.name}</td>
-                  <td>
-                    {job.lastEventFound
-                      ? new Date(job.lastEventFound).toLocaleString()
-                      : 'No events found'}
-                  </td>
-                  <td>{job.callBackURL}</td>
-                  <td>
-                    {job.startedTime
-                      ? new Date(job.startedTime).toLocaleString()
-                      : 'No events found'}
-                  </td>
-                  <td>
-                    <Label
-                      variant={
-                        // eslint-disable-next-line no-nested-ternary
-                        job.status === 'running'
-                          ? 'success'
-                          : job.status === 'error'
-                          ? 'danger'
-                          : 'warning'
-                      }
-                    >
-                      {job.status}
-                    </Label>
-                  </td>
-                </tr>
-              );
-            })}
+          {data?.map((job) => (
+            <tr key={job.name}>
+              <td>{job.name}</td>
+              <td>
+                {job.lastEventFoundAt
+                  ? new Date(job.lastEventFoundAt).toLocaleString()
+                  : 'No events found'}
+              </td>
+              <td>{job.callBackURL}</td>
+              <td>
+                {job.startedTime
+                  ? new Date(job.startedTime).toLocaleString()
+                  : 'No events found'}
+              </td>
+              <td>
+                <Label
+                  variant={
+                    // eslint-disable-next-line no-nested-ternary
+                    job.status === 'running'
+                      ? 'success'
+                      : job.status === 'error'
+                      ? 'danger'
+                      : 'warning'
+                  }
+                >
+                  {job.status}
+                </Label>
+              </td>
+            </tr>
+          ))}
         </tbody>
       </StyledTable>
     </Container>
