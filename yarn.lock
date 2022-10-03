@@ -1459,7 +1459,7 @@
   resolved "https://registry.yarnpkg.com/@cognite/potree-core/-/potree-core-1.5.1.tgz#b61bc4ed905757701c8d2074b153890974857bb3"
   integrity sha512-T0+MIDd3ebZDjRbddiLF1KhMeW0JCunbvaxpseZdgAjXx6S/W4EiIFJqjP0g9KXOn09DLSAIS8DVtKKfKtyhAA==
 
-"@cognite/power-ops-api-types@^4.0.1":
+"@cognite/power-ops-api-types@^4.1.0":
   version "4.1.0"
   resolved "https://registry.yarnpkg.com/@cognite/power-ops-api-types/-/power-ops-api-types-4.1.0.tgz#d468503be7cb489a2fd9eb152fe9bd68742fe373"
   integrity sha512-ViSlxrb9iFVCVd7MrGwLDIQ26K+3ero7cno5636qs2Ytjlj8bJV8ZX9/xUOqSHQE4pyOWpMbM0+5ju7+IH0/+g==

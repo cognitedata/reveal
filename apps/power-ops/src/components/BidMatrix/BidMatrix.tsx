@@ -165,11 +165,6 @@ export const BidMatrix = ({
   useEffect(() => {
     if (plantExternalId && bidProcessResult) {
       setBidDate(dayjs(bidProcessResult.bidDate).tz(marketConfig.timezone));
-      const priceExternalId = bidProcessResult.priceScenarios.find(
-        (scenario) =>
-          scenario.priceTsExternalId === bidProcessResult.mainScenarioExternalId
-      )?.priceTsExternalId;
-      if (!priceExternalId) return;
 
       const bidMatrix =
         plantExternalId === 'total'
@@ -183,7 +178,7 @@ export const BidMatrix = ({
             )?.matrixWithData;
 
       if (bidMatrix) {
-        updateMatrixData(bidMatrix, priceExternalId);
+        updateMatrixData(bidMatrix, bidProcessResult.mainScenarioExternalId);
       }
     }
   }, [bidProcessResult, plantExternalId]);
