@@ -794,7 +794,7 @@ __metadata:
     "@types/proj4": 2.5.2
     "@types/random-seed": 0.3.3
     "@types/skmeans": 0.11.3
-    "@types/stats": ^0.16.30
+    "@types/stats": 0.16.30
     "@types/three": 0.144.0
     "@types/tween.js": 18.5.1
     "@typescript-eslint/eslint-plugin": 5.38.1
@@ -850,7 +850,7 @@ __metadata:
     rxjs: 7.5.7
     shx: 0.3.4
     skmeans: 0.11.3
-    stats.js: ^0.17.0
+    stats.js: 0.17.0
     three: 0.144.0
     three-stdlib: 2.17.0
     ts-jest: 29.0.3
@@ -2235,7 +2235,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/stats@npm:^0.16.30":
+"@types/stats@npm:0.16.30":
   version: 0.16.30
   resolution: "@types/stats@npm:0.16.30"
   checksum: cd526ff4bb6c3159531911d9a8a6f0928a783fcc9c4364a8b6626fb123e64ad895da2629f768781cada63f54fea93c85ba4b06a842d86bc1f63e6894c55f5d1d
@@ -11634,7 +11634,7 @@ resolve@^1.9.0:
   languageName: node
   linkType: hard
 
-"stats.js@npm:^0.17.0":
+"stats.js@npm:0.17.0":
   version: 0.17.0
   resolution: "stats.js@npm:0.17.0"
   checksum: 62d55d9e28e701f5638eac312ab45f66da8cc14b43d4eba4d3ab5a26f444a91d3e0dd1f52e8fc182b03cae955dae4af471d54f1975525cc1e47dfa89a54a47c6
