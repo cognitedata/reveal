@@ -1,7 +1,13 @@
-import { Collapse, Icon } from '@cognite/cogs.js';
+import { Collapse as DefaultCollapse, Icon } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
-const { Panel: DefaultPanel } = Collapse;
+const { Panel: DefaultPanel } = DefaultCollapse;
+
+export const Collapse = styled(DefaultCollapse)`
+  && {
+    background-color: white;
+  }
+`;
 
 export const Panel = styled(DefaultPanel)`
   /* Collapse in cogs.js isn't following cogs.js style (have to override temp.) */
@@ -38,14 +44,12 @@ export const Panel = styled(DefaultPanel)`
     overflow: visible;
     & > .rc-collapse-content-box {
       margin: 0;
-      padding-top: 16px;
       padding-bottom: 4px;
     }
   }
   border-top: none !important;
   margin: 10px 0;
   background-color: var(--cogs-greyscale-grey1);
-  /* background-color: white; */
   border-radius: 6px;
 `;
 

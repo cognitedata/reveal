@@ -19,7 +19,8 @@ export const StringFilter = ({
   return (
     <>
       <Body
-        level={4}
+        level={2}
+        strong
         style={{ marginBottom: 5, marginTop: 10 }}
         className="title"
       >

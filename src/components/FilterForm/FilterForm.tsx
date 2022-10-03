@@ -23,7 +23,6 @@ const LOCKSVG = (
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
-  background: #fff;
 `;
 
 const Tags = styled.div`

@@ -1,6 +1,6 @@
 import React from 'react';
-import { Body } from '@cognite/cogs.js';
 import { AssetSelect } from 'containers/Assets';
+import { FilterFacetTitle } from '../FilterFacetTitle';
 
 export const ByAssetFilter = ({
   value,
@@ -17,13 +17,7 @@ export const ByAssetFilter = ({
 
   return (
     <>
-      <Body
-        level={4}
-        style={{ marginBottom: 5, marginTop: 10 }}
-        className="title"
-      >
-        {title}
-      </Body>
+      <FilterFacetTitle>{title}</FilterFacetTitle>
       <AssetSelect
         isMulti
         selectedAssetIds={value}

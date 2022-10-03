@@ -1,16 +1,11 @@
 import React from 'react';
 import { useList } from '@cognite/sdk-react-query-hooks';
-import { AssetFilterProps, InternalId } from '@cognite/sdk';
+import { AssetFilterProps } from '@cognite/sdk';
 import { useAssetMetadataKeys } from 'hooks/MetadataAggregateHooks';
 import { ResetFiltersButton } from './ResetFiltersButton';
 import { LabelFilter } from './LabelFilter/LabelFilter';
 import { MetadataFilter } from './MetadataFilter/MetadataFilter';
-import { DataSetFilter } from './DataSetFilter/DataSetFilter';
-import { StringFilter } from './StringFilter/StringFilter';
-import { ByAssetFilter } from './ByAssetFilter/ByAssetFilter';
 import { AggregatedFilter } from './AggregatedFilter/AggregatedFilter';
-import { DateFilter } from './DateFilter/DateFilter';
-import { AdvancedFiltersCollapse } from './AdvancedFiltersCollapse';
 import { BaseFilterCollapse } from './BaseFilterCollapse/BaseFilterCollapse';
 
 // TODO(CDFUX-000) allow customization of ordering of filters via props
@@ -39,16 +34,6 @@ export const AssetFilters = ({
           })
         }
       />
-      <DataSetFilter
-        resourceType="asset"
-        value={filter.dataSetIds}
-        setValue={newIds =>
-          setFilter({
-            ...filter,
-            dataSetIds: newIds,
-          })
-        }
-      />
       <AggregatedFilter
         title="Source"
         items={items}
@@ -61,60 +46,18 @@ export const AssetFilters = ({
           })
         }
       />
-      <StringFilter
-        title="External ID"
-        value={filter.externalIdPrefix}
-        setValue={newExternalId =>
+      <MetadataFilter
+        items={items}
+        keys={metadataKeys}
+        value={filter.metadata}
+        setValue={newMetadata =>
           setFilter({
             ...filter,
-            externalIdPrefix: newExternalId,
+            metadata: newMetadata,
           })
         }
+        useAggregates
       />
-      <AdvancedFiltersCollapse resourceType="asset" filter={filter}>
-        <ByAssetFilter
-          title="Parent"
-          value={filter.assetSubtreeIds?.map(el => (el as InternalId).id)}
-          setValue={newAssetIds =>
-            setFilter({
-              ...filter,
-              assetSubtreeIds: newAssetIds?.map(id => ({ id })),
-            })
-          }
-        />
-        <MetadataFilter
-          items={items}
-          keys={metadataKeys}
-          value={filter.metadata}
-          setValue={newMetadata =>
-            setFilter({
-              ...filter,
-              metadata: newMetadata,
-            })
-          }
-          useAggregates
-        />
-        <DateFilter
-          title="Created Time"
-          value={filter.createdTime}
-          setValue={newDate =>
-            setFilter({
-              ...filter,
-              createdTime: newDate || undefined,
-            })
-          }
-        />
-        <DateFilter
-          title="Updated Time"
-          value={filter.lastUpdatedTime}
-          setValue={newDate =>
-            setFilter({
-              ...filter,
-              lastUpdatedTime: newDate || undefined,
-            })
-          }
-        />
-      </AdvancedFiltersCollapse>
     </BaseFilterCollapse.Panel>
   );
 };

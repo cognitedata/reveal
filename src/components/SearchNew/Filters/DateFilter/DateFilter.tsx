@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Body } from '@cognite/cogs.js';
 import { DatePicker, Select, RangePicker } from 'components';
 import { TIME_SELECT } from 'containers';
 import { DateRange } from '@cognite/sdk';
+import { FilterFacetTitle } from '../FilterFacetTitle';
 
 const determinePeriod = (value: DateRange | undefined | null) => {
   if (value === undefined) {
@@ -23,6 +23,8 @@ const determinePeriod = (value: DateRange | undefined | null) => {
   return 'none';
 };
 
+type PeriodType = 'none' | 'before' | 'during' | 'after' | 'null';
+
 export const DateFilter = ({
   value,
   setValue,
@@ -36,7 +38,6 @@ export const DateFilter = ({
     newValue: { min?: number; max?: number } | undefined | null
   ) => void;
 }) => {
-  type PeriodType = 'none' | 'before' | 'during' | 'after' | 'null';
   const [period, setPeriod] = useState<PeriodType>(determinePeriod(value));
 
   const prevValueRef = useRef<PeriodType>();
@@ -66,13 +67,7 @@ export const DateFilter = ({
 
   return (
     <>
-      <Body
-        level={4}
-        style={{ marginBottom: 5, marginTop: 10 }}
-        className="title"
-      >
-        {title}
-      </Body>
+      <FilterFacetTitle>{title}</FilterFacetTitle>
       <Select
         value={options.find(el => el.value === period)!}
         options={options}

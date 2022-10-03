@@ -1,11 +1,22 @@
 import React from 'react';
-import { Body, Tooltip } from '@cognite/cogs.js';
+import { Tooltip } from '@cognite/cogs.js';
 import { DataSet, IdEither } from '@cognite/sdk';
 import { OptionsType, OptionTypeBase } from 'react-select';
 import { Select } from 'components';
 import { ResourceType, convertResourceType } from 'types';
-import { useRelevantDatasets, DataSetWCount } from 'hooks/sdk';
+import { DataSetWCount } from 'hooks/sdk';
 import { useCdfItems } from '@cognite/sdk-react-query-hooks';
+import { useResourceTypeDataSetAggregate } from 'domain/dataSets/internal/hooks/useResourceTypeDataSetAggregate';
+import { FilterFacetTitle } from '../FilterFacetTitle';
+
+const formatOption = (dataset: DataSetWCount) => {
+  const name = dataset?.name || '';
+  const label = name.length > 0 ? name : `${dataset.id}`;
+  return {
+    label: `${label}${dataset.count ? ` (${dataset.count})` : ''}`,
+    value: dataset.id,
+  };
+};
 
 export const DataSetFilter = ({
   resourceType,
@@ -24,23 +35,16 @@ export const DataSetFilter = ({
       enabled: value && value.length > 0,
     }
   );
+
   const setDataSetFilter = (ids?: number[]) => {
     const newFilters =
-      ids && ids.length > 0 ? ids.map(id => ({ id })) : undefined;
+      ids && ids.length > 0 ? ids?.map(id => ({ id })) : undefined;
     setValue(newFilters);
   };
 
-  const { data: validDatasets, isError } = useRelevantDatasets(
+  const { data: datasetOptions, isError } = useResourceTypeDataSetAggregate(
     convertResourceType(resourceType)
   );
-  const formatOption = (dataset: DataSetWCount) => {
-    const name = dataset?.name || '';
-    const label = name.length > 0 ? name : `${dataset.id}`;
-    return {
-      label: `${label}${dataset.count ? ` (${dataset.count})` : ''}`,
-      value: dataset.id,
-    };
-  };
 
   return (
     <Tooltip
@@ -52,15 +56,9 @@ export const DataSetFilter = ({
       }
     >
       <>
-        <Body
-          level={4}
-          style={{ marginBottom: 5, marginTop: 10 }}
-          className="title"
-        >
-          Data set
-        </Body>
+        <FilterFacetTitle>Data set</FilterFacetTitle>
         <Select
-          options={validDatasets?.map(formatOption)}
+          options={datasetOptions?.map(formatOption)}
           isDisabled={isError}
           onChange={newValue => {
             setDataSetFilter(
@@ -73,6 +71,7 @@ export const DataSetFilter = ({
           isMulti
           isSearchable
           isClearable
+          menuPosition="fixed"
         />
       </>
     </Tooltip>

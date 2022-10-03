@@ -16,6 +16,7 @@ import {
 import { FilterSection } from 'containers/SearchResults/SearchFiltersNew';
 import { BaseFilterCollapse } from './BaseFilterCollapse/BaseFilterCollapse';
 import { CommonFilter } from './CommonFilter/CommonFilter';
+import { CommonFilterFacets } from './types';
 
 export type FilterProps = Required<ResourceFilterProps> &
   SetResourceFilterProps & {
@@ -38,12 +39,17 @@ export const Filters = ({
   setFileFilter,
   ...rest
 }: FilterProps) => {
+  // const commonFilter = React.useRef<CommonFilterFacets>({});
+  const [commonFilter, setCommonFilter] = React.useState<CommonFilterFacets>(
+    {}
+  );
+
   // const hasFiltersApplied = assetFilter.
   if (filterSection === FilterSection.AppliedFilters) {
     return <p>Coming soon</p>;
   }
 
-  const renderFilter = () => {
+  const renderCustomResourceTypeFilter = () => {
     switch (resourceType) {
       case 'asset': {
         return (
@@ -83,10 +89,24 @@ export const Filters = ({
     }
   };
 
+  const handleCommonChange = (updatingValue: CommonFilterFacets) => {
+    setAssetFilter(prevState => ({ ...prevState, ...updatingValue }));
+    setTimeseriesFilter(prevState => ({ ...prevState, ...updatingValue }));
+    setFileFilter(prevState => ({ ...prevState, ...updatingValue }));
+    setEventFilter(prevState => ({ ...prevState, ...updatingValue }));
+    setSequenceFilter(prevState => ({ ...prevState, ...updatingValue }));
+
+    setCommonFilter(prevFilter => ({ ...prevFilter, ...updatingValue }));
+  };
+
   return (
     <BaseFilterCollapse>
-      <CommonFilter />
-      {renderFilter()}
+      <CommonFilter
+        resourceType={resourceType}
+        commonFilter={commonFilter}
+        onChange={handleCommonChange}
+      />
+      {renderCustomResourceTypeFilter()}
     </BaseFilterCollapse>
   );
 };

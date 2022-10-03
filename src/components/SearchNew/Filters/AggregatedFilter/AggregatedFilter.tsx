@@ -1,6 +1,6 @@
 import React from 'react';
-import { Body } from '@cognite/cogs.js';
 import { Select } from 'components';
+import { FilterFacetTitle } from '../FilterFacetTitle';
 
 export const AggregatedFilter = <T,>({
   items,
@@ -29,13 +29,7 @@ export const AggregatedFilter = <T,>({
 
   return (
     <>
-      <Body
-        level={4}
-        style={{ marginBottom: 5, marginTop: 10 }}
-        className="title"
-      >
-        {title}
-      </Body>
+      <FilterFacetTitle>{title}</FilterFacetTitle>
       <Select
         creatable
         className="aggregated-filter-select"

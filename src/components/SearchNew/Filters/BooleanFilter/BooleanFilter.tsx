@@ -1,5 +1,6 @@
 import React from 'react';
-import { Body, SegmentedControl } from '@cognite/cogs.js';
+import { SegmentedControl } from '@cognite/cogs.js';
+import { FilterFacetTitle } from '../FilterFacetTitle';
 
 export const BooleanFilter = ({
   title,
@@ -26,13 +27,7 @@ export const BooleanFilter = ({
 
   return (
     <>
-      <Body
-        level={4}
-        style={{ marginBottom: 5, marginTop: 10 }}
-        className="title"
-      >
-        {title}
-      </Body>
+      <FilterFacetTitle>{title}</FilterFacetTitle>
       <SegmentedControl
         fullWidth
         currentKey={currentChecked}

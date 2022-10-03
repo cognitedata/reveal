@@ -52,11 +52,13 @@ export type ResourceFilterProps = {
 };
 
 export type SetResourceFilterProps = {
-  setAssetFilter: (newFilter: AssetFilterProps) => void;
-  setTimeseriesFilter: (newFilter: TimeseriesFilter) => void;
-  setFileFilter: (newFilter: FileFilterProps) => void;
-  setEventFilter: (newFilter: EventFilter) => void;
-  setSequenceFilter: (newFilter: Required<SequenceFilter>['filter']) => void;
+  setAssetFilter: React.Dispatch<React.SetStateAction<AssetFilterProps>>;
+  setTimeseriesFilter: React.Dispatch<React.SetStateAction<TimeseriesFilter>>;
+  setFileFilter: React.Dispatch<React.SetStateAction<FileFilterProps>>;
+  setEventFilter: React.Dispatch<React.SetStateAction<EventFilter>>;
+  setSequenceFilter: React.Dispatch<
+    React.SetStateAction<Required<SequenceFilter>['filter']>
+  >;
 };
 
 export type DateRangeProps = {

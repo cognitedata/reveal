@@ -67,7 +67,7 @@ export const FileFilters = ({
           setValue={newFilters =>
             setFilter({
               ...filter,
-              labels: newFilters ? { containsAny: newFilters } : undefined,
+              labels: newFilters && { containsAny: newFilters },
             })
           }
         />

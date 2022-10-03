@@ -46,7 +46,7 @@ export const MetadataFilter = <
   return (
     <>
       <FilterHeader>
-        <Body level={4} style={{ marginBottom: 5 }} className="title">
+        <Body level={2} strong style={{ marginBottom: 5 }} className="title">
           Metadata
         </Body>
         {showClearFiltersButton && (

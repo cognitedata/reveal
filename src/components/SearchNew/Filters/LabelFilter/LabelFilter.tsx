@@ -1,10 +1,11 @@
 import React from 'react';
-import { Body, Tooltip } from '@cognite/cogs.js';
+import { Tooltip } from '@cognite/cogs.js';
 import { LabelDefinition } from '@cognite/sdk';
 import { OptionsType, OptionTypeBase } from 'react-select';
 import { Select } from 'components';
 import { ResourceType } from 'types';
 import { useList } from '@cognite/sdk-react-query-hooks';
+import { FilterFacetTitle } from '../FilterFacetTitle';
 
 export const LabelFilter = ({
   resourceType,
@@ -42,13 +43,7 @@ export const LabelFilter = ({
       content="Error fetching labels, please make sure you have labelsAcl:READ"
     >
       <>
-        <Body
-          level={4}
-          style={{ marginBottom: 5, marginTop: 10 }}
-          className="title"
-        >
-          Labels
-        </Body>
+        <FilterFacetTitle>Labels</FilterFacetTitle>
         <Select
           options={labels.map(el => ({
             label: el.name,
