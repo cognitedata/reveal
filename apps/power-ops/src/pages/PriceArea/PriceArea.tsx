@@ -86,11 +86,11 @@ export const PriceArea = () => {
         />
         <MainDiv sidePanelOpened={openedSidePanel}>
           <Switch>
+            <Route path={`${path}/price-scenarios`}>
+              <PriceScenarios bidProcessResult={bidProcessResult} />
+            </Route>
             <Route path={`${path}/:plantExternalId`}>
               <BidMatrix bidProcessResult={bidProcessResult} />
-            </Route>
-            <Route path={`${path}/:plantExternalId/price-scenarios`}>
-              <PriceScenarios bidProcessResult={bidProcessResult} />
             </Route>
             <Redirect from={path} to={`${path}/total`} />
           </Switch>
