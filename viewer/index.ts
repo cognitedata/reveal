@@ -47,6 +47,7 @@ export { CogniteModelBase, SupportedModelTypes } from './packages/model-base';
 export {
   IndexSet,
   NumericRange,
+  BeforeSceneRenderedDelegate,
   SceneRenderedDelegate,
   PointerEventDelegate,
   DisposedDelegate
