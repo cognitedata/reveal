@@ -1,3 +1,6 @@
+/*!
+ * Copyright 2022 Cognite AS
+ */
 import { Vector4 } from 'three';
 import { IClassification } from './types';
 

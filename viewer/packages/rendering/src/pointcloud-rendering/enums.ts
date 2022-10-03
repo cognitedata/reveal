@@ -1,3 +1,6 @@
+/*!
+ * Copyright 2022 Cognite AS
+ */
 export enum PotreePointSizeType {
   Fixed = 0,
   Attenuated = 1,

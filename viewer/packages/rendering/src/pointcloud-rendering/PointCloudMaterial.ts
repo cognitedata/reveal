@@ -1,3 +1,6 @@
+/*!
+ * Copyright 2022 Cognite AS
+ */
 import {
   AdditiveBlending,
   Camera,
@@ -590,7 +593,7 @@ export class PointCloudMaterial extends RawShaderMaterial {
 
   private updateVisibilityTextureData(textureData: Uint8Array): void {
     const texture = this.visibleNodesTexture;
-    
+
     if (texture) {
       texture.image.data.set(textureData);
       texture.needsUpdate = true;

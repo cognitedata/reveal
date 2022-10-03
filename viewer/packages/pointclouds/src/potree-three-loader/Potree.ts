@@ -105,10 +105,13 @@ export class Potree implements IPotree {
         continue;
       }
 
-      const visibilityTextureData = createVisibilityTextureData(pointCloud.visibleNodes, pointCloud.material.visibleNodeTextureOffsets);
+      const visibilityTextureData = createVisibilityTextureData(
+        pointCloud.visibleNodes,
+        pointCloud.material.visibleNodeTextureOffsets
+      );
       const octreeMaterialParams: OctreeMaterialParams = {
-        scale: pointCloud.scale, 
-        boundingBox: pointCloud.pcoGeometry.boundingBox, 
+        scale: pointCloud.scale,
+        boundingBox: pointCloud.pcoGeometry.boundingBox,
         spacing: pointCloud.pcoGeometry.spacing
       };
 

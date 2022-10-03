@@ -1,3 +1,6 @@
+/*!
+ * Copyright 2022 Cognite AS
+ */
 import { Color, DataTexture, NearestFilter, LinearFilter, CanvasTexture, RGBAFormat, Texture, Vector4 } from 'three';
 import { IClassification, IGradient } from './types';
 

@@ -14,7 +14,13 @@ import {
   WebGLRenderer,
   WebGLRenderTarget
 } from 'three';
-import { ClipMode, OctreeMaterialParams, PointCloudMaterial, PotreePointColorType, COLOR_BLACK } from '@reveal/rendering';
+import {
+  ClipMode,
+  OctreeMaterialParams,
+  PointCloudMaterial,
+  PotreePointColorType,
+  COLOR_BLACK
+} from '@reveal/rendering';
 import { PointCloudOctree } from './PointCloudOctree';
 import { IPointCloudTreeNode } from './IPointCloudTreeNode';
 import { PickPoint, PointCloudHit } from '../types/types';
@@ -117,10 +123,13 @@ export class PointCloudOctreePickerHelper {
         continue;
       }
 
-      const visibilityTextureData = createVisibilityTextureData(octree.visibleNodes, octree.material.visibleNodeTextureOffsets);
+      const visibilityTextureData = createVisibilityTextureData(
+        octree.visibleNodes,
+        octree.material.visibleNodeTextureOffsets
+      );
       const octreeMaterialParams: OctreeMaterialParams = {
-        scale: octree.scale, 
-        boundingBox: octree.pcoGeometry.boundingBox, 
+        scale: octree.scale,
+        boundingBox: octree.pcoGeometry.boundingBox,
         spacing: octree.pcoGeometry.spacing
       };
 

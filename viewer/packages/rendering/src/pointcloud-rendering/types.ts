@@ -1,4 +1,7 @@
-import { Color, IUniform as IThreeUniform, Vector4, Box3, Matrix4, Vector3} from 'three';
+/*!
+ * Copyright 2022 Cognite AS
+ */
+import { Color, IUniform as IThreeUniform, Vector4, Box3, Matrix4, Vector3 } from 'three';
 
 export type IGradient = [number, Color][];
 
@@ -23,4 +26,4 @@ export type OctreeMaterialParams = {
   scale: THREE.Vector3;
   spacing: number;
   boundingBox: THREE.Box3;
-}
+};

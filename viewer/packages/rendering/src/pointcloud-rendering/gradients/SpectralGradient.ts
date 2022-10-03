@@ -1,3 +1,6 @@
+/*!
+ * Copyright 2022 Cognite AS
+ */
 import { Color } from 'three';
 import { IGradient } from '../types';
 

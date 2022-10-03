@@ -29,14 +29,8 @@ export type RevealOptions = {
  */
 export type LoadingStateChangeListener = (loadingState: LoadingState) => any;
 
-export {
-  WellKnownAsprsPointClassCodes
-} from '@reveal/pointclouds';
+export { WellKnownAsprsPointClassCodes } from '@reveal/pointclouds';
 
-export {
-  PotreePointShape,
-  PotreePointColorType,
-  PotreePointSizeType
-} from '@reveal/rendering';
+export { PotreePointShape, PotreePointColorType, PotreePointSizeType } from '@reveal/rendering';
 
 export * from './migration/types';

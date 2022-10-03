@@ -9,7 +9,7 @@ import { IPotree } from '../types/IPotree';
 import { IPointCloudTreeNodeBase } from './IPointCloudTreeNodeBase';
 import { IPointCloudTreeNode } from './IPointCloudTreeNode';
 import { computeTransformedBoundingBox } from '../utils/bounds';
-import { RenderLayer, PointCloudMaterial, PotreePointSizeType, DEFAULT_MIN_NODE_PIXEL_SIZE} from '@reveal/rendering';
+import { RenderLayer, PointCloudMaterial, PotreePointSizeType, DEFAULT_MIN_NODE_PIXEL_SIZE } from '@reveal/rendering';
 import { makeOnBeforeRender } from '../utils/utils';
 
 export class PointCloudOctree extends PointCloudTree {

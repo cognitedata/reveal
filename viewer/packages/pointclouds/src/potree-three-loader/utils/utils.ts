@@ -38,7 +38,10 @@ export function handleEmptyBuffer(buffer: ArrayBuffer): ArrayBuffer {
   return buffer;
 }
 
-export function createVisibilityTextureData(nodes: IPointCloudTreeNodeBase[], visibleNodeTextureOffsets: Map<string, number>): Uint8Array {
+export function createVisibilityTextureData(
+  nodes: IPointCloudTreeNodeBase[],
+  visibleNodeTextureOffsets: Map<string, number>
+): Uint8Array {
   nodes.sort(byLevelAndIndex);
 
   const data = new Uint8Array(nodes.length * 4);
@@ -48,7 +51,7 @@ export function createVisibilityTextureData(nodes: IPointCloudTreeNodeBase[], vi
 
   for (let i = 0; i < nodes.length; i++) {
     const node = nodes[i];
-  
+
     visibleNodeTextureOffsets.set(node.name, i);
 
     if (i > 0) {
@@ -73,20 +76,8 @@ export function createVisibilityTextureData(nodes: IPointCloudTreeNodeBase[], vi
 export function makeOnBeforeRender(
   node: IPointCloudTreeNode,
   pcIndex: number
-): (
-  renderer: WebGLRenderer,
-  scene: Scene,
-  camera: Camera,
-  bufferGeometry: BufferGeometry,
-  material: Material
-) => void {
-  return (
-    _renderer: WebGLRenderer,
-    _scene: Scene,
-    _camera: Camera,
-    _geometry: BufferGeometry,
-    material: Material
-  ) => {
+): (renderer: WebGLRenderer, scene: Scene, camera: Camera, bufferGeometry: BufferGeometry, material: Material) => void {
+  return (_renderer: WebGLRenderer, _scene: Scene, _camera: Camera, _geometry: BufferGeometry, material: Material) => {
     const pointCloudMaterial = material as PointCloudMaterial;
     const materialUniforms = pointCloudMaterial.uniforms;
 
@@ -103,7 +94,7 @@ export function makeOnBeforeRender(
     // Note: when changing uniforms in onBeforeRender, the flag uniformsNeedUpdate has to be
     // set to true to instruct ThreeJS to upload them. See also
     // https://github.com/mrdoob/three.js/issues/9870#issuecomment-368750182.
-    
+
     pointCloudMaterial.uniformsNeedUpdate = true;
   };
 }
