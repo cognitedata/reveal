@@ -164,8 +164,6 @@ export class GridConfigService {
           {
             field: `${columnConfig.property}`,
             headerName: columnConfig.label,
-            headerComponent: ({ displayName }: { displayName: ReactNode }) =>
-              displayName,
             type: columnConfig.columnType
               ? columnConfig.columnType
               : this.getColumnType(columnConfig),

@@ -225,6 +225,11 @@ export const TypeDefFields = ({
           // The fix is to set default value setter, to cancel the edit
           // and there to dispatch the events to store
           valueSetter: handleCellEditRequest,
+          headerComponent: ({
+            displayName,
+          }: {
+            displayName: React.ReactNode;
+          }) => displayName,
         }}
         context={{
           typeFieldNames: currentType.fields.map((field) => ({
