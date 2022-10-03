@@ -2,7 +2,7 @@
  * Copyright 2022 Cognite AS
  */
 
-import { PotreePointShape } from '@reveal/pointclouds';
+import { PotreePointShape } from '../pointcloud-rendering';
 import * as THREE from 'three';
 
 export type BlendOptions = {

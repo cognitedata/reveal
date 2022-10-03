@@ -10,7 +10,7 @@ import { PointCloudEffectsPass } from '../render-passes/PointCloudEffectsPass';
 import { PointCloudRenderTargets } from './types';
 import { PointCloudPassParameters } from '../render-passes/types';
 import { PointCloudParameters } from '../rendering/types';
-import { PotreePointShape } from '@reveal/pointclouds';
+import { PotreePointShape } from '../pointcloud-rendering';
 
 export class PointCloudRenderPipelineProvider implements RenderPipelineProvider {
   private readonly _renderTargetData: {

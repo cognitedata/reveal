@@ -15,11 +15,10 @@ import {
   MAX_NUM_NODES_LOADING,
   PERSPECTIVE_CAMERA,
   UPDATE_THROTTLE_TIME_MS
-} from './rendering/constants';
-import { FEATURES } from './rendering/features';
+} from '@reveal/rendering';
 import { EptLoader } from './loading/EptLoader';
 import { EptBinaryLoader } from './loading/EptBinaryLoader';
-import { ClipMode, OctreeMaterialParams } from './rendering';
+import { ClipMode, OctreeMaterialParams } from '@reveal/rendering';
 import { PointCloudOctree } from './tree/PointCloudOctree';
 import { isGeometryNode, isTreeNode, isOptionalTreeNode } from './types/type-predicates';
 import { IPotree } from './types/IPotree';
@@ -73,7 +72,6 @@ export class Potree implements IPotree {
   );
 
   maxNumNodesLoading: number = MAX_NUM_NODES_LOADING;
-  features = FEATURES;
   lru = new LRU(this._pointBudget);
 
   constructor(modelDataProvider: ModelDataProvider) {
@@ -107,7 +105,7 @@ export class Potree implements IPotree {
         continue;
       }
 
-      const visibilityTextureData = createVisibilityTextureData(pointCloud.visibleNodes);
+      const visibilityTextureData = createVisibilityTextureData(pointCloud.visibleNodes, pointCloud.material.visibleNodeTextureOffsets);
       const octreeMaterialParams: OctreeMaterialParams = {
         scale: pointCloud.scale, 
         boundingBox: pointCloud.pcoGeometry.boundingBox, 

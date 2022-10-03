@@ -87,6 +87,10 @@ export const pointCloudShaders = {
   normalize: {
     fragment: glsl(require('../glsl/pointcloud/normalize.frag').default),
     vertex: glsl(require('../glsl/pointcloud/normalize.vert').default)
+  },
+  pointcloud: {
+    fragment: glsl(require('../glsl/pointcloud/pointcloud.frag').default),
+    vertex: glsl(require('../glsl/pointcloud/pointcloud.vert').default)
   }
 };
 

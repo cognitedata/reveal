@@ -1,5 +1,5 @@
 import { BufferGeometry, Camera, Material, Scene, WebGLRenderer } from 'three';
-import { PointCloudMaterial } from '../rendering';
+import { PointCloudMaterial } from '@reveal/rendering';
 import { IPointCloudTreeNode } from '../tree/IPointCloudTreeNode';
 import { IPointCloudTreeNodeBase } from '../tree/IPointCloudTreeNodeBase';
 
@@ -38,13 +38,13 @@ export function handleEmptyBuffer(buffer: ArrayBuffer): ArrayBuffer {
   return buffer;
 }
 
-export function createVisibilityTextureData(nodes: IPointCloudTreeNodeBase[]): Uint8Array {
+export function createVisibilityTextureData(nodes: IPointCloudTreeNodeBase[], visibleNodeTextureOffsets: Map<string, number>): Uint8Array {
   nodes.sort(byLevelAndIndex);
 
   const data = new Uint8Array(nodes.length * 4);
   const offsetsToChild = new Array(nodes.length).fill(Infinity);
 
-  const visibleNodeTextureOffsets = new Map<string, number>();
+  visibleNodeTextureOffsets.clear();
 
   for (let i = 0; i < nodes.length; i++) {
     const node = nodes[i];
@@ -103,8 +103,7 @@ export function makeOnBeforeRender(
     // Note: when changing uniforms in onBeforeRender, the flag uniformsNeedUpdate has to be
     // set to true to instruct ThreeJS to upload them. See also
     // https://github.com/mrdoob/three.js/issues/9870#issuecomment-368750182.
-
-    // Remove the cast to any after updating to Three.JS >= r113
-    (material as RawShaderMaterial).uniformsNeedUpdate = true;
+    
+    pointCloudMaterial.uniformsNeedUpdate = true;
   };
 }

@@ -1,5 +1,5 @@
 import { Camera, Ray, Vector2, Vector3, WebGLRenderer, MathUtils } from 'three';
-import { DEFAULT_PICK_WINDOW_SIZE } from '../rendering/constants';
+import { DEFAULT_PICK_WINDOW_SIZE } from '@reveal/rendering';
 import { PointCloudOctree } from './PointCloudOctree';
 import { PickPoint } from '../types/types';
 import { IPickState, PickParams, PointCloudOctreePickerHelper } from './PointCloudOctreePickerHelper';

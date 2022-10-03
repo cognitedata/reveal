@@ -2,7 +2,7 @@
  * Copyright 2022 Cognite AS
  */
 
-import { PointCloudMaterial } from '@reveal/pointclouds';
+import { PointCloudMaterial } from '../pointcloud-rendering';
 import { SceneHandler, WebGLRendererStateHelper } from '@reveal/utilities';
 import * as THREE from 'three';
 import { RenderPass } from '../RenderPass';
