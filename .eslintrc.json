@@ -13,7 +13,8 @@
     "@nrwl/nx",
     "testing-library",
     "lodash",
-    "testcafe"
+    "testcafe",
+    "no-only-tests"
   ],
   "overrides": [
     {
@@ -94,7 +95,8 @@
             "argsIgnorePattern": "^_",
             "varsIgnorePattern": "^_"
           }
-        ]
+        ],
+        "no-only-tests/no-only-tests": "error"
       }
     },
     {
