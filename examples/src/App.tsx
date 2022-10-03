@@ -3,7 +3,7 @@
  */
 
 import styled from 'styled-components';
-import { Migration } from './pages/Migration';
+import { Viewer } from './pages/Viewer';
 
 const PageContainer = styled.div`
   box-shadow: rgba(0, 0, 0, 0.1) 0 1px 5px 0;
@@ -17,5 +17,5 @@ const PageContainer = styled.div`
 `;
 
 export default function App(): JSX.Element {
-  return <PageContainer><Migration key="/" /></PageContainer>;
+  return <PageContainer><Viewer key="/" /></PageContainer>;
 }
