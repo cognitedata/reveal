@@ -1,13 +1,16 @@
-import React from 'react';
+import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { ToolBarButton, ToolBar, Slider, Icon } from '@cognite/cogs.js';
 import {
+  CameraControlsOptions,
   Cognite3DModel,
   Cognite3DViewer,
   CognitePointCloudModel,
+  DefaultCameraManager,
   THREE,
 } from '@cognite/reveal';
 
 import styled from 'styled-components';
+import { MeasurementTool } from '@cognite/reveal/tools';
 
 const SliderContainer = styled.div`
   display: flex;
@@ -43,8 +46,42 @@ const CenteredIcon = styled(Icon)`
 type Props = {
   viewer: Cognite3DViewer;
   model: Cognite3DModel | CognitePointCloudModel;
+  setNodesClickable: Dispatch<SetStateAction<boolean>>;
+  nodesClickable: boolean;
 };
-export function OverlayToolbar({ viewer, model }: Props) {
+export function OverlayToolbar({
+  viewer,
+  model,
+  setNodesClickable,
+  nodesClickable,
+}: Props) {
+  const cameraManager = viewer.cameraManager as DefaultCameraManager;
+
+  const [measurementTool, setMeasurementToolState] = useState<MeasurementTool>(
+    new MeasurementTool(viewer)
+  );
+  const [
+    measurementEventsSubscribed,
+    setMeasurementEventsSubscribed,
+  ] = useState(false);
+  const [
+    cameraControlsOptions,
+    setCameraControlsOptionsState,
+  ] = useState<CameraControlsOptions>(cameraManager.getCameraControlsOptions());
+
+  useEffect(() => {
+    if (viewer) {
+      setMeasurementToolState(measurementTool);
+      setCameraControlsOptionsState(cameraControlsOptions);
+    }
+  }, [
+    cameraControlsOptions,
+    cameraManager,
+    measurementTool,
+    setNodesClickable,
+    viewer,
+  ]);
+
   const buttonGroups: ToolBarButton[][] = [
     [
       {
@@ -57,6 +94,8 @@ export function OverlayToolbar({ viewer, model }: Props) {
 
   addClippingSlider();
   addPointSizeSliderIfApplicable();
+  addPointToPointMeasurement();
+  subscribeMeasurementEvents();
 
   return (
     <ToolBar direction="horizontal">
@@ -116,5 +155,61 @@ export function OverlayToolbar({ viewer, model }: Props) {
       dropdownContent: clippingPlaneSlider,
     };
     buttonGroups[0].push(pointSizeTool);
+  }
+
+  function addPointToPointMeasurement() {
+    const measurement = {
+      icon: 'Ruler',
+      toggled: !nodesClickable,
+      description: 'Measure distance between two points',
+      onClick: () => {
+        if (viewer) {
+          if (nodesClickable) {
+            measurementTool.enterMeasurementMode();
+          } else {
+            exitMeasurement();
+          }
+        }
+      },
+    };
+
+    buttonGroups[0].push(measurement);
+  }
+
+  /**
+   * Sets mouse cursor, measurement button is toggled on & stores camera contols options value.
+   */
+  function setMeasurementStartState() {
+    cameraManager.setCameraControlsOptions({
+      ...cameraControlsOptions,
+      changeCameraTargetOnClick: false,
+    });
+    // eslint-disable-next-line no-param-reassign
+    viewer.domElement.style.cursor = 'crosshair';
+    setNodesClickable(false);
+  }
+
+  /**
+   * Exits from measurement mode & reset the measurement state.
+   */
+  function exitMeasurement() {
+    cameraManager.setCameraControlsOptions({
+      ...cameraControlsOptions,
+    });
+    // eslint-disable-next-line no-param-reassign
+    viewer.domElement.style.cursor = 'default';
+    setNodesClickable(true);
+    measurementTool.exitMeasurementMode();
+  }
+
+  /**
+   * Subscribe to measurements events (Only once).
+   */
+  function subscribeMeasurementEvents() {
+    if (!measurementEventsSubscribed) {
+      measurementTool.on('added', exitMeasurement);
+      measurementTool.on('started', setMeasurementStartState);
+      setMeasurementEventsSubscribed(true);
+    }
   }
 }

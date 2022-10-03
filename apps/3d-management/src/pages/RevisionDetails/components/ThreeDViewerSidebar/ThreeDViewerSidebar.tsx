@@ -37,6 +37,7 @@ type Props = {
   // consider context for viewer/model
   viewer: Cognite3DViewer;
   model: Cognite3DModel | CognitePointCloudModel;
+  nodesClickable: boolean;
 };
 
 // base size is thumbnail and edit rotation btns minimum width
@@ -160,6 +161,7 @@ export default function ThreeDViewerSidebar(props: Props) {
           <ToolbarTreeView
             model={props.model as Cognite3DModel}
             viewer={props.viewer as Cognite3DViewer}
+            nodesClickable={props.nodesClickable}
           />
         </>
       )}

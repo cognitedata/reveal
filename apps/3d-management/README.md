@@ -10,7 +10,7 @@ Previously known as [console/glados](https://github.com/cognitedata/console) sub
 1. Install dependencies with `yarn`.
 1. Run dev server with `yarn start`. Take a note of the local address.
 1. Open the local address from above in a browser and accept the unsafe certificate.
-2. Navigate to [dev.fusion.cogniteapp.com](https://dev.fusion.cogniteapp.com/) and apply the override as described [here](https://cognitedata.atlassian.net/l/cp/4aVs8u9B).
+1. Navigate to [dev.fusion.cogniteapp.com](https://dev.fusion.cogniteapp.com/) and apply the override as described [here](https://cognitedata.atlassian.net/l/cp/4aVs8u9B).
 
 ## Deploying to production, staging and development
 
@@ -22,10 +22,9 @@ Production ([fusion.cognite.com](fusion.cognite.com/)), staging ([next-release.f
 1. Update the `cdf-3d-management`-entry of the respective configuration under [packages/fas-apps/config](https://github.com/cognitedata/cdf-hub/tree/master/packages/fas-apps/config) to match version.
 1. Create PR, merge - after merge the change should be automatically deployed to the respective environment(s).
 1. For production release only:
-    1. Manually verify that the build works at https://staging.fusion.cognite.com/
-    1. Manually promote release in [Spinnaker](https://spinnaker.cognite.ai/#/applications/fusion-app/executions?pipeline=deploy-fusion-app-prod) (for the relevant build, hover the orange indicator and select Continue) 
+   1. Manually verify that the build works at https://staging.fusion.cognite.com/
+   1. Manually promote release in [Spinnaker](https://spinnaker.cognite.ai/#/applications/fusion-app/executions?pipeline=deploy-fusion-app-prod) (for the relevant build, hover the orange indicator and select Continue)
 
 Note! The configuration uses Semver ranges, so if you deploy new versions of the cdf-3d-management applications they should automatically be released to the respective environment if updated versions is within the supported range. See [Semver calculator](https://jubianchi.github.io/semver-check/#/) to test if versions are compatible.
 
 More details available on [Wiki](https://cognitedata.atlassian.net/wiki/spaces/DET/pages/3334374461/Fusion+frontend+development+WIKI). Note however that the instructions are out-of-date and not always correct.
-

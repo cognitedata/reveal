@@ -13,17 +13,22 @@ type Args = {
   viewer: Cognite3DViewer;
   model: Cognite3DModel;
   treeViewRef: React.RefObject<NodesTreeViewRefType>;
+  nodesClickable: boolean;
 };
 
 export function useViewerNodeClickListener({
   viewer,
   model,
   treeViewRef,
+  nodesClickable,
 }: Args) {
   const dispatch = useDispatch();
 
   const viewerNodeClickListener: PointerEventDelegate = useCallback(
     async (event) => {
+      if (!nodesClickable) {
+        return;
+      }
       const intersection = await viewer.getIntersectionFromPixel(
         event.offsetX,
         event.offsetY
@@ -60,7 +65,7 @@ export function useViewerNodeClickListener({
           );
       }
     },
-    [viewer, model, dispatch, treeViewRef]
+    [viewer, model, dispatch, treeViewRef, nodesClickable]
   );
 
   useEffect(() => {

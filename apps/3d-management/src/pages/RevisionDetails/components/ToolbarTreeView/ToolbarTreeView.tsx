@@ -48,6 +48,7 @@ type TreeViewWrapperProps = {
   onNodeInfoRequested: (treeIndex: number) => void;
 
   viewer: Cognite3DViewer;
+  nodesClickable: boolean;
 };
 
 function ToolbarTreeViewComponent(props: TreeViewWrapperProps) {
@@ -70,6 +71,7 @@ function ToolbarTreeViewComponent(props: TreeViewWrapperProps) {
     viewer: props.viewer,
     model: props.model,
     treeViewRef,
+    nodesClickable: props.nodesClickable,
   });
 
   useCheckedNodesVisibility({

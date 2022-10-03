@@ -40,6 +40,8 @@ export default function ThreeDViewer(props: ThreeDViewerProps) {
   const modelId = +props.modelId;
   const { id: revisionId } = props.revision;
 
+  const [nodesClickable, setNodesClickable] = useState<boolean>(true);
+
   useEffect(() => {
     if (canvasWrapperRef.current) {
       canvasWrapperRef.current.scrollIntoView({
@@ -141,12 +143,23 @@ export default function ThreeDViewer(props: ThreeDViewerProps) {
       <CanvasContainer ref={canvasWrapperRef}>
         {viewer && model && (
           <div style={{ position: 'absolute', top: '8px', right: '8px' }}>
-            <OverlayToolbar viewer={viewer} model={model} />
+            <OverlayToolbar
+              viewer={viewer}
+              model={model}
+              setNodesClickable={setNodesClickable}
+              nodesClickable={nodesClickable}
+            />
           </div>
         )}
       </CanvasContainer>
 
-      {viewer && model && <ThreeDViewerSidebar viewer={viewer} model={model} />}
+      {viewer && model && (
+        <ThreeDViewerSidebar
+          viewer={viewer}
+          model={model}
+          nodesClickable={nodesClickable}
+        />
+      )}
     </ThreeDViewerStyled>
   );
 }
