@@ -2,7 +2,7 @@
  * Copyright 2022 Cognite AS
  */
 
-import { PointCloudObjectCollection } from './PointCloudObjectCollection';
+import { PointCloudObjectCollection } from '@reveal/data-providers';
 import { CompletePointCloudAppearance } from './PointCloudAppearance';
 
 /**

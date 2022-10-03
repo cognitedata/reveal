@@ -5,10 +5,8 @@
 import { CogniteClient } from '@cognite/sdk';
 
 import { Mock } from 'moq.ts';
-import { Potree, PointCloudOctree, PointCloudMaterial } from '../potree-three-loader';
-import { ShapeType } from './shapes/IShape';
-import { CompositeShape } from './shapes/CompositeShape';
-import { CdfAnnotationProvider } from './CdfAnnotationProvider';
+import { CompositeShape, Cylinder, Box } from '@reveal/utilities';
+import { CdfPointCloudStylableObjectProvider } from './CdfPointCloudStylableObjectProvider';
 import { CdfModelIdentifier } from '@reveal/data-providers';
 
 const dummyAnnotationsResponse = {
@@ -42,28 +40,17 @@ const sdkMock = new Mock<CogniteClient>()
       .object()
   );
 
-const potreeMock = new Mock<Potree>()
-  .setup(p => p.loadPointCloud)
-  .returns(() =>
-    Promise.resolve(
-      new Mock<PointCloudOctree>()
-        .setup(p => p.material)
-        .returns(new Mock<PointCloudMaterial>().object())
-        .object()
-    )
-  );
-
-describe(CdfAnnotationProvider.name, () => {
-  let annotationProvider: CdfAnnotationProvider;
+describe(CdfPointCloudStylableObjectProvider.name, () => {
+  let annotationProvider: CdfPointCloudStylableObjectProvider;
 
   beforeEach(async () => {
-    annotationProvider = new CdfAnnotationProvider(sdkMock.object());
+    annotationProvider = new CdfPointCloudStylableObjectProvider(sdkMock.object());
   });
 
   test('contains right annotation IDs for annotations provided by SDK', async () => {
     const expectedIds = [123, 124];
 
-    const gottenIds = (await annotationProvider.getAnnotations(new CdfModelIdentifier(123, 456))).annotations.map(
+    const gottenIds = (await annotationProvider.getPointCloudObjects(new CdfModelIdentifier(123, 456))).annotations.map(
       obj => obj.annotationId
     );
 
@@ -72,11 +59,11 @@ describe(CdfAnnotationProvider.name, () => {
   });
 
   test('contains right geometry types for annotations provided by SDK', async () => {
-    const shapes = (await annotationProvider.getAnnotations(new CdfModelIdentifier(123, 456))).annotations.map(
+    const shapes = (await annotationProvider.getPointCloudObjects(new CdfModelIdentifier(123, 456))).annotations.map(
       obj => obj.stylableObject.shape
     );
 
-    expect((shapes[0] as CompositeShape).innerShapes[0].shapeType).toEqual(ShapeType.Cylinder);
-    expect((shapes[1] as CompositeShape).innerShapes[0].shapeType).toEqual(ShapeType.Box);
+    expect((shapes[0] as CompositeShape).innerShapes[0]).toBeInstanceOf(Cylinder);
+    expect((shapes[1] as CompositeShape).innerShapes[0]).toBeInstanceOf(Box);
   });
 });

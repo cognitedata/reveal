@@ -30,8 +30,7 @@ import { IPointCloudTreeGeometryNode } from './geometry/IPointCloudTreeGeometryN
 import { BinaryHeap } from './utils/BinaryHeap';
 import { Box3Helper } from './utils/box3-helper';
 import { LRU } from './utils/lru';
-import { PointCloudObjectAnnotationData } from '../styling/PointCloudObjectAnnotationData';
-import { ModelDataProvider } from '@reveal/data-providers';
+import { ModelDataProvider, PointCloudObjectData } from '@reveal/data-providers';
 import throttle from 'lodash/throttle';
 
 export class QueueItem {
@@ -40,7 +39,7 @@ export class QueueItem {
     public weight: number,
     public node: IPointCloudTreeNodeBase,
     public parent?: IPointCloudTreeNodeBase | undefined
-  ) {}
+  ) { }
 }
 
 type VisibilityUpdateInfo = {
@@ -83,7 +82,7 @@ export class Potree implements IPotree {
   async loadPointCloud(
     baseUrl: string,
     fileName: string,
-    annotationObjectInfo: PointCloudObjectAnnotationData
+    annotationObjectInfo: PointCloudObjectData
   ): Promise<PointCloudOctree> {
     const geometry = await EptLoader.load(baseUrl, fileName, this._modelDataProvider, annotationObjectInfo);
     return new PointCloudOctree(this, geometry, annotationObjectInfo);

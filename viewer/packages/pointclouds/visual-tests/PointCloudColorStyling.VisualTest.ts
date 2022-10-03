@@ -7,7 +7,7 @@ import {
   StreamingVisualTestFixture
 } from '../../../visual-tests/test-fixtures/StreamingVisualTestFixture';
 import { PointCloudFactory } from '../src/PointCloudFactory';
-import { annotationsToObjectInfo } from '../src/styling/annotationsToObjects';
+import { cdfAnnotationsToObjectInfo } from '../../data-providers/src/pointcloud-stylable-object-providers/annotationsToObjects';
 import { IAnnotationProvider } from '../src/styling/IAnnotationProvider';
 import { ShapeType } from '../src/styling/shapes/IShape';
 import { PointCloudObjectAnnotationData } from '../src/styling/PointCloudObjectAnnotationData';
@@ -32,7 +32,7 @@ class CustomAnnotationProvider implements IAnnotationProvider {
         ]
       }
     ];
-    const annotationData = annotationsToObjectInfo(cdfAnnotations);
+    const annotationData = cdfAnnotationsToObjectInfo(cdfAnnotations);
 
     return annotationData;
   }
@@ -61,7 +61,9 @@ export default class PointCloudColorStylingVisualTest extends StreamingVisualTes
     assert(model.geometryNode instanceof PointCloudNode);
 
     const stylableObjectIds: number[] = [];
-    [...model.geometryNode.potreeNode.stylableObjectAnnotationIds].forEach(m => stylableObjectIds.push(m.annotationId));
+    [...model.geometryNode.potreeNode.stylableObjectAnnotationMetadata].forEach(m =>
+      stylableObjectIds.push(m.annotationId)
+    );
 
     const objectCollection = new AnnotationIdPointCloudObjectCollection(stylableObjectIds);
     const appearance = { color: [0, 255, 0] as [number, number, number], visible: true };

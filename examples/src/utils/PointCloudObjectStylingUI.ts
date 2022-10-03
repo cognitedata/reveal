@@ -3,6 +3,7 @@
  */
 
 import {
+  Cognite3DViewer,
   CognitePointCloudModel,
   AnnotationIdPointCloudObjectCollection,
   PointCloudAppearance,
@@ -13,9 +14,13 @@ import {
 export class PointCloudObjectStylingUI {
 
   private readonly _model: CognitePointCloudModel;
+  private readonly _viewer: Cognite3DViewer;
 
-  constructor(uiFolder: dat.GUI, model: CognitePointCloudModel) {
+  constructor(uiFolder: dat.GUI,
+              model: CognitePointCloudModel,
+              viewer: Cognite3DViewer) {
     this._model = model;
+    this._viewer = viewer;
 
     this.createDefaultStyleUi(uiFolder.addFolder('Default styling'));
     this.createByObjectIndexUi(uiFolder.addFolder('By object index styling'));
@@ -39,11 +44,21 @@ export class PointCloudObjectStylingUI {
             color: objectStyle,
           });
         });
+      },
+      addObjectBoundingBoxes: () => {
+        const boxGroup = new THREE.Group();
+        model.traverseStylableObjects((object) => {
+          const box = new THREE.Box3Helper(object.boundingBox);
+          boxGroup.add(box);
+        });
+        console.log('Added boxes to group, first: ', boxGroup.children[0]);
+        viewer.addObject3D(boxGroup);
       }
     };
 
     uiFolder.add(actions, 'reset').name('Reset all styled objects');
     uiFolder.add(actions, 'randomColors').name('Set random for objects');
+    uiFolder.add(actions, 'addObjectBoundingBoxes').name('Show object bounding boxes');
   }
 
   private createObjectAppearanceUi(uiFolder: dat.GUI): () => PointCloudAppearance {

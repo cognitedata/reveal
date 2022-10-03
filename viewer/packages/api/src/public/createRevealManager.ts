@@ -14,10 +14,12 @@ import {
   DefaultRenderPipelineProvider
 } from '@reveal/rendering';
 import {
-  CdfAnnotationProvider,
+  CdfPointCloudStylableObjectProvider,
+  PointCloudStylableObjectProvider,
+  LocalPointCloudStylableObjectProvider
+} from '@reveal/data-providers';
+import {
   createPointCloudManager,
-  IAnnotationProvider,
-  LocalAnnotationProvider
 } from '@reveal/pointclouds';
 import {
   ModelMetadataProvider,
@@ -51,7 +53,7 @@ export function createLocalRevealManager(
 ): RevealManager {
   const modelMetadataProvider = new LocalModelMetadataProvider();
   const modelDataProvider = new LocalModelDataProvider();
-  const annotationProvider = new LocalAnnotationProvider();
+  const annotationProvider = new LocalPointCloudStylableObjectProvider();
   const pointClassificationsProvider = new LocalPointClassificationsProvider();
   return createRevealManager(
     'local',
@@ -82,7 +84,7 @@ export function createCdfRevealManager(
   const applicationId = getSdkApplicationId(client);
   const modelMetadataProvider = new CdfModelMetadataProvider(client);
   const modelDataProvider = new CdfModelDataProvider(client);
-  const annotationProvider = new CdfAnnotationProvider(client);
+  const annotationProvider = new CdfPointCloudStylableObjectProvider(client);
   const pointClassificationsProvider = new UrlPointClassificationsProvider(modelDataProvider);
   return createRevealManager(
     client.project,
@@ -115,7 +117,7 @@ export function createRevealManager(
   applicationId: string,
   modelMetadataProvider: ModelMetadataProvider,
   modelDataProvider: ModelDataProvider,
-  annotationProvider: IAnnotationProvider,
+  annotationProvider: PointCloudStylableObjectProvider,
   pointClassificationsProvider: IPointClassificationsProvider,
   renderer: THREE.WebGLRenderer,
   sceneHandler: SceneHandler,
