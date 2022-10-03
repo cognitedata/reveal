@@ -2,6 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
+import Stats from 'stats.js';
 import { useEffect, useRef } from 'react';
 import { CanvasWrapper } from '../components/styled';
 import { THREE } from '@cognite/reveal';
@@ -17,7 +18,7 @@ import {
   CogniteModelBase,
   DefaultCameraManager
 } from '@cognite/reveal';
-import { DebugCameraTool, ExplodedViewTool, AxisViewTool } from '@cognite/reveal/tools';
+import { DebugCameraTool, ExplodedViewTool, AxisViewTool, Corner } from '@cognite/reveal/tools';
 import * as reveal from '@cognite/reveal';
 import { ClippingUI } from '../utils/ClippingUI';
 import { NodeStylingUI } from '../utils/NodeStylingUI';
@@ -36,7 +37,7 @@ import { MeasurementUi } from '../utils/MeasurementUi';
 window.THREE = THREE;
 (window as any).reveal = reveal;
 
-export function Migration() {
+export function Viewer() {
 
   const url = new URL(window.location.href);
   const urlParams = url.searchParams;
@@ -113,7 +114,16 @@ export function Migration() {
       // Prepare viewer
       viewer = new Cognite3DViewer(viewerOptions);
       (window as any).viewer = viewer;
-
+      
+      // Add Stats.js overlay with FPS etc
+      var stats = new Stats();
+      stats.dom.style.position = 'absolute';
+      stats.dom.style.top = stats.dom.style.left = '';
+      stats.dom.style.right = stats.dom.style.bottom = '0px';
+      document.body.appendChild(stats.dom);
+      viewer.on('beforeSceneRendered', () => stats.begin());
+      viewer.on('sceneRendered', () => stats.end());
+      
       const controlsOptions: CameraControlsOptions = {
         changeCameraTargetOnClick: true,
         mouseWheelAction: 'zoomToCursor',
@@ -336,7 +346,14 @@ export function Migration() {
         }
       });
 
-      new AxisViewTool(viewer);
+      new AxisViewTool(viewer, 
+        // Give some space for Stats.js overlay
+        { 
+          position: { 
+            corner: Corner.BottomRight, 
+            padding: new THREE.Vector2(60, 0) 
+          }
+        });
     }
 
     main();
