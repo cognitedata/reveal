@@ -1,7 +1,6 @@
 import { useMemo, useState } from 'react';
-import NewHeader from 'components/NewHeader';
 import { Button, Icon, Input } from '@cognite/cogs.js';
-import { Table } from '@cognite/cdf-utilities';
+import { Table, TableNoResults } from '@cognite/cdf-utilities';
 import Tag from 'antd/lib/tag';
 import { notification } from 'antd';
 import Checkbox from 'antd/lib/checkbox';
@@ -28,6 +27,7 @@ import {
 import { useWithExtpipes } from '../../hooks/useWithExtpipes';
 import { useDataSetMode, useSelectedDataSet } from '../../context/index';
 import { useTranslation } from 'common/i18n';
+import Page from 'components/page';
 
 const DataSetsList = (): JSX.Element => {
   const { t } = useTranslation();
@@ -302,14 +302,7 @@ const DataSetsList = (): JSX.Element => {
   }
 
   return (
-    <div>
-      <NewHeader
-        title={t('data-set_other')}
-        leftItem={SearchBar}
-        rightItem={ActionToolbar}
-        breadcrumbs={[{ title: t('data-set_other'), path: `/${appPath}` }]}
-        help="https://docs.cognite.com/cdf/data_governance/concepts/datasets"
-      />
+    <Page title={t('data-set_other')}>
       <DataSetEditor
         visible={creationDrawerVisible}
         onClose={onClose}
@@ -344,10 +337,17 @@ const DataSetsList = (): JSX.Element => {
             setItemInStorage(sorter?.columnKey, sorter?.order);
         }}
         getPopupContainer={getContainer}
-        emptyContent={<>TODO</>}
+        emptyContent={
+          <TableNoResults
+            title={t('data-set-list-no-records')}
+            content={t('data-set-list-search-not-found', {
+              // $: search !== '' ? `"${search}"` : search,
+            })}
+          />
+        }
         appendTooltipTo={getContainer()}
       />
-    </div>
+    </Page>
   );
 };
 
