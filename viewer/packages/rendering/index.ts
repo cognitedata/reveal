@@ -3,6 +3,7 @@
  */
 
 export { CadMaterialManager } from './src/CadMaterialManager';
+export { PointCloudMaterialManager } from './src/PointCloudMaterialManager';
 
 export { NodeTransformProvider } from './src/transform/NodeTransformProvider';
 

@@ -46,18 +46,15 @@ export class RevealManager {
   };
 
   private readonly _updateSubject: Subject<void>;
-  private readonly _materialManager: CadMaterialManager;
 
   constructor(
     cadManager: CadManager,
     pointCloudManager: PointCloudManager,
     pipelineExecutor: RenderPipelineExecutor,
     renderPipeline: RenderPipelineProvider,
-    materialManager: CadMaterialManager
   ) {
     this._pipelineExecutor = pipelineExecutor;
     this._renderPipeline = renderPipeline;
-    this._materialManager = materialManager;
     this._cadManager = cadManager;
     this._pointCloudManager = pointCloudManager;
     this.initLoadingStateObserver(this._cadManager, this._pointCloudManager);
@@ -77,6 +74,7 @@ export class RevealManager {
       return;
     }
     this._cadManager.dispose();
+    this._pointCloudManager.dispose();
     this._pipelineExecutor.dispose();
     this._renderPipeline.dispose();
     this._subscriptions.unsubscribe();
@@ -94,7 +92,7 @@ export class RevealManager {
   }
 
   get materialManager(): CadMaterialManager {
-    return this._materialManager;
+    return this._cadManager.materialManager;
   }
 
   get needsRedraw(): boolean {

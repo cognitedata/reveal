@@ -14,6 +14,7 @@ import {
   MAX_LOADS_TO_GPU,
   MAX_NUM_NODES_LOADING,
   PERSPECTIVE_CAMERA,
+  PointCloudMaterialManager,
   UPDATE_THROTTLE_TIME_MS
 } from '@reveal/rendering';
 import { EptLoader } from './loading/EptLoader';
@@ -64,6 +65,7 @@ export class Potree implements IPotree {
   private _pointBudget: number = DEFAULT_POINT_BUDGET;
   private readonly _rendererSize: Vector2 = new Vector2();
   private readonly _modelDataProvider: ModelDataProvider;
+  private readonly _materialManager: PointCloudMaterialManager;
 
   private readonly _throttledUpdateFunc = throttle(
     (pointClouds: PointCloudOctree[], camera: THREE.Camera, renderer: WebGLRenderer) =>
@@ -74,17 +76,21 @@ export class Potree implements IPotree {
   maxNumNodesLoading: number = MAX_NUM_NODES_LOADING;
   lru = new LRU(this._pointBudget);
 
-  constructor(modelDataProvider: ModelDataProvider) {
+  constructor(modelDataProvider: ModelDataProvider, pointCloudMaterialManager: PointCloudMaterialManager) {
     this._modelDataProvider = modelDataProvider;
+    this._materialManager = pointCloudMaterialManager;
   }
 
   async loadPointCloud(
     baseUrl: string,
     fileName: string,
+    modelIdentifier: symbol,
     _xhrRequest = (input: RequestInfo, init?: RequestInit) => fetch(input, init)
   ): Promise<PointCloudOctree> {
+    this._materialManager.addModelMaterial(modelIdentifier);
+    
     return EptLoader.load(baseUrl, fileName, this._modelDataProvider).then(
-      geometry => new PointCloudOctree(this, geometry)
+      geometry => new PointCloudOctree(this, geometry, this._materialManager.getModelMaterial(modelIdentifier))
     );
   }
 

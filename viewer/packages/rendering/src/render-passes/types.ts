@@ -56,17 +56,19 @@ export type ThreeUniforms = {
   [uniform: string]: THREE.IUniform<any>;
 };
 
+export type PointCloudMaterialParameters = {
+  weighted?: boolean;
+  shape?: PotreePointShape;
+  hqDepthPass?: boolean;
+  depthWrite?: boolean;
+  blending?: THREE.Blending;
+  blendSrc?: THREE.BlendingDstFactor | THREE.BlendingSrcFactor;
+  blendDst?: THREE.BlendingDstFactor;
+  colorWrite?: boolean;
+};
+
 export type PointCloudPassParameters = {
-  material?: {
-    weighted?: boolean;
-    shape?: PotreePointShape;
-    hqDepthPass?: boolean;
-    depthWrite?: boolean;
-    blending?: THREE.Blending;
-    blendSrc?: THREE.BlendingDstFactor | THREE.BlendingSrcFactor;
-    blendDst?: THREE.BlendingDstFactor;
-    colorWrite?: boolean;
-  };
+  material?: PointCloudMaterialParameters;
   renderer?: {
     autoClearDepth?: boolean;
   };

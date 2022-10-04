@@ -3,7 +3,7 @@
  */
 
 import * as THREE from 'three';
-import { createRenderTriangle } from '@reveal/utilities';
+import { createRenderTriangle, WebGLRendererStateHelper } from '@reveal/utilities';
 import { CadMaterialManager } from '../CadMaterialManager';
 import { RenderMode } from '../rendering/RenderMode';
 import { CogniteColors, RevealColors } from './types';
@@ -12,6 +12,7 @@ import {
   BlitEffect,
   BlitOptions,
   DepthBlendBlitOptions,
+  PointCloudPassParameters,
   PointCloudPostProcessingOptions,
   ThreeUniforms
 } from '../render-passes/types';
@@ -269,4 +270,17 @@ function setModelRenderLayers(
       node.layers.enable(RenderLayer.InFront);
     }
   });
+}
+
+export function setRendererParameters(rendererHelper: WebGLRendererStateHelper, parameters: PointCloudPassParameters): void {
+  if (parameters?.renderer) {
+    for (const prop of Object.entries(parameters.renderer)) {
+      try {
+        //@ts-ignore
+        rendererHelper[prop[0]] = prop[1];
+      } catch {
+        console.error(`Undefined WebGLRendererStateHelper property: ${prop[0]}`);
+      }
+    }
+  }
 }

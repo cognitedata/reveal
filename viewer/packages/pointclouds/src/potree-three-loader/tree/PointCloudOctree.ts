@@ -34,7 +34,7 @@ export class PointCloudOctree extends PointCloudTree {
   private readonly visibleBounds: Box3 = new Box3();
   private picker: PointCloudOctreePicker | undefined;
 
-  constructor(potree: IPotree, pcoGeometry: IPointCloudTreeGeometry, material?: PointCloudMaterial) {
+  constructor(potree: IPotree, pcoGeometry: IPointCloudTreeGeometry, material: PointCloudMaterial) {
     super();
 
     this.name = '';
@@ -46,7 +46,7 @@ export class PointCloudOctree extends PointCloudTree {
 
     this.position.copy(pcoGeometry.offset);
 
-    this.material = material || new PointCloudMaterial();
+    this.material = material;
     this.updateMaterial();
   }
 
@@ -62,7 +62,6 @@ export class PointCloudOctree extends PointCloudTree {
 
     this.pcoGeometry.root?.traverse(n => this.potree.lru.remove(n));
     this.pcoGeometry.dispose();
-    this.material.dispose();
 
     this.visibleNodes = [];
     this.visibleGeometry = [];

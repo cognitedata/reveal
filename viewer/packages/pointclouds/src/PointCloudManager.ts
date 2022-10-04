@@ -18,10 +18,12 @@ import { asyncScheduler, combineLatest, Observable, scan, Subject, throttleTime 
 import { ModelIdentifier } from '@reveal/data-providers';
 import { MetricsLogger } from '@reveal/metrics';
 import { SupportedModelTypes } from '@reveal/model-base';
+import { PointCloudMaterialManager } from '@reveal/rendering';
 
 export class PointCloudManager {
   private readonly _pointCloudMetadataRepository: PointCloudMetadataRepository;
   private readonly _pointCloudFactory: PointCloudFactory;
+  private readonly _materialManager: PointCloudMaterialManager
   private readonly _pointCloudGroupWrapper: PotreeGroupWrapper;
 
   private readonly _cameraSubject: Subject<THREE.PerspectiveCamera> = new Subject();
@@ -35,12 +37,14 @@ export class PointCloudManager {
 
   constructor(
     metadataRepository: PointCloudMetadataRepository,
+    materialManager: PointCloudMaterialManager,
     modelFactory: PointCloudFactory,
     scene: THREE.Scene,
     renderer: THREE.WebGLRenderer
   ) {
     this._pointCloudMetadataRepository = metadataRepository;
     this._pointCloudFactory = modelFactory;
+    this._materialManager = materialManager;
     this._pointCloudGroupWrapper = new PotreeGroupWrapper(modelFactory.potreeInstance);
 
     scene.add(this._pointCloudGroupWrapper);
@@ -142,6 +146,11 @@ export class PointCloudManager {
 
   removeModel(node: PointCloudNode): void {
     this._pointCloudGroupWrapper.removePointCloud(node.potreeNode);
+    this._materialManager.removeModelMaterial(node.potreeNode.modelIdentifier);
+  }
+
+  dispose(): void {
+    this._pointCloudFactory.dispose();
   }
 
   private loadedModelsObservable() {

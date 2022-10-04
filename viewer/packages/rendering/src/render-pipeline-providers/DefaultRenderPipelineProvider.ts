@@ -18,6 +18,7 @@ import { SceneHandler, WebGLRendererStateHelper } from '@reveal/utilities';
 import { PointCloudRenderPipelineProvider } from './PointCloudRenderPipelineProvider';
 import { CadNode } from '@reveal/cad-model';
 import { PointCloudNode } from '@reveal/pointclouds';
+import { PointCloudMaterialManager } from '../PointCloudMaterialManager';
 
 export class DefaultRenderPipelineProvider implements RenderPipelineProvider {
   private readonly _viewerScene: THREE.Scene;
@@ -65,6 +66,7 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider {
 
   constructor(
     materialManager: CadMaterialManager,
+    pointCloudMaterialManager: PointCloudMaterialManager,
     sceneHandler: SceneHandler,
     renderOptions: RenderOptions,
     outputRenderTarget?: {
@@ -100,7 +102,7 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider {
       ssaoParameters
     );
 
-    this._pointCloudRenderPipeline = new PointCloudRenderPipelineProvider(sceneHandler, pointCloudParameters);
+    this._pointCloudRenderPipeline = new PointCloudRenderPipelineProvider(sceneHandler, pointCloudMaterialManager, pointCloudParameters);
 
     this._postProcessingPass = new PostProcessingPass(sceneHandler.scene, {
       ssaoTexture: this._renderTargetData.ssaoRenderTarget.texture,
