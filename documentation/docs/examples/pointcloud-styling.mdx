@@ -16,6 +16,24 @@ In this context, a _stylable object_ is represented by a volume in space. Stylin
 
 Stylable objects must be supplied separately from the model itself. Upon adding a new point cloud model to the viewer, Reveal will automatically fetch data describing the point cloud objects from CDF's Annotations API, if any are available. To get the number of fetched stylable objects, use the property `model.stylableObjectCount`, where `model` is a `CognitePointCloudModel`.
 
+After the model and associated stylable objects are loaded, you may list the objects using `model.traverseStylableObjects`. This method traverses all objects as instances of `PointCloudObjectMetadata`, containing the following fields:
+
+| Field                      | Field type                      | Description                                                                           |
+|----------------------------|---------------------------------|---------------------------------------------------------------------------------------|
+| `annotationId`             | `number`                        | The ID of the CDF annotation that this stylable object corresponds to.                |
+| `assetId`                  | `number?`                       | The ID of the CDF asset associated with the annotation, if any.                       |
+| `boundingBox`              | `THREE.Box3`                    | The bounding box of the bounding box in Reveal space.                                 |
+
+To visualize all bounding boxes associated with the stylable objects:
+
+```js runnable
+const boxGroup = new THREE.Group();
+
+model.traverseStylableObjects(obj => boxGroup.add(new THREE.Box3Helper(obj.boundingBox)));
+
+viewer.addObject3D(boxGroup);
+```
+
 Point cloud objects can be styled with a `PointCloudAppearance` object, containing the following attributes:
 
 | Field                      | Field type                      | Description                                                                           |
@@ -25,12 +43,12 @@ Point cloud objects can be styled with a `PointCloudAppearance` object, containi
 
 To assign a style to one or more stylable objects, you must first create an instance of the abstract class `PointCloudObjectCollection`. Currently, the only implementation of this class provided by Reveal is `AnnotationIdPointCloudObjectCollection`, which is initialized with a list of annotation IDs corresponding to stylable objects. To see all available annotation IDs associated with the model, you may use the method `model.traverseStylableObjects`.
 
-To color all stylable objects red:
+To color all stylable objects green:
 
 ```js runnable
 const annotationIds = [];
 
-model.traverseStylableObjects(annotationMetadata => annotationIds.push(annotationMetadata.annotationId));
+model.traverseStylableObjects(objectMetadata => annotationIds.push(objectMetadata.annotationId));
 
 const objectCollection = new AnnotationIdPointCloudObjectCollection(annotationIds);
 const appearance = { color: [255, 0, 0] };
