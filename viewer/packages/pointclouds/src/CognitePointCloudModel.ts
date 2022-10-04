@@ -54,7 +54,7 @@ export class CognitePointCloudModel implements CogniteModelBase {
   /**
    * Used to clean up memory.
    */
-  dispose(): void { }
+  dispose(): void {}
 
   // eslint-disable-next-line jsdoc/require-description
   /**

@@ -12,9 +12,7 @@ import {
   PotreeNodeWrapper
 } from '../../packages/pointclouds';
 
-import {
-  PointCloudObjectData
-} from '../../packages/data-providers';
+import { PointCloudObjectData } from '../../packages/data-providers';
 
 import * as THREE from 'three';
 

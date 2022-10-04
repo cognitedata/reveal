@@ -9,14 +9,11 @@ import { SerializableCylinder } from './SerializableCylinder';
 import { Box3, Matrix4, Vector3 } from 'three';
 
 export class Cylinder implements IShape {
-
   private readonly _centerA: Vector3;
   private readonly _centerB: Vector3;
   private readonly _radius: number;
 
-  constructor(centerA: Vector3,
-    centerB: Vector3,
-    radius: number) {
+  constructor(centerA: Vector3, centerB: Vector3, radius: number) {
     this._centerA = centerA;
     this._centerB = centerB;
     this._radius = radius;

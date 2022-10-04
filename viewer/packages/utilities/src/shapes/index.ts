@@ -6,7 +6,6 @@ export { SerializableBox } from './SerializableBox';
 export { SerializableCylinder } from './SerializableCylinder';
 export { SerializableCompositeShape } from './SerializableCompositeShape';
 
-
 export { ISerializableShape, ShapeType } from './ISerializableShape';
 
 export { IShape } from './IShape';

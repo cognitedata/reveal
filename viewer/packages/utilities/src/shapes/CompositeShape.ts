@@ -28,9 +28,7 @@ export class CompositeShape implements IShape {
 
   createBoundingBox(): Box3 {
     const unionedBox = new Box3();
-    this._innerShapes
-      .map(s => s.createBoundingBox())
-      .forEach(b => unionedBox.union(b));
+    this._innerShapes.map(s => s.createBoundingBox()).forEach(b => unionedBox.union(b));
 
     return unionedBox;
   }

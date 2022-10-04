@@ -36,7 +36,7 @@ export class EptBinaryLoader implements ILoader {
 
       const boundingBox = obj.shape.createBoundingBox();
 
-      return [{ shape: serializableShape, objectId: obj.objectId }, boundingBox]
+      return [{ shape: serializableShape, objectId: obj.objectId }, boundingBox];
     });
   }
 
@@ -114,7 +114,7 @@ function createGeometryFromEptData(data: ParsedEptData): THREE.BufferGeometry {
   const geometry = new THREE.BufferGeometry();
 
   function addAttributeIfPresent<TypedArray extends ArrayLike<number>>(
-    typedArrayConstructor: { new(data: ArrayBuffer): TypedArray },
+    typedArrayConstructor: { new (data: ArrayBuffer): TypedArray },
     name: string,
     componentCount: number,
     data?: ArrayBuffer | undefined,

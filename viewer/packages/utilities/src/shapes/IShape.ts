@@ -1,6 +1,6 @@
 /*!
-* Copyright 2022 Cognite AS
-*/
+ * Copyright 2022 Cognite AS
+ */
 
 import { ISerializableShape } from './ISerializableShape';
 

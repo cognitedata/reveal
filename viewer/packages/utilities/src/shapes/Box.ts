@@ -9,7 +9,6 @@ import { IShape } from './IShape';
 import { SerializableBox } from './SerializableBox';
 
 export class Box implements IShape {
-
   private readonly _invInstanceMatrix: Matrix4;
 
   constructor(instanceMatrix: Matrix4) {

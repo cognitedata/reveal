@@ -18,9 +18,7 @@ import {
   PointCloudStylableObjectProvider,
   LocalPointCloudStylableObjectProvider
 } from '@reveal/data-providers';
-import {
-  createPointCloudManager,
-} from '@reveal/pointclouds';
+import { createPointCloudManager } from '@reveal/pointclouds';
 import {
   ModelMetadataProvider,
   CdfModelMetadataProvider,

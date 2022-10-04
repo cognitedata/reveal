@@ -15,7 +15,10 @@ export { BinaryFileProvider, File3dFormat, BlobOutputMetadata } from './src/type
 export { PointCloudObjectMetadata, PointCloudObject } from './src/pointcloud-stylable-object-providers/types';
 export { PointCloudObjectCollection } from '../pointclouds/src/styling/PointCloudObjectCollection';
 export { PointCloudStylableObjectProvider } from './src/PointCloudStylableObjectProvider';
-export { PointCloudObjectData, PointCloudObjectsMaps } from './src/pointcloud-stylable-object-providers/PointCloudObjectAnnotationData';
+export {
+  PointCloudObjectData,
+  PointCloudObjectsMaps
+} from './src/pointcloud-stylable-object-providers/PointCloudObjectAnnotationData';
 export { StylableObject, SerializableStylableObject } from './src/pointcloud-stylable-object-providers/StylableObject';
 
 export { CdfPointCloudStylableObjectProvider } from './src/pointcloud-stylable-object-providers/CdfPointCloudStylableObjectProvider';

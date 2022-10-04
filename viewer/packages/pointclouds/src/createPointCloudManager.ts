@@ -22,7 +22,11 @@ export function createPointCloudManager(
 ): PointCloudManager {
   const metadataRepository = new PointCloudMetadataRepository(modelMetadataProvider, modelDataProvider);
   const potreeInstance = new Potree(modelDataProvider);
-  const pointCloudFactory = new PointCloudFactory(potreeInstance, pointCloudStylableObjectProvider, classificationsProvider);
+  const pointCloudFactory = new PointCloudFactory(
+    potreeInstance,
+    pointCloudStylableObjectProvider,
+    classificationsProvider
+  );
 
   return new PointCloudManager(metadataRepository, pointCloudFactory, potreeInstance, scene, renderer);
 }

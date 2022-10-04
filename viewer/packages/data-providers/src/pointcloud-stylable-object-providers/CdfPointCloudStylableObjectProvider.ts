@@ -22,13 +22,15 @@ export class CdfPointCloudStylableObjectProvider implements PointCloudStylableOb
 
   private annotationGeometryToRevealShapes(geometry: any): IShape {
     if (geometry.box) {
-      return new Box(new THREE.Matrix4().fromArray(geometry.box.matrix).transpose())
+      return new Box(new THREE.Matrix4().fromArray(geometry.box.matrix).transpose());
     }
 
     if (geometry.cylinder) {
-      return new Cylinder(new THREE.Vector3().fromArray(geometry.cylinder.centerA),
-                          new THREE.Vector3().fromArray(geometry.cylinder.centerB),
-                          geometry.cylinder.radius);
+      return new Cylinder(
+        new THREE.Vector3().fromArray(geometry.cylinder.centerA),
+        new THREE.Vector3().fromArray(geometry.cylinder.centerB),
+        geometry.cylinder.radius
+      );
     }
 
     throw Error('Annotation geometry type not recognized');
