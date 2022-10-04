@@ -23,7 +23,7 @@ import { PointCloudMaterialManager } from '@reveal/rendering';
 export class PointCloudManager {
   private readonly _pointCloudMetadataRepository: PointCloudMetadataRepository;
   private readonly _pointCloudFactory: PointCloudFactory;
-  private readonly _materialManager: PointCloudMaterialManager
+  private readonly _materialManager: PointCloudMaterialManager;
   private readonly _pointCloudGroupWrapper: PotreeGroupWrapper;
 
   private readonly _cameraSubject: Subject<THREE.PerspectiveCamera> = new Subject();

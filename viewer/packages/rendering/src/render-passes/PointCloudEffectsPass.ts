@@ -13,7 +13,11 @@ export class PointCloudEffectsPass implements RenderPass {
   private readonly _pointCloudMaterialManager: PointCloudMaterialManager;
   private readonly _passMaterialParameters: PointCloudPassParameters;
 
-  constructor(scene: THREE.Object3D, pointCloudMaterialManager: PointCloudMaterialManager, materialParameters?: PointCloudPassParameters) {
+  constructor(
+    scene: THREE.Object3D,
+    pointCloudMaterialManager: PointCloudMaterialManager,
+    materialParameters?: PointCloudPassParameters
+  ) {
     this._viewerScene = scene;
     this._pointCloudMaterialManager = pointCloudMaterialManager;
     this._passMaterialParameters = materialParameters ?? {};
@@ -36,5 +40,4 @@ export class PointCloudEffectsPass implements RenderPass {
       camera.layers.mask = currentCameraMask;
     }
   }
-
 }

@@ -272,7 +272,10 @@ function setModelRenderLayers(
   });
 }
 
-export function setRendererParameters(rendererHelper: WebGLRendererStateHelper, parameters: PointCloudPassParameters): void {
+export function setRendererParameters(
+  rendererHelper: WebGLRendererStateHelper,
+  parameters: PointCloudPassParameters
+): void {
   if (parameters?.renderer) {
     for (const prop of Object.entries(parameters.renderer)) {
       try {

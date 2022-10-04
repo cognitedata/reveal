@@ -88,7 +88,7 @@ export class Potree implements IPotree {
     _xhrRequest = (input: RequestInfo, init?: RequestInit) => fetch(input, init)
   ): Promise<PointCloudOctree> {
     this._materialManager.addModelMaterial(modelIdentifier);
-    
+
     return EptLoader.load(baseUrl, fileName, this._modelDataProvider).then(
       geometry => new PointCloudOctree(this, geometry, this._materialManager.getModelMaterial(modelIdentifier))
     );

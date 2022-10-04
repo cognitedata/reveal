@@ -50,7 +50,11 @@ export class PointCloudRenderPipelineProvider implements RenderPipelineProvider 
     }
   };
 
-  constructor(sceneHandler: SceneHandler, pointCloudMaterialManager: PointCloudMaterialManager, renderParameters: PointCloudParameters) {
+  constructor(
+    sceneHandler: SceneHandler,
+    pointCloudMaterialManager: PointCloudMaterialManager,
+    renderParameters: PointCloudParameters
+  ) {
     this._renderTargetData = {
       currentRenderSize: new THREE.Vector2(1, 1),
       output: new THREE.WebGLRenderTarget(1, 1, {
@@ -66,7 +70,11 @@ export class PointCloudRenderPipelineProvider implements RenderPipelineProvider 
     this._renderParameters = renderParameters;
 
     this._standardPass = new PointCloudEffectsPass(sceneHandler.scene, pointCloudMaterialManager);
-    this._depthPass = new PointCloudEffectsPass(sceneHandler.scene, pointCloudMaterialManager, PointCloudRenderPipelineProvider.DepthPassParameters);
+    this._depthPass = new PointCloudEffectsPass(
+      sceneHandler.scene,
+      pointCloudMaterialManager,
+      PointCloudRenderPipelineProvider.DepthPassParameters
+    );
     this._attributePass = new PointCloudEffectsPass(
       sceneHandler.scene,
       pointCloudMaterialManager,

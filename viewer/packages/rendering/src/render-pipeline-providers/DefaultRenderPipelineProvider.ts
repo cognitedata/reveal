@@ -102,7 +102,11 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider {
       ssaoParameters
     );
 
-    this._pointCloudRenderPipeline = new PointCloudRenderPipelineProvider(sceneHandler, pointCloudMaterialManager, pointCloudParameters);
+    this._pointCloudRenderPipeline = new PointCloudRenderPipelineProvider(
+      sceneHandler,
+      pointCloudMaterialManager,
+      pointCloudParameters
+    );
 
     this._postProcessingPass = new PostProcessingPass(sceneHandler.scene, {
       ssaoTexture: this._renderTargetData.ssaoRenderTarget.texture,

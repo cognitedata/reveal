@@ -28,8 +28,7 @@ export function createPointCloudModel(modelId: number, revisionId: number): Cogn
       .setup(p => p.tightBoundingBox)
       .returns(new THREE.Box3())
       .object(),
-    new Mock<PointCloudMaterial>()
-      .object(),
+    new Mock<PointCloudMaterial>().object()
   );
 
   const groupWrapperMock = new Mock<PotreeGroupWrapper>();

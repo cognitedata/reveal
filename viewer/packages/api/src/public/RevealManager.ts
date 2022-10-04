@@ -51,7 +51,7 @@ export class RevealManager {
     cadManager: CadManager,
     pointCloudManager: PointCloudManager,
     pipelineExecutor: RenderPipelineExecutor,
-    renderPipeline: RenderPipelineProvider,
+    renderPipeline: RenderPipelineProvider
   ) {
     this._pipelineExecutor = pipelineExecutor;
     this._renderPipeline = renderPipeline;
