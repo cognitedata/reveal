@@ -1,10 +1,10 @@
 import { NdsRiskTypesSelection } from 'domain/wells/nds/internal/types';
 import { NptCodesSelection } from 'domain/wells/npt/internal/types';
+import { getDefaultMaxDepthData } from 'domain/wells/trajectory/internal/utils/getDefaultMaxDepthData';
 import { useWellInspectWellbores } from 'domain/wells/well/internal/hooks/useWellInspectWellbores';
 
 import React, { useCallback, useState } from 'react';
 
-import isEmpty from 'lodash/isEmpty';
 import { BooleanMap, toBooleanMap } from 'utils/booleanMap';
 
 import { PerfMetrics } from '@cognite/metrics';
@@ -14,6 +14,7 @@ import {
   PerformanceMetricsObserver,
   PerformanceObserved,
 } from 'components/Performance';
+import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 import { useWellInspectSelection } from 'modules/wellInspect/selectors';
 
 import { WellboreCasingsViewsWrapper } from './elements';
@@ -32,6 +33,8 @@ import {
 const StickChart: React.FC = () => {
   const wellbores = useWellInspectWellbores();
   const { selectedWellboreIds } = useWellInspectSelection();
+
+  const { data: depthUnit } = useUserPreferencesMeasurement();
 
   const { data: maxDepths, isLoading } = useMaxDepths();
 
@@ -73,7 +76,7 @@ const StickChart: React.FC = () => {
     }
   };
 
-  if (isEmpty(maxDepths)) {
+  if (isLoading) {
     return <EmptyState isLoading={isLoading} />;
   }
 
@@ -101,7 +104,10 @@ const StickChart: React.FC = () => {
               {...getWellboreData(wellbore)}
               {...getWellboreStickChartColumns(matchingId)}
               isWellboreSelected={Boolean(selectedWellboreIds[matchingId])}
-              maxDepth={maxDepths[matchingId]}
+              maxDepth={
+                maxDepths[matchingId] ||
+                getDefaultMaxDepthData(matchingId, depthUnit)
+              }
               columnVisibility={columnVisibility}
               columnOrder={columnOrder}
               depthMeasurementType={depthMeasurementType}

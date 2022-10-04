@@ -1,38 +1,35 @@
-import { DATA_SOURCE } from '../../../../src/modules/wellSearch/constantsSidebarFilters';
+import {
+  DATA_AVAILABILITY,
+  DATA_SOURCE,
+} from '../../../../src/modules/wellSearch/constantsSidebarFilters';
 import { TAB_NAMES } from '../../../../src/pages/authorized/search/well/inspect/constants';
 import { interceptCoreNetworkRequests } from '../../../support/commands/helpers';
+import { WELLS_SEARCH_ALIAS } from '../../../support/interceptions';
 
-const GOOD_CASINGS = 'pyxis';
-const BAD_CASINGS = 'rigel';
+const BAD_CASINGS_SOURCE = 'rigel';
 
-describe('Wells: Stick Chart - Casings', () => {
-  beforeEach(() => {
+describe('Wells: Stick Chart', () => {
+  before(() => {
     const coreRequests = interceptCoreNetworkRequests();
-    cy.addWaitForWdlResources('sources', 'GET', 'getSources');
+
+    cy.addWaitForWdlResources('casings/list', 'POST', 'casingsList');
+    cy.addWaitForWdlResources('nds/list', 'POST', 'ndsList');
+    cy.addWaitForWdlResources('npt/list', 'POST', 'nptList');
+
     cy.visit(Cypress.env('BASE_URL'));
     cy.login();
     cy.acceptCookies();
-    cy.selectCategory('Wells');
-    cy.wait('@getSources');
     cy.wait(coreRequests);
-  });
+    cy.selectCategory('Wells');
 
-  /**
-   * FDD should have a trajectory for this bad casings,
-   * since now we rely on trajectory depth limits when rendering the stick chart.
-   * This will be enabled once the datais fixed.
-   */
-  // eslint-disable-next-line jest/no-disabled-tests
-  it.skip('allows us to inspect bad casings for wellbores', () => {
-    // inspect bad casings
     cy.performWellsSearch({
       search: {
         filters: [
           {
-            category: DATA_SOURCE,
-            subCategory: DATA_SOURCE,
+            category: DATA_AVAILABILITY,
+            subCategory: DATA_AVAILABILITY,
             value: {
-              name: BAD_CASINGS,
+              name: 'Casings',
               type: 'select',
             },
           },
@@ -40,15 +37,42 @@ describe('Wells: Stick Chart - Casings', () => {
       },
     });
 
+    cy.validateSelect(
+      DATA_AVAILABILITY,
+      ['NDS events', 'NPT events', 'Trajectories'],
+      ['NDS events', 'NPT events', 'Trajectories']
+    );
+
+    cy.wait(`@${WELLS_SEARCH_ALIAS}`);
     cy.selectFirstWellInResults();
-    cy.openInspectView();
+    cy.openInspectView(1);
     cy.goToWellsInspectTab(TAB_NAMES.STICK_CHART);
 
-    cy.log('Inspect casings results');
-    cy.get('[data-testid="depth-indicator"]').should('exist');
+    cy.wait('@casingsList');
+    cy.wait('@nptList');
+    cy.wait('@ndsList');
   });
 
-  it('allows us to inspect good casings for wellbores', () => {
+  it('Should be able to inspect casings', () => {
+    cy.log('casing depth indicators should be visible');
+    cy.findAllByTestId('depth-indicator').should('be.visible');
+  });
+});
+
+describe('Wells: Stick Chart: Bad casings', () => {
+  before(() => {
+    const coreRequests = interceptCoreNetworkRequests();
+
+    cy.addWaitForWdlResources('sources', 'GET', 'getSources');
+    cy.addWaitForWdlResources('casings/list', 'POST', 'casingsList');
+
+    cy.visit(Cypress.env('BASE_URL'));
+    cy.login();
+    cy.acceptCookies();
+    cy.wait(coreRequests);
+    cy.wait('@getSources');
+    cy.selectCategory('Wells');
+
     cy.performWellsSearch({
       search: {
         filters: [
@@ -56,7 +80,7 @@ describe('Wells: Stick Chart - Casings', () => {
             category: DATA_SOURCE,
             subCategory: DATA_SOURCE,
             value: {
-              name: GOOD_CASINGS,
+              name: BAD_CASINGS_SOURCE,
               type: 'select',
             },
           },
@@ -64,17 +88,16 @@ describe('Wells: Stick Chart - Casings', () => {
       },
     });
 
-    // inspect good casings
-    cy.validateSelect(DATA_SOURCE, [GOOD_CASINGS], GOOD_CASINGS);
-    // TODO(PP-3087): Temporally disabling this line for fix well/document tabs hidden issue
-    // cy.goToTab('Wells');
-
+    cy.wait(`@${WELLS_SEARCH_ALIAS}`);
     cy.selectFirstWellInResults();
-
-    cy.openInspectView();
+    cy.openInspectView(1);
     cy.goToWellsInspectTab(TAB_NAMES.STICK_CHART);
 
-    cy.log('Inspect casings results');
-    cy.get('[data-testid="depth-indicator"]').should('exist');
+    cy.wait('@casingsList');
+  });
+
+  it('Should be able to inspect casings', () => {
+    cy.log('casing depth indicators should be visible');
+    cy.findAllByTestId('depth-indicator').should('be.visible');
   });
 });
