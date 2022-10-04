@@ -5,7 +5,7 @@
 import Stats from 'stats.js';
 import { useEffect, useRef } from 'react';
 import { CanvasWrapper } from '../components/styled';
-import { THREE } from '@cognite/reveal';
+import * as THREE from 'three'
 import { CogniteClient } from '@cognite/sdk';
 import dat from 'dat.gui';
 import {

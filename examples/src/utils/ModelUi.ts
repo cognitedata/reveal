@@ -1,4 +1,4 @@
-import { THREE } from '@cognite/reveal';
+import * as THREE from 'three'
 import { AddModelOptions, Cognite3DModel, Cognite3DViewer, CogniteModelBase, CognitePointCloudModel, ViewerState } from "@cognite/reveal";
 
 import * as dat from 'dat.gui';
