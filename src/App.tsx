@@ -12,9 +12,9 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
 
 import { translations } from 'common/i18n';
-import Home from 'pages/Home';
 import GlobalStyles from 'styles/GlobalStyles';
 import { FlagProvider } from '@cognite/react-feature-flags';
+import Flow from 'pages/flow/Flow';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -43,7 +43,7 @@ const App = () => {
                 login={() => loginAndAuthIfNeeded(project, env)}
               >
                 <SDKProvider sdk={sdk}>
-                  <Home />
+                  <Flow />
                 </SDKProvider>
               </AuthWrapper>
             </SubAppWrapper>

@@ -1,5 +1,5 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import ReactDOM from 'react-dom/client';
 import './set-public-path';
 import singleSpaReact from 'single-spa-react';
 
@@ -7,7 +7,7 @@ import App from './App';
 
 const lifecycles = singleSpaReact({
   React,
-  ReactDOM,
+  ReactDOM: ReactDOM as any,
   rootComponent: App,
   // @ts-ignore
   errorBoundary() {
@@ -15,6 +15,7 @@ const lifecycles = singleSpaReact({
     // Customize the root error boundary for your microfrontend here.
     return <span>An error occured in your app</span>;
   },
+  renderType: 'createRoot',
 });
 
 export const { bootstrap, mount, unmount } = lifecycles;
