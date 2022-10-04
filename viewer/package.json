@@ -64,7 +64,7 @@
     "skmeans": "0.11.3"
   },
   "devDependencies": {
-    "@azure/msal-browser": "2.28.3",
+    "@azure/msal-browser": "2.29.0",
     "@cognite/sdk": "7.9.5",
     "@cognite/sdk-core": "4.4.0",
     "@types/dat.gui": "0.7.7",
