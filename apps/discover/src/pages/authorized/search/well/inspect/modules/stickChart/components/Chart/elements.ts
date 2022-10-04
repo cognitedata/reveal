@@ -15,6 +15,7 @@ import {
 } from '../../../common/ChartV2/elements';
 import {
   BodyColumnBody,
+  BodyColumnHeaderWrapper,
   BodyColumnMainHeader,
 } from '../../../common/Events/elements';
 import { CHART_COLUMN_WIDTH } from '../../WellboreStickChart/constants';
@@ -23,6 +24,10 @@ export const ChartWrapper = styled(BodyColumnBody)`
   flex-direction: column;
   align-items: center;
   justify-content: center;
+
+  ${BodyColumnHeaderWrapper} {
+    display: none;
+  }
 `;
 
 export const ChartHeader = styled(BodyColumnMainHeader)`

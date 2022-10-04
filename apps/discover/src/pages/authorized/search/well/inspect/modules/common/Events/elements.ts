@@ -21,8 +21,6 @@ export const BodyColumnHeaderWrapper = styled(FlexRow)`
   border-bottom: 1px solid var(--cogs-greyscale-grey3);
   border-top-left-radius: inherit;
   border-top-right-radius: inherit;
-  display: ${(props: { visible: boolean }) =>
-    props.visible ? 'content' : 'none'};
 `;
 
 export const ColumnHeaderWrapper = styled(FlexRow)`
@@ -207,6 +205,7 @@ export const EmptyStateWrapper = styled(Flex)`
     letter-spacing: -0.004em;
     padding-top: 0;
     justify-content: center;
+    width: 120px;
   }
 `;
 
