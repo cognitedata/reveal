@@ -22,7 +22,6 @@ export const CustomUnitLabel = Template.bind({});
 export const InputOutputSelected = Template.bind({});
 
 Default.args = {
-  open: true,
   onOverrideUnitClick: () => {},
   onConversionUnitClick: () => {},
   onCustomUnitLabelClick: () => {},
@@ -38,7 +37,6 @@ Disabled.args = {
 };
 
 CustomUnitLabel.args = {
-  open: true,
   unit: '',
   originalUnit: 'psi',
   preferredUnit: '',
@@ -50,7 +48,6 @@ CustomUnitLabel.args = {
 };
 
 InputOutputSelected.args = {
-  open: true,
   unit: 'bar',
   originalUnit: 'psi',
   preferredUnit: 'psi',

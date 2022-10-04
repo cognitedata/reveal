@@ -3,10 +3,11 @@ import styled from 'styled-components/macro';
 import { Menu, Button, Dropdown } from '@cognite/cogs.js';
 import { units, UnitTypes } from 'utils/units';
 import { makeDefaultTranslations, translationKeys } from 'utils/translations';
-import TranslatedEditableText from 'components/EditableText/TranslatedEditableText';
+import UnitDropDownInput from './UnitDropDownInput';
+import UnitDropdownOutput from './UnitDropdownOutput';
+import UnitDropdownUnitType from './UnitDropdownUnitType';
 
 type UnitDropdownProps = {
-  open?: boolean;
   unit?: string;
   style?: CSSProperties;
   disabled?: boolean;
@@ -22,9 +23,17 @@ type UnitDropdownProps = {
 
 const defaultTranslations = makeDefaultTranslations('Type', 'Input', 'Output');
 
+type UnitType =
+  | {
+      label: string;
+      value: string;
+      conversions: string[];
+      type: UnitTypes;
+    }
+  | undefined;
+
 const UnitDropdown = ({
   unit,
-  open,
   style,
   disabled,
   translations,
@@ -36,162 +45,93 @@ const UnitDropdown = ({
   onCustomUnitLabelClick,
   onResetUnitClick,
 }: UnitDropdownProps) => {
+  const [open, setOpen] = useState(false);
   const t = { ...defaultTranslations, ...translations };
 
-  const inputUnitOption = units.find(
+  const inputUnitOptionToSelect = units.find(
     (unitOption) => unitOption.value === unit?.toLowerCase()
+  );
+
+  const [inputUnitOption, setInputUnitOption] = useState<UnitType>(
+    inputUnitOptionToSelect
   );
 
   const [selectedUnitType, setSelectedUnitType] = useState<
     UnitTypes | undefined
-  >(inputUnitOption?.type);
+  >(inputUnitOptionToSelect?.type);
 
   const preferredUnitOption = units.find(
     (unitOption) => unitOption.value === preferredUnit?.toLowerCase()
   );
 
-  const unitConversionOptions = inputUnitOption?.conversions?.map(
-    (conversion) => units.find((unitOption) => unitOption.value === conversion)
-  );
+  const onInputUnitTypeChange = (_previous: any, _updated: any) => {
+    const unitToSelect = units.find(
+      (unitOption) => unitOption.value === unit?.toLowerCase()
+    );
+    setInputUnitOption(unitToSelect);
+  };
 
-  const originalUnitLabel =
-    units.find((unitOption) => unitOption.value === originalUnit?.toLowerCase())
-      ?.label || originalUnit;
-
-  const unitTypeMenuItems = [
-    <Menu.Item key="reset-unit" onClick={() => onResetUnitClick()}>
-      Set to default ({originalUnitLabel || 'N/A'})
-    </Menu.Item>,
-    ...Object.values(UnitTypes).map((unitType) => {
-      if (unitType === 'Custom') {
-        return (
-          <Menu.Item
-            key="add-custom-unit"
-            onDoubleClick={(e) => {
-              e.stopPropagation();
-            }}
-            onClick={(e) => {
-              setSelectedUnitType(unitType);
-              onCustomUnitLabelClick(customUnitLabel);
-              e.stopPropagation();
-            }}
-            style={
-              !!customUnitLabel && selectedUnitType === UnitTypes.CUSTOM
-                ? {
-                    color: 'var(--cogs-midblue-3)',
-                    backgroundColor: 'var(--cogs-midblue-6)',
-                    borderRadius: 3,
-                    padding: '2px 8px',
-                  }
-                : { padding: '2px 8px' }
-            }
-          >
-            <CustomLabelWrap>
-              <TranslatedEditableText
-                value={customUnitLabel || ''}
-                onChange={(val) => {
-                  setSelectedUnitType(unitType);
-                  onCustomUnitLabelClick(val);
-                }}
-                placeholder="Custom unit label"
-                editing={!customUnitLabel}
-                hideButtons
-              />
-            </CustomLabelWrap>
-          </Menu.Item>
-        );
-      }
-      return (
-        <Menu.Item
-          key={unitType}
-          onClick={() => setSelectedUnitType(unitType)}
-          style={
-            selectedUnitType === unitType
-              ? {
-                  color: 'var(--cogs-midblue-3)',
-                  backgroundColor: 'var(--cogs-midblue-6)',
-                  borderRadius: 3,
-                }
-              : {}
-          }
-        >
-          {unitType}
-        </Menu.Item>
-      );
-    }),
-  ];
-
-  const inputUnitsMenuItems = units
-    .filter((unitOption) => unitOption.type === selectedUnitType)
-    .map((unitOption) => (
-      <Menu.Item
-        key={unitOption.value}
-        onClick={() => onOverrideUnitClick(unitOption)}
-        style={
-          selectedUnitType !== UnitTypes.CUSTOM &&
-          unit?.toLowerCase() === unitOption.value
-            ? {
-                color: 'var(--cogs-midblue-3)',
-                backgroundColor: 'var(--cogs-midblue-6)',
-                borderRadius: 3,
-              }
-            : {}
-        }
-      >
-        {unitOption.label}
-        {originalUnit?.toLowerCase() === unitOption.value && ' (original)'}
-      </Menu.Item>
-    ));
-
-  const preferredUnitsMenuItems = unitConversionOptions?.map((unitOption) => (
-    <Menu.Item
-      key={unitOption?.value}
-      onClick={() => onConversionUnitClick(unitOption)}
-      style={
-        selectedUnitType !== UnitTypes.CUSTOM &&
-        preferredUnit?.toLowerCase() === unitOption?.value
-          ? {
-              color: 'var(--cogs-midblue-3)',
-              backgroundColor: 'var(--cogs-midblue-6)',
-              borderRadius: 3,
-            }
-          : {}
-      }
-    >
-      {unitOption?.label}
-    </Menu.Item>
-  ));
+  const onUnitTypeChange = (_previous: any, _updated: any) => {
+    if (_updated === inputUnitOptionToSelect?.type) {
+      setInputUnitOption(inputUnitOptionToSelect);
+    } else {
+      setInputUnitOption(undefined);
+    }
+  };
 
   return (
     <Dropdown
+      onClickOutside={() => setOpen(false)}
       disabled={disabled}
       visible={open}
       content={
-        <Menu style={{ ...style }}>
-          <MenuContainer>
-            <UnitTypeContainer>
-              <Menu.Header>
-                <UnitMenuHeader>{t.Type}</UnitMenuHeader>
-              </Menu.Header>
-              {unitTypeMenuItems}
-            </UnitTypeContainer>
-            <UnitContainer>
-              <Menu.Header>
-                <UnitMenuHeader>{t.Input}</UnitMenuHeader>
-              </Menu.Header>
-              {inputUnitsMenuItems}
-            </UnitContainer>
-            <UnitContainer>
-              <Menu.Header>
-                <UnitMenuHeader>{t.Output}</UnitMenuHeader>
-              </Menu.Header>
-              {preferredUnitsMenuItems}
-            </UnitContainer>
-          </MenuContainer>
-        </Menu>
+        open && (
+          <Menu style={{ ...style }}>
+            <MenuContainer>
+              <UnitTypeContainer>
+                <Menu.Header>
+                  <UnitMenuHeader>{t.Type}</UnitMenuHeader>
+                </Menu.Header>
+                <UnitDropdownUnitType
+                  originalUnit={originalUnit}
+                  customUnitLabel={customUnitLabel}
+                  selectedUnitType={selectedUnitType}
+                  setSelectedUnitType={setSelectedUnitType}
+                  onResetUnitClick={onResetUnitClick}
+                  onCustomUnitLabelClick={onCustomUnitLabelClick}
+                  onChange={onUnitTypeChange}
+                />
+              </UnitTypeContainer>
+              <UnitContainer>
+                <Menu.Header>
+                  <UnitMenuHeader>{t.Input}</UnitMenuHeader>
+                </Menu.Header>
+                <UnitDropDownInput
+                  originalUnit={originalUnit}
+                  unit={unit}
+                  selectedUnitType={selectedUnitType}
+                  onOverrideUnitClick={onOverrideUnitClick}
+                  onChange={onInputUnitTypeChange}
+                />
+              </UnitContainer>
+              <UnitContainer>
+                <Menu.Header>
+                  <UnitMenuHeader>{t.Output}</UnitMenuHeader>
+                </Menu.Header>
+                <UnitDropdownOutput
+                  selectedUnitType={selectedUnitType}
+                  inputUnitOption={inputUnitOption}
+                  preferredUnit={preferredUnit}
+                  onConversionUnitClick={onConversionUnitClick}
+                />
+              </UnitContainer>
+            </MenuContainer>
+          </Menu>
+        )
       }
     >
       <Button
+        onClick={() => setOpen(!open)}
         disabled={disabled}
         icon="ChevronDown"
         type="tertiary"
@@ -239,11 +179,6 @@ const UnitContainer = styled.div`
   padding: 0 10px;
   border-left: 1px solid var(--cogs-greyscale-grey3);
   overflow-y: scroll;
-`;
-
-const CustomLabelWrap = styled.div`
-  width: 100%;
-  text-align: left;
 `;
 
 export default UnitDropdown;
