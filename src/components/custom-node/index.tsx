@@ -16,6 +16,10 @@ import {
   ExtractionPipelineNode,
   ExtractionPipelineNodeData,
 } from 'components/extraction-pipeline-node';
+import {
+  EngineeringDiagramNode,
+  EngineeringDiagramNodeData,
+} from 'components/engineering-diagram-node';
 
 export type NodeData<
   NodeType extends CanvasBlockType,
@@ -30,7 +34,8 @@ export type CustomNodeData =
   | EntityMatchingNodeData
   | ExtractionPipelineNodeData
   | RawNodeData
-  | TransformationNodeData;
+  | TransformationNodeData
+  | EngineeringDiagramNodeData;
 
 export const CustomNode = (props: NodeProps<CustomNodeData>): JSX.Element => {
   const { data } = props;
@@ -38,6 +43,12 @@ export const CustomNode = (props: NodeProps<CustomNodeData>): JSX.Element => {
   switch (data.type) {
     case 'data-set':
       return <DataSetNode {...(props as NodeProps<DataSetNodeData>)} />;
+    case 'engineering-diagram':
+      return (
+        <EngineeringDiagramNode
+          {...(props as NodeProps<EngineeringDiagramNodeData>)}
+        />
+      );
     case 'entity-matching':
       return (
         <EntityMatchingNode {...(props as NodeProps<EntityMatchingNodeData>)} />
