@@ -7,12 +7,11 @@ import {
   StreamingVisualTestFixture
 } from '../../../visual-tests/test-fixtures/StreamingVisualTestFixture';
 import { PointCloudFactory } from '../src/PointCloudFactory';
-import { cdfAnnotationsToObjectInfo } from '../../data-providers/src/pointcloud-stylable-object-providers/annotationsToObjects';
-import { IAnnotationProvider } from '../src/styling/IAnnotationProvider';
-import { ShapeType } from '../src/styling/shapes/IShape';
-import { PointCloudObjectAnnotationData } from '../src/styling/PointCloudObjectAnnotationData';
+import { cdfAnnotationsToObjectInfo } from '../../data-providers/src/pointcloud-stylable-object-providers/cdfAnnotationsToObjects';
+import { PointCloudStylableObjectProvider, PointCloudObjectData } from '../../data-providers';
+import { Cylinder } from '../../utilities';
 import { PointCloudNode } from '../src/PointCloudNode';
-import { AnnotationIdPointCloudObjectCollection } from '../src/styling/AnnotationListPointCloudObjectCollection';
+import { AnnotationIdPointCloudObjectCollection } from '../src/styling/AnnotationIdPointCloudObjectCollection';
 import { StyledPointCloudObjectCollection } from '../src/styling/StyledPointCloudObjectCollection';
 
 import { ModelIdentifier } from '@reveal/data-providers';
@@ -22,14 +21,12 @@ import * as THREE from 'three';
 import { applyDefaultsToPointCloudAppearance } from '../src/styling/PointCloudAppearance';
 import { LocalPointClassificationsProvider } from '../src/classificationsProviders/LocalPointClassificationsProvider';
 
-class CustomAnnotationProvider implements IAnnotationProvider {
-  async getAnnotations(_modelIdentifier: ModelIdentifier): Promise<PointCloudObjectAnnotationData> {
+class CustomAnnotationProvider implements PointCloudStylableObjectProvider {
+  async getPointCloudObjects(_modelIdentifier: ModelIdentifier): Promise<PointCloudObjectData> {
     const cdfAnnotations = [
       {
         annotationId: 123,
-        region: [
-          { shapeType: ShapeType.Cylinder, centerA: [-0.03, 0.1, -1000], centerB: [-0.03, 0.1, 1000], radius: 0.04 }
-        ]
+        region: [new Cylinder(new THREE.Vector3(-0.03, 0.1, -1000), new THREE.Vector3(-0.03, 0.1, 1000), 0.04)]
       }
     ];
     const annotationData = cdfAnnotationsToObjectInfo(cdfAnnotations);
