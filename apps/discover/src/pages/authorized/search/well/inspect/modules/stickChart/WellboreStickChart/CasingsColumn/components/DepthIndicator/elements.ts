@@ -7,10 +7,7 @@ import { Flex, Menu } from '@cognite/cogs.js';
 
 import { Center, sizes } from 'styles/layout';
 
-import {
-  DEPTH_SCALE_LABEL_HEIGHT,
-  DEPTH_SCALE_LABEL_WIDTH,
-} from '../../../constants';
+import { DEPTH_SCALE_LABEL_HEIGHT } from '../../../constants';
 
 import {
   DEPTH_END_MARKER_COLOR,
@@ -128,7 +125,7 @@ export const DepthEndMarkerForLine = styled(DepthEndMarker)`
 
 export const DepthEndMarkerForTriangle = styled(DepthEndMarker)`
   ${(props: { width: number }) => `
-    width: calc(${props.width}px + ${DEPTH_INDICATOR_LINE_WIDTH} + ${DEPTH_INDICATOR_END_HEIGHT} + ${DEPTH_INDICATOR_MARKER_SHIFT} + ${DEPTH_SCALE_LABEL_MARKER_WIDTH}px);
+    width: calc(${props.width}px + 36px);
     margin-right: calc(-${DEPTH_INDICATOR_MARKER_SHIFT} - ${DEPTH_INDICATOR_END_HEIGHT});
   `}
 `;
@@ -143,7 +140,7 @@ export const DepthScaleLabelTag = styled(Flex)`
   align-items: center;
   margin-top: -${DEPTH_SCALE_LABEL_HEIGHT / 2 + 1}px; // +1 for the middle point pixel
   margin-bottom: -${DEPTH_SCALE_LABEL_HEIGHT / 2 + 1}px; // +1 for the middle point pixel
-  margin-left: -${(props: DepthMarkerLabelPositionProps) => `${props.left + DEPTH_SCALE_LABEL_WIDTH + DEPTH_SCALE_LABEL_MARKER_WIDTH}px`};
+  margin-left: -${(props: DepthMarkerLabelPositionProps) => `${props.left + 80}px`};
   font-size: 12px;
   line-height: ${sizes.normal};
   padding-top: 2px;

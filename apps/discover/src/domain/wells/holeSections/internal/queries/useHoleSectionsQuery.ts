@@ -7,7 +7,7 @@ import { WELL_QUERY_KEY } from 'constants/react-query';
 import { useArrayCache } from 'hooks/useArrayCache';
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 
-import { ERROR_LOADING_HOLE_SECTINOS } from '../../constants';
+import { ERROR_LOADING_HOLE_SECTIONS } from '../../constants';
 import { getHoleSections } from '../../service/network/getHoleSections';
 import { normalizeHoleSectionGroups } from '../transformers/normalizeHoleSectionGroups';
 import { HoleSectionGroupInternal } from '../types';
@@ -16,7 +16,7 @@ export const useHoleSectionsQuery = ({ wellboreIds }: AllCursorsProps) => {
   const { data: userPreferredUnit } = useUserPreferencesMeasurement();
 
   return useArrayCache<HoleSectionGroupInternal>({
-    key: [...WELL_QUERY_KEY.WELL_TOPS, userPreferredUnit],
+    key: [...WELL_QUERY_KEY.HOLE_SECTIONS, userPreferredUnit],
     items: new Set(wellboreIds),
     fetchAction: (wellboreIds, options) =>
       getHoleSections({ wellboreIds, options })
@@ -28,7 +28,7 @@ export const useHoleSectionsQuery = ({ wellboreIds }: AllCursorsProps) => {
         })
         .then(groupByWellbore)
         .catch((error) =>
-          handleServiceError(error, {}, ERROR_LOADING_HOLE_SECTINOS)
+          handleServiceError(error, {}, ERROR_LOADING_HOLE_SECTIONS)
         ),
   });
 };

@@ -2,6 +2,7 @@ import { HoleSectionGroup } from '@cognite/sdk-wells';
 
 import { UserPreferredUnit } from 'constants/units';
 
+import { SIZE_UNIT } from '../../constants';
 import { HoleSectionGroupInternal } from '../types';
 
 import { normalizeHoleSections } from './normalizeHoleSections';
@@ -11,14 +12,15 @@ export const normalizeHoleSectionGroups = (
   userPreferredUnit: UserPreferredUnit
 ): HoleSectionGroupInternal[] => {
   return holeSectionGroups.map((holeSectionGroup) => {
-    const { measuredDepthUnit } = holeSectionGroup;
+    const { sections, sizeUnit, measuredDepthUnit } = holeSectionGroup;
 
     return {
       ...holeSectionGroup,
       measuredDepthUnit: userPreferredUnit,
-      sizeUnit: userPreferredUnit,
+      sizeUnit: SIZE_UNIT,
       sections: normalizeHoleSections(
-        holeSectionGroup.sections,
+        sections,
+        sizeUnit,
         measuredDepthUnit,
         userPreferredUnit
       ),

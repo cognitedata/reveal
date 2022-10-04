@@ -1,4 +1,5 @@
 import { CasingAssemblyInternalWithTvd } from 'domain/wells/casings/internal/types';
+import { HoleSectionInternalWithTvd } from 'domain/wells/holeSections/internal/types';
 import { DepthMeasurementWithData } from 'domain/wells/measurements/internal/types';
 import { NdsInternalWithTvd } from 'domain/wells/nds/internal/types';
 import { NptInternalWithTvd } from 'domain/wells/npt/internal/types';
@@ -29,6 +30,7 @@ export interface ColumnsData {
   ndsColumn: DataWithLoadingStatus<NdsInternalWithTvd[]>;
   trajectoryColumn: DataWithLoadingStatus<TrajectoryWithData>;
   measurementsColumn: DataWithLoadingStatus<DepthMeasurementWithData>;
+  holeSectionsColumn: DataWithLoadingStatus<HoleSectionView[]>;
 }
 
 export interface ColumnVisibilityProps {
@@ -48,6 +50,10 @@ export interface CasingAssemblyView extends CasingAssemblyInternalWithTvd {
   wellboreMatchingId: string;
   outsideDiameterFormatted: string;
   isLiner: boolean;
+}
+
+export interface HoleSectionView extends HoleSectionInternalWithTvd {
+  wellboreMatchingId: string;
 }
 
 export enum ChartColumn {

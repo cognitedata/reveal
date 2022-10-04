@@ -46,12 +46,11 @@ export const ContentWrapper = styled(Flex)`
   height: 100%;
   padding: ${sizes.extraSmall};
   justify-content: center;
-  // overflow: hidden;
 `;
 
 export const ColumnHeaderWrapper = styled(DefaultColumnHeaderWrapper)`
   ${ColumnOptionsSelectorContainer} {
-    width: 90px;
+    width: 75px;
   }
 `;
 

@@ -106,6 +106,7 @@ export const WELL_QUERY_KEY = {
   RELATED_DOCUMENT_FACETS: [WELLS, 'relatedDocuments', 'facets'],
   NPT_CODES: [WELLS, 'nptCodes'],
   NPT_DETAIL_CODES: [WELLS, 'nptDetailCodes'],
+  HOLE_SECTIONS: [WELLS, 'holeSections'],
 };
 
 const SEARCH_HISTORY = 'searchHistory';

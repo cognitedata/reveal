@@ -80,7 +80,7 @@ export const DepthLabel = styled.div`
 `;
 
 export const DepthColumnContainer = styled.div`
-  width: 130px;
+  width: 110px;
   height: 100%;
   border-right: 1px solid var(--cogs-greyscale-grey3);
 `;

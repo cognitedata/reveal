@@ -32,7 +32,7 @@ export const MUD_LINE_COLOR = '#000000';
 export const DEPTH_SCALE_MIN_HEIGHT = 16;
 export const DEPTH_BLOCK_LABEL_MINIMUM_HEIGHT = 20;
 
-export const DEPTH_SCALE_LABEL_WIDTH = 79;
+export const DEPTH_SCALE_LABEL_WIDTH = 59;
 export const DEPTH_SCALE_LABEL_HEIGHT = 16;
 
 export const EVENTS_COLUMN_WIDTH = 120;

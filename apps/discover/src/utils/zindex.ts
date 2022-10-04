@@ -36,6 +36,7 @@ const LAYERS = [
   'MAP_RIGHT_BUTTONS',
   'MAP',
   'TOOLTIP_HOVERED',
+  'OVERLAY',
   'MAIN_LAYER', // (base TYPEAHEAD from _comp, HISTOGRAM_TRACK, Autocomplete, AssetMapSearchTextbox, FloatingActions)
   'APP_FRAME',
   'TAB_SCROLL_BUTTON',

@@ -42,7 +42,7 @@ export const DepthColumn: React.FC<WithDragHandleProps<DepthColumnProps>> =
         <Column
           id="depth-column"
           isVisible={isVisible}
-          width={90}
+          width={80}
           {...dragHandleProps}
         >
           <ColumnHeaderWrapper data-testid="column-header">

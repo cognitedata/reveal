@@ -8,7 +8,6 @@ import noop from 'lodash/noop';
 import { WithDragHandleProps } from 'components/DragDropContainer';
 import EmptyState from 'components/EmptyState';
 import { DepthMeasurementUnit } from 'constants/units';
-import { useDeepCallback } from 'hooks/useDeep';
 import { FullWidth } from 'styles/layout';
 
 import {
@@ -24,9 +23,11 @@ import {
   ColumnVisibilityProps,
   CasingAssemblyView,
   ChartColumn,
+  HoleSectionView,
 } from '../../types';
 import { EMPTY_SCHEMA_TEXT, LOADING_TEXT } from '../constants';
 import { ColumnHeaderWrapper } from '../elements';
+import { HoleSectionsColumn } from '../HoleSectionsColumn';
 
 import DepthColumn from './components/DepthColumn';
 import { DepthIndicators } from './components/DepthIndicators';
@@ -37,6 +38,7 @@ import { CasingsColumnContentWrapper } from './elements';
 export interface CasingsColumnProps extends ColumnVisibilityProps {
   data?: CasingAssemblyView[];
   isLoading: boolean;
+  holeSections?: HoleSectionView[];
   scaleBlocks: number[];
   rkbLevel: WellboreInternal['datum'];
   wellWaterDepth: WellboreInternal['wellWaterDepth'];
@@ -50,6 +52,7 @@ export const CasingsColumn: React.FC<WithDragHandleProps<CasingsColumnProps>> =
     ({
       data,
       isLoading,
+      holeSections,
       rkbLevel,
       wellWaterDepth,
       scaleBlocks,
@@ -59,7 +62,7 @@ export const CasingsColumn: React.FC<WithDragHandleProps<CasingsColumnProps>> =
       isVisible = true,
       ...dragHandleProps
     }) => {
-      const renderCasingsColumnContent = useDeepCallback(() => {
+      const renderCasingsColumnContent = () => {
         if (isLoading || !data || isEmpty(data)) {
           return (
             <EmptyStateWrapper>
@@ -87,6 +90,12 @@ export const CasingsColumn: React.FC<WithDragHandleProps<CasingsColumnProps>> =
                   scaleBlocks={scaleBlocks}
                 />
 
+                <HoleSectionsColumn
+                  data={holeSections}
+                  scaleBlocks={scaleBlocks}
+                  depthMeasurementType={depthMeasurementType}
+                />
+
                 <DepthIndicators
                   casingAssemblies={data}
                   scaleBlocks={scaleBlocks}
@@ -97,7 +106,7 @@ export const CasingsColumn: React.FC<WithDragHandleProps<CasingsColumnProps>> =
             </FullWidth>
           </>
         );
-      }, [data, isLoading, scaleBlocks, depthMeasurementType]);
+      };
 
       return (
         <Column id="casings-column" isVisible={isVisible} {...dragHandleProps}>

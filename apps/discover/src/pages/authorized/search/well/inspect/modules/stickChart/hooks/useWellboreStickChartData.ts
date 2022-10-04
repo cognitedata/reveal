@@ -3,6 +3,7 @@ import { getDataWithLoadingStatus } from '../utils/getDataWithLoadingStatus';
 
 import { useCasingsColumnsData } from './useCasingsColumnsData';
 import { useFormationColumnsData } from './useFormationColumnsData';
+import { useHoleSectionsColumnsData } from './useHoleSectionsColumnsData ';
 import { useMeasurementsColumnsData } from './useMeasurementsColumnsData';
 import { useNdsColumnsData } from './useNdsColumnsData';
 import { useNptColumnsData } from './useNptColumnsData';
@@ -15,6 +16,7 @@ export const useWellboreStickChartColumns = () => {
   const ndsColumnsData = useNdsColumnsData();
   const trajectoryColumnsData = useTrajectoryColumnsData();
   const measurementsColumnsData = useMeasurementsColumnsData();
+  const holeSectionsColumnsData = useHoleSectionsColumnsData();
 
   return (wellboreMatchingId: string): ColumnsData => ({
     formationColumn: getDataWithLoadingStatus(
@@ -33,6 +35,10 @@ export const useWellboreStickChartColumns = () => {
     ),
     measurementsColumn: getDataWithLoadingStatus(
       measurementsColumnsData,
+      wellboreMatchingId
+    ),
+    holeSectionsColumn: getDataWithLoadingStatus(
+      holeSectionsColumnsData,
       wellboreMatchingId
     ),
   });
