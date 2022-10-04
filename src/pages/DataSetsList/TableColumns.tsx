@@ -1,6 +1,5 @@
 import { Icon } from '@cognite/cogs.js';
 import { stringCompare } from 'utils/shared';
-import WriteProtectedIcon from 'components/WriteProtectedIcon';
 import {
   ApprovedDot,
   LabelTag,
@@ -10,15 +9,18 @@ import {
 } from 'utils/styledComponents';
 import SearchableFilters from 'components/SearchableFilters';
 import { getItemFromStorage } from 'utils/localStorage';
-import { DataSet, Extpipe } from 'utils/types';
+import { DataSet, DataSetV3, Extpipe } from 'utils/types';
 import { ExtpipeLink } from 'components/Lineage/Extpipe/ExtpipeLink';
 import { FilterDropdownProps } from 'antd/lib/table/interface';
 import { ColumnFilterIcon } from 'components/ColumnFilterIcon';
 import isArray from 'lodash/isArray';
 import { useTranslation } from 'common/i18n';
+import DataSetName from 'components/data-sets-list/data-set-name';
 
 export interface DataSetRow {
   key: number;
+  id: DataSetV3['id'];
+  externalId: DataSetV3['externalId'];
   name: string;
   labels: string[];
   quality?: boolean;
@@ -65,10 +67,12 @@ export const useTableColumns = () => {
       key: 'dataset-name-column',
       sorter: (a: DataSetRow, b: DataSetRow) => stringCompare(a.name, b.name),
       render: (_value: string, record: DataSetRow) => (
-        <span>
-          {record.writeProtected && <WriteProtectedIcon />}
-          {record.name}
-        </span>
+        <DataSetName
+          id={record.id}
+          name={record.name}
+          externalId={record.externalId}
+          writeProtected={record.writeProtected}
+        />
       ),
       defaultSortOrder: getItemFromStorage('dataset-name-column') || undefined,
     },

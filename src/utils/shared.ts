@@ -10,6 +10,7 @@ import isDate from 'lodash/isDate';
 import isObject from 'lodash/isObject';
 import { APIDataSet, DataSet } from './types';
 import { styleScope } from 'styles/styleScope';
+import { createLink } from '@cognite/cdf-utilities';
 
 export const stringifyMetaData = (dataSet: { metadata: {} }) => {
   const newDataset = JSON.parse(JSON.stringify(dataSet));
@@ -425,3 +426,8 @@ export const getReadableCapabilities = (capabilities: any[]) =>
     );
     return [...p, ...actionLabels];
   }, []);
+
+export const createInternalLink = (path?: string | number) => {
+  const mountPoint = window.location.pathname.split('/')[2];
+  return createLink(`/${mountPoint}/${path || ''}`);
+};

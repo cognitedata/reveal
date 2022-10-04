@@ -11,12 +11,10 @@ import { trackEvent } from '@cognite/cdf-route-tracker';
 import SelectorFilter from 'components/SelectorFilter';
 import { useHandleFilters } from 'utils/filterUtils';
 import { setItemInStorage } from 'utils/localStorage';
-import { createLink } from '@cognite/cdf-utilities';
 import { getContainer } from 'utils/shared';
 import useLocalStorage from 'hooks/useLocalStorage';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import { getFlow } from '@cognite/cdf-sdk-singleton';
-import { useParams, useNavigate } from 'react-router-dom';
 import isArray from 'lodash/isArray';
 import { useTableColumns, DataSetRow } from './TableColumns';
 import {
@@ -35,9 +33,6 @@ const DataSetsList = (): JSX.Element => {
   const { getTableColumns } = useTableColumns();
   const { data: withExtpipes, isFetched: didFetchWithExtpipes } =
     useWithExtpipes();
-
-  const { appPath } = useParams<{ appPath: string }>();
-  const navigate = useNavigate();
 
   const [qualityFilter, setQualityFilter] = useState<string>('all');
   const [searchValue, setSearchValue] = useLocalStorage<string>(
@@ -88,6 +83,8 @@ const DataSetsList = (): JSX.Element => {
           const labelsFromMetadata = dataSet.metadata?.consoleLabels;
           return {
             key: dataSet.id,
+            id: dataSet.id,
+            externalId: dataSet.externalId,
             name: dataSet.name,
             description: dataSet.description,
             labels: isArray(labelsFromMetadata) ? labelsFromMetadata : [],
@@ -130,10 +127,6 @@ const DataSetsList = (): JSX.Element => {
         });
     });
     return sourceNames;
-  };
-
-  const handleRowInteraction = (value: DataSetRow) => {
-    navigate(createLink(`/${appPath}/data-set/${value.key}`));
   };
 
   const actionsRender = (_: any, row: DataSetRow) => (
@@ -326,11 +319,6 @@ const DataSetsList = (): JSX.Element => {
           actionsColumn,
         ]}
         dataSource={tableData}
-        onRow={(record: DataSetRow) => ({
-          onClick: () => {
-            handleRowInteraction(record);
-          },
-        })}
         rowClassName={() => 'pointerMouse'}
         onChange={(_pagination, _filters, sorter) => {
           if (!isArray(sorter) && sorter?.columnKey && sorter?.order)

@@ -2,6 +2,7 @@ import styled from 'styled-components';
 import Breadcrumb from 'antd/lib/breadcrumb';
 import Link from 'components/Link';
 import theme from 'styles/theme';
+import { createLink } from '@cognite/cdf-utilities';
 
 interface BreadcrumbsProps {
   breadcrumbs: { title: string; path?: string }[];
@@ -29,7 +30,7 @@ const Breadcrumbs = ({ breadcrumbs }: BreadcrumbsProps) => (
         breadcrumbs.map((crumb) => (
           <Breadcrumb.Item key={crumb.title}>
             {crumb.path ? (
-              <Link to={crumb.path}>{crumb.title}</Link>
+              <Link to={createLink(crumb.path)}>{crumb.title}</Link>
             ) : (
               crumb.title
             )}
