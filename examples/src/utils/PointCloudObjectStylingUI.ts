@@ -16,6 +16,8 @@ export class PointCloudObjectStylingUI {
   private readonly _model: CognitePointCloudModel;
   private readonly _viewer: Cognite3DViewer;
 
+  private _boundingBoxGroup: THREE.Group | undefined;
+
   constructor(uiFolder: dat.GUI,
               model: CognitePointCloudModel,
               viewer: Cognite3DViewer) {
@@ -24,6 +26,10 @@ export class PointCloudObjectStylingUI {
 
     this.createDefaultStyleUi(uiFolder.addFolder('Default styling'));
     this.createByObjectIndexUi(uiFolder.addFolder('By object index styling'));
+
+    const state = {
+      showBoundingBoxes: false
+    };
 
     const actions = {
       reset: () => {
@@ -45,20 +51,26 @@ export class PointCloudObjectStylingUI {
           });
         });
       },
-      addObjectBoundingBoxes: () => {
-        const boxGroup = new THREE.Group();
-        model.traverseStylableObjects((object) => {
-          const box = new THREE.Box3Helper(object.boundingBox);
-          boxGroup.add(box);
-        });
-        console.log('Added boxes to group, first: ', boxGroup.children[0]);
-        viewer.addObject3D(boxGroup);
-      }
     };
 
     uiFolder.add(actions, 'reset').name('Reset all styled objects');
     uiFolder.add(actions, 'randomColors').name('Set random for objects');
-    uiFolder.add(actions, 'addObjectBoundingBoxes').name('Show object bounding boxes');
+    uiFolder.add(state, 'showBoundingBoxes').name('Show object bounding boxes').onChange((value: boolean) => this.togglebjectBoundingBoxes(value));
+  }
+
+  togglebjectBoundingBoxes (b: boolean) {
+    if (b) {
+      this._boundingBoxGroup = new THREE.Group();
+      this._model.traverseStylableObjects((object) => {
+        const box = new THREE.Box3Helper(object.boundingBox);
+        this._boundingBoxGroup!.add(box);
+      });
+      this._viewer.addObject3D(this._boundingBoxGroup);
+    } else {
+      this._boundingBoxGroup?.removeFromParent();
+      this._boundingBoxGroup = undefined;
+    }
+    this._viewer.requestRedraw();
   }
 
   private createObjectAppearanceUi(uiFolder: dat.GUI): () => PointCloudAppearance {
