@@ -60,6 +60,11 @@ export const RunScheduleConnection = ({
     ...addIfExist(extpipe?.lastFailure),
   ]);
 
+  const lastRunTimeStamp = calculateLatest([
+    ...addIfExist(extpipe?.lastSuccess),
+    ...addIfExist(extpipe?.lastFailure),
+  ]);
+
   if (!lastRun) {
     return null;
   }
@@ -76,7 +81,7 @@ export const RunScheduleConnection = ({
             {t('last-run-time')}
           </StyledTitleCard>
           <CardValue className="card-value">
-            <TimeDisplay value={lastRun.createdTime} relative />
+            <TimeDisplay value={lastRunTimeStamp} relative />
           </CardValue>
           <Icon type="ArrowRight" />
         </CardInWrapper>
