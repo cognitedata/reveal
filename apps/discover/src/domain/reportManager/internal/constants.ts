@@ -10,8 +10,7 @@ export const DATA_SETS_MAP: Record<string, string> = {
   WELL_LOGS: 'Well Logs',
   RELATED_DOCUMENTS: 'Related Documents',
   DIGITAL_ROCKS: 'Digital Rocks',
-  GEOMECHANICS: 'Geomechanics',
-  PPFG: 'PPFG',
+  GEOMECHANICS_PPFG: 'Geomechanics & PPFG',
   OTHERS: 'Others',
 };
 

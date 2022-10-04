@@ -14,7 +14,7 @@ const requirements: AccessRequirements = [
   { context: 'files', aclName: 'filesAcl', acl: ['READ', 'WRITE'] },
   { context: 'sequences', aclName: 'sequencesAcl', acl: ['READ'] },
   { context: 'assets', aclName: 'assetsAcl', acl: ['READ'] },
-  { context: 'events', aclName: 'assetsAcl', acl: ['READ', 'WRITE'] },
+  { context: 'events', aclName: 'eventsAcl', acl: ['READ', 'WRITE'] },
   { context: 'wells', aclName: 'wellsAcl', acl: ['READ'] },
 ];
 

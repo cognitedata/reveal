@@ -38,6 +38,9 @@ describe('checkRequirement', () => {
       name: 'raw',
       error: '',
       missing: [],
+      scope: {
+        all: {},
+      },
     });
   });
 
@@ -55,6 +58,9 @@ describe('checkRequirement', () => {
       name: 'relationships',
       error: '',
       missing: [],
+      scope: {
+        all: {},
+      },
     });
   });
 
@@ -72,6 +78,9 @@ describe('checkRequirement', () => {
       error: '',
       missing: ['WRITE'],
       name: 'files',
+      scope: {
+        all: {},
+      },
     });
   });
 });

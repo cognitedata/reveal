@@ -1,3 +1,5 @@
+import { useReportPermissions } from 'domain/reportManager/internal/queries/useReportPermissions';
+
 import styled from 'styled-components/macro';
 
 import { Button, Dropdown } from '@cognite/cogs.js';
@@ -12,25 +14,30 @@ export const WellReportButtonMenu = ({
   wellboreMatchingId,
   dataSet,
 }: WellReportMenuProps) => {
-  return (
-    <DropdownContainer>
-      <Dropdown
-        placement="left"
-        content={
-          <WellReportMenu
-            wellboreMatchingId={wellboreMatchingId}
-            dataSet={dataSet}
-          />
-        }
-      >
-        <Button
-          key="ReportIssue"
-          type="secondary"
-          aria-label="Report Issue Button"
+  const { canReadReports, canWriteReports } = useReportPermissions();
+
+  if (canReadReports && canWriteReports) {
+    return (
+      <DropdownContainer>
+        <Dropdown
+          placement="left"
+          content={
+            <WellReportMenu
+              wellboreMatchingId={wellboreMatchingId}
+              dataSet={dataSet}
+            />
+          }
         >
-          <div>Report Issue</div>
-        </Button>
-      </Dropdown>
-    </DropdownContainer>
-  );
+          <Button
+            key="ReportIssue"
+            type="secondary"
+            aria-label="Report Issue Button"
+          >
+            <div>Report Issue</div>
+          </Button>
+        </Dropdown>
+      </DropdownContainer>
+    );
+  }
+  return null;
 };

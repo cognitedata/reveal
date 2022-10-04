@@ -3,15 +3,16 @@ import { Timestamp, CreatedAndLastUpdatedTime, InternalId } from '@cognite/sdk';
 export interface Report
   extends Partial<CreatedAndLastUpdatedTime>,
     Partial<InternalId> {
+  datasetId: number;
   description: string;
-  reason: 'INCOMPLETE' | 'DUPLICATE' | 'SENSITIVE' | 'OTHER';
-  externalId: string;
-  reportType: string;
-  ownerUserId: string;
-  status: 'BACKLOG' | 'IN_PROGRESS' | 'RESOLVED' | 'DISMISSED';
-  startTime: Timestamp;
-  endTime?: Timestamp;
   displayCreatedTime?: string;
+  endTime?: Timestamp;
+  externalId: string;
+  ownerUserId: string;
+  reason: 'INCOMPLETE' | 'DUPLICATE' | 'SENSITIVE' | 'OTHER';
+  reportType: string;
+  startTime: Timestamp;
+  status: 'BACKLOG' | 'IN_PROGRESS' | 'RESOLVED' | 'DISMISSED';
 }
 
 export type DisplayReport = Omit<Report, 'status' | 'reason'> & {
@@ -20,10 +21,10 @@ export type DisplayReport = Omit<Report, 'status' | 'reason'> & {
 };
 
 export type ReportFilter = {
+  externalIds?: string[];
   keyword?: string;
-  status?: Report['status'][];
+  ownerUserId?: string[];
   reason?: Report['reason'][];
   reportType?: Report['reportType'][];
-  externalIds?: string[];
-  ownerUserId?: string[];
+  status?: Report['status'][];
 };

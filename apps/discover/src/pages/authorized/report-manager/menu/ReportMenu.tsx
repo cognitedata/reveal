@@ -1,5 +1,4 @@
 import { adaptReportToDisplayReport } from 'domain/reportManager/internal/adapters/adaptReportToDisplayReport';
-import { useReportPermissions } from 'domain/reportManager/internal/queries/useReportPermissions';
 import { Report } from 'domain/reportManager/internal/types';
 
 import { Icon, Menu, Flex, Label } from '@cognite/cogs.js';
@@ -110,25 +109,16 @@ export const ReportMenu = ({
   activeReports,
   handleNavigation,
 }: ReportMenuProps) => {
-  const { canReadReports, canWriteReports } = useReportPermissions();
   return (
     <Menu>
-      <Menu.Item
-        onClick={() => handleNavigation('CREATE_NEW')}
-        disabled={!canWriteReports}
-        title={
-          !canWriteReports ? 'You do not have permission to create reports' : ''
-        }
-      >
+      <Menu.Item onClick={() => handleNavigation('CREATE_NEW')}>
         <Icon type="Feedback" />
         Report new issues
       </Menu.Item>
-      {canReadReports && (
-        <ActiveReportsSection
-          activeReports={activeReports}
-          handleNavigation={handleNavigation}
-        />
-      )}
+      <ActiveReportsSection
+        activeReports={activeReports}
+        handleNavigation={handleNavigation}
+      />
     </Menu>
   );
 };

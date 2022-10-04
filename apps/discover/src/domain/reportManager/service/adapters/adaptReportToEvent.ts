@@ -9,6 +9,7 @@ export const adaptReportToEvent = (report: Report): ExternalEvent => {
     source: DISCOVER_WELL_REPORT,
     type: report.externalId,
     subtype: report.reportType,
+    dataSetId: report.datasetId,
     metadata: {
       reason: report.reason,
       status: report.status,

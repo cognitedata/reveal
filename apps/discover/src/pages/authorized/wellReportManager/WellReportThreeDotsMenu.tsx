@@ -1,3 +1,5 @@
+import { useReportPermissions } from 'domain/reportManager/internal/queries/useReportPermissions';
+
 import { Button, Dropdown } from '@cognite/cogs.js';
 
 import { HoverContentWrapper } from './elements';
@@ -7,23 +9,29 @@ export const WellReportThreeDotsMenu = ({
   wellboreMatchingId,
   dataSet,
 }: WellReportMenuProps) => {
-  return (
-    <HoverContentWrapper>
-      <Dropdown
-        content={
-          <WellReportMenu
-            wellboreMatchingId={wellboreMatchingId}
-            dataSet={dataSet}
+  const { canReadReports, canWriteReports } = useReportPermissions();
+
+  if (canReadReports && canWriteReports) {
+    return (
+      <HoverContentWrapper>
+        <Dropdown
+          content={
+            <WellReportMenu
+              wellboreMatchingId={wellboreMatchingId}
+              dataSet={dataSet}
+            />
+          }
+        >
+          <Button
+            key="CreateReportButton"
+            type="ghost"
+            aria-label="Create Report Button"
+            icon="EllipsisVertical"
           />
-        }
-      >
-        <Button
-          key="CreateReportButton"
-          type="ghost"
-          aria-label="Create Report Button"
-          icon="EllipsisVertical"
-        />
-      </Dropdown>
-    </HoverContentWrapper>
-  );
+        </Dropdown>
+      </HoverContentWrapper>
+    );
+  }
+
+  return null;
 };

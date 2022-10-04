@@ -9,6 +9,7 @@ import { useDispatch } from 'react-redux';
 
 import map from 'lodash/map';
 
+import { useProjectConfigByKey } from 'hooks/useProjectConfig';
 import { wellInspectActions } from 'modules/wellInspect/actions';
 import { useWellFeedback } from 'modules/wellInspect/selectors';
 
@@ -29,6 +30,7 @@ export const WellReportModal = () => {
   const dispatch = useDispatch();
   const { data: user } = useUserInfoQuery();
   const createReport = useCreateReport();
+  const { data: feedbackConfig } = useProjectConfigByKey('feedback');
 
   const onCancel = () => {
     dispatch(
@@ -52,6 +54,7 @@ export const WellReportModal = () => {
         reportType: dataSet.value!,
         startTime: Date.now(),
         ownerUserId: user!.id,
+        datasetId: Number(feedbackConfig?.datasetId),
       },
     ]);
     dispatch(

@@ -90,55 +90,54 @@ export const Topbar: React.FC = () => {
     );
   }, []);
 
+  const navLinks = useMemo(() => {
+    const links = [
+      {
+        name: t(SEARCH_LINK_TEXT_KEY) as string,
+        isActive: activeTab === PATHNAMES.SEARCH,
+        onClick: getNavigationHandler(
+          `${navigation.SEARCH}${activePanel ? `/${activePanel}` : ''}`,
+          PATHNAMES.SEARCH
+        ),
+      },
+      {
+        name: t(FAVORITES_LINK_TEXT_KEY) as string,
+        isActive: activeTab === PATHNAMES.FAVORITES,
+        onClick: getNavigationHandler(
+          navigation.FAVORITES,
+          PATHNAMES.FAVORITES
+        ),
+      },
+    ].concat(
+      ((externalLinks as Array<any>) || []).map((externalLink) => {
+        return {
+          name: externalLink.title,
+          isActive: false,
+          onClick: () => handleExternalNavigate(externalLink.link),
+        };
+      })
+    );
+    if (canReadReports) {
+      links.push({
+        name: REPORT_MANAGER_TEXT_KEY,
+        isActive: activeTab === PATHNAMES.REPORTS,
+        onClick: getNavigationHandler(
+          navigation.REPORT_PANEL,
+          PATHNAMES.REPORTS
+        ),
+      });
+    }
+    return links;
+  }, [activeTab, activePanel, externalLinks, canReadReports]);
+
   const renderTopBarLeft = React.useMemo(
     () => (
       <TopBar.Left>
         {companyLogo}
-        <TopBarNavigationWrapper
-          links={[
-            {
-              name: t(SEARCH_LINK_TEXT_KEY) as string,
-              isActive: activeTab === PATHNAMES.SEARCH,
-              onClick: getNavigationHandler(
-                `${navigation.SEARCH}${activePanel ? `/${activePanel}` : ''}`,
-                PATHNAMES.SEARCH
-              ),
-            },
-            {
-              name: t(FAVORITES_LINK_TEXT_KEY) as string,
-              isActive: activeTab === PATHNAMES.FAVORITES,
-              onClick: getNavigationHandler(
-                navigation.FAVORITES,
-                PATHNAMES.FAVORITES
-              ),
-            },
-            {
-              name: REPORT_MANAGER_TEXT_KEY,
-              isActive: activeTab === PATHNAMES.REPORTS,
-              onClick: getNavigationHandler(
-                navigation.REPORT_PANEL,
-                PATHNAMES.REPORTS
-              ),
-              disabled: !canReadReports,
-              tooltipProps: {
-                content: !canReadReports
-                  ? 'You do not have permission to read reports'
-                  : '',
-              },
-            },
-          ].concat(
-            ((externalLinks as Array<any>) || []).map((externalLink) => {
-              return {
-                name: externalLink.title,
-                isActive: false,
-                onClick: () => handleExternalNavigate(externalLink.link),
-              };
-            })
-          )}
-        />
+        <TopBarNavigationWrapper links={navLinks} />
       </TopBar.Left>
     ),
-    [activeTab, activePanel, externalLinks, canReadReports]
+    [navLinks, companyLogo]
   );
 
   const renderTopBarRight = React.useMemo(

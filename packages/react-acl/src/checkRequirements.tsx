@@ -32,6 +32,7 @@ export const checkRequirement = ({
     name: requirement.context,
     error: '',
     missing: [],
+    scope: foundAcl?.scope,
   };
   if (foundAcl && foundAcl.actions) {
     const currentScope = foundAcl.actions;
