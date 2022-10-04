@@ -1,8 +1,8 @@
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import styled from 'styled-components';
 import { ASSET_KEY, SEARCH_KEY, TS_SEARCH_KEY } from 'utils/constants';
 import { useSearchParam } from 'hooks/navigation';
-import Search from './Search';
+import Search, { SearchFilter } from './Search';
 import SearchInAsset from './SearchInAsset';
 
 type SearchSidebarProps = {
@@ -29,14 +29,26 @@ const SearchSidebar = ({ visible, onClose }: SearchSidebarProps) => {
     [setTsUrlQuery]
   );
 
+  const [filter, setFilterSettings] = useState<SearchFilter>({
+    showEmpty: false,
+    isStep: undefined,
+    isString: undefined,
+    rootAsset: undefined,
+  });
+
   return (
     <SearchContainer visible={visible}>
       <ContentWrapper visible={visible}>
         {urlAssetId && (
-          <SearchInAsset query={tsUrlQuery} setQuery={handleTsUrlQueryChange} />
+          <SearchInAsset
+            query={tsUrlQuery}
+            setQuery={handleTsUrlQueryChange}
+            filter={filter}
+          />
         )}
         {!urlAssetId && (
           <Search
+            updateFilterInRoot={setFilterSettings}
             query={urlQuery}
             setQuery={handleUrlQueryChange}
             onClose={onClose}

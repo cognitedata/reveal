@@ -27,13 +27,15 @@ import { ASSET_KEY, TS_SEARCH_KEY } from 'utils/constants';
 import { useDebounce } from 'use-debounce';
 import { PnidButton } from 'components/SearchResultTable/PnidButton';
 import { useAddRemoveTimeseries } from './hooks';
+import { SearchFilter } from './Search';
 
 type SearchInAssetProps = {
   query: string;
   setQuery: (query: string) => void;
+  filter: SearchFilter;
 };
 
-const SearchInAsset = ({ query, setQuery }: SearchInAssetProps) => {
+const SearchInAsset = ({ query, setQuery, filter }: SearchInAssetProps) => {
   const [urlQuery = ''] = useSearchParam(TS_SEARCH_KEY, false);
   const [urlAssetId, setUrlAssetId] = useSearchParam(ASSET_KEY, false);
   const [debouncedUrlQuery] = useDebounce(urlQuery, 200);
@@ -48,7 +50,7 @@ const SearchInAsset = ({ query, setQuery }: SearchInAssetProps) => {
       debouncedUrlQuery,
       20,
       {
-        assetIds: [asset?.id],
+        assetSubtreeIds: [{ id: asset?.id }],
       },
       { enabled: Boolean(asset?.id) }
     );
@@ -56,7 +58,9 @@ const SearchInAsset = ({ query, setQuery }: SearchInAssetProps) => {
   const { data: totalAmount } = useAggregate(
     'timeseries',
     {
-      assetIds: [asset?.id],
+      assetSubtreeIds: [{ id: asset?.id }],
+      isString: Boolean(filter.isString),
+      isStep: filter.isStep,
     },
     { enabled: Boolean(asset?.id) }
   );

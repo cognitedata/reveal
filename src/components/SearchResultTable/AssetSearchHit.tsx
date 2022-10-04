@@ -42,9 +42,9 @@ export default function AssetSearchHit({
   const handleTimeSeriesClick = useAddRemoveTimeseries();
 
   const queryFilter = {
-    assetIds: [asset.id],
+    assetSubtreeIds: [{ id: asset.id }],
     isStep: filter?.isStep,
-    isString: filter?.isString,
+    isString: Boolean(filter?.isString),
   };
 
   const t = {
@@ -70,7 +70,7 @@ export default function AssetSearchHit({
     setUrlAssetId(String(assetId));
   };
 
-  const searchResultElements = timeseries?.map((ts) => (
+  const searchResultElements = timeseries?.map((ts: Timeseries) => (
     <TimeseriesSearchResultItem
       key={ts.id}
       timeseries={ts}
@@ -92,7 +92,6 @@ export default function AssetSearchHit({
   const shouldShowEmpty =
     isDataAmountFetched === false ||
     (!filter?.showEmpty && dataAmount?.count === 0);
-
   if (shouldShowEmpty) {
     return <></>;
   }

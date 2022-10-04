@@ -10,7 +10,13 @@ import {
 import SearchResultList from 'components/SearchResultTable/SearchResultList';
 import SearchTimeseries from 'components/SearchResultTable/SearchTimeseries';
 import { useSearchParam } from 'hooks/navigation';
-import { useState, ChangeEvent } from 'react';
+import {
+  useState,
+  ChangeEvent,
+  SetStateAction,
+  Dispatch,
+  useMemo,
+} from 'react';
 import { trackUsage } from 'services/metrics';
 import styled from 'styled-components';
 import { SEARCH_KEY } from 'utils/constants';
@@ -53,9 +59,15 @@ type SearchProps = {
   query: string;
   setQuery: (query: string) => void;
   onClose?: () => void;
+  updateFilterInRoot: Dispatch<SetStateAction<SearchFilter>>;
 };
 
-const Search = ({ query, setQuery, onClose }: SearchProps) => {
+const Search = ({
+  query,
+  setQuery,
+  onClose,
+  updateFilterInRoot,
+}: SearchProps) => {
   const [urlQuery = ''] = useSearchParam(SEARCH_KEY, false);
   const [debouncedUrlQuery] = useDebounce(urlQuery, 200);
   const [searchType, setSearchType] = useState<'assets' | 'timeseries'>(
@@ -98,10 +110,15 @@ const Search = ({ query, setQuery, onClose }: SearchProps) => {
       : undefined,
   };
 
+  useMemo(() => {
+    updateFilterInRoot(filter);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filter.showEmpty, filter.isStep, filter.isString, filter.rootAsset]);
+
   const handleFilterChange = (field: string, val?: boolean) => {
     trackUsage(`Search.Filters.${field}`, { value: val });
 
-    setFilterSettings((existingFilterSettings) => ({
+    setFilterSettings((existingFilterSettings: SearchFilterSettings) => ({
       ...existingFilterSettings,
       [field]: val,
     }));
