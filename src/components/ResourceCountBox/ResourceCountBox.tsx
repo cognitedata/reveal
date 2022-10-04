@@ -7,7 +7,7 @@ import {
 import Col from 'antd/lib/col';
 import Tooltip from 'antd/lib/tooltip';
 import { abbreviateNumber, getContainer } from 'utils/shared';
-import { Icons } from '@cognite/cogs.js';
+import { Icon } from '@cognite/cogs.js';
 import { ExploreViewConfig } from 'utils/types';
 import { useTranslation } from 'common/i18n';
 
@@ -55,7 +55,7 @@ const ResourceCountBox = ({
                 {abbreviateNumber(count)}
               </Tooltip>
             </ValueTag>
-            {isEvents() && <Icons.Expand />}
+            {isEvents() && <Icon type="Expand" />}
           </BorderedBox>
         </Tooltip>
       )}
