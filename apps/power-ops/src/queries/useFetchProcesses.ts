@@ -1,5 +1,5 @@
+import { Process } from '@cognite/power-ops-api-types';
 import axios from 'axios';
-import { Process } from 'types';
 import { useQuery } from 'react-query';
 import sidecar from 'utils/sidecar';
 import { useAuthenticatedAuthContext } from '@cognite/react-container';

@@ -38,6 +38,7 @@ _STORYBOOK = [
 
 _SOURCES = [
     "src/**/*.ts*",
+    "src/**/*.json",
 ]
 
 TESTS = glob(_TESTS + _STORYBOOK)
@@ -72,22 +73,25 @@ generate_package_json_helpers(
 # Dependencies from package.json
 DEPENDENCIES = [
     "@npm//@cognite/cogs.js",
-    "@npm//@cognite/sdk",
     "@npm//@cognite/power-ops-api-types",
     "@npm//@cognite/sniffer-service-types",
+    "@npm//@cognite/sdk",
+    "@npm//@monaco-editor/react",
     "@npm//@sentry/browser",
     "@npm//axios",
     "@npm//dayjs",
     "@npm//lodash",
+    "@npm//monaco-editor",
+    "@npm//msw",
     "@npm//plotly.js",
     "@npm//query-string",
     "@npm//react",
     "@npm//react-dom",
     "@npm//react-plotly.js",
     "@npm//react-query",
+    "@npm//react-router-dom",
     "@npm//react-table",
     "@npm//react-table-sticky",
-    "@npm//react-router-dom",
     "@npm//rxjs",
     "@npm//styled-components",
     "@npm//web-vitals",
@@ -102,15 +106,15 @@ DEPENDENCIES = [
 # Type dependencies from package.json
 TYPE_DEPENDENCIES = [
     "@npm//@types/axios",
+    "@npm//@types/enzyme",
+    "@npm//@types/history",
     "@npm//@types/lodash",
     "@npm//@types/react",
     "@npm//@types/react-dom",
     "@npm//@types/react-plotly.js",
-    "@npm//@types/react-table",
     "@npm//@types/react-router-dom",
     "@npm//@types/sinon",
     "@npm//@types/styled-components",
-    "@npm//@types/enzyme",
 ]
 
 # Dev dependencies from package.json
@@ -118,12 +122,17 @@ DEV_DEPENDENCIES = [
     # "@npm//@storybook/addons",
     "@npm//@testing-library/jest-dom",
     "@npm//@testing-library/react",
-    "@npm//eslint-config-react-app",
-    "@npm//express",
-    "@npm//sinon",
+    "@npm//@vitejs/plugin-react",
     "@npm//@wojtekmaj/enzyme-adapter-react-17",
     "@npm//enzyme",
+    "@npm//eslint-config-react-app",
+    "@npm//express",
     "@npm//jest-canvas-mock",
+    "@npm//sinon",
+    "@npm//vite",
+    "@npm//vite-plugin-babel-macros",
+    "@npm//vite-plugin-svgr",
+    "@npm//vite-tsconfig-paths",
 ]
 
 # Mappings for absolute imports from baseUrl @unused

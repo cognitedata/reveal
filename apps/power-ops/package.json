@@ -20,7 +20,8 @@
     "cypress:run-live": "./scripts/cypress-run-live.sh",
     "cypress:bazel-run-live": "ibazel run :cypress",
     "update-helpers": "bazel run :generate_package_json_helpers",
-    "deploy": "cd ../.. && ./scripts/deploy.sh power-ops"
+    "deploy": "cd ../.. && ./scripts/deploy.sh power-ops",
+    "update-json-schema": "npx ts-json-schema-generator --path './src/types/index.ts' --type 'WorkflowSchemaEditable' --tsconfig 'tsconfig.json' -o './src/types/WorkflowSchemaEditable.schema.json'"
   },
   "eslintConfig": {
     "extends": "react-app"

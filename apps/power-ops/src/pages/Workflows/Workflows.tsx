@@ -1,12 +1,15 @@
 import { useContext, useEffect, useMemo, useState } from 'react';
 import { useHistory, useLocation, useRouteMatch } from 'react-router-dom';
 import { CogniteEvent } from '@cognite/sdk';
-import { EVENT_TYPES, PROCESS_TYPES } from '@cognite/power-ops-api-types';
+import {
+  EVENT_TYPES,
+  PROCESS_TYPES,
+  Workflow,
+} from '@cognite/power-ops-api-types';
 import { EventStreamContext } from 'providers/eventStreamProvider';
 import { useFetchWorkflows } from 'queries/useFetchWorkflows';
 import { OptionType, Select } from '@cognite/cogs.js';
 import { useFetchWorkflowSchemas } from 'queries/useFetchWorkflowSchemas';
-import { Workflow } from 'types';
 import { EVENT_STATUSES } from 'utils/utils';
 import { useFetchWorkflowTypes } from 'queries/useFetchWorkflowTypes';
 import queryString from 'query-string';
@@ -45,7 +48,8 @@ export const Workflows = () => {
     }))
   );
 
-  const { data: workflowSchemas } = useFetchWorkflowSchemas();
+  const { data: { workflowSchemas } = { workflowSchemas: [], count: 0 } } =
+    useFetchWorkflowSchemas();
 
   const { data: workflowTypes } = useFetchWorkflowTypes();
 
@@ -169,7 +173,7 @@ export const Workflows = () => {
                 statusFilterValue.length
                   ? statusFilterValue
                       .map((filter) => filter.label.toLowerCase())
-                      .includes(value?.toString().toLowerCase())
+                      .includes(String(value).toLowerCase())
                   : true
               )
           )

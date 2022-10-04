@@ -1,4 +1,8 @@
-import { Matrix, BidProcessResult } from '@cognite/power-ops-api-types';
+import {
+  Matrix,
+  BidProcessResult,
+  WorkflowSchemaWithProcesses,
+} from '@cognite/power-ops-api-types';
 
 export interface TableData {
   id: number | undefined;
@@ -37,41 +41,7 @@ export interface BidProcessResultWithData extends BidProcessResult {
   }[];
 }
 
-export type Statuses = {
-  failed: number;
-  finished: number;
-  triggered: number;
-  running: number;
-};
-
-export type Process = {
-  id: number;
-  cdfProject: string;
-  collectionId: number;
-  eventCreationTime: string;
-  eventStartTime: string;
-  eventEndTime: string;
-  eventExternalId: string;
-  eventId?: number;
-  eventType: string;
-  status: string;
-};
-
-export type Workflow = {
-  id: number;
-  cdfProject: string;
-  collectionId: number;
-  eventCreationTime: string;
-  eventStartTime: string;
-  eventEndTime: string;
-  eventExternalId: string;
-  eventType: string;
-  status: string;
-};
-
-export type WorkflowSchema = {
-  id: number;
-  workflowType: string;
-  cdfProject: string;
-  triggeredBy: string[];
-};
+export type WorkflowSchemaEditable = Omit<
+  WorkflowSchemaWithProcesses,
+  'id' | 'cdfProject'
+>;

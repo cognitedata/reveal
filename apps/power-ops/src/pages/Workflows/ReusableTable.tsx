@@ -7,7 +7,7 @@ import {
   HeaderGroup,
 } from 'react-table';
 import { Flex, Icon, Pagination } from '@cognite/cogs.js';
-import { Process, Workflow } from 'types';
+import { Process, Workflow } from '@cognite/power-ops-api-types';
 
 import { StyledTable } from './elements';
 

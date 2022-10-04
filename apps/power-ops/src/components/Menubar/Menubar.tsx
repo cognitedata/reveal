@@ -1,7 +1,10 @@
 import { useState } from 'react';
 import { generatePath, useHistory, useRouteMatch } from 'react-router-dom';
 import { Dropdown, Icon, Menu, TopBar } from '@cognite/cogs.js';
-import { LogoutButton } from '@cognite/react-container';
+import {
+  LogoutButton,
+  useAuthenticatedAuthContext,
+} from '@cognite/react-container';
 import { handleLogout } from 'utils/utils';
 import { PAGES } from 'App';
 import { useFetchPriceAreas } from 'queries/useFetchPriceArea';
@@ -14,6 +17,7 @@ import {
 } from './elements';
 
 export const MenuBar = () => {
+  const { authState } = useAuthenticatedAuthContext();
   const history = useHistory();
   const { path } = useRouteMatch({ path: history.location.pathname }) ?? {
     path: null,
@@ -85,11 +89,20 @@ export const MenuBar = () => {
                 isActive: path === PAGES.WORKFLOWS,
                 onClick: () => history.push(PAGES.WORKFLOWS),
               },
-              {
-                name: 'Monitoring',
-                isActive: path === PAGES.MONITORING,
-                onClick: () => history.push(PAGES.MONITORING),
-              },
+              ...(authState.email?.includes('@cognite')
+                ? [
+                    {
+                      name: 'Workflow Schemas',
+                      isActive: path === PAGES.WORKFLOW_SCHEMAS,
+                      onClick: () => history.push(PAGES.WORKFLOW_SCHEMAS),
+                    },
+                    {
+                      name: 'Monitoring',
+                      isActive: path === PAGES.MONITORING,
+                      onClick: () => history.push(PAGES.MONITORING),
+                    },
+                  ]
+                : []),
             ]}
           />
         </Dropdown>

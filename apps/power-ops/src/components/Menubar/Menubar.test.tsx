@@ -7,6 +7,15 @@ import * as priceareahook from 'queries/useFetchPriceArea';
 
 import { MenuBar } from './Menubar';
 
+jest.mock('@cognite/react-container', () => {
+  return {
+    ...jest.requireActual('@cognite/react-container'),
+    useAuthenticatedAuthContext: () => ({
+      authState: { token: 'Mock', email: 'mockuser@cognitedata.com' },
+    }),
+  };
+});
+
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
   useLocation: jest.fn(),

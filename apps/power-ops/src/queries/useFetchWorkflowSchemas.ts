@@ -1,15 +1,15 @@
 import axios from 'axios';
-import { WorkflowSchema } from 'types';
 import { useQuery } from 'react-query';
 import sidecar from 'utils/sidecar';
 import { useAuthenticatedAuthContext } from '@cognite/react-container';
 import { axiosRequestConfig } from 'utils/utils';
+import { FetchWorkflowSchemasResponse } from '@cognite/power-ops-api-types';
 
 const { powerOpsApiBaseUrl } = sidecar;
 
 const fetchWorkflowSchemas = (project: string, token: string) =>
   axios
-    .get<WorkflowSchema[]>(
+    .get<FetchWorkflowSchemasResponse>(
       `${powerOpsApiBaseUrl}/${project}/workflow-schemas`,
       axiosRequestConfig(token)
     )

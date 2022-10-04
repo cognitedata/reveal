@@ -1,0 +1,57 @@
+{
+  "$ref": "#/definitions/WorkflowSchemaEditable",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "definitions": {
+    "PROCESS_TYPES": {
+      "enum": [
+        "POWEROPS_SHOP_RUN",
+        "POWEROPS_FUNCTION_CALL",
+        "POWEROPS_COLLECTION",
+        "POWEROPS_WAIT_FOR_EVENT"
+      ],
+      "type": "string"
+    },
+    "ProcessSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "metadata": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "type": "object"
+        },
+        "processType": {
+          "$ref": "#/definitions/PROCESS_TYPES"
+        }
+      },
+      "required": ["processType", "metadata"],
+      "type": "object"
+    },
+    "WorkflowSchemaEditable": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "processes": {
+          "items": {
+            "$ref": "#/definitions/ProcessSchema"
+          },
+          "type": "array"
+        },
+        "triggeredBy": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "workflowType": {
+          "type": "string"
+        }
+      },
+      "required": ["name", "workflowType", "triggeredBy", "processes"],
+      "type": "object"
+    }
+  }
+}

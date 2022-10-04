@@ -1,4 +1,4 @@
-import { Workflow } from 'types';
+import { Workflow } from '@cognite/power-ops-api-types';
 import axios from 'axios';
 import { useQuery } from 'react-query';
 import sidecar from 'utils/sidecar';
