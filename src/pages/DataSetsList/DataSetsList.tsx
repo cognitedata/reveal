@@ -319,7 +319,6 @@ const DataSetsList = (): JSX.Element => {
           actionsColumn,
         ]}
         dataSource={tableData}
-        rowClassName={() => 'pointerMouse'}
         onChange={(_pagination, _filters, sorter) => {
           if (!isArray(sorter) && sorter?.columnKey && sorter?.order)
             setItemInStorage(sorter?.columnKey, sorter?.order);

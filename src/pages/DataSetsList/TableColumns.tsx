@@ -1,21 +1,20 @@
-import { Icon } from '@cognite/cogs.js';
+import { Flex, Icon } from '@cognite/cogs.js';
 import { stringCompare } from 'utils/shared';
 import {
   ApprovedDot,
   LabelTag,
-  NoStyleList,
   NotSetDot,
   UnApprovedDot,
 } from 'utils/styledComponents';
 import SearchableFilters from 'components/SearchableFilters';
 import { getItemFromStorage } from 'utils/localStorage';
 import { DataSet, DataSetV3, Extpipe } from 'utils/types';
-import { ExtpipeLink } from 'components/Lineage/Extpipe/ExtpipeLink';
 import { FilterDropdownProps } from 'antd/lib/table/interface';
 import { ColumnFilterIcon } from 'components/ColumnFilterIcon';
 import isArray from 'lodash/isArray';
 import { useTranslation } from 'common/i18n';
 import DataSetName from 'components/data-sets-list/data-set-name';
+import ExtractionPipelineName from 'components/data-sets-list/extraction-pipeline-name';
 
 export interface DataSetRow {
   key: number;
@@ -152,17 +151,27 @@ export const useTableColumns = () => {
           return <Icon type="Loader" />;
         }
 
+        const extpipes = record.extpipes;
+        const extpipesToDisplay = extpipes.slice(0, 2);
+
         return (
-          <NoStyleList>
+          <Flex direction="column">
             {Array.isArray(record.extpipes) &&
-              record.extpipes.map((extpipe) => {
+              extpipesToDisplay.map((extpipe) => {
                 return (
-                  <li key={extpipe.id}>
-                    <ExtpipeLink extpipe={extpipe} />
-                  </li>
+                  <>
+                    <ExtractionPipelineName
+                      id={extpipe.id}
+                      name={extpipe.name}
+                    />
+                  </>
                 );
               })}
-          </NoStyleList>
+            {extpipes.length > extpipesToDisplay.length &&
+              t('and-more', {
+                count: extpipes.length - extpipesToDisplay.length,
+              })}
+          </Flex>
         );
       },
     };
