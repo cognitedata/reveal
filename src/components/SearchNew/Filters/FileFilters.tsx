@@ -1,7 +1,6 @@
 import React from 'react';
 import { useList } from '@cognite/sdk-react-query-hooks';
 import { FileFilterProps } from '@cognite/sdk';
-import { ResetFiltersButton } from './ResetFiltersButton';
 import { LabelFilter } from './LabelFilter/LabelFilter';
 import { MetadataFilter } from './MetadataFilter/MetadataFilter';
 import { AggregatedFilter } from './AggregatedFilter/AggregatedFilter';
@@ -21,7 +20,6 @@ export const FileFilters = ({
 
   return (
     <BaseFilterCollapse.Panel title="Files" {...rest}>
-      <ResetFiltersButton setFilter={setFilter} />
       <AggregatedFilter
         items={items}
         aggregator="mimeType"

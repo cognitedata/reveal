@@ -6,7 +6,6 @@ import {
 } from 'types';
 
 import { lightGrey } from 'utils';
-import styled from 'styled-components';
 import { Filters } from 'components/SearchNew/Filters';
 
 const TRANSITION_TIME = 200;
@@ -109,22 +108,20 @@ export const SearchFiltersNew = ({
             </SegmentedControl>
           </ControllerContainer> */}
 
-          <StyledFilters>
-            <Filters
-              filterSection={filterSection}
-              resourceType={resourceType}
-              assetFilter={assetFilter}
-              setAssetFilter={setAssetFilter}
-              timeseriesFilter={timeseriesFilter}
-              setTimeseriesFilter={setTimeseriesFilter}
-              sequenceFilter={sequenceFilter}
-              setSequenceFilter={setSequenceFilter}
-              eventFilter={eventFilter}
-              setEventFilter={setEventFilter}
-              fileFilter={fileFilter}
-              setFileFilter={setFileFilter}
-            />
-          </StyledFilters>
+          <Filters
+            filterSection={filterSection}
+            resourceType={resourceType}
+            assetFilter={assetFilter}
+            setAssetFilter={setAssetFilter}
+            timeseriesFilter={timeseriesFilter}
+            setTimeseriesFilter={setTimeseriesFilter}
+            sequenceFilter={sequenceFilter}
+            setSequenceFilter={setSequenceFilter}
+            eventFilter={eventFilter}
+            setEventFilter={setEventFilter}
+            fileFilter={fileFilter}
+            setFileFilter={setFileFilter}
+          />
         </>
       )}
     </div>
@@ -152,11 +149,3 @@ export const SearchFiltersNew = ({
 // const ControllerContainer = styled.div`
 //   padding-right: 16px;
 // `;
-
-const StyledFilters = styled.div`
-  padding-left: 1px;
-  padding-right: 16px;
-  padding-bottom: 16px;
-  height: 100%;
-  overflow: auto;
-`;

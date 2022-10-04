@@ -2,7 +2,6 @@ import React from 'react';
 
 import { EventFilter, InternalId } from '@cognite/sdk';
 import { useList } from '@cognite/sdk-react-query-hooks';
-import { ResetFiltersButton } from './ResetFiltersButton';
 import { AggregatedFilter } from './AggregatedFilter/AggregatedFilter';
 import { AggregatedEventFilter } from './AggregatedEventFilter/AggregatedEventFilter';
 import { ByAssetFilter } from './ByAssetFilter/ByAssetFilter';
@@ -22,7 +21,6 @@ export const EventFilters = ({
 
   return (
     <BaseFilterCollapse.Panel title="Events" {...rest}>
-      <ResetFiltersButton setFilter={setFilter} />
       <AggregatedEventFilter
         field="type"
         filter={filter}

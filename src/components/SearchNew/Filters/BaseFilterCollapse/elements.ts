@@ -4,9 +4,8 @@ import styled from 'styled-components';
 const { Panel: DefaultPanel } = DefaultCollapse;
 
 export const Collapse = styled(DefaultCollapse)`
-  && {
-    background-color: white;
-  }
+  background-color: white !important;
+  flex: 1;
 `;
 
 export const Panel = styled(DefaultPanel)`

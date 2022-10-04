@@ -1,7 +1,6 @@
 import React from 'react';
 import { useList } from '@cognite/sdk-react-query-hooks';
 import { TimeseriesFilter as TimeseriesFilterProps } from '@cognite/sdk';
-import { ResetFiltersButton } from './ResetFiltersButton';
 import { BooleanFilter } from './BooleanFilter/BooleanFilter';
 import { AggregatedFilter } from './AggregatedFilter/AggregatedFilter';
 import { MetadataFilter } from './MetadataFilter/MetadataFilter';
@@ -19,8 +18,6 @@ export const TimeseriesFilters = ({
 
   return (
     <BaseFilterCollapse.Panel title="Time series" {...rest}>
-      <ResetFiltersButton setFilter={setFilter} />
-
       <BooleanFilter
         title="Is step"
         value={filter.isStep}

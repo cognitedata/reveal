@@ -12,12 +12,21 @@ export const ResetFiltersButton = <T extends FiltersType>({
     setFilter({} as T);
   };
   return (
-    <StyledButton onClick={handleResetFilters} type="secondary" icon="Restore">
-      Reset all filters
+    <StyledButton
+      onClick={handleResetFilters}
+      type="tertiary"
+      variant="inverted"
+      icon="Restore"
+      size="default"
+    >
+      Reset filters
     </StyledButton>
   );
 };
 
-const StyledButton = styled(Button)`
+const StyledButton = styled(Button).attrs({ className: 'z-4' })`
   width: 100%;
+  position: sticky;
+  bottom: 16px;
+  min-height: 36px;
 `;

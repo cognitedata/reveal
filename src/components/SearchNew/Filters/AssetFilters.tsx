@@ -2,7 +2,6 @@ import React from 'react';
 import { useList } from '@cognite/sdk-react-query-hooks';
 import { AssetFilterProps } from '@cognite/sdk';
 import { useAssetMetadataKeys } from 'hooks/MetadataAggregateHooks';
-import { ResetFiltersButton } from './ResetFiltersButton';
 import { LabelFilter } from './LabelFilter/LabelFilter';
 import { MetadataFilter } from './MetadataFilter/MetadataFilter';
 import { AggregatedFilter } from './AggregatedFilter/AggregatedFilter';
@@ -23,7 +22,6 @@ export const AssetFilters = ({
 
   return (
     <BaseFilterCollapse.Panel title="Assets" {...rest}>
-      <ResetFiltersButton setFilter={setFilter} />
       <LabelFilter
         resourceType="asset"
         value={((filter as any).labels || { containsAny: [] }).containsAny}
