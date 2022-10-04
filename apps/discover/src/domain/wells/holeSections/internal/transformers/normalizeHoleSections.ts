@@ -1,5 +1,5 @@
 import isUndefined from 'lodash/isUndefined';
-import { toFraction } from 'utils/number';
+import { toReadableInches } from 'utils/number/toReadableInches';
 import { changeUnitTo } from 'utils/units/changeUnitTo';
 
 import { DistanceUnitEnum, HoleSection } from '@cognite/sdk-wells';
@@ -29,7 +29,7 @@ export const normalizeHoleSections = (
       holeSize: holeSizeConverted,
       holeSizeFormatted: isUndefined(holeSizeConverted)
         ? undefined
-        : `${toFraction(holeSizeConverted)}"`,
+        : `${toReadableInches(holeSizeConverted)}"`,
       bitSize: isUndefined(bitSize)
         ? undefined
         : changeUnitTo(bitSize, sizeUnit, SIZE_UNIT),

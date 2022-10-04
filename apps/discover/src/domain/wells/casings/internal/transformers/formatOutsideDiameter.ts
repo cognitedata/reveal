@@ -1,20 +1,14 @@
-import { toFraction } from 'utils/number';
+import { toReadableInches } from 'utils/number/toReadableInches';
+import { ConvertedDistance } from 'utils/units/constants';
 
 import { CASING_ASSEMBLY_DIAMETER_UNIT } from '../constants';
-import { CasingAssemblyInternal } from '../types';
 
-type CasingOutsideDiameter = Pick<CasingAssemblyInternal, 'minOutsideDiameter'>;
-
-export const formatOutsideDiameter = <T extends CasingOutsideDiameter>(
-  casingAssembly: T
-) => {
-  const { value, unit } = casingAssembly.minOutsideDiameter;
-
-  const fraction = toFraction(value).replace(/\s+/g, '-');
+export const formatOutsideDiameter = (outsideDiameter: ConvertedDistance) => {
+  const { value, unit } = outsideDiameter;
 
   if (unit === CASING_ASSEMBLY_DIAMETER_UNIT) {
-    return `${fraction}"`;
+    return toReadableInches(value);
   }
 
-  return `${fraction} ${unit}`;
+  return `${value} ${unit}`;
 };

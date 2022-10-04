@@ -9,7 +9,9 @@ export const adaptCasingAssembliesDataToView = (
   casingAssemblies: CasingAssemblyInternalWithTvd[]
 ): CasingAssemblyView[] => {
   return casingAssemblies.map((casingAssembly) => {
-    const outsideDiameterFormatted = formatOutsideDiameter(casingAssembly);
+    const outsideDiameterFormatted = formatOutsideDiameter(
+      casingAssembly.minOutsideDiameter
+    );
 
     return {
       ...casingAssembly,
