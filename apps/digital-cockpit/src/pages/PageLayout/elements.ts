@@ -22,5 +22,7 @@ export const ContentWrapper = styled.div`
   display: flex;
   flex-direction: row;
   overflow: hidden auto;
+  width: 100%;
   width: -webkit-fill-available;
+  width: -moz-available;
 `;
