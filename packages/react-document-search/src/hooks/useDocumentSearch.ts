@@ -16,7 +16,7 @@ export const useDocumentSearch = () => {
 
   const response = useInfiniteQuery(
     ['documents', 'search', appliedFilters],
-    () => {
+    ({ pageParam }) => {
       return search(
         {
           ...appliedFilters,
@@ -25,6 +25,7 @@ export const useDocumentSearch = () => {
             query: appliedFilters.search?.query || '',
             highlight: true,
           },
+          cursor: pageParam,
         },
         sdkClient!
       );

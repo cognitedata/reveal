@@ -6,6 +6,7 @@ import {
   useDocumentSearch,
   useDocumentFilters,
   useDocumentAggregateCount,
+  useDocumentFilteredAggregateCount,
 } from '@cognite/react-document-search';
 import { DocumentSearchItem } from '@cognite/sdk';
 import debounce from 'lodash/debounce';
@@ -29,12 +30,10 @@ const DocumentSearchWithProviders: React.FC = () => (
 export const DocumentSearch: React.FC = () => {
   const { results } = useDocumentSearch();
   const { setAppliedFilters } = useDocumentFilters();
-  const {
-    isLoadingTotalCount,
-    totalCount,
-    isLoadingFilteredCount,
-    filteredCount,
-  } = useDocumentAggregateCount();
+  const { data: totalCount, isLoading: isLoadingTotalCount } =
+    useDocumentAggregateCount();
+  const { data: filteredCount, isLoading: isLoadingFilteredCount } =
+    useDocumentFilteredAggregateCount();
   const debouncedSearch = debounce((searchKey) => {
     setAppliedFilters({
       search: {
@@ -66,6 +65,8 @@ export const DocumentSearch: React.FC = () => {
         {isLoadingFilteredCount ? 'Loading...' : filteredCount}
       </p>
 
+      <p>Currently fetched: {results.length}</p>
+
       <Table<DocumentSearchItem>
         dataSource={results}
         columns={[
@@ -80,9 +81,6 @@ export const DocumentSearch: React.FC = () => {
           },
         ]}
         pagination={false}
-        // onRow={() => ({
-        //   onClick: action('onClick'),
-        // })}
         resizable
         blockLayout={{
           minWidth: 100,

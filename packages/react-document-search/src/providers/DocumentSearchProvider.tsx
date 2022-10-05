@@ -7,14 +7,14 @@ interface DocumentSearchContextData {
   setAppliedFilters: (filters: DocumentSearchRequest) => void;
 }
 export const DocumentSearchContext = createContext<
-  Props & DocumentSearchContextData
+  Partial<Props> & DocumentSearchContextData
 >({
   appliedFilters: {},
   setAppliedFilters: () => noop,
 });
 
 export interface Props {
-  sdkClient?: CogniteClient;
+  sdkClient: CogniteClient;
   options?: {
     limit?: number;
   };
