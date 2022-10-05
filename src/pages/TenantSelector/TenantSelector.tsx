@@ -27,6 +27,7 @@ const clusters = [
       { value: 'power-no', label: 'Power NO (Google)', legacyAuth: true },
       { value: 'az-power-no-northeurope', label: 'Power NO (Microsoft)' },
       { value: 'statnett', label: 'Statnett', legacyAuth: true },
+      { value: 'gc-dsm-gp-001', label: 'DSM GP 001' },
     ],
   },
   {

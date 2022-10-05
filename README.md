@@ -134,6 +134,7 @@ The data stored in Charts is currently on Firebase and can be accessed for admin
 | Greenfield           | `greenfield`              | GCP       | Dev      | [Console](https://console.firebase.google.com/project/charts-510606338073/overview)           | [Console](https://console.firebase.google.com/project/charts-510606338073-staging/overview)    |
 | Bluefield            | `bluefield`               | Azure     | Dev      | [Console](https://console.firebase.google.com/project/bluefield-charts-prod/overview)         | [Console](https://console.firebase.google.com/project/bluefield-charts-stg/overview)           |
 | Azure Dev            | `azure-dev`               | Azure     | Dev      | [Console](https://console.firebase.google.com/project/azure-dev-charts-prod/overview)         | [Console](https://console.firebase.google.com/project/azure-dev-charts-stg/overview)           |
+| GC DCM GP 001        | `gc-dsm-gp-001`           | GCP       | Prod      | [Console](https://console.firebase.google.com/project/charts-806448082314/overview)          | [Console](https://console.firebase.google.com/project/charts-806448082314-staging/overview)    |
 
 ## Login
 
