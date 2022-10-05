@@ -2,7 +2,8 @@
  * Copyright 2022 Cognite AS
  */
 
-import { CognitePointCloudModel, PotreePointColorType } from '@reveal/pointclouds';
+import { CognitePointCloudModel } from '@reveal/pointclouds';
+import { PotreePointColorType } from '@reveal/rendering';
 import {
   ViewerTestFixtureComponents,
   ViewerVisualTestFixture

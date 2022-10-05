@@ -6,7 +6,7 @@ import { DefaultNodeAppearance, TreeIndexNodeCollection } from '@reveal/cad-styl
 import { DeferredPromise, NumericRange, SceneHandler } from '@reveal/utilities';
 import * as THREE from 'three';
 import { TransformControls } from 'three-stdlib';
-import { AntiAliasingMode, defaultRenderOptions, DefaultRenderPipelineProvider } from '..';
+import { AntiAliasingMode, defaultRenderOptions, DefaultRenderPipelineProvider, PointCloudMaterialManager } from '..';
 
 import {
   StreamingVisualTestFixture,
@@ -22,7 +22,7 @@ export default class RenderingVisualTestFixture extends StreamingVisualTestFixtu
   };
 
   public async setup(testFixtureComponents: StreamingTestFixtureComponents): Promise<void> {
-    const { sceneHandler, model, camera, renderer, cadMaterialManager } = testFixtureComponents;
+    const { sceneHandler, model, camera, renderer, cadMaterialManager, pcMaterialManager } = testFixtureComponents;
 
     const stepPipelineExecutor = new StepPipelineExecutor(renderer);
     this.pipelineExecutor = stepPipelineExecutor;
@@ -38,13 +38,14 @@ export default class RenderingVisualTestFixture extends StreamingVisualTestFixtu
 
     await this.setupMockCadStyling(cadMaterialManager, model.geometryNode.type);
 
-    this.setupGui(stepPipelineExecutor, renderer, cadMaterialManager, sceneHandler);
+    this.setupGui(stepPipelineExecutor, renderer, cadMaterialManager, pcMaterialManager, sceneHandler);
   }
 
   private setupGui(
     stepPipelineExecutor: StepPipelineExecutor,
     renderer: THREE.WebGLRenderer,
     cadMaterialManager: CadMaterialManager,
+    pcMaterialManager: PointCloudMaterialManager,
     sceneHandler: SceneHandler
   ) {
     this._frameStatsGUIFolder.add(this.guiData, 'frameTime').listen();
@@ -62,7 +63,7 @@ export default class RenderingVisualTestFixture extends StreamingVisualTestFixtu
 
     const updateRenderOptions = () => {
       this.pipelineProvider.dispose();
-      this.pipelineProvider = new DefaultRenderPipelineProvider(cadMaterialManager, sceneHandler, renderOptions);
+      this.pipelineProvider = new DefaultRenderPipelineProvider(cadMaterialManager, pcMaterialManager, sceneHandler, renderOptions);
       this.render();
     };
 
