@@ -15,7 +15,7 @@ import useLocalStorage from 'hooks/useLocalStorage';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import { getFlow } from '@cognite/cdf-sdk-singleton';
 import isArray from 'lodash/isArray';
-import { useTableColumns, DataSetRow } from './TableColumns';
+import { useTableColumns, DataSetRow, getLabelsList } from './TableColumns';
 import {
   DataSetWithExtpipes,
   useDataSetsList,
@@ -26,6 +26,7 @@ import { useDataSetMode, useSelectedDataSet } from '../../context/index';
 import { useTranslation } from 'common/i18n';
 import Page from 'components/page';
 import RowActions from 'components/data-sets-list/row-actions';
+import TableFilter, { TableFilterValue } from 'components/table-filters';
 
 const DataSetsList = (): JSX.Element => {
   const { t } = useTranslation();
@@ -48,6 +49,8 @@ const DataSetsList = (): JSX.Element => {
   const [changesSaved, setChangesSaved] = useState<boolean>(true);
   const [userWarned, setUserWarned] = useState<boolean>(false);
 
+  const [tempFilterValue, setTempFilterValue] = useState<TableFilterValue>({});
+
   const { setMode } = useDataSetMode();
 
   const { setSelectedDataSet } = useSelectedDataSet();
@@ -67,16 +70,26 @@ const DataSetsList = (): JSX.Element => {
     'WRITE'
   );
 
+  const dataSetsList = useMemo(() => {
+    return handleDataSetsFilters(
+      showArchived,
+      searchValue,
+      setSearchValue,
+      qualityFilter,
+      dataSetsWithExtpipes
+    );
+  }, [
+    handleDataSetsFilters,
+    showArchived,
+    searchValue,
+    setSearchValue,
+    qualityFilter,
+    dataSetsWithExtpipes,
+  ]);
+
   const tableData = useMemo(() => {
     let tableDataSets: DataSetRow[] = [];
     if (dataSetsWithExtpipes?.length && !loading) {
-      const dataSetsList = handleDataSetsFilters(
-        showArchived,
-        searchValue,
-        setSearchValue,
-        qualityFilter,
-        dataSetsWithExtpipes
-      );
       tableDataSets = dataSetsList.map(
         (dataSetWithExtpipes: DataSetWithExtpipes): DataSetRow => {
           const { dataSet, extpipes } = dataSetWithExtpipes;
@@ -100,15 +113,14 @@ const DataSetsList = (): JSX.Element => {
       );
     }
     return tableDataSets;
-  }, [
-    dataSetsWithExtpipes,
-    loading,
-    qualityFilter,
-    searchValue,
-    setSearchValue,
-    showArchived,
-    handleDataSetsFilters,
-  ]);
+  }, [dataSetsWithExtpipes, loading, dataSetsList]);
+
+  const labels = useMemo(() => {
+    return getLabelsList(
+      dataSetsList.map(({ dataSet }) => dataSet),
+      showArchived
+    );
+  }, [dataSetsList, showArchived]);
 
   const handleModalClose = () => {
     setCreationDrawerVisible(false);
@@ -140,6 +152,7 @@ const DataSetsList = (): JSX.Element => {
   const actionsColumn = {
     dataIndex: 'options',
     key: 'options',
+    title: '',
     render: (_: any, record: DataSetRow) => (
       <div
         onClick={(evt) => {
@@ -284,6 +297,14 @@ const DataSetsList = (): JSX.Element => {
     }
   };
 
+  const handleApplyFilter = (): void => {
+    // FIXME: apply filter to search query
+  };
+
+  const handleFilterValueChange = (updatedValue: TableFilterValue): void => {
+    setTempFilterValue(updatedValue);
+  };
+
   if (!didFetchWithExtpipes) {
     return <Icon type="Loader" />;
   }
@@ -298,8 +319,13 @@ const DataSetsList = (): JSX.Element => {
         sourceSuggestions={getSourcesList()}
         handleCloseModal={() => handleModalClose()}
       />
-      <div style={{ alignItems: 'center', display: 'flex' }} />
-      <Table
+      <TableFilter
+        labelOptions={labels}
+        onApply={handleApplyFilter}
+        onChange={handleFilterValueChange}
+        value={tempFilterValue}
+      />
+      <Table<DataSetRow>
         rowKey="key"
         loading={loading}
         columns={[

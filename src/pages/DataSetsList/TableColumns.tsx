@@ -16,7 +16,7 @@ import { useTranslation } from 'common/i18n';
 import DataSetName from 'components/data-sets-list/data-set-name';
 import ExtractionPipelineName from 'components/data-sets-list/extraction-pipeline-name';
 
-export interface DataSetRow {
+export type DataSetRow = {
   key: number;
   id: DataSetV3['id'];
   externalId: DataSetV3['externalId'];
@@ -27,13 +27,13 @@ export interface DataSetRow {
   extpipes: Extpipe[];
   writeProtected: boolean;
   archived: boolean;
-}
+};
 
 const getFilterDropdown = (filterProps: FilterDropdownProps) => (
   <SearchableFilters {...filterProps} />
 );
 
-const getLabelsList = (dataSets: DataSet[], showArchived: boolean) => {
+export const getLabelsList = (dataSets: DataSet[], showArchived: boolean) => {
   const labels: string[] = [];
   let dataSetsList = dataSets;
   if (!showArchived) {

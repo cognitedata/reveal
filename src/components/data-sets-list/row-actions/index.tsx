@@ -1,6 +1,6 @@
 import { Button, ButtonProps, Colors, Menu } from '@cognite/cogs.js';
 
-import Dropdown from 'components/dropdown';
+import Dropdown from 'components/dropdown/Dropdown';
 import styled from 'styled-components';
 
 type RowActionsProps = {
