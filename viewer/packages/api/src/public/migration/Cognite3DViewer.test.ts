@@ -10,7 +10,7 @@ import { SectorCuller } from '@reveal/cad-geometry-loaders';
 import { Cognite3DViewer } from './Cognite3DViewer';
 
 import nock from 'nock';
-import { DisposedDelegate, SceneRenderedDelegate } from '@reveal/utilities';
+import { BeforeSceneRenderedDelegate, DisposedDelegate, SceneRenderedDelegate } from '@reveal/utilities';
 import { createGlContext, mockClientAuthentication } from '../../../../../test-utilities';
 
 const sceneJson = require('./Cognite3DViewer.test-scene.json');
@@ -208,7 +208,7 @@ describe('Cognite3DViewer', () => {
     expect(scene.getObjectById(obj.id)).toBeFalsy();
   });
 
-  test('sceneRendered triggers after rendering', () => {
+  test('beforeSceneRendered and sceneRendered triggers before/after rendering', () => {
     // Setup a fake rendering loop
     const requestAnimationFrameSpy: jest.SpyInstance<any, any> = jest
       .spyOn(window, 'requestAnimationFrame')
@@ -218,20 +218,25 @@ describe('Cognite3DViewer', () => {
       });
     let requestAnimationFrameCallback: FrameRequestCallback | undefined;
     const viewer = new Cognite3DViewer({ sdk, renderer, _sectorCuller });
+    const onBeforeRendered: BeforeSceneRenderedDelegate = jest.fn();
     const onRendered: SceneRenderedDelegate = jest.fn();
     if (!requestAnimationFrameCallback) throw new Error('Animation frame not triggered');
 
     try {
+      viewer.on('beforeSceneRendered', onBeforeRendered);
       viewer.on('sceneRendered', onRendered);
       viewer.requestRedraw();
       requestAnimationFrameCallback(1000);
+      expect(onBeforeRendered).toBeCalledTimes(1);
       expect(onRendered).toBeCalledTimes(1);
 
       jest.clearAllMocks();
       viewer.off('sceneRendered', onRendered);
+      viewer.off('beforeSceneRendered', onBeforeRendered);
       viewer.requestRedraw();
       requestAnimationFrameCallback(1000);
-      expect(onRendered).toBeCalledTimes(0);
+      expect(onBeforeRendered).not.toBeCalled();
+      expect(onRendered).not.toBeCalled();
     } finally {
       requestAnimationFrameSpy.mockRestore();
     }
