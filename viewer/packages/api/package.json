@@ -8,6 +8,7 @@
     "lint": "yarn ws:lint"
   },
   "dependencies": {
+    "@reveal/360-images": "workspace:*",
     "@reveal/cad-geometry-loaders": "workspace:*",
     "@reveal/cad-model": "workspace:*",
     "@reveal/cad-parsers": "workspace:*",
