@@ -5,7 +5,6 @@ import Tag from 'antd/lib/tag';
 import { notification } from 'antd';
 import Checkbox from 'antd/lib/checkbox';
 import DataSetEditor from 'pages/DataSetEditor';
-import { Dropdown, DropdownMenuContent } from 'components/DropdownMenu';
 
 import { trackEvent } from '@cognite/cdf-route-tracker';
 import SelectorFilter from 'components/SelectorFilter';
@@ -26,6 +25,7 @@ import { useWithExtpipes } from '../../hooks/useWithExtpipes';
 import { useDataSetMode, useSelectedDataSet } from '../../context/index';
 import { useTranslation } from 'common/i18n';
 import Page from 'components/page';
+import RowActions from 'components/data-sets-list/row-actions';
 
 const DataSetsList = (): JSX.Element => {
   const { t } = useTranslation();
@@ -129,38 +129,6 @@ const DataSetsList = (): JSX.Element => {
     return sourceNames;
   };
 
-  const actionsRender = (_: any, row: DataSetRow) => (
-    <Dropdown
-      content={
-        <DropdownMenuContent
-          actions={[
-            {
-              label: t('edit'),
-              onClick: () => {
-                editDataSet(row.key);
-              },
-              disabled: !hasWritePermissions,
-              loading: isUpdatingDataSetVisibility || loading,
-              icon: 'Edit',
-              key: 'edit',
-            },
-            {
-              label: row.archived ? t('restore') : t('archive'),
-              onClick: () =>
-                row.archived
-                  ? restoreDataSet(row.key)
-                  : archiveDataSet(row.key),
-              disabled: !hasWritePermissions,
-              loading: isUpdatingDataSetVisibility || loading,
-              icon: row.archived ? 'Restore' : 'Archive',
-              key: row.archived ? 'restore' : 'archive',
-            },
-          ]}
-        />
-      }
-    />
-  );
-
   const statusColumn = {
     title: t('status'),
     key: 'status',
@@ -170,14 +138,40 @@ const DataSetsList = (): JSX.Element => {
   };
 
   const actionsColumn = {
-    title: (
-      <div style={{ textAlign: 'center', width: '100%' }}>
-        {t('action_other')}
+    dataIndex: 'options',
+    key: 'options',
+    render: (_: any, record: DataSetRow) => (
+      <div
+        onClick={(evt) => {
+          evt.stopPropagation();
+        }}
+      >
+        <RowActions
+          actions={[
+            {
+              children: t('edit'),
+              onClick: () => {
+                editDataSet(record.key);
+              },
+              disabled: !hasWritePermissions,
+              loading: isUpdatingDataSetVisibility || loading,
+              icon: 'Edit',
+            },
+            {
+              children: record.archived ? t('restore') : t('archive'),
+              onClick: () =>
+                record.archived
+                  ? restoreDataSet(record.key)
+                  : archiveDataSet(record.key),
+              disabled: !hasWritePermissions,
+              loading: isUpdatingDataSetVisibility || loading,
+              icon: record.archived ? 'Restore' : 'Archive',
+            },
+          ]}
+        />
       </div>
     ),
-    width: '5%',
-    key: 'id',
-    render: actionsRender,
+    width: '52px',
   };
 
   const archiveDataSet = (key: number) => {
