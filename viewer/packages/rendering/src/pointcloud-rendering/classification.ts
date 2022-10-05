@@ -1,5 +1,5 @@
 /*!
- * Copyright 2022 Cognite AS
+ * Adapted from pnext/three-loader (https://github.com/pnext/three-loader)
  */
 import { Vector4 } from 'three';
 import { IClassification } from './types';

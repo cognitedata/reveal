@@ -1,5 +1,5 @@
 /*!
- * Copyright 2022 Cognite AS
+ * Adapted from pnext/three-loader (https://github.com/pnext/three-loader)
  */
 export enum PotreePointSizeType {
   Fixed = 0,

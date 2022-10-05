@@ -1,5 +1,5 @@
 /*!
- * Copyright 2022 Cognite AS
+ * Adapted from pnext/three-loader (https://github.com/pnext/three-loader)
  */
 import { Color, IUniform as IThreeUniform, Vector4, Box3, Matrix4, Vector3 } from 'three';
 
