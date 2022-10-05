@@ -95,7 +95,7 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
   constructor(localModelUrl = 'primitives') {
     this._localModelUrl = localModelUrl;
 
-    this._perspectiveCamera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 1000);
+    this._perspectiveCamera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 1000);
 
     this._sceneHandler = new SceneHandler();
 

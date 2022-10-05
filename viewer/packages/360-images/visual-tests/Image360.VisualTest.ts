@@ -24,6 +24,9 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
   public async setup(testFixtureComponents: StreamingTestFixtureComponents): Promise<void> {
     const { cogniteClient, sceneHandler, cameraControls, renderer, camera } = testFixtureComponents;
 
+    camera.near = 0.01;
+    camera.updateProjectionMatrix();
+
     const { facade, entities } = await this.setup360Images(cogniteClient, sceneHandler);
     const size = renderer.getDrawingBufferSize(new THREE.Vector2());
 
