@@ -19,7 +19,7 @@ import {
 import { WellKnownAsprsPointClassCodes } from './types';
 
 import { StyledPointCloudObjectCollection } from './styling/StyledPointCloudObjectCollection';
-import { PointCloudObjectMetadata, PointCloudObjectAnnotation } from './annotationTypes';
+import { PointCloudObjectMetadata, PointCloudObject } from '@reveal/data-providers';
 import { CompletePointCloudAppearance } from './styling/PointCloudAppearance';
 import { ClassificationInfo } from './potree-three-loader/loading/ClassificationInfo';
 import { createDistinctColors } from '@reveal/utilities';
@@ -39,7 +39,7 @@ export class PotreeNodeWrapper {
 
   private readonly _classNameToCodeMap: ClassificationMap;
 
-  private readonly _annotations: PointCloudObjectAnnotation[];
+  private readonly _annotations: PointCloudObject[];
 
   get needsRedraw(): boolean {
     return this._needsRedraw;
@@ -47,7 +47,7 @@ export class PotreeNodeWrapper {
 
   constructor(
     octree: PointCloudOctree,
-    annotations: PointCloudObjectAnnotation[],
+    annotations: PointCloudObject[],
     modelIdentifier: symbol,
     classificationInfo: ClassificationInfo
   ) {
@@ -173,13 +173,17 @@ export class PotreeNodeWrapper {
     return codesAndNames.sort((a, b) => a.code - b.code);
   }
 
-  get stylableObjectAnnotationIds(): Iterable<PointCloudObjectMetadata> {
+  get stylableObjectAnnotationMetadata(): Iterable<PointCloudObjectMetadata> {
     return this._annotations.map(a => {
-      return { annotationId: a.annotationId, assetId: a.assetId };
+      return {
+        annotationId: a.annotationId,
+        assetId: a.assetId,
+        boundingBox: a.boundingBox
+      };
     });
   }
 
-  get stylableObjects(): PointCloudObjectAnnotation[] {
+  get stylableObjects(): PointCloudObject[] {
     return this._annotations;
   }
 

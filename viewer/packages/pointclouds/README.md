@@ -21,8 +21,8 @@ The `styling` folder contains code related to styling point cloud objects, inclu
 ### Styling
 
 - **Shape**: A primitive 3D shape, e.g. an oriented box or a cylinder.
-- **Stylable Object**: A point cloud object that can be styled. Represented by one or more **shapes** in 3D space. Assigning a style to a stylable object results in all points contained in any of the object's shapes attaining that style.
-- **Annotation**: The CDF resource type used for storing descriptions of stylable point cloud objects. One annotation corresponds to one object, and may consist of many primitive **shapes**.
+- **Stylable Object**: A point cloud object that can be styled. Represented by one or more **shapes** in 3D space. Assigning a style to a stylable object results in all points contained in any of the object's shapes attaining that style. Stylable objects are obtained from an instance of `PointCloudStylableObjectProvider` interface defined in the `data-providers` class.
+- **Annotation**: The CDF resource type used for storing descriptions of stylable point cloud objects. One annotation corresponds to one object, and may consist of many primitive **shapes**. The `CdfPointCloudStylableObjectProvider` class in the `data-providers` package provides stylable objects from the CDF Annotations API.
 - **Annotation ID**: ID uniquely referring to one annotation in CDF.
 - **Object ID**: Reveal-internal ID referring to a stylable point cloud object. Created as a running number starting from 1. Used for looking up appearance in a texture.
 
@@ -40,4 +40,4 @@ The topmost node in the octree contains points sparsely sampled from the entire 
 
 ### Styling
 
-When a point cloud model is added, Reveal automatically tries to load all **annotations** associated with that model from CDF. Each annotation is stored as a **stylable object**, associated with an **object ID**. Styling information for all annotated objects are stored in a texture. Each texel contains style information for one object, with the RGB channels containing the style color, and the alpha channel containing other effects, e.g. visibility.
+When a point cloud model is added, Reveal, by default, tries to load all **annotations** associated with that model from CDF, using the `CdfPointCloudStylableObjectProvider` defined in the `data-providers` package. Each annotation is stored as a **stylable object**, associated with an **object ID**. Styling information for all annotated objects are stored in a texture. Each texel contains style information for one object, with the RGB channels containing the style color, and the alpha channel containing other effects, e.g. visibility.

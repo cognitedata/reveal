@@ -13,9 +13,8 @@ import { PointCloudEptGeometryNode } from './PointCloudEptGeometryNode';
 import { IPointCloudTreeGeometry } from './IPointCloudTreeGeometry';
 
 import proj4 from 'proj4';
-import { ModelDataProvider } from '@reveal/data-providers';
+import { ModelDataProvider, StylableObject } from '@reveal/data-providers';
 import { toVector3, toBox3 } from './translationUtils';
-import { StylableObject } from '../../styling/StylableObject';
 
 function findDim(schema: EptSchemaEntry[], name: string): EptSchemaEntry {
   const dim = schema.find(dim => dim.name == name);

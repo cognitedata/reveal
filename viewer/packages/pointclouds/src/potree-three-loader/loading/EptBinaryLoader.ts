@@ -8,14 +8,12 @@ import * as THREE from 'three';
 
 import { WorkerPool } from '../utils/WorkerPool';
 import { ILoader } from './ILoader';
-import { ModelDataProvider } from '@reveal/data-providers';
+import { ModelDataProvider, SerializableStylableObject, StylableObject } from '@reveal/data-providers';
 import { PointCloudEptGeometryNode } from '../geometry/PointCloudEptGeometryNode';
 import * as EptDecoderWorker from '../workers/eptBinaryDecoder.worker';
 
 import { ParsedEptData, EptInputData } from '../workers/parseEpt';
 
-import { StylableObject } from '../../styling/StylableObject';
-import { createShapeBoundingBox } from '../../styling/shapes/createShapeBoundingBox';
 import { decomposeStylableObjects } from '../../styling/decomposeStylableObjects';
 
 import { fromThreeVector3, setupTransferableMethodsOnMain } from '@reveal/utilities';
@@ -23,7 +21,7 @@ import { MetricsLogger } from '@reveal/metrics';
 
 export class EptBinaryLoader implements ILoader {
   private readonly _dataLoader: ModelDataProvider;
-  private readonly _stylableObjectsWithBox: [StylableObject, THREE.Box3][];
+  private readonly _stylableObjectsWithBox: [SerializableStylableObject, THREE.Box3][];
 
   static readonly WORKER_POOL = new WorkerPool(32, EptDecoderWorker as unknown as new () => Worker);
 
@@ -33,10 +31,13 @@ export class EptBinaryLoader implements ILoader {
 
   constructor(dataLoader: ModelDataProvider, stylableObjects: StylableObject[]) {
     this._dataLoader = dataLoader;
-    this._stylableObjectsWithBox = decomposeStylableObjects(stylableObjects).map(obj => [
-      obj,
-      createShapeBoundingBox(obj.shape)
-    ]);
+    this._stylableObjectsWithBox = decomposeStylableObjects(stylableObjects).map(obj => {
+      const serializableShape = obj.shape.getSerializableShape();
+
+      const boundingBox = obj.shape.createBoundingBox();
+
+      return [{ shape: serializableShape, objectId: obj.objectId }, boundingBox];
+    });
   }
 
   async load(node: PointCloudEptGeometryNode): Promise<void> {

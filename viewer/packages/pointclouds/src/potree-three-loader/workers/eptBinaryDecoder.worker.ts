@@ -3,9 +3,8 @@
  */
 
 import { parseEpt, EptInputData, ParsedEptData } from './parseEpt';
-import { AABB, Vec3 } from '../../styling/shapes/linalg';
-import { setupTransferableMethodsOnWorker } from '@reveal/utilities';
-import { StylableObject } from '../../styling/StylableObject';
+import { SerializableStylableObject } from '@reveal/data-providers';
+import { setupTransferableMethodsOnWorker, AABB, Vec3 } from '@reveal/utilities';
 
 setupTransferableMethodsOnWorker({
   parse: {
@@ -28,7 +27,7 @@ setupTransferableMethodsOnWorker({
 
 export async function parse(
   data: EptInputData,
-  objects: StylableObject[],
+  objects: SerializableStylableObject[],
   pointOffset: Vec3,
   boundingBox: AABB
 ): Promise<ParsedEptData | Error> {

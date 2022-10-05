@@ -46,3 +46,6 @@ export { DeferredPromise } from './src/DeferredPromise';
 export { SceneHandler } from './src/SceneHandler';
 
 export * from './src/workers/workerize-transferable';
+
+export * from './src/shapes';
+export * from './src/linalg';

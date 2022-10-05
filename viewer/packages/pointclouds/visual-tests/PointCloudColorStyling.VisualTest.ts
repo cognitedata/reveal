@@ -7,12 +7,11 @@ import {
   StreamingVisualTestFixture
 } from '../../../visual-tests/test-fixtures/StreamingVisualTestFixture';
 import { PointCloudFactory } from '../src/PointCloudFactory';
-import { annotationsToObjectInfo } from '../src/styling/annotationsToObjects';
-import { IAnnotationProvider } from '../src/styling/IAnnotationProvider';
-import { ShapeType } from '../src/styling/shapes/IShape';
-import { PointCloudObjectAnnotationData } from '../src/styling/PointCloudObjectAnnotationData';
+import { cdfAnnotationsToObjectInfo } from '../../data-providers/src/pointcloud-stylable-object-providers/cdfAnnotationsToObjects';
+import { PointCloudStylableObjectProvider, PointCloudObjectData } from '../../data-providers';
+import { Cylinder } from '../../utilities';
 import { PointCloudNode } from '../src/PointCloudNode';
-import { AnnotationIdPointCloudObjectCollection } from '../src/styling/AnnotationListPointCloudObjectCollection';
+import { AnnotationIdPointCloudObjectCollection } from '../src/styling/AnnotationIdPointCloudObjectCollection';
 import { StyledPointCloudObjectCollection } from '../src/styling/StyledPointCloudObjectCollection';
 
 import { ModelIdentifier } from '@reveal/data-providers';
@@ -22,17 +21,15 @@ import * as THREE from 'three';
 import { applyDefaultsToPointCloudAppearance } from '../src/styling/PointCloudAppearance';
 import { LocalPointClassificationsProvider } from '../src/classificationsProviders/LocalPointClassificationsProvider';
 
-class CustomAnnotationProvider implements IAnnotationProvider {
-  async getAnnotations(_modelIdentifier: ModelIdentifier): Promise<PointCloudObjectAnnotationData> {
+class CustomAnnotationProvider implements PointCloudStylableObjectProvider {
+  async getPointCloudObjects(_modelIdentifier: ModelIdentifier): Promise<PointCloudObjectData> {
     const cdfAnnotations = [
       {
         annotationId: 123,
-        region: [
-          { shapeType: ShapeType.Cylinder, centerA: [-0.03, 0.1, -1000], centerB: [-0.03, 0.1, 1000], radius: 0.04 }
-        ]
+        region: [new Cylinder(new THREE.Vector3(-0.03, 0.1, -1000), new THREE.Vector3(-0.03, 0.1, 1000), 0.04)]
       }
     ];
-    const annotationData = annotationsToObjectInfo(cdfAnnotations);
+    const annotationData = cdfAnnotationsToObjectInfo(cdfAnnotations);
 
     return annotationData;
   }
@@ -61,7 +58,9 @@ export default class PointCloudColorStylingVisualTest extends StreamingVisualTes
     assert(model.geometryNode instanceof PointCloudNode);
 
     const stylableObjectIds: number[] = [];
-    [...model.geometryNode.potreeNode.stylableObjectAnnotationIds].forEach(m => stylableObjectIds.push(m.annotationId));
+    [...model.geometryNode.potreeNode.stylableObjectAnnotationMetadata].forEach(m =>
+      stylableObjectIds.push(m.annotationId)
+    );
 
     const objectCollection = new AnnotationIdPointCloudObjectCollection(stylableObjectIds);
     const appearance = { color: [0, 255, 0] as [number, number, number], visible: true };
