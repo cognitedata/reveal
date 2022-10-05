@@ -5,7 +5,7 @@ import { makeDefaultTranslations, translationKeys } from 'utils/translations';
 
 const defaultTranslations = makeDefaultTranslations(
   'Help',
-  'Early Adopter Group on Cognite Hub',
+  'Charts group on Cognite Hub',
   'Privacy policy',
   'Feedback',
   'Account',
@@ -15,14 +15,12 @@ const defaultTranslations = makeDefaultTranslations(
 
 type Props = {
   userName: string;
-  onFeedbackClick: MouseEventHandler<HTMLElement>;
   onProfileClick: MouseEventHandler<HTMLElement>;
   onLogoutClick: MouseEventHandler<HTMLElement>;
   translations?: typeof defaultTranslations;
 };
 
 function AppBarCommonActions({
-  onFeedbackClick,
   onProfileClick,
   onLogoutClick,
   userName,
@@ -50,7 +48,7 @@ function AppBarCommonActions({
                 }} // @ts-ignore Cogs does not have the correct typing for this element
                 target="_blank"
               >
-                {t['Early Adopter Group on Cognite Hub']}
+                {t['Charts group on Cognite Hub']}
               </Menu.Item>
               <Menu.Item
                 href={config.privacyPolicyUrl}
@@ -61,7 +59,6 @@ function AppBarCommonActions({
               >
                 {t['Privacy policy']}
               </Menu.Item>
-              <Menu.Item onClick={onFeedbackClick}>{t.Feedback}</Menu.Item>
               <Menu.Footer>v {config.version.substring(0, 7)}</Menu.Footer>
             </Menu>
           ),

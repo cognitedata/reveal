@@ -14,7 +14,6 @@ export default {
   title: 'Components/App Bar',
   argTypes: {
     onLogoClick: { action: 'Clicked on the logo' },
-    onFeedbackClick: { action: 'Clicked on the feedback button' },
     onProfileClick: { action: 'Clicked on the profile link' },
     onLogoutClick: { action: 'Clicked to logout' },
   },
@@ -33,7 +32,6 @@ export const UsageWithPortals = () => {
     <>
       <AppBar
         onLogoClick={() => {}}
-        onFeedbackClick={() => {}}
         onLogoutClick={() => {}}
         onProfileClick={() => {}}
         userName="Rhuan Barreto"

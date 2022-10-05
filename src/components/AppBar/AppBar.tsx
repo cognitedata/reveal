@@ -15,9 +15,6 @@ const defaultTranslations = makeDefaultTranslations(
 type Props = {
   onLogoClick: TopBarLogoProps['onLogoClick'];
   userName: ComponentProps<typeof AppBarCommonActions>['userName'];
-  onFeedbackClick: ComponentProps<
-    typeof AppBarCommonActions
-  >['onFeedbackClick'];
   onProfileClick: ComponentProps<typeof AppBarCommonActions>['onProfileClick'];
   onLogoutClick: ComponentProps<typeof AppBarCommonActions>['onLogoutClick'];
   translations?: typeof defaultTranslations;
@@ -27,7 +24,6 @@ type Props = {
 const AppBar = ({
   onLogoClick,
   translations,
-  onFeedbackClick,
   onProfileClick,
   onLogoutClick,
   userName,
@@ -44,7 +40,6 @@ const AppBar = ({
       <TopBar.Right>
         <div id="appbar-right" />
         <AppBarCommonActions
-          onFeedbackClick={onFeedbackClick}
           onProfileClick={onProfileClick}
           onLogoutClick={onLogoutClick}
           userName={userName}
