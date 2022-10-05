@@ -4,11 +4,11 @@ import { useSearchParams } from 'react-router-dom';
 
 export const useSearchParamState = <ValueType>(
   key: string
-): [ValueType | undefined, (nextState?: ValueType) => void] => {
-  const [searchParams, setSearchParams] = useSearchParams();
+): ValueType | undefined => {
+  const [searchParams] = useSearchParams();
 
   const param = searchParams.get(key);
-  const searchParamState: ValueType | undefined = useMemo(() => {
+  const parsedState: ValueType | undefined = useMemo(() => {
     let state: ValueType | undefined;
     try {
       state = JSON.parse(param ?? '');
@@ -18,25 +18,44 @@ export const useSearchParamState = <ValueType>(
     return state;
   }, [param]);
 
-  const setSearchParamsState = useCallback(
-    (nextState?: ValueType) => {
-      const updatedSearchParams = new URLSearchParams(searchParams);
-      if (!nextState) {
-        updatedSearchParams.delete(key);
-      } else {
-        let stringifiedState: string;
-        try {
-          stringifiedState = JSON.stringify(nextState);
-        } catch {
-          stringifiedState = '';
-        }
+  return parsedState;
+};
 
-        updatedSearchParams.set(key, stringifiedState);
-      }
-      setSearchParams(updatedSearchParams, { replace: true });
+export const useUpdateSearchParamState = <
+  SearchParamState extends Record<string, any>
+>(): {
+  updateSearchParamState: (nextState: SearchParamState) => void;
+} => {
+  const [_, setSearchParams] = useSearchParams();
+
+  const updateSearchParamState = useCallback(
+    (nextState: SearchParamState) => {
+      setSearchParams(
+        (prevSearchParams) => {
+          const updatedSearchParams = new URLSearchParams(prevSearchParams);
+          Object.keys(nextState).forEach((key) => {
+            const value = nextState[key];
+            if (!value) {
+              updatedSearchParams.delete(key);
+            } else {
+              let stringifiedState: string;
+              try {
+                stringifiedState = JSON.stringify(value);
+              } catch {
+                stringifiedState = '';
+              }
+              updatedSearchParams.set(key, stringifiedState);
+            }
+          });
+          return updatedSearchParams;
+        },
+        {
+          replace: true,
+        }
+      );
     },
-    [key, searchParams, setSearchParams]
+    [setSearchParams]
   );
 
-  return [searchParamState, setSearchParamsState];
+  return { updateSearchParamState };
 };

@@ -67,6 +67,7 @@
   "find-filter": "Find filter",
   "governed": "Governed",
   "governance-status": "Governance status",
+  "governance-status-with-colon": "Governance status: {{statuses}}",
   "governance-status-not-defined": "Governance status not defined",
   "group": "Group",
   "help": "Help",

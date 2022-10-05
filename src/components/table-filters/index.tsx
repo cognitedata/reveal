@@ -1,12 +1,25 @@
 import React, { PropsWithChildren, useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { Body, Button, Colors, Flex, Icon, Menu } from '@cognite/cogs.js';
+import {
+  Body,
+  Button,
+  Checkbox,
+  Colors,
+  Flex,
+  Icon,
+  Menu,
+} from '@cognite/cogs.js';
 import { Dropdown, Input, Select } from 'antd';
 import { useTranslation } from 'common/i18n';
 import { getContainer } from 'utils/shared';
-import { useSearchParamState } from 'hooks/useSearchParamState';
+import {
+  useSearchParamState,
+  useUpdateSearchParamState,
+} from 'hooks/useSearchParamState';
 import useDebounce from 'hooks/useDebounce';
 import AppliedFilters from 'components/applied-filters';
+
+type GovernanceStatus = 'governed' | 'ungoverned';
 
 type TableFilterProps = {
   labelOptions: string[];
@@ -17,8 +30,16 @@ const TableFilter = ({
 }: PropsWithChildren<TableFilterProps>): JSX.Element => {
   const { t } = useTranslation();
 
-  const [searchFilter, setSearchFilter] = useSearchParamState<string>('search');
-  const [labelFilter, setLabelFilter] = useSearchParamState<string[]>('labels');
+  const searchFilter = useSearchParamState<string>('search');
+  const labelFilter = useSearchParamState<string[]>('labels');
+  const governanceFilter =
+    useSearchParamState<GovernanceStatus[]>('governance');
+
+  const { updateSearchParamState } = useUpdateSearchParamState<{
+    labels?: string[];
+    governance?: GovernanceStatus[];
+    search?: string;
+  }>();
 
   const [isVisible, setIsVisible] = useState(false);
   const [searchQuery, setSearchQuery] = useState<string | undefined>(
@@ -27,30 +48,65 @@ const TableFilter = ({
   const debouncedSearchQuery = useDebounce(searchQuery);
 
   useEffect(() => {
-    setSearchFilter(debouncedSearchQuery);
-  }, [debouncedSearchQuery, setSearchFilter]);
+    updateSearchParamState({ search: debouncedSearchQuery });
+  }, [debouncedSearchQuery, updateSearchParamState]);
 
   const [tempSelectedLabels, setTempSelectedLabels] = useState<
     string[] | undefined
   >(labelFilter);
+  const [tempGovernanceStatus, setTempGovernanceStatus] = useState<
+    GovernanceStatus[] | undefined
+  >(governanceFilter);
 
   const handleApply = () => {
-    setLabelFilter(tempSelectedLabels);
+    updateSearchParamState({
+      governance: tempGovernanceStatus,
+      labels: tempSelectedLabels,
+    });
     setIsVisible(false);
   };
 
   const handleClear = () => {
-    handleClearLabelFilter();
+    setTempGovernanceStatus(undefined);
+    setTempSelectedLabels(undefined);
+    updateSearchParamState({
+      governance: undefined,
+      labels: undefined,
+    });
     setIsVisible(false);
   };
 
   const handleClearLabelFilter = () => {
     setTempSelectedLabels(undefined);
-    setLabelFilter(undefined);
+    updateSearchParamState({
+      labels: undefined,
+    });
+  };
+
+  const handleClearGovernanceFilter = () => {
+    setTempGovernanceStatus(undefined);
+    updateSearchParamState({
+      governance: undefined,
+    });
   };
 
   const handleSelectedLabelChange = (updatedValue: string[]) => {
     setTempSelectedLabels(updatedValue.length ? updatedValue : undefined);
+  };
+
+  const handleGovernanceStatusChange = (
+    name: GovernanceStatus,
+    updatedValue: boolean
+  ) => {
+    if (updatedValue) {
+      setTempGovernanceStatus(
+        (prevStatus) => prevStatus?.concat(name) ?? [name]
+      );
+    } else {
+      setTempGovernanceStatus((prevStatus) =>
+        prevStatus?.filter((status) => status !== name)
+      );
+    }
   };
 
   return (
@@ -81,30 +137,67 @@ const TableFilter = ({
                 </StyledMenuTitle>
                 <Flex gap={8} direction="column">
                   <StyledMenuContent>
-                    <Flex direction="column" gap={8}>
-                      <Body level="3" strong>
-                        {t('label_one')}
-                      </Body>
-                      <Select<string[]>
-                        allowClear
-                        getPopupContainer={getContainer}
-                        mode="multiple"
-                        onChange={handleSelectedLabelChange}
-                        options={labelOptions.map((label) => ({
-                          label,
-                          value: label,
-                        }))}
-                        value={tempSelectedLabels}
-                        menuItemSelectedIcon={
-                          <Icon
-                            style={{ verticalAlign: 'middle' }}
-                            type="Checkmark"
-                          />
-                        }
-                        suffixIcon={<Icon type="ChevronDown" />}
-                        placeholder={t('select-label')}
-                      />
-                    </Flex>
+                    <StyledSectionWrapper>
+                      <Flex direction="column" gap={8}>
+                        <Body level="3" strong>
+                          {t('label_one')}
+                        </Body>
+                        <StyledCheckboxWrapper>
+                          <Checkbox
+                            checked={tempGovernanceStatus?.includes('governed')}
+                            name="governed"
+                            onChange={(nextState) =>
+                              handleGovernanceStatusChange(
+                                'governed',
+                                nextState
+                              )
+                            }
+                          >
+                            <Body level={2}>{t('governed')}</Body>
+                          </Checkbox>
+                          <Checkbox
+                            checked={tempGovernanceStatus?.includes(
+                              'ungoverned'
+                            )}
+                            name="ungoverned"
+                            onChange={(nextState) =>
+                              handleGovernanceStatusChange(
+                                'ungoverned',
+                                nextState
+                              )
+                            }
+                          >
+                            <Body level={2}>{t('ungoverned')}</Body>
+                          </Checkbox>
+                        </StyledCheckboxWrapper>
+                      </Flex>
+                    </StyledSectionWrapper>
+                    <StyledSectionWrapper>
+                      <Flex direction="column" gap={8}>
+                        <Body level="3" strong>
+                          {t('label_one')}
+                        </Body>
+                        <Select<string[]>
+                          allowClear
+                          getPopupContainer={getContainer}
+                          mode="multiple"
+                          onChange={handleSelectedLabelChange}
+                          options={labelOptions.map((label) => ({
+                            label,
+                            value: label,
+                          }))}
+                          value={tempSelectedLabels}
+                          menuItemSelectedIcon={
+                            <Icon
+                              style={{ verticalAlign: 'middle' }}
+                              type="Checkmark"
+                            />
+                          }
+                          suffixIcon={<Icon type="ChevronDown" />}
+                          placeholder={t('select-label')}
+                        />
+                      </Flex>
+                    </StyledSectionWrapper>
                   </StyledMenuContent>
                   <Button type="primary" onClick={handleApply}>
                     {t('apply')}
@@ -125,8 +218,8 @@ const TableFilter = ({
       </Flex>
       <Flex>
         <AppliedFilters
-          items={
-            !!labelFilter?.length
+          items={[
+            ...(!!labelFilter?.length
               ? [
                   {
                     key: 'labels',
@@ -136,9 +229,20 @@ const TableFilter = ({
                     onClick: handleClearLabelFilter,
                   },
                 ]
-              : []
-          }
-          onClear={handleClearLabelFilter}
+              : []),
+            ...(!!governanceFilter?.length
+              ? [
+                  {
+                    key: 'governance',
+                    label: t('governance-status-with-colon', {
+                      statuses: governanceFilter?.join(', '),
+                    }),
+                    onClick: handleClearGovernanceFilter,
+                  },
+                ]
+              : []),
+          ]}
+          onClear={handleClear}
         />
       </Flex>
     </Flex>
@@ -167,6 +271,21 @@ const StyledMenuContent = styled.div`
 
 const StyledInputContainer = styled.div`
   width: 220px;
+`;
+
+const StyledSectionWrapper = styled.div`
+  :not(:last-child) {
+    padding-bottom: 12px;
+    border-bottom: 1px solid ${Colors['border--interactive--default']};
+    margin-bottom: 12px;
+  }
+`;
+
+const StyledCheckboxWrapper = styled(Flex)`
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 10px;
+  width: 255px;
 `;
 
 export default TableFilter;

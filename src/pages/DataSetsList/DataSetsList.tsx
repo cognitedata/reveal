@@ -49,8 +49,8 @@ const DataSetsList = (): JSX.Element => {
   const [changesSaved, setChangesSaved] = useState<boolean>(true);
   const [userWarned, setUserWarned] = useState<boolean>(false);
 
-  const [searchFilter] = useSearchParamState<string>('search');
-  const [labelFilter] = useSearchParamState<string[]>('labels');
+  const searchFilter = useSearchParamState<string>('search');
+  const labelFilter = useSearchParamState<string[]>('labels');
 
   const { setMode } = useDataSetMode();
 
