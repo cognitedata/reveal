@@ -6,11 +6,8 @@ import {
   NotSetDot,
   UnApprovedDot,
 } from 'utils/styledComponents';
-import SearchableFilters from 'components/SearchableFilters';
 import { getItemFromStorage } from 'utils/localStorage';
 import { DataSet, DataSetV3, Extpipe } from 'utils/types';
-import { FilterDropdownProps } from 'antd/lib/table/interface';
-import { ColumnFilterIcon } from 'components/ColumnFilterIcon';
 import isArray from 'lodash/isArray';
 import { useTranslation } from 'common/i18n';
 import DataSetName from 'components/data-sets-list/data-set-name';
@@ -28,10 +25,6 @@ export type DataSetRow = {
   writeProtected: boolean;
   archived: boolean;
 };
-
-const getFilterDropdown = (filterProps: FilterDropdownProps) => (
-  <SearchableFilters {...filterProps} />
-);
 
 export const getLabelsList = (dataSets: DataSet[], showArchived: boolean) => {
   const labels: string[] = [];
@@ -94,16 +87,6 @@ export const useTableColumns = () => {
       title: <div style={{ lineHeight: '32px' }}>{t('label_other')}</div>,
       dataIndex: 'labels',
       key: 'labels',
-      filterIcon: (filtered: boolean) => (
-        <ColumnFilterIcon filtered={filtered} />
-      ),
-      filters: getLabelsList(dataSets, showArchived).map((val) => ({
-        text: val,
-        value: val,
-      })),
-      filterDropdown: (filterProps: FilterDropdownProps) =>
-        getFilterDropdown(filterProps),
-      onFilter: (value: any, record: any) => record.labels.includes(value),
       render: (field: []) => (
         <span>
           {field?.length ? (

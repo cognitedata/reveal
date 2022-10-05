@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { Button, Icon, Input } from '@cognite/cogs.js';
+import { Button, Icon } from '@cognite/cogs.js';
 import { Table, TableNoResults } from '@cognite/cdf-utilities';
 import Tag from 'antd/lib/tag';
 import { notification } from 'antd';
@@ -26,7 +26,8 @@ import { useDataSetMode, useSelectedDataSet } from '../../context/index';
 import { useTranslation } from 'common/i18n';
 import Page from 'components/page';
 import RowActions from 'components/data-sets-list/row-actions';
-import TableFilter, { TableFilterValue } from 'components/table-filters';
+import TableFilter from 'components/table-filters';
+import { useSearchParamState } from 'hooks/useSearchParamState';
 
 const DataSetsList = (): JSX.Element => {
   const { t } = useTranslation();
@@ -49,7 +50,8 @@ const DataSetsList = (): JSX.Element => {
   const [changesSaved, setChangesSaved] = useState<boolean>(true);
   const [userWarned, setUserWarned] = useState<boolean>(false);
 
-  const [tempFilterValue, setTempFilterValue] = useState<TableFilterValue>({});
+  const [searchFilter] = useSearchParamState<string>('search');
+  const [labelFilter] = useSearchParamState<string[]>('labels');
 
   const { setMode } = useDataSetMode();
 
@@ -114,6 +116,21 @@ const DataSetsList = (): JSX.Element => {
     }
     return tableDataSets;
   }, [dataSetsWithExtpipes, loading, dataSetsList]);
+
+  const filteredTableData = useMemo(() => {
+    let filteredArray = tableData;
+    if (!!labelFilter?.length) {
+      filteredArray = filteredArray.filter(({ labels: testLabels }) =>
+        testLabels.some((label) => labelFilter.includes(label))
+      );
+    }
+    if (!!searchFilter?.length) {
+      filteredArray = filteredArray.filter(({ name = '' }) =>
+        name.toLowerCase().includes(searchFilter?.toLowerCase() ?? '')
+      );
+    }
+    return filteredArray;
+  }, [labelFilter, searchFilter, tableData]);
 
   const labels = useMemo(() => {
     return getLabelsList(
@@ -251,15 +268,6 @@ const DataSetsList = (): JSX.Element => {
       {t('create')}
     </Button>
   );
-  const SearchBar = (
-    <Input
-      placeholder={t('search-by-name-description-or-labels')}
-      value={searchValue}
-      onChange={(e) => setSearchValue(e.currentTarget.value)}
-      icon="Search"
-      style={{ width: '300px' }}
-    />
-  );
 
   const ActionToolbar = (
     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -297,14 +305,6 @@ const DataSetsList = (): JSX.Element => {
     }
   };
 
-  const handleApplyFilter = (): void => {
-    // FIXME: apply filter to search query
-  };
-
-  const handleFilterValueChange = (updatedValue: TableFilterValue): void => {
-    setTempFilterValue(updatedValue);
-  };
-
   if (!didFetchWithExtpipes) {
     return <Icon type="Loader" />;
   }
@@ -319,12 +319,7 @@ const DataSetsList = (): JSX.Element => {
         sourceSuggestions={getSourcesList()}
         handleCloseModal={() => handleModalClose()}
       />
-      <TableFilter
-        labelOptions={labels}
-        onApply={handleApplyFilter}
-        onChange={handleFilterValueChange}
-        value={tempFilterValue}
-      />
+      <TableFilter labelOptions={labels} />
       <Table<DataSetRow>
         rowKey="key"
         loading={loading}
@@ -338,7 +333,7 @@ const DataSetsList = (): JSX.Element => {
           ...(showArchived ? [statusColumn] : []),
           actionsColumn,
         ]}
-        dataSource={tableData}
+        dataSource={filteredTableData}
         onChange={(_pagination, _filters, sorter) => {
           if (!isArray(sorter) && sorter?.columnKey && sorter?.order)
             setItemInStorage(sorter?.columnKey, sorter?.order);
@@ -348,7 +343,7 @@ const DataSetsList = (): JSX.Element => {
           <TableNoResults
             title={t('data-set-list-no-records')}
             content={t('data-set-list-search-not-found', {
-              // $: search !== '' ? `"${search}"` : search,
+              $: searchFilter !== '' ? `"${searchFilter}"` : searchFilter,
             })}
           />
         }
