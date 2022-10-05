@@ -1,5 +1,5 @@
 import React from 'react';
-import { IconType, Button } from '@cognite/cogs.js';
+import { IconType, Button, Tooltip } from '@cognite/cogs.js';
 import { HeaderGroup } from 'react-table';
 import styled from 'styled-components';
 
@@ -18,7 +18,9 @@ export const SortIcon = ({
     sortIcon = isSortedDesc ? 'ReorderDescending' : 'ReorderAscending';
   }
   return (
-    <StyledIconButton icon={sortIcon} aria-label={sortLabel} type="ghost" />
+    <Tooltip content={sortLabel} arrow={false}>
+      <StyledIconButton icon={sortIcon} aria-label={sortLabel} type="ghost" />
+    </Tooltip>
   );
 };
 

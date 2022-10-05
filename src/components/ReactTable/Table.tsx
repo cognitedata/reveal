@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 import update from 'immutability-helper';
 
 import {
@@ -12,6 +12,7 @@ import {
   useResizeColumns,
   useSortBy,
   useTable,
+  Row,
 } from 'react-table';
 import styled from 'styled-components';
 import { HTML5Backend } from 'react-dnd-html5-backend';
@@ -19,7 +20,7 @@ import { Flex } from '@cognite/cogs.js';
 import { DndProvider } from 'react-dnd';
 
 import { ColumnToggle } from './ColumnToggle';
-import { useCellSelection } from './hooks';
+
 import { SortIcon } from './SortIcon';
 import { ResourceTableColumns } from './columns';
 import { LoadMore, LoadMoreProps } from './LoadMore';
@@ -33,7 +34,6 @@ export interface TableProps<T extends Record<string, any>>
 
   onSort?: (props: OnSortProps<T>) => void;
   visibleColumns?: IdType<T>[];
-  isKeyboardNavigationEnabled?: boolean;
   onRowClick?: (
     row?: T,
     evt?: React.MouseEvent<HTMLDivElement, MouseEvent>
@@ -59,7 +59,6 @@ export function NewTable<T extends TableData>({
   visibleColumns = [],
   isSortingEnabled = false,
   isStickyHeader = false,
-  isKeyboardNavigationEnabled = true,
   isResizingColumns = false,
   showLoadButton = false,
   hasNextPage,
@@ -78,14 +77,43 @@ export function NewTable<T extends TableData>({
   );
   const plugins = [
     isSortingEnabled && useSortBy,
-    isKeyboardNavigationEnabled && useCellSelection,
+
     useColumnOrder,
     !isResizingColumns && useFlexLayout,
     isResizingColumns && useResizeColumns,
     isResizingColumns && useBlockLayout,
   ].filter(Boolean) as PluginHook<T>[];
 
+  const tbodyRef = useRef<HTMLDivElement>(null);
+
   const allFields = columns.map(col => col.accessor || col.id || '');
+
+  // To add the navigation in the row
+  const handleKeyDown = (
+    event: React.KeyboardEvent<HTMLDivElement>,
+    row: Row<T>
+  ) => {
+    event.stopPropagation();
+    if (tbodyRef.current) {
+      const currentRow = tbodyRef.current?.children.namedItem(row.id);
+
+      switch (event.key) {
+        case 'ArrowUp':
+          // @ts-ignore
+          currentRow?.previousElementSibling?.focus();
+          break;
+        case 'ArrowDown':
+          // @ts-ignore
+          currentRow?.nextElementSibling?.focus();
+          break;
+        case 'Enter':
+          onRowClick(row.original);
+          break;
+        default:
+          break;
+      }
+    }
+  };
 
   const hiddenColumns =
     visibleColumns.length === 0
@@ -165,70 +193,79 @@ export function NewTable<T extends TableData>({
         </ColumnSelectorWrapper>
       ) : null}
 
-      <StyledTable {...getTableProps()}>
-        <Thead isStickyHeader={isStickyHeader}>
-          {headerGroups.map(headerGroup => (
-            <Tr {...headerGroup.getHeaderGroupProps()}>
-              {headerGroup.headers.map(column => (
-                <Th
-                  {...column.getHeaderProps(
-                    isSortingEnabled ? column.getSortByToggleProps() : undefined
-                  )}
-                >
-                  <ThWrapper>
-                    {column.render('Header')}
-                    <SortIcon
-                      canSort={column.canSort}
-                      isSorted={column.isSorted}
-                      isSortedDesc={column.isSortedDesc}
-                    />
-                    {isResizingColumns ? (
-                      <ResizerWrapper
-                        {...column.getResizerProps()}
-                        className={`resizer ${
-                          column.isResizing ? 'isResizing' : ''
-                        }`}
+      <ContainerInside>
+        <StyledTable {...getTableProps()}>
+          <Thead isStickyHeader={isStickyHeader}>
+            {headerGroups.map(headerGroup => (
+              <Tr {...headerGroup.getHeaderGroupProps()}>
+                {headerGroup.headers.map(column => (
+                  <Th
+                    {...column.getHeaderProps(
+                      isSortingEnabled
+                        ? column.getSortByToggleProps()
+                        : undefined
+                    )}
+                  >
+                    <ThWrapper
+                      className={`resizer ${
+                        column.isResizing ? 'isResizing' : ''
+                      }`}
+                    >
+                      {column.render('Header')}
+                      <SortIcon
+                        canSort={column.canSort}
+                        isSorted={column.isSorted}
+                        isSortedDesc={column.isSortedDesc}
                       />
-                    ) : null}
-                  </ThWrapper>
-                </Th>
-              ))}
-            </Tr>
-          ))}
-        </Thead>
-        <div {...getTableBodyProps()}>
-          {rows.map(row => {
-            prepareRow(row);
-            return (
-              <Tr
-                {...row.getRowProps()}
-                onClick={evt => onRowClick(row.original, evt)}
-                onKeyDown={evt => {
-                  if (evt.key === 'Enter') {
-                    onRowClick(row.original);
-                  }
-                }}
-              >
-                {row.cells.map(cell => {
-                  return (
-                    <Td {...cell.getCellProps()}>
-                      {cell.render('Cell') || '-'}
-                    </Td>
-                  );
-                })}
+                      {isResizingColumns ? (
+                        <ResizerWrapper
+                          {...column.getResizerProps()}
+                          className={`${column.isResizing ? 'isResizing' : ''}`}
+                        />
+                      ) : null}
+                    </ThWrapper>
+                  </Th>
+                ))}
               </Tr>
-            );
-          })}
-        </div>
-      </StyledTable>
-      {showLoadButton && (
-        <LoadMoreButtonWrapper justifyContent="center" alignItems="center">
-          <LoadMore {...loadMoreProps} />
-        </LoadMoreButtonWrapper>
-      )}
+            ))}
+          </Thead>
+          <div {...getTableBodyProps()} ref={tbodyRef}>
+            {rows.map(row => {
+              prepareRow(row);
+              return (
+                <Tr
+                  {...row.getRowProps()}
+                  id={row.id}
+                  tabIndex={0}
+                  onClick={evt => onRowClick(row.original, evt)}
+                  onKeyDown={evt => handleKeyDown(evt, row)}
+                >
+                  {row.cells.map(cell => {
+                    return (
+                      <Td {...cell.getCellProps()}>
+                        {cell.render('Cell') || '-'}
+                      </Td>
+                    );
+                  })}
+                </Tr>
+              );
+            })}
+          </div>
+        </StyledTable>
+        {showLoadButton && (
+          <LoadMoreButtonWrapper justifyContent="center" alignItems="center">
+            <LoadMore {...loadMoreProps} />
+          </LoadMoreButtonWrapper>
+        )}
+      </ContainerInside>
     </TableContainer>
   );
 }
+
+const ContainerInside = styled.div`
+  height: 100%;
+  overflow-y: auto;
+`;
 
 const TableContainer = styled.div`
   width: 100%;
@@ -248,8 +285,7 @@ const StyledTable = styled.div`
   color: var(--cogs-text-icon--medium);
   position: relative;
   width: 100%;
-  overflow: auto;
-  height: 100%;
+  overflow-x: auto;
 
   & > div {
     min-width: 100%;
@@ -265,9 +301,12 @@ const ResizerWrapper = styled.div`
   display: inline-block;
   width: 10px;
   height: 100%;
-  border-right: 2px solid rgba(0, 0, 0, 0.1);
+
   touch-action: none;
 
+  &:hover {
+    border-right: 2px solid rgba(0, 0, 0, 0.1);
+  }
   &.isResizing {
     border-right: 2px solid rgba(0, 0, 0, 0.3);
   }
@@ -282,14 +321,6 @@ const Th = styled.div`
 const Td = styled.div`
   padding: 8px 12px;
   word-wrap: break-word;
-  &[data-selected='true'] {
-    background: var(--cogs-surface--interactive--toggled-hover);
-  }
-
-  &:focus {
-    outline: 2px solid var(--cogs-border--interactive--toggled-default);
-    outline-offset: -1px;
-  }
 `;
 
 const StyledFlex = styled.div`
@@ -299,20 +330,36 @@ const StyledFlex = styled.div`
 const Thead = styled.div<{ isStickyHeader?: boolean }>`
   position: ${({ isStickyHeader }) => (isStickyHeader ? 'sticky' : 'relative')};
   top: 0;
+  background: white;
   z-index: 1;
 `;
 
 const Tr = styled.div`
   color: inherit;
   border-bottom: 1px solid var(--cogs-border--muted);
+  display: flex;
+  padding-top: 10px;
+  height: 100%;
   background: white;
+  min-height: 38px;
+
   &:hover {
     background: var(--cogs-surface--medium);
     cursor: pointer;
   }
 
+  &[data-selected='true'] {
+    background: var(--cogs-surface--interactive--toggled-hover);
+  }
+
+  &:focus {
+    outline: 2px solid var(--cogs-border--interactive--toggled-default);
+    outline-offset: -2px;
+  }
+
   ${Thead} &:hover {
     background: transparent;
+    cursor: unset;
   }
 `;
 
@@ -321,9 +368,14 @@ const ThWrapper = styled.div`
   align-items: center;
   font-weight: 500;
   color: var(--cogs-text-icon--strong);
+
   gap: 10px;
+
+  &:hover {
+    border-right: 2px solid rgba(0, 0, 0, 0.1);
+  }
 `;
 
 const LoadMoreButtonWrapper = styled(Flex)`
-  margin-top: 20px;
+  margin: 20px 0;
 `;

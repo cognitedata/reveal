@@ -15,7 +15,7 @@ export default {
 const exampleDatas: DataType[] = [
   {
     col1: 'Hello',
-    col2: 'World',
+    col2: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce pellentesque, eros in condimentum accumsan, urna purus porttitor leo,uzrna purus porttitor leo, vitae accumsan risus quam vitae leo. Phasellus at dolor consequat, consectetur lorem vel, tincidunt orci. Nulla luctus elementum nisl laoreet blandit.',
   },
   {
     col1: 'react-table',
@@ -199,12 +199,7 @@ export const ExampleWithNavigation: ComponentStory<typeof Table> = args => {
   const columns = useMemo(() => exampleColumns, []);
   return (
     <Flex gap={20} direction="column">
-      <Table<DataType>
-        {...args}
-        data={data}
-        columns={columns}
-        isKeyboardNavigationEnabled
-      />
+      <Table<DataType> {...args} data={data} columns={columns} />
     </Flex>
   );
 };
@@ -223,7 +218,6 @@ export const ExampleWithOnClickRow: ComponentStory<typeof Table> = args => {
         data={data}
         columns={columns}
         onRowClick={onClick}
-        isKeyboardNavigationEnabled
       />
       <pre>Current Value:{value && JSON.stringify(value)}</pre>
     </>
@@ -247,7 +241,7 @@ ExampleWithOnClickRow.play = async ({ canvasElement }) => {
 
   const preElement = canvasElement.querySelector('pre');
   expect(preElement?.innerHTML).toBe(
-    'Current Value:{"col1":"Hello","col2":"World"}'
+    `Current Value:${JSON.stringify(exampleDatas[0])}`
   );
 };
 

@@ -151,7 +151,7 @@ export function ColumnToggle<T>({
     <Dropdown
       content={
         <StyledMenu ref={drop}>
-          <Menu.Header>Columns rearrangement</Menu.Header>
+          <Menu.Header>Table Columns</Menu.Header>
           <FlexWrapper className="cogs-menu-item">
             <Label>
               <IndeterminateCheckbox
@@ -163,6 +163,7 @@ export function ColumnToggle<T>({
               Select All
             </Label>
           </FlexWrapper>
+          <Menu.Divider />
           {allColumns.map((column, index) => (
             <MenutItemDrag
               index={index}
@@ -195,8 +196,9 @@ export function ColumnToggle<T>({
 
 const StyledMenu = styled(Menu)`
   min-width: 200px;
-  height: 192px;
+  max-height: 320px;
   overflow: auto;
+  display: block;
 `;
 
 const Label = styled.label`

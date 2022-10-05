@@ -18,7 +18,7 @@ export const LoadMore: React.FC<LoadMoreProps> = props => {
 
   return hasNextPage ? (
     <Button
-      type="tertiary"
+      type="secondary"
       loading={isLoadingMore}
       onClick={() => fetchMore()}
       {...rest}

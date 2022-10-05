@@ -22,7 +22,6 @@ export const IndeterminateCheckbox = React.forwardRef<
       setHiddenColumns,
       allColumns,
       alwaysColumnVisible,
-      ...rest
     },
     ref
   ) => {
@@ -51,8 +50,8 @@ export const IndeterminateCheckbox = React.forwardRef<
     return (
       <Checkbox
         name="Select all"
-        ref={mergeRefs([defaultRef, ref]) as any}
-        {...rest}
+        checkboxRef={mergeRefs([defaultRef, ref]) as any}
+        indeterminate={Boolean(indeterminate)}
         onChange={(_, evt) => handleCheckboxChange(evt)}
       />
     );
