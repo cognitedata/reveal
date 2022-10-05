@@ -27,7 +27,9 @@ import { PointCloudManager, PointCloudNode } from '../../packages/pointclouds';
 import { PointCloudMetadataRepository } from '../../packages/pointclouds/src/PointCloudMetadataRepository';
 import { PointCloudFactory } from '../../packages/pointclouds/src/PointCloudFactory';
 import dat from 'dat.gui';
+import Stats from 'stats.js';
 import { ByScreenSizeSectorCuller } from '../../packages/cad-geometry-loaders/src/sector/culling/ByScreenSizeSectorCuller';
+import { CogniteClient } from '@cognite/sdk';
 
 export type StreamingTestFixtureComponents = {
   renderer: THREE.WebGLRenderer;
@@ -42,6 +44,7 @@ export type StreamingTestFixtureComponents = {
   pcMaterialManager: PointCloudMaterialManager;
   cadModelUpdateHandler: CadModelUpdateHandler;
   cadManager: CadManager;
+  cogniteClient?: CogniteClient;
 };
 
 export abstract class StreamingVisualTestFixture implements VisualTestFixture {
@@ -52,6 +55,7 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
   private readonly _materialManager: CadMaterialManager;
   private readonly _pcMaterialManager: PointCloudMaterialManager;
   private readonly _localModelUrl: string;
+  private readonly _statsJs = new Stats();
   private _gui!: dat.GUI;
 
   protected readonly _frameStatisticsGUIData = {
@@ -121,6 +125,13 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
     );
 
     this._resizeObserver = new ResizeObserver(() => this.render());
+
+    this._statsJs = new Stats();
+    this._statsJs.dom.style.position = 'absolute';
+    this._statsJs.dom.style.top = this._statsJs.dom.style.left = '';
+    this._statsJs.dom.style.right = this._statsJs.dom.style.bottom = '0px';
+    this._statsJs.dom.style.visibility = 'hidden';
+    document.body.appendChild(this._statsJs.dom);
   }
 
   public async run(): Promise<void> {
@@ -128,7 +139,7 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
 
     this.updateRenderer();
 
-    const { modelDataProvider, modelIdentifier, modelMetadataProvider } = await createDataProviders(
+    const { modelDataProvider, modelIdentifier, modelMetadataProvider, cogniteClient } = await createDataProviders(
       this._localModelUrl
     );
 
@@ -182,7 +193,8 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
       cadMaterialManager: this._materialManager,
       pcMaterialManager: this._pcMaterialManager,
       cadModelUpdateHandler,
-      cadManager: this._cadManager
+      cadManager: this._cadManager,
+      cogniteClient
     });
 
     this._gui.close();
@@ -196,18 +208,28 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
     this._gui.domElement.style.right = '0px';
     document.body.appendChild(this._gui.domElement);
 
+    const statsJsState = { visible: false };
     this._frameStatsGUIFolder = this._gui.addFolder('frameStats');
     this._frameStatsGUIFolder.open();
     this._frameStatsGUIFolder.name = 'Frame Statistics';
     this._frameStatsGUIFolder.add(this._frameStatisticsGUIData, 'drawCalls').listen();
     this._frameStatsGUIFolder.add(this._frameStatisticsGUIData, 'pointCount').listen();
     this._frameStatsGUIFolder.add(this._frameStatisticsGUIData, 'triangleCount').listen();
+    this._frameStatsGUIFolder
+      .add(statsJsState, 'visible')
+      .name('Show Stats.js')
+      .onChange(() => {
+        const { visible } = statsJsState;
+        this._statsJs.dom.style.visibility = visible ? 'visible' : 'hidden';
+      });
   }
 
   public abstract setup(testFixtureComponents: StreamingTestFixtureComponents): Promise<void>;
 
   public render(): void {
+    this._statsJs.begin();
     this._pipelineExecutor.render(this._renderPipelineProvider, this._perspectiveCamera);
+    this._statsJs.end();
     this._frameStatisticsGUIData.drawCalls = this._renderer.info.render.calls;
     this._frameStatisticsGUIData.triangleCount = this._renderer.info.render.triangles;
     this._frameStatisticsGUIData.pointCount = this._renderer.info.render.points;
