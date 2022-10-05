@@ -91,7 +91,7 @@ Tooltip.defaultProps = {
   appendTo: getContainer,
 };
 
-Spin.setDefaultIndicator(<Icon type="Loading" />);
+Spin.setDefaultIndicator(<Icon type="Loader" />);
 
 // some styles (e.g. tree) don't need to be global because they used once,
 // but they are loaded upfront here though, to avoid flashing of unstyled component
