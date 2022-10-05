@@ -781,7 +781,6 @@ __metadata:
     "@types/dat.gui": 0.7.7
     "@types/draco3dgltf": 1.4.0
     "@types/expect-puppeteer": 5.0.1
-    "@types/geojson": 7946.0.10
     "@types/glob": 8.0.0
     "@types/jest": 29.1.1
     "@types/jest-environment-puppeteer": 5.0.2
@@ -1951,7 +1950,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/geojson@npm:7946.0.10, @types/geojson@npm:^7946.0.8":
+"@types/geojson@npm:^7946.0.8":
   version: 7946.0.10
   resolution: "@types/geojson@npm:7946.0.10"
   checksum: 12c407c2dc93ecb26c08af533ee732f1506a9b29456616ba7ba1d525df96206c28ddf44a528f6a5415d7d22893e9d967420940a9c095ee5e539c1eba5fefc1f4
