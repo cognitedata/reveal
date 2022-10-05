@@ -29,14 +29,12 @@ function cdfAnnotationsToPointCloudObjects(cdfAnnotations: CdfPointCloudObjectAn
     const cadFromCdfToThreeMatrix = new Matrix4();
     applyDefaultModelTransformation(cadFromCdfToThreeMatrix, File3dFormat.EptPointCloud);
 
-    const annotation = {
+    return {
       annotationId: cdfAnnotation.annotationId,
       assetId: cdfAnnotation.assetId,
       boundingBox: stylableObject.shape.createBoundingBox().applyMatrix4(cadFromCdfToThreeMatrix),
       stylableObject
     };
-
-    return annotation;
   });
 
   return resultAnnotations;
