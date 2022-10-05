@@ -2,8 +2,10 @@
  * Copyright 2022 Cognite AS
  */
 
-import { StylableObject } from './styling/StylableObject';
-import { IShape } from './styling/shapes/IShape';
+import { StylableObject } from './StylableObject';
+import { IShape } from '@reveal/utilities';
+
+import { Box3 } from 'three';
 
 export type CdfPointCloudObjectAnnotation = {
   annotationId: number;
@@ -14,8 +16,9 @@ export type CdfPointCloudObjectAnnotation = {
 export type PointCloudObjectMetadata = {
   annotationId: number;
   assetId?: number;
+  boundingBox: Box3;
 };
 
-export type PointCloudObjectAnnotation = PointCloudObjectMetadata & {
+export type PointCloudObject = PointCloudObjectMetadata & {
   stylableObject: StylableObject;
 };

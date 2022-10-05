@@ -6,12 +6,13 @@ import { Mock } from 'moq.ts';
 import {
   CognitePointCloudModel,
   PointCloudNode,
-  PointCloudObjectAnnotationData,
   PointCloudOctree,
   Potree,
   PotreeGroupWrapper,
   PotreeNodeWrapper
 } from '../../packages/pointclouds';
+
+import { PointCloudObjectData } from '../../packages/data-providers';
 
 import * as THREE from 'three';
 
@@ -34,7 +35,7 @@ export function createPointCloudModel(modelId: number, revisionId: number): Cogn
       .setup(p => p.tightBoundingBox)
       .returns(new THREE.Box3())
       .object(),
-    new PointCloudObjectAnnotationData([])
+    new PointCloudObjectData([])
   );
 
   const nodeWrapper = new PotreeNodeWrapper(pointCloudOctree, [], Symbol('dummy'), { classificationSets: [] });

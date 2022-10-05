@@ -11,7 +11,8 @@ import { IPotree } from '../types/IPotree';
 import { IPointCloudTreeNodeBase } from './IPointCloudTreeNodeBase';
 import { IPointCloudTreeNode } from './IPointCloudTreeNode';
 import { computeTransformedBoundingBox } from '../utils/bounds';
-import { PointCloudObjectAnnotationData } from '../../styling/PointCloudObjectAnnotationData';
+
+import { PointCloudObjectData } from '@reveal/data-providers';
 
 // TODO haakonflatval-cognite Sep. 27 2022: Remove when material manager is in order
 enum RenderMode {
@@ -57,7 +58,7 @@ export class PointCloudOctree extends PointCloudTree {
   private readonly visibleBounds: Box3 = new Box3();
   private picker: PointCloudOctreePicker | undefined;
 
-  constructor(potree: IPotree, pcoGeometry: IPointCloudTreeGeometry, annotationInfo: PointCloudObjectAnnotationData) {
+  constructor(potree: IPotree, pcoGeometry: IPointCloudTreeGeometry, annotationInfo: PointCloudObjectData) {
     super();
 
     this.name = '';

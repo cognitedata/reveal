@@ -20,10 +20,13 @@ import { createDataProviders } from './utilities/createDataProviders';
 import { VisualTestFixture } from './VisualTestFixture';
 import { DeferredPromise, fitCameraToBoundingBox, SceneHandler } from '../../packages/utilities';
 
-import { ModelIdentifier, ModelMetadataProvider } from '../../packages/data-providers';
+import {
+  ModelIdentifier,
+  ModelMetadataProvider,
+  LocalPointCloudStylableObjectProvider
+} from '../../packages/data-providers';
 import { LoadingState } from '../../packages/model-base';
 import {
-  LocalAnnotationProvider,
   LocalPointClassificationsProvider,
   PointCloudManager,
   PointCloudNode,
@@ -108,7 +111,7 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
   createPointCloudFactory(): PointCloudFactory {
     return new PointCloudFactory(
       this.potreeInstance,
-      new LocalAnnotationProvider(),
+      new LocalPointCloudStylableObjectProvider(),
       new LocalPointClassificationsProvider()
     );
   }

@@ -4,7 +4,7 @@
 
 import { createPointCloudModel } from '../../../test-utilities/src/createPointCloudModel';
 import { CognitePointCloudModel } from './CognitePointCloudModel';
-import { AnnotationIdPointCloudObjectCollection } from './styling/AnnotationListPointCloudObjectCollection';
+import { AnnotationIdPointCloudObjectCollection } from './styling/AnnotationIdPointCloudObjectCollection';
 
 describe(CognitePointCloudModel.name, () => {
   let model: CognitePointCloudModel;

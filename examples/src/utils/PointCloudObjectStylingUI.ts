@@ -3,6 +3,7 @@
  */
 
 import {
+  Cognite3DViewer,
   CognitePointCloudModel,
   AnnotationIdPointCloudObjectCollection,
   PointCloudAppearance,
@@ -13,12 +14,22 @@ import {
 export class PointCloudObjectStylingUI {
 
   private readonly _model: CognitePointCloudModel;
+  private readonly _viewer: Cognite3DViewer;
 
-  constructor(uiFolder: dat.GUI, model: CognitePointCloudModel) {
+  private _boundingBoxGroup: THREE.Group | undefined;
+
+  constructor(uiFolder: dat.GUI,
+              model: CognitePointCloudModel,
+              viewer: Cognite3DViewer) {
     this._model = model;
+    this._viewer = viewer;
 
     this.createDefaultStyleUi(uiFolder.addFolder('Default styling'));
     this.createByObjectIndexUi(uiFolder.addFolder('By object index styling'));
+
+    const state = {
+      showBoundingBoxes: false
+    };
 
     const actions = {
       reset: () => {
@@ -39,11 +50,27 @@ export class PointCloudObjectStylingUI {
             color: objectStyle,
           });
         });
-      }
+      },
     };
 
     uiFolder.add(actions, 'reset').name('Reset all styled objects');
     uiFolder.add(actions, 'randomColors').name('Set random for objects');
+    uiFolder.add(state, 'showBoundingBoxes').name('Show object bounding boxes').onChange((value: boolean) => this.togglebjectBoundingBoxes(value));
+  }
+
+  togglebjectBoundingBoxes (b: boolean) {
+    if (b) {
+      this._boundingBoxGroup = new THREE.Group();
+      this._model.traverseStylableObjects((object) => {
+        const box = new THREE.Box3Helper(object.boundingBox);
+        this._boundingBoxGroup!.add(box);
+      });
+      this._viewer.addObject3D(this._boundingBoxGroup);
+    } else {
+      this._boundingBoxGroup?.removeFromParent();
+      this._boundingBoxGroup = undefined;
+    }
+    this._viewer.requestRedraw();
   }
 
   private createObjectAppearanceUi(uiFolder: dat.GUI): () => PointCloudAppearance {

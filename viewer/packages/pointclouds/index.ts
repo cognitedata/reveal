@@ -27,17 +27,13 @@ export { PotreeGroupWrapper } from './src/PotreeGroupWrapper';
 export { Potree, PointCloudOctree } from './src/PotreePnextLoader';
 
 export { CompletePointCloudAppearance, PointCloudAppearance } from './src/styling/PointCloudAppearance';
-export { PointCloudObjectCollection } from './src/styling/PointCloudObjectCollection';
-export { AnnotationIdPointCloudObjectCollection } from './src/styling/AnnotationListPointCloudObjectCollection';
 export { DefaultPointCloudAppearance } from './src/styling/PointCloudAppearance';
 
 export { PointCloudFactory } from './src/PointCloudFactory';
 
-export { IAnnotationProvider } from './src/styling/IAnnotationProvider';
-export { CdfAnnotationProvider } from './src/styling/CdfAnnotationProvider';
-export { LocalAnnotationProvider } from './src/styling/LocalAnnotationProvider';
-export { PointCloudObjectAnnotationData } from './src/styling/PointCloudObjectAnnotationData';
-
 export { IPointClassificationsProvider } from './src/classificationsProviders/IPointClassificationsProvider';
 export { LocalPointClassificationsProvider } from './src/classificationsProviders/LocalPointClassificationsProvider';
 export { UrlPointClassificationsProvider } from './src/classificationsProviders/UrlPointClassificationsProvider';
+
+export { PointCloudObjectCollection } from './src/styling/PointCloudObjectCollection';
+export { AnnotationIdPointCloudObjectCollection } from './src/styling/AnnotationIdPointCloudObjectCollection';

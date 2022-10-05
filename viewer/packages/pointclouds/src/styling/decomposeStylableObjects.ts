@@ -2,14 +2,13 @@
  * Copyright 2022 Cognite AS
  */
 
-import { ShapeType } from './shapes/IShape';
-import { StylableObject } from './StylableObject';
-import { CompositeShape } from './shapes/CompositeShape';
+import { StylableObject } from '@reveal/data-providers';
+import { CompositeShape } from '@reveal/utilities';
 
 export function decomposeStylableObjects(stylableObjects: StylableObject[]): StylableObject[] {
   const result = Array<StylableObject>();
   for (const obj of stylableObjects) {
-    if (obj.shape.shapeType === ShapeType.Composite) {
+    if (obj.shape instanceof CompositeShape) {
       const composite = obj.shape as CompositeShape;
       const innerObjectsList: StylableObject[] = composite.innerShapes.map(shape => ({
         shape: shape,

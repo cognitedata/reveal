@@ -1590,6 +1590,8 @@ __metadata:
 "@reveal/data-providers@workspace:*, @reveal/data-providers@workspace:packages/data-providers":
   version: 0.0.0-use.local
   resolution: "@reveal/data-providers@workspace:packages/data-providers"
+  dependencies:
+    "@reveal/utilities": "workspace:*"
   languageName: unknown
   linkType: soft
 
