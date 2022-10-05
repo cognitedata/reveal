@@ -19,7 +19,8 @@ import {
 import useDebounce from 'hooks/useDebounce';
 import AppliedFilters from 'components/applied-filters';
 
-export type GovernanceStatus = 'governed' | 'ungoverned' | 'not-defined';
+const GOVERNANCE_STATUSES = ['governed', 'ungoverned', 'not-defined'] as const;
+export type GovernanceStatus = typeof GOVERNANCE_STATUSES[number];
 
 type TableFilterProps = {
   labelOptions: string[];
@@ -143,46 +144,22 @@ const TableFilter = ({
                           {t('label_one')}
                         </Body>
                         <StyledCheckboxWrapper>
-                          <Checkbox
-                            checked={tempGovernanceStatus?.includes('governed')}
-                            name="governed"
-                            onChange={(nextState) =>
-                              handleGovernanceStatusChange(
-                                'governed',
-                                nextState
-                              )
-                            }
-                          >
-                            <Body level={2}>{t('governed')}</Body>
-                          </Checkbox>
-                          <Checkbox
-                            checked={tempGovernanceStatus?.includes(
-                              'ungoverned'
-                            )}
-                            name="ungoverned"
-                            onChange={(nextState) =>
-                              handleGovernanceStatusChange(
-                                'ungoverned',
-                                nextState
-                              )
-                            }
-                          >
-                            <Body level={2}>{t('ungoverned')}</Body>
-                          </Checkbox>
-                          <Checkbox
-                            checked={tempGovernanceStatus?.includes(
-                              'not-defined'
-                            )}
-                            name="not-defined"
-                            onChange={(nextState) =>
-                              handleGovernanceStatusChange(
-                                'not-defined',
-                                nextState
-                              )
-                            }
-                          >
-                            <Body level={2}>{t('not-defined')}</Body>
-                          </Checkbox>
+                          {GOVERNANCE_STATUSES.map((governanceStatus) => (
+                            <Checkbox
+                              checked={tempGovernanceStatus?.includes(
+                                governanceStatus
+                              )}
+                              name={governanceStatus}
+                              onChange={(nextState) =>
+                                handleGovernanceStatusChange(
+                                  governanceStatus,
+                                  nextState
+                                )
+                              }
+                            >
+                              <Body level={2}>{t(governanceStatus)}</Body>
+                            </Checkbox>
+                          ))}
                         </StyledCheckboxWrapper>
                       </Flex>
                     </StyledSectionWrapper>
