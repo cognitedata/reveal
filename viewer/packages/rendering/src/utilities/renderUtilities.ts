@@ -279,7 +279,7 @@ export function setRendererParameters(
   if (parameters?.renderer) {
     for (const prop of Object.entries(parameters.renderer)) {
       try {
-        //@ts-ignore
+        //@ts-expect-error
         rendererHelper[prop[0]] = prop[1];
       } catch {
         console.error(`Undefined WebGLRendererStateHelper property: ${prop[0]}`);

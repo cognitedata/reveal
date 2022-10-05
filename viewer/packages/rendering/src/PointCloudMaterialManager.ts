@@ -44,7 +44,7 @@ export class PointCloudMaterialManager {
   setMaterialParameters(material: PointCloudMaterial, parameters: PointCloudMaterialParameters): void {
     for (const prop of Object.entries(parameters)) {
       try {
-        //@ts-ignore
+        //@ts-expect-error
         material[prop[0]] = prop[1];
       } catch {
         console.error(`Undefined point cloud material property: ${prop[0]}`);
