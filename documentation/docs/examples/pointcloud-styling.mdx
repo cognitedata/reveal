@@ -51,7 +51,7 @@ const annotationIds = [];
 model.traverseStylableObjects(objectMetadata => annotationIds.push(objectMetadata.annotationId));
 
 const objectCollection = new AnnotationIdPointCloudObjectCollection(annotationIds);
-const appearance = { color: [255, 0, 0] };
+const appearance = { color: [0, 255, 0] };
 
 model.assignStyledObjectCollection(objectCollection, appearance);
 ```
