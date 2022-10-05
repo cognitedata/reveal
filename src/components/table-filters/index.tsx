@@ -19,7 +19,7 @@ import {
 import useDebounce from 'hooks/useDebounce';
 import AppliedFilters from 'components/applied-filters';
 
-type GovernanceStatus = 'governed' | 'ungoverned';
+export type GovernanceStatus = 'governed' | 'ungoverned' | 'not-defined';
 
 type TableFilterProps = {
   labelOptions: string[];
@@ -115,7 +115,7 @@ const TableFilter = ({
         <StyledInputContainer>
           <Input
             prefix={<Icon type="Search" />}
-            placeholder={t('search-by-name')}
+            placeholder={t('search-by-name-description-or-label')}
             onChange={(e) => setSearchQuery(e.target.value)}
             value={searchQuery}
             allowClear
@@ -168,6 +168,20 @@ const TableFilter = ({
                             }
                           >
                             <Body level={2}>{t('ungoverned')}</Body>
+                          </Checkbox>
+                          <Checkbox
+                            checked={tempGovernanceStatus?.includes(
+                              'not-defined'
+                            )}
+                            name="not-defined"
+                            onChange={(nextState) =>
+                              handleGovernanceStatusChange(
+                                'not-defined',
+                                nextState
+                              )
+                            }
+                          >
+                            <Body level={2}>{t('not-defined')}</Body>
                           </Checkbox>
                         </StyledCheckboxWrapper>
                       </Flex>
@@ -270,7 +284,7 @@ const StyledMenuContent = styled.div`
 `;
 
 const StyledInputContainer = styled.div`
-  width: 220px;
+  width: 312px;
 `;
 
 const StyledSectionWrapper = styled.div`
@@ -285,7 +299,6 @@ const StyledCheckboxWrapper = styled(Flex)`
   flex-direction: column;
   gap: 16px;
   margin-top: 10px;
-  width: 255px;
 `;
 
 export default TableFilter;

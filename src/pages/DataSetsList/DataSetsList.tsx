@@ -6,7 +6,6 @@ import { Checkbox, notification } from 'antd';
 import DataSetEditor from 'pages/DataSetEditor';
 
 import { trackEvent } from '@cognite/cdf-route-tracker';
-import SelectorFilter from 'components/SelectorFilter';
 import { useHandleFilters } from 'utils/filterUtils';
 import { setItemInStorage } from 'utils/localStorage';
 import { getContainer } from 'utils/shared';
@@ -25,7 +24,7 @@ import { useDataSetMode, useSelectedDataSet } from '../../context/index';
 import { useTranslation } from 'common/i18n';
 import Page from 'components/page';
 import RowActions from 'components/data-sets-list/row-actions';
-import TableFilter from 'components/table-filters';
+import TableFilter, { GovernanceStatus } from 'components/table-filters';
 import { useSearchParamState } from 'hooks/useSearchParamState';
 
 const DataSetsList = (): JSX.Element => {
@@ -35,11 +34,6 @@ const DataSetsList = (): JSX.Element => {
   const { data: withExtpipes, isFetched: didFetchWithExtpipes } =
     useWithExtpipes();
 
-  const [qualityFilter, setQualityFilter] = useState<string>('all');
-  const [searchValue, setSearchValue] = useLocalStorage<string>(
-    'data-sets-search',
-    ''
-  );
   const [creationDrawerVisible, setCreationDrawerVisible] =
     useState<boolean>(false);
   const [showArchived, setShowArchived] = useLocalStorage<boolean>(
@@ -51,6 +45,8 @@ const DataSetsList = (): JSX.Element => {
 
   const searchFilter = useSearchParamState<string>('search');
   const labelFilter = useSearchParamState<string[]>('labels');
+  const governanceFilter =
+    useSearchParamState<GovernanceStatus[]>('governance');
 
   const { setMode } = useDataSetMode();
 
@@ -74,17 +70,15 @@ const DataSetsList = (): JSX.Element => {
   const dataSetsList = useMemo(() => {
     return handleDataSetsFilters(
       showArchived,
-      searchValue,
-      setSearchValue,
-      qualityFilter,
+      searchFilter,
+      governanceFilter,
       dataSetsWithExtpipes
     );
   }, [
     handleDataSetsFilters,
     showArchived,
-    searchValue,
-    setSearchValue,
-    qualityFilter,
+    searchFilter,
+    governanceFilter,
     dataSetsWithExtpipes,
   ]);
 
@@ -123,20 +117,15 @@ const DataSetsList = (): JSX.Element => {
         testLabels.some((label) => labelFilter.includes(label))
       );
     }
-    if (!!searchFilter?.length) {
-      filteredArray = filteredArray.filter(({ name = '' }) =>
-        name.toLowerCase().includes(searchFilter?.toLowerCase() ?? '')
-      );
-    }
     return filteredArray;
-  }, [labelFilter, searchFilter, tableData]);
+  }, [labelFilter, tableData]);
 
   const labels = useMemo(() => {
     return getLabelsList(
-      dataSetsList.map(({ dataSet }) => dataSet),
+      dataSetsWithExtpipes.map(({ dataSet }) => dataSet),
       showArchived
     );
-  }, [dataSetsList, showArchived]);
+  }, [dataSetsWithExtpipes, showArchived]);
 
   const handleModalClose = () => {
     setCreationDrawerVisible(false);
@@ -241,17 +230,6 @@ const DataSetsList = (): JSX.Element => {
     </div>
   );
 
-  const QualitySelector = (
-    <SelectorFilter
-      filterName="data-sets-governance"
-      selectionOptions={[
-        { name: t('governed'), value: 'governed' },
-        { name: t('ungoverned'), value: 'ungoverned' },
-      ]}
-      setSelection={setQualityFilter}
-      defaultValue={qualityFilter}
-    />
-  );
   const CreateButton = (
     <Button
       type="primary"
@@ -265,12 +243,6 @@ const DataSetsList = (): JSX.Element => {
     >
       {t('create')}
     </Button>
-  );
-
-  const ActionToolbar = (
-    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-      {QualitySelector}
-    </div>
   );
 
   const onClose = () => {
@@ -309,7 +281,7 @@ const DataSetsList = (): JSX.Element => {
         sourceSuggestions={getSourcesList()}
         handleCloseModal={() => handleModalClose()}
       />
-      <Flex justifyContent="space-between">
+      <Flex alignItems="flex-start" justifyContent="space-between">
         <TableFilter labelOptions={labels} />
         <Flex alignItems="center" gap={8}>
           <Checkbox
@@ -344,7 +316,7 @@ const DataSetsList = (): JSX.Element => {
           <TableNoResults
             title={t('data-set-list-no-records')}
             content={t('data-set-list-search-not-found', {
-              $: searchFilter !== '' ? `"${searchFilter}"` : searchFilter,
+              $: !!searchFilter ? `"${searchFilter}"` : searchFilter,
             })}
           />
         }
