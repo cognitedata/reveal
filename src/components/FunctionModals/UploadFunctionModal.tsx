@@ -30,7 +30,6 @@ import {
   checkSecrets,
   checkFile,
   checkFloat,
-  skipValidation,
 } from 'utils/formValidations';
 import ErrorFeedback from 'components/Common/atoms/ErrorFeedback';
 import { allFunctionsKey } from 'utils/queryKeys';
@@ -38,7 +37,7 @@ import { Runtime } from 'types';
 import FunctionMetadata, {
   MetaType,
 } from 'components/FunctionModals/FunctionMetadata';
-import { isVendorGKE } from 'utils/environment';
+import { useLimits } from 'utils/hooks';
 
 export interface Secret {
   key: string;
@@ -75,6 +74,15 @@ const runtimes: RuntimeOption[] = [
 
 export default function UploadFunctionModal({ onCancel }: Props) {
   const queryCache = useQueryCache();
+  const {
+    data: limits = {
+      timeoutMinutes: 10,
+      cpuCores: { default: 0.25, max: 0.6, min: 0.1 },
+      memoryGb: { default: 1, max: 2.5, min: 0.1 },
+      runtimes: ['py37', 'py38', 'py39'],
+      responseSizeMb: 1,
+    },
+  } = useLimits();
 
   const [doUploadFunction, { isLoading, isError, error }] = useMutation(
     uploadFunction,
@@ -91,7 +99,6 @@ export default function UploadFunctionModal({ onCancel }: Props) {
   );
 
   const disableForm = isLoading;
-  const isGKE = isVendorGKE();
 
   const [functionName, setFunctionName] = useState({
     value: '',
@@ -104,8 +111,8 @@ export default function UploadFunctionModal({ onCancel }: Props) {
   const [file, setFile] = useState<UploadFile>();
   const [fileTouched, setFileTouched] = useState(false);
   const [secrets, setSecrets] = useState([] as Secret[]);
-  const [cpu, setCpu] = useState(isGKE ? '0.25' : '1');
-  const [memory, setMemory] = useState(isGKE ? '1' : '1.5');
+  const [cpu, setCpu] = useState(String(limits.cpuCores.default));
+  const [memory, setMemory] = useState(String(limits.memoryGb.default));
   const [runtime, setRuntime] = useState<RuntimeOption>(runtimes[1]);
   const [metadata, setMetadata] = useState([] as MetaType[]);
 
@@ -187,8 +194,8 @@ export default function UploadFunctionModal({ onCancel }: Props) {
     }
   };
 
-  const checkCPU = isVendorGKE() ? checkFloat(0.1, 0.6) : skipValidation;
-  const checkMemory = isVendorGKE() ? checkFloat(0.1, 2.5) : skipValidation;
+  const checkCPU = checkFloat(limits.cpuCores.min, limits.cpuCores.max);
+  const checkMemory = checkFloat(limits.memoryGb.min, limits.memoryGb.max);
 
   const canBeSubmitted =
     !!file &&
@@ -387,10 +394,8 @@ export default function UploadFunctionModal({ onCancel }: Props) {
             </Form.Item>
             <Form.Item
               label="CPU"
-              validateStatus={
-                isGKE && checkCPU(cpu).error ? 'error' : 'success'
-              }
-              help={isGKE && checkCPU(cpu).message}
+              validateStatus={checkCPU(cpu).error ? 'error' : 'success'}
+              help={checkCPU(cpu).message}
               style={{ fontWeight: 'bold' }}
             >
               <Input
@@ -401,16 +406,14 @@ export default function UploadFunctionModal({ onCancel }: Props) {
                 max="0.6"
                 value={cpu}
                 onChange={handleCpuChange}
-                disabled={!isGKE}
+                disabled={limits?.vendor === 'aks'}
                 allowClear
               />
             </Form.Item>
             <Form.Item
               label="Memory"
-              validateStatus={
-                isGKE && checkMemory(memory).error ? 'error' : 'success'
-              }
-              help={isGKE && checkMemory(memory).message}
+              validateStatus={checkMemory(memory).error ? 'error' : 'success'}
+              help={checkMemory(memory).message}
               style={{ fontWeight: 'bold' }}
             >
               <Input
@@ -421,7 +424,7 @@ export default function UploadFunctionModal({ onCancel }: Props) {
                 min="0.1"
                 max="2.5"
                 onChange={handleMemoryChange}
-                disabled={!isGKE}
+                disabled={limits?.vendor === 'aks'}
                 allowClear
               />
             </Form.Item>
