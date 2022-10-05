@@ -1,7 +1,7 @@
 import { Camera, WebGLRenderer } from 'three';
 import { LRU } from '../utils/lru';
 import { PointCloudOctree } from '../tree/PointCloudOctree';
-import { PointCloudObjectAnnotationData } from '../../styling/PointCloudObjectAnnotationData';
+import { PointCloudObjectData } from '@reveal/data-providers';
 
 export interface IPotree {
   pointBudget: number;
@@ -11,7 +11,7 @@ export interface IPotree {
   loadPointCloud(
     baseUrl: string,
     fileName: string,
-    stylableObjectInfo: PointCloudObjectAnnotationData
+    stylableObjectInfo: PointCloudObjectData
   ): Promise<PointCloudOctree>;
 
   updatePointClouds(pointClouds: PointCloudOctree[], camera: Camera, renderer: WebGLRenderer): void;

@@ -11,7 +11,8 @@ import { IPotree } from '../types/IPotree';
 import { IPointCloudTreeNodeBase } from './IPointCloudTreeNodeBase';
 import { IPointCloudTreeNode } from './IPointCloudTreeNode';
 import { computeTransformedBoundingBox } from '../utils/bounds';
-import { PointCloudObjectAnnotationData } from '../../styling/PointCloudObjectAnnotationData';
+
+import { PointCloudObjectData } from '@reveal/data-providers';
 
 import { RenderLayer } from '@reveal/rendering';
 
@@ -37,7 +38,7 @@ export class PointCloudOctree extends PointCloudTree {
   private readonly visibleBounds: Box3 = new Box3();
   private picker: PointCloudOctreePicker | undefined;
 
-  constructor(potree: IPotree, pcoGeometry: IPointCloudTreeGeometry, annotationInfo: PointCloudObjectAnnotationData) {
+  constructor(potree: IPotree, pcoGeometry: IPointCloudTreeGeometry, annotationInfo: PointCloudObjectData) {
     super();
 
     this.name = '';

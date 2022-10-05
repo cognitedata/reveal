@@ -176,7 +176,7 @@ export function Migration() {
         } else if (model instanceof CognitePointCloudModel) {
           new PointCloudClassificationFilterUI(gui.addFolder(`Class filter #${modelUi.pointCloudModels.length}`), model);
           pointCloudUi.applyToAllModels();
-          new PointCloudObjectStylingUI(gui.addFolder('Point cloud object styling'), model);
+          new PointCloudObjectStylingUI(gui.addFolder('Point cloud object styling'), model, viewer);
         }
       }
       const modelUi = new ModelUi(gui.addFolder('Models'), viewer, handleModelAdded);

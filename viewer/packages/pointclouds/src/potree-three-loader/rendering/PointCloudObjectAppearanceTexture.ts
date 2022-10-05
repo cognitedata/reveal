@@ -8,7 +8,7 @@ import * as THREE from 'three';
 import { StyledPointCloudObjectCollection } from '../../styling/StyledPointCloudObjectCollection';
 import { PointCloudObjectCollection } from '../../styling/PointCloudObjectCollection';
 import { DefaultPointCloudAppearance, CompletePointCloudAppearance } from '../../styling/PointCloudAppearance';
-import { ObjectsMaps } from '../../styling/PointCloudObjectAnnotationData';
+import { PointCloudObjectsMaps } from '@reveal/data-providers';
 
 export class PointCloudObjectAppearanceTexture {
   private _objectStyleTexture: THREE.DataTexture;
@@ -31,7 +31,7 @@ export class PointCloudObjectAppearanceTexture {
     this._height = height;
   }
 
-  setObjectsMaps(objectsMaps: ObjectsMaps): void {
+  setObjectsMaps(objectsMaps: PointCloudObjectsMaps): void {
     this._annotationIdsToObjectId = objectsMaps.annotationToObjectIds;
     this._objectIdsToAnnotationId = objectsMaps.objectToAnnotationIds;
   }

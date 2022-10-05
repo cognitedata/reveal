@@ -2,19 +2,15 @@
  * Copyright 2022 Cognite AS
  */
 
-import { StylableObject } from '../../styling/StylableObject';
-import { assignPoints } from '../../../wasm';
-import { Cylinder } from '../../styling/shapes/Cylinder';
-import { Box } from '../../styling/shapes/Box';
+import { SerializableStylableObject } from '@reveal/data-providers';
+import { assertNever, SerializableCylinder, SerializableBox, ShapeType } from '@reveal/utilities';
 
-import { SerializedPointCloudObject } from '../../../wasm';
-import { ShapeType } from '../../styling/shapes/IShape';
-import { assertNever } from '@reveal/utilities';
+import { WasmSerializedPointCloudObject, assignPoints } from '../../../wasm';
 
-function createSerializedObject(obj: StylableObject): SerializedPointCloudObject {
+function createWasmSerializedObject(obj: SerializableStylableObject): WasmSerializedPointCloudObject {
   switch (obj.shape.shapeType) {
     case ShapeType.Cylinder: {
-      const cylinder = obj.shape as Cylinder;
+      const cylinder = obj.shape as SerializableCylinder;
       return {
         object_id: obj.objectId,
         cylinder: {
@@ -25,7 +21,7 @@ function createSerializedObject(obj: StylableObject): SerializedPointCloudObject
       };
     }
     case ShapeType.Box: {
-      const box = obj.shape as Box;
+      const box = obj.shape as SerializableBox;
       return {
         object_id: obj.objectId,
         oriented_box: {
@@ -43,11 +39,11 @@ function createSerializedObject(obj: StylableObject): SerializedPointCloudObject
 
 export async function assignPointsToObjectsWithWasm(
   points: Float32Array,
-  objects: StylableObject[],
+  objects: SerializableStylableObject[],
   pointOffset: THREE.Vector3,
   sectorBoundingBox: THREE.Box3
 ): Promise<Uint16Array> {
-  const wasmShapes = objects.map(obj => createSerializedObject(obj));
+  const wasmShapes = objects.map(obj => createWasmSerializedObject(obj));
 
   try {
     return await assignPoints(

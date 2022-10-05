@@ -10,6 +10,7 @@ import { PointCloudNode } from './PointCloudNode';
 import { PotreePointColorType, PotreePointShape, PotreePointSizeType } from './potree-three-loader';
 
 import { SupportedModelTypes, CogniteModelBase } from '@reveal/model-base';
+import { PointCloudObjectCollection, PointCloudObjectMetadata } from '@reveal/data-providers';
 
 import {
   applyDefaultsToPointCloudAppearance,
@@ -17,8 +18,6 @@ import {
   CompletePointCloudAppearance
 } from './styling/PointCloudAppearance';
 import { StyledPointCloudObjectCollection } from './styling/StyledPointCloudObjectCollection';
-import { PointCloudObjectCollection } from './styling/PointCloudObjectCollection';
-import { PointCloudObjectMetadata } from './annotationTypes';
 
 /**
  * Represents a point clouds model loaded from CDF.
@@ -303,7 +302,7 @@ export class CognitePointCloudModel implements CogniteModelBase {
    * ```
    */
   traverseStylableObjects(callback: (annotationMetadata: PointCloudObjectMetadata) => void): void {
-    for (const obj of this.pointCloudNode.potreeNode.stylableObjectAnnotationIds) {
+    for (const obj of this.pointCloudNode.potreeNode.stylableObjectAnnotationMetadata) {
       callback(obj);
     }
   }

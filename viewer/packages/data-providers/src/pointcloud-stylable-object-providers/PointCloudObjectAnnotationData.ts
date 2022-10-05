@@ -2,21 +2,21 @@
  * Copyright 2022 Cognite AS
  */
 
-import { PointCloudObjectAnnotation } from '../annotationTypes';
+import { PointCloudObject } from './types';
 
-export type ObjectsMaps = {
+export type PointCloudObjectsMaps = {
   annotationToObjectIds: Map<number, number>;
   objectToAnnotationIds: Map<number, number>;
 };
 
-export class PointCloudObjectAnnotationData {
-  private readonly _annotations: PointCloudObjectAnnotation[];
+export class PointCloudObjectData {
+  private readonly _annotations: PointCloudObject[];
 
-  constructor(annotations: PointCloudObjectAnnotation[]) {
+  constructor(annotations: PointCloudObject[]) {
     this._annotations = annotations;
   }
 
-  createObjectsMaps(): ObjectsMaps {
+  createObjectsMaps(): PointCloudObjectsMaps {
     const objectsMaps = {
       annotationToObjectIds: new Map<number, number>(
         this._annotations.map(annotation => [annotation.annotationId, annotation.stylableObject.objectId])
@@ -29,7 +29,7 @@ export class PointCloudObjectAnnotationData {
     return objectsMaps;
   }
 
-  get annotations(): PointCloudObjectAnnotation[] {
+  get annotations(): PointCloudObject[] {
     return this._annotations;
   }
 }

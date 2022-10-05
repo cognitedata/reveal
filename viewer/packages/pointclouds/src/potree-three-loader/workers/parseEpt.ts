@@ -1,5 +1,5 @@
-import { StylableObject } from '../../styling/StylableObject';
-import { AABB, Vec3 } from '../../styling/shapes/linalg';
+import { AABB, Vec3 } from '@reveal/utilities';
+import { SerializableStylableObject } from '@reveal/data-providers';
 import { assignPointsToObjectsWithWasm } from './assignPointsToObjectsWithWasm';
 
 import * as THREE from 'three';
@@ -41,7 +41,7 @@ export type EptInputData = {
 
 export async function parseEpt(
   data: EptInputData,
-  objects: StylableObject[],
+  objects: SerializableStylableObject[],
   pointOffset: Vec3,
   sectorBoundingBox: AABB
 ): Promise<ParsedEptData> {

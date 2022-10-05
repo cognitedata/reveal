@@ -1,5 +1,4 @@
-import { PointCloudObjectAnnotationData } from '../../styling/PointCloudObjectAnnotationData';
-import { ModelDataProvider } from '@reveal/data-providers';
+import { ModelDataProvider, PointCloudObjectData } from '@reveal/data-providers';
 import { PointCloudEptGeometry } from '../geometry/PointCloudEptGeometry';
 import { PointCloudEptGeometryNode } from '../geometry/PointCloudEptGeometryNode';
 import { EptJson } from './EptJson';
@@ -9,7 +8,7 @@ export class EptLoader {
     baseUrl: string,
     fileName: string,
     modelDataProvider: ModelDataProvider,
-    objectProvider: PointCloudObjectAnnotationData
+    objectProvider: PointCloudObjectData
   ): Promise<PointCloudEptGeometry> {
     const eptJsonPromise = modelDataProvider.getJsonFile(baseUrl, fileName);
 

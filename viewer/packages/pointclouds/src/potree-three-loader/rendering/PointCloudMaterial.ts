@@ -48,14 +48,14 @@ import { generateClassificationTexture, generateDataTexture, generateGradientTex
 import { IClassification, IUniform } from './types';
 import { SpectralGradient } from './gradients/SpectralGradient';
 import { PointCloudObjectAppearanceTexture } from './PointCloudObjectAppearanceTexture';
-import { ObjectsMaps } from '../../styling/PointCloudObjectAnnotationData';
+import { PointCloudObjectsMaps } from '@reveal/data-providers';
 
 export interface IPointCloudMaterialParameters {
   size: number;
   minSize: number;
   maxSize: number;
   treeType: TreeType;
-  objectsMaps: ObjectsMaps;
+  objectsMaps: PointCloudObjectsMaps;
 }
 
 export interface IPointCloudMaterialUniforms {
