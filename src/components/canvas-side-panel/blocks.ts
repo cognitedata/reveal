@@ -1,32 +1,28 @@
-import { Colors } from '@cognite/cogs.js';
 import { CanvasBlockItem } from 'components/canvas-block';
 
 export const blocks: CanvasBlockItem[] = [
   {
-    icon: 'DataTable',
-    iconColor: Colors['border--status-success--strong'],
-    label: 'Table',
+    label: 'Raw table',
     type: 'raw-table',
   },
   {
-    icon: 'Refresh',
-    iconColor: Colors['border--status-neutral--strong'],
+    label: 'Data sets',
+    type: 'data-set',
+  },
+  {
+    label: 'Data from source',
+    type: 'extraction-pipeline',
+  },
+  {
     label: 'Transformation',
     type: 'transformation',
   },
   {
-    icon: 'Folder',
-    label: 'Data set',
-    type: 'data-set',
-  },
-  {
-    icon: 'InputData',
-    label: 'Extract from source',
-    type: 'extraction-pipeline',
-  },
-  {
-    icon: 'GraphTree',
     label: 'Entity matching',
     type: 'entity-matching',
+  },
+  {
+    label: 'Diagrams',
+    type: 'engineering-diagram',
   },
 ];

@@ -16,7 +16,8 @@
     "prettier": "prettier --config .prettierrc -l 'src/**/*.{js,ts,tsx}' || (echo \nThese files are not formatted correctly && false)",
     "pull-keys": "cdf-i18n-utils-cli pull-keys-from-remote --namespace flows",
     "remove-deleted": "cdf-i18n-utils-cli remove-deleted-keys-from-remote --namespace flows",
-    "save-missing": "cdf-i18n-utils-cli save-missing-keys-to-remote --namespace flows"
+    "save-missing": "cdf-i18n-utils-cli save-missing-keys-to-remote --namespace flows",
+    "sort-keys": "cdf-i18n-utils-cli sort-local-keys --namespace flows"
   },
   "dependencies": {
     "@cognite/cdf-i18n-utils": "^0.6.0",

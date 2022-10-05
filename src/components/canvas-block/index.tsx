@@ -1,15 +1,10 @@
-import {
-  Body,
-  Colors,
-  Elevations,
-  Flex,
-  Icon,
-  IconType,
-} from '@cognite/cogs.js';
+import { Colors, Elevations, Overline } from '@cognite/cogs.js';
+import CanvasBlockIllustration from 'components/canvas-block-illustration';
 import styled from 'styled-components';
 
 export const CANVAS_BLOCK_TYPES = [
   'data-set',
+  'engineering-diagram',
   'entity-matching',
   'extraction-pipeline',
   'raw-table',
@@ -18,8 +13,6 @@ export const CANVAS_BLOCK_TYPES = [
 export type CanvasBlockType = typeof CANVAS_BLOCK_TYPES[number];
 
 export type CanvasBlockItem = {
-  icon: IconType;
-  iconColor?: string; // FIXME: change to cogs color token type
   label: string;
   type: CanvasBlockType;
 };
@@ -29,32 +22,28 @@ type CanvasBlockProps = {
 } & CanvasBlockItem;
 
 export const CanvasBlock = ({
-  icon,
-  iconColor,
   label,
   onDragStart,
+  type,
 }: CanvasBlockProps): JSX.Element => {
   return (
     <StyledBlockContainer draggable onDragStart={onDragStart}>
-      <Flex alignItems="center" gap={8}>
-        <StyledBlockIcon $color={iconColor} type={icon} />
-        <Body level={3} strong>
-          {label}
-        </Body>
-      </Flex>
-      <StyledDragHandleIcon />
+      <CanvasBlockIllustration type={type} />
+      <Overline level={3}>{label}</Overline>
     </StyledBlockContainer>
   );
 };
 
 const StyledBlockContainer = styled.div`
   align-items: center;
-  border: 1px solid ${Colors['border--interactive--default']};
+  background-color: ${Colors['surface--medium']};
   border-radius: 6px;
   cursor: grab;
   display: flex;
-  justify-content: space-between;
-  padding: 16px;
+  flex-direction: column;
+  gap: 12px;
+  padding: 12px 4px;
+  width: 128px;
 
   :hover {
     border-color: ${Colors['border--interactive--alt']};
@@ -62,12 +51,4 @@ const StyledBlockContainer = styled.div`
   }
 
   /* FIXME: we can add grabbing state while dragging */
-`;
-
-const StyledBlockIcon = styled(Icon)<{ $color?: string }>`
-  color: ${({ $color }) => $color ?? Colors['border--interactive--default']};
-`;
-
-const StyledDragHandleIcon = styled(Icon).attrs({ type: 'DragHandleVertical' })`
-  color: ${Colors['border--interactive--default']};
 `;

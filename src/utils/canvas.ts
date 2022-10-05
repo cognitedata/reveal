@@ -4,9 +4,10 @@ import { Connection, Node } from 'react-flow-renderer';
 
 const COMPABILITY_MATRIX: Record<CanvasBlockType, CanvasBlockType[]> = {
   'data-set': ['entity-matching', 'extraction-pipeline', 'transformation'],
-  'entity-matching': [],
-  'extraction-pipeline': [],
-  'raw-table': ['transformation'],
+  'engineering-diagram': ['data-set'],
+  'entity-matching': ['data-set'],
+  'extraction-pipeline': ['data-set'],
+  'raw-table': ['data-set', 'transformation'],
   transformation: ['data-set'],
 };
 
