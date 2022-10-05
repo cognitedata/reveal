@@ -1,9 +1,8 @@
 import { useMemo, useState } from 'react';
-import { Button, Icon } from '@cognite/cogs.js';
+import { Button, Flex, Icon } from '@cognite/cogs.js';
 import { Table, TableNoResults } from '@cognite/cdf-utilities';
 import Tag from 'antd/lib/tag';
-import { notification } from 'antd';
-import Checkbox from 'antd/lib/checkbox';
+import { Checkbox, notification } from 'antd';
 import DataSetEditor from 'pages/DataSetEditor';
 
 import { trackEvent } from '@cognite/cdf-route-tracker';
@@ -257,7 +256,6 @@ const DataSetsList = (): JSX.Element => {
     <Button
       type="primary"
       icon="Add"
-      style={{ marginLeft: '20px', marginRight: '20px' }}
       onClick={() => {
         setCreationDrawerVisible(true);
         trackEvent('DataSets.CreationFlow.Starts creating data set');
@@ -271,15 +269,7 @@ const DataSetsList = (): JSX.Element => {
 
   const ActionToolbar = (
     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-      {CreateButton}
       {QualitySelector}
-      <Checkbox
-        style={{ marginTop: '10px', marginLeft: '20px' }}
-        onChange={(e) => setShowArchived(e.target.checked)}
-        checked={showArchived}
-      >
-        {t('show-archived-data-sets')}
-      </Checkbox>
     </div>
   );
 
@@ -319,7 +309,18 @@ const DataSetsList = (): JSX.Element => {
         sourceSuggestions={getSourcesList()}
         handleCloseModal={() => handleModalClose()}
       />
-      <TableFilter labelOptions={labels} />
+      <Flex justifyContent="space-between">
+        <TableFilter labelOptions={labels} />
+        <Flex alignItems="center" gap={8}>
+          <Checkbox
+            onChange={(e) => setShowArchived(e.target.checked)}
+            checked={showArchived}
+          >
+            {t('show-archived-data-sets')}
+          </Checkbox>
+          {CreateButton}
+        </Flex>
+      </Flex>
       <Table<DataSetRow>
         rowKey="key"
         loading={loading}
