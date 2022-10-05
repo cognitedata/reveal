@@ -3,7 +3,7 @@
  */
 import * as THREE from 'three';
 
-import { CognitePointCloudModel} from '@reveal/pointclouds';
+import { CognitePointCloudModel } from '@reveal/pointclouds';
 import { PotreePointColorType } from '@reveal/rendering';
 import {
   ViewerTestFixtureComponents,

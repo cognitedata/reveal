@@ -21,7 +21,10 @@ describe('PotreeGroupWrapper', () => {
   const pollLoadingStatusInterval = 1;
 
   test('getLoadingStateObserver() triggers false initially', done => {
-    const manager = new PotreeGroupWrapper(new Potree(mockModelDataProvider, mockMaterialManager), pollLoadingStatusInterval);
+    const manager = new PotreeGroupWrapper(
+      new Potree(mockModelDataProvider, mockMaterialManager),
+      pollLoadingStatusInterval
+    );
     expectObservable(manager.getLoadingStateObserver().pipe(map(x => x.isLoading)), [false], done);
   });
   test('getLoadingStateObserver() triggers true after add', done => {
@@ -36,7 +39,10 @@ describe('PotreeGroupWrapper', () => {
       .returns(new PointCloudMaterial())
       .object();
     const model = new PotreeNodeWrapper(dummyNode, Symbol('dummy'));
-    const manager = new PotreeGroupWrapper(new Potree(mockModelDataProvider, mockMaterialManager), pollLoadingStatusInterval);
+    const manager = new PotreeGroupWrapper(
+      new Potree(mockModelDataProvider, mockMaterialManager),
+      pollLoadingStatusInterval
+    );
 
     expectObservable(manager.getLoadingStateObserver().pipe(map(x => x.isLoading)), [false], done);
     manager.addPointCloud(model);

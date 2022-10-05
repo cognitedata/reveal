@@ -32,10 +32,16 @@ export default class RenderTargetVisualTest extends StreamingVisualTestFixture {
     renderTarget.depthTexture.format = THREE.DepthFormat;
     renderTarget.depthTexture.type = THREE.UnsignedIntType;
 
-    this.pipelineProvider = new DefaultRenderPipelineProvider(cadMaterialManager, pcMaterialManager, sceneHandler, defaultRenderOptions, {
-      target: renderTarget,
-      autoSize: true
-    });
+    this.pipelineProvider = new DefaultRenderPipelineProvider(
+      cadMaterialManager,
+      pcMaterialManager,
+      sceneHandler,
+      defaultRenderOptions,
+      {
+        target: renderTarget,
+        autoSize: true
+      }
+    );
 
     const vShader = `
       uniform mat4 modelMatrix;

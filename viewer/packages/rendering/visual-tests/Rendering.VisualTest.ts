@@ -63,7 +63,12 @@ export default class RenderingVisualTestFixture extends StreamingVisualTestFixtu
 
     const updateRenderOptions = () => {
       this.pipelineProvider.dispose();
-      this.pipelineProvider = new DefaultRenderPipelineProvider(cadMaterialManager, pcMaterialManager, sceneHandler, renderOptions);
+      this.pipelineProvider = new DefaultRenderPipelineProvider(
+        cadMaterialManager,
+        pcMaterialManager,
+        sceneHandler,
+        renderOptions
+      );
       this.render();
     };
 
