@@ -662,7 +662,7 @@ export class Cognite3DViewer {
     if (this._cdfSdkClient === undefined || this._image360EntityFactory === undefined) {
       throw new Error(`Adding 360 image sets is only supported when connecting to Cognite Data Fusion`);
     }
-    return this._image360EntityFactory.create(eventFilter, setTransform);
+    return this._image360EntityFactory.create(eventFilter, setTransform ?? new THREE.Matrix4(), true);
   }
 
   /**

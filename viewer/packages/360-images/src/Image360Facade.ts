@@ -18,8 +18,12 @@ export class Image360Facade<T> {
     this._rayCaster = new THREE.Raycaster();
   }
 
-  public async create(dataProviderFilter: T, postTransform?: THREE.Matrix4): Promise<Image360Entity[]> {
-    const image360Entities = await this._entityFactory.create(dataProviderFilter, postTransform);
+  public async create(
+    dataProviderFilter: T,
+    postTransform = new THREE.Matrix4(),
+    preComputedRotation = true
+  ): Promise<Image360Entity[]> {
+    const image360Entities = await this._entityFactory.create(dataProviderFilter, postTransform, preComputedRotation);
     this._image360Entities.push(...image360Entities);
     return image360Entities;
   }

@@ -14,6 +14,7 @@ export class Image360Entity {
   private readonly _sceneHandler: SceneHandler;
   private readonly _transform: THREE.Matrix4;
   private readonly _image360Icon: Image360Icon;
+  private _faceMaterials: THREE.MeshBasicMaterial[] | undefined;
 
   get transform(): THREE.Matrix4 {
     return this._transform;
@@ -23,21 +24,25 @@ export class Image360Entity {
     return this._image360Icon;
   }
 
+  set opacity(alpha: number) {
+    this._faceMaterials?.forEach(material => {
+      material.opacity = alpha;
+    });
+  }
+
   constructor(
     image360Metadata: Image360Descriptor,
     sceneHandler: SceneHandler,
     imageProvider: Image360FileProvider,
-    postTransform?: THREE.Matrix4
+    postTransform: THREE.Matrix4,
+    preComputedRotation: boolean
   ) {
     this._sceneHandler = sceneHandler;
     this._imageProvider = imageProvider;
     this._image360Metadata = image360Metadata;
     this._image360Icon = new Image360Icon();
 
-    this._transform =
-      postTransform !== undefined
-        ? postTransform.clone().multiply(image360Metadata.transform.clone())
-        : image360Metadata.transform;
+    this._transform = this.computeTransform(image360Metadata, preComputedRotation, postTransform);
 
     this._image360Icon.applyMatrix4(this._transform);
     sceneHandler.addCustomObject(this._image360Icon);
@@ -57,10 +62,17 @@ export class Image360Entity {
 
     const faceMaterialOrder: Image360Face['face'][] = ['left', 'right', 'top', 'bottom', 'front', 'back'];
 
-    const faceMaterials = faceMaterialOrder.map(
-      face => new THREE.MeshBasicMaterial({ side: THREE.BackSide, map: getFaceTexture(face), depthTest: false })
+    this._faceMaterials = faceMaterialOrder.map(
+      face =>
+        new THREE.MeshBasicMaterial({
+          side: THREE.BackSide,
+          map: getFaceTexture(face),
+          depthTest: false,
+          opacity: 1.0,
+          transparent: true
+        })
     );
-    const mesh = new THREE.Mesh(boxGeometry, faceMaterials);
+    const mesh = new THREE.Mesh(boxGeometry, this._faceMaterials);
     mesh.renderOrder = 3;
     return mesh;
 
@@ -82,5 +94,23 @@ export class Image360Entity {
       assert(face !== undefined);
       return face.faceTexture;
     }
+  }
+
+  private computeTransform(
+    image360Metadata: Image360Descriptor,
+    preComputedRotation: boolean,
+    postTransform: THREE.Matrix4
+  ): THREE.Matrix4 {
+    const { translation, rotation } = image360Metadata.transformations;
+
+    const entityTransform = translation.clone();
+
+    if (!preComputedRotation) {
+      entityTransform.multiply(rotation.clone().multiply(new THREE.Matrix4().makeRotationY(Math.PI / 2)));
+    } else {
+      entityTransform.multiply(new THREE.Matrix4().makeRotationY(Math.PI));
+    }
+
+    return postTransform.clone().multiply(entityTransform);
   }
 }

@@ -4,7 +4,7 @@
 import * as THREE from 'three';
 
 import { Cdf360ImageEventProvider, Image360Provider } from '@reveal/data-providers';
-import { StreamingTestFixtureComponents } from 'visual-tests/test-fixtures/StreamingVisualTestFixture';
+import { StreamingTestFixtureComponents } from '../../../visual-tests/test-fixtures/StreamingVisualTestFixture';
 import { StreamingVisualTestFixture } from '../../../visual-tests';
 import { Image360EntityFactory } from '../src/Image360EntityFactory';
 import { It, Mock } from 'moq.ts';
@@ -12,29 +12,28 @@ import { Image360Facade } from '../src/Image360Facade';
 import { SceneHandler } from '@reveal/utilities';
 import { CogniteClient } from '@cognite/sdk';
 import { Image360Entity } from '../src/Image360Entity';
+import { degToRad } from 'three/src/math/MathUtils';
+
+type CdfImage360Facade = Image360Facade<{
+  [key: string]: string;
+}>;
+
+type LocalImage360Facade = Image360Facade<THREE.Vector3>;
 
 export default class Image360VisualTestFixture extends StreamingVisualTestFixture {
   public async setup(testFixtureComponents: StreamingTestFixtureComponents): Promise<void> {
     const { cogniteClient, sceneHandler, cameraControls, renderer, camera } = testFixtureComponents;
 
-    if (cogniteClient === undefined) {
-      const image360Facade = await this.setupLocal(sceneHandler);
-
-      const size = renderer.getDrawingBufferSize(new THREE.Vector2());
-
-      renderer.domElement.addEventListener('mousemove', event => {
-        image360Facade.facade.intersect(
-          { x: (event.x / size.x) * 2 - 1, y: ((event.y / size.y) * 2 - 1) * -1 },
-          camera
-        );
-        this.render();
-      });
-
-      return;
-    }
-
-    const { facade, entities } = await this.setupOfficeRobotics(sceneHandler, cogniteClient);
+    const { facade, entities } = await this.setup360Images(cogniteClient, sceneHandler);
     const size = renderer.getDrawingBufferSize(new THREE.Vector2());
+
+    const guiData = {
+      opacity: 1.0
+    };
+    this.gui.add(guiData, 'opacity', 0, 1).onChange(() => {
+      entities.forEach(entity => (entity.opacity = guiData.opacity));
+      this.render();
+    });
 
     renderer.domElement.addEventListener('mousemove', event => {
       entities.forEach(p => (p.icon.hoverSpriteVisible = false));
@@ -53,10 +52,42 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
         entity.activate360Image();
         entity.icon.visible = false;
         const transform = entity.transform.toArray();
-        cameraControls.target.copy(new THREE.Vector3(transform[12], transform[13], transform[14]));
+        const image360Translation = new THREE.Vector3(transform[12], transform[13], transform[14]);
+        camera.position.copy(image360Translation);
+        cameraControls.target.copy(image360Translation.clone().add(new THREE.Vector3(0, 0, 0.001)));
       }
       this.render();
     });
+  }
+
+  private setup360Images(
+    cogniteClient: CogniteClient | undefined,
+    sceneHandler: SceneHandler
+  ): Promise<{ facade: CdfImage360Facade | LocalImage360Facade; entities: Image360Entity[] }> {
+    if (cogniteClient === undefined) {
+      return this.setupLocal(sceneHandler);
+    }
+
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+
+    if (
+      urlParams.get('project') === 'twin-test' &&
+      urlParams.get('modelId') === '946412141563897' &&
+      urlParams.get('revisionId') === '6425532219434724'
+    ) {
+      return this.setupTwinTestMauiA(sceneHandler, cogniteClient);
+    }
+
+    if (
+      urlParams.get('project') === 'officerobotics' &&
+      urlParams.get('modelId') === '2755498691043825' &&
+      urlParams.get('revisionId') === '141507501940626'
+    ) {
+      return this.setupOfficeRobotics(sceneHandler, cogniteClient);
+    }
+
+    return this.setupLocal(sceneHandler);
   }
 
   private async setupOfficeRobotics(
@@ -74,8 +105,39 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
     const rotation = new THREE.Matrix4().makeRotationAxis(new THREE.Vector3(0, 1, 0), 0.1);
     const translation = new THREE.Matrix4().makeTranslation(-18, 1, -13);
     const collectionTransform = translation.multiply(rotation);
-    const entities = await image360Facade.create({ site_id: '6th floor v3 - enterprise' }, collectionTransform);
+    const entities = await image360Facade.create({ site_id: '6th floor v3 - enterprise' }, collectionTransform, false);
     return { facade: image360Facade, entities };
+  }
+
+  private async setupTwinTestMauiA(
+    sceneHandler: SceneHandler,
+    cogniteClient: CogniteClient
+  ): Promise<{
+    facade: Image360Facade<{
+      [key: string]: string;
+    }>;
+    entities: Image360Entity[];
+  }> {
+    const cdf360ImageProvider = new Cdf360ImageEventProvider(cogniteClient);
+    const image360Factory = new Image360EntityFactory(cdf360ImageProvider, sceneHandler);
+    const image360Facade = new Image360Facade(image360Factory);
+
+    const rotation = new THREE.Matrix4().makeRotationAxis(new THREE.Vector3(0, 1, 0), degToRad(177));
+    const translation = new THREE.Matrix4().makeTranslation(11, 49, 32);
+    const collectionTransform = translation.multiply(rotation);
+    const entities = await image360Facade.create({ site_id: 'helideck-site-2' }, collectionTransform);
+
+    const rotation2 = new THREE.Matrix4().makeRotationAxis(new THREE.Vector3(0, 1, 0), degToRad(40));
+    const translation2 = new THREE.Matrix4().makeTranslation(34, 30, 46);
+    const collectionTransform2 = translation2.multiply(rotation2);
+    const entities2 = await image360Facade.create({ site_id: 'j-tube-diesel-header-tank' }, collectionTransform2);
+
+    const rotation3 = new THREE.Matrix4().makeRotationAxis(new THREE.Vector3(0, 1, 0), degToRad(96));
+    const translation3 = new THREE.Matrix4().makeTranslation(176, 37, 56);
+    const collectionTransform3 = translation3.multiply(rotation3);
+    const entities3 = await image360Facade.create({ site_id: 'se-stairs-module-5-boot-room' }, collectionTransform3);
+
+    return { facade: image360Facade, entities: entities.concat(entities2, entities3) };
   }
 
   private async setupLocal(sceneHandler: SceneHandler): Promise<{
@@ -111,7 +173,10 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
             label: 'test',
             collectionId: '0',
             collectionLabel: 'testCollection',
-            transform: new THREE.Matrix4().makeTranslation(translation.x, translation.y, translation.z)
+            transformations: {
+              translation: new THREE.Matrix4().makeTranslation(translation.x, translation.y, translation.z),
+              rotation: new THREE.Matrix4()
+            }
           }
         ]);
       });
