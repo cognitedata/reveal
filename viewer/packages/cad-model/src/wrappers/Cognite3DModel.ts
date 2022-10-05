@@ -35,7 +35,7 @@ export class Cognite3DModel implements CogniteModelBase, CdfModelNodeCollectionD
   /**
    * Returns the unit the coordinates for the model is stored. Returns an empty string
    * if no unit has been stored.
-   * Note that coordinates in Reveal always are converted to meters using {@see modelUnitToMetersFactor}.
+   * Note that coordinates in Reveal always are converted to meters using {@link modelUnitToMetersFactor}.
    */
   get modelUnit(): WellKnownUnit | '' {
     // Note! Returns union type, because we expect it to be a value in WellKnownUnit, but we
