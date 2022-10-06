@@ -6,13 +6,6 @@ export { PointCloudPickingHandler } from './src/PointCloudPickingHandler';
 
 export { WellKnownAsprsPointClassCodes } from './src/types';
 
-export {
-  PotreePointShape,
-  PotreePointColorType,
-  PotreePointSizeType,
-  PointCloudMaterial
-} from './src/potree-three-loader';
-
 export { PointCloudNode } from './src/PointCloudNode';
 export { PointCloudManager } from './src/PointCloudManager';
 export { createPointCloudManager } from './src/createPointCloudManager';
