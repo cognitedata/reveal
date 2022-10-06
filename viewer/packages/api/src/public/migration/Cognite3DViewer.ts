@@ -387,6 +387,7 @@ export class Cognite3DViewer {
 
     this.spinner.dispose();
 
+    this._models.forEach(m => m.dispose());
     this._sceneHandler.dispose();
 
     this._events.disposed.fire();

@@ -16,19 +16,17 @@ import { SSAOPass } from '../render-passes/SSAOPass';
 import { blitShaders } from '../rendering/shaders';
 import { SceneHandler, WebGLRendererStateHelper } from '@reveal/utilities';
 import { PointCloudRenderPipelineProvider } from './PointCloudRenderPipelineProvider';
-import { CadNode } from '@reveal/cad-model';
-import { PointCloudNode } from '@reveal/pointclouds';
 import { PointCloudMaterialManager } from '../PointCloudMaterialManager';
 
 export class DefaultRenderPipelineProvider implements RenderPipelineProvider {
   private readonly _viewerScene: THREE.Scene;
   private readonly _renderTargetData: RenderTargetData;
   private readonly _cadModels: {
-    cadNode: CadNode;
+    cadNode: THREE.Object3D;
     modelIdentifier: string;
   }[];
   private readonly _pointCloudModels: {
-    pointCloudNode: PointCloudNode;
+    pointCloudNode: THREE.Object3D;
     modelIdentifier: symbol;
   }[];
   private readonly _customObjects: THREE.Object3D[];
