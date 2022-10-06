@@ -15,6 +15,9 @@ import { translations } from 'common/i18n';
 import GlobalStyles from 'styles/GlobalStyles';
 import { FlagProvider } from '@cognite/react-feature-flags';
 import Flow from 'pages/flow/Flow';
+import { Route, BrowserRouter, Routes } from 'react-router-dom';
+import FlowList from 'pages/flow-list';
+import { CANVAS_PATH } from 'common';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -26,6 +29,7 @@ const queryClient = new QueryClient({
 });
 const env = getEnv();
 const project = getProject();
+const ROOT_PATH = `/:tenant/${CANVAS_PATH}`;
 
 const App = () => {
   return (
@@ -43,7 +47,12 @@ const App = () => {
                 login={() => loginAndAuthIfNeeded(project, env)}
               >
                 <SDKProvider sdk={sdk}>
-                  <Flow />
+                  <BrowserRouter>
+                    <Routes>
+                      <Route path={ROOT_PATH} element={<FlowList />} />
+                      <Route path={`${ROOT_PATH}/:id`} element={<Flow />} />
+                    </Routes>
+                  </BrowserRouter>
                 </SDKProvider>
               </AuthWrapper>
             </SubAppWrapper>
