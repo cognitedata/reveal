@@ -1,4 +1,5 @@
-#pragma glslify: import('../../base/determineMatrixOverride.glsl')
+#pragma glslify: import('../../base/determineMatrixOverride.glsl');
+#pragma glslify: import('../../treeIndex/treeIndexPacking.glsl');
 
 uniform mat4 inverseModelMatrix;
 uniform mat4 modelMatrix;
@@ -27,12 +28,10 @@ out vec3 v_color;
 out vec3 v_normal;
 out vec3 vViewPosition;
 
-out highp float v_treeIndexHundreds;
-out mediump float v_treeIndexSubHundreds;
+out TreeIndexPacked v_treeIndexPacked;
 
 void main() {
-    v_treeIndexHundreds = floor(a_treeIndex / 100.0);
-    v_treeIndexSubHundreds = round(mod(a_treeIndex, 100.0));
+    v_treeIndexPacked = packTreeIndex(a_treeIndex);
     v_oneMinusThicknessSqr = (1.0 - a_thickness) * (1.0 - a_thickness);
     v_xy = vec2(position.x, position.y);
     v_angle = a_angle;
