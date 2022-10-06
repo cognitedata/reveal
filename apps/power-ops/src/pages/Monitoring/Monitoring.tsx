@@ -1,46 +1,27 @@
-import { useAuthenticatedAuthContext } from '@cognite/react-container';
+import { Fragment } from 'react';
 import { useMetrics } from '@cognite/metrics';
 import { useFetchSnifferJobs } from 'queries/useFetchSnifferJobs';
 import { Flex, Label, Button } from '@cognite/cogs.js';
-import axios from 'axios';
-import sidecar from 'utils/sidecar';
-import { axiosRequestConfig } from 'utils/utils';
+import { useStartAllSnifferJobs } from 'queries/useStartAllSnifferJobs';
+import { useStopAllSnifferJobs } from 'queries/useStopAllSnifferJobs';
 
 import { Container, StyledTable } from './elements';
+import { JobErrors } from './JobsErrors';
 
 export const Monitoring = () => {
   const metrics = useMetrics('monitoring');
-  const { client, token } = useAuthenticatedAuthContext();
-  const { snifferServiceBaseUrl } = sidecar;
-
-  const { data, refetch } = useFetchSnifferJobs();
+  const { data: jobs = [] } = useFetchSnifferJobs();
+  const { mutate: startAllJobs } = useStartAllSnifferJobs();
+  const { mutate: stopAllJobs } = useStopAllSnifferJobs();
 
   const startJobs = async () => {
     metrics.track('click-start-all-jobs-button');
-    axios
-      .get(
-        `${snifferServiceBaseUrl}/${client.project}/jobs/start-all`,
-        axiosRequestConfig(token)
-      )
-      .then((_response) => {
-        setTimeout(() => {
-          refetch();
-        }, 500);
-      });
+    startAllJobs();
   };
 
   const stopJobs = async () => {
     metrics.track('click-stop-all-jobs-button');
-    axios
-      .get(
-        `${snifferServiceBaseUrl}/${client.project}/jobs/stop-all`,
-        axiosRequestConfig(token)
-      )
-      .then((_response) => {
-        setTimeout(() => {
-          refetch();
-        }, 2000);
-      });
+    stopAllJobs();
   };
 
   return (
@@ -65,43 +46,54 @@ export const Monitoring = () => {
         <thead>
           <tr>
             <th>Job Name</th>
-            <th>Last Event found at</th>
+            <th>Latest Info</th>
             <th>CallBack URL </th>
             <th>Running Since </th>
             <th>Status </th>
           </tr>
         </thead>
         <tbody>
-          {data?.map((job) => (
-            <tr key={job.name}>
-              <td>{job.name}</td>
-              <td>
-                {job.lastEventFoundAt
-                  ? new Date(job.lastEventFoundAt).toLocaleString()
-                  : 'No events found'}
-              </td>
-              <td>{job.callBackURL}</td>
-              <td>
-                {job.startedTime
-                  ? new Date(job.startedTime).toLocaleString()
-                  : 'No events found'}
-              </td>
-              <td>
-                <Label
-                  variant={
-                    // eslint-disable-next-line no-nested-ternary
-                    job.status === 'running'
-                      ? 'success'
-                      : job.status === 'error'
-                      ? 'danger'
-                      : 'warning'
-                  }
-                >
-                  {job.status}
-                </Label>
-              </td>
-            </tr>
-          ))}
+          {jobs.map((job) => {
+            return (
+              <Fragment key={job.name}>
+                <tr>
+                  <td>{job.name}</td>
+                  <td>
+                    <div>
+                      {job.lastEventFoundAt
+                        ? new Date(job.lastEventFoundAt).toLocaleString()
+                        : 'No events found'}
+                    </div>
+                  </td>
+                  <td>{job.callBackURL}</td>
+                  <td>
+                    {job.startedTime
+                      ? new Date(job.startedTime).toLocaleString()
+                      : 'No events found'}
+                  </td>
+                  <td>
+                    <Label
+                      variant={
+                        // eslint-disable-next-line no-nested-ternary
+                        job.status === 'running'
+                          ? 'success'
+                          : job.status === 'error'
+                          ? 'danger'
+                          : 'warning'
+                      }
+                    >
+                      {job.status}
+                    </Label>
+                  </td>
+                </tr>
+                <tr>
+                  <td colSpan={5}>
+                    <JobErrors jobName={job.name} />
+                  </td>
+                </tr>
+              </Fragment>
+            );
+          })}
         </tbody>
       </StyledTable>
     </Container>

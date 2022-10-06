@@ -23,7 +23,7 @@ module.exports = {
       '<rootDir>/../../packages/$1/dist/mocks',
     ],
     // we don't want external private packages to be treated as local
-    '^@cognite/(?!cogs.js|sdk|power-ops-api-types|reveal|potree-core|seismic-sdk-js|videx-wellog|user-management-service-types)(.*)$':
+    '^@cognite/(?!cogs.js|sdk|power-ops-api-types|sniffer-service-types|reveal|potree-core|seismic-sdk-js|videx-wellog|user-management-service-types)(.*)$':
       [
         '../../../packages/$1/src',
         '../../../packages/$1/dist',

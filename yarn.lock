@@ -1601,6 +1601,11 @@
   resolved "https://registry.yarnpkg.com/@cognite/sniffer-service-types/-/sniffer-service-types-1.0.1.tgz#905369e71e110d2574261e3139a81d91f1b09f2c"
   integrity sha512-Z3enMziNvVjbM5lcZXgpO/cFBpsoyP4/DCkV8acF37Cj5IzDeozyp/G6IaRriyCUxt/2TIqxdn94uH8DH70Pmw==
 
+"@cognite/sniffer-service-types@^1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@cognite/sniffer-service-types/-/sniffer-service-types-1.0.1.tgz#905369e71e110d2574261e3139a81d91f1b09f2c"
+  integrity sha512-Z3enMziNvVjbM5lcZXgpO/cFBpsoyP4/DCkV8acF37Cj5IzDeozyp/G6IaRriyCUxt/2TIqxdn94uH8DH70Pmw==
+
 "@cognite/user-management-service-types@^0.1.6":
   version "0.1.6"
   resolved "https://registry.yarnpkg.com/@cognite/user-management-service-types/-/user-management-service-types-0.1.6.tgz#539bd3e76a023534c5d7fe2d14cbdbc1d3dbeaad"
