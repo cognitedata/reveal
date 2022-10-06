@@ -10,7 +10,8 @@ import { PotreeNodeWrapper } from './PotreeNodeWrapper';
 import { WellKnownAsprsPointClassCodes } from './types';
 import { createPointClassKey } from './createPointClassKey';
 
-import { PickPoint, PotreePointColorType, PotreePointShape, PotreePointSizeType } from './potree-three-loader';
+import { PickPoint } from './potree-three-loader';
+import { PotreePointColorType, PotreePointShape, PotreePointSizeType } from '@reveal/rendering';
 
 const PotreeDefaultPointClass = 'DEFAULT';
 

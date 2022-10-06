@@ -10,7 +10,8 @@ import { PointCloudEffectsPass } from '../render-passes/PointCloudEffectsPass';
 import { PointCloudRenderTargets } from './types';
 import { PointCloudPassParameters } from '../render-passes/types';
 import { PointCloudParameters } from '../rendering/types';
-import { PotreePointShape } from '@reveal/pointclouds';
+import { PotreePointShape } from '../pointcloud-rendering';
+import { PointCloudMaterialManager } from '../PointCloudMaterialManager';
 
 export class PointCloudRenderPipelineProvider implements RenderPipelineProvider {
   private readonly _renderTargetData: {
@@ -49,7 +50,11 @@ export class PointCloudRenderPipelineProvider implements RenderPipelineProvider 
     }
   };
 
-  constructor(sceneHandler: SceneHandler, renderParameters: PointCloudParameters) {
+  constructor(
+    sceneHandler: SceneHandler,
+    pointCloudMaterialManager: PointCloudMaterialManager,
+    renderParameters: PointCloudParameters
+  ) {
     this._renderTargetData = {
       currentRenderSize: new THREE.Vector2(1, 1),
       output: new THREE.WebGLRenderTarget(1, 1, {
@@ -64,10 +69,15 @@ export class PointCloudRenderPipelineProvider implements RenderPipelineProvider 
     this._sceneHandler = sceneHandler;
     this._renderParameters = renderParameters;
 
-    this._standardPass = new PointCloudEffectsPass(sceneHandler);
-    this._depthPass = new PointCloudEffectsPass(sceneHandler, PointCloudRenderPipelineProvider.DepthPassParameters);
+    this._standardPass = new PointCloudEffectsPass(sceneHandler.scene, pointCloudMaterialManager);
+    this._depthPass = new PointCloudEffectsPass(
+      sceneHandler.scene,
+      pointCloudMaterialManager,
+      PointCloudRenderPipelineProvider.DepthPassParameters
+    );
     this._attributePass = new PointCloudEffectsPass(
-      sceneHandler,
+      sceneHandler.scene,
+      pointCloudMaterialManager,
       PointCloudRenderPipelineProvider.AttributePassParameters
     );
   }

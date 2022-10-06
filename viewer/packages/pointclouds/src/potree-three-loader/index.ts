@@ -1,4 +1,3 @@
-export * from './rendering';
 export * from './tree/PointAttributes';
 export * from './tree/PointCloudOctreeNode';
 export * from './tree/PointCloudOctreePicker';
