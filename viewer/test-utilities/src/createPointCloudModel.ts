@@ -15,7 +15,7 @@ import {
 import * as THREE from 'three';
 
 import { IPointCloudTreeGeometry } from '../../packages/pointclouds/src/potree-three-loader/geometry/IPointCloudTreeGeometry';
-import { PointCloudMaterial } from '@reveal/rendering';
+import { PointCloudMaterial } from '../../packages/rendering';
 
 export function createPointCloudModel(modelId: number, revisionId: number): CognitePointCloudModel {
   const pointCloudOctree = new PointCloudOctree(
