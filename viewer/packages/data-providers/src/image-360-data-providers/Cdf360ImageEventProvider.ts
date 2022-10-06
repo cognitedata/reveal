@@ -108,10 +108,13 @@ export class Cdf360ImageEventProvider implements Image360Provider<{ [key: string
       collectionLabel: eventMetadata.site_name,
       id: eventMetadata.station_id,
       label: eventMetadata.station_name,
-      transform: parseTransform(eventMetadata)
+      transformations: parseTransform(eventMetadata)
     };
 
-    function parseTransform(transformationData: Event360TransformationData): THREE.Matrix4 {
+    function parseTransform(transformationData: Event360TransformationData): {
+      translation: THREE.Matrix4;
+      rotation: THREE.Matrix4;
+    } {
       const translationComponents = transformationData.translation.split(' ').map(parseFloat);
       const milimetersInMeters = 1000;
       const translation = new THREE.Vector3(
@@ -126,11 +129,11 @@ export class Cdf360ImageEventProvider implements Image360Provider<{ [key: string
         -rotationAxisComponents[1]
       );
       const rotationAngle = THREE.MathUtils.DEG2RAD * parseFloat(transformationData.rotation_angle);
-      const translationMatrix = new THREE.Matrix4().makeTranslation(translation.x, translation.y, translation.z);
       const rotationMatrix = new THREE.Matrix4().makeRotationAxis(rotationAxis, rotationAngle);
-      const offsetRot = new THREE.Matrix4().makeRotationY(Math.PI / 2);
 
-      return translationMatrix.multiply(offsetRot.multiply(rotationMatrix));
+      const translationMatrix = new THREE.Matrix4().makeTranslation(translation.x, translation.y, translation.z);
+
+      return { translation: translationMatrix, rotation: rotationMatrix };
     }
   }
 
