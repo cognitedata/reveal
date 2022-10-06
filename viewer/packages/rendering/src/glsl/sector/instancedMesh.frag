@@ -7,6 +7,7 @@ precision highp float;
 #pragma glslify: import('../base/determineVisibility.glsl');
 #pragma glslify: import('../base/determineColor.glsl');
 #pragma glslify: import('../base/isClipped.glsl')
+#pragma glslify: import('../treeIndex/treeIndexPacking.glsl')
 
 uniform sampler2D colorDataTexture;
 uniform sampler2D matCapTexture;
@@ -15,13 +16,12 @@ uniform int renderMode;
 
 in vec3 v_color;
 in vec3 v_viewPosition;
+in TreeIndexPacked v_treeIndexPacked;
 
-in highp float v_treeIndexHundreds;
-in mediump float v_treeIndexSubHundreds;
 void main()
 {
-    highp float v_treeIndex = round(v_treeIndexHundreds) * 100.0 + round(v_treeIndexSubHundreds);
-    NodeAppearance appearance = determineNodeAppearance(colorDataTexture, treeIndexTextureSize, v_treeIndex);
+    highp int treeIndex = unpackTreeIndex(v_treeIndexPacked);
+    NodeAppearance appearance = determineNodeAppearance(colorDataTexture, treeIndexTextureSize, float(treeIndex));
     if (!determineVisibility(appearance, renderMode)) {
         discard;
     }
@@ -32,5 +32,5 @@ void main()
 
     vec4 color = determineColor(v_color, appearance);
     vec3 normal = derivateNormal(v_viewPosition);
-    updateFragmentColor(renderMode, color, v_treeIndex, normal, gl_FragCoord.z, matCapTexture, GeometryType.InstancedMesh);
+    updateFragmentColor(renderMode, color, float(treeIndex), normal, gl_FragCoord.z, matCapTexture, GeometryType.InstancedMesh);
 }
