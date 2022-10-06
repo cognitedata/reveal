@@ -91,7 +91,7 @@ export class PostProcessingPass implements RenderPass {
 
     // Removes blending with the back objects framebuffer when it is hidden i.e. not
     // been rendered. This is a sanity check as well as a workaround for multisampled
-    // rendertargets not being able to clear properly.
+    // rendertargets not being able to clear properly (REV-530).
     this.setBlendFactorByBackVisibility = () => {
       inFrontBlitMaterial.uniforms.blendFactor.value = backBlitObject.visible ? 0.5 : 0.0;
     };
