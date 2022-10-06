@@ -273,7 +273,7 @@ export class Cognite3DViewer {
         if (!this._image360Facade) {
           return;
         }
-        this._image360Facade.allHoverIcons = false;
+        this._image360Facade.allHoverIconsVisibility = false;
         const { offsetX, offsetY } = event;
         const normalizedCoords = {
           x: (offsetX / this.renderer.domElement.clientWidth) * 2 - 1,

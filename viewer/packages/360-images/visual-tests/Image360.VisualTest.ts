@@ -51,13 +51,13 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
       this.render();
     });
 
-    renderer.domElement.addEventListener('click', event => {
+    renderer.domElement.addEventListener('click', async event => {
       const { x, y } = event;
       const { x: width, y: height } = size;
       const ndcCoordinates = pixelToNormalizedDeviceCoordinates(x, y, width, height);
       const entity = facade.intersect({ x: ndcCoordinates.x, y: ndcCoordinates.y }, camera);
       if (entity !== undefined) {
-        entity.activate360Image();
+        await entity.activate360Image();
         entity.icon.visible = false;
         const transform = entity.transform.toArray();
         const image360Translation = new THREE.Vector3(transform[12], transform[13], transform[14]);
