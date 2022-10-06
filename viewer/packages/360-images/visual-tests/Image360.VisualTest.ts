@@ -9,7 +9,7 @@ import { StreamingVisualTestFixture } from '../../../visual-tests';
 import { Image360EntityFactory } from '../src/Image360EntityFactory';
 import { It, Mock } from 'moq.ts';
 import { Image360Facade } from '../src/Image360Facade';
-import { SceneHandler } from '@reveal/utilities';
+import { pixelToNormalizedDeviceCoordinates, SceneHandler } from '@reveal/utilities';
 import { CogniteClient } from '@cognite/sdk';
 import { Image360Entity } from '../src/Image360Entity';
 import { degToRad } from 'three/src/math/MathUtils';
@@ -28,7 +28,7 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
     camera.updateProjectionMatrix();
 
     const { facade, entities } = await this.setup360Images(cogniteClient, sceneHandler);
-    const size = renderer.getDrawingBufferSize(new THREE.Vector2());
+    const size = new THREE.Vector2(renderer.domElement.clientWidth, renderer.domElement.clientHeight);
 
     const guiData = {
       opacity: 1.0
@@ -40,7 +40,10 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
 
     renderer.domElement.addEventListener('mousemove', event => {
       entities.forEach(p => (p.icon.hoverSpriteVisible = false));
-      const entity = facade.intersect({ x: (event.x / size.x) * 2 - 1, y: ((event.y / size.y) * 2 - 1) * -1 }, camera);
+      const { x, y } = event;
+      const { x: width, y: height } = size;
+      const ndcCoordinates = pixelToNormalizedDeviceCoordinates(x, y, width, height);
+      const entity = facade.intersect({ x: ndcCoordinates.x, y: ndcCoordinates.y }, camera);
       if (entity === undefined) {
         this.render();
         return;
@@ -50,7 +53,10 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
     });
 
     renderer.domElement.addEventListener('click', event => {
-      const entity = facade.intersect({ x: (event.x / size.x) * 2 - 1, y: ((event.y / size.y) * 2 - 1) * -1 }, camera);
+      const { x, y } = event;
+      const { x: width, y: height } = size;
+      const ndcCoordinates = pixelToNormalizedDeviceCoordinates(x, y, width, height);
+      const entity = facade.intersect({ x: ndcCoordinates.x, y: ndcCoordinates.y }, camera);
       if (entity !== undefined) {
         entity.activate360Image();
         entity.icon.visible = false;
