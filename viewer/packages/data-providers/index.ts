@@ -15,6 +15,7 @@ export { ModelDataProvider } from './src/ModelDataProvider';
 export { Image360Provider } from './src/Image360Provider';
 export {
   BinaryFileProvider,
+  JsonFileProvider,
   File3dFormat,
   BlobOutputMetadata,
   Image360Descriptor,
