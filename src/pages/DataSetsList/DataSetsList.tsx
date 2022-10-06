@@ -55,6 +55,7 @@ const DataSetsList = (): JSX.Element => {
   const {
     dataSetsWithExtpipes = [],
     isExtpipesFetched,
+    isFetched: didFetchDataSets,
     isLoading: loading,
   } = useDataSetsList();
   const { updateDataSetVisibility, isLoading: isUpdatingDataSetVisibility } =
@@ -267,7 +268,7 @@ const DataSetsList = (): JSX.Element => {
     }
   };
 
-  if (!didFetchWithExtpipes) {
+  if (!didFetchWithExtpipes || !didFetchDataSets) {
     return <Icon type="Loader" />;
   }
 

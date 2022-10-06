@@ -229,6 +229,7 @@ export const useDataSetsList = (): {
   dataSetsWithExtpipes?: DataSetWithExtpipes[];
   error: any;
   isExtpipesFetched: boolean;
+  isFetched: boolean;
   isLoading: boolean;
 } => {
   const { data: extpipes, ...extpipesQuery } = useExtpipes();
