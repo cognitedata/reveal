@@ -26,12 +26,7 @@ export const useMapSources = () => {
   const searchResultSources = useDeepMemo(
     // this creates the sources and set's up the clustering layer
     () => createSources(seismicCollection, features, mapConfig?.cluster),
-    [
-      features.features.length,
-      seismicCollection,
-      mapConfig?.cluster,
-      mapConfig?.zoom,
-    ]
+    [features.features, seismicCollection, mapConfig?.cluster]
   );
 
   const combinedSources = useDeepMemo(
