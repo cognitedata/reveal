@@ -5,7 +5,7 @@ import { ChartListProps } from '../types';
 import ChartListDropdown from '../ChartListDropdown/ChartListDropdown';
 
 const defaultTranslations = makeDefaultTranslations(
-  "You search didn't return any results",
+  "Your search didn't return any results",
   ...ChartListDropdown.translationKeys
 );
 
@@ -21,13 +21,19 @@ function ChartListGrid({
   onChartDuplicateClick,
   onChartDeleteClick,
   translations,
+  emptyState,
 }: Props) {
   const t = { ...defaultTranslations, ...translations };
+  if (!loading && list.length === 0 && emptyState) return <>{emptyState}</>;
   return (
     <Flex gap={15} wrap="wrap">
       {!loading && list.length === 0 && (
         <div style={{ flexGrow: 1, textAlign: 'center', marginBottom: 10 }}>
-          <Title level={4}>{t["You search didn't return any results"]}</Title>
+          {emptyState || (
+            <Title level={4}>
+              {t["Your search didn't return any results"]}
+            </Title>
+          )}
         </div>
       )}
       {loading

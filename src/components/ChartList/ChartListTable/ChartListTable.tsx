@@ -23,7 +23,9 @@ const defaultTranslations = makeDefaultTranslations(
   'Owner',
   'Updated',
   'Actions',
-  "You search didn't return any results",
+  "Your search didn't return any results",
+  'Create a new chart to get started',
+  'You can also check out public charts in the left menu.',
   ...translationKeys(ChartListDropdown.defaultTranslations)
 );
 
@@ -38,6 +40,7 @@ function ChartListTable({
   onChartClick,
   onChartDeleteClick,
   onChartDuplicateClick,
+  emptyState,
   translations,
 }: Props) {
   const t = { ...defaultTranslations, ...translations };
@@ -83,10 +86,8 @@ function ChartListTable({
         <tbody>
           {!loading && list.length === 0 && (
             <tr>
-              <td colSpan={5} style={{ textAlign: 'center' }}>
-                <Title level={4}>
-                  {t["You search didn't return any results"]}
-                </Title>
+              <td colSpan={5}>
+                {emptyState || t["Your search didn't return any results"]}
               </td>
             </tr>
           )}

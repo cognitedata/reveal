@@ -4,6 +4,7 @@ import useMyChartsList from 'hooks/charts/hooks/useMyChartsList';
 import usePublicChartsList from 'hooks/charts/hooks/usePublicChartsList';
 import { ComponentProps } from 'react';
 import { trackUsage } from 'services/metrics';
+import { EmptyStatePublicCharts } from 'components/EmptyStates';
 import ChartList from '../ChartList';
 
 type Props = {
@@ -46,6 +47,7 @@ const PublicChartsList = ({ viewOption, sortOption, searchTerm }: Props) => {
       onChartDeleteClick={() => {}}
       translations={translations}
       readOnly
+      emptyState={<EmptyStatePublicCharts />}
     />
   );
 };

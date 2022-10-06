@@ -3,6 +3,7 @@ import { useNavigate } from 'hooks/navigation';
 import { useComponentTranslations } from 'hooks/translations';
 import { ComponentProps } from 'react';
 import { trackUsage } from 'services/metrics';
+import { EmptyStateMyCharts } from 'components/EmptyStates';
 import ChartList from '../ChartList';
 
 type Props = {
@@ -34,6 +35,7 @@ const MyChartsList = ({ sortOption, searchTerm, viewOption }: Props) => {
 
   return (
     <ChartList
+      emptyState={<EmptyStateMyCharts />}
       error={error as string}
       loading={loading}
       viewOption={viewOption}

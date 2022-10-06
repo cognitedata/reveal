@@ -12,7 +12,9 @@ const defaultTranslations = makeDefaultTranslations(
   'Actions',
   'Duplicate',
   'Delete',
-  "You search didn't return any results"
+  "Your search didn't return any results",
+  'Create a new chart to get started',
+  'You can also check out public charts in the left menu.'
 );
 
 interface Props extends ChartListProps {
@@ -31,11 +33,13 @@ const ChartList = ({
   onChartDuplicateClick,
   readOnly,
   translations,
+  emptyState,
 }: Props) => {
   const Component = viewOption === 'list' ? ChartListTable : ChartListGrid;
   return (
     <>
       <Component
+        emptyState={emptyState}
         loading={loading}
         list={list}
         onChartClick={onChartClick}

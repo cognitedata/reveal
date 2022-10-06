@@ -12,6 +12,7 @@ export interface ChartListProps {
     loadingPlot: boolean;
     plotlyProps: ComponentProps<typeof PlotlyChart> | undefined;
   }[];
+  emptyState?: JSX.Element;
   onChartClick: (chartId: string) => void;
   onChartDuplicateClick: (chartId: string) => void;
   onChartDeleteClick: (chartId: string) => void;
