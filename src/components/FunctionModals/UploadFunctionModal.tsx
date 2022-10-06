@@ -33,7 +33,7 @@ import {
 } from 'utils/formValidations';
 import ErrorFeedback from 'components/Common/atoms/ErrorFeedback';
 import { allFunctionsKey } from 'utils/queryKeys';
-import { Runtime } from 'types';
+import { CogFunctionLimit, Runtime } from 'types';
 import FunctionMetadata, {
   MetaType,
 } from 'components/FunctionModals/FunctionMetadata';
@@ -72,17 +72,17 @@ const runtimes: RuntimeOption[] = [
   { label: 'Python 3.9', value: 'py39' },
 ];
 
+const limitDefaults: CogFunctionLimit = {
+  timeoutMinutes: 10,
+  cpuCores: { default: 0.25, max: 0.6, min: 0.1 },
+  memoryGb: { default: 1, max: 2.5, min: 0.1 },
+  runtimes: ['py37', 'py38', 'py39'],
+  responseSizeMb: 1,
+};
+
 export default function UploadFunctionModal({ onCancel }: Props) {
   const queryCache = useQueryCache();
-  const {
-    data: limits = {
-      timeoutMinutes: 10,
-      cpuCores: { default: 0.25, max: 0.6, min: 0.1 },
-      memoryGb: { default: 1, max: 2.5, min: 0.1 },
-      runtimes: ['py37', 'py38', 'py39'],
-      responseSizeMb: 1,
-    },
-  } = useLimits();
+  const { data: limits = limitDefaults } = useLimits();
 
   const [doUploadFunction, { isLoading, isError, error }] = useMutation(
     uploadFunction,
@@ -196,6 +196,7 @@ export default function UploadFunctionModal({ onCancel }: Props) {
 
   const checkCPU = checkFloat(limits.cpuCores.min, limits.cpuCores.max);
   const checkMemory = checkFloat(limits.memoryGb.min, limits.memoryGb.max);
+  const isAKS = limits?.vendor === 'aks';
 
   const canBeSubmitted =
     !!file &&
@@ -406,7 +407,7 @@ export default function UploadFunctionModal({ onCancel }: Props) {
                 max="0.6"
                 value={cpu}
                 onChange={handleCpuChange}
-                disabled={limits?.vendor === 'aks'}
+                disabled={isAKS}
                 allowClear
               />
             </Form.Item>
@@ -424,7 +425,7 @@ export default function UploadFunctionModal({ onCancel }: Props) {
                 min="0.1"
                 max="2.5"
                 onChange={handleMemoryChange}
-                disabled={limits?.vendor === 'aks'}
+                disabled={isAKS}
                 allowClear
               />
             </Form.Item>
