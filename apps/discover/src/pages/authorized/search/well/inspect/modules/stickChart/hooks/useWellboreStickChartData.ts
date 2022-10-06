@@ -3,7 +3,7 @@ import { getDataWithLoadingStatus } from '../utils/getDataWithLoadingStatus';
 
 import { useCasingsColumnsData } from './useCasingsColumnsData';
 import { useFormationColumnsData } from './useFormationColumnsData';
-import { useHoleSectionsColumnsData } from './useHoleSectionsColumnsData ';
+import { useHoleSectionsColumnsData } from './useHoleSectionsColumnsData';
 import { useMeasurementsColumnsData } from './useMeasurementsColumnsData';
 import { useNdsColumnsData } from './useNdsColumnsData';
 import { useNptColumnsData } from './useNptColumnsData';
