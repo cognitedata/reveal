@@ -1,4 +1,13 @@
 {
+  "current_language_text": "Language: English",
+  "data-set": "Data set",
+  "engineering-diagram": "Diagram",
+  "english": "English",
+  "english_language": "English",
+  "entity-matching": "Entity matching",
+  "extraction-pipeline": "Extraction pipeline",
+  "japanese": "Japanese",
+  "japanese_language": "Japanese",
   "list-create-flow": "Create flow",
   "list-delete": "Delete flow",
   "list-description": "Description TBD",
@@ -8,6 +17,13 @@
   "list-search-filtered-count_other": "{{filteredCount}}/{{count}} flows",
   "list-search-placeholder": "Search",
   "list-title": "Flows",
+  "no-configuration": "No configuration",
+  "raw-table": "Raw table",
+  "test1": "test1",
+  "test2": "test2",
   "toolbox-description": "Drag and drop items to the canvas",
-  "toolbox-title": "Toolbox"
+  "toolbox-title": "Toolbox",
+  "transformation": "Transformation",
+  "welcome": "Hello to {{appName}} {{userName}}",
+  "welcome_text": "Hello to {{appName}} {{userName}} (locize)"
 }

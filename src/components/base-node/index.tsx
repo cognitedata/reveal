@@ -1,4 +1,4 @@
-import { Colors } from '@cognite/cogs.js';
+import { Colors, IconType } from '@cognite/cogs.js';
 import { Handle, Position, useNodes } from 'react-flow-renderer';
 import styled from 'styled-components';
 
@@ -9,6 +9,9 @@ const BASE_NODE_HANDLE_SIZE_IN_PX = 6;
 
 type BaseNodeProps = {
   children: React.ReactNode;
+  description?: string;
+  icon: IconType;
+  title: string;
 };
 
 export const BaseNode = ({ children }: BaseNodeProps): JSX.Element => {
