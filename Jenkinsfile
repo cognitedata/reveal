@@ -163,6 +163,7 @@ pods {
     "\$(git merge-base refs/remotes/origin/master HEAD)" :
     // for staging/production compare current and previous commit hashes
     'HEAD^1'
+  final boolean isReleaseBranch = env.BRANCH_NAME.startsWith('release-')
 
   registerNightly()
 
@@ -221,7 +222,6 @@ pods {
           script: "bazel run snapshots -- collect --out snapshot.json",
         )
 
-
         def diffStr = sh(
             label: "diff against deployed",
             script: "GOOGLE_APPLICATION_CREDENTIALS=/jenkins-bazel-build-cache-member/credentials.json bazel run snapshots -- diff --format=json --stderr-pretty deployed \"\$(pwd)/snapshot.json\"",
@@ -234,9 +234,18 @@ pods {
         def changedOrAdded = diff.findAll { change -> ['added', 'changed'].contains(change.change) }
         def changeHasTag = { tag -> { change -> change.tags.any { t -> t == tag } } }
 
-        changedPackageInfos = changedOrAdded.findAll(changeHasTag('package_info'))
-        changedPublishFas = changedOrAdded.findAll(changeHasTag('publish_fas'))
-        changedPublishStorybook = changedOrAdded.findAll(changeHasTag('publish_storybook'))
+        if (!isReleaseBranch) {
+          changedPackageInfos = changedOrAdded.findAll(changeHasTag('package_info'))
+          changedPublishFas = changedOrAdded.findAll(changeHasTag('publish_fas'))
+          changedPublishStorybook = changedOrAdded.findAll(changeHasTag('publish_storybook'))
+        } else {
+          String branchName = env.BRANCH_NAME.substring(8)
+          String versionRegex = ".\\d+\\.\\d+\\.\\d+.*"
+          String appName = branchName.replaceAll(versionRegex, "")
+          changedPublishFas = changedOrAdded.findAll(changeHasTag('publish_fas'))
+          def isReleaseApp = { change -> change.label.startsWith("//apps/" + appName) }
+          changedPublishFas = changedPublishFas.findAll(isReleaseApp)
+        }
 
         def targetComment = { changes, name, emoji ->
           changes.size() > 0 ?
@@ -271,7 +280,7 @@ pods {
     stageWithNotify('Bazel test', CONTEXTS.bazelTests) {
       container('bazel') {
         sh(label: 'lint bazel files', script: 'bazel run //:buildifier_check')
-        if (isProduction || (!isPullRequest && env.BRANCH_NAME.startsWith('release-'))) {
+        if (isProduction || (!isPullRequest && isReleaseBranch)) {
           sh(label: 'bazel test //...', script: 'bazel test //... --test_tag_filters=-ignore_test_in_cd,-nightly')
         } else {
           sh(label: 'bazel test //...', script: 'bazel test //... --test_tag_filters=-nightly')
@@ -462,7 +471,7 @@ pods {
       )
     }
 
-    if (!isPullRequest) {
+    if (!isPullRequest && !isReleaseBranch) {
       stage('Push and tag snapshot') {
         container('bazel') {
           sh(
