@@ -18,8 +18,6 @@ describe(SceneHandler.name, () => {
     const cadModel = createCadModel(1, 1);
     const cadNodeMock = cadModel.cadNode;
 
-    const disposeCadNode = jest.spyOn(cadNodeMock, 'dispose');
-
     const sceneHandler = new SceneHandler();
     sceneHandler.addCadModel(cadNodeMock, '0');
     sceneHandler.addCustomObject(customObjectMesh);
@@ -30,8 +28,6 @@ describe(SceneHandler.name, () => {
 
     expect(disposeCustomObjectMeshGeometry).toBeCalled();
     expect(disposeCustomObjectMeshMaterial).toBeCalled();
-
-    expect(disposeCadNode).toBeCalled();
 
     expect(sceneHandler.scene.children.length).toBe(0);
   });
