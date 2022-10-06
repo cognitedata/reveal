@@ -7,9 +7,12 @@ import {
   CallResponse,
   Log,
   Schedule,
+  CogFunctionLimit,
 } from 'types';
 import sdk, { getUserInformation } from '@cognite/cdf-sdk-singleton';
 import { getProject } from '@cognite/cdf-utilities';
+import camelCase from 'lodash/camelCase';
+import mapKeys from 'lodash/mapKeys';
 import {
   allFunctionsKey,
   allSchedulesKey,
@@ -19,6 +22,7 @@ import {
   logsKey,
   responseKey,
   sortFunctionKey,
+  limitsKey,
 } from './queryKeys';
 import { getCalls, getCall, getResponse, getLogs, getLatestCalls } from './api';
 
@@ -65,7 +69,19 @@ export const useSchedules = (config?: QueryConfig<Schedule[], unknown>) =>
         .then(r => r.data?.items),
     config
   );
-
+export const useLimits = (config?: QueryConfig<CogFunctionLimit, unknown>) =>
+  useQuery<CogFunctionLimit>(
+    [limitsKey],
+    () =>
+      sdk
+        .get(`/api/v1/projects/${getProject()}/functions/limits`, {
+          params: { vendor: true },
+        })
+        .then(
+          r => mapKeys(r.data, (_, key) => camelCase(key)) as CogFunctionLimit
+        ),
+    config
+  );
 export const useCalls = (
   args: GetCallsArgs,
   config?: QueryConfig<Call[], unknown>

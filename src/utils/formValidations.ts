@@ -221,5 +221,3 @@ export const checkFloat = (min: number, max: number) => (data: string) => {
     message: '',
   };
 };
-
-export const skipValidation = () => ({ error: false, message: '' });

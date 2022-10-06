@@ -23,7 +23,7 @@ export interface Relationship {
   relationshipType: RelationshipType;
 }
 
-export type Runtime = 'py37' | 'py38' | 'py39';
+export type Runtime = 'py37' | 'py38' | 'py39' | 'py310' | 'py311' | 'py312'; // Future proofing.
 
 export interface CogFunctionUpload {
   name: string;
@@ -45,6 +45,23 @@ export interface CogFunction extends CogFunctionUpload {
   status: 'Queued' | 'Deploying' | 'Ready' | 'Failed';
   error?: Error;
   runtimeVersion?: string;
+}
+
+export interface CogFunctionLimit {
+  timeoutMinutes: number;
+  cpuCores: {
+    default: number;
+    max: number;
+    min: number;
+  };
+  memoryGb: {
+    default: number;
+    max: number;
+    min: number;
+  };
+  runtimes: Runtime[];
+  responseSizeMb: number;
+  vendor?: string;
 }
 
 export interface Error {
