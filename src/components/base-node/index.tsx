@@ -35,12 +35,12 @@ export const BaseNode = ({
       <StyledBaseHandleLeft
         isValidConnection={(connection) => isConnectionValid(connection, nodes)}
         position={Position.Left}
-        type="source"
+        type="target"
       />
       <StyledBaseHandleRight
         isValidConnection={(connection) => isConnectionValid(connection, nodes)}
         position={Position.Right}
-        type="target"
+        type="source"
       />
       <StyledBaseNodeHeader>
         <Flex gap={8}>

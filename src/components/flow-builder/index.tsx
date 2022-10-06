@@ -5,6 +5,7 @@ import ReactFlow, {
   Background,
   Edge,
   Node,
+  MarkerType,
   OnConnect,
   ReactFlowInstance,
   useEdgesState,
@@ -53,7 +54,23 @@ export const FlowBuilder = ({
 
   const onConnect: OnConnect = useCallback(
     (connection) => {
-      setEdges((prevEdges) => addEdge(connection, prevEdges));
+      setEdges((prevEdges) =>
+        addEdge(
+          {
+            ...connection,
+            animated: true,
+            markerEnd: {
+              type: MarkerType.ArrowClosed,
+              height: 16,
+              width: 16,
+            },
+            style: {
+              strokeWidth: 1,
+            },
+          },
+          prevEdges
+        )
+      );
     },
     [setEdges]
   );
