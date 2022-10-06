@@ -1663,7 +1663,6 @@ __metadata:
     "@reveal/cad-parsers": "workspace:*"
     "@reveal/cad-styling": "workspace:*"
     "@reveal/logger": "workspace:*"
-    "@reveal/pointclouds": "workspace:*"
     "@reveal/utilities": "workspace:*"
   languageName: unknown
   linkType: soft
