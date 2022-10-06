@@ -6,13 +6,8 @@ import * as THREE from 'three';
 
 export type PotreeClassification = { [pointClass: number]: { x: number; y: number; z: number; w: number } };
 
-import {
-  PointCloudOctree,
-  PotreePointColorType,
-  PotreePointShape,
-  IClassification,
-  PickPoint
-} from './potree-three-loader';
+import { PointCloudOctree, PickPoint } from './potree-three-loader';
+import { PotreePointColorType, PotreePointShape, IClassification } from '@reveal/rendering';
 import { WellKnownAsprsPointClassCodes } from './types';
 
 import { createPointClassKey } from './createPointClassKey';

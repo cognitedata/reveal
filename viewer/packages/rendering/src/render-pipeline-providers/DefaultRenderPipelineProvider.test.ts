@@ -11,6 +11,7 @@ import { defaultRenderOptions } from '../rendering/types';
 import { CadNode } from '@reveal/cad-model';
 import { PointCloudNode } from '@reveal/pointclouds';
 import { createCadModel, createPointCloudModel } from '../../../../test-utilities';
+import { PointCloudMaterialManager } from '../PointCloudMaterialManager';
 
 describe(DefaultRenderPipelineProvider.name, () => {
   let rendererMock: IMock<THREE.WebGLRenderer>;
@@ -53,6 +54,9 @@ describe(DefaultRenderPipelineProvider.name, () => {
       .returns(new IndexSet([]))
       .setup(p => p.getModelInFrontTreeIndices('0'))
       .returns(new IndexSet([]));
+    const pcMaterialManagerMock = new Mock<PointCloudMaterialManager>()
+      .setup(p => p.setModelsMaterialParameters({}))
+      .returns();
 
     const sceneHandler = new SceneHandler();
 
@@ -60,6 +64,7 @@ describe(DefaultRenderPipelineProvider.name, () => {
 
     const defaultRenderPipelineProvider = new DefaultRenderPipelineProvider(
       materialManagerMock.object(),
+      pcMaterialManagerMock.object(),
       sceneHandler,
       defaultRenderOptions
     );
@@ -82,6 +87,9 @@ describe(DefaultRenderPipelineProvider.name, () => {
       .returns(new IndexSet([0]))
       .setup(p => p.getModelInFrontTreeIndices('0'))
       .returns(new IndexSet([0]));
+    const pcMaterialManagerMock = new Mock<PointCloudMaterialManager>()
+      .setup(p => p.setModelsMaterialParameters({}))
+      .returns();
 
     const sceneHandler = new SceneHandler();
 
@@ -89,6 +97,7 @@ describe(DefaultRenderPipelineProvider.name, () => {
 
     const defaultRenderPipelineProvider = new DefaultRenderPipelineProvider(
       materialManagerMock.object(),
+      pcMaterialManagerMock.object(),
       sceneHandler,
       defaultRenderOptions
     );
@@ -105,6 +114,9 @@ describe(DefaultRenderPipelineProvider.name, () => {
 
   test('Pipeline with one custom object return two passes', () => {
     const materialManagerMock = new Mock<CadMaterialManager>();
+    const pcMaterialManagerMock = new Mock<PointCloudMaterialManager>()
+      .setup(p => p.setModelsMaterialParameters({}))
+      .returns();
 
     const sceneHandler = new SceneHandler();
 
@@ -112,6 +124,7 @@ describe(DefaultRenderPipelineProvider.name, () => {
 
     const defaultRenderPipelineProvider = new DefaultRenderPipelineProvider(
       materialManagerMock.object(),
+      pcMaterialManagerMock.object(),
       sceneHandler,
       defaultRenderOptions
     );
@@ -134,6 +147,9 @@ describe(DefaultRenderPipelineProvider.name, () => {
       .returns(new IndexSet([]))
       .setup(p => p.getModelInFrontTreeIndices('0'))
       .returns(new IndexSet([]));
+    const pcMaterialManagerMock = new Mock<PointCloudMaterialManager>()
+      .setup(p => p.setModelsMaterialParameters({}))
+      .returns();
 
     const sceneHandler = new SceneHandler();
 
@@ -144,6 +160,7 @@ describe(DefaultRenderPipelineProvider.name, () => {
 
     const defaultRenderPipelineProvider = new DefaultRenderPipelineProvider(
       materialManagerMock.object(),
+      pcMaterialManagerMock.object(),
       sceneHandler,
       renderOptions
     );
@@ -160,6 +177,9 @@ describe(DefaultRenderPipelineProvider.name, () => {
 
   test('Pipeline with one point cloud model returns 3 passes', () => {
     const materialManagerMock = new Mock<CadMaterialManager>();
+    const pcMaterialManagerMock = new Mock<PointCloudMaterialManager>()
+      .setup(p => p.setModelsMaterialParameters({}))
+      .returns();
 
     const sceneHandler = new SceneHandler();
 
@@ -167,6 +187,7 @@ describe(DefaultRenderPipelineProvider.name, () => {
 
     const defaultRenderPipelineProvider = new DefaultRenderPipelineProvider(
       materialManagerMock.object(),
+      pcMaterialManagerMock.object(),
       sceneHandler,
       defaultRenderOptions
     );
@@ -183,6 +204,9 @@ describe(DefaultRenderPipelineProvider.name, () => {
 
   test('Pipeline with one point cloud model and point blending enabled returns 4 passes', () => {
     const materialManagerMock = new Mock<CadMaterialManager>();
+    const pcMaterialManagerMock = new Mock<PointCloudMaterialManager>()
+      .setup(p => p.setModelsMaterialParameters({}))
+      .returns();
 
     const sceneHandler = new SceneHandler();
 
@@ -190,6 +214,7 @@ describe(DefaultRenderPipelineProvider.name, () => {
 
     const defaultRenderPipelineProvider = new DefaultRenderPipelineProvider(
       materialManagerMock.object(),
+      pcMaterialManagerMock.object(),
       sceneHandler,
       {
         ...defaultRenderOptions,
