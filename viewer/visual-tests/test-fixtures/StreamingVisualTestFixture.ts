@@ -57,6 +57,7 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
   private readonly _pcMaterialManager: PointCloudMaterialManager;
   private readonly _localModelUrl: string;
   private readonly _statsJs = new Stats();
+  private readonly _cadNodes: Array<CadNode>;
   private _gui!: dat.GUI;
 
   protected readonly _frameStatisticsGUIData = {
@@ -100,6 +101,7 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
     this._localModelUrl = localModelUrl;
 
     this._perspectiveCamera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 1000);
+    this._cadNodes = new Array<CadNode>();
 
     this._sceneHandler = new SceneHandler();
 
@@ -314,6 +316,9 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
 
     if (modelOutputs.includes('gltf-directory') || modelOutputs.includes('reveal-directory')) {
       const cadModel = await cadManager.addModel(modelIdentifier);
+
+      this._cadNodes.push(cadModel);
+
       this._sceneHandler.addCadModel(cadModel, cadModel.cadModelIdentifier);
       return cadModel;
     } else if (modelOutputs.includes('ept-pointcloud')) {
@@ -329,6 +334,7 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
   public dispose(): void {
     this._resizeObserver.disconnect();
     this._controls.dispose();
+    this._cadNodes.forEach(cadNode => cadNode.dispose());
     this._sceneHandler.dispose();
     this._depthRenderPipeline.dispose();
     this.pipelineProvider.dispose();
