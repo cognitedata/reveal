@@ -20,8 +20,8 @@ in TreeIndexPacked v_treeIndexPacked;
 
 void main()
 {
-    highp int treeIndex = unpackTreeIndex(v_treeIndexPacked);
-    NodeAppearance appearance = determineNodeAppearance(colorDataTexture, treeIndexTextureSize, float(treeIndex));
+    highp float treeIndex = unpackTreeIndex(v_treeIndexPacked);
+    NodeAppearance appearance = determineNodeAppearance(colorDataTexture, treeIndexTextureSize, treeIndex);
     if (!determineVisibility(appearance, renderMode)) {
         discard;
     }
@@ -32,5 +32,5 @@ void main()
 
     vec4 color = determineColor(v_color, appearance);
     vec3 normal = derivateNormal(v_viewPosition);
-    updateFragmentColor(renderMode, color, float(treeIndex), normal, gl_FragCoord.z, matCapTexture, GeometryType.InstancedMesh);
+    updateFragmentColor(renderMode, color, treeIndex, normal, gl_FragCoord.z, matCapTexture, GeometryType.InstancedMesh);
 }

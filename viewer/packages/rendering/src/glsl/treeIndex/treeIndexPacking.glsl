@@ -26,7 +26,7 @@ TreeIndexPacked packTreeIndex(float treeIndex) {
 /**
  * Unpacks the packed treeIndex to an int representing the original input TreeIndex
  */
-int unpackTreeIndex(TreeIndexPacked treeIndexPacked) {
-    highp int treeIndex = int(treeIndexPacked.thousands) * 1000 + int(treeIndexPacked.subThousands);
+float unpackTreeIndex(TreeIndexPacked treeIndexPacked) {
+    highp float treeIndex = round(treeIndexPacked.thousands) * 1000.0 + round(treeIndexPacked.subThousands);
     return treeIndex;
 }
