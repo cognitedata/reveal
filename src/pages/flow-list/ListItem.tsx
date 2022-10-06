@@ -7,9 +7,6 @@ import { Flow } from 'types';
 import FlowListItemMenu from './FlowItemMenu';
 
 export default function ListItem({ flow }: { flow: Flow }) {
-  console.log(
-    Object.keys(Colors).filter((c) => c.includes('text') && c.includes('icon'))
-  );
   return (
     <StyledListItem justifyContent="space-between">
       <Link to={createLink(`/${CANVAS_PATH}/${flow.id}`)}>
