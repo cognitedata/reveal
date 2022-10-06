@@ -246,7 +246,7 @@ describe(GltfSectorParser.name, () => {
 
     const dracoMeshVolume = calculateVolumeOfMesh(
       dracoVertexBuffer,
-      Uint16Array.from(dracoGeometryBuffer.getIndex().array)
+      Uint16Array.from(dracoGeometryBuffer.getIndex()!.array)
     );
 
     const testFileByteBuffer = fs.readFileSync(__dirname + '/anders-test-scene.glb');
@@ -265,7 +265,7 @@ describe(GltfSectorParser.name, () => {
       return n % stride >= positionOffset;
     });
 
-    const meshVolume = calculateVolumeOfMesh(vertexBuffer, Uint16Array.from(geometryBuffer.getIndex().array));
+    const meshVolume = calculateVolumeOfMesh(vertexBuffer, Uint16Array.from(geometryBuffer.getIndex()!.array));
 
     expect(Math.abs(1 - dracoMeshVolume / meshVolume)).toBeLessThan(1e-4);
   });

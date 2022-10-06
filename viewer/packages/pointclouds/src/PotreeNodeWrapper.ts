@@ -6,7 +6,8 @@ import * as THREE from 'three';
 
 export type PotreeClassification = { [pointClass: number]: { x: number; y: number; z: number; w: number } };
 
-import { PointCloudOctree, PotreePointColorType, PotreePointShape, IClassification } from './potree-three-loader';
+import { PointCloudOctree, PickPoint } from './potree-three-loader';
+import { PotreePointColorType, PotreePointShape, IClassification } from '@reveal/rendering';
 import { WellKnownAsprsPointClassCodes } from './types';
 
 import { createPointClassKey } from './createPointClassKey';
@@ -18,17 +19,25 @@ export class PotreeNodeWrapper {
   readonly octree: PointCloudOctree;
   private _needsRedraw = false;
   private readonly _classification: IClassification = {} as IClassification;
+  private readonly _modelIdentifier: symbol;
+
+  private static readonly pickingWindowSize = 20;
 
   get needsRedraw(): boolean {
     return this._needsRedraw;
   }
 
-  constructor(octree: PointCloudOctree) {
+  constructor(octree: PointCloudOctree, modelIdentifier: symbol) {
     this.octree = octree;
     this.pointSize = 2;
     this.pointColorType = PotreePointColorType.Rgb;
     this.pointShape = PotreePointShape.Circle;
     this._classification = octree.material.classification;
+    this._modelIdentifier = modelIdentifier;
+  }
+
+  get modelIdentifier(): symbol {
+    return this._modelIdentifier;
   }
 
   get pointSize(): number {
@@ -72,11 +81,16 @@ export class PotreeNodeWrapper {
     return this._classification;
   }
 
+  pick(renderer: THREE.WebGLRenderer, camera: THREE.Camera, ray: THREE.Ray): PickPoint | null {
+    return this.octree.pick(renderer, camera, ray, { pickWindowSize: PotreeNodeWrapper.pickingWindowSize });
+  }
+
   setClassificationAndRecompute(pointClass: number | WellKnownAsprsPointClassCodes, visible: boolean): void {
     const key = createPointClassKey(pointClass);
 
     this._classification[key].w = visible ? 1.0 : 0.0;
     this.octree.material.classification = this._classification;
+    this._needsRedraw = true;
   }
 
   resetRedraw(): void {

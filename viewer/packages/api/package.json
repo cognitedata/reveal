@@ -1,0 +1,26 @@
+{
+  "name": "@reveal/api",
+  "private": true,
+  "main": "index.ts",
+  "scripts": {
+    "start": "yarn ws:serve --env testFixture=Default.VisualTest.ts",
+    "test": "yarn ws:test --config ./../../jest.config.js",
+    "lint": "yarn ws:lint"
+  },
+  "dependencies": {
+    "@reveal/360-images": "workspace:*",
+    "@reveal/cad-geometry-loaders": "workspace:*",
+    "@reveal/cad-model": "workspace:*",
+    "@reveal/cad-parsers": "workspace:*",
+    "@reveal/cad-styling": "workspace:*",
+    "@reveal/camera-manager": "workspace:*",
+    "@reveal/data-providers": "workspace:*",
+    "@reveal/data-source": "workspace:*",
+    "@reveal/logger": "workspace:*",
+    "@reveal/metrics": "workspace:*",
+    "@reveal/model-base": "workspace:*",
+    "@reveal/pointclouds": "workspace:*",
+    "@reveal/rendering": "workspace:*",
+    "@reveal/utilities": "workspace:*"
+  }
+}

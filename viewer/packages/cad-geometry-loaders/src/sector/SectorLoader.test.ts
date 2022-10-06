@@ -5,7 +5,7 @@
 import * as THREE from 'three';
 
 import { AutoDisposeGroup } from '@reveal/utilities';
-import { asyncIteratorToArray, createCadModelMetadata, generateV8SectorTree } from '../../../../test-utilities';
+import { asyncIteratorToArray, createCadModelMetadata, generateV9SectorTree } from '../../../../test-utilities';
 import { CadModelMetadata, SectorMetadata, LevelOfDetail, ConsumedSector, WantedSector } from '@reveal/cad-parsers';
 
 import { SectorCuller } from './culling/SectorCuller';
@@ -14,10 +14,10 @@ import { DetermineSectorsInput, DetermineSectorsPayload, SectorLoadingSpent } fr
 import { ModelStateHandler } from './ModelStateHandler';
 import { SectorRepository } from '@reveal/sector-loader';
 import { SectorLoader } from './SectorLoader';
-import { CadNode } from '@reveal/rendering';
 import { IMock, Mock } from 'moq.ts';
 import Log from '@reveal/logger';
 import { LogLevelNumbers } from 'loglevel';
+import { CadNode } from '@reveal/cad-model';
 
 describe('SectorLoader', () => {
   let culler: SectorCuller;
@@ -32,8 +32,8 @@ describe('SectorLoader', () => {
   let currentLogLevel: LogLevelNumbers;
 
   beforeAll(() => {
-    const sectorRoot = generateV8SectorTree(2, 2);
-    model = createCadModelMetadata(8, sectorRoot);
+    const sectorRoot = generateV9SectorTree(2, 2);
+    model = createCadModelMetadata(9, sectorRoot);
     currentLogLevel = Log.getLevel();
     Log.setLevel('silent');
   });

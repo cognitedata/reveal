@@ -14,9 +14,12 @@ export class NodeTransformTextureBuilder {
   private readonly _transformOverrideIndexTexture: THREE.DataTexture;
   private _needsUpdate = false;
   private readonly _handleTransformChangedBound = this.handleTransformChanged.bind(this);
+  private readonly _transformOverrideIndexBufferView: Float32Array;
 
   constructor(treeIndexCount: number, transformProvider: NodeTransformProvider) {
-    this._transformOverrideIndexTexture = allocateTransformOverrideTexture(treeIndexCount);
+    const { dataTexture, bufferView } = allocateTransformOverrideIndexTexture(treeIndexCount);
+    this._transformOverrideIndexTexture = dataTexture;
+    this._transformOverrideIndexBufferView = bufferView;
     this._transformOverrideBuffer = new TransformOverrideBuffer(this.handleNewTransformTexture.bind(this));
     this._transformProvider = transformProvider;
 
@@ -58,10 +61,7 @@ export class NodeTransformTextureBuilder {
   }
 
   private setOverrideIndex(treeIndex: number, transformIndex: number) {
-    const data = this._transformOverrideIndexTexture.image.data;
-    data[treeIndex * 4 + 0] = (transformIndex + 1) >> 16;
-    data[treeIndex * 4 + 1] = (transformIndex + 1) >> 8;
-    data[treeIndex * 4 + 2] = (transformIndex + 1) >> 0;
+    this._transformOverrideIndexBufferView[treeIndex] = transformIndex + 1;
     this._transformOverrideIndexTexture.needsUpdate = true;
   }
 
@@ -83,18 +83,21 @@ export class NodeTransformTextureBuilder {
   }
 }
 
-function allocateTransformOverrideTexture(treeIndexCount: number): THREE.DataTexture {
+function allocateTransformOverrideIndexTexture(treeIndexCount: number): {
+  dataTexture: THREE.DataTexture;
+  bufferView: Float32Array;
+} {
   const { width, height } = determinePowerOfTwoDimensions(treeIndexCount);
   const textureElementCount = width * height;
 
-  // Texture for holding node transforms (translation, scale, rotation)
-  const transformOverrideIndexBuffer = new Uint8ClampedArray(4 * textureElementCount);
+  const transformOverrideIndexBuffer = new Float32Array(textureElementCount);
   const transformOverrideIndexTexture = new THREE.DataTexture(
     transformOverrideIndexBuffer,
     width,
     height,
-    THREE.RGBAFormat
+    THREE.RedFormat,
+    THREE.FloatType
   );
 
-  return transformOverrideIndexTexture;
+  return { dataTexture: transformOverrideIndexTexture, bufferView: transformOverrideIndexBuffer };
 }

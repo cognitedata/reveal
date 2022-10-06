@@ -17,8 +17,8 @@ import {
   AbsolutePosition,
   RelativePosition
 } from './types';
-import { Cognite3DViewer } from '@reveal/core';
 import { MetricsLogger } from '@reveal/metrics';
+import { Cognite3DViewer } from '@reveal/api';
 
 export class AxisViewTool extends Cognite3DViewerToolBase {
   private readonly _layoutConfig: Required<AxisBoxConfig>;
@@ -80,44 +80,18 @@ export class AxisViewTool extends Cognite3DViewerToolBase {
     divElement.style.width = `${this._layoutConfig.size}px`;
     divElement.style.zIndex = '1';
 
-    let xMouse = 0;
-    let yMouse = 0;
-
     divElement.addEventListener('mousedown', event => {
-      const mouseDownEvent = new MouseEvent('mousedown', {
-        clientX: event.clientX,
-        clientY: event.clientY,
-        button: event.button
-      });
-      xMouse = event.clientX;
-      yMouse = event.clientY;
-      viewer.renderer.domElement.dispatchEvent(mouseDownEvent);
-    });
-
-    divElement.addEventListener('mousemove', event => {
-      const mouseMoveEvent = new MouseEvent('mousemove', {
-        clientX: event.clientX,
-        clientY: event.clientY,
-        button: event.button
-      });
-      viewer.renderer.domElement.dispatchEvent(mouseMoveEvent);
+      event.stopPropagation();
     });
 
     divElement.addEventListener('contextmenu', event => event.preventDefault());
 
     divElement.addEventListener('mouseup', event => {
-      const mouseUpEvent = new MouseEvent('mouseup', {
-        clientX: event.clientX,
-        clientY: event.clientY,
-        button: event.button
-      });
-
       const rect = viewer.domElement.getBoundingClientRect();
       const x = event.clientX - rect.left;
       const y = event.clientY - rect.top;
-      if (Math.abs(xMouse - event.clientX) + Math.abs(yMouse - event.clientY) <= 10 && !this.handleClick(x, y, rect)) {
-        viewer.renderer.domElement.dispatchEvent(mouseUpEvent);
-      }
+      this.handleClick(x, y, rect);
+      event.stopPropagation();
     });
 
     viewer.domElement.appendChild(divElement);
@@ -373,12 +347,15 @@ export class AxisViewTool extends Cognite3DViewerToolBase {
           tex: { value: this.getFaceTexture(faceConfig, this._layoutConfig.size) }
         },
         depthTest: false,
-        glslVersion: THREE.GLSL3
+        glslVersion: THREE.GLSL3,
+        // Even if this isn't transparent, we want ThreeJS to draw the object
+        // after transparent objects so its correctly blended
+        transparent: true
       })
     );
 
     face.frustumCulled = false;
-    face.renderOrder = 1;
+    face.renderOrder = 1000; // Draw last (i.e. on top)
 
     face.position.copy(position.multiplyScalar(0.5 * this._boxFaceGeometry.parameters.width));
     face.lookAt(position.multiplyScalar(2));

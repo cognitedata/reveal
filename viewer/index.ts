@@ -8,7 +8,7 @@
  * @module @cognite/reveal
  */
 
-export * from './core/src/index';
+export * from './packages/api/';
 
 export {
   CameraControlsOptions,
@@ -29,6 +29,7 @@ export {
   DefaultNodeAppearance,
   NodeCollection,
   TreeIndexNodeCollection,
+  NodeIdNodeCollection,
   IntersectionNodeCollection,
   UnionNodeCollection,
   SerializedNodeCollection,
@@ -36,9 +37,7 @@ export {
   SinglePropertyFilterNodeCollection,
   AssetNodeCollection,
   InvertedNodeCollection,
-  registerCustomNodeCollectionType,
-  TypeName,
-  NodeCollectionDescriptor,
+  registerNodeCollectionType,
   NodeCollectionSerializationContext,
   CdfModelNodeCollectionDataProvider
 } from './packages/cad-styling';
@@ -46,9 +45,9 @@ export {
 export { CogniteModelBase, SupportedModelTypes } from './packages/model-base';
 
 export {
-  revealEnv,
   IndexSet,
   NumericRange,
+  BeforeSceneRenderedDelegate,
   SceneRenderedDelegate,
   PointerEventDelegate,
   DisposedDelegate
@@ -56,3 +55,4 @@ export {
 
 export { Cognite3DModel, BoundingBoxClipper, GeometryFilter, WellKnownUnit } from './packages/cad-model';
 export { CognitePointCloudModel } from './packages/pointclouds';
+export { Image360Entity } from './packages/360-images';

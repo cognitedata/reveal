@@ -7,7 +7,7 @@ import { CameraConfiguration } from '@reveal/utilities';
 import { WellKnownAsprsPointClassCodes } from './types';
 import { PointCloudNode } from './PointCloudNode';
 
-import { PotreePointColorType, PotreePointShape, PotreePointSizeType } from './potree-three-loader';
+import { PotreePointColorType, PotreePointShape, PotreePointSizeType } from '@reveal/rendering';
 
 import { SupportedModelTypes, CogniteModelBase } from '@reveal/model-base';
 
@@ -16,7 +16,7 @@ import { SupportedModelTypes, CogniteModelBase } from '@reveal/model-base';
  * @noInheritDoc
  * @module @cognite/reveal
  */
-export class CognitePointCloudModel extends THREE.Object3D implements CogniteModelBase {
+export class CognitePointCloudModel implements CogniteModelBase {
   public readonly type: SupportedModelTypes = 'pointcloud';
   public readonly modelId: number;
   /**
@@ -36,19 +36,15 @@ export class CognitePointCloudModel extends THREE.Object3D implements CogniteMod
    * @internal
    */
   constructor(modelId: number, revisionId: number, pointCloudNode: PointCloudNode) {
-    super();
     this.modelId = modelId;
     this.revisionId = revisionId;
     this.pointCloudNode = pointCloudNode;
-    this.add(pointCloudNode);
   }
 
   /**
    * Used to clean up memory.
    */
-  dispose(): void {
-    this.children = [];
-  }
+  dispose(): void {}
 
   // eslint-disable-next-line jsdoc/require-description
   /**

@@ -8,14 +8,13 @@
     "sourceMap": true,
     "typeRoots": [
       "node_modules/@types",
-      "core/src/@types"
+      "packages/api/src/@types"
     ]
   },
   // include is also used for eslint to understand which files should be linted
   "include": [
     "*.js",
     "*.ts",
-    "core/src/**/*",
     ".eslintrc.js",
   ],
   "exclude": [

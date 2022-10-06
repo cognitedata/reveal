@@ -1,0 +1,159 @@
+---
+id: point-to-point-measurement
+title: Point to point measurement
+description: Demo shows how to measure point to point distance in Reveal.
+---
+
+import { DemoWrapper } from '@site/versioned_docs/version-4.x/components/DemoWrapper';
+import useBaseUrl from '@docusaurus/useBaseUrl';
+
+The `MeasurementTool` is a measuring tool for point to point distance in 3D models, by clicking to- and from-points. The default measurement unit is meters, but the tool provides callbacks to allow configuring the unit.
+When exiting from the tool, all the measurement will be removed from the `Cognite3DViewer`. Note that the precision the tool can provide is limited, and the tool should only be used for approximate measurement - not high precision measurement for e.g. construction.
+
+To effectively edit measuring line properties, tool is configurable with `MeasurementOptions` options to set
+- Custom label content for each measurement.
+- Size of line width in meters.
+- Color of line.
+
+:::tip
+`CameraControlsOptions.changeCameraTargetOnClick` should be set to `false` to avoid click event registering for camera when `MeasurementTool` is active. Also avoid any custom click-handler that might interfere with the measurement tool.
+:::
+
+<DemoWrapper />
+
+## Point to point distance measurment
+To enter point-to-point measurement mode, use `MeasurementTool.enterMeasurementMode()`. This will register events for handling mouse clicks and touch events to allow placing the measurement end-points. Note that the tool is optimized for use with mouse.
+
+To exit measurement mode, call `exitMeasurementMode()`. The tool will also exit measurement mode if user presses Escape key.
+
+```jsx runnable-4x
+// import { MeasurementTool } from '@cognite/reveal/tools';
+
+const measurementTool = new MeasurementTool(viewer);
+measurementTool.enterMeasurementMode();
+```
+
+## Events
+The tool exposes events for subscribing to measurement start, end & added. In the below example, the mouse cursor is changed to a cross-hair while measuring.
+
+```jsx runnable-4x
+// import { MeasurementTool } from '@cognite/reveal/tools';
+const measurementTool = new MeasurementTool(viewer);
+
+// Subscribe to measurement events
+measurementTool.on('started',
+  () => viewer.domElement.style.cursor = 'crosshair');
+measurementTool.on('ended',
+  () => viewer.domElement.attributeStyleMap.delete('cursor'));
+measurementTool.on('added', (measurement) => {
+  alert(`Measurement added with ${JSON.stringify(measurement.distanceInMeters)} distance!`);
+  measurementTool.exitMeasurementMode();
+});
+
+measurementTool.enterMeasurementMode();
+```
+
+
+
+### Mode of measurement
+To get the mode of measurement `MeasurementTool.isInMeasurementMode`. It returns `true` if the measurement is active else `false`.
+
+
+## Set width, color & label units of the measuring line
+To change width, color of the line and label units, use `MeasurementTool.setLineOptions(options: MeasurementOptions)`. MeasurementOptions expects
+  - `distanceToLabelCallback` : callback for custom operation on measurement labels
+  - `lineWidth` : number - units in meters
+  - `color` : THREE.color
+
+The updated line width, color and label units will be applied for the next measuring distance.
+
+```jsx runnable-4x
+// import { MeasurementTool } from '@cognite/reveal/tools';
+
+const lineOptions = {
+  distanceToLabelCallback: (distanceInMeters) => {
+  // 1 meter = 100 centimeter
+  return `${(distanceInMeters * 100).toFixed(2)} cm`;
+  },
+  lineWidth: 0.1,
+  color: new THREE.Color(0xff0000)
+};
+const measurementTool = new MeasurementTool(viewer);
+measurementTool.enterMeasurementMode();
+
+//Update line width, color and label units for the next measuring line.
+measurementTool.setLineOptions(lineOptions);
+```
+
+### Get all measurement
+To get all measurements added the tool provides `MeasurementTool.getAllMeasurements()` which will
+return an array of measurements of type `Measurement`, having below details
+  - `measurementId` : unique id of measurement.
+  - `startPoint` : start point of the measurement.
+  - `endPoint` : end point of the measurement.
+  - `distanceInMeters` : measured distance in meters.
+```jsx runnable-4x
+// import { MeasurementTool } from '@cognite/reveal/tools';
+
+const measurementTool = new MeasurementTool(viewer);
+measurementTool.enterMeasurementMode();
+
+//add measurements
+
+//get all measurements
+setTimeout(() => {
+  const measurements = measurementTool.getAllMeasurements();
+  measurements.forEach(measurement => {
+    alert(measurement.distanceInMeters);
+  });
+}, 6000);
+```
+
+### Change appearance of existing measurement
+To change existing measurement line width or color, use `MeasurementTool.updateLineWidth(lineWidth: number)` or `MeasurementTool.updateLineColor(color: THREE.Color)`
+
+```jsx runnable-4x
+// import { MeasurementTool } from '@cognite/reveal/tools';
+
+const measurementTool = new MeasurementTool(viewer);
+setInterval(() => {
+  const measurements = measurementTool.getAllMeasurements();
+  console.log(measurements);
+  for (const measurement of measurements) {
+    const color = Math.floor(Math.random() * 16777215);
+    const lineWidth = (Math.random() * 1.0) + 0.2;
+    measurementTool.updateLineColor(measurement, new THREE.Color(color));
+    measurementTool.updateLineWidth(measurement, lineWidth);
+  }
+}, 200);
+measurementTool.enterMeasurementMode();
+```
+
+### Remove measurement
+To remove a measurement from the viewer, we have `MeasurementTool.removeMeasurement(measurement: Measurement)`
+  - `measurement` : Measurement to be removed.
+
+```jsx runnable-4x
+// import { MeasurementTool } from '@cognite/reveal/tools';
+
+const measurementTool = new MeasurementTool(viewer);
+measurementTool.enterMeasurementMode();
+
+//remove the first measurement in the added list
+setTimeout(() => {
+  const measurements = measurementTool.getAllMeasurements();
+
+  if (measurements[0]) {
+    measurementTool.removeMeasurement(measurements[0]);
+  }
+}, 6000);
+```
+
+To remove all measurement from the viewer, use `MeasurementTool.removeAllMeasurement()`
+
+### Label visibility
+Measurement labels can be hidden/visible using `MeasurementTool.showMeasurementLabels(enable: boolean)`.
+```jsx
+// Hide all measurement lables
+measurementTool.showMeasurementLabels(false);
+```

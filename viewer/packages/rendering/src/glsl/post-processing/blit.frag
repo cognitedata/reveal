@@ -20,6 +20,9 @@ uniform sampler2D tOutlineColors;
 
 in vec2 vUv;
 
+in float near;
+in float far;
+
 out vec4 fragColor;
 
 #if defined(SSAO_BLUR) 
@@ -38,8 +41,11 @@ out vec4 fragColor;
 #pragma glslify: import('./outline.glsl')
 #endif
 
-void main() {
+#if defined(EDGES) && defined(DEPTH_WRITE) 
+#pragma glslify: import('../math/toViewZ.glsl')
+#endif
 
+void main() {
   vec4 diffuse = texture(tDiffuse, vUv); 
   
   if(diffuse.a == 0.0){
@@ -55,7 +61,12 @@ void main() {
   #endif
   #if defined(EDGES)
     float edgeStrength = edgeDetectionFilter(tDiffuse);
-    fragColor.rgb *= isnan(edgeStrength) ? 1.0 : pow(1.0 - edgeStrength, 2.0);
+    edgeStrength = (1.0 - pow(1.0 - edgeStrength, 2.0));
+    #if defined(DEPTH_WRITE)
+      float depthEdge = toViewZ(texture(tDepth, vUv).r, near, far);
+      edgeStrength *= (1.0 - smoothstep(10.0, 40.0, depthEdge));
+    #endif
+    fragColor.rgb *= isnan(edgeStrength) ? 1.0 : (1.0 - edgeStrength);
   #endif
   #if defined(OUTLINE)
     int outline = fetchOutlineIndex(tDiffuse);

@@ -10,7 +10,7 @@ i.e., just want to view some 3d models from CDF.
 
 import { DemoWrapper } from '@site/versioned_docs/version-2.x/components/DemoWrapper';
 
-<DemoWrapper name="Cognite3DViewerDemo" />
+<DemoWrapper />
 
 ```jsx
 import { CogniteClient } from '@cognite/sdk';
@@ -42,7 +42,7 @@ async function main() {
 main();
 ```
 
-Models can be temporarily hidden using `Cognite3DModel.visible`. Note that 
+Models can be temporarily hidden using `Cognite3DModel.visible`. Note that
 the viewer must be explicitly re-rendered after setting the visibility flag:
 
 ```js runnable-2x
@@ -58,7 +58,7 @@ setTimeout(() => {
 Hiding models doesn't free any memory occupied by the model and should only be used
 to temporarily hide a model when it's expected that it will shortly be shown again.
 
-To also reclaim memory and permanently unloading the model, use 
+To also reclaim memory and permanently unloading the model, use
 `Cognite3DViewer.removeModel()`:
 
 ```js runnable-2x

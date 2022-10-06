@@ -1,0 +1,1233 @@
+{
+  "version": 9,
+  "projectId": 123,
+  "modelId": 456,
+  "revisionId": 789,
+  "subRevisionId": 999,
+  "maxTreeIndex": 103350,
+  "sectors": [
+    {
+      "id": 0,
+      "sectorFileName": "0.glb",
+      "path": "0/",
+      "depth": 0,
+      "boundingBox": {
+        "min": {
+          "x": 327.6250190734863,
+          "y": 83.02500396169489,
+          "z": 459.38399757381416
+        },
+        "max": {
+          "x": 354.4250168831204,
+          "y": 124.77210748850757,
+          "z": 507.60200195387006
+        }
+      },
+      "estimatedTriangleCount": 40189,
+      "estimatedDrawCallCount": 3,
+      "minDiagonalLength": 5.4196696281433105,
+      "maxDiagonalLength": 30.748855590820312,
+      "downloadSize": 773012
+    },
+    {
+      "id": 1,
+      "sectorFileName": "1.glb",
+      "parentId": 0,
+      "path": "0/0/",
+      "depth": 1,
+      "boundingBox": {
+        "min": {
+          "x": 327.81001554988325,
+          "y": 82.9832539594936,
+          "z": 498.5000236534979
+        },
+        "max": {
+          "x": 354.5500020980835,
+          "y": 123.99400591911399,
+          "z": 507.8000064251246
+        }
+      },
+      "estimatedTriangleCount": 79824,
+      "estimatedDrawCallCount": 6,
+      "minDiagonalLength": 3.0934176445007324,
+      "maxDiagonalLength": 4.969033241271973,
+      "downloadSize": 1575476
+    },
+    {
+      "id": 2,
+      "sectorFileName": "2.glb",
+      "parentId": 0,
+      "path": "0/1/",
+      "depth": 1,
+      "boundingBox": {
+        "min": {
+          "x": 327.80751560771023,
+          "y": 102.36379282483566,
+          "z": 496.2612929906337
+        },
+        "max": {
+          "x": 356.129584249087,
+          "y": 124.51847686804831,
+          "z": 508.2675890472127
+        }
+      },
+      "estimatedTriangleCount": 119606,
+      "estimatedDrawCallCount": 8,
+      "minDiagonalLength": 1.1481746435165405,
+      "maxDiagonalLength": 2.4885330200195312,
+      "downloadSize": 1700760
+    },
+    {
+      "id": 3,
+      "sectorFileName": "3.glb",
+      "parentId": 0,
+      "path": "0/2/",
+      "depth": 1,
+      "boundingBox": {
+        "min": {
+          "x": 341.35001621674746,
+          "y": 103.1369690511557,
+          "z": 496.46602358063683
+        },
+        "max": {
+          "x": 356.04978162319236,
+          "y": 124.9550371851642,
+          "z": 508.4050659239292
+        }
+      },
+      "estimatedTriangleCount": 179971,
+      "estimatedDrawCallCount": 13,
+      "minDiagonalLength": 0.28510940074920654,
+      "maxDiagonalLength": 0.8949297666549683,
+      "downloadSize": 1847892
+    },
+    {
+      "id": 4,
+      "sectorFileName": "4.glb",
+      "parentId": 0,
+      "path": "0/3/",
+      "depth": 1,
+      "boundingBox": {
+        "min": {
+          "x": 341.7250162316486,
+          "y": 103.45241450333143,
+          "z": 496.2150235695299
+        },
+        "max": {
+          "x": 356.04950623060034,
+          "y": 114.20000541827176,
+          "z": 508.3950561577482
+        }
+      },
+      "estimatedTriangleCount": 243072,
+      "estimatedDrawCallCount": 14,
+      "minDiagonalLength": 0.043852776288986206,
+      "maxDiagonalLength": 0.320000022649765,
+      "downloadSize": 1427140
+    },
+    {
+      "id": 5,
+      "sectorFileName": "5.glb",
+      "parentId": 0,
+      "path": "0/4/",
+      "depth": 1,
+      "boundingBox": {
+        "min": {
+          "x": 341.71960998047325,
+          "y": 103.46082537595066,
+          "z": 498.2569873038604
+        },
+        "max": {
+          "x": 348.7850165660093,
+          "y": 114.14999885557955,
+          "z": 508.2850561540777
+        }
+      },
+      "estimatedTriangleCount": 198422,
+      "estimatedDrawCallCount": 11,
+      "minDiagonalLength": 0.10160000622272491,
+      "maxDiagonalLength": 0.1931648999452591,
+      "downloadSize": 1437524
+    },
+    {
+      "id": 6,
+      "sectorFileName": "6.glb",
+      "parentId": 0,
+      "path": "0/5/",
+      "depth": 1,
+      "boundingBox": {
+        "min": {
+          "x": 341.79001953531406,
+          "y": 108.79741906758451,
+          "z": 498.399989746928
+        },
+        "max": {
+          "x": 348.7132990722894,
+          "y": 114.13049725344172,
+          "z": 508.2417297363281
+        }
+      },
+      "estimatedTriangleCount": 153478,
+      "estimatedDrawCallCount": 12,
+      "minDiagonalLength": 0.025317978113889694,
+      "maxDiagonalLength": 0.08541668951511383,
+      "downloadSize": 273296
+    },
+    {
+      "id": 7,
+      "sectorFileName": "7.glb",
+      "parentId": 0,
+      "path": "0/6/",
+      "depth": 1,
+      "boundingBox": {
+        "min": {
+          "x": 341.826626103872,
+          "y": 103.47186800208877,
+          "z": 498.399989746928
+        },
+        "max": {
+          "x": 348.6550221144914,
+          "y": 108.82499847590225,
+          "z": 508.24505615234375
+        }
+      },
+      "estimatedTriangleCount": 195218,
+      "estimatedDrawCallCount": 13,
+      "minDiagonalLength": 0.020514000207185745,
+      "maxDiagonalLength": 0.09753600507974625,
+      "downloadSize": 501652
+    },
+    {
+      "id": 8,
+      "sectorFileName": "8.glb",
+      "parentId": 0,
+      "path": "0/7/",
+      "depth": 1,
+      "boundingBox": {
+        "min": {
+          "x": 327.45001555309864,
+          "y": 103.2233996492944,
+          "z": 498.82264867355116
+        },
+        "max": {
+          "x": 342.04701623751316,
+          "y": 124.7651074928317,
+          "z": 517.0237120572856
+        }
+      },
+      "estimatedTriangleCount": 176093,
+      "estimatedDrawCallCount": 14,
+      "minDiagonalLength": 0.36026108264923096,
+      "maxDiagonalLength": 1.0074374675750732,
+      "downloadSize": 1833388
+    },
+    {
+      "id": 9,
+      "sectorFileName": "9.glb",
+      "parentId": 0,
+      "path": "0/8/",
+      "depth": 1,
+      "boundingBox": {
+        "min": {
+          "x": 327.6929877847433,
+          "y": 103.47149773347672,
+          "z": 499.4588998560298
+        },
+        "max": {
+          "x": 341.7936792931518,
+          "y": 114.21500542614376,
+          "z": 507.8101491196867
+        }
+      },
+      "estimatedTriangleCount": 199445,
+      "estimatedDrawCallCount": 13,
+      "minDiagonalLength": 0.2013237476348877,
+      "maxDiagonalLength": 0.31810951232910156,
+      "downloadSize": 1407316
+    },
+    {
+      "id": 10,
+      "sectorFileName": "10.glb",
+      "parentId": 0,
+      "path": "0/9/",
+      "depth": 1,
+      "boundingBox": {
+        "min": {
+          "x": 334.7279877886176,
+          "y": 103.5025021361497,
+          "z": 499.6500060999533
+        },
+        "max": {
+          "x": 341.73376989650563,
+          "y": 114.10036262523732,
+          "z": 508.26853252213914
+        }
+      },
+      "estimatedTriangleCount": 219311,
+      "estimatedDrawCallCount": 14,
+      "minDiagonalLength": 0.038099996745586395,
+      "maxDiagonalLength": 0.16256001591682434,
+      "downloadSize": 1221344
+    },
+    {
+      "id": 11,
+      "sectorFileName": "11.glb",
+      "parentId": 0,
+      "path": "0/10/",
+      "depth": 1,
+      "boundingBox": {
+        "min": {
+          "x": 334.7356443454092,
+          "y": 103.50400213641115,
+          "z": 500.04002375050914
+        },
+        "max": {
+          "x": 341.6188301097849,
+          "y": 107.63980779975502,
+          "z": 507.28022378716685
+        }
+      },
+      "estimatedTriangleCount": 79615,
+      "estimatedDrawCallCount": 8,
+      "minDiagonalLength": 0.022360680624842644,
+      "maxDiagonalLength": 0.036000002175569534,
+      "downloadSize": 134348
+    },
+    {
+      "id": 12,
+      "sectorFileName": "12.glb",
+      "parentId": 0,
+      "path": "0/11/",
+      "depth": 1,
+      "boundingBox": {
+        "min": {
+          "x": 327.7179877907038,
+          "y": 103.52997337722401,
+          "z": 499.44390415643585
+        },
+        "max": {
+          "x": 334.762109649997,
+          "y": 114.15900008550152,
+          "z": 507.80091167252976
+        }
+      },
+      "estimatedTriangleCount": 158496,
+      "estimatedDrawCallCount": 16,
+      "minDiagonalLength": 0.02699556201696396,
+      "maxDiagonalLength": 0.15425953269004822,
+      "downloadSize": 778052
+    },
+    {
+      "id": 13,
+      "sectorFileName": "13.glb",
+      "parentId": 0,
+      "path": "0/12/",
+      "depth": 1,
+      "boundingBox": {
+        "min": {
+          "x": 319.3097556106666,
+          "y": 82.78559760460266,
+          "z": 496.2625084105993
+        },
+        "max": {
+          "x": 354.67501684022136,
+          "y": 104.61191002181295,
+          "z": 513.2421582039522
+        }
+      },
+      "estimatedTriangleCount": 119726,
+      "estimatedDrawCallCount": 6,
+      "minDiagonalLength": 1.6691906452178955,
+      "maxDiagonalLength": 2.7037441730499268,
+      "downloadSize": 1479840
+    },
+    {
+      "id": 14,
+      "sectorFileName": "14.glb",
+      "parentId": 0,
+      "path": "0/13/",
+      "depth": 1,
+      "boundingBox": {
+        "min": {
+          "x": 337.28183966169127,
+          "y": 82.52347534536342,
+          "z": 498.53002368449233
+        },
+        "max": {
+          "x": 354.67501684022136,
+          "y": 104.20242953767185,
+          "z": 507.9999997183497
+        }
+      },
+      "estimatedTriangleCount": 159645,
+      "estimatedDrawCallCount": 8,
+      "minDiagonalLength": 1.013775110244751,
+      "maxDiagonalLength": 1.4382749795913696,
+      "downloadSize": 1621396
+    },
+    {
+      "id": 15,
+      "sectorFileName": "15.glb",
+      "parentId": 0,
+      "path": "0/14/",
+      "depth": 1,
+      "boundingBox": {
+        "min": {
+          "x": 337.7863285346393,
+          "y": 92.67614509523843,
+          "z": 497.6000236348482
+        },
+        "max": {
+          "x": 354.5500122308731,
+          "y": 103.94800065473676,
+          "z": 509.3973679464725
+        }
+      },
+      "estimatedTriangleCount": 197445,
+      "estimatedDrawCallCount": 10,
+      "minDiagonalLength": 0.4405909776687622,
+      "maxDiagonalLength": 0.9160000085830688,
+      "downloadSize": 1928800
+    },
+    {
+      "id": 16,
+      "sectorFileName": "16.glb",
+      "parentId": 0,
+      "path": "0/15/",
+      "depth": 1,
+      "boundingBox": {
+        "min": {
+          "x": 338.0403686519712,
+          "y": 92.95543410404298,
+          "z": 507.30402409587987
+        },
+        "max": {
+          "x": 354.20716477877613,
+          "y": 103.6550049171783,
+          "z": 517.19202456536
+        }
+      },
+      "estimatedTriangleCount": 56152,
+      "estimatedDrawCallCount": 9,
+      "minDiagonalLength": 0.013896655291318893,
+      "maxDiagonalLength": 0.27489304542541504,
+      "downloadSize": 362884
+    },
+    {
+      "id": 17,
+      "sectorFileName": "17.glb",
+      "parentId": 0,
+      "path": "0/16/",
+      "depth": 1,
+      "boundingBox": {
+        "min": {
+          "x": 338.01598510963333,
+          "y": 92.85142089320892,
+          "z": 499.2830237164744
+        },
+        "max": {
+          "x": 354.1250168205006,
+          "y": 103.62601278775306,
+          "z": 507.49202410131693
+        }
+      },
+      "estimatedTriangleCount": 199579,
+      "estimatedDrawCallCount": 10,
+      "minDiagonalLength": 0.3175000250339508,
+      "maxDiagonalLength": 0.407106876373291,
+      "downloadSize": 983476
+    },
+    {
+      "id": 18,
+      "sectorFileName": "18.glb",
+      "parentId": 0,
+      "path": "0/17/",
+      "depth": 1,
+      "boundingBox": {
+        "min": {
+          "x": 346.17492269836293,
+          "y": 92.92933253704358,
+          "z": 499.18337845528526
+        },
+        "max": {
+          "x": 354.6480168456328,
+          "y": 103.62921867415497,
+          "z": 507.4920241064392
+        }
+      },
+      "estimatedTriangleCount": 199955,
+      "estimatedDrawCallCount": 13,
+      "minDiagonalLength": 0.13257451355457306,
+      "maxDiagonalLength": 0.27294108271598816,
+      "downloadSize": 1490316
+    },
+    {
+      "id": 19,
+      "sectorFileName": "19.glb",
+      "parentId": 0,
+      "path": "0/18/",
+      "depth": 1,
+      "boundingBox": {
+        "min": {
+          "x": 346.25415447849775,
+          "y": 98.25867557156715,
+          "z": 497.6000236348482
+        },
+        "max": {
+          "x": 354.11402185915995,
+          "y": 103.5159976221934,
+          "z": 507.3695894063494
+        }
+      },
+      "estimatedTriangleCount": 184455,
+      "estimatedDrawCallCount": 13,
+      "minDiagonalLength": 0.024167537689208984,
+      "maxDiagonalLength": 0.09801600128412247,
+      "downloadSize": 401400
+    },
+    {
+      "id": 20,
+      "sectorFileName": "20.glb",
+      "parentId": 0,
+      "path": "0/19/",
+      "depth": 1,
+      "boundingBox": {
+        "min": {
+          "x": 346.2725048816557,
+          "y": 93.0160077178307,
+          "z": 497.6000236348482
+        },
+        "max": {
+          "x": 354.1120136787407,
+          "y": 98.26199786551297,
+          "z": 507.3380240971456
+        }
+      },
+      "estimatedTriangleCount": 124303,
+      "estimatedDrawCallCount": 13,
+      "minDiagonalLength": 0.022360680624842644,
+      "maxDiagonalLength": 0.11000000685453415,
+      "downloadSize": 375872
+    },
+    {
+      "id": 21,
+      "sectorFileName": "21.glb",
+      "parentId": 0,
+      "path": "0/20/",
+      "depth": 1,
+      "boundingBox": {
+        "min": {
+          "x": 337.9167595371113,
+          "y": 92.92892090741185,
+          "z": 499.059409838461
+        },
+        "max": {
+          "x": 346.394922696938,
+          "y": 103.60000491747635,
+          "z": 507.41702158316025
+        }
+      },
+      "estimatedTriangleCount": 133140,
+      "estimatedDrawCallCount": 11,
+      "minDiagonalLength": 0.22078388929367065,
+      "maxDiagonalLength": 0.2929554283618927,
+      "downloadSize": 1237772
+    },
+    {
+      "id": 22,
+      "sectorFileName": "22.glb",
+      "parentId": 0,
+      "path": "0/21/",
+      "depth": 1,
+      "boundingBox": {
+        "min": {
+          "x": 338.0049865692854,
+          "y": 98.16304300376683,
+          "z": 499.14190961318815
+        },
+        "max": {
+          "x": 346.31402739815735,
+          "y": 103.53436307580222,
+          "z": 507.47202410333557
+        }
+      },
+      "estimatedTriangleCount": 199976,
+      "estimatedDrawCallCount": 11,
+      "minDiagonalLength": 0.10960100591182709,
+      "maxDiagonalLength": 0.21272499859333038,
+      "downloadSize": 1139736
+    },
+    {
+      "id": 23,
+      "sectorFileName": "23.glb",
+      "parentId": 0,
+      "path": "0/22/",
+      "depth": 1,
+      "boundingBox": {
+        "min": {
+          "x": 342.1345995077152,
+          "y": 98.2100046655396,
+          "z": 499.9920237483457
+        },
+        "max": {
+          "x": 346.3000164479017,
+          "y": 103.49517131608445,
+          "z": 507.19499389764115
+        }
+      },
+      "estimatedTriangleCount": 112826,
+      "estimatedDrawCallCount": 13,
+      "minDiagonalLength": 0.02468056231737137,
+      "maxDiagonalLength": 0.09055385738611221,
+      "downloadSize": 326728
+    },
+    {
+      "id": 24,
+      "sectorFileName": "24.glb",
+      "parentId": 0,
+      "path": "0/23/",
+      "depth": 1,
+      "boundingBox": {
+        "min": {
+          "x": 338.0268273686932,
+          "y": 98.23699245462194,
+          "z": 499.99999389611185
+        },
+        "max": {
+          "x": 342.1852255873382,
+          "y": 103.40906235673113,
+          "z": 507.3870240994729
+        }
+      },
+      "estimatedTriangleCount": 75220,
+      "estimatedDrawCallCount": 13,
+      "minDiagonalLength": 0.02154066041111946,
+      "maxDiagonalLength": 0.09000000357627869,
+      "downloadSize": 264904
+    },
+    {
+      "id": 25,
+      "sectorFileName": "25.glb",
+      "parentId": 0,
+      "path": "0/24/",
+      "depth": 1,
+      "boundingBox": {
+        "min": {
+          "x": 337.966016050661,
+          "y": 92.92314444474984,
+          "z": 499.89900512620807
+        },
+        "max": {
+          "x": 346.36670113802813,
+          "y": 98.29709269334195,
+          "z": 507.4910241032485
+        }
+      },
+      "estimatedTriangleCount": 199799,
+      "estimatedDrawCallCount": 10,
+      "minDiagonalLength": 0.1397426277399063,
+      "maxDiagonalLength": 0.21272499859333038,
+      "downloadSize": 845496
+    },
+    {
+      "id": 26,
+      "sectorFileName": "26.glb",
+      "parentId": 0,
+      "path": "0/25/",
+      "depth": 1,
+      "boundingBox": {
+        "min": {
+          "x": 338.05601605580887,
+          "y": 92.95389589741286,
+          "z": 503.2224002761419
+        },
+        "max": {
+          "x": 346.16480664064875,
+          "y": 98.25723030512454,
+          "z": 507.4024118408714
+        }
+      },
+      "estimatedTriangleCount": 185960,
+      "estimatedDrawCallCount": 12,
+      "minDiagonalLength": 0.024413108825683594,
+      "maxDiagonalLength": 0.1166190430521965,
+      "downloadSize": 814380
+    },
+    {
+      "id": 27,
+      "sectorFileName": "27.glb",
+      "parentId": 0,
+      "path": "0/26/",
+      "depth": 1,
+      "boundingBox": {
+        "min": {
+          "x": 338.0024096665438,
+          "y": 92.9933346531359,
+          "z": 499.0520993892674
+        },
+        "max": {
+          "x": 346.28196777414996,
+          "y": 98.26416230668434,
+          "z": 503.2410455110948
+        }
+      },
+      "estimatedTriangleCount": 109146,
+      "estimatedDrawCallCount": 11,
+      "minDiagonalLength": 0.030000001192092896,
+      "maxDiagonalLength": 0.12322337180376053,
+      "downloadSize": 342252
+    },
+    {
+      "id": 28,
+      "sectorFileName": "28.glb",
+      "parentId": 0,
+      "path": "0/27/",
+      "depth": 1,
+      "boundingBox": {
+        "min": {
+          "x": 337.7957035504587,
+          "y": 82.06455077608734,
+          "z": 498.45000852283556
+        },
+        "max": {
+          "x": 356.7438688276186,
+          "y": 93.48250000097723,
+          "z": 513.2421582039522
+        }
+      },
+      "estimatedTriangleCount": 199975,
+      "estimatedDrawCallCount": 11,
+      "minDiagonalLength": 0.3752812445163727,
+      "maxDiagonalLength": 0.8342961072921753,
+      "downloadSize": 1783616
+    },
+    {
+      "id": 29,
+      "sectorFileName": "29.glb",
+      "parentId": 0,
+      "path": "0/28/",
+      "depth": 1,
+      "boundingBox": {
+        "min": {
+          "x": 346.265016452875,
+          "y": 87.90491458190716,
+          "z": 499.5740287073749
+        },
+        "max": {
+          "x": 354.4510168322595,
+          "y": 93.05825240124163,
+          "z": 507.80091167252976
+        }
+      },
+      "estimatedTriangleCount": 189214,
+      "estimatedDrawCallCount": 20,
+      "minDiagonalLength": 0.027368055656552315,
+      "maxDiagonalLength": 0.2729479670524597,
+      "downloadSize": 1055376
+    },
+    {
+      "id": 30,
+      "sectorFileName": "30.glb",
+      "parentId": 0,
+      "path": "0/29/",
+      "depth": 1,
+      "boundingBox": {
+        "min": {
+          "x": 346.22030714071786,
+          "y": 82.83500393060967,
+          "z": 499.71202373667603
+        },
+        "max": {
+          "x": 354.7560168467462,
+          "y": 88.0182734699481,
+          "z": 507.600024105981
+        }
+      },
+      "estimatedTriangleCount": 51690,
+      "estimatedDrawCallCount": 16,
+      "minDiagonalLength": 0.03807886689901352,
+      "maxDiagonalLength": 0.25165054202079773,
+      "downloadSize": 274244
+    },
+    {
+      "id": 31,
+      "sectorFileName": "31.glb",
+      "parentId": 0,
+      "path": "0/30/",
+      "depth": 1,
+      "boundingBox": {
+        "min": {
+          "x": 337.89598998244753,
+          "y": 82.24395702843867,
+          "z": 498.04999389173463
+        },
+        "max": {
+          "x": 346.4532463279497,
+          "y": 93.09424485120203,
+          "z": 513.1421264652163
+        }
+      },
+      "estimatedTriangleCount": 173639,
+      "estimatedDrawCallCount": 13,
+      "minDiagonalLength": 0.22651107609272003,
+      "maxDiagonalLength": 0.33000001311302185,
+      "downloadSize": 1264672
+    },
+    {
+      "id": 32,
+      "sectorFileName": "32.glb",
+      "parentId": 0,
+      "path": "0/31/",
+      "depth": 1,
+      "boundingBox": {
+        "min": {
+          "x": 337.9459899859804,
+          "y": 82.73300392949021,
+          "z": 505.6616750434041
+        },
+        "max": {
+          "x": 346.38072788065136,
+          "y": 93.05000441800803,
+          "z": 513.2529661593871
+        }
+      },
+      "estimatedTriangleCount": 143307,
+      "estimatedDrawCallCount": 19,
+      "minDiagonalLength": 0.026478633284568787,
+      "maxDiagonalLength": 0.21272499859333038,
+      "downloadSize": 673848
+    },
+    {
+      "id": 33,
+      "sectorFileName": "33.glb",
+      "parentId": 0,
+      "path": "0/32/",
+      "depth": 1,
+      "boundingBox": {
+        "min": {
+          "x": 337.9800160562154,
+          "y": 82.09364197522378,
+          "z": 498.24999877787195
+        },
+        "max": {
+          "x": 346.36517982755424,
+          "y": 93.06830126792192,
+          "z": 505.8421701788902
+        }
+      },
+      "estimatedTriangleCount": 199165,
+      "estimatedDrawCallCount": 9,
+      "minDiagonalLength": 0.13858774304389954,
+      "maxDiagonalLength": 0.21272499859333038,
+      "downloadSize": 1088896
+    },
+    {
+      "id": 34,
+      "sectorFileName": "34.glb",
+      "parentId": 0,
+      "path": "0/33/",
+      "depth": 1,
+      "boundingBox": {
+        "min": {
+          "x": 338.06351778557735,
+          "y": 87.59500416135415,
+          "z": 499.9920237483457
+        },
+        "max": {
+          "x": 342.2559926782619,
+          "y": 93.03481821343303,
+          "z": 505.75399023442463
+        }
+      },
+      "estimatedTriangleCount": 49344,
+      "estimatedDrawCallCount": 5,
+      "minDiagonalLength": 0.017320508137345314,
+      "maxDiagonalLength": 0.10960100591182709,
+      "downloadSize": 248276
+    },
+    {
+      "id": 35,
+      "sectorFileName": "35.glb",
+      "parentId": 0,
+      "path": "0/34/",
+      "depth": 1,
+      "boundingBox": {
+        "min": {
+          "x": 342.1694581570191,
+          "y": 87.51018415678213,
+          "z": 499.99202374822926
+        },
+        "max": {
+          "x": 346.3479931652546,
+          "y": 93.01643874682486,
+          "z": 505.79442416496374
+        }
+      },
+      "estimatedTriangleCount": 159970,
+      "estimatedDrawCallCount": 9,
+      "minDiagonalLength": 0.027856776490807533,
+      "maxDiagonalLength": 0.11000000685453415,
+      "downloadSize": 724404
+    },
+    {
+      "id": 36,
+      "sectorFileName": "36.glb",
+      "parentId": 0,
+      "path": "0/35/",
+      "depth": 1,
+      "boundingBox": {
+        "min": {
+          "x": 338.01998779177666,
+          "y": 82.06455077608734,
+          "z": 499.34209295797194
+        },
+        "max": {
+          "x": 346.2928099996025,
+          "y": 87.59251755251452,
+          "z": 505.75223169045057
+        }
+      },
+      "estimatedTriangleCount": 95747,
+      "estimatedDrawCallCount": 15,
+      "minDiagonalLength": 0.02500000037252903,
+      "maxDiagonalLength": 0.11000000685453415,
+      "downloadSize": 270704
+    },
+    {
+      "id": 37,
+      "sectorFileName": "37.glb",
+      "parentId": 0,
+      "path": "0/36/",
+      "depth": 1,
+      "boundingBox": {
+        "min": {
+          "x": 327.45001555379713,
+          "y": 82.94435037401655,
+          "z": 498.53002368449233
+        },
+        "max": {
+          "x": 338.6857962012291,
+          "y": 104.10844939947128,
+          "z": 507.99999856035413
+        }
+      },
+      "estimatedTriangleCount": 129491,
+      "estimatedDrawCallCount": 9,
+      "minDiagonalLength": 0.9793917536735535,
+      "maxDiagonalLength": 1.4382749795913696,
+      "downloadSize": 1139260
+    },
+    {
+      "id": 38,
+      "sectorFileName": "38.glb",
+      "parentId": 0,
+      "path": "0/37/",
+      "depth": 1,
+      "boundingBox": {
+        "min": {
+          "x": 327.8142900946377,
+          "y": 92.9999108674751,
+          "z": 498.5000236770138
+        },
+        "max": {
+          "x": 338.3009704720462,
+          "y": 103.77464439815009,
+          "z": 508.21053588882984
+        }
+      },
+      "estimatedTriangleCount": 193215,
+      "estimatedDrawCallCount": 8,
+      "minDiagonalLength": 0.4191000163555145,
+      "maxDiagonalLength": 0.9160000085830688,
+      "downloadSize": 1327176
+    },
+    {
+      "id": 39,
+      "sectorFileName": "39.glb",
+      "parentId": 0,
+      "path": "0/38/",
+      "depth": 1,
+      "boundingBox": {
+        "min": {
+          "x": 327.8060155698331,
+          "y": 98.28288409109844,
+          "z": 499.3925237231888
+        },
+        "max": {
+          "x": 338.1421578174889,
+          "y": 103.62001231875553,
+          "z": 508.315563963959
+        }
+      },
+      "estimatedTriangleCount": 199744,
+      "estimatedDrawCallCount": 16,
+      "minDiagonalLength": 0.09469788521528244,
+      "maxDiagonalLength": 0.3397425711154938,
+      "downloadSize": 1422088
+    },
+    {
+      "id": 40,
+      "sectorFileName": "40.glb",
+      "parentId": 0,
+      "path": "0/39/",
+      "depth": 1,
+      "boundingBox": {
+        "min": {
+          "x": 333.0819928681627,
+          "y": 98.39324245462194,
+          "z": 500.1995122070075
+        },
+        "max": {
+          "x": 338.04478172430106,
+          "y": 103.33694866945734,
+          "z": 507.8093073730706
+        }
+      },
+      "estimatedTriangleCount": 52890,
+      "estimatedDrawCallCount": 8,
+      "minDiagonalLength": 0.02060007117688656,
+      "maxDiagonalLength": 0.06050000339746475,
+      "downloadSize": 100728
+    },
+    {
+      "id": 41,
+      "sectorFileName": "41.glb",
+      "parentId": 0,
+      "path": "0/40/",
+      "depth": 1,
+      "boundingBox": {
+        "min": {
+          "x": 328.10850463802376,
+          "y": 98.39324245462194,
+          "z": 500.3450061031617
+        },
+        "max": {
+          "x": 333.0603118186529,
+          "y": 103.50500000015798,
+          "z": 508.33056152359546
+        }
+      },
+      "estimatedTriangleCount": 74730,
+      "estimatedDrawCallCount": 9,
+      "minDiagonalLength": 0.01973681151866913,
+      "maxDiagonalLength": 0.05728001147508621,
+      "downloadSize": 171572
+    },
+    {
+      "id": 42,
+      "sectorFileName": "42.glb",
+      "parentId": 0,
+      "path": "0/41/",
+      "depth": 1,
+      "boundingBox": {
+        "min": {
+          "x": 327.80576556982123,
+          "y": 93.17399907734944,
+          "z": 499.2830237164744
+        },
+        "max": {
+          "x": 338.1099894775644,
+          "y": 98.52082613444024,
+          "z": 508.00008931353676
+        }
+      },
+      "estimatedTriangleCount": 199976,
+      "estimatedDrawCallCount": 12,
+      "minDiagonalLength": 0.1414213478565216,
+      "maxDiagonalLength": 0.3799999952316284,
+      "downloadSize": 1354316
+    },
+    {
+      "id": 43,
+      "sectorFileName": "43.glb",
+      "parentId": 0,
+      "path": "0/42/",
+      "depth": 1,
+      "boundingBox": {
+        "min": {
+          "x": 332.9198061491914,
+          "y": 93.26027152592845,
+          "z": 500.02502375032054
+        },
+        "max": {
+          "x": 338.0539749994561,
+          "y": 98.44000467401929,
+          "z": 507.5100664143687
+        }
+      },
+      "estimatedTriangleCount": 100193,
+      "estimatedDrawCallCount": 10,
+      "minDiagonalLength": 0.020600073039531708,
+      "maxDiagonalLength": 0.11280514299869537,
+      "downloadSize": 355672
+    },
+    {
+      "id": 44,
+      "sectorFileName": "44.glb",
+      "parentId": 0,
+      "path": "0/43/",
+      "depth": 1,
+      "boundingBox": {
+        "min": {
+          "x": 327.8697255849838,
+          "y": 93.26027152592845,
+          "z": 500.02502375032054
+        },
+        "max": {
+          "x": 332.99615248528073,
+          "y": 98.44000467401929,
+          "z": 507.80091167252976
+        }
+      },
+      "estimatedTriangleCount": 119010,
+      "estimatedDrawCallCount": 11,
+      "minDiagonalLength": 0.020600073039531708,
+      "maxDiagonalLength": 0.10991187393665314,
+      "downloadSize": 518740
+    },
+    {
+      "id": 45,
+      "sectorFileName": "45.glb",
+      "parentId": 0,
+      "path": "0/44/",
+      "depth": 1,
+      "boundingBox": {
+        "min": {
+          "x": 319.34001516760327,
+          "y": 83.28799737547524,
+          "z": 496.4840235814918
+        },
+        "max": {
+          "x": 338.049998738829,
+          "y": 93.48250000097723,
+          "z": 507.84944189769527
+        }
+      },
+      "estimatedTriangleCount": 197420,
+      "estimatedDrawCallCount": 10,
+      "minDiagonalLength": 0.3799999952316284,
+      "maxDiagonalLength": 0.9160000085830688,
+      "downloadSize": 980040
+    },
+    {
+      "id": 46,
+      "sectorFileName": "46.glb",
+      "parentId": 0,
+      "path": "0/45/",
+      "depth": 1,
+      "boundingBox": {
+        "min": {
+          "x": 328.6740421929762,
+          "y": 82.73535548864356,
+          "z": 498.83453420442896
+        },
+        "max": {
+          "x": 338.1291149872115,
+          "y": 93.34357963435032,
+          "z": 507.99999661175957
+        }
+      },
+      "estimatedTriangleCount": 194751,
+      "estimatedDrawCallCount": 13,
+      "minDiagonalLength": 0.18624000251293182,
+      "maxDiagonalLength": 0.33373644948005676,
+      "downloadSize": 1415252
+    },
+    {
+      "id": 47,
+      "sectorFileName": "47.glb",
+      "parentId": 0,
+      "path": "0/46/",
+      "depth": 1,
+      "boundingBox": {
+        "min": {
+          "x": 333.37991967695416,
+          "y": 87.97499636613838,
+          "z": 499.99500000011176
+        },
+        "max": {
+          "x": 338.0750966827036,
+          "y": 93.30061034976129,
+          "z": 507.5100241055479
+        }
+      },
+      "estimatedTriangleCount": 109920,
+      "estimatedDrawCallCount": 11,
+      "minDiagonalLength": 0.02060007117688656,
+      "maxDiagonalLength": 0.1254432201385498,
+      "downloadSize": 549644
+    },
+    {
+      "id": 48,
+      "sectorFileName": "48.glb",
+      "parentId": 0,
+      "path": "0/47/",
+      "depth": 1,
+      "boundingBox": {
+        "min": {
+          "x": 328.69301692003734,
+          "y": 87.97499636613838,
+          "z": 499.99500000011176
+        },
+        "max": {
+          "x": 333.3957977941952,
+          "y": 93.30061034976129,
+          "z": 507.81545532122254
+        }
+      },
+      "estimatedTriangleCount": 124257,
+      "estimatedDrawCallCount": 12,
+      "minDiagonalLength": 0.020600073039531708,
+      "maxDiagonalLength": 0.13563553988933563,
+      "downloadSize": 683004
+    },
+    {
+      "id": 49,
+      "sectorFileName": "49.glb",
+      "parentId": 0,
+      "path": "0/48/",
+      "depth": 1,
+      "boundingBox": {
+        "min": {
+          "x": 328.6909125015214,
+          "y": 82.73174330410643,
+          "z": 499.99500000011176
+        },
+        "max": {
+          "x": 338.08442230896253,
+          "y": 88.0565333907103,
+          "z": 507.81545532122254
+        }
+      },
+      "estimatedTriangleCount": 103887,
+      "estimatedDrawCallCount": 14,
+      "minDiagonalLength": 0.017326930537819862,
+      "maxDiagonalLength": 0.1534593105316162,
+      "downloadSize": 426884
+    },
+    {
+      "id": 50,
+      "sectorFileName": "50.glb",
+      "parentId": 0,
+      "path": "0/49/",
+      "depth": 1,
+      "boundingBox": {
+        "min": {
+          "x": 319.31501516816206,
+          "y": 83.32150335609913,
+          "z": 496.2150235695299
+        },
+        "max": {
+          "x": 328.7969911224382,
+          "y": 93.22001182478202,
+          "z": 507.5286178559709
+        }
+      },
+      "estimatedTriangleCount": 70494,
+      "estimatedDrawCallCount": 16,
+      "minDiagonalLength": 0.02500000037252903,
+      "maxDiagonalLength": 0.23448267579078674,
+      "downloadSize": 380376
+    }
+  ]
+}

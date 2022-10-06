@@ -23,7 +23,7 @@ in vec4 axis;
 in vec4 v_centerA;
 in vec4 v_centerB;
 in float height;
-in float v_treeIndex;
+flat in float v_treeIndex;
 in vec3 v_color;
 in vec3 v_normal;
 

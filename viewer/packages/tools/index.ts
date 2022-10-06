@@ -19,24 +19,15 @@ export {
   AbsolutePosition,
   RelativePosition
 } from './src/AxisView/types';
-export { GeomapTool } from './src/Geomap/GeomapTool';
-export {
-  MapConfig,
-  MapProviders,
-  BingMapConfig,
-  HereMapConfig,
-  MapboxConfig,
-  MapboxMode,
-  MapboxStyle,
-  MapboxImageFormat,
-  BingMapType,
-  BingMapImageFormat,
-  HereMapType,
-  HereMapScheme,
-  HereMapImageFormat
-} from './src/Geomap/MapConfig';
 export { TimelineTool } from './src/Timeline/TimelineTool';
 export { Keyframe } from './src/Timeline/Keyframe';
 export { TimelineDateUpdateDelegate } from './src/Timeline/types';
 export { Cognite3DViewerToolBase } from './src/Cognite3DViewerToolBase';
-export { DebugLoadedSectorsTool, DebugLoadedSectorsToolOptions } from './src/DebugLoadedSectorsTool';
+export { MeasurementTool } from './src/Measurement/MeasurementTool';
+export { Measurement } from './src/Measurement/MeasurementManager';
+export {
+  MeasurementOptions,
+  MeasurementAddedDelegate,
+  MeasurementStartedDelegate,
+  MeasurementEndedDelegate
+} from './src/Measurement/types';

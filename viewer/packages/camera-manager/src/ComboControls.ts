@@ -96,20 +96,20 @@ export class ComboControls extends EventDispatcher {
   private _sphericalEnd: Spherical = new Spherical();
   private readonly _deltaTarget: Vector3 = new Vector3();
   private readonly _rawCameraRotation = new Quaternion();
-  private _keyboard: Keyboard = new Keyboard();
+  private readonly _keyboard: Keyboard;
 
   private readonly _offsetVector: Vector3 = new Vector3();
   private readonly _panVector: Vector3 = new Vector3();
   private readonly _raycaster: Raycaster = new Raycaster();
   private readonly _targetFPS: number = 30;
   private _targetFPSOverActualFPS: number = 1;
-  private _isFocused = false;
 
   constructor(camera: PerspectiveCamera | OrthographicCamera, domElement: HTMLElement) {
     super();
     this._camera = camera;
     this._reusableCamera = camera.clone() as typeof camera;
     this._domElement = domElement;
+    this._keyboard = new Keyboard(this._domElement);
 
     // rotation
 
@@ -138,10 +138,13 @@ export class ComboControls extends EventDispatcher {
 
       window.removeEventListener('pointerup', this.onMouseUp);
       window.removeEventListener('pointerdown', this.onFocusChanged);
+
+      // dipose all keyboard events registered. REV-461!
+      this._keyboard.dispose();
     };
   }
 
-  public update = (deltaTime: number): boolean => {
+  public update = (deltaTime: number, forceUpdate = false): boolean => {
     const {
       _camera,
       _target,
@@ -157,7 +160,7 @@ export class ComboControls extends EventDispatcher {
       enabled
     } = this;
 
-    if (!enabled) {
+    if (!forceUpdate && !enabled) {
       return false;
     }
 
@@ -242,7 +245,7 @@ export class ComboControls extends EventDispatcher {
     this._target.copy(this._targetEnd);
     this._scrollTarget.copy(target);
     this._spherical.copy(this._sphericalEnd);
-    this.update(1000 / this._targetFPS);
+    this.update(1000 / this._targetFPS, true);
     this.triggerCameraChangeEvent();
   };
 
@@ -384,23 +387,9 @@ export class ComboControls extends EventDispatcher {
   };
 
   private readonly onFocusChanged = (event: MouseEvent | TouchEvent | FocusEvent) => {
-    this._isFocused =
-      event.type !== 'blur' &&
-      (this.isDescendant(this._domElement.parentElement!, event.target as HTMLElement) ||
-        document.activeElement === this._domElement);
-
-    this._keyboard.disabled = !this._isFocused;
-  };
-
-  private readonly isDescendant = (parent: HTMLElement, child: HTMLElement) => {
-    let node = child.parentNode;
-    while (node !== null) {
-      if (node === parent) {
-        return true;
-      }
-      node = node.parentNode;
+    if (event.type !== 'blur') {
+      this._keyboard.disabled = false;
     }
-    return false;
   };
 
   private readonly onContextMenu = (event: MouseEvent) => {
@@ -552,7 +541,7 @@ export class ComboControls extends EventDispatcher {
   };
 
   private readonly handleKeyboard = () => {
-    if (!this.enabled || !this.enableKeyboardNavigation || !this._isFocused) {
+    if (!this.enabled || !this.enableKeyboardNavigation) {
       return;
     }
 

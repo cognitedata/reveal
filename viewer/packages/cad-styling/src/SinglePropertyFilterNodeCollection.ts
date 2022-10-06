@@ -2,22 +2,17 @@
  * Copyright 2021 Cognite AS
  */
 
-import * as THREE from 'three';
-
-import { PopulateIndexSetFromPagedResponseHelper } from './PopulateIndexSetFromPagedResponseHelper';
 import { PropertyFilterNodeCollectionOptions } from './PropertyFilterNodeCollection';
 
-import { IndexSet, NumericRange, toThreeBox3 } from '@reveal/utilities';
-import { AreaCollection } from './prioritized/AreaCollection';
-import { EmptyAreaCollection } from './prioritized/EmptyAreaCollection';
-import { NodeCollection } from './NodeCollection';
 import { SerializedNodeCollection } from './SerializedNodeCollection';
 import { CdfModelNodeCollectionDataProvider } from './CdfModelNodeCollectionDataProvider';
 
 import { CogniteClient, HttpRequestOptions, ListResponse, Node3D } from '@cognite/sdk';
 
 import range from 'lodash/range';
+import chunk from 'lodash/chunk';
 import cloneDeep from 'lodash/cloneDeep';
+import { CdfNodeCollectionBase } from './CdfNodeCollectionBase';
 
 /**
  * Node collection that filters nodes based on a node property from a list of values, similarly to how
@@ -25,17 +20,13 @@ import cloneDeep from 'lodash/cloneDeep';
  * nodes within a set of areas or systems. The node set is optimized for matching with properties with
  * a large number of values (i.e. thousands).
  */
-export class SinglePropertyFilterNodeCollection extends NodeCollection {
+export class SinglePropertyFilterNodeCollection extends CdfNodeCollectionBase {
   public static readonly classToken = 'SinglePropertyNodeCollection';
 
   private readonly _client: CogniteClient;
   private readonly _model: CdfModelNodeCollectionDataProvider;
 
-  private _indexSet = new IndexSet();
-  private _areas: AreaCollection = EmptyAreaCollection.instance();
-
   private readonly _options: Required<PropertyFilterNodeCollectionOptions>;
-  private _fetchResultHelper: PopulateIndexSetFromPagedResponseHelper<Node3D> | undefined;
   private readonly _filter = {
     propertyCategory: '',
     propertyKey: '',
@@ -52,14 +43,10 @@ export class SinglePropertyFilterNodeCollection extends NodeCollection {
     model: CdfModelNodeCollectionDataProvider,
     options: PropertyFilterNodeCollectionOptions = {}
   ) {
-    super(SinglePropertyFilterNodeCollection.classToken);
+    super(SinglePropertyFilterNodeCollection.classToken, model);
     this._client = client;
     this._model = model;
     this._options = { requestPartitions: 1, ...options };
-  }
-
-  get isLoading(): boolean {
-    return this._fetchResultHelper !== undefined && this._fetchResultHelper.isLoading;
   }
 
   /**
@@ -72,35 +59,20 @@ export class SinglePropertyFilterNodeCollection extends NodeCollection {
    * @param propertyKey Node property key, e.g. `':FU'`.
    * @param propertyValues Lookup values, e.g. `["AR100APG539","AP500INF534","AP400INF553", ...]`
    */
-  async executeFilter(propertyCategory: string, propertyKey: string, propertyValues: string[]): Promise<void> {
+  executeFilter(propertyCategory: string, propertyKey: string, propertyValues: string[]): Promise<void> {
     const { requestPartitions } = this._options;
 
-    if (this._fetchResultHelper !== undefined) {
-      // Interrupt any ongoing operation to avoid fetching results unnecessary
-      this._fetchResultHelper.interrupt();
-    }
-    const fetchResultHelper = new PopulateIndexSetFromPagedResponseHelper<Node3D>(
-      nodes => nodes.map(node => new NumericRange(node.treeIndex, node.subtreeSize)),
-      async nodes => {
-        return nodes.map(node => {
-          const box = new THREE.Box3();
-          if (node.boundingBox !== undefined) {
-            toThreeBox3(node.boundingBox, box);
-            this._model.mapBoxFromCdfToModelCoordinates(box, box);
-          }
-          return box;
-        });
-      },
-      () => this.notifyChanged()
-    );
-    this._fetchResultHelper = fetchResultHelper;
-    this._indexSet = fetchResultHelper.indexSet;
-    this._areas = fetchResultHelper.areas;
     const outputsUrl = this.buildUrl();
-    const batches = Array.from(splitQueryToBatches(propertyValues));
+    const batches = splitQueryToBatches(propertyValues);
 
     const requests = batches.flatMap(batch => {
-      const filter = { properties: { [`${propertyCategory}`]: { [`${propertyKey}`]: batch } } };
+      const filter = {
+        properties: {
+          [`${propertyCategory}`]: {
+            [`${propertyKey}`]: batch
+          }
+        }
+      };
       const batchRequests = range(1, requestPartitions + 1).map(async p => {
         const response = postAsListResponse<Node3D[]>(this._client, outputsUrl, {
           data: {
@@ -109,33 +81,11 @@ export class SinglePropertyFilterNodeCollection extends NodeCollection {
             partition: `${p}/${requestPartitions}`
           }
         });
-
-        return fetchResultHelper.pageResults(response);
+        return response;
       });
       return batchRequests;
     });
-
-    this.notifyChanged();
-    await Promise.all(requests);
-  }
-
-  /**
-   * Clears the node set and interrupts any ongoing operations.
-   */
-  clear(): void {
-    if (this._fetchResultHelper !== undefined) {
-      this._fetchResultHelper.interrupt();
-    }
-    this._indexSet.clear();
-    this.notifyChanged();
-  }
-
-  getIndexSet(): IndexSet {
-    return this._indexSet;
-  }
-
-  getAreas(): AreaCollection {
-    return this._areas;
+    return this.updateCollectionFromResults(requests);
   }
 
   private buildUrl(): string {
@@ -153,12 +103,8 @@ export class SinglePropertyFilterNodeCollection extends NodeCollection {
   }
 }
 
-function* splitQueryToBatches(propertyValues: string[]): Generator<string[]> {
-  const batchSize = 1000;
-  for (let i = 0; i < propertyValues.length; i += batchSize) {
-    const batch = propertyValues.slice(i, Math.min(propertyValues.length, i + batchSize));
-    yield batch;
-  }
+function splitQueryToBatches(propertyValues: string[]): string[][] {
+  return chunk(propertyValues, 1000);
 }
 
 type RawListResponse<T> = {

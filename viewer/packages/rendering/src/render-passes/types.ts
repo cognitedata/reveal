@@ -2,6 +2,7 @@
  * Copyright 2022 Cognite AS
  */
 
+import { PotreePointShape } from '../pointcloud-rendering';
 import * as THREE from 'three';
 
 export type BlendOptions = {
@@ -24,9 +25,24 @@ export type BlitOptions = {
   ssaoTexture?: THREE.Texture;
   blendOptions?: BlendOptions;
   overrideAlpha?: number;
-  writeColor?: boolean;
   edges?: boolean;
   outline?: boolean;
+};
+
+export type DepthBlendBlitOptions = {
+  texture: THREE.Texture;
+  depthTexture: THREE.DepthTexture;
+  blendTexture: THREE.Texture;
+  blendDepthTexture: THREE.Texture;
+  blendFactor: number;
+  overrideAlpha?: number;
+  outline?: boolean;
+};
+
+export type PointCloudPostProcessingOptions = {
+  texture: THREE.Texture;
+  depthTexture: THREE.DepthTexture;
+  pointBlending: boolean;
 };
 
 export const transparentBlendOptions: BlendOptions = {
@@ -36,13 +52,33 @@ export const transparentBlendOptions: BlendOptions = {
   blendSourceAlpha: THREE.OneMinusDstAlphaFactor
 };
 
-export const alphaMaskBlendOptions: BlendOptions = {
-  blendDestination: THREE.SrcAlphaFactor,
-  blendSource: THREE.ZeroFactor,
-  blendDestinationAlpha: THREE.OneFactor,
-  blendSourceAlpha: THREE.ZeroFactor
-};
-
 export type ThreeUniforms = {
   [uniform: string]: THREE.IUniform<any>;
+};
+
+export type PointCloudMaterialParameters = {
+  weighted?: boolean;
+  shape?: PotreePointShape;
+  hqDepthPass?: boolean;
+  depthWrite?: boolean;
+  blending?: THREE.Blending;
+  blendSrc?: THREE.BlendingDstFactor | THREE.BlendingSrcFactor;
+  blendDst?: THREE.BlendingDstFactor;
+  colorWrite?: boolean;
+};
+
+export type PointCloudPassParameters = {
+  material?: PointCloudMaterialParameters;
+  renderer?: {
+    autoClearDepth?: boolean;
+  };
+};
+
+export type PostProcessingObjectsVisibilityParameters = {
+  cad: {
+    back: boolean;
+    ghost: boolean;
+    inFront: boolean;
+  };
+  pointCloud: boolean;
 };

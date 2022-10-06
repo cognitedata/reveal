@@ -2,23 +2,57 @@
  * Copyright 2021 Cognite AS
  */
 import * as THREE from 'three';
+import { Vector4 } from 'three';
 
 type WebGLRendererState = {
   autoClear?: boolean;
+  autoClearDepth?: boolean;
   clearColor?: THREE.Color | string | number;
   clearAlpha?: number;
   size?: THREE.Vector2;
   localClippingEnabled?: boolean;
   renderTarget?: THREE.WebGLRenderTarget | null;
+  scissorData?: THREE.Vector4;
+  scissorTest?: boolean;
+  webGLState?: WebGLState;
+};
+
+type WebGLState = {
+  buffers?: {
+    depth?: {
+      mask?: boolean;
+      test?: boolean;
+    };
+  };
 };
 
 export class WebGLRendererStateHelper {
   private _originalState: WebGLRendererState = {};
   private readonly _renderer: THREE.WebGLRenderer;
 
+  private static readonly DefaultWebGLState: WebGLState = {
+    buffers: {
+      depth: {
+        mask: true,
+        test: true
+      }
+    }
+  };
+
   constructor(renderer: THREE.WebGLRenderer) {
     this._renderer = renderer;
     this._originalState = {};
+  }
+
+  setScissor(x: number, y: number, width: number, height: number): void {
+    const scissorData = this._renderer.getScissor(new Vector4());
+    this._originalState = { scissorData, ...this._originalState };
+    this._renderer.setScissor(x, y, width, height);
+  }
+
+  setScissorTest(enabled: boolean): void {
+    this._originalState = { scissorTest: this._renderer.getScissorTest(), ...this._originalState };
+    this._renderer.setScissorTest(enabled);
   }
 
   setClearColor(color: THREE.Color | number | string, alpha?: number): void {
@@ -28,6 +62,28 @@ export class WebGLRendererStateHelper {
       ...this._originalState
     };
     this._renderer.setClearColor(color, alpha);
+  }
+
+  setWebGLState(state: WebGLState, resetState: WebGLState = WebGLRendererStateHelper.DefaultWebGLState): void {
+    this._originalState = {
+      webGLState: {
+        buffers: state?.buffers ? {} : undefined
+      },
+      ...this._originalState
+    };
+
+    if (state?.buffers?.depth) {
+      const newTest = state.buffers.depth?.test;
+      const newMask = state.buffers.depth?.mask;
+
+      this._originalState.webGLState!.buffers!.depth = {
+        test: newTest !== undefined ? resetState.buffers?.depth?.test : undefined,
+        mask: newMask !== undefined ? resetState.buffers?.depth?.mask : undefined
+      };
+
+      if (newMask !== undefined) this._renderer.state.buffers.depth.setMask(newMask);
+      if (newTest !== undefined) this._renderer.state.buffers.depth.setTest(newTest);
+    }
   }
 
   setSize(width: number, height: number): void {
@@ -45,6 +101,11 @@ export class WebGLRendererStateHelper {
     this._renderer.autoClear = enabled;
   }
 
+  set autoClearDepth(enabled: boolean) {
+    this._originalState = { autoClearDepth: this._renderer.autoClearDepth, ...this._originalState };
+    this._renderer.autoClearDepth = enabled;
+  }
+
   setRenderTarget(renderTarget: THREE.WebGLRenderTarget | null): void {
     this._originalState = { renderTarget: this._renderer.getRenderTarget(), ...this._originalState };
     this._renderer.setRenderTarget(renderTarget);
@@ -53,6 +114,9 @@ export class WebGLRendererStateHelper {
   resetState(): void {
     if (this._originalState.autoClear !== undefined) {
       this._renderer.autoClear = this._originalState.autoClear;
+    }
+    if (this._originalState.autoClearDepth !== undefined) {
+      this._renderer.autoClearDepth = this._originalState.autoClearDepth;
     }
     if (this._originalState.clearColor !== undefined) {
       this._renderer.setClearColor(this._originalState.clearColor, this._originalState.clearAlpha);
@@ -65,6 +129,23 @@ export class WebGLRendererStateHelper {
     }
     if (this._originalState.renderTarget !== undefined) {
       this._renderer.setRenderTarget(this._originalState.renderTarget);
+    }
+    if (this._originalState.scissorData !== undefined) {
+      this._renderer.setScissor(this._originalState.scissorData);
+    }
+    if (this._originalState.scissorTest !== undefined) {
+      this._renderer.setScissorTest(this._originalState.scissorTest);
+    }
+    if (this._originalState.webGLState !== undefined) {
+      this._renderer.state.reset();
+
+      if (this._originalState.webGLState?.buffers?.depth) {
+        const lastTest = this._originalState.webGLState.buffers.depth?.test;
+        const lastMask = this._originalState.webGLState.buffers.depth?.mask;
+
+        if (lastMask !== undefined) this._renderer.state.buffers.depth.setMask(lastMask);
+        if (lastTest !== undefined) this._renderer.state.buffers.depth.setTest(lastTest);
+      }
     }
 
     this._originalState = {};

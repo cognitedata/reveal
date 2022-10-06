@@ -40,7 +40,7 @@ module.exports = {
       'block',
       [
         {
-          pattern: `(Copyright 20\\d{2}|istanbul ignore)`,
+          pattern: `(Copyright 20\\d{2}|istanbul ignore|Adapted from pnext/three-loader)`,
           template: `!\n * Copyright ${new Date().getFullYear()} Cognite AS\n `
         }
       ]
@@ -86,7 +86,7 @@ module.exports = {
   },
   overrides: [
     {
-      files: ['*.test.ts'],
+      files: ['*.test.ts', 'test-utilities/**/*.ts'],
       rules: {
         // complains when you do expect(mockObj.mockFn).toBeCalled() in tests
         '@typescript-eslint/unbound-method': 'off'
@@ -95,7 +95,7 @@ module.exports = {
 
     // more strict jsdoc rules for public API
     {
-      files: ['./core/src/public/**/*.ts'],
+      files: ['./packages/api/src/public/**/*.ts'],
       rules: {
         'jsdoc/require-jsdoc': [
           'warn',

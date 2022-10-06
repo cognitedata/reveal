@@ -7,15 +7,20 @@ import remove from 'lodash/remove';
 
 export class SceneHandler {
   private readonly _scene: THREE.Scene;
-  private readonly _cadModels: { object: THREE.Object3D; modelIdentifier: string }[];
+  private readonly _cadModels: { cadNode: THREE.Object3D; modelIdentifier: string }[];
+  private readonly _pointCloudModels: { pointCloudNode: THREE.Object3D; modelIdentifier: symbol }[];
   private readonly _customObjects: THREE.Object3D[];
 
   get scene(): THREE.Scene {
     return this._scene;
   }
 
-  get cadModels(): { object: THREE.Object3D; modelIdentifier: string }[] {
+  get cadModels(): { cadNode: THREE.Object3D; modelIdentifier: string }[] {
     return this._cadModels;
+  }
+
+  get pointCloudModels(): { pointCloudNode: THREE.Object3D; modelIdentifier: symbol }[] {
+    return this._pointCloudModels;
   }
 
   get customObjects(): THREE.Object3D[] {
@@ -24,20 +29,34 @@ export class SceneHandler {
 
   constructor() {
     this._cadModels = [];
+    this._pointCloudModels = [];
     this._customObjects = [];
     this._scene = new THREE.Scene();
 
-    this._scene.autoUpdate = false;
+    // @ts-expect-error
+    // Missing type definition for ThreeJS r144. When this fails,
+    // its most likely because the type definitions have been updated
+    this._scene.matrixWorldAutoUpdate = false;
   }
 
-  public addCadModel(object: THREE.Object3D, modelIdentifier: string): void {
-    this._cadModels.push({ object, modelIdentifier });
-    this._scene.add(object);
+  public addCadModel(cadNode: THREE.Object3D, modelIdentifier: string): void {
+    this._cadModels.push({ cadNode, modelIdentifier });
+    this._scene.add(cadNode);
   }
 
-  public removeCadModel(object: THREE.Object3D): void {
-    this.scene.remove(object);
-    remove(this._cadModels, { object });
+  public addPointCloudModel(pointCloudNode: THREE.Object3D, modelIdentifier: symbol): void {
+    this._pointCloudModels.push({ pointCloudNode, modelIdentifier });
+    this._scene.add(pointCloudNode);
+  }
+
+  public removePointCloudModel(pointCloudNode: THREE.Object3D): void {
+    this.scene.remove(pointCloudNode);
+    remove(this._pointCloudModels, { pointCloudNode });
+  }
+
+  public removeCadModel(cadNode: THREE.Object3D): void {
+    this.scene.remove(cadNode);
+    remove(this._cadModels, { cadNode });
   }
 
   public addCustomObject(object: THREE.Object3D): void {
@@ -52,6 +71,7 @@ export class SceneHandler {
 
   public dispose(): void {
     this._cadModels.splice(0);
+    this._pointCloudModels.splice(0);
     this._customObjects.splice(0);
 
     this.scene.traverse(object => {

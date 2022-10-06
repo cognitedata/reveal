@@ -1,18 +1,22 @@
 import * as dat from 'dat.gui';
-import { Cognite3DModel } from "@cognite/reveal";
+import * as THREE from 'three';
+import { Cognite3DModel, Cognite3DViewer, DefaultCameraManager } from "@cognite/reveal";
 import { CogniteClient, Node3D } from "@cognite/sdk";
 import { TreeIndexNodeCollection } from '@cognite/reveal';
 import { NumericRange } from '@cognite/reveal';
 import { DefaultNodeAppearance } from '@cognite/reveal';
+import { TransformControls } from 'three/examples/jsm/controls/TransformControls';
 
 export class InspectNodeUI {
   private readonly _uiFolder: dat.GUI;
   private readonly _uiSubFolders: dat.GUI[] = [];
   private readonly _sdk: CogniteClient;
+  private readonly _viewer: Cognite3DViewer;
 
-  constructor(uiFolder: dat.GUI, sdk: CogniteClient) {
+  constructor(uiFolder: dat.GUI, sdk: CogniteClient, viewer: Cognite3DViewer) {
     this._uiFolder = uiFolder;
     this._sdk = sdk;
+    this._viewer = viewer;
   }
 
   async inspectNode(model: Cognite3DModel, treeIndex: number): Promise<void> {
@@ -55,11 +59,40 @@ export class InspectNodeUI {
       hide: () => {
         const nodeCollection = new TreeIndexNodeCollection(new NumericRange(node.treeIndex, node.subtreeSize));
         model.assignStyledNodeCollection(nodeCollection, DefaultNodeAppearance.Hidden);
+      },
+      addTranslationGizmo: async () => {
+        // Create dummy object that can be dragged around
+        const bbox = await model.getBoundingBoxByTreeIndex(node.treeIndex);
+        const startPosition = bbox.getCenter(new THREE.Vector3());
+        const draggable = new THREE.Object3D();
+        draggable.position.copy(startPosition);
+        
+        const gizmo = new TransformControls(this._viewer.getCamera(), this._viewer.renderer.domElement);
+        const offset = new THREE.Vector3();
+        const transform = new THREE.Matrix4();
+        gizmo.addEventListener('change', () => {
+          offset.copy(draggable.position);
+          offset.addScaledVector(startPosition, -1.0);
+          transform.makeTranslation(offset.x, offset.y, offset.z);
+          model.setNodeTransformByTreeIndex(node.treeIndex, transform);
+          this._viewer.requestRedraw();
+        });
+				gizmo.addEventListener( 'dragging-changed', (event: any) =>  {
+          const dragging: boolean = event.value;
+					const cameraManager: DefaultCameraManager = this._viewer.cameraManager as DefaultCameraManager;
+          cameraManager.cameraControlsEnabled = !dragging;
+				} );
+
+        this._viewer.addObject3D(gizmo);
+        this._viewer.addObject3D(draggable);
+
+        gizmo.attach(draggable);
       }
     };
     nodeUi.add(actions, 'hide').name('Hide');
     nodeUi.add(actions, 'highlight').name('Highlight');
     nodeUi.add(actions, 'resetAndHighlight').name('Reset+highlight');
+    nodeUi.add(actions, 'addTranslationGizmo').name('Drag');
 
     if (node.properties === undefined) {
       return;

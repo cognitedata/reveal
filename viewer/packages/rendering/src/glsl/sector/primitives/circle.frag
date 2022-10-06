@@ -12,7 +12,7 @@ uniform sampler2D matCapTexture;
 uniform vec2 treeIndexTextureSize;
 uniform int renderMode;
 
-in float v_treeIndex;
+flat in float v_treeIndex;
 in vec2 v_xy;
 in vec3 v_color;
 in vec3 v_normal;
@@ -23,7 +23,7 @@ void main() {
     vec3 normal = normalize( v_normal );
     if (dist > 0.25)
       discard;
-      
+
     NodeAppearance appearance = determineNodeAppearance(colorDataTexture, treeIndexTextureSize, v_treeIndex);
     if (!determineVisibility(appearance, renderMode)) {
         discard;

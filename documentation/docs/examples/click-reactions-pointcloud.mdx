@@ -10,7 +10,7 @@ a mouse click.
 
 import { DemoWrapper } from '@site/docs/components/DemoWrapper';
 
-<DemoWrapper name="Cognite3DViewerDemo" modelType="pointcloud" />
+<DemoWrapper modelType="pointcloud" />
 
 ## Detecting clicked positions
 
@@ -29,17 +29,4 @@ viewer.on('click', async event => {
     viewer.addObject3D(sphere);
   };
 });
-```
-
-## Controlling the intersection threshold
-
-By default, points within 5 cm of an intersection ray is considered to be intersecting. For point clouds of large
-physical assets this is usually a good value, but for point clouds with large extends (e.g. geographical point clouds)
-this threshold might be too small.
-
-The intersection threshold can be changed using the `pointIntersectionThreshold` option of `getIntersectionFromPixel`:
-
-```js
-const options = { pointIntersectionThreshold: 1.0 /* 1 m */ };
-const intersection = await viewer.getIntersectionFromPixel(event.offsetX, event.offsetY, options);
 ```

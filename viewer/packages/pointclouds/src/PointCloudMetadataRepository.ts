@@ -13,7 +13,7 @@ import {
   ModelIdentifier,
   File3dFormat,
   BlobOutputMetadata
-} from '@reveal/modeldata-api';
+} from '@reveal/data-providers';
 
 export class PointCloudMetadataRepository implements MetadataRepository<Promise<PointCloudMetadata>> {
   private readonly _modelMetadataProvider: ModelMetadataProvider;
@@ -40,6 +40,7 @@ export class PointCloudMetadataRepository implements MetadataRepository<Promise<
     const scene = await this._modelDataProvider.getJsonFile(modelBaseUrl, this._blobFileName);
     const cameraConfiguration = await cameraConfigurationPromise;
     return {
+      modelIdentifier: modelIdentifier.revealInternalId,
       format: output.format as File3dFormat,
       formatVersion: output.version,
       modelBaseUrl,

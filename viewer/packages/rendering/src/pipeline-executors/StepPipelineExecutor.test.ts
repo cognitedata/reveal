@@ -4,9 +4,9 @@
 
 import * as THREE from 'three';
 import { It, Mock, Times } from 'moq.ts';
-import { RenderPipelineProvider } from 'dist/packages/rendering';
 import { RenderPass } from '../RenderPass';
 import { StepPipelineExecutor } from './StepPipelineExecutor';
+import { RenderPipelineProvider } from '../RenderPipelineProvider';
 
 describe(StepPipelineExecutor.name, () => {
   let stepPipelineExecutor: StepPipelineExecutor;

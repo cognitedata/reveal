@@ -16,12 +16,6 @@ In certain scenarios it might be useful to customize how Reveal retrieves data, 
 
 Note that certain features relies on connectivity to CDF and won't work without a connection.
 
-:::warning
-This is an experimental feature and has not been tested extensively.
-You might experience problems with Reveal if the implementation is not 
-according to expectations from Reveal.
-:::
-
 ## Overview
 
 To implement a custom data source, DataSource from `@cognite/reveal/extensions/datasource` must be implemented
@@ -61,12 +55,9 @@ class CdfModelIdentifier implements ModelIdentifier {
 | `getModelOutputs()`     | Yes                                        | Returns an object describing the set of valid formats and version for the given model |
 
 `getModelUri()` returns a "base URL" that will be passed to `ModelDataProvider.getBinaryFile()` and `getJsonFile()`. Note that
-its up to `ModelDataProvider` how this base URL is handled for CAD models and it is possible to use this base URL as 
-some other identifier, e.g. a folder on disk or ID of a blob storage. For point clouds, however, this
-needs to be an actual URL as we base point cloud streaming on a third party library which manages it's own
-network layer. 
-It will require an instance of `BlobOutputMetadata` as input which defines the format, version, and if 
-applicable, the remote blob id of the output.
+it's up to `ModelDataProvider` how this base URL is handled and it is possible to use this base URL as 
+some other identifier, e.g. a folder on disk or ID of a blob storage. `getModelUri()` accepts `BlobOutputMetadata` as input which 
+defines the format, version, and if applicable, the "blob id" of the output.
 
 `getModelMatrix()` is responsible for converting from stored geometry coordinates to Reveal coordinates (right-handed, Y up). This 
 is required for models stored in different orientation in CDF. For CAD models, most models are stored in a right-handed Z up coordinate system, and will need
@@ -90,7 +81,7 @@ new THREE.Matrix4().identity();
 In addition to the model identifier, the methods can accept the format of the output which describes which output format that is used for the given model/revision.
 
 `getModelOutputs()` returns a list of supported outputs for a given model/revision.
-The `BlobOutputMetadata` type includes the format, version, and if applicable, the remote blob id of the model. 
+The `BlobOutputMetadata` type includes the format, version, and if applicable, the "blob id" of the model. 
 
 
 ### Example implementation
@@ -158,9 +149,8 @@ class MyModelMetaDataProvider implements ModelMetaDataProvider {
 
 | Function/Field          | Required?                                  | Description                                                      |
 | ----------------------- | ------------------------------------------ | ---------------------------------------------------------------- |
-| `getBinaryFile()`       | Yes                                        | Retrieves a binary blob. Used to download CAD geometry           |
-| `getJsonFile()`         | Yes                                        | Retrieves JSON data. This is used to store some metadata about models |
-| `headers: HttpHeaders`  | Only used for point clouds.                | Headers used during point cloud streaming. Useful if you e.g. need to provide authentication headers to the requests |
+| `getBinaryFile()`       | Yes                                        | Retrieves a binary blob. Used to download CAD geometry and point clouds  |
+| `getJsonFile()`         | Yes                                        | Retrieves JSON data. This is used to retrieve metadata about models |
 
 ### Example implementation
 
@@ -172,8 +162,6 @@ data doesn't necessarily need to be downloaded over HTTP.
 import { ModelDataProvider } from '@cognite/reveal/extensions/datasource';
 
 class MyModelDataProvider implements ModelDataProvider {
-  public readonly headers: HttpHeaders = {};
-
   async getJsonFile(baseUrl: string, fileName: string): Promise<any> {
     const url = `${baseUrl}/${fileName}`;
     const response = await fetch(url);

@@ -4,15 +4,18 @@ title: Pointcloud models
 description: Usage of pointcloud models with Cognite3DViewer
 ---
 
-`@cognite/reveal` supports point clouds through a third-party library, [`potree-core`](https://github.com/tentone/potree-core). The viewer
-supports loading both point clouds and CAD models at the same time. Point clouds can be generated from various sources including
+import useBaseUrl from '@docusaurus/useBaseUrl';
+
+`@cognite/reveal` supports point clouds through a third-party library, [`three-loader`](https://github.com/pnext/three-loader) that is
+included in the Reveal codebase and modified for our needs. Most of the internal point cloud logic is based on [`potree`](https://github.com/potree/potree/).
+The viewer supports loading both point clouds and CAD models at the same time. Point clouds can be generated from various sources including
 [laser scans](https://en.wikipedia.org/wiki/Laser_scanning) and [photogrammetry models](https://en.wikipedia.org/wiki/Photogrammetry).
 Loading point clouds is done with identical code to when [loading CAD models](./cad-basic) - Reveal will determine that the model
 is a point cloud model and act accordingly.
 
 import { DemoWrapper } from '@site/versioned_docs/version-3.x/components/DemoWrapper';
 
-<DemoWrapper name="Cognite3DViewerDemo" modelType="pointcloud" />
+<DemoWrapper modelType="pointcloud" />
 
 ```jsx
 import { CogniteClient } from '@cognite/sdk';
@@ -87,6 +90,27 @@ model.pointColorType = PotreePointColorType.Depth;
 
 Other useful coloring schemes are `Rgb` (color) , `Classification` (color by point class) and `Intensity`
 (strength of the backscattered signal in a laser scan).
+
+## Point cloud post processing effects
+
+Users can enable various post processing effects for point cloud rendering. One of them is the "point blending" effect
+which produces a more "stable" rendering of surfaces within the point cloud model but it comes with a cost of
+decreased performance.
+
+<a target='_blank' href={useBaseUrl('/img/point-blending.jpg')}>
+  <img src={useBaseUrl('/img/point-blending.jpg')} alt="Illustration of point blending effect" />
+</a>
+
+You can enable the described effect by passing a corresponding property on initialization of `Cognite3DViewer`:
+```jsx
+const viewer = new Cognite3DViewer(
+  {
+    sdk: client,
+    pointCloudEffects: {
+      pointBlending: true
+    }
+  });
+```
 
 ## Classification filtering
 

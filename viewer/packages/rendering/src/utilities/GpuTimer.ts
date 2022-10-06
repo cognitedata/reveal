@@ -111,7 +111,7 @@ export class GpuTimer {
 
   // either returns a previously free'd query or if there aren't any allocates a new one
   private allocateQuery(): [string, WebGLQuery] {
-    return this._freeQueries.length > 0 ? this._freeQueries.splice(-1, 1)[0] : ['', this._gl.createQuery()];
+    return this._freeQueries.length > 0 ? this._freeQueries.splice(-1, 1)[0] : ['', this._gl.createQuery()!];
   }
 
   // attempt to resolve one frame's worth of timings

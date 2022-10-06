@@ -59,7 +59,7 @@ export class GltfSectorParser {
     node: Node,
     glbHeaderData: GlbHeaderData,
     data: ArrayBuffer
-  ): Promise<ParsedGeometry> | undefined {
+  ): Promise<ParsedGeometry | undefined> {
     const instancingExtension = node.extensions?.EXT_mesh_gpu_instancing;
     const meshId = node.mesh;
 
@@ -240,7 +240,7 @@ export class GltfSectorParser {
     if (dracoCompression !== undefined) {
       const dracoBufferView = json.bufferViews[dracoCompression.bufferView];
 
-      const dracoMeshOffset = offsetToBinChunk + dracoBufferView.byteOffset;
+      const dracoMeshOffset = offsetToBinChunk + (dracoBufferView.byteOffset ?? 0);
 
       const dracoMeshLength = dracoBufferView.byteLength;
 

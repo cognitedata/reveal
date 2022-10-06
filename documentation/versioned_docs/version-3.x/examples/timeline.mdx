@@ -15,7 +15,7 @@ The test data used in the documentation site is for testing and to show the capa
 The examples shown is therefore might not be a ideal model construction progression.
 :::
 
-<DemoWrapper name="Cognite3DViewerDemo" />
+<DemoWrapper />
 
 ## Timeline
 
@@ -120,7 +120,7 @@ timeline.subscribe('dateChanged', (data) => {
   const progress = ((data.date.getTime() - data.startDate.getTime()) / (data.endDate.getTime() - data.startDate.getTime()) * 100);
   progressBar.style.width = `${progress}%`;
   });
-  
+
 timeline.play(startDate, endDate, durationMs);
 ```
 

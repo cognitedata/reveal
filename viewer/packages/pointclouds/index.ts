@@ -2,11 +2,9 @@
  * Copyright 2022 Cognite AS
  */
 
-export { intersectPointClouds } from './src/picking';
+export { PointCloudPickingHandler } from './src/PointCloudPickingHandler';
 
 export { WellKnownAsprsPointClassCodes } from './src/types';
-
-export { PotreePointShape, PotreePointColorType, PotreePointSizeType } from './src/potree-three-loader';
 
 export { PointCloudNode } from './src/PointCloudNode';
 export { PointCloudManager } from './src/PointCloudManager';

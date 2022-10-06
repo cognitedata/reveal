@@ -3,16 +3,16 @@
  */
 
 import * as THREE from 'three';
-import 'jest-extended';
 import { ComboControls } from '../src/ComboControls';
+import { It, Mock } from 'moq.ts';
 
 describe('Combo Controls', () => {
   let controls: ComboControls;
 
   beforeEach(() => {
     const camera = new THREE.PerspectiveCamera();
-    const domElement = document.createElement('div');
-    controls = new ComboControls(camera, domElement);
+    const domElementMock = new Mock<HTMLDivElement>().setup(p => p.addEventListener(It.IsAny(), It.IsAny())).returns();
+    controls = new ComboControls(camera, domElementMock.object());
   });
 
   test('Getting a state should return the same as the state that was set', () => {

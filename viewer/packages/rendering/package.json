@@ -3,7 +3,7 @@
   "private": true,
   "main": "index.ts",
   "scripts": {
-    "start": "yarn ws:start",
+    "start": "yarn ws:serve --env testFixture=Rendering.VisualTest.ts",
     "test": "yarn ws:test --config ./../../jest.config.js",
     "lint": "yarn ws:lint"
   },
@@ -11,8 +11,6 @@
     "@reveal/cad-parsers": "workspace:*",
     "@reveal/cad-styling": "workspace:*",
     "@reveal/logger": "workspace:*",
-    "@reveal/sector-loader": "workspace:*",
-    "@reveal/sector-parser": "workspace:*",
     "@reveal/utilities": "workspace:*"
   },
   "sideEffects": false,

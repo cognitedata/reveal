@@ -49,7 +49,7 @@ function generatePlane3D(
 }
 
 export function setBoxGeometry(geometry: THREE.BufferGeometry): THREE.Box3 {
-  const boxGeometry = new THREE.BoxBufferGeometry(1, 1, 1, 1, 1, 1);
+  const boxGeometry = new THREE.BoxGeometry(1, 1, 1, 1, 1, 1);
 
   geometry.setIndex(boxGeometry.getIndex());
   geometry.setAttribute('position', boxGeometry.getAttribute('position'));
@@ -61,7 +61,7 @@ export function setBoxGeometry(geometry: THREE.BufferGeometry): THREE.Box3 {
 }
 
 export function setQuadGeometry(geometry: THREE.BufferGeometry, includeNormal = true): THREE.Box3 {
-  const quadGeometry = new THREE.PlaneBufferGeometry(1, 1, 1, 1);
+  const quadGeometry = new THREE.PlaneGeometry(1, 1, 1, 1);
 
   geometry.setIndex(quadGeometry.getIndex());
   geometry.setAttribute('position', quadGeometry.getAttribute('position'));
@@ -116,7 +116,7 @@ export function setTorusGeometry(geometry: THREE.BufferGeometry): THREE.Box3 {
 }
 
 export function setNutGeometry(geometry: THREE.BufferGeometry): THREE.Box3 {
-  const nutGeometry = new THREE.CylinderBufferGeometry(0.5, 0.5, 1, 6);
+  const nutGeometry = new THREE.CylinderGeometry(0.5, 0.5, 1, 6);
   nutGeometry.applyMatrix4(new THREE.Matrix4().makeRotationX(-Math.PI / 2));
 
   geometry.setIndex(nutGeometry.getIndex());

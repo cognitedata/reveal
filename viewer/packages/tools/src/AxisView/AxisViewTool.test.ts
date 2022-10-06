@@ -3,9 +3,9 @@
  */
 
 import { CogniteClient } from '@cognite/sdk';
+import { Cognite3DViewer } from '@reveal/api';
 import * as THREE from 'three';
 
-import { Cognite3DViewer } from '@reveal/core';
 import { createGlContext, mockClientAuthentication } from '../../../../test-utilities';
 
 import { AxisViewTool } from './AxisViewTool';

@@ -14,12 +14,12 @@ import { SceneHandler } from '@reveal/utilities';
 export class CadGeometryRenderModePipelineProvider implements RenderPipelineProvider {
   private readonly _materialManager: CadMaterialManager;
   private readonly _cadModels: {
-    object: THREE.Object3D<THREE.Event>;
+    cadNode: THREE.Object3D;
     modelIdentifier: string;
   }[];
   private readonly _renderTargetData: { currentRenderSize: THREE.Vector2 };
   private readonly _geometryPass: GeometryPass;
-  private _outputRenderTarget: THREE.WebGLRenderTarget = null;
+  private _outputRenderTarget: THREE.WebGLRenderTarget | null = null;
   private _autoSizeRenderTarget = false;
 
   public readonly scene: THREE.Scene;
@@ -39,7 +39,7 @@ export class CadGeometryRenderModePipelineProvider implements RenderPipelineProv
   // TODO 2022-05-11 christjt: This should ideally set in the constructor,
   // but this is hard since it is initialized before v8 sector culler
   // which creates the render target
-  public setOutputRenderTarget(target: THREE.WebGLRenderTarget, autoSizeRenderTarget = true): void {
+  public setOutputRenderTarget(target: THREE.WebGLRenderTarget | null, autoSizeRenderTarget = true): void {
     this._outputRenderTarget = target;
     this._autoSizeRenderTarget = autoSizeRenderTarget;
   }
@@ -55,7 +55,7 @@ export class CadGeometryRenderModePipelineProvider implements RenderPipelineProv
 
   private updateRenderTargetSizes(renderer: THREE.WebGLRenderer): void {
     const renderSize = new THREE.Vector2();
-    renderer.getSize(renderSize);
+    renderer.getDrawingBufferSize(renderSize);
 
     const { x: width, y: height } = renderSize;
 

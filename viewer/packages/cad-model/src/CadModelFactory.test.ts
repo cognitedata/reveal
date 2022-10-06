@@ -6,10 +6,10 @@ import * as THREE from 'three';
 import { CadModelFactory } from './CadModelFactory';
 
 import { CadMaterialManager } from '@reveal/rendering';
-import { GeometryFilter } from './GeometryFilter';
-import { ModelDataProvider, ModelMetadataProvider, ModelIdentifier, BlobOutputMetadata } from '@reveal/modeldata-api';
+import { ModelDataProvider, ModelMetadataProvider, ModelIdentifier, BlobOutputMetadata } from '@reveal/data-providers';
 
 import { It, Mock } from 'moq.ts';
+import { GeometryFilter } from './types';
 
 describe('CadModelFactory', () => {
   let materialManager: CadMaterialManager;
@@ -22,35 +22,23 @@ describe('CadModelFactory', () => {
     const mockIdentifier = new Mock<ModelIdentifier>().setup(p => p.revealInternalId).returns(Symbol('test'));
     mockIdentifierObject = mockIdentifier.object();
 
-    const testOutput: BlobOutputMetadata = { blobId: 1, format: 'reveal-directory', version: 8 };
+    const testOutput: BlobOutputMetadata = { blobId: 1, format: 'gltf-directory', version: 9 };
     const testBaseUrl = 'https://test-base-url';
 
     const sector = {
       id: 0,
-      parentId: -1,
+      sectorFileName: '0.glb',
       path: '0/',
-      depth: 1,
+      depth: 0,
       boundingBox: {
         min: { x: -1, y: -1, z: -1 },
         max: { x: 1, y: 1, z: 1 }
       },
-      indexFile: {
-        peripheralFiles: [],
-        fileName: 'test.i3d',
-        downloadSize: 1000
-      },
-      facesFile: {
-        quadSize: 0.1,
-        facesCount: 10,
-        recursiveCoverageFactors: { yz: 0.5, xz: 0.5, xy: 0.2 },
-        coverageFactors: { yz: 0.5, xz: 0.5, xy: 0.5 },
-        fileName: 'test.f3d',
-        downloadSize: 1000
-      },
       estimatedTriangleCount: 10000,
       estimatedDrawCallCount: 20,
-      maxDiagonalLength: 3.0,
-      minDiagonalLength: 1.0
+      minDiagonalLength: 3.0,
+      maxDiagonalLength: 1.0,
+      downloadSize: 16334
     };
 
     const modelMetadataProviderMock = new Mock<ModelMetadataProvider>()
