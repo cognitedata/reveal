@@ -14,12 +14,18 @@ import {
   WebGLRenderer,
   WebGLRenderTarget
 } from 'three';
-import { COLOR_BLACK } from '../rendering/constants';
-import { ClipMode, PointCloudMaterial, PotreePointColorType } from '../rendering';
+import {
+  ClipMode,
+  OctreeMaterialParams,
+  PointCloudMaterial,
+  PotreePointColorType,
+  COLOR_BLACK
+} from '@reveal/rendering';
 import { PointCloudOctree } from './PointCloudOctree';
 import { IPointCloudTreeNode } from './IPointCloudTreeNode';
 import { PickPoint, PointCloudHit } from '../types/types';
 import { WebGLRendererStateHelper } from '@reveal/utilities';
+import { createVisibilityTextureData, makeOnBeforeRender } from '../utils/utils';
 
 export interface RenderedNode {
   node: IPointCloudTreeNode;
@@ -117,8 +123,18 @@ export class PointCloudOctreePickerHelper {
         continue;
       }
 
+      const visibilityTextureData = createVisibilityTextureData(
+        octree.visibleNodes,
+        octree.material.visibleNodeTextureOffsets
+      );
+      const octreeMaterialParams: OctreeMaterialParams = {
+        scale: octree.scale,
+        boundingBox: octree.pcoGeometry.boundingBox,
+        spacing: octree.pcoGeometry.spacing
+      };
+
       PointCloudOctreePickerHelper.updatePickMaterial(pickMaterial, octree.material, params);
-      pickMaterial.updateMaterial(octree, nodes, camera, renderer);
+      pickMaterial.updateMaterial(octreeMaterialParams, visibilityTextureData, camera, renderer);
 
       if (params.onBeforePickRender) {
         params.onBeforePickRender(pickMaterial, pickState.renderTarget);
@@ -126,7 +142,6 @@ export class PointCloudOctreePickerHelper {
 
       // Create copies of the nodes so we can render them differently than in the normal point cloud.
       pickState.scene.children = PointCloudOctreePickerHelper.createTempNodes(
-        octree,
         nodes,
         pickMaterial,
         renderedNodes.length
@@ -165,7 +180,6 @@ export class PointCloudOctreePickerHelper {
   }
 
   private static createTempNodes(
-    octree: PointCloudOctree,
     nodes: IPointCloudTreeNode[],
     pickMaterial: PointCloudMaterial,
     nodeIndexOffset: number
@@ -183,7 +197,7 @@ export class PointCloudOctreePickerHelper {
       if (nodeIndex > 255) {
         console.error('More than 255 nodes for pick are not supported.');
       }
-      tempNode.onBeforeRender = PointCloudMaterial.makeOnBeforeRender(octree, node, nodeIndex);
+      tempNode.onBeforeRender = makeOnBeforeRender(node, nodeIndex);
 
       tempNodes.push(tempNode);
     }

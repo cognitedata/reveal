@@ -1,3 +1,6 @@
+/*!
+ * Adapted from pnext/three-loader (https://github.com/pnext/three-loader)
+ */
 import { Color } from 'three';
 import { IGradient } from '../types';
 

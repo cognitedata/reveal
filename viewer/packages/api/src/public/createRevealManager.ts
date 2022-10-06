@@ -10,6 +10,7 @@ import { MetricsLogger } from '@reveal/metrics';
 import {
   RenderOptions,
   CadMaterialManager,
+  PointCloudMaterialManager,
   BasicPipelineExecutor,
   DefaultRenderPipelineProvider
 } from '@reveal/rendering';
@@ -104,13 +105,15 @@ export function createRevealManager(
   });
 
   const renderOptions: RenderOptions = revealOptions?.renderOptions ?? {};
-  const materialManager = new CadMaterialManager();
+  const cadMaterialManager = new CadMaterialManager();
+  const pointCloudMaterialManager = new PointCloudMaterialManager();
   const pipelineExecutor = new BasicPipelineExecutor(renderer, {
     autoResizeRenderer: true,
     resolutionThreshold: revealOptions.rendererResolutionThreshold
   });
   const defaultRenderPipeline = new DefaultRenderPipelineProvider(
-    materialManager,
+    cadMaterialManager,
+    pointCloudMaterialManager,
     sceneHandler,
     renderOptions,
     revealOptions.outputRenderTarget
@@ -118,15 +121,16 @@ export function createRevealManager(
   const pointCloudManager = createPointCloudManager(
     modelMetadataProvider,
     modelDataProvider,
+    pointCloudMaterialManager,
     sceneHandler.scene,
     renderer
   );
   sceneHandler.customObjects.push(pointCloudManager.pointCloudGroupWrapper);
-  const cadManager = createCadManager(modelMetadataProvider, modelDataProvider, materialManager, {
+  const cadManager = createCadManager(modelMetadataProvider, modelDataProvider, cadMaterialManager, {
     ...revealOptions.internal?.cad,
     continuousModelStreaming: revealOptions.continuousModelStreaming
   });
-  return new RevealManager(cadManager, pointCloudManager, pipelineExecutor, defaultRenderPipeline, materialManager);
+  return new RevealManager(cadManager, pointCloudManager, pipelineExecutor, defaultRenderPipeline);
 }
 
 /**
