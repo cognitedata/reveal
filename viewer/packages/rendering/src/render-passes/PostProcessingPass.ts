@@ -24,12 +24,15 @@ import { PostProcessingPipelineOptions } from '../render-pipeline-providers/type
 export class PostProcessingPass implements RenderPass {
   private readonly _scene: THREE.Scene;
   private readonly _postProcessingObjects: THREE.Mesh[];
+  private readonly setBlendFactorByBackVisibility: () => void;
 
   public updateRenderObjectsVisibility(visibilityParameters: PostProcessingObjectsVisibilityParameters): void {
     this._postProcessingObjects[0].visible = visibilityParameters.cad.back;
     this._postProcessingObjects[1].visible = visibilityParameters.cad.ghost;
     this._postProcessingObjects[2].visible = visibilityParameters.cad.inFront;
     this._postProcessingObjects[3].visible = visibilityParameters.pointCloud;
+
+    this.setBlendFactorByBackVisibility();
   }
 
   constructor(scene: THREE.Scene, postProcessingPipelineOptions: PostProcessingPipelineOptions) {
@@ -85,6 +88,13 @@ export class PostProcessingPass implements RenderPass {
     const inFrontBlitObject = createFullScreenTriangleMesh(inFrontBlitMaterial);
     inFrontBlitObject.name = 'In-front Styling blit object';
     inFrontBlitObject.renderOrder = 2;
+
+    // Removes blending with the back objects framebuffer when it is hidden i.e. not
+    // been rendered. This is a sanity check as well as a workaround for multisampled
+    // rendertargets not being able to clear properly (REV-530).
+    this.setBlendFactorByBackVisibility = () => {
+      inFrontBlitMaterial.uniforms.blendFactor.value = backBlitObject.visible ? 0.5 : 0.0;
+    };
 
     this._scene.add(backBlitObject);
     this._scene.add(pointcloudBlitObject);
