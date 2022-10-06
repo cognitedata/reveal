@@ -11,7 +11,6 @@ import { PointCloudFactory } from './PointCloudFactory';
 import { PointCloudNode } from './PointCloudNode';
 import { PointCloudMetadataRepository } from './PointCloudMetadataRepository';
 import { PotreeGroupWrapper } from './PotreeGroupWrapper';
-import { PointCloudOctree } from './potree-three-loader';
 
 import { asyncScheduler, combineLatest, Observable, scan, Subject, throttleTime } from 'rxjs';
 
@@ -32,8 +31,6 @@ export class PointCloudManager {
   private readonly _budgetSubject: Subject<number> = new Subject();
 
   private readonly _renderer: THREE.WebGLRenderer;
-
-  private _clippingPlanes: THREE.Plane[] = [];
 
   constructor(
     metadataRepository: PointCloudMetadataRepository,
@@ -86,22 +83,8 @@ export class PointCloudManager {
   }
 
   set clippingPlanes(planes: THREE.Plane[]) {
-    this._clippingPlanes = planes;
-
-    this._pointCloudGroupWrapper.traversePointClouds(cloud => this.setClippingPlanesForPointCloud(cloud));
-  }
-
-  setClippingPlanesForPointCloud(octree: PointCloudOctree): void {
-    const material = octree.material;
-    material.clipping = true;
-    material.clipIntersection = false;
-    material.clippingPlanes = this._clippingPlanes;
-
-    material.defines = {
-      ...material.defines,
-      NUM_CLIPPING_PLANES: this._clippingPlanes.length,
-      UNION_CLIPPING_PLANES: 0
-    };
+    this._materialManager.clippingPlanes = planes;
+    this.requestRedraw();
   }
 
   getLoadingStateObserver(): Observable<LoadingState> {
@@ -139,7 +122,7 @@ export class PointCloudManager {
     node.setModelTransformation(metadata.modelMatrix);
 
     this._modelSubject.next({ modelIdentifier, operation: 'add' });
-    this.setClippingPlanesForPointCloud(nodeWrapper.octree);
+    this._materialManager.setClippingPlanesForPointCloud(modelIdentifier.revealInternalId);
 
     return node;
   }

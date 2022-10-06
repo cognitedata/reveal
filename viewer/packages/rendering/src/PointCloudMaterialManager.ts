@@ -6,14 +6,15 @@ import { PointCloudMaterial } from './pointcloud-rendering';
 import { PointCloudMaterialParameters } from './render-passes/types';
 
 export class PointCloudMaterialManager {
-  private readonly modelsMaterialsMap: Map<symbol, PointCloudMaterial> = new Map();
+  private readonly _modelsMaterialsMap: Map<symbol, PointCloudMaterial> = new Map();
+  private _clippingPlanes: THREE.Plane[] = [];
 
   addModelMaterial(modelIdentifier: symbol): void {
-    this.modelsMaterialsMap.set(modelIdentifier, new PointCloudMaterial());
+    this._modelsMaterialsMap.set(modelIdentifier, new PointCloudMaterial());
   }
 
   removeModelMaterial(modelIdentifier: symbol): void {
-    const material = this.modelsMaterialsMap.get(modelIdentifier);
+    const material = this._modelsMaterialsMap.get(modelIdentifier);
 
     if (material) {
       material.dispose();
@@ -21,11 +22,11 @@ export class PointCloudMaterialManager {
       throw new Error(`Model identifier: ${modelIdentifier.toString()} not found`);
     }
 
-    this.modelsMaterialsMap.delete(modelIdentifier);
+    this._modelsMaterialsMap.delete(modelIdentifier);
   }
 
   getModelMaterial(modelIdentifier: symbol): PointCloudMaterial {
-    const material = this.modelsMaterialsMap.get(modelIdentifier);
+    const material = this._modelsMaterialsMap.get(modelIdentifier);
     if (material === undefined) {
       throw new Error(`Model ${modelIdentifier.toString()} has not been added to PointCloudMaterialManager`);
     }
@@ -33,9 +34,34 @@ export class PointCloudMaterialManager {
     return material;
   }
 
+  get clippingPlanes(): THREE.Plane[] {
+    return this._clippingPlanes;
+  }
+
+  set clippingPlanes(clippingPlanes: THREE.Plane[]) {
+    this._clippingPlanes = clippingPlanes;
+    for (const modelIdentifier of this._modelsMaterialsMap.keys()) {
+      this.setClippingPlanesForPointCloud(modelIdentifier);
+    }
+  }
+
+  setClippingPlanesForPointCloud(modelIdentifier: symbol): void {
+    const material = this.getModelMaterial(modelIdentifier);
+
+    material.clipping = true;
+    material.clipIntersection = false;
+    material.clippingPlanes = this._clippingPlanes;
+
+    material.defines = {
+      ...material.defines,
+      NUM_CLIPPING_PLANES: this._clippingPlanes.length,
+      UNION_CLIPPING_PLANES: 0
+    };
+  }
+
   setModelsMaterialParameters(materialParameters: PointCloudMaterialParameters | undefined): void {
     if (materialParameters) {
-      this.modelsMaterialsMap.forEach(material => {
+      this._modelsMaterialsMap.forEach(material => {
         this.setMaterialParameters(material, materialParameters);
       });
     }
@@ -53,9 +79,9 @@ export class PointCloudMaterialManager {
   }
 
   dispose(): void {
-    this.modelsMaterialsMap.forEach(material => {
+    this._modelsMaterialsMap.forEach(material => {
       material.dispose();
     });
-    this.modelsMaterialsMap.clear();
+    this._modelsMaterialsMap.clear();
   }
 }
