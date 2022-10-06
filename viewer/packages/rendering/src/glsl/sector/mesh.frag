@@ -19,6 +19,7 @@ in vec3 v_color;
 in vec3 v_viewPosition;
 
 in TreeIndexPacked  v_treeIndexPacked;
+
 void main()
 {
     highp float v_treeIndex = unpackTreeIndex(v_treeIndexPacked);

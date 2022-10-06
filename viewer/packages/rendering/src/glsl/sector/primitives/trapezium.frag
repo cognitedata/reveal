@@ -18,6 +18,7 @@ in vec3 v_normal;
 in vec3 vViewPosition;
 
 in TreeIndexPacked  v_treeIndexPacked;
+
 void main()
 {
     highp float v_treeIndex = unpackTreeIndex(v_treeIndexPacked);
