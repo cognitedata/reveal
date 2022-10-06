@@ -1,16 +1,16 @@
+/*!
+ * Adapted from pnext/three-loader (https://github.com/pnext/three-loader)
+ */
 import {
   AdditiveBlending,
-  BufferGeometry,
   Camera,
   Color,
   GLSL3,
   LessEqualDepth,
-  Material,
   NearestFilter,
   NoBlending,
   PerspectiveCamera,
   RawShaderMaterial,
-  Scene,
   Texture,
   Vector2,
   Vector3,
@@ -26,12 +26,7 @@ import {
   DEFAULT_RGB_GAMMA,
   PERSPECTIVE_CAMERA
 } from './constants';
-import { PointCloudOctree } from '../tree/PointCloudOctree';
-import { IPointCloudTreeNodeBase } from '../tree/IPointCloudTreeNodeBase';
-import { IPointCloudTreeNode } from '../tree/IPointCloudTreeNode';
-import { byLevelAndIndex } from '../utils/utils';
 import { DEFAULT_CLASSIFICATION } from './classification';
-import { ClipMode, IClipBox } from './clipping';
 import {
   NormalFilteringMode,
   PointCloudMixingMode,
@@ -39,11 +34,13 @@ import {
   PointOpacityType,
   PotreePointShape,
   PotreePointSizeType,
-  TreeType
+  TreeType,
+  ClipMode
 } from './enums';
 import { generateClassificationTexture, generateDataTexture, generateGradientTexture } from './texture-generation';
-import { IClassification, IUniform } from './types';
+import { IClassification, IUniform, OctreeMaterialParams, IClipBox } from './types';
 import { SpectralGradient } from './gradients/SpectralGradient';
+import { pointCloudShaders } from '../rendering/shaders';
 
 export interface IPointCloudMaterialParameters {
   size: number;
@@ -171,7 +168,7 @@ export class PointCloudMaterial extends RawShaderMaterial {
   numClipBoxes: number = 0;
   clipBoxes: IClipBox[] = [];
   visibleNodesTexture: Texture | undefined;
-  private readonly visibleNodeTextureOffsets = new Map<string, number>();
+  visibleNodeTextureOffsets = new Map<string, number>();
 
   private readonly _gradient = SpectralGradient;
   private gradientTexture: Texture | undefined = generateGradientTexture(this._gradient);
@@ -371,8 +368,8 @@ export class PointCloudMaterial extends RawShaderMaterial {
   }
 
   updateShaderSource(): void {
-    this.vertexShader = this.applyDefines(require('./shaders/pointcloud.vert').default);
-    this.fragmentShader = this.applyDefines(require('./shaders/pointcloud.frag').default);
+    this.vertexShader = this.applyDefines(pointCloudShaders.pointcloud.vertex);
+    this.fragmentShader = this.applyDefines(pointCloudShaders.pointcloud.fragment);
 
     if (this.opacity === 1.0) {
       this.blending = NoBlending;
@@ -558,8 +555,8 @@ export class PointCloudMaterial extends RawShaderMaterial {
   }
 
   updateMaterial(
-    octree: PointCloudOctree,
-    visibleNodes: IPointCloudTreeNodeBase[],
+    octreeParams: OctreeMaterialParams,
+    visibilityTextureData: Uint8Array,
     camera: Camera,
     renderer: WebGLRenderer
   ): void {
@@ -585,91 +582,22 @@ export class PointCloudMaterial extends RawShaderMaterial {
       this.screenHeight = PointCloudMaterial.helperVec2.height;
     }
 
-    const maxScale = Math.max(octree.scale.x, octree.scale.y, octree.scale.z);
-    this.spacing = octree.pcoGeometry.spacing * maxScale;
-    this.octreeSize = octree.pcoGeometry.boundingBox.getSize(PointCloudMaterial.helperVec3).x;
+    const maxScale = Math.max(octreeParams.scale.x, octreeParams.scale.y, octreeParams.scale.z);
+    this.spacing = octreeParams.spacing * maxScale;
+    this.octreeSize = octreeParams.boundingBox.getSize(PointCloudMaterial.helperVec3).x;
 
     if (this.pointSizeType === PotreePointSizeType.Adaptive || this.pointColorType === PotreePointColorType.Lod) {
-      this.updateVisibilityTextureData(visibleNodes);
+      this.updateVisibilityTextureData(visibilityTextureData);
     }
   }
 
-  private updateVisibilityTextureData(nodes: IPointCloudTreeNodeBase[]) {
-    nodes.sort(byLevelAndIndex);
-
-    const data = new Uint8Array(nodes.length * 4);
-    const offsetsToChild = new Array(nodes.length).fill(Infinity);
-
-    this.visibleNodeTextureOffsets.clear();
-
-    for (let i = 0; i < nodes.length; i++) {
-      const node = nodes[i];
-
-      this.visibleNodeTextureOffsets.set(node.name, i);
-
-      if (i > 0) {
-        const parentName = node.name.slice(0, -1);
-        const parentOffset = this.visibleNodeTextureOffsets.get(parentName)!;
-        const parentOffsetToChild = i - parentOffset;
-
-        offsetsToChild[parentOffset] = Math.min(offsetsToChild[parentOffset], parentOffsetToChild);
-
-        // tslint:disable:no-bitwise
-        const offset = parentOffset * 4;
-        data[offset] = data[offset] | (1 << node.index);
-        data[offset + 1] = offsetsToChild[parentOffset] >> 8;
-        data[offset + 2] = offsetsToChild[parentOffset] % 256;
-        // tslint:enable:no-bitwise
-      }
-
-      data[i * 4 + 3] = node.name.length;
-    }
-
+  private updateVisibilityTextureData(textureData: Uint8Array): void {
     const texture = this.visibleNodesTexture;
+
     if (texture) {
-      texture.image.data.set(data);
+      texture.image.data.set(textureData);
       texture.needsUpdate = true;
     }
-  }
-
-  static makeOnBeforeRender(
-    octree: PointCloudOctree,
-    node: IPointCloudTreeNode,
-    pcIndex?: number
-  ): (
-    renderer: WebGLRenderer,
-    scene: Scene,
-    camera: Camera,
-    bufferGeometry: BufferGeometry,
-    material: Material
-  ) => void {
-    return (
-      _renderer: WebGLRenderer,
-      _scene: Scene,
-      _camera: Camera,
-      _geometry: BufferGeometry,
-      material: Material
-    ) => {
-      const pointCloudMaterial = material as PointCloudMaterial;
-      const materialUniforms = pointCloudMaterial.uniforms;
-
-      materialUniforms.level.value = node.level;
-      materialUniforms.isLeafNode.value = node.isLeafNode;
-
-      const vnStart = pointCloudMaterial.visibleNodeTextureOffsets.get(node.name);
-      if (vnStart !== undefined) {
-        materialUniforms.vnStart.value = vnStart;
-      }
-
-      materialUniforms.pcIndex.value = pcIndex !== undefined ? pcIndex : octree.visibleNodes.indexOf(node);
-
-      // Note: when changing uniforms in onBeforeRender, the flag uniformsNeedUpdate has to be
-      // set to true to instruct ThreeJS to upload them. See also
-      // https://github.com/mrdoob/three.js/issues/9870#issuecomment-368750182.
-
-      // Remove the cast to any after updating to Three.JS >= r113
-      (material as RawShaderMaterial).uniformsNeedUpdate = true;
-    };
   }
 }
 

@@ -1,3 +1,6 @@
+/*!
+ * Adapted from pnext/three-loader (https://github.com/pnext/three-loader)
+ */
 import { Color, DataTexture, NearestFilter, LinearFilter, CanvasTexture, RGBAFormat, Texture, Vector4 } from 'three';
 import { IClassification, IGradient } from './types';
 
