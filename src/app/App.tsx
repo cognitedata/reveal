@@ -21,6 +21,7 @@ import collapseStyle from 'rc-collapse/assets/index.css';
 import datePickerStyle from 'react-datepicker/dist/react-datepicker.css';
 import theme from './styles/theme';
 import rootStyles from './styles/index.css';
+import { RecoilRoot } from 'recoil';
 
 export default () => {
   const env = getEnv();
@@ -70,11 +71,13 @@ export default () => {
                   disableMetrics
                   refreshInterval={86400}
                 >
-                  <BrowserRouter>
-                    <Routes>
-                      <Route path="/:tenant/*" element={<RootApp />} />
-                    </Routes>
-                  </BrowserRouter>
+                  <RecoilRoot>
+                    <BrowserRouter>
+                      <Routes>
+                        <Route path="/:tenant/*" element={<RootApp />} />
+                      </Routes>
+                    </BrowserRouter>
+                  </RecoilRoot>
                 </FlagProvider>
               </ThemeProvider>
               <GlobalStyle theme={theme} />
