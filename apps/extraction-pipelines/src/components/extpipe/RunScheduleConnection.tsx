@@ -11,12 +11,12 @@ import {
 } from 'components/styled';
 import { addIfExist, calculateLatest } from 'utils/extpipeUtils';
 import { useAllRuns } from 'hooks/useRuns';
-import { filterByTimeBetween, isWithinDaysInThePast } from 'utils/runsUtils';
 import moment from 'moment';
 import { useSelectedExtpipe } from 'hooks/useExtpipe';
 import { useLocation, useRouteMatch } from 'react-router-dom';
 import { HEALTH_PATH } from 'routing/RoutingConfig';
 import { useTranslation } from 'common';
+import { RunApi } from 'model/Runs';
 
 export const RunScheduleConnection = ({
   externalId,
@@ -37,20 +37,23 @@ export const RunScheduleConnection = ({
     [data?.pages]
   );
 
-  const errorsInThePastWeek = allRuns.filter(
-    (r) => r.status === 'failure' && isWithinDaysInThePast(7)(r)
-  );
-  const errorLastWeek = allRuns.filter(
-    (r) =>
-      r.status === 'failure' &&
-      filterByTimeBetween(
-        moment().subtract(14, 'days'),
-        moment().subtract(7, 'days')
-      )(r)
-  );
-
-  const errorsComparedToLastWeek =
-    errorsInThePastWeek.length - errorLastWeek.length;
+  const { data: last30DayPages } = useAllRuns({
+    externalId,
+    dateRange: {
+      startDate: moment().subtract('30d').startOf('day').toDate(),
+      endDate: moment().endOf('day').toDate(),
+    },
+  });
+  const [last30Days, last30DaysSuccess] = useMemo(() => {
+    const runs =
+      last30DayPages?.pages.reduce(
+        (accl, p) => [...accl, ...p.items],
+        [] as RunApi[]
+      ) || [];
+    const success = runs.filter((r) => r.status === 'success').length;
+    const fails = runs.filter((r) => r.status === 'failure').length;
+    return [success + fails, success];
+  }, [last30DayPages]);
 
   const lastRun = allRuns[0];
 
@@ -64,6 +67,14 @@ export const RunScheduleConnection = ({
     ...addIfExist(extpipe?.lastSuccess),
     ...addIfExist(extpipe?.lastFailure),
   ]);
+
+  const { format } = useMemo(
+    () =>
+      new Intl.NumberFormat(undefined, {
+        style: 'percent',
+      }),
+    []
+  );
 
   if (!lastRun) {
     return null;
@@ -98,14 +109,16 @@ export const RunScheduleConnection = ({
       {runsStatus === 'success' && (
         <CardInWrapper>
           <StyledTitleCard className="card-title">
-            <Tag color="danger">{errorsInThePastWeek.length}</Tag>
-            {t('failed-runs-past-week')}
+            <Tag color="success">{last30DaysSuccess}</Tag>
+            {t('successful-runs-30-days')}
           </StyledTitleCard>
-          <CardValue className="card-value">
-            {t('runs-compared-to-last-week', {
-              count: errorsComparedToLastWeek,
-            })}
-          </CardValue>
+          {last30Days > 0 && (
+            <CardValue className="card-value">
+              {t('successful-runs-30-days-percentage', {
+                percentage: format(last30DaysSuccess / last30Days),
+              })}
+            </CardValue>
+          )}
         </CardInWrapper>
       )}
       <CardNavLink to={`${url}/${HEALTH_PATH}${search}`} exact>
