@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button } from '@cognite/cogs.js';
-import { useQueryStringArray } from 'app/hooks';
+import { useQueryStringArray } from 'app/hooks/hooks';
 import { CART_KEY } from 'app/utils/constants';
 import { Tooltip } from 'antd';
 

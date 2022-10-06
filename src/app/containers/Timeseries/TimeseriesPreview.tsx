@@ -15,7 +15,7 @@ import {
 import { ResourceDetailsTabs, TabTitle } from 'app/containers/ResourceDetails';
 
 import { useDateRange } from 'app/context/DateRangeContext';
-import { useOnPreviewTabChange } from 'app/hooks';
+import { useOnPreviewTabChange } from 'app/hooks/hooks';
 import styled from 'styled-components';
 
 export type TimeseriesPreviewTabType =

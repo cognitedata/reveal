@@ -12,9 +12,11 @@ import { getUserInformation } from '@cognite/cdf-sdk-singleton';
 import { useQuery } from 'react-query';
 
 import { trackUsage } from 'app/utils/Metrics';
-import { SEARCH_KEY } from './utils/constants';
+import { SEARCH_KEY } from '../utils/constants';
 
 const opts: { arrayFormat: 'comma' } = { arrayFormat: 'comma' };
+
+// TODO: Refactor this whole file into separate files
 
 const getSetItems =
   (

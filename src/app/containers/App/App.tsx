@@ -11,7 +11,7 @@ import { ResourceSelectionProvider } from 'app/context/ResourceSelectionContext'
 import { DateRangeProvider } from 'app/context/DateRangeContext';
 import { useSDK } from '@cognite/sdk-provider';
 import { getFlow } from '@cognite/cdf-sdk-singleton';
-import { useUserInformation } from 'app/hooks';
+import { useUserInformation } from 'app/hooks/hooks';
 
 const Spinner = () => <Loader />;
 const Exploration = React.lazy(

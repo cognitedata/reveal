@@ -14,7 +14,7 @@ import { Sequence } from '@cognite/sdk';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 
 import { ResourceDetailsTabs, TabTitle } from 'app/containers/ResourceDetails';
-import { useOnPreviewTabChange } from 'app/hooks';
+import { useOnPreviewTabChange } from 'app/hooks/hooks';
 
 export type SequencePreviewType =
   | 'details'

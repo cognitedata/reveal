@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useContext } from 'react';
 import {
   ResourceItem,
-  SearchFilters,
   AssetSearchResults,
   FileSearchResults,
   SequenceSearchResults,
@@ -11,6 +10,7 @@ import {
   getTitle,
   ResourceType,
   Splitter,
+  SearchFilters as OldSearchFilters,
 } from '@cognite/data-exploration';
 import { Colors, Flex } from '@cognite/cogs.js';
 
@@ -27,7 +27,7 @@ import {
   useQueryStringArray,
   useCurrentResourceType,
   useCurrentResourceId,
-} from 'app/hooks';
+} from 'app/hooks/hooks';
 import { SEARCH_KEY, CART_KEY, FILTER } from 'app/utils/constants';
 import SelectedResults from 'app/components/SelectionResults/SelectionResults';
 import { ExplorationSearchBar } from 'app/containers/Exploration/ExplorationSearchBar';
@@ -37,6 +37,7 @@ import { ThreeDSearchResults } from 'app/containers/ThreeD/ThreeDSearchResults';
 import FilterToggleButton from './FilterToggleButton';
 import { ExplorationFilterToggle } from 'app/containers/Exploration/ExplorationFilterToggle';
 import { useFlagFilter } from 'app/hooks/flags/useFlagFilters';
+import { SearchFilters } from 'app/containers/SearchResults/SearchFilters';
 
 const getPageTitle = (query: string, resourceType: ResourceType): string => {
   return `${query}${query ? ' in' : ''} ${getTitle(resourceType, true)}`;
@@ -218,21 +219,39 @@ function SearchPage() {
         )}
 
         <SearchFiltersWrapper>
-          <SearchFilters
-            assetFilter={assetFilter}
-            setAssetFilter={setAssetFilter}
-            timeseriesFilter={timeseriesFilter}
-            setTimeseriesFilter={setTimeseriesFilter}
-            sequenceFilter={sequenceFilter}
-            setSequenceFilter={setSequenceFilter}
-            eventFilter={eventFilter}
-            setEventFilter={setEventFilter}
-            fileFilter={fileFilter}
-            setFileFilter={setFileFilter}
-            resourceType={currentResourceType}
-            closeFilters={() => setShowFilter(false)}
-            visible={currentResourceType !== 'threeD' && showFilter}
-          />
+          {showNewFilter ? (
+            <SearchFilters
+              assetFilter={assetFilter}
+              setAssetFilter={setAssetFilter}
+              timeseriesFilter={timeseriesFilter}
+              setTimeseriesFilter={setTimeseriesFilter}
+              sequenceFilter={sequenceFilter}
+              setSequenceFilter={setSequenceFilter}
+              eventFilter={eventFilter}
+              setEventFilter={setEventFilter}
+              fileFilter={fileFilter}
+              setFileFilter={setFileFilter}
+              resourceType={currentResourceType}
+              // closeFilters={() => setShowFilter(false)}
+              visible={currentResourceType !== 'threeD' && showFilter}
+            />
+          ) : (
+            <OldSearchFilters
+              assetFilter={assetFilter}
+              setAssetFilter={setAssetFilter}
+              timeseriesFilter={timeseriesFilter}
+              setTimeseriesFilter={setTimeseriesFilter}
+              sequenceFilter={sequenceFilter}
+              setSequenceFilter={setSequenceFilter}
+              eventFilter={eventFilter}
+              setEventFilter={setEventFilter}
+              fileFilter={fileFilter}
+              setFileFilter={setFileFilter}
+              resourceType={currentResourceType}
+              closeFilters={() => setShowFilter(false)}
+              visible={currentResourceType !== 'threeD' && showFilter}
+            />
+          )}
         </SearchFiltersWrapper>
 
         <Wrapper>

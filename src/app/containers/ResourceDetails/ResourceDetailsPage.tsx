@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { useCurrentResourceType } from 'app/hooks';
+import { useCurrentResourceType } from 'app/hooks/hooks';
 import { AssetPage } from 'app/containers/Asset/AssetPage';
 import { EventPage } from 'app/containers/Event/EventPage';
 import { TimeseriesPage } from 'app/containers/Timeseries/TimeseriesPage';

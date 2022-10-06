@@ -16,7 +16,7 @@ import {
 import Highlighter from 'react-highlight-words';
 import { Model3D } from '@cognite/sdk';
 import { ResourceType } from '@cognite/data-exploration';
-import { useCurrentResourceId } from 'app/hooks';
+import { useCurrentResourceId } from 'app/hooks/hooks';
 
 export type Model3DWithType = Model3D & {
   type: ResourceType;

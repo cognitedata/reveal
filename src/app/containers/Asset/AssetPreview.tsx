@@ -15,7 +15,7 @@ import ResourceTitleRow from 'app/components/ResourceTitleRow';
 import { Asset } from '@cognite/sdk';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 import { ResourceDetailsTabs, TabTitle } from 'app/containers/ResourceDetails';
-import { useCurrentResourceId, useOnPreviewTabChange } from 'app/hooks';
+import { useCurrentResourceId, useOnPreviewTabChange } from 'app/hooks/hooks';
 import ResourceSelectionContext from 'app/context/ResourceSelectionContext';
 
 export type AssetPreviewTabType =

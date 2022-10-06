@@ -15,7 +15,7 @@ import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 import { CogniteEvent } from '@cognite/sdk';
 
 import { ResourceDetailsTabs, TabTitle } from 'app/containers/ResourceDetails';
-import { useOnPreviewTabChange } from 'app/hooks';
+import { useOnPreviewTabChange } from 'app/hooks/hooks';
 
 export type EventPreviewTabType =
   | 'details'

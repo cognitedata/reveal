@@ -12,7 +12,7 @@ import {
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 import styled from 'styled-components';
 import { trackUsage } from 'app/utils/Metrics';
-import { useQueryString } from 'app/hooks';
+import { useQueryString } from 'app/hooks/hooks';
 import { SEARCH_KEY } from 'app/utils/constants';
 import { Divider, Space } from 'antd';
 import { TitleRowActions } from './TitleRowActions';
