@@ -1,39 +1,37 @@
 import React from 'react';
 import { useList } from '@cognite/sdk-react-query-hooks';
-import { TimeseriesFilter as TimeseriesFilterProps } from '@cognite/sdk';
-import { BooleanFilter } from '../../components/Filters/BooleanFilter/BooleanFilter';
-import { AggregatedFilter } from '../../components/Filters/AggregatedFilter/AggregatedFilter';
-import { MetadataFilter } from '../../components/Filters/MetadataFilter/MetadataFilter';
 import { BaseFilterCollapse } from '../../components/Collapse/BaseFilterCollapse/BaseFilterCollapse';
+import { useTimeseriesFilters } from 'app/store/filter';
+import {
+  AggregatedFilter,
+  BooleanFilter,
+  MetadataFilter,
+} from '@cognite/data-exploration';
 
-export const TimeseriesFilters = ({
-  filter,
-  setFilter,
-  ...rest
-}: {
-  filter: TimeseriesFilterProps;
-  setFilter: (newFilter: TimeseriesFilterProps) => void;
-}) => {
-  const { data: items = [] } = useList('timeseries', { filter, limit: 1000 });
+export const TimeseriesFilters = ({ ...rest }) => {
+  const [timeseriesFilter, setTimeseriesFilter] = useTimeseriesFilters();
+
+  const { data: items = [] } = useList('timeseries', {
+    filter: timeseriesFilter,
+    limit: 1000,
+  });
 
   return (
     <BaseFilterCollapse.Panel title="Time series" {...rest}>
       <BooleanFilter
         title="Is step"
-        value={filter.isStep}
+        value={timeseriesFilter.isStep}
         setValue={newValue =>
-          setFilter({
-            ...filter,
+          setTimeseriesFilter({
             isStep: newValue,
           })
         }
       />
       <BooleanFilter
         title="Is string"
-        value={filter.isString}
+        value={timeseriesFilter.isString}
         setValue={newValue =>
-          setFilter({
-            ...filter,
+          setTimeseriesFilter({
             isString: newValue,
           })
         }
@@ -43,16 +41,15 @@ export const TimeseriesFilters = ({
         items={items}
         aggregator="unit"
         title="Unit"
-        value={filter.unit}
-        setValue={newValue => setFilter({ ...filter, unit: newValue })}
+        value={timeseriesFilter.unit}
+        setValue={newValue => setTimeseriesFilter({ unit: newValue })}
       />
 
       <MetadataFilter
         items={items}
-        value={filter.metadata}
+        value={timeseriesFilter.metadata}
         setValue={newMetadata =>
-          setFilter({
-            ...filter,
+          setTimeseriesFilter({
             metadata: newMetadata,
           })
         }

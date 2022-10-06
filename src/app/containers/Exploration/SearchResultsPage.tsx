@@ -38,6 +38,13 @@ import FilterToggleButton from './FilterToggleButton';
 import { ExplorationFilterToggle } from 'app/containers/Exploration/ExplorationFilterToggle';
 import { useFlagFilter } from 'app/hooks/flags/useFlagFilters';
 import { SearchFilters } from 'app/containers/SearchResults/SearchFilters';
+import {
+  useAssetFilters,
+  useEventsFilters,
+  useFileFilters,
+  useSequenceFilters,
+  useTimeseriesFilters,
+} from 'app/store/filter';
 
 const getPageTitle = (query: string, resourceType: ResourceType): string => {
   return `${query}${query ? ' in' : ''} ${getTitle(resourceType, true)}`;
@@ -61,17 +68,23 @@ function SearchPage() {
     .map(s => parseInt(s, 10))
     .filter(n => Number.isFinite(n));
 
+  const [assetFilter, setAssetFilter] = useAssetFilters();
+  const [fileFilter, setFileFilter] = useFileFilters();
+  const [eventFilter, setEventFilter] = useEventsFilters();
+  const [timeseriesFilter, setTimeseriesFilter] = useTimeseriesFilters();
+  const [sequenceFilter, setSequenceFilter] = useSequenceFilters();
+
   const {
-    assetFilter,
-    setAssetFilter,
-    timeseriesFilter,
-    setTimeseriesFilter,
-    sequenceFilter,
-    setSequenceFilter,
-    eventFilter,
-    setEventFilter,
-    fileFilter,
-    setFileFilter,
+    // assetFilter,
+    // setAssetFilter,
+    // timeseriesFilter,
+    // setTimeseriesFilter,
+    // sequenceFilter,
+    // setSequenceFilter,
+    // eventFilter,
+    // setEventFilter,
+    // fileFilter,
+    // setFileFilter,
     mode,
   } = useContext(ResourceSelectionContext);
 
@@ -221,16 +234,6 @@ function SearchPage() {
         <SearchFiltersWrapper>
           {showNewFilter ? (
             <SearchFilters
-              assetFilter={assetFilter}
-              setAssetFilter={setAssetFilter}
-              timeseriesFilter={timeseriesFilter}
-              setTimeseriesFilter={setTimeseriesFilter}
-              sequenceFilter={sequenceFilter}
-              setSequenceFilter={setSequenceFilter}
-              eventFilter={eventFilter}
-              setEventFilter={setEventFilter}
-              fileFilter={fileFilter}
-              setFileFilter={setFileFilter}
               resourceType={currentResourceType}
               // closeFilters={() => setShowFilter(false)}
               visible={currentResourceType !== 'threeD' && showFilter}

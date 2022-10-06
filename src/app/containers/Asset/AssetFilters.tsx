@@ -1,12 +1,19 @@
 import React from 'react';
 import { useList } from '@cognite/sdk-react-query-hooks';
-import { AggregateResponse, AssetFilterProps } from '@cognite/sdk';
-import { LabelFilter } from '../../components/Filters/LabelFilter/LabelFilter';
-import { MetadataFilter } from '../../components/Filters/MetadataFilter/MetadataFilter';
-import { AggregatedFilter } from '../../components/Filters/AggregatedFilter/AggregatedFilter';
-import { BaseFilterCollapse } from '../../components/Collapse/BaseFilterCollapse/BaseFilterCollapse';
+import {
+  AggregateResponse,
+  AssetFilterProps,
+  LabelContainsAnyFilter,
+} from '@cognite/sdk';
 import { useQuery, UseQueryOptions } from 'react-query';
 import { useSDK } from '@cognite/sdk-provider';
+import { useAssetFilters } from 'app/store/filter';
+import { BaseFilterCollapse } from 'app/components/Collapse/BaseFilterCollapse/BaseFilterCollapse';
+import {
+  AggregatedFilter,
+  LabelFilter,
+  MetadataFilter,
+} from '@cognite/data-exploration';
 
 // TODO: Move to domain layer
 export const useAssetMetadataKeys = (
@@ -33,26 +40,29 @@ export const useAssetMetadataKeys = (
   return { data: data as any, ...rest };
 };
 
-export const AssetFilters = ({
-  filter,
-  setFilter,
-  ...rest
-}: {
-  filter: AssetFilterProps;
-  setFilter: (newFilter: AssetFilterProps) => void;
-}) => {
-  const { data: items = [] } = useList('assets', { filter, limit: 1000 });
+export const AssetFilters = ({ ...rest }) => {
+  const [assetFilters, setAssetFilters] = useAssetFilters();
 
-  const { data: metadataKeys = [] } = useAssetMetadataKeys(filter);
+  const { data: items = [] } = useList('assets', {
+    filter: assetFilters,
+    limit: 1000,
+  });
+
+  const { data: metadataKeys = [] } = useAssetMetadataKeys(assetFilters);
 
   return (
     <BaseFilterCollapse.Panel title="Assets" {...rest}>
       <LabelFilter
         resourceType="asset"
-        value={((filter as any).labels || { containsAny: [] }).containsAny}
+        value={
+          (
+            (assetFilters.labels as LabelContainsAnyFilter) || {
+              containsAny: [],
+            }
+          ).containsAny
+        }
         setValue={newFilters =>
-          setFilter({
-            ...filter,
+          setAssetFilters({
             labels: newFilters ? { containsAny: newFilters } : undefined,
           })
         }
@@ -61,10 +71,9 @@ export const AssetFilters = ({
         title="Source"
         items={items}
         aggregator="source"
-        value={filter.source}
+        value={assetFilters.source}
         setValue={newSource =>
-          setFilter({
-            ...filter,
+          setAssetFilters({
             source: newSource,
           })
         }
@@ -72,10 +81,9 @@ export const AssetFilters = ({
       <MetadataFilter
         items={items}
         keys={metadataKeys}
-        value={filter.metadata}
+        value={assetFilters.metadata}
         setValue={newMetadata =>
-          setFilter({
-            ...filter,
+          setAssetFilters({
             metadata: newMetadata,
           })
         }

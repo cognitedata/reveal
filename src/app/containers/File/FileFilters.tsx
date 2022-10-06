@@ -1,22 +1,22 @@
 import React from 'react';
 import { useList } from '@cognite/sdk-react-query-hooks';
-import { FileFilterProps } from '@cognite/sdk';
-import { LabelFilter } from '../../components/Filters/LabelFilter/LabelFilter';
-import { MetadataFilter } from '../../components/Filters/MetadataFilter/MetadataFilter';
-import { AggregatedFilter } from '../../components/Filters/AggregatedFilter/AggregatedFilter';
-import { StringFilter } from '../../components/Filters/StringFilter/StringFilter';
-import { DateFilter } from '../../components/Filters/DateFilter/DateFilter';
 import { BaseFilterCollapse } from '../../components/Collapse/BaseFilterCollapse/BaseFilterCollapse';
+import { useFileFilters } from 'app/store/filter';
+import {
+  AggregatedFilter,
+  DateFilter,
+  LabelFilter,
+  MetadataFilter,
+  StringFilter,
+} from '@cognite/data-exploration';
 
-export const FileFilters = ({
-  filter,
-  setFilter,
-  ...rest
-}: {
-  filter: FileFilterProps;
-  setFilter: (newFilter: FileFilterProps) => void;
-}) => {
-  const { data: items = [] } = useList('files', { filter, limit: 1000 });
+export const FileFilters = ({ ...rest }) => {
+  const [fileFilter, setFileFilter] = useFileFilters();
+
+  const { data: items = [] } = useList('files', {
+    filter: fileFilter,
+    limit: 1000,
+  });
 
   return (
     <BaseFilterCollapse.Panel title="Files" {...rest}>
@@ -24,25 +24,23 @@ export const FileFilters = ({
         items={items}
         aggregator="mimeType"
         title="Mime type"
-        value={filter.mimeType}
-        setValue={newValue => setFilter({ ...filter, mimeType: newValue })}
+        value={fileFilter.mimeType}
+        setValue={newValue => setFileFilter({ mimeType: newValue })}
       />
       <DateFilter
         title="Source Modified Time"
-        value={filter.sourceModifiedTime}
+        value={fileFilter.sourceModifiedTime}
         setValue={newDate =>
-          setFilter({
-            ...filter,
+          setFileFilter({
             sourceModifiedTime: newDate || undefined,
           })
         }
       />
       <LabelFilter
         resourceType="file"
-        value={((filter as any).labels || { containsAny: [] }).containsAny}
+        value={((fileFilter as any).labels || { containsAny: [] }).containsAny}
         setValue={newFilters =>
-          setFilter({
-            ...filter,
+          setFileFilter({
             labels: newFilters ? { containsAny: newFilters } : undefined,
           })
         }
@@ -50,20 +48,18 @@ export const FileFilters = ({
 
       <DateFilter
         title="Uploaded Time"
-        value={filter.uploadedTime}
+        value={fileFilter.uploadedTime}
         setValue={newDate =>
-          setFilter({
-            ...filter,
+          setFileFilter({
             uploadedTime: newDate || undefined,
           })
         }
       />
       <StringFilter
         title="Directory prefix"
-        value={(filter as any).directoryPrefix}
+        value={(fileFilter as any).directoryPrefix}
         setValue={newPrefix =>
-          setFilter({
-            ...filter,
+          setFileFilter({
             // @ts-ignore
             directoryPrefix: newPrefix,
           })
@@ -73,20 +69,18 @@ export const FileFilters = ({
         title="Source"
         items={items}
         aggregator="source"
-        value={filter.source}
+        value={fileFilter.source}
         setValue={newSource =>
-          setFilter({
-            ...filter,
+          setFileFilter({
             source: newSource,
           })
         }
       />
       <MetadataFilter
         items={items}
-        value={filter.metadata}
+        value={fileFilter.metadata}
         setValue={newMetadata =>
-          setFilter({
-            ...filter,
+          setFileFilter({
             metadata: newMetadata,
           })
         }
@@ -94,10 +88,9 @@ export const FileFilters = ({
 
       <DateFilter
         title="Source Created Time"
-        value={filter.sourceCreatedTime}
+        value={fileFilter.sourceCreatedTime}
         setValue={newDate =>
-          setFilter({
-            ...filter,
+          setFileFilter({
             sourceCreatedTime: newDate || undefined,
           })
         }

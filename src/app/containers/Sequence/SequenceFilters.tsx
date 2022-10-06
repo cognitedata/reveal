@@ -1,27 +1,24 @@
 import React from 'react';
 import { useList } from '@cognite/sdk-react-query-hooks';
-import { SequenceFilter } from '@cognite/sdk';
-import { MetadataFilter } from '../../components/Filters/MetadataFilter/MetadataFilter';
 import { BaseFilterCollapse } from '../../components/Collapse/BaseFilterCollapse/BaseFilterCollapse';
+import { useSequenceFilters } from 'app/store/filter';
+import { MetadataFilter } from '@cognite/data-exploration';
 
-export const SequenceFilters = ({
-  filter,
-  setFilter,
-  ...rest
-}: {
-  filter: Required<SequenceFilter>['filter'];
-  setFilter: (newFilter: Required<SequenceFilter>['filter']) => void;
-}) => {
-  const { data: items = [] } = useList('sequences', { filter, limit: 1000 });
+export const SequenceFilters = ({ ...rest }) => {
+  const [sequenceFilter, setSequenceFilter] = useSequenceFilters();
+
+  const { data: items = [] } = useList('sequences', {
+    filter: sequenceFilter,
+    limit: 1000,
+  });
 
   return (
     <BaseFilterCollapse.Panel title="Sequences" {...rest}>
       <MetadataFilter
         items={items}
-        value={filter.metadata}
+        value={sequenceFilter.metadata}
         setValue={newMetadata =>
-          setFilter({
-            ...filter,
+          setSequenceFilter({
             metadata: newMetadata,
           })
         }

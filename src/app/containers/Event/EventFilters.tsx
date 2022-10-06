@@ -1,41 +1,39 @@
 import React from 'react';
 
-import { EventFilter, InternalId } from '@cognite/sdk';
 import { useList } from '@cognite/sdk-react-query-hooks';
-import { AggregatedFilter } from '../../components/Filters/AggregatedFilter/AggregatedFilter';
-import { AggregatedEventFilter } from '../../components/Filters/AggregatedEventFilter/AggregatedEventFilter';
-import { ByAssetFilter } from '../../components/Filters/ByAssetFilter/ByAssetFilter';
-import { DateFilter } from '../../components/Filters/DateFilter/DateFilter';
-import { MetadataFilter } from '../../components/Filters/MetadataFilter/MetadataFilter';
 import { BaseFilterCollapse } from '../../components/Collapse/BaseFilterCollapse/BaseFilterCollapse';
+import { useEventsFilters } from 'app/store/filter';
+import {
+  AggregatedEventFilter,
+  AggregatedFilter,
+  DateFilter,
+  MetadataFilter,
+} from '@cognite/data-exploration';
 
-export const EventFilters = ({
-  filter,
-  setFilter,
-  ...rest
-}: {
-  filter: EventFilter;
-  setFilter: (newFilter: EventFilter) => void;
-}) => {
-  const { data: items = [] } = useList('events', { filter, limit: 1000 });
+export const EventFilters = ({ ...rest }: {}) => {
+  const [eventFilter, setEventFilter] = useEventsFilters();
+
+  const { data: items = [] } = useList('events', {
+    filter: eventFilter,
+    limit: 1000,
+  });
 
   return (
     <BaseFilterCollapse.Panel title="Events" {...rest}>
       <AggregatedEventFilter
         field="type"
-        filter={filter}
+        filter={eventFilter}
         setValue={newValue => {
-          setFilter({ ...filter, type: newValue });
+          setEventFilter({ type: newValue });
         }}
         title="Type"
-        value={filter.type}
+        value={eventFilter.type}
       />
       <DateFilter
         title="Start Time"
-        value={filter.startTime}
+        value={eventFilter.startTime}
         setValue={newDate =>
-          setFilter({
-            ...filter,
+          setEventFilter({
             startTime: newDate || undefined,
           })
         }
@@ -44,51 +42,50 @@ export const EventFilters = ({
         title="End Time"
         enableNull
         value={
-          filter.endTime && 'isNull' in filter.endTime ? null : filter.endTime
+          eventFilter.endTime && 'isNull' in eventFilter.endTime
+            ? null
+            : eventFilter.endTime
         }
         setValue={newDate =>
-          setFilter({
-            ...filter,
+          setEventFilter({
             endTime: newDate === null ? { isNull: true } : newDate || undefined,
           })
         }
       />
       <AggregatedEventFilter
         field="subtype"
-        filter={filter}
+        filter={eventFilter}
         setValue={newValue => {
-          setFilter({ ...filter, subtype: newValue });
+          setEventFilter({ subtype: newValue });
         }}
         title="Sub-type"
-        value={filter.subtype}
+        value={eventFilter.subtype}
       />
-      <ByAssetFilter
-        value={filter.assetSubtreeIds?.map(el => (el as InternalId).id)}
+      {/* <ByAssetFilter
+        value={eventF.assetSubtreeIds?.map(el => (el as InternalId).id)}
         setValue={newValue =>
           setFilter({
             ...filter,
             assetSubtreeIds: newValue?.map(id => ({ id })),
           })
         }
-      />
+      /> */}
       <AggregatedFilter
         title="Source"
         items={items}
         aggregator="source"
-        value={filter.source}
+        value={eventFilter.source}
         setValue={newSource =>
-          setFilter({
-            ...filter,
+          setEventFilter({
             source: newSource,
           })
         }
       />
       <MetadataFilter
         items={items}
-        value={filter.metadata}
+        value={eventFilter.metadata}
         setValue={newMetadata =>
-          setFilter({
-            ...filter,
+          setEventFilter({
             metadata: newMetadata,
           })
         }

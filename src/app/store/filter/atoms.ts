@@ -1,5 +1,5 @@
-import { DynamicFilter, GlobalFilter } from './types';
-import { atom, atomFamily } from 'recoil';
+import { GlobalFilter } from './types';
+import { atom } from 'recoil';
 
 const defaultFilterState = {
   asset: {},
@@ -20,10 +20,11 @@ export const globalFilterAtom = atom<GlobalFilter>({
   },
 });
 
-export const dynamicFilterAtom = atomFamily<DynamicFilter, string>({
-  key: 'DynamicFilter',
-  default: {
-    phrase: '',
-    filters: defaultFilterState,
-  },
-});
+// WIP
+// export const dynamicFilterAtom = atomFamily<DynamicFilter, string>({
+//   key: 'DynamicFilter',
+//   default: {
+//     phrase: '',
+//     filters: defaultFilterState,
+//   },
+// });

@@ -4,7 +4,6 @@ import {
   EventFilter,
   FileFilterProps,
   IdEither,
-  Metadata,
   SequenceFilter,
   TimeseriesFilter,
 } from '@cognite/sdk';
@@ -16,32 +15,30 @@ export type Filters = {
   file: FileFilterProps;
   event: EventFilter;
 };
-type CommonFacets = {
+export type CommonFacets = {
   assetSubtreeIds?: IdEither[];
   dataSetIds?: IdEither[];
-  metadata?: Metadata;
+  // metadata?: Metadata;
   createdTime?: DateRange;
   lastUpdatedTime?: DateRange;
+  externalIdPrefix?: string;
 };
 
-type CommonFacetsKeys =
-  | 'assetSubtreeIds'
-  | 'dataSetIds'
-  | 'metadata'
-  | 'createdTime'
-  | 'lastUpdatedTime';
+type CommonFacetsKeys = keyof CommonFacets;
 
 export type GlobalFilter = {
   phrase?: string;
   filters: {
     common: CommonFacets;
-    asset: Omit<Filters['asset'], CommonFacetsKeys>;
+    asset: Omit<AssetFilterProps, CommonFacetsKeys>;
     timeseries: Omit<Filters['timeseries'], CommonFacetsKeys>;
     sequence: Omit<Filters['sequence'], CommonFacetsKeys>;
     file: Omit<Filters['file'], CommonFacetsKeys>;
     event: Omit<Filters['event'], CommonFacetsKeys>;
   };
 };
+
+export type GlobalFilterKeys = keyof GlobalFilter['filters'];
 
 export type DynamicFilter = {
   phrase?: string;

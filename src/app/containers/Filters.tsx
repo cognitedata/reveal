@@ -1,89 +1,42 @@
 import React from 'react';
 
 import { BaseFilterCollapse } from '../components/Collapse/BaseFilterCollapse/BaseFilterCollapse';
-import { CommonFilterFacets } from '../components/Filters/types';
 import { ResetFiltersButton } from '../components/Buttons/ResetFiltersButton';
 import styled from 'styled-components';
-import {
-  ResourceFilterProps,
-  ResourceType,
-  SetResourceFilterProps,
-} from '@cognite/data-exploration';
+import { ResourceType } from '@cognite/data-exploration';
 import { AssetFilters } from './Asset/AssetFilters';
 import { EventFilters } from './Event/EventFilters';
-import { TimeseriesFilters } from './Timeseries/TimeseriesFilters';
-import { FileFilters } from './File/FileFilters';
-import { SequenceFilters } from './Sequence/SequenceFilters';
 import { CommonFilter } from './Common/CommonFilter';
-// import { useFilterDispatch, useFilterState } from 'providers';
+import { FileFilters } from './File/FileFilters';
+import { TimeseriesFilters } from './Timeseries/TimeseriesFilters';
+import { SequenceFilters } from './Sequence/SequenceFilters';
 
-export type FilterProps = Required<ResourceFilterProps> &
-  SetResourceFilterProps & {
-    resourceType: ResourceType;
-  };
+export interface Props {
+  resourceType: ResourceType;
+}
 
-export const Filters = ({
-  resourceType,
-  assetFilter,
-  setAssetFilter,
-  timeseriesFilter,
-  setTimeseriesFilter,
-  sequenceFilter,
-  setSequenceFilter,
-  eventFilter,
-  setEventFilter,
-  fileFilter,
-  setFileFilter,
-  ...rest
-}: FilterProps) => {
+export const Filters: React.FC<Props> = ({ resourceType }) => {
   const renderCustomResourceTypeFilter = () => {
     switch (resourceType) {
       case 'asset': {
-        return (
-          <AssetFilters
-            filter={assetFilter}
-            setFilter={setAssetFilter}
-            {...rest}
-          />
-        );
+        return <AssetFilters />;
       }
       case 'event': {
-        return <EventFilters filter={eventFilter} setFilter={setEventFilter} />;
+        return <EventFilters />;
       }
       case 'timeSeries': {
-        return (
-          <TimeseriesFilters
-            filter={timeseriesFilter}
-            setFilter={setTimeseriesFilter}
-          />
-        );
+        return <TimeseriesFilters />;
       }
       case 'file': {
-        return <FileFilters filter={fileFilter} setFilter={setFileFilter} />;
+        return <FileFilters />;
       }
       case 'sequence': {
-        return (
-          <SequenceFilters
-            filter={sequenceFilter}
-            setFilter={setSequenceFilter}
-          />
-        );
+        return <SequenceFilters />;
       }
-
       default: {
         return null;
       }
     }
-  };
-
-  const handleCommonChange = (_updatingValue: CommonFilterFacets) => {
-    // setSearchFilter('common', updatingValue);
-    // setAssetFilter(prevState => ({ ...prevState, ...updatingValue }));
-    // setTimeseriesFilter(prevState => ({ ...prevState, ...updatingValue }));
-    // setFileFilter(prevState => ({ ...prevState, ...updatingValue }));
-    // setEventFilter(prevState => ({ ...prevState, ...updatingValue }));
-    // setSequenceFilter(prevState => ({ ...prevState, ...updatingValue }));
-    // setCommonFilter(prevFilter => ({ ...prevFilter, ...updatingValue }));
   };
 
   // This function (and the above) will be greatly simplified with the new filter structure (coming soon)
@@ -94,11 +47,7 @@ export const Filters = ({
   return (
     <Container>
       <BaseFilterCollapse>
-        <CommonFilter
-          resourceType={resourceType}
-          commonFilter={{}}
-          onChange={handleCommonChange}
-        />
+        <CommonFilter resourceType={resourceType} />
         {renderCustomResourceTypeFilter()}
       </BaseFilterCollapse>
       <ResetFiltersButton setFilter={handleClearClick} />

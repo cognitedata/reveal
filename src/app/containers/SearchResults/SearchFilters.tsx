@@ -1,10 +1,5 @@
 import React from 'react';
-import {
-  ResourceType,
-  ResourceFilterProps,
-  SetResourceFilterProps,
-  lightGrey,
-} from '@cognite/data-exploration';
+import { ResourceType, lightGrey } from '@cognite/data-exploration';
 import { Filters } from 'app/containers/Filters';
 
 // import { useFilterState } from 'providers';
@@ -28,23 +23,12 @@ export const SearchFilters = ({
   // allowHide = true,
   // closeFilters = () => {},
   resourceType,
-  assetFilter,
-  setAssetFilter,
-  timeseriesFilter,
-  setTimeseriesFilter,
-  sequenceFilter,
-  setSequenceFilter,
-  eventFilter,
-  setEventFilter,
-  fileFilter,
-  setFileFilter,
 }: // enableFilterFeature,
 {
   resourceType: ResourceType;
   visible?: boolean;
   allowHide?: boolean;
-} & Required<ResourceFilterProps> &
-  SetResourceFilterProps) => {
+}) => {
   // Re-enable all the commented code when 'all filters' is improved by design.
 
   // const state = useFilterState();
@@ -102,19 +86,7 @@ export const SearchFilters = ({
             </SegmentedControl>
           </ControllerContainer> */}
 
-          <Filters
-            resourceType={resourceType}
-            assetFilter={assetFilter}
-            setAssetFilter={setAssetFilter}
-            timeseriesFilter={timeseriesFilter}
-            setTimeseriesFilter={setTimeseriesFilter}
-            sequenceFilter={sequenceFilter}
-            setSequenceFilter={setSequenceFilter}
-            eventFilter={eventFilter}
-            setEventFilter={setEventFilter}
-            fileFilter={fileFilter}
-            setFileFilter={setFileFilter}
-          />
+          <Filters resourceType={resourceType} />
         </>
       )}
     </div>
