@@ -1,4 +1,11 @@
-import { Colors, IconType } from '@cognite/cogs.js';
+import {
+  Colors,
+  Detail,
+  Flex,
+  Icon,
+  IconType,
+  Overline,
+} from '@cognite/cogs.js';
 import { Handle, Position, useNodes } from 'react-flow-renderer';
 import styled from 'styled-components';
 
@@ -14,7 +21,12 @@ type BaseNodeProps = {
   title: string;
 };
 
-export const BaseNode = ({ children }: BaseNodeProps): JSX.Element => {
+export const BaseNode = ({
+  children,
+  description,
+  icon,
+  title,
+}: BaseNodeProps): JSX.Element => {
   const nodes = useNodes<CustomNodeData>();
 
   return (
@@ -29,6 +41,21 @@ export const BaseNode = ({ children }: BaseNodeProps): JSX.Element => {
         position={Position.Right}
         type="target"
       />
+      <StyledBaseNodeHeader>
+        <Flex gap={8}>
+          <StyledBaseNodeIconContainer>
+            <StyledBaseNodeIcon type={icon} />
+          </StyledBaseNodeIconContainer>
+          <Flex direction="column" gap={2}>
+            <StyledBaseNodeTitle level={3}>{title}</StyledBaseNodeTitle>
+            {!!description && (
+              <StyledBaseNodeDescription>
+                {description}
+              </StyledBaseNodeDescription>
+            )}
+          </Flex>
+        </Flex>
+      </StyledBaseNodeHeader>
       {children}
     </StyledBaseNodeContainer>
   );
@@ -47,15 +74,14 @@ const StyledBaseHandle = styled(Handle)`
 `;
 
 const StyledBaseNodeContainer = styled.div`
-  align-items: center;
   background-color: ${Colors['surface--muted']};
   border: 1px solid ${Colors['border--interactive--default']};
   border-right: none;
   border-left: none;
   display: flex;
+  flex-direction: column;
   height: 80px;
-  justify-content: center;
-  width: 200px;
+  width: 300px;
 
   ${StyledBaseHandle}.react-flow__handle-connecting {
     background-color: ${Colors['border--status-critical--strong']};
@@ -74,4 +100,31 @@ const StyledBaseHandleRight = styled(StyledBaseHandle)`
 const StyledBaseHandleLeft = styled(StyledBaseHandle)`
   left: -${BASE_NODE_HANDLE_SIZE_IN_PX}px;
   border-radius: 4px 0 0 4px;
+`;
+
+const StyledBaseNodeHeader = styled.div`
+  border-bottom: 1px solid ${Colors['border--interactive--default']};
+  padding: 8px;
+`;
+
+const StyledBaseNodeIconContainer = styled.div`
+  align-items: center;
+  background-color: ${Colors['surface--interactive--toggled-default']};
+  border-radius: 4px;
+  display: flex;
+  height: 36px;
+  justify-content: center;
+  width: 36px;
+`;
+
+const StyledBaseNodeIcon = styled(Icon)`
+  color: ${Colors['text-icon--interactive--default']};
+`;
+
+const StyledBaseNodeTitle = styled(Overline)`
+  color: ${Colors['text-icon--interactive--default']};
+`;
+
+const StyledBaseNodeDescription = styled(Detail)`
+  color: ${Colors['text-icon--interactive--disabled']};
 `;
