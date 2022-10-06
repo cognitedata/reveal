@@ -30,6 +30,7 @@ import dat from 'dat.gui';
 import Stats from 'stats.js';
 import { ByScreenSizeSectorCuller } from '../../packages/cad-geometry-loaders/src/sector/culling/ByScreenSizeSectorCuller';
 import { CogniteClient } from '@cognite/sdk';
+import { getDistanceToMeterConversionFactor } from '../../packages/cad-parsers';
 
 export type StreamingTestFixtureComponents = {
   renderer: THREE.WebGLRenderer;
@@ -289,6 +290,12 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
       const boundingBox = model.sectorScene.getBoundsOfMostGeometry();
       const cadFromCdfToThreeMatrix = new THREE.Matrix4().set(1, 0, 0, 0, 0, 0, 1, 0, 0, -1, 0, 0, 0, 0, 0, 1);
       boundingBox.applyMatrix4(cadFromCdfToThreeMatrix);
+      const unit = model.cadModelMetadata.scene.unit;
+      const scaleFactor = getDistanceToMeterConversionFactor(unit);
+      if (scaleFactor) {
+        boundingBox.max.multiplyScalar(scaleFactor);
+        boundingBox.min.multiplyScalar(scaleFactor);
+      }
       return boundingBox;
     } else if (model instanceof PointCloudNode) {
       return model.potreeNode.boundingBox.clone();

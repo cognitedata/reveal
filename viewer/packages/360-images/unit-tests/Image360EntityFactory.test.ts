@@ -20,28 +20,37 @@ describe(Image360EntityFactory.name, () => {
           label: 'test_0',
           collectionId: '0',
           collectionLabel: 'testCollection',
-          transform: new THREE.Matrix4()
+          transformations: {
+            translation: new THREE.Matrix4(),
+            rotation: new THREE.Matrix4()
+          }
         },
         {
           id: '1',
           label: 'test_1',
           collectionId: '0',
           collectionLabel: 'testCollection',
-          transform: new THREE.Matrix4()
+          transformations: {
+            translation: new THREE.Matrix4(),
+            rotation: new THREE.Matrix4()
+          }
         },
         {
           id: '2',
           label: 'test_2',
           collectionId: '0',
           collectionLabel: 'testCollection',
-          transform: new THREE.Matrix4()
+          transformations: {
+            translation: new THREE.Matrix4(),
+            rotation: new THREE.Matrix4()
+          }
         }
       ]);
 
     const mockSceneHandler = new Mock<SceneHandler>().setup(p => p.addCustomObject(It.IsAny())).returns();
 
     const image360EntityFactory = new Image360EntityFactory(mock360ImageProvider.object(), mockSceneHandler.object());
-    const entities = await image360EntityFactory.create('someString');
+    const entities = await image360EntityFactory.create('someString', new THREE.Matrix4(), true);
 
     expect(entities.length).toBe(3);
   });
