@@ -840,7 +840,7 @@ __metadata:
     prettier: 2.7.1
     process: 0.11.10
     proj4: 2.8.0
-    puppeteer: 18.1.0
+    puppeteer: 18.2.0
     random-seed: 0.3.0
     raw-loader: 4.0.2
     resize-observer-polyfill: 1.5.1
@@ -10434,22 +10434,33 @@ __metadata:
   languageName: node
   linkType: hard
 
-"puppeteer@npm:18.1.0":
-  version: 18.1.0
-  resolution: "puppeteer@npm:18.1.0"
+"puppeteer-core@npm:18.2.0":
+  version: 18.2.0
+  resolution: "puppeteer-core@npm:18.2.0"
   dependencies:
     cross-fetch: 3.1.5
     debug: 4.3.4
     devtools-protocol: 0.0.1045489
     extract-zip: 2.0.1
     https-proxy-agent: 5.0.1
-    progress: 2.0.3
     proxy-from-env: 1.1.0
     rimraf: 3.0.2
     tar-fs: 2.1.1
     unbzip2-stream: 1.4.3
     ws: 8.9.0
-  checksum: b805067a1cb5d33afeb5359b268c2d2f8915ee066f653622a045b4fc9a14e5fbfb13894d67903183d023e87e2f8302d78d3fcc75d9ad2973fb8e49daf3261402
+  checksum: 1b9595ceb94fd6319313c341dcce6c27de66a39a601eb5013a84e644dba825da9de57b481bdfb6a49c801b0c9601d84c49b436b9490a151d92db25771fe3b285
+  languageName: node
+  linkType: hard
+
+"puppeteer@npm:18.2.0":
+  version: 18.2.0
+  resolution: "puppeteer@npm:18.2.0"
+  dependencies:
+    https-proxy-agent: 5.0.1
+    progress: 2.0.3
+    proxy-from-env: 1.1.0
+    puppeteer-core: 18.2.0
+  checksum: 3fe1bd78d527089a637087ba0348da093465c21d6021e8580d209abb44c0283781964df70dabdfea1ca96bfbc7b22da72986d7dd44de648f0bf35763d743c569
   languageName: node
   linkType: hard
 
