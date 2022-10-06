@@ -1,9 +1,8 @@
 import { createLink } from '@cognite/cdf-utilities';
-import { Icon } from '@cognite/cogs.js';
-import { CANVAS_PATH } from 'common';
+import { Flex, Icon } from '@cognite/cogs.js';
 import { useFlowList } from 'hooks/raw';
-import { Link } from 'react-router-dom';
-import DeleteButton from './DeleteButton';
+import styled from 'styled-components';
+import ListItem from './ListItem';
 
 export default function List({}: {}) {
   const { data, isLoading, error } = useFlowList();
@@ -19,13 +18,10 @@ export default function List({}: {}) {
     );
   }
   return (
-    <ul>
-      {data?.map((row) => (
-        <li key={row.id}>
-          <Link to={createLink(`/${CANVAS_PATH}/${row.id}`)}>{row.name}</Link>
-          <DeleteButton id={row.id} />
-        </li>
+    <Flex direction="column">
+      {data?.map((flow) => (
+        <ListItem key={flow.id} flow={flow} />
       ))}
-    </ul>
+    </Flex>
   );
 }

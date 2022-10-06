@@ -6,12 +6,14 @@ export default function CreateButton({}: {}) {
   const { mutate, isLoading } = useInsertFlow();
   return (
     <Button
+      type="primary"
       disabled={isLoading}
       icon={isLoading ? 'Loader' : 'Add'}
       onClick={() =>
         mutate({
           id: v4(),
-          name: 'new flow',
+          name: `Flow-demo ${new Date().getTime().toString()}`,
+          description: `This is for the first iteration`,
           flow: {},
         })
       }
