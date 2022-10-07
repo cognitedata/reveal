@@ -14,11 +14,13 @@ import { getRootAsset } from '../../../utils/assets';
 export type DocumentTableProps = Omit<
   TableProps<DocumentWithRelationshipLabels>,
   'columns'
->;
+> & {
+  query?: string;
+};
 export type DocumentWithRelationshipLabels = Document;
 
 export const DocumentsTable = (props: DocumentTableProps) => {
-  // const { relatedResourceType, query } = props;
+  const { query } = props;
   const sdk = useSDK();
 
   const columns = [
@@ -29,7 +31,7 @@ export const DocumentsTable = (props: DocumentTableProps) => {
           fileName: row.original.name || '',
           file: row.original,
         };
-        return <DocumentNamePreview {...fileNamePreviewProps} query={''} />;
+        return <DocumentNamePreview {...fileNamePreviewProps} query={query} />;
       },
     },
     Table.Columns.mimeType,

@@ -28,6 +28,7 @@ export const DocumentSearchResults = ({
   return (
     <DocumentSearchResultWrapper>
       <DocumentsTable
+        query={query}
         tableHeaders={
           <SearchResultToolbar
             showCount={true}
