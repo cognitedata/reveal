@@ -15,7 +15,9 @@ import {
   useTables,
 } from 'hooks/raw';
 import { collectPages } from 'utils';
-import { Flex } from '@cognite/cogs.js';
+import { Button, Flex } from '@cognite/cogs.js';
+import { useNavigate } from 'react-router-dom';
+import { createLink } from '@cognite/cdf-utilities';
 
 export type RawNodeData = NodeData<
   'raw-table',
@@ -27,6 +29,8 @@ export type RawNodeData = NodeData<
 
 export const RawTableNode = (_: NodeProps<RawNodeData>): JSX.Element => {
   const { t } = useTranslation();
+
+  const navigate = useNavigate();
 
   const [selectedDatabase, setSelectedDatabase] = useState<string>();
   const [selectedTable, setSelectedTable] = useState<string>();
@@ -99,6 +103,20 @@ export const RawTableNode = (_: NodeProps<RawNodeData>): JSX.Element => {
             titleI18nKey="table"
             value={selectedTable}
           />
+        )}
+        {!!selectedDatabase && !!selectedTable && (
+          <Button
+            onClick={() =>
+              navigate(
+                createLink(`/raw`, {
+                  activeTable: `["${selectedDatabase}","${selectedTable}",null]`,
+                  tabs: `[["${selectedDatabase}","${selectedTable}",null]]`,
+                })
+              )
+            }
+          >
+            {t('view')}
+          </Button>
         )}
       </Flex>
     </BaseNode>

@@ -31,5 +31,6 @@
   "select-label-with-colon": "<strong>{{selectLabel}}:</strong> {{optionLabel}}",
   "database": "Database",
   "post-process": "{{content}}",
-  "table": "Table"
+  "table": "Table",
+  "view": "View"
 }
