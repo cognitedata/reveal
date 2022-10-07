@@ -1,4 +1,5 @@
 {
+  "list-create-flow": "Create flow",
   "list-delete": "Delete flow",
   "list-description": "Description TBD",
   "list-search-count_one": "{{count}} flow",

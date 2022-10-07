@@ -18,6 +18,8 @@ import Flow from 'pages/flow/Flow';
 import { Route, BrowserRouter, Routes } from 'react-router-dom';
 import FlowList from 'pages/flow-list';
 import { CANVAS_PATH } from 'common';
+import { ErrorBoundary } from 'react-error-boundary';
+import ErrorFeedback from 'common/ErrorFeedback';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -48,10 +50,12 @@ const App = () => {
               >
                 <SDKProvider sdk={sdk}>
                   <BrowserRouter>
-                    <Routes>
-                      <Route path={ROOT_PATH} element={<FlowList />} />
-                      <Route path={`${ROOT_PATH}/:id`} element={<Flow />} />
-                    </Routes>
+                    <ErrorBoundary FallbackComponent={ErrorFeedback}>
+                      <Routes>
+                        <Route path={ROOT_PATH} element={<FlowList />} />
+                        <Route path={`${ROOT_PATH}/:id`} element={<Flow />} />
+                      </Routes>
+                    </ErrorBoundary>
                   </BrowserRouter>
                 </SDKProvider>
               </AuthWrapper>
