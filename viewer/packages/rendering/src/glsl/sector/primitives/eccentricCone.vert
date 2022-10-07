@@ -1,5 +1,6 @@
 #pragma glslify: import('../../math/mul3.glsl')
 #pragma glslify: import('../../base/determineMatrixOverride.glsl');
+#pragma glslify: import('../../treeIndex/treeIndexPacking.glsl');
 
 uniform mat4 inverseModelMatrix;
 uniform mat4 modelMatrix;
@@ -22,7 +23,6 @@ in float a_radiusB;
 in vec3 a_normal;
 in vec3 a_color;
 
-flat out float v_treeIndex;
 // We pack the radii into w-components
 out vec4 v_centerA;
 out vec4 v_centerB;
@@ -36,7 +36,10 @@ out float height;
 out vec3 v_color;
 out vec3 v_normal;
 
+out TreeIndexPacked v_treeIndexPacked;
+
 void main() {
+    v_treeIndexPacked = packTreeIndex(a_treeIndex);
 
   mat4 treeIndexWorldTransform = determineMatrixOverride(
       a_treeIndex,
@@ -116,7 +119,6 @@ void main() {
     V.w = surfacePoint.y;
     axis.w = surfacePoint.z;
 
-    v_treeIndex = a_treeIndex;
     v_color = a_color;
     v_normal = normalMatrix * normal;
 
