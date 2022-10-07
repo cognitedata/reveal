@@ -7,7 +7,7 @@ import {
 } from '@cognite/sdk';
 import { useQuery, UseQueryOptions } from 'react-query';
 import { useSDK } from '@cognite/sdk-provider';
-import { useAssetFilters } from 'app/store/filter';
+import { useAssetFilters, useResetAssetFilters } from 'app/store/filter';
 import { BaseFilterCollapse } from 'app/components/Collapse/BaseFilterCollapse/BaseFilterCollapse';
 import {
   AggregatedFilter,
@@ -42,6 +42,7 @@ export const useAssetMetadataKeys = (
 
 export const AssetFilters = ({ ...rest }) => {
   const [assetFilters, setAssetFilters] = useAssetFilters();
+  const resetAssetFilters = useResetAssetFilters();
 
   const { data: items = [] } = useList('assets', {
     filter: assetFilters,
@@ -51,7 +52,11 @@ export const AssetFilters = ({ ...rest }) => {
   const { data: metadataKeys = [] } = useAssetMetadataKeys(assetFilters);
 
   return (
-    <BaseFilterCollapse.Panel title="Assets" {...rest}>
+    <BaseFilterCollapse.Panel
+      title="Assets"
+      onResetClick={resetAssetFilters}
+      {...rest}
+    >
       <LabelFilter
         resourceType="asset"
         value={

@@ -53,8 +53,8 @@ const getPageTitle = (query: string, resourceType: ResourceType): string => {
 };
 
 function SearchPage() {
+  const isFilterFeatureEnabled = useFlagFilter();
   // Adding the flag to manually enable 'Documents' tab to appear.
-  const showNewFilter = useFlagFilter();
   const isDocumentEnabled = useFlagDocumentSearch();
 
   const [currentResourceType, setCurrentResourceType] =
@@ -218,7 +218,7 @@ function SearchPage() {
   return (
     <RootHeightWrapper>
       <SearchInputContainer alignItems="center">
-        {showNewFilter && (
+        {isFilterFeatureEnabled && (
           <>
             <ExplorationFilterToggle
               filterState={showFilter}
@@ -246,7 +246,7 @@ function SearchPage() {
         )}
 
         <SearchFiltersWrapper>
-          {showNewFilter ? (
+          {isFilterFeatureEnabled ? (
             <SearchFilters
               resourceType={currentResourceType}
               // closeFilters={() => setShowFilter(false)}

@@ -1,7 +1,7 @@
 import { globalFilterAtom } from 'app/store/filter';
 import { CommonFacets, GlobalFilter } from 'app/store/filter/types';
 import { defaultFilterSetter } from 'app/store/filter/utils';
-import { selector, useRecoilState } from 'recoil';
+import { selector, useRecoilState, useResetRecoilState } from 'recoil';
 
 const globalCommonFilters = selector<CommonFacets>({
   key: 'GlobalCommonFilters',
@@ -15,6 +15,8 @@ const globalCommonFilters = selector<CommonFacets>({
   set: defaultFilterSetter('common'),
 });
 export const useCommonFilters = () => useRecoilState(globalCommonFilters);
+export const useResetCommonFilters = () =>
+  useResetRecoilState(globalCommonFilters);
 
 const globalAssetFilters = selector<GlobalFilter['filters']['asset']>({
   key: 'GlobalAssetFilters',
@@ -28,6 +30,8 @@ const globalAssetFilters = selector<GlobalFilter['filters']['asset']>({
   set: defaultFilterSetter('asset'),
 });
 export const useAssetFilters = () => useRecoilState(globalAssetFilters);
+export const useResetAssetFilters = () =>
+  useResetRecoilState(globalAssetFilters);
 
 const globalEventFilters = selector<GlobalFilter['filters']['event']>({
   key: 'GlobalEventsFilters',
@@ -41,6 +45,8 @@ const globalEventFilters = selector<GlobalFilter['filters']['event']>({
   set: defaultFilterSetter('event'),
 });
 export const useEventsFilters = () => useRecoilState(globalEventFilters);
+export const useResetEventsFilters = () =>
+  useResetRecoilState(globalEventFilters);
 
 const globalFileFilters = selector<GlobalFilter['filters']['file']>({
   key: 'GlobalFileFilters',
@@ -54,6 +60,7 @@ const globalFileFilters = selector<GlobalFilter['filters']['file']>({
   set: defaultFilterSetter('file'),
 });
 export const useFileFilters = () => useRecoilState(globalFileFilters);
+export const useResetFileFilters = () => useResetRecoilState(globalFileFilters);
 
 const globalTimeseriesFilters = selector<GlobalFilter['filters']['timeseries']>(
   {
@@ -70,6 +77,8 @@ const globalTimeseriesFilters = selector<GlobalFilter['filters']['timeseries']>(
 );
 export const useTimeseriesFilters = () =>
   useRecoilState(globalTimeseriesFilters);
+export const useResetTimeseriesFilters = () =>
+  useResetRecoilState(globalTimeseriesFilters);
 
 const globalSequenceFilters = selector<GlobalFilter['filters']['sequence']>({
   key: 'GlobalSequenceFilters',
@@ -83,3 +92,5 @@ const globalSequenceFilters = selector<GlobalFilter['filters']['sequence']>({
   set: defaultFilterSetter('sequence'),
 });
 export const useSequenceFilters = () => useRecoilState(globalSequenceFilters);
+export const useResetSequenceFilters = () =>
+  useResetRecoilState(globalSequenceFilters);

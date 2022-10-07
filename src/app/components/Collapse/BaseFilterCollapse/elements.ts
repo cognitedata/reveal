@@ -29,6 +29,7 @@ export const Panel = styled(DefaultPanel)`
     border-bottom: none !important;
     background: transparent !important;
     padding: 12px 16px !important;
+    margin-top: 8px;
   }
   & > .rc-collapse-header > i {
     order: 1;
@@ -37,8 +38,6 @@ export const Panel = styled(DefaultPanel)`
     overflow: hidden !important;
   }
   & > .rc-collapse-content-active {
-    border-top: 1px solid var(--cogs-color-strokes-default);
-    background: var(--cogs-greyscale-grey1) !important;
     padding: 0 16px !important;
     overflow: visible;
     & > .rc-collapse-content-box {
@@ -46,19 +45,21 @@ export const Panel = styled(DefaultPanel)`
       padding-bottom: 4px;
     }
   }
-  border-top: none !important;
+  border-top: 1px solid var(--cogs-border--muted) !important;
   margin: 10px 0;
-  background-color: var(--cogs-greyscale-grey1);
-  border-radius: 6px;
+  background-color: white;
+
+  &:first-child {
+    border-top: none !important;
+  }
 `;
 
 export const Container = styled.div`
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   width: 100%;
-  justify-content: center;
-  order: -1;
-  margin-right: 8px;
+  align-items: center;
+  justify-content: space-between;
 `;
 
 export const StyledCollapseIcon = styled(Icon)`

@@ -1,7 +1,10 @@
 import React from 'react';
 import { useList } from '@cognite/sdk-react-query-hooks';
 import { BaseFilterCollapse } from '../../components/Collapse/BaseFilterCollapse/BaseFilterCollapse';
-import { useTimeseriesFilters } from 'app/store/filter';
+import {
+  useResetTimeseriesFilters,
+  useTimeseriesFilters,
+} from 'app/store/filter';
 import {
   AggregatedFilter,
   BooleanFilter,
@@ -10,6 +13,7 @@ import {
 
 export const TimeseriesFilters = ({ ...rest }) => {
   const [timeseriesFilter, setTimeseriesFilter] = useTimeseriesFilters();
+  const resetTimeseriesFilters = useResetTimeseriesFilters();
 
   const { data: items = [] } = useList('timeseries', {
     filter: timeseriesFilter,
@@ -17,7 +21,11 @@ export const TimeseriesFilters = ({ ...rest }) => {
   });
 
   return (
-    <BaseFilterCollapse.Panel title="Time series" {...rest}>
+    <BaseFilterCollapse.Panel
+      title="Time series"
+      onResetClick={resetTimeseriesFilters}
+      {...rest}
+    >
       <BooleanFilter
         title="Is step"
         value={timeseriesFilter.isStep}

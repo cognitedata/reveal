@@ -9,16 +9,21 @@ import {
 } from '@cognite/data-exploration';
 import { BaseFilterCollapse } from '../../components/Collapse/BaseFilterCollapse/BaseFilterCollapse';
 // import { MetadataFilter } from '../MetadataFilter/MetadataFilter';
-import { useCommonFilters } from 'app/store/filter';
+import { useCommonFilters, useResetCommonFilters } from 'app/store/filter';
 
 interface Props {
   resourceType: ResourceType;
 }
 export const CommonFilter: React.FC<Props> = ({ resourceType, ...rest }) => {
   const [commonFilter, setCommonFilter] = useCommonFilters();
+  const resetCommonFilter = useResetCommonFilters();
 
   return (
-    <BaseFilterCollapse.Panel title="Common" {...rest}>
+    <BaseFilterCollapse.Panel
+      title="Common"
+      onResetClick={resetCommonFilter}
+      {...rest}
+    >
       <DataSetFilter
         resourceType={resourceType}
         value={commonFilter.dataSetIds}

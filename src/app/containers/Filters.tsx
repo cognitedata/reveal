@@ -1,7 +1,6 @@
 import React from 'react';
 
 import { BaseFilterCollapse } from '../components/Collapse/BaseFilterCollapse/BaseFilterCollapse';
-import { ResetFiltersButton } from '../components/Buttons/ResetFiltersButton';
 import styled from 'styled-components';
 import { ResourceType } from '@cognite/data-exploration';
 import { AssetFilters } from './Asset/AssetFilters';
@@ -39,18 +38,12 @@ export const Filters: React.FC<Props> = ({ resourceType }) => {
     }
   };
 
-  // This function (and the above) will be greatly simplified with the new filter structure (coming soon)
-  const handleClearClick = () => {
-    // setSearchFilter('common', {});
-  };
-
   return (
     <Container>
       <BaseFilterCollapse>
         <CommonFilter resourceType={resourceType} />
         {renderCustomResourceTypeFilter()}
       </BaseFilterCollapse>
-      <ResetFiltersButton setFilter={handleClearClick} />
     </Container>
   );
 };
@@ -60,5 +53,5 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   overflow: scroll;
-  padding-right: 16px;
+  /* padding-right: 16px; */
 `;

@@ -1,14 +1,17 @@
 import * as React from 'react';
 
-import { CollapsePanelProps } from '@cognite/cogs.js';
-import { Collapse, StyledCollapseIcon, Container, Panel } from './elements';
-import { FilterTitle } from './BaseFilterTitle';
+import { Collapse, Container, Panel } from './elements';
+import { FilterHeader } from './BaseFilterHeader';
+import { ResetButton } from 'app/components/Buttons/ResetButton';
 
-const CollapseIcon: React.FC<CollapsePanelProps> = ({ isActive }) => {
-  return (
-    <StyledCollapseIcon type="ChevronDown" active={`${isActive}`} /> // note: active is string?!?!
-  );
-};
+// Might need this in the near future. Leaving for now
+// const CollapseIcon: React.FC<CollapsePanelProps> = ({ isActive }) => {
+//   return (
+//     <StyledCollapseIcon type="ChevronDown" active={`${isActive}`} /> // note: active is string?!?!
+//   );
+// };
+
+const NoIcon = () => null;
 
 interface BaseFilterCollapseProps {
   children: React.ReactNode;
@@ -17,17 +20,19 @@ export const BaseFilterCollapse = ({
   children,
   ...rest
 }: BaseFilterCollapseProps) => {
-  const [activeKeys, setActiveKeys] = React.useState(['0', '1']);
+  const [activeKeys, _setActiveKeys] = React.useState(['0', '1']);
 
   return (
     <Collapse
       {...rest}
       activeKey={activeKeys}
-      onChange={keys => {
-        setActiveKeys(keys as unknown as string[]);
-      }}
+      // Might be we will support collapse in the near future! Leaving this here.
+      // onChange={keys => {
+      //   setActiveKeys(keys as unknown as string[]);
+      // }}
       ghost
-      expandIcon={CollapseIcon}
+      // expandIcon={CollapseIcon}
+      expandIcon={NoIcon}
     >
       {children}
     </Collapse>
@@ -37,13 +42,12 @@ export const BaseFilterCollapse = ({
 interface BaseFilterPanelProps {
   children: React.ReactNode;
   title: string;
-  showApplyButton?: boolean;
-  handleApplyClick?: () => void;
-  // headerTestId?: string;
+  onResetClick?: () => void;
 }
 export const BaseFilterPanel = ({
   children,
   title,
+  onResetClick,
   ...rest
 }: BaseFilterPanelProps) => {
   return (
@@ -51,7 +55,8 @@ export const BaseFilterPanel = ({
       {...rest}
       header={
         <Container>
-          <FilterTitle title={title} />
+          <FilterHeader title={title} />
+          <ResetButton onClick={onResetClick} />
         </Container>
       }
       key={title?.split(' ').join('-')}
