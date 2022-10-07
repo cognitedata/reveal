@@ -57,7 +57,7 @@ export const BaseNode = ({
           </Flex>
         </Flex>
       </StyledBaseNodeHeader>
-      {children}
+      <StyledBaseNodeContent>{children}</StyledBaseNodeContent>
     </StyledBaseNodeContainer>
   );
 };
@@ -76,7 +76,6 @@ const StyledBaseNodeContainer = styled.div`
   box-shadow: ${Elevations['elevation--surface--interactive']};
   display: flex;
   flex-direction: column;
-  height: 80px;
   width: 300px;
 
   ${StyledBaseHandle}.react-flow__handle-left.react-flow__handle-connecting {
@@ -132,4 +131,9 @@ const StyledBaseNodeTitle = styled(Overline)`
 
 const StyledBaseNodeDescription = styled(Detail)`
   color: ${Colors['text-icon--interactive--disabled']};
+`;
+
+const StyledBaseNodeContent = styled.div`
+  padding: 8px;
+  width: 100%;
 `;

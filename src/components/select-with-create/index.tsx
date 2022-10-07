@@ -30,6 +30,8 @@ type SelectWithCreateProps = {
 >;
 
 const SelectWithCreate = ({
+  disabled,
+  loading,
   onCreate,
   onSelect,
   options,
@@ -74,6 +76,7 @@ const SelectWithCreate = ({
     <Select<string, SelectWithCreateOption>
       allowClear
       clearIcon={<StyledClearIcon type="ClearAll" />}
+      disabled={disabled || loading}
       filterOption={() => true}
       onSearch={handleSearch}
       onSelect={handleSelect}
@@ -81,7 +84,9 @@ const SelectWithCreate = ({
         selectLabel: t(titleI18nKey, { postProcess: 'lowercase' }),
       })}
       showSearch
-      suffixIcon={<StyledSuffixIcon type="ChevronDown" />}
+      suffixIcon={
+        <StyledSuffixIcon type={loading ? 'Loader' : 'ChevronDown'} />
+      }
       {...selectProps}
     >
       {filteredOptions.map(({ label, value }) => (
@@ -102,7 +107,7 @@ const SelectWithCreate = ({
           {label}
         </Option>
       ))}
-      {filteredOptions.length === 0 && (
+      {filteredOptions.length === 0 && search.length > 3 && (
         <Option
           label={
             <Trans

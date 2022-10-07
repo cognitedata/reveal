@@ -12,3 +12,7 @@ export type Flow = {
   description?: string;
   canvas: Canvas;
 };
+
+export type Items<T> = {
+  items: T[];
+};

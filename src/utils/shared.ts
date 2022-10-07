@@ -1,7 +1,8 @@
 import { useMemo } from 'react';
+import { InfiniteData } from 'react-query';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { styleScope } from 'styles/styleScope';
-import { Flow } from 'types';
+import { Flow, Items } from 'types';
 
 export const getContainer = () => {
   const els = document.getElementsByClassName(styleScope);
@@ -48,3 +49,8 @@ export const filterFlow = (
     ).length == queries.length
   );
 };
+
+export const collectPages = <T>(data?: InfiniteData<Items<T>>) =>
+  data
+    ? data.pages.reduce((accl, page) => [...accl, ...page.items], [] as T[])
+    : ([] as T[]);
