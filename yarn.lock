@@ -1239,10 +1239,10 @@
     tippy.js "6.2.0"
     ts-dedent "^2.2.0"
 
-"@cognite/data-exploration@4.30.0":
-  version "4.30.0"
-  resolved "https://registry.yarnpkg.com/@cognite/data-exploration/-/data-exploration-4.30.0.tgz#100380f546f34d5304136cf49b99f494b2fd4728"
-  integrity sha512-w7iNlVB1CvB019IGLWvLy1rqKbaa1/NEZc9Ly134j9Rbmg3YZ0WK3YGq4P3FKJUdxsYHwN8pvJeEyE9Z7VDn2g==
+"@cognite/data-exploration@4.30.3":
+  version "4.30.3"
+  resolved "https://registry.yarnpkg.com/@cognite/data-exploration/-/data-exploration-4.30.3.tgz#76b9c2c59e87514c141bb08ad1518ff7c41b7bdd"
+  integrity sha512-9Y0yBz+UxB/y6samJCo/wwX9DAR0Pt7guHcq8XHHjr5j+LKw4unwHTx1Y2k4PDg3wnn8rWmWkpNq1B9o1OupIg==
   dependencies:
     "@babel/runtime" "^7.12.5"
     "@cognite/annotations" "^1.1.0"
@@ -1298,7 +1298,7 @@
     use-debounce "^6.0.1"
     uuid "^8.3.2"
 
-"@cognite/gcs-browser-upload@cognitedata/gcs-browser-upload#mn/temporary-azure-fix":
+"@cognite/gcs-browser-upload@github:cognitedata/gcs-browser-upload#mn/temporary-azure-fix":
   version "1.1.1"
   resolved "https://codeload.github.com/cognitedata/gcs-browser-upload/tar.gz/e180a039d56e9572efbfe123bd607e7ce1e6f06e"
   dependencies:
