@@ -1,4 +1,4 @@
-import { useTypedTranslation } from '@cognite/cdf-i18n-utils';
+import { TypedTrans, useTypedTranslation } from '@cognite/cdf-i18n-utils';
 
 import en from 'common/i18n/translations/en/flows.json';
 import ja from 'common/i18n/translations/ja/flows.json';
@@ -12,3 +12,5 @@ export const translations = {
 export const languages = Object.keys(translations);
 
 export const useTranslation = () => useTypedTranslation<TranslationKeys>();
+
+export const Trans = TypedTrans<TranslationKeys>;

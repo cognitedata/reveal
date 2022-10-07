@@ -25,5 +25,10 @@
   "toolbox-title": "Toolbox",
   "transformation": "Transformation",
   "welcome": "Hello to {{appName}} {{userName}}",
-  "welcome_text": "Hello to {{appName}} {{userName}} (locize)"
+  "welcome_text": "Hello to {{appName}} {{userName}} (locize)",
+  "select-with-create-placeholder": "Select {{selectLabel}} or create new",
+  "select-with-create-option": "Create {{selectLabel}} \"{{optionLabel}}\"", 
+  "select-label-with-colon": "<strong>{{selectLabel}}:</strong> {{optionLabel}}",
+  "database": "Database",
+  "post-process": "{{content}}"
 }
