@@ -32,5 +32,6 @@
   "database": "Database",
   "post-process": "{{content}}",
   "table": "Table",
+  "run": "Run",
   "view": "View"
 }

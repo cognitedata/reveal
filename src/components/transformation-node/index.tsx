@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 
-import { Flex } from '@cognite/cogs.js';
+import { Button, Flex } from '@cognite/cogs.js';
 import { NodeProps } from 'react-flow-renderer';
 
 import { NodeData } from 'components/custom-node';
@@ -13,6 +13,8 @@ import {
 import { TransformationRead } from 'types/transformation';
 import { collectPages } from 'utils';
 import SelectWithCreate from 'components/select-with-create';
+import { useNavigate } from 'react-router-dom';
+import { createLink } from '@cognite/cdf-utilities';
 
 export type TransformationNodeData = NodeData<
   'transformation',
@@ -26,6 +28,8 @@ export const TransformationNode = (
 ): JSX.Element => {
   const { t } = useTranslation();
 
+  const navigate = useNavigate();
+
   const [selectedTransformation, setSelectedTransformation] =
     useState<string>();
 
@@ -33,10 +37,17 @@ export const TransformationNode = (
   const { mutate: createTransformation, isLoading: isCreatingTransformation } =
     useCreateTransformation();
 
-  const transformationOptions = useMemo(() => {
-    const list = collectPages<TransformationRead>(transformations);
-    return list.map(({ name }) => ({ label: name, value: name }));
+  const transformationList = useMemo(() => {
+    return collectPages<TransformationRead>(transformations);
   }, [transformations]);
+
+  const transformationOptions = useMemo(() => {
+    return transformationList.map(({ name }) => ({ label: name, value: name }));
+  }, [transformationList]);
+
+  const selectedTransformationId = transformationList.find(
+    ({ name }) => name === selectedTransformation
+  )?.id;
 
   const handleTransformationCreate = (value: string) => {
     createTransformation({ externalId: `tr-${value}`, name: value });
@@ -67,6 +78,23 @@ export const TransformationNode = (
           titleI18nKey="transformation"
           value={selectedTransformation}
         />
+        {selectedTransformationId !== undefined && (
+          <Flex gap={8}>
+            <Button
+              block
+              onClick={() =>
+                navigate(
+                  createLink(`/transformations/${selectedTransformationId}`)
+                )
+              }
+            >
+              {t('view')}
+            </Button>
+            <Button block icon="Play">
+              {t('run')}
+            </Button>
+          </Flex>
+        )}
       </Flex>
     </BaseNode>
   );
