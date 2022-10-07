@@ -4,6 +4,15 @@
   ],
   "packageRules": [
     {
+      "timezone": "Europe/Oslo"
+    },
+    {
+      // Prepare Renovate PRs before office hours
+      "schedule": [
+        "after 6am and before 9am every weekday"
+      ]
+    },
+    {
       "matchPackagePrefixes": [
         "@cognite/sdk-",
         "@cognite/reveal-"
@@ -49,7 +58,10 @@
         "pin",
         "digest"
       ],
-      "stabilityDays": 4
+      // Hold back creating PRs until version is 4 days old
+      // https://docs.renovatebot.com/configuration-options/#suppress-branchpr-creation-for-x-days
+      "stabilityDays": 4,
+      "internalChecksFilter": "strict"
     },
     {
       "matchUpdateTypes": [
