@@ -49,7 +49,10 @@
         "pin",
         "digest"
       ],
-      "stabilityDays": 4
+      // Hold back creating PRs until version is 4 days old
+      // https://docs.renovatebot.com/configuration-options/#suppress-branchpr-creation-for-x-days
+      "stabilityDays": 4,
+      "internalChecksFilter": "strict"
     },
     {
       "matchUpdateTypes": [
