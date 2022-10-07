@@ -1,5 +1,6 @@
-import { Document } from 'types';
+import { Document } from 'domain/documents';
 
+// This is the normalized version (Document) of DocumentSearchItem from sdk.
 export const documents: Document[] = [
   {
     id: 1,

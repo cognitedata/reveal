@@ -5,9 +5,11 @@ import { ResourceIcons } from 'components/ResourceIcons/ResourceIcons';
 import styled from 'styled-components/macro';
 import { useResultCount } from 'components/ResultCount/ResultCount';
 
+// Why do we have this file and a 'SearchNew' folder in the first place?
 const resourceTypeMap: Record<ResourceType, string> = {
   asset: 'Assets',
   file: 'Files',
+  document: 'Documents',
   event: 'Events',
   timeSeries: 'Time series',
   sequence: 'Sequences',
@@ -17,6 +19,7 @@ const defaultResourceTypes: ResourceType[] = [
   'asset',
   'timeSeries',
   'file',
+  'document',
   'event',
   'sequence',
   'threeD',

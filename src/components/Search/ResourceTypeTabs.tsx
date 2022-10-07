@@ -8,15 +8,18 @@ import { useResultCount } from 'components/ResultCount/ResultCount';
 const resourceTypeMap: Record<ResourceType, string> = {
   asset: 'Assets',
   file: 'Files',
+  document: 'Documents',
   event: 'Events',
   timeSeries: 'Time series',
   sequence: 'Sequences',
   threeD: '3D',
 };
+
 const defaultResourceTypes: ResourceType[] = [
   'asset',
   'timeSeries',
   'file',
+  'document',
   'event',
   'sequence',
   'threeD',
@@ -25,6 +28,7 @@ const defaultResourceTypes: ResourceType[] = [
 type Props = {
   resourceTypes?: ResourceType[];
   currentResourceType: ResourceType;
+  isDocumentEnabled?: boolean;
   query?: string;
   filter?: any;
   showCount?: boolean;
@@ -35,7 +39,7 @@ const ResourceTypeTab = ({
   currentResourceType,
   query,
   showCount = false,
-}: Omit<Props, 'setCurrentResourceType'>) => {
+}: Omit<Props, 'setCurrentResourceType' | 'isDocumentEnabled'>) => {
   const result = useResultCount({
     filter: {},
     query,
@@ -60,6 +64,7 @@ export const ResourceTypeTabs = ({
   currentResourceType,
   setCurrentResourceType,
   resourceTypes = defaultResourceTypes,
+  isDocumentEnabled = false,
   ...rest
 }: Props) => {
   return (
@@ -67,12 +72,21 @@ export const ResourceTypeTabs = ({
       activeKey={currentResourceType}
       onChange={tab => setCurrentResourceType(tab as ResourceType)}
     >
-      {resourceTypes.map(resourceType => (
-        <Tabs.TabPane
-          key={resourceType}
-          tab={<ResourceTypeTab currentResourceType={resourceType} {...rest} />}
-        />
-      ))}
+      {resourceTypes.map(resourceType => {
+        // This basically hides the 'Documents' tab with the help of a feature flag controlled from subapp.
+        if (!isDocumentEnabled && resourceType === 'document') {
+          return null;
+        }
+
+        return (
+          <Tabs.TabPane
+            key={resourceType}
+            tab={
+              <ResourceTypeTab currentResourceType={resourceType} {...rest} />
+            }
+          />
+        );
+      })}
     </StyledTabs>
   );
 };

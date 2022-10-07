@@ -1,5 +1,5 @@
 import React from 'react';
-import { Document } from 'types';
+import { Document } from 'domain/documents';
 import styled from 'styled-components';
 import Highlighter from 'react-highlight-words';
 import { HighlightCell, EllipsisText, FileThumbnail } from 'components';

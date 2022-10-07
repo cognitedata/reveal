@@ -4,19 +4,19 @@ import { NewTable as Table, TableProps } from 'components/ReactTable/Table';
 
 import { DocumentNamePreview } from './DocumentNamePreview';
 import { Column, Row } from 'react-table';
-import { Document } from 'types';
+import { Document } from 'domain/documents';
 import { Body, A, Flex } from '@cognite/cogs.js';
 import { useQuery } from 'react-query';
 import { useSDK } from '@cognite/sdk-provider';
 import { getRootAsset } from '../../../utils/assets';
 
-export type DocumentTableProps = TableProps<DocumentWithRelationshipLabels>; /*&
-  RelationshipLabels & {
-    query?: string;
-  };*/
-export type DocumentWithRelationshipLabels =
-  /*RelationshipLabels &*/
-  Document;
+// TODO: Might need to add RelationshipLabels at some point.
+export type DocumentTableProps = Omit<
+  TableProps<DocumentWithRelationshipLabels>,
+  'columns'
+>;
+export type DocumentWithRelationshipLabels = Document;
+
 export const DocumentsTable = (props: DocumentTableProps) => {
   // const { relatedResourceType, query } = props;
   const sdk = useSDK();
@@ -89,6 +89,7 @@ export const DocumentsTable = (props: DocumentTableProps) => {
 
   return (
     <Table<DocumentWithRelationshipLabels>
+      {...props}
       columns={columns}
       data={props.data}
       visibleColumns={[

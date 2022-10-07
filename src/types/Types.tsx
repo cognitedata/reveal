@@ -7,6 +7,7 @@ export type ResourceType =
   | 'sequence'
   | 'file'
   | 'event'
+  | 'document'
   | 'threeD';
 
 // Temporary mapping of the two almost identical types. Should be
@@ -39,8 +40,8 @@ export function convertResourceType(t?: ResourceType): SdkResourceType {
  * Temporary fix
  * A wrapper that handle the case of resource type which is threeD in general the normal function will return the error
  */
-export const convertResourceThreeDWrapper = (type?: ResourceType) => {
-  if (type === 'threeD') return type as SdkResourceType;
+export const convertResourceTypeWrapper = (type?: ResourceType) => {
+  if (type === 'threeD' || type === 'document') return type as SdkResourceType;
   return convertResourceType(type);
 };
 
@@ -57,6 +58,9 @@ export function getTitle(t: ResourceType, plural: boolean = true): string {
     }
     case 'file': {
       return plural ? 'Files' : 'File';
+    }
+    case 'document': {
+      return plural ? 'Documents' : 'Document';
     }
     case 'event': {
       return plural ? 'Events' : 'Event';

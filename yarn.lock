@@ -2258,6 +2258,13 @@
     mixpanel-browser "2.41.0"
     react "17.0.2"
 
+"@cognite/react-document-search@^0.2.0":
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/@cognite/react-document-search/-/react-document-search-0.2.0.tgz#abd4cd7301dbbf54647265abddb554fc447faa96"
+  integrity sha512-yWMdOWxA93uGZAmF67gJSgvJGPtDAr9GuIlB5ctV3LacX2qD2jgR2PZ7LV5/F+q+ato4lZ4K+hExZbibuPPwIg==
+  dependencies:
+    lodash "4.17.21"
+
 "@cognite/react-document-table@^1.22.2":
   version "1.24.0"
   resolved "https://registry.yarnpkg.com/@cognite/react-document-table/-/react-document-table-1.24.0.tgz#76fd6b3468f43f5fd4afba9cd0db30099da3c6e3"

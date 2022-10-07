@@ -26,6 +26,7 @@ import {
   hardDeleteAnnotations,
   updateAnnotations,
   linkFileToAssetIds,
+  AnnotationResourceType,
 } from '@cognite/annotations';
 import styled from 'styled-components';
 import { useResourceSelector } from 'context/ResourceSelectorContext';
@@ -350,7 +351,7 @@ const AnnotationPreviewSidebar = ({
         setSelectedAnnotations([
           {
             ...selectedAnnotation!,
-            resourceType: item.type,
+            resourceType: item.type as AnnotationResourceType, // added to solve type error!
             resourceExternalId: item.externalId,
             resourceId: item.id,
           },

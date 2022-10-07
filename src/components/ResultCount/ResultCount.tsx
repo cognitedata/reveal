@@ -6,9 +6,10 @@ import {
 } from '@cognite/sdk-react-query-hooks';
 import { formatNumber } from 'utils';
 import { Body } from '@cognite/cogs.js';
-import { getTitle, ResourceType, convertResourceThreeDWrapper } from 'types';
+import { getTitle, ResourceType, convertResourceTypeWrapper } from 'types';
 import { ThreeDModelsResponse, useInfinite3DModels } from 'hooks';
 import { Model3D } from '@cognite/sdk';
+import { useDocumentFilteredAggregateCount } from '@cognite/react-document-search';
 
 type ResultProps = {
   api: 'list' | 'search';
@@ -44,7 +45,7 @@ export const useResultCount = ({
   count,
   label,
 }: ResultProps) => {
-  const sdkType = convertResourceThreeDWrapper(type);
+  const sdkType = convertResourceTypeWrapper(type);
 
   const { data: search, isFetched: searchDone } = useSearch(
     sdkType,
@@ -74,6 +75,11 @@ export const useResultCount = ({
     count: 0,
     label: label || getTitle(type, count !== 1).toLowerCase(),
   };
+
+  const { data: filteredDocumentCount } = useDocumentFilteredAggregateCount();
+  if (type === 'document') {
+    return { ...result, count: formatNumber(filteredDocumentCount || 0) };
+  }
 
   if (type === 'threeD') {
     if (is3DModelLoading) return result;

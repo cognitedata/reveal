@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { action } from '@storybook/addon-actions';
 import { ComponentStory } from '@storybook/react';
 import { DocumentsTable } from './DocumentsNewTable';
-import { documents } from '../../../stubs/documents';
+import { documents } from 'stubs/documents';
 
 export default {
   title: 'Documents/DocumentsNewTable',

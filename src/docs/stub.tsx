@@ -4,6 +4,7 @@ import { sequences } from 'stubs/sequences';
 import { datasets } from 'stubs/datasets';
 import { events } from 'stubs/events';
 import { files } from 'stubs/files';
+import { documents } from 'stubs/documents';
 import styled from 'styled-components';
 import { datapoints } from 'stubs/timeseriesDatapoints';
 import { AssetListScope, IdEither } from '@cognite/sdk';
@@ -38,6 +39,10 @@ export const sdkMock = {
     return { data: { items: [] } };
   },
   post: async (query: string, body: any) => {
+    if (query.includes('documents/search')) {
+      return { data: { items: documents } };
+    }
+
     if (query.includes('aggregate')) {
       return { data: { items: [{ count: 1 }] } };
     }

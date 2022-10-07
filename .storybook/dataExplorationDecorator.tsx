@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 
 import { Container, sdkMock } from '../src/docs/stub';
 import { DataExplorationProvider } from '../src/context';
+import { DocumentSearchProvider } from '@cognite/react-document-search';
 
 type DataExplorationProviderParameters = {
   mockCdfClient?: Partial<CogniteClient>;
@@ -35,7 +36,9 @@ export default makeDecorator({
           {/* Added toast container to show toast in storybook */}
           <ToastContainer />
           <QueryClientProvider client={queryClient}>
-            {storyFn(context)}
+            <DocumentSearchProvider sdkClient={mockCDFClient}>
+              {storyFn(context)}
+            </DocumentSearchProvider>
           </QueryClientProvider>
         </DataExplorationProvider>
       </Container>

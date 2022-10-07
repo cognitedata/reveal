@@ -1,7 +1,7 @@
 import mime from 'mime-types';
 import { CogniteClient, FileInfo } from '@cognite/sdk';
 import lowerCase from 'lodash/lowerCase';
-import { Document } from 'types';
+import { Document } from 'domain/documents';
 
 export const getMIMEType = (fileURI: string) => mime.lookup(fileURI);
 

@@ -5,13 +5,15 @@ import {
   DocumentSourceFile,
   EpochTimestamp,
   LabelList,
+  DocumentHighlight,
 } from '@cognite/sdk';
-import { DocumentHighlight } from '@cognite/sdk/dist/src/api/documents/types.gen';
 
+// Flattened version of 'DocumentSearchItem' from cognite/sdk
 export interface Document {
   id: CogniteInternalId;
   externalId?: CogniteExternalId;
   name?: string;
+  title?: string;
   author?: string;
   createdTime: EpochTimestamp;
   lastUpdatedTime?: EpochTimestamp;
