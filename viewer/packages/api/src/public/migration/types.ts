@@ -180,6 +180,18 @@ export interface AddModelOptions {
   geometryFilter?: GeometryFilter;
 }
 
+export type AddImage360Options = {
+  /**
+   * An optional transformation which will be applied to all 360 images that are fetched.
+   */
+  collectionTransform?: THREE.Matrix4;
+  /**
+   * Set this to false if the 360 images' rotation is not pre-multiplied to fit the given model.
+   * @default true
+   */
+  preMultipliedRotation?: boolean;
+};
+
 export type CadIntersection = {
   /**
    * The intersection type.
