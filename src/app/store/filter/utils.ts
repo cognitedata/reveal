@@ -5,13 +5,16 @@ import { DefaultValue, GetRecoilValue, SetRecoilState } from 'recoil';
 const updateGlobalFilters = <T>(
   currentFilters: GlobalFilter,
   key: GlobalFilterKeys,
-  value: T
+  newValue: T
 ) => {
   return {
     ...currentFilters,
     filters: {
       ...currentFilters.filters,
-      [key]: value,
+      [key]: {
+        ...currentFilters.filters[key],
+        ...newValue,
+      },
     },
   };
 };

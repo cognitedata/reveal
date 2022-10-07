@@ -23,6 +23,7 @@ import datePickerStyle from 'react-datepicker/dist/react-datepicker.css';
 import theme from './styles/theme';
 import rootStyles from './styles/index.css';
 import { RecoilRoot } from 'recoil';
+import { RecoilURLSyncJSON } from 'recoil-sync';
 
 export default () => {
   const env = getEnv();
@@ -74,11 +75,13 @@ export default () => {
                     refreshInterval={86400}
                   >
                     <RecoilRoot>
-                      <BrowserRouter>
-                        <Routes>
-                          <Route path="/:tenant/*" element={<RootApp />} />
-                        </Routes>
-                      </BrowserRouter>
+                      <RecoilURLSyncJSON location={{ part: 'queryParams' }}>
+                        <BrowserRouter>
+                          <Routes>
+                            <Route path="/:tenant/*" element={<RootApp />} />
+                          </Routes>
+                        </BrowserRouter>
+                      </RecoilURLSyncJSON>
                     </RecoilRoot>
                   </FlagProvider>
                 </ThemeProvider>

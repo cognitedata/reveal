@@ -1,5 +1,8 @@
 import { GlobalFilter } from './types';
 import { atom } from 'recoil';
+import { syncEffect } from 'recoil-sync';
+import { custom } from '@recoiljs/refine';
+import { FILTER } from './constants';
 
 const defaultFilterState = {
   asset: {},
@@ -8,6 +11,9 @@ const defaultFilterState = {
   file: {},
   event: {},
 };
+
+// TODO: Add some proper object validation here.
+const customChecker = <T>() => custom(x => x as T);
 
 export const globalFilterAtom = atom<GlobalFilter>({
   key: 'GlobalFilter',
@@ -18,6 +24,7 @@ export const globalFilterAtom = atom<GlobalFilter>({
       common: {},
     },
   },
+  effects: [syncEffect({ refine: customChecker(), itemKey: FILTER })],
 });
 
 // WIP
