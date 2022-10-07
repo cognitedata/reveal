@@ -73,7 +73,7 @@ const SelectWithCreate = ({
   };
 
   return (
-    <Select<string, SelectWithCreateOption>
+    <StyledSelect
       allowClear
       clearIcon={<StyledClearIcon type="ClearAll" />}
       disabled={disabled || loading}
@@ -130,9 +130,13 @@ const SelectWithCreate = ({
           </StyledCreateOption>
         </Option>
       )}
-    </Select>
+    </StyledSelect>
   );
 };
+
+const StyledSelect = styled(Select<string, SelectWithCreateOption>)`
+  width: 100%;
+`;
 
 const StyledClearIcon = styled(Icon)`
   margin-top: -2px;

@@ -1,6 +1,11 @@
 import { useSDK } from '@cognite/sdk-provider';
-import { RawDBRow } from '@cognite/sdk/dist/src';
-import { RAW_DB_NAME, RAW_TABLE_NAME, TABLE_PAGE_SIZE } from 'common/constants';
+import { RawDB, RawDBRow } from '@cognite/sdk';
+import {
+  BASE_QUERY_KEY,
+  RAW_DB_NAME,
+  RAW_TABLE_NAME,
+  TABLE_PAGE_SIZE,
+} from 'common/constants';
 import {
   useInfiniteQuery,
   useMutation,
@@ -9,12 +14,9 @@ import {
   UseQueryOptions,
 } from 'react-query';
 import { Canvas, Flow } from 'types';
-import { RawDB } from '@cognite/sdk';
 
-export const BASE_KEY = 'flows';
-
-export const dbKey = (db: string) => [BASE_KEY, db];
-export const databaseListKey = [BASE_KEY, 'database-list'];
+export const dbKey = (db: string) => [BASE_QUERY_KEY, db];
+export const databaseListKey = [BASE_QUERY_KEY, 'database-list'];
 export const tableListKey = (db: string) => [...dbKey(db), 'table-list'];
 
 const getCheckKey = () => ['raw-setup-check'];

@@ -16,3 +16,8 @@ export type Flow = {
 export type Items<T> = {
   items: T[];
 };
+
+export type SdkListData<T> = {
+  items: T[];
+  nextCursor?: string;
+};

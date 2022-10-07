@@ -2,7 +2,6 @@ import { useMemo, useState } from 'react';
 
 import { RawDB, RawDBTable } from '@cognite/sdk';
 import { NodeProps } from 'react-flow-renderer';
-import styled from 'styled-components';
 
 import { NodeData } from 'components/custom-node';
 import { BaseNode } from 'components/base-node';
@@ -80,7 +79,7 @@ export const RawTableNode = (_: NodeProps<RawNodeData>): JSX.Element => {
       title={t('raw-table', { postProcess: 'uppercase' })}
     >
       <Flex direction="column" gap={8}>
-        <StyledSelectWithCreate
+        <SelectWithCreate
           className="nodrag"
           loading={isCreatingDatabase}
           onClear={() => handleDatabaseSelect(undefined)}
@@ -92,7 +91,7 @@ export const RawTableNode = (_: NodeProps<RawNodeData>): JSX.Element => {
           value={selectedDatabase}
         />
         {!!selectedDatabase && (
-          <StyledSelectWithCreate
+          <SelectWithCreate
             className="nodrag"
             loading={isCreatingTable}
             onClear={() => handleTableSelect(undefined)}
@@ -122,7 +121,3 @@ export const RawTableNode = (_: NodeProps<RawNodeData>): JSX.Element => {
     </BaseNode>
   );
 };
-
-const StyledSelectWithCreate = styled(SelectWithCreate)`
-  width: 100%;
-`;
