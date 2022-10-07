@@ -113,6 +113,7 @@ export const getDefaultClientIdForPKCE = (cluster: string) => {
       return 'a7869455-32f2-4a07-b568-8485b9b887f0';
     case 'api':
     case 'europe-west1-1':
+    case 'westeurope-1':
       return '6890be09-b7c9-4500-b020-c3cb762d14cc';
   }
 };
