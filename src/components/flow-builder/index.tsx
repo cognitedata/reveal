@@ -1,10 +1,12 @@
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 
+import { Colors } from '@cognite/cogs.js';
 import ReactFlow, {
   addEdge,
   Background,
   Edge,
   Node,
+  MarkerType,
   OnConnect,
   ReactFlowInstance,
   useEdgesState,
@@ -53,7 +55,23 @@ export const FlowBuilder = ({
 
   const onConnect: OnConnect = useCallback(
     (connection) => {
-      setEdges((prevEdges) => addEdge(connection, prevEdges));
+      setEdges((prevEdges) =>
+        addEdge(
+          {
+            ...connection,
+            animated: true,
+            markerEnd: {
+              type: MarkerType.ArrowClosed,
+              height: 16,
+              width: 16,
+            },
+            style: {
+              strokeWidth: 1,
+            },
+          },
+          prevEdges
+        )
+      );
     },
     [setEdges]
   );
@@ -113,7 +131,13 @@ export const FlowBuilder = ({
         onInit={setReactFlowInstance}
         onNodesChange={onNodesChange}
       >
-        <Background />
+        <Background
+          style={{
+            background: Colors['surface--misc-canvas'],
+          }}
+          color="#dddddd"
+          size={1}
+        />
       </ReactFlow>
     </StyledReactFlowContainer>
   );

@@ -1,7 +1,9 @@
+import { getProject } from '@cognite/cdf-utilities';
 import { useMemo } from 'react';
+import { InfiniteData } from 'react-query';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { styleScope } from 'styles/styleScope';
-import { Flow } from 'types';
+import { Flow, Items } from 'types';
 
 export const getContainer = () => {
   const els = document.getElementsByClassName(styleScope);
@@ -47,4 +49,26 @@ export const filterFlow = (
         description?.toLowerCase().includes(subQ)
     ).length == queries.length
   );
+};
+
+export const collectPages = <T>(data?: InfiniteData<Items<T>>) =>
+  data
+    ? data.pages.reduce((accl, page) => [...accl, ...page.items], [] as T[])
+    : ([] as T[]);
+
+export const getProjectBaseUrl = (): string => {
+  const project = getProject();
+
+  return `/api/v1/projects/${project}`;
+};
+
+export const getTransformationsApiBaseUrl = (): string => {
+  const baseUrl = getProjectBaseUrl();
+
+  return `${baseUrl}/transformations`;
+};
+export const getTransformationsApiUrl = (path?: string): string => {
+  const baseUrl = getTransformationsApiBaseUrl();
+
+  return `${baseUrl}${path ?? ''}`;
 };

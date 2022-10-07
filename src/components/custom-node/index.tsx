@@ -66,6 +66,10 @@ export const CustomNode = (props: NodeProps<CustomNodeData>): JSX.Element => {
         <TransformationNode {...(props as NodeProps<TransformationNodeData>)} />
       );
     default:
-      return <BaseNode>unknown type</BaseNode>;
+      return (
+        <BaseNode icon="Favorite" title="unknown">
+          unknown type
+        </BaseNode>
+      );
   }
 };

@@ -12,3 +12,12 @@ export type Flow = {
   description?: string;
   canvas: Canvas;
 };
+
+export type Items<T> = {
+  items: T[];
+};
+
+export type SdkListData<T> = {
+  items: T[];
+  nextCursor?: string;
+};

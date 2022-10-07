@@ -1,4 +1,8 @@
 {
+  "data-set": "Data set",
+  "engineering-diagram": "Diagram",
+  "entity-matching": "Entity matching",
+  "extraction-pipeline": "Extraction pipeline",
   "list-create-flow": "Create flow",
   "list-delete": "Delete flow",
   "list-description": "Description TBD",
@@ -8,6 +12,17 @@
   "list-search-filtered-count_other": "{{filteredCount}}/{{count}} flows",
   "list-search-placeholder": "Search",
   "list-title": "Flows",
+  "no-configuration": "No configuration",
+  "raw-table": "Raw table",
   "toolbox-description": "Drag and drop items to the canvas",
-  "toolbox-title": "Toolbox"
+  "toolbox-title": "Toolbox",
+  "transformation": "Transformation",
+  "select-with-create-placeholder": "Select {{selectLabel}} or create new",
+  "select-with-create-option": "Create {{selectLabel}} \"{{optionLabel}}\"",
+  "select-label-with-colon": "<strong>{{selectLabel}}:</strong> {{optionLabel}}",
+  "database": "Database",
+  "post-process": "{{content}}",
+  "table": "Table",
+  "run": "Run",
+  "view": "View"
 }

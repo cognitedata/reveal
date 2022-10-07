@@ -1,5 +1,8 @@
+import { useEffect } from 'react';
+
 import { Colors } from '@cognite/cogs.js';
 import { Allotment } from 'allotment';
+import { ReactFlowProvider } from 'react-flow-renderer';
 import styled from 'styled-components';
 
 import {
@@ -9,7 +12,7 @@ import {
 } from 'common';
 import { CanvasSidePanel } from '../canvas-side-panel';
 import { FlowBuilder } from '../flow-builder';
-import { ReactFlowProvider } from 'react-flow-renderer';
+import { useDatabases } from 'hooks/raw';
 
 import { Flow } from 'types';
 
@@ -21,6 +24,14 @@ type Props = {
 export const Canvas = ({ flow, onChange }: Props): JSX.Element => {
   const { canvas } = flow;
   const { nodes, edges } = canvas;
+
+  const { fetchNextPage, isFetching, hasNextPage } = useDatabases();
+
+  useEffect(() => {
+    if (hasNextPage && !isFetching) {
+      fetchNextPage();
+    }
+  }, [hasNextPage, fetchNextPage, isFetching]);
 
   return (
     <ReactFlowProvider>
