@@ -11,7 +11,7 @@ const fetchJobErrors = (project: string, token: string, jobName: string) =>
   axios
     .get<SnifferErrorLog[]>(
       `${snifferServiceBaseUrl}/${project}/jobs/job-errors`,
-      axiosRequestConfig(token, { params: jobName })
+      axiosRequestConfig(token, { params: { jobName } })
     )
     .then(({ data }) => data);
 
