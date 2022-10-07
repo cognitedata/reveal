@@ -1,0 +1,54 @@
+[
+  {
+    "imageFolder": "river",
+    "translation": {
+      "x": 5,
+      "y": 3,
+      "z": -10
+    },
+    "rotation": {
+      "x": 0,
+      "y": 0,
+      "z": 0
+    }
+  },
+  {
+    "imageFolder": "river",
+    "translation": {
+      "x": 10,
+      "y": 3,
+      "z": -5
+    },
+    "rotation": {
+      "x": 0,
+      "y": 0,
+      "z": 0
+    }
+  },
+  {
+    "imageFolder": "river",
+    "translation": {
+      "x": 10,
+      "y": 3,
+      "z": -10
+    },
+    "rotation": {
+      "x": 0,
+      "y": 0,
+      "z": 0
+    }
+  },
+  {
+    "imageFolder": "river",
+    "translation": {
+      "x": 5,
+      "y": 3,
+      "z": -5
+    },
+    "rotation": {
+      "x": 0,
+      "y": 0,
+      "z": 0
+    }
+  }
+]
