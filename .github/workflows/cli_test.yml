@@ -30,7 +30,6 @@ jobs:
           yarn install --frozen-lockfile
           rm .npmrc
           yarn build production platypus-cdf-cli
-
       - name: Run the E2E Tests
         run: |
           yarn nx run platypus-cdf-cli:e2e
