@@ -1,3 +1,6 @@
+/*!
+ * Adapted from pnext/three-loader (https://github.com/pnext/three-loader)
+ */
 export enum PotreePointSizeType {
   Fixed = 0,
   Attenuated = 1,
@@ -49,4 +52,10 @@ export enum NormalFilteringMode {
 export enum PointCloudMixingMode {
   CHECKBOARD = 1,
   STRIPES = 2
+}
+
+export enum ClipMode {
+  DISABLED = 0,
+  CLIP_OUTSIDE = 1,
+  HIGHLIGHT_INSIDE = 2
 }

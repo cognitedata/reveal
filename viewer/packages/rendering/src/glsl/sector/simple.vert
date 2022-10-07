@@ -19,13 +19,15 @@ in vec4 matrix1;
 in vec4 matrix2;
 in vec4 matrix3;
 
-flat out float v_treeIndex;
 out vec3 v_color;
 out vec3 v_normal;
 out vec3 vViewPosition;
 
-void main() {
+out TreeIndexPacked v_treeIndexPacked;
 
+void main() {
+    v_treeIndexHundreds = floor(treeIndex / 100.0);
+    v_treeIndexSubHundreds = round(mod(treeIndex, 100.0));
     mat4 treeIndexWorldTransform = determineMatrixOverride(
       treeIndex,
       treeIndexTextureSize,
@@ -34,7 +36,7 @@ void main() {
       transformOverrideTexture
     );
 
-    v_treeIndex = treeIndex;
+    v_treeIndex = int(treeIndex);
     v_color = color;
     v_normal = normalize(normalMatrix * (inverseModelMatrix * treeIndexWorldTransform * modelMatrix * vec4(normalize(normal), 0.0)).xyz);
     mat4 instanceMatrix = mat4(matrix0, matrix1, matrix2, matrix3);

@@ -3,7 +3,7 @@
  */
 
 import * as THREE from 'three';
-import { createRenderTriangle } from '@reveal/utilities';
+import { createRenderTriangle, WebGLRendererStateHelper } from '@reveal/utilities';
 import { CadMaterialManager } from '../CadMaterialManager';
 import { RenderMode } from '../rendering/RenderMode';
 import { CogniteColors, RevealColors } from './types';
@@ -12,12 +12,12 @@ import {
   BlitEffect,
   BlitOptions,
   DepthBlendBlitOptions,
+  PointCloudPassParameters,
   PointCloudPostProcessingOptions,
   ThreeUniforms
 } from '../render-passes/types';
 import { blitShaders, depthBlendBlitShaders, pointCloudShaders } from '../rendering/shaders';
 import { NodeOutlineColor } from '@reveal/cad-styling';
-import { CadNode } from '@reveal/cad-model';
 
 export const unitOrthographicCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, -1, 1);
 
@@ -207,7 +207,7 @@ export enum RenderLayer {
 export function setupCadModelsGeometryLayers(
   materialManager: CadMaterialManager,
   cadModels?: {
-    cadNode: CadNode;
+    cadNode: THREE.Object3D;
     modelIdentifier: string;
   }[]
 ): void {
@@ -242,7 +242,7 @@ export function hasStyledNodes(
 
 function setModelRenderLayers(
   cadModels: {
-    cadNode: CadNode;
+    cadNode: THREE.Object3D;
     modelIdentifier: string;
   },
   materialManager: CadMaterialManager
@@ -269,4 +269,20 @@ function setModelRenderLayers(
       node.layers.enable(RenderLayer.InFront);
     }
   });
+}
+
+export function setRendererParameters(
+  rendererHelper: WebGLRendererStateHelper,
+  parameters: PointCloudPassParameters
+): void {
+  if (parameters?.renderer) {
+    for (const prop of Object.entries(parameters.renderer)) {
+      try {
+        //@ts-expect-error
+        rendererHelper[prop[0]] = prop[1];
+      } catch {
+        console.error(`Undefined WebGLRendererStateHelper property: ${prop[0]}`);
+      }
+    }
+  }
 }

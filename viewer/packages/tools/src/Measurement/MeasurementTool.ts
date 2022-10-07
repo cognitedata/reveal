@@ -16,11 +16,12 @@ import { MeasurementManager, Measurement } from './MeasurementManager';
 import { MeasurementLabels } from './MeasurementLabels';
 import { HtmlOverlayTool, HtmlOverlayToolOptions } from '../HtmlOverlay/HtmlOverlayTool';
 import rulerSvg from '!!raw-loader!./styles/ruler.svg';
+import { MetricsLogger } from '@reveal/metrics';
 
 type MeasurementEvents = 'added' | 'started' | 'ended' | 'disposed';
 
 /**
- * Enables {@see Cognite3DViewer} to perform a point to point measurement.
+ * Enables {@link Cognite3DViewer} to perform a point to point measurement.
  * This can be achieved by selecting a point on the 3D Object and drag the pointer to
  * required point to get measurement of the distance.
  * The tools default measurement is in "Meters" as supported in Reveal, but it also provides
@@ -97,6 +98,8 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
 
     this._geometryGroup.name = MeasurementTool.name;
     this._viewer.addObject3D(this._geometryGroup);
+
+    MetricsLogger.trackCreateTool('MeasurementTool');
   }
 
   /**
@@ -374,12 +377,16 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
       window.addEventListener('keydown', this._handleMeasurementCancel);
     } else {
       this._activeMeasurement.endMeasurement(intersection.point);
+      const measurement = this._activeMeasurement.getMeasurement();
+
       this._measurements.push(this._activeMeasurement);
       this._activeMeasurement = undefined;
       // To avoid issue when exiting measurement mode when a measurement 'added' event called
       this._events.measurementAdded.fire(this._measurements[this._measurements.length - 1].getMeasurement());
       this._viewer.domElement.removeEventListener('pointermove', this._handlePointerMove);
       window.removeEventListener('keydown', this._handleMeasurementCancel);
+
+      MetricsLogger.trackEvent('measurementAdded', { measurement });
     }
     this._viewer.requestRedraw();
   }
