@@ -15,7 +15,7 @@ import {
   RenderMode,
   RenderPipelineExecutor,
   RenderPipelineProvider,
-  PotreePointColorType,
+  PointColorType,
   PointCloudMaterialManager
 } from '../../packages/rendering';
 import { createDataProviders } from './utilities/createDataProviders';
@@ -323,7 +323,7 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
       return cadModel;
     } else if (modelOutputs.includes('ept-pointcloud')) {
       const pointCloudNode = await pointCloudManager.addModel(modelIdentifier);
-      pointCloudNode.pointColorType = PotreePointColorType.Height;
+      pointCloudNode.pointColorType = PointColorType.Height;
       this._sceneHandler.addCustomObject(pointCloudNode);
       return pointCloudNode;
     } else {

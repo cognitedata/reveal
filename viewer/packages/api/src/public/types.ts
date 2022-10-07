@@ -31,6 +31,6 @@ export type LoadingStateChangeListener = (loadingState: LoadingState) => any;
 
 export { WellKnownAsprsPointClassCodes } from '@reveal/pointclouds';
 
-export { PotreePointShape, PotreePointColorType, PotreePointSizeType } from '@reveal/rendering';
+export { PointShape, PointColorType, PointSizeType } from '@reveal/rendering';
 
 export * from './migration/types';
