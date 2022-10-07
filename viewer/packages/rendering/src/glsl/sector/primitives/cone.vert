@@ -1,5 +1,6 @@
 #pragma glslify: import('../../math/mul3.glsl')
-#pragma glslify: import('../../base/determineMatrixOverride.glsl')
+#pragma glslify: import('../../base/determineMatrixOverride.glsl');
+#pragma glslify: import('../../treeIndex/treeIndexPacking.glsl');
 
 uniform mat4 inverseModelMatrix;
 uniform mat4 modelMatrix;
@@ -25,7 +26,6 @@ in vec3 a_localXAxis;
 in float a_angle;
 in float a_arcAngle;
 
-flat out float v_treeIndex;
 // We pack the radii into w-components
 out vec4 v_centerB;
 // U, V, axis represent the 3x3 cone basis.
@@ -40,7 +40,10 @@ out float v_arcAngle;
 out vec3 v_color;
 out vec3 v_normal;
 
+out TreeIndexPacked v_treeIndexPacked;
+
 void main() {
+    v_treeIndexPacked = packTreeIndex(a_treeIndex);
     mat4 treeIndexWorldTransform = determineMatrixOverride(
       a_treeIndex,
       treeIndexTextureSize,
@@ -83,7 +86,6 @@ void main() {
     surfacePoint = mul3(modelViewMatrix, surfacePoint);
 
     // out data
-    v_treeIndex = a_treeIndex;
     v_angle = a_angle;
     v_arcAngle = a_arcAngle;
 
