@@ -34,13 +34,12 @@ import {
 } from '@reveal/pointclouds';
 
 import {
+  AddImage360Options,
   AddModelOptions,
   Cognite3DViewerOptions,
   Intersection,
   CadModelBudget,
-  IntersectionFromPixelOptions,
-  CadIntersection,
-  AddImage360Options
+  CadIntersection
 } from './types';
 import { RevealManager } from '../RevealManager';
 import { RevealOptions } from '../types';
@@ -1093,7 +1092,6 @@ export class Cognite3DViewer {
    * Raycasting model(s) for finding where the ray intersects with the model.
    * @param offsetX X coordinate in pixels (relative to the domElement).
    * @param offsetY Y coordinate in pixels (relative to the domElement).
-   * @param options Options to control the behavior of the intersection operation. Optional (new in 1.3.0).
    * @returns A promise that if there was an intersection then return the intersection object - otherwise it
    * returns `null` if there were no intersections.
    * @see {@link https://en.wikipedia.org/wiki/Ray_casting}.
@@ -1123,20 +1121,6 @@ export class Cognite3DViewer {
    *   ' at this exact point ', intersection.point
    *   );
    * ```
-   */
-  async getIntersectionFromPixel(offsetX: number, offsetY: number): Promise<null | Intersection>;
-  /**
-   * @deprecated Since 3.1 options argument have no effect.
-   */
-  async getIntersectionFromPixel(
-    offsetX: number,
-    offsetY: number,
-    options: IntersectionFromPixelOptions
-  ): Promise<null | Intersection>;
-  /**
-   * @obvious
-   * @param offsetX
-   * @param offsetY
    */
   async getIntersectionFromPixel(offsetX: number, offsetY: number): Promise<null | Intersection> {
     return this.intersectModels(offsetX, offsetY);
