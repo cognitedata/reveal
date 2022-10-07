@@ -4,7 +4,7 @@
 
 import * as THREE from 'three';
 
-export type PotreeClassification = { [pointClass: number]: { x: number; y: number; z: number; w: number } };
+export type PointClassification = { [pointClass: number]: { x: number; y: number; z: number; w: number } };
 
 import { PointCloudOctree, PickPoint } from './potree-three-loader';
 import { PotreePointColorType, PotreePointShape, IClassification } from '@reveal/rendering';
@@ -77,7 +77,7 @@ export class PotreeNodeWrapper {
     this._needsRedraw = true;
   }
 
-  get classification(): PotreeClassification {
+  get classification(): PointClassification {
     return this._classification;
   }
 
