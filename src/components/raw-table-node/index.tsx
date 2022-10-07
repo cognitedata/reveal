@@ -1,7 +1,7 @@
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo } from 'react';
 
 import { RawDB, RawDBTable } from '@cognite/sdk';
-import { NodeProps } from 'react-flow-renderer';
+import { NodeProps, useReactFlow } from 'react-flow-renderer';
 
 import { NodeData } from 'components/custom-node';
 import { BaseNode } from 'components/base-node';
@@ -26,22 +26,28 @@ export type RawNodeData = NodeData<
   }
 >;
 
-export const RawTableNode = (_: NodeProps<RawNodeData>): JSX.Element => {
+export const RawTableNode = ({
+  data,
+  id,
+}: NodeProps<RawNodeData>): JSX.Element => {
+  const { extraProps = {} } = data;
+  const { database: selectedDatabase, table: selectedTable } = extraProps;
+
   const { t } = useTranslation();
 
   const navigate = useNavigate();
 
-  const [selectedDatabase, setSelectedDatabase] = useState<string>();
-  const [selectedTable, setSelectedTable] = useState<string>();
+  const { setNodes } = useReactFlow();
 
   const { data: databases } = useDatabases();
   const { data: tables } = useTables(
     { database: selectedDatabase ?? '' },
     { enabled: !!selectedDatabase }
   );
-  const { mutate: createDatabase, isLoading: isCreatingDatabase } =
+  const { mutateAsync: createDatabase, isLoading: isCreatingDatabase } =
     useCreateDatabase();
-  const { mutate: createTable, isLoading: isCreatingTable } = useCreateTable();
+  const { mutateAsync: createTable, isLoading: isCreatingTable } =
+    useCreateTable();
 
   const databaseOptions = useMemo(() => {
     const list = collectPages<RawDB>(databases);
@@ -52,25 +58,71 @@ export const RawTableNode = (_: NodeProps<RawNodeData>): JSX.Element => {
     return list.map(({ name }) => ({ label: name, value: name }));
   }, [tables]);
 
-  const handleDatabaseCreate = (value: string) => {
-    createDatabase({ name: value });
+  const updateRawNode = useCallback(
+    (extraProps: RawNodeData['extraProps']) => {
+      setNodes((prevNodes) => {
+        return prevNodes.map((node) => {
+          const { id: testId } = node;
+          if (testId === id) {
+            return { ...node, data: { ...node.data, extraProps } };
+          }
+          return node;
+        });
+      });
+    },
+    [id, setNodes]
+  );
+
+  const handleDatabaseClear = () => {
+    updateRawNode({
+      database: undefined,
+      table: undefined,
+    });
   };
 
-  const handleDatabaseSelect = (value?: string) => {
+  const handleDatabaseCreate = (value: string) => {
+    createDatabase({ name: value }).then(() => {
+      updateRawNode({
+        database: value,
+        table: undefined,
+      });
+    });
+  };
+
+  const handleDatabaseSelect = (value: string) => {
     if (value !== selectedDatabase) {
-      setSelectedTable(undefined);
+      updateRawNode({
+        database: value,
+        table: undefined,
+      });
     }
-    setSelectedDatabase(value);
+  };
+
+  const handleTableClear = () => {
+    updateRawNode({
+      database: selectedDatabase,
+      table: undefined,
+    });
   };
 
   const handleTableCreate = (value: string) => {
     if (selectedDatabase) {
-      createTable({ database: selectedDatabase, table: value });
+      createTable({ database: selectedDatabase, table: value }).then(() => {
+        updateRawNode({
+          database: selectedDatabase,
+          table: value,
+        });
+      });
     }
   };
 
-  const handleTableSelect = (value?: string) => {
-    setSelectedTable(value);
+  const handleTableSelect = (value: string) => {
+    if (value !== selectedTable) {
+      updateRawNode({
+        database: selectedDatabase,
+        table: value,
+      });
+    }
   };
 
   return (
@@ -82,7 +134,7 @@ export const RawTableNode = (_: NodeProps<RawNodeData>): JSX.Element => {
         <SelectWithCreate
           className="nodrag"
           loading={isCreatingDatabase}
-          onClear={() => handleDatabaseSelect(undefined)}
+          onClear={handleDatabaseClear}
           onCreate={handleDatabaseCreate}
           onSelect={handleDatabaseSelect}
           optionLabelProp="label"
@@ -94,7 +146,7 @@ export const RawTableNode = (_: NodeProps<RawNodeData>): JSX.Element => {
           <SelectWithCreate
             className="nodrag"
             loading={isCreatingTable}
-            onClear={() => handleTableSelect(undefined)}
+            onClear={handleTableClear}
             onCreate={handleTableCreate}
             onSelect={handleTableSelect}
             optionLabelProp="label"
