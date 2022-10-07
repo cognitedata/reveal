@@ -1,7 +1,13 @@
 import { useSDK } from '@cognite/sdk-provider';
+import { RawDBRow } from '@cognite/sdk/dist/src';
 import { RAW_DB_NAME, RAW_TABLE_NAME, TABLE_PAGE_SIZE } from 'common/constants';
-import { useMutation, useQuery, useQueryClient } from 'react-query';
-import { Flow } from 'types';
+import {
+  useMutation,
+  useQuery,
+  useQueryClient,
+  UseQueryOptions,
+} from 'react-query';
+import { Canvas, Flow } from 'types';
 
 const getCheckKey = () => ['raw-setup-check'];
 
@@ -48,34 +54,56 @@ export function useCreateRawTable() {
   );
 }
 
+const rowToFlow = (row: RawDBRow): Flow => ({
+  id: row.key,
+  updated: row.lastUpdatedTime.getTime(),
+  name: row.columns.name as string,
+  description: row.columns.description as string | undefined,
+  canvas: row.columns.canvas as Canvas,
+});
+
 const getFlowListKey = () => ['flow-list'];
-export function useFlowList() {
+export function useFlowList(
+  opts?: Omit<UseQueryOptions<Flow[], Error>, 'queryKey' | 'queryFn'>
+) {
   const sdk = useSDK();
-  return useQuery(getFlowListKey(), async () => {
-    const rows = await sdk.raw
-      .listRows(RAW_DB_NAME, RAW_TABLE_NAME, { limit: TABLE_PAGE_SIZE })
-      .autoPagingToArray({ limit: -1 });
-    return rows
-      .map(
-        (row): Flow => ({
-          id: row.key,
-          updated: row.lastUpdatedTime.getTime(),
-          name: row.columns.name as string,
-          description: row.columns.description as string | undefined,
-          flow: row.columns.flow as any,
-        })
-      )
-      .sort((a, b) => (b.updated || 0) - (a.updated || 0));
-  });
+  return useQuery(
+    getFlowListKey(),
+    async () => {
+      const rows = await sdk.raw
+        .listRows(RAW_DB_NAME, RAW_TABLE_NAME, { limit: TABLE_PAGE_SIZE })
+        .autoPagingToArray({ limit: -1 });
+      return rows
+        .map(rowToFlow)
+        .sort((a, b) => (b.updated || 0) - (a.updated || 0));
+    },
+    opts
+  );
+}
+
+const getFlowItemKey = (id: string) => ['flow', id];
+export function useFlow(
+  id: string,
+  opts?: Omit<UseQueryOptions<Flow, Error>, 'queryKey' | 'queryFn'>
+) {
+  const sdk = useSDK();
+  return useQuery(
+    getFlowItemKey(id),
+    async () => {
+      const row = await sdk.raw.retrieveRow(RAW_DB_NAME, RAW_TABLE_NAME, id);
+      return rowToFlow(row);
+    },
+    opts
+  );
 }
 
 export function useInsertFlow() {
   const sdk = useSDK();
   const qc = useQueryClient();
   return useMutation(
-    ({ id, name, flow, description }: Flow) => {
+    ({ id, name, canvas, description }: Flow) => {
       return sdk.raw.insertRows(RAW_DB_NAME, RAW_TABLE_NAME, [
-        { key: id, columns: { name, flow, description } },
+        { key: id, columns: { name, canvas, description } },
       ]);
     },
     {

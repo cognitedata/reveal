@@ -1,8 +1,10 @@
-import { useCallback, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 
 import ReactFlow, {
   addEdge,
   Background,
+  Edge,
+  Node,
   OnConnect,
   ReactFlowInstance,
   useEdgesState,
@@ -16,13 +18,31 @@ import { CANVAS_DRAG_AND_DROP_DATA_TRANSFER_IDENTIFIER } from 'common';
 import { CANVAS_BLOCK_TYPES } from 'components/canvas-block';
 import { CustomNode } from 'components/custom-node';
 
-export const FlowBuilder = (): JSX.Element => {
+type Props = {
+  initialEdges: Edge<any>[];
+  initialNodes: Node<any>[];
+  onChange: (f: { nodes: Node<any>[]; edges: Edge<any>[] }) => void;
+};
+export const FlowBuilder = ({
+  initialEdges,
+  initialNodes,
+  onChange,
+}: Props): JSX.Element => {
   const reactFlowContainer = useRef<HTMLDivElement>(null);
 
-  const [edges, setEdges, onEdgesChange] = useEdgesState([]);
-  const [nodes, setNodes, onNodesChange] = useNodesState([]);
+  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [reactFlowInstance, setReactFlowInstance] =
     useState<ReactFlowInstance>();
+
+  const mutate = useCallback(onChange, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    mutate({
+      nodes,
+      edges,
+    });
+  }, [nodes, edges, mutate]);
 
   const nodeTypes = useMemo(
     () => ({

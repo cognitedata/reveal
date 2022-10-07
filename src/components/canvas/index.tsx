@@ -11,7 +11,17 @@ import { CanvasSidePanel } from '../canvas-side-panel';
 import { FlowBuilder } from '../flow-builder';
 import { ReactFlowProvider } from 'react-flow-renderer';
 
-export const Canvas = (): JSX.Element => {
+import { Flow } from 'types';
+
+type Props = {
+  flow: Flow;
+  onChange: (f: Flow) => void;
+};
+
+export const Canvas = ({ flow, onChange }: Props): JSX.Element => {
+  const { canvas } = flow;
+  const { nodes, edges } = canvas;
+
   return (
     <ReactFlowProvider>
       <StyledCanvasContainer>
@@ -24,7 +34,13 @@ export const Canvas = (): JSX.Element => {
             <CanvasSidePanel />
           </Allotment.Pane>
           <Allotment.Pane>
-            <FlowBuilder />
+            <FlowBuilder
+              initialNodes={nodes}
+              initialEdges={edges}
+              onChange={({ nodes, edges }) =>
+                onChange({ ...flow, canvas: { nodes, edges } })
+              }
+            />
           </Allotment.Pane>
         </Allotment>
       </StyledCanvasContainer>
