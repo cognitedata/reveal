@@ -194,8 +194,8 @@ export class Cognite3DViewer {
   /**
    * Gets a list of models currently added to the viewer.
    */
-  public get models(): CogniteModelBase[] {
-    return this._models.slice();
+  public get models(): (Cognite3DModel | CognitePointCloudModel)[] {
+    return this._models.map(model => model as Cognite3DModel | CognitePointCloudModel);
   }
 
   /**
