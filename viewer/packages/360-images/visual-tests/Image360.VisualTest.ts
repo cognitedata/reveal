@@ -3,11 +3,10 @@
  */
 import * as THREE from 'three';
 
-import { Cdf360ImageEventProvider, Image360Provider } from '@reveal/data-providers';
+import { Cdf360ImageEventProvider, Local360ImageProvider } from '@reveal/data-providers';
 import { StreamingTestFixtureComponents } from '../../../visual-tests/test-fixtures/StreamingVisualTestFixture';
 import { StreamingVisualTestFixture } from '../../../visual-tests';
 import { Image360EntityFactory } from '../src/Image360EntityFactory';
-import { It, Mock } from 'moq.ts';
 import { Image360Facade } from '../src/Image360Facade';
 import { pixelToNormalizedDeviceCoordinates, SceneHandler } from '@reveal/utilities';
 import { CogniteClient } from '@cognite/sdk';
@@ -18,7 +17,7 @@ type CdfImage360Facade = Image360Facade<{
   [key: string]: string;
 }>;
 
-type LocalImage360Facade = Image360Facade<THREE.Vector3>;
+type LocalImage360Facade = Image360Facade<unknown>;
 
 export default class Image360VisualTestFixture extends StreamingVisualTestFixture {
   public async setup(testFixtureComponents: StreamingTestFixtureComponents): Promise<void> {
@@ -52,18 +51,19 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
       this.render();
     });
 
-    renderer.domElement.addEventListener('click', event => {
+    renderer.domElement.addEventListener('click', async event => {
       const { x, y } = event;
       const { x: width, y: height } = size;
       const ndcCoordinates = pixelToNormalizedDeviceCoordinates(x, y, width, height);
       const entity = facade.intersect({ x: ndcCoordinates.x, y: ndcCoordinates.y }, camera);
       if (entity !== undefined) {
-        entity.activate360Image();
+        await entity.activate360Image();
         entity.icon.visible = false;
         const transform = entity.transform.toArray();
         const image360Translation = new THREE.Vector3(transform[12], transform[13], transform[14]);
         camera.position.copy(image360Translation);
         cameraControls.target.copy(image360Translation.clone().add(new THREE.Vector3(0, 0, 0.001)));
+        cameraControls.update();
       }
       this.render();
     });
@@ -153,42 +153,15 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
     facade: Image360Facade<any>;
     entities: Image360Entity[];
   }> {
-    const image360Factory = new Image360EntityFactory(this.getMockImage360Provider().object(), sceneHandler);
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    const modelUrl = urlParams.get('modelUrl') ?? 'primitives';
+    const dataProvider = new Local360ImageProvider(`${window.location.origin}/${modelUrl}`);
+    const image360Factory = new Image360EntityFactory(dataProvider, sceneHandler);
     const image360Facade = new Image360Facade(image360Factory);
 
-    const entities = (
-      await Promise.all([
-        image360Facade.create(new THREE.Vector3(5, 3, -10)),
-        image360Facade.create(new THREE.Vector3(10, 3, -5)),
-        image360Facade.create(new THREE.Vector3(10, 3, -10)),
-        image360Facade.create(new THREE.Vector3(5, 3, -5))
-      ])
-    ).flatMap(p => p);
-
-    entities[0].icon.visible = false;
+    const entities = await image360Facade.create({});
 
     return { facade: image360Facade, entities };
-  }
-
-  private getMockImage360Provider() {
-    const mock360ImageProvider = new Mock<Image360Provider<THREE.Vector3>>();
-    mock360ImageProvider
-      .setup(p => p.get360ImageDescriptors(It.IsAny()))
-      .callback(({ args: [arg] }) => {
-        const translation = arg as THREE.Vector3;
-        return Promise.resolve([
-          {
-            id: '0',
-            label: 'test',
-            collectionId: '0',
-            collectionLabel: 'testCollection',
-            transformations: {
-              translation: new THREE.Matrix4().makeTranslation(translation.x, translation.y, translation.z),
-              rotation: new THREE.Matrix4()
-            }
-          }
-        ]);
-      });
-    return mock360ImageProvider;
   }
 }
