@@ -8,14 +8,14 @@ import {
 } from '@cognite/power-ops-api-types';
 import { EventStreamContext } from 'providers/eventStreamProvider';
 import { useFetchWorkflows } from 'queries/useFetchWorkflows';
-import { OptionType, Select } from '@cognite/cogs.js';
+import { Graphic, Label, OptionType, Select } from '@cognite/cogs.js';
 import { useFetchWorkflowSchemas } from 'queries/useFetchWorkflowSchemas';
 import { EVENT_STATUSES } from 'utils/utils';
 import { useFetchWorkflowTypes } from 'queries/useFetchWorkflowTypes';
 import queryString from 'query-string';
 
 import { ReusableTable } from './ReusableTable';
-import { Container, SearchAndFilter } from './elements';
+import { Container, EmptyStateContainer, SearchAndFilter } from './elements';
 import { workflowsColumns } from './utils';
 
 export const Workflows = () => {
@@ -207,8 +207,57 @@ export const Workflows = () => {
           }}
         />
       </SearchAndFilter>
-      {filteredWorkflows && (
+      {filteredWorkflows?.length ? (
         <ReusableTable data={filteredWorkflows} columns={workflowsColumns} />
+      ) : (
+        <EmptyStateContainer className="workflows">
+          <Graphic type="Search" />
+          <div className="cogs-title-5">No results available</div>
+          <div className="cogs-body-2">
+            There are currently no workflows in progress
+          </div>
+          <div>
+            {[...statusFilterValue, ...workflowTypeFilterValue].map(
+              (filter) => (
+                <Label
+                  key={filter.value}
+                  variant="normal"
+                  icon="Close"
+                  iconPlacement="right"
+                  size="medium"
+                  style={{ borderRadius: '4px', marginRight: '8px' }}
+                  onClick={() => {
+                    setStatusFilterValue(
+                      statusFilterValue.filter((value) => value !== filter)
+                    );
+                    setWorkflowTypeFilterValue(
+                      workflowTypeFilterValue.filter(
+                        (value) => value !== filter
+                      )
+                    );
+                  }}
+                >
+                  {filter.value}
+                </Label>
+              )
+            )}
+            {!![...statusFilterValue, ...workflowTypeFilterValue].length && (
+              <Label
+                variant="unknown"
+                icon="Close"
+                iconPlacement="right"
+                size="medium"
+                style={{ borderRadius: '4px' }}
+                onClick={() => {
+                  setStatusFilterValue([]);
+                  setWorkflowTypeFilterValue([]);
+                }}
+              >
+                <span className="cogs-body-2">Clear all</span>
+              </Label>
+            )}
+          </div>
+        </EmptyStateContainer>
       )}
     </Container>
   );

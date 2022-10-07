@@ -5,6 +5,7 @@ import {
   Button,
   Collapse,
   Detail,
+  Graphic,
   Icon,
   Input,
   TableData,
@@ -25,6 +26,7 @@ import {
   Container,
   MetadataContainer,
   CollapseContainer,
+  EmptyStateContainer,
 } from './elements';
 
 export const WorkflowSingle = () => {
@@ -223,8 +225,16 @@ export const WorkflowSingle = () => {
             </MetadataContainer>
           </Collapse.Panel>
         </CollapseContainer>
-        {processes && (
+        {processes?.length ? (
           <ReusableTable data={processes} columns={processColumns} />
+        ) : (
+          <EmptyStateContainer className="processes">
+            <Graphic type="Search" />
+            <div className="cogs-title-5">No processes available</div>
+            <div className="cogs-body-2">
+              There are currently no processes in progress
+            </div>
+          </EmptyStateContainer>
         )}
       </Container>
     </div>
