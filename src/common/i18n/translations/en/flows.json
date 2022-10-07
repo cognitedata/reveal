@@ -1,13 +1,12 @@
 {
-  "current_language_text": "Language: English",
-  "english": "English",
-  "english_language": "English",
-  "japanese": "Japanese",
-  "japanese_language": "Japanese",
-  "test1": "test1",
-  "test2": "test2",
+  "list-delete": "Delete flow",
+  "list-description": "Description TBD",
+  "list-search-count_one": "{{count}} flow",
+  "list-search-count_other": "{{count}} flows",
+  "list-search-filtered-count_one": "{{filteredCount}}/{{count}} flow",
+  "list-search-filtered-count_other": "{{filteredCount}}/{{count}} flows",
+  "list-search-placeholder": "Search",
+  "list-title": "Flows",
   "toolbox-description": "Drag and drop items to the canvas",
-  "toolbox-title": "Toolbox",
-  "welcome": "Hello to {{appName}} {{userName}}",
-  "welcome_text": "Hello to {{appName}} {{userName}} (locize)"
+  "toolbox-title": "Toolbox"
 }

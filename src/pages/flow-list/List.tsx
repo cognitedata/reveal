@@ -1,12 +1,12 @@
-import { createLink } from '@cognite/cdf-utilities';
-import { Icon } from '@cognite/cogs.js';
-import { CANVAS_PATH } from 'common';
+import { Flex, Icon } from '@cognite/cogs.js';
+import { URL_SEARCH_QUERY_PARAM } from 'common';
 import { useFlowList } from 'hooks/raw';
-import { Link } from 'react-router-dom';
-import DeleteButton from './DeleteButton';
+import { filterFlow, useUrlQuery } from 'utils';
+import ListItem from './ListItem';
 
-export default function List({}: {}) {
+export default function List() {
   const { data, isLoading, error } = useFlowList();
+  const [query] = useUrlQuery(URL_SEARCH_QUERY_PARAM);
   if (isLoading) {
     return <Icon type="Loader" />;
   }
@@ -19,13 +19,12 @@ export default function List({}: {}) {
     );
   }
   return (
-    <ul>
-      {data?.map((row) => (
-        <li key={row.id}>
-          <Link to={createLink(`/${CANVAS_PATH}/${row.id}`)}>{row.name}</Link>
-          <DeleteButton id={row.id} />
-        </li>
-      ))}
-    </ul>
+    <Flex direction="column">
+      {data
+        ?.filter((flow) => filterFlow(flow, query))
+        .map((flow) => (
+          <ListItem key={flow.id} flow={flow} />
+        ))}
+    </Flex>
   );
 }

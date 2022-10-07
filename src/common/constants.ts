@@ -7,3 +7,4 @@ export const CANVAS_PATH = 'flows';
 export const RAW_DB_NAME = 'flows-tmp-storage';
 export const RAW_TABLE_NAME = 'flows';
 export const TABLE_PAGE_SIZE = 25;
+export const URL_SEARCH_QUERY_PARAM = 'q';
