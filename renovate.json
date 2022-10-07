@@ -2,11 +2,12 @@
   "extends": [
     "config:base"
   ],
+  "timezone": "Europe/Oslo",
   "packageRules": [
     {
-      "timezone": "Europe/Oslo"
-    },
-    {
+      "matchPackagePrefixes": [
+        ""
+      ],
       // Prepare Renovate PRs before office hours
       "schedule": [
         "after 6am and before 9am every weekday"
@@ -67,7 +68,10 @@
       "matchUpdateTypes": [
         "major"
       ],
-      "stabilityDays": 10
+      "stabilityDays": 10,
+      // Hold back creating PRs until version is 10 days old
+      // https://docs.renovatebot.com/configuration-options/#suppress-branchpr-creation-for-x-days
+      "internalChecksFilter": "strict"
     }
   ]
 }
