@@ -1,30 +1,26 @@
-import { Body, Flex, Tag, Tooltip } from '@cognite/cogs.js';
-import { DataSet, CogniteEvent } from '@cognite/sdk';
+import {
+  Body,
+  Button,
+  Dropdown,
+  Flex,
+  Menu,
+  Tag,
+  Tooltip,
+} from '@cognite/cogs.js';
+import { DataSet, Asset } from '@cognite/sdk';
 import { useCdfItem, useCdfItems } from '@cognite/sdk-react-query-hooks';
 import capitalize from 'lodash/capitalize';
 import uniqueId from 'lodash/uniqueId';
 import React from 'react';
-import { Column } from 'react-table';
+
 import styled from 'styled-components';
 
 import { HighlightCell, TimeDisplay } from 'components';
-import {
-  SequenceWithRelationshipLabels,
-  TimeseriesWithRelationshipLabels,
-} from 'containers';
-import { AssetWithRelationshipLabels } from 'containers/Assets/AssetTable/AssetNewTable';
-import { FileWithRelationshipLabels } from 'containers/Files/FileTable/FileNewTable';
-import { mapFileType } from 'utils';
 
-export interface ResourceTableHashMap {
-  [key: string]: Column<
-    TimeseriesWithRelationshipLabels &
-      AssetWithRelationshipLabels &
-      CogniteEvent &
-      FileWithRelationshipLabels &
-      SequenceWithRelationshipLabels
-  >;
-}
+import { mapFileType } from 'utils';
+import { createLink } from '@cognite/cdf-utilities';
+import { useGetRootAsset } from 'hooks';
+import { ResourceTableHashMap } from './types';
 
 export const ResourceTableColumns: ResourceTableHashMap = {
   name: {
@@ -125,16 +121,35 @@ export const ResourceTableColumns: ResourceTableHashMap = {
       const ids = value
         ? [{ id: value }]
         : data.assetIds?.map(val => ({ id: val }));
-      const { data: items, isFetched } = useCdfItems<{ name?: string }>(
+      const { data: items, isFetched } = useCdfItems<Asset>(
         'assets',
         ids || [],
         true,
         { enabled: Boolean(data.assetIds) || Boolean(data.assetId) }
       );
-      const assetsName = items?.map(item => item.name).join(', ');
-      return assetsName && isFetched ? (
-        <Body level={3}>{assetsName}</Body>
-      ) : null;
+
+      const hasData = items && items?.length > 0 && isFetched;
+
+      if (!hasData) {
+        return null;
+      }
+
+      return (
+        <Dropdown
+          openOnHover
+          content={
+            <Menu>
+              {items?.map(item => (
+                <Menu.Item key={item.id}>{item.name}</Menu.Item>
+              ))}
+            </Menu>
+          }
+        >
+          <Button icon="ChevronDown" iconPlacement="right">
+            {items?.length} Asset(s)
+          </Button>
+        </Dropdown>
+      );
     },
   },
   type: {
@@ -193,6 +208,56 @@ export const ResourceTableColumns: ResourceTableHashMap = {
     accessor: 'columns',
     Header: '# of Columns',
     Cell: ({ value }) => <Body level={2}>{value ? value.length : 0}</Body>,
+  },
+  asset: {
+    accessor: 'assetId',
+    Header: 'Root Asset',
+    Cell: ({ value }) => {
+      const { data: rootAsset, isLoading } = useGetRootAsset(value!);
+
+      return isLoading || rootAsset?.name ? (
+        <Button
+          type="link"
+          href={createLink(`/explore/asset/${value}`)}
+          icon="ArrowUpRight"
+          iconPlacement="right"
+        >
+          {rootAsset?.name}
+        </Button>
+      ) : null;
+    },
+  },
+  rootAsset: {
+    accessor: 'rootId',
+    Header: 'Root Asset',
+    Cell: ({ value }) => {
+      const { data: rootAsset, isLoading } = useGetRootAsset(value!);
+
+      return isLoading || rootAsset?.name ? (
+        <Button
+          type="link"
+          href={createLink(`/explore/asset/${value}`)}
+          icon="ArrowUpRight"
+          iconPlacement="right"
+        >
+          {rootAsset?.name}
+        </Button>
+      ) : null;
+    },
+  },
+  relationshipLabels: {
+    accessor: 'relationshipLabels',
+    Header: 'Relationship Labels',
+    width: 250,
+    Cell: ({ rowData }: { rowData: any }) => (
+      <Flex gap={2} wrap="wrap">
+        {rowData.relationshipLabels?.map((label: string) => (
+          <Tooltip content={label} key={uniqueId()}>
+            <StyledTag style={{ display: 'block' }}>{label}</StyledTag>
+          </Tooltip>
+        ))}
+      </Flex>
+    ),
   },
 };
 

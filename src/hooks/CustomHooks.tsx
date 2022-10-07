@@ -7,9 +7,13 @@ import {
 } from 'react-query';
 import { useParams } from 'react-router-dom';
 import queryString from 'query-string';
-import { IdEither, Model3D } from '@cognite/sdk';
+import { Asset, IdEither, Model3D } from '@cognite/sdk';
 import { extractUniqueIds } from 'utils';
-import { SdkResourceType, useCdfItems } from '@cognite/sdk-react-query-hooks';
+import {
+  SdkResourceType,
+  useCdfItem,
+  useCdfItems,
+} from '@cognite/sdk-react-query-hooks';
 import unionBy from 'lodash/unionBy';
 
 export type ThreeDModelsResponse = {
@@ -171,4 +175,14 @@ export const useIsOverflow = (ref: React.RefObject<HTMLElement>) => {
   ]);
 
   return isOverflow;
+};
+
+export const useGetRootAsset = (rootId: number) => {
+  return useCdfItem<Asset>(
+    'assets',
+    { id: rootId },
+    {
+      enabled: Boolean(rootId),
+    }
+  );
 };
