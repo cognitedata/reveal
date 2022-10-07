@@ -6,7 +6,7 @@ import {
 } from '@cognite/sdk-react-query-hooks';
 import { formatNumber } from 'utils';
 import { Body } from '@cognite/cogs.js';
-import { getTitle, ResourceType, convertResourceTypeWrapper } from 'types';
+import { getTitle, ResourceType, convertResourceType } from 'types';
 import { ThreeDModelsResponse, useInfinite3DModels } from 'hooks';
 import { Model3D } from '@cognite/sdk';
 import { useDocumentFilteredAggregateCount } from '@cognite/react-document-search';
@@ -45,7 +45,7 @@ export const useResultCount = ({
   count,
   label,
 }: ResultProps) => {
-  const sdkType = convertResourceTypeWrapper(type);
+  const sdkType = convertResourceType(type);
 
   const { data: search, isFetched: searchDone } = useSearch(
     sdkType,

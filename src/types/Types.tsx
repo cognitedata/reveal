@@ -13,8 +13,10 @@ export type ResourceType =
 // Temporary mapping of the two almost identical types. Should be
 // removed as soon as possible, but that requires a full refactor
 // replacing ResourceType with SdkResourcetype
-export function convertResourceType(t?: ResourceType): SdkResourceType {
-  switch (t) {
+export function convertResourceType(type?: ResourceType): SdkResourceType {
+  if (type === 'threeD' || type === 'document') return type as SdkResourceType;
+
+  switch (type) {
     case 'asset': {
       return 'assets';
     }
@@ -31,19 +33,10 @@ export function convertResourceType(t?: ResourceType): SdkResourceType {
       return 'events';
     }
     default: {
-      throw new Error(`Unknown ResourceType: ${t}`);
+      throw new Error(`Unknown ResourceType: ${type}`);
     }
   }
 }
-
-/**
- * Temporary fix
- * A wrapper that handle the case of resource type which is threeD in general the normal function will return the error
- */
-export const convertResourceTypeWrapper = (type?: ResourceType) => {
-  if (type === 'threeD' || type === 'document') return type as SdkResourceType;
-  return convertResourceType(type);
-};
 
 export function getTitle(t: ResourceType, plural: boolean = true): string {
   switch (t) {
