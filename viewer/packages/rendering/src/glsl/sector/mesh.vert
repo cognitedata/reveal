@@ -1,4 +1,5 @@
 #pragma glslify: import('../base/determineMatrixOverride.glsl')
+#pragma glslify: import('../treeIndex/treeIndexPacking.glsl')
 
 uniform mat4 modelMatrix;
 uniform mat4 viewMatrix;
@@ -13,12 +14,13 @@ in vec3 color;
 in float treeIndex;
 
 out vec3 v_color;
-flat out float v_treeIndex;
 out vec3 v_viewPosition;
+out TreeIndexPacked v_treeIndexPacked;
+out mediump float v_treeIndexSubHundreds;
 
 void main() {
+    v_treeIndexPacked = packTreeIndex(treeIndex);
     v_color = color;
-    v_treeIndex = treeIndex;
 
     mat4 treeIndexWorldTransform = determineMatrixOverride(
       treeIndex,
