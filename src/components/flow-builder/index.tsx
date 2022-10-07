@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 
+import { Colors } from '@cognite/cogs.js';
 import ReactFlow, {
   addEdge,
   Background,
@@ -130,7 +131,13 @@ export const FlowBuilder = ({
         onInit={setReactFlowInstance}
         onNodesChange={onNodesChange}
       >
-        <Background />
+        <Background
+          style={{
+            background: Colors['surface--misc-canvas'],
+          }}
+          color="#dddddd"
+          size={1}
+        />
       </ReactFlow>
     </StyledReactFlowContainer>
   );
