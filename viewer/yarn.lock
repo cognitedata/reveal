@@ -782,7 +782,7 @@ __metadata:
     "@types/draco3dgltf": 1.4.0
     "@types/expect-puppeteer": 5.0.1
     "@types/glob": 8.0.0
-    "@types/jest": 29.1.1
+    "@types/jest": 29.1.2
     "@types/jest-environment-puppeteer": 5.0.2
     "@types/jest-image-snapshot": 5.1.0
     "@types/jsdom": 20.0.0
@@ -840,7 +840,7 @@ __metadata:
     prettier: 2.7.1
     process: 0.11.10
     proj4: 2.8.0
-    puppeteer: 18.1.0
+    puppeteer: 18.2.1
     random-seed: 0.3.0
     raw-loader: 4.0.2
     resize-observer-polyfill: 1.5.1
@@ -1662,7 +1662,6 @@ __metadata:
     "@reveal/cad-parsers": "workspace:*"
     "@reveal/cad-styling": "workspace:*"
     "@reveal/logger": "workspace:*"
-    "@reveal/pointclouds": "workspace:*"
     "@reveal/utilities": "workspace:*"
   languageName: unknown
   linkType: soft
@@ -2048,13 +2047,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/jest@npm:29.1.1":
-  version: 29.1.1
-  resolution: "@types/jest@npm:29.1.1"
+"@types/jest@npm:29.1.2":
+  version: 29.1.2
+  resolution: "@types/jest@npm:29.1.2"
   dependencies:
     expect: ^29.0.0
     pretty-format: ^29.0.0
-  checksum: d9e6f7d6ab64cf45535369d0a3dc4640cbe6b37ab6f8927e874eacc199581338ebf6ff544f7c2cd188c5fc7cd0b3197aa72cb2b826f0a1352b93b89993711413
+  checksum: a6761b5ac132c641740886f9c0714607255ebffb6add5989f51ea9e392fc3c5cd474e7590f12b003d5b67ce177dfbc8d3d60d0baa335c48c50deeee6b755a473
   languageName: node
   linkType: hard
 
@@ -10433,22 +10432,33 @@ __metadata:
   languageName: node
   linkType: hard
 
-"puppeteer@npm:18.1.0":
-  version: 18.1.0
-  resolution: "puppeteer@npm:18.1.0"
+"puppeteer-core@npm:18.2.1":
+  version: 18.2.1
+  resolution: "puppeteer-core@npm:18.2.1"
   dependencies:
     cross-fetch: 3.1.5
     debug: 4.3.4
     devtools-protocol: 0.0.1045489
     extract-zip: 2.0.1
     https-proxy-agent: 5.0.1
-    progress: 2.0.3
     proxy-from-env: 1.1.0
     rimraf: 3.0.2
     tar-fs: 2.1.1
     unbzip2-stream: 1.4.3
     ws: 8.9.0
-  checksum: b805067a1cb5d33afeb5359b268c2d2f8915ee066f653622a045b4fc9a14e5fbfb13894d67903183d023e87e2f8302d78d3fcc75d9ad2973fb8e49daf3261402
+  checksum: 27ed65a7335ee3f4356425ebe4bbb5202f7b39493398643554a12b981922b2243dc331d9a478215706b79696bcf391637dd5e5405d60aff6ba8f94f0c3fea742
+  languageName: node
+  linkType: hard
+
+"puppeteer@npm:18.2.1":
+  version: 18.2.1
+  resolution: "puppeteer@npm:18.2.1"
+  dependencies:
+    https-proxy-agent: 5.0.1
+    progress: 2.0.3
+    proxy-from-env: 1.1.0
+    puppeteer-core: 18.2.1
+  checksum: 58ba8c7abd82071dc12e280622fa352a8ac253375a514c7a3527b468672a4ccdfe20b37aa09498774da2f0666bcdd9a47838c6661de483a3d6e10b47ef666113
   languageName: node
   linkType: hard
 

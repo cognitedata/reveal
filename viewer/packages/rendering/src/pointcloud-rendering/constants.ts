@@ -1,3 +1,6 @@
+/*!
+ * Adapted from pnext/three-loader (https://github.com/pnext/three-loader)
+ */
 import { Color, Vector4 } from 'three';
 
 export const DEFAULT_RGB_BRIGHTNESS = 0;

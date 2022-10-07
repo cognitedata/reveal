@@ -4,24 +4,22 @@
 
 import * as THREE from 'three';
 import remove from 'lodash/remove';
-import { CadNode } from '@reveal/cad-model';
-import { PointCloudNode } from '@reveal/pointclouds';
 
 export class SceneHandler {
   private readonly _scene: THREE.Scene;
-  private readonly _cadModels: { cadNode: CadNode; modelIdentifier: string }[];
-  private readonly _pointCloudModels: { pointCloudNode: PointCloudNode; modelIdentifier: symbol }[];
+  private readonly _cadModels: { cadNode: THREE.Object3D; modelIdentifier: string }[];
+  private readonly _pointCloudModels: { pointCloudNode: THREE.Object3D; modelIdentifier: symbol }[];
   private readonly _customObjects: THREE.Object3D[];
 
   get scene(): THREE.Scene {
     return this._scene;
   }
 
-  get cadModels(): { cadNode: CadNode; modelIdentifier: string }[] {
+  get cadModels(): { cadNode: THREE.Object3D; modelIdentifier: string }[] {
     return this._cadModels;
   }
 
-  get pointCloudModels(): { pointCloudNode: PointCloudNode; modelIdentifier: symbol }[] {
+  get pointCloudModels(): { pointCloudNode: THREE.Object3D; modelIdentifier: symbol }[] {
     return this._pointCloudModels;
   }
 
@@ -41,22 +39,22 @@ export class SceneHandler {
     this._scene.matrixWorldAutoUpdate = false;
   }
 
-  public addCadModel(cadNode: CadNode, modelIdentifier: string): void {
+  public addCadModel(cadNode: THREE.Object3D, modelIdentifier: string): void {
     this._cadModels.push({ cadNode, modelIdentifier });
     this._scene.add(cadNode);
   }
 
-  public addPointCloudModel(pointCloudNode: PointCloudNode, modelIdentifier: symbol): void {
+  public addPointCloudModel(pointCloudNode: THREE.Object3D, modelIdentifier: symbol): void {
     this._pointCloudModels.push({ pointCloudNode, modelIdentifier });
     this._scene.add(pointCloudNode);
   }
 
-  public removePointCloudModel(pointCloudNode: PointCloudNode): void {
+  public removePointCloudModel(pointCloudNode: THREE.Object3D): void {
     this.scene.remove(pointCloudNode);
     remove(this._pointCloudModels, { pointCloudNode });
   }
 
-  public removeCadModel(cadNode: CadNode): void {
+  public removeCadModel(cadNode: THREE.Object3D): void {
     this.scene.remove(cadNode);
     remove(this._cadModels, { cadNode });
   }
@@ -72,8 +70,6 @@ export class SceneHandler {
   }
 
   public dispose(): void {
-    this._cadModels.forEach(c => c.cadNode.dispose());
-
     this._cadModels.splice(0);
     this._pointCloudModels.splice(0);
     this._customObjects.splice(0);

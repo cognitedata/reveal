@@ -20,6 +20,7 @@ const worldToViewportVars = {
  * @returns           Relative screen coordinates in X, Y and Z in range [-1, 1] if point
  * is within near/far of camera.
  */
+
 export function worldToNormalizedViewportCoordinates(
   camera: THREE.PerspectiveCamera,
   position3D: THREE.Vector3,
@@ -68,4 +69,11 @@ export function worldToViewportCoordinates(
   out.x = Math.round(out.x * canvasWidth);
   out.y = Math.round(out.y * canvasHeight);
   return out;
+}
+
+/**
+ * Converts a pixel coordinate to normalized device coordinate (in range [-1, 1])
+ */
+export function pixelToNormalizedDeviceCoordinates(x: number, y: number, width: number, height: number): THREE.Vector2 {
+  return new THREE.Vector2((x / width) * 2 - 1, (y / height) * -2 + 1);
 }

@@ -5,14 +5,14 @@
 import { assertNever, EventTrigger } from '@reveal/utilities';
 
 /**
- * Base class for tools attaching to a {@see Cognite3DViewer}.
+ * Base class for tools attaching to a {@link Cognite3DViewer}.
  */
 export abstract class Cognite3DViewerToolBase {
   private readonly _disposedEvent = new EventTrigger<() => void>();
   private _disposed = false;
 
   /**
-   * Registers an event handler that is triggered when {@see Cognite3DViewerToolBase.dispose} is
+   * Registers an event handler that is triggered when {@link Cognite3DViewerToolBase.dispose} is
    * called.
    * @param event
    * @param handler
