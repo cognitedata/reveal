@@ -4,6 +4,15 @@
   ],
   "packageRules": [
     {
+      "timezone": "Europe/Oslo"
+    },
+    {
+      // Prepare Renovate PRs before office hours
+      "schedule": [
+        "after 6 am weekdays and before 9 am every weekday"
+      ]
+    },
+    {
       "matchPackagePrefixes": [
         "@cognite/sdk-",
         "@cognite/reveal-"
