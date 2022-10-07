@@ -14,3 +14,4 @@ export * from './getTagColor';
 export * from './preApproveDataElements';
 export * from './unitUtils';
 export * from './updateCalculatedDataElements';
+export * from './isValidEquipment';

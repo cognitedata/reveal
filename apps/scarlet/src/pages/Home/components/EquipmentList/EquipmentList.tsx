@@ -133,7 +133,6 @@ export const EquipmentList = () => {
         equipmentList={homePageState.equipmentListQuery.data}
         key={unitId}
       />
-
       {!loading && error ? (
         <Styled.ContentWrapper empty>
           <div className="cogs-table no-data">
@@ -145,11 +144,11 @@ export const EquipmentList = () => {
         <Styled.ContentWrapper empty={!loading && !data?.length}>
           {(!!data?.length || loading) && (
             <EquipmentsFilter
+              key={unitId}
               loading={loading}
               filter={filter}
-              setFilter={setFilter}
               numberEquipments={equipmentList?.length || 0}
-              key={unitId}
+              setFilter={setFilter}
             />
           )}
           <Styled.TableContainer isLoading={loading} ref={TableContainerRef}>

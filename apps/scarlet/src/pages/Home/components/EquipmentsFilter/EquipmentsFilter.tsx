@@ -25,15 +25,15 @@ import {
 type EquipmentsFilterProps = {
   loading: boolean;
   filter: Filter;
-  setFilter: Dispatch<SetStateAction<Filter>>;
   numberEquipments: number;
+  setFilter: Dispatch<SetStateAction<Filter>>;
 };
 
 export const EquipmentsFilter = ({
   loading,
   filter,
-  setFilter,
   numberEquipments,
+  setFilter,
 }: EquipmentsFilterProps) => {
   const [search, setSearch] = useState('');
 

@@ -21,6 +21,8 @@ import {
 } from 'types';
 import { getDataElementConfig, parseDate } from 'utils';
 
+const PCMS_TYPE_KEY = 'Component Type(API)';
+
 export const transformEquipmentData = ({
   config,
   scannerDetections = [],
@@ -185,6 +187,28 @@ const getPCMSDetection = (
 //   } as Detection;
 // };
 
+const getComponentTypeOfPCMSType = (type: string) => {
+  switch (type) {
+    case 'HEXSS':
+    case 'DRUM':
+    case 'FILTER':
+    case 'STACK':
+    case 'REACTOR':
+    case 'COLTOP':
+    case 'COLMID':
+    case 'COLBTM':
+      return EquipmentComponentType.SHELL;
+    case 'HEADER BOX':
+      return EquipmentComponentType.HEAD;
+    case 'TUBE':
+    case 'CONTUBE':
+    case 'RADTUBE':
+      return EquipmentComponentType.BUNDLE;
+    default:
+      return undefined;
+  }
+};
+
 const mergeDetections = (
   equipmentStateDetections: Detection[] = [],
   scannerDetections: ScannerDetection[] = [],
@@ -275,13 +299,8 @@ const getEquipmentComponents = (
   } else if (pcmsComponents) {
     components = pcmsComponents
       .map((pcmsComponent) => {
-        const pcmsType =
-          pcmsComponent.metadata?.['Component Type(API)'].toLowerCase();
-        const componentType =
-          pcmsType &&
-          Object.values(EquipmentComponentType).find((item) =>
-            pcmsType.includes(item)
-          );
+        const pcmsType = pcmsComponent.metadata?.[PCMS_TYPE_KEY];
+        const componentType = pcmsType && getComponentTypeOfPCMSType(pcmsType);
 
         if (!componentType) {
           console.error(`Component type ${pcmsType} can't be defined`);

@@ -1,6 +1,6 @@
 import { CogniteClient } from '@cognite/sdk';
 import { DataSetId, EquipmentListItem, EquipmentStatus, Facility } from 'types';
-import { getEquipmentType } from 'utils';
+import { getEquipmentType, isValidEquipment } from 'utils';
 import config from 'utils/config';
 
 import { getUnitAsset } from '.';
@@ -23,8 +23,8 @@ export const getEquipmentList = async (
   });
 
   equipmentList = pcmsEquipmentIds
-    .filter((item) => /^\d+-/.test(item))
-    .filter((item, i, self) => self.indexOf(item) === i)
+    .filter(isValidEquipment)
+    .filter((id, i, self) => self.indexOf(id) === i)
     .map((id) => {
       const equipmentState = equipmentStates[id];
       const progress = equipmentState?.progress ?? 0;

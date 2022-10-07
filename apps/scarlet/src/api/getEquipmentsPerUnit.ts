@@ -1,5 +1,6 @@
 import { CogniteClient } from '@cognite/sdk';
 import { DataSetId } from 'types';
+import { isValidEquipment } from 'utils';
 
 export const getEquipmentsPerUnit = async (
   client: CogniteClient,
@@ -26,7 +27,7 @@ export const getEquipmentsPerUnit = async (
   do {
     if (next) list = await next(); // eslint-disable-line no-await-in-loop
     list.items
-      .filter((item) => /^\d+-/.test(item.name))
+      .filter((item) => isValidEquipment(item.name))
       .forEach((item) => {
         if (!item.parentExternalId) return;
         const key = item.parentExternalId.replace('Equipments_', '');

@@ -8,8 +8,11 @@ export const getEquipmentType = (equipmentId: string) => {
     case '07':
     case '41':
       return EquipmentType.EXCHANGER;
-    default:
+    case '35':
+    case '95':
       return EquipmentType.VESSEL;
+    default:
+      return undefined;
   }
 };
 
