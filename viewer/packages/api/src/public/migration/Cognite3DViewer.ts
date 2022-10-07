@@ -39,7 +39,7 @@ import {
   Cognite3DViewerOptions,
   Intersection,
   CadModelBudget,
-  CadIntersection,
+  CadIntersection
 } from './types';
 import { RevealManager } from '../RevealManager';
 import { RevealOptions } from '../types';
