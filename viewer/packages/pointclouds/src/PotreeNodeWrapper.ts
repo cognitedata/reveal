@@ -7,7 +7,7 @@ import * as THREE from 'three';
 export type PointClassification = { [pointClass: number]: { x: number; y: number; z: number; w: number } };
 
 import { PointCloudOctree, PickPoint } from './potree-three-loader';
-import { PotreePointColorType, PotreePointShape, IClassification } from '@reveal/rendering';
+import { PointColorType, PointShape, IClassification } from '@reveal/rendering';
 import { WellKnownAsprsPointClassCodes } from './types';
 
 import { createPointClassKey } from './createPointClassKey';
@@ -30,8 +30,8 @@ export class PotreeNodeWrapper {
   constructor(octree: PointCloudOctree, modelIdentifier: symbol) {
     this.octree = octree;
     this.pointSize = 2;
-    this.pointColorType = PotreePointColorType.Rgb;
-    this.pointShape = PotreePointShape.Circle;
+    this.pointColorType = PointColorType.Rgb;
+    this.pointShape = PointShape.Circle;
     this._classification = octree.material.classification;
     this._modelIdentifier = modelIdentifier;
   }
@@ -61,18 +61,18 @@ export class PotreeNodeWrapper {
     return new THREE.Box3().setFromPoints([min, max]);
   }
 
-  get pointColorType(): PotreePointColorType {
+  get pointColorType(): PointColorType {
     return this.octree.material.pointColorType;
   }
-  set pointColorType(type: PotreePointColorType) {
+  set pointColorType(type: PointColorType) {
     this.octree.material.pointColorType = type;
     this._needsRedraw = true;
   }
 
-  get pointShape(): PotreePointShape {
+  get pointShape(): PointShape {
     return this.octree.material.shape;
   }
-  set pointShape(shape: PotreePointShape) {
+  set pointShape(shape: PointShape) {
     this.octree.material.shape = shape;
     this._needsRedraw = true;
   }

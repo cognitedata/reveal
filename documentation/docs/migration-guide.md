@@ -12,5 +12,10 @@ This document is an overview of some important differences between Reveal 3.x an
 ## Potree prefix removed
 
 In Reveal 3, several symbols has `Potree`-prefix which now has been replaced. This includes:
-- `PotreeClassification` is now named `PointClassification`
-- 
+
+- `PotreePointColorType` is now called `PointColorType`
+- `PotreePointShape` is now called `PointShape`
+- `PotreePointSizeType` is now called `PointSizeType`
+- `PotreeClassification` is now called `PointClassification`
+
+The above changes are simple renames and migrating these should be very easy.
