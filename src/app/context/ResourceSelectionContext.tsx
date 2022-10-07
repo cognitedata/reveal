@@ -102,8 +102,11 @@ export const useResourceFilter = (type: ResourceType) => {
     case 'threeD': {
       return {};
     }
+    case 'document': {
+      return {};
+    }
     default:
-      throw new Error('Unknown sdk type');
+      throw new Error('Unknown sdk type-filter');
   }
 };
 export const useSetResourceFilter = (type: ResourceType) => {
@@ -125,7 +128,7 @@ export const useSetResourceFilter = (type: ResourceType) => {
       return observer.setTimeseriesFilter;
     }
     default:
-      throw new Error('Unknown sdk type');
+      throw new Error('Unknown sdk type-setFilter');
   }
 };
 

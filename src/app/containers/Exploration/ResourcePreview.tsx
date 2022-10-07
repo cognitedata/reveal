@@ -27,6 +27,8 @@ export default function ResourcePreview({
       return <AssetPreview assetId={id} actions={closePreviewButton} />;
     case 'file':
       return <FilePreview fileId={id} actions={closePreviewButton} />;
+    case 'document': // At some point we might want to have documents its own preview
+      return <FilePreview fileId={id} actions={closePreviewButton} />;
     case 'sequence':
       return <SequencePreview sequenceId={id} actions={closePreviewButton} />;
     case 'timeSeries':

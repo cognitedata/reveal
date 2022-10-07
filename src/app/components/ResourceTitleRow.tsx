@@ -5,7 +5,7 @@ import { createLink } from '@cognite/cdf-utilities';
 import { Icon, Button, Colors } from '@cognite/cogs.js';
 
 import {
-  convertResourceThreeDWrapper,
+  convertResourceTypeWrapper,
   ResourceItem,
   ResourceIcons,
 } from '@cognite/data-exploration';
@@ -39,7 +39,7 @@ export default function ResourceTitleRow({
   isBackButtonAvailable = true,
 }: Props) {
   const { data, isFetched } = useCdfItem<{ name?: string }>(
-    convertResourceThreeDWrapper(type),
+    convertResourceTypeWrapper(type),
     {
       id,
     }

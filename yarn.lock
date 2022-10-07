@@ -1239,16 +1239,17 @@
     tippy.js "6.2.0"
     ts-dedent "^2.2.0"
 
-"@cognite/data-exploration@^4.29.2":
-  version "4.29.2"
-  resolved "https://registry.yarnpkg.com/@cognite/data-exploration/-/data-exploration-4.29.2.tgz#73d8a08b8295e9cceaf49609ee2f9b54b8b8e3b4"
-  integrity sha512-GpvfqmmKGy/0dVczLzpRvALo9zCzeNNX/UVh8JNPFcsT48cHnvdsjk/4GORBQcomA4q2duyPqbTRTUDxsvehgQ==
+"@cognite/data-exploration@4.30.0":
+  version "4.30.0"
+  resolved "https://registry.yarnpkg.com/@cognite/data-exploration/-/data-exploration-4.30.0.tgz#100380f546f34d5304136cf49b99f494b2fd4728"
+  integrity sha512-w7iNlVB1CvB019IGLWvLy1rqKbaa1/NEZc9Ly134j9Rbmg3YZ0WK3YGq4P3FKJUdxsYHwN8pvJeEyE9Z7VDn2g==
   dependencies:
     "@babel/runtime" "^7.12.5"
     "@cognite/annotations" "^1.1.0"
     "@cognite/cdf-utilities" "^0.14.4"
     "@cognite/cogs.js" "^7.13.2"
     "@cognite/gcs-browser-upload" cognitedata/gcs-browser-upload#mn/temporary-azure-fix
+    "@cognite/react-document-search" "^0.2.0"
     "@cognite/react-document-table" "^1.22.2"
     "@cognite/react-feature-flags" "^1.0.1"
     "@cognite/react-picture-annotation" "3.0.1"
@@ -1313,6 +1314,13 @@
   dependencies:
     mixpanel-browser "2.41.0"
     react "17.0.2"
+
+"@cognite/react-document-search@^0.2.0":
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/@cognite/react-document-search/-/react-document-search-0.2.0.tgz#abd4cd7301dbbf54647265abddb554fc447faa96"
+  integrity sha512-yWMdOWxA93uGZAmF67gJSgvJGPtDAr9GuIlB5ctV3LacX2qD2jgR2PZ7LV5/F+q+ato4lZ4K+hExZbibuPPwIg==
+  dependencies:
+    lodash "4.17.21"
 
 "@cognite/react-document-table@^1.22.2":
   version "1.24.0"

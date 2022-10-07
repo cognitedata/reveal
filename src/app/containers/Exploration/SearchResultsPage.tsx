@@ -6,6 +6,7 @@ import {
   SequenceSearchResults,
   TimeseriesSearchResults,
   EventSearchResults,
+  DocumentSearchResults,
   ResourceTypeTabs,
   getTitle,
   ResourceType,
@@ -22,6 +23,7 @@ import ResourceSelectionContext, {
 import { useDebounce } from 'use-debounce';
 import styled from 'styled-components/macro';
 import ResourcePreview from 'app/containers/Exploration/ResourcePreview';
+import { useDocumentFilters } from '@cognite/react-document-search';
 import {
   useQueryString,
   useQueryStringArray,
@@ -36,7 +38,7 @@ import { PageTitle } from '@cognite/cdf-utilities';
 import { ThreeDSearchResults } from 'app/containers/ThreeD/ThreeDSearchResults';
 import FilterToggleButton from './FilterToggleButton';
 import { ExplorationFilterToggle } from 'app/containers/Exploration/ExplorationFilterToggle';
-import { useFlagFilter } from 'app/hooks/flags/useFlagFilters';
+import { useFlagFilter, useFlagDocumentSearch } from 'app/hooks/flags';
 import { SearchFilters } from 'app/containers/SearchResults/SearchFilters';
 import {
   useAssetFilters,
@@ -51,7 +53,9 @@ const getPageTitle = (query: string, resourceType: ResourceType): string => {
 };
 
 function SearchPage() {
+  // Adding the flag to manually enable 'Documents' tab to appear.
   const showNewFilter = useFlagFilter();
+  const isDocumentEnabled = useFlagDocumentSearch();
 
   const [currentResourceType, setCurrentResourceType] =
     useCurrentResourceType();
@@ -60,6 +64,7 @@ function SearchPage() {
   const [showFilter, setShowFilter] = useState(false);
   const [query] = useQueryString(SEARCH_KEY);
   const [debouncedQuery] = useDebounce(query, 100);
+  const { setAppliedFilters } = useDocumentFilters();
 
   const editable = useResourceEditable();
 
@@ -103,6 +108,14 @@ function SearchPage() {
   const isTimeseriesFilterApplied = Object.keys(timeseriesFilter).length > 0;
   const isFileFilterApplied = Object.keys(fileFilter).length > 0;
   const isSequenceFilterApplied = Object.keys(sequenceFilter).length > 0;
+
+  useEffect(() => {
+    setAppliedFilters({
+      search: {
+        query: query || '',
+      },
+    });
+  }, [query, setAppliedFilters]);
 
   useEffect(() => {
     if (currentResourceType === 'asset' && isAssetFilterApplied) {
@@ -222,6 +235,7 @@ function SearchPage() {
           query={query}
           currentResourceType={currentResourceType}
           setCurrentResourceType={setCurrentResourceType}
+          isDocumentEnabled={isDocumentEnabled}
         />
       </TabsContainer>
       <MainContainer>
@@ -287,6 +301,15 @@ function SearchPage() {
                       openPreview(item.id !== activeId ? item.id : undefined)
                     }
                     {...commonProps}
+                  />
+                )}
+                {currentResourceType === 'document' && (
+                  <DocumentSearchResults
+                    query={query}
+                    filter={fileFilter}
+                    onClick={(item: ResourceItem) => {
+                      openPreview(item.id !== activeId ? item.id : undefined);
+                    }}
                   />
                 )}
                 {currentResourceType === 'sequence' && (
