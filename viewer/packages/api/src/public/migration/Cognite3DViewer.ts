@@ -83,14 +83,6 @@ export class Cognite3DViewer {
   }
 
   /**
-   * For now it just always returns true.
-   * @see Https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/getContext#Browser_compatibility.
-   */
-  static isBrowserSupported(): true {
-    return true;
-  }
-
-  /**
    * The DOM element the viewer will insert its rendering canvas into.
    * The DOM element can be specified in the options when the viewer is created.
    * If not specified, the DOM element will be created automatically.
