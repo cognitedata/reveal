@@ -14,13 +14,7 @@ import {
   WebGLRenderer,
   WebGLRenderTarget
 } from 'three';
-import {
-  ClipMode,
-  OctreeMaterialParams,
-  PointCloudMaterial,
-  PotreePointColorType,
-  COLOR_BLACK
-} from '@reveal/rendering';
+import { ClipMode, OctreeMaterialParams, PointCloudMaterial, PointColorType, COLOR_BLACK } from '@reveal/rendering';
 import { PointCloudOctree } from './PointCloudOctree';
 import { IPointCloudTreeNode } from './IPointCloudTreeNode';
 import { PickPoint, PointCloudHit } from '../types/types';
@@ -372,7 +366,7 @@ export class PointCloudOctreePickerHelper {
     scene.matrixWorldAutoUpdate = false;
 
     const material = new PointCloudMaterial();
-    material.pointColorType = PotreePointColorType.PointIndex;
+    material.pointColorType = PointColorType.PointIndex;
 
     return {
       renderTarget: PointCloudOctreePickerHelper.makePickRenderTarget(),
