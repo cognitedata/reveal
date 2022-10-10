@@ -282,8 +282,12 @@ const DataSetsList = (): JSX.Element => {
         sourceSuggestions={getSourcesList()}
         handleCloseModal={() => handleModalClose()}
       />
-      <Flex alignItems="flex-start" justifyContent="space-between">
-        <TableFilter labelOptions={labels} />
+      <Flex alignItems="center" justifyContent="space-between">
+        <TableFilter
+          filteredCount={filteredTableData.length}
+          labelOptions={labels}
+          totalCount={dataSetsWithExtpipes.length}
+        />
         <Flex alignItems="center" gap={8}>
           <Checkbox
             onChange={(e) => setShowArchived(e.target.checked)}

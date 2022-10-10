@@ -23,11 +23,15 @@ const GOVERNANCE_STATUSES = ['governed', 'ungoverned', 'not-defined'] as const;
 export type GovernanceStatus = typeof GOVERNANCE_STATUSES[number];
 
 type TableFilterProps = {
+  filteredCount?: number;
   labelOptions: string[];
+  totalCount?: number;
 };
 
 const TableFilter = ({
+  filteredCount,
   labelOptions,
+  totalCount,
 }: PropsWithChildren<TableFilterProps>): JSX.Element => {
   const { t } = useTranslation();
 
@@ -112,7 +116,7 @@ const TableFilter = ({
 
   return (
     <Flex direction="column" gap={8}>
-      <Flex gap={8}>
+      <Flex alignItems="center" gap={8}>
         <StyledInputContainer>
           <Input
             prefix={<Icon type="Search" />}
@@ -206,36 +210,46 @@ const TableFilter = ({
             {t('filter')}
           </Button>
         </Dropdown>
+        {filteredCount !== undefined && totalCount !== undefined && (
+          <StyledItemCount level={2}>
+            {totalCount > filteredCount
+              ? t('filtered-data-set-count', {
+                  filteredCount: filteredCount,
+                  count: totalCount,
+                })
+              : t('data-set-count', {
+                  count: totalCount,
+                })}
+          </StyledItemCount>
+        )}
       </Flex>
-      <Flex>
-        <AppliedFilters
-          items={[
-            ...(!!labelFilter?.length
-              ? [
-                  {
-                    key: 'labels',
-                    label: t('label-with-colon', {
-                      labels: labelFilter?.join(', '),
-                    }),
-                    onClick: handleClearLabelFilter,
-                  },
-                ]
-              : []),
-            ...(!!governanceFilter?.length
-              ? [
-                  {
-                    key: 'governance',
-                    label: t('governance-status-with-colon', {
-                      statuses: governanceFilter?.join(', '),
-                    }),
-                    onClick: handleClearGovernanceFilter,
-                  },
-                ]
-              : []),
-          ]}
-          onClear={handleClear}
-        />
-      </Flex>
+      <AppliedFilters
+        items={[
+          ...(!!labelFilter?.length
+            ? [
+                {
+                  key: 'labels',
+                  label: t('label-with-colon', {
+                    labels: labelFilter?.join(', '),
+                  }),
+                  onClick: handleClearLabelFilter,
+                },
+              ]
+            : []),
+          ...(!!governanceFilter?.length
+            ? [
+                {
+                  key: 'governance',
+                  label: t('governance-status-with-colon', {
+                    statuses: governanceFilter?.join(', '),
+                  }),
+                  onClick: handleClearGovernanceFilter,
+                },
+              ]
+            : []),
+        ]}
+        onClear={handleClear}
+      />
     </Flex>
   );
 };
@@ -276,6 +290,10 @@ const StyledCheckboxWrapper = styled(Flex)`
   flex-direction: column;
   gap: 16px;
   margin-top: 10px;
+`;
+
+const StyledItemCount = styled(Body)`
+  color: ${Colors['text-icon--muted']};
 `;
 
 export default TableFilter;
