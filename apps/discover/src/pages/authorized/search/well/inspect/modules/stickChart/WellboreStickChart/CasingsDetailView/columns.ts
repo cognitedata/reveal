@@ -36,12 +36,12 @@ export const getCasingsDetailViewColumns = (
       width: 'auto',
     },
     {
-      Header: `OD Min (${CASING_ASSEMBLY_DIAMETER_UNIT})`,
+      Header: `OD (${CASING_ASSEMBLY_DIAMETER_UNIT})`,
       accessor: 'minOutsideDiameter.value',
       width: 'auto',
     },
     {
-      Header: `ID Min (${CASING_ASSEMBLY_DIAMETER_UNIT})`,
+      Header: `ID (${CASING_ASSEMBLY_DIAMETER_UNIT})`,
       accessor: 'minInsideDiameter.value',
       width: 'auto',
     },
