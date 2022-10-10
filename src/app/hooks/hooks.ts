@@ -1,3 +1,4 @@
+import React from 'react';
 import qs from 'query-string';
 import {
   useParams,
@@ -13,6 +14,7 @@ import { useQuery } from 'react-query';
 
 import { trackUsage } from 'app/utils/Metrics';
 import { SEARCH_KEY } from '../utils/constants';
+import { FILTER } from 'app/store/filter/constants';
 
 const opts: { arrayFormat: 'comma' } = { arrayFormat: 'comma' };
 
@@ -85,18 +87,27 @@ export const useCurrentResourceType = (): [
   const { resourceType = 'asset' } = useParams<{
     resourceType: ResourceType;
   }>();
-  const setCurrentResourceType = (newResourceType: ResourceType) => {
-    const query = qs.parse(location.search, opts)[SEARCH_KEY];
-    navigate(
-      createLink(
-        `/explore/search/${newResourceType}`,
-        {
-          [SEARCH_KEY]: query,
-        },
+  const setCurrentResourceType = React.useCallback(
+    (newResourceType: ResourceType) => {
+      const { [SEARCH_KEY]: query, [FILTER]: filter } = qs.parse(
+        location.search,
         opts
-      )
-    );
-  };
+      );
+
+      navigate(
+        createLink(
+          `/explore/search/${newResourceType}`,
+          {
+            [SEARCH_KEY]: query,
+            [FILTER]: filter,
+          },
+          opts
+        )
+      );
+    },
+    [location.search, navigate]
+  );
+
   return [resourceType, setCurrentResourceType];
 };
 
