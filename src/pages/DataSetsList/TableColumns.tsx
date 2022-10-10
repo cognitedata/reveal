@@ -83,7 +83,7 @@ export const useTableColumns = () => {
       dataIndex: 'labels',
       key: 'labels',
       render: (field: []) => (
-        <Flex gap={8}>
+        <Flex gap={8} wrap="wrap">
           {field?.length ? (
             field.map((label: string) => <Label size="medium">{label}</Label>)
           ) : (
