@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { generatePath, useHistory, useRouteMatch } from 'react-router-dom';
+import { generatePath, useHistory, useLocation } from 'react-router-dom';
 import { Dropdown, Icon, Menu, TopBar } from '@cognite/cogs.js';
 import {
   LogoutButton,
@@ -19,9 +19,8 @@ import {
 export const MenuBar = () => {
   const { authState } = useAuthenticatedAuthContext();
   const history = useHistory();
-  const { path } = useRouteMatch({ path: history.location.pathname }) ?? {
-    path: null,
-  };
+  const { pathname } = useLocation();
+
   const [visible, setVisible] = useState<boolean>(false);
   const { data: allPriceAreas = [] } = useFetchPriceAreas();
 
@@ -54,7 +53,7 @@ export const MenuBar = () => {
               <Menu.Header>Price Area</Menu.Header>
               {allPriceAreas.map((pricearea) => (
                 <Menu.Item
-                  selected={path?.includes(
+                  selected={pathname.includes(
                     `${PAGES.PORTFOLIO}/${pricearea.externalId}`
                   )}
                   key={pricearea.externalId}
@@ -66,7 +65,9 @@ export const MenuBar = () => {
                     );
                   }}
                   appendIcon={
-                    path?.includes(`${PAGES.PORTFOLIO}/${pricearea.externalId}`)
+                    pathname.includes(
+                      `${PAGES.PORTFOLIO}/${pricearea.externalId}`
+                    )
                       ? 'Checkmark'
                       : undefined
                   }
@@ -81,24 +82,24 @@ export const MenuBar = () => {
             links={[
               {
                 name: 'Portfolio',
-                isActive: path?.includes(PAGES.PORTFOLIO),
+                isActive: pathname.includes(PAGES.PORTFOLIO),
                 onClick: () => toggleDropdown(),
               },
               {
                 name: 'Workflows',
-                isActive: path === PAGES.WORKFLOWS,
+                isActive: pathname.includes(PAGES.WORKFLOWS),
                 onClick: () => history.push(PAGES.WORKFLOWS),
               },
               ...(authState.email?.includes('@cognite')
                 ? [
                     {
                       name: 'Workflow Schemas',
-                      isActive: path === PAGES.WORKFLOW_SCHEMAS,
+                      isActive: pathname.includes(PAGES.WORKFLOW_SCHEMAS),
                       onClick: () => history.push(PAGES.WORKFLOW_SCHEMAS),
                     },
                     {
                       name: 'Monitoring',
-                      isActive: path === PAGES.MONITORING,
+                      isActive: pathname.includes(PAGES.MONITORING),
                       onClick: () => history.push(PAGES.MONITORING),
                     },
                   ]
