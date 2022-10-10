@@ -24,6 +24,7 @@ import theme from './styles/theme';
 import rootStyles from './styles/index.css';
 import { RecoilRoot } from 'recoil';
 import { RecoilURLSyncJSON } from 'recoil-sync';
+import { RecoilDevTools } from 'recoil-gear';
 
 export default () => {
   const env = getEnv();
@@ -81,6 +82,7 @@ export default () => {
                             <Route path="/:tenant/*" element={<RootApp />} />
                           </Routes>
                         </BrowserRouter>
+                        <RecoilDevTools />
                       </RecoilURLSyncJSON>
                     </RecoilRoot>
                   </FlagProvider>

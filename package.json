@@ -39,6 +39,7 @@
     "react-window": "^1.8.6",
     "react-window-infinite-loader": "^1.0.7",
     "recoil": "^0.7.5",
+    "recoil-gear": "^1.0.2",
     "recoil-sync": "^0.1.1",
     "single-spa": "^5.8.3",
     "single-spa-react": "^4.1.1",

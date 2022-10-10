@@ -2,7 +2,7 @@ import { globalFilterAtom } from 'app/store/filter';
 import { GlobalFilter, GlobalFilterKeys } from 'app/store/filter/types';
 import { DefaultValue, GetRecoilValue, SetRecoilState } from 'recoil';
 
-const updateGlobalFilters = <T>(
+const updateFilters = <T>(
   currentFilters: GlobalFilter,
   key: GlobalFilterKeys,
   newValue: T
@@ -19,6 +19,16 @@ const updateGlobalFilters = <T>(
   };
 };
 
+const clearFilters = (currentFilters: GlobalFilter, key: GlobalFilterKeys) => {
+  return {
+    ...currentFilters,
+    filters: {
+      ...currentFilters.filters,
+      [key]: {},
+    },
+  };
+};
+
 export const defaultFilterSetter =
   (id: GlobalFilterKeys) =>
   <T>(
@@ -28,11 +38,8 @@ export const defaultFilterSetter =
     const currentFilters = get(globalFilterAtom);
 
     if (newValue instanceof DefaultValue) {
-      return set(globalFilterAtom, updateGlobalFilters(currentFilters, id, {}));
+      return set(globalFilterAtom, clearFilters(currentFilters, id));
     }
 
-    return set(
-      globalFilterAtom,
-      updateGlobalFilters(currentFilters, id, newValue)
-    );
+    return set(globalFilterAtom, updateFilters(currentFilters, id, newValue));
   };

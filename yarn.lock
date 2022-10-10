@@ -12443,6 +12443,11 @@ readdirp@~3.6.0:
   dependencies:
     picomatch "^2.2.1"
 
+recoil-gear@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/recoil-gear/-/recoil-gear-1.0.2.tgz#41a9ded962393621b9d55b025a3cf439380a3955"
+  integrity sha512-FuSZ6JdarNO/Cx65UHPuxO0wwQoGH5J8O3+Uza2PQrdPJ1+xHq1RAxAKau97Pq4q4T/8HYCziTlrGvEE/wQMbQ==
+
 recoil-sync@^0.1.1:
   version "0.1.1"
   resolved "https://registry.yarnpkg.com/recoil-sync/-/recoil-sync-0.1.1.tgz#c20df122077b45c7b3dba9ed30f7f03b15f8b79c"
