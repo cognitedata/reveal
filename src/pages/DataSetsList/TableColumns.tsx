@@ -1,12 +1,12 @@
 import { Flex, Icon, Label } from '@cognite/cogs.js';
 import { stringCompare } from 'utils/shared';
-import { ApprovedDot, NotSetDot, UnApprovedDot } from 'utils/styledComponents';
 import { getItemFromStorage } from 'utils/localStorage';
 import { DataSet, DataSetV3, Extpipe } from 'utils/types';
 import isArray from 'lodash/isArray';
 import { useTranslation } from 'common/i18n';
 import DataSetName from 'components/data-sets-list/data-set-name';
 import ExtractionPipelineName from 'components/data-sets-list/extraction-pipeline-name';
+import GovernanceStatus from 'components/data-sets-list/governance-status';
 
 export type DataSetRow = {
   key: number;
@@ -95,25 +95,9 @@ export const useTableColumns = () => {
     {
       title: t('governance-status'),
       key: 'quality',
-      render: (row: DataSetRow) => (
-        <div style={{ display: 'inline-box' }}>
-          {row.quality === undefined && (
-            <span>
-              <NotSetDot /> {t('not-defined')}
-            </span>
-          )}
-          {row.quality && (
-            <span>
-              <ApprovedDot /> {t('governed')}
-            </span>
-          )}
-          {row.quality === false && (
-            <span>
-              <UnApprovedDot /> {t('ungoverned')}
-            </span>
-          )}
-        </div>
-      ),
+      render: (row: DataSetRow) => {
+        return <GovernanceStatus isGoverned={row.quality} />;
+      },
     },
   ];
 
