@@ -77,6 +77,7 @@ export const PriceArea = () => {
       <PortfolioHeader bidProcessResult={bidProcessResult} />
       <Container>
         <Sidebar
+          key={bidProcessResult.priceAreaName}
           bidProcessResult={bidProcessResult}
           opened={openedSidePanel}
           setOpened={() => {
