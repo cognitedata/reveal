@@ -23,6 +23,18 @@ jest.mock('domain/wells/well/internal/hooks/useWellInspectWells', () => ({
           },
         ],
       },
+      {
+        id: '1',
+        name: 'WellB',
+        wellbores: [
+          {
+            id: '2',
+            name: '',
+            description: 'WellboreDescriptionB',
+            title: 'WellboreDescription WellboreB',
+          },
+        ],
+      },
     ],
   }),
 }));
@@ -40,7 +52,10 @@ describe('Well Inspect Sidebar Content', () => {
     const well = await screen.findByText('WellA');
     expect(well).toBeInTheDocument();
 
-    const wellbore = await screen.findByTitle('WellboreDescription WellboreA');
-    expect(wellbore).toBeInTheDocument();
+    expect(screen.getByTitle('WellboreA')).toBeInTheDocument();
+
+    expect(
+      screen.getByTitle('WellboreDescription WellboreB')
+    ).toBeInTheDocument();
   });
 });

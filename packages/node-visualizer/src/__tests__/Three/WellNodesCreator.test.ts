@@ -27,7 +27,7 @@ describe('WellNodesCreator should work as designed', () => {
     const testData = new BPData(data as any);
     const wellNodes = WellNodesCreator.create(testData);
     expect(wellNodes?.length).toBe(1);
-    expect(wellNodes?.[0].name).toBe('Well OPH23672416');
+    expect(wellNodes?.[0].name).toBe('OPH23672416');
     // should have one trajectory
     expect(wellNodes?.[0].children.length).toBe(1);
   });
@@ -78,11 +78,7 @@ describe('WellNodesCreator should work as designed', () => {
       undefined,
       'ft'
     );
-    expect(viewInfo.addValue).toHaveBeenNthCalledWith(
-      1,
-      'Well',
-      'Well OPH23672416'
-    );
+    expect(viewInfo.addValue).toHaveBeenNthCalledWith(1, 'Well', 'OPH23672416');
     expect(viewInfo.addValue).toHaveBeenNthCalledWith(
       2,
       'Trajectory',

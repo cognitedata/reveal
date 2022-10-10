@@ -83,8 +83,9 @@ export const SidebarContent: React.FC = () => {
 
           <BlockContent>
             {well.wellbores.map((wellbore) => {
-              const { title, color, id } = wellbore;
+              const { name, title, color, id } = wellbore;
               const wellboreHasErrors = !isEmpty(errors[id]);
+              const wellboreName = name || title;
 
               return (
                 <BlockContentItem
@@ -101,7 +102,7 @@ export const SidebarContent: React.FC = () => {
                     style={{ width: '100%' }}
                   >
                     <CheckboxContent>
-                      <MiddleEllipsis value={title} />
+                      <MiddleEllipsis value={wellboreName} />
                     </CheckboxContent>
                   </Checkbox>
                   {wellboreHasErrors && (
