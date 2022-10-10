@@ -35,7 +35,7 @@ jobs:
         with:
           token: ${{ secrets.NPM_PUBLISH_TOKEN }}
           tag: latest
-          access: restricted
+          access: public
           check-version: true
           package: ./dist/apps/platypus-cdf-cli/package.json
 
