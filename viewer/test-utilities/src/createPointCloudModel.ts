@@ -27,7 +27,7 @@ export function createPointCloudModel(modelId: number, revisionId: number): Cogn
   return pointCloudModel;
 }
 
-export function createPointCloudNode() {
+export function createPointCloudNode(): PointCloudNode {
   const modelDataProvider = new LocalModelDataProvider();
   const potreeInstance = new Potree(modelDataProvider);
 
