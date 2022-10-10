@@ -60,18 +60,18 @@ export interface DoglegSeverityUnitInternal
   distanceUnit: Distance;
 }
 
-export interface TrueVerticalDepthsDataLayer extends TrueVerticalDepths {
+export interface TvdDataWithMdIndex extends TrueVerticalDepths {
   mdTvdMap: Record<number, number>;
 }
 
 export type KeyedTvdData = Record<
   WellboreInternal['matchingId'],
-  TrueVerticalDepthsDataLayer
+  TvdDataWithMdIndex
 >;
 
 export type GroupedTvdData = Record<
   WellboreInternal['matchingId'],
-  TrueVerticalDepthsDataLayer[]
+  TvdDataWithMdIndex[]
 >;
 
 export interface TrajectoryChartDataList {

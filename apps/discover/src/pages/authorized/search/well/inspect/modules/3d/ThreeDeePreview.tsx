@@ -1,7 +1,7 @@
 import { useCasingSchematicsQuery } from 'domain/wells/casings/internal/queries/useCasingSchematicsQuery';
 import { sortCasingAssembliesByMDBase } from 'domain/wells/casings/internal/transformers/sortCasingAssembliesByMDBase';
 import { useDepthMeasurementsForWellLogs } from 'domain/wells/measurements/internal/hooks/useDepthMeasurementsForWellLogs';
-import { useNdsWithTvdData } from 'domain/wells/nds/internal/hooks/useNdsWithTvdData';
+import { useNdsEventsQuery } from 'domain/wells/nds/internal/queries/useNdsEventsQuery';
 import { useNptEventsQuery } from 'domain/wells/npt/internal/queries/useNptEventsQuery';
 import { useTrajectoriesWithData } from 'domain/wells/trajectory/internal/hooks/useTrajectoriesWithData';
 import { useWellInspectSelectedWells } from 'domain/wells/well/internal/hooks/useWellInspectSelectedWells';
@@ -29,7 +29,7 @@ const ThreeDeePreview: React.FC<Props> = ({ wellboreIds }: Props) => {
 
   const { data: casingData, isLoading: casingLoading } =
     useCasingSchematicsQuery({ wellboreIds });
-  const { data: ndsEvents, isLoading: ndsLoading } = useNdsWithTvdData({
+  const { data: ndsEvents, isLoading: ndsLoading } = useNdsEventsQuery({
     wellboreIds,
   });
   const { data: nptEvents, isLoading: nptLoading } = useNptEventsQuery({

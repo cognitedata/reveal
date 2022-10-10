@@ -1,6 +1,6 @@
 import { ConvertedDistance } from 'utils/units/constants';
 
-import { Nds, NdsAggregate } from '@cognite/sdk-wells';
+import { Distance, Nds, NdsAggregate } from '@cognite/sdk-wells';
 
 export interface NdsInternal
   extends Omit<Nds, 'holeDiameter' | 'holeStart' | 'holeEnd'> {
@@ -8,6 +8,11 @@ export interface NdsInternal
   holeStart?: ConvertedDistance;
   holeEnd?: ConvertedDistance;
   ndsCodeColor: string;
+}
+
+export interface NdsWithTvd extends Nds {
+  holeStartTvd?: Distance;
+  holeEndTvd?: Distance;
 }
 
 export interface NdsInternalWithTvd extends NdsInternal {

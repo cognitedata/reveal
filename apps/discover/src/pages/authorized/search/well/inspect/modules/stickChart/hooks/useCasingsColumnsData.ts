@@ -1,4 +1,4 @@
-import { useCasingsWithTvdData } from 'domain/wells/casings/internal/hooks/useCasingsWithTvdData';
+import { useCasingSchematicsWithTvdDataQuery } from 'domain/wells/casings/internal/queries/useCasingSchematicsWithTvdDataQuery';
 import { groupByWellbore } from 'domain/wells/wellbore/internal/transformers/groupByWellbore';
 
 import isEmpty from 'lodash/isEmpty';
@@ -13,12 +13,12 @@ import { adaptToCasingsColumnData } from '../utils/adaptToCasingsColumnData';
 export const useCasingsColumnsData = () => {
   const wellboreIds = useWellInspectWellboreIds();
 
-  const { data, isLoading } = useCasingsWithTvdData({
+  const { data, isLoading } = useCasingSchematicsWithTvdDataQuery({
     wellboreIds,
   });
 
   return useDeepMemo(() => {
-    if (isEmpty(data)) {
+    if (!data || isEmpty(data)) {
       return {
         data: EMPTY_OBJECT as Record<string, CasingAssemblyView[]>,
         isLoading,

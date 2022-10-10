@@ -1,4 +1,4 @@
-import { useNdsWithTvdData } from 'domain/wells/nds/internal/hooks/useNdsWithTvdData';
+import { useNdsWithTvdDataQuery } from 'domain/wells/nds/internal/queries/useNdsWithTvdDataQuery';
 import { NdsInternalWithTvd } from 'domain/wells/nds/internal/types';
 import { groupByWellbore } from 'domain/wells/wellbore/internal/transformers/groupByWellbore';
 
@@ -11,10 +11,10 @@ import { useWellInspectWellboreIds } from 'modules/wellInspect/selectors';
 export const useNdsColumnsData = () => {
   const wellboreIds = useWellInspectWellboreIds();
 
-  const { data, isLoading } = useNdsWithTvdData({ wellboreIds });
+  const { data, isLoading } = useNdsWithTvdDataQuery({ wellboreIds });
 
   return useDeepMemo(() => {
-    if (isEmpty(data)) {
+    if (!data || isEmpty(data)) {
       return {
         data: EMPTY_OBJECT as Record<string, NdsInternalWithTvd[]>,
         isLoading,

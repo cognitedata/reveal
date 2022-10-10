@@ -66,8 +66,7 @@ export const DepthIndicators = React.forwardRef<
         return [
           ...depthIndicators,
           <DepthIndicator
-            // eslint-disable-next-line react/no-array-index-key
-            key={`casing-assembly-${index}`}
+            key={`casing-assembly-${depthTop.value}-${depthBase.value}`}
             casingAssembly={casingAssembly}
             depthTopScaled={depthTopScaled}
             depthBase={depthBase.value}

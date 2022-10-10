@@ -1,8 +1,8 @@
 import { toIdentifierWithMatchingId } from 'domain/wells/utils/toIdentifierWithMatchingId';
 import { groupByWellbore } from 'domain/wells/wellbore/internal/transformers/groupByWellbore';
 
-import compact from 'lodash/compact';
 import { toDistanceUnit } from 'utils/units/toDistanceUnit';
+import { withoutNil } from 'utils/withoutNil';
 
 import {
   DistanceUnitEnum,
@@ -12,17 +12,15 @@ import {
 
 import { UserPreferredUnit } from 'constants/units';
 
-import { NptInternal } from '../../internal/types';
-
 export const getInterpolateRequests = (
-  nptData: Npt[] | NptInternal[],
+  nptData: Npt[],
   userPreferredUnit?: UserPreferredUnit
 ): TrajectoryInterpolationRequest[] => {
   const groupedNptData = groupByWellbore(nptData);
 
   return Object.keys(groupedNptData).map((wellboreMatchingId) => {
     const npt = groupedNptData[wellboreMatchingId];
-    const measuredDepths = compact(
+    const measuredDepths = withoutNil(
       npt.map(({ measuredDepth }) => measuredDepth?.value)
     );
     const nptWithMeasurement = npt.find(({ measuredDepth }) => measuredDepth);

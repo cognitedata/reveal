@@ -1,10 +1,20 @@
 import { ConvertedDistance } from 'utils/units/constants';
 
-import { CasingSchematic, CasingAssembly } from '@cognite/sdk-wells';
+import { CasingSchematic, CasingAssembly, Distance } from '@cognite/sdk-wells';
 
 export interface CasingSchematicInternal
   extends Omit<CasingSchematic, 'casingAssemblies'> {
   casingAssemblies: Array<CasingAssemblyInternal>;
+}
+
+export interface CasingSchematicWithTvd
+  extends Omit<CasingSchematic, 'casingAssemblies'> {
+  casingAssemblies: Array<CasingAssemblyWithTvd>;
+}
+
+export interface CasingSchematicInternalWithTvd
+  extends CasingSchematicInternal {
+  casingAssemblies: Array<CasingAssemblyInternalWithTvd>;
 }
 
 export interface CasingAssemblyInternal
@@ -16,9 +26,9 @@ export interface CasingAssemblyInternal
   measuredDepthBase: ConvertedDistance;
 }
 
-export interface CasingSchematicInternalWithTvd
-  extends CasingSchematicInternal {
-  casingAssemblies: Array<CasingAssemblyInternalWithTvd>;
+export interface CasingAssemblyWithTvd extends CasingAssembly {
+  trueVerticalDepthTop?: Distance;
+  trueVerticalDepthBase?: Distance;
 }
 
 export interface CasingAssemblyInternalWithTvd extends CasingAssemblyInternal {

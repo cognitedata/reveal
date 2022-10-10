@@ -6,16 +6,15 @@ import isEmpty from 'lodash/isEmpty';
 import { toDistanceUnit } from 'utils/units/toDistanceUnit';
 
 import {
+  CasingSchematic,
   DistanceUnitEnum,
   TrajectoryInterpolationRequest,
 } from '@cognite/sdk-wells';
 
 import { UserPreferredUnit } from 'constants/units';
 
-import { CasingSchematicInternal } from '../../internal/types';
-
 export const getInterpolateRequests = (
-  casingSchematics: CasingSchematicInternal[],
+  casingSchematics: CasingSchematic[],
   userPreferredUnit?: UserPreferredUnit
 ): TrajectoryInterpolationRequest[] => {
   const groupedCasingSchematics = groupByWellbore(casingSchematics);
@@ -26,10 +25,12 @@ export const getInterpolateRequests = (
 
     const measuredDepths = wellboreCasingSchematics.flatMap(
       ({ casingAssemblies }) =>
-        casingAssemblies.flatMap(({ measuredDepthBase, measuredDepthTop }) => [
-          measuredDepthBase.value,
-          measuredDepthTop.value,
-        ])
+        casingAssemblies.flatMap(
+          ({ originalMeasuredDepthBase, originalMeasuredDepthTop }) => [
+            originalMeasuredDepthBase.value,
+            originalMeasuredDepthTop.value,
+          ]
+        )
     );
 
     const casingSchematicWithAssemblies = wellboreCasingSchematics.find(
@@ -38,7 +39,7 @@ export const getInterpolateRequests = (
 
     const casingAssembliesDataUnit = head(
       casingSchematicWithAssemblies?.casingAssemblies
-    )?.measuredDepthBase.unit;
+    )?.originalMeasuredDepthBase.unit;
 
     const measuredDepthUnit =
       casingAssembliesDataUnit || DistanceUnitEnum.Meter;

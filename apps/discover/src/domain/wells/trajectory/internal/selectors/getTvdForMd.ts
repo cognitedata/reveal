@@ -8,11 +8,11 @@ import { Distance } from '@cognite/sdk-wells';
 
 import { UserPreferredUnit } from 'constants/units';
 
-import { TrueVerticalDepthsDataLayer } from '../types';
+import { TvdDataWithMdIndex } from '../types';
 
 export const getTvdForMd = (
   measuredDepth: Distance | ConvertedDistance | number,
-  trueVerticalDepths: TrueVerticalDepthsDataLayer,
+  trueVerticalDepths: TvdDataWithMdIndex,
   toFixed: Fixed = Fixed.ThreeDecimals,
   unit?: UserPreferredUnit
 ) => {
@@ -22,18 +22,21 @@ export const getTvdForMd = (
 
   const tvd = mdTvdMap[md];
 
+  if (isUndefined(tvd)) {
+    return undefined;
+  }
+
   const { unit: tvdUnit } = trueVerticalDepthUnit;
 
-  if (!unit && tvd) {
+  if (!unit) {
     return toFixedNumberFromNumber(tvd, toFixed);
   }
 
-  if (unit) {
-    const convertedValue = changeUnitTo(tvd, tvdUnit, unit);
-    if (!isUndefined(convertedValue)) {
-      return toFixedNumberFromNumber(convertedValue, toFixed);
-    }
+  const convertedValue = changeUnitTo(tvd, tvdUnit, unit);
+
+  if (isUndefined(convertedValue)) {
+    return undefined;
   }
 
-  return undefined;
+  return toFixedNumberFromNumber(convertedValue, toFixed);
 };

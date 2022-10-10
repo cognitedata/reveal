@@ -2,11 +2,9 @@ import times from 'lodash/times';
 
 import { TrueVerticalDepths } from '@cognite/sdk-wells';
 
-import { TrueVerticalDepthsDataLayer } from '../types';
+import { TvdDataWithMdIndex } from '../types';
 
-export const normalizeTvd = (
-  rawTvd: TrueVerticalDepths
-): TrueVerticalDepthsDataLayer => {
+export const addMdIndex = (rawTvd: TrueVerticalDepths): TvdDataWithMdIndex => {
   const { measuredDepths, trueVerticalDepths } = rawTvd;
 
   const mdTvdMap = times(measuredDepths.length).reduce(
@@ -14,7 +12,7 @@ export const normalizeTvd = (
       ...valueMap,
       [measuredDepths[index]]: trueVerticalDepths[index],
     }),
-    {} as TrueVerticalDepthsDataLayer['mdTvdMap']
+    {} as TvdDataWithMdIndex['mdTvdMap']
   );
 
   return {

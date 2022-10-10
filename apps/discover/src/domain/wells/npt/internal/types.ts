@@ -1,6 +1,11 @@
 import { ConvertedDistance } from 'utils/units/constants';
 
-import { Npt, NptAggregate, NptAggregateRow } from '@cognite/sdk-wells';
+import {
+  Distance,
+  Npt,
+  NptAggregate,
+  NptAggregateRow,
+} from '@cognite/sdk-wells';
 
 export interface NptInternal extends Omit<Npt, 'measuredDepth'> {
   nptCode: string;
@@ -49,6 +54,10 @@ export type NptCodesSelection = Record<
   NptInternal['nptCode'],
   NptInternal['nptCodeDetail'][]
 >;
+
+export interface NptWithTvd extends Npt {
+  trueVerticalDepth?: Distance;
+}
 
 export interface NptInternalWithTvd extends NptInternal {
   trueVerticalDepth?: ConvertedDistance;

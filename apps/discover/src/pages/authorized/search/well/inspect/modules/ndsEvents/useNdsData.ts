@@ -1,5 +1,5 @@
-import { useNdsWithTvdData } from 'domain/wells/nds/internal/hooks/useNdsWithTvdData';
 import { useNdsAggregatesSummaryQuery } from 'domain/wells/nds/internal/queries/useNdsAggregatesSummaryQuery';
+import { useNdsWithTvdDataQuery } from 'domain/wells/nds/internal/queries/useNdsWithTvdDataQuery';
 import { useWellInspectSelectedWellbores } from 'domain/wells/well/internal/hooks/useWellInspectSelectedWellbores';
 
 import keyBy from 'lodash/keyBy';
@@ -16,7 +16,7 @@ export const useNdsData = () => {
   const wellboreMatchingIdMap = keyBy(wellbores, 'matchingId');
   const { data: userPreferredUnit } = useUserPreferencesMeasurement();
 
-  const { data: ndsData, isLoading } = useNdsWithTvdData({
+  const { data: ndsData, isLoading } = useNdsWithTvdDataQuery({
     wellboreIds,
   });
 

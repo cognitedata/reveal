@@ -29,7 +29,7 @@ export const normalizeHoleSections = (
       holeSize: holeSizeConverted,
       holeSizeFormatted: isUndefined(holeSizeConverted)
         ? undefined
-        : `${toReadableInches(holeSizeConverted)}"`,
+        : toReadableInches(holeSizeConverted),
       bitSize: isUndefined(bitSize)
         ? undefined
         : changeUnitTo(bitSize, sizeUnit, SIZE_UNIT),
