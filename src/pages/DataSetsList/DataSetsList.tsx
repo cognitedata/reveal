@@ -242,7 +242,7 @@ const DataSetsList = (): JSX.Element => {
       }}
       disabled={!hasWritePermissions}
     >
-      {t('create')}
+      {t('create-data-set')}
     </Button>
   );
 
