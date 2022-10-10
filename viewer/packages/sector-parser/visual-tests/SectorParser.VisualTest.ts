@@ -61,9 +61,13 @@ export default class SectorParserVisualTestFixture extends SimpleVisualTestFixtu
       blobs.map(async element => {
         const geometries = await loader.parseSector(element);
         geometries.forEach(result => {
+          if (result.type !== RevealGeometryCollectionType.GeneralCylinderCollection) {
+            return;
+          }
           const material = materialMap.get(result.type)!;
 
           const mesh = new THREE.Mesh(result.geometryBuffer, material);
+          this.logAttributeData(mesh, group);
           mesh.frustumCulled = false;
           mesh.onBeforeRender = () => {
             (material.uniforms.inverseModelMatrix?.value as THREE.Matrix4)?.copy(mesh.matrixWorld).invert();
@@ -73,6 +77,72 @@ export default class SectorParserVisualTestFixture extends SimpleVisualTestFixtu
         });
       })
     );
+  }
+
+  logAttributeData(mesh: THREE.Mesh, group: THREE.Group, index = 0): void {
+    console.log('a_centerA');
+    const centerA = new THREE.Vector3(
+      mesh.geometry.attributes.a_centerA.getX(index),
+      mesh.geometry.attributes.a_centerA.getY(index),
+      mesh.geometry.attributes.a_centerA.getZ(index)
+    );
+    console.log(centerA);
+    createSphere(centerA);
+
+    console.log('a_centerB');
+    const centerB = new THREE.Vector3(
+      mesh.geometry.attributes.a_centerB.getX(index),
+      mesh.geometry.attributes.a_centerB.getY(index),
+      mesh.geometry.attributes.a_centerB.getZ(index)
+    );
+    console.log(centerB);
+    createSphere(centerB);
+
+    console.log('a_planeA');
+    const planeA = new THREE.Vector4(
+      mesh.geometry.attributes.a_planeA.getX(index),
+      mesh.geometry.attributes.a_planeA.getY(index),
+      mesh.geometry.attributes.a_planeA.getZ(index),
+      mesh.geometry.attributes.a_planeA.getW(index)
+    );
+    console.log(planeA);
+
+    console.log('a_planeB');
+    const planeB = new THREE.Vector4(
+      mesh.geometry.attributes.a_planeB.getX(index),
+      mesh.geometry.attributes.a_planeB.getY(index),
+      mesh.geometry.attributes.a_planeB.getZ(index),
+      mesh.geometry.attributes.a_planeB.getW(index)
+    );
+    console.log(planeB);
+
+    console.log('a_localXAxis');
+    const localXAxis = new THREE.Vector3(
+      mesh.geometry.attributes.a_localXAxis.getX(index),
+      mesh.geometry.attributes.a_localXAxis.getY(index),
+      mesh.geometry.attributes.a_localXAxis.getZ(index)
+    );
+    console.log(localXAxis);
+
+    console.log(mesh.geometry.attributes.a_angle.getX(index));
+    console.log(mesh.geometry.attributes.a_arcAngle.getX(index));
+
+    console.log(Object.keys(mesh.geometry.attributes));
+
+    // const height = centerA.clone().sub(centerB).length();
+    // console.log('Height: ' + height);
+    // console.log('Half height: ' + height / 2);
+
+    // const testA = planeA.w - planeB.w;
+    // console.log('Test A: ' + testA);
+
+    function createSphere(pos: THREE.Vector3) {
+      const geom = new THREE.SphereGeometry(0.1, 10, 10);
+      const mat = new THREE.MeshBasicMaterial({ color: 'blue' });
+      const mesh = new THREE.Mesh(geom, mat);
+      mesh.position.copy(pos);
+      group.add(mesh);
+    }
   }
 
   private initializeGroup(scene: THREE.Scene) {

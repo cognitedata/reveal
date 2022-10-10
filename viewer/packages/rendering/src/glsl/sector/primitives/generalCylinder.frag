@@ -21,17 +21,21 @@ uniform int renderMode;
 // Note! Must be placed after all uniforms in order for this to work on iOS (REV-287)
 #pragma glslify: import('../../base/updateFragmentDepth.glsl')
 
-in vec4 v_centerB;
-in vec4 v_W;
-in vec4 v_U;
-in float v_angle;
-in float v_arcAngle;
-in float v_surfacePointY;
-in vec4 v_planeA;
-in vec4 v_planeB;
 flat in float v_treeIndex;
 in vec3 v_color;
-in vec3 v_normal;
+
+in vec3 v_viewPos;
+
+in mat3 v_modelBasis;
+
+in vec3 v_centerB;
+
+in vec2 v_angles;
+
+in vec4 v_planeA;
+in vec4 v_planeB;
+
+in float v_radius;
 
 void main() {
     NodeAppearance appearance = determineNodeAppearance(colorDataTexture, treeIndexTextureSize, v_treeIndex);
@@ -40,53 +44,33 @@ void main() {
     }
 
     vec4 color = determineColor(v_color, appearance);
-    vec3 normal = normalize( v_normal );
-
-    float R1 = v_centerB.w;
-    vec4 U = v_U;
-    vec4 W = v_W;
-    vec4 V = vec4(normalize(cross(W.xyz, U.xyz)), v_surfacePointY);
-
-    mat3 basis = mat3(U.xyz, V.xyz, W.xyz);
-    vec3 surfacePoint = vec3(U.w, V.w, W.w);
-    vec3 rayTarget = surfacePoint;
-
-#if defined(COGNITE_ORTHOGRAPHIC_CAMERA)
-    vec3 rayDirection = vec3(0.0, 0.0, -1.0);
-#else
+    
+    vec3 rayTarget = v_viewPos;
     vec3 rayDirection = normalize(rayTarget); // rayOrigin is (0,0,0) in camera space
-#endif
 
-    vec3 diff = rayTarget - v_centerB.xyz;
-    vec3 E = diff * basis;
-    vec3 D = rayDirection * basis;
+    vec3 diff = rayTarget - v_centerB;
+    vec3 E = diff * v_modelBasis;
+    vec3 D = rayDirection * v_modelBasis;
 
     float a = dot(D.xy, D.xy);
     float b = dot(E.xy, D.xy);
-    float c = dot(E.xy, E.xy) - R1*R1;
+    float c = dot(E.xy, E.xy) - v_radius*v_radius;
 
     // Calculate a dicriminant of the above quadratic equation
     float d = b*b - a*c;
 
     // d < 0.0 means the ray hits outside an infinitely long cone
-    if (d < 0.0)
-        discard;
+    if (d < 0.0) discard;
 
     float sqrtd = sqrt(d);
     float dist1 = (-b - sqrtd) / a;
     float dist2 = (-b + sqrtd) / a;
 
-    // Make sure dist1 is the smaller one
-    if (dist2 < dist1) {
-        float tmp = dist1;
-        dist1 = dist2;
-        dist2 = tmp;
-    }
-
-    float dist = dist1;
+    float dist = min(dist1, dist2);
     vec3 intersectionPoint = E + dist * D;
+
     float theta = atan(intersectionPoint.y, intersectionPoint.x);
-    if (theta < v_angle) theta += 2.0 * PI;
+    theta += theta < v_angles[0] ? 2.0 * PI : 0.0;
 
     // Intersection point in camera space
     vec3 p = rayTarget + dist * rayDirection;
@@ -95,34 +79,29 @@ void main() {
     vec3 planeANormal = v_planeA.xyz;
     vec3 planeBCenter = vec3(0.0, 0.0, v_planeB.w);
     vec3 planeBNormal = v_planeB.xyz;
-    bool isInner = false;
 
     if (dot(intersectionPoint - planeACenter, planeANormal) > 0.0 ||
         dot(intersectionPoint - planeBCenter, planeBNormal) > 0.0 ||
-        theta > v_arcAngle + v_angle ||
+        theta > v_angles[1] + v_angles[0] ||
         isClipped(appearance, p)
        ) {
         // Missed the first point, check the other point
-        isInner = true;
-        dist = dist2;
+        dist = max(dist1, dist2);
         intersectionPoint = E + dist * D;
         theta = atan(intersectionPoint.y, intersectionPoint.x);
         p = rayTarget + dist*rayDirection;
-        if (theta < v_angle) theta += 2.0 * PI;
         if (dot(intersectionPoint - planeACenter, planeANormal) > 0.0 ||
             dot(intersectionPoint - planeBCenter, planeBNormal) > 0.0 ||
-            theta > v_arcAngle + v_angle || isClipped(appearance, p)
+            theta > v_angles[1] + v_angles[0] || isClipped(appearance, p)
            ) {
             // Missed the other point too
             discard;
         }
     }
 
-#if !defined(COGNITE_RENDER_COLOR_ID) && !defined(COGNITE_RENDER_DEPTH)
-    // Regular cylinder has simpler normal vector in camera space
-    vec3 p_local = p - v_centerB.xyz;
-    normal = normalize(p_local - W.xyz * dot(p_local, W.xyz));
-#endif
+    //TODO - christjt 2022/10/10: This seems wrong when hitting inner surface 
+    vec3 p_local = p - v_centerB;
+    vec3 normal = normalize(p_local - v_modelBasis[2] * dot(p_local, v_modelBasis[2]));
 
     float fragDepth = updateFragmentDepth(p, projectionMatrix);
     updateFragmentColor(renderMode, color, v_treeIndex, normal, fragDepth, matCapTexture, GeometryType.Primitive);

@@ -14,7 +14,7 @@ import { PrimitiveName, Primitive } from './types';
 
 import * as THREE from 'three';
 import { TypedArray } from '../../../../packages/utilities';
-import { assert } from 'console';
+import assert from 'assert';
 
 function createCommonBuffer(elementSizes: number[], primitiveDescs: Primitive[][]) {
   let totalSize = 0;

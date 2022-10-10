@@ -4,6 +4,7 @@
 uniform mat4 inverseModelMatrix;
 uniform mat4 modelMatrix;
 uniform mat4 viewMatrix;
+uniform mat4 modelViewMatrix;
 uniform mat4 projectionMatrix;
 uniform mat3 normalMatrix;
 uniform vec3 cameraPosition;
@@ -29,46 +30,25 @@ in float a_arcAngle;
 
 flat out float v_treeIndex;
 // We pack the radii into w-components
-out vec4 v_centerB;
-// U, V, axis represent the 3x3 cone basis.
-// They are vec4 to pack extra data into the w-component
-// since Safari on iOS only supports 8 varying vec4 registers.
-out vec4 v_U;
-out vec4 v_W;
+out vec3 v_centerB;
+out mat3 v_modelBasis;
+out vec3 v_viewPos;
 out vec4 v_planeA;
 out vec4 v_planeB;
-out float v_surfacePointY;
-out float v_angle;
-out float v_arcAngle;
+out vec2 v_angles;
 out vec3 v_color;
-out vec3 v_normal;
+out float v_radius;
 
 void main() {
-
-    mat4 modelViewMatrix = viewMatrix * modelMatrix;
-
-    mat4 treeIndexWorldTransform = determineMatrixOverride(
-      a_treeIndex,
-      treeIndexTextureSize,
-      transformOverrideIndexTexture,
-      transformOverrideTextureSize,
-      transformOverrideTexture
-    );
-
-    mat4 modelTransformOffset = inverseModelMatrix * treeIndexWorldTransform * modelMatrix;
-
-    vec3 centerA = mul3(modelTransformOffset, a_centerA);
-    vec3 centerB = mul3(modelTransformOffset, a_centerB);
+    vec3 centerA = a_centerA;
+    vec3 centerB = a_centerB;
 
     vec3 center = 0.5 * (centerA + centerB);
     float halfHeight = 0.5 * length(centerA - centerB);
     vec3 dir = normalize(centerA - centerB);
-    vec3 newPosition = position;
 
     vec3 rayOrigin = (inverseModelMatrix * vec4(cameraPosition, 1.0)).xyz;
     vec3 objectToCameraModelSpace = rayOrigin - center;
-
-    float leftUpScale = a_radius;
 
     vec3 lDir = dir;
     if (dot(objectToCameraModelSpace, dir) < 0.0) { // direction vector looks away, flip it
@@ -78,49 +58,37 @@ void main() {
     vec3 left = normalize(cross(objectToCameraModelSpace, lDir));
     vec3 up = normalize(cross(left, lDir));
 
-    // make sure the billboard will not overlap with cap geometry (flickering effect), not important if we write to depth buffer
-    newPosition.x *= 1.0 - (a_radius * (position.x + 1.0) * 0.0025 / halfHeight);
+    vec3 localBillboardPosition = center + mat3(halfHeight * lDir, a_radius * left, a_radius * up) * position;
+    vec3 viewBillboardPosition = mul3(modelViewMatrix, localBillboardPosition);
 
-    vec3 surfacePoint = center + mat3(halfHeight * lDir, leftUpScale * left, leftUpScale * up) * newPosition;
-    vec3 transformed = surfacePoint;
-    surfacePoint = mul3(modelViewMatrix, surfacePoint);
+    gl_Position = projectionMatrix * vec4(viewBillboardPosition, 1.0 );
 
     // varying data
     v_treeIndex = a_treeIndex;
-    v_angle = a_angle;
-    v_arcAngle = a_arcAngle;
+    v_angles[0] = a_angle;
+    v_angles[1] = a_arcAngle;
 
-    // compute basis for cone
-    v_W.xyz = dir;
-    v_U.xyz = (modelTransformOffset * vec4(a_localXAxis, 0)).xyz;
-    v_W.xyz = normalize(normalMatrix * v_W.xyz);
-    v_U.xyz = normalize(normalMatrix * v_U.xyz);
-    // We pack surfacePoint as w-components of U and W
-    v_W.w = surfacePoint.z;
-    v_U.w = surfacePoint.x;
+    v_modelBasis[0] = normalize(normalMatrix * a_localXAxis);
+    v_modelBasis[2] = normalize(normalMatrix * dir);
+    v_modelBasis[1] = normalize(cross(v_modelBasis[2], v_modelBasis[0]));
 
     // We pack radii as w-components of v_centerB
-    mat4 modelToTransformOffset = modelMatrix * modelTransformOffset;
-    float radius = length((modelToTransformOffset * vec4(a_localXAxis * a_radius, 0.0)).xyz);
+    mat4 modelToTransformOffset = modelMatrix;
+    float radius = length((modelMatrix * vec4(a_localXAxis * a_radius, 0.0)).xyz);
 
     centerB = centerB - dir;
-    v_centerB.xyz = mul3(modelViewMatrix, centerB);
-    v_centerB.w = radius;
+    v_centerB = mul3(modelViewMatrix, centerB);
+    v_radius = radius;
 
     vec4 planeA = a_planeA;
-    planeA.w = length((modelToTransformOffset * vec4(planeA.xyz * planeA.w, 0.0)).xyz);
+    planeA.w = length((modelMatrix * vec4(planeA.xyz * planeA.w, 0.0)).xyz);
 
     vec4 planeB = a_planeB;
-    planeB.w = length((modelToTransformOffset * vec4(planeB.xyz * planeB.w, 0.0)).xyz);
+    planeB.w = length((modelMatrix * vec4(planeB.xyz * planeB.w, 0.0)).xyz);
 
     v_planeA = planeA;
     v_planeB = planeB;
-    v_surfacePointY = surfacePoint.y;
-    v_centerB.w = radius;
+    v_viewPos = viewBillboardPosition;
 
     v_color = a_color;
-    v_normal = normalMatrix * normal;
-
-    vec4 mvPosition = modelViewMatrix * vec4( transformed, 1.0 );
-    gl_Position = projectionMatrix * mvPosition;
 }
