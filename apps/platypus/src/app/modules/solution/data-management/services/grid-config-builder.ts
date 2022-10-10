@@ -1,14 +1,18 @@
 /* eslint-disable no-prototype-builtins */
-import { ColumnConfig, GridConfig } from '@cognite/cog-data-grid';
+import {
+  ColumnConfig,
+  ColumnDataType,
+  GridConfig,
+} from '@cognite/cog-data-grid';
 import { KeyValueMap, DataModelTypeDefsType } from '@platypus/platypus-core';
 import { CheckboxCellRenderer } from '../components/DataPreviewTable/cell-renderers/CheckboxCellRenderer';
 import { IdCellRenderer } from '../components/DataPreviewTable/cell-renderers/IdCellRenderer';
 
 const colTypesMap: KeyValueMap = {
-  Boolean: 'BOOLEAN',
-  String: 'TEXT',
-  Int: 'NUMBER',
-  Float: 'DECIMAL',
+  Boolean: ColumnDataType.Boolean,
+  String: ColumnDataType.Text,
+  Int: ColumnDataType.Number,
+  Float: ColumnDataType.Decimal,
 };
 
 export const getInitialGridConfig = () => {
@@ -31,7 +35,7 @@ export const buildGridConfig = (
         label: '',
         property: '_isDraftSelected',
         defaultValue: '',
-        dataType: 'TEXT',
+        dataType: ColumnDataType.Text,
         colDef: {
           editable: false,
           sortable: false,
@@ -45,7 +49,7 @@ export const buildGridConfig = (
         label: 'Instances',
         property: instanceIdCol,
         defaultValue: '',
-        dataType: 'TEXT',
+        dataType: ColumnDataType.Text,
         colDef: {
           editable: false,
           sortable: false,
@@ -65,11 +69,12 @@ export const buildGridConfig = (
           property: field.name,
           dataType: colTypesMap.hasOwnProperty(field.type.name)
             ? colTypesMap[field.type.name]
-            : 'CUSTOM',
+            : ColumnDataType.Custom,
           optional: field.nonNull,
           defaultValue: '',
           rules: [],
           metadata: {},
+          isList: field.type.list || false,
           colDef: {
             sortable: false,
             cellEditorParams: {

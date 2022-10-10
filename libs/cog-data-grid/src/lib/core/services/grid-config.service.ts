@@ -14,7 +14,6 @@ import {
   ColumnTypes,
 } from '../types';
 import { decimalValueFormatter } from '../utils';
-import { ReactNode } from 'react';
 
 const cellClassRules = {
   'cog-table-cell-cell-empty': (params: any) =>
@@ -110,6 +109,7 @@ export class GridConfigService {
           },
           listColType: {
             cellRenderer: 'listCellRendererComponent',
+            cellEditor: 'listCellRendererComponent',
             ...this.getColTypeProps('List', theme),
           },
           numberColType: {
@@ -173,6 +173,13 @@ export class GridConfigService {
             resizable: true,
             cellClassRules: cellClassRules,
             width: userProvidedColDef.width || (index === 0 ? 240 : 200),
+            cellRendererParams: {
+              listDataType: this.getColumnType(columnConfig).includes(
+                'listColType'
+              )
+                ? columnConfig.dataType
+                : ColumnDataType.Text,
+            },
           },
           userProvidedColDef
         ) as ColDef;
@@ -187,7 +194,7 @@ export class GridConfigService {
 
     if (isList) {
       dataTypeName = 'list';
-      return ['listColType', dataType];
+      return ['listColType'];
     }
 
     if (this.customColTypes.includes(dataType)) {
