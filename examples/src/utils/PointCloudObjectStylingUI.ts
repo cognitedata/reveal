@@ -55,10 +55,10 @@ export class PointCloudObjectStylingUI {
 
     uiFolder.add(actions, 'reset').name('Reset all styled objects');
     uiFolder.add(actions, 'randomColors').name('Set random for objects');
-    uiFolder.add(state, 'showBoundingBoxes').name('Show object bounding boxes').onChange((value: boolean) => this.togglebjectBoundingBoxes(value));
+    uiFolder.add(state, 'showBoundingBoxes').name('Show object bounding boxes').onChange((value: boolean) => this.toggleObjectBoundingBoxes(value));
   }
 
-  togglebjectBoundingBoxes (b: boolean) {
+  toggleObjectBoundingBoxes (b: boolean) {
     if (b) {
       this._boundingBoxGroup = new THREE.Group();
       this._model.traverseStylableObjects((object) => {
