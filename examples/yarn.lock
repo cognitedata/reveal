@@ -187,7 +187,7 @@
   version "0.0.0"
   uid ""
 
-"@cognite/sdk-core@^4.8.0":
+"@cognite/sdk-core@^4.8.1":
   version "4.8.1"
   resolved "https://registry.yarnpkg.com/@cognite/sdk-core/-/sdk-core-4.8.1.tgz#008c6d7e15393f3a840baf809a0037efa8266849"
   integrity sha512-FEICothNg/aAHdAY84J/udt5NcPcoe8GlT+piFgpvV8zIFpFbUxU4oLVf20xl0AJX1xCO13iWrL/szf6BWqEcA==
