@@ -1,4 +1,4 @@
-import { GridConfig } from '@cognite/cog-data-grid';
+import { BoolCellRenderer, GridConfig } from '@cognite/cog-data-grid';
 import { Tooltip } from '@cognite/cogs.js';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import { BuiltInType, DataModelTypeDefsField } from '@platypus/platypus-core';
@@ -104,6 +104,7 @@ export const useTypeDefFieldsGrid = () => {
             suppressMovable: true,
             suppressSizeToFit: true,
             headerClass: 'col-txt-center',
+            cellRenderer: BoolCellRenderer,
             cellRendererParams: {
               disabled: props.isRequiredDisabled,
               // if the whole UI is disabled, no need to show the tooltip

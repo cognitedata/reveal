@@ -126,8 +126,8 @@ describe('DataManagement reducer', () => {
   const mockSliceInstance = dataManagementSlice.reducer(mockInitialState, {
     type: dataManagementSlice.actions.createNewDraftRow,
   });
-  it('should populate false for the boolean field', () => {
-    expect(mockSliceInstance.draftRows['Person'][0].isAlive).toBe(false);
+  it('should populate null for the boolean field', () => {
+    expect(mockSliceInstance.draftRows['Person'][0].isAlive).toBe(null);
   });
   it('should populate null for the string field', () => {
     expect(mockSliceInstance.draftRows['Person'][0].name).toBe(null);

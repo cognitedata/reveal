@@ -202,8 +202,8 @@ export const DataPreviewTable = ({
                 : -1;
 
               /*
-              This conditional is for the case where the aggregation 
-              is only returning 0s due to the syncer issue. Remove below code 
+              This conditional is for the case where the aggregation
+              is only returning 0s due to the syncer issue. Remove below code
               when the syncer issue is resolved.
               */
               if (result.items.length > 0 && onHideOverlay.current) {
@@ -296,6 +296,12 @@ export const DataPreviewTable = ({
 
     dataManagementHandler
       .ingestNodes({
+        /*
+        PG3 does not currently set a value to null if we pass null when doing a partial
+        update (overwrite: false), but rather it will ignore that value. Therefore in
+        order to be able to set values to null we need overwrite: true
+        */
+        overwrite: true,
         spaceExternalId: dataModelExternalId,
         model: [dataModelExternalId, `${dataModelType.name}_${version}`],
         items: [updatedRowData],

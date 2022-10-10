@@ -14,6 +14,8 @@ import {
   ColumnTypes,
 } from '../types';
 import { decimalValueFormatter } from '../utils';
+import { ReactNode } from 'react';
+import SelectCellEditor from '../../components/select-cell-editor';
 
 const cellClassRules = {
   'cog-table-cell-cell-empty': (params: any) =>
@@ -92,12 +94,22 @@ export class GridConfigService {
         textCellEditor: TextCellEditor,
         customRendererComponent: CustomCellRenderer,
         cogCustomHeader: CustomHeader,
+        selectCellEditor: SelectCellEditor,
       },
       columnTypes: Object.assign(
         {
           booleanColType: {
-            cellRenderer: 'checkboxRendererComponent',
+            cellEditor: 'selectCellEditor',
             ...this.getColTypeProps('Boolean', theme),
+            cellEditorParams: {
+              options: [
+                { label: 'Select value', value: null },
+                { label: 'True', value: true },
+                { label: 'False', value: false },
+              ],
+            },
+            cellEditorPopup: true,
+            cellStyle: { 'text-transform': 'capitalize' },
           },
           customColTypes: {
             cellRenderer: 'customRendererComponent',
@@ -156,9 +168,6 @@ export class GridConfigService {
           return null;
         }
 
-        const isEditable =
-          this.isNotEditableIfExpressionOrEditRule(columnConfig);
-
         const userProvidedColDef = columnConfig.colDef || {};
         const colDef = Object.assign(
           {
@@ -169,7 +178,7 @@ export class GridConfigService {
             type: columnConfig.columnType
               ? columnConfig.columnType
               : this.getColumnType(columnConfig),
-            editable: isEditable,
+            editable: true,
             resizable: true,
             cellClassRules: cellClassRules,
             width: userProvidedColDef.width || (index === 0 ? 240 : 200),
@@ -236,20 +245,6 @@ export class GridConfigService {
     }
 
     return [];
-  }
-
-  private isNotEditableIfExpressionOrEditRule(column: ColumnConfig): boolean {
-    let isEditable = true;
-
-    const isExpression = (column.defaultValue as string)
-      .toString()
-      .startsWith('=');
-
-    if (isExpression || column.dataType === ColumnDataType.Boolean) {
-      isEditable = false;
-    }
-
-    return isEditable;
   }
 
   private isVirtualizationModeDisabled(): boolean {

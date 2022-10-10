@@ -39,9 +39,7 @@ const getDefaultCellValueForDraftRow = (field: DataModelTypeDefsField) => {
   if (field.type.list) {
     return [];
   }
-  if (field.type.name === 'Boolean') {
-    return false;
-  }
+
   return null;
 };
 
