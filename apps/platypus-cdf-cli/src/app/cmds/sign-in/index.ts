@@ -4,12 +4,12 @@ import { AUTH_TYPE, SETTINGS } from '../../constants';
 import { promiseWithTimeout } from '../../utils/general';
 import { getCogniteSDKClient } from '../../utils/cogniteSdk';
 
-export const command = 'signin <project>';
+export const command = 'signin [project]';
 export const aliases = ['login'];
 export const desc = 'Sign in to Cognite Data Fusion';
 export const builder = (yargs: Argv<LoginArgs>) =>
   yargs
-    .usage('$0 signin <project>')
+    .usage('$0 signin [project]')
     .example('$0 signin platypus', 'Sign in to platypus project')
     .version(false)
     .positional('project', {
@@ -40,7 +40,6 @@ export const builder = (yargs: Argv<LoginArgs>) =>
     })
     .option('cluster', {
       type: 'string',
-      default: 'greenfield',
       description: 'Cluster Name',
     })
     .check(validateClusterName)

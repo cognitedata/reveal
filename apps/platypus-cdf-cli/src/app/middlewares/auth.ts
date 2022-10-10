@@ -21,6 +21,7 @@ import { getCommandName } from '../utils/yargs-utils';
 import { skipMiddleware } from './util';
 import logout from '../common/auth/logout';
 import logger, { DEBUG as _DEBUG } from '../utils/logger';
+import { prompt } from 'enquirer';
 
 const DEBUG = _DEBUG.extend('middleware:auth');
 
@@ -33,6 +34,38 @@ export async function authenticate(arg: Arguments<BaseArgs>) {
     // for `login` command, rerunning should retrigger signin, hence we should clear cached tokens and config
     // as well, inject a default clientId
     if (getCommandName(arg) === 'login' || getCommandName(arg) === 'signin') {
+      const questions = [];
+      if (arg.project === undefined) {
+        questions.push({
+          type: 'input',
+          name: 'project',
+          message: 'What project do you want to login to?',
+        });
+      }
+
+      if (arg.cluster === undefined) {
+        questions.push({
+          type: 'autocomplete',
+          name: 'cluster',
+          message: 'What cluster is it on?',
+          limit: 10,
+          initial: 2,
+          choices: ['greenfield', 'bluefield', 'api', 'westeurope-1', 'omv'],
+        });
+      }
+
+      if (arg.tenant === undefined) {
+        questions.push({
+          type: 'input',
+          name: 'tenant',
+          message: 'What is your AzureAD tenant?',
+        });
+      }
+
+      const answers = await prompt(questions);
+
+      arg = { ...arg, ...answers };
+
       logger.info(
         'Logging out the current user and clearing the config (if exists)'
       );
