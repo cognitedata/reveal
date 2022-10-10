@@ -188,7 +188,6 @@ export const WellboreStickChart: React.FC<WellboreStickChartProps> = ({
                 scaleBlocks={scaleBlocks}
                 measurementTypesSelection={measurementTypesSelection}
                 depthMeasurementType={depthMeasurementType}
-                onChangeDepthMeasurementType={setDepthMeasurementType}
                 isVisible={columnVisibility[ChartColumn.MEASUREMENTS]}
               />
 

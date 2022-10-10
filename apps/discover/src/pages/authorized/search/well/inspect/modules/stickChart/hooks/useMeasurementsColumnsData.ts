@@ -1,29 +1,47 @@
+import { useDepthMeasurementsTVD } from 'domain/wells/measurements/internal/hooks/useDepthMeasurementsTVD';
 import { useFitLotDepthMeasurements } from 'domain/wells/measurements/internal/hooks/useFitLotDepthMeasurements';
+import { filterMdIndexedDepthMeasurements } from 'domain/wells/measurements/internal/selectors/filterMdIndexedDepthMeasurements';
 import { DepthMeasurementWithData } from 'domain/wells/measurements/internal/types';
-import { keyByWellbore } from 'domain/wells/wellbore/internal/transformers/keyByWellbore';
+import { groupByWellbore } from 'domain/wells/wellbore/internal/transformers/groupByWellbore';
 
-import isEmpty from 'lodash/isEmpty';
-
-import { EMPTY_OBJECT } from 'constants/empty';
+import { EMPTY_ARRAY, EMPTY_OBJECT } from 'constants/empty';
 import { useDeepMemo } from 'hooks/useDeep';
 import { useWellInspectWellboreIds } from 'modules/wellInspect/selectors';
 
 export const useMeasurementsColumnsData = () => {
   const wellboreIds = useWellInspectWellboreIds();
 
-  const { data, isLoading } = useFitLotDepthMeasurements({ wellboreIds });
+  const { data: initialData, isLoading: isInitialDataLoading } =
+    useFitLotDepthMeasurements({
+      wellboreIds,
+    });
+
+  const { data: tvdIndexedData, isLoading: isTvdIndexedDataLoading } =
+    useDepthMeasurementsTVD(initialData);
+
+  const mdIndexedData = useDeepMemo(() => {
+    if (!initialData) {
+      return EMPTY_ARRAY;
+    }
+    return filterMdIndexedDepthMeasurements(initialData);
+  }, [initialData]);
 
   return useDeepMemo(() => {
-    if (isEmpty(data)) {
+    if (isInitialDataLoading || isTvdIndexedDataLoading) {
       return {
         data: EMPTY_OBJECT as Record<string, DepthMeasurementWithData>,
-        isLoading,
+        isLoading: true,
       };
     }
 
     return {
-      data: keyByWellbore(data),
+      data: groupByWellbore([...mdIndexedData, ...tvdIndexedData]),
       isLoading: false,
     };
-  }, [data, isLoading]);
+  }, [
+    mdIndexedData,
+    tvdIndexedData,
+    isInitialDataLoading,
+    isTvdIndexedDataLoading,
+  ]);
 };

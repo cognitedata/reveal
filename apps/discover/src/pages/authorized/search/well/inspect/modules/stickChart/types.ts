@@ -29,7 +29,7 @@ export interface ColumnsData {
   nptColumn: DataWithLoadingStatus<NptInternalWithTvd[]>;
   ndsColumn: DataWithLoadingStatus<NdsInternalWithTvd[]>;
   trajectoryColumn: DataWithLoadingStatus<TrajectoryWithData>;
-  measurementsColumn: DataWithLoadingStatus<DepthMeasurementWithData>;
+  measurementsColumn: DataWithLoadingStatus<DepthMeasurementWithData[]>;
   holeSectionsColumn: DataWithLoadingStatus<HoleSectionView[]>;
 }
 

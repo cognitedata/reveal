@@ -15,12 +15,8 @@ export const INCOMPLETE_DATA_TEXT = 'Data incomplete';
 export const NO_OPTIONS_SELECTED_TEXT = 'No options selected';
 export const NO_DATA_AMONG_SELECTED_OPTIONS_TEXT =
   'No data among selected options';
-export const DATA_NOT_AVAILABLE_IN_MD_MODE_TEXT =
-  'MD data not available; switch to TVD to see graph';
 
 export const NO_COLUMNS_SELECTED_TEXT = 'No columns selected';
-
-export const SWITCH_BUTTON_TEXT = 'Switch';
 
 export const SOME_EVENT_MISSING_TVD_TEXT =
   'Some event might be missing for TVD';
