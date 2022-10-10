@@ -89,16 +89,8 @@ export class CommandBuilderService {
     return validator.validate();
   }
 
-  generatePromptsFromErrors(
-    commandValues: KeyValueMap,
-    commandArgs: CommandArgument[],
-    argsPromptsMap: KeyValueMap
-  ) {
-    return this.enquirerBuilder.build(
-      commandValues,
-      commandArgs,
-      argsPromptsMap
-    );
+  generatePrompt(commandArg: CommandArgument, commandArgs: KeyValueMap) {
+    return this.enquirerBuilder.build(commandArg, commandArgs);
   }
 }
 

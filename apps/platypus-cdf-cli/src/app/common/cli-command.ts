@@ -45,14 +45,14 @@ export abstract class CLICommand implements CommandModule {
     }
 
     if (!validationResult.valid) {
-      const prompts = this.commandBuilder.generatePromptsFromErrors(
-        args,
-        this._args,
-        validationResult.errors
-      );
+      const argsMap = {};
+      this._args.forEach((arg) => (argsMap[arg.name] = arg));
 
-      const result = await promptQuestions(prompts);
-      args = Object.assign(args, result);
+      for (const error in validationResult.errors) {
+        const prompt = this.commandBuilder.generatePrompt(argsMap[error], args);
+        const result = await promptQuestions(prompt);
+        args = Object.assign(args, result);
+      }
 
       const validationResultAfterPrompt = this.commandBuilder.validateArgs(
         args,

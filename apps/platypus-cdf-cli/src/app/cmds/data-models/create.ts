@@ -9,6 +9,7 @@ import Response, {
 } from '@cognite/platypus-cdf-cli/app/utils/logger';
 import {
   DataModelExternalIdValidator,
+  DataUtils,
   Validator,
 } from '@platypus/platypus-core';
 import { Arguments, Argv } from 'yargs';
@@ -34,7 +35,10 @@ export const commandArgs = [
       'The external id of the data model (Default value is name if not specified)',
     prompt: 'Enter data model external id',
     type: CommandArgumentType.STRING,
-    required: false,
+    required: true,
+    promptDefaultValue: (commandArgs) => {
+      return DataUtils.convertToCamelCase(commandArgs['name']);
+    },
     example:
       'cdf data-models create "My DM" --external-id="DM1" --data-set-id="ds-1"   Create a data model with the name "My DM" and external-id "DM1" managed by Data Set "ds-1"',
   },

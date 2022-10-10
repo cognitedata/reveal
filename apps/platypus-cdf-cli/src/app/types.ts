@@ -1,4 +1,4 @@
-import { Logger, ValidationRule } from '@platypus/platypus-core';
+import { KeyValueMap, Logger, ValidationRule } from '@platypus/platypus-core';
 import { Mixpanel } from 'mixpanel';
 import { AUTH_CONFIG, AUTH_TYPE, LOGIN_STATUS } from './constants';
 
@@ -91,6 +91,8 @@ export interface CommandArgument {
   description: string;
   /** The prompt message that will be shown to the user if value is empty */
   prompt?: string;
+  /** Prompt default value */
+  promptDefaultValue?: string | ((commandArgs: KeyValueMap) => string);
   /** The default value for this arg */
   initial?: string | boolean | number;
   /** Is required */

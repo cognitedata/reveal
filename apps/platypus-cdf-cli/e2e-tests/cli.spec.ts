@@ -54,15 +54,24 @@ describe('platpus-cli', () => {
       const dataModelName = `cdf-cli-publish-e2e-test-${getDatamodelNameTimeAppendix()}`;
       const dataModelExternalId = dataModelName;
 
-      await platypusCli.dataModelsCreate(dataModelName, dataModelExternalId);
+      let output = await platypusCli.dataModelsCreate(
+        dataModelName,
+        dataModelExternalId
+      );
 
-      let output = await platypusCli.dataModelsPublish(
+      expect(output).toMatch(
+        `Data model "${dataModelName}" has been created successfully`
+      );
+
+      output = await platypusCli.dataModelsPublish(
         dataModelExternalId,
         __dirname + '/graphql-schemas/valid_schema_v1.gql'
       );
 
       // platypusCli.dataModelsDelete(dataModelExternalId);
-      expect(output).toMatch('Api version 1 has been published');
+      expect(output).toMatch(
+        /(Api version 1 has been published|Api version 1 has been updated)/i
+      );
 
       output = await platypusCli.dataModelsList();
       expect(output).toContain(dataModelExternalId);

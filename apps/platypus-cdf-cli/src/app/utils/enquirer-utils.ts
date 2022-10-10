@@ -44,6 +44,16 @@ export const showInput = (commandArg: CommandArgument) => {
   return buildBasePrompt(commandArg);
 };
 
+export const showInputWithDefault = (
+  commandArg: CommandArgument,
+  defaultValue: string
+) => {
+  return {
+    ...buildBasePrompt,
+    initial: defaultValue,
+  };
+};
+
 export const showNumeric = (commandArg: CommandArgument) => {
   return Object.assign(buildBasePrompt(commandArg), commandArg.options, {
     type: 'numeral',
