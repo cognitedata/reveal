@@ -13,9 +13,9 @@ import moment from 'moment';
 import { DataSet } from 'utils/types';
 import Typography from 'antd/lib/typography';
 import Tag from 'antd/lib/tag';
-import WriteProtectedIcon from '../WriteProtectedIcon';
 import InfoTooltip from '../InfoTooltip';
 import { useTranslation } from 'common/i18n';
+import { Icon } from '@cognite/cogs.js';
 
 const { Text } = Typography;
 
@@ -47,7 +47,7 @@ const BasicInfoCard = ({ dataSet }: BasicInfoCardProps) => {
       <PaneTitle>{t('basic-information')}</PaneTitle>
       <ItemLabel>{t('name')}</ItemLabel>{' '}
       <ItemValue>
-        {writeProtected && <WriteProtectedIcon />}
+        {writeProtected && <Icon type="Lock" />}
         {name}
       </ItemValue>
       <ItemLabel>{t('data-set-id')}</ItemLabel>{' '}

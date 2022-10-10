@@ -1,25 +1,18 @@
 import { useMemo, useState } from 'react';
-import NewHeader from 'components/NewHeader';
-import { Button, Icon, Input } from '@cognite/cogs.js';
-import Table from 'antd/lib/table';
-import Tag from 'antd/lib/tag';
-import { notification } from 'antd';
-import Checkbox from 'antd/lib/checkbox';
+import { Button, Flex, Icon, Label } from '@cognite/cogs.js';
+import { Table, TableNoResults } from '@cognite/cdf-utilities';
+import { Checkbox, notification } from 'antd';
 import DataSetEditor from 'pages/DataSetEditor';
-import { Dropdown, DropdownMenuContent } from 'components/DropdownMenu';
 
 import { trackEvent } from '@cognite/cdf-route-tracker';
-import SelectorFilter from 'components/SelectorFilter';
 import { useHandleFilters } from 'utils/filterUtils';
 import { setItemInStorage } from 'utils/localStorage';
-import { createLink } from '@cognite/cdf-utilities';
 import { getContainer } from 'utils/shared';
 import useLocalStorage from 'hooks/useLocalStorage';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import { getFlow } from '@cognite/cdf-sdk-singleton';
-import { useParams, useNavigate } from 'react-router-dom';
 import isArray from 'lodash/isArray';
-import { useTableColumns, DataSetRow } from './TableColumns';
+import { useTableColumns, DataSetRow, getLabelsList } from './TableColumns';
 import {
   DataSetWithExtpipes,
   useDataSetsList,
@@ -28,6 +21,10 @@ import {
 import { useWithExtpipes } from '../../hooks/useWithExtpipes';
 import { useDataSetMode, useSelectedDataSet } from '../../context/index';
 import { useTranslation } from 'common/i18n';
+import Page from 'components/page';
+import RowActions from 'components/data-sets-list/row-actions';
+import TableFilter, { GovernanceStatus } from 'components/table-filters';
+import { useSearchParamState } from 'hooks/useSearchParamState';
 
 const DataSetsList = (): JSX.Element => {
   const { t } = useTranslation();
@@ -36,14 +33,6 @@ const DataSetsList = (): JSX.Element => {
   const { data: withExtpipes, isFetched: didFetchWithExtpipes } =
     useWithExtpipes();
 
-  const { appPath } = useParams<{ appPath: string }>();
-  const navigate = useNavigate();
-
-  const [qualityFilter, setQualityFilter] = useState<string>('all');
-  const [searchValue, setSearchValue] = useLocalStorage<string>(
-    'data-sets-search',
-    ''
-  );
   const [creationDrawerVisible, setCreationDrawerVisible] =
     useState<boolean>(false);
   const [showArchived, setShowArchived] = useLocalStorage<boolean>(
@@ -53,6 +42,11 @@ const DataSetsList = (): JSX.Element => {
   const [changesSaved, setChangesSaved] = useState<boolean>(true);
   const [userWarned, setUserWarned] = useState<boolean>(false);
 
+  const searchFilter = useSearchParamState<string>('search');
+  const labelFilter = useSearchParamState<string[]>('labels');
+  const governanceFilter =
+    useSearchParamState<GovernanceStatus[]>('governance');
+
   const { setMode } = useDataSetMode();
 
   const { setSelectedDataSet } = useSelectedDataSet();
@@ -60,6 +54,7 @@ const DataSetsList = (): JSX.Element => {
   const {
     dataSetsWithExtpipes = [],
     isExtpipesFetched,
+    isFetched: didFetchDataSets,
     isLoading: loading,
   } = useDataSetsList();
   const { updateDataSetVisibility, isLoading: isUpdatingDataSetVisibility } =
@@ -72,22 +67,32 @@ const DataSetsList = (): JSX.Element => {
     'WRITE'
   );
 
+  const dataSetsList = useMemo(() => {
+    return handleDataSetsFilters(
+      showArchived,
+      searchFilter,
+      governanceFilter,
+      dataSetsWithExtpipes
+    );
+  }, [
+    handleDataSetsFilters,
+    showArchived,
+    searchFilter,
+    governanceFilter,
+    dataSetsWithExtpipes,
+  ]);
+
   const tableData = useMemo(() => {
     let tableDataSets: DataSetRow[] = [];
     if (dataSetsWithExtpipes?.length && !loading) {
-      const dataSetsList = handleDataSetsFilters(
-        showArchived,
-        searchValue,
-        setSearchValue,
-        qualityFilter,
-        dataSetsWithExtpipes
-      );
       tableDataSets = dataSetsList.map(
         (dataSetWithExtpipes: DataSetWithExtpipes): DataSetRow => {
           const { dataSet, extpipes } = dataSetWithExtpipes;
           const labelsFromMetadata = dataSet.metadata?.consoleLabels;
           return {
             key: dataSet.id,
+            id: dataSet.id,
+            externalId: dataSet.externalId,
             name: dataSet.name,
             description: dataSet.description,
             labels: isArray(labelsFromMetadata) ? labelsFromMetadata : [],
@@ -103,15 +108,24 @@ const DataSetsList = (): JSX.Element => {
       );
     }
     return tableDataSets;
-  }, [
-    dataSetsWithExtpipes,
-    loading,
-    qualityFilter,
-    searchValue,
-    setSearchValue,
-    showArchived,
-    handleDataSetsFilters,
-  ]);
+  }, [dataSetsWithExtpipes, loading, dataSetsList]);
+
+  const filteredTableData = useMemo(() => {
+    let filteredArray = tableData;
+    if (!!labelFilter?.length) {
+      filteredArray = filteredArray.filter(({ labels: testLabels }) =>
+        testLabels.some((label) => labelFilter.includes(label))
+      );
+    }
+    return filteredArray;
+  }, [labelFilter, tableData]);
+
+  const labels = useMemo(() => {
+    return getLabelsList(
+      dataSetsWithExtpipes.map(({ dataSet }) => dataSet),
+      showArchived
+    );
+  }, [dataSetsWithExtpipes, showArchived]);
 
   const handleModalClose = () => {
     setCreationDrawerVisible(false);
@@ -132,59 +146,54 @@ const DataSetsList = (): JSX.Element => {
     return sourceNames;
   };
 
-  const handleRowInteraction = (value: DataSetRow) => {
-    navigate(createLink(`/${appPath}/data-set/${value.key}`));
-  };
-
-  const actionsRender = (_: any, row: DataSetRow) => (
-    <Dropdown
-      content={
-        <DropdownMenuContent
-          actions={[
-            {
-              label: t('edit'),
-              onClick: () => {
-                editDataSet(row.key);
-              },
-              disabled: !hasWritePermissions,
-              loading: isUpdatingDataSetVisibility || loading,
-              icon: 'Edit',
-              key: 'edit',
-            },
-            {
-              label: row.archived ? t('restore') : t('archive'),
-              onClick: () =>
-                row.archived
-                  ? restoreDataSet(row.key)
-                  : archiveDataSet(row.key),
-              disabled: !hasWritePermissions,
-              loading: isUpdatingDataSetVisibility || loading,
-              icon: row.archived ? 'Restore' : 'Archive',
-              key: row.archived ? 'restore' : 'archive',
-            },
-          ]}
-        />
-      }
-    />
-  );
-
   const statusColumn = {
     title: t('status'),
     key: 'status',
     width: '5%',
     render: (row: DataSetRow) =>
-      row.archived && <Tag color="red">{t('archived')}</Tag>,
+      row.archived && (
+        <Label size="medium" variant="danger">
+          {t('archived')}
+        </Label>
+      ),
   };
 
   const actionsColumn = {
-    title: (
-      <div style={{ textAlign: 'center', width: '100%' }}>
-        {t('action_other')}
+    dataIndex: 'options',
+    key: 'options',
+    title: '',
+    render: (_: any, record: DataSetRow) => (
+      <div
+        onClick={(evt) => {
+          evt.stopPropagation();
+        }}
+      >
+        <RowActions
+          actions={[
+            {
+              children: t('edit'),
+              onClick: () => {
+                editDataSet(record.key);
+              },
+              disabled: !hasWritePermissions,
+              loading: isUpdatingDataSetVisibility || loading,
+              icon: 'Edit',
+            },
+            {
+              children: record.archived ? t('restore') : t('archive'),
+              onClick: () =>
+                record.archived
+                  ? restoreDataSet(record.key)
+                  : archiveDataSet(record.key),
+              disabled: !hasWritePermissions,
+              loading: isUpdatingDataSetVisibility || loading,
+              icon: record.archived ? 'Restore' : 'Archive',
+            },
+          ]}
+        />
       </div>
     ),
-    width: '5%',
-    key: 'id',
-    render: actionsRender,
+    width: '52px',
   };
 
   const archiveDataSet = (key: number) => {
@@ -225,22 +234,10 @@ const DataSetsList = (): JSX.Element => {
     </div>
   );
 
-  const QualitySelector = (
-    <SelectorFilter
-      filterName="data-sets-governance"
-      selectionOptions={[
-        { name: t('governed'), value: 'governed' },
-        { name: t('ungoverned'), value: 'ungoverned' },
-      ]}
-      setSelection={setQualityFilter}
-      defaultValue={qualityFilter}
-    />
-  );
   const CreateButton = (
     <Button
       type="primary"
       icon="Add"
-      style={{ marginLeft: '20px', marginRight: '20px' }}
       onClick={() => {
         setCreationDrawerVisible(true);
         trackEvent('DataSets.CreationFlow.Starts creating data set');
@@ -248,31 +245,8 @@ const DataSetsList = (): JSX.Element => {
       }}
       disabled={!hasWritePermissions}
     >
-      {t('create')}
+      {t('create-data-set')}
     </Button>
-  );
-  const SearchBar = (
-    <Input
-      placeholder={t('search-by-name-description-or-labels')}
-      value={searchValue}
-      onChange={(e) => setSearchValue(e.currentTarget.value)}
-      icon="Search"
-      style={{ width: '300px' }}
-    />
-  );
-
-  const ActionToolbar = (
-    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-      {CreateButton}
-      {QualitySelector}
-      <Checkbox
-        style={{ marginTop: '10px', marginLeft: '20px' }}
-        onChange={(e) => setShowArchived(e.target.checked)}
-        checked={showArchived}
-      >
-        {t('show-archived-data-sets')}
-      </Checkbox>
-    </div>
   );
 
   const onClose = () => {
@@ -297,19 +271,12 @@ const DataSetsList = (): JSX.Element => {
     }
   };
 
-  if (!didFetchWithExtpipes) {
+  if (!didFetchWithExtpipes || !didFetchDataSets) {
     return <Icon type="Loader" />;
   }
 
   return (
-    <div>
-      <NewHeader
-        title={t('data-set_other')}
-        leftItem={SearchBar}
-        rightItem={ActionToolbar}
-        breadcrumbs={[{ title: t('data-set_other'), path: `/${appPath}` }]}
-        help="https://docs.cognite.com/cdf/data_governance/concepts/datasets"
-      />
+    <Page title={t('data-set_other')}>
       <DataSetEditor
         visible={creationDrawerVisible}
         onClose={onClose}
@@ -318,8 +285,27 @@ const DataSetsList = (): JSX.Element => {
         sourceSuggestions={getSourcesList()}
         handleCloseModal={() => handleModalClose()}
       />
-      <div style={{ alignItems: 'center', display: 'flex' }} />
-      <Table
+      <Flex
+        alignItems="center"
+        justifyContent="space-between"
+        style={{ marginBottom: 16 }}
+      >
+        <TableFilter
+          filteredCount={filteredTableData.length}
+          labelOptions={labels}
+          totalCount={dataSetsWithExtpipes.length}
+        />
+        <Flex alignItems="center" gap={8}>
+          <Checkbox
+            onChange={(e) => setShowArchived(e.target.checked)}
+            checked={showArchived}
+          >
+            {t('show-archived-data-sets')}
+          </Checkbox>
+          {CreateButton}
+        </Flex>
+      </Flex>
+      <Table<DataSetRow>
         rowKey="key"
         loading={loading}
         columns={[
@@ -332,20 +318,23 @@ const DataSetsList = (): JSX.Element => {
           ...(showArchived ? [statusColumn] : []),
           actionsColumn,
         ]}
-        dataSource={tableData}
-        onRow={(record: DataSetRow) => ({
-          onClick: () => {
-            handleRowInteraction(record);
-          },
-        })}
-        rowClassName={() => 'pointerMouse'}
+        dataSource={filteredTableData}
         onChange={(_pagination, _filters, sorter) => {
           if (!isArray(sorter) && sorter?.columnKey && sorter?.order)
             setItemInStorage(sorter?.columnKey, sorter?.order);
         }}
         getPopupContainer={getContainer}
+        emptyContent={
+          <TableNoResults
+            title={t('data-set-list-no-records')}
+            content={t('data-set-list-search-not-found', {
+              $: !!searchFilter ? `"${searchFilter}"` : searchFilter,
+            })}
+          />
+        }
+        appendTooltipTo={getContainer()}
       />
-    </div>
+    </Page>
   );
 };
 

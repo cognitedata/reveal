@@ -16,8 +16,8 @@ import { Loader } from '@cognite/cogs.js';
 import { DataSetsContextProvider } from 'context';
 import AccessCheck from 'AccessCheck';
 import { translations } from 'common/i18n';
-import styled from 'styled-components';
 import { FlagProvider } from '@cognite/react-feature-flags';
+import styled from 'styled-components';
 
 const DataSetsList = lazy(() => import('pages/DataSetsList/DataSetsList'));
 const DataSetDetails = lazy(
@@ -54,24 +54,26 @@ const App = () => {
               >
                 <SDKProvider sdk={sdk}>
                   <DataSetsContextProvider>
-                    <PageWrapper>
-                      <BrowserRouter>
-                        <Suspense fallback={<Loader />}>
-                          <AccessCheck>
-                            <Routes>
-                              <Route
-                                path="/:tenant/:appPath"
-                                element={<DataSetsList />}
-                              />
-                              <Route
-                                path="/:tenant/:appPath/data-set/:dataSetId"
-                                element={<DataSetDetails />}
-                              />
-                            </Routes>
-                          </AccessCheck>
-                        </Suspense>
-                      </BrowserRouter>
-                    </PageWrapper>
+                    <BrowserRouter>
+                      <Suspense fallback={<Loader />}>
+                        <AccessCheck>
+                          <Routes>
+                            <Route
+                              path="/:tenant/:appPath"
+                              element={<DataSetsList />}
+                            />
+                            <Route
+                              path="/:tenant/:appPath/data-set/:dataSetId"
+                              element={
+                                <PageWrapper>
+                                  <DataSetDetails />
+                                </PageWrapper>
+                              }
+                            />
+                          </Routes>
+                        </AccessCheck>
+                      </Suspense>
+                    </BrowserRouter>
                   </DataSetsContextProvider>
                 </SDKProvider>
               </AuthWrapper>
@@ -86,7 +88,6 @@ const App = () => {
 
 const PageWrapper = styled.div`
   padding: 20px;
-
   @media (min-width: 992px) {
     padding: 20px 50px;
   }
