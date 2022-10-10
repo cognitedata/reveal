@@ -1,11 +1,6 @@
-import { Flex, Icon } from '@cognite/cogs.js';
+import { Flex, Icon, Label } from '@cognite/cogs.js';
 import { stringCompare } from 'utils/shared';
-import {
-  ApprovedDot,
-  LabelTag,
-  NotSetDot,
-  UnApprovedDot,
-} from 'utils/styledComponents';
+import { ApprovedDot, NotSetDot, UnApprovedDot } from 'utils/styledComponents';
 import { getItemFromStorage } from 'utils/localStorage';
 import { DataSet, DataSetV3, Extpipe } from 'utils/types';
 import isArray from 'lodash/isArray';
@@ -88,15 +83,13 @@ export const useTableColumns = () => {
       dataIndex: 'labels',
       key: 'labels',
       render: (field: []) => (
-        <span>
+        <Flex gap={8}>
           {field?.length ? (
-            field.map((label: string) => (
-              <LabelTag key={label}>{label}</LabelTag>
-            ))
+            field.map((label: string) => <Label size="medium">{label}</Label>)
           ) : (
-            <p style={{ fontStyle: 'italic' }}>{t('no-labels')}</p>
+            <></>
           )}
-        </span>
+        </Flex>
       ),
     },
     {
