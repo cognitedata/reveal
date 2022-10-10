@@ -73,7 +73,7 @@ export const buildGridConfig = (
           colDef: {
             sortable: false,
             cellEditorParams: {
-              isRequired: field.nonNull,
+              isRequired: field.nonNull || field.type.nonNull,
             },
           },
         } as ColumnConfig;

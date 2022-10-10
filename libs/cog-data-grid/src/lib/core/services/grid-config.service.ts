@@ -162,8 +162,10 @@ export class GridConfigService {
         const userProvidedColDef = columnConfig.colDef || {};
         const colDef = Object.assign(
           {
-            field: `${columnConfig.property}`,
-            headerName: columnConfig.label,
+            field: columnConfig.property,
+            headerName: `${columnConfig.label}${
+              userProvidedColDef.cellEditorParams?.isRequired ? '*' : ''
+            }`,
             type: columnConfig.columnType
               ? columnConfig.columnType
               : this.getColumnType(columnConfig),
