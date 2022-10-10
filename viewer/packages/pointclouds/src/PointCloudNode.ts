@@ -149,17 +149,14 @@ export class PointCloudNode extends THREE.Group {
     return this._potreeNode.classNames;
   }
 
-  getBoundingBox(outBbox?: THREE.Box3): THREE.Box3 {
-    outBbox = outBbox || new THREE.Box3();
+  getBoundingBox(outBbox: THREE.Box3 = new THREE.Box3()): THREE.Box3 {
     outBbox.copy(this._potreeNode.boundingBox);
-    outBbox.applyMatrix4(this.matrixWorld);
     return outBbox;
   }
 
   setModelTransformation(matrix: THREE.Matrix4): void {
-    this._potreeNode.octree.applyMatrix4(matrix);
-    this._potreeNode.octree.updateMatrix();
-    this._potreeNode.octree.updateWorldMatrix(true, true);
+    this.matrix.copy(matrix);
+    this.updateMatrixWorld(true);
   }
 
   getModelTransformation(out = new THREE.Matrix4()): THREE.Matrix4 {
