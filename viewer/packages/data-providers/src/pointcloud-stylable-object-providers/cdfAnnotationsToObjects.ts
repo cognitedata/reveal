@@ -32,7 +32,7 @@ function cdfAnnotationsToPointCloudObjects(cdfAnnotations: CdfPointCloudObjectAn
     return {
       annotationId: cdfAnnotation.annotationId,
       assetId: cdfAnnotation.assetId,
-      boundingBox: stylableObject.shape.createBoundingBox().applyMatrix4(cadFromCdfToThreeMatrix),
+      boundingBox: stylableObject.shape.createBoundingBox(),
       stylableObject
     };
   });

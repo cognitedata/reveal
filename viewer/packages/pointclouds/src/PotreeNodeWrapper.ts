@@ -135,9 +135,7 @@ export class PotreeNodeWrapper {
     const box: THREE.Box3 =
       this.octree.pcoGeometry.tightBoundingBox || this.octree.pcoGeometry.boundingBox || this.octree.boundingBox;
     // Apply transformation to switch axes
-    const min = new THREE.Vector3(box.min.x, box.min.z, -box.min.y);
-    const max = new THREE.Vector3(box.max.x, box.max.z, -box.max.y);
-    return new THREE.Box3().setFromPoints([min, max]);
+    return box.clone().applyMatrix4(this.octree.matrixWorld);
   }
 
   get pointColorType(): PotreePointColorType {
@@ -178,7 +176,7 @@ export class PotreeNodeWrapper {
       return {
         annotationId: a.annotationId,
         assetId: a.assetId,
-        boundingBox: a.boundingBox
+        boundingBox: a.boundingBox.clone().applyMatrix4(this.octree.matrixWorld)
       };
     });
   }
