@@ -20,6 +20,14 @@ import { LocalModelDataProvider } from '../../packages/data-providers';
 import { IPointCloudTreeGeometry } from '../../packages/pointclouds/src/potree-three-loader/geometry/IPointCloudTreeGeometry';
 
 export function createPointCloudModel(modelId: number, revisionId: number): CognitePointCloudModel {
+  const pointCloudNode = createPointCloudNode();
+
+  const pointCloudModel = new CognitePointCloudModel(modelId, revisionId, pointCloudNode);
+
+  return pointCloudModel;
+}
+
+export function createPointCloudNode() {
   const modelDataProvider = new LocalModelDataProvider();
   const potreeInstance = new Potree(modelDataProvider);
 
@@ -41,8 +49,5 @@ export function createPointCloudModel(modelId: number, revisionId: number): Cogn
   const nodeWrapper = new PotreeNodeWrapper(pointCloudOctree, [], Symbol('dummy'), { classificationSets: [] });
 
   const pointCloudNode = new PointCloudNode(potreeGroup, nodeWrapper);
-
-  const pointCloudModel = new CognitePointCloudModel(modelId, revisionId, pointCloudNode);
-
-  return pointCloudModel;
+  return pointCloudNode;
 }
