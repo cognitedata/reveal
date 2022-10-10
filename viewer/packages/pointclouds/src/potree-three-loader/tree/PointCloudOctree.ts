@@ -77,8 +77,8 @@ export class PointCloudOctree extends PointCloudTree {
   }
 
   private updateMaterial(): void {
-    this.material.heightMin = this.pcoGeometry.tightBoundingBox.min.clone().applyMatrix4(this.matrix).y;
-    this.material.heightMax = this.pcoGeometry.tightBoundingBox.max.clone().applyMatrix4(this.matrix).y;
+    this.material.heightMin = this.pcoGeometry.tightBoundingBox.min.clone().applyMatrix4(this.matrixWorld).y;
+    this.material.heightMax = this.pcoGeometry.tightBoundingBox.max.clone().applyMatrix4(this.matrixWorld).y;
   }
 
   dispose(): void {
