@@ -44,7 +44,6 @@ export const callEquipmentExportFunction = async (
 
   const functionCall = await client.functions.calls.callFunction(
     functionId,
-
     {
       data: {
         env: config.env,

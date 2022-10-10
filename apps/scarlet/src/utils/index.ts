@@ -8,6 +8,7 @@ export * from './getDataElementHasDiscrepancy';
 export * from './getEquipmentProgress';
 export * from './getEquipmentStateExternalId';
 export * from './getEquipmentType';
+export * from './getComponentTypeOfPcmsType';
 export * from './getEquipmentToSave';
 export * from './getFormulaFields';
 export * from './getTagColor';

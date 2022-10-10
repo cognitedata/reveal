@@ -10,7 +10,7 @@ export const getFunctionCallStatus = async (
 ) => {
   const status: FunctionCallStatus | undefined = await client
     .get(
-      `/api/playground/projects/p66-dev/functions/${functionCall.functionId}/calls/${functionCall.id}`
+      `/api/playground/projects/${client.project}/functions/${functionCall.functionId}/calls/${functionCall.id}`
     )
     .then((response) => response.data?.status)
     .catch(() => undefined);
