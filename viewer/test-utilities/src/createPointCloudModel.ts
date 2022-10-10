@@ -22,9 +22,7 @@ import { IPointCloudTreeGeometry } from '../../packages/pointclouds/src/potree-t
 export function createPointCloudModel(modelId: number, revisionId: number): CognitePointCloudModel {
   const pointCloudNode = createPointCloudNode();
 
-  const pointCloudModel = new CognitePointCloudModel(modelId, revisionId, pointCloudNode);
-
-  return pointCloudModel;
+ return new CognitePointCloudModel(modelId, revisionId, pointCloudNode);
 }
 
 export function createPointCloudNode(): PointCloudNode {
