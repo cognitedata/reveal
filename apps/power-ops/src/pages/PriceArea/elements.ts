@@ -6,14 +6,14 @@ const sidePanelOpenedWidth = 280;
 const sidePanelClosedWidth = 68;
 
 interface SidePanelProps {
-  sidePanelOpened: boolean;
+  sidePanelOpen: boolean;
 }
 
 export const MainDiv = styled.div<SidePanelProps>`
   width: calc(
     100% -
       ${(props) =>
-        props.sidePanelOpened ? sidePanelOpenedWidth : sidePanelClosedWidth}px
+        props.sidePanelOpen ? sidePanelOpenedWidth : sidePanelClosedWidth}px
   );
 
   transition-property: width, transform, left, right;

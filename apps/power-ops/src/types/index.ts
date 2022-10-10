@@ -1,5 +1,4 @@
 import {
-  Matrix,
   BidProcessResult,
   WorkflowSchemaWithProcesses,
 } from '@cognite/power-ops-api-types';
@@ -28,16 +27,16 @@ export interface SubColumn {
   accessor: string | (() => string) | undefined;
 }
 
-export interface MatrixWithData extends Matrix {
-  columnHeaders: Array<string | number>;
-  dataRows: Array<string | number>[];
+export interface BidMatrixData {
+  headerRow: (string | number)[];
+  dataRows: [string, ...number[]][];
 }
 
 export interface BidProcessResultWithData extends BidProcessResult {
-  totalMatrixWithData: MatrixWithData;
+  totalMatrixWithData: BidMatrixData;
   plantMatrixesWithData: {
     plantName: string;
-    matrixWithData: MatrixWithData;
+    matrixWithData: BidMatrixData;
   }[];
 }
 

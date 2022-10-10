@@ -26,6 +26,5 @@ export const useFetchWorkflows = () => {
   return useQuery({
     queryKey: [project, 'workflows'],
     queryFn: () => fetchWorkflows(project, token),
-    enabled: Boolean(project && token),
   });
 };

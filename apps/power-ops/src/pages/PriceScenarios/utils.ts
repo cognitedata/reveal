@@ -1,5 +1,5 @@
 import { BidProcessResultWithData, TableColumn } from 'types';
-import { calculateScenarioProduction, roundWithDec } from 'utils/utils';
+import { calculateScenarioProduction } from 'utils/utils';
 import { DatapointAggregates, Datapoints, DoubleDatapoint } from '@cognite/sdk';
 import {
   BidProcessResult,
@@ -110,16 +110,16 @@ export const getFormattedProductionColumn = (
   datapoints: DoubleDatapoint[] | CalculatedProduction[],
   accessor: string
 ): Record<string, string>[] => {
-  const formatedData = Array(24).fill({
+  const formattedData = Array(24).fill({
     [accessor]: undefined,
   });
   datapoints.forEach((point) => {
     const hour = point.timestamp.getHours();
-    formatedData[hour] = {
-      [accessor]: roundWithDec(point.value, 1),
+    formattedData[hour] = {
+      [accessor]: point.value.toFixed(1),
     };
   });
-  return formatedData || [];
+  return formattedData || [];
 };
 
 export const calculateProduction = async (

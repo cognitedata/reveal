@@ -24,6 +24,6 @@ export const useFetchProcesses = (workflowExternalId: string) => {
   return useQuery({
     queryKey: [project, 'processes', workflowExternalId],
     queryFn: () => fetchProcesses(project, workflowExternalId, token),
-    enabled: Boolean(project && token),
+    enabled: !!workflowExternalId,
   });
 };

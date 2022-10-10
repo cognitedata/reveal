@@ -1,4 +1,4 @@
-import { WorkflowSchemasPage } from 'pages/WorkflowSchemas/WorkflowSchemasPage';
+import { WorkflowSchemas } from 'pages/WorkflowSchemas/WorkflowSchemas';
 import { useFetchWorkflowSchemas } from 'queries/useFetchWorkflowSchemas';
 import { Loader, toast, ToastContainer } from '@cognite/cogs.js';
 import { useUpdateWorkflowSchema } from 'queries/useUpdateWorkflowSchema';
@@ -6,7 +6,7 @@ import { useMemo } from 'react';
 import { useDeleteWorkflowSchema } from 'queries/useDeleteWorkflowSchema';
 import { useCreateWorkflowSchema } from 'queries/useCreateWorkflowSchema';
 
-export const WorkflowSchemasPageContainer = () => {
+export const WorkflowSchemasContainer = () => {
   const {
     data: { workflowSchemas } = { workflowSchemas: [], count: 0 },
     isLoading: isLoadingWorkflowSchemas,
@@ -55,7 +55,7 @@ export const WorkflowSchemasPageContainer = () => {
       {isLoadingWorkflowSchemas ? (
         <Loader infoText="Loading Workflow Schemas" />
       ) : (
-        <WorkflowSchemasPage
+        <WorkflowSchemas
           workflowSchemas={workflowSchemas}
           onCreate={handleCreate}
           onSave={handleSave}

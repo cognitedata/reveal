@@ -1,6 +1,10 @@
-import { CalculatedProduction } from '@cognite/power-ops-api-types';
+import {
+  BidProcessResult,
+  CalculatedProduction,
+  DEFAULT_CONFIG,
+} from '@cognite/power-ops-api-types';
 import { DoubleDatapoint } from '@cognite/sdk';
-import { MatrixWithData, BidProcessResultWithData } from 'types';
+import { BidMatrixData } from 'types';
 import sidecar from 'utils/sidecar';
 import axios, { AxiosRequestConfig } from 'axios';
 import dayjs from 'dayjs';
@@ -54,7 +58,7 @@ export const pickChartColor = (index: number) => {
 };
 
 export const interpolateProduction = (
-  matrix: MatrixWithData,
+  matrix: BidMatrixData,
   lowerBoundIndex: number,
   upperBoundIndex: number,
   hour: number,
@@ -64,10 +68,8 @@ export const interpolateProduction = (
     (matrix.dataRows[hour][lowerBoundIndex] as number) || 0;
   const upperBoundValue =
     (matrix.dataRows[hour][upperBoundIndex] as number) || 0;
-  const lowerBoundPrice =
-    (matrix.columnHeaders[lowerBoundIndex] as number) || 0;
-  const upperBoundPrice =
-    (matrix.columnHeaders[upperBoundIndex] as number) || 0;
+  const lowerBoundPrice = (matrix.headerRow[lowerBoundIndex] as number) || 0;
+  const upperBoundPrice = (matrix.headerRow[upperBoundIndex] as number) || 0;
 
   return linearInterpolation(
     lowerBoundValue,
@@ -96,20 +98,16 @@ export const linearInterpolation = (
     : 0;
 };
 
-export const roundWithDec = (number: number, decimals: number) => {
-  return number.toFixed(decimals);
-};
-
 export const calculateScenarioProduction = (
   scenarioPricePerHour: DoubleDatapoint[],
-  matrix: MatrixWithData
+  matrix: BidMatrixData
 ): CalculatedProduction[] => {
   const production: CalculatedProduction[] = [];
   scenarioPricePerHour.forEach((scenarioPrice, hour) => {
     let lowerBoundIndex = 1;
     let upperBoundIndex = 1;
 
-    matrix.columnHeaders.every((price, priceIndex) => {
+    matrix.headerRow.every((price, priceIndex) => {
       // First column header is "Hour" so we start from index 1
       if (typeof price === 'string') return true;
 
@@ -162,7 +160,7 @@ export const fetchBidMatricesData = async (
 };
 
 export const downloadBidMatrices = async (
-  bidProcessResult: BidProcessResultWithData,
+  bidProcessResult: BidProcessResult,
   project: string | undefined,
   token: string | undefined
 ) => {
@@ -196,16 +194,19 @@ export const triggerDownloadFromBlob = (fileName: string, blob: Blob) => {
   link.parentNode?.removeChild(link);
 };
 
-export const formatDate = (date: Date | string, timeZone?: string) => {
-  const formatDate = dayjs(date).tz(timeZone);
-  const timeZoneString = timeZone ? formatDate.format(' UTC Z') : '';
-  if (formatDate.isToday()) {
-    return `Today ${formatDate.format('HH:mm')}${timeZoneString}`;
+export const formatDate = (
+  date: Date | string,
+  timeZone: string = DEFAULT_CONFIG.TIME_ZONE
+) => {
+  const formattedDate = dayjs(date).tz(timeZone);
+  const timeZoneString = timeZone ? formattedDate.format(' UTC Z') : '';
+  if (formattedDate.isToday()) {
+    return `Today ${formattedDate.format('HH:mm')}${timeZoneString}`;
   }
-  if (formatDate.isYesterday()) {
-    return `Yesterday ${formatDate.format('HH:mm')}${timeZoneString}`;
+  if (formattedDate.isYesterday()) {
+    return `Yesterday ${formattedDate.format('HH:mm')}${timeZoneString}`;
   }
-  return formatDate.format('MMM DD, YYYY HH:mm') + timeZoneString;
+  return formattedDate.format('MMM DD, YYYY HH:mm') + timeZoneString;
 };
 
 export const handleLogout = (history: History) => {

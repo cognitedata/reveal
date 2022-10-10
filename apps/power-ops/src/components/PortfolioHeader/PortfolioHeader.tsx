@@ -1,12 +1,7 @@
 import { Button, Dropdown, Icon, Label, Menu } from '@cognite/cogs.js';
-import { useAuthContext } from '@cognite/react-container';
-import { downloadBidMatrices, formatDate } from 'utils/utils';
-import { DEFAULT_CONFIG } from '@cognite/power-ops-api-types';
-import { BidProcessResultWithData } from 'types';
-import { MouseEvent, useContext, useEffect, useState } from 'react';
-import { CogniteClient } from '@cognite/sdk';
-import { PriceAreasContext } from 'providers/priceAreaProvider';
-import { useMetrics } from '@cognite/metrics';
+import { formatDate } from 'utils/utils';
+import { BidProcessConfiguration } from '@cognite/power-ops-api-types';
+import { useState } from 'react';
 
 import {
   Header,
@@ -17,108 +12,46 @@ import {
 } from './elements';
 import { formatMethod } from './utils';
 
-export const useBidMatrixProcessStartDate = (
-  externalId: string | undefined,
-  client: CogniteClient | undefined,
-  timeZone: string | undefined
-) => {
-  const [startDate, setStartDate] = useState<string>('');
-
-  const getStartDate = (): void => {
-    if (!client || !externalId) return;
-
-    client.events
-      .retrieve([{ externalId }], {
-        ignoreUnknownIds: true,
-      })
-      .then(([event]) => {
-        setStartDate(
-          formatDate(event.createdTime, timeZone || DEFAULT_CONFIG.TIME_ZONE)
-        );
-      });
-  };
-
-  useEffect(() => getStartDate(), []);
-
-  return { startDate, getStartDate };
-};
+interface Props {
+  bidProcessExternalId: string;
+  startDate: string | undefined;
+  priceAreaName: string;
+  processConfigurations: BidProcessConfiguration[];
+  onChangeProcessConfigurationExternalId: (
+    processConfigurationExternalId: string
+  ) => void;
+  onDownloadMatrix: (bidProcessExternalId: string) => Promise<void>;
+}
 
 export const PortfolioHeader = ({
-  bidProcessResult,
-}: {
-  bidProcessResult: BidProcessResultWithData;
-}) => {
-  const metrics = useMetrics('portfolio');
-
-  const { client, authState } = useAuthContext();
-
-  const {
-    allProcessConfigurations,
-    bidProcessEventExternalId,
-    bidProcessConfigurationChanged,
-  } = useContext(PriceAreasContext);
-
-  const [downloading, setDownloading] = useState<boolean>(false);
-
-  const { startDate, getStartDate } = useBidMatrixProcessStartDate(
-    bidProcessResult?.bidProcessExternalId,
-    client,
-    bidProcessResult.marketConfiguration?.timezone
-  );
-
-  const downloadMatrix = async (_e: MouseEvent) => {
-    setDownloading(true);
-    await downloadBidMatrices(
-      bidProcessResult,
-      client?.project,
-      authState?.token
-    );
-    setDownloading(false);
-    metrics.track(`click-download-matrices-button`, {
-      bidProcessExternalId: bidProcessResult.bidProcessExternalId,
-    });
-  };
-
-  const selectProcessConfiguration = async (
-    _e: MouseEvent,
-    selectedConfigurationExternalId: string
-  ) => {
-    bidProcessConfigurationChanged(selectedConfigurationExternalId);
-    metrics.track(`click-process-configuration-dropdown`, {
-      selectedConfiguration: selectedConfigurationExternalId,
-    });
-  };
-
-  useEffect(() => {
-    if (bidProcessResult?.bidProcessExternalId) {
-      getStartDate();
-    }
-  }, [bidProcessResult]);
-
+  bidProcessExternalId,
+  startDate,
+  priceAreaName,
+  processConfigurations,
+  onChangeProcessConfigurationExternalId,
+  onDownloadMatrix,
+}: Props) => {
+  const [downloading, setDownloading] = useState(false);
   return (
     <Header>
       <div>
-        <StyledTitle level={5}>
-          Price Area {bidProcessResult.priceAreaName}
-        </StyledTitle>
+        <StyledTitle level={5}>Price Area {priceAreaName}</StyledTitle>
         <Label size="small" variant="unknown">
-          {`Matrix generation started: ${startDate}`}
+          {startDate && <>Matrix generation started: {startDate}</>}
         </Label>
       </div>
       <div className="right-side">
         <Dropdown
           content={
             <Menu>
-              {allProcessConfigurations?.map((config) => (
+              {processConfigurations.map((config) => (
                 <Menu.Item
                   selected={
-                    config.bidProcessEventExternalId ===
-                    bidProcessEventExternalId
+                    config.bidProcessEventExternalId === bidProcessExternalId
                   }
                   key={config.bidProcessEventExternalId}
-                  onClick={(e) =>
-                    selectProcessConfiguration(
-                      e,
+                  onClick={() =>
+                    onChangeProcessConfigurationExternalId(
                       config.bidProcessEventExternalId
                     )
                   }
@@ -129,12 +62,12 @@ export const PortfolioHeader = ({
                       <p>
                         Process finished:{' '}
                         {formatDate(
-                          config.bidProcessFinishedDate!.toLocaleString()
+                          config.bidProcessFinishedDate.toLocaleString()
                         )}
                       </p>
                     </div>
                     {config.bidProcessEventExternalId ===
-                      bidProcessEventExternalId && <Icon type="Checkmark" />}
+                      bidProcessExternalId && <Icon type="Checkmark" />}
                   </MethodItem>
                 </Menu.Item>
               ))}
@@ -144,12 +77,12 @@ export const PortfolioHeader = ({
           <MethodButton type="tertiary">
             <div className="method-name">
               <b>Method:&nbsp;</b>
+              {bidProcessExternalId === '' && 'Loading...'}
               {formatMethod(
-                allProcessConfigurations?.find(
+                processConfigurations.find(
                   (config) =>
-                    config.bidProcessEventExternalId ===
-                    bidProcessEventExternalId
-                )?.bidProcessConfiguration || ''
+                    config.bidProcessEventExternalId === bidProcessExternalId
+                )?.bidProcessConfiguration ?? ''
               )}
             </div>
             <Icon type="ChevronDown" />
@@ -160,7 +93,12 @@ export const PortfolioHeader = ({
           icon="Download"
           type="primary"
           loading={downloading}
-          onClick={downloadMatrix}
+          disabled={bidProcessExternalId === ''}
+          onClick={async () => {
+            setDownloading(true);
+            await onDownloadMatrix(bidProcessExternalId);
+            setDownloading(false);
+          }}
         >
           Download
         </Button>

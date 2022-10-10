@@ -1,2 +1,2 @@
-export * from './WorkflowSchemasPage';
-export * from './WorkflowSchemasPageContainer';
+export * from './WorkflowSchemas';
+export * from './WorkflowSchemasContainer';

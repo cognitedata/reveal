@@ -1,10 +1,6 @@
 import { Button, Detail } from '@cognite/cogs.js';
-import React, { useCallback, useEffect, useState } from 'react';
-import { NavLink, useLocation, useRouteMatch } from 'react-router-dom';
-import debounce from 'lodash/debounce';
-import { BidProcessResultWithData } from 'types';
-import { Plant } from '@cognite/power-ops-api-types';
-import { useMetrics } from '@cognite/metrics';
+import { useState } from 'react';
+import { NavLink } from 'react-router-dom';
 
 import {
   Header,
@@ -16,168 +12,123 @@ import {
 } from './elements';
 
 type Props = {
-  bidProcessResult: BidProcessResultWithData;
-  opened: boolean;
-  setOpened: () => void;
+  open: boolean;
+  onOpenCloseClick: () => void;
+  onNavigate?: (section: 'total' | 'price-scenarios' | string) => void;
+  onSearch?: (term: string, clear?: boolean) => void;
+  total: { url: string; current: boolean };
+  priceScenarios: { url: string; current: boolean };
+  plants: {
+    name: string;
+    externalId: string;
+    url: string;
+    current: boolean;
+  }[];
 };
 
-export const Sidebar = React.memo(
-  ({ bidProcessResult, opened, setOpened }: Props) => {
-    const metrics = useMetrics('portfolio');
+export const Sidebar = ({
+  open,
+  plants,
+  total,
+  priceScenarios,
+  onSearch,
+  onOpenCloseClick,
+  onNavigate,
+}: Props) => {
+  const [query, setQuery] = useState('');
+  const [focused, setFocused] = useState(false);
+  const [resize, setResize] = useState(false);
 
-    const { pathname } = useLocation();
-    const currentPath = pathname.endsWith('/')
-      ? pathname.slice(0, -1)
-      : pathname;
-    const match = useRouteMatch();
+  const filteredPlants = plants.filter((plant) =>
+    plant.name.toLowerCase().includes(query.toLowerCase())
+  );
 
-    const [query, setQuery] = useState<string>('');
-    const [searchPrice, setSearchPrice] = useState<boolean>(true);
-    const [searchTotal, setSearchTotal] = useState<boolean>(true);
-    const [isSearching, setIsSearching] = useState<boolean>(false);
-    const [filteredPlants, setFilteredPlants] = useState<Plant[]>([]);
-    const [focused, setFocused] = useState<boolean>(false);
-    const [resize, setResize] = useState<boolean>(false);
+  const handleClearQuery = () => {
+    if (query === '') return;
+    onSearch?.('', true);
+    setQuery('');
+  };
 
-    const trackSidebarNavLinkClick = (selectedSection: string) => {
-      if (selectedSection === 'total') {
-        metrics.track('click-sidebar-total-link');
-      } else if (selectedSection === 'price-scenarios') {
-        metrics.track('click-sidebar-price-scenarios-link');
-      } else {
-        metrics.track('click-sidebar-plant-link', {
-          selectedPlant: selectedSection,
-        });
-      }
-    };
+  const handleNavigate = (section: string) => {
+    handleClearQuery();
+    onNavigate?.(section);
+  };
 
-    const debouncedSearch = useCallback(
-      debounce((query: any, callback: any) => {
-        if (query) {
-          metrics.track('type-search-input', { query });
-        }
-
-        const searchResults = bidProcessResult.plants?.filter((plant) =>
-          plant.displayName.toLowerCase().includes(query.toLowerCase())
-        );
-        callback(searchResults);
-      }, 300),
-      []
-    );
-
-    useEffect(() => {
-      if (bidProcessResult.plants) {
-        debouncedSearch(query, (result: Plant[]) => {
-          setSearchPrice('price scenarios'.includes(query.toLowerCase()));
-          setSearchTotal('total'.includes(query.toLowerCase()));
-          setFilteredPlants(query?.length ? result : bidProcessResult.plants);
-          setIsSearching(!!query?.length);
-        });
-      }
-    }, [query]);
-
-    return (
-      <StyledPanel sidePanelOpened={opened}>
-        <Header>
-          {opened ? (
-            <StyledSearch
-              icon="Search"
-              placeholder="Search plants"
-              autoFocus={focused}
-              onChange={(e) => setQuery(e.target.value)}
-              value={query}
-              clearable={{
-                callback: () => {
-                  metrics.track('click-clear-search-button');
-                  setQuery('');
-                },
-              }}
-            />
-          ) : (
-            <Button
-              type="secondary"
-              icon="Search"
-              aria-label="Open search field"
-              onClick={() => {
-                metrics.track('click-open-search-button');
-                setOpened();
-                setFocused(true);
-              }}
-            />
-          )}
-        </Header>
-        {opened && (
-          <PanelContent>
-            {!isSearching && <Detail>Price area overview</Detail>}
-            {searchTotal && (
-              <NavLink
-                to={`${match.url}/total`}
-                onClick={() => trackSidebarNavLinkClick('total')}
-              >
-                <StyledButton
-                  toggled={currentPath === `${match.url}/total`}
-                  key={`${bidProcessResult.priceAreaExternalId}-total`}
-                  onClick={() => setQuery('')}
-                >
-                  <p>Total</p>
-                </StyledButton>
-              </NavLink>
-            )}
-            {searchPrice && (
-              <NavLink
-                to={`${match.url}/price-scenarios`}
-                onClick={() => trackSidebarNavLinkClick('price-scenarios')}
-              >
-                <StyledButton
-                  toggled={currentPath === `${match.url}/price-scenarios`}
-                  key={`${bidProcessResult.priceAreaExternalId}-price-scenarios-link`}
-                  onClick={() => setQuery('')}
-                >
-                  <p>Price Scenarios</p>
-                </StyledButton>
-              </NavLink>
-            )}
-            {!isSearching && <Detail>Plants</Detail>}
-            {filteredPlants &&
-              filteredPlants.map((plant) => {
-                return (
-                  <NavLink
-                    to={`${match.url}/${plant.externalId}`}
-                    key={`${bidProcessResult.priceAreaExternalId}-${plant.externalId}`}
-                    onClick={() =>
-                      trackSidebarNavLinkClick(
-                        bidProcessResult.priceAreaExternalId
-                      )
-                    }
-                  >
-                    <StyledButton
-                      toggled={
-                        currentPath === `${match.url}/${plant.externalId}`
-                      }
-                      key={plant.externalId}
-                      onClick={() => setQuery('')}
-                    >
-                      <p>{plant.displayName}</p>
-                    </StyledButton>
-                  </NavLink>
-                );
-              })}
-          </PanelContent>
-        )}
-        <Footer onTransitionEnd={() => setResize(!resize)}>
+  return (
+    <StyledPanel sidePanelOpened={open}>
+      <Header>
+        {open ? (
+          <StyledSearch
+            icon="Search"
+            placeholder="Search plants"
+            autoFocus={focused}
+            onChange={(e) => {
+              setQuery(e.target.value);
+              onSearch?.(e.target.value);
+            }}
+            value={query}
+            clearable={{
+              callback: handleClearQuery,
+            }}
+          />
+        ) : (
           <Button
             type="secondary"
-            aria-label="Show or hide sidebar"
-            icon={opened ? 'PanelLeft' : 'PanelRight'}
+            aria-label="Open search field"
+            icon={open ? 'PanelLeft' : 'PanelRight'}
             onClick={() => {
-              setOpened();
-              setFocused(false);
+              onOpenCloseClick();
+              setFocused(true);
             }}
+          />
+        )}
+      </Header>
+      {open && (
+        <PanelContent>
+          <Detail>Price area overview</Detail>
+          <NavLink to={total.url} onClick={() => handleNavigate('total')}>
+            <StyledButton toggled={total.current} key="total">
+              <p>Total</p>
+            </StyledButton>
+          </NavLink>
+          <NavLink
+            to={priceScenarios.url}
+            onClick={() => handleNavigate('price-scenarios')}
           >
-            {opened && 'Hide'}
-          </Button>
-        </Footer>
-      </StyledPanel>
-    );
-  }
-);
+            <StyledButton
+              toggled={priceScenarios.current}
+              key="price-scenarios"
+            >
+              <p>Price Scenarios</p>
+            </StyledButton>
+          </NavLink>
+          <Detail>Plants</Detail>
+          {filteredPlants.map(({ name, url, current, externalId }) => (
+            <NavLink
+              to={url}
+              key={externalId}
+              onClick={() => handleNavigate(externalId)}
+            >
+              <StyledButton toggled={current} key={externalId}>
+                <p>{name}</p>
+              </StyledButton>
+            </NavLink>
+          ))}
+        </PanelContent>
+      )}
+      <Footer onTransitionEnd={() => setResize(!resize)}>
+        <Button
+          type="secondary"
+          aria-label="Show or hide sidebar"
+          icon={open ? 'PanelLeft' : 'PanelRight'}
+          onClick={() => {
+            onOpenCloseClick();
+            setFocused(false);
+          }}
+        >
+          {open && 'Hide'}
+        </Button>
+      </Footer>
+    </StyledPanel>
+  );
+};

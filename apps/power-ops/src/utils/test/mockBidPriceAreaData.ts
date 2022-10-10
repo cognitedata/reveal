@@ -31,7 +31,7 @@ const mockDataRows = [
   ['21', 103.21, -0.87, -0.32],
   ['22', 103.21, -0.87, -0.32],
   ['23', 103.21, -0.87, -0.32],
-];
+] as [string, ...number[]][];
 
 export const mockPriceArea: PriceArea = {
   externalId: 'mock_price_area_NO1',
@@ -118,24 +118,21 @@ export const mockBidProcessResult: BidProcessResultWithData = {
     },
   ],
   totalMatrixWithData: {
-    externalId: 'total_matrixes_with_data_externalId',
-    columnHeaders: mockColumnHeaders,
+    headerRow: mockColumnHeaders,
     dataRows: mockDataRows,
   },
   plantMatrixesWithData: [
     {
       plantName: 'plant1',
       matrixWithData: {
-        externalId: 'plant1_with_data_externalId',
-        columnHeaders: mockColumnHeaders,
+        headerRow: mockColumnHeaders,
         dataRows: mockDataRows,
       },
     },
     {
       plantName: 'plant2',
       matrixWithData: {
-        externalId: 'plant2_with_data_externalId',
-        columnHeaders: mockColumnHeaders,
+        headerRow: mockColumnHeaders,
         dataRows: mockDataRows,
       },
     },

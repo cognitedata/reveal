@@ -20,6 +20,5 @@ export const useFetchWorkflowSchemas = () => {
   return useQuery({
     queryKey: [project, 'workflow-schemas'],
     queryFn: () => fetchWorkflowSchemas(project, token),
-    enabled: Boolean(project && token),
   });
 };

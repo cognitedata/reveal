@@ -20,6 +20,5 @@ export const useFetchSnifferJobs = () => {
   return useQuery({
     queryKey: [project, 'sniffer-jobs'],
     queryFn: () => fetchJobs(project, token),
-    enabled: Boolean(project && token),
   });
 };

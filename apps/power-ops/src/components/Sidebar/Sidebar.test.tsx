@@ -15,24 +15,34 @@ jest.mock('react-router-dom', () => ({
 
 jest.mock('lodash/debounce', () => jest.fn((fn) => fn));
 
+const MockSidebar: React.FC<{ open?: boolean; path?: string }> = ({
+  path,
+  open = true,
+}) => {
+  // Render with sidebar open
+  const [openedSidePanel, setOpenedSidePanel] = React.useState(open);
+
+  return (
+    <Sidebar
+      plants={mockBidProcessResult.plants.map((plant) => ({
+        name: plant.displayName,
+        externalId: plant.externalId,
+        url: `/${plant.externalId}`,
+        current: false,
+      }))}
+      total={{ url: `${path}/total`, current: false }}
+      priceScenarios={{ url: `${path}/price-scenarios`, current: false }}
+      open={openedSidePanel}
+      onOpenCloseClick={() => setOpenedSidePanel(!openedSidePanel)}
+    />
+  );
+};
+
 describe('Sidebar tests', () => {
   it('Should render the open sidebar on load', async () => {
     (useLocation as jest.Mock).mockImplementation(() => ({
       pathname: '/test-path',
     }));
-
-    const MockSidebar: React.FC = () => {
-      // Render with sidebar open
-      const [openedSidePanel, setOpenedSidePanel] = React.useState(true);
-
-      return (
-        <Sidebar
-          bidProcessResult={mockBidProcessResult}
-          opened={openedSidePanel}
-          setOpened={() => setOpenedSidePanel(!openedSidePanel)}
-        />
-      );
-    };
 
     testRenderer(<MockSidebar />);
 
@@ -44,19 +54,6 @@ describe('Sidebar tests', () => {
       (useLocation as jest.Mock).mockImplementation(() => ({
         pathname: '/test-path',
       }));
-
-      const MockSidebar: React.FC = () => {
-        // Render with sidebar open
-        const [openedSidePanel, setOpenedSidePanel] = React.useState(true);
-
-        return (
-          <Sidebar
-            bidProcessResult={mockBidProcessResult}
-            opened={openedSidePanel}
-            setOpened={() => setOpenedSidePanel(!openedSidePanel)}
-          />
-        );
-      };
 
       testRenderer(<MockSidebar />);
 
@@ -73,20 +70,7 @@ describe('Sidebar tests', () => {
         pathname: '/test-path',
       }));
 
-      const MockSidebar: React.FC = () => {
-        // Render with sidebar closed
-        const [openedSidePanel, setOpenedSidePanel] = React.useState(false);
-
-        return (
-          <Sidebar
-            bidProcessResult={mockBidProcessResult}
-            opened={openedSidePanel}
-            setOpened={() => setOpenedSidePanel(!openedSidePanel)}
-          />
-        );
-      };
-
-      testRenderer(<MockSidebar />);
+      testRenderer(<MockSidebar open={false} />);
 
       const hideButton = screen.getByLabelText('Show or hide sidebar', {
         selector: 'button',
@@ -103,20 +87,7 @@ describe('Sidebar tests', () => {
         pathname: '/test-path',
       }));
 
-      const MockSidebar: React.FC = () => {
-        // Render with sidebar closed
-        const [openedSidePanel, setOpenedSidePanel] = React.useState(false);
-
-        return (
-          <Sidebar
-            bidProcessResult={mockBidProcessResult}
-            opened={openedSidePanel}
-            setOpened={() => setOpenedSidePanel(!openedSidePanel)}
-          />
-        );
-      };
-
-      testRenderer(<MockSidebar />);
+      testRenderer(<MockSidebar open={false} />);
 
       const searchButton = screen.getByLabelText('Open search field', {
         selector: 'button',
@@ -130,20 +101,6 @@ describe('Sidebar tests', () => {
       (useLocation as jest.Mock).mockImplementation(() => ({
         pathname: `/portfolio/${mockBidProcessResult.priceAreaExternalId}/Total`,
       }));
-
-      const MockSidebar: React.FC = () => {
-        // Render with sidebar open
-        const [openedSidePanel, setOpenedSidePanel] = React.useState(true);
-
-        return (
-          <Sidebar
-            bidProcessResult={mockBidProcessResult}
-            opened={openedSidePanel}
-            setOpened={() => setOpenedSidePanel(!openedSidePanel)}
-          />
-        );
-      };
-
       testRenderer(<MockSidebar />);
 
       const results = (await screen.findAllByRole('link')).length;
@@ -155,19 +112,6 @@ describe('Sidebar tests', () => {
       (useLocation as jest.Mock).mockImplementation(() => ({
         pathname: `/portfolio/${mockBidProcessResult.priceAreaExternalId}/Total`,
       }));
-
-      const MockSidebar: React.FC = () => {
-        // Render with sidebar open
-        const [openedSidePanel, setOpenedSidePanel] = React.useState(true);
-
-        return (
-          <Sidebar
-            bidProcessResult={mockBidProcessResult}
-            opened={openedSidePanel}
-            setOpened={() => setOpenedSidePanel(!openedSidePanel)}
-          />
-        );
-      };
 
       testRenderer(<MockSidebar />);
 
@@ -192,19 +136,6 @@ describe('Sidebar tests', () => {
         pathname: `/portfolio/${mockBidProcessResult.priceAreaExternalId}/Total`,
       }));
 
-      const MockSidebar: React.FC = () => {
-        // Render with sidebar open
-        const [openedSidePanel, setOpenedSidePanel] = React.useState(true);
-
-        return (
-          <Sidebar
-            bidProcessResult={mockBidProcessResult}
-            opened={openedSidePanel}
-            setOpened={() => setOpenedSidePanel(!openedSidePanel)}
-          />
-        );
-      };
-
       testRenderer(<MockSidebar />);
 
       const searchBar = screen.getByPlaceholderText('Search plants');
@@ -221,46 +152,14 @@ describe('Sidebar tests', () => {
       const results = mockBidProcessResult.plants.map(
         (plant) => plant.displayName
       );
-      results.push('Total');
-      results.push('Price Scenarios');
+
       const expectedResults = results.filter((result) =>
         result.toLowerCase().includes(query.toLowerCase())
       );
+      expectedResults.push('Total');
+      expectedResults.push('Price Scenarios');
 
       expect(searchResults.sort()).toEqual(expectedResults.sort());
-    });
-  });
-
-  describe('Matrix button tests', () => {
-    it('Should navigate to correct url on click of button', async () => {
-      (useLocation as jest.Mock).mockImplementation(() => ({
-        pathname: `/portfolio/${mockBidProcessResult.priceAreaExternalId}/Total`,
-      }));
-
-      const MockSidebar: React.FC = () => {
-        // Render with sidebar open
-        const [openedSidePanel, setOpenedSidePanel] = React.useState(true);
-
-        return (
-          <Sidebar
-            bidProcessResult={mockBidProcessResult}
-            opened={openedSidePanel}
-            setOpened={() => setOpenedSidePanel(!openedSidePanel)}
-          />
-        );
-      };
-
-      testRenderer(<MockSidebar />);
-
-      const testPlant = mockBidProcessResult.plants[0];
-      const testButton = screen.getByRole('link', {
-        name: testPlant.displayName,
-      });
-      fireEvent.click(testButton);
-
-      expect(global.window.location.href).toContain(
-        `/portfolio/${mockBidProcessResult.priceAreaExternalId}/${testPlant.externalId}`
-      );
     });
   });
 });

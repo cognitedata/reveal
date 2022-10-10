@@ -7,7 +7,7 @@ import {
 } from '@cognite/react-container';
 import { handleLogout } from 'utils/utils';
 import { PAGES } from 'App';
-import { useFetchPriceAreas } from 'queries/useFetchPriceArea';
+import { useFetchPriceAreas } from 'queries/useFetchPriceAreas';
 
 import {
   StyledTopBar,

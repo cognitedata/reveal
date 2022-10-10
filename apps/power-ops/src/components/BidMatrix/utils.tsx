@@ -1,62 +1,53 @@
-import { PROCESS_TYPES } from '@cognite/power-ops-api-types';
+import { DEFAULT_CONFIG, WORKFLOW_TYPES } from '@cognite/power-ops-api-types';
 import { CogniteEvent, DoubleDatapoint } from '@cognite/sdk';
 import { Column } from 'react-table';
-import { TableData, TableRow, TableColumn, MatrixWithData } from 'types';
-import { calculateScenarioProduction, roundWithDec } from 'utils/utils';
+import { TableData, TableRow, BidMatrixData } from 'types';
+import { calculateScenarioProduction } from 'utils/utils';
 
-interface BidMatrixResponse {
+export interface BidMatrixTableData {
   columns: Column<TableData>[];
   data: TableData[];
 }
 
-export const formatBidMatrixData = async (
-  matrix: MatrixWithData,
-  tickSize: string
-): Promise<BidMatrixResponse> => {
+const numberOfDecimals = (tickSize: string = DEFAULT_CONFIG.DECIMAL_POINTS) =>
+  Number.isInteger(Number(tickSize)) ? 0 : tickSize?.split('.')[1].length;
+
+export const formatBidMatrixData = (
+  matrixData: BidMatrixData,
+  tickSize: string = DEFAULT_CONFIG.DECIMAL_POINTS
+): BidMatrixTableData => {
   // Get desired number of decimal places from market configuration tick_size
-  const numberOfDecimals = Number.isInteger(Number(tickSize))
-    ? 0
-    : tickSize?.split('.')[1].length;
+  const decimals = numberOfDecimals(tickSize);
 
   // Create array of table columns
-  const formattedColumnHeaders: TableColumn[] = matrix.columnHeaders.map(
-    (columnHeader, index) => {
-      const formattedValue =
-        typeof columnHeader === 'number'
-          ? `${roundWithDec(columnHeader, numberOfDecimals || 1)}`
-          : columnHeader;
-      const accessor = columnHeader?.toString().replace('.', '');
-      return {
-        Header: `${formattedValue}`,
-        accessor,
-        disableSortBy: true,
-        id: `${index}`,
-      } as TableColumn;
-    }
-  );
+  const formattedHeaders = matrixData.headerRow.map((header, index) => ({
+    Header:
+      typeof header === 'number' ? String(header.toFixed(decimals)) : header,
+    accessor: String(header).replace('.', ','),
+    disableSortBy: true,
+    id: String(index),
+  }));
 
   // Create array of table data
-  const tableData: TableData[] = [];
-  matrix.dataRows?.forEach((row, rowIndex) => {
-    row.forEach((value: number | string, index) => {
-      if (!tableData[rowIndex]) {
-        tableData[rowIndex] = {
-          id: index,
-        };
-      }
-      const { accessor } = formattedColumnHeaders[index];
-      if (accessor) {
-        // first value in each row should be the 1-based hour of the day (1-24)
-        tableData[rowIndex][accessor] = index === 0 ? rowIndex + 1 : value;
-      }
-    });
+  const tableData = matrixData.dataRows.map((row, rowIndex) =>
+    row.reduce(
+      (prev, curr, columnIndex) => ({
+        ...prev,
+        [formattedHeaders[columnIndex].accessor]: curr,
+      }),
+      { id: rowIndex } as { id: number } & Record<string, string | number>
+    )
+  );
+
+  tableData.forEach(({ Hour }, index) => {
+    tableData[index].Hour = Number(Hour) + 1;
   });
 
   // Make bidmatrix table the same height as price scenario table
-  tableData.push({ id: undefined });
+  tableData.push({ id: NaN });
 
   return {
-    columns: formattedColumnHeaders as Column<TableData>[],
+    columns: formattedHeaders,
     data: tableData,
   };
 };
@@ -116,12 +107,15 @@ export const copyMatrixToClipboard = async (
   }
 };
 
-export const formatScenarioData = async (
+export const formatScenarioData = (
   scenarioPricePerHour: DoubleDatapoint[],
-  matrix: MatrixWithData
-): Promise<{ id: number; base: string; production: string }[]> => {
+  matrixData: BidMatrixData
+): { id: number; base: string; production: string }[] => {
   const dataArray: { id: number; base: string; production: string }[] = [];
-  const production = calculateScenarioProduction(scenarioPricePerHour, matrix);
+  const production = calculateScenarioProduction(
+    scenarioPricePerHour,
+    matrixData
+  );
 
   if (scenarioPricePerHour.length && production?.length) {
     for (
@@ -135,8 +129,8 @@ export const formatScenarioData = async (
       )
         dataArray.push({
           id: index,
-          base: roundWithDec(scenarioPricePerHour[index].value as number, 2),
-          production: roundWithDec(production[index].value as number, 1),
+          base: scenarioPricePerHour[index].value.toFixed(2),
+          production: production[index].value.toFixed(1),
         });
     }
   }
@@ -151,8 +145,8 @@ export const formatScenarioData = async (
   );
   dataArray.push({
     id: 24,
-    base: roundWithDec(averageBasePrice, 2),
-    production: roundWithDec(totalProduction, 2),
+    base: averageBasePrice.toFixed(2),
+    production: totalProduction.toFixed(2),
   });
 
   return dataArray;
@@ -169,7 +163,7 @@ export const isNewBidMatrixAvailable = (
     parentProcessEventExternalId &&
     parentProcessEventExternalId !== currentBidProcessExternalId &&
     parentProcessEventExternalId.includes(
-      PROCESS_TYPES.DAY_AHEAD_BID_MATRIX_CALCULATION
+      WORKFLOW_TYPES.DAY_AHEAD_BID_MATRIX_CALCULATION
     )
   );
 };

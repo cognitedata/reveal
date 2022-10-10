@@ -3,7 +3,7 @@ import * as utils from 'utils/utils';
 import { useLocation } from 'react-router-dom';
 import { mockBidProcessResult, mockPriceArea } from 'utils/test';
 import { testRenderer } from 'utils/test/render';
-import * as priceareahook from 'queries/useFetchPriceArea';
+import * as priceAreaHook from 'queries/useFetchPriceAreas';
 
 import { MenuBar } from './Menubar';
 
@@ -28,7 +28,8 @@ describe('Menubar tests', () => {
     (useLocation as jest.Mock).mockImplementation(() => ({
       pathname: '/test-path',
     }));
-    jest.spyOn(priceareahook, 'useFetchPriceAreas').mockImplementation(() => ({
+    // @ts-expect-error We dont need the full implementation of the hook
+    jest.spyOn(priceAreaHook, 'useFetchPriceAreas').mockImplementation(() => ({
       data: [mockPriceArea],
     }));
   });

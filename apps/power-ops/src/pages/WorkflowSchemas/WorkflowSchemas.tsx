@@ -19,7 +19,7 @@ interface Props {
   onDelete: (workflowSchema: WorkflowSchemaWithProcesses) => void;
 }
 
-export const WorkflowSchemasPage = ({
+export const WorkflowSchemas = ({
   workflowSchemas,
   onCreate,
   onSave,
