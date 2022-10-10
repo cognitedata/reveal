@@ -1,4 +1,3 @@
-import { MaxDepthData } from 'domain/wells/trajectory/internal/types';
 import { WellTopSurfaceInternal } from 'domain/wells/wellTops/internal/types';
 
 import { Distance } from 'convert-units';
@@ -11,8 +10,7 @@ import { getWellTopSurfaceViewBase } from './getWellTopSurfaceViewBase';
 export const adaptWellTopSurfacesToView = (
   wellboreMatchingId: string,
   depthUnit: Distance,
-  wellTopSurfaces: WellTopSurfaceInternal[],
-  maxDepth: MaxDepthData
+  wellTopSurfaces: WellTopSurfaceInternal[]
 ): WellTopSurfaceView[] => {
   return wellTopSurfaces
     .filter(({ top }) => top)
@@ -21,7 +19,6 @@ export const adaptWellTopSurfacesToView = (
 
       const base = getWellTopSurfaceViewBase(
         wellTopSurface,
-        maxDepth,
         wellTopSurfaces[index + 1]
       );
 

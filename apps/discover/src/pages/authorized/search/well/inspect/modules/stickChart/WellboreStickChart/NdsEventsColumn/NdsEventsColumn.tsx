@@ -18,10 +18,7 @@ import { useDeepMemo } from 'hooks/useDeep';
 import { NDS_COLUMN_TITLE } from '../../../common/Events/constants';
 import { ColumnHeaderWrapper } from '../../../common/Events/elements';
 import NdsEventsBadge from '../../../common/Events/NdsEventsBadge';
-import {
-  NdsEventsByDepth,
-  EMPTY_STATE_TEXT,
-} from '../../../common/Events/NdsEventsByDepth';
+import { NdsEventsByDepth } from '../../../common/Events/NdsEventsByDepth';
 import { EventsColumnView } from '../../../common/Events/types';
 import { Column } from '../../components/Column';
 import { ColumnNotification } from '../../components/ColumnNotification';
@@ -32,6 +29,7 @@ import {
   DEFAULT_EVENTS_COLUMN_VIEW,
   EVENTS_COLUMN_WIDTH,
   NO_DATA_AMONG_SELECTED_OPTIONS_TEXT,
+  NO_DATA_TEXT,
   NO_OPTIONS_SELECTED_TEXT,
   SOME_EVENT_MISSING_TVD_TEXT,
 } from '../constants';
@@ -79,7 +77,7 @@ export const NdsEventsColumn: React.FC<
       if (!isEmpty(data) && isEmpty(filteredData)) {
         return NO_DATA_AMONG_SELECTED_OPTIONS_TEXT;
       }
-      return EMPTY_STATE_TEXT;
+      return NO_DATA_TEXT;
     }, [data, filteredData, ndsRiskTypesSelection]);
 
     const renderBlockEvents = (

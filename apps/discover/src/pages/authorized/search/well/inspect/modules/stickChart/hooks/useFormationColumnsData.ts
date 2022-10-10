@@ -10,16 +10,13 @@ import { useWellInspectWellboreIds } from 'modules/wellInspect/selectors';
 import { WellTopSurfaceView } from '../types';
 import { adaptWellTopSurfacesToView } from '../utils/adaptWellTopSurfacesToView';
 
-import { useMaxDepths } from './useMaxDepths';
-
 export const useFormationColumnsData = () => {
   const wellboreIds = useWellInspectWellboreIds();
 
   const { data, isLoading } = useWellTopsQuery({ wellboreIds });
-  const { data: maxDepths } = useMaxDepths();
 
   return useDeepMemo(() => {
-    if (!data || isEmpty(maxDepths)) {
+    if (!data || isEmpty(data)) {
       return {
         data: EMPTY_OBJECT as Record<string, WellTopSurfaceView[]>,
         isLoading,
@@ -31,8 +28,7 @@ export const useFormationColumnsData = () => {
         return adaptWellTopSurfacesToView(
           wellboreMatchingId,
           measuredDepthUnit,
-          tops,
-          maxDepths[wellboreMatchingId]
+          tops
         );
       }
     );
@@ -41,5 +37,5 @@ export const useFormationColumnsData = () => {
       data: groupByWellbore(wellTopSurfaces),
       isLoading: false,
     };
-  }, [data, isLoading, maxDepths]);
+  }, [data, isLoading]);
 };

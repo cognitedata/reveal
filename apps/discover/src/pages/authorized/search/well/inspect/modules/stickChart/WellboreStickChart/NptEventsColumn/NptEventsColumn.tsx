@@ -19,10 +19,7 @@ import { useDeepMemo } from 'hooks/useDeep';
 import { NPT_COLUMN_TITLE } from '../../../common/Events/constants';
 import { ColumnHeaderWrapper } from '../../../common/Events/elements';
 import NptEventsBadge from '../../../common/Events/NptEventsBadge';
-import {
-  NptEventsByDepth,
-  EMPTY_STATE_TEXT,
-} from '../../../common/Events/NptEventsByDepth';
+import { NptEventsByDepth } from '../../../common/Events/NptEventsByDepth';
 import { EventsColumnView } from '../../../common/Events/types';
 import { Column } from '../../components/Column';
 import { ColumnNotification } from '../../components/ColumnNotification';
@@ -33,6 +30,7 @@ import {
   DEFAULT_EVENTS_COLUMN_VIEW,
   EVENTS_COLUMN_WIDTH,
   NO_DATA_AMONG_SELECTED_OPTIONS_TEXT,
+  NO_DATA_TEXT,
   NO_OPTIONS_SELECTED_TEXT,
   SOME_EVENT_MISSING_TVD_TEXT,
 } from '../constants';
@@ -82,7 +80,7 @@ export const NptEventsColumn: React.FC<
       if (!isEmpty(data) && isEmpty(filteredData)) {
         return NO_DATA_AMONG_SELECTED_OPTIONS_TEXT;
       }
-      return EMPTY_STATE_TEXT;
+      return NO_DATA_TEXT;
     }, [data, filteredData]);
 
     const renderBlockEvents = (

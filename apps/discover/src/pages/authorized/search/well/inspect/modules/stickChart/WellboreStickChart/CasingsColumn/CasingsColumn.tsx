@@ -25,7 +25,7 @@ import {
   ChartColumn,
   HoleSectionView,
 } from '../../types';
-import { EMPTY_SCHEMA_TEXT, LOADING_TEXT } from '../constants';
+import { LOADING_TEXT, NO_DATA_TEXT } from '../constants';
 import { ColumnHeaderWrapper } from '../elements';
 import { HoleSectionsColumn } from '../HoleSectionsColumn';
 
@@ -69,7 +69,7 @@ export const CasingsColumn: React.FC<WithDragHandleProps<CasingsColumnProps>> =
               <EmptyState
                 isLoading={isLoading}
                 loadingSubtitle={isLoading ? LOADING_TEXT : ''}
-                emptySubtitle={EMPTY_SCHEMA_TEXT}
+                emptySubtitle={NO_DATA_TEXT}
                 hideHeading
               />
             </EmptyStateWrapper>

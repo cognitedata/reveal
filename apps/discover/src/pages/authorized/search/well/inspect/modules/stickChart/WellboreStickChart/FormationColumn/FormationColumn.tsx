@@ -5,12 +5,14 @@ import isUndefined from 'lodash/isUndefined';
 
 import { WithDragHandleProps } from 'components/DragDropContainer';
 import { DepthMeasurementUnit } from 'constants/units';
-import { useDeepCallback } from 'hooks/useDeep';
+import { useDeepMemo } from 'hooks/useDeep';
 
 import { BodyColumnBody } from '../../../common/Events/elements';
 import { Column } from '../../components/Column';
 import { useScaledDepth } from '../../hooks/useScaledDepth';
 import { ColumnVisibilityProps, WellTopSurfaceView } from '../../types';
+import { isFormationDataIncomplete } from '../../utils/isFormationDataIncomplete';
+import { INCOMPLETE_DATA_TEXT, NO_DATA_TEXT } from '../constants';
 
 import { FormationColumnEmptyState } from './components/FormationColumnEmptyState';
 import { FormationLayer } from './components/FormationLayer';
@@ -37,9 +39,24 @@ export const FormationColumn: React.FC<
 
     const isMdScale = depthMeasurementType === DepthMeasurementUnit.MD;
 
-    const renderFormationLayers = useDeepCallback(() => {
+    const emptyText = useDeepMemo(() => {
       if (!data || isEmpty(data)) {
-        return <FormationColumnEmptyState isLoading={isLoading} />;
+        return NO_DATA_TEXT;
+      }
+      if (isFormationDataIncomplete(data)) {
+        return INCOMPLETE_DATA_TEXT;
+      }
+      return undefined;
+    }, [data]);
+
+    const renderFormationLayers = () => {
+      if (!data || isLoading || emptyText) {
+        return (
+          <FormationColumnEmptyState
+            isLoading={isLoading}
+            emptyText={emptyText}
+          />
+        );
       }
 
       return data.map(({ name, top, depthDifference, color }) => {
@@ -62,7 +79,7 @@ export const FormationColumn: React.FC<
           />
         );
       });
-    }, [data, isLoading, depthMeasurementType, getScaledDepth]);
+    };
 
     return (
       <Column

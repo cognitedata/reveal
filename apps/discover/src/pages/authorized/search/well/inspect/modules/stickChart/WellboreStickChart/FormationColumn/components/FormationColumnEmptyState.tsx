@@ -1,7 +1,6 @@
 import * as React from 'react';
 
-import { LOADING_TEXT } from '../../constants';
-import { EMPTY_FORMATION_TEXT } from '../constants';
+import { LOADING_TEXT, NO_DATA_TEXT } from '../../constants';
 import {
   FormationColumnBlockText,
   FormationColumnEmptyStateWrapper,
@@ -9,15 +8,16 @@ import {
 
 export interface FormationColumnEmptyStateProps {
   isLoading?: boolean;
+  emptyText?: string;
 }
 
 export const FormationColumnEmptyState: React.FC<
   FormationColumnEmptyStateProps
-> = ({ isLoading = false }) => {
+> = ({ isLoading = false, emptyText = NO_DATA_TEXT }) => {
   return (
     <FormationColumnEmptyStateWrapper>
       <FormationColumnBlockText>
-        {isLoading ? LOADING_TEXT : EMPTY_FORMATION_TEXT}
+        {isLoading ? LOADING_TEXT : emptyText}
       </FormationColumnBlockText>
     </FormationColumnEmptyStateWrapper>
   );

@@ -6,12 +6,12 @@ import { ChartColumn } from '../types';
 export const RKB_LEVEL_LABEL = 'RKB level';
 export const WATER_DEPTH_LABEL = 'Water depth';
 
-export const EMPTY_SCHEMA_TEXT = 'This wellbore has no schema data';
 export const LOADING_TEXT = 'Loading';
 export const EMPTY_SUMMARY_TEXT = 'No summary to display';
 export const DEFAULT_EXPAND_GRAPH_TEXT = 'Expand to see graph';
 
 export const NO_DATA_TEXT = 'Data not available';
+export const INCOMPLETE_DATA_TEXT = 'Data incomplete';
 export const NO_OPTIONS_SELECTED_TEXT = 'No options selected';
 export const NO_DATA_AMONG_SELECTED_OPTIONS_TEXT =
   'No data among selected options';

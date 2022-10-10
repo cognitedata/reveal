@@ -1,4 +1,3 @@
-import { MaxDepthData } from 'domain/wells/trajectory/internal/types';
 import {
   WellTopSurfaceDepthInternal,
   WellTopSurfaceInternal,
@@ -6,7 +5,6 @@ import {
 
 export const getWellTopSurfaceViewBase = (
   currentWellTopSurface: WellTopSurfaceInternal,
-  maxDepth: MaxDepthData,
   nextWellTopSurface?: WellTopSurfaceInternal
 ): WellTopSurfaceDepthInternal => {
   // If current well top surface has base value.
@@ -22,10 +20,8 @@ export const getWellTopSurfaceViewBase = (
   /**
    * If next well top surface is undefined,
    * it means the current well top surface is the last one.
-   * In that case, take the max depth as the base.
+   * In that case, take the top depth as the base.
+   * This makes the depth difference 0 and a formation block will not be rendered.
    */
-  return {
-    measuredDepth: maxDepth.maxMeasuredDepth,
-    trueVerticalDepth: maxDepth.maxTrueVerticalDepth,
-  };
+  return currentWellTopSurface.top;
 };
