@@ -1,7 +1,7 @@
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo } from 'react';
 
 import { Button, Flex } from '@cognite/cogs.js';
-import { NodeProps } from 'react-flow-renderer';
+import { NodeProps, useReactFlow } from 'react-flow-renderer';
 
 import { NodeData } from 'components/custom-node';
 import { BaseNode } from 'components/base-node';
@@ -12,7 +12,9 @@ import {
 } from 'hooks/transformation';
 import { TransformationRead } from 'types/transformation';
 import { collectPages } from 'utils';
-import SelectWithCreate from 'components/select-with-create';
+import SelectWithCreate, {
+  SelectWithCreateOption,
+} from 'components/select-with-create';
 import { useNavigate } from 'react-router-dom';
 import { createLink } from '@cognite/cdf-utilities';
 
@@ -20,44 +22,78 @@ export type TransformationNodeData = NodeData<
   'transformation',
   {
     transformationId?: number;
+    transformationName?: string;
   }
 >;
 
-export const TransformationNode = (
-  _: NodeProps<TransformationNodeData>
-): JSX.Element => {
+export const TransformationNode = ({
+  data,
+  id,
+}: NodeProps<TransformationNodeData>): JSX.Element => {
+  const { extraProps = {} } = data;
+  const { transformationId: selectedTransformationId } = extraProps;
+
   const { t } = useTranslation();
 
   const navigate = useNavigate();
 
-  const [selectedTransformation, setSelectedTransformation] =
-    useState<string>();
+  const { setNodes } = useReactFlow();
 
   const { data: transformations } = useTransformationList();
-  const { mutate: createTransformation, isLoading: isCreatingTransformation } =
-    useCreateTransformation();
-
-  const transformationList = useMemo(() => {
-    return collectPages<TransformationRead>(transformations);
-  }, [transformations]);
+  const {
+    mutateAsync: createTransformation,
+    isLoading: isCreatingTransformation,
+  } = useCreateTransformation();
 
   const transformationOptions = useMemo(() => {
-    return transformationList.map(({ name }) => ({ label: name, value: name }));
-  }, [transformationList]);
+    const list = collectPages<TransformationRead>(transformations);
+    return list.map(({ id, name }) => ({ label: name, value: id }));
+  }, [transformations]);
 
-  const selectedTransformationId = transformationList.find(
-    ({ name }) => name === selectedTransformation
-  )?.id;
+  const updateTransformationNode = useCallback(
+    (extraProps: TransformationNodeData['extraProps']) => {
+      setNodes((prevNodes) => {
+        return prevNodes.map((node) => {
+          const { id: testId } = node;
+          if (testId === id) {
+            return { ...node, data: { ...node.data, extraProps } };
+          }
+          return node;
+        });
+      });
+    },
+    [id, setNodes]
+  );
 
-  const handleTransformationCreate = (value: string) => {
-    createTransformation({ externalId: `tr-${value}`, name: value });
+  const handleTransformationClear = () => {
+    updateTransformationNode({
+      transformationId: undefined,
+      transformationName: undefined,
+    });
   };
 
-  const handleTransformationSelect = (value?: string) => {
-    if (value !== selectedTransformation) {
-      setSelectedTransformation(undefined);
+  const handleTransformationCreate = (labelToCreate: string) => {
+    createTransformation({
+      externalId: `tr-${labelToCreate}`,
+      name: labelToCreate,
+    }).then(({ id, name }) => {
+      updateTransformationNode({
+        transformationId: id,
+        transformationName: name,
+      });
+    });
+  };
+
+  const handleTransformationSelect = (
+    value: number,
+    option: SelectWithCreateOption<number>
+  ) => {
+    if (value !== selectedTransformationId) {
+      updateTransformationNode({
+        transformationId: value,
+        transformationName: option.label,
+      });
     }
-    setSelectedTransformation(value);
   };
 
   return (
@@ -67,16 +103,16 @@ export const TransformationNode = (
       title={t('transformation', { postProcess: 'uppercase' })}
     >
       <Flex direction="column" gap={8}>
-        <SelectWithCreate
+        <SelectWithCreate<number>
           className="nodrag"
           loading={isCreatingTransformation}
-          onClear={() => handleTransformationSelect(undefined)}
+          onClear={handleTransformationClear}
           onCreate={handleTransformationCreate}
           onSelect={handleTransformationSelect}
           optionLabelProp="label"
           options={transformationOptions}
           titleI18nKey="transformation"
-          value={selectedTransformation}
+          value={selectedTransformationId}
         />
         {selectedTransformationId !== undefined && (
           <Flex gap={8}>

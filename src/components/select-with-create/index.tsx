@@ -10,26 +10,29 @@ const { Option } = Select;
 
 const FLOW_BUILDER_CREATE_OPTION_VALUE_PREFIX = 'flow-builder-create-value/';
 
-type SelectWithCreateOption = {
+export type SelectWithCreateOption<V> = {
   label: string;
-  value: string;
+  value: V;
 };
 
-type SelectWithCreateProps = {
-  onCreate?: (value: string) => void;
-  options: SelectWithCreateOption[];
+type SelectWithCreateProps<V> = {
+  onCreate?: (labelToCreate: string) => void;
+  onSelect?: (value: V, option: SelectWithCreateOption<V>) => void;
+  options: SelectWithCreateOption<V>[];
   titleI18nKey: TranslationKeys;
 } & Omit<
-  SelectProps<string, SelectWithCreateOption>,
+  SelectProps<V, SelectWithCreateOption<V>>,
   | 'allowClear'
   | 'clearIcon'
   | 'filterOption'
+  | 'labelInValue'
   | 'onSearch'
+  | 'onSelect'
   | 'options'
   | 'showSearch'
 >;
 
-const SelectWithCreate = ({
+const SelectWithCreate = <V extends string | number = string>({
   disabled,
   loading,
   onCreate,
@@ -37,15 +40,15 @@ const SelectWithCreate = ({
   options,
   titleI18nKey,
   ...selectProps
-}: SelectWithCreateProps): JSX.Element => {
+}: SelectWithCreateProps<V>): JSX.Element => {
   const { t } = useTranslation();
 
   const [search, setSearch] = useState('');
 
   const filteredOptions = useMemo(() => {
     const lowerCaseSearch = search.toLowerCase();
-    return options.filter(({ value }) =>
-      value.toLowerCase().includes(lowerCaseSearch)
+    return options.filter(({ label }) =>
+      label.toLowerCase().includes(lowerCaseSearch)
     );
   }, [options, search]);
 
@@ -53,33 +56,33 @@ const SelectWithCreate = ({
     setSearch(value);
   };
 
-  const handleSelect = (value: string) => {
-    let selectedOption: SelectWithCreateOption | undefined;
-    if (value.startsWith(FLOW_BUILDER_CREATE_OPTION_VALUE_PREFIX)) {
-      const selectedValue = value.split(
+  const handleSelect = (value: V) => {
+    if (
+      typeof value === 'string' &&
+      value.startsWith(FLOW_BUILDER_CREATE_OPTION_VALUE_PREFIX)
+    ) {
+      const labelToCreate = value.split(
         FLOW_BUILDER_CREATE_OPTION_VALUE_PREFIX
       )[1];
-      selectedOption = { label: selectedValue, value: selectedValue };
-      onCreate?.(selectedValue);
+      onCreate?.(labelToCreate);
     } else {
-      selectedOption = options.find(
-        ({ value: testValue }) => testValue === value
-      );
-    }
-
-    if (selectedOption) {
-      onSelect?.(value, selectedOption);
+      const selectedOption: SelectWithCreateOption<V> | undefined =
+        options.find(({ value: testValue }) => testValue === value);
+      if (selectedOption) {
+        onSelect?.(value, selectedOption);
+      }
     }
   };
 
   return (
-    <StyledSelect
+    <Select<V, SelectWithCreateOption<V>>
       allowClear
       clearIcon={<StyledClearIcon type="ClearAll" />}
       disabled={disabled || loading}
       filterOption={() => true}
+      labelInValue={false}
+      onSelect={handleSelect as any} // we can cast to any as long as `labelInValue` is false
       onSearch={handleSearch}
-      onSelect={handleSelect}
       placeholder={t('select-with-create-placeholder', {
         selectLabel: t(titleI18nKey, { postProcess: 'lowercase' }),
       })}
@@ -87,6 +90,7 @@ const SelectWithCreate = ({
       suffixIcon={
         <StyledSuffixIcon type={loading ? 'Loader' : 'ChevronDown'} />
       }
+      virtual={false}
       {...selectProps}
     >
       {filteredOptions.map(({ label, value }) => (
@@ -130,13 +134,9 @@ const SelectWithCreate = ({
           </StyledCreateOption>
         </Option>
       )}
-    </StyledSelect>
+    </Select>
   );
 };
-
-const StyledSelect = styled(Select<string, SelectWithCreateOption>)`
-  width: 100%;
-`;
 
 const StyledClearIcon = styled(Icon)`
   margin-top: -2px;
