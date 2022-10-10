@@ -1,11 +1,11 @@
 import { InternalId } from '@cognite/sdk';
 import React from 'react';
 import {
-  ByAssetFilter,
-  DataSetFilter,
   ResourceType,
-  DateFilter,
-  StringFilter,
+  DataSetFilterV2,
+  ByAssetFilterV2,
+  DateFilterV2,
+  StringFilterV2,
 } from '@cognite/data-exploration';
 import { BaseFilterCollapse } from '../../components/Collapse/BaseFilterCollapse/BaseFilterCollapse';
 // import { MetadataFilter } from '../MetadataFilter/MetadataFilter';
@@ -24,25 +24,25 @@ export const CommonFilter: React.FC<Props> = ({ resourceType, ...rest }) => {
       onResetClick={resetCommonFilter}
       {...rest}
     >
-      <DataSetFilter
+      <DataSetFilterV2
         resourceType={resourceType}
         value={commonFilter.dataSetIds}
         setValue={newValue => setCommonFilter({ dataSetIds: newValue })}
       />
-      <ByAssetFilter
+      <ByAssetFilterV2
         value={commonFilter.assetSubtreeIds?.map(el => (el as InternalId).id)}
         setValue={newValue =>
           setCommonFilter({ assetSubtreeIds: newValue?.map(id => ({ id })) })
         }
       />
-      <DateFilter
+      <DateFilterV2
         title="Created Time"
         value={commonFilter.createdTime}
         setValue={newValue =>
           setCommonFilter({ createdTime: newValue || undefined })
         }
       />
-      <DateFilter
+      <DateFilterV2
         title="Updated Time"
         value={commonFilter.lastUpdatedTime}
         setValue={newValue =>
@@ -55,7 +55,7 @@ export const CommonFilter: React.FC<Props> = ({ resourceType, ...rest }) => {
         value={commonFilter.metadata}
         setValue={newValue => onChange({ metadata: newValue })}
       /> */}
-      <StringFilter
+      <StringFilterV2
         title="External ID"
         value={commonFilter.externalIdPrefix}
         setValue={newValue => setCommonFilter({ externalIdPrefix: newValue })}

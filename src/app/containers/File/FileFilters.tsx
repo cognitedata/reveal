@@ -3,11 +3,11 @@ import { useList } from '@cognite/sdk-react-query-hooks';
 import { BaseFilterCollapse } from '../../components/Collapse/BaseFilterCollapse/BaseFilterCollapse';
 import { useFileFilters, useResetFileFilters } from 'app/store/filter';
 import {
-  AggregatedFilter,
-  DateFilter,
-  LabelFilter,
-  MetadataFilter,
-  StringFilter,
+  AggregatedFilterV2,
+  DateFilterV2,
+  LabelFilterV2,
+  MetadataFilterV2,
+  StringFilterV2,
 } from '@cognite/data-exploration';
 
 export const FileFilters = ({ ...rest }) => {
@@ -25,14 +25,14 @@ export const FileFilters = ({ ...rest }) => {
       onResetClick={resetFileFilters}
       {...rest}
     >
-      <AggregatedFilter
+      <AggregatedFilterV2
         items={items}
         aggregator="mimeType"
         title="Mime type"
         value={fileFilter.mimeType}
         setValue={newValue => setFileFilter({ mimeType: newValue })}
       />
-      <DateFilter
+      <DateFilterV2
         title="Source Modified Time"
         value={fileFilter.sourceModifiedTime}
         setValue={newDate =>
@@ -41,7 +41,7 @@ export const FileFilters = ({ ...rest }) => {
           })
         }
       />
-      <LabelFilter
+      <LabelFilterV2
         resourceType="file"
         value={((fileFilter as any).labels || { containsAny: [] }).containsAny}
         setValue={newFilters =>
@@ -51,7 +51,7 @@ export const FileFilters = ({ ...rest }) => {
         }
       />
 
-      <DateFilter
+      <DateFilterV2
         title="Uploaded Time"
         value={fileFilter.uploadedTime}
         setValue={newDate =>
@@ -60,7 +60,7 @@ export const FileFilters = ({ ...rest }) => {
           })
         }
       />
-      <StringFilter
+      <StringFilterV2
         title="Directory prefix"
         value={(fileFilter as any).directoryPrefix}
         setValue={newPrefix =>
@@ -70,7 +70,7 @@ export const FileFilters = ({ ...rest }) => {
           })
         }
       />
-      <AggregatedFilter
+      <AggregatedFilterV2
         title="Source"
         items={items}
         aggregator="source"
@@ -81,7 +81,7 @@ export const FileFilters = ({ ...rest }) => {
           })
         }
       />
-      <MetadataFilter
+      <MetadataFilterV2
         items={items}
         value={fileFilter.metadata}
         setValue={newMetadata =>
@@ -91,7 +91,7 @@ export const FileFilters = ({ ...rest }) => {
         }
       />
 
-      <DateFilter
+      <DateFilterV2
         title="Source Created Time"
         value={fileFilter.sourceCreatedTime}
         setValue={newDate =>

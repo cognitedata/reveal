@@ -10,9 +10,9 @@ import { useSDK } from '@cognite/sdk-provider';
 import { useAssetFilters, useResetAssetFilters } from 'app/store/filter';
 import { BaseFilterCollapse } from 'app/components/Collapse/BaseFilterCollapse/BaseFilterCollapse';
 import {
-  AggregatedFilter,
-  LabelFilter,
-  MetadataFilter,
+  AggregatedFilterV2,
+  LabelFilterV2,
+  MetadataFilterV2,
 } from '@cognite/data-exploration';
 
 // TODO: Move to domain layer
@@ -57,7 +57,7 @@ export const AssetFilters = ({ ...rest }) => {
       onResetClick={resetAssetFilters}
       {...rest}
     >
-      <LabelFilter
+      <LabelFilterV2
         resourceType="asset"
         value={
           (
@@ -72,7 +72,7 @@ export const AssetFilters = ({ ...rest }) => {
           })
         }
       />
-      <AggregatedFilter
+      <AggregatedFilterV2
         title="Source"
         items={items}
         aggregator="source"
@@ -83,7 +83,7 @@ export const AssetFilters = ({ ...rest }) => {
           })
         }
       />
-      <MetadataFilter
+      <MetadataFilterV2
         items={items}
         keys={metadataKeys}
         value={assetFilters.metadata}

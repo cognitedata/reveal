@@ -6,9 +6,9 @@ import {
   useTimeseriesFilters,
 } from 'app/store/filter';
 import {
-  AggregatedFilter,
+  AggregatedFilterV2,
   BooleanFilter,
-  MetadataFilter,
+  MetadataFilterV2,
 } from '@cognite/data-exploration';
 
 export const TimeseriesFilters = ({ ...rest }) => {
@@ -45,7 +45,7 @@ export const TimeseriesFilters = ({ ...rest }) => {
         }
       />
 
-      <AggregatedFilter
+      <AggregatedFilterV2
         items={items}
         aggregator="unit"
         title="Unit"
@@ -53,7 +53,7 @@ export const TimeseriesFilters = ({ ...rest }) => {
         setValue={newValue => setTimeseriesFilter({ unit: newValue })}
       />
 
-      <MetadataFilter
+      <MetadataFilterV2
         items={items}
         value={timeseriesFilter.metadata}
         setValue={newMetadata =>

@@ -4,10 +4,10 @@ import { useList } from '@cognite/sdk-react-query-hooks';
 import { BaseFilterCollapse } from '../../components/Collapse/BaseFilterCollapse/BaseFilterCollapse';
 import { useEventsFilters, useResetEventsFilters } from 'app/store/filter';
 import {
-  AggregatedEventFilter,
-  AggregatedFilter,
-  DateFilter,
-  MetadataFilter,
+  AggregatedEventFilterV2,
+  AggregatedFilterV2,
+  DateFilterV2,
+  MetadataFilterV2,
 } from '@cognite/data-exploration';
 
 export const EventFilters = ({ ...rest }: {}) => {
@@ -25,7 +25,7 @@ export const EventFilters = ({ ...rest }: {}) => {
       onResetClick={resetEventFilters}
       {...rest}
     >
-      <AggregatedEventFilter
+      <AggregatedEventFilterV2
         field="type"
         filter={eventFilter}
         setValue={newValue => {
@@ -34,7 +34,7 @@ export const EventFilters = ({ ...rest }: {}) => {
         title="Type"
         value={eventFilter.type}
       />
-      <DateFilter
+      <DateFilterV2
         title="Start Time"
         value={eventFilter.startTime}
         setValue={newDate =>
@@ -43,7 +43,7 @@ export const EventFilters = ({ ...rest }: {}) => {
           })
         }
       />
-      <DateFilter
+      <DateFilterV2
         title="End Time"
         enableNull
         value={
@@ -57,7 +57,7 @@ export const EventFilters = ({ ...rest }: {}) => {
           })
         }
       />
-      <AggregatedEventFilter
+      <AggregatedEventFilterV2
         field="subtype"
         filter={eventFilter}
         setValue={newValue => {
@@ -75,7 +75,7 @@ export const EventFilters = ({ ...rest }: {}) => {
           })
         }
       /> */}
-      <AggregatedFilter
+      <AggregatedFilterV2
         title="Source"
         items={items}
         aggregator="source"
@@ -86,7 +86,7 @@ export const EventFilters = ({ ...rest }: {}) => {
           })
         }
       />
-      <MetadataFilter
+      <MetadataFilterV2
         items={items}
         value={eventFilter.metadata}
         setValue={newMetadata =>
