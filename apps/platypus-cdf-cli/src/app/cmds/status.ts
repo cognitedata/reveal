@@ -16,10 +16,13 @@ class LoginStatusCommand implements CommandModule {
     const { project, cluster, tenant, msalAccountInfo } = authConfig;
     DEBUG('Global config is stored at %s', globalConfig.path);
 
-    const table = new Table({
-      head: ['Status', green('User is authenticated')],
-    });
-    table.push(['Tenant', tenant], ['Cluster', cluster], ['Project', project]);
+    const table = new Table();
+    table.push(
+      ['Status', green('User is authenticated')],
+      ['Tenant', tenant],
+      ['Cluster', cluster],
+      ['Project', project]
+    );
     if (msalAccountInfo) {
       let username = '',
         name = '';
