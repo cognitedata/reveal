@@ -1,7 +1,6 @@
 import { useMemo, useState } from 'react';
-import { Button, Flex, Icon } from '@cognite/cogs.js';
+import { Button, Flex, Icon, Label } from '@cognite/cogs.js';
 import { Table, TableNoResults } from '@cognite/cdf-utilities';
-import Tag from 'antd/lib/tag';
 import { Checkbox, notification } from 'antd';
 import DataSetEditor from 'pages/DataSetEditor';
 
@@ -152,7 +151,11 @@ const DataSetsList = (): JSX.Element => {
     key: 'status',
     width: '5%',
     render: (row: DataSetRow) =>
-      row.archived && <Tag color="red">{t('archived')}</Tag>,
+      row.archived && (
+        <Label size="medium" variant="danger">
+          {t('archived')}
+        </Label>
+      ),
   };
 
   const actionsColumn = {
@@ -282,7 +285,11 @@ const DataSetsList = (): JSX.Element => {
         sourceSuggestions={getSourcesList()}
         handleCloseModal={() => handleModalClose()}
       />
-      <Flex alignItems="center" justifyContent="space-between">
+      <Flex
+        alignItems="center"
+        justifyContent="space-between"
+        style={{ marginBottom: 16 }}
+      >
         <TableFilter
           filteredCount={filteredTableData.length}
           labelOptions={labels}
