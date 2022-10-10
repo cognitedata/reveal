@@ -7,7 +7,7 @@ import { ResourceType } from 'types';
 import { useList } from '@cognite/sdk-react-query-hooks';
 import { FilterFacetTitle } from '../FilterFacetTitle';
 
-export const LabelFilter = ({
+export const LabelFilterV2 = ({
   resourceType,
   value,
   setValue,
@@ -49,6 +49,7 @@ export const LabelFilter = ({
             label: el.name,
             value: el.externalId,
           }))}
+          cogsTheme="grey"
           isDisabled={isError || !allowLabels}
           onChange={newValue => {
             setLabel(

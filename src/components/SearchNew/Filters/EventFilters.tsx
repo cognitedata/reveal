@@ -2,11 +2,11 @@ import React from 'react';
 
 import { EventFilter, InternalId } from '@cognite/sdk';
 import { useList } from '@cognite/sdk-react-query-hooks';
-import { AggregatedFilter } from './AggregatedFilter/AggregatedFilter';
-import { AggregatedEventFilter } from './AggregatedEventFilter/AggregatedEventFilter';
-import { ByAssetFilter } from './ByAssetFilter/ByAssetFilter';
-import { DateFilter } from './DateFilter/DateFilter';
-import { MetadataFilter } from './MetadataFilter/MetadataFilter';
+import { AggregatedFilterV2 } from './AggregatedFilter/AggregatedFilter';
+import { AggregatedEventFilterV2 } from './AggregatedEventFilter/AggregatedEventFilter';
+import { ByAssetFilterV2 } from './ByAssetFilter/ByAssetFilter';
+import { DateFilterV2 } from './DateFilter/DateFilter';
+import { MetadataFilterV2 } from './MetadataFilter/MetadataFilter';
 import { BaseFilterCollapse } from './BaseFilterCollapse/BaseFilterCollapse';
 
 export const EventFilters = ({
@@ -21,7 +21,7 @@ export const EventFilters = ({
 
   return (
     <BaseFilterCollapse.Panel title="Events" {...rest}>
-      <AggregatedEventFilter
+      <AggregatedEventFilterV2
         field="type"
         filter={filter}
         setValue={newValue => {
@@ -30,7 +30,7 @@ export const EventFilters = ({
         title="Type"
         value={filter.type}
       />
-      <DateFilter
+      <DateFilterV2
         title="Start Time"
         value={filter.startTime}
         setValue={newDate =>
@@ -40,7 +40,7 @@ export const EventFilters = ({
           })
         }
       />
-      <DateFilter
+      <DateFilterV2
         title="End Time"
         enableNull
         value={
@@ -53,7 +53,7 @@ export const EventFilters = ({
           })
         }
       />
-      <AggregatedEventFilter
+      <AggregatedEventFilterV2
         field="subtype"
         filter={filter}
         setValue={newValue => {
@@ -62,7 +62,7 @@ export const EventFilters = ({
         title="Sub-type"
         value={filter.subtype}
       />
-      <ByAssetFilter
+      <ByAssetFilterV2
         value={filter.assetSubtreeIds?.map(el => (el as InternalId).id)}
         setValue={newValue =>
           setFilter({
@@ -71,7 +71,7 @@ export const EventFilters = ({
           })
         }
       />
-      <AggregatedFilter
+      <AggregatedFilterV2
         title="Source"
         items={items}
         aggregator="source"
@@ -83,7 +83,7 @@ export const EventFilters = ({
           })
         }
       />
-      <MetadataFilter
+      <MetadataFilterV2
         items={items}
         value={filter.metadata}
         setValue={newMetadata =>

@@ -2,11 +2,11 @@ import { InternalId } from '@cognite/sdk';
 import React from 'react';
 import { ResourceType } from 'types';
 import { BaseFilterCollapse } from '../BaseFilterCollapse/BaseFilterCollapse';
-import { ByAssetFilter } from '../ByAssetFilter/ByAssetFilter';
-import { DataSetFilter } from '../DataSetFilter/DataSetFilter';
-import { DateFilter } from '../DateFilter/DateFilter';
+import { ByAssetFilterV2 } from '../ByAssetFilter/ByAssetFilter';
+import { DataSetFilterV2 } from '../DataSetFilter/DataSetFilter';
+import { DateFilterV2 } from '../DateFilter/DateFilter';
 // import { MetadataFilter } from '../MetadataFilter/MetadataFilter';
-import { StringFilter } from '../StringFilter/StringFilter';
+import { StringFilterV2 } from '../StringFilter/StringFilter';
 import { CommonFilterFacets } from '../types';
 
 interface Props {
@@ -22,23 +22,23 @@ export const CommonFilter: React.FC<Props> = ({
 }) => {
   return (
     <BaseFilterCollapse.Panel title="Common" {...rest}>
-      <DataSetFilter
+      <DataSetFilterV2
         resourceType={resourceType}
         value={commonFilter.dataSetIds}
         setValue={newValue => onChange({ dataSetIds: newValue })}
       />
-      <ByAssetFilter
+      <ByAssetFilterV2
         value={commonFilter.assetSubtreeIds?.map(el => (el as InternalId).id)}
         setValue={newValue =>
           onChange({ assetSubtreeIds: newValue?.map(id => ({ id })) })
         }
       />
-      <DateFilter
+      <DateFilterV2
         title="Created Time"
         value={commonFilter.createdTime}
         setValue={newValue => onChange({ createdTime: newValue || undefined })}
       />
-      <DateFilter
+      <DateFilterV2
         title="Updated Time"
         value={commonFilter.lastUpdatedTime}
         setValue={newValue =>
@@ -51,7 +51,7 @@ export const CommonFilter: React.FC<Props> = ({
         value={commonFilter.metadata}
         setValue={newValue => onChange({ metadata: newValue })}
       /> */}
-      <StringFilter
+      <StringFilterV2
         title="External ID"
         value={commonFilter.externalIdPrefix}
         setValue={newValue => onChange({ externalIdPrefix: newValue })}

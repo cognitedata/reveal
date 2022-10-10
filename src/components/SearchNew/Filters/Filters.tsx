@@ -1,7 +1,7 @@
 import React from 'react';
 
 import {
-  AssetFilters,
+  AssetFiltersV2,
   EventFilters,
   FileFilters,
   SequenceFilters,
@@ -55,7 +55,7 @@ export const Filters = ({
     switch (resourceType) {
       case 'asset': {
         return (
-          <AssetFilters
+          <AssetFiltersV2
             filter={assetFilter}
             setFilter={setAssetFilter}
             {...rest}

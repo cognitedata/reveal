@@ -3,20 +3,20 @@ import { ComponentStory } from '@storybook/react';
 import { userEvent, waitFor, within } from '@storybook/testing-library';
 import { expect } from '@storybook/jest';
 import { assets } from 'stubs/assets';
-import { ByAssetFilter } from './ByAssetFilter';
+import { ByAssetFilterV2 } from './ByAssetFilter';
 
 export default {
-  title: 'Search Results/Filters/ByAssetFilter',
-  component: ByAssetFilter,
+  title: 'Search Results/Filters/ByAssetFilterV2',
+  component: ByAssetFilterV2,
   argTypes: {
     title: {
       type: 'string',
     },
   },
 };
-export const Example: ComponentStory<typeof ByAssetFilter> = args => {
+export const Example: ComponentStory<typeof ByAssetFilterV2> = args => {
   const [value, setValue] = useState<number[] | undefined>(undefined);
-  return <ByAssetFilter {...args} value={value} setValue={setValue} />;
+  return <ByAssetFilterV2 {...args} value={value} setValue={setValue} />;
 };
 
 Example.args = {

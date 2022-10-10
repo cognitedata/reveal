@@ -2,7 +2,7 @@ import React from 'react';
 import { Select } from 'components';
 import { FilterFacetTitle } from '../FilterFacetTitle';
 
-export const AggregatedFilter = <T,>({
+export const AggregatedFilterV2 = <T,>({
   items,
   value,
   setValue,
@@ -33,6 +33,13 @@ export const AggregatedFilter = <T,>({
       <Select
         creatable
         className="aggregated-filter-select"
+        styles={{
+          control: base => ({
+            ...base,
+            backgroundColor: '#f1f1f1',
+            border: 'none',
+          }),
+        }}
         value={value ? { value, label: value } : null}
         onChange={item => {
           if (item) {

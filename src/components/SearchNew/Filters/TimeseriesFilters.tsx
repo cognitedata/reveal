@@ -2,8 +2,8 @@ import React from 'react';
 import { useList } from '@cognite/sdk-react-query-hooks';
 import { TimeseriesFilter as TimeseriesFilterProps } from '@cognite/sdk';
 import { BooleanFilter } from './BooleanFilter/BooleanFilter';
-import { AggregatedFilter } from './AggregatedFilter/AggregatedFilter';
-import { MetadataFilter } from './MetadataFilter/MetadataFilter';
+import { AggregatedFilterV2 } from './AggregatedFilter/AggregatedFilter';
+import { MetadataFilterV2 } from './MetadataFilter/MetadataFilter';
 import { BaseFilterCollapse } from './BaseFilterCollapse/BaseFilterCollapse';
 
 export const TimeseriesFilters = ({
@@ -39,7 +39,7 @@ export const TimeseriesFilters = ({
         }
       />
 
-      <AggregatedFilter
+      <AggregatedFilterV2
         items={items}
         aggregator="unit"
         title="Unit"
@@ -47,7 +47,7 @@ export const TimeseriesFilters = ({
         setValue={newValue => setFilter({ ...filter, unit: newValue })}
       />
 
-      <MetadataFilter
+      <MetadataFilterV2
         items={items}
         value={filter.metadata}
         setValue={newMetadata =>

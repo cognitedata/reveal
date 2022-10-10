@@ -2,7 +2,7 @@ import React from 'react';
 import { AssetSelect } from 'containers/Assets';
 import { FilterFacetTitle } from '../FilterFacetTitle';
 
-export const ByAssetFilter = ({
+export const ByAssetFilterV2 = ({
   value,
   setValue,
   title = 'Asset',
@@ -22,6 +22,7 @@ export const ByAssetFilter = ({
         isMulti
         selectedAssetIds={value}
         onAssetSelected={setFilterByAsset}
+        cogsTheme="grey"
       />
     </>
   );

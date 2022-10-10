@@ -4,21 +4,25 @@ import { Props, OptionTypeBase } from 'react-select';
 import {
   Select as CogsSelect,
   SelectProps as CogsSelectProps,
+  Theme,
 } from '@cognite/cogs.js';
 
 export type SelectProps<OptionType> = Props<OptionType> & {
   creatable?: boolean;
+  cogsTheme?: Theme;
 };
 
 export const Select = <
   OptionType extends OptionTypeBase = { label: string; value: string }
 >({
   creatable = false,
+  cogsTheme,
   ...extraProps
 }: SelectProps<OptionType>) => {
   const props: Props<OptionType> = {
     isClearable: true,
     closeMenuOnSelect: true,
+    theme: cogsTheme as any,
     ...extraProps,
     styles: {
       ...extraProps.styles,
@@ -43,7 +47,7 @@ export const Select = <
     return (
       <ReactSelectCreatable
         {...props}
-        formatCreateLabel={input => `Use "${input}"`}
+        formatCreateLabel={(input: string) => `Use "${input}"`}
       />
     );
   }

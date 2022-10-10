@@ -8,6 +8,7 @@ import {
 import { useDebounce } from 'use-debounce';
 import { Select } from 'components';
 import { Props, OptionTypeBase } from 'react-select';
+import { Theme } from '@cognite/cogs.js';
 
 type AssetInfo = { value: number; name: string };
 
@@ -15,12 +16,14 @@ export type AssetSelectProps = Props<OptionTypeBase> & {
   onAssetSelected?: (assetIds?: number[]) => void;
   selectedAssetIds?: number[];
   rootOnly?: boolean;
+  cogsTheme?: Theme;
 };
 
 export const AssetSelect = ({
   onAssetSelected = () => {},
   selectedAssetIds,
   rootOnly,
+  cogsTheme,
   ...extraProps
 }: AssetSelectProps) => {
   const [query, setQuery] = useState('');
@@ -103,6 +106,7 @@ export const AssetSelect = ({
       value={getSelectedItemValues()}
       onInputChange={input => setQuery(input)}
       options={values}
+      cogsTheme={cogsTheme}
       onChange={selected => {
         if (!selected) {
           onAssetSelected(undefined);

@@ -25,7 +25,7 @@ const determinePeriod = (value: DateRange | undefined | null) => {
 
 type PeriodType = 'none' | 'before' | 'during' | 'after' | 'null';
 
-export const DateFilter = ({
+export const DateFilterV2 = ({
   value,
   setValue,
   title,
@@ -75,6 +75,7 @@ export const DateFilter = ({
         isClearable={false}
         blurInputOnSelect
         isMulti={false}
+        cogsTheme="grey"
         onChange={(newValue: any) => {
           const newKey = (
             newValue as {

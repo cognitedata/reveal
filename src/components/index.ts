@@ -1,6 +1,17 @@
 export * from './Chart';
 export * from './Common';
 export * from './Search';
+export {
+  DataSetFilterV2,
+  LabelFilterV2,
+  DateFilterV2,
+  AssetFiltersV2,
+  StringFilterV2,
+  AggregatedFilterV2,
+  ByAssetFilterV2,
+  MetadataFilterV2,
+  AggregatedEventFilterV2,
+} from './SearchNew';
 export * from './InfoGrid/InfoGrid';
 export * from './FilterForm/FilterForm';
 export * from './Splitter/Splitter';

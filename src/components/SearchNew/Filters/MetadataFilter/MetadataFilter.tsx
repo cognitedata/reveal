@@ -1,8 +1,8 @@
 import React, { useMemo } from 'react';
 import styled from 'styled-components';
 import { Body, Button } from '@cognite/cogs.js';
-import { FilterForm } from 'components';
 import { mergeUniqueMetadataKeys } from './utils';
+import { FilterFormV2 } from 'components/FilterFormV2/FilterFormV2';
 
 const FilterHeader = styled.div`
   display: flex;
@@ -11,7 +11,7 @@ const FilterHeader = styled.div`
   align-items: center;
 `;
 
-export const MetadataFilter = <
+export const MetadataFilterV2 = <
   T extends { metadata?: { [key: string]: string } }
 >({
   items,
@@ -56,7 +56,7 @@ export const MetadataFilter = <
         )}
       </FilterHeader>
 
-      <FilterForm
+      <FilterFormV2
         metadata={metadata}
         keys={keys}
         filters={value}

@@ -3,11 +3,11 @@ import { ComponentStory } from '@storybook/react';
 import { userEvent, waitFor, within } from '@storybook/testing-library';
 import { expect } from '@storybook/jest';
 import { assets } from 'stubs/assets';
-import { AggregatedFilter } from './AggregatedFilter';
+import { AggregatedFilterV2 } from './AggregatedFilter';
 
 export default {
-  title: 'Search Results/Filters/AggregatedFilter',
-  component: AggregatedFilter,
+  title: 'Search Results/Filters/AggregatedFilterV2',
+  component: AggregatedFilterV2,
   argTypes: {
     title: {
       type: 'string',
@@ -18,9 +18,9 @@ export default {
   },
 };
 
-export const Example: ComponentStory<typeof AggregatedFilter> = args => {
+export const Example: ComponentStory<typeof AggregatedFilterV2> = args => {
   const [value, setValue] = useState<string | undefined>(undefined);
-  return <AggregatedFilter {...args} value={value} setValue={setValue} />;
+  return <AggregatedFilterV2 {...args} value={value} setValue={setValue} />;
 };
 
 Example.args = {

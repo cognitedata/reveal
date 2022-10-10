@@ -2,13 +2,13 @@ import React from 'react';
 import { useList } from '@cognite/sdk-react-query-hooks';
 import { AssetFilterProps } from '@cognite/sdk';
 import { useAssetMetadataKeys } from 'hooks/MetadataAggregateHooks';
-import { LabelFilter } from './LabelFilter/LabelFilter';
-import { MetadataFilter } from './MetadataFilter/MetadataFilter';
-import { AggregatedFilter } from './AggregatedFilter/AggregatedFilter';
+import { LabelFilterV2 } from './LabelFilter/LabelFilter';
+import { MetadataFilterV2 } from './MetadataFilter/MetadataFilter';
+import { AggregatedFilterV2 } from './AggregatedFilter/AggregatedFilter';
 import { BaseFilterCollapse } from './BaseFilterCollapse/BaseFilterCollapse';
 
 // TODO(CDFUX-000) allow customization of ordering of filters via props
-export const AssetFilters = ({
+export const AssetFiltersV2 = ({
   filter,
   setFilter,
   ...rest
@@ -22,7 +22,7 @@ export const AssetFilters = ({
 
   return (
     <BaseFilterCollapse.Panel title="Assets" {...rest}>
-      <LabelFilter
+      <LabelFilterV2
         resourceType="asset"
         value={((filter as any).labels || { containsAny: [] }).containsAny}
         setValue={newFilters =>
@@ -32,7 +32,7 @@ export const AssetFilters = ({
           })
         }
       />
-      <AggregatedFilter
+      <AggregatedFilterV2
         title="Source"
         items={items}
         aggregator="source"
@@ -44,7 +44,7 @@ export const AssetFilters = ({
           })
         }
       />
-      <MetadataFilter
+      <MetadataFilterV2
         items={items}
         keys={metadataKeys}
         value={filter.metadata}

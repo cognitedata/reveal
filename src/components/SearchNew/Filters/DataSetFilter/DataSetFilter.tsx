@@ -18,7 +18,7 @@ const formatOption = (dataset: DataSetWCount) => {
   };
 };
 
-export const DataSetFilter = ({
+export const DataSetFilterV2 = ({
   resourceType,
   value,
   setValue,
@@ -72,6 +72,7 @@ export const DataSetFilter = ({
           isSearchable
           isClearable
           menuPosition="fixed"
+          cogsTheme="grey"
         />
       </>
     </Tooltip>

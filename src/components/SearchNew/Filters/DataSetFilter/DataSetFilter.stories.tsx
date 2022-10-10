@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { IdEither } from '@cognite/sdk';
 import { ComponentStory } from '@storybook/react';
-import { DataSetFilter } from './DataSetFilter';
+import { DataSetFilterV2 } from './DataSetFilter';
+import { DataSetFilter } from 'index';
 
 export default {
-  title: 'Search Results/Filters/DataSetFilterv2',
-  component: DataSetFilter,
+  title: 'Search Results/Filters/DataSetFilterV2',
+  component: DataSetFilterV2,
   argTypes: {
     resourceType: {
       type: 'select',
@@ -16,7 +17,7 @@ export default {
 
 export const Example: ComponentStory<typeof DataSetFilter> = args => {
   const [value, setValue] = useState<IdEither[] | undefined>(undefined);
-  return <DataSetFilter {...args} value={value} setValue={setValue} />;
+  return <DataSetFilterV2 {...args} value={value} setValue={setValue} />;
 };
 
 Example.args = {

@@ -1,7 +1,7 @@
 import React from 'react';
 import { useList } from '@cognite/sdk-react-query-hooks';
 import { SequenceFilter } from '@cognite/sdk';
-import { MetadataFilter } from './MetadataFilter/MetadataFilter';
+import { MetadataFilterV2 } from './MetadataFilter/MetadataFilter';
 import { BaseFilterCollapse } from './BaseFilterCollapse/BaseFilterCollapse';
 
 export const SequenceFilters = ({
@@ -16,7 +16,7 @@ export const SequenceFilters = ({
 
   return (
     <BaseFilterCollapse.Panel title="Sequences" {...rest}>
-      <MetadataFilter
+      <MetadataFilterV2
         items={items}
         value={filter.metadata}
         setValue={newMetadata =>

@@ -8,7 +8,7 @@ import {
   SequenceFilter,
 } from '@cognite/sdk';
 import {
-  AssetFilters,
+  AssetFiltersV2,
   TimeseriesFilters,
   FileFilters,
   SequenceFilters,
@@ -17,13 +17,13 @@ import {
 
 export default {
   title: 'Search Results/ResourceFilters',
-  component: AssetFilters,
+  component: AssetFiltersV2,
   decorators: [(storyFn: any) => <Container>{storyFn()}</Container>],
 };
 
 export const Asset = () => {
   const [filter, setFilter] = useState<AssetFilterProps>({});
-  return <AssetFilters filter={filter} setFilter={setFilter} />;
+  return <AssetFiltersV2 filter={filter} setFilter={setFilter} />;
 };
 export const Timeseries = () => {
   const [filter, setFilter] = useState<TimeseriesFilter>({});

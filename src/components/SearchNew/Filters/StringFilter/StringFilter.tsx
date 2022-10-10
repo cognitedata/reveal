@@ -1,7 +1,7 @@
 import React from 'react';
 import { Body, Input } from '@cognite/cogs.js';
 
-export const StringFilter = ({
+export const StringFilterV2 = ({
   value,
   setValue,
   title,
@@ -27,8 +27,11 @@ export const StringFilter = ({
         {title}
       </Body>
       <Input
-        variant="default"
-        style={{ width: '100%', borderColor: '#cccccc' }}
+        style={{
+          width: '100%',
+          backgroundColor: '#f1f1f1',
+          border: 'none',
+        }}
         value={value || ''}
         placeholder={placeholder}
         onChange={ev => setNewString(ev.target.value)}

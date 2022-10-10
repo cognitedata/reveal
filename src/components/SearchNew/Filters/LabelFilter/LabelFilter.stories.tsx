@@ -1,10 +1,10 @@
 import { ComponentStory } from '@storybook/react';
 import React, { useState } from 'react';
-import { LabelFilter } from './LabelFilter';
+import { LabelFilterV2 } from './LabelFilter';
 
 export default {
-  title: 'Search Results/Filters/LabelFilter',
-  component: LabelFilter,
+  title: 'Search Results/Filters/LabelFilterV2',
+  component: LabelFilterV2,
   argTypes: {
     resourceType: {
       type: 'select',
@@ -13,11 +13,11 @@ export default {
   },
 };
 
-export const Example: ComponentStory<typeof LabelFilter> = args => {
+export const Example: ComponentStory<typeof LabelFilterV2> = args => {
   const [value, setValue] = useState<{ externalId: string }[] | undefined>(
     undefined
   );
-  return <LabelFilter {...args} value={value} setValue={setValue} />;
+  return <LabelFilterV2 {...args} value={value} setValue={setValue} />;
 };
 Example.args = {
   resourceType: 'asset',

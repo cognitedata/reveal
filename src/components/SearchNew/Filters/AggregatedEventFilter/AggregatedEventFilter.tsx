@@ -30,7 +30,7 @@ const useEventAggregate = (
   );
 };
 
-export const AggregatedEventFilter = ({
+export const AggregatedEventFilterV2 = ({
   field,
   filter,
   title,
@@ -61,6 +61,13 @@ export const AggregatedEventFilter = ({
           } else {
             handleUpdate(undefined);
           }
+        }}
+        styles={{
+          control: base => ({
+            ...base,
+            backgroundColor: '#f1f1f1',
+            border: 'none',
+          }),
         }}
         options={[...data].map(({ value: eventType }) => ({
           value: eventType,

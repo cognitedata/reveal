@@ -3,16 +3,16 @@ import { within, userEvent, waitFor } from '@storybook/testing-library';
 import { expect } from '@storybook/jest';
 import React, { useState } from 'react';
 import { assets } from 'stubs/assets';
-import { MetadataFilter } from './MetadataFilter';
+import { MetadataFilterV2 } from './MetadataFilter';
 
 export default {
-  title: 'Search Results/Filters/MetadataFilter',
-  component: MetadataFilter,
+  title: 'Search Results/Filters/MetadataFilterV2',
+  component: MetadataFilterV2,
 };
 
-export const Example: ComponentStory<typeof MetadataFilter> = () => {
+export const Example: ComponentStory<typeof MetadataFilterV2> = () => {
   const [value, setValue] = useState<any | undefined>(undefined);
-  return <MetadataFilter items={assets} value={value} setValue={setValue} />;
+  return <MetadataFilterV2 items={assets} value={value} setValue={setValue} />;
 };
 
 Example.play = async ({ canvasElement }) => {
