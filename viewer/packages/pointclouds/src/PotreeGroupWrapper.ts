@@ -90,7 +90,6 @@ export class PotreeGroupWrapper extends THREE.Object3D {
   }
 
   addPointCloud(node: PotreeNodeWrapper): void {
-    this.potreeGroup.add(node.octree);
     this.nodes.push(node);
 
     this._pointClouds.push(node.octree);
