@@ -10,6 +10,7 @@ import {
   BooleanFilter,
   MetadataFilterV2,
 } from '@cognite/data-exploration';
+import { TempMultiSelectFix } from 'app/containers/elements';
 
 export const TimeseriesFilters = ({ ...rest }) => {
   const [timeseriesFilter, setTimeseriesFilter] = useTimeseriesFilters();
@@ -26,42 +27,44 @@ export const TimeseriesFilters = ({ ...rest }) => {
       onResetClick={resetTimeseriesFilters}
       {...rest}
     >
-      <BooleanFilter
-        title="Is step"
-        value={timeseriesFilter.isStep}
-        setValue={newValue =>
-          setTimeseriesFilter({
-            isStep: newValue,
-          })
-        }
-      />
-      <BooleanFilter
-        title="Is string"
-        value={timeseriesFilter.isString}
-        setValue={newValue =>
-          setTimeseriesFilter({
-            isString: newValue,
-          })
-        }
-      />
+      <TempMultiSelectFix>
+        <BooleanFilter
+          title="Is step"
+          value={timeseriesFilter.isStep}
+          setValue={newValue =>
+            setTimeseriesFilter({
+              isStep: newValue,
+            })
+          }
+        />
+        <BooleanFilter
+          title="Is string"
+          value={timeseriesFilter.isString}
+          setValue={newValue =>
+            setTimeseriesFilter({
+              isString: newValue,
+            })
+          }
+        />
 
-      <AggregatedFilterV2
-        items={items}
-        aggregator="unit"
-        title="Unit"
-        value={timeseriesFilter.unit}
-        setValue={newValue => setTimeseriesFilter({ unit: newValue })}
-      />
+        <AggregatedFilterV2
+          items={items}
+          aggregator="unit"
+          title="Unit"
+          value={timeseriesFilter.unit}
+          setValue={newValue => setTimeseriesFilter({ unit: newValue })}
+        />
 
-      <MetadataFilterV2
-        items={items}
-        value={timeseriesFilter.metadata}
-        setValue={newMetadata =>
-          setTimeseriesFilter({
-            metadata: newMetadata,
-          })
-        }
-      />
+        <MetadataFilterV2
+          items={items}
+          value={timeseriesFilter.metadata}
+          setValue={newMetadata =>
+            setTimeseriesFilter({
+              metadata: newMetadata,
+            })
+          }
+        />
+      </TempMultiSelectFix>
     </BaseFilterCollapse.Panel>
   );
 };

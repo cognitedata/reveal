@@ -56,7 +56,9 @@ export function useQueryString(
   const search = qs.parse(location.search, opts);
   const item = (search[key] || '') as string;
 
-  return [decodeURIComponent(item), getSetItems(key, push, location, navigate)];
+  const queryString = React.useMemo(() => decodeURIComponent(item), [item]);
+
+  return [queryString, getSetItems(key, push, location, navigate)];
 }
 
 const emptyArray = [] as string[];

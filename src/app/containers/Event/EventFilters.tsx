@@ -9,6 +9,7 @@ import {
   DateFilterV2,
   MetadataFilterV2,
 } from '@cognite/data-exploration';
+import { TempMultiSelectFix } from 'app/containers/elements';
 
 export const EventFilters = ({ ...rest }: {}) => {
   const [eventFilter, setEventFilter] = useEventsFilters();
@@ -25,48 +26,50 @@ export const EventFilters = ({ ...rest }: {}) => {
       onResetClick={resetEventFilters}
       {...rest}
     >
-      <AggregatedEventFilterV2
-        field="type"
-        filter={eventFilter}
-        setValue={newValue => {
-          setEventFilter({ type: newValue });
-        }}
-        title="Type"
-        value={eventFilter.type}
-      />
-      <DateFilterV2
-        title="Start Time"
-        value={eventFilter.startTime}
-        setValue={newDate =>
-          setEventFilter({
-            startTime: newDate || undefined,
-          })
-        }
-      />
-      <DateFilterV2
-        title="End Time"
-        enableNull
-        value={
-          eventFilter.endTime && 'isNull' in eventFilter.endTime
-            ? null
-            : eventFilter.endTime
-        }
-        setValue={newDate =>
-          setEventFilter({
-            endTime: newDate === null ? { isNull: true } : newDate || undefined,
-          })
-        }
-      />
-      <AggregatedEventFilterV2
-        field="subtype"
-        filter={eventFilter}
-        setValue={newValue => {
-          setEventFilter({ subtype: newValue });
-        }}
-        title="Sub-type"
-        value={eventFilter.subtype}
-      />
-      {/* <ByAssetFilter
+      <TempMultiSelectFix>
+        <AggregatedEventFilterV2
+          field="type"
+          filter={eventFilter}
+          setValue={newValue => {
+            setEventFilter({ type: newValue });
+          }}
+          title="Type"
+          value={eventFilter.type}
+        />
+        <DateFilterV2
+          title="Start Time"
+          value={eventFilter.startTime}
+          setValue={newDate =>
+            setEventFilter({
+              startTime: newDate || undefined,
+            })
+          }
+        />
+        <DateFilterV2
+          title="End Time"
+          enableNull
+          value={
+            eventFilter.endTime && 'isNull' in eventFilter.endTime
+              ? null
+              : eventFilter.endTime
+          }
+          setValue={newDate =>
+            setEventFilter({
+              endTime:
+                newDate === null ? { isNull: true } : newDate || undefined,
+            })
+          }
+        />
+        <AggregatedEventFilterV2
+          field="subtype"
+          filter={eventFilter}
+          setValue={newValue => {
+            setEventFilter({ subtype: newValue });
+          }}
+          title="Sub-type"
+          value={eventFilter.subtype}
+        />
+        {/* <ByAssetFilter
         value={eventF.assetSubtreeIds?.map(el => (el as InternalId).id)}
         setValue={newValue =>
           setFilter({
@@ -75,26 +78,27 @@ export const EventFilters = ({ ...rest }: {}) => {
           })
         }
       /> */}
-      <AggregatedFilterV2
-        title="Source"
-        items={items}
-        aggregator="source"
-        value={eventFilter.source}
-        setValue={newSource =>
-          setEventFilter({
-            source: newSource,
-          })
-        }
-      />
-      <MetadataFilterV2
-        items={items}
-        value={eventFilter.metadata}
-        setValue={newMetadata =>
-          setEventFilter({
-            metadata: newMetadata,
-          })
-        }
-      />
+        <AggregatedFilterV2
+          title="Source"
+          items={items}
+          aggregator="source"
+          value={eventFilter.source}
+          setValue={newSource =>
+            setEventFilter({
+              source: newSource,
+            })
+          }
+        />
+        <MetadataFilterV2
+          items={items}
+          value={eventFilter.metadata}
+          setValue={newMetadata =>
+            setEventFilter({
+              metadata: newMetadata,
+            })
+          }
+        />
+      </TempMultiSelectFix>
     </BaseFilterCollapse.Panel>
   );
 };

@@ -5,20 +5,19 @@ interface Props {
   filterState: boolean;
   onClick: () => void;
 }
-export const ExplorationFilterToggle: React.FC<Props> = ({
-  filterState,
-  onClick,
-}) => {
-  const icon = filterState ? 'PanelLeft' : 'PanelRight';
-  const tooltipContent = filterState ? 'Hide filters' : 'Show filters';
+export const ExplorationFilterToggle: React.FC<Props> = React.memo(
+  ({ filterState, onClick }) => {
+    const icon = filterState ? 'PanelLeft' : 'PanelRight';
+    const tooltipContent = filterState ? 'Hide filters' : 'Show filters';
 
-  return (
-    <Tooltip content={tooltipContent}>
-      <Button
-        icon={icon}
-        aria-label="Toggle search filters"
-        onClick={onClick}
-      />
-    </Tooltip>
-  );
-};
+    return (
+      <Tooltip content={tooltipContent}>
+        <Button
+          icon={icon}
+          aria-label="Toggle search filters"
+          onClick={onClick}
+        />
+      </Tooltip>
+    );
+  }
+);

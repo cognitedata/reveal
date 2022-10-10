@@ -61,7 +61,7 @@ function SearchPage() {
     useCurrentResourceType();
 
   const [activeId, openPreview] = useCurrentResourceId();
-  const [showFilter, setShowFilter] = useState(false);
+  const [showFilter, setShowFilter] = useState(true);
   const [query] = useQueryString(SEARCH_KEY);
   const [debouncedQuery] = useDebounce(query, 100);
   const { setAppliedFilters } = useDocumentFilters();
@@ -113,9 +113,160 @@ function SearchPage() {
     onDateRangeChange: setDateRange,
   };
 
-  const handleFilterToggleClick = () => {
+  const handleFilterToggleClick = React.useCallback(() => {
     setShowFilter(prevState => !prevState);
-  };
+  }, []);
+
+  if (isFilterFeatureEnabled) {
+    return (
+      <RootHeightWrapperNew>
+        <SearchFiltersWrapper>
+          <SearchFilters
+            resourceType={currentResourceType}
+            visible={currentResourceType !== 'threeD' && showFilter}
+          />
+        </SearchFiltersWrapper>
+
+        <MainSearchContainer>
+          <SearchInputContainer>
+            <ExplorationFilterToggle
+              filterState={showFilter}
+              onClick={handleFilterToggleClick}
+            />
+            <VerticalDivider />
+
+            <ExplorationSearchBar />
+          </SearchInputContainer>
+
+          <TabsContainer>
+            <ResourceTypeTabs
+              showCount
+              query={query}
+              currentResourceType={currentResourceType}
+              setCurrentResourceType={setCurrentResourceType}
+              isDocumentEnabled={isDocumentEnabled}
+            />
+          </TabsContainer>
+
+          <MainContainer>
+            <Wrapper>
+              <StyledSplitter secondaryMinSize={415} primaryIndex={1}>
+                <Flex
+                  direction="column"
+                  style={{
+                    borderRight: active
+                      ? `1px solid ${Colors['greyscale-grey3'].hex()}`
+                      : 'unset',
+                  }}
+                >
+                  <SearchResultWrapper>
+                    {currentResourceType === 'asset' && (
+                      <AssetSearchResults
+                        showCount
+                        onClick={(item: ResourceItem) =>
+                          openPreview(
+                            item.id !== activeId ? item.id : undefined
+                          )
+                        }
+                        filter={assetFilter}
+                        {...commonProps}
+                      />
+                    )}
+                    {currentResourceType === 'file' && (
+                      <FileSearchResults
+                        showCount
+                        filter={fileFilter}
+                        allowEdit={editable}
+                        onClick={(item: ResourceItem) =>
+                          openPreview(
+                            item.id !== activeId ? item.id : undefined
+                          )
+                        }
+                        {...commonProps}
+                      />
+                    )}
+                    {currentResourceType === 'document' && (
+                      <DocumentSearchResults
+                        query={query}
+                        filter={fileFilter}
+                        onClick={(item: ResourceItem) => {
+                          openPreview(
+                            item.id !== activeId ? item.id : undefined
+                          );
+                        }}
+                      />
+                    )}
+                    {currentResourceType === 'sequence' && (
+                      <SequenceSearchResults
+                        showCount
+                        onClick={(item: ResourceItem) =>
+                          openPreview(
+                            item.id !== activeId ? item.id : undefined
+                          )
+                        }
+                        filter={sequenceFilter}
+                        {...commonProps}
+                      />
+                    )}
+                    {currentResourceType === 'timeSeries' && (
+                      <TimeseriesSearchResults
+                        showCount
+                        onClick={(item: ResourceItem) =>
+                          openPreview(
+                            item.id !== activeId ? item.id : undefined
+                          )
+                        }
+                        filter={timeseriesFilter}
+                        showDatePicker={!activeId}
+                        {...commonProps}
+                      />
+                    )}
+                    {currentResourceType === 'event' && (
+                      <EventSearchResults
+                        showCount
+                        onClick={(item: ResourceItem) =>
+                          openPreview(
+                            item.id !== activeId ? item.id : undefined
+                          )
+                        }
+                        filter={eventFilter}
+                        {...commonProps}
+                      />
+                    )}
+                    {currentResourceType === 'threeD' && (
+                      <ThreeDSearchResults
+                        onClick={(item: ResourceItem) => {
+                          openPreview(
+                            item.id !== activeId ? item.id : undefined
+                          );
+                        }}
+                        query={query}
+                      />
+                    )}
+                  </SearchResultWrapper>
+                </Flex>
+
+                {active && activeId && (
+                  <SearchResultWrapper>
+                    <ResourcePreview
+                      item={{ id: activeId, type: currentResourceType }}
+                      onCloseClicked={() => openPreview(undefined)}
+                    />
+                  </SearchResultWrapper>
+                )}
+                {!activeId && cart.length > 0 && (
+                  <SelectedResults
+                    ids={cart.map(id => ({ id }))}
+                    resourceType={currentResourceType}
+                  />
+                )}
+              </StyledSplitter>
+            </Wrapper>
+          </MainContainer>
+        </MainSearchContainer>
+      </RootHeightWrapperNew>
+    );
+  }
 
   return (
     <RootHeightWrapper>
@@ -319,8 +470,10 @@ const SearchResultWrapper = styled.div`
 
 const SearchInputContainer = styled(Flex)`
   border-bottom: 1px solid ${Colors['greyscale-grey3'].hex()};
-  padding-top: 20px;
+  padding-top: 16px;
+  padding-left: 16px;
   padding-bottom: 16px;
+  align-items: center;
 `;
 
 const TabsContainer = styled.div`
@@ -355,9 +508,22 @@ const RootHeightWrapper = styled.div`
   flex-direction: column;
 `;
 
+const RootHeightWrapperNew = styled.div`
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+`;
+
 const VerticalDivider = styled.div`
   width: 1px;
   height: 16px;
   background-color: var(--cogs-border--muted);
   margin: 0px 8px;
+`;
+
+const MainSearchContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
 `;

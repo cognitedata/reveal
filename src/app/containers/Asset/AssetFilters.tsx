@@ -14,6 +14,7 @@ import {
   LabelFilterV2,
   MetadataFilterV2,
 } from '@cognite/data-exploration';
+import { TempMultiSelectFix } from 'app/containers/elements';
 
 // TODO: Move to domain layer
 export const useAssetMetadataKeys = (
@@ -57,43 +58,45 @@ export const AssetFilters = ({ ...rest }) => {
       onResetClick={resetAssetFilters}
       {...rest}
     >
-      <LabelFilterV2
-        resourceType="asset"
-        value={
-          (
-            (assetFilters.labels as LabelContainsAnyFilter) || {
-              containsAny: [],
-            }
-          ).containsAny
-        }
-        setValue={newFilters =>
-          setAssetFilters({
-            labels: newFilters ? { containsAny: newFilters } : undefined,
-          })
-        }
-      />
-      <AggregatedFilterV2
-        title="Source"
-        items={items}
-        aggregator="source"
-        value={assetFilters.source}
-        setValue={newSource =>
-          setAssetFilters({
-            source: newSource,
-          })
-        }
-      />
-      <MetadataFilterV2
-        items={items}
-        keys={metadataKeys}
-        value={assetFilters.metadata}
-        setValue={newMetadata =>
-          setAssetFilters({
-            metadata: newMetadata,
-          })
-        }
-        useAggregates
-      />
+      <TempMultiSelectFix>
+        <LabelFilterV2
+          resourceType="asset"
+          value={
+            (
+              (assetFilters.labels as LabelContainsAnyFilter) || {
+                containsAny: [],
+              }
+            ).containsAny
+          }
+          setValue={newFilters =>
+            setAssetFilters({
+              labels: newFilters ? { containsAny: newFilters } : undefined,
+            })
+          }
+        />
+        <AggregatedFilterV2
+          title="Source"
+          items={items}
+          aggregator="source"
+          value={assetFilters.source}
+          setValue={newSource =>
+            setAssetFilters({
+              source: newSource,
+            })
+          }
+        />
+        <MetadataFilterV2
+          items={items}
+          keys={metadataKeys}
+          value={assetFilters.metadata}
+          setValue={newMetadata =>
+            setAssetFilters({
+              metadata: newMetadata,
+            })
+          }
+          useAggregates
+        />
+      </TempMultiSelectFix>
     </BaseFilterCollapse.Panel>
   );
 };

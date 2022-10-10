@@ -3,11 +3,14 @@ import { Input } from '@cognite/cogs.js';
 import { debounce } from 'lodash';
 import { useQueryString } from 'app/hooks/hooks';
 import { SEARCH_KEY } from 'app/utils/constants';
+import { useFlagFilter } from 'app/hooks';
+import { surfaceActionMuted } from 'app/utils/colors';
 
 export const ExplorationSearchBar = () => {
   const [urlQuery, setUrlQuery] = useQueryString(SEARCH_KEY);
   const debouncedSetUrlQuery = debounce(setUrlQuery, 200);
   const [localQuery, setLocalQuery] = useState(urlQuery);
+  const isFilterEnabled = useFlagFilter();
 
   useEffect(() => {
     if (localQuery !== urlQuery) {
@@ -31,7 +34,7 @@ export const ExplorationSearchBar = () => {
       variant="noBorder"
       fullWidth
       style={{
-        background: 'transparent',
+        background: isFilterEnabled ? surfaceActionMuted : 'transparent',
         border: 'none',
         outline: 'none',
         boxShadow: 'none',
