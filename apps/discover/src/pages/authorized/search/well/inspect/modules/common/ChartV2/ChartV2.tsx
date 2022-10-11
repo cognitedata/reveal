@@ -197,7 +197,7 @@ const ChartV2 = React.forwardRef(
 
       setYRange((prevState) => {
         const [prevMax, prevMin] = prevState;
-        if (prevMax !== max && prevMin !== min) {
+        if (prevMax !== max || prevMin !== min) {
           return [max, min];
         }
 
