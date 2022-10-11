@@ -4,7 +4,6 @@ import { debounce } from 'lodash';
 import { useQueryString } from 'app/hooks/hooks';
 import { SEARCH_KEY } from 'app/utils/constants';
 import { useFlagFilter } from 'app/hooks';
-import { surfaceActionMuted } from 'app/utils/colors';
 
 export const ExplorationSearchBar = () => {
   const [urlQuery, setUrlQuery] = useQueryString(SEARCH_KEY);
@@ -34,10 +33,10 @@ export const ExplorationSearchBar = () => {
       variant="noBorder"
       fullWidth
       style={{
-        background: isFilterEnabled ? surfaceActionMuted : 'transparent',
-        border: 'none',
-        outline: 'none',
-        boxShadow: 'none',
+        background: isFilterEnabled ? undefined : 'transparent',
+        border: isFilterEnabled ? undefined : 'none',
+        outline: isFilterEnabled ? undefined : 'none',
+        boxShadow: isFilterEnabled ? undefined : 'none',
       }}
       icon="Search"
       placeholder="Search..."
