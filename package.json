@@ -35,7 +35,7 @@
     "@cognite/sdk-v5": "npm:@cognite/sdk@^5.6.2",
     "@cognite/sdk-wells": "3.16.0",
     "@cognite/seismic-sdk-js": "0.2.1",
-    "@cognite/simconfig-api-sdk": "1.4.3",
+    "@cognite/simconfig-api-sdk": "1.5.3",
     "@cognite/sniffer-service-types": "^1.0.1",
     "@cognite/user-management-service-types": "^0.1.6",
     "@cognite/videx-wellog": "^0.2.16-alpha3",

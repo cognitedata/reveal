@@ -1591,10 +1591,10 @@
     typedoc-plugin-markdown "^2.3.1"
     xhr2 "^0.2.0"
 
-"@cognite/simconfig-api-sdk@1.4.3":
-  version "1.4.3"
-  resolved "https://registry.yarnpkg.com/@cognite/simconfig-api-sdk/-/simconfig-api-sdk-1.4.3.tgz#7a7883f473b77b5621bb84b953e94c37bf5ffea2"
-  integrity sha512-y97/9JvWpZXO7JI73PJ7PSr3W5sS6XpPtmIKAIUWwG4hx8KtExamGNgox9V2P1LFZd16p8wG9fdQHr3Tilw0zw==
+"@cognite/simconfig-api-sdk@1.5.3":
+  version "1.5.3"
+  resolved "https://registry.yarnpkg.com/@cognite/simconfig-api-sdk/-/simconfig-api-sdk-1.5.3.tgz#ed57d3f86ca07fda4f809f1a87424080612db783"
+  integrity sha512-BYMsY5CsZSZ8mtKpo6kSi2pjA/ixxjHQKyuvWGQYPy5ZV4lVHqtqyWWdJpoPQwSIZ3EQxfdgbtoP3xpotWef5A==
 
 "@cognite/sniffer-service-types@^1.0.1":
   version "1.0.1"
