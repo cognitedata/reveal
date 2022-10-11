@@ -7,7 +7,7 @@ import { FilterFormV2 } from 'components/FilterFormV2/FilterFormV2';
 const FilterHeader = styled.div`
   display: flex;
   justify-content: space-between;
-  margin-top: 10px;
+  margin-top: 12px;
   align-items: center;
 `;
 

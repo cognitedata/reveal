@@ -3,6 +3,7 @@ import { Select, SpacedRow } from 'components';
 import { Button, Colors, Icon, Tooltip } from '@cognite/cogs.js';
 import styled, { css } from 'styled-components';
 import { useAssetMetadataValues } from 'hooks/MetadataAggregateHooks';
+import { reactSelectCogsStylingProps } from 'components/SearchNew/Filters/elements';
 
 const LOCKSVG = (
   <svg
@@ -80,14 +81,12 @@ const Tag = styled.div<TagProps>(
 );
 
 const FilterItemWrapper = styled.div`
-  margin-bottom: 12px;
   .key {
     margin-bottom: 16px;
   }
   .key,
   .value {
     display: flex;
-    margin-right: 4px;
     flex: 1;
     > div {
       flex: 1;
@@ -196,17 +195,14 @@ const FilterItem = ({
             disabled?: boolean;
           }>
             creatable
+            {...reactSelectCogsStylingProps}
             styles={{
               menu: style => ({
                 ...style,
                 width: '100%',
                 maxWidth: '320px',
               }),
-              control: base => ({
-                ...base,
-                backgroundColor: '#f1f1f1',
-                border: 'none',
-              }),
+              ...reactSelectCogsStylingProps.styles,
             }}
             placeholder="Key"
             disabled={!!initialKey}
@@ -228,17 +224,14 @@ const FilterItem = ({
             disabled?: boolean;
           }>
             creatable
+            {...reactSelectCogsStylingProps}
             styles={{
               menu: style => ({
                 ...style,
                 width: '100%',
                 maxWidth: '320px',
               }),
-              control: base => ({
-                ...base,
-                backgroundColor: '#f1f1f1',
-                border: 'none',
-              }),
+              ...reactSelectCogsStylingProps.styles,
             }}
             placeholder="Value"
             disabled={!selectedKey}

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Select } from 'components';
 import { FilterFacetTitle } from '../FilterFacetTitle';
+import { reactSelectCogsStylingProps } from '../elements';
 
 export const AggregatedFilterV2 = <T,>({
   items,
@@ -33,13 +34,7 @@ export const AggregatedFilterV2 = <T,>({
       <Select
         creatable
         className="aggregated-filter-select"
-        styles={{
-          control: base => ({
-            ...base,
-            backgroundColor: '#f1f1f1',
-            border: 'none',
-          }),
-        }}
+        {...reactSelectCogsStylingProps}
         value={value ? { value, label: value } : null}
         onChange={item => {
           if (item) {

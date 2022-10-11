@@ -7,6 +7,7 @@ import { useQuery } from 'react-query';
 
 import { Select } from 'components';
 import { FilterFacetTitle } from '../FilterFacetTitle';
+import { reactSelectCogsStylingProps } from '../elements';
 
 type EventFieldForAggregate = 'type' | 'subtype' | 'dataSetId';
 
@@ -62,13 +63,7 @@ export const AggregatedEventFilterV2 = ({
             handleUpdate(undefined);
           }
         }}
-        styles={{
-          control: base => ({
-            ...base,
-            backgroundColor: '#f1f1f1',
-            border: 'none',
-          }),
-        }}
+        {...reactSelectCogsStylingProps}
         options={[...data].map(({ value: eventType }) => ({
           value: eventType,
           label: eventType,

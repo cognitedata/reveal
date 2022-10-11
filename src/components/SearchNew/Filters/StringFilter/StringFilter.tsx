@@ -1,5 +1,6 @@
 import React from 'react';
-import { Body, Input } from '@cognite/cogs.js';
+import { Input } from '@cognite/cogs.js';
+import { FilterFacetTitle } from '../FilterFacetTitle';
 
 export const StringFilterV2 = ({
   value,
@@ -18,19 +19,11 @@ export const StringFilterV2 = ({
 
   return (
     <>
-      <Body
-        level={2}
-        strong
-        style={{ marginBottom: 5, marginTop: 10 }}
-        className="title"
-      >
-        {title}
-      </Body>
+      <FilterFacetTitle>{title}</FilterFacetTitle>
       <Input
+        variant="noBorder"
         style={{
           width: '100%',
-          backgroundColor: '#f1f1f1',
-          border: 'none',
         }}
         value={value || ''}
         placeholder={placeholder}

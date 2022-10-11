@@ -3,8 +3,8 @@ import React from 'react';
 import styled from 'styled-components';
 
 export const Title = styled(Body).attrs({ strong: true, level: 2 })`
-  padding-bottom: 5px;
-  padding-top: 10px;
+  padding-bottom: 6px;
+  padding-top: 12px;
 `;
 
 export const FilterFacetTitle: React.FC = ({ children }) => {
