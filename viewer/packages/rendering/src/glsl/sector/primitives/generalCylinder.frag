@@ -5,7 +5,8 @@ precision highp float;
 #pragma glslify: import('../../base/determineNodeAppearance.glsl');
 #pragma glslify: import('../../base/determineVisibility.glsl');
 #pragma glslify: import('../../base/determineColor.glsl');
-#pragma glslify: import('../../base/isClipped.glsl')
+#pragma glslify: import('../../base/isClipped.glsl');
+#pragma glslify: import('../../treeIndex/treeIndexPacking.glsl');
 #pragma glslify: import('../../math/constants.glsl')
 
 // TODO general cylinder and cone are very similar and used
@@ -21,7 +22,7 @@ uniform int renderMode;
 // Note! Must be placed after all uniforms in order for this to work on iOS (REV-287)
 #pragma glslify: import('../../base/updateFragmentDepth.glsl')
 
-flat in float v_treeIndex;
+in TreeIndexPacked  v_treeIndexPacked;
 in vec3 v_color;
 
 in vec3 v_viewPos;
@@ -37,7 +38,9 @@ in vec4 v_planeB;
 
 in float v_radius;
 
-void main() {
+void main()
+{
+    highp float v_treeIndex = unpackTreeIndex(v_treeIndexPacked);
     NodeAppearance appearance = determineNodeAppearance(colorDataTexture, treeIndexTextureSize, v_treeIndex);
     if (!determineVisibility(appearance, renderMode)) {
         discard;

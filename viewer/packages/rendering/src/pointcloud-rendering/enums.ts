@@ -1,13 +1,13 @@
 /*!
  * Adapted from pnext/three-loader (https://github.com/pnext/three-loader)
  */
-export enum PotreePointSizeType {
+export enum PointSizeType {
   Fixed = 0,
   Attenuated = 1,
   Adaptive = 2
 }
 
-export enum PotreePointShape {
+export enum PointShape {
   Square = 0,
   Circle = 1,
   Paraboloid = 2
@@ -23,7 +23,7 @@ export enum PointOpacityType {
   Attenuated = 1
 }
 
-export enum PotreePointColorType {
+export enum PointColorType {
   Rgb = 0,
   Color = 1,
   Depth = 2,

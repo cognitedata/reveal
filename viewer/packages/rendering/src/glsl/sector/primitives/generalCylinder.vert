@@ -1,5 +1,6 @@
 #pragma glslify: import('../../math/mul3.glsl')
-#pragma glslify: import('../../base/determineMatrixOverride.glsl')
+#pragma glslify: import('../../base/determineMatrixOverride.glsl');
+#pragma glslify: import('../../treeIndex/treeIndexPacking.glsl');
 
 uniform mat4 inverseModelMatrix;
 uniform mat4 modelMatrix;
@@ -25,17 +26,31 @@ in vec3 a_localXAxis;
 in float a_angle;
 in float a_arcAngle;
 
+<<<<<<< HEAD
 flat out float v_treeIndex;
 out vec3 v_centerB;
 out mat3 v_modelBasis;
 out vec3 v_viewPos;
+=======
+// We pack the radii into w-components
+out vec4 v_centerB;
+// U, V, axis represent the 3x3 cone basis.
+// They are vec4 to pack extra data into the w-component
+// since Safari on iOS only supports 8 varying vec4 registers.
+out vec4 v_U;
+out vec4 v_W;
+>>>>>>> 9b6fc680e1ec483cfe8bf63b9d3b14be90e3c6c5
 out vec4 v_planeA;
 out vec4 v_planeB;
 out vec2 v_angles;
 out vec3 v_color;
 out float v_radius;
 
+out TreeIndexPacked v_treeIndexPacked;
+
 void main() {
+    v_treeIndexPacked = packTreeIndex(a_treeIndex);
+
     mat4 treeIndexWorldTransform = determineMatrixOverride(
         a_treeIndex,
         treeIndexTextureSize,

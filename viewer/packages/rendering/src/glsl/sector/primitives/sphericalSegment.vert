@@ -1,4 +1,5 @@
 #pragma glslify: import('../../math/mul3.glsl')
+#pragma glslify: import('../../treeIndex/treeIndexPacking.glsl');
 
 uniform mat4 inverseModelMatrix;
 uniform mat4 inverseNormalMatrix;
@@ -17,7 +18,6 @@ in float a_horizontalRadius;
 in float a_verticalRadius;
 in float a_height;
 
-flat out float v_treeIndex;
 // We pack vRadius as w-component of center
 out vec4 center;
 out float hRadius;
@@ -32,8 +32,10 @@ out vec4 sphereNormal;
 out vec3 v_color;
 out vec3 v_normal;
 
+out TreeIndexPacked v_treeIndexPacked;
+
 void main() {
-    v_treeIndex = a_treeIndex;
+    v_treeIndexPacked = packTreeIndex(a_treeIndex);
     v_color = a_color;
 
     mat4 modelViewMatrix = viewMatrix * modelMatrix;

@@ -45,4 +45,4 @@ examples/public/
 # Generated files
 documentation/.docusaurus
 documentation/generated
-documentation/docs/API Reference.md
+documentation/docs/api

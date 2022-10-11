@@ -180,6 +180,18 @@ export interface AddModelOptions {
   geometryFilter?: GeometryFilter;
 }
 
+export type AddImage360Options = {
+  /**
+   * An optional transformation which will be applied to all 360 images that are fetched.
+   */
+  collectionTransform?: THREE.Matrix4;
+  /**
+   * Set this to false if the 360 images' rotation is not pre-multiplied to fit the given model.
+   * @default true
+   */
+  preMultipliedRotation?: boolean;
+};
+
 export type CadIntersection = {
   /**
    * The intersection type.
@@ -215,17 +227,3 @@ export type Intersection = CadIntersection | PointCloudIntersection;
 export { CameraConfiguration } from '@reveal/utilities';
 
 export { CadModelBudget, PointCloudBudget };
-
-/**
- * Options to control how {@link Cognite3DViewer.getIntersectionFromPixel} behaves.
- * @deprecated Since 3.1 these options have no effect.
- */
-export interface IntersectionFromPixelOptions {
-  /**
-   * Threshold (in meters) for how close a point must be an intersection
-   * ray for it to be considered an intersection for point clouds. Defaults
-   * to 0.05.
-   * @deprecated Since 3.1, threshold doesn't affect picking because of new, GPU based method.
-   */
-  pointIntersectionThreshold?: number;
-}

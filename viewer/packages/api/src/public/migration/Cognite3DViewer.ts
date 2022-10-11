@@ -34,11 +34,11 @@ import {
 } from '@reveal/pointclouds';
 
 import {
+  AddImage360Options,
   AddModelOptions,
   Cognite3DViewerOptions,
   Intersection,
   CadModelBudget,
-  IntersectionFromPixelOptions,
   CadIntersection
 } from './types';
 import { RevealManager } from '../RevealManager';
@@ -61,7 +61,7 @@ import {
   determineResolutionCap,
   determineSsaoRenderParameters
 } from './renderOptionsHelpers';
-import { Image360Entity, Image360EntityFactory } from '@reveal/360-images';
+import { Image360Entity, Image360EntityFactory, Image360Facade } from '@reveal/360-images';
 
 type Cognite3DViewerEvents = 'click' | 'hover' | 'cameraChange' | 'beforeSceneRendered' | 'sceneRendered' | 'disposed';
 
@@ -77,17 +77,9 @@ type Cognite3DViewerEvents = 'click' | 'hover' | 'cameraChange' | 'beforeSceneRe
  */
 export class Cognite3DViewer {
   private readonly _domElementResizeObserver: ResizeObserver;
-  private readonly _image360EntityFactory: Image360EntityFactory<{ [key: string]: string }> | undefined;
+  private readonly _image360Facade: Image360Facade<{ [key: string]: string }> | undefined;
   private get canvas(): HTMLCanvasElement {
     return this.renderer.domElement;
-  }
-
-  /**
-   * For now it just always returns true.
-   * @see Https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/getContext#Browser_compatibility.
-   */
-  static isBrowserSupported(): true {
-    return true;
   }
 
   /**
@@ -259,13 +251,31 @@ export class Cognite3DViewer {
       this._dataSource = new CdfDataSource(options.sdk);
       this._cdfSdkClient = options.sdk;
       const image360DataProvider = new Cdf360ImageEventProvider(this._cdfSdkClient);
-      this._image360EntityFactory = new Image360EntityFactory(image360DataProvider, this._sceneHandler);
+      const image360EntityFactory = new Image360EntityFactory(image360DataProvider, this._sceneHandler);
+      this._image360Facade = new Image360Facade(image360EntityFactory);
       this._revealManagerHelper = RevealManagerHelper.createCdfHelper(
         this._renderer,
         this._sceneHandler,
         revealOptions,
         options.sdk
       );
+
+      this.on('hover', event => {
+        if (!this._image360Facade) {
+          return;
+        }
+        this._image360Facade.allHoverIconsVisibility = false;
+        const { offsetX, offsetY } = event;
+        const normalizedCoords = {
+          x: (offsetX / this.renderer.domElement.clientWidth) * 2 - 1,
+          y: (offsetY / this.renderer.domElement.clientHeight) * -2 + 1
+        };
+        const entity = this._image360Facade.intersect(normalizedCoords, this._cameraManager.getCamera());
+        if (!entity) {
+          return;
+        }
+        entity.icon.hoverSpriteVisible = true;
+      });
     }
 
     this.startPointerEventListeners();
@@ -677,7 +687,7 @@ export class Cognite3DViewer {
    * Adds a set of 360 images to the scene from the /events API in Cognite Data Fusion.
    * @param datasource The CDF data source which holds the references to the 360 image sets.
    * @param eventFilter The metadata filter to apply when querying events that contains the 360 images.
-   * @param setTransform An optional addition transform which will be applied to all the 360 images in this set.
+   * @param add360ImageOptions Options for behaviours when adding 360 images.
    * @example
    * ```js
    * const eventFilter = { site_id: "12345" };
@@ -687,16 +697,20 @@ export class Cognite3DViewer {
   add360ImageSet(
     datasource: 'events',
     eventFilter: { [key: string]: string },
-    setTransform?: THREE.Matrix4
+    add360ImageOptions?: AddImage360Options
   ): Promise<Image360Entity[]> {
     if (datasource !== 'events') {
       throw new Error(`${datasource} is an unknown datasource from 360 images`);
     }
 
-    if (this._cdfSdkClient === undefined || this._image360EntityFactory === undefined) {
+    if (this._cdfSdkClient === undefined || this._image360Facade === undefined) {
       throw new Error(`Adding 360 image sets is only supported when connecting to Cognite Data Fusion`);
     }
-    return this._image360EntityFactory.create(eventFilter, setTransform ?? new THREE.Matrix4(), true);
+
+    const collectionTransform = add360ImageOptions?.collectionTransform ?? new THREE.Matrix4();
+    const preMultipliedRotation = add360ImageOptions?.preMultipliedRotation ?? true;
+
+    return this._image360Facade.create(eventFilter, collectionTransform, preMultipliedRotation);
   }
 
   /**
@@ -1078,7 +1092,6 @@ export class Cognite3DViewer {
    * Raycasting model(s) for finding where the ray intersects with the model.
    * @param offsetX X coordinate in pixels (relative to the domElement).
    * @param offsetY Y coordinate in pixels (relative to the domElement).
-   * @param options Options to control the behavior of the intersection operation. Optional (new in 1.3.0).
    * @returns A promise that if there was an intersection then return the intersection object - otherwise it
    * returns `null` if there were no intersections.
    * @see {@link https://en.wikipedia.org/wiki/Ray_casting}.
@@ -1108,20 +1121,6 @@ export class Cognite3DViewer {
    *   ' at this exact point ', intersection.point
    *   );
    * ```
-   */
-  async getIntersectionFromPixel(offsetX: number, offsetY: number): Promise<null | Intersection>;
-  /**
-   * @deprecated Since 3.1 options argument have no effect.
-   */
-  async getIntersectionFromPixel(
-    offsetX: number,
-    offsetY: number,
-    options: IntersectionFromPixelOptions
-  ): Promise<null | Intersection>;
-  /**
-   * @obvious
-   * @param offsetX
-   * @param offsetY
    */
   async getIntersectionFromPixel(offsetX: number, offsetY: number): Promise<null | Intersection> {
     return this.intersectModels(offsetX, offsetY);
