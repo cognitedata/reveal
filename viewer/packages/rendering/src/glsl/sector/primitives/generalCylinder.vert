@@ -20,16 +20,13 @@ in vec3 a_centerA;
 in vec3 a_centerB;
 in float a_radius;
 in vec3 a_color;
-// slicing plane attributes
 in vec4 a_planeA;
 in vec4 a_planeB;
-// segment attributes
 in vec3 a_localXAxis;
 in float a_angle;
 in float a_arcAngle;
 
 flat out float v_treeIndex;
-// We pack the radii into w-components
 out vec3 v_centerB;
 out mat3 v_modelBasis;
 out vec3 v_viewPos;
@@ -39,7 +36,19 @@ out vec2 v_angles;
 out vec3 v_color;
 out float v_radius;
 
+float angleBetween(vec3 a, vec3 b){
+  return acos(dot(normalize(a), normalize(b)));
+}
+
 void main() {
+    mat4 treeIndexWorldTransform = determineMatrixOverride(
+        a_treeIndex,
+        treeIndexTextureSize,
+        transformOverrideIndexTexture,
+        transformOverrideTextureSize,
+        transformOverrideTexture
+    );
+
     vec3 centerA = a_centerA;
     vec3 centerB = a_centerB;
 
@@ -59,7 +68,7 @@ void main() {
     vec3 up = normalize(cross(left, lDir));
 
     vec3 localBillboardPosition = center + mat3(halfHeight * lDir, a_radius * left, a_radius * up) * position;
-    vec3 viewBillboardPosition = mul3(modelViewMatrix, localBillboardPosition);
+    vec3 viewBillboardPosition = mul3(viewMatrix * treeIndexWorldTransform * modelMatrix, localBillboardPosition);
 
     gl_Position = projectionMatrix * vec4(viewBillboardPosition, 1.0 );
 
@@ -72,19 +81,19 @@ void main() {
     v_modelBasis[2] = normalize(normalMatrix * dir);
     v_modelBasis[1] = normalize(cross(v_modelBasis[2], v_modelBasis[0]));
 
-    // We pack radii as w-components of v_centerB
-    mat4 modelToTransformOffset = modelMatrix;
-    float radius = length((modelMatrix * vec4(a_localXAxis * a_radius, 0.0)).xyz);
+    float radius = length((treeIndexWorldTransform * modelMatrix * vec4(a_localXAxis * a_radius, 0.0)).xyz);
 
-    centerB = centerB - dir;
-    v_centerB = mul3(modelViewMatrix, centerB);
+    v_centerB = mul3(viewMatrix * treeIndexWorldTransform * modelMatrix, centerB);
     v_radius = radius;
 
+    float planeAngleA = angleBetween(a_planeA.xyz, vec3(0.0, 0.0, 1.0));
+    float planeAngleB = angleBetween(a_planeB.xyz, vec3(0.0, 0.0, -1.0));
+
     vec4 planeA = a_planeA;
-    planeA.w = length((modelMatrix * vec4(planeA.xyz * planeA.w, 0.0)).xyz);
+    planeA.w = length(centerA - centerB) - tan(planeAngleA) * a_radius;
 
     vec4 planeB = a_planeB;
-    planeB.w = length((modelMatrix * vec4(planeB.xyz * planeB.w, 0.0)).xyz);
+    planeB.w = tan(planeAngleB) * a_radius;
 
     v_planeA = planeA;
     v_planeB = planeB;

@@ -18,12 +18,12 @@ export default class GeneralCylinderVisualTest extends SimpleVisualTestFixture {
 
     const generalCylinderDescriptor = {
       treeIndex: 0,
-      color: [1, 0, 0, 1],
-      centerA: [0, 0, 1],
+      color: [0, 0, 0, 1],
+      centerA: [0, 0, 1.4663076400756836],
       centerB: [0, 0, -1],
-      radius: 1,
-      planeA: [0, 0, 1, 3],
-      planeB: [0, 0, -1, 1],
+      radius: 0.2,
+      planeA: [0.4161977469921112, 0.07338689267635345, 0.9063078165054321, 2],
+      planeB: [0, 0, -1, 0],
       localXAxis: [1, 0, 0],
       angle: 0,
       arcAngle: Math.PI * 2

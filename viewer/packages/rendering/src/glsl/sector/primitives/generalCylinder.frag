@@ -89,6 +89,7 @@ void main() {
         dist = max(dist1, dist2);
         intersectionPoint = E + dist * D;
         theta = atan(intersectionPoint.y, intersectionPoint.x);
+        theta += theta < v_angles[0] ? 2.0 * PI : 0.0;
         p = rayTarget + dist*rayDirection;
         if (dot(intersectionPoint - planeACenter, planeANormal) > 0.0 ||
             dot(intersectionPoint - planeBCenter, planeBNormal) > 0.0 ||
