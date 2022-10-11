@@ -85,10 +85,10 @@ void main() {
     float planeAngleB = acos(dot(normalize(a_planeB.xyz), normalize(vec3(0.0, 0.0, -1.0))));
 
     vec4 planeA = a_planeA;
-    planeA.w = 2.0 * halfHeight - tan(planeAngleA) * a_radius;
+    planeA.w = length((modelToTransformOffset * vec4(halfHeight * 2.0 * dir, 0.0)).xyz) - tan(planeAngleA) * radius;
 
     vec4 planeB = a_planeB;
-    planeB.w = tan(planeAngleB) * a_radius;
+    planeB.w = tan(planeAngleB) * radius;
 
     v_planeA = planeA;
     v_planeB = planeB;
