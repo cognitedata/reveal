@@ -8,6 +8,10 @@ static final String STAGING_APP_ID = 'charts-dev'
 // At this time, there is no production build for the demo app.
 static final String PRODUCTION_APP_ID = 'charts'
 
+// This is your FAS app id to be used in Fusion.
+// At this point, Fusion enforces all sub-app packages to be prefixed with cdf-.
+static final String FUSION_APP_ID = 'cdf-charts-ui'
+
 // This is your FAS app identifier (repo) shared across both production and staging apps
 // in order to do a commit lookup (commits are shared between apps).
 static final String APPLICATION_REPO_ID = 'cognite-charts'
@@ -40,9 +44,11 @@ static final Map<String, String> CONTEXTS = [
   buildStaging: 'continuous-integration/jenkins/build-staging',
   publishStaging: 'continuous-integration/jenkins/publish-staging',
   buildProduction: 'continuous-integration/jenkins/build-production',
+  buildFusion: 'continuous-integration/jenkins/build-fusion',
   publishProduction: 'continuous-integration/jenkins/publish-production',
   buildPreview: 'continuous-integration/jenkins/build-preview',
   publishPreview: 'continuous-integration/jenkins/publish-preview',
+  publishFusion: 'continuous-integration/jenkins/publish-fusion'
 ]
 
 // Copy these before installing dependencies so that we don't have to
@@ -53,6 +59,7 @@ static final String[] DIRS = [
   'preview',
   'staging',
   'production',
+  'fusion'
 ]
 
 String appEnv() {
@@ -62,6 +69,8 @@ String appEnv() {
   if (environment.isPullRequest) { appEnv = 'preview' }
   return appEnv
 }
+
+def isFusion = env.BRANCH_NAME == 'release/fusion';
 
 def scmVars = { };
 
@@ -147,8 +156,22 @@ pods {
               }
             }
           },
+
+          'Fusion': {
+            dir('fusion') {
+              stageWithNotify('Build for Fusion', CONTEXTS.buildFusion) {
+                fas.build(
+                  appId: FUSION_APP_ID,
+                  repo: APPLICATION_REPO_ID,
+                  buildCommand: 'yarn build:fusion',
+                  shouldExecute: isFusion,
+                  shouldPublishSourceMap: false,
+                )
+              }
+            }
+          },
         ],
-        workers: 3,
+        workers: 4,
       )
     }
 
@@ -184,6 +207,16 @@ pods {
           slack.send(
             channel: SLACK_CHANNEL,
               message: "Deployment of ${env.BRANCH_NAME} complete!"
+          )
+        }
+      }
+    }
+
+    stageWithNotify('Publish Fusion build', CONTEXTS.publishFusion) {
+      if (isFusion) {
+        dir('fusion') {
+          fas.publish(
+            shouldPublishSourceMap: false
           )
         }
       }

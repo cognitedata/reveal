@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "build": "react-scripts build",
+    "build:fusion": "react-scripts build",
     "build-storybook": "build-storybook -s public",
     "chromatic": "chromatic --exit-zero-on-changes",
     "cy": "cypress open",
