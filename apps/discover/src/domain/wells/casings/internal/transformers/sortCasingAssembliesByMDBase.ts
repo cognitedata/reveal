@@ -8,7 +8,7 @@ const MD_BASE_VALUE_ACCESSOR = 'measuredDepthBase.value';
 
 export const sortCasingAssembliesByMDBase = <T extends CasingAssemblyType>(
   casingAssemblies: T[],
-  desc = true
+  desc = false
 ) => {
   if (desc) {
     return sortObjectsDecending<CasingAssemblyType>(

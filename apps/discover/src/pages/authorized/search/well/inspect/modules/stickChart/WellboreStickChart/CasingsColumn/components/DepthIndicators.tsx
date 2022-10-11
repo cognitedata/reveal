@@ -83,29 +83,28 @@ export const DepthIndicators = React.forwardRef<
       [casingAssemblies, getScaledDepth, depthMeasurementType]
     );
 
-    const DepthIndicatorsLeftHalf = useMemo(
-      () =>
-        reduceRight(
-          casingAssemblies,
-          (...args) => depthIndicatorsReducer(...args, true),
-          EMPTY_ARRAY as JSX.Element[]
-        ),
-      [casingAssemblies, depthIndicatorsReducer]
-    );
+    const DepthIndicatorsLeftHalf = useMemo(() => {
+      if (!showBothSides) {
+        return null;
+      }
+      return reduce(
+        casingAssemblies,
+        (...args) => depthIndicatorsReducer(...args, true),
+        EMPTY_ARRAY as JSX.Element[]
+      );
+    }, [showBothSides, depthIndicatorsReducer]);
 
-    const DepthIndicatorsRightHalf = useMemo(
-      () =>
-        reduce(
-          casingAssemblies,
-          depthIndicatorsReducer,
-          EMPTY_ARRAY as JSX.Element[]
-        ),
-      [casingAssemblies, depthIndicatorsReducer]
-    );
+    const DepthIndicatorsRightHalf = useMemo(() => {
+      return reduceRight(
+        casingAssemblies,
+        depthIndicatorsReducer,
+        EMPTY_ARRAY as JSX.Element[]
+      );
+    }, [depthIndicatorsReducer]);
 
     return (
       <DepthIndicatorsContainer ref={ref}>
-        {showBothSides && DepthIndicatorsLeftHalf}
+        {DepthIndicatorsLeftHalf}
         {DepthIndicatorsRightHalf}
       </DepthIndicatorsContainer>
     );
