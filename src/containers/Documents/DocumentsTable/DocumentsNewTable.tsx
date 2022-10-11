@@ -3,12 +3,13 @@ import React from 'react';
 import { NewTable as Table, TableProps } from 'components/ReactTable/Table';
 
 import { DocumentNamePreview } from './DocumentNamePreview';
+import { DocumentContentPreview } from './DocumentContentPreview';
 import { Column, Row } from 'react-table';
 import { Document } from 'domain/documents';
 import { Body, A, Flex } from '@cognite/cogs.js';
 import { useQuery } from 'react-query';
 import { useSDK } from '@cognite/sdk-provider';
-import { getRootAsset } from '../../../utils/assets';
+import { getRootAsset } from 'utils/assets';
 
 // TODO: Might need to add RelationshipLabels at some point.
 export type DocumentTableProps = Omit<
@@ -32,6 +33,13 @@ export const DocumentsTable = (props: DocumentTableProps) => {
           file: row.original,
         };
         return <DocumentNamePreview {...fileNamePreviewProps} query={query} />;
+      },
+    },
+    {
+      id: 'content',
+      Header: 'Content',
+      Cell: ({ row }: { row: Row<Document> }) => {
+        return <DocumentContentPreview document={row.original} query={query} />;
       },
     },
     Table.Columns.mimeType,
@@ -96,6 +104,7 @@ export const DocumentsTable = (props: DocumentTableProps) => {
       data={props.data}
       visibleColumns={[
         'name',
+        'content',
         'mimeType',
         'lastUpdatedTime',
         'createdTime',
