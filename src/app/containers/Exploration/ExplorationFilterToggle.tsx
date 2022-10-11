@@ -11,7 +11,7 @@ export const ExplorationFilterToggle: React.FC<Props> = React.memo(
     const tooltipContent = filterState ? 'Hide filters' : 'Show filters';
 
     return (
-      <Tooltip content={tooltipContent}>
+      <Tooltip position="bottom" content={tooltipContent}>
         <Button
           icon={icon}
           aria-label="Toggle search filters"

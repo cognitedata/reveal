@@ -129,11 +129,15 @@ function SearchPage() {
 
         <MainSearchContainer>
           <SearchInputContainer>
-            <ExplorationFilterToggle
-              filterState={showFilter}
-              onClick={handleFilterToggleClick}
-            />
-            <VerticalDivider />
+            {currentResourceType !== 'threeD' && (
+              <>
+                <ExplorationFilterToggle
+                  filterState={showFilter}
+                  onClick={handleFilterToggleClick}
+                />
+                <VerticalDivider />
+              </>
+            )}
 
             <ExplorationSearchBar />
           </SearchInputContainer>
