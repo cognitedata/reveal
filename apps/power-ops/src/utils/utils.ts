@@ -2,6 +2,7 @@ import {
   BidProcessResult,
   CalculatedProduction,
   DEFAULT_CONFIG,
+  Plant,
 } from '@cognite/power-ops-api-types';
 import { DoubleDatapoint } from '@cognite/sdk';
 import { BidMatrixData } from 'types';
@@ -236,3 +237,19 @@ export const axiosRequestConfig = (
   headers: { Authorization: `Bearer ${token}`, ...moreHeaders },
   ...moreConfig,
 });
+
+export const sortPlants = (plantA: Plant, plantB: Plant) => {
+  const orderingA = Number(plantA.ordering) || undefined;
+  const orderingB = Number(plantB.ordering) || undefined;
+
+  if (!orderingA && !orderingB) {
+    return plantA.displayName.localeCompare(plantB.displayName);
+  }
+  if (!orderingA) {
+    return 1;
+  }
+  if (!orderingB) {
+    return -1;
+  }
+  return orderingA - orderingB;
+};

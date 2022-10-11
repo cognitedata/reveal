@@ -5,6 +5,7 @@ import debounce from 'lodash/debounce';
 import { useFetchBidProcessResult } from 'queries/useFetchBidProcessResult';
 import { useCallback } from 'react';
 import { useLocation, useParams, useRouteMatch } from 'react-router-dom';
+import { sortPlants } from 'utils/utils';
 
 type Props = {
   bidProcessEventExternalId: string;
@@ -71,7 +72,7 @@ const SidebarContainer = ({
         url: `${url}/price-scenarios`,
         current: pathname === `${url}/price-scenarios`,
       }}
-      plants={bidProcessResult.plants.map((plant) => ({
+      plants={bidProcessResult.plants.sort(sortPlants).map((plant) => ({
         name: plant.displayName,
         externalId: plant.externalId,
         url: `${url}/${plant.externalId}`,
