@@ -32,7 +32,6 @@ const AppWrapper = styled.div<{ isFilterEnabled?: boolean }>`
   height: 100%;
   max-width: 100vw;
   padding-left: ${props => (props.isFilterEnabled ? '0px' : '16px')};
-  padding-right: 16px;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;

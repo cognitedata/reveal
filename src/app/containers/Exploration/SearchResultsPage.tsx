@@ -468,15 +468,12 @@ const SearchResultWrapper = styled.div`
   flex: 1 1 auto;
   display: flex;
   flex-direction: column;
-  padding-inline: 8px;
   height: 100%;
 `;
 
 const SearchInputContainer = styled(Flex)`
-  border-bottom: 1px solid ${Colors['greyscale-grey3'].hex()};
-  padding-top: 16px;
-  padding-left: 16px;
-  padding-bottom: 16px;
+  padding: 16px;
+  padding-bottom: 8px;
   align-items: center;
 `;
 

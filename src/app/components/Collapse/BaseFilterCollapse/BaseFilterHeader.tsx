@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Title as DefaultTitle, Body } from '@cognite/cogs.js';
+import { Title as DefaultTitle, Detail } from '@cognite/cogs.js';
 
 const Content = styled.div`
   display: flex;
@@ -11,6 +11,10 @@ const BaseTitle = styled(DefaultTitle)`
   && {
     color: var(--cogs-greyscale-grey9);
   }
+`;
+
+const BaseSubtitle = styled(Detail)`
+  color: var(--cogs-text-icon--muted);
 `;
 
 interface Props {
@@ -24,7 +28,7 @@ export const FilterHeader: React.FC<React.PropsWithChildren<Props>> =
         <BaseTitle level={6} onClick={handleFilterClick && handleFilterClick}>
           {title}
         </BaseTitle>
-        <Body level={5}>Filters</Body>
+        <BaseSubtitle strong>Filters</BaseSubtitle>
       </Content>
     );
   });
