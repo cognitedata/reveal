@@ -134,7 +134,6 @@ export const DataModelHeader = ({
         ? SchemaEditorMode.Edit
         : SchemaEditorMode.View
     );
-
     track('SelectDM', {
       dataModel: dataModelExternalId,
       version: dataModelVersion.version,

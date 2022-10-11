@@ -338,7 +338,9 @@ type Query {
       errors = [err];
     }
 
-    return errors.map((err) => this.graphQlToValidationError(err));
+    return errors.map((err) =>
+      this.graphQlToValidationError(err as GraphQLError)
+    );
   }
 
   private graphQlToValidationError(

@@ -112,8 +112,6 @@ module.exports = (config) => {
   );
 
   config.externals = {
-    react: 'react',
-    'react-dom': 'react-dom',
     'single-spa': 'single-spa',
     '@cognite/cdf-sdk-singleton': '@cognite/cdf-sdk-singleton',
   };

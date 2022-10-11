@@ -2,7 +2,7 @@ import { useAuthContext } from '@cognite/react-container';
 import { useDispatch } from 'react-redux';
 import globalStateSlice from '@platypus-app/redux/reducers/global/globalReducer';
 import { setCogniteSDKClient } from './cogniteSdk';
-
+import { CogniteClient } from '@cognite/sdk';
 type AuthContainerProps = {
   children: React.ReactNode;
 };
@@ -14,7 +14,9 @@ export const AuthContainer = ({ children }: AuthContainerProps) => {
   if (!client || !authState) {
     return null;
   }
-  setCogniteSDKClient(client!);
+
+  // TODO: Find better way to fix typing
+  setCogniteSDKClient(client as unknown as CogniteClient);
 
   if (authState !== undefined) {
     dispatch(

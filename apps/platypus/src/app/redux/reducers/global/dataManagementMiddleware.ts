@@ -10,7 +10,7 @@ const getLocalStorageProvider = () =>
 
 export const draftRowsLocalStorageMiddleware =
   (store: MiddlewareAPI) => (next: Dispatch) => (action: Action) => {
-    next(action);
+    const result = next(action);
     const state = store.getState();
     const localStorageProvider = getLocalStorageProvider();
 
@@ -66,4 +66,5 @@ export const draftRowsLocalStorageMiddleware =
         ] || undefined;
       draftRows && localStorageProvider.setItem(lsKey, draftRows);
     }
+    return result;
   };

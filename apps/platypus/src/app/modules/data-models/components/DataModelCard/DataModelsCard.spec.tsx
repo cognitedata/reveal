@@ -13,7 +13,7 @@ describe('DataModelCard', () => {
     const headers = screen.getAllByRole('heading', { level: 5 });
     expect(headers.length).toBe(1);
     expect(screen.getByRole('heading')).toHaveTextContent('BestDay');
-    expect(screen.queryByText('BestDay')).not.toBeNull();
+    expect(screen.getByText('BestDay')).not.toBeNull();
     expect(screen.queryByText('No owners')).toBeNull();
     expect(screen.getByRole('definition')).toBeInTheDocument();
     expect(screen.getByRole('definition')).toHaveTextContent('1.2');
@@ -24,7 +24,7 @@ describe('DataModelCard', () => {
     const headers = screen.getAllByRole('heading', { level: 5 });
     expect(headers.length).toBe(1);
     expect(screen.getByRole('heading')).toHaveTextContent('Equipments');
-    expect(screen.queryByText('No owners')).not.toBeNull();
-    expect(screen.queryByRole('definition')).not.toBeInTheDocument();
+    expect(screen.getByText('No owners')).not.toBeNull();
+    expect(screen.queryByText('definition')).not.toBeInTheDocument();
   });
 });

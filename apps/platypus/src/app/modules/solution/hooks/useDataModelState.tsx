@@ -2,6 +2,7 @@ import { actions as solutionActions } from '@platypus-app/redux/reducers/global/
 import { BuiltInType } from '@platypus/platypus-core';
 import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
+import { SchemaEditorMode } from '../data-model/types';
 
 export const useDataModelState = () => {
   const dispatch = useDispatch();
@@ -23,7 +24,7 @@ export const useDataModelState = () => {
   );
 
   const setGraphQlSchema = useCallback(
-    (graphQlSchema) => {
+    (graphQlSchema: string) => {
       dispatch(solutionActions.setGraphQlSchema(graphQlSchema));
       dispatch(solutionActions.parseGraphQlSchema(graphQlSchema));
     },
@@ -31,14 +32,14 @@ export const useDataModelState = () => {
   );
 
   const setIsDirty = useCallback(
-    (isDirty) => {
+    (isDirty: boolean) => {
       dispatch(solutionActions.setIsDirty(isDirty));
     },
     [dispatch]
   );
 
   const setEditorMode = useCallback(
-    (editorMode) => {
+    (editorMode: SchemaEditorMode) => {
       dispatch(solutionActions.setEditorMode(editorMode));
     },
     [dispatch]

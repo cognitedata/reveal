@@ -32,7 +32,7 @@ export function getArgs() {
     .example('$0 file.js', '')
     .example('$0 http://example.com/db.json', '')
     .epilog('ttps://github.com/cognitedata/platypus/apps/mock-server')
-    .parse();
+    .parseSync();
 
   // Should be used only for development purposes only!
   // Read the readme file how you can pass args

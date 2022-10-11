@@ -164,12 +164,6 @@
           "off"
         ],
         "@typescript-eslint/no-unused-vars": "off",
-        "@typescript-eslint/no-unused-vars-experimental": [
-          "error",
-          {
-            "ignoredNamesRegex": "^_"
-          }
-        ],
         "prettier/prettier": [
           "error",
           {

@@ -11,11 +11,15 @@
   ],
   "exclude": [
     "../**/*.spec.ts",
+    "../**/*.test.ts",
     "../**/*.spec.js",
+    "../**/*.test.js",
     "../**/*.spec.tsx",
+    "../**/*.test.tsx",
     "../**/*.spec.jsx",
-    "../**/*.spec.jsx",
-    "../src/app/tests/render.tsx"
+    "../**/*.test.jsx",
+    "../src/app/tests/render.tsx",
+    "jest.config.ts"
   ],
   "include": ["../src/**/*", "*.js"]
 }

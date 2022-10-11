@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars-experimental */
 import React from 'react';
 
 interface IProps {

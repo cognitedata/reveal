@@ -21,29 +21,29 @@ export type CogniteRenderOptions = Omit<RenderOptions, 'queries'> &
 export const Wrapper =
   (
     state: DeepPartial<RootState>,
-    NestedWrapper?: React.FunctionComponent<{}> | ComponentClass<{}>
+    NestedWrapper?: React.ElementType
   ) =>
-  ({ children }: React.PropsWithChildren<{}>) => {
-    const newStore = configureStore({
-      reducer: rootReducer as any,
-      preloadedState: state as any,
-      middleware: (getDefaultMiddleware) => [
-        ...getDefaultMiddleware({ serializableCheck: false }),
-      ],
-    });
+    ({ children }: React.PropsWithChildren<{}>) => {
+      const newStore = configureStore({
+        reducer: rootReducer as any,
+        preloadedState: state as any,
+        middleware: (getDefaultMiddleware) => [
+          ...getDefaultMiddleware({ serializableCheck: false }),
+        ],
+      });
 
-    const wrappedChildren = NestedWrapper ? (
-      <NestedWrapper>{children}</NestedWrapper>
-    ) : (
-      children
-    );
+      const wrappedChildren = NestedWrapper ? (
+        <NestedWrapper>{children}</NestedWrapper>
+      ) : (
+        children
+      );
 
-    return (
-      <AppProviders store={newStore} tenant={''}>
-        {wrappedChildren}
-      </AppProviders>
-    );
-  };
+      return (
+        <AppProviders store={newStore} tenant={''}>
+          {wrappedChildren}
+        </AppProviders>
+      );
+    };
 
 type RenderableComponent<Props, T> = React.ReactElement<
   Props,

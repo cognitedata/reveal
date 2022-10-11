@@ -34,6 +34,7 @@ describe('Data Model Page - Toggle Schema Visualizer', () => {
     cy.get('.monaco-editor textarea:first')
       .should('be.visible')
       .type(gqlSchema, {
+        delay: 0,
         parseSpecialCharSequences: false,
       });
 
@@ -52,6 +53,7 @@ describe('Data Model Page - Toggle Schema Visualizer', () => {
     cy.get('.monaco-editor textarea:first')
       .should('be.visible')
       .type(gqlSchema, {
+        delay: 0,
         parseSpecialCharSequences: false,
       });
 

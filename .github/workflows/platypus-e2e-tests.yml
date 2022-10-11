@@ -40,7 +40,7 @@ jobs:
           yarn test
 
       - name: Cypress run
-        uses: cypress-io/github-action@v2
+        uses: cypress-io/github-action@v4.2.0
         # let's give this action an ID so we can refer
         # to its output values later
         id: cypress
@@ -53,7 +53,6 @@ jobs:
         with:
           # let's make sure our tests pass on Chrome browser
           browser: chrome
-          headless: true
           start: yarn nx serve mock-server
           wait-on: 'http://localhost:4002'
           # wait for 1 minute for the server to respond

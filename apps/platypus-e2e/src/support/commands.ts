@@ -74,7 +74,8 @@ Cypress.Commands.add('setQueryExplorerQuery', (query: string) => {
     .first()
     .click()
     .type('{selectAll}')
-    .type(query, { parseSpecialCharSequences: false });
+    .type(query, { parseSpecialCharSequences: false })
+    .type('\n');
 });
 
 Cypress.Commands.add('assertQueryExplorerResult', (mockSuccess) => {
@@ -114,7 +115,7 @@ Cypress.Commands.add(
         .closest('.ag-row')
         .as('row');
 
-      cy.get('@row').find(`[col-id="nonNull"] label`).click();
+      cy.get('@row').find(`[col-id="nonNull"]`).click();
     }
 
     // Wait for visualizer to be updated with new type
@@ -162,10 +163,10 @@ Cypress.Commands.add('addDataModelType', (typeName: string) => {
   // Find the row in the grid and click
   // initially the cell renderer is displayed
   // we need to click the cell to display the cell editor
-  cy.get(`.ag-row-last div[col-id="name"]`).click();
-  cy.get(`.ag-row-last [col-id="name"] [data-cy="schema-type-field"]`)
-    .type('name')
-    .type('{enter}');
+  cy.get(`.ag-row-last div[col-id="name"]`).closest('.ag-row').as('row');
+
+  cy.get('@row').find(`div[col-id="name"]`).click();
+  cy.get('@row').find(`[col-id="name"] input`).type('name').type('{enter}');
 
   const typeSelector = `div#${typeName}.node`;
   // Wait for visualizer to be updated with new type before reloading page

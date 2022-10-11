@@ -1,7 +1,6 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import ReactDOMClient from 'react-dom/client';
 import singleSpaReact from 'single-spa-react';
-
 import './app/utils/sentry';
 import AppWrapper from './AppWrapper';
 import { environment } from './environments/environment';
@@ -16,18 +15,17 @@ let lifecycles = {
 } as any;
 
 if (environment.APP_ENV === 'mock' || environment.APP_ENV === 'development') {
-  ReactDOM.render(<AppWrapper />, document.getElementById('root'));
+  const container = document.getElementById('root');
+  const root = ReactDOMClient.createRoot(container!);
+  root.render(<AppWrapper />);
 } else {
   lifecycles = singleSpaReact({
     React,
-    ReactDOM,
+    ReactDOMClient,
     rootComponent: AppWrapper,
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
     errorBoundary() {
-      // eslint-disable-line
-      // Customize the root error boundary for your microfrontend here.
-      return <span>An error occured in your app</span>;
+      // Customize the root error boundary for your micro-frontend here.
+      return <span>An error occurred in your app</span>;
     },
   });
 }

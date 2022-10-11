@@ -2,13 +2,11 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "outDir": "../../dist/out-tsc",
-    "types": [
-      "node"
-    ],
+    "types": ["node"]
   },
   "files": [
     "../../node_modules/@nrwl/react/typings/cssmodule.d.ts",
-    "../../node_modules/@nrwl/react/typings/image.d.ts",
+    "../../node_modules/@nrwl/react/typings/image.d.ts"
   ],
   "exclude": [
     "**/*.spec.ts",
@@ -17,12 +15,8 @@
     "**/*.stories.js",
     "**/*.stories.jsx",
     "**/*.stories.tsx",
-    "**/mocks/**.*"
+    "**/mocks/**.*",
+    "jest.config.ts"
   ],
-  "include": [
-    "**/*.js",
-    "**/*.jsx",
-    "**/*.ts",
-    "**/*.tsx"
-  ]
+  "include": ["**/*.js", "**/*.jsx", "**/*.ts", "**/*.tsx"]
 }

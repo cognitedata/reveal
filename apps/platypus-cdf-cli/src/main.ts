@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import yargs, { scriptName } from 'yargs';
+import yargs, { CommandModule, scriptName } from 'yargs';
 import chalk from 'chalk';
 import { authenticate } from './app/middlewares/auth';
 import * as signin from './app/cmds/sign-in';
@@ -28,14 +28,14 @@ scriptName(CONSTANTS.APP_ID)
     `$0 <command>
 
     The Cognite Data Fusion CLI (CDF CLI) currently supports managing data models. For feature requests, navigate to [Cognite Hub](https://hub.cognite.com/).
-  
+
     Check out the full documentation here: https://docs.cognite.com/cli
   `
   )
   .middleware([init, authenticate])
   .version()
   .demandCommand(1)
-  .command(signin)
+  .command(signin as CommandModule)
   .command(dataModelsCmds)
   .command(logout)
   .command(status)

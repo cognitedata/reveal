@@ -69,7 +69,7 @@ export const DataModelPage = ({ dataModelExternalId }: DataModelPageProps) => {
     selectedVersionNumber,
     typeDefs,
   } = useSelector<DataModelState>((state) => state.dataModel);
-  const { setEditorMode, setGraphQlSchema, setIsDirty, setBuiltInTypes } =
+  const { setEditorMode, setGraphQlSchema, setIsDirty, parseGraphQLSchema } =
     useDataModelState();
   const { setLocalDraft, removeLocalDraft, getLocalDraft } =
     useLocalDraft(dataModelExternalId);
@@ -85,10 +85,8 @@ export const DataModelPage = ({ dataModelExternalId }: DataModelPageProps) => {
     dataModelExternalId
   );
   const localDraft = getLocalDraft(selectedDataModelVersion.version);
-
   const [saving, setSaving] = useState(false);
   const [updating, setUpdating] = useState(false);
-  const [isInit, setInit] = useState(false);
   const [breakingChanges, setBreakingChanges] = useState('');
   const [showEndpointModal, setShowEndpointModal] = useState(false);
 
@@ -120,30 +118,13 @@ export const DataModelPage = ({ dataModelExternalId }: DataModelPageProps) => {
 
   // Use this hook as init livecycle
   useEffect(() => {
-    if (!isInit) {
-      setBuiltInTypes(dataModelTypeDefsBuilder.getBuiltinTypes());
-      dataModelTypeDefsBuilder.clear();
-      if (localDraft) {
-        setGraphQlSchema(localDraft.schema);
-        setEditorMode(SchemaEditorMode.Edit);
-
-        if (latestDataModelVersion.schema !== localDraft.schema) {
-          setIsDirty(true);
-        }
-      } else {
-        setEditorMode(
-          selectedDataModelVersion.status === DataModelVersionStatus.DRAFT
-            ? SchemaEditorMode.Edit
-            : SchemaEditorMode.View
-        );
-        setGraphQlSchema(selectedDataModelVersion.schema);
-        setIsDirty(false);
-      }
-
-      setInit(true);
+    if (localDraft) {
+      setGraphQlSchema(localDraft.schema);
+      parseGraphQLSchema(localDraft.schema);
+      setEditorMode(SchemaEditorMode.Edit);
+      setIsDirty(true);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedDataModelVersion, isInit]);
+  }, []);
 
   const handleSaveOrPublish = async () => {
     try {
@@ -264,27 +245,25 @@ export const DataModelPage = ({ dataModelExternalId }: DataModelPageProps) => {
   };
 
   const onSchemaChanged = useCallback(
-    (schemaString) => {
-      if (isInit) {
-        // update local storage only when schema is changed
-        if (selectedDataModelVersion.schema !== schemaString) {
-          setIsDirty(selectedDataModelVersion.schema !== schemaString);
+    (schemaString: string) => {
+      // update local storage only when schema is changed
+      if (selectedDataModelVersion.schema !== schemaString) {
+        setIsDirty(selectedDataModelVersion.schema !== schemaString);
 
-          setLocalDraft({
-            ...selectedDataModelVersion,
-            schema: schemaString,
-            status: DataModelVersionStatus.DRAFT,
-          });
-        }
+        setLocalDraft({
+          ...selectedDataModelVersion,
+          schema: schemaString,
+          status: DataModelVersionStatus.DRAFT,
+        });
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [selectedDataModelVersion, isInit]
+    [selectedDataModelVersion]
   );
 
   const handleDiscardClick = () => {
     dataModelTypeDefsBuilder.clear();
-    setInit(false);
+    setGraphQlSchema(latestDataModelVersion.schema);
   };
 
   // TODO need this?
@@ -293,7 +272,6 @@ export const DataModelPage = ({ dataModelExternalId }: DataModelPageProps) => {
       onSchemaChanged(graphQlSchema);
     }
   }, [graphQlSchema, editorMode, onSchemaChanged, saving, updating]);
-
   return (
     <>
       <PageContentLayout>
@@ -314,52 +292,49 @@ export const DataModelPage = ({ dataModelExternalId }: DataModelPageProps) => {
           />
         </PageContentLayout.Header>
         <PageContentLayout.Body style={{ flexDirection: 'row' }}>
-          {isInit ? (
-            <SplitPanelLayout
-              sidebar={
+          <SplitPanelLayout
+            sidebar={
+              <ErrorBoundary errorComponent={<ErrorPlaceholder />}>
+                <EditorPanel
+                  editorMode={editorMode}
+                  externalId={dataModelExternalId}
+                  isPublishing={saving || updating}
+                />
+              </ErrorBoundary>
+            }
+            sidebarWidth={640}
+            sidebarMinWidth={440}
+            content={
+              <Flex
+                data-testid="Schema_visualization"
+                direction="column"
+                style={{ height: '100%' }}
+              >
+                <PageToolbar
+                  title={t('preview_title', 'Preview')}
+                  size={Size.SMALL}
+                >
+                  {typeDefs.types.length > MAX_TYPES_VISUALIZABLE && (
+                    <ToggleVisualizer
+                      isVisualizerOn={isVisualizerOn}
+                      setIsVisualizerOn={setIsVisualizerOn}
+                    />
+                  )}
+                </PageToolbar>
                 <ErrorBoundary errorComponent={<ErrorPlaceholder />}>
-                  <EditorPanel
-                    editorMode={editorMode}
-                    externalId={dataModelExternalId}
-                    isPublishing={saving || updating}
+                  <SchemaVisualizer
+                    active={currentTypeName || undefined}
+                    graphQLSchemaString={graphQlSchema}
+                    isVisualizerOn={
+                      typeDefs.types.length <= MAX_TYPES_VISUALIZABLE ||
+                      isVisualizerOn
+                    }
                   />
                 </ErrorBoundary>
-              }
-              sidebarWidth={640}
-              sidebarMinWidth={440}
-              content={
-                <Flex
-                  data-testid="Schema_visualization"
-                  direction="column"
-                  style={{ height: '100%' }}
-                >
-                  <PageToolbar
-                    title={t('preview_title', 'Preview')}
-                    size={Size.SMALL}
-                  >
-                    {typeDefs.types.length > MAX_TYPES_VISUALIZABLE && (
-                      <ToggleVisualizer
-                        isVisualizerOn={isVisualizerOn}
-                        setIsVisualizerOn={setIsVisualizerOn}
-                      />
-                    )}
-                  </PageToolbar>
-                  <ErrorBoundary errorComponent={<ErrorPlaceholder />}>
-                    <SchemaVisualizer
-                      active={currentTypeName || undefined}
-                      graphQLSchemaString={graphQlSchema}
-                      isVisualizerOn={
-                        typeDefs.types.length <= MAX_TYPES_VISUALIZABLE ||
-                        isVisualizerOn
-                      }
-                    />
-                  </ErrorBoundary>
-                </Flex>
-              }
-            />
-          ) : (
-            <Spinner />
-          )}
+              </Flex>
+            }
+          />
+          )
         </PageContentLayout.Body>
       </PageContentLayout>
 

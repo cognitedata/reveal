@@ -1,5 +1,6 @@
-module.exports = {
-  displayName: 'platypus-cdf-cli',
+/* eslint-disable */
+export default {
+  displayName: 'mock-server',
   preset: '../../jest.preset.js',
   globals: {
     'ts-jest': {
@@ -11,5 +12,5 @@ module.exports = {
     '^.+\\.[tj]s$': 'ts-jest',
   },
   moduleFileExtensions: ['ts', 'js', 'html'],
-  coverageDirectory: '../../coverage/apps/platypus-cdf-cli',
+  coverageDirectory: '../../coverage/apps/mock-server',
 };

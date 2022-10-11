@@ -29,9 +29,7 @@ export const TypeDescription: React.FC<TypeDescriptionProps> = ({
   return isLoading ? (
     <S.StyledSkeleton />
   ) : (
-    <Detail as="div" css>
-      {description}
-    </Detail>
+    <Detail as="div">{description}</Detail>
   );
 };
 

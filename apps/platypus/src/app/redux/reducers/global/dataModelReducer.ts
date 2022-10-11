@@ -23,6 +23,8 @@ export interface DataModelReducerState {
   customTypesNames: string[];
   builtInTypes: BuiltInType[];
 }
+const getTypeDefsBuilder = () =>
+  rootInjector.get(TOKENS.dataModelTypeDefsBuilderService);
 
 export const initialState = {
   currentTypeName: null as null | string,
@@ -34,11 +36,8 @@ export const initialState = {
   typeFieldErrors: {} as { [key: string]: string },
   hasError: false,
   customTypesNames: [] as string[],
-  builtInTypes: [],
+  builtInTypes: getTypeDefsBuilder().getBuiltinTypes(),
 } as DataModelReducerState;
-
-const getTypeDefsBuilder = () =>
-  rootInjector.get(TOKENS.dataModelTypeDefsBuilderService);
 
 const updateDataModelState = (
   state: DataModelReducerState
@@ -69,6 +68,7 @@ const clearState = (state: DataModelReducerState): DataModelReducerState => {
   state.typeFieldErrors = {};
   state.customTypesNames = [];
   state.builtInTypes = typeDefsBuilder.getBuiltinTypes();
+  state.editorMode = SchemaEditorMode.View;
   return state;
 };
 
@@ -125,6 +125,7 @@ const dataModelSlice = createSlice({
         clearState(state);
       }
     },
+    // Remove action
     setBuiltInTypes: (state, action: PayloadAction<BuiltInType[]>) => {
       state.builtInTypes = action.payload;
     },
