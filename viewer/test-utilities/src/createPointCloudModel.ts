@@ -23,7 +23,6 @@ export function createPointCloudModel(modelId: number, revisionId: number): Cogn
   const potreeInstance = new Potree(modelDataProvider);
 
   const potreeGroup = new PotreeGroupWrapper(potreeInstance);
-
   const pointCloudOctree = new PointCloudOctree(
     new Mock<Potree>().object(),
     new Mock<IPointCloudTreeGeometry>()

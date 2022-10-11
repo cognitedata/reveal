@@ -26,9 +26,9 @@ export class PointCloudEffectsPass implements RenderPass {
     try {
       camera.layers.mask = getLayerMask(RenderLayer.PointCloud);
 
-      this._sceneHandler.pointCloudModels.forEach(model => {
-        return this.setMaterialParameters(model.pointCloudNode.potreeNode.octree.material);
-      });
+      this._sceneHandler.pointCloudModels.forEach(model =>
+        this.setMaterialParameters(model.pointCloudNode.potreeNode.octree.material)
+      );
 
       this.setRendererParameters(rendererStateHelper);
 

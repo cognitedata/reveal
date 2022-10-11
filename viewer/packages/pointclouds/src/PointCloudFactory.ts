@@ -8,6 +8,7 @@ import { Potree } from './potree-three-loader';
 import { DEFAULT_POINT_CLOUD_METADATA_FILE } from './constants';
 import { IAnnotationProvider } from './styling/IAnnotationProvider';
 
+
 export class PointCloudFactory {
   private readonly _potreeInstance: Potree;
   private readonly _annotationProvider: IAnnotationProvider;

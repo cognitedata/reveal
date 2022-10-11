@@ -5,6 +5,7 @@
 // @ts-ignore
 import visualTestsFixtures from '**/*.VisualTest.ts';
 
+//TODO: remove for Reveal 4.0
 import { VisualTestFixture } from './test-fixtures/VisualTestFixture';
 
 async function testGenerator(): Promise<Map<string, VisualTestFixture>> {

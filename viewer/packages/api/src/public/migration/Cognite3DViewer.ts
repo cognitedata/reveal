@@ -1150,8 +1150,7 @@ export class Cognite3DViewer {
             model,
             point: result.point,
             pointIndex: result.pointIndex,
-            distanceToCamera: result.distance,
-            annotationId: result.annotationId
+            distanceToCamera: result.distance
           };
           intersections.push(intersection);
           break;
