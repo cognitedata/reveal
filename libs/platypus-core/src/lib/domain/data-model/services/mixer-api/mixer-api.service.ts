@@ -59,7 +59,7 @@ export class MixerApiService {
   listApis(): Promise<DataModelApiOutputDTO[]> {
     const listVersionsQuery = `
     query {
-      listApis {
+      listApis(first:1000) {
         edges {
           node {
             externalId
