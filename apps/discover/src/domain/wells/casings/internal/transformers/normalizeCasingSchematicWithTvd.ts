@@ -4,6 +4,7 @@ import {
   CasingSchematicInternalWithTvd,
   CasingSchematicWithTvd,
 } from '../types';
+import { getUniqueCasingAssemblies } from '../utils/getUniqueCasingAssemblies';
 
 import { normalizeCasingAssemblyWithTvd } from './normalizeCasingAssemblyWithTvd';
 
@@ -11,14 +12,16 @@ export const normalizeCasingSchematicWithTvd = (
   rawCasingSchematic: CasingSchematicWithTvd,
   userPreferredUnit: UserPreferredUnit
 ): CasingSchematicInternalWithTvd => {
-  const casingAssemblies = rawCasingSchematic.casingAssemblies.map(
-    (casingAssembly) => {
-      return normalizeCasingAssemblyWithTvd(casingAssembly, userPreferredUnit);
-    }
+  const uniqueCasingAssemblies = getUniqueCasingAssemblies(
+    rawCasingSchematic.casingAssemblies
   );
+
+  const casingAssemblies = uniqueCasingAssemblies.map((casingAssembly) => {
+    return normalizeCasingAssemblyWithTvd(casingAssembly, userPreferredUnit);
+  });
 
   return {
     ...rawCasingSchematic,
-    casingAssemblies,
+    casingAssemblies: getUniqueCasingAssemblies(casingAssemblies),
   };
 };
