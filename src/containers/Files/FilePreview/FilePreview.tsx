@@ -23,6 +23,7 @@ import { ResourceItem } from 'types';
 import { AnnotationPreviewSidebar } from './AnnotationPreviewSidebar';
 import { useAnnotations } from '../hooks';
 import { AnnotationHoverPreview } from './AnnotationHoverPreview';
+import { EmptyState } from 'components/EmpyState/EmptyState';
 
 type FilePreviewProps = {
   fileId: number;
@@ -91,12 +92,11 @@ export const FilePreview = ({
 
   if (!canPreviewFile) {
     return (
-      <CenteredPlaceholder>
-        <h1>No preview for this type of file</h1>
-        <p>
-          File types that can be previewed are: {readablePreviewableFileTypes()}
-        </p>
-      </CenteredPlaceholder>
+      <EmptyState
+        title="Preview is not available for this type of file"
+        body={`File types that can be previewed are: ${readablePreviewableFileTypes()}`}
+        graphic="DataKits"
+      />
     );
   }
 

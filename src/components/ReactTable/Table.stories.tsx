@@ -322,3 +322,8 @@ export const ExampleWithResizing: ComponentStory<typeof Table> = args => {
 ExampleWithResizing.args = {
   isResizingColumns: true,
 };
+
+export const ExampleWithEmptyState: ComponentStory<typeof Table> = args => {
+  const columns = useMemo(() => exampleColumns, []);
+  return <Table {...args} data={[]} columns={columns} />;
+};

@@ -24,6 +24,7 @@ import { ColumnToggle } from './ColumnToggle';
 import { SortIcon } from './SortIcon';
 import { ResourceTableColumns } from './columns';
 import { LoadMore, LoadMoreProps } from './LoadMore';
+import { EmptyState } from 'components/EmpyState/EmptyState';
 
 export interface TableProps<T extends Record<string, any>>
   extends LoadMoreProps {
@@ -193,71 +194,77 @@ export function NewTable<T extends TableData>({
         </ColumnSelectorWrapper>
       ) : null}
 
-      <ContainerInside>
-        <StyledTable {...getTableProps()}>
-          <Thead isStickyHeader={isStickyHeader}>
-            {headerGroups.map(headerGroup => (
-              <Tr {...headerGroup.getHeaderGroupProps()}>
-                {headerGroup.headers.map(column => (
-                  <Th
-                    {...column.getHeaderProps(
-                      isSortingEnabled
-                        ? column.getSortByToggleProps()
-                        : undefined
-                    )}
-                  >
-                    <ThWrapper
-                      className={`resizer ${
-                        column.isResizing ? 'isResizing' : ''
-                      }`}
+      {!data || data.length === 0 ? (
+        <EmptyState body="Please, refine your filters" />
+      ) : (
+        <ContainerInside>
+          <StyledTable {...getTableProps()}>
+            <Thead isStickyHeader={isStickyHeader}>
+              {headerGroups.map(headerGroup => (
+                <Tr {...headerGroup.getHeaderGroupProps()}>
+                  {headerGroup.headers.map(column => (
+                    <Th
+                      {...column.getHeaderProps(
+                        isSortingEnabled
+                          ? column.getSortByToggleProps()
+                          : undefined
+                      )}
                     >
-                      {column.render('Header')}
-                      <SortIcon
-                        canSort={column.canSort}
-                        isSorted={column.isSorted}
-                        isSortedDesc={column.isSortedDesc}
-                      />
-                      {isResizingColumns ? (
-                        <ResizerWrapper
-                          {...column.getResizerProps()}
-                          className={`${column.isResizing ? 'isResizing' : ''}`}
+                      <ThWrapper
+                        className={`resizer ${
+                          column.isResizing ? 'isResizing' : ''
+                        }`}
+                      >
+                        {column.render('Header')}
+                        <SortIcon
+                          canSort={column.canSort}
+                          isSorted={column.isSorted}
+                          isSortedDesc={column.isSortedDesc}
                         />
-                      ) : null}
-                    </ThWrapper>
-                  </Th>
-                ))}
-              </Tr>
-            ))}
-          </Thead>
-          <div {...getTableBodyProps()} ref={tbodyRef}>
-            {rows.map(row => {
-              prepareRow(row);
-              return (
-                <Tr
-                  {...row.getRowProps()}
-                  id={row.id}
-                  tabIndex={0}
-                  onClick={evt => onRowClick(row.original, evt)}
-                  onKeyDown={evt => handleKeyDown(evt, row)}
-                >
-                  {row.cells.map(cell => {
-                    return (
-                      <Td {...cell.getCellProps()}>
-                        {cell.render('Cell') || '-'}
-                      </Td>
-                    );
-                  })}
+                        {isResizingColumns ? (
+                          <ResizerWrapper
+                            {...column.getResizerProps()}
+                            className={`${
+                              column.isResizing ? 'isResizing' : ''
+                            }`}
+                          />
+                        ) : null}
+                      </ThWrapper>
+                    </Th>
+                  ))}
                 </Tr>
-              );
-            })}
-          </div>
-        </StyledTable>
-        {showLoadButton && (
-          <LoadMoreButtonWrapper justifyContent="center" alignItems="center">
-            <LoadMore {...loadMoreProps} />
-          </LoadMoreButtonWrapper>
-        )}
-      </ContainerInside>
+              ))}
+            </Thead>
+            <div {...getTableBodyProps()} ref={tbodyRef}>
+              {rows.map(row => {
+                prepareRow(row);
+                return (
+                  <Tr
+                    {...row.getRowProps()}
+                    id={row.id}
+                    tabIndex={0}
+                    onClick={evt => onRowClick(row.original, evt)}
+                    onKeyDown={evt => handleKeyDown(evt, row)}
+                  >
+                    {row.cells.map(cell => {
+                      return (
+                        <Td {...cell.getCellProps()}>
+                          {cell.render('Cell') || '-'}
+                        </Td>
+                      );
+                    })}
+                  </Tr>
+                );
+              })}
+            </div>
+          </StyledTable>
+          {showLoadButton && (
+            <LoadMoreButtonWrapper justifyContent="center" alignItems="center">
+              <LoadMore {...loadMoreProps} />
+            </LoadMoreButtonWrapper>
+          )}
+        </ContainerInside>
+      )}
     </TableContainer>
   );
 }
