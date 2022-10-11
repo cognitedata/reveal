@@ -1,4 +1,4 @@
-import { useHoleSectionsQuery } from 'domain/wells/holeSections/internal/queries/useHoleSectionsQuery';
+import { useHoleSectionsWithTvdQuery } from 'domain/wells/holeSections/internal/queries/useHoleSectionsWithTvdQuery';
 import { groupByWellbore } from 'domain/wells/wellbore/internal/transformers/groupByWellbore';
 
 import isEmpty from 'lodash/isEmpty';
@@ -13,7 +13,7 @@ import { adaptToHoleSectionDataView } from '../utils/adaptToHoleSectionDataView'
 export const useHoleSectionsColumnsData = () => {
   const wellboreIds = useWellInspectWellboreIds();
 
-  const { data, isLoading } = useHoleSectionsQuery({
+  const { data, isLoading } = useHoleSectionsWithTvdQuery({
     wellboreIds,
   });
 

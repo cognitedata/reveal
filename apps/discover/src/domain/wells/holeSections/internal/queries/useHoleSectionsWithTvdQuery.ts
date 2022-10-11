@@ -8,21 +8,26 @@ import { useArrayCache } from 'hooks/useArrayCache';
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';
 
 import { ERROR_LOADING_HOLE_SECTIONS } from '../../constants';
-import { getHoleSections } from '../../service/network/getHoleSections';
-import { normalizeHoleSectionGroup } from '../transformers/normalizeHoleSectionGroup';
-import { HoleSectionGroupInternal } from '../types';
+import { getHoleSectionsWithTvd } from '../../service/network/getHoleSectionsWithTvd';
+import { normalizeHoleSectionGroupWithTvd } from '../transformers/normalizeHoleSectionGroupWithTvd';
+import { HoleSectionGroupInternalWithTvd } from '../types';
 
-export const useHoleSectionsQuery = ({ wellboreIds }: AllCursorsProps) => {
+export const useHoleSectionsWithTvdQuery = ({
+  wellboreIds,
+}: AllCursorsProps) => {
   const { data: userPreferredUnit } = useUserPreferencesMeasurement();
 
-  return useArrayCache<HoleSectionGroupInternal>({
-    key: [...WELL_QUERY_KEY.HOLE_SECTIONS, userPreferredUnit],
+  return useArrayCache<HoleSectionGroupInternalWithTvd>({
+    key: [...WELL_QUERY_KEY.HOLE_SECTIONS_WITH_TVD, userPreferredUnit],
     items: new Set(wellboreIds),
     fetchAction: (wellboreIds, options) =>
-      getHoleSections({ wellboreIds, options })
+      getHoleSectionsWithTvd({ wellboreIds, options })
         .then((holeSectionGroups) => {
           return holeSectionGroups.map((holeSectionGroup) =>
-            normalizeHoleSectionGroup(holeSectionGroup, userPreferredUnit)
+            normalizeHoleSectionGroupWithTvd(
+              holeSectionGroup,
+              userPreferredUnit
+            )
           );
         })
         .then(groupByWellbore)

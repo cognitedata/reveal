@@ -1,6 +1,10 @@
 import { Distance } from 'convert-units';
 
-import { HoleSection, HoleSectionGroup } from '@cognite/sdk-wells';
+import {
+  DistanceUnitEnum,
+  HoleSection,
+  HoleSectionGroup,
+} from '@cognite/sdk-wells';
 
 export interface HoleSectionGroupInternal
   extends Omit<HoleSectionGroup, 'measuredDepthUnit' | 'sizeUnit'> {
@@ -14,8 +18,19 @@ export interface HoleSectionInternal extends HoleSection {
   color: string;
 }
 
+export interface HoleSectionGroupWithTvd extends HoleSectionGroup {
+  trueVerticalDepthUnit: DistanceUnitEnum;
+  sections: Array<HoleSectionWithTvd>;
+}
+
+export interface HoleSectionWithTvd extends HoleSection {
+  topTrueVerticalDepth?: number;
+  baseTrueVerticalDepth?: number;
+}
+
 export interface HoleSectionGroupInternalWithTvd
   extends HoleSectionGroupInternal {
+  trueVerticalDepthUnit: Distance;
   sections: Array<HoleSectionInternal>;
 }
 
