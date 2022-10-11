@@ -57,5 +57,4 @@ export const DocumentSearchResults = ({
 
 const DocumentSearchResultWrapper = styled.div`
   height: 100%;
-  padding-top: 20px;
 `;

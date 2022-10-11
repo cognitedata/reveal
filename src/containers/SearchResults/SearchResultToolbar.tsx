@@ -37,6 +37,7 @@ export const SearchResultToolbar = ({
 
 const ToolbarRow = styled(SpacedRow)`
   align-items: center;
-  padding: 5px 0;
   height: 60px;
+  margin-left: 16px;
+  margin-right: 16px;
 `;

@@ -21,6 +21,7 @@ import { RelatedResourceType } from 'hooks/RelatedResourcesHooks';
 import { TIME_SELECT } from 'containers';
 import { Body, Checkbox, Flex } from '@cognite/cogs.js';
 import { TimeseriesToolbar } from './TimeseriesToolbar';
+import styled from 'styled-components';
 
 export const TimeseriesSearchResults = ({
   query = '',
@@ -71,7 +72,7 @@ export const TimeseriesSearchResults = ({
       />
 
       <EnsureNonEmptyResource api="timeSeries">
-        <Flex justifyContent="space-between" alignItems="center">
+        <TopbarContainer>
           {showDatePicker && (
             <SpacedRow style={{ marginBottom: 8 }}>
               <Body level={4} style={{ alignSelf: 'center' }}>
@@ -94,7 +95,7 @@ export const TimeseriesSearchResults = ({
               Hide empty
             </Checkbox>
           )}
-        </Flex>
+        </TopbarContainer>
 
         <ResultTableLoader<Timeseries>
           mode={showRelatedResources ? 'relatedResources' : 'search'}
@@ -146,3 +147,10 @@ export const TimeseriesSearchResults = ({
     </>
   );
 };
+
+const TopbarContainer = styled(Flex).attrs({
+  justifyContent: 'space-between',
+  alignItems: 'center',
+})`
+  padding: 0 16px;
+`;

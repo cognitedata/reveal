@@ -1,7 +1,6 @@
 import React from 'react';
 import { ResourceType } from 'types';
-import { Badge, Colors, Tabs } from '@cognite/cogs.js';
-import { ResourceIcons } from 'components/ResourceIcons/ResourceIcons';
+import { Colors, Label, Tabs } from '@cognite/cogs.js';
 import styled from 'styled-components/macro';
 import { useResultCount } from 'components/ResultCount/ResultCount';
 
@@ -49,13 +48,13 @@ const ResourceTypeTab = ({
 
   return (
     <TabContainer>
-      <ResourceIcons style={{ marginRight: 12 }} type={currentResourceType} />
-      <div>{resourceTypeMap[currentResourceType]}</div>
+      <ResourceTypeTitle>
+        {resourceTypeMap[currentResourceType]}
+      </ResourceTypeTitle>
       {showCount && (
-        <Badge
-          text={`${result.count}`}
-          background={Colors['greyscale-grey3'].hex()}
-        />
+        <Label size="small" variant="unknown">
+          {result.count}
+        </Label>
       )}
     </TabContainer>
   );
@@ -100,4 +99,8 @@ const StyledTabs = styled(Tabs)`
 const TabContainer = styled.div`
   display: flex;
   align-items: center;
+`;
+
+const ResourceTypeTitle = styled.div`
+  margin-right: 8px;
 `;

@@ -283,9 +283,9 @@ const TableContainer = styled.div`
 
 const ColumnSelectorWrapper = styled.div`
   width: 100%;
-  margin-bottom: 20px;
   display: flex;
-  gap: 10px;
+  padding-right: 16px;
+  align-items: center;
 `;
 
 const StyledTable = styled.div`
