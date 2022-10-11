@@ -4,7 +4,6 @@
 uniform mat4 inverseModelMatrix;
 uniform mat4 modelMatrix;
 uniform mat4 viewMatrix;
-uniform mat4 modelViewMatrix;
 uniform mat4 projectionMatrix;
 uniform mat3 normalMatrix;
 uniform vec3 cameraPosition;
@@ -36,10 +35,6 @@ out vec2 v_angles;
 out vec3 v_color;
 out float v_radius;
 
-float angleBetween(vec3 a, vec3 b){
-  return acos(dot(normalize(a), normalize(b)));
-}
-
 void main() {
     mat4 treeIndexWorldTransform = determineMatrixOverride(
         a_treeIndex,
@@ -48,6 +43,9 @@ void main() {
         transformOverrideTextureSize,
         transformOverrideTexture
     );
+
+    mat4 modelToTransformOffset = treeIndexWorldTransform * modelMatrix;
+    mat4 modelToView = viewMatrix * modelToTransformOffset;
 
     vec3 centerA = a_centerA;
     vec3 centerB = a_centerB;
@@ -59,16 +57,13 @@ void main() {
     vec3 rayOrigin = (inverseModelMatrix * vec4(cameraPosition, 1.0)).xyz;
     vec3 objectToCameraModelSpace = rayOrigin - center;
 
-    vec3 lDir = dir;
-    if (dot(objectToCameraModelSpace, dir) < 0.0) { // direction vector looks away, flip it
-        lDir = -lDir;
-    }
+    vec3 lDir = faceforward(dir, -objectToCameraModelSpace, dir);
 
     vec3 left = normalize(cross(objectToCameraModelSpace, lDir));
     vec3 up = normalize(cross(left, lDir));
 
     vec3 localBillboardPosition = center + mat3(halfHeight * lDir, a_radius * left, a_radius * up) * position;
-    vec3 viewBillboardPosition = mul3(viewMatrix * treeIndexWorldTransform * modelMatrix, localBillboardPosition);
+    vec3 viewBillboardPosition = mul3(modelToView, localBillboardPosition);
 
     gl_Position = projectionMatrix * vec4(viewBillboardPosition, 1.0 );
 
@@ -81,16 +76,16 @@ void main() {
     v_modelBasis[2] = normalize(normalMatrix * dir);
     v_modelBasis[1] = normalize(cross(v_modelBasis[2], v_modelBasis[0]));
 
-    float radius = length((treeIndexWorldTransform * modelMatrix * vec4(a_localXAxis * a_radius, 0.0)).xyz);
+    float radius = length((modelToTransformOffset * vec4(a_localXAxis * a_radius, 0.0)).xyz);
 
-    v_centerB = mul3(viewMatrix * treeIndexWorldTransform * modelMatrix, centerB);
+    v_centerB = mul3(modelToView, centerB);
     v_radius = radius;
 
-    float planeAngleA = angleBetween(a_planeA.xyz, vec3(0.0, 0.0, 1.0));
-    float planeAngleB = angleBetween(a_planeB.xyz, vec3(0.0, 0.0, -1.0));
+    float planeAngleA = acos(dot(normalize(a_planeA.xyz), normalize(vec3(0.0, 0.0, 1.0))));
+    float planeAngleB = acos(dot(normalize(a_planeB.xyz), normalize(vec3(0.0, 0.0, -1.0))));
 
     vec4 planeA = a_planeA;
-    planeA.w = length(centerA - centerB) - tan(planeAngleA) * a_radius;
+    planeA.w = 2.0 * halfHeight - tan(planeAngleA) * a_radius;
 
     vec4 planeB = a_planeB;
     planeB.w = tan(planeAngleB) * a_radius;
