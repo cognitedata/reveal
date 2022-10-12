@@ -10,14 +10,9 @@ const PotreeDefaultPointClass = 'DEFAULT';
 type ClassificationMap = { [key: string]: { rgb: THREE.Color; code: number } };
 
 import { PointCloudOctree, PickPoint } from './potree-three-loader';
-import {
-  PointColorType,
-  PointShape,
-  IClassification,
-  DEFAULT_CLASSIFICATION,
-  StyledPointCloudObjectCollection,
-  CompletePointCloudAppearance
-} from '@reveal/rendering';
+import { PointColorType, PointShape, IClassification, DEFAULT_CLASSIFICATION } from '@reveal/rendering';
+
+import { StyledPointCloudObjectCollection, CompletePointCloudAppearance } from '@reveal/pointcloud-styling';
 import { WellKnownAsprsPointClassCodes } from './types';
 
 import { PointCloudObjectMetadata, PointCloudObject } from '@reveal/data-providers';

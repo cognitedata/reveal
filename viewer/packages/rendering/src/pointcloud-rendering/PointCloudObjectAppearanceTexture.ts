@@ -5,10 +5,13 @@
 import { generateDataTexture } from './texture-generation';
 
 import * as THREE from 'three';
-import { StyledPointCloudObjectCollection } from './styling/StyledPointCloudObjectCollection';
-import { PointCloudObjectCollection } from './styling/PointCloudObjectCollection';
-import { DefaultPointCloudAppearance, CompletePointCloudAppearance } from './styling/PointCloudAppearance';
-import { PointCloudObjectsMaps } from '@reveal/data-providers';
+import {
+  StyledPointCloudObjectCollection,
+  PointCloudObjectCollection,
+  DefaultPointCloudAppearance,
+  CompletePointCloudAppearance
+} from '@reveal/pointcloud-styling';
+import { PointCloudObjectIdMaps } from './PointCloudObjectIdMaps';
 
 export class PointCloudObjectAppearanceTexture {
   private _objectStyleTexture: THREE.DataTexture;
@@ -31,7 +34,7 @@ export class PointCloudObjectAppearanceTexture {
     this._height = height;
   }
 
-  setObjectsMaps(objectsMaps: PointCloudObjectsMaps): void {
+  setObjectsMaps(objectsMaps: PointCloudObjectIdMaps): void {
     this._annotationIdsToObjectId = objectsMaps.annotationToObjectIds;
     this._objectIdsToAnnotationId = objectsMaps.objectToAnnotationIds;
   }

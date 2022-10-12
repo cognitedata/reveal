@@ -8,15 +8,16 @@ import {
 } from '../../../visual-tests/test-fixtures/StreamingVisualTestFixture';
 import { PointCloudFactory } from '../src/PointCloudFactory';
 import { cdfAnnotationsToObjectInfo } from '../../data-providers/src/pointcloud-stylable-object-providers/cdfAnnotationsToObjects';
-import { PointCloudStylableObjectProvider, PointCloudObjectData } from '../../data-providers';
+import { PointCloudObject, PointCloudStylableObjectProvider } from '../../data-providers';
 import { Cylinder } from '../../utilities';
 import { PointCloudNode } from '../src/PointCloudNode';
 import {
   AnnotationIdPointCloudObjectCollection,
   StyledPointCloudObjectCollection,
-  applyDefaultsToPointCloudAppearance,
-  PointCloudMaterialManager
-} from '../../rendering';
+  applyDefaultsToPointCloudAppearance
+} from '../../pointcloud-styling';
+
+import { PointCloudMaterialManager } from '../../rendering';
 
 import { ModelIdentifier } from '@reveal/data-providers';
 
@@ -25,7 +26,7 @@ import * as THREE from 'three';
 import { LocalPointClassificationsProvider } from '../src/classificationsProviders/LocalPointClassificationsProvider';
 
 class CustomAnnotationProvider implements PointCloudStylableObjectProvider {
-  async getPointCloudObjects(_modelIdentifier: ModelIdentifier): Promise<PointCloudObjectData> {
+  async getPointCloudObjects(_modelIdentifier: ModelIdentifier): Promise<PointCloudObject[]> {
     const cdfAnnotations = [
       {
         annotationId: 123,

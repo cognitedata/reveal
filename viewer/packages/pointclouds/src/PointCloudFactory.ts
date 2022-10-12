@@ -50,11 +50,6 @@ export class PointCloudFactory {
     );
 
     pointCloudOctree.name = `PointCloudOctree: ${modelBaseUrl}`;
-    return new PotreeNodeWrapper(
-      pointCloudOctree,
-      annotationInfo.annotations,
-      modelIdentifier.revealInternalId,
-      classSchema
-    );
+    return new PotreeNodeWrapper(pointCloudOctree, annotationInfo, modelIdentifier.revealInternalId, classSchema);
   }
 }

@@ -10,13 +10,9 @@ import { PotreeNodeWrapper } from './PotreeNodeWrapper';
 import { WellKnownAsprsPointClassCodes } from './types';
 
 import { PickPoint } from './potree-three-loader';
-import {
-  PointColorType,
-  PointShape,
-  PointSizeType,
-  CompletePointCloudAppearance,
-  StyledPointCloudObjectCollection
-} from '@reveal/rendering';
+import { PointColorType, PointShape, PointSizeType } from '@reveal/rendering';
+
+import { CompletePointCloudAppearance, StyledPointCloudObjectCollection } from '@reveal/pointcloud-styling';
 
 export class PointCloudNode extends THREE.Group {
   private readonly _potreeGroup: PotreeGroupWrapper;

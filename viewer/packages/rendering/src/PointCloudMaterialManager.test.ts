@@ -2,17 +2,17 @@
  * Copyright 2022 Cognite AS
  */
 
-import { PointCloudObjectData } from '@reveal/data-providers';
 import * as THREE from 'three';
+import { PointCloudObjectIdMaps } from './pointcloud-rendering/PointCloudObjectIdMaps';
 import { PointCloudMaterialManager } from './PointCloudMaterialManager';
 
 describe('PointCloudMaterialManager', () => {
   let materialManager: PointCloudMaterialManager;
-  let objectData: PointCloudObjectData;
+  let objectData: PointCloudObjectIdMaps;
 
   beforeEach(() => {
     materialManager = new PointCloudMaterialManager();
-    objectData = new PointCloudObjectData([]);
+    objectData = { objectToAnnotationIds: new Map<number, number>(), annotationToObjectIds: new Map<number, number>() };
   });
 
   test('addModelMaterial creates material and sets corresponding value in the map', () => {

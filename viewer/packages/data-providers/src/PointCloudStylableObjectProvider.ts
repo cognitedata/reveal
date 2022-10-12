@@ -3,8 +3,8 @@
  */
 
 import { ModelIdentifier } from './ModelIdentifier';
-import { PointCloudObjectData } from './pointcloud-stylable-object-providers/PointCloudObjectAnnotationData';
+import { PointCloudObject } from './pointcloud-stylable-object-providers/types';
 
 export interface PointCloudStylableObjectProvider {
-  getPointCloudObjects(modelIdentifier: ModelIdentifier): Promise<PointCloudObjectData>;
+  getPointCloudObjects(modelIdentifier: ModelIdentifier): Promise<PointCloudObject[]>;
 }

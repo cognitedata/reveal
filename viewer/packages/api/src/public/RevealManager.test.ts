@@ -6,12 +6,7 @@ import * as THREE from 'three';
 import { createRevealManager } from './createRevealManager';
 import { RevealManager } from './RevealManager';
 
-import {
-  ModelDataProvider,
-  ModelMetadataProvider,
-  PointCloudStylableObjectProvider,
-  PointCloudObjectData
-} from '@reveal/data-providers';
+import { ModelDataProvider, ModelMetadataProvider, PointCloudStylableObjectProvider } from '@reveal/data-providers';
 import { SectorCuller } from '@reveal/cad-geometry-loaders';
 import { SceneHandler } from '@reveal/utilities';
 import { LocalPointClassificationsProvider } from '@reveal/pointclouds';
@@ -28,7 +23,7 @@ describe('RevealManager', () => {
   };
   const annotationProvider = new Mock<PointCloudStylableObjectProvider>()
     .setup(p => p.getPointCloudObjects(It.IsAny()))
-    .returns(Promise.resolve(new PointCloudObjectData([])))
+    .returns(Promise.resolve([]))
     .object();
   const pointClassificationsProvider = new LocalPointClassificationsProvider();
   let manager: RevealManager;

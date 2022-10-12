@@ -15,10 +15,6 @@ export { ModelDataProvider } from './src/ModelDataProvider';
 
 export { PointCloudObjectMetadata, PointCloudObject } from './src/pointcloud-stylable-object-providers/types';
 export { PointCloudStylableObjectProvider } from './src/PointCloudStylableObjectProvider';
-export {
-  PointCloudObjectData,
-  PointCloudObjectsMaps
-} from './src/pointcloud-stylable-object-providers/PointCloudObjectAnnotationData';
 export { StylableObject, SerializableStylableObject } from './src/pointcloud-stylable-object-providers/StylableObject';
 
 export { CdfPointCloudStylableObjectProvider } from './src/pointcloud-stylable-object-providers/CdfPointCloudStylableObjectProvider';

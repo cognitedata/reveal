@@ -64,6 +64,6 @@ export {
   AnnotationIdPointCloudObjectCollection,
   DefaultPointCloudAppearance,
   StyledPointCloudObjectCollection
-} from './packages/rendering';
+} from './packages/pointcloud-styling';
 
 export { Image360Entity } from './packages/360-images';

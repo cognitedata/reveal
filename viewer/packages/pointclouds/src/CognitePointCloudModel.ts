@@ -9,16 +9,15 @@ import { PointCloudNode } from './PointCloudNode';
 
 import { SupportedModelTypes, CogniteModelBase } from '@reveal/model-base';
 import { PointCloudObjectMetadata } from '@reveal/data-providers';
+import { PointColorType, PointShape, PointSizeType } from '@reveal/rendering';
+
 import {
+  StyledPointCloudObjectCollection,
   PointCloudObjectCollection,
   applyDefaultsToPointCloudAppearance,
   PointCloudAppearance,
-  CompletePointCloudAppearance,
-  PointColorType,
-  PointShape,
-  PointSizeType,
-  StyledPointCloudObjectCollection
-} from '@reveal/rendering';
+  CompletePointCloudAppearance
+} from '@reveal/pointcloud-styling';
 
 /**
  * Represents a point clouds model loaded from CDF.

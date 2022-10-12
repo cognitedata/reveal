@@ -1647,6 +1647,14 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@reveal/pointcloud-styling@workspace:*, @reveal/pointcloud-styling@workspace:packages/pointcloud-styling":
+  version: 0.0.0-use.local
+  resolution: "@reveal/pointcloud-styling@workspace:packages/pointcloud-styling"
+  dependencies:
+    "@reveal/utilities": "workspace:*"
+  languageName: unknown
+  linkType: soft
+
 "@reveal/pointclouds@workspace:*, @reveal/pointclouds@workspace:packages/pointclouds":
   version: 0.0.0-use.local
   resolution: "@reveal/pointclouds@workspace:packages/pointclouds"
@@ -1654,6 +1662,7 @@ __metadata:
     "@reveal/data-providers": "workspace:*"
     "@reveal/metrics": "workspace:*"
     "@reveal/model-base": "workspace:*"
+    "@reveal/pointcloud-styling": "workspace:*"
     "@reveal/rendering": "workspace:*"
     "@reveal/utilities": "workspace:*"
   languageName: unknown
@@ -1666,8 +1675,8 @@ __metadata:
     "@reveal/cad-model": "workspace:*"
     "@reveal/cad-parsers": "workspace:*"
     "@reveal/cad-styling": "workspace:*"
-    "@reveal/data-providers": "workspace:*"
     "@reveal/logger": "workspace:*"
+    "@reveal/pointcloud-styling": "workspace:*"
     "@reveal/utilities": "workspace:*"
   languageName: unknown
   linkType: soft

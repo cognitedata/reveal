@@ -44,7 +44,7 @@ import { generateClassificationTexture, generateDataTexture, generateGradientTex
 import { IClassification, IUniform, OctreeMaterialParams, IClipBox } from './types';
 import { SpectralGradient } from './gradients/SpectralGradient';
 import { PointCloudObjectAppearanceTexture } from './PointCloudObjectAppearanceTexture';
-import { PointCloudObjectsMaps } from '@reveal/data-providers';
+import { PointCloudObjectIdMaps } from '@reveal/rendering';
 import { pointCloudShaders } from '../rendering/shaders';
 
 export interface IPointCloudMaterialParameters {
@@ -52,7 +52,7 @@ export interface IPointCloudMaterialParameters {
   minSize: number;
   maxSize: number;
   treeType: TreeType;
-  objectsMaps: PointCloudObjectsMaps;
+  objectsMaps: PointCloudObjectIdMaps;
 }
 
 export interface IPointCloudMaterialUniforms {

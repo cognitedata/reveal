@@ -3,8 +3,7 @@
  */
 
 import { PointCloudObjectAppearanceTexture } from './PointCloudObjectAppearanceTexture';
-import { AnnotationIdPointCloudObjectCollection } from './styling/AnnotationIdPointCloudObjectCollection';
-import { StyledPointCloudObjectCollection } from './styling/StyledPointCloudObjectCollection';
+import { AnnotationIdPointCloudObjectCollection, StyledPointCloudObjectCollection } from '@reveal/pointcloud-styling';
 
 const textureWidth = 10;
 const textureHeight = 10;
