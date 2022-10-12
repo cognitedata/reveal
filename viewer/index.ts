@@ -53,6 +53,8 @@ export {
   DisposedDelegate
 } from './packages/utilities';
 
+export { PointCloudObjectMetadata } from './packages/data-providers';
+
 export { Cognite3DModel, BoundingBoxClipper, GeometryFilter, WellKnownUnit } from './packages/cad-model';
 
 export { CognitePointCloudModel } from './packages/pointclouds';
