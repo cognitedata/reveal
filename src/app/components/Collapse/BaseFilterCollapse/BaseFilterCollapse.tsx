@@ -42,11 +42,13 @@ export const BaseFilterCollapse = ({
 interface BaseFilterPanelProps {
   children: React.ReactNode;
   title: string;
+  hideResetButton?: boolean;
   onResetClick?: () => void;
 }
 export const BaseFilterPanel = ({
   children,
   title,
+  hideResetButton,
   onResetClick,
   ...rest
 }: BaseFilterPanelProps) => {
@@ -56,7 +58,7 @@ export const BaseFilterPanel = ({
       header={
         <Container>
           <FilterHeader title={title} />
-          <ResetButton onClick={onResetClick} />
+          {!hideResetButton && <ResetButton onClick={onResetClick} />}
         </Container>
       }
       key={title?.split(' ').join('-')}

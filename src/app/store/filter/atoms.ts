@@ -1,8 +1,9 @@
-import { GlobalFilter } from './types';
-import { atom } from 'recoil';
+import { GlobalFilter, GlobalFilterKeys } from './types';
+import { atom, useRecoilValue } from 'recoil';
 import { syncEffect } from 'recoil-sync';
 import { custom } from '@recoiljs/refine';
 import { FILTER } from './constants';
+import { isObjectEmpty } from 'app/utils/compare';
 
 const defaultFilterState = {
   asset: {},
@@ -26,6 +27,14 @@ export const globalFilterAtom = atom<GlobalFilter>({
   },
   effects: [syncEffect({ refine: customChecker(), itemKey: FILTER })],
 });
+
+export const useFilterEmptyState = (key: GlobalFilterKeys) => {
+  const {
+    filters: { [key]: facets },
+  } = useRecoilValue(globalFilterAtom);
+
+  return isObjectEmpty(facets);
+};
 
 // WIP
 // export const dynamicFilterAtom = atomFamily<DynamicFilter, string>({

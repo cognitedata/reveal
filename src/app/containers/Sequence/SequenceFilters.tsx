@@ -1,13 +1,18 @@
 import React from 'react';
 import { useList } from '@cognite/sdk-react-query-hooks';
 import { BaseFilterCollapse } from '../../components/Collapse/BaseFilterCollapse/BaseFilterCollapse';
-import { useResetSequenceFilters, useSequenceFilters } from 'app/store/filter';
+import {
+  useFilterEmptyState,
+  useResetSequenceFilters,
+  useSequenceFilters,
+} from 'app/store/filter';
 import { MetadataFilterV2 } from '@cognite/data-exploration';
 import { TempMultiSelectFix } from 'app/containers/elements';
 
 export const SequenceFilters = ({ ...rest }) => {
   const [sequenceFilter, setSequenceFilter] = useSequenceFilters();
   const resetSequenceFilters = useResetSequenceFilters();
+  const isFiltersEmpty = useFilterEmptyState('sequence');
 
   const { data: items = [] } = useList('sequences', {
     filter: sequenceFilter,
@@ -17,6 +22,7 @@ export const SequenceFilters = ({ ...rest }) => {
   return (
     <BaseFilterCollapse.Panel
       title="Sequences"
+      hideResetButton={isFiltersEmpty}
       onResetClick={resetSequenceFilters}
       {...rest}
     >

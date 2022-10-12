@@ -2,6 +2,7 @@ import React from 'react';
 import { useList } from '@cognite/sdk-react-query-hooks';
 import { BaseFilterCollapse } from '../../components/Collapse/BaseFilterCollapse/BaseFilterCollapse';
 import {
+  useFilterEmptyState,
   useResetTimeseriesFilters,
   useTimeseriesFilters,
 } from 'app/store/filter';
@@ -15,6 +16,7 @@ import { TempMultiSelectFix } from 'app/containers/elements';
 export const TimeseriesFilters = ({ ...rest }) => {
   const [timeseriesFilter, setTimeseriesFilter] = useTimeseriesFilters();
   const resetTimeseriesFilters = useResetTimeseriesFilters();
+  const isFiltersEmpty = useFilterEmptyState('timeseries');
 
   const { data: items = [] } = useList('timeseries', {
     filter: timeseriesFilter,
@@ -24,6 +26,7 @@ export const TimeseriesFilters = ({ ...rest }) => {
   return (
     <BaseFilterCollapse.Panel
       title="Time series"
+      hideResetButton={isFiltersEmpty}
       onResetClick={resetTimeseriesFilters}
       {...rest}
     >

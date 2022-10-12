@@ -2,7 +2,11 @@ import React from 'react';
 
 import { useList } from '@cognite/sdk-react-query-hooks';
 import { BaseFilterCollapse } from '../../components/Collapse/BaseFilterCollapse/BaseFilterCollapse';
-import { useEventsFilters, useResetEventsFilters } from 'app/store/filter';
+import {
+  useEventsFilters,
+  useFilterEmptyState,
+  useResetEventsFilters,
+} from 'app/store/filter';
 import {
   AggregatedEventFilterV2,
   AggregatedFilterV2,
@@ -14,6 +18,7 @@ import { TempMultiSelectFix } from 'app/containers/elements';
 export const EventFilters = ({ ...rest }: {}) => {
   const [eventFilter, setEventFilter] = useEventsFilters();
   const resetEventFilters = useResetEventsFilters();
+  const isFiltersEmpty = useFilterEmptyState('event');
 
   const { data: items = [] } = useList('events', {
     filter: eventFilter,
@@ -23,6 +28,7 @@ export const EventFilters = ({ ...rest }: {}) => {
   return (
     <BaseFilterCollapse.Panel
       title="Events"
+      hideResetButton={isFiltersEmpty}
       onResetClick={resetEventFilters}
       {...rest}
     >

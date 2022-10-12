@@ -1,7 +1,11 @@
 import React from 'react';
 import { useList } from '@cognite/sdk-react-query-hooks';
 import { BaseFilterCollapse } from '../../components/Collapse/BaseFilterCollapse/BaseFilterCollapse';
-import { useFileFilters, useResetFileFilters } from 'app/store/filter';
+import {
+  useFileFilters,
+  useFilterEmptyState,
+  useResetFileFilters,
+} from 'app/store/filter';
 import {
   AggregatedFilterV2,
   DateFilterV2,
@@ -14,6 +18,7 @@ import { TempMultiSelectFix } from 'app/containers/elements';
 export const FileFilters = ({ ...rest }) => {
   const [fileFilter, setFileFilter] = useFileFilters();
   const resetFileFilters = useResetFileFilters();
+  const isFiltersEmpty = useFilterEmptyState('file');
 
   const { data: items = [] } = useList('files', {
     filter: fileFilter,
@@ -23,6 +28,7 @@ export const FileFilters = ({ ...rest }) => {
   return (
     <BaseFilterCollapse.Panel
       title="Files"
+      hideResetButton={isFiltersEmpty}
       onResetClick={resetFileFilters}
       {...rest}
     >
