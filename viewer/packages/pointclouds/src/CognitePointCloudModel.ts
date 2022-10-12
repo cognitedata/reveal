@@ -7,17 +7,18 @@ import { CameraConfiguration } from '@reveal/utilities';
 import { WellKnownAsprsPointClassCodes } from './types';
 import { PointCloudNode } from './PointCloudNode';
 
-import { PotreePointColorType, PotreePointShape, PotreePointSizeType } from './potree-three-loader';
-
 import { SupportedModelTypes, CogniteModelBase } from '@reveal/model-base';
-import { PointCloudObjectCollection, PointCloudObjectMetadata } from '@reveal/data-providers';
-
+import { PointCloudObjectMetadata } from '@reveal/data-providers';
 import {
+  PointCloudObjectCollection,
   applyDefaultsToPointCloudAppearance,
   PointCloudAppearance,
-  CompletePointCloudAppearance
-} from './styling/PointCloudAppearance';
-import { StyledPointCloudObjectCollection } from './styling/StyledPointCloudObjectCollection';
+  CompletePointCloudAppearance,
+  PointColorType,
+  PointShape,
+  PointSizeType,
+  StyledPointCloudObjectCollection
+} from '@reveal/rendering';
 
 /**
  * Represents a point clouds model loaded from CDF.
@@ -151,19 +152,19 @@ export class CognitePointCloudModel implements CogniteModelBase {
   /**
    * Determines how points currently are colored.
    */
-  get pointColorType(): PotreePointColorType {
+  get pointColorType(): PointColorType {
     return this.pointCloudNode.pointColorType;
   }
 
   /**
    * Specifies how points are colored.
-   * @default PotreePointColorType.Rgb
+   * @default PointColorType.Rgb
    * @example
    * ```js
-   * model.pointColorType = PotreePointColorType.Rgb
+   * model.pointColorType = PointColorType.Rgb
    * ```
    */
-  set pointColorType(type: PotreePointColorType) {
+  set pointColorType(type: PointColorType) {
     this.pointCloudNode.pointColorType = type;
   }
 
@@ -185,33 +186,33 @@ export class CognitePointCloudModel implements CogniteModelBase {
   /**
    * Get the point size type.
    */
-  get pointSizeType(): PotreePointSizeType {
+  get pointSizeType(): PointSizeType {
     return this.pointCloudNode.pointSizeType;
   }
 
   /**
    * Set the point size type for the point cloud.
    * The point size type can be either Fixed or Adaptive.
-   * @default `PotreePointSizeType.Adaptive`
+   * @default `PointSizeType.Adaptive`
    */
-  set pointSizeType(type: PotreePointSizeType) {
+  set pointSizeType(type: PointSizeType) {
     this.pointCloudNode.pointSizeType = type;
   }
 
   /**
    * Sets the point shape of each rendered point in the point cloud.
-   * @default `PotreePointShape.Circle`
-   * @see {@link PotreePointShape}.
+   * @default `PointShape.Circle`
+   * @see {@link PointShape}.
    */
-  get pointShape(): PotreePointShape {
+  get pointShape(): PointShape {
     return this.pointCloudNode.pointShape;
   }
 
   /**
    * Gets the point shape of each rendered point in the point cloud.
-   * @see {@link PotreePointShape}.
+   * @see {@link PointShape}.
    */
-  set pointShape(shape: PotreePointShape) {
+  set pointShape(shape: PointShape) {
     this.pointCloudNode.pointShape = shape;
   }
 

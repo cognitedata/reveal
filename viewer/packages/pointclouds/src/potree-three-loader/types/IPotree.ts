@@ -11,7 +11,8 @@ export interface IPotree {
   loadPointCloud(
     baseUrl: string,
     fileName: string,
-    stylableObjectInfo: PointCloudObjectData
+    stylableObjectInfo: PointCloudObjectData,
+    modelIdentifier: symbol
   ): Promise<PointCloudOctree>;
 
   updatePointClouds(pointClouds: PointCloudOctree[], camera: Camera, renderer: WebGLRenderer): void;

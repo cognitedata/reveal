@@ -1,6 +1,4 @@
 import { Box3, Camera, Object3D, Points, Ray, Sphere, Vector3, WebGLRenderer } from 'three';
-import { DEFAULT_MIN_NODE_PIXEL_SIZE } from '../rendering/constants';
-import { PointCloudMaterial, PotreePointSizeType } from '../rendering';
 import { IPointCloudTreeGeometry } from '../geometry/IPointCloudTreeGeometry';
 import { IPointCloudTreeGeometryNode } from '../geometry/IPointCloudTreeGeometryNode';
 import { PointCloudOctreeNode } from './PointCloudOctreeNode';
@@ -12,29 +10,8 @@ import { IPointCloudTreeNodeBase } from './IPointCloudTreeNodeBase';
 import { IPointCloudTreeNode } from './IPointCloudTreeNode';
 import { computeTransformedBoundingBox } from '../utils/bounds';
 
-import { PointCloudObjectData } from '@reveal/data-providers';
-
-// TODO haakonflatval-cognite Sep. 27 2022: Remove when material manager is in order
-enum RenderMode {
-  Color = 1,
-  Normal,
-  TreeIndex,
-  PackColorAndNormal,
-  Depth,
-  Effects,
-  Ghost,
-  LOD,
-  DepthBufferOnly,
-  GeometryType
-}
-
-enum RenderLayer {
-  Back = RenderMode.Color,
-  InFront = RenderMode.Effects,
-  Ghost = RenderMode.Ghost,
-  PointCloud,
-  Default = 0
-}
+import { RenderLayer, PointCloudMaterial, PointSizeType, DEFAULT_MIN_NODE_PIXEL_SIZE } from '@reveal/rendering';
+import { makeOnBeforeRender } from '../utils/utils';
 
 export class PointCloudOctree extends PointCloudTree {
   potree: IPotree;
@@ -58,7 +35,7 @@ export class PointCloudOctree extends PointCloudTree {
   private readonly visibleBounds: Box3 = new Box3();
   private picker: PointCloudOctreePicker | undefined;
 
-  constructor(potree: IPotree, pcoGeometry: IPointCloudTreeGeometry, annotationInfo: PointCloudObjectData) {
+  constructor(potree: IPotree, pcoGeometry: IPointCloudTreeGeometry, material: PointCloudMaterial) {
     super();
 
     this.name = '';
@@ -70,9 +47,7 @@ export class PointCloudOctree extends PointCloudTree {
 
     this.position.copy(pcoGeometry.offset);
 
-    const objectsMaps = annotationInfo.createObjectsMaps();
-
-    this.material = new PointCloudMaterial({ objectsMaps });
+    this.material = material;
     this.updateMaterial();
   }
 
@@ -88,7 +63,6 @@ export class PointCloudOctree extends PointCloudTree {
 
     this.pcoGeometry.root?.traverse(n => this.potree.lru.remove(n));
     this.pcoGeometry.dispose();
-    this.material.dispose();
 
     this.visibleNodes = [];
     this.visibleGeometry = [];
@@ -101,11 +75,11 @@ export class PointCloudOctree extends PointCloudTree {
     this.disposed = true;
   }
 
-  get pointSizeType(): PotreePointSizeType {
+  get pointSizeType(): PointSizeType {
     return this.material.pointSizeType;
   }
 
-  set pointSizeType(value: PotreePointSizeType) {
+  set pointSizeType(value: PointSizeType) {
     this.material.pointSizeType = value;
   }
 
@@ -115,7 +89,7 @@ export class PointCloudOctree extends PointCloudTree {
     points.name = geometryNode.name;
     points.position.copy(geometryNode.boundingBox.min);
     points.frustumCulled = false;
-    points.onBeforeRender = PointCloudMaterial.makeOnBeforeRender(this, node);
+    points.onBeforeRender = makeOnBeforeRender(node, this.visibleNodes.indexOf(node));
     points.layers.set(RenderLayer.PointCloud);
 
     if (parent) {

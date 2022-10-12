@@ -11,14 +11,17 @@ import { cdfAnnotationsToObjectInfo } from '../../data-providers/src/pointcloud-
 import { PointCloudStylableObjectProvider, PointCloudObjectData } from '../../data-providers';
 import { Cylinder } from '../../utilities';
 import { PointCloudNode } from '../src/PointCloudNode';
-import { AnnotationIdPointCloudObjectCollection } from '../src/styling/AnnotationIdPointCloudObjectCollection';
-import { StyledPointCloudObjectCollection } from '../src/styling/StyledPointCloudObjectCollection';
+import {
+  AnnotationIdPointCloudObjectCollection,
+  StyledPointCloudObjectCollection,
+  applyDefaultsToPointCloudAppearance,
+  PointCloudMaterialManager
+} from '../../rendering';
 
 import { ModelIdentifier } from '@reveal/data-providers';
 
 import assert from 'assert';
 import * as THREE from 'three';
-import { applyDefaultsToPointCloudAppearance } from '../src/styling/PointCloudAppearance';
 import { LocalPointClassificationsProvider } from '../src/classificationsProviders/LocalPointClassificationsProvider';
 
 class CustomAnnotationProvider implements PointCloudStylableObjectProvider {
@@ -44,7 +47,8 @@ export default class PointCloudColorStylingVisualTest extends StreamingVisualTes
     return new PointCloudFactory(
       this.potreeInstance,
       new CustomAnnotationProvider(),
-      new LocalPointClassificationsProvider()
+      new LocalPointClassificationsProvider(),
+      new PointCloudMaterialManager()
     );
   }
 

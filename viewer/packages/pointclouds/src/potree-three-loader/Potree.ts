@@ -14,12 +14,12 @@ import {
   MAX_LOADS_TO_GPU,
   MAX_NUM_NODES_LOADING,
   PERSPECTIVE_CAMERA,
+  PointCloudMaterialManager,
   UPDATE_THROTTLE_TIME_MS
-} from './rendering/constants';
-import { FEATURES } from './rendering/features';
+} from '@reveal/rendering';
 import { EptLoader } from './loading/EptLoader';
 import { EptBinaryLoader } from './loading/EptBinaryLoader';
-import { ClipMode } from './rendering';
+import { ClipMode, OctreeMaterialParams } from '@reveal/rendering';
 import { PointCloudOctree } from './tree/PointCloudOctree';
 import { isGeometryNode, isTreeNode, isOptionalTreeNode } from './types/type-predicates';
 import { IPotree } from './types/IPotree';
@@ -32,6 +32,7 @@ import { Box3Helper } from './utils/box3-helper';
 import { LRU } from './utils/lru';
 import { ModelDataProvider, PointCloudObjectData } from '@reveal/data-providers';
 import throttle from 'lodash/throttle';
+import { createVisibilityTextureData } from './utils/utils';
 
 export class QueueItem {
   constructor(
@@ -64,6 +65,7 @@ export class Potree implements IPotree {
   private _pointBudget: number = DEFAULT_POINT_BUDGET;
   private readonly _rendererSize: Vector2 = new Vector2();
   private readonly _modelDataProvider: ModelDataProvider;
+  private readonly _materialManager: PointCloudMaterialManager;
 
   private readonly _throttledUpdateFunc = throttle(
     (pointClouds: PointCloudOctree[], camera: THREE.Camera, renderer: WebGLRenderer) =>
@@ -72,20 +74,22 @@ export class Potree implements IPotree {
   );
 
   maxNumNodesLoading: number = MAX_NUM_NODES_LOADING;
-  features = FEATURES;
   lru = new LRU(this._pointBudget);
 
-  constructor(modelDataProvider: ModelDataProvider) {
+  constructor(modelDataProvider: ModelDataProvider, pointCloudMaterialManager: PointCloudMaterialManager) {
     this._modelDataProvider = modelDataProvider;
+    this._materialManager = pointCloudMaterialManager;
   }
 
   async loadPointCloud(
     baseUrl: string,
     fileName: string,
-    annotationObjectInfo: PointCloudObjectData
+    annotationObjectInfo: PointCloudObjectData,
+    modelIdentifier: symbol
   ): Promise<PointCloudOctree> {
+    this._materialManager.addModelMaterial(modelIdentifier, annotationObjectInfo);
     const geometry = await EptLoader.load(baseUrl, fileName, this._modelDataProvider, annotationObjectInfo);
-    return new PointCloudOctree(this, geometry, annotationObjectInfo);
+    return new PointCloudOctree(this, geometry, this._materialManager.getModelMaterial(modelIdentifier));
   }
 
   updatePointClouds(pointClouds: PointCloudOctree[], camera: Camera, renderer: WebGLRenderer): void {
@@ -105,7 +109,17 @@ export class Potree implements IPotree {
         continue;
       }
 
-      pointCloud.material.updateMaterial(pointCloud, pointCloud.visibleNodes, camera, renderer);
+      const visibilityTextureData = createVisibilityTextureData(
+        pointCloud.visibleNodes,
+        pointCloud.material.visibleNodeTextureOffsets
+      );
+      const octreeMaterialParams: OctreeMaterialParams = {
+        scale: pointCloud.scale,
+        boundingBox: pointCloud.pcoGeometry.boundingBox,
+        spacing: pointCloud.pcoGeometry.spacing
+      };
+
+      pointCloud.material.updateMaterial(octreeMaterialParams, visibilityTextureData, camera, renderer);
       pointCloud.updateVisibleBounds();
       pointCloud.updateBoundingBoxes();
     }

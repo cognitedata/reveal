@@ -72,20 +72,20 @@ viewer.pointCloudBudget = { numberOfPoints: 500000 };
 
 ## Point shape
 
-You can set the point shape of each rendered point in the point cloud. Values are defined by `PotreePointShape` enum.
+You can set the point shape of each rendered point in the point cloud. Values are defined by `PointShape` enum.
 
 ```js runnable
-// import { PotreePointShape } from '@cognite/reveal';
-model.pointShape = PotreePointShape.Square;
+// import { PointShape } from '@cognite/reveal';
+model.pointShape = PointShape.Square;
 ```
 
 ## Point color type
 
-You can specify in which way points should be colored. Values are defined by `PotreePointColorType` enum.
+You can specify in which way points should be colored. Values are defined by `PointColorType` enum.
 
 ```js runnable
-// import { PotreePointColorType } from '@cognite/reveal'
-model.pointColorType = PotreePointColorType.Depth;
+// import { PointColorType } from '@cognite/reveal'
+model.pointColorType = PointColorType.Depth;
 ```
 
 Other useful coloring schemes are `Rgb` (color) , `Classification` (color by point class) and `Intensity`

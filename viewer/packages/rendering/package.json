@@ -11,8 +11,8 @@
     "@reveal/cad-model": "workspace:*",
     "@reveal/cad-parsers": "workspace:*",
     "@reveal/cad-styling": "workspace:*",
+    "@reveal/data-providers": "workspace:*",
     "@reveal/logger": "workspace:*",
-    "@reveal/pointclouds": "workspace:*",
     "@reveal/utilities": "workspace:*"
   },
   "sideEffects": false,

@@ -2,6 +2,8 @@
  * Copyright 2021 Cognite AS
  */
 
+import * as THREE from 'three';
+
 import { CogniteClient } from '@cognite/sdk';
 
 import { SinglePropertyFilterNodeCollection } from './SinglePropertyFilterNodeCollection';
@@ -9,18 +11,21 @@ import { IndexSet, NumericRange } from '@reveal/utilities';
 
 import nock from 'nock';
 import { CdfModelNodeCollectionDataProvider } from './CdfModelNodeCollectionDataProvider';
+import { It, Mock } from 'moq.ts';
 
 describe('SinglePropertyFilterNodeCollection', () => {
+  let mockClient: Mock<CogniteClient>;
+  let mockModel: Mock<CdfModelNodeCollectionDataProvider>;
   let set: SinglePropertyFilterNodeCollection;
-  let client: CogniteClient;
-  let model: CdfModelNodeCollectionDataProvider;
-  const filterNodesEndpointPath = /.*\/nodes\/list/;
 
   beforeEach(() => {
-    client = new CogniteClient({ appId: 'test', project: 'dummy', getToken: async () => 'dummy' });
+    mockClient = new Mock<CogniteClient>();
+    mockClient.setup(x => x.getBaseUrl()).returns('https://mycdf');
 
-    model = { modelId: 112, revisionId: 113 } as CdfModelNodeCollectionDataProvider;
-    set = new SinglePropertyFilterNodeCollection(client, model);
+    mockModel = new Mock<CdfModelNodeCollectionDataProvider>();
+    mockModel.setup(x => x.mapBoxFromCdfToModelCoordinates(It.IsAny(), It.IsAny())).returns(new THREE.Box3());
+
+    set = new SinglePropertyFilterNodeCollection(mockClient.object(), mockModel.object());
   });
 
   afterEach(() => {
@@ -36,11 +41,7 @@ describe('SinglePropertyFilterNodeCollection', () => {
 
   test('isLoading is true while executing request and false after', async () => {
     // Arrange
-    nock(/.*/)
-      .post(filterNodesEndpointPath)
-      .reply(200, () => {
-        return { items: [] };
-      });
+    setupPostReturn(mockClient, 200, { items: [] });
 
     // Act
     const promise = set.executeFilter('PDMS', ':capStatus', ['S8', 'S9']);
@@ -53,11 +54,8 @@ describe('SinglePropertyFilterNodeCollection', () => {
 
   test('executeFilter() with empty result triggers change', async () => {
     // Arrange
-    nock(/.*/)
-      .post(filterNodesEndpointPath)
-      .reply(200, () => {
-        return { items: [] };
-      });
+    setupPostReturn(mockClient, 200, { items: [] });
+
     const listener = jest.fn();
     set.on('changed', listener);
 
@@ -71,11 +69,7 @@ describe('SinglePropertyFilterNodeCollection', () => {
 
   test('executeFilter() with single batch result, creates correct IndexSet', async () => {
     // Arrange
-    nock(/.*/)
-      .post(filterNodesEndpointPath)
-      .reply(200, () => {
-        return { items: [createNodeJson(10, 100), createNodeJson(110, 10)] };
-      });
+    setupPostReturn(mockClient, 200, { items: [createNodeJson(10, 100), createNodeJson(110, 10)] });
 
     // Act
     await set.executeFilter('PDMS', ':capStatus', ['S9']);
@@ -89,16 +83,12 @@ describe('SinglePropertyFilterNodeCollection', () => {
 
   test('executeFilter() loops through all requests in response set', async () => {
     // Arrange
-    nock(/.*/)
-      .post(filterNodesEndpointPath)
-      .reply(200, () => {
-        return { items: [createNodeJson(1, 10), createNodeJson(20, 10)], nextCursor: 'abcdef' };
-      });
-    nock(/.*/)
-      .post(filterNodesEndpointPath)
-      .reply(200, () => {
-        return { items: [createNodeJson(30, 10), createNodeJson(50, 10)] };
-      });
+    setupPostReturn(
+      mockClient,
+      200,
+      { items: [createNodeJson(1, 10), createNodeJson(20, 10)], nextCursor: 'abcdef' },
+      { items: [createNodeJson(30, 10), createNodeJson(50, 10)] }
+    );
 
     // Act
     await set.executeFilter('PDMS', 'Type', ['ARCH', 'PIPE']);
@@ -114,16 +104,12 @@ describe('SinglePropertyFilterNodeCollection', () => {
 
   test('executeFilter() twice discards results from first request', async () => {
     // Arrange
-    nock(/.*/)
-      .post(filterNodesEndpointPath)
-      .reply(200, () => {
-        return { items: [createNodeJson(1, 10), createNodeJson(20, 10)] };
-      });
-    nock(/.*/)
-      .post(filterNodesEndpointPath)
-      .reply(200, () => {
-        return { items: [createNodeJson(30, 10), createNodeJson(50, 10)] };
-      });
+    setupPostReturn(
+      mockClient,
+      200,
+      { items: [createNodeJson(1, 10), createNodeJson(20, 10)] },
+      { items: [createNodeJson(30, 10), createNodeJson(50, 10)] }
+    );
 
     // Act
     const first = set.executeFilter('Foo', 'Bar', ['value1', 'value2']);
@@ -142,22 +128,12 @@ describe('SinglePropertyFilterNodeCollection', () => {
 
   test('executeFilter() with two partitions, finishes and merges both', async () => {
     // Arrange
-    set = new SinglePropertyFilterNodeCollection(client, model, { requestPartitions: 2 });
-
-    nock(/.*/)
-      .post(filterNodesEndpointPath)
-      .twice()
-      .reply(200, (_, body) => {
-        const partition = (body as any).partition;
-        switch (partition) {
-          case '1/2':
-            return { items: [createNodeJson(1, 10)] };
-          case '2/2':
-            return { items: [createNodeJson(30, 10)] };
-          default:
-            fail(`Unexpected partition '${partition}'`);
-        }
-      });
+    setupPostReturn(
+      mockClient,
+      200,
+      { items: [createNodeJson(1, 10)], nextCursor: 'abc' },
+      { items: [createNodeJson(30, 10)] }
+    );
 
     // Act
     await set.executeFilter('Foo', 'Bar', ['value1', 'value2']);
@@ -172,16 +148,7 @@ describe('SinglePropertyFilterNodeCollection', () => {
 
   test('executeFilter() with very many values, splits into multiple requests', async () => {
     // Arrange
-    nock(/.*/)
-      .post(filterNodesEndpointPath)
-      .reply(200, () => {
-        return { items: [createNodeJson(1, 10)] }; // First batch
-      });
-    nock(/.*/)
-      .post(filterNodesEndpointPath)
-      .reply(200, () => {
-        return { items: [createNodeJson(30, 10)] }; // Second batch
-      });
+    setupPostReturn(mockClient, 200, { items: [createNodeJson(1, 10)] }, { items: [createNodeJson(30, 10)] });
 
     // Act
     const values = new NumericRange(0, 1500).toArray().map(x => `value${x}`);
@@ -197,11 +164,7 @@ describe('SinglePropertyFilterNodeCollection', () => {
 
   test('clear() interrupts ongoing operation and resets set', async () => {
     // Arrange
-    nock(/.*/)
-      .post(filterNodesEndpointPath)
-      .reply(200, () => {
-        return { items: [createNodeJson(10, 100)] };
-      });
+    setupPostReturn(mockClient, 200, { items: [createNodeJson(10, 100)] });
 
     // Act
     const executeFilterOperation = set.executeFilter('PDMS', ':FU', ['A', 'B', 'C']);
@@ -216,4 +179,25 @@ describe('SinglePropertyFilterNodeCollection', () => {
 
 function createNodeJson(treeIndex: number, subtreeSize: number) {
   return { treeIndex: treeIndex, subtreeSize };
+}
+
+function setupPostReturn(mockClient: Mock<CogniteClient>, status: number, ...bodies: any[]) {
+  const filterNodesEndpointPath = /.*\/nodes\/list/;
+
+  mockClient
+    .setup(x =>
+      x.post(
+        It.Is<string>(url => filterNodesEndpointPath.test(url)),
+        It.IsAny()
+      )
+    )
+    .callback(async () => {
+      const body = bodies[0];
+      bodies.splice(0, 1);
+      return {
+        status,
+        data: body,
+        headers: {}
+      };
+    });
 }

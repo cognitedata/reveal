@@ -20,7 +20,8 @@ import {
   SceneRenderedDelegate,
   DisposedDelegate,
   determineCurrentDevice,
-  SceneHandler
+  SceneHandler,
+  BeforeSceneRenderedDelegate
 } from '@reveal/utilities';
 
 import { MetricsLogger } from '@reveal/metrics';
@@ -33,11 +34,11 @@ import {
 } from '@reveal/pointclouds';
 
 import {
+  AddImage360Options,
   AddModelOptions,
   Cognite3DViewerOptions,
   Intersection,
   CadModelBudget,
-  IntersectionFromPixelOptions,
   CadIntersection
 } from './types';
 import { RevealManager } from '../RevealManager';
@@ -49,7 +50,7 @@ import { ViewerState, ViewStateHelper } from '../../utilities/ViewStateHelper';
 import { RevealManagerHelper } from '../../storage/RevealManagerHelper';
 
 import { DefaultCameraManager, CameraManager, CameraChangeDelegate } from '@reveal/camera-manager';
-import { CdfModelIdentifier, File3dFormat } from '@reveal/data-providers';
+import { Cdf360ImageEventProvider, CdfModelIdentifier, File3dFormat } from '@reveal/data-providers';
 import { DataSource, CdfDataSource, LocalDataSource } from '@reveal/data-source';
 import { IntersectInput, SupportedModelTypes, CogniteModelBase, LoadingState } from '@reveal/model-base';
 
@@ -60,8 +61,9 @@ import {
   determineResolutionCap,
   determineSsaoRenderParameters
 } from './renderOptionsHelpers';
+import { Image360Entity, Image360EntityFactory, Image360Facade } from '@reveal/360-images';
 
-type Cognite3DViewerEvents = 'click' | 'hover' | 'cameraChange' | 'sceneRendered' | 'disposed';
+type Cognite3DViewerEvents = 'click' | 'hover' | 'cameraChange' | 'beforeSceneRendered' | 'sceneRendered' | 'disposed';
 
 /**
  * @example
@@ -75,16 +77,9 @@ type Cognite3DViewerEvents = 'click' | 'hover' | 'cameraChange' | 'sceneRendered
  */
 export class Cognite3DViewer {
   private readonly _domElementResizeObserver: ResizeObserver;
+  private readonly _image360Facade: Image360Facade<{ [key: string]: string }> | undefined;
   private get canvas(): HTMLCanvasElement {
     return this.renderer.domElement;
-  }
-
-  /**
-   * For now it just always returns true.
-   * @see Https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/getContext#Browser_compatibility.
-   */
-  static isBrowserSupported(): true {
-    return true;
   }
 
   /**
@@ -123,6 +118,7 @@ export class Cognite3DViewer {
     cameraChange: new EventTrigger<CameraChangeDelegate>(),
     click: new EventTrigger<PointerEventDelegate>(),
     hover: new EventTrigger<PointerEventDelegate>(),
+    beforeSceneRendered: new EventTrigger<BeforeSceneRenderedDelegate>(),
     sceneRendered: new EventTrigger<SceneRenderedDelegate>(),
     disposed: new EventTrigger<DisposedDelegate>()
   };
@@ -213,6 +209,7 @@ export class Cognite3DViewer {
     this.canvas.style.maxHeight = '100%';
 
     this._domElement = options.domElement ?? createCanvasWrapper();
+    this._domElement.tabIndex = 0;
     this._domElement.appendChild(this.canvas);
     this._domElementResizeObserver = this.setupDomElementResizeListener(this._domElement);
 
@@ -222,11 +219,11 @@ export class Cognite3DViewer {
 
     this._sceneHandler = new SceneHandler();
 
-    this._mouseHandler = new InputHandler(this.canvas);
+    this._mouseHandler = new InputHandler(this.domElement);
 
     this._cameraManager =
       options.cameraManager ??
-      new DefaultCameraManager(this.canvas, this._mouseHandler, this.modelIntersectionCallback.bind(this));
+      new DefaultCameraManager(this._domElement, this._mouseHandler, this.modelIntersectionCallback.bind(this));
 
     this._cameraManager.on('cameraChange', (position: THREE.Vector3, target: THREE.Vector3) => {
       this._events.cameraChange.fire(position.clone(), target.clone());
@@ -253,12 +250,32 @@ export class Cognite3DViewer {
       // CDF - default mode
       this._dataSource = new CdfDataSource(options.sdk);
       this._cdfSdkClient = options.sdk;
+      const image360DataProvider = new Cdf360ImageEventProvider(this._cdfSdkClient);
+      const image360EntityFactory = new Image360EntityFactory(image360DataProvider, this._sceneHandler);
+      this._image360Facade = new Image360Facade(image360EntityFactory);
       this._revealManagerHelper = RevealManagerHelper.createCdfHelper(
         this._renderer,
         this._sceneHandler,
         revealOptions,
         options.sdk
       );
+
+      this.on('hover', event => {
+        if (!this._image360Facade) {
+          return;
+        }
+        this._image360Facade.allHoverIconsVisibility = false;
+        const { offsetX, offsetY } = event;
+        const normalizedCoords = {
+          x: (offsetX / this.renderer.domElement.clientWidth) * 2 - 1,
+          y: (offsetY / this.renderer.domElement.clientHeight) * -2 + 1
+        };
+        const entity = this._image360Facade.intersect(normalizedCoords, this._cameraManager.getCamera());
+        if (!entity) {
+          return;
+        }
+        entity.icon.hoverSpriteVisible = true;
+      });
     }
 
     this.startPointerEventListeners();
@@ -361,6 +378,7 @@ export class Cognite3DViewer {
 
     this.spinner.dispose();
 
+    this._models.forEach(m => m.dispose());
     this._sceneHandler.dispose();
 
     this._events.disposed.fire();
@@ -392,7 +410,13 @@ export class Cognite3DViewer {
    */
   on(event: 'cameraChange', callback: CameraChangeDelegate): void;
   /**
-   * Event that is triggered immediatly after the scene has been rendered.
+   * Event that is triggered immediately before the scene is rendered.
+   * @param event Metadata about the rendering frame.
+   * @param callback Callback to trigger when event occurs.
+   */
+  on(event: 'beforeSceneRendered', callback: BeforeSceneRenderedDelegate): void;
+  /**
+   * Event that is triggered immediately after the scene has been rendered.
    * @param event Metadata about the rendering frame.
    * @param callback Callback to trigger when the event occurs.
    */
@@ -405,7 +429,12 @@ export class Cognite3DViewer {
    */
   on(
     event: Cognite3DViewerEvents,
-    callback: PointerEventDelegate | CameraChangeDelegate | SceneRenderedDelegate | DisposedDelegate
+    callback:
+      | PointerEventDelegate
+      | CameraChangeDelegate
+      | BeforeSceneRenderedDelegate
+      | SceneRenderedDelegate
+      | DisposedDelegate
   ): void {
     switch (event) {
       case 'click':
@@ -418,6 +447,10 @@ export class Cognite3DViewer {
 
       case 'cameraChange':
         this._events.cameraChange.subscribe(callback as CameraChangeDelegate);
+        break;
+
+      case 'beforeSceneRendered':
+        this._events.beforeSceneRendered.subscribe(callback as BeforeSceneRenderedDelegate);
         break;
 
       case 'sceneRendered':
@@ -448,6 +481,10 @@ export class Cognite3DViewer {
    */
   off(event: 'cameraChange', callback: CameraChangeDelegate): void;
   /**
+   * Unsubscribe the 'beforeSceneRendered'-event previously subscribed with {@link on}.
+   */
+  off(event: 'beforeSceneRendered', callback: BeforeSceneRenderedDelegate): void;
+  /**
    * @example
    * ```js
    * viewer.off('sceneRendered', updateStats);
@@ -468,26 +505,38 @@ export class Cognite3DViewer {
    * @param event
    * @param callback
    */
-  off(event: Cognite3DViewerEvents, callback: any): void {
+  off(
+    event: Cognite3DViewerEvents,
+    callback:
+      | PointerEventDelegate
+      | CameraChangeDelegate
+      | BeforeSceneRenderedDelegate
+      | SceneRenderedDelegate
+      | DisposedDelegate
+  ): void {
     switch (event) {
       case 'click':
-        this._events.click.unsubscribe(callback);
+        this._events.click.unsubscribe(callback as PointerEventDelegate);
         break;
 
       case 'hover':
-        this._events.hover.unsubscribe(callback);
+        this._events.hover.unsubscribe(callback as PointerEventDelegate);
         break;
 
       case 'cameraChange':
-        this._events.cameraChange.unsubscribe(callback);
+        this._events.cameraChange.unsubscribe(callback as CameraChangeDelegate);
+        break;
+
+      case 'beforeSceneRendered':
+        this._events.beforeSceneRendered.unsubscribe(callback as BeforeSceneRenderedDelegate);
         break;
 
       case 'sceneRendered':
-        this._events.sceneRendered.unsubscribe(callback);
+        this._events.sceneRendered.unsubscribe(callback as SceneRenderedDelegate);
         break;
 
       case 'disposed':
-        this._events.disposed.unsubscribe(callback);
+        this._events.disposed.unsubscribe(callback as DisposedDelegate);
         break;
 
       default:
@@ -632,6 +681,36 @@ export class Cognite3DViewer {
     this._sceneHandler.addPointCloudModel(pointCloudNode, pointCloudNode.potreeNode.modelIdentifier);
 
     return model;
+  }
+
+  /**
+   * Adds a set of 360 images to the scene from the /events API in Cognite Data Fusion.
+   * @param datasource The CDF data source which holds the references to the 360 image sets.
+   * @param eventFilter The metadata filter to apply when querying events that contains the 360 images.
+   * @param add360ImageOptions Options for behaviours when adding 360 images.
+   * @example
+   * ```js
+   * const eventFilter = { site_id: "12345" };
+   * await viewer.add360ImageSet(eventFilter);
+   * ```
+   */
+  add360ImageSet(
+    datasource: 'events',
+    eventFilter: { [key: string]: string },
+    add360ImageOptions?: AddImage360Options
+  ): Promise<Image360Entity[]> {
+    if (datasource !== 'events') {
+      throw new Error(`${datasource} is an unknown datasource from 360 images`);
+    }
+
+    if (this._cdfSdkClient === undefined || this._image360Facade === undefined) {
+      throw new Error(`Adding 360 image sets is only supported when connecting to Cognite Data Fusion`);
+    }
+
+    const collectionTransform = add360ImageOptions?.collectionTransform ?? new THREE.Matrix4();
+    const preMultipliedRotation = add360ImageOptions?.preMultipliedRotation ?? true;
+
+    return this._image360Facade.create(eventFilter, collectionTransform, preMultipliedRotation);
   }
 
   /**
@@ -1013,7 +1092,6 @@ export class Cognite3DViewer {
    * Raycasting model(s) for finding where the ray intersects with the model.
    * @param offsetX X coordinate in pixels (relative to the domElement).
    * @param offsetY Y coordinate in pixels (relative to the domElement).
-   * @param options Options to control the behavior of the intersection operation. Optional (new in 1.3.0).
    * @returns A promise that if there was an intersection then return the intersection object - otherwise it
    * returns `null` if there were no intersections.
    * @see {@link https://en.wikipedia.org/wiki/Ray_casting}.
@@ -1043,20 +1121,6 @@ export class Cognite3DViewer {
    *   ' at this exact point ', intersection.point
    *   );
    * ```
-   */
-  async getIntersectionFromPixel(offsetX: number, offsetY: number): Promise<null | Intersection>;
-  /**
-   * @deprecated Since 3.1 options argument have no effect.
-   */
-  async getIntersectionFromPixel(
-    offsetX: number,
-    offsetY: number,
-    options: IntersectionFromPixelOptions
-  ): Promise<null | Intersection>;
-  /**
-   * @obvious
-   * @param offsetX
-   * @param offsetY
    */
   async getIntersectionFromPixel(offsetX: number, offsetY: number): Promise<null | Intersection> {
     return this.intersectModels(offsetX, offsetY);
@@ -1100,12 +1164,16 @@ export class Cognite3DViewer {
       if (this.revealManager.needsRedraw || this._clippingNeedsUpdate) {
         const frameNumber = this.renderer.info.render.frame;
         const start = Date.now();
-        this.revealManager.render(this.getCamera());
+        const camera = this.getCamera();
+
+        this._events.beforeSceneRendered.fire({ frameNumber, renderer: this.renderer, camera });
+
+        this.revealManager.render(camera);
         this.revealManager.resetRedraw();
         this._clippingNeedsUpdate = false;
         const renderTime = Date.now() - start;
 
-        this._events.sceneRendered.fire({ frameNumber, renderTime, renderer: this.renderer, camera: this.getCamera() });
+        this._events.sceneRendered.fire({ frameNumber, renderTime, renderer: this.renderer, camera });
       }
     }
   }
@@ -1250,7 +1318,7 @@ function createCanvasWrapper(): HTMLElement {
 }
 
 function createRenderer(): THREE.WebGLRenderer {
-  const renderer = new THREE.WebGLRenderer();
+  const renderer = new THREE.WebGLRenderer({ powerPreference: 'high-performance' });
   renderer.setPixelRatio(window.devicePixelRatio);
   return renderer;
 }

@@ -14,7 +14,7 @@ import * as EptDecoderWorker from '../workers/eptBinaryDecoder.worker';
 
 import { ParsedEptData, EptInputData } from '../workers/parseEpt';
 
-import { decomposeStylableObjects } from '../../styling/decomposeStylableObjects';
+import { decomposeStylableObjects } from '../../decomposeStylableObjects';
 
 import { fromThreeVector3, setupTransferableMethodsOnMain } from '@reveal/utilities';
 import { MetricsLogger } from '@reveal/metrics';

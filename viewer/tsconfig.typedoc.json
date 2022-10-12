@@ -10,7 +10,9 @@
     "target": "ES2019",
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "strict": true,
+    "allowJs": true,
   },
   "exclude": [
     "./**/*.test.ts",

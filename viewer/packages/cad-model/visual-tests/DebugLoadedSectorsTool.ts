@@ -6,12 +6,13 @@ import * as THREE from 'three';
 import { LevelOfDetail, SectorNode } from '../../cad-parsers/';
 
 import { assertNever } from '@reveal/utilities';
+import { CadNode } from '../src/wrappers/CadNode';
 
 export type DebugLoadedSectorsToolOptions = {
   showSimpleSectors?: boolean;
   showDetailedSectors?: boolean;
   showDiscardedSectors?: boolean;
-  colorBy?: 'depth' | 'lod' | 'loadedTimestamp' | 'random';
+  colorBy?: 'depth' | 'lod' | 'loadedTimestamp' | 'random' | 'drawcalls';
   leafsOnly?: boolean;
   sectorPathFilterRegex?: string;
 };
@@ -20,7 +21,7 @@ export class DebugLoadedSectorsTool {
   private readonly _boundingBoxes = new THREE.Group();
   private readonly _scene: THREE.Scene;
   private _options: Required<DebugLoadedSectorsToolOptions>;
-  private _model?: THREE.Object3D;
+  private _model?: CadNode;
 
   constructor(scene: THREE.Scene, options: DebugLoadedSectorsToolOptions = {}) {
     this._scene = scene;
@@ -45,7 +46,7 @@ export class DebugLoadedSectorsTool {
     this._scene.remove(this._boundingBoxes);
   }
 
-  showSectorBoundingBoxes(model: THREE.Object3D): void {
+  showSectorBoundingBoxes(model: CadNode): void {
     this._model = model;
     this.updateBoundingBoxes();
   }
@@ -90,6 +91,7 @@ export class DebugLoadedSectorsTool {
 
   private createBboxNodeFor(node: SectorNode, allSelectedNodes: SectorNode[]) {
     const options = this._options;
+    const model = this._model!;
 
     function determineColor() {
       switch (options.colorBy) {
@@ -118,6 +120,18 @@ export class DebugLoadedSectorsTool {
           const nodesByTimestamp = [...allSelectedNodes].sort((a, b) => a.updatedTimestamp - b.updatedTimestamp);
           const indexOfNode = nodesByTimestamp.findIndex(x => x === node);
           const s = (nodesByTimestamp.length - 1 - indexOfNode) / Math.max(nodesByTimestamp.length - 1, 1);
+          return new THREE.Color(Colors.green).lerpHSL(Colors.red, s);
+        }
+        case 'drawcalls': {
+          const [minDrawCalls, maxDrawCalls] = allSelectedNodes.reduce(
+            ([min, max], x) => {
+              const sector = model.sectorScene.getSectorById(x.sectorId)!;
+              return [Math.min(min, sector.estimatedDrawCallCount), Math.max(max, sector.estimatedDrawCallCount)];
+            },
+            [Infinity, -Infinity]
+          );
+          const sector = model.sectorScene.getSectorById(node.sectorId)!;
+          const s = (sector.estimatedDrawCallCount - minDrawCalls) / (maxDrawCalls - minDrawCalls);
           return new THREE.Color(Colors.green).lerpHSL(Colors.red, s);
         }
         default:
