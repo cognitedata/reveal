@@ -8,6 +8,7 @@ import {
   AnnotationIdPointCloudObjectCollection,
   PointCloudAppearance,
   DefaultPointCloudAppearance,
+  PointCloudObjectMetadata,
   THREE
 } from '@cognite/reveal';
 
@@ -36,7 +37,7 @@ export class PointCloudObjectStylingUI {
         this._model.removeAllStyledObjectCollections();
       },
       randomColors: () => {
-        model.traverseStylableObjects((object) => {
+        model.traverseStylableObjects((object: PointCloudObjectMetadata) => {
           const objectStyle: [number, number, number] = [
             Math.floor(Math.random() * 255),
             Math.floor(Math.random() * 255),
