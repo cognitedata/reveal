@@ -36,9 +36,6 @@ const DataSetDetails = (): JSX.Element => {
   const { t } = useTranslation();
   const [editDrawerVisible, setEditDrawerVisible] = useState<boolean>(false);
   const [changesSaved, setChangesSaved] = useState<boolean>(true);
-
-  const { appPath } = useParams<{ appPath: string }>();
-
   const { dataSetId } = useParams();
 
   const {
