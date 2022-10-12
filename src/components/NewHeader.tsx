@@ -31,7 +31,7 @@ const NewHeader = ({ title, rightItem, help }: NewHeaderProps) => {
   return (
     <>
       <Flex justifyContent="space-between" style={{ padding: '10px 0' }}>
-        <Flex alignItems="center">
+        <Flex alignItems="center" gap={8}>
           <Button
             icon="ArrowLeft"
             onClick={handleGoToDatasets}
@@ -39,7 +39,7 @@ const NewHeader = ({ title, rightItem, help }: NewHeaderProps) => {
           >
             {t('data-set_other')}
           </Button>
-          <DataSetTitle level="4">{title}</DataSetTitle>
+          <Title level="4">{title}</Title>
         </Flex>
         <Flex alignItems="center" gap={8}>
           {rightItem && <span>{rightItem}</span>}
@@ -62,9 +62,5 @@ const NewHeader = ({ title, rightItem, help }: NewHeaderProps) => {
     </>
   );
 };
-
-const DataSetTitle = styled(Title)`
-  margin: 0 0 0 8px;
-`;
 
 export default NewHeader;
