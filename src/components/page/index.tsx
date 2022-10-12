@@ -13,7 +13,6 @@ export type PageProps = {
 const Page = ({ children, className, title }: PageProps): JSX.Element => {
   const { appPath } = useParams<{ appPath?: string }>();
 
-  debugger;
   return (
     <StyledPage className={className}>
       <Breadcrumb
