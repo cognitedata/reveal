@@ -84,7 +84,6 @@ export class PickingHandler {
     this._treeIndexRenderPipeline.setOutputRenderTarget(this._pickPixelColorStorage.renderTarget, false);
     this._depthRenderPipeline.setOutputRenderTarget(this._pickPixelColorStorage.renderTarget, false);
   }
-
   public async intersectCadNodes(
     cadNodes: CadNode[],
     input: IntersectInput,

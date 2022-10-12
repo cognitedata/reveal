@@ -30,6 +30,7 @@ export function createPointCloudNode(): PointCloudNode {
   const potreeInstance = new Potree(modelDataProvider);
 
   const potreeGroup = new PotreeGroupWrapper(potreeInstance);
+
   const pointCloudOctree = new PointCloudOctree(
     new Mock<Potree>().object(),
     new Mock<IPointCloudTreeGeometry>()

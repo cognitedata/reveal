@@ -13,7 +13,6 @@
     "@reveal/data-providers": "workspace:*",
     "@reveal/metrics": "workspace:*",
     "@reveal/model-base": "workspace:*",
-    "@reveal/rendering": "workspace:*",
     "@reveal/utilities": "workspace:*"
   }
 }

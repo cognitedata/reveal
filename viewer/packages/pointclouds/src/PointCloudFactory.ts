@@ -9,7 +9,6 @@ import { DEFAULT_POINT_CLOUD_METADATA_FILE } from './constants';
 import { PointCloudStylableObjectProvider } from '@reveal/data-providers';
 import { IPointClassificationsProvider } from './classificationsProviders/IPointClassificationsProvider';
 
-
 export class PointCloudFactory {
   private readonly _potreeInstance: Potree;
   private readonly _pointCloudObjectProvider: PointCloudStylableObjectProvider;

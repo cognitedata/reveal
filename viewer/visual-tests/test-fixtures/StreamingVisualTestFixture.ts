@@ -19,7 +19,6 @@ import {
 import { createDataProviders } from './utilities/createDataProviders';
 import { VisualTestFixture } from './VisualTestFixture';
 import { DeferredPromise, fitCameraToBoundingBox, SceneHandler } from '../../packages/utilities';
-<<<<<<< HEAD
 
 import {
   ModelIdentifier,
@@ -34,11 +33,6 @@ import {
   Potree,
   PotreePointColorType
 } from '../../packages/pointclouds';
-=======
-import { ModelIdentifier, ModelMetadataProvider } from '../../packages/data-providers';
-import { LoadingState } from '../../packages/model-base';
-import { PointCloudManager, PointCloudNode, PotreePointColorType } from '../../packages/pointclouds';
->>>>>>> refs/rewritten/22fd033caa5317c6fe92f57bcc529928d2465e41-2
 import { PointCloudMetadataRepository } from '../../packages/pointclouds/src/PointCloudMetadataRepository';
 import { PointCloudFactory } from '../../packages/pointclouds/src/PointCloudFactory';
 import dat from 'dat.gui';
@@ -175,7 +169,6 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
       this._sceneHandler.scene,
       this._renderer
     );
-
     const sectorCuller = new ByScreenSizeSectorCuller();
     const cadModelFactory = new CadModelFactory(this._materialManager, modelMetadataProvider, modelDataProvider);
     const cadModelUpdateHandler = new CadModelUpdateHandler(sectorCuller, false);
@@ -323,12 +316,8 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
     } else if (modelOutputs.includes('ept-pointcloud')) {
       const pointCloudNode = await pointCloudManager.addModel(modelIdentifier);
       pointCloudNode.pointColorType = PotreePointColorType.Height;
-<<<<<<< HEAD
 
       this._sceneHandler.addPointCloudModel(pointCloudNode, modelIdentifier.revealInternalId);
-=======
-      this._sceneHandler.addCustomObject(pointCloudNode);
->>>>>>> refs/rewritten/22fd033caa5317c6fe92f57bcc529928d2465e41-2
       return pointCloudNode;
     } else {
       throw Error(`Unknown output format ${modelOutputs}`);
