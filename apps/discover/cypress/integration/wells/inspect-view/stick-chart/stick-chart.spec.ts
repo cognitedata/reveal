@@ -77,8 +77,8 @@ describe('Wells: stick chart', () => {
       .should('be.gte', 1);
 
     cy.log(`diameter should be displayed in: ${CASING_ASSEMBLY_DIAMETER_UNIT}`);
-    cy.verifyColumnHeader(`OD Min (${CASING_ASSEMBLY_DIAMETER_UNIT})`);
-    cy.verifyColumnHeader(`ID Min (${CASING_ASSEMBLY_DIAMETER_UNIT})`);
+    cy.verifyColumnHeader(`OD (${CASING_ASSEMBLY_DIAMETER_UNIT})`);
+    cy.verifyColumnHeader(`ID (${CASING_ASSEMBLY_DIAMETER_UNIT})`);
 
     cy.log('go back to stick chart page');
     cy.findAllByTestId('go-back-button').click({ force: true });
