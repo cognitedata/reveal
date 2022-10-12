@@ -30,7 +30,7 @@ const NewHeader = ({ title, rightItem, help }: NewHeaderProps) => {
 
   return (
     <>
-      <Flex justifyContent="space-between" style={{ padding: 10 }}>
+      <Flex justifyContent="space-between" style={{ padding: '10px 0' }}>
         <Flex alignItems="center">
           <Button
             icon="ArrowLeft"
