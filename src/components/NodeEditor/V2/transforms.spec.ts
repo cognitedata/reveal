@@ -3184,4 +3184,259 @@ describe('getStepsFromWorkflowReactFlow', () => {
 
     expect(steps).toEqual([]);
   });
+
+  it('should not treat valid case as loop (case 1)', () => {
+    const workflows: ChartWorkflowV2[] = [
+      {
+        version: 'v2',
+        lineStyle: 'solid',
+        name: 'F1',
+        type: 'workflow',
+        preferredUnit: '',
+        flow: {
+          position: [-1, 0],
+          elements: [
+            {
+              type: 'CalculationOutput',
+              position: {
+                x: 771,
+                y: 57,
+              },
+              id: '4a5a2693-bd9d-4f4a-95f9-79ba2d83e947',
+            },
+            {
+              id: 'd849bb42-dc0e-458b-81c1-22a01b36d60c',
+              type: 'CalculationInput',
+              position: {
+                y: 97.23956298828125,
+                x: 251.21527099609375,
+              },
+              data: {
+                type: 'timeseries',
+                selectedSourceId: '3dda2363-5d21-4f74-af8b-0a07be9d1c8e',
+              },
+            },
+            {
+              id: 'reactflow__edge-d849bb42-dc0e-458b-81c1-22a01b36d60cresult-4a5a2693-bd9d-4f4a-95f9-79ba2d83e947datapoints',
+              target: '4a5a2693-bd9d-4f4a-95f9-79ba2d83e947',
+              sourceHandle: 'result',
+              source: 'd849bb42-dc0e-458b-81c1-22a01b36d60c',
+              targetHandle: 'datapoints',
+            },
+          ],
+          zoom: 1,
+        },
+        id: 'dbde7d9b-fb1a-477a-92f5-2aea98d5d818',
+        color: '#005d5d',
+        settings: {
+          autoAlign: true,
+        },
+        createdAt: 1665041631341,
+        enabled: false,
+        calls: [
+          {
+            status: 'Pending',
+            hash: -1242965814,
+            callDate: 1665041654614,
+            id: 'cdb4d993-8c9f-40c5-96cb-d2fb2ea5057f',
+            callId: 'cdb4d993-8c9f-40c5-96cb-d2fb2ea5057f',
+          },
+        ],
+        unit: '',
+        lineWeight: 1,
+      },
+      {
+        id: 'd625f675-4246-43aa-80f4-c5e187f551b0',
+        createdAt: 1665041657055,
+        lineWeight: 1,
+        enabled: false,
+        calls: [
+          {
+            status: 'Pending',
+            id: '4b8e1b1c-7df3-4de4-8bb2-c59bde779717',
+            callId: '4b8e1b1c-7df3-4de4-8bb2-c59bde779717',
+            callDate: 1665041664600,
+            hash: -1242965814,
+          },
+        ],
+        name: 'F2',
+        flow: {
+          elements: [
+            {
+              type: 'CalculationOutput',
+              id: 'dc396784-7f28-4e39-ba4e-8855c65148ac',
+              position: {
+                x: 712,
+                y: 80,
+              },
+            },
+            {
+              type: 'CalculationInput',
+              data: {
+                selectedSourceId: 'dbde7d9b-fb1a-477a-92f5-2aea98d5d818',
+                type: 'workflow',
+              },
+              id: '6ca5a870-b62b-4327-94d1-efd98e7f278a',
+              position: {
+                y: 99.23956298828125,
+                x: 208.21527099609375,
+              },
+            },
+            {
+              source: '6ca5a870-b62b-4327-94d1-efd98e7f278a',
+              targetHandle: 'datapoints',
+              target: 'dc396784-7f28-4e39-ba4e-8855c65148ac',
+              sourceHandle: 'result',
+              id: 'reactflow__edge-6ca5a870-b62b-4327-94d1-efd98e7f278aresult-dc396784-7f28-4e39-ba4e-8855c65148acdatapoints',
+            },
+          ],
+          position: [0, 0],
+          zoom: 1,
+        },
+        settings: {
+          autoAlign: true,
+        },
+        version: 'v2',
+        preferredUnit: '',
+        color: '#9f1853',
+        lineStyle: 'solid',
+        type: 'workflow',
+        unit: '',
+      },
+      {
+        createdAt: 1665041657055,
+        id: 'f9fdda4c-3576-4a61-826b-6f3669ea9607',
+        type: 'workflow',
+        enabled: true,
+        lineWeight: 1,
+        version: 'v2',
+        unit: '',
+        color: '#fa4d56',
+        flow: {
+          position: [138, -85],
+          elements: [
+            {
+              type: 'CalculationOutput',
+              position: {
+                y: 80,
+                x: 712,
+              },
+              id: 'dc396784-7f28-4e39-ba4e-8855c65148ac',
+            },
+            {
+              data: {
+                selectedSourceId: 'dbde7d9b-fb1a-477a-92f5-2aea98d5d818',
+                type: 'workflow',
+              },
+              id: '6ca5a870-b62b-4327-94d1-efd98e7f278a',
+              type: 'CalculationInput',
+              position: {
+                x: 78.21527099609375,
+                y: 106.23956298828125,
+              },
+            },
+            {
+              position: {
+                x: 429.21527099609375,
+                y: 93.23956298828125,
+              },
+              type: 'ToolboxFunction',
+              data: {
+                parameterValues: {},
+                selectedOperation: {
+                  op: 'add',
+                  version: '1.0',
+                },
+              },
+              id: '36197cae-36b0-42d0-a2b9-d0d85b37ce9e',
+            },
+            {
+              targetHandle: 'a',
+              target: '36197cae-36b0-42d0-a2b9-d0d85b37ce9e',
+              sourceHandle: 'result',
+              source: '6ca5a870-b62b-4327-94d1-efd98e7f278a',
+              id: 'reactflow__edge-6ca5a870-b62b-4327-94d1-efd98e7f278aresult-36197cae-36b0-42d0-a2b9-d0d85b37ce9ea',
+            },
+            {
+              type: 'CalculationInput',
+              data: {
+                type: 'workflow',
+                selectedSourceId: 'd625f675-4246-43aa-80f4-c5e187f551b0',
+              },
+              position: {
+                y: 240.23956298828125,
+                x: 96.21527099609375,
+              },
+              id: '857c51f8-11a2-433b-b709-2006295b1b2e',
+            },
+            {
+              id: 'reactflow__edge-857c51f8-11a2-433b-b709-2006295b1b2eresult-36197cae-36b0-42d0-a2b9-d0d85b37ce9eb',
+              sourceHandle: 'result',
+              target: '36197cae-36b0-42d0-a2b9-d0d85b37ce9e',
+              source: '857c51f8-11a2-433b-b709-2006295b1b2e',
+              targetHandle: 'b',
+            },
+            {
+              id: 'reactflow__edge-36197cae-36b0-42d0-a2b9-d0d85b37ce9eout-result-0-dc396784-7f28-4e39-ba4e-8855c65148acdatapoints',
+              target: 'dc396784-7f28-4e39-ba4e-8855c65148ac',
+              sourceHandle: 'out-result-0',
+              source: '36197cae-36b0-42d0-a2b9-d0d85b37ce9e',
+              targetHandle: 'datapoints',
+            },
+          ],
+          zoom: 1,
+        },
+        lineStyle: 'solid',
+        settings: {
+          autoAlign: true,
+        },
+        calls: [],
+        name: 'F3',
+        preferredUnit: '',
+      },
+    ];
+
+    const workflow = workflows[2];
+
+    const steps = getStepsFromWorkflowReactFlow(
+      workflow,
+      workflows,
+      fullListOfOperations
+    );
+
+    expect(steps).toEqual([
+      {
+        step: 0,
+        op: 'add',
+        version: '1.0',
+        inputs: [
+          {
+            type: 'ts',
+            value: '3dda2363-5d21-4f74-af8b-0a07be9d1c8e',
+            param: 'a',
+          },
+          {
+            type: 'ts',
+            value: '3dda2363-5d21-4f74-af8b-0a07be9d1c8e',
+            param: 'b',
+          },
+        ],
+        params: {
+          align_timesteps: true,
+        },
+      },
+      {
+        step: 1,
+        op: 'PASSTHROUGH',
+        version: '1.0',
+        inputs: [
+          {
+            type: 'result',
+            value: 0,
+            param: 'series',
+          },
+        ],
+      },
+    ]);
+  });
 });

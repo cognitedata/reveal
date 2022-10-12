@@ -52,8 +52,13 @@ export function transformParamInput(
 const fillReferencedCalculations = (
   workflows: ChartWorkflowV2[],
   elements: Elements = [],
-  illegalReferences: string[]
-): Elements => {
+  visitedReferences: { id: string; depth: number }[],
+  depth: number
+): {
+  transformedElements: Elements;
+  visitedReferences: { id: string; depth: number }[];
+  done: boolean;
+} => {
   let transformedElements = [...elements];
   const hasCalculationReference = transformedElements.some(
     (node) => node.type === NodeTypes.SOURCE && node.data.type === 'workflow'
@@ -61,11 +66,11 @@ const fillReferencedCalculations = (
   let shouldTerminate = false;
 
   if (!hasCalculationReference) {
-    return transformedElements;
+    return { transformedElements, visitedReferences, done: true };
   }
 
   // Keep track of visited references to avoid circular dependencies
-  const updatedIllegalReferences = [...illegalReferences];
+  const updatedVisitedReferences = [...visitedReferences];
 
   // Handle calculation references by adding their nodes & connections to current workflow
   const calculationReferences = transformedElements.filter(
@@ -82,14 +87,29 @@ const fillReferencedCalculations = (
       return;
     }
 
-    // Abort if circular reference is detected
-    if (illegalReferences.includes(referencedWorkflow.id)) {
+    // Only detect potential loops if the repeat depth is above a certain threshold
+    const circularDetectionDepthLimit = 1000;
+    const isPotentialCircularReference =
+      visitedReferences
+        .filter((visitedRef) => visitedRef.id === referencedWorkflow.id)
+        .sort((a, b) => b.depth - a.depth).length >=
+      circularDetectionDepthLimit;
+
+    // Abort if potential circular reference is detected
+    if (isPotentialCircularReference) {
       shouldTerminate = true;
       return;
     }
 
     // Update list of visited references
-    updatedIllegalReferences.push(referencedWorkflow.id);
+    if (
+      !updatedVisitedReferences.find(
+        (visitedRef) =>
+          visitedRef.id === referencedWorkflow.id && visitedRef.depth === depth
+      )
+    ) {
+      updatedVisitedReferences.push({ id: referencedWorkflow.id, depth });
+    }
 
     const referencedWorkflowOutput = referencedWorkflow.flow?.elements.find(
       (el) => el.type === NodeTypes.OUTPUT
@@ -101,7 +121,7 @@ const fillReferencedCalculations = (
         (el as Edge).target === referencedWorkflowOutput.id
     );
 
-    const sourceEdges = transformedElements.filter(
+    const sourceEdges = elements.filter(
       (el) => (el as Edge).source === ref.id
     ) as Edge[];
 
@@ -130,14 +150,18 @@ const fillReferencedCalculations = (
   });
 
   if (shouldTerminate) {
-    return transformedElements;
+    return {
+      transformedElements,
+      visitedReferences: updatedVisitedReferences,
+      done: true,
+    };
   }
 
-  return fillReferencedCalculations(
-    workflows,
+  return {
     transformedElements,
-    updatedIllegalReferences
-  );
+    visitedReferences: updatedVisitedReferences,
+    done: false,
+  };
 };
 
 const getOperationFromReactFlowNode = (node: FlowElement) => {
@@ -331,9 +355,35 @@ export const getStepsFromWorkflowReactFlow = (
     }
   });
 
-  const elements = fillReferencedCalculations(workflows, filteredElements, [
-    workflow.id,
-  ]);
+  let elements = filteredElements;
+  let visitedReferences = [{ id: workflow.id, depth: 0 }];
+  let depth = 1;
+  let hasCalculationReference = true;
+  let isDoneFilling = false;
+
+  while (!isDoneFilling && hasCalculationReference) {
+    hasCalculationReference = elements.some(
+      (node) =>
+        node.type === NodeTypes.SOURCE &&
+        ((node.data as SourceNodeData).type || '') === 'workflow'
+    );
+
+    if (!hasCalculationReference) {
+      break;
+    }
+
+    const result = fillReferencedCalculations(
+      workflows,
+      elements,
+      visitedReferences,
+      depth
+    );
+
+    elements = result.transformedElements;
+    visitedReferences = result.visitedReferences;
+    isDoneFilling = result.done;
+    depth += 1;
+  }
 
   const outputNode = elements.find(
     (node) => node.type === NodeTypes.OUTPUT
