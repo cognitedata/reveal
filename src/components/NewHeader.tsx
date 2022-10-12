@@ -1,5 +1,4 @@
 import { ReactElement } from 'react';
-import styled from 'styled-components';
 import { Title, Flex, Button } from '@cognite/cogs.js';
 import { trackEvent } from '@cognite/cdf-route-tracker';
 import { createLink, getProject } from '@cognite/cdf-utilities';
