@@ -52,6 +52,5 @@ const Container = styled.div`
   height: 100%;
   display: flex;
   flex-direction: column;
-  overflow: scroll;
-  /* padding-right: 16px; */
+  overflow-y: auto;
 `;

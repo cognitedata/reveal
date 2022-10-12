@@ -483,6 +483,7 @@ const TabsContainer = styled.div`
 
 const MainContainer = styled(Flex)`
   height: calc(100% - 140px);
+  flex: 1;
 `;
 
 const FilterWrapper = styled.div`
@@ -525,6 +526,8 @@ const VerticalDivider = styled.div`
 const MainSearchContainer = styled.div`
   display: flex;
   flex-direction: column;
-  width: 100%;
   height: 100%;
+  /* width: calc(100% - 303px); */
+  flex: 1;
+  overflow: auto;
 `;

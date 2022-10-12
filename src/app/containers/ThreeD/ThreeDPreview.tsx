@@ -148,6 +148,8 @@ export const ThreeDPreview = ({
 const RevealContainer = styled.div`
   height: calc(100% - 85px);
   width: 100%;
+  padding: 16px;
+  padding-top: 0px;
 `;
 
 const ToolBarWrapper = styled.div`
