@@ -1,4 +1,3 @@
-import noop from 'lodash/noop';
 import { useState } from 'react';
 import { EditableChip } from './EditableChip';
 
@@ -20,9 +19,7 @@ export const Base = () => {
   );
 };
 
-export const Locked = () => (
-  <EditableChip onChange={noop} value="my-movie-app" isLocked />
-);
+export const Locked = () => <EditableChip value="my-movie-app" isLocked />;
 export const WithPlaceholder = () => (
-  <EditableChip onChange={noop} value={undefined} placeholder="Data model-ID" />
+  <EditableChip value={undefined} placeholder="Data model-ID" />
 );

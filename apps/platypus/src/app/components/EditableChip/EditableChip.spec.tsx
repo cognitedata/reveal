@@ -4,13 +4,10 @@ import '@testing-library/jest-dom/extend-expect';
 import userEvent from '@testing-library/user-event';
 
 import { EditableChip } from './EditableChip';
-import noop from 'lodash/noop';
 
 describe('EditableChip', () => {
   it("Renders placeholder state when there's no value", () => {
-    render(
-      <EditableChip isLocked={false} placeholder="lorem" onChange={noop} />
-    );
+    render(<EditableChip isLocked={false} placeholder="lorem" />);
 
     expect(screen.queryByRole('button')).toBeNull();
     expect(screen.queryByTestId('icon-lock')).toBeNull();
@@ -18,14 +15,7 @@ describe('EditableChip', () => {
   });
 
   it('Renders correctly when not locked and value is present', () => {
-    render(
-      <EditableChip
-        isLocked={false}
-        placeholder="lorem"
-        value="ipsum"
-        onChange={noop}
-      />
-    );
+    render(<EditableChip isLocked={false} placeholder="lorem" value="ipsum" />);
 
     expect(screen.getByRole('button')).toBeTruthy();
     expect(screen.queryByTestId('icon-lock')).toBeNull();
@@ -33,14 +23,7 @@ describe('EditableChip', () => {
   });
 
   it('Renders correctly when locked', () => {
-    render(
-      <EditableChip
-        isLocked
-        placeholder="lorem"
-        value="ipsum"
-        onChange={noop}
-      />
-    );
+    render(<EditableChip isLocked placeholder="lorem" value="ipsum" />);
 
     expect(screen.queryByRole('button')).toBeNull();
     expect(screen.getByTestId('icon-lock')).toBeTruthy();
@@ -48,11 +31,9 @@ describe('EditableChip', () => {
   });
 
   it('Renders value in input when value prop changes after mount', () => {
-    const { rerender } = render(
-      <EditableChip value={undefined} onChange={noop} />
-    );
+    const { rerender } = render(<EditableChip value={undefined} />);
 
-    rerender(<EditableChip value="lorem" onChange={noop} />);
+    rerender(<EditableChip value="lorem" />);
     userEvent.click(screen.getByRole('button'));
 
     expect(screen.getByRole('textbox')).toHaveValue('lorem');

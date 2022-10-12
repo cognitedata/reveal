@@ -14,8 +14,19 @@ describe('DataUtilsTest', () => {
     expect(DataUtils.isArray([])).toBe(true);
     expect(DataUtils.isArray({})).toBe(false);
   });
+
   it('should check if data is number', async () => {
     expect(DataUtils.isNumber('test')).toBe(false);
     expect(DataUtils.isNumber(1)).toBe(true);
+  });
+
+  describe('convertToCamelCase', () => {
+    it('works', () => {
+      expect(DataUtils.convertToCamelCase('Lorem Ipsum')).toBe('loremIpsum');
+    });
+
+    it('works when a string ends in a space', () => {
+      expect(DataUtils.convertToCamelCase('Lorem ')).toBe('lorem');
+    });
   });
 });

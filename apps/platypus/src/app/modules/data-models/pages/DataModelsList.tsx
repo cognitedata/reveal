@@ -19,7 +19,7 @@ export const DataModelsList = () => {
   const history = useHistory();
   const { t } = useTranslation('data-models');
 
-  const [createDataModel, setCreateDataModel] = useState(false);
+  const [isCreateModalVisible, setIsCreateModalVisible] = useState(false);
   const [dataModelToDelete, setDataModelToDelete] = useState<
     DataModel | undefined
   >(undefined);
@@ -118,17 +118,16 @@ export const DataModelsList = () => {
             type="primary"
             disabled={!dataModelsWriteAcl.isAclSupported}
             data-cy="create-data-model-btn"
-            onClick={() => setCreateDataModel(true)}
+            onClick={() => setIsCreateModalVisible(true)}
           >
             {t('create_data_model_btn', 'Create Data Model')}
           </Button>
         </Tooltip>
       </Flex>
       {dataModels && dataModels.length ? renderList() : renderEmptyList()}
-      <CreateDataModel
-        createDataModel={createDataModel}
-        onCancel={() => setCreateDataModel(false)}
-      />
+      {isCreateModalVisible && (
+        <CreateDataModel onCancel={() => setIsCreateModalVisible(false)} />
+      )}
       {dataModelToDelete && (
         <DeleteDataModel
           dataModel={dataModelToDelete}

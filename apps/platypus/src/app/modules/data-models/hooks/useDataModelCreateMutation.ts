@@ -11,10 +11,7 @@ export function useDataModelCreateMutation() {
 
   return useMutation<Result<DataModel>, PlatypusError, CreateDataModelDTO>(
     (dto) => {
-      return dataModelsHandler.create({
-        name: dto.name.trim(),
-        description: dto.description,
-      });
+      return dataModelsHandler.create(dto);
     },
     {
       onSuccess: (result) => {

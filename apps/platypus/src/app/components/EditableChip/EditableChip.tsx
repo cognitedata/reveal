@@ -1,4 +1,5 @@
 import { Button, Icon, Input } from '@cognite/cogs.js';
+import { HtmlElementProps } from '@platypus-app/types';
 import {
   ChangeEventHandler,
   KeyboardEventHandler,
@@ -8,26 +9,35 @@ import {
 } from 'react';
 import styled from 'styled-components';
 
-export type EditableChipProps = {
+export interface EditableChipProps
+  extends Omit<HtmlElementProps<HTMLDivElement>, 'onChange'> {
   className?: string;
   isLocked?: boolean;
-  onChange: (value: string) => void;
+  label?: string;
+  onChange?: (value: string) => void;
   placeholder?: string;
   value?: string;
-};
+}
 
-export const EditableChip = (props: EditableChipProps) => {
+export const EditableChip = ({
+  isLocked,
+  label,
+  onChange,
+  placeholder,
+  value,
+  ...rest
+}: EditableChipProps) => {
   const [isInEditMode, setIsInEditMode] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
-  const [value, setValue] = useState('');
+  const [internalValue, setInternalValue] = useState('');
 
   const handleChange: ChangeEventHandler<HTMLInputElement> = (event) => {
-    setValue(event.target.value);
+    setInternalValue(event.target.value);
   };
 
   const handleEditClick = () => {
     setIsInEditMode(true);
-    setValue(props.value || '');
+    setInternalValue(value || '');
   };
 
   const handleKeyDown: KeyboardEventHandler = (event) => {
@@ -48,8 +58,8 @@ export const EditableChip = (props: EditableChipProps) => {
   const submit = () => {
     setIsInEditMode(false);
 
-    if (value && value !== props.value) {
-      props.onChange(value);
+    if (internalValue && internalValue !== value) {
+      onChange!(internalValue);
     }
   };
 
@@ -59,27 +69,31 @@ export const EditableChip = (props: EditableChipProps) => {
     inputRef.current?.focus();
   }, [isInEditMode]);
 
-  return isInEditMode ? (
-    <StyledInput
-      className={props.className}
-      ref={inputRef}
-      onChange={handleChange}
-      onKeyDown={handleKeyDown}
-      onBlur={submit}
-      value={value}
-    />
-  ) : (
-    <Label
-      className={props.className}
-      hasValue={!!props.value}
-      isLocked={!!props.isLocked}
-    >
-      {props.value || props.placeholder}
-      {props.isLocked && <StyledIcon data-testid="icon-lock" type="Lock" />}
-      {!props.isLocked && props.value && (
-        <StyledButton icon="Edit" aria-label="Edit" onClick={handleEditClick} />
+  return (
+    <div {...rest}>
+      {isInEditMode ? (
+        <StyledInput
+          aria-label={label}
+          ref={inputRef}
+          onChange={handleChange}
+          onKeyDown={handleKeyDown}
+          onBlur={submit}
+          value={internalValue}
+        />
+      ) : (
+        <Label hasValue={!!value} isLocked={!!isLocked}>
+          {value || placeholder}
+          {isLocked && <StyledIcon data-testid="icon-lock" type="Lock" />}
+          {!isLocked && value && (
+            <StyledButton
+              icon="Edit"
+              aria-label="Edit"
+              onClick={handleEditClick}
+            />
+          )}
+        </Label>
       )}
-    </Label>
+    </div>
   );
 };
 

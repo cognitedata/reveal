@@ -15,6 +15,7 @@ export class DataUtils {
     const regex = /\s+(\w)?/gi;
 
     return input
+      .trim()
       .toLowerCase()
       .replace(regex, (match, letter) => letter.toUpperCase());
   }

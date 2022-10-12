@@ -7,6 +7,7 @@ import {
   OptionType,
   Select,
   Textarea,
+  Tooltip,
 } from '@cognite/cogs.js';
 import { ModalDialog } from '@platypus-app/components/ModalDialog/ModalDialog';
 import { Notification } from '@platypus-app/components/Notification/Notification';
@@ -14,22 +15,23 @@ import { DEFAULT_VERSION_PATH } from '@platypus-app/utils/config';
 import { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useTranslation } from '../../hooks/useTranslation';
-import { CreateDataModelModalContent } from './elements';
+import {
+  CreateDataModelModalContent,
+  NameWrapper,
+  StyledEditableChip,
+} from './elements';
 import { useDataSets } from '@platypus-app/hooks/useDataSets';
 import { DataSet } from '@cognite/sdk/dist/src/types';
 import { Spinner } from '@platypus-app/components/Spinner/Spinner';
 import { useDataModelCreateMutation } from './hooks/useDataModelCreateMutation';
+import { DataUtils } from '@platypus/platypus-core';
 
-export const CreateDataModel = ({
-  createDataModel,
-  onCancel,
-}: {
-  createDataModel: boolean;
-  onCancel: VoidFunction;
-}) => {
+export const CreateDataModel = ({ onCancel }: { onCancel: VoidFunction }) => {
   const [dataModelName, setDataModelName] = useState('');
   const [dataModelDescription, setDataModelDescription] = useState('');
   const [inputError, setInputError] = useState(false);
+  const [externalId, setExternalId] = useState('');
+  const [isExternalIdDirty, setIsExternalIdDirty] = useState(false);
   const history = useHistory();
   const { t } = useTranslation('CreateDataModelDialog');
   const dataModelCreateMutation = useDataModelCreateMutation();
@@ -52,9 +54,27 @@ export const CreateDataModel = ({
     OptionType<unknown> | undefined
   >(undefined);
 
+  const handleNameChange = (value: string) => {
+    setDataModelName(value);
+
+    if (!isExternalIdDirty) {
+      setExternalId(DataUtils.convertToCamelCase(value));
+    }
+
+    if (inputError) {
+      setInputError(false);
+    }
+  };
+
+  const handleExternalIdChange = (value: string) => {
+    setExternalId(value);
+    setIsExternalIdDirty(true);
+  };
+
   const onCreateDataModel = () => {
     dataModelCreateMutation.mutate(
       {
+        externalId,
         name: dataModelName.trim(),
         description: dataModelDescription,
       },
@@ -84,54 +104,66 @@ export const CreateDataModel = ({
 
   return (
     <ModalDialog
-      visible={createDataModel}
+      visible
       title={t('create_data_model', 'Create Data Model')}
-      onCancel={() => {
-        setInputError(false);
-        setDataModelName('');
-        setDataModelDescription('');
-        onCancel();
-      }}
-      onOk={() => onCreateDataModel()}
+      onCancel={onCancel}
+      onOk={onCreateDataModel}
       okDisabled={!dataModelName || !dataModelName.trim()}
       okButtonName={t('confirm', 'Confirm')}
       okProgress={dataModelCreateMutation.isLoading}
       okType="primary"
     >
       <CreateDataModelModalContent data-cy="create-data-model-modal">
-        <Body level={2} strong>
-          {t('modal_name_title', 'Name')}
-        </Body>
-        <Input
-          fullWidth
-          autoFocus
-          name="dataModelName"
-          data-cy="input-data-model-name"
-          value={dataModelName}
-          placeholder={t('modal_name_input_placeholder', 'Enter name')}
-          css={{}}
-          onChange={(e) => {
-            setDataModelName(e.target.value);
-            if (inputError) {
-              setInputError(false);
-            }
-          }}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter') {
-              onCreateDataModel();
-            }
-          }}
-          error={inputError}
-        />
-        <div className="input-detail">
-          {inputError && <Icon type="Warning" />}
-          <Detail>
-            {t(
-              'detail_data_model_name_unique',
-              "Data Model's name should be unique"
-            )}
-          </Detail>
-        </div>
+        <label>
+          <Body level={2} strong>
+            {t('modal_name_title', 'Name')}
+          </Body>
+          <NameWrapper>
+            <Input
+              fullWidth
+              autoFocus
+              name="dataModelName"
+              data-cy="input-data-model-name"
+              value={dataModelName}
+              placeholder={t('modal_name_input_placeholder', 'Enter name')}
+              css={{}}
+              onChange={(e) => {
+                handleNameChange(e.target.value);
+              }}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  onCreateDataModel();
+                }
+              }}
+              error={inputError}
+            />
+            <div className="input-detail">
+              {inputError && <Icon type="Warning" />}
+              <Detail>
+                {t(
+                  'detail_data_model_name_unique',
+                  "Data Model's name should be unique"
+                )}
+              </Detail>
+            </div>
+          </NameWrapper>
+        </label>
+        <Tooltip
+          content={
+            externalId
+              ? 'External ID'
+              : 'External ID automatically generated from [Name]'
+          }
+          placement="bottom"
+        >
+          <StyledEditableChip
+            data-testid="external-id-field"
+            label="External ID"
+            onChange={handleExternalIdChange}
+            placeholder="DataModel-ID"
+            value={externalId}
+          />
+        </Tooltip>
 
         <Body level={2} strong>
           {t('modal_description_title', 'Description')}
@@ -143,23 +175,9 @@ export const CreateDataModel = ({
           onChange={(e) => setDataModelDescription(e.target.value)}
           placeholder={t(
             'modal_description_textarea_placeholder',
-            'Description (optional)'
+            'Add description'
           )}
         ></Textarea>
-
-        <div
-          style={{
-            borderTop: '1px solid var(--cogs-greyscale-grey4)',
-            margin: '32px 0px 20px 0px',
-          }}
-        ></div>
-
-        <Body level={2} strong>
-          {t('modal_data_sets_title', 'Access Control')}
-        </Body>
-        <Body level={3}>
-          <em>{t('modal_data_sets_title_coming_soon', 'Coming Soon')}</em>
-        </Body>
         {/* Temporarily hidden until backend support is available */}
         {false && (
           <>
