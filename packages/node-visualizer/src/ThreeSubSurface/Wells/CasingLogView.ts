@@ -137,10 +137,10 @@ export class CasingLogView extends BaseGroupThreeView {
 
     viewInfo.addTabbedValue('Name', sample.name);
     viewInfo.addTabbedValue(
-      'Radius',
+      'Outer Diameter',
       Number.isNaN(sample.radius) || sample.radius === 0
         ? 'No casing'
-        : sample.radius.toFixed(3)
+        : (sample.radius * 2).toFixed(3)
     );
     viewInfo.addTabbedValue('Comments', sample.comments);
     viewInfo.addTabbedValue('Status comment', sample.currentStatusComment);
