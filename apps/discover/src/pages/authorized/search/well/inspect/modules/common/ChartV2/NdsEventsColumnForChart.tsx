@@ -85,6 +85,7 @@ export const NdsEventsColumnForChart: React.FC<Props> = ({
         {(isEventsLoading || isEmpty(events)) && (
           <EmptyStateWrapper>
             <EmptyState
+              hideHeading
               isLoading={isEventsLoading}
               loadingSubtitle={isEventsLoading ? LOADING_TEXT : ''}
               emptySubtitle={EMPTY_STATE_TEXT}
