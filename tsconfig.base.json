@@ -27,8 +27,7 @@
       "@platypus/platypus-common-utils": [
         "libs/platypus-common-utils/src/index.ts"
       ],
-      "@platypus/platypus-core": ["libs/platypus-core/src/index.ts"],
-      "@platypus/platypus-ui": ["libs/platypus-ui/src/index.ts"]
+      "@platypus/platypus-core": ["libs/platypus-core/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]
