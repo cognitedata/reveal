@@ -7,6 +7,7 @@ import { useTranslation } from 'common/i18n';
 import DataSetName from 'components/data-sets-list/data-set-name';
 import ExtractionPipelineName from 'components/data-sets-list/extraction-pipeline-name';
 import GovernanceStatus from 'components/data-sets-list/governance-status';
+import { useResourceAggregates } from 'hooks/useResourceAggregates';
 
 export type DataSetRow = {
   key: number;
@@ -19,6 +20,52 @@ export type DataSetRow = {
   extpipes: Extpipe[];
   writeProtected: boolean;
   archived: boolean;
+};
+
+const ResourceCountColumn = ({ dataSetId }: { dataSetId: number }) => {
+  const [
+    { data: assets },
+    { data: timeseries },
+    { data: files },
+    { data: events },
+    { data: sequences },
+  ] = useResourceAggregates(dataSetId);
+
+  const assetCount = assets?.[0]?.count || 0;
+  const timeseriesCount = timeseries?.[0]?.count || 0;
+  const filesCount = files?.[0]?.count || 0;
+  const eventsCount = events?.[0]?.count || 0;
+  const sequencesCount = sequences?.[0]?.count || 0;
+
+  return (
+    <Flex gap={8}>
+      {assetCount > 0 && (
+        <Label size="small" icon="Assets" variant="unknown">
+          {assetCount.toLocaleString()}
+        </Label>
+      )}
+      {timeseriesCount > 0 && (
+        <Label size="small" icon="Timeseries" variant="unknown">
+          {timeseriesCount.toLocaleString()}
+        </Label>
+      )}
+      {filesCount > 0 && (
+        <Label size="small" icon="Document" variant="unknown">
+          {filesCount.toLocaleString()}
+        </Label>
+      )}
+      {eventsCount > 0 && (
+        <Label size="small" icon="Events" variant="unknown">
+          {eventsCount.toLocaleString()}
+        </Label>
+      )}
+      {sequencesCount > 0 && (
+        <Label size="small" icon="Sequences" variant="unknown">
+          {sequencesCount.toLocaleString()}
+        </Label>
+      )}
+    </Flex>
+  );
 };
 
 export const getLabelsList = (dataSets: DataSet[], showArchived: boolean) => {
@@ -62,6 +109,13 @@ export const useTableColumns = () => {
         />
       ),
       defaultSortOrder: getItemFromStorage('dataset-name-column') || undefined,
+    },
+    {
+      title: t('data-overview'),
+      key: 'data-overview',
+      dataIndex: 'id',
+      width: '200px',
+      render: (value: number) => <ResourceCountColumn dataSetId={value} />,
     },
     {
       title: t('description'),
