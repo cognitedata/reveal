@@ -1,25 +1,10 @@
 import React, { useState } from 'react';
 import { Button, Input, Tooltip, Flex, Loader } from '@cognite/cogs.js';
-import {
-  AssetNodeCollection,
-  Cognite3DModel,
-  Cognite3DViewer,
-  DefaultNodeAppearance,
-  NodeOutlineColor,
-} from '@cognite/reveal';
-import { useSDK } from '@cognite/sdk-provider';
 import { AssetMappingsList } from 'app/containers/ThreeD/AssetMappingsList';
 import { useAssetMappings } from 'app/containers/ThreeD/hooks';
-import { ExpandButton } from 'app/containers/ThreeD/ThreeDToolbar';
-import {
-  getAssetMappingsByAssetId,
-  selectAssetBoundingBox,
-} from 'app/containers/ThreeD/utils';
 import styled from 'styled-components';
 
 type ThreeDSidebarProps = {
-  viewer: Cognite3DViewer | null;
-  viewerModel: Cognite3DModel | null;
   modelId?: number;
   revisionId?: number;
   selectedAssetId: number | null;
@@ -30,15 +15,11 @@ type ThreeDSidebarProps = {
 export const AssetMappingsSidebar = ({
   modelId,
   revisionId,
-  viewer,
-  viewerModel,
   selectedAssetId,
   onClose,
   setSelectedAssetId,
 }: ThreeDSidebarProps) => {
   const [query, setQuery] = useState('');
-
-  const sdk = useSDK();
 
   const { data: assetListData, isFetched } = useAssetMappings(
     modelId,
@@ -49,38 +30,7 @@ export const AssetMappingsSidebar = ({
     // Deselect current asset mappings
     if (assetId === selectedAssetId) {
       setSelectedAssetId(null);
-
-      if (viewerModel) {
-        viewerModel.removeAllStyledNodeCollections();
-        viewerModel.setDefaultNodeAppearance(DefaultNodeAppearance.Default);
-      }
-      return;
-    }
-
-    if (viewer && viewerModel) {
-      // Style related nodes
-      const assetNodes = new AssetNodeCollection(sdk, viewerModel);
-      assetNodes.executeFilter({ assetId });
-
-      viewerModel.removeAllStyledNodeCollections();
-      viewerModel.setDefaultNodeAppearance(DefaultNodeAppearance.Ghosted);
-      viewerModel.assignStyledNodeCollection(assetNodes, {
-        renderGhosted: false,
-        outlineColor: NodeOutlineColor.Cyan,
-      });
-
-      // Zoom in to view
-      const mappings = await getAssetMappingsByAssetId(
-        sdk,
-        modelId,
-        revisionId,
-        [assetId]
-      );
-      const boundingBox = await selectAssetBoundingBox(mappings, viewerModel);
-      if (boundingBox) {
-        viewer.fitCameraToBoundingBox(boundingBox);
-      }
-
+    } else {
       setSelectedAssetId(assetId);
     }
   };
@@ -96,7 +46,6 @@ export const AssetMappingsSidebar = ({
     <SidebarContainer>
       <SidebarHeader>
         <Flex direction="row" justifyContent="flex-end">
-          <ExpandButton viewer={viewer} viewerModel={viewerModel} />
           <Tooltip content="Hide">
             <Button icon="PanelLeft" onClick={onClose} aria-label="Hide" />
           </Tooltip>

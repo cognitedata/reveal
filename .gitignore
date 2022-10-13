@@ -33,3 +33,4 @@ cypress/videos
 .yalc/
 yalc.lock
 /.idea/
+/.log/
