@@ -24,11 +24,11 @@ export type DataSetRow = {
 
 const ResourceCountColumn = ({ dataSetId }: { dataSetId: number }) => {
   const [
-    { data: assets, isFetched: isAssetsFetched },
-    { data: timeseries, isFetched: isTimeseriesFetched },
-    { data: files, isFetched: isFilesFetched },
-    { data: events, isFetched: isEventsFetched },
-    { data: sequences, isFetched: isSequencesFetched },
+    { data: assets },
+    { data: timeseries },
+    { data: files },
+    { data: events },
+    { data: sequences },
   ] = useResourceAggregates(dataSetId);
 
   const assetCount = assets?.[0]?.count || 0;
@@ -37,45 +37,32 @@ const ResourceCountColumn = ({ dataSetId }: { dataSetId: number }) => {
   const eventsCount = events?.[0]?.count || 0;
   const sequencesCount = sequences?.[0]?.count || 0;
 
-  const isAllFetched =
-    isAssetsFetched &&
-    isTimeseriesFetched &&
-    isFilesFetched &&
-    isEventsFetched &&
-    isSequencesFetched;
-
   return (
     <Flex gap={8}>
-      {isAllFetched ? (
-        <>
-          {assetCount > 0 && (
-            <Label size="small" icon="Assets" variant="unknown">
-              {assetCount.toLocaleString()}
-            </Label>
-          )}
-          {timeseriesCount > 0 && (
-            <Label size="small" icon="Timeseries" variant="unknown">
-              {timeseriesCount.toLocaleString()}
-            </Label>
-          )}
-          {filesCount > 0 && (
-            <Label size="small" icon="Document" variant="unknown">
-              {filesCount.toLocaleString()}
-            </Label>
-          )}
-          {eventsCount > 0 && (
-            <Label size="small" icon="Events" variant="unknown">
-              {eventsCount.toLocaleString()}
-            </Label>
-          )}
-          {sequencesCount > 0 && (
-            <Label size="small" icon="Sequences" variant="unknown">
-              {sequencesCount.toLocaleString()}
-            </Label>
-          )}
-        </>
-      ) : (
-        <Icon type="Loader" />
+      {assetCount > 0 && (
+        <Label size="small" icon="Assets" variant="unknown">
+          {assetCount.toLocaleString()}
+        </Label>
+      )}
+      {timeseriesCount > 0 && (
+        <Label size="small" icon="Timeseries" variant="unknown">
+          {timeseriesCount.toLocaleString()}
+        </Label>
+      )}
+      {filesCount > 0 && (
+        <Label size="small" icon="Document" variant="unknown">
+          {filesCount.toLocaleString()}
+        </Label>
+      )}
+      {eventsCount > 0 && (
+        <Label size="small" icon="Events" variant="unknown">
+          {eventsCount.toLocaleString()}
+        </Label>
+      )}
+      {sequencesCount > 0 && (
+        <Label size="small" icon="Sequences" variant="unknown">
+          {sequencesCount.toLocaleString()}
+        </Label>
       )}
     </Flex>
   );
