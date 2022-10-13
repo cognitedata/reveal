@@ -2,8 +2,8 @@ import React from 'react';
 import styled from 'styled-components';
 import { Alert } from 'antd';
 import { useList } from '@cognite/sdk-react-query-hooks';
-import { Loader } from 'components/Loader/Loader';
 import { ResourceType, convertResourceType } from 'types';
+import { EmptyState } from './EmpyState/EmptyState';
 
 type Props = {
   api: ResourceType;
@@ -19,7 +19,7 @@ const ResourceAlert = styled(Alert)`
  * alert on error or if the list call is empty.
  */
 export function EnsureNonEmptyResource({ api, children }: Props) {
-  const { data, isFetched, isError } = useList(convertResourceType(api), {
+  const { data, isLoading, isError } = useList(convertResourceType(api), {
     limit: 1,
   });
 
@@ -32,8 +32,8 @@ export function EnsureNonEmptyResource({ api, children }: Props) {
       />
     );
   }
-  if (!isFetched) {
-    return <Loader />;
+  if (isLoading) {
+    return <EmptyState isLoading={isLoading} title="Loading Results" />;
   }
 
   if (data && data.length === 0) {

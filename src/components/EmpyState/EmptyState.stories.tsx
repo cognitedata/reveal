@@ -20,6 +20,19 @@ Example.args = {
   body: 'Please, refine your filters',
 };
 
+export const ExampleWithLoading: ComponentStory<typeof EmptyState> = args => {
+  return (
+    <Container>
+      <EmptyState {...args} />
+    </Container>
+  );
+};
+
+ExampleWithLoading.args = {
+  title: 'Loading Results',
+  isLoading: true,
+};
+
 const Container = styled.div`
   height: 100%;
 `;
