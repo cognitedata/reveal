@@ -291,5 +291,6 @@
   "write-protected-tooltip": "Only members of groups that you explicitly grant access, can write data to a write-protected data set.",
   "data-set-list-no-records": "No results found",
   "data-set-list-search-not-found": "The search {{$}} did not match any data sets. Please try another search.",
-  "search-by-name-description-or-label": "Search by name, description or label"
+  "search-by-name-description-or-label": "Search by name, description or label",
+  "data-overview": "Data overview"
 }
