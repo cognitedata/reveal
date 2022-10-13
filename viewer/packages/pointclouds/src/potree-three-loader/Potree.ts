@@ -19,7 +19,7 @@ import {
 } from '@reveal/rendering';
 import { EptLoader } from './loading/EptLoader';
 import { EptBinaryLoader } from './loading/EptBinaryLoader';
-import { ClipMode, OctreeMaterialParams } from '@reveal/rendering';
+import { OctreeMaterialParams } from '@reveal/rendering';
 import { PointCloudOctree } from './tree/PointCloudOctree';
 import { isGeometryNode, isTreeNode, isOptionalTreeNode } from './types/type-predicates';
 import { IPotree } from './types/IPotree';
@@ -161,8 +161,7 @@ export class Potree implements IPotree {
 
     if (
       node.level > maxLevel ||
-      !sceneParams.frustums[pointCloudIndex].intersectsBox(node.boundingBox) ||
-      this.shouldClip(pointCloud, node.boundingBox)
+        !sceneParams.frustums[pointCloudIndex].intersectsBox(node.boundingBox)
     ) {
       return;
     }
@@ -356,31 +355,6 @@ export class Potree implements IPotree {
     } else if (!pointCloud.showBoundingBox && node.boundingBoxNode) {
       node.boundingBoxNode.visible = false;
     }
-  }
-
-  private shouldClip(pointCloud: PointCloudOctree, boundingBox: Box3): boolean {
-    const material = pointCloud.material;
-
-    if (material.numClipBoxes === 0 || material.clipMode !== ClipMode.CLIP_OUTSIDE) {
-      return false;
-    }
-
-    const box2 = boundingBox.clone();
-    pointCloud.updateMatrixWorld(true);
-    box2.applyMatrix4(pointCloud.matrixWorld);
-
-    const clipBoxes = material.clipBoxes;
-    for (let i = 0; i < clipBoxes.length; i++) {
-      const clipMatrixWorld = clipBoxes[i].matrix;
-      const clipBoxWorld = new Box3(new Vector3(-0.5, -0.5, -0.5), new Vector3(0.5, 0.5, 0.5)).applyMatrix4(
-        clipMatrixWorld
-      );
-      if (box2.intersectsBox(clipBoxWorld)) {
-        return false;
-      }
-    }
-
-    return true;
   }
 
   private readonly updateVisibilityStructures = (() => {

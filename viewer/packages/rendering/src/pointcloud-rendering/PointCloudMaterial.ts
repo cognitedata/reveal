@@ -4,7 +4,6 @@
 import {
   AdditiveBlending,
   Camera,
-  Color,
   GLSL3,
   LessEqualDepth,
   NearestFilter,
@@ -20,9 +19,6 @@ import {
   COLOR_WHITE,
   DEFAULT_MAX_POINT_SIZE,
   DEFAULT_MIN_POINT_SIZE,
-  DEFAULT_RGB_BRIGHTNESS,
-  DEFAULT_RGB_CONTRAST,
-  DEFAULT_RGB_GAMMA,
   OBJECT_STYLING_TEXTURE_HEIGHT,
   OBJECT_STYLING_TEXTURE_WIDTH,
   PERSPECTIVE_CAMERA
@@ -49,7 +45,6 @@ export interface IPointCloudMaterialParameters {
 
 export interface IPointCloudMaterialUniforms {
   classificationLUT: IUniform<Texture>;
-  depthMap: IUniform<Texture | null>;
   fov: IUniform<number>;
   gradient: IUniform<Texture>;
   heightMax: IUniform<number>;
@@ -334,10 +329,7 @@ export class PointCloudMaterial extends RawShaderMaterial {
     }
 
     const uObj = this.uniforms[name];
-
-    if (uObj.type === 'c') {
-      (uObj.value as Color).copy(value as Color);
-    } else if (value !== uObj.value) {
+    if (value !== uObj.value) {
       uObj.value = value;
     }
   }

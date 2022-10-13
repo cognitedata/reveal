@@ -14,7 +14,7 @@ import {
   WebGLRenderer,
   WebGLRenderTarget
 } from 'three';
-import { ClipMode, OctreeMaterialParams, PointCloudMaterial, PointColorType, COLOR_BLACK } from '@reveal/rendering';
+import { OctreeMaterialParams, PointCloudMaterial, PointColorType, COLOR_BLACK } from '@reveal/rendering';
 import { PointCloudOctree } from './PointCloudOctree';
 import { IPointCloudTreeNode } from './IPointCloudTreeNode';
 import { PickPoint, PointCloudHit } from '../types/types';
@@ -127,7 +127,7 @@ export class PointCloudOctreePickerHelper {
         spacing: octree.pcoGeometry.spacing
       };
 
-      PointCloudOctreePickerHelper.updatePickMaterial(pickMaterial, octree.material, params);
+      PointCloudOctreePickerHelper.updatePickMaterial(pickMaterial, octree.material);
       pickMaterial.updateMaterial(octreeMaterialParams, visibilityTextureData, camera, renderer);
 
       if (params.onBeforePickRender) {
@@ -200,8 +200,7 @@ export class PointCloudOctreePickerHelper {
 
   private static updatePickMaterial(
     pickMaterial: PointCloudMaterial,
-    nodeMaterial: PointCloudMaterial,
-    params: Partial<PickParams>
+    nodeMaterial: PointCloudMaterial
   ): void {
     pickMaterial.pointSizeType = nodeMaterial.pointSizeType;
     pickMaterial.shape = nodeMaterial.shape;
@@ -209,15 +208,6 @@ export class PointCloudOctreePickerHelper {
     pickMaterial.minSize = nodeMaterial.minSize;
     pickMaterial.maxSize = nodeMaterial.maxSize;
     pickMaterial.classification = nodeMaterial.classification;
-    pickMaterial.useFilterByNormal = nodeMaterial.useFilterByNormal;
-    pickMaterial.filterByNormalThreshold = nodeMaterial.filterByNormalThreshold;
-
-    if (params.pickOutsideClipRegion) {
-      pickMaterial.clipMode = ClipMode.DISABLED;
-    } else {
-      pickMaterial.clipMode = nodeMaterial.clipMode;
-      pickMaterial.setClipBoxes(nodeMaterial.clipMode === ClipMode.CLIP_OUTSIDE ? nodeMaterial.clipBoxes : []);
-    }
   }
 
   public static updatePickRenderTarget(pickState: IPickState, width: number, height: number): void {
