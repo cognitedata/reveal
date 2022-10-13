@@ -125,7 +125,7 @@ export const useTableColumns = () => {
     },
     {
       title: t('data-overview'),
-      key: '1',
+      key: 'data-overview',
       dataIndex: 'id',
       width: '200px',
       render: (value: number) => <ResourceCountColumn dataSetId={value} />,
