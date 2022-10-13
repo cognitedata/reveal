@@ -1,5 +1,4 @@
 import {
-  Box3,
   Camera,
   Frustum,
   Matrix4,
@@ -159,10 +158,7 @@ export class Potree implements IPotree {
 
     const maxLevel = pointCloud.maxLevel !== undefined ? pointCloud.maxLevel : Infinity;
 
-    if (
-      node.level > maxLevel ||
-        !sceneParams.frustums[pointCloudIndex].intersectsBox(node.boundingBox)
-    ) {
+    if (node.level > maxLevel || !sceneParams.frustums[pointCloudIndex].intersectsBox(node.boundingBox)) {
       return;
     }
 

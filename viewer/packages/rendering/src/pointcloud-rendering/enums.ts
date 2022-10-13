@@ -22,5 +22,5 @@ export enum PointColorType {
   Lod = 6,
   LevelOfDetail = 6,
   PointIndex = 7,
-  Classification = 8,
+  Classification = 8
 }

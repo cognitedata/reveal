@@ -24,11 +24,7 @@ import {
   PERSPECTIVE_CAMERA
 } from './constants';
 import { DEFAULT_CLASSIFICATION } from './classification';
-import {
-  PointColorType,
-  PointShape,
-  PointSizeType
-} from './enums';
+import { PointColorType, PointShape, PointSizeType } from './enums';
 import { generateClassificationTexture, generateDataTexture, generateGradientTexture } from './texture-generation';
 import { PointClassification, IUniform, OctreeMaterialParams } from './types';
 import { SpectralGradient } from './gradients/SpectralGradient';
@@ -88,7 +84,7 @@ const COLOR_DEFS = {
   [PointColorType.Intensity]: 'color_type_intensity',
   [PointColorType.Lod]: 'color_type_lod',
   [PointColorType.PointIndex]: 'color_type_point_index',
-  [PointColorType.Classification]: 'color_type_classification',
+  [PointColorType.Classification]: 'color_type_classification'
 };
 
 export class PointCloudMaterial extends RawShaderMaterial {
@@ -140,7 +136,7 @@ export class PointCloudMaterial extends RawShaderMaterial {
     spacing: makeUniform('f', 1.0),
     // @ts-ignore
     visibleNodes: makeUniform('t', this.visibleNodesTexture || new Texture()),
-    vnStart: makeUniform('f', 0.0),
+    vnStart: makeUniform('f', 0.0)
   };
 
   @uniform('fov') fov!: number;

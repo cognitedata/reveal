@@ -198,10 +198,7 @@ export class PointCloudOctreePickerHelper {
     return tempNodes;
   }
 
-  private static updatePickMaterial(
-    pickMaterial: PointCloudMaterial,
-    nodeMaterial: PointCloudMaterial
-  ): void {
+  private static updatePickMaterial(pickMaterial: PointCloudMaterial, nodeMaterial: PointCloudMaterial): void {
     pickMaterial.pointSizeType = nodeMaterial.pointSizeType;
     pickMaterial.shape = nodeMaterial.shape;
     pickMaterial.size = nodeMaterial.size;
