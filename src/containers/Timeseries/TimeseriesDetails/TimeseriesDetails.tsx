@@ -1,70 +1,46 @@
 import React from 'react';
 import { Timeseries } from '@cognite/sdk';
-import {
-  DetailsTabGrid,
-  DetailsTabItem,
-  TimeDisplay,
-  DataSetItem,
-  AssetsItem,
-} from 'components';
+import { GeneralDetails, TimeDisplay } from 'components';
 import { TimeseriesLastReading } from '../TimeseriesLastReading/TimeseriesLastReading';
 
 export function TimeseriesDetails({ timeseries }: { timeseries: Timeseries }) {
   return (
-    <DetailsTabGrid>
-      <DetailsTabItem name="Name" value={timeseries.name} copyable />
-      <DetailsTabItem name="Description" value={timeseries.description} />
-      <DetailsTabItem name="Unit" value={timeseries.unit} />
-      <DetailsTabItem name="ID" value={timeseries.id} copyable />
-      <DetailsTabItem
+    <GeneralDetails>
+      <GeneralDetails.Item name="Name" value={timeseries.name} copyable />
+      <GeneralDetails.Item name="Description" value={timeseries.description} />
+      <GeneralDetails.Item name="Unit" value={timeseries.unit} />
+      <GeneralDetails.Item name="ID" value={timeseries.id} copyable />
+      <GeneralDetails.Item
         name="External ID"
         value={timeseries.externalId}
         copyable
       />
-      <DetailsTabItem
+      <GeneralDetails.Item
         name="Is String"
         value={timeseries.isString ? 'True' : 'False'}
       />
-      <DetailsTabItem
+      <GeneralDetails.Item
         name="Is Step"
         value={timeseries.isStep ? 'True' : 'False'}
       />
-      <DataSetItem id={timeseries.id} type="timeSeries" />
-      <AssetsItem
+      <GeneralDetails.DataSetItem id={timeseries.id} type="timeSeries" />
+      <GeneralDetails.AssetsItem
         assetIds={timeseries.assetId ? [timeseries.assetId] : undefined}
         linkId={timeseries.id}
         type="timeSeries"
       />
-      <DetailsTabItem
+      <GeneralDetails.Item
         name="Created at"
-        value={
-          timeseries ? (
-            <TimeDisplay value={timeseries.createdTime} />
-          ) : (
-            'Loading...'
-          )
-        }
+        value={<TimeDisplay value={timeseries.createdTime} />}
       />
-      <DetailsTabItem
+      <GeneralDetails.Item
         name="Updated at"
-        value={
-          timeseries ? (
-            <TimeDisplay value={timeseries.lastUpdatedTime} />
-          ) : (
-            'Loading...'
-          )
-        }
+        value={<TimeDisplay value={timeseries.lastUpdatedTime} />}
       />
-      <DetailsTabItem
+      <GeneralDetails.Item
         name="Last reading"
-        value={
-          timeseries ? (
-            <TimeseriesLastReading timeseriesId={timeseries.id} />
-          ) : (
-            'Loading...'
-          )
-        }
+        value={<TimeseriesLastReading timeseriesId={timeseries.id} />}
       />
-    </DetailsTabGrid>
+    </GeneralDetails>
   );
 }

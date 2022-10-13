@@ -1,41 +1,28 @@
 import React from 'react';
 import { Asset } from '@cognite/sdk';
-import {
-  TimeDisplay,
-  DetailsTabGrid,
-  DetailsTabItem,
-  DataSetItem,
-  Label,
-} from 'components';
+import { TimeDisplay, GeneralDetails } from 'components';
 
 type Props = {
   asset: Asset;
 };
 
 export const AssetDetails = ({ asset }: Props) => (
-  <DetailsTabGrid>
-    <DetailsTabItem name="Name" value={asset.name} copyable />
-    <DetailsTabItem name="Description" value={asset.description} />
-    <DetailsTabItem name="ID" value={asset.id} copyable />
-    <DetailsTabItem name="External ID" value={asset.externalId} copyable />
-    <DataSetItem id={asset.id} type="asset" />
-    <DetailsTabItem
+  <GeneralDetails>
+    <GeneralDetails.Item name="Name" value={asset.name} copyable />
+    <GeneralDetails.Item name="Description" value={asset.description} />
+    <GeneralDetails.Item name="ID" value={asset.id} copyable />
+    <GeneralDetails.Item name="External ID" value={asset.externalId} copyable />
+    <GeneralDetails.DataSetItem id={asset.id} type="asset" />
+    <GeneralDetails.Item
       name="Created at"
-      value={asset ? <TimeDisplay value={asset.createdTime} /> : 'Loading...'}
+      value={<TimeDisplay value={asset.createdTime} />}
     />
-    <DetailsTabItem
+    <GeneralDetails.Item
       name="Updated at"
-      value={
-        asset ? <TimeDisplay value={asset.lastUpdatedTime} /> : 'Loading...'
-      }
+      value={<TimeDisplay value={asset.lastUpdatedTime} />}
     />
-    <DetailsTabItem
-      name="Labels"
-      value={
-        asset.labels
-          ? asset.labels.map(label => <Label>{label.externalId}</Label>)
-          : undefined
-      }
+    <GeneralDetails.LabelsItem
+      labels={asset.labels?.map(label => label.externalId)}
     />
-  </DetailsTabGrid>
+  </GeneralDetails>
 );

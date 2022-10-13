@@ -1,34 +1,26 @@
 import React from 'react';
 import { FileInfo } from '@cognite/sdk';
-import {
-  TimeDisplay,
-  DetailsTabGrid,
-  DetailsTabItem,
-  DataSetItem,
-  AssetsItem,
-  Label,
-} from 'components';
+import { TimeDisplay, GeneralDetails } from 'components';
 
 export const FileDetails = ({ file }: { file: FileInfo }) => (
-  <DetailsTabGrid>
-    <DetailsTabItem name="Name" value={file.name} copyable />
-    <DetailsTabItem name="ID" value={file.id} copyable />
-    <DetailsTabItem name="External ID" value={file.externalId} copyable />
-    <DetailsTabItem name="Source" value={file.source} />
-    <DetailsTabItem name="MIME type" value={file.mimeType} />
-    <DataSetItem id={file.id} type="file" />
-    <AssetsItem assetIds={file.assetIds} linkId={file.id} type="file" />
-    <DetailsTabItem
-      name="Labels"
-      value={
-        file.labels
-          ? file.labels.map(label => <Label>{label.externalId}</Label>)
-          : undefined
-      }
+  <GeneralDetails>
+    <GeneralDetails.Item name="Name" value={file.name} copyable />
+    <GeneralDetails.Item name="ID" value={file.id} copyable />
+    <GeneralDetails.Item name="External ID" value={file.externalId} copyable />
+    <GeneralDetails.Item name="Source" value={file.source} />
+    <GeneralDetails.Item name="MIME type" value={file.mimeType} />
+    <GeneralDetails.DataSetItem id={file.id} type="file" />
+    <GeneralDetails.AssetsItem
+      assetIds={file.assetIds}
+      linkId={file.id}
+      type="file"
     />
-    <DetailsTabItem
+    <GeneralDetails.LabelsItem
+      labels={file.labels?.map(label => label.externalId)}
+    />
+    <GeneralDetails.Item
       name="Uploaded at"
-      value={file ? <TimeDisplay value={file.uploadedTime} /> : 'Loading...'}
+      value={<TimeDisplay value={file.uploadedTime} />}
     />
-  </DetailsTabGrid>
+  </GeneralDetails>
 );

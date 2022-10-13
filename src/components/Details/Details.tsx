@@ -1,182 +1,42 @@
 import React from 'react';
-import Typography from 'antd/lib/typography';
 import styled from 'styled-components';
-import { Body, Colors, Icon, A, toast } from '@cognite/cogs.js';
-import { List } from 'antd';
-import { useCdfItem } from '@cognite/sdk-react-query-hooks';
-import { convertResourceType, ResourceType } from 'types';
-import { DataSet } from '@cognite/sdk';
-import { createLink } from '@cognite/cdf-utilities';
+import { Title } from '@cognite/cogs.js';
+import {
+  AssetItem,
+  AssetsItem,
+  DataSetItem,
+  DetailsItem,
+  LabelsItem,
+} from './DetailsItem';
 
-const { Text } = Typography;
-
-export const DetailsTabGrid = ({
+export const GeneralDetails = ({
   children,
 }: {
   children: React.ReactNode[];
 }) => (
-  <GridContainer>
-    <List
-      grid={{
-        gutter: 16,
-        xs: 1,
-        sm: 2,
-        md: 2,
-        lg: 3,
-        xl: 3,
-        xxl: 5,
-      }}
-      dataSource={children}
-      renderItem={item => <List.Item>{item}</List.Item>}
-    />
-  </GridContainer>
+  <GeneralDetailsCard>
+    <GeneralDetailsHeader>
+      <Title level={5}>General</Title>
+    </GeneralDetailsHeader>
+    <GeneralDetailsContent>{children}</GeneralDetailsContent>
+  </GeneralDetailsCard>
 );
+GeneralDetails.Item = DetailsItem;
+GeneralDetails.DataSetItem = DataSetItem;
+GeneralDetails.AssetsItem = AssetsItem;
+GeneralDetails.AssetItem = AssetItem;
+GeneralDetails.LabelsItem = LabelsItem;
 
-export const DetailsTabItem = ({
-  name,
-  value,
-  copyable = false,
-  link,
-}: {
-  name: string;
-  value?: any;
-  copyable?: boolean;
-  link?: string;
-}) => (
-  <div>
-    <Name>{name}</Name>
-    {value ? (
-      <Value
-        copyable={
-          !!value && copyable
-            ? {
-                icon: (
-                  <Icon
-                    onClick={() => toast.success('Copied to clipboard')}
-                    type="Copy"
-                  />
-                ),
-                tooltips: false,
-              }
-            : false
-        }
-      >
-        {link ? (
-          <A href={link} target="_blank" rel="noopener">
-            {value}
-          </A>
-        ) : (
-          value
-        )}
-      </Value>
-    ) : (
-      <em>Not set</em>
-    )}
-  </div>
-);
-
-export const DataSetItem = ({
-  id,
-  type,
-}: {
-  id: number;
-  type: ResourceType;
-}) => {
-  const { data: item, isFetched } = useCdfItem<{ dataSetId?: number }>(
-    convertResourceType(type),
-    { id }
-  );
-  const { data: ds } = useCdfItem<DataSet>(
-    'datasets',
-    { id: item?.dataSetId! },
-    {
-      enabled: isFetched && Number.isFinite(item?.dataSetId),
-    }
-  );
-
-  if (isFetched && item) {
-    return (
-      <DetailsTabItem
-        name="Data set"
-        value={ds?.name || item?.dataSetId}
-        link={
-          item.dataSetId
-            ? createLink(`/data-sets/data-set/${item.dataSetId}`)
-            : undefined
-        }
-      />
-    );
-  }
-
-  return null;
-};
-
-export const AssetsItem = ({
-  assetIds,
-  linkId,
-  type,
-}: {
-  assetIds: number[] | undefined;
-  linkId: number;
-  type: ResourceType;
-}) => {
-  if (assetIds) {
-    if (assetIds.length === 1) {
-      return <AssetItem id={assetIds[0]} />;
-    }
-    const assetsLink = createLink(
-      window.location.pathname.includes('/search')
-        ? `/explore/search/${type}/${linkId}/asset`
-        : `/explore/${type}/${linkId}/asset`
-    );
-    const assetsLinkText = `${assetIds.length} assets`;
-    return (
-      <DetailsTabItem
-        name="Linked asset(s)"
-        value={assetsLinkText}
-        link={assetsLink}
-      />
-    );
-  }
-  return <DetailsTabItem name="Linked asset(s)" />;
-};
-
-export const AssetItem = ({ id }: { id: number }) => {
-  const { data: item, isFetched } = useCdfItem<{ name?: string }>('assets', {
-    id,
-  });
-
-  if (isFetched && item) {
-    return (
-      <DetailsTabItem
-        name="Linked asset(s)"
-        value={item.name}
-        link={createLink(`/explore/asset/${id}`)}
-      />
-    );
-  }
-
-  return null;
-};
-
-const GridContainer = styled.div`
-  padding: 20px 16px;
+const GeneralDetailsCard = styled.div`
+  background-color: var(--cogs-surface--medium);
+  border-radius: 8px;
 `;
 
-const Name = styled(Body)`
-  font-size: 14px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+const GeneralDetailsHeader = styled.div`
+  border-bottom: 1px solid var(--cogs-border--muted);
+  padding: 16px 12px;
 `;
 
-const Value = styled(Text)`
-  font-size: 16px;
-`;
-
-export const Label = styled.span`
-  background-color: ${Colors['greyscale-grey3'].hex()};
-  padding: 5px;
-  margin-right: 5px;
-  border-radius: 4px;
+const GeneralDetailsContent = styled.div`
+  padding: 12px;
 `;

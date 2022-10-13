@@ -1,40 +1,30 @@
 import React from 'react';
 import { Sequence } from '@cognite/sdk';
-import {
-  TimeDisplay,
-  DetailsTabGrid,
-  DetailsTabItem,
-  DataSetItem,
-  AssetsItem,
-} from 'components';
+import { TimeDisplay, GeneralDetails } from 'components';
 
 export const SequenceDetails = ({ sequence }: { sequence: Sequence }) => (
-  <DetailsTabGrid>
-    <DetailsTabItem name="Name" value={sequence.name} copyable />
-    <DetailsTabItem name="Description" value={sequence.description} />
-    <DetailsTabItem name="ID" value={sequence.id} copyable />
-    <DetailsTabItem name="External ID" value={sequence.externalId} copyable />
-    <DataSetItem id={sequence.id} type="sequence" />
-    <AssetsItem
+  <GeneralDetails>
+    <GeneralDetails.Item name="Name" value={sequence.name} copyable />
+    <GeneralDetails.Item name="Description" value={sequence.description} />
+    <GeneralDetails.Item name="ID" value={sequence.id} copyable />
+    <GeneralDetails.Item
+      name="External ID"
+      value={sequence.externalId}
+      copyable
+    />
+    <GeneralDetails.DataSetItem id={sequence.id} type="sequence" />
+    <GeneralDetails.AssetsItem
       assetIds={sequence.assetId ? [sequence.assetId] : undefined}
       linkId={sequence.id}
       type="sequence"
     />
-    <DetailsTabItem
+    <GeneralDetails.Item
       name="Created at"
-      value={
-        sequence ? <TimeDisplay value={sequence.createdTime} /> : 'Loading...'
-      }
+      value={<TimeDisplay value={sequence.createdTime} />}
     />
-    <DetailsTabItem
+    <GeneralDetails.Item
       name="Updated at"
-      value={
-        sequence ? (
-          <TimeDisplay value={sequence.lastUpdatedTime} />
-        ) : (
-          'Loading...'
-        )
-      }
+      value={<TimeDisplay value={sequence.lastUpdatedTime} />}
     />
-  </DetailsTabGrid>
+  </GeneralDetails>
 );

@@ -34,6 +34,11 @@ export const assets: Asset[] = [
     },
     source: 'some source',
     id: 354247832298988,
+    labels: [
+      { externalId: 'BEST_DAY_NETWORK_LEVEL_COUNTRY' },
+      { externalId: 'SOME_LABEL' },
+      { externalId: 'ANOTHER_VERY_VERY_VERY_VERY_VERY_LOOOOOOOOOONG_ONE' },
+    ],
   },
   {
     createdTime: new Date(1649079372960),

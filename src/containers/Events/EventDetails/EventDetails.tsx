@@ -1,39 +1,35 @@
 import React from 'react';
 import { CogniteEvent } from '@cognite/sdk';
-import {
-  TimeDisplay,
-  DetailsTabGrid,
-  DetailsTabItem,
-  DataSetItem,
-  AssetsItem,
-} from 'components';
+import { TimeDisplay, GeneralDetails } from 'components';
 
 export const EventDetails = ({ event }: { event: CogniteEvent }) => (
-  <DetailsTabGrid>
-    <DetailsTabItem name="Type" value={event.type} copyable />
-    <DetailsTabItem name="Sub type" value={event.subtype} copyable />
-    <DetailsTabItem name="Description" value={event.description} />
-    <DetailsTabItem name="ID" value={event.id} copyable />
-    <DetailsTabItem name="External ID" value={event.externalId} copyable />
-    <DetailsTabItem
+  <GeneralDetails>
+    <GeneralDetails.Item name="Type" value={event.type} copyable />
+    <GeneralDetails.Item name="Sub type" value={event.subtype} copyable />
+    <GeneralDetails.Item name="Description" value={event.description} />
+    <GeneralDetails.Item name="ID" value={event.id} copyable />
+    <GeneralDetails.Item name="External ID" value={event.externalId} copyable />
+    <GeneralDetails.Item
       name="Start time"
-      value={event ? <TimeDisplay value={event.startTime} /> : 'Loading...'}
+      value={<TimeDisplay value={event.startTime} />}
     />
-    <DetailsTabItem
+    <GeneralDetails.Item
       name="End time"
-      value={event ? <TimeDisplay value={event.endTime} /> : 'Loading...'}
+      value={<TimeDisplay value={event.endTime} />}
     />
-    <DataSetItem id={event.id} type="event" />
-    <AssetsItem assetIds={event.assetIds} linkId={event.id} type="event" />
-    <DetailsTabItem
+    <GeneralDetails.DataSetItem id={event.id} type="event" />
+    <GeneralDetails.AssetsItem
+      assetIds={event.assetIds}
+      linkId={event.id}
+      type="event"
+    />
+    <GeneralDetails.Item
       name="Created at"
-      value={event ? <TimeDisplay value={event.createdTime} /> : 'Loading...'}
+      value={<TimeDisplay value={event.createdTime} />}
     />
-    <DetailsTabItem
+    <GeneralDetails.Item
       name="Updated at"
-      value={
-        event ? <TimeDisplay value={event.lastUpdatedTime} /> : 'Loading...'
-      }
+      value={<TimeDisplay value={event.lastUpdatedTime} />}
     />
-  </DetailsTabGrid>
+  </GeneralDetails>
 );
