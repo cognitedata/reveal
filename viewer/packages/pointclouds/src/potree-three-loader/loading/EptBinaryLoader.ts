@@ -131,9 +131,6 @@ function createGeometryFromEptData(data: ParsedEptData): THREE.BufferGeometry {
   addAttributeIfPresent<Uint8Array>(Uint8Array, 'color', 4, data.color, true);
   addAttributeIfPresent<Float32Array>(Float32Array, 'intensity', 1, data.intensity);
   addAttributeIfPresent<Uint8Array>(Uint8Array, 'classification', 1, data.classification);
-  addAttributeIfPresent<Uint8Array>(Uint8Array, 'return number', 1, data.returnNumber);
-  addAttributeIfPresent<Uint8Array>(Uint8Array, 'number of returns', 1, data.numberOfReturns);
-  addAttributeIfPresent<Uint16Array>(Uint16Array, 'source id', 1, data.pointSourceId);
   addAttributeIfPresent<Uint16Array>(Uint16Array, 'objectId', 1, data.objectId);
 
   geometry.attributes.indices.normalized = true;
