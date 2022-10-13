@@ -2,7 +2,17 @@
   "extends": [
     "config:base"
   ],
+  "timezone": "Europe/Oslo",
   "packageRules": [
+    {
+      "matchPackagePrefixes": [
+        ""
+      ],
+      // Prepare Renovate PRs before office hours
+      "schedule": [
+        "after 6am and before 9am every weekday"
+      ]
+    },
     {
       "matchPackagePrefixes": [
         "@cognite/sdk-",
@@ -31,7 +41,8 @@
       ],
       "addLabels": [
         "dependencies",
-        "auto-update"
+        "auto-update",
+        "slack"
       ],
       "prConcurrentLimit": 5
     },
@@ -48,13 +59,19 @@
         "pin",
         "digest"
       ],
-      "stabilityDays": 4
+      // Hold back creating PRs until version is 4 days old
+      // https://docs.renovatebot.com/configuration-options/#suppress-branchpr-creation-for-x-days
+      "stabilityDays": 4,
+      "internalChecksFilter": "strict"
     },
     {
       "matchUpdateTypes": [
         "major"
       ],
-      "stabilityDays": 10
+      "stabilityDays": 10,
+      // Hold back creating PRs until version is 10 days old
+      // https://docs.renovatebot.com/configuration-options/#suppress-branchpr-creation-for-x-days
+      "internalChecksFilter": "strict"
     }
   ]
 }

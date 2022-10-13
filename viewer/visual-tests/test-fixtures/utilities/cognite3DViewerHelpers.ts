@@ -2,7 +2,7 @@
  * Copyright 2022 Cognite AS
  */
 
-import { createApplicationSDK } from '../../../test-utilities/src/appUtils';
+import { getApplicationSDK } from '../../../test-utilities/src/appUtils';
 import { AddModelOptions, Cognite3DModel, Cognite3DViewer, OnLoadingCallback } from '../../../packages/api';
 import { CogniteClient } from '@cognite/sdk';
 import { CognitePointCloudModel } from '../../../packages/pointclouds';
@@ -12,12 +12,7 @@ export async function createCognite3DViewer(onLoading: OnLoadingCallback = () =>
   const urlParams = new URLSearchParams(queryString);
 
   if (urlParams.has('modelId') && urlParams.has('revisionId')) {
-    const client = await createApplicationSDK('reveal.example.simple', {
-      project: '3d-test',
-      cluster: 'greenfield',
-      clientId: 'a03a8caf-7611-43ac-87f3-1d493c085579',
-      tenantId: '20a88741-8181-4275-99d9-bd4451666d6e'
-    });
+    const client = await getApplicationSDK(urlParams);
 
     return new Cognite3DViewer({ sdk: client, logMetrics: false, onLoading });
   }

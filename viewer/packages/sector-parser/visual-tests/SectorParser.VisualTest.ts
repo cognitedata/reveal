@@ -62,7 +62,6 @@ export default class SectorParserVisualTestFixture extends SimpleVisualTestFixtu
         const geometries = await loader.parseSector(element);
         geometries.forEach(result => {
           const material = materialMap.get(result.type)!;
-
           const mesh = new THREE.Mesh(result.geometryBuffer, material);
           mesh.frustumCulled = false;
           mesh.onBeforeRender = () => {

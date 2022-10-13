@@ -47,6 +47,7 @@ export { CogniteModelBase, SupportedModelTypes } from './packages/model-base';
 export {
   IndexSet,
   NumericRange,
+  BeforeSceneRenderedDelegate,
   SceneRenderedDelegate,
   PointerEventDelegate,
   DisposedDelegate
@@ -54,3 +55,4 @@ export {
 
 export { Cognite3DModel, BoundingBoxClipper, GeometryFilter, WellKnownUnit } from './packages/cad-model';
 export { CognitePointCloudModel } from './packages/pointclouds';
+export { Image360Entity } from './packages/360-images';

@@ -20,7 +20,16 @@ export type PointerEventData = { offsetX: number; offsetY: number; button?: numb
 export type DisposedDelegate = () => void;
 
 /**
- * Delegate for rendering events.
+ * Delegate for event triggered when scene is about to be rendered.
+ */
+export type BeforeSceneRenderedDelegate = (event: {
+  frameNumber: number;
+  renderer: THREE.WebGLRenderer;
+  camera: THREE.PerspectiveCamera;
+}) => void;
+
+/**
+ * Delegate for event triggered when scene has been rendered.
  * @module @cognite/reveal
  */
 export type SceneRenderedDelegate = (event: {
