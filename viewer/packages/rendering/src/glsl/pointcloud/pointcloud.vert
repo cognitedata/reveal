@@ -83,7 +83,7 @@ out vec3 vColor;
 	out float vLogDepth;
 #endif
 
-#if defined(weighted_splats) || defined(paraboloid_point_shape)
+#if defined(weighted_splats) || defined(paraboloid_point_shape) || defined(hq_depth_pass)
 	out float vRadius;
 #endif
 
@@ -265,7 +265,7 @@ void main() {
 	pointSize = max(minSize, pointSize);
 	pointSize = min(maxSize, pointSize);
 
-	#if defined(weighted_splats) || defined(paraboloid_point_shape)
+	#if defined(weighted_splats) || defined(paraboloid_point_shape) || defined(hq_depth_pass)
 		vRadius = pointSize / projFactor;
 	#endif
 
@@ -317,6 +317,15 @@ void main() {
 	// ---------------------
 	// CLIPPING
 	// ---------------------
+        #if defined hq_depth_pass
+                float originalDepth = gl_Position.w;
+                float adjustedDepth = originalDepth + 2.0 * vRadius;
+                float adjust = adjustedDepth / originalDepth;
+
+                mvPosition.xyz = mvPosition.xyz * adjust;
+                gl_Position = projectionMatrix * mvPosition;
+       #endif
+
 
         if (isClipped((modelViewMatrix * vec4(position, 1.0)).xyz)) {
                 gl_Position = vec4(1000.0, 1000.0, 1000.0, 1.0);

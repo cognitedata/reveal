@@ -160,6 +160,7 @@ export class PointCloudMaterial extends RawShaderMaterial {
   @uniform('spacing') spacing!: number;
 
   @requiresShaderUpdate() weighted: boolean = false;
+  @requiresShaderUpdate() hqDepthPass: boolean = false;
   @requiresShaderUpdate() pointColorType: PointColorType = PointColorType.Rgb;
   @requiresShaderUpdate() pointSizeType: PointSizeType = PointSizeType.Adaptive;
   @requiresShaderUpdate() useEDL: boolean = false;
@@ -274,6 +275,10 @@ export class PointCloudMaterial extends RawShaderMaterial {
 
     if (this.weighted) {
       define('weighted_splats');
+    }
+
+    if (this.hqDepthPass) {
+      define('hq_depth_pass');
     }
 
     define(`OBJECT_STYLING_TEXTURE_WIDTH ${OBJECT_STYLING_TEXTURE_WIDTH}`);
