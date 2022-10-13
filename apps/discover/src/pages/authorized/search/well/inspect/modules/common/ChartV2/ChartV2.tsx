@@ -191,6 +191,7 @@ const ChartV2 = React.forwardRef(
       }
 
       const visibleYValues = findVisibleYTicksValues(graph);
+      const interval = visibleYValues[1] - visibleYValues[0];
 
       // Change the graph position to match the events by depth column.
       const [max, min] = maxMin(visibleYValues);
@@ -198,7 +199,7 @@ const ChartV2 = React.forwardRef(
       setYRange((prevState) => {
         const [prevMax, prevMin] = prevState;
         if (prevMax !== max || prevMin !== min) {
-          return [max, min];
+          return [max + interval, min - interval];
         }
 
         return prevState;
