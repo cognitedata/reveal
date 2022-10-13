@@ -17,7 +17,6 @@ import { DataSetsContextProvider } from 'context';
 import AccessCheck from 'AccessCheck';
 import { translations } from 'common/i18n';
 import { FlagProvider } from '@cognite/react-feature-flags';
-import styled from 'styled-components';
 
 const DataSetsList = lazy(() => import('pages/DataSetsList/DataSetsList'));
 const DataSetDetails = lazy(
@@ -64,11 +63,7 @@ const App = () => {
                             />
                             <Route
                               path="/:tenant/:appPath/data-set/:dataSetId"
-                              element={
-                                <PageWrapper>
-                                  <DataSetDetails />
-                                </PageWrapper>
-                              }
+                              element={<DataSetDetails />}
                             />
                           </Routes>
                         </AccessCheck>
@@ -86,11 +81,11 @@ const App = () => {
   );
 };
 
-const PageWrapper = styled.div`
-  padding: 20px;
-  @media (min-width: 992px) {
-    padding: 20px 50px;
-  }
-`;
+// const PageWrapper = styled.div`
+//   padding: 20px;
+//   @media (min-width: 992px) {
+//     padding: 20px 50px;
+//   }
+// `;
 
 export default App;

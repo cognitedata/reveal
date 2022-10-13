@@ -1,34 +1,36 @@
 import { useState } from 'react';
+import styled from 'styled-components';
 import { useParams } from 'react-router-dom';
-import { getContainer } from 'utils/shared';
+import { usePermissions } from '@cognite/sdk-react-query-hooks';
+import { getFlow } from '@cognite/cdf-sdk-singleton';
 
-import NewHeader from 'components/NewHeader';
+import { notification } from 'antd';
 import Spin from 'antd/lib/spin';
 import Card from 'antd/lib/card';
 import Row from 'antd/lib/row';
 import Col from 'antd/lib/col';
-import { Button, Tooltip } from '@cognite/cogs.js';
-import theme from 'styles/theme';
 import Tabs from 'antd/lib/tabs';
+import { Button, Tooltip, Colors, Title, Flex } from '@cognite/cogs.js';
+
+import DataSetEditor from 'pages/DataSetEditor';
 import ExploreData from 'components/ExploreData';
 import Lineage from 'components/Lineage';
 import DocumentationsTab from 'components/DocumentationsTab';
 import AccessControl from 'components/AccessControl';
-import { SeperatorLine, DetailsPane } from 'utils/styledComponents';
-import DataSetEditor from 'pages/DataSetEditor';
-import { notification } from 'antd';
 import BasicInfoCard from 'components/BasicInfoCard';
 import { ErrorMessage } from 'components/ErrorMessage/ErrorMessage';
-import { usePermissions } from '@cognite/sdk-react-query-hooks';
-import { getFlow } from '@cognite/cdf-sdk-singleton';
+import DatasetTopBar from 'components/dataset-detail-topbar/DatasetTopBar';
+
+import { useTranslation } from 'common/i18n';
+import { ContentView, DetailsPane, getContainer } from 'utils';
+
 import {
   DataSetWithExtpipes,
   useDataSetWithExtpipes,
   useUpdateDataSetVisibility,
 } from '../../actions/index';
 import { useSelectedDataSet } from '../../context/index';
-import { useTranslation } from 'common/i18n';
-import { DATASET_HELP } from 'utils/constants';
+import TabTitle from './TabTitle';
 
 const { TabPane } = Tabs;
 
@@ -174,73 +176,142 @@ const DataSetDetails = (): JSX.Element => {
 
   if (dataSet) {
     const actions = (
-      <div>
+      <>
         {editButton}
         {editDrawer}
         {dataSet.metadata.archived ? restoreButton : archiveButton}
-      </div>
+      </>
     );
 
     return (
       <div>
-        <NewHeader
-          title={dataSet.name}
-          ornamentColor={theme.specificTitleOrnamentColor}
-          help={DATASET_HELP}
-          rightItem={actions}
-        />
-        <div style={{ alignItems: 'center', display: 'flex' }} />
-        <Card loading={loading && !dataSet}>
-          <Row>
-            <Col md={6} xs={24}>
-              <BasicInfoCard dataSet={dataSet} />
-            </Col>
-            <Col md={1} xs={0}>
-              <SeperatorLine />
-            </Col>
-            <Col md={17} xs={24}>
-              <DetailsPane>
-                <Tabs animated={false} defaultActiveKey="1" size="large">
-                  <TabPane tab={t('tab-explore-data-uppercase')} key="1">
-                    <ExploreData
-                      loading={loading}
-                      dataSetId={Number(dataSetId)}
-                    />
-                  </TabPane>
-                  <TabPane tab={t('tab-lineage-uppercase')} key="2">
-                    <Lineage
-                      dataSetWithExtpipes={
-                        dataSetWithExtpipes as DataSetWithExtpipes
-                      }
-                      isExtpipesFetched={isExtpipesFetched}
-                    />
-                  </TabPane>
-                  <TabPane tab={t('tab-documentation-uppercase')} key="3">
-                    <DocumentationsTab dataSet={dataSet} />
-                  </TabPane>
-                  <TabPane tab={t('tab-access-control-uppercase')} key="4">
-                    <AccessControl
-                      dataSetId={dataSet.id}
-                      writeProtected={dataSet.writeProtected}
-                    />
-                  </TabPane>
-                </Tabs>
-              </DetailsPane>
-            </Col>
-          </Row>
-        </Card>
+        <DatasetTopBar dataset={dataSet} actions={actions} />
+        <StyledDivider />
+        <DetailsPane>
+          <Tabs animated={false} defaultActiveKey="1" size="large">
+            <TabPane
+              tab={<TabTitle title={t('tab-overview')} iconType="Info" />}
+              key="1"
+            >
+              <Row style={{ padding: 12 }}>
+                <Col span={15}>
+                  <Row>
+                    <Col span={24}>
+                      <StyledCard>
+                        <StyledCardTitle level={5}>
+                          {t('description')}
+                        </StyledCardTitle>
+                        <StyledDivider />
+                        <ContentView>{dataSet.description}</ContentView>
+                      </StyledCard>
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col span={12}>
+                      <StyledCard>
+                        <Flex
+                          justifyContent="space-between"
+                          alignItems="center"
+                          style={{ padding: '8px 24px' }}
+                        >
+                          <Title level={5}>{t('tab-overview')}</Title>
+                          <Button
+                            type="link"
+                            onClick={() => {
+                              //TODO
+                            }}
+                          >
+                            {t('view')}
+                          </Button>
+                        </Flex>
+                        <StyledDivider />
+                        {/* <>TODO: Overview content</> */}
+                      </StyledCard>
+                    </Col>
+                    <Col span={12}>
+                      <StyledCard>
+                        <StyledCardTitle level={5}>
+                          {t('tab-access-control')}
+                        </StyledCardTitle>
+                        <StyledDivider />
+                        {/* <>TODO: Access control content</> */}
+                      </StyledCard>
+                    </Col>
+                  </Row>
+                </Col>
+                <Col span={7}>
+                  <StyledCard>
+                    <StyledCardTitle level={5}>{t('summary')}</StyledCardTitle>
+                    <StyledDivider />
+                    <BasicInfoCard dataSet={dataSet} />
+                  </StyledCard>
+                </Col>
+              </Row>
+            </TabPane>
+            <TabPane
+              tab={
+                <TabTitle title={t('tab-explore-data')} iconType="DataSource" />
+              }
+              key="2"
+            >
+              <ExploreData loading={loading} dataSetId={Number(dataSetId)} />
+            </TabPane>
+            <TabPane
+              tab={<TabTitle title={t('tab-lineage')} iconType="Lineage" />}
+              key="3"
+            >
+              <Lineage
+                dataSetWithExtpipes={dataSetWithExtpipes as DataSetWithExtpipes}
+                isExtpipesFetched={isExtpipesFetched}
+              />
+            </TabPane>
+            <TabPane
+              tab={
+                <TabTitle
+                  title={t('tab-documentation')}
+                  iconType="Documentation"
+                />
+              }
+              key="4"
+            >
+              <DocumentationsTab dataSet={dataSet} />
+            </TabPane>
+            <TabPane
+              tab={<TabTitle title={t('tab-access-control')} iconType="Lock" />}
+              key="5"
+            >
+              <AccessControl
+                dataSetId={dataSet.id}
+                writeProtected={dataSet.writeProtected}
+              />
+            </TabPane>
+          </Tabs>
+        </DetailsPane>
       </div>
     );
   }
+
   return (
     <div>
-      <NewHeader
-        title={t('data-set-details')}
-        ornamentColor={theme.specificTitleOrnamentColor}
-      />
+      <DatasetTopBar dataset={dataSet} />
       {renderLoadingError(loading)}
     </div>
   );
 };
+
+const StyledDivider = styled.div`
+  background-color: ${Colors['bg-control--disabled']};
+  height: 1px;
+  width: 100%;
+`;
+
+const StyledCard = styled(Card)`
+  margin: 12px;
+  min-height: 300px;
+`;
+
+const StyledCardTitle = styled(Title)`
+  padding: 16px 24px;
+`;
 
 export default DataSetDetails;

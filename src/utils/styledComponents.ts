@@ -131,7 +131,7 @@ export const BlockedInformationWrapper = styled(InformationWrapper)`
 `;
 
 export const ContentView = styled.div`
-  padding-left: 20px;
+  padding: 24px;
 `;
 
 export const ItemLabel = styled.h4`
@@ -260,9 +260,12 @@ export const SeperatorLine = styled.div`
 
 export const DetailsPane = styled.div`
   height: 100%;
-  padding-left: 20px;
   display: inline-block;
   width: 100%;
+
+  .ant-card-body {
+    padding: 0 !important;
+  }
 `;
 
 export const PaneTitle = styled.h4`
