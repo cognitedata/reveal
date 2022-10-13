@@ -185,11 +185,9 @@ describe('Wells: nds-events', () => {
     cy.log('scroll table and hoover on the row');
     cy.findByTestId('nds-wellbore-table').scrollTo('bottom');
 
-    cy.findByTitle(`${STATIC_WELLBORE_1}`).invoke(
-      'attr',
-      'style',
-      'opacity: 1'
-    );
+    cy.findByTestId('nds-wellbore-table')
+      .findByTitle(`${STATIC_WELLBORE_1}`)
+      .invoke('attr', 'style', 'opacity: 1');
 
     cy.log('click on view button');
     cy.contains('View').click({ force: true });
