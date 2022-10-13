@@ -48,7 +48,6 @@ const BasicInfoCard = ({ dataSet }: BasicInfoCardProps) => {
 
   return (
     <BasicInfoPane>
-      {/* <PaneTitle>{t('basic-information')}</PaneTitle> */}
       <ItemLabel>{t('name')}</ItemLabel>{' '}
       <ItemValue>
         {writeProtected && <Icon type="Lock" />}

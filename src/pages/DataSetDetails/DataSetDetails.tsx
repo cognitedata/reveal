@@ -1,28 +1,25 @@
 import { useState } from 'react';
-import styled from 'styled-components';
 import { useParams } from 'react-router-dom';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import { getFlow } from '@cognite/cdf-sdk-singleton';
 
 import { notification } from 'antd';
 import Spin from 'antd/lib/spin';
-import Card from 'antd/lib/card';
-import Row from 'antd/lib/row';
-import Col from 'antd/lib/col';
+
 import Tabs from 'antd/lib/tabs';
-import { Button, Tooltip, Colors, Title, Flex } from '@cognite/cogs.js';
+import { Button, Tooltip } from '@cognite/cogs.js';
 
 import DataSetEditor from 'pages/DataSetEditor';
 import ExploreData from 'components/ExploreData';
 import Lineage from 'components/Lineage';
 import DocumentationsTab from 'components/DocumentationsTab';
 import AccessControl from 'components/AccessControl';
-import BasicInfoCard from 'components/BasicInfoCard';
+
 import { ErrorMessage } from 'components/ErrorMessage/ErrorMessage';
 import DatasetTopBar from 'components/dataset-detail-topbar/DatasetTopBar';
 
 import { useTranslation } from 'common/i18n';
-import { ContentView, DetailsPane, getContainer } from 'utils';
+import { DetailsPane, Divider, getContainer } from 'utils';
 
 import {
   DataSetWithExtpipes,
@@ -31,6 +28,7 @@ import {
 } from '../../actions/index';
 import { useSelectedDataSet } from '../../context/index';
 import TabTitle from './TabTitle';
+import DatasetOverview from 'components/Overview/DatasetOverview';
 
 const { TabPane } = Tabs;
 
@@ -186,67 +184,14 @@ const DataSetDetails = (): JSX.Element => {
     return (
       <div>
         <DatasetTopBar dataset={dataSet} actions={actions} />
-        <StyledDivider />
+        <Divider />
         <DetailsPane>
           <Tabs animated={false} defaultActiveKey="1" size="large">
             <TabPane
               tab={<TabTitle title={t('tab-overview')} iconType="Info" />}
               key="1"
             >
-              <Row style={{ padding: 12 }}>
-                <Col span={15}>
-                  <Row>
-                    <Col span={24}>
-                      <StyledCard>
-                        <StyledCardTitle level={5}>
-                          {t('description')}
-                        </StyledCardTitle>
-                        <StyledDivider />
-                        <ContentView>{dataSet.description}</ContentView>
-                      </StyledCard>
-                    </Col>
-                  </Row>
-                  <Row>
-                    <Col span={12}>
-                      <StyledCard>
-                        <Flex
-                          justifyContent="space-between"
-                          alignItems="center"
-                          style={{ padding: '8px 24px' }}
-                        >
-                          <Title level={5}>{t('tab-overview')}</Title>
-                          <Button
-                            type="link"
-                            onClick={() => {
-                              //TODO
-                            }}
-                          >
-                            {t('view')}
-                          </Button>
-                        </Flex>
-                        <StyledDivider />
-                        {/* <>TODO: Overview content</> */}
-                      </StyledCard>
-                    </Col>
-                    <Col span={12}>
-                      <StyledCard>
-                        <StyledCardTitle level={5}>
-                          {t('tab-access-control')}
-                        </StyledCardTitle>
-                        <StyledDivider />
-                        {/* <>TODO: Access control content</> */}
-                      </StyledCard>
-                    </Col>
-                  </Row>
-                </Col>
-                <Col span={7}>
-                  <StyledCard>
-                    <StyledCardTitle level={5}>{t('summary')}</StyledCardTitle>
-                    <StyledDivider />
-                    <BasicInfoCard dataSet={dataSet} />
-                  </StyledCard>
-                </Col>
-              </Row>
+              <DatasetOverview dataset={dataSet} />
             </TabPane>
             <TabPane
               tab={
@@ -298,20 +243,5 @@ const DataSetDetails = (): JSX.Element => {
     </div>
   );
 };
-
-const StyledDivider = styled.div`
-  background-color: ${Colors['bg-control--disabled']};
-  height: 1px;
-  width: 100%;
-`;
-
-const StyledCard = styled(Card)`
-  margin: 12px;
-  min-height: 300px;
-`;
-
-const StyledCardTitle = styled(Title)`
-  padding: 16px 24px;
-`;
 
 export default DataSetDetails;

@@ -3,7 +3,7 @@ import theme from 'styles/theme';
 import Input from 'antd/lib/input';
 import Card from 'antd/lib/card';
 import Table from 'antd/lib/table';
-import { Button, Input as CogsInput } from '@cognite/cogs.js';
+import { Button, Colors, Input as CogsInput } from '@cognite/cogs.js';
 import Tag from 'antd/lib/tag';
 import Select from 'antd/lib/select';
 import Menu from 'antd/lib/menu';
@@ -413,4 +413,10 @@ export const RequiredFieldLabel = styled(FieldLabel)`
     content: '*  ';
     color: red;
   }
+`;
+
+export const Divider = styled.div`
+  background-color: ${Colors['bg-control--disabled']};
+  height: 1px;
+  width: 100%;
 `;

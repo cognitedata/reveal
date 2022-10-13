@@ -81,11 +81,4 @@ const App = () => {
   );
 };
 
-// const PageWrapper = styled.div`
-//   padding: 20px;
-//   @media (min-width: 992px) {
-//     padding: 20px 50px;
-//   }
-// `;
-
 export default App;

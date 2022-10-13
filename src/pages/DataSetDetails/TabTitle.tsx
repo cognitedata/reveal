@@ -11,7 +11,6 @@ type TabTitleProps = {
 const TabTitle = ({ iconType, title }: TabTitleProps): JSX.Element => {
   return (
     <Flex direction="row" alignItems="center" gap={6}>
-      {/* @ts-ignore */}
       <Icon type={iconType}></Icon>
       <StyledTitle>{title}</StyledTitle>
     </Flex>
