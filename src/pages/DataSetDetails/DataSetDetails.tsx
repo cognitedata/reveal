@@ -28,6 +28,7 @@ import {
 } from '../../actions/index';
 import { useSelectedDataSet } from '../../context/index';
 import { useTranslation } from 'common/i18n';
+import { DATASET_HELP } from 'utils/constants';
 
 const { TabPane } = Tabs;
 
@@ -35,9 +36,6 @@ const DataSetDetails = (): JSX.Element => {
   const { t } = useTranslation();
   const [editDrawerVisible, setEditDrawerVisible] = useState<boolean>(false);
   const [changesSaved, setChangesSaved] = useState<boolean>(true);
-
-  const { appPath } = useParams<{ appPath: string }>();
-
   const { dataSetId } = useParams();
 
   const {
@@ -188,11 +186,7 @@ const DataSetDetails = (): JSX.Element => {
         <NewHeader
           title={dataSet.name}
           ornamentColor={theme.specificTitleOrnamentColor}
-          breadcrumbs={[
-            { title: t('data-set_other'), path: `/${appPath}` },
-            { title: dataSet.name },
-          ]}
-          help="https://docs.cognite.com/cdf/data_governance/concepts/datasets"
+          help={DATASET_HELP}
           rightItem={actions}
         />
         <div style={{ alignItems: 'center', display: 'flex' }} />
@@ -243,10 +237,6 @@ const DataSetDetails = (): JSX.Element => {
       <NewHeader
         title={t('data-set-details')}
         ornamentColor={theme.specificTitleOrnamentColor}
-        breadcrumbs={[
-          { title: t('data-set_other'), path: `/${appPath}` },
-          { title: t('data-set-details') },
-        ]}
       />
       {renderLoadingError(loading)}
     </div>
