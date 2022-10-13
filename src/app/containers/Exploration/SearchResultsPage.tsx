@@ -46,7 +46,7 @@ import {
   useFileFilters,
   useSequenceFilters,
   useTimeseriesFilters,
-} from 'app/store/filter';
+} from 'app/store/filter/selectors';
 
 const getPageTitle = (query: string, resourceType: ResourceType): string => {
   return `${query}${query ? ' in' : ''} ${getTitle(resourceType, true)}`;
