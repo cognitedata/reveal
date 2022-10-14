@@ -28,10 +28,6 @@ module.exports = (config, context) => {
             to: "[name][ext]",
           },
           {
-            from: "apps/platypus-cdf-cli/**/codegen-static/python/*",
-            to: "python/[name][ext]",
-          },
-          {
             from: "apps/platypus-cdf-cli/**/codegen-static/js/*",
             to: "js/[name][ext]",
           }

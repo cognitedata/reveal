@@ -67,7 +67,7 @@ const commandArgs = [
 const command = 'generate-js-sdk';
 const describe =
   'Create a JavaScript (TypeScript) SDK for interacting with FDM';
-class SolutionGeneratePythonCommand extends CLICommand {
+class SolutionGenerateJSCommand extends CLICommand {
   async execute(args: Arguments<SolutionsGeneratePythonCommandArgs>) {
     try {
       args.logger.info(
@@ -187,11 +187,7 @@ const DM_VERSION="${args['data-model-version']}"`
   }
 }
 
-export default new SolutionGeneratePythonCommand(
-  command,
-  describe,
-  commandArgs
-);
+export default new SolutionGenerateJSCommand(command, describe, commandArgs);
 
 export const getModelTypes = async (dm: string, version: number) => {
   const mixerApiService = getMixerApiService();
