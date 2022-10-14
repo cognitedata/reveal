@@ -28,7 +28,7 @@ import {
   DummyPointCloudStylableObjectProvider
 } from '../../packages/data-providers';
 import { LoadingState } from '../../packages/model-base';
-<<<<<<< HEAD
+
 import {
   LocalPointClassificationsProvider,
   PointCloudManager,
@@ -36,9 +36,6 @@ import {
   Potree
 } from '../../packages/pointclouds';
 
-=======
-import { PointCloudManager, PointCloudNode } from '../../packages/pointclouds';
->>>>>>> master
 import { PointCloudMetadataRepository } from '../../packages/pointclouds/src/PointCloudMetadataRepository';
 import { PointCloudFactory } from '../../packages/pointclouds/src/PointCloudFactory';
 import dat from 'dat.gui';
