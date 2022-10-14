@@ -10,6 +10,7 @@ const defaultFilterState = {
   timeseries: {},
   sequence: {},
   file: {},
+  document: {},
   event: {},
 };
 

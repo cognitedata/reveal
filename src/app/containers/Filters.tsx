@@ -9,6 +9,7 @@ import { CommonFilter } from './Common/CommonFilter';
 import { FileFilters } from './File/FileFilters';
 import { TimeseriesFilters } from './Timeseries/TimeseriesFilters';
 import { SequenceFilters } from './Sequence/SequenceFilters';
+import { DocumentFilter } from 'app/containers/Document/DocumentFilters';
 
 export interface Props {
   resourceType: ResourceType;
@@ -25,6 +26,9 @@ export const Filters: React.FC<Props> = ({ resourceType }) => {
       }
       case 'timeSeries': {
         return <TimeseriesFilters />;
+      }
+      case 'document': {
+        return <DocumentFilter />;
       }
       case 'file': {
         return <FileFilters />;

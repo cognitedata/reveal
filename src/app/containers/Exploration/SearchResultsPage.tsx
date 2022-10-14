@@ -23,7 +23,6 @@ import ResourceSelectionContext, {
 import { useDebounce } from 'use-debounce';
 import styled from 'styled-components/macro';
 import ResourcePreview from 'app/containers/Exploration/ResourcePreview';
-import { useDocumentFilters } from '@cognite/react-document-search';
 import {
   useQueryString,
   useQueryStringArray,
@@ -47,6 +46,8 @@ import {
   useSequenceFilters,
   useTimeseriesFilters,
 } from 'app/store/filter/selectors';
+import { useDocumentFilters } from 'app/store/filter/selectors/documentSelectors';
+import { useObserveDocumentSearchFilters } from 'app/domain/document/internal/hook/useObserveDocumentSearchFilters';
 
 const getPageTitle = (query: string, resourceType: ResourceType): string => {
   return `${query}${query ? ' in' : ''} ${getTitle(resourceType, true)}`;
@@ -64,7 +65,6 @@ function SearchPage() {
   const [showFilter, setShowFilter] = useState(true);
   const [query] = useQueryString(SEARCH_KEY);
   const [debouncedQuery] = useDebounce(query, 100);
-  const { setAppliedFilters } = useDocumentFilters();
 
   const editable = useResourceEditable();
 
@@ -75,19 +75,14 @@ function SearchPage() {
 
   const [assetFilter, setAssetFilter] = useAssetFilters();
   const [fileFilter, setFileFilter] = useFileFilters();
+  const [documentFilter] = useDocumentFilters();
   const [eventFilter, setEventFilter] = useEventsFilters();
   const [timeseriesFilter, setTimeseriesFilter] = useTimeseriesFilters();
   const [sequenceFilter, setSequenceFilter] = useSequenceFilters();
 
   const { mode } = useContext(ResourceSelectionContext);
 
-  useEffect(() => {
-    setAppliedFilters({
-      search: {
-        query: query || '',
-      },
-    });
-  }, [query, setAppliedFilters]);
+  useObserveDocumentSearchFilters();
 
   const onSelect = (item: ResourceItem) => {
     const newCart = cart.includes(item.id)
@@ -192,7 +187,7 @@ function SearchPage() {
                     {currentResourceType === 'document' && (
                       <DocumentSearchResults
                         query={query}
-                        filter={fileFilter}
+                        filter={documentFilter}
                         onClick={(item: ResourceItem) => {
                           openPreview(
                             item.id !== activeId ? item.id : undefined

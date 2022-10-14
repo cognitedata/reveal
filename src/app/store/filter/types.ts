@@ -7,6 +7,7 @@ import {
   SequenceFilter,
   TimeseriesFilter,
 } from '@cognite/sdk';
+import { InternalDocumentFilter } from 'app/domain/document/internal/types';
 
 export type Filters = {
   asset: AssetFilterProps;
@@ -14,7 +15,9 @@ export type Filters = {
   sequence: Required<SequenceFilter>['filter'];
   file: FileFilterProps;
   event: EventFilter;
+  document: InternalDocumentFilter;
 };
+
 export type CommonFacets = {
   assetSubtreeIds?: IdEither[];
   dataSetIds?: IdEither[];
@@ -34,6 +37,7 @@ export type GlobalFilter = {
     timeseries: Omit<Filters['timeseries'], CommonFacetsKeys>;
     sequence: Omit<Filters['sequence'], CommonFacetsKeys>;
     file: Omit<Filters['file'], CommonFacetsKeys>;
+    document: Filters['document'];
     event: Omit<Filters['event'], CommonFacetsKeys>;
   };
 };
