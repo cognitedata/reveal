@@ -30,6 +30,7 @@ export const Panel = styled(DefaultPanel)`
     background: transparent !important;
     padding: 12px 16px !important;
     margin-top: 8px;
+    cursor: default !important;
   }
   & > .rc-collapse-header > i {
     order: 1;

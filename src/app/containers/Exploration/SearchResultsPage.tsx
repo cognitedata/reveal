@@ -473,7 +473,7 @@ const SearchResultWrapper = styled.div`
 
 const SearchInputContainer = styled(Flex)`
   padding: 16px;
-  padding-bottom: 8px;
+  padding-bottom: 12px;
   align-items: center;
 `;
 
