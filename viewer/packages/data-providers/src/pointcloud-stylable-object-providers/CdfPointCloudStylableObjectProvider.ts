@@ -63,9 +63,7 @@ export class CdfPointCloudStylableObjectProvider implements PointCloudStylableOb
     return annotations;
   }
 
-  async getPointCloudObjects(modelIdentifier: ModelIdentifier): Promise<PointCloudObject[]> {
-    assert(modelIdentifier instanceof CdfModelIdentifier);
-
+  async getPointCloudObjects(modelIdentifier: CdfModelIdentifier): Promise<PointCloudObject[]> {
     const annotations = await this.fetchAnnotations(modelIdentifier);
 
     return cdfAnnotationsToObjectInfo(annotations);
