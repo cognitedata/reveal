@@ -5,8 +5,8 @@
 import { PointCloudObject } from '@reveal/data-providers';
 import { PointCloudObjectIdMaps } from '@reveal/rendering';
 
-export function createObjectsMaps(objects: PointCloudObject[]): PointCloudObjectIdMaps {
-  const objectsMaps = {
+export function createObjectIdMaps(objects: PointCloudObject[]): PointCloudObjectIdMaps {
+  return {
     annotationToObjectIds: new Map<number, number>(
       objects.map(annotation => [annotation.annotationId, annotation.stylableObject.objectId])
     ),
@@ -14,6 +14,4 @@ export function createObjectsMaps(objects: PointCloudObject[]): PointCloudObject
       objects.map(annotation => [annotation.stylableObject.objectId, annotation.annotationId])
     )
   };
-
-  return objectsMaps;
 }

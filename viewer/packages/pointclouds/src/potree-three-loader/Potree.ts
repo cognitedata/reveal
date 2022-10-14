@@ -27,7 +27,7 @@ import { IVisibilityUpdateResult } from './types/IVisibilityUpdateResult';
 import { IPointCloudTreeNodeBase } from './tree/IPointCloudTreeNodeBase';
 import { IPointCloudTreeNode } from './tree/IPointCloudTreeNode';
 import { IPointCloudTreeGeometryNode } from './geometry/IPointCloudTreeGeometryNode';
-import { createObjectsMaps } from './utils/createObjectsMaps';
+import { createObjectIdMaps } from './utils/createObjectIdMaps';
 import { BinaryHeap } from './utils/BinaryHeap';
 import { Box3Helper } from './utils/box3-helper';
 import { LRU } from './utils/lru';
@@ -88,7 +88,7 @@ export class Potree implements IPotree {
     pointCloudObjects: PointCloudObject[],
     modelIdentifier: symbol
   ): Promise<PointCloudOctree> {
-    this._materialManager.addModelMaterial(modelIdentifier, createObjectsMaps(pointCloudObjects));
+    this._materialManager.addModelMaterial(modelIdentifier, createObjectIdMaps(pointCloudObjects));
     const geometry = await EptLoader.load(baseUrl, fileName, this._modelDataProvider, pointCloudObjects);
     return new PointCloudOctree(this, geometry, this._materialManager.getModelMaterial(modelIdentifier));
   }
