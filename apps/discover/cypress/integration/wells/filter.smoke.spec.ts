@@ -34,6 +34,8 @@ const NPT_CODE_SELECT = 'CEMT';
 const NPT_DETAILS_CODE_SELECT = 'BARR';
 const SEARCH_QUERY = 'Discover';
 
+const KEYSTROKE_DELAY = 10;
+
 const checkRequestContainsFilter = (expectedFilter: unknown) => {
   cy.wait(`@${WELLS_SEARCH_ALIAS}`)
     .its('request.body.filter')
@@ -197,7 +199,7 @@ describe('Wells sidebar filters', () => {
       .findAllByRole('slider')
       .first()
       .click()
-      .type('{rightarrow}{rightarrow}');
+      .type('{rightarrow}{rightarrow}', { delay: KEYSTROKE_DELAY });
 
     const maxMeasuredDepth = {
       min: 6237,
@@ -228,7 +230,9 @@ describe('Wells sidebar filters', () => {
       .findAllByRole('slider')
       .last()
       .click()
-      .type('{leftarrow}{leftarrow}{leftarrow}{leftarrow}{leftarrow}');
+      .type('{leftarrow}{leftarrow}{leftarrow}{leftarrow}{leftarrow}', {
+        delay: KEYSTROKE_DELAY,
+      });
 
     checkRequestContainsFilter({
       datum: {
@@ -280,7 +284,7 @@ describe('Wells sidebar filters', () => {
       .findAllByRole('slider')
       .last()
       .click()
-      .type('{leftArrow}{leftArrow}');
+      .type('{leftArrow}{leftArrow}', { delay: KEYSTROKE_DELAY });
 
     checkTVDFilter();
 
@@ -431,6 +435,7 @@ describe('Wells sidebar filters', () => {
       .should('be.visible')
       .type('{rightarrow}{rightarrow}', {
         force: true,
+        delay: KEYSTROKE_DELAY,
       });
 
     checkRequestContainsFilter({
