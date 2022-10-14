@@ -5477,7 +5477,7 @@
 
 "@types/geojson@*":
   version "7946.0.8"
-  resolved "https://registry.npmjs.org/@types/geojson/-/geojson-7946.0.8.tgz"
+  resolved "https://registry.yarnpkg.com/@types/geojson/-/geojson-7946.0.8.tgz#30744afdb385e2945e22f3b033f897f76b1f12ca"
   integrity sha512-1rkryxURpr6aWP7R786/UQOkJ3PcpQiWkAXBmdWc7ryFWqN6a4xfK7BtjXvFBKO9LjQ+MWQSWxYeZX1OApnArA==
 
 "@types/glob@*", "@types/glob@^7.1.1":
@@ -7475,7 +7475,7 @@ babel-plugin-macros@^2.0.0, babel-plugin-macros@^2.8.0:
 
 babel-plugin-macros@^3.0.1, babel-plugin-macros@^3.1.0:
   version "3.1.0"
-  resolved "https://registry.npmjs.org/babel-plugin-macros/-/babel-plugin-macros-3.1.0.tgz"
+  resolved "https://registry.yarnpkg.com/babel-plugin-macros/-/babel-plugin-macros-3.1.0.tgz#9ef6dc74deb934b4db344dc973ee851d148c50c1"
   integrity sha512-Cg7TFGpIr01vOQNODXOOaGz2NpCU5gl8x1qJFbb6hbZxR7XrcE2vtbAsTAbJ7/xwJtUuJEw8K8Zr/AE0LHlesg==
   dependencies:
     "@babel/runtime" "^7.12.5"
@@ -8891,7 +8891,7 @@ concat-map@0.0.1:
 
 concat-stream@^1.5.0:
   version "1.6.2"
-  resolved "https://registry.npmjs.org/concat-stream/-/concat-stream-1.6.2.tgz"
+  resolved "https://registry.yarnpkg.com/concat-stream/-/concat-stream-1.6.2.tgz#904bdf194cd3122fc675c77fc4ac3d4ff0fd1a34"
   integrity sha512-27HBghJxjiZtIk3Ycvn/4kbJk/1uZuJFfuPEns6LaEvpvG1f0hTea8lilrouyo9mVc2GWdcEZ8OLoGmSADlrCw==
   dependencies:
     buffer-from "^1.0.0"
@@ -9732,7 +9732,7 @@ d3-scale-chromatic@3:
 
 d3-scale@4:
   version "4.0.2"
-  resolved "https://registry.npmjs.org/d3-scale/-/d3-scale-4.0.2.tgz"
+  resolved "https://registry.yarnpkg.com/d3-scale/-/d3-scale-4.0.2.tgz#82b38e8e8ff7080764f8dcec77bd4be393689396"
   integrity sha512-GZW464g1SH7ag3Y7hXjf8RoUuAFIqklOAq3MRl4OaWabTFJY9PN/E1YklhXLh+OQ3fM9yS2nOkCoS+WLZ6kvxQ==
   dependencies:
     d3-array "2.10.0 - 3"
@@ -10406,7 +10406,7 @@ duplexer@^0.1.1, duplexer@^0.1.2:
 
 duplexify@^3.4.2, duplexify@^3.6.0:
   version "3.7.1"
-  resolved "https://registry.npmjs.org/duplexify/-/duplexify-3.7.1.tgz"
+  resolved "https://registry.yarnpkg.com/duplexify/-/duplexify-3.7.1.tgz#2a4df5317f6ccfd91f86d6fd25d8d8a103b88309"
   integrity sha512-07z8uv2wMyS51kKhD1KsdXJg5WQ6t93RneqRxUHnskXVtlYYkLqM0gqStQZ3pj073g687jPCHrqNfCzawLYh5g==
   dependencies:
     end-of-stream "^1.0.0"
@@ -10655,7 +10655,7 @@ es-array-method-boxes-properly@^1.0.0:
 
 es-get-iterator@^1.0.2:
   version "1.1.2"
-  resolved "https://registry.npmjs.org/es-get-iterator/-/es-get-iterator-1.1.2.tgz"
+  resolved "https://registry.yarnpkg.com/es-get-iterator/-/es-get-iterator-1.1.2.tgz#9234c54aba713486d7ebde0220864af5e2b283f7"
   integrity sha512-+DTO8GYwbMCwbywjimwZMHp8AuYXOS2JZFWoi2AlPOS3ebnII9w/NLpNZtA7A0YLaVDw+O7KFCeoIV7OPvM7hQ==
   dependencies:
     call-bind "^1.0.2"
@@ -10695,7 +10695,7 @@ es5-shim@^4.5.13:
 
 es6-error@^4.0.1:
   version "4.1.1"
-  resolved "https://registry.npmjs.org/es6-error/-/es6-error-4.1.1.tgz"
+  resolved "https://registry.yarnpkg.com/es6-error/-/es6-error-4.1.1.tgz#9e3af407459deed47e9a91f9b885a84eb05c561d"
   integrity sha512-Um/+FxMr9CISWh0bi5Zv0iOD+4cFh5qLeks1qhAopKVAJw3drgKbKySikp7wGhDL0HPeaja0P5ULZrxLkniUVg==
 
 es6-shim@^0.35.5:
@@ -11369,7 +11369,7 @@ extglob@^2.0.4:
 
 extract-zip@2.0.1:
   version "2.0.1"
-  resolved "https://registry.npmjs.org/extract-zip/-/extract-zip-2.0.1.tgz"
+  resolved "https://registry.yarnpkg.com/extract-zip/-/extract-zip-2.0.1.tgz#663dca56fe46df890d5f131ef4a06d22bb8ba13a"
   integrity sha512-GDhU9ntwuKyGXdZBUgTIe+vXnWj0fppUEtMDL0+idd5Sta8TGpHssn/eusA9mrPr9qNDym6SxAYZjNvCn/9RBg==
   dependencies:
     debug "^4.1.1"
@@ -11825,8 +11825,8 @@ fresh@0.5.2:
 
 from2@^2.1.0:
   version "2.3.0"
-  resolved "https://registry.npmjs.org/from2/-/from2-2.3.0.tgz"
-  integrity sha1-i/tVAr3kpNNs/e6gB/zKIdfjgq8=
+  resolved "https://registry.yarnpkg.com/from2/-/from2-2.3.0.tgz#8bfb5502bde4a4d36cfdeea007fcca21d7e382af"
+  integrity sha512-OMcX/4IC/uqEPVgGeyfN22LJk6AZrMkRZHxcHBMBvHScDGgwTm2GT2Wkgtocyd3JfZffjj2kYUDXXII0Fk9W0g==
   dependencies:
     inherits "^2.0.1"
     readable-stream "^2.0.0"
@@ -12405,10 +12405,15 @@ graphql-ws@^4.9.0:
   resolved "https://registry.npmjs.org/graphql-ws/-/graphql-ws-4.9.0.tgz"
   integrity sha512-sHkK9+lUm20/BGawNEWNtVAeJzhZeBg21VmvmLoT5NdGVeZWv5PdIhkcayQIAgjSyyQ17WMKmbDijIPG2On+Ag==
 
-graphql@^15.5.1, graphql@^15.6.1:
+graphql@^15.5.1:
   version "15.8.0"
   resolved "https://registry.yarnpkg.com/graphql/-/graphql-15.8.0.tgz#33410e96b012fa3bdb1091cc99a94769db212b38"
   integrity sha512-5gghUc24tP9HRznNpV2+FIoq3xKkj5dTQqf4v0CpdPbFVwFkWoxOM+o+2OC9ZSvjEMTjfmG9QT+gcvggTwW1zw==
+
+graphql@^16.6.0:
+  version "16.6.0"
+  resolved "https://registry.yarnpkg.com/graphql/-/graphql-16.6.0.tgz#c2dcffa4649db149f6282af726c8c83f1c7c5fdb"
+  integrity sha512-KPIBPDlW7NxrbT/eh4qPXz5FiFdL5UbaA0XUNz2Rp3Z3hqBSkbj0GVjwFDztsWVauZUWsbKHgMg++sk8UX0bkw==
 
 gtoken@^5.0.4:
   version "5.3.2"
@@ -16155,7 +16160,7 @@ mixpanel-browser@2.41.0:
 
 mixpanel-browser@^2.45.0:
   version "2.45.0"
-  resolved "https://registry.npmjs.org/mixpanel-browser/-/mixpanel-browser-2.45.0.tgz"
+  resolved "https://registry.yarnpkg.com/mixpanel-browser/-/mixpanel-browser-2.45.0.tgz#a2973be5b66e6d2799ef95a1e55b8ad8eede57e8"
   integrity sha512-PQ1DaTk68yyYtLA0iejmzPA9iNDhT4uIZpqZjRTw7HWpYfl123fydHb2laKanaKjm8YDmrGGz3+xZ4Q6joogyg==
 
 mixpanel@^0.13.0:
@@ -17034,7 +17039,7 @@ package-json@^6.3.0:
 
 pako@~1.0.5:
   version "1.0.11"
-  resolved "https://registry.npmjs.org/pako/-/pako-1.0.11.tgz"
+  resolved "https://registry.yarnpkg.com/pako/-/pako-1.0.11.tgz#6c9599d340d54dfd3946380252a35705a6b992bf"
   integrity sha512-4hLB8Py4zZce5s4yd9XzopqwVv/yGNhV1Bl8NTmCq1763HeK2+EwVTv+leGeL13Dnh2wfbqowVPXCIO0z4taYw==
 
 parallel-transform@^1.1.0:
@@ -17167,7 +17172,7 @@ path-browserify@0.0.1:
 
 path-browserify@^1.0.1:
   version "1.0.1"
-  resolved "https://registry.npmjs.org/path-browserify/-/path-browserify-1.0.1.tgz"
+  resolved "https://registry.yarnpkg.com/path-browserify/-/path-browserify-1.0.1.tgz#d98454a9c3753d5790860f16f68867b9e46be1fd"
   integrity sha512-b7uo2UCUOYZcnF/3ID0lulOJi/bafxa1xPe7ZPsammBSpjSWQkjNxlt635YGS2MiR9GjvuXCtz2emr3jbsz98g==
 
 path-case@^3.0.4:
@@ -18220,7 +18225,7 @@ prompts@^2.0.1, prompts@^2.4.0, prompts@^2.4.2:
 
 prop-types@15, prop-types@15.x, prop-types@^15.0.0, prop-types@^15.5.10, prop-types@^15.5.6, prop-types@^15.5.8, prop-types@^15.6.0, prop-types@^15.6.2, prop-types@^15.7.2, prop-types@^15.8.1:
   version "15.8.1"
-  resolved "https://registry.npmjs.org/prop-types/-/prop-types-15.8.1.tgz"
+  resolved "https://registry.yarnpkg.com/prop-types/-/prop-types-15.8.1.tgz#67d87bf1a694f48435cf332c24af10214a3140b5"
   integrity sha512-oj87CgZICdulUohogVAR7AjlC0327U4el4L6eAvOqCeudMDVU0NThNaV+b9Df4dXgSP1gXMTnPdhfe/2qDH5cg==
   dependencies:
     loose-envify "^1.4.0"
@@ -19701,7 +19706,7 @@ resolve-from@^4.0.0:
 
 resolve-from@^5.0.0:
   version "5.0.0"
-  resolved "https://registry.npmjs.org/resolve-from/-/resolve-from-5.0.0.tgz"
+  resolved "https://registry.yarnpkg.com/resolve-from/-/resolve-from-5.0.0.tgz#c35225843df8f776df21c57557bc087e9dfdfc69"
   integrity sha512-qYg9KP24dD5qka9J47d0aVky0N+b4fTU89LN9iDnjB5waksiC49rvMB0PrUJQGoTmH50XPiqOvAjDfaijGxYZw==
 
 resolve-pathname@^3.0.0:
@@ -21468,7 +21473,7 @@ throttleit@^1.0.0:
 
 through2@^2.0.0:
   version "2.0.5"
-  resolved "https://registry.npmjs.org/through2/-/through2-2.0.5.tgz"
+  resolved "https://registry.yarnpkg.com/through2/-/through2-2.0.5.tgz#01c1e39eb31d07cb7d03a96a70823260b23132cd"
   integrity sha512-/mrRod8xqpA+IHSLyGCQ2s8SPHiCDEeQJSep1jqLYeEUClOFG2Qsh+4FU6G9VeqpZnGW/Su8LQGc4YKni5rYSQ==
   dependencies:
     readable-stream "~2.3.6"
@@ -21787,7 +21792,7 @@ tslib@^1.10.0, tslib@^1.8.1, tslib@^1.9.0, tslib@^1.9.3:
 
 tslib@^2, tslib@^2.0.0, tslib@^2.0.1, tslib@^2.0.3, tslib@^2.1.0, tslib@^2.3.0, tslib@^2.3.1, tslib@^2.4.0:
   version "2.4.0"
-  resolved "https://registry.npmjs.org/tslib/-/tslib-2.4.0.tgz"
+  resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.4.0.tgz#7cecaa7f073ce680a05847aa77be941098f36dc3"
   integrity sha512-d6xOpEDfsi2CZVlPQzGeux8XMwLT9hssAsaPYExaQMuYskwb+x1x7J371tWlbBdWHroy99KnVB6qIkUbs5X3UQ==
 
 tslib@~2.3.0:
