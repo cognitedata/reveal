@@ -31,14 +31,14 @@ import {
 } from './constants';
 import { DEFAULT_CLASSIFICATION } from './classification';
 import {
-  NormalFilteringMode,
-  PointCloudMixingMode,
   PointColorType,
-  PointOpacityType,
   PointShape,
   PointSizeType,
   TreeType,
-  ClipMode
+  PointOpacityType,
+  ClipMode,
+  NormalFilteringMode,
+  PointCloudMixingMode
 } from './enums';
 import { generateClassificationTexture, generateDataTexture, generateGradientTexture } from './texture-generation';
 import { IClassification, IUniform, OctreeMaterialParams, IClipBox } from './types';

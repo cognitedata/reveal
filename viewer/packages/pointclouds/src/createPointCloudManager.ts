@@ -11,6 +11,8 @@ import { ModelDataProvider, ModelMetadataProvider, PointCloudStylableObjectProvi
 import { Potree } from './potree-three-loader';
 import { PointCloudFactory } from './PointCloudFactory';
 import { IPointClassificationsProvider } from './classificationsProviders/IPointClassificationsProvider';
+
+
 import { PointCloudMaterialManager } from '@reveal/rendering';
 
 export function createPointCloudManager(
@@ -26,7 +28,7 @@ export function createPointCloudManager(
 
   const potreeInstance = new Potree(modelDataProvider, pointCloudMaterialManager);
   const pointCloudFactory = new PointCloudFactory(
-    potreeInstance,
+    modelDataProvider,
     pointCloudStylableObjectProvider,
     classificationsProvider,
     pointCloudMaterialManager

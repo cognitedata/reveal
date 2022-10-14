@@ -7,9 +7,10 @@ import { CameraConfiguration } from '@reveal/utilities';
 import { WellKnownAsprsPointClassCodes } from './types';
 import { PointCloudNode } from './PointCloudNode';
 
+import { PointColorType, PointShape, PointSizeType } from '@reveal/rendering';
+
 import { SupportedModelTypes, CogniteModelBase } from '@reveal/model-base';
 import { PointCloudObjectMetadata } from '@reveal/data-providers';
-import { PointColorType, PointShape, PointSizeType } from '@reveal/rendering';
 
 import {
   StyledPointCloudObjectCollection,

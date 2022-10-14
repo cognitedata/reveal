@@ -36,6 +36,7 @@ describe('PointCloudMaterialManager', () => {
   test('setModelsMaterialParameters sets material parameters for all models', () => {
     const modelIdentifier1 = Symbol('model');
     const modelIdentifier2 = Symbol('model');
+
     materialManager.addModelMaterial(modelIdentifier1, objectData);
     materialManager.addModelMaterial(modelIdentifier2, objectData);
 

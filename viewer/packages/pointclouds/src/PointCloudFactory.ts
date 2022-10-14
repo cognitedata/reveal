@@ -9,6 +9,9 @@ import { Potree } from './potree-three-loader';
 import { DEFAULT_POINT_CLOUD_METADATA_FILE } from './constants';
 import { PointCloudStylableObjectProvider } from '@reveal/data-providers';
 import { IPointClassificationsProvider } from './classificationsProviders/IPointClassificationsProvider';
+
+import { ModelDataProvider } from '@reveal/data-providers';
+
 import { PointCloudMaterialManager } from '@reveal/rendering';
 
 export class PointCloudFactory {
@@ -17,13 +20,11 @@ export class PointCloudFactory {
   private readonly _classificationsProvider: IPointClassificationsProvider;
   private readonly _pointCloudMaterialManager: PointCloudMaterialManager;
 
-  constructor(
-    potreeInstance: Potree,
-    pointCloudObjectProvider: PointCloudStylableObjectProvider,
-    classificationsProvider: IPointClassificationsProvider,
-    pointCloudMaterialManager: PointCloudMaterialManager
-  ) {
-    this._potreeInstance = potreeInstance;
+  constructor(modelLoader: ModelDataProvider,
+              pointCloudObjectProvider: PointCloudStylableObjectProvider,
+              classificationsProvider: IPointClassificationsProvider,
+              pointCloudMaterialManager: PointCloudMaterialManager) {
+    this._potreeInstance = new Potree(modelLoader, pointCloudMaterialManager);
     this._pointCloudObjectProvider = pointCloudObjectProvider;
     this._classificationsProvider = classificationsProvider;
     this._pointCloudMaterialManager = pointCloudMaterialManager;

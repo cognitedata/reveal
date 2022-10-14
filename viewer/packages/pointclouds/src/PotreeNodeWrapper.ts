@@ -4,15 +4,19 @@
 
 import * as THREE from 'three';
 
+
 export type PotreeClassification = { [pointClass: number]: { x: number; y: number; z: number; w: number } };
 const PotreeDefaultPointClass = 'DEFAULT';
 
 type ClassificationMap = { [key: string]: { rgb: THREE.Color; code: number } };
 
+import { StyledPointCloudObjectCollection, CompletePointCloudAppearance } from '@reveal/pointcloud-styling';
+
+export type PointClassification = { [pointClass: number]: { x: number; y: number; z: number; w: number } };
+
 import { PointCloudOctree, PickPoint } from './potree-three-loader';
 import { PointColorType, PointShape, IClassification, DEFAULT_CLASSIFICATION } from '@reveal/rendering';
 
-import { StyledPointCloudObjectCollection, CompletePointCloudAppearance } from '@reveal/pointcloud-styling';
 import { WellKnownAsprsPointClassCodes } from './types';
 
 import { PointCloudObjectMetadata, PointCloudObject } from '@reveal/data-providers';
@@ -148,7 +152,7 @@ export class PotreeNodeWrapper {
     this._needsRedraw = true;
   }
 
-  get classification(): PotreeClassification {
+  get classification(): PointClassification {
     return this._classification;
   }
 
