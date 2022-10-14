@@ -20,10 +20,12 @@ export class PointCloudFactory {
   private readonly _classificationsProvider: IPointClassificationsProvider;
   private readonly _pointCloudMaterialManager: PointCloudMaterialManager;
 
-  constructor(modelLoader: ModelDataProvider,
-              pointCloudObjectProvider: PointCloudStylableObjectProvider,
-              classificationsProvider: IPointClassificationsProvider,
-              pointCloudMaterialManager: PointCloudMaterialManager) {
+  constructor(
+    modelLoader: ModelDataProvider,
+    pointCloudObjectProvider: PointCloudStylableObjectProvider,
+    classificationsProvider: IPointClassificationsProvider,
+    pointCloudMaterialManager: PointCloudMaterialManager
+  ) {
     this._potreeInstance = new Potree(modelLoader, pointCloudMaterialManager);
     this._pointCloudObjectProvider = pointCloudObjectProvider;
     this._classificationsProvider = classificationsProvider;

@@ -4,7 +4,6 @@
 
 import * as THREE from 'three';
 
-
 export type PotreeClassification = { [pointClass: number]: { x: number; y: number; z: number; w: number } };
 const PotreeDefaultPointClass = 'DEFAULT';
 

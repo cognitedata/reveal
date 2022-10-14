@@ -12,7 +12,6 @@ import { Potree } from './potree-three-loader';
 import { PointCloudFactory } from './PointCloudFactory';
 import { IPointClassificationsProvider } from './classificationsProviders/IPointClassificationsProvider';
 
-
 import { PointCloudMaterialManager } from '@reveal/rendering';
 
 export function createPointCloudManager(
