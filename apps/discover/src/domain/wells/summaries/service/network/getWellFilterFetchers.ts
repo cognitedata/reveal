@@ -4,6 +4,7 @@ import {
 } from 'domain/wells/utils/authenticate';
 
 import { processSpudDateLimits } from '../../internal/transformers/processSpudDateLimits';
+import { processTrajectoriesMaximumInclinationLimits } from '../../internal/transformers/processTrajectoriesMaximumInclinationLimits';
 import { getNamesFromSourceItems } from '../utils/getNamesFromSourceItems';
 import { getPropertiesFromSummaryCounts } from '../utils/getPropertiesFromSummaryCounts';
 import { getTypesFromMeasurementTypes } from '../utils/getTypesFromMeasurementTypes';
@@ -62,6 +63,11 @@ export const getWellFilterFetchers = () => {
 
     spudDateLimits: () =>
       getWellSDKClient().summaries.spudDateLimits().then(processSpudDateLimits),
+
+    maximumInclinationLimits: () =>
+      getWellSDKClient()
+        .summaries.trajectoriesMaximumInclinationLimits()
+        .then(processTrajectoriesMaximumInclinationLimits),
 
     nptCodes: () =>
       getWellSDKClient()

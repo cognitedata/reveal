@@ -289,9 +289,7 @@ export const filterConfigs = (
     key: 'well_characteristics_filter.maximum_inclination_angle',
     category: WELLBORE_CHARACTERISTICS,
     type: FilterTypes.NUMERIC_RANGE,
-    fetcher: () =>
-      // Later these will be taken from the sdk
-      Promise.resolve([0, 180]),
+    fetcher: wellFilterFetchers?.maximumInclinationLimits,
     filterParameters: (values): WellFilter => ({
       trajectories: {
         maxInclination: {

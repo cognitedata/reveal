@@ -74,8 +74,8 @@ const checkMaxInclination = () => {
     .its('request.body.filter')
     .should((body) => {
       const expected = {
-        min: 100,
-        max: 180,
+        min: 20,
+        max: 69.23,
         unit: 'degree',
       };
 
@@ -342,7 +342,7 @@ describe('Wells sidebar filters', () => {
       .siblings()
       .last()
       .findByTestId('From-MaximumInclinationAngleo')
-      .type('100{enter}');
+      .type('{selectAll}20{enter}');
 
     checkMaxInclination();
 
