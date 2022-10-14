@@ -5,7 +5,8 @@ precision highp float;
 #pragma glslify: import('../../base/determineNodeAppearance.glsl');
 #pragma glslify: import('../../base/determineVisibility.glsl');
 #pragma glslify: import('../../base/determineColor.glsl');
-#pragma glslify: import('../../base/isClipped.glsl')
+#pragma glslify: import('../../base/isClipped.glsl');
+#pragma glslify: import('../../treeIndex/treeIndexPacking.glsl');
 #pragma glslify: import('../../math/constants.glsl')
 
 uniform sampler2D colorDataTexture;
@@ -23,11 +24,13 @@ in vec4 axis;
 in vec4 v_centerA;
 in vec4 v_centerB;
 in float height;
-flat in float v_treeIndex;
 in vec3 v_color;
 in vec3 v_normal;
+in TreeIndexPacked  v_treeIndexPacked;
 
-void main() {
+void main()
+{
+    highp float v_treeIndex = unpackTreeIndex(v_treeIndexPacked);
     NodeAppearance appearance = determineNodeAppearance(colorDataTexture, treeIndexTextureSize, v_treeIndex);
     if (!determineVisibility(appearance, renderMode)) {
         discard;

@@ -50,7 +50,7 @@ describe(CdfPointCloudStylableObjectProvider.name, () => {
   test('contains right annotation IDs for annotations provided by SDK', async () => {
     const expectedIds = [123, 124];
 
-    const gottenIds = (await annotationProvider.getPointCloudObjects(new CdfModelIdentifier(123, 456))).annotations.map(
+    const gottenIds = (await annotationProvider.getPointCloudObjects(new CdfModelIdentifier(123, 456))).map(
       obj => obj.annotationId
     );
 
@@ -59,7 +59,7 @@ describe(CdfPointCloudStylableObjectProvider.name, () => {
   });
 
   test('contains right geometry types for annotations provided by SDK', async () => {
-    const shapes = (await annotationProvider.getPointCloudObjects(new CdfModelIdentifier(123, 456))).annotations.map(
+    const shapes = (await annotationProvider.getPointCloudObjects(new CdfModelIdentifier(123, 456))).map(
       obj => obj.stylableObject.shape
     );
 

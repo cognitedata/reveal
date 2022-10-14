@@ -4,28 +4,33 @@
 
 import { PotreeNodeWrapper } from './PotreeNodeWrapper';
 import { PointCloudMetadata } from './PointCloudMetadata';
+
 import { Potree } from './potree-three-loader';
 import { DEFAULT_POINT_CLOUD_METADATA_FILE } from './constants';
 import { PointCloudStylableObjectProvider } from '@reveal/data-providers';
 import { IPointClassificationsProvider } from './classificationsProviders/IPointClassificationsProvider';
+import { PointCloudMaterialManager } from '@reveal/rendering';
 
 export class PointCloudFactory {
   private readonly _potreeInstance: Potree;
   private readonly _pointCloudObjectProvider: PointCloudStylableObjectProvider;
   private readonly _classificationsProvider: IPointClassificationsProvider;
+  private readonly _pointCloudMaterialManager: PointCloudMaterialManager;
 
   constructor(
     potreeInstance: Potree,
     pointCloudObjectProvider: PointCloudStylableObjectProvider,
-    classificationsProvider: IPointClassificationsProvider
+    classificationsProvider: IPointClassificationsProvider,
+    pointCloudMaterialManager: PointCloudMaterialManager
   ) {
     this._potreeInstance = potreeInstance;
     this._pointCloudObjectProvider = pointCloudObjectProvider;
     this._classificationsProvider = classificationsProvider;
+    this._pointCloudMaterialManager = pointCloudMaterialManager;
   }
 
-  get potreeInstance(): Potree {
-    return this._potreeInstance;
+  dispose(): void {
+    this._pointCloudMaterialManager.dispose();
   }
 
   async createModel(modelMetadata: PointCloudMetadata): Promise<PotreeNodeWrapper> {
@@ -40,15 +45,11 @@ export class PointCloudFactory {
     const pointCloudOctree = await this._potreeInstance.loadPointCloud(
       modelBaseUrl,
       DEFAULT_POINT_CLOUD_METADATA_FILE,
-      annotationInfo
+      annotationInfo,
+      modelIdentifier.revealInternalId
     );
 
     pointCloudOctree.name = `PointCloudOctree: ${modelBaseUrl}`;
-    return new PotreeNodeWrapper(
-      pointCloudOctree,
-      annotationInfo.annotations,
-      modelIdentifier.revealInternalId,
-      classSchema
-    );
+    return new PotreeNodeWrapper(pointCloudOctree, annotationInfo, modelIdentifier.revealInternalId, classSchema);
   }
 }

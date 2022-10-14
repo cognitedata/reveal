@@ -9,21 +9,15 @@ const PotreeDefaultPointClass = 'DEFAULT';
 
 type ClassificationMap = { [key: string]: { rgb: THREE.Color; code: number } };
 
-import {
-  PointCloudOctree,
-  PotreePointColorType,
-  PotreePointShape,
-  IClassification,
-  PickPoint
-} from './potree-three-loader';
+import { PointCloudOctree, PickPoint } from './potree-three-loader';
+import { PointColorType, PointShape, IClassification, DEFAULT_CLASSIFICATION } from '@reveal/rendering';
+
+import { StyledPointCloudObjectCollection, CompletePointCloudAppearance } from '@reveal/pointcloud-styling';
 import { WellKnownAsprsPointClassCodes } from './types';
 
-import { StyledPointCloudObjectCollection } from './styling/StyledPointCloudObjectCollection';
 import { PointCloudObjectMetadata, PointCloudObject } from '@reveal/data-providers';
-import { CompletePointCloudAppearance } from './styling/PointCloudAppearance';
 import { ClassificationInfo } from './potree-three-loader/loading/ClassificationInfo';
 import { createDistinctColors } from '@reveal/utilities';
-import { DEFAULT_CLASSIFICATION } from './potree-three-loader/rendering/classification';
 
 /**
  * Wrapper around `Potree.PointCloudOctree` with some convenience functions.
@@ -31,7 +25,7 @@ import { DEFAULT_CLASSIFICATION } from './potree-three-loader/rendering/classifi
 export class PotreeNodeWrapper {
   readonly octree: PointCloudOctree;
   private _needsRedraw = false;
-  private readonly _classification: IClassification = {} as IClassification;
+  private readonly _classification: IClassification;
 
   private readonly _modelIdentifier: symbol;
 
@@ -53,8 +47,8 @@ export class PotreeNodeWrapper {
   ) {
     this.octree = octree;
     this.pointSize = 2;
-    this.pointColorType = PotreePointColorType.Rgb;
-    this.pointShape = PotreePointShape.Circle;
+    this.pointColorType = PointColorType.Rgb;
+    this.pointShape = PointShape.Circle;
     this._classification = octree.material.classification;
     this._annotations = annotations;
     this._modelIdentifier = modelIdentifier;
@@ -138,18 +132,18 @@ export class PotreeNodeWrapper {
     return box.clone().applyMatrix4(this.octree.matrixWorld);
   }
 
-  get pointColorType(): PotreePointColorType {
+  get pointColorType(): PointColorType {
     return this.octree.material.pointColorType;
   }
-  set pointColorType(type: PotreePointColorType) {
+  set pointColorType(type: PointColorType) {
     this.octree.material.pointColorType = type;
     this._needsRedraw = true;
   }
 
-  get pointShape(): PotreePointShape {
+  get pointShape(): PointShape {
     return this.octree.material.shape;
   }
-  set pointShape(shape: PotreePointShape) {
+  set pointShape(shape: PointShape) {
     this.octree.material.shape = shape;
     this._needsRedraw = true;
   }

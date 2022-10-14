@@ -3,12 +3,12 @@
  */
 
 import { CogniteClient } from '@cognite/sdk';
-import { CdfModelIdentifier, ModelIdentifier } from '@reveal/data-providers';
+import { ModelIdentifier } from '../ModelIdentifier';
+import { CdfModelIdentifier } from '../model-identifiers/CdfModelIdentifier';
 import { IShape, Box, Cylinder } from '@reveal/utilities';
 import assert from 'assert';
-import { CdfPointCloudObjectAnnotation } from './types';
+import { CdfPointCloudObjectAnnotation, PointCloudObject } from './types';
 import { PointCloudStylableObjectProvider } from '../PointCloudStylableObjectProvider';
-import { PointCloudObjectData } from './PointCloudObjectAnnotationData';
 
 import * as THREE from 'three';
 import { cdfAnnotationsToObjectInfo } from './cdfAnnotationsToObjects';
@@ -63,7 +63,7 @@ export class CdfPointCloudStylableObjectProvider implements PointCloudStylableOb
     return annotations;
   }
 
-  async getPointCloudObjects(modelIdentifier: ModelIdentifier): Promise<PointCloudObjectData> {
+  async getPointCloudObjects(modelIdentifier: ModelIdentifier): Promise<PointCloudObject[]> {
     assert(modelIdentifier instanceof CdfModelIdentifier);
 
     const annotations = await this.fetchAnnotations(modelIdentifier);

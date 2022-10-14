@@ -2,7 +2,8 @@
  * Copyright 2022 Cognite AS
  */
 
-import { CognitePointCloudModel, PotreePointColorType, PotreePointSizeType } from '@reveal/pointclouds';
+import { CognitePointCloudModel } from '@reveal/pointclouds';
+import { PointColorType, PointSizeType } from '@reveal/rendering';
 import {
   ViewerTestFixtureComponents,
   ViewerVisualTestFixture
@@ -22,8 +23,8 @@ export default class DefaultPointCloudVisualTest extends ViewerVisualTestFixture
       return Promise.resolve();
     }
 
-    model.pointColorType = PotreePointColorType.Height;
-    model.pointSizeType = PotreePointSizeType.Fixed;
+    model.pointColorType = PointColorType.Height;
+    model.pointSizeType = PointSizeType.Fixed;
     model.pointSize = 50.0;
     return Promise.resolve();
   }

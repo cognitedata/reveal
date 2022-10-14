@@ -80,44 +80,18 @@ export class AxisViewTool extends Cognite3DViewerToolBase {
     divElement.style.width = `${this._layoutConfig.size}px`;
     divElement.style.zIndex = '1';
 
-    let xMouse = 0;
-    let yMouse = 0;
-
     divElement.addEventListener('mousedown', event => {
-      const mouseDownEvent = new MouseEvent('mousedown', {
-        clientX: event.clientX,
-        clientY: event.clientY,
-        button: event.button
-      });
-      xMouse = event.clientX;
-      yMouse = event.clientY;
-      viewer.renderer.domElement.dispatchEvent(mouseDownEvent);
-    });
-
-    divElement.addEventListener('mousemove', event => {
-      const mouseMoveEvent = new MouseEvent('mousemove', {
-        clientX: event.clientX,
-        clientY: event.clientY,
-        button: event.button
-      });
-      viewer.renderer.domElement.dispatchEvent(mouseMoveEvent);
+      event.stopPropagation();
     });
 
     divElement.addEventListener('contextmenu', event => event.preventDefault());
 
     divElement.addEventListener('mouseup', event => {
-      const mouseUpEvent = new MouseEvent('mouseup', {
-        clientX: event.clientX,
-        clientY: event.clientY,
-        button: event.button
-      });
-
       const rect = viewer.domElement.getBoundingClientRect();
       const x = event.clientX - rect.left;
       const y = event.clientY - rect.top;
-      if (Math.abs(xMouse - event.clientX) + Math.abs(yMouse - event.clientY) <= 10 && !this.handleClick(x, y, rect)) {
-        viewer.renderer.domElement.dispatchEvent(mouseUpEvent);
-      }
+      this.handleClick(x, y, rect);
+      event.stopPropagation();
     });
 
     viewer.domElement.appendChild(divElement);

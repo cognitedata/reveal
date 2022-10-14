@@ -8,7 +8,13 @@ export { transformCameraConfiguration } from './src/transformCameraConfiguration
 export { RandomColors } from './src/RandomColors';
 export { CameraConfiguration } from './src/CameraConfiguration';
 export { EventTrigger, clickOrTouchEventOffset, InputHandler, disposeOfAllEventListeners } from './src/events';
-export { DisposedDelegate, SceneRenderedDelegate, PointerEventDelegate, PointerEventData } from './src/events/types';
+export {
+  DisposedDelegate,
+  BeforeSceneRenderedDelegate,
+  SceneRenderedDelegate,
+  PointerEventDelegate,
+  PointerEventData
+} from './src/events/types';
 export { assertNever } from './src/assertNever';
 export { NumericRange } from './src/NumericRange';
 export { determinePowerOfTwoDimensions } from './src/determinePowerOfTwoDimensions';
@@ -39,7 +45,11 @@ export { disposeAttributeArrayOnUpload } from './src/disposeAttributeArrayOnUplo
 export { incrementOrInsertIndex, decrementOrDeleteIndex } from './src/counterMap';
 export { calculateVolumeOfMesh } from './src/calculateVolumeOfMesh';
 
-export { worldToNormalizedViewportCoordinates, worldToViewportCoordinates } from './src/worldToViewport';
+export {
+  worldToNormalizedViewportCoordinates,
+  worldToViewportCoordinates,
+  pixelToNormalizedDeviceCoordinates
+} from './src/worldToViewport';
 
 export { DeferredPromise } from './src/DeferredPromise';
 

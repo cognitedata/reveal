@@ -12,7 +12,7 @@
     "@reveal/cad-parsers": "workspace:*",
     "@reveal/cad-styling": "workspace:*",
     "@reveal/logger": "workspace:*",
-    "@reveal/pointclouds": "workspace:*",
+    "@reveal/pointcloud-styling": "workspace:*",
     "@reveal/utilities": "workspace:*"
   },
   "sideEffects": false,

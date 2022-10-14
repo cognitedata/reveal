@@ -13,6 +13,8 @@
     "@reveal/data-providers": "workspace:*",
     "@reveal/metrics": "workspace:*",
     "@reveal/model-base": "workspace:*",
+    "@reveal/pointcloud-styling": "workspace:*",
+    "@reveal/rendering": "workspace:*",
     "@reveal/utilities": "workspace:*"
   }
 }

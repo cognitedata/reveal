@@ -6,7 +6,6 @@ import { CompositeShape } from '@reveal/utilities';
 
 import { applyDefaultModelTransformation } from '../utilities/applyDefaultModelTransformation';
 import { PointCloudObject, CdfPointCloudObjectAnnotation } from './types';
-import { PointCloudObjectData } from './PointCloudObjectAnnotationData';
 import { StylableObject } from './StylableObject';
 
 import { Matrix4 } from 'three';
@@ -40,8 +39,6 @@ function cdfAnnotationsToPointCloudObjects(cdfAnnotations: CdfPointCloudObjectAn
   return resultAnnotations;
 }
 
-export function cdfAnnotationsToObjectInfo(annotations: CdfPointCloudObjectAnnotation[]): PointCloudObjectData {
-  const translatedAnnotations = cdfAnnotationsToPointCloudObjects(annotations);
-
-  return new PointCloudObjectData(translatedAnnotations);
+export function cdfAnnotationsToObjectInfo(annotations: CdfPointCloudObjectAnnotation[]): PointCloudObject[] {
+  return cdfAnnotationsToPointCloudObjects(annotations);
 }

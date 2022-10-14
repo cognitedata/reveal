@@ -29,6 +29,7 @@ export {
   DefaultNodeAppearance,
   NodeCollection,
   TreeIndexNodeCollection,
+  NodeIdNodeCollection,
   IntersectionNodeCollection,
   UnionNodeCollection,
   SerializedNodeCollection,
@@ -36,9 +37,7 @@ export {
   SinglePropertyFilterNodeCollection,
   AssetNodeCollection,
   InvertedNodeCollection,
-  registerCustomNodeCollectionType,
-  TypeName,
-  NodeCollectionDescriptor,
+  registerNodeCollectionType,
   NodeCollectionSerializationContext,
   CdfModelNodeCollectionDataProvider
 } from './packages/cad-styling';
@@ -48,6 +47,7 @@ export { CogniteModelBase, SupportedModelTypes } from './packages/model-base';
 export {
   IndexSet,
   NumericRange,
+  BeforeSceneRenderedDelegate,
   SceneRenderedDelegate,
   PointerEventDelegate,
   DisposedDelegate
@@ -56,11 +56,16 @@ export {
 export { PointCloudObjectMetadata } from './packages/data-providers';
 
 export { Cognite3DModel, BoundingBoxClipper, GeometryFilter, WellKnownUnit } from './packages/cad-model';
+
+export { CognitePointCloudModel } from './packages/pointclouds';
+
 export {
-  CognitePointCloudModel,
   CompletePointCloudAppearance,
   PointCloudAppearance,
   PointCloudObjectCollection,
   AnnotationIdPointCloudObjectCollection,
-  DefaultPointCloudAppearance
-} from './packages/pointclouds';
+  DefaultPointCloudAppearance,
+  StyledPointCloudObjectCollection
+} from './packages/pointcloud-styling';
+
+export { Image360Entity } from './packages/360-images';

@@ -9,7 +9,7 @@ import { PropertyFilterNodeCollection } from './PropertyFilterNodeCollection';
 import nock from 'nock';
 import { CdfModelNodeCollectionDataProvider } from './CdfModelNodeCollectionDataProvider';
 
-describe('PropertyFilterNodeCollection', () => {
+describe(PropertyFilterNodeCollection.name, () => {
   let client: CogniteClient;
   let model: CdfModelNodeCollectionDataProvider;
   let set: PropertyFilterNodeCollection;

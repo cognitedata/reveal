@@ -2,9 +2,9 @@
  * Copyright 2022 Cognite AS
  */
 
-import { ModelIdentifier } from '@reveal/data-providers';
-import { PointCloudObjectData } from './pointcloud-stylable-object-providers/PointCloudObjectAnnotationData';
+import { ModelIdentifier } from './ModelIdentifier';
+import { PointCloudObject } from './pointcloud-stylable-object-providers/types';
 
 export interface PointCloudStylableObjectProvider {
-  getPointCloudObjects(modelIdentifier: ModelIdentifier): Promise<PointCloudObjectData>;
+  getPointCloudObjects(modelIdentifier: ModelIdentifier): Promise<PointCloudObject[]>;
 }

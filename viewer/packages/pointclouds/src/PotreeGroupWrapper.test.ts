@@ -9,17 +9,22 @@ import { PotreeGroupWrapper } from './PotreeGroupWrapper';
 import { PotreeNodeWrapper } from './PotreeNodeWrapper';
 import { yieldProcessing } from '../../../test-utilities';
 
-import { Potree, PointCloudOctree, PointCloudMaterial } from './potree-three-loader';
+import { Potree, PointCloudOctree } from './potree-three-loader';
 import { Mock } from 'moq.ts';
 import { ModelDataProvider } from '@reveal/data-providers';
+import { PointCloudMaterialManager, PointCloudMaterial } from '@reveal/rendering';
 
 const mockModelDataProvider = new Mock<ModelDataProvider>().object();
+const mockMaterialManager = new Mock<PointCloudMaterialManager>().object();
 
 describe('PotreeGroupWrapper', () => {
   const pollLoadingStatusInterval = 1;
 
   test('getLoadingStateObserver() triggers false initially', done => {
-    const manager = new PotreeGroupWrapper(new Potree(mockModelDataProvider), pollLoadingStatusInterval);
+    const manager = new PotreeGroupWrapper(
+      new Potree(mockModelDataProvider, mockMaterialManager),
+      pollLoadingStatusInterval
+    );
     expectObservable(manager.getLoadingStateObserver().pipe(map(x => x.isLoading)), [false], done);
   });
   test('getLoadingStateObserver() triggers true after add', done => {
@@ -34,7 +39,10 @@ describe('PotreeGroupWrapper', () => {
       .returns(new PointCloudMaterial())
       .object();
     const model = new PotreeNodeWrapper(dummyNode, [], Symbol('dummy'), { classificationSets: [] });
-    const manager = new PotreeGroupWrapper(new Potree(mockModelDataProvider), pollLoadingStatusInterval);
+    const manager = new PotreeGroupWrapper(
+      new Potree(mockModelDataProvider, mockMaterialManager),
+      pollLoadingStatusInterval
+    );
 
     expectObservable(manager.getLoadingStateObserver().pipe(map(x => x.isLoading)), [false], done);
     manager.addPointCloud(model);

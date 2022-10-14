@@ -10,7 +10,8 @@ export type TrackedEvents =
   | 'cameraNavigated'
   | 'toolCreated'
   | 'cadModelStyleAssigned'
-  | 'cadNodeTransformOverridden';
+  | 'cadNodeTransformOverridden'
+  | 'measurementAdded';
 
 export type EventProps = {
   [key: string]: any;
