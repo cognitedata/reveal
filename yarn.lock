@@ -1672,7 +1672,7 @@
     query-string "^5.1.1"
     url "^0.11.0"
 
-"@cognite/sdk-core@^4.0.1", "@cognite/sdk-core@^4.6.0":
+"@cognite/sdk-core@^4.6.0", "@cognite/sdk-core@^4.8.1":
   version "4.8.1"
   resolved "https://registry.yarnpkg.com/@cognite/sdk-core/-/sdk-core-4.8.1.tgz#008c6d7e15393f3a840baf809a0037efa8266849"
   integrity sha512-FEICothNg/aAHdAY84J/udt5NcPcoe8GlT+piFgpvV8zIFpFbUxU4oLVf20xl0AJX1xCO13iWrL/szf6BWqEcA==
@@ -1692,14 +1692,6 @@
     "@cognite/sdk-core" "^3.4.1"
     lodash "^4.17.11"
 
-"@cognite/sdk-v6@npm:@cognite/sdk@6.1.1":
-  version "6.1.1"
-  resolved "https://registry.npmjs.org/@cognite/sdk/-/sdk-6.1.1.tgz"
-  integrity sha512-uJRgkSj6FIuBYFwzbbworWvjCHauEVr/pxMQhzQvtcTQEIZaeDUfBUyrF0hYiGQeOBKWjKi3kH/c36/lrTxl5g==
-  dependencies:
-    "@cognite/sdk-core" "^4.0.1"
-    lodash "^4.17.11"
-
 "@cognite/sdk@7.8.2":
   version "7.8.2"
   resolved "https://registry.yarnpkg.com/@cognite/sdk/-/sdk-7.8.2.tgz#f862ba3c692dd284d58aa87ba7127ffb41e1f299"
@@ -1715,6 +1707,16 @@
   integrity sha512-rK7IajwtSEg1DkuqZ88F7hvvZG8cG7bwQx8eN0uMJilNJNnWGqjnLyOJHsIlB/K0bkhbccur4GrPDPu3Fe1fjg==
   dependencies:
     "@cognite/sdk-core" "^1.2.2"
+    lodash "^4.17.11"
+
+"@cognite/sdk@^7.9.6":
+  version "7.9.6"
+  resolved "https://registry.yarnpkg.com/@cognite/sdk/-/sdk-7.9.6.tgz#6f66262bc7b62078bd93dd7996a986fb53b93fee"
+  integrity sha512-JDtTAer69pX3BdM4ftG6n/OT2GjnhrqlLCO8ufZivORbC/0aNGOYcgoBkIoAaacmqn1DJGJDTeI33g3XZErHEQ==
+  dependencies:
+    "@cognite/sdk-core" "^4.8.1"
+    "@types/geojson" "^7946.0.8"
+    geojson "^0.5.0"
     lodash "^4.17.11"
 
 "@cognite/sidecar@0.4.1", "@cognite/sidecar@^0.4.1":
@@ -5479,6 +5481,11 @@
   version "7946.0.8"
   resolved "https://registry.npmjs.org/@types/geojson/-/geojson-7946.0.8.tgz"
   integrity sha512-1rkryxURpr6aWP7R786/UQOkJ3PcpQiWkAXBmdWc7ryFWqN6a4xfK7BtjXvFBKO9LjQ+MWQSWxYeZX1OApnArA==
+
+"@types/geojson@^7946.0.8":
+  version "7946.0.10"
+  resolved "https://registry.yarnpkg.com/@types/geojson/-/geojson-7946.0.10.tgz#6dfbf5ea17142f7f9a043809f1cd4c448cb68249"
+  integrity sha512-Nmh0K3iWQJzniTuPRcJn5hxXkfB1T1pgB89SBig5PlJQU5yocazeu4jATJlaA0GYFKWMqDdvYemoSnF2pXgLVA==
 
 "@types/glob@*", "@types/glob@^7.1.1":
   version "7.2.0"

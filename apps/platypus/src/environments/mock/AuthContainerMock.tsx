@@ -19,9 +19,10 @@ export const AuthContainerMock = ({ children }: AuthContainerProps) => {
 
   const cogniteClient: CogniteClient = new CogniteClient({
     appId: config.APP_APP_ID,
+    project: 'mock',
+    baseUrl: window.location.origin,
+    getToken: async () => 'mock',
   });
-  cogniteClient.setProject('mock');
-  cogniteClient.setBaseUrl(window.location.origin);
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   cogniteClient.initAPIs();

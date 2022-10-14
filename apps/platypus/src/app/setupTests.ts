@@ -12,8 +12,10 @@ configureI18n();
 
 const cogniteClient: CogniteClient = new CogniteClient({
   appId: config.APP_APP_ID,
+  baseUrl: window.location.origin,
+  project: 'mock',
+  getToken: async () => 'mock',
 });
-cogniteClient.setBaseUrl(window.location.origin);
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 cogniteClient.initAPIs();
