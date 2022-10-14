@@ -15,13 +15,8 @@ import {
   RenderMode,
   RenderPipelineExecutor,
   RenderPipelineProvider,
-<<<<<<< HEAD
-  PointCloudMaterialManager,
-  PointColorType
-=======
   PointColorType,
   PointCloudMaterialManager
->>>>>>> master
 } from '../../packages/rendering';
 import { createDataProviders } from './utilities/createDataProviders';
 import { VisualTestFixture } from './VisualTestFixture';
