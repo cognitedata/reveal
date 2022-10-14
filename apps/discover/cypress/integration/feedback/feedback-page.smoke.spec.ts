@@ -24,7 +24,7 @@ import {
   interceptGetUserRoles,
 } from '../../support/interceptions/user';
 
-describe.skip('Feedback', () => {
+describe('Feedback', () => {
   describe('Normal User', () => {
     before(() => {
       cancelFrontendMetricsRequest();
@@ -82,10 +82,14 @@ describe.skip('Feedback', () => {
         .should('be.visible');
 
       cy.log('Mark document as incorrect geo');
-      cy.findByText('Incorrect geographic tag').should('be.visible').click();
+      cy.findByText('Incorrect geographic tag')
+        .should('exist')
+        .click({ force: true });
 
       cy.log('mark document as incorrect type and set type');
-      cy.findByText('Incorrect document type').should('be.visible').click();
+      cy.findByText('Incorrect document type')
+        .should('exist')
+        .click({ force: true });
       cy.findByText('Select document type').click();
       cy.findByText(docType).click();
 
@@ -145,10 +149,14 @@ describe.skip('Feedback', () => {
         .should('be.visible');
 
       cy.log('Mark document as incorrect geo');
-      cy.findByText('Incorrect geographic tag').should('be.visible').click();
+      cy.findByText('Incorrect geographic tag')
+        .should('exist')
+        .click({ force: true });
 
       cy.log('mark document as incorrect type and set type');
-      cy.findByText('Incorrect document type').should('be.visible').click();
+      cy.findByText('Incorrect document type')
+        .should('exist')
+        .click({ force: true });
       cy.findByText('Select document type').click();
       cy.findByText('Drilling Report').click();
 
@@ -201,7 +209,7 @@ describe.skip('Feedback', () => {
     });
   });
 
-  describe.skip('Admin User Feedback', () => {
+  describe('Admin User Feedback', () => {
     beforeEach(() => {
       interceptGetUserRoles();
       interceptGetGeneralFeedback();
@@ -217,7 +225,8 @@ describe.skip('Feedback', () => {
       );
 
       cy.clickAdminSettings();
-      cy.contains('Feedback').should('be.visible').click();
+      cy.findByTestId('ADMIN/FEEDBACK').should('be.visible').click();
+      cy.wait(`@${GET_GENERAL_FEEDBACK_ALIAS}`, { requestTimeout: 20000 });
     });
 
     describe('Admin User Document Feedback', () => {
@@ -249,7 +258,6 @@ describe.skip('Feedback', () => {
           'Wait for results and check that empty-state-container is not there'
         );
 
-        cy.wait(`@${GET_GENERAL_FEEDBACK_ALIAS}`);
         cy.isTableEmptyStateVisible(false);
 
         // DOCUMENT FEEDBACK
@@ -270,6 +278,7 @@ describe.skip('Feedback', () => {
 
       it('Should render all details in document feedback table', () => {
         cy.clickDocumentFeedbackButton();
+        cy.wait(`@${GET_DOCUMENT_FEEDBACK_ALIAS}`);
         cy.isTableEmptyStateVisible(false);
         cy.sortDataOnCreatedDate();
 
@@ -287,10 +296,12 @@ describe.skip('Feedback', () => {
 
       it('Archive feedback', () => {
         cy.clickDocumentFeedbackButton();
+        cy.wait(`@${GET_DOCUMENT_FEEDBACK_ALIAS}`);
         cy.isTableEmptyStateVisible(false);
         cy.sortDataOnCreatedDate();
 
         cy.clickNthRowArchiveFeedbackIcon(0);
+        cy.wait(`@${GET_DOCUMENT_FEEDBACK_ALIAS}`);
 
         cy.contains(comment).should('not.exist');
         cy.clickViewArchivedButton();
@@ -299,6 +310,7 @@ describe.skip('Feedback', () => {
         cy.contains(comment).should('be.visible');
 
         cy.clickNthRowRevertArchivedButton(0);
+        cy.wait(`@${GET_DOCUMENT_FEEDBACK_ALIAS}`);
 
         cy.contains(comment).should('not.exist');
         cy.clickViewArchivedButton();
@@ -308,6 +320,7 @@ describe.skip('Feedback', () => {
 
       it('Document feedback comment section', () => {
         cy.clickDocumentFeedbackButton();
+        cy.wait(`@${GET_DOCUMENT_FEEDBACK_ALIAS}`);
         cy.isTableEmptyStateVisible(false);
         cy.sortDataOnCreatedDate();
         cy.clickNthRowCommentIcon(0);
@@ -317,6 +330,7 @@ describe.skip('Feedback', () => {
 
       it('Admin user assignment', () => {
         cy.clickDocumentFeedbackButton();
+        cy.wait(`@${GET_DOCUMENT_FEEDBACK_ALIAS}`);
         cy.isTableEmptyStateVisible(false);
         cy.sortDataOnCreatedDate();
 
@@ -328,9 +342,8 @@ describe.skip('Feedback', () => {
           .eq(1)
           .then((element: JQuery<HTMLElement>) => {
             const userName = element[0].innerText;
-            console.log('element', element[0].innerText);
             cy.get('.cogs-menu-item').eq(1).click();
-            cy.wait(`@${GET_DOCUMENT_FEEDBACK_ALIAS}`);
+            cy.wait(`@${GET_DOCUMENT_FEEDBACK_ALIAS}`, { timeout: 25000 });
             cy.contains(comment);
 
             cy.checkAssignedToLabelOnNthRow(0, userName);
@@ -350,6 +363,7 @@ describe.skip('Feedback', () => {
 
       it('Status assignment', () => {
         cy.clickDocumentFeedbackButton();
+        cy.wait(`@${GET_DOCUMENT_FEEDBACK_ALIAS}`);
         cy.isTableEmptyStateVisible(false);
         cy.sortDataOnCreatedDate();
 
@@ -397,6 +411,7 @@ describe.skip('Feedback', () => {
         cy.sortDataOnCreatedDate();
 
         cy.clickNthRowArchiveFeedbackIcon(0);
+        cy.wait(`@${GET_GENERAL_FEEDBACK_ALIAS}`);
 
         cy.contains(comment).should('not.exist');
         cy.clickViewArchivedButton();
@@ -405,6 +420,7 @@ describe.skip('Feedback', () => {
         cy.contains(comment).should('be.visible');
 
         cy.clickNthRowRevertArchivedButton(0);
+        cy.wait(`@${GET_GENERAL_FEEDBACK_ALIAS}`);
 
         cy.contains(comment).should('not.exist');
         cy.clickViewArchivedButton();
@@ -434,7 +450,7 @@ describe.skip('Feedback', () => {
             const userName = element[0].innerText;
             console.log('element', element[0].innerText);
             cy.get('.cogs-menu-item').eq(1).click();
-            cy.wait(`@${GET_GENERAL_FEEDBACK_ALIAS}`);
+            cy.wait(`@${GET_GENERAL_FEEDBACK_ALIAS}`, { timeout: 25000 });
             cy.contains(comment);
 
             cy.checkAssignedToLabelOnNthRow(0, userName);

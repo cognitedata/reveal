@@ -109,6 +109,7 @@ export const AdminSettings: React.FC<Props> = ({
               item.onClick();
               setShowDropdown(false);
             }}
+            data-testid={item.key}
           >
             {item.name}
           </Menu.Item>
