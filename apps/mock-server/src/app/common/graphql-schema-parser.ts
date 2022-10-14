@@ -14,14 +14,14 @@ export class GraphQlSchemaParser {
     `;
 
     // schema is your GraphQL schema.
-    const schema = buildSchema(newSchemaString, {
-      experimentalFragmentVariables: true,
-    });
+    const schema = buildSchema(newSchemaString);
 
-    const introspection = graphqlSync(schema, getIntrospectionQuery())
-      .data as IntrospectionQuery;
+    const introspection = graphqlSync({
+      schema,
+      source: getIntrospectionQuery(),
+    }).data;
 
-    return introspection;
+    return introspection as unknown as IntrospectionQuery;
   }
 
   buildGraphQlSchemaAst(schemaString: string) {
@@ -32,9 +32,7 @@ export class GraphQlSchemaParser {
     `;
 
     // schema is your GraphQL schema.
-    const schema = buildSchema(newSchemaString, {
-      experimentalFragmentVariables: true,
-    });
+    const schema = buildSchema(newSchemaString);
 
     return schema;
   }

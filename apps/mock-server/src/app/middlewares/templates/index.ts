@@ -79,12 +79,12 @@ export default function (db: CdfMockDatabase, config: CdfApiConfig) {
         return;
       }
 
-      const response = await graphql(
-        graphQlServers[serverKey],
-        `
+      const response = await graphql({
+        schema: graphQlServers[serverKey],
+        source: `
           ${graphQlQuery}
-        `
-      );
+        `,
+      });
       res.jsonp(response);
     }
   );

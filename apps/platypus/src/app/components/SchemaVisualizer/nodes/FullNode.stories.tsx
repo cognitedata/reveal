@@ -4,7 +4,7 @@ import {
   MainTitle,
   Wrapper,
 } from '@platypus-app/components/Styles/storybook';
-import { ObjectTypeDefinitionNode } from 'graphql';
+import { Kind, ObjectTypeDefinitionNode } from 'graphql';
 
 import { NodeWrapper } from '../SchemaVisualizer';
 import { FullNode } from './FullNode';
@@ -159,9 +159,9 @@ export const WithTypeDirective = () => (
       ...mockCustomType,
       directives: [
         {
-          kind: 'Directive',
+          kind: Kind.DIRECTIVE,
           name: {
-            kind: 'Name',
+            kind: Kind.NAME,
             value: 'view',
           },
         },

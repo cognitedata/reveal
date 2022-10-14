@@ -3,33 +3,39 @@ import {
   DraftRowData,
 } from '@platypus-app/redux/reducers/global/dataManagementReducer';
 import { DataModelTypeDefsType } from '@platypus/platypus-core';
+import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 
 export const useDraftRows = () => {
   const dispatch = useDispatch();
 
-  const setDraftRows = (rows: DraftRowData[]) => {
-    dispatch(dataManagementActions.setDraftRowsData({ rows: [...rows] }));
-  };
+  const setDraftRows = useCallback(
+    (rows: DraftRowData[]) => () => {
+      dispatch(dataManagementActions.setDraftRowsData({ rows: [...rows] }));
+    },
+    [dispatch]
+  );
 
-  const createNewDraftRow = () => {
+  const createNewDraftRow = useCallback(() => {
     dispatch(dataManagementActions.createNewDraftRow());
-  };
+  }, [dispatch]);
 
-  const clearState = () => {
+  const clearState = useCallback(() => {
     dispatch(dataManagementActions.clearState());
-  };
+  }, [dispatch]);
 
-  const updateRowData = (payload: {
-    row: DraftRowData;
-    field: string;
-    newValue: string;
-  }) => {
-    dispatch(dataManagementActions.updateRowData(payload));
-  };
-  const removeDrafts = (ids: string[]) => {
-    dispatch(dataManagementActions.removeDraftRows({ rows: ids }));
-  };
+  const updateRowData = useCallback(
+    (payload: { row: DraftRowData; field: string; newValue: string }) => {
+      dispatch(dataManagementActions.updateRowData(payload));
+    },
+    [dispatch]
+  );
+  const removeDrafts = useCallback(
+    (ids: string[]) => {
+      dispatch(dataManagementActions.removeDraftRows({ rows: ids }));
+    },
+    [dispatch]
+  );
   const setSelectedType = (
     dataModelExternalId: string,
     selectedVersion: string,

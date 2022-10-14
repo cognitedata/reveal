@@ -51,7 +51,7 @@
     "express": "^4.17.2",
     "graphiql": "^1.5.1",
     "graphiql-explorer": "^0.6.3",
-    "graphql": "^15.6.1",
+    "graphql": "^16.6.0",
     "graphql-extra": "^0.2.2",
     "graphql-tools": "^8.2.0",
     "http-proxy-middleware": "^2.0.1",

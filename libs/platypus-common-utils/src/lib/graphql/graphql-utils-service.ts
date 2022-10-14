@@ -323,7 +323,7 @@ type Query {
 
     try {
       doc = parse(schemaToValidate);
-      errors = validateSDL(doc);
+      errors = validateSDL(doc).slice();
 
       if (errors.length) {
         return errors.map((err) => this.graphQlToValidationError(err));
