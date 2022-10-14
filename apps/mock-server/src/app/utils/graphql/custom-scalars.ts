@@ -22,7 +22,7 @@ const dateScallar = (scalarName: string) => {
     name: scalarName,
     description: scalarName + ' custom scalar type',
     serialize(value) {
-      const serializedValue = new Date(value).toISOString();
+      const serializedValue = new Date(value as string).toISOString();
       return serializedValue; // Convert outgoing value for JSON
     },
     parseValue(value) {
