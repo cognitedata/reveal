@@ -1,0 +1,166 @@
+# @cognite/fdm-client
+
+This library, plus the `generate-js-sdk` functionality of the beta [CDF CLI](https://www.npmjs.com/package/@cognite/cdf-cli).
+
+Cognite FDM Client is an **auto-generated query builder** that enables **type-safe** CDF data querying and ingestion against your data models. This tool **reduces boilerplate**. And you can easily use it along side React Query (demo coming soon).
+
+## Get started
+
+To get started, make sure you have the beta [CDF CLI](https://www.npmjs.com/package/@cognite/cdf-cli) installed.
+
+Then, in the project you would like to generate the SDK, run `cdf data-models generate-js-sdk`.
+
+From then, you can run the below code to get a instantiated `FDMQueryClient`.
+
+```js
+import { FDMQueryClientBuilder } from '@cognite/fdm-client';
+
+const client = FDMQueryClientBuilder.fromClient(/**Your CogniteClient Here**/);
+```
+
+Hint: Feel free to checkout the `generated/sample.ts` for how to use the SDK!
+
+## Querying
+
+With FDM, you get access to `list`, `search`, and `aggregate` queries for every `type` you define.
+
+To run these queries, use the `runQuery` command and it will autocomplete all of the fields.
+
+### Basic query with no variables
+
+```js
+import { everything } from '@cognite/fdm-client';
+
+client
+  .runQuery({
+    searchMovie: {
+      items: {
+        ...everything, // use everything to get all the scalars back.
+        name: true, // or just type the property name as key and `true` as value to get the data back
+      },
+    },
+  })
+  .then((response) => {
+    // do something with `response.data`
+  });
+```
+
+You'll notice that the response you get back is according to the field selection in the `runQuery` command.
+
+### Basic query with variables
+
+For most queries, you would like to specify some parameters (i.e. `query` for `search` commands, or `limit` for page size).
+
+You can do that via giving the query an array with the 1st item being the parameters, 2nd being the query like the first example.
+
+```js
+client
+  .runQuery({
+    searchMovie: [
+      { query: 'some string', limit: 1000 }, // you can specify the parameters right in here
+      {
+        items: {
+          name: true,
+        },
+      },
+    ],
+  })
+  .then((response) => {
+    // do something with `response.data`
+  });
+```
+
+## Upserting
+
+To upsert (update or insert) data into your data model's types, you can use `upsertNodes`.
+
+When you upsert, you must specify the `externalId` and any other required fields.
+
+### Basic Nodes
+
+Loading basic nodes is very easy, simply pass in an array of JSON object after specifying the type that you would like to load to.
+
+```js
+await client.upsertNodes('Actor', [
+  {
+    name: 'Brad Pitt',
+    externalId: 'bp',
+  },
+]);
+await client.upsertNodes('Movie', [
+  {
+    name: "Ocean's 11",
+    externalId: 'o11',
+  },
+]);
+```
+
+### 1:1 (direct) relationships
+
+We have a special `NodeRef` class defined to make it easy for ingesting 1:1 (direct) relationships. Just specify the target node's `externalId`.
+
+```js
+import { NodeRef } from '@cognite/fdm-client';
+
+client.upsertNodes('Actor', [
+  {
+    name: 'Brad Pitt',
+    externalId: 'bp',
+    favMovie: new NodeRef('o11'),
+  },
+]);
+```
+
+## Upserting Relationships
+
+For loading relationships - 1:m (one to many) or m:n (many to many), specify first the property that the data should be loaded to to `upsertRelationships`. Then, we have a special `NodeRef` class to make it easy for ingesting these relationships. Just specify the start and end node's `externalId`s.
+
+```js
+import { NodeRef } from '@cognite/fdm-client';
+
+client.upsertRelationships('Movie', 'actors', [
+  {
+    startNode: new NodeRef('o11'),
+    endNode: new NodeRef('bp'),
+  },
+]);
+```
+
+## Deleting
+
+For deleting nodes data just use the `deleteNodes` and pass in the `externalId`s to be deleted for the specified type.
+
+For deleting relationships - 1:m (one to many) or m:n (many to many), use the special `NodeRef` class and specify the start and end node's `externalId`s. Pass the array of relationships to be deleted to `deleteRelationships`.
+
+```js
+import { NodeRef } from '@cognite/fdm-client';
+// deleting nodes
+client.deleteNodes('Movie', ['bp']);
+
+// deleting relationships
+client.deleteRelationships('Movie', 'actors', [
+  {
+    startNode: new NodeRef('o11'),
+    endNode: new NodeRef('bp'),
+  },
+]);
+```
+
+# FAQ
+
+### How does it work?
+
+For querying, we take inspiration from [genql](https://github.com/remorses/genql).
+
+#### The `@cognite/fdm-client` npm package
+
+The `@cognite/fdm-client` npm package consists of two key parts:
+
+1. The `@cognite/fdm-client` module itself, which only changes when you re-install the package
+2. The `.cognite/fdm-client` folder, which is the default location for the `generate-js-sdk` command of the beta CDF CLI.
+
+When you update your data model, simply rerun `generate-js-sdk` and you will get the latest autogenerated SDK in your code for use. You do not need to reinstall `@cognite/fdm-client` on each data model change.
+
+### Keeping the query engine out of version control by default
+
+By generating CDF FDM Client into `node_modules`, the SDK is usually kept out of version control by default since `node_modules` is typically ignored for version control. This is by design. When using a custom output path for the generated client (using `--output-directory`), it is advised to exclude it from your version control because it should be generated based on the specified data model + version from Cognite.

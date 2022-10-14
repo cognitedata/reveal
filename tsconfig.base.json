@@ -23,6 +23,9 @@
       "@cognite/platypus-cdf-cli/*": ["apps/platypus-cdf-cli/src/*"],
       "@platypus-app/*": ["apps/platypus/src/app/*"],
       "@platypus-core/*": ["libs/platypus-core/src/lib/*"],
+      "@platypus/@cognite/fdm-client": [
+        "libs/@cognite/fdm-client/src/index.ts"
+      ],
       "@platypus/mock-data": ["libs/mock-data/src/index.ts"],
       "@platypus/platypus-common-utils": [
         "libs/platypus-common-utils/src/index.ts"

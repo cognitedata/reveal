@@ -1,0 +1,17 @@
+{
+  "name": ".cognite/fdm-client",
+  "version": "0.0.1",
+  "description": "A FDM JS Client for Cognite Data Fusion",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cognitedata/platypus.git",
+    "directory": "apps/platypus-cdf-cli"
+  },
+  "author": "Cognite",
+  "license": "Apache-2.0",
+  "main": "./FDMQueryClient.js",
+  "types": "./FDMQueryClient.d.ts",
+  "engines": {
+    "node": ">=14.18.2"
+  }
+}

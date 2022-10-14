@@ -6,6 +6,6 @@
     "types": ["node"],
     "declaration": true
   },
-  "exclude": ["**/*.spec.ts", "jest.config.ts"],
+  "exclude": ["**/*.spec.ts", "jest.config.ts", "**/codegen-static/**"],
   "include": ["**/*.ts"]
 }

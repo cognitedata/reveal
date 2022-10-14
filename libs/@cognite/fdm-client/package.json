@@ -1,11 +1,11 @@
 {
-  "name": "@cognite/cdf-cli",
-  "version": "0.1.0--alpha",
+  "name": "@cognite/fdm-client",
+  "version": "0.3.2",
   "description": "A CLI for Cognite Data Fusion",
   "repository": {
     "type": "git",
     "url": "https://github.com/cognitedata/platypus.git",
-    "directory": "apps/platypus-cdf-cli"
+    "directory": "libs/@cognite/fdm-client"
   },
   "files":["**/*"],
   "author": "Cognite",
@@ -14,15 +14,17 @@
   "engines": {
     "node": ">=14.18.2"
   },
-  "bin": {
-    "cdf": "./main.js"
-  },
   "dependencies": {
-    "@cognite/sdk": "^5.4.0",
-    "@cognite/sdk-v6": "npm:@cognite/sdk@6.1.1",
-    "@genql/cli": "^2.10.0",
+    "@cognite/sdk": "^7.9.6",
+    "@genql/runtime": "^2.10.0",
     "tslib": "^2.0.0",
-    "typescript": "*"
+    "typescript": "*",
+    "graphql": "^16.6.0"
+  },
+  "peerDependencies": {
+    "@cognite/sdk": "^7.9.6",
+    "@genql/runtime": "^6.1.1",
+    "graphql": "^16.6.0"
   },
   "resolutions": {
     "graphql": "^16.5.0"

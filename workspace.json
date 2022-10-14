@@ -1,6 +1,48 @@
 {
   "version": 2,
   "projects": {
+    "@cognite-fdm-client": {
+      "root": "libs/@cognite/fdm-client",
+      "sourceRoot": "libs/@cognite/fdm-client/src",
+      "projectType": "library",
+      "targets": {
+        "build": {
+          "executor": "@nrwl/web:package",
+          "outputs": ["{options.outputPath}"],
+          "options": {
+            "outputPath": "dist/libs/@cognite/fdm-client",
+            "tsConfig": "libs/@cognite/fdm-client/tsconfig.lib.json",
+            "project": "libs/@cognite/fdm-client/package.json",
+            "entryFile": "libs/@cognite/fdm-client/src/index.ts",
+            "external": ["react/jsx-runtime", ".cognite/fdm-client"],
+            "rollupConfig": "@nrwl/react/plugins/bundle-rollup",
+            "assets": [
+              {
+                "glob": "libs/@cognite/fdm-client/README.md",
+                "input": ".",
+                "output": "."
+              }
+            ]
+          }
+        },
+        "lint": {
+          "executor": "@nrwl/linter:eslint",
+          "outputs": ["{options.outputFile}"],
+          "options": {
+            "lintFilePatterns": ["libs/@cognite/fdm-client/**/*.ts"]
+          }
+        },
+        "test": {
+          "executor": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/@cognite/fdm-client"],
+          "options": {
+            "jestConfig": "libs/@cognite/fdm-client/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      },
+      "tags": []
+    },
     "cog-data-grid": {
       "root": "libs/cog-data-grid",
       "sourceRoot": "libs/cog-data-grid/src",
