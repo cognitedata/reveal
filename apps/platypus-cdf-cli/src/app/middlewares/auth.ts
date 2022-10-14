@@ -1,6 +1,6 @@
 import { Arguments } from 'yargs';
 import { BaseArgs, ProjectConfig } from '../types';
-import { CogniteClient } from '@cognite/sdk-v6';
+import { CogniteClient } from '@cognite/sdk';
 import {
   createSdkClient,
   getCogniteSDKClient,
