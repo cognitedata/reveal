@@ -22,6 +22,13 @@ Cypress.Commands.add('goToWellsInspectTab', (tab: WellInspectTabs) => {
   // cy.url().should('contain', path);
 });
 
+Cypress.Commands.add('verifyInspectTabSelection', (tab: WellInspectTabs) => {
+  cy.log(`${tab} tab should be selected`);
+  cy.findAllByRole('tab')
+    .contains(tab)
+    .should('have.attr', 'aria-selected', 'true');
+});
+
 Cypress.Commands.add('openInspectView', (selectedWells?: number) => {
   if (selectedWells > 0) {
     cy.log(
@@ -93,6 +100,7 @@ Cypress.Commands.add(
 
 export interface WellsCommands {
   goToWellsInspectTab(tab: string): void;
+  verifyInspectTabSelection(tab: string): void;
   openInspectView(selectedWells?: number): void;
   clearWellsSelection(): void;
   selectFirstWellInResults(): void;

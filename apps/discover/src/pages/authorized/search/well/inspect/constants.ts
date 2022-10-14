@@ -12,6 +12,11 @@ export enum TAB_NAMES {
   THREE_DEE = '3D',
 }
 
+export enum WellInspectViewModes {
+  GRAPH = 'Graph',
+  TABLE = 'Table',
+}
+
 export type WellInspectTabs = TAB_NAMES;
 
 export const MAX_3D_WELLBORES_COUNT = 20;

@@ -1,21 +1,26 @@
 import { DATA_SOURCE } from '../../../../src/modules/wellSearch/constantsSidebarFilters';
-import { TAB_NAMES } from '../../../../src/pages/authorized/search/well/inspect/constants';
+import {
+  WellInspectViewModes,
+  TAB_NAMES,
+} from '../../../../src/pages/authorized/search/well/inspect/constants';
 import { interceptCoreNetworkRequests } from '../../../support/commands/helpers';
 import { WELLS_SEARCH_ALIAS } from '../../../support/interceptions';
 import { NPT_EVENTS_SOURCE } from '../../../support/selectors/wells.selectors';
 
 describe('Wells: NPT Events', () => {
-  beforeEach(() => {
+  before(() => {
     const coreRequests = interceptCoreNetworkRequests();
+    cy.addWaitForWdlResources('sources', 'GET', 'getSources');
+    cy.addWaitForWdlResources('npt/list', 'POST', 'nptList');
+
     cy.visit(Cypress.env('BASE_URL'));
     cy.login();
     cy.acceptCookies();
     cy.wait(coreRequests);
 
     cy.selectCategory('Wells');
-  });
 
-  it('allow us to see NPT data in different views', () => {
+    cy.wait('@getSources');
     cy.clickOnFilterCategory(DATA_SOURCE);
     cy.validateSelect(DATA_SOURCE, [NPT_EVENTS_SOURCE], NPT_EVENTS_SOURCE);
 
@@ -24,24 +29,13 @@ describe('Wells: NPT Events', () => {
     cy.openInspectView(2);
 
     cy.goToWellsInspectTab(TAB_NAMES.NPT_EVENTS);
+    cy.wait('@nptList');
+  });
 
+  it('should be able to inspect npt events graph', () => {
     cy.log('Graph should be the default selected view');
+    cy.findByTestId('npt-events-graph').should('be.visible');
 
-    // NOTE: this long timeout here is an exception because of the long loading time for NPT Events should be removed in future
-    cy.findByTestId('npt-events-graph', { timeout: 200000 }).should(
-      'be.visible'
-    );
-
-    cy.log('Switch to table view');
-    cy.findByTestId('multi-state-toggle').contains('Table').click();
-    cy.log('Check that we have filters');
-    cy.findByTestId('search-box-input').should('be.visible');
-    cy.contains('NPT Duration (hrs)').should('be.visible');
-    cy.contains('NPT Code').should('be.visible');
-    cy.contains('NPT Detail Code').should('be.visible');
-
-    cy.log('Switch back to graph view');
-    cy.findByTestId('multi-state-toggle').contains('Graph').click();
     cy.log('Check that we see the legend footer');
     cy.contains('NPT Codes').should('be.visible');
 
@@ -51,13 +45,34 @@ describe('Wells: NPT Events', () => {
       .first()
       .should('be.visible')
       .click();
+
+    cy.log('Previous button should be disabled');
     cy.findByLabelText('previous-wellbore')
       .should('be.visible')
       .should('be.disabled');
 
+    cy.log('Navigate to next wellbore view');
     cy.findByLabelText('next-wellbore')
       .should('be.visible')
       .should('not.be.disabled')
       .click();
+    cy.findAllByTestId('bar').should('be.visible');
+
+    cy.goBackToInspectTab(TAB_NAMES.NPT_EVENTS);
+  });
+
+  it('should be able to inspect npt events table', () => {
+    cy.switchToInspectViewMode(WellInspectViewModes.TABLE);
+
+    cy.log('Check that we have filters');
+    cy.findByTestId('search-box-input').should('be.visible');
+    cy.contains('NPT Duration (hrs)').should('be.visible');
+    cy.contains('NPT Code').should('be.visible');
+    cy.contains('NPT Detail Code').should('be.visible');
+  });
+
+  it('should be able to switch back to graph view', () => {
+    cy.switchToInspectViewMode(WellInspectViewModes.GRAPH);
+    cy.findByTestId('npt-events-graph').should('be.visible');
   });
 });

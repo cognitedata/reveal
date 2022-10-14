@@ -1,6 +1,7 @@
 import '@testing-library/cypress/add-commands';
 import { AdminCommands } from './admin.commands';
 import { ButtonCommands } from './button.commands';
+import { CheckboxCommands } from './checkbox.commands';
 import { CommentCommands } from './comments.commands';
 import { DocumentCommands } from './document.commands';
 import { FavoriteCommands } from './favorite.commands';
@@ -12,8 +13,8 @@ import { SearchCommands } from './search.commands';
 import { SettingsCommands } from './settings.commands';
 import { SidebarCommands } from './sidebar.commands';
 import { TableCommands } from './table.commands';
+import { WellInspectCommands } from './wellInspect.commands';
 import { WellsCommands } from './wells.commands';
-import { CheckboxCommands } from './checkbox.commands';
 
 declare global {
   namespace Cypress {
@@ -32,7 +33,8 @@ declare global {
         TableCommands,
         WellsCommands,
         CheckboxCommands,
-        LoginCommand {}
+        LoginCommand,
+        WellInspectCommands {}
   }
 }
 
@@ -42,6 +44,7 @@ export * from './search.commands';
 export * from './favorite.commands';
 export * from './admin.commands';
 export * from './wells.commands';
+export * from './wellInspect.commands';
 export * from './sidebar.commands';
 export * from './table.commands';
 export * from './button.commands';
