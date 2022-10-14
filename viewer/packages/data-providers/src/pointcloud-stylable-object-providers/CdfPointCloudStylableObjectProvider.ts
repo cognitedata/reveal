@@ -3,10 +3,8 @@
  */
 
 import { CogniteClient } from '@cognite/sdk';
-import { ModelIdentifier } from '../ModelIdentifier';
 import { CdfModelIdentifier } from '../model-identifiers/CdfModelIdentifier';
 import { IShape, Box, Cylinder } from '@reveal/utilities';
-import assert from 'assert';
 import { CdfPointCloudObjectAnnotation, PointCloudObject } from './types';
 import { PointCloudStylableObjectProvider } from '../PointCloudStylableObjectProvider';
 
