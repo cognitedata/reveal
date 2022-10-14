@@ -67,6 +67,14 @@
   ],
   "jest": {
     "testEnvironment": "jsdom",
+    "roots": [
+      "<rootDir>",
+      "<rootDir>/src"
+    ],
+    "modulePaths": [
+      "<rootDir>",
+      "<rootDir>/src"
+    ],
     "moduleNameMapper": {
       "\\.(css|less)$": "identity-obj-proxy",
       "d3(.*)": "<rootDir>/node_modules/d3$1/dist/d3$1.min.js"

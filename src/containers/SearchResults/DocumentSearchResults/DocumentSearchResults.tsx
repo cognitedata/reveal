@@ -5,11 +5,13 @@ import { useDocumentSearch } from '@cognite/react-document-search';
 import { SearchResultToolbar } from 'containers/SearchResults';
 import { DocumentsTable } from 'containers/Documents';
 import { Document, normalize } from 'domain/documents';
+import { Asset } from '@cognite/sdk';
+import { ResourceType } from 'types';
 
 export interface DocumentSearchResultsProps {
   query?: string;
   filter: object;
-  onClick: (item: Document) => void;
+  onClick: (item: Document | Asset, itemType: ResourceType) => void;
 }
 
 // When using this component do not forget to wrap it with DocumentSearchProvider.
@@ -41,7 +43,12 @@ export const DocumentSearchResults = ({
         data={normalizedDocuments}
         onRowClick={document => {
           if (document !== undefined) {
-            onClick(document);
+            onClick(document, 'document');
+          }
+        }}
+        onRootAssetClick={asset => {
+          if (asset !== undefined) {
+            onClick(asset, 'asset');
           }
         }}
         showLoadButton

@@ -6,10 +6,11 @@ import { DocumentNamePreview } from './DocumentNamePreview';
 import { DocumentContentPreview } from './DocumentContentPreview';
 import { Column, Row } from 'react-table';
 import { Document } from 'domain/documents';
-import { Body, A, Flex } from '@cognite/cogs.js';
+import { Body, Flex, Button } from '@cognite/cogs.js';
 import { useQuery } from 'react-query';
 import { useSDK } from '@cognite/sdk-provider';
-import { getRootAsset } from 'utils/assets';
+import { getRootAsset } from 'utils';
+import { Asset } from '@cognite/sdk';
 
 // TODO: Might need to add RelationshipLabels at some point.
 export type DocumentTableProps = Omit<
@@ -17,11 +18,12 @@ export type DocumentTableProps = Omit<
   'columns'
 > & {
   query?: string;
+  onRootAssetClick: (asset: Asset) => void;
 };
 export type DocumentWithRelationshipLabels = Document;
 
 export const DocumentsTable = (props: DocumentTableProps) => {
-  const { query } = props;
+  const { query, onRootAssetClick } = props;
   const sdk = useSDK();
 
   const columns = [
@@ -63,20 +65,28 @@ export const DocumentsTable = (props: DocumentTableProps) => {
           }
         );
 
-        return (
-          <Body level={2}>
-            <Flex alignItems="center">
-              <A
-                href="https://cognite.com" // this is a placeholder, don't know where it should go
-                rel="noopener noreferrer"
-                target="_blank"
-                isExternal={true}
-              >
-                {rootAsset?.name}
-              </A>
-            </Flex>
-          </Body>
-        );
+        if (rootAsset) {
+          return (
+            <Body level={2}>
+              <Flex alignItems="center">
+                <Button
+                  type="link"
+                  icon="ArrowRight"
+                  iconPlacement="right"
+                  style={{ color: 'inherit' }}
+                  onClick={e => {
+                    e.stopPropagation();
+                    onRootAssetClick(rootAsset);
+                  }}
+                >
+                  {rootAsset?.name}
+                </Button>
+              </Flex>
+            </Body>
+          );
+        }
+
+        return null;
       },
     },
     Table.Columns.externalId,

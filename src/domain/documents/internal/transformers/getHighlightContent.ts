@@ -1,4 +1,5 @@
-import { Document } from 'domain/documents';
+import { Document } from '../types';
+import { DASH } from 'utils';
 
 export const getHighlightContent = (document: Document) => {
   if (
@@ -13,5 +14,5 @@ export const getHighlightContent = (document: Document) => {
       .trim();
   }
 
-  return '–'; // This is a special character(–), not a good old minus sign (-)
+  return DASH; // This is a special character(–), not a good old minus sign (-)
 };
