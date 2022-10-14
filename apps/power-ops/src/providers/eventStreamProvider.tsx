@@ -8,12 +8,12 @@ import {
 } from 'react';
 import sidecar from 'utils/sidecar';
 import { Observable, Subject, fromEvent } from 'rxjs';
-import { SnifferEvent } from '@cognite/power-ops-api-types';
+import { SnifferRequestPayload } from '@cognite/sniffer-service-types';
 import { useAuthContext } from '@cognite/react-container';
 import { CogniteEvent, Relationship } from '@cognite/sdk';
 
 export interface EventStreamContextType {
-  eventStore?: Subject<{
+  eventStore: Subject<{
     event: CogniteEvent;
     relationshipsAsSource: Relationship[];
     relationshipsAsTarget: Relationship[];
@@ -44,10 +44,12 @@ export const EventStreamProvider: React.FC<
 
   useEffect(() => {
     const subscription = eventEmitter?.subscribe(async (e) => {
-      const snifferEvent: SnifferEvent = JSON.parse(e.data);
+      const snifferPayload: SnifferRequestPayload = JSON.parse(e.data);
 
       if (client) {
-        const [event] = await client.events.retrieve([{ id: snifferEvent.id }]);
+        const [event] = await client.events.retrieve([
+          { id: snifferPayload.id },
+        ]);
 
         const [
           { items: relationshipsAsSource },
@@ -65,7 +67,7 @@ export const EventStreamProvider: React.FC<
           }),
         ]);
 
-        eventStreamContext?.eventStore?.next({
+        eventStreamContext.eventStore.next({
           event,
           relationshipsAsSource: relationshipsAsSource || [],
           relationshipsAsTarget: relationshipsAsTarget || [],

@@ -25,5 +25,6 @@ export const useFetchProcesses = (workflowExternalId: string) => {
     queryKey: [project, 'processes', workflowExternalId],
     queryFn: () => fetchProcesses(project, workflowExternalId, token),
     enabled: !!workflowExternalId,
+    refetchOnWindowFocus: 'always',
   });
 };

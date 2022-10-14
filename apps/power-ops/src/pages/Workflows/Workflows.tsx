@@ -1,11 +1,7 @@
 import { useContext, useEffect, useMemo, useState } from 'react';
 import { useHistory, useLocation, useRouteMatch } from 'react-router-dom';
 import { CogniteEvent } from '@cognite/sdk';
-import {
-  EVENT_TYPES,
-  PROCESS_TYPES,
-  Workflow,
-} from '@cognite/power-ops-api-types';
+import { EVENT_TYPES, WORKFLOW_TYPES } from '@cognite/power-ops-api-types';
 import { EventStreamContext } from 'providers/eventStreamProvider';
 import { useFetchWorkflows } from 'queries/useFetchWorkflows';
 import { Graphic, Label, OptionType, Select } from '@cognite/cogs.js';
@@ -26,32 +22,22 @@ export const Workflows = () => {
   const { search } = useLocation();
   const urlParams = useMemo(() => new URLSearchParams(search), [search]);
 
-  const [filteredWorkflows, setFilteredWorkflows] = useState<
-    Workflow[] | undefined
-  >([]);
-  const { data: workflows, refetch: refetchWorkflows } = useFetchWorkflows();
-
-  // Setup for table filters
-  const [workflowTypeFilterValue, setWorkflowTypeFilterValue] = useState<
-    OptionType<string>[]
-  >([]);
-  const [workflowTypeFilterOptions, setWorkflowTypeFilterOptions] = useState<
-    OptionType<string>[]
-  >([]);
-  const [statusFilterValue, setStatusFilterValue] = useState<
-    OptionType<string>[]
-  >([]);
-  const [statusFilterOptions] = useState<OptionType<string>[]>(
-    EVENT_STATUSES.map((status: string) => ({
-      label: status,
-      value: status,
-    }))
-  );
-
+  const { data: workflowTypes } = useFetchWorkflowTypes();
   const { data: { workflowSchemas } = { workflowSchemas: [], count: 0 } } =
     useFetchWorkflowSchemas();
 
-  const { data: workflowTypes } = useFetchWorkflowTypes();
+  const {
+    data: { workflows } = { workflows: [], count: 0 },
+    refetch: refetchWorkflows,
+  } = useFetchWorkflows();
+
+  const [workflowTypeFilterValue, setWorkflowTypeFilterValue] = useState<
+    OptionType<string>[]
+  >([]);
+
+  const [statusFilterValue, setStatusFilterValue] = useState<
+    OptionType<string>[]
+  >([]);
 
   const isWorkflowEvent = async (needle: string): Promise<boolean> => {
     return !!(
@@ -64,7 +50,7 @@ export const Workflows = () => {
     if (!event.externalId) return;
 
     switch (event.type) {
-      case PROCESS_TYPES.DAY_AHEAD_BID_MATRIX_CALCULATION:
+      case WORKFLOW_TYPES.DAY_AHEAD_BID_MATRIX_CALCULATION:
         if (await isWorkflowEvent(event.externalId)) {
           refetchWorkflows({ cancelRefetch: true });
         }
@@ -82,29 +68,28 @@ export const Workflows = () => {
     }
   };
 
-  useEffect(() => {
-    refetchWorkflows({ cancelRefetch: true });
-    const subscription = eventStore?.subscribe(({ event }) => {
-      processEvent(event);
-    });
-    return () => {
-      subscription?.unsubscribe();
-    };
-  }, []);
+  const filteredWorkflows = useMemo(() => {
+    return workflows.filter(
+      (workflow) =>
+        Object.values(workflow).some((value) =>
+          workflowTypeFilterValue.length
+            ? workflowTypeFilterValue
+                .map((filter) => filter.value)
+                .includes(value?.toString())
+            : true
+        ) &&
+        Object.values(workflow).some((value) =>
+          statusFilterValue.length
+            ? statusFilterValue
+                .map((filter) => filter.label.toLowerCase())
+                .includes(String(value).toLowerCase())
+            : true
+        )
+    );
+  }, [workflows, search]);
 
   useEffect(() => {
-    // Set workflow type filter dropdown options
-    const workflowTypeOptions =
-      workflowTypes?.map(({ workflowType }) => ({
-        label: workflowType,
-        value: workflowType,
-      })) || [];
-
-    setWorkflowTypeFilterOptions(workflowTypeOptions);
-  }, [workflowTypes]);
-
-  // Get filters from the URL
-  useEffect(() => {
+    // Get filters from the URL
     const parsedURL = queryString.parse(search);
     if (parsedURL.workflowType) {
       setWorkflowTypeFilterValue(
@@ -129,6 +114,17 @@ export const Workflows = () => {
           })
       );
     }
+
+    // Fetch Workflows list
+    refetchWorkflows({ cancelRefetch: true });
+
+    // Subscribe to SSE events
+    const subscription = eventStore?.subscribe(({ event }) => {
+      processEvent(event);
+    });
+    return () => {
+      subscription?.unsubscribe();
+    };
   }, []);
 
   // Add filters to the URL
@@ -156,31 +152,6 @@ export const Workflows = () => {
     });
   }, [workflowTypeFilterValue, statusFilterValue]);
 
-  // Filter table data by selected filter options
-  useEffect(() => {
-    setFilteredWorkflows(
-      workflowTypeFilterValue.length || statusFilterValue.length
-        ? workflows?.filter(
-            (workflow) =>
-              Object.values(workflow).some((value) =>
-                workflowTypeFilterValue.length
-                  ? workflowTypeFilterValue
-                      .map((filter) => filter.value)
-                      .includes(value?.toString())
-                  : true
-              ) &&
-              Object.values(workflow).some((value) =>
-                statusFilterValue.length
-                  ? statusFilterValue
-                      .map((filter) => filter.label.toLowerCase())
-                      .includes(String(value).toLowerCase())
-                  : true
-              )
-          )
-        : workflows
-    );
-  }, [search, workflows]);
-
   return (
     <Container>
       <SearchAndFilter>
@@ -190,7 +161,12 @@ export const Workflows = () => {
           isMulti
           showSelectedItemCount
           value={workflowTypeFilterValue}
-          options={workflowTypeFilterOptions}
+          options={
+            workflowTypes?.map(({ workflowType }) => ({
+              label: workflowType,
+              value: workflowType,
+            })) || []
+          }
           onChange={(selected: OptionType<string>[]) => {
             setWorkflowTypeFilterValue(selected);
           }}
@@ -201,7 +177,10 @@ export const Workflows = () => {
           isMulti
           showSelectedItemCount
           value={statusFilterValue}
-          options={statusFilterOptions}
+          options={EVENT_STATUSES.map((status: string) => ({
+            label: status,
+            value: status,
+          }))}
           onChange={(selected: OptionType<string>[]) => {
             setStatusFilterValue(selected);
           }}

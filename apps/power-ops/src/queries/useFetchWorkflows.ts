@@ -19,12 +19,13 @@ const fetchWorkflows = (project: string, token: string) =>
       `${powerOpsApiBaseUrl}/${project}/workflows`,
       axiosRequestConfig(token)
     )
-    .then(({ data }) => data.workflows);
+    .then(({ data }) => data);
 
 export const useFetchWorkflows = () => {
   const { project, token } = useAuthenticatedAuthContext();
   return useQuery({
     queryKey: [project, 'workflows'],
     queryFn: () => fetchWorkflows(project, token),
+    refetchOnWindowFocus: 'always',
   });
 };
