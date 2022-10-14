@@ -25,7 +25,7 @@ import { DeferredPromise, fitCameraToBoundingBox, SceneHandler } from '../../pac
 import {
   ModelIdentifier,
   ModelMetadataProvider,
-  LocalPointCloudStylableObjectProvider
+  DummyPointCloudStylableObjectProvider
 } from '../../packages/data-providers';
 import { LoadingState } from '../../packages/model-base';
 import {
@@ -121,7 +121,7 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
   createPointCloudFactory(): PointCloudFactory {
     return new PointCloudFactory(
       this.potreeInstance,
-      new LocalPointCloudStylableObjectProvider(),
+      new DummyPointCloudStylableObjectProvider(),
       new LocalPointClassificationsProvider(),
       new PointCloudMaterialManager()
     );

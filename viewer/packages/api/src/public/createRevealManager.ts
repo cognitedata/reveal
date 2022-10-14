@@ -17,7 +17,7 @@ import {
 import {
   CdfPointCloudStylableObjectProvider,
   PointCloudStylableObjectProvider,
-  LocalPointCloudStylableObjectProvider
+  DummyPointCloudStylableObjectProvider
 } from '@reveal/data-providers';
 import { createPointCloudManager } from '@reveal/pointclouds';
 import {
@@ -52,7 +52,7 @@ export function createLocalRevealManager(
 ): RevealManager {
   const modelMetadataProvider = new LocalModelMetadataProvider();
   const modelDataProvider = new LocalModelDataProvider();
-  const annotationProvider = new LocalPointCloudStylableObjectProvider();
+  const annotationProvider = new DummyPointCloudStylableObjectProvider();
   const pointClassificationsProvider = new LocalPointClassificationsProvider();
   return createRevealManager(
     'local',

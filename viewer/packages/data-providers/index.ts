@@ -18,7 +18,7 @@ export { PointCloudStylableObjectProvider } from './src/PointCloudStylableObject
 export { StylableObject, SerializableStylableObject } from './src/pointcloud-stylable-object-providers/StylableObject';
 
 export { CdfPointCloudStylableObjectProvider } from './src/pointcloud-stylable-object-providers/CdfPointCloudStylableObjectProvider';
-export { LocalPointCloudStylableObjectProvider } from './src/pointcloud-stylable-object-providers/LocalPointCloudStylableObjectProvider';
+export { DummyPointCloudStylableObjectProvider } from './src/pointcloud-stylable-object-providers/DummyPointCloudStylableObjectProvider';
 
 export { Image360Provider } from './src/Image360Provider';
 export {
