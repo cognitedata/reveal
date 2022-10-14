@@ -7,7 +7,7 @@ import groupBy from 'lodash/groupBy';
 import orderBy from 'lodash/orderBy';
 import zipWith from 'lodash/zipWith';
 
-import { CogniteClient, FileInfo } from '@cognite/sdk';
+import { CogniteClient, FileInfo, Metadata } from '@cognite/sdk';
 import { Image360Descriptor, Image360Face } from '../types';
 import { Image360Provider } from '../Image360Provider';
 import assert from 'assert';
@@ -27,13 +27,13 @@ type Event360Filter = {
   station_name: string;
 };
 
-export class Cdf360ImageEventProvider implements Image360Provider<{ [key: string]: string }> {
+export class Cdf360ImageEventProvider implements Image360Provider<Metadata> {
   private readonly _client: CogniteClient;
   constructor(client: CogniteClient) {
     this._client = client;
   }
 
-  public async get360ImageDescriptors(metadataFilter: { [key: string]: string }): Promise<Image360Descriptor[]> {
+  public async get360ImageDescriptors(metadataFilter: Metadata): Promise<Image360Descriptor[]> {
     const image360Events = await this._client.events.list({ filter: { metadata: metadataFilter } });
     return image360Events.items
       .map(image360Event => image360Event.metadata as Event360Metadata)

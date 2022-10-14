@@ -21,7 +21,8 @@ import {
   DisposedDelegate,
   determineCurrentDevice,
   SceneHandler,
-  BeforeSceneRenderedDelegate
+  BeforeSceneRenderedDelegate,
+  pixelToNormalizedDeviceCoordinates
 } from '@reveal/utilities';
 
 import { MetricsLogger } from '@reveal/metrics';
@@ -62,6 +63,7 @@ import {
   determineSsaoRenderParameters
 } from './renderOptionsHelpers';
 import { Image360Entity, Image360EntityFactory, Image360Facade } from '@reveal/360-images';
+import { StationaryCameraManager } from '@reveal/camera-manager/src/StationaryCameraManager';
 
 type Cognite3DViewerEvents = 'click' | 'hover' | 'cameraChange' | 'beforeSceneRendered' | 'sceneRendered' | 'disposed';
 
@@ -260,21 +262,47 @@ export class Cognite3DViewer {
         options.sdk
       );
 
-      this.on('hover', event => {
+      let lastHovered: Image360Entity | undefined;
+      this.domElement.addEventListener('mousemove', event => {
         if (!this._image360Facade) {
           return;
         }
         this._image360Facade.allHoverIconsVisibility = false;
-        const { offsetX, offsetY } = event;
-        const normalizedCoords = {
-          x: (offsetX / this.renderer.domElement.clientWidth) * 2 - 1,
-          y: (offsetY / this.renderer.domElement.clientHeight) * -2 + 1
-        };
-        const entity = this._image360Facade.intersect(normalizedCoords, this._cameraManager.getCamera());
-        if (!entity) {
+        const size = new THREE.Vector2(this.domElement.clientWidth, this.domElement.clientHeight);
+
+        const { x, y } = event;
+        const { x: width, y: height } = size;
+        const ndcCoordinates = pixelToNormalizedDeviceCoordinates(x, y, width, height);
+        const entity = this._image360Facade.intersect(
+          { x: ndcCoordinates.x, y: ndcCoordinates.y },
+          this._cameraManager.getCamera()
+        );
+        if (entity !== undefined) {
+          entity.icon.hoverSpriteVisible = true;
+        }
+        if (entity !== lastHovered) {
+          this.revealManager.requestRedraw();
+          lastHovered = entity;
+        }
+      });
+
+      this.on('click', async event => {
+        if (!this._image360Facade) {
           return;
         }
-        entity.icon.hoverSpriteVisible = true;
+        const size = new THREE.Vector2(this.domElement.clientWidth, this.domElement.clientHeight);
+
+        const { offsetX, offsetY } = event;
+        const { x: width, y: height } = size;
+        const ndcCoordinates = pixelToNormalizedDeviceCoordinates(offsetX, offsetY, width, height);
+        const entity = this._image360Facade.intersect(
+          { x: ndcCoordinates.x, y: ndcCoordinates.y },
+          this._cameraManager.getCamera()
+        );
+        if (entity === undefined) {
+          return;
+        }
+        await this.enter360Image(entity);
       });
     }
 
@@ -711,6 +739,30 @@ export class Cognite3DViewer {
     const preMultipliedRotation = add360ImageOptions?.preMultipliedRotation ?? true;
 
     return this._image360Facade.create(eventFilter, collectionTransform, preMultipliedRotation);
+  }
+
+  private _currentActive: Image360Entity | undefined;
+  /**
+   * Lorem Ipsum.
+   * @param image360
+   */
+  async enter360Image(image360: Image360Entity): Promise<void> {
+    if (this._cdfSdkClient === undefined || this._image360Facade === undefined) {
+      throw new Error(`Adding 360 image sets is only supported when connecting to Cognite Data Fusion`);
+    }
+    const image360Transform = image360.transform.elements;
+    const pos = new THREE.Vector3(image360Transform[12], image360Transform[13], image360Transform[14]);
+    const test = new StationaryCameraManager(this._domElement, this._cameraManager.getCamera().clone());
+    await image360.activate360Image();
+    this.setCameraManager(test, false);
+    this.cameraManager.setCameraState({ position: pos, target: pos });
+    this._image360Facade.allIconsVisibility = true;
+    image360.icon.visible = false;
+    if (this._currentActive !== image360) {
+      this._currentActive?.deactivate360Image();
+    }
+    this._currentActive = image360;
+    this.revealManager.requestRedraw();
   }
 
   /**

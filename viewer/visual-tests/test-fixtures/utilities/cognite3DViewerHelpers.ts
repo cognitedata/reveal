@@ -14,7 +14,13 @@ export async function createCognite3DViewer(onLoading: OnLoadingCallback = () =>
   if (urlParams.has('modelId') && urlParams.has('revisionId')) {
     const client = await getApplicationSDK(urlParams);
 
-    return new Cognite3DViewer({ sdk: client, logMetrics: false, onLoading });
+    return new Cognite3DViewer({
+      sdk: client,
+      logMetrics: false,
+      onLoading,
+      continuousModelStreaming: true,
+      rendererResolutionThreshold: Infinity
+    });
   }
 
   const client = new CogniteClient({
@@ -23,7 +29,13 @@ export async function createCognite3DViewer(onLoading: OnLoadingCallback = () =>
     getToken: async () => 'dummy'
   });
 
-  return new Cognite3DViewer({ sdk: client, _localModels: true, logMetrics: false, onLoading });
+  return new Cognite3DViewer({
+    sdk: client,
+    _localModels: true,
+    logMetrics: false,
+    onLoading,
+    continuousModelStreaming: true
+  });
 }
 
 export async function addModels(

@@ -15,6 +15,7 @@ export class Image360Entity {
   private readonly _transform: THREE.Matrix4;
   private readonly _image360Icon: Image360Icon;
   private _faceMaterials: THREE.MeshBasicMaterial[] | undefined;
+  private _imageContainer: THREE.Mesh | undefined;
 
   get transform(): THREE.Matrix4 {
     return this._transform;
@@ -49,11 +50,25 @@ export class Image360Entity {
   }
 
   public async activate360Image(): Promise<void> {
+    this._imageContainer = this._imageContainer ?? (await this.load360Image());
+    this._imageContainer.visible = true;
+  }
+
+  public async deactivate360Image(): Promise<void> {
+    if (this._imageContainer === undefined) {
+      return;
+    }
+    this._imageContainer.visible = false;
+  }
+
+  private async load360Image(): Promise<THREE.Mesh> {
     const faces = await this._imageProvider.get360ImageFiles(this._image360Metadata);
     const box = await this.createImage360VisualizationObject(faces);
     box.applyMatrix4(this._transform);
     this._sceneHandler.addCustomObject(box);
+    return box;
   }
+
   private async createImage360VisualizationObject(faces: Image360Face[]): Promise<THREE.Mesh> {
     const loader = new THREE.TextureLoader();
     const faceTextures = await getTextures();
