@@ -29,6 +29,10 @@ export class ActiveCameraManager implements CameraManager {
     return isEnabled;
   }
 
+  get innerCameraManager(): CameraManager {
+    return this._activeCameraManager;
+  }
+
   constructor(initialActiveCamera: CameraManager) {
     this._activeCameraManager = initialActiveCamera;
 
@@ -36,7 +40,16 @@ export class ActiveCameraManager implements CameraManager {
     initialActiveCamera.on('cameraChange', this._activeCameraEventHandler);
   }
 
-  public setActiveCameraManager(cameraManager: CameraManager): void {
+  public setActiveCameraManager(cameraManager: CameraManager, cameraStateUpdate = true): void {
+    if (cameraStateUpdate) {
+      const currentState = this._activeCameraManager.getCameraState();
+      cameraManager.setCameraState({ position: currentState.position, target: currentState.target });
+    }
+    cameraManager.getCamera().aspect = this.getCamera().aspect;
+
+    this._activeCameraManager.enabled = false;
+    cameraManager.enabled = true;
+
     this._activeCameraManager.off('cameraChange', this._activeCameraEventHandler);
     this._activeCameraManager = cameraManager;
     this._activeCameraManager.on('cameraChange', this._activeCameraEventHandler);
@@ -76,6 +89,7 @@ export class ActiveCameraManager implements CameraManager {
 
   public dispose(): void {
     this._activeCameraManager.dispose();
+    this._cameraChangedListeners.clear();
   }
 
   private onActiveCameraManagerEventFired(position: THREE.Vector3, target: THREE.Vector3) {
