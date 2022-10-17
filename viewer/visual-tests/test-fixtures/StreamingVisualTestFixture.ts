@@ -25,7 +25,8 @@ import { DeferredPromise, fitCameraToBoundingBox, SceneHandler } from '../../pac
 import {
   ModelIdentifier,
   ModelMetadataProvider,
-  DummyPointCloudStylableObjectProvider
+  DummyPointCloudStylableObjectProvider,
+  ModelDataProvider
 } from '../../packages/data-providers';
 import { LoadingState } from '../../packages/model-base';
 
@@ -83,6 +84,7 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
   private _pipelineExecutor: RenderPipelineExecutor;
   private _cadManager!: CadManager;
   private _potreeInstance!: Potree;
+  private _modelDataProvider!: ModelDataProvider;
 
   private readonly _depthRenderPipeline: CadGeometryRenderModePipelineProvider;
   private readonly _resizeObserver: ResizeObserver;
@@ -115,13 +117,17 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
     return this._potreeInstance;
   }
 
+  get modelDataProvider(): ModelDataProvider {
+    return this._modelDataProvider;
+  }
+
   /*
    * Overridable field creation methods
    */
 
   createPointCloudFactory(): PointCloudFactory {
     return new PointCloudFactory(
-      this.potreeInstance,
+      this.modelDataProvider,
       new DummyPointCloudStylableObjectProvider(),
       new LocalPointClassificationsProvider(),
       new PointCloudMaterialManager()
@@ -180,6 +186,8 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
     const { modelDataProvider, modelIdentifier, modelMetadataProvider, cogniteClient } = await createDataProviders(
       this._localModelUrl
     );
+
+    this._modelDataProvider = modelDataProvider;
 
     const pointCloudMetadataRepository = new PointCloudMetadataRepository(modelMetadataProvider, modelDataProvider);
     this._potreeInstance = new Potree(modelDataProvider, this._pcMaterialManager);

@@ -46,7 +46,7 @@ export default class PointCloudColorStylingVisualTest extends StreamingVisualTes
 
   override createPointCloudFactory(): PointCloudFactory {
     return new PointCloudFactory(
-      this.potreeInstance,
+      this.modelDataProvider,
       new CustomAnnotationProvider(),
       new LocalPointClassificationsProvider(),
       new PointCloudMaterialManager()
