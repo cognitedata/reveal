@@ -135,7 +135,7 @@ export class CognitePointCloudModel implements CogniteModelBase {
 
   /**
    * Returns a list of sorted classification names and codes present in the model.
-   * Names will be the custom names provided by the user, or a default one if none has been provided.
+   * Names will be the custom names provided by the user, or a default one if none have been provided.
    * @returns A sorted list of classification codes and names from the model.
    */
   getClasses(): Array<{ name: string; code: number | WellKnownAsprsPointClassCodes }> {
