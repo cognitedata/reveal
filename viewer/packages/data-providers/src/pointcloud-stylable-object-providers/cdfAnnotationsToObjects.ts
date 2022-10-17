@@ -12,17 +12,14 @@ import { Matrix4 } from 'three';
 import { File3dFormat } from '../types';
 
 function cdfAnnotationsToPointCloudObjects(cdfAnnotations: CdfPointCloudObjectAnnotation[]): PointCloudObject[] {
-  let idCounter = 0;
-
-  const resultAnnotations = cdfAnnotations.map(cdfAnnotation => {
-    idCounter++;
+  const resultAnnotations = cdfAnnotations.map((cdfAnnotation, index) => {
 
     const shapes = cdfAnnotation.region;
 
     const compShape = new CompositeShape(shapes);
     const stylableObject: StylableObject = {
       shape: compShape,
-      objectId: idCounter
+      objectId: index
     };
 
     const cadFromCdfToThreeMatrix = new Matrix4();
