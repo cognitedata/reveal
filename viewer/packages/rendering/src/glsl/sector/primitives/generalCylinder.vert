@@ -26,20 +26,10 @@ in vec3 a_localXAxis;
 in float a_angle;
 in float a_arcAngle;
 
-
-// We pack the radii into w-components
-out vec4 v_centerB;
-// U, V, axis represent the 3x3 cone basis.
-// They are vec4 to pack extra data into the w-component
-// since Safari on iOS only supports 8 varying vec4 registers.
-out vec4 v_U;
-out vec4 v_W;
-
 flat out float v_treeIndex;
 out vec3 v_centerB;
 out mat3 v_modelBasis;
 out vec3 v_viewPos;
-
 out vec4 v_planeA;
 out vec4 v_planeB;
 out vec2 v_angles;
@@ -48,12 +38,8 @@ out float v_radius;
 
 out TreeIndexPacked v_treeIndexPacked;
 
-out TreeIndexPacked v_treeIndexPacked;
-
 void main() {
     v_treeIndexPacked = packTreeIndex(a_treeIndex);
-
-    mat4 modelViewMatrix = viewMatrix * modelMatrix;
 
     mat4 treeIndexWorldTransform = determineMatrixOverride(
         a_treeIndex,
@@ -87,7 +73,6 @@ void main() {
     gl_Position = projectionMatrix * vec4(viewBillboardPosition, 1.0 );
 
     // varying data
-
     v_treeIndex = a_treeIndex;
     v_angles[0] = a_angle;
     v_angles[1] = a_arcAngle;
