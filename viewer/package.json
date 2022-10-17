@@ -101,7 +101,7 @@
     "eslint-plugin-prettier": "4.2.1",
     "eslint-plugin-unused-imports": "2.0.0",
     "file-loader": "6.2.0",
-    "gl": "5.0.3",
+    "gl": "6.0.1",
     "glob": "8.0.3",
     "glslify-loader": "2.0.0",
     "html-webpack-plugin": "5.5.0",
