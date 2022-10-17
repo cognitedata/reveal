@@ -10,8 +10,6 @@ type ClassificationMap = { [key: string]: { rgb: THREE.Color; code: number } };
 
 import { StyledPointCloudObjectCollection, CompletePointCloudAppearance } from '@reveal/pointcloud-styling';
 
-export type PointClassification = { [pointClass: number]: { x: number; y: number; z: number; w: number } };
-
 import { PointCloudOctree, PickPoint } from './potree-three-loader';
 import { PointColorType, PointShape, IClassification, DEFAULT_CLASSIFICATION } from '@reveal/rendering';
 
@@ -150,7 +148,7 @@ export class PotreeNodeWrapper {
     this._needsRedraw = true;
   }
 
-  get classification(): PointClassification {
+  get classification(): IClassification {
     return this._classification;
   }
 
