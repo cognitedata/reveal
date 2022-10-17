@@ -13,6 +13,7 @@ import { IPointClassificationsProvider } from './classificationsProviders/IPoint
 import { ModelDataProvider } from '@reveal/data-providers';
 
 import { PointCloudMaterialManager } from '@reveal/rendering';
+import { createObjectIdMaps } from './potree-three-loader/utils/createObjectIdMaps';
 
 export class PointCloudFactory {
   private readonly _potreeInstance: Potree;
@@ -44,6 +45,9 @@ export class PointCloudFactory {
 
     const annotationInfo = await annotationInfoPromise;
     const classSchema = await classSchemaPromise;
+
+    this._pointCloudMaterialManager.addModelMaterial(modelIdentifier.revealInternalId,
+                                                     createObjectIdMaps(annotationInfo));
 
     const pointCloudOctree = await this._potreeInstance.loadPointCloud(
       modelBaseUrl,

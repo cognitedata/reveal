@@ -88,7 +88,6 @@ export class Potree implements IPotree {
     pointCloudObjects: PointCloudObject[],
     modelIdentifier: symbol
   ): Promise<PointCloudOctree> {
-    this._materialManager.addModelMaterial(modelIdentifier, createObjectIdMaps(pointCloudObjects));
     const geometry = await EptLoader.load(baseUrl, fileName, this._modelDataProvider, pointCloudObjects);
     return new PointCloudOctree(this, geometry, this._materialManager.getModelMaterial(modelIdentifier));
   }

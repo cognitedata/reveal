@@ -49,7 +49,7 @@ export default class PointCloudColorStylingVisualTest extends StreamingVisualTes
       this.modelDataProvider,
       new CustomAnnotationProvider(),
       new LocalPointClassificationsProvider(),
-      new PointCloudMaterialManager()
+      this._pcMaterialManager
     );
   }
 

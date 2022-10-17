@@ -67,7 +67,7 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
   private readonly _renderer: THREE.WebGLRenderer;
   private readonly _controls: OrbitControls;
   private readonly _materialManager: CadMaterialManager;
-  private readonly _pcMaterialManager: PointCloudMaterialManager;
+  protected readonly _pcMaterialManager: PointCloudMaterialManager;
   private readonly _localModelUrl: string;
   private readonly _statsJs = new Stats();
   private readonly _cadNodes: Array<CadNode>;
@@ -130,7 +130,7 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
       this.modelDataProvider,
       new DummyPointCloudStylableObjectProvider(),
       new LocalPointClassificationsProvider(),
-      new PointCloudMaterialManager()
+      this._pcMaterialManager
     );
   }
 
