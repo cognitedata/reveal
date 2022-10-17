@@ -1,10 +1,10 @@
 /*!
  * Copyright 2022 Cognite AS
  */
+import * as THREE from 'three';
 
-import { CameraState, CameraChangeDelegate } from 'index';
-import { PerspectiveCamera, Box3 } from 'three';
 import { CameraManager } from './CameraManager';
+import { CameraChangeDelegate, CameraState } from './types';
 
 export class ActiveCameraManager implements CameraManager {
   private readonly _cameraChangedListeners: Set<CameraChangeDelegate> = new Set();
@@ -55,7 +55,7 @@ export class ActiveCameraManager implements CameraManager {
     this._activeCameraManager.on('cameraChange', this._activeCameraEventHandler);
   }
 
-  public getCamera(): PerspectiveCamera {
+  public getCamera(): THREE.PerspectiveCamera {
     return this._activeCameraManager.getCamera();
   }
 
@@ -76,14 +76,14 @@ export class ActiveCameraManager implements CameraManager {
   }
 
   public fitCameraToBoundingBox(
-    boundingBox: Box3,
+    boundingBox: THREE.Box3,
     duration?: number | undefined,
     radiusFactor?: number | undefined
   ): void {
     this._activeCameraManager.fitCameraToBoundingBox(boundingBox, duration, radiusFactor);
   }
 
-  public update(deltaTime: number, boundingBox: Box3): void {
+  public update(deltaTime: number, boundingBox: THREE.Box3): void {
     this._activeCameraManager.update(deltaTime, boundingBox);
   }
 
