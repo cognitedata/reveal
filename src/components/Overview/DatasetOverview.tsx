@@ -5,7 +5,6 @@ import Card from 'antd/lib/card';
 import Typography from 'antd/lib/typography';
 import BasicInfoCard from 'components/BasicInfoCard';
 import { Title, Flex, Body, Button, Icon } from '@cognite/cogs.js';
-import { createLink } from '@cognite/cdf-utilities';
 import { ContentView, Divider, DataSet } from 'utils';
 import { useTranslation } from 'common/i18n';
 import UsersIcon from 'assets/Users.svg';
@@ -16,8 +15,12 @@ const { Text } = Typography;
 type DatasetOverviewProps = {
   dataset: DataSet;
   loading?: Boolean | undefined;
+  onActiveTabChange: (tabKey: string) => void;
 };
-const DatasetOverview = ({ dataset }: DatasetOverviewProps): JSX.Element => {
+const DatasetOverview = ({
+  dataset,
+  onActiveTabChange,
+}: DatasetOverviewProps): JSX.Element => {
   const { t } = useTranslation();
 
   const { id } = dataset;
@@ -57,9 +60,6 @@ const DatasetOverview = ({ dataset }: DatasetOverviewProps): JSX.Element => {
     },
   } as const;
 
-  const viewAndManageUserPermission = () =>
-    window.open(createLink(`/access-management`), '_blank');
-
   return (
     <Row style={{ padding: 12 }}>
       <Col span={15}>
@@ -77,6 +77,9 @@ const DatasetOverview = ({ dataset }: DatasetOverviewProps): JSX.Element => {
             <StyledCard>
               <Flex justifyContent="space-between" alignItems="center">
                 <StyledCardTitle level={5}>{t('tab-overview')}</StyledCardTitle>
+                <Button type="link" onClick={() => onActiveTabChange('data')}>
+                  View
+                </Button>
               </Flex>
               <Divider />
               <Row style={{ padding: 12 }}>
@@ -88,22 +91,18 @@ const DatasetOverview = ({ dataset }: DatasetOverviewProps): JSX.Element => {
                       ];
                     return (
                       <Row style={{ marginLeft: 18, padding: '12px 0' }}>
-                        <Col
-                          span={2}
-                          style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                          }}
-                        >
-                          {resourceAggr.icon}
-                        </Col>
                         <Col span={8}>
-                          <Text strong className="aggr-title">
-                            {resourceAggr.name}
-                          </Text>
+                          <Flex direction="row" alignItems="center" gap={10}>
+                            {resourceAggr.icon}
+                            <Text strong className="aggr-title">
+                              {resourceAggr.name}
+                            </Text>
+                          </Flex>
                         </Col>
                         <Col span={14}>
-                          <Body level={1}>{resourceAggr.value}</Body>
+                          <Body level={1}>
+                            {resourceAggr.value.toLocaleString()}
+                          </Body>
                         </Col>
                       </Row>
                     );
@@ -130,7 +129,7 @@ const DatasetOverview = ({ dataset }: DatasetOverviewProps): JSX.Element => {
                 </Text>
                 <Button
                   type="secondary"
-                  onClick={viewAndManageUserPermission}
+                  onClick={() => onActiveTabChange('access-control')}
                   style={{ width: 270 }}
                 >
                   {t('manage')}

@@ -35,6 +35,7 @@ const { TabPane } = Tabs;
 const DataSetDetails = (): JSX.Element => {
   const { t } = useTranslation();
   const [editDrawerVisible, setEditDrawerVisible] = useState<boolean>(false);
+  const [activeTabKey, setActiveTabKey] = useState<string>('overview');
   const [changesSaved, setChangesSaved] = useState<boolean>(true);
   const { dataSetId } = useParams();
 
@@ -172,6 +173,10 @@ const DataSetDetails = (): JSX.Element => {
     return <ErrorMessage error={error} />;
   };
 
+  const activeTabChangeHandler = (tabKey: string) => {
+    setActiveTabKey(tabKey);
+  };
+
   if (dataSet) {
     const actions = (
       <>
@@ -186,24 +191,34 @@ const DataSetDetails = (): JSX.Element => {
         <DatasetTopBar dataset={dataSet} actions={actions} />
         <Divider />
         <DetailsPane>
-          <Tabs animated={false} defaultActiveKey="1" size="large">
+          <Tabs
+            animated={false}
+            defaultActiveKey="overview"
+            size="large"
+            activeKey={activeTabKey}
+            onChange={activeTabChangeHandler}
+          >
             <TabPane
               tab={<TabTitle title={t('tab-overview')} iconType="Info" />}
-              key="1"
+              key="overview"
             >
-              <DatasetOverview loading={loading} dataset={dataSet} />
+              <DatasetOverview
+                loading={loading}
+                dataset={dataSet}
+                onActiveTabChange={activeTabChangeHandler}
+              />
             </TabPane>
             <TabPane
               tab={
                 <TabTitle title={t('tab-explore-data')} iconType="DataSource" />
               }
-              key="2"
+              key="data"
             >
               <ExploreData loading={loading} dataSetId={Number(dataSetId)} />
             </TabPane>
             <TabPane
               tab={<TabTitle title={t('tab-lineage')} iconType="Lineage" />}
-              key="3"
+              key="lineage"
             >
               <Lineage
                 dataSetWithExtpipes={dataSetWithExtpipes as DataSetWithExtpipes}
@@ -217,13 +232,13 @@ const DataSetDetails = (): JSX.Element => {
                   iconType="Documentation"
                 />
               }
-              key="4"
+              key="documentation"
             >
               <DocumentationsTab dataSet={dataSet} />
             </TabPane>
             <TabPane
               tab={<TabTitle title={t('tab-access-control')} iconType="Lock" />}
-              key="5"
+              key="access-control"
             >
               <AccessControl
                 dataSetId={dataSet.id}
