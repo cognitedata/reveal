@@ -125,7 +125,7 @@ export const AssetMappingsList = ({
 };
 
 const AssetList = styled.div`
-  height: calc(100% - 125px);
+  height: calc(100% - 56px);
 `;
 
 const AssetListItem = styled.div`

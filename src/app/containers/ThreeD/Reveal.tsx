@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSDK } from '@cognite/sdk-provider';
 import styled from 'styled-components';
 import { use3DModel } from './hooks';
@@ -6,93 +6,133 @@ import {
   AssetNodeCollection,
   Cognite3DModel,
   Cognite3DViewer,
+  CognitePointCloudModel,
   DefaultCameraManager,
   DefaultNodeAppearance,
   NodeOutlineColor,
+  THREE,
 } from '@cognite/reveal';
-import { Loader } from '@cognite/cogs.js';
+
 import { Alert } from 'antd';
 import { useQuery } from 'react-query';
-import { getAssetMappingsByAssetId, selectAssetBoundingBox } from './utils';
-import { ExpandButton } from './ThreeDToolbar';
+import { getAssetMappingsByAssetId } from './utils';
+import { ErrorBoundary } from 'react-error-boundary';
+import RevealErrorFeedback from './RevealErrorFeedback';
 
+type ChildProps = {
+  model: Cognite3DModel | CognitePointCloudModel;
+  viewer: Cognite3DViewer;
+};
 type Props = {
   modelId: number;
   revisionId: number;
   focusAssetId?: number | null;
+  children?: (opts: ChildProps) => JSX.Element;
 };
 
-export default function Reveal({ focusAssetId, modelId, revisionId }: Props) {
+export function Reveal({ focusAssetId, modelId, revisionId, children }: Props) {
   const sdk = useSDK();
-  const revealContainer = useRef<HTMLDivElement | null>(null);
-  const [viewer, setViewer] = useState<Cognite3DViewer | null>(null);
-  const [viewerModel, setViewerModel] = useState<Cognite3DModel | null>(null);
-  const { data: threeDModel, isLoading: isThreeDModelLoading } = use3DModel(
-    Number(modelId)
-  );
-  const { data: mappings } = useQuery(
-    ['getAssetMappingsByAssetId', modelId, revisionId, focusAssetId],
-    () => getAssetMappingsByAssetId(sdk, modelId, revisionId, [focusAssetId!]),
-    { enabled: !!focusAssetId }
+  const [revealContainer, setRevealContainer] = useState<HTMLDivElement | null>(
+    null
   );
 
-  const { data: boundingBox } = useQuery(
-    ['selectAssetBoundingBox', modelId, revisionId, focusAssetId],
-    () => selectAssetBoundingBox(mappings!, viewerModel!),
-    { enabled: !!mappings && mappings.length > 0 && !!viewerModel }
-  );
+  const handleMount = useCallback(node => setRevealContainer(node), []);
 
-  const createViewerWithCameraAndModel = useCallback(() => {
-    if (!threeDModel || !revisionId || !revealContainer.current) {
-      return null;
+  const { data: apiThreeDModel } = use3DModel(modelId);
+
+  const viewer = useMemo(() => {
+    if (!revealContainer) {
+      return;
     }
 
-    const threeDViewer = new Cognite3DViewer({
+    const viewer = new Cognite3DViewer({
       sdk,
-      domElement: revealContainer.current,
+      domElement: revealContainer!,
       continuousModelStreaming: true,
+      loadingIndicatorStyle: {
+        placement: 'bottomLeft',
+        opacity: 1,
+      },
     });
 
-    const cameraManager = threeDViewer.cameraManager as DefaultCameraManager;
+    const cameraManager = viewer.cameraManager as DefaultCameraManager;
     cameraManager.setCameraControlsOptions({
       mouseWheelAction: 'zoomToCursor',
       changeCameraTargetOnClick: true,
     });
 
-    threeDViewer
-      .addModel({
+    return viewer;
+  }, [sdk, revealContainer]);
+
+  useEffect(() => () => viewer?.dispose(), [viewer]);
+
+  const { data: models } = useQuery(
+    ['reveal-model', modelId, revisionId],
+    async () => {
+      if (!viewer) {
+        return Promise.reject('Viewer missing');
+      }
+      const model = await viewer.addModel({
         modelId: modelId,
         revisionId,
-      } as Cognite3DModel)
-      .then(model => {
-        threeDViewer.loadCameraFromModel(model);
-        setViewerModel(model as Cognite3DModel);
       });
-    return threeDViewer;
-  }, [sdk, modelId, threeDModel, revisionId]);
 
-  useEffect(() => {
-    if (!viewer) {
-      const threeDViewer = createViewerWithCameraAndModel();
-      setViewer(threeDViewer);
-    } else if (viewer && viewer.models.length === 1) {
-      viewer.dispose();
-      const threeDViewer = createViewerWithCameraAndModel();
-      setViewer(threeDViewer);
+      viewer.loadCameraFromModel(model);
+      const threeDModel = model instanceof Cognite3DModel ? model : undefined;
+      const pointCloudModel =
+        model instanceof CognitePointCloudModel ? model : undefined;
+
+      return { threeDModel, pointCloudModel };
+    },
+    {
+      enabled: !!viewer,
+      cacheTime: 0,
     }
-  }, [viewer, createViewerWithCameraAndModel]);
+  );
+
+  const { data: mappings = [], isFetched: mappingsFetched } = useQuery(
+    ['getAssetMappingsByAssetId', modelId, revisionId, focusAssetId],
+    () => getAssetMappingsByAssetId(sdk, modelId, revisionId, [focusAssetId!]),
+    { enabled: !!focusAssetId }
+  );
+
+  const { threeDModel } = models || {
+    threeDModel: undefined,
+    pointCloudModel: undefined,
+  };
+
+  const { data: boundingBox } = useQuery(
+    ['reveal-model', modelId, revisionId, focusAssetId],
+    async () => {
+      const boundingBoxNodes = await Promise.all(
+        mappings.map(m => threeDModel?.getBoundingBoxByNodeId(m.nodeId))
+      );
+
+      const boundingBox = boundingBoxNodes.reduce((accl: THREE.Box3, box) => {
+        return box ? accl.union(box) : accl;
+      }, new THREE.Box3());
+
+      return boundingBox;
+    },
+    {
+      enabled: !!threeDModel && mappingsFetched,
+    }
+  );
 
   useEffect(() => {
-    if (!viewerModel) {
+    if (!threeDModel || !viewer) {
       return;
     }
+
+    threeDModel.removeAllStyledNodeCollections();
+
     if (focusAssetId) {
-      const assetNodes = new AssetNodeCollection(sdk, viewerModel);
+      const assetNodes = new AssetNodeCollection(sdk, threeDModel);
+
       assetNodes.executeFilter({ assetId: focusAssetId });
 
-      viewerModel.removeAllStyledNodeCollections();
-      viewerModel.setDefaultNodeAppearance(DefaultNodeAppearance.Ghosted);
-      viewerModel.assignStyledNodeCollection(assetNodes, {
+      threeDModel.setDefaultNodeAppearance(DefaultNodeAppearance.Ghosted);
+      threeDModel.assignStyledNodeCollection(assetNodes, {
         renderGhosted: false,
         outlineColor: NodeOutlineColor.Cyan,
       });
@@ -101,16 +141,11 @@ export default function Reveal({ focusAssetId, modelId, revisionId }: Props) {
         viewer?.fitCameraToBoundingBox(boundingBox);
       }
     } else {
-      viewerModel.removeAllStyledNodeCollections();
-      viewerModel.setDefaultNodeAppearance(DefaultNodeAppearance.Default);
+      threeDModel.setDefaultNodeAppearance(DefaultNodeAppearance.Default);
     }
-  }, [boundingBox, focusAssetId, sdk, viewer, viewerModel]);
+  }, [boundingBox, focusAssetId, sdk, threeDModel, viewer]);
 
-  if (isThreeDModelLoading) {
-    return <Loader />;
-  }
-
-  if (!threeDModel || !revisionId) {
+  if (!apiThreeDModel || !revisionId) {
     return (
       <Alert
         type="error"
@@ -122,25 +157,29 @@ export default function Reveal({ focusAssetId, modelId, revisionId }: Props) {
   }
 
   return (
-    <RevealContainer ref={revealContainer}>
-      <ButtonOverlayContainer>
-        <ExpandButton viewer={viewer} viewerModel={viewerModel} />
-      </ButtonOverlayContainer>
-    </RevealContainer>
+    <>
+      <RevealContainer id="revealContainer" ref={handleMount} />
+      {children &&
+        threeDModel &&
+        viewer &&
+        children({ model: threeDModel, viewer })}
+    </>
   );
 }
-
-const ButtonOverlayContainer = styled.div`
-  position: relative;
-  top: 10px;
-  left: 50%;
-`;
 
 // This container has an inline style 'position: relative' given by @cognite/reveal.
 // We can not cancel it, so we had to use that -85px trick here!
 const RevealContainer = styled.div`
   height: calc(100% - 85px);
-  width: 100%;
-  padding: 16px;
-  padding-top: 0px;
 `;
+
+export default function RevealWithErrorBoundary(props: Props) {
+  return (
+    /* This is aparantly an issue because of multiple versions of @types/react. Error fallback
+    // seems to work.
+    @ts-ignore */
+    <ErrorBoundary FallbackComponent={RevealErrorFeedback}>
+      <Reveal {...props} />
+    </ErrorBoundary>
+  );
+}

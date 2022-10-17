@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { PageTitle } from '@cognite/cdf-utilities';
 import ResourceTitleRow from 'app/components/ResourceTitleRow';
 import { useParams } from 'react-router-dom';
@@ -9,10 +9,11 @@ import {
 import styled from 'styled-components';
 import { AssetPreviewSidebar } from 'app/containers/ThreeD/AssetPreviewSidebar';
 import { useSearchParamNumber } from 'app/utils/URLUtils';
-import { Button, Tooltip } from '@cognite/cogs.js';
 import Reveal from './Reveal';
 import { AssetMappingsSidebar } from './AssetMappingsSidebar';
 import { trackUsage } from 'app/utils/Metrics';
+import { ExpandButton } from './ThreeDToolbar';
+import { Flex } from '@cognite/cogs.js';
 
 export const ThreeDPreview = ({
   threeDId,
@@ -24,68 +25,77 @@ export const ThreeDPreview = ({
   const { id } = useParams<{ id: string }>();
   const modelId = parseInt(id!, 10);
 
-  const { data: threeDModel, isLoading } = use3DModel(modelId);
+  const { data: apiThreeDModel, isLoading } = use3DModel(modelId);
   useEffect(() => {
     trackUsage('3DPreview.Open', { modelId });
   }, [modelId]);
 
   const [selectedAssetId, setSelectedAssetId] = useSearchParamNumber('assetId');
-  const [isAssetMappingSidebarVisible, setIsAssetMappingSidebarVisible] =
-    useState<boolean>(true);
   const { data: revision } = useDefault3DModelRevision(modelId);
 
   return (
     <>
-      <PageTitle title={isLoading ? '...' : threeDModel?.name} />
+      <PageTitle title={isLoading ? '...' : apiThreeDModel?.name} />
       <ResourceTitleRow
-        title={threeDModel?.name}
+        title={apiThreeDModel?.name}
         item={{ id: threeDId, type: 'threeD' }}
         afterDefaultActions={actions}
       />
-      {revision && (
-        <Reveal
-          modelId={modelId}
-          revisionId={revision.id}
-          focusAssetId={selectedAssetId}
-        />
-      )}
-      {!isAssetMappingSidebarVisible && (
-        <ToolBarWrapper>
-          <Tooltip content="Search">
-            <Button
-              icon="Search"
-              onClick={() => setIsAssetMappingSidebarVisible(true)}
-              aria-label="Search"
+      <PreviewContainer>
+        {revision && (
+          <Reveal
+            key={`${modelId}.${revision.id}`}
+            modelId={modelId}
+            revisionId={revision.id}
+            focusAssetId={selectedAssetId}
+          >
+            {({ model, viewer }) => {
+              return (
+                <SidebarContainer gap={15}>
+                  <AssetMappingsSidebar
+                    modelId={modelId}
+                    revisionId={revision.id}
+                    selectedAssetId={selectedAssetId}
+                    setSelectedAssetId={setSelectedAssetId}
+                  />
+                  <ExpandButton viewer={viewer} viewerModel={model} />
+                </SidebarContainer>
+              );
+            }}
+          </Reveal>
+        )}
+
+        {!!selectedAssetId && (
+          <MakeDetailsSeethrough>
+            <AssetPreviewSidebar
+              assetId={selectedAssetId}
+              onClose={() => setSelectedAssetId(null)}
+              isBackButtonAvailable={false}
             />
-          </Tooltip>
-        </ToolBarWrapper>
-      )}
-      {isAssetMappingSidebarVisible && (
-        <AssetMappingsSidebar
-          modelId={threeDModel?.id}
-          revisionId={revision?.id}
-          selectedAssetId={selectedAssetId}
-          setSelectedAssetId={setSelectedAssetId}
-          onClose={() => setIsAssetMappingSidebarVisible(false)}
-        />
-      )}
-      {!!selectedAssetId && (
-        <AssetPreviewSidebar
-          assetId={selectedAssetId}
-          onClose={() => setSelectedAssetId(null)}
-          isBackButtonAvailable={false}
-        />
-      )}
+          </MakeDetailsSeethrough>
+        )}
+      </PreviewContainer>
     </>
   );
 };
 
-const ToolBarWrapper = styled.div`
-  position: absolute;
-  top: 96px;
-  left: 96px;
-
-  button {
-    margin-left: 5px;
+const MakeDetailsSeethrough = styled.div`
+  opacity: 0.5;
+  &:hover {
+    opacity: 1;
   }
+`;
+
+const SidebarContainer = styled(Flex)`
+  position: absolute;
+  width: 300px;
+  top: 100px;
+  left: 30px;
+  z-index: 100;
+  overflow: hidden;
+`;
+
+const PreviewContainer = styled.div`
+  height: calc(100% - 85px);
+  width: 100%;
 `;

@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
-import { Button, Input, Tooltip, Flex, Loader } from '@cognite/cogs.js';
+import { Button, Flex, Input, Loader } from '@cognite/cogs.js';
 import { AssetMappingsList } from 'app/containers/ThreeD/AssetMappingsList';
 import { useAssetMappings } from 'app/containers/ThreeD/hooks';
 import styled from 'styled-components';
+import { useCdfItem } from '@cognite/sdk-react-query-hooks';
+import { Asset } from '@cognite/sdk';
 
 type ThreeDSidebarProps = {
   modelId?: number;
   revisionId?: number;
   selectedAssetId: number | null;
-  onClose: () => void;
+
   setSelectedAssetId: (assetId: number | null) => void;
 };
 
@@ -16,10 +18,16 @@ export const AssetMappingsSidebar = ({
   modelId,
   revisionId,
   selectedAssetId,
-  onClose,
   setSelectedAssetId,
 }: ThreeDSidebarProps) => {
+  const { data: asset } = useCdfItem<Asset>(
+    'assets',
+    { id: selectedAssetId! },
+    { enabled: Number.isFinite(selectedAssetId) }
+  );
+
   const [query, setQuery] = useState('');
+  const [expanded, setExpanded] = useState(false);
 
   const { data: assetListData, isFetched } = useAssetMappings(
     modelId,
@@ -42,63 +50,43 @@ export const AssetMappingsSidebar = ({
     return true;
   };
 
+  if (!isFetched) {
+    return <Loader />;
+  }
   return (
-    <SidebarContainer>
-      <SidebarHeader>
-        <Flex direction="row" justifyContent="flex-end">
-          <Tooltip content="Hide">
-            <Button icon="PanelLeft" onClick={onClose} aria-label="Hide" />
-          </Tooltip>
-        </Flex>
-      </SidebarHeader>
-      {isFetched ? (
-        <>
-          <InputContainer>
-            <Input
-              value={query}
-              onChange={e => setQuery(e.target.value)}
-              placeholder="Search assets"
-              fullWidth
-            />
-          </InputContainer>
-          <AssetMappingsList
-            query={query}
-            assets={assetListData ?? []}
-            selectedAssetId={selectedAssetId}
-            onClick={handleAssetClick}
-            itemCount={assetListData?.length ?? 0}
-            isItemLoaded={isItemLoaded}
-            loadMoreItems={() => {}}
-          />
-        </>
-      ) : (
-        <Loader />
+    <SidebarContainer expanded={expanded} onFocus={() => setExpanded(true)}>
+      <Flex gap={5}>
+        <Input
+          style={{ flexGrow: 1 }}
+          value={query}
+          onChange={e => {
+            setQuery(e.target.value);
+          }}
+          placeholder={asset?.name || 'Search assets'}
+          fullWidth
+        />
+        {expanded && <Button icon="Close" onClick={() => setExpanded(false)} />}
+      </Flex>
+      {expanded && (
+        <AssetMappingsList
+          query={query}
+          assets={assetListData ?? []}
+          selectedAssetId={selectedAssetId}
+          onClick={e => {
+            handleAssetClick(e);
+            setExpanded(false);
+          }}
+          itemCount={assetListData?.length ?? 0}
+          isItemLoaded={isItemLoaded}
+          loadMoreItems={() => {}}
+        />
       )}
     </SidebarContainer>
   );
 };
 
-const SidebarHeader = styled.div`
-  padding: 10px;
-  margin: 10px 0;
-  border-bottom: 1px solid #e8e8e8;
-
-  button {
-    margin-right: 5px;
-  }
-`;
-
-const SidebarContainer = styled.div`
-  position: absolute;
-  width: 300px;
-  height: calc(100% - 85px);
-  top: 85px;
-  left: 0;
-  z-index: 100;
-  background: var(--cogs-white);
+const SidebarContainer = styled.div<{ expanded?: boolean }>`
+  height: ${props => (props.expanded ? '400px' : 'initial')};
+  background: ${props => (props.expanded ? ' var(--cogs-white)' : 'initial')};
   overflow: hidden;
-`;
-
-const InputContainer = styled.div`
-  margin: 10px 5px;
 `;

@@ -1,7 +1,11 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button, Tooltip } from '@cognite/cogs.js';
-import { Cognite3DViewer, Cognite3DModel } from '@cognite/reveal';
+import {
+  Cognite3DViewer,
+  Cognite3DModel,
+  CognitePointCloudModel,
+} from '@cognite/reveal';
 import { createLink } from '@cognite/cdf-utilities';
 
 export const HomeButton = () => {
@@ -25,7 +29,7 @@ export const ExpandButton = ({
   viewerModel,
 }: {
   viewer: Cognite3DViewer | null;
-  viewerModel: Cognite3DModel | null;
+  viewerModel: Cognite3DModel | CognitePointCloudModel | null;
 }) => {
   return (
     <Tooltip content="Fit to view">
