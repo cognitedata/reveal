@@ -7,6 +7,7 @@ import * as THREE from 'three';
 import { assertNever } from '@reveal/utilities';
 import { LoadingState } from '@reveal/model-base';
 
+import { PointCloudFactory } from './PointCloudFactory';
 import { PointCloudNode } from './PointCloudNode';
 import { PointCloudMetadataRepository } from './PointCloudMetadataRepository';
 import { PotreeGroupWrapper } from './PotreeGroupWrapper';
@@ -17,7 +18,6 @@ import { asyncScheduler, combineLatest, Observable, scan, Subject, throttleTime 
 import { ModelIdentifier } from '@reveal/data-providers';
 import { MetricsLogger } from '@reveal/metrics';
 import { SupportedModelTypes } from '@reveal/model-base';
-import { PointCloudFactory } from './PointCloudFactory';
 import { PointCloudMaterialManager } from '@reveal/rendering';
 
 export class PointCloudManager {
@@ -43,8 +43,8 @@ export class PointCloudManager {
   ) {
     this._pointCloudMetadataRepository = metadataRepository;
     this._pointCloudFactory = modelFactory;
-    this._pointCloudGroupWrapper = new PotreeGroupWrapper(potreeInstance);
     this._materialManager = materialManager;
+    this._pointCloudGroupWrapper = new PotreeGroupWrapper(potreeInstance);
 
     scene.add(this._pointCloudGroupWrapper);
 
