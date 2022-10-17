@@ -32,7 +32,6 @@ target
 # Viewer ignores
 .eslintcache
 __diff_output__/
-viewer/wasm/pkg/*
 
 # Examples
 
