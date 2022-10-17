@@ -31,9 +31,8 @@ class CustomAnnotationProvider implements PointCloudStylableObjectProvider {
         region: [new Cylinder(new THREE.Vector3(-0.03, 0.1, -1000), new THREE.Vector3(-0.03, 0.1, 1000), 0.04)]
       }
     ];
-    const annotationData = cdfAnnotationsToObjectInfo(cdfAnnotations);
 
-    return annotationData;
+    return cdfAnnotationsToObjectInfo(cdfAnnotations);
   }
 }
 
