@@ -13,7 +13,6 @@ import { File3dFormat } from '../types';
 
 function cdfAnnotationsToPointCloudObjects(cdfAnnotations: CdfPointCloudObjectAnnotation[]): PointCloudObject[] {
   const resultAnnotations = cdfAnnotations.map((cdfAnnotation, index) => {
-
     const shapes = cdfAnnotation.region;
 
     const compShape = new CompositeShape(shapes);

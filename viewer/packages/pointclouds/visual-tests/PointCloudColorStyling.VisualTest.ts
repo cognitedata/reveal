@@ -17,8 +17,6 @@ import {
   applyDefaultsToPointCloudAppearance
 } from '../../pointcloud-styling';
 
-import { PointCloudMaterialManager } from '../../rendering';
-
 import { ModelIdentifier } from '@reveal/data-providers';
 
 import assert from 'assert';
