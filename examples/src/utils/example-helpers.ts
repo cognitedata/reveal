@@ -100,9 +100,15 @@ export function getCredentialEnvironment(): CredentialEnvironment | undefined {
   return credentialEnvironmentList.environments[environmentParam];
 }
 
-async function getTokenSupplier(credentialEnvironment: CredentialEnvironment,
-                                baseUrl: string)
-: Promise<() => Promise<string>> {
+export async function createSDKFromEnvironment(
+  appId: string,
+  project: string,
+  environmentParam: string): Promise<CogniteClient> {
+
+  const credentialEnvironmentList = JSON.parse(process.env.REACT_APP_CREDENTIAL_ENVIRONMENTS!) as CredentialEnvironmentList;
+  const credentialEnvironment = credentialEnvironmentList.environments[environmentParam];
+
+  const baseUrl = `https://${credentialEnvironment.cluster}.cognitedata.com`;
   const cdfScopes = [
     `${baseUrl}/user_impersonation`,
     `${baseUrl}/IDENTITY`
@@ -166,25 +172,10 @@ async function getTokenSupplier(credentialEnvironment: CredentialEnvironment,
     return accessToken;
   }
 
-  return getToken;
-}
-
-export async function createSDKFromEnvironment(
-  appId: string,
-  project: string,
-  environmentParam: string): Promise<CogniteClient> {
-
-  const credentialEnvironmentList = JSON.parse(process.env.REACT_APP_CREDENTIAL_ENVIRONMENTS!) as CredentialEnvironmentList;
-  const credentialEnvironment = credentialEnvironmentList.environments[environmentParam];
-
-  const baseUrl = `https://${credentialEnvironment.cluster}.cognitedata.com`;
-
-  const getToken = await getTokenSupplier(credentialEnvironment, baseUrl);
-
   const client = new CogniteClient({ appId,
                                      project,
                                      getToken,
-                                     baseUrl });
+                                     baseUrl});
   await client.authenticate();
   return client;
 }
