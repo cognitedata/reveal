@@ -46,7 +46,13 @@ export class StationaryCameraManager implements CameraManager {
   }
 
   getCameraState(): Required<CameraState> {
-    return { position: this._camera.position, rotation: this._camera.quaternion, target: this._camera.position };
+    const unitForward = new THREE.Vector3(0, 0, -1);
+    unitForward.applyQuaternion(this._camera.quaternion);
+    return {
+      position: this._camera.position,
+      rotation: this._camera.quaternion,
+      target: unitForward.add(this._camera.position)
+    };
   }
 
   on(_: 'cameraChange', callback: CameraChangeDelegate): void {
@@ -79,6 +85,7 @@ export class StationaryCameraManager implements CameraManager {
     this._domElement.removeEventListener('pointermove', this.rotateCamera.bind(this));
     this._domElement.removeEventListener('pointerdown', this.enableDragging.bind(this));
     this._domElement.removeEventListener('pointerup', this.disableDragging.bind(this));
+    this._domElement.removeEventListener('pointerout', this.disableDragging.bind(this));
   }
 
   private enableDragging(_: PointerEvent) {
