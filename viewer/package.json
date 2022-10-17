@@ -62,7 +62,7 @@
     "rxjs": "7.5.7",
     "skmeans": "0.11.3",
     "three": "0.144.0",
-    "three-stdlib": "2.17.2"
+    "three-stdlib": "2.17.3"
   },
   "devDependencies": {
     "@azure/msal-browser": "2.30.0",
@@ -77,7 +77,7 @@
     "@types/jsdom": "20.0.0",
     "@types/lodash": "4.14.186",
     "@types/mixpanel-browser": "2.38.0",
-    "@types/node": "16.11.65",
+    "@types/node": "16.11.66",
     "@types/offscreencanvas": "2019.7.0",
     "@types/proj4": "2.5.2",
     "@types/random-seed": "0.3.3",
@@ -101,7 +101,7 @@
     "eslint-plugin-prettier": "4.2.1",
     "eslint-plugin-unused-imports": "2.0.0",
     "file-loader": "6.2.0",
-    "gl": "5.0.3",
+    "gl": "6.0.1",
     "glob": "8.0.3",
     "glslify-loader": "2.0.0",
     "html-webpack-plugin": "5.5.0",
