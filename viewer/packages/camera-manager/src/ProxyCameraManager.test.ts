@@ -4,11 +4,11 @@
 import * as THREE from 'three';
 
 import { It, Mock } from 'moq.ts';
-import { ActiveCameraManager } from './ActiveCameraManager';
+import { ProxyCameraManager } from './ProxyCameraManager';
 import { CameraManager } from './CameraManager';
 import { CameraChangeDelegate } from './types';
 
-describe(ActiveCameraManager.name, () => {
+describe(ProxyCameraManager.name, () => {
   test('Switching camera manager should also switch event handling', () => {
     const cameraOneEventHandlers = new Set<CameraChangeDelegate>();
     const cameraOnePositionResult = new THREE.Vector3().random();
@@ -46,7 +46,7 @@ describe(ActiveCameraManager.name, () => {
       .returns({ aspect: 70 } as THREE.PerspectiveCamera)
       .object();
 
-    const activeCameraManager = new ActiveCameraManager(cameraManagerOne);
+    const activeCameraManager = new ProxyCameraManager(cameraManagerOne);
 
     const cameraChangedResults: [THREE.Vector3, THREE.Vector3][] = [];
     activeCameraManager.on('cameraChange', (position, target) => {

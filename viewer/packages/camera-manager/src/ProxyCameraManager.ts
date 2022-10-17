@@ -6,7 +6,7 @@ import * as THREE from 'three';
 import { CameraManager } from './CameraManager';
 import { CameraChangeDelegate, CameraState } from './types';
 
-export class ActiveCameraManager implements CameraManager {
+export class ProxyCameraManager implements CameraManager {
   private readonly _cameraChangedListeners: Set<CameraChangeDelegate> = new Set();
 
   private _activeCameraManager: CameraManager;
@@ -40,15 +40,20 @@ export class ActiveCameraManager implements CameraManager {
     initialActiveCamera.on('cameraChange', this._activeCameraEventHandler);
   }
 
-  public setActiveCameraManager(cameraManager: CameraManager, cameraStateUpdate = true): void {
-    if (cameraStateUpdate) {
+  public setActiveCameraManager(cameraManager: CameraManager, preserveCameraState = true): void {
+    if (preserveCameraState) {
       const currentState = this._activeCameraManager.getCameraState();
       cameraManager.setCameraState({ position: currentState.position, target: currentState.target });
     }
     cameraManager.getCamera().aspect = this.getCamera().aspect;
 
-    this._activeCameraManager.enabled = false;
-    cameraManager.enabled = true;
+    if (cameraManager.enabled !== undefined) {
+      cameraManager.enabled = true;
+    }
+
+    if (this._activeCameraManager.enabled !== undefined) {
+      this._activeCameraManager.enabled = false;
+    }
 
     this._activeCameraManager.off('cameraChange', this._activeCameraEventHandler);
     this._activeCameraManager = cameraManager;

@@ -49,7 +49,7 @@ import { Spinner } from '../../utilities/Spinner';
 import { ViewerState, ViewStateHelper } from '../../utilities/ViewStateHelper';
 import { RevealManagerHelper } from '../../storage/RevealManagerHelper';
 
-import { DefaultCameraManager, CameraManager, CameraChangeDelegate, ActiveCameraManager } from '@reveal/camera-manager';
+import { DefaultCameraManager, CameraManager, CameraChangeDelegate, ProxyCameraManager } from '@reveal/camera-manager';
 import { Cdf360ImageEventProvider, CdfModelIdentifier, File3dFormat } from '@reveal/data-providers';
 import { DataSource, CdfDataSource, LocalDataSource } from '@reveal/data-source';
 import { IntersectInput, SupportedModelTypes, CogniteModelBase, LoadingState } from '@reveal/model-base';
@@ -103,7 +103,7 @@ export class Cognite3DViewer {
   private readonly _dataSource: DataSource;
 
   private readonly _sceneHandler: SceneHandler;
-  private readonly _activeCameraManager: ActiveCameraManager;
+  private readonly _activeCameraManager: ProxyCameraManager;
   private readonly _subscription = new Subscription();
   private readonly _revealManagerHelper: RevealManagerHelper;
   private readonly _domElement: HTMLElement;
@@ -225,7 +225,7 @@ export class Cognite3DViewer {
       options.cameraManager ??
       new DefaultCameraManager(this._domElement, this._mouseHandler, this.modelIntersectionCallback.bind(this));
 
-    this._activeCameraManager = new ActiveCameraManager(initialActiveCameraManager);
+    this._activeCameraManager = new ProxyCameraManager(initialActiveCameraManager);
 
     this._activeCameraManager.on('cameraChange', (position: THREE.Vector3, target: THREE.Vector3) => {
       this._events.cameraChange.fire(position.clone(), target.clone());
@@ -553,10 +553,10 @@ export class Cognite3DViewer {
   /**
    * Sets the active camera manager instance for current Cognite3Dviewer.
    * @param cameraManager Camera manager instance.
-   * @param cameraStateUpdate Whether to set current camera state to new camera manager.
+   * @param preserveCameraState Whether to set current camera state to new camera manager.
    */
-  setCameraManager(cameraManager: CameraManager, cameraStateUpdate: boolean = true): void {
-    this._activeCameraManager.setActiveCameraManager(cameraManager, cameraStateUpdate);
+  setCameraManager(cameraManager: CameraManager, preserveCameraState: boolean = true): void {
+    this._activeCameraManager.setActiveCameraManager(cameraManager, preserveCameraState);
     this.requestRedraw();
   }
 
