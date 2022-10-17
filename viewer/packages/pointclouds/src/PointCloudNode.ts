@@ -146,7 +146,7 @@ export class PointCloudNode extends THREE.Group {
    * @returns A sorted list of classification codes from the model.
    */
   getClasses(): Array<{ name: string; code: number | WellKnownAsprsPointClassCodes }> {
-    return this._potreeNode.classNames;
+    return this._potreeNode.classes;
   }
 
   getBoundingBox(outBbox: THREE.Box3 = new THREE.Box3()): THREE.Box3 {

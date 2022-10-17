@@ -159,7 +159,7 @@ export class PotreeNodeWrapper {
     return WellKnownAsprsPointClassCodes[code] ?? `Class ${code}`;
   }
 
-  get classNames(): Array<{ name: string; code: number }> {
+  get classes(): Array<{ name: string; code: number }> {
     const codesAndNames = Object.entries(this._classNameToCodeMap).map(nameAndCode => ({
       name: nameAndCode[0],
       code: nameAndCode[1].code
