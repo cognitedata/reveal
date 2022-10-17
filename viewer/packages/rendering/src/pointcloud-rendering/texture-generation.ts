@@ -2,7 +2,7 @@
  * Adapted from pnext/three-loader (https://github.com/pnext/three-loader)
  */
 import { Color, DataTexture, NearestFilter, LinearFilter, CanvasTexture, RGBAFormat, Texture, Vector4 } from 'three';
-import { IClassification, IGradient } from './types';
+import { PointClassification, IGradient } from './types';
 
 export function generateDataTexture(width: number, height: number, color: Color): DataTexture {
   const size = width * height;
@@ -54,7 +54,7 @@ export function generateGradientTexture(gradient: IGradient): Texture {
   return texture;
 }
 
-export function generateClassificationTexture(classification: IClassification): Texture {
+export function generateClassificationTexture(classification: PointClassification): Texture {
   const width = 256;
   const height = 256;
   const size = width * height;

@@ -41,7 +41,7 @@ import {
   PointCloudMixingMode
 } from './enums';
 import { generateClassificationTexture, generateDataTexture, generateGradientTexture } from './texture-generation';
-import { IClassification, IUniform, OctreeMaterialParams, IClipBox } from './types';
+import { PointClassification, IUniform, OctreeMaterialParams, IClipBox } from './types';
 import { SpectralGradient } from './gradients/SpectralGradient';
 import { PointCloudObjectAppearanceTexture } from './PointCloudObjectAppearanceTexture';
 import { PointCloudObjectIdMaps } from '@reveal/rendering';
@@ -185,7 +185,7 @@ export class PointCloudMaterial extends RawShaderMaterial {
     OBJECT_STYLING_TEXTURE_HEIGHT
   );
 
-  private _classification: IClassification = DEFAULT_CLASSIFICATION;
+  private _classification: PointClassification = DEFAULT_CLASSIFICATION;
   private classificationTexture: Texture | undefined = generateClassificationTexture(this._classification);
 
   uniforms: IPointCloudMaterialUniforms & Record<string, IUniform<any>> = {
@@ -527,12 +527,12 @@ export class PointCloudMaterial extends RawShaderMaterial {
     return this._objectAppearanceTexture;
   }
 
-  get classification(): IClassification {
+  get classification(): PointClassification {
     return this._classification;
   }
 
-  set classification(value: IClassification) {
-    const copy = {} as IClassification;
+  set classification(value: PointClassification) {
+    const copy = {} as PointClassification;
     for (const key of Object.keys(value)) {
       copy[key] = value[key as number | 'DEFAULT'].clone();
     }

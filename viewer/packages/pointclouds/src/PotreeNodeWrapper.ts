@@ -11,7 +11,7 @@ type ClassificationMap = { [key: string]: { rgb: THREE.Color; code: number } };
 import { StyledPointCloudObjectCollection, CompletePointCloudAppearance } from '@reveal/pointcloud-styling';
 
 import { PointCloudOctree, PickPoint } from './potree-three-loader';
-import { PointColorType, PointShape, IClassification, DEFAULT_CLASSIFICATION } from '@reveal/rendering';
+import { PointColorType, PointShape, PointClassification, DEFAULT_CLASSIFICATION } from '@reveal/rendering';
 
 import { WellKnownAsprsPointClassCodes } from './types';
 
@@ -25,7 +25,7 @@ import { createDistinctColors } from '@reveal/utilities';
 export class PotreeNodeWrapper {
   readonly octree: PointCloudOctree;
   private _needsRedraw = false;
-  private readonly _classification: IClassification;
+  private readonly _classification: PointClassification;
 
   private readonly _modelIdentifier: symbol;
 
@@ -148,7 +148,7 @@ export class PotreeNodeWrapper {
     this._needsRedraw = true;
   }
 
-  get classification(): IClassification {
+  get classification(): PointClassification {
     return this._classification;
   }
 
