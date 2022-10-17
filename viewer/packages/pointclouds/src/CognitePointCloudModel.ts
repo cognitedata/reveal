@@ -267,14 +267,16 @@ export class CognitePointCloudModel implements CogniteModelBase {
   unassignStyledObjectCollection(objectCollection: PointCloudObjectCollection): void {
     const styledCollectionIndex = this._styledObjectCollections.findIndex(x => x.objectCollection === objectCollection);
 
-    if (styledCollectionIndex !== -1) {
-      this._styledObjectCollections.splice(styledCollectionIndex, 1);
+    if (styledCollectionIndex === -1) {
+      return;
+    }
 
-      this.pointCloudNode.removeAllStyledPointCloudObjects();
+    this._styledObjectCollections.splice(styledCollectionIndex, 1);
 
-      for (const styledObjectCollection of this._styledObjectCollections) {
-        this.pointCloudNode.assignStyledPointCloudObjectCollection(styledObjectCollection);
-      }
+    this.pointCloudNode.removeAllStyledPointCloudObjects();
+
+    for (const styledObjectCollection of this._styledObjectCollections) {
+      this.pointCloudNode.assignStyledPointCloudObjectCollection(styledObjectCollection);
     }
   }
 
