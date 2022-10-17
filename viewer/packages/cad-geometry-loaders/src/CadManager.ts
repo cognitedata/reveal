@@ -132,9 +132,6 @@ export class CadManager {
 
   updateCamera(camera: THREE.PerspectiveCamera, cameraInMotion: boolean): void {
     this._cadModelUpdateHandler.updateCamera(camera, cameraInMotion);
-    if (cameraInMotion) {
-      this._needsRedraw = true;
-    }
   }
 
   get clippingPlanes(): THREE.Plane[] {
