@@ -120,7 +120,7 @@ const DatasetOverview = ({
               <Flex
                 alignItems="center"
                 direction="column"
-                style={{ padding: 46 }}
+                style={{ margin: '46px auto' }}
               >
                 <img src={UsersIcon} alt="Users" />
                 <Title level={4}>{t('who-has-access')}</Title>
@@ -130,7 +130,7 @@ const DatasetOverview = ({
                 <Button
                   type="secondary"
                   onClick={() => onActiveTabChange('access-control')}
-                  style={{ width: 270 }}
+                  // style={{ width: 270 }}
                 >
                   {t('manage')}
                 </Button>
