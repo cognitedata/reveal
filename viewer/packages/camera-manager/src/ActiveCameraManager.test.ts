@@ -26,6 +26,8 @@ describe(ActiveCameraManager.name, () => {
       .callback(({ args: [_, eventHandler] }) => {
         cameraOneEventHandlers.delete(eventHandler);
       })
+      .setup(p => p.getCamera())
+      .returns({ aspect: 70 } as THREE.PerspectiveCamera)
       .object();
 
     const cameraTwoPositionResult = new THREE.Vector3().random();
@@ -40,6 +42,8 @@ describe(ActiveCameraManager.name, () => {
       .callback(() => {
         cameraTwoEventHandler(cameraTwoPositionResult, cameraTwoTargetResult);
       })
+      .setup(p => p.getCamera())
+      .returns({ aspect: 70 } as THREE.PerspectiveCamera)
       .object();
 
     const activeCameraManager = new ActiveCameraManager(cameraManagerOne);
@@ -55,7 +59,7 @@ describe(ActiveCameraManager.name, () => {
     expect(cameraChangedResults[0][0]).toBe(cameraOnePositionResult);
     expect(cameraChangedResults[0][1]).toBe(cameraOneTargetResult);
 
-    activeCameraManager.setActiveCameraManager(cameraManagerTwo);
+    activeCameraManager.setActiveCameraManager(cameraManagerTwo, false);
 
     cameraManagerOne.setCameraState({});
 
