@@ -2,42 +2,9 @@ import { AABB, Vec3 } from '@reveal/utilities';
 import { SerializableStylableObject } from '@reveal/data-providers';
 import { assignPointsToObjectsWithWasm } from './assignPointsToObjectsWithWasm';
 
+import { EptInputData, ParsedEptData, SchemaEntry } from './types';
+
 import * as THREE from 'three';
-
-export type ParsedEptData = {
-  numPoints: number;
-  tightBoundingBox: { min: number[]; max: number[] };
-  mean: number[];
-  position: ArrayBuffer;
-  color: ArrayBuffer | undefined;
-  intensity: ArrayBuffer | undefined;
-  classification: ArrayBuffer | undefined;
-  returnNumber: ArrayBuffer | undefined;
-  numberOfReturns: ArrayBuffer | undefined;
-  pointSourceId: ArrayBuffer | undefined;
-  indices: ArrayBuffer;
-  objectId: ArrayBuffer;
-};
-
-export type SchemaEntry = {
-  name: string;
-  size: number;
-  type: 'signed' | 'unsigned' | 'float';
-};
-
-type RawVector3 = {
-  x: number;
-  y: number;
-  z: number;
-};
-
-export type EptInputData = {
-  buffer: ArrayBuffer;
-  schema: SchemaEntry[];
-  scale: RawVector3;
-  offset: RawVector3;
-  mins: [number, number, number];
-};
 
 export async function parseEpt(
   data: EptInputData,
@@ -198,9 +165,9 @@ export async function parseEpt(
   for (let i = 0; i < numPoints; ++i) {
     const pos = i * pointSize;
     if (xyz) {
-      x = xyzExtractor[0](pos) * scale.x + offset.x - mins[0];
-      y = xyzExtractor[1](pos) * scale.y + offset.y - mins[1];
-      z = xyzExtractor[2](pos) * scale.z + offset.z - mins[2];
+      x = xyzExtractor[0](pos) * scale[0] + offset[0] - mins[0];
+      y = xyzExtractor[1](pos) * scale[1] + offset[1] - mins[1];
+      z = xyzExtractor[2](pos) * scale[2] + offset[2] - mins[2];
 
       mean[0] += x / numPoints;
       mean[1] += y / numPoints;

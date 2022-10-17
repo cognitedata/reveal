@@ -12,7 +12,7 @@ import { ModelDataProvider, SerializableStylableObject, StylableObject } from '@
 import { PointCloudEptGeometryNode } from '../geometry/PointCloudEptGeometryNode';
 import * as EptDecoderWorker from '../workers/eptBinaryDecoder.worker';
 
-import { ParsedEptData, EptInputData } from '../workers/parseEpt';
+import { ParsedEptData, EptInputData } from '../workers/types';
 
 import { decomposeStylableObjects } from '../../decomposeStylableObjects';
 
@@ -76,8 +76,8 @@ export class EptBinaryLoader implements ILoader {
     const eptData: EptInputData = {
       buffer: data,
       schema: node.ept.schema,
-      scale: node.ept.eptScale,
-      offset: node.ept.eptOffset,
+      scale: node.ept.eptScale.toArray(),
+      offset: node.ept.eptOffset.toArray(),
       mins: fromThreeVector3(node.key.b.min)
     };
 
