@@ -1,40 +1,41 @@
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { getContainer } from 'utils/shared';
+import { usePermissions } from '@cognite/sdk-react-query-hooks';
+import { getFlow } from '@cognite/cdf-sdk-singleton';
 
-import NewHeader from 'components/NewHeader';
+import { notification } from 'antd';
 import Spin from 'antd/lib/spin';
-import Card from 'antd/lib/card';
-import Row from 'antd/lib/row';
-import Col from 'antd/lib/col';
-import { Button, Tooltip } from '@cognite/cogs.js';
-import theme from 'styles/theme';
+
 import Tabs from 'antd/lib/tabs';
+import { Button, Tooltip } from '@cognite/cogs.js';
+
+import DataSetEditor from 'pages/DataSetEditor';
 import ExploreData from 'components/ExploreData';
 import Lineage from 'components/Lineage';
 import DocumentationsTab from 'components/DocumentationsTab';
 import AccessControl from 'components/AccessControl';
-import { SeperatorLine, DetailsPane } from 'utils/styledComponents';
-import DataSetEditor from 'pages/DataSetEditor';
-import { notification } from 'antd';
-import BasicInfoCard from 'components/BasicInfoCard';
+
 import { ErrorMessage } from 'components/ErrorMessage/ErrorMessage';
-import { usePermissions } from '@cognite/sdk-react-query-hooks';
-import { getFlow } from '@cognite/cdf-sdk-singleton';
+import DatasetTopBar from 'components/dataset-detail-topbar/DatasetTopBar';
+
+import { useTranslation } from 'common/i18n';
+import { DetailsPane, Divider, getContainer } from 'utils';
+
 import {
   DataSetWithExtpipes,
   useDataSetWithExtpipes,
   useUpdateDataSetVisibility,
 } from '../../actions/index';
 import { useSelectedDataSet } from '../../context/index';
-import { useTranslation } from 'common/i18n';
-import { DATASET_HELP } from 'utils/constants';
+import TabTitle from './TabTitle';
+import DatasetOverview from 'components/Overview/DatasetOverview';
 
 const { TabPane } = Tabs;
 
 const DataSetDetails = (): JSX.Element => {
   const { t } = useTranslation();
   const [editDrawerVisible, setEditDrawerVisible] = useState<boolean>(false);
+  const [activeTabKey, setActiveTabKey] = useState<string>('overview');
   const [changesSaved, setChangesSaved] = useState<boolean>(true);
   const { dataSetId } = useParams();
 
@@ -172,72 +173,87 @@ const DataSetDetails = (): JSX.Element => {
     return <ErrorMessage error={error} />;
   };
 
+  const activeTabChangeHandler = (tabKey: string) => {
+    setActiveTabKey(tabKey);
+  };
+
   if (dataSet) {
     const actions = (
-      <div>
+      <>
         {editButton}
         {editDrawer}
         {dataSet.metadata.archived ? restoreButton : archiveButton}
-      </div>
+      </>
     );
 
     return (
       <div>
-        <NewHeader
-          title={dataSet.name}
-          ornamentColor={theme.specificTitleOrnamentColor}
-          help={DATASET_HELP}
-          rightItem={actions}
-        />
-        <div style={{ alignItems: 'center', display: 'flex' }} />
-        <Card loading={loading && !dataSet}>
-          <Row>
-            <Col md={6} xs={24}>
-              <BasicInfoCard dataSet={dataSet} />
-            </Col>
-            <Col md={1} xs={0}>
-              <SeperatorLine />
-            </Col>
-            <Col md={17} xs={24}>
-              <DetailsPane>
-                <Tabs animated={false} defaultActiveKey="1" size="large">
-                  <TabPane tab={t('tab-explore-data-uppercase')} key="1">
-                    <ExploreData
-                      loading={loading}
-                      dataSetId={Number(dataSetId)}
-                    />
-                  </TabPane>
-                  <TabPane tab={t('tab-lineage-uppercase')} key="2">
-                    <Lineage
-                      dataSetWithExtpipes={
-                        dataSetWithExtpipes as DataSetWithExtpipes
-                      }
-                      isExtpipesFetched={isExtpipesFetched}
-                    />
-                  </TabPane>
-                  <TabPane tab={t('tab-documentation-uppercase')} key="3">
-                    <DocumentationsTab dataSet={dataSet} />
-                  </TabPane>
-                  <TabPane tab={t('tab-access-control-uppercase')} key="4">
-                    <AccessControl
-                      dataSetId={dataSet.id}
-                      writeProtected={dataSet.writeProtected}
-                    />
-                  </TabPane>
-                </Tabs>
-              </DetailsPane>
-            </Col>
-          </Row>
-        </Card>
+        <DatasetTopBar dataset={dataSet} actions={actions} />
+        <Divider />
+        <DetailsPane>
+          <Tabs
+            animated={false}
+            defaultActiveKey="overview"
+            size="large"
+            activeKey={activeTabKey}
+            onChange={activeTabChangeHandler}
+          >
+            <TabPane
+              tab={<TabTitle title={t('tab-overview')} iconType="Info" />}
+              key="overview"
+            >
+              <DatasetOverview
+                loading={loading}
+                dataset={dataSet}
+                onActiveTabChange={activeTabChangeHandler}
+              />
+            </TabPane>
+            <TabPane
+              tab={
+                <TabTitle title={t('tab-explore-data')} iconType="DataSource" />
+              }
+              key="data"
+            >
+              <ExploreData loading={loading} dataSetId={Number(dataSetId)} />
+            </TabPane>
+            <TabPane
+              tab={<TabTitle title={t('tab-lineage')} iconType="Lineage" />}
+              key="lineage"
+            >
+              <Lineage
+                dataSetWithExtpipes={dataSetWithExtpipes as DataSetWithExtpipes}
+                isExtpipesFetched={isExtpipesFetched}
+              />
+            </TabPane>
+            <TabPane
+              tab={
+                <TabTitle
+                  title={t('tab-documentation')}
+                  iconType="Documentation"
+                />
+              }
+              key="documentation"
+            >
+              <DocumentationsTab dataSet={dataSet} />
+            </TabPane>
+            <TabPane
+              tab={<TabTitle title={t('tab-access-control')} iconType="Lock" />}
+              key="access-control"
+            >
+              <AccessControl
+                dataSetId={dataSet.id}
+                writeProtected={dataSet.writeProtected}
+              />
+            </TabPane>
+          </Tabs>
+        </DetailsPane>
       </div>
     );
   }
+
   return (
     <div>
-      <NewHeader
-        title={t('data-set-details')}
-        ornamentColor={theme.specificTitleOrnamentColor}
-      />
+      <DatasetTopBar dataset={dataSet} />
       {renderLoadingError(loading)}
     </div>
   );

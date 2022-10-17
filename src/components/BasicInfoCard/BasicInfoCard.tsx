@@ -1,6 +1,5 @@
 import {
   BasicInfoPane,
-  PaneTitle,
   ItemLabel,
   ItemValue,
   NoDataText,
@@ -16,6 +15,11 @@ import Tag from 'antd/lib/tag';
 import InfoTooltip from '../InfoTooltip';
 import { useTranslation } from 'common/i18n';
 import { Icon } from '@cognite/cogs.js';
+import {
+  CREATE_DATASET_DOC,
+  EDIT_DATASET_DOC,
+  EDIT_DATASET_HELP_DOC,
+} from 'utils';
 
 const { Text } = Typography;
 
@@ -44,7 +48,6 @@ const BasicInfoCard = ({ dataSet }: BasicInfoCardProps) => {
 
   return (
     <BasicInfoPane>
-      <PaneTitle>{t('basic-information')}</PaneTitle>
       <ItemLabel>{t('name')}</ItemLabel>{' '}
       <ItemValue>
         {writeProtected && <Icon type="Lock" />}
@@ -57,7 +60,7 @@ const BasicInfoCard = ({ dataSet }: BasicInfoCardProps) => {
             {t('basic-info-tooltip-data-set-id')}
           </span>
         }
-        url="https://docs.cognite.com/cdf/data_governance/guides/datasets/create_data_sets.html#step-3a-ingest-new-data-into-the-data-set"
+        url={CREATE_DATASET_DOC}
         urlTitle={t('learn-more-in-our-docs')}
         showIcon={false}
       >
@@ -88,7 +91,7 @@ const BasicInfoCard = ({ dataSet }: BasicInfoCardProps) => {
             <InfoTooltip
               title={t('governance-status')}
               tooltipText={t('basic-info-tooltip-governance-status')}
-              url="https://docs.cognite.com/cdf/data_governance/guides/datasets/edit_explore_data_sets.html#explore-data-sets"
+              url={EDIT_DATASET_DOC}
               urlTitle={t('learn-more-in-our-docs')}
               showIcon={false}
             />
@@ -157,7 +160,7 @@ const BasicInfoCard = ({ dataSet }: BasicInfoCardProps) => {
       {archived && (
         <InfoTooltip
           tooltipText={t('basic-info-tooltip-data-set-archived')}
-          url="https://docs.cognite.com/cdf/data_governance/guides/datasets/edit_explore_data_sets.html"
+          url={EDIT_DATASET_HELP_DOC}
           urlTitle={t('learn-more-in-our-docs')}
           showIcon={false}
         >
