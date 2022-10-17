@@ -179,7 +179,7 @@ describe('Feedback', () => {
       cy.log('Submit feedback from favorites page');
       cy.goToFavoritesPage();
       cy.openGeneralFeedbackModal(comment, true);
-      cy.wait('@submitGeneralFeedback', { requestTimeout: 10000 }).then(
+      cy.wait('@submitGeneralFeedback', { requestTimeout: 30000 }).then(
         (interception) => {
           assert.equal(interception.request.body.payload.comment, comment);
           assert.exists(interception.request.body.payload.screenshotB64);
@@ -272,13 +272,13 @@ describe('Feedback', () => {
         cy.findByTestId('empty-state-container')
           .contains('Loading results')
           .should('be.visible');
-        cy.wait(`@${GET_DOCUMENT_FEEDBACK_ALIAS}`);
+        cy.wait(`@${GET_DOCUMENT_FEEDBACK_ALIAS}`, { timeout: 20000 });
         cy.findByTestId('empty-state-container').should('not.exist');
       });
 
       it('Should render all details in document feedback table', () => {
         cy.clickDocumentFeedbackButton();
-        cy.wait(`@${GET_DOCUMENT_FEEDBACK_ALIAS}`);
+        cy.wait(`@${GET_DOCUMENT_FEEDBACK_ALIAS}`, { timeout: 20000 });
         cy.isTableEmptyStateVisible(false);
         cy.sortDataOnCreatedDate();
 
@@ -296,12 +296,12 @@ describe('Feedback', () => {
 
       it('Archive feedback', () => {
         cy.clickDocumentFeedbackButton();
-        cy.wait(`@${GET_DOCUMENT_FEEDBACK_ALIAS}`);
+        cy.wait(`@${GET_DOCUMENT_FEEDBACK_ALIAS}`, { timeout: 20000 });
         cy.isTableEmptyStateVisible(false);
         cy.sortDataOnCreatedDate();
 
         cy.clickNthRowArchiveFeedbackIcon(0);
-        cy.wait(`@${GET_DOCUMENT_FEEDBACK_ALIAS}`);
+        cy.wait(`@${GET_DOCUMENT_FEEDBACK_ALIAS}`, { timeout: 20000 });
 
         cy.contains(comment).should('not.exist');
         cy.clickViewArchivedButton();
@@ -310,7 +310,7 @@ describe('Feedback', () => {
         cy.contains(comment).should('be.visible');
 
         cy.clickNthRowRevertArchivedButton(0);
-        cy.wait(`@${GET_DOCUMENT_FEEDBACK_ALIAS}`);
+        cy.wait(`@${GET_DOCUMENT_FEEDBACK_ALIAS}`, { timeout: 20000 });
 
         cy.contains(comment).should('not.exist');
         cy.clickViewArchivedButton();
@@ -320,7 +320,7 @@ describe('Feedback', () => {
 
       it('Document feedback comment section', () => {
         cy.clickDocumentFeedbackButton();
-        cy.wait(`@${GET_DOCUMENT_FEEDBACK_ALIAS}`);
+        cy.wait(`@${GET_DOCUMENT_FEEDBACK_ALIAS}`, { timeout: 20000 });
         cy.isTableEmptyStateVisible(false);
         cy.sortDataOnCreatedDate();
         cy.clickNthRowCommentIcon(0);
@@ -330,7 +330,7 @@ describe('Feedback', () => {
 
       it('Admin user assignment', () => {
         cy.clickDocumentFeedbackButton();
-        cy.wait(`@${GET_DOCUMENT_FEEDBACK_ALIAS}`);
+        cy.wait(`@${GET_DOCUMENT_FEEDBACK_ALIAS}`, { timeout: 20000 });
         cy.isTableEmptyStateVisible(false);
         cy.sortDataOnCreatedDate();
 
@@ -357,13 +357,13 @@ describe('Feedback', () => {
 
         cy.clickFeedbackUnassignButton();
         cy.clickWarningModalUnassignButton();
-        cy.wait(`@${GET_DOCUMENT_FEEDBACK_ALIAS}`);
+        cy.wait(`@${GET_DOCUMENT_FEEDBACK_ALIAS}`, { timeout: 20000 });
         cy.checkAssignedToLabelOnNthRow(0);
       });
 
       it('Status assignment', () => {
         cy.clickDocumentFeedbackButton();
-        cy.wait(`@${GET_DOCUMENT_FEEDBACK_ALIAS}`);
+        cy.wait(`@${GET_DOCUMENT_FEEDBACK_ALIAS}`, { timeout: 20000 });
         cy.isTableEmptyStateVisible(false);
         cy.sortDataOnCreatedDate();
 
@@ -375,7 +375,7 @@ describe('Feedback', () => {
         cy.get('.cogs-menu').contains(RESOLVED).should('be.enabled');
         cy.get('.cogs-menu').contains(DISMISSED).should('be.enabled').click();
 
-        cy.wait(`@${GET_DOCUMENT_FEEDBACK_ALIAS}`);
+        cy.wait(`@${GET_DOCUMENT_FEEDBACK_ALIAS}`, { timeout: 20000 });
 
         cy.checkNthRowStatus(0, DISMISSED);
       });
