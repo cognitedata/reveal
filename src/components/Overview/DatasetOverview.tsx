@@ -78,7 +78,7 @@ const DatasetOverview = ({
               <Flex justifyContent="space-between" alignItems="center">
                 <StyledCardTitle level={5}>{t('tab-overview')}</StyledCardTitle>
                 <Button type="link" onClick={() => onActiveTabChange('data')}>
-                  View
+                  {t('view')}
                 </Button>
               </Flex>
               <Divider />
