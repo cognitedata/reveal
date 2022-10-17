@@ -2,7 +2,7 @@
  * Copyright 2022 Cognite AS
  */
 
-import { parseEpt  } from './parseEpt';
+import { parseEpt } from './parseEpt';
 import { EptInputData, ParsedEptData } from './types';
 import { SerializableStylableObject } from '@reveal/data-providers';
 import { setupTransferableMethodsOnWorker, AABB, Vec3 } from '@reveal/utilities';
