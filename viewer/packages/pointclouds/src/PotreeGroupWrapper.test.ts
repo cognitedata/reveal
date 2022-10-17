@@ -38,7 +38,7 @@ describe('PotreeGroupWrapper', () => {
       .setup(p => p.material)
       .returns(new PointCloudMaterial())
       .object();
-    const model = new PotreeNodeWrapper(dummyNode, [], Symbol('dummy'), { classificationSets: [] });
+    const model = new PotreeNodeWrapper(Symbol('dummy'), dummyNode, [], { classificationSets: [] });
     const manager = new PotreeGroupWrapper(
       new Potree(mockModelDataProvider, mockMaterialManager),
       pollLoadingStatusInterval

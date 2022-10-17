@@ -43,9 +43,9 @@ export class PotreeNodeWrapper {
   }
 
   constructor(
+    modelIdentifier: symbol,
     octree: PointCloudOctree,
     annotations: PointCloudObject[],
-    modelIdentifier: symbol,
     classificationInfo: ClassificationInfo
   ) {
     this.octree = octree;

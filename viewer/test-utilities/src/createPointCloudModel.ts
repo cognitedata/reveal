@@ -49,7 +49,7 @@ export function createPointCloudNode(): PointCloudNode {
       .object()
   );
 
-  const nodeWrapper = new PotreeNodeWrapper(pointCloudOctree, [], Symbol('dummy'), { classificationSets: [] });
+  const nodeWrapper = new PotreeNodeWrapper(Symbol('dummy'), pointCloudOctree, [], { classificationSets: [] });
 
   return new PointCloudNode(potreeGroup, nodeWrapper);
 }
