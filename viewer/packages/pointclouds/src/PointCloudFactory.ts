@@ -43,8 +43,8 @@ export class PointCloudFactory {
     const annotationInfoPromise = this._pointCloudObjectProvider.getPointCloudObjects(modelIdentifier);
     const classSchemaPromise = this._classificationsProvider.getClassifications(modelMetadata);
 
-    const annotationInfo = await annotationInfoPromise;
-    const classSchema = await classSchemaPromise;
+    const [annotationInfo, classSchema] = await Promise.all([annotationInfoPromise,
+                                                             classSchemaPromise]);
 
     this._pointCloudMaterialManager.addModelMaterial(modelIdentifier.revealInternalId,
                                                      createObjectIdMaps(annotationInfo));
