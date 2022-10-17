@@ -191,7 +191,7 @@ const DataSetDetails = (): JSX.Element => {
               tab={<TabTitle title={t('tab-overview')} iconType="Info" />}
               key="1"
             >
-              <DatasetOverview dataset={dataSet} />
+              <DatasetOverview loading={loading} dataset={dataSet} />
             </TabPane>
             <TabPane
               tab={

@@ -95,6 +95,7 @@
   "lineage-transformations-subtitle": "以下の変換は、この Data set の Cognite Data Fusion データモデルに適合するようにデータを変更します。",
   "link-name": "リンク名",
   "links": "リンク",
+  "manage": "Manage",
   "name": "名前",
   "new-transformation": "新しい変換",
   "no-documentation-files-uploaded": "アップロードされたドキュメントファイルなし",
@@ -154,8 +155,10 @@
   "upload-file-remove-file-confirm": "この Data set から {{fileName}} を本当に削除しますか？",
   "value": "値",
   "view": "見る",
+  "view-and-manage-user-permission": "View and manage user permissions",
   "view-or-ingest-data-to-this-raw-table": "この RAW テーブルを閲覧またはデータを投入",
   "what-you-need-to-do": "やるべきこと",
+  "who-has-access": "Who has access?",
   "write-protected": "書き込み保護",
   "write-protected-tooltip": "明示的にアクセスを許可したグループのメンバーのみが、書き込み保護されたデータセットにデータを書き込むことができます。",
   "you-have-unsaved-changes-are-you-sure-you-want-to-navigate-away": "保存していない変更がありますが、本当にページを離れますか？"

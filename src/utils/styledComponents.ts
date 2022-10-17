@@ -132,6 +132,7 @@ export const BlockedInformationWrapper = styled(InformationWrapper)`
 
 export const ContentView = styled.div`
   padding: 24px;
+  min-height: 300px;
 `;
 
 export const ItemLabel = styled.h4`
