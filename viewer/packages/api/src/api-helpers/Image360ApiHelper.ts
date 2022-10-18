@@ -124,9 +124,9 @@ export class Image360ApiHelper {
     this._image360Facade.allHoverIconsVisibility = false;
     const size = new THREE.Vector2(this._domElement.clientWidth, this._domElement.clientHeight);
 
-    const { x, y } = event;
+    const { offsetX, offsetY } = event;
     const { x: width, y: height } = size;
-    const ndcCoordinates = pixelToNormalizedDeviceCoordinates(x, y, width, height);
+    const ndcCoordinates = pixelToNormalizedDeviceCoordinates(offsetX, offsetY, width, height);
     const entity = this._image360Facade.intersect(
       { x: ndcCoordinates.x, y: ndcCoordinates.y },
       this._activeCameraManager.getCamera()
