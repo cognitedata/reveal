@@ -237,6 +237,10 @@ function fetchAndQueryData(props: FetchAndQueryDataProps): CdfResourceObject[] {
       return [];
     }
 
+    if (relation === null && isFetchingObject) {
+      return [];
+    }
+
     if (
       !isFetchingObject &&
       relation.length &&

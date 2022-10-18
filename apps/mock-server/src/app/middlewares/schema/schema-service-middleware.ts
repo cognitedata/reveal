@@ -27,10 +27,14 @@ export default function (db: CdfMockDatabase, config: CdfApiConfig) {
   };
   schemaServiceRouter.init();
 
-  schemaServiceRouter.delete('/datamodelstorage/nodes', (req, res) => {
+  schemaServiceRouter.post('/datamodelstorage/nodes/delete', (req, res) => {
     if (!req.body.items || !req.body.items.length) {
       return res.status(400).jsonp({ errorMessage: 'items can not be empty' });
     }
+
+    const schemaDb = CdfDatabaseService.from(schemaServiceDb, 'schema');
+    const dataModel = schemaDb.find({ externalId: req.body.spaceExternalId });
+    const dataModelDb = dataModel.db;
 
     req.body.items.forEach((item) => {
       if (item.externalId === undefined) {
@@ -38,6 +42,15 @@ export default function (db: CdfMockDatabase, config: CdfApiConfig) {
           errorMessage: 'one or more items is missing externalId property',
         });
       }
+      CdfDatabaseService.from(schemaServiceDb, 'nodes').deleteByKey({
+        externalId: item.externalId,
+      });
+
+      Object.keys(dataModelDb).forEach((modelName) => {
+        dataModelDb[modelName] = dataModelDb[modelName].filter(
+          (dbItem) => item.externalId !== dbItem.externalId
+        );
+      });
     });
 
     return res.status(200).jsonp({});
@@ -58,7 +71,7 @@ export default function (db: CdfMockDatabase, config: CdfApiConfig) {
       return res.status(400).jsonp({ errorMessage: 'items can not be empty' });
     }
 
-    const model = req.body.model[0];
+    const model = req.body.model[1];
 
     const schemaDb = CdfDatabaseService.from(schemaServiceDb, 'schema');
     const dataModel = schemaDb.find({ externalId: req.body.spaceExternalId });
@@ -74,7 +87,7 @@ export default function (db: CdfMockDatabase, config: CdfApiConfig) {
     // for ingest, we need to insert in nodes and as well in the schema db
     // because the graphql apis will use schema.db field
     req.body.items.forEach((item) => {
-      dataModelDb[model].filter(
+      dataModelDb[model] = dataModelDb[model].filter(
         (dbItem) => item.externalId !== dbItem.externalId
       );
       dataModelDb[model].push(item);
