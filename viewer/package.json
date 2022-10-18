@@ -37,7 +37,7 @@
     "test:wasm": "yarn workspaces foreach run run-wasm-pack test --headless --chrome ./wasm",
     "test:visual:client": "cross-env JEST_PUPPETEER_CONFIG=visual-tests/jest-puppeteer.config.js jest --config=visual-tests/jest.config.js --verbose",
     "test:visual:server": "webpack-dev-server --config packages/webpack.config.js",
-    "test:visual": "yarn run build:wasm && concurrently --passthrough-arguments -k -s \"first\" \"yarn run test:visual:client\" \"yarn run test:visual:server\"",
+    "test:visual": "yarn run build:wasm && concurrently --passthrough-arguments -k -s \"first\" \"yarn run test:visual:client {@}\" \"yarn run test:visual:server\"",
     "coverage": "yarn run build:wasm-test && jest --coverage",
     "lint": "eslint . --ext .ts,.js --max-warnings 0 --cache",
     "prebump": "yarn version --no-git-tag-version && yarn && cd ../documentation && yarn replace-latest-by-next",
