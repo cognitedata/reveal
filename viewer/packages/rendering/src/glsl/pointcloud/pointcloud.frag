@@ -36,6 +36,10 @@ in vec3 vColor;
 	in float vLogDepth;
 #endif
 
+#if defined(paraboloid_point_shape)
+        in vec3 vViewPosition;
+#endif
+
 #if defined(weighted_splats) || defined(paraboloid_point_shape)
 	in float vRadius;
 #endif
