@@ -74,7 +74,7 @@ export class Image360ApiHelper {
 
   public async enter360Image(image360Entity: Image360Entity): Promise<void> {
     await image360Entity.activate360Image();
-    const position = getImage360Translation();
+    const position = new THREE.Vector3().setFromMatrixPosition(image360Entity.transform);
     const { rotation } = this._activeCameraManager.getCameraState();
     if (this._activeCameraManager.innerCameraManager !== this._image360Navigation) {
       this._cachedCameraManager = this._activeCameraManager.innerCameraManager;
@@ -88,11 +88,6 @@ export class Image360ApiHelper {
     }
     this._interactionState.lastImage360Entered = image360Entity;
     this._requestRedraw();
-
-    function getImage360Translation(): THREE.Vector3 {
-      const worldTransform = image360Entity.transform.elements;
-      return new THREE.Vector3(worldTransform[12], worldTransform[13], worldTransform[14]);
-    }
   }
 
   public exit360Image(): void {

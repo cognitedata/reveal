@@ -63,8 +63,7 @@ export class Image360Entity {
   }
 
   /**
-   * Disables the icon and enables a unit inverted cube
-   * which contains the 360 image.
+   * Enables a unit inverted cube which contains the 360 image.
    */
   public async activate360Image(): Promise<void> {
     this._imageContainer = this._imageContainer ?? (await this.load360Image());
@@ -72,8 +71,7 @@ export class Image360Entity {
   }
 
   /**
-   * Enables the icon and disables the unit inverted cube
-   * which contains the 360 image.
+   * Disables the unit inverted cube which contains the 360 image.
    */
   public async deactivate360Image(): Promise<void> {
     if (this._imageContainer === undefined) {
