@@ -23,7 +23,7 @@ export class EptBinaryLoader implements ILoader {
   private readonly _dataLoader: ModelDataProvider;
   private readonly _stylableObjectsWithBox: [SerializableStylableObject, THREE.Box3][];
 
-  static readonly WORKER_POOL = new WorkerPool(32, EptDecoderWorker as unknown as new () => Worker);
+  static readonly WORKER_POOL = new WorkerPool(8, EptDecoderWorker as unknown as new () => Worker);
 
   extension(): string {
     return '.bin';
