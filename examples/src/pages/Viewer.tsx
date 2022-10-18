@@ -30,6 +30,7 @@ import { PointCloudUi } from '../utils/PointCloudUi';
 import { ModelUi } from '../utils/ModelUi';
 import { createSDKFromEnvironment } from '../utils/example-helpers';
 import { PointCloudClassificationFilterUI } from '../utils/PointCloudClassificationFilterUI';
+import { PointCloudObjectStylingUI } from '../utils/PointCloudObjectStylingUI';
 import { CustomCameraManager } from '../utils/CustomCameraManager';
 import { MeasurementUi } from '../utils/MeasurementUi';
 import { Image360UI } from '../utils/Image360UI';
@@ -184,8 +185,10 @@ export function Viewer() {
           new NodeStylingUI(gui.addFolder(`Node styling #${modelUi.cadModels.length}`), client, viewer, model);
           new BulkHtmlOverlayUI(gui.addFolder(`Node tagging #${modelUi.cadModels.length}`), viewer, model, client);
         } else if (model instanceof CognitePointCloudModel) {
-          new PointCloudClassificationFilterUI(gui.addFolder(`Class filter #${modelUi.pointCloudModels.length}`), model);
+          const modelIndex = modelUi.pointCloudModels.length
+          new PointCloudClassificationFilterUI(gui.addFolder(`Class filter #${modelIndex}`), model);
           pointCloudUi.applyToAllModels();
+          new PointCloudObjectStylingUI(gui.addFolder(`Point cloud object styling #${modelIndex}`), model, viewer);
         }
       }
       const modelUi = new ModelUi(gui.addFolder('Models'), viewer, handleModelAdded);
@@ -340,8 +343,11 @@ export function Viewer() {
               break;
             case 'pointcloud':
               {
-                const { pointIndex, point } = intersection;
-                console.log(`Clicked point with pointIndex ${pointIndex} at`, point);
+                const { point } = intersection;
+                console.log(`Clicked point assigned to the object with annotationId: ${intersection.annotationId} at`, point);
+                const sphere = new THREE.Mesh(new THREE.SphereGeometry(0.1), new THREE.MeshBasicMaterial({ color: 'red' }));
+                sphere.position.copy(point);
+                viewer.addObject3D(sphere);
               }
               break;
           }
