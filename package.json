@@ -139,10 +139,6 @@
     "typescript": "~4.5.5",
     "webpack-bundle-analyzer": "^3.9.0"
   },
-  "resolutions": {
-    "three": "0.136.0",
-    "@types/three": "0.136.0"
-  },
   "engines": {
     "node": ">=14"
   }

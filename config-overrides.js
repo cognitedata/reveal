@@ -1,6 +1,6 @@
 const { override, useBabelRc } = require('customize-cra');
 const PrefixWrap = require('postcss-prefixwrap');
-const { colors, ids } = require('./src/cogs-variables.js');
+const { ids } = require('./src/cogs-variables.js');
 
 const CSS_REGEX = /\.css$/;
 const LESS_REGEX = /\.less$/;
@@ -73,6 +73,19 @@ const replaceStyleLoaders = config => {
           .find(rule => Array.isArray(rule.oneOf))
           .oneOf.filter(rule => {
             return !cssRegexMatcher(rule);
+          })
+          .map(rule => {
+            // This part is added as a workaround for a webpack 5 problem that
+            // occurs while using @cognite/reveal@3.2.0. For more details, you
+            // can check:
+            // https://github.com/cognitedata/reveal-cra-three-import-bug
+            if (rule.type === 'asset/resource') {
+              return {
+                ...rule,
+                exclude: [...rule.exclude, /node_modules\/three/],
+              };
+            }
+            return rule;
           }),
       ],
     },
