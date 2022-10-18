@@ -10,7 +10,7 @@ import {
 } from 'constants/react-query';
 import { useJsonHeaders } from 'hooks/useJsonHeaders';
 
-import { MAXIMUM_NUMBER_OF_ADMINS } from '../../constants';
+import { ADMIN_USER_ROLE, MAXIMUM_NUMBER_OF_ADMINS } from '../../constants';
 
 export const useAdminUsersQuery = (
   query = ''
@@ -22,7 +22,7 @@ export const useAdminUsersQuery = (
 
   return useQuery<UMSUser[] | undefined>(
     USER_MANAGEMENT_SYSTEM_KEY.ADMIN_USERS,
-    () => search(query, true, MAXIMUM_NUMBER_OF_ADMINS),
+    () => search(query, [ADMIN_USER_ROLE], MAXIMUM_NUMBER_OF_ADMINS),
     {
       retry: 2,
       ...ONLY_FETCH_ONCE,

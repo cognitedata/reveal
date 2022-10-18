@@ -1,3 +1,4 @@
+import { ADMIN_USER_ROLE } from 'domain/userManagementService/constants';
 import { getProcessedAdminList } from 'domain/userManagementService/internal/selectors/getProcessedAdminList';
 import { getUmsUsers } from 'domain/userManagementService/service/network/getUmsUsers';
 
@@ -48,7 +49,7 @@ export const AdminList: React.FC<Props> = ({
         setUsers(processedAdminList);
         return;
       }
-      search(value, true)
+      search(value, [ADMIN_USER_ROLE])
         .then((results) => {
           setUsers(results);
         })
