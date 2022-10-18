@@ -291,7 +291,8 @@
             "fusion": {
               "buildTarget": "platypus:build:fusion",
               "hmr": true,
-              "proxyConfig": "apps/platypus/proxy.conf.json"
+              "proxyConfig": "apps/platypus/proxy.conf.json",
+              "allowedHosts": "cog-appdev.dev.fusion.cogniteapp.com"
             },
             "preview": {
               "buildTarget": "platypus:build:preview",
