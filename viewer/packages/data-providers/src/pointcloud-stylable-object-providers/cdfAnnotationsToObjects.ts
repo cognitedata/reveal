@@ -18,7 +18,7 @@ function cdfAnnotationsToPointCloudObjects(cdfAnnotations: CdfPointCloudObjectAn
     const compShape = new CompositeShape(shapes);
     const stylableObject: StylableObject = {
       shape: compShape,
-      objectId: index
+      objectId: index + 1
     };
 
     const cadFromCdfToThreeMatrix = new Matrix4();
