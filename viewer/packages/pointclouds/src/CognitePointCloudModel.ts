@@ -10,6 +10,15 @@ import { PointCloudNode } from './PointCloudNode';
 import { PointColorType, PointShape, PointSizeType } from '@reveal/rendering';
 
 import { SupportedModelTypes, CogniteModelBase } from '@reveal/model-base';
+import { PointCloudObjectMetadata } from '@reveal/data-providers';
+
+import {
+  StyledPointCloudObjectCollection,
+  PointCloudObjectCollection,
+  applyDefaultsToPointCloudAppearance,
+  PointCloudAppearance,
+  CompletePointCloudAppearance
+} from '@reveal/pointcloud-styling';
 
 /**
  * Represents a point clouds model loaded from CDF.
@@ -28,6 +37,8 @@ export class CognitePointCloudModel implements CogniteModelBase {
    * @internal
    */
   readonly pointCloudNode: PointCloudNode;
+
+  private readonly _styledObjectCollections: StyledPointCloudObjectCollection[] = [];
 
   /**
    * @param modelId
@@ -123,10 +134,11 @@ export class CognitePointCloudModel implements CogniteModelBase {
   }
 
   /**
-   * Returns a list of sorted classification codes present in the model.
-   * @returns A sorted list of classification codes from the model.
+   * Returns a list of sorted classification names and codes present in the model.
+   * Names will be the custom names provided by the user, or a default one if none have been provided.
+   * @returns A sorted list of classification codes and names from the model.
    */
-  getClasses(): Array<number | WellKnownAsprsPointClassCodes> {
+  getClasses(): Array<{ name: string; code: number | WellKnownAsprsPointClassCodes }> {
     return this.pointCloudNode.getClasses();
   }
 
@@ -202,5 +214,99 @@ export class CognitePointCloudModel implements CogniteModelBase {
    */
   set pointShape(shape: PointShape) {
     this.pointCloudNode.pointShape = shape;
+  }
+
+  /**
+   * Gets default point appearance
+   */
+  getDefaultPointCloudAppearance(): PointCloudAppearance {
+    return this.pointCloudNode.defaultAppearance;
+  }
+
+  /**
+   * Sets default apparance for points that are not styled otherwise
+   * @param appearance Appearance to assign as default
+   */
+  setDefaultPointCloudAppearance(appearance: PointCloudAppearance): void {
+    const fullAppearance: CompletePointCloudAppearance = applyDefaultsToPointCloudAppearance(appearance);
+    this.pointCloudNode.defaultAppearance = fullAppearance;
+  }
+
+  /**
+   * Gets the object collections that have been assigned a style
+   * @returns All object collections and their associated style
+   */
+  get styledCollections(): StyledPointCloudObjectCollection[] {
+    return this._styledObjectCollections;
+  }
+
+  /**
+   * Assign a style to a collection of objects. If the object collection has been assigned
+   * a style previously, the previous style will be replaced by the new one.
+   * @param objectCollection The object collection to assign a style to
+   * @param appearance The style to assign to the object collection
+   */
+  assignStyledObjectCollection(objectCollection: PointCloudObjectCollection, appearance: PointCloudAppearance): void {
+    const fullAppearance: CompletePointCloudAppearance = applyDefaultsToPointCloudAppearance(appearance);
+    const index = this._styledObjectCollections.findIndex(x => x.objectCollection === objectCollection);
+    if (index !== -1) {
+      this._styledObjectCollections[index].style = fullAppearance;
+      this.pointCloudNode.assignStyledPointCloudObjectCollection(this._styledObjectCollections[index]);
+    } else {
+      const newObjectCollection = new StyledPointCloudObjectCollection(objectCollection, fullAppearance);
+
+      this._styledObjectCollections.push(newObjectCollection);
+      this.pointCloudNode.assignStyledPointCloudObjectCollection(newObjectCollection);
+    }
+  }
+
+  /**
+   * Unassign style from an already styled object collection.
+   * @param objectCollection The object collection from which to remove the style
+   */
+  unassignStyledObjectCollection(objectCollection: PointCloudObjectCollection): void {
+    const styledCollectionIndex = this._styledObjectCollections.findIndex(x => x.objectCollection === objectCollection);
+
+    if (styledCollectionIndex === -1) {
+      return;
+    }
+
+    this._styledObjectCollections.splice(styledCollectionIndex, 1);
+
+    this.pointCloudNode.removeAllStyledPointCloudObjects();
+
+    for (const styledObjectCollection of this._styledObjectCollections) {
+      this.pointCloudNode.assignStyledPointCloudObjectCollection(styledObjectCollection);
+    }
+  }
+
+  /**
+   * Removes styling on all object collections in this model
+   */
+  removeAllStyledObjectCollections(): void {
+    this.pointCloudNode.removeAllStyledPointCloudObjects();
+    this._styledObjectCollections.splice(0);
+  }
+
+  /**
+   * @returns The number of stylable objects
+   */
+  get stylableObjectCount(): number {
+    return this.pointCloudNode.potreeNode.stylableObjects.length;
+  }
+
+  /**
+   * Iterates through all stylable objects for this model
+   * @example
+   * ```js
+   * model.traverseStylableObjects(
+   *     annotationMetadata => console.log(annotationMetadata.annotationId)
+   * );
+   * ```
+   */
+  traverseStylableObjects(callback: (annotationMetadata: PointCloudObjectMetadata) => void): void {
+    for (const obj of this.pointCloudNode.potreeNode.stylableObjectAnnotationMetadata) {
+      callback(obj);
+    }
   }
 }

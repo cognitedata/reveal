@@ -18,28 +18,33 @@ import {
   WebGLRenderer
 } from 'three';
 import {
+  COLOR_WHITE,
   DEFAULT_HIGHLIGHT_COLOR,
   DEFAULT_MAX_POINT_SIZE,
   DEFAULT_MIN_POINT_SIZE,
   DEFAULT_RGB_BRIGHTNESS,
   DEFAULT_RGB_CONTRAST,
   DEFAULT_RGB_GAMMA,
+  OBJECT_STYLING_TEXTURE_HEIGHT,
+  OBJECT_STYLING_TEXTURE_WIDTH,
   PERSPECTIVE_CAMERA
 } from './constants';
 import { DEFAULT_CLASSIFICATION } from './classification';
 import {
-  NormalFilteringMode,
-  PointCloudMixingMode,
   PointColorType,
-  PointOpacityType,
   PointShape,
   PointSizeType,
   TreeType,
-  ClipMode
+  PointOpacityType,
+  ClipMode,
+  NormalFilteringMode,
+  PointCloudMixingMode
 } from './enums';
 import { generateClassificationTexture, generateDataTexture, generateGradientTexture } from './texture-generation';
-import { IClassification, IUniform, OctreeMaterialParams, IClipBox } from './types';
+import { PointClassification, IUniform, OctreeMaterialParams, IClipBox } from './types';
 import { SpectralGradient } from './gradients/SpectralGradient';
+import { PointCloudObjectAppearanceTexture } from './PointCloudObjectAppearanceTexture';
+import { PointCloudObjectIdMaps } from '@reveal/rendering';
 import { pointCloudShaders } from '../rendering/shaders';
 
 export interface IPointCloudMaterialParameters {
@@ -47,6 +52,7 @@ export interface IPointCloudMaterialParameters {
   minSize: number;
   maxSize: number;
   treeType: TreeType;
+  objectsMaps: PointCloudObjectIdMaps;
 }
 
 export interface IPointCloudMaterialUniforms {
@@ -70,6 +76,7 @@ export interface IPointCloudMaterialUniforms {
   level: IUniform<number>;
   maxSize: IUniform<number>;
   minSize: IUniform<number>;
+  objectIdLUT: IUniform<Texture>;
   octreeSize: IUniform<number>;
   opacity: IUniform<number>;
   pcIndex: IUniform<number>;
@@ -173,7 +180,12 @@ export class PointCloudMaterial extends RawShaderMaterial {
   private readonly _gradient = SpectralGradient;
   private gradientTexture: Texture | undefined = generateGradientTexture(this._gradient);
 
-  private _classification: IClassification = DEFAULT_CLASSIFICATION;
+  private readonly _objectAppearanceTexture = new PointCloudObjectAppearanceTexture(
+    OBJECT_STYLING_TEXTURE_WIDTH,
+    OBJECT_STYLING_TEXTURE_HEIGHT
+  );
+
+  private _classification: PointClassification = DEFAULT_CLASSIFICATION;
   private classificationTexture: Texture | undefined = generateClassificationTexture(this._classification);
 
   uniforms: IPointCloudMaterialUniforms & Record<string, IUniform<any>> = {
@@ -197,6 +209,7 @@ export class PointCloudMaterial extends RawShaderMaterial {
     level: makeUniform('f', 0.0),
     maxSize: makeUniform('f', DEFAULT_MAX_POINT_SIZE),
     minSize: makeUniform('f', DEFAULT_MIN_POINT_SIZE),
+    objectIdLUT: makeUniform('t', this._objectAppearanceTexture.objectStyleTexture),
     octreeSize: makeUniform('f', 0),
     opacity: makeUniform('f', 1.0),
     pcIndex: makeUniform('f', 0),
@@ -209,7 +222,7 @@ export class PointCloudMaterial extends RawShaderMaterial {
     spacing: makeUniform('f', 1.0),
     toModel: makeUniform('Matrix4f', []),
     transition: makeUniform('f', 0.5),
-    uColor: makeUniform('c', new Color(0xffffff)),
+    uColor: makeUniform('c', COLOR_WHITE),
     // @ts-ignore
     visibleNodes: makeUniform('t', this.visibleNodesTexture || new Texture()),
     vnStart: makeUniform('f', 0.0),
@@ -304,6 +317,7 @@ export class PointCloudMaterial extends RawShaderMaterial {
     returnNumber: { type: 'f', value: [] },
     numberOfReturns: { type: 'f', value: [] },
     pointSourceID: { type: 'f', value: [] },
+    objectId: { type: 'f', value: [] },
     indices: { type: 'fv', value: [] }
   };
 
@@ -312,7 +326,7 @@ export class PointCloudMaterial extends RawShaderMaterial {
       glslVersion: GLSL3
     });
 
-    const tex = (this.visibleNodesTexture = generateDataTexture(2048, 1, new Color(0xffffff)));
+    const tex = (this.visibleNodesTexture = generateDataTexture(2048, 1, COLOR_WHITE));
     tex.minFilter = NearestFilter;
     tex.magFilter = NearestFilter;
     this.setUniform('visibleNodes', tex);
@@ -329,6 +343,10 @@ export class PointCloudMaterial extends RawShaderMaterial {
     this.defaultAttributeValues.indices = [0, 0, 0, 0];
 
     this.vertexColors = true;
+
+    if (parameters.objectsMaps) {
+      this._objectAppearanceTexture.setObjectsMaps(parameters.objectsMaps);
+    }
 
     this.updateShaderSource();
   }
@@ -454,6 +472,7 @@ export class PointCloudMaterial extends RawShaderMaterial {
 
     define('MAX_POINT_LIGHTS 0');
     define('MAX_DIR_LIGHTS 0');
+    define(`OBJECT_STYLING_TEXTURE_WIDTH ${OBJECT_STYLING_TEXTURE_WIDTH}`);
 
     parts.push(shaderSrc);
 
@@ -504,14 +523,18 @@ export class PointCloudMaterial extends RawShaderMaterial {
     this.setUniform('clipBoxes', clipBoxesArray);
   }
 
-  get classification(): IClassification {
+  get objectAppearanceTexture(): PointCloudObjectAppearanceTexture {
+    return this._objectAppearanceTexture;
+  }
+
+  get classification(): PointClassification {
     return this._classification;
   }
 
-  set classification(value: IClassification) {
-    const copy = {} as IClassification;
+  set classification(value: PointClassification) {
+    const copy = {} as PointClassification;
     for (const key of Object.keys(value)) {
-      copy[key] = value[key].clone();
+      copy[key] = value[key as number | 'DEFAULT'].clone();
     }
 
     this._classification = copy;
@@ -552,6 +575,10 @@ export class PointCloudMaterial extends RawShaderMaterial {
     } else if (value !== uObj.value) {
       uObj.value = value;
     }
+  }
+
+  onBeforeRender(): void {
+    this._objectAppearanceTexture.onBeforeRender();
   }
 
   updateMaterial(
