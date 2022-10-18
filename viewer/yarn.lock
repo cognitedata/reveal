@@ -788,7 +788,7 @@ __metadata:
     "@types/jsdom": 20.0.0
     "@types/lodash": 4.14.186
     "@types/mixpanel-browser": 2.38.0
-    "@types/node": 16.11.65
+    "@types/node": 16.11.66
     "@types/offscreencanvas": 2019.7.0
     "@types/proj4": 2.5.2
     "@types/random-seed": 0.3.3
@@ -816,7 +816,7 @@ __metadata:
     eslint-plugin-prettier: 4.2.1
     eslint-plugin-unused-imports: 2.0.0
     file-loader: 6.2.0
-    gl: 5.0.3
+    gl: 6.0.1
     glob: 8.0.3
     glslify: 7.1.1
     glslify-import: 3.1.0
@@ -851,7 +851,7 @@ __metadata:
     skmeans: 0.11.3
     stats.js: 0.17.0
     three: 0.144.0
-    three-stdlib: 2.17.2
+    three-stdlib: 2.17.3
     ts-jest: 29.0.3
     ts-loader: 9.4.1
     tsc-alias: 1.7.0
@@ -2111,10 +2111,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:16.11.65":
-  version: 16.11.65
-  resolution: "@types/node@npm:16.11.65"
-  checksum: 81d84cb1e7aa305574cd35acf1a5e47f4a7f52783ba096f4bc511314540dee33a27cbd4fddc8bddd4535f1c87a96a76907157bcde093a25c89e8851d6dd63022
+"@types/node@npm:16.11.66":
+  version: 16.11.66
+  resolution: "@types/node@npm:16.11.66"
+  checksum: bf190db14d1f32ab10588dd1a1e30bb2e9ba9b78281fce7a81fa80d914f9b3203d48cf1c6a8f96ef6b0edbba281478d2c68d6ebb7719c896f2dd62429c64ef09
   languageName: node
   linkType: hard
 
@@ -2637,7 +2637,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"abbrev@npm:1":
+"abbrev@npm:1, abbrev@npm:^1.0.0":
   version: 1.1.1
   resolution: "abbrev@npm:1.1.1"
   checksum: a4a97ec07d7ea112c517036882b2ac22f3109b7b19077dc656316d07d308438aac28e4d9746dc4d84bf6b1e75b4a7b0a5f3cb30592419f128ca9a8cee3bcfa17
@@ -6465,18 +6465,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"gl@npm:5.0.3":
-  version: 5.0.3
-  resolution: "gl@npm:5.0.3"
+"gl@npm:6.0.1":
+  version: 6.0.1
+  resolution: "gl@npm:6.0.1"
   dependencies:
     bindings: ^1.5.0
     bit-twiddle: ^1.0.2
     glsl-tokenizer: ^2.1.5
     nan: ^2.16.0
-    node-abi: ^3.22.0
-    node-gyp: ^9.0.0
+    node-abi: ^3.26.0
+    node-gyp: ^9.2.0
     prebuild-install: ^7.1.1
-  checksum: daf5e3cf8341014eb866f4d8e96a36b428c9d48242c5e5ebfec6e3ee5638d5d637f9d3d3704812bec6a0137c0de9978040316ea7b724395d00ce801af65c2ee2
+  checksum: 5634fecc0f9c4c2a9cde49d186648d2c869bf518a3aed463d10bc51448e40d92ec561bbe2d45ed03e33537212cad11fa898ac6056fc2db52f82bfb57c0abb225
   languageName: node
   linkType: hard
 
@@ -9522,12 +9522,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"node-abi@npm:^3.22.0":
-  version: 3.22.0
-  resolution: "node-abi@npm:3.22.0"
+"node-abi@npm:^3.26.0":
+  version: 3.26.0
+  resolution: "node-abi@npm:3.26.0"
   dependencies:
     semver: ^7.3.5
-  checksum: ad76823920780de39b9712b10c8e5ee424d573b74720b9eeef9ce6523d587f114787aefeabbd34d7a861f9cfab9ac131e1a149243470bb79d6eb5d414a3fa58e
+  checksum: 01271cf7b7e5b62a1d3d556efa4756a625b63b085dfd20558107abff3458082bfb0aed82a2985b1f82ccacd400bf3959ead5c0d1249aaf167fc88b82280f1764
   languageName: node
   linkType: hard
 
@@ -9561,15 +9561,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"node-gyp@npm:^9.0.0":
-  version: 9.0.0
-  resolution: "node-gyp@npm:9.0.0"
+"node-gyp@npm:^9.2.0":
+  version: 9.3.0
+  resolution: "node-gyp@npm:9.3.0"
   dependencies:
     env-paths: ^2.2.0
     glob: ^7.1.4
     graceful-fs: ^4.2.6
     make-fetch-happen: ^10.0.3
-    nopt: ^5.0.0
+    nopt: ^6.0.0
     npmlog: ^6.0.0
     rimraf: ^3.0.2
     semver: ^7.3.5
@@ -9577,7 +9577,7 @@ __metadata:
     which: ^2.0.2
   bin:
     node-gyp: bin/node-gyp.js
-  checksum: 4d8ef8860f7e4f4d86c91db3f519d26ed5cc23b48fe54543e2afd86162b4acbd14f21de42a5db344525efb69a991e021b96a68c70c6e2d5f4a5cb770793da6d3
+  checksum: 589ddd3ed967724ef425f9624bfa47cf73022640ab3eba6d556e92cdc4ddef33b63fce3a467c93b995a3f61df92eafd3c3d1e8dbe4a2c00c383334487dea99c3
   languageName: node
   linkType: hard
 
@@ -9630,6 +9630,17 @@ __metadata:
   bin:
     nopt: bin/nopt.js
   checksum: d35fdec187269503843924e0114c0c6533fb54bbf1620d0f28b4b60ba01712d6687f62565c55cc20a504eff0fbe5c63e22340c3fad549ad40469ffb611b04f2f
+  languageName: node
+  linkType: hard
+
+"nopt@npm:^6.0.0":
+  version: 6.0.0
+  resolution: "nopt@npm:6.0.0"
+  dependencies:
+    abbrev: ^1.0.0
+  bin:
+    nopt: bin/nopt.js
+  checksum: 82149371f8be0c4b9ec2f863cc6509a7fd0fa729929c009f3a58e4eb0c9e4cae9920e8f1f8eb46e7d032fec8fb01bede7f0f41a67eb3553b7b8e14fa53de1dac
   languageName: node
   linkType: hard
 
@@ -12043,9 +12054,9 @@ resolve@^1.9.0:
   languageName: node
   linkType: hard
 
-"three-stdlib@npm:2.17.2":
-  version: 2.17.2
-  resolution: "three-stdlib@npm:2.17.2"
+"three-stdlib@npm:2.17.3":
+  version: 2.17.3
+  resolution: "three-stdlib@npm:2.17.3"
   dependencies:
     "@babel/runtime": ^7.16.7
     "@types/offscreencanvas": ^2019.6.4
@@ -12060,7 +12071,7 @@ resolve@^1.9.0:
     zstddec: ^0.0.2
   peerDependencies:
     three: ">=0.122.0"
-  checksum: 8a6f7cdb75bda4b7cf6d719442bf0e2305e43b3850f08ab4081e5131a1343cc480d31181e8fe5b46e9376979e3ec9381960fb82b566360c1155dd9f9d402bb8e
+  checksum: e3e164c86bd6a08df2e5c2516a6f53d2ed30842c8124512225148b584a3957add99a6328dbf7c9ba28ddfba5806a106dcf0813b6647bf9efcb2a81cf8f794ee8
   languageName: node
   linkType: hard
 
