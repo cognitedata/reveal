@@ -22,6 +22,7 @@ import RevealErrorFeedback from './RevealErrorFeedback';
 type ChildProps = {
   model: Cognite3DModel | CognitePointCloudModel;
   viewer: Cognite3DViewer;
+  boundingBox?: THREE.Box3;
 };
 type Props = {
   modelId: number;
@@ -162,7 +163,7 @@ export function Reveal({ focusAssetId, modelId, revisionId, children }: Props) {
       {children &&
         threeDModel &&
         viewer &&
-        children({ model: threeDModel, viewer })}
+        children({ model: threeDModel, viewer, boundingBox })}
     </>
   );
 }

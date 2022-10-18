@@ -5,6 +5,7 @@ import {
   Cognite3DViewer,
   Cognite3DModel,
   CognitePointCloudModel,
+  THREE,
 } from '@cognite/reveal';
 import { createLink } from '@cognite/cdf-utilities';
 
@@ -39,6 +40,33 @@ export const ExpandButton = ({
         onClick={() => {
           if (viewer && viewerModel) {
             viewer.fitCameraToModel(viewerModel);
+          }
+        }}
+      />
+    </Tooltip>
+  );
+};
+
+export const FocusAssetButton = ({
+  boundingBox,
+  viewer,
+  viewerModel,
+}: {
+  boundingBox?: THREE.Box3;
+  viewer: Cognite3DViewer | null;
+  viewerModel: Cognite3DModel | null;
+}) => {
+  if (!boundingBox) {
+    return <></>;
+  }
+
+  return (
+    <Tooltip content="Focus asset">
+      <Button
+        icon="Collapse"
+        onClick={() => {
+          if (viewer && viewerModel) {
+            viewer.fitCameraToBoundingBox(boundingBox);
           }
         }}
       />

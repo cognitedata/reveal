@@ -12,8 +12,10 @@ import { useSearchParamNumber } from 'app/utils/URLUtils';
 import Reveal from './Reveal';
 import { AssetMappingsSidebar } from './AssetMappingsSidebar';
 import { trackUsage } from 'app/utils/Metrics';
-import { ExpandButton } from './ThreeDToolbar';
+import { ExpandButton, FocusAssetButton } from './ThreeDToolbar';
 import { Flex } from '@cognite/cogs.js';
+import { Slider } from 'app/containers/ThreeD/slider/Slider';
+import { Cognite3DModel } from '@cognite/reveal';
 
 export const ThreeDPreview = ({
   threeDId,
@@ -49,7 +51,7 @@ export const ThreeDPreview = ({
             revisionId={revision.id}
             focusAssetId={selectedAssetId}
           >
-            {({ model, viewer }) => {
+            {({ model, viewer, boundingBox }) => {
               return (
                 <SidebarContainer gap={15}>
                   <AssetMappingsSidebar
@@ -58,7 +60,22 @@ export const ThreeDPreview = ({
                     selectedAssetId={selectedAssetId}
                     setSelectedAssetId={setSelectedAssetId}
                   />
-                  <ExpandButton viewer={viewer} viewerModel={model} />
+                  <Flex gap={4}>
+                    <ExpandButton viewer={viewer} viewerModel={model} />
+                    {model.type === 'cad' && selectedAssetId && (
+                      <FocusAssetButton
+                        boundingBox={boundingBox}
+                        viewer={viewer}
+                        viewerModel={model as Cognite3DModel}
+                      />
+                    )}
+                    {model.type === 'cad' && (
+                      <Slider
+                        viewer={viewer}
+                        viewerModel={model as Cognite3DModel}
+                      />
+                    )}
+                  </Flex>
                 </SidebarContainer>
               );
             }}
