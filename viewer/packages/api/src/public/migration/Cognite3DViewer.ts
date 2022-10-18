@@ -696,7 +696,7 @@ export class Cognite3DViewer {
   }
 
   /**
-   * Lorem Ipsum.
+   * Enter visualization of a 360 image.
    * @param image360
    */
   async enter360Image(image360: Image360Entity): Promise<void> {
@@ -707,7 +707,7 @@ export class Cognite3DViewer {
   }
 
   /**
-   * Lorem Ipsum.
+   * Exit visualization of the 360 image.
    */
   exit360Image(): void {
     if (this._cdfSdkClient === undefined || this._image360ApiHelper === undefined) {

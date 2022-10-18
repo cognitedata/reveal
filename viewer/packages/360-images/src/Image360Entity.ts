@@ -3,9 +3,9 @@
  */
 
 import * as THREE from 'three';
+import assert from 'assert';
 import { SceneHandler } from '@reveal/utilities';
 import { Image360Descriptor, Image360FileProvider, Image360Face } from '@reveal/data-providers';
-import assert from 'assert';
 import { Image360Icon } from './Image360Icon';
 
 export class Image360Entity {
@@ -17,14 +17,27 @@ export class Image360Entity {
   private _faceMaterials: THREE.MeshBasicMaterial[] | undefined;
   private _imageContainer: THREE.Mesh | undefined;
 
+  /**
+   * Get the model-to-world transformation matrix
+   * of the given 360 image.
+   * @returns transform
+   */
   get transform(): THREE.Matrix4 {
     return this._transform;
   }
 
+  /**
+   * Get the icon that represents the 360
+   * image during normal visualization.
+   * @returns Image360Icon
+   */
   get icon(): Image360Icon {
     return this._image360Icon;
   }
 
+  /**
+   * Sets the opacity of this 360 image.
+   */
   set opacity(alpha: number) {
     this._faceMaterials?.forEach(material => {
       material.opacity = alpha;
@@ -49,11 +62,19 @@ export class Image360Entity {
     sceneHandler.addCustomObject(this._image360Icon);
   }
 
+  /**
+   * Disables the icon and enables a unit inverted cube
+   * which contains the 360 image.
+   */
   public async activate360Image(): Promise<void> {
     this._imageContainer = this._imageContainer ?? (await this.load360Image());
     this._imageContainer.visible = true;
   }
 
+  /**
+   * Enables the icon and disables the unit inverted cube
+   * which contains the 360 image.
+   */
   public async deactivate360Image(): Promise<void> {
     if (this._imageContainer === undefined) {
       return;
@@ -104,7 +125,7 @@ export class Image360Entity {
         })
       );
     }
-    function getFaceTexture(side: 'front' | 'back' | 'left' | 'right' | 'top' | 'bottom') {
+    function getFaceTexture(side: Image360Face['face']) {
       const face = faceTextures.find(p => p.side === side);
       assert(face !== undefined);
       return face.faceTexture;
