@@ -23,7 +23,7 @@ type SliderProps = {
   viewerModel: Cognite3DModel | CognitePointCloudModel;
 };
 
-export const Slider = ({ viewer, viewerModel }: SliderProps): JSX.Element => {
+export const Slicer = ({ viewer, viewerModel }: SliderProps): JSX.Element => {
   const [min, max] = useMemo(() => {
     const bounds = viewerModel?.getModelBoundingBox();
     return [bounds?.min.y, bounds?.max.y];

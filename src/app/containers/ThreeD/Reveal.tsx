@@ -171,7 +171,7 @@ export function Reveal({ focusAssetId, modelId, revisionId, children }: Props) {
 // This container has an inline style 'position: relative' given by @cognite/reveal.
 // We can not cancel it, so we had to use that -85px trick here!
 const RevealContainer = styled.div`
-  height: calc(100% - 85px);
+  height: calc(100% - 10px);
 `;
 
 export default function RevealWithErrorBoundary(props: Props) {

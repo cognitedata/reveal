@@ -13,8 +13,9 @@ import Reveal from './Reveal';
 import { AssetMappingsSidebar } from './AssetMappingsSidebar';
 import { trackUsage } from 'app/utils/Metrics';
 import { ExpandButton, FocusAssetButton } from './ThreeDToolbar';
-import { Flex } from '@cognite/cogs.js';
-import { Slider } from 'app/containers/ThreeD/slider/Slider';
+import { Flex, ToolBar } from '@cognite/cogs.js';
+import { Slicer } from 'app/containers/ThreeD/slicer/Slicer';
+import PointSizeSlider from './point-size-slider/PointSizeSlider';
 
 export const ThreeDPreview = ({
   threeDId,
@@ -53,29 +54,39 @@ export const ThreeDPreview = ({
             {({ pointCloudModel, threeDModel, viewer, boundingBox }) => {
               const model = pointCloudModel || threeDModel;
               return (
-                <SidebarContainer gap={15}>
-                  {threeDModel && (
-                    <AssetMappingsSidebar
-                      modelId={modelId}
-                      revisionId={revision.id}
-                      selectedAssetId={selectedAssetId}
-                      setSelectedAssetId={setSelectedAssetId}
-                    />
-                  )}
-                  <Flex gap={4}>
+                <>
+                  <SidebarContainer gap={15}>
                     {threeDModel && (
-                      <ExpandButton viewer={viewer} viewerModel={threeDModel} />
-                    )}
-                    {threeDModel && selectedAssetId && (
-                      <FocusAssetButton
-                        boundingBox={boundingBox}
-                        viewer={viewer}
-                        viewerModel={threeDModel}
+                      <AssetMappingsSidebar
+                        modelId={modelId}
+                        revisionId={revision.id}
+                        selectedAssetId={selectedAssetId}
+                        setSelectedAssetId={setSelectedAssetId}
                       />
                     )}
-                    {model && <Slider viewer={viewer} viewerModel={model} />}
-                  </Flex>
-                </SidebarContainer>
+                  </SidebarContainer>
+                  {model && (
+                    <StyledToolBar>
+                      {threeDModel && (
+                        <ExpandButton
+                          viewer={viewer}
+                          viewerModel={threeDModel}
+                        />
+                      )}
+                      {threeDModel && selectedAssetId && (
+                        <FocusAssetButton
+                          boundingBox={boundingBox}
+                          viewer={viewer}
+                          viewerModel={threeDModel}
+                        />
+                      )}
+                      {model && <Slicer viewer={viewer} viewerModel={model} />}
+                      {pointCloudModel && (
+                        <PointSizeSlider model={pointCloudModel} />
+                      )}
+                    </StyledToolBar>
+                  )}
+                </>
               );
             }}
           </Reveal>
@@ -95,6 +106,13 @@ export const ThreeDPreview = ({
   );
 };
 
+const StyledToolBar = styled(ToolBar)`
+  position: relative;
+  left: 30px;
+  bottom: 250px;
+  height: 150px;
+`;
+
 const MakeDetailsSeethrough = styled.div`
   opacity: 0.5;
   &:hover {
@@ -113,5 +131,5 @@ const SidebarContainer = styled(Flex)`
 
 const PreviewContainer = styled.div`
   height: calc(100% - 85px);
-  width: 100%;
+  width: calc(100% - 14px);
 `;
