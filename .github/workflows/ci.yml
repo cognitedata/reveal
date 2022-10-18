@@ -278,7 +278,7 @@ jobs:
     needs: [ci-examples, build-viewer, deploy-preview-documentation]
     if: always()
     steps:
-    - uses: geekyeggo/delete-artifact@v1
+    - uses: geekyeggo/delete-artifact@v2
       with:
         name: |
           viewer
