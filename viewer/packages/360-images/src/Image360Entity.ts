@@ -20,7 +20,7 @@ export class Image360Entity {
   /**
    * Get the model-to-world transformation matrix
    * of the given 360 image.
-   * @returns transform
+   * @returns model-to-world transform of the 360 Image
    */
   get transform(): THREE.Matrix4 {
     return this._transform;
