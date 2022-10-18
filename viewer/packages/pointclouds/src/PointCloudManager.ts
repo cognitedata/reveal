@@ -11,6 +11,7 @@ import { PointCloudFactory } from './PointCloudFactory';
 import { PointCloudNode } from './PointCloudNode';
 import { PointCloudMetadataRepository } from './PointCloudMetadataRepository';
 import { PotreeGroupWrapper } from './PotreeGroupWrapper';
+import { Potree } from './potree-three-loader';
 
 import { asyncScheduler, combineLatest, Observable, scan, Subject, throttleTime } from 'rxjs';
 
@@ -36,13 +37,14 @@ export class PointCloudManager {
     metadataRepository: PointCloudMetadataRepository,
     materialManager: PointCloudMaterialManager,
     modelFactory: PointCloudFactory,
+    potreeInstance: Potree,
     scene: THREE.Scene,
     renderer: THREE.WebGLRenderer
   ) {
     this._pointCloudMetadataRepository = metadataRepository;
     this._pointCloudFactory = modelFactory;
     this._materialManager = materialManager;
-    this._pointCloudGroupWrapper = new PotreeGroupWrapper(modelFactory.potreeInstance);
+    this._pointCloudGroupWrapper = new PotreeGroupWrapper(potreeInstance);
 
     scene.add(this._pointCloudGroupWrapper);
 
