@@ -15,7 +15,6 @@ import { trackUsage } from 'app/utils/Metrics';
 import { ExpandButton, FocusAssetButton } from './ThreeDToolbar';
 import { Flex } from '@cognite/cogs.js';
 import { Slider } from 'app/containers/ThreeD/slider/Slider';
-import { Cognite3DModel } from '@cognite/reveal';
 
 export const ThreeDPreview = ({
   threeDId,
@@ -51,30 +50,30 @@ export const ThreeDPreview = ({
             revisionId={revision.id}
             focusAssetId={selectedAssetId}
           >
-            {({ model, viewer, boundingBox }) => {
+            {({ pointCloudModel, threeDModel, viewer, boundingBox }) => {
+              const model = pointCloudModel || threeDModel;
               return (
                 <SidebarContainer gap={15}>
-                  <AssetMappingsSidebar
-                    modelId={modelId}
-                    revisionId={revision.id}
-                    selectedAssetId={selectedAssetId}
-                    setSelectedAssetId={setSelectedAssetId}
-                  />
+                  {threeDModel && (
+                    <AssetMappingsSidebar
+                      modelId={modelId}
+                      revisionId={revision.id}
+                      selectedAssetId={selectedAssetId}
+                      setSelectedAssetId={setSelectedAssetId}
+                    />
+                  )}
                   <Flex gap={4}>
-                    <ExpandButton viewer={viewer} viewerModel={model} />
-                    {model.type === 'cad' && selectedAssetId && (
+                    {threeDModel && (
+                      <ExpandButton viewer={viewer} viewerModel={threeDModel} />
+                    )}
+                    {threeDModel && selectedAssetId && (
                       <FocusAssetButton
                         boundingBox={boundingBox}
                         viewer={viewer}
-                        viewerModel={model as Cognite3DModel}
+                        viewerModel={threeDModel}
                       />
                     )}
-                    {model.type === 'cad' && (
-                      <Slider
-                        viewer={viewer}
-                        viewerModel={model as Cognite3DModel}
-                      />
-                    )}
+                    {model && <Slider viewer={viewer} viewerModel={model} />}
                   </Flex>
                 </SidebarContainer>
               );

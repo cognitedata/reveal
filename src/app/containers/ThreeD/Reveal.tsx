@@ -20,7 +20,8 @@ import { ErrorBoundary } from 'react-error-boundary';
 import RevealErrorFeedback from './RevealErrorFeedback';
 
 type ChildProps = {
-  model: Cognite3DModel | CognitePointCloudModel;
+  threeDModel?: Cognite3DModel;
+  pointCloudModel?: CognitePointCloudModel;
   viewer: Cognite3DViewer;
   boundingBox?: THREE.Box3;
 };
@@ -97,7 +98,7 @@ export function Reveal({ focusAssetId, modelId, revisionId, children }: Props) {
     { enabled: !!focusAssetId }
   );
 
-  const { threeDModel } = models || {
+  const { threeDModel, pointCloudModel } = models || {
     threeDModel: undefined,
     pointCloudModel: undefined,
   };
@@ -161,9 +162,8 @@ export function Reveal({ focusAssetId, modelId, revisionId, children }: Props) {
     <>
       <RevealContainer id="revealContainer" ref={handleMount} />
       {children &&
-        threeDModel &&
         viewer &&
-        children({ model: threeDModel, viewer, boundingBox })}
+        children({ threeDModel, pointCloudModel, viewer, boundingBox })}
     </>
   );
 }

@@ -7,7 +7,12 @@ import {
   Menu,
   Slider as CogsSlider,
 } from '@cognite/cogs.js';
-import { Cognite3DModel, Cognite3DViewer, THREE } from '@cognite/reveal';
+import {
+  Cognite3DModel,
+  Cognite3DViewer,
+  CognitePointCloudModel,
+  THREE,
+} from '@cognite/reveal';
 import { ids } from 'cogs-variables';
 import { useMemo, useState } from 'react';
 
@@ -15,7 +20,7 @@ import styled from 'styled-components';
 
 type SliderProps = {
   viewer: Cognite3DViewer;
-  viewerModel: Cognite3DModel;
+  viewerModel: Cognite3DModel | CognitePointCloudModel;
 };
 
 export const Slider = ({ viewer, viewerModel }: SliderProps): JSX.Element => {
