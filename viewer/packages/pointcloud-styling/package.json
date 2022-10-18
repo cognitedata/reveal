@@ -1,0 +1,12 @@
+{
+  "name": "@reveal/pointcloud-styling",
+  "private": true,
+  "main": "index.ts",
+  "scripts": {
+    "test": "yarn ws:test --config ./../../jest.config.js",
+    "lint": "yarn ws:lint"
+  },
+  "dependencies": {
+    "@reveal/utilities": "workspace:*"
+  }
+}

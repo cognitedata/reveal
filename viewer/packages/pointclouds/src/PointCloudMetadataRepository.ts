@@ -40,7 +40,7 @@ export class PointCloudMetadataRepository implements MetadataRepository<Promise<
     const scene = await this._modelDataProvider.getJsonFile(modelBaseUrl, this._blobFileName);
     const cameraConfiguration = await cameraConfigurationPromise;
     return {
-      modelIdentifier: modelIdentifier.revealInternalId,
+      modelIdentifier: modelIdentifier,
       format: output.format as File3dFormat,
       formatVersion: output.version,
       modelBaseUrl,

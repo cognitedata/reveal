@@ -8,95 +8,135 @@ import * as THREE from 'three';
 
 import { WorkerPool } from '../utils/WorkerPool';
 import { ILoader } from './ILoader';
-import { ModelDataProvider } from '@reveal/data-providers';
+import { ModelDataProvider, SerializableStylableObject, StylableObject } from '@reveal/data-providers';
 import { PointCloudEptGeometryNode } from '../geometry/PointCloudEptGeometryNode';
-import EptDecoderWorker from '../workers/eptBinaryDecoder.worker';
-import { ParsedEptData } from '../workers/eptBinaryDecoder.worker';
+import * as EptDecoderWorker from '../workers/eptBinaryDecoder.worker';
+
+import { ParsedEptData, EptInputData } from '../workers/types';
+
+import { decomposeStylableObjects } from '../../decomposeStylableObjects';
+
+import { fromThreeVector3, setupTransferableMethodsOnMain } from '@reveal/utilities';
+import { MetricsLogger } from '@reveal/metrics';
 
 export class EptBinaryLoader implements ILoader {
   private readonly _dataLoader: ModelDataProvider;
+  private readonly _stylableObjectsWithBox: [SerializableStylableObject, THREE.Box3][];
 
-  static readonly WORKER_POOL = new WorkerPool(32, EptDecoderWorker);
+  static readonly WORKER_POOL = new WorkerPool(8, EptDecoderWorker as unknown as new () => Worker);
 
   extension(): string {
     return '.bin';
   }
 
-  constructor(dataLoader: ModelDataProvider) {
+  constructor(dataLoader: ModelDataProvider, stylableObjects: StylableObject[]) {
     this._dataLoader = dataLoader;
+    this._stylableObjectsWithBox = decomposeStylableObjects(stylableObjects).map(obj => {
+      const serializableShape = obj.shape.getSerializableShape();
+
+      const boundingBox = obj.shape.createBoundingBox();
+
+      return [{ shape: serializableShape, objectId: obj.objectId }, boundingBox];
+    });
   }
 
   async load(node: PointCloudEptGeometryNode): Promise<void> {
     if (node.loaded) return;
 
     const fullFileName = node.fileName() + this.extension();
+    const data = await this._dataLoader.getBinaryFile(node.baseUrl(), fullFileName);
 
-    return this._dataLoader.getBinaryFile(node.baseUrl(), fullFileName).then(data => this.parse(node, data));
+    const parsedResultOrError = await this.parse(node, data);
+
+    if (!(parsedResultOrError as any).position) {
+      // Is an error
+      const error = parsedResultOrError as Error;
+      MetricsLogger.trackError(error, { moduleName: 'EptBinaryLoader', methodName: 'load' });
+
+      node.markAsNotLoading();
+
+      return;
+    }
+
+    this.finalizeLoading(parsedResultOrError as ParsedEptData, node);
   }
 
-  parse(node: PointCloudEptGeometryNode, buffer: ArrayBuffer): Promise<void> {
-    return EptBinaryLoader.WORKER_POOL.getWorker().then(
-      autoTerminatingWorker =>
-        new Promise<void>(res => {
-          autoTerminatingWorker.worker.onmessage = function (e: { data: ParsedEptData }) {
-            const g = new THREE.BufferGeometry();
-            const numPoints = e.data.numPoints;
+  private finalizeLoading(parsedData: ParsedEptData, node: PointCloudEptGeometryNode) {
+    const geometry = createGeometryFromEptData(parsedData);
 
-            const position = new Float32Array(e.data.position);
-            g.setAttribute('position', new THREE.BufferAttribute(position, 3));
+    const tightBoundingBox = createTightBoundingBox(parsedData);
 
-            const indices = new Uint8Array(e.data.indices);
-            g.setAttribute('indices', new THREE.BufferAttribute(indices, 4));
-
-            if (e.data.color) {
-              const color = new Uint8Array(e.data.color);
-              g.setAttribute('color', new THREE.BufferAttribute(color, 4, true));
-            }
-            if (e.data.intensity) {
-              const intensity = new Float32Array(e.data.intensity);
-              g.setAttribute('intensity', new THREE.BufferAttribute(intensity, 1));
-            }
-            if (e.data.classification) {
-              const classification = new Uint8Array(e.data.classification);
-              g.setAttribute('classification', new THREE.BufferAttribute(classification, 1));
-            }
-            if (e.data.returnNumber) {
-              const returnNumber = new Uint8Array(e.data.returnNumber);
-              g.setAttribute('return number', new THREE.BufferAttribute(returnNumber, 1));
-            }
-            if (e.data.numberOfReturns) {
-              const numberOfReturns = new Uint8Array(e.data.numberOfReturns);
-              g.setAttribute('number of returns', new THREE.BufferAttribute(numberOfReturns, 1));
-            }
-            if (e.data.pointSourceId) {
-              const pointSourceId = new Uint16Array(e.data.pointSourceId);
-              g.setAttribute('source id', new THREE.BufferAttribute(pointSourceId, 1));
-            }
-
-            g.attributes.indices.normalized = true;
-
-            const tightBoundingBox = new THREE.Box3(
-              new THREE.Vector3().fromArray(e.data.tightBoundingBox.min),
-              new THREE.Vector3().fromArray(e.data.tightBoundingBox.max)
-            );
-
-            node.doneLoading(g, tightBoundingBox, numPoints, new THREE.Vector3(...e.data.mean));
-
-            EptBinaryLoader.WORKER_POOL.releaseWorker(autoTerminatingWorker);
-            res();
-          };
-
-          const toArray = (v: THREE.Vector3) => [v.x, v.y, v.z];
-          const message = {
-            buffer: buffer,
-            schema: node.ept.schema,
-            scale: node.ept.eptScale,
-            offset: node.ept.eptOffset,
-            mins: toArray(node.key.b.min)
-          };
-
-          autoTerminatingWorker.worker.postMessage(message, [message.buffer]);
-        })
-    );
+    const numPoints = parsedData.numPoints;
+    node.doneLoading(geometry, tightBoundingBox, numPoints, new THREE.Vector3(...parsedData.mean));
   }
+
+  async parse(node: PointCloudEptGeometryNode, data: ArrayBuffer): Promise<ParsedEptData | Error> {
+    const autoTerminatingWorker = await EptBinaryLoader.WORKER_POOL.getWorker();
+    const eptDecoderWorker = autoTerminatingWorker.worker as unknown as typeof EptDecoderWorker;
+    const eptData: EptInputData = {
+      buffer: data,
+      schema: node.ept.schema,
+      scale: node.ept.eptScale.toArray(),
+      offset: node.ept.eptOffset.toArray(),
+      mins: fromThreeVector3(node.key.b.min)
+    };
+
+    setupTransferableMethodsOnMain(autoTerminatingWorker.worker, {
+      parse: {
+        pickTransferablesFromParams: (params: any) => {
+          return params.buffer;
+        }
+      }
+    });
+
+    const relevantObjects = this._stylableObjectsWithBox
+      .filter(objAndBox => objAndBox[1].intersectsBox(node.boundingBox))
+      .map(objAndBox => objAndBox[0]);
+
+    const result = await eptDecoderWorker.parse(eptData, relevantObjects, node.boundingBox.min.toArray(), {
+      min: node.boundingBox.min.toArray(),
+      max: node.boundingBox.max.toArray()
+    });
+
+    EptBinaryLoader.WORKER_POOL.releaseWorker(autoTerminatingWorker);
+    return result;
+  }
+}
+
+function createTightBoundingBox(data: ParsedEptData): THREE.Box3 {
+  return new THREE.Box3(
+    new THREE.Vector3().fromArray(data.tightBoundingBox.min),
+    new THREE.Vector3().fromArray(data.tightBoundingBox.max)
+  );
+}
+
+function createGeometryFromEptData(data: ParsedEptData): THREE.BufferGeometry {
+  const geometry = new THREE.BufferGeometry();
+
+  function addAttributeIfPresent<TypedArray extends ArrayLike<number>>(
+    typedArrayConstructor: { new (data: ArrayBuffer): TypedArray },
+    name: string,
+    componentCount: number,
+    data?: ArrayBuffer | undefined,
+    normalized: boolean = false
+  ): void {
+    if (data) {
+      const typedArray = new typedArrayConstructor(data);
+      geometry.setAttribute(name, new THREE.BufferAttribute(typedArray, componentCount, normalized));
+    }
+  }
+
+  addAttributeIfPresent<Float32Array>(Float32Array, 'position', 3, data.position);
+  addAttributeIfPresent<Uint8Array>(Uint8Array, 'indices', 4, data.indices);
+  addAttributeIfPresent<Uint8Array>(Uint8Array, 'color', 4, data.color, true);
+  addAttributeIfPresent<Float32Array>(Float32Array, 'intensity', 1, data.intensity);
+  addAttributeIfPresent<Uint8Array>(Uint8Array, 'classification', 1, data.classification);
+  addAttributeIfPresent<Uint8Array>(Uint8Array, 'return number', 1, data.returnNumber);
+  addAttributeIfPresent<Uint8Array>(Uint8Array, 'number of returns', 1, data.numberOfReturns);
+  addAttributeIfPresent<Uint16Array>(Uint16Array, 'source id', 1, data.pointSourceId);
+  addAttributeIfPresent<Uint16Array>(Uint16Array, 'objectId', 1, data.objectId);
+
+  geometry.attributes.indices.normalized = true;
+
+  return geometry;
 }

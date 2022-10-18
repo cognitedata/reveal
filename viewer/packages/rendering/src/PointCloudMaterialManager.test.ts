@@ -3,25 +3,28 @@
  */
 
 import * as THREE from 'three';
+import { PointCloudObjectIdMaps } from './pointcloud-rendering/PointCloudObjectIdMaps';
 import { PointCloudMaterialManager } from './PointCloudMaterialManager';
 
 describe('PointCloudMaterialManager', () => {
   let materialManager: PointCloudMaterialManager;
+  let objectData: PointCloudObjectIdMaps;
 
   beforeEach(() => {
     materialManager = new PointCloudMaterialManager();
+    objectData = { objectToAnnotationIds: new Map<number, number>(), annotationToObjectIds: new Map<number, number>() };
   });
 
   test('addModelMaterial creates material and sets corresponding value in the map', () => {
     const modelIdentifier = Symbol('model');
-    materialManager.addModelMaterial(modelIdentifier);
+    materialManager.addModelMaterial(modelIdentifier, objectData);
 
     expect(materialManager.getModelMaterial(modelIdentifier)).not.toBeEmpty();
   });
 
   test('removeModelMaterial removes material from the map', () => {
     const modelIdentifier = Symbol('model');
-    materialManager.addModelMaterial(modelIdentifier);
+    materialManager.addModelMaterial(modelIdentifier, objectData);
 
     expect(materialManager.getModelMaterial(modelIdentifier)).not.toBeEmpty();
 
@@ -33,8 +36,9 @@ describe('PointCloudMaterialManager', () => {
   test('setModelsMaterialParameters sets material parameters for all models', () => {
     const modelIdentifier1 = Symbol('model');
     const modelIdentifier2 = Symbol('model');
-    materialManager.addModelMaterial(modelIdentifier1);
-    materialManager.addModelMaterial(modelIdentifier2);
+
+    materialManager.addModelMaterial(modelIdentifier1, objectData);
+    materialManager.addModelMaterial(modelIdentifier2, objectData);
 
     const material1 = materialManager.getModelMaterial(modelIdentifier1);
     const material2 = materialManager.getModelMaterial(modelIdentifier2);

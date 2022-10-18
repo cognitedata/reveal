@@ -12,7 +12,7 @@ export interface IClipBox {
   position: Vector3;
 }
 
-export interface IClassification {
+export interface PointClassification {
   [value: string]: Vector4;
   DEFAULT: Vector4;
 }

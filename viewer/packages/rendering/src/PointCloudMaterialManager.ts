@@ -2,6 +2,7 @@
  * Copyright 2022 Cognite AS
  */
 
+import { PointCloudObjectIdMaps } from './pointcloud-rendering/PointCloudObjectIdMaps';
 import { PointCloudMaterial } from './pointcloud-rendering';
 import { PointCloudMaterialParameters } from './render-passes/types';
 
@@ -9,8 +10,8 @@ export class PointCloudMaterialManager {
   private readonly _modelsMaterialsMap: Map<symbol, PointCloudMaterial> = new Map();
   private _clippingPlanes: THREE.Plane[] = [];
 
-  addModelMaterial(modelIdentifier: symbol): void {
-    this._modelsMaterialsMap.set(modelIdentifier, new PointCloudMaterial());
+  addModelMaterial(modelIdentifier: symbol, objectIdMaps: PointCloudObjectIdMaps): void {
+    this._modelsMaterialsMap.set(modelIdentifier, new PointCloudMaterial({ objectsMaps: objectIdMaps }));
   }
 
   removeModelMaterial(modelIdentifier: symbol): void {
