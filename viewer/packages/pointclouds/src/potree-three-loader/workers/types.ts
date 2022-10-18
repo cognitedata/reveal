@@ -19,7 +19,7 @@ export type ParsedEptData = {
   objectId: ArrayBuffer;
 };
 
-export type SchemaEntry = {
+export type AttributeSchema = {
   name: string;
   size: number;
   type: 'signed' | 'unsigned' | 'float';
@@ -27,7 +27,7 @@ export type SchemaEntry = {
 
 export type EptInputData = {
   buffer: ArrayBuffer;
-  schema: SchemaEntry[];
+  schema: AttributeSchema[];
   scale: Vec3;
   offset: Vec3;
   mins: [number, number, number];

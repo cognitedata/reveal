@@ -2,7 +2,7 @@ import { AABB, Vec3 } from '@reveal/utilities';
 import { SerializableStylableObject } from '@reveal/data-providers';
 import { assignPointsToObjectsWithWasm } from './assignPointsToObjectsWithWasm';
 
-import { EptInputData, ParsedEptData, SchemaEntry } from './types';
+import { EptInputData, ParsedEptData, AttributeSchema } from './types';
 
 import * as THREE from 'three';
 
@@ -14,15 +14,15 @@ export async function parseEpt(
 ): Promise<ParsedEptData> {
   const buffer = data.buffer;
   const view = new DataView(buffer);
-  const schema: SchemaEntry[] = data.schema;
+  const schema: AttributeSchema[] = data.schema;
   const scale = data.scale;
   const offset = data.offset;
   const mins = data.mins;
 
-  const dimensions: Record<string, SchemaEntry> = schema.reduce((p, c) => {
+  const dimensions: Record<string, AttributeSchema> = schema.reduce((p, c) => {
     p[c.name] = c;
     return p;
-  }, {} as Record<string, SchemaEntry>);
+  }, {} as Record<string, AttributeSchema>);
 
   const dimOffset = (name: string) => {
     let offset = 0;
