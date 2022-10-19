@@ -33,7 +33,7 @@ export const ExtpipeInformation = ({ canEdit }: Props) => {
   return (
     <>
       <Section
-        title="Basic information"
+        title={t('ext-pipeline-info-title')}
         icon="World"
         items={[
           {
