@@ -8,10 +8,11 @@ import {
 import { interceptCoreNetworkRequests } from '../../../support/commands/helpers';
 import { WELL_SOURCE_WITH_ALL } from '../../../support/constants';
 
-describe.skip('Three-dee component', () => {
+describe('Three-dee component', () => {
   beforeEach(() => {
     const coreRequests = interceptCoreNetworkRequests();
     cy.addWaitForWdlResources('sources', 'GET', 'getSources');
+    cy.addWaitForWdlResources('measurements/depth/list', 'POST', 'getDepths');
     cy.visit(Cypress.env('BASE_URL'));
     cy.login();
     cy.acceptCookies();
@@ -48,13 +49,24 @@ describe.skip('Three-dee component', () => {
     cy.openInspectView(1);
 
     cy.goToWellsInspectTab(TAB_NAMES.THREE_DEE);
+    cy.wait('@getDepths', { timeout: 20000 });
 
     cy.log('checking the empty state message');
     cy.findByTestId('empty-state-container')
       .contains(LOADING_SUB_TEXT)
       .should('be.visible');
 
+    cy.findByRole('tab', { name: 'Wells' }).should('be.visible');
+    cy.findByRole('tab', { name: 'Others' }).should('be.visible');
+
     cy.findByText('Log filter').should('be.visible');
+
+    /*
+     * we have to add a wait here,
+     * because 3D will re-render with well-logs. this can be removed when it was fixed- (PP-2693)
+     */
+
+    cy.wait(1000);
 
     cy.log('expand log filter');
     cy.findAllByRole('treeitem')
@@ -141,6 +153,7 @@ describe.skip('Three-dee component', () => {
     cy.findByText(WARNING_MODAL_EXPLANATION).should('be.visible');
     cy.findByText(WARNING_MODAL_QUESTION).should('be.visible');
     cy.findByRole('button', { name: 'Proceed' }).should('be.visible').click();
+    cy.wait('@getDepths', { timeout: 20000 });
 
     cy.log('checking the number of rows that loaded');
     /**
