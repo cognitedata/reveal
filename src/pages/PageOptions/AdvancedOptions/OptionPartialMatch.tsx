@@ -36,10 +36,11 @@ export const OptionPartialMatch = ({ workflowId }: { workflowId: number }) => {
       </Flex>
       <Flex row style={{ width: '100%', marginBottom: '12px' }}>
         <Body level={2}>
-          Select this option to include matches where the diagrams tag names do
-          not exactly match the asset tag name. CDF finds matches by comparing
-          similar characters, such as 0 and O, 8 and B. Clear this option to
-          allow only exact matches.
+          Select this option to allow detecting tags based on unique parts.
+          E.g. if "12-AB-3456" is a tag, "12", "AB" and "3456" must all be found in the 
+          diagram to get a detection if partial match is not enabled.
+          With partial match enabled, if no other tag contains the combination 
+          "AB-3456", the tag can be detected without finding "12".
         </Body>
       </Flex>
     </OptionWrapper>
