@@ -14,7 +14,6 @@ import {
   SearchFilters as OldSearchFilters,
 } from '@cognite/data-exploration';
 import { Colors, Flex } from '@cognite/cogs.js';
-
 import { trackUsage } from 'app/utils/Metrics';
 import ResourceSelectionContext, {
   useResourceFilter,
@@ -48,6 +47,7 @@ import {
 } from 'app/store/filter/selectors';
 import { useDocumentFilters } from 'app/store/filter/selectors/documentSelectors';
 import { useObserveDocumentSearchFilters } from 'app/domain/document/internal/hook/useObserveDocumentSearchFilters';
+import { DocumentSort } from 'app/domain/document/internal/types';
 
 const getPageTitle = (query: string, resourceType: ResourceType): string => {
   return `${query}${query ? ' in' : ''} ${getTitle(resourceType, true)}`;
@@ -81,8 +81,8 @@ function SearchPage() {
   const [sequenceFilter, setSequenceFilter] = useSequenceFilters();
 
   const { mode } = useContext(ResourceSelectionContext);
-
-  useObserveDocumentSearchFilters();
+  const [{ column, order }, setDocumentSort] = useState<DocumentSort>({});
+  useObserveDocumentSearchFilters({ column, order });
 
   const onSelect = (item: ResourceItem) => {
     const newCart = cart.includes(item.id)
@@ -192,6 +192,12 @@ function SearchPage() {
                           openPreview(
                             item.id !== activeId ? item.id : undefined
                           );
+                        }}
+                        onSortClicked={(column, desc) => {
+                          if (desc !== undefined) {
+                            const order = desc ? 'desc' : 'asc';
+                            setDocumentSort({ column, order });
+                          }
                         }}
                       />
                     )}
@@ -360,6 +366,12 @@ function SearchPage() {
                     filter={fileFilter}
                     onClick={(item: ResourceItem) => {
                       openPreview(item.id !== activeId ? item.id : undefined);
+                    }}
+                    onSortClicked={(column, desc) => {
+                      if (desc !== undefined) {
+                        const order = desc ? 'desc' : 'asc';
+                        setDocumentSort({ column, order });
+                      }
                     }}
                   />
                 )}

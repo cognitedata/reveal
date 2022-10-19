@@ -9,3 +9,10 @@ export type InternalDocumentFilter = {
   lastUpdatedTime?: { min?: Timestamp; max?: Timestamp };
   assetSubtreeIds?: IdEither[];
 };
+
+export type Order = 'asc' | 'desc';
+
+export type DocumentSort = {
+  column?: string;
+  order?: Order;
+};
