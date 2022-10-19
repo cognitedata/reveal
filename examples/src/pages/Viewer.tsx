@@ -30,8 +30,10 @@ import { PointCloudUi } from '../utils/PointCloudUi';
 import { ModelUi } from '../utils/ModelUi';
 import { createSDKFromEnvironment } from '../utils/example-helpers';
 import { PointCloudClassificationFilterUI } from '../utils/PointCloudClassificationFilterUI';
+import { PointCloudObjectStylingUI } from '../utils/PointCloudObjectStylingUI';
 import { CustomCameraManager } from '../utils/CustomCameraManager';
 import { MeasurementUi } from '../utils/MeasurementUi';
+import { Image360UI } from '../utils/Image360UI';
 
 
 window.THREE = THREE;
@@ -48,7 +50,7 @@ export function Viewer() {
     // Check in order to avoid double initialization of everything, especially dat.gui.
     // See https://reactjs.org/docs/strict-mode.html#detecting-unexpected-side-effects for why its called twice.
     if (!canvasWrapperRef.current) {
-      return () => {};
+      return () => { };
     }
 
     const gui = new dat.GUI({ width: Math.min(500, 0.8 * window.innerWidth) });
@@ -114,7 +116,7 @@ export function Viewer() {
       // Prepare viewer
       viewer = new Cognite3DViewer(viewerOptions);
       (window as any).viewer = viewer;
-      
+
       // Add Stats.js overlay with FPS etc
       var stats = new Stats();
       stats.dom.style.position = 'absolute';
@@ -123,7 +125,7 @@ export function Viewer() {
       document.body.appendChild(stats.dom);
       viewer.on('beforeSceneRendered', () => stats.begin());
       viewer.on('sceneRendered', () => stats.end());
-      
+
       const controlsOptions: CameraControlsOptions = {
         changeCameraTargetOnClick: true,
         mouseWheelAction: 'zoomToCursor',
@@ -183,8 +185,10 @@ export function Viewer() {
           new NodeStylingUI(gui.addFolder(`Node styling #${modelUi.cadModels.length}`), client, viewer, model);
           new BulkHtmlOverlayUI(gui.addFolder(`Node tagging #${modelUi.cadModels.length}`), viewer, model, client);
         } else if (model instanceof CognitePointCloudModel) {
-          new PointCloudClassificationFilterUI(gui.addFolder(`Class filter #${modelUi.pointCloudModels.length}`), model);
+          const modelIndex = modelUi.pointCloudModels.length
+          new PointCloudClassificationFilterUI(gui.addFolder(`Class filter #${modelIndex}`), model);
           pointCloudUi.applyToAllModels();
+          new PointCloudObjectStylingUI(gui.addFolder(`Point cloud object styling #${modelIndex}`), model, viewer);
         }
       }
       const modelUi = new ModelUi(gui.addFolder('Models'), viewer, handleModelAdded);
@@ -253,6 +257,7 @@ export function Viewer() {
       new CameraUI(viewer, gui.addFolder('Camera'));
       const pointCloudUi = new PointCloudUi(viewer, gui.addFolder('Point clouds'));
       await modelUi.restoreModelsFromUrl();
+      new Image360UI(viewer, gui.addFolder('360 Images'));
 
       let expandTool: ExplodedViewTool | null;
       let explodeSlider: dat.GUIController | null;
@@ -313,7 +318,7 @@ export function Viewer() {
       controlsGui.add(guiState.controls, 'changeCameraTargetOnClick').name('Change camera target on click').onFinishChange(value => {
         cameraManager.setCameraControlsOptions({ ...cameraManager.getCameraControlsOptions(), changeCameraTargetOnClick: value });
       });
-      controlsGui.add(guiState.controls, 'cameraManager', cameraManagerTypes).name('Camera manager type').onFinishChange( (value: ('Default' | 'Custom')) => {
+      controlsGui.add(guiState.controls, 'cameraManager', cameraManagerTypes).name('Camera manager type').onFinishChange((value: ('Default' | 'Custom')) => {
         viewer.setCameraManager(cameraManagers[value]);
       });
 
@@ -338,20 +343,23 @@ export function Viewer() {
               break;
             case 'pointcloud':
               {
-                const { pointIndex, point } = intersection;
-                console.log(`Clicked point with pointIndex ${pointIndex} at`, point);
+                const { point } = intersection;
+                console.log(`Clicked point assigned to the object with annotationId: ${intersection.annotationId} at`, point);
+                const sphere = new THREE.Mesh(new THREE.SphereGeometry(0.1), new THREE.MeshBasicMaterial({ color: 'red' }));
+                sphere.position.copy(point);
+                viewer.addObject3D(sphere);
               }
               break;
           }
         }
       });
 
-      new AxisViewTool(viewer, 
+      new AxisViewTool(viewer,
         // Give some space for Stats.js overlay
-        { 
-          position: { 
-            corner: Corner.BottomRight, 
-            padding: new THREE.Vector2(60, 0) 
+        {
+          position: {
+            corner: Corner.BottomRight,
+            padding: new THREE.Vector2(60, 0)
           }
         });
     }

@@ -47,10 +47,8 @@
       "prConcurrentLimit": 5
     },
     {
-      "matchLanguages": [
-        "rust"
-      ],
-      "enabled": false
+      "matchPaths": ["viewer"],
+      "extends": ["github>Turbo87/renovate-config//rust/updateToolchain"]
     },
     {
       "matchUpdateTypes": [

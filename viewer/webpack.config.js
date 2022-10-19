@@ -2,6 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 const path = require('path');
+const RemovePlugin = require('remove-files-webpack-plugin');
 const nodeExternals = require('webpack-node-externals');
 const copyPkgJsonPlugin = require('copy-pkg-json-webpack-plugin');
 const packageJSON = require('./package.json');
@@ -16,7 +17,6 @@ module.exports = env => {
 
   return {
     mode: development ? 'development' : 'production',
-    // Internals is not part of prod builds
     entry: {
       index: './index.ts',
       tools: './tools.ts',
@@ -35,9 +35,9 @@ module.exports = env => {
       rules: [
         {
           test: /\.worker\.ts$/,
-          loader: 'worker-loader',
+          loader: 'workerize-loader',
           options: {
-            inline: 'no-fallback'
+            inline: true
           }
         },
         {
@@ -72,6 +72,10 @@ module.exports = env => {
         {
           test: /\.css$/,
           use: ['raw-loader']
+        },
+        {
+          test: /\.wasm$/,
+          type: 'asset/inline'
         }
       ]
     },
@@ -107,6 +111,18 @@ module.exports = env => {
           MIXPANEL_TOKEN: development ? MIXPANEL_TOKEN_DEV : MIXPANEL_TOKEN_PROD,
           IS_DEVELOPMENT_MODE: development
         })
+      }),
+      new RemovePlugin({
+        after: {
+          test: [
+            {
+              folder: 'dist',
+              method: absoluteItemPath => {
+                return new RegExp(/\.worker.js$/, 'm').test(absoluteItemPath);
+              }
+            }
+          ]
+        }
       }),
       {
         apply: compiler => {

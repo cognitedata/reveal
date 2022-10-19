@@ -14,10 +14,23 @@ import {
 
 import * as THREE from 'three';
 
+import { LocalModelDataProvider } from '../../packages/data-providers';
 import { IPointCloudTreeGeometry } from '../../packages/pointclouds/src/potree-three-loader/geometry/IPointCloudTreeGeometry';
-import { PointCloudMaterial } from '../../packages/rendering';
+import { DEFAULT_CLASSIFICATION, PointCloudMaterial, PointCloudMaterialManager } from '../../packages/rendering';
+import { PointCloudObjectAppearanceTexture } from '../../packages/rendering/src/pointcloud-rendering/PointCloudObjectAppearanceTexture';
 
 export function createPointCloudModel(modelId: number, revisionId: number): CognitePointCloudModel {
+  const pointCloudNode = createPointCloudNode();
+
+  return new CognitePointCloudModel(modelId, revisionId, pointCloudNode);
+}
+
+export function createPointCloudNode(): PointCloudNode {
+  const modelDataProvider = new LocalModelDataProvider();
+  const potreeInstance = new Potree(modelDataProvider, new Mock<PointCloudMaterialManager>().object());
+
+  const potreeGroup = new PotreeGroupWrapper(potreeInstance);
+
   const pointCloudOctree = new PointCloudOctree(
     new Mock<Potree>().object(),
     new Mock<IPointCloudTreeGeometry>()
@@ -28,14 +41,15 @@ export function createPointCloudModel(modelId: number, revisionId: number): Cogn
       .setup(p => p.tightBoundingBox)
       .returns(new THREE.Box3())
       .object(),
-    new Mock<PointCloudMaterial>().object()
+    new Mock<PointCloudMaterial>()
+      .setup(p => p.classification)
+      .returns(DEFAULT_CLASSIFICATION)
+      .setup(p => p.objectAppearanceTexture)
+      .returns(new PointCloudObjectAppearanceTexture(1, 1))
+      .object()
   );
 
-  const groupWrapperMock = new Mock<PotreeGroupWrapper>();
-  const nodeWrapperMock = new Mock<PotreeNodeWrapper>().setup(p => p.octree).returns(pointCloudOctree);
+  const nodeWrapper = new PotreeNodeWrapper(Symbol('dummy'), pointCloudOctree, [], { classificationSets: [] });
 
-  const pointCloudNode = new PointCloudNode(groupWrapperMock.object(), nodeWrapperMock.object(), undefined);
-  const model = new CognitePointCloudModel(modelId, revisionId, pointCloudNode);
-
-  return model;
+  return new PointCloudNode(potreeGroup, nodeWrapper);
 }

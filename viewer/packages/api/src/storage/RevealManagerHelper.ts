@@ -8,13 +8,17 @@ import { createCdfRevealManager, createLocalRevealManager, createRevealManager }
 import { RevealManager } from '../public/RevealManager';
 import { RevealOptions } from '../public/types';
 
-import { CdfModelIdentifier, LocalModelIdentifier } from '@reveal/data-providers';
+import {
+  CdfModelIdentifier,
+  LocalModelIdentifier,
+  DummyPointCloudStylableObjectProvider
+} from '@reveal/data-providers';
 import { DataSource } from '@reveal/data-source';
 import { assertNever, SceneHandler } from '@reveal/utilities';
 
-import { CogniteClient } from '@cognite/sdk';
 import { CadNode } from '@reveal/cad-model';
-import { PointCloudNode } from '@reveal/pointclouds';
+import { CogniteClient } from '@cognite/sdk';
+import { PointCloudNode, LocalPointClassificationsProvider } from '@reveal/pointclouds';
 
 /**
  * Helper for {@link RevealManager} for creating a uniform interface for
@@ -93,6 +97,8 @@ export class RevealManagerHelper {
       'custom-datasource-app',
       dataSource.getModelMetadataProvider(),
       dataSource.getModelDataProvider(),
+      new DummyPointCloudStylableObjectProvider(),
+      new LocalPointClassificationsProvider(),
       renderer,
       sceneHandler,
       revealOptions

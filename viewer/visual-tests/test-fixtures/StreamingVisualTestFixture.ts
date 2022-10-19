@@ -21,9 +21,22 @@ import {
 import { createDataProviders } from './utilities/createDataProviders';
 import { VisualTestFixture } from './VisualTestFixture';
 import { DeferredPromise, fitCameraToBoundingBox, SceneHandler } from '../../packages/utilities';
-import { ModelIdentifier, ModelMetadataProvider } from '../../packages/data-providers';
+
+import {
+  ModelIdentifier,
+  ModelMetadataProvider,
+  DummyPointCloudStylableObjectProvider,
+  ModelDataProvider
+} from '../../packages/data-providers';
 import { LoadingState } from '../../packages/model-base';
-import { PointCloudManager, PointCloudNode } from '../../packages/pointclouds';
+
+import {
+  LocalPointClassificationsProvider,
+  PointCloudManager,
+  PointCloudNode,
+  Potree
+} from '../../packages/pointclouds';
+
 import { PointCloudMetadataRepository } from '../../packages/pointclouds/src/PointCloudMetadataRepository';
 import { PointCloudFactory } from '../../packages/pointclouds/src/PointCloudFactory';
 import dat from 'dat.gui';
@@ -54,7 +67,7 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
   private readonly _renderer: THREE.WebGLRenderer;
   private readonly _controls: OrbitControls;
   private readonly _materialManager: CadMaterialManager;
-  private readonly _pcMaterialManager: PointCloudMaterialManager;
+  protected readonly _pcMaterialManager: PointCloudMaterialManager;
   private readonly _localModelUrl: string;
   private readonly _statsJs = new Stats();
   private readonly _cadNodes: Array<CadNode>;
@@ -70,6 +83,9 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
   private _renderPipelineProvider: RenderPipelineProvider;
   private _pipelineExecutor: RenderPipelineExecutor;
   private _cadManager!: CadManager;
+  private _potreeInstance!: Potree;
+  private _modelDataProvider!: ModelDataProvider;
+
   private readonly _depthRenderPipeline: CadGeometryRenderModePipelineProvider;
   private readonly _resizeObserver: ResizeObserver;
 
@@ -97,12 +113,37 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
     return this._renderPipelineProvider;
   }
 
+  get potreeInstance(): Potree {
+    return this._potreeInstance;
+  }
+
+  get modelDataProvider(): ModelDataProvider {
+    return this._modelDataProvider;
+  }
+
+  /*
+   * Overridable field creation methods
+   */
+
+  createPointCloudFactory(): PointCloudFactory {
+    return new PointCloudFactory(
+      this.modelDataProvider,
+      new DummyPointCloudStylableObjectProvider(),
+      new LocalPointClassificationsProvider(),
+      this._pcMaterialManager
+    );
+  }
+
+  createCamera(): THREE.PerspectiveCamera {
+    return new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 1000);
+  }
+
   constructor(localModelUrl = 'primitives') {
     this._localModelUrl = localModelUrl;
 
-    this._perspectiveCamera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 1000);
-    this._cadNodes = new Array<CadNode>();
+    this._perspectiveCamera = this.createCamera();
 
+    this._cadNodes = new Array<CadNode>();
     this._sceneHandler = new SceneHandler();
 
     this._renderer = new THREE.WebGLRenderer();
@@ -146,20 +187,23 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
       this._localModelUrl
     );
 
-    const sectorCuller = new ByScreenSizeSectorCuller();
-    const cadModelFactory = new CadModelFactory(this._materialManager, modelMetadataProvider, modelDataProvider);
-    const cadModelUpdateHandler = new CadModelUpdateHandler(sectorCuller, false);
-    this._cadManager = new CadManager(this._materialManager, cadModelFactory, cadModelUpdateHandler);
+    this._modelDataProvider = modelDataProvider;
 
     const pointCloudMetadataRepository = new PointCloudMetadataRepository(modelMetadataProvider, modelDataProvider);
-    const pointCloudFactory = new PointCloudFactory(modelDataProvider, this._pcMaterialManager);
+    this._potreeInstance = new Potree(modelDataProvider, this._pcMaterialManager);
+    const pointCloudFactory = this.createPointCloudFactory();
     const pointCloudManager = new PointCloudManager(
       pointCloudMetadataRepository,
       this._pcMaterialManager,
       pointCloudFactory,
+      this._potreeInstance,
       this._sceneHandler.scene,
       this._renderer
     );
+    const sectorCuller = new ByScreenSizeSectorCuller();
+    const cadModelFactory = new CadModelFactory(this._materialManager, modelMetadataProvider, modelDataProvider);
+    const cadModelUpdateHandler = new CadModelUpdateHandler(sectorCuller, false);
+    this._cadManager = new CadManager(this._materialManager, cadModelFactory, cadModelUpdateHandler);
 
     const model = await this.addModel(modelIdentifier, modelMetadataProvider, this._cadManager, pointCloudManager);
 
@@ -324,7 +368,8 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
     } else if (modelOutputs.includes('ept-pointcloud')) {
       const pointCloudNode = await pointCloudManager.addModel(modelIdentifier);
       pointCloudNode.pointColorType = PointColorType.Height;
-      this._sceneHandler.addCustomObject(pointCloudNode);
+
+      this._sceneHandler.addPointCloudModel(pointCloudNode, modelIdentifier.revealInternalId);
       return pointCloudNode;
     } else {
       throw Error(`Unknown output format ${modelOutputs}`);

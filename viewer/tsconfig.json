@@ -5,7 +5,8 @@
     "module": "esnext",
     "lib": [
       "dom",
-      "esnext"
+      "esnext",
+      "webworker"
     ],
     "stripInternal": true,
     "noUnusedLocals": true,
