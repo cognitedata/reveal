@@ -13,6 +13,7 @@ import { useTranslation } from 'common/i18n';
 
 interface TimeseriesPreviewProps {
   dataSetId: number;
+  query: string;
 }
 
 const TimeseriesPreview = ({ dataSetId }: TimeseriesPreviewProps) => {

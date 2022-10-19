@@ -13,6 +13,7 @@ import { useTranslation } from 'common/i18n';
 
 interface filesTableProps {
   dataSetId: number;
+  query: string;
 }
 
 const FilesTable = ({ dataSetId }: filesTableProps) => {

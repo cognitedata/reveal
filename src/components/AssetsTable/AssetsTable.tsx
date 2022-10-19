@@ -13,6 +13,7 @@ import { useTranslation } from 'common/i18n';
 
 interface assetsTableProps {
   dataSetId: number;
+  query: string;
 }
 
 const AssetsTable = ({ dataSetId }: assetsTableProps) => {

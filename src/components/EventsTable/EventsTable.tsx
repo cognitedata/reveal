@@ -13,6 +13,7 @@ import { useTranslation } from 'common/i18n';
 
 interface EventsPreviewProps {
   dataSetId: number;
+  query: string;
 }
 
 const EventsPreview = ({ dataSetId }: EventsPreviewProps) => {

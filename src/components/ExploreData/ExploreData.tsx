@@ -21,6 +21,7 @@ import SequencesTable from '../SequencesTable';
 import EventsProfile from '../EventsProfile';
 import ResourceCountBox from '../ResourceCountBox';
 import { useTranslation } from 'common/i18n';
+import { Input } from '@cognite/cogs.js';
 
 interface ExploreDataProps {
   loading: boolean;
@@ -100,6 +101,8 @@ const ExploreData = ({ loading, dataSetId }: ExploreDataProps) => {
     }
   };
 
+  const [query, setQuery] = useState('');
+
   const dataSetContainsData = () => {
     return !(
       assetCount === 0 &&
@@ -109,10 +112,19 @@ const ExploreData = ({ loading, dataSetId }: ExploreDataProps) => {
       eventsCounts === 0
     );
   };
+
   if (dataSetContainsData()) {
     return (
       <Spin spinning={loading}>
         <ContentView>
+          <Input
+            value={query}
+            icon="Search"
+            placeholder="Search"
+            onChange={(evt) => {
+              setQuery(evt.currentTarget.value);
+            }}
+          />
           <ItemLabel>{t('data-profile')}</ItemLabel>
           <Col
             span={24}
@@ -132,11 +144,19 @@ const ExploreData = ({ loading, dataSetId }: ExploreDataProps) => {
             <ResourceCountBox count={sequencesCount} resourceName="Sequences" />
             <ResourceCountBox count={filesCount} resourceName="Files" />
           </Col>
-          {timeseriesCount > 0 && <TimeseriesTable dataSetId={dataSetId} />}
-          {assetCount > 0 && <AssetsTable dataSetId={dataSetId} />}
-          {eventsCounts > 0 && <EventsTable dataSetId={dataSetId} />}
-          {filesCount > 0 && <FilesTable dataSetId={dataSetId} />}
-          {sequencesCount > 0 && <SequencesTable dataSetId={dataSetId} />}
+          {timeseriesCount > 0 && (
+            <TimeseriesTable dataSetId={dataSetId} query={query} />
+          )}
+          {assetCount > 0 && (
+            <AssetsTable dataSetId={dataSetId} query={query} />
+          )}
+          {eventsCounts > 0 && (
+            <EventsTable dataSetId={dataSetId} query={query} />
+          )}
+          {filesCount > 0 && <FilesTable dataSetId={dataSetId} query={query} />}
+          {sequencesCount > 0 && (
+            <SequencesTable dataSetId={dataSetId} query={query} />
+          )}
 
           {exploreView.visible && renderExploreView()}
         </ContentView>

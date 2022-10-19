@@ -13,6 +13,7 @@ import { useTranslation } from 'common/i18n';
 
 interface sequencesTableProps {
   dataSetId: number;
+  query: string;
 }
 
 const SequencesTable = ({ dataSetId }: sequencesTableProps) => {
