@@ -46,8 +46,7 @@ export default function ExtpipeRunHistory() {
     <>
       <ExtpipeBreadcrumbs extpipe={extpipe} />
       <ExtpipeHeading />
-
-      <PageWrapperColumn style={{ marginTop: '1rem' }}>
+      <PageWrapperColumn>
         <SectionWithoutHeader>
           <FilterWrapper>
             <QuickDateTimeFilters />

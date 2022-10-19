@@ -42,9 +42,7 @@ export const ExtpipeDetails: FunctionComponent<ExtpipeViewProps> = () => {
       <ExtpipeBreadcrumbs extpipe={extpipe} />
       <ExtpipeHeading />
       <PageWrapperColumn>
-        <TopSection>
-          <RunScheduleConnection externalId={extpipe.externalId} />
-        </TopSection>
+        <RunScheduleConnection externalId={extpipe.externalId} />
         <MiddleSection>
           <div css="width: calc(100% - 416px);">
             <DocumentationSection canEdit={canEdit} />
@@ -63,12 +61,5 @@ export const ExtpipeDetails: FunctionComponent<ExtpipeViewProps> = () => {
 
 const MiddleSection = styled.div`
   display: flex;
-  margin-bottom: 1rem;
   gap: 16px;
-`;
-
-const TopSection = styled.section`
-  display: flex;
-  flex-direction: column;
-  margin-top: 1rem;
 `;
