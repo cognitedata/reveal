@@ -152,6 +152,7 @@
   "owner-err": "There should be an owner.",
   "publish": "Publish",
   "remove-contact": "Remove contact",
+  "required-field-is-missing": "A required field is missing",
   "role": "Role",
   "role-placeholder": "e.g. Data engineer",
   "run-alerts": "Run alerts",

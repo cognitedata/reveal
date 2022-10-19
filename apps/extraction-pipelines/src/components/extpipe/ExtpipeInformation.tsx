@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import InlineEdit from 'components/extpipe/InlineEdit';
 import * as yup from 'yup';
 import { useSelectedExtpipe } from 'hooks/useExtpipe';
@@ -17,6 +17,8 @@ import {
 } from 'utils/validation/extpipeSchemas';
 import { useTranslation } from 'common';
 import RelativeTimeWithTooltip from 'components/extpipes/cols/RelativeTimeWithTooltip';
+import { Button } from '@cognite/cogs.js';
+import BasicInformationModal from './BasicInformationModal';
 
 interface Props {
   canEdit: boolean;
@@ -26,14 +28,31 @@ export const ExtpipeInformation = ({ canEdit }: Props) => {
   const { t } = useTranslation();
   const { data: extpipe } = useSelectedExtpipe();
 
+  const [isOpen, setIsOpen] = useState(false);
+
   if (!extpipe) {
     return null;
   }
 
   return (
     <>
+      <BasicInformationModal
+        extpipe={extpipe}
+        isOpen={isOpen}
+        onClose={() => setIsOpen(false)}
+      />
       <Section
         title={t('ext-pipeline-info-title')}
+        extra={
+          <Button
+            disabled={!canEdit}
+            onClick={() => setIsOpen(true)}
+            size="small"
+            type="ghost"
+          >
+            Edit
+          </Button>
+        }
         icon="World"
         items={[
           {
