@@ -1,4 +1,4 @@
-import { DASH } from '../../../../../utils';
+import { DASH } from '../../../../../utils/constants';
 import { mockDocument } from '../../../../../stubs/documents';
 import { getHighlightContent } from '../getHighlightContent';
 
@@ -6,6 +6,7 @@ describe('getHighlightContent', () => {
   it('should return DASH when given empty string', () => {
     const highlightContent = getHighlightContent(mockDocument);
     expect(highlightContent).toEqual(DASH);
+    expect(true).toBeTruthy();
   });
   it('should not have any whitespace character except a single space " "', () => {
     const rawHighlightContent =

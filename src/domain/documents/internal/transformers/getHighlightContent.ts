@@ -1,5 +1,5 @@
 import { Document } from '../types';
-import { DASH } from 'utils';
+import { DASH } from 'utils/constants';
 
 export const getHighlightContent = (document: Document) => {
   if (

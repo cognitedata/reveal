@@ -19,7 +19,7 @@ const Loading = () => {
         r="46.8109"
         transform="rotate(3.35681 50 50)"
         stroke="#B5B9FB"
-        stroke-dasharray="5 3"
+        strokeDasharray="5 3"
       />
       <circle
         id="innerLine"
@@ -27,7 +27,7 @@ const Loading = () => {
         cy="49.5"
         r="37"
         stroke="#ACB1FA"
-        stroke-dasharray="5 3"
+        strokeDasharray="5 3"
       />
 
       {/* <!-- Paper --> */}
@@ -46,7 +46,7 @@ const Loading = () => {
         x2="48.8014"
         y2="33.8358"
         stroke="#DADADA"
-        stroke-linecap="round"
+        strokeLinecap="round"
       />
       <line
         x1="13.8014"
@@ -54,7 +54,7 @@ const Loading = () => {
         x2="48.8014"
         y2="45.8358"
         stroke="#DADADA"
-        stroke-linecap="round"
+        strokeLinecap="round"
       />
       <line
         x1="13.8014"
@@ -62,7 +62,7 @@ const Loading = () => {
         x2="48.8014"
         y2="57.8358"
         stroke="#DADADA"
-        stroke-linecap="round"
+        strokeLinecap="round"
       />
       <line
         x1="13.8014"
@@ -70,7 +70,7 @@ const Loading = () => {
         x2="48.8014"
         y2="69.8358"
         stroke="#DADADA"
-        stroke-linecap="round"
+        strokeLinecap="round"
       />
       <line
         x1="13.8014"
@@ -78,7 +78,7 @@ const Loading = () => {
         x2="48.8014"
         y2="81.8358"
         stroke="#DADADA"
-        stroke-linecap="round"
+        strokeLinecap="round"
       />
 
       {/* <!-- Particle --> */}
@@ -107,7 +107,7 @@ const Loading = () => {
         x2="42.948"
         y2="96.7739"
         stroke="#DADADA"
-        stroke-linecap="round"
+        strokeLinecap="round"
       />
       <line
         x1="51.4574"
@@ -115,7 +115,7 @@ const Loading = () => {
         x2="51.4574"
         y2="96.7739"
         stroke="#DADADA"
-        stroke-linecap="round"
+        strokeLinecap="round"
       />
       <line
         x1="59.9668"
@@ -123,7 +123,7 @@ const Loading = () => {
         x2="59.9668"
         y2="96.7739"
         stroke="#DADADA"
-        stroke-linecap="round"
+        strokeLinecap="round"
       />
       <line
         x1="68.4761"
@@ -131,7 +131,7 @@ const Loading = () => {
         x2="68.4761"
         y2="96.7739"
         stroke="#DADADA"
-        stroke-linecap="round"
+        strokeLinecap="round"
       />
       <line
         x1="39.1287"
@@ -139,12 +139,12 @@ const Loading = () => {
         x2="72.1663"
         y2="85.4997"
         stroke="#DADADA"
-        stroke-linecap="round"
+        strokeLinecap="round"
       />
       <path
         d="M39.1287 91.9997H72.1663"
         stroke="#DADADA"
-        stroke-linecap="round"
+        strokeLinecap="round"
       />
 
       {/* <!-- Particle --> */}
@@ -158,14 +158,14 @@ const Loading = () => {
         <g id="lookingGlassInner">
           <mask id="path-20-inside-1" fill="white">
             <path
-              fill-rule="evenodd"
-              clip-rule="evenodd"
+              fillRule="evenodd"
+              clipRule="evenodd"
               d="M48.9779 62.3786C53.3157 67.1497 60.3241 68.0464 65.6539 64.8617C65.706 64.9316 65.7619 64.9996 65.8218 65.0655L81.9495 82.8043C82.9392 83.8928 84.6239 83.973 85.7124 82.9833C86.801 81.9936 86.8811 80.3089 85.8914 79.2203L69.7638 61.4815C69.7039 61.4157 69.6414 61.3535 69.5767 61.295C73.2528 56.2916 73.0254 49.23 68.6877 44.459C63.7393 39.0162 55.3157 38.6155 49.873 43.5639C44.4303 48.5123 44.0296 56.9359 48.9779 62.3786ZM65.1046 60.3173C61.2947 63.7811 55.3982 63.5006 51.9343 59.6907C48.4705 55.8808 48.751 49.9843 52.5609 46.5204C56.3708 43.0565 62.2673 43.3371 65.7312 47.1469C69.195 50.9568 68.9145 56.8534 65.1046 60.3173Z"
             />
           </mask>
           <path
-            fill-rule="evenodd"
-            clip-rule="evenodd"
+            fillRule="evenodd"
+            clipRule="evenodd"
             d="M48.9779 62.3786C53.3157 67.1497 60.3241 68.0464 65.6539 64.8617C65.706 64.9316 65.7619 64.9996 65.8218 65.0655L81.9495 82.8043C82.9392 83.8928 84.6239 83.973 85.7124 82.9833C86.801 81.9936 86.8811 80.3089 85.8914 79.2203L69.7638 61.4815C69.7039 61.4157 69.6414 61.3535 69.5767 61.295C73.2528 56.2916 73.0254 49.23 68.6877 44.459C63.7393 39.0162 55.3157 38.6155 49.873 43.5639C44.4303 48.5123 44.0296 56.9359 48.9779 62.3786ZM65.1046 60.3173C61.2947 63.7811 55.3982 63.5006 51.9343 59.6907C48.4705 55.8808 48.751 49.9843 52.5609 46.5204C56.3708 43.0565 62.2673 43.3371 65.7312 47.1469C69.195 50.9568 68.9145 56.8534 65.1046 60.3173Z"
             fill="white"
           />

@@ -1,4 +1,4 @@
-import { Table } from 'components';
+import { Table } from '../components';
 
 export function getColumnsWithRelationshipLabels(
   columns: any,
