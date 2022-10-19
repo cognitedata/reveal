@@ -5,7 +5,7 @@ import {
   SdkResourceType,
 } from '@cognite/sdk-react-query-hooks';
 import { formatNumber } from 'utils';
-import { Body } from '@cognite/cogs.js';
+import { Label } from '@cognite/cogs.js';
 import { getTitle, ResourceType, convertResourceType } from 'types';
 import { ThreeDModelsResponse, useInfinite3DModels } from 'hooks';
 import { Model3D } from '@cognite/sdk';
@@ -31,9 +31,9 @@ export function ResultCount(props: ResultProps) {
   if (!result.count) return null;
 
   return (
-    <Body level={4}>
+    <Label variant="normal">
       {resultWithFilters.count} of {result.count} {result.label}
-    </Body>
+    </Label>
   );
 }
 

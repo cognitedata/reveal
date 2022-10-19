@@ -138,7 +138,7 @@ export type TimeseriesChartProps = {
 export const TimeseriesChart = ({
   timeseriesId,
   height,
-  numberOfPoints = 1000,
+  numberOfPoints = 20,
   timeOptions = ['15M', '1H', '6H', '12H', '1D', '1M', '1Y', '2Y', '5Y', '10Y'],
   defaultOption,
   cacheToDate = true,

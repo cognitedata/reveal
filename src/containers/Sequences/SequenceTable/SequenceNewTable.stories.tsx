@@ -3,17 +3,17 @@ import styled from 'styled-components';
 import { action } from '@storybook/addon-actions';
 import { sequences } from 'stubs/sequences';
 import { ComponentStory } from '@storybook/react';
-import { SequenceTable } from './SequenceNewTable';
+import { SequenceNewTable } from './SequenceNewTable';
 
 export default {
   title: 'Sequences/SequenceNewTable',
-  component: SequenceTable,
+  component: SequenceNewTable,
   decorators: [(storyFn: any) => <Container>{storyFn()}</Container>],
   argTypes: { query: { control: 'text' } },
 };
 
-export const Example: ComponentStory<typeof SequenceTable> = args => (
-  <SequenceTable {...args} />
+export const Example: ComponentStory<typeof SequenceNewTable> = args => (
+  <SequenceNewTable {...args} />
 );
 Example.args = {
   data: sequences,

@@ -9,16 +9,18 @@ export const HighlightCell = React.memo(
     text,
     query,
     lines = 2,
+    className,
   }: {
     text?: string;
     query?: string;
     lines?: number;
+    className?: string;
   }) => {
     const textWrapperRef = useRef<HTMLDivElement>(null);
     const isEllipsisActive = useIsOverflow(textWrapperRef);
 
     return (
-      <EllipsisText level={2} lines={lines}>
+      <EllipsisText level={2} lines={lines} className={className}>
         <div ref={textWrapperRef}>
           {isEllipsisActive ? (
             <Tooltip

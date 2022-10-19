@@ -17,7 +17,7 @@ import {
 } from '@cognite/sdk-react-query-hooks';
 import { useQueries } from 'react-query';
 import { useSDK } from '@cognite/sdk-provider';
-import { calculateGranularity, TIME_SELECT } from 'containers';
+import { calculateGranularity } from 'containers';
 
 type ResourceType = FileInfo | Asset | CogniteEvent | Sequence | Timeseries;
 
@@ -26,13 +26,14 @@ const PAGE_SIZE = 50;
 // Adding this same as the num of point in Timeseries charts component to easily apply the cache
 const NUMBER_OF_POINTS = 1000;
 
-const useDatapointFromTimeseries = <T extends ResourceType>(
+export const useDatapointFromTimeseries = <T extends ResourceType>(
   items: T[],
   dateRange: [Date, Date],
   api: SdkResourceType,
   hideEmptyData?: boolean
 ) => {
   const sdk = useSDK();
+
   const timeseriesAggregateResults = useQueries(
     items.map(timeseries => ({
       queryKey: [
@@ -99,9 +100,9 @@ const useDatapointFromTimeseries = <T extends ResourceType>(
 export const useResourceResults = <T extends ResourceType>(
   api: SdkResourceType,
   query?: string,
-  filter?: any,
-  dateRange: [Date, Date] | undefined = TIME_SELECT['2Y'].getTime(),
-  hideEmptyData?: boolean
+  filter?: any
+  // dateRange: [Date, Date] | undefined = TIME_SELECT['2Y'].getTime(),
+  // hideEmptyData?: boolean
 ) => {
   const searchEnabled = !!query && query.length > 0;
 
@@ -158,12 +159,14 @@ export const useResourceResults = <T extends ResourceType>(
     searchEnabled,
   };
 
-  const itemsWithoutEmptyDataPoints = useDatapointFromTimeseries(
-    items,
-    dateRange,
-    api,
-    hideEmptyData
-  );
+  //TODO Rewrite this logic
+  // This was causing the whole table to rerender and making alot of api request will need to be fix in the future to hide empty data columns
+  // const itemsWithoutEmptyDataPoints = useDatapointFromTimeseries(
+  //   items,
+  //   dateRange,
+  //   api,
+  //   hideEmptyData
+  // );
 
-  return { ...result, items: itemsWithoutEmptyDataPoints };
+  return { ...result, items };
 };

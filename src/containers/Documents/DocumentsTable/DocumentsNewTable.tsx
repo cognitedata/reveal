@@ -6,11 +6,12 @@ import { DocumentNamePreview } from './DocumentNamePreview';
 import { DocumentContentPreview } from './DocumentContentPreview';
 import { Column, Row } from 'react-table';
 import { Document } from 'domain/documents';
-import { Body, Flex, Button } from '@cognite/cogs.js';
+import { Button, Body } from '@cognite/cogs.js';
 import { useQuery } from 'react-query';
 import { useSDK } from '@cognite/sdk-provider';
 import { getRootAsset } from 'utils';
-import { Asset } from '@cognite/sdk';
+import { createLink } from '@cognite/cdf-utilities';
+import { TimeDisplay } from 'components';
 
 // TODO: Might need to add RelationshipLabels at some point.
 export type DocumentTableProps = Omit<
@@ -18,12 +19,11 @@ export type DocumentTableProps = Omit<
   'columns'
 > & {
   query?: string;
-  onRootAssetClick: (asset: Asset) => void;
 };
 export type DocumentWithRelationshipLabels = Document;
 
 export const DocumentsTable = (props: DocumentTableProps) => {
-  const { query, onRootAssetClick } = props;
+  const { query } = props;
   const sdk = useSDK();
 
   const columns = [
@@ -44,8 +44,23 @@ export const DocumentsTable = (props: DocumentTableProps) => {
         return <DocumentContentPreview document={row.original} query={query} />;
       },
     },
+    {
+      id: 'author',
+      Header: 'Author',
+      Cell: ({ row }: { row: Row<Document> }) => {
+        return <Body level={2}>{row.original.author}</Body>;
+      },
+    },
     Table.Columns.mimeType,
-    Table.Columns.lastUpdatedTime,
+    {
+      id: 'modifiedTime',
+      Header: 'Last updated',
+      Cell: ({ row }: { row: Row<Document> }) => (
+        <Body level={2}>
+          <TimeDisplay value={row.original.modifiedTime} relative withTooltip />
+        </Body>
+      ),
+    },
     Table.Columns.created,
     {
       id: 'rootAsset',
@@ -67,25 +82,18 @@ export const DocumentsTable = (props: DocumentTableProps) => {
 
         if (rootAsset) {
           return (
-            <Body level={2}>
-              <Flex alignItems="center">
-                <Button
-                  type="link"
-                  icon="ArrowRight"
-                  iconPlacement="right"
-                  style={{ color: 'inherit' }}
-                  onClick={e => {
-                    e.stopPropagation();
-                    onRootAssetClick(rootAsset);
-                  }}
-                >
-                  {rootAsset?.name}
-                </Button>
-              </Flex>
-            </Body>
+            <Button
+              href={createLink(`/explore/asset/${rootAsset.id}`)}
+              // rel="noopener noreferrer"
+              target="_blank"
+              type="link"
+              iconPlacement="right"
+              icon="ArrowUpRight"
+            >
+              {rootAsset?.name}
+            </Button>
           );
         }
-
         return null;
       },
     },
@@ -116,7 +124,7 @@ export const DocumentsTable = (props: DocumentTableProps) => {
         'name',
         'content',
         'mimeType',
-        'lastUpdatedTime',
+        'modifiedTime',
         'createdTime',
         'rootAsset',
       ]}

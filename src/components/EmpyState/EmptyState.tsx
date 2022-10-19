@@ -18,10 +18,12 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
 }) => {
   return (
     <EmptyStateWrapper justifyContent="center" alignItems="center">
-      <Flex direction="column" gap={4} alignItems="center">
-        {isLoading ? <Loading /> : <Graphic type={graphic || 'Search'} />}
-        <Title level={2}>{title || 'No results available'}</Title>
-        {body && <Body level={2}>{body}</Body>}
+      <Flex direction="column" gap={8} alignItems="center">
+        <GraphicWrapper>
+          {isLoading ? <Loading /> : <Graphic type={graphic || 'Search'} />}
+        </GraphicWrapper>
+        <Title level={5}>{title || 'No results available'}</Title>
+        {body && <StyledBody level={2}>{body}</StyledBody>}
       </Flex>
     </EmptyStateWrapper>
   );
@@ -29,4 +31,10 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
 
 const EmptyStateWrapper = styled(Flex)`
   height: 100%;
+`;
+const GraphicWrapper = styled.div`
+  padding-bottom: 8px;
+`;
+const StyledBody = styled(Body)`
+  color: var(--cogs-text-icon--medium);
 `;

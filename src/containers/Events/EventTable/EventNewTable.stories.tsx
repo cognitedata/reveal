@@ -3,17 +3,17 @@ import styled from 'styled-components';
 import { action } from '@storybook/addon-actions';
 import { events } from 'stubs/events';
 import { ComponentStory } from '@storybook/react';
-import { EventTable } from './EventNewTable';
+import { EventNewTable } from './EventNewTable';
 
 export default {
   title: 'Events/EventNewTable',
-  component: EventTable,
+  component: EventNewTable,
   decorators: [(storyFn: any) => <Container>{storyFn()}</Container>],
   argTypes: { query: { control: 'text' } },
 };
 
-export const Example: ComponentStory<typeof EventTable> = args => (
-  <EventTable {...args} />
+export const Example: ComponentStory<typeof EventNewTable> = args => (
+  <EventNewTable {...args} />
 );
 Example.args = {
   data: events,

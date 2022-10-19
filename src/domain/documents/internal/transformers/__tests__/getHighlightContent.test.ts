@@ -1,5 +1,5 @@
-import { DASH } from 'utils';
-import { mockDocument } from 'stubs/documents';
+import { DASH } from '../../../../../utils';
+import { mockDocument } from '../../../../../stubs/documents';
 import { getHighlightContent } from '../getHighlightContent';
 
 describe('getHighlightContent', () => {

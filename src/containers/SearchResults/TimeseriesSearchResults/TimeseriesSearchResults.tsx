@@ -1,42 +1,28 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { TimeseriesFilter, Timeseries } from '@cognite/sdk';
 import {
   SelectableItemsProps,
   DateRangeProps,
   TableStateProps,
   ResourceItem,
+  convertResourceType,
 } from 'types';
-import {
-  TimeseriesTable,
-  TimeseriesSparklineCard,
-} from 'containers/Timeseries';
-import {
-  GridTable,
-  SpacedRow,
-  RangePicker,
-  EnsureNonEmptyResource,
-} from 'components';
-import { ResultTableLoader } from 'containers/ResultTableLoader';
+import { TimeseriesNewTable } from 'containers/Timeseries';
+import { EnsureNonEmptyResource } from 'components';
+
 import { RelatedResourceType } from 'hooks/RelatedResourcesHooks';
-import { TIME_SELECT } from 'containers';
-import { Body, Checkbox, Flex } from '@cognite/cogs.js';
-import { TimeseriesToolbar } from './TimeseriesToolbar';
-import styled from 'styled-components';
+
+import { Flex, Loader } from '@cognite/cogs.js';
+
+import { SearchResultToolbar, useResourceResults } from '..';
 
 export const TimeseriesSearchResults = ({
   query = '',
   filter = {},
-  onClick,
-  initialView = 'list',
-  showRelatedResources = false,
-  showDatePicker = false,
-  relatedResourceType,
-  parentResource,
   showCount = false,
   count,
-  dateRange,
-  onDateRangeChange,
-  ...extraProps
+  onClick,
+  relatedResourceType,
 }: {
   query?: string;
   showCount?: boolean;
@@ -51,106 +37,40 @@ export const TimeseriesSearchResults = ({
 } & SelectableItemsProps &
   DateRangeProps &
   TableStateProps) => {
-  const [stateDateRange, stateSetDateRange] = useState<[Date, Date]>(
-    TIME_SELECT['1Y'].getTime()
-  );
-  const [hideEmptyData, setHideEmptyData] = useState(false);
-  const [currentView, setCurrentView] = useState<string>(initialView);
-  const onClickCheckbox = () => {
-    setHideEmptyData(prev => !prev);
-  };
+  const api = convertResourceType('timeSeries');
+
+  const { canFetchMore, fetchMore, isFetched, items } =
+    useResourceResults<Timeseries>(api, query, filter);
+  // TODO Needs refactoring for hiding emppty datasets
+
+  if (!isFetched) {
+    return <Loader />;
+  }
 
   return (
     <>
-      <TimeseriesToolbar
-        showCount={showCount}
-        query={query}
-        filter={filter}
-        currentView={currentView}
-        onViewChange={setCurrentView}
-        count={count}
-      />
-
       <EnsureNonEmptyResource api="timeSeries">
-        <TopbarContainer>
-          {showDatePicker && (
-            <SpacedRow style={{ marginBottom: 8 }}>
-              <Body level={4} style={{ alignSelf: 'center' }}>
-                Showing graph data from
-              </Body>
-              {onDateRangeChange && (
-                <RangePicker
-                  initialRange={dateRange || stateDateRange}
-                  onRangeChanged={onDateRangeChange || stateSetDateRange}
-                />
-              )}
-            </SpacedRow>
-          )}
-          {showDatePicker && (
-            <Checkbox
-              onChange={onClickCheckbox}
-              name="Hidden"
-              checked={hideEmptyData}
-            >
-              Hide empty
-            </Checkbox>
-          )}
-        </TopbarContainer>
+        <Flex justifyContent="space-between" alignItems="center"></Flex>
 
-        <ResultTableLoader<Timeseries>
-          mode={showRelatedResources ? 'relatedResources' : 'search'}
-          hideEmptyData={hideEmptyData}
-          type="timeSeries"
-          filter={filter}
-          query={query}
-          dateRange={dateRange || [new Date(), new Date()]}
-          parentResource={parentResource}
-          relatedResourceType={relatedResourceType}
-          {...(relatedResourceType === 'relationship'
-            ? { estimatedRowHeight: 100 }
-            : {})}
-          {...extraProps}
-        >
-          {props =>
-            currentView === 'grid' ? (
-              <GridTable<Timeseries>
-                {...props}
-                cellHeight={360}
-                minCellWidth={500}
-                onEndReached={() => props.onEndReached!({ distanceFromEnd: 0 })}
-                onItemClicked={timeseries => onClick(timeseries)}
-                {...extraProps}
-                renderCell={cellProps => (
-                  <TimeseriesSparklineCard
-                    {...cellProps}
-                    dateRange={dateRange || stateDateRange}
-                    onDateRangeChange={onDateRangeChange || stateSetDateRange}
-                  />
-                )}
-                canFetchMore
-              />
-            ) : (
-              <TimeseriesTable
-                {...props}
-                onRowClick={file => {
-                  onClick(file);
-                  return true;
-                }}
-                dateRange={dateRange || stateDateRange}
-                relatedResourceType={relatedResourceType}
-                onDateRangeChange={onDateRangeChange || stateSetDateRange}
-              />
-            )
+        <TimeseriesNewTable
+          tableHeaders={
+            <SearchResultToolbar
+              showCount={showCount}
+              api={query?.length > 0 ? 'search' : 'list'}
+              type="timeSeries"
+              filter={filter}
+              count={count}
+              query={query}
+            />
           }
-        </ResultTableLoader>
+          data={items}
+          fetchMore={fetchMore}
+          showLoadButton
+          hasNextPage={canFetchMore}
+          onRowClick={timseries => onClick(timseries)}
+          relatedResourceType={relatedResourceType}
+        />
       </EnsureNonEmptyResource>
     </>
   );
 };
-
-const TopbarContainer = styled(Flex).attrs({
-  justifyContent: 'space-between',
-  alignItems: 'center',
-})`
-  padding: 0 16px;
-`;

@@ -16,7 +16,7 @@ import {
 } from 'react-table';
 import styled from 'styled-components';
 import { HTML5Backend } from 'react-dnd-html5-backend';
-import { Flex } from '@cognite/cogs.js';
+import { Body, Flex } from '@cognite/cogs.js';
 import { DndProvider } from 'react-dnd';
 
 import { ColumnToggle } from './ColumnToggle';
@@ -24,6 +24,7 @@ import { ColumnToggle } from './ColumnToggle';
 import { SortIcon } from './SortIcon';
 import { ResourceTableColumns } from './columns';
 import { LoadMore, LoadMoreProps } from './LoadMore';
+// import { useLocalStorageState } from 'utils';
 import { EmptyState } from 'components/EmpyState/EmptyState';
 
 export interface TableProps<T extends Record<string, any>>
@@ -36,7 +37,7 @@ export interface TableProps<T extends Record<string, any>>
   onSort?: (props: OnSortProps<T>) => void;
   visibleColumns?: IdType<T>[];
   onRowClick?: (
-    row?: T,
+    row: T,
     evt?: React.MouseEvent<HTMLDivElement, MouseEvent>
   ) => void;
   showLoadButton?: boolean;
@@ -59,8 +60,8 @@ export function NewTable<T extends TableData>({
   onSort,
   visibleColumns = [],
   isSortingEnabled = false,
-  isStickyHeader = false,
-  isResizingColumns = false,
+  isStickyHeader = true,
+  isResizingColumns = true,
   showLoadButton = false,
   hasNextPage,
   isLoadingMore,
@@ -116,12 +117,13 @@ export function NewTable<T extends TableData>({
     }
   };
 
-  const hiddenColumns =
-    visibleColumns.length === 0
+  const hiddenColumns = useMemo(() => {
+    return visibleColumns.length === 0
       ? []
       : (allFields.filter(
           col => !visibleColumns.some(visibleColumn => visibleColumn === col)
         ) as IdType<T>[]);
+  }, [allFields, visibleColumns]);
 
   const {
     getTableProps,
@@ -249,7 +251,7 @@ export function NewTable<T extends TableData>({
                     {row.cells.map(cell => {
                       return (
                         <Td {...cell.getCellProps()}>
-                          {cell.render('Cell') || '-'}
+                          <Body level={2}>{cell.render('Cell') || '–'}</Body>
                         </Td>
                       );
                     })}
@@ -284,15 +286,15 @@ const TableContainer = styled.div`
 const ColumnSelectorWrapper = styled.div`
   width: 100%;
   display: flex;
-  padding-right: 16px;
   align-items: center;
+  padding: 16px;
+  gap: 10px;
 `;
 
 const StyledTable = styled.div`
   color: var(--cogs-text-icon--medium);
   position: relative;
   width: 100%;
-  overflow-x: auto;
 
   & > div {
     min-width: 100%;
@@ -325,11 +327,6 @@ const Th = styled.div`
   padding: 8px 12px;
 `;
 
-const Td = styled.div`
-  padding: 8px 12px;
-  word-wrap: break-word;
-`;
-
 const StyledFlex = styled.div`
   margin-left: auto;
 `;
@@ -345,10 +342,12 @@ const Tr = styled.div`
   color: inherit;
   border-bottom: 1px solid var(--cogs-border--muted);
   display: flex;
-  padding-top: 10px;
+  align-items: center;
   height: 100%;
+
   background: white;
-  min-height: 38px;
+
+  min-height: 42px;
 
   &:hover {
     background: var(--cogs-surface--medium);
@@ -360,8 +359,8 @@ const Tr = styled.div`
   }
 
   &:focus {
-    outline: 2px solid var(--cogs-border--interactive--toggled-default);
-    outline-offset: -2px;
+    outline: none;
+    background-color: var(--cogs-surface--interactive--toggled-pressed);
   }
 
   ${Thead} &:hover {
@@ -369,16 +368,20 @@ const Tr = styled.div`
     cursor: unset;
   }
 `;
+const Td = styled.div`
+  word-wrap: break-word;
+  padding: 8px 12px;
+  font-size: 14px;
+`;
 
 const ThWrapper = styled.div`
   display: flex;
   align-items: center;
   font-weight: 500;
   color: var(--cogs-text-icon--strong);
-
   gap: 10px;
 
-  &:hover {
+  &:hover > ${ResizerWrapper} {
     border-right: 2px solid rgba(0, 0, 0, 0.1);
   }
 `;

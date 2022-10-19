@@ -2,12 +2,11 @@ import React from 'react';
 import { ResourceItem, convertResourceType, SelectableItemsProps } from 'types';
 import { useCdfItem, useCdfItems } from '@cognite/sdk-react-query-hooks';
 import { Asset } from '@cognite/sdk';
-import { AssetTable } from 'containers';
+import { AssetNewTable } from 'containers';
 
 export const AssetIdTable = ({
   resource,
   onItemClicked,
-  ...props
 }: {
   resource: ResourceItem;
   onItemClicked: (id: number) => void;
@@ -21,7 +20,7 @@ export const AssetIdTable = ({
   const assetIds: number[] =
     (item as any).assetIds || [(item as any).assetId] || [];
 
-  const { data: assets } = useCdfItems<Asset>(
+  const { data: assets = [] } = useCdfItems<Asset>(
     'assets',
     assetIds.map(id => ({ id })),
     false,
@@ -29,10 +28,9 @@ export const AssetIdTable = ({
   );
 
   return (
-    <AssetTable
+    <AssetNewTable
       data={assets}
-      onRowClick={el => onItemClicked(el.id)}
-      {...props}
+      onRowClick={asset => onItemClicked(asset.id)}
     />
   );
 };

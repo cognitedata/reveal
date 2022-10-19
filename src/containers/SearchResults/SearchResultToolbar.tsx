@@ -1,5 +1,4 @@
 import React from 'react';
-import styled from 'styled-components';
 import { ResultCount, SpacedRow } from 'components';
 import { ResourceType } from 'types';
 
@@ -20,7 +19,7 @@ export const SearchResultToolbar = ({
   count?: number;
   showCount?: boolean;
 }) => (
-  <ToolbarRow>
+  <SpacedRow>
     {showCount && (
       <ResultCount
         type={type}
@@ -32,12 +31,5 @@ export const SearchResultToolbar = ({
     )}
     <div className="spacer" />
     {children}
-  </ToolbarRow>
+  </SpacedRow>
 );
-
-const ToolbarRow = styled(SpacedRow)`
-  align-items: center;
-  height: 60px;
-  margin-left: 16px;
-  margin-right: 16px;
-`;

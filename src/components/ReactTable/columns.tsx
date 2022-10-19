@@ -13,7 +13,7 @@ import capitalize from 'lodash/capitalize';
 import uniqueId from 'lodash/uniqueId';
 import React from 'react';
 
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 import { HighlightCell, TimeDisplay } from 'components';
 
@@ -26,17 +26,17 @@ export const ResourceTableColumns: ResourceTableHashMap = {
   name: {
     Header: 'Name',
     accessor: 'name',
-    Cell: ({ value }) => <HighlightCell text={value || '-'} />,
+    Cell: ({ value }) => <HighlightCell text={value || '–'} lines={1} />,
   },
   description: {
     Header: 'Description',
     accessor: 'description',
-    Cell: ({ value }) => <HighlightCell text={value || '-'} />,
+    Cell: ({ value }) => <HighlightCell text={value} lines={1} />,
   },
   externalId: {
     Header: 'External ID',
     accessor: 'externalId',
-    Cell: ({ value }) => <HighlightCell text={value || '-'} />,
+    Cell: ({ value }) => <HighlightCell text={value} lines={1} />,
   },
   created: {
     Header: 'Created',
@@ -92,12 +92,12 @@ export const ResourceTableColumns: ResourceTableHashMap = {
   isString: {
     Header: 'Is String',
     accessor: 'isString',
-    Cell: ({ value }) => <Body level={3}>{capitalize(value.toString())}</Body>,
+    Cell: ({ value }) => <Body level={2}>{capitalize(value.toString())}</Body>,
   },
   isStep: {
     Header: 'Is Step',
     accessor: 'isStep',
-    Cell: ({ value }) => <Body level={3}>{capitalize(value.toString())}</Body>,
+    Cell: ({ value }) => <Body level={2}>{capitalize(value.toString())}</Body>,
   },
   dataSet: {
     Header: 'Dataset',
@@ -110,7 +110,7 @@ export const ResourceTableColumns: ResourceTableHashMap = {
           enabled: Number.isFinite(value),
         }
       );
-      return <Body level={3}>{(ds && ds?.name) || '-'}</Body>;
+      return <Body level={2}>{(ds && ds?.name) || '–'}</Body>;
     },
   },
   assets: {
@@ -159,21 +159,21 @@ export const ResourceTableColumns: ResourceTableHashMap = {
       const finalString = row.original.subtype
         ? `${value} - ${row.original.subtype}`
         : row.original.type;
-      return <Body level={3}>{finalString}</Body>;
+      return <HighlightCell lines={1} text={finalString} />;
     },
   },
   startTime: {
     accessor: 'startTime',
     Header: 'Start Time',
     Cell: ({ value }) => (
-      <Body level={2}>{value ? <TimeDisplay value={value} /> : '-'}</Body>
+      <Body level={2}>{value ? <TimeDisplay value={value} /> : '–'}</Body>
     ),
   },
   endTime: {
     accessor: 'endTime',
     Header: 'End Time',
     Cell: ({ value }) => (
-      <Body level={2}>{value ? <TimeDisplay value={value} /> : '-'}</Body>
+      <Body level={2}>{value ? <TimeDisplay value={value} /> : '–'}</Body>
     ),
   },
   mimeType: {
@@ -195,7 +195,7 @@ export const ResourceTableColumns: ResourceTableHashMap = {
         {file && file.uploaded ? (
           <TimeDisplay value={file.uploadedTime} relative withTooltip />
         ) : (
-          '-'
+          '–'
         )}
       </Body>
     ),
@@ -206,7 +206,7 @@ export const ResourceTableColumns: ResourceTableHashMap = {
   },
   columns: {
     accessor: 'columns',
-    Header: '# of Columns',
+    Header: '№ of Columns',
     Cell: ({ value }) => <Body level={2}>{value ? value.length : 0}</Body>,
   },
   asset: {
@@ -218,11 +218,12 @@ export const ResourceTableColumns: ResourceTableHashMap = {
       return isLoading || rootAsset?.name ? (
         <Button
           type="link"
+          target="_blank"
           href={createLink(`/explore/asset/${value}`)}
           icon="ArrowUpRight"
           iconPlacement="right"
         >
-          {rootAsset?.name}
+          <StyledButton>{rootAsset?.name}</StyledButton>
         </Button>
       ) : null;
     },
@@ -236,11 +237,12 @@ export const ResourceTableColumns: ResourceTableHashMap = {
       return isLoading || rootAsset?.name ? (
         <Button
           type="link"
+          target="_blank"
           href={createLink(`/explore/asset/${value}`)}
           icon="ArrowUpRight"
           iconPlacement="right"
         >
-          {rootAsset?.name}
+          <StyledButton>{rootAsset?.name}</StyledButton>
         </Button>
       ) : null;
     },
@@ -261,9 +263,18 @@ export const ResourceTableColumns: ResourceTableHashMap = {
   },
 };
 
-const StyledTag = styled(Tag)`
+const ellipsistyles = css`
   max-width: 200px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+`;
+
+const StyledTag = styled(Tag)`
+  ${ellipsistyles};
+`;
+
+export const StyledButton = styled.div`
+  ${ellipsistyles};
+  max-width: 80px;
 `;

@@ -4,11 +4,11 @@ import { Loader } from 'components';
 import { SelectableItemsProps, ResourceType, convertResourceType } from 'types';
 import { Alert } from 'antd';
 import {
-  AssetTable,
+  AssetNewTable,
   FileTable,
-  TimeseriesTable,
-  EventTable,
-  SequenceTable,
+  TimeseriesNewTable,
+  SequenceNewTable,
+  EventNewTable,
 } from 'containers';
 
 import { ANNOTATION_METADATA_PREFIX as PREFIX } from '@cognite/annotations';
@@ -75,11 +75,7 @@ export function AnnotationTable({
   switch (resourceType) {
     case 'asset': {
       return (
-        <AssetTable
-          data={items}
-          onRowClick={el => onItemClicked(el.id)}
-          {...props}
-        />
+        <AssetNewTable data={items} onRowClick={el => onItemClicked(el.id)} />
       );
     }
     case 'file': {
@@ -93,28 +89,22 @@ export function AnnotationTable({
     }
     case 'timeSeries': {
       return (
-        <TimeseriesTable
+        <TimeseriesNewTable
           data={items}
           onRowClick={el => onItemClicked(el.id)}
-          {...props}
         />
       );
     }
     case 'event': {
       return (
-        <EventTable
-          data={items}
-          onRowClick={el => onItemClicked(el.id)}
-          {...props}
-        />
+        <EventNewTable data={items} onRowClick={el => onItemClicked(el.id)} />
       );
     }
     case 'sequence': {
       return (
-        <SequenceTable
+        <SequenceNewTable
           data={items}
           onRowClick={el => onItemClicked(el.id)}
-          {...props}
         />
       );
     }

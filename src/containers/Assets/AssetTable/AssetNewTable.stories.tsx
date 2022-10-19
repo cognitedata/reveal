@@ -3,11 +3,11 @@ import styled from 'styled-components';
 import { action } from '@storybook/addon-actions';
 import { assets } from 'stubs/assets';
 import { ComponentStory } from '@storybook/react';
-import { AssetTable } from './AssetNewTable';
+import { AssetNewTable } from './AssetNewTable';
 
 export default {
   title: 'Assets/AssetNewTable',
-  component: AssetTable,
+  component: AssetNewTable,
   decorators: [
     (storyFn: any) => (
       <AssetNewTableContainer>{storyFn()}</AssetNewTableContainer>
@@ -21,8 +21,8 @@ export default {
   },
 };
 
-export const Example: ComponentStory<typeof AssetTable> = args => (
-  <AssetTable {...args} />
+export const Example: ComponentStory<typeof AssetNewTable> = args => (
+  <AssetNewTable {...args} />
 );
 Example.args = {
   data: assets,

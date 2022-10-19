@@ -4,3 +4,4 @@ export * from './AssetTable/AssetTable';
 export * from './AssetTreeTable/AssetTreeTable';
 export * from './AssetBreadcrumb/AssetBreadcrumb';
 export * from './AssetSelect/AssetSelect';
+export { AssetNewTable, ParentCell } from './AssetTable/AssetNewTable';

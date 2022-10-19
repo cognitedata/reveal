@@ -150,29 +150,24 @@ export const useInfinite3DModels = (
  */
 export const useIsOverflow = (ref: React.RefObject<HTMLElement>) => {
   const [isOverflow, setIsOverflow] = useState(false);
-  const { current } = ref;
+
   useEffect(() => {
     if (
-      current?.clientWidth &&
-      current?.scrollWidth &&
-      current?.clientHeight &&
-      current?.scrollHeight
+      ref.current?.clientWidth &&
+      ref.current?.scrollWidth &&
+      ref.current?.clientHeight &&
+      ref.current?.scrollHeight
     ) {
       if (
-        current?.clientWidth < current?.scrollWidth ||
-        current?.clientHeight < current?.scrollHeight
+        ref.current?.clientWidth < ref.current?.scrollWidth ||
+        ref.current?.clientHeight < ref.current?.scrollHeight
       ) {
         setIsOverflow(true);
       } else {
         setIsOverflow(false);
       }
     }
-  }, [
-    current?.clientWidth,
-    current?.clientHeight,
-    current?.scrollWidth,
-    current?.scrollHeight,
-  ]);
+  }, [ref]);
 
   return isOverflow;
 };

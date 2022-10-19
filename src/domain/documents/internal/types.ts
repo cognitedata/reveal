@@ -16,7 +16,7 @@ export interface Document {
   title?: string;
   author?: string;
   createdTime: EpochTimestamp;
-  lastUpdatedTime?: EpochTimestamp;
+  modifiedTime?: EpochTimestamp;
   lastIndexedTime?: EpochTimestamp;
   mimeType?: string;
   extension?: string;

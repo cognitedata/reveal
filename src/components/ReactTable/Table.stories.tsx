@@ -113,15 +113,16 @@ ExampleWithSorting.play = async ({ canvasElement }) => {
   let rows = TbodyElement.getAllByRole('row');
   expect(rows.length).toBe(3);
 
-  let firstCell = rows[0].querySelector('[role="cell"]')?.innerHTML;
-  expect(firstCell).toBe('Hello');
+  let firstCell = within(rows[0].querySelector('[role="cell"]')!);
+
+  expect(firstCell.getByText('Hello').innerHTML).toBe('Hello');
 
   const button = canvas.getAllByRole('button');
   userEvent.dblClick(button[0]);
 
   rows = TbodyElement.getAllByRole('row');
-  firstCell = rows[0].querySelector('[role="cell"]')?.innerHTML;
-  expect(firstCell).toBe('whatever');
+  firstCell = within(rows[0].querySelector('[role="cell"]')!);
+  expect(firstCell.getByText('whatever').innerHTML).toBe('whatever');
 };
 
 export const ExampleWithStickyHeader = () => {
@@ -270,6 +271,7 @@ export const ExampleWithLoadMoreButton: ComponentStory<typeof Table> = () => {
       data={data}
       columns={columns}
       showLoadButton
+      visibleColumns={['col2']}
       fetchMore={fetchMore}
       hasNextPage={hasNextPage}
       isLoadingMore={isLoading}

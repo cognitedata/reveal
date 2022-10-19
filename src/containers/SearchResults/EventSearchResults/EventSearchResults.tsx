@@ -6,22 +6,24 @@ import {
   TableStateProps,
   DateRangeProps,
   ResourceItem,
+  convertResourceType,
 } from 'types';
-import { EventTable } from 'containers/Events';
-import { ResultTableLoader } from 'containers/ResultTableLoader';
+import { EventNewTable } from 'containers/Events';
+
 import { RelatedResourceType } from 'hooks/RelatedResourcesHooks';
 import { EnsureNonEmptyResource } from 'components';
+import { useResourceResults } from '../SearchResultLoader';
+import { Loader } from '@cognite/cogs.js';
 
 export const EventSearchResults = ({
   query = '',
   filter = {},
   onClick,
-  showRelatedResources = false,
+
   relatedResourceType,
-  parentResource,
+
   count,
   showCount = false,
-  ...extraProps
 }: {
   query?: string;
   filter?: EventFilter;
@@ -33,39 +35,35 @@ export const EventSearchResults = ({
   onClick: (item: CogniteEvent) => void;
 } & SelectableItemsProps &
   TableStateProps &
-  DateRangeProps) => (
-  <>
-    {showCount && (
-      <SearchResultToolbar
-        showCount={showCount}
-        api={query.length > 0 ? 'search' : 'list'}
-        type="event"
-        filter={filter}
-        query={query}
-        count={count}
-      />
-    )}
+  DateRangeProps) => {
+  const api = convertResourceType('event');
+  const { canFetchMore, fetchMore, isFetched, items } =
+    useResourceResults<CogniteEvent>(api, query, filter);
+
+  if (!isFetched) {
+    return <Loader />;
+  }
+
+  return (
     <EnsureNonEmptyResource api="event">
-      <ResultTableLoader<CogniteEvent>
-        mode={showRelatedResources ? 'relatedResources' : 'search'}
-        type="event"
-        filter={filter}
-        query={query}
-        parentResource={parentResource}
-        relatedResourceType={relatedResourceType}
-        {...extraProps}
-      >
-        {props => (
-          <EventTable
-            {...props}
-            {...(relatedResourceType === 'relationship'
-              ? { estimatedRowHeight: 100 }
-              : {})}
-            onRowClick={event => onClick(event)}
-            relatedResourceType={relatedResourceType}
+      <EventNewTable
+        tableHeaders={
+          <SearchResultToolbar
+            api={query.length > 0 ? 'search' : 'list'}
+            type="event"
+            filter={filter}
+            showCount={showCount}
+            query={query}
+            count={count}
           />
-        )}
-      </ResultTableLoader>
+        }
+        data={items}
+        fetchMore={fetchMore}
+        showLoadButton
+        hasNextPage={canFetchMore}
+        onRowClick={event => onClick(event)}
+        relatedResourceType={relatedResourceType}
+      />
     </EnsureNonEmptyResource>
-  </>
-);
+  );
+};

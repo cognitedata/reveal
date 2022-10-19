@@ -6,22 +6,24 @@ import {
   TableStateProps,
   DateRangeProps,
   ResourceItem,
+  convertResourceType,
 } from 'types';
-import { SequenceTable } from 'containers/Sequences';
-import { ResultTableLoader } from 'containers/ResultTableLoader';
+import { SequenceNewTable } from 'containers/Sequences';
+
 import { RelatedResourceType } from 'hooks/RelatedResourcesHooks';
 import { EnsureNonEmptyResource } from 'components';
+import { useResourceResults } from '../SearchResultLoader';
+import { Loader } from '@cognite/cogs.js';
 
 export const SequenceSearchResults = ({
   query = '',
   filter = {},
-  showRelatedResources = false,
+
   relatedResourceType,
-  parentResource,
+
   count,
   onClick,
   showCount = false,
-  ...extraProps
 }: {
   query?: string;
   filter?: Required<SequenceFilter>['filter'];
@@ -33,37 +35,33 @@ export const SequenceSearchResults = ({
   onClick: (item: Sequence) => void;
 } & SelectableItemsProps &
   TableStateProps &
-  DateRangeProps) => (
-  <>
-    <SearchResultToolbar
-      api={query.length > 0 ? 'search' : 'list'}
-      type="sequence"
-      filter={filter}
-      showCount={showCount}
-      query={query}
-      count={count}
-    />
+  DateRangeProps) => {
+  const api = convertResourceType('sequence');
+  const { canFetchMore, fetchMore, isFetched, items } =
+    useResourceResults<Sequence>(api, query, filter);
+
+  if (!isFetched) {
+    return <Loader />;
+  }
+  return (
     <EnsureNonEmptyResource api="sequence">
-      <ResultTableLoader<Sequence>
-        mode={showRelatedResources ? 'relatedResources' : 'search'}
-        type="sequence"
-        filter={filter}
-        query={query}
-        parentResource={parentResource}
-        relatedResourceType={relatedResourceType}
-        {...(relatedResourceType === 'relationship'
-          ? { estimatedRowHeight: 100 }
-          : {})}
-        {...extraProps}
-      >
-        {props => (
-          <SequenceTable
-            {...props}
-            onRowClick={sequence => onClick(sequence)}
-            relatedResourceType={relatedResourceType}
+      <SequenceNewTable
+        tableHeaders={
+          <SearchResultToolbar
+            api={query.length > 0 ? 'search' : 'list'}
+            type="sequence"
+            filter={filter}
+            showCount={showCount}
+            query={query}
+            count={count}
           />
-        )}
-      </ResultTableLoader>
+        }
+        data={items}
+        fetchMore={fetchMore}
+        hasNextPage={canFetchMore}
+        onRowClick={sequence => onClick(sequence)}
+        relatedResourceType={relatedResourceType}
+      />
     </EnsureNonEmptyResource>
-  </>
-);
+  );
+};

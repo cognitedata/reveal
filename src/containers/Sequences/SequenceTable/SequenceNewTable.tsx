@@ -6,8 +6,11 @@ import { getNewColumnsWithRelationshipLabels } from 'utils';
 import { Column } from 'react-table';
 
 export type SequenceWithRelationshipLabels = Sequence & RelationshipLabels;
-export const SequenceTable = (
-  props: Omit<TableProps<SequenceWithRelationshipLabels>, 'columns'> &
+export const SequenceNewTable = (
+  props: Omit<
+    TableProps<SequenceWithRelationshipLabels | Sequence>,
+    'columns'
+  > &
     RelationshipLabels
 ) => {
   const { relatedResourceType, ...rest } = props;
@@ -36,6 +39,7 @@ export const SequenceTable = (
   return (
     <Table<Sequence>
       columns={updatedColumns}
+      isStickyHeader
       visibleColumns={[
         'name',
         'externalId',

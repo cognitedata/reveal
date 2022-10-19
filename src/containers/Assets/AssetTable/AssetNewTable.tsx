@@ -1,18 +1,26 @@
 import React, { useMemo } from 'react';
-import { Button } from '@cognite/cogs.js';
 import { Asset } from '@cognite/sdk';
-import { useCdfItem } from '@cognite/sdk-react-query-hooks';
+import { Button } from '@cognite/cogs.js';
 import { Column } from 'react-table';
 import { NewTable as Table, TableProps } from 'components/ReactTable/Table';
 import { getNewColumnsWithRelationshipLabels } from 'utils';
 import { RelationshipLabels } from 'types';
 
-const ParentCell = ({
+export type AssetWithRelationshipLabels = RelationshipLabels & Asset;
+export interface AssetTableProps
+  extends Omit<TableProps<AssetWithRelationshipLabels>, 'columns'> {
+  relatedResourceType?: string;
+}
+
+import { useCdfItem } from '@cognite/sdk-react-query-hooks';
+import { StyledButton } from 'components/ReactTable';
+
+export const ParentCell = ({
   rootId,
-  onRowClick,
+  onClick,
 }: {
   rootId: number;
-  onRowClick: (asset: Asset) => void;
+  onClick: (asset: Asset) => void;
 }) => {
   const { data: rootAsset, isFetched } = useCdfItem<Asset>(
     'assets',
@@ -24,30 +32,23 @@ const ParentCell = ({
 
   return (
     <Button
-      type="link"
-      icon="ArrowRight"
+      type="ghost"
       iconPlacement="right"
-      style={{ color: 'inherit' }}
+      icon="ArrowRight"
       onClick={e => {
         e.stopPropagation();
         if (rootAsset) {
-          onRowClick(rootAsset);
+          onClick(rootAsset);
         }
       }}
     >
-      {isFetched ? rootAsset?.name : 'Loading...'}
+      {isFetched ? <StyledButton>rootAsset?.name</StyledButton> : 'Loading...'}
     </Button>
   );
 };
 
-export type AssetWithRelationshipLabels = RelationshipLabels & Asset;
-export interface AssetTableProps
-  extends TableProps<AssetWithRelationshipLabels> {
-  relatedResourceType?: string;
-}
-
-export const AssetTable = (props: AssetTableProps) => {
-  const { onRowClick = () => {}, data } = props;
+export const AssetNewTable = (props: AssetTableProps) => {
+  const { onRowClick = () => {}, data, ...rest } = props;
 
   const columns = useMemo(
     () => [
@@ -55,11 +56,9 @@ export const AssetTable = (props: AssetTableProps) => {
       Table.Columns.description,
       Table.Columns.externalId,
       {
-        id: 'rootId',
-        Header: 'Root Asset',
-        accessor: 'rootId',
-        Cell: ({ value }) => (
-          <ParentCell rootId={value!} onRowClick={onRowClick} />
+        ...Table.Columns.rootAsset,
+        Cell: ({ value }: { value: number }) => (
+          <ParentCell rootId={value!} onClick={onRowClick} />
         ),
       },
       Table.Columns.created,
@@ -79,6 +78,7 @@ export const AssetTable = (props: AssetTableProps) => {
       visibleColumns={['name', 'rootId']}
       data={data || []}
       onRowClick={onRowClick}
+      {...rest}
     />
   );
 };

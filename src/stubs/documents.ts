@@ -11,7 +11,7 @@ export const mockDocument: Document = {
     5943881697483384, 7404541461379072, 8220256008593149,
   ],
 
-  lastUpdatedTime: new Date().getTime(),
+  modifiedTime: new Date().getTime(),
   createdTime: new Date().getTime(),
   sourceFile: {
     name: 'SKA-AK-P-XB-2930-001.png',
@@ -29,7 +29,7 @@ export const mockDocument2: Document = {
     name: 'random.pdf',
     datasetId: 2980543378855428,
   },
-  lastUpdatedTime: new Date().getTime(),
+  modifiedTime: new Date().getTime(),
   createdTime: new Date().getTime(),
 };
 // This is the normalized version (Document) of DocumentSearchItem from sdk.

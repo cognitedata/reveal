@@ -1,3 +1,5 @@
+import React from 'react';
+
 export const sleep = (milliseconds: number) =>
   new Promise(resolve => setTimeout(resolve, milliseconds));
 
@@ -14,4 +16,31 @@ export function mergeRefs<T = any>(
       }
     });
   };
+}
+
+export function useLocalStorageState<T>(
+  key: string,
+  defaultValue: T | string = '',
+  { serialize = JSON.stringify, deserialize = JSON.parse } = {}
+): [T, React.Dispatch<React.SetStateAction<T>>] {
+  const [state, setState] = React.useState<T>(() => {
+    const valueInLocalStorage = window.localStorage.getItem(key);
+    if (valueInLocalStorage) {
+      return deserialize(valueInLocalStorage);
+    }
+    return defaultValue;
+  });
+
+  const prevKeyRef = React.useRef(key);
+
+  React.useEffect(() => {
+    const prevKey = prevKeyRef.current;
+    if (prevKey !== key) {
+      window.localStorage.removeItem(prevKey);
+    }
+    prevKeyRef.current = key;
+    window.localStorage.setItem(key, serialize(state));
+  }, [key, state, serialize]);
+
+  return [state, setState];
 }
