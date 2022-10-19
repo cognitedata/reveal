@@ -30,6 +30,7 @@ GeneralDetails.LabelsItem = LabelsItem;
 const GeneralDetailsCard = styled.div`
   background-color: var(--cogs-surface--medium);
   border-radius: 8px;
+  margin-bottom: 8px;
 `;
 
 const GeneralDetailsHeader = styled.div`
