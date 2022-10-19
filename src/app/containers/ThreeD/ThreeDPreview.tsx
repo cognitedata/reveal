@@ -50,6 +50,7 @@ export const ThreeDPreview = ({
             modelId={modelId}
             revisionId={revision.id}
             focusAssetId={selectedAssetId}
+            setSelectedAssetId={setSelectedAssetId}
           >
             {({ pointCloudModel, threeDModel, viewer, boundingBox }) => {
               const model = pointCloudModel || threeDModel;
@@ -91,16 +92,10 @@ export const ThreeDPreview = ({
             }}
           </Reveal>
         )}
-
-        {!!selectedAssetId && (
-          <MakeDetailsSeethrough>
-            <AssetPreviewSidebar
-              assetId={selectedAssetId}
-              onClose={() => setSelectedAssetId(null)}
-              isBackButtonAvailable={false}
-            />
-          </MakeDetailsSeethrough>
-        )}
+        <AssetPreviewSidebar
+          assetId={selectedAssetId}
+          isBackButtonAvailable={false}
+        />
       </PreviewContainer>
     </>
   );
@@ -111,13 +106,6 @@ const StyledToolBar = styled(ToolBar)`
   left: 30px;
   bottom: 250px;
   height: 150px;
-`;
-
-const MakeDetailsSeethrough = styled.div`
-  opacity: 0.5;
-  &:hover {
-    opacity: 1;
-  }
 `;
 
 const SidebarContainer = styled(Flex)`

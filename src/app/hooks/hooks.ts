@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import qs from 'query-string';
 import {
   useParams,
@@ -176,3 +176,12 @@ export const useOnPreviewTabChange = (tabType?: string, type?: string) => {
     });
   };
 };
+
+export function usePrevious<T>(value: T) {
+  const ref = useRef<T>();
+  useEffect(() => {
+    ref.current = value;
+  }, [value]); // Only re-run if value changes
+
+  return ref.current;
+}

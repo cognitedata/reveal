@@ -1,34 +1,37 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { AssetPreview } from 'app/containers/Asset/AssetPreview';
 import { Tooltip, Button } from '@cognite/cogs.js';
 
 export const AssetPreviewSidebar = ({
   assetId,
-  onClose,
   isBackButtonAvailable = true,
 }: {
   assetId: number | null;
-  onClose: () => void;
   isBackButtonAvailable?: boolean;
 }) => {
+  const [visible, setVisible] = useState(false);
+  useEffect(() => setVisible(!!assetId), [assetId]);
+
+  if (!visible || !assetId) {
+    return null;
+  }
+
   const closePreviewButton = (
     <Tooltip content="Close preview">
-      <Button icon="Close" onClick={() => onClose()} />
+      <Button icon="Close" onClick={() => setVisible(false)} />
     </Tooltip>
   );
 
   return (
     <SidebarContainer>
-      {assetId && (
-        <PreviewWrapper>
-          <AssetPreview
-            assetId={assetId}
-            actions={closePreviewButton}
-            isBackButtonAvailable={isBackButtonAvailable}
-          />
-        </PreviewWrapper>
-      )}
+      <PreviewWrapper>
+        <AssetPreview
+          assetId={assetId}
+          actions={closePreviewButton}
+          isBackButtonAvailable={isBackButtonAvailable}
+        />
+      </PreviewWrapper>
     </SidebarContainer>
   );
 };

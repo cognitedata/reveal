@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import { use3DModel } from './hooks';
 import {
   AssetNodeCollection,
+  CadIntersection,
   Cognite3DModel,
   Cognite3DViewer,
   CognitePointCloudModel,
@@ -18,6 +19,8 @@ import { useQuery } from 'react-query';
 import { getAssetMappingsByAssetId } from './utils';
 import { ErrorBoundary } from 'react-error-boundary';
 import RevealErrorFeedback from './RevealErrorFeedback';
+import { PointerEventData } from '@cognite/reveal/packages/utilities';
+import { usePrevious } from '@cognite/data-exploration';
 
 type ChildProps = {
   threeDModel?: Cognite3DModel;
@@ -29,10 +32,17 @@ type Props = {
   modelId: number;
   revisionId: number;
   focusAssetId?: number | null;
+  setSelectedAssetId?: (assetId: number | null) => void;
   children?: (opts: ChildProps) => JSX.Element;
 };
 
-export function Reveal({ focusAssetId, modelId, revisionId, children }: Props) {
+export function Reveal({
+  focusAssetId,
+  modelId,
+  revisionId,
+  setSelectedAssetId,
+  children,
+}: Props) {
   const sdk = useSDK();
   const [revealContainer, setRevealContainer] = useState<HTMLDivElement | null>(
     null
@@ -65,12 +75,10 @@ export function Reveal({ focusAssetId, modelId, revisionId, children }: Props) {
     const cameraManager = viewer.cameraManager as DefaultCameraManager;
     cameraManager.setCameraControlsOptions({
       mouseWheelAction: focusAssetId ? 'zoomToTarget' : 'zoomToCursor',
-      changeCameraTargetOnClick: !focusAssetId,
     });
   }, [focusAssetId, viewer]);
 
   useEffect(() => () => viewer?.dispose(), [viewer]);
-
   const { data: models } = useQuery(
     ['reveal-model', modelId, revisionId],
     async () => {
@@ -106,7 +114,7 @@ export function Reveal({ focusAssetId, modelId, revisionId, children }: Props) {
     pointCloudModel: undefined,
   };
 
-  const { data: boundingBox } = useQuery(
+  const { data: selectedAssetBoundingBox } = useQuery(
     ['reveal-model', modelId, revisionId, focusAssetId],
     async () => {
       const boundingBoxNodes = await Promise.all(
@@ -142,13 +150,49 @@ export function Reveal({ focusAssetId, modelId, revisionId, children }: Props) {
         outlineColor: NodeOutlineColor.Cyan,
       });
 
-      if (boundingBox) {
-        viewer?.fitCameraToBoundingBox(boundingBox);
+      if (selectedAssetBoundingBox) {
+        viewer.fitCameraToBoundingBox(selectedAssetBoundingBox);
       }
     } else {
       threeDModel.setDefaultNodeAppearance(DefaultNodeAppearance.Default);
     }
-  }, [boundingBox, focusAssetId, sdk, threeDModel, viewer]);
+  }, [selectedAssetBoundingBox, focusAssetId, sdk, threeDModel, viewer]);
+
+  const onViewerClick = useCallback(
+    async ({ offsetX, offsetY }: PointerEventData) => {
+      if (!threeDModel || !viewer || !setSelectedAssetId) {
+        return;
+      }
+
+      // Click outside selected asset handler
+      const intersection = await viewer.getIntersectionFromPixel(
+        offsetX,
+        offsetY
+      );
+      if (intersection && focusAssetId) {
+        const { treeIndex } = intersection as CadIntersection;
+
+        const node = await threeDModel.mapTreeIndexToNodeId(treeIndex);
+        if (!node) {
+          setSelectedAssetId(null);
+        }
+      } else {
+        setSelectedAssetId(null);
+      }
+    },
+    [focusAssetId, setSelectedAssetId, threeDModel, viewer]
+  );
+  const previousClickHandler = usePrevious(onViewerClick);
+
+  useEffect(() => {
+    if (!viewer) {
+      return;
+    }
+    if (previousClickHandler) {
+      viewer.off('click', previousClickHandler);
+    }
+    viewer.on('click', onViewerClick);
+  }, [onViewerClick, previousClickHandler, viewer]);
 
   if (!apiThreeDModel || !revisionId) {
     return (
@@ -166,7 +210,12 @@ export function Reveal({ focusAssetId, modelId, revisionId, children }: Props) {
       <RevealContainer id="revealContainer" ref={handleMount} />
       {children &&
         viewer &&
-        children({ threeDModel, pointCloudModel, viewer, boundingBox })}
+        children({
+          threeDModel,
+          pointCloudModel,
+          viewer,
+          boundingBox: selectedAssetBoundingBox,
+        })}
     </>
   );
 }
