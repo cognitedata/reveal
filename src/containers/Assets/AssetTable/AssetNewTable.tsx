@@ -3,7 +3,6 @@ import { Asset } from '@cognite/sdk';
 import { Button } from '@cognite/cogs.js';
 import { Column } from 'react-table';
 import { NewTable as Table, TableProps } from 'components/ReactTable/Table';
-import { getNewColumnsWithRelationshipLabels } from 'utils';
 import { RelationshipLabels } from 'types';
 
 export type AssetWithRelationshipLabels = RelationshipLabels & Asset;
@@ -65,16 +64,11 @@ export const AssetNewTable = (props: AssetTableProps) => {
       Table.Columns.labels,
     ],
     [onRowClick]
-  ) as Column<AssetWithRelationshipLabels>[];
-
-  const isRelationshipTable = props?.relatedResourceType === 'relationship';
+  ) as Column<Asset>[];
 
   return (
-    <Table<AssetWithRelationshipLabels>
-      columns={getNewColumnsWithRelationshipLabels<AssetWithRelationshipLabels>(
-        columns,
-        isRelationshipTable
-      )}
+    <Table<Asset>
+      columns={columns}
       visibleColumns={['name', 'rootId']}
       data={data || []}
       onRowClick={onRowClick}

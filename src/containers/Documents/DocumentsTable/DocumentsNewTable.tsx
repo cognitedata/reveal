@@ -107,7 +107,7 @@ export const DocumentsTable = (props: DocumentTableProps) => {
     // Table.Columns.source,
     // Table.Columns.assets,
     // Table.Columns.labels,
-  ] as Column<DocumentWithRelationshipLabels>[];
+  ] as Column<Document>[];
 
   // const updatedColumns =
   //   getNewColumnsWithRelationshipLabels<DocumentWithRelationshipLabels>(
@@ -116,7 +116,7 @@ export const DocumentsTable = (props: DocumentTableProps) => {
   //   );
 
   return (
-    <Table<DocumentWithRelationshipLabels>
+    <Table
       {...props}
       columns={columns}
       data={props.data}

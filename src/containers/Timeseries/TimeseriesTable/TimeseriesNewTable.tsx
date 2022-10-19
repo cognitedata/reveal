@@ -6,7 +6,6 @@ import { TIME_SELECT } from 'containers';
 import { TimeseriesChart } from '..';
 import { Body } from '@cognite/cogs.js';
 import { Column } from 'react-table';
-import { getNewColumnsWithRelationshipLabels } from 'utils';
 
 export type TimeseriesWithRelationshipLabels = Timeseries & RelationshipLabels;
 
@@ -23,7 +22,7 @@ export const TimeseriesNewTable = ({
   const start = startTime.valueOf();
   const end = endTime.valueOf();
 
-  const { relatedResourceType = '', data, ...rest } = props;
+  const { data, ...rest } = props;
   const columns = useMemo(() => {
     const sparkLineColumn: Column<Timeseries & { data: any }> = {
       Header: 'Preview',
@@ -67,17 +66,12 @@ export const TimeseriesNewTable = ({
       Table.Columns.isStep,
       Table.Columns.dataSet,
       Table.Columns.assets,
-    ] as Column<TimeseriesWithRelationshipLabels>[];
+    ] as Column<Timeseries>[];
   }, [end, start]);
-
-  const updatedColumns = getNewColumnsWithRelationshipLabels(
-    columns,
-    relatedResourceType === 'relationship'
-  );
 
   return (
     <Table
-      columns={updatedColumns}
+      columns={columns}
       data={data}
       isStickyHeader
       visibleColumns={visibleColumns}

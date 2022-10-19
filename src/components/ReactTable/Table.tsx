@@ -295,7 +295,8 @@ const StyledTable = styled.div`
   color: var(--cogs-text-icon--medium);
   position: relative;
   width: 100%;
-
+  /* To isolate the z-index to the scope of the table */
+  isolation: isolate;
   & > div {
     min-width: 100%;
     width: fit-content;

@@ -251,9 +251,9 @@ export const ResourceTableColumns: ResourceTableHashMap = {
     accessor: 'relationshipLabels',
     Header: 'Relationship Labels',
     width: 250,
-    Cell: ({ rowData }: { rowData: any }) => (
+    Cell: ({ value }) => (
       <Flex gap={2} wrap="wrap">
-        {rowData.relationshipLabels?.map((label: string) => (
+        {value?.map((label: string) => (
           <Tooltip content={label} key={uniqueId()}>
             <StyledTag style={{ display: 'block' }}>{label}</StyledTag>
           </Tooltip>
