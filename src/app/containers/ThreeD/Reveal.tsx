@@ -47,7 +47,7 @@ export function Reveal({ focusAssetId, modelId, revisionId, children }: Props) {
       return;
     }
 
-    const viewer = new Cognite3DViewer({
+    return new Cognite3DViewer({
       sdk,
       domElement: revealContainer!,
       continuousModelStreaming: true,
@@ -56,15 +56,18 @@ export function Reveal({ focusAssetId, modelId, revisionId, children }: Props) {
         opacity: 1,
       },
     });
+  }, [revealContainer, sdk]);
 
+  useEffect(() => {
+    if (!viewer) {
+      return;
+    }
     const cameraManager = viewer.cameraManager as DefaultCameraManager;
     cameraManager.setCameraControlsOptions({
-      mouseWheelAction: 'zoomToCursor',
-      changeCameraTargetOnClick: true,
+      mouseWheelAction: focusAssetId ? 'zoomToTarget' : 'zoomToCursor',
+      changeCameraTargetOnClick: !focusAssetId,
     });
-
-    return viewer;
-  }, [sdk, revealContainer]);
+  }, [focusAssetId, viewer]);
 
   useEffect(() => () => viewer?.dispose(), [viewer]);
 
