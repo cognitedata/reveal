@@ -22,7 +22,7 @@ import {
   StyledTextArea,
 } from 'components/styled';
 import { MarkdownView } from 'components/markDown/MarkdownView';
-import { A, Button, Graphic } from '@cognite/cogs.js';
+import { A, Button, Flex, Graphic } from '@cognite/cogs.js';
 import Section from 'components/section';
 import { trackUsage } from 'utils/Metrics';
 import { useTranslation } from 'common';
@@ -157,7 +157,7 @@ export const DocumentationSection: FunctionComponent<
             </CountSpan>
           )}
         </div>
-        <div>
+        <Flex gap={8}>
           <Button
             type="ghost"
             onClick={onCancel}
@@ -181,7 +181,7 @@ export const DocumentationSection: FunctionComponent<
               {t('confirm')}
             </Button>
           </MessageDialog>
-        </div>
+        </Flex>
       </div>
     </>
   );
