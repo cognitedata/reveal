@@ -48,7 +48,10 @@ export function Reveal({
     null
   );
 
-  const handleMount = useCallback(node => setRevealContainer(node), []);
+  const handleMount = useCallback(
+    (node: HTMLDivElement | null) => setRevealContainer(node),
+    []
+  );
 
   const { data: apiThreeDModel } = use3DModel(modelId);
 

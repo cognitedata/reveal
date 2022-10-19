@@ -1,5 +1,5 @@
 import { Body } from '@cognite/cogs.js';
-import React from 'react';
+import React, { PropsWithChildren } from 'react';
 import styled from 'styled-components';
 
 export const Title = styled(Body).attrs({ strong: true, level: 2 })`
@@ -7,6 +7,6 @@ export const Title = styled(Body).attrs({ strong: true, level: 2 })`
   padding-top: 12px;
 `;
 
-export const FilterTitle: React.FC = ({ children }) => {
+export const FilterTitle: React.FC<PropsWithChildren> = ({ children }) => {
   return <Title>{children}</Title>;
 };
