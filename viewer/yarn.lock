@@ -843,7 +843,7 @@ __metadata:
     puppeteer: 18.2.1
     random-seed: 0.3.0
     raw-loader: 4.0.2
-    remove-files-webpack-plugin: ^1.5.0
+    remove-files-webpack-plugin: 1.5.0
     resize-observer-polyfill: 1.5.1
     rimraf: 3.0.2
     run-script-os: 1.1.6
@@ -10976,7 +10976,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"remove-files-webpack-plugin@npm:^1.5.0":
+"remove-files-webpack-plugin@npm:1.5.0":
   version: 1.5.0
   resolution: "remove-files-webpack-plugin@npm:1.5.0"
   dependencies:
