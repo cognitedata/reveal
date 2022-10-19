@@ -1,11 +1,13 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import { EditModal } from 'components/modals/EditModal';
 import { Extpipe } from 'model/Extpipe';
 import { useTranslation } from 'common';
 import Field from './fields/Field';
-import { Flex, Input } from '@cognite/cogs.js';
+import { Flex, Input, OptionType, Select } from '@cognite/cogs.js';
 import { FormikErrors, useFormik } from 'formik';
+import { useDataSetsList } from 'hooks/useDataSetsList';
+import { DATASET_LIST_LIMIT } from 'pages/create/DataSetIdInput';
 
 type BasicInformationModalProps = {
   extpipe: Extpipe;
@@ -15,7 +17,7 @@ type BasicInformationModalProps = {
 
 type BasicInformationFormFields = Pick<
   Extpipe,
-  'description' | 'externalId' | 'source'
+  'dataSetId' | 'description' | 'externalId' | 'source'
 >;
 
 const BasicInformationModal = ({
@@ -24,6 +26,8 @@ const BasicInformationModal = ({
   onClose,
 }: BasicInformationModalProps): JSX.Element => {
   const { t } = useTranslation();
+
+  const { data: dataSets, status } = useDataSetsList(DATASET_LIST_LIMIT);
 
   const handleSubmit = () => {};
 
@@ -41,6 +45,7 @@ const BasicInformationModal = ({
 
   const formik = useFormik<BasicInformationFormFields>({
     initialValues: {
+      dataSetId: extpipe.dataSetId,
       description: extpipe.description,
       externalId: extpipe.externalId,
       source: extpipe.source,
@@ -50,6 +55,29 @@ const BasicInformationModal = ({
   });
 
   const { setFieldValue, errors, values } = formik;
+
+  const dataSetOptions = useMemo(() => {
+    return (
+      dataSets
+        ?.map(({ externalId, id, name }) => ({
+          value: id,
+          label: name ?? externalId ?? `${id}`,
+          externalId,
+        }))
+        .sort((dsA, dsB) => {
+          return dsA.label.localeCompare(dsB.label);
+        }) ?? []
+    );
+  }, [dataSets]);
+
+  const selectedOption = useMemo(() => {
+    return values.dataSetId
+      ? dataSetOptions.find(({ value }) => value === values.dataSetId) ?? {
+          label: `${values.dataSetId}`,
+          value: values.dataSetId,
+        }
+      : undefined;
+  }, [dataSetOptions, values.dataSetId]);
 
   return (
     <EditModal
@@ -64,6 +92,17 @@ const BasicInformationModal = ({
             onChange={(e) => setFieldValue('description', e.target.value)}
             placeholder={t('description-placeholder')}
             value={values.description}
+          />
+        </Field>
+        <Field info={t('data-set-id-hint')} title={t('data-set')}>
+          <Select
+            disabled={status !== 'success'}
+            isClearable
+            onChange={(option: OptionType<number>) =>
+              setFieldValue('dataSetId', option.value)
+            }
+            options={dataSetOptions}
+            value={selectedOption}
           />
         </Field>
         <Field info={t('source-hint')} title={t('source')}>
