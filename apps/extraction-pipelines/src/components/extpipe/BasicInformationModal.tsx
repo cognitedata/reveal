@@ -4,10 +4,13 @@ import { EditModal } from 'components/modals/EditModal';
 import { Extpipe } from 'model/Extpipe';
 import { useTranslation } from 'common';
 import Field from './fields/Field';
-import { Flex, Input, OptionType, Select } from '@cognite/cogs.js';
+import { Button, Flex, Input, OptionType, Select } from '@cognite/cogs.js';
 import { FormikErrors, useFormik } from 'formik';
 import { useDataSetsList } from 'hooks/useDataSetsList';
 import { DATASET_LIST_LIMIT } from 'pages/create/DataSetIdInput';
+import { convertScheduleValue, Schedule } from './edit/Schedule';
+import { SupportedScheduleStrings } from 'components/extpipes/cols/Schedule';
+import { useDetailsUpdate } from 'hooks/details/useDetailsUpdate';
 
 type BasicInformationModalProps = {
   extpipe: Extpipe;
@@ -15,10 +18,13 @@ type BasicInformationModalProps = {
   onClose: () => void;
 };
 
-type BasicInformationFormFields = Pick<
+export type BasicInformationFormFields = Pick<
   Extpipe,
   'dataSetId' | 'description' | 'externalId' | 'source'
->;
+> & {
+  schedule?: SupportedScheduleStrings;
+  cron?: string;
+};
 
 const BasicInformationModal = ({
   extpipe,
@@ -27,17 +33,60 @@ const BasicInformationModal = ({
 }: BasicInformationModalProps): JSX.Element => {
   const { t } = useTranslation();
 
+  const { mutate: updateExtpipeDetails } = useDetailsUpdate();
+
   const { data: dataSets, status } = useDataSetsList(DATASET_LIST_LIMIT);
 
-  const handleSubmit = () => {};
+  const updateBasicInformation = () => {
+    updateExtpipeDetails({
+      id: extpipe.id,
+      items: [
+        {
+          id: `${extpipe.id}`,
+          update: {
+            dataSetId: {
+              set: values.dataSetId,
+            },
+            description: {
+              set: values.description,
+            },
+            externalId: {
+              set: values.externalId,
+            },
+            schedule: {
+              set:
+                values.schedule === SupportedScheduleStrings.SCHEDULED
+                  ? values.cron
+                  : values.schedule,
+            },
+            source: {
+              set: values.source,
+            },
+          },
+        },
+      ],
+    });
+    onClose();
+  };
 
   const handleValidation = (
     values: BasicInformationFormFields
   ): FormikErrors<BasicInformationFormFields> => {
     const errors: FormikErrors<BasicInformationFormFields> = {};
 
+    if (!values.dataSetId) {
+      errors.dataSetId = t('required-field-is-missing');
+    }
+
     if (!values.externalId) {
       errors.externalId = t('required-field-is-missing');
+    }
+
+    if (
+      values.schedule === SupportedScheduleStrings.SCHEDULED &&
+      !values.cron
+    ) {
+      errors.cron = t('required-field-is-missing');
     }
 
     return errors;
@@ -45,16 +94,25 @@ const BasicInformationModal = ({
 
   const formik = useFormik<BasicInformationFormFields>({
     initialValues: {
+      cron:
+        extpipe.schedule &&
+        convertScheduleValue(extpipe.schedule) ===
+          SupportedScheduleStrings.SCHEDULED
+          ? extpipe.schedule
+          : undefined,
       dataSetId: extpipe.dataSetId,
       description: extpipe.description,
       externalId: extpipe.externalId,
+      schedule: extpipe.schedule
+        ? convertScheduleValue(extpipe.schedule)
+        : undefined,
       source: extpipe.source,
     },
-    onSubmit: handleSubmit,
+    onSubmit: updateBasicInformation,
     validate: handleValidation,
   });
 
-  const { setFieldValue, errors, values } = formik;
+  const { setFieldValue, errors, handleSubmit, values } = formik;
 
   const dataSetOptions = useMemo(() => {
     return (
@@ -97,7 +155,6 @@ const BasicInformationModal = ({
         <Field info={t('data-set-id-hint')} title={t('data-set')}>
           <Select
             disabled={status !== 'success'}
-            isClearable
             onChange={(option: OptionType<number>) =>
               setFieldValue('dataSetId', option.value)
             }
@@ -123,6 +180,23 @@ const BasicInformationModal = ({
             value={values.externalId}
           />
         </Field>
+        <Field info={t('schedule-hint')} title={t('schedule')}>
+          <Schedule
+            errors={errors}
+            setFieldValue={setFieldValue}
+            values={values}
+          />
+        </Field>
+        <Flex gap={8} justifyContent="flex-end">
+          <Button onClick={onClose}>{t('cancel')}</Button>
+          <Button
+            disabled={!!Object.keys(errors).length}
+            onClick={() => handleSubmit()}
+            type="primary"
+          >
+            {t('confirm')}
+          </Button>
+        </Flex>
       </Flex>
     </EditModal>
   );

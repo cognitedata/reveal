@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { parseCron } from 'utils/cronUtils';
 import InteractiveCopy from 'components/InteractiveCopy/InteractiveCopy';
 import { StyledTooltip } from 'components/styled';
-import { useTranslation } from 'common';
+import { TranslationKeys, useTranslation } from 'common';
 interface OwnProps {
   id: string;
   schedule?: string;
@@ -15,6 +15,37 @@ export enum SupportedScheduleStrings {
   SCHEDULED = 'Scheduled',
 }
 type Props = OwnProps;
+
+export const getReadableSchedule = (
+  schedule?: string,
+  t?: (key: TranslationKeys) => string
+): string => {
+  if (!t) {
+    return '-';
+  }
+
+  if (!schedule) {
+    return t('not-defined');
+  }
+
+  if (
+    schedule.toLowerCase() === SupportedScheduleStrings.ON_TRIGGER.toLowerCase()
+  ) {
+    return t('on-trigger');
+  }
+
+  if (
+    schedule.toLowerCase() === SupportedScheduleStrings.CONTINUOUS.toLowerCase()
+  ) {
+    return t('continuous');
+  }
+
+  try {
+    return parseCron(schedule ?? '');
+  } catch (e) {
+    return t('not-valid');
+  }
+};
 
 const Schedule: FunctionComponent<Props> = ({
   schedule,

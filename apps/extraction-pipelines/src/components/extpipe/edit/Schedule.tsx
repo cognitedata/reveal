@@ -1,39 +1,14 @@
-import React, {
-  FunctionComponent,
-  PropsWithChildren,
-  useEffect,
-  useState,
-} from 'react';
-import { Colors } from '@cognite/cogs.js';
-import DisplaySchedule, {
-  SupportedScheduleStrings,
-} from 'components/extpipes/cols/Schedule';
-import CronInput from 'components/inputs/cron/CronInput';
+import React, { FunctionComponent, PropsWithChildren } from 'react';
+import { A, Colors, Detail, Flex, Input } from '@cognite/cogs.js';
+import { SupportedScheduleStrings } from 'components/extpipes/cols/Schedule';
 import styled from 'styled-components';
-import { DivFlex } from 'components/styled';
-import { FormProvider, useForm } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
-import {
-  mapModelToInput,
-  mapScheduleInputToScheduleValue,
-} from 'utils/cronUtils';
-import MessageDialog from 'components/buttons/MessageDialog';
-import { ContactBtnTestIds } from 'utils/constants';
-import { Extpipe, ExtpipeFieldName } from 'model/Extpipe';
-import {
-  createUpdateSpec,
-  useDetailsUpdate,
-} from 'hooks/details/useDetailsUpdate';
-import { ColumnForm, Hint } from 'components/styled';
-import { scheduleSchema } from 'utils/validation/extpipeSchemas';
+import { parseCron as parseCronUtil } from 'utils/cronUtils';
+import { CRON_LINK } from 'utils/constants';
 import { ScheduleSelector } from 'components/inputs/ScheduleSelector';
-import { OptionTypeBase } from 'react-select';
-import { CloseButton, EditButton, SaveButton } from 'components/styled';
-import { TableHeadings } from 'components/table/ExtpipeTableCol';
-import { AddFieldInfoText } from 'components/message/AddFieldInfoText';
-import { NoDataAdded } from 'components/buttons/AddFieldValueBtn';
-import { trackUsage } from 'utils/Metrics';
 import { useTranslation } from 'common';
+import Field from '../fields/Field';
+import { FormikErrors } from 'formik';
+import { BasicInformationFormFields } from '../BasicInformationModal';
 
 export interface ScheduleFormInput {
   schedule: string;
@@ -41,193 +16,90 @@ export interface ScheduleFormInput {
 }
 
 interface ScheduleProps {
-  extpipe: Extpipe;
-  name: ExtpipeFieldName;
-  label: string;
-  canEdit: boolean;
+  errors: FormikErrors<BasicInformationFormFields>;
+  setFieldValue: <T extends keyof BasicInformationFormFields>(
+    field: T,
+    value: BasicInformationFormFields[T],
+    shouldValidate?: boolean
+  ) => void;
+  values: BasicInformationFormFields;
 }
 
+export const convertScheduleValue = (
+  schedule: string
+): SupportedScheduleStrings => {
+  if (
+    schedule !== SupportedScheduleStrings.CONTINUOUS &&
+    schedule !== SupportedScheduleStrings.NOT_DEFINED &&
+    schedule !== SupportedScheduleStrings.ON_TRIGGER
+  ) {
+    return SupportedScheduleStrings.SCHEDULED;
+  }
+  return schedule;
+};
+
+const parseCron = (exp: string) => {
+  try {
+    const parsed = parseCronUtil(exp);
+    return parsed;
+  } catch (_) {
+    return undefined;
+  }
+};
+
 export const Schedule: FunctionComponent<ScheduleProps> = ({
-  extpipe,
-  name,
-  canEdit,
+  errors,
+  setFieldValue,
+  values,
 }: PropsWithChildren<ScheduleProps>) => {
   const { t } = useTranslation();
-  const [showCron, setShowCron] = useState(false);
-  const [isEdit, setIsEdit] = useState(false);
-  const [errorVisible, setErrorVisible] = useState(false);
-  const { mutate } = useDetailsUpdate();
-  const { schedule } = extpipe;
-  const methods = useForm<ScheduleFormInput>({
-    resolver: yupResolver(scheduleSchema),
-    defaultValues: mapModelToInput(extpipe?.schedule),
-    reValidateMode: 'onSubmit',
-  });
-  const { register, handleSubmit, watch, setValue } = methods;
-  const scheduleValue = watch('schedule');
 
-  useEffect(() => {
-    register('schedule');
-  }, [register]);
+  const shouldShowCron = values.schedule === SupportedScheduleStrings.SCHEDULED;
 
-  useEffect(() => {
-    if (scheduleValue === SupportedScheduleStrings.SCHEDULED) {
-      setShowCron(true);
-    } else {
-      setShowCron(false);
-    }
-  }, [scheduleValue]);
+  const parsedCron = values.cron && parseCron(values.cron);
 
-  const onSave = async (field: ScheduleFormInput) => {
-    if (extpipe) {
-      const updatedSchedule = mapScheduleInputToScheduleValue(field);
-      trackUsage({ t: 'EditField.Save', field: 'schedule' });
-      const items = createUpdateSpec({
-        id: extpipe.id,
-        fieldValue: updatedSchedule,
-        fieldName: 'schedule',
-      });
-      await mutate(items, {
-        onError: () => {
-          trackUsage({ t: 'EditField.Rejected', field: 'schedule' });
-          setErrorVisible(true);
-        },
-        onSuccess: () => {
-          trackUsage({ t: 'EditField.Completed', field: 'schedule' });
-          setIsEdit(false);
-        },
-      });
-    }
-  };
-
-  const onEditClick = () => {
-    if (canEdit) {
-      trackUsage({ t: 'EditField.Start', field: 'schedule' });
-      setIsEdit(true);
-    }
-  };
-
-  const handleClickError = () => {
-    setErrorVisible(false);
-  };
-
-  const onCancel = () => {
-    trackUsage({ t: 'EditField.Cancel', field: 'schedule' });
-    setIsEdit(false);
-  };
-
-  const selectChanged = (selected: OptionTypeBase) => {
-    setValue('schedule', selected.value);
-  };
-
-  const whenNotEditing = () => {
-    if (!canEdit) {
-      return schedule == null ? (
-        <NoDataAdded>{t('no-schedule-set')}</NoDataAdded>
-      ) : (
-        <div css="padding: 0 1rem">
-          <DisplaySchedule id="display-schedule" schedule={schedule} />
-        </div>
-      );
-    }
-    return (
-      <EditButton
-        showPencilIcon={schedule != null}
-        onClick={onEditClick}
-        disabled={!canEdit}
-        title="Toggle edit row"
-        aria-expanded={isEdit}
-        aria-controls={name}
-        data-testid={`${ContactBtnTestIds.EDIT_BTN}schedule`}
-        $full
-      >
-        {!schedule ? (
-          <AddFieldInfoText>
-            {TableHeadings.SCHEDULE.toLowerCase()}
-          </AddFieldInfoText>
-        ) : (
-          <DisplaySchedule id="display-schedule" schedule={schedule} />
-        )}
-      </EditButton>
-    );
-  };
-
-  const whenEditing = (
-    <>
-      <Hint>{t('schedule-hint')}</Hint>
-      <ScheduleWrapper>
-        <ScheduleSelector
-          inputId="schedule-selector"
-          schedule={scheduleValue}
-          onSelectChange={selectChanged}
-        />
-        {showCron && (
-          <CronWrapper
-            id="cron-expression"
-            role="region"
-            direction="column"
-            align="flex-start"
-          >
-            <CronInput />
-          </CronWrapper>
-        )}
-        <ButtonWrapper>
-          <MessageDialog
-            visible={errorVisible}
-            handleClickError={handleClickError}
-            title={t('server-err-title')}
-            contentText={t('server-err-desc')}
-          >
-            <SaveButton
-              htmlType="submit"
-              aria-controls={name}
-              data-testid={`${ContactBtnTestIds.SAVE_BTN}${name}`}
-            />
-          </MessageDialog>
-          <CloseButton
-            onClick={onCancel}
-            aria-controls={name}
-            data-testid={`${ContactBtnTestIds.CANCEL_BTN}${name}`}
-          />
-        </ButtonWrapper>
-      </ScheduleWrapper>
-    </>
-  );
   return (
-    <FormProvider {...methods}>
-      <ColumnForm onSubmit={handleSubmit(onSave)}>
-        {isEdit ? whenEditing : whenNotEditing()}
-      </ColumnForm>
-    </FormProvider>
+    <Flex direction="column">
+      <ScheduleSelector
+        schedule={values.schedule}
+        onSelectChange={(option) => setFieldValue('schedule', option.value)}
+      />
+      {shouldShowCron && (
+        <StyledCronWrapper id="cron-expression">
+          <Field isRequired title={t('cron-title')}>
+            <StyledCronDescription>{t('cron-info')}</StyledCronDescription>
+            <Detail>
+              <A href={CRON_LINK}>{t('cron-learn-more')}</A>
+            </Detail>
+            <Input
+              error={errors.cron}
+              fullWidth
+              name="cron"
+              onChange={(e) => setFieldValue('cron', e.target.value)}
+              placeholder={t('description-placeholder')}
+              value={values.cron}
+            />
+            {parsedCron && (
+              <StyledCronDescription>{parsedCron}</StyledCronDescription>
+            )}
+          </Field>
+        </StyledCronWrapper>
+      )}
+    </Flex>
   );
 };
 
-export const CronWrapper = styled(DivFlex)`
-  margin: 1rem 0 1rem 2rem;
-  padding: 1rem 0;
+const StyledCronWrapper = styled.div`
   border-top: 0.0625rem solid ${Colors['greyscale-grey3'].hex()};
-  border-bottom: 0.0625rem solid ${Colors['greyscale-grey3'].hex()};
-  label {
-    margin-left: 0;
-  }
-`;
-
-const ScheduleWrapper = styled(DivFlex)`
-  display: grid;
-  grid-template-areas: 'select btns' 'cron cron';
-  grid-template-columns: 1fr auto;
-  grid-gap: 0.5rem;
-  .cogs-select {
-    grid-area: select;
-  }
-  #cron-expression {
-    grid-area: cron;
-  }
-`;
-
-const ButtonWrapper = styled.div`
-  grid-area: btns;
   display: flex;
-  justify-content: flex-end;
-  gap: 0.5rem;
+  margin: 1rem 0 0 2rem;
+  padding-top: 0.5rem;
+
+  > * {
+    width: 100%;
+  }
+`;
+
+const StyledCronDescription = styled(Detail)`
+  color: ${Colors['text-icon--muted']};
 `;

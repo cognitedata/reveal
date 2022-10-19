@@ -1,24 +1,19 @@
-import React, { useState } from 'react';
-import InlineEdit from 'components/extpipe/InlineEdit';
-import * as yup from 'yup';
+import React, { useMemo, useState } from 'react';
 import { useSelectedExtpipe } from 'hooks/useExtpipe';
-import { Schedule } from 'components/extpipe/edit/Schedule';
-import { rootUpdate } from 'hooks/details/useDetailsUpdate';
 import RawTablesSection from 'components/inputs/rawSelector/RawTablesSection';
 import { ContactsSection } from 'components/extpipe/ContactsSection';
 import { MetaDataSection } from 'components/extpipe/MetaDataSection';
-import { EditDataSetId } from 'components/extpipe/edit/EditDataSetId';
 import Section from 'components/section';
 import { NotificationSection } from 'components/extpipe/NotificationSection';
-import {
-  externalIdRule,
-  metaDescriptionSchema,
-  sourceSchema,
-} from 'utils/validation/extpipeSchemas';
 import { useTranslation } from 'common';
 import RelativeTimeWithTooltip from 'components/extpipes/cols/RelativeTimeWithTooltip';
 import { Button } from '@cognite/cogs.js';
 import BasicInformationModal from './BasicInformationModal';
+import { getReadableSchedule } from 'components/extpipes/cols/Schedule';
+import Link from 'components/link';
+import { createLink } from '@cognite/cdf-utilities';
+import { useDataSetsList } from 'hooks/useDataSetsList';
+import { DATASET_LIST_LIMIT } from 'pages/create/DataSetIdInput';
 
 interface Props {
   canEdit: boolean;
@@ -27,6 +22,11 @@ interface Props {
 export const ExtpipeInformation = ({ canEdit }: Props) => {
   const { t } = useTranslation();
   const { data: extpipe } = useSelectedExtpipe();
+
+  const { data: dataSets } = useDataSetsList(DATASET_LIST_LIMIT);
+  const dataSet = useMemo(() => {
+    return dataSets?.find(({ id }) => id === extpipe?.dataSetId);
+  }, [dataSets, extpipe]);
 
   const [isOpen, setIsOpen] = useState(false);
 
@@ -58,72 +58,33 @@ export const ExtpipeInformation = ({ canEdit }: Props) => {
           {
             key: 'description',
             title: t('description'),
-            value: (
-              <InlineEdit
-                name="description"
-                hintText={t('description-hint')}
-                placeholder={t('description-placeholder')}
-                label={t('description')}
-                canEdit={canEdit}
-                schema={metaDescriptionSchema}
-                defaultValues={{ description: extpipe?.description }}
-                fullWidth
-                updateFn={rootUpdate({ extpipe, name: 'description' })}
-              />
-            ),
+            value: extpipe.description ?? '-',
           },
           {
             key: 'data-set-id',
             title: t('data-set'),
-            value: <EditDataSetId canEdit={canEdit} />,
+            value: extpipe.dataSetId ? (
+              <Link to={createLink(`/data-sets/data-set/${extpipe.dataSetId}`)}>
+                {dataSet?.name ?? dataSet?.externalId ?? extpipe.dataSetId}
+              </Link>
+            ) : (
+              '-'
+            ),
           },
           {
             key: 'source',
             title: t('source'),
-            value: (
-              <InlineEdit
-                name="source"
-                hintText={t('source-hint')}
-                placeholder={t('source-placeholder')}
-                label={t('source')}
-                canEdit={canEdit}
-                schema={sourceSchema}
-                updateFn={rootUpdate({ extpipe, name: 'source' })}
-                defaultValues={{
-                  source: extpipe?.source,
-                }}
-                fullWidth
-              />
-            ),
+            value: extpipe.source ?? '-',
           },
           {
             key: 'external-id',
             title: t('external-id'),
-            value: (
-              <InlineEdit
-                name="externalId"
-                hintText={t('external-id-hint')}
-                placeholder={t('external-id-placeholder')}
-                label={t('external-id')}
-                canEdit={canEdit}
-                schema={yup.object().shape(externalIdRule)}
-                defaultValues={{ externalId: extpipe?.externalId }}
-                fullWidth
-                updateFn={rootUpdate({ extpipe, name: 'externalId' })}
-              />
-            ),
+            value: extpipe.externalId ?? '-',
           },
           {
             key: 'schedule',
             title: t('schedule'),
-            value: (
-              <Schedule
-                name="schedule"
-                extpipe={extpipe}
-                label={t('schedule')}
-                canEdit={canEdit}
-              />
-            ),
+            value: getReadableSchedule(extpipe.schedule, t),
           },
         ]}
       />
