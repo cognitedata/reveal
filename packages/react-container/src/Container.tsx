@@ -75,6 +75,18 @@ const RawContainer: React.FC<Props> = ({
     window.location.assign('/');
   };
 
+  if (!initialTenant) {
+    if (!initialTenantOrApiKeyTenant) {
+      return <TenantSelectorWrapper sidecar={sidecar} />;
+    }
+
+    history.push(`/${initialTenantOrApiKeyTenant}/`);
+
+    // Don't know why we need to reload here, need to ask @Fran
+    // document.location.reload();
+    return <Loader />;
+  }
+
   const projectFlow = getProjectSpecificFlow(initialTenantOrApiKeyTenant);
   const configuration: Configuration = {
     auth: {
@@ -114,18 +126,6 @@ const RawContainer: React.FC<Props> = ({
   // we use it for the redirection on azure ad auth
   if (redirectAuthResult === undefined) {
     return null;
-  }
-
-  if (!initialTenant) {
-    if (!initialTenantOrApiKeyTenant) {
-      return <TenantSelectorWrapper sidecar={sidecar} />;
-    }
-
-    history.push(`/${initialTenantOrApiKeyTenant}/`);
-
-    // Don't know why we need to reload here, need to ask @Fran
-    // document.location.reload();
-    return <Loader />;
   }
 
   return (

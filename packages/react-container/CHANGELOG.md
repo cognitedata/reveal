@@ -1,3 +1,7 @@
+## 6.4.0 October 20 2022
+
+- Fix race condition between react-container and react-project-selector in handling code callback
+
 ## 6.3.0 September 30 2022
 
 - add separated `token` and `project` to the useAuthenticatedAuthContext hook output to avoid more object destructuring
