@@ -10,7 +10,7 @@ This app is served as an example [React]-based application served using frontend
 ## How do I run my application locally?
 
 1. Clone the repository
-2. `cd apps/simconfig/`
+2. `cd apps/simconfig/ `
 3. Run `yarn start:bazel`, which will install all the required dependencies for the application and run the app at [https://localhost:3000/](https://localhost:3000/)
 4. To run this app connected to local SimConfig services
    - First setup and run Sim Config services locally [how-do-i-run-my-service-locally](https://github.com/cognitedata/application-services/tree/master/services/simconfig-api#how-do-i-run-my-service-locally) in a separate terminal/IDE

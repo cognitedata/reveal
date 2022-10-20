@@ -32,7 +32,7 @@ export default function App() {
   const isInitialized = useSelector(selectIsInitialized);
 
   simconfigApiPropertiesSlice.actions.setProperties({
-    baseUrl: sidecar.simconfigApiBaseUrl,
+    baseUrl: sidecar.cdfApiBaseUrl,
   });
   enhanceSimconfigApiEndpoints();
 
@@ -48,7 +48,7 @@ export default function App() {
     dispatch(
       simconfigApiPropertiesSlice.actions.setProperties({
         authHeaders: client.getDefaultRequestHeaders(),
-        baseUrl: sidecar.simconfigApiBaseUrl,
+        baseUrl: sidecar.cdfApiBaseUrl,
         project: client.project,
       })
     );
