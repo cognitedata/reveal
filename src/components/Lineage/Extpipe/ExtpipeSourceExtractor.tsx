@@ -16,24 +16,25 @@ const Wrapper = styled.div`
 `;
 export type ExtpipeSourceExtractorProps = SourceProps & ExtractorProps;
 
-export const ExtpipeSourceExtractor: FunctionComponent<ExtpipeSourceExtractorProps> =
-  ({
-    extractorAccounts,
-    sourceNames,
-  }: PropsWithChildren<ExtpipeSourceExtractorProps>) => {
-    const { t } = useTranslation();
-    return (
-      <Wrapper>
-        <ExtpipeSourceExtractorTitle>
-          {t('source_one')}
-        </ExtpipeSourceExtractorTitle>
-        <LineageSubTitle>{t('lineage-source-text')}</LineageSubTitle>
-        <Source sourceNames={sourceNames} />
-        <ExtpipeSourceExtractorTitle>
-          {t('extractor_one')}
-        </ExtpipeSourceExtractorTitle>
-        <LineageSubTitle>{t('lineage-extractor-text')}</LineageSubTitle>
-        <Extractor extractorAccounts={extractorAccounts} />
-      </Wrapper>
-    );
-  };
+export const ExtpipeSourceExtractor: FunctionComponent<
+  ExtpipeSourceExtractorProps
+> = ({
+  extractorAccounts,
+  sourceNames,
+}: PropsWithChildren<ExtpipeSourceExtractorProps>) => {
+  const { t } = useTranslation();
+  return (
+    <Wrapper>
+      <ExtpipeSourceExtractorTitle>
+        {t('source_one')}
+      </ExtpipeSourceExtractorTitle>
+      <LineageSubTitle>{t('lineage-source-text')}</LineageSubTitle>
+      <Source sourceNames={sourceNames} />
+      <ExtpipeSourceExtractorTitle>
+        {t('extractor_one')}
+      </ExtpipeSourceExtractorTitle>
+      <LineageSubTitle>{t('lineage-extractor-text')}</LineageSubTitle>
+      <Extractor extractorAccounts={extractorAccounts} />
+    </Wrapper>
+  );
+};

@@ -1,28 +1,24 @@
+import Typography from 'antd/lib/typography';
+import { Body, Flex, Icon, Label, Tooltip } from '@cognite/cogs.js';
+import { notification } from 'antd';
 import {
   BasicInfoPane,
-  ItemLabel,
-  ItemValue,
   NoDataText,
-  ThinBorderLine,
-  ApprovedDot,
-  UnApprovedDot,
-  LabelTag,
-} from 'utils/styledComponents';
-import moment from 'moment';
-import { DataSet } from 'utils/types';
-import Typography from 'antd/lib/typography';
-import Tag from 'antd/lib/tag';
-import InfoTooltip from '../InfoTooltip';
-import { useTranslation } from 'common/i18n';
-import { Icon } from '@cognite/cogs.js';
-import {
+  SimpleLabel,
+  DataSet,
   CREATE_DATASET_DOC,
   EDIT_DATASET_DOC,
   EDIT_DATASET_HELP_DOC,
+  getGovernedStatus,
+  TooltipLink,
 } from 'utils';
+import copy from 'copy-to-clipboard';
 
-const { Text } = Typography;
-
+import { useTranslation } from 'common/i18n';
+import moment from 'moment';
+import DatasetProperty from './DatasetProperty';
+import { TabbableButton } from 'components/tabbable-button';
+import styled from 'styled-components';
 interface BasicInfoCardProps {
   dataSet: DataSet;
 }
@@ -46,129 +42,265 @@ const BasicInfoCard = ({ dataSet }: BasicInfoCardProps) => {
     archived = false,
   } = metadata;
 
+  const { statusVariant, statusI18nKey } = getGovernedStatus(consoleGoverned);
+
+  const handleCopy = (copiedText: string) => {
+    copy(copiedText || '');
+    notification.success({
+      message: t('copy-notification'),
+    });
+  };
+
   return (
     <BasicInfoPane>
-      <ItemLabel>{t('name')}</ItemLabel>{' '}
-      <ItemValue>
-        {writeProtected && <Icon type="Lock" />}
-        {name}
-      </ItemValue>
-      <ItemLabel>{t('data-set-id')}</ItemLabel>{' '}
-      <InfoTooltip
-        tooltipText={
-          <span data-testid="id-tooltip">
-            {t('basic-info-tooltip-data-set-id')}
-          </span>
+      <DatasetProperty
+        label={
+          <Body level={2} className="mute">
+            {t('name')}
+          </Body>
         }
-        url={CREATE_DATASET_DOC}
-        urlTitle={t('learn-more-in-our-docs')}
-        showIcon={false}
-      >
-        <Tag color="blue" style={{ marginBottom: '10px' }}>
-          <Text copyable={{ text: String(id) }}>{id}</Text>
-        </Tag>
-      </InfoTooltip>
-      <ItemLabel>{t('external-id')}</ItemLabel>
-      <ItemValue>
-        {externalId ? (
-          <Typography.Paragraph ellipsis={{ rows: 1, expandable: true }}>
-            {externalId}
-          </Typography.Paragraph>
-        ) : (
-          <NoDataText>{t('external-id-no')}</NoDataText>
-        )}
-      </ItemValue>
-      <ThinBorderLine />
-      <ItemLabel>{t('description')}</ItemLabel>
-      <ItemValue>
-        <Typography.Paragraph ellipsis={{ rows: 2, expandable: true }}>
-          {description}
-        </Typography.Paragraph>
-      </ItemValue>
+        value={
+          <Flex gap={8} alignItems="center">
+            {writeProtected && <Icon type="Lock" />}
+            <Body level={1} strong>
+              {name}
+            </Body>
+            <TabbableButton
+              aria-label={t('copy-name')}
+              onClick={() => handleCopy(name)}
+            >
+              <Icon type="Copy" />
+            </TabbableButton>
+          </Flex>
+        }
+      />
+      <DatasetProperty
+        label={
+          <Body level={2} className="mute">
+            {t('description')}
+          </Body>
+        }
+        value={
+          <Body level={1} strong>
+            <Typography.Paragraph
+              ellipsis={{ rows: 2, expandable: true }}
+              style={{ margin: 0 }}
+            >
+              {description}
+            </Typography.Paragraph>
+          </Body>
+        }
+      />
+      <DatasetProperty
+        label={
+          <Flex gap={6} direction="row" alignItems="center">
+            <Body level={2} className="mute">
+              {t('data-set-id')}
+            </Body>
+            <Tooltip
+              content={
+                <p data-testid="id-tooltip">
+                  {t('basic-info-tooltip-data-set-id')}{' '}
+                  <TooltipLink
+                    href={CREATE_DATASET_DOC}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {t('learn-more-in-our-docs')}
+                  </TooltipLink>
+                </p>
+              }
+              wrapped
+            >
+              <HelpIcon type="Help" />
+            </Tooltip>
+          </Flex>
+        }
+        value={
+          <Flex gap={8} alignItems="center">
+            <Body level={1} strong>
+              {id}
+            </Body>
+            <TabbableButton
+              aria-label={t('copy-dataset-id')}
+              onClick={() => handleCopy(name)}
+            >
+              <Icon type="Copy" />
+            </TabbableButton>
+          </Flex>
+        }
+      />
+      <DatasetProperty
+        label={
+          <Body level={2} className="mute">
+            {t('external-id')}
+          </Body>
+        }
+        value={
+          externalId ? (
+            <Flex gap={8} alignItems="center">
+              <Body level={1} strong>
+                {externalId}
+              </Body>
+              <TabbableButton
+                aria-label={t('copy-external-id')}
+                onClick={() => handleCopy(name)}
+              >
+                <Icon type="Copy" />
+              </TabbableButton>
+            </Flex>
+          ) : (
+            <NoDataText>{t('external-id-no')}</NoDataText>
+          )
+        }
+      />
       {metadata && (
         <>
-          <ItemLabel>
-            <InfoTooltip
-              title={t('governance-status')}
-              tooltipText={t('basic-info-tooltip-governance-status')}
-              url={EDIT_DATASET_DOC}
-              urlTitle={t('learn-more-in-our-docs')}
-              showIcon={false}
-            />
-          </ItemLabel>
-          <ItemValue>
-            {consoleGoverned !== undefined ? (
-              <>
-                {consoleGoverned ? (
-                  <>
-                    <ApprovedDot />
-                    {t('governed')}
-                  </>
-                ) : (
-                  <span>
-                    <UnApprovedDot />
-                    {t('ungoverned')}
-                  </span>
-                )}
-              </>
-            ) : (
-              <NoDataText>{t('quality-not-defined')}</NoDataText>
-            )}
-          </ItemValue>
+          <DatasetProperty
+            label={
+              <Flex gap={6} direction="row" alignItems="center">
+                <Body level={2} className="mute">
+                  {t('governance-status')}
+                </Body>
+                <Tooltip
+                  content={
+                    <p>
+                      {t('basic-info-tooltip-governance-status')}{' '}
+                      <TooltipLink
+                        href={EDIT_DATASET_DOC}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        {t('learn-more-in-our-docs')}
+                      </TooltipLink>
+                    </p>
+                  }
+                  wrapped
+                >
+                  <HelpIcon type="Help" />
+                </Tooltip>
+              </Flex>
+            }
+            value={
+              <div>
+                <Label size="medium" variant={statusVariant}>
+                  {t(statusI18nKey)}
+                </Label>
+              </div>
+            }
+          />
+          <DatasetProperty
+            label={
+              <Body level={2} className="mute">
+                {consoleOwners?.length ? t('owner') : t('owner_other')}
+              </Body>
+            }
+            value={
+              consoleOwners?.length ? (
+                consoleOwners.map((owner) => (
+                  <div key={owner.name}>
+                    <Body level={1} strong>
+                      {owner.name}
+                    </Body>
+                    <Flex gap={8} alignItems="center">
+                      <Body level={1} strong>
+                        <a href={`mailto:${owner.email}`}>{owner.email}</a>
+                      </Body>
+                      <TabbableButton
+                        aria-label={t('copy-owner-email')}
+                        onClick={() => handleCopy(name)}
+                      >
+                        <Icon type="Copy" />
+                      </TabbableButton>
+                    </Flex>
+                  </div>
+                ))
+              ) : (
+                <NoDataText>{t('no-owners-set')}</NoDataText>
+              )
+            }
+          />
 
-          <ItemLabel>
-            {t('owner')}
-            {Array.isArray(consoleOwners) && consoleOwners.length > 1 && 's'}
-          </ItemLabel>
-          {Array.isArray(consoleOwners) && consoleOwners.length > 0 ? (
-            consoleOwners.map((owner) => (
-              <span key={owner.name}>
-                <ItemValue>{owner.name}</ItemValue>
-                <ItemValue>
-                  <a href={`mailto:${owner.email}`}>{owner.email}</a>
-                </ItemValue>
-              </span>
-            ))
-          ) : (
-            <NoDataText>{t('no-owners-set')}</NoDataText>
-          )}
-          <ItemLabel>{t('label_other')}</ItemLabel>
-          <ItemValue>
-            {Array.isArray(consoleLabels) && consoleLabels.length > 0 ? (
-              <>
-                {consoleLabels.map((tag) => (
-                  <LabelTag key={tag}>{tag}</LabelTag>
-                ))}
-              </>
-            ) : (
-              <NoDataText>{t('no-labels-assigned')}</NoDataText>
-            )}
-          </ItemValue>
+          <DatasetProperty
+            label={
+              <Body level={2} className="mute">
+                {t('label_other')}
+              </Body>
+            }
+            value={
+              consoleLabels?.length ? (
+                <Flex gap={6} alignItems="center" direction="row" wrap="wrap">
+                  {consoleLabels.map((tag) => (
+                    <SimpleLabel size="medium" variant="default">
+                      {tag}
+                    </SimpleLabel>
+                  ))}
+                </Flex>
+              ) : (
+                <NoDataText>{t('no-labels-assigned')}</NoDataText>
+              )
+            }
+          />
         </>
       )}
-      <ThinBorderLine />
-      <ItemLabel>{t('created-by')}</ItemLabel>
-      <ItemValue>
-        {consoleCreatedBy ? (
-          <>{consoleCreatedBy.username}</>
-        ) : (
-          <NoDataText>{t('not-available')}</NoDataText>
-        )}
-      </ItemValue>
-      <ItemLabel>{t('last-updated')}</ItemLabel>
-      <ItemValue>{moment(lastUpdatedTime).calendar()}</ItemValue>
+
+      <DatasetProperty
+        label={
+          <Body level={2} className="mute">
+            {t('created-by')}
+          </Body>
+        }
+        value={
+          consoleCreatedBy ? (
+            consoleCreatedBy.username
+          ) : (
+            <NoDataText>{t('not-available')}</NoDataText>
+          )
+        }
+      />
+
+      <DatasetProperty
+        label={
+          <Body level={2} className="mute">
+            {t('last-updated')}
+          </Body>
+        }
+        value={moment(lastUpdatedTime).calendar()}
+      />
+
       {archived && (
-        <InfoTooltip
-          tooltipText={t('basic-info-tooltip-data-set-archived')}
-          url={EDIT_DATASET_HELP_DOC}
-          urlTitle={t('learn-more-in-our-docs')}
-          showIcon={false}
-        >
-          <Tag color="red">{t('archived')}</Tag>
-        </InfoTooltip>
+        <DatasetProperty
+          value={
+            <Flex gap={6} direction="row" alignItems="center">
+              <Tooltip
+                content={
+                  <p>
+                    {t('basic-info-tooltip-data-set-archived')}
+                    <TooltipLink
+                      href={EDIT_DATASET_HELP_DOC}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {' '}
+                      {t('learn-more-in-our-docs')}
+                    </TooltipLink>
+                  </p>
+                }
+              >
+                <Label size="medium" variant="danger">
+                  {t('archived')}
+                </Label>
+              </Tooltip>
+            </Flex>
+          }
+        />
       )}
     </BasicInfoPane>
   );
 };
+
+const HelpIcon = styled(Icon)`
+  margin-top: 3px;
+`;
 
 export default BasicInfoCard;

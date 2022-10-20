@@ -1,22 +1,33 @@
 import { ReactElement } from 'react';
-import { Button, Flex, Title } from '@cognite/cogs.js';
+import { Button, Flex, Label, Title } from '@cognite/cogs.js';
 import { createLink, getProject } from '@cognite/cdf-utilities';
 import { trackEvent } from '@cognite/cdf-route-tracker';
 
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
 
-import { DataSetV3, DATASET_HELP_DOC } from 'utils';
+import {
+  DataSet,
+  DATASET_HELP_DOC,
+  getGovernedStatus,
+  SimpleLabel,
+} from 'utils';
 import styled from 'styled-components';
+import { useTranslation } from 'common/i18n';
 
 interface DatasetTopBarProps {
-  dataset: DataSetV3 | undefined;
+  dataset: DataSet;
   actions?: ReactElement;
 }
 
 const DatasetTopBar = ({ dataset, actions }: DatasetTopBarProps) => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
   const { appPath } = useParams<{ appPath?: string }>();
+
+  const { metadata } = dataset;
+  const { consoleGoverned: isGoverned, consoleLabels } = metadata;
+  const { statusVariant, statusI18nKey } = getGovernedStatus(isGoverned);
 
   const handleGoToDatasets = () => {
     if (location.key === 'default') {
@@ -34,7 +45,22 @@ const DatasetTopBar = ({ dataset, actions }: DatasetTopBarProps) => {
           onClick={handleGoToDatasets}
           type="secondary"
         />
-        <Title level="4">{dataset?.name}</Title>
+        <Title level="4">{dataset?.name || dataset?.externalId}</Title>
+        <Label size="medium" variant={statusVariant}>
+          {t(statusI18nKey)}
+        </Label>
+        {consoleLabels?.length && (
+          <Flex gap={4} alignItems="center" direction="row">
+            <SimpleLabel size="medium" variant="default">
+              {consoleLabels[0]}
+            </SimpleLabel>
+            {consoleLabels.length > 1 && (
+              <SimpleLabel size="medium" variant="default">
+                {`+${consoleLabels.length - 1}`}
+              </SimpleLabel>
+            )}
+          </Flex>
+        )}
       </Flex>
       <Flex alignItems="center" gap={8}>
         {actions}
