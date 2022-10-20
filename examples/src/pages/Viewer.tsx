@@ -86,6 +86,8 @@ export function Viewer() {
         });
       }
 
+      const edlEnabled = (urlParams.get('edl') ?? 'true') === 'true';
+
       let viewerOptions: Cognite3DViewerOptions = {
         sdk: client,
         domElement: canvasWrapperRef.current!,
@@ -97,8 +99,8 @@ export function Viewer() {
         pointCloudEffects: {
           pointBlending: (urlParams.get('pointBlending') === 'true' ?? undefined),
           EDLOptions: {
-            strength: 0.0,
-            radius: 0.0
+            strength: edlEnabled ? parseFloat(urlParams.get('edlStrength') ?? '0.5') : 0.0,
+            radius: parseFloat(urlParams.get('edlRadius') ?? '2.2'),
           }
         }
       };
@@ -118,8 +120,6 @@ export function Viewer() {
       // Prepare viewer
       viewer = new Cognite3DViewer(viewerOptions);
       (window as any).viewer = viewer;
-
-      viewer.setBackgroundColor(new THREE.Color('black'));
       
       // Add Stats.js overlay with FPS etc
       var stats = new Stats();

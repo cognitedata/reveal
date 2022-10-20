@@ -26,9 +26,10 @@ void main() {
 
 	#if defined(points_blend) 
 		color = color / color.w;
-		outputColor = vec4(color.rgb, 1.0);
-		gl_FragDepth = depth;
 	#endif
+
+	outputColor = vec4(color.rgb, 1.0);
+	gl_FragDepth = depth;
 
 	#if defined(use_edl)
 		float edlDepth = color.a;
@@ -38,7 +39,8 @@ void main() {
 		float shade = exp(-obs.x * 300.0 * edlStrength);
 		
 		shouldDiscard = shouldDiscard && obs.x == 0.0; 
-		outputColor = vec4(color.rgb * shade, 1.0);
+		
+		outputColor.xyz *= shade;
 		gl_FragDepth = obs.y;
 	#endif
 
