@@ -1,11 +1,10 @@
 name: Publish Package to NPM
 on:
-  pull_request:
+  release:
     types:
-      - opened
-      - synchronize
+      - published
 jobs:
-  build:
+  deploy-to-npm:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
