@@ -4,61 +4,57 @@ This is where we keep all our domain logic
 
 ## Folder structure explained
 
-```
+```bash
 domain
-└── wells
-  └── nds
-    └── internal <-- internal type
-      ├── \_\_fixtures <- should not import types from sdk/external request - only for transofmred internal
-      |
-      | ├── actions <-- react-query - calls service->network
-      | | └── xxxMutate.ts
-      |
-      | #
-      | # has no logic, just calls a network function
-      | # returns an internal type (this is the reason it is in 'internal' not 'service')
-      | #
-      | ├── queries <-- react-query, should return internal type!
-      | | └── xxxQuery.ts
-      | #
-      | # any logic needed to change the above queries should be in these hooks
-      | #
-      | ├── hooks <-- these often are special versions of the above queries
-      | | └── xxxSelector.ts
-      |
-      ├── transformers
-      | └── normalize.ts <- called inside the query
-      | └── getxxx.ts <- change one field to different format
-      ├── adapters
-      | └── adaptXXXtoTableView.ts <- change/add new fields in bulk
-      |
-      └── types.ts <-- internal type
-    |── service <-- external API type
-    | ├── \_\_fixtures - should only import types from sdk/external request
-    | ├── \_\_mocks
+└── events
+  └── "internal" # internal type
+    ├── __fixtures # should not import types from sdk/external request - only for transofmred internal
     |
-    | ├── network <-- axios/sdk - must return external API type
-    | | └── getxxx.ts
-    | | └── createxxx.ts
-    | | └── deletexxx.ts
+    | ├── actions # react-query - calls service->network
+    | | └── xyzMutate.ts
     |
-    | ├── utils <---- generic stuff used by network etc.
-    | | └── getxxx.ts
-    | | └── usexxx.ts
+    | #
+    | # has no logic, just calls a network function
+    | # returns an internal type (this is the reason it is in 'internal' not 'service')
+    | #
+    | ├── queries # react-query, should return internal type!
+    | | └── xyzQuery.ts
+    | #
+    | # any logic needed to change the above queries should be in these hooks
+    | #
+    | ├── hooks # these often are special versions of the above queries
+    | | └── xyzSelector.ts
     |
-    | └── types.ts <-- external API type
-  |── types.ts <-- external API type
-  |── constants.ts
+    ├── transformers # mapping/transforming internal data to the api level
+    | └── normalize.ts # called inside the query
+    | └── getXYZ.ts # change one field to different format
+    ├── adapters
+    | └── adaptXYZtoTableView.ts # change/add new fields in bulk
+    |
+    └── types.ts # internal type
+  └── "service" # external API type
+    ├── __fixtures # should only import types from sdk/external request
+    ├── __mocks
+    |
+    ├── network # axios/sdk - must return external API type
+    | └── getXYZ.ts
+    | └── createXYZ.ts
+    | └── deleteXYZ.ts
+    |
+    ├── queries # react-query, should return internal type!
+    | └── useXYZQuery.ts
+    |
+    ├── transformers # mapping/transforming api level data to internal data (e.g., store) -- utilize the internal types for this!
+    |
+    ├── utils # generic stuff used by network etc.
+    | └── getXYZ.ts
+    | └── useXYZ.ts
+    |
+    └── types.ts # external API type
+|── types.ts # Global types
+|── constants.ts
+|── builders.ts
 
-|
-| // etc:
-|
-├── favorites
-    |── service
-    |── dataLayer
-├── documents
-    |── service
-    |── dataLayer
 ```
 
 | Folder             | Description                                                  |

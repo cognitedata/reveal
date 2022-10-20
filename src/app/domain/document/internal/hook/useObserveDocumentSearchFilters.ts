@@ -37,7 +37,7 @@ export const useObserveDocumentSearchFilters = ({
       search: {
         query: query || '',
       },
-      filter: transformFilter,
+      filter: transformFilter as any, // Fixme: Looking into it in future PRs
       sort: sort,
     });
   }, [query, setAppliedFilters, transformFilter, sort]);

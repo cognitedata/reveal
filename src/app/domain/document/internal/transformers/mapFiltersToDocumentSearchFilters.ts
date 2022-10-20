@@ -1,6 +1,13 @@
-import { DocumentFilter } from '@cognite/sdk';
-import { AdvancedFilterBuilder } from 'app/domain/builders';
-import { GlobalFilter } from 'app/store/filter/types';
+import { AdvancedFilterBuilder, AdvancedFilter } from 'app/domain/builders';
+import { InternalDocumentFilter } from 'app/domain/document/internal/types';
+
+type DocumentProperties = {
+  'sourceFile.assetIds': number[];
+  author: string[];
+  'sourceFile.source': string[];
+  'sourceFile.mimeType': string[];
+  externalId: string;
+};
 
 export const mapFiltersToDocumentSearchFilters = ({
   externalIdPrefix,
@@ -10,50 +17,28 @@ export const mapFiltersToDocumentSearchFilters = ({
   createdTime,
   lastUpdatedTime,
   assetSubtreeIds,
-}: GlobalFilter['filters']['document']): DocumentFilter | undefined => {
-  const builder = new AdvancedFilterBuilder();
+}: InternalDocumentFilter): AdvancedFilter<DocumentProperties> | undefined => {
+  const builder = new AdvancedFilterBuilder<DocumentProperties>()
+    .containsAny('sourceFile.assetIds', () => {
+      return assetSubtreeIds?.reduce((acc, item) => {
+        if ('id' in item) {
+          return [...acc, item.id];
+        }
+        return acc;
+      }, [] as number[]);
+    })
+    .in('author', author)
+    .in('sourceFile.source', source)
+    .in('sourceFile.mimeType', mimeType)
+    .prefix('externalId', externalIdPrefix)
+    .range('createdTime', {
+      lte: createdTime?.max as number,
+      gte: createdTime?.min as number,
+    })
+    .range('modifiedTime', {
+      lte: lastUpdatedTime?.max as number,
+      gte: lastUpdatedTime?.min as number,
+    });
 
-  if (assetSubtreeIds) {
-    const assetIds = assetSubtreeIds.reduce((acc, item) => {
-      if ('id' in item) {
-        return [...acc, item.id];
-      }
-      return acc;
-    }, [] as number[]);
-
-    // Note: should we also check for externalId (string)? Currently filter only gives number.
-    builder.containsAny(['sourceFile', 'assetIds'], assetIds);
-  }
-
-  if (createdTime) {
-    const lte = createdTime.max as number | undefined;
-    const gte = createdTime.min as number | undefined;
-
-    builder.range(['createdTime'], { lte, gte });
-  }
-
-  if (lastUpdatedTime) {
-    const lte = lastUpdatedTime.max as number | undefined;
-    const gte = lastUpdatedTime.min as number | undefined;
-
-    builder.range(['modifiedTime'], { lte, gte });
-  }
-
-  if (author) {
-    builder.in(['author'], author);
-  }
-
-  if (source) {
-    builder.in(['sourceFile', 'source'], source);
-  }
-
-  if (mimeType) {
-    builder.in(['sourceFile', 'mimeType'], mimeType);
-  }
-
-  if (externalIdPrefix) {
-    builder.prefix(['externalId'], externalIdPrefix);
-  }
-
-  return new AdvancedFilterBuilder().and(builder).build();
+  return new AdvancedFilterBuilder<DocumentProperties>().and(builder).build();
 };

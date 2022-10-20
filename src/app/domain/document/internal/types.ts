@@ -1,12 +1,12 @@
-import { Timestamp, IdEither } from '@cognite/sdk';
+import { IdEither, DateRange } from '@cognite/sdk';
 
 export type InternalDocumentFilter = {
   author?: string[];
   source?: string[];
   mimeType?: string[];
   externalIdPrefix?: string;
-  createdTime?: { min?: Timestamp; max?: Timestamp };
-  lastUpdatedTime?: { min?: Timestamp; max?: Timestamp };
+  createdTime?: DateRange;
+  lastUpdatedTime?: DateRange;
   assetSubtreeIds?: IdEither[];
 };
 

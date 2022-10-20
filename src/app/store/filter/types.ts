@@ -1,20 +1,20 @@
 import {
   AssetFilterProps,
   DateRange,
-  EventFilter,
   FileFilterProps,
   IdEither,
   SequenceFilter,
   TimeseriesFilter,
 } from '@cognite/sdk';
 import { InternalDocumentFilter } from 'app/domain/document/internal/types';
+import { InternalEventsFilters } from 'app/domain/events/internal/types';
 
 export type Filters = {
   asset: AssetFilterProps;
   timeseries: TimeseriesFilter;
   sequence: Required<SequenceFilter>['filter'];
   file: FileFilterProps;
-  event: EventFilter;
+  event: InternalEventsFilters;
   document: InternalDocumentFilter;
 };
 

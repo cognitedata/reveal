@@ -14,13 +14,19 @@ import {
   MetadataFilterV2,
 } from '@cognite/data-exploration';
 import { TempMultiSelectFix } from 'app/containers/elements';
+// import { useEventsFilteredListQuery } from 'app/domain/events/internal/queries/useEventsFilteredListQuery';
+import { CogniteEvent } from '@cognite/sdk/dist/src';
 
 export const EventFilters = ({ ...rest }: {}) => {
   const [eventFilter, setEventFilter] = useEventsFilters();
   const resetEventFilters = useResetEventsFilters();
   const isFiltersEmpty = useFilterEmptyState('event');
 
-  const { data: items = [] } = useList('events', {
+  // TODO: use this hook with the new table.
+  // const { data, hasNextPage, fetchNextPage, isLoading, isFetchingNextPage } =
+  //   useEventsFilteredListQuery();
+
+  const { data: items = [] } = useList<CogniteEvent>('events', {
     filter: eventFilter,
     limit: 1000,
   });
