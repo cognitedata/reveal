@@ -4,7 +4,6 @@ import { notification } from 'antd';
 import {
   BasicInfoPane,
   NoDataText,
-  SimpleLabel,
   DataSet,
   CREATE_DATASET_DOC,
   EDIT_DATASET_DOC,
@@ -221,9 +220,9 @@ const BasicInfoCard = ({ dataSet }: BasicInfoCardProps) => {
               consoleLabels?.length ? (
                 <Flex gap={6} alignItems="center" direction="row" wrap="wrap">
                   {consoleLabels.map((tag) => (
-                    <SimpleLabel size="medium" variant="default">
+                    <Label size="medium" variant="default">
                       {tag}
-                    </SimpleLabel>
+                    </Label>
                   ))}
                 </Flex>
               ) : (

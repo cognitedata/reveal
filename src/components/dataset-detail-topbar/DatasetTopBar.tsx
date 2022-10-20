@@ -5,12 +5,7 @@ import { trackEvent } from '@cognite/cdf-route-tracker';
 
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
 
-import {
-  DataSet,
-  DATASET_HELP_DOC,
-  getGovernedStatus,
-  SimpleLabel,
-} from 'utils';
+import { DataSet, DATASET_HELP_DOC, getGovernedStatus } from 'utils';
 import styled from 'styled-components';
 import { useTranslation } from 'common/i18n';
 
@@ -51,13 +46,13 @@ const DatasetTopBar = ({ dataset, actions }: DatasetTopBarProps) => {
         </Label>
         {consoleLabels?.length ? (
           <Flex gap={4} alignItems="center" direction="row">
-            <SimpleLabel size="medium" variant="default">
+            <Label size="medium" variant="default">
               {consoleLabels[0]}
-            </SimpleLabel>
+            </Label>
             {consoleLabels.length > 1 && (
-              <SimpleLabel size="medium" variant="default">
+              <Label size="medium" variant="default">
                 {`+${consoleLabels.length - 1}`}
-              </SimpleLabel>
+              </Label>
             )}
           </Flex>
         ) : (
