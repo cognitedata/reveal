@@ -6,8 +6,8 @@ import {
   useAuthenticatedAuthContext,
 } from '@cognite/react-container';
 import { handleLogout } from 'utils/utils';
-import { PAGES } from 'App';
 import { useFetchPriceAreas } from 'queries/useFetchPriceAreas';
+import { PAGES } from 'types';
 
 import {
   StyledTopBar,

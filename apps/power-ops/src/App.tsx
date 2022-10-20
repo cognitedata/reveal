@@ -13,17 +13,7 @@ import { Workflows, WorkflowSingle } from 'pages/Workflows';
 import { Monitoring } from 'pages/Monitoring';
 import { Portfolio } from 'pages/Portfolio';
 import { WorkflowSchemasContainer } from 'pages/WorkflowSchemas';
-
-export enum PAGES {
-  HOME = '/home',
-  MONITORING = '/monitoring',
-  WORKFLOWS_SINGLE = '/workflows/:workflowExternalId',
-  WORKFLOWS = '/workflows',
-  PRICE_AREA = '/portfolio/:priceAreaExternalId',
-  PORTFOLIO = '/portfolio',
-  WORKFLOW_SCHEMAS = '/workflow-schemas',
-  LOGOUT = '/logout',
-}
+import { PAGES } from 'types';
 
 const App = () => (
   <Container sidecar={sidecar}>

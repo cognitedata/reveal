@@ -44,3 +44,14 @@ export type WorkflowSchemaEditable = Omit<
   WorkflowSchemaWithProcesses,
   'id' | 'cdfProject'
 >;
+
+export enum PAGES {
+  HOME = '/home',
+  MONITORING = '/monitoring',
+  WORKFLOWS_SINGLE = '/workflows/:workflowExternalId',
+  WORKFLOWS = '/workflows',
+  PRICE_AREA = '/portfolio/:priceAreaExternalId',
+  PORTFOLIO = '/portfolio',
+  WORKFLOW_SCHEMAS = '/workflow-schemas',
+  LOGOUT = '/logout',
+}

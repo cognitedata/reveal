@@ -1,5 +1,5 @@
 import { EventStreamContext } from 'providers/eventStreamProvider';
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect } from 'react';
 import { useAuthenticatedAuthContext } from '@cognite/react-container';
 import { CogniteEvent } from '@cognite/sdk';
 import { EVENT_TYPES } from '@cognite/power-ops-api-types';
@@ -9,8 +9,8 @@ export const useNewBidMatrixAvailable = (
   priceAreaExternalId: string,
   bidProcessExternalId: string
 ) => {
-  const [newMatrixAvailable, setNewMatrixAvailable] = useState(false);
-  const { eventStore } = useContext(EventStreamContext);
+  const { eventStore, newMatrixAvailable, setNewMatrixAvailable } =
+    useContext(EventStreamContext);
   const { client } = useAuthenticatedAuthContext();
 
   const processEvent = async (event: CogniteEvent): Promise<void> => {
@@ -30,13 +30,11 @@ export const useNewBidMatrixAvailable = (
   };
 
   useEffect(() => {
-    const subscription = eventStore?.subscribe(({ event }) => {
+    const subscription = eventStore.subscribe(({ event }) => {
       processEvent(event);
     });
 
-    return () => {
-      subscription?.unsubscribe();
-    };
+    return () => subscription.unsubscribe();
   }, [processEvent]);
 
   return newMatrixAvailable;

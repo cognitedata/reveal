@@ -1,15 +1,17 @@
 import {
-  useState,
   createContext,
   useContext,
   useEffect,
   PropsWithChildren,
-  ReactNode,
+  useState,
+  SetStateAction,
+  Dispatch,
+  useMemo,
 } from 'react';
 import sidecar from 'utils/sidecar';
-import { Observable, Subject, fromEvent } from 'rxjs';
+import { Subject, fromEvent } from 'rxjs';
 import { SnifferRequestPayload } from '@cognite/sniffer-service-types';
-import { useAuthContext } from '@cognite/react-container';
+import { useAuthenticatedAuthContext } from '@cognite/react-container';
 import { CogniteEvent, Relationship } from '@cognite/sdk';
 
 export interface EventStreamContextType {
@@ -18,69 +20,62 @@ export interface EventStreamContextType {
     relationshipsAsSource: Relationship[];
     relationshipsAsTarget: Relationship[];
   }>;
+  newMatrixAvailable: boolean;
+  setNewMatrixAvailable: Dispatch<SetStateAction<boolean>>;
 }
 
 export const EventStreamContext = createContext<EventStreamContextType>({
   eventStore: new Subject(),
+  newMatrixAvailable: false,
+  setNewMatrixAvailable: () => null,
 });
 
-export const EventStreamProvider: React.FC<
-  PropsWithChildren<{ children: ReactNode }>
-> = ({ children }) => {
-  const { client } = useAuthContext();
+const source = new EventSource(`${sidecar.powerOpsApiBaseUrl}/sse`, {
+  withCredentials: false,
+});
 
-  const [eventEmitter, setEventEmitter] =
-    useState<Observable<MessageEvent> | null>(null);
-  const eventStreamContext = useContext(EventStreamContext);
+export const EventStreamProvider = ({ children }: PropsWithChildren) => {
+  const { client, project } = useAuthenticatedAuthContext();
+  const [newMatrixAvailable, setNewMatrixAvailable] = useState(false);
+
+  const eventEmitter = fromEvent<MessageEvent<string>>(source, project);
+  const { eventStore } = useContext(EventStreamContext);
 
   useEffect(() => {
-    if (client?.project && !eventEmitter) {
-      const source = new EventSource(`${sidecar.powerOpsApiBaseUrl}/sse`, {
-        withCredentials: false,
+    const subscription = eventEmitter.subscribe(async (e) => {
+      const snifferEvent = JSON.parse(e.data) as SnifferRequestPayload;
+      const [event] = await client.events.retrieve([{ id: snifferEvent.id }]);
+      const [
+        { items: relationshipsAsSource = [] },
+        { items: relationshipsAsTarget = [] },
+      ] = await Promise.all([
+        client.relationships.list({
+          filter: { sourceExternalIds: [event.externalId!] },
+        }),
+        client.relationships.list({
+          filter: {
+            targetExternalIds: [event.externalId!],
+          },
+        }),
+      ]);
+      eventStore.next({
+        event,
+        relationshipsAsSource,
+        relationshipsAsTarget,
       });
-      setEventEmitter(fromEvent<MessageEvent>(source, client.project));
-    }
-  }, [client]);
-
-  useEffect(() => {
-    const subscription = eventEmitter?.subscribe(async (e) => {
-      const snifferPayload: SnifferRequestPayload = JSON.parse(e.data);
-
-      if (client) {
-        const [event] = await client.events.retrieve([
-          { id: snifferPayload.id },
-        ]);
-
-        const [
-          { items: relationshipsAsSource },
-          { items: relationshipsAsTarget },
-        ] = await Promise.all([
-          client.relationships.list({
-            filter: {
-              sourceExternalIds: [event.externalId!],
-            },
-          }),
-          client.relationships.list({
-            filter: {
-              targetExternalIds: [event.externalId!],
-            },
-          }),
-        ]);
-
-        eventStreamContext.eventStore.next({
-          event,
-          relationshipsAsSource: relationshipsAsSource || [],
-          relationshipsAsTarget: relationshipsAsTarget || [],
-        });
-      }
     });
 
-    return () => {
-      subscription?.unsubscribe();
-    };
-  }, [eventEmitter]);
+    return () => subscription.unsubscribe();
+  }, []);
 
-  const { Provider } = EventStreamContext;
+  const contextValue = useMemo(
+    () => ({ eventStore, newMatrixAvailable, setNewMatrixAvailable }),
+    [eventStore, newMatrixAvailable, setNewMatrixAvailable]
+  );
 
-  return <Provider value={eventStreamContext}>{children}</Provider>;
+  return (
+    <EventStreamContext.Provider value={contextValue}>
+      {children}
+    </EventStreamContext.Provider>
+  );
 };
