@@ -122,7 +122,7 @@ const ExploreData = ({ loading, dataSetId }: ExploreDataProps) => {
           <Input
             value={query}
             icon="Search"
-            placeholder="Search"
+            placeholder={t('search')}
             onChange={(evt) => {
               setQuery(evt.currentTarget.value);
             }}
