@@ -63,7 +63,8 @@ export const AssetNewTable = (props: AssetTableProps) => {
       Table.Columns.created,
       Table.Columns.labels,
     ],
-    [onRowClick]
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
   ) as Column<Asset>[];
 
   return (

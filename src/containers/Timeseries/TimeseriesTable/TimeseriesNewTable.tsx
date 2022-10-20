@@ -1,5 +1,5 @@
 import { Timeseries } from '@cognite/sdk';
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { DateRangeProps, RelationshipLabels } from 'types';
 import { NewTable as Table, TableProps } from 'components/ReactTable/Table';
 import { TIME_SELECT } from 'containers';
@@ -12,15 +12,20 @@ export type TimeseriesWithRelationshipLabels = Timeseries & RelationshipLabels;
 const visibleColumns = ['name', 'description', 'data', 'lastUpdatedTime'];
 
 export const TimeseriesNewTable = ({
-  dateRange = TIME_SELECT['1Y'].getTime(),
+  dateRange: dateRangeProp,
   ...props
 }: Omit<TableProps<TimeseriesWithRelationshipLabels>, 'columns'> &
   RelationshipLabels &
   DateRangeProps) => {
-  const startTime = dateRange[0];
-  const endTime = dateRange[1];
-  const start = startTime.valueOf();
-  const end = endTime.valueOf();
+  const [dateRange, setDateRange] = useState(
+    dateRangeProp || TIME_SELECT['1Y'].getTime()
+  );
+
+  useEffect(() => {
+    if (dateRangeProp) {
+      setDateRange(dateRangeProp);
+    }
+  }, [dateRangeProp]);
 
   const { data, ...rest } = props;
   const columns = useMemo(() => {
@@ -48,7 +53,7 @@ export const TimeseriesNewTable = ({
             showGridLine="none"
             minRowTicks={2}
             enableTooltipPreview
-            dateRange={[new Date(start), new Date(end)]}
+            dateRange={dateRange}
             onDateRangeChange={() => {}}
           />
         );
@@ -67,7 +72,7 @@ export const TimeseriesNewTable = ({
       Table.Columns.dataSet,
       Table.Columns.assets,
     ] as Column<Timeseries>[];
-  }, [end, start]);
+  }, [dateRange]);
 
   return (
     <Table

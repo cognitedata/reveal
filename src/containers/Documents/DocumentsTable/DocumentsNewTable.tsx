@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import { NewTable as Table, TableProps } from 'components/ReactTable/Table';
 
@@ -26,88 +26,100 @@ export const DocumentsTable = (props: DocumentTableProps) => {
   const { query } = props;
   const sdk = useSDK();
 
-  const columns = [
-    {
-      ...Table.Columns.name,
-      Cell: ({ row }: { row: Row<DocumentWithRelationshipLabels> }) => {
-        const fileNamePreviewProps = {
-          fileName: row.original.name || '',
-          file: row.original,
-        };
-        return <DocumentNamePreview {...fileNamePreviewProps} query={query} />;
-      },
-    },
-    {
-      id: 'content',
-      Header: 'Content',
-      Cell: ({ row }: { row: Row<Document> }) => {
-        return <DocumentContentPreview document={row.original} query={query} />;
-      },
-    },
-    {
-      id: 'author',
-      Header: 'Author',
-      Cell: ({ row }: { row: Row<Document> }) => {
-        return <Body level={2}>{row.original.author}</Body>;
-      },
-    },
-    Table.Columns.mimeType,
-    {
-      id: 'modifiedTime',
-      Header: 'Last updated',
-      Cell: ({ row }: { row: Row<Document> }) => (
-        <Body level={2}>
-          <TimeDisplay value={row.original.modifiedTime} relative withTooltip />
-        </Body>
-      ),
-    },
-    Table.Columns.created,
-    {
-      id: 'rootAsset',
-      Header: 'Root asset',
-      Cell: ({ row }: { row: Row<Document> }) => {
-        const { data: rootAsset } = useQuery(
-          ['document', row.original.id, 'rootAsset'],
-          () => {
-            if (row.original?.assetIds?.length) {
-              return getRootAsset(sdk, row.original.assetIds[0]);
-            }
-
-            return undefined;
+  const columns = useMemo(
+    () =>
+      [
+        {
+          ...Table.Columns.name,
+          Cell: ({ row }: { row: Row<DocumentWithRelationshipLabels> }) => {
+            const fileNamePreviewProps = {
+              fileName: row.original.name || '',
+              file: row.original,
+            };
+            return (
+              <DocumentNamePreview {...fileNamePreviewProps} query={query} />
+            );
           },
-          {
-            enabled: Boolean(row.original.assetIds?.length),
-          }
-        );
+        },
+        {
+          id: 'content',
+          Header: 'Content',
+          Cell: ({ row }: { row: Row<Document> }) => {
+            return (
+              <DocumentContentPreview document={row.original} query={query} />
+            );
+          },
+        },
+        {
+          id: 'author',
+          Header: 'Author',
+          Cell: ({ row }: { row: Row<Document> }) => {
+            return <Body level={2}>{row.original.author}</Body>;
+          },
+        },
+        Table.Columns.mimeType,
+        {
+          id: 'modifiedTime',
+          Header: 'Last updated',
+          Cell: ({ row }: { row: Row<Document> }) => (
+            <Body level={2}>
+              <TimeDisplay
+                value={row.original.modifiedTime}
+                relative
+                withTooltip
+              />
+            </Body>
+          ),
+        },
+        Table.Columns.created,
+        {
+          id: 'rootAsset',
+          Header: 'Root asset',
+          Cell: ({ row }: { row: Row<Document> }) => {
+            const { data: rootAsset } = useQuery(
+              ['document', row.original.id, 'rootAsset'],
+              () => {
+                if (row.original?.assetIds?.length) {
+                  return getRootAsset(sdk, row.original.assetIds[0]);
+                }
 
-        if (rootAsset) {
-          return (
-            <Button
-              href={createLink(`/explore/asset/${rootAsset.id}`)}
-              // rel="noopener noreferrer"
-              target="_blank"
-              type="link"
-              iconPlacement="right"
-              icon="ArrowUpRight"
-            >
-              {rootAsset?.name}
-            </Button>
-          );
-        }
-        return null;
-      },
-    },
-    Table.Columns.externalId,
-    Table.Columns.id,
-    /**
-     * It's not yet known what the other columns will be
-     * */
-    // Table.Columns.created,
-    // Table.Columns.dataSet,
-    // Table.Columns.source,
-    // Table.Columns.assets,
-    // Table.Columns.labels,
-  ] as Column<Document>[];
+                return undefined;
+              },
+              {
+                enabled: Boolean(row.original.assetIds?.length),
+              }
+            );
+
+            if (rootAsset) {
+              return (
+                <Button
+                  href={createLink(`/explore/asset/${rootAsset.id}`)}
+                  // rel="noopener noreferrer"
+                  target="_blank"
+                  type="link"
+                  iconPlacement="right"
+                  icon="ArrowUpRight"
+                >
+                  {rootAsset?.name}
+                </Button>
+              );
+            }
+            return null;
+          },
+        },
+        Table.Columns.externalId,
+        Table.Columns.id,
+        /**
+         * It's not yet known what the other columns will be
+         * */
+        // Table.Columns.created,
+        // Table.Columns.dataSet,
+        // Table.Columns.source,
+        // Table.Columns.assets,
+        // Table.Columns.labels,
+      ] as Column<Document>[],
+    [query, sdk]
+  );
 
   // const updatedColumns =
   //   getNewColumnsWithRelationshipLabels<DocumentWithRelationshipLabels>(
