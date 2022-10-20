@@ -2,7 +2,7 @@
  * convert ms to display
  */
 export default function convertMSToDisplay(milliseconds: number) {
-  if (isNaN(milliseconds)) return '';
+  if (Number.isNaN(milliseconds)) return '';
   let hour: number;
   let minute: number;
   let seconds: number;

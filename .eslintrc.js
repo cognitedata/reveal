@@ -1,5 +1,5 @@
 module.exports = {
-  extends: ['@cognite', 'react-app'],
+  extends: ['@cognite'],
   rules: {
     'react/react-in-jsx-scope': 'off',
     'react/jsx-props-no-spreading': 'off',
