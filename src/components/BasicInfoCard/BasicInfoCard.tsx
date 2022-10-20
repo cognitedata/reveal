@@ -45,7 +45,7 @@ const BasicInfoCard = ({ dataSet }: BasicInfoCardProps) => {
   const { statusVariant, statusI18nKey } = getGovernedStatus(consoleGoverned);
 
   const handleCopy = (copiedText: string) => {
-    copy(copiedText || '');
+    copy(copiedText);
     notification.success({
       message: t('copy-notification'),
     });
@@ -118,7 +118,7 @@ const BasicInfoCard = ({ dataSet }: BasicInfoCardProps) => {
             </Body>
             <TabbableButton
               aria-label={t('copy-dataset-id')}
-              onClick={() => handleCopy(name)}
+              onClick={() => handleCopy(id.toString())}
             >
               <Icon type="Copy" />
             </TabbableButton>
@@ -139,7 +139,7 @@ const BasicInfoCard = ({ dataSet }: BasicInfoCardProps) => {
               </Body>
               <TabbableButton
                 aria-label={t('copy-external-id')}
-                onClick={() => handleCopy(name)}
+                onClick={() => handleCopy(externalId)}
               >
                 <Icon type="Copy" />
               </TabbableButton>
@@ -198,7 +198,7 @@ const BasicInfoCard = ({ dataSet }: BasicInfoCardProps) => {
                       </Body>
                       <TabbableButton
                         aria-label={t('copy-owner-email')}
-                        onClick={() => handleCopy(name)}
+                        onClick={() => handleCopy(owner.email)}
                       >
                         <Icon type="Copy" />
                       </TabbableButton>

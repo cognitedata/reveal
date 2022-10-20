@@ -49,7 +49,7 @@ const DatasetTopBar = ({ dataset, actions }: DatasetTopBarProps) => {
         <Label size="medium" variant={statusVariant}>
           {t(statusI18nKey)}
         </Label>
-        {consoleLabels?.length && (
+        {consoleLabels?.length ? (
           <Flex gap={4} alignItems="center" direction="row">
             <SimpleLabel size="medium" variant="default">
               {consoleLabels[0]}
@@ -60,6 +60,8 @@ const DatasetTopBar = ({ dataset, actions }: DatasetTopBarProps) => {
               </SimpleLabel>
             )}
           </Flex>
+        ) : (
+          <></>
         )}
       </Flex>
       <Flex alignItems="center" gap={8}>
