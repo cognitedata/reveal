@@ -22,6 +22,7 @@ import EventsProfile from '../EventsProfile';
 import ResourceCountBox from '../ResourceCountBox';
 import { useTranslation } from 'common/i18n';
 import { Input } from '@cognite/cogs.js';
+import useDebounce from 'hooks/useDebounce';
 
 interface ExploreDataProps {
   loading: boolean;
@@ -102,6 +103,7 @@ const ExploreData = ({ loading, dataSetId }: ExploreDataProps) => {
   };
 
   const [query, setQuery] = useState('');
+  const debouncedQuery = useDebounce(query, 100);
 
   const dataSetContainsData = () => {
     return !(
@@ -145,17 +147,19 @@ const ExploreData = ({ loading, dataSetId }: ExploreDataProps) => {
             <ResourceCountBox count={filesCount} resourceName="Files" />
           </Col>
           {timeseriesCount > 0 && (
-            <TimeseriesTable dataSetId={dataSetId} query={query} />
+            <TimeseriesTable dataSetId={dataSetId} query={debouncedQuery} />
           )}
           {assetCount > 0 && (
-            <AssetsTable dataSetId={dataSetId} query={query} />
+            <AssetsTable dataSetId={dataSetId} query={debouncedQuery} />
           )}
           {eventsCounts > 0 && (
-            <EventsTable dataSetId={dataSetId} query={query} />
+            <EventsTable dataSetId={dataSetId} query={debouncedQuery} />
           )}
-          {filesCount > 0 && <FilesTable dataSetId={dataSetId} query={query} />}
+          {filesCount > 0 && (
+            <FilesTable dataSetId={dataSetId} query={debouncedQuery} />
+          )}
           {sequencesCount > 0 && (
-            <SequencesTable dataSetId={dataSetId} query={query} />
+            <SequencesTable dataSetId={dataSetId} query={debouncedQuery} />
           )}
 
           {exploreView.visible && renderExploreView()}
