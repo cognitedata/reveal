@@ -55,7 +55,11 @@ export const UnifiedFileViewerWrapper = ({
 
   const [zoomControlsHidden] = useState(hideZoomControls);
   const [page, setPage] = useState(1);
-  const [container, setContainer] = useState<ContainerConfig>();
+  const [container, setContainer] = useState<ContainerConfig>({
+    id: containerId,
+    maxWidth: MAX_CONTAINER_WIDTH,
+    maxHeight: MAX_CONTAINER_HEIGHT,
+  });
   const [selectedIds, setSelectedIds] = useState<string[]>(
     zoomOnAnnotation?.annotation
       ? [String(zoomOnAnnotation?.annotation.id)]
@@ -63,6 +67,10 @@ export const UnifiedFileViewerWrapper = ({
   );
   const [hoverId, setHoverId] = useState<string | undefined>(undefined);
   const fileUrl = useFileDownloadUrl(file.id);
+
+  useEffect(() => {
+    setContainer((prevState: ContainerConfig) => ({ ...prevState, page }));
+  }, [page]);
 
   useEffect(() => {
     if (file.id && file.mimeType && fileUrl) {

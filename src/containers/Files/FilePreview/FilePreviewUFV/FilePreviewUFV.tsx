@@ -40,7 +40,7 @@ export const FilePreviewUFV = ({
   contextualization,
   onItemClicked,
   fileIcon,
-  showZoomControls = true,
+  showZoomControls = false,
 }: FilePreviewUFVProps) => {
   const sdk = useSDK();
 
