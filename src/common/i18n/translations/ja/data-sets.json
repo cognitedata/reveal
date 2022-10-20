@@ -117,6 +117,7 @@
   "not-available": "使用不可",
   "not-defined": "未定義",
   "owner": "オーナー",
+  "owner_other": "Owners",
   "owner-email": "オーナー Email",
   "owner-name": "オーナー名",
   "owner-with-name": "オーナー {{ownerName}}",
