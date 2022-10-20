@@ -1,5 +1,5 @@
 import Typography from 'antd/lib/typography';
-import { Body, Flex, Icon, Label, Tooltip } from '@cognite/cogs.js';
+import { Body, Flex, Icon, Label } from '@cognite/cogs.js';
 import { notification } from 'antd';
 import {
   BasicInfoPane,
@@ -10,7 +10,6 @@ import {
   EDIT_DATASET_DOC,
   EDIT_DATASET_HELP_DOC,
   getGovernedStatus,
-  TooltipLink,
 } from 'utils';
 import copy from 'copy-to-clipboard';
 
@@ -19,6 +18,7 @@ import moment from 'moment';
 import DatasetProperty from './DatasetProperty';
 import { TabbableButton } from 'components/tabbable-button';
 import styled from 'styled-components';
+import InfoTooltip from 'components/InfoTooltip';
 interface BasicInfoCardProps {
   dataSet: DataSet;
 }
@@ -97,23 +97,18 @@ const BasicInfoCard = ({ dataSet }: BasicInfoCardProps) => {
             <Body level={2} className="mute">
               {t('data-set-id')}
             </Body>
-            <Tooltip
-              content={
-                <p data-testid="id-tooltip">
+            <InfoTooltip
+              tooltipText={
+                <span data-testid="id-tooltip">
                   {t('basic-info-tooltip-data-set-id')}{' '}
-                  <TooltipLink
-                    href={CREATE_DATASET_DOC}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    {t('learn-more-in-our-docs')}
-                  </TooltipLink>
-                </p>
+                </span>
               }
-              wrapped
+              url={CREATE_DATASET_DOC}
+              urlTitle={t('learn-more-in-our-docs')}
+              showIcon={false}
             >
               <HelpIcon type="Help" />
-            </Tooltip>
+            </InfoTooltip>
           </Flex>
         }
         value={
@@ -162,23 +157,18 @@ const BasicInfoCard = ({ dataSet }: BasicInfoCardProps) => {
                 <Body level={2} className="mute">
                   {t('governance-status')}
                 </Body>
-                <Tooltip
-                  content={
-                    <p>
+                <InfoTooltip
+                  tooltipText={
+                    <span data-testid="id-tooltip">
                       {t('basic-info-tooltip-governance-status')}{' '}
-                      <TooltipLink
-                        href={EDIT_DATASET_DOC}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        {t('learn-more-in-our-docs')}
-                      </TooltipLink>
-                    </p>
+                    </span>
                   }
-                  wrapped
+                  url={EDIT_DATASET_DOC}
+                  urlTitle={t('learn-more-in-our-docs')}
+                  showIcon={false}
                 >
                   <HelpIcon type="Help" />
-                </Tooltip>
+                </InfoTooltip>
               </Flex>
             }
             value={
@@ -272,25 +262,20 @@ const BasicInfoCard = ({ dataSet }: BasicInfoCardProps) => {
         <DatasetProperty
           value={
             <Flex gap={6} direction="row" alignItems="center">
-              <Tooltip
-                content={
-                  <p>
-                    {t('basic-info-tooltip-data-set-archived')}
-                    <TooltipLink
-                      href={EDIT_DATASET_HELP_DOC}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      {' '}
-                      {t('learn-more-in-our-docs')}
-                    </TooltipLink>
-                  </p>
+              <InfoTooltip
+                tooltipText={
+                  <span data-testid="id-tooltip">
+                    {t('basic-info-tooltip-data-set-archived')}{' '}
+                  </span>
                 }
+                url={EDIT_DATASET_HELP_DOC}
+                urlTitle={t('learn-more-in-our-docs')}
+                showIcon={false}
               >
                 <Label size="medium" variant="danger">
                   {t('archived')}
                 </Label>
-              </Tooltip>
+              </InfoTooltip>
             </Flex>
           }
         />
