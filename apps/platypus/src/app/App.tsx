@@ -2,6 +2,7 @@ import { BrowserRouter as Router } from 'react-router-dom';
 import styled from 'styled-components/macro';
 import { ToastContainer } from '@cognite/cogs.js';
 import { ContainerProvider } from 'brandi-react';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { rootInjector } from './di';
 
 import Routes from './Routes';
@@ -18,6 +19,7 @@ function App() {
   const tenant = getTenant();
   return (
     <QueryClientProvider client={queryClient}>
+      <ReactQueryDevtools initialIsOpen={false} />
       <ContainerProvider container={rootInjector}>
         <ToastContainer />
         <StyledWrapper>

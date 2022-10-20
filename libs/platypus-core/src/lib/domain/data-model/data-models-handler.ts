@@ -9,6 +9,7 @@ import {
   DataModelApiOutputDTO,
   DeleteDataModelDTO,
   FetchDataModelDTO,
+  UpdateDataModelDTO,
 } from './dto';
 
 import { MixerApiService, DmsApiService } from './services/';
@@ -92,6 +93,38 @@ export class DataModelsHandler {
         this.dataModelDataMapper.deserialize(createApiResponse);
 
       return Result.ok(createdDataModel);
+    } catch (err) {
+      if ((err as PlatypusError).code === 409) {
+        return Result.fail({
+          name: 'Data Model with that name already exists.',
+        });
+      }
+
+      return Result.fail(err);
+    }
+  }
+
+  async update(dto: UpdateDataModelDTO): Promise<Result<DataModel>> {
+    const validator = new Validator(dto);
+    validator.addRule('name', new RequiredFieldValidator());
+    const validationResult = validator.validate();
+
+    if (!validationResult.valid) {
+      return Promise.resolve(Result.fail(validationResult.errors));
+    }
+
+    try {
+      const updateApiResponse = await this.mixerApiService.upsertApi({
+        externalId: dto.externalId,
+        description: dto.description || '',
+        name: dto.name,
+        metadata: dto.metadata || {},
+      });
+
+      const updatedDataModel =
+        this.dataModelDataMapper.deserialize(updateApiResponse);
+
+      return Result.ok(updatedDataModel);
     } catch (err) {
       if ((err as PlatypusError).code === 409) {
         return Result.fail({

@@ -17,10 +17,12 @@ jest.mock('../../hooks/useDataSets', () => {
 });
 
 const mockMutate = jest.fn();
-jest.mock('./hooks/useDataModelCreateMutation', () => {
+jest.mock('./hooks/useDataModelMutation', () => {
   return {
-    useDataModelCreateMutation: () => ({
-      mutate: mockMutate,
+    useDataModelMutation: () => ({
+      create: {
+        mutate: mockMutate,
+      },
     }),
   };
 });

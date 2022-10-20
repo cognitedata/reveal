@@ -11,21 +11,25 @@ import {
   StyledExternalId,
 } from './elements';
 import { useDataModel } from '@platypus-app/hooks/useDataModelActions';
+import { useState } from 'react';
+import { DataModelSettingsModal } from '@platypus-app/components/DataModelSettingsModal/DataModelSettingsModal';
 
 export const NavigationDataModel = () => {
   const { dataModelExternalId } = useParams<{
     dataModelExternalId: string;
   }>();
   const { data: dataModel } = useDataModel(dataModelExternalId);
-
+  const [isSettingsModalVisible, setIsSettingsModalVisible] = useState(false);
   const history = useHistory();
 
   const renderTopBarRight = () => {
     return (
       <StyledTopBarRight>
-        <Tooltip placement="bottom" content="WIP..." arrow={false}>
-          <StyledButton icon="Settings" aria-label="Settings" />
-        </Tooltip>
+        <StyledButton
+          icon="Settings"
+          aria-label="Settings"
+          onClick={() => setIsSettingsModalVisible(true)}
+        />
       </StyledTopBarRight>
     );
   };
@@ -55,8 +59,18 @@ export const NavigationDataModel = () => {
 
   return (
     <StyledTopBar>
-      {renderTitleButton()}
-      {renderTopBarRight()}
+      {dataModel && (
+        <>
+          {renderTitleButton()}
+          {renderTopBarRight()}
+          {isSettingsModalVisible && (
+            <DataModelSettingsModal
+              dataModel={dataModel}
+              onRequestClose={() => setIsSettingsModalVisible(false)}
+            />
+          )}
+        </>
+      )}
     </StyledTopBar>
   );
 };

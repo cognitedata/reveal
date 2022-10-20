@@ -2,12 +2,7 @@ describe('Data Model Page - Toggle Schema Visualizer', () => {
   const createNewDataModel = (dataModelName: string) => {
     cy.visit('/');
 
-    cy.getBySel('create-data-model-btn').should('be.visible');
     cy.getBySel('create-data-model-btn').click();
-    cy.getBySelLike('create-data-model-modal').should('be.visible');
-    cy.getBySelLike('modal-title').contains('Create Data Model');
-
-    cy.getBySel('create-data-model-btn').click({ force: true });
     cy.getBySel('input-data-model-name').type(dataModelName);
     cy.getBySel('modal-ok-button').click();
     cy.url().should('include', `/data-models/${dataModelName}/latest`);
