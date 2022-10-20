@@ -112,6 +112,7 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider {
       ssaoTexture: this._renderTargetData.ssaoRenderTarget.texture,
       edges: edges.enabled,
       pointBlending: pointCloudParameters.pointBlending,
+      EDLOptions: pointCloudParameters.EDLOptions,
       ...this._pointCloudRenderPipeline.pointCloudRenderTargets,
       ...this._cadGeometryRenderPipeline.cadGeometryRenderTargets
     });

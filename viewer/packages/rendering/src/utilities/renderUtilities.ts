@@ -19,6 +19,7 @@ import {
 import { blitShaders, depthBlendBlitShaders, pointCloudShaders } from '../rendering/shaders';
 import { NodeOutlineColor } from '@reveal/cad-styling';
 import { CadNode } from '@reveal/cad-model';
+import { DEFAULT_EDL_NEIGHBOURS_COUNT } from '../pointcloud-rendering/constants';
 
 export const unitOrthographicCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, -1, 1);
 
@@ -109,17 +110,30 @@ export function getBlitMaterial(options: BlitOptions): THREE.RawShaderMaterial {
 }
 
 export function getPointCloudPostProcessingMaterial(options: PointCloudPostProcessingOptions): THREE.RawShaderMaterial {
-  const { texture, depthTexture, pointBlending } = options;
+  const { texture, depthTexture, pointBlending, EDLOptions } = options;
 
-  const uniforms: ThreeUniforms = {
+  let uniforms: ThreeUniforms = {
     tDiffuse: { value: texture },
-    tDepth: { value: depthTexture }
+    tDepth: { value: depthTexture },
   };
 
-  const defines: Record<string, boolean> = {};
+  const defines: Record<string, boolean | number> = {};
 
   if (pointBlending) {
     defines['points_blend'] = true;
+  }
+
+  if (EDLOptions) {
+    defines['use_edl'] = true;
+    defines['NEIGHBOUR_COUNT'] = DEFAULT_EDL_NEIGHBOURS_COUNT;
+
+    uniforms = {...uniforms, 
+      radius: { value: EDLOptions.radius},
+      edlStrength: { value: EDLOptions.strength },
+      screenWidth: { value: 1, },
+      screeHeight: { value: 1 },
+      neighbours: { value: getEDLNeighbourPoints(DEFAULT_EDL_NEIGHBOURS_COUNT) }
+    };
   }
 
   return new THREE.RawShaderMaterial({
@@ -129,6 +143,15 @@ export function getPointCloudPostProcessingMaterial(options: PointCloudPostProce
     defines,
     glslVersion: THREE.GLSL3
   });
+}
+
+function getEDLNeighbourPoints(neighbourCount: number): Float32Array {
+  const neighbours = new Float32Array(neighbourCount * 2);
+  for (let c = 0; c < neighbourCount; c++) {
+    neighbours[2 * c + 0] = Math.cos(2 * c * Math.PI / neighbourCount);
+    neighbours[2 * c + 1] = Math.sin(2 * c * Math.PI / neighbourCount);
+  }
+  return neighbours;
 }
 
 function createOutlineColorTexture(): THREE.DataTexture {

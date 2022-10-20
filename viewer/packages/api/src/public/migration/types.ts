@@ -10,6 +10,7 @@ import { CameraManager } from '@reveal/camera-manager';
 
 import { GeometryFilter, Cognite3DModel } from '@reveal/cad-model';
 import { DataSource } from '@reveal/data-source';
+import { EDLOptions } from '@reveal/rendering';
 
 /**
  * Callback to monitor loaded requests and progress.
@@ -121,6 +122,10 @@ export interface Cognite3DViewerOptions {
      * big enough. Can cause significant decrease in performance on some machines.
      */
     pointBlending?: boolean;
+    /**
+     * Eye Dome Lighting (EDL) effect, considerably improves depth perception of point cloud model.
+     */
+    EDLOptions?: EDLOptions
   };
 
   /**

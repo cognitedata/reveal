@@ -17,3 +17,4 @@ export const UPDATE_THROTTLE_TIME_MS = 100;
 export const PERSPECTIVE_CAMERA = 'PerspectiveCamera';
 export const COLOR_BLACK = new Color(0, 0, 0);
 export const DEFAULT_HIGHLIGHT_COLOR = new Vector4(1, 0, 0, 1);
+export const DEFAULT_EDL_NEIGHBOURS_COUNT = 8;

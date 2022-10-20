@@ -95,7 +95,11 @@ export function Viewer() {
         ssaoQualityHint: (urlParams.get('ssao') ?? undefined) as any,
         continuousModelStreaming: true,
         pointCloudEffects: {
-          pointBlending: (urlParams.get('pointBlending') === 'true' ?? undefined)
+          pointBlending: (urlParams.get('pointBlending') === 'true' ?? undefined),
+          EDLOptions: {
+            strength: 0.0,
+            radius: 0.0
+          }
         }
       };
 
@@ -114,6 +118,8 @@ export function Viewer() {
       // Prepare viewer
       viewer = new Cognite3DViewer(viewerOptions);
       (window as any).viewer = viewer;
+
+      viewer.setBackgroundColor(new THREE.Color('black'));
       
       // Add Stats.js overlay with FPS etc
       var stats = new Stats();

@@ -24,6 +24,8 @@ import { PostProcessingPipelineOptions } from '../render-pipeline-providers/type
 export class PostProcessingPass implements RenderPass {
   private readonly _scene: THREE.Scene;
   private readonly _postProcessingObjects: THREE.Mesh[];
+  private readonly _pointcloudBlitMaterial: THREE.ShaderMaterial;
+  private readonly _postProcessingOptions: PostProcessingPipelineOptions;
 
   public updateRenderObjectsVisibility(visibilityParameters: PostProcessingObjectsVisibilityParameters): void {
     this._postProcessingObjects[0].visible = visibilityParameters.cad.back;
@@ -34,6 +36,7 @@ export class PostProcessingPass implements RenderPass {
 
   constructor(scene: THREE.Scene, postProcessingPipelineOptions: PostProcessingPipelineOptions) {
     this._scene = scene;
+    this._postProcessingOptions = postProcessingPipelineOptions;
 
     const backBlitMaterial = getBlitMaterial({
       texture: postProcessingPipelineOptions.back.texture,
@@ -52,8 +55,11 @@ export class PostProcessingPass implements RenderPass {
     const pointcloudBlitMaterial = getPointCloudPostProcessingMaterial({
       texture: postProcessingPipelineOptions.pointCloud.texture,
       depthTexture: postProcessingPipelineOptions.pointCloud.depthTexture,
-      pointBlending: postProcessingPipelineOptions?.pointBlending ?? false
+      pointBlending: postProcessingPipelineOptions?.pointBlending ?? false,
+      EDLOptions: postProcessingPipelineOptions?.EDLOptions
     });
+
+    this._pointcloudBlitMaterial = pointcloudBlitMaterial;
 
     // rendered pointcloud data
     const pointcloudBlitObject = createFullScreenTriangleMesh(pointcloudBlitMaterial);
@@ -95,6 +101,11 @@ export class PostProcessingPass implements RenderPass {
   }
 
   public render(renderer: THREE.WebGLRenderer, camera: THREE.Camera): void {
+    if (this._postProcessingOptions.EDLOptions) {
+      this._pointcloudBlitMaterial.uniforms.screenWidth = { value: this._postProcessingOptions.pointCloud.width };
+      this._pointcloudBlitMaterial.uniforms.screenHeight = { value: this._postProcessingOptions.pointCloud.height };
+    }
+
     renderer.sortObjects = true;
     camera.layers.mask = getLayerMask(RenderLayer.Default);
     renderer.render(this._scene, camera);

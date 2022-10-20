@@ -69,7 +69,13 @@ export class PointCloudRenderPipelineProvider implements RenderPipelineProvider 
     this._sceneHandler = sceneHandler;
     this._renderParameters = renderParameters;
 
-    this._standardPass = new PointCloudEffectsPass(sceneHandler.scene, pointCloudMaterialManager);
+    const standardPassParameters: PointCloudPassParameters = {
+      material: {
+        useEDL: renderParameters.EDLOptions ? true : false,
+      }
+    };
+
+    this._standardPass = new PointCloudEffectsPass(sceneHandler.scene, pointCloudMaterialManager, standardPassParameters);
     this._depthPass = new PointCloudEffectsPass(
       sceneHandler.scene,
       pointCloudMaterialManager,

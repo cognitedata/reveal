@@ -1356,6 +1356,7 @@ function createRevealManagerOptions(viewerOptions: Cognite3DViewerOptions, devic
     ssaoRenderParameters,
     edgeDetectionParameters,
     pointCloudParameters: {
+      EDLOptions: viewerOptions.pointCloudEffects?.EDLOptions ?? defaultRenderOptions.pointCloudParameters.EDLOptions,
       pointBlending:
         viewerOptions?.pointCloudEffects?.pointBlending ?? defaultRenderOptions.pointCloudParameters.pointBlending
     }

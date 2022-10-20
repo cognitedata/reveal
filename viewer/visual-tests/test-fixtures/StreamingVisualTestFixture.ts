@@ -291,7 +291,7 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
       boundingBox.applyMatrix4(cadFromCdfToThreeMatrix);
       return boundingBox;
     } else if (model instanceof PointCloudNode) {
-      return model.potreeNode.boundingBox.clone();
+      return model.getBoundingBox().clone();
     } else {
       throw new Error(`Unkown type of model(${model})`);
     }
@@ -311,8 +311,7 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
       return cadModel;
     } else if (modelOutputs.includes('ept-pointcloud')) {
       const pointCloudNode = await pointCloudManager.addModel(modelIdentifier);
-      pointCloudNode.pointColorType = PotreePointColorType.Height;
-      this._sceneHandler.addCustomObject(pointCloudNode);
+      this._sceneHandler.addPointCloudModel(pointCloudNode, modelIdentifier.revealInternalId);
       return pointCloudNode;
     } else {
       throw Error(`Unknown output format ${modelOutputs}`);
