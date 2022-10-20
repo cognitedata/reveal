@@ -23,6 +23,7 @@ import ResourceCountBox from '../ResourceCountBox';
 import { useTranslation } from 'common/i18n';
 import { Input } from '@cognite/cogs.js';
 import useDebounce from 'hooks/useDebounce';
+import { useFlag } from '@cognite/react-feature-flags';
 
 interface ExploreDataProps {
   loading: boolean;
@@ -104,6 +105,7 @@ const ExploreData = ({ loading, dataSetId }: ExploreDataProps) => {
 
   const [query, setQuery] = useState('');
   const debouncedQuery = useDebounce(query, 100);
+  const { isEnabled } = useFlag('data-catalog');
 
   const dataSetContainsData = () => {
     return !(
@@ -119,14 +121,16 @@ const ExploreData = ({ loading, dataSetId }: ExploreDataProps) => {
     return (
       <Spin spinning={loading}>
         <ContentView>
-          <Input
-            value={query}
-            icon="Search"
-            placeholder={t('search')}
-            onChange={(evt) => {
-              setQuery(evt.currentTarget.value);
-            }}
-          />
+          {isEnabled && (
+            <Input
+              value={query}
+              icon="Search"
+              placeholder={t('search')}
+              onChange={(evt) => {
+                setQuery(evt.currentTarget.value);
+              }}
+            />
+          )}
           <ItemLabel>{t('data-profile')}</ItemLabel>
           <Col
             span={24}
