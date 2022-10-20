@@ -171,6 +171,10 @@ export const useExportToCSV = ({
          */
         const zipBundle = new JSZip();
 
+        /**
+         * TODO(DEGR-693) Fix this later!
+         */
+        // eslint-disable-next-line no-restricted-syntax
         for (const chunk of downloadChunks) {
           /**
            * Convert to CSV

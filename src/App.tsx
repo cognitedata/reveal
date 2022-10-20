@@ -3,6 +3,7 @@ import { SDKProvider } from '@cognite/sdk-provider';
 import { QueryClientProvider, QueryClient } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
 import { ToastContainer } from '@cognite/cogs.js';
+import { DataExplorationProvider } from '@cognite/data-exploration';
 import { RecoilRoot } from 'recoil';
 import config from 'config/config';
 import { IntercomProvider } from 'react-use-intercom';
@@ -63,29 +64,32 @@ const sdkClient = getSDK();
 export default function RootApp() {
   return (
     <Sentry.ErrorBoundary fallback={<p>An error has occurred</p>} showDialog>
-      <QueryClientProvider client={queryClient}>
-        <IntercomProvider
-          appId={config.intercomAppId}
-          autoBoot
-          initializeDelay={1000}
-          autoBootProps={{
-            hideDefaultLauncher: true,
-            alignment: 'right',
-            horizontalPadding: 20,
-            verticalPadding: 20,
-          }}
-        >
-          <RecoilRoot>
-            <SDKProvider sdk={sdkClient}>
-              <Router history={history}>
-                <ToastContainer />
-                <Routes />
-              </Router>
-            </SDKProvider>
-          </RecoilRoot>
-        </IntercomProvider>
-        <ReactQueryDevtools />
-      </QueryClientProvider>
+      <SDKProvider sdk={sdkClient}>
+        {/** @ts-ignore */}
+        <DataExplorationProvider sdk={sdkClient}>
+          <QueryClientProvider client={queryClient}>
+            <IntercomProvider
+              appId={config.intercomAppId}
+              autoBoot
+              initializeDelay={1000}
+              autoBootProps={{
+                hideDefaultLauncher: true,
+                alignment: 'right',
+                horizontalPadding: 20,
+                verticalPadding: 20,
+              }}
+            >
+              <RecoilRoot>
+                <Router history={history}>
+                  <ToastContainer />
+                  <Routes />
+                </Router>
+              </RecoilRoot>
+            </IntercomProvider>
+            <ReactQueryDevtools />
+          </QueryClientProvider>
+        </DataExplorationProvider>
+      </SDKProvider>
     </Sentry.ErrorBoundary>
   );
 }

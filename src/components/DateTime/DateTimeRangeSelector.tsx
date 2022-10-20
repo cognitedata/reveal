@@ -20,7 +20,6 @@ const DateTimeRangeSelector = ({ range, onChange, ...rest }: Props) => {
   return (
     <DateRange
       range={range}
-      format="L"
       onChange={(newRange) => {
         const startDate = new Date(newRange.startDate ?? new Date());
         startDate.setHours(range.startDate.getHours());

@@ -17,9 +17,8 @@ const localStorageEffect =
     }
 
     onSet((newValue = '', _, isReset) => {
-      isReset
-        ? localStorage.removeItem(key)
-        : localStorage.setItem(key, JSON.stringify(newValue));
+      if (isReset) localStorage.removeItem(key);
+      else localStorage.setItem(key, JSON.stringify(newValue));
     });
   };
 

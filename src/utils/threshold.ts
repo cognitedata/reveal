@@ -16,18 +16,20 @@ export function isThresholdValid(threshold: ChartThreshold): boolean {
       return (
         typeof threshold.upperLimit === 'number' &&
         typeof threshold.lowerLimit === 'number' &&
-        !isNaN(threshold.upperLimit) &&
-        !isNaN(threshold.lowerLimit)
+        !Number.isNaN(threshold.upperLimit) &&
+        !Number.isNaN(threshold.lowerLimit)
       );
 
     case 'under':
       return (
-        typeof threshold.upperLimit === 'number' && !isNaN(threshold.upperLimit)
+        typeof threshold.upperLimit === 'number' &&
+        !Number.isNaN(threshold.upperLimit)
       );
 
     case 'over':
       return (
-        typeof threshold.lowerLimit === 'number' && !isNaN(threshold.lowerLimit)
+        typeof threshold.lowerLimit === 'number' &&
+        !Number.isNaN(threshold.lowerLimit)
       );
 
     default:
