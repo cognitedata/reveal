@@ -2,17 +2,17 @@
 
 ## Running locally
 
-- Start local development server
-  ```
-  yarn
-  yarn start
-  ```
-- Navigate to [dev.fusion.cogniteapp.com](dev.fusion.cogniteapp.com)
-- Run `importMapOverrides.enableUI()` in the console
-- Click the <img width="32" valign="bottom" src="https://user-images.githubusercontent.com/6615090/165697621-dc80186c-2bdc-4f1c-90a1-d7ab4f985efc.png"> button that appears in the bottom right corner
-- Find `@cognite/cdf-data-exploration` module name and click on the row including it
-- Override using `https://localhost:3010/index.js` (port might differ depending on your local settings)
-- Click `Apply override` and refresh ✨
+1. Start local development server
+   ```
+   yarn
+   yarn start
+   ```
+2. Navigate to [dev.fusion.cogniteapp.com](dev.fusion.cogniteapp.com)
+3. Run `importMapOverrides.enableUI()` in the console
+4. Click the <img width="32" valign="bottom" src="https://user-images.githubusercontent.com/6615090/165697621-dc80186c-2bdc-4f1c-90a1-d7ab4f985efc.png"> button that appears in the bottom right corner
+5. Find `@cognite/cdf-data-exploration` module name and click on the row including it
+6. Override using `https://localhost:3010/index.js` (port might differ depending on your local settings)
+7. Click `Apply override` and refresh ✨
 
 ## Troubleshooting
 
@@ -37,12 +37,27 @@ For non-interactive single run:
 yarn test:once
 ```
 
-## Releasing a new version
+## Releasing a new version to Fusion
 
-Merging to `master` branch will automatically trigger a release of the subapp. After that is completed successfully, you need to trigger a CD build [here](https://cd.jenkins.cognite.ai/job/cognitedata-cd/job/cdf-hub/job/master/) for changes to take effect on fusion.cognite.com.
+Releasing a new version of the subapp to Fusion is done in two steps.
 
-If you are releasing a new version of the subapp (ie. version in `package.json` has been updated), make sure the import map for the environment ([staging](https://github.com/cognitedata/cdf-hub/blob/master/packages/fas-apps/config/staging.fas-apps.import-map.json) or [production](https://github.com/cognitedata/cdf-hub/blob/master/packages/fas-apps/config/prod.fas-apps.import-map.json)) matches the version you want to release. If not, you need to update the version with a PR in cdf-hub repo to deploy your changes.
+### 1- Releasing a new version of the subapp
 
-[Example PR (staging)](https://github.com/cognitedata/cdf-hub/pull/1471) • [Example PR (production)](https://github.com/cognitedata/cdf-hub/pull/1488)
+Merging to `master` branch will automatically trigger the release of a new version of subapp on FAS. The new version number is determined by the version field in `package.json` with a bumped `patch` version from the last build.
 
-Production releases are performed in two steps. After the deployment is triggered on the master branch CD (via a pull request or on Jenkins manually as mentioned above), the changes will be directly deployed to staging.fusion.cognite.com. fusion.cognite.com will only be updated after you press the manual OK in [Spinnaker](https://spinnaker.cognite.ai/#/applications/fusion-app-prod/executions).
+The version number is used to determine what is visible in different environments of Fusion: `dev.fusion.cogniteapp.com` (dev), `next-release.fusion.cognite.com` (staging) and `fusion.cognite.com` (prod). Each environment has its own [import map](https://github.com/cognitedata/cdf-ui-hub/tree/master/packages/fas-apps/config), governing the range of valid versions.
+
+> For a more detailed explanation of this step, see the guide [here](https://cognitedata.atlassian.net/wiki/spaces/CE/pages/3688562771/...version+and+release+sub-app).
+
+### 2- Deploying to Fusion
+
+After the subapp is released, to see the changes on any environment of Fusion, a build of cdf-ui-hub's master branch should be triggered.
+
+1. Go to [`cdf-ui-hub` on Jenkins CD](https://cd.jenkins.cognite.ai/blue/organizations/jenkins/cognitedata-cd%2Fcdf-ui-hub/branches).
+2. Locate the `master` branch and click the `Run ▶️` button.
+3. After the build is successful, the changes automatically will take effect on `dev.fusion.cogniteapp.com` and `next-release.fusion.cognite.com` if the new version matches the corresponding import maps.
+4. To deploy to the production environment `fusion.cognite.com`, go to `staging.fusion.cognite.com` to verify that your changes work properly.
+5. If everything looks alright, go to [Spinnaker](https://spinnaker.cognite.ai/#/applications/fusion-app/executions).
+6. Locate the `deploy-fusion-app-prod` pipeline and verify the build by clicking `Continue`.
+
+> For a more detailed explanation of this step, see the step-by-step guide [here](https://cognitedata.atlassian.net/wiki/spaces/CE/pages/3758588022/...deploy+a+new+sub-app+version+to+production).
