@@ -1,3 +1,4 @@
+import { Splitter } from '@cognite/data-exploration';
 import styled from 'styled-components';
 
 export const TempCommonMultiSelectFix = styled.div`
@@ -27,5 +28,11 @@ export const TempMultiSelectFix = styled.div`
         font-weight: 500;
       }
     }
+  }
+`;
+
+export const StyledSplitter = styled(Splitter)`
+  .splitter-layout .layout-pane.layout-pane-primary {
+    overflow: hidden;
   }
 `;

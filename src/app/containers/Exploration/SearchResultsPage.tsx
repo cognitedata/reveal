@@ -10,7 +10,6 @@ import {
   ResourceTypeTabs,
   getTitle,
   ResourceType,
-  Splitter,
   SearchFilters as OldSearchFilters,
 } from '@cognite/data-exploration';
 
@@ -48,6 +47,7 @@ import {
   useSequenceFilters,
   useTimeseriesFilters,
 } from 'app/store/filter/selectors';
+import { StyledSplitter } from 'app/containers/elements';
 import { useDocumentFilters } from 'app/store/filter/selectors/documentSelectors';
 import { useObserveDocumentSearchFilters } from 'app/domain/document/internal/hook/useObserveDocumentSearchFilters';
 import { DocumentSort } from 'app/domain/document/internal/types';
@@ -150,7 +150,7 @@ function SearchPage() {
             />
           </TabsContainer>
 
-          <MainContainer>
+          <MainContainer $isFilterFeatureEnabled={isFilterFeatureEnabled}>
             <Wrapper>
               <StyledSplitter secondaryMinSize={415} primaryIndex={1}>
                 <Flex
@@ -299,7 +299,7 @@ function SearchPage() {
           isDocumentEnabled={isDocumentEnabled}
         />
       </TabsContainer>
-      <MainContainer>
+      <MainContainer $isFilterFeatureEnabled={isFilterFeatureEnabled}>
         {currentResourceType !== 'threeD' && !showFilter && (
           <FilterWrapper>
             <FilterToggleButton toggleOpen={handleFilterToggleClick} />
@@ -440,11 +440,6 @@ function SearchPage() {
     </RootHeightWrapper>
   );
 }
-const StyledSplitter = styled(Splitter)`
-  .splitter-layout .layout-pane.layout-pane-primary {
-    overflow: hidden;
-  }
-`;
 
 export const SearchResultsPage = () => {
   const [resourceType] = useCurrentResourceType();
@@ -491,7 +486,9 @@ const TabsContainer = styled.div`
   flex: 0 0 auto;
 `;
 
-const MainContainer = styled(Flex)`
+const MainContainer = styled(Flex)<{ $isFilterFeatureEnabled?: boolean }>`
+  padding-left: ${({ $isFilterFeatureEnabled }) =>
+    $isFilterFeatureEnabled ? '0px' : '16px'};
   height: calc(100% - 140px);
   flex: 1;
 `;

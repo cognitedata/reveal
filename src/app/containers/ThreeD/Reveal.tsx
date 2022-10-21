@@ -65,7 +65,7 @@ export function Reveal({
       domElement: revealContainer!,
       continuousModelStreaming: true,
       loadingIndicatorStyle: {
-        placement: 'bottomLeft',
+        placement: 'topRight',
         opacity: 1,
       },
     });
@@ -226,7 +226,10 @@ export function Reveal({
 // This container has an inline style 'position: relative' given by @cognite/reveal.
 // We can not cancel it, so we had to use that -85px trick here!
 const RevealContainer = styled.div`
-  height: calc(100% - 10px);
+  height: 100%;
+  width: 100%;
+  max-height: 100%;
+  max-width: 100%;
 `;
 
 export default function RevealWithErrorBoundary(props: Props) {

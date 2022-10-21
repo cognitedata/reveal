@@ -120,16 +120,13 @@ export default function ResourceTitleRow({
 
 export const TitleRowWrapper = styled.div`
   h1 {
-    margin: 0;
+    margin: 0px;
   }
   display: flex;
   align-items: center;
   flex-wrap: nowrap;
-  margin-top: 16px;
-  padding-left: 16px;
-  padding-right: 16px;
+  padding: 16px;
   border-bottom: 1px solid ${Colors['greyscale-grey3'].hex()};
-  padding-bottom: 10px;
 `;
 
 const NameWrapper = styled.div`

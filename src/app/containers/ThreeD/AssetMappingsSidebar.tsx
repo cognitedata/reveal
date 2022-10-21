@@ -12,6 +12,7 @@ type ThreeDSidebarProps = {
   selectedAssetId: number | null;
 
   setSelectedAssetId: (assetId: number | null) => void;
+  setAssetPreviewSidebarVisible: (visible: boolean) => void;
 };
 
 export const AssetMappingsSidebar = ({
@@ -19,6 +20,7 @@ export const AssetMappingsSidebar = ({
   revisionId,
   selectedAssetId,
   setSelectedAssetId,
+  setAssetPreviewSidebarVisible,
 }: ThreeDSidebarProps) => {
   const { data: asset } = useCdfItem<Asset>(
     'assets',
@@ -38,8 +40,10 @@ export const AssetMappingsSidebar = ({
     // Deselect current asset mappings
     if (assetId === selectedAssetId) {
       setSelectedAssetId(null);
+      setAssetPreviewSidebarVisible(false);
     } else {
       setSelectedAssetId(assetId);
+      setAssetPreviewSidebarVisible(true);
     }
   };
 
