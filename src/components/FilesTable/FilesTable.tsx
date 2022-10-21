@@ -1,34 +1,28 @@
-import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ItemLabel } from 'utils/styledComponents';
 import Table from 'antd/lib/table';
 import { FileInfo } from '@cognite/sdk';
-import sdk from '@cognite/cdf-sdk-singleton';
 import { createLink } from '@cognite/cdf-utilities';
 import { getContainer } from 'utils/shared';
 import { DEFAULT_ANTD_TABLE_PAGINATION } from 'utils/tableUtils';
 import handleError from 'utils/handleError';
 import ColumnWrapper from '../ColumnWrapper';
 import { useTranslation } from 'common/i18n';
+import { useSearchResource } from 'hooks/useSearchResource';
 
 interface filesTableProps {
   dataSetId: number;
+  query: string;
 }
 
-const FilesTable = ({ dataSetId }: filesTableProps) => {
+const FilesTable = ({ dataSetId, query }: filesTableProps) => {
   const { t } = useTranslation();
-  const [files, setFiles] = useState<FileInfo[]>();
 
-  useEffect(() => {
-    sdk.files
-      .list({ filter: { dataSetIds: [{ id: dataSetId }] } })
-      .then((res) => {
-        setFiles(res.items);
-      })
-      .catch((e) => {
-        handleError({ message: t('fetch-files-failed'), ...e });
-      });
-  }, [dataSetId, t]);
+  const { data: files } = useSearchResource('files', dataSetId, query, {
+    onError: (e: any) => {
+      handleError({ message: t('fetch-files-failed'), ...e });
+    },
+  });
 
   const filesColumns = [
     {

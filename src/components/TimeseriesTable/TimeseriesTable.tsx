@@ -1,32 +1,27 @@
-import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ItemLabel } from 'utils/styledComponents';
 import Table from 'antd/lib/table';
 import { Timeseries } from '@cognite/sdk';
 import { createLink } from '@cognite/cdf-utilities';
-import handleError from 'utils/handleError';
 import { getContainer } from 'utils/shared';
 import { DEFAULT_ANTD_TABLE_PAGINATION } from 'utils/tableUtils';
-import sdk from '@cognite/cdf-sdk-singleton';
 import ColumnWrapper from '../ColumnWrapper';
 import { useTranslation } from 'common/i18n';
+import { useSearchResource } from 'hooks/useSearchResource';
 
 interface TimeseriesPreviewProps {
   dataSetId: number;
+  query: string;
 }
 
-const TimeseriesPreview = ({ dataSetId }: TimeseriesPreviewProps) => {
+const TimeseriesPreview = ({ dataSetId, query }: TimeseriesPreviewProps) => {
   const { t } = useTranslation();
-  const [timeseries, setTimeseries] = useState<Timeseries[]>();
 
-  useEffect(() => {
-    sdk.timeseries
-      .list({ filter: { dataSetIds: [{ id: dataSetId }] } })
-      .then((res) => setTimeseries(res.items))
-      .catch((e) =>
-        handleError({ message: t('fetch-timeseries-failed'), ...e })
-      );
-  }, [dataSetId, t]);
+  const { data: timeseries } = useSearchResource(
+    'timeseries',
+    dataSetId,
+    query
+  );
 
   const timeseriesColumns = [
     {
