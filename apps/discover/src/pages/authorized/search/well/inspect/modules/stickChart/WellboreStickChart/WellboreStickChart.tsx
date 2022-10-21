@@ -16,7 +16,7 @@ import { SelectedWellboreNptView } from '../../nptEvents/Graph';
 import { useColumnHeight } from '../hooks/useColumnHeight';
 import { useScaleBlocks } from '../hooks/useScaleBlocks';
 import { useTrajectoryCurveConfigs } from '../hooks/useTrajectoryCurveConfigs';
-import { ChartColumn, ColumnsData, WellboreData } from '../types';
+import { ChartColumn, WellboreStickChartData, WellboreData } from '../types';
 
 import { CasingsColumn } from './CasingsColumn';
 import { CasingsDetailView } from './CasingsDetailView';
@@ -32,7 +32,9 @@ import { TrajectoryColumn } from './TrajectoryColumn';
 import { WellboreNdsDetailedView } from './WellboreNdsDetailedView';
 import { WellboreStickChartEmptyState } from './WellboreStickChartEmptyState';
 
-export interface WellboreStickChartProps extends WellboreData, ColumnsData {
+export interface WellboreStickChartProps
+  extends WellboreData,
+    WellboreStickChartData {
   isWellboreSelected?: boolean;
   /**
    * If the wellbore doesn't have any data (casings, trajectories, etc.),
@@ -58,6 +60,7 @@ export const WellboreStickChart: React.FC<WellboreStickChartProps> = ({
   wellboreMatchingId,
   rkbLevel,
   wellWaterDepth,
+  headerExtraData,
   /**
    * WellboreStickChartColumns
    */
@@ -115,7 +118,11 @@ export const WellboreStickChart: React.FC<WellboreStickChartProps> = ({
     <>
       <NoUnmountShowHide show={isWellboreSelected}>
         <WellboreStickChartWrapper>
-          <Header wellName={wellName} wellboreName={wellboreName} />
+          <Header
+            wellName={wellName}
+            wellboreName={wellboreName}
+            {...headerExtraData}
+          />
 
           <WellboreStickChartEmptyState
             isAnyColumnVisible={isAnyColumnVisible}

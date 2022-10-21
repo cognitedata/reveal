@@ -23,7 +23,8 @@ export interface WellboreData {
   wellWaterDepth: WellboreInternal['wellWaterDepth'];
 }
 
-export interface ColumnsData {
+export interface WellboreStickChartData {
+  headerExtraData: HeaderExtraData;
   formationColumn: DataWithLoadingStatus<WellTopSurfaceView[]>;
   casingsColumn: DataWithLoadingStatus<CasingAssemblyView[]>;
   nptColumn: DataWithLoadingStatus<NptInternalWithTvd[]>;
@@ -35,6 +36,10 @@ export interface ColumnsData {
 
 export interface ColumnVisibilityProps {
   isVisible?: boolean;
+}
+
+export interface HeaderExtraData {
+  rigNames?: string[];
 }
 
 export interface WellTopSurfaceView extends WellTopSurfaceInternal {

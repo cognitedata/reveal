@@ -29,7 +29,7 @@ export const useMeasurementsColumnsData = () => {
   return useDeepMemo(() => {
     if (isInitialDataLoading || isTvdIndexedDataLoading) {
       return {
-        data: EMPTY_OBJECT as Record<string, DepthMeasurementWithData>,
+        data: EMPTY_OBJECT as Record<string, DepthMeasurementWithData[]>,
         isLoading: true,
       };
     }

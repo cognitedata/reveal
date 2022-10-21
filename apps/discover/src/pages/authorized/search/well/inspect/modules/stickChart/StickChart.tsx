@@ -20,7 +20,7 @@ import { useWellInspectSelection } from 'modules/wellInspect/selectors';
 import { WellboreCasingsViewsWrapper } from './elements';
 import { FilterBar } from './filters';
 import { useMaxDepths } from './hooks/useMaxDepths';
-import { useWellboreStickChartColumns } from './hooks/useWellboreStickChartData';
+import { useWellboreStickChartData } from './hooks/useWellboreStickChartData';
 import { ChartColumn } from './types';
 import { getWellboreData } from './utils/getWellboreData';
 import { WellboreStickChart } from './WellboreStickChart';
@@ -38,7 +38,7 @@ const StickChart: React.FC = () => {
 
   const { data: maxDepths, isLoading } = useMaxDepths();
 
-  const getWellboreStickChartColumns = useWellboreStickChartColumns();
+  const getWellboreStickChartData = useWellboreStickChartData();
 
   const [columnVisibility, setColumnVisibility] = useState(
     toBooleanMap(DEFAULT_VISIBLE_COLUMNS)
@@ -102,7 +102,7 @@ const StickChart: React.FC = () => {
             <WellboreStickChart
               key={matchingId}
               {...getWellboreData(wellbore)}
-              {...getWellboreStickChartColumns(matchingId)}
+              {...getWellboreStickChartData(matchingId)}
               isWellboreSelected={Boolean(selectedWellboreIds[matchingId])}
               maxDepth={
                 maxDepths[matchingId] ||

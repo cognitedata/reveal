@@ -111,6 +111,7 @@ export const WELL_QUERY_KEY = {
   NPT_DETAIL_CODES: [WELLS, 'nptDetailCodes'],
   HOLE_SECTIONS: [WELLS, 'holeSections'],
   HOLE_SECTIONS_WITH_TVD: [WELLS, 'holeSections', 'tvd'],
+  RIG_OPERATIONS: [WELLS, 'rigOperations'],
 };
 
 const SEARCH_HISTORY = 'searchHistory';

@@ -1,5 +1,7 @@
 import styled from 'styled-components/macro';
 
+import { Label } from '@cognite/cogs.js';
+
 import { Flex, FlexRow, sizes } from 'styles/layout';
 
 export const HeaderWrapper = styled(FlexRow)`
@@ -28,5 +30,17 @@ export const WellboreName = styled(Flex)`
   align-items: center;
   letter-spacing: -0.006em;
   color: rgba(0, 0, 0, 0.9);
+`;
+
+export const HeaderData = styled(FlexRow)`
   margin-top: ${sizes.extraSmall};
+  width: fit-content;
+  gap: ${sizes.small};
+`;
+
+export const HeaderLabel = styled(Label)`
+  font-size: 12px;
+  line-height: ${sizes.normal};
+  padding: 2px 6px;
+  border-radius: ${sizes.extraSmall};
 `;
