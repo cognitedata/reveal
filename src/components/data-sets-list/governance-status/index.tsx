@@ -1,7 +1,8 @@
-import { Body, Colors, Flex, Icon } from '@cognite/cogs.js';
+import { Body, Flex, Icon } from '@cognite/cogs.js';
 
-import { TranslationKeys, useTranslation } from 'common/i18n';
+import { useTranslation } from 'common/i18n';
 import { DataSetRow } from 'pages/DataSetsList/TableColumns';
+import { getGovernedStatus } from 'utils';
 
 type GovernanceStatusProps = {
   isGoverned: DataSetRow['quality'];
@@ -11,20 +12,7 @@ const GovernanceStatus = ({
   isGoverned,
 }: GovernanceStatusProps): JSX.Element => {
   const { t } = useTranslation();
-
-  let statusColor: string;
-  let statusI18nKey: TranslationKeys;
-
-  if (isGoverned) {
-    statusColor = Colors['border--status-success--strong'];
-    statusI18nKey = 'governed';
-  } else if (isGoverned === false) {
-    statusColor = Colors['border--status-critical--strong'];
-    statusI18nKey = 'ungoverned';
-  } else {
-    statusColor = Colors['border--status-warning--strong'];
-    statusI18nKey = 'not-defined';
-  }
+  const { statusColor, statusI18nKey } = getGovernedStatus(isGoverned);
 
   return (
     <Flex alignItems="center" gap={8}>
