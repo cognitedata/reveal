@@ -7,7 +7,6 @@ import {
   PluginHook,
   SortingRule,
   useColumnOrder,
-  useBlockLayout,
   useFlexLayout,
   useResizeColumns,
   useSortBy,
@@ -96,9 +95,8 @@ export function NewTable<T extends TableData>({
     isSortingEnabled && useSortBy,
 
     useColumnOrder,
-    !isResizingColumns && useFlexLayout,
+    useFlexLayout,
     isResizingColumns && useResizeColumns,
-    isResizingColumns && useBlockLayout,
   ].filter(Boolean) as PluginHook<T>[];
 
   const tbodyRef = useRef<HTMLDivElement>(null);
