@@ -10,16 +10,19 @@ import {
   CognitePointCloudModel,
   DefaultCameraManager,
   DefaultNodeAppearance,
-  NodeOutlineColor,
   THREE,
 } from '@cognite/reveal';
 
 import { Alert } from 'antd';
 import { useQuery } from 'react-query';
-import { getAssetMappingsByAssetId } from './utils';
+import {
+  getAncestorByNodeId,
+  getAssetMappingsByAssetId,
+  getAssetIdFromMapped3DNode,
+} from './utils';
 import { ErrorBoundary } from 'react-error-boundary';
 import RevealErrorFeedback from './RevealErrorFeedback';
-import { PointerEventData } from '@cognite/reveal/packages/utilities';
+import { PointerEventDelegate } from '@cognite/reveal';
 import { usePrevious } from '@cognite/data-exploration';
 
 type ChildProps = {
@@ -47,6 +50,11 @@ export function Reveal({
   const [revealContainer, setRevealContainer] = useState<HTMLDivElement | null>(
     null
   );
+
+  const [clickedNodeId, setclickedNodeId] = useState<number | null>(null);
+  useEffect(() => {
+    if (!focusAssetId) setclickedNodeId(null);
+  }, [focusAssetId, setclickedNodeId]);
 
   const handleMount = useCallback(
     (node: HTMLDivElement | null) => setRevealContainer(node),
@@ -112,6 +120,35 @@ export function Reveal({
     { enabled: !!focusAssetId }
   );
 
+  const { data: ancestorNodes } = useQuery(
+    ['getAncestorByNodeId', modelId, revisionId, clickedNodeId],
+    () => getAncestorByNodeId(sdk, modelId, revisionId, clickedNodeId!),
+    {
+      enabled: !!clickedNodeId,
+    }
+  );
+
+  const { data: mappedAssetId } = useQuery(
+    ['getAssetIdFromMapped3DNode', modelId, revisionId, ancestorNodes],
+    () => getAssetIdFromMapped3DNode(sdk, modelId, revisionId, ancestorNodes),
+    {
+      enabled: !!ancestorNodes,
+    }
+  );
+
+  const prevMappedAssetId = usePrevious(mappedAssetId);
+
+  useEffect(() => {
+    if (
+      mappedAssetId &&
+      setSelectedAssetId &&
+      mappedAssetId != focusAssetId &&
+      mappedAssetId != prevMappedAssetId
+    ) {
+      setSelectedAssetId(mappedAssetId);
+    }
+  }, [focusAssetId, mappedAssetId, prevMappedAssetId, setSelectedAssetId]);
+
   const { threeDModel, pointCloudModel } = models || {
     threeDModel: undefined,
     pointCloudModel: undefined,
@@ -147,11 +184,11 @@ export function Reveal({
 
       assetNodes.executeFilter({ assetId: focusAssetId });
 
-      threeDModel.setDefaultNodeAppearance(DefaultNodeAppearance.Ghosted);
-      threeDModel.assignStyledNodeCollection(assetNodes, {
-        renderGhosted: false,
-        outlineColor: NodeOutlineColor.Cyan,
-      });
+      threeDModel.setDefaultNodeAppearance(DefaultNodeAppearance.Default);
+      threeDModel.assignStyledNodeCollection(
+        assetNodes,
+        DefaultNodeAppearance.Highlighted
+      );
 
       if (selectedAssetBoundingBox) {
         viewer.fitCameraToBoundingBox(selectedAssetBoundingBox);
@@ -161,8 +198,8 @@ export function Reveal({
     }
   }, [selectedAssetBoundingBox, focusAssetId, sdk, threeDModel, viewer]);
 
-  const onViewerClick = useCallback(
-    async ({ offsetX, offsetY }: PointerEventData) => {
+  const onViewerClick: PointerEventDelegate = useCallback(
+    async ({ offsetX, offsetY }) => {
       if (!threeDModel || !viewer || !setSelectedAssetId) {
         return;
       }
@@ -172,18 +209,16 @@ export function Reveal({
         offsetX,
         offsetY
       );
-      if (intersection && focusAssetId) {
+      if (intersection) {
         const { treeIndex } = intersection as CadIntersection;
 
-        const node = await threeDModel.mapTreeIndexToNodeId(treeIndex);
-        if (!node) {
-          setSelectedAssetId(null);
-        }
+        const nodeId = await threeDModel.mapTreeIndexToNodeId(treeIndex);
+        setclickedNodeId(nodeId);
       } else {
         setSelectedAssetId(null);
       }
     },
-    [focusAssetId, setSelectedAssetId, threeDModel, viewer]
+    [setSelectedAssetId, threeDModel, viewer]
   );
   const previousClickHandler = usePrevious(onViewerClick);
 
