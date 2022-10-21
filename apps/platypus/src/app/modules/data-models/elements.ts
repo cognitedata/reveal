@@ -2,13 +2,8 @@ import { StyledPageWrapper } from '@platypus-app/components/Layouts/elements';
 import styled from 'styled-components/macro';
 import { ModalDialog } from '@platypus-app/components/ModalDialog/ModalDialog';
 import { Row } from '@cognite/cogs.js';
-import { EditableChip } from '@platypus-app/components/EditableChip/EditableChip';
 
 const dataModelListWidth = 1020;
-
-export const NameWrapper = styled.div`
-  margin-bottom: 16px;
-`;
 
 export const StyledDataModelListWrapper = styled(StyledPageWrapper)`
   width: ${dataModelListWidth}px;
@@ -29,11 +24,6 @@ export const StyledDataModelListWrapper = styled(StyledPageWrapper)`
   }
 `;
 
-export const StyledEditableChip = styled(EditableChip)`
-  display: inline-block;
-  margin-bottom: 24px;
-`;
-
 export const StyledModalDialog = styled(ModalDialog)`
   .confirmDelete {
     margin: 15px 0 0 0;
@@ -51,28 +41,5 @@ export const StyledRow = styled(Row)`
   overflow: auto;
   @media only screen and (max-width: ${dataModelListWidth}px) {
     grid-template-columns: repeat(2, 1fr) !important;
-  }
-`;
-
-export const CreateDataModelModalContent = styled.div`
-  .cogs-body-2 {
-    margin-bottom: 6px;
-
-    &:first-of-type {
-      &:after {
-        content: ' *';
-        color: var(--cogs-red);
-      }
-    }
-  }
-  .input-detail {
-    display: flex;
-    align-items: center;
-    margin: 4px 0 0;
-    .cogs-icon-Warning {
-      width: 12px !important;
-      margin-right: 6px;
-      color: var(--cogs-text-danger);
-    }
   }
 `;

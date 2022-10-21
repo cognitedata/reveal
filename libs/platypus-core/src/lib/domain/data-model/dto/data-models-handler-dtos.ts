@@ -11,6 +11,9 @@ export interface CreateDataModelDTO {
     [key: string]: string | number | boolean;
   };
 }
+export interface UpdateDataModelDTO extends CreateDataModelDTO {
+  externalId: string;
+}
 
 export interface DeleteDataModelDTO {
   id: string;

@@ -172,9 +172,7 @@ export class GridConfigService {
         const colDef = Object.assign(
           {
             field: columnConfig.property,
-            headerName: `${columnConfig.label}${
-              userProvidedColDef.cellEditorParams?.isRequired ? '*' : ''
-            }`,
+            headerName: columnConfig.label,
             type: columnConfig.columnType
               ? columnConfig.columnType
               : this.getColumnType(columnConfig),
