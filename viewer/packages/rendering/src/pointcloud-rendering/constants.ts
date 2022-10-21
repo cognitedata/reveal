@@ -1,7 +1,7 @@
 /*!
  * Adapted from pnext/three-loader (https://github.com/pnext/three-loader)
  */
-import { Color, Vector4 } from 'three';
+import { Color } from 'three';
 
 export const DEFAULT_RGB_BRIGHTNESS = 0;
 export const DEFAULT_RGB_CONTRAST = 0;
