@@ -1,14 +1,18 @@
+import sdk from '@cognite/cdf-sdk-singleton';
 import { Table, TableNoResults } from '@cognite/cdf-utilities';
-import { Flex, Button } from '@cognite/cogs.js';
+import { Button, Flex } from '@cognite/cogs.js';
 import {
-  ExploreViewConfig,
-  handleError,
   getContainer,
   ContentView,
+  handleError,
+  getResourceSearchParams,
+  getResourceSearchQueryKey,
+  ExploreViewConfig,
 } from 'utils';
 import { useTranslation } from 'common/i18n';
-import { useSearchResource } from 'hooks/useSearchResource';
 import { useResourceTableColumns } from 'components/Data/ResourceTableColumns';
+import { useQuery } from 'react-query';
+
 interface EventsPreviewProps {
   dataSetId: number;
   setExploreView?: (value: ExploreViewConfig) => void;
@@ -22,10 +26,12 @@ const EventsPreview = ({
 }: EventsPreviewProps) => {
   const { t } = useTranslation();
   const { getResourceTableColumns } = useResourceTableColumns();
-  const { data: events, isLoading: isEventsLoading } = useSearchResource(
-    'events',
-    dataSetId,
-    query,
+  const { data: events, isLoading: isEventsLoading } = useQuery(
+    getResourceSearchQueryKey('events', dataSetId, query),
+    () =>
+      sdk.events.search(
+        getResourceSearchParams(dataSetId, query, 'description')
+      ),
     {
       onError: (e: any) => {
         handleError({ message: t('fetch-events-failed'), ...e });

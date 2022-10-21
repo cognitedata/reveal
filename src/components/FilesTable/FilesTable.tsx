@@ -1,8 +1,15 @@
+import sdk from '@cognite/cdf-sdk-singleton';
 import { Table, TableNoResults } from '@cognite/cdf-utilities';
-import { ContentView, getContainer, handleError } from 'utils';
+import {
+  getContainer,
+  ContentView,
+  handleError,
+  getResourceSearchParams,
+  getResourceSearchQueryKey,
+} from 'utils';
 import { useTranslation } from 'common/i18n';
-import { useSearchResource } from 'hooks/useSearchResource';
 import { useResourceTableColumns } from 'components/Data/ResourceTableColumns';
+import { useQuery } from 'react-query';
 
 interface filesTableProps {
   dataSetId: number;
@@ -12,10 +19,9 @@ interface filesTableProps {
 const FilesTable = ({ dataSetId, query }: filesTableProps) => {
   const { t } = useTranslation();
   const { getResourceTableColumns } = useResourceTableColumns();
-  const { data: files, isLoading: isFilesLoading } = useSearchResource(
-    'files',
-    dataSetId,
-    query,
+  const { data: files, isLoading: isFilesLoading } = useQuery(
+    getResourceSearchQueryKey('files', dataSetId, query),
+    () => sdk.files.search(getResourceSearchParams(dataSetId, query, 'name')),
     {
       onError: (e: any) => {
         handleError({ message: t('fetch-files-failed'), ...e });

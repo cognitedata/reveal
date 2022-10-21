@@ -1,8 +1,15 @@
+import sdk from '@cognite/cdf-sdk-singleton';
 import { Table, TableNoResults } from '@cognite/cdf-utilities';
-import { ContentView, getContainer, handleError } from 'utils';
-import { useSearchResource } from 'hooks/useSearchResource';
+import {
+  getContainer,
+  ContentView,
+  handleError,
+  getResourceSearchParams,
+  getResourceSearchQueryKey,
+} from 'utils';
 import { useTranslation } from 'common/i18n';
 import { useResourceTableColumns } from 'components/Data/ResourceTableColumns';
+import { useQuery } from 'react-query';
 
 interface assetsTableProps {
   dataSetId: number;
@@ -12,10 +19,9 @@ interface assetsTableProps {
 const AssetsTable = ({ dataSetId, query }: assetsTableProps) => {
   const { t } = useTranslation();
   const { getResourceTableColumns } = useResourceTableColumns();
-  const { data: assets, isLoading: isAssetsLoading } = useSearchResource(
-    'assets',
-    dataSetId,
-    query,
+  const { data: assets, isLoading: isAssetsLoading } = useQuery(
+    getResourceSearchQueryKey('assets', dataSetId, query),
+    () => sdk.assets.search(getResourceSearchParams(dataSetId, query)),
     {
       onError: (e: any) => {
         handleError({ message: t('assets-failed-to-fetch'), ...e });

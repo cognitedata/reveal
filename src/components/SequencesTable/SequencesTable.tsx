@@ -1,8 +1,15 @@
+import sdk from '@cognite/cdf-sdk-singleton';
 import { Table, TableNoResults } from '@cognite/cdf-utilities';
-import { handleError, getContainer, ContentView } from 'utils';
+import {
+  getContainer,
+  ContentView,
+  handleError,
+  getResourceSearchParams,
+  getResourceSearchQueryKey,
+} from 'utils';
 import { useTranslation } from 'common/i18n';
-import { useSearchResource } from 'hooks/useSearchResource';
 import { useResourceTableColumns } from 'components/Data/ResourceTableColumns';
+import { useQuery } from 'react-query';
 
 interface sequencesTableProps {
   dataSetId: number;
@@ -12,10 +19,9 @@ interface sequencesTableProps {
 const SequencesTable = ({ dataSetId, query }: sequencesTableProps) => {
   const { t } = useTranslation();
   const { getResourceTableColumns } = useResourceTableColumns();
-  const { data: sequences, isLoading: isSequencesLoading } = useSearchResource(
-    'sequences',
-    dataSetId,
-    query,
+  const { data: sequences, isLoading: isSequencesLoading } = useQuery(
+    getResourceSearchQueryKey('sequences', dataSetId, query),
+    () => sdk.sequences.search(getResourceSearchParams(dataSetId, query)),
     {
       onError: (e: any) => {
         handleError({ message: t('fetch-sequences-failed'), ...e });
