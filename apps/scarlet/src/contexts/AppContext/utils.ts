@@ -8,6 +8,7 @@ import {
   DetectionState,
   DetectionType,
   EquipmentComponent,
+  EquipmentComponentType,
   EquipmentData,
   Remark,
 } from 'types';
@@ -127,6 +128,12 @@ export const removeDetection = (
 ): EquipmentData => {
   const equipment = removeLinkedDetections(equipmentOrigin, detection.id);
   const dataElement = getDataElement(equipment, dataElementOrigin);
+
+  if (dataElement.key === 'no_of_courses') {
+    equipment.components = equipment.components.filter(
+      (eq) => eq.type !== EquipmentComponentType.COURSE
+    );
+  }
 
   const detectionIndex = dataElement.detections!.findIndex(
     (item) => item.id === detection.id

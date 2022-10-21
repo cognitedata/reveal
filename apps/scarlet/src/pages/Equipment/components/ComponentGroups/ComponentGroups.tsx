@@ -5,6 +5,13 @@ import { EquipmentComponentGroup, EquipmentComponentType } from 'types';
 
 import * as Styled from './style';
 
+const VISIBLE_COMPONENT_TYPES = [
+  EquipmentComponentType.BUNDLE,
+  EquipmentComponentType.HEAD,
+  EquipmentComponentType.NOZZLE,
+  EquipmentComponentType.SHELL,
+];
+
 type ComponentGroupsProps = {
   group?: EquipmentComponentGroup;
   onChange: (group: EquipmentComponentGroup) => void;
@@ -19,7 +26,7 @@ export const ComponentGroups = ({ group, onChange }: ComponentGroupsProps) => {
       Object.values(
         equipmentConfig.data?.equipmentTypes[equipment.data?.type]
           .componentTypes
-      ) || [];
+      ).filter((e) => VISIBLE_COMPONENT_TYPES.includes(e.type)) || [];
   }
 
   useEffect(() => {

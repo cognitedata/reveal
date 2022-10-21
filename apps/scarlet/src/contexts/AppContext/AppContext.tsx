@@ -1,5 +1,6 @@
 import React, { Reducer, useReducer } from 'react';
 import { useSaveEquipment } from 'hooks';
+import { getTruncatedCourseComponents } from 'utils';
 
 import { AppAction, AppActionType, AppState } from '.';
 import {
@@ -99,6 +100,13 @@ function reducer(state: AppState, action: AppAction) {
         dataElement,
         detection
       );
+
+      equipmentToSave.components = getTruncatedCourseComponents({
+        equipmentType: equipmentToSave.type,
+        prevComponents: state.equipment.data?.components ?? [],
+        newComponents: equipmentToSave.components,
+        config: state.equipmentConfig.data!,
+      });
 
       return {
         ...state,

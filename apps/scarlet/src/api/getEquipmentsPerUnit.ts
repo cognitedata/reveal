@@ -27,7 +27,12 @@ export const getEquipmentsPerUnit = async (
   do {
     if (next) list = await next(); // eslint-disable-line no-await-in-loop
     list.items
-      .filter((item) => isValidEquipment(item.name))
+      .filter((item) =>
+        isValidEquipment({
+          id: item.name,
+          type: item.metadata?._typeName ?? '', // eslint-disable-line no-underscore-dangle
+        })
+      )
       .forEach((item) => {
         if (!item.parentExternalId) return;
         const key = item.parentExternalId.replace('Equipments_', '');

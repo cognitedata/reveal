@@ -1,15 +1,21 @@
 import { EquipmentType } from 'types';
 
-export const getEquipmentType = (equipmentId: string) => {
-  const typeId = equipmentId.split('-')[0];
-  switch (typeId) {
-    case '24':
+export const getEquipmentType = (pcmsType: string) => {
+  switch (pcmsType) {
+    case 'Exchanger - Air Cooled':
       return EquipmentType.AIR_COOLER;
-    case '07':
-    case '41':
+    case 'Boiler - Fired':
+    case 'Boiler - Unfired':
+    case 'Boiler - Process Steam Generator':
+    case 'EXCHANGER - Double Pipe':
+    case 'EXCHANGER - Plate/Frame':
+    case 'EXCHANGER - Shell/Tube':
       return EquipmentType.EXCHANGER;
-    case '35':
-    case '95':
+    case 'Filter/Strainer':
+    case 'Flare/Stack':
+    case 'Tower':
+    case 'Drum':
+    case 'Tank':
       return EquipmentType.VESSEL;
     default:
       return undefined;

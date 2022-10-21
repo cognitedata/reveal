@@ -16,3 +16,4 @@ export * from './preApproveDataElements';
 export * from './unitUtils';
 export * from './updateCalculatedDataElements';
 export * from './isValidEquipment';
+export * from './getTruncatedCourseComponents';

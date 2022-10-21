@@ -91,14 +91,14 @@ export const Equipment = () => {
   useEffect(() => {
     const loading =
       configQuery.loading ||
-      scannerDetectionsQuery.loading ||
       pcmsQuery.loading ||
-      // malQuery.loading ||
-      // msQuery.loading ||
-      equipmentStateQuery.loading;
+      equipmentStateQuery.loading ||
+      scannerDetectionsQuery.loading;
+    // malQuery.loading ||
+    // msQuery.loading ||
 
     const error =
-      configQuery.error || equipmentStateQuery.error || pcmsQuery.error;
+      configQuery.error || pcmsQuery.error || equipmentStateQuery.error;
 
     const equipmentData =
       loading || error
@@ -110,7 +110,9 @@ export const Equipment = () => {
             pcms: pcmsQuery.data!,
             // mal: malQuery.data,
             // ms: msQuery.data,
-            type: getEquipmentType(equipmentId),
+            type: getEquipmentType(
+              pcmsQuery.data?.equipment.metadata?._typeName ?? '' // eslint-disable-line no-underscore-dangle
+            ),
           });
 
     appDispatch({

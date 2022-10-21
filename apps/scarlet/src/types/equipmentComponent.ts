@@ -18,4 +18,5 @@ export enum EquipmentComponentType {
   NOZZLE = 'nozzle',
   SHELL = 'shell',
   BUNDLE = 'bundle',
+  COURSE = 'course',
 }

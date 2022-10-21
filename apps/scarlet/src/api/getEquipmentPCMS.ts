@@ -1,7 +1,7 @@
 import { CogniteClient } from '@cognite/sdk';
 import { DataSetId, Facility } from 'types';
 
-import { getUnitAsset } from '.';
+import { getUnitAsset, getEquipmentAsset } from '.';
 
 export const getEquipmentPCMS = async (
   client: CogniteClient,
@@ -23,19 +23,11 @@ export const getEquipmentPCMS = async (
     throw Error('Unit asset is not available');
   }
 
-  const equipmentAssets = await client.assets.list({
-    filter: {
-      name: equipmentId,
-      parentExternalIds: [`Equipments_${unitAsset.externalId}`],
-      dataSetIds: [{ id: DataSetId.P66_PCMS }],
-    },
+  const equipment = await getEquipmentAsset(client, {
+    facility,
+    unitId,
+    equipmentId,
   });
-
-  if (!equipmentAssets.items.length) {
-    throw Error('Equipment asset is not available');
-  }
-
-  const equipment = equipmentAssets.items[0];
 
   const componentAssets = await client.assets.list({
     filter: {

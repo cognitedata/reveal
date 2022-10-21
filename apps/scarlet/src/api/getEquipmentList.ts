@@ -17,16 +17,15 @@ export const getEquipmentList = async (
     facility,
     unitId,
   });
-  const pcmsEquipmentIds = await getPCMSEquipmentIds(client, {
+  const pcmsEquipmentList = await getPCMSEquipmentList(client, {
     facility,
     unitId,
   });
 
-  equipmentList = pcmsEquipmentIds
+  equipmentList = pcmsEquipmentList
     .filter(isValidEquipment)
-    .filter((id, i, self) => self.indexOf(id) === i)
-    .map((id) => {
-      const equipmentState = equipmentStates[id];
+    .map((eq) => {
+      const equipmentState = equipmentStates[eq.id];
       const progress = equipmentState?.progress ?? 0;
       const completed = equipmentState?.progress === '100';
       let status = EquipmentStatus.NOT_STARTED;
@@ -34,8 +33,8 @@ export const getEquipmentList = async (
       else if (equipmentState?.modifiedBy) status = EquipmentStatus.ONGOING;
 
       return {
-        id,
-        type: getEquipmentType(id),
+        id: eq.id,
+        type: getEquipmentType(eq.type),
         status,
         progress,
         modifiedBy: equipmentState?.modifiedBy,
@@ -81,11 +80,11 @@ const getEquipmentStates = async (
   return equipmentStates;
 };
 
-const getPCMSEquipmentIds = async (
+const getPCMSEquipmentList = async (
   client: CogniteClient,
   { facility, unitId }: { facility: Facility; unitId: string }
-) => {
-  const equipmentList: string[] = [];
+): Promise<{ id: string; type: string }[]> => {
+  const equipmentList: { id: string; type: string }[] = [];
 
   try {
     const unitAsset = await getUnitAsset(client, { unitId, facility });
@@ -104,7 +103,12 @@ const getPCMSEquipmentIds = async (
 
     do {
       if (next) list = await next(); // eslint-disable-line no-await-in-loop
-      equipmentList.push(...list.items.map((item) => item.name));
+      equipmentList.push(
+        ...list.items.map((item) => ({
+          id: item.name,
+          type: item.metadata?._typeName ?? '', // eslint-disable-line no-underscore-dangle
+        }))
+      );
       next = list.next;
     } while (list.next);
   } catch (e) {

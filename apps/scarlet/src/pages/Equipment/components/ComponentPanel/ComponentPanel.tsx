@@ -27,7 +27,7 @@ export const ComponentPanel = () => {
   const [isRenaming, setIsRenaming] = useState(false);
   const [isDeleteView, setIsDeleteView] = useState(false);
   const [isRenameView, setIsRenameView] = useState(false);
-  const { components, loading } = useEquipmentComponentsByType(
+  const { components, subComponents, loading } = useEquipmentComponentsByType(
     currentGroup?.type
   );
   const toggleMenu = () => setMenuActive((isActive) => !isActive);
@@ -180,6 +180,16 @@ export const ComponentPanel = () => {
             components={components}
             loading={loading || !currentGroup}
           />
+          {subComponents.length > 0 && (
+            <>
+              <h5 className="cogs-title-5">Sub Components</h5>
+              <ComponentList
+                key={`subgroup_${currentGroup?.type}`}
+                components={subComponents}
+                loading={loading || !currentGroup}
+              />
+            </>
+          )}
         </Styled.ContentWrapper>
       )}
       {!isDeleteView && !isRenameView && !components.length && !loading && (
