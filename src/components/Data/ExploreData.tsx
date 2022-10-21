@@ -171,7 +171,7 @@ const ExploreData = ({ loading, dataSetId }: ExploreDataProps) => {
                     label={assetCount.toLocaleString()}
                     disabled={assetCount === 0}
                     isTooltip={assetCount < 0}
-                    key="assets"
+                    resource="assets"
                   />
                 }
                 key="assets"
@@ -187,7 +187,7 @@ const ExploreData = ({ loading, dataSetId }: ExploreDataProps) => {
                     label={eventsCounts.toLocaleString()}
                     disabled={eventsCounts === 0}
                     isTooltip={eventsCounts < 0}
-                    key="events"
+                    resource="events"
                   />
                 }
                 key="events"
@@ -207,7 +207,7 @@ const ExploreData = ({ loading, dataSetId }: ExploreDataProps) => {
                     label={filesCount.toLocaleString()}
                     disabled={filesCount === 0}
                     isTooltip={filesCount < 0}
-                    key="files"
+                    resource="files"
                   />
                 }
                 key="files"
@@ -223,7 +223,7 @@ const ExploreData = ({ loading, dataSetId }: ExploreDataProps) => {
                     label={sequencesCount.toLocaleString()}
                     disabled={sequencesCount === 0}
                     isTooltip={sequencesCount < 0}
-                    key="sequences"
+                    resource="sequences"
                   />
                 }
                 key="sequences"
@@ -238,8 +238,8 @@ const ExploreData = ({ loading, dataSetId }: ExploreDataProps) => {
                     iconType="Timeseries"
                     label={timeseriesCount.toLocaleString()}
                     disabled={timeseriesCount === 0}
-                    isTooltip={1 === 1}
-                    key="timeseries"
+                    isTooltip={timeseriesCount < 0}
+                    resource="timeseries"
                   />
                 }
                 key="timeseries"

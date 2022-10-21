@@ -6,7 +6,7 @@ import styled from 'styled-components';
 const { Text } = Typography;
 
 type TabTitleProps = {
-  key?: string;
+  resource?: string;
   iconType?: IconType | undefined;
   title: string;
   disabled?: boolean | undefined;
@@ -20,7 +20,7 @@ const TabTitle = ({
   title,
   isTooltip,
   label,
-  key,
+  resource,
 }: TabTitleProps): JSX.Element => {
   const { t } = useTranslation();
 
@@ -44,7 +44,8 @@ const TabTitle = ({
         content={
           <p>
             {t('resource-count-p1-1', { resourceName: title })}{' '}
-            <b>{key?.toLocaleLowerCase()}:read</b> {t('resource-count-p1-2')}
+            <b>{resource?.toLocaleLowerCase()}:read</b>{' '}
+            {t('resource-count-p1-2')}
             <br />
             <b style={{ fontStyle: 'italic' }}>{t('resource-count-p2')}</b>
           </p>

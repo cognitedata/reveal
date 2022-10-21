@@ -1,14 +1,19 @@
 import { Link } from 'react-router-dom';
-import { ItemLabel } from 'utils/styledComponents';
-import Table from 'antd/lib/table';
 import { Asset } from '@cognite/sdk';
 import { createLink } from '@cognite/cdf-utilities';
-import handleError from 'utils/handleError';
-import { getContainer } from 'utils/shared';
-import { DEFAULT_ANTD_TABLE_PAGINATION } from 'utils/tableUtils';
+import { Table, TableNoResults } from '@cognite/cdf-utilities';
+
+import AntdTable from 'antd/lib/table';
 import ColumnWrapper from '../ColumnWrapper';
-import { useTranslation } from 'common/i18n';
+
+import {
+  ItemLabel,
+  getContainer,
+  handleError,
+  DEFAULT_ANTD_TABLE_PAGINATION,
+} from 'utils';
 import { useSearchResource } from 'hooks/useSearchResource';
+import { useTranslation } from 'common/i18n';
 
 interface assetsTableProps {
   dataSetId: number;
@@ -62,7 +67,7 @@ const AssetsTable = ({ dataSetId, query }: assetsTableProps) => {
   return (
     <div>
       <ItemLabel>{t('assets')}</ItemLabel>
-      <Table
+      <AntdTable
         rowKey="id"
         columns={assetColumns}
         dataSource={assets}
