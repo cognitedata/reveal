@@ -1,4 +1,4 @@
-name: Publish Package to NPM
+name: Nightly Publish Package to NPM
 on:
   pull_request:
     types:
@@ -18,8 +18,7 @@ jobs:
 
       - name: Get nightly version
         working-directory: viewer
-        run: |
-          NIGHTLY_VERSION=$(jq -r .version ./package.json | echo $(grep -oP '([0-9]+.[0-9]+.[0-9]+)') | echo $(< /dev/stdin)-dev.$(date +'%Y%m%d')) >> $GITHUB_ENV
+        run: echo "NIGHTLY_VERSION=$(jq -r .version ./package.json | echo $(grep -oP '([0-9]+.[0-9]+.[0-9]+)') | echo $(< /dev/stdin)-dev.$(date +'%Y%m%d'))" >> $GITHUB_ENV
 
       - name: Set nightly version
         working-directory: viewer
