@@ -1,18 +1,11 @@
 /*!
  * Adapted from pnext/three-loader (https://github.com/pnext/three-loader)
  */
-import { Color, IUniform as IThreeUniform, Vector4, Box3, Matrix4, Vector3 } from 'three';
+import { Color, IUniform as IThreeUniform, Vector4 } from 'three';
 
 export type IGradient = [number, Color][];
 
-export interface IClipBox {
-  box: Box3;
-  inverse: Matrix4;
-  matrix: Matrix4;
-  position: Vector3;
-}
-
-export interface IClassification {
+export interface PointClassification {
   [value: string]: Vector4;
   DEFAULT: Vector4;
 }

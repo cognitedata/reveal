@@ -2,11 +2,12 @@
 
 NodeAppearance determineNodeAppearance(sampler2D nodeAppearanceTexture, vec2 textureSize, highp float treeIndex) {
 
-  float dataTextureWidth = textureSize.x;
-  float dataTextureHeight = textureSize.y;
+  highp int dataTextureWidth = int(textureSize.x);
+  highp int dataTextureHeight = int(textureSize.y);
 
-  int xTreeIndexTextureCoord = int(mod(treeIndex, dataTextureWidth));
-  int yTreeIndexTextureCoord = int(floor(treeIndex / dataTextureWidth));
+  highp int iTreeIndex = int(treeIndex);
+  highp int xTreeIndexTextureCoord = iTreeIndex % dataTextureWidth;
+  highp int yTreeIndexTextureCoord = iTreeIndex / dataTextureWidth;
 
   vec4 texel = texelFetch(nodeAppearanceTexture, ivec2(xTreeIndexTextureCoord, yTreeIndexTextureCoord), 0);
   float alphaUnwrapped = floor((texel.a * 255.0) + 0.5);

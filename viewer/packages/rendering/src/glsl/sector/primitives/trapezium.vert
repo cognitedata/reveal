@@ -1,4 +1,5 @@
-#pragma glslify: import('../../base/determineMatrixOverride.glsl')
+#pragma glslify: import('../../base/determineMatrixOverride.glsl');
+#pragma glslify: import('../../treeIndex/treeIndexPacking.glsl');
 
 uniform mat4 inverseModelMatrix;
 uniform mat4 modelMatrix;
@@ -18,12 +19,14 @@ in vec3 a_vertex2;
 in vec3 a_vertex3;
 in vec3 a_vertex4;
 
-flat out float v_treeIndex;
 out vec3 v_color;
 out vec3 v_normal;
 out vec3 vViewPosition;
 
+out highp vec2 v_treeIndexPacked;
+
 void main() {
+    v_treeIndexPacked = packTreeIndex(a_treeIndex);
     vec3 transformed;
     // reduce the avarage branchings
     if (position.x < 1.5) {
@@ -42,7 +45,6 @@ void main() {
 
     vec3 objectNormal = cross(a_vertex1 - a_vertex2, a_vertex1 - a_vertex3);
 
-    v_treeIndex = a_treeIndex;
     v_color = a_color;
     v_normal = normalMatrix * normalize(inverseModelMatrix * treeIndexWorldTransform * modelMatrix * vec4(objectNormal, 0.0)).xyz;
 

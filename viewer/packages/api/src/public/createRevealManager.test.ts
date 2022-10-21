@@ -4,12 +4,13 @@
 
 import { createRevealManager } from './createRevealManager';
 
-import { ModelDataProvider, ModelMetadataProvider } from '@reveal/data-providers';
+import { ModelDataProvider, ModelMetadataProvider, PointCloudStylableObjectProvider } from '@reveal/data-providers';
 
 import { It, Mock, SetPropertyExpression } from 'moq.ts';
 
 import * as THREE from 'three';
 import { SceneHandler } from '@reveal/utilities';
+import { IPointClassificationsProvider } from '@reveal/pointclouds';
 
 describe('createRevealManager', () => {
   test('createRevealManager does not throw on empty internal options', () => {
@@ -19,6 +20,8 @@ describe('createRevealManager', () => {
         'some-application-id',
         new Mock<ModelMetadataProvider>().object(),
         new Mock<ModelDataProvider>().object(),
+        new Mock<PointCloudStylableObjectProvider>().object(),
+        new Mock<IPointClassificationsProvider>().object(),
         new Mock<THREE.WebGLRenderer>()
           .setup(_ => It.Is((expression: SetPropertyExpression) => expression.name === 'info'))
           .returns({})

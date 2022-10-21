@@ -18,7 +18,6 @@ import {
 } from '../render-passes/types';
 import { blitShaders, depthBlendBlitShaders, pointCloudShaders } from '../rendering/shaders';
 import { NodeOutlineColor } from '@reveal/cad-styling';
-import { CadNode } from '@reveal/cad-model';
 import { DEFAULT_EDL_NEIGHBOURS_COUNT } from '../pointcloud-rendering/constants';
 
 export const unitOrthographicCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, -1, 1);
@@ -232,7 +231,7 @@ export enum RenderLayer {
 export function setupCadModelsGeometryLayers(
   materialManager: CadMaterialManager,
   cadModels?: {
-    cadNode: CadNode;
+    cadNode: THREE.Object3D;
     modelIdentifier: string;
   }[]
 ): void {
@@ -267,7 +266,7 @@ export function hasStyledNodes(
 
 function setModelRenderLayers(
   cadModels: {
-    cadNode: CadNode;
+    cadNode: THREE.Object3D;
     modelIdentifier: string;
   },
   materialManager: CadMaterialManager

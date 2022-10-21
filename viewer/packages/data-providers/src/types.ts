@@ -24,7 +24,10 @@ export type Image360Descriptor = {
   label: string;
   collectionId: string;
   collectionLabel: string;
-  transform: THREE.Matrix4;
+  transformations: {
+    translation: THREE.Matrix4;
+    rotation: THREE.Matrix4;
+  };
 };
 
 export type Image360Face = {

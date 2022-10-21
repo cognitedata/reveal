@@ -10,7 +10,7 @@ import { PointCloudEffectsPass } from '../render-passes/PointCloudEffectsPass';
 import { PointCloudRenderTargets } from './types';
 import { PointCloudPassParameters } from '../render-passes/types';
 import { PointCloudParameters } from '../rendering/types';
-import { PotreePointShape } from '../pointcloud-rendering';
+import { PointShape } from '../pointcloud-rendering';
 import { PointCloudMaterialManager } from '../PointCloudMaterialManager';
 
 export class PointCloudRenderPipelineProvider implements RenderPipelineProvider {
@@ -27,7 +27,7 @@ export class PointCloudRenderPipelineProvider implements RenderPipelineProvider 
   private static readonly DepthPassParameters: PointCloudPassParameters = {
     material: {
       weighted: false,
-      shape: PotreePointShape.Circle,
+      shape: PointShape.Circle,
       hqDepthPass: true,
       depthWrite: true,
       blending: THREE.NormalBlending,
@@ -37,7 +37,7 @@ export class PointCloudRenderPipelineProvider implements RenderPipelineProvider 
   private static readonly AttributePassParameters: PointCloudPassParameters = {
     material: {
       weighted: true,
-      shape: PotreePointShape.Circle,
+      shape: PointShape.Circle,
       hqDepthPass: false,
       depthWrite: false,
       blending: THREE.CustomBlending,

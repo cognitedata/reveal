@@ -14,11 +14,21 @@ export class Image360EntityFactory<T> {
     this._image360DataProvider = image360DataProvider;
     this._sceneHandler = sceneHandler;
   }
-  public async create(dataProviderFilter: T, postTransform?: THREE.Matrix4): Promise<Image360Entity[]> {
+  public async create(
+    dataProviderFilter: T,
+    postTransform: THREE.Matrix4,
+    preMultipliedRotation: boolean
+  ): Promise<Image360Entity[]> {
     const event360Metadatas = await this._image360DataProvider.get360ImageDescriptors(dataProviderFilter);
     return event360Metadatas.map(
       event360Metadata =>
-        new Image360Entity(event360Metadata, this._sceneHandler, this._image360DataProvider, postTransform)
+        new Image360Entity(
+          event360Metadata,
+          this._sceneHandler,
+          this._image360DataProvider,
+          postTransform,
+          preMultipliedRotation
+        )
     );
   }
 }

@@ -23,6 +23,7 @@ export { DynamicDefragmentedBuffer } from './src/datastructures/DynamicDefragmen
 export { AutoDisposeGroup } from './src/three/AutoDisposeGroup';
 export { BoundingBoxLOD } from './src/three/BoundingBoxLOD';
 export { toThreeBox3 } from './src/three/toThreeBox3';
+export { fromThreeVector3 } from './src/three/fromThreeVector3';
 export { unionBoxes } from './src/three/unionBoxes';
 export { determineCurrentDevice, DeviceDescriptor } from './src/device';
 export { createRenderTriangle } from './src/three/createFullScreenTriangleGeometry';
@@ -30,6 +31,7 @@ export { createRenderTriangle } from './src/three/createFullScreenTriangleGeomet
 export { fitCameraToBoundingBox } from './src/three/fitCameraToBoundingBox';
 export { isBox3OnPositiveSideOfPlane } from './src/three/isBox3OnPositiveSideOfPlane';
 export { visitBox3CornerPoints } from './src/three/visitBox3CornerPoints';
+export { createDistinctColors } from './src/three/createDistinctColors';
 export { isMobileOrTablet } from './src/isMobileOrTablet';
 export { WebGLRendererStateHelper } from './src/WebGLRendererStateHelper';
 
@@ -43,8 +45,17 @@ export { disposeAttributeArrayOnUpload } from './src/disposeAttributeArrayOnUplo
 export { incrementOrInsertIndex, decrementOrDeleteIndex } from './src/counterMap';
 export { calculateVolumeOfMesh } from './src/calculateVolumeOfMesh';
 
-export { worldToNormalizedViewportCoordinates, worldToViewportCoordinates } from './src/worldToViewport';
+export {
+  worldToNormalizedViewportCoordinates,
+  worldToViewportCoordinates,
+  pixelToNormalizedDeviceCoordinates
+} from './src/worldToViewport';
 
 export { DeferredPromise } from './src/DeferredPromise';
 
 export { SceneHandler } from './src/SceneHandler';
+
+export * from './src/workers/workerize-transferable';
+
+export * from './src/shapes';
+export * from './src/linalg';

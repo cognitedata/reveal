@@ -3,7 +3,7 @@
  */
 
 import { CognitePointCloudModel } from '@reveal/pointclouds';
-import { PotreePointColorType } from '@reveal/rendering';
+import { PointColorType } from '@reveal/rendering';
 import {
   ViewerTestFixtureComponents,
   ViewerVisualTestFixture
@@ -23,7 +23,7 @@ export default class DefaultPointCloudVisualTest extends ViewerVisualTestFixture
       return Promise.resolve();
     }
 
-    model.pointColorType = PotreePointColorType.Height;
+    model.pointColorType = PointColorType.Height;
     return Promise.resolve();
   }
 }

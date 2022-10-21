@@ -18,3 +18,9 @@ export { PotreeNodeWrapper } from './src/PotreeNodeWrapper';
 export { PotreeGroupWrapper } from './src/PotreeGroupWrapper';
 
 export { Potree, PointCloudOctree } from './src/PotreePnextLoader';
+
+export { PointCloudFactory } from './src/PointCloudFactory';
+
+export { IPointClassificationsProvider } from './src/classificationsProviders/IPointClassificationsProvider';
+export { LocalPointClassificationsProvider } from './src/classificationsProviders/LocalPointClassificationsProvider';
+export { UrlPointClassificationsProvider } from './src/classificationsProviders/UrlPointClassificationsProvider';

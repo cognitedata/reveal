@@ -1,0 +1,38 @@
+[package]
+name = "pointclouds-wasm"
+description = "Rust+Webassembly for point clouds"
+version = "0.1.0"
+authors = ["Håkon Flatval <hakon.flatval@cognite.com>"]
+categories = ["wasm"]
+edition = "2021"
+
+repository = "https://github.com/cognitedata/reveal"
+license-file = "../../../../LICENSE"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+wasm-bindgen = { version = "0.2.45", features = ["serde-serialize"] }
+web-sys = { version = "0.3.22", features = ["console"] }
+
+serde = { version = "1.0.145", features = ["derive"] }
+
+js-sys = "0.3.59"
+
+nalgebra = "0.31.2"
+nalgebra-glm = "0.17.0"
+wasm-bindgen-test = "0.3.32"
+
+console_error_panic_hook = "0.1.7"
+
+# These crates are used for running unit tests.
+[dev-dependencies]
+wasm-bindgen-test = "0.3.32"
+futures = "0.3.25"
+wasm-bindgen-futures = "0.3.22"
+rand = "0.8.5"
+rand_chacha = "0.3.1"
+
+# Only used in rand, but need to add `js` feature for wasm compatibility
+getrandom = { version = "0.2", features = ["js"] }

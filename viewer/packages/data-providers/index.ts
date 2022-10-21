@@ -8,12 +8,22 @@ export { Cdf360ImageEventProvider } from './src/image-360-data-providers/Cdf360I
 export { LocalModelDataProvider } from './src/model-data-providers/LocalModelDataProvider';
 export { LocalModelIdentifier } from './src/model-identifiers/LocalModelIdentifier';
 export { LocalModelMetadataProvider } from './src/metadata-providers/LocalModelMetadataProvider';
+export { Local360ImageProvider } from './src/image-360-data-providers/Local360ImageProvider';
 export { ModelIdentifier } from './src/ModelIdentifier';
 export { ModelMetadataProvider } from './src/ModelMetadataProvider';
 export { ModelDataProvider } from './src/ModelDataProvider';
+
+export { PointCloudObjectMetadata, PointCloudObject } from './src/pointcloud-stylable-object-providers/types';
+export { PointCloudStylableObjectProvider } from './src/PointCloudStylableObjectProvider';
+export { StylableObject, SerializableStylableObject } from './src/pointcloud-stylable-object-providers/StylableObject';
+
+export { CdfPointCloudStylableObjectProvider } from './src/pointcloud-stylable-object-providers/CdfPointCloudStylableObjectProvider';
+export { DummyPointCloudStylableObjectProvider } from './src/pointcloud-stylable-object-providers/DummyPointCloudStylableObjectProvider';
+
 export { Image360Provider } from './src/Image360Provider';
 export {
   BinaryFileProvider,
+  JsonFileProvider,
   File3dFormat,
   BlobOutputMetadata,
   Image360Descriptor,

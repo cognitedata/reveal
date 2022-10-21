@@ -8,7 +8,7 @@ export { createV9SceneSectorMetadata } from './src/createSceneSectorMetadata';
 
 export { createCadModelMetadata } from './src/createCadModelMetadata';
 export { createCadModel } from './src/createCadModel';
-export { createPointCloudModel } from './src/createPointCloudModel';
+export { createPointCloudModel, createPointCloudNode } from './src/createPointCloudModel';
 
 export { mockClientAuthentication } from './src/cogniteClientAuth';
 

@@ -8,12 +8,22 @@ import { assertNever } from '@reveal/utilities';
 import { ConsumedSector } from '@reveal/cad-parsers';
 
 import { Subject, Observable, combineLatest, asyncScheduler, BehaviorSubject } from 'rxjs';
-import { scan, share, startWith, auditTime, filter, map, observeOn, mergeMap } from 'rxjs/operators';
+import {
+  scan,
+  share,
+  startWith,
+  auditTime,
+  filter,
+  map,
+  observeOn,
+  mergeMap,
+  distinctUntilKeyChanged,
+  mergeWith
+} from 'rxjs/operators';
 import { SectorCuller } from './sector/culling/SectorCuller';
 import { CadLoadingHints } from './CadLoadingHints';
 
 import { LoadingState } from '@reveal/model-base';
-import { emissionLastMillis } from './utilities/rxOperations';
 import { loadingEnabled } from './sector/rxSectorUtilities';
 import { SectorLoader } from './sector/SectorLoader';
 import { CadModelBudget, defaultCadModelBudget } from './CadModelBudget';
@@ -29,7 +39,7 @@ export class CadModelUpdateHandler {
   private _budget: CadModelBudget;
   private _lastSpent: SectorLoadingSpent;
 
-  private readonly _cameraSubject: Subject<THREE.PerspectiveCamera> = new Subject();
+  private readonly _cameraSubject: Subject<CameraInput> = new Subject();
   private readonly _clippingPlaneSubject: Subject<THREE.Plane[]> = new Subject();
   private readonly _loadingHintsSubject: Subject<CadLoadingHints> = new Subject();
   private readonly _prioritizedLoadingHintsSubject: Subject<void> = new Subject();
@@ -69,14 +79,20 @@ export class CadModelUpdateHandler {
       combineLatest([
         this._loadingHintsSubject.pipe(startWith({} as CadLoadingHints)),
         this._budgetSubject.pipe(startWith(this._budget))
-      ]).pipe(map(makeSettingsInput)),
-      this._prioritizedLoadingHintsSubject.pipe(startWith(undefined as void)),
-      combineLatest([
-        this._cameraSubject.pipe(auditTime(500)),
-        this._cameraSubject.pipe(auditTime(250), emissionLastMillis(600))
-      ]).pipe(map(makeCameraInput)),
-      combineLatest([this._clippingPlaneSubject.pipe(startWith([]))]).pipe(map(makeClippingInput)),
-      this.loadingModelObservable()
+      ]).pipe(map(makeSettingsInput), auditTime(250)),
+      this._prioritizedLoadingHintsSubject.pipe(startWith(undefined as void), auditTime(250)),
+      this._cameraSubject.pipe(
+        auditTime(500),
+        filter((input: CameraInput) => input.cameraInMotion),
+        mergeWith(
+          this._cameraSubject.pipe(
+            distinctUntilKeyChanged('cameraInMotion'),
+            filter((input: CameraInput) => !input.cameraInMotion)
+          )
+        )
+      ),
+      combineLatest([this._clippingPlaneSubject.pipe(startWith([]))]).pipe(map(makeClippingInput), auditTime(250)),
+      this.loadingModelObservable().pipe(auditTime(250))
     ]);
     const collectStatisticsCallback = (spendage: SectorLoadingSpent) => {
       this._lastSpent = spendage;
@@ -106,7 +122,6 @@ export class CadModelUpdateHandler {
 
     this._updateObservable = combinator.pipe(
       observeOn(asyncScheduler), // Schedule tasks on macro task queue (setInterval)
-      auditTime(250), // Take the last value every 250ms
       map(createDetermineSectorsInput), // Map from array to interface (enables destructuring)
       filter(loadingEnabled), // should we load?
       mergeMap(async x => loadSectors(x)),
@@ -120,8 +135,8 @@ export class CadModelUpdateHandler {
     this._sectorCuller.dispose();
   }
 
-  updateCamera(camera: THREE.PerspectiveCamera): void {
-    this._cameraSubject.next(camera);
+  updateCamera(camera: THREE.PerspectiveCamera, cameraInMotion: boolean): void {
+    this._cameraSubject.next(makeCameraInput([camera, cameraInMotion]));
   }
 
   set clippingPlanes(value: THREE.Plane[]) {
