@@ -1,4 +1,4 @@
-import { Button, Detail } from '@cognite/cogs.js';
+import { Detail } from '@cognite/cogs.js';
 import dayjs from 'dayjs';
 import { TableData } from 'types';
 import { HeadlessTable } from 'components/HeadlessTable';
@@ -11,96 +11,74 @@ import {
   StyledHeader,
   StyledBidMatrixTable,
   StyledPriceScenarioTable,
-  Main,
-  StyledInfobar,
 } from './elements';
 import { BidMatrixTableData } from './utils';
 
 type Props = {
-  newMatrixAvailable: boolean;
   bidDate: dayjs.Dayjs;
   bidMatrixTitle: string;
   bidMatrixExternalId: string;
   bidMatrixTableData: BidMatrixTableData;
   mainScenarioTableData: TableData[];
   onBidMatrixCopyClick: () => Promise<boolean>;
-  onReloadClick: () => void;
 };
 
 export const BidMatrix = ({
-  newMatrixAvailable,
   bidDate,
   bidMatrixTitle,
   bidMatrixExternalId,
   bidMatrixTableData,
   mainScenarioTableData,
   onBidMatrixCopyClick,
-  onReloadClick,
 }: Props) => (
-  <Main>
-    {newMatrixAvailable && (
-      <StyledInfobar className="new-matrix">
-        A new matrix is available. We recommend that you update this page.
-        <Button
-          type="tertiary"
-          size="small"
-          icon="Refresh"
-          iconPlacement="right"
-          onClick={onReloadClick}
-        >
-          Update matrix
-        </Button>
-      </StyledInfobar>
-    )}
-    <div className="main">
-      <StyledDiv className="bidmatrix">
-        <StyledHeader>
-          <div>
-            <span>
-              <StyledTitle level={5}>Bid matrix: {bidMatrixTitle}</StyledTitle>
-            </span>
-            <Detail>
-              Generated for {bidDate.format('MMM DD, YYYY')} -{' '}
-              {bidMatrixExternalId}
-            </Detail>
-          </div>
-          <CopyButton copyFunction={onBidMatrixCopyClick} />
-        </StyledHeader>
-        <StyledBidMatrixTable>
-          <HeadlessTable
-            tableHeader={bidMatrixTableData.columns}
-            tableData={bidMatrixTableData.data}
-            className="bidmatrix"
-          />
-        </StyledBidMatrixTable>
-      </StyledDiv>
-      <StyledDiv className="price-scenario">
-        <StyledHeader>
-          <div>
-            <span>
-              <StyledTitle level={5}>Price Scenario</StyledTitle>
-            </span>
-            <Detail>
-              {/* TODO(POWEROPS-297): Replace with water value */}
-              <div style={{ height: '16px' }} />
-              {/* <Label size="small" variant="unknown">
+  <div className="main">
+    <StyledDiv className="bidmatrix">
+      <StyledHeader>
+        <div>
+          <span>
+            <StyledTitle level={5}>Bid matrix: {bidMatrixTitle}</StyledTitle>
+          </span>
+          <Detail>
+            Generated for {bidDate.format('MMM DD, YYYY')} -{' '}
+            {bidMatrixExternalId}
+          </Detail>
+        </div>
+        <CopyButton copyFunction={onBidMatrixCopyClick} />
+      </StyledHeader>
+      <StyledBidMatrixTable>
+        <HeadlessTable
+          tableHeader={bidMatrixTableData.columns}
+          tableData={bidMatrixTableData.data}
+          className="bidmatrix"
+        />
+      </StyledBidMatrixTable>
+    </StyledDiv>
+    <StyledDiv className="price-scenario">
+      <StyledHeader>
+        <div>
+          <span>
+            <StyledTitle level={5}>Price Scenario</StyledTitle>
+          </span>
+          <Detail>
+            {/* TODO(POWEROPS-297): Replace with water value */}
+            <div style={{ height: '16px' }} />
+            {/* <Label size="small" variant="unknown">
                 Water value
                   155 NOK
                 </Label> */}
-            </Detail>
-          </div>
-        </StyledHeader>
-        <StyledPriceScenarioTable>
-          <HeadlessTable
-            tableHeader={[
-              { Header: 'Base Price', accessor: 'base' },
-              { Header: 'Production', accessor: 'production' },
-            ]}
-            tableData={mainScenarioTableData}
-            className="price-scenario"
-          />
-        </StyledPriceScenarioTable>
-      </StyledDiv>
-    </div>
-  </Main>
+          </Detail>
+        </div>
+      </StyledHeader>
+      <StyledPriceScenarioTable>
+        <HeadlessTable
+          tableHeader={[
+            { Header: 'Base Price', accessor: 'base' },
+            { Header: 'Production', accessor: 'production' },
+          ]}
+          tableData={mainScenarioTableData}
+          className="price-scenario"
+        />
+      </StyledPriceScenarioTable>
+    </StyledDiv>
+  </div>
 );

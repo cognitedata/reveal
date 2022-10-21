@@ -5,7 +5,7 @@ import { pickChartColor } from 'utils/utils';
 import { BidProcessResultWithData, TableData, TableColumn } from 'types';
 import { Column } from 'react-table';
 import { HeadlessTable } from 'components/HeadlessTable';
-import { useAuthContext } from '@cognite/react-container';
+import { useAuthenticatedAuthContext } from '@cognite/react-container';
 import {
   DoubleDatapoint,
   SyntheticDatapoint,
@@ -35,14 +35,13 @@ import {
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
-export const PriceScenarios = ({
-  bidProcessResult,
-}: {
+interface Props {
   bidProcessResult: BidProcessResultWithData;
-}) => {
-  const metrics = useMetrics('price-scenarios');
-  const { client } = useAuthContext();
+}
 
+export const PriceScenarios = ({ bidProcessResult }: Props) => {
+  const metrics = useMetrics('price-scenarios');
+  const { client } = useAuthenticatedAuthContext();
   const bidDate = dayjs(bidProcessResult.bidDate).tz(
     bidProcessResult.marketConfiguration?.timezone || DEFAULT_CONFIG.TIME_ZONE
   );
@@ -72,7 +71,6 @@ export const PriceScenarios = ({
   > => {
     // When "Total" tab is selected, table looks like:
     // [Hour, Scenario 1, Scenario 2, ..., Scenario n]
-    if (!client) return [];
 
     // We need to split the scenario in max 10 element arrays due to a bug in the SDK
     // Ref: https://cognitedata.slack.com/archives/C6KNJCEEA/p1663773050949699
@@ -126,7 +124,6 @@ export const PriceScenarios = ({
   ): Promise<Record<string, string>[][]> => {
     // When a "Scenario" tab is selected, table looks like:
     // [Hour, Total (for this scenario), Plant 1, Plant 2, ..., Plant n]
-    if (!client) return [];
 
     // Get current scenario from activeScenarioIndex
     const currentScenario =
@@ -230,7 +227,7 @@ export const PriceScenarios = ({
     const priceTimeseries =
       activeTab === 'total'
         ? priceExternalIds &&
-          (await client?.datapoints.retrieve({
+          (await client.datapoints.retrieve({
             items: priceExternalIds.map((externalId) => {
               return externalId;
             }),
@@ -238,7 +235,7 @@ export const PriceScenarios = ({
             end: bidDate.endOf('day').valueOf(),
           }))
         : bidProcessResult.priceScenarios[activeScenarioIndex] &&
-          (await client?.datapoints.retrieve({
+          (await client.datapoints.retrieve({
             items: [
               {
                 externalId:

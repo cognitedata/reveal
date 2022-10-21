@@ -1,10 +1,10 @@
-import { Button, Dropdown, Icon, Label, Menu } from '@cognite/cogs.js';
+import { Body, Button, Dropdown, Icon, Label, Menu } from '@cognite/cogs.js';
 import { formatDate } from 'utils/utils';
 import { BidProcessConfiguration } from '@cognite/power-ops-api-types';
-import { useState } from 'react';
 
 import {
   Header,
+  StyledModal,
   VerticalSeparator,
   StyledTitle,
   MethodItem,
@@ -17,23 +17,49 @@ interface Props {
   startDate: string | undefined;
   priceAreaName: string;
   processConfigurations: BidProcessConfiguration[];
+  showConfirmDownloadModal: boolean;
+  downloading: boolean;
+  onChangeShowConfirmDownloadModal: (isVisible: boolean) => void;
   onChangeProcessConfigurationExternalId: (
     processConfigurationExternalId: string
   ) => void;
   onDownloadMatrix: (bidProcessExternalId: string) => Promise<void>;
+  onDownloadButtonClick: () => Promise<void>;
 }
 
-export const PortfolioHeader = ({
+export const DayAheadMarketHeader = ({
   bidProcessExternalId,
   startDate,
   priceAreaName,
+  downloading,
   processConfigurations,
+  showConfirmDownloadModal,
+  onChangeShowConfirmDownloadModal,
   onChangeProcessConfigurationExternalId,
   onDownloadMatrix,
+  onDownloadButtonClick,
 }: Props) => {
-  const [downloading, setDownloading] = useState(false);
   return (
     <Header>
+      <StyledModal
+        testId="confirm-download-modal"
+        visible={showConfirmDownloadModal}
+        title={<Body strong>Are you sure you want to download this bid?</Body>}
+        okText="Download anyway"
+        onCancel={() => onChangeShowConfirmDownloadModal(false)}
+        onOk={async () => {
+          onChangeShowConfirmDownloadModal(false);
+          await onDownloadMatrix(bidProcessExternalId);
+        }}
+        width={620}
+        appElement={document.documentElement}
+      >
+        <Body level={2}>
+          We have registered high shop run penalties for this bid and would
+          advise against downloading and sending it. Are you sure you want to
+          proceed?
+        </Body>
+      </StyledModal>
       <div>
         <StyledTitle level={5}>Price Area {priceAreaName}</StyledTitle>
         <Label size="small" variant="unknown">
@@ -61,9 +87,10 @@ export const PortfolioHeader = ({
                       {formatMethod(config.bidProcessConfiguration)}
                       <p>
                         Process finished:{' '}
-                        {formatDate(
-                          config.bidProcessFinishedDate.toLocaleString()
-                        )}
+                        {config.bidProcessFinishedDate &&
+                          formatDate(
+                            config.bidProcessFinishedDate.toLocaleString()
+                          )}
                       </p>
                     </div>
                     {config.bidProcessEventExternalId ===
@@ -95,9 +122,7 @@ export const PortfolioHeader = ({
           loading={downloading}
           disabled={bidProcessExternalId === ''}
           onClick={async () => {
-            setDownloading(true);
-            await onDownloadMatrix(bidProcessExternalId);
-            setDownloading(false);
+            await onDownloadButtonClick();
           }}
         >
           Download

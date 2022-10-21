@@ -3,40 +3,44 @@ import {
   useFilters,
   useSortBy,
   usePagination,
-  Column,
   HeaderGroup,
+  UseTableOptions,
 } from 'react-table';
 import { Flex, Icon, Pagination } from '@cognite/cogs.js';
-import { Process, Workflow } from '@cognite/power-ops-api-types';
 
 import { StyledTable } from './elements';
 
-export const ReusableTable = ({
+type ReusableTableProps<T extends object> = {
+  data: UseTableOptions<T>['data'];
+  columns: UseTableOptions<T>['columns'];
+  showPagination?: boolean;
+  pageSize?: number;
+};
+
+export function ReusableTable<T extends object>({
   data,
   columns,
-  className = '',
-}: {
-  data: (Workflow | Process)[];
-  columns: Column[];
-  className?: string;
-}) => {
+  showPagination = true,
+  pageSize = 10,
+}: ReusableTableProps<T>) {
   const {
     headerGroups,
     page,
     pageOptions,
-    state: { pageIndex, pageSize },
+    state: { pageIndex },
     ...tableInstance
-  } = useTable(
+  } = useTable<T>(
     {
       columns,
       data,
+      initialState: { pageSize },
     },
     useFilters,
     useSortBy,
     usePagination
   );
 
-  const sortColumnIcon = (column: HeaderGroup) => {
+  const sortColumnIcon = (column: HeaderGroup<T>) => {
     if (column.isSorted) {
       return column.isSortedDesc ? (
         <Icon type="ReorderDescending" />
@@ -75,7 +79,7 @@ export const ReusableTable = ({
             tableInstance.prepareRow(row);
             return (
               // eslint-disable-next-line react/jsx-key
-              <tr {...row.getRowProps()} className={className}>
+              <tr {...row.getRowProps()}>
                 {row.cells.map((cell) => (
                   // eslint-disable-next-line react/jsx-key
                   <td {...cell.getCellProps()} className="cogs-body-2">
@@ -87,15 +91,17 @@ export const ReusableTable = ({
           })}
         </tbody>
       </StyledTable>
-      <Flex style={{ justifyContent: 'center', alignItems: 'center' }}>
-        <Pagination
-          initialCurrentPage={pageIndex + 1}
-          totalPages={pageOptions.length}
-          itemsPerPage={pageSize as any}
-          onPageChange={(x) => tableInstance.gotoPage(() => x - 1)}
-          hideItemsPerPage
-        />
-      </Flex>
+      {showPagination && (
+        <Flex style={{ justifyContent: 'center', alignItems: 'center' }}>
+          <Pagination
+            initialCurrentPage={pageIndex + 1}
+            totalPages={pageOptions.length}
+            itemsPerPage={pageSize as any}
+            onPageChange={(x) => tableInstance.gotoPage(() => x - 1)}
+            hideItemsPerPage
+          />
+        </Flex>
+      )}
     </>
   );
-};
+}

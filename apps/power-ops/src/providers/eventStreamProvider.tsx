@@ -30,15 +30,20 @@ export const EventStreamContext = createContext<EventStreamContextType>({
   setNewMatrixAvailable: () => null,
 });
 
-const source = new EventSource(`${sidecar.powerOpsApiBaseUrl}/sse`, {
-  withCredentials: false,
-});
+export const getEventSource = () => {
+  return new EventSource(`${sidecar.powerOpsApiBaseUrl}/sse`, {
+    withCredentials: false,
+  });
+};
 
 export const EventStreamProvider = ({ children }: PropsWithChildren) => {
   const { client, project } = useAuthenticatedAuthContext();
   const [newMatrixAvailable, setNewMatrixAvailable] = useState(false);
 
-  const eventEmitter = fromEvent<MessageEvent<string>>(source, project);
+  const eventEmitter = fromEvent<MessageEvent<string>>(
+    getEventSource(),
+    project
+  );
   const { eventStore } = useContext(EventStreamContext);
 
   useEffect(() => {

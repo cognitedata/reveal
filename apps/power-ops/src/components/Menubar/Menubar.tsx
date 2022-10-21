@@ -42,19 +42,20 @@ export const MenuBar = () => {
           style={{
             position: 'absolute',
             top: '19.5px',
-            left: '372px',
+            left: '435px',
           }}
         />
         <Dropdown
+          className="top-bar-dropdown"
           visible={visible}
           onClickOutside={() => setVisible(false)}
           content={
             <StyledMenu>
-              <Menu.Header>Price Area</Menu.Header>
+              <Menu.Header>Price Areas</Menu.Header>
               {allPriceAreas.map((pricearea) => (
                 <Menu.Item
                   selected={pathname.includes(
-                    `${PAGES.PORTFOLIO}/${pricearea.externalId}`
+                    `${PAGES.DAY_AHEAD_MARKET}/${pricearea.externalId}`
                   )}
                   key={pricearea.externalId}
                   onClick={() => {
@@ -66,7 +67,7 @@ export const MenuBar = () => {
                   }}
                   appendIcon={
                     pathname.includes(
-                      `${PAGES.PORTFOLIO}/${pricearea.externalId}`
+                      `${PAGES.DAY_AHEAD_MARKET}/${pricearea.externalId}`
                     )
                       ? 'Checkmark'
                       : undefined
@@ -77,36 +78,35 @@ export const MenuBar = () => {
               ))}
             </StyledMenu>
           }
-        >
-          <TopBar.Navigation
-            links={[
-              {
-                name: 'Portfolio',
-                isActive: pathname.includes(PAGES.PORTFOLIO),
-                onClick: () => toggleDropdown(),
-              },
-              {
-                name: 'Workflows',
-                isActive: pathname.includes(PAGES.WORKFLOWS),
-                onClick: () => history.push(PAGES.WORKFLOWS),
-              },
-              ...(authState.email?.includes('@cognite')
-                ? [
-                    {
-                      name: 'Workflow Schemas',
-                      isActive: pathname.includes(PAGES.WORKFLOW_SCHEMAS),
-                      onClick: () => history.push(PAGES.WORKFLOW_SCHEMAS),
-                    },
-                    {
-                      name: 'Monitoring',
-                      isActive: pathname.includes(PAGES.MONITORING),
-                      onClick: () => history.push(PAGES.MONITORING),
-                    },
-                  ]
-                : []),
-            ]}
-          />
-        </Dropdown>
+        />
+        <TopBar.Navigation
+          links={[
+            {
+              name: 'Day Ahead Market',
+              isActive: pathname.includes(PAGES.DAY_AHEAD_MARKET),
+              onClick: () => toggleDropdown(),
+            },
+            {
+              name: 'Workflows',
+              isActive: pathname.includes(PAGES.WORKFLOWS),
+              onClick: () => history.push(PAGES.WORKFLOWS),
+            },
+            ...(authState.email?.includes('@cognite')
+              ? [
+                  {
+                    name: 'Workflow Schemas',
+                    isActive: pathname.includes(PAGES.WORKFLOW_SCHEMAS),
+                    onClick: () => history.push(PAGES.WORKFLOW_SCHEMAS),
+                  },
+                  {
+                    name: 'Monitoring',
+                    isActive: pathname.includes(PAGES.MONITORING),
+                    onClick: () => history.push(PAGES.MONITORING),
+                  },
+                ]
+              : []),
+          ]}
+        />
       </TopBar.Left>
       <TopBar.Right>
         <LogOutButtonContainer>

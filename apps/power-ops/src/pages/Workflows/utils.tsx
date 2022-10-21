@@ -1,11 +1,12 @@
 import dayjs from 'dayjs';
 import { useMemo } from 'react';
-import { CellProps, Column } from 'react-table';
+import { Column } from 'react-table';
 import { Detail } from '@cognite/cogs.js';
 import { StatusLabel } from 'components/StatusLabel/StatusLabel';
 import { ViewMoreButton } from 'components/ViewMoreButton/ViewMoreButton';
 import { OpenInFusion } from 'components/OpenInFusion/OpenInFusion';
 import { calculateDuration } from 'utils/utils';
+import { Process, ProcessStatus, Workflow } from '@cognite/power-ops-api-types';
 
 import { CellWrapper } from './elements';
 
@@ -19,12 +20,12 @@ export const handleCopyButtonClick = async (text: string | undefined) => {
   }
 };
 
-const reusableColumns: Column[] = [
+export const processColumns: Column<Process>[] = [
   {
     accessor: 'eventType',
     Header: 'Workflow Type / External ID',
     disableSortBy: true,
-    Cell: ({ row }: CellProps<any>) => (
+    Cell: ({ row }) => (
       <>
         <div className="cogs-body-2 strong">{row.values.eventType}</div>
         <Detail
@@ -41,71 +42,121 @@ const reusableColumns: Column[] = [
   {
     accessor: 'status',
     Header: 'Status',
-    Cell: ({ value }) => useMemo(() => <StatusLabel status={value} />, [value]),
+    Cell: ({ value }: { value: ProcessStatus }) =>
+      useMemo(() => <StatusLabel status={value} />, [value]),
   },
   {
     accessor: 'eventCreationTime',
     Header: 'Triggered',
-    Cell: ({ value }) =>
-      Date.parse(value) ? dayjs(value).format('DD MMM, YYYY HH:mm:ss') : value,
+    Cell: ({ value }) => (
+      <>{value ? dayjs(value).format('DD MMM, YYYY HH:mm:ss') : value}</>
+    ),
   },
   {
     accessor: 'eventStartTime',
     Header: 'Started',
-    Cell: ({ value }) =>
-      Date.parse(value) ? dayjs(value).format('DD MMM, YYYY HH:mm:ss') : value,
+    Cell: ({ value }) => (
+      <>{value ? dayjs(value).format('DD MMM, YYYY HH:mm:ss') : value}</>
+    ),
   },
   {
     accessor: 'eventEndTime',
     Header: 'Finished/Failed',
-    Cell: ({ value }) =>
-      Date.parse(value) ? dayjs(value).format('DD MMM, YYYY HH:mm:ss') : value,
+    Cell: ({ value }) => (
+      <>{value ? dayjs(value).format('DD MMM, YYYY HH:mm:ss') : value}</>
+    ),
   },
   {
     Header: 'Duration',
-    accessor: (values: any) => {
-      if (values?.eventCreationTime && values?.eventEndTime) {
-        return calculateDuration(
-          values?.eventCreationTime,
-          values?.eventEndTime
-        );
+    accessor: (values) => {
+      if (values.eventCreationTime && values.eventEndTime) {
+        return calculateDuration(values.eventCreationTime, values.eventEndTime);
       }
       return '';
     },
   },
-];
-
-export const processColumns: Column[] = [
-  ...reusableColumns,
   {
-    accessor: 'actions',
+    accessor: 'eventExternalId',
     disableSortBy: true,
-    Cell: ({ row }: CellProps<any>) =>
+    Cell: ({ value }) =>
       useMemo(
         () => (
           <CellWrapper>
-            <OpenInFusion eventExternalId={row.original.eventExternalId} />
+            <OpenInFusion type="event" endPoint="events" externalId={value} />
           </CellWrapper>
         ),
-        [row.original.eventExternalId]
+        [value]
       ),
   },
 ];
 
-export const workflowsColumns: Column[] = [
-  ...reusableColumns,
+export const workflowsColumns: Column<Workflow>[] = [
   {
-    accessor: 'actions',
+    accessor: 'eventType',
+    Header: 'Workflow Type / External ID',
     disableSortBy: true,
-    Cell: ({ row }: CellProps<any>) =>
+    Cell: ({ row, value }) => (
+      <>
+        <div className="cogs-body-2 strong">{value}</div>
+        <Detail
+          style={{
+            overflowWrap: 'anywhere',
+            color: 'var(--cogs-text-icon--medium)',
+          }}
+        >
+          {row.original.eventExternalId}
+        </Detail>
+      </>
+    ),
+  },
+  {
+    accessor: 'status',
+    Header: 'Status',
+    Cell: ({ value }: { value: ProcessStatus }) =>
+      useMemo(() => <StatusLabel status={value} />, [value]),
+  },
+  {
+    accessor: 'eventCreationTime',
+    Header: 'Triggered',
+    Cell: ({ value }) => (
+      <>{value ? dayjs(value).format('DD MMM, YYYY HH:mm:ss') : value}</>
+    ),
+  },
+  {
+    accessor: 'eventStartTime',
+    Header: 'Started',
+    Cell: ({ value }) => (
+      <>{value ? dayjs(value).format('DD MMM, YYYY HH:mm:ss') : value}</>
+    ),
+  },
+  {
+    accessor: 'eventEndTime',
+    Header: 'Finished/Failed',
+    Cell: ({ value }) => (
+      <>{value ? dayjs(value).format('DD MMM, YYYY HH:mm:ss') : value}</>
+    ),
+  },
+  {
+    Header: 'Duration',
+    accessor: (values) => {
+      if (values.eventCreationTime && values.eventEndTime) {
+        return calculateDuration(values.eventCreationTime, values.eventEndTime);
+      }
+      return '';
+    },
+  },
+  {
+    accessor: 'eventExternalId',
+    disableSortBy: true,
+    Cell: ({ value }) =>
       useMemo(
         () => (
           <CellWrapper>
-            <ViewMoreButton eventExternalId={row.original.eventExternalId} />
-            <OpenInFusion eventExternalId={row.original.eventExternalId} />
+            <ViewMoreButton eventExternalId={value} />
+            <OpenInFusion type="event" endPoint="events" externalId={value} />
           </CellWrapper>
         ),
-        [row.original.eventExternalId]
+        [value]
       ),
   },
 ];

@@ -3,7 +3,7 @@ import { useContext, useEffect } from 'react';
 import { useAuthenticatedAuthContext } from '@cognite/react-container';
 import { CogniteEvent } from '@cognite/sdk';
 import { EVENT_TYPES } from '@cognite/power-ops-api-types';
-import { isNewBidMatrixAvailable } from 'components/BidMatrix/utils';
+import { isNewBidMatrixAvailable } from 'components/ShopQualityAssuranceModal/utils';
 
 export const useNewBidMatrixAvailable = (
   priceAreaExternalId: string,

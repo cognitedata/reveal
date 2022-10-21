@@ -1,5 +1,5 @@
 import styled from 'styled-components/macro';
-import { Button, Title } from '@cognite/cogs.js';
+import { Button, Modal, Title } from '@cognite/cogs.js';
 
 export const StyledTitle = styled(Title)`
   font-family: 'Inter';
@@ -23,6 +23,26 @@ export const Header = styled.span`
     display: flex;
     align-items: center;
     margin-left: auto;
+  }
+`;
+
+export const StyledModal = styled(Modal)`
+  border-radius: 12px;
+  font-family: 'Inter';
+  margin-top: 30vh;
+
+  .cogs-modal-header {
+    border: none;
+    padding: 0 0 10px 0;
+  }
+
+  .cogs-modal-content {
+    padding: 12px 0;
+  }
+
+  .cogs-modal-footer {
+    border: none;
+    padding: 18px 0 0 0;
   }
 `;
 

@@ -17,8 +17,8 @@ import { EventStreamContext } from 'providers/eventStreamProvider';
 import { CopyButton } from 'components/CopyButton/CopyButton';
 import { useFetchProcesses } from 'queries/useFetchProcesses';
 import { useAuthenticatedAuthContext } from '@cognite/react-container';
+import { ReusableTable } from 'components/ReusableTable';
 
-import { ReusableTable } from './ReusableTable';
 import { handleCopyButtonClick, processColumns } from './utils';
 import {
   Header,

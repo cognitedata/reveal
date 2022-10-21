@@ -4,7 +4,7 @@ import { useFetchPriceAreas } from 'queries/useFetchPriceAreas';
 import { NotFoundPage } from 'pages/NotFound/NotFound';
 import { PAGES } from 'types';
 
-export const Portfolio = () => {
+export const DayAheadMarket = () => {
   const { data: priceAreas = [], isFetched, isFetching } = useFetchPriceAreas();
 
   if (isFetching) return <Loader infoTitle="Loading Price Areas" />;
@@ -12,5 +12,7 @@ export const Portfolio = () => {
   if (isFetched && priceAreas.length === 0)
     return <NotFoundPage message="No price areas found" />;
 
-  return <Redirect to={`${PAGES.PORTFOLIO}/${priceAreas[0].externalId}`} />;
+  return (
+    <Redirect to={`${PAGES.DAY_AHEAD_MARKET}/${priceAreas[0].externalId}`} />
+  );
 };

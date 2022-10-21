@@ -1,6 +1,7 @@
 import {
   BidProcessResult,
   WorkflowSchemaWithProcesses,
+  ScenarioObjectiveOutputCDFModel,
 } from '@cognite/power-ops-api-types';
 
 export interface TableData {
@@ -45,13 +46,24 @@ export type WorkflowSchemaEditable = Omit<
   'id' | 'cdfProject'
 >;
 
+export enum SOLVER_STATUS_TYPES {
+  INFEASIBLE = 'Integer infeasible',
+  OPTIMAL = 'Optimal solution is available',
+}
+
+export interface ShopRunPenalties
+  extends Omit<ScenarioObjectiveOutputCDFModel, 'shopProcessEventExternalId'> {
+  scenario: string;
+}
+
 export enum PAGES {
   HOME = '/home',
-  MONITORING = '/monitoring',
+  PRICE_AREA = '/day-ahead-market/:priceAreaExternalId',
+  PORTFOLIO = '/portfolio', // Deprecated, should use "DAY_AHEAD_MARKET"
+  DAY_AHEAD_MARKET = '/day-ahead-market',
   WORKFLOWS_SINGLE = '/workflows/:workflowExternalId',
   WORKFLOWS = '/workflows',
-  PRICE_AREA = '/portfolio/:priceAreaExternalId',
-  PORTFOLIO = '/portfolio',
   WORKFLOW_SCHEMAS = '/workflow-schemas',
+  MONITORING = '/monitoring',
   LOGOUT = '/logout',
 }

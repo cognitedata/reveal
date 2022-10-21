@@ -1,5 +1,5 @@
 import styled, { css } from 'styled-components/macro';
-import { Infobar, Title } from '@cognite/cogs.js';
+import { Title } from '@cognite/cogs.js';
 import { MainPanel } from 'styles/layout';
 
 const GeneralTableStyles = css`
@@ -30,18 +30,6 @@ export const Main = styled(MainPanel)`
     display: flex;
     flex-direction: row;
     padding: 16px 0 16px 16px;
-  }
-`;
-
-export const StyledInfobar = styled(Infobar)`
-  .cogs-infobar__content {
-    height: 40px;
-  }
-  p {
-    margin: auto;
-    Button {
-      margin-left: 16px;
-    }
   }
 `;
 

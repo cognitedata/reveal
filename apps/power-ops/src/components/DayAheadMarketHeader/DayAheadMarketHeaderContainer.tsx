@@ -4,39 +4,65 @@ import { useFetchProcessConfigurations } from 'queries/useFetchProcessConfigurat
 import { useParams } from 'react-router-dom';
 import { downloadBidMatrices, formatDate } from 'utils/utils';
 import { useAuthenticatedAuthContext } from '@cognite/react-container';
-import { PortfolioHeader } from 'components/PortfolioHeader/PortfolioHeader';
+import { DayAheadMarketHeader } from 'components/DayAheadMarketHeader/DayAheadMarketHeader';
 import { useFetchPriceAreas } from 'queries/useFetchPriceAreas';
-import { useEffect } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { shopPenaltiesExceedLimit } from 'components/ShopQualityAssuranceModal/utils';
 
 type Props = {
   bidProcessEventExternalId: string;
   onChangeBidProcessEventExternalId: (externalId: string) => void;
 };
 
-const PortfolioHeaderContainer = ({
+const DayAheadMarketHeaderContainer = ({
   bidProcessEventExternalId,
   onChangeBidProcessEventExternalId,
 }: Props) => {
+  const metrics = useMetrics('day-ahead-market');
+
   const { project, token } = useAuthenticatedAuthContext();
-  const metrics = useMetrics('portfolio');
   const { priceAreaExternalId } = useParams<{ priceAreaExternalId: string }>();
 
-  const { data: priceAreas } = useFetchPriceAreas();
+  const [downloadingMatrix, setDownloadingMatrix] = useState(false);
+  const [showConfirmDownloadModal, setShowConfirmDownloadModal] =
+    useState(false);
 
+  const { data: priceAreas } = useFetchPriceAreas();
   const { data: bidProcessResult } = useFetchBidProcessResult(
     priceAreaExternalId,
     bidProcessEventExternalId
   );
-
   const { data: processConfigurations = [] } =
     useFetchProcessConfigurations(priceAreaExternalId);
 
-  const handleDownloadMatrix = (externalId: string) => {
+  const penaltiesLimitExceeded = useMemo(() => {
+    if (!bidProcessResult) return false;
+    return shopPenaltiesExceedLimit(bidProcessResult);
+  }, [bidProcessResult]);
+
+  const handleDownloadMatrix = async (externalId: string) => {
     metrics.track(`click-download-matrices-button`, {
       bidProcessExternalId: externalId,
     });
     if (!bidProcessResult) return Promise.reject();
-    return downloadBidMatrices(bidProcessResult, project, token);
+    setDownloadingMatrix(true);
+    const matrixes = await downloadBidMatrices(
+      bidProcessResult,
+      project,
+      token
+    );
+    setDownloadingMatrix(false);
+    return matrixes;
+  };
+
+  const handleDownloadButtonClick = async () => {
+    if (penaltiesLimitExceeded) {
+      setShowConfirmDownloadModal(true);
+    } else {
+      setDownloadingMatrix(true);
+      await handleDownloadMatrix(bidProcessEventExternalId);
+      setDownloadingMatrix(false);
+    }
   };
 
   useEffect(() => {
@@ -47,7 +73,7 @@ const PortfolioHeaderContainer = ({
   }, [processConfigurations]);
 
   return (
-    <PortfolioHeader
+    <DayAheadMarketHeader
       bidProcessExternalId={bidProcessEventExternalId}
       startDate={
         bidProcessResult
@@ -62,6 +88,9 @@ const PortfolioHeaderContainer = ({
         priceAreas?.find((pa) => pa.externalId === priceAreaExternalId)?.name ??
         'Loading...'
       }
+      showConfirmDownloadModal={showConfirmDownloadModal}
+      downloading={downloadingMatrix}
+      onChangeShowConfirmDownloadModal={setShowConfirmDownloadModal}
       onChangeProcessConfigurationExternalId={(externalId) => {
         metrics.track(`click-process-configuration-dropdown`, {
           selectedConfiguration: externalId,
@@ -69,8 +98,9 @@ const PortfolioHeaderContainer = ({
         onChangeBidProcessEventExternalId(externalId);
       }}
       onDownloadMatrix={handleDownloadMatrix}
+      onDownloadButtonClick={handleDownloadButtonClick}
     />
   );
 };
 
-export default PortfolioHeaderContainer;
+export default DayAheadMarketHeaderContainer;

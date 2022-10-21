@@ -1,5 +1,5 @@
-import { DEFAULT_CONFIG, WORKFLOW_TYPES } from '@cognite/power-ops-api-types';
-import { CogniteEvent, DoubleDatapoint } from '@cognite/sdk';
+import { DEFAULT_CONFIG } from '@cognite/power-ops-api-types';
+import { DoubleDatapoint } from '@cognite/sdk';
 import { Column } from 'react-table';
 import { TableData, TableRow, BidMatrixData } from 'types';
 import { calculateScenarioProduction } from 'utils/utils';
@@ -150,20 +150,4 @@ export const formatScenarioData = (
   });
 
   return dataArray;
-};
-
-export const isNewBidMatrixAvailable = (
-  processFinishEvent: CogniteEvent,
-  currentBidProcessExternalId: string
-): boolean => {
-  const parentProcessEventExternalId =
-    processFinishEvent.metadata?.event_external_id;
-
-  return !!(
-    parentProcessEventExternalId &&
-    parentProcessEventExternalId !== currentBidProcessExternalId &&
-    parentProcessEventExternalId.includes(
-      WORKFLOW_TYPES.DAY_AHEAD_BID_MATRIX_CALCULATION
-    )
-  );
 };

@@ -9,7 +9,7 @@ jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
   useLocation: jest.fn(),
   useRouteMatch: () => ({
-    url: `/portfolio/${mockBidProcessResult.priceAreaExternalId}`,
+    url: `/day-ahead-market/${mockBidProcessResult.priceAreaExternalId}`,
   }),
 }));
 
@@ -99,7 +99,7 @@ describe('Sidebar tests', () => {
 
     it('Should return all plants + total and price scenarios if no query entered', async () => {
       (useLocation as jest.Mock).mockImplementation(() => ({
-        pathname: `/portfolio/${mockBidProcessResult.priceAreaExternalId}/Total`,
+        pathname: `/day-ahead-market/${mockBidProcessResult.priceAreaExternalId}/Total`,
       }));
       testRenderer(<MockSidebar />);
 
@@ -110,7 +110,7 @@ describe('Sidebar tests', () => {
 
     it('Should display the correct plant names', async () => {
       (useLocation as jest.Mock).mockImplementation(() => ({
-        pathname: `/portfolio/${mockBidProcessResult.priceAreaExternalId}/Total`,
+        pathname: `/day-ahead-market/${mockBidProcessResult.priceAreaExternalId}/Total`,
       }));
 
       testRenderer(<MockSidebar />);
@@ -133,7 +133,7 @@ describe('Sidebar tests', () => {
 
     it('Should return correct results when given a query', async () => {
       (useLocation as jest.Mock).mockImplementation(() => ({
-        pathname: `/portfolio/${mockBidProcessResult.priceAreaExternalId}/Total`,
+        pathname: `/day-ahead-market/${mockBidProcessResult.priceAreaExternalId}/Total`,
       }));
 
       testRenderer(<MockSidebar />);

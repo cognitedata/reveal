@@ -18,7 +18,7 @@ const SidebarContainer = ({
   open,
   onOpenClose,
 }: Props) => {
-  const metrics = useMetrics('portfolio');
+  const metrics = useMetrics('day-ahead-market');
   const { url } = useRouteMatch();
   const { pathname } = useLocation();
   const { priceAreaExternalId } = useParams<{ priceAreaExternalId: string }>();
@@ -47,7 +47,9 @@ const SidebarContainer = ({
         if (fromSearch) {
           metrics.track('click-open-search-button');
         } else {
-          metrics.track(`click-${open ? 'close' : 'open'}-portfolio-sidebar`);
+          metrics.track(
+            `click-${open ? 'close' : 'open'}-day-ahead-market-sidebar`
+          );
         }
       }}
       onNavigate={(section) => {

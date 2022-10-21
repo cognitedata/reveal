@@ -1,6 +1,6 @@
 import { rest } from 'msw';
 import { MSWRequest } from 'utils/test';
-import { BidProcessResultWithData } from 'types';
+import { BidProcessResultWithData, SOLVER_STATUS_TYPES } from 'types';
 import sidecar from 'utils/sidecar';
 import { PriceArea } from '@cognite/power-ops-api-types';
 
@@ -53,6 +53,7 @@ export const mockBidProcessResult: BidProcessResultWithData = {
       displayName: 'Plant2',
     },
   ],
+  startDate: new Date(),
   bidDate: new Date(),
   bidProcessExternalId: 'bidProcessExternalId',
   mainScenarioExternalId: 'scenario1_externalId',
@@ -77,6 +78,18 @@ export const mockBidProcessResult: BidProcessResultWithData = {
           },
         },
       ],
+      objectives: [
+        {
+          watercourse: 'watercourse_1',
+          shopProcessEventExternalId: 'POWEROPS_SHOP_RUN_1651153522578',
+          sumPenalties: 12345.1234,
+          majorPenalties: 23.45,
+          minorPenalties: 56.78,
+          solverStatus: SOLVER_STATUS_TYPES.INFEASIBLE,
+          sequenceExternalId: 'POWEROPS_FUNCTION_CALL_1651153522578_YLJA(54)',
+          sequenceId: 1234,
+        },
+      ],
     },
     {
       name: 'Scenario 2',
@@ -96,6 +109,18 @@ export const mockBidProcessResult: BidProcessResultWithData = {
           production: {
             shopProductionExternalIds: ['scenario2_shop_plant2_externalId'],
           },
+        },
+      ],
+      objectives: [
+        {
+          watercourse: 'watercourse_1',
+          shopProcessEventExternalId: 'POWEROPS_SHOP_RUN_1651153522578',
+          sumPenalties: 12345.1234,
+          majorPenalties: 23.45,
+          minorPenalties: 56.78,
+          solverStatus: SOLVER_STATUS_TYPES.INFEASIBLE,
+          sequenceExternalId: 'POWEROPS_FUNCTION_CALL_1651153522578_YLJA(54)',
+          sequenceId: 1234,
         },
       ],
     },

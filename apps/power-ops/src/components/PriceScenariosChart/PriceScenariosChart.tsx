@@ -1,7 +1,7 @@
 import { Data, PlotMouseEvent } from 'plotly.js';
 import { SetStateAction, useEffect, useState } from 'react';
 import { Datapoints, DoubleDatapoint, ExternalId } from '@cognite/sdk';
-import { useAuthContext } from '@cognite/react-container';
+import { useAuthenticatedAuthContext } from '@cognite/react-container';
 import { pickChartColor } from 'utils/utils';
 import { DEFAULT_CONFIG, BidProcessResult } from '@cognite/power-ops-api-types';
 import { useMetrics } from '@cognite/metrics';
@@ -45,7 +45,7 @@ export const PriceScenariosChart = ({
   tableData,
 }: PriceScenariosChartProps) => {
   const metrics = useMetrics('price-scenarios');
-  const { client } = useAuthContext();
+  const { client } = useAuthenticatedAuthContext();
   const [chartData, setChartData] = useState<Data[]>([{}]);
   const [hoverClass, setHoverClass] = useState<string>('');
   const [tooltipAlignClass, setTooltipAlignClass] =

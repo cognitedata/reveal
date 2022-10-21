@@ -16,6 +16,9 @@ export const StyledTopBar = styled(TopBar)`
   .cogs-icon {
     z-index: ${layers.MAXIMUM};
   }
+  .top-bar-dropdown {
+    background-color: transparent;
+  }
 `;
 
 export const Code = styled.code`

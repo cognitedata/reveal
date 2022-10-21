@@ -45,8 +45,10 @@ describe('Menubar tests', () => {
   it('Should show dropdown on click', async () => {
     testRenderer(<MenuBar />);
 
-    const portfolioTab = await screen.findByRole('tab', { name: /Portfolio/i });
-    fireEvent.click(portfolioTab);
+    const dayAheadMarketTab = await screen.findByRole('tab', {
+      name: /Day Ahead Market/i,
+    });
+    fireEvent.click(dayAheadMarketTab);
 
     const dropdown = await screen.findByRole('tooltip', {
       name: /Price Area/i,
@@ -54,11 +56,13 @@ describe('Menubar tests', () => {
     expect(dropdown).toBeInTheDocument();
   });
 
-  it('Should show price area in portfolio dropdown', async () => {
+  it('Should show price area in day ahead market dropdown', async () => {
     testRenderer(<MenuBar />);
 
-    const portfolioTab = await screen.findByRole('tab', { name: /Portfolio/i });
-    fireEvent.click(portfolioTab);
+    const dayAheadMarketTab = await screen.findByRole('tab', {
+      name: /Day Ahead Market/i,
+    });
+    fireEvent.click(dayAheadMarketTab);
 
     const priceAreaButton = await screen.findByRole('button', {
       name: mockBidProcessResult.priceAreaName,
@@ -70,8 +74,10 @@ describe('Menubar tests', () => {
   it('Should navigate to correct url when selecting price area', async () => {
     testRenderer(<MenuBar />);
 
-    const portfolioTab = await screen.findByRole('tab', { name: /Portfolio/i });
-    fireEvent.click(portfolioTab);
+    const dayAheadMarketTab = await screen.findByRole('tab', {
+      name: /Day Ahead Market/i,
+    });
+    fireEvent.click(dayAheadMarketTab);
 
     const priceAreaButton = await screen.findByRole('button', {
       name: mockBidProcessResult.priceAreaName,
@@ -79,7 +85,7 @@ describe('Menubar tests', () => {
     fireEvent.click(priceAreaButton);
 
     expect(global.window.location.href).toContain(
-      `/portfolio/${mockBidProcessResult.priceAreaExternalId}/total`
+      `/day-ahead-market/${mockBidProcessResult.priceAreaExternalId}/total`
     );
   });
 

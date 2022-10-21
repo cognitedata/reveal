@@ -1,19 +1,20 @@
+import dayjs from 'dayjs';
+import { useMemo } from 'react';
+import { useParams } from 'react-router-dom';
+import { useMetrics } from '@cognite/metrics';
 import { Loader } from '@cognite/cogs.js';
+import { useFetchBidMatrix } from 'queries/useFetchBidMatrix';
+import { useFetchBidProcessResult } from 'queries/useFetchBidProcessResult';
+import { useFetchScenarioPrice } from 'queries/useFetchScenarioPrice';
+import { NotFoundPage } from 'pages/NotFound/NotFound';
 import { BidMatrix } from 'components/BidMatrix/BidMatrix';
 import {
   copyMatrixToClipboard,
   formatBidMatrixData,
   formatScenarioData,
 } from 'components/BidMatrix/utils';
-import dayjs from 'dayjs';
-import { useNewBidMatrixAvailable } from 'hooks/useNewBidMatrixAvailable';
-import { NotFoundPage } from 'pages/NotFound/NotFound';
-import { useFetchBidMatrix } from 'queries/useFetchBidMatrix';
-import { useFetchBidProcessResult } from 'queries/useFetchBidProcessResult';
-import { useParams } from 'react-router-dom';
-import { useMetrics } from '@cognite/metrics';
-import { useMemo } from 'react';
-import { useFetchScenarioPrice } from 'queries/useFetchScenarioPrice';
+
+import { Main } from './elements';
 
 type Props = {
   bidProcessEventExternalId: string;
@@ -26,11 +27,6 @@ export const BidMatrixContainer = ({ bidProcessEventExternalId }: Props) => {
     plantExternalId: string;
     priceAreaExternalId: string;
   }>();
-
-  const newMatrixAvailable = useNewBidMatrixAvailable(
-    priceAreaExternalId,
-    bidProcessEventExternalId
-  );
   const { data: bidProcessResult, isFetching: isFetchingBidProcess } =
     useFetchBidProcessResult(priceAreaExternalId, bidProcessEventExternalId);
 
@@ -40,12 +36,12 @@ export const BidMatrixContainer = ({ bidProcessEventExternalId }: Props) => {
 
   const bidMatrixExternalId = useMemo(() => {
     if (!bidProcessResult?.totalMatrix || !bidProcessResult?.plantMatrixes)
-      return undefined;
+      return '';
 
     return plantExternalId === 'total'
       ? bidProcessResult.totalMatrix.externalId
       : bidProcessResult.plantMatrixes.find((p) => p.plantName === plant?.name)
-          ?.matrix?.externalId;
+          ?.matrix?.externalId || '';
   }, [bidProcessResult, plantExternalId]);
 
   const bidDate = useMemo(() => {
@@ -73,7 +69,8 @@ export const BidMatrixContainer = ({ bidProcessEventExternalId }: Props) => {
   // Not Founds
   if (!bidProcessResult)
     return <NotFoundPage message="Bid Process Not Found" />;
-  if (!bidMatrixData) return <NotFoundPage message="Bid Matrix Not Found" />;
+  if (!bidMatrixData || !bidMatrixExternalId)
+    return <NotFoundPage message="Bid Matrix Not Found" />;
   if (!mainScenarioPricesPerHour)
     return <NotFoundPage message="Scenario Price Not Found" />;
   if (!bidDate) return <NotFoundPage message="Bid date Not Found" />;
@@ -104,21 +101,16 @@ export const BidMatrixContainer = ({ bidProcessEventExternalId }: Props) => {
     );
   };
 
-  const handleReloadClick = () => {
-    metrics.track('click-reload-bid-matrix-button', { priceAreaExternalId });
-    window.location.reload();
-  };
-
   return (
-    <BidMatrix
-      newMatrixAvailable={newMatrixAvailable}
-      bidDate={bidDate}
-      bidMatrixTitle={getMatrixTitle()}
-      bidMatrixExternalId={bidMatrixExternalId}
-      bidMatrixTableData={formattedBidMatrixTableData}
-      mainScenarioTableData={formattedMainScenarioTableData}
-      onBidMatrixCopyClick={handleCopyBidMatrixClick}
-      onReloadClick={handleReloadClick}
-    />
+    <Main>
+      <BidMatrix
+        bidDate={bidDate}
+        bidMatrixTitle={getMatrixTitle()}
+        bidMatrixExternalId={bidMatrixExternalId}
+        bidMatrixTableData={formattedBidMatrixTableData}
+        mainScenarioTableData={formattedMainScenarioTableData}
+        onBidMatrixCopyClick={handleCopyBidMatrixClick}
+      />
+    </Main>
   );
 };

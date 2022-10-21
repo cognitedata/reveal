@@ -5,7 +5,7 @@ import {
   getTestCogniteClient,
 } from 'utils/test';
 import { setupServer } from 'msw/node';
-import { useAuthContext } from '@cognite/react-container';
+import { useAuthenticatedAuthContext } from '@cognite/react-container';
 
 import { PriceScenarios } from './PriceScenarios';
 import {
@@ -19,7 +19,7 @@ const mockServer = setupServer(
 );
 
 jest.mock('@cognite/react-container', () => ({
-  useAuthContext: jest.fn(),
+  useAuthenticatedAuthContext: jest.fn(),
 }));
 
 describe('Price scenario page tests', () => {
@@ -27,7 +27,7 @@ describe('Price scenario page tests', () => {
   afterAll(() => mockServer.close());
 
   beforeEach(() => {
-    (useAuthContext as jest.Mock).mockImplementation(() => ({
+    (useAuthenticatedAuthContext as jest.Mock).mockImplementation(() => ({
       client: getTestCogniteClient(),
     }));
   });
