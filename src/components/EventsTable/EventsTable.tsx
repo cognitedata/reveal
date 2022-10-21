@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { ItemLabel } from 'utils/styledComponents';
 import Table from 'antd/lib/table';
 import { CogniteEvent } from '@cognite/sdk';
 import sdk from '@cognite/cdf-sdk-singleton';
@@ -10,12 +9,15 @@ import { getContainer } from 'utils/shared';
 import { DEFAULT_ANTD_TABLE_PAGINATION } from 'utils/tableUtils';
 import ColumnWrapper from '../ColumnWrapper';
 import { useTranslation } from 'common/i18n';
+import { ExploreViewConfig } from 'utils';
+import { Flex, Button } from '@cognite/cogs.js';
 
 interface EventsPreviewProps {
   dataSetId: number;
+  setExploreView?: (value: ExploreViewConfig) => void;
 }
 
-const EventsPreview = ({ dataSetId }: EventsPreviewProps) => {
+const EventsPreview = ({ dataSetId, setExploreView }: EventsPreviewProps) => {
   const { t } = useTranslation();
   const [events, setEvents] = useState<CogniteEvent[]>();
 
@@ -59,9 +61,23 @@ const EventsPreview = ({ dataSetId }: EventsPreviewProps) => {
     },
   ];
 
+  const handleViewEvents = () => {
+    if (setExploreView && dataSetId) {
+      setExploreView({
+        visible: true,
+        type: 'events-profile',
+        id: dataSetId,
+      });
+    }
+  };
+
   return (
     <div id="#events">
-      <ItemLabel>{t('events')}</ItemLabel>
+      <Flex justifyContent="flex-end" style={{ padding: '12px 0' }}>
+        <Button type="secondary" size="small" onClick={handleViewEvents}>
+          {`${t('view')} ${t('events').toLocaleLowerCase()}`}
+        </Button>
+      </Flex>
       <Table
         rowKey="id"
         columns={eventsColumns}

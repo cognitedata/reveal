@@ -1,20 +1,62 @@
-import { Flex, Icon, IconType } from '@cognite/cogs.js';
+import { Flex, Icon, IconType, Label, Tooltip } from '@cognite/cogs.js';
 import Typography from 'antd/lib/typography';
+import { useTranslation } from 'common/i18n';
 import styled from 'styled-components';
 
 const { Text } = Typography;
 
 type TabTitleProps = {
-  title: string;
+  key?: string;
   iconType?: IconType | undefined;
+  title: string;
+  disabled?: boolean | undefined;
+  isTooltip?: boolean | undefined;
+  label?: string | number;
 };
-const TabTitle = ({ iconType, title }: TabTitleProps): JSX.Element => {
-  return (
-    <Flex direction="row" alignItems="center" gap={6}>
-      {iconType && <Icon type={iconType}></Icon>}
-      <StyledTitle>{title}</StyledTitle>
-    </Flex>
-  );
+
+const TabTitle = ({
+  disabled = false,
+  iconType,
+  title,
+  isTooltip,
+  label,
+  key,
+}: TabTitleProps): JSX.Element => {
+  const { t } = useTranslation();
+
+  const getTitle = () => {
+    return (
+      <Flex direction="row" alignItems="center" gap={6}>
+        {iconType && <Icon type={iconType}></Icon>}
+        <StyledTitle disabled={disabled}>{title}</StyledTitle>
+        {label && (
+          <Label variant="unknown" size="small">
+            {label}
+          </Label>
+        )}
+      </Flex>
+    );
+  };
+
+  if (isTooltip) {
+    return (
+      <Tooltip
+        content={
+          <p>
+            {t('resource-count-p1-1', { resourceName: title })}{' '}
+            <b>{key?.toLocaleLowerCase()}:read</b> {t('resource-count-p1-2')}
+            <br />
+            <b style={{ fontStyle: 'italic' }}>{t('resource-count-p2')}</b>
+          </p>
+        }
+        wrapped
+      >
+        {getTitle()}
+      </Tooltip>
+    );
+  }
+
+  return getTitle();
 };
 
 const StyledTitle = styled(Text)`

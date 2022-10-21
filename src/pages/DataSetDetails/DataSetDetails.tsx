@@ -10,7 +10,7 @@ import Tabs from 'antd/lib/tabs';
 import { Button, Tooltip } from '@cognite/cogs.js';
 
 import DataSetEditor from 'pages/DataSetEditor';
-import ExploreData from 'components/ExploreData';
+import ExploreData from 'components/Data/ExploreData';
 import Lineage from 'components/Lineage';
 import DocumentationsTab from 'components/DocumentationsTab';
 import AccessControl from 'components/AccessControl';
