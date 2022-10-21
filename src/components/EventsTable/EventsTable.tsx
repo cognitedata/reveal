@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { ItemLabel } from 'utils/styledComponents';
 import Table from 'antd/lib/table';
-import { CogniteEvent, EventSearch } from '@cognite/sdk';
+import { CogniteEvent } from '@cognite/sdk';
 import sdk from '@cognite/cdf-sdk-singleton';
 import { createLink } from '@cognite/cdf-utilities';
 import handleError from 'utils/handleError';
