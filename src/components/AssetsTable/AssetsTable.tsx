@@ -2,13 +2,18 @@ import { Link } from 'react-router-dom';
 import { ItemLabel } from 'utils/styledComponents';
 import Table from 'antd/lib/table';
 import { Asset } from '@cognite/sdk';
+import sdk from '@cognite/cdf-sdk-singleton';
 import { createLink } from '@cognite/cdf-utilities';
 import handleError from 'utils/handleError';
-import { getContainer } from 'utils/shared';
+import {
+  getContainer,
+  getResourceSearchParams,
+  getResourceSearchQueryKey,
+} from 'utils/shared';
 import { DEFAULT_ANTD_TABLE_PAGINATION } from 'utils/tableUtils';
 import ColumnWrapper from '../ColumnWrapper';
 import { useTranslation } from 'common/i18n';
-import { useSearchResource } from 'hooks/useSearchResource';
+import { useQuery } from 'react-query';
 
 interface assetsTableProps {
   dataSetId: number;
@@ -53,11 +58,15 @@ const AssetsTable = ({ dataSetId, query }: assetsTableProps) => {
     },
   ];
 
-  const { data: assets } = useSearchResource('assets', dataSetId, query, {
-    onError: (e: any) => {
-      handleError({ message: t('assets-failed-to-fetch'), ...e });
-    },
-  });
+  const { data: assets } = useQuery(
+    getResourceSearchQueryKey('assets', dataSetId, query),
+    () => sdk.assets.search(getResourceSearchParams(dataSetId, query)),
+    {
+      onError: (e: any) => {
+        handleError({ message: t('assets-failed-to-fetch'), ...e });
+      },
+    }
+  );
 
   return (
     <div>

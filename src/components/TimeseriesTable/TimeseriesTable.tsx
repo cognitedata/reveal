@@ -3,11 +3,17 @@ import { ItemLabel } from 'utils/styledComponents';
 import Table from 'antd/lib/table';
 import { Timeseries } from '@cognite/sdk';
 import { createLink } from '@cognite/cdf-utilities';
-import { getContainer } from 'utils/shared';
+import handleError from 'utils/handleError';
+import {
+  getContainer,
+  getResourceSearchParams,
+  getResourceSearchQueryKey,
+} from 'utils/shared';
 import { DEFAULT_ANTD_TABLE_PAGINATION } from 'utils/tableUtils';
+import sdk from '@cognite/cdf-sdk-singleton';
 import ColumnWrapper from '../ColumnWrapper';
 import { useTranslation } from 'common/i18n';
-import { useSearchResource } from 'hooks/useSearchResource';
+import { useQuery } from 'react-query';
 
 interface TimeseriesPreviewProps {
   dataSetId: number;
@@ -17,10 +23,14 @@ interface TimeseriesPreviewProps {
 const TimeseriesPreview = ({ dataSetId, query }: TimeseriesPreviewProps) => {
   const { t } = useTranslation();
 
-  const { data: timeseries } = useSearchResource(
-    'timeseries',
-    dataSetId,
-    query
+  const { data: timeseries } = useQuery(
+    getResourceSearchQueryKey('timeseries', dataSetId, query),
+    () => sdk.timeseries.search(getResourceSearchParams(dataSetId, query)),
+    {
+      onError: (e: any) => {
+        handleError({ message: t('fetch-timeseries-failed'), ...e });
+      },
+    }
   );
 
   const timeseriesColumns = [
