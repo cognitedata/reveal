@@ -217,7 +217,7 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
     this._controls.target.copy(target);
     this._perspectiveCamera.updateMatrixWorld();
 
-    this._cadManager.updateCamera(this._perspectiveCamera, true);
+    this._cadManager.updateCamera(this._perspectiveCamera, false);
     pointCloudManager.updateCamera(this._perspectiveCamera);
 
     this._controls.addEventListener('change', () => {
