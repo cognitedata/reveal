@@ -15,7 +15,7 @@ import {
 import { BidMatrixTableData } from './utils';
 
 type Props = {
-  bidDate: dayjs.Dayjs;
+  bidDate?: dayjs.Dayjs;
   bidMatrixTitle: string;
   bidMatrixExternalId: string;
   bidMatrixTableData: BidMatrixTableData;
@@ -39,7 +39,7 @@ export const BidMatrix = ({
             <StyledTitle level={5}>Bid matrix: {bidMatrixTitle}</StyledTitle>
           </span>
           <Detail>
-            Generated for {bidDate.format('MMM DD, YYYY')} -{' '}
+            Generated for {bidDate?.format('MMM DD, YYYY')} -{' '}
             {bidMatrixExternalId}
           </Detail>
         </div>

@@ -27,7 +27,8 @@ export const BidMatrixContainer = ({ bidProcessEventExternalId }: Props) => {
     plantExternalId: string;
     priceAreaExternalId: string;
   }>();
-  const { data: bidProcessResult, isFetching: isFetchingBidProcess } =
+
+  const { data: bidProcessResult, status: fetchBidProcessStatus } =
     useFetchBidProcessResult(priceAreaExternalId, bidProcessEventExternalId);
 
   const plant = bidProcessResult
@@ -37,11 +38,13 @@ export const BidMatrixContainer = ({ bidProcessEventExternalId }: Props) => {
   const bidMatrixExternalId = useMemo(() => {
     if (!bidProcessResult?.totalMatrix || !bidProcessResult?.plantMatrixes)
       return '';
+    if (plantExternalId === 'total')
+      return bidProcessResult.totalMatrix.externalId;
 
-    return plantExternalId === 'total'
-      ? bidProcessResult.totalMatrix.externalId
-      : bidProcessResult.plantMatrixes.find((p) => p.plantName === plant?.name)
-          ?.matrix?.externalId || '';
+    return (
+      bidProcessResult.plantMatrixes.find((p) => p.plantName === plant?.name)
+        ?.matrix?.externalId ?? ''
+    );
   }, [bidProcessResult, plantExternalId]);
 
   const bidDate = useMemo(() => {
@@ -51,29 +54,31 @@ export const BidMatrixContainer = ({ bidProcessEventExternalId }: Props) => {
     );
   }, [bidProcessResult, plantExternalId]);
 
-  const { data: bidMatrixData, isFetching: isFetchingBidMatrix } =
+  const { data: bidMatrixData, status: fetchBidMatrixStatus } =
     useFetchBidMatrix(bidMatrixExternalId);
   const {
     data: mainScenarioPricesPerHour,
-    isFetching: isFetchingMainScenarioPrices,
+    status: fetchMainScenarioPricesStatus,
   } = useFetchScenarioPrice(bidDate, bidProcessResult?.mainScenarioExternalId);
 
   // Loading States
-  if (isFetchingBidProcess)
+  if (fetchBidProcessStatus === 'idle' || fetchBidProcessStatus === 'loading')
     return <Loader infoTitle="Loading Bid Process" darkMode={false} />;
-  if (isFetchingMainScenarioPrices)
+  if (
+    fetchMainScenarioPricesStatus === 'idle' ||
+    fetchMainScenarioPricesStatus === 'loading'
+  )
     return <Loader infoTitle="Loading Scenario Price" darkMode={false} />;
-  if (isFetchingBidMatrix)
+  if (fetchBidMatrixStatus === 'idle' || fetchBidMatrixStatus === 'loading')
     return <Loader infoTitle="Loading Bid Matrix" darkMode={false} />;
 
-  // Not Founds
-  if (!bidProcessResult)
-    return <NotFoundPage message="Bid Process Not Found" />;
-  if (!bidMatrixData || !bidMatrixExternalId)
-    return <NotFoundPage message="Bid Matrix Not Found" />;
-  if (!mainScenarioPricesPerHour)
-    return <NotFoundPage message="Scenario Price Not Found" />;
-  if (!bidDate) return <NotFoundPage message="Bid date Not Found" />;
+  // Errors
+  if (fetchBidProcessStatus === 'error')
+    return <NotFoundPage message="Failure loading Bid Process" />;
+  if (fetchBidMatrixStatus === 'error')
+    return <NotFoundPage message="Failure loading Bid Matrix" />;
+  if (fetchMainScenarioPricesStatus === 'error')
+    return <NotFoundPage message="Failure loading Scenario Price" />;
 
   // Data Formatters
   const formattedBidMatrixTableData = formatBidMatrixData(

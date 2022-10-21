@@ -12,14 +12,15 @@ export const PriceScenariosContainer = ({
   bidProcessEventExternalId,
 }: Props) => {
   const { priceAreaExternalId } = useParams<{ priceAreaExternalId: string }>();
-  const { data, isFetching } = useFetchBidProcessResultWithData(
+  const { data, status } = useFetchBidProcessResultWithData(
     priceAreaExternalId,
     bidProcessEventExternalId
   );
 
-  if (isFetching)
+  if (status === 'idle' || status === 'loading')
     return <Loader infoTitle="Loading Bid Process Result" darkMode={false} />;
-  if (!data) return <NotFoundPage message="Bid Process Result Not Found" />;
+  if (status === 'error')
+    return <NotFoundPage message="Error fetching Bid Process Result" />;
 
   return <PriceScenarios bidProcessResult={data} />;
 };
