@@ -76,6 +76,7 @@ export const buildGridConfig = (
           metadata: {},
           isList: field.type.list || false,
           colDef: {
+            headerName: `${field.name}${field.type.nonNull ? '*' : ''}`,
             sortable: false,
             cellEditorParams: {
               isRequired: field.nonNull || field.type.nonNull,
