@@ -17,7 +17,7 @@ in vec3 a_color;
 out vec3 v_color;
 out vec3 v_viewPosition;
 
-out TreeIndexPacked v_treeIndexPacked;
+out highp vec2 v_treeIndexPacked;
 
 void main() {
     v_treeIndexPacked = packTreeIndex(a_treeIndex);

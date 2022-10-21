@@ -22,7 +22,7 @@ uniform int renderMode;
 // Note! Must be placed after all uniforms in order for this to work on iOS (REV-287)
 #pragma glslify: import('../../base/updateFragmentDepth.glsl')
 
-in TreeIndexPacked  v_treeIndexPacked;
+in highp vec2  v_treeIndexPacked;
 in vec3 v_color;
 
 in vec3 v_viewPos;
@@ -47,7 +47,7 @@ void main()
     }
 
     vec4 color = determineColor(v_color, appearance);
-    
+
     vec3 rayTarget = v_viewPos;
     vec3 rayDirection = normalize(rayTarget); // rayOrigin is (0,0,0) in camera space
 
@@ -103,7 +103,7 @@ void main()
         }
     }
 
-    //TODO - christjt 2022/10/10: This seems wrong when hitting inner surface 
+    //TODO - christjt 2022/10/10: This seems wrong when hitting inner surface
     vec3 p_local = p - v_centerB;
     vec3 normal = normalize(p_local - v_modelBasis[2] * dot(p_local, v_modelBasis[2]));
 
