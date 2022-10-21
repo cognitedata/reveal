@@ -29,7 +29,7 @@ console_error_panic_hook = "0.1.7"
 # These crates are used for running unit tests.
 [dev-dependencies]
 wasm-bindgen-test = "0.3.32"
-futures = "0.1.27"
+futures = "0.3.25"
 wasm-bindgen-futures = "0.3.22"
 rand = "0.8.5"
 rand_chacha = "0.3.1"
