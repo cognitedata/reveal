@@ -26,7 +26,7 @@ in vec4 v_centerB;
 in float height;
 in vec3 v_color;
 in vec3 v_normal;
-in TreeIndexPacked  v_treeIndexPacked;
+in highp vec2  v_treeIndexPacked;
 
 void main()
 {

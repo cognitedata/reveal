@@ -15,8 +15,7 @@ in float treeIndex;
 
 out vec3 v_color;
 out vec3 v_viewPosition;
-out TreeIndexPacked v_treeIndexPacked;
-out mediump float v_treeIndexSubHundreds;
+out highp vec2 v_treeIndexPacked;
 
 void main() {
     v_treeIndexPacked = packTreeIndex(treeIndex);
