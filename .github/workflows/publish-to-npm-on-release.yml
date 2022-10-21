@@ -8,15 +8,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      
-      - uses: actions/cache@v3
-        id: npm_cache
-        with:
-          path: '**/node_modules'
-          key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
 
       - name: Install NPM dependencies
-        if: steps.npm_cache.outputs.cache-hit != 'true'
         working-directory: viewer
         run: yarn install --immutable
 
