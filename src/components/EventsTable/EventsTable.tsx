@@ -1,8 +1,6 @@
-import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Table from 'antd/lib/table';
 import { CogniteEvent } from '@cognite/sdk';
-import sdk from '@cognite/cdf-sdk-singleton';
 import { createLink } from '@cognite/cdf-utilities';
 import handleError from 'utils/handleError';
 import { getContainer } from 'utils/shared';
@@ -11,26 +9,25 @@ import ColumnWrapper from '../ColumnWrapper';
 import { useTranslation } from 'common/i18n';
 import { ExploreViewConfig } from 'utils';
 import { Flex, Button } from '@cognite/cogs.js';
-
+import { useSearchResource } from 'hooks/useSearchResource';
 interface EventsPreviewProps {
   dataSetId: number;
   setExploreView?: (value: ExploreViewConfig) => void;
+  query: string;
 }
 
-const EventsPreview = ({ dataSetId, setExploreView }: EventsPreviewProps) => {
+const EventsPreview = ({
+  dataSetId,
+  setExploreView,
+  query,
+}: EventsPreviewProps) => {
   const { t } = useTranslation();
-  const [events, setEvents] = useState<CogniteEvent[]>();
 
-  useEffect(() => {
-    sdk.events
-      .list({ filter: { dataSetIds: [{ id: dataSetId }] } })
-      .then((res) => {
-        setEvents(res.items);
-      })
-      .catch((e) => {
-        handleError({ message: t('fetch-events-failed'), ...e });
-      });
-  }, [dataSetId, t]);
+  const { data: events } = useSearchResource('events', dataSetId, query, {
+    onError: (e: any) => {
+      handleError({ message: t('fetch-events-failed'), ...e });
+    },
+  });
 
   const eventsColumns = [
     {

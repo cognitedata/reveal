@@ -1,23 +1,22 @@
-import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ItemLabel } from 'utils/styledComponents';
 import Table from 'antd/lib/table';
 import { Sequence } from '@cognite/sdk';
-import sdk from '@cognite/cdf-sdk-singleton';
 import { createLink } from '@cognite/cdf-utilities';
 import { handleError } from 'utils/handleError';
 import { getContainer } from 'utils/shared';
 import { DEFAULT_ANTD_TABLE_PAGINATION } from 'utils/tableUtils';
 import ColumnWrapper from '../ColumnWrapper';
 import { useTranslation } from 'common/i18n';
+import { useSearchResource } from 'hooks/useSearchResource';
 
 interface sequencesTableProps {
   dataSetId: number;
+  query: string;
 }
 
-const SequencesTable = ({ dataSetId }: sequencesTableProps) => {
+const SequencesTable = ({ dataSetId, query }: sequencesTableProps) => {
   const { t } = useTranslation();
-  const [sequences, setSequences] = useState<Sequence[]>();
 
   const sequencesColumns = [
     {
@@ -48,16 +47,12 @@ const SequencesTable = ({ dataSetId }: sequencesTableProps) => {
       ),
     },
   ];
-  useEffect(() => {
-    sdk.sequences
-      .list({ filter: { dataSetIds: [{ id: dataSetId }] } })
-      .then((res) => {
-        setSequences(res.items);
-      })
-      .catch((e) => {
-        handleError({ message: t('fetch-sequences-failed'), ...e });
-      });
-  }, [dataSetId, t]);
+
+  const { data: sequences } = useSearchResource('sequences', dataSetId, query, {
+    onError: (e: any) => {
+      handleError({ message: t('fetch-sequences-failed'), ...e });
+    },
+  });
 
   return (
     <div id="#sequences">

@@ -22,6 +22,9 @@ import FilesTable from 'components/FilesTable';
 import SequencesTable from 'components/SequencesTable';
 import TimeseriesTable from 'components/TimeseriesTable';
 import EventsProfile from 'components/EventsProfile';
+import { Input } from '@cognite/cogs.js';
+import useDebounce from 'hooks/useDebounce';
+import { useFlag } from '@cognite/react-feature-flags';
 
 const { TabPane } = Tabs;
 
@@ -101,6 +104,10 @@ const ExploreData = ({ loading, dataSetId }: ExploreDataProps) => {
       });
   }, [dataSetId, activeResourceTabKey]);
 
+  const [query, setQuery] = useState('');
+  const debouncedQuery = useDebounce(query, 100);
+  const { isEnabled } = useFlag('data-catalog');
+
   const dataSetContainsData = () => {
     return !(
       assetCount === 0 &&
@@ -139,6 +146,16 @@ const ExploreData = ({ loading, dataSetId }: ExploreDataProps) => {
       <Spin spinning={loading}>
         <ContentView>
           <DetailsPane>
+            {isEnabled && (
+              <Input
+                value={query}
+                icon="Search"
+                placeholder={t('search')}
+                onChange={(evt) => {
+                  setQuery(evt.currentTarget.value);
+                }}
+              />
+            )}
             <Tabs
               animated={false}
               defaultActiveKey="assets"
@@ -160,7 +177,7 @@ const ExploreData = ({ loading, dataSetId }: ExploreDataProps) => {
                 key="assets"
                 disabled={assetCount === 0}
               >
-                <AssetsTable dataSetId={dataSetId} />
+                <AssetsTable dataSetId={dataSetId} query={debouncedQuery} />
               </TabPane>
               <TabPane
                 tab={
@@ -179,6 +196,7 @@ const ExploreData = ({ loading, dataSetId }: ExploreDataProps) => {
                 <EventsTable
                   dataSetId={dataSetId}
                   setExploreView={setExploreView}
+                  query={debouncedQuery}
                 />
               </TabPane>
               <TabPane
@@ -195,7 +213,7 @@ const ExploreData = ({ loading, dataSetId }: ExploreDataProps) => {
                 key="files"
                 disabled={filesCount === 0}
               >
-                <FilesTable dataSetId={dataSetId} />
+                <FilesTable dataSetId={dataSetId} query={debouncedQuery} />
               </TabPane>
               <TabPane
                 tab={
@@ -211,7 +229,7 @@ const ExploreData = ({ loading, dataSetId }: ExploreDataProps) => {
                 key="sequences"
                 disabled={sequencesCount === 0}
               >
-                <SequencesTable dataSetId={dataSetId} />
+                <SequencesTable dataSetId={dataSetId} query={debouncedQuery} />
               </TabPane>
               <TabPane
                 tab={
@@ -227,7 +245,7 @@ const ExploreData = ({ loading, dataSetId }: ExploreDataProps) => {
                 key="timeseries"
                 disabled={timeseriesCount === 0}
               >
-                <TimeseriesTable dataSetId={dataSetId} />
+                <TimeseriesTable dataSetId={dataSetId} query={debouncedQuery} />
               </TabPane>
             </Tabs>
             {exploreView.visible && renderExploreView()}

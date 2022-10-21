@@ -2,15 +2,12 @@ import styled from 'styled-components';
 import Row from 'antd/lib/row';
 import Col from 'antd/lib/col';
 import Card from 'antd/lib/card';
-import Typography from 'antd/lib/typography';
 import BasicInfoCard from 'components/BasicInfoCard';
 import { Title, Flex, Body, Button, Icon } from '@cognite/cogs.js';
 import { ContentView, Divider, DataSet } from 'utils';
 import { useTranslation } from 'common/i18n';
 import UsersIcon from 'assets/Users.svg';
 import { useResourceAggregates } from 'hooks/useResourceAggregates';
-
-const { Text } = Typography;
 
 type DatasetOverviewProps = {
   dataset: DataSet;
@@ -94,9 +91,9 @@ const DatasetOverview = ({
                         <Col span={8}>
                           <Flex direction="row" alignItems="center" gap={10}>
                             {resourceAggr.icon}
-                            <Text strong className="aggr-title">
+                            <Body level={1} strong className="aggr-title">
                               {resourceAggr.name}
-                            </Text>
+                            </Body>
                           </Flex>
                         </Col>
                         <Col span={14}>
@@ -124,13 +121,17 @@ const DatasetOverview = ({
               >
                 <img src={UsersIcon} alt="Users" />
                 <Title level={4}>{t('who-has-access')}</Title>
-                <Text strong className="manage-access-secondary-info">
+                <Body
+                  level={2}
+                  strong
+                  className="mute"
+                  style={{ padding: '2px 0 24px 0' }}
+                >
                   {t('view-and-manage-user-permission')}
-                </Text>
+                </Body>
                 <Button
                   type="secondary"
                   onClick={() => onActiveTabChange('access-control')}
-                  // style={{ width: 270 }}
                 >
                   {t('manage')}
                 </Button>
@@ -161,12 +162,8 @@ const StyledCard = styled(Card)`
     color: rgba(0, 0, 0, 0.7);
   }
 
-  .manage-access-secondary-info {
-    font-weight: 500;
-    font-size: 16px;
-    line-height: 24px;
+  .mute {
     color: rgba(0, 0, 0, 0.55);
-    padding: 2px 0 24px 0;
   }
 `;
 

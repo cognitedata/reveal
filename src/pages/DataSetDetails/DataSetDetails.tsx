@@ -251,12 +251,7 @@ const DataSetDetails = (): JSX.Element => {
     );
   }
 
-  return (
-    <div>
-      <DatasetTopBar dataset={dataSet} />
-      {renderLoadingError(loading)}
-    </div>
-  );
+  return <div>{renderLoadingError(loading)}</div>;
 };
 
 export default DataSetDetails;

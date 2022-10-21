@@ -1,23 +1,22 @@
-import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ItemLabel } from 'utils/styledComponents';
 import Table from 'antd/lib/table';
 import { Asset } from '@cognite/sdk';
-import sdk from '@cognite/cdf-sdk-singleton';
 import { createLink } from '@cognite/cdf-utilities';
 import handleError from 'utils/handleError';
 import { getContainer } from 'utils/shared';
 import { DEFAULT_ANTD_TABLE_PAGINATION } from 'utils/tableUtils';
 import ColumnWrapper from '../ColumnWrapper';
 import { useTranslation } from 'common/i18n';
+import { useSearchResource } from 'hooks/useSearchResource';
 
 interface assetsTableProps {
   dataSetId: number;
+  query: string;
 }
 
-const AssetsTable = ({ dataSetId }: assetsTableProps) => {
+const AssetsTable = ({ dataSetId, query }: assetsTableProps) => {
   const { t } = useTranslation();
-  const [assets, setAssets] = useState<Asset[]>();
 
   const assetColumns = [
     {
@@ -54,16 +53,11 @@ const AssetsTable = ({ dataSetId }: assetsTableProps) => {
     },
   ];
 
-  useEffect(() => {
-    sdk.assets
-      .list({ filter: { dataSetIds: [{ id: dataSetId }] } })
-      .then((res) => {
-        setAssets(res.items);
-      })
-      .catch((e) => {
-        handleError({ message: t('assets-failed-to-fetch'), ...e });
-      });
-  }, [dataSetId, t]);
+  const { data: assets } = useSearchResource('assets', dataSetId, query, {
+    onError: (e: any) => {
+      handleError({ message: t('assets-failed-to-fetch'), ...e });
+    },
+  });
 
   return (
     <div>

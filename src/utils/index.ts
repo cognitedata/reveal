@@ -3,3 +3,4 @@ export * from './types';
 export * from './shared';
 export * from './styledComponents';
 export * from './metrics';
+export * from './datasetUtils';
