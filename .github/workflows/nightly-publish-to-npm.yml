@@ -1,8 +1,11 @@
 name: Publish Package to NPM
 on:
-  release:
+  pull_request:
     types:
-      - published
+      - opened
+      - synchronize
+  #shedule:
+    #- cron: '0 5 * * 1-5'
 jobs:
   deploy-to-npm:
     runs-on: ubuntu-latest
@@ -13,12 +16,14 @@ jobs:
         working-directory: viewer
         run: yarn install --immutable
 
-      - name: Rust fmt
+      - name: Get nightly version
         working-directory: viewer
-        continue-on-error: false
         run: |
-            rustup component add rustfmt
-            cargo fmt --check
+          NIGHTLY_VERSION=$(jq -r .version ./package.json | echo $(grep -oP '([0-9]+.[0-9]+.[0-9]+)') | echo $(< /dev/stdin)-dev.$(date +'%Y%m%d')) >> $GITHUB_ENV
+
+      - name: Set nightly version
+        working-directory: viewer
+        run: npm version ${{ env.NIGHTLY_VERSION }}
 
       - name: Build production version
         working-directory: viewer
@@ -26,7 +31,7 @@ jobs:
 
       - name: Publish to NPM
         working-directory: viewer/dist
-        run: npm publish --dry-run
+        run: npm publish --dry-run --tag nightly
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN }}
