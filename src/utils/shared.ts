@@ -434,9 +434,9 @@ export const createInternalLink = (path?: string | number) => {
 
 export const getResourceSearchQueryKey = (
   resource: string,
-  query: string,
-  dataSetId: number
-) => [resource, 'search', query, dataSetId];
+  dataSetId: number,
+  query: string
+): ResourceSearchQueryType => [resource, 'search', dataSetId, query];
 
 type ResourceSearchParams = {
   filter: {

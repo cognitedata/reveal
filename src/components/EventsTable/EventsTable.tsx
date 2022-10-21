@@ -2,14 +2,13 @@ import { Link } from 'react-router-dom';
 import { ItemLabel } from 'utils/styledComponents';
 import Table from 'antd/lib/table';
 import { CogniteEvent } from '@cognite/sdk';
-import sdk from '@cognite/cdf-sdk-singleton';
 import { createLink } from '@cognite/cdf-utilities';
 import handleError from 'utils/handleError';
-import { getContainer, getResourceSearchParams } from 'utils/shared';
+import { getContainer } from 'utils/shared';
 import { DEFAULT_ANTD_TABLE_PAGINATION } from 'utils/tableUtils';
 import ColumnWrapper from '../ColumnWrapper';
 import { useTranslation } from 'common/i18n';
-import { useQuery } from 'react-query';
+import { useSearchResource } from 'hooks/useSearchResource';
 
 interface EventsPreviewProps {
   dataSetId: number;
@@ -19,18 +18,11 @@ interface EventsPreviewProps {
 const EventsPreview = ({ dataSetId, query }: EventsPreviewProps) => {
   const { t } = useTranslation();
 
-  const { data: events } = useQuery(
-    ['events', dataSetId, query],
-    () =>
-      sdk.events.search(
-        getResourceSearchParams(dataSetId, query, 'description')
-      ),
-    {
-      onError: (e: any) => {
-        handleError({ message: t('fetch-events-failed'), ...e });
-      },
-    }
-  );
+  const { data: events } = useSearchResource('events', dataSetId, query, {
+    onError: (e: any) => {
+      handleError({ message: t('fetch-events-failed'), ...e });
+    },
+  });
 
   const eventsColumns = [
     {

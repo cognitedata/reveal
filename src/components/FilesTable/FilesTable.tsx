@@ -2,18 +2,13 @@ import { Link } from 'react-router-dom';
 import { ItemLabel } from 'utils/styledComponents';
 import Table from 'antd/lib/table';
 import { FileInfo } from '@cognite/sdk';
-import sdk from '@cognite/cdf-sdk-singleton';
 import { createLink } from '@cognite/cdf-utilities';
-import {
-  getContainer,
-  getResourceSearchParams,
-  getResourceSearchQueryKey,
-} from 'utils/shared';
+import { getContainer } from 'utils/shared';
 import { DEFAULT_ANTD_TABLE_PAGINATION } from 'utils/tableUtils';
 import handleError from 'utils/handleError';
 import ColumnWrapper from '../ColumnWrapper';
 import { useTranslation } from 'common/i18n';
-import { useQuery } from 'react-query';
+import { useSearchResource } from 'hooks/useSearchResource';
 
 interface filesTableProps {
   dataSetId: number;
@@ -23,15 +18,11 @@ interface filesTableProps {
 const FilesTable = ({ dataSetId, query }: filesTableProps) => {
   const { t } = useTranslation();
 
-  const { data: files } = useQuery(
-    getResourceSearchQueryKey('files', query, dataSetId),
-    () => sdk.files.search(getResourceSearchParams(dataSetId, query, 'name')),
-    {
-      onError: (e: any) => {
-        handleError({ message: t('fetch-files-failed'), ...e });
-      },
-    }
-  );
+  const { data: files } = useSearchResource('files', dataSetId, query, {
+    onError: (e: any) => {
+      handleError({ message: t('fetch-files-failed'), ...e });
+    },
+  });
 
   const filesColumns = [
     {
