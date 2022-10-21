@@ -25,7 +25,7 @@ in vec4 V;
 in vec4 sphereNormal;
 in vec3 v_color;
 in vec3 v_normal;
-in TreeIndexPacked  v_treeIndexPacked;
+in highp vec2  v_treeIndexPacked;
 
 void main()
 {
