@@ -13,6 +13,7 @@ export interface Report
   reportType: string;
   startTime: Timestamp;
   status: 'BACKLOG' | 'IN_PROGRESS' | 'RESOLVED' | 'DISMISSED';
+  wellboreName?: string;
 }
 
 export type DisplayReport = Omit<Report, 'status' | 'reason'> & {

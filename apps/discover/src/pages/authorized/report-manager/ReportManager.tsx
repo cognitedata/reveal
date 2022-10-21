@@ -45,7 +45,7 @@ const useDataForReportManager = ({
     adaptReportsForList({ reports, users }).then((data) => {
       const filteredData = wellboreFilter
         ? data.filter((item) => {
-            return item.externalId
+            return item.wellboreName
               ?.toLowerCase()
               ?.includes(wellboreFilter.toLowerCase());
           })

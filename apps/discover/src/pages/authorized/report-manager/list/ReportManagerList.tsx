@@ -111,7 +111,7 @@ export const ReportManagerList: React.FC<Props> = ({
     () => [
       {
         header: () => <HeaderPadded>Wellbore / Data sets</HeaderPadded>,
-        accessorKey: 'externalId',
+        accessorKey: 'wellboreName',
         enableColumnFilter: false,
         minSize: 300,
         cell: ({ row, getValue }) => {

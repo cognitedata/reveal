@@ -1,10 +1,14 @@
 import { reportManagerAPI } from 'domain/reportManager/service/network/reportManagerAPI';
+import { getWellboresByWellIds } from 'domain/wells/wellbore/service/network/getWellboresByWellId';
 
 import { useCallback } from 'react';
 import { useQuery, useQueryClient, UseQueryResult } from 'react-query';
 
+import uniq from 'lodash/uniq';
+
 import { REPORTS_QUERY_KEY } from 'constants/react-query';
 
+import { normalizeReports } from '../transformers/normalizeReports';
 import { Report } from '../types';
 
 export const useReportsQuery = (
@@ -12,7 +16,14 @@ export const useReportsQuery = (
 ): UseQueryResult<Report[]> => {
   return useQuery(
     [REPORTS_QUERY_KEY.ALL, reportIds],
-    () => reportManagerAPI.search({}),
+    () =>
+      reportManagerAPI
+        .search({})
+        .then((reports) =>
+          getWellboresByWellIds(
+            uniq(reports.map((report) => report.externalId))
+          ).then((wellbores) => normalizeReports(reports, wellbores))
+        ),
     {
       select: useCallback<(reports: Report[]) => Report[]>(
         (reports) => {

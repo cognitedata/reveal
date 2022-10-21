@@ -13,6 +13,7 @@ const transformReportForDisplay = (
   return {
     ...report,
     externalId: report.reportType,
+    wellboreName: report.reportType,
     ownerUserId: user && user.displayName ? user.displayName : '',
   };
 };
@@ -64,6 +65,7 @@ export const adaptReportsForList = async ({
       ...results,
       {
         externalId: report.externalId,
+        wellboreName: report.wellboreName,
         subRows: [transformReportForDisplay(report, user)],
       },
     ];
