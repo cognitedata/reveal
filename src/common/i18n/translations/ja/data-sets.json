@@ -111,6 +111,8 @@
   "no-owner-specified": "オーナー指定なし",
   "no-owners-set": "オーナー設定なし",
   "no-rawtable-specified": "RAW テーブル指定なし",
+  "no-records": "No results found",
+  "no-search-records": "The search {{$}} did not match any record. Please try another search.",
   "no-source-set": "ソース設定なし",
   "no-source-specified": "ソース指定なし",
   "no-transformation-applied": "変換適用なし",

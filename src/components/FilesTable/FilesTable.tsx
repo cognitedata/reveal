@@ -1,14 +1,8 @@
-import { Link } from 'react-router-dom';
-import { ItemLabel } from 'utils/styledComponents';
-import Table from 'antd/lib/table';
-import { FileInfo } from '@cognite/sdk';
-import { createLink } from '@cognite/cdf-utilities';
-import { getContainer } from 'utils/shared';
-import { DEFAULT_ANTD_TABLE_PAGINATION } from 'utils/tableUtils';
-import handleError from 'utils/handleError';
-import ColumnWrapper from '../ColumnWrapper';
+import { Table, TableNoResults } from '@cognite/cdf-utilities';
+import { ContentView, getContainer, handleError } from 'utils';
 import { useTranslation } from 'common/i18n';
 import { useSearchResource } from 'hooks/useSearchResource';
+import { useResourceTableColumns } from 'components/Data/ResourceTableColumns';
 
 interface filesTableProps {
   dataSetId: number;
@@ -17,52 +11,40 @@ interface filesTableProps {
 
 const FilesTable = ({ dataSetId, query }: filesTableProps) => {
   const { t } = useTranslation();
-
-  const { data: files } = useSearchResource('files', dataSetId, query, {
-    onError: (e: any) => {
-      handleError({ message: t('fetch-files-failed'), ...e });
-    },
-  });
-
-  const filesColumns = [
+  const { getResourceTableColumns } = useResourceTableColumns();
+  const { data: files, isLoading: isFilesLoading } = useSearchResource(
+    'files',
+    dataSetId,
+    query,
     {
-      title: t('name'),
-      dataIndex: 'name',
-      key: 'name',
-      render: (value: any) => <ColumnWrapper title={value} />,
-    },
-    {
-      title: t('source_one'),
-      dataIndex: 'source',
-      key: 'source',
-    },
-    {
-      title: t('id'),
-      dataIndex: 'id',
-      key: 'id',
-      render: (value: any) => <ColumnWrapper title={value} />,
-    },
-    {
-      title: t('action_other'),
-      render: (record: FileInfo) => (
-        <span>
-          <Link to={createLink(`/explore/file/${record.id}`)}>{t('view')}</Link>
-        </span>
-      ),
-    },
-  ];
+      onError: (e: any) => {
+        handleError({ message: t('fetch-files-failed'), ...e });
+      },
+    }
+  );
 
   return (
-    <div id="#files">
-      <ItemLabel>{t('files')}</ItemLabel>
+    <ContentView id="filesTableId">
       <Table
-        rowKey="id"
-        columns={filesColumns}
-        dataSource={files}
-        pagination={DEFAULT_ANTD_TABLE_PAGINATION}
+        rowKey="key"
+        loading={isFilesLoading}
+        columns={[...getResourceTableColumns('files')]}
+        dataSource={files || []}
+        onChange={(_pagination, _filters) => {
+          // TODO: Implement sorting
+        }}
         getPopupContainer={getContainer}
+        emptyContent={
+          <TableNoResults
+            title={t('no-records')}
+            content={t('no-search-records', {
+              $: '',
+            })}
+          />
+        }
+        appendTooltipTo={getContainer()}
       />
-    </div>
+    </ContentView>
   );
 };
 

@@ -1,14 +1,8 @@
-import { Link } from 'react-router-dom';
-import { ItemLabel } from 'utils/styledComponents';
-import Table from 'antd/lib/table';
-import { Sequence } from '@cognite/sdk';
-import { createLink } from '@cognite/cdf-utilities';
-import { handleError } from 'utils/handleError';
-import { getContainer } from 'utils/shared';
-import { DEFAULT_ANTD_TABLE_PAGINATION } from 'utils/tableUtils';
-import ColumnWrapper from '../ColumnWrapper';
+import { Table, TableNoResults } from '@cognite/cdf-utilities';
+import { handleError, getContainer, ContentView } from 'utils';
 import { useTranslation } from 'common/i18n';
 import { useSearchResource } from 'hooks/useSearchResource';
+import { useResourceTableColumns } from 'components/Data/ResourceTableColumns';
 
 interface sequencesTableProps {
   dataSetId: number;
@@ -17,54 +11,40 @@ interface sequencesTableProps {
 
 const SequencesTable = ({ dataSetId, query }: sequencesTableProps) => {
   const { t } = useTranslation();
-
-  const sequencesColumns = [
+  const { getResourceTableColumns } = useResourceTableColumns();
+  const { data: sequences, isLoading: isSequencesLoading } = useSearchResource(
+    'sequences',
+    dataSetId,
+    query,
     {
-      title: t('name'),
-      dataIndex: 'name',
-      key: 'name',
-      render: (value: any) => <ColumnWrapper title={value} />,
-    },
-    {
-      title: t('id'),
-      dataIndex: 'id',
-      key: 'id',
-      render: (value: any) => <ColumnWrapper title={value} />,
-    },
-    {
-      title: t('description'),
-      dataIndex: 'description',
-      key: 'description',
-    },
-    {
-      title: t('action_other'),
-      render: (record: Sequence) => (
-        <span>
-          <Link to={createLink(`/explore/sequence/${record.id}`)}>
-            {t('view')}
-          </Link>
-        </span>
-      ),
-    },
-  ];
-
-  const { data: sequences } = useSearchResource('sequences', dataSetId, query, {
-    onError: (e: any) => {
-      handleError({ message: t('fetch-sequences-failed'), ...e });
-    },
-  });
+      onError: (e: any) => {
+        handleError({ message: t('fetch-sequences-failed'), ...e });
+      },
+    }
+  );
 
   return (
-    <div id="#sequences">
-      <ItemLabel>{t('sequence_other')}</ItemLabel>
+    <ContentView id="sequencesTableId">
       <Table
-        rowKey="id"
-        columns={sequencesColumns}
-        dataSource={sequences}
-        pagination={DEFAULT_ANTD_TABLE_PAGINATION}
+        rowKey="key"
+        loading={isSequencesLoading}
+        columns={[...getResourceTableColumns('sequences')]}
+        dataSource={sequences || []}
+        onChange={(_pagination, _filters) => {
+          // TODO: Implement sorting
+        }}
         getPopupContainer={getContainer}
+        emptyContent={
+          <TableNoResults
+            title={t('no-records')}
+            content={t('no-search-records', {
+              $: '',
+            })}
+          />
+        }
+        appendTooltipTo={getContainer()}
       />
-    </div>
+    </ContentView>
   );
 };
 

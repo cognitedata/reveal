@@ -1,13 +1,8 @@
-import { Link } from 'react-router-dom';
-import { ItemLabel } from 'utils/styledComponents';
-import Table from 'antd/lib/table';
-import { Timeseries } from '@cognite/sdk';
-import { createLink } from '@cognite/cdf-utilities';
-import { getContainer } from 'utils/shared';
-import { DEFAULT_ANTD_TABLE_PAGINATION } from 'utils/tableUtils';
-import ColumnWrapper from '../ColumnWrapper';
+import { Table, TableNoResults } from '@cognite/cdf-utilities';
+import { getContainer, ContentView } from 'utils';
 import { useTranslation } from 'common/i18n';
 import { useSearchResource } from 'hooks/useSearchResource';
+import { useResourceTableColumns } from 'components/Data/ResourceTableColumns';
 
 interface TimeseriesPreviewProps {
   dataSetId: number;
@@ -16,68 +11,32 @@ interface TimeseriesPreviewProps {
 
 const TimeseriesPreview = ({ dataSetId, query }: TimeseriesPreviewProps) => {
   const { t } = useTranslation();
-
-  const { data: timeseries } = useSearchResource(
-    'timeseries',
-    dataSetId,
-    query
-  );
-
-  const timeseriesColumns = [
-    {
-      title: t('name'),
-      dataIndex: 'name',
-      key: 'name',
-      render: (value: any) => <ColumnWrapper title={value} />,
-    },
-    {
-      title: t('id'),
-      dataIndex: 'id',
-      key: 'id',
-      render: (value: any) => <ColumnWrapper title={value} />,
-    },
-    {
-      title: t('external-id'),
-      dataIndex: 'externalId',
-      key: 'externalId',
-      render: (value: any) => <ColumnWrapper title={value} />,
-    },
-    {
-      title: t('description'),
-      dataIndex: 'description',
-      key: 'description',
-    },
-    {
-      title: t('asset-id'),
-      dataIndex: 'assetId',
-      key: 'assetId',
-      render: (value: any) => <ColumnWrapper title={value} />,
-    },
-    {
-      title: t('action_other'),
-      render: (record: Timeseries) => {
-        return (
-          <span>
-            <Link to={createLink(`/explore/timeSeries/${record.id}`)}>
-              {t('view')}
-            </Link>
-          </span>
-        );
-      },
-    },
-  ];
+  const { getResourceTableColumns } = useResourceTableColumns();
+  const { data: timeseries, isLoading: isTimeseriesLoading } =
+    useSearchResource('timeseries', dataSetId, query);
 
   return (
-    <div id="#timeseries">
-      <ItemLabel>{t('time-series')}</ItemLabel>
+    <ContentView id="timeseriesTableId">
       <Table
-        rowKey="id"
-        columns={timeseriesColumns}
-        dataSource={timeseries}
-        pagination={DEFAULT_ANTD_TABLE_PAGINATION}
+        rowKey="key"
+        loading={isTimeseriesLoading}
+        columns={[...getResourceTableColumns('timeseries')]}
+        dataSource={timeseries || []}
+        onChange={(_pagination, _filters) => {
+          // TODO: Implement sorting
+        }}
         getPopupContainer={getContainer}
+        emptyContent={
+          <TableNoResults
+            title={t('no-records')}
+            content={t('no-search-records', {
+              $: '',
+            })}
+          />
+        }
+        appendTooltipTo={getContainer()}
       />
-    </div>
+    </ContentView>
   );
 };
 

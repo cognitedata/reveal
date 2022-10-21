@@ -52,25 +52,15 @@ const ExploreData = ({ loading, dataSetId }: ExploreDataProps) => {
   const [filesCount, setFilesCount] = useState<number>(0);
 
   useEffect(() => {
-    filesCounter(dataSetId)
+    assetsCounter(dataSetId)
       .then((counter) => {
-        setFilesCount(counter[0].count);
+        setAssetCount(counter[0].count);
         if (counter[0].count > 0 && !activeResourceTabKey) {
-          setActiveResourceTabKey('files');
+          setActiveResourceTabKey('assets');
         }
       })
       .catch(() => {
-        setFilesCount(-1);
-      });
-    timeSeriesCounter(dataSetId)
-      .then((counter) => {
-        setTimeseriesCount(counter[0].count);
-        if (counter[0].count > 0 && !activeResourceTabKey) {
-          setActiveResourceTabKey('timeseries');
-        }
-      })
-      .catch(() => {
-        setTimeseriesCount(-1);
+        setAssetCount(-1);
       });
     eventsCounter(dataSetId)
       .then((counter) => {
@@ -82,15 +72,15 @@ const ExploreData = ({ loading, dataSetId }: ExploreDataProps) => {
       .catch(() => {
         setEventsCount(-1);
       });
-    assetsCounter(dataSetId)
+    filesCounter(dataSetId)
       .then((counter) => {
-        setAssetCount(counter[0].count);
+        setFilesCount(counter[0].count);
         if (counter[0].count > 0 && !activeResourceTabKey) {
-          setActiveResourceTabKey('assets');
+          setActiveResourceTabKey('files');
         }
       })
       .catch(() => {
-        setAssetCount(-1);
+        setFilesCount(-1);
       });
     sequenceCounter(dataSetId)
       .then((counter) => {
@@ -101,6 +91,16 @@ const ExploreData = ({ loading, dataSetId }: ExploreDataProps) => {
       })
       .catch(() => {
         setSequencesCount(-1);
+      });
+    timeSeriesCounter(dataSetId)
+      .then((counter) => {
+        setTimeseriesCount(counter[0].count);
+        if (counter[0].count > 0 && !activeResourceTabKey) {
+          setActiveResourceTabKey('timeseries');
+        }
+      })
+      .catch(() => {
+        setTimeseriesCount(-1);
       });
   }, [dataSetId, activeResourceTabKey]);
 
