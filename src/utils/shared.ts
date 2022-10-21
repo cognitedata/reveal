@@ -436,7 +436,7 @@ export const getResourceSearchQueryKey = (
   resource: string,
   dataSetId: number,
   query: string
-): ResourceSearchQueryType => [resource, 'search', dataSetId, query];
+) => [resource, 'search', dataSetId, query];
 
 type ResourceSearchParams = {
   filter: {
