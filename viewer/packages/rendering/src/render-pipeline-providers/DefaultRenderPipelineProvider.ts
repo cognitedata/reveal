@@ -93,7 +93,9 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider {
     const pointCloudParameters = renderOptions.pointCloudParameters ?? defaultRenderOptions.pointCloudParameters;
 
     // Disable the effect if any of the parameters is 0
-    pointCloudParameters.EDLOptions = this.shouldApplyEDL(pointCloudParameters) ? pointCloudParameters.EDLOptions : undefined;
+    pointCloudParameters.EDLOptions = this.shouldApplyEDL(pointCloudParameters)
+      ? pointCloudParameters.EDLOptions
+      : undefined;
 
     if (pointCloudParameters?.pointBlending === true && pointCloudParameters.EDLOptions) {
       throw new Error('EDL and point blending cannot be enabled at the same time');
@@ -248,7 +250,7 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider {
   private shouldApplyEDL(pointCloudParameters: PointCloudParameters): boolean {
     if (pointCloudParameters.EDLOptions?.radius === 0 || pointCloudParameters.EDLOptions?.strength === 0) {
       return false;
-    } 
+    }
 
     return true;
   }

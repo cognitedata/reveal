@@ -114,7 +114,7 @@ export function getPointCloudPostProcessingMaterial(options: PointCloudPostProce
 
   let uniforms: ThreeUniforms = {
     tDiffuse: { value: texture },
-    tDepth: { value: depthTexture },
+    tDepth: { value: depthTexture }
   };
 
   const defines: Record<string, boolean | number> = {};
@@ -127,10 +127,11 @@ export function getPointCloudPostProcessingMaterial(options: PointCloudPostProce
     defines['use_edl'] = true;
     defines['NEIGHBOUR_COUNT'] = DEFAULT_EDL_NEIGHBOURS_COUNT;
 
-    uniforms = {...uniforms, 
-      radius: { value: EDLOptions.radius},
+    uniforms = {
+      ...uniforms,
+      radius: { value: EDLOptions.radius },
       edlStrength: { value: EDLOptions.strength },
-      screenWidth: { value: 1, },
+      screenWidth: { value: 1 },
       screeHeight: { value: 1 },
       neighbours: { value: getEDLNeighbourPoints(DEFAULT_EDL_NEIGHBOURS_COUNT) }
     };
@@ -148,8 +149,8 @@ export function getPointCloudPostProcessingMaterial(options: PointCloudPostProce
 function getEDLNeighbourPoints(neighbourCount: number): Float32Array {
   const neighbours = new Float32Array(neighbourCount * 2);
   for (let c = 0; c < neighbourCount; c++) {
-    neighbours[2 * c + 0] = Math.cos(2 * c * Math.PI / neighbourCount);
-    neighbours[2 * c + 1] = Math.sin(2 * c * Math.PI / neighbourCount);
+    neighbours[2 * c + 0] = Math.cos((2 * c * Math.PI) / neighbourCount);
+    neighbours[2 * c + 1] = Math.sin((2 * c * Math.PI) / neighbourCount);
   }
   return neighbours;
 }

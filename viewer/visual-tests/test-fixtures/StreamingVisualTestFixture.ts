@@ -15,7 +15,6 @@ import {
   RenderMode,
   RenderPipelineExecutor,
   RenderPipelineProvider,
-  PotreePointColorType,
   PointCloudMaterialManager
 } from '../../packages/rendering';
 import { createDataProviders } from './utilities/createDataProviders';

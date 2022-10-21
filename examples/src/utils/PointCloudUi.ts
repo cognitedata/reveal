@@ -49,7 +49,8 @@ export class PointCloudUi {
     });
     ui.add(this._params, 'pointShape', {
       Circle: PotreePointShape.Circle,
-      Square: PotreePointShape.Square
+      Square: PotreePointShape.Square,
+      Paraboloid: PotreePointShape.Paraboloid,
     }).onChange(valueStr => {
       this._params.pointShape = parseInt(valueStr, 10);
       this.applyToAllModels()

@@ -1361,6 +1361,6 @@ function createRevealManagerOptions(viewerOptions: Cognite3DViewerOptions, devic
         viewerOptions?.pointCloudEffects?.pointBlending ?? defaultRenderOptions.pointCloudParameters.pointBlending
     }
   };
-  
+
   return revealOptions;
 }

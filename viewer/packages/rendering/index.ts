@@ -12,7 +12,7 @@ export {
   defaultRenderOptions,
   SsaoParameters,
   SsaoSampleQuality,
-  AntiAliasingMode, 
+  AntiAliasingMode,
   EDLOptions
 } from './src/rendering/types';
 
