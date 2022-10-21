@@ -13,13 +13,6 @@ jobs:
         working-directory: viewer
         run: yarn install --immutable
 
-      - name: Rust fmt
-        working-directory: viewer
-        continue-on-error: false
-        run: |
-            rustup component add rustfmt
-            cargo fmt --check
-
       - name: Build production version
         working-directory: viewer
         run: yarn run build:prod
