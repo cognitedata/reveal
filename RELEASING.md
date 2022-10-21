@@ -3,7 +3,7 @@ deployed when pushed to master.
 
 # Publishing packages
 Publishing of new packages to NPM is handled automatically by a Github Actions workflow which is triggered when publishing a new release on GitHub. 
-The only concideration you need to make when publishing a new release, is that the NPM package version must be unique meaning that the package version has not been released previously.
+The only consideration you need to make when publishing a new release, is that the NPM package version must be unique meaning that the package version has not been released previously.
 
 ### Updating latest documentation
 To update the documentation with any changes that might have been added since the last release:
