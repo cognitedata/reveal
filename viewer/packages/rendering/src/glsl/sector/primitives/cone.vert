@@ -40,7 +40,7 @@ out float v_arcAngle;
 out vec3 v_color;
 out vec3 v_normal;
 
-out TreeIndexPacked v_treeIndexPacked;
+out highp vec2 v_treeIndexPacked;
 
 void main() {
     v_treeIndexPacked = packTreeIndex(a_treeIndex);
