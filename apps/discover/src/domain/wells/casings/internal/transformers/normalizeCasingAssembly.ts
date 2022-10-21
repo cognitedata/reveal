@@ -9,7 +9,7 @@ import { CASING_ASSEMBLY_DIAMETER_UNIT } from '../constants';
 import { CasingAssemblyInternal } from '../types';
 import { isLiner } from '../utils/isLiner';
 
-import { formatOutsideDiameter } from './formatOutsideDiameter';
+import { formatDiameter } from './formatOutsideDiameter';
 
 export const normalizeCasingAssembly = (
   rawCasingAssemby: CasingAssembly,
@@ -24,6 +24,12 @@ export const normalizeCasingAssembly = (
     ...rest
   } = rawCasingAssemby;
 
+  const minInsideDiameterConverted = convertDistance(
+    minInsideDiameter,
+    CASING_ASSEMBLY_DIAMETER_UNIT,
+    Fixed.TwoDecimals
+  );
+
   const minOutsideDiameterConverted = convertDistance(
     minOutsideDiameter,
     CASING_ASSEMBLY_DIAMETER_UNIT,
@@ -32,11 +38,7 @@ export const normalizeCasingAssembly = (
 
   return {
     ...rest,
-    minInsideDiameter: convertDistance(
-      minInsideDiameter,
-      CASING_ASSEMBLY_DIAMETER_UNIT,
-      Fixed.TwoDecimals
-    ),
+    minInsideDiameter: minInsideDiameterConverted,
     minOutsideDiameter: minOutsideDiameterConverted,
     maxOutsideDiameter: convertDistance(
       maxOutsideDiameter,
@@ -51,9 +53,8 @@ export const normalizeCasingAssembly = (
       originalMeasuredDepthBase,
       userPreferredUnit
     ),
-    outsideDiameterFormatted: formatOutsideDiameter(
-      minOutsideDiameterConverted
-    ),
+    outsideDiameterFormatted: formatDiameter(minOutsideDiameterConverted),
+    insideDiameterFormatted: formatDiameter(minInsideDiameterConverted),
     isLiner: isLiner(rawCasingAssemby),
   };
 };

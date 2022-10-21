@@ -25,6 +25,7 @@ export interface CasingAssemblyInternal
   measuredDepthTop: ConvertedDistance;
   measuredDepthBase: ConvertedDistance;
   outsideDiameterFormatted: string;
+  insideDiameterFormatted: string;
   isLiner: boolean;
 }
 

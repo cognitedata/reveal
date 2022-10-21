@@ -47,7 +47,12 @@ export class WellCasingCreator {
       topMd *= unit.factor;
       baseMd *= unit.factor;
 
-      const sample = new CasingLogSample(radius, topMd, baseMd);
+      const sample = new CasingLogSample(
+        radius,
+        topMd,
+        baseMd,
+        casing.metadata.assy_hole_size
+      );
 
       sample.name = casing.metadata.assy_name;
       sample.comments = casing.metadata.assy_comments;

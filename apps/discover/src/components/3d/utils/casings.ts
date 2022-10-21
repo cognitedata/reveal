@@ -63,7 +63,7 @@ export const mapCasingTo3D = (
       object_state: '', // "ACTUAL"
       assy_current_status_comment: '', // "Tubing removed so casing can be cut and new Geological target acquired."
       assy_current_md_top: '', // "18566.037132"
-      assy_hole_size: '', // "26.0"
+      assy_hole_size: casingAssembly.outsideDiameterFormatted, // "26.0"
       assy_event_native_uid: '', // "Yix8V"
       assy_report_type: '', // "CASING"
       assy_original_md_top: String(casingAssembly.measuredDepthTop.value), // "4946.009892"

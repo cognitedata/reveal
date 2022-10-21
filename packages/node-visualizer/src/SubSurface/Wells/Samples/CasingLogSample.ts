@@ -30,14 +30,22 @@ export class CasingLogSample extends BaseLogSample {
 
   public currentStatusComment: string = '';
 
+  public outerDiameter?: string = '';
+
   //= =================================================
   // CONSTRUCTOR
   //= =================================================
 
-  public constructor(radius: number, topMd: number, baseMd: number) {
+  public constructor(
+    radius: number,
+    topMd: number,
+    baseMd: number,
+    outerDiameter?: string
+  ) {
     super(topMd);
     this.baseMd = baseMd;
     this.radius = radius;
+    this.outerDiameter = outerDiameter;
   }
 
   //= =================================================

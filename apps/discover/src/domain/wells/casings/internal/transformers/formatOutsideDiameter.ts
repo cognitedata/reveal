@@ -3,8 +3,8 @@ import { ConvertedDistance } from 'utils/units/constants';
 
 import { CASING_ASSEMBLY_DIAMETER_UNIT } from '../constants';
 
-export const formatOutsideDiameter = (outsideDiameter: ConvertedDistance) => {
-  const { value, unit } = outsideDiameter;
+export const formatDiameter = (diameter: ConvertedDistance) => {
+  const { value, unit } = diameter;
 
   if (unit === CASING_ASSEMBLY_DIAMETER_UNIT) {
     return toReadableInches(value);
