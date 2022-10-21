@@ -3,7 +3,11 @@ import { normalizeEvents } from 'app/domain/events/service/transformers/normaliz
 
 export const getEventsList = (
   sdk: CogniteClient,
-  data: {
+  {
+    advancedFilter,
+    cursor,
+    limit,
+  }: {
     advancedFilter?: any;
     cursor?: string;
     limit?: number;
@@ -17,8 +21,9 @@ export const getEventsList = (
           'cdf-version': 'alpha',
         },
         data: {
-          limit: 1000,
-          ...data,
+          limit: limit ?? 1000,
+          cursor,
+          advancedFilter,
         },
       }
     )

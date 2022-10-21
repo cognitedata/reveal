@@ -13,6 +13,9 @@ import {
   Splitter,
   SearchFilters as OldSearchFilters,
 } from '@cognite/data-exploration';
+
+import { EventSearchResults as NewEventSearchResults } from '../Event/EventSearchResults';
+
 import { Colors, Flex } from '@cognite/cogs.js';
 import { trackUsage } from 'app/utils/Metrics';
 import ResourceSelectionContext, {
@@ -227,9 +230,9 @@ function SearchPage() {
                       />
                     )}
                     {currentResourceType === 'event' && (
-                      <EventSearchResults
+                      <NewEventSearchResults
                         showCount
-                        onClick={(item: ResourceItem) =>
+                        onClick={(item: any) =>
                           openPreview(
                             item.id !== activeId ? item.id : undefined
                           )
