@@ -48,8 +48,6 @@ export interface WellTopSurfaceView extends WellTopSurfaceInternal {
 
 export interface CasingAssemblyView extends CasingAssemblyInternalWithTvd {
   wellboreMatchingId: string;
-  outsideDiameterFormatted: string;
-  isLiner: boolean;
 }
 
 export interface HoleSectionView extends HoleSectionInternalWithTvd {

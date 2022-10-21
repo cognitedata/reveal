@@ -66,7 +66,7 @@ describe('useCreateAllWellCollection', () => {
 
     expect(
       JSON.parse((await screen.getByTestId('Json-String').textContent) || '')
-    ).toEqual(mockCasingSchematicInternal);
+    ).toMatchObject(mockCasingSchematicInternal);
   });
 
   it('should return empty array for server error', async () => {

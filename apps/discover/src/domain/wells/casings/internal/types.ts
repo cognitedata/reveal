@@ -24,6 +24,8 @@ export interface CasingAssemblyInternal
   maxOutsideDiameter: ConvertedDistance;
   measuredDepthTop: ConvertedDistance;
   measuredDepthBase: ConvertedDistance;
+  outsideDiameterFormatted: string;
+  isLiner: boolean;
 }
 
 export interface CasingAssemblyWithTvd extends CasingAssembly {
