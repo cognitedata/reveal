@@ -54,11 +54,10 @@ export class Image360Entity {
     this._sceneHandler = sceneHandler;
     this._imageProvider = imageProvider;
     this._image360Metadata = image360Metadata;
-    this._image360Icon = new Image360Icon();
 
     this._transform = this.computeTransform(image360Metadata, preComputedRotation, postTransform);
+    this._image360Icon = new Image360Icon(this._transform);
 
-    this._image360Icon.applyMatrix4(this._transform);
     sceneHandler.addCustomObject(this._image360Icon);
   }
 
