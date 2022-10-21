@@ -2,13 +2,9 @@ import React, { useState } from 'react';
 import { Flex, SegmentedControl } from '@cognite/cogs.js';
 import { AssetFilterProps, Asset } from '@cognite/sdk';
 import { EnsureNonEmptyResource } from 'components';
+import { ColumnToggleProps } from 'components/ReactTable/Table';
 import { AssetTreeTable, SearchResultToolbar, AssetNewTable } from 'containers';
-import {
-  SelectableItemsProps,
-  DateRangeProps,
-  TableStateProps,
-  convertResourceType,
-} from 'types';
+import { convertResourceType, SelectableItemsProps } from 'types';
 import { KeepMounted } from '../../../components/KeepMounted/KeepMounted';
 import { useResourceResults } from '..';
 import styled from 'styled-components';
@@ -19,20 +15,27 @@ export const AssetSearchResults = ({
   filter,
   showCount = false,
   onClick,
+  isTreeEnabled,
+
   ...extraProps
 }: {
   query?: string;
+  isTreeEnabled?: boolean;
   showCount?: boolean;
   filter: AssetFilterProps;
   onClick: (item: Asset) => void;
-} & SelectableItemsProps &
-  TableStateProps &
-  DateRangeProps) => {
-  const [currentView, setCurrentView] = useState<string>('tree');
+} & ColumnToggleProps<Asset> &
+  SelectableItemsProps) => {
+  const [currentView, setCurrentView] = useState<string>(() =>
+    isTreeEnabled ? 'tree' : 'list'
+  );
   const api = convertResourceType('asset');
 
   const { canFetchMore, fetchMore, items, isFetched } =
     useResourceResults<Asset>(api, query, filter);
+
+  const { onSelect, selectionMode, isSelected, ...rest } = extraProps;
+  const treeProps = { onSelect, selectionMode, isSelected };
 
   if (!isFetched) {
     return <EmptyState isLoading={!isFetched} title="Loading Assets..." />;
@@ -47,23 +50,25 @@ export const AssetSearchResults = ({
         query={query}
       />
 
-      <SegmentedControl
-        currentKey={currentView}
-        onButtonClicked={setCurrentView}
-      >
-        <SegmentedControl.Button
-          icon="Tree"
-          key="tree"
-          title="Asset hierarchy"
-          aria-label="Asset hierarchy"
-        />
-        <SegmentedControl.Button
-          icon="List"
-          key="list"
-          title="List"
-          aria-label="List"
-        />
-      </SegmentedControl>
+      {isTreeEnabled ? (
+        <SegmentedControl
+          currentKey={currentView}
+          onButtonClicked={setCurrentView}
+        >
+          <SegmentedControl.Button
+            icon="Tree"
+            key="tree"
+            title="Asset hierarchy"
+            aria-label="Asset hierarchy"
+          />
+          <SegmentedControl.Button
+            icon="List"
+            key="list"
+            title="List"
+            aria-label="List"
+          />
+        </SegmentedControl>
+      ) : null}
     </StyledTableHeader>
   );
 
@@ -73,6 +78,7 @@ export const AssetSearchResults = ({
         {currentView !== 'list' ? tableHeaders : null}
         <KeepMounted isVisible={currentView === 'list'}>
           <AssetNewTable
+            {...rest}
             onRowClick={asset => onClick(asset)}
             data={items}
             showLoadButton
@@ -87,7 +93,7 @@ export const AssetSearchResults = ({
             filter={filter}
             query={query}
             onAssetClicked={asset => onClick(asset)}
-            {...extraProps}
+            {...treeProps}
           />
         </KeepMounted>
       </EnsureNonEmptyResource>

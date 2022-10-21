@@ -1,29 +1,22 @@
 import React from 'react';
 import { EventFilter, CogniteEvent } from '@cognite/sdk';
 import { SearchResultToolbar } from 'containers/SearchResults';
-import {
-  SelectableItemsProps,
-  TableStateProps,
-  DateRangeProps,
-  ResourceItem,
-  convertResourceType,
-} from 'types';
+import { ResourceItem, convertResourceType } from 'types';
 import { EventNewTable } from 'containers/Events';
 
 import { RelatedResourceType } from 'hooks/RelatedResourcesHooks';
 import { EnsureNonEmptyResource } from 'components';
 import { useResourceResults } from '../SearchResultLoader';
 import { Loader } from '@cognite/cogs.js';
+import { ColumnToggleProps } from 'components/ReactTable';
 
 export const EventSearchResults = ({
   query = '',
   filter = {},
   onClick,
-
-  relatedResourceType,
-
   count,
   showCount = false,
+  ...rest
 }: {
   query?: string;
   filter?: EventFilter;
@@ -33,9 +26,7 @@ export const EventSearchResults = ({
   parentResource?: ResourceItem;
   count?: number;
   onClick: (item: CogniteEvent) => void;
-} & SelectableItemsProps &
-  TableStateProps &
-  DateRangeProps) => {
+} & ColumnToggleProps<CogniteEvent>) => {
   const api = convertResourceType('event');
   const { canFetchMore, fetchMore, isFetched, items } =
     useResourceResults<CogniteEvent>(api, query, filter);
@@ -62,7 +53,7 @@ export const EventSearchResults = ({
         showLoadButton
         hasNextPage={canFetchMore}
         onRowClick={event => onClick(event)}
-        relatedResourceType={relatedResourceType}
+        {...rest}
       />
     </EnsureNonEmptyResource>
   );

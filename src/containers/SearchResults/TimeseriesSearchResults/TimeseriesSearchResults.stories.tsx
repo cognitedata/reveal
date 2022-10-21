@@ -1,6 +1,6 @@
 import { ComponentStory } from '@storybook/react';
-import { TIME_SELECT } from 'containers';
-import React, { useState } from 'react';
+
+import React from 'react';
 import styled from 'styled-components';
 import { TimeseriesSearchResults } from './TimeseriesSearchResults';
 
@@ -9,30 +9,18 @@ export default {
   component: TimeseriesSearchResults,
   argTypes: {
     query: { control: 'text' },
-    showDatePicker: { control: 'boolean' },
   },
 };
 
 export const Example: ComponentStory<typeof TimeseriesSearchResults> = args => {
-  const [dateRange, setDateRange] = useState<[Date, Date]>(
-    TIME_SELECT['2Y'].getTime()
-  );
-  const onDateRange = (newDate: [Date, Date]) => {
-    setDateRange(newDate);
-  };
   return (
     <Container>
-      <TimeseriesSearchResults
-        {...args}
-        dateRange={dateRange}
-        onDateRangeChange={onDateRange}
-      />
+      <TimeseriesSearchResults {...args} />
     </Container>
   );
 };
 
 Example.args = {
-  showDatePicker: true,
   showCount: true,
 };
 

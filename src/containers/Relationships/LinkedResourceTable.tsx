@@ -1,17 +1,16 @@
 import React from 'react';
-import { Asset } from '@cognite/sdk';
+
 import { ResourceType, ResourceItem, SelectableItemsProps } from 'types';
-import { AssetTable } from 'containers';
+
 import {
   FileSearchResults,
   TimeseriesSearchResults,
   EventSearchResults,
+  AssetSearchResults,
   SequenceSearchResults,
 } from 'containers/SearchResults';
-import { ResultTableLoader } from 'containers/ResultTableLoader';
 
 export const LinkedResourceTable = ({
-  excludeParentResource = false,
   isGroupingFilesEnabled,
   type,
   parentResource,
@@ -29,17 +28,12 @@ export const LinkedResourceTable = ({
   switch (type) {
     case 'asset':
       return (
-        <ResultTableLoader<Asset>
-          excludedIds={excludeParentResource ? [parentResource.id] : []}
-          mode="search"
-          type="asset"
+        <AssetSearchResults
+          onClick={row => onItemClicked(row.id)}
           filter={filter}
           {...selectionMode}
-        >
-          {props => (
-            <AssetTable onRowClick={el => onItemClicked(el.id)} {...props} />
-          )}
-        </ResultTableLoader>
+          hideColumnToggle
+        />
       );
     case 'event':
       return (
@@ -47,6 +41,7 @@ export const LinkedResourceTable = ({
           filter={filter}
           onClick={el => onItemClicked(el.id)}
           {...selectionMode}
+          hideColumnToggle
         />
       );
     case 'file':
@@ -58,6 +53,7 @@ export const LinkedResourceTable = ({
           filter={filter}
           onClick={el => onItemClicked(el.id)}
           {...selectionMode}
+          hideColumnToggle
         />
       );
     case 'sequence':
@@ -66,6 +62,7 @@ export const LinkedResourceTable = ({
           filter={filter}
           onClick={el => onItemClicked(el.id)}
           {...selectionMode}
+          hideColumnToggle
         />
       );
 

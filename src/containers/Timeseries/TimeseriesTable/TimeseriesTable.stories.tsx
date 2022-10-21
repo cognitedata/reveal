@@ -24,7 +24,6 @@ export const ExampleSingleSelect: ComponentStory<
   typeof TimeseriesTable
 > = args => <TimeseriesTable {...args} />;
 ExampleSingleSelect.args = {
-  selectionMode: 'single',
   items: timeseries,
   onItemClicked: action('onItemClicked'),
 };

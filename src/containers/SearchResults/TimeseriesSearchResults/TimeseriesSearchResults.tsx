@@ -1,12 +1,6 @@
 import React from 'react';
 import { TimeseriesFilter, Timeseries } from '@cognite/sdk';
-import {
-  SelectableItemsProps,
-  DateRangeProps,
-  TableStateProps,
-  ResourceItem,
-  convertResourceType,
-} from 'types';
+import { ResourceItem, convertResourceType } from 'types';
 import { TimeseriesNewTable } from 'containers/Timeseries';
 import { EnsureNonEmptyResource } from 'components';
 
@@ -15,6 +9,7 @@ import { RelatedResourceType } from 'hooks/RelatedResourcesHooks';
 import { Flex, Loader } from '@cognite/cogs.js';
 
 import { SearchResultToolbar, useResourceResults } from '..';
+import { ColumnToggleProps } from 'components/ReactTable';
 
 export const TimeseriesSearchResults = ({
   query = '',
@@ -23,6 +18,7 @@ export const TimeseriesSearchResults = ({
   count,
   onClick,
   relatedResourceType,
+  ...rest
 }: {
   query?: string;
   showCount?: boolean;
@@ -34,9 +30,7 @@ export const TimeseriesSearchResults = ({
   count?: number;
   showDatePicker?: boolean;
   onClick: (item: Timeseries) => void;
-} & SelectableItemsProps &
-  DateRangeProps &
-  TableStateProps) => {
+} & ColumnToggleProps<Timeseries>) => {
   const api = convertResourceType('timeSeries');
 
   const { canFetchMore, fetchMore, isFetched, items } =
@@ -69,6 +63,7 @@ export const TimeseriesSearchResults = ({
           hasNextPage={canFetchMore}
           onRowClick={timseries => onClick(timseries)}
           relatedResourceType={relatedResourceType}
+          {...rest}
         />
       </EnsureNonEmptyResource>
     </>

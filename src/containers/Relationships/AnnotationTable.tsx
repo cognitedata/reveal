@@ -5,10 +5,10 @@ import { SelectableItemsProps, ResourceType, convertResourceType } from 'types';
 import { Alert } from 'antd';
 import {
   AssetNewTable,
-  FileTable,
   TimeseriesNewTable,
   SequenceNewTable,
   EventNewTable,
+  FileNewTable,
 } from 'containers';
 
 import { ANNOTATION_METADATA_PREFIX as PREFIX } from '@cognite/annotations';
@@ -25,7 +25,6 @@ export function AnnotationTable({
   fileId,
   resourceType,
   onItemClicked,
-  ...props
 }: Props & SelectableItemsProps) {
   const {
     data: annotations,
@@ -57,6 +56,10 @@ export function AnnotationTable({
     [annotations]
   );
 
+  function onRowClick<T extends { id: number }>({ id }: T) {
+    onItemClicked(id);
+  }
+
   const itemsEnabled = ids && ids.length > 0;
   const {
     data: items = [],
@@ -75,38 +78,30 @@ export function AnnotationTable({
   switch (resourceType) {
     case 'asset': {
       return (
-        <AssetNewTable data={items} onRowClick={el => onItemClicked(el.id)} />
+        <AssetNewTable data={items} onRowClick={onRowClick} hideColumnToggle />
       );
     }
     case 'file': {
       return (
-        <FileTable
-          data={items}
-          onRowClick={el => onItemClicked(el.id)}
-          {...props}
-        />
+        <FileNewTable data={items} onRowClick={onRowClick} hideColumnToggle />
       );
     }
     case 'timeSeries': {
       return (
         <TimeseriesNewTable
           data={items}
-          onRowClick={el => onItemClicked(el.id)}
+          onRowClick={onRowClick}
+          hideColumnToggle
         />
       );
     }
     case 'event': {
       return (
-        <EventNewTable data={items} onRowClick={el => onItemClicked(el.id)} />
+        <EventNewTable data={items} onRowClick={onRowClick} hideColumnToggle />
       );
     }
     case 'sequence': {
-      return (
-        <SequenceNewTable
-          data={items}
-          onRowClick={el => onItemClicked(el.id)}
-        />
-      );
+      return <SequenceNewTable data={items} onRowClick={onRowClick} />;
     }
     default:
       return null;

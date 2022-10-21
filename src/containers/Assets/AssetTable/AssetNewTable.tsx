@@ -6,10 +6,6 @@ import { NewTable as Table, TableProps } from 'components/ReactTable/Table';
 import { RelationshipLabels } from 'types';
 
 export type AssetWithRelationshipLabels = RelationshipLabels & Asset;
-export interface AssetTableProps
-  extends Omit<TableProps<AssetWithRelationshipLabels>, 'columns'> {
-  relatedResourceType?: string;
-}
 
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 import { StyledButton } from 'components/ReactTable';
@@ -21,7 +17,7 @@ export const ParentCell = ({
   rootId: number;
   onClick: (asset: Asset) => void;
 }) => {
-  const { data: rootAsset, isFetched } = useCdfItem<Asset>(
+  const { data: rootAsset, isLoading } = useCdfItem<Asset>(
     'assets',
     { id: rootId },
     {
@@ -41,12 +37,18 @@ export const ParentCell = ({
         }
       }}
     >
-      {isFetched ? <StyledButton>rootAsset?.name</StyledButton> : 'Loading...'}
+      {isLoading ? (
+        'Loading...'
+      ) : (
+        <StyledButton>{rootAsset?.name}</StyledButton>
+      )}
     </Button>
   );
 };
 
-export const AssetNewTable = (props: AssetTableProps) => {
+export const AssetNewTable = (
+  props: TableProps<AssetWithRelationshipLabels>
+) => {
   const { onRowClick = () => {}, data, ...rest } = props;
 
   const columns = useMemo(

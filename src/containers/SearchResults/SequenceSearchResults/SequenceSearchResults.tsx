@@ -1,19 +1,14 @@
 import React from 'react';
 import { SequenceFilter, Sequence } from '@cognite/sdk';
 import { SearchResultToolbar } from 'containers/SearchResults';
-import {
-  SelectableItemsProps,
-  TableStateProps,
-  DateRangeProps,
-  ResourceItem,
-  convertResourceType,
-} from 'types';
+import { ResourceItem, convertResourceType } from 'types';
 import { SequenceNewTable } from 'containers/Sequences';
 
 import { RelatedResourceType } from 'hooks/RelatedResourcesHooks';
 import { EnsureNonEmptyResource } from 'components';
 import { useResourceResults } from '../SearchResultLoader';
 import { Loader } from '@cognite/cogs.js';
+import { ColumnToggleProps } from 'components/ReactTable';
 
 export const SequenceSearchResults = ({
   query = '',
@@ -24,6 +19,7 @@ export const SequenceSearchResults = ({
   count,
   onClick,
   showCount = false,
+  ...rest
 }: {
   query?: string;
   filter?: Required<SequenceFilter>['filter'];
@@ -33,9 +29,7 @@ export const SequenceSearchResults = ({
   count?: number;
   showCount?: boolean;
   onClick: (item: Sequence) => void;
-} & SelectableItemsProps &
-  TableStateProps &
-  DateRangeProps) => {
+} & ColumnToggleProps<Sequence>) => {
   const api = convertResourceType('sequence');
   const { canFetchMore, fetchMore, isFetched, items } =
     useResourceResults<Sequence>(api, query, filter);
@@ -61,6 +55,7 @@ export const SequenceSearchResults = ({
         hasNextPage={canFetchMore}
         onRowClick={sequence => onClick(sequence)}
         relatedResourceType={relatedResourceType}
+        {...rest}
       />
     </EnsureNonEmptyResource>
   );

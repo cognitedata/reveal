@@ -3,17 +3,17 @@ import styled from 'styled-components';
 import { action } from '@storybook/addon-actions';
 import { files } from 'stubs/files';
 import { ComponentStory } from '@storybook/react';
-import { FileTable } from './FileNewTable';
+import { FileNewTable } from './FileNewTable';
 
 export default {
   title: 'Files/FileNewTable',
-  component: FileTable,
+  component: FileNewTable,
   decorators: [(storyFn: any) => <Container>{storyFn()}</Container>],
   argTypes: { query: { control: 'text' } },
 };
 
-export const Example: ComponentStory<typeof FileTable> = args => (
-  <FileTable {...args} />
+export const Example: ComponentStory<typeof FileNewTable> = args => (
+  <FileNewTable {...args} />
 );
 Example.args = {
   data: files,

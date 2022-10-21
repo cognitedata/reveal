@@ -6,13 +6,12 @@ import { uniqBy } from 'lodash';
 import { ANNOTATION_METADATA_PREFIX as PREFIX } from '@cognite/annotations';
 import { Alert } from 'antd';
 import { Loader } from 'components';
-import { FileTable } from 'containers';
+import { FileNewTable } from 'containers';
 import { useUniqueCdfItems } from 'hooks';
 
 export const AnnotatedWithTable = ({
   resource,
   onItemClicked,
-  ...props
 }: {
   resource: ResourceItem;
   onItemClicked: (id: number) => void;
@@ -64,10 +63,10 @@ export const AnnotatedWithTable = ({
   }
 
   return (
-    <FileTable
+    <FileNewTable
+      hideColumnToggle
       data={items}
-      onRowClick={el => onItemClicked(el.id)}
-      {...props}
+      onRowClick={({ id }) => onItemClicked(id)}
     />
   );
 };

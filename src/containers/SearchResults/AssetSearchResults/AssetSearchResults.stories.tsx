@@ -15,7 +15,6 @@ export const Example: ComponentStory<typeof AssetSearchResults> = args => (
   </Container>
 );
 Example.args = {
-  isSelected: () => false,
   showCount: true,
   filter: {},
 };

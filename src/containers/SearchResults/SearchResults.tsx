@@ -35,6 +35,7 @@ export const SearchResults = ({
     case 'asset':
       return (
         <AssetSearchResults
+          isTreeEnabled
           onClick={item => onClick({ id: item.id, type: 'asset' })}
           filter={assetFilter}
           {...commonProps}
@@ -46,7 +47,6 @@ export const SearchResults = ({
           filter={fileFilter}
           allowEdit={allowEdit}
           onClick={item => onClick({ id: item.id, type: 'file' })}
-          {...commonProps}
         />
       );
     case 'sequence':

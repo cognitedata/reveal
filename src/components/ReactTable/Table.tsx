@@ -38,30 +38,37 @@ import { ColumnToggle } from './ColumnToggle';
 import { SortIcon } from './SortIcon';
 import { ResourceTableColumns } from './columns';
 import { LoadMore, LoadMoreProps } from './LoadMore';
-// import { useLocalStorageState } from 'utils';
+// import { useLocalStorageState } from 'utils'
 import { EmptyState } from 'components/EmpyState/EmptyState';
 
-export interface TableProps<T extends Record<string, any>>
-  extends LoadMoreProps {
+export interface ColumnToggleProps<T> {
+  visibleColumns?: IdType<T>[];
+  hideColumnToggle?: boolean;
+  alwaysColumnVisible?: string;
+}
+
+interface RootTable<T extends Record<string, any>>
+  extends LoadMoreProps,
+    ColumnToggleProps<T> {
   data: T[];
   columns: Column<T>[];
   isSortingEnabled?: boolean;
   isStickyHeader?: boolean;
-
   onSort?: (props: OnSortProps<T>) => void;
-  visibleColumns?: IdType<T>[];
+
   onRowClick?: (
     row: T,
     evt?: React.MouseEvent<HTMLDivElement, MouseEvent>
   ) => void;
   showLoadButton?: boolean;
-  alwaysColumnVisible?: string;
   tableHeaders?: React.ReactElement;
   isResizingColumns?: boolean;
 }
 export interface OnSortProps<T> {
   sortBy?: SortingRule<T>[];
 }
+
+export interface TableProps<T> extends Omit<RootTable<T>, 'columns'> {}
 
 export type TableData = Record<string, any>;
 
@@ -77,12 +84,13 @@ export function NewTable<T extends TableData>({
   isStickyHeader = true,
   isResizingColumns = true,
   showLoadButton = false,
+  hideColumnToggle = false,
   hasNextPage,
   isLoadingMore,
   tableHeaders,
   fetchMore,
   alwaysColumnVisible,
-}: TableProps<T>) {
+}: RootTable<T>) {
   const defaultColumn = useMemo(
     () => ({
       minWidth: 100,
@@ -193,7 +201,7 @@ export function NewTable<T extends TableData>({
       {tableHeaders || hiddenColumns.length > 0 ? (
         <ColumnSelectorWrapper>
           {tableHeaders}
-          {hiddenColumns.length > 0 && (
+          {hiddenColumns.length > 0 && !hideColumnToggle && (
             <DndProvider backend={HTML5Backend}>
               <StyledFlex>
                 <ColumnToggle<T>

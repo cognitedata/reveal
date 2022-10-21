@@ -9,8 +9,7 @@ export type EventWithRelationshipLabels = RelationshipLabels & CogniteEvent;
 
 const visibleColumns = ['type', 'description'];
 export const EventNewTable = (
-  props: Omit<TableProps<EventWithRelationshipLabels>, 'columns'> &
-    RelationshipLabels
+  props: TableProps<EventWithRelationshipLabels>
 ) => {
   const columns = useMemo(
     () =>

@@ -1,22 +1,21 @@
 import React, { useState } from 'react';
 import { FileFilterProps, FileInfo } from '@cognite/sdk';
-import { FileGridPreview, FileTable } from 'containers/Files';
-import {
-  SelectableItemsProps,
-  TableStateProps,
-  DateRangeProps,
-  ResourceItem,
-} from 'types';
-import { GridTable, EnsureNonEmptyResource } from 'components';
-import { ResultTableLoader } from 'containers/ResultTableLoader';
+import { FileNewTable } from 'containers/Files';
+import { ResourceItem, convertResourceType } from 'types';
+import { EnsureNonEmptyResource } from 'components';
 import { RelatedResourceType } from 'hooks/RelatedResourcesHooks';
 import FileGroupingTable from 'containers/Files/FileGroupingTable/FileGroupingTable';
 import { FileToolbar } from './FileToolbar';
+import { useResourceResults } from '..';
+import { EmptyState } from 'components/EmpyState/EmptyState';
+import styled from 'styled-components';
+import { Flex } from '@cognite/cogs.js';
+import { ColumnToggleProps } from 'components/ReactTable';
 
 export const FileSearchResults = ({
   query = '',
   filter = {},
-  showRelatedResources = false,
+
   relatedResourceType,
   parentResource,
   count,
@@ -24,7 +23,7 @@ export const FileSearchResults = ({
   showCount = false,
   allowEdit = false,
   onClick,
-  ...extraProps
+  ...rest
 }: {
   query?: string;
   items?: FileInfo[];
@@ -37,9 +36,7 @@ export const FileSearchResults = ({
   allowEdit?: boolean;
   isGroupingFilesEnabled?: boolean;
   onClick: (item: FileInfo) => void;
-} & SelectableItemsProps &
-  TableStateProps &
-  DateRangeProps) => {
+} & ColumnToggleProps<FileInfo>) => {
   const [currentView, setCurrentView] = useState<string>(() => {
     if (
       Boolean(parentResource) &&
@@ -50,73 +47,65 @@ export const FileSearchResults = ({
     }
     return 'list';
   });
+  const api = convertResourceType('file');
+  const { canFetchMore, fetchMore, items, isFetched } =
+    useResourceResults<FileInfo>(api, query, filter);
+
+  if (!isFetched) {
+    return <EmptyState isLoading={!isFetched} />;
+  }
+  const tableHeaders = (
+    <FileToolbar
+      showCount={showCount}
+      isHaveParent={Boolean(parentResource)}
+      relatedResourceType={relatedResourceType}
+      query={query}
+      isGroupingFilesEnabled={isGroupingFilesEnabled}
+      filter={filter}
+      onFileClicked={file => {
+        onClick(file);
+        return true;
+      }}
+      currentView={currentView}
+      onViewChange={setCurrentView}
+      allowEdit={allowEdit}
+      count={count}
+    />
+  );
 
   return (
     <>
-      <FileToolbar
-        showCount={showCount}
-        isHaveParent={Boolean(parentResource)}
-        relatedResourceType={relatedResourceType}
-        query={query}
-        isGroupingFilesEnabled={isGroupingFilesEnabled}
-        filter={filter}
-        onFileClicked={file => {
-          onClick(file);
-          return true;
-        }}
-        currentView={currentView}
-        onViewChange={setCurrentView}
-        allowEdit={allowEdit}
-        count={count}
-      />
       <EnsureNonEmptyResource api="file">
-        <ResultTableLoader<FileInfo>
-          type="file"
-          mode={showRelatedResources ? 'relatedResources' : 'search'}
-          filter={filter}
-          query={query}
-          parentResource={parentResource}
-          {...(relatedResourceType === 'relationship'
-            ? { estimatedRowHeight: 100 }
-            : {})}
-          relatedResourceType={relatedResourceType}
-          {...extraProps}
-        >
-          {props => {
-            if (currentView === 'grid')
-              return (
-                <GridTable
-                  {...props}
-                  onEndReached={() =>
-                    props.onEndReached!({ distanceFromEnd: 0 })
-                  }
-                  onItemClicked={file => onClick(file)}
-                  {...extraProps}
-                  renderCell={cellProps => <FileGridPreview {...cellProps} />}
-                  canFetchMore
-                />
-              );
+        {currentView !== 'list' ? (
+          <StyledTableHeader>{tableHeaders}</StyledTableHeader>
+        ) : null}
+        {currentView === 'tree' && (
+          <FileGroupingTable
+            parentResource={parentResource}
+            onItemClicked={file => onClick(file)}
+          />
+        )}
 
-            if (currentView === 'tree')
-              return (
-                <FileGroupingTable
-                  parentResource={parentResource}
-                  onItemClicked={file => onClick(file)}
-                />
-              );
-            return (
-              <FileTable
-                {...props}
-                onRowClick={file => {
-                  onClick(file);
-                  return true;
-                }}
-                relatedResourceType={relatedResourceType}
-              />
-            );
-          }}
-        </ResultTableLoader>
+        {currentView === 'list' && (
+          <FileNewTable
+            tableHeaders={
+              <StyledTableHeader justifyContent="flex-end">
+                {tableHeaders}
+              </StyledTableHeader>
+            }
+            data={items}
+            onRowClick={file => onClick(file)}
+            fetchMore={fetchMore}
+            showLoadButton
+            hasNextPage={canFetchMore}
+            {...rest}
+          />
+        )}
       </EnsureNonEmptyResource>
     </>
   );
 };
+
+const StyledTableHeader = styled(Flex)`
+  flex: 1;
+`;

@@ -68,35 +68,31 @@ export const FileToolbar = ({
             Upload
           </UploadButton>
         )}
-        <SegmentedControl
-          onButtonClicked={onViewChange}
-          currentKey={currentView}
-        >
-          {isHaveParent &&
-          relatedResourceType === 'linkedResource' &&
-          isGroupingFilesEnabled ? (
+        {isGroupingFilesEnabled ? (
+          <SegmentedControl
+            onButtonClicked={onViewChange}
+            currentKey={currentView}
+          >
+            {isHaveParent &&
+            relatedResourceType === 'linkedResource' &&
+            isGroupingFilesEnabled ? (
+              <SegmentedControl.Button
+                key="tree"
+                icon="Tree"
+                title="Tree"
+                aria-label="Tree"
+              />
+            ) : (
+              <div />
+            )}
             <SegmentedControl.Button
-              key="tree"
-              icon="Tree"
-              title="Tree"
-              aria-label="Tree"
+              key="list"
+              icon="List"
+              title="List"
+              aria-label="List"
             />
-          ) : (
-            <div />
-          )}
-          <SegmentedControl.Button
-            key="list"
-            icon="List"
-            title="List"
-            aria-label="List"
-          />
-          <SegmentedControl.Button
-            key="grid"
-            icon="Grid"
-            title="Grid"
-            aria-label="Grid"
-          />
-        </SegmentedControl>
+          </SegmentedControl>
+        ) : null}
       </SearchResultToolbar>
       <FileUploaderModal
         key={uuid()}
@@ -121,3 +117,9 @@ const UploadButton = styled(Button)`
     margin-right: 8px;
   }
 `;
+
+// TODO Have to fix this styling as something is breaking on storybook
+// const StyledSearchResultToolbar = styled(SearchResultToolbar)`
+//   flex: 1;
+//   justify-content: space-between;
+// `;

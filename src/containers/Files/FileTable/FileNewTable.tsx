@@ -6,12 +6,15 @@ import { RelationshipLabels } from 'types';
 import { FileNamePreview } from './FileNamePreview';
 import { Column, Row } from 'react-table';
 
-export type FileTableProps = TableProps<FileWithRelationshipLabels> &
+export type FileTableProps = Omit<
+  TableProps<FileWithRelationshipLabels>,
+  'columns'
+> &
   RelationshipLabels & {
     query?: string;
   };
 export type FileWithRelationshipLabels = RelationshipLabels & FileInfo;
-export const FileTable = (props: FileTableProps) => {
+export const FileNewTable = (props: FileTableProps) => {
   const { query } = props;
 
   const columns = useMemo(
@@ -51,8 +54,8 @@ export const FileTable = (props: FileTableProps) => {
   return (
     <Table<FileInfo>
       columns={columns}
-      data={props.data}
       visibleColumns={['name', 'mimeType', 'uploadedTime']}
+      {...props}
     />
   );
 };
