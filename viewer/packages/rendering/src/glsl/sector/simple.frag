@@ -15,7 +15,7 @@ uniform int renderMode;
 in vec3 v_color;
 in vec3 v_normal;
 in vec3 vViewPosition;
-in TreeIndexPacked  v_treeIndexPacked;
+in highp vec2  v_treeIndexPacked;
 
 void main()
 {
