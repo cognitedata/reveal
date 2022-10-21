@@ -13,6 +13,10 @@ export class Image360Facade<T> {
   private readonly _image360Entities: Image360Entity[];
   private readonly _rayCaster: THREE.Raycaster;
 
+  set allIconsVisibility(visible: boolean) {
+    this._image360Entities.forEach(entity => (entity.icon.visible = visible));
+  }
+
   set allHoverIconsVisibility(visible: boolean) {
     this._image360Entities.forEach(entity => (entity.icon.hoverSpriteVisible = visible));
   }
