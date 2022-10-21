@@ -115,7 +115,7 @@ const SuiteOverview: React.FC = () => {
     // boards images
     return boards
       .reduce<string[]>((acc, board) => {
-        if (board.imageFileId) {
+        if (board?.imageFileId) {
           acc.push(board.imageFileId);
         }
         return acc;
@@ -124,7 +124,7 @@ const SuiteOverview: React.FC = () => {
         hasSuiteThumbnails
           ? // sub-suites images
             childSuites!.reduce<string[]>((acc, child) => {
-              if (byKey[child].imageFileId) {
+              if (byKey[child]?.imageFileId) {
                 acc.push(byKey[child].imageFileId as string);
               }
               return acc;
