@@ -9,18 +9,18 @@ export class Image360Icon extends THREE.Group {
   private readonly MAX_PIXEL_SIZE = 256;
   private readonly _hoverSprite: THREE.Sprite;
   private readonly _outerSprite: THREE.Sprite;
-  constructor(modelMatrix: THREE.Matrix4) {
+  constructor(modelToWorldTransform: THREE.Matrix4) {
     super();
     this._hoverSprite = this.createHoverSprite();
     this._hoverSprite.visible = false;
 
     this._outerSprite = this.createOuterRingsSprite();
 
-    this.setupAdaptiveScaling(modelMatrix);
+    this.setupAdaptiveScaling(modelToWorldTransform);
 
     this.add(this._outerSprite);
     this.add(this._hoverSprite);
-    this.applyMatrix4(modelMatrix);
+    this.applyMatrix4(modelToWorldTransform);
   }
 
   set hoverSpriteVisible(visible: boolean) {
@@ -40,7 +40,7 @@ export class Image360Icon extends THREE.Group {
     }
   }
 
-  private setupAdaptiveScaling(modelMatrix: THREE.Matrix4): void {
+  private setupAdaptiveScaling(modelToWorldTransform: THREE.Matrix4): void {
     const base = new THREE.Vector4();
     const offset = new THREE.Vector4();
     const transform = new THREE.Matrix4();
@@ -65,7 +65,7 @@ export class Image360Icon extends THREE.Group {
     ): number {
       const clientHeight = renderer.domElement.clientHeight;
 
-      transform.copy(modelMatrix);
+      transform.copy(modelToWorldTransform);
       transform.premultiply(camera.matrixWorldInverse);
 
       base.set(0, 0, 0, 1);
@@ -90,7 +90,7 @@ export class Image360Icon extends THREE.Group {
 
   private createOuterRingsSprite(): THREE.Sprite {
     const canvas = document.createElement('canvas');
-    const textureSize = 256;
+    const textureSize = this.MAX_PIXEL_SIZE;
     canvas.width = textureSize;
     canvas.height = textureSize;
 
@@ -106,17 +106,17 @@ export class Image360Icon extends THREE.Group {
 
     function drawOuterCircle() {
       context.beginPath();
-      context.lineWidth = 16;
+      context.lineWidth = textureSize / 16;
       context.strokeStyle = '#FFFFFF';
-      context.arc(textureSize / 2, textureSize / 2, textureSize / 2 - 8, 0, 2 * Math.PI);
+      context.arc(textureSize / 2, textureSize / 2, textureSize / 2 - context.lineWidth / 2, 0, 2 * Math.PI);
       context.stroke();
     }
 
     function drawInnerCircle() {
       context.beginPath();
-      context.lineWidth = 32;
+      context.lineWidth = textureSize / 8;
       context.strokeStyle = 'rgba(255, 255, 255, 0.75)';
-      context.arc(textureSize / 2, textureSize / 2, textureSize / 2 - 32, 0, 2 * Math.PI);
+      context.arc(textureSize / 2, textureSize / 2, textureSize / 2 - context.lineWidth, 0, 2 * Math.PI);
       context.shadowColor = 'red';
       context.stroke();
     }
@@ -124,7 +124,7 @@ export class Image360Icon extends THREE.Group {
 
   private createHoverSprite(): THREE.Sprite {
     const canvas = document.createElement('canvas');
-    const textureSize = 256;
+    const textureSize = this.MAX_PIXEL_SIZE;
     canvas.width = textureSize;
     canvas.height = textureSize;
 
@@ -138,9 +138,17 @@ export class Image360Icon extends THREE.Group {
     return sprite;
 
     function drawHoverSelector() {
+      const outerCircleLineWidth = textureSize / 16;
+      const innerCircleLineWidth = textureSize / 8;
       context.beginPath();
       context.fillStyle = '#FC2574';
-      context.arc(textureSize / 2, textureSize / 2, textureSize / 2 - 84, 0, 2 * Math.PI);
+      context.arc(
+        textureSize / 2,
+        textureSize / 2,
+        textureSize / 2 - outerCircleLineWidth - 2 * innerCircleLineWidth,
+        0,
+        2 * Math.PI
+      );
       context.fill();
     }
   }
