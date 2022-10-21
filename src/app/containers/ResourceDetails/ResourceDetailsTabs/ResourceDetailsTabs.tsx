@@ -6,7 +6,7 @@ import {
   ResourceItem,
   getTitle,
 } from '@cognite/data-exploration';
-import { Badge, Colors, Tabs, TabPaneProps } from '@cognite/cogs.js';
+import { Colors, Tabs, TabPaneProps, Label } from '@cognite/cogs.js';
 import { useNavigate } from 'react-router-dom';
 import { createLink } from '@cognite/cdf-utilities';
 import ResourceSelectionContext from 'app/context/ResourceSelectionContext';
@@ -97,17 +97,15 @@ export const ResourceDetailsTabs = ({
     <Tabs.TabPane
       key={key}
       tab={
-        <TabWrapper>
-          <div>{getTitle(key)}</div>
-          <Badge
-            style={{ alignSelf: 'flex-end' }}
-            text={addPlusSignToCount(
+        <>
+          <TabTitle>{getTitle(key)}</TabTitle>
+          <Label size="small" variant="unknown">
+            {addPlusSignToCount(
               key === 'asset' ? assetCount : counts[key]!,
               hasMoreRelationships[key]!
             )}
-            background={Colors['greyscale-grey3'].hex()}
-          />
-        </TabWrapper>
+          </Label>
+        </>
       }
     >
       <ResourceDetailTabContent
@@ -135,8 +133,10 @@ const StyledTabs = styled(Tabs)`
   padding-right: 16px;
   flex: 1;
   height: 100%;
+
   .rc-tabs-nav-wrap {
     border-bottom: 1px solid ${Colors['greyscale-grey3'].hex()};
+    margin-bottom: 16px;
   }
   .rc-tabs-content-holder {
     display: flex;
@@ -147,11 +147,5 @@ const StyledTabs = styled(Tabs)`
 `;
 
 export const TabTitle = styled.span`
-  font-size: 14px;
-  font-weight: 600;
-`;
-
-const TabWrapper = styled.div`
-  display: flex;
-  align-items: center;
+  margin-right: 8px;
 `;

@@ -125,7 +125,7 @@ export const TitleRowWrapper = styled.div`
   display: flex;
   align-items: center;
   flex-wrap: nowrap;
-  margin: 16px 0px;
+  margin-top: 16px;
   padding-left: 16px;
   padding-right: 16px;
   border-bottom: 1px solid ${Colors['greyscale-grey3'].hex()};
