@@ -62,7 +62,11 @@ export const BidMatrixContainer = ({ bidProcessEventExternalId }: Props) => {
   } = useFetchScenarioPrice(bidDate, bidProcessResult?.mainScenarioExternalId);
 
   // Loading States
-  if (fetchBidProcessStatus === 'idle' || fetchBidProcessStatus === 'loading')
+  if (
+    fetchBidProcessStatus === 'idle' ||
+    fetchBidProcessStatus === 'loading' ||
+    !bidDate
+  )
     return <Loader infoTitle="Loading Bid Process" darkMode={false} />;
   if (
     fetchMainScenarioPricesStatus === 'idle' ||

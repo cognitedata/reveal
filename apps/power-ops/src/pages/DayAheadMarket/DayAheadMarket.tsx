@@ -5,11 +5,14 @@ import { NotFoundPage } from 'pages/NotFound/NotFound';
 import { PAGES } from 'types';
 
 export const DayAheadMarket = () => {
-  const { data: priceAreas = [], isFetched, isFetching } = useFetchPriceAreas();
+  const { data: priceAreas = [], status } = useFetchPriceAreas();
 
-  if (isFetching) return <Loader infoTitle="Loading Price Areas" />;
+  if (status === 'idle' || status === 'loading')
+    return <Loader infoTitle="Loading Price Areas" />;
+  if (status === 'error')
+    return <NotFoundPage message="Error fetching Price Areas" />;
 
-  if (isFetched && priceAreas.length === 0)
+  if (priceAreas.length === 0)
     return <NotFoundPage message="No price areas found" />;
 
   return (

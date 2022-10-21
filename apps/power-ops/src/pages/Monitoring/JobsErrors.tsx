@@ -3,10 +3,11 @@ import { NotFoundPage } from 'pages/NotFound/NotFound';
 import { useFetchSnifferJobErrors } from 'queries/useFetchSnifferJobErrors';
 
 export const JobErrors = ({ jobName }: { jobName: string }) => {
-  const { data: jobErrors, isFetching } = useFetchSnifferJobErrors(jobName);
+  const { data: jobErrors, status } = useFetchSnifferJobErrors(jobName);
 
-  if (isFetching) return <Loader />;
-  if (!jobErrors) return <NotFoundPage message="Job Errors not found" />;
+  if (status === 'idle' || status === 'loading') return <Loader />;
+  if (status === 'error')
+    return <NotFoundPage message="Job Errors not found" />;
 
   return (
     <div>

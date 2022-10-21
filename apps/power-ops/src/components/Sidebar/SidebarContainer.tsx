@@ -22,7 +22,7 @@ const SidebarContainer = ({
   const { url } = useRouteMatch();
   const { pathname } = useLocation();
   const { priceAreaExternalId } = useParams<{ priceAreaExternalId: string }>();
-  const { data: bidProcessResult, isFetching } = useFetchBidProcessResult(
+  const { data: bidProcessResult, status } = useFetchBidProcessResult(
     priceAreaExternalId,
     bidProcessEventExternalId
   );
@@ -36,8 +36,8 @@ const SidebarContainer = ({
     []
   );
 
-  if (isFetching) return <Loader />;
-  if (!bidProcessResult) return <>Bid Process not Found</>;
+  if (status === 'idle' || status === 'loading') return <Loader />;
+  if (status === 'error') return <>Error fetching Bid Process</>;
 
   return (
     <Sidebar
