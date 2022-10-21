@@ -10,7 +10,7 @@ export const SearchResultToolbar = ({
   children,
   count,
   showCount,
-  className,
+  style,
 }: {
   api: 'list' | 'search';
   type: ResourceType;
@@ -19,9 +19,9 @@ export const SearchResultToolbar = ({
   children?: React.ReactNode;
   count?: number;
   showCount?: boolean;
-  className?: string;
+  style?: React.CSSProperties;
 }) => (
-  <SpacedRow className={className}>
+  <SpacedRow style={style}>
     {showCount && (
       <ResultCount
         type={type}

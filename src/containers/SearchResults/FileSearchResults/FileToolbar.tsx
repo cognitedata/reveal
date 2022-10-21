@@ -58,6 +58,7 @@ export const FileToolbar = ({
         filter={filter}
         query={query}
         count={count}
+        style={{ flex: 1, justifyContent: 'space-between' }}
       >
         {allowEdit && (
           <UploadButton
@@ -117,9 +118,3 @@ const UploadButton = styled(Button)`
     margin-right: 8px;
   }
 `;
-
-// TODO Have to fix this styling as something is breaking on storybook
-// const StyledSearchResultToolbar = styled(SearchResultToolbar)`
-//   flex: 1;
-//   justify-content: space-between;
-// `;
