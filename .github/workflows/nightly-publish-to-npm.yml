@@ -11,6 +11,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+        with:
+          persist-credentials: false
 
       - name: Setup Node
         uses: actions/setup-node@v1
@@ -37,7 +39,11 @@ jobs:
 
       - name: Publish to NPM
         working-directory: viewer/dist
-        run: npm publish --tag nightly
+        run: |
+          git config --global user.email "cognite-cicd@users.noreply.github.com"
+          git config --global user.name "Cognite CICD"
+          echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> .npmrc
+          npm publish --tag nightly
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN }}
