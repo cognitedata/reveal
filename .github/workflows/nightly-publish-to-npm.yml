@@ -21,6 +21,15 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
           always-auth: true
 
+      - name: Setup Cognite CICD
+        run: |
+          git config --global user.email "cognite-cicd@users.noreply.github.com"
+          git config --global user.name "Cognite CICD"
+          echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> .npmrc
+          npm whoami
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN }}
+
       - name: Install NPM dependencies
         working-directory: viewer
         run: yarn install --immutable
@@ -39,11 +48,7 @@ jobs:
 
       - name: Publish to NPM
         working-directory: viewer/dist
-        run: |
-          git config --global user.email "cognite-cicd@users.noreply.github.com"
-          git config --global user.name "Cognite CICD"
-          echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> .npmrc
-          npm publish --tag nightly
+        run: npm publish --tag nightly
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN }}
