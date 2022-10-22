@@ -1,12 +1,23 @@
 name: Nightly Publish Package to NPM
 on:
-  schedule:
-    - cron: '0 5 * * *'
+  pull_request:
+    types:
+      - opened
+      - synchronize
+  #schedule:
+    #- cron: '0 5 * * *'
 jobs:
   deploy-to-npm:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+
+      - name: Setup Node
+        uses: actions/setup-node@v1
+        with:
+          node-version: '14.x'
+          registry-url: 'https://registry.npmjs.org'
+          always-auth: true
 
       - name: Install NPM dependencies
         working-directory: viewer
