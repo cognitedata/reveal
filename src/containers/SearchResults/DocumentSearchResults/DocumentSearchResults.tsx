@@ -1,28 +1,28 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components/macro';
 import { useDocumentSearch } from '@cognite/react-document-search';
 
 import { SearchResultToolbar } from 'containers/SearchResults';
 import { DocumentsTable } from 'containers/Documents';
 import { Document, normalize } from 'domain/documents';
+import { useObserveDocumentSearchFilters } from 'domain/documents/internal/hook/useObserveDocumentSearchFilters';
 export interface DocumentSearchResultsProps {
   query?: string;
-  filter: object;
+  filter: Record<string, unknown>;
   onClick: (item: Document) => void;
-  onSortClicked: (column: string, desc?: boolean) => void;
 }
 
 // When using this component do not forget to wrap it with DocumentSearchProvider.
 export const DocumentSearchResults = ({
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   query = '',
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  filter = {},
+  filter,
   onClick,
-  onSortClicked,
 }: DocumentSearchResultsProps) => {
+  const [sortBy, setSortBy] = useState({});
   const { results, isLoading, fetchNextPage, hasNextPage } =
     useDocumentSearch();
+
+  useObserveDocumentSearchFilters(query, filter, sortBy);
 
   const normalizedDocuments = normalize(results);
 
@@ -34,7 +34,7 @@ export const DocumentSearchResults = ({
           const { sortBy } = props;
           if (sortBy !== undefined && sortBy.length > 0) {
             const { id: columnName, desc } = sortBy[0];
-            onSortClicked(columnName, desc);
+            setSortBy({ column: columnName, order: desc ? 'desc' : 'asc' });
           }
         }}
         query={query}

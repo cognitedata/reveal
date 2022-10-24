@@ -55,10 +55,9 @@ interface RootTable<T extends Record<string, any>>
   isSortingEnabled?: boolean;
   isStickyHeader?: boolean;
   onSort?: (props: OnSortProps<T>) => void;
-
   onRowClick?: (
     row: T,
-    evt?: React.MouseEvent<HTMLDivElement, MouseEvent>
+    event?: React.MouseEvent<HTMLDivElement, MouseEvent>
   ) => void;
   showLoadButton?: boolean;
   tableHeaders?: React.ReactElement;

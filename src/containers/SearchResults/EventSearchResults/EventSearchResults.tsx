@@ -1,14 +1,14 @@
 import React from 'react';
 import { EventFilter, CogniteEvent } from '@cognite/sdk';
 import { SearchResultToolbar } from 'containers/SearchResults';
-import { ResourceItem, convertResourceType } from 'types';
+import { ResourceItem } from 'types';
 import { EventNewTable } from 'containers/Events';
 
 import { RelatedResourceType } from 'hooks/RelatedResourcesHooks';
 import { EnsureNonEmptyResource } from 'components';
-import { useResourceResults } from '../SearchResultLoader';
 import { Loader } from '@cognite/cogs.js';
 import { ColumnToggleProps } from 'components/ReactTable';
+import { useEventsFilteredListQuery } from 'domain/events/internal/queries/useEventsFilteredListQuery';
 
 export const EventSearchResults = ({
   query = '',
@@ -16,7 +16,6 @@ export const EventSearchResults = ({
   onClick,
   count,
   showCount = false,
-  ...rest
 }: {
   query?: string;
   filter?: EventFilter;
@@ -27,11 +26,10 @@ export const EventSearchResults = ({
   count?: number;
   onClick: (item: CogniteEvent) => void;
 } & ColumnToggleProps<CogniteEvent>) => {
-  const api = convertResourceType('event');
-  const { canFetchMore, fetchMore, isFetched, items } =
-    useResourceResults<CogniteEvent>(api, query, filter);
+  const { data, isLoading, hasNextPage, fetchNextPage } =
+    useEventsFilteredListQuery({ query, eventsFilters: filter });
 
-  if (!isFetched) {
+  if (isLoading) {
     return <Loader />;
   }
 
@@ -48,12 +46,12 @@ export const EventSearchResults = ({
             count={count}
           />
         }
-        data={items}
-        fetchMore={fetchMore}
+        data={data}
+        fetchMore={fetchNextPage}
         showLoadButton
-        hasNextPage={canFetchMore}
-        onRowClick={event => onClick(event)}
-        {...rest}
+        hasNextPage={hasNextPage}
+        onRowClick={(event: CogniteEvent) => onClick(event)}
+        // relatedResourceType={relatedResourceType}
       />
     </EnsureNonEmptyResource>
   );

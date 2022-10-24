@@ -7,6 +7,7 @@ import {
   LabelList,
   DocumentHighlight,
 } from '@cognite/sdk';
+import { IdEither, DateRange } from '@cognite/sdk';
 
 // Flattened version of 'DocumentSearchItem' from cognite/sdk
 export interface Document {
@@ -30,3 +31,20 @@ export interface Document {
   geoLocation?: DocumentGeoJsonGeometry;
   highlight?: DocumentHighlight;
 }
+
+export type InternalDocumentFilter = {
+  author?: string[];
+  source?: string[];
+  mimeType?: string[];
+  externalIdPrefix?: string;
+  createdTime?: DateRange;
+  lastUpdatedTime?: DateRange;
+  assetSubtreeIds?: IdEither[];
+};
+
+export type Order = 'asc' | 'desc';
+
+export type DocumentSort = {
+  column?: string;
+  order?: Order;
+};

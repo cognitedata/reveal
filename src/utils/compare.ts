@@ -1,13 +1,21 @@
+import isObject from 'lodash/isObject';
 import isEmpty from 'lodash/isEmpty';
+import isArray from 'lodash/isArray';
 
-export const isObjectEmpty = (object: any) => {
-  if (isEmpty(object)) {
+export const isObjectEmpty = (object?: Record<string, unknown>) => {
+  if (isEmpty(object) || object === undefined || !isObject(object)) {
     return true;
   }
 
-  return Object.keys(object).every(key => {
+  const isAllPropertiesInObjectEmpty = Object.keys(object).every(key => {
+    const value = object[key];
+
     return (
-      object[key] === undefined || object[key] === null || isEmpty(object[key])
+      value === undefined ||
+      value === null ||
+      ((isObject(value) || isArray(value)) && isEmpty(value))
     );
   });
+
+  return isAllPropertiesInObjectEmpty;
 };
