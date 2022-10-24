@@ -14,13 +14,6 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Setup Node
-        uses: actions/setup-node@v1
-        with:
-          node-version: '14.x'
-          registry-url: 'https://registry.npmjs.org'
-          always-auth: true
-
       - name: Setup Cognite CICD
         run: |
           git config --global user.email "cognite-cicd@users.noreply.github.com"
