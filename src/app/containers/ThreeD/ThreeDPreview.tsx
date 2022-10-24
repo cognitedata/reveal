@@ -12,8 +12,12 @@ import { useSearchParamNumber } from 'app/utils/URLUtils';
 import Reveal from './Reveal';
 import { AssetMappingsSidebar } from './AssetMappingsSidebar';
 import { trackUsage } from 'app/utils/Metrics';
+import {
+  ExpandButton,
+  FocusAssetButton,
+  PointToPointMeasurementButton,
+} from './ThreeDToolbar';
 import { StyledSplitter } from 'app/containers/elements';
-import { ExpandButton, FocusAssetButton } from './ThreeDToolbar';
 import { Flex, ToolBar } from '@cognite/cogs.js';
 import { Slicer } from 'app/containers/ThreeD/slicer/Slicer';
 import PointSizeSlider from './point-size-slider/PointSizeSlider';
@@ -95,6 +99,7 @@ export const ThreeDPreview = ({
                         {pointCloudModel && (
                           <PointSizeSlider model={pointCloudModel} />
                         )}
+                        <PointToPointMeasurementButton viewer={viewer} />
                       </StyledToolBar>
                     )}
                   </>

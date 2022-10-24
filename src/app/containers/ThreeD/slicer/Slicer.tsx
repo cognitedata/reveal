@@ -61,7 +61,7 @@ export const Slicer = ({ viewer, viewerModel }: SliderProps): JSX.Element => {
         </StyledMenu>
       }
     >
-      <Button icon="Slice" onClick={() => {}} />
+      <Button icon="Slice" />
     </Dropdown>
   );
 };
