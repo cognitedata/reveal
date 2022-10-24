@@ -44,6 +44,11 @@ jobs:
            rustup component add rustfmt
            cargo fmt --check
 
+    - name: Ensure Cargo.lock up to date
+      working-directory: viewer
+      continue-on-error: false
+      run: cargo update --locked
+
     # Skip to save time - development version is enough
     # - name: Build prod version
     #   working-directory: viewer
