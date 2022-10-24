@@ -4,7 +4,7 @@ import { css } from 'styled-components';
 export function TransformationIframe({
   transformationId,
 }: {
-  transformationId: number | undefined;
+  transformationId: number | null;
 }) {
   return transformationId ? (
     <iframe

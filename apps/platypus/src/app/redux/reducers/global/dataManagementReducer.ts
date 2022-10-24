@@ -23,6 +23,7 @@ export interface IDataManagementState {
   shouldShowDraftRows: boolean;
   shouldShowPublishedRows: boolean;
   isTransformationModalOpen: boolean;
+  transformationId: number | null;
 }
 
 const initialState = {
@@ -33,6 +34,7 @@ const initialState = {
   shouldShowDraftRows: true,
   shouldShowPublishedRows: true,
   isTransformationModalOpen: false,
+  transformationId: null,
 } as IDataManagementState;
 
 const getDefaultCellValueForDraftRow = (field: DataModelTypeDefsField) => {
@@ -189,10 +191,14 @@ const dataManagementSlice = createSlice({
     },
     setIsTransformationModalOpen: (
       state,
-      action: PayloadAction<{ isTransformationModalOpen: boolean }>
+      action: PayloadAction<{
+        isTransformationModalOpen: boolean;
+        transformationId: number | null;
+      }>
     ) => {
       state.isTransformationModalOpen =
         action.payload.isTransformationModalOpen;
+      state.transformationId = action.payload.transformationId;
     },
   },
 });

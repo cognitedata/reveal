@@ -49,7 +49,7 @@ describe('platpus-cli', () => {
   // });
 
   describe('cdf data-models publish', () => {
-    jest.setTimeout(30000);
+    jest.setTimeout(50000);
     it('can publish data models and list', async () => {
       const dataModelName = `cdf-cli-publish-e2e-test-${getDatamodelNameTimeAppendix()}`;
       const dataModelExternalId = dataModelName;

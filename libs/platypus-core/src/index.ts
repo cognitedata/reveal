@@ -6,6 +6,7 @@ export * from './lib/boundaries/types';
 export * from './lib/boundaries/validation';
 export * from './lib/boundaries/utils';
 export * from './lib/domain/data-model';
+export * from './lib/domain/transformation';
 export * from './lib/domain/common/validators';
 export * from './lib/domain/data-model/services';
 export * from './lib/domain/data-model/constants';

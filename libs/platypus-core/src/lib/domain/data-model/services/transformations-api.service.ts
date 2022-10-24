@@ -1,5 +1,6 @@
 import { CogniteClient } from '@cognite/sdk';
-import { DataModelTransformation } from './../types';
+import { DataModelTransformationCreateDTO } from '@platypus-core/domain/transformation/dto';
+import { DataModelTransformation } from '@platypus-core/domain/transformation/types';
 
 export class TransformationApiService {
   private transformationsBaseUrl: string;
@@ -7,10 +8,15 @@ export class TransformationApiService {
     this.transformationsBaseUrl = `/api/v1/projects/${this.cdfClient.project}/transformations`;
   }
 
-  getTransformationsForType(
-    type: string, // e.g 'Room_1'
-    externalId: string
-  ): Promise<DataModelTransformation | null> {
+  getTransformationsForType({
+    dataModelExternalId,
+    typeName,
+    version,
+  }: {
+    dataModelExternalId: string;
+    typeName: string;
+    version: string;
+  }): Promise<DataModelTransformation[]> {
     return new Promise((resolve, reject) => {
       this.cdfClient
         .post(`${this.transformationsBaseUrl}/filter`, {
@@ -28,21 +34,21 @@ export class TransformationApiService {
             const items = (
               response.data.items as DataModelTransformation[]
             ).filter(
-              (el) =>
-                el.destination.type === 'data_model_instances' &&
-                el.destination?.modelExternalId === type &&
-                el.destination.spaceExternalId === externalId
+              ({ destination }) =>
+                destination.type === 'data_model_instances' &&
+                destination.modelExternalId.startsWith(typeName) &&
+                destination?.modelExternalId.endsWith(`_${version}`) &&
+                destination.spaceExternalId === dataModelExternalId
             );
-            // Our promise should resolve to singular value, but items[0] could === undefined
-            // since filter result could be empty array in that case we fallback to null
-            resolve(items[0] ?? null);
+            resolve(items);
           }
         });
     });
   }
+
   // https://docs.cognite.com/api/v1/#operation/createTransformations
   createTransformation(
-    transformation: Omit<DataModelTransformation, 'id'>
+    transformation: DataModelTransformationCreateDTO
   ): Promise<DataModelTransformation> {
     return new Promise((resolve, reject) => {
       this.cdfClient
@@ -53,7 +59,6 @@ export class TransformationApiService {
         })
         .then((response) => {
           if (response.data.errors) {
-            console.log(response);
             reject(response.data);
           } else {
             resolve(response.data.items[0]);

@@ -152,4 +152,14 @@ describe('Data model services utils', () => {
       expect(utils.getVersionedExternalId('name', '1')).toEqual('name_1');
     });
   });
+
+  describe('parseModelName', () => {
+    it('returns correctly for model name', () => {
+      expect(utils.parseModelName('Movie_4')).toBe('Movie');
+    });
+
+    it('returns correctly for one-to-many model names', () => {
+      expect(utils.parseModelName('Movie_actors_3')).toBe('Movie.actors');
+    });
+  });
 });

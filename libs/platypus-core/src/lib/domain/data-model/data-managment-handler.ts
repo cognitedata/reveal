@@ -7,11 +7,8 @@ import {
 import { MixerQueryBuilder, MixerApiService } from './services/mixer-api';
 
 import { TransformationApiService, DmsApiService } from './services';
-import {
-  DataModelTransformation,
-  DataModelTypeDefsType,
-  PaginatedResponse,
-} from './types';
+import { DataModelTypeDefsType, PaginatedResponse } from './types';
+import { DataModelTransformationCreateDTO } from '../transformation/dto';
 
 export class DataManagementHandler {
   constructor(
@@ -105,14 +102,17 @@ export class DataManagementHandler {
         .catch((error) => reject(Result.fail(error)));
     });
   }
-  getTransformations(type: string, externalId: string) {
-    return this.transformationApiService.getTransformationsForType(
-      type,
-      externalId
-    );
+
+  getTransformations(params: {
+    dataModelExternalId: string;
+    typeName: string;
+    version: string;
+  }) {
+    return this.transformationApiService.getTransformationsForType(params);
   }
-  createTransformation(transformation: Omit<DataModelTransformation, 'id'>) {
-    return this.transformationApiService.createTransformation(transformation);
+
+  createTransformation(dto: DataModelTransformationCreateDTO) {
+    return this.transformationApiService.createTransformation(dto);
   }
 
   deleteData(dto: DmsDeleteNodesRequestDTO): Promise<Result<boolean>> {
