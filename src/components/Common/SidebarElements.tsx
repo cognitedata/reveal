@@ -13,7 +13,7 @@ export const Toolbar = styled.div`
   align-items: center;
   padding: 0 10px;
 
-  > button {
+  .cogs-btn {
     margin-top: 1rem;
   }
 `;

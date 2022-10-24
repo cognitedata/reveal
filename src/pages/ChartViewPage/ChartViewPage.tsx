@@ -6,7 +6,7 @@ import {
   useState,
 } from 'react';
 import get from 'lodash/get';
-import { toast, Loader, Button } from '@cognite/cogs.js';
+import { toast, Loader, Button, Tooltip } from '@cognite/cogs.js';
 import { useUserInfo } from '@cognite/sdk-react-query-hooks';
 import { useIsChartOwner } from 'hooks/user';
 import { useParams } from 'react-router-dom';
@@ -92,6 +92,7 @@ type ChartViewProps = {
 };
 
 const defaultTranslations = makeDefaultTranslations(
+  'Threshold',
   'Chart could not be saved!',
   'Could not load chart',
   'This chart does not seem to exist. You might not have access',
@@ -294,8 +295,8 @@ const ChartViewPage = ({ chartId: chartIdProp }: ChartViewProps) => {
     setShowContextMenu(false);
     setShowErrorSidebar(false);
     setShowThresholdMenu((prevState) => !prevState);
-    setTimeout(() => window.dispatchEvent(new Event('resize')), 100);
-  }, [selectedSourceId, showThresholdMenu]);
+    setTimeout(() => window.dispatchEvent(new Event('resize')), 200);
+  }, []);
 
   const handleErrorIconClick = useCallback(
     (sourceId: string) => {
@@ -762,7 +763,14 @@ const ChartViewPage = ({ chartId: chartIdProp }: ChartViewProps) => {
           />
         )}
         <Toolbar>
-          <Button icon="Threshold" onClick={() => handleThresholdClick()} />
+          <Tooltip content={t.Threshold} position="left">
+            <Button
+              icon="Threshold"
+              aria-label="Toggle threshold sidebar"
+              toggled={showThresholdMenu}
+              onClick={() => handleThresholdClick()}
+            />
+          </Tooltip>
         </Toolbar>
       </ChartViewContainer>
     </>
