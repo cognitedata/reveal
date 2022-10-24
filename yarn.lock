@@ -1449,6 +1449,13 @@
     "@types/geojson" "^7946.0.7"
     axios "^0.19.2"
 
+"@cognite/metrics@1.2.2":
+  version "1.2.2"
+  resolved "https://registry.yarnpkg.com/@cognite/metrics/-/metrics-1.2.2.tgz#3aafe9fa339b146c44c3c938a33e6f2d7237f2ce"
+  integrity sha512-3B3Gr4UAk2jmGeVy3sTwnI3SDgGVUuV+AL+FwvIy9znvvmEz/w6WX+wGD0urK89iNNRdnxJaaJwmi26tfyA4BA==
+  dependencies:
+    mixpanel-browser "2.41.0"
+
 "@cognite/potree-core@1.4.0":
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/@cognite/potree-core/-/potree-core-1.4.0.tgz#7cd83dfd68eb66d97d3fa3e312cbe31acf20ca30"
@@ -1600,6 +1607,14 @@
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/@cognite/sniffer-service-types/-/sniffer-service-types-1.0.1.tgz#905369e71e110d2574261e3139a81d91f1b09f2c"
   integrity sha512-Z3enMziNvVjbM5lcZXgpO/cFBpsoyP4/DCkV8acF37Cj5IzDeozyp/G6IaRriyCUxt/2TIqxdn94uH8DH70Pmw==
+
+"@cognite/storage@^0.1.3":
+  version "0.1.3"
+  resolved "https://registry.yarnpkg.com/@cognite/storage/-/storage-0.1.3.tgz#a90d0c2eeebdb9d75f7ad1bf89ca9e79c1bf6df5"
+  integrity sha512-6yVkKGRi5VcFYAq3XovhqfPylMgWW9n1LyKV6XiznhJEIzeHByF1bLHW4wbjTpyUmswe8GjxyrvmSYRmAJXz9g==
+  dependencies:
+    "@cognite/metrics" "1.2.2"
+    lodash "4.17.21"
 
 "@cognite/user-management-service-types@^0.1.6":
   version "0.1.6"
@@ -19539,6 +19554,11 @@ mixin-deep@^1.2.0:
   dependencies:
     for-in "^1.0.2"
     is-extendable "^1.0.1"
+
+mixpanel-browser@2.41.0:
+  version "2.41.0"
+  resolved "https://registry.yarnpkg.com/mixpanel-browser/-/mixpanel-browser-2.41.0.tgz#d49753b4e4a7e6ddd18c126be4a917fff4ce3039"
+  integrity sha512-IEuc9cH44hba9a3KEyulXINLn+gpFqluBDo7xiTk1h3j111dmmsctaE6tUzZYxgGLVqeNhTpsccdliOeX24Wlw==
 
 mixpanel-browser@2.45.0, mixpanel-browser@^2.35.0, mixpanel-browser@^2.39.0:
   version "2.45.0"
