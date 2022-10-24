@@ -1365,10 +1365,10 @@
     use-debounce "^6.0.1"
     uuid "^8.3.2"
 
-"@cognite/data-exploration@5.4.0":
-  version "5.4.0"
-  resolved "https://registry.yarnpkg.com/@cognite/data-exploration/-/data-exploration-5.4.0.tgz#94affe24298a7c75f2bf2f38417887d9a084d539"
-  integrity sha512-dy2xYWdrSujwcpT3bLJ/wejmnvwIpKX1LX4q55yoIH/xQ9WC/g+LGZwOY/3Wyt0aJmLkUkVzjWbY4benfAa+sw==
+"@cognite/data-exploration@5.4.2":
+  version "5.4.2"
+  resolved "https://registry.yarnpkg.com/@cognite/data-exploration/-/data-exploration-5.4.2.tgz#bde186dc948b361be8154341b775fbc2c0c8f2d8"
+  integrity sha512-7A01MxNVQ/ZarQmZlB3Eb3iC9k+dKyvaiOwNiFLmTNyGC+ItyR0VWCYf3yhvECmpM6i0Ak+AMtOuy6tnIoPIPA==
   dependencies:
     "@babel/runtime" "^7.12.5"
     "@cognite/annotations" "^1.1.0"
@@ -1425,7 +1425,7 @@
     use-debounce "^6.0.1"
     uuid "^8.3.2"
 
-"@cognite/gcs-browser-upload@cognitedata/gcs-browser-upload#mn/temporary-azure-fix", "@cognite/gcs-browser-upload@github:cognitedata/gcs-browser-upload#mn/temporary-azure-fix":
+"@cognite/gcs-browser-upload@cognitedata/gcs-browser-upload#mn/temporary-azure-fix":
   version "1.1.1"
   resolved "https://codeload.github.com/cognitedata/gcs-browser-upload/tar.gz/e180a039d56e9572efbfe123bd607e7ce1e6f06e"
   dependencies:
