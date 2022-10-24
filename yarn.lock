@@ -1365,10 +1365,10 @@
     use-debounce "^6.0.1"
     uuid "^8.3.2"
 
-"@cognite/data-exploration@5.2.0":
-  version "5.2.0"
-  resolved "https://registry.yarnpkg.com/@cognite/data-exploration/-/data-exploration-5.2.0.tgz#6d0983b1ecdab241bbf74cab115aaae6bd4c1ea5"
-  integrity sha512-xWaSt+U1SMEy6AjZUL05jS4Pk4ipm3chq52k+7Jcj+7eZM9Mm5hMVF0jViEJceCEctlqUFOyqe0MrVzG9kuPqA==
+"@cognite/data-exploration@5.4.0":
+  version "5.4.0"
+  resolved "https://registry.yarnpkg.com/@cognite/data-exploration/-/data-exploration-5.4.0.tgz#94affe24298a7c75f2bf2f38417887d9a084d539"
+  integrity sha512-dy2xYWdrSujwcpT3bLJ/wejmnvwIpKX1LX4q55yoIH/xQ9WC/g+LGZwOY/3Wyt0aJmLkUkVzjWbY4benfAa+sw==
   dependencies:
     "@babel/runtime" "^7.12.5"
     "@cognite/annotations" "^1.1.0"
@@ -1382,7 +1382,7 @@
     "@cognite/sdk" "^7.8.4"
     "@cognite/sdk-provider" "^2.0.0"
     "@cognite/sdk-react-query-hooks" "^6.0.2"
-    "@cognite/unified-file-viewer" "^1.2.4"
+    "@cognite/unified-file-viewer" "^1.5.0"
     "@types/react-table" "^7.0.0"
     "@visx/axis" "^2.1.0"
     "@visx/event" "^2.1.0"
@@ -1425,7 +1425,7 @@
     use-debounce "^6.0.1"
     uuid "^8.3.2"
 
-"@cognite/gcs-browser-upload@cognitedata/gcs-browser-upload#mn/temporary-azure-fix":
+"@cognite/gcs-browser-upload@cognitedata/gcs-browser-upload#mn/temporary-azure-fix", "@cognite/gcs-browser-upload@github:cognitedata/gcs-browser-upload#mn/temporary-azure-fix":
   version "1.1.1"
   resolved "https://codeload.github.com/cognitedata/gcs-browser-upload/tar.gz/e180a039d56e9572efbfe123bd607e7ce1e6f06e"
   dependencies:
@@ -1619,6 +1619,23 @@
   version "1.5.1"
   resolved "https://registry.yarnpkg.com/@cognite/unified-file-viewer/-/unified-file-viewer-1.5.1.tgz#cc49c7e2941837f6ddd409a17c01e07928c2cf3c"
   integrity sha512-r2kCRMIXbVJK7Bw1+T6BExM+I56mPmVTUKGkNTo+GTRilWU4eIjMe84tw2ByjrMaKqF4dpvuRmwPhjZemugeIg==
+  dependencies:
+    "@cognite/cogs.js" "^7.14.2"
+    "@cognite/sdk" "^7.6.0"
+    chroma-js "^2.4.2"
+    konva "^8.3.9"
+    lodash "^4.17.21"
+    mime-types "^2.1.35"
+    pdf-lib "^1.17.1"
+    pdfjs-dist "2.6.347"
+    rollup-plugin-typescript2 "^0.34.1"
+    styled-components "^5.3.5"
+    uuid "^8.3.2"
+
+"@cognite/unified-file-viewer@^1.5.0":
+  version "1.6.2"
+  resolved "https://registry.yarnpkg.com/@cognite/unified-file-viewer/-/unified-file-viewer-1.6.2.tgz#4a592cef1cbc480ed4c7843e86112a573d3c31b3"
+  integrity sha512-QXQmUeYsP5J/Nx8YhFoNBE4DPHKv5j0SApH/LWLDfa5xP30MZ3gaKCfFJxnvBIe7XnM6X+IYBsLtYGIUMVR7IQ==
   dependencies:
     "@cognite/cogs.js" "^7.14.2"
     "@cognite/sdk" "^7.6.0"
