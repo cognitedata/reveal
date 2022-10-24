@@ -112,8 +112,7 @@ export const ThreeDPreview = ({
           {!!assetPreviewSidebarVisible && selectedAssetId && (
             <AssetPreviewSidebar
               assetId={selectedAssetId}
-              setVisible={setAssetPreviewSidebarVisible}
-              isBackButtonAvailable={false}
+              onClose={() => setSelectedAssetId(null)}
             />
           )}
         </StyledSplitter>

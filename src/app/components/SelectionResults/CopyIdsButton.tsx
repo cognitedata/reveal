@@ -10,7 +10,7 @@ import {
 
 import { InternalId } from '@cognite/sdk';
 import { useCdfItems } from '@cognite/sdk-react-query-hooks';
-import { copyIdsToClipboard } from '../TitleRowActions/CopyIdsButton';
+import { copyIdsToClipboard } from '../TitleRowActions/MoreButton';
 
 type Props = {
   ids: InternalId[];

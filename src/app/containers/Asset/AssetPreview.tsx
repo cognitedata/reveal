@@ -29,11 +29,11 @@ export type AssetPreviewTabType =
 export const AssetPreview = ({
   assetId,
   actions,
-  isBackButtonAvailable = true,
+  hideDefaultCloseActions,
 }: {
   assetId: number;
   actions?: React.ReactNode;
-  isBackButtonAvailable?: boolean;
+  hideDefaultCloseActions?: boolean;
 }) => {
   const { tabType } = useParams<{
     tabType: AssetPreviewTabType;
@@ -88,7 +88,7 @@ export const AssetPreview = ({
       <ResourceTitleRow
         item={{ id: assetId, type: 'asset' }}
         afterDefaultActions={actions}
-        isBackButtonAvailable={isBackButtonAvailable}
+        hideDefaultCloseActions={hideDefaultCloseActions}
       />
       <ResourceDetailsTabs
         parentResource={{

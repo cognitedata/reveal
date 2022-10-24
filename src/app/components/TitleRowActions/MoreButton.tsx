@@ -1,5 +1,5 @@
 import React from 'react';
-import { Menu, Dropdown, notification, Tooltip } from 'antd';
+import { Menu, Dropdown, notification } from 'antd';
 import { Button } from '@cognite/cogs.js';
 import {
   ResourceType,
@@ -57,9 +57,14 @@ export const copyIdsToClipboard = async (
   }
 };
 
-export function PowerBIButton({ item: { type, id } }: Props) {
+export function MoreButton({ item: { type, id } }: Props) {
   const env = useEnv();
   const tenant = useTenant();
+
+  const { data } = useCdfItem<{ externalId?: string }>(
+    convertResourceType(type),
+    { id }
+  );
 
   const menu = (
     <Menu>
@@ -71,35 +76,6 @@ export function PowerBIButton({ item: { type, id } }: Props) {
       >
         Copy oData query
       </Menu.Item>
-      <Menu.Item key="copyId">
-        <a
-          href="https://docs.cognite.com/cdf/dashboards/guides/powerbi/getting_started.html"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn about the PowerBI connector
-        </a>
-      </Menu.Item>
-    </Menu>
-  );
-
-  return (
-    <Dropdown overlay={menu} trigger={['click']}>
-      <Tooltip title="PowerBI">
-        <Button icon="PowerBI" />
-      </Tooltip>
-    </Dropdown>
-  );
-}
-
-export function GrafanaButton({ item: { type, id } }: Props) {
-  const { data } = useCdfItem<{ externalId?: string }>(
-    convertResourceType(type),
-    { id }
-  );
-
-  const menu = (
-    <Menu>
       <Menu.Item
         disabled={!data?.externalId}
         onClick={() =>
@@ -108,6 +84,15 @@ export function GrafanaButton({ item: { type, id } }: Props) {
         key="copyExternalId"
       >
         Copy external id
+      </Menu.Item>
+      <Menu.Item key="copyId">
+        <a
+          href="https://docs.cognite.com/cdf/dashboards/guides/powerbi/getting_started.html"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Learn about the PowerBI connector
+        </a>
       </Menu.Item>
       <Menu.Item key="grafanaLink">
         <a
@@ -123,9 +108,7 @@ export function GrafanaButton({ item: { type, id } }: Props) {
 
   return (
     <Dropdown overlay={menu} trigger={['click']}>
-      <Tooltip title="Grafana">
-        <Button icon="LineChart" />
-      </Tooltip>
+      <Button icon="EllipsisHorizontal" aria-label="More" />
     </Dropdown>
   );
 }

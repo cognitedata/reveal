@@ -7,6 +7,7 @@ import {
   convertResourceType,
   ResourceItem,
   FileDownloadAnchor,
+  Resource,
 } from '@cognite/data-exploration';
 
 import { useCdfItem, baseCacheKey } from '@cognite/sdk-react-query-hooks';
@@ -66,6 +67,7 @@ function MetadataDownload({ item: { id, type } }: Props) {
         <Button
           disabled={downloading}
           icon={downloading ? 'Loader' : 'Download'}
+          aria-label="Download"
         />
       </Tooltip>
     </Dropdown>
@@ -138,6 +140,7 @@ function FileDownloadButton({ item }: Props) {
           icon={downloading ? 'Loader' : 'Download'}
           title="Download"
           disabled={downloading}
+          aria-label="Download"
         />
       </Tooltip>
     </Dropdown>
@@ -151,11 +154,8 @@ function TimeseriesDownloadButton({ item: { id, type }, dateFilter }: Props) {
 
   const api = convertResourceType(type);
 
-  const { data: metadata = {}, isFetched: metadataFetched } = useCdfItem(
-    api,
-    { id },
-    { enabled: downloading }
-  );
+  const { data: metadata = {}, isFetched: metadataFetched } =
+    useCdfItem<Resource>(api, { id }, { enabled: downloading });
 
   const limit = 100000;
   const { data: datapoints = [], isFetched: dataPointsFetched } = useQuery(
@@ -235,6 +235,7 @@ function TimeseriesDownloadButton({ item: { id, type }, dateFilter }: Props) {
         <Button
           disabled={downloading}
           icon={downloading ? 'Loader' : 'Download'}
+          aria-label="Download"
         />
       </Tooltip>
     </Dropdown>

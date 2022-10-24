@@ -1,22 +1,14 @@
 import React from 'react';
-
-import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { createLink } from '@cognite/cdf-utilities';
-import { Icon, Button, Colors } from '@cognite/cogs.js';
-
+import { Colors, Title } from '@cognite/cogs.js';
 import {
   convertResourceType,
   ResourceItem,
   ResourceIcons,
 } from '@cognite/data-exploration';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
-import styled from 'styled-components';
-import { trackUsage } from 'app/utils/Metrics';
-import { useQueryString } from 'app/hooks/hooks';
-import { SEARCH_KEY } from 'app/utils/constants';
-import { Divider, Space } from 'antd';
-import { TitleRowActions } from './TitleRowActions';
 import { DatapointsMultiQuery } from '@cognite/sdk';
+import styled from 'styled-components';
+import { TitleRowActions } from './TitleRowActions';
 
 export type DateFilter = Pick<DatapointsMultiQuery, 'start' | 'end'>;
 type Props = {
@@ -26,7 +18,7 @@ type Props = {
   getTitle?: (_: any) => string | undefined;
   beforeDefaultActions?: React.ReactNode;
   afterDefaultActions?: React.ReactNode;
-  isBackButtonAvailable?: boolean;
+  hideDefaultCloseActions?: boolean;
 };
 
 export default function ResourceTitleRow({
@@ -36,82 +28,29 @@ export default function ResourceTitleRow({
   getTitle = (i: any) => i?.name,
   beforeDefaultActions,
   afterDefaultActions,
-  isBackButtonAvailable = true,
+  hideDefaultCloseActions,
 }: Props) {
-  const { data, isFetched } = useCdfItem<{ name?: string }>(
-    convertResourceType(type),
-    {
-      id,
-    }
-  );
+  const { data } = useCdfItem<{ name?: string }>(convertResourceType(type), {
+    id,
+  });
 
-  const navigate = useNavigate();
-  const location = useLocation();
-  const isInitialPage = location.key === 'default';
-
-  const prevLinkDefault = location.pathname.replace(
-    'explore/',
-    'explore/search/'
-  );
-
-  const isPreview = location.pathname.includes('/search');
-  const [query] = useQueryString(SEARCH_KEY);
   const name = (
     <NameWrapper>
-      {!isPreview &&
-        (isFetched ? (
-          <ResourceIcons type={type} style={{ marginRight: '10px' }} />
-        ) : (
-          <Icon type="Loader" />
-        ))}
-      <NameHeader>
-        {title || getTitle(data) || id}
-        {isPreview && '→'}
-      </NameHeader>
+      <ResourceIcons type={type} style={{ marginRight: '10px' }} />
+      <Name level="3">{title || getTitle(data) || id}</Name>
     </NameWrapper>
   );
 
   return (
     <TitleRowWrapper>
-      {!isPreview && isBackButtonAvailable && (
-        <StyledGoBackWrapper>
-          <Space>
-            {/* Go back */}
-
-            <Button
-              icon="ArrowLeft"
-              onClick={() =>
-                isInitialPage
-                  ? navigate(prevLinkDefault + location.search)
-                  : navigate(-1)
-              }
-            />
-
-            <Divider type="vertical" style={{ height: '36px' }} />
-          </Space>
-        </StyledGoBackWrapper>
-      )}
-      <PreviewLinkWrapper>
-        {isPreview ? (
-          <StyledLink
-            to={createLink(`/explore/${type}/${id}`, {
-              [SEARCH_KEY]: query,
-            })}
-            state={{ prevPath: location.pathname }}
-            onClick={() => trackUsage('Exploration.FullPage', { type, id })}
-          >
-            {name}{' '}
-          </StyledLink>
-        ) : (
-          name
-        )}
-      </PreviewLinkWrapper>
+      <PreviewLinkWrapper>{name}</PreviewLinkWrapper>
       <StyledGoBackWrapper>
         <TitleRowActions
           dateFilter={datefilter}
           item={{ type, id }}
           beforeDefaultActions={beforeDefaultActions}
           afterDefaultActions={afterDefaultActions}
+          hideDefaultCloseActions={hideDefaultCloseActions}
         />
       </StyledGoBackWrapper>
     </TitleRowWrapper>
@@ -134,8 +73,7 @@ const NameWrapper = styled.div`
   align-items: center;
 `;
 
-const NameHeader = styled.h1`
-  color: inherit;
+const Name = styled(Title)`
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -150,8 +88,4 @@ const PreviewLinkWrapper = styled.div`
   overflow: hidden;
   vertical-align: bottom;
   flex: 1 1 auto;
-`;
-
-const StyledLink = styled(Link)`
-  color: var(--cogs-primary);
 `;

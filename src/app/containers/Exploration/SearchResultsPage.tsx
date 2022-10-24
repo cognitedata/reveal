@@ -258,7 +258,6 @@ function SearchPage() {
                   <SearchResultWrapper>
                     <ResourcePreview
                       item={{ id: activeId, type: currentResourceType }}
-                      onCloseClicked={() => openPreview(undefined)}
                     />
                   </SearchResultWrapper>
                 )}
@@ -424,7 +423,6 @@ function SearchPage() {
               <SearchResultWrapper>
                 <ResourcePreview
                   item={{ id: activeId, type: currentResourceType }}
-                  onCloseClicked={() => openPreview(undefined)}
                 />
               </SearchResultWrapper>
             )}

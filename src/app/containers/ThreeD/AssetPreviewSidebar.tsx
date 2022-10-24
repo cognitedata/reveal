@@ -4,16 +4,14 @@ import { Tooltip, Button } from '@cognite/cogs.js';
 
 export const AssetPreviewSidebar = ({
   assetId,
-  setVisible,
-  isBackButtonAvailable = true,
+  onClose,
 }: {
   assetId: number;
-  setVisible: (visible: boolean) => void;
-  isBackButtonAvailable?: boolean;
+  onClose: () => void;
 }) => {
   const closePreviewButton = (
     <Tooltip content="Close preview">
-      <Button icon="Close" onClick={() => setVisible(false)} />
+      <Button icon="Close" onClick={onClose} />
     </Tooltip>
   );
 
@@ -22,7 +20,7 @@ export const AssetPreviewSidebar = ({
       <AssetPreview
         assetId={assetId}
         actions={closePreviewButton}
-        isBackButtonAvailable={isBackButtonAvailable}
+        hideDefaultCloseActions
       />
     </PreviewWrapper>
   );

@@ -6,39 +6,26 @@ import { TimeseriesPreview } from 'app/containers/Timeseries/TimeseriesPreview';
 import { EventPreview } from 'app/containers/Event/EventPreview';
 import { ThreeDPreview } from 'app/containers/ThreeD/ThreeDPreview';
 import { ResourceItem } from '@cognite/data-exploration';
-import { Button } from '@cognite/cogs.js';
-import { Tooltip } from 'antd';
 
 type Props = {
   item: ResourceItem;
-  onCloseClicked: () => void;
 };
-export default function ResourcePreview({
-  item: { type, id },
-  onCloseClicked,
-}: Props) {
-  const closePreviewButton = (
-    <Tooltip title="Close preview">
-      <Button icon="Close" onClick={onCloseClicked} />
-    </Tooltip>
-  );
+export default function ResourcePreview({ item: { type, id } }: Props) {
   switch (type) {
     case 'asset':
-      return <AssetPreview assetId={id} actions={closePreviewButton} />;
+      return <AssetPreview assetId={id} />;
     case 'file':
-      return <FilePreview fileId={id} actions={closePreviewButton} />;
+      return <FilePreview fileId={id} />;
     case 'document': // At some point we might want to have documents its own preview
-      return <FilePreview fileId={id} actions={closePreviewButton} />;
+      return <FilePreview fileId={id} />;
     case 'sequence':
-      return <SequencePreview sequenceId={id} actions={closePreviewButton} />;
+      return <SequencePreview sequenceId={id} />;
     case 'timeSeries':
-      return (
-        <TimeseriesPreview timeseriesId={id} actions={closePreviewButton} />
-      );
+      return <TimeseriesPreview timeseriesId={id} />;
     case 'event':
-      return <EventPreview eventId={id} actions={closePreviewButton} />;
+      return <EventPreview eventId={id} />;
     case 'threeD':
-      return <ThreeDPreview threeDId={id} actions={closePreviewButton} />;
+      return <ThreeDPreview threeDId={id} />;
     default:
       return null;
   }
