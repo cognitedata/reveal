@@ -23,6 +23,8 @@ import { useTranslation } from 'common';
 import { Artifact, getDownloadUrl } from 'service/extractors';
 import { DocsLinkGrid, DocsLinkGridItem } from 'components/DocsLinkGrid';
 import { trackUsage } from 'utils';
+import { getReleaseVersionCore } from 'utils/utils';
+import { ReleaseTag } from 'components/ReleaseTag';
 
 const ExtractorDetails = () => {
   const { t } = useTranslation();
@@ -153,9 +155,10 @@ const ExtractorDetails = () => {
                   <Flex gap={8}>
                     <Label size="small">
                       {t('v-version', {
-                        version: latestRelease?.version,
+                        version: getReleaseVersionCore(latestRelease?.version),
                       })}
                     </Label>
+                    <ReleaseTag version={latestRelease?.version}></ReleaseTag>
                     <StyledBodyMuted>
                       {t('released-date', {
                         createdAt,
@@ -229,9 +232,12 @@ const ExtractorDetails = () => {
                 <Flex direction="column" gap={8}>
                   <Flex justifyContent="space-between" gap={8}>
                     <Title level="5">
-                      {t('version-n', {
-                        version: release.version,
-                      })}
+                      <Flex gap={8}>
+                        {t('version-n', {
+                          version: getReleaseVersionCore(release.version),
+                        })}
+                        <ReleaseTag version={release.version}></ReleaseTag>
+                      </Flex>
                     </Title>
                     <StyledBodyMuted>
                       {release?.createdTime && formatDate(release?.createdTime)}
