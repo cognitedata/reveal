@@ -119,6 +119,7 @@ const MetadataHeader = styled.div`
 const MetadataTableContainer = styled.div`
   margin: 8px 16px 0;
   max-width: 900px;
+  white-space: pre;
   overflow: auto;
 
   tr[role='row'],
