@@ -6,9 +6,10 @@ import * as THREE from 'three';
 import { createRevealManager } from './createRevealManager';
 import { RevealManager } from './RevealManager';
 
-import { ModelDataProvider, ModelMetadataProvider } from '@reveal/data-providers';
+import { ModelDataProvider, ModelMetadataProvider, PointCloudStylableObjectProvider } from '@reveal/data-providers';
 import { SectorCuller } from '@reveal/cad-geometry-loaders';
 import { SceneHandler } from '@reveal/utilities';
+import { LocalPointClassificationsProvider } from '@reveal/pointclouds';
 import { LoadingStateChangeListener } from './types';
 import { It, Mock, SetPropertyExpression } from 'moq.ts';
 
@@ -20,6 +21,11 @@ describe('RevealManager', () => {
     filterSectorsToLoad: jest.fn(),
     dispose: jest.fn()
   };
+  const annotationProvider = new Mock<PointCloudStylableObjectProvider>()
+    .setup(p => p.getPointCloudObjects(It.IsAny()))
+    .returns(Promise.resolve([]))
+    .object();
+  const pointClassificationsProvider = new LocalPointClassificationsProvider();
   let manager: RevealManager;
 
   beforeEach(() => {
@@ -41,6 +47,8 @@ describe('RevealManager', () => {
       'myAppId',
       stubMetadataProvider,
       stubDataProvider,
+      annotationProvider,
+      pointClassificationsProvider,
       rendererMock.object(),
       new SceneHandler(),
       {

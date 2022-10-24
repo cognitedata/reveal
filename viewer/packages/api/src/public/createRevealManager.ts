@@ -14,6 +14,11 @@ import {
   BasicPipelineExecutor,
   DefaultRenderPipelineProvider
 } from '@reveal/rendering';
+import {
+  CdfPointCloudStylableObjectProvider,
+  PointCloudStylableObjectProvider,
+  DummyPointCloudStylableObjectProvider
+} from '@reveal/data-providers';
 import { createPointCloudManager } from '@reveal/pointclouds';
 import {
   ModelMetadataProvider,
@@ -27,6 +32,11 @@ import {
 import { CogniteClient } from '@cognite/sdk';
 import { SceneHandler } from '@reveal/utilities';
 import { createCadManager } from '@reveal/cad-geometry-loaders';
+import {
+  IPointClassificationsProvider,
+  LocalPointClassificationsProvider,
+  UrlPointClassificationsProvider
+} from '@reveal/pointclouds';
 
 /**
  * Used to create an instance of reveal manager that works with localhost.
@@ -42,11 +52,15 @@ export function createLocalRevealManager(
 ): RevealManager {
   const modelMetadataProvider = new LocalModelMetadataProvider();
   const modelDataProvider = new LocalModelDataProvider();
+  const annotationProvider = new DummyPointCloudStylableObjectProvider();
+  const pointClassificationsProvider = new LocalPointClassificationsProvider();
   return createRevealManager(
     'local',
     'local-dataSource-appId',
     modelMetadataProvider,
     modelDataProvider,
+    annotationProvider,
+    pointClassificationsProvider,
     renderer,
     sceneHandler,
     revealOptions
@@ -69,11 +83,15 @@ export function createCdfRevealManager(
   const applicationId = getSdkApplicationId(client);
   const modelMetadataProvider = new CdfModelMetadataProvider(client);
   const modelDataProvider = new CdfModelDataProvider(client);
+  const annotationProvider = new CdfPointCloudStylableObjectProvider(client);
+  const pointClassificationsProvider = new UrlPointClassificationsProvider(modelDataProvider);
   return createRevealManager(
     client.project,
     applicationId,
     modelMetadataProvider,
     modelDataProvider,
+    annotationProvider,
+    pointClassificationsProvider,
     renderer,
     sceneHandler,
     revealOptions
@@ -87,6 +105,8 @@ export function createCdfRevealManager(
  * @param applicationId
  * @param modelMetadataProvider
  * @param modelDataProvider
+ * @param annotationProvider
+ * @param pointClassificationsProvider
  * @param renderer
  * @param sceneHandler
  * @param revealOptions
@@ -96,6 +116,8 @@ export function createRevealManager(
   applicationId: string,
   modelMetadataProvider: ModelMetadataProvider,
   modelDataProvider: ModelDataProvider,
+  annotationProvider: PointCloudStylableObjectProvider,
+  pointClassificationsProvider: IPointClassificationsProvider,
   renderer: THREE.WebGLRenderer,
   sceneHandler: SceneHandler,
   revealOptions: RevealOptions = {}
@@ -121,6 +143,8 @@ export function createRevealManager(
   const pointCloudManager = createPointCloudManager(
     modelMetadataProvider,
     modelDataProvider,
+    annotationProvider,
+    pointClassificationsProvider,
     pointCloudMaterialManager,
     sceneHandler.scene,
     renderer

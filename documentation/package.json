@@ -10,9 +10,9 @@
     "Maksim Nesterenko <maksim.nesterenko@cognite.com>"
   ],
   "scripts": {
-    "start": "cross-env HTTPS=true docusaurus start --port=9000",
-    "build": "docusaurus build",
-    "build:fast": "docusaurus build --no-minify",
+    "start": "cross-env HTTPS=true NODE_OPTIONS=--max_old_space_size=4096 docusaurus start --port=9000",
+    "build": "cross-env NODE_OPTIONS=--max_old_space_size=4096 docusaurus build",
+    "build:fast": "cross-env NODE_OPTIONS=--max_old_space_size=4096 docusaurus build --no-minify",
     "swizzle": "docusaurus swizzle",
     "replace-1.x:clean-versioned": "rimraf versioned_sidebars/version-1.x-sidebars.json versioned_docs/version-1.x versions.json",
     "replace-1.x:copy-docs": "yarn docusaurus docs:version 1.x && git checkout HEAD -- versions.json",
@@ -75,7 +75,7 @@
     "docusaurus-plugin-typedoc": "0.17.5",
     "replace": "1.2.1",
     "rimraf": "3.0.2",
-    "typedoc": "0.23.17",
+    "typedoc": "0.23.18",
     "typedoc-plugin-markdown": "3.13.6",
     "typedoc-plugin-no-inherit": "1.4.0",
     "typescript": "4.8.4"

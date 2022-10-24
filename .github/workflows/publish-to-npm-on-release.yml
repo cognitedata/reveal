@@ -1,0 +1,33 @@
+name: Publish Package to NPM
+on:
+  release:
+    types:
+      - published
+jobs:
+  deploy-to-npm:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install NPM dependencies
+        working-directory: viewer
+        run: yarn install --immutable
+
+      - name: Rust fmt
+        working-directory: viewer
+        continue-on-error: false
+        run: |
+            rustup component add rustfmt
+            cargo fmt --check
+
+      - name: Build production version
+        working-directory: viewer
+        run: yarn run build:prod
+
+      - name: Publish to NPM
+        working-directory: viewer/dist
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

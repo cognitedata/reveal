@@ -9,6 +9,7 @@ import { IPotree } from '../types/IPotree';
 import { IPointCloudTreeNodeBase } from './IPointCloudTreeNodeBase';
 import { IPointCloudTreeNode } from './IPointCloudTreeNode';
 import { computeTransformedBoundingBox } from '../utils/bounds';
+
 import { RenderLayer, PointCloudMaterial, PointSizeType, DEFAULT_MIN_NODE_PIXEL_SIZE } from '@reveal/rendering';
 import { makeOnBeforeRender } from '../utils/utils';
 
@@ -51,8 +52,8 @@ export class PointCloudOctree extends PointCloudTree {
   }
 
   private updateMaterial(): void {
-    this.material.heightMin = this.pcoGeometry.tightBoundingBox.min.clone().applyMatrix4(this.matrix).y;
-    this.material.heightMax = this.pcoGeometry.tightBoundingBox.max.clone().applyMatrix4(this.matrix).y;
+    this.material.heightMin = this.pcoGeometry.tightBoundingBox.min.clone().applyMatrix4(this.matrixWorld).y;
+    this.material.heightMax = this.pcoGeometry.tightBoundingBox.max.clone().applyMatrix4(this.matrixWorld).y;
   }
 
   dispose(): void {

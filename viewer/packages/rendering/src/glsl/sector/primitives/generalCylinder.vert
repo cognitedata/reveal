@@ -36,7 +36,7 @@ out vec2 v_angles;
 out vec3 v_color;
 out float v_radius;
 
-out TreeIndexPacked v_treeIndexPacked;
+out highp vec2 v_treeIndexPacked;
 
 void main() {
     v_treeIndexPacked = packTreeIndex(a_treeIndex);
