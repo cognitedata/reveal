@@ -16,7 +16,7 @@ crate-type = ["cdylib"]
 wasm-bindgen = { version = "0.2.45", features = ["serde-serialize"] }
 web-sys = { version = "0.3.22", features = ["console"] }
 
-serde = { version = "1.0.145", features = ["derive"] }
+serde = { version = "1.0.147", features = ["derive"] }
 
 js-sys = "0.3.59"
 
