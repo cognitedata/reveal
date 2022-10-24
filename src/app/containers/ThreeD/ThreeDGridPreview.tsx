@@ -17,6 +17,7 @@ import Highlighter from 'react-highlight-words';
 import { Model3D } from '@cognite/sdk';
 import { ResourceType } from '@cognite/data-exploration';
 import { useCurrentResourceId } from 'app/hooks/hooks';
+import { trackUsage } from 'app/utils/Metrics';
 
 export type Model3DWithType = Model3D & {
   type: ResourceType;
@@ -89,6 +90,7 @@ export const ThreeDGridPreview = ({
       style={style}
       onClick={() => {
         onClick(item);
+        trackUsage('Exploration.Preview.ThreeDModel', { name, modelId });
       }}
     >
       <GridItemWrapper isSelected={isSelected}>

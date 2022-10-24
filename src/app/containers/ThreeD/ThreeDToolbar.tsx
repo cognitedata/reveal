@@ -9,6 +9,7 @@ import {
   DefaultCameraManager,
 } from '@cognite/reveal';
 import { createLink } from '@cognite/cdf-utilities';
+import { trackUsage } from 'app/utils/Metrics';
 import { MeasurementTool } from '@cognite/reveal/tools';
 
 export const HomeButton = () => {
@@ -21,6 +22,7 @@ export const HomeButton = () => {
         aria-label="Home"
         onClick={() => {
           navigate(createLink(`/explore/search/threeD`));
+          trackUsage('Exploration.Preview.ThreeDModel');
         }}
       />
     </Tooltip>
@@ -43,6 +45,7 @@ export const ExpandButton = ({
           if (viewer && viewerModel) {
             viewer.fitCameraToModel(viewerModel);
           }
+          trackUsage('Exploration.Preview.FitToView');
         }}
       />
     </Tooltip>

@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import { AssetPreview } from 'app/containers/Asset/AssetPreview';
 import { Tooltip, Button } from '@cognite/cogs.js';
+import { trackUsage } from 'app/utils/Metrics';
 
 export const AssetPreviewSidebar = ({
   assetId,
@@ -11,7 +12,13 @@ export const AssetPreviewSidebar = ({
 }) => {
   const closePreviewButton = (
     <Tooltip content="Close preview">
-      <Button icon="Close" onClick={onClose} />
+      <Button
+        icon="Close"
+        onClick={() => {
+          onClose();
+          trackUsage('Exploration.Preview.ThreeDModel', { assetId });
+        }}
+      />
     </Tooltip>
   );
 

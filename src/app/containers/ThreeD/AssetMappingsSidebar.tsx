@@ -5,6 +5,7 @@ import { useAssetMappings } from 'app/containers/ThreeD/hooks';
 import styled from 'styled-components';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 import { Asset } from '@cognite/sdk';
+import { trackUsage } from 'app/utils/Metrics';
 
 type ThreeDSidebarProps = {
   modelId?: number;
@@ -58,18 +59,33 @@ export const AssetMappingsSidebar = ({
     return <Loader />;
   }
   return (
-    <SidebarContainer expanded={expanded} onFocus={() => setExpanded(true)}>
+    <SidebarContainer
+      expanded={expanded}
+      onFocus={() => {
+        setExpanded(true);
+        trackUsage('Exploration.Preview.AssetMapping');
+      }}
+    >
       <Flex gap={5}>
         <Input
           style={{ flexGrow: 1 }}
           value={query}
           onChange={e => {
             setQuery(e.target.value);
+            trackUsage('Exploration.Action.Search', { name: query });
           }}
           placeholder={asset?.name || 'Search assets'}
           fullWidth
         />
-        {expanded && <Button icon="Close" onClick={() => setExpanded(false)} />}
+        {expanded && (
+          <Button
+            icon="Close"
+            onClick={() => {
+              setExpanded(false);
+              trackUsage('Exploration.Preview.AssetMapping');
+            }}
+          />
+        )}
       </Flex>
       {expanded && (
         <AssetMappingsList
@@ -79,6 +95,7 @@ export const AssetMappingsSidebar = ({
           onClick={e => {
             handleAssetClick(e);
             setExpanded(false);
+            trackUsage('Exploration.Action.Select', { selectedAssetId });
           }}
           itemCount={assetListData?.length ?? 0}
           isItemLoaded={isItemLoaded}

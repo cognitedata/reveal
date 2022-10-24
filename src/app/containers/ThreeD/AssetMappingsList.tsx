@@ -8,6 +8,7 @@ import AutoSizer from 'react-virtualized-auto-sizer';
 import { FixedSizeList as List } from 'react-window';
 import InfiniteLoader from 'react-window-infinite-loader';
 import styled from 'styled-components';
+import { trackUsage } from 'app/utils/Metrics';
 
 const EmptyAssetMappingsList = () => {
   return (
@@ -86,7 +87,12 @@ export const AssetMappingsList = ({
                   return (
                     <AssetListItem
                       key={filteredAssets[index].id}
-                      onClick={() => onClick(filteredAssets[index].id)}
+                      onClick={() => {
+                        onClick(filteredAssets[index].id);
+                        trackUsage('Exploration.Action.Select', {
+                          selectedAssetId,
+                        });
+                      }}
                       onKeyDown={() => onClick(filteredAssets[index].id)}
                       className={
                         selectedAssetId === filteredAssets[index].id
