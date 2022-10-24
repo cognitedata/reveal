@@ -10,6 +10,9 @@ export const QueryKeys = {
   AUTHENTICATED_USER: ['AUTHENTICATED_USER'] as const,
   PUBLISHED_ROW_COUNT: (datamodelId: string, dataModelTypeName: string) =>
     ['PUBLISHED_ROW_COUNT', datamodelId, dataModelTypeName] as const,
-  TRANSFORMATION: (type: string, externalId: string) =>
-    [QueryKeys.TRANSFORMATION, `${type}_${externalId}`] as const,
+  TRANSFORMATION: (
+    dataModelExternalId: string,
+    type: string,
+    version: string
+  ) => ['TRANSFORMATION', dataModelExternalId, type, version] as const,
 };

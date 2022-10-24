@@ -19,7 +19,6 @@ import { DataPreviewTable } from '../components/DataPreviewTable/DataPreviewTabl
 import { TransformationIframe } from '../components/TransformationPlaceholder/TransformationIframe';
 import { TypeList } from '../components/TypeList/TypeList';
 import { useDraftRows } from '../hooks/useDraftRows';
-import { useTransformation } from '../hooks/useTransformationAPI';
 import { useDataManagementPageUI } from '../hooks/useDataManagemenPageUI';
 
 export interface PreviewProps {
@@ -44,7 +43,7 @@ export const Preview = ({ dataModelExternalId }: PreviewProps) => {
     selectedVersionNumber
   );
   const selectedTypeNameFromQuery = getQueryParameter('type');
-  const { selectedType, isTransformationModalOpen } =
+  const { selectedType, isTransformationModalOpen, transformationId } =
     useSelector<DataManagementState>((state) => state.dataManagement);
   const { setSelectedType, clearState } = useDraftRows();
 
@@ -60,13 +59,6 @@ export const Preview = ({ dataModelExternalId }: PreviewProps) => {
   const doesSupportRead = useCapabilities('transformationsAcl', [
     'READ',
   ]).isAclSupported;
-
-  const typeKey = `${selectedType?.name}_${selectedDataModelVersion.version}`;
-  const transformation = useTransformation(
-    typeKey,
-    selectedDataModelVersion.externalId,
-    !!doesSupportRead
-  );
 
   if (selectedTypeNameFromQuery && !selectedType) {
     const typeFromQuery = dataModelTypeDefs.types.find(
@@ -103,18 +95,17 @@ export const Preview = ({ dataModelExternalId }: PreviewProps) => {
           visible={isTransformationModalOpen}
           title="Transformations"
           onOk={() => {
-            setIsTransformationModalOpen(false);
+            setIsTransformationModalOpen(false, null);
           }}
           onCancel={() => {
-            setIsTransformationModalOpen(false);
+            setIsTransformationModalOpen(false, null);
           }}
           okType="primary"
           width="90%"
           height="86%"
         >
           <div style={{ flex: 1 }}>
-            {transformation.isLoading && <p>Loading</p>}
-            <TransformationIframe transformationId={transformation.data?.id} />
+            <TransformationIframe transformationId={transformationId} />
           </div>
         </ModalDialog>
       )}
@@ -148,6 +139,7 @@ export const Preview = ({ dataModelExternalId }: PreviewProps) => {
                 dataModelType={selectedType}
                 dataModelTypeDefs={dataModelTypeDefs}
                 dataModelExternalId={dataModelExternalId}
+                // ensure we pass real version number and not "latest" here
                 version={selectedDataModelVersion.version}
               />
             </Flex>

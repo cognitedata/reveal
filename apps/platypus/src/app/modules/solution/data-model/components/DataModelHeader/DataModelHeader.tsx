@@ -63,7 +63,9 @@ export const DataModelHeader = ({
     setEditorMode,
     setGraphQlSchema,
     setIsDirty,
+    setSelectedDataModelVersion,
     setSelectedVersionNumber,
+    switchDataModelVersion,
   } = useDataModelState();
 
   const { getRemoteAndLocalSchemas, removeLocalDraft, setLocalDraft } =
@@ -111,6 +113,7 @@ export const DataModelHeader = ({
     setIsDirty(false);
     setCurrentTypeName(null);
     setSelectedVersionNumber(DEFAULT_VERSION_PATH);
+    setSelectedDataModelVersion(latestDataModelVersion);
 
     track('Discard', {
       dataModel: dataModelExternalId,
@@ -124,16 +127,8 @@ export const DataModelHeader = ({
   };
 
   const handleDataModelVersionSelect = (dataModelVersion: DataModelVersion) => {
-    setGraphQlSchema(dataModelVersion.schema);
+    switchDataModelVersion(dataModelVersion);
     parseGraphQLSchema(dataModelVersion.schema);
-    setIsDirty(false);
-    setCurrentTypeName(null);
-    setSelectedVersionNumber(dataModelVersion.version);
-    setEditorMode(
-      dataModelVersion.status === DataModelVersionStatus.DRAFT
-        ? SchemaEditorMode.Edit
-        : SchemaEditorMode.View
-    );
     track('SelectDM', {
       dataModel: dataModelExternalId,
       version: dataModelVersion.version,

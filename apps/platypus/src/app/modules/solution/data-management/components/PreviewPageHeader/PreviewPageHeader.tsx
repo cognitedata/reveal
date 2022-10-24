@@ -1,37 +1,54 @@
 import { PageToolbar } from '@platypus-app/components/PageToolbar/PageToolbar';
 import { Tooltip, Button, Flex, Label } from '@cognite/cogs.js';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
-import { BulkPopulationButton } from '../DataPreviewTable/BulkPopulationButton';
 import { PageHeaderDivider } from '../DataPreviewTable/elements';
+import { TransformationDropdown } from '@platypus-app/modules/solution/data-management/components/TransformationDropdown/TransformationDropdown';
+import useTransformations from '@platypus-app/modules/solution/data-management/hooks/useTransformations';
+import { BulkPopulationButton } from '@platypus-app/modules/solution/data-management/components/BulkPopulationButton/BulkPopulationButton';
 
 type Props = {
-  title: string;
+  dataModelExternalId: string;
+  draftRowsCount: number;
   isDeleteButtonDisabled: boolean;
   onCreateClick: () => void;
   onDeleteClick: () => void;
-  draftRowsCount: number;
+  onDraftRowsCountClick: () => void;
+  onPublishedRowsCountClick: () => void;
   publishedRowsCount: number;
   shouldShowDraftRows: boolean;
   shouldShowPublishedRows: boolean;
-  onPublishedRowsCountClick: () => void;
-  onDraftRowsCountClick: () => void;
+  title: string;
+  typeName: string;
+  version: string;
 };
 
 export function PreviewPageHeader({
-  title,
+  dataModelExternalId,
+  draftRowsCount,
   isDeleteButtonDisabled,
   onCreateClick,
   onDeleteClick,
-  draftRowsCount,
-  shouldShowDraftRows,
-  publishedRowsCount,
-  shouldShowPublishedRows,
-  onPublishedRowsCountClick,
   onDraftRowsCountClick,
+  onPublishedRowsCountClick,
+  publishedRowsCount,
+  shouldShowDraftRows,
+  shouldShowPublishedRows,
+  title,
+  typeName,
+  version,
 }: Props) {
   const { t } = useTranslation('DataPreview');
+  const { data: transformations } = useTransformations({
+    dataModelExternalId,
+    isEnabled: true,
+    typeName,
+    version,
+  });
 
-  const isTableEmpty = draftRowsCount === 0 && publishedRowsCount === 0;
+  const tableHasRows = draftRowsCount > 0 || publishedRowsCount > 0;
+  const shouldShowActions =
+    transformations && (transformations.length > 0 || tableHasRows);
+
   return (
     <PageToolbar
       title={title}
@@ -90,7 +107,7 @@ export function PreviewPageHeader({
         </>
       }
     >
-      {!isTableEmpty && (
+      {shouldShowActions && (
         <Flex justifyContent={'flex-end'} gap={8}>
           <Button
             type="ghost"
@@ -110,7 +127,15 @@ export function PreviewPageHeader({
             {t('create-new-row', 'Add instance')}
           </Button>
           <PageHeaderDivider />
-          <BulkPopulationButton />
+          {transformations && transformations.length > 0 ? (
+            <TransformationDropdown
+              dataModelExternalId={dataModelExternalId}
+              typeName={typeName}
+              version={version}
+            />
+          ) : (
+            <BulkPopulationButton />
+          )}
         </Flex>
       )}
     </PageToolbar>

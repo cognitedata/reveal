@@ -11,7 +11,8 @@ import { useDispatch } from 'react-redux';
 import globalReducer from './reducers/global/globalReducer';
 import dataModelSlice from './reducers/global/dataModelReducer';
 import dataManagementSlice from './reducers/global/dataManagementReducer';
-import { draftRowsLocalStorageMiddleware } from './reducers/global/dataManagementMiddleware';
+import { draftRowsLocalStorageMiddleware } from './middlewares/dataManagementMiddleware';
+import { graphQlSchemaLocalStorageMiddleware } from './middlewares/dataModelMiddleware';
 import { environment } from '../../environments/environment';
 
 const createReducer = (asyncReducers: any) => {
@@ -35,6 +36,7 @@ function createStore() {
     middleware: (getDefaultMiddleware) => [
       ...getDefaultMiddleware({ serializableCheck: false }),
       draftRowsLocalStorageMiddleware,
+      graphQlSchemaLocalStorageMiddleware,
     ],
   });
 }

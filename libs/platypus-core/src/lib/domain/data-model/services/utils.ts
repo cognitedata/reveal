@@ -45,3 +45,14 @@ export const getVersionedExternalId = (
 ): string => {
   return `${name}_${version}`;
 };
+
+/*
+Parse a model name created by getVersionedExternalId or getOneToManyModelName
+and return a prettified version. For example:
+
+Movie_1 => Movie
+Movie_actors_3 => Movie.actors
+*/
+export const parseModelName = (modelName: string) => {
+  return modelName.split('_').slice(0, -1).join('.');
+};

@@ -1,15 +1,35 @@
-import React from 'react';
 import { Body, Button, Title } from '@cognite/cogs.js';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 
 import { useDraftRows } from '../../hooks/useDraftRows';
 
 import * as S from './elements';
-import { BulkPopulationButton } from './BulkPopulationButton';
+import { BulkPopulationButton } from '../BulkPopulationButton/BulkPopulationButton';
+import useTransformations from '../../hooks/useTransformations';
 
-export const NoRowsOverlay: React.FC = () => {
+export type NoRowsOverlayProps = {
+  dataModelExternalId: string;
+  typeName: string;
+  version: string;
+};
+
+export const NoRowsOverlay = ({
+  dataModelExternalId,
+  typeName,
+  version,
+}: NoRowsOverlayProps) => {
   const { t } = useTranslation('NoRowsOverlay');
   const { createNewDraftRow } = useDraftRows();
+  const { data: transformations } = useTransformations({
+    dataModelExternalId,
+    isEnabled: true,
+    typeName,
+    version,
+  });
+
+  if (!transformations || transformations.length > 0) {
+    return null;
+  }
 
   return (
     <S.NoRowsOverlay data-cy="no-rows-overlay">

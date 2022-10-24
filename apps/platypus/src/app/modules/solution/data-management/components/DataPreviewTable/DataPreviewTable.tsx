@@ -464,13 +464,16 @@ export const DataPreviewTable = ({
         shouldShowPublishedRows={shouldShowPublishedRows}
         onDraftRowsCountClick={toggleShouldShowDraftRows}
         onPublishedRowsCountClick={toggleShouldShowPublishedRows}
+        typeName={dataModelType.name}
+        dataModelExternalId={dataModelExternalId}
+        version={version}
       />
 
       <CollapsablePanel
         sidePanelRight={
           <ListDataPreview
             title={listDataTitle}
-            onCloseClick={(_) => {
+            onCloseClick={() => {
               setListDataTitle('');
               setIsListDataVisible(false);
             }}
@@ -490,7 +493,13 @@ export const DataPreviewTable = ({
               cacheBlockSize: pageSizeLimit,
               // this needs to be 1 since we use cursor-based pagination
               maxConcurrentDatasourceRequests: 1,
-              noRowsOverlayComponent: NoRowsOverlay,
+              noRowsOverlayComponent: () => (
+                <NoRowsOverlay
+                  dataModelExternalId={dataModelExternalId}
+                  typeName={dataModelType.name}
+                  version={version}
+                />
+              ),
               onCellEditingStarted: handleCellEditingStarted,
             }}
             defaultColDef={{

@@ -5,6 +5,8 @@ import {
   BuiltInType,
   DataModelTypeDefs,
   DataModelTypeDefsType,
+  DataModelVersion,
+  DataModelVersionStatus,
   UpdateDataModelFieldDTO,
 } from '@platypus/platypus-core';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
@@ -18,6 +20,7 @@ export interface DataModelReducerState {
   isDirty: boolean;
   selectedVersionNumber: string;
   typeDefs: DataModelTypeDefs;
+  selectedDataModelVersion?: DataModelVersion;
   typeFieldErrors: { [key: string]: string };
   hasError: boolean;
   customTypesNames: string[];
@@ -69,6 +72,7 @@ const clearState = (state: DataModelReducerState): DataModelReducerState => {
   state.customTypesNames = [];
   state.builtInTypes = typeDefsBuilder.getBuiltinTypes();
   state.editorMode = SchemaEditorMode.View;
+  delete state.selectedDataModelVersion;
   return state;
 };
 
@@ -90,6 +94,12 @@ const dataModelSlice = createSlice({
     },
     setSelectedVersionNumber: (state, action: PayloadAction<string>) => {
       state.selectedVersionNumber = action.payload;
+    },
+    setSelectedDataModelVersion: (
+      state,
+      action: PayloadAction<DataModelVersion>
+    ) => {
+      state.selectedDataModelVersion = action.payload;
     },
     setTypeFieldErrors: (
       state,
@@ -217,7 +227,20 @@ const dataModelSlice = createSlice({
       state.typeDefs = typeDefsBuilder.removeType(state.typeDefs, typeName);
       updateDataModelState(state);
     },
-
+    switchDataModelVersion: (
+      state,
+      action: PayloadAction<DataModelVersion>
+    ) => {
+      state.graphQlSchema = action.payload.schema;
+      state.isDirty = false;
+      state.currentTypeName = null;
+      state.selectedVersionNumber = action.payload.version;
+      state.selectedDataModelVersion = action.payload;
+      state.editorMode =
+        action.payload.status === DataModelVersionStatus.DRAFT
+          ? SchemaEditorMode.Edit
+          : SchemaEditorMode.View;
+    },
     clearState,
   },
 });

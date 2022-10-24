@@ -1,7 +1,10 @@
 import { rootInjector, TOKENS } from '@platypus-app/di';
 import { StorageProviderType } from '@platypus/platypus-core';
 import { Action, Dispatch, MiddlewareAPI } from '@reduxjs/toolkit';
-import { actions, compatiblizeDraftRowsData } from './dataManagementReducer';
+import {
+  actions,
+  compatiblizeDraftRowsData,
+} from '../reducers/global/dataManagementReducer';
 
 const getLocalStorageProvider = () =>
   rootInjector

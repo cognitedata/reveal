@@ -71,7 +71,7 @@ export const DataModelPage = ({ dataModelExternalId }: DataModelPageProps) => {
   } = useSelector<DataModelState>((state) => state.dataModel);
   const { setEditorMode, setGraphQlSchema, setIsDirty, parseGraphQLSchema } =
     useDataModelState();
-  const { setLocalDraft, removeLocalDraft, getLocalDraft } =
+  const { removeLocalDraft, getLocalDraft } =
     useLocalDraft(dataModelExternalId);
 
   const selectedDataModelVersion = useSelectedDataModelVersion(
@@ -124,6 +124,7 @@ export const DataModelPage = ({ dataModelExternalId }: DataModelPageProps) => {
       setEditorMode(SchemaEditorMode.Edit);
       setIsDirty(true);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleSaveOrPublish = async () => {
@@ -244,34 +245,11 @@ export const DataModelPage = ({ dataModelExternalId }: DataModelPageProps) => {
     setSaving(false);
   };
 
-  const onSchemaChanged = useCallback(
-    (schemaString: string) => {
-      // update local storage only when schema is changed
-      if (selectedDataModelVersion.schema !== schemaString) {
-        setIsDirty(selectedDataModelVersion.schema !== schemaString);
-
-        setLocalDraft({
-          ...selectedDataModelVersion,
-          schema: schemaString,
-          status: DataModelVersionStatus.DRAFT,
-        });
-      }
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [selectedDataModelVersion]
-  );
-
   const handleDiscardClick = () => {
     dataModelTypeDefsBuilder.clear();
     setGraphQlSchema(latestDataModelVersion.schema);
   };
 
-  // TODO need this?
-  useEffect(() => {
-    if (!saving && !updating && editorMode === SchemaEditorMode.Edit) {
-      onSchemaChanged(graphQlSchema);
-    }
-  }, [graphQlSchema, editorMode, onSchemaChanged, saving, updating]);
   return (
     <>
       <PageContentLayout>

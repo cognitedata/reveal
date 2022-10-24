@@ -30,28 +30,33 @@ describe('DataManagementHandlerTest', () => {
     ),
   } as any;
 
-  const mockTransformation = {
-    id: 123,
-    name: 't_Test_Type_1',
-    externalId: 'Test',
-    destination: {
-      type: 'data_model_instances',
-      modelExternalId: 'Type_1',
-      spaceExternalId: 'Test',
-      instanceSpaceExternalId: 'Test',
+  const mockTransformation = [
+    {
+      id: 123,
+      name: 't_Test_Type_1',
+      externalId: 'Test',
+      destination: {
+        type: 'data_model_instances',
+        modelExternalId: 'Type_1',
+        spaceExternalId: 'Test',
+        instanceSpaceExternalId: 'Test',
+      },
     },
-  };
+  ];
+
   const transformationApiMock = {
     createTransformation: jest
       .fn()
-      .mockImplementation(() => Promise.resolve(mockTransformation)),
+      .mockImplementation(() => Promise.resolve(mockTransformation[0])),
     getTransformationsForType: jest
       .fn()
       .mockImplementation(() => Promise.resolve(mockTransformation)),
   } as any;
+
   const dmsApiMock = {
     ingestNodes: jest.fn().mockImplementation(() => Promise.resolve()),
   } as any;
+
   const createInstance = () => {
     return new DataManagementHandler(
       queryBuilderMock,
@@ -87,6 +92,7 @@ describe('DataManagementHandlerTest', () => {
     expect(response.isSuccess).toBe(true);
     expect(response.getValue().items).toEqual(fetchDataResponseMock.items);
   });
+
   it('should create transformation', async () => {
     const service = createInstance();
     const response = await service.createTransformation({
@@ -101,11 +107,16 @@ describe('DataManagementHandlerTest', () => {
     });
     expect(response.id).toEqual(123);
   });
+
   it('should get transformation from list', async () => {
     const service = createInstance();
-    const response = await service.getTransformations('Type', 'Test');
+    const response = await service.getTransformations({
+      dataModelExternalId: 'Test',
+      typeName: 'Type',
+      version: '1',
+    });
     expect(transformationApiMock.getTransformationsForType).toBeCalled();
     expect(response).toEqual(mockTransformation);
-    expect(response?.externalId).toEqual('Test');
+    expect(response.length).toEqual(1);
   });
 });

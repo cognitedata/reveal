@@ -1,5 +1,5 @@
 import { actions as solutionActions } from '@platypus-app/redux/reducers/global/dataModelReducer';
-import { BuiltInType } from '@platypus/platypus-core';
+import { BuiltInType, DataModelVersion } from '@platypus/platypus-core';
 import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import { SchemaEditorMode } from '../data-model/types';
@@ -52,6 +52,13 @@ export const useDataModelState = () => {
     [dispatch]
   );
 
+  const setSelectedDataModelVersion = useCallback(
+    (version: DataModelVersion) => {
+      dispatch(solutionActions.setSelectedDataModelVersion(version));
+    },
+    [dispatch]
+  );
+
   const setBuiltInTypes = useCallback(
     (builtInTypes: BuiltInType[]) => {
       dispatch(solutionActions.setBuiltInTypes(builtInTypes));
@@ -69,6 +76,12 @@ export const useDataModelState = () => {
     [dispatch]
   );
 
+  const switchDataModelVersion = useCallback(
+    (dataModelVersion: DataModelVersion) =>
+      dispatch(solutionActions.switchDataModelVersion(dataModelVersion)),
+    [dispatch]
+  );
+
   return {
     setCurrentTypeName,
     setDataModelFieldErrors,
@@ -76,8 +89,10 @@ export const useDataModelState = () => {
     setGraphQlSchema,
     setIsDirty,
     setSelectedVersionNumber,
+    setSelectedDataModelVersion,
     setBuiltInTypes,
     clearState,
     parseGraphQLSchema,
+    switchDataModelVersion,
   };
 };

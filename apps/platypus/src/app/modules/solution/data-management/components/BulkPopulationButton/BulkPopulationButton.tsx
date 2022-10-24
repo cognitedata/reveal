@@ -9,9 +9,10 @@ import { DataManagementState } from '@platypus-app/redux/reducers/global/dataMan
 import { DataModelState } from '@platypus-app/redux/reducers/global/dataModelReducer';
 import { useParams } from 'react-router-dom';
 
-import { useDataManagementPageUI } from '../../hooks/useDataManagemenPageUI';
+import { useDataManagementPageUI } from '@platypus-app/modules/solution/data-management/hooks/useDataManagemenPageUI';
 
-import { useTransformationMutate } from '../../hooks/useTransformationAPI';
+import useTransformationCreateMutation from '@platypus-app/modules/solution/data-management/hooks/useTransformationCreateMutation';
+import { suggestTransformationProperties } from '@platypus-core/domain/transformation';
 
 export const BulkPopulationButton = () => {
   const { t } = useTranslation('BulkPopulationButton');
@@ -24,6 +25,13 @@ export const BulkPopulationButton = () => {
   const { dataModelExternalId } = useParams<{
     dataModelExternalId: string;
   }>();
+
+  const { selectedType } = useSelector<DataManagementState>(
+    (state) => state.dataManagement
+  );
+
+  // we need data model version to get version number because
+  // selectedVersionNumber can be "latest"
   const { data: dataModelVersions } = useDataModelVersions(dataModelExternalId);
   const selectedDataModelVersion = useSelectedDataModelVersion(
     selectedVersionNumber,
@@ -31,15 +39,21 @@ export const BulkPopulationButton = () => {
     dataModelExternalId
   );
 
-  const { selectedType } = useSelector<DataManagementState>(
-    (state) => state.dataManagement
-  );
-
-  const typeKey = `${selectedType?.name}_${selectedDataModelVersion.version}`;
-
-  const { mutate } = useTransformationMutate(typeKey, dataModelExternalId);
+  const createTransformationMutation = useTransformationCreateMutation();
 
   const missingPermissions = getMissingPermissions();
+
+  if (!selectedType) {
+    return null;
+  }
+
+  const { externalId: transformationExternalId, name: transformationName } =
+    suggestTransformationProperties({
+      dataModelExternalId,
+      numExistingTransformations: 0,
+      typeName: selectedType.name,
+      version: selectedDataModelVersion.version,
+    });
 
   return (
     <Tooltip
@@ -53,8 +67,20 @@ export const BulkPopulationButton = () => {
         icon="ExternalLink"
         iconPlacement="right"
         onClick={() => {
-          mutate();
-          setIsTransformationModalOpen(true);
+          createTransformationMutation.mutate(
+            {
+              dataModelExternalId,
+              transformationExternalId,
+              transformationName,
+              typeName: selectedType.name,
+              version: selectedDataModelVersion.version,
+            },
+            {
+              onSuccess: (transformation) => {
+                setIsTransformationModalOpen(true, transformation.id);
+              },
+            }
+          );
         }}
       >
         {t('load-data-button', 'Load data in bulk')}

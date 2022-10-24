@@ -32,9 +32,13 @@ export const useDataManagementPageUI = () => {
   const toggleShouldShowPublishedRows = () =>
     dispatch(dataManagementActions.toggleShouldShowPublishedRows());
 
-  const setIsTransformationModalOpen = (value: boolean) => {
+  const setIsTransformationModalOpen = (
+    value: boolean,
+    transformationId: number | null
+  ) => {
     dispatch(
       dataManagementActions.setIsTransformationModalOpen({
+        transformationId,
         isTransformationModalOpen: value,
       })
     );
