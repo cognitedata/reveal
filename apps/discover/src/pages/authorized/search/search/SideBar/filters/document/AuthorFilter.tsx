@@ -3,8 +3,16 @@ import { AuthorItem } from 'domain/documents/internal/types';
 import { useDocumentAuthorsQuery } from 'domain/documents/service/queries/useDocumentAuthorsQuery';
 import { useSetDocumentFilters } from 'domain/savedSearches/internal/hooks/useSetDocumentFilters';
 
-import { memo, useState } from 'react';
-import { OptionProps, OptionTypeBase, components } from 'react-select';
+import React, { useCallback, useState } from 'react';
+import {
+  OptionProps,
+  OptionTypeBase,
+  components,
+  MenuListComponentProps,
+  GroupTypeBase,
+} from 'react-select';
+
+import filter from 'lodash/filter';
 
 import { Select, Menu, Icon } from '@cognite/cogs.js';
 
@@ -16,32 +24,17 @@ import { FilterPayload } from 'pages/authorized/search/search/SideBar/types';
 
 import { FilterCollapse } from '../../components/FilterCollapse';
 
+const MAX_OPTIONS = 10;
+
+type MenuListProps = MenuListComponentProps<
+  AuthorItem,
+  boolean,
+  GroupTypeBase<AuthorItem>
+>;
+
 interface AuthorOptionType extends OptionProps<OptionTypeBase, boolean> {
   data: AuthorItem;
 }
-
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-const MenuList = ({ children, ...props }) => {
-  return (
-    <>
-      {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
-      {/* @ts-ignore */}
-      <components.MenuList {...props}>
-        {
-          Array.isArray(children)
-            ? children.slice(0, props.selectProps?.maxOptions) /* Options */
-            : children /* NoOptionsLabel */
-        }
-        {children?.length > props.selectProps?.maxOptions && (
-          <Menu.Footer>
-            and {children.length - (props.selectProps?.maxOptions || 0)} more...
-          </Menu.Footer>
-        )}
-      </components.MenuList>
-    </>
-  );
-};
 
 const Option = ({ data, isSelected, ...props }: AuthorOptionType) => {
   return (
@@ -60,7 +53,7 @@ const Option = ({ data, isSelected, ...props }: AuthorOptionType) => {
   );
 };
 
-export const AuthorFilter = memo(({ title, ...rest }: FilterPayload) => {
+export const AuthorFilter = React.memo(({ title, ...rest }: FilterPayload) => {
   const docQueryFacetType = 'authors';
   const appliedFilters = useFilterAppliedFilters();
   const currentFilterStateFacets =
@@ -68,9 +61,14 @@ export const AuthorFilter = memo(({ title, ...rest }: FilterPayload) => {
 
   const { data, isLoading } = useDocumentAuthorsQuery();
 
+  const [filteredAuthors, setFilteredAuthors] = useState<Array<AuthorItem>>([]);
   const [value, setValue] = useState<Array<AuthorItem>>([]);
 
   const allAuthors = getAuthorsFilter(data || EMPTY_ARRAY);
+
+  useDeepEffect(() => {
+    setFilteredAuthors(allAuthors);
+  }, [allAuthors]);
 
   useDeepEffect(() => {
     const selectedAuthors = allAuthors.filter((item: AuthorItem) => {
@@ -81,6 +79,13 @@ export const AuthorFilter = memo(({ title, ...rest }: FilterPayload) => {
 
   const setDocumentFilters = useSetDocumentFilters();
 
+  const onInputChange = (inputValue: string) => {
+    const results = filter(allAuthors, ({ value }) => {
+      return value.indexOf(inputValue) > -1;
+    });
+    setFilteredAuthors(results);
+  };
+
   const onChange = (authorData: AuthorItem[]) => {
     setValue(authorData);
     setDocumentFilters({
@@ -89,19 +94,36 @@ export const AuthorFilter = memo(({ title, ...rest }: FilterPayload) => {
     });
   };
 
+  const MenuList = useCallback(
+    ({ children, ...props }: MenuListProps) => {
+      return (
+        <components.MenuList {...props}>
+          {children}
+          {filteredAuthors.length > MAX_OPTIONS && (
+            <Menu.Footer>
+              and {filteredAuthors.length - MAX_OPTIONS} more...
+            </Menu.Footer>
+          )}
+        </components.MenuList>
+      );
+    },
+    [filteredAuthors.length]
+  );
+
   return (
     <FilterCollapse.Panel title={title} showApplyButton={false} {...rest}>
       <div data-testid="filter-item-wrapper" aria-label={`${title} list`}>
         <MultiSelectContainer>
           <Select
-            options={allAuthors}
+            options={filteredAuthors.slice(0, MAX_OPTIONS)}
             isMulti
             showSelectedItemCount
             components={{
               MenuList,
               Option,
             }}
-            maxOptions={10}
+            maxOptions={MAX_OPTIONS}
+            onInputChange={onInputChange}
             onChange={onChange}
             value={value}
             isLoading={isLoading}
