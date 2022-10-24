@@ -3,6 +3,21 @@
  */
 import styled from 'styled-components/macro';
 
+export const Toolbar = styled.div`
+  border-left: 1px solid var(--cogs-greyscale-grey4);
+  width: 3.4375rem;
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 0 10px;
+
+  > button {
+    margin-top: 1rem;
+  }
+`;
+
 export const Sidebar = styled.div<{ visible?: boolean }>`
   border-left: 1px solid var(--cogs-greyscale-grey4);
   visibility: ${(props) => (props.visible ? 'visible' : 'hidden')};

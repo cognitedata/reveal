@@ -19,7 +19,6 @@ type Props = {
   selectedSourceId?: string;
   onRowClick: (id?: string) => void;
   onInfoClick: (id?: string) => void;
-  onThresholdClick: (id?: string) => void;
   onErrorIconClick?: (id: string) => void;
   draggable?: boolean;
   timeseriesData?: TimeseriesEntry[];
@@ -80,7 +79,6 @@ const SourceRows = memo(
     calculationData = [],
     onRowClick = () => {},
     onInfoClick = () => {},
-    onThresholdClick = () => {},
     onErrorIconClick = () => {},
     onOverrideUnitClick = () => () => {},
     onConversionUnitClick = () => () => {},
@@ -119,7 +117,6 @@ const SourceRows = memo(
                   isWorkspaceMode={isWorkspaceMode}
                   onRowClick={onRowClick}
                   onInfoClick={onInfoClick}
-                  onThresholdClick={onThresholdClick}
                   isSelected={selectedSourceId === src.id}
                   disabled={isEditorMode}
                   isFileViewerMode={isFileViewerMode}
@@ -147,7 +144,6 @@ const SourceRows = memo(
                   isSelected={selectedSourceId === src.id}
                   onRowClick={onRowClick}
                   onInfoClick={onInfoClick}
-                  onThresholdClick={onThresholdClick}
                   onErrorIconClick={onErrorIconClick}
                   mode={mode}
                   openNodeEditor={openNodeEditor}
