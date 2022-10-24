@@ -21,6 +21,7 @@ import { StyledSplitter } from 'app/containers/elements';
 import { Flex, ToolBar } from '@cognite/cogs.js';
 import { Slicer } from 'app/containers/ThreeD/slicer/Slicer';
 import PointSizeSlider from './point-size-slider/PointSizeSlider';
+import HelpButton from 'app/containers/ThreeD/help-button';
 
 export const ThreeDPreview = ({
   threeDId,
@@ -100,6 +101,7 @@ export const ThreeDPreview = ({
                           <PointSizeSlider model={pointCloudModel} />
                         )}
                         <PointToPointMeasurementButton viewer={viewer} />
+                        <HelpButton />
                       </StyledToolBar>
                     )}
                   </>
