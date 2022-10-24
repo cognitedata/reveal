@@ -53,6 +53,7 @@ export const DataModel = () => {
     setSelectedVersionNumber,
     clearState,
     setGraphQlSchema,
+    setSelectedDataModelVersion,
   } = useDataModelState();
 
   const [isReady, setIsReady] = useState(false);
@@ -101,6 +102,7 @@ export const DataModel = () => {
         setGraphQlSchema(selectedDataModelVersion.schema);
         // set selected version based on the param in the route we landed on
         setSelectedVersionNumber(version);
+        setSelectedDataModelVersion(selectedDataModelVersion);
         setCurrentTypeName(null);
         setIsReady(true);
       }
