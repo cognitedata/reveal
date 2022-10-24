@@ -187,6 +187,7 @@ export const ComponentPanel = () => {
                 key={`subgroup_${currentGroup?.type}`}
                 components={subComponents}
                 loading={loading || !currentGroup}
+                expandFirstElem={false}
               />
             </>
           )}

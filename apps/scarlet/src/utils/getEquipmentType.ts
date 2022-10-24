@@ -1,21 +1,21 @@
 import { EquipmentType } from 'types';
 
 export const getEquipmentType = (pcmsType: string) => {
-  switch (pcmsType) {
-    case 'Exchanger - Air Cooled':
+  switch (pcmsType.toLocaleLowerCase()) {
+    case 'exchanger - air cooled':
       return EquipmentType.AIR_COOLER;
-    case 'Boiler - Fired':
-    case 'Boiler - Unfired':
-    case 'Boiler - Process Steam Generator':
-    case 'EXCHANGER - Double Pipe':
-    case 'EXCHANGER - Plate/Frame':
-    case 'EXCHANGER - Shell/Tube':
+    case 'boiler - fired':
+    case 'boiler - unfired':
+    case 'boiler - process steam generator':
+    case 'exchanger - double pipe':
+    case 'exchanger - plate/frame':
+    case 'exchanger - shell/tube':
       return EquipmentType.EXCHANGER;
-    case 'Filter/Strainer':
-    case 'Flare/Stack':
-    case 'Tower':
-    case 'Drum':
-    case 'Tank':
+    case 'filter/strainer':
+    case 'flare/stack':
+    case 'tower':
+    case 'drum':
+    case 'tank':
       return EquipmentType.VESSEL;
     default:
       return undefined;

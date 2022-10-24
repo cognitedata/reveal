@@ -16,10 +16,16 @@ export const useEquipmentComponentsByType = (type?: EquipmentComponentType) => {
         allComponents?.filter((component) => component.type === type) || [];
 
       let subComponents: EquipmentComponent[] = [];
-      if (type === EquipmentComponentType.SHELL) {
+      if (
+        [EquipmentComponentType.SHELL, EquipmentComponentType.CHANNEL].includes(
+          type
+        )
+      ) {
         subComponents =
           allComponents?.filter(
-            (component) => component.type === EquipmentComponentType.COURSE
+            (component) =>
+              component.type === EquipmentComponentType.COURSE &&
+              component.id.startsWith(type)
           ) || [];
       }
 

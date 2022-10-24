@@ -19,4 +19,5 @@ export enum EquipmentComponentType {
   SHELL = 'shell',
   BUNDLE = 'bundle',
   COURSE = 'course',
+  CHANNEL = 'channel',
 }

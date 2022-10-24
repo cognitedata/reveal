@@ -11,9 +11,14 @@ import * as Styled from './style';
 type ComponentListProps = {
   components: EquipmentComponent[];
   loading: boolean;
+  expandFirstElem?: boolean;
 };
 
-export const ComponentList = ({ components, loading }: ComponentListProps) => {
+export const ComponentList = ({
+  components,
+  loading,
+  expandFirstElem = true,
+}: ComponentListProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const { visibleDataElement } = useDataPanelState();
   const [activeComponentIds, setActiveComponentIds] = useState<string[]>();
@@ -51,7 +56,11 @@ export const ComponentList = ({ components, loading }: ComponentListProps) => {
         {!isEmptyList && (
           <Styled.Collapse
             expandIcon={expandIcon}
-            activeKey={activeComponentIds || components[0].id}
+            activeKey={
+              expandFirstElem
+                ? activeComponentIds || components[0].id
+                : activeComponentIds
+            }
             onChange={setActiveComponentIds as any}
           >
             {components.map((component) => (

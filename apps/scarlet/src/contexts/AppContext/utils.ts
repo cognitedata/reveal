@@ -130,8 +130,15 @@ export const removeDetection = (
   const dataElement = getDataElement(equipment, dataElementOrigin);
 
   if (dataElement.key === 'no_of_courses') {
+    const componentType =
+      equipment.components.find((comp) => comp.id === dataElement.componentId)
+        ?.type ?? '';
     equipment.components = equipment.components.filter(
-      (eq) => eq.type !== EquipmentComponentType.COURSE
+      (comp) =>
+        !(
+          comp.type === EquipmentComponentType.COURSE &&
+          comp.id.startsWith(componentType)
+        )
     );
   }
 

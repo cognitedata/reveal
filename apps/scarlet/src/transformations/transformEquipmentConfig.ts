@@ -68,6 +68,8 @@ const getType = (configType: string): EquipmentComponentType | undefined => {
       return EquipmentComponentType.NOZZLE;
     case 'shell':
       return EquipmentComponentType.SHELL;
+    case 'channel':
+      return EquipmentComponentType.CHANNEL;
     case 'course':
       return EquipmentComponentType.COURSE;
   }

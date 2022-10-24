@@ -7,11 +7,13 @@ import {
 import { getCourseComponents } from 'transformations';
 
 export const getTruncatedCourseComponents = ({
+  componentType,
   equipmentType,
   prevComponents,
   newComponents,
   config,
 }: {
+  componentType: EquipmentComponentType;
   equipmentType: EquipmentType;
   prevComponents: EquipmentComponent[];
   newComponents: EquipmentComponent[];
@@ -21,7 +23,7 @@ export const getTruncatedCourseComponents = ({
   const prevNumbOfCourses =
     parseInt(
       prevComponents
-        .find((comp) => comp.type === EquipmentComponentType.SHELL)
+        .find((comp) => comp.type === componentType)
         ?.componentElements.find((elem) => elem.key === 'no_of_courses')
         ?.detections[0]?.value ?? '',
       10
@@ -30,7 +32,7 @@ export const getTruncatedCourseComponents = ({
   const newNumbOfCourses =
     parseInt(
       newComponents
-        .find((comp) => comp.type === EquipmentComponentType.SHELL)
+        .find((comp) => comp.type === componentType)
         ?.componentElements.find((elem) => elem.key === 'no_of_courses')
         ?.detections[0]?.value ?? '',
       10
@@ -38,18 +40,29 @@ export const getTruncatedCourseComponents = ({
 
   if (newNumbOfCourses === 0 && newComponents.length > 1) {
     resComponents = resComponents.filter(
-      (comp) => comp.type !== EquipmentComponentType.COURSE
+      (comp) =>
+        !(
+          comp.type === EquipmentComponentType.COURSE &&
+          comp.id.startsWith(componentType)
+        )
     );
   } else if (newNumbOfCourses && newNumbOfCourses < prevNumbOfCourses) {
     const allComps = newComponents.filter(
-      (comp) => comp.type !== EquipmentComponentType.COURSE
+      (comp) =>
+        !(
+          comp.type === EquipmentComponentType.COURSE &&
+          comp.id.startsWith(componentType)
+        )
     );
     const courseComps = newComponents.filter(
-      (comp) => comp.type === EquipmentComponentType.COURSE
+      (comp) =>
+        comp.type === EquipmentComponentType.COURSE &&
+        comp.id.startsWith(componentType)
     );
     resComponents = [...allComps, ...courseComps.slice(0, newNumbOfCourses)];
   } else if (newNumbOfCourses > prevNumbOfCourses) {
     const courseComponents = getCourseComponents({
+      idPrexis: componentType,
       numbOfCourses: newNumbOfCourses - prevNumbOfCourses,
       equipmentType,
       config,

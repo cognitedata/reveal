@@ -308,24 +308,6 @@ const getEquipmentComponents = (
         return component;
       })
       .filter((item) => item) as EquipmentComponent[];
-
-    if (
-      components.find((comp) => comp.type === EquipmentComponentType.SHELL) &&
-      config.equipmentTypes[equipmentType].componentTypes.course
-    ) {
-      const numbOfCourses =
-        scannerDetections.find((detection) => detection.key === 'no_of_courses')
-          ?.value ?? '';
-
-      if (numbOfCourses) {
-        const coursesComponents = getCourseComponents({
-          numbOfCourses: parseInt(numbOfCourses, 10),
-          equipmentType,
-          config,
-        });
-        components = [...components, ...coursesComponents];
-      }
-    }
   }
 
   // add scanner detections
@@ -537,11 +519,13 @@ const transformDetectionValue = (
 };
 
 export const getCourseComponents = ({
+  idPrexis,
   numbOfCourses,
   equipmentType,
   config,
   startIndex,
 }: {
+  idPrexis: string;
   numbOfCourses: number;
   equipmentType: EquipmentType;
   config: EquipmentConfig;
@@ -550,7 +534,7 @@ export const getCourseComponents = ({
   const courseComponents = [];
   for (let i = 1; i <= numbOfCourses; i++) {
     const courseComp: EquipmentComponent = {
-      id: uuid(),
+      id: `${idPrexis}-${uuid()}`,
       name: `Course-${startIndex ? startIndex + i : i}`,
       pcmsExternalId: '',
       type: EquipmentComponentType.COURSE,

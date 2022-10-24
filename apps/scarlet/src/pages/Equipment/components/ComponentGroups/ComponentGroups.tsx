@@ -10,6 +10,7 @@ const VISIBLE_COMPONENT_TYPES = [
   EquipmentComponentType.HEAD,
   EquipmentComponentType.NOZZLE,
   EquipmentComponentType.SHELL,
+  EquipmentComponentType.CHANNEL,
 ];
 
 type ComponentGroupsProps = {

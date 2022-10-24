@@ -17,6 +17,8 @@ const getComponentTypeOfPcmsType = (type: string) => {
     case 'CONTUBE':
     case 'RADTUBE':
       return EquipmentComponentType.BUNDLE;
+    case 'HEXTS':
+      return EquipmentComponentType.CHANNEL;
     default:
       return undefined;
   }

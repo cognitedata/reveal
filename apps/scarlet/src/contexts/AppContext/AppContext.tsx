@@ -1,6 +1,7 @@
 import React, { Reducer, useReducer } from 'react';
 import { useSaveEquipment } from 'hooks';
 import { getTruncatedCourseComponents } from 'utils';
+import { EquipmentComponentType } from 'types';
 
 import { AppAction, AppActionType, AppState } from '.';
 import {
@@ -101,12 +102,22 @@ function reducer(state: AppState, action: AppAction) {
         detection
       );
 
-      equipmentToSave.components = getTruncatedCourseComponents({
-        equipmentType: equipmentToSave.type,
-        prevComponents: state.equipment.data?.components ?? [],
-        newComponents: equipmentToSave.components,
-        config: state.equipmentConfig.data!,
-      });
+      const componentType = state.equipment.data!.components.find(
+        (c) => c.id === dataElement.componentId
+      )!.type;
+
+      if (
+        [EquipmentComponentType.CHANNEL, EquipmentComponentType.SHELL].includes(
+          componentType
+        )
+      )
+        equipmentToSave.components = getTruncatedCourseComponents({
+          componentType,
+          equipmentType: equipmentToSave.type,
+          prevComponents: state.equipment.data?.components ?? [],
+          newComponents: equipmentToSave.components,
+          config: state.equipmentConfig.data!,
+        });
 
       return {
         ...state,
