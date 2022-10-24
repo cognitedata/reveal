@@ -73,11 +73,11 @@ pods {
       gitTitle = sh(returnStdout: true, script: "git show -s --format='%s' HEAD").trim()
       gitAuthor = sh(returnStdout: true, script: "git show -s --format='%ae' HEAD").trim()
     }
-  
+
     githubNotifyWrapper(context_install) {
-        stage('Install dependencies') {
-            yarn.setup()
-        }
+      stage('Install dependencies') {
+        yarn.setup()
+      }
     }
 
     parallel(
@@ -99,7 +99,7 @@ pods {
         if(!isPullRequest) {
           print "No PR previews for release builds"
           return;
-        }  
+        }
         stageWithNotify('Build and deploy PR') {
           def package_name = "@cognite/cdf-context-ui-pnid";
           def prefix = jenkinsHelpersUtil.determineRepoName();
@@ -127,7 +127,7 @@ pods {
             buildCommand: 'yarn build',
             shouldPublishSourceMap: false
           )
-        }   
+        }
       },
     )
 
