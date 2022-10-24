@@ -1,18 +1,14 @@
-import { Link } from 'react-router-dom';
-import { ItemLabel } from 'utils/styledComponents';
-import Table from 'antd/lib/table';
-import { Asset } from '@cognite/sdk';
 import sdk from '@cognite/cdf-sdk-singleton';
-import { createLink } from '@cognite/cdf-utilities';
-import handleError from 'utils/handleError';
+import { Table, TableNoResults } from '@cognite/cdf-utilities';
 import {
   getContainer,
+  ContentView,
+  handleError,
   getResourceSearchParams,
   getResourceSearchQueryKey,
-} from 'utils/shared';
-import { DEFAULT_ANTD_TABLE_PAGINATION } from 'utils/tableUtils';
-import ColumnWrapper from '../ColumnWrapper';
+} from 'utils';
 import { useTranslation } from 'common/i18n';
+import { useResourceTableColumns } from 'components/Data/ResourceTableColumns';
 import { useQuery } from 'react-query';
 
 interface assetsTableProps {
@@ -22,43 +18,8 @@ interface assetsTableProps {
 
 const AssetsTable = ({ dataSetId, query }: assetsTableProps) => {
   const { t } = useTranslation();
-
-  const assetColumns = [
-    {
-      title: t('name'),
-      dataIndex: 'name',
-      key: 'name',
-      render: (value: any) => <ColumnWrapper title={value} />,
-    },
-    {
-      title: t('id'),
-      dataIndex: 'id',
-      key: 'id',
-      render: (value: any) => <ColumnWrapper title={value} />,
-    },
-    {
-      title: t('parent-external-id'),
-      dataIndex: 'parentExternalId',
-      key: 'parentExternalId',
-    },
-    {
-      title: t('source_one'),
-      dataIndex: 'source',
-      key: 'source',
-    },
-    {
-      title: t('action_other'),
-      render: (record: Asset) => (
-        <span>
-          <Link to={createLink(`/explore/asset/${record.id}`)}>
-            {t('view')}
-          </Link>
-        </span>
-      ),
-    },
-  ];
-
-  const { data: assets } = useQuery(
+  const { getResourceTableColumns } = useResourceTableColumns();
+  const { data: assets, isLoading: isAssetsLoading } = useQuery(
     getResourceSearchQueryKey('assets', dataSetId, query),
     () => sdk.assets.search(getResourceSearchParams(dataSetId, query)),
     {
@@ -69,17 +30,27 @@ const AssetsTable = ({ dataSetId, query }: assetsTableProps) => {
   );
 
   return (
-    <div>
-      <ItemLabel>{t('assets')}</ItemLabel>
+    <ContentView id="assetsTableId">
       <Table
-        rowKey="id"
-        columns={assetColumns}
-        dataSource={assets}
-        pagination={DEFAULT_ANTD_TABLE_PAGINATION}
-        expandIcon={() => <span />}
+        rowKey="key"
+        loading={isAssetsLoading}
+        columns={[...getResourceTableColumns('assets')]}
+        dataSource={assets || []}
+        onChange={(_pagination, _filters) => {
+          // TODO: Implement sorting
+        }}
         getPopupContainer={getContainer}
+        emptyContent={
+          <TableNoResults
+            title={t('no-records')}
+            content={t('no-search-records', {
+              $: '',
+            })}
+          />
+        }
+        appendTooltipTo={getContainer()}
       />
-    </div>
+    </ContentView>
   );
 };
 

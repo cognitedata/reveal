@@ -1,18 +1,14 @@
-import { Link } from 'react-router-dom';
-import { ItemLabel } from 'utils/styledComponents';
-import Table from 'antd/lib/table';
-import { Sequence } from '@cognite/sdk';
 import sdk from '@cognite/cdf-sdk-singleton';
-import { createLink } from '@cognite/cdf-utilities';
-import { handleError } from 'utils/handleError';
+import { Table, TableNoResults } from '@cognite/cdf-utilities';
 import {
   getContainer,
+  ContentView,
+  handleError,
   getResourceSearchParams,
   getResourceSearchQueryKey,
-} from 'utils/shared';
-import { DEFAULT_ANTD_TABLE_PAGINATION } from 'utils/tableUtils';
-import ColumnWrapper from '../ColumnWrapper';
+} from 'utils';
 import { useTranslation } from 'common/i18n';
+import { useResourceTableColumns } from 'components/Data/ResourceTableColumns';
 import { useQuery } from 'react-query';
 
 interface sequencesTableProps {
@@ -22,38 +18,8 @@ interface sequencesTableProps {
 
 const SequencesTable = ({ dataSetId, query }: sequencesTableProps) => {
   const { t } = useTranslation();
-
-  const sequencesColumns = [
-    {
-      title: t('name'),
-      dataIndex: 'name',
-      key: 'name',
-      render: (value: any) => <ColumnWrapper title={value} />,
-    },
-    {
-      title: t('id'),
-      dataIndex: 'id',
-      key: 'id',
-      render: (value: any) => <ColumnWrapper title={value} />,
-    },
-    {
-      title: t('description'),
-      dataIndex: 'description',
-      key: 'description',
-    },
-    {
-      title: t('action_other'),
-      render: (record: Sequence) => (
-        <span>
-          <Link to={createLink(`/explore/sequence/${record.id}`)}>
-            {t('view')}
-          </Link>
-        </span>
-      ),
-    },
-  ];
-
-  const { data: sequences } = useQuery(
+  const { getResourceTableColumns } = useResourceTableColumns();
+  const { data: sequences, isLoading: isSequencesLoading } = useQuery(
     getResourceSearchQueryKey('sequences', dataSetId, query),
     () => sdk.sequences.search(getResourceSearchParams(dataSetId, query)),
     {
@@ -62,17 +28,29 @@ const SequencesTable = ({ dataSetId, query }: sequencesTableProps) => {
       },
     }
   );
+
   return (
-    <div id="#sequences">
-      <ItemLabel>{t('sequence_other')}</ItemLabel>
+    <ContentView id="sequencesTableId">
       <Table
-        rowKey="id"
-        columns={sequencesColumns}
-        dataSource={sequences}
-        pagination={DEFAULT_ANTD_TABLE_PAGINATION}
+        rowKey="key"
+        loading={isSequencesLoading}
+        columns={[...getResourceTableColumns('sequences')]}
+        dataSource={sequences || []}
+        onChange={(_pagination, _filters) => {
+          // TODO: Implement sorting
+        }}
         getPopupContainer={getContainer}
+        emptyContent={
+          <TableNoResults
+            title={t('no-records')}
+            content={t('no-search-records', {
+              $: '',
+            })}
+          />
+        }
+        appendTooltipTo={getContainer()}
       />
-    </div>
+    </ContentView>
   );
 };
 

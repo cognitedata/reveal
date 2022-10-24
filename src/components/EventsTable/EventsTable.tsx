@@ -1,29 +1,32 @@
-import { Link } from 'react-router-dom';
-import { ItemLabel } from 'utils/styledComponents';
-import Table from 'antd/lib/table';
-import { CogniteEvent } from '@cognite/sdk';
 import sdk from '@cognite/cdf-sdk-singleton';
-import { createLink } from '@cognite/cdf-utilities';
-import handleError from 'utils/handleError';
+import { Table, TableNoResults } from '@cognite/cdf-utilities';
+import { Button, Flex } from '@cognite/cogs.js';
 import {
   getContainer,
+  ContentView,
+  handleError,
   getResourceSearchParams,
   getResourceSearchQueryKey,
-} from 'utils/shared';
-import { DEFAULT_ANTD_TABLE_PAGINATION } from 'utils/tableUtils';
-import ColumnWrapper from '../ColumnWrapper';
+  ExploreViewConfig,
+} from 'utils';
 import { useTranslation } from 'common/i18n';
+import { useResourceTableColumns } from 'components/Data/ResourceTableColumns';
 import { useQuery } from 'react-query';
 
 interface EventsPreviewProps {
   dataSetId: number;
+  setExploreView?: (value: ExploreViewConfig) => void;
   query: string;
 }
 
-const EventsPreview = ({ dataSetId, query }: EventsPreviewProps) => {
+const EventsPreview = ({
+  dataSetId,
+  setExploreView,
+  query,
+}: EventsPreviewProps) => {
   const { t } = useTranslation();
-
-  const { data: events } = useQuery(
+  const { getResourceTableColumns } = useResourceTableColumns();
+  const { data: events, isLoading: isEventsLoading } = useQuery(
     getResourceSearchQueryKey('events', dataSetId, query),
     () =>
       sdk.events.search(
@@ -36,46 +39,43 @@ const EventsPreview = ({ dataSetId, query }: EventsPreviewProps) => {
     }
   );
 
-  const eventsColumns = [
-    {
-      title: t('type'),
-      dataIndex: 'type',
-      key: 'type',
-    },
-    {
-      title: t('subtype'),
-      dataIndex: 'subtype',
-      key: 'subtype',
-    },
-    {
-      title: t('id'),
-      dataIndex: 'id',
-      key: 'id',
-      render: (value: any) => <ColumnWrapper title={value} />,
-    },
-    {
-      title: t('action_other'),
-      render: (record: CogniteEvent) => (
-        <span>
-          <Link to={createLink(`/explore/event/${record.id}`)}>
-            {t('view')}
-          </Link>
-        </span>
-      ),
-    },
-  ];
+  const handleViewEvents = () => {
+    if (setExploreView && dataSetId) {
+      setExploreView({
+        visible: true,
+        type: 'events-profile',
+        id: dataSetId,
+      });
+    }
+  };
 
   return (
-    <div id="#events">
-      <ItemLabel>{t('events')}</ItemLabel>
+    <ContentView id="eventsTableId">
+      <Flex justifyContent="flex-end">
+        <Button type="secondary" size="small" onClick={handleViewEvents}>
+          {`${t('view')} ${t('events').toLocaleLowerCase()}`}
+        </Button>
+      </Flex>
       <Table
-        rowKey="id"
-        columns={eventsColumns}
-        dataSource={events}
-        pagination={DEFAULT_ANTD_TABLE_PAGINATION}
+        rowKey="key"
+        loading={isEventsLoading}
+        columns={[...getResourceTableColumns('events')]}
+        dataSource={events || []}
+        onChange={(_pagination, _filters) => {
+          // TODO: Implement sorting
+        }}
         getPopupContainer={getContainer}
+        emptyContent={
+          <TableNoResults
+            title={t('no-records')}
+            content={t('no-search-records', {
+              $: '',
+            })}
+          />
+        }
+        appendTooltipTo={getContainer()}
       />
-    </div>
+    </ContentView>
   );
 };
 

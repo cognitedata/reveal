@@ -193,6 +193,8 @@
   "no-owner-specified": "No owner specified",
   "no-owners-set": "No owners set",
   "no-rawtable-specified": "No RAW table specified",
+  "no-records": "No results found",
+  "no-search-records": "The search {{$}} did not match any record. Please try another search.",
   "no-source-set": "No source set",
   "no-source-specified": "No source specified",
   "no-tables-in-this-database": "No tables in this database",
