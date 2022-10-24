@@ -131,7 +131,7 @@ export const DataPreviewTable = ({
         });
         Notification({
           type: 'success',
-          message: t('ingest_success_title', 'Instance published'),
+          message: t('ingest_success_title', 'Instance added'),
         });
       });
   };

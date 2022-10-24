@@ -19,7 +19,7 @@ describe('Platypus Data Preview Page - Manual Data Ingestion', () => {
     cy.getBySel('handle-add-row-button').first().click();
     cy.getBySel('toast-body')
       .should('be.visible')
-      .and('contain', 'Instance published');
+      .and('contain', 'Instance added');
     cy.reload();
     cy.get('[data-testid="User"]').click();
     cy.getBySel('data-preview-table').should('be.visible');
