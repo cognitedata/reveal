@@ -190,6 +190,7 @@ const ExploreData = ({ loading, dataSetId }: ExploreDataProps) => {
                       setQuery(evt.currentTarget.value);
                     }}
                     style={{ width: 312 }}
+                    allowClear
                   />
                   <TableFilter
                     onClear={onClearFilters}
@@ -211,6 +212,7 @@ const ExploreData = ({ loading, dataSetId }: ExploreDataProps) => {
                         onChange={formik.handleChange}
                         value={formik.values.externalIdPrefix}
                         placeholder={t('starts-with')}
+                        allowClear
                       />
                     </StyledTableFilterSection>
                   </TableFilter>
