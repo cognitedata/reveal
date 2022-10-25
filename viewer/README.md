@@ -153,6 +153,12 @@ Add the following script to your package's `package.json`:
 Running the command `yarn start` will host a localhost site with a template HTML that includes the `/app/index.ts` script that has been transpiled to javascript.
 To see an example of this check out the `packages/camera-manager` package.
 
+## Debugging
+
+### Worker source maps
+
+When bundling source maps with inlined web workers, the bundle size grows huge. Therefore source maps for workers are disabled by default. In order to add source maps to workers, pass `--env workerSourceMaps=true` to the `yarn build` script.
+
 ## Creating and running visual tests
 
 Visual test files must be on the format `visual-tests/SomeTest.VisualTest.ts`. See one of the existing tests
