@@ -17,6 +17,10 @@ describe('adaptToWellboreRigNamesMap', () => {
         wellboreMatchingId: 'wellbore-2',
         rigName: 'Rig 3',
       }),
+      getMockRigOperation({
+        wellboreMatchingId: 'wellbore-2',
+        rigName: 'Rig 3',
+      }),
     ];
 
     const wellboreRigNamesMap = adaptToWellboreRigNamesMap(rigOperations);

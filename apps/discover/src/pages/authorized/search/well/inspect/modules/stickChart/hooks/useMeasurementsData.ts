@@ -8,7 +8,7 @@ import { EMPTY_ARRAY, EMPTY_OBJECT } from 'constants/empty';
 import { useDeepMemo } from 'hooks/useDeep';
 import { useWellInspectWellboreIds } from 'modules/wellInspect/selectors';
 
-export const useMeasurementsColumnsData = () => {
+export const useMeasurementsData = () => {
   const wellboreIds = useWellInspectWellboreIds();
 
   const { data: initialData, isLoading: isInitialDataLoading } =

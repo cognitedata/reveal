@@ -10,7 +10,7 @@ import { useWellInspectWellboreIds } from 'modules/wellInspect/selectors';
 import { WellTopSurfaceView } from '../types';
 import { adaptWellTopSurfacesToView } from '../utils/adaptWellTopSurfacesToView';
 
-export const useFormationColumnsData = () => {
+export const useFormationsData = () => {
   const wellboreIds = useWellInspectWellboreIds();
 
   const { data, isLoading } = useWellTopsQuery({ wellboreIds });

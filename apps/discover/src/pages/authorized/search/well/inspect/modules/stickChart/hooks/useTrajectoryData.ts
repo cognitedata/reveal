@@ -8,7 +8,7 @@ import { EMPTY_OBJECT } from 'constants/empty';
 import { useDeepMemo } from 'hooks/useDeep';
 import { useWellInspectWellboreIds } from 'modules/wellInspect/selectors';
 
-export const useTrajectoryColumnsData = () => {
+export const useTrajectoryData = () => {
   const wellboreIds = useWellInspectWellboreIds();
 
   const { data, isLoading } = useTrajectoriesWithData({ wellboreIds });

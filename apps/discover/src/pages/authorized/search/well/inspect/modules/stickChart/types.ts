@@ -21,25 +21,22 @@ export interface WellboreData {
   wellboreColor: string;
   rkbLevel: WellboreInternal['datum'];
   wellWaterDepth: WellboreInternal['wellWaterDepth'];
+  totalDrillingDays: WellboreInternal['totalDrillingDays'];
 }
 
 export interface WellboreStickChartData {
-  headerExtraData: HeaderExtraData;
-  formationColumn: DataWithLoadingStatus<WellTopSurfaceView[]>;
-  casingsColumn: DataWithLoadingStatus<CasingAssemblyView[]>;
-  nptColumn: DataWithLoadingStatus<NptInternalWithTvd[]>;
-  ndsColumn: DataWithLoadingStatus<NdsInternalWithTvd[]>;
-  trajectoryColumn: DataWithLoadingStatus<TrajectoryWithData>;
-  measurementsColumn: DataWithLoadingStatus<DepthMeasurementWithData[]>;
-  holeSectionsColumn: DataWithLoadingStatus<HoleSectionView[]>;
+  rigNames?: string[];
+  formationsData: DataWithLoadingStatus<WellTopSurfaceView[]>;
+  casingsData: DataWithLoadingStatus<CasingAssemblyView[]>;
+  nptData: DataWithLoadingStatus<NptInternalWithTvd[]>;
+  ndsData: DataWithLoadingStatus<NdsInternalWithTvd[]>;
+  trajectoryData: DataWithLoadingStatus<TrajectoryWithData>;
+  measurementsData: DataWithLoadingStatus<DepthMeasurementWithData[]>;
+  holeSectionsData: DataWithLoadingStatus<HoleSectionView[]>;
 }
 
 export interface ColumnVisibilityProps {
   isVisible?: boolean;
-}
-
-export interface HeaderExtraData {
-  rigNames?: string[];
 }
 
 export interface WellTopSurfaceView extends WellTopSurfaceInternal {

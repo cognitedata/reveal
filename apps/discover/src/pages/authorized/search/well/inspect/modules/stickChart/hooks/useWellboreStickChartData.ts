@@ -1,47 +1,44 @@
 import { WellboreStickChartData } from '../types';
 import { getDataWithLoadingStatus } from '../utils/getDataWithLoadingStatus';
 
-import { useCasingsColumnsData } from './useCasingsColumnsData';
-import { useFormationColumnsData } from './useFormationColumnsData';
-import { useHeaderExtraData } from './useHeaderExtraData';
-import { useHoleSectionsColumnsData } from './useHoleSectionsColumnsData';
-import { useMeasurementsColumnsData } from './useMeasurementsColumnsData';
-import { useNdsColumnsData } from './useNdsColumnsData';
-import { useNptColumnsData } from './useNptColumnsData';
-import { useTrajectoryColumnsData } from './useTrajectoryColumnsData';
+import { useCasingsData } from './useCasingsData';
+import { useFormationsData } from './useFormationsData';
+import { useHoleSectionsData } from './useHoleSectionsData';
+import { useMeasurementsData } from './useMeasurementsData';
+import { useNdsData } from './useNdsData';
+import { useNptData } from './useNptData';
+import { useRigNames } from './useRigNames';
+import { useTrajectoryData } from './useTrajectoryData';
 
 export const useWellboreStickChartData = () => {
-  const headerExtraData = useHeaderExtraData();
-  const formationColumnsData = useFormationColumnsData();
-  const casingsColumnsData = useCasingsColumnsData();
-  const nptColumnsData = useNptColumnsData();
-  const ndsColumnsData = useNdsColumnsData();
-  const trajectoryColumnsData = useTrajectoryColumnsData();
-  const measurementsColumnsData = useMeasurementsColumnsData();
-  const holeSectionsColumnsData = useHoleSectionsColumnsData();
+  const rigNames = useRigNames();
+  const formationsData = useFormationsData();
+  const casingsData = useCasingsData();
+  const nptData = useNptData();
+  const ndsData = useNdsData();
+  const trajectoryData = useTrajectoryData();
+  const measurementsData = useMeasurementsData();
+  const holeSectionsData = useHoleSectionsData();
 
   return (wellboreMatchingId: string): WellboreStickChartData => ({
-    headerExtraData: headerExtraData[wellboreMatchingId],
-    formationColumn: getDataWithLoadingStatus(
-      formationColumnsData,
+    rigNames: rigNames[wellboreMatchingId],
+    formationsData: getDataWithLoadingStatus(
+      formationsData,
       wellboreMatchingId
     ),
-    casingsColumn: getDataWithLoadingStatus(
-      casingsColumnsData,
+    casingsData: getDataWithLoadingStatus(casingsData, wellboreMatchingId),
+    nptData: getDataWithLoadingStatus(nptData, wellboreMatchingId),
+    ndsData: getDataWithLoadingStatus(ndsData, wellboreMatchingId),
+    trajectoryData: getDataWithLoadingStatus(
+      trajectoryData,
       wellboreMatchingId
     ),
-    nptColumn: getDataWithLoadingStatus(nptColumnsData, wellboreMatchingId),
-    ndsColumn: getDataWithLoadingStatus(ndsColumnsData, wellboreMatchingId),
-    trajectoryColumn: getDataWithLoadingStatus(
-      trajectoryColumnsData,
+    measurementsData: getDataWithLoadingStatus(
+      measurementsData,
       wellboreMatchingId
     ),
-    measurementsColumn: getDataWithLoadingStatus(
-      measurementsColumnsData,
-      wellboreMatchingId
-    ),
-    holeSectionsColumn: getDataWithLoadingStatus(
-      holeSectionsColumnsData,
+    holeSectionsData: getDataWithLoadingStatus(
+      holeSectionsData,
       wellboreMatchingId
     ),
   });

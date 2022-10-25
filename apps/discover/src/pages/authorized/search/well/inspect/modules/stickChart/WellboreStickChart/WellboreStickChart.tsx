@@ -60,17 +60,18 @@ export const WellboreStickChart: React.FC<WellboreStickChartProps> = ({
   wellboreMatchingId,
   rkbLevel,
   wellWaterDepth,
-  headerExtraData,
+  totalDrillingDays,
   /**
-   * WellboreStickChartColumns
+   * WellboreStickChartData
    */
-  formationColumn,
-  casingsColumn,
-  nptColumn,
-  ndsColumn,
-  trajectoryColumn,
-  measurementsColumn,
-  holeSectionsColumn,
+  rigNames,
+  formationsData,
+  casingsData,
+  nptData,
+  ndsData,
+  trajectoryData,
+  measurementsData,
+  holeSectionsData,
   /**
    * Other props
    */
@@ -121,7 +122,8 @@ export const WellboreStickChart: React.FC<WellboreStickChartProps> = ({
           <Header
             wellName={wellName}
             wellboreName={wellboreName}
-            {...headerExtraData}
+            totalDrillingDays={totalDrillingDays}
+            rigNames={rigNames}
           />
 
           <WellboreStickChartEmptyState
@@ -136,7 +138,7 @@ export const WellboreStickChart: React.FC<WellboreStickChartProps> = ({
             >
               <FormationColumn
                 key={ChartColumn.FORMATION}
-                {...formationColumn}
+                {...formationsData}
                 scaleBlocks={scaleBlocks}
                 depthMeasurementType={depthMeasurementType}
                 isVisible={columnVisibility[ChartColumn.FORMATION]}
@@ -152,9 +154,9 @@ export const WellboreStickChart: React.FC<WellboreStickChartProps> = ({
 
               <CasingsColumn
                 key={ChartColumn.CASINGS}
-                {...casingsColumn}
+                {...casingsData}
                 scaleBlocks={scaleBlocks}
-                holeSections={holeSectionsColumn.data}
+                holeSections={holeSectionsData.data}
                 rkbLevel={rkbLevel}
                 wellWaterDepth={wellWaterDepth}
                 depthMeasurementType={depthMeasurementType}
@@ -164,7 +166,7 @@ export const WellboreStickChart: React.FC<WellboreStickChartProps> = ({
 
               <NdsEventsColumn
                 key={ChartColumn.NDS}
-                {...ndsColumn}
+                {...ndsData}
                 scaleBlocks={scaleBlocks}
                 ndsRiskTypesSelection={ndsRiskTypesSelection}
                 depthMeasurementType={depthMeasurementType}
@@ -174,7 +176,7 @@ export const WellboreStickChart: React.FC<WellboreStickChartProps> = ({
 
               <NptEventsColumn
                 key={ChartColumn.NPT}
-                {...nptColumn}
+                {...nptData}
                 scaleBlocks={scaleBlocks}
                 nptCodesSelecton={nptCodesSelecton}
                 depthMeasurementType={depthMeasurementType}
@@ -184,14 +186,14 @@ export const WellboreStickChart: React.FC<WellboreStickChartProps> = ({
 
               {/* <SummaryColumn
                 key={ChartColumn.SUMMARY}
-                {...casingsColumn}
+                {...casingsData}
                 summaryVisibility={summaryVisibility}
                 isVisible={columnVisibility[ChartColumn.SUMMARY]}
               /> */}
 
               <MeasurementsColumn
                 key={ChartColumn.MEASUREMENTS}
-                {...measurementsColumn}
+                {...measurementsData}
                 scaleBlocks={scaleBlocks}
                 measurementTypesSelection={measurementTypesSelection}
                 depthMeasurementType={depthMeasurementType}
@@ -200,7 +202,7 @@ export const WellboreStickChart: React.FC<WellboreStickChartProps> = ({
 
               <TrajectoryColumn
                 key={ChartColumn.TRAJECTORY}
-                {...trajectoryColumn}
+                {...trajectoryData}
                 scaleBlocks={scaleBlocks}
                 curveColor={wellboreColor}
                 depthMeasurementType={depthMeasurementType}
@@ -216,7 +218,7 @@ export const WellboreStickChart: React.FC<WellboreStickChartProps> = ({
         <CasingsDetailView
           wellName={wellName}
           wellboreName={wellboreName}
-          data={casingsColumn?.data}
+          data={casingsData?.data}
           onBackClick={() => setShowCasingsDetailView(false)}
         />
       )}

@@ -1,4 +1,4 @@
-import { useHoleSectionsWithTvdQuery } from 'domain/wells/holeSections/internal/queries/useHoleSectionsWithTvdQuery';
+import { useCasingSchematicsWithTvdDataQuery } from 'domain/wells/casings/internal/queries/useCasingSchematicsWithTvdDataQuery';
 import { groupByWellbore } from 'domain/wells/wellbore/internal/transformers/groupByWellbore';
 
 import isEmpty from 'lodash/isEmpty';
@@ -7,24 +7,24 @@ import { EMPTY_OBJECT } from 'constants/empty';
 import { useDeepMemo } from 'hooks/useDeep';
 import { useWellInspectWellboreIds } from 'modules/wellInspect/selectors';
 
-import { HoleSectionView } from '../types';
-import { adaptToHoleSectionDataView } from '../utils/adaptToHoleSectionDataView';
+import { CasingAssemblyView } from '../types';
+import { adaptToCasingsColumnData } from '../utils/adaptToCasingsColumnData';
 
-export const useHoleSectionsColumnsData = () => {
+export const useCasingsData = () => {
   const wellboreIds = useWellInspectWellboreIds();
 
-  const { data, isLoading } = useHoleSectionsWithTvdQuery({
+  const { data, isLoading } = useCasingSchematicsWithTvdDataQuery({
     wellboreIds,
   });
 
   return useDeepMemo(() => {
     if (!data || isEmpty(data)) {
       return {
-        data: EMPTY_OBJECT as Record<string, HoleSectionView[]>,
+        data: EMPTY_OBJECT as Record<string, CasingAssemblyView[]>,
         isLoading,
       };
     }
-    const adaptedData = adaptToHoleSectionDataView(data);
+    const adaptedData = adaptToCasingsColumnData(data);
 
     return {
       data: groupByWellbore(adaptedData),

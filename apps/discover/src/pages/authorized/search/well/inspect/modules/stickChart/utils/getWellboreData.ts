@@ -4,7 +4,14 @@ import { WellboreInternal } from 'domain/wells/wellbore/internal/types';
 import { WellboreData } from '../types';
 
 export const getWellboreData = (wellbore: WellboreInternal): WellboreData => {
-  const { matchingId, wellName, name, color, wellWaterDepth } = wellbore;
+  const {
+    matchingId,
+    wellName,
+    name,
+    color,
+    wellWaterDepth,
+    totalDrillingDays,
+  } = wellbore;
 
   return {
     wellboreMatchingId: matchingId,
@@ -13,5 +20,6 @@ export const getWellboreData = (wellbore: WellboreInternal): WellboreData => {
     wellboreColor: color,
     rkbLevel: getRkbLevel(wellbore),
     wellWaterDepth,
+    totalDrillingDays,
   };
 };

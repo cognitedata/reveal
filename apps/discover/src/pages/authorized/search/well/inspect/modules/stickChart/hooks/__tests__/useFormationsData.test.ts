@@ -14,11 +14,11 @@ import { getWrapper } from '__test-utils/renderer';
 import { getMockedStore } from '__test-utils/store.utils';
 import { AppStore } from '__test-utils/types';
 
-import { useFormationColumnsData } from '../useFormationColumnsData';
+import { useFormationsData } from '../useFormationsData';
 
 const mockServer = setupServer();
 
-describe('useFormationColumnsData', () => {
+describe('useFormationsData', () => {
   beforeAll(() => mockServer.listen());
   beforeEach(() => mockServer.resetHandlers());
   afterAll(() => mockServer.close());
@@ -41,12 +41,9 @@ describe('useFormationColumnsData', () => {
         },
       },
     });
-    const { result, waitFor } = await renderHook(
-      () => useFormationColumnsData(),
-      {
-        wrapper: getWrapper(store),
-      }
-    );
+    const { result, waitFor } = await renderHook(() => useFormationsData(), {
+      wrapper: getWrapper(store),
+    });
 
     await waitFor(() => !isEmpty(result.current.data));
     expect(result.current.data['test-wellbore-1']).toEqual(
@@ -85,7 +82,7 @@ describe('useFormationColumnsData', () => {
       },
     });
     const { result, waitForNextUpdate } = await renderHook(
-      () => useFormationColumnsData(),
+      () => useFormationsData(),
       {
         wrapper: getWrapper(store),
       }
