@@ -61,7 +61,6 @@ jobs:
         key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
 
     - name: Cache cargo registry
-      if: env.GIT_DIFF
       uses: actions/cache@v3
       id: cargo_cache
       with:
@@ -109,7 +108,6 @@ jobs:
         key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
 
     - name: Cache cargo registry
-      if: env.GIT_DIFF
       uses: actions/cache@v3
       id: cargo_cache
       with:
@@ -150,7 +148,6 @@ jobs:
         key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
 
     - name: Cache cargo registry
-      if: env.GIT_DIFF
       uses: actions/cache@v3
       id: cargo_cache
       with:
@@ -211,7 +208,6 @@ jobs:
         key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
 
     - name: Cache cargo registry
-      if: env.GIT_DIFF
       uses: actions/cache@v3
       id: cargo_cache
       with:
@@ -258,7 +254,6 @@ jobs:
           key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
 
       - name: Cache cargo registry
-        if: env.GIT_DIFF
         uses: actions/cache@v3
         id: cargo_cache
         with:
