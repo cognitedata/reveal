@@ -1,5 +1,10 @@
-import { CogDataGrid, GridConfig } from '@cognite/cog-data-grid';
-import { CollapsablePanel } from '@cognite/cogs.js';
+import {
+  CogDataGrid,
+  CogDataList,
+  GridConfig,
+  PrimitiveTypesListData,
+} from '@cognite/cog-data-grid';
+import { Body, CollapsablePanel, Title } from '@cognite/cogs.js';
 import { ErrorBoundary } from '@platypus-app/components/ErrorBoundary/ErrorBoundary';
 import { Notification } from '@platypus-app/components/Notification/Notification';
 import { FlexPlaceholder } from '@platypus-app/components/Placeholder/FlexPlaceholder';
@@ -36,10 +41,13 @@ import {
 } from '../../services/grid-config-builder';
 import { DeleteRowsModal } from '../DeleteRowsModal/DeleteRowsModal';
 import { PreviewPageHeader } from '../PreviewPageHeader/PreviewPageHeader';
-import { StyledDataPreviewTable } from './elements';
+import {
+  StyledCollapsablePanelContainer,
+  StyledDataPreviewTable,
+} from './elements';
 import { ErrorPlaceholder } from './ErrorPlaceholder';
-import { ListDataPreview } from './ListDataPreview';
 import { NoRowsOverlay } from './NoRowsOverlay';
+import { SidePanel } from './SidePanel';
 import { sanitizeRow } from './utils';
 
 const pageSizeLimit = 100;
@@ -114,8 +122,14 @@ export const DataPreviewTable = ({
     dataModelType,
   });
 
-  const [listDataTitle, setListDataTitle] = useState('');
-  const [isListDataVisible, setIsListDataVisible] = useState(false);
+  const [listData, setListData] = useState<{
+    fieldName: string;
+    data: PrimitiveTypesListData;
+  }>();
+
+  const handleCloseListDataSidePanel = useCallback(() => {
+    setListData(undefined);
+  }, [setListData]);
 
   const handleRowPublish = (row: KeyValueMap) => {
     dataManagementHandler
@@ -264,14 +278,25 @@ export const DataPreviewTable = ({
   };
 
   const handleCellEditingStarted = (e: CellEditingStartedEvent) => {
-    if ((e.colDef.type || []).includes('listColType')) {
-      setListDataTitle(e.colDef.field || '<No Title>');
-      setIsListDataVisible(true);
-      e.api.stopEditing();
-      window.setTimeout(() => {
-        e.api.ensureColumnVisible(e.colDef.field || '');
-      }, 400);
+    if (!(e.colDef.type || []).includes('listColType')) {
+      handleCloseListDataSidePanel();
+      return;
     }
+
+    if (!e.colDef.field) {
+      throw Error('Attempting to edit cell without field value');
+    }
+
+    const cellData = e.data[e.colDef.field] || [];
+
+    setListData({
+      data: cellData,
+      fieldName: e.colDef.field,
+    });
+    e.api.stopEditing();
+    window.setTimeout(() => {
+      e.colDef.field && e.api.ensureColumnVisible(e.colDef.field);
+    }, 400);
   };
 
   /*
@@ -469,59 +494,81 @@ export const DataPreviewTable = ({
         version={version}
       />
 
-      <CollapsablePanel
-        sidePanelRight={
-          <ListDataPreview
-            title={listDataTitle}
-            onCloseClick={() => {
-              setListDataTitle('');
-              setIsListDataVisible(false);
-            }}
-          />
-        }
-        sidePanelRightVisible={isListDataVisible}
-        sidePanelRightWidth={376}
-      >
-        <StyledDataPreviewTable data-cy="data-preview-table">
-          <CogDataGrid
-            ref={gridRef}
-            gridOptions={{
-              enableCellChangeFlash: true,
-              rowModelType: 'infinite',
-              rowBuffer: pageSizeLimit / 2,
-              // how big each page in our page cache will be, default is 100
-              cacheBlockSize: pageSizeLimit,
-              // this needs to be 1 since we use cursor-based pagination
-              maxConcurrentDatasourceRequests: 1,
-              noRowsOverlayComponent: () => (
-                <NoRowsOverlay
-                  dataModelExternalId={dataModelExternalId}
-                  typeName={dataModelType.name}
-                  version={version}
-                />
-              ),
-              onCellEditingStarted: handleCellEditingStarted,
-            }}
-            defaultColDef={{
-              valueSetter: handleCellValueChanged,
-            }}
-            rowSelection="multiple"
-            rowNodeId={instanceIdCol}
-            config={gridConfig}
-            suppressRowClickSelection
-            rowMultiSelectWithClick={false}
-            rowClassRules={{
-              'ag-row-selected': (params) => params.data?._isDraftSelected,
-            }}
-            onGridReady={onGridReady}
-            pinnedTopRowData={draftRowsData}
-            onPinnedRowDataChanged={handlePinnedRowDataChanged}
-            onSelectionChanged={handleSelectionChanged}
-            shouldShowDraftRows={shouldShowDraftRows}
-            shouldShowPublishedRows={shouldShowPublishedRows}
-          />
-        </StyledDataPreviewTable>
-      </CollapsablePanel>
+      <StyledCollapsablePanelContainer>
+        <CollapsablePanel
+          sidePanelRight={
+            <SidePanel
+              title={
+                <Body
+                  level={2}
+                  style={{ color: 'var(--cogs-text-icon--medium)' }}
+                >
+                  <Title
+                    as="span"
+                    level={6}
+                    style={{ color: 'var(--cogs-text-icon--medium)' }}
+                  >
+                    {`${listData?.fieldName} (${listData?.data.length})`}
+                  </Title>
+                  {` ${t('side_panel_title_for', 'for')} `}
+                  <Title
+                    as="span"
+                    level={6}
+                    style={{ color: 'var(--cogs-text-icon--medium)' }}
+                  >
+                    {dataModelType.name}
+                  </Title>
+                </Body>
+              }
+              onCloseClick={handleCloseListDataSidePanel}
+            >
+              {listData?.data && <CogDataList listData={listData.data || []} />}
+            </SidePanel>
+          }
+          sidePanelRightVisible={!!listData}
+          sidePanelRightWidth={376}
+        >
+          <StyledDataPreviewTable data-cy="data-preview-table">
+            <CogDataGrid
+              ref={gridRef}
+              gridOptions={{
+                enableCellChangeFlash: true,
+                rowModelType: 'infinite',
+                rowBuffer: pageSizeLimit / 2,
+                // how big each page in our page cache will be, default is 100
+                cacheBlockSize: pageSizeLimit,
+                // this needs to be 1 since we use cursor-based pagination
+                maxConcurrentDatasourceRequests: 1,
+                noRowsOverlayComponent: () => (
+                  <NoRowsOverlay
+                    dataModelExternalId={dataModelExternalId}
+                    typeName={dataModelType.name}
+                    version={version}
+                  />
+                ),
+                onCellEditingStarted: handleCellEditingStarted,
+              }}
+              defaultColDef={{
+                valueSetter: handleCellValueChanged,
+              }}
+              rowSelection="multiple"
+              rowNodeId={instanceIdCol}
+              config={gridConfig}
+              suppressRowClickSelection
+              rowMultiSelectWithClick={false}
+              rowClassRules={{
+                'ag-row-selected': (params) => params.data?._isDraftSelected,
+              }}
+              onGridReady={onGridReady}
+              pinnedTopRowData={draftRowsData}
+              onPinnedRowDataChanged={handlePinnedRowDataChanged}
+              onSelectionChanged={handleSelectionChanged}
+              shouldShowDraftRows={shouldShowDraftRows}
+              shouldShowPublishedRows={shouldShowPublishedRows}
+            />
+          </StyledDataPreviewTable>
+        </CollapsablePanel>
+      </StyledCollapsablePanelContainer>
     </ErrorBoundary>
   );
 };

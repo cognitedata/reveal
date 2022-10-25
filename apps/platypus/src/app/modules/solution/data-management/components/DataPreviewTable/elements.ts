@@ -1,5 +1,12 @@
 import styled from 'styled-components';
 
+export const StyledCollapsablePanelContainer = styled.div`
+  height: 100%;
+  .cp-right-panel .cp-panel-content {
+    height: 100%;
+  }
+`;
+
 export const StyledDataPreviewTable = styled.div`
   height: 100%;
   background-color: var(--cogs-surface--medium);
