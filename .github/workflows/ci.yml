@@ -36,6 +36,7 @@ jobs:
   populate-cargo-cache:
     name: Update Cargo cache
     runs-on: ubuntu-latest
+    needs: populate-npm-cache
     steps:
     - uses: actions/checkout@v3
 
