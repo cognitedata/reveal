@@ -56,7 +56,7 @@ jobs:
   build-viewer:
     name: Build Reveal
     runs-on: ubuntu-latest
-    needs: [populate-npm-cache, populate-cargo-cache]
+    needs: populate-cargo-cache
     steps:
     - uses: actions/checkout@v3
 
