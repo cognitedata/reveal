@@ -9,9 +9,12 @@ import { createLink } from '@cognite/cdf-utilities';
 import ResourceProperty from './ResourceProperty';
 import { useTranslation } from 'common/i18n';
 import moment from 'moment';
+import { useFlag } from '@cognite/react-feature-flags';
 
 export const useResourceTableColumns = () => {
   const { t } = useTranslation();
+
+  const { isEnabled } = useFlag('data-catalog');
 
   const resourceTableColumns = {
     assets: [
@@ -129,7 +132,7 @@ export const useResourceTableColumns = () => {
           />
         ),
       },
-      {
+      isEnabled && {
         title: t('external-id'),
         dataIndex: 'external-id',
         key: 'dataset-events-external-id',
@@ -147,7 +150,7 @@ export const useResourceTableColumns = () => {
           <ResourceProperty value={record.name} />
         ),
       },
-      {
+      isEnabled && {
         title: t('external-id'),
         dataIndex: 'external-id',
         key: 'dataset-files-external-id',
@@ -205,7 +208,7 @@ export const useResourceTableColumns = () => {
           <ResourceProperty value={record.name} />
         ),
       },
-      {
+      isEnabled && {
         title: t('external-id'),
         dataIndex: 'external-id',
         key: 'dataset-sequences-external-id',
