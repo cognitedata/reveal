@@ -11,6 +11,7 @@ import {
 import { useTranslation } from 'common/i18n';
 import { useResourceTableColumns } from 'components/Data/ResourceTableColumns';
 import { useQuery } from 'react-query';
+import { Timeseries } from '@cognite/sdk';
 
 interface TimeseriesPreviewProps {
   dataSetId: number;
@@ -24,7 +25,8 @@ const TimeseriesPreview = ({
   filters,
 }: TimeseriesPreviewProps) => {
   const { t } = useTranslation();
-  const { getResourceTableColumns } = useResourceTableColumns();
+  const resourceTableColumns =
+    useResourceTableColumns<Timeseries>('timeseries');
   const { data: timeseries, isLoading: isTimeseriesLoading } = useQuery(
     getResourceSearchQueryKey('timeseries', dataSetId, query, filters),
     () =>
@@ -41,7 +43,7 @@ const TimeseriesPreview = ({
       <Table
         rowKey="key"
         loading={isTimeseriesLoading}
-        columns={[...getResourceTableColumns('timeseries')]}
+        columns={resourceTableColumns}
         dataSource={timeseries || []}
         onChange={(_pagination, _filters) => {
           // TODO: Implement sorting

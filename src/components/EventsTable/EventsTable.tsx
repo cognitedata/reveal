@@ -13,6 +13,7 @@ import {
 import { useTranslation } from 'common/i18n';
 import { useResourceTableColumns } from 'components/Data/ResourceTableColumns';
 import { useQuery } from 'react-query';
+import { CogniteEvent } from '@cognite/sdk/dist/src';
 
 interface EventsPreviewProps {
   dataSetId: number;
@@ -28,7 +29,7 @@ const EventsPreview = ({
   filters,
 }: EventsPreviewProps) => {
   const { t } = useTranslation();
-  const { getResourceTableColumns } = useResourceTableColumns();
+  const resourceTableColumns = useResourceTableColumns<CogniteEvent>('events');
   const { data: events, isLoading: isEventsLoading } = useQuery(
     getResourceSearchQueryKey('events', dataSetId, query, filters),
     () =>
@@ -62,7 +63,7 @@ const EventsPreview = ({
       <Table
         rowKey="key"
         loading={isEventsLoading}
-        columns={[...getResourceTableColumns('events')]}
+        columns={resourceTableColumns}
         dataSource={events || []}
         onChange={(_pagination, _filters) => {
           // TODO: Implement sorting

@@ -11,6 +11,7 @@ import {
 import { useTranslation } from 'common/i18n';
 import { useResourceTableColumns } from 'components/Data/ResourceTableColumns';
 import { useQuery } from 'react-query';
+import { Sequence } from '@cognite/sdk';
 
 interface sequencesTableProps {
   dataSetId: number;
@@ -20,7 +21,7 @@ interface sequencesTableProps {
 
 const SequencesTable = ({ dataSetId, query, filters }: sequencesTableProps) => {
   const { t } = useTranslation();
-  const { getResourceTableColumns } = useResourceTableColumns();
+  const resourceTableColumns = useResourceTableColumns<Sequence>('sequences');
   const { data: sequences, isLoading: isSequencesLoading } = useQuery(
     getResourceSearchQueryKey('sequences', dataSetId, query, filters),
     () =>
@@ -37,7 +38,7 @@ const SequencesTable = ({ dataSetId, query, filters }: sequencesTableProps) => {
       <Table
         rowKey="key"
         loading={isSequencesLoading}
-        columns={[...getResourceTableColumns('sequences')]}
+        columns={resourceTableColumns}
         dataSource={sequences || []}
         onChange={(_pagination, _filters) => {
           // TODO: Implement sorting

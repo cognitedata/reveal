@@ -11,6 +11,7 @@ import {
 import { useTranslation } from 'common/i18n';
 import { useResourceTableColumns } from 'components/Data/ResourceTableColumns';
 import { useQuery } from 'react-query';
+import { Asset } from '@cognite/sdk';
 
 interface assetsTableProps {
   dataSetId: number;
@@ -20,7 +21,7 @@ interface assetsTableProps {
 
 const AssetsTable = ({ dataSetId, query, filters }: assetsTableProps) => {
   const { t } = useTranslation();
-  const { getResourceTableColumns } = useResourceTableColumns();
+  const resourceTableColumns = useResourceTableColumns<Asset>('assets');
   const { data: assets, isLoading: isAssetsLoading } = useQuery(
     getResourceSearchQueryKey('assets', dataSetId, query, filters),
     () => sdk.assets.search(getResourceSearchParams(dataSetId, query, filters)),
@@ -36,7 +37,7 @@ const AssetsTable = ({ dataSetId, query, filters }: assetsTableProps) => {
       <Table
         rowKey="key"
         loading={isAssetsLoading}
-        columns={[...getResourceTableColumns('assets')]}
+        columns={resourceTableColumns}
         dataSource={assets || []}
         onChange={(_pagination, _filters) => {
           // TODO: Implement sorting

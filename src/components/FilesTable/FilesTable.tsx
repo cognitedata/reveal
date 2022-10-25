@@ -11,6 +11,7 @@ import {
 import { useTranslation } from 'common/i18n';
 import { useResourceTableColumns } from 'components/Data/ResourceTableColumns';
 import { useQuery } from 'react-query';
+import { FileInfo } from '@cognite/sdk';
 
 interface filesTableProps {
   dataSetId: number;
@@ -20,7 +21,7 @@ interface filesTableProps {
 
 const FilesTable = ({ dataSetId, query, filters }: filesTableProps) => {
   const { t } = useTranslation();
-  const { getResourceTableColumns } = useResourceTableColumns();
+  const resourceTableColumns = useResourceTableColumns<FileInfo>('files');
   const { data: files, isLoading: isFilesLoading } = useQuery(
     getResourceSearchQueryKey('files', dataSetId, query, filters),
     () =>
@@ -39,7 +40,7 @@ const FilesTable = ({ dataSetId, query, filters }: filesTableProps) => {
       <Table
         rowKey="key"
         loading={isFilesLoading}
-        columns={[...getResourceTableColumns('files')]}
+        columns={resourceTableColumns}
         dataSource={files || []}
         onChange={(_pagination, _filters) => {
           // TODO: Implement sorting
