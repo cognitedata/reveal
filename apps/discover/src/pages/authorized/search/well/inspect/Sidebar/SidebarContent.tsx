@@ -1,3 +1,4 @@
+import { useOngoingWellReportWellbores } from 'domain/reportManager/internal/hooks/useOngoingWellReportWellbores';
 import { useSidebarWells } from 'domain/wells/well/internal/hooks/useSidebarWells';
 import { WellInternal } from 'domain/wells/well/internal/types';
 import { DEFAULT_WELLBORE_COLOR } from 'domain/wells/wellbore/constants';
@@ -19,6 +20,7 @@ import {
 } from 'modules/wellInspect/selectors';
 import { WellboreId } from 'modules/wellSearch/types';
 import { WellReportThreeDotsMenu } from 'pages/authorized/wellReportManager';
+import { WellReportNotification } from 'pages/authorized/wellReportManager/WellReportNotification';
 
 import {
   BlockContent,
@@ -39,7 +41,7 @@ export const SidebarContent: React.FC = () => {
   const isColoredWellbores = useColoredWellbores();
   const { selectedWellIds, selectedWellboreIds } = useWellInspectSelection();
   const indeterminateWells = useWellInspectIndeterminateWells();
-
+  const ongoingWellReportsWellboreExternalIds = useOngoingWellReportWellbores();
   const dispatch = useDispatch();
 
   const handleClickWell = useCallback(
@@ -105,6 +107,12 @@ export const SidebarContent: React.FC = () => {
                       <MiddleEllipsis value={wellboreName} />
                     </CheckboxContent>
                   </Checkbox>
+                  <WellReportNotification
+                    wellboreMatchingId={wellbore.matchingId}
+                    ongoingWellReportWellboreExternalIds={
+                      ongoingWellReportsWellboreExternalIds
+                    }
+                  />
                   {wellboreHasErrors && (
                     <WellboreErrorWarning errors={errors[id]} />
                   )}

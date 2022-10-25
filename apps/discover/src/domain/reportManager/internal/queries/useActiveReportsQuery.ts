@@ -8,7 +8,7 @@ import { Report } from '../types';
 import { useReportPermissions } from './useReportPermissions';
 
 export const useActiveReportsQuery = (
-  externalIds: string[]
+  externalIds?: string[]
 ): UseQueryResult<Report[]> => {
   const { canReadReports } = useReportPermissions();
 
