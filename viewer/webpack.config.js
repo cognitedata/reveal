@@ -100,13 +100,14 @@ module.exports = env => {
       ignored: /node_modules/
     },
     plugins: [
-      development ? new webpack.EvalSourceMapDevToolPlugin({
-        test: /\.ts$/
-      }) :
-        new webpack.SourceMapDevToolPlugin({
-          test: /\.ts$/,
-          filename: '[file].map'
-        }),
+      development
+        ? new webpack.EvalSourceMapDevToolPlugin({
+            test: /\.ts$/
+          })
+        : new webpack.SourceMapDevToolPlugin({
+            test: /\.ts$/,
+            filename: '[file].map'
+          }),
       new copyPkgJsonPlugin({
         remove: development
           ? ['devDependencies', 'scripts', 'workspaces', 'husky']
