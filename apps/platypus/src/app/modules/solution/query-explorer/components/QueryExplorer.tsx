@@ -1,7 +1,6 @@
-import { useState, useEffect, useRef } from 'react';
-import GraphiQL, { FetcherParams } from 'graphiql';
-import 'graphiql/graphiql.min.css';
-import GraphiQLExplorer from 'graphiql-explorer';
+import { useState, useEffect } from 'react';
+import GraphiQL from 'graphiql';
+import { useExplorerPlugin } from '@graphiql/plugin-explorer';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import {
   GraphQLSchema,
@@ -25,14 +24,14 @@ export const QueryExplorer = ({
   schemaVersion,
   defaultQuery,
 }: QueryExplorerType) => {
-  const graphiql = useRef<GraphiQL>(null);
   const [gqlSchema, setGqlSchema] = useState<GraphQLSchema>();
-  const [isExplorerOpen, setIsExplorerOpen] = useState<boolean>(false);
   const [isReady, setIsReady] = useState<boolean>(false);
   const [explorerQuery, setExplorerQuery] = useState(defaultQuery);
+  const explorerPlugin = useExplorerPlugin({
+    query: explorerQuery,
+    onEdit: setExplorerQuery,
+  });
   const { t } = useTranslation('SolutionQueryExplorer');
-
-  const handleToggleExplorer = () => setIsExplorerOpen(!isExplorerOpen);
 
   const handleEditQuery = (query: string | undefined) =>
     setExplorerQuery(query);
@@ -41,6 +40,8 @@ export const QueryExplorer = ({
     if (isReady || !solutionId || !schemaVersion) {
       return;
     }
+
+    localStorage.setItem('graphiql:theme', 'light');
 
     graphQlQueryFetcher
       .fetcher(
@@ -70,57 +71,15 @@ export const QueryExplorer = ({
 
   return (
     <QueryExplorerContainer>
-      {
-        <GraphiQLExplorer
-          title={t('query_explorer_title', 'Query Explorer')}
-          schema={gqlSchema}
-          query={explorerQuery}
-          onEdit={handleEditQuery}
-          explorerIsOpen={isExplorerOpen}
-          onToggleExplorer={handleToggleExplorer}
-        />
-      }
-      {/* TODO: Update graphiql package to fix ts errors */}
-      {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
-      {/* @ts-ignore */}
       <GraphiQL
-        ref={graphiql}
-        fetcher={(graphQlParams: FetcherParams) =>
+        fetcher={(graphQlParams) =>
           graphQlQueryFetcher.fetcher(graphQlParams, solutionId, schemaVersion)
         }
         onEditQuery={handleEditQuery}
         query={explorerQuery}
         schema={gqlSchema}
-      >
-        <GraphiQL.Toolbar>
-          <GraphiQL.Button
-            onClick={() => graphiql.current?.handlePrettifyQuery()}
-            label={t('query_explorer_prettify_btn', 'Prettify')}
-            title={t(
-              'query_explorer_prettify_title_btn',
-              'Prettify Query (Shift-Ctrl-P)'
-            )}
-          />
-          <GraphiQL.Button
-            onClick={() => graphiql.current?.handleCopyQuery()}
-            label={t('query_explorer_copy_btn', 'Copy')}
-            title={t(
-              'query_explorer_copy_title_btn',
-              'Copy Query (Shift-Ctrl-C)'
-            )}
-          />
-          <GraphiQL.Button
-            onClick={() => graphiql.current?.handleToggleHistory()}
-            label={t('query_explorer_history_btn', 'History')}
-            title={t('query_explorer_history_title_btn', 'Show History')}
-          />
-          <GraphiQL.Button
-            onClick={handleToggleExplorer}
-            label={t('query_explorer_btn', 'Explorer')}
-            title={t('query_explorer_title_btn', 'Toggle Explorer')}
-          />
-        </GraphiQL.Toolbar>
-      </GraphiQL>
+        plugins={[explorerPlugin]}
+      ></GraphiQL>
     </QueryExplorerContainer>
   );
 };

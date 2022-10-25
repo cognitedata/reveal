@@ -11,8 +11,11 @@ import { useGlobalStyles } from '@cognite/cdf-utilities';
 
 import cogsStyles from '@cognite/cogs.js/dist/cogs.css';
 import monacoStyles from 'monaco-editor/dev/vs/editor/editor.main.css';
-import graphiqlStyles from 'graphiql/graphiql.min.css';
+
 import styleScope from '../styleScope';
+
+import graphiqlExplorerStyles from '@graphiql/plugin-explorer/dist/style.css';
+import graphiqlStyles from 'graphiql/graphiql.min.css';
 
 import agGridStyles from 'ag-grid-community/dist/styles/ag-grid.css';
 import cogDataGridStyles from '@cognite/cog-data-grid-root/lib/cog-data-grid-styles.css';
@@ -44,6 +47,7 @@ export default function GlobalStyles(props: { children: React.ReactNode }) {
   const isStyleLoaded = useGlobalStyles([
     cogsStyles,
     graphiqlStyles,
+    graphiqlExplorerStyles,
     monacoStyles,
     agGridStyles,
     cogDataGridStyles,
