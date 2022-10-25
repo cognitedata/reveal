@@ -11,6 +11,7 @@ import {
   ContentView,
   DetailsPane,
   trackUsage,
+  ExploreDataFilters,
 } from 'utils';
 import { useUserInformation } from 'hooks/useUserInformation';
 import { useTranslation } from 'common/i18n';
@@ -29,6 +30,7 @@ import { useFlag } from '@cognite/react-feature-flags';
 import { TableFilter } from '@cognite/cdf-utilities';
 import styled from 'styled-components';
 import { useFormik } from 'formik';
+import AppliedFilters from 'components/applied-filters';
 
 const { TabPane } = Tabs;
 
@@ -110,7 +112,7 @@ const ExploreData = ({ loading, dataSetId }: ExploreDataProps) => {
 
   const [query, setQuery] = useState('');
   const [isFilterVisible, setIsFilterVisible] = useState(false);
-  const [appliedFilters, setAppliedFilters] = useState({});
+  const [appliedFilters, setAppliedFilters] = useState<ExploreDataFilters>({});
   const debouncedQuery = useDebounce(query, 100);
   const { isEnabled } = useFlag('data-catalog');
 
@@ -165,45 +167,64 @@ const ExploreData = ({ loading, dataSetId }: ExploreDataProps) => {
     setIsFilterVisible(false);
   };
 
+  const clearFilter = (key: keyof ExploreDataFilters) => {
+    formik.setFieldValue(key, '');
+    const filters = { ...appliedFilters };
+    delete filters[key];
+    setAppliedFilters(filters);
+  };
+
   if (dataSetContainsData()) {
     return (
       <Spin spinning={loading}>
         <ContentView>
           <DetailsPane>
             {isEnabled && (
-              <Flex display="inline-flex" gap={8}>
-                <Input
-                  value={query}
-                  prefix={<Icon type="Search" />}
-                  placeholder={t('search')}
-                  onChange={(evt) => {
-                    setQuery(evt.currentTarget.value);
-                  }}
-                  style={{ width: 312 }}
-                />
-                <TableFilter
+              <Flex direction="column" gap={8}>
+                <Flex display="inline-flex" gap={8}>
+                  <Input
+                    value={query}
+                    prefix={<Icon type="Search" />}
+                    placeholder={t('search')}
+                    onChange={(evt) => {
+                      setQuery(evt.currentTarget.value);
+                    }}
+                    style={{ width: 312 }}
+                  />
+                  <TableFilter
+                    onClear={onClearFilters}
+                    onApply={onApplyFilters}
+                    visible={isFilterVisible}
+                    onVisibleChange={() => setIsFilterVisible(!isFilterVisible)}
+                    menuTitle={t('filter-by')}
+                  >
+                    <StyledTableFilterSection>
+                      <label
+                        className="cogs-body-2 strong"
+                        htmlFor="externalIdPrefix"
+                      >
+                        {t('external-id')}
+                      </label>
+                      <Input
+                        id="externalIdPrefix"
+                        name="externalIdPrefix"
+                        onChange={formik.handleChange}
+                        value={formik.values.externalIdPrefix}
+                        placeholder={t('starts-with')}
+                      />
+                    </StyledTableFilterSection>
+                  </TableFilter>
+                </Flex>
+                <AppliedFilters
+                  items={Object.entries(appliedFilters).map(([key, value]) => ({
+                    key,
+                    label: t(key as keyof ExploreDataFilters, {
+                      value,
+                    }),
+                    onClick: () => clearFilter(key as keyof ExploreDataFilters),
+                  }))}
                   onClear={onClearFilters}
-                  onApply={onApplyFilters}
-                  visible={isFilterVisible}
-                  onVisibleChange={() => setIsFilterVisible(!isFilterVisible)}
-                  menuTitle={t('filter-by')}
-                >
-                  <StyledTableFilterSection>
-                    <label
-                      className="cogs-body-2 cogs-body-strong"
-                      htmlFor="externalIdPrefix"
-                    >
-                      {t('external-id')}
-                    </label>
-                    <Input
-                      id="externalIdPrefix"
-                      name="externalIdPrefix"
-                      onChange={formik.handleChange}
-                      value={formik.values.externalIdPrefix}
-                      placeholder={t('starts-with')}
-                    />
-                  </StyledTableFilterSection>
-                </TableFilter>
+                />
               </Flex>
             )}
             <Tabs

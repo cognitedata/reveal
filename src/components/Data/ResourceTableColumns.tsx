@@ -129,6 +129,14 @@ export const useResourceTableColumns = () => {
           />
         ),
       },
+      {
+        title: t('external-id'),
+        dataIndex: 'external-id',
+        key: 'dataset-events-external-id',
+        render: (_value: string, record: Asset) => (
+          <ResourceProperty value={record.externalId} />
+        ),
+      },
     ],
     files: [
       {
@@ -137,6 +145,14 @@ export const useResourceTableColumns = () => {
         key: 'dataset-file-name',
         render: (_value: string, record: FileInfo) => (
           <ResourceProperty value={record.name} />
+        ),
+      },
+      {
+        title: t('external-id'),
+        dataIndex: 'external-id',
+        key: 'dataset-files-external-id',
+        render: (_value: string, record: Asset) => (
+          <ResourceProperty value={record.externalId} />
         ),
       },
       {
@@ -187,6 +203,14 @@ export const useResourceTableColumns = () => {
         key: 'dataset-sequence-name',
         render: (_value: string, record: Sequence) => (
           <ResourceProperty value={record.name} />
+        ),
+      },
+      {
+        title: t('external-id'),
+        dataIndex: 'external-id',
+        key: 'dataset-sequences-external-id',
+        render: (_value: string, record: Asset) => (
+          <ResourceProperty value={record.externalId} />
         ),
       },
       {
