@@ -15,8 +15,8 @@ on:
       - '**'
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  populate-caches:
-    name: Update NPM and Cargo caches
+  populate-npm-cache:
+    name: Update NPM cache
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
@@ -33,8 +33,13 @@ jobs:
       working-directory: viewer
       run: yarn install --immutable
 
+  populate-cargo-cache:
+    name: Update Cargo cache
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
     - name: Cache cargo registry
-      if: env.GIT_DIFF
       uses: actions/cache@v3
       id: cargo_cache
       with:
@@ -50,7 +55,7 @@ jobs:
   build-viewer:
     name: Build Reveal
     runs-on: ubuntu-latest
-    needs: populate-caches
+    needs: [populate-npm-cache, populate-cargo-cache]
 
     steps:
     - uses: actions/checkout@v3
