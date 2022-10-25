@@ -1,12 +1,29 @@
 name: Nightly Publish Package to NPM
 on:
   schedule:
-    - cron: '0 5 * * *'
+    - cron: '0 5 * * 1-5'
+
 jobs:
   deploy-to-npm:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+        with:
+          persist-credentials: false
+
+      - name: Setup Node
+        uses: actions/setup-node@v1
+        with:
+          node-version: '14.x'
+          registry-url: 'https://registry.npmjs.org'
+          always-auth: true
+
+      - name: Setup Cognite CICD
+        run: |
+          echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> .npmrc
+          npm whoami
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN }}
 
       - name: Install NPM dependencies
         working-directory: viewer
