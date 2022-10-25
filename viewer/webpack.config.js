@@ -14,6 +14,7 @@ const MIXPANEL_TOKEN_PROD = '8c900bdfe458e32b768450c20750853d';
 
 module.exports = env => {
   const development = env?.development ?? false;
+  const useWorkerSourceMaps = env?.workerSourceMaps === 'true';
 
   return {
     mode: development ? 'development' : 'production',
@@ -102,7 +103,8 @@ module.exports = env => {
     plugins: [
       development
         ? new webpack.EvalSourceMapDevToolPlugin({
-            test: /\.ts$/
+            test: /\.ts$/,
+            exclude: useWorkerSourceMaps ? /^$/ : /\.worker\.ts$/
           })
         : new webpack.SourceMapDevToolPlugin({
             test: /\.ts$/,
