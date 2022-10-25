@@ -10,6 +10,7 @@ import { NavigationPanel } from 'components/NavigationPanel';
 import { OverlayNavigation } from 'components/OverlayNavigation';
 import { Table } from 'components/Tablev3';
 import { Treemap, TreeMapData } from 'components/Treemap';
+import { WellReportButtonMenu } from 'pages/authorized/wellReportManager/WellReportButtonMenu';
 
 import { ViewModeControl } from '../../../common/ViewModeControl';
 import { EMPTY_APPLIED_FILTERS } from '../../constants';
@@ -115,6 +116,11 @@ export const DetailedView: React.FC<DetailedViewProps> = ({
           onPreviousClick={onPreviousClick}
           onNextClick={onNextClick}
           onBackClick={onBackClick}
+          additionalActionComponent={
+            <WellReportButtonMenu
+              wellboreMatchingId={currentWellbore?.wellboreMatchingId || ''}
+            />
+          }
         />
 
         <FiltersBar>

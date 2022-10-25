@@ -16,28 +16,29 @@ export const WellReportButtonMenu = ({
 }: WellReportMenuProps) => {
   const { canReadReports, canWriteReports } = useReportPermissions();
 
-  if (canReadReports && canWriteReports) {
-    return (
-      <DropdownContainer>
-        <Dropdown
-          placement="left"
-          content={
-            <WellReportMenu
-              wellboreMatchingId={wellboreMatchingId}
-              dataSet={dataSet}
-            />
-          }
-        >
-          <Button
-            key="ReportIssue"
-            type="secondary"
-            aria-label="Report Issue Button"
-          >
-            <div>Report Issue</div>
-          </Button>
-        </Dropdown>
-      </DropdownContainer>
-    );
+  if (!canReadReports || !canWriteReports || wellboreMatchingId.trim() === '') {
+    return null;
   }
-  return null;
+
+  return (
+    <DropdownContainer>
+      <Dropdown
+        placement="left"
+        content={
+          <WellReportMenu
+            wellboreMatchingId={wellboreMatchingId}
+            dataSet={dataSet}
+          />
+        }
+      >
+        <Button
+          key="ReportIssue"
+          type="secondary"
+          aria-label="Report Issue Button"
+        >
+          <div>Report Issue</div>
+        </Button>
+      </Dropdown>
+    </DropdownContainer>
+  );
 };
