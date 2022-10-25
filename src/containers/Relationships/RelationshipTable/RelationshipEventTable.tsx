@@ -6,7 +6,7 @@ import { ResultCount } from 'components';
 import { Column } from 'react-table';
 import { RelationshipTableProps } from './RelationshipTable';
 import { EventWithRelationshipLabels } from 'containers/Events/EventTable/EventNewTable';
-import { RelationshipFilters } from './RelationshipFilters';
+
 import { EmptyState } from 'components/EmpyState/EmptyState';
 
 const {
@@ -33,39 +33,25 @@ export function RelationshipEventTable({
 }: Omit<RelationshipTableProps, 'type'>) {
   const { data: count } = useRelationshipCount(parentResource, 'event');
 
-  const {
-    hasNextPage,
-    fetchNextPage,
-    isLoading,
-    items,
-    relationshipLabelOptions,
-    onChangeLabelValue,
-    labelValue,
-  } = useRelatedResourceResults<EventWithRelationshipLabels>(
-    'relationship',
-    'event',
-    parentResource
-  );
+  const { hasNextPage, fetchNextPage, isLoading, items } =
+    useRelatedResourceResults<EventWithRelationshipLabels>(
+      'relationship',
+      'event',
+      parentResource
+    );
   if (isLoading) {
     return <EmptyState isLoading={isLoading} />;
   }
   return (
-    <>
-      <RelationshipFilters
-        options={relationshipLabelOptions}
-        onChange={onChangeLabelValue}
-        value={labelValue}
-      />
-      <NewTable
-        columns={columns}
-        tableHeaders={<ResultCount api="list" type="event" count={count} />}
-        data={items}
-        showLoadButton
-        fetchMore={fetchNextPage}
-        hasNextPage={hasNextPage}
-        isLoadingMore={isLoading}
-        onRowClick={row => onItemClicked(row.id)}
-      />
-    </>
+    <NewTable
+      columns={columns}
+      tableHeaders={<ResultCount api="list" type="event" count={count} />}
+      data={items}
+      showLoadButton
+      fetchMore={fetchNextPage}
+      hasNextPage={hasNextPage}
+      isLoadingMore={isLoading}
+      onRowClick={row => onItemClicked(row.id)}
+    />
   );
 }

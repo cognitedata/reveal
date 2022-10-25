@@ -6,7 +6,7 @@ import { useRelatedResourceResults, useRelationshipCount } from 'hooks';
 
 import { Column } from 'react-table';
 import { RelationshipTableProps } from './RelationshipTable';
-import { RelationshipFilters } from './RelationshipFilters';
+
 import { EmptyState } from 'components/EmpyState/EmptyState';
 import { ResultCount } from 'components';
 
@@ -24,41 +24,27 @@ export function RelationshipAssetTable({
     rootAsset,
   ] as Column<AssetWithRelationshipLabels>[];
 
-  const {
-    hasNextPage,
-    fetchNextPage,
-    isLoading,
-    items,
-    relationshipLabelOptions,
-    onChangeLabelValue,
-    labelValue,
-  } = useRelatedResourceResults<AssetWithRelationshipLabels>(
-    'relationship',
-    'asset',
-    parentResource
-  );
+  const { hasNextPage, fetchNextPage, isLoading, items } =
+    useRelatedResourceResults<AssetWithRelationshipLabels>(
+      'relationship',
+      'asset',
+      parentResource
+    );
   const { data: count } = useRelationshipCount(parentResource, 'asset');
 
   if (isLoading) {
     return <EmptyState isLoading={isLoading} />;
   }
   return (
-    <>
-      <RelationshipFilters
-        options={relationshipLabelOptions}
-        onChange={onChangeLabelValue}
-        value={labelValue}
-      />
-      <NewTable
-        tableHeaders={<ResultCount api="list" type="asset" count={count} />}
-        columns={columns}
-        data={items}
-        showLoadButton
-        fetchMore={fetchNextPage}
-        hasNextPage={hasNextPage}
-        isLoadingMore={isLoading}
-        onRowClick={row => onItemClicked(row.id)}
-      />
-    </>
+    <NewTable
+      tableHeaders={<ResultCount api="list" type="asset" count={count} />}
+      columns={columns}
+      data={items}
+      showLoadButton
+      fetchMore={fetchNextPage}
+      hasNextPage={hasNextPage}
+      isLoadingMore={isLoading}
+      onRowClick={row => onItemClicked(row.id)}
+    />
   );
 }

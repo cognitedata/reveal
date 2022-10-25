@@ -1,4 +1,3 @@
-import { Flex } from '@cognite/cogs.js';
 import React from 'react';
 import { Select } from 'components';
 import { OptionsType, OptionTypeBase } from 'react-select';
@@ -16,36 +15,32 @@ export function RelationshipFilters({
   value,
 }: RelationshipFiltersProps) {
   return (
-    <Flex alignItems="center">
-      <h4>Relationship Labels:</h4>
-      <SelectWrapper>
-        <Select
-          creatable
-          options={options.map(option => ({
-            label: option,
-            value: option,
-          }))}
-          onChange={newValue => {
-            onChange(
-              newValue
-                ? (newValue as OptionsType<OptionTypeBase>).map(el => el.value)
-                : undefined
-            );
-          }}
-          value={value?.map(el => ({
-            label: el.externalId,
-            value: el.externalId,
-          }))}
-          isMulti
-          isSearchable
-          isClearable
-        />
-      </SelectWrapper>
-    </Flex>
+    <SelectWrapper>
+      <Select
+        options={options.map(option => ({
+          label: option,
+          value: option,
+        }))}
+        title="Labels:"
+        onChange={newValue => {
+          onChange(
+            newValue
+              ? (newValue as OptionsType<OptionTypeBase>).map(el => el.value)
+              : undefined
+          );
+        }}
+        value={value?.map(el => ({
+          label: el.externalId,
+          value: el.externalId,
+        }))}
+        isMulti
+        isSearchable
+        isClearable
+      />
+    </SelectWrapper>
   );
 }
 
 const SelectWrapper = styled.div`
   width: 225px;
-  margin: 20px;
 `;

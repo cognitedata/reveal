@@ -68,7 +68,6 @@ export const RelatedResourcesLoader = <T extends Resource>({
         <h4>Relationship Labels:</h4>
         <SelectWrapper>
           <Select
-            creatable
             options={relationshipLabelOptions.map(option => ({
               label: option,
               value: option,

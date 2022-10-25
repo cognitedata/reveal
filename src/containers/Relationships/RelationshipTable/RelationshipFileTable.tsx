@@ -8,7 +8,6 @@ import { Column } from 'react-table';
 import { RelationshipTableProps } from './RelationshipTable';
 
 import { FileWithRelationshipLabels } from 'containers/Files/FileTable/FileNewTable';
-import { RelationshipFilters } from './RelationshipFilters';
 import { EmptyState } from 'components/EmpyState/EmptyState';
 
 const {
@@ -37,39 +36,25 @@ export function RelationshipFileTable({
 }: Omit<RelationshipTableProps, 'type'>) {
   const { data: count } = useRelationshipCount(parentResource, 'file');
 
-  const {
-    hasNextPage,
-    fetchNextPage,
-    isLoading,
-    items,
-    relationshipLabelOptions,
-    onChangeLabelValue,
-    labelValue,
-  } = useRelatedResourceResults<FileWithRelationshipLabels>(
-    'relationship',
-    'file',
-    parentResource
-  );
+  const { hasNextPage, fetchNextPage, isLoading, items } =
+    useRelatedResourceResults<FileWithRelationshipLabels>(
+      'relationship',
+      'file',
+      parentResource
+    );
   if (isLoading) {
     return <EmptyState isLoading={isLoading} />;
   }
   return (
-    <>
-      <RelationshipFilters
-        options={relationshipLabelOptions}
-        onChange={onChangeLabelValue}
-        value={labelValue}
-      />
-      <NewTable
-        columns={columns}
-        tableHeaders={<ResultCount api="list" type="file" count={count} />}
-        data={items}
-        showLoadButton
-        fetchMore={fetchNextPage}
-        hasNextPage={hasNextPage}
-        isLoadingMore={isLoading}
-        onRowClick={row => onItemClicked(row.id)}
-      />
-    </>
+    <NewTable
+      columns={columns}
+      tableHeaders={<ResultCount api="list" type="file" count={count} />}
+      data={items}
+      showLoadButton
+      fetchMore={fetchNextPage}
+      hasNextPage={hasNextPage}
+      isLoadingMore={isLoading}
+      onRowClick={row => onItemClicked(row.id)}
+    />
   );
 }

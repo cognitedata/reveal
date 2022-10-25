@@ -7,7 +7,6 @@ import { Column } from 'react-table';
 import { RelationshipTableProps } from './RelationshipTable';
 
 import { SequenceWithRelationshipLabels } from 'index';
-import { RelationshipFilters } from './RelationshipFilters';
 import { EmptyState } from 'components/EmpyState/EmptyState';
 
 const {
@@ -36,39 +35,25 @@ export function RelationshipSequenceTable({
 }: Omit<RelationshipTableProps, 'type'>) {
   const { data: count } = useRelationshipCount(parentResource, 'sequence');
 
-  const {
-    hasNextPage,
-    fetchNextPage,
-    isLoading,
-    items,
-    relationshipLabelOptions,
-    onChangeLabelValue,
-    labelValue,
-  } = useRelatedResourceResults<SequenceWithRelationshipLabels>(
-    'relationship',
-    'sequence',
-    parentResource
-  );
+  const { hasNextPage, fetchNextPage, isLoading, items } =
+    useRelatedResourceResults<SequenceWithRelationshipLabels>(
+      'relationship',
+      'sequence',
+      parentResource
+    );
   if (isLoading) {
     return <EmptyState isLoading={isLoading} />;
   }
   return (
-    <>
-      <RelationshipFilters
-        options={relationshipLabelOptions}
-        onChange={onChangeLabelValue}
-        value={labelValue}
-      />
-      <NewTable
-        columns={columns}
-        tableHeaders={<ResultCount api="list" type="sequence" count={count} />}
-        data={items}
-        showLoadButton
-        fetchMore={fetchNextPage}
-        hasNextPage={hasNextPage}
-        isLoadingMore={isLoading}
-        onRowClick={row => onItemClicked(row.id)}
-      />
-    </>
+    <NewTable
+      columns={columns}
+      tableHeaders={<ResultCount api="list" type="sequence" count={count} />}
+      data={items}
+      showLoadButton
+      fetchMore={fetchNextPage}
+      hasNextPage={hasNextPage}
+      isLoadingMore={isLoading}
+      onRowClick={row => onItemClicked(row.id)}
+    />
   );
 }
