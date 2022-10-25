@@ -49,6 +49,14 @@ jobs:
       continue-on-error: false
       run: cargo update --locked
 
+
+    - name: Cache cargo registry
+      if: env.GIT_DIFF
+      uses: actions/cache@v3
+      with:
+        path: ~/.cargo/registry
+        key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock') }}
+
     # Skip to save time - development version is enough
     # - name: Build prod version
     #   working-directory: viewer
