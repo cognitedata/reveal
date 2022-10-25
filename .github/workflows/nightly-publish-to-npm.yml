@@ -1,7 +1,7 @@
 name: Nightly Publish Package to NPM
 on:
   schedule:
-    - cron: '0 5 * * 1-6'
+    - cron: '0 5 * * 1-5'
 
 jobs:
   deploy-to-npm:
