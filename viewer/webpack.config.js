@@ -94,7 +94,7 @@ module.exports = env => {
         type: 'umd'
       }
     },
-    devtool: false, // development ? 'eval-source-map' : 'source-map',
+    devtool: false,
     watchOptions: {
       aggregateTimeout: 1500,
       ignored: /node_modules/
