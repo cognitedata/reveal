@@ -23,8 +23,6 @@ jobs:
 
       - name: Setup Cognite CICD
         run: |
-          git config --global user.email "cognite-cicd@users.noreply.github.com"
-          git config --global user.name "Cognite CICD"
           echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> .npmrc
           npm whoami
         env:
