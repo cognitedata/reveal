@@ -8,6 +8,7 @@ import {
   getResourceSearchParams,
   getResourceSearchQueryKey,
   ExploreViewConfig,
+  ExploreDataFilters,
 } from 'utils';
 import { useTranslation } from 'common/i18n';
 import { useResourceTableColumns } from 'components/Data/ResourceTableColumns';
@@ -17,20 +18,22 @@ interface EventsPreviewProps {
   dataSetId: number;
   setExploreView?: (value: ExploreViewConfig) => void;
   query: string;
+  filters: ExploreDataFilters;
 }
 
 const EventsPreview = ({
   dataSetId,
   setExploreView,
   query,
+  filters,
 }: EventsPreviewProps) => {
   const { t } = useTranslation();
   const { getResourceTableColumns } = useResourceTableColumns();
   const { data: events, isLoading: isEventsLoading } = useQuery(
-    getResourceSearchQueryKey('events', dataSetId, query),
+    getResourceSearchQueryKey('events', dataSetId, query, filters),
     () =>
       sdk.events.search(
-        getResourceSearchParams(dataSetId, query, 'description')
+        getResourceSearchParams(dataSetId, query, filters, 'description')
       ),
     {
       onError: (e: any) => {

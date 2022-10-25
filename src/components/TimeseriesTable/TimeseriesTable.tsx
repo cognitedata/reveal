@@ -6,6 +6,7 @@ import {
   handleError,
   getResourceSearchParams,
   getResourceSearchQueryKey,
+  ExploreDataFilters,
 } from 'utils';
 import { useTranslation } from 'common/i18n';
 import { useResourceTableColumns } from 'components/Data/ResourceTableColumns';
@@ -14,14 +15,20 @@ import { useQuery } from 'react-query';
 interface TimeseriesPreviewProps {
   dataSetId: number;
   query: string;
+  filters: ExploreDataFilters;
 }
 
-const TimeseriesPreview = ({ dataSetId, query }: TimeseriesPreviewProps) => {
+const TimeseriesPreview = ({
+  dataSetId,
+  query,
+  filters,
+}: TimeseriesPreviewProps) => {
   const { t } = useTranslation();
   const { getResourceTableColumns } = useResourceTableColumns();
   const { data: timeseries, isLoading: isTimeseriesLoading } = useQuery(
-    getResourceSearchQueryKey('timeseries', dataSetId, query),
-    () => sdk.timeseries.search(getResourceSearchParams(dataSetId, query)),
+    getResourceSearchQueryKey('timeseries', dataSetId, query, filters),
+    () =>
+      sdk.timeseries.search(getResourceSearchParams(dataSetId, query, filters)),
     {
       onError: (e: any) => {
         handleError({ message: t('fetch-timeseries-failed'), ...e });

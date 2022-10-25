@@ -6,6 +6,7 @@ import {
   handleError,
   getResourceSearchParams,
   getResourceSearchQueryKey,
+  ExploreDataFilters,
 } from 'utils';
 import { useTranslation } from 'common/i18n';
 import { useResourceTableColumns } from 'components/Data/ResourceTableColumns';
@@ -14,14 +15,16 @@ import { useQuery } from 'react-query';
 interface sequencesTableProps {
   dataSetId: number;
   query: string;
+  filters: ExploreDataFilters;
 }
 
-const SequencesTable = ({ dataSetId, query }: sequencesTableProps) => {
+const SequencesTable = ({ dataSetId, query, filters }: sequencesTableProps) => {
   const { t } = useTranslation();
   const { getResourceTableColumns } = useResourceTableColumns();
   const { data: sequences, isLoading: isSequencesLoading } = useQuery(
-    getResourceSearchQueryKey('sequences', dataSetId, query),
-    () => sdk.sequences.search(getResourceSearchParams(dataSetId, query)),
+    getResourceSearchQueryKey('sequences', dataSetId, query, filters),
+    () =>
+      sdk.sequences.search(getResourceSearchParams(dataSetId, query, filters)),
     {
       onError: (e: any) => {
         handleError({ message: t('fetch-sequences-failed'), ...e });

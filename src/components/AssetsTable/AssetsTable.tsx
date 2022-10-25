@@ -6,6 +6,7 @@ import {
   handleError,
   getResourceSearchParams,
   getResourceSearchQueryKey,
+  ExploreDataFilters,
 } from 'utils';
 import { useTranslation } from 'common/i18n';
 import { useResourceTableColumns } from 'components/Data/ResourceTableColumns';
@@ -14,14 +15,15 @@ import { useQuery } from 'react-query';
 interface assetsTableProps {
   dataSetId: number;
   query: string;
+  filters: ExploreDataFilters;
 }
 
-const AssetsTable = ({ dataSetId, query }: assetsTableProps) => {
+const AssetsTable = ({ dataSetId, query, filters }: assetsTableProps) => {
   const { t } = useTranslation();
   const { getResourceTableColumns } = useResourceTableColumns();
   const { data: assets, isLoading: isAssetsLoading } = useQuery(
-    getResourceSearchQueryKey('assets', dataSetId, query),
-    () => sdk.assets.search(getResourceSearchParams(dataSetId, query)),
+    getResourceSearchQueryKey('assets', dataSetId, query, filters),
+    () => sdk.assets.search(getResourceSearchParams(dataSetId, query, filters)),
     {
       onError: (e: any) => {
         handleError({ message: t('assets-failed-to-fetch'), ...e });

@@ -6,6 +6,7 @@ import {
   handleError,
   getResourceSearchParams,
   getResourceSearchQueryKey,
+  ExploreDataFilters,
 } from 'utils';
 import { useTranslation } from 'common/i18n';
 import { useResourceTableColumns } from 'components/Data/ResourceTableColumns';
@@ -14,14 +15,18 @@ import { useQuery } from 'react-query';
 interface filesTableProps {
   dataSetId: number;
   query: string;
+  filters: ExploreDataFilters;
 }
 
-const FilesTable = ({ dataSetId, query }: filesTableProps) => {
+const FilesTable = ({ dataSetId, query, filters }: filesTableProps) => {
   const { t } = useTranslation();
   const { getResourceTableColumns } = useResourceTableColumns();
   const { data: files, isLoading: isFilesLoading } = useQuery(
-    getResourceSearchQueryKey('files', dataSetId, query),
-    () => sdk.files.search(getResourceSearchParams(dataSetId, query, 'name')),
+    getResourceSearchQueryKey('files', dataSetId, query, filters),
+    () =>
+      sdk.files.search(
+        getResourceSearchParams(dataSetId, query, filters, 'name')
+      ),
     {
       onError: (e: any) => {
         handleError({ message: t('fetch-files-failed'), ...e });

@@ -435,8 +435,13 @@ export const createInternalLink = (path?: string | number) => {
 export const getResourceSearchQueryKey = (
   resource: string,
   dataSetId: number,
-  query: string
-) => [resource, 'search', dataSetId, query];
+  query: string,
+  filters: ExploreDataFilters
+) => [resource, 'search', dataSetId, query, filters];
+
+export type ExploreDataFilters = {
+  externalIdPrefix?: string;
+};
 
 type ResourceSearchParams = {
   filter: {
@@ -452,11 +457,13 @@ type ResourceSearchParams = {
 export const getResourceSearchParams = (
   dataSetId: number,
   query: string,
+  filters: ExploreDataFilters,
   prop?: 'query' | 'name' | 'description'
 ): ResourceSearchParams => {
   const params: ResourceSearchParams = {
     filter: {
       dataSetIds: [{ id: dataSetId }],
+      ...filters,
     },
   };
   if (query.length > 0) {
