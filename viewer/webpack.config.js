@@ -107,7 +107,6 @@ module.exports = env => {
             exclude: useWorkerSourceMaps ? /^$/ : /\.worker\.ts$/
           })
         : new webpack.SourceMapDevToolPlugin({
-            test: /\.ts$/,
             filename: '[file].map'
           }),
       new copyPkgJsonPlugin({
