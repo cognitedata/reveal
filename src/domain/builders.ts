@@ -60,7 +60,7 @@ export class AdvancedFilterBuilder<T extends Record<string, unknown>> {
 
   private getProperty<K extends keyof T>(key: K) {
     if (typeof key === 'string' || key instanceof String) {
-      return key.split('.');
+      return key.split('|');
     }
     throw new Error('Key is not a string');
   }

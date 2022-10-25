@@ -2,10 +2,10 @@ import { AdvancedFilterBuilder, AdvancedFilter } from '../../../builders';
 import { InternalDocumentFilter } from '../types';
 
 type DocumentProperties = {
-  'sourceFile.assetIds': number[];
+  'sourceFile|assetIds': number[];
   author: string[];
-  'sourceFile.source': string[];
-  'sourceFile.mimeType': string[];
+  'sourceFile|source': string[];
+  'sourceFile|mimeType': string[];
   externalId: string;
 };
 
@@ -19,7 +19,7 @@ export const mapFiltersToDocumentSearchFilters = ({
   assetSubtreeIds,
 }: InternalDocumentFilter): AdvancedFilter<DocumentProperties> | undefined => {
   const builder = new AdvancedFilterBuilder<DocumentProperties>()
-    .containsAny('sourceFile.assetIds', () => {
+    .containsAny('sourceFile|assetIds', () => {
       return assetSubtreeIds?.reduce((acc, item) => {
         if ('id' in item) {
           return [...acc, item.id];
@@ -28,8 +28,8 @@ export const mapFiltersToDocumentSearchFilters = ({
       }, [] as number[]);
     })
     .in('author', author)
-    .in('sourceFile.source', source)
-    .in('sourceFile.mimeType', mimeType)
+    .in('sourceFile|source', source)
+    .in('sourceFile|mimeType', mimeType)
     .prefix('externalId', externalIdPrefix)
     .range('createdTime', {
       lte: createdTime?.max as number,

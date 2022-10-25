@@ -2,9 +2,22 @@ import { useEventsListQuery } from 'domain/events/service/queries/useEventsListQ
 import { isEmpty } from 'lodash';
 import { useMemo } from 'react';
 import { mapEventsMetadataKeysWithQuery } from '../transformers/mapEventsMetadataKeysWithQuery';
+import { mapFiltersToEventsAdvancedFilters } from '../transformers/mapFiltersToEventsAdvancedFilters';
+import { InternalEventsFilters } from '../types';
 
-export const useEventsSearchQueryMetadataKeysQuery = (query?: string) => {
-  const { data } = useEventsListQuery({}, { enabled: !isEmpty(query) });
+export const useEventsSearchQueryMetadataKeysQuery = (
+  query: string | undefined,
+  eventsFilters: InternalEventsFilters
+) => {
+  const advancedFilter = useMemo(
+    () => mapFiltersToEventsAdvancedFilters(eventsFilters),
+    [eventsFilters]
+  );
+
+  const { data } = useEventsListQuery(
+    { advancedFilter },
+    { enabled: !isEmpty(query) }
+  );
 
   return useMemo(
     () => mapEventsMetadataKeysWithQuery(data, query),

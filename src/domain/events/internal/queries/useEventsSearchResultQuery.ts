@@ -4,21 +4,26 @@ import { mapFiltersToEventsAdvancedFilters } from '../transformers/mapFiltersToE
 import { InternalEventsFilters } from '../types';
 import { useEventsSearchQueryMetadataKeysQuery } from './useEventsMetadataKeysQuery';
 
-export const useEventsFilteredListQuery = ({
+export const useEventsSearchResultQuery = ({
   query,
   eventsFilters,
 }: {
   query?: string;
   eventsFilters: InternalEventsFilters;
 }) => {
-  // const [eventsFilters] = useEventsFilters();
-
-  const searchQueryMetadataKeys = useEventsSearchQueryMetadataKeysQuery(query);
+  const searchQueryMetadataKeys = useEventsSearchQueryMetadataKeysQuery(
+    query,
+    eventsFilters
+  );
 
   const advancedFilter = useMemo(
     () =>
-      mapFiltersToEventsAdvancedFilters(eventsFilters, searchQueryMetadataKeys),
-    [eventsFilters, searchQueryMetadataKeys]
+      mapFiltersToEventsAdvancedFilters(
+        eventsFilters,
+        searchQueryMetadataKeys,
+        query
+      ),
+    [eventsFilters, searchQueryMetadataKeys, query]
   );
 
   return useEventsListQuery({ advancedFilter, limit: 25 });

@@ -8,7 +8,7 @@ import { RelatedResourceType } from 'hooks/RelatedResourcesHooks';
 import { EnsureNonEmptyResource } from 'components';
 import { Loader } from '@cognite/cogs.js';
 import { ColumnToggleProps } from 'components/ReactTable';
-import { useEventsFilteredListQuery } from 'domain/events/internal/queries/useEventsFilteredListQuery';
+import { useEventsSearchResultQuery } from 'domain/events/internal/queries/useEventsSearchResultQuery';
 
 export const EventSearchResults = ({
   query = '',
@@ -27,7 +27,7 @@ export const EventSearchResults = ({
   onClick: (item: CogniteEvent) => void;
 } & ColumnToggleProps<CogniteEvent>) => {
   const { data, isLoading, hasNextPage, fetchNextPage } =
-    useEventsFilteredListQuery({ query, eventsFilters: filter });
+    useEventsSearchResultQuery({ query, eventsFilters: filter });
 
   if (isLoading) {
     return <Loader />;

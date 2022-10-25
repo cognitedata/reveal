@@ -1,4 +1,5 @@
 import { AdvancedFilter, AdvancedFilterBuilder } from 'domain/builders';
+import isEmpty from 'lodash/isEmpty';
 import { InternalEventsFilters } from '../types';
 
 export type EventsProperties = {
@@ -8,7 +9,8 @@ export type EventsProperties = {
   subtype: string;
   source: string[];
   externalId: string;
-  [key: `metadata.${string}`]: string;
+  description: string;
+  [key: `metadata|${string}`]: string;
 };
 
 export const mapFiltersToEventsAdvancedFilters = (
@@ -25,7 +27,8 @@ export const mapFiltersToEventsAdvancedFilters = (
     externalIdPrefix,
     dataSetIds,
   }: InternalEventsFilters,
-  searchQueryMetadataKeys?: Record<string, string>
+  searchQueryMetadataKeys?: Record<string, string>,
+  query?: string
 ): AdvancedFilter<EventsProperties> | undefined => {
   const filterBuilder = new AdvancedFilterBuilder<EventsProperties>()
     .containsAny('assetIds', () => {
@@ -77,7 +80,7 @@ export const mapFiltersToEventsAdvancedFilters = (
 
   if (metadata) {
     for (const [key, value] of Object.entries(metadata)) {
-      filterBuilder.equals(`metadata.${key}`, value);
+      filterBuilder.equals(`metadata|${key}`, value);
     }
   }
 
@@ -85,12 +88,14 @@ export const mapFiltersToEventsAdvancedFilters = (
    * We want to filter all the metadata keys with the search query, to give a better result
    * to the user when using our search.
    */
-  if (searchQueryMetadataKeys) {
+  if (searchQueryMetadataKeys && !isEmpty(query)) {
     const searchBuilder = new AdvancedFilterBuilder<EventsProperties>();
 
     for (const [key, value] of Object.entries(searchQueryMetadataKeys)) {
-      searchBuilder.prefix(`metadata.${key}`, value);
+      searchBuilder.prefix(`metadata|${key}`, value);
     }
+
+    searchBuilder.prefix('description', query);
 
     filterBuilder.or(searchBuilder);
   }
