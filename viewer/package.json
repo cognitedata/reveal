@@ -49,7 +49,7 @@
     "ws:serve": "yarn run build:wasm && webpack-dev-server --config packages/webpack.config.js",
     "ws:test": "cd $INIT_CWD && jest --runInBand",
     "ws:test:wasm": "cd $INIT_CWD && wasm-pack test --chrome --headless ./wasm",
-    "ws:update-cargo-index": "cargo update --dry-run",
+    "ws:update-cargo-index": "time cargo update --dry-run",
     "ws:lint": "cd $INIT_CWD && eslint . --ext .ts,.js --max-warnings 0 --cache"
   },
   "dependencies": {
