@@ -1,11 +1,8 @@
 name: Nightly Publish Package to NPM
 on:
-  pull_request:
-    types:
-      - opened
-      - synchronize
-  #schedule:
-    #- cron: '0 5 * * *'
+  schedule:
+    - cron: '0 5 * * 1-6'
+
 jobs:
   deploy-to-npm:
     runs-on: ubuntu-latest

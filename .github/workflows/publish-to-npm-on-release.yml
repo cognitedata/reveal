@@ -19,8 +19,6 @@ jobs:
 
       - name: Setup Cognite CICD
         run: |
-          git config --global user.email "cognite-cicd@users.noreply.github.com"
-          git config --global user.name "Cognite CICD"
           echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> .npmrc
           npm whoami
         env:
@@ -29,13 +27,6 @@ jobs:
       - name: Install NPM dependencies
         working-directory: viewer
         run: yarn install --immutable
-
-      - name: Rust fmt
-        working-directory: viewer
-        continue-on-error: false
-        run: |
-            rustup component add rustfmt
-            cargo fmt --check
 
       - name: Build production version
         working-directory: viewer
