@@ -53,6 +53,13 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
+    - name: Cache NPM packages
+      uses: actions/cache@v3
+      id: npm_cache
+      with:
+        path: '**/node_modules'
+        key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
+
     - name: Lint
       working-directory: viewer
       continue-on-error: false
