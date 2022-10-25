@@ -94,12 +94,19 @@ module.exports = env => {
         type: 'umd'
       }
     },
-    devtool: development ? 'eval-source-map' : 'source-map',
+    devtool: false, // development ? 'eval-source-map' : 'source-map',
     watchOptions: {
       aggregateTimeout: 1500,
       ignored: /node_modules/
     },
     plugins: [
+      development ? new webpack.EvalSourceMapDevToolPlugin({
+        test: /\.ts$/
+      }) :
+        new webpack.SourceMapDevToolPlugin({
+          test: /\.ts$/,
+          filename: '[file].map'
+        }),
       new copyPkgJsonPlugin({
         remove: development
           ? ['devDependencies', 'scripts', 'workspaces', 'husky']
