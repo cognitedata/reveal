@@ -5,7 +5,7 @@
   "scripts": {
     "start": "yarn ws:serve --env testFixture=PointCloudColorStyling.VisualTest.ts",
     "test": "yarn ws:test --config ./../../jest.config.js",
-    "run-wasm-pack": "wasm-pack",
+    "run-wasm-pack": "yarn run ws:update-cargo-index && wasm-pack",
     "test:wasm": "yarn ws:test:wasm",
     "lint": "yarn ws:lint"
   },

@@ -14,6 +14,7 @@ const MIXPANEL_TOKEN_PROD = '8c900bdfe458e32b768450c20750853d';
 
 module.exports = env => {
   const development = env?.development ?? false;
+  const useWorkerSourceMaps = env?.workerSourceMaps === 'true';
 
   return {
     mode: development ? 'development' : 'production',
@@ -94,12 +95,20 @@ module.exports = env => {
         type: 'umd'
       }
     },
-    devtool: development ? 'eval-source-map' : 'source-map',
+    devtool: false,
     watchOptions: {
       aggregateTimeout: 1500,
       ignored: /node_modules/
     },
     plugins: [
+      development
+        ? new webpack.EvalSourceMapDevToolPlugin({
+            test: /\.ts$/,
+            exclude: useWorkerSourceMaps ? /^$/ : /\.worker\.ts$/
+          })
+        : new webpack.SourceMapDevToolPlugin({
+            filename: '[file].map'
+          }),
       new copyPkgJsonPlugin({
         remove: development
           ? ['devDependencies', 'scripts', 'workspaces', 'husky']
@@ -118,7 +127,7 @@ module.exports = env => {
             {
               folder: 'dist',
               method: absoluteItemPath => {
-                return new RegExp(/\.worker.js$/, 'm').test(absoluteItemPath);
+                return new RegExp(/\.worker\.js(\.map)?$/, 'm').test(absoluteItemPath);
               }
             }
           ]
