@@ -127,7 +127,7 @@ module.exports = env => {
             {
               folder: 'dist',
               method: absoluteItemPath => {
-                return new RegExp(/\.worker.js$/, 'm').test(absoluteItemPath);
+                return new RegExp(/\.worker\.js(\.map)?$/, 'm').test(absoluteItemPath);
               }
             }
           ]
