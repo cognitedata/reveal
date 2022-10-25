@@ -292,7 +292,7 @@ const StyledCheckboxWrapper = styled(Flex)`
   margin-top: 10px;
 `;
 
-const StyledItemCount = styled(Body)`
+export const StyledItemCount = styled(Body)`
   color: ${Colors['text-icon--muted']};
 `;
 

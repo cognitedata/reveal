@@ -11,11 +11,12 @@ import ResourceProperty from './ResourceProperty';
 import { useTranslation } from 'common/i18n';
 import moment from 'moment';
 import { useFlag } from '@cognite/react-feature-flags';
+import { ExploreDataResourceTypes } from './ExploreData';
 
 type TResource = Asset | Timeseries | FileInfo | CogniteEvent | Sequence;
 
 export function useResourceTableColumns<T extends TResource>(
-  resource: 'assets' | 'timeseries' | 'files' | 'events' | 'sequences'
+  resource: ExploreDataResourceTypes
 ): ColumnsType<T> {
   const { t } = useTranslation();
 

@@ -1,44 +1,25 @@
-import sdk from '@cognite/cdf-sdk-singleton';
 import { Table, TableNoResults } from '@cognite/cdf-utilities';
-import {
-  getContainer,
-  ContentView,
-  handleError,
-  getResourceSearchParams,
-  getResourceSearchQueryKey,
-  ExploreDataFilters,
-} from 'utils';
+import { getContainer, ContentView } from 'utils';
 import { useTranslation } from 'common/i18n';
 import { useResourceTableColumns } from 'components/Data/ResourceTableColumns';
-import { useQuery } from 'react-query';
 import { Asset } from '@cognite/sdk';
 
-interface assetsTableProps {
-  dataSetId: number;
-  query: string;
-  filters: ExploreDataFilters;
+interface AssetsTableProps {
+  isLoading: boolean;
+  data: Asset[] | undefined;
 }
 
-const AssetsTable = ({ dataSetId, query, filters }: assetsTableProps) => {
+const AssetsTable = ({ data = [], isLoading }: AssetsTableProps) => {
   const { t } = useTranslation();
   const resourceTableColumns = useResourceTableColumns<Asset>('assets');
-  const { data: assets, isLoading: isAssetsLoading } = useQuery(
-    getResourceSearchQueryKey('assets', dataSetId, query, filters),
-    () => sdk.assets.search(getResourceSearchParams(dataSetId, query, filters)),
-    {
-      onError: (e: any) => {
-        handleError({ message: t('assets-failed-to-fetch'), ...e });
-      },
-    }
-  );
 
   return (
     <ContentView id="assetsTableId">
       <Table
         rowKey="key"
-        loading={isAssetsLoading}
+        loading={isLoading}
         columns={resourceTableColumns}
-        dataSource={assets || []}
+        dataSource={data}
         onChange={(_pagination, _filters) => {
           // TODO: Implement sorting
         }}

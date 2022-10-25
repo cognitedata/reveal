@@ -1,56 +1,32 @@
-import sdk from '@cognite/cdf-sdk-singleton';
 import { Table, TableNoResults } from '@cognite/cdf-utilities';
 import { Button, Flex } from '@cognite/cogs.js';
-import {
-  getContainer,
-  ContentView,
-  handleError,
-  getResourceSearchParams,
-  getResourceSearchQueryKey,
-  ExploreViewConfig,
-  ExploreDataFilters,
-} from 'utils';
+import { getContainer, ContentView, ExploreViewConfig } from 'utils';
 import { useTranslation } from 'common/i18n';
 import { useResourceTableColumns } from 'components/Data/ResourceTableColumns';
-import { useQuery } from 'react-query';
 import { CogniteEvent } from '@cognite/sdk/dist/src';
 
 interface EventsPreviewProps {
   dataSetId: number;
   setExploreView?: (value: ExploreViewConfig) => void;
-  query: string;
-  filters: ExploreDataFilters;
+  isLoading: boolean;
+  data: CogniteEvent[] | undefined;
 }
 
 const EventsPreview = ({
   dataSetId,
-  setExploreView,
-  query,
-  filters,
+  data = [],
+  isLoading,
+  setExploreView = () => {},
 }: EventsPreviewProps) => {
   const { t } = useTranslation();
   const resourceTableColumns = useResourceTableColumns<CogniteEvent>('events');
-  const { data: events, isLoading: isEventsLoading } = useQuery(
-    getResourceSearchQueryKey('events', dataSetId, query, filters),
-    () =>
-      sdk.events.search(
-        getResourceSearchParams(dataSetId, query, filters, 'description')
-      ),
-    {
-      onError: (e: any) => {
-        handleError({ message: t('fetch-events-failed'), ...e });
-      },
-    }
-  );
 
   const handleViewEvents = () => {
-    if (setExploreView && dataSetId) {
-      setExploreView({
-        visible: true,
-        type: 'events-profile',
-        id: dataSetId,
-      });
-    }
+    setExploreView({
+      visible: true,
+      type: 'events-profile',
+      id: dataSetId,
+    });
   };
 
   return (
@@ -62,9 +38,9 @@ const EventsPreview = ({
       </Flex>
       <Table
         rowKey="key"
-        loading={isEventsLoading}
+        loading={isLoading}
         columns={resourceTableColumns}
-        dataSource={events || []}
+        dataSource={data}
         onChange={(_pagination, _filters) => {
           // TODO: Implement sorting
         }}
