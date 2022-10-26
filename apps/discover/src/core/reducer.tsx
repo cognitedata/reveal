@@ -6,6 +6,7 @@ import { feedback } from 'modules/feedback/reducer';
 import { global } from 'modules/global/reducer';
 import { inspectTabs } from 'modules/inspectTabs/reducer';
 import { map } from 'modules/map/reducer';
+import { reportManager } from 'modules/report-manager/reducer';
 import { resultPanel } from 'modules/resultPanel/reducer';
 import { search } from 'modules/search/reducer';
 import { seismic } from 'modules/seismicSearch/reducer';
@@ -33,6 +34,7 @@ const rootReducer = combineReducers<StoreState>({
   sidebar,
   resultPanel,
   wellInspect,
+  reportManager,
 });
 
 export default rootReducer;

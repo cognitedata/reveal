@@ -8,11 +8,9 @@ import {
   TOGGLE_SELECTED_WELL,
   TOGGLE_SELECTED_WELLBORE_OF_WELL,
   SET_GO_BACK_NAVIGATION_PATH,
-  SET_WELL_FEEDBACK,
   SetPrerequisiteData,
   ToggleSelectedWell,
   ToggleSelectedWellboreOfWell,
-  SetWellFeedback,
 } from './types';
 
 export const WELL_SELECTED_RELATED_DOCUMENTS_COLUMNS =
@@ -39,9 +37,6 @@ const setSelectedRelatedDocumentColumns = createAction<BooleanSelection>(
   SET_SELECTED_RELATED_DOCUMENT_COLUMNS
 );
 
-const setWellFeedback =
-  createAction<SetWellFeedback['payload']>(SET_WELL_FEEDBACK);
-
 export const wellInspectActions = {
   setPrerequisiteData,
   setGoBackNavigationPath,
@@ -49,5 +44,4 @@ export const wellInspectActions = {
   toggleSelectedWellboreOfWell,
   setColoredWellbores,
   setSelectedRelatedDocumentColumns,
-  setWellFeedback,
 };

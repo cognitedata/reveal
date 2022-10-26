@@ -15,6 +15,10 @@ import { InspectTabsAction, InspectTabsState } from 'modules/inspectTabs/types';
 import { MapState } from 'modules/map/types';
 import { MapAction } from 'modules/map/types.actions';
 import {
+  ReportManagerAction,
+  ReportManagerState,
+} from 'modules/report-manager/types';
+import {
   ResultPanelState,
   ResultPanelActions,
 } from 'modules/resultPanel/types';
@@ -38,7 +42,8 @@ export type StoreAction =
   | WellSearchAction
   | SidebarActions
   | ResultPanelActions
-  | WellInspectAction;
+  | WellInspectAction
+  | ReportManagerAction;
 
 export type StoreState = {
   environment: {
@@ -58,6 +63,7 @@ export type StoreState = {
   sidebar: SidebarState;
   resultPanel: ResultPanelState;
   wellInspect: WellInspectState;
+  reportManager: ReportManagerState;
 };
 
 export type ThunkResult<R> = ThunkAction<R, StoreState, undefined, StoreAction>;

@@ -25,6 +25,7 @@ import { useTranslation } from 'hooks/useTranslation';
 import { documentSearchActions } from 'modules/documentSearch/actions';
 import { useIsDocumentConfigEnabled } from 'modules/documentSearch/hooks';
 import { useDocumentResultCount } from 'modules/documentSearch/hooks/useDocumentResultCount';
+import { useWellFeedback } from 'modules/report-manager/selector';
 import {
   setResultPanelWidth,
   setActivePanel,
@@ -37,6 +38,8 @@ import { useFilterBarIsOpen } from 'modules/sidebar/selectors';
 import { Modules, CategoryTypes } from 'modules/sidebar/types';
 import { wellSearchActions } from 'modules/wellSearch/actions';
 import { useIsWellConfigEnabled } from 'modules/wellSearch/hooks/useWellConfig';
+
+import { WellReportModal } from '../wellReportManager';
 
 import {
   DOCUMENT_TAB_TITLE_KEY,
@@ -98,6 +101,7 @@ export const Search: React.FC = () => {
 
   const documentResultCount = useDocumentResultCount();
   const { data: wellsData } = useWellSearchResultQuery();
+  const wellFeedback = useWellFeedback();
 
   const wellInspectMode = location.pathname.includes(
     navigation.SEARCH_WELLS_INSPECT
@@ -307,6 +311,7 @@ export const Search: React.FC = () => {
           <Route path={navigation.SEARCH_WELLS} render={WellSearch} />
           <Redirect from={navigation.SEARCH} to={defaultPage()} />
         </Switch>
+        {wellFeedback?.visible && <WellReportModal />}
       </OuterSearchWrapper>
     ),
     [

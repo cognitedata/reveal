@@ -80,7 +80,3 @@ export const useWellInspectGoBackNavigationPath = () => {
 export const useColoredWellbores = () => {
   return useSelector((state) => state.wellInspect.coloredWellbores);
 };
-
-export const useWellFeedback = () => {
-  return useSelector((state) => state.wellInspect.wellFeedback);
-};

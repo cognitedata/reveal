@@ -17,11 +17,7 @@ import { useHorizontalScroll } from 'hooks/useHorizontalScroll';
 import { useTranslation } from 'hooks/useTranslation';
 import { inspectTabsActions } from 'modules/inspectTabs/actions';
 import { useInspectStateFromUrl } from 'modules/wellInspect/hooks/useInspectStateFromUrl';
-import {
-  useWellInspectSelectedWellboreIds,
-  useWellFeedback,
-} from 'modules/wellInspect/selectors';
-import { WellReportModal } from 'pages/authorized/wellReportManager/WellReportModal';
+import { useWellInspectSelectedWellboreIds } from 'modules/wellInspect/selectors';
 
 import {
   InspectContainer,
@@ -48,7 +44,6 @@ export const WellInspect: React.FC = () => {
   const history = useHistory();
   const location = useLocation();
   const dispatch = useDispatch();
-  const wellFeedback = useWellFeedback();
 
   useInspectStateFromUrl();
 
@@ -240,7 +235,6 @@ export const WellInspect: React.FC = () => {
         onConfirm={onOpenThreedeeConfirm}
         onCancel={onCloseThreedeeWarningModal}
       />
-      {wellFeedback.visible && <WellReportModal />}
     </>
   );
 };

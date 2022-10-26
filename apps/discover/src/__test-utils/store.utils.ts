@@ -16,6 +16,7 @@ import { initialState as favoriteState } from 'modules/favorite/reducer';
 import { initialState as feedbackState } from 'modules/feedback/reducer';
 import { initialState as inspectTabsState } from 'modules/inspectTabs/reducer';
 import { initialState as mapState } from 'modules/map/reducer';
+import { initialState as reportManagerState } from 'modules/report-manager/reducer';
 import { initialState as searchState } from 'modules/search/reducer';
 import { initialState as seismicState } from 'modules/seismicSearch/reducer';
 import { initialState as sidebarState } from 'modules/sidebar/reducer';
@@ -64,5 +65,6 @@ export const getInitialStore: () => PartialStoreState = () => {
       sortBy: {},
     },
     wellInspect: { ...wellInspectState },
+    reportManager: { ...reportManagerState },
   };
 };

@@ -26,6 +26,7 @@ import { useWells } from 'modules/wellSearch/selectors';
 import { isWellboreFavored } from 'modules/wellSearch/utils/isWellboreFavored';
 import { WellboreSubtableOptions } from 'pages/authorized/constant';
 import { ADD_TO_FAVORITES_OPTION_TEXT } from 'pages/authorized/search/document/constants';
+import { WellReportMenu } from 'pages/authorized/wellReportManager/WellReportMenu';
 import { FlexRow } from 'styles/layout';
 
 import { NO_WELLBORES_FOUND } from '../constants';
@@ -103,6 +104,15 @@ export const WellboreResultTable: React.FC<Props> = React.memo(({ well }) => {
                     }
                   >
                     <span>{ADD_TO_FAVORITES_OPTION_TEXT}</span>
+                  </Menu.Submenu>
+                  <Menu.Submenu
+                    content={
+                      <WellReportMenu
+                        wellboreMatchingId={row.original.matchingId}
+                      />
+                    }
+                  >
+                    <span>Report Issue</span>
                   </Menu.Submenu>
                 </Menu>
               }

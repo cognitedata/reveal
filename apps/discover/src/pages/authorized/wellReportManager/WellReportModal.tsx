@@ -10,8 +10,8 @@ import { useDispatch } from 'react-redux';
 import map from 'lodash/map';
 
 import { useProjectConfigByKey } from 'hooks/useProjectConfig';
-import { wellInspectActions } from 'modules/wellInspect/actions';
-import { useWellFeedback } from 'modules/wellInspect/selectors';
+import { reportManagerActions } from 'modules/report-manager/actions';
+import { useWellFeedback } from 'modules/report-manager/selector';
 
 import { CreateReportModal, ReportFormValues } from '../report-manager';
 
@@ -34,7 +34,7 @@ export const WellReportModal = () => {
 
   const onCancel = () => {
     dispatch(
-      wellInspectActions.setWellFeedback({
+      reportManagerActions.setWellFeedback({
         visible: false,
       })
     );
@@ -58,7 +58,7 @@ export const WellReportModal = () => {
       },
     ]);
     dispatch(
-      wellInspectActions.setWellFeedback({
+      reportManagerActions.setWellFeedback({
         visible: false,
       })
     );

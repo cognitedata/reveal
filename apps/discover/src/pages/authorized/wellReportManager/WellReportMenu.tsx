@@ -6,7 +6,7 @@ import { useHistory } from 'react-router-dom';
 
 import navigation from 'constants/navigation';
 import { showGlobalSidePanel } from 'modules/global/reducer';
-import { wellInspectActions } from 'modules/wellInspect/actions';
+import { reportManagerActions } from 'modules/report-manager/actions';
 
 import { ReportMenu, ReportMenuProps } from '../report-manager';
 
@@ -35,7 +35,7 @@ export const WellReportMenu = ({
         break;
       case 'CREATE_NEW':
         dispatch(
-          wellInspectActions.setWellFeedback({
+          reportManagerActions.setWellFeedback({
             visible: true,
             wellboreMatchingId,
             dataSet,

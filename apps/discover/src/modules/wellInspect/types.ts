@@ -13,7 +13,6 @@ export const SET_GO_BACK_NAVIGATION_PATH = 'SET_GO_BACK_NAVIGATION_PATH';
 export const SET_COLORED_WELLBORES = 'SET_COLORED_WELLBORES';
 export const SET_SELECTED_RELATED_DOCUMENT_COLUMNS =
   'SET_SELECTED_RELATED_DOCUMENT_COLUMNS';
-export const SET_WELL_FEEDBACK = 'SET_WELL_FEEDBACK';
 
 export type BooleanSelection = {
   [key: string]: boolean;
@@ -33,7 +32,6 @@ export interface WellInspectState {
   goBackNavigationPath: string;
   coloredWellbores: boolean;
   selectedRelatedDocumentsColumns: BooleanSelection;
-  wellFeedback: WellFeedback;
 }
 
 export interface SetPrerequisiteData {
@@ -75,16 +73,10 @@ interface SetSelectedRelatedDoucmentColumns {
   payload: TableResults;
 }
 
-export interface SetWellFeedback {
-  type: typeof SET_WELL_FEEDBACK;
-  payload: WellFeedback;
-}
-
 export type WellInspectAction =
   | SetPrerequisiteData
   | ToggleSelectedWell
   | ToggleSelectedWellboreOfWell
   | SetGoBackNavigationPath
   | SetColoredWellbores
-  | SetSelectedRelatedDoucmentColumns
-  | SetWellFeedback;
+  | SetSelectedRelatedDoucmentColumns;
