@@ -51,15 +51,24 @@ export const DocumentsTable = (props: DocumentTableProps) => {
           },
         },
         {
+          // When accessor is given a function, do not forget to add an id right after it!
+          accessor: row => row.author,
           id: 'author',
           Header: 'Author',
           Cell: ({ row }: { row: Row<Document> }) => {
             return <Body level={2}>{row.original.author}</Body>;
           },
         },
-        Table.Columns.mimeType,
         {
-          id: 'modifiedTime',
+          // You do not have to add an id field if accessor is given a string.
+          accessor: 'type',
+          Header: 'Type',
+          Cell: ({ row }: { row: Row<Document> }) => {
+            return <Body level={2}>{row.original.type}</Body>;
+          },
+        },
+        {
+          accessor: 'modifiedTime',
           Header: 'Last updated',
           Cell: ({ row }: { row: Row<Document> }) => (
             <Body level={2}>
@@ -135,7 +144,7 @@ export const DocumentsTable = (props: DocumentTableProps) => {
       visibleColumns={[
         'name',
         'content',
-        'mimeType',
+        'type',
         'modifiedTime',
         'createdTime',
         'rootAsset',

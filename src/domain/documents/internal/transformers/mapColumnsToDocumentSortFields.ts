@@ -2,7 +2,8 @@ import { DocumentFilterProperty } from '@cognite/sdk';
 
 const columnToSortMap = new Map<string, DocumentFilterProperty>([
   ['name', ['sourceFile', 'name']],
-  ['mimeType', ['sourceFile', 'mimeType']],
+  ['type', ['type']],
+  ['author', ['author']],
   ['modifiedTime', ['modifiedTime']],
   ['createdTime', ['createdTime']],
   ['externalId', ['externalId']],

@@ -108,7 +108,7 @@ export function NewTable<T extends TableData>({
 
   const tbodyRef = useRef<HTMLDivElement>(null);
 
-  const allFields = columns.map(col => col.accessor || col.id || '');
+  const allFields = columns.map(col => col.id || col.accessor || '');
 
   // To add the navigation in the row
   const handleKeyDown = (
