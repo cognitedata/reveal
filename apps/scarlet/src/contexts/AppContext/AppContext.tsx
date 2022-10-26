@@ -102,11 +102,12 @@ function reducer(state: AppState, action: AppAction) {
         detection
       );
 
-      const componentType = state.equipment.data!.components.find(
+      const componentType = state.equipment.data?.components.find(
         (c) => c.id === dataElement.componentId
-      )!.type;
+      )?.type;
 
       if (
+        componentType &&
         [EquipmentComponentType.CHANNEL, EquipmentComponentType.SHELL].includes(
           componentType
         )
