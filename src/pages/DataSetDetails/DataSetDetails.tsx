@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import { getFlow } from '@cognite/cdf-sdk-singleton';
 
@@ -32,12 +32,30 @@ import DatasetOverview from 'components/Overview/DatasetOverview';
 
 const { TabPane } = Tabs;
 
+const tabTypes = [
+  'overview',
+  'documentation',
+  'access-control',
+  'lineage',
+  'data',
+];
+
+const setDefaultActiveTab = (tab: string | null) => {
+  if (tab) {
+    if (tabTypes.includes(tab)) {
+      return tab;
+    }
+  }
+  return 'overview';
+};
+
 const DataSetDetails = (): JSX.Element => {
   const { t } = useTranslation();
   const [editDrawerVisible, setEditDrawerVisible] = useState<boolean>(false);
-  const [activeTabKey, setActiveTabKey] = useState<string>('overview');
   const [changesSaved, setChangesSaved] = useState<boolean>(true);
   const { dataSetId } = useParams();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const activeTab = setDefaultActiveTab(searchParams.get('activeTab'));
 
   const {
     dataSetWithExtpipes,
@@ -174,7 +192,8 @@ const DataSetDetails = (): JSX.Element => {
   };
 
   const activeTabChangeHandler = (tabKey: string) => {
-    setActiveTabKey(tabKey);
+    searchParams.set('activeTab', tabKey);
+    setSearchParams(searchParams);
   };
 
   if (dataSet) {
@@ -195,7 +214,7 @@ const DataSetDetails = (): JSX.Element => {
             animated={false}
             defaultActiveKey="overview"
             size="large"
-            activeKey={activeTabKey}
+            activeKey={activeTab}
             onChange={activeTabChangeHandler}
           >
             <TabPane
