@@ -4,7 +4,11 @@ import { AssetFilterProps, Asset } from '@cognite/sdk';
 import { EnsureNonEmptyResource } from 'components';
 import { ColumnToggleProps } from 'components/ReactTable/Table';
 import { AssetTreeTable, SearchResultToolbar, AssetNewTable } from 'containers';
-import { convertResourceType, SelectableItemsProps } from 'types';
+import {
+  convertResourceType,
+  SelectableItemsProps,
+  ThreeDModelClickHandler,
+} from 'types';
 import { KeepMounted } from '../../../components/KeepMounted/KeepMounted';
 import { useResourceResults } from '..';
 import styled from 'styled-components';
@@ -15,6 +19,7 @@ export const AssetSearchResults = ({
   filter,
   showCount = false,
   onClick,
+  onThreeDModelClick,
   isTreeEnabled,
 
   ...extraProps
@@ -24,6 +29,7 @@ export const AssetSearchResults = ({
   showCount?: boolean;
   filter: AssetFilterProps;
   onClick: (item: Asset) => void;
+  onThreeDModelClick?: ThreeDModelClickHandler;
 } & ColumnToggleProps<Asset> &
   SelectableItemsProps) => {
   const [currentView, setCurrentView] = useState<string>(() =>
@@ -88,6 +94,7 @@ export const AssetSearchResults = ({
             tableHeaders={tableHeaders}
             hasNextPage={canFetchMore}
             fetchMore={fetchMore}
+            onThreeDModelClick={onThreeDModelClick}
           />
         </KeepMounted>
 
@@ -96,6 +103,7 @@ export const AssetSearchResults = ({
             filter={filter}
             query={query}
             onAssetClicked={asset => onClick(asset)}
+            onThreeDModelClick={onThreeDModelClick}
             {...treeProps}
           />
         </KeepMounted>

@@ -4,13 +4,20 @@ import { Asset, AssetFilterProps } from '@cognite/sdk';
 import styled from 'styled-components';
 import { usePrevious } from 'hooks/CustomHooks';
 import { Loader, Table } from 'components';
-import { SelectableItemsProps, TableStateProps } from 'types';
+import {
+  SelectableItemsProps,
+  TableStateProps,
+  ThreeDModelClickHandler,
+} from 'types';
 import {
   useRootTree,
   useSearchTree,
   useRootPath,
   ConstructedTreeAsset,
 } from './hooks';
+import { ThreeDAssetMappings, useThreeDAssetMappings } from 'hooks/threeDHooks';
+import { ThreeDModelCell } from '../AssetTable/AssetNewTable';
+import { ColumnShape } from 'react-base-table';
 
 export const AssetTreeTable = ({
   filter = {},
@@ -20,6 +27,7 @@ export const AssetTreeTable = ({
   isSelected,
   disableScroll,
   hierachyRootId,
+  onThreeDModelClick,
   ...selectionProps
 }: {
   filter: AssetFilterProps;
@@ -27,6 +35,7 @@ export const AssetTreeTable = ({
   onAssetClicked: (item: Asset) => void;
   hierachyRootId?: number;
   disableScroll?: boolean;
+  onThreeDModelClick?: ThreeDModelClickHandler;
 } & SelectableItemsProps &
   TableStateProps) => {
   const [previewId, setPreviewId] = useState<number | undefined>(undefined);
@@ -40,6 +49,8 @@ export const AssetTreeTable = ({
   const [rootExpandedKeys, setRootExpandedKeys] = useState<number[]>([]);
   const [searchExpandedKeys, setSearchExpandedKeys] = useState<number[]>([]);
   const [usedRootPath, setUsedRootPath] = useState(false);
+
+  const { data: threeDAssetMappings } = useThreeDAssetMappings();
 
   const startFromRoot =
     (!query || query === '') &&
@@ -65,6 +76,24 @@ export const AssetTreeTable = ({
             ? asset.aggregates.childCount
             : 'N/A'}
         </span>
+      ),
+      width: 300,
+    },
+    {
+      key: 'threeDModels',
+      title: '3D availability',
+      threeDAssetMappings,
+      cellRenderer: ({
+        column,
+        rowData: asset,
+      }: {
+        column: ColumnShape<{ threeDAssetMappings: ThreeDAssetMappings }>;
+        rowData: Asset;
+      }) => (
+        <ThreeDModelCell
+          mappings={column.threeDAssetMappings[asset.id]}
+          onThreeDModelClick={onThreeDModelClick}
+        />
       ),
       width: 300,
     },

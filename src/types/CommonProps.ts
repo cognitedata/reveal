@@ -7,6 +7,7 @@ import {
   SequenceFilter,
 } from '@cognite/sdk';
 import { ResourceItem } from './Types';
+import { ThreeDAssetMappingItem } from 'hooks/threeDHooks';
 
 export type SmallPreviewProps = {
   actions?: React.ReactNode[];
@@ -73,3 +74,8 @@ export type TableStateProps = {
   selectedIds?: AllowedTableStateId[];
   disabledIds?: AllowedTableStateId[];
 };
+
+export type ThreeDModelClickHandler = (
+  mapping: ThreeDAssetMappingItem,
+  e: React.MouseEvent
+) => void;
