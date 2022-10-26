@@ -1,9 +1,6 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
-import { SdkResourceType, useCdfItem } from '@cognite/sdk-react-query-hooks';
-import { Model3D } from '@cognite/sdk';
-import { PageTitle } from '@cognite/cdf-utilities';
-import { ThreeDPreview } from './ThreeDPreview';
+import { ThreeDView } from './ThreeDView';
 
 export const ThreeDPage = () => {
   const { id: threeDIdString = '' } = useParams<{
@@ -11,22 +8,9 @@ export const ThreeDPage = () => {
   }>();
   const threeDId = parseInt(threeDIdString, 10);
 
-  const { data: threeD } = useCdfItem<Model3D>(
-    'threeD' as SdkResourceType,
-    {
-      id: threeDId,
-    },
-    { enabled: Boolean(threeDIdString) }
-  );
-
-  if (!threeDIdString) {
+  if (!threeDIdString || !Number.isFinite(threeDId)) {
     return null;
   }
 
-  return (
-    <>
-      <PageTitle title={threeD?.name} />
-      <ThreeDPreview threeDId={threeDId} />
-    </>
-  );
+  return <ThreeDView modelId={threeDId} />;
 };

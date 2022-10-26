@@ -32,7 +32,7 @@ import { SEARCH_KEY, CART_KEY } from 'app/utils/constants';
 import SelectedResults from 'app/components/SelectionResults/SelectionResults';
 import { ExplorationSearchBar } from 'app/containers/Exploration/ExplorationSearchBar';
 import { useDateRange } from 'app/context/DateRangeContext';
-import { PageTitle } from '@cognite/cdf-utilities';
+import { createLink, PageTitle } from '@cognite/cdf-utilities';
 import { ThreeDSearchResults } from 'app/containers/ThreeD/ThreeDSearchResults';
 import FilterToggleButton from './FilterToggleButton';
 import { ExplorationFilterToggle } from 'app/containers/Exploration/ExplorationFilterToggle';
@@ -48,12 +48,14 @@ import {
 import { StyledSplitter } from 'app/containers/elements';
 import { useDocumentFilters } from 'app/store/filter/selectors/documentSelectors';
 import { CogniteEvent } from '@cognite/sdk';
+import { useNavigate } from 'react-router-dom';
 
 const getPageTitle = (query: string, resourceType: ResourceType): string => {
   return `${query}${query ? ' in' : ''} ${getTitle(resourceType, true)}`;
 };
 
 function SearchPage() {
+  const navigate = useNavigate();
   const isFilterFeatureEnabled = useFlagFilter();
   // Adding the flag to manually enable 'Documents' tab to appear.
   const isDocumentEnabled = useFlagDocumentSearch();
@@ -395,7 +397,7 @@ function SearchPage() {
                 {currentResourceType === 'threeD' && (
                   <ThreeDSearchResults
                     onClick={(item: ResourceItem) => {
-                      openPreview(item.id !== activeId ? item.id : undefined);
+                      navigate(createLink(`/explore/threeD/${item.id}`));
                     }}
                     query={query}
                   />

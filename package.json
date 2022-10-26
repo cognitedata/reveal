@@ -25,7 +25,7 @@
     "e2e:dev": "concurrently --kill-others 'yarn start' 'yarn cy:open' "
   },
   "dependencies": {
-    "@cognite/cdf-utilities": "^0.14.4",
+    "@cognite/cdf-utilities": "^1.14.0",
     "@cognite/cogs.js": "^7.13.2",
     "@cognite/data-exploration": "5.5.0",
     "@cognite/data-exploration-v4": "npm:@cognite/data-exploration@4.38.0",

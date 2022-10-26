@@ -4,7 +4,6 @@ import { FilePreview } from 'app/containers/File/FilePreview';
 import { SequencePreview } from 'app/containers/Sequence/SequencePreview';
 import { TimeseriesPreview } from 'app/containers/Timeseries/TimeseriesPreview';
 import { EventPreview } from 'app/containers/Event/EventPreview';
-import { ThreeDPreview } from 'app/containers/ThreeD/ThreeDPreview';
 import { ResourceItem } from '@cognite/data-exploration';
 
 type Props = {
@@ -24,8 +23,6 @@ export default function ResourcePreview({ item: { type, id } }: Props) {
       return <TimeseriesPreview timeseriesId={id} />;
     case 'event':
       return <EventPreview eventId={id} />;
-    case 'threeD':
-      return <ThreeDPreview threeDId={id} />;
     default:
       return null;
   }

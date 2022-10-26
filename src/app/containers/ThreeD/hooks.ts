@@ -12,6 +12,7 @@ import {
   useInfiniteQuery,
   UseInfiniteQueryOptions,
   useQuery,
+  UseQueryOptions,
 } from 'react-query';
 
 export type ThreeDModelsResponse = {
@@ -39,27 +40,51 @@ export const use3DModel = (id: number | undefined) => {
   );
 };
 
-export const useDefault3DModelRevision = (id: number | undefined) => {
+const getRevisionKey = (id?: number) => ['cdf', '3d', 'model', id, 'revisions'];
+
+type RevisionOpts<T> = UseQueryOptions<Revision3D[], unknown, T>;
+
+export const useRevisions = <T = Revision3D[]>(
+  modelId: number,
+  opts?: Omit<RevisionOpts<T>, 'queryKey' | 'queryFn'>
+) => {
   const sdk = useSDK();
-
-  return useQuery<Revision3D>(
-    ['cdf', '3d', 'model', id, 'revisions'],
-    async () => {
-      const resp = await sdk.get(
-        `/api/v1/projects/${sdk.project}/3d/models/${id}/revisions`
-      );
-      const revisions = (resp.data.items || []) as any[];
-
-      // Published or latest revision
-      return (
-        revisions.find(r => r.published) ||
-        revisions.reduce((prev, current) =>
-          prev.createdTime > current.createdTime ? prev : current
-        )
-      );
-    },
-    { enabled: Boolean(id) }
+  return useQuery(
+    getRevisionKey(modelId),
+    () => sdk.revisions3D.list(modelId, { limit: 1000 }).then(r => r.items),
+    opts
   );
+};
+
+export const useDefault3DModelRevision = (
+  modelId: number,
+  opts?: Omit<
+    RevisionOpts<Revision3D | undefined>,
+    'queryKey' | 'queryFn' | 'select'
+  >
+) => {
+  return useRevisions(modelId!, {
+    select: revisions =>
+      revisions.find(r => r.published) ||
+      revisions.reduce((prev, current) =>
+        prev.createdTime > current.createdTime ? prev : current
+      ),
+    ...opts,
+  });
+};
+
+export const useRevisionIndex = (
+  modelId: number,
+  revisionId: number,
+  opts?: Omit<
+    RevisionOpts<number | undefined>,
+    'queryKey' | 'queryFn' | 'select'
+  >
+) => {
+  return useRevisions(modelId, {
+    select: revisions => revisions.findIndex(r => r.id === revisionId),
+    ...opts,
+  });
 };
 
 export const use3DModelThumbnail = (url?: string) => {

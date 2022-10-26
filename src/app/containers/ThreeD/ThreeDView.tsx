@@ -1,39 +1,25 @@
 import React, { useEffect, useState } from 'react';
-import { PageTitle } from '@cognite/cdf-utilities';
-import ResourceTitleRow from 'app/components/ResourceTitleRow';
-import { useParams } from 'react-router-dom';
-import {
-  use3DModel,
-  useDefault3DModelRevision,
-} from 'app/containers/ThreeD/hooks';
-import styled from 'styled-components';
-import { AssetPreviewSidebar } from 'app/containers/ThreeD/AssetPreviewSidebar';
+
+import { useDefault3DModelRevision } from './hooks';
+import { trackUsage } from 'app/utils/Metrics';
 import { useSearchParamNumber } from 'app/utils/URLUtils';
+import { StyledSplitter } from '../elements';
 import Reveal from './Reveal';
 import { AssetMappingsSidebar } from './AssetMappingsSidebar';
-import { trackUsage } from 'app/utils/Metrics';
 import {
   ExpandButton,
   FocusAssetButton,
   PointToPointMeasurementButton,
 } from './ThreeDToolbar';
-import { StyledSplitter } from 'app/containers/elements';
-import { Flex, ToolBar } from '@cognite/cogs.js';
-import { Slicer } from 'app/containers/ThreeD/slicer/Slicer';
+import { Slicer } from './slicer/Slicer';
 import PointSizeSlider from './point-size-slider/PointSizeSlider';
-import HelpButton from 'app/containers/ThreeD/help-button';
+import HelpButton from './help-button';
+import { AssetPreviewSidebar } from './AssetPreviewSidebar';
+import styled from 'styled-components';
+import { Flex, ToolBar } from '@cognite/cogs.js';
+import ThreeDTitle from './ThreeDTitle';
 
-export const ThreeDPreview = ({
-  threeDId,
-  actions,
-}: {
-  threeDId: number;
-  actions?: React.ReactNode;
-}) => {
-  const { id } = useParams<{ id: string }>();
-  const modelId = parseInt(id!, 10);
-
-  const { data: apiThreeDModel, isLoading } = use3DModel(modelId);
+export const ThreeDView = ({ modelId }: { modelId: number }) => {
   useEffect(() => {
     trackUsage('3DPreview.Open', { modelId });
   }, [modelId]);
@@ -46,12 +32,7 @@ export const ThreeDPreview = ({
 
   return (
     <>
-      <PageTitle title={isLoading ? '...' : apiThreeDModel?.name} />
-      <ResourceTitleRow
-        title={apiThreeDModel?.name}
-        item={{ id: threeDId, type: 'threeD' }}
-        afterDefaultActions={actions}
-      />
+      <ThreeDTitle id={modelId} />
       <PreviewContainer>
         <StyledSplitter primaryIndex={0}>
           {revision && (
