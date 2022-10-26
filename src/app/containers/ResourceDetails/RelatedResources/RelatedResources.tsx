@@ -10,6 +10,9 @@ import {
   useRelatedResourceCount,
   AnnotationTable,
   AnnotatedWithTable,
+  RelationshipFilters,
+  useRelatedResourceResults,
+  RelationshipLabels,
 } from '@cognite/data-exploration';
 import { Select } from '@cognite/cogs.js';
 
@@ -121,13 +124,19 @@ export const RelatedResources = ({
     // eslint-disable-next-line
     [isFetched, linkedResourceCount]
   );
+  const { relationshipLabelOptions, onChangeLabelValue, labelValue } =
+    useRelatedResourceResults<RelationshipLabels>(
+      selectedType?.value || 'linkedResource',
+      type,
+      parentResource
+    );
 
   return (
     <RelatedResourcesContainer>
       <FilterWrapper>
-        <h4 style={{ marginBottom: 0 }}>Filter by:</h4>
         <SelectWrapper>
           <Select
+            title="Filter By:"
             value={selectedType as any}
             onChange={setSelectedType}
             options={relatedResourceTypes}
@@ -135,14 +144,23 @@ export const RelatedResources = ({
             closeMenuOnSelect
           />
         </SelectWrapper>
+        {selectedType?.value === 'relationship' && (
+          <RelationshipFilters
+            options={relationshipLabelOptions}
+            onChange={onChangeLabelValue}
+            value={labelValue}
+          />
+        )}
       </FilterWrapper>
       <TableOffsetHeightWrapper>
         {selectedType?.value === 'relationship' && (
-          <RelationshipTable
-            parentResource={parentResource}
-            type={type}
-            {...props}
-          />
+          <>
+            <RelationshipTable
+              parentResource={parentResource}
+              type={type}
+              {...props}
+            />
+          </>
         )}
 
         {selectedType?.value === 'linkedResource' && (
@@ -198,9 +216,10 @@ const RelatedResourcesContainer = styled.div`
 const FilterWrapper = styled.div`
   display: flex;
   align-items: center;
+  padding: 20px 0;
+  gap: 10px;
 `;
 
 const SelectWrapper = styled.div`
   width: 225px;
-  margin: 20px;
 `;

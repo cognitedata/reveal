@@ -159,6 +159,7 @@ function SearchPage() {
                   <SearchResultWrapper>
                     {currentResourceType === 'asset' && (
                       <AssetSearchResults
+                        isTreeEnabled
                         showCount
                         onClick={(item: ResourceItem) =>
                           openPreview(
