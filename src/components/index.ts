@@ -32,3 +32,5 @@ export * from './FileDownloadAnchor';
 export * from './EnsureNonEmptyResource';
 export * from './DataSetSelect';
 export * from './FileThumbnail';
+export * from './SearchQueryInfoPanel';
+export * from './FilesSyntaxButton';

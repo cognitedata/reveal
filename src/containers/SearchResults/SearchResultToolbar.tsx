@@ -1,6 +1,7 @@
 import React from 'react';
-import { ResultCount, SpacedRow } from 'components';
+import { FilesSyntaxButton, ResultCount, SpacedRow } from 'components';
 import { ResourceType } from 'types';
+import styled from 'styled-components/macro';
 
 export const SearchResultToolbar = ({
   api,
@@ -21,7 +22,7 @@ export const SearchResultToolbar = ({
   showCount?: boolean;
   style?: React.CSSProperties;
 }) => (
-  <SpacedRow style={style}>
+  <StyledSpacedRow style={style}>
     {showCount && (
       <ResultCount
         type={type}
@@ -31,7 +32,23 @@ export const SearchResultToolbar = ({
         count={count}
       />
     )}
-    <div className="spacer" />
+    {type === 'document' && (
+      <>
+        <VerticalDivider />
+        <FilesSyntaxButton />
+      </>
+    )}
     {children}
-  </SpacedRow>
+  </StyledSpacedRow>
 );
+
+const VerticalDivider = styled.div`
+  width: 1px;
+  height: 16px;
+  background-color: var(--cogs-border--muted);
+  margin: 0 8px 0 2px;
+`;
+
+const StyledSpacedRow = styled(SpacedRow)`
+  align-items: center;
+`;
