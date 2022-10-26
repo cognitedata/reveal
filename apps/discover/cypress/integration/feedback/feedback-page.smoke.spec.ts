@@ -24,7 +24,7 @@ import {
   interceptGetUserRoles,
 } from '../../support/interceptions/user';
 
-describe('Feedback', () => {
+describe.skip('Feedback', () => {
   describe('Normal User', () => {
     before(() => {
       cancelFrontendMetricsRequest();
