@@ -103,6 +103,8 @@ describe('Documents', () => {
 
     cy.log(`Perform input search for: ${filename}`);
     cy.performSearch(filename);
+    cy.wait(`@${DOCUMENTS_SEARCH_ALIAS}`);
+
     cy.log(`Search results should be shown in the table`);
     cy.findAllByTestId('table-row').should('have.length.greaterThan', 0);
 
@@ -132,6 +134,8 @@ describe('Documents', () => {
 
     cy.log('Apply input filter again');
     cy.performSearch(filename);
+    cy.wait(`@${DOCUMENTS_SEARCH_ALIAS}`);
+
     // cy.findAllByTestId('table-row').should('have.length.greaterThan', 26);
 
     cy.log('Apply other filters');
@@ -206,6 +210,7 @@ describe('Documents', () => {
 
     cy.log('Apply input filter');
     cy.performSearch(filename.substring(0, 3));
+    cy.wait(`@${DOCUMENTS_SEARCH_ALIAS}`);
 
     cy.log(`Apply File Type filter: ${FILE_TYPE}`);
     cy.contains('File Type').should('be.visible').click({ force: true });
@@ -239,6 +244,7 @@ describe('Documents', () => {
 
   it('Click Preview document hover button', () => {
     cy.performSearch(filename);
+    cy.wait(`@${DOCUMENTS_SEARCH_ALIAS}`);
     cy.findAllByTestId('table-row')
       .first()
       .children()
