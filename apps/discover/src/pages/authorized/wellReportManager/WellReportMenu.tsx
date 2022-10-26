@@ -13,11 +13,13 @@ import { ReportMenu, ReportMenuProps } from '../report-manager';
 export type WellReportMenuProps = {
   wellboreMatchingId: string;
   dataSet?: keyof typeof DATA_SETS_MAP;
+  wellboreName?: string;
 };
 
 export const WellReportMenu = ({
   wellboreMatchingId,
   dataSet,
+  wellboreName,
 }: WellReportMenuProps) => {
   const history = useHistory();
   const dispatch = useDispatch();
@@ -30,7 +32,9 @@ export const WellReportMenu = ({
       case 'ALL':
         history.push({
           pathname: navigation.REPORT_PANEL,
-          search: `?wellbores=${encodeURIComponent(wellboreMatchingId)}`,
+          search: `?wellbores=${encodeURIComponent(
+            wellboreName || wellboreMatchingId
+          )}`,
         });
         break;
       case 'CREATE_NEW':
@@ -49,7 +53,7 @@ export const WellReportMenu = ({
         history.push({
           pathname: navigation.REPORT_PANEL,
           search: `?filter_status=Resolved&wellbores=${encodeURIComponent(
-            wellboreMatchingId
+            wellboreName || wellboreMatchingId
           )}`,
         });
         break;

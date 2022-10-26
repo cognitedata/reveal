@@ -15,7 +15,7 @@ export const RowHoverComponentWellbore: React.FC<{ row: Row<TableReport> }> = ({
   const pathToCopy = `${window.location.origin}${
     window.location.pathname
   }?${URL_PARAM_WELLBORE_FILTER}=${encodeURIComponent(
-    row.original.externalId!
+    row.original.wellboreName!
   )}`;
 
   return (

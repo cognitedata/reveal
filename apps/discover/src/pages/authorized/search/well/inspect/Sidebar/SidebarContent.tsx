@@ -118,6 +118,7 @@ export const SidebarContent: React.FC = () => {
                   )}
                   <WellReportThreeDotsMenu
                     wellboreMatchingId={wellbore.matchingId}
+                    wellboreName={wellboreName}
                   />
                 </BlockContentItem>
               );

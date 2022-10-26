@@ -8,6 +8,7 @@ import { WellReportMenu, WellReportMenuProps } from './WellReportMenu';
 export const WellReportThreeDotsMenu = ({
   wellboreMatchingId,
   dataSet,
+  wellboreName,
 }: WellReportMenuProps) => {
   const { canReadReports, canWriteReports } = useReportPermissions();
 
@@ -19,6 +20,7 @@ export const WellReportThreeDotsMenu = ({
             <WellReportMenu
               wellboreMatchingId={wellboreMatchingId}
               dataSet={dataSet}
+              wellboreName={wellboreName}
             />
           }
         >
