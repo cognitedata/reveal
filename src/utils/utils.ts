@@ -31,10 +31,8 @@ export const getReleaseState = (version?: string): string | undefined => {
   }
   const matches = parseReleaseVersion(version);
   if (typeof matches[1] === 'string') {
-    if (matches[1].toLowerCase().includes('prerelease')) {
+    if (/(?:release|beta|alpha)/.test(matches[1].toLowerCase())) {
       return 'Prerelease';
-    } else if (matches[1].toLowerCase().includes('beta')) {
-      return 'Beta';
     }
   }
   return undefined;
@@ -65,6 +63,5 @@ const parseReleaseVersion = (version: string): string[] => {
   const matches = version.match(
     new RegExp(`^${versionCoreExp.source}${stateExp.source}${buildExp.source}$`)
   );
-
-  return matches !== null ? matches.slice(1, 4) : [version];
+  return [version].concat((matches || []).slice(2, 4));
 };

@@ -159,6 +159,8 @@ const ExtractorDetails = () => {
                       })}
                     </Label>
                     <ReleaseTag version={latestRelease?.version}></ReleaseTag>
+                  </Flex>
+                  <Flex gap={8}>
                     <StyledBodyMuted>
                       {t('released-date', {
                         createdAt,
