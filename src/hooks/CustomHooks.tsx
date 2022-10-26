@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useSDK } from '@cognite/sdk-provider';
 import {
   useInfiniteQuery,
@@ -14,6 +14,7 @@ import {
   useCdfItem,
   useCdfItems,
 } from '@cognite/sdk-react-query-hooks';
+import copy from 'copy-to-clipboard';
 import unionBy from 'lodash/unionBy';
 
 export type ThreeDModelsResponse = {
@@ -181,3 +182,62 @@ export const useGetRootAsset = (rootId: number) => {
     }
   );
 };
+
+export interface UseClipboardOptions {
+  /**
+   * timeout delay (in ms) to switch back to initial state once copied.
+   */
+  timeout?: number;
+  /**
+   * Set the desired MIME type
+   */
+  format?: string;
+}
+
+/**
+ * React hook to copy content to clipboard
+ *
+ * @param initialValue the text or value to copy
+ * @param {Number} [optionsOrTimeout=1500] optionsOrTimeout - delay (in ms) to switch back to initial state once copied.
+ * @param {Object} optionsOrTimeout
+ * @param {string} optionsOrTimeout.format - set the desired MIME type
+ * @param {number} optionsOrTimeout.timeout - delay (in ms) to switch back to initial state once copied.
+ *
+ *
+ */
+export function useClipboard(
+  initialValue: string | number,
+  optionsOrTimeout: number | UseClipboardOptions = {}
+) {
+  const [hasCopied, setHasCopied] = useState(false);
+
+  const [value, setValue] = useState(initialValue);
+
+  const { timeout = 1500, ...copyOptions } =
+    typeof optionsOrTimeout === 'number'
+      ? { timeout: optionsOrTimeout }
+      : optionsOrTimeout;
+
+  const onCopy = useCallback(() => {
+    const didCopy = copy(`${value}`, copyOptions);
+    setHasCopied(didCopy);
+  }, [value, copyOptions]);
+
+  useEffect(() => {
+    let timeoutId: number | null = null;
+
+    if (hasCopied) {
+      timeoutId = window.setTimeout(() => {
+        setHasCopied(false);
+      }, timeout);
+    }
+
+    return () => {
+      if (timeoutId) {
+        window.clearTimeout(timeoutId);
+      }
+    };
+  }, [timeout, hasCopied]);
+
+  return { value, setValue, onCopy, hasCopied };
+}

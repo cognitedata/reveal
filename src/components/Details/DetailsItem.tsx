@@ -1,13 +1,11 @@
 import React from 'react';
-import Typography from 'antd/lib/typography';
-import { Body, Icon, A, toast, Label, Flex } from '@cognite/cogs.js';
+import { Body, A, toast, Label, Flex, Button } from '@cognite/cogs.js';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 import { convertResourceType, ResourceType } from 'types';
 import { DataSet } from '@cognite/sdk';
 import { createLink } from '@cognite/cdf-utilities';
 import styled from 'styled-components';
-
-const { Text } = Typography;
+import { useClipboard } from 'hooks';
 
 type DetailsItemProps = {
   name: string;
@@ -22,41 +20,40 @@ export const DetailsItem = ({
   copyable = false,
   link,
 }: DetailsItemProps) => {
-  const renderValue = () => (
-    <Text
-      className="cogs-body-2"
-      copyable={
-        copyable && {
-          icon: [
-            <Icon
-              onClick={() => toast.success('Copied to clipboard')}
-              type="Copy"
-            />,
-            <Icon type="Checkmark" />,
-          ],
-          tooltips: false,
-        }
-      }
-    >
-      {value}
-    </Text>
-  );
-
-  const renderLink = () => (
-    <A href={link} target="_blank" rel="noopener">
-      {value}
-    </A>
+  const { hasCopied, onCopy } = useClipboard(
+    copyable && typeof value === 'string' ? value : ''
   );
 
   return (
-    <DetailsItemContainer>
-      <Body level={2} strong>
-        {name}
-      </Body>
-      <Spacer />
-      {Boolean(value) && (link ? renderLink() : renderValue())}
-      {!Boolean(value) && <MutedBody level={2}>Not set</MutedBody>}
-    </DetailsItemContainer>
+    <Flex>
+      <DetailsItemContainer>
+        <Body level={2} strong>
+          {name}
+        </Body>
+        <Spacer />
+
+        {Boolean(value) &&
+          (link ? (
+            <A href={link} target="_blank" rel="noopener">
+              {value}
+            </A>
+          ) : (
+            <Body level={2}>{value}</Body>
+          ))}
+        {!Boolean(value) && <MutedBody level={2}>No description</MutedBody>}
+      </DetailsItemContainer>
+      <ButtonWrapper visibility={copyable && Boolean(value)}>
+        <Button
+          type="ghost"
+          icon={hasCopied ? 'Checkmark' : 'Copy'}
+          disabled={hasCopied}
+          onClick={() => {
+            onCopy();
+            toast.success('Copied to clipboard');
+          }}
+        />
+      </ButtonWrapper>
+    </Flex>
   );
 };
 
@@ -171,7 +168,9 @@ export const LabelsItem = ({ labels = [] }: { labels?: string[] }) => {
 const DetailsItemContainer = styled.div`
   display: flex;
   flex-direction: row;
+  flex: 1;
   margin-bottom: 16px;
+  padding-top: 5px;
   align-items: flex-start;
 `;
 
@@ -185,4 +184,9 @@ const Spacer = styled.div`
 
 const MutedBody = styled(Body)`
   color: var(--cogs-text-icon--muted);
+`;
+
+const ButtonWrapper = styled.div<{ visibility?: boolean }>`
+  padding-bottom: 10px;
+  visibility: ${({ visibility }) => (visibility ? 'unset' : 'hidden')};
 `;
