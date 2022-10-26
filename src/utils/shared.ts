@@ -431,38 +431,3 @@ export const createInternalLink = (path?: string | number) => {
   const mountPoint = window.location.pathname.split('/')[2];
   return createLink(`/${mountPoint}/${path || ''}`);
 };
-
-export const getResourceSearchQueryKey = (
-  resource: string,
-  dataSetId: number,
-  query: string
-) => [resource, 'search', dataSetId, query];
-
-type ResourceSearchParams = {
-  filter: {
-    dataSetIds: Array<{ id: number }>;
-  };
-  search?: {
-    query?: string;
-    name?: string;
-    description?: string;
-  };
-};
-
-export const getResourceSearchParams = (
-  dataSetId: number,
-  query: string,
-  prop?: 'query' | 'name' | 'description'
-): ResourceSearchParams => {
-  const params: ResourceSearchParams = {
-    filter: {
-      dataSetIds: [{ id: dataSetId }],
-    },
-  };
-  if (query.length > 0) {
-    params.search = {
-      [prop || 'query']: query,
-    };
-  }
-  return params;
-};

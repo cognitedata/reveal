@@ -1,41 +1,25 @@
-import sdk from '@cognite/cdf-sdk-singleton';
 import { Table, TableNoResults } from '@cognite/cdf-utilities';
-import {
-  getContainer,
-  ContentView,
-  handleError,
-  getResourceSearchParams,
-  getResourceSearchQueryKey,
-} from 'utils';
+import { getContainer, ContentView } from 'utils';
 import { useTranslation } from 'common/i18n';
 import { useResourceTableColumns } from 'components/Data/ResourceTableColumns';
-import { useQuery } from 'react-query';
+import { FileInfo } from '@cognite/sdk';
 
-interface filesTableProps {
-  dataSetId: number;
-  query: string;
+interface FilesTableProps {
+  data: FileInfo[] | undefined;
+  isLoading: boolean;
 }
 
-const FilesTable = ({ dataSetId, query }: filesTableProps) => {
+const FilesTable = ({ data = [], isLoading }: FilesTableProps) => {
   const { t } = useTranslation();
-  const { getResourceTableColumns } = useResourceTableColumns();
-  const { data: files, isLoading: isFilesLoading } = useQuery(
-    getResourceSearchQueryKey('files', dataSetId, query),
-    () => sdk.files.search(getResourceSearchParams(dataSetId, query, 'name')),
-    {
-      onError: (e: any) => {
-        handleError({ message: t('fetch-files-failed'), ...e });
-      },
-    }
-  );
+  const resourceTableColumns = useResourceTableColumns<FileInfo>('files');
 
   return (
     <ContentView id="filesTableId">
       <Table
         rowKey="key"
-        loading={isFilesLoading}
-        columns={[...getResourceTableColumns('files')]}
-        dataSource={files || []}
+        loading={isLoading}
+        columns={resourceTableColumns}
+        dataSource={data}
         onChange={(_pagination, _filters) => {
           // TODO: Implement sorting
         }}

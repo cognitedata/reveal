@@ -306,5 +306,7 @@
   "who-has-access": "Who has access?",
   "write-protected": "Write-protected",
   "write-protected-tooltip": "Only members of groups that you explicitly grant access, can write data to a write-protected data set.",
-  "you-have-unsaved-changes-are-you-sure-you-want-to-navigate-away": "You have unsaved changes, are you sure you want to navigate away?"
+  "you-have-unsaved-changes-are-you-sure-you-want-to-navigate-away": "You have unsaved changes, are you sure you want to navigate away?",
+  "starts-with": "starts with",
+  "externalIdPrefix": "External ID: {{value}}"
 }

@@ -1,41 +1,25 @@
-import sdk from '@cognite/cdf-sdk-singleton';
 import { Table, TableNoResults } from '@cognite/cdf-utilities';
-import {
-  getContainer,
-  ContentView,
-  handleError,
-  getResourceSearchParams,
-  getResourceSearchQueryKey,
-} from 'utils';
+import { getContainer, ContentView } from 'utils';
 import { useTranslation } from 'common/i18n';
 import { useResourceTableColumns } from 'components/Data/ResourceTableColumns';
-import { useQuery } from 'react-query';
+import { Sequence } from '@cognite/sdk';
 
 interface sequencesTableProps {
-  dataSetId: number;
-  query: string;
+  data: Sequence[] | undefined;
+  isLoading: boolean;
 }
 
-const SequencesTable = ({ dataSetId, query }: sequencesTableProps) => {
+const SequencesTable = ({ data = [], isLoading }: sequencesTableProps) => {
   const { t } = useTranslation();
-  const { getResourceTableColumns } = useResourceTableColumns();
-  const { data: sequences, isLoading: isSequencesLoading } = useQuery(
-    getResourceSearchQueryKey('sequences', dataSetId, query),
-    () => sdk.sequences.search(getResourceSearchParams(dataSetId, query)),
-    {
-      onError: (e: any) => {
-        handleError({ message: t('fetch-sequences-failed'), ...e });
-      },
-    }
-  );
+  const resourceTableColumns = useResourceTableColumns<Sequence>('sequences');
 
   return (
     <ContentView id="sequencesTableId">
       <Table
         rowKey="key"
-        loading={isSequencesLoading}
-        columns={[...getResourceTableColumns('sequences')]}
-        dataSource={sequences || []}
+        loading={isLoading}
+        columns={resourceTableColumns}
+        dataSource={data}
         onChange={(_pagination, _filters) => {
           // TODO: Implement sorting
         }}

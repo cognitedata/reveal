@@ -1,8 +1,9 @@
 import { Body } from '@cognite/cogs.js';
 import Link from 'components/Link';
+import { ReactNode } from 'react';
 
 type ResourcePropertyProps = {
-  value: string | number | undefined;
+  value: ReactNode;
   isLink?: boolean | undefined;
   redirectURL?: string;
 };
@@ -13,7 +14,7 @@ const ResourceProperty = ({
   redirectURL,
 }: ResourcePropertyProps): JSX.Element => {
   return (
-    <Body level={2} strong>
+    <Body level={2}>
       {isLink && redirectURL ? (
         <Link to={redirectURL} target="_blank">
           {value}

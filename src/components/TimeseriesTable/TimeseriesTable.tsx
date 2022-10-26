@@ -1,41 +1,29 @@
-import sdk from '@cognite/cdf-sdk-singleton';
 import { Table, TableNoResults } from '@cognite/cdf-utilities';
-import {
-  getContainer,
-  ContentView,
-  handleError,
-  getResourceSearchParams,
-  getResourceSearchQueryKey,
-} from 'utils';
+import { getContainer, ContentView } from 'utils';
 import { useTranslation } from 'common/i18n';
 import { useResourceTableColumns } from 'components/Data/ResourceTableColumns';
-import { useQuery } from 'react-query';
+import { Timeseries } from '@cognite/sdk';
 
 interface TimeseriesPreviewProps {
-  dataSetId: number;
-  query: string;
+  data: Timeseries[] | undefined;
+  isLoading: boolean;
 }
 
-const TimeseriesPreview = ({ dataSetId, query }: TimeseriesPreviewProps) => {
+const TimeseriesPreview = ({
+  data = [],
+  isLoading,
+}: TimeseriesPreviewProps) => {
   const { t } = useTranslation();
-  const { getResourceTableColumns } = useResourceTableColumns();
-  const { data: timeseries, isLoading: isTimeseriesLoading } = useQuery(
-    getResourceSearchQueryKey('timeseries', dataSetId, query),
-    () => sdk.timeseries.search(getResourceSearchParams(dataSetId, query)),
-    {
-      onError: (e: any) => {
-        handleError({ message: t('fetch-timeseries-failed'), ...e });
-      },
-    }
-  );
+  const resourceTableColumns =
+    useResourceTableColumns<Timeseries>('timeseries');
 
   return (
     <ContentView id="timeseriesTableId">
       <Table
         rowKey="key"
-        loading={isTimeseriesLoading}
-        columns={[...getResourceTableColumns('timeseries')]}
-        dataSource={timeseries || []}
+        loading={isLoading}
+        columns={resourceTableColumns}
+        dataSource={data}
         onChange={(_pagination, _filters) => {
           // TODO: Implement sorting
         }}

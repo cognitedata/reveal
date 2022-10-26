@@ -22,9 +22,16 @@ import FilesTable from 'components/FilesTable';
 import SequencesTable from 'components/SequencesTable';
 import TimeseriesTable from 'components/TimeseriesTable';
 import EventsProfile from 'components/EventsProfile';
-import { Input } from '@cognite/cogs.js';
+import { Flex, Icon } from '@cognite/cogs.js';
+import { Input } from 'antd';
 import useDebounce from 'hooks/useDebounce';
 import { useFlag } from '@cognite/react-feature-flags';
+import { TableFilter } from '@cognite/cdf-utilities';
+import styled from 'styled-components';
+import { useFormik } from 'formik';
+import AppliedFilters from 'components/applied-filters';
+import { StyledItemCount } from 'components/table-filters';
+import { ResourcesFilters, useResourcesSearch } from 'hooks/useResourcesSearch';
 
 const { TabPane } = Tabs;
 
@@ -33,10 +40,17 @@ interface ExploreDataProps {
   dataSetId: number;
 }
 
+export type ExploreDataResourceTypes =
+  | 'assets'
+  | 'files'
+  | 'events'
+  | 'sequences'
+  | 'timeseries';
+
 const ExploreData = ({ loading, dataSetId }: ExploreDataProps) => {
   const { t } = useTranslation();
   const [activeResourceTabKey, setActiveResourceTabKey] = useState<
-    string | undefined
+    ExploreDataResourceTypes | undefined
   >(undefined);
   const [exploreView, setExploreView] = useState<ExploreViewConfig>({
     visible: false,
@@ -46,7 +60,7 @@ const ExploreData = ({ loading, dataSetId }: ExploreDataProps) => {
   const email = data?.email;
 
   const [assetCount, setAssetCount] = useState<number>(0);
-  const [eventsCounts, setEventsCount] = useState<number>(0);
+  const [eventsCount, setEventsCount] = useState<number>(0);
   const [sequencesCount, setSequencesCount] = useState<number>(0);
   const [timeseriesCount, setTimeseriesCount] = useState<number>(0);
   const [filesCount, setFilesCount] = useState<number>(0);
@@ -105,8 +119,22 @@ const ExploreData = ({ loading, dataSetId }: ExploreDataProps) => {
   }, [dataSetId, activeResourceTabKey]);
 
   const [query, setQuery] = useState('');
+  const [isFilterVisible, setIsFilterVisible] = useState(false);
+  const [appliedFilters, setAppliedFilters] = useState<ResourcesFilters>({});
   const debouncedQuery = useDebounce(query, 100);
   const { isEnabled } = useFlag('data-catalog');
+
+  const {
+    assets: { data: assetsData, isLoading: isAssetsLoading },
+    events: { data: eventsData, isLoading: isEventsLoading },
+    files: { data: filesData, isLoading: isFilesLoading },
+    sequences: { data: sequencesData, isLoading: isSequencesLoading },
+    timeseries: { data: timeseriesData, isLoading: isTimeseriesLoading },
+  } = useResourcesSearch({
+    dataSetId,
+    query: debouncedQuery,
+    filters: appliedFilters,
+  });
 
   const dataSetContainsData = () => {
     return !(
@@ -114,12 +142,12 @@ const ExploreData = ({ loading, dataSetId }: ExploreDataProps) => {
       sequencesCount === 0 &&
       timeseriesCount === 0 &&
       filesCount === 0 &&
-      eventsCounts === 0
+      eventsCount === 0
     );
   };
 
   const activeResourceTabChangeHandler = (tabKey: string) => {
-    setActiveResourceTabKey(tabKey);
+    setActiveResourceTabKey(tabKey as ExploreDataResourceTypes);
   };
 
   const renderExploreView = () => {
@@ -141,20 +169,118 @@ const ExploreData = ({ loading, dataSetId }: ExploreDataProps) => {
     }
   };
 
+  const formik = useFormik({
+    initialValues: {
+      externalIdPrefix: '',
+    },
+    onSubmit: (values) => setAppliedFilters(values),
+  });
+
+  const onClearFilters = () => {
+    setAppliedFilters({});
+    formik.resetForm();
+    setIsFilterVisible(false);
+  };
+
+  const onApplyFilters = () => {
+    formik.handleSubmit();
+    setIsFilterVisible(false);
+  };
+
+  const clearFilter = (key: keyof ResourcesFilters) => {
+    formik.setFieldValue(key, '');
+    const filters = { ...appliedFilters };
+    delete filters[key];
+    setAppliedFilters(filters);
+  };
+
+  const getSearchResultsCount = () => {
+    switch (activeResourceTabKey) {
+      case 'assets':
+        return assetsData?.length;
+      case 'events':
+        return eventsData?.length;
+      case 'files':
+        return filesData?.length;
+      case 'sequences':
+        return sequencesData?.length;
+      case 'timeseries':
+        return timeseriesData?.length;
+    }
+  };
+
+  const getTotalResultsCount = () => {
+    switch (activeResourceTabKey) {
+      case 'assets':
+        return assetCount;
+      case 'events':
+        return eventsCount;
+      case 'files':
+        return filesCount;
+      case 'sequences':
+        return sequencesCount;
+      case 'timeseries':
+        return timeseriesCount;
+    }
+  };
+
   if (dataSetContainsData()) {
     return (
       <Spin spinning={loading}>
         <ContentView>
           <DetailsPane>
             {isEnabled && (
-              <Input
-                value={query}
-                icon="Search"
-                placeholder={t('search')}
-                onChange={(evt) => {
-                  setQuery(evt.currentTarget.value);
-                }}
-              />
+              <Flex direction="column" gap={8}>
+                <Flex display="inline-flex" gap={8} alignItems="center">
+                  <Input
+                    value={query}
+                    prefix={<Icon type="Search" />}
+                    placeholder={t('search')}
+                    onChange={(evt) => {
+                      setQuery(evt.currentTarget.value);
+                    }}
+                    style={{ width: 312 }}
+                    allowClear
+                  />
+                  <TableFilter
+                    onClear={onClearFilters}
+                    onApply={onApplyFilters}
+                    visible={isFilterVisible}
+                    onVisibleChange={() => setIsFilterVisible(!isFilterVisible)}
+                    menuTitle={t('filter-by')}
+                  >
+                    <StyledTableFilterSection>
+                      <label
+                        className="cogs-body-2 strong"
+                        htmlFor="externalIdPrefix"
+                      >
+                        {t('external-id')}
+                      </label>
+                      <Input
+                        id="externalIdPrefix"
+                        name="externalIdPrefix"
+                        onChange={formik.handleChange}
+                        value={formik.values.externalIdPrefix}
+                        placeholder={t('starts-with')}
+                        allowClear
+                      />
+                    </StyledTableFilterSection>
+                  </TableFilter>
+                  <StyledItemCount level={2}>
+                    {getSearchResultsCount()} of {getTotalResultsCount()}
+                  </StyledItemCount>
+                </Flex>
+                <AppliedFilters
+                  items={Object.entries(appliedFilters).map(([key, value]) => ({
+                    key,
+                    label: t(key as keyof ResourcesFilters, {
+                      value,
+                    }),
+                    onClick: () => clearFilter(key as keyof ResourcesFilters),
+                  }))}
+                  onClear={onClearFilters}
+                />
+              </Flex>
             )}
             <Tabs
               animated={false}
@@ -177,26 +303,27 @@ const ExploreData = ({ loading, dataSetId }: ExploreDataProps) => {
                 key="assets"
                 disabled={assetCount === 0}
               >
-                <AssetsTable dataSetId={dataSetId} query={debouncedQuery} />
+                <AssetsTable data={assetsData} isLoading={isAssetsLoading} />
               </TabPane>
               <TabPane
                 tab={
                   <TabTitle
                     title={t('events')}
                     iconType="Events"
-                    label={eventsCounts.toLocaleString()}
-                    disabled={eventsCounts === 0}
-                    isTooltip={eventsCounts < 0}
+                    label={eventsCount.toLocaleString()}
+                    disabled={eventsCount === 0}
+                    isTooltip={eventsCount < 0}
                     resource="events"
                   />
                 }
                 key="events"
-                disabled={eventsCounts === 0}
+                disabled={eventsCount === 0}
               >
                 <EventsTable
                   dataSetId={dataSetId}
                   setExploreView={setExploreView}
-                  query={debouncedQuery}
+                  data={eventsData}
+                  isLoading={isEventsLoading}
                 />
               </TabPane>
               <TabPane
@@ -213,7 +340,7 @@ const ExploreData = ({ loading, dataSetId }: ExploreDataProps) => {
                 key="files"
                 disabled={filesCount === 0}
               >
-                <FilesTable dataSetId={dataSetId} query={debouncedQuery} />
+                <FilesTable data={filesData} isLoading={isFilesLoading} />
               </TabPane>
               <TabPane
                 tab={
@@ -229,7 +356,10 @@ const ExploreData = ({ loading, dataSetId }: ExploreDataProps) => {
                 key="sequences"
                 disabled={sequencesCount === 0}
               >
-                <SequencesTable dataSetId={dataSetId} query={debouncedQuery} />
+                <SequencesTable
+                  data={sequencesData}
+                  isLoading={isSequencesLoading}
+                />
               </TabPane>
               <TabPane
                 tab={
@@ -245,7 +375,10 @@ const ExploreData = ({ loading, dataSetId }: ExploreDataProps) => {
                 key="timeseries"
                 disabled={timeseriesCount === 0}
               >
-                <TimeseriesTable dataSetId={dataSetId} query={debouncedQuery} />
+                <TimeseriesTable
+                  data={timeseriesData}
+                  isLoading={isTimeseriesLoading}
+                />
               </TabPane>
             </Tabs>
             {exploreView.visible && renderExploreView()}
@@ -259,3 +392,10 @@ const ExploreData = ({ loading, dataSetId }: ExploreDataProps) => {
 };
 
 export default ExploreData;
+
+const StyledTableFilterSection = styled.div`
+  display: flex;
+  gap: 8px;
+  flex-direction: column;
+  padding: 16px;
+`;
