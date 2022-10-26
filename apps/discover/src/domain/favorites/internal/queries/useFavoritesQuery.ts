@@ -1,6 +1,6 @@
 import { getFavorites } from 'domain/favorites/service/network/getFavorites';
 
-import { useQuery, UseQueryResult } from 'react-query';
+import { useQuery, UseQueryResult } from '@tanstack/react-query';
 
 import { getProjectInfo } from '@cognite/react-container';
 

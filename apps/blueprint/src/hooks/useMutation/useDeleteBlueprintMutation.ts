@@ -1,6 +1,6 @@
 import { useContext } from 'react';
 import { AuthContext } from 'providers/AuthProvider';
-import { useMutation, useQueryClient } from 'react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useListBlueprintsName } from 'hooks/useQuery/useListBlueprintsQuery';
 import { BlueprintReference } from 'typings';
 
@@ -15,17 +15,17 @@ const useDeleteBlueprintMutation = () => {
     {
       onMutate: async (id: string) => {
         // Cancel any outgoing refetches (so they don't overwrite our optimistic update)
-        await queryClient.cancelQueries(useListBlueprintsName);
+        await queryClient.cancelQueries([useListBlueprintsName]);
 
         // Snapshot the previous value
         const previousBlueprints = queryClient.getQueryData<
           BlueprintReference[]
-        >(useListBlueprintsName);
+        >([useListBlueprintsName]);
 
         // Optimistically update to the new value
         if (previousBlueprints) {
           queryClient.setQueryData<BlueprintReference[]>(
-            useListBlueprintsName,
+            [useListBlueprintsName],
             previousBlueprints.filter((bp) => bp.externalId !== id)
           );
         }
@@ -36,7 +36,7 @@ const useDeleteBlueprintMutation = () => {
       onError: (_, __, context) => {
         if (context) {
           queryClient.setQueryData<BlueprintReference[]>(
-            useListBlueprintsName,
+            [useListBlueprintsName],
             context
           );
         }

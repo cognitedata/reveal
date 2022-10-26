@@ -3,8 +3,12 @@ import { WellInternal } from 'domain/wells/well/internal/types';
 import { getWellsByIds } from 'domain/wells/well/service/network/getWellsById';
 
 import * as React from 'react';
-import { useQuery, useQueryClient, UseQueryResult } from 'react-query';
 
+import {
+  useQuery,
+  useQueryClient,
+  UseQueryResult,
+} from '@tanstack/react-query';
 import concat from 'lodash/concat';
 import difference from 'lodash/difference';
 import isEmpty from 'lodash/isEmpty';

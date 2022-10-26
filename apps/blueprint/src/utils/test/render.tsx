@@ -3,7 +3,7 @@ import { BrowserRouter } from 'react-router-dom';
 // Here is where our custom render is being defined, so we don't need this check
 import { render, RenderOptions } from '@testing-library/react';
 import { I18nContainer } from '@cognite/react-i18n';
-import { QueryClientProvider, QueryClient } from 'react-query';
+import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 
 const queryClient = new QueryClient();
 

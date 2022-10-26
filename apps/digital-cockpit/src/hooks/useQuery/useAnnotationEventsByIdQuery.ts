@@ -1,6 +1,6 @@
 import { CogniteClient, CogniteEvent, IdEither } from '@cognite/sdk';
 import useCDFExplorerContext from 'hooks/useCDFExplorerContext';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 
 const next = async (client: CogniteClient, metadata: any = {}, cursor = '') => {
   const response = await client.events.list({

@@ -1,6 +1,6 @@
 import { deleteSavedSearch } from 'domain/savedSearches/service/network/deleteSavedSearch';
 
-import { useMutation, useQueryClient } from 'react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { getProjectInfo } from '@cognite/react-container';
 
@@ -13,6 +13,6 @@ export function useSavedSearchDeleteMutate() {
   const queryClient = useQueryClient();
 
   return useMutation((id: string) => deleteSavedSearch(id, headers, tenant), {
-    onSuccess: () => queryClient.invalidateQueries(SAVED_SEARCHES_QUERY_KEY),
+    onSuccess: () => queryClient.invalidateQueries([SAVED_SEARCHES_QUERY_KEY]),
   });
 }

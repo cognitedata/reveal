@@ -1,7 +1,6 @@
 import { addShareSavedSearch } from 'domain/savedSearches/service/network/addShareSavedSearch';
 
-import { useMutation, useQueryClient } from 'react-query';
-
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { handleServiceError } from 'utils/errors';
 
 import { SavedSearchAddShareSchemaBody } from '@cognite/discover-api-types';

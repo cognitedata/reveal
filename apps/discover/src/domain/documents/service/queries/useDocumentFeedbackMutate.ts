@@ -4,7 +4,7 @@ import { useDocumentCategoryId } from 'domain/documents/internal/hooks/useDocume
 import { adaptLabelNamesToLabelsQuery } from 'domain/labels/internal/transformers/adaptLabelNamesToLabelsQuery';
 import { getAllLabelsByQuery } from 'domain/labels/service/network/getAllLabelsByQuery';
 
-import { useMutation, useQueryClient } from 'react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { getProjectInfo } from '@cognite/react-container';
 

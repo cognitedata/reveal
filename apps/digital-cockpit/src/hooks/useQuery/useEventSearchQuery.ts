@@ -1,4 +1,4 @@
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import { CogniteEvent, EventSearchRequest } from '@cognite/sdk';
 import useCDFExplorerContext from 'hooks/useCDFExplorerContext';
 

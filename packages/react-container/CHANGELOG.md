@@ -1,3 +1,7 @@
+## 7.0.0 October 05 2022
+
+- BREAKING: replaced `react-query` with `@tanstack/react-query`
+
 ## 6.4.0 October 20 2022
 
 - Fix race condition between react-container and react-project-selector in handling code callback

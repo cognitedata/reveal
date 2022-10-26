@@ -1,4 +1,4 @@
-import { useQuery, UseQueryOptions } from 'react-query';
+import { useQuery, UseQueryOptions } from '@tanstack/react-query';
 import { DatapointAggregates, Datapoints, DatapointsQuery } from '@cognite/sdk';
 import useCDFExplorerContext from 'hooks/useCDFExplorerContext';
 import { calculateGranularity } from 'utils/timeseries';

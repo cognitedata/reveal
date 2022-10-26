@@ -1,6 +1,6 @@
 import { saveFlow } from '@cognite/auth-utils';
 import { useContext } from 'react';
-import { useMutation } from 'react-query';
+import { useMutation } from '@tanstack/react-query';
 
 import LoginContext from '../context';
 import { validateTenant } from '../api';

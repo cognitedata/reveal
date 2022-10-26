@@ -160,7 +160,6 @@ export const Richtext: React.FC<RichtextProps> = ({
         readOnly={readOnly}
         data-testid="editable-area"
       />
-
       {showActionButtons && (
         <Portal targetId={actionTarget}>
           <ActionButtons>
@@ -186,7 +185,6 @@ export const Richtext: React.FC<RichtextProps> = ({
           </ActionButtons>
         </Portal>
       )}
-
       {showUserList && userManagementServiceBaseUrl && (
         <Portal>
           <div

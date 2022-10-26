@@ -1,7 +1,7 @@
 import { getSavedSearch } from 'domain/savedSearches/service/network/getSavedSearch';
 import { SavedSearchContent } from 'domain/savedSearches/types';
 
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 
 import { getProjectInfo } from '@cognite/react-container';
 

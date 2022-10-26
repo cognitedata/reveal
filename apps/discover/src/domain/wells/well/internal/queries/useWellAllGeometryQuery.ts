@@ -1,4 +1,4 @@
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 
 import { WellGeometryListResponse } from '@cognite/discover-api-types';
 import { getProjectInfo } from '@cognite/react-container';

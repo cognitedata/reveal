@@ -1,7 +1,8 @@
 import { useQuerySavedSearchCurrent } from 'domain/savedSearches/internal/queries/useQuerySavedSearchCurrent';
 
 import React, { useEffect } from 'react';
-import { useQueryClient } from 'react-query';
+
+import { useQueryClient } from '@tanstack/react-query';
 
 import EmptyState from 'components/EmptyState';
 import { NO_RESULTS_TEXT } from 'components/EmptyState/constants';
@@ -18,7 +19,7 @@ export const SeismicResults: React.FC = () => {
   const { data: currentSavedSearch } = useQuerySavedSearchCurrent();
 
   useEffect(() => {
-    queryClient.invalidateQueries(SAVED_SEARCHES_QUERY_KEY);
+    queryClient.invalidateQueries([SAVED_SEARCHES_QUERY_KEY]);
   }, [currentSavedSearch]);
 
   const hasNoData = resultData && resultData.length === 0;

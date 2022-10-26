@@ -1,5 +1,5 @@
 import { Equipment, useListEquipmentForRoomQuery } from 'graphql/generated';
-import { useQueryClient } from 'react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import { EQUIPMENT_TYPES } from 'recoil/equipmentPopup/constants';
 
 import { EquipmentMutate } from '../../types';

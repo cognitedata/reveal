@@ -2,7 +2,7 @@ import React from 'react';
 import { CogniteAuth } from '@cognite/auth-utils';
 import { CogniteClient } from '@cognite/sdk';
 import { action } from '@storybook/addon-actions';
-import { QueryClientProvider, QueryClient } from 'react-query';
+import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 
 import ProjectSelector from './ProjectSelector';
 // import * as fetchProjects from './fetchProjects';

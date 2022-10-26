@@ -1,6 +1,6 @@
 import { searchDocumentById } from 'domain/documents/internal/transformers/searchDocumentById';
 
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 
 import { Document } from '@cognite/sdk';
 

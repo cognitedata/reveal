@@ -1,6 +1,6 @@
 import { useDocumentSearchResultQuery } from 'domain/documents/service/queries/useDocumentSearchResultQuery';
 
-import { useQueryClient } from 'react-query';
+import { useQueryClient } from '@tanstack/react-query';
 
 import { DOCUMENTS_QUERY_KEY } from 'constants/react-query';
 import { useDocumentSearchOptions } from 'modules/documentSearch/hooks/useDocumentSearchOptions';

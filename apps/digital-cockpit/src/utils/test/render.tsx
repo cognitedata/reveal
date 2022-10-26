@@ -7,7 +7,7 @@ import { CdfClientProvider } from 'providers/CdfClientProvider';
 import { ApiClientProvider } from 'providers/ApiClientProvider';
 import { TenantProvider } from 'providers/TenantProvider';
 import { BrowserRouter } from 'react-router-dom';
-import { QueryClient, QueryClientProvider } from 'react-query';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { StoreState } from 'store/types';
 import { CdfClient } from 'utils/cdfClient';
 import { ApiClient } from 'utils/apiClient';

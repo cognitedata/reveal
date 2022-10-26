@@ -1,7 +1,6 @@
 import { getMockedSavedSearchWithFilters } from 'domain/savedSearches/service/__fixtures/savedSearch';
 
-import { useQueryClient } from 'react-query';
-
+import { useQueryClient } from '@tanstack/react-query';
 import { renderHook } from '@testing-library/react-hooks';
 
 import { SEARCH_HISTORY_KEY } from 'constants/react-query';
@@ -10,7 +9,7 @@ import { useCurrentSavedSearchState } from 'modules/sidebar/selectors/useCurrent
 import { useSearchHistoryListQuery } from '../../queries/useSearchHistoryQuery';
 import { useUpdateSearchHistoryListQuery } from '../useUpdateSearchHistoryListQuery';
 
-jest.mock('react-query', () => ({
+jest.mock('@tanstack/react-query', () => ({
   useQueryClient: jest.fn(),
 }));
 

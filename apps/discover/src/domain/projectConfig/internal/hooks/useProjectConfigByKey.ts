@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { useQuery } from 'react-query';
+
+import { useQuery } from '@tanstack/react-query';
 
 import { ProjectConfig } from '@cognite/discover-api-types';
 import { getProjectInfo } from '@cognite/react-container';

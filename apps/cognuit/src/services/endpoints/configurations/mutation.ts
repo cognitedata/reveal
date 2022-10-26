@@ -1,7 +1,7 @@
 import ApiContext from 'contexts/ApiContext';
 import APIErrorContext from 'contexts/APIErrorContext';
 import { useContext } from 'react';
-import { useMutation, useQueryClient } from 'react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { CONFIGURATIONS_KEYS } from 'services/configs/queryKeys';
 import { CustomError } from 'services/CustomError';
 
@@ -12,7 +12,7 @@ const useConfigurationsMutation = () => {
 
   const defaultConfigs = {
     onSuccess: () => {
-      queryCache.invalidateQueries(CONFIGURATIONS_KEYS.default);
+      queryCache.invalidateQueries([CONFIGURATIONS_KEYS.default]);
       removeError();
     },
     onError: (error: CustomError) => {

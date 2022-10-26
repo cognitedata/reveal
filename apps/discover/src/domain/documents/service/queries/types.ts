@@ -1,4 +1,4 @@
-import { UseInfiniteQueryResult } from 'react-query';
+import { UseInfiniteQueryResult } from '@tanstack/react-query';
 
 import { DocumentResult } from 'modules/documentSearch/types';
 

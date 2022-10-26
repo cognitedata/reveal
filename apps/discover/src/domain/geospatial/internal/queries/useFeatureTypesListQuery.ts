@@ -1,4 +1,4 @@
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 
 import { GEOSPATIAL_QUERY_KEY } from 'constants/react-query';
 

@@ -1,6 +1,6 @@
 import { AuthContext } from 'providers/AuthProvider';
 import { useContext } from 'react';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import { BlueprintReference } from 'typings';
 
 export const useListBlueprintsName = 'listBlueprints';

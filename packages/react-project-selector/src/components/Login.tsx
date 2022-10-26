@@ -7,7 +7,7 @@ import {
 } from 'react-router-dom';
 import { Loader } from '@cognite/cogs.js';
 import { getFlow } from '@cognite/auth-utils';
-import { QueryClient, QueryClientProvider } from 'react-query';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import { ClusterGroup } from '../clusters';
 import LoginContext from '../context';

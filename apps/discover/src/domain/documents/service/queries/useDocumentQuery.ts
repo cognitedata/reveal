@@ -1,6 +1,6 @@
 import { OTHER_DOCUMENT_TYPE } from 'domain/documents/constants';
 
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 
 import {
   DocumentCategories,

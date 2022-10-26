@@ -2,8 +2,12 @@ import { reportManagerAPI } from 'domain/reportManager/service/network/reportMan
 import { getWellboresByWellIds } from 'domain/wells/wellbore/service/network/getWellboresByWellId';
 
 import { useCallback } from 'react';
-import { useQuery, useQueryClient, UseQueryResult } from 'react-query';
 
+import {
+  useQuery,
+  useQueryClient,
+  UseQueryResult,
+} from '@tanstack/react-query';
 import uniq from 'lodash/uniq';
 
 import { REPORTS_QUERY_KEY } from 'constants/react-query';

@@ -1,7 +1,7 @@
 import { SAVED_SEARCHES_CURRENT_KEY } from 'domain/savedSearches/constants';
 import { getSavedSearch } from 'domain/savedSearches/service/network/getSavedSearch';
 
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 
 import { getProjectInfo } from '@cognite/react-container';
 

@@ -1,7 +1,6 @@
 import { createSavedSearch } from 'domain/savedSearches/service/network/createSavedSearch';
 
-import { useMutation, useQueryClient } from 'react-query';
-
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { handleServiceError } from 'utils/errors';
 
 import { SavedSearchSchemaBody } from '@cognite/discover-api-types';
@@ -21,7 +20,8 @@ export function useSavedSearchCreateMutate() {
       return createSavedSearch(id, body, headers, tenant);
     },
     {
-      onSuccess: () => queryClient.invalidateQueries(SAVED_SEARCHES_QUERY_KEY),
+      onSuccess: () =>
+        queryClient.invalidateQueries([SAVED_SEARCHES_QUERY_KEY]),
       onError: (error: Error) => {
         handleServiceError(error);
         return Promise.reject(error);

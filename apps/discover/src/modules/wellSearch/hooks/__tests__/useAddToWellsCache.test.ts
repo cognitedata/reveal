@@ -1,7 +1,6 @@
 import { WellInternal } from 'domain/wells/well/internal/types';
 
-import { useQueryClient } from 'react-query';
-
+import { useQueryClient } from '@tanstack/react-query';
 import { renderHook } from '@testing-library/react-hooks';
 import concat from 'lodash/concat';
 
@@ -10,7 +9,7 @@ import { WELL_QUERY_KEY } from 'constants/react-query';
 
 import { useAddToWellsCache } from '../useAddToWellsCache';
 
-jest.mock('react-query', () => ({
+jest.mock('@tanstack/react-query', () => ({
   useQueryClient: jest.fn(),
 }));
 

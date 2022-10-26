@@ -1,7 +1,6 @@
 import { WellInternal } from 'domain/wells/well/internal/types';
 
-import { useQueryClient } from 'react-query';
-
+import { useQueryClient } from '@tanstack/react-query';
 import concat from 'lodash/concat';
 import differenceBy from 'lodash/differenceBy';
 

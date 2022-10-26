@@ -1,5 +1,4 @@
-import { useQuery } from 'react-query';
-
+import { useQuery } from '@tanstack/react-query';
 import { getCogniteSDKClient } from 'utils/getCogniteSDKClient';
 
 export const useDocumentAssetNames = (assetIds: number[]) =>

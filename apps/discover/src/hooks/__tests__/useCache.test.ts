@@ -1,5 +1,4 @@
-import { QueryClient } from 'react-query';
-
+import { QueryClient } from '@tanstack/react-query';
 import { renderHook } from '@testing-library/react-hooks';
 
 import { QueryClientWrapper } from '__test-utils/queryClientWrapper';
@@ -30,7 +29,7 @@ describe('useCache', () => {
     const { result, waitForNextUpdate } = renderHook(
       () =>
         useCache({
-          key: 'a',
+          key: ['a'],
           items: new Set(['1', '2', '3']),
           fetchAction: dynamicFetchAction,
         }),
@@ -49,7 +48,7 @@ describe('useCache', () => {
     const { waitForNextUpdate } = renderHook(
       () =>
         useCache({
-          key: 'c',
+          key: ['c'],
           items: new Set(['1', '2', '3']),
           fetchAction: dynamicFetchAction,
         }),
@@ -66,7 +65,7 @@ describe('useCache', () => {
     const { result, waitForNextUpdate: waitAgain } = renderHook(
       () =>
         useCache({
-          key: 'c',
+          key: ['c'],
           items: new Set(['1', '2', '3', '4', '5']),
           fetchAction: dynamicFetchAction,
         }),

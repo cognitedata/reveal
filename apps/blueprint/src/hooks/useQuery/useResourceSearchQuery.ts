@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import { useQuery, UseQueryOptions } from 'react-query';
+import { useQuery, UseQueryOptions } from '@tanstack/react-query';
 import { AuthContext } from 'providers/AuthProvider';
 import { Asset, Timeseries } from '@cognite/sdk';
 

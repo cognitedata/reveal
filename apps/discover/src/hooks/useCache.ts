@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { useQuery, useQueryClient } from 'react-query';
 
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import pick from 'lodash/pick';
 import { FetchOptions } from 'utils/fetchAllCursors';
 
@@ -18,7 +18,7 @@ import { FetchOptions } from 'utils/fetchAllCursors';
  *
  */
 export type CacheProps<T> = {
-  key: string | string[];
+  key: string[];
   items: Set<string>;
   fetchAction: (
     items: Set<string>,

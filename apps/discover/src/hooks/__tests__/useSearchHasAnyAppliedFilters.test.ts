@@ -10,11 +10,9 @@ import { QueryClientWrapper } from '__test-utils/queryClientWrapper';
 // this one throws an "open handle" console error. It will help to investigate later
 describe('useSearchHasAnyAppliedFilters hook', () => {
   it('should return false initially', async () => {
-    const { result, waitForNextUpdate } = renderHook(
-      () => useSearchHasAnyAppliedFilters(),
-      { wrapper: QueryClientWrapper }
-    );
-    await waitForNextUpdate();
+    const { result } = renderHook(() => useSearchHasAnyAppliedFilters(), {
+      wrapper: QueryClientWrapper,
+    });
     expect(result.current).toBeFalsy();
   });
 });

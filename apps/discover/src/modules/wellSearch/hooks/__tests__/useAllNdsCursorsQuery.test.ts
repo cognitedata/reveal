@@ -25,12 +25,12 @@ describe('useAllNdsCursorsQuery', () => {
     );
   });
   test('should return undefined when no wellboreId is passed', async () => {
-    const { result, waitFor } = renderHookWithStore(() =>
+    const { result } = renderHookWithStore(() =>
       useAllNdsCursorsQuery({
         wellboreIds: new Set([]),
       })
     );
-    await waitFor(() => expect(result.current.isLoading).toEqual(false));
+
     expect(result.current.data).toBeUndefined();
   });
 });

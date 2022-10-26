@@ -1,4 +1,4 @@
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import { useContext } from 'react';
 import isEmpty from 'lodash/isEmpty';
 import { DocumentsAggregateAllUniqueValuesRequest } from '@cognite/sdk';

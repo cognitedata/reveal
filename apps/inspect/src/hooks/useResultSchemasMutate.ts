@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from 'react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { DB_NAME, RESULTS_SCHEMA_TABLE } from '../constants';
 import { getCogniteSDKClient } from '../utils/getCogniteClientSDK';

@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 import { useAuthenticatedAuthContext } from '@cognite/react-container';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import { DoubleDatapoint } from '@cognite/sdk';
 
 export const useFetchScenarioPrice = (

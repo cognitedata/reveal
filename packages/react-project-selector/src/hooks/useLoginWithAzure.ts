@@ -1,6 +1,6 @@
 import { useCallback, useContext } from 'react';
 import { CogniteClient } from '@cognite/sdk-v5';
-import { useMutation } from 'react-query';
+import { useMutation } from '@tanstack/react-query';
 
 import LoginContext from '../context';
 import { COGNITE_SDK_ACCOUNT_ID_KEY } from '../constants';

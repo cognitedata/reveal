@@ -3,8 +3,7 @@ import {
   WellLegendPayload,
 } from 'domain/wells/legend/internal/types';
 
-import { useMutation, useQueryClient } from 'react-query';
-
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { handleServiceError } from 'utils/errors';
 
 import { getProjectInfo } from '@cognite/react-container';

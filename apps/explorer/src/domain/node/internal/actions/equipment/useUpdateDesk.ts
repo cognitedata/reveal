@@ -4,7 +4,7 @@ import {
   useGetSearchDataQuery,
   useListPeopleWithNoDeskQuery,
 } from 'graphql/generated';
-import { useQueryClient } from 'react-query';
+import { useQueryClient } from '@tanstack/react-query';
 
 import { usePersonMutate } from '../person/usePersonMutate';
 

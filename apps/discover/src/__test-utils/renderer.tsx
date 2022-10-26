@@ -1,9 +1,9 @@
 import * as React from 'react';
 import Modal from 'react-modal';
-import { QueryClient } from 'react-query';
 import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 
+import { QueryClient } from '@tanstack/react-query';
 import { RenderResult, RenderOptions } from '@testing-library/react';
 import { renderHook, RenderHookOptions } from '@testing-library/react-hooks';
 import { AnyAction, Store } from 'redux';

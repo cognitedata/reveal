@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { useMutation, useQueryClient } from 'react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import sidecar from 'utils/sidecar';
 import { useAuthenticatedAuthContext } from '@cognite/react-container';
 import { axiosRequestConfig } from 'utils/utils';

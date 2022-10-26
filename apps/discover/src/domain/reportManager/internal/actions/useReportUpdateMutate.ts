@@ -1,6 +1,6 @@
 import { reportManagerAPI } from 'domain/reportManager/service/network/reportManagerAPI';
 
-import { useMutation, useQueryClient } from 'react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { REPORTS_QUERY_KEY } from 'constants/react-query';
 

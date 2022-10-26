@@ -1,6 +1,6 @@
 import { feedback } from 'domain/feedback/service/network/service';
 
-import { useMutation, useQueryClient } from 'react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { useJsonHeaders } from '../../../../hooks/useJsonHeaders';
 import { FeedbackPatchBody, FeedbackType } from '../types';

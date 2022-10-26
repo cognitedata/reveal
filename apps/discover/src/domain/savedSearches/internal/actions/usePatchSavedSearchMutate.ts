@@ -1,8 +1,7 @@
 import { updateCurrentSearch } from 'domain/savedSearches/service/utils';
 import { SavedSearchContent } from 'domain/savedSearches/types';
 
-import { useMutation, useQueryClient } from 'react-query';
-
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { log } from 'utils/log';
 
 import { getProjectInfo } from '@cognite/react-container';

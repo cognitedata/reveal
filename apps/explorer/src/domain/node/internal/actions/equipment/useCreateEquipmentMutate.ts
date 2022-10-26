@@ -3,7 +3,7 @@ import {
   useGetMapDataQuery,
   useListPeopleWithNoDeskQuery,
 } from 'graphql/generated';
-import { useQueryClient } from 'react-query';
+import { useQueryClient } from '@tanstack/react-query';
 
 import { EquipmentMutate } from '../../types';
 import { useNodeMutate } from '../useNodeMutate';

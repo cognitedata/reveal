@@ -1,6 +1,6 @@
 import { BidProcessResult } from '@cognite/power-ops-api-types';
 import { useFetchBidProcessResult } from 'queries/useFetchBidProcessResult';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import { BidMatrixData, BidProcessResultWithData } from 'types';
 import { fetchBidMatricesData } from 'utils/utils';
 import { useAuthenticatedAuthContext } from '@cognite/react-container';

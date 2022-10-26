@@ -1,6 +1,6 @@
 import { useSearchHistoryListQuery } from 'domain/searchHistory/internal/queries/useSearchHistoryQuery';
 
-import { useQueryClient } from 'react-query';
+import { useQueryClient } from '@tanstack/react-query';
 
 import { SEARCH_HISTORY_KEY } from 'constants/react-query';
 import { useCurrentSavedSearchState } from 'modules/sidebar/selectors/useCurrentSavedSearchState';

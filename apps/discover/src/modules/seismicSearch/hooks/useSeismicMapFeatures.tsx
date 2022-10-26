@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
-import { useQueryClient } from 'react-query';
 
+import { useQueryClient } from '@tanstack/react-query';
 import { featureCollection } from '@turf/helpers';
 import { SeismicError } from 'services/seismic';
 import { SeismicGetData } from 'services/types';

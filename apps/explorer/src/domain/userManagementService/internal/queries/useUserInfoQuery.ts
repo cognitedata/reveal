@@ -1,6 +1,6 @@
 import { getUserPreferences } from 'domain/userManagementService/service/network/getUserPreferences';
 
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import { getProjectInfo } from '@cognite/react-container';
 import { useJsonHeaders } from 'hooks/useJsonHeaders';
 

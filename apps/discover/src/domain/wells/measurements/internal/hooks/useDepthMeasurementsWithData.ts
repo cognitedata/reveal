@@ -13,7 +13,7 @@ export const useDepthMeasurementsWithData = ({
 }: AllCursorsProps & MeasurementTypeFilter) => {
   const {
     data: depthMeasurements = [],
-    isLoading: isDepthMeasurementsLoading,
+    isInitialLoading: isDepthMeasurementsLoading,
   } = useDepthMeasurementsQuery({ wellboreIds, measurementTypes });
 
   const sequenceExternalIds = useMemo(
@@ -23,7 +23,7 @@ export const useDepthMeasurementsWithData = ({
 
   const {
     data: depthMeasurementData = [],
-    isLoading: isDepthMeasurementDataLoading,
+    isInitialLoading: isDepthMeasurementDataLoading,
   } = useDepthMeasurementDataQuery({
     sequenceExternalIds,
     /**

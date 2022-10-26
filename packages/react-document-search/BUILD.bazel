@@ -44,7 +44,8 @@ DEPENDENCIES = [
     "@npm//@cognite/storage",
     "@npm//lodash",
     "@npm//react",
-    "@npm//react-query",
+    "@npm//@tanstack/react-query",
+    "@npm//@tanstack/react-query-devtools",
     "@npm//styled-components",
 ]
 

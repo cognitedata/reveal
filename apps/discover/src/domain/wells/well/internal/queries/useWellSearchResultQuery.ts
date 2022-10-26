@@ -1,7 +1,7 @@
 import { useWellFilters } from 'domain/wells/well/internal/filters/useWellFilters';
 import { WellInternal } from 'domain/wells/well/internal/types';
 
-import { useQuery, UseQueryResult } from 'react-query';
+import { useQuery, UseQueryResult } from '@tanstack/react-query';
 
 import { Metrics } from '@cognite/metrics';
 

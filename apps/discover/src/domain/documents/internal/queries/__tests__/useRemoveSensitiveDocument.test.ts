@@ -1,7 +1,6 @@
 import { useDocumentSearchResultQuery } from 'domain/documents/service/queries/useDocumentSearchResultQuery';
 
-import { useQueryClient } from 'react-query';
-
+import { useQueryClient } from '@tanstack/react-query';
 import { renderHook } from '@testing-library/react-hooks';
 
 import { getMockDocument } from '__test-utils/fixtures/document';
@@ -10,7 +9,7 @@ import { getEmptyDocumentStateFacets } from 'modules/documentSearch/utils';
 
 import { useRemoveSensitiveDocument } from '../useRemoveSensitiveDocument';
 
-jest.mock('react-query', () => ({
+jest.mock('@tanstack/react-query', () => ({
   useQueryClient: jest.fn(),
 }));
 

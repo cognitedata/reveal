@@ -1,5 +1,5 @@
 import { useAuthenticatedAuthContext } from '@cognite/react-container';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 
 export const useFetchPowerOpsConfiguration = () => {
   const { client } = useAuthenticatedAuthContext();

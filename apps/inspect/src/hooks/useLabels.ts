@@ -1,5 +1,5 @@
 import { LabelDefinition } from '@cognite/sdk';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 
 import { getCogniteSDKClient } from '../utils/getCogniteClientSDK';
 

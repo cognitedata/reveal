@@ -1,5 +1,5 @@
 import uniq from 'lodash/uniq';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import { compileExpression } from 'filtrex';
 import { useAuthContext } from '@cognite/react-container';
 import {

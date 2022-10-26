@@ -2,7 +2,7 @@ import ApiContext from 'contexts/ApiContext';
 import APIErrorContext from 'contexts/APIErrorContext';
 import { useIsTokenAndApiValid } from 'hooks/useIsTokenAndApiValid';
 import { useContext } from 'react';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import { PROJECTS_KEY } from 'services/configs/queryKeys';
 import { Project, Source } from 'typings/interfaces';
 import { CustomError } from 'services/CustomError';

@@ -25,6 +25,6 @@ describe('useDocumentSearchOneQuery', () => {
     await waitForNextUpdate();
 
     expect(result.current.data).toBeUndefined();
-    expect(result.current.status).toBe('success');
+    expect(result.current.status).toBe('error');
   });
 });

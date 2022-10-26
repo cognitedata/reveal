@@ -3,7 +3,7 @@ import APIErrorContext from 'contexts/APIErrorContext';
 import { useIsTokenAndApiValid } from 'hooks/useIsTokenAndApiValid';
 import { HeartbeatsConnector, HeartbeatsOutages } from 'pages/Status/types';
 import { useContext } from 'react';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import { SOURCES_KEY } from 'services/configs/queryKeys';
 import { CustomError } from 'services/CustomError';
 import { HeartbeatsReportResponse } from 'types/ApiInterface';
@@ -16,7 +16,7 @@ const useSourcesQuery = () => {
   const isValid = useIsTokenAndApiValid();
 
   const { data, ...rest } = useQuery(
-    SOURCES_KEY.default,
+    [SOURCES_KEY.default],
     async () => {
       return api!.reference.getSources();
     },
@@ -42,7 +42,7 @@ export const useInstancesQuery = (source: string) => {
   const isValid = useIsTokenAndApiValid();
 
   const { data, ...rest } = useQuery(
-    SOURCES_KEY.instances,
+    [SOURCES_KEY.instances],
     async () => {
       return api!.connectors.get(source);
     },

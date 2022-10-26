@@ -1,6 +1,6 @@
 import { useContext } from 'react';
 import { AuthContext } from 'providers/AuthProvider';
-import { useMutation, useQueryClient } from 'react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useListBlueprintsName } from 'hooks/useQuery/useListBlueprintsQuery';
 import { BlueprintReference } from 'typings';
 import { useFetchBlueprintDefinitionName } from 'hooks/useQuery/useFetchBlueprintDefinitionQuery';

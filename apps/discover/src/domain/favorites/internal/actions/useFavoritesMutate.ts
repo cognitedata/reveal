@@ -6,7 +6,7 @@ import { shareFavorite } from 'domain/favorites/service/network/shareFavorite';
 import { updateFavorite } from 'domain/favorites/service/network/updateFavorite';
 import { updateFavoriteContent } from 'domain/favorites/service/network/updateFavoriteContent';
 
-import { useMutation, useQueryClient } from 'react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { FavoritePostSchema } from '@cognite/discover-api-types';
 import { getTenantInfo } from '@cognite/react-container';

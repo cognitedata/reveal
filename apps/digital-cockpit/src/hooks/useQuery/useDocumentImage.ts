@@ -2,7 +2,7 @@ import { Buffer } from 'buffer';
 
 import { FileInfo } from '@cognite/sdk';
 import useCDFExplorerContext from 'hooks/useCDFExplorerContext';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 
 export const useDocumentImage = (document: FileInfo | undefined) => {
   const { client } = useCDFExplorerContext();

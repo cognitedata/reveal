@@ -1,6 +1,6 @@
 import { reportManagerAPI } from 'domain/reportManager/service/network/reportManagerAPI';
 
-import { useMutation } from 'react-query';
+import { useMutation } from '@tanstack/react-query';
 
 import { useAllReportsInvalidate } from '../queries/useReportsQuery';
 import { Report } from '../types';

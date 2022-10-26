@@ -1,7 +1,6 @@
 import { getLabels } from 'domain/labels/service/network/getLabels';
 
-import { useQuery } from 'react-query';
-
+import { useQuery } from '@tanstack/react-query';
 import { handleServiceError } from 'utils/errors';
 
 import { DOCUMENTS_QUERY_KEY } from 'constants/react-query';

@@ -1,7 +1,7 @@
 import { Asset, CogniteInternalId } from '@cognite/sdk';
 import React, { useMemo, useState } from 'react';
 import debounce from 'lodash/debounce';
-import { UseQueryResult } from 'react-query';
+import { UseQueryResult } from '@tanstack/react-query';
 import { Input, Tooltip } from '@cognite/cogs.js';
 import Loading from 'components/utils/Loading';
 import { useAssetSearchQuery } from 'hooks/useQuery/useAssetQuery';

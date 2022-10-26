@@ -1,6 +1,6 @@
 import { getRoles, getRolesLegacy } from 'domain/user/service/network';
 
-import { UseQueryResult, useQuery } from 'react-query';
+import { UseQueryResult, useQuery } from '@tanstack/react-query';
 
 import { AuthModes } from '@cognite/discover-api-types';
 import { getTenantInfo } from '@cognite/react-container';

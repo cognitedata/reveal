@@ -1,4 +1,4 @@
-import { useQuery, UseQueryResult } from 'react-query';
+import { useQuery, UseQueryResult } from '@tanstack/react-query';
 
 import { ProjectConfig } from '@cognite/discover-api-types';
 import { getTenantInfo } from '@cognite/react-container';

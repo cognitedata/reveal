@@ -1,7 +1,7 @@
 import { getSavedSearches } from 'domain/savedSearches/service/network/getSavedSearches';
 import { SavedSearchItem } from 'domain/savedSearches/types';
 
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 
 import { getProjectInfo } from '@cognite/react-container';
 
@@ -13,7 +13,7 @@ export const useQuerySavedSearchesList = () => {
   const [tenant] = getProjectInfo();
 
   return useQuery<SavedSearchItem[]>(
-    SAVED_SEARCHES_QUERY_KEY,
+    [SAVED_SEARCHES_QUERY_KEY],
     () => getSavedSearches(headers, tenant),
     {
       enabled: true,

@@ -4,7 +4,7 @@ import { SpecialIconType } from 'components/icons/IconContainer';
 import useCogniteApplications from 'hooks/useCogniteApplications';
 import { useContext, useState } from 'react';
 import { Button, Switch, Title, toast } from '@cognite/cogs.js';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import { ApplicationItem } from 'store/config/types';
 import {
   getGroupsState,

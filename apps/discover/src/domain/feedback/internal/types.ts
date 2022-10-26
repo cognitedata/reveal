@@ -1,4 +1,4 @@
-import { UseMutateAsyncFunction } from 'react-query';
+import { UseMutateAsyncFunction } from '@tanstack/react-query';
 
 import {
   FeedbackPatchBodyGeneral,

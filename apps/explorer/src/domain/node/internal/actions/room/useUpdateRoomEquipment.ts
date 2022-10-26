@@ -1,6 +1,6 @@
 import { useListEquipmentForRoomQuery } from 'graphql/generated';
 import difference from 'lodash/difference';
-import { useQueryClient } from 'react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import { useRecoilValue } from 'recoil';
 import {
   EquipmentSelectOptionType,

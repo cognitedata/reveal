@@ -36,7 +36,7 @@ const SidebarContainer = ({
     []
   );
 
-  if (status === 'idle' || status === 'loading') return <Loader />;
+  if (status === 'loading') return <Loader />;
   if (status === 'error') return <>Error fetching Bid Process</>;
 
   return (

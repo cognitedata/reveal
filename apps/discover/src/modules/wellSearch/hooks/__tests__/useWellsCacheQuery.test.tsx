@@ -2,8 +2,7 @@ import 'domain/wells/__mocks/setupWellsMockSDK';
 import { getMockConfigGet } from 'domain/projectConfig/service/__mocks/getMockConfigGet';
 import { getMockWellsById } from 'domain/wells/well/service/__mocks/getMockWellsById';
 
-import { QueryClient, useQueryClient } from 'react-query';
-
+import { QueryClient, useQueryClient } from '@tanstack/react-query';
 import { screen } from '@testing-library/react';
 import { setupServer } from 'msw/node';
 

@@ -1,7 +1,7 @@
 import uniq from 'lodash/uniq';
 import { AuthContext } from 'providers/AuthProvider';
 import { useContext } from 'react';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 
 export const useAssetsQuery = (assetIds: (string | undefined)[]) => {
   const { client } = useContext(AuthContext);

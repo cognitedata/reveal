@@ -1,4 +1,4 @@
-import { useInfiniteQuery } from 'react-query';
+import { useInfiniteQuery } from '@tanstack/react-query';
 import { useContext } from 'react';
 import { DocumentSearchItem } from '@cognite/sdk';
 

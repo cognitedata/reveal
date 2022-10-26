@@ -14,7 +14,7 @@ import dayjs from 'dayjs';
 import StatusMessage from 'components/StatusMessage';
 import useDeleteBlueprintMutation from 'hooks/useMutation/useDeleteBlueprintMutation';
 import useCreateBlueprintMutation from 'hooks/useMutation/useCreateBlueprintMutation';
-import { useQueryClient } from 'react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import { useFetchBlueprintDefinitionName } from 'hooks/useQuery/useFetchBlueprintDefinitionQuery';
 import { AuthContext } from 'providers/AuthProvider';
 import {

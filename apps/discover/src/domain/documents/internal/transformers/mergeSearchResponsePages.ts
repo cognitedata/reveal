@@ -1,7 +1,6 @@
 import { InifniteQueryResponse } from 'domain/documents/service/queries/types';
 
-import { UseInfiniteQueryResult } from 'react-query';
-
+import { UseInfiniteQueryResult } from '@tanstack/react-query';
 import add from 'lodash/add';
 
 import { DocumentResult } from 'modules/documentSearch/types';

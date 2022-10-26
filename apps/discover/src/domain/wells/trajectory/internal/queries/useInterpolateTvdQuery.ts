@@ -1,7 +1,6 @@
 import { groupByWellbore } from 'domain/wells/wellbore/internal/transformers/groupByWellbore';
 
-import { useQuery } from 'react-query';
-
+import { useQuery } from '@tanstack/react-query';
 import { handleServiceError } from 'utils/errors';
 
 import { TrajectoryInterpolationRequest } from '@cognite/sdk-wells';

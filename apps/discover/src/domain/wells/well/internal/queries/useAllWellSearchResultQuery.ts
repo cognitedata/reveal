@@ -1,6 +1,10 @@
 import { WellInternal } from 'domain/wells/well/internal/types';
 
-import { useQuery, useQueryClient, UseQueryResult } from 'react-query';
+import {
+  useQuery,
+  useQueryClient,
+  UseQueryResult,
+} from '@tanstack/react-query';
 
 import { WELL_QUERY_KEY } from 'constants/react-query';
 import { useDeepEffect } from 'hooks/useDeep';

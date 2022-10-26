@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import * as React from 'react';
-import { useQueryClient } from 'react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import { AuthenticatedUser } from '@cognite/auth-utils';
 import { Loader } from '@cognite/cogs.js';
 import { CogniteClient } from '@cognite/sdk';
@@ -137,7 +137,7 @@ export const AuthContainer: React.FC<AuthContainerProps> = ({
 
           // This will remove current fetching queries that have the old token,
           // then they will be re-created and use the new token
-          queryClient.removeQueries({ fetching: true });
+          queryClient.removeQueries({ fetchStatus: 'fetching' });
         });
       };
     }

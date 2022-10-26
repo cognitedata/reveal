@@ -1,6 +1,6 @@
 import { useAuthenticatedAuthContext } from '@cognite/react-container';
 import axios from 'axios';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import { BidMatrixData } from 'types';
 import sidecar from 'utils/sidecar';
 import { axiosRequestConfig } from 'utils/utils';

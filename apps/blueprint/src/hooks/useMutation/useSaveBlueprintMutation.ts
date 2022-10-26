@@ -1,6 +1,6 @@
 import { useContext } from 'react';
 import { AuthContext } from 'providers/AuthProvider';
-import { useMutation } from 'react-query';
+import { useMutation } from '@tanstack/react-query';
 import { BlueprintDefinition } from 'typings';
 import { toast } from '@cognite/cogs.js';
 

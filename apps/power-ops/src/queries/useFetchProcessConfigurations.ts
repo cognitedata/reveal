@@ -1,4 +1,4 @@
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import { useAuthenticatedAuthContext } from '@cognite/react-container';
 import sidecar from 'utils/sidecar';
 import axios from 'axios';

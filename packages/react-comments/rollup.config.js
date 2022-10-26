@@ -21,7 +21,7 @@ export default {
     // https://github.com/facebook/react/issues/20235
     // with react 17 we are getting Unresolved dependencies for react/jsx-runtime
     'react/jsx-runtime',
-    'react-query',
+    '@tanstack/react-query',
     'lodash/isEqual',
     'axios',
     '@cognite/cogs.js',

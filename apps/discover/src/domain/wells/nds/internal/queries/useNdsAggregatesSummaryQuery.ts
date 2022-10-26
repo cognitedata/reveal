@@ -1,7 +1,7 @@
 import { mergeNdsAggregates } from 'domain/wells/nds/internal/transformers/mergeNdsAggregates';
 import { NdsAggregatesSummary } from 'domain/wells/nds/internal/types';
 
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 
 import { NdsAggregateEnum } from '@cognite/sdk-wells';
 

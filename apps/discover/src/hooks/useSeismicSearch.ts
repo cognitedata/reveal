@@ -1,8 +1,8 @@
 import { SavedSearchQuery } from 'domain/savedSearches/types';
 
-import { useQueryClient } from 'react-query';
 import { useDispatch } from 'react-redux';
 
+import { useQueryClient } from '@tanstack/react-query';
 import isUndefined from 'lodash/isUndefined';
 import { FetchHeaders } from 'utils/fetch';
 

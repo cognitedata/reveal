@@ -1,5 +1,4 @@
-import { useQuery, UseQueryResult } from 'react-query';
-
+import { useQuery, UseQueryResult } from '@tanstack/react-query';
 import { mergeUniqueArray } from 'utils/merge';
 
 import { DocumentFilter } from '@cognite/sdk';

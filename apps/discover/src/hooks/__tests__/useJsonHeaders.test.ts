@@ -3,8 +3,8 @@ import { renderHook } from '@testing-library/react-hooks';
 
 import { useJsonHeaders } from '../useJsonHeaders';
 
-jest.mock('react-query', () => ({
-  ...jest.requireActual('react-query'),
+jest.mock('@tanstack/react-query', () => ({
+  ...jest.requireActual('@tanstack/react-query'),
   useQuery: () => ({ isLoading: false, error: {}, data: [] }),
 }));
 

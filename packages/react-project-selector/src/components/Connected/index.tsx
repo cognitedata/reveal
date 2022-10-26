@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import { getFlow, removeFlow } from '@cognite/auth-utils';
 import { Loader } from '@cognite/cogs.js';
 import { useHistory } from 'react-router-dom';
@@ -26,12 +26,12 @@ const Connected = ({ logout }: ConnectedProps) => {
     data: user,
     isLoading: userLoading,
     isError: userError,
-  } = useQuery('getUserFromMsft', getUser);
+  } = useQuery(['getUserFromMsft'], getUser);
   const {
     data: allProjects = [],
     isLoading: projectsLoading,
     isError: projectsError,
-  } = useQuery('getProjects', getProjects);
+  } = useQuery(['getProjects'], getProjects);
 
   const { recentProjects, addToRecentProjects } = useRecentProjects({
     recentProjectsKey: `${user?.id}_${cluster}_${options?.directory ?? ''}`,

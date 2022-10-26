@@ -1,6 +1,6 @@
 import { removeShareSavedSearch } from 'domain/savedSearches/service/network/removeShareSavedSearch';
 
-import { useMutation, useQueryClient } from 'react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { SavedSearchRemoveShareSchemaPOST } from '@cognite/discover-api-types';
 import { getProjectInfo } from '@cognite/react-container';

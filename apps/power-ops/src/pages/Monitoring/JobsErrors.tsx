@@ -5,7 +5,7 @@ import { useFetchSnifferJobErrors } from 'queries/useFetchSnifferJobErrors';
 export const JobErrors = ({ jobName }: { jobName: string }) => {
   const { data: jobErrors, status } = useFetchSnifferJobErrors(jobName);
 
-  if (status === 'idle' || status === 'loading') return <Loader />;
+  if (status === 'loading') return <Loader />;
   if (status === 'error')
     return <NotFoundPage message="Job Errors not found" />;
 

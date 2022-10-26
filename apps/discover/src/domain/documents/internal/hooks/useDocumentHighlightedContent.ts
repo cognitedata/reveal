@@ -1,4 +1,4 @@
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 
 import { getDocument } from 'modules/documentSearch/service';
 import { DocumentHighlight, DocumentType } from 'modules/documentSearch/types';

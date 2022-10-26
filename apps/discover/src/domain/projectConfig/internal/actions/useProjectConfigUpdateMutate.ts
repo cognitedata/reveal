@@ -1,5 +1,4 @@
-import { useMutation, useQueryClient } from 'react-query';
-
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import isObject from 'lodash/isObject';
 import noop from 'lodash/noop';
 

@@ -1,6 +1,10 @@
 import { getUmsUsers } from 'domain/userManagementService/service/network/getUmsUsers';
 
-import { useQuery, useQueryClient, UseQueryResult } from 'react-query';
+import {
+  useQuery,
+  useQueryClient,
+  UseQueryResult,
+} from '@tanstack/react-query';
 
 import { UMSUser } from '@cognite/user-management-service-types';
 

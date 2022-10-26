@@ -17,7 +17,7 @@ export const PriceScenariosContainer = ({
     bidProcessEventExternalId
   );
 
-  if (status === 'idle' || status === 'loading')
+  if (status === 'loading')
     return <Loader infoTitle="Loading Bid Process Result" darkMode={false} />;
   if (status === 'error')
     return <NotFoundPage message="Error fetching Bid Process Result" />;

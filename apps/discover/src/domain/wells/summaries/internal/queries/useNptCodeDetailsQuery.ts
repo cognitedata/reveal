@@ -1,6 +1,6 @@
 import { getWellSDKClient } from 'domain/wells/utils/authenticate';
 
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 
 import { WELL_QUERY_KEY } from 'constants/react-query';
 

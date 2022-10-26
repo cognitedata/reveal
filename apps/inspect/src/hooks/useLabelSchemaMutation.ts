@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from 'react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { v4 as uuid } from 'uuid';
 
 import { DB_NAME, LABEL_SCHEMA_TABLE } from '../constants';

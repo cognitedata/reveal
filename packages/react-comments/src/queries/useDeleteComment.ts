@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { CommentResponse, CommentTarget } from '@cognite/comment-service-types';
 import { AuthHeaders } from '@cognite/react-container';
-import { useMutation, useQueryClient } from 'react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { getHeaders } from '../utils/getHeaders';
 

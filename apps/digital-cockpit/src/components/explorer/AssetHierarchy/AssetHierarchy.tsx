@@ -13,7 +13,7 @@ import {
   useAssetListQuery,
   useAssetRetrieveQuery,
 } from 'hooks/useQuery/useAssetQuery';
-import { UseQueryResult } from 'react-query';
+import { UseQueryResult } from '@tanstack/react-query';
 import union from 'lodash/union';
 import Tree, { Node } from 'react-virtualized-tree';
 import noop from 'lodash/noop';

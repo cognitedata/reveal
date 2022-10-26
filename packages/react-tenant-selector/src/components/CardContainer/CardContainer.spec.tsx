@@ -1,6 +1,6 @@
 import { screen } from '@testing-library/react';
 import React from 'react';
-import { QueryClientProvider, QueryClient } from 'react-query';
+import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 
 import { render } from '../../utils/test';
 

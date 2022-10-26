@@ -3,7 +3,7 @@ import {
   useGetMapDataQuery,
   useGetSearchDataQuery,
 } from 'graphql/generated';
-import { useQueryClient } from 'react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import env from 'utils/config';
 
 import { useNodeMutate } from '../useNodeMutate';

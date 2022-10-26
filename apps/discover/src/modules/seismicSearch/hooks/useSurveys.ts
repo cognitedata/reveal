@@ -5,8 +5,7 @@ import {
 import { seismicSearch } from 'domain/seismic/service/network/seismicSearch';
 import { SeismicGetData } from 'domain/seismic/service/network/types';
 
-import { useQuery, QueryClient } from 'react-query';
-
+import { useQuery, QueryClient } from '@tanstack/react-query';
 import { FetchHeaders } from 'utils/fetch';
 
 import { getProjectInfo } from '@cognite/react-container';

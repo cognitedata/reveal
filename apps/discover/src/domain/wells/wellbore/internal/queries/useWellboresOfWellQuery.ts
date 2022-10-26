@@ -1,4 +1,4 @@
-import { useQuery, UseQueryResult } from 'react-query';
+import { useQuery, UseQueryResult } from '@tanstack/react-query';
 
 import { WELL_QUERY_KEY } from 'constants/react-query';
 import { useUserPreferencesMeasurement } from 'hooks/useUserPreferences';

@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import sidecar from 'utils/sidecar';
 import { useAuthenticatedAuthContext } from '@cognite/react-container';
 import { SnifferErrorLog } from '@cognite/sniffer-service-types';

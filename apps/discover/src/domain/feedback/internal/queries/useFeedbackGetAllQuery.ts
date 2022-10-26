@@ -1,6 +1,6 @@
 import { feedback } from 'domain/feedback/service/network/service';
 
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 
 import { FEEDBACK_QUERY_KEY } from '../../../../constants/react-query';
 import { useJsonHeaders } from '../../../../hooks/useJsonHeaders';

@@ -1,6 +1,6 @@
 import { FileInfo } from '@cognite/sdk';
 import useCDFExplorerContext from 'hooks/useCDFExplorerContext';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 
 export const useDocumentDownloadUrl = (document: FileInfo) => {
   const { client } = useCDFExplorerContext();

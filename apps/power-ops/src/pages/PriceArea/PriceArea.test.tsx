@@ -15,8 +15,8 @@ jest.mock('react-router-dom', () => ({
   useRouteMatch: jest.fn(),
 }));
 
-jest.mock('react-query', () => ({
-  ...jest.requireActual('react-query'),
+jest.mock('@tanstack/react-query', () => ({
+  ...jest.requireActual('@tanstack/react-query'),
   useQueryClient: () => ({
     setQueryData: jest.fn(),
   }),

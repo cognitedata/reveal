@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { useQueryClient } from 'react-query';
 import { useDispatch } from 'react-redux';
 import { Row } from 'react-table';
 
+import { useQueryClient } from '@tanstack/react-query';
 import compact from 'lodash/compact';
 
 import { RowProps, Table } from 'components/Tablev3';

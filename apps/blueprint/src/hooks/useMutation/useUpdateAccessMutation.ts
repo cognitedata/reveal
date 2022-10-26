@@ -1,6 +1,10 @@
 import { useContext } from 'react';
 import { AuthContext } from 'providers/AuthProvider';
-import { useMutation, UseMutationOptions, useQueryClient } from 'react-query';
+import {
+  useMutation,
+  UseMutationOptions,
+  useQueryClient,
+} from '@tanstack/react-query';
 import { useListBlueprintsName } from 'hooks/useQuery/useListBlueprintsQuery';
 import { BlueprintReference } from 'typings';
 import { toast } from '@cognite/cogs.js';
@@ -23,8 +27,8 @@ export const useUpdateAccessMutation = (
     {
       onSuccess: async (...params) => {
         // Cancel any outgoing refetches (so they don't overwrite our optimistic update)
-        await queryClient.cancelQueries(useListBlueprintsName);
-        await queryClient.refetchQueries(useListBlueprintsName);
+        await queryClient.cancelQueries([useListBlueprintsName]);
+        await queryClient.refetchQueries([useListBlueprintsName]);
         if (options.onSuccess) {
           options.onSuccess(...params);
         }

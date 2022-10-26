@@ -1,7 +1,7 @@
 import { updateNode } from 'domain/node/service/network/updateNode';
 
 import { Building } from 'graphql/generated';
-import { useMutation } from 'react-query';
+import { useMutation } from '@tanstack/react-query';
 import { getCogniteSDKClient } from 'utils/getCogniteSDKClient';
 
 import { EquipmentMutate, PersonMutate, RoomMutate } from '../types';

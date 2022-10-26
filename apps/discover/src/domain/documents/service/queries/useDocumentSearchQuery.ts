@@ -4,7 +4,7 @@ import {
   SearchRequestOptions,
 } from 'domain/documents/service/network/searchDocument';
 
-import { useInfiniteQuery, useQueryClient } from 'react-query';
+import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
 
 import { Metrics } from '@cognite/metrics';
 

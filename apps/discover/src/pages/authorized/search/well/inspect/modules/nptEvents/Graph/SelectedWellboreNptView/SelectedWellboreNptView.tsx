@@ -79,9 +79,8 @@ export const SelectedWellboreNptView: React.FC<Props> = React.memo(
             disableNavigation={isEmpty(wellboreIdsToNavigate)}
           />
           {Content}
+          {(isLoading || chartRendering) && <LoadingOverlay />}
         </OverlayNavigation>
-
-        {(isLoading || chartRendering) && <LoadingOverlay />}
       </>
     );
   }

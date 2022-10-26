@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import { IdEither, Timeseries } from '@cognite/sdk';
 import { AuthContext } from 'providers/AuthProvider';
 

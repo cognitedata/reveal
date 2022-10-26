@@ -2,7 +2,7 @@ import React, { useState, useCallback, useEffect } from 'react';
 import { CogniteClient } from '@cognite/sdk-v5';
 import { CogniteAuth, AuthenticatedUser, getFlow } from '@cognite/auth-utils';
 import { Loader } from '@cognite/cogs.js';
-import { QueryClientProvider, QueryClient } from 'react-query';
+import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 import { SidecarConfig } from '@cognite/sidecar';
 
 // note: only using relative paths until we can setup storybook baseUrl properly:

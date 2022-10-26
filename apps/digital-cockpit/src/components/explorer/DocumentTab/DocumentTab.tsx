@@ -2,7 +2,7 @@ import { Badge } from '@cognite/cogs.js';
 import { CogniteInternalId, FileInfo, FilesSearchFilter } from '@cognite/sdk';
 import debounce from 'lodash/debounce';
 import { useEffect, useMemo, useState } from 'react';
-import { UseQueryResult } from 'react-query';
+import { UseQueryResult } from '@tanstack/react-query';
 import useFileSearchQuery from 'hooks/useQuery/useFileSearchQuery';
 import NoData from 'components/utils/NoData';
 import Loading from 'components/utils/Loading';

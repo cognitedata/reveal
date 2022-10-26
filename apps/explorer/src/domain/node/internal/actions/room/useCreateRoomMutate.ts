@@ -1,6 +1,6 @@
 import env from 'utils/config';
 import { useGetMapDataQuery, useGetSearchDataQuery } from 'graphql/generated';
-import { useQueryClient } from 'react-query';
+import { useQueryClient } from '@tanstack/react-query';
 
 import { RoomMutate } from '../../types';
 import { useNodeMutate } from '../useNodeMutate';

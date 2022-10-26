@@ -11,7 +11,7 @@ import { configureStore } from 'store';
 import { History } from 'history';
 import { AuthProvider } from '@cognite/react-container';
 import { HelpCenterContextProvider } from 'context/HelpCenterContext';
-import { QueryClient, QueryClientProvider } from 'react-query';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import * as Sentry from '@sentry/browser';
 import { useMetrics } from 'utils/metrics';
 
