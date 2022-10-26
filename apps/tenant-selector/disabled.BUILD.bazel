@@ -330,7 +330,7 @@ start_storybook(
 
 publish_storybook(
     name = "publish_storybook",
-    build = ":storybook-static-final",
+    build = ":storybook-static",
     # Storybook sub domain to be used
     sub_domain = "tenant-selector",
 )

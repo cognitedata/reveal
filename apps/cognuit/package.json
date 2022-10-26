@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "start": "bazel run :start",
+    "start:build": "bazel run :serve_build",
     "build": "bazel build :build_sed",
     "build:manual": "../../node_modules/.bin/vite build",
     "test": "bazel run :jest -- ",

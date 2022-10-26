@@ -18,7 +18,7 @@ export REACT_APP_I18N_PSEUDO="${REACT_APP_I18N_PSEUDO:-false}"
 export REACT_APP_I18N_DEBUG="${REACT_APP_I18N_DEBUG:-true}"
 export REACT_APP_LANGUAGE="${REACT_APP_LANGUAGE:-en}"
 
-if is_demo_app ; then
+if is_demo_app; then
   export REACT_APP_LOCIZE_PROJECT_ID="${REACT_APP_LOCIZE_PROJECT_ID:-1ee63b21-27c7-44ad-891f-4bd9af378b72}"
   export REACT_APP_LOCIZE_API_KEY="${REACT_APP_LOCIZE_API_KEY:-7a10ae6b-49f3-4600-944d-009140ca6fc9}" # pragma: allowlist secret
 else

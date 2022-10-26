@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "start": "bazel run :start",
+    "start:build": "bazel run :serve_build",
     "start:application-services": "REACT_APP_DC_API_URL=http://localhost:8001 yarn start",
     "build": "bazel build :build_sed",
     "build:manual": "./scripts/build.sh",

@@ -3,6 +3,7 @@ load("@io_bazel_rules_docker//docker/package_managers:download_pkgs.bzl", "downl
 load("@io_bazel_rules_docker//docker/package_managers:apt_key.bzl", "add_apt_key")
 load("@io_bazel_rules_docker//container:container.bzl", "container_image", "container_layer")
 load("@com_github_cognitedata_bazel_tools//general/docker_smoke_test:docker_smoke_test.bzl", "docker_smoke_test")
+load("@build_bazel_rules_nodejs//:index.bzl", "copy_to_bin")
 
 exports_files(
     [
@@ -10,6 +11,18 @@ exports_files(
         "jest.react.config.js",
         "babelTransform.js",
     ],
+    visibility = ["//visibility:public"],
+)
+
+copy_to_bin(
+    name = "vite_config",
+    srcs = [":vite.config.js"],
+    visibility = ["//apps:__subpackages__"],
+)
+
+copy_to_bin(
+    name = "vite_config_storybook",
+    srcs = [":vite.storybook.config.js"],
     visibility = ["//visibility:public"],
 )
 

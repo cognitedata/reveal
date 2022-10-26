@@ -3,6 +3,7 @@
   "compilerOptions": {
     "allowJs": false,
     "baseUrl": "src",
+    "target": "es5",
     "declaration": true,
     "module": "es2015",
     "outDir": "dist",

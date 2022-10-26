@@ -14,6 +14,8 @@ load("//rules/publish:publish_storybook.bzl", "publish_storybook")
 load("//rules/test:cypress_batch_test.bzl", "cypress_batch_test")
 load("//rules/build_sed:build_sed.bzl", "build_sed")
 load("//rules/storybook:move_assets.bzl", "move_assets")
+load("//apps:apps.bzl", "STORYBOOK_DEPENDENCIES", "VITE_DEPENDENCIES")
+load("@npm//history-server:index.bzl", "history_server")
 
 # Filename conventions described at
 # https://create-react-app.dev/docs/running-tests#filename-conventions
@@ -204,13 +206,9 @@ vite_build(
         "--node_options=--require=./$(execpath chdir.js)",
         "build",
     ],
-    data = _RUNTIME_DEPS + DEPENDENCIES + TYPE_DEPENDENCIES + [
+    data = _RUNTIME_DEPS + DEPENDENCIES + TYPE_DEPENDENCIES + VITE_DEPENDENCIES + [
+        "//apps:vite_config",
         ":vite_config",
-        "@npm//@vitejs/plugin-react",
-        "@npm//vite-tsconfig-paths",
-        "@npm//vite-plugin-svgr",
-        "@npm//vite-plugin-babel-macros",
-        "@npm//rollup-plugin-node-builtins",
     ],
     env = {
         "INLINE_RUNTIME_CHUNK": "false",
@@ -305,6 +303,15 @@ build_sed(
     src_dir = ":build",
 )
 
+history_server(
+    name = "serve_build",
+    args = [
+        "-a",
+        "$(rootpath :build_sed)",
+    ],
+    data = [":build_sed"],
+)
+
 ### E2E Tests End ###
 
 ### Cypress ###
@@ -375,14 +382,9 @@ build_storybook(
         "storybook-static-tmp",
     ],
     chdir = "$(RULEDIR)",
-    data = _RUNTIME_DEPS + DEPENDENCIES + DEV_DEPENDENCIES + TYPE_DEPENDENCIES + [
+    data = _RUNTIME_DEPS + STORYBOOK_DEPENDENCIES + DEPENDENCIES + DEV_DEPENDENCIES + TYPE_DEPENDENCIES + [
+        "//apps:vite_config_storybook",
         "copy_storybook_files",
-        "@npm//@storybook/addon-essentials",
-        "@npm//@storybook/addon-links",
-        "@npm//@storybook/react",
-        "@npm//@storybook/builder-vite",
-        "@npm//vite-plugin-babel-macros",
-        "@npm//vite-tsconfig-paths",
     ],
     output_dir = True,
 )

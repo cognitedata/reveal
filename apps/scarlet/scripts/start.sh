@@ -44,7 +44,7 @@ function cleanup {
 
 trap cleanup EXIT
 
-ibazel run :start --max-old-space-size=4096
+ibazel run :start
 
 EXIT_CODE=$?
 

@@ -12,6 +12,8 @@ load("//rules/publish:publish_fas.bzl", "publish_fas")
 load("@npm//@bazel/typescript:index.bzl", "ts_project")
 load("@npm//@bazel/cypress:index.bzl", "cypress_web_test")
 load("@npm//cypress:index.bzl", "cypress")
+load("//apps:apps.bzl", "VITE_DEPENDENCIES")
+load("@npm//history-server:index.bzl", "history_server")
 
 # Filename conventions described at
 # https://create-react-app.dev/docs/running-tests#filename-conventions
@@ -296,16 +298,9 @@ vite_build(
         "--node_options=--require=./$(execpath chdir.js)",
         "build",
     ],
-    data = _RUNTIME_DEPS + DEPENDENCIES + TYPE_DEPENDENCIES + [
+    data = _RUNTIME_DEPS + DEPENDENCIES + TYPE_DEPENDENCIES + VITE_DEPENDENCIES + [
+        "//apps:vite_config",
         ":vite_config",
-        "@npm//@vitejs/plugin-react",
-        "@npm//vite-tsconfig-paths",
-        "@npm//vite-plugin-svgr",
-        "@npm//vite-plugin-babel-macros",
-        "@npm//rollup-plugin-node-builtins",
-        # "@npm//typeface-inter:typeface-inter__all_files",
-        # "@npm//@types/webpack-env",
-        # ":random-id",
     ],
     env = {
         "INLINE_RUNTIME_CHUNK": "false",
@@ -395,6 +390,15 @@ build_sed(
     }),
     out_dir = "build_bazel",
     src_dir = ":build",
+)
+
+history_server(
+    name = "serve_build",
+    args = [
+        "-a",
+        "$(rootpath :build_sed)",
+    ],
+    data = [":build_sed"],
 )
 
 ### Storybook ###

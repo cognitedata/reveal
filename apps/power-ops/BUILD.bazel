@@ -8,6 +8,8 @@ load("//rules/lint:index.bzl", "eslint_config", "eslint_test", "prettier_test")
 load("//rules/package_json_helpers:generate.bzl", "generate_package_json_helpers")
 load("//rules/publish:publish_fas.bzl", "publish_fas")
 load("//rules/build_sed:build_sed.bzl", "build_sed")
+load("//apps:apps.bzl", "VITE_DEPENDENCIES")
+load("@npm//history-server:index.bzl", "history_server")
 
 # load("@npm//@storybook/react:index.bzl", "build_storybook", "start_storybook")
 # load("//rules/publish:publish_storybook.bzl", "publish_storybook")
@@ -228,13 +230,9 @@ vite_build(
         "--node_options=--require=./$(execpath chdir.js)",
         "build",
     ],
-    data = _RUNTIME_DEPS + DEPENDENCIES + TYPE_DEPENDENCIES + [
+    data = _RUNTIME_DEPS + DEPENDENCIES + TYPE_DEPENDENCIES + VITE_DEPENDENCIES + [
+        "//apps:vite_config",
         ":vite_config",
-        "@npm//@vitejs/plugin-react",
-        "@npm//vite-tsconfig-paths",
-        "@npm//vite-plugin-svgr",
-        "@npm//vite-plugin-babel-macros",
-        "@npm//rollup-plugin-node-builtins",
     ],
     env = {
         "INLINE_RUNTIME_CHUNK": "false",
@@ -329,6 +327,15 @@ build_sed(
     src_dir = ":build",
 )
 
+history_server(
+    name = "serve_build",
+    args = [
+        "-a",
+        "$(rootpath :build_sed)",
+    ],
+    data = [":build_sed"],
+)
+
 ### E2E Tests End ###
 
 ### Cypress ###
@@ -396,14 +403,8 @@ build_sed(
 #         "storybook-static-tmp",
 #     ],
 #     chdir = "$(RULEDIR)",
-#     data = _RUNTIME_DEPS + DEPENDENCIES + DEV_DEPENDENCIES + TYPE_DEPENDENCIES + [
+#     data = _RUNTIME_DEPS + STORYBOOK_DEPENDENCIES + DEPENDENCIES + DEV_DEPENDENCIES + TYPE_DEPENDENCIES + [
 #         "copy_storybook_files",
-#         "@npm//@storybook/addon-essentials",
-#         "@npm//@storybook/addon-links",
-#         "@npm//@storybook/react",
-#         "@npm//@storybook/builder-vite",
-#         "@npm//vite-plugin-babel-macros",
-#         "@npm//vite-tsconfig-paths",
 #     ],
 #     output_dir = True,
 # )

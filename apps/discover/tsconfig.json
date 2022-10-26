@@ -3,7 +3,7 @@
   "compilerOptions": {
     "baseUrl": "src",
     "target": "es6",
-    "module": "esnext",
+    "module": "es6",
     "types": ["vite/client", "jest", "@testing-library/jest-dom"],
     "alwaysStrict": true,
     "downlevelIteration": true,
