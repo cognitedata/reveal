@@ -22,6 +22,7 @@ import {
   getCellStatus,
   getCellType,
   getCellValue,
+  getCellValueBoolean,
   transformSearchValue,
 } from './utils';
 
@@ -175,6 +176,12 @@ export const EquipmentList = () => {
                     accessor: ColumnAccessor.STATUS,
                     maxWidth: 150,
                     Cell: loading ? getCellSkeleton : getCellStatus,
+                  },
+                  {
+                    Header: 'U1 Document',
+                    accessor: ColumnAccessor.U1_DOC,
+                    maxWidth: 100,
+                    Cell: loading ? getCellSkeleton : getCellValueBoolean,
                   },
                   {
                     Header: 'Last modified by',

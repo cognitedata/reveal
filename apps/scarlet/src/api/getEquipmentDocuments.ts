@@ -1,5 +1,7 @@
 import { CogniteClient, FileLink, InternalId } from '@cognite/sdk';
-import { DataSetId, DocumentType, EquipmentDocument, Facility } from 'types';
+import { DocumentType, EquipmentDocument, Facility } from 'types';
+
+import { getDocuments } from './getDocuments';
 
 export const getEquipmentDocuments = async (
   client: CogniteClient,
@@ -13,18 +15,16 @@ export const getEquipmentDocuments = async (
     equipmentId: string;
   }
 ): Promise<EquipmentDocument[]> => {
-  const filesResponse = await client.files.list({
-    filter: {
-      externalIdPrefix: `${facility.name}_${unitId}_${equipmentId}`,
-      uploaded: true,
-      dataSetIds: [{ id: DataSetId.P66_EquipmentScans }],
-    },
+  const documentsResp = await getDocuments(client, {
+    facility,
+    unitId,
+    equipmentId,
   });
 
-  if (!filesResponse.items.length) return Promise.resolve([]);
+  if (!documentsResp.items.length) return Promise.resolve([]);
 
   const downloadUrlsResponse = (await client.files.getDownloadUrls(
-    filesResponse.items.map(({ id }) => ({ id }))
+    documentsResp.items.map(({ id }) => ({ id }))
   )) as (FileLink & InternalId)[];
 
   const downloadUrlsDictionary = downloadUrlsResponse.reduce(
@@ -35,7 +35,7 @@ export const getEquipmentDocuments = async (
     {} as Record<number, string>
   );
 
-  const documents: EquipmentDocument[] = filesResponse.items
+  const documents: EquipmentDocument[] = documentsResp.items
     .map((item) => ({
       id: item.id,
       externalId: item.externalId,

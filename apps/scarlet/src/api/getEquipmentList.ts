@@ -2,6 +2,7 @@ import { CogniteClient } from '@cognite/sdk';
 import { DataSetId, EquipmentListItem, EquipmentStatus, Facility } from 'types';
 import { getEquipmentType, isValidEquipment } from 'utils';
 import config from 'utils/config';
+import { getDocuments } from 'api';
 
 import { getUnitAsset } from '.';
 
@@ -21,6 +22,10 @@ export const getEquipmentList = async (
     facility,
     unitId,
   });
+  const docs = await getDocuments(client, {
+    facility,
+    unitId,
+  });
 
   equipmentList = pcmsEquipmentList
     .filter(isValidEquipment)
@@ -31,6 +36,9 @@ export const getEquipmentList = async (
       let status = EquipmentStatus.NOT_STARTED;
       if (completed) status = EquipmentStatus.COMPLETED;
       else if (equipmentState?.modifiedBy) status = EquipmentStatus.ONGOING;
+      const u1doc = docs.items.some((doc) =>
+        doc.name.startsWith(`${facility.name}_${unitId}_${eq.id}`)
+      );
 
       return {
         id: eq.id,
@@ -38,6 +46,7 @@ export const getEquipmentList = async (
         status,
         progress,
         modifiedBy: equipmentState?.modifiedBy,
+        u1doc,
       };
     })
     .sort((a, b) => (a.id < b.id ? -1 : 1));

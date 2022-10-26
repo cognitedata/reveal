@@ -21,6 +21,10 @@ export const getCellValue = ({
   }
 };
 
+export const getCellValueBoolean = ({
+  value,
+}: CellProps<EquipmentListItem, boolean>) => (value ? 'Yes' : 'No');
+
 export const getCellStatus = ({
   value,
   row,

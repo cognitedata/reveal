@@ -5,4 +5,5 @@ export enum ColumnAccessor {
   TYPE = 'type',
   STATUS = 'status',
   MODIFIED_BY = 'modifiedBy',
+  U1_DOC = 'u1doc',
 }

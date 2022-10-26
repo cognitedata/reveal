@@ -16,3 +16,4 @@ export * from './getUnitAsset';
 export * from './getUnitListByFacility';
 export * from './saveEquipment';
 export * from './getEquipmentAsset';
+export * from './getDocuments';

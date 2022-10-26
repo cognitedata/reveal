@@ -1,10 +1,26 @@
 import {
+  DataElementState,
   EquipmentComponent,
   EquipmentComponentType,
   EquipmentConfig,
   EquipmentType,
 } from 'types';
 import { getCourseComponents } from 'transformations';
+
+const getComponentElemValue = ({
+  key,
+  componentType,
+  components,
+}: {
+  key: string;
+  componentType: EquipmentComponentType;
+  components: EquipmentComponent[];
+}) =>
+  components
+    .find((comp) => comp.type === componentType)
+    ?.componentElements.find(
+      (elem) => elem.key === key && elem.state === DataElementState.APPROVED
+    )?.detections[0]?.value ?? '';
 
 export const getTruncatedCourseComponents = ({
   componentType,
@@ -22,19 +38,22 @@ export const getTruncatedCourseComponents = ({
   let resComponents = newComponents;
   const prevNumbOfCourses =
     parseInt(
-      prevComponents
-        .find((comp) => comp.type === componentType)
-        ?.componentElements.find((elem) => elem.key === 'no_of_courses')
-        ?.detections[0]?.value ?? '',
+      getComponentElemValue({
+        key: 'no_of_courses',
+        componentType,
+        components: prevComponents,
+      }),
       10
     ) || 0;
 
   const newNumbOfCourses =
     parseInt(
-      newComponents
-        .find((comp) => comp.type === componentType)
-        ?.componentElements.find((elem) => elem.key === 'no_of_courses')
-        ?.detections[0]?.value ?? '',
+      getComponentElemValue({
+        key: 'no_of_courses',
+        componentType,
+        components: newComponents,
+      }),
+
       10
     ) || 0;
 
