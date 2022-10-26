@@ -1,18 +1,15 @@
 import React, { useState } from 'react';
 import { Flex, SegmentedControl } from '@cognite/cogs.js';
-import { AssetFilterProps, Asset } from '@cognite/sdk';
+import { Asset } from '@cognite/sdk';
 import { EnsureNonEmptyResource } from 'components';
 import { ColumnToggleProps } from 'components/ReactTable/Table';
 import { AssetTreeTable, SearchResultToolbar, AssetNewTable } from 'containers';
-import {
-  convertResourceType,
-  SelectableItemsProps,
-  ThreeDModelClickHandler,
-} from 'types';
+import { SelectableItemsProps, ThreeDModelClickHandler } from 'types';
 import { KeepMounted } from '../../../components/KeepMounted/KeepMounted';
-import { useResourceResults } from '..';
 import styled from 'styled-components';
 import { EmptyState } from 'components/EmpyState/EmptyState';
+import { useAssetsFilteredListQuery } from 'domain/assets/internal/queries/useAssetsFilteredListQuery';
+import { InternalAssetFilters } from 'domain/assets/internal/types';
 
 export const AssetSearchResults = ({
   query = '',
@@ -21,31 +18,30 @@ export const AssetSearchResults = ({
   onClick,
   onThreeDModelClick,
   isTreeEnabled,
-
   ...extraProps
 }: {
   query?: string;
   isTreeEnabled?: boolean;
   showCount?: boolean;
-  filter: AssetFilterProps;
+  filter: InternalAssetFilters;
   onClick: (item: Asset) => void;
   onThreeDModelClick?: ThreeDModelClickHandler;
 } & ColumnToggleProps<Asset> &
   SelectableItemsProps) => {
+  const { data, hasNextPage, fetchNextPage, isLoading } =
+    useAssetsFilteredListQuery({ filter });
+
   const [currentView, setCurrentView] = useState<string>(() =>
     isTreeEnabled ? 'tree' : 'list'
   );
-  const api = convertResourceType('asset');
-
-  const { canFetchMore, fetchMore, items, isFetched } =
-    useResourceResults<Asset>(api, query, filter);
 
   const { onSelect, selectionMode, isSelected, ...rest } = extraProps;
   const treeProps = { onSelect, selectionMode, isSelected };
 
-  if (!isFetched) {
-    return <EmptyState isLoading={!isFetched} title="Loading Assets..." />;
+  if (isLoading) {
+    return <EmptyState isLoading={isLoading} title="Loading Assets..." />;
   }
+
   const tableHeaders = (
     <StyledTableHeader justifyContent="space-between" alignItems="center">
       <SearchResultToolbar
@@ -89,11 +85,11 @@ export const AssetSearchResults = ({
           <AssetNewTable
             {...rest}
             onRowClick={asset => onClick(asset)}
-            data={items}
+            data={data}
             showLoadButton
             tableHeaders={tableHeaders}
-            hasNextPage={canFetchMore}
-            fetchMore={fetchMore}
+            hasNextPage={hasNextPage}
+            fetchMore={fetchNextPage}
             onThreeDModelClick={onThreeDModelClick}
           />
         </KeepMounted>

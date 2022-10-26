@@ -129,7 +129,7 @@ export const AssetNewTable = (
       {
         ...Table.Columns.rootAsset,
         Cell: ({ value }: { value: number }) => (
-          <ParentCell rootId={value!} onClick={onRowClick} />
+          <ParentCell rootId={value!} onClick={onRowClick as any} />
         ),
       },
       {
