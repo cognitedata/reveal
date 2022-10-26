@@ -2,15 +2,20 @@ import React, { useMemo } from 'react';
 import { Sequence } from '@cognite/sdk';
 
 import { useInfiniteSequenceRows } from 'hooks/sequenceHooks';
-import {
-  SequenceDataTable,
-  SequenceDataRow,
-} from 'containers/Sequences/SequenceDataTable/SequenceDataTable';
 
 import { Loader } from 'components';
+import { EmptyState } from 'components/EmpyState/EmptyState';
+import { NewTable } from 'components/ReactTable';
+import { AllowedTableStateId } from 'types';
+
+export interface SequenceDataRow {
+  rowNumber: number;
+  key: string;
+  [id: string]: any;
+}
 
 export const SequencePreview = ({ sequence }: { sequence: Sequence }) => {
-  const { data, isFetched, fetchNextPage, hasNextPage, isFetchingNextPage } =
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
     useInfiniteSequenceRows(
       {
         id: sequence.id,
@@ -42,25 +47,30 @@ export const SequencePreview = ({ sequence }: { sequence: Sequence }) => {
       ),
     [data]
   );
+  const tableColumns = useMemo(
+    () =>
+      sequence.columns.map((column, index) => ({
+        accessor: `${index}`,
+        Header: `${column.externalId || column.id}`,
+      })),
+    [sequence.columns]
+  );
 
-  if (!isFetched) {
-    return <Loader />;
+  if (isLoading) {
+    return <EmptyState isLoading={isLoading} />;
   }
   if (!data) {
     return <Loader />;
   }
 
-  const handleOnEndReached = () => {
-    if (hasNextPage && !isFetchingNextPage) {
-      fetchNextPage();
-    }
-  };
-
   return (
-    <SequenceDataTable
-      onEndReached={handleOnEndReached}
-      sequence={sequence}
-      rows={listItems || []}
+    <NewTable<any & { id: AllowedTableStateId }>
+      columns={tableColumns}
+      data={listItems || []}
+      showLoadButton
+      hasNextPage={hasNextPage}
+      isLoadingMore={isFetchingNextPage}
+      fetchMore={fetchNextPage}
     />
   );
 };
