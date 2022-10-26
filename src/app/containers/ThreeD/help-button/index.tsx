@@ -1,4 +1,4 @@
-import { Button, Colors, Dropdown, Menu } from '@cognite/cogs.js';
+import { Button, Colors, Dropdown, Menu, Tooltip } from '@cognite/cogs.js';
 import {
   MouseNavigation,
   KeyboardNavigation,
@@ -18,9 +18,11 @@ const HelpButton = (): JSX.Element => {
           <KeyboardNavigation />
         </StyledMenu>
       }
-      placement="right"
+      placement="right-end"
     >
-      <Button icon="Help" />
+      <Tooltip content="Help">
+        <Button icon="Help" type="ghost" />
+      </Tooltip>
     </Dropdown>
   );
 };

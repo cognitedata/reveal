@@ -6,6 +6,7 @@ import {
   Flex,
   Menu,
   Slider as CogsSlider,
+  Tooltip,
 } from '@cognite/cogs.js';
 import {
   Cognite3DModel,
@@ -42,7 +43,7 @@ export const Slicer = ({ viewer, viewerModel }: SliderProps): JSX.Element => {
         <StyledMenu>
           <Flex direction="column" gap={12}>
             <Flex direction="column" gap={2}>
-              <StyledHeader strong>Slicing</StyledHeader>
+              <StyledHeader strong>Slice vertically</StyledHeader>
               <StyledSlider
                 min={min}
                 max={max}
@@ -60,8 +61,11 @@ export const Slicer = ({ viewer, viewerModel }: SliderProps): JSX.Element => {
           </Flex>
         </StyledMenu>
       }
+      placement="right"
     >
-      <Button icon="Slice" />
+      <Tooltip content="Slice">
+        <Button icon="Slice" type="ghost" />
+      </Tooltip>
     </Dropdown>
   );
 };

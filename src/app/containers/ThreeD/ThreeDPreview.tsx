@@ -122,10 +122,12 @@ export const ThreeDPreview = ({
 };
 
 const StyledToolBar = styled(ToolBar)`
-  position: relative;
+  position: absolute;
   left: 30px;
-  bottom: 25vh;
+  bottom: 30px;
   display: table-cell;
+  width: fit-content;
+  height: fit-content;
 `;
 
 const SidebarContainer = styled(Flex)`

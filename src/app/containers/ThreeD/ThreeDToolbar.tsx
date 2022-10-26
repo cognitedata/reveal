@@ -37,7 +37,7 @@ export const ExpandButton = ({
   viewerModel: Cognite3DModel | CognitePointCloudModel | null;
 }) => {
   return (
-    <Tooltip content="Fit to view">
+    <Tooltip content="Fit view">
       <Button
         icon="ExpandAlternative"
         aria-label="Fit to view"
@@ -47,6 +47,7 @@ export const ExpandButton = ({
           }
           trackUsage('Exploration.Preview.FitToView');
         }}
+        type="ghost"
       />
     </Tooltip>
   );
@@ -66,7 +67,7 @@ export const FocusAssetButton = ({
   }
 
   return (
-    <Tooltip content="Focus asset">
+    <Tooltip content="Fit asset">
       <Button
         icon="Collapse"
         onClick={() => {
@@ -74,6 +75,7 @@ export const FocusAssetButton = ({
             viewer.fitCameraToBoundingBox(boundingBox);
           }
         }}
+        type="ghost"
       />
     </Tooltip>
   );
@@ -123,11 +125,12 @@ export const PointToPointMeasurementButton = ({
   };
 
   return (
-    <Tooltip content="Measure distance between two points">
+    <Tooltip content="Distance measuring tool">
       <Button
         icon="Ruler"
         onClick={handleClick}
         toggled={isInMeasurementMode}
+        type="ghost"
       />
     </Tooltip>
   );
