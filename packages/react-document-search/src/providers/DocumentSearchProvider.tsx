@@ -3,7 +3,7 @@ import { CogniteClient, DocumentSearchRequest } from '@cognite/sdk';
 import noop from 'lodash/noop';
 
 interface DocumentSearchContextData {
-  appliedFilters: DocumentSearchRequest;
+  appliedFilters: Omit<DocumentSearchRequest, 'limit'>;
   setAppliedFilters: (filters: DocumentSearchRequest) => void;
 }
 export const DocumentSearchContext = createContext<
@@ -15,14 +15,15 @@ export const DocumentSearchContext = createContext<
 
 export interface Props {
   sdkClient: CogniteClient;
-  options?: {
-    limit?: number;
-  };
+  // Commented out the options, might be useful in the future.
+  // options?: {
+  //   limit?: number;
+  // };
 }
 
 export const DocumentSearchProvider: React.FC<
   React.PropsWithChildren<Props>
-> = ({ children, sdkClient, options }) => {
+> = ({ children, sdkClient }) => {
   const [appliedFilters, setAppliedFilters] = useState<DocumentSearchRequest>({
     search: {
       query: '',
@@ -32,11 +33,11 @@ export const DocumentSearchProvider: React.FC<
   const value = useMemo(() => {
     return {
       sdkClient,
-      options,
+      // options,
       appliedFilters,
       setAppliedFilters,
     };
-  }, [sdkClient, options, appliedFilters, setAppliedFilters]);
+  }, [sdkClient, appliedFilters, setAppliedFilters]);
   return (
     <DocumentSearchContext.Provider value={value}>
       {children}

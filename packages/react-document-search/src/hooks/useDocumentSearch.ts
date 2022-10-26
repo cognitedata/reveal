@@ -9,18 +9,18 @@ import { useDocumentFilters } from './useDocumentFilters';
 
 export const DOCUMENT_SEARCH_PAGE_LIMIT = 20;
 
-export const useDocumentSearch = () => {
+export const useDocumentSearch = ({ limit }: { limit?: number } = {}) => {
   const { sdkClient } = useContext(DocumentSearchContext);
   const { appliedFilters } = useDocumentFilters();
-  const limit = appliedFilters?.limit || DOCUMENT_SEARCH_PAGE_LIMIT;
+  const localLimit = limit || DOCUMENT_SEARCH_PAGE_LIMIT;
 
   const response = useInfiniteQuery(
-    ['documents', 'search', appliedFilters],
+    ['documents', 'search', appliedFilters, localLimit],
     ({ pageParam }) => {
       return search(
         {
           ...appliedFilters,
-          limit,
+          limit: localLimit,
           search: {
             query: appliedFilters.search?.query || '',
             highlight: true,
