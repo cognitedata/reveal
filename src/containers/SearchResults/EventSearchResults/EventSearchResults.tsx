@@ -51,7 +51,6 @@ export const EventSearchResults = ({
         showLoadButton
         hasNextPage={hasNextPage}
         onRowClick={(event: CogniteEvent) => onClick(event)}
-        // relatedResourceType={relatedResourceType}
       />
     </EnsureNonEmptyResource>
   );

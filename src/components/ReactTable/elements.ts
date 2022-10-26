@@ -9,6 +9,8 @@ export const ContainerInside = styled.div`
 export const TableContainer = styled.div`
   width: 100%;
   display: flex;
+  padding: 16px;
+  padding-bottom: 0;
   height: 100%;
   flex-direction: column;
 `;
@@ -17,7 +19,6 @@ export const ColumnSelectorWrapper = styled.div`
   width: 100%;
   display: flex;
   align-items: center;
-  padding: 16px;
   gap: 10px;
 `;
 
@@ -75,13 +76,14 @@ export const Tr = styled.div`
   display: flex;
   align-items: center;
   height: 100%;
+  min-height: 48px;
 
   background: white;
 
   min-height: 42px;
 
   &:hover {
-    background: var(--cogs-surface--medium);
+    background: var(--cogs-surface--interactive--hover);
     cursor: pointer;
   }
 

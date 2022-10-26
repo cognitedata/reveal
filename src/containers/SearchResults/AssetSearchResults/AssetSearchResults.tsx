@@ -51,23 +51,26 @@ export const AssetSearchResults = ({
       />
 
       {isTreeEnabled ? (
-        <SegmentedControl
-          currentKey={currentView}
-          onButtonClicked={setCurrentView}
-        >
-          <SegmentedControl.Button
-            icon="Tree"
-            key="tree"
-            title="Asset hierarchy"
-            aria-label="Asset hierarchy"
-          />
-          <SegmentedControl.Button
-            icon="List"
-            key="list"
-            title="List"
-            aria-label="List"
-          />
-        </SegmentedControl>
+        <Flex alignItems="center" gap={10}>
+          <SegmentedControl
+            currentKey={currentView}
+            onButtonClicked={setCurrentView}
+          >
+            <SegmentedControl.Button
+              icon="Tree"
+              key="tree"
+              title="Asset hierarchy"
+              aria-label="Asset hierarchy"
+            />
+            <SegmentedControl.Button
+              icon="List"
+              key="list"
+              title="List"
+              aria-label="List"
+            />
+          </SegmentedControl>
+          <Divider />
+        </Flex>
       ) : null}
     </StyledTableHeader>
   );
@@ -102,4 +105,10 @@ export const AssetSearchResults = ({
 };
 const StyledTableHeader = styled(Flex)`
   flex: 1;
+`;
+
+const Divider = styled.div`
+  height: 16px;
+  width: 2px;
+  background: var(--cogs-border--muted);
 `;

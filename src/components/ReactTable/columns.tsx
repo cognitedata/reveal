@@ -31,12 +31,12 @@ export const ResourceTableColumns: ResourceTableHashMap = {
   description: {
     Header: 'Description',
     accessor: 'description',
-    Cell: ({ value }) => <HighlightCell text={value} lines={1} />,
+    Cell: ({ value }) => <HighlightCell text={value || '-'} lines={1} />,
   },
   externalId: {
     Header: 'External ID',
     accessor: 'externalId',
-    Cell: ({ value }) => <HighlightCell text={value} lines={1} />,
+    Cell: ({ value }) => <HighlightCell text={value || '-'} lines={1} />,
   },
   created: {
     Header: 'Created',
@@ -134,13 +134,36 @@ export const ResourceTableColumns: ResourceTableHashMap = {
         return null;
       }
 
+      if (items.length === 1) {
+        const rootAsset = items[0];
+        return (
+          <Button
+            onClick={e => e.stopPropagation()}
+            type="link"
+            target="_blank"
+            href={createLink(`/explore/asset/${rootAsset.id}`)}
+            icon="ArrowUpRight"
+            iconPlacement="right"
+          >
+            <StyledButton>{rootAsset.name}</StyledButton>
+          </Button>
+        );
+      }
+
       return (
         <Dropdown
           openOnHover
           content={
             <Menu>
               {items?.map(item => (
-                <Menu.Item key={item.id}>{item.name}</Menu.Item>
+                <Menu.Item
+                  onClick={e => e.stopPropagation()}
+                  href={createLink(`/explore/asset/${item.id}`)}
+                  target="_blank"
+                  key={item.id}
+                >
+                  {item.name}
+                </Menu.Item>
               ))}
             </Menu>
           }
@@ -218,6 +241,7 @@ export const ResourceTableColumns: ResourceTableHashMap = {
       return isLoading || rootAsset?.name ? (
         <Button
           type="link"
+          onClick={e => e.stopPropagation()}
           target="_blank"
           href={createLink(`/explore/asset/${value}`)}
           icon="ArrowUpRight"
@@ -236,6 +260,7 @@ export const ResourceTableColumns: ResourceTableHashMap = {
 
       return isLoading || rootAsset?.name ? (
         <Button
+          onClick={e => e.stopPropagation()}
           type="link"
           target="_blank"
           href={createLink(`/explore/asset/${value}`)}

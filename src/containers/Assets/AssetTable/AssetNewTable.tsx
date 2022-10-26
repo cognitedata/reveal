@@ -27,7 +27,7 @@ export const ParentCell = ({
 
   return (
     <Button
-      type="ghost"
+      type="link"
       iconPlacement="right"
       icon="ArrowRight"
       onClick={e => {
