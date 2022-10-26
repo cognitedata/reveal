@@ -11,6 +11,7 @@ import {
   getTitle,
   ResourceType,
   SearchFilters as OldSearchFilters,
+  ThreeDAssetMappingItem,
 } from '@cognite/data-exploration';
 
 import { Colors, Flex } from '@cognite/cogs.js';
@@ -112,6 +113,10 @@ function SearchPage() {
     setShowFilter(prevState => !prevState);
   }, []);
 
+  const handleThreeDModelClick = (mapping: ThreeDAssetMappingItem) => {
+    navigate(createLink(`/explore/search/threeD/${mapping.model.id}`));
+  };
+
   if (isFilterFeatureEnabled) {
     return (
       <RootHeightWrapperNew>
@@ -168,6 +173,7 @@ function SearchPage() {
                             item.id !== activeId ? item.id : undefined
                           )
                         }
+                        onThreeDModelClick={handleThreeDModelClick}
                         filter={assetFilter}
                         {...commonProps}
                       />
@@ -339,6 +345,7 @@ function SearchPage() {
                     onClick={(item: ResourceItem) =>
                       openPreview(item.id !== activeId ? item.id : undefined)
                     }
+                    onThreeDModelClick={handleThreeDModelClick}
                     filter={assetFilter}
                     {...commonProps}
                   />
