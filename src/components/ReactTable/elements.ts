@@ -36,20 +36,20 @@ export const StyledTable = styled.div`
 
 export const ResizerWrapper = styled.div`
   position: absolute;
-  z-index: 1;
-  top: 0;
   right: 0;
-  display: inline-block;
-  width: 10px;
+  top: 0;
   height: 100%;
-
+  width: 4px;
+  background: rgba(0, 0, 0, 0.2);
+  cursor: col-resize;
+  user-select: none;
   touch-action: none;
+  opacity: 0;
 
-  &:hover {
-    border-right: 2px solid rgba(0, 0, 0, 0.1);
-  }
   &.isResizing {
-    border-right: 2px solid rgba(0, 0, 0, 0.3);
+    opacity: 1;
+    background: rgba(0, 0, 0, 0.3);
+    cursor: col-resize;
   }
 `;
 
@@ -113,9 +113,12 @@ export const ThWrapper = styled.div`
   font-weight: 500;
   color: var(--cogs-text-icon--strong);
   gap: 10px;
+  position: relative;
 
-  &:hover > ${ResizerWrapper} {
-    border-right: 2px solid rgba(0, 0, 0, 0.1);
+  &:hover {
+    .resizer {
+      opacity: 1;
+    }
   }
 `;
 

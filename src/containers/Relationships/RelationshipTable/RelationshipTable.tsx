@@ -7,13 +7,11 @@ import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import { createLink } from '@cognite/cdf-utilities';
 import { A } from '@cognite/cogs.js';
 import { AppContext } from 'context/AppContext';
-import {
-  RelationshipAssetTable,
-  RelationshipEventTable,
-  RelationshipFileTable,
-  RelationshipSequenceTable,
-  RelationshipTimeseriesTable,
-} from '.';
+import { RelationshipAssetTable } from './RelationshipAssetTable';
+import { RelationshipEventTable } from './RelationshipEventTable';
+import { RelationshipFileTable } from './RelationshipFileTable';
+import { RelationshipSequenceTable } from './RelationshipSequenceTable';
+import { RelationshipTimeseriesTable } from './RelationshipTimeseriesTable';
 
 export type RelationshipTableProps = {
   type: ResourceType;
