@@ -114,7 +114,7 @@ function SearchPage() {
   }, []);
 
   const handleThreeDModelClick = (mapping: ThreeDAssetMappingItem) => {
-    navigate(createLink(`/explore/search/threeD/${mapping.model.id}`));
+    navigate(createLink(`/explore/threeD/${mapping.model.id}`));
   };
 
   if (isFilterFeatureEnabled) {
