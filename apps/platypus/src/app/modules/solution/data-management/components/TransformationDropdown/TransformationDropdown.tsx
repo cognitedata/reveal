@@ -3,21 +3,19 @@ import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import { Fragment } from 'react';
 import styled from 'styled-components';
 import { useDataManagementPageUI } from '../../hooks/useDataManagemenPageUI';
-import useTransformationCreateMutation from '../../hooks/useTransformationCreateMutation';
 import useTransformations from '../../hooks/useTransformations';
-import {
-  groupTransformationsByTypes,
-  suggestTransformationProperties,
-} from '@platypus-core/domain/transformation';
+import { groupTransformationsByTypes } from '@platypus-core/domain/transformation';
 
 type Props = {
   dataModelExternalId: string;
+  onAddClick: () => void;
   typeName: string;
   version: string;
 };
 
 export function TransformationDropdown({
   dataModelExternalId,
+  onAddClick,
   typeName,
   version,
 }: Props) {
@@ -30,54 +28,26 @@ export function TransformationDropdown({
     typeName,
     version,
   });
-  const createTransformationMutation = useTransformationCreateMutation();
 
-  const arrangedTransformations = groupTransformationsByTypes(
+  const groupedTransformations = groupTransformationsByTypes(
     transformations ?? []
   );
-
-  const handleAddClick = () => {
-    const { externalId: transformationExternalId, name: transformationName } =
-      suggestTransformationProperties({
-        dataModelExternalId,
-        numExistingTransformations: transformations
-          ? transformations.length
-          : 1,
-        typeName,
-        version,
-      });
-
-    createTransformationMutation.mutate(
-      {
-        dataModelExternalId,
-        transformationExternalId,
-        transformationName,
-        typeName,
-        version,
-      },
-      {
-        onSuccess: (transformation) => {
-          setIsTransformationModalOpen(true, transformation.id);
-        },
-      }
-    );
-  };
 
   return (
     <Dropdown
       hideOnSelect
       content={
         <Menu>
-          {Object.keys(arrangedTransformations).map((key) => (
+          {Object.keys(groupedTransformations).map((key) => (
             <Fragment key={key}>
-              {arrangedTransformations[key].transformations.length ? (
+              {groupedTransformations[key].transformations.length ? (
                 <>
                   <Menu.Header>
                     {`${t('data_for', 'Data For')} ${
-                      arrangedTransformations[key].displayName
+                      groupedTransformations[key].displayName
                     }`}
                   </Menu.Header>
-                  {arrangedTransformations[key].transformations.map(
+                  {groupedTransformations[key].transformations.map(
                     (transformation) => (
                       <StyledMenuItem
                         key={transformation.id}
@@ -96,11 +66,7 @@ export function TransformationDropdown({
             </Fragment>
           ))}
 
-          <AddNewButton
-            iconPlacement="left"
-            icon="Add"
-            onClick={handleAddClick}
-          >
+          <AddNewButton iconPlacement="left" icon="Add" onClick={onAddClick}>
             {t('bulk-create-new', 'Create new')}
           </AddNewButton>
         </Menu>

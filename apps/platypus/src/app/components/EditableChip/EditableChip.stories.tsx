@@ -10,16 +10,25 @@ export const Base = () => {
   const [value, setValue] = useState<string>('my-movie-app');
 
   return (
-    <EditableChip
-      onChange={(newValue) => {
-        setValue(newValue);
-      }}
-      value={value}
-    />
+    <div style={{ width: '200px' }}>
+      <EditableChip
+        onChange={(newValue) => {
+          setValue(newValue);
+        }}
+        value={value}
+      />
+    </div>
   );
 };
 
 export const Locked = () => <EditableChip value="my-movie-app" isLocked />;
+
+export const WithLongValue = () => (
+  <div style={{ width: '200px' }}>
+    <EditableChip value="e0a265c9-906e-43c1-91ab-29b4b4fc52c" isLocked />
+  </div>
+);
+
 export const WithPlaceholder = () => (
   <EditableChip value={undefined} placeholder="Data model-ID" />
 );

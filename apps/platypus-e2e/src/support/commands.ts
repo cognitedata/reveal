@@ -65,25 +65,32 @@ Cypress.Commands.add('getCogsToast', (type, ...args) => {
 });
 
 Cypress.Commands.add('clickQueryExplorerExecuteQuery', () => {
-  return cy.get('.execute-button').click();
+  return cy.get('.graphiql-execute-button').click();
 });
 
 Cypress.Commands.add('setQueryExplorerQuery', (query: string) => {
-  return cy
-    .get('.CodeMirror-lines')
-    .first()
-    .click()
-    .type('{selectAll}')
-    .type(query, { parseSpecialCharSequences: false })
-    .type('\n');
+  cy.get('.graphiql-query-editor textarea').type(query, {
+    force: true,
+    parseSpecialCharSequences: false,
+  });
 });
 
 Cypress.Commands.add('assertQueryExplorerResult', (mockSuccess) => {
-  return cy
-    .window()
-    .its('g.resultComponent.viewer')
-    .invoke('getValue')
-    .should('deep.equal', JSON.stringify(mockSuccess, null, 2));
+  const normalizeString = (input: string) =>
+    input.replace(/\\n/gm, '').replace(/\\t/gm, '').replace(/\s/gm, '');
+
+  cy.get('.result-window')
+    .invoke('text')
+    .then((resultsString: string) => {
+      // when returning the results like this, they start with " x { ..."
+      return normalizeString(resultsString.substring(2));
+    })
+    .as('graphQlResults');
+
+  cy.get(`@graphQlResults`).should(
+    'deep.equal',
+    normalizeString(`${JSON.stringify(mockSuccess, null, 2)}`)
+  );
 });
 
 Cypress.Commands.add(

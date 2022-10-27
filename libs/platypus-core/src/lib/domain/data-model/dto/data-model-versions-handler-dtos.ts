@@ -32,7 +32,7 @@ export interface CreateDataModelVersionDTO {
 
 export interface GraphQlQueryParams {
   query: string;
-  operationName?: string;
+  operationName?: string | null;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   variables?: any;
 }

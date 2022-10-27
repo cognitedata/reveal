@@ -1,5 +1,5 @@
 import { Body } from '@cognite/cogs.js';
-import { ModalDialog } from '@platypus-app/components/ModalDialog/ModalDialog';
+import { ModalDialog } from '@platypus-app/components/ModalDialog';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 
 type BaseModalProps = {

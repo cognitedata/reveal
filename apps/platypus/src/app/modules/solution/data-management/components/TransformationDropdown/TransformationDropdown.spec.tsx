@@ -4,6 +4,7 @@ import '@testing-library/jest-dom/extend-expect';
 import userEvent from '@testing-library/user-event';
 import { TransformationDropdown } from './TransformationDropdown';
 import { DataModelTransformation } from '@platypus/platypus-core';
+import noop from 'lodash/noop';
 
 const mockTransformations: DataModelTransformation[] = [
   {
@@ -54,17 +55,6 @@ jest.mock(
   })
 );
 
-const mockMutate = jest.fn().mockImplementation((transformation, options) => {
-  options.onSuccess({ id: transformation.transformationExternalId });
-});
-
-jest.mock(
-  '@platypus-app/modules/solution/data-management/hooks/useTransformationCreateMutation',
-  () => () => ({
-    mutate: mockMutate,
-  })
-);
-
 jest.mock(
   '@platypus-app/modules/solution/data-management/hooks/useTransformations',
   () => () => ({ data: mockTransformations })
@@ -72,7 +62,6 @@ jest.mock(
 
 describe('TransformationDropdown', () => {
   beforeAll(() => {
-    mockMutate.mockClear();
     mockSetIsTransformationModalOpen.mockClear();
   });
 
@@ -80,6 +69,7 @@ describe('TransformationDropdown', () => {
     render(
       <TransformationDropdown
         dataModelExternalId="imdb"
+        onAddClick={noop}
         typeName="Movie"
         version="2"
       />
@@ -101,6 +91,7 @@ describe('TransformationDropdown', () => {
     render(
       <TransformationDropdown
         dataModelExternalId="imdb"
+        onAddClick={noop}
         typeName="Movie"
         version="2"
       />

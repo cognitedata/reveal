@@ -1,6 +1,6 @@
 import { StyledPageWrapper } from '@platypus-app/components/Layouts/elements';
 import styled from 'styled-components/macro';
-import { ModalDialog } from '@platypus-app/components/ModalDialog/ModalDialog';
+import { ModalDialog } from '@platypus-app/components/ModalDialog';
 import { Row } from '@cognite/cogs.js';
 
 const dataModelListWidth = 1020;

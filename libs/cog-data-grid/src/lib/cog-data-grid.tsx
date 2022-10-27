@@ -12,9 +12,10 @@ import { CogDataGridStyled } from './cog-data-grid-styled';
 import './cog-data-grid.module.css';
 import { gridConfigService } from './core/services/grid-config.service';
 import { ColumnTypes, GridConfig, KeyValueMap } from './core/types';
+import { ThemeNames } from './types';
 
 export interface CogDataGridProps extends AgGridReactProps {
-  theme?: 'default' | 'compact';
+  theme?: ThemeNames;
   data?: KeyValueMap[];
   config: GridConfig;
   /** An object map of custom column types which contain groups of properties that column definitions can inherit by referencing in their `type` property. */

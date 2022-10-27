@@ -1,4 +1,4 @@
-import { ModalDialog } from '@platypus-app/components/ModalDialog/ModalDialog';
+import { ModalDialog } from '@platypus-app/components/ModalDialog';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import { StyledBody, StyledBreakingChanges } from './elements';
 

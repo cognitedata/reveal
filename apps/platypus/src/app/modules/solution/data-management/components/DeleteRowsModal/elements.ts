@@ -1,4 +1,4 @@
-import { ModalDialog } from '@platypus-app/components/ModalDialog/ModalDialog';
+import { ModalDialog } from '@platypus-app/components/ModalDialog';
 import styled from 'styled-components';
 
 export const StyledModalDialog = styled(ModalDialog)`

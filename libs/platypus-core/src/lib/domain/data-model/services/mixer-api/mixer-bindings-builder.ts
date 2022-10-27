@@ -46,8 +46,8 @@ export class MixerBindingsBuilder {
 
         this.filterOneToManyCustomTypeRelations(def).forEach((field) => {
           const connectionModelName = getOneToManyModelName(
-            def,
-            field,
+            def.name,
+            field.name,
             dataModelVersion.version
           );
 

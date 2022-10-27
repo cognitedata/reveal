@@ -105,7 +105,11 @@ describe('Data model services utils', () => {
   describe('getOneToManyModelName', () => {
     it('should generate name according to naming scheme "<from type>_<property name>_<version number>"', () => {
       const type = dataModelTypeDefsMock.types[0];
-      const name = utils.getOneToManyModelName(type, type.fields[1], '1');
+      const name = utils.getOneToManyModelName(
+        type.name,
+        type.fields[1].name,
+        '1'
+      );
 
       expect(name).toEqual('Post_authors_1');
     });

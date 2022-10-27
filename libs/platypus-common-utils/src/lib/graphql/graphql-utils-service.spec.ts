@@ -491,17 +491,6 @@ describe('GraphQlUtilsServiceTest', () => {
           ],
         },
         {
-          message: 'Interfaces are not supported.',
-          status: 400,
-          errorMessage: 'Interfaces are not supported.',
-          locations: [
-            {
-              line: 12,
-              column: 7,
-            },
-          ],
-        },
-        {
           message:
             'Field "appearsIn" should be a required type if the list element type is required. For example, the valid cases are "[Episode]" and "[Episode!]!"',
           status: 400,

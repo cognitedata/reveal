@@ -4,17 +4,19 @@ import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import { useDraftRows } from '../../hooks/useDraftRows';
 
 import * as S from './elements';
-import { BulkPopulationButton } from '../BulkPopulationButton/BulkPopulationButton';
+import { BulkPopulationButton } from '../BulkPopulationButton';
 import useTransformations from '../../hooks/useTransformations';
 
 export type NoRowsOverlayProps = {
   dataModelExternalId: string;
+  onLoadDataClick: () => void;
   typeName: string;
   version: string;
 };
 
 export const NoRowsOverlay = ({
   dataModelExternalId,
+  onLoadDataClick,
   typeName,
   version,
 }: NoRowsOverlayProps) => {
@@ -49,7 +51,9 @@ export const NoRowsOverlay = ({
         <Button type="primary" icon="Add" onClick={createNewDraftRow}>
           {t('add-instance-button', 'Add instance')}
         </Button>
-        <BulkPopulationButton />
+        <BulkPopulationButton onClick={onLoadDataClick}>
+          {t('load-data-button', 'Populate in bulk')}
+        </BulkPopulationButton>
       </S.NoRowsOverlayButtons>
     </S.NoRowsOverlay>
   );

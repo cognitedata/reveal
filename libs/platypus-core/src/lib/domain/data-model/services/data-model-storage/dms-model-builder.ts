@@ -86,7 +86,7 @@ export class DmsModelBuilder {
     version: string
   ) {
     return {
-      externalId: getOneToManyModelName(type, field, version), //from_type to_type property version
+      externalId: getOneToManyModelName(type.name, field.name, version), //from_type to_type property version
       allowNode: false,
       allowEdge: true,
       properties: {

@@ -1,126 +1,129 @@
 import { useState } from 'react';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 
-import { Input, SegmentedControl, Select, OptionType } from '@cognite/cogs.js';
-import { Row, Column, Label } from './elements';
-
-import { EditableChip } from '@platypus-app/components/EditableChip/EditableChip';
-import { ModalDialog } from '@platypus-app/components/ModalDialog/ModalDialog';
+import { OptionType } from '@cognite/cogs.js';
+import { ModalDialog } from '@platypus-app/components/ModalDialog';
 
 import {
-  DataModelExternalIdValidator,
+  DataModelTypeDefsType,
   RequiredFieldValidator,
   Validator,
 } from '@platypus/platypus-core';
+import {
+  CreateTransformationForm,
+  TransformationType,
+} from '../CreateTransformationForm';
+import useTransformationCreateMutation from '../../hooks/useTransformationCreateMutation';
+import { useDataManagementPageUI } from '../../hooks/useDataManagemenPageUI';
+import useSelector from '@platypus-app/hooks/useSelector';
+import { generateId } from '@platypus-app/utils/uuid';
+import {
+  getOneToManyModelName,
+  getVersionedExternalId,
+} from '@platypus-core/domain/data-model/services/utils';
 
 type Option = OptionType<any>;
 
 export interface CreateTransformationModalProps {
-  name: string;
-  id: string;
-  selectedRelationship?: Option;
-  relationships?: Option[];
+  dataModelExternalId: string;
+  dataModelType: DataModelTypeDefsType;
   onRequestClose: () => void;
-  onOk: () => void;
-  onRelationshipChange?: (relationship: Option) => void;
+  version: string;
 }
 
-export const CreateTransformationModal = (
-  props: CreateTransformationModalProps
-) => {
+export const CreateTransformationModal = ({
+  dataModelExternalId,
+  dataModelType,
+  onRequestClose,
+  version,
+}: CreateTransformationModalProps) => {
   const { t } = useTranslation('CreateTransformationModal');
 
-  const [transformationType, setTransformationType] = useState('data');
+  const [selectedRelationship, setSelectedRelationship] = useState<Option>();
+  const [transformationType, setTransformationType] = useState(
+    TransformationType.Data
+  );
+  const { setIsTransformationModalOpen } = useDataManagementPageUI();
+  const { customTypesNames } = useSelector((state) => state.dataModel);
 
-  const validator = new Validator(props);
-  if (transformationType === 'relationship') {
+  const createTransformationMutation = useTransformationCreateMutation();
+
+  const [transformationExternalId] = useState(generateId());
+  const transformationName = selectedRelationship
+    ? getOneToManyModelName(
+        dataModelType.name,
+        selectedRelationship.value,
+        version
+      )
+    : getVersionedExternalId(dataModelType.name, version);
+
+  const relationships: Option[] = dataModelType.fields
+    .filter((field) => {
+      return field.type.list && customTypesNames.includes(field.type.name);
+    })
+    .map((field) => ({
+      value: field.name,
+      label: `${dataModelType.name}.${field.name}`,
+    }));
+
+  const validator = new Validator({
+    selectedRelationship,
+  });
+  if (transformationType === TransformationType.RelationShip) {
     validator.addRule('selectedRelationship', new RequiredFieldValidator());
   }
   const validationResult = validator.validate();
+
+  const handleTransformationTypeChange = (value: TransformationType) => {
+    setTransformationType(value);
+
+    if (value === TransformationType.Data) {
+      setSelectedRelationship(undefined);
+    }
+  };
+
+  const handleSubmit = () => {
+    createTransformationMutation.mutate(
+      {
+        dataModelExternalId,
+        oneToManyFieldName: selectedRelationship
+          ? selectedRelationship.value
+          : undefined,
+        transformationExternalId,
+        transformationName,
+        typeName: dataModelType.name,
+        version,
+      },
+      {
+        onSuccess: (transformation) => {
+          onRequestClose();
+          setIsTransformationModalOpen(true, transformation.id);
+        },
+      }
+    );
+  };
 
   return (
     <ModalDialog
       visible
       title={t('create_transformation_modal_title', 'Create transformation')}
-      onOk={props.onOk}
-      onCancel={props.onRequestClose}
+      onOk={handleSubmit}
+      onCancel={onRequestClose}
       okDisabled={!validationResult.valid}
+      okProgress={createTransformationMutation.isLoading}
       okButtonName={t('create_transformation_modal_ok_button', 'Next')}
       okType="primary"
       width="620px"
     >
-      <Row>
-        <Column>
-          <Label htmlFor="nameInput">
-            {t(
-              'create_transformation_modal_transformation_name_label',
-              'Transformation name'
-            )}
-          </Label>
-          <Input
-            id="nameInput"
-            type="text"
-            disabled
-            value={props.name}
-            fullWidth
-          ></Input>
-        </Column>
-        <Column>
-          <EditableChip
-            className="transformation-id"
-            onChange={() => {
-              return true;
-            }}
-            value={props.id}
-            isLocked
-          ></EditableChip>
-        </Column>
-      </Row>
-
-      {props.relationships && props.relationships.length > 0 && (
-        <Row>
-          <Column>
-            <Label>
-              {t(
-                'create_transformation_modal_transformation_type_label',
-                'Transformation type'
-              )}
-            </Label>
-            <SegmentedControl
-              fullWidth
-              currentKey={transformationType}
-              onButtonClicked={setTransformationType}
-            >
-              <SegmentedControl.Button key="data">
-                {t('create_transformation_modal_load_data_button', 'Load data')}
-              </SegmentedControl.Button>
-              <SegmentedControl.Button key="relationship">
-                {t(
-                  'create_transformation_modal_load_relationship_button',
-                  'Load relationship'
-                )}
-              </SegmentedControl.Button>
-            </SegmentedControl>
-          </Column>
-          <Column>
-            {transformationType === 'relationship' && (
-              <>
-                <Label>
-                  {t(
-                    'create_transformation_modal_relationship_label',
-                    'Relationship'
-                  )}
-                </Label>
-                <Select
-                  value={props.selectedRelationship}
-                  options={props.relationships}
-                  onChange={props.onRelationshipChange}
-                />
-              </>
-            )}
-          </Column>
-        </Row>
-      )}
+      <CreateTransformationForm
+        id={transformationExternalId}
+        name={transformationName}
+        onRelationshipChange={setSelectedRelationship}
+        onTransformationTypeChange={handleTransformationTypeChange}
+        relationships={relationships}
+        selectedRelationship={selectedRelationship}
+        transformationType={transformationType}
+      />
     </ModalDialog>
   );
 };
