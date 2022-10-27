@@ -46,7 +46,7 @@ export const SyntaxHelperWrapper = styled.div`
   width: 416px;
   padding: ${sizes.small};
   box-shadow: var(--cogs-z-4);
-  border-radius: 4px;
+  border-radius: ${sizes.small};
 `;
 
 export const TitleContainer = styled.div`
@@ -112,7 +112,7 @@ export const CopyToClipboardStyle = styled.span(
     min-width: 24px;
     text-align: center;
     padding: 1px ${sizes.extraSmall};
-    border-radius: 4px;
+    border-radius: ${sizes.small};
     background-color: var(--cogs-bg-control--secondary);
     cursor: pointer;
     user-select: none;
@@ -129,7 +129,7 @@ export const SyntaxRuleInfoContainer = styled(FlexRow)(
   () => css`
     background: #f6f9ff; // not in the cogs
     border: 1px solid var(--cogs-midblue-5);
-    border-radius: 8px;
+    border-radius: ${sizes.small};
     margin-top: 8px;
     margin-bottom: 12px;
   `

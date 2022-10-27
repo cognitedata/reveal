@@ -62,7 +62,7 @@ export const DocumentsTable = (props: DocumentTableProps) => {
         {
           // You do not have to add an id field if accessor is given a string.
           accessor: 'type',
-          Header: 'Type',
+          Header: 'File type',
           Cell: ({ row }: { row: Row<Document> }) => {
             return <Body level={2}>{row.original.type}</Body>;
           },
