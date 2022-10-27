@@ -44,6 +44,7 @@
     "replace-latest-by-next": "yarn replace-4.x"
   },
   "dependencies": {
+    "@azure/msal-browser": "2.30.0",
     "@cognite/reveal": "link:../viewer/dist",
     "@cognite/reveal-1.x": "npm:@cognite/reveal@1.x.x",
     "@cognite/reveal-2.x": "npm:@cognite/reveal@2.3",
