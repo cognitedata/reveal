@@ -1,5 +1,5 @@
 import { ReactElement } from 'react';
-import { Button, Flex, Label, Title } from '@cognite/cogs.js';
+import { Button, Flex, Icon, Label, Title } from '@cognite/cogs.js';
 import { createLink, getProject } from '@cognite/cdf-utilities';
 import { trackEvent } from '@cognite/cdf-route-tracker';
 
@@ -40,6 +40,7 @@ const DatasetTopBar = ({ dataset, actions }: DatasetTopBarProps) => {
           onClick={handleGoToDatasets}
           type="secondary"
         />
+        {dataset?.writeProtected ? <Icon type="Lock" /> : <></>}
         <Title level="4">{dataset?.name || dataset?.externalId}</Title>
         <Label size="medium" variant={statusVariant}>
           {t(statusI18nKey)}
@@ -62,7 +63,7 @@ const DatasetTopBar = ({ dataset, actions }: DatasetTopBarProps) => {
       <Flex alignItems="center" gap={8}>
         {actions}
         <Button
-          icon="Help"
+          icon="Documentation"
           type="ghost"
           href={DATASET_HELP_DOC}
           target="_blank"

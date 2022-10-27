@@ -248,7 +248,7 @@ export const RawCreateButton = styled(Button)`
 `;
 
 export const BasicInfoPane = styled.div`
-  padding-left: 20px;
+  padding: 12px;
   display: inline-block;
   width: 100%;
 `;

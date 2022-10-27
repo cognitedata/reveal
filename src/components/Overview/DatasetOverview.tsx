@@ -8,6 +8,7 @@ import { ContentView, Divider, DataSet } from 'utils';
 import { useTranslation } from 'common/i18n';
 import UsersIcon from 'assets/Users.svg';
 import { useResourceAggregates } from 'hooks/useResourceAggregates';
+import { createLink } from '@cognite/cdf-utilities';
 
 type DatasetOverviewProps = {
   dataset: DataSet;
@@ -57,99 +58,112 @@ const DatasetOverview = ({
     },
   } as const;
 
+  const handleManageAccess = () => {
+    window.open(createLink(`/access-management`), '_blank');
+  };
+
   return (
-    <Row style={{ padding: 12 }}>
-      <Col span={15}>
-        <Row>
-          <Col span={24}>
-            <StyledCard>
-              <StyledCardTitle level={5}>{t('description')}</StyledCardTitle>
-              <Divider />
-              <ContentView>{dataset?.description}</ContentView>
-            </StyledCard>
-          </Col>
-        </Row>
-        <Row>
-          <Col span={12}>
-            <StyledCard>
-              <Flex justifyContent="space-between" alignItems="center">
-                <StyledCardTitle level={5}>{t('tab-overview')}</StyledCardTitle>
-                <Button type="link" onClick={() => onActiveTabChange('data')}>
-                  {t('view')}
-                </Button>
-              </Flex>
-              <Divider />
-              <Row style={{ padding: 12 }}>
-                <Col span={24}>
-                  {Object.keys(resourceAggregates).map((resource) => {
-                    const resourceAggr =
-                      resourceAggregates[
-                        resource as keyof typeof resourceAggregates
-                      ];
-                    return (
-                      <Row style={{ marginLeft: 18, padding: '12px 0' }}>
-                        <Col span={8}>
-                          <Flex direction="row" alignItems="center" gap={10}>
-                            {resourceAggr.icon}
-                            <Body level={1} strong className="aggr-title">
-                              {resourceAggr.name}
+    <OverviewWrapper className="overview-wrapper">
+      <Row style={{ padding: 12 }}>
+        <Col span={15}>
+          <Row>
+            <Col span={24}>
+              <StyledCard>
+                <StyledCardTitle level={5}>{t('description')}</StyledCardTitle>
+                <Divider />
+                <ContentView>{dataset?.description}</ContentView>
+              </StyledCard>
+            </Col>
+          </Row>
+          <Row>
+            <Col span={12}>
+              <StyledCard>
+                <Flex justifyContent="space-between" alignItems="center">
+                  <StyledCardTitle level={5}>
+                    {t('tab-overview')}
+                  </StyledCardTitle>
+                  <Button
+                    type="link"
+                    onClick={() => onActiveTabChange('data')}
+                    style={{ marginRight: 12 }}
+                  >
+                    {t('view')}
+                  </Button>
+                </Flex>
+                <Divider />
+                <Row style={{ padding: 12 }}>
+                  <Col span={24}>
+                    {Object.keys(resourceAggregates).map((resource) => {
+                      const resourceAggr =
+                        resourceAggregates[
+                          resource as keyof typeof resourceAggregates
+                        ];
+                      return (
+                        <Row style={{ marginLeft: 18, padding: '12px 0' }}>
+                          <Col span={8}>
+                            <Flex direction="row" alignItems="center" gap={10}>
+                              {resourceAggr.icon}
+                              <Body level={1} strong className="aggr-title">
+                                {resourceAggr.name}
+                              </Body>
+                            </Flex>
+                          </Col>
+                          <Col span={14}>
+                            <Body level={1}>
+                              {resourceAggr.value.toLocaleString()}
                             </Body>
-                          </Flex>
-                        </Col>
-                        <Col span={14}>
-                          <Body level={1}>
-                            {resourceAggr.value.toLocaleString()}
-                          </Body>
-                        </Col>
-                      </Row>
-                    );
-                  })}
-                </Col>
-              </Row>
-            </StyledCard>
-          </Col>
-          <Col span={12}>
-            <StyledCard>
-              <StyledCardTitle level={5}>
-                {t('tab-access-control')}
-              </StyledCardTitle>
-              <Divider />
-              <Flex
-                alignItems="center"
-                direction="column"
-                style={{ margin: '46px auto' }}
-              >
-                <img src={UsersIcon} alt="Users" />
-                <Title level={4}>{t('who-has-access')}</Title>
-                <Body
-                  level={2}
-                  strong
-                  className="mute"
-                  style={{ padding: '2px 0 24px 0' }}
+                          </Col>
+                        </Row>
+                      );
+                    })}
+                  </Col>
+                </Row>
+              </StyledCard>
+            </Col>
+            <Col span={12}>
+              <StyledCard>
+                <StyledCardTitle level={5}>
+                  {t('tab-access-control')}
+                </StyledCardTitle>
+                <Divider />
+                <Flex
+                  alignItems="center"
+                  direction="column"
+                  style={{ margin: '46px auto' }}
                 >
-                  {t('view-and-manage-user-permission')}
-                </Body>
-                <Button
-                  type="secondary"
-                  onClick={() => onActiveTabChange('access-control')}
-                >
-                  {t('manage')}
-                </Button>
-              </Flex>
-            </StyledCard>
-          </Col>
-        </Row>
-      </Col>
-      <Col span={9}>
-        <StyledCard>
-          <StyledCardTitle level={5}>{t('summary')}</StyledCardTitle>
-          <Divider />
-          <BasicInfoCard dataSet={dataset} />
-        </StyledCard>
-      </Col>
-    </Row>
+                  <img src={UsersIcon} alt="Users" />
+                  <Title level={4}>{t('who-has-access')}</Title>
+                  <Body
+                    level={2}
+                    strong
+                    className="mute"
+                    style={{ padding: '2px 0 24px 0' }}
+                  >
+                    {t('view-and-manage-user-permission')}
+                  </Body>
+                  <Button type="secondary" onClick={handleManageAccess}>
+                    {t('manage')}
+                  </Button>
+                </Flex>
+              </StyledCard>
+            </Col>
+          </Row>
+        </Col>
+        <Col span={9}>
+          <StyledCard>
+            <StyledCardTitle level={5}>{t('summary')}</StyledCardTitle>
+            <Divider />
+            <BasicInfoCard dataSet={dataset} />
+          </StyledCard>
+        </Col>
+      </Row>
+    </OverviewWrapper>
   );
 };
+
+const OverviewWrapper = styled.div`
+  background-color: #f5f5f5;
+`;
 
 const StyledCard = styled(Card)`
   margin: 12px;

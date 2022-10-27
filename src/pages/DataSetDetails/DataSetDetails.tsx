@@ -3,11 +3,13 @@ import { useParams, useSearchParams } from 'react-router-dom';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import { getFlow } from '@cognite/cdf-sdk-singleton';
 
+import copy from 'copy-to-clipboard';
+
 import { notification } from 'antd';
 import Spin from 'antd/lib/spin';
 
 import Tabs from 'antd/lib/tabs';
-import { Button, Tooltip } from '@cognite/cogs.js';
+import { Button, Flex, Tooltip } from '@cognite/cogs.js';
 
 import DataSetEditor from 'pages/DataSetEditor';
 import ExploreData from 'components/Data/ExploreData';
@@ -77,15 +79,51 @@ const DataSetDetails = (): JSX.Element => {
   const { updateDataSetVisibility, isLoading: isUpdatingDataSetVisibility } =
     useUpdateDataSetVisibility();
 
+  const handleDatasetIdCopy = (copiedText: string | number | undefined) => {
+    if (copiedText) {
+      copy(copiedText.toString());
+      notification.success({
+        message: t('copy-notification'),
+      });
+    }
+  };
+
+  const copyDatasetIdButton = (
+    <Button
+      disabled={!dataSet?.id}
+      onClick={() => handleDatasetIdCopy(dataSet?.id)}
+      icon="Copy"
+      iconPlacement="left"
+      type="tertiary"
+    >
+      {t('copy-id')}
+    </Button>
+  );
+
+  const editButton = (
+    <Button
+      disabled={!hasWritePermissions}
+      onClick={() => {
+        setSelectedDataSet(Number(dataSetId));
+        setEditDrawerVisible(true);
+      }}
+      icon="Edit"
+      iconPlacement="left"
+      type="tertiary"
+    >
+      {t('edit')}
+    </Button>
+  );
+
   const archiveButton = (
     <Tooltip content={t('dataset-details-archived-data-tooltip')}>
       <Button
         disabled={!hasWritePermissions}
         onClick={() => archiveDataSet()}
-        style={{
-          marginLeft: '10px',
-        }}
         loading={isUpdatingDataSetVisibility}
+        icon="Archive"
+        iconPlacement="left"
+        type="tertiary"
       >
         {t('archive')}
       </Button>
@@ -97,29 +135,14 @@ const DataSetDetails = (): JSX.Element => {
       <Button
         disabled={!hasWritePermissions}
         onClick={() => restoreDataSet()}
-        style={{
-          marginLeft: '10px',
-        }}
         loading={isUpdatingDataSetVisibility}
+        icon="Restore"
+        iconPlacement="left"
+        type="tertiary"
       >
         {t('restore')}
       </Button>
     </Tooltip>
-  );
-
-  const editButton = (
-    <Button
-      disabled={!hasWritePermissions}
-      onClick={() => {
-        setSelectedDataSet(Number(dataSetId));
-        setEditDrawerVisible(true);
-      }}
-      style={{
-        marginLeft: '10px',
-      }}
-    >
-      {t('edit')}
-    </Button>
   );
 
   const discardChangesButton = (
@@ -199,9 +222,12 @@ const DataSetDetails = (): JSX.Element => {
   if (dataSet) {
     const actions = (
       <>
-        {editButton}
+        <Flex alignItems="center" gap={8}>
+          {copyDatasetIdButton}
+          {editButton}
+          {dataSet.metadata.archived ? restoreButton : archiveButton}
+        </Flex>
         {editDrawer}
-        {dataSet.metadata.archived ? restoreButton : archiveButton}
       </>
     );
 

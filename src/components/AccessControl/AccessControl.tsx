@@ -1,7 +1,12 @@
 import Spin from 'antd/lib/spin';
 import { isOidcEnv } from 'utils/shared';
 import { useCdfGroups } from 'actions';
-import { TitleOrnament, MiniInfoTitle, ContentView } from 'utils';
+import {
+  TitleOrnament,
+  MiniInfoTitle,
+  ContentView,
+  CREATE_GROUP_ACCESS_DOC,
+} from 'utils';
 import Owners from './Owners';
 import GroupsWithAccess from './GroupsWithAccess';
 import { useTranslation } from 'common/i18n';
@@ -40,9 +45,9 @@ const AccessControl = ({ dataSetId, writeProtected }: AccessControlProps) => {
           isOidcEnv={isOidc}
         />
         <p style={{ marginTop: '20px' }}>
-          {t('access-control-p2')}
+          {t('access-control-p2')}{' '}
           <a
-            href="https://docs.cognite.com/cdf/access/guides/create_groups.html"
+            href={CREATE_GROUP_ACCESS_DOC}
             target="_blank"
             rel="noopener noreferrer"
           >

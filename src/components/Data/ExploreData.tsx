@@ -231,7 +231,12 @@ const ExploreData = ({ loading, dataSetId }: ExploreDataProps) => {
           <DetailsPane>
             {isEnabled && (
               <Flex direction="column" gap={8}>
-                <Flex display="inline-flex" gap={8} alignItems="center">
+                <Flex
+                  display="inline-flex"
+                  gap={8}
+                  alignItems="center"
+                  style={{ marginLeft: 10 }}
+                >
                   <Input
                     value={query}
                     prefix={<Icon type="Search" />}
