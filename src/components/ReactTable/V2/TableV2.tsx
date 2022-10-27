@@ -11,6 +11,7 @@ import {
   getSortedRowModel,
   SortingState,
 } from '@tanstack/react-table';
+import { DASH } from '../../../utils';
 import { ColumnToggle } from './ColumnToggle';
 
 import {
@@ -33,7 +34,7 @@ import { Body } from '@cognite/cogs.js';
 import { DndProvider } from 'react-dnd';
 
 import { SortIcon } from './SortIcon';
-import { ResourceTableColumns } from '../columns';
+import { ResourceTableColumns } from './columns';
 import { LoadMore, LoadMoreProps } from '../LoadMore';
 import { EmptyState } from 'components/EmpyState/EmptyState';
 
@@ -267,7 +268,7 @@ export function TableV2<T extends TableData>({
                             {flexRender(
                               cell.column.columnDef.cell,
                               cell.getContext()
-                            ) || '–'}
+                            ) || DASH}
                           </Body>
                         </Td>
                       );

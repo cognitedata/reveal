@@ -31,7 +31,7 @@ export const AssetIdTable = ({
     <AssetNewTable
       data={assets}
       onRowClick={asset => onItemClicked(asset.id)}
-      hideColumnToggle
+      id="asset-id-table"
     />
   );
 };

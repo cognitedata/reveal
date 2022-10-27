@@ -1,8 +1,8 @@
+import { ColumnDef } from '@tanstack/react-table';
 import React, { useMemo } from 'react';
 import { Asset } from '@cognite/sdk';
 import { Button, Dropdown, Menu } from '@cognite/cogs.js';
-import { Column } from 'react-table';
-import { NewTable as Table, TableProps } from 'components/ReactTable/Table';
+import { TableV2 as Table, TableProps } from 'components/ReactTable/V2/TableV2';
 import { RelationshipLabels, ThreeDModelClickHandler } from 'types';
 
 export type AssetWithRelationshipLabels = RelationshipLabels & Asset;
@@ -13,6 +13,8 @@ import {
   ThreeDAssetMappingItem,
   useThreeDAssetMappings,
 } from 'hooks/threeDHooks';
+
+const visibleColumns = ['name', 'rootId'];
 
 export const ParentCell = ({
   rootId,
@@ -110,7 +112,7 @@ export const ThreeDModelCell = ({
 };
 
 export const AssetNewTable = (
-  props: TableProps<AssetWithRelationshipLabels> & {
+  props: Omit<TableProps<AssetWithRelationshipLabels>, 'columns'> & {
     onThreeDModelClick?: (
       mapping: ThreeDAssetMappingItem,
       e: React.MouseEvent
@@ -123,7 +125,10 @@ export const AssetNewTable = (
 
   const columns = useMemo(
     () => [
-      Table.Columns.name,
+      {
+        ...Table.Columns.name,
+        enableHiding: false,
+      },
       Table.Columns.description,
       Table.Columns.externalId,
       {
@@ -133,30 +138,43 @@ export const AssetNewTable = (
         ),
       },
       {
-        accessor: 'id',
-        Header: '3D availability',
-        Cell: ({ value }) => (
+        accessorKey: 'id',
+        header: '3D availability',
+        cell: ({ getValue }) => (
           <ThreeDModelCell
-            mappings={threeDAssetMappings[value]}
+            mappings={threeDAssetMappings[getValue<number>()]}
             onThreeDModelClick={onThreeDModelClick}
           />
         ),
-        width: 300,
-      } as Column<Asset>,
+        size: 300,
+      },
       Table.Columns.created,
       Table.Columns.labels,
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [threeDAssetMappings]
-  ) as Column<Asset>[];
+  ) as ColumnDef<AssetWithRelationshipLabels>[];
+
+  const hiddenColumns = useMemo(() => {
+    return (
+      columns
+        .filter(
+          column =>
+            // @ts-ignore Don't know why `accessorKey` is not recognized from the type -_-
+            !visibleColumns.includes(column.accessorKey || column?.id)
+        )
+        // @ts-ignore
+        .map(column => column.accessorKey || column.id)
+    );
+  }, [columns]);
 
   return (
     <Table<Asset>
-      columns={columns}
-      visibleColumns={['name', 'rootId']}
       data={data || []}
+      columns={columns}
       onRowClick={onRowClick}
       {...rest}
+      hiddenColumns={hiddenColumns}
     />
   );
 };

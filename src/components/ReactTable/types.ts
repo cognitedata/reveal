@@ -1,4 +1,5 @@
 import { CogniteEvent } from '@cognite/sdk';
+import { ColumnDef } from '@tanstack/react-table';
 import {
   SequenceWithRelationshipLabels,
   TimeseriesWithRelationshipLabels,
@@ -10,6 +11,16 @@ import { ColumnKeys } from './constants';
 
 export type ResourceTableHashMap = {
   [key in typeof ColumnKeys[number]]: Column<
+    TimeseriesWithRelationshipLabels &
+      AssetWithRelationshipLabels &
+      CogniteEvent &
+      FileWithRelationshipLabels &
+      SequenceWithRelationshipLabels
+  >;
+};
+
+export type ResourceTableHashMap2 = {
+  [key in typeof ColumnKeys[number]]: ColumnDef<
     TimeseriesWithRelationshipLabels &
       AssetWithRelationshipLabels &
       CogniteEvent &

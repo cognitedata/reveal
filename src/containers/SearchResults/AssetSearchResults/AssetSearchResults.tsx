@@ -84,6 +84,7 @@ export const AssetSearchResults = ({
         <KeepMounted isVisible={currentView === 'list'}>
           <AssetNewTable
             {...rest}
+            id="asset-search-results"
             onRowClick={asset => onClick(asset)}
             data={data}
             showLoadButton

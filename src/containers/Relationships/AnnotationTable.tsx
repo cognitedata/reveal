@@ -78,7 +78,11 @@ export function AnnotationTable({
   switch (resourceType) {
     case 'asset': {
       return (
-        <AssetNewTable data={items} onRowClick={onRowClick} hideColumnToggle />
+        <AssetNewTable
+          data={items}
+          onRowClick={onRowClick}
+          id="asset-annotations-table"
+        />
       );
     }
     case 'file': {
