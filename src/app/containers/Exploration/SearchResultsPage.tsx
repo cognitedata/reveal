@@ -50,6 +50,7 @@ import { StyledSplitter } from 'app/containers/elements';
 import { useDocumentFilters } from 'app/store/filter/selectors/documentSelectors';
 import { CogniteEvent } from '@cognite/sdk';
 import { useNavigate } from 'react-router-dom';
+import { useFlagAdvancedFilters } from 'app/hooks/flags/useFlagAdvancedFilters';
 
 const getPageTitle = (query: string, resourceType: ResourceType): string => {
   return `${query}${query ? ' in' : ''} ${getTitle(resourceType, true)}`;
@@ -58,6 +59,7 @@ const getPageTitle = (query: string, resourceType: ResourceType): string => {
 function SearchPage() {
   const navigate = useNavigate();
   const isFilterFeatureEnabled = useFlagFilter();
+  const isAdvancedFiltersEnabled = useFlagAdvancedFilters();
   // Adding the flag to manually enable 'Documents' tab to appear.
   const isDocumentEnabled = useFlagDocumentSearch();
 
@@ -168,6 +170,7 @@ function SearchPage() {
                       <AssetSearchResults
                         isTreeEnabled
                         showCount
+                        enableAdvancedFilters={isAdvancedFiltersEnabled}
                         onClick={(item: ResourceItem) =>
                           openPreview(
                             item.id !== activeId ? item.id : undefined
@@ -230,6 +233,7 @@ function SearchPage() {
                     {currentResourceType === 'event' && (
                       <EventSearchResults
                         showCount
+                        enableAdvancedFilters={isAdvancedFiltersEnabled}
                         onClick={(item: CogniteEvent) =>
                           openPreview(
                             item.id !== activeId ? item.id : undefined
@@ -342,6 +346,7 @@ function SearchPage() {
                 {currentResourceType === 'asset' && (
                   <AssetSearchResults
                     showCount
+                    enableAdvancedFilters={isAdvancedFiltersEnabled}
                     onClick={(item: ResourceItem) =>
                       openPreview(item.id !== activeId ? item.id : undefined)
                     }
@@ -394,6 +399,7 @@ function SearchPage() {
                 {currentResourceType === 'event' && (
                   <EventSearchResults
                     showCount
+                    enableAdvancedFilters={isAdvancedFiltersEnabled}
                     onClick={(item: ResourceItem) =>
                       openPreview(item.id !== activeId ? item.id : undefined)
                     }
