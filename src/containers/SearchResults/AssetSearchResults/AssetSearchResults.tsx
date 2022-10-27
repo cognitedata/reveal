@@ -3,8 +3,17 @@ import { Flex, SegmentedControl } from '@cognite/cogs.js';
 import { Asset } from '@cognite/sdk';
 import { EnsureNonEmptyResource } from 'components';
 import { ColumnToggleProps } from 'components/ReactTable/Table';
-import { AssetTreeTable, SearchResultToolbar, AssetNewTable } from 'containers';
-import { SelectableItemsProps, ThreeDModelClickHandler } from 'types';
+import {
+  AssetTreeTable,
+  SearchResultToolbar,
+  AssetNewTable,
+  useResourceResults,
+} from 'containers';
+import {
+  convertResourceType,
+  SelectableItemsProps,
+  ThreeDModelClickHandler,
+} from 'types';
 import { KeepMounted } from '../../../components/KeepMounted/KeepMounted';
 import styled from 'styled-components';
 import { EmptyState } from 'components/EmpyState/EmptyState';
@@ -18,8 +27,10 @@ export const AssetSearchResults = ({
   onClick,
   onThreeDModelClick,
   isTreeEnabled,
+  enableAdvancedFilters,
   ...extraProps
 }: {
+  enableAdvancedFilters?: boolean;
   query?: string;
   isTreeEnabled?: boolean;
   showCount?: boolean;
@@ -28,6 +39,10 @@ export const AssetSearchResults = ({
   onThreeDModelClick?: ThreeDModelClickHandler;
 } & ColumnToggleProps<Asset> &
   SelectableItemsProps) => {
+  const api = convertResourceType('asset');
+  const { canFetchMore, fetchMore, items, isFetched } =
+    useResourceResults<Asset>(api, query, filter);
+
   const { data, hasNextPage, fetchNextPage, isLoading } =
     useAssetsFilteredListQuery({ filter });
 
@@ -38,8 +53,9 @@ export const AssetSearchResults = ({
   const { onSelect, selectionMode, isSelected, ...rest } = extraProps;
   const treeProps = { onSelect, selectionMode, isSelected };
 
-  if (isLoading) {
-    return <EmptyState isLoading={isLoading} title="Loading Assets..." />;
+  const loading = enableAdvancedFilters ? isLoading : !isFetched;
+  if (loading) {
+    return <EmptyState isLoading={loading} title="Loading Assets..." />;
   }
 
   const tableHeaders = (
@@ -86,11 +102,11 @@ export const AssetSearchResults = ({
             {...rest}
             id="asset-search-results"
             onRowClick={asset => onClick(asset)}
-            data={data}
+            data={enableAdvancedFilters ? data : items}
             showLoadButton
             tableHeaders={tableHeaders}
-            hasNextPage={hasNextPage}
-            fetchMore={fetchNextPage}
+            hasNextPage={enableAdvancedFilters ? hasNextPage : canFetchMore}
+            fetchMore={enableAdvancedFilters ? fetchNextPage : fetchMore}
             onThreeDModelClick={onThreeDModelClick}
           />
         </KeepMounted>
