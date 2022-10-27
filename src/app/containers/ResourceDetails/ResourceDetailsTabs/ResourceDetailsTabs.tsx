@@ -131,6 +131,7 @@ export const ResourceDetailsTabs = ({
 const StyledTabs = styled(Tabs)`
   padding-left: 16px;
   padding-right: 16px;
+  margin-top: 8px;
   flex: 1;
   height: 100%;
 
