@@ -6,6 +6,7 @@ import { DataSet } from '@cognite/sdk';
 import { createLink } from '@cognite/cdf-utilities';
 import styled from 'styled-components';
 import { useClipboard } from 'hooks';
+import { DASH } from 'utils';
 
 type DetailsItemProps = {
   name: string;
@@ -40,7 +41,7 @@ export const DetailsItem = ({
           ) : (
             <Body level={2}>{value}</Body>
           ))}
-        {!Boolean(value) && <MutedBody level={2}>No description</MutedBody>}
+        {!Boolean(value) && <MutedBody level={2}>{DASH}</MutedBody>}
       </DetailsItemContainer>
       <ButtonWrapper visible={copyable && Boolean(value)}>
         <Button
