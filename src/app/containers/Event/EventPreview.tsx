@@ -16,6 +16,7 @@ import { CogniteEvent } from '@cognite/sdk';
 
 import { ResourceDetailsTabs, TabTitle } from 'app/containers/ResourceDetails';
 import { useOnPreviewTabChange } from 'app/hooks/hooks';
+import { DetailsTabWrapper } from 'app/containers/Common/element';
 
 export type EventPreviewTabType =
   | 'details'
@@ -83,8 +84,10 @@ export const EventPreview = ({
         onTabChange={onTabChange}
         additionalTabs={[
           <Tabs.TabPane tab={<TabTitle>Details</TabTitle>} key="details">
-            <EventDetails event={event} />
-            <Metadata metadata={event.metadata} />
+            <DetailsTabWrapper>
+              <EventDetails event={event} />
+              <Metadata metadata={event.metadata} />
+            </DetailsTabWrapper>
           </Tabs.TabPane>,
         ]}
       />

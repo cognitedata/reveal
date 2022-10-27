@@ -1503,17 +1503,17 @@
     use-debounce "^6.0.1"
     uuid "^8.3.2"
 
-"@cognite/data-exploration@5.6.0":
-  version "5.6.0"
-  resolved "https://registry.yarnpkg.com/@cognite/data-exploration/-/data-exploration-5.6.0.tgz#40724b2cb3fee3d0180f7cae423dc162ac4a6b38"
-  integrity sha512-NPZiXUcQIMhWVaQTQJc2cRBziQQlulppeqN5HrW0FTVr6l6ul39zV7ZL0VpwX8Z7e8eHacyYV9RqMhbMBwKn5A==
+"@cognite/data-exploration@5.9.1":
+  version "5.9.1"
+  resolved "https://registry.yarnpkg.com/@cognite/data-exploration/-/data-exploration-5.9.1.tgz#9f6eab87ca382ef19d1b3d53f1d211ab3ced6c2a"
+  integrity sha512-DIOPXsOvxwYBDz2yi1vhfg+BEK2Mnoa/vORRANvd/VWELlCbfMxYFS5RxL8QTMzzKrGMtv5peKVDXALdMcpRPQ==
   dependencies:
     "@babel/runtime" "^7.12.5"
     "@cognite/annotations" "^1.1.0"
     "@cognite/cdf-utilities" "^0.14.4"
     "@cognite/cogs.js" "^7.13.2"
     "@cognite/gcs-browser-upload" cognitedata/gcs-browser-upload#mn/temporary-azure-fix
-    "@cognite/react-document-search" "^0.2.0"
+    "@cognite/react-document-search" "0.2.0"
     "@cognite/react-document-table" "^1.22.2"
     "@cognite/react-feature-flags" "^1.0.1"
     "@cognite/react-picture-annotation" "3.0.1"
@@ -1521,6 +1521,8 @@
     "@cognite/sdk-provider" "^2.0.0"
     "@cognite/sdk-react-query-hooks" "^6.0.2"
     "@cognite/unified-file-viewer" "^1.5.0"
+    "@tanstack/react-table" "^8.5.15"
+    "@types/react-copy-to-clipboard" "^5.0.4"
     "@types/react-table" "^7.0.0"
     "@visx/axis" "^2.1.0"
     "@visx/event" "^2.1.0"
@@ -1533,6 +1535,7 @@
     "@visx/threshold" "^2.1.0"
     "@visx/tooltip" "^2.1.0"
     antd "^4.21.0"
+    copy-to-clipboard "^3.3.2"
     d3-array "^2.12.1"
     d3-scale "^4.0.2"
     d3-time "^3.0.0"
@@ -1544,6 +1547,7 @@
     mime-types "^2.1.30"
     query-string "^7.0.0"
     react-base-table "^1.12.0"
+    react-copy-to-clipboard "^5.1.0"
     react-datepicker "^3.7.0"
     react-dnd "^16.0.1"
     react-dnd-html5-backend "^16.0.1"
@@ -1580,7 +1584,7 @@
     mixpanel-browser "2.41.0"
     react "17.0.2"
 
-"@cognite/react-document-search@^0.2.0":
+"@cognite/react-document-search@0.2.0", "@cognite/react-document-search@^0.2.0":
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/@cognite/react-document-search/-/react-document-search-0.2.0.tgz#abd4cd7301dbbf54647265abddb554fc447faa96"
   integrity sha512-yWMdOWxA93uGZAmF67gJSgvJGPtDAr9GuIlB5ctV3LacX2qD2jgR2PZ7LV5/F+q+ato4lZ4K+hExZbibuPPwIg==
@@ -3039,6 +3043,18 @@
     "@svgr/plugin-svgo" "^5.5.0"
     loader-utils "^2.0.0"
 
+"@tanstack/react-table@^8.5.15":
+  version "8.5.17"
+  resolved "https://registry.yarnpkg.com/@tanstack/react-table/-/react-table-8.5.17.tgz#2cf86ae17474a007b611ef65b5f56f3b421a8207"
+  integrity sha512-QHCvxGk1fpdcH0XM5DL02broJ50UY6U04/rr0BTQnL6Tt7V4zdRfjHZB6sVHDwbUElJnL+xlfKPi1DNNEIQs8g==
+  dependencies:
+    "@tanstack/table-core" "8.5.17"
+
+"@tanstack/table-core@8.5.17":
+  version "8.5.17"
+  resolved "https://registry.yarnpkg.com/@tanstack/table-core/-/table-core-8.5.17.tgz#753f1aeda6df8a9225ace8cb9d6ec64e5f1f27b2"
+  integrity sha512-oKGg68v1E6UF2RNukSChwNX6W0ongM/QxbFPp+yW4SMOrciGNftG1XDF3dBCM/xbFpN7Pe+L880Evv6kVHrDXA==
+
 "@testing-library/cypress@^8.0.2":
   version "8.0.3"
   resolved "https://registry.yarnpkg.com/@testing-library/cypress/-/cypress-8.0.3.tgz#24ab34df34d7896866603ade705afbdd186e273c"
@@ -3460,6 +3476,13 @@
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/@types/react-canvas-draw/-/react-canvas-draw-1.2.0.tgz#2665a871fcefca0b7ec8793910f95e176c21672a"
   integrity sha512-ZrGtORZSsF5ErpRiWw2/Yqwkf7CyCgcNfLnABb6kjCTsx8AjcepO3pkKOOYS7MqGyLHALB6GLuSALl1PtEpRhA==
+  dependencies:
+    "@types/react" "*"
+
+"@types/react-copy-to-clipboard@^5.0.4":
+  version "5.0.4"
+  resolved "https://registry.yarnpkg.com/@types/react-copy-to-clipboard/-/react-copy-to-clipboard-5.0.4.tgz#558f2c38a97f53693e537815f6024f1e41e36a7e"
+  integrity sha512-otTJsJpofYAeaIeOwV5xBUGpo6exXG2HX7X4nseToCB2VgPEBxGBHCm/FecZ676doNR7HCSTVtmohxfG2b3/yQ==
   dependencies:
     "@types/react" "*"
 
@@ -12688,6 +12711,14 @@ react-colorful@^5.1.2:
   version "5.5.1"
   resolved "https://registry.yarnpkg.com/react-colorful/-/react-colorful-5.5.1.tgz#29d9c4e496f2ca784dd2bb5053a3a4340cfaf784"
   integrity sha512-M1TJH2X3RXEt12sWkpa6hLc/bbYS0H6F4rIqjQZ+RxNBstpY67d9TrFXtqdZwhpmBXcCwEi7stKqFue3ZRkiOg==
+
+react-copy-to-clipboard@^5.1.0:
+  version "5.1.0"
+  resolved "https://registry.yarnpkg.com/react-copy-to-clipboard/-/react-copy-to-clipboard-5.1.0.tgz#09aae5ec4c62750ccb2e6421a58725eabc41255c"
+  integrity sha512-k61RsNgAayIJNoy9yDsYzDe/yAZAzEbEgcz3DZMhF686LEyukcE1hzurxe85JandPUG+yTfGVFzuEw3xt8WP/A==
+  dependencies:
+    copy-to-clipboard "^3.3.1"
+    prop-types "^15.8.1"
 
 react-date-range@^1.1.3:
   version "1.4.0"

@@ -22,6 +22,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { createLink } from '@cognite/cdf-utilities';
 import { getFlow } from '@cognite/cdf-sdk-singleton';
 import { useOnPreviewTabChange } from 'app/hooks/hooks';
+import { DetailsTabWrapper } from 'app/containers/Common/element';
 
 export type FilePreviewTabType =
   | 'preview'
@@ -150,8 +151,10 @@ export const FilePreview = ({
               </PreviewTabWrapper>
             </Tabs.TabPane>,
             <Tabs.TabPane tab={<TabTitle>File details</TabTitle>} key="info">
-              <FileDetails file={fileInfo} />
-              <Metadata metadata={fileInfo.metadata} />
+              <DetailsTabWrapper>
+                <FileDetails file={fileInfo} />
+                <Metadata metadata={fileInfo.metadata} />
+              </DetailsTabWrapper>
             </Tabs.TabPane>,
           ]}
         />

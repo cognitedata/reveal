@@ -136,7 +136,6 @@ const StyledTabs = styled(Tabs)`
 
   .rc-tabs-nav-wrap {
     border-bottom: 1px solid ${Colors['greyscale-grey3'].hex()};
-    margin-bottom: 16px;
   }
   .rc-tabs-content-holder {
     display: flex;

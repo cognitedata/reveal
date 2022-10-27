@@ -17,6 +17,7 @@ import { ResourceDetailsTabs, TabTitle } from 'app/containers/ResourceDetails';
 import { useDateRange } from 'app/context/DateRangeContext';
 import { useOnPreviewTabChange } from 'app/hooks/hooks';
 import styled from 'styled-components';
+import { DetailsTabWrapper } from 'app/containers/Common/element';
 
 export type TimeseriesPreviewTabType =
   | 'details'
@@ -97,8 +98,10 @@ export const TimeseriesPreview = ({
             onTabChange={tabChange}
             additionalTabs={[
               <Tabs.TabPane tab={<TabTitle>Details</TabTitle>} key="details">
-                <TimeseriesDetails timeseries={timeseries} />
-                <Metadata metadata={timeseries.metadata} />
+                <DetailsTabWrapper>
+                  <TimeseriesDetails timeseries={timeseries} />
+                  <Metadata metadata={timeseries.metadata} />
+                </DetailsTabWrapper>
               </Tabs.TabPane>,
             ]}
           />

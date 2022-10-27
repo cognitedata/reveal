@@ -17,6 +17,7 @@ import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 import { ResourceDetailsTabs, TabTitle } from 'app/containers/ResourceDetails';
 import { useCurrentResourceId, useOnPreviewTabChange } from 'app/hooks/hooks';
 import ResourceSelectionContext from 'app/context/ResourceSelectionContext';
+import { DetailsTabWrapper } from 'app/containers/Common/element';
 
 export type AssetPreviewTabType =
   | 'details'
@@ -100,8 +101,10 @@ export const AssetPreview = ({
         onTabChange={onTabChange}
         additionalTabs={[
           <Tabs.TabPane tab={<TabTitle>Details</TabTitle>} key="details">
-            <AssetDetails asset={asset} />
-            <Metadata metadata={asset.metadata} />
+            <DetailsTabWrapper>
+              <AssetDetails asset={asset} />
+              <Metadata metadata={asset.metadata} />
+            </DetailsTabWrapper>
           </Tabs.TabPane>,
           <Tabs.TabPane
             tab={<TabTitle>Hierarchy</TabTitle>}
