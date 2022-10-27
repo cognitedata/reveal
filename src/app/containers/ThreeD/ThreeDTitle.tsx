@@ -10,13 +10,14 @@ import { useInfiniteQuery } from 'react-query';
 import { useSDK } from '@cognite/sdk-provider';
 import { Model3D } from '@cognite/sdk/dist/src';
 import { useNavigate } from 'react-router-dom';
+import { Alert } from 'antd';
 
 const { Item } = Menu;
 
 export default function ThreeDTitle({ id }: { id: number }) {
   const navigate = useNavigate();
   const sdk = useSDK();
-  const { data: apiThreeDModel } = use3DModel(id);
+  const { data: apiThreeDModel, error } = use3DModel(id);
   const { data: revision } = useDefault3DModelRevision(id);
   const { data: revisionIndex } = useRevisionIndex(id, revision?.id!, {
     enabled: !!revision?.id,
@@ -50,6 +51,16 @@ export default function ThreeDTitle({ id }: { id: number }) {
         : undefined,
     [data]
   );
+
+  if (error) {
+    return (
+      <>
+        <PageTitle title={id.toString()} />
+        <SecondaryTopbar title={id.toString()} />
+        <Alert type="error" message="Error" description={`${error}`} />
+      </>
+    );
+  }
 
   return (
     <>

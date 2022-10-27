@@ -61,7 +61,11 @@ export function Reveal({
     []
   );
 
-  const { data: apiThreeDModel } = use3DModel(modelId);
+  const {
+    data: apiThreeDModel,
+    isFetched: isModelFetched,
+    isError: isModelError,
+  } = use3DModel(modelId);
 
   const viewer = useMemo(() => {
     if (!revealContainer) {
@@ -232,7 +236,7 @@ export function Reveal({
     viewer.on('click', onViewerClick);
   }, [onViewerClick, previousClickHandler, viewer]);
 
-  if (!apiThreeDModel || !revisionId) {
+  if (isModelError || (isModelFetched && !apiThreeDModel) || !revisionId) {
     return (
       <Alert
         type="error"
