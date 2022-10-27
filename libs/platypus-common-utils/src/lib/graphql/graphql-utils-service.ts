@@ -16,6 +16,7 @@ import {
   buildSchema,
   GraphQLError,
   DocumentNode,
+  Kind,
 } from 'graphql';
 
 import {
@@ -158,18 +159,21 @@ export class GraphQlUtilsService implements IGraphQlUtilsService {
       this.schemaAst!.typeMap.get(type)
     );
 
-    const mappedTypes: DataModelTypeDefsType[] = types.map((type) => {
-      const typeDef = type as ObjectTypeDefinitionNode;
-      const typeApi = objectTypeApi(typeDef);
-      const mappedType = this.toSolutionDataModelType(typeApi);
-      if (typeDef.fields && typeDef.fields.length) {
-        mappedType.fields = typeDef.fields.map((field) =>
-          this.toSolutionDataModelField(fieldDefinitionApi(field))
-        );
-      }
+    const mappedTypes: DataModelTypeDefsType[] = types
+      // We will only parse Objects types for now
+      .filter((type) => type && type.kind === Kind.OBJECT_TYPE_DEFINITION)
+      .map((type) => {
+        const typeDef = type as ObjectTypeDefinitionNode;
+        const typeApi = objectTypeApi(typeDef);
+        const mappedType = this.toSolutionDataModelType(typeApi);
+        if (typeDef.fields && typeDef.fields.length) {
+          mappedType.fields = typeDef.fields.map((field) =>
+            this.toSolutionDataModelField(fieldDefinitionApi(field))
+          );
+        }
 
-      return mappedType;
-    });
+        return mappedType;
+      });
 
     return {
       types: mappedTypes,

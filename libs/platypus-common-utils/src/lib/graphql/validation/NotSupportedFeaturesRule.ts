@@ -4,7 +4,6 @@ import {
   FieldDefinitionNode,
   GraphQLError,
   InputObjectTypeDefinitionNode,
-  InterfaceTypeDefinitionNode,
   ObjectTypeExtensionNode,
   TypeDefinitionNode,
   UnionTypeDefinitionNode,
@@ -20,7 +19,6 @@ export function NotSupportedFeaturesRule(
   return {
     FieldDefinition: checkFieldDef,
     EnumTypeDefinition: checkForEnums,
-    InterfaceTypeDefinition: checkForInterfaces,
     ObjectTypeExtension: checkForTypeExtension,
     UnionTypeDefinition: checkForUnionTypeDefs,
     InputObjectTypeDefinition: checkForInputTypeDefs,
@@ -39,12 +37,6 @@ export function NotSupportedFeaturesRule(
   function checkForTypeExtension(node: ObjectTypeExtensionNode) {
     context.reportError(
       new GraphQLError(`Type extensions are not supported.`, node)
-    );
-  }
-
-  function checkForInterfaces(node: InterfaceTypeDefinitionNode) {
-    context.reportError(
-      new GraphQLError(`Interfaces are not supported.`, node)
     );
   }
 
