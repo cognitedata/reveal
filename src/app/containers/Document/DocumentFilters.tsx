@@ -11,11 +11,20 @@ import { useDocumentAggregateMimeTypeQuery } from 'app/domain/document/service/q
 import { useDocumentAggregateSourceQuery } from 'app/domain/document/service/queries/aggregates/useDocumentAggregateSourceQuery';
 import { MultiSelectFilter } from 'app/components/Filters/MultiSelectFilter';
 import { useFilterEmptyState } from 'app/store';
+import { useList } from '@cognite/sdk-react-query-hooks';
+import { MetadataFilterV2 } from '@cognite/data-exploration';
+import isEmpty from 'lodash/isEmpty';
 
 export const DocumentFilter = ({ ...rest }) => {
   const [documentFilter, setDocumentFilter] = useDocumentFilters();
   const resetDocumentFilters = useResetDocumentFilters();
   const isFiltersEmpty = useFilterEmptyState('document');
+
+  // TODO: Use the documents API to fetch the metadata keys.
+  const { data: items = [] } = useList('files', {
+    filter: documentFilter,
+    limit: 1000,
+  });
 
   const { data: authorOptions, isError: isAuthorError } =
     useDocumentAggregateAuthorQuery();
@@ -64,6 +73,15 @@ export const DocumentFilter = ({ ...rest }) => {
             });
           }}
           values={documentFilter.source}
+        />
+        <MetadataFilterV2
+          items={items}
+          value={documentFilter.metadata}
+          setValue={newMetadata =>
+            setDocumentFilter({
+              metadata: isEmpty(newMetadata) ? undefined : newMetadata,
+            })
+          }
         />
       </TempMultiSelectFix>
     </BaseFilterCollapse.Panel>

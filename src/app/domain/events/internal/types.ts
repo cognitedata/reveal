@@ -9,6 +9,7 @@ import {
   Timestamp,
 } from '@cognite/sdk';
 
+// TODO: Remove all of these type and get the exported type from data-exploration component library
 export interface InternalEventsData {
   id: number;
   startTime?: Timestamp;

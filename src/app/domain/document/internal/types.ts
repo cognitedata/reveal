@@ -1,5 +1,6 @@
-import { IdEither, DateRange } from '@cognite/sdk';
+import { IdEither, DateRange, Metadata } from '@cognite/sdk';
 
+// TODO: Remove this type and get the exported type from data-exploration component library
 export type InternalDocumentFilter = {
   author?: string[];
   source?: string[];
@@ -8,6 +9,7 @@ export type InternalDocumentFilter = {
   createdTime?: DateRange;
   lastUpdatedTime?: DateRange;
   assetSubtreeIds?: IdEither[];
+  metadata?: Metadata;
 };
 
 export type Order = 'asc' | 'desc';
