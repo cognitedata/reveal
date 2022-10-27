@@ -79,7 +79,7 @@ export const DepthLabel = styled.div`
   cursor: pointer;
 `;
 
-export const DepthColumnContainer = styled.div`
+export const DepthTagsContainer = styled.div`
   width: 110px;
   height: 100%;
   border-right: 1px solid var(--cogs-greyscale-grey3);

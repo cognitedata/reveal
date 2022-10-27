@@ -159,6 +159,7 @@ export const WellboreStickChart: React.FC<WellboreStickChartProps> = ({
                 holeSections={holeSectionsData.data}
                 rkbLevel={rkbLevel}
                 wellWaterDepth={wellWaterDepth}
+                maxDepth={maxDepth}
                 depthMeasurementType={depthMeasurementType}
                 onClickDetailsButton={() => setShowCasingsDetailView(true)}
                 isVisible={columnVisibility[ChartColumn.CASINGS]}

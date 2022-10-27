@@ -1,27 +1,16 @@
-import Tag from 'images/tag.svg';
-import TagLight from 'images/tagLight.svg';
 import styled from 'styled-components/macro';
-import layers from 'utils/zindex';
 
-import { Flex, Menu } from '@cognite/cogs.js';
+import { Menu } from '@cognite/cogs.js';
 
-import { Center, sizes } from 'styles/layout';
-
-import { DEPTH_SCALE_LABEL_HEIGHT } from '../../../constants';
+import { Center } from 'styles/layout';
 
 import {
-  DEPTH_END_MARKER_COLOR,
   DEPTH_INDICATOR_END_HEIGHT,
   DEPTH_INDICATOR_LINE_WIDTH,
-  DEPTH_INDICATOR_MARKER_SHIFT,
   DEPTH_INDICATOR_SPACING,
-  DEPTH_SCALE_LABEL_MARKER_WIDTH,
   DEPTH_SEGMENT_COLOR,
   TOOLTIP_HOVER_AREA,
 } from './constants';
-
-type OverlappingProps = { $overlapping: boolean };
-type DepthMarkerLabelPositionProps = { left: number };
 
 export const DepthIndicatorWrapper = styled.div`
   display: inline-block;
@@ -50,7 +39,7 @@ export const DepthIndicatorLine = styled.div`
 
 export const Description = styled.div`
   position: relative;
-  bottom: -${DEPTH_INDICATOR_LINE_WIDTH};
+  top: -14px;
   text-transform: lowercase;
   padding: 2px;
 
@@ -108,44 +97,4 @@ export const TooptipSection = styled(Menu.Item)`
 
 export const FlipHorizontal = styled.div`
   ${(props: { flip: boolean }) => props.flip && `transform: scaleX(-1)`};
-`;
-
-export const DepthEndMarker = styled.div`
-  height: 1px;
-  border-bottom: 1px dashed ${DEPTH_END_MARKER_COLOR};
-  float: right;
-`;
-
-export const DepthEndMarkerForLine = styled(DepthEndMarker)`
-  ${(props: { width: number }) => `
-    width: calc(${props.width}px + ${DEPTH_INDICATOR_LINE_WIDTH} + ${DEPTH_INDICATOR_MARKER_SHIFT} + ${DEPTH_SCALE_LABEL_MARKER_WIDTH}px);
-    margin-right: -${DEPTH_INDICATOR_MARKER_SHIFT};
-  `}
-`;
-
-export const DepthEndMarkerForTriangle = styled(DepthEndMarker)`
-  ${(props: { width: number }) => `
-    width: calc(${props.width}px + 36px);
-    margin-right: calc(-${DEPTH_INDICATOR_MARKER_SHIFT} - ${DEPTH_INDICATOR_END_HEIGHT});
-  `}
-`;
-
-export const DepthScaleLabelTag = styled(Flex)`
-  background-image: ${(props: OverlappingProps) =>
-    props.$overlapping ? `url(${TagLight})` : `url(${Tag})`};
-  background-repeat: no-repeat, no-repeat;
-  color: var(--cogs-text-icon--strong);
-  height: ${DEPTH_SCALE_LABEL_HEIGHT + 1}px; // +1 for the middle point pixel
-  padding-left: ${sizes.extraSmall};
-  align-items: center;
-  margin-top: -${DEPTH_SCALE_LABEL_HEIGHT / 2 + 1}px; // +1 for the middle point pixel
-  margin-bottom: -${DEPTH_SCALE_LABEL_HEIGHT / 2 + 1}px; // +1 for the middle point pixel
-  margin-left: -${(props: DepthMarkerLabelPositionProps) => `${props.left + 80}px`};
-  font-size: 12px;
-  line-height: ${sizes.normal};
-  padding-top: 2px;
-  &:hover {
-    z-index: ${layers.TOOLTIP_HOVERED};
-    background-image: ${`url(${Tag})`};
-  }
 `;

@@ -1,20 +1,18 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import isUndefined from 'lodash/isUndefined';
-import { Fixed, toFixedNumberFromNumber } from 'utils/number';
 import layers from 'utils/zindex';
 
 import { Tooltip } from 'components/PopperTooltip';
 
 import { CasingAssemblyView } from '../../../../types';
+import { getDepthTagDisplayDepth } from '../../../../utils/getDepthTagDisplayDepth';
+import { CasingDepthTag } from '../DepthTag';
 
 import { DEPTH_INDICATOR_END_HEIGHT, TOOLTIP_PLACEMENT } from './constants';
 import { DepthSegment } from './DepthSegment';
 import {
-  DepthEndMarkerForLine,
-  DepthEndMarkerForTriangle,
   DepthIndicatorWrapper,
-  DepthScaleLabelTag,
   DescriptionFlipped,
   DescriptionUnflipped,
   FlipHorizontal,
@@ -62,10 +60,6 @@ export const DepthIndicator: React.FC<DepthIndicatorProps> = ({
 
   useEffect(() => updateDepthMarkerWidth(), [updateDepthMarkerWidth]);
 
-  const DepthEndMarker = isLiner
-    ? DepthEndMarkerForLine
-    : DepthEndMarkerForTriangle;
-
   return (
     <DepthIndicatorWrapper
       ref={depthIndicatorRef}
@@ -95,15 +89,11 @@ export const DepthIndicator: React.FC<DepthIndicatorProps> = ({
       </Tooltip>
 
       {!isUndefined(depthMarkerWidth) && (
-        <>
-          <DepthScaleLabelTag
-            left={depthMarkerWidth}
-            $overlapping={isOverlapping}
-          >
-            {toFixedNumberFromNumber(depthBase, Fixed.NoDecimals)}
-          </DepthScaleLabelTag>
-          <DepthEndMarker width={depthMarkerWidth} />
-        </>
+        <CasingDepthTag
+          content={getDepthTagDisplayDepth(depthBase)}
+          depthMarkerWidth={depthMarkerWidth}
+          isOverlapping={isOverlapping}
+        />
       )}
 
       <DescriptionWrapper>{outsideDiameterFormatted}</DescriptionWrapper>
