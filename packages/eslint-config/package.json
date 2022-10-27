@@ -1,6 +1,6 @@
 {
   "name": "@cognite/eslint-config",
-  "version": "3.1.0",
+  "version": "3.2.0",
   "description": "Cognite eslint config",
   "main": "index.js",
   "repository": {
@@ -21,9 +21,9 @@
     "update-helpers": "bazel run :generate_package_json_helpers"
   },
   "peerDependencies": {
-    "@cognite/eslint-plugin": "^2.0.0",
+    "@cognite/eslint-plugin": "^2.1.0",
     "babel-eslint": ">=10.0",
-    "eslint": "^6.5",
+    "eslint": "^6.5 || ^7.0 || ^8.0",
     "eslint-config-airbnb": ">=18.0",
     "eslint-config-prettier": ">=6",
     "eslint-plugin-import": ">=2.18",
