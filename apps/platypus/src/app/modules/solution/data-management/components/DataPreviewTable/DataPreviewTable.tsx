@@ -30,7 +30,15 @@ import {
   ValueSetterParams,
 } from 'ag-grid-community';
 import { AgGridReact } from 'ag-grid-react';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import {
+  forwardRef,
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { useDataManagementPageUI } from '../../hooks/useDataManagemenPageUI';
 import { useDraftRows } from '../../hooks/useDraftRows';
 import { useNodesDeleteMutation } from '../../hooks/useNodesDeleteMutation';
@@ -39,6 +47,7 @@ import {
   buildGridConfig,
   getInitialGridConfig,
 } from '../../services/grid-config-builder';
+import { CreateTransformationModal } from '../CreateTransformationModal';
 import { DeleteRowsModal } from '../DeleteRowsModal/DeleteRowsModal';
 import { PreviewPageHeader } from '../PreviewPageHeader/PreviewPageHeader';
 import {
@@ -58,16 +67,21 @@ export interface DataPreviewTableProps {
   dataModelExternalId: string;
   version: string;
 }
-export const DataPreviewTable = ({
-  dataModelType,
-  dataModelTypeDefs,
-  dataModelExternalId,
-  version,
-}: DataPreviewTableProps) => {
+
+export type DataPreviewTableRef = {
+  purgeInfiniteCache: () => void;
+};
+
+export const DataPreviewTable = forwardRef<
+  DataPreviewTableRef,
+  DataPreviewTableProps
+>(({ dataModelType, dataModelTypeDefs, dataModelExternalId, version }, ref) => {
   const instanceIdCol = 'externalId';
 
   const { t } = useTranslation('DataPreviewTable');
   const [isGridInit, setIsGridInit] = useState(false);
+  const [isTransformationModalVisible, setIsTransformationModalVisible] =
+    useState(false);
   // This property is used to trigger a rerender when a selection occurs in the grid
   const [, setSelectedPublishedRowsCount] = useState(0);
   const gridRef = useRef<AgGridReact>(null);
@@ -180,6 +194,22 @@ export const DataPreviewTable = ({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isNoRowsOverlayVisible]);
+
+  useImperativeHandle(
+    ref,
+    () => {
+      return {
+        purgeInfiniteCache: () => {
+          gridRef.current?.api.purgeInfiniteCache();
+          console.log(
+            'gridRef.current?.api.purgeInfiniteCache',
+            gridRef.current?.api.purgeInfiniteCache
+          );
+        },
+      };
+    },
+    [gridRef]
+  );
 
   const onGridReady = useCallback(
     (grid: GridReadyEvent) => {
@@ -433,7 +463,10 @@ export const DataPreviewTable = ({
           );
         }
 
-        Notification({ type: 'success', message: successNotificationMessage });
+        Notification({
+          type: 'success',
+          message: successNotificationMessage,
+        });
         setIsDeleteRowsModalVisible(false);
       },
     });
@@ -473,12 +506,21 @@ export const DataPreviewTable = ({
           onDelete={handleDeleteRows}
         />
       )}
+      {isTransformationModalVisible && (
+        <CreateTransformationModal
+          dataModelExternalId={dataModelExternalId}
+          dataModelType={dataModelType}
+          onRequestClose={() => setIsTransformationModalVisible(false)}
+          version={version}
+        />
+      )}
 
       <PreviewPageHeader
         title={dataModelType.name}
         isDeleteButtonDisabled={
           totalSelectedRowCount === 0 || deleteRowsMutation.isLoading
         }
+        onAddTransformationClick={() => setIsTransformationModalVisible(true)}
         onCreateClick={createNewDraftRow}
         onDeleteClick={() => {
           setIsDeleteRowsModalVisible(true);
@@ -542,6 +584,9 @@ export const DataPreviewTable = ({
                 noRowsOverlayComponent: () => (
                   <NoRowsOverlay
                     dataModelExternalId={dataModelExternalId}
+                    onLoadDataClick={() =>
+                      setIsTransformationModalVisible(true)
+                    }
                     typeName={dataModelType.name}
                     version={version}
                   />
@@ -571,4 +616,4 @@ export const DataPreviewTable = ({
       </StyledCollapsablePanelContainer>
     </ErrorBoundary>
   );
-};
+});

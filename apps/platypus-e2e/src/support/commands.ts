@@ -69,10 +69,9 @@ Cypress.Commands.add('clickQueryExplorerExecuteQuery', () => {
 });
 
 Cypress.Commands.add('setQueryExplorerQuery', (query: string) => {
-  cy.get('.CodeMirror-lines').first().click({ force: true });
-
-  cy.get('.CodeMirror').then((editor: any) => {
-    editor[0].CodeMirror.setValue(query);
+  cy.get('.graphiql-query-editor textarea').type(query, {
+    force: true,
+    parseSpecialCharSequences: false,
   });
 });
 

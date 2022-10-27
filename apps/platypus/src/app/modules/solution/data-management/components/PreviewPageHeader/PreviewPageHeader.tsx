@@ -2,14 +2,15 @@ import { PageToolbar } from '@platypus-app/components/PageToolbar/PageToolbar';
 import { Tooltip, Button, Flex, Label } from '@cognite/cogs.js';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import { PageHeaderDivider } from '../DataPreviewTable/elements';
-import { TransformationDropdown } from '@platypus-app/modules/solution/data-management/components/TransformationDropdown/TransformationDropdown';
+import { TransformationDropdown } from '@platypus-app/modules/solution/data-management/components/TransformationDropdown';
 import useTransformations from '@platypus-app/modules/solution/data-management/hooks/useTransformations';
-import { BulkPopulationButton } from '@platypus-app/modules/solution/data-management/components/BulkPopulationButton/BulkPopulationButton';
+import { BulkPopulationButton } from '@platypus-app/modules/solution/data-management/components/BulkPopulationButton';
 
 type Props = {
   dataModelExternalId: string;
   draftRowsCount: number;
   isDeleteButtonDisabled: boolean;
+  onAddTransformationClick: () => void;
   onCreateClick: () => void;
   onDeleteClick: () => void;
   onDraftRowsCountClick: () => void;
@@ -26,6 +27,7 @@ export function PreviewPageHeader({
   dataModelExternalId,
   draftRowsCount,
   isDeleteButtonDisabled,
+  onAddTransformationClick,
   onCreateClick,
   onDeleteClick,
   onDraftRowsCountClick,
@@ -129,12 +131,15 @@ export function PreviewPageHeader({
           <PageHeaderDivider />
           {transformations && transformations.length > 0 ? (
             <TransformationDropdown
+              onAddClick={onAddTransformationClick}
               dataModelExternalId={dataModelExternalId}
               typeName={typeName}
               version={version}
             />
           ) : (
-            <BulkPopulationButton />
+            <BulkPopulationButton onClick={onAddTransformationClick}>
+              {t('load-data-button', 'Bulk population')}
+            </BulkPopulationButton>
           )}
         </Flex>
       )}

@@ -32,27 +32,3 @@ export const groupTransformationsByTypes = (
 
   return groups;
 };
-
-/*
-Autogenerate a transformation externalId and name given some properties
-*/
-export const suggestTransformationProperties = ({
-  dataModelExternalId,
-  numExistingTransformations,
-  typeName,
-  version,
-}: {
-  dataModelExternalId: string;
-  numExistingTransformations: number;
-  typeName: string;
-  version: string;
-}) => {
-  // 1-based index appended to transformation name and externalId for an attempt at
-  // uniqueness
-  const transformationIndex = numExistingTransformations + 1;
-
-  return {
-    externalId: `t_${dataModelExternalId}_${typeName}_${version}_${transformationIndex}`,
-    name: `${typeName}_${version} ${transformationIndex}`,
-  };
-};

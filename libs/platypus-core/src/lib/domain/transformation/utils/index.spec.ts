@@ -1,7 +1,4 @@
-import {
-  groupTransformationsByTypes,
-  suggestTransformationProperties,
-} from '.';
+import { groupTransformationsByTypes } from '.';
 import { DataModelTransformation } from '../types';
 
 describe('groupTransformationsByTypes', () => {
@@ -86,22 +83,6 @@ describe('groupTransformationsByTypes', () => {
           },
         ],
       },
-    });
-  });
-});
-
-describe('suggestTransformationProperties', () => {
-  it('Returns correct values', () => {
-    expect(
-      suggestTransformationProperties({
-        dataModelExternalId: 'imdb',
-        numExistingTransformations: 3,
-        typeName: 'Movie',
-        version: '2',
-      })
-    ).toEqual({
-      externalId: 't_imdb_Movie_2_4',
-      name: 'Movie_2 4',
     });
   });
 });

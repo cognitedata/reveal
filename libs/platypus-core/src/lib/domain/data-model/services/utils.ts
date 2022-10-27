@@ -1,4 +1,4 @@
-import { DataModelTypeDefsType, DataModelTypeDefsField } from '../types';
+import { DataModelTypeDefsType } from '../types';
 import { KeyValueMap } from '../../../boundaries/types';
 import {
   mixerApiBuiltInTypes,
@@ -17,11 +17,11 @@ export const getTypesMap = () => {
 };
 
 export const getOneToManyModelName = (
-  referencingType: DataModelTypeDefsType,
-  referencingField: DataModelTypeDefsField,
+  referencingTypeName: string,
+  referencingFieldName: string,
   modelVersion: string
 ) => {
-  return `${referencingType.name}_${referencingField.name}_${modelVersion}`;
+  return `${referencingTypeName}_${referencingFieldName}_${modelVersion}`;
 };
 
 export const isInlineType = (typeDef: DataModelTypeDefsType): boolean => {

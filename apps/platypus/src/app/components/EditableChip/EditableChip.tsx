@@ -82,7 +82,7 @@ export const EditableChip = ({
         />
       ) : (
         <Label hasValue={!!value} isLocked={!!isLocked}>
-          {value || placeholder}
+          <ValueWrapper>{value || placeholder}</ValueWrapper>
           {isLocked && <StyledIcon data-testid="icon-lock" type="Lock" />}
           {!isLocked && value && (
             <StyledButton
@@ -96,6 +96,12 @@ export const EditableChip = ({
     </div>
   );
 };
+
+const ValueWrapper = styled.span`
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
 
 const Label = styled.div<{ hasValue: boolean; isLocked: boolean }>`
   align-items: center;
@@ -111,6 +117,7 @@ const Label = styled.div<{ hasValue: boolean; isLocked: boolean }>`
   display: inline-flex;
   height: 36px;
   margin: 0;
+  max-width: 100%;
   opacity: ${(props) => (props.hasValue ? 1 : 0.5)};
   padding-left: 12px;
   padding-right: ${(props) =>
@@ -119,6 +126,7 @@ const Label = styled.div<{ hasValue: boolean; isLocked: boolean }>`
 
 const StyledIcon = styled(Icon)`
   color: var(--cogs-text-icon--muted);
+  flex-shrink: 0;
   margin: 0 0 0 16px;
   opacity: 0.5;
 `;
@@ -128,12 +136,14 @@ const StyledInput = styled(Input)`
 `;
 
 const StyledButton = styled(Button)`
-  background-color: transparent;
-  border-radius: 0 6px 6px 0;
-  height: 100%;
-  margin: 0 0 0 4px;
+  && {
+    background-color: transparent;
+    border-radius: 0 6px 6px 0;
+    height: 100%;
+    margin: 0 0 0 4px;
 
-  &:hover {
-    background-color: var(--cogs-surface--interactive--hover);
+    &:hover {
+      background-color: var(--cogs-surface--interactive--hover);
+    }
   }
 `;

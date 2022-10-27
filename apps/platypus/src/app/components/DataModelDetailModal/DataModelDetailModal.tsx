@@ -7,7 +7,7 @@ import {
   Textarea,
   Tooltip,
 } from '@cognite/cogs.js';
-import { ModalDialog } from '@platypus-app/components/ModalDialog/ModalDialog';
+import { ModalDialog } from '@platypus-app/components/ModalDialog';
 import { useState } from 'react';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import {

@@ -5,7 +5,6 @@ import { PreviewPageHeader } from './PreviewPageHeader';
 import { DataModelTransformation } from '@platypus/platypus-core';
 import noop from 'lodash/noop';
 import useTransformations from '@platypus-app/modules/solution/data-management/hooks/useTransformations';
-import { UseQueryResult } from '@tanstack/react-query';
 
 jest.mock(
   '@platypus-app/modules/solution/data-management/hooks/useTransformations'
@@ -36,14 +35,14 @@ const mockedUseTransformations =
   useTransformations as unknown as jest.MockedFn<UseQuery>;
 
 jest.mock(
-  '@platypus-app/modules/solution/data-management/components/TransformationDropdown/TransformationDropdown',
+  '@platypus-app/modules/solution/data-management/components/TransformationDropdown',
   () => ({
     TransformationDropdown: () => null,
   })
 );
 
 jest.mock(
-  '@platypus-app/modules/solution/data-management/components/BulkPopulationButton/BulkPopulationButton',
+  '@platypus-app/modules/solution/data-management/components/BulkPopulationButton',
   () => ({
     BulkPopulationButton: () => null,
   })
@@ -74,6 +73,7 @@ describe('PreviewPageHeader', () => {
         dataModelExternalId="imdb"
         draftRowsCount={0}
         isDeleteButtonDisabled={false}
+        onAddTransformationClick={noop}
         onCreateClick={noop}
         onDeleteClick={noop}
         onDraftRowsCountClick={noop}
@@ -101,6 +101,7 @@ describe('PreviewPageHeader', () => {
         dataModelExternalId="imdb"
         draftRowsCount={0}
         isDeleteButtonDisabled={false}
+        onAddTransformationClick={noop}
         onCreateClick={noop}
         onDeleteClick={noop}
         onDraftRowsCountClick={noop}
@@ -127,6 +128,7 @@ describe('PreviewPageHeader', () => {
         dataModelExternalId="imdb"
         draftRowsCount={1}
         isDeleteButtonDisabled={false}
+        onAddTransformationClick={noop}
         onCreateClick={noop}
         onDeleteClick={noop}
         onDraftRowsCountClick={noop}
@@ -154,6 +156,7 @@ describe('PreviewPageHeader', () => {
         dataModelExternalId="imdb"
         draftRowsCount={0}
         isDeleteButtonDisabled={false}
+        onAddTransformationClick={noop}
         onCreateClick={noop}
         onDeleteClick={noop}
         onDraftRowsCountClick={noop}

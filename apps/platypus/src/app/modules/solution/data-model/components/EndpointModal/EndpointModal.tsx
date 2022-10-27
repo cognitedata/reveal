@@ -1,5 +1,5 @@
 import { Button, Flex } from '@cognite/cogs.js';
-import { ModalDialog } from '@platypus-app/components/ModalDialog/ModalDialog';
+import { ModalDialog } from '@platypus-app/components/ModalDialog';
 import { useTranslation } from '@platypus-app/hooks/useTranslation';
 import { Notification } from '@platypus-app/components/Notification/Notification';
 import { StyledEndpoint } from './elements';

@@ -1,5 +1,5 @@
 import styled from 'styled-components/macro';
-import { EditableChip } from '@platypus-app/components/EditableChip/EditableChip';
+import { EditableChip } from '@platypus-app/components/EditableChip';
 import { Body, Icon } from '@cognite/cogs.js';
 
 export const FormLabel = styled(Body)`
