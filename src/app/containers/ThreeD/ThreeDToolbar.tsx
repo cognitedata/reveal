@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button, Tooltip } from '@cognite/cogs.js';
 import {
@@ -83,8 +83,12 @@ export const FocusAssetButton = ({
 
 export const PointToPointMeasurementButton = ({
   viewer,
+  nodesClickable,
+  setNodesClickable,
 }: {
   viewer: Cognite3DViewer;
+  nodesClickable: boolean;
+  setNodesClickable: (clickable: boolean) => void;
 }) => {
   const measurementTool = useMemo(() => {
     return new MeasurementTool(viewer);
@@ -94,8 +98,6 @@ export const PointToPointMeasurementButton = ({
     return viewer.cameraManager as DefaultCameraManager;
   }, [viewer]);
 
-  const [isInMeasurementMode, setIsInMeasurementMode] = useState(false);
-
   const enterMeasurementMode = () => {
     cameraManager.setCameraControlsOptions({
       ...cameraManager.getCameraControlsOptions(),
@@ -103,7 +105,7 @@ export const PointToPointMeasurementButton = ({
     });
     viewer.domElement.style.cursor = 'crosshair';
     measurementTool.enterMeasurementMode();
-    setIsInMeasurementMode(true);
+    setNodesClickable(false);
   };
 
   const exitMeasurementMode = () => {
@@ -113,11 +115,11 @@ export const PointToPointMeasurementButton = ({
     });
     viewer.domElement.style.cursor = 'default';
     measurementTool.exitMeasurementMode();
-    setIsInMeasurementMode(false);
+    setNodesClickable(true);
   };
 
   const handleClick = () => {
-    if (isInMeasurementMode) {
+    if (!nodesClickable) {
       exitMeasurementMode();
     } else {
       enterMeasurementMode();
@@ -129,7 +131,7 @@ export const PointToPointMeasurementButton = ({
       <Button
         icon="Ruler"
         onClick={handleClick}
-        toggled={isInMeasurementMode}
+        toggled={!nodesClickable}
         type="ghost"
       />
     </Tooltip>

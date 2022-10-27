@@ -25,6 +25,7 @@ export const ThreeDView = ({ modelId }: { modelId: number }) => {
   }, [modelId]);
 
   const [selectedAssetId, setSelectedAssetId] = useSearchParamNumber('assetId');
+  const [nodesClickable, setNodesClickable] = useState<boolean>(true);
   const { data: revision } = useDefault3DModelRevision(modelId);
   const [assetPreviewSidebarVisible, setAssetPreviewSidebarVisible] = useState(
     !!selectedAssetId
@@ -42,6 +43,7 @@ export const ThreeDView = ({ modelId }: { modelId: number }) => {
               revisionId={revision.id}
               focusAssetId={selectedAssetId}
               setSelectedAssetId={setSelectedAssetId}
+              nodesClickable={nodesClickable}
             >
               {({ pointCloudModel, threeDModel, viewer, boundingBox }) => {
                 const model = pointCloudModel || threeDModel;
@@ -81,7 +83,11 @@ export const ThreeDView = ({ modelId }: { modelId: number }) => {
                         {pointCloudModel && (
                           <PointSizeSlider model={pointCloudModel} />
                         )}
-                        <PointToPointMeasurementButton viewer={viewer} />
+                        <PointToPointMeasurementButton
+                          viewer={viewer}
+                          nodesClickable={nodesClickable}
+                          setNodesClickable={setNodesClickable}
+                        />
                         <HelpButton />
                       </StyledToolBar>
                     )}

@@ -36,6 +36,7 @@ type Props = {
   revisionId: number;
   focusAssetId?: number | null;
   setSelectedAssetId?: (assetId: number | null) => void;
+  nodesClickable: boolean;
   children?: (opts: ChildProps) => JSX.Element;
 };
 
@@ -44,6 +45,7 @@ export function Reveal({
   modelId,
   revisionId,
   setSelectedAssetId,
+  nodesClickable,
   children,
 }: Props) {
   const sdk = useSDK();
@@ -204,7 +206,7 @@ export function Reveal({
 
   const onViewerClick: PointerEventDelegate = useCallback(
     async ({ offsetX, offsetY }) => {
-      if (!threeDModel || !viewer || !setSelectedAssetId) {
+      if (!threeDModel || !viewer || !setSelectedAssetId || !nodesClickable) {
         return;
       }
 
@@ -222,7 +224,7 @@ export function Reveal({
         setSelectedAssetId(null);
       }
     },
-    [setSelectedAssetId, threeDModel, viewer]
+    [nodesClickable, setSelectedAssetId, threeDModel, viewer]
   );
   const previousClickHandler = usePrevious(onViewerClick);
 
