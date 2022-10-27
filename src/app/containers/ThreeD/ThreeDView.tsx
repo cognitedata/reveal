@@ -93,7 +93,7 @@ export const ThreeDView = ({ modelId }: { modelId: number }) => {
           {!!assetPreviewSidebarVisible && selectedAssetId && (
             <AssetPreviewSidebar
               assetId={selectedAssetId}
-              onClose={() => setSelectedAssetId(null)}
+              setVisible={setAssetPreviewSidebarVisible}
             />
           )}
         </StyledSplitter>
