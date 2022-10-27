@@ -42,7 +42,7 @@ export const DetailsItem = ({
           ))}
         {!Boolean(value) && <MutedBody level={2}>No description</MutedBody>}
       </DetailsItemContainer>
-      <ButtonWrapper visibility={copyable && Boolean(value)}>
+      <ButtonWrapper visible={copyable && Boolean(value)}>
         <Button
           type="ghost"
           icon={hasCopied ? 'Checkmark' : 'Copy'}
@@ -186,7 +186,7 @@ const MutedBody = styled(Body)`
   color: var(--cogs-text-icon--muted);
 `;
 
-const ButtonWrapper = styled.div<{ visibility?: boolean }>`
+const ButtonWrapper = styled.div<{ visible?: boolean }>`
   padding-bottom: 10px;
-  visibility: ${({ visibility }) => (visibility ? 'unset' : 'hidden')};
+  visibility: ${({ visible }) => (visible ? 'unset' : 'hidden')};
 `;
