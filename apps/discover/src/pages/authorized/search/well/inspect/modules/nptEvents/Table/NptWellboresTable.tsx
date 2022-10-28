@@ -1,5 +1,5 @@
 import { NptView } from 'domain/wells/npt/internal/types';
-import { groupByWellbore } from 'domain/wells/wellbore/internal/transformers/groupByWellbore';
+import { groupByWellboreName } from 'domain/wells/wellbore/internal/transformers/groupByWellboreName';
 
 import React, { useState } from 'react';
 import { Row } from 'react-table';
@@ -37,7 +37,7 @@ export const NptWellboresTable: React.FC<NptWellboresTableProps> = ({
   const nptWellboresTableColumns = useNptWellboresTableColumns();
 
   useDeepEffect(() => {
-    const groupedData = groupByWellbore(data);
+    const groupedData = groupByWellboreName(data);
     const wellbores = Object.keys(groupedData).map((wellboreName) => ({
       id: wellboreName,
       wellboreName,
