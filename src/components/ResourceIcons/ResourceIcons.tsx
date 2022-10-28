@@ -1,51 +1,29 @@
 import React from 'react';
-import { Icon } from '@cognite/cogs.js';
-import styled from 'styled-components';
+import { Label } from '@cognite/cogs.js';
 import { ResourceType } from 'types';
 
-const IconBackground = styled.div`
-  padding: 8px;
-  background-color: #edf0ff;
-  color: #4255bb;
-  border-radius: 4px;
-  height: 32px;
-`;
-
 const AssetIcon = ({ style }: { style?: React.CSSProperties }) => (
-  <IconBackground style={style}>
-    <Icon type="Assets" style={{ marginRight: 0 }} />
-  </IconBackground>
+  <Label icon="Assets" style={style} />
 );
 const TimeseriesIcon = ({ style }: { style?: React.CSSProperties }) => (
-  <IconBackground style={style}>
-    <Icon type="Timeseries" style={{ marginRight: 0 }} />
-  </IconBackground>
+  <Label icon="Timeseries" style={style} />
 );
 const FileIcon = ({ style }: { style?: React.CSSProperties }) => (
-  <IconBackground style={style}>
-    <Icon type="Document" style={{ marginRight: 0 }} />
-  </IconBackground>
+  <Label icon="Document" style={style} />
 );
 const DocumentIcon = ({ style }: { style?: React.CSSProperties }) => (
-  <IconBackground style={style}>
-    <Icon type="Document" style={{ marginRight: 0 }} />
-  </IconBackground>
+  <Label icon="Document" style={style} />
 );
 const SequenceIcon = ({ style }: { style?: React.CSSProperties }) => (
-  <IconBackground style={style}>
-    <Icon type="Sequences" style={{ marginRight: 0 }} />
-  </IconBackground>
+  <Label icon="Sequences" style={style} />
 );
 const EventIcon = ({ style }: { style?: React.CSSProperties }) => (
-  <IconBackground style={style}>
-    <Icon type="Events" style={{ marginRight: 0 }} />
-  </IconBackground>
+  <Label icon="Events" style={style} />
 );
 const ThreeDIcon = ({ style }: { style?: React.CSSProperties }) => (
-  <IconBackground style={style}>
-    <Icon type="Cube" style={{ marginRight: 0 }} />
-  </IconBackground>
+  <Label icon="Cube" style={style} />
 );
+
 export const ResourceIcons = ({
   type,
   style,
