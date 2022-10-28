@@ -2,6 +2,8 @@ import { AllCursorsProps } from 'domain/wells/types';
 
 import { useMemo } from 'react';
 
+import { EMPTY_ARRAY } from 'constants/empty';
+
 import { MeasurementTypeFilter } from '../../service/types';
 import { useDepthMeasurementDataQuery } from '../queries/useDepthMeasurementDataQuery';
 import { useDepthMeasurementsQuery } from '../queries/useDepthMeasurementsQuery';
@@ -24,22 +26,13 @@ export const useDepthMeasurementsWithData = ({
   const {
     data: depthMeasurementData = [],
     isInitialLoading: isDepthMeasurementDataLoading,
-  } = useDepthMeasurementDataQuery({
-    sequenceExternalIds,
-    /**
-     * There is a doubt if we should or shouldn't send the measurementTypes for this request body.
-     * Commenting this out as a quick fix.
-     * This should be confirmed and fixed as soon as possible.
-     * TODO(PP-3071)
-     */
-    // measurementTypes,
-  });
+  } = useDepthMeasurementDataQuery({ sequenceExternalIds, measurementTypes });
 
   const isLoading = isDepthMeasurementsLoading || isDepthMeasurementDataLoading;
 
   const depthMeasurementWithData = useMemo(() => {
     if (isLoading) {
-      return [];
+      return EMPTY_ARRAY;
     }
 
     return mergeDepthMeasurementsAndData(
