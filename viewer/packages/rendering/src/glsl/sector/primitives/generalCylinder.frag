@@ -59,7 +59,7 @@ void main()
     float b = dot(E.xy, D.xy);
     float c = dot(E.xy, E.xy) - v_radius*v_radius;
 
-    // Calculate a dicriminant of the above quadratic equation
+    // Calculate a discriminant of the above quadratic equation
     float d = b*b - a*c;
 
     // d < 0.0 means the ray hits outside an infinitely long cone
