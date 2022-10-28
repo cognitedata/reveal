@@ -108,7 +108,6 @@ void main()
         normalFactor = -1.0;
     }
 
-    //TODO - christjt 2022/10/10: This seems wrong when hitting inner surface
     vec3 p_local = p - v_centerB;
     vec3 normal = normalize(p_local - v_modelBasis[2] * dot(p_local, v_modelBasis[2])) * normalFactor;
 
