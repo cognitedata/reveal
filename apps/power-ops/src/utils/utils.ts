@@ -66,9 +66,9 @@ export const interpolateProduction = (
   shopPrice: number
 ) => {
   const lowerBoundValue =
-    (matrix.dataRows[hour][lowerBoundIndex] as number) || 0;
+    (matrix.dataRows[hour]?.[lowerBoundIndex] as number) || 0;
   const upperBoundValue =
-    (matrix.dataRows[hour][upperBoundIndex] as number) || 0;
+    (matrix.dataRows[hour]?.[upperBoundIndex] as number) || 0;
   const lowerBoundPrice = (matrix.headerRow[lowerBoundIndex] as number) || 0;
   const upperBoundPrice = (matrix.headerRow[upperBoundIndex] as number) || 0;
 
