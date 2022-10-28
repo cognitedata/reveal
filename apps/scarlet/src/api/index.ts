@@ -3,8 +3,6 @@ export * from './getEquipmentAnnotations';
 export * from './getEquipmentConfig';
 export * from './getEquipmentDocuments';
 export * from './getEquipmentList';
-export * from './getEquipmentMAL';
-export * from './getEquipmentMS';
 export * from './getEquipmentPCMS';
 export * from './getEquipmentsPerUnit';
 export * from './getEquipmentState';

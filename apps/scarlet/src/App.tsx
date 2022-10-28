@@ -4,7 +4,6 @@ import sidecar from 'utils/sidecar';
 import { Container } from '@cognite/react-container';
 import NotFoundPage from 'pages/Error404';
 import { Home } from 'pages/Home';
-import { Support } from 'pages/Support';
 import { Equipment } from 'pages/Equipment';
 import { MenuBar, PAGES } from 'pages/Menubar';
 import { AppProvider } from 'contexts';
@@ -18,7 +17,6 @@ const App = () => (
         <AppProvider>
           <Switch>
             <Route path={PAGES.EQUIPMENT} render={() => <Equipment />} />
-            <Route path={PAGES.SUPPORT} render={() => <Support />} />
             <Route path={PAGES.UNIT} render={() => <Home />} />
             <Route path={PAGES.FACILITY} render={() => <Home />} />
             <Route path={PAGES.HOME} render={() => <Home />} />

@@ -14,8 +14,6 @@ import {
   DetectionState,
   ScannerDetection,
   EquipmentComponent,
-  // MALData,
-  // MSData,
   DataElementType,
   EquipmentComponentType,
 } from 'types';
@@ -32,16 +30,13 @@ export const transformEquipmentData = ({
   scannerDetections = [],
   equipmentState,
   pcms,
-  // mal,
-  // ms,
+
   type,
 }: {
   config?: EquipmentConfig;
   scannerDetections?: ScannerDetection[];
   equipmentState?: EquipmentData;
   pcms?: PCMSData;
-  // mal?: MALData;
-  // ms?: MSData;
   type?: EquipmentType;
 }): EquipmentData | undefined => {
   if (!type || !config || !config.equipmentTypes[type]) return undefined;
@@ -52,8 +47,6 @@ export const transformEquipmentData = ({
     scannerDetections,
     equipmentState?.equipmentElements
     // pcms?.equipment
-    // mal,
-    // ms
   );
 
   const equipmentComponents = getEquipmentComponents(
@@ -62,8 +55,6 @@ export const transformEquipmentData = ({
     scannerDetections,
     equipmentState?.components,
     pcms?.components
-    // mal,
-    // ms
   );
 
   const created = equipmentState?.created || Date.now();
@@ -82,8 +73,6 @@ const getEquipmentElements = (
   scannerDetections: ScannerDetection[] = [],
   equipmentStateElements: DataElement[] = []
   // pcms?: Asset
-  // mal?: MALData,
-  // ms?: MSData
 ): DataElement[] => {
   const equipmentTypeData = config.equipmentTypes[type];
 
@@ -120,15 +109,11 @@ const getEquipmentElements = (
       //   pcms,
       //   dataElementConfig.type
       // );
-      // const malDetection = getMALDetection(key, mal, dataElementConfig.type);
-      // const msDetection = getMSDetection(key, ms, dataElementConfig.type);
 
       const detections = mergeDetections(
         equipmentStateDetections,
         itemScannerDetections
         // pcmsDetection
-        // malDetection,
-        // msDetection
       );
 
       return {
@@ -161,42 +146,10 @@ const getEquipmentElements = (
 //   } as Detection;
 // };
 
-// const getMALDetection = (
-//   key: string,
-//   mal?: MALData,
-//   dataElementType?: DataElementType
-// ) => {
-//   if (!mal || mal[key] === undefined || mal[key] === '') return undefined;
-
-//   return {
-//     id: uuid(),
-//     type: DetectionType.MAL,
-//     value: transformDetectionValue(mal[key], dataElementType),
-//     state: DetectionState.APPROVED,
-//   } as Detection;
-// };
-
-// const getMSDetection = (
-//   key: string,
-//   ms?: MSData,
-//   dataElementType?: DataElementType
-// ) => {
-//   if (!ms || ms[key] === undefined || ms[key] === '') return undefined;
-
-//   return {
-//     id: uuid(),
-//     type: DetectionType.MS2,
-//     value: transformDetectionValue(ms[key], dataElementType),
-//     state: DetectionState.APPROVED,
-//   } as Detection;
-// };
-
 const mergeDetections = (
   equipmentStateDetections: Detection[] = [],
   scannerDetections: ScannerDetection[] = []
   // pcmsDetection?: Detection
-  // malDetection?: Detection,
-  // msDetection?: Detection
 ) => {
   const detections = [...equipmentStateDetections];
 
@@ -220,28 +173,6 @@ const mergeDetections = (
     detections.push(...scannerDetections);
   }
 
-  // if (malDetection) {
-  //   const existingMALDetection = detections.find(
-  //     (detection) => detection.type === DetectionType.MAL
-  //   );
-  //   if (!existingMALDetection) {
-  //     detections.push(malDetection);
-  //   } else if (!existingMALDetection.isPrimary) {
-  //     existingMALDetection.value = malDetection.value;
-  //   }
-  // }
-
-  // if (msDetection) {
-  //   const existingMSDetection = detections.find((detection) =>
-  //     [DetectionType.MS2, DetectionType.MS3].includes(detection.type)
-  //   );
-  //   if (!existingMSDetection) {
-  //     detections.push(msDetection);
-  //   } else if (!existingMSDetection.isPrimary) {
-  //     existingMSDetection.value = msDetection.value;
-  //   }
-  // }
-
   return detections;
 };
 
@@ -251,8 +182,6 @@ const getEquipmentComponents = (
   scannerDetections: ScannerDetection[] = [],
   equipmentStateComponents?: EquipmentComponent[],
   pcmsComponents?: Asset[]
-  // mal?: MALData,
-  // ms?: MSData
 ) => {
   let components: EquipmentComponent[] = [];
   if (equipmentStateComponents) {
@@ -272,8 +201,6 @@ const getEquipmentComponents = (
             config,
             component
             // pcmsComponent
-            // mal,
-            // ms
           ),
         };
       }
@@ -302,7 +229,6 @@ const getEquipmentComponents = (
           config,
           component
           // pcmsComponent
-          // ms
         );
 
         return component;
@@ -369,8 +295,6 @@ const getComponentElements = (
   config: EquipmentConfig,
   component: EquipmentComponent
   // pcmsComponent?: Asset
-  // mal?: MALData,
-  // ms?: MSData
 ): DataElement[] => {
   const configComponentTypes = Object.values(
     config.equipmentTypes[equipmentType].componentTypes
@@ -431,40 +355,6 @@ const getComponentElements = (
   //     existingPCMSDetection.value = pcmsDetection.value;
   //   }
   // }
-
-  // const malDetection = getMALDetection(
-  //   dataElement.key,
-  //   mal,
-  //   dataElement.config.type
-  // );
-
-  // if (malDetection) {
-  //   const existingMALDetection = dataElement.detections.find(
-  //     (detection) => detection.type === DetectionType.MAL
-  //   );
-  //   if (!existingMALDetection) {
-  //     dataElement.detections.push(malDetection);
-  //   } else if (!existingMALDetection.isPrimary) {
-  //     existingMALDetection.value = malDetection.value;
-  //   }
-  // }
-
-  // const msDetection = getMSDetection(
-  //   dataElement.key,
-  //   ms,
-  //   dataElement.config.type
-  // );
-  // if (msDetection) {
-  //   const existingMSDetection = dataElement.detections.find((detection) =>
-  //     [DetectionType.MS2, DetectionType.MS3].includes(detection.type)
-  //   );
-  //   if (!existingMSDetection) {
-  //     dataElement.detections.push(msDetection);
-  //   } else if (!existingMSDetection.isPrimary) {
-  //     existingMSDetection.value = msDetection.value;
-  //   }
-  // }
-  // });
 
   return componentElements;
 };

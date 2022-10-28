@@ -4,7 +4,6 @@ import { TopBar } from '@cognite/cogs.js';
 
 export enum PAGES {
   HOME = '/',
-  SUPPORT = '/support',
   FACILITY = '/:facility',
   UNIT = '/:facility/:unitId',
   EQUIPMENT = '/:facility/:unitId/:equipmentId',

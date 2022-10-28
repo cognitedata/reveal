@@ -146,14 +146,7 @@ export const removeDetection = (
     (item) => item.id === detection.id
   );
 
-  if (
-    [
-      DetectionType.SCANNER,
-      DetectionType.MAL,
-      DetectionType.MS2,
-      DetectionType.MS3,
-    ].includes(detection.type)
-  ) {
+  if ([DetectionType.SCANNER].includes(detection.type)) {
     dataElement.detections![detectionIndex!] = {
       ...detection,
       state: DetectionState.OMITTED,

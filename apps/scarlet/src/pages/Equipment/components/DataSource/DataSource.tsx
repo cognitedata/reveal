@@ -34,9 +34,6 @@ export type DataSourceFormValues = {
 
 const readOnlyDetectionTypes = [
   DetectionType.PCMS,
-  DetectionType.MAL,
-  DetectionType.MS2,
-  DetectionType.MS3,
   DetectionType.LINKED,
   DetectionType.CALCULATED,
 ];

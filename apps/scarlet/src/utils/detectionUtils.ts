@@ -34,12 +34,6 @@ export const getDetectionSourceLabel = (detection?: Detection) => {
     case DetectionType.MANUAL:
     case DetectionType.SCANNER:
       return detection.documentExternalId || defaultLabel;
-    case DetectionType.MAL:
-      return 'Master Asset List';
-    case DetectionType.MS2:
-      return 'MS2';
-    case DetectionType.MS3:
-      return 'MS3';
     case DetectionType.LINKED:
       return 'Linked field';
     case DetectionType.CALCULATED:
@@ -57,12 +51,6 @@ export const getDetectionSourceAcronym = (detection: Detection) => {
       return 'Input';
     case DetectionType.MANUAL_EXTERNAL:
       return 'Ext.';
-    case DetectionType.MAL:
-      return 'MAL';
-    case DetectionType.MS2:
-      return 'MS2';
-    case DetectionType.MS3:
-      return 'MS3';
     case DetectionType.LINKED:
       return 'Linked';
     case DetectionType.CALCULATED:

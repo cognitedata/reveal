@@ -9,12 +9,7 @@ import {
 } from 'types';
 import { getDataElementPCMSDetection, isCalculatedDataElement } from 'utils';
 
-import {
-  CalculatedElementInfoBox,
-  DataSourceHeader,
-  NewDataSource,
-  DataSourcePanel,
-} from '..';
+import { CalculatedElementInfoBox, NewDataSource, DataSourcePanel } from '..';
 
 import * as Styled from './style';
 
@@ -210,7 +205,7 @@ export const DataSourceList = ({
         </>
       )}
 
-      {PCMSDetection ? (
+      {PCMSDetection && (
         <DataSourcePanel
           detection={PCMSDetection}
           dataElement={dataElement}
@@ -221,13 +216,6 @@ export const DataSourceList = ({
             defaultActiveKey: PCMSDetection.id,
           }}
         />
-      ) : (
-        <Styled.EmptySource>
-          <Styled.EmptySourceHead>
-            <DataSourceHeader label="PCMS" />
-          </Styled.EmptySourceHead>
-          <Styled.EmptySourceBody>Not available</Styled.EmptySourceBody>
-        </Styled.EmptySource>
       )}
 
       {detections.map((detection) => (

@@ -9,8 +9,6 @@ import {
   getEquipmentAnnotations,
   getEquipmentConfig,
   getEquipmentDocuments,
-  // getEquipmentMAL,
-  // getEquipmentMS,
   getEquipmentPCMS,
   getEquipmentState,
 } from 'api';
@@ -55,18 +53,6 @@ export const Equipment = () => {
     equipmentId,
   });
 
-  // const { state: malQuery } = useApi(getEquipmentMAL, {
-  //   facility,
-  //   unitId,
-  //   equipmentId,
-  // });
-
-  // const { state: msQuery } = useApi(getEquipmentMS, {
-  //   facility,
-  //   unitId,
-  //   equipmentId,
-  // });
-
   const { state: scannerDetectionsQuery } = useApi(
     getEquipmentAnnotations,
     { config: configQuery.data, documents: documentsQuery.data },
@@ -94,8 +80,6 @@ export const Equipment = () => {
       pcmsQuery.loading ||
       equipmentStateQuery.loading ||
       scannerDetectionsQuery.loading;
-    // malQuery.loading ||
-    // msQuery.loading ||
 
     const error =
       configQuery.error || pcmsQuery.error || equipmentStateQuery.error;
@@ -108,8 +92,6 @@ export const Equipment = () => {
             scannerDetections: scannerDetectionsQuery.data,
             equipmentState: equipmentStateQuery.data,
             pcms: pcmsQuery.data!,
-            // mal: malQuery.data,
-            // ms: msQuery.data,
             type: getEquipmentType(
               pcmsQuery.data?.equipment.metadata?._typeName ?? '' // eslint-disable-line no-underscore-dangle
             ),
@@ -128,8 +110,6 @@ export const Equipment = () => {
     configQuery,
     scannerDetectionsQuery,
     pcmsQuery,
-    // malQuery,
-    // msQuery,
     documentsQuery,
     equipmentStateQuery,
   ]);
