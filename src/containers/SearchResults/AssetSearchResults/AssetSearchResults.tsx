@@ -44,7 +44,7 @@ export const AssetSearchResults = ({
     useResourceResults<Asset>(api, query, filter);
 
   const { data, hasNextPage, fetchNextPage, isLoading } =
-    useAssetsFilteredListQuery({ filter });
+    useAssetsFilteredListQuery({ assetFilter: filter });
 
   const [currentView, setCurrentView] = useState<string>(() =>
     isTreeEnabled ? 'tree' : 'list'

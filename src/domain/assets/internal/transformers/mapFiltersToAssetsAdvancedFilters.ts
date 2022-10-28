@@ -12,21 +12,13 @@ export type AssetsProperties = {
 export const mapFiltersToAssetsAdvancedFilters = ({
   source,
   metadata,
-  assetSubtreeIds,
   createdTime,
   lastUpdatedTime,
   externalIdPrefix,
   dataSetIds,
 }: InternalAssetFilters): AdvancedFilter<AssetsProperties> | undefined => {
   const filterBuilder = new AdvancedFilterBuilder<AssetsProperties>()
-    .containsAny('assetSubtreeIds', () => {
-      return assetSubtreeIds?.reduce((acc, item) => {
-        if ('id' in item) {
-          return [...acc, item.id];
-        }
-        return acc;
-      }, [] as number[]);
-    })
+
     .containsAny('dataSetIds', () => {
       return dataSetIds?.reduce((acc, item) => {
         if ('id' in item) {

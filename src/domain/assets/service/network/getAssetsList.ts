@@ -7,10 +7,12 @@ export const getAssetsList = (
     advancedFilter,
     cursor,
     limit,
+    filter,
   }: {
     advancedFilter?: any;
     cursor?: string;
     limit?: number;
+    filter?: Record<string, any>;
   }
 ) => {
   return sdk
@@ -24,6 +26,7 @@ export const getAssetsList = (
           limit: limit ?? 1000,
           cursor,
           advancedFilter,
+          filter,
         },
       }
     )

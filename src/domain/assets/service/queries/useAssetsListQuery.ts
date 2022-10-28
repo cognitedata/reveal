@@ -9,10 +9,12 @@ import { getAssetsList } from '../network/getAssetsList';
 export const useAssetsListQuery = (
   {
     advancedFilter,
+    filter,
     limit,
   }: {
     advancedFilter?: AdvancedFilter<AssetsProperties>;
     limit?: number;
+    filter?: Record<string, any>;
   } = {},
   options?: UseInfiniteQueryOptions
 ) => {
@@ -23,6 +25,7 @@ export const useAssetsListQuery = (
     ({ pageParam }) => {
       return getAssetsList(sdk, {
         cursor: pageParam,
+        filter,
         advancedFilter,
         limit,
       });
