@@ -4,8 +4,9 @@ import { useDocumentSearch } from '@cognite/react-document-search';
 
 import { SearchResultToolbar } from 'containers/SearchResults';
 import { DocumentsTable } from 'containers/Documents';
-import { Document, normalize } from 'domain/documents';
+import { Document, DocumentSort, normalize } from 'domain/documents';
 import { useObserveDocumentSearchFilters } from 'domain/documents/internal/hook/useObserveDocumentSearchFilters';
+
 export interface DocumentSearchResultsProps {
   query?: string;
   filter: Record<string, unknown>;
@@ -18,7 +19,7 @@ export const DocumentSearchResults = ({
   filter,
   onClick,
 }: DocumentSearchResultsProps) => {
-  const [sortBy, setSortBy] = useState({});
+  const [sortBy, setSortBy] = useState<DocumentSort[]>([]);
   const { results, isLoading, fetchNextPage, hasNextPage } =
     useDocumentSearch();
 
@@ -29,12 +30,14 @@ export const DocumentSearchResults = ({
   return (
     <DocumentSearchResultWrapper>
       <DocumentsTable
-        isSortingEnabled
+        id="documents-search-results"
+        enableSorting
         onSort={props => {
-          const { sortBy } = props;
-          if (sortBy !== undefined && sortBy.length > 0) {
-            const { id: columnName, desc } = sortBy[0];
-            setSortBy({ column: columnName, order: desc ? 'desc' : 'asc' });
+          if (props !== undefined && props.length > 0) {
+            const { id: columnName, desc } = props[0];
+            setSortBy([{ column: columnName, order: desc ? 'desc' : 'asc' }]);
+          } else {
+            setSortBy([]);
           }
         }}
         query={query}

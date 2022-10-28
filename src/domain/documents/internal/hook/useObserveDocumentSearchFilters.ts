@@ -8,7 +8,7 @@ import { DocumentSort, InternalDocumentFilter } from '../types';
 export const useObserveDocumentSearchFilters = (
   query: string,
   documentFilter: InternalDocumentFilter = {},
-  { column, order }: DocumentSort
+  sortStateArr: DocumentSort[]
 ) => {
   const { setAppliedFilters } = useDocumentSearchFilters();
   // const [query] = useQueryString(SEARCH_KEY);
@@ -20,15 +20,19 @@ export const useObserveDocumentSearchFilters = (
   );
 
   const sort = React.useMemo(() => {
-    if (column !== undefined && order !== undefined) {
+    if (sortStateArr.length > 0) {
+      const { column, order } = sortStateArr[0];
+
       return [
         {
           order: order,
-          property: mapColumnsToDocumentSortFields(column),
+          property: mapColumnsToDocumentSortFields(column!),
         },
       ];
     }
-  }, [order, column]);
+
+    return undefined;
+  }, [sortStateArr]);
 
   useEffect(() => {
     setAppliedFilters({
