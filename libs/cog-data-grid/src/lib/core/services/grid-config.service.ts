@@ -6,7 +6,12 @@ import {
   CustomHeader,
   CustomCellRenderer,
 } from '../../components';
-import { ColDef, GridOptions, ValueFormatterParams } from 'ag-grid-community';
+import {
+  ColDef,
+  GridOptions,
+  ValueFormatterParams,
+  ValueGetterParams,
+} from 'ag-grid-community';
 import {
   GridConfig,
   ColumnDataType,
@@ -113,6 +118,20 @@ export class GridConfigService {
           },
           customColTypes: {
             cellRenderer: 'customRendererComponent',
+            valueGetter: (params: ValueGetterParams) => {
+              if (
+                params.data === undefined ||
+                params.colDef.field === undefined
+              ) {
+                return '';
+              }
+              const value = params.data[params.colDef.field];
+              if (value === null) {
+                return '';
+              } else {
+                return value.externalId || value._externalId;
+              }
+            },
             ...this.getColTypeProps('Link', theme),
           },
           largeTextColType: {
