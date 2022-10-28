@@ -53,9 +53,11 @@ export const ParentCell = ({
 };
 
 export const ThreeDModelCell = ({
+  assetId,
   mappings,
   onThreeDModelClick,
 }: {
+  assetId: number;
   mappings: ThreeDAssetMappingItem[];
   onThreeDModelClick?: ThreeDModelClickHandler;
 }) => {
@@ -71,7 +73,7 @@ export const ThreeDModelCell = ({
         iconPlacement="right"
         onClick={e => {
           e.stopPropagation();
-          onThreeDModelClick?.(mapping, e);
+          onThreeDModelClick?.(mapping, assetId, e);
         }}
         type="ghost"
       >
@@ -90,7 +92,7 @@ export const ThreeDModelCell = ({
               appendIcon="ArrowUpRight"
               key={mapping.model.id}
               onClick={e => {
-                onThreeDModelClick?.(mapping, e);
+                onThreeDModelClick?.(mapping, assetId, e);
               }}
             >
               {mapping.model.name}
@@ -113,10 +115,7 @@ export const ThreeDModelCell = ({
 
 export const AssetNewTable = (
   props: Omit<TableProps<AssetWithRelationshipLabels>, 'columns'> & {
-    onThreeDModelClick?: (
-      mapping: ThreeDAssetMappingItem,
-      e: React.MouseEvent
-    ) => void;
+    onThreeDModelClick?: ThreeDModelClickHandler;
   }
 ) => {
   const { onRowClick = () => {}, data, onThreeDModelClick, ...rest } = props;
@@ -142,6 +141,7 @@ export const AssetNewTable = (
         header: '3D availability',
         cell: ({ getValue }) => (
           <ThreeDModelCell
+            assetId={getValue<number>()}
             mappings={threeDAssetMappings[getValue<number>()]}
             onThreeDModelClick={onThreeDModelClick}
           />

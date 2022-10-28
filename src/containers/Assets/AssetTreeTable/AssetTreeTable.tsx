@@ -91,6 +91,7 @@ export const AssetTreeTable = ({
         rowData: Asset;
       }) => (
         <ThreeDModelCell
+          assetId={asset.id}
           mappings={column.threeDAssetMappings[asset.id]}
           onThreeDModelClick={onThreeDModelClick}
         />

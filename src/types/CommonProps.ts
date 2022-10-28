@@ -77,5 +77,6 @@ export type TableStateProps = {
 
 export type ThreeDModelClickHandler = (
   mapping: ThreeDAssetMappingItem,
+  assetId: number,
   e: React.MouseEvent
 ) => void;
