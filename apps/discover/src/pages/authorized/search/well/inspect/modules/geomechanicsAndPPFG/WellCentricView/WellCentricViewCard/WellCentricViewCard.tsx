@@ -26,7 +26,7 @@ import {
 import { Header } from './Header';
 
 export interface WellCentricViewCardProps {
-  data: MeasurementsView;
+  data: MeasurementsView[];
   nptEvents: NptInternal[];
   ndsEvents: NdsInternal[];
   measurementUnits: MeasurementUnits;
@@ -44,7 +44,7 @@ export const WellCentricViewCard: React.FC<WellCentricViewCardProps> = ({
   isSelected,
   onSelectWellbore,
 }) => {
-  const { wellName, wellboreName, depthRange } = data;
+  const { wellName, wellboreName, depthRange } = data[0];
   const { pressureUnit } = measurementUnits;
 
   const [eventsColumnView, setEventsColumnView] = useState(

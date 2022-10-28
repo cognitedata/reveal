@@ -41,6 +41,11 @@ export const WellCentricView: React.FC<WellCentricViewProps> = ({
     useState<WellWellboreSelection>({});
   const [wellboreSelection, setWellboreSelection] = useState<BooleanMap>({});
 
+  const groupedMeasurements = useDeepMemo(
+    () => groupByWellbore(measurementViewList),
+    [measurementViewList]
+  );
+
   const groupedNptEvents = useDeepMemo(
     () => groupByWellbore(nptEvents),
     [nptEvents]
@@ -84,20 +89,23 @@ export const WellCentricView: React.FC<WellCentricViewProps> = ({
   return (
     <>
       <WellCentricViewWrapper>
-        {measurementViewList.map((measurementsView) => {
-          const { wellName, wellboreMatchingId, id } = measurementsView;
-
+        {Object.keys(groupedMeasurements).map((wellboreMatchingId) => {
+          const wellboreMeasurements = groupedMeasurements[wellboreMatchingId];
           const wellboreNptEvents = groupedNptEvents[wellboreMatchingId] || [];
           const wellboreNdsEvents = groupedNdsEvents[wellboreMatchingId] || [];
 
           const onSelectWellbore = (isSelected: boolean) => {
-            handleSelectWellbore(wellName, wellboreMatchingId, isSelected);
+            handleSelectWellbore(
+              wellboreMeasurements[0].wellName,
+              wellboreMatchingId,
+              isSelected
+            );
           };
 
           return (
             <WellCentricViewCard
-              key={id}
-              data={measurementsView}
+              key={wellboreMatchingId}
+              data={wellboreMeasurements}
               nptEvents={wellboreNptEvents}
               ndsEvents={wellboreNdsEvents}
               measurementUnits={measurementUnits}

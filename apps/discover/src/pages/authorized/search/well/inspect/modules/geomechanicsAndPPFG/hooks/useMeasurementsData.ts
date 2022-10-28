@@ -1,4 +1,5 @@
 import { useDepthMeasurementsForMeasurementTypes } from 'domain/wells/measurements/internal/hooks/useDepthMeasurementsForMeasurementTypes';
+import { useDepthMeasurementsTVD } from 'domain/wells/measurements/internal/hooks/useDepthMeasurementsTVD';
 import { getErrors } from 'domain/wells/measurements/internal/utils/getErrors';
 import { useNdsEventsQuery } from 'domain/wells/nds/internal/queries/useNdsEventsQuery';
 import { adaptNdsEventsToMultiSelect } from 'domain/wells/nds/internal/transformers/adaptNdsEventsToMultiSelect';
@@ -21,6 +22,9 @@ export const useMeasurementsData = () => {
       wellboreIds,
     });
 
+  const { data: tvdData, isLoading: isTvdDataLoading } =
+    useDepthMeasurementsTVD(data);
+
   const { data: nptEvents = [], isLoading: isNptEventsLoading } =
     useNptEventsQuery({
       wellboreIds,
@@ -32,11 +36,14 @@ export const useMeasurementsData = () => {
     });
 
   const isLoading =
-    isDepthMeasurementsLoading || isNptEventsLoading || isNdsEventsLoading;
+    isDepthMeasurementsLoading ||
+    isTvdDataLoading ||
+    isNptEventsLoading ||
+    isNdsEventsLoading;
 
   const adaptedMeasurementsData = useDeepMemo(() => {
-    return adaptMeasurementDataToView(wellbores, data);
-  }, [wellbores, data]);
+    return adaptMeasurementDataToView(wellbores, tvdData);
+  }, [wellbores, tvdData]);
 
   const curveFilterOptions = useDeepMemo(
     () => getCurveFilterOptions(adaptedMeasurementsData),
