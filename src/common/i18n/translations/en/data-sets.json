@@ -43,6 +43,7 @@
   "connected-links": "Connected links",
   "consumer-name": "Consumer name",
   "consumer-name-hint": "The name of the consuming system or application",
+  "copy-id": "Copy ID",
   "copy-name": "Copy name",
   "copy-dataset-id": "Copy dataset-id",
   "copy-external-id": "Copy external-id",

@@ -59,11 +59,11 @@ const BasicInfoCard = ({ dataSet }: BasicInfoCardProps) => {
           </Body>
         }
         value={
-          <Flex gap={8} alignItems="center">
-            {writeProtected && <Icon type="Lock" />}
-            <Body level={1} strong>
-              {name}
-            </Body>
+          <Flex gap={8} alignItems="center" justifyContent="space-between">
+            <Flex gap={8} alignItems="center">
+              {writeProtected && <Icon type="Lock" />}
+              <Body level={1}>{name}</Body>
+            </Flex>
             <TabbableButton
               aria-label={t('copy-name')}
               onClick={() => handleCopy(name)}
@@ -80,9 +80,9 @@ const BasicInfoCard = ({ dataSet }: BasicInfoCardProps) => {
           </Body>
         }
         value={
-          <Body level={1} strong>
+          <Body level={1}>
             <Typography.Paragraph
-              ellipsis={{ rows: 2, expandable: true }}
+              ellipsis={{ rows: 2, expandable: true, symbol: 'view more' }}
               style={{ margin: 0 }}
             >
               {description}
@@ -111,10 +111,8 @@ const BasicInfoCard = ({ dataSet }: BasicInfoCardProps) => {
           </Flex>
         }
         value={
-          <Flex gap={8} alignItems="center">
-            <Body level={1} strong>
-              {id}
-            </Body>
+          <Flex gap={8} alignItems="center" justifyContent="space-between">
+            <Body level={1}>{id}</Body>
             <TabbableButton
               aria-label={t('copy-dataset-id')}
               onClick={() => handleCopy(id.toString())}
@@ -132,10 +130,8 @@ const BasicInfoCard = ({ dataSet }: BasicInfoCardProps) => {
         }
         value={
           externalId ? (
-            <Flex gap={8} alignItems="center">
-              <Body level={1} strong>
-                {externalId}
-              </Body>
+            <Flex gap={8} alignItems="center" justifyContent="space-between">
+              <Body level={1}>{externalId}</Body>
               <TabbableButton
                 aria-label={t('copy-external-id')}
                 onClick={() => handleCopy(externalId)}
@@ -144,7 +140,7 @@ const BasicInfoCard = ({ dataSet }: BasicInfoCardProps) => {
               </TabbableButton>
             </Flex>
           ) : (
-            <NoDataText>{t('external-id-no')}</NoDataText>
+            <NoDataText className="mute">{t('external-id-no')}</NoDataText>
           )
         }
       />
@@ -188,11 +184,9 @@ const BasicInfoCard = ({ dataSet }: BasicInfoCardProps) => {
               consoleOwners?.length ? (
                 consoleOwners.map((owner) => (
                   <div key={owner.name}>
-                    <Body level={1} strong>
-                      {owner.name}
-                    </Body>
+                    <Body level={1}>{owner.name}</Body>
                     <Flex gap={8} alignItems="center">
-                      <Body level={1} strong>
+                      <Body level={1}>
                         <a href={`mailto:${owner.email}`}>{owner.email}</a>
                       </Body>
                       <TabbableButton
@@ -205,7 +199,7 @@ const BasicInfoCard = ({ dataSet }: BasicInfoCardProps) => {
                   </div>
                 ))
               ) : (
-                <NoDataText>{t('no-owners-set')}</NoDataText>
+                <NoDataText className="mute">{t('no-owners-set')}</NoDataText>
               )
             }
           />
@@ -226,7 +220,9 @@ const BasicInfoCard = ({ dataSet }: BasicInfoCardProps) => {
                   ))}
                 </Flex>
               ) : (
-                <NoDataText>{t('no-labels-assigned')}</NoDataText>
+                <NoDataText className="mute">
+                  {t('no-labels-assigned')}
+                </NoDataText>
               )
             }
           />
@@ -241,9 +237,9 @@ const BasicInfoCard = ({ dataSet }: BasicInfoCardProps) => {
         }
         value={
           consoleCreatedBy ? (
-            consoleCreatedBy.username
+            <Body level={1}>{consoleCreatedBy.username}</Body>
           ) : (
-            <NoDataText>{t('not-available')}</NoDataText>
+            <NoDataText className="mute">{t('not-available')}</NoDataText>
           )
         }
       />
@@ -254,7 +250,7 @@ const BasicInfoCard = ({ dataSet }: BasicInfoCardProps) => {
             {t('last-updated')}
           </Body>
         }
-        value={moment(lastUpdatedTime).calendar()}
+        value={<Body level={1}>{moment(lastUpdatedTime).calendar()}</Body>}
       />
 
       {archived && (

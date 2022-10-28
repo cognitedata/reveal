@@ -30,18 +30,18 @@ export function useResourceTableColumns<T extends TResource>(
       render: (_value, record) => <ResourceProperty value={record.name} />,
     },
     {
+      title: t('source_one'),
+      dataIndex: 'source',
+      key: 'dataset-asset-source',
+      render: (_value, record) => <ResourceProperty value={record?.source} />,
+    },
+    {
       title: t('external-id'),
       dataIndex: 'external-id',
       key: 'dataset-asset-external-id',
       render: (_value, record) => (
         <ResourceProperty value={record.externalId} />
       ),
-    },
-    {
-      title: t('source_one'),
-      dataIndex: 'source',
-      key: 'dataset-asset-source',
-      render: (_value, record) => <ResourceProperty value={record?.source} />,
     },
     {
       title: t('last-updated'),
@@ -137,6 +137,7 @@ export function useResourceTableColumns<T extends TResource>(
       title: t('name'),
       dataIndex: 'name',
       key: 'dataset-file-name',
+      width: '20%',
       render: (_value, record) => <ResourceProperty value={record.name} />,
     },
     {
@@ -190,6 +191,7 @@ export function useResourceTableColumns<T extends TResource>(
       title: t('description'),
       dataIndex: 'description',
       key: 'dataset-sequence-description',
+      width: '25%',
       render: (_value, record) => (
         <ResourceProperty value={record.description} />
       ),
@@ -239,6 +241,7 @@ export function useResourceTableColumns<T extends TResource>(
       title: t('description'),
       dataIndex: 'description',
       key: 'dataset-timeseries-description',
+      width: '25%',
       render: (_value, record) => (
         <ResourceProperty value={record.description} />
       ),
@@ -255,7 +258,9 @@ export function useResourceTableColumns<T extends TResource>(
       title: t('asset-id'),
       dataIndex: 'asset-id',
       key: 'dataset-timeseries-asset-id',
-      render: (_value, record) => <ResourceProperty value={record.assetId} />,
+      render: (_value, record) => (
+        <ResourceProperty value={record.assetId || '-'} />
+      ),
     },
     {
       title: t('last-updated'),
@@ -292,17 +297,16 @@ export function useResourceTableColumns<T extends TResource>(
   ];
 
   if (isEnabled) {
-    events.push({
+    events.splice(3, 0, {
       title: t('external-id'),
       dataIndex: 'external-id',
       key: 'dataset-events-external-id',
       render: (_value, record) => (
         <ResourceProperty value={record.externalId} />
       ),
-      width: 200,
     });
 
-    files.splice(1, 0, {
+    files.splice(2, 0, {
       title: t('external-id'),
       dataIndex: 'external-id',
       key: 'dataset-files-external-id',
@@ -311,7 +315,7 @@ export function useResourceTableColumns<T extends TResource>(
       ),
     });
 
-    sequences.splice(1, 0, {
+    sequences.splice(2, 0, {
       title: t('external-id'),
       dataIndex: 'external-id',
       key: 'dataset-sequences-external-id',

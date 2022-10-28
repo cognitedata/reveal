@@ -12,3 +12,6 @@ export const EDIT_DATASET_DOC =
   'https://docs.cognite.com/cdf/data_governance/guides/datasets/edit_explore_data_sets.html#explore-data-sets';
 export const EXPLORE_DATA_CATALOG =
   'https://docs.cognite.com/cdf/data_governance/guides/datasets/create_data_sets.html';
+
+export const CREATE_GROUP_ACCESS_DOC =
+  'https://docs.cognite.com/cdf/access/guides/create_groups_oidc';
