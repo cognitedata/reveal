@@ -43,23 +43,23 @@ export const getCommonColumns = (
       width: '140px',
     },
     {
-      Header: `MD hole start (${unit})`,
-      accessor: NDS_ACCESSORS.MD_HOLE_START,
+      Header: `MD hole top (${unit})`,
+      accessor: NDS_ACCESSORS.MD_HOLE_TOP,
       width: '140px',
     },
     {
-      Header: `MD hole end (${unit})`,
-      accessor: NDS_ACCESSORS.MD_HOLE_END,
+      Header: `MD hole base (${unit})`,
+      accessor: NDS_ACCESSORS.MD_HOLE_BASE,
       width: '140px',
     },
     {
-      Header: `TVD offset hole start (${unit})`,
-      accessor: NDS_ACCESSORS.TVD_HOLE_START,
+      Header: `TVD offset hole top (${unit})`,
+      accessor: NDS_ACCESSORS.TVD_HOLE_TOP,
       width: '160px',
     },
     {
-      Header: `TVD offset hole end (${unit})`,
-      accessor: NDS_ACCESSORS.TVD_HOLE_END,
+      Header: `TVD offset hole base (${unit})`,
+      accessor: NDS_ACCESSORS.TVD_HOLE_BASE,
       width: '160px',
     },
   ];

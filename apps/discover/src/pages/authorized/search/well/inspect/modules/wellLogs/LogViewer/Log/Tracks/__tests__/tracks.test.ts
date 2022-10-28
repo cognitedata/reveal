@@ -101,7 +101,7 @@ describe('getLogViewerTracks', () => {
   it('should not contain NDS scale track when there is no TVD based log data', () => {
     const tracks = getLogViewerTracks({
       logData: mdBasedLogData,
-      eventsData: [{ holeStartValue: 0, holeEndValue: 100 }],
+      eventsData: [{ holeTopValue: 0, holeBaseValue: 100 }],
       depthUnit: 'ft',
     });
     expect(tracks).not.toContain(NDS_SCALE_TRACK);
@@ -119,7 +119,7 @@ describe('getLogViewerTracks', () => {
   it('should contain NDS scale track when both events data and TVD based log data are available', () => {
     const tracks = getLogViewerTracks({
       logData: tvdBasedLogData,
-      eventsData: [{ holeStartValue: 0, holeEndValue: 100 }],
+      eventsData: [{ holeTopValue: 0, holeBaseValue: 100 }],
       depthUnit: 'ft',
     });
     expect(tracks).toContain(NDS_SCALE_TRACK);

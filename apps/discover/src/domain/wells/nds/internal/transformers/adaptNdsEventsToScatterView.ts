@@ -30,14 +30,14 @@ export const adaptNdsEventsToScatterView = (
       subtype,
       severity,
       probability,
-      holeStartTvd,
-      holeEndTvd,
+      holeTopTvd,
+      holeBaseTvd,
       holeDiameter,
       ndsCodeColor,
     } = event;
 
     return {
-      id: `${riskType}-${subtype}-${holeStartTvd?.value}-${holeEndTvd?.value}-${severity}-${probability}-${index}`,
+      id: `${riskType}-${subtype}-${holeTopTvd?.value}-${holeBaseTvd?.value}-${severity}-${probability}-${index}`,
       dotColor: ndsCodeColor,
       original: event,
       metadata: [
@@ -64,19 +64,16 @@ export const adaptNdsEventsToScatterView = (
           content: holeDiameter?.value,
         },
         {
-          title: [
-            'TVD Hole Start',
-            holeStartTvd?.unit && `(${holeStartTvd.unit})`,
-          ]
+          title: ['TVD Hole Top', holeTopTvd?.unit && `(${holeTopTvd.unit})`]
             .filter(Boolean)
             .join(' '),
-          content: holeStartTvd?.value,
+          content: holeTopTvd?.value,
         },
         {
-          title: ['TVD Hole End', holeEndTvd?.unit && `(${holeEndTvd.unit})`]
+          title: ['TVD Hole Base', holeBaseTvd?.unit && `(${holeBaseTvd.unit})`]
             .filter(Boolean)
             .join(' '),
-          content: holeEndTvd?.value,
+          content: holeBaseTvd?.value,
         },
       ],
     };

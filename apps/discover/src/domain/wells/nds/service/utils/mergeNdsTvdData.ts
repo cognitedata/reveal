@@ -12,23 +12,23 @@ export const mergeNdsTvdData = (
 ): NdsWithTvd => {
   const tvdData: Partial<NdsWithTvd> = {};
 
-  const { holeStart, holeEnd } = nds;
+  const { holeTop, holeBase } = nds;
 
   const { unit } = trueVerticalDepths.trueVerticalDepthUnit;
 
-  if (holeStart) {
-    const holeStartTvdValue = getTvdForMd(holeStart, trueVerticalDepths);
+  if (holeTop) {
+    const holeTopTvdValue = getTvdForMd(holeTop, trueVerticalDepths);
 
-    if (!isUndefined(holeStartTvdValue)) {
-      tvdData.holeStartTvd = { value: holeStartTvdValue, unit };
+    if (!isUndefined(holeTopTvdValue)) {
+      tvdData.holeTopTvd = { value: holeTopTvdValue, unit };
     }
   }
 
-  if (holeEnd) {
-    const holeEndTvdValue = getTvdForMd(holeEnd, trueVerticalDepths);
+  if (holeBase) {
+    const holeBaseTvdValue = getTvdForMd(holeBase, trueVerticalDepths);
 
-    if (!isUndefined(holeEndTvdValue)) {
-      tvdData.holeEndTvd = { value: holeEndTvdValue, unit };
+    if (!isUndefined(holeBaseTvdValue)) {
+      tvdData.holeBaseTvd = { value: holeBaseTvdValue, unit };
     }
   }
 

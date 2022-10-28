@@ -44,13 +44,13 @@ export const NdsEventsByDepth: React.FC<Props> = React.memo(
       return (
         <>
           {scaleBlocks.map((depth, index) => {
-            const blockEvents = events.filter(({ holeStart, holeStartTvd }) => {
-              const holeStartDepth = isMdScale ? holeStart : holeStartTvd;
+            const blockEvents = events.filter(({ holeTop, holeTopTvd }) => {
+              const holeTopDepth = isMdScale ? holeTop : holeTopTvd;
 
               return (
-                holeStartDepth &&
-                holeStartDepth.value < depth &&
-                (!index || holeStartDepth.value >= scaleBlocks[index - 1])
+                holeTopDepth &&
+                holeTopDepth.value < depth &&
+                (!index || holeTopDepth.value >= scaleBlocks[index - 1])
               );
             });
 

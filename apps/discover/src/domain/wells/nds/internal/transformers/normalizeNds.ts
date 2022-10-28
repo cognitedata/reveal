@@ -13,14 +13,14 @@ export const normalizeNds = (
   userPreferredUnit: UserPreferredUnit,
   ndsCodeColorMap: ColorMap = {}
 ): NdsInternal => {
-  const { holeDiameter, holeStart, holeEnd, riskType } = rawNds;
+  const { holeDiameter, holeTop, holeBase, riskType } = rawNds;
 
   return {
     ...rawNds,
     holeDiameter:
       holeDiameter && convertDistance(holeDiameter, userPreferredUnit),
-    holeStart: holeStart && convertDistance(holeStart, userPreferredUnit),
-    holeEnd: holeEnd && convertDistance(holeEnd, userPreferredUnit),
+    holeTop: holeTop && convertDistance(holeTop, userPreferredUnit),
+    holeBase: holeBase && convertDistance(holeBase, userPreferredUnit),
     ndsCodeColor: riskType ? ndsCodeColorMap[riskType] : DEFAULT_NDS_COLOR,
   };
 };

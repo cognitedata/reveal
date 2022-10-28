@@ -6,8 +6,8 @@ export const NDS_ACCESSORS = {
   PROBABILITY: 'probability',
   SUBTYPE: 'subtype',
   DIAMETER_HOLE: 'holeDiameter.value',
-  MD_HOLE_START: 'holeStart.value',
-  MD_HOLE_END: 'holeEnd.value',
-  TVD_HOLE_START: 'holeStartTvd.value',
-  TVD_HOLE_END: 'holeEndTvd.value',
+  MD_HOLE_TOP: 'holeTop.value',
+  MD_HOLE_BASE: 'holeBase.value',
+  TVD_HOLE_TOP: 'holeTopTvd.value',
+  TVD_HOLE_BASE: 'holeBaseTvd.value',
 };

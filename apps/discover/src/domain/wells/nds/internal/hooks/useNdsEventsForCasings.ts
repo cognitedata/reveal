@@ -19,7 +19,7 @@ export const useNdsEventsForCasings = ({ wellboreIds }: AllCursorsProps) => {
     }
 
     const eventsWithHoleStart = data.filter(
-      ({ holeStart }) => !isUndefined(holeStart)
+      ({ holeTop }) => !isUndefined(holeTop)
     );
 
     return {

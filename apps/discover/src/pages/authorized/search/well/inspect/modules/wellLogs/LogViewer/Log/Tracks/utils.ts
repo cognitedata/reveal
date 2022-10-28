@@ -74,10 +74,10 @@ export const getCategorizedLogData = (logData: WellLogPreviewData) => {
 export const convertEventsDataToArray = (data: WellLogNdsEventsData[]) => {
   return data
     .filter((eventData) => !isEmpty(eventData.riskType))
-    .map(({ holeStartValue, holeEndValue, riskType }) => [
-      holeStartValue,
+    .map(({ holeTopValue, holeBaseValue, riskType }) => [
+      holeTopValue,
       riskType,
-      holeEndValue,
+      holeBaseValue,
     ]);
 };
 

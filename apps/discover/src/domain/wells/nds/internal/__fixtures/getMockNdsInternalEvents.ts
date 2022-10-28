@@ -17,31 +17,23 @@ export const getMockNdsInternalEvents = (
       value: 0.445,
       unit: 'm',
     },
-    holeStart: {
-      value: 2824,
-      unit: 'm',
-    },
-    holeEnd: {
-      value: 2863,
-      unit: 'm',
-    },
     holeTop: {
       value: 2824,
-      unit: 'meter',
+      unit: 'm',
     },
     holeBase: {
       value: 2863,
-      unit: 'meter',
+      unit: 'm',
     },
     riskType: 'equipment failure',
     subtype: 'downhole tool',
     severity: undefined,
     probability: undefined,
-    holeStartTvd: {
+    holeTopTvd: {
       value: 2823.999,
       unit: 'm',
     },
-    holeEndTvd: {
+    holeBaseTvd: {
       value: 2862.999,
       unit: 'm',
     },

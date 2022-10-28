@@ -7,8 +7,7 @@ export const isEventsOverlap = (
   return (
     parentEvent.wellboreMatchingId !== childEvent.wellboreMatchingId &&
     parentEvent.riskType === childEvent.riskType &&
-    Number(parentEvent.holeStart?.value) >=
-      Number(childEvent.holeStart?.value) &&
-    Number(parentEvent.holeEnd?.value) <= Number(childEvent.holeEnd?.value)
+    Number(parentEvent.holeTop?.value) >= Number(childEvent.holeTop?.value) &&
+    Number(parentEvent.holeBase?.value) <= Number(childEvent.holeBase?.value)
   );
 };

@@ -18,21 +18,21 @@ export const getInterpolateRequests = (
 
   return Object.keys(groupedNdsData).map((wellboreMatchingId) => {
     const nds = groupedNdsData[wellboreMatchingId];
-    const holeStartValues = withoutNil(
-      nds.map(({ holeStart }) => holeStart?.value)
+    const holeTopValues = withoutNil(nds.map(({ holeTop }) => holeTop?.value));
+    const holeBaseValues = withoutNil(
+      nds.map(({ holeBase }) => holeBase?.value)
     );
-    const holeEndValues = withoutNil(nds.map(({ holeEnd }) => holeEnd?.value));
     const ndsWithMeasurement = nds.find(
-      ({ holeStart, holeEnd }) => holeStart || holeEnd
+      ({ holeTop, holeBase }) => holeTop || holeBase
     );
     const measuredDepthUnit =
-      ndsWithMeasurement?.holeStart?.unit ||
-      ndsWithMeasurement?.holeEnd?.unit ||
+      ndsWithMeasurement?.holeTop?.unit ||
+      ndsWithMeasurement?.holeBase?.unit ||
       DEFAULT_MEASURED_DEPTH_UNIT;
 
     return {
       wellboreId: toIdentifierWithMatchingId(wellboreMatchingId),
-      measuredDepths: [...holeStartValues, ...holeEndValues],
+      measuredDepths: [...holeTopValues, ...holeBaseValues],
       measuredDepthUnit: toDistanceUnit(measuredDepthUnit),
       trueVerticalDepthUnit:
         userPreferredUnit && toDistanceUnit(userPreferredUnit),

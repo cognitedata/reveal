@@ -24,31 +24,31 @@ export const NdsEventDetailCardContent: React.FC<
     severity,
     probability,
     holeDiameter,
-    holeStart,
-    holeEnd,
-    holeStartTvd,
-    holeEndTvd,
+    holeTop,
+    holeBase,
+    holeTopTvd,
+    holeBaseTvd,
   } = event;
 
-  const holeStartDepth = useMemo(() => {
-    if (depthMeasurementType === DepthMeasurementUnit.MD && holeStart) {
-      return holeStart;
+  const holeTopDepth = useMemo(() => {
+    if (depthMeasurementType === DepthMeasurementUnit.MD && holeTop) {
+      return holeTop;
     }
-    if (depthMeasurementType === DepthMeasurementUnit.TVD && holeStartTvd) {
-      return holeStartTvd;
+    if (depthMeasurementType === DepthMeasurementUnit.TVD && holeTopTvd) {
+      return holeTopTvd;
     }
     return null;
-  }, [holeStart?.value, holeStartTvd?.value]);
+  }, [holeTop?.value, holeTopTvd?.value]);
 
-  const holeEndDepth = useMemo(() => {
-    if (depthMeasurementType === DepthMeasurementUnit.MD && holeEnd) {
-      return holeEnd;
+  const holeBaseDepth = useMemo(() => {
+    if (depthMeasurementType === DepthMeasurementUnit.MD && holeBase) {
+      return holeBase;
     }
-    if (depthMeasurementType === DepthMeasurementUnit.TVD && holeEndTvd) {
-      return holeEndTvd;
+    if (depthMeasurementType === DepthMeasurementUnit.TVD && holeBaseTvd) {
+      return holeBaseTvd;
     }
     return null;
-  }, [holeEnd?.value, holeEndTvd?.value]);
+  }, [holeBase?.value, holeBaseTvd?.value]);
 
   return (
     <>
@@ -72,16 +72,16 @@ export const NdsEventDetailCardContent: React.FC<
 
       <FlexRowFullWidth>
         <DetailCardBlock
-          title={`${depthMeasurementType} Hole Start ${getDisplayUnit(
-            holeStartDepth?.unit
+          title={`${depthMeasurementType} Hole Top ${getDisplayUnit(
+            holeTopDepth?.unit
           )}`}
-          value={holeStartDepth?.value}
+          value={holeTopDepth?.value}
         />
         <DetailCardBlock
-          title={`${depthMeasurementType} Hole End ${getDisplayUnit(
-            holeEndDepth?.unit
+          title={`${depthMeasurementType} Hole Base ${getDisplayUnit(
+            holeBaseDepth?.unit
           )}`}
-          value={holeEndDepth?.value}
+          value={holeBaseDepth?.value}
         />
       </FlexRowFullWidth>
     </>

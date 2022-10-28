@@ -44,18 +44,18 @@ const NdsEventsColumn: React.FC<WithDragHandleProps<Props>> = ({
 }: Props) => {
   const blockElements = useMemo(() => {
     const lastEvents = events.filter(
-      ({ holeStart }) =>
-        holeStart && holeStart.value >= scaleBlocks[scaleBlocks.length - 1]
+      ({ holeTop }) =>
+        holeTop && holeTop.value >= scaleBlocks[scaleBlocks.length - 1]
     );
 
     return (
       <>
         {scaleBlocks.map((row, index) => {
           const blockEvents = events.filter(
-            ({ holeStart }) =>
-              holeStart &&
-              holeStart.value < row &&
-              (!index || holeStart.value >= scaleBlocks[index - 1])
+            ({ holeTop }) =>
+              holeTop &&
+              holeTop.value < row &&
+              (!index || holeTop.value >= scaleBlocks[index - 1])
           );
 
           const renderContent = () => {

@@ -44,10 +44,10 @@ export const NdsEventsColumnForChart: React.FC<Props> = ({
       <>
         {scaleBlocks.map((row, index) => {
           const blockEvents = events.filter(
-            ({ holeStart }) =>
-              holeStart &&
-              holeStart.value >= row &&
-              holeStart.value < scaleBlocks[index + 1]
+            ({ holeTop }) =>
+              holeTop &&
+              holeTop.value >= row &&
+              holeTop.value < scaleBlocks[index + 1]
           );
 
           const renderContent = () => {

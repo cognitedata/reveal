@@ -12,7 +12,7 @@ export type WellLogPreviewDataColumn = {
 export type WellLogPreviewData = Record<string, WellLogPreviewDataColumn>;
 
 export type WellLogNdsEventsData = {
-  holeStartValue: number;
-  holeEndValue: number;
+  holeTopValue: number;
+  holeBaseValue: number;
   riskType?: string;
 };

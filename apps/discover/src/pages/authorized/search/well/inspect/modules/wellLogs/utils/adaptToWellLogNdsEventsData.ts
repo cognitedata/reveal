@@ -15,10 +15,10 @@ export const adaptToWellLogNdsEventsData = (
   });
 
   return sortNdsByHoleStart(nonOverlappingEvents).map(
-    ({ holeStart, holeEnd, riskType }) => {
+    ({ holeTop, holeBase, riskType }) => {
       return {
-        holeStartValue: Number(holeStart?.value),
-        holeEndValue: Number(holeEnd?.value),
+        holeTopValue: Number(holeTop?.value),
+        holeBaseValue: Number(holeBase?.value),
         riskType,
       };
     }

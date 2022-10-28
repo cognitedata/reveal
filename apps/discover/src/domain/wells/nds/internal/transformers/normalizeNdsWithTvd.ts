@@ -12,12 +12,11 @@ export const normalizeNdsWithTvd = (
   userPreferredUnit: UserPreferredUnit,
   ndsCodeColorMap: ColorMap
 ): NdsInternalWithTvd => {
-  const { holeStartTvd, holeEndTvd } = rawNds;
+  const { holeTopTvd, holeBaseTvd } = rawNds;
 
   return {
     ...normalizeNds(rawNds, userPreferredUnit, ndsCodeColorMap),
-    holeStartTvd:
-      holeStartTvd && convertDistance(holeStartTvd, userPreferredUnit),
-    holeEndTvd: holeEndTvd && convertDistance(holeEndTvd, userPreferredUnit),
+    holeTopTvd: holeTopTvd && convertDistance(holeTopTvd, userPreferredUnit),
+    holeBaseTvd: holeBaseTvd && convertDistance(holeBaseTvd, userPreferredUnit),
   };
 };

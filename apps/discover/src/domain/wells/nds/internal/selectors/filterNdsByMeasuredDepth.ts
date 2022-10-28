@@ -6,6 +6,6 @@ export const filterNdsByMeasuredDepth = (
   maxDepth: number
 ) =>
   (nds || []).filter(
-    ({ holeStart }) =>
-      holeStart && holeStart.value >= minDepth && holeStart.value <= maxDepth
+    ({ holeTop }) =>
+      holeTop && holeTop.value >= minDepth && holeTop.value <= maxDepth
   );

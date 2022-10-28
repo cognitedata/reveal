@@ -76,8 +76,8 @@ describe('LogViewer -> Log -> utils', () => {
   describe('convertEventsDataToArray', () => {
     it('should filter events data and convert to array', () => {
       const eventsData: WellLogNdsEventsData[] = [
-        { holeStartValue: 0, holeEndValue: 100 },
-        { holeStartValue: 10, holeEndValue: 90, riskType: 'riskType' },
+        { holeTopValue: 0, holeBaseValue: 100 },
+        { holeTopValue: 10, holeBaseValue: 90, riskType: 'riskType' },
       ];
       expect(convertEventsDataToArray(eventsData)).toEqual([
         [10, 'riskType', 90],

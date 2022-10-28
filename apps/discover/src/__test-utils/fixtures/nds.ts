@@ -7,11 +7,11 @@ export const getMockNdsEvent = (extras?: Partial<Nds>): Nds => ({
     eventExternalId: 'events/nds/test/eventExternalId',
     sourceName: 'TEST_SOURCE',
   },
-  holeStart: {
+  holeTop: {
     value: 75.0,
     unit: 'meter',
   },
-  holeEnd: {
+  holeBase: {
     value: 85.0,
     unit: 'meter',
   },

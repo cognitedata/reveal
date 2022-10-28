@@ -10,10 +10,10 @@ export const mapNDSTo3D = (
       wellboreAssetExternalId,
       source,
       holeDiameter,
-      holeStart,
-      holeEnd,
-      holeStartTvd,
-      holeEndTvd,
+      holeTop,
+      holeBase,
+      holeTopTvd,
+      holeBaseTvd,
     } = nds;
 
     return {
@@ -23,14 +23,14 @@ export const mapNDSTo3D = (
       metadata: {
         diameter_hole: String(holeDiameter?.value),
         diameter_hole_unit: holeDiameter?.unit,
-        md_hole_start: String(holeStart?.value),
-        md_hole_start_unit: holeStart?.unit,
-        md_hole_end: String(holeEnd?.value),
-        md_hole_end_unit: holeEnd?.unit,
-        tvd_offset_hole_start: String(holeStartTvd?.value),
-        tvd_offset_hole_start_unit: holeStartTvd?.unit,
-        tvd_offset_hole_end: String(holeEndTvd?.value),
-        tvd_offset_hole_end_unit: holeEndTvd?.unit,
+        md_hole_start: String(holeTop?.value),
+        md_hole_start_unit: holeTop?.unit,
+        md_hole_end: String(holeBase?.value),
+        md_hole_end_unit: holeBase?.unit,
+        tvd_offset_hole_start: String(holeTopTvd?.value),
+        tvd_offset_hole_start_unit: holeTopTvd?.unit,
+        tvd_offset_hole_end: String(holeBaseTvd?.value),
+        tvd_offset_hole_end_unit: holeBaseTvd?.unit,
       },
     };
   });

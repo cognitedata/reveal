@@ -29,7 +29,7 @@ describe('ScaleTracks', () => {
   describe('getNDSScaleTrack', () => {
     it('should return NDS scale track and call block title setter', () => {
       const eventsData: WellLogNdsEventsData[] = [
-        { holeStartValue: 0, holeEndValue: 100 },
+        { holeTopValue: 0, holeBaseValue: 100 },
       ];
       const ndsScaleTrack = getNDSScaleTrack(eventsData, 'ft');
 
