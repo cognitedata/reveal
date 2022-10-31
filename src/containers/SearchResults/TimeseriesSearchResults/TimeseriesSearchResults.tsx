@@ -47,6 +47,7 @@ export const TimeseriesSearchResults = ({
         <Flex justifyContent="space-between" alignItems="center"></Flex>
 
         <TimeseriesNewTable
+          id="timeseries-search-results"
           tableHeaders={
             <SearchResultToolbar
               showCount={showCount}

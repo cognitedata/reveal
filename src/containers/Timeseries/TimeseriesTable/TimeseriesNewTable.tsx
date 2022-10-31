@@ -1,11 +1,12 @@
 import { Timeseries } from '@cognite/sdk';
 import React, { useEffect, useMemo, useState } from 'react';
 import { DateRangeProps, RelationshipLabels } from 'types';
-import { NewTable as Table, TableProps } from 'components/ReactTable/Table';
+import { TableV2 as Table, TableProps } from 'components/ReactTable/V2/TableV2';
 import { TIME_SELECT } from 'containers';
 import { TimeseriesChart } from '..';
 import { Body } from '@cognite/cogs.js';
-import { Column } from 'react-table';
+import { ColumnDef } from '@tanstack/react-table';
+import { useGetHiddenColumns } from 'hooks';
 
 export type TimeseriesWithRelationshipLabels = Timeseries & RelationshipLabels;
 
@@ -29,12 +30,11 @@ export const TimeseriesNewTable = ({
 
   const { data, ...rest } = props;
   const columns = useMemo(() => {
-    const sparkLineColumn: Column<Timeseries & { data: any }> = {
-      Header: 'Preview',
-      accessor: 'data',
-      width: 400,
-
-      Cell: ({ row }) => {
+    const sparkLineColumn: ColumnDef<Timeseries & { data: any }> = {
+      header: 'Preview',
+      accessorKey: 'data',
+      size: 400,
+      cell: ({ row }) => {
         const timeseries = row.original;
         if (timeseries.isString) {
           return <Body level={2}>N/A for string time series</Body>;
@@ -60,7 +60,7 @@ export const TimeseriesNewTable = ({
       },
     };
     return [
-      Table.Columns.name,
+      { ...Table.Columns.name, enableHiding: false },
       Table.Columns.description,
       Table.Columns.unit,
       sparkLineColumn,
@@ -71,15 +71,15 @@ export const TimeseriesNewTable = ({
       Table.Columns.isStep,
       Table.Columns.dataSet,
       Table.Columns.assets,
-    ] as Column<Timeseries>[];
+    ] as ColumnDef<Timeseries>[];
   }, [dateRange]);
+  const hiddenColumns = useGetHiddenColumns(columns, visibleColumns);
 
   return (
     <Table
       columns={columns}
       data={data}
-      isStickyHeader
-      visibleColumns={visibleColumns}
+      hiddenColumns={hiddenColumns}
       {...rest}
     />
   );

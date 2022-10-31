@@ -93,9 +93,9 @@ export function AnnotationTable({
     case 'timeSeries': {
       return (
         <TimeseriesNewTable
+          id="timeseries-annotation-table"
           data={items}
           onRowClick={onRowClick}
-          hideColumnToggle
         />
       );
     }
