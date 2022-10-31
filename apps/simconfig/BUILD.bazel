@@ -437,7 +437,7 @@ publish_fas(
     # FAS production app id
     production_app_id = "simconfig",
     # FAS app identifier (repo) shared across both production and staging apps
-    repo_id = "simconfig",
+    repo_id = "cdf-simint-ui",
     # Sentry project name
     sentry_project_name = "simconfig",
     # FAS staging app id
