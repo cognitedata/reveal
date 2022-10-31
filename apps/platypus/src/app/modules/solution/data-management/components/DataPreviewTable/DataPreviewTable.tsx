@@ -147,11 +147,16 @@ export const DataPreviewTable = forwardRef<
 
   const handleRowPublish = (row: KeyValueMap) => {
     dataManagementHandler
-      .ingestNodes({
-        spaceExternalId: dataModelExternalId,
-        model: [dataModelExternalId, `${dataModelType.name}_${version}`],
-        items: [sanitizeRow(row)],
-      })
+      .ingestNodes(
+        {
+          spaceExternalId: dataModelExternalId,
+          model: [dataModelExternalId, `${dataModelType.name}_${version}`],
+          items: [sanitizeRow(row)],
+        },
+        dataModelExternalId,
+        dataModelType,
+        dataModelTypeDefs
+      )
       .then(({ items }) => {
         removeDrafts(items.map((item) => item.externalId as string));
         publishedRows.refetch().then(() => {
@@ -358,26 +363,43 @@ export const DataPreviewTable = forwardRef<
       return true;
     }
 
+    let newValue = e.newValue;
+    if (
+      dataManagementHandler.isRelationshipField(
+        e.colDef.field!,
+        dataModelType,
+        dataModelTypeDefs
+      ) &&
+      e.newValue !== null
+    ) {
+      // Set to null if externalId is set to empty string
+      newValue = e.newValue === '' ? null : { externalId: e.newValue };
+    }
+
     // update ag-grid cell data
-    e.data[e.colDef.field] = e.newValue;
+    e.data[e.colDef.field] = newValue;
 
     const updatedRowData = {
       ...e.data,
-      [e.colDef.field!]: e.newValue,
     };
 
     dataManagementHandler
-      .ingestNodes({
-        /*
+      .ingestNodes(
+        {
+          /*
         PG3 does not currently set a value to null if we pass null when doing a partial
         update (overwrite: false), but rather it will ignore that value. Therefore in
         order to be able to set values to null we need overwrite: true
         */
-        overwrite: true,
-        spaceExternalId: dataModelExternalId,
-        model: [dataModelExternalId, `${dataModelType.name}_${version}`],
-        items: [updatedRowData],
-      })
+          overwrite: true,
+          spaceExternalId: dataModelExternalId,
+          model: [dataModelExternalId, `${dataModelType.name}_${version}`],
+          items: [updatedRowData],
+        },
+        dataModelExternalId,
+        dataModelType,
+        dataModelTypeDefs
+      )
       .then(() => {
         gridRef.current?.api.refreshCells();
         if (e.colDef.field) {

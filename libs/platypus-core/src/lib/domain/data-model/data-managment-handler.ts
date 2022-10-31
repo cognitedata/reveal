@@ -1,13 +1,19 @@
 import { Result } from '../../boundaries/types';
 import {
   DmsDeleteNodesRequestDTO,
-  DmsIngestNodesRequestDTO,
+  DmsIngestNodesItemDTO,
   FetchDataDTO,
+  UnnormalizedDmsIngestNodesItemDTO,
+  UnnormalizedDmsIngestNodesRequestDTO,
 } from './dto';
 import { MixerQueryBuilder, MixerApiService } from './services/mixer-api';
 
 import { TransformationApiService, DmsApiService } from './services';
-import { DataModelTypeDefsType, PaginatedResponse } from './types';
+import {
+  DataModelTypeDefs,
+  DataModelTypeDefsType,
+  PaginatedResponse,
+} from './types';
 import { DataModelTransformationCreateDTO } from '../transformation/dto';
 
 export class DataManagementHandler {
@@ -125,7 +131,81 @@ export class DataManagementHandler {
       .catch((error) => Result.fail(error));
   }
 
-  ingestNodes(dto: DmsIngestNodesRequestDTO) {
-    return this.dmsApiService.ingestNodes(dto);
+  ingestNodes(
+    dto: UnnormalizedDmsIngestNodesRequestDTO,
+    dataModelExternalId: string,
+    dataModelType: DataModelTypeDefsType,
+    dataModelTypeDefs: DataModelTypeDefs
+  ) {
+    const normalizedDto = {
+      spaceExternalId: dto.spaceExternalId,
+      model: dto.model,
+      overwrite: dto.overwrite,
+      items: this.normalizeIngestionItem(
+        dto.items,
+        dataModelExternalId,
+        dataModelType,
+        dataModelTypeDefs
+      ),
+    };
+    return this.dmsApiService.ingestNodes(normalizedDto);
+  }
+
+  isRelationshipField(
+    field: string,
+    dataModelType: DataModelTypeDefsType,
+    dataModelTypeDefs: DataModelTypeDefs
+  ): boolean {
+    return this.getRelationshipFields(
+      dataModelType,
+      dataModelTypeDefs
+    ).includes(field);
+  }
+
+  /*
+Replace relationships with correct ingestion format.
+Must be on the format [spaceExternalId, externalId] or null instead of {externalId} or null
+*/
+  private normalizeIngestionItem(
+    items: UnnormalizedDmsIngestNodesItemDTO[],
+    dataModelExternalId: string,
+    dataModelType: DataModelTypeDefsType,
+    dataModelTypeDefs: DataModelTypeDefs
+  ): DmsIngestNodesItemDTO[] {
+    const relationshipFields = new Set(
+      this.getRelationshipFields(dataModelType, dataModelTypeDefs)
+    );
+    return items.map((item) =>
+      Object.fromEntries(
+        Object.entries(item).map(([key, value]) => {
+          if (
+            relationshipFields.has(key) &&
+            value !== null &&
+            typeof value === 'object'
+          ) {
+            const externalId = value.externalId;
+            if (externalId === '') {
+              return [key, null];
+            } else {
+              return [key, [dataModelExternalId, externalId]];
+            }
+          } else {
+            return [key, value];
+          }
+        })
+      )
+    );
+  }
+
+  private getRelationshipFields(
+    dataModelType: DataModelTypeDefsType,
+    dataModelTypeDefs: DataModelTypeDefs
+  ): string[] {
+    const modelTypeNames = new Set(
+      dataModelTypeDefs.types.map((modelTypeDef) => modelTypeDef.name)
+    );
+    return dataModelType.fields
+      .filter((field) => modelTypeNames.has(field.type.name))
+      .map((field) => field.name);
   }
 }

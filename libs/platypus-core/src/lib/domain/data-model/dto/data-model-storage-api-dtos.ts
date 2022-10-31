@@ -70,8 +70,7 @@ export interface DmsDeleteDataModelRequestDTO
 /************* Models APIs DTOs **************/
 
 /************* Nodes APIs DTOs **************/
-export interface DmsIngestNodesRequestDTO
-  extends BaseDTOWithKeyValuePairsItems {
+interface BaseDmsIngestNodesRequestDTO {
   /**
    * The space to ingest the nodes into.
    */
@@ -87,6 +86,28 @@ export interface DmsIngestNodesRequestDTO
    * With overwrite, missing items keys will null out existing data – assuming the columns are nullable.
    */
   overwrite?: boolean;
+}
+export interface DmsIngestNodesRequestDTO extends BaseDmsIngestNodesRequestDTO {
+  /**
+   * Instances to ingest.
+   */
+  items: DmsIngestNodesItemDTO[];
+}
+export interface DmsIngestNodesItemDTO {
+  // The value can also be a [spaceExternalId, externalId] pair or null for direction relatiobships.
+  [key: string]: string | number | boolean | [string, string] | null;
+}
+
+export interface UnnormalizedDmsIngestNodesItemDTO {
+  // The value can also be a { externalId } or null for direction relatiobships.
+  [key: string]: string | number | boolean | { externalId: string } | null;
+}
+export interface UnnormalizedDmsIngestNodesRequestDTO
+  extends BaseDmsIngestNodesRequestDTO {
+  /**
+   * Instances to ingest.
+   */
+  items: UnnormalizedDmsIngestNodesItemDTO[];
 }
 
 export interface FilterNodesRequestDTO extends BaseFilterableDTO {}

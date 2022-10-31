@@ -9,11 +9,7 @@ export const CustomCellRenderer = React.memo((props: ICellRendererParams) => {
 
   return (
     <div>
-      <Tag>
-        {props.value.externalId ||
-          props.value._externalId ||
-          JSON.stringify(props.value)}
-      </Tag>
+      <Tag>{props.value}</Tag>
     </div>
   );
 });

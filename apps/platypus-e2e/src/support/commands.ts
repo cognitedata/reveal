@@ -75,22 +75,19 @@ Cypress.Commands.add('setQueryExplorerQuery', (query: string) => {
   });
 });
 
-Cypress.Commands.add('assertQueryExplorerResult', (mockSuccess) => {
-  const normalizeString = (input: string) =>
-    input.replace(/\\n/gm, '').replace(/\\t/gm, '').replace(/\s/gm, '');
+function normalizeWhitespace(str: string) {
+  return str.replace(/\u00a0/g, ' ');
+}
 
-  cy.get('.result-window')
-    .invoke('text')
-    .then((resultsString: string) => {
-      // when returning the results like this, they start with " x { ..."
-      return normalizeString(resultsString.substring(2));
-    })
-    .as('graphQlResults');
-
-  cy.get(`@graphQlResults`).should(
-    'deep.equal',
-    normalizeString(`${JSON.stringify(mockSuccess, null, 2)}`)
-  );
+/*
+Taken from https://github.com/graphql/graphiql/blob/main/packages/graphiql/cypress/support/commands.ts#L116
+*/
+Cypress.Commands.add('assertQueryExplorerResult', (expectedResult) => {
+  cy.get('section.result-window').should((element) => {
+    expect(normalizeWhitespace(element.get(0).innerText)).to.equal(
+      JSON.stringify(expectedResult, null, 2)
+    );
+  });
 });
 
 Cypress.Commands.add(

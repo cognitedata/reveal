@@ -49,6 +49,52 @@ describe('Platypus Data Preview Page - Manual Data Ingestion', () => {
       );
     });
   });
+  it('should update, remove, and then insert direct relationships', () => {
+    cy.get('[data-testid="Post"]').click();
+    cy.get('[data-testid="Post"]').should('have.class', 'active');
+    cy.getBySel('data-preview-table').should('be.visible');
+    cy.intercept('POST', 'api/v1/projects/mock/datamodelstorage/nodes').as(
+      'ingestNodes'
+    );
+    cy.get('div[role="gridcell"][col-id="user"]')
+      .should('be.visible')
+      .should('contain', '123')
+      .first()
+      .focus()
+      .dblclick()
+      .type('321{enter}');
+
+    cy.wait('@ingestNodes').then((interception) => {
+      expect(interception.response.statusCode).to.equal(201);
+      expect(interception.response.body.items[0].user[1]).to.equal('321');
+    });
+
+    cy.get('div[role="gridcell"][col-id="user"]')
+      .should('be.visible')
+      .should('contain', '321')
+      .first()
+      .focus()
+      .dblclick()
+      .type('{backspace}{enter}');
+
+    cy.wait('@ingestNodes').then((interception) => {
+      expect(interception.response.statusCode).to.equal(201);
+      expect(interception.response.body.items[0].user).to.equal(null);
+    });
+
+    cy.get('div[role="gridcell"][col-id="user"]')
+      .should('be.visible')
+      .should('contain', '')
+      .first()
+      .focus()
+      .dblclick()
+      .type('123{enter}');
+
+    cy.wait('@ingestNodes').then((interception) => {
+      expect(interception.response.statusCode).to.equal(201);
+      expect(interception.response.body.items[0].user[1]).to.equal('123');
+    });
+  });
   it('should handle row revert on server update error', () => {
     cy.get('[data-testid="User"]').click();
     cy.get('[data-testid="User"]').should('have.class', 'active');
