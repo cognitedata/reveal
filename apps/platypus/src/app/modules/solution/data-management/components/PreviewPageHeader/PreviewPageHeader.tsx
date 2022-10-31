@@ -76,7 +76,9 @@ export function PreviewPageHeader({
               style={{ marginLeft: '8px' }}
             >
               <span
-                style={{ opacity: !shouldShowPublishedRows ? '0.2' : '1.0' }}
+                style={{
+                  opacity: !shouldShowPublishedRows ? '0.2' : '1.0',
+                }}
               >
                 {publishedRowsCount}
               </span>
@@ -96,12 +98,17 @@ export function PreviewPageHeader({
             }`}
           >
             <Label
-              onClick={onDraftRowsCountClick}
+              onClick={draftRowsCount ? onDraftRowsCountClick : undefined}
               variant="unknown"
               size="medium"
               style={{ marginLeft: '4px' }}
             >
-              <span style={{ opacity: !shouldShowDraftRows ? '0.2' : '1.0' }}>
+              <span
+                style={{
+                  opacity:
+                    !shouldShowDraftRows || !draftRowsCount ? '0.2' : '1.0',
+                }}
+              >
                 {draftRowsCount}
               </span>
             </Label>
