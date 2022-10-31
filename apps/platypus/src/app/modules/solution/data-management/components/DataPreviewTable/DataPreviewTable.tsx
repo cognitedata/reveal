@@ -319,7 +319,15 @@ export const DataPreviewTable = forwardRef<
   };
 
   const handleCellEditingStarted = (e: CellEditingStartedEvent) => {
-    if (!(e.colDef.type || []).includes('listColType')) {
+    const fieldName = e.colDef.field || '';
+    const fieldType = dataModelType?.fields?.find(
+      (field) => field.name === fieldName
+    );
+    const isListTypeCell = fieldType?.list || fieldType?.type.list;
+    const isCustomListTypeCell =
+      isListTypeCell && e.colDef.cellRendererParams.listDataType === 'CUSTOM';
+
+    if (!isListTypeCell || isCustomListTypeCell) {
       handleCloseListDataSidePanel();
       return;
     }

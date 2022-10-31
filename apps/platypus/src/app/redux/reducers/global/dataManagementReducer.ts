@@ -37,14 +37,6 @@ const initialState = {
   transformationId: null,
 } as IDataManagementState;
 
-const getDefaultCellValueForDraftRow = (field: DataModelTypeDefsField) => {
-  if (field.type.list) {
-    return [];
-  }
-
-  return null;
-};
-
 export const isDraftRowDataComplete = (
   draftRowData: DraftRowData,
   dataModelType: DataModelTypeDefsType
@@ -121,7 +113,7 @@ const dataManagementSlice = createSlice({
         (rowObj, field) => {
           return {
             ...rowObj,
-            [field.name]: getDefaultCellValueForDraftRow(field),
+            [field.name]: null,
           };
         },
         {
@@ -223,9 +215,7 @@ export const compatiblizeDraftRowsData = (
         _draftStatus: draftRowData['_draftStatus'],
         _isDraftSelected: draftRowData['_isDraftSelected'] === true,
         [field.name]:
-          field.name in draftRowData
-            ? draftRowData[field.name]
-            : getDefaultCellValueForDraftRow(field),
+          field.name in draftRowData ? draftRowData[field.name] : null,
       };
     }, {} as DraftRowData);
   });

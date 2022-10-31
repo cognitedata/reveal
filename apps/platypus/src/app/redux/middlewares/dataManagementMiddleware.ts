@@ -47,7 +47,7 @@ export const draftRowsLocalStorageMiddleware =
         actions.setDraftRowsData({
           rows: compatiblizeDraftRowsData(
             state.dataManagement.draftRows[action.payload.selectedType.name] ||
-              [],
+              null,
             action.payload.selectedType
           ),
         })
