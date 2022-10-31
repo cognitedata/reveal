@@ -16,7 +16,7 @@ export function useNodesDeleteMutation({
   dataModelExternalId: string;
   dataModelType: DataModelTypeDefsType;
 }) {
-  const aggregationsQueryKey = QueryKeys.PUBLISHED_ROW_COUNT(
+  const aggregationsQueryKey = QueryKeys.PUBLISHED_ROWS_COUNT_BY_TYPE(
     dataModelExternalId,
     dataModelType.name
   );

@@ -42,7 +42,7 @@ import {
 import { useDataManagementPageUI } from '../../hooks/useDataManagemenPageUI';
 import { useDraftRows } from '../../hooks/useDraftRows';
 import { useNodesDeleteMutation } from '../../hooks/useNodesDeleteMutation';
-import { usePublishedRowsCount } from '../../hooks/usePublishedRowsCount';
+import { usePublishedRowsCountMapByType } from '../../hooks/usePublishedRowsCountMapByType';
 import {
   buildGridConfig,
   getInitialGridConfig,
@@ -127,9 +127,13 @@ export const DataPreviewTable = forwardRef<
   const [isDeleteRowsModalVisible, setIsDeleteRowsModalVisible] =
     useState(false);
 
-  const publishedRows = usePublishedRowsCount({
+  const {
+    data: publishedRowsCountMap,
+    refetch: refetchPublishedRowsCountMap,
+    isFetched: isPublishedRowsCountMapFetched,
+  } = usePublishedRowsCountMapByType({
     dataModelExternalId,
-    dataModelType,
+    dataModelTypes: dataModelTypeDefs.types,
   });
   const deleteRowsMutation = useNodesDeleteMutation({
     dataModelExternalId,
@@ -159,7 +163,7 @@ export const DataPreviewTable = forwardRef<
       )
       .then(({ items }) => {
         removeDrafts(items.map((item) => item.externalId as string));
-        publishedRows.refetch().then(() => {
+        refetchPublishedRowsCountMap().then(() => {
           gridRef.current?.api.refreshInfiniteCache();
         });
         Notification({
@@ -170,8 +174,10 @@ export const DataPreviewTable = forwardRef<
   };
 
   const isNoRowsOverlayVisible = useMemo(
-    () => draftRowsData.length === 0 && (publishedRows.data || 0) === 0,
-    [draftRowsData.length, publishedRows.data]
+    () =>
+      draftRowsData.length === 0 &&
+      (publishedRowsCountMap?.[dataModelType.name] || 0) === 0,
+    [draftRowsData.length, publishedRowsCountMap, dataModelType]
   );
 
   useEffect(() => {
@@ -490,6 +496,7 @@ export const DataPreviewTable = forwardRef<
           message: successNotificationMessage,
         });
         setIsDeleteRowsModalVisible(false);
+        refetchPublishedRowsCountMap({ exact: true, cancelRefetch: true });
       },
     });
   }, [
@@ -497,10 +504,11 @@ export const DataPreviewTable = forwardRef<
     deleteRowsMutation,
     deleteSelectedRows,
     singleSelectedRowExternalId,
+    refetchPublishedRowsCountMap,
     t,
   ]);
 
-  if (!isGridInit || !publishedRows.isFetched) {
+  if (!isGridInit || !isPublishedRowsCountMapFetched) {
     return <Spinner />;
   }
 
@@ -548,7 +556,7 @@ export const DataPreviewTable = forwardRef<
           setIsDeleteRowsModalVisible(true);
         }}
         draftRowsCount={draftRowsData.length}
-        publishedRowsCount={publishedRows.data || 0}
+        publishedRowsCount={publishedRowsCountMap?.[dataModelType.name] || 0}
         shouldShowDraftRows={shouldShowDraftRows}
         shouldShowPublishedRows={shouldShowPublishedRows}
         onDraftRowsCountClick={toggleShouldShowDraftRows}

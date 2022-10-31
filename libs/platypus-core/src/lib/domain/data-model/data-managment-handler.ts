@@ -3,6 +3,8 @@ import {
   DmsDeleteNodesRequestDTO,
   DmsIngestNodesItemDTO,
   FetchDataDTO,
+  FetchPublishedRowsCountDTO,
+  PublishedRowsCountMap,
   UnnormalizedDmsIngestNodesItemDTO,
   UnnormalizedDmsIngestNodesRequestDTO,
 } from './dto';
@@ -53,6 +55,45 @@ export class DataManagementHandler {
                 .externalId
             )
           );
+        })
+        .catch((err) => {
+          reject(Result.fail(err));
+        })
+    );
+  }
+
+  fetchPublishedRowsCount(
+    dto: FetchPublishedRowsCountDTO
+  ): Promise<Result<PublishedRowsCountMap>> {
+    return new Promise((resolve, reject) =>
+      this.mixerApiService
+        .runQuery({
+          graphQlParams: {
+            query: `query Aggregate {
+        ${dto.dataModelTypes
+          ?.map(
+            (dataModelType) => `
+            aggregate${dataModelType.name} {
+              items {
+                count {
+                  externalId
+                }
+              }
+            }`
+          )
+          .join('')}
+      }`,
+          },
+          dataModelId: dto.dataModelId,
+          schemaVersion: dto.version,
+        })
+        .then((res) => {
+          const counts: PublishedRowsCountMap = {};
+          for (const typeName in res.data || {}) {
+            counts[typeName.replace(/aggregate/, '')] =
+              res.data[typeName]?.items[0]?.count?.externalId || 0;
+          }
+          resolve(Result.ok(counts));
         })
         .catch((err) => {
           reject(Result.fail(err));

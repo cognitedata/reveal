@@ -104,7 +104,7 @@ export const Preview = ({ dataModelExternalId }: PreviewProps) => {
           onOk={() => {
             // refetch aggregate count
             queryClient.refetchQueries(
-              QueryKeys.PUBLISHED_ROW_COUNT(
+              QueryKeys.PUBLISHED_ROWS_COUNT_BY_TYPE(
                 dataModelExternalId,
                 selectedType.name
               )

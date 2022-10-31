@@ -20,7 +20,7 @@ describe('DataManagementHandlerTest', () => {
     },
   };
 
-  const solutionSchemaServiceMock = {
+  const mixerApiServiceMock = {
     runQuery: jest.fn().mockImplementation(() =>
       Promise.resolve({
         data: {
@@ -44,7 +44,7 @@ describe('DataManagementHandlerTest', () => {
     },
   ];
 
-  const transformationApiMock = {
+  const transformationApiServiceMock = {
     createTransformation: jest
       .fn()
       .mockImplementation(() => Promise.resolve(mockTransformation[0])),
@@ -53,16 +53,16 @@ describe('DataManagementHandlerTest', () => {
       .mockImplementation(() => Promise.resolve(mockTransformation)),
   } as any;
 
-  const dmsApiMock = {
+  const dmsApiServiceMock = {
     ingestNodes: jest.fn().mockImplementation(() => Promise.resolve()),
   } as any;
 
   const createInstance = () => {
     return new DataManagementHandler(
       queryBuilderMock,
-      solutionSchemaServiceMock,
-      transformationApiMock,
-      dmsApiMock
+      mixerApiServiceMock,
+      transformationApiServiceMock,
+      dmsApiServiceMock
     );
   };
 
@@ -88,9 +88,37 @@ describe('DataManagementHandlerTest', () => {
       version: '1',
     });
     expect(queryBuilderMock.buildQuery).toBeCalled();
-    expect(solutionSchemaServiceMock.runQuery).toBeCalled();
+    expect(mixerApiServiceMock.runQuery).toBeCalled();
     expect(response.isSuccess).toBe(true);
     expect(response.getValue().items).toEqual(fetchDataResponseMock.items);
+  });
+
+  it('should fetch published rows count', async () => {
+    const service = createInstance();
+
+    mixerApiServiceMock.runQuery.mockImplementationOnce(() =>
+      Promise.resolve({
+        data: {
+          aggregatePerson: {
+            items: [],
+          },
+          aggregateCars: {
+            items: [],
+          },
+        },
+      })
+    );
+
+    const response = await service.fetchPublishedRowsCount({
+      dataModelTypes: [],
+      dataModelId: 'testExternalId',
+      version: '1',
+    });
+    expect(response.isSuccess).toBe(true);
+    expect(response.getValue()).toEqual({
+      Person: 0,
+      Cars: 0,
+    });
   });
 
   it('should create transformation', async () => {
@@ -115,7 +143,7 @@ describe('DataManagementHandlerTest', () => {
       typeName: 'Type',
       version: '1',
     });
-    expect(transformationApiMock.getTransformationsForType).toBeCalled();
+    expect(transformationApiServiceMock.getTransformationsForType).toBeCalled();
     expect(response).toEqual(mockTransformation);
     expect(response.length).toEqual(1);
   });

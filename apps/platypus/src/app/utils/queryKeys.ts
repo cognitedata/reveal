@@ -8,8 +8,11 @@ export const QueryKeys = {
     ['DATA_MODEL_VERSION_LIST', dataModelExternalId] as const,
   DATA_SETS_LIST: ['DATA_SETS_LIST'] as const,
   AUTHENTICATED_USER: ['AUTHENTICATED_USER'] as const,
-  PUBLISHED_ROW_COUNT: (datamodelId: string, dataModelTypeName: string) =>
-    ['PUBLISHED_ROW_COUNT', datamodelId, dataModelTypeName] as const,
+  PUBLISHED_ROWS_COUNT_BY_TYPE: (
+    datamodelId: string,
+    dataModelTypeName: string
+  ) =>
+    ['PUBLISHED_ROWS_COUNT_BY_TYPE', datamodelId, dataModelTypeName] as const,
   TRANSFORMATION: (
     dataModelExternalId: string,
     type: string,

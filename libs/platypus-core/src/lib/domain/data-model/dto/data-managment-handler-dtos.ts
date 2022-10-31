@@ -9,3 +9,13 @@ export interface FetchDataDTO {
   dataModelId: string;
   version: string;
 }
+
+export interface FetchPublishedRowsCountDTO {
+  dataModelTypes: DataModelTypeDefsType[];
+  dataModelId: string;
+  version: string;
+}
+
+export interface PublishedRowsCountMap {
+  [typeName: string]: number;
+}

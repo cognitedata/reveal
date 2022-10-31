@@ -1,23 +1,25 @@
 import { TOKENS } from '@platypus-app/di';
-import { DataModelTypeDefsType, FetchDataDTO } from '@platypus/platypus-core';
+import {
+  DataModelTypeDefsType,
+  FetchPublishedRowsCountDTO,
+} from '@platypus/platypus-core';
 import { useQuery } from '@tanstack/react-query';
 import { useInjection } from '../../../../hooks/useInjection';
 import { Notification } from '@platypus-app/components/Notification/Notification';
 import {
   useDataModelVersions,
   useSelectedDataModelVersion,
-  useDataModelTypeDefs,
 } from '@platypus-app/hooks/useDataModelActions';
 import { DataModelState } from '@platypus-app/redux/reducers/global/dataModelReducer';
 import useSelector from '@platypus-app/hooks/useSelector';
 import { QueryKeys } from '@platypus-app/utils/queryKeys';
 
-export const usePublishedRowsCount = ({
+export const usePublishedRowsCountMapByType = ({
   dataModelExternalId,
-  dataModelType,
+  dataModelTypes,
 }: {
   dataModelExternalId: string;
-  dataModelType: DataModelTypeDefsType;
+  dataModelTypes: DataModelTypeDefsType[];
 }) => {
   const { selectedVersionNumber } = useSelector<DataModelState>(
     (state) => state.dataModel
@@ -28,27 +30,18 @@ export const usePublishedRowsCount = ({
     dataModelVersions || [],
     dataModelExternalId
   );
-  const dataModelTypeDefs = useDataModelTypeDefs(
-    dataModelExternalId,
-    selectedVersionNumber
-  );
-  const dto: Omit<FetchDataDTO, 'cursor' | 'hasNextPage' | 'limit'> & {
-    dataModelType: DataModelTypeDefsType | null;
-  } = {
+  const dto: FetchPublishedRowsCountDTO = {
     dataModelId: dataModelExternalId,
-    dataModelTypeDefs,
-    dataModelType,
+    dataModelTypes,
     version: selectedDataModelVersion.version,
   };
 
   const dataManagementHandler = useInjection(TOKENS.DataManagementHandler);
   return useQuery(
-    QueryKeys.PUBLISHED_ROW_COUNT(dto.dataModelId, dto.dataModelType.name),
+    QueryKeys.PUBLISHED_ROWS_COUNT_BY_TYPE(dto.dataModelId, dto.dataModelId),
     async () => {
       try {
-        const result = await dataManagementHandler.fetchNumberOfPublishedRows(
-          dto
-        );
+        const result = await dataManagementHandler.fetchPublishedRowsCount(dto);
         return result.getValue();
       } catch (errResponse: any) {
         const error = errResponse.error;
