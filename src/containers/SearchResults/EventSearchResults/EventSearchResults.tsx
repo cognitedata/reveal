@@ -46,6 +46,7 @@ export const EventSearchResults = ({
   return (
     <EnsureNonEmptyResource api="event">
       <EventNewTable
+        id="event-search-results"
         tableHeaders={
           <SearchResultToolbar
             api={query.length > 0 ? 'search' : 'list'}

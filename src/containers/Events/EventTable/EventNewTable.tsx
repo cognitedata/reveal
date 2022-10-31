@@ -1,20 +1,22 @@
 import React, { useMemo } from 'react';
 import { CogniteEvent } from '@cognite/sdk';
-import { Column } from 'react-table';
-import { NewTable as Table, TableProps } from 'components/ReactTable/Table';
+
+import { TableV2 as Table, TableProps } from 'components/ReactTable/V2/TableV2';
 
 import { RelationshipLabels } from 'types';
+import { ColumnDef } from '@tanstack/react-table';
+import { useGetHiddenColumns } from 'hooks';
 
 export type EventWithRelationshipLabels = RelationshipLabels & CogniteEvent;
 
 const visibleColumns = ['type', 'description'];
 export const EventNewTable = (
-  props: TableProps<EventWithRelationshipLabels>
+  props: Omit<TableProps<EventWithRelationshipLabels>, 'columns'>
 ) => {
   const columns = useMemo(
     () =>
       [
-        Table.Columns.type,
+        { ...Table.Columns.type, enableHiding: false },
         Table.Columns.description,
         Table.Columns.externalId,
         Table.Columns.lastUpdatedTime,
@@ -25,15 +27,15 @@ export const EventNewTable = (
         Table.Columns.endTime,
         Table.Columns.source,
         Table.Columns.assets,
-      ] as Column<CogniteEvent>[],
+      ] as ColumnDef<CogniteEvent>[],
     []
   );
+  const hiddenColumns = useGetHiddenColumns(columns, visibleColumns);
 
   return (
     <Table<CogniteEvent>
       columns={columns}
-      alwaysColumnVisible="type"
-      visibleColumns={visibleColumns}
+      hiddenColumns={hiddenColumns}
       {...props}
     />
   );

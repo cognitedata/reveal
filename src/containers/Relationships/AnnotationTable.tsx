@@ -101,7 +101,11 @@ export function AnnotationTable({
     }
     case 'event': {
       return (
-        <EventNewTable data={items} onRowClick={onRowClick} hideColumnToggle />
+        <EventNewTable
+          id="event-annotatio-table"
+          data={items}
+          onRowClick={onRowClick}
+        />
       );
     }
     case 'sequence': {
