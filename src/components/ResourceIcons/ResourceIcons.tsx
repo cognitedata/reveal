@@ -3,25 +3,25 @@ import { Label } from '@cognite/cogs.js';
 import { ResourceType } from 'types';
 
 const AssetIcon = ({ style }: { style?: React.CSSProperties }) => (
-  <Label icon="Assets" style={style} />
+  <Label variant="normal" icon="Assets" style={style} />
 );
 const TimeseriesIcon = ({ style }: { style?: React.CSSProperties }) => (
-  <Label icon="Timeseries" style={style} />
+  <Label variant="normal" icon="Timeseries" style={style} />
 );
 const FileIcon = ({ style }: { style?: React.CSSProperties }) => (
-  <Label icon="Document" style={style} />
+  <Label variant="normal" icon="Document" style={style} />
 );
 const DocumentIcon = ({ style }: { style?: React.CSSProperties }) => (
-  <Label icon="Document" style={style} />
+  <Label variant="normal" icon="Document" style={style} />
 );
 const SequenceIcon = ({ style }: { style?: React.CSSProperties }) => (
-  <Label icon="Sequences" style={style} />
+  <Label variant="normal" icon="Sequences" style={style} />
 );
 const EventIcon = ({ style }: { style?: React.CSSProperties }) => (
-  <Label icon="Events" style={style} />
+  <Label variant="normal" icon="Events" style={style} />
 );
 const ThreeDIcon = ({ style }: { style?: React.CSSProperties }) => (
-  <Label icon="Cube" style={style} />
+  <Label variant="normal" icon="Cube" style={style} />
 );
 
 export const ResourceIcons = ({
