@@ -1,10 +1,20 @@
 import React, { useMemo } from 'react';
 import { Sequence } from '@cognite/sdk';
-import { NewTable as Table, TableProps } from 'components/ReactTable/Table';
+import { TableV2 as Table, TableProps } from 'components/ReactTable/V2/TableV2';
 import { RelationshipLabels } from 'types';
-import { Column } from 'react-table';
+
+import { ColumnDef } from '@tanstack/react-table';
+import { useGetHiddenColumns } from 'hooks';
 
 export type SequenceWithRelationshipLabels = Sequence & RelationshipLabels;
+
+const visibleColumns = [
+  'name',
+  'externalId',
+  'relation',
+  'lastUpdatedTime',
+  'createdTime',
+];
 export const SequenceNewTable = (
   props: Omit<
     TableProps<SequenceWithRelationshipLabels | Sequence>,
@@ -15,7 +25,7 @@ export const SequenceNewTable = (
   const columns = useMemo(
     () =>
       [
-        Table.Columns.name,
+        { ...Table.Columns.name, enableHiding: false },
         Table.Columns.description,
         Table.Columns.externalId,
         Table.Columns.columns,
@@ -24,22 +34,10 @@ export const SequenceNewTable = (
         Table.Columns.id,
         Table.Columns.asset,
         Table.Columns.dataSet,
-      ] as Column<Sequence>[],
+      ] as ColumnDef<Sequence>[],
     []
   );
+  const hiddenColumns = useGetHiddenColumns(columns, visibleColumns);
 
-  return (
-    <Table
-      columns={columns}
-      isStickyHeader
-      visibleColumns={[
-        'name',
-        'externalId',
-        'relation',
-        'lastUpdatedTime',
-        'createdTime',
-      ]}
-      {...props}
-    />
-  );
+  return <Table columns={columns} hiddenColumns={hiddenColumns} {...props} />;
 };

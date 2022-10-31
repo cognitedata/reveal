@@ -40,6 +40,7 @@ export const SequenceSearchResults = ({
   return (
     <EnsureNonEmptyResource api="sequence">
       <SequenceNewTable
+        id="sequence-search-results"
         tableHeaders={
           <SearchResultToolbar
             api={query.length > 0 ? 'search' : 'list'}

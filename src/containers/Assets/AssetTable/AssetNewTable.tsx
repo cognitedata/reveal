@@ -13,6 +13,7 @@ import {
   ThreeDAssetMappingItem,
   useThreeDAssetMappings,
 } from 'hooks/threeDHooks';
+import { useGetHiddenColumns } from 'hooks';
 
 const visibleColumns = ['name', 'rootId'];
 
@@ -132,8 +133,11 @@ export const AssetNewTable = (
       Table.Columns.externalId,
       {
         ...Table.Columns.rootAsset,
-        Cell: ({ value }: { value: number }) => (
-          <ParentCell rootId={value!} onClick={onRowClick as any} />
+        cell: ({ getValue }) => (
+          <ParentCell
+            rootId={getValue<number>()!}
+            onClick={onRowClick as any}
+          />
         ),
       },
       {
@@ -155,18 +159,7 @@ export const AssetNewTable = (
     [threeDAssetMappings]
   ) as ColumnDef<AssetWithRelationshipLabels>[];
 
-  const hiddenColumns = useMemo(() => {
-    return (
-      columns
-        .filter(
-          column =>
-            // @ts-ignore Don't know why `accessorKey` is not recognized from the type -_-
-            !visibleColumns.includes(column.accessorKey || column?.id)
-        )
-        // @ts-ignore
-        .map(column => column.accessorKey || column.id)
-    );
-  }, [columns]);
+  const hiddenColumns = useGetHiddenColumns(columns, visibleColumns);
 
   return (
     <Table<Asset>

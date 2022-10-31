@@ -5,7 +5,7 @@ import { useInfiniteSequenceRows } from 'hooks/sequenceHooks';
 
 import { Loader } from 'components';
 import { EmptyState } from 'components/EmpyState/EmptyState';
-import { NewTable } from 'components/ReactTable';
+import { TableV2 as Table } from 'components/ReactTable/V2/TableV2';
 import { AllowedTableStateId } from 'types';
 
 export interface SequenceDataRow {
@@ -50,8 +50,8 @@ export const SequencePreview = ({ sequence }: { sequence: Sequence }) => {
   const tableColumns = useMemo(
     () =>
       sequence.columns.map((column, index) => ({
-        accessor: `${index}`,
-        Header: `${column.externalId || column.id}`,
+        accessorKey: `${index}`,
+        header: `${column.externalId || column.id}`,
       })),
     [sequence.columns]
   );
@@ -64,7 +64,8 @@ export const SequencePreview = ({ sequence }: { sequence: Sequence }) => {
   }
 
   return (
-    <NewTable<any & { id: AllowedTableStateId }>
+    <Table<any & { id: AllowedTableStateId }>
+      id="sequence-details-preview"
       columns={tableColumns}
       data={listItems || []}
       showLoadButton

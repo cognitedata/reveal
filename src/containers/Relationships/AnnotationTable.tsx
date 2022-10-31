@@ -105,7 +105,13 @@ export function AnnotationTable({
       );
     }
     case 'sequence': {
-      return <SequenceNewTable data={items} onRowClick={onRowClick} />;
+      return (
+        <SequenceNewTable
+          id="sequence-annotation-table"
+          data={items}
+          onRowClick={onRowClick}
+        />
+      );
     }
     default:
       return null;
