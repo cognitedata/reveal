@@ -80,6 +80,7 @@ export function AnnotationTable({
       return (
         <AssetNewTable
           data={items}
+          hideColumnToggle
           onRowClick={onRowClick}
           id="asset-annotations-table"
         />
@@ -97,6 +98,7 @@ export function AnnotationTable({
     case 'timeSeries': {
       return (
         <TimeseriesNewTable
+          hideColumnToggle
           id="timeseries-annotation-table"
           data={items}
           onRowClick={onRowClick}
@@ -117,6 +119,7 @@ export function AnnotationTable({
         <SequenceNewTable
           id="sequence-annotation-table"
           data={items}
+          hideColumnToggle
           onRowClick={onRowClick}
         />
       );

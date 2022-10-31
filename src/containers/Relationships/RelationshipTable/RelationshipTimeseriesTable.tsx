@@ -1,15 +1,16 @@
 import React from 'react';
 
-import { NewTable } from 'components/ReactTable';
+import { TableV2 as Table } from 'components/ReactTable/V2/TableV2';
 
 import { useRelatedResourceResults, useRelationshipCount } from 'hooks';
 
 import { ResultCount } from 'components';
-import { Column } from 'react-table';
+
 import { RelationshipTableProps } from './RelationshipTable';
 import { TimeseriesWithRelationshipLabels } from 'containers/Timeseries/TimeseriesTable/TimeseriesNewTable';
 import { RelationshipFilters } from './RelationshipFilters';
 import { EmptyState } from 'components/EmpyState/EmptyState';
+import { ColumnDef } from '@tanstack/react-table';
 
 const {
   relationshipLabels,
@@ -20,7 +21,7 @@ const {
   lastUpdatedTime,
   created,
   assets,
-} = NewTable.Columns;
+} = Table.Columns;
 
 const columns = [
   name,
@@ -31,7 +32,7 @@ const columns = [
   lastUpdatedTime,
   created,
   assets,
-] as Column<TimeseriesWithRelationshipLabels>[];
+] as ColumnDef<TimeseriesWithRelationshipLabels>[];
 
 export function RelationshipTimeseriesTable({
   parentResource,
@@ -62,7 +63,8 @@ export function RelationshipTimeseriesTable({
         onChange={onChangeLabelValue}
         value={labelValue}
       />
-      <NewTable
+      <Table
+        id="relationship-timeseries-table"
         columns={columns}
         tableHeaders={
           <ResultCount api="list" type="timeSeries" count={count} />

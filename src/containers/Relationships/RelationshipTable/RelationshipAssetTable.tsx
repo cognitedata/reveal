@@ -1,28 +1,28 @@
 import React from 'react';
 
-import { NewTable } from 'components/ReactTable';
+import { TableV2 as Table } from 'components/ReactTable/V2/TableV2';
 import { AssetWithRelationshipLabels } from 'containers/Assets/AssetTable/AssetNewTable';
 import { useRelatedResourceResults, useRelationshipCount } from 'hooks';
 
-import { Column } from 'react-table';
 import { RelationshipTableProps } from './RelationshipTable';
 
 import { EmptyState } from 'components/EmpyState/EmptyState';
 import { ResultCount } from 'components';
+import { ColumnDef } from '@tanstack/react-table';
 
 export function RelationshipAssetTable({
   parentResource,
   onItemClicked,
 }: Omit<RelationshipTableProps, 'type'>) {
   const { relationshipLabels, relation, externalId, rootAsset, name } =
-    NewTable.Columns;
+    Table.Columns;
   const columns = [
     name,
     relationshipLabels,
     relation,
     externalId,
     rootAsset,
-  ] as Column<AssetWithRelationshipLabels>[];
+  ] as ColumnDef<AssetWithRelationshipLabels>[];
 
   const { hasNextPage, fetchNextPage, isLoading, items } =
     useRelatedResourceResults<AssetWithRelationshipLabels>(
@@ -36,7 +36,8 @@ export function RelationshipAssetTable({
     return <EmptyState isLoading={isLoading} />;
   }
   return (
-    <NewTable
+    <Table
+      id="relationship-asset-table"
       tableHeaders={<ResultCount api="list" type="asset" count={count} />}
       columns={columns}
       data={items}
@@ -44,6 +45,7 @@ export function RelationshipAssetTable({
       fetchMore={fetchNextPage}
       hasNextPage={hasNextPage}
       isLoadingMore={isLoading}
+      hideColumnToggle
       onRowClick={row => onItemClicked(row.id)}
     />
   );

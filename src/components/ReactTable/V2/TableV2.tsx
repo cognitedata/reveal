@@ -48,6 +48,7 @@ export interface TableProps<T extends Record<string, any>>
   showLoadButton?: boolean;
   tableHeaders?: React.ReactElement;
   enableColumnResizing?: boolean;
+  hideColumnToggle?: boolean;
   hiddenColumns?: string[];
   onSort?: (props: SortingState) => void;
   onRowClick?: (
@@ -74,6 +75,7 @@ export function TableV2<T extends TableData>({
   tableHeaders,
   fetchMore,
   hiddenColumns,
+  hideColumnToggle,
 }: TableProps<T>) {
   const defaultColumn: Partial<ColumnDef<T, unknown>> = useMemo(
     () => ({
@@ -183,15 +185,17 @@ export function TableV2<T extends TableData>({
       {tableHeaders || !isEmpty(hiddenColumns) ? (
         <ColumnSelectorWrapper>
           {tableHeaders}
-          <DndProvider backend={HTML5Backend}>
-            <StyledFlex>
-              <ColumnToggle<T>
-                moveCard={moveCard}
-                allColumns={getAllLeafColumns()}
-                toggleAllColumnsVisible={handleToggleAllVisibility}
-              />
-            </StyledFlex>
-          </DndProvider>
+          {!hideColumnToggle && (
+            <DndProvider backend={HTML5Backend}>
+              <StyledFlex>
+                <ColumnToggle<T>
+                  moveCard={moveCard}
+                  allColumns={getAllLeafColumns()}
+                  toggleAllColumnsVisible={handleToggleAllVisibility}
+                />
+              </StyledFlex>
+            </DndProvider>
+          )}
         </ColumnSelectorWrapper>
       ) : null}
 

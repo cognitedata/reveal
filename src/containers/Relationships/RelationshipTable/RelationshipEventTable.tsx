@@ -1,13 +1,12 @@
 import React from 'react';
-
-import { NewTable } from 'components/ReactTable';
+import { TableV2 as Table } from 'components/ReactTable/V2/TableV2';
 import { useRelatedResourceResults, useRelationshipCount } from 'hooks';
 import { ResultCount } from 'components';
-import { Column } from 'react-table';
 import { RelationshipTableProps } from './RelationshipTable';
 import { EventWithRelationshipLabels } from 'containers/Events/EventTable/EventNewTable';
 
 import { EmptyState } from 'components/EmpyState/EmptyState';
+import { ColumnDef } from '@tanstack/react-table';
 
 const {
   relationshipLabels,
@@ -16,7 +15,7 @@ const {
   type,
   lastUpdatedTime,
   created,
-} = NewTable.Columns;
+} = Table.Columns;
 
 const columns = [
   type,
@@ -25,7 +24,7 @@ const columns = [
   externalId,
   lastUpdatedTime,
   created,
-] as Column<EventWithRelationshipLabels>[];
+] as ColumnDef<EventWithRelationshipLabels>[];
 
 export function RelationshipEventTable({
   parentResource,
@@ -43,10 +42,12 @@ export function RelationshipEventTable({
     return <EmptyState isLoading={isLoading} />;
   }
   return (
-    <NewTable
+    <Table
+      id="relationship-event-table"
       columns={columns}
       tableHeaders={<ResultCount api="list" type="event" count={count} />}
       data={items}
+      hideColumnToggle
       showLoadButton
       fetchMore={fetchNextPage}
       hasNextPage={hasNextPage}

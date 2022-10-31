@@ -1,14 +1,12 @@
 import React from 'react';
-
-import { NewTable } from 'components/ReactTable';
 import { useRelatedResourceResults, useRelationshipCount } from 'hooks';
-
 import { ResultCount } from 'components';
-import { Column } from 'react-table';
+import { TableV2 as Table } from 'components/ReactTable/V2/TableV2';
 import { RelationshipTableProps } from './RelationshipTable';
 
 import { FileWithRelationshipLabels } from 'containers/Files/FileTable/FileNewTable';
 import { EmptyState } from 'components/EmpyState/EmptyState';
+import { ColumnDef } from '@tanstack/react-table';
 
 const {
   relationshipLabels,
@@ -18,7 +16,7 @@ const {
   uploadedTime,
   lastUpdatedTime,
   created,
-} = NewTable.Columns;
+} = Table.Columns;
 
 const columns = [
   name,
@@ -28,7 +26,7 @@ const columns = [
   uploadedTime,
   lastUpdatedTime,
   created,
-] as Column<FileWithRelationshipLabels>[];
+] as ColumnDef<FileWithRelationshipLabels>[];
 
 export function RelationshipFileTable({
   parentResource,
@@ -46,7 +44,9 @@ export function RelationshipFileTable({
     return <EmptyState isLoading={isLoading} />;
   }
   return (
-    <NewTable
+    <Table
+      id="relationship-file-table"
+      hideColumnToggle
       columns={columns}
       tableHeaders={<ResultCount api="list" type="file" count={count} />}
       data={items}

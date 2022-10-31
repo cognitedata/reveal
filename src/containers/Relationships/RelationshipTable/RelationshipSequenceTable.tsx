@@ -1,13 +1,13 @@
 import React from 'react';
 
-import { NewTable } from 'components/ReactTable';
+import { TableV2 as Table } from 'components/ReactTable/V2/TableV2';
 import { useRelatedResourceResults, useRelationshipCount } from 'hooks';
 import { ResultCount } from 'components';
-import { Column } from 'react-table';
 import { RelationshipTableProps } from './RelationshipTable';
 
 import { SequenceWithRelationshipLabels } from 'index';
 import { EmptyState } from 'components/EmpyState/EmptyState';
+import { ColumnDef } from '@tanstack/react-table';
 
 const {
   relationshipLabels,
@@ -17,7 +17,7 @@ const {
   uploadedTime,
   lastUpdatedTime,
   created,
-} = NewTable.Columns;
+} = Table.Columns;
 
 const columns = [
   name,
@@ -27,7 +27,7 @@ const columns = [
   uploadedTime,
   lastUpdatedTime,
   created,
-] as Column<SequenceWithRelationshipLabels>[];
+] as ColumnDef<SequenceWithRelationshipLabels>[];
 
 export function RelationshipSequenceTable({
   parentResource,
@@ -45,11 +45,13 @@ export function RelationshipSequenceTable({
     return <EmptyState isLoading={isLoading} />;
   }
   return (
-    <NewTable
+    <Table
+      id="relationship-sequence-table"
       columns={columns}
       tableHeaders={<ResultCount api="list" type="sequence" count={count} />}
       data={items}
       showLoadButton
+      hideColumnToggle
       fetchMore={fetchNextPage}
       hasNextPage={hasNextPage}
       isLoadingMore={isLoading}
