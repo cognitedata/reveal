@@ -19,6 +19,7 @@ import styled from 'styled-components';
 import { EmptyState } from 'components/EmpyState/EmptyState';
 import { useAssetsFilteredListQuery } from 'domain/assets/internal/queries/useAssetsFilteredListQuery';
 import { InternalAssetFilters } from 'domain/assets/internal/types';
+import { TableSortBy } from 'components/ReactTable/V2';
 
 export const AssetSearchResults = ({
   query = '',
@@ -43,8 +44,9 @@ export const AssetSearchResults = ({
   const { canFetchMore, fetchMore, items, isFetched } =
     useResourceResults<Asset>(api, query, filter);
 
+  const [sortBy, setSortBy] = useState<TableSortBy[]>([]);
   const { data, hasNextPage, fetchNextPage, isLoading } =
-    useAssetsFilteredListQuery({ assetFilter: filter });
+    useAssetsFilteredListQuery({ assetFilter: filter, sortBy: sortBy });
 
   const [currentView, setCurrentView] = useState<string>(() =>
     isTreeEnabled ? 'tree' : 'list'
@@ -103,6 +105,8 @@ export const AssetSearchResults = ({
             id="asset-search-results"
             onRowClick={asset => onClick(asset)}
             data={enableAdvancedFilters ? data : items}
+            enableSorting
+            onSort={props => setSortBy(props)}
             showLoadButton
             tableHeaders={tableHeaders}
             hasNextPage={enableAdvancedFilters ? hasNextPage : canFetchMore}

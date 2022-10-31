@@ -37,6 +37,7 @@ import { SortIcon } from './SortIcon';
 import { ResourceTableColumns } from './columns';
 import { LoadMore, LoadMoreProps } from '../LoadMore';
 import { EmptyState } from 'components/EmpyState/EmptyState';
+import { TableSortingState } from 'components/ReactTable/V2/types';
 
 export interface TableProps<T extends Record<string, any>>
   extends LoadMoreProps {
@@ -50,7 +51,7 @@ export interface TableProps<T extends Record<string, any>>
   enableColumnResizing?: boolean;
   hideColumnToggle?: boolean;
   hiddenColumns?: string[];
-  onSort?: (props: SortingState) => void;
+  onSort?: (props: TableSortingState) => void;
   onRowClick?: (
     row: T,
     evt?: React.MouseEvent<HTMLDivElement, MouseEvent>

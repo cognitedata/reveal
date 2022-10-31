@@ -1,8 +1,7 @@
-import { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { useDocumentFilters as useDocumentSearchFilters } from '@cognite/react-document-search';
 import { mapFiltersToDocumentSearchFilters } from '../transformers/mapFiltersToDocumentSearchFilters';
 import { mapColumnsToDocumentSortFields } from '../transformers/mapColumnsToDocumentSortFields';
-import React from 'react';
 import { DocumentSort, InternalDocumentFilter } from '../types';
 
 export const useObserveDocumentSearchFilters = (
@@ -19,7 +18,7 @@ export const useObserveDocumentSearchFilters = (
     [documentFilter]
   );
 
-  const sort = React.useMemo(() => {
+  const sort = useMemo(() => {
     if (sortStateArr.length > 0) {
       const { column, order } = sortStateArr[0];
 

@@ -139,6 +139,7 @@ export const AssetNewTable = (
             onClick={onRowClick as any}
           />
         ),
+        enableSorting: false,
       },
       {
         accessorKey: 'id',
@@ -151,9 +152,13 @@ export const AssetNewTable = (
           />
         ),
         size: 300,
+        enableSorting: false,
       },
       Table.Columns.created,
-      Table.Columns.labels,
+      {
+        ...Table.Columns.labels,
+        enableSorting: false,
+      },
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [threeDAssetMappings]
