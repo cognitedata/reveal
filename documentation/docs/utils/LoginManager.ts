@@ -76,7 +76,7 @@ export class LoginManager {
     if(primarySubDomain === 'reveal-docs'){
       return `${window.location.origin}/reveal-docs`;
     } else if(primarySubDomain === 'reveal-docs-preview'){
-      return `${window.location.origin}/reveal-docs/${subdomains[1]}/`;
+      return `${window.location.origin}/reveal-docs-preview/${subdomains[1]}/`;
     }
     throw new Error(`Unknown redirect URL: ${window.location.href}`);
   }
