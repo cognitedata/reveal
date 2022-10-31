@@ -74,8 +74,10 @@ export class LoginManager {
     const subdomains = window.location.pathname.split('/').filter(p => p.length > 0);
     const primarySubDomain = subdomains[0];
     if(primarySubDomain === 'reveal-docs'){
+      console.log('docs-prodorlocal');
       return `${window.location.origin}/reveal-docs`;
     } else if(primarySubDomain === 'reveal-docs-preview'){
+      console.log('docs-preview');
       return `${window.location.origin}/reveal-docs-preview/${subdomains[1]}/`;
     }
     throw new Error(`Unknown redirect URL: ${window.location.href}`);
