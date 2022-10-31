@@ -71,7 +71,7 @@ export class PointCloudRenderPipelineProvider implements RenderPipelineProvider 
 
     const standardPassParameters: PointCloudPassParameters = {
       material: {
-        useEDL: renderParameters.EDLOptions ? true : false
+        useEDL: renderParameters.edlOptions ? true : false
       }
     };
 

@@ -59,7 +59,7 @@ export class PostProcessingPass implements RenderPass {
       texture: postProcessingPipelineOptions.pointCloud.texture,
       depthTexture: postProcessingPipelineOptions.pointCloud.depthTexture,
       pointBlending: postProcessingPipelineOptions?.pointBlending ?? false,
-      EDLOptions: postProcessingPipelineOptions?.EDLOptions
+      edlOptions: postProcessingPipelineOptions?.edlOptions
     });
 
     this._pointcloudBlitMaterial = pointcloudBlitMaterial;
@@ -111,7 +111,7 @@ export class PostProcessingPass implements RenderPass {
   }
 
   public render(renderer: THREE.WebGLRenderer, camera: THREE.Camera): void {
-    if (this._postProcessingOptions.EDLOptions) {
+    if (this._postProcessingOptions.edlOptions) {
       this._pointcloudBlitMaterial.uniforms.screenWidth = { value: this._postProcessingOptions.pointCloud.width };
       this._pointcloudBlitMaterial.uniforms.screenHeight = { value: this._postProcessingOptions.pointCloud.height };
     }

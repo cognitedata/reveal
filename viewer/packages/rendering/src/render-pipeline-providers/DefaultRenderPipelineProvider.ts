@@ -91,11 +91,11 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider {
     const pointCloudParameters = renderOptions.pointCloudParameters ?? defaultRenderOptions.pointCloudParameters;
 
     // Disable the effect if any of the parameters is 0
-    pointCloudParameters.EDLOptions = this.shouldApplyEDL(pointCloudParameters)
-      ? pointCloudParameters.EDLOptions
+    pointCloudParameters.edlOptions = this.shouldApplyEDL(pointCloudParameters)
+      ? pointCloudParameters.edlOptions
       : undefined;
 
-    if (pointCloudParameters?.pointBlending === true && pointCloudParameters.EDLOptions) {
+    if (pointCloudParameters?.pointBlending === true && pointCloudParameters.edlOptions) {
       throw new Error('EDL and point blending cannot be enabled at the same time');
     }
 
@@ -119,7 +119,7 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider {
       ssaoTexture: this._renderTargetData.ssaoRenderTarget.texture,
       edges: edges.enabled,
       pointBlending: pointCloudParameters.pointBlending,
-      EDLOptions: pointCloudParameters.EDLOptions,
+      edlOptions: pointCloudParameters.edlOptions,
       ...this._pointCloudRenderPipeline.pointCloudRenderTargets,
       ...this._cadGeometryRenderPipeline.cadGeometryRenderTargets
     });
@@ -246,7 +246,7 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider {
   }
 
   private shouldApplyEDL(pointCloudParameters: PointCloudParameters): boolean {
-    if (pointCloudParameters.EDLOptions?.radius === 0 || pointCloudParameters.EDLOptions?.strength === 0) {
+    if (pointCloudParameters.edlOptions?.radius === 0 || pointCloudParameters.edlOptions?.strength === 0) {
       return false;
     }
 

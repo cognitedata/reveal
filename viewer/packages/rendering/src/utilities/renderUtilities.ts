@@ -109,7 +109,7 @@ export function getBlitMaterial(options: BlitOptions): THREE.RawShaderMaterial {
 }
 
 export function getPointCloudPostProcessingMaterial(options: PointCloudPostProcessingOptions): THREE.RawShaderMaterial {
-  const { texture, depthTexture, pointBlending, EDLOptions } = options;
+  const { texture, depthTexture, pointBlending, edlOptions } = options;
 
   let uniforms: ThreeUniforms = {
     tDiffuse: { value: texture },
@@ -122,14 +122,14 @@ export function getPointCloudPostProcessingMaterial(options: PointCloudPostProce
     defines['points_blend'] = true;
   }
 
-  if (EDLOptions) {
+  if (edlOptions) {
     defines['use_edl'] = true;
     defines['NEIGHBOUR_COUNT'] = DEFAULT_EDL_NEIGHBOURS_COUNT;
 
     uniforms = {
       ...uniforms,
-      radius: { value: EDLOptions.radius },
-      edlStrength: { value: EDLOptions.strength },
+      radius: { value: edlOptions.radius },
+      edlStrength: { value: edlOptions.strength },
       screenWidth: { value: 1 },
       screeHeight: { value: 1 },
       neighbours: { value: getEDLNeighbourPoints(DEFAULT_EDL_NEIGHBOURS_COUNT) }

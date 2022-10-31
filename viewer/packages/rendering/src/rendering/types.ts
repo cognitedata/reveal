@@ -76,7 +76,7 @@ export const defaultRenderOptions: Required<RenderOptions> = {
   multiSampleCountHint: 1,
   ssaoRenderParameters: { sampleSize: SsaoSampleQuality.Default, sampleRadius: 1.0, depthCheckBias: 0.0125 },
   edgeDetectionParameters: { enabled: true },
-  pointCloudParameters: { pointBlending: false, EDLOptions: { strength: 0.5, radius: 2.2 } }
+  pointCloudParameters: { pointBlending: false, edlOptions: { strength: 0.5, radius: 2.2 } }
 };
 
 /**
@@ -115,5 +115,5 @@ export type PointCloudParameters = {
   /**
    * Eye Dome Lighting effect options. Considerably improves perception of depth within rendered point cloud.
    */
-  EDLOptions?: EDLOptions;
+  edlOptions?: EDLOptions;
 };
