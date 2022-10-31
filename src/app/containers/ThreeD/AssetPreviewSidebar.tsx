@@ -5,17 +5,17 @@ import { trackUsage } from 'app/utils/Metrics';
 
 export const AssetPreviewSidebar = ({
   assetId,
-  setVisible,
+  close,
 }: {
   assetId: number;
-  setVisible: (visible: boolean) => void;
+  close: () => void;
 }) => {
   const closePreviewButton = (
     <Tooltip content="Close preview">
       <Button
         icon="Close"
         onClick={() => {
-          setVisible(false);
+          close();
           trackUsage('Exploration.Preview.ThreeDModel', { assetId });
         }}
       />

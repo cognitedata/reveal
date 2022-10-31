@@ -18,6 +18,7 @@ import { AssetPreviewSidebar } from './AssetPreviewSidebar';
 import styled from 'styled-components';
 import { Flex, ToolBar } from '@cognite/cogs.js';
 import ThreeDTitle from './ThreeDTitle';
+import NodePreview from './NodePreview';
 
 export const ThreeDView = ({ modelId }: { modelId: number }) => {
   useEffect(() => {
@@ -27,9 +28,16 @@ export const ThreeDView = ({ modelId }: { modelId: number }) => {
   const [selectedAssetId, setSelectedAssetId] = useSearchParamNumber('assetId');
   const [nodesClickable, setNodesClickable] = useState<boolean>(true);
   const { data: revision } = useDefault3DModelRevision(modelId);
-  const [assetPreviewSidebarVisible, setAssetPreviewSidebarVisible] = useState(
+  const [assetColumnVisible, setAssetColumnVisible] = useState(false);
+  const [nodePreviewVisible, setNodePreviewVisible] = useState(
     !!selectedAssetId
   );
+
+  useEffect(() => {
+    if (selectedAssetId) {
+      setNodePreviewVisible(true);
+    }
+  }, [selectedAssetId]);
 
   return (
     <>
@@ -56,9 +64,7 @@ export const ThreeDView = ({ modelId }: { modelId: number }) => {
                           revisionId={revision.id}
                           selectedAssetId={selectedAssetId}
                           setSelectedAssetId={setSelectedAssetId}
-                          setAssetPreviewSidebarVisible={
-                            setAssetPreviewSidebarVisible
-                          }
+                          setAssetPreviewSidebarVisible={setNodePreviewVisible}
                         />
                       )}
                     </SidebarContainer>
@@ -91,15 +97,33 @@ export const ThreeDView = ({ modelId }: { modelId: number }) => {
                         <HelpButton />
                       </StyledToolBar>
                     )}
+                    {nodePreviewVisible && !!selectedAssetId && (
+                      <NodePreviewContainer>
+                        <NodePreview
+                          assetId={selectedAssetId}
+                          closePreview={() => {
+                            setNodePreviewVisible(false);
+                            setSelectedAssetId(null);
+                          }}
+                          openDetails={() => {
+                            setNodePreviewVisible(false);
+                            setAssetColumnVisible(true);
+                          }}
+                        />
+                      </NodePreviewContainer>
+                    )}
                   </>
                 );
               }}
             </Reveal>
           )}
-          {!!assetPreviewSidebarVisible && selectedAssetId && (
+          {assetColumnVisible && !!selectedAssetId && (
             <AssetPreviewSidebar
               assetId={selectedAssetId}
-              setVisible={setAssetPreviewSidebarVisible}
+              close={() => {
+                setAssetColumnVisible(false);
+                setNodePreviewVisible(true);
+              }}
             />
           )}
         </StyledSplitter>
@@ -107,6 +131,14 @@ export const ThreeDView = ({ modelId }: { modelId: number }) => {
     </>
   );
 };
+
+const NodePreviewContainer = styled.div`
+  position: absolute;
+  right: 30px;
+  top: 30px;
+  height: 400px;
+  width: 300px;
+`;
 
 const StyledToolBar = styled(ToolBar)`
   position: absolute;
