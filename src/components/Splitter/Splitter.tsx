@@ -6,24 +6,29 @@ import { SIDEBAR_RESIZE_EVENT } from 'utils';
 
 export type SplitterProps = {
   secondaryMinSize?: number;
+  primaryMinSize?: number;
   percentage?: boolean;
   primaryIndex?: 0 | 1;
   children: React.ReactNode | React.ReactNode[];
   className?: string;
+  secondaryInitialSize?: number;
 };
 
 export const Splitter = ({
   children,
   secondaryMinSize = 360,
   percentage = false,
+  primaryMinSize,
   primaryIndex = 0,
+  secondaryInitialSize,
   className,
 }: SplitterProps) => (
   <SplitterWrapper className={className}>
     <SplitterLayout
       secondaryMinSize={secondaryMinSize}
-      secondaryInitialSize={secondaryMinSize}
+      secondaryInitialSize={secondaryInitialSize || secondaryMinSize}
       primaryIndex={primaryIndex}
+      primaryMinSize={primaryMinSize}
       onDragEnd={() => {
         window.dispatchEvent(new Event(SIDEBAR_RESIZE_EVENT));
       }}
