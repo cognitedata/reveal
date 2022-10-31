@@ -88,6 +88,7 @@ export const FileSearchResults = ({
 
         {currentView === 'list' && (
           <FileNewTable
+            id="file-search-results"
             tableHeaders={
               <StyledTableHeader justifyContent="flex-end">
                 {tableHeaders}

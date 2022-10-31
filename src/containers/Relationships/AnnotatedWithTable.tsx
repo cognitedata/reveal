@@ -64,7 +64,7 @@ export const AnnotatedWithTable = ({
 
   return (
     <FileNewTable
-      hideColumnToggle
+      id="file-appear-in-table"
       data={items}
       onRowClick={({ id }) => onItemClicked(id)}
     />

@@ -1,11 +1,13 @@
 import React, { useMemo } from 'react';
 
 import { FileInfo } from '@cognite/sdk';
-import { NewTable as Table, TableProps } from 'components/ReactTable/Table';
+import { TableV2 as Table, TableProps } from 'components/ReactTable/V2/TableV2';
 import { RelationshipLabels } from 'types';
 import { FileNamePreview } from './FileNamePreview';
-import { Column, Row } from 'react-table';
+import { ColumnDef } from '@tanstack/react-table';
+import { useGetHiddenColumns } from 'hooks';
 
+const visibleColumns = ['name', 'mimeType', 'uploadedTime'];
 export type FileTableProps = Omit<
   TableProps<FileWithRelationshipLabels>,
   'columns'
@@ -22,13 +24,9 @@ export const FileNewTable = (props: FileTableProps) => {
       [
         {
           ...Table.Columns.name,
-          Cell: ({
-            value: fileName,
-            row,
-          }: {
-            value: string;
-            row: Row<FileInfo>;
-          }) => {
+          enableHiding: false,
+          cell: ({ getValue, row }) => {
+            const fileName = getValue<string>();
             const fileNamePreviewProps = {
               fileName,
               file: row.original,
@@ -47,14 +45,15 @@ export const FileNewTable = (props: FileTableProps) => {
         Table.Columns.source,
         Table.Columns.assets,
         Table.Columns.labels,
-      ] as Column<FileInfo>[],
+      ] as ColumnDef<FileInfo>[],
     [query]
   );
+  const hiddenColumns = useGetHiddenColumns(columns, visibleColumns);
 
   return (
     <Table<FileInfo>
       columns={columns}
-      visibleColumns={['name', 'mimeType', 'uploadedTime']}
+      hiddenColumns={hiddenColumns}
       {...props}
     />
   );

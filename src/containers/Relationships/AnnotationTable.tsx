@@ -87,7 +87,11 @@ export function AnnotationTable({
     }
     case 'file': {
       return (
-        <FileNewTable data={items} onRowClick={onRowClick} hideColumnToggle />
+        <FileNewTable
+          id="file-annotation-table"
+          data={items}
+          onRowClick={onRowClick}
+        />
       );
     }
     case 'timeSeries': {
