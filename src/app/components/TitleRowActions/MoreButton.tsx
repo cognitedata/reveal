@@ -1,6 +1,6 @@
 import React from 'react';
-import { Menu, Dropdown, notification } from 'antd';
-import { Button } from '@cognite/cogs.js';
+import { notification } from 'antd';
+import { Button, Dropdown, Menu } from '@cognite/cogs.js';
 import {
   ResourceType,
   ResourceItem,
@@ -107,7 +107,7 @@ export function MoreButton({ item: { type, id } }: Props) {
   );
 
   return (
-    <Dropdown overlay={menu} trigger={['click']}>
+    <Dropdown content={menu} openOnHover={false}>
       <Button icon="EllipsisHorizontal" aria-label="More" />
     </Dropdown>
   );

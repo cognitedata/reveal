@@ -1,6 +1,5 @@
 import React from 'react';
-import { Tooltip } from 'antd';
-import { Button } from '@cognite/cogs.js';
+import { Button, Tooltip } from '@cognite/cogs.js';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import { ResourceItem } from '@cognite/data-exploration';
 import { getFlow } from '@cognite/cdf-sdk-singleton';
@@ -34,7 +33,7 @@ export const EditFileButton = ({
     return (
       <Tooltip
         placement="bottom"
-        title={
+        content={
           <>
             <p>
               You do not have the necessary permissions to edit this file. You
@@ -44,7 +43,7 @@ export const EditFileButton = ({
           </>
         }
       >
-        <Button icon="Edit" disabled />
+        <Button icon="Edit" aria-label="Edit" disabled />
       </Tooltip>
     );
   }
@@ -63,8 +62,8 @@ export const EditFileButton = ({
   }
 
   return (
-    <Tooltip title="Edit">
-      <Button icon="Edit" key={id} onClick={onClick} />
+    <Tooltip content="Edit">
+      <Button icon="Edit" aria-label="edit" key={id} onClick={onClick} />
     </Tooltip>
   );
 };

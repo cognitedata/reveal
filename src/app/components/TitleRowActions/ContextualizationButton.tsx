@@ -1,6 +1,5 @@
 import React from 'react';
-import { Dropdown, Menu, Tooltip, Space } from 'antd';
-import { Button, Icon } from '@cognite/cogs.js';
+import { Button, Dropdown, Flex, Icon, Menu, Tooltip } from '@cognite/cogs.js';
 import { usePermissions } from '@cognite/sdk-react-query-hooks';
 import {
   ResourceItem,
@@ -83,10 +82,10 @@ export const ContextualizationButton = ({
   const menu = (
     <Menu>
       <Menu.Item onClick={start}>
-        <Space>
+        <Flex>
           <Icon type={icon} />
           <span>{label}</span>
-        </Space>
+        </Flex>
       </Menu.Item>
     </Menu>
   );
@@ -102,7 +101,7 @@ export const ContextualizationButton = ({
     return (
       <Tooltip
         placement="bottom"
-        title={
+        content={
           <>
             <p>
               You do not have the necessary permissions to edit this file. You
@@ -112,16 +111,16 @@ export const ContextualizationButton = ({
           </>
         }
       >
-        <Button icon="LightBulb" disabled />
+        <Button icon="LightBulb" aria-label="Warning" disabled />
       </Tooltip>
     );
   }
 
   return (
-    <Dropdown overlay={menu} trigger={['click']} key={id}>
-      <Tooltip title="Contextualize">
-        <Button icon={icon} />
-      </Tooltip>
-    </Dropdown>
+    <Tooltip content="Contextualize">
+      <Dropdown content={menu} openOnHover={false} key={id}>
+        <Button icon={icon} aria-label="Contextualize" />
+      </Dropdown>
+    </Tooltip>
   );
 };

@@ -1,5 +1,4 @@
 import React from 'react';
-import { Space, Divider } from 'antd';
 import { ResourceItem } from '@cognite/data-exploration';
 import DownloadButton from './DownloadButton';
 import { MoreButton } from './MoreButton';
@@ -88,10 +87,10 @@ export const TitleRowActions = ({
       {afterDefaultActions}
       {!hideDefaultCloseActions && activeId && (
         <>
-          <StyledDivider type="vertical" />
+          <Divider />
           <Button
-            icon="Expand"
-            aria-label="Expand"
+            icon={isPreview ? 'Expand' : 'Collapse'}
+            aria-label="Toggle fullscreen"
             onClick={() => (isPreview ? goToFullPagePreview() : goToPreview())}
           />
           <Button
@@ -107,10 +106,17 @@ export const TitleRowActions = ({
   );
 };
 
-const StyledSpace = styled(Space)`
+const StyledSpace = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
   float: right;
 `;
 
-const StyledDivider = styled(Divider)`
-  height: 36px;
+const Divider = styled.div`
+  width: 1px;
+  height: 16px;
+  background-color: var(--cogs-border--muted);
 `;

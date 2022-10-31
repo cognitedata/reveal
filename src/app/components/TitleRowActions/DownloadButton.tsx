@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Dropdown, Menu, Tooltip } from 'antd';
-import { MenuItemProps } from 'antd/es/menu/MenuItem';
 import { FileInfo } from '@cognite/sdk';
-import { Button } from '@cognite/cogs.js';
+import { Button, Dropdown, Menu, Tooltip } from '@cognite/cogs.js';
 import {
   convertResourceType,
   ResourceItem,
@@ -62,24 +60,21 @@ function MetadataDownload({ item: { id, type } }: Props) {
   );
 
   return (
-    <Dropdown overlay={menu} trigger={['click']}>
-      <Tooltip title="Download">
+    <Tooltip content="Download">
+      <Dropdown content={menu} openOnHover={false}>
         <Button
           disabled={downloading}
           icon={downloading ? 'Loader' : 'Download'}
           aria-label="Download"
         />
-      </Tooltip>
-    </Dropdown>
+      </Dropdown>
+    </Tooltip>
   );
 }
 
-function FileDownloadMenuItem({
-  item: { id },
-  ...props
-}: Props & MenuItemProps) {
+function FileDownloadMenuItem({ item: { id } }: Props) {
   return (
-    <Menu.Item {...props}>
+    <Menu.Item>
       <FileDownloadAnchor text={<>Download original file</>} id={{ id }} />
     </Menu.Item>
   );
@@ -117,9 +112,7 @@ function FileDownloadButton({ item }: Props) {
     setDownloading(false);
   }, [id]);
 
-  // Having this as a function prevents continoysly fetching the download link in the brackground
-  // when the menu isn't visible
-  const menu = () => (
+  const menu = (
     <Menu>
       <Menu.Item
         onClick={() => {
@@ -129,21 +122,20 @@ function FileDownloadButton({ item }: Props) {
         Download metadata
       </Menu.Item>
       <FileDownloadMenuItem item={item} />
-      <Menu.Item disabled>Download including annotations</Menu.Item>
     </Menu>
   );
 
   return (
-    <Dropdown overlay={menu} trigger={['click']}>
-      <Tooltip title="Download">
+    <Tooltip content="Download">
+      <Dropdown content={menu} openOnHover={false}>
         <Button
           icon={downloading ? 'Loader' : 'Download'}
           title="Download"
           disabled={downloading}
           aria-label="Download"
         />
-      </Tooltip>
-    </Dropdown>
+      </Dropdown>
+    </Tooltip>
   );
 }
 
@@ -230,15 +222,15 @@ function TimeseriesDownloadButton({ item: { id, type }, dateFilter }: Props) {
   );
 
   return (
-    <Dropdown overlay={menu} trigger={['click']}>
-      <Tooltip title="Download">
+    <Tooltip content="Download">
+      <Dropdown content={menu} openOnHover={false}>
         <Button
           disabled={downloading}
           icon={downloading ? 'Loader' : 'Download'}
           aria-label="Download"
         />
-      </Tooltip>
-    </Dropdown>
+      </Dropdown>
+    </Tooltip>
   );
 }
 
