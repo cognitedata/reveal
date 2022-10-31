@@ -1,13 +1,4 @@
-import {
-  Button,
-  Colors,
-  Detail,
-  Dropdown,
-  Flex,
-  Menu,
-  Slider as CogsSlider,
-  Tooltip,
-} from '@cognite/cogs.js';
+import { Button, Dropdown, Menu, RangeSlider, Tooltip } from '@cognite/cogs.js';
 import {
   Cognite3DModel,
   Cognite3DViewer,
@@ -26,11 +17,11 @@ type SliderProps = {
 
 export const Slicer = ({ viewer, viewerModel }: SliderProps): JSX.Element => {
   const [min, max] = useMemo(() => {
-    const bounds = viewerModel?.getModelBoundingBox();
+    const bounds = viewerModel?.getModelBoundingBox(undefined, true);
     return [bounds?.min.y, bounds?.max.y];
   }, [viewerModel]);
 
-  const [sliderValue, setSliderValue] = useState(max);
+  const [sliderValue, setSliderValue] = useState<[number, number]>([min, max]);
 
   if (!viewer || !viewerModel || min === undefined || max === undefined) {
     return <></>;
@@ -41,27 +32,27 @@ export const Slicer = ({ viewer, viewerModel }: SliderProps): JSX.Element => {
       appendTo={() => document.getElementsByClassName(ids.styleScope).item(0)!}
       content={
         <StyledMenu>
-          <Flex direction="column" gap={12}>
-            <Flex direction="column" gap={2}>
-              <StyledHeader strong>Slice vertically</StyledHeader>
-              <StyledSlider
-                min={min}
-                max={max}
-                step={(max - min) / 250.0}
-                onChange={v => {
-                  const vector = [0, -1, 0];
-                  viewer.setClippingPlanes([
-                    new THREE.Plane(new THREE.Vector3(...vector), v),
-                  ]);
-                  setSliderValue(v);
-                }}
-                value={sliderValue}
-              />
-            </Flex>
-          </Flex>
+          <StyledSlider
+            min={min}
+            max={max}
+            step={(max - min) / 1000}
+            setValue={v => {
+              if (v[0] !== undefined && v[1] !== undefined) {
+                const maxVector = [0, -1, 0];
+                const minVector = [0, 1, 0];
+                viewer.setClippingPlanes([
+                  new THREE.Plane(new THREE.Vector3(...minVector), -v[0]),
+                  new THREE.Plane(new THREE.Vector3(...maxVector), v[1]),
+                ]);
+                setSliderValue([v[0], v[1]]);
+              }
+            }}
+            value={sliderValue}
+            vertical
+          />
         </StyledMenu>
       }
-      placement="right"
+      placement="right-end"
     >
       <Tooltip content="Slice">
         <Button icon="Slice" type="ghost" />
@@ -71,15 +62,15 @@ export const Slicer = ({ viewer, viewerModel }: SliderProps): JSX.Element => {
 };
 
 const StyledMenu = styled(Menu)`
-  min-width: 166px;
+  height: 512px;
   padding: 12px;
+
+  .rc-slider-vertical .rc-slider-mark {
+    display: none;
+  }
 `;
 
-const StyledHeader = styled(Detail)`
-  color: ${Colors['text-icon--muted']};
-`;
-
-const StyledSlider = styled(CogsSlider)`
+const StyledSlider = styled(RangeSlider)`
   offset-anchor: right top;
   float: right;
   display: inline;
