@@ -58,6 +58,7 @@ import { ErrorPlaceholder } from './ErrorPlaceholder';
 import { NoRowsOverlay } from './NoRowsOverlay';
 import { SidePanel } from './SidePanel';
 import { sanitizeRow } from './utils';
+import { useManualPopulationFeatureFlag } from '@platypus-app/flags';
 
 const pageSizeLimit = 100;
 
@@ -89,6 +90,7 @@ export const DataPreviewTable = forwardRef<
   const [gridConfig, setGridConfig] = useState<GridConfig>(
     getInitialGridConfig()
   );
+  const { isEnabled } = useManualPopulationFeatureFlag();
   const dataManagementHandler = useInjection(TOKENS.DataManagementHandler);
 
   const draftRowsData = useSelector(
@@ -363,12 +365,12 @@ export const DataPreviewTable = forwardRef<
   Technique borrowed from https://stackoverflow.com/a/64294316
   */
   const handleCellValueChanged = (e: ValueSetterParams) => {
-    if (!e.colDef.field) {
+    if (!e.colDef.field || !isEnabled) {
       return false;
     }
 
-    // if draft row, update redux store and return true
     if (e.node?.rowPinned === 'top') {
+      // if draft row, update redux store and return true
       updateRowData({
         field: e.colDef.field,
         newValue: e.newValue,
@@ -612,6 +614,7 @@ export const DataPreviewTable = forwardRef<
             <CogDataGrid
               ref={gridRef}
               gridOptions={{
+                readOnlyEdit: !isEnabled,
                 enableCellChangeFlash: true,
                 rowModelType: 'infinite',
                 rowBuffer: pageSizeLimit / 2,

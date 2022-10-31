@@ -1584,7 +1584,7 @@
 
 "@cognite/react-feature-flags@^1.0.1":
   version "1.0.1"
-  resolved "https://registry.npmjs.org/@cognite/react-feature-flags/-/react-feature-flags-1.0.1.tgz"
+  resolved "https://registry.yarnpkg.com/@cognite/react-feature-flags/-/react-feature-flags-1.0.1.tgz#5afe17038c52ac22564b8cb6e9c08a5ea8eb6cf6"
   integrity sha512-iZ0X5GvaVd192VFUHf/UL4WGd7SmPChHP5MQJRRsXSAAXrGzf65reOzhOiVv5LRBCIvrwoDtRlGtEzMizRmS6g==
   dependencies:
     "@cognite/testing" "0.1.1-rc.0"

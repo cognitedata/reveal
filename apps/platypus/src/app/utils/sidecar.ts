@@ -2,6 +2,14 @@
 /* eslint-disable no-underscore-dangle  */
 import { SidecarConfig, getDefaultSidecar } from '@cognite/sidecar';
 
+export interface PlatypusSidecarConfig extends SidecarConfig {
+  disableTranslations?: boolean;
+  disableLoopDetector?: boolean;
+  disableSentry?: boolean;
+  disableIntercom?: boolean;
+  disableReactQuery?: boolean;
+  unleash: string;
+}
 // # -------------------------------------
 // #
 // #
@@ -56,10 +64,11 @@ const getAadApplicationId = (cluster: string) => {
   disableSentry: true,
   disableIntercom: false,
   disableReactQuery: false,
+  unleash: 'v2Qyg7YqvhyAMCRMbDmy1qA6SuG8YCBE',
   reactQueryDevtools: {
     disabled: true,
   },
   ...((window as any).__cogniteSidecar || {}),
 };
 
-export default (window as any).__cogniteSidecar as SidecarConfig;
+export default (window as any).__cogniteSidecar as PlatypusSidecarConfig;

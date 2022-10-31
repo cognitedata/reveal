@@ -19,7 +19,6 @@ import {
   ColumnTypes,
 } from '../types';
 import { decimalValueFormatter } from '../utils';
-import { ReactNode } from 'react';
 import SelectCellEditor from '../../components/select-cell-editor';
 
 const cellClassRules = {

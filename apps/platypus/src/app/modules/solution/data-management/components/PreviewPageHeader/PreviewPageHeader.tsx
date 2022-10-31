@@ -5,6 +5,7 @@ import { PageHeaderDivider } from '../DataPreviewTable/elements';
 import { TransformationDropdown } from '@platypus-app/modules/solution/data-management/components/TransformationDropdown';
 import useTransformations from '@platypus-app/modules/solution/data-management/hooks/useTransformations';
 import { BulkPopulationButton } from '@platypus-app/modules/solution/data-management/components/BulkPopulationButton';
+import { useManualPopulationFeatureFlag } from '@platypus-app/flags';
 
 type Props = {
   dataModelExternalId: string;
@@ -40,6 +41,7 @@ export function PreviewPageHeader({
   version,
 }: Props) {
   const { t } = useTranslation('DataPreview');
+  const { isEnabled } = useManualPopulationFeatureFlag();
   const { data: transformations } = useTransformations({
     dataModelExternalId,
     isEnabled: true,
@@ -126,15 +128,17 @@ export function PreviewPageHeader({
             data-cy="btn-pagetoolbar-delete"
             onClick={onDeleteClick}
           />
-          <Button
-            data-cy="create-new-row-btn"
-            type="primary"
-            icon="Add"
-            iconPlacement="left"
-            onClick={onCreateClick}
-          >
-            {t('create-new-row', 'Add instance')}
-          </Button>
+          {isEnabled && (
+            <Button
+              data-cy="create-new-row-btn"
+              type="primary"
+              icon="Add"
+              iconPlacement="left"
+              onClick={onCreateClick}
+            >
+              {t('create-new-row', 'Add instance')}
+            </Button>
+          )}
           <PageHeaderDivider />
           {transformations && transformations.length > 0 ? (
             <TransformationDropdown

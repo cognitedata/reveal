@@ -10,6 +10,7 @@ import { getTenant } from './utils/tenant-utils';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { queryClient } from './queryClient';
 import NoAccessWrapper from './components/NoAccessPage/NoAccessWrapper';
+import { FeatureFlagProvider } from '../environments/FeatureFlagProvider';
 
 // Globally defined global
 // GraphiQL package needs this to be run correctly
@@ -18,21 +19,23 @@ import NoAccessWrapper from './components/NoAccessPage/NoAccessWrapper';
 function App() {
   const tenant = getTenant();
   return (
-    <QueryClientProvider client={queryClient}>
-      <ReactQueryDevtools initialIsOpen={false} />
-      <ContainerProvider container={rootInjector}>
-        <ToastContainer />
-        <StyledWrapper>
-          <NoAccessWrapper>
-            <Router basename={tenant}>
-              <StyledPage>
-                <Routes />
-              </StyledPage>
-            </Router>
-          </NoAccessWrapper>
-        </StyledWrapper>
-      </ContainerProvider>
-    </QueryClientProvider>
+    <FeatureFlagProvider>
+      <QueryClientProvider client={queryClient}>
+        <ReactQueryDevtools initialIsOpen={false} />
+        <ContainerProvider container={rootInjector}>
+          <ToastContainer />
+          <StyledWrapper>
+            <NoAccessWrapper>
+              <Router basename={tenant}>
+                <StyledPage>
+                  <Routes />
+                </StyledPage>
+              </Router>
+            </NoAccessWrapper>
+          </StyledWrapper>
+        </ContainerProvider>
+      </QueryClientProvider>
+    </FeatureFlagProvider>
   );
 }
 

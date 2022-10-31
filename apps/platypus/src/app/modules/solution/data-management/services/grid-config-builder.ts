@@ -77,6 +77,7 @@ export const buildGridConfig = (
           isList: field.type.list || false,
           colDef: {
             headerName: `${field.name}${field.type.nonNull ? '*' : ''}`,
+            editable: false,
             sortable: false,
             cellEditorParams: {
               isRequired: field.nonNull || field.type.nonNull,
