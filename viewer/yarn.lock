@@ -788,7 +788,7 @@ __metadata:
     "@types/jsdom": 20.0.0
     "@types/lodash": 4.14.186
     "@types/mixpanel-browser": 2.38.0
-    "@types/node": 16.18.0
+    "@types/node": 18.11.3
     "@types/offscreencanvas": 2019.7.0
     "@types/proj4": 2.5.2
     "@types/random-seed": 0.3.3
@@ -2147,10 +2147,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:16.18.0":
-  version: 16.18.0
-  resolution: "@types/node@npm:16.18.0"
-  checksum: 4eb4b88012c7d3f527c1b4989cf085479d44ce418fb047fb8d3b545601a3e1fc436de8491b9734debeda8eae241963fb802cea87a5a5698bf5f6f3d489d446a8
+"@types/node@npm:18.11.3":
+  version: 18.11.3
+  resolution: "@types/node@npm:18.11.3"
+  checksum: 3a2a9142d891a90a195c296149bf64a69cc0abcc42f543be911ab22b2e0ead85ff077f90af92f0f13f6e3e5e72501469200fd753dfd1101825d4646a89d3ee47
   languageName: node
   linkType: hard
 
