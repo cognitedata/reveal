@@ -51,7 +51,7 @@ export class LoginManager {
       auth: {
         clientId: this._clientId,
         authority: `https://login.microsoftonline.com/${this._tenantId}`,
-        redirectUri: (window.location.origin + '/reveal-docs')
+        redirectUri: this.getRedirectUrl()
       },
       cache: {
         cacheLocation: BrowserCacheLocation.LocalStorage,
@@ -60,10 +60,7 @@ export class LoginManager {
     };
     
     const msalInstance = new PublicClientApplication(msalConfig);
-    console.log("🚀 ~ file: LoginManager.ts ~ line 65 ~ LoginManager ~ setupMsalInstance ~ msalInstance", msalInstance)
-
     const allAccounts = msalInstance.getAllAccounts();
-    console.log("🚀 ~ file: LoginManager.ts ~ line 68 ~ LoginManager ~ setupMsalInstance ~ allAccounts", allAccounts)
 
     if(allAccounts.length > 0){
       msalInstance.setActiveAccount(allAccounts[0]);
@@ -71,6 +68,17 @@ export class LoginManager {
     }
 
     return msalInstance;
+  }
+
+  private getRedirectUrl(): string {
+    const subdomains = window.location.pathname.split('/').filter(p => p.length > 0);
+    const primarySubDomain = subdomains[0];
+    if(primarySubDomain === 'reveal-docs'){
+      return `${window.location.origin}/reveal-docs`;
+    } else if(primarySubDomain === 'reveal-docs-preview'){
+      return `${window.location.origin}/reveal-docs/${subdomains[1]}/`;
+    }
+    throw new Error(`Unknown redirect URL: ${window.location.href}`);
   }
 }
 
