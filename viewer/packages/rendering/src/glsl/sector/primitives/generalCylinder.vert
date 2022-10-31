@@ -38,6 +38,20 @@ out float v_radius;
 
 out highp vec2 v_treeIndexPacked;
 
+
+bool isWithinSpan(vec3 point, vec3 span) {
+    return all(lessThan(abs(point), span));
+}
+
+vec3 transformQuadToCoverScreenInViewSpace(vec3 position, mat4 projectionMatrix, float near) {
+    float tanFov = 1.0 / projectionMatrix[1][1];
+
+    float aspect = projectionMatrix[1][1] / projectionMatrix[0][0];
+    float maxAspect = max(aspect, 1.0 / aspect);
+    vec3 fullScreenQuadCorner = vec3(position.xy * maxAspect * tanFov * near, -near - 1e-6);
+    return fullScreenQuadCorner;
+}
+
 void main() {
     v_treeIndexPacked = packTreeIndex(a_treeIndex);
 
@@ -67,10 +81,24 @@ void main() {
     vec3 left = normalize(cross(objectToCameraModelSpace, lDir));
     vec3 up = normalize(cross(left, lDir));
 
-    vec3 localBillboardPosition = center + mat3(halfHeight * lDir, a_radius * left, a_radius * up) * position;
+    mat3 billboardWorldRotation = mat3(lDir, left, up);
+    vec3 cylinderAxisScales = vec3(halfHeight, a_radius, a_radius);
+    mat3 inverseBillboardWorldRotation = transpose(billboardWorldRotation);
+    vec3 cameraPosInCylinderSpace = inverseBillboardWorldRotation * (rayOrigin - center);
+
+    mat3 billboardWorldScaleRotation = mat3(halfHeight * lDir, a_radius * left, a_radius * up);
+
+    vec3 localBillboardPosition = center + billboardWorldScaleRotation * position;
     vec3 viewBillboardPosition = mul3(modelToView, localBillboardPosition);
 
-    gl_Position = projectionMatrix * vec4(viewBillboardPosition, 1.0 );
+    float near = projectionMatrix[3][2] / (projectionMatrix[2][2] - 1.0);
+
+    // Check whether we are inside the primitive, in which case the quad must cover the entire screen
+    if (isWithinSpan(cameraPosInCylinderSpace, cylinderAxisScales + vec3(near))) {
+        viewBillboardPosition = transformQuadToCoverScreenInViewSpace(position, projectionMatrix, near);
+    }
+
+    gl_Position = projectionMatrix * vec4(viewBillboardPosition, 1.0);
 
     // varying data
     v_treeIndex = a_treeIndex;
