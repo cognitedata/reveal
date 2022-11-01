@@ -94,10 +94,10 @@ pub fn try_parse_objects(
     input_objects: Vec<wasm_bindgen::prelude::JsValue>,
 ) -> Result<Vec<Box<dyn shapes::Shape>>, String> {
     let objects_result: Result<_, _> = input_objects
-        .iter()
+        .into_iter()
         .map(|input_object| {
-            let input_shape = input_object
-                .into_serde::<InputShape>()
+            let input_shape =
+                serde_wasm_bindgen::from_value::<InputShape>(input_object)
                 .map_err(|serde_error| {
                     format!("Got error while deserializing shape: {}", serde_error)
                 });

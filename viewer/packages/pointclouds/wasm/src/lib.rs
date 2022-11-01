@@ -37,8 +37,8 @@ pub fn assign_points(
     init();
 
     let mut point_vec = parse_inputs::parse_points(&input_points, input_point_offset);
-    let bounding_box: BoundingBox = input_bounding_box
-        .into_serde::<InputBoundingBox>()
+    let bounding_box: BoundingBox =
+        serde_wasm_bindgen::from_value::<InputBoundingBox>(input_bounding_box.into())
         .map_err(|serde_error| {
             format!(
                 "Got error while deserializing bounding box: {}",
