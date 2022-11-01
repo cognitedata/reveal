@@ -30,9 +30,12 @@ describe('Wells: NPT Events Graph view', () => {
     cy.toggleSelectAllRows('well-result-table');
     cy.openInspectView();
     cy.goToWellsInspectTab(TAB_NAMES.NPT_EVENTS);
-    cy.findByTestId('loading-container').should('exist');
+    cy.findByTestId('npt-events-graph')
+      .findByTestId('loading-container')
+      .as('NptLoader')
+      .should('exist');
     cy.wait(['@getNptList']);
-    cy.findByTestId('loading-container').should('not.exist');
+    cy.get('@NptLoader').should('not.exist');
   });
 
   it('should be able to open single wellbore view', () => {
