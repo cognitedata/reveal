@@ -19,7 +19,7 @@ export enum AntiAliasingMode {
 /**
  * Configuration parameters for Eye Dome Lighting (EDL) point cloud post-processing effect.
  */
-export type EDLOptions = {
+export type EdlOptions = {
   /**
    * Determines how pronounced the effect is. Lower values result in more transparent edges.
    */
@@ -115,5 +115,5 @@ export type PointCloudParameters = {
   /**
    * Eye Dome Lighting effect options. Considerably improves perception of depth within rendered point cloud.
    */
-  edlOptions: EDLOptions;
+  edlOptions: EdlOptions;
 };

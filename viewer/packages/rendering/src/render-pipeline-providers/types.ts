@@ -3,7 +3,7 @@
  */
 
 import * as THREE from 'three';
-import { EDLOptions } from '../rendering/types';
+import { EdlOptions } from '../rendering/types';
 
 export type RenderTargetData = {
   currentRenderSize: THREE.Vector2;
@@ -27,5 +27,5 @@ export type PostProcessingPipelineOptions = CadGeometryRenderTargets &
     ssaoTexture: THREE.Texture;
     edges: boolean;
     pointBlending?: boolean;
-    edlOptions: EDLOptions;
+    edlOptions: EdlOptions;
   };

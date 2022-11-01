@@ -4,7 +4,7 @@
 
 import { PointShape } from '../pointcloud-rendering';
 import * as THREE from 'three';
-import { EDLOptions } from '../rendering/types';
+import { EdlOptions } from '../rendering/types';
 
 export type BlendOptions = {
   blendDestination: THREE.BlendingDstFactor;
@@ -44,7 +44,7 @@ export type PointCloudPostProcessingOptions = {
   texture: THREE.Texture;
   depthTexture: THREE.DepthTexture;
   pointBlending: boolean;
-  edlOptions: EDLOptions;
+  edlOptions: EdlOptions;
 };
 
 export const transparentBlendOptions: BlendOptions = {

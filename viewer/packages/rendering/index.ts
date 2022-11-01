@@ -13,7 +13,7 @@ export {
   SsaoParameters,
   SsaoSampleQuality,
   AntiAliasingMode,
-  EDLOptions
+  EdlOptions
 } from './src/rendering/types';
 
 export * from './src/pointcloud-rendering/constants';

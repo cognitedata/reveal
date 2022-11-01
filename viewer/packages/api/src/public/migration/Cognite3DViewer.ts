@@ -7,7 +7,7 @@ import TWEEN from '@tweenjs/tween.js';
 import { Subscription, fromEventPattern } from 'rxjs';
 import pick from 'lodash/pick';
 
-import { defaultRenderOptions, EDLOptions } from '@reveal/rendering';
+import { defaultRenderOptions, EdlOptions } from '@reveal/rendering';
 
 import {
   assertNever,
@@ -1332,7 +1332,7 @@ function createRenderer(): THREE.WebGLRenderer {
  */
 function createCompleteEdlOptions(inputOptions?: Partial<EDLOptions> | 'disabled'): EDLOptions {
   if (inputOptions === undefined) {
-    return defaultRenderOptions.pointCloudParameters.edlOptions;
+    return defaultRenEdlOptions.pointCloudParameEdlOptionstions;
   }
 
   if (inputOptions === 'disabled') {

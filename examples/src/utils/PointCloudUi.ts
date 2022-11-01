@@ -59,7 +59,7 @@ export class PointCloudUi {
       urlParams.set('pointBlending', value);
       window.location.href = url.toString()
     });
-    const edl = ui.addFolder('EDLOptions');
+    const edl = ui.addFolder('EdlOptions');
     edl.open();
     edl.add(this._params.edlOptions, 'enabled').onChange(value => {
       urlParams.set('edl', value);

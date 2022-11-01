@@ -10,7 +10,7 @@ import { CameraManager } from '@reveal/camera-manager';
 
 import { GeometryFilter, Cognite3DModel } from '@reveal/cad-model';
 import { DataSource } from '@reveal/data-source';
-import { EDLOptions } from '@reveal/rendering';
+import { EdlOptions } from '@reveal/rendering';
 
 /**
  * Callback to monitor loaded requests and progress.
@@ -125,7 +125,7 @@ export interface Cognite3DViewerOptions {
     /**
      * Eye Dome Lighting (EDL) effect, considerably improves depth perception of point cloud model.
      */
-    edlOptions?: Partial<EDLOptions> | 'disabled';
+    edlOptions?: Partial<EdlOptions> | 'disabled';
   };
 
   /**
