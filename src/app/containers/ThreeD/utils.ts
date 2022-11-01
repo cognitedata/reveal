@@ -1,103 +1,233 @@
-import { Cognite3DModel, THREE } from '@cognite/reveal';
-import { AssetMapping3D, CogniteClient, Node3D } from '@cognite/sdk';
+import {
+  AssetNodeCollection,
+  CadIntersection,
+  Cognite3DModel,
+  Cognite3DViewer,
+  DefaultNodeAppearance,
+  THREE,
+  ViewerState,
+} from '@cognite/reveal';
+import { CogniteClient } from '@cognite/sdk';
+import {
+  fetchAssetMappingsByAssetIdQuery,
+  fetchClosestAssetIdQuery,
+} from 'app/containers/ThreeD/hooks';
+import { FetchQueryOptions, QueryClient } from 'react-query';
 
-export const getAssetMappingsByAssetId = async (
+const THREE_D_VIEWER_STATE_QUERY_PARAMETER_KEY = 'viewerState';
+export const THREE_D_SELECTED_ASSET_QUERY_PARAMETER_KEY = 'selectedAssetId';
+
+const getBoundingBoxByNodeIdQueryKey = (
+  modelId: number,
+  revisionId: number,
+  nodeId: number
+) => [
+  'cdf',
+  '3d',
+  'model',
+  modelId,
+  'revision',
+  revisionId,
+  'node',
+  nodeId,
+  'bounding-box',
+];
+
+export const fetchBoundingBoxByNodeIdQuery = (
   sdk: CogniteClient,
-  modelId?: number,
-  revisionId?: number,
-  assetIds: number[] = []
-) => {
-  if (!modelId || !revisionId) {
-    return [];
-  }
-
-  const models = await sdk.post<{ items: AssetMapping3D[] }>(
-    `/api/v1/projects/${sdk.project}/3d/models/${modelId}/revisions/${revisionId}/mappings/list`,
-    { data: { filter: { assetIds }, limit: 1000 } }
+  queryClient: QueryClient,
+  threeDModel: Cognite3DModel,
+  modelId: number,
+  revisionId: number,
+  nodeId: number,
+  options?: FetchQueryOptions<THREE.Box3>
+): Promise<THREE.Box3> => {
+  return queryClient.fetchQuery(
+    getBoundingBoxByNodeIdQueryKey(modelId, revisionId, nodeId),
+    () => threeDModel.getBoundingBoxByNodeId(nodeId),
+    options
   );
-  return models.data.items;
 };
 
-export const getAncestorByNodeId = async (
+export const fitCameraToAsset = async (
   sdk: CogniteClient,
-  modelId?: number,
-  revisionId?: number,
-  nodeId?: number
+  queryClient: QueryClient,
+  viewer: Cognite3DViewer,
+  threeDModel: Cognite3DModel,
+  modelId: number,
+  revisionId: number,
+  assetId: number
 ) => {
-  if (!modelId || !revisionId || !nodeId) {
-    return [];
-  }
-
-  const ancestors = await sdk.revisions3D.list3DNodeAncestors(
+  const mappings = await fetchAssetMappingsByAssetIdQuery(
+    sdk,
+    queryClient,
     modelId,
     revisionId,
-    nodeId,
-    {
-      limit: 1000,
-    }
+    assetId
   );
-  return ancestors.items;
+
+  const boundingBoxNodes = await Promise.all(
+    mappings.map(m =>
+      fetchBoundingBoxByNodeIdQuery(
+        sdk,
+        queryClient,
+        threeDModel,
+        modelId,
+        revisionId,
+        m.nodeId
+      )
+    )
+  );
+
+  const boundingBox = boundingBoxNodes.reduce((accl: THREE.Box3, box) => {
+    return box ? accl.union(box) : accl;
+  }, new THREE.Box3());
+
+  viewer.fitCameraToBoundingBox(boundingBox);
 };
 
-export const getAssetIdFromMapped3DNode = async (
+export const highlightAsset = (
   sdk: CogniteClient,
-  modelId?: number,
-  revisionId?: number,
-  ancestorNodes: Node3D[] = []
+  threeDModel: Cognite3DModel,
+  assetId: number
 ) => {
-  if ((!modelId && !revisionId) || ancestorNodes.length === 0) {
-    return null;
-  }
+  const assetNodes = new AssetNodeCollection(sdk, threeDModel);
+  assetNodes.executeFilter({ assetId });
 
-  const assetNodeIds = ancestorNodes
-    .filter(node => node.depth !== 0)
-    .map(node => node.id);
-
-  const assetMapped3DNodes = await sdk.assetMappings3D.filter(
-    modelId!,
-    revisionId!,
-    {
-      filter: {
-        nodeIds: assetNodeIds,
-      },
-    }
+  threeDModel.removeAllStyledNodeCollections();
+  threeDModel.setDefaultNodeAppearance(DefaultNodeAppearance.Default);
+  threeDModel.assignStyledNodeCollection(
+    assetNodes,
+    DefaultNodeAppearance.Highlighted
   );
-  for (const nodeId of assetNodeIds.reverse()) {
-    const mappedNode = assetMapped3DNodes.items.find(
-      node => nodeId == node.nodeId
-    );
-    if (mappedNode?.assetId) {
-      return mappedNode.assetId;
-    }
-  }
-  return null;
 };
 
-export async function selectAssetBoundingBox(
-  assetMappings: AssetMapping3D[],
-  model: Cognite3DModel
-): Promise<THREE.Box3 | null> {
-  const boundingBox = new THREE.Box3();
+export const removeAllStyles = (threeDModel: Cognite3DModel) => {
+  threeDModel.removeAllStyledNodeCollections();
+  threeDModel.setDefaultNodeAppearance(DefaultNodeAppearance.Default);
+};
 
-  await Promise.all(
-    assetMappings.map(async assetMapping => {
-      const { nodeId } = assetMapping;
-      const nodeBoundingBox = await model.getBoundingBoxByNodeId(nodeId);
-      boundingBox.union(nodeBoundingBox);
-    })
-  );
+const getNodeIdByTreeIndexQueryKey = (
+  modelId: number,
+  revisionId: number,
+  treeIndex: number
+) => [
+  'cdf',
+  '3d',
+  'model',
+  modelId,
+  'revision',
+  revisionId,
+  'tree-index',
+  treeIndex,
+  'node-id',
+];
 
-  return boundingBox;
-}
-
-export const get3dAssetMappings = async (
+export const fetchNodeIdByTreeIndex = (
   sdk: CogniteClient,
-  modelId?: number,
-  revisionId?: number,
-  nextCursor?: string,
-  limit?: number
-) =>
-  sdk.get(
-    `/api/v1/projects/${sdk.project}/3d/models/${modelId}/revisions/${revisionId}/mappings`,
-    { params: { limit: limit || 1000, cursor: nextCursor } }
+  queryClient: QueryClient,
+  threeDModel: Cognite3DModel,
+  modelId: number,
+  revisionId: number,
+  treeIndex: number,
+  options?: FetchQueryOptions<number>
+): Promise<number> => {
+  return queryClient.fetchQuery(
+    getNodeIdByTreeIndexQueryKey(modelId, revisionId, treeIndex),
+    () => threeDModel.mapTreeIndexToNodeId(treeIndex),
+    options
   );
+};
+
+export const findClosestAsset = async (
+  sdk: CogniteClient,
+  queryClient: QueryClient,
+  threeDModel: Cognite3DModel,
+  modelId: number,
+  revisionId: number,
+  intersection: CadIntersection
+) => {
+  const { treeIndex } = intersection as CadIntersection;
+
+  const nodeId = await fetchNodeIdByTreeIndex(
+    sdk,
+    queryClient,
+    threeDModel,
+    modelId,
+    revisionId,
+    treeIndex
+  );
+
+  const closestAssetId = await fetchClosestAssetIdQuery(
+    sdk,
+    queryClient,
+    modelId,
+    revisionId,
+    nodeId
+  );
+
+  return closestAssetId;
+};
+
+export const getURLWithThreeDViewerState = (
+  state: string,
+  selectedAssetId?: number
+): string => {
+  const search = window.location.search;
+  const params = new URLSearchParams(search);
+  params.append(THREE_D_VIEWER_STATE_QUERY_PARAMETER_KEY, state);
+  if (selectedAssetId) {
+    params.append(
+      THREE_D_SELECTED_ASSET_QUERY_PARAMETER_KEY,
+      `${selectedAssetId}`
+    );
+  }
+
+  return `${window.location.origin}${
+    window.location.pathname
+  }?${params.toString()}`;
+};
+
+export const parseThreeDViewerStateFromURL = (): {
+  selectedAssetId?: number;
+  viewerState?: ViewerState;
+} => {
+  const search = window.location.search;
+  const params = new URLSearchParams(search);
+  const viewerStateParam = params.get(THREE_D_VIEWER_STATE_QUERY_PARAMETER_KEY);
+  const selectedAssetIdParam = params.get(
+    THREE_D_SELECTED_ASSET_QUERY_PARAMETER_KEY
+  );
+  params.delete(THREE_D_VIEWER_STATE_QUERY_PARAMETER_KEY);
+  params.delete(THREE_D_SELECTED_ASSET_QUERY_PARAMETER_KEY);
+
+  window.history.replaceState(
+    null,
+    '',
+    `${window.location.pathname}?${params.toString()}`
+  );
+
+  let viewerState: ViewerState | undefined;
+  try {
+    viewerState = JSON.parse(viewerStateParam ?? '');
+  } catch {
+    viewerState = undefined;
+  }
+
+  let selectedAssetId: number | undefined;
+  try {
+    const parsedNum = parseInt(selectedAssetIdParam ?? '', 10);
+    if (Number.isNaN(parsedNum)) {
+      selectedAssetId = undefined;
+    } else {
+      selectedAssetId = parsedNum;
+    }
+  } catch {
+    selectedAssetId = undefined;
+  }
+
+  return {
+    viewerState,
+    selectedAssetId,
+  };
+};

@@ -1,19 +1,27 @@
-import React, { useState } from 'react';
+import React, { Dispatch, SetStateAction, useState } from 'react';
 import { Button, Flex, Input, Loader } from '@cognite/cogs.js';
 import { AssetMappingsList } from 'app/containers/ThreeD/AssetMappingsList';
-import { useAssetMappings } from 'app/containers/ThreeD/hooks';
+import { useMappedAssets } from 'app/containers/ThreeD/hooks';
 import styled from 'styled-components';
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 import { Asset } from '@cognite/sdk';
 import { trackUsage } from 'app/utils/Metrics';
+import {
+  fitCameraToAsset,
+  highlightAsset,
+  removeAllStyles,
+} from 'app/containers/ThreeD/utils';
+import { useSDK } from '@cognite/sdk-provider';
+import { useQueryClient } from 'react-query';
+import { Cognite3DModel, Cognite3DViewer } from '@cognite/reveal';
 
 type ThreeDSidebarProps = {
-  modelId?: number;
-  revisionId?: number;
-  selectedAssetId: number | null;
-
-  setSelectedAssetId: (assetId: number | null) => void;
-  setAssetPreviewSidebarVisible: (visible: boolean) => void;
+  modelId: number;
+  revisionId: number;
+  selectedAssetId?: number;
+  setSelectedAssetId: Dispatch<SetStateAction<number | undefined>>;
+  viewer: Cognite3DViewer;
+  threeDModel: Cognite3DModel;
 };
 
 export const AssetMappingsSidebar = ({
@@ -21,8 +29,12 @@ export const AssetMappingsSidebar = ({
   revisionId,
   selectedAssetId,
   setSelectedAssetId,
-  setAssetPreviewSidebarVisible,
+  viewer,
+  threeDModel,
 }: ThreeDSidebarProps) => {
+  const sdk = useSDK();
+  const queryClient = useQueryClient();
+
   const { data: asset } = useCdfItem<Asset>(
     'assets',
     { id: selectedAssetId! },
@@ -32,25 +44,33 @@ export const AssetMappingsSidebar = ({
   const [query, setQuery] = useState('');
   const [expanded, setExpanded] = useState(false);
 
-  const { data: assetListData, isFetched } = useAssetMappings(
+  const { data: mappedAssets, isFetched } = useMappedAssets(
     modelId,
     revisionId
   );
 
-  const handleAssetClick = async (assetId: number) => {
-    // Deselect current asset mappings
-    if (assetId === selectedAssetId) {
-      setSelectedAssetId(null);
-      setAssetPreviewSidebarVisible(false);
+  const handleAssetClick = async (clickedAssetId: number) => {
+    if (clickedAssetId !== selectedAssetId) {
+      highlightAsset(sdk, threeDModel, clickedAssetId);
+      fitCameraToAsset(
+        sdk,
+        queryClient,
+        viewer,
+        threeDModel,
+        modelId,
+        revisionId,
+        clickedAssetId
+      );
+      setSelectedAssetId(clickedAssetId);
     } else {
-      setSelectedAssetId(assetId);
-      setAssetPreviewSidebarVisible(true);
+      removeAllStyles(threeDModel);
+      setSelectedAssetId(undefined);
     }
   };
 
   const isItemLoaded = (index: number) => {
-    if (assetListData?.length) {
-      return Boolean(index < assetListData?.length);
+    if (mappedAssets?.length) {
+      return Boolean(index < mappedAssets?.length);
     }
     return true;
   };
@@ -90,14 +110,14 @@ export const AssetMappingsSidebar = ({
       {expanded && (
         <AssetMappingsList
           query={query}
-          assets={assetListData ?? []}
+          assets={mappedAssets ?? []}
           selectedAssetId={selectedAssetId}
           onClick={e => {
             handleAssetClick(e);
             setExpanded(false);
             trackUsage('Exploration.Action.Select', { selectedAssetId });
           }}
-          itemCount={assetListData?.length ?? 0}
+          itemCount={mappedAssets?.length ?? 0}
           isItemLoaded={isItemLoaded}
           loadMoreItems={() => {}}
         />

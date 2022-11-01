@@ -33,7 +33,7 @@ const EmptyAssetMappingsList = () => {
 type AssetMappingsListProps = {
   assets: Asset[];
   query: string;
-  selectedAssetId: number | null;
+  selectedAssetId?: number;
   itemCount: number;
   onClick: (assetId: number) => void;
   isItemLoaded: (index: number) => boolean;

@@ -1,43 +1,51 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, {
+  Dispatch,
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 import { useSDK } from '@cognite/sdk-provider';
 import styled from 'styled-components';
 import { use3DModel } from './hooks';
 import {
-  AssetNodeCollection,
   CadIntersection,
   Cognite3DModel,
   Cognite3DViewer,
   CognitePointCloudModel,
   DefaultCameraManager,
-  DefaultNodeAppearance,
-  THREE,
 } from '@cognite/reveal';
 
 import { Alert } from 'antd';
-import { useQuery } from 'react-query';
+import { useQuery, useQueryClient } from 'react-query';
 import {
-  getAncestorByNodeId,
-  getAssetMappingsByAssetId,
-  getAssetIdFromMapped3DNode,
+  findClosestAsset,
+  highlightAsset,
+  fitCameraToAsset,
+  removeAllStyles,
+  parseThreeDViewerStateFromURL,
 } from './utils';
 import { ErrorBoundary } from 'react-error-boundary';
 import RevealErrorFeedback from './RevealErrorFeedback';
 import { PointerEventDelegate } from '@cognite/reveal';
 import { usePrevious } from '@cognite/data-exploration';
+import { StyledSplitter } from 'app/containers/elements';
+import { AssetPreviewSidebar } from 'app/containers/ThreeD/AssetPreviewSidebar';
 
 type ChildProps = {
   threeDModel?: Cognite3DModel;
   pointCloudModel?: CognitePointCloudModel;
   viewer: Cognite3DViewer;
-  boundingBox?: THREE.Box3;
 };
 type Props = {
   modelId: number;
   revisionId: number;
   focusAssetId?: number | null;
-  setSelectedAssetId?: (assetId: number | null) => void;
+  setSelectedAssetId: Dispatch<SetStateAction<number | undefined>>;
   nodesClickable: boolean;
   children?: (opts: ChildProps) => JSX.Element;
+  assetColumnVisible: boolean;
 };
 
 export function Reveal({
@@ -47,16 +55,13 @@ export function Reveal({
   setSelectedAssetId,
   nodesClickable,
   children,
+  assetColumnVisible,
 }: Props) {
   const sdk = useSDK();
+
   const [revealContainer, setRevealContainer] = useState<HTMLDivElement | null>(
     null
   );
-
-  const [clickedNodeId, setclickedNodeId] = useState<number | null>(null);
-  useEffect(() => {
-    if (!focusAssetId) setclickedNodeId(null);
-  }, [focusAssetId, setclickedNodeId]);
 
   const handleMount = useCallback(
     (node: HTMLDivElement | null) => setRevealContainer(node),
@@ -120,111 +125,99 @@ export function Reveal({
     }
   );
 
-  const { data: mappings = [], isFetched: mappingsFetched } = useQuery(
-    ['getAssetMappingsByAssetId', modelId, revisionId, focusAssetId],
-    () => getAssetMappingsByAssetId(sdk, modelId, revisionId, [focusAssetId!]),
-    { enabled: !!focusAssetId }
-  );
-
-  const { data: ancestorNodes } = useQuery(
-    ['getAncestorByNodeId', modelId, revisionId, clickedNodeId],
-    () => getAncestorByNodeId(sdk, modelId, revisionId, clickedNodeId!),
-    {
-      enabled: !!clickedNodeId,
-    }
-  );
-
-  const { data: mappedAssetId } = useQuery(
-    ['getAssetIdFromMapped3DNode', modelId, revisionId, ancestorNodes],
-    () => getAssetIdFromMapped3DNode(sdk, modelId, revisionId, ancestorNodes),
-    {
-      enabled: !!ancestorNodes,
-    }
-  );
-
-  const prevMappedAssetId = usePrevious(mappedAssetId);
-
-  useEffect(() => {
-    if (
-      mappedAssetId &&
-      setSelectedAssetId &&
-      mappedAssetId != focusAssetId &&
-      mappedAssetId != prevMappedAssetId
-    ) {
-      setSelectedAssetId(mappedAssetId);
-    }
-  }, [focusAssetId, mappedAssetId, prevMappedAssetId, setSelectedAssetId]);
+  const queryClient = useQueryClient();
 
   const { threeDModel, pointCloudModel } = models || {
     threeDModel: undefined,
     pointCloudModel: undefined,
   };
 
-  const { data: selectedAssetBoundingBox } = useQuery(
-    ['reveal-model', modelId, revisionId, focusAssetId],
-    async () => {
-      const boundingBoxNodes = await Promise.all(
-        mappings.map(m => threeDModel?.getBoundingBoxByNodeId(m.nodeId))
-      );
-
-      const boundingBox = boundingBoxNodes.reduce((accl: THREE.Box3, box) => {
-        return box ? accl.union(box) : accl;
-      }, new THREE.Box3());
-
-      return boundingBox;
-    },
-    {
-      enabled: !!threeDModel && mappingsFetched,
-    }
-  );
-
   useEffect(() => {
-    if (!threeDModel || !viewer) {
-      return;
-    }
-
-    threeDModel.removeAllStyledNodeCollections();
-
-    if (focusAssetId) {
-      const assetNodes = new AssetNodeCollection(sdk, threeDModel);
-
-      assetNodes.executeFilter({ assetId: focusAssetId });
-
-      threeDModel.setDefaultNodeAppearance(DefaultNodeAppearance.Default);
-      threeDModel.assignStyledNodeCollection(
-        assetNodes,
-        DefaultNodeAppearance.Highlighted
-      );
-
-      if (selectedAssetBoundingBox) {
-        viewer.fitCameraToBoundingBox(selectedAssetBoundingBox);
+    if (viewer && threeDModel) {
+      const { selectedAssetId: paramAssetId, viewerState } =
+        parseThreeDViewerStateFromURL();
+      if (viewerState) {
+        viewer.setViewState(viewerState);
       }
-    } else {
-      threeDModel.setDefaultNodeAppearance(DefaultNodeAppearance.Default);
+      if (paramAssetId) {
+        setSelectedAssetId(paramAssetId);
+        if (
+          !viewerState?.models?.some(({ styledSets }) => !!styledSets.length)
+        ) {
+          highlightAsset(sdk, threeDModel, paramAssetId);
+          fitCameraToAsset(
+            sdk,
+            queryClient,
+            viewer,
+            threeDModel,
+            modelId,
+            revisionId,
+            paramAssetId
+          );
+        }
+      }
     }
-  }, [selectedAssetBoundingBox, focusAssetId, sdk, threeDModel, viewer]);
+  }, [
+    modelId,
+    queryClient,
+    revisionId,
+    sdk,
+    setSelectedAssetId,
+    threeDModel,
+    viewer,
+  ]);
 
   const onViewerClick: PointerEventDelegate = useCallback(
     async ({ offsetX, offsetY }) => {
-      if (!threeDModel || !viewer || !setSelectedAssetId || !nodesClickable) {
+      if (!threeDModel || !viewer || !nodesClickable) {
         return;
       }
 
-      // Click outside selected asset handler
       const intersection = await viewer.getIntersectionFromPixel(
         offsetX,
         offsetY
       );
-      if (intersection) {
-        const { treeIndex } = intersection as CadIntersection;
 
-        const nodeId = await threeDModel.mapTreeIndexToNodeId(treeIndex);
-        setclickedNodeId(nodeId);
-      } else {
-        setSelectedAssetId(null);
+      let closestAssetId: number | undefined;
+      if (intersection) {
+        closestAssetId = await findClosestAsset(
+          sdk,
+          queryClient,
+          threeDModel,
+          modelId,
+          revisionId,
+          intersection as CadIntersection
+        );
       }
+
+      if (closestAssetId && closestAssetId !== focusAssetId) {
+        highlightAsset(sdk, threeDModel, closestAssetId);
+        fitCameraToAsset(
+          sdk,
+          queryClient,
+          viewer,
+          threeDModel,
+          modelId,
+          revisionId,
+          closestAssetId
+        );
+      } else if (!closestAssetId) {
+        removeAllStyles(threeDModel);
+      }
+
+      setSelectedAssetId(closestAssetId);
     },
-    [nodesClickable, setSelectedAssetId, threeDModel, viewer]
+    [
+      focusAssetId,
+      modelId,
+      nodesClickable,
+      queryClient,
+      revisionId,
+      sdk,
+      setSelectedAssetId,
+      threeDModel,
+      viewer,
+    ]
   );
   const previousClickHandler = usePrevious(onViewerClick);
 
@@ -250,17 +243,27 @@ export function Reveal({
   }
 
   return (
-    <>
-      <RevealContainer id="revealContainer" ref={handleMount} />
-      {children &&
-        viewer &&
-        children({
-          threeDModel,
-          pointCloudModel,
-          viewer,
-          boundingBox: selectedAssetBoundingBox,
-        })}
-    </>
+    <StyledSplitter>
+      <>
+        <RevealContainer id="revealContainer" ref={handleMount} />
+        {children &&
+          viewer &&
+          children({
+            threeDModel,
+            pointCloudModel,
+            viewer,
+          })}
+      </>
+      {!!focusAssetId && threeDModel && assetColumnVisible && (
+        <AssetPreviewSidebar
+          assetId={focusAssetId}
+          onClose={() => {
+            removeAllStyles(threeDModel);
+            setSelectedAssetId(undefined);
+          }}
+        />
+      )}
+    </StyledSplitter>
   );
 }
 

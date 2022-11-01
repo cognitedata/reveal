@@ -5,12 +5,14 @@ import {
   Cognite3DViewer,
   Cognite3DModel,
   CognitePointCloudModel,
-  THREE,
   DefaultCameraManager,
 } from '@cognite/reveal';
 import { createLink } from '@cognite/cdf-utilities';
 import { trackUsage } from 'app/utils/Metrics';
 import { MeasurementTool } from '@cognite/reveal/tools';
+import { useSDK } from '@cognite/sdk-provider';
+import { useQueryClient } from 'react-query';
+import { fitCameraToAsset } from 'app/containers/ThreeD/utils';
 
 export const HomeButton = () => {
   const navigate = useNavigate();
@@ -54,15 +56,22 @@ export const ExpandButton = ({
 };
 
 export const FocusAssetButton = ({
-  boundingBox,
+  modelId,
+  revisionId,
+  selectedAssetId,
   viewer,
-  viewerModel,
+  threeDModel,
 }: {
-  boundingBox?: THREE.Box3;
+  modelId: number;
+  revisionId: number;
+  selectedAssetId?: number;
   viewer: Cognite3DViewer | null;
-  viewerModel: Cognite3DModel | null;
+  threeDModel: Cognite3DModel | null;
 }) => {
-  if (!boundingBox) {
+  const sdk = useSDK();
+  const queryClient = useQueryClient();
+
+  if (!selectedAssetId) {
     return <></>;
   }
 
@@ -71,8 +80,16 @@ export const FocusAssetButton = ({
       <Button
         icon="Collapse"
         onClick={() => {
-          if (viewer && viewerModel) {
-            viewer.fitCameraToBoundingBox(boundingBox);
+          if (viewer && threeDModel) {
+            fitCameraToAsset(
+              sdk,
+              queryClient,
+              viewer,
+              threeDModel,
+              modelId,
+              revisionId,
+              selectedAssetId
+            );
           }
         }}
         type="ghost"

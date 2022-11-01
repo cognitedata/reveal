@@ -51,6 +51,7 @@ import { useDocumentFilters } from 'app/store/filter/selectors/documentSelectors
 import { CogniteEvent } from '@cognite/sdk';
 import { useNavigate } from 'react-router-dom';
 import { useFlagAdvancedFilters } from 'app/hooks/flags/useFlagAdvancedFilters';
+import { THREE_D_SELECTED_ASSET_QUERY_PARAMETER_KEY } from 'app/containers/ThreeD/utils';
 
 const getPageTitle = (query: string, resourceType: ResourceType): string => {
   return `${query}${query ? ' in' : ''} ${getTitle(resourceType, true)}`;
@@ -115,8 +116,15 @@ function SearchPage() {
     setShowFilter(prevState => !prevState);
   }, []);
 
-  const handleThreeDModelClick = (mapping: ThreeDAssetMappingItem) => {
-    navigate(createLink(`/explore/threeD/${mapping.model.id}`));
+  const handleThreeDModelClick = (
+    mapping: ThreeDAssetMappingItem,
+    assetId: number
+  ) => {
+    navigate(
+      createLink(`/explore/threeD/${mapping.model.id}`, {
+        [THREE_D_SELECTED_ASSET_QUERY_PARAMETER_KEY]: assetId,
+      })
+    );
   };
 
   if (isFilterFeatureEnabled) {
