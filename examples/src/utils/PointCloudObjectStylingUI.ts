@@ -2,14 +2,14 @@
  * Copyright 2022 Cognite AS
  */
 
+import * as THREE from 'three';
 import {
   Cognite3DViewer,
   CognitePointCloudModel,
   AnnotationIdPointCloudObjectCollection,
   PointCloudAppearance,
   DefaultPointCloudAppearance,
-  PointCloudObjectMetadata,
-  THREE
+  PointCloudObjectMetadata
 } from '@cognite/reveal';
 
 export class PointCloudObjectStylingUI {

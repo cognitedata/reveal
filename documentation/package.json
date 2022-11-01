@@ -47,6 +47,7 @@
     "@azure/msal-browser": "2.30.0",
     "@cognite/reveal": "link:../viewer/dist",
     "@cognite/reveal-1.x": "npm:@cognite/reveal@1.x.x",
+    "@cognite/reveal-1.x/three": "npm:three@0.125.2",
     "@cognite/reveal-2.x": "npm:@cognite/reveal@2.3",
     "@cognite/reveal-3.x": "npm:@cognite/reveal@3.x.x",
     "@cognite/reveal-4.x": "link:../viewer/dist",
@@ -67,12 +68,12 @@
     "react-dom": "18.2.0",
     "react-live": "2.4.1",
     "styled-components": "5.3.6",
-    "three": "0.125.2"
+    "three": "0.144.0"
   },
   "devDependencies": {
     "@types/react": "18.0.24",
     "@types/styled-components": "5.1.26",
-    "@types/three": "0.125.2",
+    "@types/three": "0.144.0",
     "docusaurus-plugin-typedoc": "0.17.5",
     "replace": "1.2.2",
     "rimraf": "3.0.2",
