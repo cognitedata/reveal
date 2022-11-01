@@ -9,11 +9,11 @@ describe('Platypus Data Preview Page - Preview', () => {
     cy.getBySel('page-title').contains('Data management');
     cy.getBySel('types-list-panel').should('be.visible');
     cy.getBySel('types-list-filter').should('be.visible');
-    cy.getBySel('types-list-item').should('have.length', 3);
+    cy.getBySel('types-list-item').should('have.length', 4);
   });
 
   it('should display only types with storage', () => {
-    cy.getBySel('types-list-item').should('have.length', 3);
+    cy.getBySel('types-list-item').should('have.length', 4);
     cy.get('[data-testid="Post"]').should('be.visible');
     cy.get('[data-testid="User"]').should('be.visible');
     cy.get('[data-testid="Comment"]').should('be.visible');
@@ -66,54 +66,10 @@ describe('Platypus Data Preview Page - Preview', () => {
   });
 
   it('should show the no rows overlay when the table is empty', () => {
-    cy.get('[data-testid="User"]').click();
-    cy.get('[data-testid="User"]').should('have.class', 'active');
+    cy.get('[data-testid="TypeWithoutData"]').click();
+    cy.get('[data-testid="TypeWithoutData"]').should('have.class', 'active');
     cy.getBySel('data-preview-table').should('be.visible');
 
-    cy.intercept(
-      'POST',
-      'api/v1/projects/mock/datamodelstorage/nodes/delete'
-    ).as('deleteNodes');
-
-    // Wait for row to be rendered
-    cy.get('div[role="gridcell"][col-id="name"]')
-      .should('be.visible')
-      .should('contain', 'John Doe');
-
-    cy.get('div[role="gridcell"][col-id="_isDraftSelected"]').each(($el) => {
-      cy.wrap($el).should('be.visible').click();
-    });
-
-    const response = {
-      data: {
-        listUser: {
-          items: [],
-        },
-        aggregateUser: {
-          items: [
-            {
-              count: {
-                externalId: 0,
-              },
-            },
-          ],
-        },
-      },
-    };
-
-    cy.intercept(
-      'POST',
-      '/api/v1/projects/mock/schema/api/blog/1/graphql',
-      response
-    );
-    cy.on('window:confirm', () => true);
-    cy.getBySel('btn-pagetoolbar-delete').click();
-    cy.getBySel('data-row-confirm-deletion-checkbox').click();
-    cy.getBySel('modal-ok-button').click();
-
-    cy.wait('@deleteNodes').then((interception) => {
-      expect(interception.response.statusCode).to.equal(200);
-    });
     cy.getBySel('no-rows-overlay').contains(
       'This data model type has currently no data'
     );

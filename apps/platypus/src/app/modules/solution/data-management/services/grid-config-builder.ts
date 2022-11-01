@@ -26,67 +26,71 @@ export const getInitialGridConfig = () => {
 export const buildGridConfig = (
   instanceIdCol: string,
   dataModelType: DataModelTypeDefsType,
-  onRowAdd: (row: KeyValueMap) => void
+  onRowAdd: (row: KeyValueMap) => void,
+  enableDeletion: boolean
 ): GridConfig => {
-  return {
-    ...getInitialGridConfig(),
-    columns: [
-      {
-        label: '',
-        property: '_isDraftSelected',
-        defaultValue: '',
-        dataType: ColumnDataType.Text,
-        colDef: {
-          editable: false,
-          sortable: false,
-          suppressMovable: true,
-          cellRenderer: CheckboxCellRenderer,
-          headerComponent: () => '',
-          width: 44,
-        },
-      },
-      {
-        label: 'Instances',
-        property: instanceIdCol,
-        defaultValue: '',
-        dataType: ColumnDataType.Text,
-        colDef: {
-          editable: false,
-          sortable: false,
-          suppressMovable: true,
-          cellRenderer: IdCellRenderer,
-          cellRendererParams: {
-            onRowAdd,
-          },
-          cellStyle: {
-            padding: '0 var(--ag-cell-horizontal-padding)',
-          },
-        },
-      },
-      ...dataModelType.fields.map((field) => {
-        const colConfig = {
-          label: field.name,
-          property: field.name,
-          dataType: colTypesMap.hasOwnProperty(field.type.name)
-            ? colTypesMap[field.type.name]
-            : ColumnDataType.Custom,
-          optional: field.nonNull,
+  const columns: ColumnConfig[] = enableDeletion
+    ? [
+        {
+          label: '',
+          property: '_isDraftSelected',
           defaultValue: '',
-          rules: [],
-          metadata: {},
-          isList: field.type.list || false,
+          dataType: ColumnDataType.Text,
           colDef: {
-            headerName: `${field.name}${field.type.nonNull ? '*' : ''}`,
             editable: false,
             sortable: false,
-            cellEditorParams: {
-              isRequired: field.nonNull || field.type.nonNull,
-            },
+            suppressMovable: true,
+            cellRenderer: CheckboxCellRenderer,
+            headerComponent: () => '',
+            width: 44,
           },
-        } as ColumnConfig;
+        },
+      ]
+    : [];
 
-        return colConfig;
-      }),
-    ],
-  };
+  columns.push(
+    {
+      label: 'Instances',
+      property: instanceIdCol,
+      defaultValue: '',
+      dataType: ColumnDataType.Text,
+      colDef: {
+        editable: false,
+        sortable: false,
+        suppressMovable: true,
+        cellRenderer: IdCellRenderer,
+        cellRendererParams: {
+          onRowAdd,
+        },
+        cellStyle: {
+          padding: '0 var(--ag-cell-horizontal-padding)',
+        },
+      },
+    },
+    ...dataModelType.fields.map((field) => {
+      const colConfig = {
+        label: field.name,
+        property: field.name,
+        dataType: colTypesMap.hasOwnProperty(field.type.name)
+          ? colTypesMap[field.type.name]
+          : ColumnDataType.Custom,
+        optional: field.nonNull,
+        defaultValue: '',
+        rules: [],
+        metadata: {},
+        isList: field.type.list || false,
+        colDef: {
+          headerName: `${field.name}${field.type.nonNull ? '*' : ''}`,
+          sortable: false,
+          cellEditorParams: {
+            isRequired: field.nonNull || field.type.nonNull,
+          },
+        },
+      } as ColumnConfig;
+
+      return colConfig;
+    })
+  );
+
+  return { ...getInitialGridConfig(), columns: columns };
 };

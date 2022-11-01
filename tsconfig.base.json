@@ -21,7 +21,10 @@
       "@cognite/cog-data-grid-root/*": ["libs/cog-data-grid/src/*"],
       "@cognite/graph": ["libs/graph/src/index.ts"],
       "@cognite/platypus-cdf-cli/*": ["apps/platypus-cdf-cli/src/*"],
-      "@platypus-app/*": ["apps/platypus/src/app/*"],
+      "@platypus-app/*": [
+        "apps/platypus/src/app/*",
+        "apps/platypus/src/environments/environment.ts"
+      ],
       "@platypus-core/*": ["libs/platypus-core/src/lib/*"],
       "@platypus/mock-data": ["libs/mock-data/src/index.ts"],
       "@platypus/platypus-common-utils": [

@@ -58,7 +58,10 @@ import { ErrorPlaceholder } from './ErrorPlaceholder';
 import { NoRowsOverlay } from './NoRowsOverlay';
 import { SidePanel } from './SidePanel';
 import { sanitizeRow } from './utils';
-import { useManualPopulationFeatureFlag } from '@platypus-app/flags';
+import {
+  useManualPopulationFeatureFlag,
+  useDataManagementDeletionFeatureFlag,
+} from '@platypus-app/flags';
 
 const pageSizeLimit = 100;
 
@@ -90,7 +93,10 @@ export const DataPreviewTable = forwardRef<
   const [gridConfig, setGridConfig] = useState<GridConfig>(
     getInitialGridConfig()
   );
-  const { isEnabled } = useManualPopulationFeatureFlag();
+  const { isEnabled: enableManualPopulation } =
+    useManualPopulationFeatureFlag();
+  const { isEnabled: enableDeletion } = useDataManagementDeletionFeatureFlag();
+
   const dataManagementHandler = useInjection(TOKENS.DataManagementHandler);
 
   const draftRowsData = useSelector(
@@ -184,7 +190,12 @@ export const DataPreviewTable = forwardRef<
 
   useEffect(() => {
     setGridConfig(
-      buildGridConfig(instanceIdCol, dataModelType, handleRowPublish)
+      buildGridConfig(
+        instanceIdCol,
+        dataModelType,
+        handleRowPublish,
+        enableDeletion
+      )
     );
     setIsGridInit(false);
     setFetchError(null);
@@ -365,7 +376,7 @@ export const DataPreviewTable = forwardRef<
   Technique borrowed from https://stackoverflow.com/a/64294316
   */
   const handleCellValueChanged = (e: ValueSetterParams) => {
-    if (!e.colDef.field || !isEnabled) {
+    if (!e.colDef.field || !enableManualPopulation) {
       return false;
     }
 
@@ -614,7 +625,7 @@ export const DataPreviewTable = forwardRef<
             <CogDataGrid
               ref={gridRef}
               gridOptions={{
-                readOnlyEdit: !isEnabled,
+                readOnlyEdit: !enableManualPopulation,
                 enableCellChangeFlash: true,
                 rowModelType: 'infinite',
                 rowBuffer: pageSizeLimit / 2,

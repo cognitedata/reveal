@@ -23,15 +23,38 @@ describe('Data Model Page - Existing Solution Preview', () => {
 
   it('should fill the code editor with text', () => {
     // This should come imported from the mock package
-    const expectedSchema =
-      'type Post {\n  title: String!\n  views: Int!\n  user: User\n tags: [String]\n comments: [Comment]\n}\n\ntype User {\n  name: String!\n}\n\ntype Comment {\n  body: String!\n  date: Timestamp!\n  post: Post\n}';
+    const expectedSchema = `
+        type Post {  
+          title: String!  
+          views: Int!  
+          user: User tags: [String]
+          comments: [Comment]
+        }
+        type User {  
+          name: String!
+        }
+        type Comment {  
+          body: String!  
+          date: Timestamp!  
+          post: Post
+        }
+        type TypeWithoutData {  
+          name: String!
+        }`;
 
     cy.get('[aria-label="Code editor"]').click();
     cy.get('.monaco-editor textarea:first').should('be.visible');
     cy.getBySel('edit-schema-btn').should('be.visible').click();
-    cy.get('.monaco-editor textarea:first')
-      .type('{selectAll}')
-      .should('have.value', expectedSchema);
+
+    cy.get('.monaco-editor')
+      .invoke('text')
+      .then((text) => {
+        //regex removes whitespace.
+        //text returned by cypress contains weird linebreaks and whitespace characters
+        expect(text.replace(/\s+/g, '')).to.contain(
+          expectedSchema.replace(/\s+/g, '')
+        );
+      });
   });
 
   it('should render the visualizer with mock data', () => {
@@ -147,9 +170,7 @@ describe('Data Model Page - Existing Solution Preview', () => {
 
     // Code Editor check for properly working
     cy.get('[aria-label="Code editor"]').click();
-    cy.get('.monaco-editor textarea:first')
-      .type('{selectAll}')
-      .should('contain.value', 'type Author');
+    cy.contains('.monaco-editor', 'type Author');
     // Visualizer correct output
     cy.get('div#visualizer-wrapper').should(
       'not.contain',

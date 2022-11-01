@@ -74,6 +74,16 @@ export const mockDataSample = {
         },
       },
     },
+    {
+      spaceExternalId: 'blog',
+      externalId: 'TypeWithoutDataTable',
+      properties: {
+        name: {
+          type: 'text',
+          nullable: false,
+        },
+      },
+    },
   ],
   nodes: [
     {
@@ -187,7 +197,7 @@ export const mockDataSample = {
           ],
           dataModel: {
             graphqlRepresentation:
-              'type Post {\n  title: String!\n  views: Int!\n  user: User\n tags: [String]\n comments: [Comment]\n}\n\ntype User {\n  name: String!\n}\n\ntype Comment {\n  body: String!\n  date: Timestamp!\n  post: Post\n}',
+              'type Post {\n  title: String!\n  views: Int!\n  user: User\n tags: [String]\n comments: [Comment]\n}\n\ntype User {\n  name: String!\n}\n\ntype Comment {\n  body: String!\n  date: Timestamp!\n  post: Post\n}\n\ntype TypeWithoutData {\n  name: String!\n}',
             types: [],
           },
         },

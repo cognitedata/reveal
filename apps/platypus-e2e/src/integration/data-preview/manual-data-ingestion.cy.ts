@@ -175,26 +175,6 @@ describe('Platypus Data Preview Page - Manual Data Ingestion', () => {
     cy.get('[data-testid="User"] .cogs-detail').should('contain', '1 instance');
   });
 
-  it('should delete single draft row in table', () => {
-    cy.get('[data-testid="User"]').click();
-    cy.get('[data-testid="User"]').should('have.class', 'active');
-    cy.getBySel('data-preview-table').should('be.visible');
-    cy.getBySel('create-new-row-btn').should('be.visible').click();
-    cy.getBySel('draft-row').should('be.visible');
-    cy.get('[data-testid="User"] .cogs-detail').should('contain', '1 draft');
-    cy.get('div[role="gridcell"][col-id="name"]')
-      .first()
-      .click()
-      .type('TestName{enter}');
-
-    cy.getBySel('draft-row-selection-checkbox').first().click();
-    cy.getBySel('btn-pagetoolbar-delete').first().click();
-    cy.getBySel('data-row-confirm-deletion-checkbox').first().click();
-    cy.getBySel('modal-ok-button').first().click();
-    cy.getBySel('draft-row').should('not.exist');
-    cy.get('[data-testid="User"] .cogs-detail').should('contain', '0 draft');
-  });
-
   it('should delete multiple draft rows in table', () => {
     cy.get('[data-testid="User"]').click();
     cy.get('[data-testid="User"]').should('have.class', 'active');

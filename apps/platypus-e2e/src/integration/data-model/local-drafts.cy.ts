@@ -104,7 +104,7 @@ describe('Data Model Page - Local Drafts', () => {
   });
 
   it('persists unpublished changes after refreshing the page with only types without fields', () => {
-    const oldTypeNames = ['Post', 'User', 'Comment'];
+    const oldTypeNames = ['Post', 'User', 'Comment', 'TypeWithoutData'];
 
     cy.getBySel('edit-schema-btn').should('be.visible').click();
     oldTypeNames.forEach((typeName) => {

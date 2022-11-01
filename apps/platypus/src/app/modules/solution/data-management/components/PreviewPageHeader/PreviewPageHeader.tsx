@@ -5,7 +5,10 @@ import { PageHeaderDivider } from '../DataPreviewTable/elements';
 import { TransformationDropdown } from '@platypus-app/modules/solution/data-management/components/TransformationDropdown';
 import useTransformations from '@platypus-app/modules/solution/data-management/hooks/useTransformations';
 import { BulkPopulationButton } from '@platypus-app/modules/solution/data-management/components/BulkPopulationButton';
-import { useManualPopulationFeatureFlag } from '@platypus-app/flags';
+import {
+  useManualPopulationFeatureFlag,
+  useDataManagementDeletionFeatureFlag,
+} from '@platypus-app/flags';
 
 type Props = {
   dataModelExternalId: string;
@@ -41,7 +44,9 @@ export function PreviewPageHeader({
   version,
 }: Props) {
   const { t } = useTranslation('DataPreview');
-  const { isEnabled } = useManualPopulationFeatureFlag();
+  const { isEnabled: enableManualPopulation } =
+    useManualPopulationFeatureFlag();
+  const { isEnabled: enableDelete } = useDataManagementDeletionFeatureFlag();
   const { data: transformations } = useTransformations({
     dataModelExternalId,
     isEnabled: true,
@@ -120,15 +125,17 @@ export function PreviewPageHeader({
     >
       {shouldShowActions && (
         <Flex justifyContent={'flex-end'} gap={8}>
-          <Button
-            type="ghost"
-            icon="Delete"
-            disabled={isDeleteButtonDisabled}
-            aria-label="Delete"
-            data-cy="btn-pagetoolbar-delete"
-            onClick={onDeleteClick}
-          />
-          {isEnabled && (
+          {enableDelete && (
+            <Button
+              type="ghost"
+              icon="Delete"
+              disabled={isDeleteButtonDisabled}
+              aria-label="Delete"
+              data-cy="btn-pagetoolbar-delete"
+              onClick={onDeleteClick}
+            />
+          )}
+          {enableManualPopulation && (
             <Button
               data-cy="create-new-row-btn"
               type="primary"

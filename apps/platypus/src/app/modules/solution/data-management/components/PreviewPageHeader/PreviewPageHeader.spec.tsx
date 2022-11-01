@@ -11,6 +11,9 @@ jest.mock('@platypus-app/flags', () => {
     useManualPopulationFeatureFlag: () => ({
       isEnabled: true,
     }),
+    useDataManagementDeletionFeatureFlag: () => ({
+      isEnabled: true,
+    }),
   };
 });
 
