@@ -97,8 +97,7 @@ pub fn try_parse_objects(
         .into_iter()
         .map(|input_object| {
             let input_shape =
-                serde_wasm_bindgen::from_value::<InputShape>(input_object)
-                .map_err(|serde_error| {
+                serde_wasm_bindgen::from_value::<InputShape>(input_object).map_err(|serde_error| {
                     format!("Got error while deserializing shape: {}", serde_error)
                 });
 
