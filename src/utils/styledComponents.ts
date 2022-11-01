@@ -183,21 +183,9 @@ export const NoDataText = styled.p`
   font-style: italic;
 `;
 
-export const LineageDot = styled.div`
-  height: 10px;
-  width: 10px;
-  border-radius: 20px;
-  background: #4a67fb;
-`;
-export const EmptyLineageDot = styled.div`
-  height: 10px;
-  width: 10px;
-  border-radius: 20px;
-  background: ${theme.disabledColor};
-`;
-
 export const LineageTitle = styled.h5`
   font-size: 16px;
+  font-weight: 600;
 `;
 
 export const LineageSubTitle = styled.p`
@@ -420,4 +408,15 @@ export const Divider = styled.div`
   background-color: ${Colors['bg-control--disabled']};
   height: 1px;
   width: 100%;
+`;
+
+export const LineageSection = styled(Card)`
+  border-radius: 6px;
+  border: 1px solid #d9d9d9;
+  padding: 24px;
+`;
+export const SectionLine = styled.div`
+  transform: rotate(90deg);
+  width: 32px;
+  border: 6px solid rgba(83, 88, 127, 0.16);
 `;
