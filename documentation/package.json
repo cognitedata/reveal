@@ -74,7 +74,7 @@
     "@types/styled-components": "5.1.26",
     "@types/three": "0.125.2",
     "docusaurus-plugin-typedoc": "0.17.5",
-    "replace": "1.2.1",
+    "replace": "1.2.2",
     "rimraf": "3.0.2",
     "typedoc": "0.23.19",
     "typedoc-plugin-markdown": "3.13.6",
