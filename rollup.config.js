@@ -19,11 +19,12 @@ export default [
         file: pkg.main,
         name: 'named',
         format: 'umd',
+        sourcemap: false,
       },
       {
         file: pkg.module,
         format: 'es',
-        sourcemap: true,
+        sourcemap: false,
       },
     ],
     plugins: [

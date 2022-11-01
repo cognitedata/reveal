@@ -1,5 +1,5 @@
 import { useCallback, useMemo } from 'react';
-import { Annotation } from '@cognite/unified-file-viewer';
+import { Annotation, RectangleAnnotation } from '@cognite/unified-file-viewer';
 import { CommonLegacyCogniteAnnotation } from './types';
 import { useQuery } from 'react-query';
 import { baseCacheKey } from '@cognite/sdk-react-query-hooks';
@@ -12,33 +12,33 @@ type useUnifiedFileViewerAnnotationsProps = {
   hoverable: boolean;
   onMouseEnter?: (annotation: Annotation) => void;
   onMouseLeave?: (annotation: Annotation) => void;
-  onClick?: (annotation: Annotation) => Annotation;
+  onClick?: (annotation: Annotation) => void;
   renderAnnotation: (
     annotation: CommonLegacyCogniteAnnotation,
     isSelected: boolean
-  ) => Annotation;
+  ) => Annotation | undefined;
 };
 export const useUnifiedFileViewerAnnotations = ({
   annotations,
   selectedIds,
   hoverable,
   hoverId,
-  onClick = () => {},
-  onMouseEnter = () => {},
-  onMouseLeave = () => {},
+  onClick,
+  onMouseEnter,
+  onMouseLeave,
   renderAnnotation,
 }: useUnifiedFileViewerAnnotationsProps) => {
   const getHoverStyles = useCallback(
-    (annotation: Annotation) => {
-      if (hoverable) {
+    (annotation: RectangleAnnotation) => {
+      if (annotation && hoverable) {
         const isOnHover = hoverId == annotation.id;
         return {
           ...annotation,
           style: {
             ...annotation.style,
             fill: isOnHover
-              ? `${annotation.style.stroke}22`
-              : `${annotation.style.fill || 'transparent'}`,
+              ? `${annotation.style?.stroke}22`
+              : `${annotation.style?.fill || 'transparent'}`,
           },
         };
       }
@@ -54,10 +54,15 @@ export const useUnifiedFileViewerAnnotations = ({
         const styledUFVAnnotation = renderAnnotation(
           cogniteAnnotation,
           isSelected
+        ) as RectangleAnnotation;
+        return (
+          styledUFVAnnotation || {
+            ...cogniteAnnotation,
+            id: String(cogniteAnnotation.id),
+          }
         );
-        return styledUFVAnnotation;
       })
-      .filter(annotation => annotation !== undefined)
+      .filter(Boolean)
       .map(annotation => getHoverStyles(annotation));
   }, [annotations, renderAnnotation, selectedIds, getHoverStyles]);
 
@@ -65,22 +70,28 @@ export const useUnifiedFileViewerAnnotations = ({
     return ufvAnnotations.map(ufvAnnotation => {
       return {
         ...ufvAnnotation,
-        onClick: (e: Event, annotation: Annotation) => {
+        onClick: (e: any, annotation: Annotation) => {
           e.cancelBubble = true;
-          onClick(annotation);
+          if (onClick) {
+            onClick(annotation);
+          }
         },
-        onMouseOver: (e: Event, annotation: Annotation) => {
+        onMouseOver: (e: any, annotation: Annotation) => {
           e.cancelBubble = true;
-          onMouseEnter(annotation);
+          if (onMouseEnter) {
+            onMouseEnter(annotation);
+          }
         },
-        onMouseOut: (e: Event, annotation: Annotation) => {
+        onMouseOut: (e: any, annotation: Annotation) => {
           e.cancelBubble = true;
-          onMouseLeave(annotation);
+          if (onMouseLeave) {
+            onMouseLeave(annotation);
+          }
         },
       };
     });
   }, [ufvAnnotations, onClick, onMouseEnter, onMouseLeave]);
-  return ufvAnnotationsWithEvents;
+  return ufvAnnotationsWithEvents as Annotation[];
 };
 
 export const useFileDownloadUrl = (fileId: number) => {

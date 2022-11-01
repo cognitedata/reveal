@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { FileInfo } from '@cognite/sdk';
 import { Loader } from 'components';
 import styled from 'styled-components';
@@ -21,9 +21,13 @@ import {
   CommonLegacyCogniteAnnotation,
   ProposedCogniteAnnotation,
 } from './types';
-import { getAnnotationsFromLegacyCogniteAnnotations } from '@cognite/unified-file-viewer';
+import {
+  Annotation,
+  getAnnotationsFromLegacyCogniteAnnotations,
+} from '@cognite/unified-file-viewer';
 import { applyStylesToUFVAnnotation, getContainerId } from './utils';
 import { DEFAULT_ZOOM_SCALE } from './constants';
+import { LegacyCogniteAnnotation } from '@cognite/unified-file-viewer/dist/core/utils/api';
 
 export type FilePreviewUFVProps = {
   fileId: number;
@@ -79,6 +83,52 @@ export const FilePreviewUFV = ({
     ];
   }, [pendingAnnotations, persistedAnnotations]);
 
+  // apply styles conditionally to ufv annotation
+  const getUFVAnnotationWithStyles = useCallback(
+    (
+      ufvAnnotation: Annotation,
+      cogniteAnnotation: CommonLegacyCogniteAnnotation,
+      isSelected: boolean
+    ): Annotation => {
+      const isPending = pendingAnnotations.some(
+        ({ id }) => id == cogniteAnnotation.id
+      );
+      const styledUfvAnnotation = applyStylesToUFVAnnotation(
+        ufvAnnotation,
+        isSelected,
+        isPending,
+        cogniteAnnotation.resourceType
+      );
+
+      if (cogniteAnnotation.metadata && cogniteAnnotation.metadata.color) {
+        styledUfvAnnotation.style.stroke = cogniteAnnotation.metadata.color;
+      }
+      return styledUfvAnnotation as Annotation;
+    },
+    [pendingAnnotations]
+  );
+
+  // converts cognite annotations to UFV annotation and applies styles
+
+  const renderAnnotationCallback = useCallback(
+    (annotation: CommonLegacyCogniteAnnotation, isSelected: boolean) => {
+      const [ufvAnnotation] = getAnnotationsFromLegacyCogniteAnnotations(
+        [annotation as LegacyCogniteAnnotation],
+        getContainerId(fileId)
+      );
+      let renderAnnotation;
+      if (ufvAnnotation) {
+        renderAnnotation = getUFVAnnotationWithStyles(
+          ufvAnnotation,
+          annotation,
+          isSelected
+        );
+      }
+      return renderAnnotation;
+    },
+    [getUFVAnnotationWithStyles, fileId]
+  );
+
   if (!fileFetched) {
     return <Loader />;
   }
@@ -127,7 +177,7 @@ export const FilePreviewUFV = ({
       <UnifiedFileViewerWrapper
         file={file}
         sdk={sdk}
-        hideZoomControls={!showZoomControls}
+        hideControls={!showZoomControls}
         annotations={getAnnotations()}
         creatable
         hoverable
@@ -142,29 +192,7 @@ export const FilePreviewUFV = ({
         renderItemPreview={annotation => (
           <AnnotationHoverPreview annotation={[annotation]} />
         )}
-        renderAnnotation={(annotation, isAnnotationSelected) => {
-          const [ufvAnnotation] = getAnnotationsFromLegacyCogniteAnnotations(
-            [annotation],
-            getContainerId(fileId)
-          );
-          if (ufvAnnotation) {
-            const isPending = !!pendingAnnotations.find(
-              ({ id }) => id === String(annotation.id)
-            );
-            const styledUfvAnnotation = applyStylesToUFVAnnotation(
-              ufvAnnotation,
-              isAnnotationSelected,
-              isPending,
-              annotation.resourceType
-            );
-
-            if (annotation.metadata && annotation.metadata.color) {
-              styledUfvAnnotation.style.stroke = annotation.metadata.color;
-            }
-            return styledUfvAnnotation;
-          }
-          return ufvAnnotation;
-        }}
+        renderAnnotation={renderAnnotationCallback}
       />
       <SidebarWrapper>
         <AnnotationPreviewSidebar
@@ -196,6 +224,7 @@ const SidebarWrapper = styled.div`
   overflow: auto;
   flex-grow: 0;
   border-left: 1px solid ${lightGrey};
+  background-color: white;
 `;
 
 const CenteredPlaceholder = styled.div`

@@ -6,7 +6,7 @@ import { UnifiedViewer } from '@cognite/unified-file-viewer';
 export const ZoomingTools = ({
   fileViewerRef,
 }: {
-  fileViewerRef: UnifiedViewer | null;
+  fileViewerRef?: UnifiedViewer;
 }) => {
   const handleZoomOut = () => {
     fileViewerRef?.zoomOut();

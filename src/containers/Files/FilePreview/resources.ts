@@ -668,7 +668,7 @@ export const response = [
   },
 ];
 
-export const orcResults = [
+export const ocrResults = [
   {
     boundingBox: {
       xMax: 0.17019607843137255,

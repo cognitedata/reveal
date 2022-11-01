@@ -1,7 +1,7 @@
 import { ComponentStory } from '@storybook/react';
 import React from 'react';
 import { CogniteClient } from '@cognite/sdk';
-import { response } from '../resources';
+import { ocrResults, response } from '../resources';
 import { FilePreviewUFV } from './FilePreviewUFV';
 // @ts-ignore
 import pdfFileUrl from '../pnid.pdf';
@@ -59,6 +59,9 @@ const pdfSdkMock = {
     if (query.includes('events')) {
       return { data: { items: response } };
     }
+    if (query.includes('ocr')) {
+      return { data: { items: [{ annotations: ocrResults }] } };
+    }
     return { data: { items: [] } };
   },
   files: {
@@ -108,5 +111,4 @@ export const Images: ComponentStory<typeof FilePreviewUFV> = args => (
 );
 Images.args = {
   fileId: 333,
-  showZoomControls: false,
 };

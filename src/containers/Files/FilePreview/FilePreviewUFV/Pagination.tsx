@@ -2,14 +2,16 @@ import React, { useState } from 'react';
 import { Pagination as CogsPagination } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { useEffect } from 'react';
-import { getPdfCache } from '@cognite/unified-file-viewer';
+import { ContainerType, getPdfCache } from '@cognite/unified-file-viewer';
+import { DocumentContainerProps } from '@cognite/unified-file-viewer/dist/core/containers/DocumentContainer';
+import { ImageContainerProps } from '@cognite/unified-file-viewer/dist/core/containers/ImageContainer';
 
 export const Pagination = ({
-  pdfUrl,
+  container,
   onPageChange,
   children,
 }: {
-  pdfUrl: string;
+  container: DocumentContainerProps | ImageContainerProps;
   onPageChange: (pageNumber: number) => void;
   children: any;
 }) => {
@@ -17,12 +19,12 @@ export const Pagination = ({
 
   useEffect(() => {
     (async () => {
-      if (pdfUrl) {
-        const pdfNumPages = await getPdfCache().getPdfNumPages(pdfUrl);
+      if (container.type === ContainerType.DOCUMENT && container.url) {
+        const pdfNumPages = await getPdfCache().getPdfNumPages(container.url);
         setNumPages(pdfNumPages);
       }
     })();
-  }, [pdfUrl]);
+  }, [container.type, container.url]);
 
   if (numPages > 1) {
     return (
@@ -33,7 +35,7 @@ export const Pagination = ({
             totalPages={numPages}
             onPageChange={onPageChange}
             hideItemsPerPage
-            size="small"
+            size="default"
           />
         </ToolBar>
       </>
@@ -45,7 +47,6 @@ export const Pagination = ({
 const ToolBar = styled.div`
   position: absolute;
   z-index: 100;
-  bottom: 24px;
-  left: 50%;
-  transform: translateX(-50%);
+  bottom: 10px;
+  right: 140px;
 `;

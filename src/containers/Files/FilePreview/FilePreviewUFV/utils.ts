@@ -1,4 +1,4 @@
-import { Annotation } from '@cognite/unified-file-viewer';
+import { Annotation, RectangleAnnotation } from '@cognite/unified-file-viewer';
 import {
   AnnotationResourceType,
   CogniteAnnotation,
@@ -10,16 +10,17 @@ export const getContainerId = (fileId?: number) => {
   return String(fileId) || DEFAULT_CONTAINER_ID;
 };
 export const convertUFVAnnotationToLegacyCogniteAnnotation = (
-  annotation: Annotation
+  annotation: RectangleAnnotation,
+  label: string
 ): CogniteAnnotation => {
   return {
     createdTime: new Date(),
-    label: annotation,
+    label,
     lastUpdatedTime: new Date(),
     source: '',
     status: 'unhandled',
     version: 0,
-    id: annotation.id,
+    id: +annotation.id,
     type: 'asset',
     box: {
       xMax: annotation.x + annotation.width,
@@ -48,7 +49,7 @@ export const applyStylesToUFVAnnotation = (
       ...(annotation.style || {}),
       strokeWidth: 2,
       stroke: colors.strokeColor,
-      backgroundColor: colors.backgroundColor,
+      fill: colors.backgroundColor,
     },
   };
 };

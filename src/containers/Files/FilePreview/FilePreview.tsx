@@ -177,6 +177,7 @@ const SidebarWrapper = styled.div`
   overflow: auto;
   flex-grow: 0;
   border-left: 1px solid ${lightGrey};
+  background-color: white;
 `;
 
 const CenteredPlaceholder = styled.div`
