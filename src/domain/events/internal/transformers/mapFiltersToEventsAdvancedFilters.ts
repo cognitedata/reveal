@@ -95,7 +95,7 @@ export const mapFiltersToEventsAdvancedFilters = (
       searchBuilder.prefix(`metadata|${key}`, value);
     }
 
-    searchBuilder.prefix('description', query);
+    searchBuilder.search('description', query);
 
     filterBuilder.or(searchBuilder);
   }

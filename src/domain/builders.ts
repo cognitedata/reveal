@@ -15,8 +15,8 @@ type LeafFilter<T> =
   | Prefix<T>
   | Exists
   | ContainsAny<T>
-  | ContainsAll<T>;
-// | Search;
+  | ContainsAll<T>
+  | Search;
 type BoolFilter<T> = And<T> | Or<T> | Not<T>;
 
 type And<T> = { and: AdvancedFilter<T>[] };
@@ -42,7 +42,7 @@ type ContainsAny<T> = {
 type ContainsAll<T> = {
   containsAll: { property: Property; values: T[keyof T] };
 };
-// type Search = { search: { property: Property; value: string } };
+type Search = { search: { property: Property; value: string } };
 
 type Operator = 'gte' | 'gt' | 'lte' | 'lt';
 
@@ -191,6 +191,22 @@ export class AdvancedFilterBuilder<T extends Record<string, unknown>> {
       ];
     }
 
+    return this;
+  }
+  search<K extends keyof T>(key: K, value?: string) {
+    if (value !== undefined) {
+      const property = this.getProperty(key);
+
+      this.filters = [
+        ...this.filters,
+        {
+          search: {
+            property,
+            value,
+          },
+        },
+      ];
+    }
     return this;
   }
   exists<K extends keyof T>(key: K) {
