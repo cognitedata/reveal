@@ -21,8 +21,7 @@ export const adaptToMeasurementChartData = <T extends DepthMeasurementWithData>(
     curveData,
   }: MeasurementCurveFormatterData<T>) => Partial<MeasurementCurveData>
 ): MeasurementCurveData[] => {
-  const { wellboreMatchingId, depthColumn, columns, rows } = data;
-  const { unit: depthUnit } = depthColumn;
+  const { wellboreMatchingId, depthUnit, columns, rows } = data;
 
   return compact(
     columns.map((column, columnIndex) => {

@@ -9,11 +9,13 @@ import { normalizeDepthIndexColumn } from './normalizeDepthIndexColumn';
 export const normalizeDepthMeasurementData = (
   rawDepthMeasurementData: DepthMeasurementData
 ): DepthMeasurementDataInternal => {
-  const { depthColumn, depthUnit } = rawDepthMeasurementData;
+  const { depthColumn, depthUnit: depthUnitOriginal } = rawDepthMeasurementData;
+
+  const depthUnit = toDistance(depthUnitOriginal.unit);
 
   return {
     ...rawDepthMeasurementData,
-    depthColumn: normalizeDepthIndexColumn(depthColumn),
-    depthUnit: toDistance(depthUnit.unit),
+    depthColumn: normalizeDepthIndexColumn(depthColumn, depthUnit),
+    depthUnit,
   };
 };

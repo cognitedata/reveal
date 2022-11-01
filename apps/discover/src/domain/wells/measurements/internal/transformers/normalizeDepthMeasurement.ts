@@ -17,7 +17,7 @@ export const normalizeDepthMeasurement = (
 
   return {
     ...rawDepthMeasurement,
-    depthColumn: normalizeDepthIndexColumn(depthColumn),
+    depthColumn: normalizeDepthIndexColumn(depthColumn, unit),
     datum: datum && normalizeDatum(datum, unit),
     depthRange: depthRange && normalizeDistanceRange(depthRange, unit),
   };
