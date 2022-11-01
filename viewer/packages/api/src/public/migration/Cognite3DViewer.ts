@@ -1330,9 +1330,9 @@ function createRenderer(): THREE.WebGLRenderer {
  * Create EDL options from input options.
  * @param inputOptions
  */
-function createCompleteEdlOptions(inputOptions?: Partial<EDLOptions> | 'disabled'): EDLOptions {
+function createCompleteEdlOptions(inputOptions?: Partial<EdlOptions> | 'disabled'): EdlOptions {
   if (inputOptions === undefined) {
-    return defaultRenEdlOptions.pointCloudParameEdlOptionstions;
+    return defaultRenderOptions.pointCloudParameters.edlOptions;
   }
 
   if (inputOptions === 'disabled') {
