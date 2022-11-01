@@ -1,15 +1,19 @@
 import { useMemo } from 'react';
+import { TableSortBy } from 'components/ReactTable/V2';
 import { useEventsListQuery } from '../../service/queries/useEventsListQuery';
 import { mapFiltersToEventsAdvancedFilters } from '../transformers/mapFiltersToEventsAdvancedFilters';
+import { mapTableSortByToEventSortFields } from '../transformers/mapTableSortByToEventSortFields';
 import { InternalEventsFilters } from '../types';
 import { useEventsSearchQueryMetadataKeysQuery } from './useEventsMetadataKeysQuery';
 
 export const useEventsSearchResultQuery = ({
   query,
   eventsFilters,
+  eventsSortBy,
 }: {
   query?: string;
   eventsFilters: InternalEventsFilters;
+  eventsSortBy: TableSortBy[];
 }) => {
   const searchQueryMetadataKeys = useEventsSearchQueryMetadataKeysQuery(
     query,
@@ -26,5 +30,10 @@ export const useEventsSearchResultQuery = ({
     [eventsFilters, searchQueryMetadataKeys, query]
   );
 
-  return useEventsListQuery({ advancedFilter, limit: 25 });
+  const sort = useMemo(
+    () => mapTableSortByToEventSortFields(eventsSortBy),
+    [eventsSortBy]
+  );
+
+  return useEventsListQuery({ advancedFilter, sort, limit: 25 });
 };

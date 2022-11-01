@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { EventFilter, CogniteEvent } from '@cognite/sdk';
 import {
   SearchResultToolbar,
@@ -12,6 +12,7 @@ import { EnsureNonEmptyResource } from 'components';
 import { Loader } from '@cognite/cogs.js';
 import { ColumnToggleProps } from 'components/ReactTable';
 import { useEventsSearchResultQuery } from 'domain/events/internal/queries/useEventsSearchResultQuery';
+import { TableSortBy } from 'components/ReactTable/V2';
 
 export const EventSearchResults = ({
   query = '',
@@ -35,8 +36,13 @@ export const EventSearchResults = ({
   const { canFetchMore, fetchMore, isFetched, items } =
     useResourceResults<CogniteEvent>(api, query, filter);
 
+  const [sortBy, setSortBy] = useState<TableSortBy[]>([]);
   const { data, isLoading, hasNextPage, fetchNextPage } =
-    useEventsSearchResultQuery({ query, eventsFilters: filter });
+    useEventsSearchResultQuery({
+      query,
+      eventsFilters: filter,
+      eventsSortBy: sortBy,
+    });
 
   const loading = enableAdvancedFilters ? isLoading : !isFetched;
   if (loading) {
@@ -58,6 +64,10 @@ export const EventSearchResults = ({
           />
         }
         data={enableAdvancedFilters ? data : items}
+        enableSorting
+        onSort={props => {
+          setSortBy(props);
+        }}
         fetchMore={enableAdvancedFilters ? fetchNextPage : fetchMore}
         showLoadButton
         hasNextPage={enableAdvancedFilters ? hasNextPage : canFetchMore}

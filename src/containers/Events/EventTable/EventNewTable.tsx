@@ -21,12 +21,21 @@ export const EventNewTable = (
         Table.Columns.externalId,
         Table.Columns.lastUpdatedTime,
         Table.Columns.created,
-        Table.Columns.id,
-        Table.Columns.dataSet,
+        {
+          ...Table.Columns.id,
+          enableSorting: false,
+        },
+        {
+          ...Table.Columns.dataSet,
+          enableSorting: false,
+        },
         Table.Columns.startTime,
         Table.Columns.endTime,
         Table.Columns.source,
-        Table.Columns.assets,
+        {
+          ...Table.Columns.assets,
+          enableSorting: false,
+        },
       ] as ColumnDef<CogniteEvent>[],
     []
   );
