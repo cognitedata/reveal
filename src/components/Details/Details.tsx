@@ -7,6 +7,7 @@ import {
   DataSetItem,
   DetailsItem,
   LabelsItem,
+  ThreeDModelItem,
 } from './DetailsItem';
 
 export const GeneralDetails = ({
@@ -26,6 +27,7 @@ GeneralDetails.DataSetItem = DataSetItem;
 GeneralDetails.AssetsItem = AssetsItem;
 GeneralDetails.AssetItem = AssetItem;
 GeneralDetails.LabelsItem = LabelsItem;
+GeneralDetails.ThreeDModelItem = ThreeDModelItem;
 
 const GeneralDetailsCard = styled.div`
   background-color: var(--cogs-surface--medium);

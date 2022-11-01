@@ -7,6 +7,11 @@ import { createLink } from '@cognite/cdf-utilities';
 import styled from 'styled-components';
 import { useClipboard } from 'hooks';
 import { DASH } from 'utils';
+import { ThreeDAssetMappingItem } from 'hooks/threeDHooks';
+import {
+  ThreeDModelCellDropdown,
+  ThreeDModelCellLink,
+} from 'containers/Assets/AssetTable/ThreeDModelCell';
 
 type DetailsItemProps = {
   name: string;
@@ -46,6 +51,7 @@ export const DetailsItem = ({
       <ButtonWrapper visible={copyable && Boolean(value)}>
         <Button
           type="ghost"
+          size="small"
           icon={hasCopied ? 'Checkmark' : 'Copy'}
           disabled={hasCopied}
           onClick={() => {
@@ -166,6 +172,34 @@ export const LabelsItem = ({ labels = [] }: { labels?: string[] }) => {
   return <DetailsItem name="Labels" />;
 };
 
+export const ThreeDModelItem = ({
+  assetId,
+  mappings,
+}: {
+  assetId: number;
+  mappings: ThreeDAssetMappingItem[];
+}) => {
+  return (
+    <Flex>
+      <DetailsItemContainer>
+        <Body level={2} strong>
+          {mappings.length === 1 ? 'Linked 3D model' : 'Linked 3D models'}
+        </Body>
+        <Spacer />
+
+        {mappings.length === 1 ? (
+          <ThreeDModelCellLink assetId={assetId} mapping={mappings[0]} />
+        ) : (
+          <Body level={2}>{mappings.length} models</Body>
+        )}
+      </DetailsItemContainer>
+      <ButtonWrapper visible={mappings.length > 1}>
+        <ThreeDModelCellDropdown assetId={assetId} mappings={mappings} />
+      </ButtonWrapper>
+    </Flex>
+  );
+};
+
 const DetailsItemContainer = styled.div`
   display: flex;
   flex-direction: row;
@@ -188,6 +222,7 @@ const MutedBody = styled(Body)`
 `;
 
 const ButtonWrapper = styled.div<{ visible?: boolean }>`
-  padding-bottom: 10px;
+  margin-left: 8px;
+  margin-bottom: 8px;
   visibility: ${({ visible }) => (visible ? 'unset' : 'hidden')};
 `;

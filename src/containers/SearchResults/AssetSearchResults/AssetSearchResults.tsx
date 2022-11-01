@@ -9,11 +9,7 @@ import {
   AssetNewTable,
   useResourceResults,
 } from 'containers';
-import {
-  convertResourceType,
-  SelectableItemsProps,
-  ThreeDModelClickHandler,
-} from 'types';
+import { convertResourceType, SelectableItemsProps } from 'types';
 import { KeepMounted } from '../../../components/KeepMounted/KeepMounted';
 import styled from 'styled-components';
 import { EmptyState } from 'components/EmpyState/EmptyState';
@@ -26,7 +22,6 @@ export const AssetSearchResults = ({
   filter,
   showCount = false,
   onClick,
-  onThreeDModelClick,
   isTreeEnabled,
   enableAdvancedFilters,
   ...extraProps
@@ -37,7 +32,6 @@ export const AssetSearchResults = ({
   showCount?: boolean;
   filter: InternalAssetFilters;
   onClick: (item: Asset) => void;
-  onThreeDModelClick?: ThreeDModelClickHandler;
 } & ColumnToggleProps<Asset> &
   SelectableItemsProps) => {
   const api = convertResourceType('asset');
@@ -111,7 +105,6 @@ export const AssetSearchResults = ({
             tableHeaders={tableHeaders}
             hasNextPage={enableAdvancedFilters ? hasNextPage : canFetchMore}
             fetchMore={enableAdvancedFilters ? fetchNextPage : fetchMore}
-            onThreeDModelClick={onThreeDModelClick}
           />
         </KeepMounted>
 
@@ -120,7 +113,6 @@ export const AssetSearchResults = ({
             filter={filter}
             query={query}
             onAssetClicked={asset => onClick(asset)}
-            onThreeDModelClick={onThreeDModelClick}
             {...treeProps}
           />
         </KeepMounted>

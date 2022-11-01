@@ -4,11 +4,7 @@ import { Asset, AssetFilterProps } from '@cognite/sdk';
 import styled from 'styled-components';
 import { usePrevious } from 'hooks/CustomHooks';
 import { Loader, Table } from 'components';
-import {
-  SelectableItemsProps,
-  TableStateProps,
-  ThreeDModelClickHandler,
-} from 'types';
+import { SelectableItemsProps, TableStateProps } from 'types';
 import {
   useRootTree,
   useSearchTree,
@@ -16,7 +12,7 @@ import {
   ConstructedTreeAsset,
 } from './hooks';
 import { ThreeDAssetMappings, useThreeDAssetMappings } from 'hooks/threeDHooks';
-import { ThreeDModelCell } from '../AssetTable/AssetNewTable';
+import { ThreeDModelCell } from '../AssetTable/ThreeDModelCell';
 import { ColumnShape } from 'react-base-table';
 
 export const AssetTreeTable = ({
@@ -27,7 +23,6 @@ export const AssetTreeTable = ({
   isSelected,
   disableScroll,
   hierachyRootId,
-  onThreeDModelClick,
   ...selectionProps
 }: {
   filter: AssetFilterProps;
@@ -35,7 +30,6 @@ export const AssetTreeTable = ({
   onAssetClicked: (item: Asset) => void;
   hierachyRootId?: number;
   disableScroll?: boolean;
-  onThreeDModelClick?: ThreeDModelClickHandler;
 } & SelectableItemsProps &
   TableStateProps) => {
   const [previewId, setPreviewId] = useState<number | undefined>(undefined);
@@ -93,7 +87,6 @@ export const AssetTreeTable = ({
         <ThreeDModelCell
           assetId={asset.id}
           mappings={column.threeDAssetMappings[asset.id]}
-          onThreeDModelClick={onThreeDModelClick}
         />
       ),
       width: 300,

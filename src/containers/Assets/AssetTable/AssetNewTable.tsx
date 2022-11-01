@@ -1,19 +1,17 @@
 import { ColumnDef } from '@tanstack/react-table';
 import React, { useMemo } from 'react';
 import { Asset } from '@cognite/sdk';
-import { Button, Dropdown, Menu } from '@cognite/cogs.js';
+import { Button } from '@cognite/cogs.js';
 import { TableV2 as Table, TableProps } from 'components/ReactTable/V2/TableV2';
-import { RelationshipLabels, ThreeDModelClickHandler } from 'types';
+import { RelationshipLabels } from 'types';
 
 export type AssetWithRelationshipLabels = RelationshipLabels & Asset;
 
 import { useCdfItem } from '@cognite/sdk-react-query-hooks';
 import { StyledButton } from 'components/ReactTable';
-import {
-  ThreeDAssetMappingItem,
-  useThreeDAssetMappings,
-} from 'hooks/threeDHooks';
+import { useThreeDAssetMappings } from 'hooks/threeDHooks';
 import { useGetHiddenColumns } from 'hooks';
+import { ThreeDModelCell } from './ThreeDModelCell';
 
 const visibleColumns = ['name', 'rootId'];
 
@@ -53,73 +51,10 @@ export const ParentCell = ({
   );
 };
 
-export const ThreeDModelCell = ({
-  assetId,
-  mappings,
-  onThreeDModelClick,
-}: {
-  assetId: number;
-  mappings: ThreeDAssetMappingItem[];
-  onThreeDModelClick?: ThreeDModelClickHandler;
-}) => {
-  if (!mappings?.length) {
-    return null;
-  }
-
-  if (mappings.length === 1) {
-    const mapping = mappings[0];
-    return (
-      <Button
-        icon="ArrowUpRight"
-        iconPlacement="right"
-        onClick={e => {
-          e.stopPropagation();
-          onThreeDModelClick?.(mapping, assetId, e);
-        }}
-        type="ghost"
-      >
-        {mapping.model.name}
-      </Button>
-    );
-  }
-
-  return (
-    <Dropdown
-      content={
-        <Menu onClick={e => e.stopPropagation()}>
-          <Menu.Header>Models</Menu.Header>
-          {mappings.map(mapping => (
-            <Menu.Item
-              appendIcon="ArrowUpRight"
-              key={mapping.model.id}
-              onClick={e => {
-                onThreeDModelClick?.(mapping, assetId, e);
-              }}
-            >
-              {mapping.model.name}
-            </Menu.Item>
-          ))}
-        </Menu>
-      }
-    >
-      <Button
-        icon="ChevronDown"
-        iconPlacement="right"
-        onClick={e => e.stopPropagation()}
-        type="ghost"
-      >
-        {mappings.length} models available
-      </Button>
-    </Dropdown>
-  );
-};
-
 export const AssetNewTable = (
-  props: Omit<TableProps<AssetWithRelationshipLabels>, 'columns'> & {
-    onThreeDModelClick?: ThreeDModelClickHandler;
-  }
+  props: Omit<TableProps<AssetWithRelationshipLabels>, 'columns'>
 ) => {
-  const { onRowClick = () => {}, data, onThreeDModelClick, ...rest } = props;
+  const { onRowClick = () => {}, data, ...rest } = props;
 
   const { data: threeDAssetMappings } = useThreeDAssetMappings();
 
@@ -148,7 +83,6 @@ export const AssetNewTable = (
           <ThreeDModelCell
             assetId={getValue<number>()}
             mappings={threeDAssetMappings[getValue<number>()]}
-            onThreeDModelClick={onThreeDModelClick}
           />
         ),
         size: 300,
