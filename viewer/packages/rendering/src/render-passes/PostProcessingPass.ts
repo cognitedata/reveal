@@ -14,6 +14,7 @@ import {
   RenderLayer
 } from '../utilities/renderUtilities';
 import { PostProcessingPipelineOptions } from '../render-pipeline-providers/types';
+import { shouldApplyEdl } from '../render-pipeline-providers/pointCloudParameterUtils';
 
 /**
  * Single pass that applies post processing effects and
@@ -59,7 +60,7 @@ export class PostProcessingPass implements RenderPass {
       texture: postProcessingPipelineOptions.pointCloud.texture,
       depthTexture: postProcessingPipelineOptions.pointCloud.depthTexture,
       pointBlending: postProcessingPipelineOptions?.pointBlending ?? false,
-      edlOptions: postProcessingPipelineOptions?.edlOptions
+      edlOptions: postProcessingPipelineOptions.edlOptions
     });
 
     this._pointcloudBlitMaterial = pointcloudBlitMaterial;
@@ -111,7 +112,7 @@ export class PostProcessingPass implements RenderPass {
   }
 
   public render(renderer: THREE.WebGLRenderer, camera: THREE.Camera): void {
-    if (this._postProcessingOptions.edlOptions) {
+    if (shouldApplyEdl(this._postProcessingOptions.edlOptions)) {
       this._pointcloudBlitMaterial.uniforms.screenWidth = { value: this._postProcessingOptions.pointCloud.width };
       this._pointcloudBlitMaterial.uniforms.screenHeight = { value: this._postProcessingOptions.pointCloud.height };
     }

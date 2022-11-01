@@ -7,7 +7,7 @@ import TWEEN from '@tweenjs/tween.js';
 import { Subscription, fromEventPattern } from 'rxjs';
 import pick from 'lodash/pick';
 
-import { defaultRenderOptions } from '@reveal/rendering';
+import { defaultRenderOptions, EDLOptions } from '@reveal/rendering';
 
 import {
   assertNever,
@@ -1326,6 +1326,22 @@ function createRenderer(): THREE.WebGLRenderer {
   return renderer;
 }
 
+/**
+ * Create EDL options from input options.
+ * @param inputOptions
+ */
+function createCompleteEdlOptions(inputOptions?: Partial<EDLOptions> | 'disabled'): EDLOptions {
+  if (inputOptions === undefined) {
+    return defaultRenderOptions.pointCloudParameters.edlOptions;
+  }
+
+  if (inputOptions === 'disabled') {
+    return { radius: 0.0, strength: 0.0 };
+  }
+
+  return { ...defaultRenderOptions.pointCloudParameters.edlOptions, ...inputOptions };
+}
+
 function createRevealManagerOptions(viewerOptions: Cognite3DViewerOptions, devicePixelRatio: number): RevealOptions {
   const customTarget = viewerOptions.renderTargetOptions?.target;
   const outputRenderTarget = customTarget
@@ -1354,17 +1370,18 @@ function createRevealManagerOptions(viewerOptions: Cognite3DViewerOptions, devic
 
   revealOptions.logMetrics = viewerOptions.logMetrics;
 
+  const edlOptions = createCompleteEdlOptions(viewerOptions.pointCloudEffects?.edlOptions);
+
   revealOptions.renderOptions = {
     antiAliasing,
     multiSampleCountHint: multiSampleCount,
     ssaoRenderParameters,
     edgeDetectionParameters,
     pointCloudParameters: {
-      edlOptions: viewerOptions.pointCloudEffects?.edlOptions ?? defaultRenderOptions.pointCloudParameters.edlOptions,
+      edlOptions,
       pointBlending:
         viewerOptions?.pointCloudEffects?.pointBlending ?? defaultRenderOptions.pointCloudParameters.pointBlending
     }
   };
-
   return revealOptions;
 }

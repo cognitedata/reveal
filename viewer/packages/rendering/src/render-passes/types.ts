@@ -44,7 +44,7 @@ export type PointCloudPostProcessingOptions = {
   texture: THREE.Texture;
   depthTexture: THREE.DepthTexture;
   pointBlending: boolean;
-  edlOptions?: EDLOptions;
+  edlOptions: EDLOptions;
 };
 
 export const transparentBlendOptions: BlendOptions = {

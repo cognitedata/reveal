@@ -24,7 +24,7 @@ export class PointCloudUi {
     
     this._viewer = viewer;
     this._params.pointBlending = urlParams.get('pointBlending') === 'true';
-    this._params.edlOptions.enabled = urlParams.get('edl') === 'true';
+    this._params.edlOptions.enabled = (urlParams.get('edl') ?? 'true') === 'true';
     this._params.edlOptions.radius = parseFloat(urlParams.get('edlRadius') ?? '2.2');
     this._params.edlOptions.strength = parseFloat(urlParams.get('edlStrength') ?? '0.5');
 

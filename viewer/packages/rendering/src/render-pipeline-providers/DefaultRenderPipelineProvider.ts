@@ -9,7 +9,7 @@ import { RenderPass } from '../RenderPass';
 import { RenderPipelineProvider } from '../RenderPipelineProvider';
 import { createFullScreenTriangleMesh, createRenderTarget, hasStyledNodes } from '../utilities/renderUtilities';
 import { RenderTargetData } from './types';
-import { AntiAliasingMode, defaultRenderOptions, PointCloudParameters, RenderOptions } from '../rendering/types';
+import { AntiAliasingMode, defaultRenderOptions, RenderOptions } from '../rendering/types';
 import { CadGeometryRenderPipelineProvider } from './CadGeometryRenderPipelineProvider';
 import { PostProcessingPass } from '../render-passes/PostProcessingPass';
 import { SSAOPass } from '../render-passes/SSAOPass';
@@ -17,6 +17,7 @@ import { blitShaders } from '../rendering/shaders';
 import { SceneHandler, WebGLRendererStateHelper } from '@reveal/utilities';
 import { PointCloudRenderPipelineProvider } from './PointCloudRenderPipelineProvider';
 import { PointCloudMaterialManager } from '../PointCloudMaterialManager';
+import { shouldApplyEdl } from './pointCloudParameterUtils';
 
 export class DefaultRenderPipelineProvider implements RenderPipelineProvider {
   private readonly _viewerScene: THREE.Scene;
@@ -90,12 +91,7 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider {
     const edges = renderOptions.edgeDetectionParameters ?? defaultRenderOptions.edgeDetectionParameters;
     const pointCloudParameters = renderOptions.pointCloudParameters ?? defaultRenderOptions.pointCloudParameters;
 
-    // Disable the effect if any of the parameters is 0
-    pointCloudParameters.edlOptions = this.shouldApplyEDL(pointCloudParameters)
-      ? pointCloudParameters.edlOptions
-      : undefined;
-
-    if (pointCloudParameters?.pointBlending === true && pointCloudParameters.edlOptions) {
+    if (pointCloudParameters.pointBlending === true && shouldApplyEdl(pointCloudParameters.edlOptions)) {
       throw new Error('EDL and point blending cannot be enabled at the same time');
     }
 
@@ -243,13 +239,5 @@ export class DefaultRenderPipelineProvider implements RenderPipelineProvider {
 
   private shouldRenderPointClouds(): boolean {
     return this._pointCloudModels.length > 0;
-  }
-
-  private shouldApplyEDL(pointCloudParameters: PointCloudParameters): boolean {
-    if (pointCloudParameters.edlOptions?.radius === 0 || pointCloudParameters.edlOptions?.strength === 0) {
-      return false;
-    }
-
-    return true;
   }
 }

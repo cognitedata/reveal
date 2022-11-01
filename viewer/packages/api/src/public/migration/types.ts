@@ -125,7 +125,7 @@ export interface Cognite3DViewerOptions {
     /**
      * Eye Dome Lighting (EDL) effect, considerably improves depth perception of point cloud model.
      */
-    edlOptions?: EDLOptions;
+    edlOptions?: Partial<EDLOptions> | 'disabled';
   };
 
   /**

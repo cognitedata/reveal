@@ -19,6 +19,7 @@ import {
 import { blitShaders, depthBlendBlitShaders, pointCloudShaders } from '../rendering/shaders';
 import { NodeOutlineColor } from '@reveal/cad-styling';
 import { DEFAULT_EDL_NEIGHBOURS_COUNT } from '../pointcloud-rendering/constants';
+import { shouldApplyEdl } from '../render-pipeline-providers/pointCloudParameterUtils';
 
 export const unitOrthographicCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, -1, 1);
 
@@ -122,7 +123,7 @@ export function getPointCloudPostProcessingMaterial(options: PointCloudPostProce
     defines['points_blend'] = true;
   }
 
-  if (edlOptions) {
+  if (shouldApplyEdl(edlOptions)) {
     defines['use_edl'] = true;
     defines['NEIGHBOUR_COUNT'] = DEFAULT_EDL_NEIGHBOURS_COUNT;
 

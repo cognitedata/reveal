@@ -12,6 +12,7 @@ import { PointCloudPassParameters } from '../render-passes/types';
 import { PointCloudParameters } from '../rendering/types';
 import { PointShape } from '../pointcloud-rendering';
 import { PointCloudMaterialManager } from '../PointCloudMaterialManager';
+import { shouldApplyEdl } from './pointCloudParameterUtils';
 
 export class PointCloudRenderPipelineProvider implements RenderPipelineProvider {
   private readonly _renderTargetData: {
@@ -71,7 +72,7 @@ export class PointCloudRenderPipelineProvider implements RenderPipelineProvider 
 
     const standardPassParameters: PointCloudPassParameters = {
       material: {
-        useEDL: renderParameters.edlOptions ? true : false
+        useEDL: shouldApplyEdl(renderParameters.edlOptions)
       }
     };
 

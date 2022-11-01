@@ -100,10 +100,10 @@ export function Viewer() {
         continuousModelStreaming: true,
         pointCloudEffects: {
           pointBlending: (urlParams.get('pointBlending') === 'true' ?? undefined),
-          edlOptions: {
-            strength: edlEnabled ? parseFloat(urlParams.get('edlStrength') ?? '0.5') : 0.0,
+          edlOptions: edlEnabled ? {
+            strength: parseFloat(urlParams.get('edlStrength') ?? '0.5'),
             radius: parseFloat(urlParams.get('edlRadius') ?? '2.2'),
-          }
+          } : 'disabled'
         }
       };
 

@@ -27,5 +27,5 @@ export type PostProcessingPipelineOptions = CadGeometryRenderTargets &
     ssaoTexture: THREE.Texture;
     edges: boolean;
     pointBlending?: boolean;
-    edlOptions?: EDLOptions;
+    edlOptions: EDLOptions;
   };

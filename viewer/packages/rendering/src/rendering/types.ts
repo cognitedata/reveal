@@ -111,9 +111,9 @@ export type PointCloudParameters = {
   /**
    * Effect of blending close points together. Creates smoother texture on object surfaces.
    */
-  pointBlending?: boolean;
+  pointBlending: boolean;
   /**
    * Eye Dome Lighting effect options. Considerably improves perception of depth within rendered point cloud.
    */
-  edlOptions?: EDLOptions;
+  edlOptions: EDLOptions;
 };
