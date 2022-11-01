@@ -6,7 +6,10 @@ import {
   useResetSequenceFilters,
   useSequenceFilters,
 } from 'app/store/filter';
-import { MetadataFilterV2 } from '@cognite/data-exploration';
+import {
+  MetadataFilterV2,
+  transformNewFilterToOldFilter,
+} from '@cognite/data-exploration';
 import { TempMultiSelectFix } from 'app/containers/elements';
 
 export const SequenceFilters = ({ ...rest }) => {
@@ -15,7 +18,7 @@ export const SequenceFilters = ({ ...rest }) => {
   const isFiltersEmpty = useFilterEmptyState('sequence');
 
   const { data: items = [] } = useList('sequences', {
-    filter: sequenceFilter,
+    filter: transformNewFilterToOldFilter(sequenceFilter),
     limit: 1000,
   });
 

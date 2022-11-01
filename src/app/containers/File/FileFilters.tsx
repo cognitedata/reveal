@@ -12,6 +12,7 @@ import {
   LabelFilterV2,
   MetadataFilterV2,
   StringFilterV2,
+  transformNewFilterToOldFilter,
 } from '@cognite/data-exploration';
 import { TempMultiSelectFix } from 'app/containers/elements';
 
@@ -21,7 +22,7 @@ export const FileFilters = ({ ...rest }) => {
   const isFiltersEmpty = useFilterEmptyState('file');
 
   const { data: items = [] } = useList('files', {
-    filter: fileFilter,
+    filter: transformNewFilterToOldFilter(fileFilter),
     limit: 1000,
   });
 
@@ -51,12 +52,10 @@ export const FileFilters = ({ ...rest }) => {
         />
         <LabelFilterV2
           resourceType="file"
-          value={
-            ((fileFilter as any).labels || { containsAny: [] }).containsAny
-          }
+          value={fileFilter.labels}
           setValue={newFilters =>
             setFileFilter({
-              labels: newFilters ? { containsAny: newFilters } : undefined,
+              labels: newFilters,
             })
           }
         />

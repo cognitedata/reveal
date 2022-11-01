@@ -1,10 +1,5 @@
-import React from 'react';
 import { useList } from '@cognite/sdk-react-query-hooks';
-import {
-  AggregateResponse,
-  AssetFilterProps,
-  LabelContainsAnyFilter,
-} from '@cognite/sdk';
+import { AggregateResponse } from '@cognite/sdk';
 import { useQuery, UseQueryOptions } from 'react-query';
 import { useSDK } from '@cognite/sdk-provider';
 import {
@@ -15,22 +10,27 @@ import {
 import { BaseFilterCollapse } from 'app/components/Collapse/BaseFilterCollapse/BaseFilterCollapse';
 import {
   AggregatedFilterV2,
+  InternalAssetFilters,
   LabelFilterV2,
   MetadataFilterV2,
+  transformNewFilterToOldFilter,
 } from '@cognite/data-exploration';
 import { TempMultiSelectFix } from 'app/containers/elements';
 
 // TODO: Move to domain layer
 export const useAssetMetadataKeys = (
-  filter?: AssetFilterProps,
+  filter?: InternalAssetFilters,
   config?: UseQueryOptions<
     AggregateResponse[],
     unknown,
     AggregateResponse[],
-    (string | AssetFilterProps | undefined)[]
+    (string | InternalAssetFilters | undefined)[]
   >
 ) => {
   const sdk = useSDK();
+
+  filter = transformNewFilterToOldFilter(filter);
+
   const { data, ...rest } = useQuery(
     ['assets', 'aggregate', 'metadataKeys', filter],
     async () =>
@@ -51,7 +51,7 @@ export const AssetFilters = ({ ...rest }) => {
   const isFiltersEmpty = useFilterEmptyState('asset');
 
   const { data: items = [] } = useList('assets', {
-    filter: assetFilters,
+    filter: transformNewFilterToOldFilter(assetFilters),
     limit: 1000,
   });
 
@@ -67,16 +67,10 @@ export const AssetFilters = ({ ...rest }) => {
       <TempMultiSelectFix>
         <LabelFilterV2
           resourceType="asset"
-          value={
-            (
-              (assetFilters.labels as LabelContainsAnyFilter) || {
-                containsAny: [],
-              }
-            ).containsAny
-          }
+          value={assetFilters.labels}
           setValue={newFilters =>
             setAssetFilters({
-              labels: newFilters ? { containsAny: newFilters } : undefined,
+              labels: newFilters,
             })
           }
         />

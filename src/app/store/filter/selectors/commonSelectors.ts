@@ -1,10 +1,10 @@
+import { InternalCommonFilters } from '@cognite/data-exploration';
 import { selector, useRecoilState, useResetRecoilState } from 'recoil';
 
 import { globalFilterAtom } from '../atoms';
-import { CommonFacets } from '../types';
 import { defaultFilterSetter } from '../utils';
 
-const globalCommonFilters = selector<CommonFacets>({
+const globalCommonFilters = selector<InternalCommonFilters>({
   key: 'GlobalCommonFilters',
   get: ({ get }) => {
     const {

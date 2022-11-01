@@ -2,7 +2,9 @@ import isObject from 'lodash/isObject';
 import isEmpty from 'lodash/isEmpty';
 import { isArray } from 'lodash';
 
-export const isObjectEmpty = (object?: Record<string, unknown>) => {
+export const isObjectEmpty = <T extends Record<string, unknown>>(
+  object?: T
+) => {
   if (isEmpty(object) || object === undefined || !isObject(object)) {
     return true;
   }

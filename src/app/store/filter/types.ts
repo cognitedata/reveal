@@ -1,43 +1,33 @@
 import {
-  AssetFilterProps,
-  DateRange,
-  FileFilterProps,
-  IdEither,
-  SequenceFilter,
-  TimeseriesFilter,
-} from '@cognite/sdk';
-import { InternalDocumentFilter } from 'app/domain/document/internal/types';
-import { InternalEventsFilters } from 'app/domain/events/internal/types';
+  InternalAssetFilters,
+  InternalCommonFilters,
+  InternalDocumentFilter,
+  InternalEventsFilters,
+  InternalFilesFilters,
+  InternalSequenceFilters,
+  InternalTimeseriesFilters,
+} from '@cognite/data-exploration';
 
 export type Filters = {
-  asset: AssetFilterProps;
-  timeseries: TimeseriesFilter;
-  sequence: Required<SequenceFilter>['filter'];
-  file: FileFilterProps;
+  asset: InternalAssetFilters;
+  timeseries: InternalTimeseriesFilters;
+  sequence: InternalSequenceFilters;
+  file: InternalFilesFilters;
   event: InternalEventsFilters;
   document: InternalDocumentFilter;
 };
 
-export type CommonFacets = {
-  assetSubtreeIds?: IdEither[];
-  dataSetIds?: IdEither[];
-  // metadata?: Metadata;
-  createdTime?: DateRange;
-  lastUpdatedTime?: DateRange;
-  externalIdPrefix?: string;
-};
-
-type CommonFacetsKeys = keyof CommonFacets;
+type CommonFacetsKeys = keyof InternalCommonFilters;
 
 export type GlobalFilter = {
   phrase?: string;
   filters: {
-    common: CommonFacets;
-    asset: Omit<AssetFilterProps, CommonFacetsKeys>;
+    common: InternalCommonFilters;
+    asset: Omit<Filters['asset'], CommonFacetsKeys>;
     timeseries: Omit<Filters['timeseries'], CommonFacetsKeys>;
     sequence: Omit<Filters['sequence'], CommonFacetsKeys>;
     file: Omit<Filters['file'], CommonFacetsKeys>;
-    document: Filters['document'];
+    document: Omit<Filters['document'], CommonFacetsKeys>;
     event: Omit<Filters['event'], CommonFacetsKeys>;
   };
 };

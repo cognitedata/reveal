@@ -1,4 +1,3 @@
-import { InternalId } from '@cognite/sdk';
 import React from 'react';
 import {
   ResourceType,
@@ -8,7 +7,6 @@ import {
   StringFilterV2,
 } from '@cognite/data-exploration';
 import { BaseFilterCollapse } from '../../components/Collapse/BaseFilterCollapse/BaseFilterCollapse';
-// import { MetadataFilter } from '../MetadataFilter/MetadataFilter';
 import {
   useCommonFilters,
   useFilterEmptyState,
@@ -34,14 +32,12 @@ export const CommonFilter: React.FC<Props> = ({ resourceType, ...rest }) => {
       <TempCommonMultiSelectFix>
         <DataSetFilterV2
           resourceType={resourceType}
-          value={commonFilter.dataSetIds}
+          value={commonFilter.dataSetIds?.map(({ value }) => value)}
           setValue={newValue => setCommonFilter({ dataSetIds: newValue })}
         />
         <ByAssetFilterV2
-          value={commonFilter.assetSubtreeIds?.map(el => (el as InternalId).id)}
-          setValue={newValue =>
-            setCommonFilter({ assetSubtreeIds: newValue?.map(id => ({ id })) })
-          }
+          value={commonFilter.assetSubtreeIds?.map(({ value }) => value)}
+          setValue={newValue => setCommonFilter({ assetSubtreeIds: newValue })}
         />
         <DateFilterV2
           title="Created Time"

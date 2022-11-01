@@ -10,6 +10,7 @@ import {
   AggregatedFilterV2,
   BooleanFilter,
   MetadataFilterV2,
+  transformNewFilterToOldFilter,
 } from '@cognite/data-exploration';
 import { TempMultiSelectFix } from 'app/containers/elements';
 
@@ -19,7 +20,7 @@ export const TimeseriesFilters = ({ ...rest }) => {
   const isFiltersEmpty = useFilterEmptyState('timeseries');
 
   const { data: items = [] } = useList('timeseries', {
-    filter: timeseriesFilter,
+    filter: transformNewFilterToOldFilter(timeseriesFilter),
     limit: 1000,
   });
 
