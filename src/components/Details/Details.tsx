@@ -41,4 +41,12 @@ const GeneralDetailsHeader = styled.div`
 
 const GeneralDetailsContent = styled.div`
   padding: 12px;
+  display: grid;
+  grid-gap: 8px;
+  --max-columns: 2;
+  /* Adjusting for the 8px grid-gap as well */
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(max(500px, calc(100% / var(--max-columns) - 16px)), 1fr)
+  );
 `;

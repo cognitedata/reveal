@@ -58,6 +58,7 @@ export const DetailsItem = ({
             onCopy();
             toast.success('Copied to clipboard');
           }}
+          aria-label="Copy"
         />
       </ButtonWrapper>
     </Flex>
