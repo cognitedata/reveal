@@ -343,7 +343,7 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
       }
       return boundingBox;
     } else if (model instanceof PointCloudNode) {
-      return model.getBoundingBox().clone();
+      return model.potreeNode.boundingBox.clone();
     } else {
       throw new Error(`Unkown type of model(${model})`);
     }
